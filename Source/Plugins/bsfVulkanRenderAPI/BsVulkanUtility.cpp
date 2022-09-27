@@ -379,10 +379,10 @@ namespace bs { namespace ct
 
 	VkBorderColor VulkanUtility::GetBorderColor(const Color& color)
 	{
-		if(color.r > 0.0f || color.g > 0.0f || color.b > 0.0f)
+		if(color.R > 0.0f || color.G > 0.0f || color.B > 0.0f)
 			return VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
 
-		if(color.a > 0.0f)
+		if(color.A > 0.0f)
 			return VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK;
 
 		return VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK;
@@ -790,9 +790,9 @@ namespace bs { namespace ct
 
 	UINT32 VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, UINT32 arraySize, UINT32& offset)
 	{
-		const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::PARAM_SIZES.lookup[type];
-		UINT32 size = (typeInfo.baseTypeSize * typeInfo.numColumns * typeInfo.numRows) / 4;
-		UINT32 alignment = typeInfo.alignment / 4;
+		const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::PARAM_SIZES.Lookup[type];
+		UINT32 size = (typeInfo.BaseTypeSize * typeInfo.NumColumns * typeInfo.NumRows) / 4;
+		UINT32 alignment = typeInfo.Alignment / 4;
 
 		// Fix alignment if needed
 		UINT32 alignOffset = offset % alignment;

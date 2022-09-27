@@ -14,13 +14,13 @@ namespace bs { namespace ct
 	/** Description of a single swap chain surface. */
 	struct SwapChainSurface
 	{
-		VulkanImage* image;
-		VulkanSemaphore* sync;
-		bool acquired;
-		bool needsWait;
+		VulkanImage* Image;
+		VulkanSemaphore* Sync;
+		bool Acquired;
+		bool NeedsWait;
 
-		VulkanFramebuffer* framebuffer;
-		VULKAN_FRAMEBUFFER_DESC framebufferDesc;
+		VulkanFramebuffer* Framebuffer;
+		VULKAN_FRAMEBUFFER_DESC FramebufferDesc;
 	};
 
 	/** Vulkan swap chain containing two or more buffers for rendering and presenting onto the screen. */

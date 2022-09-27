@@ -58,7 +58,7 @@ namespace bs { namespace ct
 	SPtr<GpuProgram> VulkanGLSLProgramFactory::Create(GpuProgramType type, GpuDeviceFlags deviceMask)
 	{
 		GPU_PROGRAM_DESC desc;
-		desc.type = type;
+		desc.Type = type;
 
 		SPtr<GpuProgram> gpuProg = bs_shared_ptr<VulkanGpuProgram>(new (bs_alloc<VulkanGpuProgram>())
 			VulkanGpuProgram(desc, deviceMask));
@@ -236,9 +236,9 @@ namespace bs { namespace ct
 				spvEP = compiler.get_entry_point(ep.name, ep.execution_model);
 			}
 
-			workgroupSize[0] = spvEP.workgroup_size.x;
-			workgroupSize[1] = spvEP.workgroup_size.y;
-			workgroupSize[2] = spvEP.workgroup_size.z;
+			workgroupSize[0] = spvEP.workgroup_size.X;
+			workgroupSize[1] = spvEP.workgroup_size.Y;
+			workgroupSize[2] = spvEP.workgroup_size.Z;
 		}
 
 		// Copy the source into destination buffer

@@ -34,13 +34,13 @@ namespace bs
 		Initialize();
 
 		VULKAN_RENDER_PASS_DESC rpDesc;
-		rpDesc.numSamples = mProperties.multisampleCount > 1 ? mProperties.multisampleCount : 1;
-		rpDesc.offscreen = true;
+		rpDesc.NumSamples = mProperties.MultisampleCount > 1 ? mProperties.MultisampleCount : 1;
+		rpDesc.Offscreen = true;
 
 		VULKAN_FRAMEBUFFER_DESC fbDesc;
-		fbDesc.width = mProperties.width;
-		fbDesc.height = mProperties.height;
-		fbDesc.layers = mProperties.numSlices;
+		fbDesc.Width = mProperties.Width;
+		fbDesc.Height = mProperties.Height;
+		fbDesc.Layers = mProperties.NumSlices;
 
 		for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; ++i)
 		{
@@ -48,15 +48,15 @@ namespace bs
 				continue;
 
 			const SPtr<TextureView>& view = mColorSurfaces[i];
-			VulkanTexture* texture = static_cast<VulkanTexture*>(mDesc.colorSurfaces[i].texture.get());
+			VulkanTexture* texture = static_cast<VulkanTexture*>(mDesc.ColorSurfaces[i].Texture.get());
 
 			VulkanImage* image = texture->GetResource(mDeviceIdx);
 			if (image == nullptr)
 				continue;
 
 			TextureSurface surface;
-			surface.mipLevel = view->GetMostDetailedMip();
-			surface.numMipLevels = view->GetNumMips();
+			surface.MipLevel = view->GetMostDetailedMip();
+			surface.NumMipLevels = view->GetNumMips();
 
 			if (texture->GetProperties().GetTextureType() == TEX_TYPE_3D)
 			{
@@ -66,39 +66,39 @@ namespace bs
 				if (view->GetNumArraySlices() > 1)
 					BS_LOG(Error, RenderBackend, "Cannot specify array slices when rendering to a 3D texture.");
 
-				surface.face = 0;
-				surface.numFaces = mProperties.numSlices;
+				surface.Face = 0;
+				surface.NumFaces = mProperties.NumSlices;
 
-				fbDesc.color[i].baseLayer = 0;
+				fbDesc.Color[i].BaseLayer = 0;
 			}
 			else
 			{
-				surface.face = view->GetFirstArraySlice();
-				surface.numFaces = view->GetNumArraySlices();
+				surface.Face = view->GetFirstArraySlice();
+				surface.NumFaces = view->GetNumArraySlices();
 
-				fbDesc.color[i].baseLayer = view->GetFirstArraySlice();
-				fbDesc.layers = view->GetNumArraySlices();
+				fbDesc.Color[i].BaseLayer = view->GetFirstArraySlice();
+				fbDesc.Layers = view->GetNumArraySlices();
 			}
 
-			fbDesc.color[i].image = image;
-			fbDesc.color[i].surface = surface;
+			fbDesc.Color[i].Image = image;
+			fbDesc.Color[i].Surface = surface;
 
-			rpDesc.color[i].enabled = true;
-			rpDesc.color[i].format = VulkanUtility::GetPixelFormat(texture->GetProperties().GetFormat(),
+			rpDesc.Color[i].Enabled = true;
+			rpDesc.Color[i].Format = VulkanUtility::GetPixelFormat(texture->GetProperties().GetFormat(),
 																   texture->GetProperties().IsHardwareGammaEnabled());
 		}
 
 		if(mDepthStencilSurface != nullptr)
 		{
 			const SPtr<TextureView>& view = mDepthStencilSurface;
-			VulkanTexture* texture = static_cast<VulkanTexture*>(mDesc.depthStencilSurface.texture.get());
+			VulkanTexture* texture = static_cast<VulkanTexture*>(mDesc.DepthStencilSurface.Texture.get());
 
 			VulkanImage* image = texture->GetResource(mDeviceIdx);
 			if (image != nullptr)
 			{
 				TextureSurface surface;
-				surface.mipLevel = view->GetMostDetailedMip();
-				surface.numMipLevels = view->GetNumMips();
+				surface.MipLevel = view->GetMostDetailedMip();
+				surface.NumMipLevels = view->GetNumMips();
 
 				if (texture->GetProperties().GetTextureType() == TEX_TYPE_3D)
 				{
@@ -108,23 +108,23 @@ namespace bs
 					if (view->GetNumArraySlices() > 1)
 						BS_LOG(Error, RenderBackend, "Cannot specify array slices when rendering to a 3D texture.");
 
-					surface.face = 0;
-					surface.numFaces = 1;
+					surface.Face = 0;
+					surface.NumFaces = 1;
 				}
 				else
 				{
-					surface.face = view->GetFirstArraySlice();
-					surface.numFaces = view->GetNumArraySlices();
+					surface.Face = view->GetFirstArraySlice();
+					surface.NumFaces = view->GetNumArraySlices();
 
-					fbDesc.layers = view->GetNumArraySlices();
+					fbDesc.Layers = view->GetNumArraySlices();
 				}
 
-				fbDesc.depth.image = image;
-				fbDesc.depth.surface = surface;
-				fbDesc.depth.baseLayer = view->GetFirstArraySlice();
+				fbDesc.Depth.Image = image;
+				fbDesc.Depth.Surface = surface;
+				fbDesc.Depth.BaseLayer = view->GetFirstArraySlice();
 
-				rpDesc.depth.enabled = true;
-				rpDesc.depth.format = VulkanUtility::GetPixelFormat(texture->GetProperties().GetFormat(),
+				rpDesc.Depth.Enabled = true;
+				rpDesc.Depth.Format = VulkanUtility::GetPixelFormat(texture->GetProperties().GetFormat(),
 																	texture->GetProperties().IsHardwareGammaEnabled());
 			}
 		}

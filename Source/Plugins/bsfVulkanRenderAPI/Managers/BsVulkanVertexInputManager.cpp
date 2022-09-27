@@ -16,18 +16,18 @@ namespace bs { namespace ct
 		size_t VulkanVertexInputManager::HashFunc::operator()(const VertexDeclarationKey& key) const
 	{
 		size_t hash = 0;
-		bs_hash_combine(hash, key.bufferDeclId);
-		bs_hash_combine(hash, key.shaderDeclId);
+		bs_hash_combine(hash, key.BufferDeclId);
+		bs_hash_combine(hash, key.ShaderDeclId);
 
 		return hash;
 	}
 
 	bool VulkanVertexInputManager::EqualFunc::operator()(const VertexDeclarationKey& a, const VertexDeclarationKey& b) const
 	{
-		if (a.bufferDeclId != b.bufferDeclId)
+		if (a.BufferDeclId != b.BufferDeclId)
 			return false;
 
-		if (a.shaderDeclId != b.shaderDeclId)
+		if (a.ShaderDeclId != b.ShaderDeclId)
 			return false;
 
 		return true;
@@ -59,8 +59,8 @@ namespace bs { namespace ct
 		Lock lock(mMutex);
 
 		VertexDeclarationKey pair;
-		pair.bufferDeclId = vbDecl->GetId();
-		pair.shaderDeclId = shaderDecl->GetId();
+		pair.BufferDeclId = vbDecl->GetId();
+		pair.ShaderDeclId = shaderDecl->GetId();
 
 		auto iterFind = mVertexInputMap.find(pair);
 		if (iterFind == mVertexInputMap.end())
@@ -73,8 +73,8 @@ namespace bs { namespace ct
 			iterFind = mVertexInputMap.find(pair);
 		}
 
-		iterFind->second.lastUsedIdx = ++mLastUsedCounter;
-		return iterFind->second.vertexInput;
+		iterFind->second.LastUsedIdx = ++mLastUsedCounter;
+		return iterFind->second.VertexInput;
 	}
 
 	void VulkanVertexInputManager::AddNew(const SPtr<VertexDeclaration>& vbDecl,
@@ -106,18 +106,18 @@ namespace bs { namespace ct
 		}
 
 		VertexInputEntry newEntry;
-		GroupAlloc& alloc = newEntry.allocator;
+		GroupAlloc& alloc = newEntry.Allocator;
 
 		alloc.Reserve<VkVertexInputAttributeDescription>(numAttributes)
 			 .Reserve<VkVertexInputBindingDescription>(numBindings)
 			 .Init();
 
-		newEntry.attributes = alloc.Alloc<VkVertexInputAttributeDescription>(numAttributes);
-		newEntry.bindings = alloc.Alloc<VkVertexInputBindingDescription>(numBindings);
+		newEntry.Attributes = alloc.Alloc<VkVertexInputAttributeDescription>(numAttributes);
+		newEntry.Bindings = alloc.Alloc<VkVertexInputBindingDescription>(numBindings);
 
 		for (UINT32 i = 0; i < numBindings; i++)
 		{
-			VkVertexInputBindingDescription& binding = newEntry.bindings[i];
+			VkVertexInputBindingDescription& binding = newEntry.Bindings[i];
 			binding.binding = i;
 			binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 			binding.stride = vbDecl->GetProperties().GetVertexSize(i);
@@ -127,7 +127,7 @@ namespace bs { namespace ct
 		bool isFirstInBinding = true;
 		for (auto& vbElem : vbElements)
 		{
-			VkVertexInputAttributeDescription& attribute = newEntry.attributes[attribIdx];
+			VkVertexInputAttributeDescription& attribute = newEntry.Attributes[attribIdx];
 
 			bool foundSemantic = false;
 			for (auto& inputElem : inputElements)
@@ -147,7 +147,7 @@ namespace bs { namespace ct
 			attribute.format = VulkanUtility::GetVertexType(vbElem.GetType());
 			attribute.offset = vbElem.GetOffset();
 
-			VkVertexInputBindingDescription& binding = newEntry.bindings[attribute.binding];
+			VkVertexInputBindingDescription& binding = newEntry.Bindings[attribute.binding];
 
 			bool isPerVertex = vbElem.GetInstanceStepRate() == 0;
 			if (isFirstInBinding)
@@ -175,18 +175,18 @@ namespace bs { namespace ct
 		vertexInputCI.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		vertexInputCI.pNext = nullptr;
 		vertexInputCI.flags = 0;
-		vertexInputCI.pVertexBindingDescriptions = newEntry.bindings;
+		vertexInputCI.pVertexBindingDescriptions = newEntry.Bindings;
 		vertexInputCI.vertexBindingDescriptionCount = numBindings;
-		vertexInputCI.pVertexAttributeDescriptions = newEntry.attributes;
+		vertexInputCI.pVertexAttributeDescriptions = newEntry.Attributes;
 		vertexInputCI.vertexAttributeDescriptionCount = numAttributes;
 
 		// Create key and add to the layout map
 		VertexDeclarationKey pair;
-		pair.bufferDeclId = vbDecl->GetId();
-		pair.shaderDeclId = shaderInputDecl->GetId();
+		pair.BufferDeclId = vbDecl->GetId();
+		pair.ShaderDeclId = shaderInputDecl->GetId();
 
-		newEntry.vertexInput = bs_shared_ptr_new<VulkanVertexInput>(mNextId++, vertexInputCI);
-		newEntry.lastUsedIdx = ++mLastUsedCounter;
+		newEntry.VertexInput = bs_shared_ptr_new<VulkanVertexInput>(mNextId++, vertexInputCI);
+		newEntry.LastUsedIdx = ++mLastUsedCounter;
 
 		mVertexInputMap[pair] = std::move(newEntry);
 	}
@@ -208,7 +208,7 @@ namespace bs { namespace ct
 		Map<UINT32, VertexDeclarationKey> leastFrequentlyUsedMap;
 
 		for (auto iter = mVertexInputMap.begin(); iter != mVertexInputMap.end(); ++iter)
-			leastFrequentlyUsedMap[iter->second.lastUsedIdx] = iter->first;
+			leastFrequentlyUsedMap[iter->second.LastUsedIdx] = iter->first;
 
 		UINT32 elemsRemoved = 0;
 		for (auto iter = leastFrequentlyUsedMap.begin(); iter != leastFrequentlyUsedMap.end(); ++iter)

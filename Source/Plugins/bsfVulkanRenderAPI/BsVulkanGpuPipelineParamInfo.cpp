@@ -28,7 +28,7 @@ namespace bs { namespace ct
 
 		UINT32 totalNumSlots = 0;
 		for (UINT32 i = 0; i < mNumSets; i++)
-			totalNumSlots += mSetInfos[i].numSlots;
+			totalNumSlots += mSetInfos[i].NumSlots;
 
 		mAlloc.Reserve<VkDescriptorSetLayoutBinding>(mNumElements)
 			.Reserve<GpuParamObjectType>(mNumElements)
@@ -69,26 +69,26 @@ namespace bs { namespace ct
 		UINT32 globalBindingIdx = 0;
 		for (UINT32 i = 0; i < mNumSets; i++)
 		{
-			mSetExtraInfos[i].slotIndices = mAlloc.Alloc<UINT32>(mSetInfos[i].numSlots);
+			mSetExtraInfos[i].SlotIndices = mAlloc.Alloc<UINT32>(mSetInfos[i].NumSlots);
 
-			mLayoutInfos[i].numBindings = 0;
-			mLayoutInfos[i].bindings = nullptr;
-			mLayoutInfos[i].types = nullptr;
-			mLayoutInfos[i].elementTypes = nullptr;
+			mLayoutInfos[i].NumBindings = 0;
+			mLayoutInfos[i].Bindings = nullptr;
+			mLayoutInfos[i].Types = nullptr;
+			mLayoutInfos[i].ElementTypes = nullptr;
 
-			for (UINT32 j = 0; j < mSetInfos[i].numSlots; j++)
+			for (UINT32 j = 0; j < mSetInfos[i].NumSlots; j++)
 			{
-				if (mSetInfos[i].slotIndices[j] == (UINT32)-1)
+				if (mSetInfos[i].SlotIndices[j] == (UINT32)-1)
 				{
-					mSetExtraInfos[i].slotIndices[j] = (UINT32)-1;
+					mSetExtraInfos[i].SlotIndices[j] = (UINT32)-1;
 					continue;
 				}
 
 				VkDescriptorSetLayoutBinding& binding = bindings[globalBindingIdx];
 				binding.binding = j;
 
-				mSetExtraInfos[i].slotIndices[j] = globalBindingIdx;
-				mLayoutInfos[i].numBindings++;
+				mSetExtraInfos[i].SlotIndices[j] = globalBindingIdx;
+				mLayoutInfos[i].NumBindings++;
 				globalBindingIdx++;
 			}
 		}
@@ -96,10 +96,10 @@ namespace bs { namespace ct
 		UINT32 offset = 0;
 		for (UINT32 i = 0; i < mNumSets; i++)
 		{
-			mLayoutInfos[i].bindings = &bindings[offset];
-			mLayoutInfos[i].types = &types[offset];
-			mLayoutInfos[i].elementTypes = &elementTypes[offset];
-			offset += mLayoutInfos[i].numBindings;
+			mLayoutInfos[i].Bindings = &bindings[offset];
+			mLayoutInfos[i].Types = &types[offset];
+			mLayoutInfos[i].ElementTypes = &elementTypes[offset];
+			offset += mLayoutInfos[i].NumBindings;
 		}
 
 		VkShaderStageFlags stageFlagsLookup[6];
@@ -121,7 +121,7 @@ namespace bs { namespace ct
 			{
 				for (auto& entry : params)
 				{
-					UINT32 bindingIdx = GetBindingIdx(entry.second.set, entry.second.slot);
+					UINT32 bindingIdx = GetBindingIdx(entry.second.Set, entry.second.Slot);
 					assert(bindingIdx != (UINT32)-1);
 
 					VkDescriptorSetLayoutBinding& binding = bindings[bindingIdx];
@@ -135,7 +135,7 @@ namespace bs { namespace ct
 			{
 				for (auto& entry : params)
 				{
-					UINT32 bindingIdx = GetBindingIdx(entry.second.set, entry.second.slot);
+					UINT32 bindingIdx = GetBindingIdx(entry.second.Set, entry.second.Slot);
 					assert(bindingIdx != (UINT32)-1);
 
 					VkDescriptorSetLayoutBinding& binding = bindings[bindingIdx];
@@ -143,19 +143,19 @@ namespace bs { namespace ct
 					binding.stageFlags |= stageFlagsLookup[i];
 					binding.descriptorType = descType;
 
-					types[bindingIdx] = entry.second.type;
-					elementTypes[bindingIdx] = entry.second.elementType;
+					types[bindingIdx] = entry.second.Type;
+					elementTypes[bindingIdx] = entry.second.ElementType;
 				}
 			};
 
-			setUpBlockBindings(paramDesc->paramBlocks, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-			setUpBindings(paramDesc->textures, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-			setUpBindings(paramDesc->loadStoreTextures, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+			setUpBlockBindings(paramDesc->ParamBlocks, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+			setUpBindings(paramDesc->Textures, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+			setUpBindings(paramDesc->LoadStoreTextures, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
 
 			// Set up sampler bindings
-			for (auto& entry : paramDesc->samplers)
+			for (auto& entry : paramDesc->Samplers)
 			{
-				UINT32 bindingIdx = GetBindingIdx(entry.second.set, entry.second.slot);
+				UINT32 bindingIdx = GetBindingIdx(entry.second.Set, entry.second.Slot);
 				assert(bindingIdx != (UINT32)-1);
 
 				VkDescriptorSetLayoutBinding& binding = bindings[bindingIdx];
@@ -169,22 +169,22 @@ namespace bs { namespace ct
 					binding.stageFlags |= stageFlagsLookup[i];
 					binding.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
 
-					types[bindingIdx] = entry.second.type;
-					elementTypes[bindingIdx] = entry.second.elementType;
+					types[bindingIdx] = entry.second.Type;
+					elementTypes[bindingIdx] = entry.second.ElementType;
 				}
 			}
 
 			// Set up buffer bindings
-			for (auto& entry : paramDesc->buffers)
+			for (auto& entry : paramDesc->Buffers)
 			{
-				UINT32 bindingIdx = GetBindingIdx(entry.second.set, entry.second.slot);
+				UINT32 bindingIdx = GetBindingIdx(entry.second.Set, entry.second.Slot);
 				assert(bindingIdx != (UINT32)-1);
 
 				VkDescriptorSetLayoutBinding& binding = bindings[bindingIdx];
 				binding.descriptorCount = 1;
 				binding.stageFlags |= stageFlagsLookup[i];
 
-				switch(entry.second.type)
+				switch(entry.second.Type)
 				{
 				default:
 				case GPOT_BYTE_BUFFER:
@@ -199,8 +199,8 @@ namespace bs { namespace ct
 					break;
 				}
 
-				types[bindingIdx] = entry.second.type;
-				elementTypes[bindingIdx] = entry.second.elementType;
+				types[bindingIdx] = entry.second.Type;
+				elementTypes[bindingIdx] = entry.second.ElementType;
 			}
 		}
 
@@ -212,7 +212,7 @@ namespace bs { namespace ct
 
 			VulkanDescriptorManager& descManager = devices[i]->GetDescriptorManager();
 			for (UINT32 j = 0; j < mNumSets; j++)
-				mLayouts[i][j] = descManager.GetLayout(mLayoutInfos[j].bindings, mLayoutInfos[j].numBindings);
+				mLayouts[i][j] = descManager.GetLayout(mLayoutInfos[j].Bindings, mLayoutInfos[j].NumBindings);
 		}
 	}
 

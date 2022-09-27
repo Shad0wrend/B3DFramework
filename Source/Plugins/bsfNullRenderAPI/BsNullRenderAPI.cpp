@@ -28,7 +28,7 @@ namespace bs { namespace ct
 		mVideoModeInfo = bs_shared_ptr_new<VideoModeInfo>();
 
 		GPUInfo gpuInfo;
-		gpuInfo.numGPUs = 0;
+		gpuInfo.NumGpUs = 0;
 
 		PlatformUtility::SetGPUInfoInternal(gpuInfo);
 
@@ -54,9 +54,9 @@ namespace bs { namespace ct
 
 		mNumDevices = 1;
 		mCurrentCapabilities = bs_newN<RenderAPICapabilities>(mNumDevices);
-		mCurrentCapabilities->deviceName = "Null";
-		mCurrentCapabilities->renderAPIName = GetName();
-		mCurrentCapabilities->deviceVendor = GPU_UNKNOWN;
+		mCurrentCapabilities->DeviceName = "Null";
+		mCurrentCapabilities->RenderApiName = GetName();
+		mCurrentCapabilities->DeviceVendor = GPU_UNKNOWN;
 				
 		RenderAPI::Initialize();
 	}
@@ -101,78 +101,78 @@ namespace bs { namespace ct
 	GpuParamBlockDesc NullRenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params)
 	{
 		GpuParamBlockDesc block;
-		block.blockSize = 0;
-		block.isShareable = true;
-		block.name = name;
-		block.slot = 0;
-		block.set = 0;
+		block.BlockSize = 0;
+		block.IsShareable = true;
+		block.Name = name;
+		block.Slot = 0;
+		block.Set = 0;
 
 		for (auto& param : params)
 		{
-			const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::PARAM_SIZES.lookup[param.type];
+			const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::PARAM_SIZES.Lookup[param.Type];
 
-			if (param.arraySize > 1)
+			if (param.ArraySize > 1)
 			{
 				// Arrays perform no packing and their elements are always padded and aligned to four component vectors
 				UINT32 size;
-				if(param.type == GPDT_STRUCT)
-					size = Math::DivideAndRoundUp(param.elementSize, 16U) * 4;
+				if(param.Type == GPDT_STRUCT)
+					size = Math::DivideAndRoundUp(param.ElementSize, 16U) * 4;
 				else
-					size = Math::DivideAndRoundUp(typeInfo.size, 16U) * 4;
+					size = Math::DivideAndRoundUp(typeInfo.Size, 16U) * 4;
 
-				block.blockSize = Math::DivideAndRoundUp(block.blockSize, 4U) * 4;
+				block.BlockSize = Math::DivideAndRoundUp(block.BlockSize, 4U) * 4;
 
-				param.elementSize = size;
-				param.arrayElementStride = size;
-				param.cpuMemOffset = block.blockSize;
-				param.gpuMemOffset = 0;
+				param.ElementSize = size;
+				param.ArrayElementStride = size;
+				param.CpuMemOffset = block.BlockSize;
+				param.GpuMemOffset = 0;
 
 				// Last array element isn't rounded up to four component vectors unless it's a struct
-				if(param.type != GPDT_STRUCT)
+				if(param.Type != GPDT_STRUCT)
 				{
-					block.blockSize += size * (param.arraySize - 1);
-					block.blockSize += typeInfo.size / 4;
+					block.BlockSize += size * (param.ArraySize - 1);
+					block.BlockSize += typeInfo.Size / 4;
 				}
 				else
-					block.blockSize += param.arraySize * size;
+					block.BlockSize += param.ArraySize * size;
 			}
 			else
 			{
 				UINT32 size;
-				if(param.type == GPDT_STRUCT)
+				if(param.Type == GPDT_STRUCT)
 				{
 					// Structs are always aligned and arounded up to 4 component vectors
-					size = Math::DivideAndRoundUp(param.elementSize, 16U) * 4;
-					block.blockSize = Math::DivideAndRoundUp(block.blockSize, 4U) * 4;
+					size = Math::DivideAndRoundUp(param.ElementSize, 16U) * 4;
+					block.BlockSize = Math::DivideAndRoundUp(block.BlockSize, 4U) * 4;
 				}
 				else
 				{
-					size = typeInfo.baseTypeSize * (typeInfo.numRows * typeInfo.numColumns) / 4;
+					size = typeInfo.BaseTypeSize * (typeInfo.NumRows * typeInfo.NumColumns) / 4;
 
 					// Pack everything as tightly as possible as long as the data doesn't cross 16 byte boundary
-					UINT32 alignOffset = block.blockSize % 4;
+					UINT32 alignOffset = block.BlockSize % 4;
 					if (alignOffset != 0 && size > (4 - alignOffset))
 					{
 						UINT32 padding = (4 - alignOffset);
-						block.blockSize += padding;
+						block.BlockSize += padding;
 					}
 				}
 
-				param.elementSize = size;
-				param.arrayElementStride = size;
-				param.cpuMemOffset = block.blockSize;
-				param.gpuMemOffset = 0;
+				param.ElementSize = size;
+				param.ArrayElementStride = size;
+				param.CpuMemOffset = block.BlockSize;
+				param.GpuMemOffset = 0;
 
-				block.blockSize += size;
+				block.BlockSize += size;
 			}
 
-			param.paramBlockSlot = 0;
-			param.paramBlockSet = 0;
+			param.ParamBlockSlot = 0;
+			param.ParamBlockSet = 0;
 		}
 
 		// Constant buffer size must always be a multiple of 16
-		if (block.blockSize % 4 != 0)
-			block.blockSize += (4 - (block.blockSize % 4));
+		if (block.BlockSize % 4 != 0)
+			block.BlockSize += (4 - (block.BlockSize % 4));
 
 		return block;
 	}

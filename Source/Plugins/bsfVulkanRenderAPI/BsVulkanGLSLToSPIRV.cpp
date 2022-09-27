@@ -492,8 +492,8 @@ namespace bs { namespace ct
 		// Parse individual uniforms
 		struct UniformInfo
 		{
-			UINT32 bufferOffset;
-			UINT32 arraySize;
+			UINT32 BufferOffset;
+			UINT32 ArraySize;
 		};
 
 		UnorderedMap<String, UniformInfo> uniforms;
@@ -521,36 +521,36 @@ namespace bs { namespace ct
 				const glslang::TSampler& sampler = ttype->getSampler();
 
 				GpuParamObjectDesc param;
-				param.name = name;
-				param.slot = qualifier.layoutBinding;
-				param.set = qualifier.layoutSet;
-				param.type = GPOT_UNKNOWN;
-				param.elementType = mapSamplerBasicType(sampler);
+				param.Name = name;
+				param.Slot = qualifier.layoutBinding;
+				param.Set = qualifier.layoutSet;
+				param.Type = GPOT_UNKNOWN;
+				param.ElementType = mapSamplerBasicType(sampler);
 
-				if (param.set == glslang::TQualifier::layoutSetEnd)
-					param.set = 0;
+				if (param.Set == glslang::TQualifier::layoutSetEnd)
+					param.Set = 0;
 
 				if (sampler.isImage())
 				{
 					switch (sampler.dim)
 					{
-					case glslang::Esd1D:		param.type = sampler.isArrayed() ? GPOT_RWTEXTURE1DARRAY : GPOT_RWTEXTURE1D; break;
+					case glslang::Esd1D:		param.Type = sampler.isArrayed() ? GPOT_RWTEXTURE1DARRAY : GPOT_RWTEXTURE1D; break;
 					case glslang::Esd2D:
 						if(sampler.isArrayed())
-							param.type = sampler.isMultiSample() ? GPOT_RWTEXTURE2DMSARRAY : GPOT_RWTEXTURE2DARRAY;
+							param.Type = sampler.isMultiSample() ? GPOT_RWTEXTURE2DMSARRAY : GPOT_RWTEXTURE2DARRAY;
 						else
-							param.type = sampler.isMultiSample() ? GPOT_RWTEXTURE2DMS : GPOT_RWTEXTURE2D;
+							param.Type = sampler.isMultiSample() ? GPOT_RWTEXTURE2DMS : GPOT_RWTEXTURE2D;
 						break;
-					case glslang::Esd3D:		param.type = GPOT_RWTEXTURE3D; break;
-					case glslang::EsdBuffer:	param.type = GPOT_RWBYTE_BUFFER; break;
+					case glslang::Esd3D:		param.Type = GPOT_RWTEXTURE3D; break;
+					case glslang::EsdBuffer:	param.Type = GPOT_RWBYTE_BUFFER; break;
 					default:
 						break;
 					}
 
 					if(sampler.dim != glslang::EsdBuffer)
-						desc.loadStoreTextures[name] = param;
+						desc.LoadStoreTextures[name] = param;
 					else
-						desc.buffers[name] = param;
+						desc.Buffers[name] = param;
 				}
 				else
 				{
@@ -558,42 +558,42 @@ namespace bs { namespace ct
 					{
 						switch (sampler.dim)
 						{
-						case glslang::Esd1D:		param.type = GPOT_SAMPLER1D; break;
+						case glslang::Esd1D:		param.Type = GPOT_SAMPLER1D; break;
 						default:
-						case glslang::Esd2D:		param.type = sampler.isMultiSample() ? GPOT_SAMPLER2DMS : GPOT_SAMPLER2D; break;
-						case glslang::Esd3D:		param.type = GPOT_SAMPLER3D; break;
-						case glslang::EsdCube:		param.type = GPOT_SAMPLERCUBE; break;
+						case glslang::Esd2D:		param.Type = sampler.isMultiSample() ? GPOT_SAMPLER2DMS : GPOT_SAMPLER2D; break;
+						case glslang::Esd3D:		param.Type = GPOT_SAMPLER3D; break;
+						case glslang::EsdCube:		param.Type = GPOT_SAMPLERCUBE; break;
 						}
 
-						desc.samplers[name] = param;
+						desc.Samplers[name] = param;
 					}
 
 					if (!sampler.isPureSampler())
 					{
 						switch (sampler.dim)
 						{
-						case glslang::Esd1D:		param.type = sampler.isArrayed() ? GPOT_TEXTURE1DARRAY : GPOT_TEXTURE1D; break;
+						case glslang::Esd1D:		param.Type = sampler.isArrayed() ? GPOT_TEXTURE1DARRAY : GPOT_TEXTURE1D; break;
 						case glslang::Esd2D:
 							if(sampler.isArrayed())
-								param.type = sampler.isMultiSample() ? GPOT_TEXTURE2DMSARRAY : GPOT_TEXTURE2DARRAY;
+								param.Type = sampler.isMultiSample() ? GPOT_TEXTURE2DMSARRAY : GPOT_TEXTURE2DARRAY;
 							else
-								param.type = sampler.isMultiSample() ? GPOT_TEXTURE2DMS : GPOT_TEXTURE2D;
+								param.Type = sampler.isMultiSample() ? GPOT_TEXTURE2DMS : GPOT_TEXTURE2D;
 							break;
-						case glslang::Esd3D:		param.type = GPOT_TEXTURE3D; break;
-						case glslang::EsdCube:		param.type = sampler.isArrayed() ? GPOT_TEXTURECUBEARRAY : GPOT_TEXTURECUBE; break;
-						case glslang::EsdBuffer:	param.type = GPOT_BYTE_BUFFER; break;
+						case glslang::Esd3D:		param.Type = GPOT_TEXTURE3D; break;
+						case glslang::EsdCube:		param.Type = sampler.isArrayed() ? GPOT_TEXTURECUBEARRAY : GPOT_TEXTURECUBE; break;
+						case glslang::EsdBuffer:	param.Type = GPOT_BYTE_BUFFER; break;
 						default:
 							break;
 						}
 
 						if (sampler.dim != glslang::EsdBuffer)
-							desc.textures[name] = param;
+							desc.Textures[name] = param;
 						else
-							desc.buffers[name] = param;
+							desc.Buffers[name] = param;
 					}
 				}
 
-				if(param.type == GPOT_UNKNOWN)
+				if(param.Type == GPOT_UNKNOWN)
 					BS_LOG(Error, RenderBackend, "Cannot determine type for uniform: {0}", name);
 			}
 			else
@@ -601,8 +601,8 @@ namespace bs { namespace ct
 				if(qualifier.storage == glslang::EvqUniform || qualifier.storage == glslang::EvqGlobal)
 				{
 					UniformInfo info;
-					info.arraySize = program->getUniformArraySize(i);
-					info.bufferOffset = program->getUniformBufferOffset(i);
+					info.ArraySize = program->getUniformArraySize(i);
+					info.BufferOffset = program->getUniformBufferOffset(i);
 
 					uniforms[String(name)] = info;
 				}
@@ -628,31 +628,31 @@ namespace bs { namespace ct
 			if(qualifier.storage == glslang::EvqBuffer) // Shared storage buffer
 			{
 				GpuParamObjectDesc param;
-				param.name = name;
-				param.slot = qualifier.layoutBinding;
-				param.set = qualifier.layoutSet;
+				param.Name = name;
+				param.Slot = qualifier.layoutBinding;
+				param.Set = qualifier.layoutSet;
 
-				if (param.set == glslang::TQualifier::layoutSetEnd)
-					param.set = 0;
+				if (param.Set == glslang::TQualifier::layoutSetEnd)
+					param.Set = 0;
 
-				param.type = GPOT_RWSTRUCTURED_BUFFER;
-				desc.buffers[name] = param;
+				param.Type = GPOT_RWSTRUCTURED_BUFFER;
+				desc.Buffers[name] = param;
 			}
 			else // Uniform buffer
 			{
 				int size = Math::DivideAndRoundUp(program->getUniformBlockSize(i), 16) * 16;
 
 				GpuParamBlockDesc blockDesc;
-				blockDesc.name = name;
-				blockDesc.blockSize = size / 4;
-				blockDesc.isShareable = true;
-				blockDesc.slot = qualifier.layoutBinding;
-				blockDesc.set = qualifier.layoutSet;
+				blockDesc.Name = name;
+				blockDesc.BlockSize = size / 4;
+				blockDesc.IsShareable = true;
+				blockDesc.Slot = qualifier.layoutBinding;
+				blockDesc.Set = qualifier.layoutSet;
 
-				if (blockDesc.set == glslang::TQualifier::layoutSetEnd)
-					blockDesc.set = 0;
+				if (blockDesc.Set == glslang::TQualifier::layoutSetEnd)
+					blockDesc.Set = 0;
 
-				desc.paramBlocks[name] = blockDesc;
+				desc.ParamBlocks[name] = blockDesc;
 
 				// Parse members of the uniform buffer
 				const glslang::TTypeList* typeList = ttype->getStruct();
@@ -692,8 +692,8 @@ namespace bs { namespace ct
 					UINT32 arraySize = paramTType->isArray() ? paramTType->getCumulativeArraySize() : 1;
 					if (paramType != GPDT_STRUCT)
 					{
-						const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::PARAM_SIZES.lookup[paramType];
-						elementSize = typeInfo.size / 4;
+						const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::PARAM_SIZES.Lookup[paramType];
+						elementSize = typeInfo.Size / 4;
 
 						// Array elements in std140 are always rounded to vec4
 						if (arraySize > 1)
@@ -719,7 +719,7 @@ namespace bs { namespace ct
 						// Ensure our calculation matches the glslang provided one. We don't use glslang directly because
 						// for some cases offset is not provided (e.g. structs that have members optimized out).
 						const UniformInfo& uniformInfo = findIter->second;
-						assert((uniformInfo.bufferOffset / 4) == bufferOffset);
+						assert((uniformInfo.BufferOffset / 4) == bufferOffset);
 					}
 					else
 					{
@@ -732,17 +732,17 @@ namespace bs { namespace ct
 					if(!unusedMember)
 					{
 						GpuParamDataDesc paramDesc;
-						paramDesc.name = paramName;
-						paramDesc.type = paramType;
-						paramDesc.paramBlockSet = blockDesc.set;
-						paramDesc.paramBlockSlot = blockDesc.slot;
-						paramDesc.elementSize = elementSize;
-						paramDesc.arrayElementStride = arrayStride;
-						paramDesc.arraySize = arraySize;
-						paramDesc.cpuMemOffset = bufferOffset;
-						paramDesc.gpuMemOffset = bufferOffset;
+						paramDesc.Name = paramName;
+						paramDesc.Type = paramType;
+						paramDesc.ParamBlockSet = blockDesc.Set;
+						paramDesc.ParamBlockSlot = blockDesc.Slot;
+						paramDesc.ElementSize = elementSize;
+						paramDesc.ArrayElementStride = arrayStride;
+						paramDesc.ArraySize = arraySize;
+						paramDesc.CpuMemOffset = bufferOffset;
+						paramDesc.GpuMemOffset = bufferOffset;
 
-						desc.params[paramName] = paramDesc;
+						desc.Params[paramName] = paramDesc;
 					}
 
 					bufferOffset += stride * arraySize;
@@ -769,7 +769,7 @@ namespace bs { namespace ct
 		glslang::TProgram* program = bs_new<glslang::TProgram>();
 
 		EShLanguage glslType;
-		switch(desc.type)
+		switch(desc.Type)
 		{
 		case GPT_FRAGMENT_PROGRAM:
 			glslType = EShLangFragment;
@@ -797,7 +797,7 @@ namespace bs { namespace ct
 		spv::SpvBuildLogger logger;
 		std::string compileLog;
 
-		const String& source = desc.source;
+		const String& source = desc.Source;
 		const char* sourceBytes = source.c_str();
 
 		glslang::TShader* shader = bs_new<glslang::TShader>(glslType);
@@ -806,13 +806,13 @@ namespace bs { namespace ct
 		shader->setEntryPoint("main");
 
 		SPtr<GpuProgramBytecode> bytecode = bs_shared_ptr_new<GpuProgramBytecode>();
-		bytecode->compilerId = VULKAN_COMPILER_ID;
-		bytecode->compilerVersion = VULKAN_COMPILER_VERSION;
+		bytecode->CompilerId = VULKAN_COMPILER_ID;
+		bytecode->CompilerVersion = VULKAN_COMPILER_VERSION;
 
 		EShMessages messages = (EShMessages)((int)EShMsgSpvRules | (int)EShMsgVulkanRules);
 		if (!shader->parse(&resources, 450, false, messages))
 		{
-			bytecode->messages = "Compile error: " + String(shader->getInfoLog());
+			bytecode->Messages = "Compile error: " + String(shader->getInfoLog());
 			goto cleanup;
 		}
 
@@ -820,7 +820,7 @@ namespace bs { namespace ct
 
 		if (!program->link(messages))
 		{
-			bytecode->messages = "Link error: " + String(program->getInfoLog());
+			bytecode->Messages = "Link error: " + String(program->getInfoLog());
 			goto cleanup;
 		}
 
@@ -831,21 +831,21 @@ namespace bs { namespace ct
 		GlslangToSpv(*program->getIntermediate(glslType), spirv, &logger);
 
 		// Parse uniforms
-		bytecode->paramDesc = bs_shared_ptr_new<GpuParamDesc>();
-		if(!parseUniforms(program, *bytecode->paramDesc, bytecode->messages))
+		bytecode->ParamDesc = bs_shared_ptr_new<GpuParamDesc>();
+		if(!parseUniforms(program, *bytecode->ParamDesc, bytecode->Messages))
 			goto cleanup;
 
 		// If vertex program, retrieve information about vertex inputs
-		if (desc.type == GPT_VERTEX_PROGRAM)
+		if (desc.Type == GPT_VERTEX_PROGRAM)
 		{
-			if (!parseVertexAttributes(program, bytecode->vertexInput, bytecode->messages))
+			if (!parseVertexAttributes(program, bytecode->VertexInput, bytecode->Messages))
 				goto cleanup;
 		}
 
-		bytecode->instructions.size = (UINT32)spirv.size() * sizeof(UINT32);
-		bytecode->instructions.data = (UINT8*)bs_alloc(bytecode->instructions.size);
+		bytecode->Instructions.Size = (UINT32)spirv.size() * sizeof(UINT32);
+		bytecode->Instructions.Data = (UINT8*)bs_alloc(bytecode->Instructions.Size);
 
-		memcpy(bytecode->instructions.data, spirv.data(), bytecode->instructions.size);
+		memcpy(bytecode->Instructions.Data, spirv.data(), bytecode->Instructions.Size);
 
 cleanup:
 		bs_delete(program);

@@ -86,27 +86,27 @@ namespace bs { namespace ct
 		{
 			const SubmitInfo& entry = mQueuedBuffers[i];
 
-			commandBuffers[i] = entry.cmdBuffer->GetHandle();
-			entry.cmdBuffer->AllocateSemaphores(&signalSemaphores[signalSemaphoreIdx]);
+			commandBuffers[i] = entry.CmdBuffer->GetHandle();
+			entry.CmdBuffer->AllocateSemaphores(&signalSemaphores[signalSemaphoreIdx]);
 
-			UINT32 semaphoresCount = entry.numSemaphores;
+			UINT32 semaphoresCount = entry.NumSemaphores;
 			PrepareSemaphores(mQueuedSemaphores.data() + readSemaphoreIdx, &waitSemaphores[writeSemaphoreIdx], semaphoresCount);
 
 			GetSubmitInfo(&commandBuffers[i], &signalSemaphores[signalSemaphoreIdx], signalSemaphoresPerCB,
 						  &waitSemaphores[writeSemaphoreIdx], semaphoresCount, submitInfos[i]);
 
-			entry.cmdBuffer->SetIsSubmitted();
-			mLastCommandBuffer = entry.cmdBuffer; // Needs to be set because getSubmitInfo depends on it
+			entry.CmdBuffer->SetIsSubmitted();
+			mLastCommandBuffer = entry.CmdBuffer; // Needs to be set because getSubmitInfo depends on it
 			mLastCBSemaphoreUsed = false;
 
-			mActiveBuffers.push(entry.cmdBuffer);
+			mActiveBuffers.push(entry.CmdBuffer);
 
-			readSemaphoreIdx += entry.numSemaphores;
+			readSemaphoreIdx += entry.NumSemaphores;
 			writeSemaphoreIdx += semaphoresCount;
 			signalSemaphoreIdx += signalSemaphoresPerCB;
 		}
 
-		VulkanCmdBuffer* lastCB = mQueuedBuffers[numCBs - 1].cmdBuffer;
+		VulkanCmdBuffer* lastCB = mQueuedBuffers[numCBs - 1].CmdBuffer;
 		UINT32 totalNumSemaphores = writeSemaphoreIdx;
 		mActiveSubmissions.push_back(SubmitInfo(lastCB, mNextSubmitIdx++, totalNumSemaphores, numCBs));
 
@@ -192,7 +192,7 @@ namespace bs { namespace ct
 		auto iter = mActiveSubmissions.begin();
 		while (iter != mActiveSubmissions.end())
 		{
-			VulkanCmdBuffer* cmdBuffer = iter->cmdBuffer;
+			VulkanCmdBuffer* cmdBuffer = iter->CmdBuffer;
 			if (cmdBuffer == nullptr)
 			{
 				++iter;
@@ -205,7 +205,7 @@ namespace bs { namespace ct
 				break; // No chance of any later CBs of being done either
 			}
 
-			lastFinishedSubmission = iter->submitIdx;
+			lastFinishedSubmission = iter->SubmitIdx;
 			++iter;
 		}
 
@@ -218,10 +218,10 @@ namespace bs { namespace ct
 		iter = mActiveSubmissions.begin();
 		while (iter != mActiveSubmissions.end())
 		{
-			if (iter->submitIdx > lastFinishedSubmission)
+			if (iter->SubmitIdx > lastFinishedSubmission)
 				break;
 
-			for (UINT32 i = 0; i < iter->numSemaphores; i++)
+			for (UINT32 i = 0; i < iter->NumSemaphores; i++)
 			{
 				VulkanSemaphore* semaphore = mActiveSemaphores.front();
 				mActiveSemaphores.pop();
@@ -229,7 +229,7 @@ namespace bs { namespace ct
 				semaphore->NotifyDone(0, VulkanAccessFlag::Read | VulkanAccessFlag::Write);
 			}
 
-			for(UINT32 i = 0; i < iter->numCommandBuffers; i++)
+			for(UINT32 i = 0; i < iter->NumCommandBuffers; i++)
 			{
 				VulkanCmdBuffer* cb = mActiveBuffers.front();
 				mActiveBuffers.pop();

@@ -15,9 +15,9 @@ namespace bs { namespace ct
 	/** Contains format describing a Vulkan surface. */
 	struct SurfaceFormat
 	{
-		VkFormat colorFormat;
-		VkFormat depthFormat;
-		VkColorSpaceKHR colorSpace;
+		VkFormat ColorFormat;
+		VkFormat DepthFormat;
+		VkColorSpaceKHR ColorSpace;
 	};
 
 	/** Represents a single GPU device usable by Vulkan. */
@@ -58,16 +58,16 @@ namespace bs { namespace ct
 		const VkPhysicalDeviceMemoryProperties& GetMemoryProperties() const { return mMemoryProperties; }
 
 		/** Returns the number of queue supported on the device, per type. */
-		UINT32 GetNumQueues(GpuQueueType type) const { return (UINT32)mQueueInfos[(int)type].queues.size(); }
+		UINT32 GetNumQueues(GpuQueueType type) const { return (UINT32)mQueueInfos[(int)type].Queues.size(); }
 
 		/** Returns queue of the specified type at the specified index. Index must be in range [0, getNumQueues()). */
-		VulkanQueue* GetQueue(GpuQueueType type, UINT32 idx) const { return mQueueInfos[(int)type].queues[idx]; }
+		VulkanQueue* GetQueue(GpuQueueType type, UINT32 idx) const { return mQueueInfos[(int)type].Queues[idx]; }
 
 		/**
 		 * Returns index of the queue family for the specified queue type. Returns -1 if no queues for the specified type
 		 * exist. There will always be a queue family for the graphics type.
 		 */
-		UINT32 GetQueueFamily(GpuQueueType type) const { return mQueueInfos[(int)type].familyIdx; }
+		UINT32 GetQueueFamily(GpuQueueType type) const { return mQueueInfos[(int)type].FamilyIdx; }
 
 		/**
 		 * Fills out a mask that has bits set for every queue index that maps to the same physical queue as the provided
@@ -138,8 +138,8 @@ namespace bs { namespace ct
 		/** Contains data about a set of queues of a specific type. */
 		struct QueueInfo
 		{
-			UINT32 familyIdx;
-			Vector<VulkanQueue*> queues;
+			UINT32 FamilyIdx;
+			Vector<VulkanQueue*> Queues;
 		};
 
 		QueueInfo mQueueInfos[GQT_COUNT];

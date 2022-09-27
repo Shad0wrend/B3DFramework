@@ -99,12 +99,12 @@ namespace bs { namespace ct
 		{
 			ViewInfo() = default;
 			ViewInfo(VkFormat format, VkBufferView view)
-				: format(format), view(view), useCount(1)
+				: Format(format), View(view), UseCount(1)
 			{ }
 
-			VkFormat format = VK_FORMAT_UNDEFINED;
-			VkBufferView view = VK_NULL_HANDLE;
-			UINT32 useCount = 0;
+			VkFormat Format = VK_FORMAT_UNDEFINED;
+			VkBufferView View = VK_NULL_HANDLE;
+			UINT32 UseCount = 0;
 		};
 
 		/**

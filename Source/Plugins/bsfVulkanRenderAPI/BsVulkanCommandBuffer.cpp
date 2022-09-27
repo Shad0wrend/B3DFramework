@@ -65,10 +65,10 @@ namespace bs { namespace ct
 			poolCI.queueFamilyIndex = familyIdx;
 
 			PoolInfo& poolInfo = mPools[familyIdx];
-			poolInfo.queueFamily = familyIdx;
-			memset(poolInfo.buffers, 0, sizeof(poolInfo.buffers));
+			poolInfo.QueueFamily = familyIdx;
+			memset(poolInfo.Buffers, 0, sizeof(poolInfo.Buffers));
 
-			vkCreateCommandPool(device.GetLogical(), &poolCI, gVulkanAllocator, &poolInfo.pool);
+			vkCreateCommandPool(device.GetLogical(), &poolCI, gVulkanAllocator, &poolInfo.Pool);
 		}
 	}
 
@@ -82,14 +82,14 @@ namespace bs { namespace ct
 			PoolInfo& poolInfo = entry.second;
 			for (UINT32 i = 0; i < BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY; i++)
 			{
-				VulkanCmdBuffer* buffer = poolInfo.buffers[i];
+				VulkanCmdBuffer* buffer = poolInfo.Buffers[i];
 				if (buffer == nullptr)
 					break;
 
 				bs_delete(buffer);
 			}
 
-			vkDestroyCommandPool(mDevice.GetLogical(), poolInfo.pool, gVulkanAllocator);
+			vkDestroyCommandPool(mDevice.GetLogical(), poolInfo.Pool, gVulkanAllocator);
 		}
 	}
 
@@ -99,7 +99,7 @@ namespace bs { namespace ct
 		if (iterFind == mPools.end())
 			return nullptr;
 
-		VulkanCmdBuffer** buffers = iterFind->second.buffers;
+		VulkanCmdBuffer** buffers = iterFind->second.Buffers;
 
 		UINT32 i = 0;
 		for(; i < BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY; i++)
@@ -131,7 +131,7 @@ namespace bs { namespace ct
 
 		const PoolInfo& poolInfo = iterFind->second;
 
-		return bs_new<VulkanCmdBuffer>(mDevice, mNextId++, poolInfo.pool, poolInfo.queueFamily, secondary);
+		return bs_new<VulkanCmdBuffer>(mDevice, mNextId++, poolInfo.Pool, poolInfo.QueueFamily, secondary);
 	}
 
 	/** Returns a set of pipeline stages that can are allowed to be used for the specified set of access flags. */
@@ -248,7 +248,7 @@ namespace bs { namespace ct
 			for (auto& entry : mResources)
 			{
 				ResourceUseHandle& useHandle = entry.second;
-				assert(!useHandle.used);
+				assert(!useHandle.Used);
 
 				entry.first->NotifyUnbound();
 			}
@@ -258,16 +258,16 @@ namespace bs { namespace ct
 				UINT32 imageInfoIdx = entry.second;
 				ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
-				ResourceUseHandle& useHandle = imageInfo.useHandle;
-				assert(!useHandle.used);
+				ResourceUseHandle& useHandle = imageInfo.UseHandle;
+				assert(!useHandle.Used);
 
 				entry.first->NotifyUnbound();
 			}
 
 			for (auto& entry : mBuffers)
 			{
-				ResourceUseHandle& useHandle = entry.second.useHandle;
-				assert(!useHandle.used);
+				ResourceUseHandle& useHandle = entry.second.UseHandle;
+				assert(!useHandle.Used);
 
 				entry.first->NotifyUnbound();
 			}
@@ -276,7 +276,7 @@ namespace bs { namespace ct
 			for (auto& entry : mSwapChains)
 			{
 				ResourceUseHandle& useHandle = entry.second;
-				assert(!useHandle.used);
+				assert(!useHandle.Used);
 
 				entry.first->NotifyUnbound();
 			}
@@ -395,9 +395,9 @@ namespace bs { namespace ct
 		for(auto& entry : mShaderBoundSubresourceInfos)
 		{
 			ImageSubresourceInfo& subresourceInfo = mSubresourceInfoStorage[entry];
-			subresourceInfo.useFlags.Unset(ImageUseFlagBits::Shader);
-			subresourceInfo.shaderUse.access = VulkanAccessFlag::None;
-			subresourceInfo.shaderUse.stages = 0;
+			subresourceInfo.UseFlags.Unset(ImageUseFlagBits::Shader);
+			subresourceInfo.ShaderUse.Access = VulkanAccessFlag::None;
+			subresourceInfo.ShaderUse.Stages = 0;
 		}
 
 		mShaderBoundSubresourceInfos.clear();
@@ -473,7 +473,7 @@ namespace bs { namespace ct
 			UINT32 currentQueueFamily = resource->GetQueueFamily();
 			if (currentQueueFamily != (UINT32)-1 && currentQueueFamily != mQueueFamily)
 			{
-				Vector<VkBufferMemoryBarrier>& barriers = mTransitionInfoTemp[currentQueueFamily].bufferBarriers;
+				Vector<VkBufferMemoryBarrier>& barriers = mTransitionInfoTemp[currentQueueFamily].BufferBarriers;
 
 				barriers.push_back(VkBufferMemoryBarrier());
 				VkBufferMemoryBarrier& barrier = barriers.back();
@@ -490,7 +490,7 @@ namespace bs { namespace ct
 		}
 
 		// For images issue queue transitions, as above. Also issue layout transitions to their inital layouts.
-		Vector<VkImageMemoryBarrier>& localBarriers = mTransitionInfoTemp[mQueueFamily].imageBarriers;
+		Vector<VkImageMemoryBarrier>& localBarriers = mTransitionInfoTemp[mQueueFamily].ImageBarriers;
 		for (auto& entry : mImages)
 		{
 			VulkanImage* resource = static_cast<VulkanImage*>(entry.first);
@@ -500,17 +500,17 @@ namespace bs { namespace ct
 			bool queueMismatch = resource->IsExclusive() && currentQueueFamily != (UINT32)-1
 				&& currentQueueFamily != mQueueFamily;
 
-			ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.subresourceInfoIdx];
+			ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
 			if (queueMismatch)
 			{
-				Vector<VkImageMemoryBarrier>& barriers = mTransitionInfoTemp[currentQueueFamily].imageBarriers;
+				Vector<VkImageMemoryBarrier>& barriers = mTransitionInfoTemp[currentQueueFamily].ImageBarriers;
 
-				for (UINT32 i = 0; i < imageInfo.numSubresourceInfos; i++)
+				for (UINT32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
 				{
 					ImageSubresourceInfo& subresourceInfo = subresourceInfos[i];
 
 					UINT32 startIdx = (UINT32)barriers.size();
-					resource->GetBarriers(subresourceInfo.range, barriers);
+					resource->GetBarriers(subresourceInfo.Range, barriers);
 
 					for(UINT32 j = startIdx; j < (UINT32)barriers.size(); j++)
 					{
@@ -524,15 +524,15 @@ namespace bs { namespace ct
 				}
 			}
 
-			for (UINT32 i = 0; i < imageInfo.numSubresourceInfos; i++)
+			for (UINT32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
 			{
 				ImageSubresourceInfo& subresourceInfo = subresourceInfos[i];
 
-				const VkImageSubresourceRange& range = subresourceInfo.range;
+				const VkImageSubresourceRange& range = subresourceInfo.Range;
 				UINT32 mipEnd = range.baseMipLevel + range.levelCount;
 				UINT32 faceEnd = range.baseArrayLayer + range.layerCount;
 
-				VkImageLayout initialLayout = subresourceInfo.initialLayout;
+				VkImageLayout initialLayout = subresourceInfo.InitialLayout;
 				if (initialLayout != VK_IMAGE_LAYOUT_UNDEFINED)
 				{
 					bool layoutMismatch = false;
@@ -555,13 +555,13 @@ namespace bs { namespace ct
 					if (layoutMismatch)
 					{
 						UINT32 startIdx = (UINT32)localBarriers.size();
-						resource->GetBarriers(subresourceInfo.range, localBarriers);
+						resource->GetBarriers(subresourceInfo.Range, localBarriers);
 
 						for (UINT32 j = startIdx; j < (UINT32)localBarriers.size(); j++)
 						{
 							VkImageMemoryBarrier& barrier = localBarriers[j];
 
-							barrier.dstAccessMask = resource->GetAccessFlags(initialLayout, subresourceInfo.initialReadOnly);
+							barrier.dstAccessMask = resource->GetAccessFlags(initialLayout, subresourceInfo.InitialReadOnly);
 							barrier.newLayout = initialLayout;
 						}
 					}
@@ -572,7 +572,7 @@ namespace bs { namespace ct
 					for (UINT32 face = range.baseArrayLayer; face < faceEnd; face++)
 					{
 						VulkanImageSubresource* subresource = resource->GetSubresource(face, mip);
-						subresource->SetLayout(subresourceInfo.currentLayout);
+						subresource->SetLayout(subresourceInfo.CurrentLayout);
 					}
 				}
 			}
@@ -580,7 +580,7 @@ namespace bs { namespace ct
 
 		for (auto& entry : mTransitionInfoTemp)
 		{
-			bool empty = entry.second.imageBarriers.empty() && entry.second.bufferBarriers.empty();
+			bool empty = entry.second.ImageBarriers.empty() && entry.second.BufferBarriers.empty();
 			if (empty)
 				continue;
 
@@ -594,18 +594,18 @@ namespace bs { namespace ct
 			VkCommandBuffer vkCmdBuffer = cmdBuffer->GetHandle();
 
 			TransitionInfo& barriers = entry.second;
-			UINT32 numImgBarriers = (UINT32)barriers.imageBarriers.size();
-			UINT32 numBufferBarriers = (UINT32)barriers.bufferBarriers.size();
+			UINT32 numImgBarriers = (UINT32)barriers.ImageBarriers.size();
+			UINT32 numBufferBarriers = (UINT32)barriers.BufferBarriers.size();
 
 			VkPipelineStageFlags srcStage = 0;
 			VkPipelineStageFlags dstStage = 0;
-			getPipelineStageFlags(barriers.imageBarriers, srcStage, dstStage);
+			getPipelineStageFlags(barriers.ImageBarriers, srcStage, dstStage);
 
 			vkCmdPipelineBarrier(vkCmdBuffer,
 								 srcStage, dstStage,
 								 0, 0, nullptr,
-								 numBufferBarriers, barriers.bufferBarriers.data(),
-								 numImgBarriers, barriers.imageBarriers.data());
+								 numBufferBarriers, barriers.BufferBarriers.data(),
+								 numImgBarriers, barriers.ImageBarriers.data());
 
 			// Find an appropriate queue to execute on
 			UINT32 otherQueueIdx = 0;
@@ -657,9 +657,9 @@ namespace bs { namespace ct
 		for(auto& entry : mActiveSwapChains)
 		{
 			const SwapChainSurface& surface = entry->GetBackBuffer();
-			if (surface.needsWait)
+			if (surface.NeedsWait)
 			{
-				VulkanSemaphore* semaphore = entry->GetBackBuffer().sync;
+				VulkanSemaphore* semaphore = entry->GetBackBuffer().Sync;
 
 				if (numSemaphores >= (UINT32)mSemaphoresTemp.size())
 					mSemaphoresTemp.push_back(semaphore);
@@ -675,7 +675,7 @@ namespace bs { namespace ct
 		// Issue second part of transition pipeline barriers (on this queue)
 		for (auto& entry : mTransitionInfoTemp)
 		{
-			bool empty = entry.second.imageBarriers.size() == 0 && entry.second.bufferBarriers.size() == 0;
+			bool empty = entry.second.ImageBarriers.size() == 0 && entry.second.BufferBarriers.size() == 0;
 			if (empty)
 				continue;
 
@@ -683,18 +683,18 @@ namespace bs { namespace ct
 			VkCommandBuffer vkCmdBuffer = cmdBuffer->GetHandle();
 
 			TransitionInfo& barriers = entry.second;
-			UINT32 numImgBarriers = (UINT32)barriers.imageBarriers.size();
-			UINT32 numBufferBarriers = (UINT32)barriers.bufferBarriers.size();
+			UINT32 numImgBarriers = (UINT32)barriers.ImageBarriers.size();
+			UINT32 numBufferBarriers = (UINT32)barriers.BufferBarriers.size();
 
 			VkPipelineStageFlags srcStage = 0;
 			VkPipelineStageFlags dstStage = 0;
-			getPipelineStageFlags(barriers.imageBarriers, srcStage, dstStage);
+			getPipelineStageFlags(barriers.ImageBarriers, srcStage, dstStage);
 
 			vkCmdPipelineBarrier(vkCmdBuffer,
 								 srcStage, dstStage,
 								 0, 0, nullptr,
-								 numBufferBarriers, barriers.bufferBarriers.data(),
-								 numImgBarriers, barriers.imageBarriers.data());
+								 numBufferBarriers, barriers.BufferBarriers.data(),
+								 numImgBarriers, barriers.ImageBarriers.data());
 
 			cmdBuffer->End();
 			queue->QueueSubmit(cmdBuffer, mSemaphoresTemp.data(), numSemaphores);
@@ -709,10 +709,10 @@ namespace bs { namespace ct
 		for (auto& entry : mResources)
 		{
 			ResourceUseHandle& useHandle = entry.second;
-			assert(!useHandle.used);
+			assert(!useHandle.Used);
 
-			useHandle.used = true;
-			entry.first->NotifyUsed(mGlobalQueueIdx, mQueueFamily, useHandle.flags);
+			useHandle.Used = true;
+			entry.first->NotifyUsed(mGlobalQueueIdx, mQueueFamily, useHandle.Flags);
 		}
 
 		for (auto& entry : mImages)
@@ -720,29 +720,29 @@ namespace bs { namespace ct
 			UINT32 imageInfoIdx = entry.second;
 			ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
-			ResourceUseHandle& useHandle = imageInfo.useHandle;
-			assert(!useHandle.used);
+			ResourceUseHandle& useHandle = imageInfo.UseHandle;
+			assert(!useHandle.Used);
 
-			useHandle.used = true;
-			entry.first->NotifyUsed(mGlobalQueueIdx, mQueueFamily, useHandle.flags);
+			useHandle.Used = true;
+			entry.first->NotifyUsed(mGlobalQueueIdx, mQueueFamily, useHandle.Flags);
 		}
 
 		for (auto& entry : mBuffers)
 		{
-			ResourceUseHandle& useHandle = entry.second.useHandle;
-			assert(!useHandle.used);
+			ResourceUseHandle& useHandle = entry.second.UseHandle;
+			assert(!useHandle.Used);
 
-			useHandle.used = true;
-			entry.first->NotifyUsed(mGlobalQueueIdx, mQueueFamily, useHandle.flags);
+			useHandle.Used = true;
+			entry.first->NotifyUsed(mGlobalQueueIdx, mQueueFamily, useHandle.Flags);
 		}
 
 		for (auto& entry : mSwapChains)
 		{
 			ResourceUseHandle& useHandle = entry.second;
-			assert(!useHandle.used);
+			assert(!useHandle.Used);
 
-			useHandle.used = true;
-			entry.first->NotifyUsed(mGlobalQueueIdx, mQueueFamily, useHandle.flags);
+			useHandle.Used = true;
+			entry.first->NotifyUsed(mGlobalQueueIdx, mQueueFamily, useHandle.Flags);
 		}
 
 		// Note: Uncomment for debugging only, prevents any device concurrency issues.
@@ -752,8 +752,8 @@ namespace bs { namespace ct
 		// indices to be the same
 		for (auto& entry : mTransitionInfoTemp)
 		{
-			entry.second.imageBarriers.clear();
-			entry.second.bufferBarriers.clear();
+			entry.second.ImageBarriers.clear();
+			entry.second.BufferBarriers.clear();
 		}
 
 		mGraphicsPipeline = nullptr;
@@ -790,9 +790,9 @@ namespace bs { namespace ct
 			for (auto& entry : mResources)
 			{
 				ResourceUseHandle& useHandle = entry.second;
-				assert(useHandle.used);
+				assert(useHandle.Used);
 
-				entry.first->NotifyDone(mGlobalQueueIdx, useHandle.flags);
+				entry.first->NotifyDone(mGlobalQueueIdx, useHandle.Flags);
 			}
 
 			for (auto& entry : mImages)
@@ -800,27 +800,27 @@ namespace bs { namespace ct
 				UINT32 imageInfoIdx = entry.second;
 				ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
-				ResourceUseHandle& useHandle = imageInfo.useHandle;
-				assert(useHandle.used);
+				ResourceUseHandle& useHandle = imageInfo.UseHandle;
+				assert(useHandle.Used);
 
-				entry.first->NotifyDone(mGlobalQueueIdx, useHandle.flags);
+				entry.first->NotifyDone(mGlobalQueueIdx, useHandle.Flags);
 			}
 
 			for (auto& entry : mBuffers)
 			{
-				ResourceUseHandle& useHandle = entry.second.useHandle;
-				assert(useHandle.used);
+				ResourceUseHandle& useHandle = entry.second.UseHandle;
+				assert(useHandle.Used);
 
-				entry.first->NotifyDone(mGlobalQueueIdx, useHandle.flags);
+				entry.first->NotifyDone(mGlobalQueueIdx, useHandle.Flags);
 			}
 
 			// Must be done after images & framebuffer because swap chain does error checking if those were freed
 			for (auto& entry : mSwapChains)
 			{
 				ResourceUseHandle& useHandle = entry.second;
-				assert(useHandle.used);
+				assert(useHandle.Used);
 
-				entry.first->NotifyDone(mGlobalQueueIdx, useHandle.flags);
+				entry.first->NotifyDone(mGlobalQueueIdx, useHandle.Flags);
 			}
 		}
 		else
@@ -864,7 +864,7 @@ namespace bs { namespace ct
 		VulkanSwapChain* swapChain = nullptr;
 		if(rt != nullptr)
 		{
-			if (rt->GetProperties().isWindow)
+			if (rt->GetProperties().IsWindow)
 			{
 #if BS_PLATFORM == BS_PLATFORM_WIN32
 				Win32RenderWindow* window = static_cast<Win32RenderWindow*>(rt.get());
@@ -926,32 +926,32 @@ namespace bs { namespace ct
 			for(UINT32 i = 0; i < numColorAttachments; i++)
 			{
 				const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetColorAttachment(i);
-				UINT32 imageInfoIdx = mImages[fbAttachment.image];
+				UINT32 imageInfoIdx = mImages[fbAttachment.Image];
 				ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
-				ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.subresourceInfoIdx];
-				for(UINT32 j = 0; j < imageInfo.numSubresourceInfos; j++)
+				ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
+				for(UINT32 j = 0; j < imageInfo.NumSubresourceInfos; j++)
 				{
 					ImageSubresourceInfo& entry = subresourceInfos[j];
-					entry.useFlags.Unset(ImageUseFlagBits::Framebuffer);
-					entry.fbUse.access = VulkanAccessFlag::None;
-					entry.fbUse.stages = 0;
+					entry.UseFlags.Unset(ImageUseFlagBits::Framebuffer);
+					entry.FbUse.Access = VulkanAccessFlag::None;
+					entry.FbUse.Stages = 0;
 				}
 			}
 
 			if(renderPass->HasDepthAttachment())
 			{
 				const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetDepthStencilAttachment();
-				UINT32 imageInfoIdx = mImages[fbAttachment.image];
+				UINT32 imageInfoIdx = mImages[fbAttachment.Image];
 				ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
-				ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.subresourceInfoIdx];
-				for(UINT32 j = 0; j < imageInfo.numSubresourceInfos; j++)
+				ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
+				for(UINT32 j = 0; j < imageInfo.NumSubresourceInfos; j++)
 				{
 					ImageSubresourceInfo& entry = subresourceInfos[j];
-					entry.useFlags.Unset(ImageUseFlagBits::Framebuffer);
-					entry.fbUse.access = VulkanAccessFlag::None;
-					entry.fbUse.stages = 0;
+					entry.UseFlags.Unset(ImageUseFlagBits::Framebuffer);
+					entry.FbUse.Access = VulkanAccessFlag::None;
+					entry.FbUse.Stages = 0;
 				}
 			}
 		}
@@ -1005,19 +1005,19 @@ namespace bs { namespace ct
 				{
 					const VulkanFramebufferAttachment& attachment = mFramebuffer->GetColorAttachment(i);
 
-					if (((1 << attachment.index) & targetMask) == 0)
+					if (((1 << attachment.Index) & targetMask) == 0)
 						continue;
 
 					attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 					attachments[attachmentIdx].colorAttachment = i;
 
 					VkClearColorValue& colorValue = attachments[attachmentIdx].clearValue.color;
-					colorValue.float32[0] = color.r;
-					colorValue.float32[1] = color.g;
-					colorValue.float32[2] = color.b;
-					colorValue.float32[3] = color.a;
+					colorValue.float32[0] = color.R;
+					colorValue.float32[1] = color.G;
+					colorValue.float32[2] = color.B;
+					colorValue.float32[3] = color.A;
 
-					UINT32 curBaseLayer = attachment.baseLayer;
+					UINT32 curBaseLayer = attachment.BaseLayer;
 					if (attachmentIdx == 0)
 						baseLayer = curBaseLayer;
 					else
@@ -1055,7 +1055,7 @@ namespace bs { namespace ct
 
 					attachments[attachmentIdx].colorAttachment = 0;
 
-					UINT32 curBaseLayer = mFramebuffer->GetDepthStencilAttachment().baseLayer;
+					UINT32 curBaseLayer = mFramebuffer->GetDepthStencilAttachment().BaseLayer;
 					if (attachmentIdx == 0)
 						baseLayer = curBaseLayer;
 					else
@@ -1080,10 +1080,10 @@ namespace bs { namespace ct
 			VkClearRect clearRect;
 			clearRect.baseArrayLayer = baseLayer;
 			clearRect.layerCount = mFramebuffer->GetNumLayers();
-			clearRect.rect.offset.x = area.x;
-			clearRect.rect.offset.y = area.y;
-			clearRect.rect.extent.width = area.width;
-			clearRect.rect.extent.height = area.height;
+			clearRect.rect.offset.x = area.X;
+			clearRect.rect.offset.y = area.Y;
+			clearRect.rect.extent.width = area.Width;
+			clearRect.rect.extent.height = area.Height;
 
 			vkCmdClearAttachments(mCmdBuffer, numAttachments, attachments, 1, &clearRect);
 		}
@@ -1100,16 +1100,16 @@ namespace bs { namespace ct
 				{
 					const VulkanFramebufferAttachment& attachment = mFramebuffer->GetColorAttachment(i);
 
-					if (((1 << attachment.index) & targetMask) == 0)
+					if (((1 << attachment.Index) & targetMask) == 0)
 						continue;
 
-					clearMask |= (ClearMaskBits)(1 << attachment.index);
+					clearMask |= (ClearMaskBits)(1 << attachment.Index);
 
 					VkClearColorValue& colorValue = clearValues[i].color;
-					colorValue.float32[0] = color.r;
-					colorValue.float32[1] = color.g;
-					colorValue.float32[2] = color.b;
-					colorValue.float32[3] = color.a;
+					colorValue.float32[0] = color.R;
+					colorValue.float32[1] = color.G;
+					colorValue.float32[2] = color.B;
+					colorValue.float32[3] = color.A;
 				}
 			}
 
@@ -1159,10 +1159,10 @@ namespace bs { namespace ct
 	void VulkanCmdBuffer::ClearViewport(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask)
 	{
 		Rect2I area;
-		area.x = (UINT32)(mViewport.x * mFramebuffer->GetWidth());
-		area.y = (UINT32)(mViewport.y * mFramebuffer->GetHeight());
-		area.width = (UINT32)(mViewport.width * mFramebuffer->GetWidth());
-		area.height = (UINT32)(mViewport.height * mFramebuffer->GetHeight());
+		area.X = (UINT32)(mViewport.X * mFramebuffer->GetWidth());
+		area.Y = (UINT32)(mViewport.Y * mFramebuffer->GetHeight());
+		area.Width = (UINT32)(mViewport.Width * mFramebuffer->GetWidth());
+		area.Height = (UINT32)(mViewport.Height * mFramebuffer->GetHeight());
 
 		ClearViewport(area, buffers, color, depth, stencil, targetMask);
 	}
@@ -1300,10 +1300,10 @@ namespace bs { namespace ct
 		for (UINT32 i = 0; i < numColorAttachments; i++)
 		{
 			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetColorAttachment(i);
-			ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.image, fbAttachment.surface.face,
-				fbAttachment.surface.mipLevel);
+			ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.Image, fbAttachment.Surface.Face,
+				fbAttachment.Surface.MipLevel);
 
-			if (subresourceInfo.useFlags.IsSet(ImageUseFlagBits::Shader) && !pipeline->IsColorReadOnly(i))
+			if (subresourceInfo.UseFlags.IsSet(ImageUseFlagBits::Shader) && !pipeline->IsColorReadOnly(i))
 			{
 				BS_LOG(Warning, RenderBackend, "Framebuffer attachment also used as a shader input, but color writes "
 					"aren't disabled. This will result in undefined behavior.");
@@ -1313,10 +1313,10 @@ namespace bs { namespace ct
 		if (renderPass->HasDepthAttachment())
 		{
 			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetDepthStencilAttachment();
-			ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.image, fbAttachment.surface.face,
-				fbAttachment.surface.mipLevel);
+			ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.Image, fbAttachment.Surface.Face,
+				fbAttachment.Surface.MipLevel);
 
-			if (subresourceInfo.useFlags.IsSet(ImageUseFlagBits::Shader) && !pipeline->IsDepthReadOnly())
+			if (subresourceInfo.UseFlags.IsSet(ImageUseFlagBits::Shader) && !pipeline->IsDepthReadOnly())
 			{
 				BS_LOG(Warning, RenderBackend, "Framebuffer attachment also used as a shader input, but depth/stencil "
 					"writes aren't disabled. This will result in undefined behavior.");
@@ -1338,10 +1338,10 @@ namespace bs { namespace ct
 		if (mViewportRequiresBind || forceAll)
 		{
 			VkViewport viewport;
-			viewport.x = mViewport.x * mFramebuffer->GetWidth();
-			viewport.y = mViewport.y * mFramebuffer->GetHeight();
-			viewport.width = mViewport.width * mFramebuffer->GetWidth();
-			viewport.height = mViewport.height * mFramebuffer->GetHeight();
+			viewport.x = mViewport.X * mFramebuffer->GetWidth();
+			viewport.y = mViewport.Y * mFramebuffer->GetHeight();
+			viewport.width = mViewport.Width * mFramebuffer->GetWidth();
+			viewport.height = mViewport.Height * mFramebuffer->GetHeight();
 			viewport.minDepth = 0.0f;
 			viewport.maxDepth = 1.0f;
 
@@ -1360,10 +1360,10 @@ namespace bs { namespace ct
 			VkRect2D scissorRect;
 			if(mGraphicsPipeline->IsScissorEnabled())
 			{
-				scissorRect.offset.x = mScissor.x;
-				scissorRect.offset.y = mScissor.y;
-				scissorRect.extent.width = mScissor.width;
-				scissorRect.extent.height = mScissor.height;
+				scissorRect.offset.x = mScissor.X;
+				scissorRect.offset.y = mScissor.Y;
+				scissorRect.extent.width = mScissor.Width;
+				scissorRect.extent.height = mScissor.Height;
 			}
 			else
 			{
@@ -1471,33 +1471,33 @@ namespace bs { namespace ct
 	{
 		auto createLayoutTransitionBarrier = [&](VulkanImage* image, ImageInfo& imageInfo)
 		{
-			ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.subresourceInfoIdx];
-			for (UINT32 i = 0; i < imageInfo.numSubresourceInfos; i++)
+			ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
+			for (UINT32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
 			{
 				ImageSubresourceInfo& subresourceInfo = subresourceInfos[i];
 
-				if (subresourceInfo.requiredLayout == VK_IMAGE_LAYOUT_UNDEFINED ||
-					subresourceInfo.currentLayout == subresourceInfo.requiredLayout)
+				if (subresourceInfo.RequiredLayout == VK_IMAGE_LAYOUT_UNDEFINED ||
+					subresourceInfo.CurrentLayout == subresourceInfo.RequiredLayout)
 					continue;
 
 				const bool isReadOnly =
-					!subresourceInfo.fbUse.access.IsSet(VulkanAccessFlag::Write) &&
-					!subresourceInfo.shaderUse.access.IsSet(VulkanAccessFlag::Write);
+					!subresourceInfo.FbUse.Access.IsSet(VulkanAccessFlag::Write) &&
+					!subresourceInfo.ShaderUse.Access.IsSet(VulkanAccessFlag::Write);
 
 				mLayoutTransitionBarriersTemp.push_back(VkImageMemoryBarrier());
 				VkImageMemoryBarrier& barrier = mLayoutTransitionBarriersTemp.back();
 				barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
 				barrier.pNext = nullptr;
 				barrier.srcAccessMask = 0; // Not relevant for layout transition
-				barrier.dstAccessMask = image->GetAccessFlags(subresourceInfo.requiredLayout, isReadOnly);
+				barrier.dstAccessMask = image->GetAccessFlags(subresourceInfo.RequiredLayout, isReadOnly);
 				barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 				barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-				barrier.oldLayout = subresourceInfo.currentLayout;
-				barrier.newLayout = subresourceInfo.requiredLayout;
+				barrier.oldLayout = subresourceInfo.CurrentLayout;
+				barrier.newLayout = subresourceInfo.RequiredLayout;
 				barrier.image = image->GetHandle();
-				barrier.subresourceRange = subresourceInfo.range;
+				barrier.subresourceRange = subresourceInfo.Range;
 
-				subresourceInfo.currentLayout = subresourceInfo.requiredLayout;
+				subresourceInfo.CurrentLayout = subresourceInfo.RequiredLayout;
 			}
 		};
 
@@ -1572,16 +1572,16 @@ namespace bs { namespace ct
 		for(auto& entry : mShaderBoundSubresourceInfos)
 		{
 			ImageSubresourceInfo& subresourceInfo = mSubresourceInfoStorage[entry];
-			subresourceInfo.writeHazardUse.access = VulkanAccessFlag::None;
-			subresourceInfo.writeHazardUse.stages = 0;
+			subresourceInfo.WriteHazardUse.Access = VulkanAccessFlag::None;
+			subresourceInfo.WriteHazardUse.Stages = 0;
 		}
 
 		// Note: I should keep track of any buffers modified and only clear those, to prevent excess iteration
 		for(auto& entry : mBuffers)
 		{
 			BufferInfo& bufferInfo = entry.second;
-			bufferInfo.writeHazardUse.access = VulkanAccessFlag::None;
-			bufferInfo.writeHazardUse.stages = 0;
+			bufferInfo.WriteHazardUse.Access = VulkanAccessFlag::None;
+			bufferInfo.WriteHazardUse.Stages = 0;
 		}
 	}
 
@@ -1595,21 +1595,21 @@ namespace bs { namespace ct
 		for (UINT32 i = 0; i < numColorAttachments; i++)
 		{
 			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetColorAttachment(i);
-			ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.image, fbAttachment.surface.face,
-																		fbAttachment.surface.mipLevel);
+			ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.Image, fbAttachment.Surface.Face,
+																		fbAttachment.Surface.MipLevel);
 
-			subresourceInfo.currentLayout = subresourceInfo.renderPassLayout;
-			subresourceInfo.requiredLayout = subresourceInfo.renderPassLayout;
+			subresourceInfo.CurrentLayout = subresourceInfo.RenderPassLayout;
+			subresourceInfo.RequiredLayout = subresourceInfo.RenderPassLayout;
 		}
 
 		if (renderPass->HasDepthAttachment())
 		{
 			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetDepthStencilAttachment();
-			ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.image, fbAttachment.surface.face,
-																		fbAttachment.surface.mipLevel);
+			ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.Image, fbAttachment.Surface.Face,
+																		fbAttachment.Surface.MipLevel);
 
-			subresourceInfo.currentLayout = subresourceInfo.renderPassLayout;
-			subresourceInfo.requiredLayout = subresourceInfo.renderPassLayout;
+			subresourceInfo.CurrentLayout = subresourceInfo.RenderPassLayout;
+			subresourceInfo.RequiredLayout = subresourceInfo.RenderPassLayout;
 		}
 	}
 
@@ -1627,10 +1627,10 @@ namespace bs { namespace ct
 		renderPassBeginInfo.pNext = nullptr;
 		renderPassBeginInfo.framebuffer = mFramebuffer->GetVkFramebuffer();
 		renderPassBeginInfo.renderPass = renderPass->GetVkRenderPass(mRenderTargetLoadMask, RT_NONE, mClearMask);
-		renderPassBeginInfo.renderArea.offset.x = mClearArea.x;
-		renderPassBeginInfo.renderArea.offset.y = mClearArea.y;
-		renderPassBeginInfo.renderArea.extent.width = mClearArea.width;
-		renderPassBeginInfo.renderArea.extent.height = mClearArea.height;
+		renderPassBeginInfo.renderArea.offset.x = mClearArea.X;
+		renderPassBeginInfo.renderArea.offset.y = mClearArea.Y;
+		renderPassBeginInfo.renderArea.extent.width = mClearArea.Width;
+		renderPassBeginInfo.renderArea.extent.height = mClearArea.Height;
 		renderPassBeginInfo.clearValueCount = renderPass->GetNumClearEntries(mClearMask);
 		renderPassBeginInfo.pClearValues = mClearValues.data();
 
@@ -1785,9 +1785,9 @@ namespace bs { namespace ct
 		for(auto& entry : mShaderBoundSubresourceInfos)
 		{
 			ImageSubresourceInfo& subresourceInfo = mSubresourceInfoStorage[entry];
-			subresourceInfo.useFlags.Unset(ImageUseFlagBits::Shader);
-			subresourceInfo.shaderUse.access = VulkanAccessFlag::None;
-			subresourceInfo.shaderUse.stages = 0;
+			subresourceInfo.UseFlags.Unset(ImageUseFlagBits::Shader);
+			subresourceInfo.ShaderUse.Access = VulkanAccessFlag::None;
+			subresourceInfo.ShaderUse.Stages = 0;
 		}
 
 		mShaderBoundSubresourceInfos.clear();
@@ -1878,20 +1878,20 @@ namespace bs { namespace ct
 		if(mFramebuffer)
 			renderPass = mFramebuffer->GetRenderPass();
 
-		ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.subresourceInfoIdx];
-		for(UINT32 i = 0; i < imageInfo.numSubresourceInfos; i++)
+		ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
+		for(UINT32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
 		{
 			ImageSubresourceInfo& entry = subresourceInfos[i];
-			if(face >= entry.range.baseArrayLayer && face < (entry.range.baseArrayLayer + entry.range.layerCount) &&
-			   mip >= entry.range.baseMipLevel && mip < (entry.range.baseMipLevel + entry.range.levelCount))
+			if(face >= entry.Range.baseArrayLayer && face < (entry.Range.baseArrayLayer + entry.Range.layerCount) &&
+			   mip >= entry.Range.baseMipLevel && mip < (entry.Range.baseMipLevel + entry.Range.levelCount))
 			{
 				// If it's a FB attachment, retrieve its layout after the render pass begins
-				if(entry.useFlags.IsSet(ImageUseFlagBits::Framebuffer) && inRenderPass && mFramebuffer)
+				if(entry.UseFlags.IsSet(ImageUseFlagBits::Framebuffer) && inRenderPass && mFramebuffer)
 				{
 					RenderSurfaceMask readMask = GetFbReadMask();
 
 					// Is it a depth-stencil attachment?
-					if(renderPass->HasDepthAttachment() && mFramebuffer->GetDepthStencilAttachment().image == image)
+					if(renderPass->HasDepthAttachment() && mFramebuffer->GetDepthStencilAttachment().Image == image)
 					{
 						if (readMask.IsSet(RT_DEPTH))
 						{
@@ -1916,9 +1916,9 @@ namespace bs { namespace ct
 						{
 							const VulkanFramebufferAttachment& attachment = mFramebuffer->GetColorAttachment(j);
 
-							if (attachment.image == image)
+							if (attachment.Image == image)
 							{
-								if (readMask.IsSet((RenderSurfaceMaskBits)(1 << attachment.index)))
+								if (readMask.IsSet((RenderSurfaceMaskBits)(1 << attachment.Index)))
 									return VK_IMAGE_LAYOUT_GENERAL;
 								else
 									return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
@@ -1927,7 +1927,7 @@ namespace bs { namespace ct
 					}
 				}
 
-				return entry.requiredLayout;
+				return entry.RequiredLayout;
 			}
 		}
 
@@ -1940,8 +1940,8 @@ namespace bs { namespace ct
 		if(insertResult.second) // New element
 		{
 			ResourceUseHandle& useHandle = insertResult.first->second;
-			useHandle.used = false;
-			useHandle.flags = flags;
+			useHandle.Used = false;
+			useHandle.Flags = flags;
 
 			res->NotifyBound();
 		}
@@ -1949,8 +1949,8 @@ namespace bs { namespace ct
 		{
 			ResourceUseHandle& useHandle = insertResult.first->second;
 
-			assert(!useHandle.used);
-			useHandle.flags |= flags;
+			assert(!useHandle.Used);
+			useHandle.Flags |= flags;
 		}
 	}
 
@@ -1986,33 +1986,33 @@ namespace bs { namespace ct
 		{
 			mSubresourceInfoStorage.push_back(ImageSubresourceInfo());
 			ImageSubresourceInfo& subresourceInfo = mSubresourceInfoStorage.back();
-			subresourceInfo.currentLayout = layout;
-			subresourceInfo.initialLayout = layout;
-			subresourceInfo.initialReadOnly = !access.IsSet(VulkanAccessFlag::Write);
-			subresourceInfo.requiredLayout = layout;
-			subresourceInfo.renderPassLayout = finalLayout;
-			subresourceInfo.range = subresourceRange;
+			subresourceInfo.CurrentLayout = layout;
+			subresourceInfo.InitialLayout = layout;
+			subresourceInfo.InitialReadOnly = !access.IsSet(VulkanAccessFlag::Write);
+			subresourceInfo.RequiredLayout = layout;
+			subresourceInfo.RenderPassLayout = finalLayout;
+			subresourceInfo.Range = subresourceRange;
 
 			switch(use)
 			{
 			default:
 			case ImageUseFlagBits::Shader:
-				subresourceInfo.shaderUse.access = access;
-				subresourceInfo.shaderUse.stages = stages;
-				subresourceInfo.writeHazardUse.access = access;
-				subresourceInfo.writeHazardUse.stages = stages;
+				subresourceInfo.ShaderUse.Access = access;
+				subresourceInfo.ShaderUse.Stages = stages;
+				subresourceInfo.WriteHazardUse.Access = access;
+				subresourceInfo.WriteHazardUse.Stages = stages;
 				break;
 			case ImageUseFlagBits::Framebuffer:
-				subresourceInfo.fbUse.access = access;
-				subresourceInfo.fbUse.stages = stages;
+				subresourceInfo.FbUse.Access = access;
+				subresourceInfo.FbUse.Stages = stages;
 				break;
 			case ImageUseFlagBits::Transfer:
-				subresourceInfo.transferUse.access = access;
-				subresourceInfo.transferUse.stages = stages;
+				subresourceInfo.TransferUse.Access = access;
+				subresourceInfo.TransferUse.Stages = stages;
 				break;
 			}
 
-			subresourceInfo.useFlags = use;
+			subresourceInfo.UseFlags = use;
 
 			if (use == ImageUseFlagBits::Shader)
 				mShaderBoundSubresourceInfos.insert((UINT32)mSubresourceInfoStorage.size() - 1);
@@ -2025,11 +2025,11 @@ namespace bs { namespace ct
 			mImageInfos.push_back(ImageInfo());
 
 			ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
-			imageInfo.subresourceInfoIdx = (UINT32)mSubresourceInfoStorage.size();
-			imageInfo.numSubresourceInfos = 1;
+			imageInfo.SubresourceInfoIdx = (UINT32)mSubresourceInfoStorage.size();
+			imageInfo.NumSubresourceInfos = 1;
 
-			imageInfo.useHandle.used = false;
-			imageInfo.useHandle.flags = access;
+			imageInfo.UseHandle.Used = false;
+			imageInfo.UseHandle.Flags = access;
 
 			registerSubresourceInfo(range);
 
@@ -2040,23 +2040,23 @@ namespace bs { namespace ct
 			UINT32 imageInfoIdx = insertResult.first->second;
 			ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
-			assert(!imageInfo.useHandle.used);
-			imageInfo.useHandle.flags |= access;
+			assert(!imageInfo.UseHandle.Used);
+			imageInfo.UseHandle.Flags |= access;
 
 			// See if there is an overlap between existing ranges and the new range. And if so break them up accordingly.
 			//// First test for the simplest and most common case (same range or no overlap) to avoid more complex
 			//// computations.
-			ImageSubresourceInfo* subresources = &mSubresourceInfoStorage[imageInfo.subresourceInfoIdx];
+			ImageSubresourceInfo* subresources = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
 
 			bool foundRange = false;
-			for(UINT32 i = 0; i < imageInfo.numSubresourceInfos; i++)
+			for(UINT32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
 			{
-				if(VulkanUtility::RangeOverlaps(subresources[i].range, range))
+				if(VulkanUtility::RangeOverlaps(subresources[i].Range, range))
 				{
-					if (subresources[i].range.layerCount == range.layerCount &&
-						subresources[i].range.levelCount == range.levelCount &&
-						subresources[i].range.baseArrayLayer == range.baseArrayLayer &&
-						subresources[i].range.baseMipLevel == range.baseMipLevel)
+					if (subresources[i].Range.layerCount == range.layerCount &&
+						subresources[i].Range.levelCount == range.levelCount &&
+						subresources[i].Range.baseArrayLayer == range.baseArrayLayer &&
+						subresources[i].Range.baseMipLevel == range.baseMipLevel)
 					{
 						// Just update existing range
 						switch(use)
@@ -2075,7 +2075,7 @@ namespace bs { namespace ct
 						}
 
 						if (use == ImageUseFlagBits::Shader)
-							mShaderBoundSubresourceInfos.insert(imageInfo.subresourceInfoIdx + i);
+							mShaderBoundSubresourceInfos.insert(imageInfo.SubresourceInfoIdx + i);
 
 						foundRange = true;
 						break;
@@ -2097,12 +2097,12 @@ namespace bs { namespace ct
 					UINT32 newSubresourceIdx = (UINT32)mSubresourceInfoStorage.size();
 
 					FrameVector<UINT32> cutOverlappingRanges;
-					for (UINT32 i = 0; i < imageInfo.numSubresourceInfos; i++)
+					for (UINT32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
 					{
-						UINT32 subresourceIdx = imageInfo.subresourceInfoIdx + i;
+						UINT32 subresourceIdx = imageInfo.SubresourceInfoIdx + i;
 						ImageSubresourceInfo& subresource = mSubresourceInfoStorage[subresourceIdx];
 
-						if (!VulkanUtility::RangeOverlaps(subresource.range, range))
+						if (!VulkanUtility::RangeOverlaps(subresource.Range, range))
 						{
 							// Just copy as is
 							mSubresourceInfoStorage.push_back(subresource);
@@ -2113,13 +2113,13 @@ namespace bs { namespace ct
 						else // Need to cut
 						{
 							UINT32 numCutRanges;
-							VulkanUtility::CutRange(subresource.range, range, tempCutRanges, numCutRanges);
+							VulkanUtility::CutRange(subresource.Range, range, tempCutRanges, numCutRanges);
 
 							for(UINT32 j = 0; j < numCutRanges; j++)
 							{
 								// Create a copy of the original subresource with the new range
 								ImageSubresourceInfo newInfo = mSubresourceInfoStorage[subresourceIdx];
-								newInfo.range = tempCutRanges[j];
+								newInfo.Range = tempCutRanges[j];
 
 								if(VulkanUtility::RangeOverlaps(tempCutRanges[j], range))
 								{
@@ -2163,7 +2163,7 @@ namespace bs { namespace ct
 
 						for(auto& entry : cutOverlappingRanges)
 						{
-							VkImageSubresourceRange& overlappingRange = mSubresourceInfoStorage[entry].range;
+							VkImageSubresourceRange& overlappingRange = mSubresourceInfoStorage[entry].Range;
 
 							UINT32 numSourceRanges = (UINT32)sourceRanges.size();
 							for(UINT32 i = 0; i < numSourceRanges; i++)
@@ -2191,8 +2191,8 @@ namespace bs { namespace ct
 						}
 					}
 
-					imageInfo.subresourceInfoIdx = newSubresourceIdx;
-					imageInfo.numSubresourceInfos = (UINT32)mSubresourceInfoStorage.size() - newSubresourceIdx;
+					imageInfo.SubresourceInfoIdx = newSubresourceIdx;
+					imageInfo.NumSubresourceInfos = (UINT32)mSubresourceInfoStorage.size() - newSubresourceIdx;
 				}
 				bs_frame_clear();
 			}
@@ -2218,16 +2218,16 @@ namespace bs { namespace ct
 		if (insertResult.second) // New element
 		{
 			BufferInfo& bufferInfo = insertResult.first->second;
-			bufferInfo.useFlags = useFlags;
+			bufferInfo.UseFlags = useFlags;
 
-			bufferInfo.useHandle.used = false;
-			bufferInfo.useHandle.flags = access;
+			bufferInfo.UseHandle.Used = false;
+			bufferInfo.UseHandle.Flags = access;
 
 			// Transfer write hazards are handled externally
 			if(useFlags != BufferUseFlagBits::Transfer)
 			{
-				bufferInfo.writeHazardUse.access = access;
-				bufferInfo.writeHazardUse.stages = stages;
+				bufferInfo.WriteHazardUse.Access = access;
+				bufferInfo.WriteHazardUse.Stages = stages;
 			}
 
 			res->NotifyBound();
@@ -2236,7 +2236,7 @@ namespace bs { namespace ct
 		{
 			BufferInfo& bufferInfo = insertResult.first->second;
 
-			assert(!bufferInfo.useHandle.used);
+			assert(!bufferInfo.UseHandle.Used);
 
 			// Transfer write hazards are handled externally
 			bool resetRenderPass = false;
@@ -2246,10 +2246,10 @@ namespace bs { namespace ct
 				if (access.IsSetAny(VulkanAccessFlag::Read | VulkanAccessFlag::Write))
 				{
 					// Read-after-write (and write-after-write, as little sense does that make)
-					if (bufferInfo.writeHazardUse.access.IsSet(VulkanAccessFlag::Write))
+					if (bufferInfo.WriteHazardUse.Access.IsSet(VulkanAccessFlag::Write))
 					{
 						mNeedsRAWMemoryBarrier = true;
-						mMemoryBarrierSrcStages |= bufferInfo.writeHazardUse.stages;
+						mMemoryBarrierSrcStages |= bufferInfo.WriteHazardUse.Stages;
 						mMemoryBarrierDstStages |= stages;
 						mMemoryBarrierSrcAccess |= VK_ACCESS_SHADER_WRITE_BIT;
 
@@ -2289,10 +2289,10 @@ namespace bs { namespace ct
 				if (access.IsSet(VulkanAccessFlag::Write))
 				{
 					// Write-after-read
-					if (bufferInfo.writeHazardUse.access.IsSet(VulkanAccessFlag::Read))
+					if (bufferInfo.WriteHazardUse.Access.IsSet(VulkanAccessFlag::Read))
 					{
 						mNeedsWARMemoryBarrier = true;
-						mMemoryBarrierSrcStages |= bufferInfo.writeHazardUse.stages;
+						mMemoryBarrierSrcStages |= bufferInfo.WriteHazardUse.Stages;
 						mMemoryBarrierDstStages |= stages;
 
 						// End render pass as we perform memory barriers at the beggining a render pass/dispatch call, so this
@@ -2301,12 +2301,12 @@ namespace bs { namespace ct
 					}
 				}
 
-				bufferInfo.writeHazardUse.access |= access;
-				bufferInfo.writeHazardUse.stages |= stages;
+				bufferInfo.WriteHazardUse.Access |= access;
+				bufferInfo.WriteHazardUse.Stages |= stages;
 			}
 
-			bufferInfo.useHandle.flags |= access;
-			bufferInfo.useFlags |= useFlags;
+			bufferInfo.UseHandle.Flags |= access;
+			bufferInfo.UseFlags |= useFlags;
 
 			// Need to end render pass in order to execute the barrier. Hopefully this won't trigger much since most
 			// shader writes are done during compute
@@ -2321,8 +2321,8 @@ namespace bs { namespace ct
 		if (insertResult.second) // New element
 		{
 			ResourceUseHandle& useHandle = insertResult.first->second;
-			useHandle.used = false;
-			useHandle.flags = VulkanAccessFlag::Write;
+			useHandle.Used = false;
+			useHandle.Flags = VulkanAccessFlag::Write;
 
 			res->NotifyBound();
 		}
@@ -2330,8 +2330,8 @@ namespace bs { namespace ct
 		{
 			ResourceUseHandle& useHandle = insertResult.first->second;
 
-			assert(!useHandle.used);
-			useHandle.flags |= VulkanAccessFlag::Write;
+			assert(!useHandle.Used);
+			useHandle.Flags |= VulkanAccessFlag::Write;
 		}
 
 		// Register any sub-resources
@@ -2351,8 +2351,8 @@ namespace bs { namespace ct
 
 			VulkanAccessFlag access = ((readMask & FBT_COLOR) != 0) ? VulkanAccessFlag::Read : VulkanAccessFlag::Write;
 
-			VkImageSubresourceRange range = attachment.image->GetRange(attachment.surface);
-			RegisterImageFramebuffer(attachment.image, range, layout, attachment.finalLayout, access,
+			VkImageSubresourceRange range = attachment.Image->GetRange(attachment.Surface);
+			RegisterImageFramebuffer(attachment.Image, range, layout, attachment.FinalLayout, access,
 				VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
 		}
 
@@ -2371,8 +2371,8 @@ namespace bs { namespace ct
 			VulkanAccessFlag access = (((readMask & FBT_DEPTH) != 0) && ((readMask & FBT_STENCIL) != 0)) ?
 				VulkanAccessFlag::Read : VulkanAccessFlag::Write;
 
-			VkImageSubresourceRange range = attachment.image->GetRange(attachment.surface);
-			RegisterImageFramebuffer(attachment.image, range, layout, attachment.finalLayout, access,
+			VkImageSubresourceRange range = attachment.Image->GetRange(attachment.Surface);
+			RegisterImageFramebuffer(attachment.Image, range, layout, attachment.FinalLayout, access,
 				VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT);
 		}
 	}
@@ -2383,8 +2383,8 @@ namespace bs { namespace ct
 		if (insertResult.second) // New element
 		{
 			ResourceUseHandle& useHandle = insertResult.first->second;
-			useHandle.used = false;
-			useHandle.flags = VulkanAccessFlag::Write;
+			useHandle.Used = false;
+			useHandle.Flags = VulkanAccessFlag::Write;
 
 			res->NotifyBound();
 		}
@@ -2392,8 +2392,8 @@ namespace bs { namespace ct
 		{
 			ResourceUseHandle& useHandle = insertResult.first->second;
 
-			assert(!useHandle.used);
-			useHandle.flags |= VulkanAccessFlag::Write;
+			assert(!useHandle.Used);
+			useHandle.Flags |= VulkanAccessFlag::Write;
 		}
 	}
 
@@ -2406,7 +2406,7 @@ namespace bs { namespace ct
 			// Register the necessary layout transition, but only if the image isn't bound for framebuffer bind. If it is
 			// then we are forced to use the layout that's expected by the framebuffer.
 
-			if(subresourceInfo.useFlags.IsSet(ImageUseFlagBits::Framebuffer))
+			if(subresourceInfo.UseFlags.IsSet(ImageUseFlagBits::Framebuffer))
 			{
 				// Currently the system doesn't support image being bound to framebuffer, yet being written to by the
 				// shader. This seems like an unlikely scenario.
@@ -2417,28 +2417,28 @@ namespace bs { namespace ct
 				// Check if the image had a layout previously assigned, and if so check if multiple different layouts
 				// were requested. In that case we wish to transfer the image to GENERAL layout.
 
-				bool firstUseInRenderPass = !subresourceInfo.useFlags.IsSetAny(
+				bool firstUseInRenderPass = !subresourceInfo.UseFlags.IsSetAny(
 					ImageUseFlagBits::Shader | ImageUseFlagBits::Framebuffer);
-				if (firstUseInRenderPass || subresourceInfo.requiredLayout == VK_IMAGE_LAYOUT_UNDEFINED)
-					subresourceInfo.requiredLayout = layout;
-				else if (subresourceInfo.requiredLayout != layout)
-					subresourceInfo.requiredLayout = VK_IMAGE_LAYOUT_GENERAL;
+				if (firstUseInRenderPass || subresourceInfo.RequiredLayout == VK_IMAGE_LAYOUT_UNDEFINED)
+					subresourceInfo.RequiredLayout = layout;
+				else if (subresourceInfo.RequiredLayout != layout)
+					subresourceInfo.RequiredLayout = VK_IMAGE_LAYOUT_GENERAL;
 			}
 		}
 
-		if (subresourceInfo.currentLayout != subresourceInfo.requiredLayout)
+		if (subresourceInfo.CurrentLayout != subresourceInfo.RequiredLayout)
 			mQueuedLayoutTransitions[image] = imageInfoIdx;
 
 		// If a FB attachment was just bound as a shader input, we might need to restart the render pass with a FB
 		// attachment that supports read-only attachments using the GENERAL or DEPTH_READ_ONLY layout
 		bool resetRenderPass = false;
-		if (!subresourceInfo.useFlags.IsSet(ImageUseFlagBits::Shader))
+		if (!subresourceInfo.UseFlags.IsSet(ImageUseFlagBits::Shader))
 		{
-			if (subresourceInfo.useFlags.IsSet(ImageUseFlagBits::Framebuffer))
+			if (subresourceInfo.UseFlags.IsSet(ImageUseFlagBits::Framebuffer))
 			{
 				// Special case for depth: If user has set up proper read-only flags, then the render pass will have
 				// taken care of setting the valid state anyway, so no need to end the render pass
-				if (subresourceInfo.requiredLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+				if (subresourceInfo.RequiredLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
 				{
 					resetRenderPass = ((mRenderTargetReadOnlyFlags & FBT_DEPTH) == 0 &&
 						(mRenderTargetReadOnlyFlags & FBT_STENCIL) == 0);
@@ -2452,10 +2452,10 @@ namespace bs { namespace ct
 		if(access.IsSetAny(VulkanAccessFlag::Read | VulkanAccessFlag::Write))
 		{
 			// Read-after-write (and write-after-write, as little sense does that make)
-			if(subresourceInfo.writeHazardUse.access.IsSet(VulkanAccessFlag::Write))
+			if(subresourceInfo.WriteHazardUse.Access.IsSet(VulkanAccessFlag::Write))
 			{
 				mNeedsRAWMemoryBarrier = true;
-				mMemoryBarrierSrcStages |= subresourceInfo.writeHazardUse.stages;
+				mMemoryBarrierSrcStages |= subresourceInfo.WriteHazardUse.Stages;
 				mMemoryBarrierDstStages |= stages;
 				mMemoryBarrierSrcAccess |= VK_ACCESS_SHADER_WRITE_BIT;
 
@@ -2474,10 +2474,10 @@ namespace bs { namespace ct
 		if(access.IsSet(VulkanAccessFlag::Write))
 		{
 			// Write-after-read
-			if(subresourceInfo.writeHazardUse.access.IsSet(VulkanAccessFlag::Read))
+			if(subresourceInfo.WriteHazardUse.Access.IsSet(VulkanAccessFlag::Read))
 			{
 				mNeedsWARMemoryBarrier = true;
-				mMemoryBarrierSrcStages |= subresourceInfo.writeHazardUse.stages;
+				mMemoryBarrierSrcStages |= subresourceInfo.WriteHazardUse.Stages;
 				mMemoryBarrierDstStages |= stages;
 
 				// End render pass as we perform memory barriers at the beggining a render pass/dispatch call, so this
@@ -2486,13 +2486,13 @@ namespace bs { namespace ct
 			}
 		}
 
-		subresourceInfo.shaderUse.access |= access;
-		subresourceInfo.shaderUse.stages |= stages;
+		subresourceInfo.ShaderUse.Access |= access;
+		subresourceInfo.ShaderUse.Stages |= stages;
 
-		subresourceInfo.writeHazardUse.access |= access;
-		subresourceInfo.writeHazardUse.stages |= stages;
+		subresourceInfo.WriteHazardUse.Access |= access;
+		subresourceInfo.WriteHazardUse.Stages |= stages;
 
-		subresourceInfo.useFlags |= ImageUseFlagBits::Shader;
+		subresourceInfo.UseFlags |= ImageUseFlagBits::Shader;
 
 		// If we need to switch frame-buffers or execute memory barriers, end current render pass
 		if (resetRenderPass && IsInRenderPass())
@@ -2506,17 +2506,17 @@ namespace bs { namespace ct
 		// Framebuffer expects a certain layout and we must respect it. In the case when the FB attachment is also bound
 		// for shader reads, this will override the layout required for shader read (GENERAL or DEPTH_READ_ONLY), but that
 		// is fine because those transitions are handled automatically by render-pass layout transitions.
-		subresourceInfo.requiredLayout = layout;
-		subresourceInfo.renderPassLayout = finalLayout;
+		subresourceInfo.RequiredLayout = layout;
+		subresourceInfo.RenderPassLayout = finalLayout;
 
-		if (subresourceInfo.currentLayout != subresourceInfo.requiredLayout)
+		if (subresourceInfo.CurrentLayout != subresourceInfo.RequiredLayout)
 			mQueuedLayoutTransitions[image] = imageInfoIdx;
 
 		// If the FB attachment was previously bound as a shader input, we might need to restart the render pass with a FB
 		// attachment that supports read-only attachments using the GENERAL or DEPTH_READ_ONLY layout
 		bool resetRenderPass = false;
-		if (!subresourceInfo.useFlags.IsSet(ImageUseFlagBits::Framebuffer))
-			resetRenderPass = subresourceInfo.useFlags.IsSet(ImageUseFlagBits::Shader);
+		if (!subresourceInfo.UseFlags.IsSet(ImageUseFlagBits::Framebuffer))
+			resetRenderPass = subresourceInfo.UseFlags.IsSet(ImageUseFlagBits::Shader);
 
 		// If this image has been previously written to be a shader prevent read-after-write and write-after-write hazards
 		// Note: This could be handled through sub-pass dependencies instead of explicit memory barriers, but those require
@@ -2525,10 +2525,10 @@ namespace bs { namespace ct
 		if(access.IsSetAny(VulkanAccessFlag::Read | VulkanAccessFlag::Write))
 		{
 			// Read-after-write
-			if(subresourceInfo.writeHazardUse.access.IsSet(VulkanAccessFlag::Write))
+			if(subresourceInfo.WriteHazardUse.Access.IsSet(VulkanAccessFlag::Write))
 			{
 				mNeedsRAWMemoryBarrier = true;
-				mMemoryBarrierSrcStages |= subresourceInfo.writeHazardUse.stages;
+				mMemoryBarrierSrcStages |= subresourceInfo.WriteHazardUse.Stages;
 				mMemoryBarrierDstStages |= stages;
 				mMemoryBarrierSrcAccess |= VK_ACCESS_SHADER_WRITE_BIT;
 
@@ -2561,10 +2561,10 @@ namespace bs { namespace ct
 		// No need to check for write-after-read barrier as it only needs an execution dependency and that is already
 		// handled by the render pass
 
-		subresourceInfo.fbUse.access |= access;
-		subresourceInfo.fbUse.stages |= stages;
+		subresourceInfo.FbUse.Access |= access;
+		subresourceInfo.FbUse.Stages |= stages;
 
-		subresourceInfo.useFlags |= ImageUseFlagBits::Framebuffer;
+		subresourceInfo.UseFlags |= ImageUseFlagBits::Framebuffer;
 
 		// If we need to switch frame-buffers or execute memory barriers, end current render pass
 		if (resetRenderPass && IsInRenderPass())
@@ -2577,14 +2577,14 @@ namespace bs { namespace ct
 		// Note: Currently it is assumed that all images submitted for a transfer operation will have their pre-operation
 		// layout set externally. 	
 		
-		subresourceInfo.currentLayout = layout;
-		subresourceInfo.requiredLayout = layout;
+		subresourceInfo.CurrentLayout = layout;
+		subresourceInfo.RequiredLayout = layout;
 
 		// These are currently not used nor cleared
-		subresourceInfo.transferUse.access |= access;
-		subresourceInfo.transferUse.stages |= stages;
+		subresourceInfo.TransferUse.Access |= access;
+		subresourceInfo.TransferUse.Stages |= stages;
 
-		subresourceInfo.useFlags |= ImageUseFlagBits::Transfer;
+		subresourceInfo.UseFlags |= ImageUseFlagBits::Transfer;
 	}
 
 	VulkanCmdBuffer::ImageSubresourceInfo& VulkanCmdBuffer::FindSubresourceInfo(VulkanImage* image, UINT32 face, UINT32 mip)
@@ -2592,12 +2592,12 @@ namespace bs { namespace ct
 		UINT32 imageInfoIdx = mImages[image];
 		ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
-		ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.subresourceInfoIdx];
-		for(UINT32 i = 0; i < imageInfo.numSubresourceInfos; i++)
+		ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
+		for(UINT32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
 		{
 			ImageSubresourceInfo& entry = subresourceInfos[i];
-			if(face >= entry.range.baseArrayLayer && face < (entry.range.baseArrayLayer + entry.range.layerCount) &&
-			   mip >= entry.range.baseMipLevel && mip < (entry.range.baseMipLevel + entry.range.levelCount))
+			if(face >= entry.Range.baseArrayLayer && face < (entry.Range.baseArrayLayer + entry.Range.layerCount) &&
+			   mip >= entry.Range.baseMipLevel && mip < (entry.Range.baseMipLevel + entry.Range.levelCount))
 			{
 				return entry;
 			}
@@ -2659,10 +2659,10 @@ namespace bs { namespace ct
 		for(UINT32 i = 0; i < numColorAttachments; i++)
 		{
 			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetColorAttachment(i);
-			ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.image, fbAttachment.surface.face,
-				fbAttachment.surface.mipLevel);
+			ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.Image, fbAttachment.Surface.Face,
+				fbAttachment.Surface.MipLevel);
 
-			bool readOnly = subresourceInfo.useFlags.IsSet(ImageUseFlagBits::Shader);
+			bool readOnly = subresourceInfo.UseFlags.IsSet(ImageUseFlagBits::Shader);
 
 			if(readOnly)
 				readMask.Set((RenderSurfaceMaskBits)(1 << i));
@@ -2671,10 +2671,10 @@ namespace bs { namespace ct
 		if (renderPass->HasDepthAttachment())
 		{
 			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetDepthStencilAttachment();
-			ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.image, fbAttachment.surface.face,
-				fbAttachment.surface.mipLevel);
+			ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.Image, fbAttachment.Surface.Face,
+				fbAttachment.Surface.MipLevel);
 
-			bool readOnly = subresourceInfo.useFlags.IsSet(ImageUseFlagBits::Shader);
+			bool readOnly = subresourceInfo.UseFlags.IsSet(ImageUseFlagBits::Shader);
 
 			if (readOnly)
 				readMask.Set(RT_DEPTH);

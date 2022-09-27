@@ -108,10 +108,10 @@ namespace bs { namespace ct
 		{
 			GpuPipelineKey(UINT32 framebufferId, UINT32 vertexInputId, UINT32 readOnlyFlags, DrawOperationType drawOp);
 
-			UINT32 framebufferId;
-			UINT32 vertexInputId;
-			UINT32 readOnlyFlags;
-			DrawOperationType drawOp;
+			UINT32 FramebufferId;
+			UINT32 VertexInputId;
+			UINT32 ReadOnlyFlags;
+			DrawOperationType DrawOp;
 		};
 
 		/**	Creates a hash from GPU pipeline key. */
@@ -131,9 +131,9 @@ namespace bs { namespace ct
 		/** Contains pipeline data specific to a single Vulkan device. */
 		struct PerDeviceData
 		{
-			VulkanDevice* device;
-			VkPipelineLayout pipelineLayout;
-			UnorderedMap<GpuPipelineKey, VulkanPipeline*, HashFunc, EqualFunc> pipelines;
+			VulkanDevice* Device;
+			VkPipelineLayout PipelineLayout;
+			UnorderedMap<GpuPipelineKey, VulkanPipeline*, HashFunc, EqualFunc> Pipelines;
 		};
 
 		VkPipelineShaderStageCreateInfo mShaderStageInfos[5];
@@ -192,9 +192,9 @@ namespace bs { namespace ct
 		/** Contains pipeline data specific to a single Vulkan device. */
 		struct PerDeviceData
 		{
-			VulkanDevice* device;
-			VulkanPipeline* pipeline;
-			VkPipelineLayout pipelineLayout;
+			VulkanDevice* Device;
+			VulkanPipeline* Pipeline;
+			VkPipelineLayout PipelineLayout;
 		};
 
 		GpuDeviceFlags mDeviceMask;

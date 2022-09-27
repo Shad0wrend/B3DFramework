@@ -12,8 +12,8 @@ namespace bs { namespace ct
 
 	VulkanFramebuffer::VulkanFramebuffer(VulkanResourceManager* owner, VulkanRenderPass* renderPass,
 		const VULKAN_FRAMEBUFFER_DESC& desc)
-		: VulkanResource(owner, false), mRenderPass(renderPass), mWidth(desc.width), mHeight(desc.height)
-		, mNumLayers(desc.layers)
+		: VulkanResource(owner, false), mRenderPass(renderPass), mWidth(desc.Width), mHeight(desc.Height)
+		, mNumLayers(desc.Layers)
 	{
 		mId = sNextValidId++;
 
@@ -23,35 +23,35 @@ namespace bs { namespace ct
 		UINT32 attachmentIdx = 0;
 		for(UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
-			if (desc.color[i].image == nullptr)
+			if (desc.Color[i].Image == nullptr)
 				continue;
 
-			mColorAttachments[attachmentIdx].baseLayer = desc.color[i].baseLayer;
-			mColorAttachments[attachmentIdx].image = desc.color[i].image;
-			mColorAttachments[attachmentIdx].finalLayout = renderPass->GetColorDesc(attachmentIdx).finalLayout;
-			mColorAttachments[attachmentIdx].index = i;
-			mColorAttachments[attachmentIdx].surface = desc.color[i].surface;
+			mColorAttachments[attachmentIdx].BaseLayer = desc.Color[i].BaseLayer;
+			mColorAttachments[attachmentIdx].Image = desc.Color[i].Image;
+			mColorAttachments[attachmentIdx].FinalLayout = renderPass->GetColorDesc(attachmentIdx).finalLayout;
+			mColorAttachments[attachmentIdx].Index = i;
+			mColorAttachments[attachmentIdx].Surface = desc.Color[i].Surface;
 
-			if (desc.color[i].surface.numMipLevels == 0)
-				attachmentViews[attachmentIdx] = desc.color[i].image->GetView(true);
+			if (desc.Color[i].Surface.NumMipLevels == 0)
+				attachmentViews[attachmentIdx] = desc.Color[i].Image->GetView(true);
 			else
-				attachmentViews[attachmentIdx] = desc.color[i].image->GetView(desc.color[i].surface, true);
+				attachmentViews[attachmentIdx] = desc.Color[i].Image->GetView(desc.Color[i].Surface, true);
 
 			attachmentIdx++;
 		}
 
 		if (renderPass->HasDepthAttachment())
 		{
-			mDepthStencilAttachment.baseLayer = desc.depth.baseLayer;
-			mDepthStencilAttachment.image = desc.depth.image;
-			mDepthStencilAttachment.finalLayout = renderPass->GetDepthDesc().finalLayout;
-			mDepthStencilAttachment.index = 0;
-			mDepthStencilAttachment.surface = desc.depth.surface;
+			mDepthStencilAttachment.BaseLayer = desc.Depth.BaseLayer;
+			mDepthStencilAttachment.Image = desc.Depth.Image;
+			mDepthStencilAttachment.FinalLayout = renderPass->GetDepthDesc().finalLayout;
+			mDepthStencilAttachment.Index = 0;
+			mDepthStencilAttachment.Surface = desc.Depth.Surface;
 
-			if (desc.depth.surface.numMipLevels == 0)
-				attachmentViews[attachmentIdx] = desc.depth.image->GetView(true);
+			if (desc.Depth.Surface.NumMipLevels == 0)
+				attachmentViews[attachmentIdx] = desc.Depth.Image->GetView(true);
 			else
-				attachmentViews[attachmentIdx] = desc.depth.image->GetView(desc.depth.surface, true);
+				attachmentViews[attachmentIdx] = desc.Depth.Image->GetView(desc.Depth.Surface, true);
 
 			attachmentIdx++;
 		}
@@ -61,9 +61,9 @@ namespace bs { namespace ct
 		framebufferCI.flags = 0;
 		framebufferCI.attachmentCount = renderPass->GetNumAttachments();
 		framebufferCI.pAttachments = attachmentViews;
-		framebufferCI.width = desc.width;
-		framebufferCI.height = desc.height;
-		framebufferCI.layers = desc.layers;
+		framebufferCI.width = desc.Width;
+		framebufferCI.height = desc.Height;
+		framebufferCI.layers = desc.Layers;
 
 		// Relying on the fact that compatible render passes can be used, and don't need to match exactly
 		framebufferCI.renderPass = mRenderPass->GetVkRenderPass(RT_NONE, RT_NONE, CLEAR_NONE);

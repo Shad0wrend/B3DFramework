@@ -112,8 +112,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataBoolRTTI : public RTTIType<ManagedSerializableFieldDataBool, ManagedSerializableFieldData, ManagedSerializableFieldDataBoolRTTI>
 	{
 	private:
-		bool& GetValue(ManagedSerializableFieldDataBool* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataBool* obj, bool& val) { obj->value = val; }
+		bool& GetValue(ManagedSerializableFieldDataBool* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataBool* obj, bool& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataBoolRTTI()
@@ -141,8 +141,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataCharRTTI : public RTTIType<ManagedSerializableFieldDataChar, ManagedSerializableFieldData, ManagedSerializableFieldDataCharRTTI>
 	{
 	private:
-		wchar_t& GetValue(ManagedSerializableFieldDataChar* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataChar* obj, wchar_t& val) { obj->value = val; }
+		wchar_t& GetValue(ManagedSerializableFieldDataChar* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataChar* obj, wchar_t& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataCharRTTI()
@@ -170,8 +170,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataI8RTTI : public RTTIType<ManagedSerializableFieldDataI8, ManagedSerializableFieldData, ManagedSerializableFieldDataI8RTTI>
 	{
 	private:
-		INT8& GetValue(ManagedSerializableFieldDataI8* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataI8* obj, INT8& val) { obj->value = val; }
+		INT8& GetValue(ManagedSerializableFieldDataI8* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataI8* obj, INT8& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataI8RTTI()
@@ -199,8 +199,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataU8RTTI : public RTTIType<ManagedSerializableFieldDataU8, ManagedSerializableFieldData, ManagedSerializableFieldDataU8RTTI>
 	{
 	private:
-		UINT8& GetValue(ManagedSerializableFieldDataU8* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataU8* obj, UINT8& val) { obj->value = val; }
+		UINT8& GetValue(ManagedSerializableFieldDataU8* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataU8* obj, UINT8& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataU8RTTI()
@@ -228,8 +228,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataI16RTTI : public RTTIType<ManagedSerializableFieldDataI16, ManagedSerializableFieldData, ManagedSerializableFieldDataI16RTTI>
 	{
 	private:
-		INT16& GetValue(ManagedSerializableFieldDataI16* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataI16* obj, INT16& val) { obj->value = val; }
+		INT16& GetValue(ManagedSerializableFieldDataI16* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataI16* obj, INT16& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataI16RTTI()
@@ -257,8 +257,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataU16RTTI : public RTTIType<ManagedSerializableFieldDataU16, ManagedSerializableFieldData, ManagedSerializableFieldDataU16RTTI>
 	{
 	private:
-		UINT16& GetValue(ManagedSerializableFieldDataU16* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataU16* obj, UINT16& val) { obj->value = val; }
+		UINT16& GetValue(ManagedSerializableFieldDataU16* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataU16* obj, UINT16& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataU16RTTI()
@@ -286,8 +286,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataI32RTTI : public RTTIType<ManagedSerializableFieldDataI32, ManagedSerializableFieldData, ManagedSerializableFieldDataI32RTTI>
 	{
 	private:
-		INT32& GetValue(ManagedSerializableFieldDataI32* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataI32* obj, INT32& val) { obj->value = val; }
+		INT32& GetValue(ManagedSerializableFieldDataI32* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataI32* obj, INT32& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataI32RTTI()
@@ -315,8 +315,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataU32RTTI : public RTTIType<ManagedSerializableFieldDataU32, ManagedSerializableFieldData, ManagedSerializableFieldDataU32RTTI>
 	{
 	private:
-		UINT32& GetValue(ManagedSerializableFieldDataU32* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataU32* obj, UINT32& val) { obj->value = val; }
+		UINT32& GetValue(ManagedSerializableFieldDataU32* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataU32* obj, UINT32& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataU32RTTI()
@@ -344,8 +344,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataI64RTTI : public RTTIType<ManagedSerializableFieldDataI64, ManagedSerializableFieldData, ManagedSerializableFieldDataI64RTTI>
 	{
 	private:
-		INT64& GetValue(ManagedSerializableFieldDataI64* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataI64* obj, INT64& val) { obj->value = val; }
+		INT64& GetValue(ManagedSerializableFieldDataI64* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataI64* obj, INT64& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataI64RTTI()
@@ -373,8 +373,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataU64RTTI : public RTTIType<ManagedSerializableFieldDataU64, ManagedSerializableFieldData, ManagedSerializableFieldDataU64RTTI>
 	{
 	private:
-		UINT64& GetValue(ManagedSerializableFieldDataU64* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataU64* obj, UINT64& val) { obj->value = val; }
+		UINT64& GetValue(ManagedSerializableFieldDataU64* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataU64* obj, UINT64& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataU64RTTI()
@@ -402,8 +402,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataFloatRTTI : public RTTIType<ManagedSerializableFieldDataFloat, ManagedSerializableFieldData, ManagedSerializableFieldDataFloatRTTI>
 	{
 	private:
-		float& GetValue(ManagedSerializableFieldDataFloat* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataFloat* obj, float& val) { obj->value = val; }
+		float& GetValue(ManagedSerializableFieldDataFloat* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataFloat* obj, float& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataFloatRTTI()
@@ -431,8 +431,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataDoubleRTTI : public RTTIType<ManagedSerializableFieldDataDouble, ManagedSerializableFieldData, ManagedSerializableFieldDataDoubleRTTI>
 	{
 	private:
-		double& GetValue(ManagedSerializableFieldDataDouble* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataDouble* obj, double& val) { obj->value = val; }
+		double& GetValue(ManagedSerializableFieldDataDouble* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataDouble* obj, double& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataDoubleRTTI()
@@ -489,8 +489,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataResourceRefRTTI : public RTTIType<ManagedSerializableFieldDataResourceRef, ManagedSerializableFieldData, ManagedSerializableFieldDataResourceRefRTTI>
 	{
 	private:
-		HResource& GetValue(ManagedSerializableFieldDataResourceRef* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataResourceRef* obj, HResource& val) { obj->value = HResource(val); }
+		HResource& GetValue(ManagedSerializableFieldDataResourceRef* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataResourceRef* obj, HResource& val) { obj->Value = HResource(val); }
 
 	public:
 		ManagedSerializableFieldDataResourceRefRTTI()
@@ -547,8 +547,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataReflectableRefRTTI : public RTTIType<ManagedSerializableFieldDataReflectableRef, ManagedSerializableFieldData, ManagedSerializableFieldDataReflectableRefRTTI>
 	{
 	private:
-		SPtr<IReflectable> GetValue(ManagedSerializableFieldDataReflectableRef* obj) { return obj->value; }
-		void SetValue(ManagedSerializableFieldDataReflectableRef* obj, SPtr<IReflectable> val) { obj->value = val; }
+		SPtr<IReflectable> GetValue(ManagedSerializableFieldDataReflectableRef* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataReflectableRef* obj, SPtr<IReflectable> val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataReflectableRefRTTI()

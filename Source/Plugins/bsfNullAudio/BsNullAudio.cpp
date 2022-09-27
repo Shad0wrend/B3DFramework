@@ -8,7 +8,7 @@ namespace bs
 {
 	NullAudio::NullAudio()
 	{
-		mDefaultDevice.name = "NullDevice";
+		mDefaultDevice.Name = "NullDevice";
 		mActiveDevice = mDefaultDevice;
 		mAllDevices.push_back(mActiveDevice);
 	}

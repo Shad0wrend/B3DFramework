@@ -57,33 +57,33 @@ namespace bs { namespace ct
 		/** Contains data about writing to either buffer or a texture descriptor. */
 		union WriteInfo
 		{
-			VkDescriptorImageInfo image;
-			VkDescriptorBufferInfo buffer;
-			VkBufferView bufferView;
+			VkDescriptorImageInfo Image;
+			VkDescriptorBufferInfo Buffer;
+			VkBufferView BufferView;
 		};
 
 		/** All GPU param data related to a single descriptor set. */
 		struct PerSetData
 		{
-			VulkanDescriptorSet* latestSet;
-			Vector<VulkanDescriptorSet*> sets;
+			VulkanDescriptorSet* LatestSet;
+			Vector<VulkanDescriptorSet*> Sets;
 
-			VkWriteDescriptorSet* writeSetInfos;
-			WriteInfo* writeInfos;
+			VkWriteDescriptorSet* WriteSetInfos;
+			WriteInfo* WriteInfos;
 
-			UINT32 numElements;
+			UINT32 NumElements;
 		};
 
 		/** All GPU param data beloning to a single device. */
 		struct PerDeviceData
 		{
-			PerSetData* perSetData;
+			PerSetData* PerSetData;
 
-			VkImage* sampledImages;
-			VkImage* storageImages;
-			VkBuffer* uniformBuffers;
-			VkBuffer* buffers;
-			VkSampler* samplers;
+			VkImage* SampledImages;
+			VkImage* StorageImages;
+			VkBuffer* UniformBuffers;
+			VkBuffer* Buffers;
+			VkSampler* Samplers;
 		};
 
 		friend class VulkanHardwareBufferManager;

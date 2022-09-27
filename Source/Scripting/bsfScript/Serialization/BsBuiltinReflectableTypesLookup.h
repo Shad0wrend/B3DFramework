@@ -34,10 +34,10 @@ namespace bs
 			META_GetPrevEntries(entries, META_Entry_##ScriptType());														\
 																															\
 			ReflectableTypeInfo entry;																						\
-			entry.metaData = ScriptType::GetMetaData();																		\
-			entry.typeId = ReflectableType::GetRttiStatic()->GetRttiId();													\
-			entry.monoClass = nullptr;																						\
-			entry.createCallback = &Create##ScriptType;																		\
+			entry.MetaData = ScriptType::GetMetaData();																		\
+			entry.TypeId = ReflectableType::GetRttiStatic()->GetRttiId();													\
+			entry.MonoClass = nullptr;																						\
+			entry.CreateCallback = &Create##ScriptType;																		\
 																															\
 			entries.push_back(entry);																						\
 		}																													\

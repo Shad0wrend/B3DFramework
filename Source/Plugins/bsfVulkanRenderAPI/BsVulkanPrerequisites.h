@@ -80,8 +80,8 @@ namespace bs { namespace ct
 	/** Contains lists of images and buffers that require pipeline barrier transitions. */
 	struct TransitionInfo
 	{
-		Vector<VkImageMemoryBarrier> imageBarriers;
-		Vector<VkBufferMemoryBarrier> bufferBarriers;
+		Vector<VkImageMemoryBarrier> ImageBarriers;
+		Vector<VkBufferMemoryBarrier> BufferBarriers;
 	};
 
 	/** Bits that map to a specific part of a render target and signify whether it should be cleared or not. */

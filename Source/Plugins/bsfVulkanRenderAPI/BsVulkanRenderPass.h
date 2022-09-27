@@ -15,26 +15,26 @@ namespace bs { namespace ct
 	struct VULKAN_RENDER_PASS_ATTACHMENT_DESC
 	{
 		/** Determines if the attachment is used in the pass. */
-		bool enabled = false;
+		bool Enabled = false;
 
 		/** Format of the attached image. */
-		VkFormat format = VK_FORMAT_UNDEFINED;
+		VkFormat Format = VK_FORMAT_UNDEFINED;
 	};
 
 	/** Contains parameters used for initializing VulkanRenderPass object. */
 	struct VULKAN_RENDER_PASS_DESC
 	{
 		/** Description of the color attachments, and their enabled states. */
-		VULKAN_RENDER_PASS_ATTACHMENT_DESC color[BS_MAX_MULTIPLE_RENDER_TARGETS];
+		VULKAN_RENDER_PASS_ATTACHMENT_DESC Color[BS_MAX_MULTIPLE_RENDER_TARGETS];
 
 		/** Description of the depth attachment, and its enabled state. */
-		VULKAN_RENDER_PASS_ATTACHMENT_DESC depth;
+		VULKAN_RENDER_PASS_ATTACHMENT_DESC Depth;
 
 		/** Number of samples in the attachments. All attachments must have the same number of samples. */
-		UINT32 numSamples = 0;
+		UINT32 NumSamples = 0;
 
 		/** Set to true if render pass will be rendering to an offscreen surface that will not be presented. */
-		bool offscreen = false;
+		bool Offscreen = false;
 	};
 
 	/**
@@ -108,9 +108,9 @@ namespace bs { namespace ct
 				bool operator()(const VariantKey& lhs, const VariantKey& rhs) const;
 			};
 
-			RenderSurfaceMask loadMask;
-			RenderSurfaceMask readMask;
-			ClearMask clearMask;
+			RenderSurfaceMask LoadMask;
+			RenderSurfaceMask ReadMask;
+			ClearMask ClearMask;
 		};
 
 		/** Creates a new variant of the render pass. */
@@ -170,8 +170,8 @@ namespace bs { namespace ct
 				bool operator()(const VariantKey& lhs, const VariantKey& rhs) const;
 			};
 
-			VkDevice device = VK_NULL_HANDLE;
-			VULKAN_RENDER_PASS_DESC desc;
+			VkDevice Device = VK_NULL_HANDLE;
+			VULKAN_RENDER_PASS_DESC Desc;
 		};
 
 		mutable Mutex mMutex;

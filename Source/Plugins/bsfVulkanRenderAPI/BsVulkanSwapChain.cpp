@@ -122,23 +122,23 @@ namespace bs { namespace ct
 		assert(result == VK_SUCCESS);
 
 		VULKAN_IMAGE_DESC imageDesc;
-		imageDesc.format = colorFormat;
-		imageDesc.type = TEX_TYPE_2D;
-		imageDesc.usage = TU_RENDERTARGET;
-		imageDesc.layout = VK_IMAGE_LAYOUT_UNDEFINED;
-		imageDesc.numFaces = 1;
-		imageDesc.numMipLevels = 1;
-		imageDesc.allocation = VK_NULL_HANDLE;
+		imageDesc.Format = colorFormat;
+		imageDesc.Type = TEX_TYPE_2D;
+		imageDesc.Usage = TU_RENDERTARGET;
+		imageDesc.Layout = VK_IMAGE_LAYOUT_UNDEFINED;
+		imageDesc.NumFaces = 1;
+		imageDesc.NumMipLevels = 1;
+		imageDesc.Allocation = VK_NULL_HANDLE;
 
 		mSurfaces.resize(numImages);
 		for (UINT32 i = 0; i < numImages; i++)
 		{
-			imageDesc.image = images[i];
+			imageDesc.Image = images[i];
 
-			mSurfaces[i].acquired = false;
-			mSurfaces[i].needsWait = false;
-			mSurfaces[i].image = owner->Create<VulkanImage>(imageDesc, false);
-			mSurfaces[i].sync = owner->Create<VulkanSemaphore>();
+			mSurfaces[i].Acquired = false;
+			mSurfaces[i].NeedsWait = false;
+			mSurfaces[i].Image = owner->Create<VulkanImage>(imageDesc, false);
+			mSurfaces[i].Sync = owner->Create<VulkanSemaphore>();
 		}
 
 		bs_stack_free(images);
@@ -167,10 +167,10 @@ namespace bs { namespace ct
 			result = vkCreateImage(mDevice, &depthStencilImageCI, gVulkanAllocator, &depthStencilImage);
 			assert(result == VK_SUCCESS);
 
-			imageDesc.image = depthStencilImage;
-			imageDesc.usage = TU_DEPTHSTENCIL;
-			imageDesc.format = depthFormat;
-			imageDesc.allocation = device.AllocateMemory(depthStencilImage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+			imageDesc.Image = depthStencilImage;
+			imageDesc.Usage = TU_DEPTHSTENCIL;
+			imageDesc.Format = depthFormat;
+			imageDesc.Allocation = device.AllocateMemory(depthStencilImage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
 			mDepthStencilImage = owner->Create<VulkanImage>(imageDesc, true);
 		}
@@ -179,15 +179,15 @@ namespace bs { namespace ct
 
 		// Create a render pass
 		VULKAN_RENDER_PASS_DESC rpDesc;
-		rpDesc.numSamples = 1;
-		rpDesc.offscreen = false;
-		rpDesc.color[0].format = colorFormat;
-		rpDesc.color[0].enabled = true;
+		rpDesc.NumSamples = 1;
+		rpDesc.Offscreen = false;
+		rpDesc.Color[0].Format = colorFormat;
+		rpDesc.Color[0].Enabled = true;
 
 		if(mDepthStencilImage)
 		{
-			rpDesc.depth.format = depthFormat;
-			rpDesc.depth.enabled = true;
+			rpDesc.Depth.Format = depthFormat;
+			rpDesc.Depth.Enabled = true;
 		}
 
 		VulkanRenderPass* renderPass = VulkanRenderPasses::Instance().Get(mDevice, rpDesc);
@@ -196,18 +196,18 @@ namespace bs { namespace ct
 		UINT32 numFramebuffers = (UINT32)mSurfaces.size();
 		for (UINT32 i = 0; i < numFramebuffers; i++)
 		{
-			VULKAN_FRAMEBUFFER_DESC& desc = mSurfaces[i].framebufferDesc;
-			desc.width = mWidth;
-			desc.height = mHeight;
-			desc.layers = 1;
-			desc.color[0].image = mSurfaces[i].image;
-			desc.color[0].surface = TextureSurface::COMPLETE;
-			desc.color[0].baseLayer = 0;
-			desc.depth.image = mDepthStencilImage;
-			desc.depth.surface = TextureSurface::COMPLETE;
-			desc.depth.baseLayer = 0;
+			VULKAN_FRAMEBUFFER_DESC& desc = mSurfaces[i].FramebufferDesc;
+			desc.Width = mWidth;
+			desc.Height = mHeight;
+			desc.Layers = 1;
+			desc.Color[0].Image = mSurfaces[i].Image;
+			desc.Color[0].Surface = TextureSurface::COMPLETE;
+			desc.Color[0].BaseLayer = 0;
+			desc.Depth.Image = mDepthStencilImage;
+			desc.Depth.Surface = TextureSurface::COMPLETE;
+			desc.Depth.BaseLayer = 0;
 
-			mSurfaces[i].framebuffer = owner->Create<VulkanFramebuffer>(renderPass, desc);
+			mSurfaces[i].Framebuffer = owner->Create<VulkanFramebuffer>(renderPass, desc);
 		}
 	}
 
@@ -219,17 +219,17 @@ namespace bs { namespace ct
 			{
 				// Swap chain images only live as long as the swap chain, so its invalid if they are being used somewhere,
 				// and same goes for the framebuffer since it depends on those images.
-				assert(!surface.image->IsBound());
-				assert(!surface.framebuffer->IsBound());
+				assert(!surface.Image->IsBound());
+				assert(!surface.Framebuffer->IsBound());
 
-				surface.framebuffer->Destroy();
-				surface.framebuffer = nullptr;
+				surface.Framebuffer->Destroy();
+				surface.Framebuffer = nullptr;
 
-				surface.image->Destroy();
-				surface.image = nullptr;
+				surface.Image->Destroy();
+				surface.Image = nullptr;
 
-				surface.sync->Destroy();
-				surface.sync = nullptr;
+				surface.Sync->Destroy();
+				surface.Sync = nullptr;
 			}
 
 			vkDestroySwapchainKHR(mDevice, mSwapChain, gVulkanAllocator);
@@ -247,7 +247,7 @@ namespace bs { namespace ct
 		uint32_t imageIndex;
 
 		VkResult result = vkAcquireNextImageKHR(mDevice, mSwapChain, UINT64_MAX,
-			mSurfaces[mCurrentSemaphoreIdx].sync->GetHandle(), VK_NULL_HANDLE, &imageIndex);
+			mSurfaces[mCurrentSemaphoreIdx].Sync->GetHandle(), VK_NULL_HANDLE, &imageIndex);
 
 		if(result != VK_SUCCESS)
 			return result;
@@ -255,13 +255,13 @@ namespace bs { namespace ct
 		// In case surfaces aren't being distributed in round-robin fashion the image and semaphore indices might not match,
 		// in which case just move the semaphores
 		if(imageIndex != mCurrentSemaphoreIdx)
-			std::swap(mSurfaces[mCurrentSemaphoreIdx].sync, mSurfaces[imageIndex].sync);
+			std::swap(mSurfaces[mCurrentSemaphoreIdx].Sync, mSurfaces[imageIndex].Sync);
 
 		mCurrentSemaphoreIdx = (mCurrentSemaphoreIdx + 1) % mSurfaces.size();
 
-		assert(!mSurfaces[imageIndex].acquired && "Same swap chain surface being acquired twice in a row without present().");
-		mSurfaces[imageIndex].acquired = true;
-		mSurfaces[imageIndex].needsWait = true;
+		assert(!mSurfaces[imageIndex].Acquired && "Same swap chain surface being acquired twice in a row without present().");
+		mSurfaces[imageIndex].Acquired = true;
+		mSurfaces[imageIndex].NeedsWait = true;
 
 		mCurrentBackBufferIdx = imageIndex;
 
@@ -270,11 +270,11 @@ namespace bs { namespace ct
 
 	bool VulkanSwapChain::PrepareForPresent(UINT32& backBufferIdx)
 	{
-		if (!mSurfaces[mCurrentBackBufferIdx].acquired)
+		if (!mSurfaces[mCurrentBackBufferIdx].Acquired)
 			return false;
 
-		assert(mSurfaces[mCurrentBackBufferIdx].acquired && "Attempting to present an unacquired back buffer.");
-		mSurfaces[mCurrentBackBufferIdx].acquired = false;
+		assert(mSurfaces[mCurrentBackBufferIdx].Acquired && "Attempting to present an unacquired back buffer.");
+		mSurfaces[mCurrentBackBufferIdx].Acquired = false;
 
 		backBufferIdx = mCurrentBackBufferIdx;
 		return true;
@@ -282,9 +282,9 @@ namespace bs { namespace ct
 
 	void VulkanSwapChain::NotifyBackBufferWaitIssued()
 	{
-		if (!mSurfaces[mCurrentBackBufferIdx].acquired)
+		if (!mSurfaces[mCurrentBackBufferIdx].Acquired)
 			return;
 
-		mSurfaces[mCurrentBackBufferIdx].needsWait = false;
+		mSurfaces[mCurrentBackBufferIdx].NeedsWait = false;
 	}
 }}

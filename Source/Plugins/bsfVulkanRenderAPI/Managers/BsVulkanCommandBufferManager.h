@@ -121,7 +121,7 @@ namespace bs { namespace ct
 		/** Contains command buffers specific to one device. */
 		struct PerDeviceData
 		{
-			VulkanTransferBuffer transferBuffers[GQT_COUNT][BS_MAX_QUEUES_PER_TYPE];
+			VulkanTransferBuffer TransferBuffers[GQT_COUNT][BS_MAX_QUEUES_PER_TYPE];
 		};
 
 		const VulkanRenderAPI& mRapi;

@@ -96,14 +96,14 @@ namespace bs { namespace ct
 		struct SubmitInfo
 		{
 			SubmitInfo(VulkanCmdBuffer* cmdBuffer, UINT32 submitIdx, UINT32 numSemaphores, UINT32 numCommandBuffers)
-				: cmdBuffer(cmdBuffer), submitIdx(submitIdx), numSemaphores(numSemaphores)
-				, numCommandBuffers(numCommandBuffers)
+				: CmdBuffer(cmdBuffer), SubmitIdx(submitIdx), NumSemaphores(numSemaphores)
+				, NumCommandBuffers(numCommandBuffers)
 			{ }
 
-			VulkanCmdBuffer* cmdBuffer;
-			UINT32 submitIdx;
-			UINT32 numSemaphores;
-			UINT32 numCommandBuffers;
+			VulkanCmdBuffer* CmdBuffer;
+			UINT32 SubmitIdx;
+			UINT32 NumSemaphores;
+			UINT32 NumCommandBuffers;
 		};
 
 		VulkanDevice& mDevice;

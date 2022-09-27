@@ -17,42 +17,42 @@ namespace bs { namespace ct
 	struct VULKAN_ATTACHMENT_DESC
 	{
 		/** Image to attach or null if none. */
-		VulkanImage* image = nullptr;
+		VulkanImage* Image = nullptr;
 
 		/** Surface representing the sub-resource of the image to use as an attachment. */
-		TextureSurface surface;
+		TextureSurface Surface;
 
 		/** Initial layer of the surface as pointed to by the provided image view. */
-		UINT32 baseLayer = 0;
+		UINT32 BaseLayer = 0;
 	};
 
 	/** Contains parameters used for initializing VulkanFrameBuffer object. */
 	struct VULKAN_FRAMEBUFFER_DESC
 	{
 		/** Images describing the color attachments. */
-		VULKAN_ATTACHMENT_DESC color[BS_MAX_MULTIPLE_RENDER_TARGETS];
+		VULKAN_ATTACHMENT_DESC Color[BS_MAX_MULTIPLE_RENDER_TARGETS];
 
 		/** Image describing the depth attachment. */
-		VULKAN_ATTACHMENT_DESC depth;
+		VULKAN_ATTACHMENT_DESC Depth;
 
 		/** Width of the images, in pixels. All images must be the same size. */
-		UINT32 width = 0;
+		UINT32 Width = 0;
 
 		/** Height of the images, in pixels. All images must be the same size. */
-		UINT32 height = 0;
+		UINT32 Height = 0;
 
 		/** Number of image layers to render to. This value is used for all provided surfaces. */
-		UINT32 layers = 0;
+		UINT32 Layers = 0;
 	};
 
 	/** Information about a single framebuffer attachment. */
 	struct VulkanFramebufferAttachment
 	{
-		VulkanImage* image = nullptr;
-		TextureSurface surface;
-		UINT32 baseLayer = 0;
-		VkImageLayout finalLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		UINT32 index = 0;
+		VulkanImage* Image = nullptr;
+		TextureSurface Surface;
+		UINT32 BaseLayer = 0;
+		VkImageLayout FinalLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		UINT32 Index = 0;
 	};
 
 	/** Vulkan frame buffer containing one or multiple color surfaces, and an optional depth surface. */

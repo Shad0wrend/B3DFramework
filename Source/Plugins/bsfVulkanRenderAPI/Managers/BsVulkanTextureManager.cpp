@@ -10,11 +10,11 @@ namespace bs
 {
 	struct DummyTexFormat
 	{
-		TextureType type;
-		int arraySize;
-		int width;
-		int height;
-		int depth;
+		TextureType Type;
+		int ArraySize;
+		int Width;
+		int Height;
+		int Depth;
 	};
 
 	const static DummyTexFormat DummyTexTypes[] =
@@ -54,26 +54,26 @@ namespace bs
 		int idx = 0;
 		for(auto& entry : DummyTexTypes)
 		{
-			SPtr<PixelData> pixelData = PixelData::Create(entry.width, entry.height, entry.depth, PF_RGBA8);
+			SPtr<PixelData> pixelData = PixelData::Create(entry.Width, entry.Height, entry.Depth, PF_RGBA8);
 
-			for(int depth = 0; depth < entry.depth; depth++)
-				for(int height = 0; height < entry.height; height++)
-					for(int width = 0; width < entry.width; width++)
+			for(int depth = 0; depth < entry.Depth; depth++)
+				for(int height = 0; height < entry.Height; height++)
+					for(int width = 0; width < entry.Width; width++)
 						pixelData->SetColorAt(Color::White, width, height, depth);
 
 			TEXTURE_DESC desc;
-			desc.type = entry.type;
-			desc.width = entry.width;
-			desc.height = entry.height;
-			desc.depth = entry.depth;
-			desc.numArraySlices = entry.arraySize;
-			desc.format = PF_RGBA8;
-			desc.usage = TU_STATIC | TU_MUTABLEFORMAT;
+			desc.Type = entry.Type;
+			desc.Width = entry.Width;
+			desc.Height = entry.Height;
+			desc.Depth = entry.Depth;
+			desc.NumArraySlices = entry.ArraySize;
+			desc.Format = PF_RGBA8;
+			desc.Usage = TU_STATIC | TU_MUTABLEFORMAT;
 
 			mDummyReadTextures[idx] = std::static_pointer_cast<VulkanTexture>(CreateTexture(desc));
 			mDummyReadTextures[idx]->WriteData(*pixelData);
 
-			desc.usage = TU_LOADSTORE;
+			desc.Usage = TU_LOADSTORE;
 			mDummyStorageTextures[idx] = std::static_pointer_cast<VulkanTexture>(CreateTexture(desc));
 
 			idx++;

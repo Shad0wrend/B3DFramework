@@ -16,14 +16,14 @@ namespace bs { namespace ct
 		const TextureProperties& props)
 	{
 		VULKAN_IMAGE_DESC desc;
-		desc.image = image;
-		desc.allocation = allocation;
-		desc.type = props.GetTextureType();
-		desc.format = actualFormat;
-		desc.numFaces = props.GetNumFaces();
-		desc.numMipLevels = props.GetNumMipmaps() + 1;
-		desc.layout = layout;
-		desc.usage = (UINT32)props.GetUsage();
+		desc.Image = image;
+		desc.Allocation = allocation;
+		desc.Type = props.GetTextureType();
+		desc.Format = actualFormat;
+		desc.NumFaces = props.GetNumFaces();
+		desc.NumMipLevels = props.GetNumMipmaps() + 1;
+		desc.Layout = layout;
+		desc.Usage = (UINT32)props.GetUsage();
 
 		return desc;
 	}
@@ -34,15 +34,15 @@ namespace bs { namespace ct
 	{ }
 
 	VulkanImage::VulkanImage(VulkanResourceManager* owner, const VULKAN_IMAGE_DESC& desc, bool ownsImage)
-		: VulkanResource(owner, false), mImage(desc.image), mAllocation(desc.allocation)
-		, mFramebufferMainView(VK_NULL_HANDLE), mUsage(desc.usage), mOwnsImage(ownsImage), mNumFaces(desc.numFaces)
-		, mNumMipLevels(desc.numMipLevels)
+		: VulkanResource(owner, false), mImage(desc.Image), mAllocation(desc.Allocation)
+		, mFramebufferMainView(VK_NULL_HANDLE), mUsage(desc.Usage), mOwnsImage(ownsImage), mNumFaces(desc.NumFaces)
+		, mNumMipLevels(desc.NumMipLevels)
 	{
 		mImageViewCI.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		mImageViewCI.pNext = nullptr;
 		mImageViewCI.flags = 0;
-		mImageViewCI.image = desc.image;
-		mImageViewCI.format = desc.format;
+		mImageViewCI.image = desc.Image;
+		mImageViewCI.format = desc.Format;
 		mImageViewCI.components = {
 			VK_COMPONENT_SWIZZLE_R,
 			VK_COMPONENT_SWIZZLE_G,
@@ -50,7 +50,7 @@ namespace bs { namespace ct
 			VK_COMPONENT_SWIZZLE_A
 		};
 
-		switch (desc.type)
+		switch (desc.Type)
 		{
 		case TEX_TYPE_1D:
 			mImageViewCI.viewType = VK_IMAGE_VIEW_TYPE_1D;
@@ -67,30 +67,30 @@ namespace bs { namespace ct
 			break;
 		}
 
-		TextureSurface completeSurface(0, desc.numMipLevels, 0, desc.numFaces);
+		TextureSurface completeSurface(0, desc.NumMipLevels, 0, desc.NumFaces);
 		if ((mUsage & TU_DEPTHSTENCIL) != 0)
 		{
-			mFramebufferMainView = CreateView(completeSurface, desc.format, GetAspectFlags());
-			mMainView = CreateView(completeSurface, desc.format, VK_IMAGE_ASPECT_DEPTH_BIT);
+			mFramebufferMainView = CreateView(completeSurface, desc.Format, GetAspectFlags());
+			mMainView = CreateView(completeSurface, desc.Format, VK_IMAGE_ASPECT_DEPTH_BIT);
 		}
 		else
-			mMainView = CreateView(completeSurface, desc.format, VK_IMAGE_ASPECT_COLOR_BIT);
+			mMainView = CreateView(completeSurface, desc.Format, VK_IMAGE_ASPECT_COLOR_BIT);
 
 		ImageViewInfo mainViewInfo;
-		mainViewInfo.surface = completeSurface;
-		mainViewInfo.framebuffer = false;
-		mainViewInfo.view = mMainView;
-		mainViewInfo.format = desc.format;
+		mainViewInfo.Surface = completeSurface;
+		mainViewInfo.Framebuffer = false;
+		mainViewInfo.View = mMainView;
+		mainViewInfo.Format = desc.Format;
 
 		mImageInfos.push_back(mainViewInfo);
 
 		if (mFramebufferMainView != VK_NULL_HANDLE)
 		{
 			ImageViewInfo fbMainViewInfo;
-			fbMainViewInfo.surface = completeSurface;
-			fbMainViewInfo.framebuffer = true;
-			fbMainViewInfo.view = mFramebufferMainView;
-			fbMainViewInfo.format = desc.format;
+			fbMainViewInfo.Surface = completeSurface;
+			fbMainViewInfo.Framebuffer = true;
+			fbMainViewInfo.View = mFramebufferMainView;
+			fbMainViewInfo.Format = desc.Format;
 
 			mImageInfos.push_back(fbMainViewInfo);
 		}
@@ -98,7 +98,7 @@ namespace bs { namespace ct
 		UINT32 numSubresources = mNumFaces * mNumMipLevels;
 		mSubresources = (VulkanImageSubresource**)bs_alloc(sizeof(VulkanImageSubresource*) * numSubresources);
 		for (UINT32 i = 0; i < numSubresources; i++)
-			mSubresources[i] = owner->Create<VulkanImageSubresource>(desc.layout);
+			mSubresources[i] = owner->Create<VulkanImageSubresource>(desc.Layout);
 	}
 
 	VulkanImage::~VulkanImage()
@@ -115,7 +115,7 @@ namespace bs { namespace ct
 		}
 
 		for(auto& entry : mImageInfos)
-			vkDestroyImageView(vkDevice, entry.view, gVulkanAllocator);
+			vkDestroyImageView(vkDevice, entry.View, gVulkanAllocator);
 
 		if (mOwnsImage)
 		{
@@ -147,40 +147,40 @@ namespace bs { namespace ct
 	{
 		for(auto& entry : mImageInfos)
 		{
-			if (surface.mipLevel == entry.surface.mipLevel &&
-				surface.numMipLevels == entry.surface.numMipLevels &&
-				surface.face == entry.surface.face &&
-				surface.numFaces == entry.surface.numFaces &&
-				format == entry.format)
+			if (surface.MipLevel == entry.Surface.MipLevel &&
+				surface.NumMipLevels == entry.Surface.NumMipLevels &&
+				surface.Face == entry.Surface.Face &&
+				surface.NumFaces == entry.Surface.NumFaces &&
+				format == entry.Format)
 			{
 				if((mUsage & TU_DEPTHSTENCIL) == 0)
-					return entry.view;
+					return entry.View;
 				else
 				{
-					if (framebuffer == entry.framebuffer)
-						return entry.view;
+					if (framebuffer == entry.Framebuffer)
+						return entry.View;
 				}
 			}
 		}
 
 		ImageViewInfo info;
-		info.surface = surface;
-		info.framebuffer = framebuffer;
-		info.format = format;
+		info.Surface = surface;
+		info.Framebuffer = framebuffer;
+		info.Format = format;
 
 		if ((mUsage & TU_DEPTHSTENCIL) != 0)
 		{
 			if(framebuffer)
-				info.view = CreateView(surface, format, GetAspectFlags());
+				info.View = CreateView(surface, format, GetAspectFlags());
 			else
-				info.view = CreateView(surface, format, VK_IMAGE_ASPECT_DEPTH_BIT);
+				info.View = CreateView(surface, format, VK_IMAGE_ASPECT_DEPTH_BIT);
 		}
 		else
-			info.view = CreateView(surface, format, VK_IMAGE_ASPECT_COLOR_BIT);
+			info.View = CreateView(surface, format, VK_IMAGE_ASPECT_COLOR_BIT);
 
 		mImageInfos.push_back(info);
 
-		return info.view;
+		return info.View;
 	}
 
 	VkImageView VulkanImage::CreateView(const TextureSurface& surface, VkFormat format, VkImageAspectFlags aspectMask) const
@@ -188,7 +188,7 @@ namespace bs { namespace ct
 		VkImageViewType oldViewType = mImageViewCI.viewType;
 		VkFormat oldFormat = mImageViewCI.format;
 
-		const UINT32 numFaces = surface.numFaces == 0 ? mNumFaces : surface.numFaces;
+		const UINT32 numFaces = surface.NumFaces == 0 ? mNumFaces : surface.NumFaces;
 
 		switch (oldViewType)
 		{
@@ -217,10 +217,10 @@ namespace bs { namespace ct
 		}
 
 		mImageViewCI.subresourceRange.aspectMask = aspectMask;
-		mImageViewCI.subresourceRange.baseMipLevel = surface.mipLevel;
-		mImageViewCI.subresourceRange.levelCount = surface.numMipLevels == 0 ? VK_REMAINING_MIP_LEVELS : surface.numMipLevels;
-		mImageViewCI.subresourceRange.baseArrayLayer = surface.face;
-		mImageViewCI.subresourceRange.layerCount = surface.numFaces == 0 ? VK_REMAINING_ARRAY_LAYERS : surface.numFaces;
+		mImageViewCI.subresourceRange.baseMipLevel = surface.MipLevel;
+		mImageViewCI.subresourceRange.levelCount = surface.NumMipLevels == 0 ? VK_REMAINING_MIP_LEVELS : surface.NumMipLevels;
+		mImageViewCI.subresourceRange.baseArrayLayer = surface.Face;
+		mImageViewCI.subresourceRange.layerCount = surface.NumFaces == 0 ? VK_REMAINING_ARRAY_LAYERS : surface.NumFaces;
 		mImageViewCI.format = format;
 
 		VkImageView view;
@@ -283,10 +283,10 @@ namespace bs { namespace ct
 	VkImageSubresourceRange VulkanImage::GetRange(const TextureSurface& surface) const
 	{
 		VkImageSubresourceRange range;
-		range.baseArrayLayer = surface.face;
-		range.layerCount = surface.numFaces == 0 ? mNumFaces : surface.numFaces;
-		range.baseMipLevel = surface.mipLevel;
-		range.levelCount = surface.numMipLevels == 0 ? mNumMipLevels : surface.numMipLevels;
+		range.baseArrayLayer = surface.Face;
+		range.layerCount = surface.NumFaces == 0 ? mNumFaces : surface.NumFaces;
+		range.baseMipLevel = surface.MipLevel;
+		range.levelCount = surface.NumMipLevels == 0 ? mNumMipLevels : surface.NumMipLevels;
 		range.aspectMask = GetAspectFlags();
 
 		return range;
@@ -794,8 +794,8 @@ namespace bs { namespace ct
 		if(PixelUtil::IsCompressed(pixelData.GetFormat()))
 		{
 			Vector2I blockDim = PixelUtil::GetBlockDimensions(pixelData.GetFormat());
-			rowPitchInPixels *= blockDim.x;
-			slicePitchInPixels *= blockDim.x * blockDim.y;
+			rowPitchInPixels *= blockDim.X;
+			slicePitchInPixels *= blockDim.X * blockDim.Y;
 		}
 
 		return device.GetResourceManager().Create<VulkanBuffer>(buffer, allocation,
@@ -909,9 +909,9 @@ namespace bs { namespace ct
 
 		UINT32 mipWidth, mipHeight, mipDepth;
 
-		bool copyEntireSurface = desc.srcVolume.GetWidth() == 0 ||
-			desc.srcVolume.GetHeight() == 0 ||
-			desc.srcVolume.GetDepth() == 0;
+		bool copyEntireSurface = desc.SrcVolume.GetWidth() == 0 ||
+			desc.SrcVolume.GetHeight() == 0 ||
+			desc.SrcVolume.GetDepth() == 0;
 
 		if(copyEntireSurface)
 		{
@@ -919,56 +919,56 @@ namespace bs { namespace ct
 				srcProps.GetWidth(),
 				srcProps.GetHeight(),
 				srcProps.GetDepth(),
-				desc.srcMip,
+				desc.SrcMip,
 				mipWidth,
 				mipHeight,
 				mipDepth);
 		}
 		else
 		{
-			mipWidth = desc.srcVolume.GetWidth();
-			mipHeight = desc.srcVolume.GetHeight();
-			mipDepth = desc.srcVolume.GetDepth();
+			mipWidth = desc.SrcVolume.GetWidth();
+			mipHeight = desc.SrcVolume.GetHeight();
+			mipDepth = desc.SrcVolume.GetDepth();
 		}
 
 		VkImageResolve resolveRegion;
-		resolveRegion.srcOffset = { (INT32)desc.srcVolume.left, (INT32)desc.srcVolume.top, (INT32)desc.srcVolume.front };
-		resolveRegion.dstOffset = { desc.dstPosition.x, desc.dstPosition.y, desc.dstPosition.z };
+		resolveRegion.srcOffset = { (INT32)desc.SrcVolume.Left, (INT32)desc.SrcVolume.Top, (INT32)desc.SrcVolume.Front };
+		resolveRegion.dstOffset = { desc.DstPosition.X, desc.DstPosition.Y, desc.DstPosition.Z };
 		resolveRegion.extent = { mipWidth, mipHeight, mipDepth };
-		resolveRegion.srcSubresource.baseArrayLayer = desc.srcFace;
+		resolveRegion.srcSubresource.baseArrayLayer = desc.SrcFace;
 		resolveRegion.srcSubresource.layerCount = 1;
-		resolveRegion.srcSubresource.mipLevel = desc.srcMip;
+		resolveRegion.srcSubresource.mipLevel = desc.SrcMip;
 		resolveRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		resolveRegion.dstSubresource.baseArrayLayer = desc.dstFace;
+		resolveRegion.dstSubresource.baseArrayLayer = desc.DstFace;
 		resolveRegion.dstSubresource.layerCount = 1;
-		resolveRegion.dstSubresource.mipLevel = desc.dstMip;
+		resolveRegion.dstSubresource.mipLevel = desc.DstMip;
 		resolveRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 		VkImageCopy imageRegion;
-		imageRegion.srcOffset = { (INT32)desc.srcVolume.left, (INT32)desc.srcVolume.top, (INT32)desc.srcVolume.front };
-		imageRegion.dstOffset = { desc.dstPosition.x, desc.dstPosition.y, desc.dstPosition.z };
+		imageRegion.srcOffset = { (INT32)desc.SrcVolume.Left, (INT32)desc.SrcVolume.Top, (INT32)desc.SrcVolume.Front };
+		imageRegion.dstOffset = { desc.DstPosition.X, desc.DstPosition.Y, desc.DstPosition.Z };
 		imageRegion.extent = { mipWidth, mipHeight, mipDepth };
-		imageRegion.srcSubresource.baseArrayLayer = desc.srcFace;
+		imageRegion.srcSubresource.baseArrayLayer = desc.SrcFace;
 		imageRegion.srcSubresource.layerCount = 1;
-		imageRegion.srcSubresource.mipLevel = desc.srcMip;
+		imageRegion.srcSubresource.mipLevel = desc.SrcMip;
 		imageRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		imageRegion.dstSubresource.baseArrayLayer = desc.dstFace;
+		imageRegion.dstSubresource.baseArrayLayer = desc.DstFace;
 		imageRegion.dstSubresource.layerCount = 1;
-		imageRegion.dstSubresource.mipLevel = desc.dstMip;
+		imageRegion.dstSubresource.mipLevel = desc.DstMip;
 		imageRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 		VkImageSubresourceRange srcRange;
 		srcRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		srcRange.baseArrayLayer = desc.srcFace;
+		srcRange.baseArrayLayer = desc.SrcFace;
 		srcRange.layerCount = 1;
-		srcRange.baseMipLevel = desc.srcMip;
+		srcRange.baseMipLevel = desc.SrcMip;
 		srcRange.levelCount = 1;
 
 		VkImageSubresourceRange dstRange;
 		dstRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		dstRange.baseArrayLayer = desc.dstFace;
+		dstRange.baseArrayLayer = desc.DstFace;
 		dstRange.layerCount = 1;
-		dstRange.baseMipLevel = desc.dstMip;
+		dstRange.baseMipLevel = desc.DstMip;
 		dstRange.levelCount = 1;
 
 		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());

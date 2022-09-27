@@ -38,8 +38,8 @@ namespace bs { namespace ct
 		/**	Key uniquely identifying buffer and shader vertex declarations. */
 		struct VertexDeclarationKey
 		{
-			UINT32 bufferDeclId;
-			UINT32 shaderDeclId;
+			UINT32 BufferDeclId;
+			UINT32 ShaderDeclId;
 		};
 
 		/**	Creates a hash from vertex declaration key. */
@@ -59,12 +59,12 @@ namespace bs { namespace ct
 		/**	Contains data about a single instance of vertex input object. */
 		struct VertexInputEntry
 		{
-			VkVertexInputAttributeDescription* attributes;
-			VkVertexInputBindingDescription* bindings;
-			SPtr<VulkanVertexInput> vertexInput;
-			UINT32 lastUsedIdx;
+			VkVertexInputAttributeDescription* Attributes;
+			VkVertexInputBindingDescription* Bindings;
+			SPtr<VulkanVertexInput> VertexInput;
+			UINT32 LastUsedIdx;
 
-			GroupAlloc allocator;
+			GroupAlloc Allocator;
 		};
 
 	public:

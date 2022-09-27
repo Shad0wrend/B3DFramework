@@ -13,7 +13,7 @@ namespace bs
 
 	CharacterCollisionFlags NullPhysicsCharacterController::Move(const Vector3& displacement)
 	{
-		mDesc.position += displacement;
+		mDesc.Position += displacement;
 
 		return CharacterCollisionFlags();
 	}

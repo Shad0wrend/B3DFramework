@@ -25,7 +25,7 @@ namespace bs { namespace ct
 		VulkanDevice& device = mOwner->GetDevice();
 
 		for(auto& entry : mViews)
-			vkDestroyBufferView(device.GetLogical(), entry.view, gVulkanAllocator);
+			vkDestroyBufferView(device.GetLogical(), entry.View, gVulkanAllocator);
 
 		vkDestroyBuffer(device.GetLogical(), mBuffer, gVulkanAllocator);
 		device.FreeMemory(mAllocation);
@@ -122,12 +122,12 @@ namespace bs { namespace ct
 	VkBufferView VulkanBuffer::GetView(VkFormat format)
 	{
 		const auto iterFind = std::find_if(mViews.begin(), mViews.end(),
-			[format](const ViewInfo& x) { return x.format == format; });
+			[format](const ViewInfo& x) { return x.Format == format; });
 
 		if(iterFind != mViews.end())
 		{
-			iterFind->useCount++;
-			return iterFind->view;
+			iterFind->UseCount++;
+			return iterFind->View;
 		}
 
 		VkBufferViewCreateInfo viewCI;
@@ -150,12 +150,12 @@ namespace bs { namespace ct
 	void VulkanBuffer::FreeView(VkBufferView view)
 	{
 		const auto iterFind = std::find_if(mViews.begin(), mViews.end(),
-			[view](const ViewInfo& x) { return x.view == view; });
+			[view](const ViewInfo& x) { return x.View == view; });
 
 		if(iterFind != mViews.end())
 		{
-			assert(iterFind->useCount > 0);
-			iterFind->useCount--;
+			assert(iterFind->UseCount > 0);
+			iterFind->UseCount--;
 		}
 		else
 		{
@@ -167,9 +167,9 @@ namespace bs { namespace ct
 	{
 		for(auto iter = mViews.begin(); iter != mViews.end();)
 		{
-			if(iter->useCount == 0)
+			if(iter->UseCount == 0)
 			{
-				vkDestroyBufferView(GetDevice().GetLogical(), iter->view, gVulkanAllocator);
+				vkDestroyBufferView(GetDevice().GetLogical(), iter->View, gVulkanAllocator);
 				iter = mViews.erase(iter);
 			}
 			else

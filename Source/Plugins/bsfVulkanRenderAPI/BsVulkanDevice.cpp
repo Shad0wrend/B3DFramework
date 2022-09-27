@@ -17,7 +17,7 @@ namespace bs { namespace ct
 	{
 		// Set to default
 		for (UINT32 i = 0; i < GQT_COUNT; i++)
-			mQueueInfos[i].familyIdx = (UINT32)-1;
+			mQueueInfos[i].FamilyIdx = (UINT32)-1;
 
 		vkGetPhysicalDeviceProperties(device, &mDeviceProperties);
 		vkGetPhysicalDeviceFeatures(device, &mDeviceFeatures);
@@ -45,8 +45,8 @@ namespace bs { namespace ct
 			createInfo.queueCount = std::min(queueFamilyProperties[familyIdx].queueCount, (uint32_t)BS_MAX_QUEUES_PER_TYPE);
 			createInfo.pQueuePriorities = defaultQueuePriorities;
 
-			mQueueInfos[type].familyIdx = familyIdx;
-			mQueueInfos[type].queues.resize(createInfo.queueCount, nullptr);
+			mQueueInfos[type].FamilyIdx = familyIdx;
+			mQueueInfos[type].Queues.resize(createInfo.queueCount, nullptr);
 		};
 
 		// Look for dedicated compute queues
@@ -134,13 +134,13 @@ namespace bs { namespace ct
 		// Retrieve queues
 		for(UINT32 i = 0; i < GQT_COUNT; i++)
 		{
-			UINT32 numQueues = (UINT32)mQueueInfos[i].queues.size();
+			UINT32 numQueues = (UINT32)mQueueInfos[i].Queues.size();
 			for (UINT32 j = 0; j < numQueues; j++)
 			{
 				VkQueue queue;
-				vkGetDeviceQueue(mLogicalDevice, mQueueInfos[i].familyIdx, j, &queue);
+				vkGetDeviceQueue(mLogicalDevice, mQueueInfos[i].FamilyIdx, j, &queue);
 
-				mQueueInfos[i].queues[j] = bs_new<VulkanQueue>(*this, queue, (GpuQueueType)i, j);
+				mQueueInfos[i].Queues[j] = bs_new<VulkanQueue>(*this, queue, (GpuQueueType)i, j);
 			}
 		}
 
@@ -169,11 +169,11 @@ namespace bs { namespace ct
 
 		for (UINT32 i = 0; i < GQT_COUNT; i++)
 		{
-			UINT32 numQueues = (UINT32)mQueueInfos[i].queues.size();
+			UINT32 numQueues = (UINT32)mQueueInfos[i].Queues.size();
 			for (UINT32 j = 0; j < numQueues; j++)
 			{
-				mQueueInfos[i].queues[j]->RefreshStates(true, true);
-				bs_delete(mQueueInfos[i].queues[j]);
+				mQueueInfos[i].Queues[j]->RefreshStates(true, true);
+				bs_delete(mQueueInfos[i].Queues[j]);
 			}
 		}
 
@@ -238,23 +238,23 @@ namespace bs { namespace ct
 		assert(result == VK_SUCCESS);
 
 		SurfaceFormat output;
-		output.colorFormat = VK_FORMAT_R8G8B8A8_UNORM;
-		output.colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+		output.ColorFormat = VK_FORMAT_R8G8B8A8_UNORM;
+		output.ColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
 
 		PixelFormat depthFormat = VulkanUtility::GetClosestSupportedPixelFormat(*this, PF_D24S8, TEX_TYPE_2D,
 			TU_DEPTHSTENCIL, true, false);
 
-		output.depthFormat = VulkanUtility::GetPixelFormat(depthFormat);
+		output.DepthFormat = VulkanUtility::GetPixelFormat(depthFormat);
 
 		// If there is no preferred format, use standard RGBA
 		if ((numFormats == 1) && (surfaceFormats[0].format == VK_FORMAT_UNDEFINED))
 		{
 			if (gamma)
-				output.colorFormat = VK_FORMAT_R8G8B8A8_SRGB;
+				output.ColorFormat = VK_FORMAT_R8G8B8A8_SRGB;
 			else
-				output.colorFormat = VK_FORMAT_B8G8R8A8_UNORM;
+				output.ColorFormat = VK_FORMAT_B8G8R8A8_UNORM;
 
-			output.colorSpace = surfaceFormats[0].colorSpace;
+			output.ColorSpace = surfaceFormats[0].colorSpace;
 		}
 		else
 		{
@@ -299,8 +299,8 @@ namespace bs { namespace ct
 				{
 					if(surfaceFormats[j].format == wantedFormats[i])
 					{
-						output.colorFormat = surfaceFormats[j].format;
-						output.colorSpace = surfaceFormats[j].colorSpace;
+						output.ColorFormat = surfaceFormats[j].format;
+						output.ColorSpace = surfaceFormats[j].colorSpace;
 
 						foundFormat = true;
 						break;
@@ -314,8 +314,8 @@ namespace bs { namespace ct
 			// If we haven't found anything, fall back to first available
 			if(!foundFormat)
 			{
-				output.colorFormat = surfaceFormats[0].format;
-				output.colorSpace = surfaceFormats[0].colorSpace;
+				output.ColorFormat = surfaceFormats[0].format;
+				output.ColorSpace = surfaceFormats[0].colorSpace;
 
 				if (gamma)
 				{

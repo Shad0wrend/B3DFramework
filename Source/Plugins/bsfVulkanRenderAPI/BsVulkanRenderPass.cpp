@@ -8,16 +8,16 @@
 namespace bs { namespace ct
 {
 	VulkanRenderPass::VariantKey::VariantKey(RenderSurfaceMask loadMask, RenderSurfaceMask readMask,
-		ClearMask clearMask)
-		:loadMask(loadMask), readMask(readMask), clearMask(clearMask)
+		::bs::ct::ClearMask clearMask)
+		:LoadMask(loadMask), ReadMask(readMask), ClearMask(clearMask)
 	{ }
 
 	size_t VulkanRenderPass::VariantKey::HashFunction::operator()(const VariantKey& v) const
 	{
 		size_t hash = 0;
-		bs_hash_combine(hash, v.readMask);
-		bs_hash_combine(hash, v.loadMask);
-		bs_hash_combine(hash, v.clearMask);
+		bs_hash_combine(hash, v.ReadMask);
+		bs_hash_combine(hash, v.LoadMask);
+		bs_hash_combine(hash, v.ClearMask);
 
 		return hash;
 	}
@@ -25,7 +25,7 @@ namespace bs { namespace ct
 	bool VulkanRenderPass::VariantKey::EqualFunction::operator()(
 		const VariantKey& lhs, const VariantKey& rhs) const
 	{
-		return lhs.loadMask == rhs.loadMask && lhs.readMask == rhs.readMask && lhs.clearMask == rhs.clearMask;
+		return lhs.LoadMask == rhs.LoadMask && lhs.ReadMask == rhs.ReadMask && lhs.ClearMask == rhs.ClearMask;
 	}
 
 	UINT32 VulkanRenderPass::sNextValidId = 1;
@@ -34,17 +34,17 @@ namespace bs { namespace ct
 		:mDevice(device)
 	{
 		mId = sNextValidId++;
-		mSampleFlags = VulkanUtility::GetSampleFlags(desc.numSamples);
+		mSampleFlags = VulkanUtility::GetSampleFlags(desc.NumSamples);
 
 		UINT32 attachmentIdx = 0;
 		for(UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
-			if(!desc.color[i].enabled)
+			if(!desc.Color[i].Enabled)
 				continue;
 
 			VkAttachmentDescription& attachmentDesc = mAttachments[attachmentIdx];
 			attachmentDesc.flags = 0;
-			attachmentDesc.format = desc.color[i].format;
+			attachmentDesc.format = desc.Color[i].Format;
 			attachmentDesc.samples = mSampleFlags;
 			attachmentDesc.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			attachmentDesc.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -53,7 +53,7 @@ namespace bs { namespace ct
 			attachmentDesc.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 			// If offscreen we make the assumption the surface will be read by a shader
-			if(desc.offscreen)
+			if(desc.Offscreen)
 				attachmentDesc.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			else
 				attachmentDesc.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
@@ -67,13 +67,13 @@ namespace bs { namespace ct
 		}
 
 		mNumColorAttachments = attachmentIdx;
-		mHasDepth = desc.depth.enabled;
+		mHasDepth = desc.Depth.Enabled;
 
 		if (mHasDepth)
 		{
 			VkAttachmentDescription& attachmentDesc = mAttachments[attachmentIdx];
 			attachmentDesc.flags = 0;
-			attachmentDesc.format = desc.depth.format;
+			attachmentDesc.format = desc.Depth.Format;
 			attachmentDesc.samples = mSampleFlags;
 			attachmentDesc.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 			attachmentDesc.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -297,22 +297,22 @@ namespace bs { namespace ct
 	}
 
 	VulkanRenderPasses::VariantKey::VariantKey(const VkDevice& device, const VULKAN_RENDER_PASS_DESC& desc)
-		:device(device), desc(desc)
+		:Device(device), Desc(desc)
 	{ }
 
 	size_t VulkanRenderPasses::VariantKey::HashFunction::operator()(const VariantKey& v) const
 	{
 		size_t hash = 0;
-		bs_hash_combine(hash, v.device);
-		bs_hash_combine(hash, v.desc.offscreen);
-		bs_hash_combine(hash, v.desc.numSamples);
-		bs_hash_combine(hash, v.desc.depth.enabled);
-		bs_hash_combine(hash, v.desc.depth.format);
+		bs_hash_combine(hash, v.Device);
+		bs_hash_combine(hash, v.Desc.Offscreen);
+		bs_hash_combine(hash, v.Desc.NumSamples);
+		bs_hash_combine(hash, v.Desc.Depth.Enabled);
+		bs_hash_combine(hash, v.Desc.Depth.Format);
 
-		for(UINT32 i = 0; i < bs_size(v.desc.color); i++)
+		for(UINT32 i = 0; i < bs_size(v.Desc.Color); i++)
 		{
-			bs_hash_combine(hash, v.desc.color[i].enabled);
-			bs_hash_combine(hash, v.desc.color[i].format);
+			bs_hash_combine(hash, v.Desc.Color[i].Enabled);
+			bs_hash_combine(hash, v.Desc.Color[i].Format);
 		}
 
 		return hash;
@@ -320,17 +320,17 @@ namespace bs { namespace ct
 
 	bool VulkanRenderPasses::VariantKey::EqualFunction::operator()(const VariantKey& lhs, const VariantKey& rhs) const
 	{
-		if(lhs.device != rhs.device ||
-			lhs.desc.offscreen != rhs.desc.offscreen ||
-			lhs.desc.numSamples != rhs.desc.numSamples ||
-			lhs.desc.depth.enabled != rhs.desc.depth.enabled ||
-			lhs.desc.depth.format != rhs.desc.depth.format)
+		if(lhs.Device != rhs.Device ||
+			lhs.Desc.Offscreen != rhs.Desc.Offscreen ||
+			lhs.Desc.NumSamples != rhs.Desc.NumSamples ||
+			lhs.Desc.Depth.Enabled != rhs.Desc.Depth.Enabled ||
+			lhs.Desc.Depth.Format != rhs.Desc.Depth.Format)
 			return false;
 
-		for(UINT32 i = 0; i < bs_size(lhs.desc.color); i++)
+		for(UINT32 i = 0; i < bs_size(lhs.Desc.Color); i++)
 		{
-			if(lhs.desc.color[i].enabled != rhs.desc.color[i].enabled ||
-				lhs.desc.color[i].format != rhs.desc.color[i].format)
+			if(lhs.Desc.Color[i].Enabled != rhs.Desc.Color[i].Enabled ||
+				lhs.Desc.Color[i].Format != rhs.Desc.Color[i].Format)
 				return false;
 		}
 

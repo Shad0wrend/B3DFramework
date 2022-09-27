@@ -15,10 +15,10 @@ namespace bs { namespace ct
 		/** Compares two descriptor layouts. */
 		bool operator==(const VulkanLayoutKey& rhs) const;
 
-		UINT32 numBindings;
-		VkDescriptorSetLayoutBinding* bindings;
+		UINT32 NumBindings;
+		VkDescriptorSetLayoutBinding* Bindings;
 
-		VulkanDescriptorLayout* layout = nullptr;
+		VulkanDescriptorLayout* Layout = nullptr;
 	};
 
 	/** Used as a key in a hash map containing pipeline layouts. */
@@ -32,8 +32,8 @@ namespace bs { namespace ct
 		/** Calculates a has value for the provided descriptor layouts. */
 		size_t CalculateHash() const;
 
-		UINT32 numLayouts;
-		VulkanDescriptorLayout** layouts;
+		UINT32 NumLayouts;
+		VulkanDescriptorLayout** Layouts;
 	};
 }}
 
@@ -50,10 +50,10 @@ namespace std
 	{
 		size_t operator()(const bs::ct::VulkanLayoutKey& value) const
 		{
-			if (value.layout != nullptr)
-				return value.layout->GetHash();
+			if (value.Layout != nullptr)
+				return value.Layout->GetHash();
 
-			return bs::ct::VulkanDescriptorLayout::CalculateHash(value.bindings, value.numBindings);
+			return bs::ct::VulkanDescriptorLayout::CalculateHash(value.Bindings, value.NumBindings);
 		}
 	};
 

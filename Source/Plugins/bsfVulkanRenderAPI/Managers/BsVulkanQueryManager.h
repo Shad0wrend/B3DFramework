@@ -59,8 +59,8 @@ namespace bs { namespace ct
 		/** Query buffer pool and related information. */
 		struct PoolInfo
 		{
-			VkQueryPool pool = VK_NULL_HANDLE;
-			UINT32 startIdx;
+			VkQueryPool Pool = VK_NULL_HANDLE;
+			UINT32 StartIdx;
 		};
 
 		/** Attempts to find a free query of the specified type, or allocates a new one. Creates new pools as needed. */

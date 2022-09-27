@@ -262,10 +262,10 @@ namespace bs { namespace ct
 #endif
 
 		GPUInfo gpuInfo;
-		gpuInfo.numGPUs = std::min(5U, mNumDevices);
+		gpuInfo.NumGpUs = std::min(5U, mNumDevices);
 
-		for(UINT32 i = 0; i < gpuInfo.numGPUs; i++)
-			gpuInfo.names[i] = mDevices[i]->GetDeviceProperties().deviceName;
+		for(UINT32 i = 0; i < gpuInfo.NumGpUs; i++)
+			gpuInfo.Names[i] = mDevices[i]->GetDeviceProperties().deviceName;
 
 		PlatformUtility::SetGPUInfoInternal(gpuInfo);
 
@@ -404,9 +404,9 @@ namespace bs { namespace ct
 				continue;
 
 			// Flush all param block buffers
-			for (auto iter = paramDesc->paramBlocks.begin(); iter != paramDesc->paramBlocks.end(); ++iter)
+			for (auto iter = paramDesc->ParamBlocks.begin(); iter != paramDesc->ParamBlocks.end(); ++iter)
 			{
-				SPtr<GpuParamBlockBuffer> buffer = gpuParams->GetParamBlockBuffer(iter->second.set, iter->second.slot);
+				SPtr<GpuParamBlockBuffer> buffer = gpuParams->GetParamBlockBuffer(iter->second.Set, iter->second.Slot);
 
 				if (buffer != nullptr)
 					buffer->FlushToGpu(globalQueueIdx);
@@ -613,36 +613,36 @@ namespace bs { namespace ct
 	GpuParamBlockDesc VulkanRenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params)
 	{
 		GpuParamBlockDesc block;
-		block.blockSize = 0;
-		block.isShareable = true;
-		block.name = name;
-		block.slot = 0;
-		block.set = 0;
+		block.BlockSize = 0;
+		block.IsShareable = true;
+		block.Name = name;
+		block.Slot = 0;
+		block.Set = 0;
 
 		for (auto& param : params)
 		{
 			UINT32 size;
-			if(param.type == GPDT_STRUCT)
+			if(param.Type == GPDT_STRUCT)
 			{
 				// Structs are always aligned and rounded up to vec4
-				size = Math::DivideAndRoundUp(param.elementSize, 16U) * 4;
-				block.blockSize = Math::DivideAndRoundUp(block.blockSize, 4U) * 4;
+				size = Math::DivideAndRoundUp(param.ElementSize, 16U) * 4;
+				block.BlockSize = Math::DivideAndRoundUp(block.BlockSize, 4U) * 4;
 			}
 			else
-				size = VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(param.type, param.arraySize, block.blockSize);
+				size = VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(param.Type, param.ArraySize, block.BlockSize);
 
-			param.elementSize = size;
-			param.arrayElementStride = size;
-			param.cpuMemOffset = block.blockSize;
-			param.gpuMemOffset = 0;
-			block.blockSize += size * param.arraySize;
-			param.paramBlockSlot = 0;
-			param.paramBlockSet = 0;
+			param.ElementSize = size;
+			param.ArrayElementStride = size;
+			param.CpuMemOffset = block.BlockSize;
+			param.GpuMemOffset = 0;
+			block.BlockSize += size * param.ArraySize;
+			param.ParamBlockSlot = 0;
+			param.ParamBlockSet = 0;
 		}
 
 		// Constant buffer size must always be a multiple of 16
-		if (block.blockSize % 4 != 0)
-			block.blockSize += (4 - (block.blockSize % 4));
+		if (block.BlockSize % 4 != 0)
+			block.BlockSize += (4 - (block.BlockSize % 4));
 
 		return block;
 	}
@@ -662,33 +662,33 @@ namespace bs { namespace ct
 			const VkPhysicalDeviceLimits& deviceLimits = deviceProps.limits;
 
 			DriverVersion driverVersion;
-			driverVersion.major = ((uint32_t)(deviceProps.apiVersion) >> 22);
-			driverVersion.minor = ((uint32_t)(deviceProps.apiVersion) >> 12) & 0x3ff;
-			driverVersion.release = (uint32_t)(deviceProps.apiVersion) & 0xfff;
-			driverVersion.build = 0;
+			driverVersion.Major = ((uint32_t)(deviceProps.apiVersion) >> 22);
+			driverVersion.Minor = ((uint32_t)(deviceProps.apiVersion) >> 12) & 0x3ff;
+			driverVersion.Release = (uint32_t)(deviceProps.apiVersion) & 0xfff;
+			driverVersion.Build = 0;
 
-			caps.driverVersion = driverVersion;
-			caps.deviceName = deviceProps.deviceName;
+			caps.DriverVersion = driverVersion;
+			caps.DeviceName = deviceProps.deviceName;
 			
 			// Determine vendor
 			switch (deviceProps.vendorID)
 			{
 			case 0x10DE:
-				caps.deviceVendor = GPU_NVIDIA;
+				caps.DeviceVendor = GPU_NVIDIA;
 				break;
 			case 0x1002:
-				caps.deviceVendor = GPU_AMD;
+				caps.DeviceVendor = GPU_AMD;
 				break;
 			case 0x163C:
 			case 0x8086:
-				caps.deviceVendor = GPU_INTEL;
+				caps.DeviceVendor = GPU_INTEL;
 				break;
 			default:
-				caps.deviceVendor = GPU_UNKNOWN;
+				caps.DeviceVendor = GPU_UNKNOWN;
 				break;
 			};
 			
-			caps.renderAPIName = GetName();
+			caps.RenderApiName = GetName();
 
 			if(deviceFeatures.textureCompressionBC)
 				caps.SetCapability(RSC_TEXTURE_COMPRESSION_BC);
@@ -707,62 +707,62 @@ namespace bs { namespace ct
 			caps.SetCapability(RSC_RENDER_TARGET_LAYERS);
 			caps.SetCapability(RSC_MULTI_THREADED_CB);
 
-			caps.conventions.ndcYAxis = Conventions::Axis::Down;
-			caps.conventions.matrixOrder = Conventions::MatrixOrder::ColumnMajor;
+			caps.Conventions.NdcYAxis = Conventions::Axis::Down;
+			caps.Conventions.MatrixOrder = Conventions::MatrixOrder::ColumnMajor;
 
-			caps.maxBoundVertexBuffers = deviceLimits.maxVertexInputBindings;
-			caps.numMultiRenderTargets = deviceLimits.maxColorAttachments;
+			caps.MaxBoundVertexBuffers = deviceLimits.maxVertexInputBindings;
+			caps.NumMultiRenderTargets = deviceLimits.maxColorAttachments;
 
-			caps.numTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = deviceLimits.maxPerStageDescriptorSampledImages;
-			caps.numTextureUnitsPerStage[GPT_VERTEX_PROGRAM] = deviceLimits.maxPerStageDescriptorSampledImages;
-			caps.numTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = deviceLimits.maxPerStageDescriptorSampledImages;
+			caps.NumTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = deviceLimits.maxPerStageDescriptorSampledImages;
+			caps.NumTextureUnitsPerStage[GPT_VERTEX_PROGRAM] = deviceLimits.maxPerStageDescriptorSampledImages;
+			caps.NumTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = deviceLimits.maxPerStageDescriptorSampledImages;
 
-			caps.numGpuParamBlockBuffersPerStage[GPT_FRAGMENT_PROGRAM] = deviceLimits.maxPerStageDescriptorUniformBuffers;
-			caps.numGpuParamBlockBuffersPerStage[GPT_VERTEX_PROGRAM] = deviceLimits.maxPerStageDescriptorUniformBuffers;
-			caps.numGpuParamBlockBuffersPerStage[GPT_COMPUTE_PROGRAM] = deviceLimits.maxPerStageDescriptorUniformBuffers;
+			caps.NumGpuParamBlockBuffersPerStage[GPT_FRAGMENT_PROGRAM] = deviceLimits.maxPerStageDescriptorUniformBuffers;
+			caps.NumGpuParamBlockBuffersPerStage[GPT_VERTEX_PROGRAM] = deviceLimits.maxPerStageDescriptorUniformBuffers;
+			caps.NumGpuParamBlockBuffersPerStage[GPT_COMPUTE_PROGRAM] = deviceLimits.maxPerStageDescriptorUniformBuffers;
 
-			caps.numLoadStoreTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = deviceLimits.maxPerStageDescriptorStorageImages;
-			caps.numLoadStoreTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = deviceLimits.maxPerStageDescriptorStorageImages;
+			caps.NumLoadStoreTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = deviceLimits.maxPerStageDescriptorStorageImages;
+			caps.NumLoadStoreTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = deviceLimits.maxPerStageDescriptorStorageImages;
 
 			if(deviceFeatures.geometryShader)
 			{
 				caps.SetCapability(RSC_GEOMETRY_PROGRAM);
 				caps.AddShaderProfile("gs_5_0");
-				caps.numTextureUnitsPerStage[GPT_GEOMETRY_PROGRAM] = deviceLimits.maxPerStageDescriptorSampledImages;
-				caps.numGpuParamBlockBuffersPerStage[GPT_GEOMETRY_PROGRAM] = deviceLimits.maxPerStageDescriptorUniformBuffers;
-				caps.geometryProgramNumOutputVertices = deviceLimits.maxGeometryOutputVertices;
+				caps.NumTextureUnitsPerStage[GPT_GEOMETRY_PROGRAM] = deviceLimits.maxPerStageDescriptorSampledImages;
+				caps.NumGpuParamBlockBuffersPerStage[GPT_GEOMETRY_PROGRAM] = deviceLimits.maxPerStageDescriptorUniformBuffers;
+				caps.GeometryProgramNumOutputVertices = deviceLimits.maxGeometryOutputVertices;
 			}
 
 			if (deviceFeatures.tessellationShader)
 			{
 				caps.SetCapability(RSC_TESSELLATION_PROGRAM);
 
-				caps.numTextureUnitsPerStage[GPT_HULL_PROGRAM] = deviceLimits.maxPerStageDescriptorSampledImages;
-				caps.numTextureUnitsPerStage[GPT_DOMAIN_PROGRAM] = deviceLimits.maxPerStageDescriptorSampledImages;
+				caps.NumTextureUnitsPerStage[GPT_HULL_PROGRAM] = deviceLimits.maxPerStageDescriptorSampledImages;
+				caps.NumTextureUnitsPerStage[GPT_DOMAIN_PROGRAM] = deviceLimits.maxPerStageDescriptorSampledImages;
 				
-				caps.numGpuParamBlockBuffersPerStage[GPT_HULL_PROGRAM] = deviceLimits.maxPerStageDescriptorUniformBuffers;
-				caps.numGpuParamBlockBuffersPerStage[GPT_DOMAIN_PROGRAM] = deviceLimits.maxPerStageDescriptorUniformBuffers;
+				caps.NumGpuParamBlockBuffersPerStage[GPT_HULL_PROGRAM] = deviceLimits.maxPerStageDescriptorUniformBuffers;
+				caps.NumGpuParamBlockBuffersPerStage[GPT_DOMAIN_PROGRAM] = deviceLimits.maxPerStageDescriptorUniformBuffers;
 			}
 
-			caps.numCombinedTextureUnits
-				= caps.numTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM]
-				+ caps.numTextureUnitsPerStage[GPT_VERTEX_PROGRAM]
-				+ caps.numTextureUnitsPerStage[GPT_GEOMETRY_PROGRAM]
-				+ caps.numTextureUnitsPerStage[GPT_HULL_PROGRAM]
-				+ caps.numTextureUnitsPerStage[GPT_DOMAIN_PROGRAM]
-				+ caps.numTextureUnitsPerStage[GPT_COMPUTE_PROGRAM];
+			caps.NumCombinedTextureUnits
+				= caps.NumTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM]
+				+ caps.NumTextureUnitsPerStage[GPT_VERTEX_PROGRAM]
+				+ caps.NumTextureUnitsPerStage[GPT_GEOMETRY_PROGRAM]
+				+ caps.NumTextureUnitsPerStage[GPT_HULL_PROGRAM]
+				+ caps.NumTextureUnitsPerStage[GPT_DOMAIN_PROGRAM]
+				+ caps.NumTextureUnitsPerStage[GPT_COMPUTE_PROGRAM];
 
-			caps.numCombinedParamBlockBuffers
-				= caps.numGpuParamBlockBuffersPerStage[GPT_FRAGMENT_PROGRAM]
-				+ caps.numGpuParamBlockBuffersPerStage[GPT_VERTEX_PROGRAM]
-				+ caps.numGpuParamBlockBuffersPerStage[GPT_GEOMETRY_PROGRAM]
-				+ caps.numGpuParamBlockBuffersPerStage[GPT_HULL_PROGRAM]
-				+ caps.numGpuParamBlockBuffersPerStage[GPT_DOMAIN_PROGRAM]
-				+ caps.numGpuParamBlockBuffersPerStage[GPT_COMPUTE_PROGRAM];
+			caps.NumCombinedParamBlockBuffers
+				= caps.NumGpuParamBlockBuffersPerStage[GPT_FRAGMENT_PROGRAM]
+				+ caps.NumGpuParamBlockBuffersPerStage[GPT_VERTEX_PROGRAM]
+				+ caps.NumGpuParamBlockBuffersPerStage[GPT_GEOMETRY_PROGRAM]
+				+ caps.NumGpuParamBlockBuffersPerStage[GPT_HULL_PROGRAM]
+				+ caps.NumGpuParamBlockBuffersPerStage[GPT_DOMAIN_PROGRAM]
+				+ caps.NumGpuParamBlockBuffersPerStage[GPT_COMPUTE_PROGRAM];
 
-			caps.numCombinedLoadStoreTextureUnits
-				= caps.numLoadStoreTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM]
-				+ caps.numLoadStoreTextureUnitsPerStage[GPT_COMPUTE_PROGRAM];
+			caps.NumCombinedLoadStoreTextureUnits
+				= caps.NumLoadStoreTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM]
+				+ caps.NumLoadStoreTextureUnitsPerStage[GPT_COMPUTE_PROGRAM];
 
 			caps.AddShaderProfile("glsl");
 

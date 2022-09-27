@@ -10,30 +10,30 @@
 namespace bs { namespace ct
 {
 	VulkanLayoutKey::VulkanLayoutKey(VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings)
-		:numBindings(numBindings), bindings(bindings)
+		:NumBindings(numBindings), Bindings(bindings)
 	{ }
 
 	bool VulkanLayoutKey::operator==(const VulkanLayoutKey& rhs) const
 	{
 		// If both have a layout, use that to compare directly, otherwise do it per-binding
-		if (layout != nullptr && rhs.layout != nullptr)
-			return layout == rhs.layout;
+		if (Layout != nullptr && rhs.Layout != nullptr)
+			return Layout == rhs.Layout;
 
-		if (numBindings != rhs.numBindings)
+		if (NumBindings != rhs.NumBindings)
 			return false;
 
-		for (UINT32 i = 0; i < numBindings; i++)
+		for (UINT32 i = 0; i < NumBindings; i++)
 		{
-			if (bindings[i].binding != rhs.bindings[i].binding)
+			if (Bindings[i].binding != rhs.Bindings[i].binding)
 				return false;
 
-			if (bindings[i].descriptorType != rhs.bindings[i].descriptorType)
+			if (Bindings[i].descriptorType != rhs.Bindings[i].descriptorType)
 				return false;
 
-			if (bindings[i].descriptorCount != rhs.bindings[i].descriptorCount)
+			if (Bindings[i].descriptorCount != rhs.Bindings[i].descriptorCount)
 				return false;
 
-			if (bindings[i].stageFlags != rhs.bindings[i].stageFlags)
+			if (Bindings[i].stageFlags != rhs.Bindings[i].stageFlags)
 				return false;
 		}
 
@@ -41,19 +41,19 @@ namespace bs { namespace ct
 	}
 
 	VulkanPipelineLayoutKey::VulkanPipelineLayoutKey(VulkanDescriptorLayout** layouts, UINT32 numLayouts)
-		:numLayouts(numLayouts), layouts(layouts)
+		:NumLayouts(numLayouts), Layouts(layouts)
 	{
 		
 	}
 
 	bool VulkanPipelineLayoutKey::operator==(const VulkanPipelineLayoutKey& rhs) const
 	{
-		if (numLayouts != rhs.numLayouts)
+		if (NumLayouts != rhs.NumLayouts)
 			return false;
 
-		for (UINT32 i = 0; i < numLayouts; i++)
+		for (UINT32 i = 0; i < NumLayouts; i++)
 		{
-			if (layouts[i] != rhs.layouts[i])
+			if (Layouts[i] != rhs.Layouts[i])
 				return false;
 		}
 
@@ -63,8 +63,8 @@ namespace bs { namespace ct
 	size_t VulkanPipelineLayoutKey::CalculateHash() const
 	{
 		size_t hash = 0;
-		for (UINT32 i = 0; i < numLayouts; i++)
-			bs_hash_combine(hash, layouts[i]->GetHash());
+		for (UINT32 i = 0; i < NumLayouts; i++)
+			bs_hash_combine(hash, Layouts[i]->GetHash());
 
 		return hash;
 	}
@@ -79,13 +79,13 @@ namespace bs { namespace ct
 	{
 		for (auto& entry : mLayouts)
 		{
-			bs_delete(entry.layout);
-			bs_free(entry.bindings);
+			bs_delete(entry.Layout);
+			bs_free(entry.Bindings);
 		}
 
 		for (auto& entry : mPipelineLayouts)
 		{
-			bs_free(entry.first.layouts);
+			bs_free(entry.first.Layouts);
 			vkDestroyPipelineLayout(mDevice.GetLogical(), entry.second, gVulkanAllocator);
 		}
 
@@ -99,16 +99,16 @@ namespace bs { namespace ct
 
 		auto iterFind = mLayouts.find(key);
 		if (iterFind != mLayouts.end())
-			return iterFind->layout;
+			return iterFind->Layout;
 
 		// Create new
-		key.bindings = bs_allocN<VkDescriptorSetLayoutBinding>(numBindings);
-		memcpy(key.bindings, bindings, numBindings * sizeof(VkDescriptorSetLayoutBinding));
+		key.Bindings = bs_allocN<VkDescriptorSetLayoutBinding>(numBindings);
+		memcpy(key.Bindings, bindings, numBindings * sizeof(VkDescriptorSetLayoutBinding));
 
-		key.layout = bs_new<VulkanDescriptorLayout>(mDevice, key.bindings, numBindings);
+		key.Layout = bs_new<VulkanDescriptorLayout>(mDevice, key.Bindings, numBindings);
 		mLayouts.insert(key);
 		
-		return key.layout;
+		return key.Layout;
 	}
 
 	VulkanDescriptorSet* VulkanDescriptorManager::CreateSet(VulkanDescriptorLayout* layout)
@@ -168,8 +168,8 @@ namespace bs { namespace ct
 
 		bs_stack_free(setLayouts);
 
-		key.layouts = (VulkanDescriptorLayout**)bs_alloc(sizeof(VulkanDescriptorLayout*) * numLayouts);
-		memcpy(key.layouts, layouts, sizeof(VulkanDescriptorLayout*) * numLayouts);
+		key.Layouts = (VulkanDescriptorLayout**)bs_alloc(sizeof(VulkanDescriptorLayout*) * numLayouts);
+		memcpy(key.Layouts, layouts, sizeof(VulkanDescriptorLayout*) * numLayouts);
 
 		mPipelineLayouts.insert(std::make_pair(key, pipelineLayout));
 		return pipelineLayout;

@@ -58,34 +58,34 @@ namespace bs { namespace ct
 
 		if(!mBytecode ||
 #if BS_PLATFORM == BS_PLATFORM_OSX
-			mBytecode->compilerId != MOLTENVK_COMPILER_ID || mBytecode->compilerVersion != MOLTENVK_COMPILER_VERSION)
+			mBytecode->CompilerId != MOLTENVK_COMPILER_ID || mBytecode->CompilerVersion != MOLTENVK_COMPILER_VERSION)
 #else
-			mBytecode->compilerId != VULKAN_COMPILER_ID || mBytecode->compilerVersion != VULKAN_COMPILER_VERSION)
+			mBytecode->CompilerId != VULKAN_COMPILER_ID || mBytecode->CompilerVersion != VULKAN_COMPILER_VERSION)
 #endif
 		{
 			GPU_PROGRAM_DESC desc;
-			desc.type = mType;
-			desc.entryPoint = mEntryPoint;
+			desc.Type = mType;
+			desc.EntryPoint = mEntryPoint;
 #if BS_PLATFORM == BS_PLATFORM_OSX
 			desc.language = "mvksl";
 #else
-			desc.language = "vksl";
+			desc.Language = "vksl";
 #endif
-			desc.source = mSource;
+			desc.Source = mSource;
 
 			mBytecode = CompileBytecode(desc);
 		}
 
-		mCompileMessages = mBytecode->messages;
-		mIsCompiled = mBytecode->instructions.data != nullptr;
+		mCompileMessages = mBytecode->Messages;
+		mIsCompiled = mBytecode->Instructions.Data != nullptr;
 
 		if(mIsCompiled)
 		{
 			VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 			VulkanDevice* devices[BS_MAX_DEVICES];
 
-			UINT32 codeSize = mBytecode->instructions.size;
-			UINT8* code = mBytecode->instructions.data;
+			UINT32 codeSize = mBytecode->Instructions.Size;
+			UINT8* code = mBytecode->Instructions.Data;
 
 #if BS_PLATFORM == BS_PLATFORM_OSX
 			UINT32 workgroupSize[3] = { 1, 1, 1 };
@@ -128,12 +128,12 @@ namespace bs { namespace ct
 				}
 			}
 
-			mParametersDesc = mBytecode->paramDesc;
+			mParametersDesc = mBytecode->ParamDesc;
 
 			if (mType == GPT_VERTEX_PROGRAM)
 			{
 				mInputDeclaration = HardwareBufferManager::Instance().CreateVertexDeclaration(
-					mBytecode->vertexInput, mDeviceMask);
+					mBytecode->VertexInput, mDeviceMask);
 			}
 		}
 

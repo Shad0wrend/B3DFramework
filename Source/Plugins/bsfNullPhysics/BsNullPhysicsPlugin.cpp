@@ -12,7 +12,7 @@ namespace bs
 		void StartUp(bool cooking) 
 		{
 			PHYSICS_INIT_DESC initDesc;
-			initDesc.initCooking = cooking;
+			initDesc.InitCooking = cooking;
 
 			Physics::StartUp<NullPhysics>(initDesc);
 		}

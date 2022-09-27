@@ -49,9 +49,9 @@ namespace bs { namespace ct
 		samplerInfo.magFilter = VulkanUtility::GetFilter(magFilter);
 		samplerInfo.minFilter = VulkanUtility::GetFilter(minFilter);
 		samplerInfo.mipmapMode = VulkanUtility::GetMipFilter(mipFilter);
-		samplerInfo.addressModeU = VulkanUtility::GetAddressingMode(addressMode.u);
-		samplerInfo.addressModeV = VulkanUtility::GetAddressingMode(addressMode.v);
-		samplerInfo.addressModeW = VulkanUtility::GetAddressingMode(addressMode.w);
+		samplerInfo.addressModeU = VulkanUtility::GetAddressingMode(addressMode.U);
+		samplerInfo.addressModeV = VulkanUtility::GetAddressingMode(addressMode.V);
+		samplerInfo.addressModeW = VulkanUtility::GetAddressingMode(addressMode.W);
 		samplerInfo.mipLodBias = GetProperties().GetTextureMipmapBias();
 		samplerInfo.anisotropyEnable = anisotropy;
 		samplerInfo.maxAnisotropy = (float)GetProperties().GetTextureAnisotropy();

@@ -12,7 +12,7 @@
 namespace bs
 {
 	ManagedSerializableDiff::ModifiedField::ModifiedField(const SPtr<ManagedSerializableTypeInfo>& parentType,
-		const SPtr<ManagedSerializableMemberInfo>& fieldType, const SPtr<Modification>& modification)
+		const SPtr<ManagedSerializableMemberInfo>& fieldType, const SPtr<ManagedSerializableDiff::Modification>& modification)
 		:ParentType(parentType), FieldType(fieldType), Modification(modification)
 	{ }
 
@@ -26,7 +26,7 @@ namespace bs
 		return GetRttiStatic();
 	}
 
-	ManagedSerializableDiff::ModifiedArrayEntry::ModifiedArrayEntry(UINT32 idx, const SPtr<Modification>& modification)
+	ManagedSerializableDiff::ModifiedArrayEntry::ModifiedArrayEntry(UINT32 idx, const SPtr<ManagedSerializableDiff::Modification>& modification)
 		:Idx(idx), Modification(modification)
 	{ }
 
@@ -41,7 +41,7 @@ namespace bs
 	}
 
 	ManagedSerializableDiff::ModifiedDictionaryEntry::ModifiedDictionaryEntry(
-		const SPtr<ManagedSerializableFieldData>& key, const SPtr<Modification>& modification)
+		const SPtr<ManagedSerializableFieldData>& key, const SPtr<ManagedSerializableDiff::Modification>& modification)
 		:Key(key), Modification(modification)
 	{ }
 

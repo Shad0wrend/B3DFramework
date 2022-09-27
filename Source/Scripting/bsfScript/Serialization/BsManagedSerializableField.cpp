@@ -101,7 +101,7 @@ namespace bs
 				{
 					auto fieldData = bs_shared_ptr_new<ManagedSerializableFieldDataBool>();
 					if(value != nullptr)
-						memcpy(&fieldData->value, MonoUtil::Unbox(value), sizeof(fieldData->value));
+						memcpy(&fieldData->Value, MonoUtil::Unbox(value), sizeof(fieldData->Value));
 
 					return fieldData;
 				}
@@ -109,7 +109,7 @@ namespace bs
 				{
 					auto fieldData = bs_shared_ptr_new<ManagedSerializableFieldDataChar>();
 					if(value != nullptr)
-						memcpy(&fieldData->value, MonoUtil::Unbox(value), sizeof(fieldData->value));
+						memcpy(&fieldData->Value, MonoUtil::Unbox(value), sizeof(fieldData->Value));
 
 					return fieldData;
 				}
@@ -117,7 +117,7 @@ namespace bs
 				{
 					auto fieldData = bs_shared_ptr_new<ManagedSerializableFieldDataI8>();
 					if(value != nullptr)
-						memcpy(&fieldData->value, MonoUtil::Unbox(value), sizeof(fieldData->value));
+						memcpy(&fieldData->Value, MonoUtil::Unbox(value), sizeof(fieldData->Value));
 
 					return fieldData;
 				}
@@ -125,7 +125,7 @@ namespace bs
 				{
 					auto fieldData = bs_shared_ptr_new<ManagedSerializableFieldDataU8>();
 					if(value != nullptr)
-						memcpy(&fieldData->value, MonoUtil::Unbox(value), sizeof(fieldData->value));
+						memcpy(&fieldData->Value, MonoUtil::Unbox(value), sizeof(fieldData->Value));
 
 					return fieldData;
 				}
@@ -133,7 +133,7 @@ namespace bs
 				{
 					auto fieldData = bs_shared_ptr_new<ManagedSerializableFieldDataI16>();
 					if(value != nullptr)
-						memcpy(&fieldData->value, MonoUtil::Unbox(value), sizeof(fieldData->value));
+						memcpy(&fieldData->Value, MonoUtil::Unbox(value), sizeof(fieldData->Value));
 
 					return fieldData;
 				}
@@ -141,7 +141,7 @@ namespace bs
 				{
 					auto fieldData = bs_shared_ptr_new<ManagedSerializableFieldDataU16>();
 					if(value != nullptr)
-						memcpy(&fieldData->value, MonoUtil::Unbox(value), sizeof(fieldData->value));
+						memcpy(&fieldData->Value, MonoUtil::Unbox(value), sizeof(fieldData->Value));
 
 					return fieldData;
 				}
@@ -149,7 +149,7 @@ namespace bs
 				{
 					auto fieldData = bs_shared_ptr_new<ManagedSerializableFieldDataI32>();
 					if(value != nullptr)
-						memcpy(&fieldData->value, MonoUtil::Unbox(value), sizeof(fieldData->value));
+						memcpy(&fieldData->Value, MonoUtil::Unbox(value), sizeof(fieldData->Value));
 
 					return fieldData;
 				}
@@ -157,7 +157,7 @@ namespace bs
 				{
 					auto fieldData = bs_shared_ptr_new<ManagedSerializableFieldDataU32>();
 					if(value != nullptr)
-						memcpy(&fieldData->value, MonoUtil::Unbox(value), sizeof(fieldData->value));
+						memcpy(&fieldData->Value, MonoUtil::Unbox(value), sizeof(fieldData->Value));
 
 					return fieldData;
 				}
@@ -165,7 +165,7 @@ namespace bs
 				{
 					auto fieldData = bs_shared_ptr_new<ManagedSerializableFieldDataI64>();
 					if(value != nullptr)
-						memcpy(&fieldData->value, MonoUtil::Unbox(value), sizeof(fieldData->value));
+						memcpy(&fieldData->Value, MonoUtil::Unbox(value), sizeof(fieldData->Value));
 
 					return fieldData;
 				}
@@ -173,7 +173,7 @@ namespace bs
 				{
 					auto fieldData = bs_shared_ptr_new<ManagedSerializableFieldDataU64>();
 					if(value != nullptr)
-						memcpy(&fieldData->value, MonoUtil::Unbox(value), sizeof(fieldData->value));
+						memcpy(&fieldData->Value, MonoUtil::Unbox(value), sizeof(fieldData->Value));
 
 					return fieldData;
 				}
@@ -181,7 +181,7 @@ namespace bs
 				{
 					auto fieldData = bs_shared_ptr_new<ManagedSerializableFieldDataFloat>();
 					if(value != nullptr)
-						memcpy(&fieldData->value, MonoUtil::Unbox(value), sizeof(fieldData->value));
+						memcpy(&fieldData->Value, MonoUtil::Unbox(value), sizeof(fieldData->Value));
 
 					return fieldData;
 				}
@@ -189,7 +189,7 @@ namespace bs
 				{
 					auto fieldData = bs_shared_ptr_new<ManagedSerializableFieldDataDouble>();
 					if(value != nullptr)
-						memcpy(&fieldData->value, MonoUtil::Unbox(value), sizeof(fieldData->value));
+						memcpy(&fieldData->Value, MonoUtil::Unbox(value), sizeof(fieldData->Value));
 
 					return fieldData;
 				}
@@ -264,7 +264,7 @@ namespace bs
 				if (value != nullptr)
 				{
 					ScriptResourceBase* scriptResource = ScriptManagedResource::ToNative(value);
-					fieldData->value = scriptResource->GetGenericHandle();
+					fieldData->Value = scriptResource->GetGenericHandle();
 				}
 
 				return fieldData;
@@ -281,7 +281,7 @@ namespace bs
 				if (value != nullptr)
 				{
 					ScriptResourceBase* scriptResource = ScriptResource::ToNative(value);
-					fieldData->value = scriptResource->GetGenericHandle();
+					fieldData->Value = scriptResource->GetGenericHandle();
 				}
 
 				return fieldData;
@@ -297,7 +297,7 @@ namespace bs
 				if (value != nullptr)
 				{
 					ScriptReflectableBase* scriptReflectable = (ScriptReflectableBase*)ScriptObjectImpl::ToNative(value);
-					fieldData->value = scriptReflectable->GetReflectable();
+					fieldData->Value = scriptReflectable->GetReflectable();
 				}
 
 				return fieldData;
@@ -313,7 +313,7 @@ namespace bs
 			if(value != nullptr)
 			{
 				ScriptRRefBase* scriptRRefBase = ScriptRRefBase::ToNative(value);
-				fieldData->value = scriptRRefBase->GetHandle();
+				fieldData->Value = scriptRRefBase->GetHandle();
 			}
 
 			return fieldData;
@@ -374,7 +374,7 @@ namespace bs
 	void* ManagedSerializableFieldDataBool::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Bool))
-			return &value;
+			return &Value;
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -383,7 +383,7 @@ namespace bs
 	void* ManagedSerializableFieldDataChar::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Char))
-			return &value;
+			return &Value;
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -392,7 +392,7 @@ namespace bs
 	void* ManagedSerializableFieldDataI8::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I8))
-			return &value;
+			return &Value;
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -401,7 +401,7 @@ namespace bs
 	void* ManagedSerializableFieldDataU8::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U8))
-			return &value;
+			return &Value;
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -410,7 +410,7 @@ namespace bs
 	void* ManagedSerializableFieldDataI16::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I16))
-			return &value;
+			return &Value;
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -419,7 +419,7 @@ namespace bs
 	void* ManagedSerializableFieldDataU16::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U16))
-			return &value;
+			return &Value;
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -428,7 +428,7 @@ namespace bs
 	void* ManagedSerializableFieldDataI32::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I32))
-			return &value;
+			return &Value;
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -437,7 +437,7 @@ namespace bs
 	void* ManagedSerializableFieldDataU32::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U32))
-			return &value;
+			return &Value;
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -446,7 +446,7 @@ namespace bs
 	void* ManagedSerializableFieldDataI64::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I64))
-			return &value;
+			return &Value;
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -455,7 +455,7 @@ namespace bs
 	void* ManagedSerializableFieldDataU64::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U64))
-			return &value;
+			return &Value;
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -467,7 +467,7 @@ namespace bs
 		{
 			auto primitiveTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo);
 			if(primitiveTypeInfo->MType == ScriptPrimitiveType::Float)
-				return &value;
+				return &Value;
 		}
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -480,7 +480,7 @@ namespace bs
 		{
 			auto primitiveTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo);
 			if(primitiveTypeInfo->MType == ScriptPrimitiveType::Double)
-				return &value;
+				return &Value;
 		}
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -511,13 +511,13 @@ namespace bs
 		{
 			const auto refTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoRef>(typeInfo);
 
-			if (!value.IsLoaded())
+			if (!Value.IsLoaded())
 				return nullptr;
 
 			if (refTypeInfo->MType == ScriptReferenceType::ManagedResourceBase ||
 				refTypeInfo->MType == ScriptReferenceType::ManagedResource)
 			{
-				ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().GetScriptResource(value, false);
+				ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().GetScriptResource(Value, false);
 				assert(scriptResource != nullptr);
 
 				return scriptResource->GetManagedInstance();
@@ -525,7 +525,7 @@ namespace bs
 			else if (refTypeInfo->MType == ScriptReferenceType::BuiltinResourceBase ||
 					 refTypeInfo->MType == ScriptReferenceType::BuiltinResource)
 			{
-				ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().GetScriptResource(value, true);
+				ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().GetScriptResource(Value, true);
 
 				return scriptResource->GetManagedInstance();
 			}
@@ -548,7 +548,7 @@ namespace bs
 			// Note: Each reference ref ends up creating its own object instance. Perhaps share the same instance between
 			// all references to the same resource?
 
-			return ScriptRRefBase::Create(value, resourceRRefClass);
+			return ScriptRRefBase::Create(Value, resourceRRefClass);
 		}
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -612,7 +612,7 @@ namespace bs
 		{
 			const auto refTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoRef>(typeInfo);
 
-			if (!value)
+			if (!Value)
 				return nullptr;
 
 			UINT32 rttiId = refTypeInfo->MRtiiTypeId;
@@ -621,7 +621,7 @@ namespace bs
 			if (info == nullptr)
 				return nullptr;
 
-			return info->CreateCallback(value);
+			return info->CreateCallback(Value);
 		}
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -705,7 +705,7 @@ namespace bs
 	MonoObject* ManagedSerializableFieldDataBool::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Bool))
-			return MonoUtil::Box(MonoUtil::GetBoolClass(), &value);
+			return MonoUtil::Box(MonoUtil::GetBoolClass(), &Value);
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -714,7 +714,7 @@ namespace bs
 	MonoObject* ManagedSerializableFieldDataChar::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Char))
-			return MonoUtil::Box(MonoUtil::GetCharClass(), &value);
+			return MonoUtil::Box(MonoUtil::GetCharClass(), &Value);
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -723,7 +723,7 @@ namespace bs
 	MonoObject* ManagedSerializableFieldDataI8::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I8))
-			return MonoUtil::Box(MonoUtil::GetSByteClass(), &value);
+			return MonoUtil::Box(MonoUtil::GetSByteClass(), &Value);
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -732,7 +732,7 @@ namespace bs
 	MonoObject* ManagedSerializableFieldDataU8::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U8))
-			return MonoUtil::Box(MonoUtil::GetByteClass(), &value);
+			return MonoUtil::Box(MonoUtil::GetByteClass(), &Value);
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -741,7 +741,7 @@ namespace bs
 	MonoObject* ManagedSerializableFieldDataI16::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I16))
-			return MonoUtil::Box(MonoUtil::GetInT16Class(), &value);
+			return MonoUtil::Box(MonoUtil::GetInT16Class(), &Value);
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -750,7 +750,7 @@ namespace bs
 	MonoObject* ManagedSerializableFieldDataU16::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U16))
-			return MonoUtil::Box(MonoUtil::GetUinT16Class(), &value);
+			return MonoUtil::Box(MonoUtil::GetUinT16Class(), &Value);
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -759,7 +759,7 @@ namespace bs
 	MonoObject* ManagedSerializableFieldDataI32::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I32))
-			return MonoUtil::Box(MonoUtil::GetInT32Class(), &value);
+			return MonoUtil::Box(MonoUtil::GetInT32Class(), &Value);
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -768,7 +768,7 @@ namespace bs
 	MonoObject* ManagedSerializableFieldDataU32::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U32))
-			return MonoUtil::Box(MonoUtil::GetUinT32Class(), &value);
+			return MonoUtil::Box(MonoUtil::GetUinT32Class(), &Value);
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -777,7 +777,7 @@ namespace bs
 	MonoObject* ManagedSerializableFieldDataI64::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I64))
-			return MonoUtil::Box(MonoUtil::GetInT64Class(), &value);
+			return MonoUtil::Box(MonoUtil::GetInT64Class(), &Value);
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -786,7 +786,7 @@ namespace bs
 	MonoObject* ManagedSerializableFieldDataU64::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 	{
 		if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U64))
-			return MonoUtil::Box(MonoUtil::GetUinT64Class(), &value);
+			return MonoUtil::Box(MonoUtil::GetUinT64Class(), &Value);
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 		return nullptr;
@@ -798,7 +798,7 @@ namespace bs
 		{
 			auto primitiveTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo);
 			if (primitiveTypeInfo->MType == ScriptPrimitiveType::Float)
-				return MonoUtil::Box(MonoUtil::GetFloatClass(), &value);
+				return MonoUtil::Box(MonoUtil::GetFloatClass(), &Value);
 		}
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -811,7 +811,7 @@ namespace bs
 		{
 			auto primitiveTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoPrimitive>(typeInfo);
 			if (primitiveTypeInfo->MType == ScriptPrimitiveType::Double)
-				return MonoUtil::Box(MonoUtil::GetDoubleClass(), &value);
+				return MonoUtil::Box(MonoUtil::GetDoubleClass(), &Value);
 		}
 
 		BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -1073,62 +1073,62 @@ namespace bs
 
 	size_t ManagedSerializableFieldDataBool::GetHash()
 	{
-		return bs_hash(value);
+		return bs_hash(Value);
 	}
 
 	size_t ManagedSerializableFieldDataChar::GetHash()
 	{
-		return bs_hash(value);
+		return bs_hash(Value);
 	}
 
 	size_t ManagedSerializableFieldDataI8::GetHash()
 	{
-		return bs_hash(value);
+		return bs_hash(Value);
 	}
 
 	size_t ManagedSerializableFieldDataU8::GetHash()
 	{
-		return bs_hash(value);
+		return bs_hash(Value);
 	}
 
 	size_t ManagedSerializableFieldDataI16::GetHash()
 	{
-		return bs_hash(value);
+		return bs_hash(Value);
 	}
 
 	size_t ManagedSerializableFieldDataU16::GetHash()
 	{
-		return bs_hash(value);
+		return bs_hash(Value);
 	}
 
 	size_t ManagedSerializableFieldDataI32::GetHash()
 	{
-		return bs_hash(value);
+		return bs_hash(Value);
 	}
 
 	size_t ManagedSerializableFieldDataU32::GetHash()
 	{
-		return bs_hash(value);
+		return bs_hash(Value);
 	}
 
 	size_t ManagedSerializableFieldDataI64::GetHash()
 	{
-		return bs_hash(value);
+		return bs_hash(Value);
 	}
 
 	size_t ManagedSerializableFieldDataU64::GetHash()
 	{
-		return bs_hash(value);
+		return bs_hash(Value);
 	}
 
 	size_t ManagedSerializableFieldDataFloat::GetHash()
 	{
-		return bs_hash(value);
+		return bs_hash(Value);
 	}
 
 	size_t ManagedSerializableFieldDataDouble::GetHash()
 	{
-		return bs_hash(value);
+		return bs_hash(Value);
 	}
 
 	size_t ManagedSerializableFieldDataString::GetHash()
@@ -1138,7 +1138,7 @@ namespace bs
 
 	size_t ManagedSerializableFieldDataResourceRef::GetHash()
 	{
-		return bs_hash(value.GetUuid());
+		return bs_hash(Value.GetUuid());
 	}
 
 	size_t ManagedSerializableFieldDataGameObjectRef::GetHash()
@@ -1148,7 +1148,7 @@ namespace bs
 
 	size_t ManagedSerializableFieldDataReflectableRef::GetHash()
 	{
-		return bs_hash(value);
+		return bs_hash(Value);
 	}
 
 	size_t ManagedSerializableFieldDataObject::GetHash()

@@ -58,9 +58,9 @@ namespace bs { namespace ct
 		/** Command buffer pool and related information. */
 		struct PoolInfo
 		{
-			VkCommandPool pool = VK_NULL_HANDLE;
-			VulkanCmdBuffer* buffers[BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY];
-			UINT32 queueFamily = -1;
+			VkCommandPool Pool = VK_NULL_HANDLE;
+			VulkanCmdBuffer* Buffers[BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY];
+			UINT32 QueueFamily = -1;
 		};
 
 		/** Creates a new command buffer. */
@@ -379,26 +379,26 @@ namespace bs { namespace ct
 		/** Contains information about a single Vulkan resource bound/used on this command buffer. */
 		struct ResourceUseHandle
 		{
-			bool used;
-			VulkanAccessFlags flags;
+			bool Used;
+			VulkanAccessFlags Flags;
 		};
 
 		/** Describes where and how is a resource being accessed and by which stages. */
 		struct ResourcePipelineUse
 		{
 			/** Specifies how will the subresource be accessed during the current render pass or dispatch call. */
-			VulkanAccessFlags access;
+			VulkanAccessFlags Access;
 
 			/** Stages the image is being used in during the current render pass or dispatch call. */
-			VkPipelineStageFlags stages = 0;
+			VkPipelineStageFlags Stages = 0;
 		};
 
 		/** Contains information about a single Vulkan buffer resource bound/used on this command buffer. */
 		struct BufferInfo
 		{
-			ResourceUseHandle useHandle;
+			ResourceUseHandle UseHandle;
 
-			BufferUseFlags useFlags;
+			BufferUseFlags UseFlags;
 
 			/**
 			 * Use flags when buffer is bound for any kind of operation that will require an execution or memory
@@ -406,34 +406,34 @@ namespace bs { namespace ct
 			 * (not counting transfer operations which handle the barriers explicitly). Reset after a memory barrier is
 			 * issued.
 			 */
-			ResourcePipelineUse writeHazardUse;
+			ResourcePipelineUse WriteHazardUse;
 		};
 
 		/** Contains information about a single Vulkan image resource bound/used on this command buffer. */
 		struct ImageInfo
 		{
-			ResourceUseHandle useHandle;
+			ResourceUseHandle UseHandle;
 
-			UINT32 subresourceInfoIdx;
-			UINT32 numSubresourceInfos;
+			UINT32 SubresourceInfoIdx;
+			UINT32 NumSubresourceInfos;
 		};
 
 		/** Contains information about a range of Vulkan image sub-resources bound/used on this command buffer. */
 		struct ImageSubresourceInfo
 		{
-			VkImageSubresourceRange range;
+			VkImageSubresourceRange Range;
 
 			// Storing stage & access flags separately per use category so they can be cleared independantly when that use
 			// ends (e.g. image unbound as FB attachment, or memory barrier executed)
 
 			/** Use flags when subresource is bound for shader reads or writes. Reset after resource is unbound. */
-			ResourcePipelineUse shaderUse;
+			ResourcePipelineUse ShaderUse;
 
 			/** Use flags when subresource is bound as a framebuffer attachment. Reset after resource is unbound. */
-			ResourcePipelineUse fbUse;
+			ResourcePipelineUse FbUse;
 
 			/** Use flags when subresource is bound for a transfer operation. Currently unused. */
-			ResourcePipelineUse transferUse;
+			ResourcePipelineUse TransferUse;
 
 			/**
 			 * Use flags when subresource is bound for any kind of operation that will require an execution or memory
@@ -441,41 +441,41 @@ namespace bs { namespace ct
 			 * (not counting render pass writes, which handles barriers through subpass dependencies, or transfer operations
 			 * which handle the barriers explicitly). Reset after a memory barrier is issued.
 			 */
-			ResourcePipelineUse writeHazardUse;
+			ResourcePipelineUse WriteHazardUse;
 
 			/**
 			 * Specifies how will the subresource be used during the current render pass or dispatch call. Reset
 			 * after use.
 			 */
-			ImageUseFlags useFlags;
+			ImageUseFlags UseFlags;
 
 			/** Determines is the initial use of this subresource read-only. Used for better determining access flags. */
-			bool initialReadOnly = false;
+			bool InitialReadOnly = false;
 
 			// Only relevant for layout transitions
 			/**
 			 * Layout transition performed during the submit() call. Doesn't require ending the render pass since it
 			 * will be delayed until submit().
 			 */
-			VkImageLayout initialLayout;
+			VkImageLayout InitialLayout;
 
 			/**
 			 * Layout the image is currently in. This will be the initial layout if no other transition was performed, or
 			 * layout resulting from the last performed transition.
 			 */
-			VkImageLayout currentLayout;
+			VkImageLayout CurrentLayout;
 
 			/**
 			 * Stores the layout that the image needs to be before being used in the current render pass or dispatch call.
 			 * Equal to currentLayout if no transition is needed. Updated after every render pass or dispatch call.
 			 */
-			VkImageLayout requiredLayout;
+			VkImageLayout RequiredLayout;
 
 			/**
 			 * Layout the image will have after the render pass executes, taking account automatic transitions render pass
 			 * does on its attachments. Only relevant for FB attachments. Ignored if render pass doesn't execute.
 			 */
-			VkImageLayout renderPassLayout;
+			VkImageLayout RenderPassLayout;
 		};
 
 		/** Checks if all the prerequisites for rendering have been made (e.g. render target and pipeline state are set.) */

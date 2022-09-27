@@ -36,10 +36,10 @@ namespace bs { namespace ct
 		}
 
 		for (auto& entry : mTimerPools)
-			vkDestroyQueryPool(mDevice.GetLogical(), entry.pool, gVulkanAllocator);
+			vkDestroyQueryPool(mDevice.GetLogical(), entry.Pool, gVulkanAllocator);
 
 		for (auto& entry : mOcclusionPools)
-			vkDestroyQueryPool(mDevice.GetLogical(), entry.pool, gVulkanAllocator);
+			vkDestroyQueryPool(mDevice.GetLogical(), entry.Pool, gVulkanAllocator);
 	}
 
 	VulkanQueryPool::PoolInfo& VulkanQueryPool::AllocatePool(VkQueryType type)
@@ -53,11 +53,11 @@ namespace bs { namespace ct
 		queryPoolCI.queryType = type;
 
 		PoolInfo poolInfo;
-		VkResult result = vkCreateQueryPool(mDevice.GetLogical(), &queryPoolCI, gVulkanAllocator, &poolInfo.pool);
+		VkResult result = vkCreateQueryPool(mDevice.GetLogical(), &queryPoolCI, gVulkanAllocator, &poolInfo.Pool);
 		assert(result == VK_SUCCESS);
 
 		Vector<PoolInfo>& poolInfos = type == VK_QUERY_TYPE_TIMESTAMP ? mTimerPools : mOcclusionPools;
-		poolInfo.startIdx = (UINT32)poolInfos.size() * NUM_QUERIES_PER_POOL;
+		poolInfo.StartIdx = (UINT32)poolInfos.size() * NUM_QUERIES_PER_POOL;
 
 		poolInfos.push_back(poolInfo);
 
@@ -82,7 +82,7 @@ namespace bs { namespace ct
 				UINT32 poolIdx = (UINT32)divResult.quot;
 				UINT32 queryIdx = (UINT32)divResult.rem;
 
-				curQuery = mDevice.GetResourceManager().Create<VulkanQuery>(poolInfos[poolIdx].pool, queryIdx);
+				curQuery = mDevice.GetResourceManager().Create<VulkanQuery>(poolInfos[poolIdx].Pool, queryIdx);
 				queries[i] = curQuery;
 
 				return curQuery;
@@ -92,10 +92,10 @@ namespace bs { namespace ct
 		}
 
 		PoolInfo& poolInfo = AllocatePool(type);
-		UINT32 queryIdx = poolInfo.startIdx % NUM_QUERIES_PER_POOL;
+		UINT32 queryIdx = poolInfo.StartIdx % NUM_QUERIES_PER_POOL;
 
-		VulkanQuery* query = mDevice.GetResourceManager().Create<VulkanQuery>(poolInfo.pool, queryIdx);
-		queries[poolInfo.startIdx] = query;
+		VulkanQuery* query = mDevice.GetResourceManager().Create<VulkanQuery>(poolInfo.Pool, queryIdx);
+		queries[poolInfo.StartIdx] = query;
 
 		return query;
 	}

@@ -17,14 +17,14 @@ namespace bs { namespace ct
 	/** Descriptor used for initializing a VulkanImage. */
 	struct VULKAN_IMAGE_DESC
 	{
-		VkImage image; /**< Internal Vulkan image object */
-		VmaAllocation allocation; /** Information about the memory allocated for this image. */
-		VkImageLayout layout; /**< Initial layout of the image. */
-		TextureType type; /**< Type of the image. */
-		VkFormat format; /**< Pixel format of the image. */
-		UINT32 numFaces; /**< Number of faces (array slices, or cube-map faces). */
-		UINT32 numMipLevels; /**< Number of mipmap levels per face. */
-		UINT32 usage; /** Determines how will the image be used. */
+		VkImage Image; /**< Internal Vulkan image object */
+		VmaAllocation Allocation; /** Information about the memory allocated for this image. */
+		VkImageLayout Layout; /**< Initial layout of the image. */
+		TextureType Type; /**< Type of the image. */
+		VkFormat Format; /**< Pixel format of the image. */
+		UINT32 NumFaces; /**< Number of faces (array slices, or cube-map faces). */
+		UINT32 NumMipLevels; /**< Number of mipmap levels per face. */
+		UINT32 Usage; /** Determines how will the image be used. */
 	};
 
 	/** Wrapper around a Vulkan image object that manages its usage and lifetime. */
@@ -162,10 +162,10 @@ namespace bs { namespace ct
 		/** Contains information about view for a specific surface(s) of this image. */
 		struct ImageViewInfo
 		{
-			TextureSurface surface;
-			bool framebuffer;
-			VkImageView view;
-			VkFormat format;
+			TextureSurface Surface;
+			bool Framebuffer;
+			VkImageView View;
+			VkFormat Format;
 		};
 
 		VkImage mImage;

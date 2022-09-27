@@ -126,7 +126,7 @@ namespace bs { namespace ct
 				GpuQueueType queueType = (GpuQueueType)j;
 
 				for (UINT32 k = 0; k < BS_MAX_QUEUES_PER_TYPE; k++)
-					mDeviceData[i].transferBuffers[j][k] = VulkanTransferBuffer(device.get(), queueType, k);
+					mDeviceData[i].TransferBuffers[j][k] = VulkanTransferBuffer(device.get(), queueType, k);
 			}
 		}
 	}
@@ -211,7 +211,7 @@ namespace bs { namespace ct
 
 		PerDeviceData& deviceData = mDeviceData[deviceIdx];
 
-		VulkanTransferBuffer* transferBuffer = &deviceData.transferBuffers[type][queueIdx];
+		VulkanTransferBuffer* transferBuffer = &deviceData.TransferBuffers[type][queueIdx];
 		transferBuffer->Allocate();
 		return transferBuffer;
 	}
@@ -224,7 +224,7 @@ namespace bs { namespace ct
 		for (UINT32 i = 0; i < GQT_COUNT; i++)
 		{
 			for (UINT32 j = 0; j < BS_MAX_QUEUES_PER_TYPE; j++)
-				deviceData.transferBuffers[i][j].Flush(false);
+				deviceData.TransferBuffers[i][j].Flush(false);
 		}
 	}
 
