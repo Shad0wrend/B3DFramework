@@ -5,6 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObject.h"
 #include "Image/BsColor.h"
+#include "../../../Foundation/bsfUtility/Image/BsColorGradient.h"
 
 namespace bs { struct __ColorGradientKeyInterop; }
 namespace bs { class ColorGradient; }

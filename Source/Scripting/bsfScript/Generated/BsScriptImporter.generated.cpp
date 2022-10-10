@@ -6,7 +6,6 @@
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Importer/BsImporter.h"
 #include "BsScriptResourceManager.h"
-#include "Wrappers/BsScriptRRefBase.h"
 #include "Wrappers/BsScriptAsyncOp.h"
 #include "Reflection/BsRTTIType.h"
 #include "../../../Foundation/bsfCore/Text/BsFontImportOptions.h"

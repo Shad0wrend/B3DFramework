@@ -5,6 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObject.h"
 #include "../../../Foundation/bsfCore/RenderAPI/BsVideoModeInfo.h"
+#include "../../../Foundation/bsfCore/BsCoreApplication.h"
 
 namespace bs { struct __START_UP_DESCInterop; }
 namespace bs { class ApplicationEx; }

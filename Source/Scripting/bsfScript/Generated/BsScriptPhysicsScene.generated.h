@@ -4,6 +4,7 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObject.h"
+#include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
 #include "Math/BsRay.h"
 #include "Math/BsVector3.h"
 #include "Math/BsSphere.h"

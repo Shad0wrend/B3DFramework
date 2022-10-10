@@ -4,6 +4,7 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "Wrappers/BsScriptResource.h"
+#include "../../../Foundation/bsfCore/Animation/BsAnimationClip.h"
 
 namespace bs { class AnimationClip; }
 namespace bs { struct __AnimationEventInterop; }

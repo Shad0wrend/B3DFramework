@@ -4,6 +4,7 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObject.h"
+#include "../../../Foundation/bsfCore/Importer/BsImporter.h"
 
 namespace bs { struct MultiResource; }
 namespace bs { struct __SubResourceInterop; }

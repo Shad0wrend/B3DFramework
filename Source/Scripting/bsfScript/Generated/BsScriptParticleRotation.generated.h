@@ -6,6 +6,7 @@
 #include "Wrappers/BsScriptReflectable.h"
 #include "BsScriptParticleEvolver.generated.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
+#include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 
 namespace bs { struct __PARTICLE_ROTATION_DESCInterop; }
 namespace bs { class ParticleRotation; }

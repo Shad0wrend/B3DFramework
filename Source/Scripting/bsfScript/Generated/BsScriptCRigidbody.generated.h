@@ -9,6 +9,7 @@
 #include "Math/BsQuaternion.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
 #include "../../../Foundation/bsfCore/Physics/BsRigidbody.h"
+#include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
 #include "../../../Foundation/bsfCore/Physics/BsRigidbody.h"
 
 namespace bs { class CRigidbody; }

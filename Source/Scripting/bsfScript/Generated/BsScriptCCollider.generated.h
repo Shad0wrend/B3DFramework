@@ -5,6 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "Wrappers/BsScriptComponent.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
+#include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
 
 namespace bs { struct __CollisionDataInterop; }
 namespace bs { class CCollider; }

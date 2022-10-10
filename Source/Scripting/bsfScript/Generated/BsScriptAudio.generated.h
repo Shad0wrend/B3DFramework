@@ -4,6 +4,7 @@
 
 #include "BsScriptEnginePrerequisites.h"
 #include "BsScriptObject.h"
+#include "../../../Foundation/bsfCore/Audio/BsAudio.h"
 
 namespace bs { class Audio; }
 namespace bs { struct __AudioDeviceInterop; }

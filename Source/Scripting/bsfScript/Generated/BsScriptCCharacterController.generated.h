@@ -5,10 +5,12 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "Wrappers/BsScriptComponent.h"
 #include "../../../Foundation/bsfCore/Physics/BsCharacterController.h"
+#include "../../../Foundation/bsfCore/Physics/BsCharacterController.h"
 #include "Math/BsVector3.h"
 #include "../../../Foundation/bsfCore/Physics/BsCharacterController.h"
 #include "../../../Foundation/bsfCore/Physics/BsCharacterController.h"
 #include "Math/BsRadian.h"
+#include "../../../Foundation/bsfCore/Physics/BsCharacterController.h"
 
 namespace bs { class CCharacterController; }
 namespace bs { struct __ControllerColliderCollisionInterop; }

@@ -5,6 +5,7 @@
 #include "BsScriptEnginePrerequisites.h"
 #include "Wrappers/BsScriptReflectable.h"
 #include "../../../Foundation/bsfCore/Text/BsFont.h"
+#include "../../../Foundation/bsfCore/Text/BsFontDesc.h"
 
 namespace bs { struct FontBitmap; }
 namespace bs { struct __CharDescInterop; }

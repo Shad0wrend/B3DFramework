@@ -6,6 +6,7 @@
 #include "Wrappers/BsScriptReflectable.h"
 #include "BsScriptParticleEmitterShape.generated.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEmitter.h"
+#include "../../../Foundation/bsfCore/Particles/BsParticleEmitter.h"
 
 namespace bs { class ParticleEmitterSkinnedMeshShape; }
 namespace bs { struct __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop; }

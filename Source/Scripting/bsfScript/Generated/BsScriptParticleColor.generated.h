@@ -6,6 +6,7 @@
 #include "Wrappers/BsScriptReflectable.h"
 #include "BsScriptParticleEvolver.generated.h"
 #include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
+#include "../../../Foundation/bsfCore/Particles/BsParticleEvolver.h"
 
 namespace bs { class ParticleColor; }
 namespace bs { struct __PARTICLE_COLOR_DESCInterop; }
