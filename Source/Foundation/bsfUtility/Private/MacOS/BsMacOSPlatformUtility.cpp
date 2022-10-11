@@ -42,7 +42,7 @@ namespace bs
 		bufferlen = sizeof(buffer);
 		if(sysctlbyname("hw.cpufrequency", buffer, &bufferlen, nullptr, 0) == 0)
 		{
-			UINT32 speedHz = *(UINT32*)buffer;
+			u32 speedHz = *(u32*)buffer;
 			sysInfo.cpuClockSpeedMhz = speedHz / (1000 * 1000);
 		}
 		else
@@ -50,15 +50,15 @@ namespace bs
 
 		bufferlen = sizeof(buffer);
 		if(sysctlbyname("hw.physicalcpu", buffer, &bufferlen, nullptr, 0) == 0)
-			sysInfo.cpuNumCores = *(UINT32*)buffer;
+			sysInfo.cpuNumCores = *(u32*)buffer;
 		else
 			sysInfo.cpuNumCores = 0;
 
 		bufferlen = sizeof(buffer);
 		if(sysctlbyname("hw.memsize", buffer, &bufferlen, nullptr, 0) == 0)
 		{
-			UINT64 memAmountBytes = *(UINT64*)buffer;
-			sysInfo.memoryAmountMb = (UINT32)(memAmountBytes / (1024 * 1024));
+			u64 memAmountBytes = *(u64*)buffer;
+			sysInfo.memoryAmountMb = (u32)(memAmountBytes / (1024 * 1024));
 		}
 		else
 			sysInfo.memoryAmountMb = 0;
@@ -73,10 +73,10 @@ namespace bs
 		uuid_generate(nativeUUID);
 
 		return UUID(
-			*(UINT32*)&nativeUUID[0],
-			*(UINT32*)&nativeUUID[4],
-			*(UINT32*)&nativeUUID[8],
-			*(UINT32*)&nativeUUID[12]);
+			*(u32*)&nativeUUID[0],
+			*(u32*)&nativeUUID[4],
+			*(u32*)&nativeUUID[8],
+			*(u32*)&nativeUUID[12]);
 	}
 
 	String PlatformUtility::convertCaseUTF8(const bs::String& input, bool toUpper)
@@ -99,7 +99,7 @@ namespace bs
 		}
 
 		CFIndex stringLength = CFStringGetLength(mutableString) + 1;
-		auto buffer = bs_stack_alloc<char>((UINT32)stringLength);
+		auto buffer = bs_stack_alloc<char>((u32)stringLength);
 
 		CFStringGetCString(mutableString, buffer, stringLength, kCFStringEncodingUTF8);
 		CFRelease(mutableString);

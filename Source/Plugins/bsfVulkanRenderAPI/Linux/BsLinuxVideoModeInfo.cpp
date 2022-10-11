@@ -15,18 +15,18 @@ namespace bs { namespace ct
 
 		::Display* display = LinuxPlatform::getXDisplay();
 
-		INT32 minor, major;
+		i32 minor, major;
 		XRRQueryVersion(display, &minor, &major);
 
-		INT32 defaultScreen = XDefaultScreen(display);
+		i32 defaultScreen = XDefaultScreen(display);
 		RROutput primaryOutput = XRRGetOutputPrimary(display, RootWindow(display, defaultScreen));
 
-		INT32 screenCount = XScreenCount(display);
-		for(INT32 i = 0; i < screenCount; i++)
+		i32 screenCount = XScreenCount(display);
+		for(i32 i = 0; i < screenCount; i++)
 		{
 			XRRScreenResources* screenRes = XRRGetScreenResources(display, RootWindow(display, i));
 
-			for(INT32 j = 0; j < screenRes->noutput; j++)
+			for(i32 j = 0; j < screenRes->noutput; j++)
 			{
 				XRROutputInfo* outputInfo = XRRGetOutputInfo(display, screenRes, screenRes->outputs[j]);
 
@@ -45,7 +45,7 @@ namespace bs { namespace ct
 				}
 
 				VideoOutputInfo* output = bs_new<LinuxVideoOutputInfo>(display, i, outputInfo, crtcInfo, screenRes,
-						screenRes->outputs[j], (UINT32)mOutputs.size());
+						screenRes->outputs[j], (u32)mOutputs.size());
 
 				// Make sure the primary output is the first in the output list
 				if(i == defaultScreen && screenRes->outputs[j] == primaryOutput)
@@ -63,8 +63,8 @@ namespace bs { namespace ct
 		LinuxPlatform::unlockX();
 	}
 
-	LinuxVideoOutputInfo::LinuxVideoOutputInfo(::Display* x11Display, INT32 screen, XRROutputInfo* outputInfo,
-		XRRCrtcInfo* crtcInfo, XRRScreenResources* screenRes, RROutput outputID, UINT32 outputIdx)
+	LinuxVideoOutputInfo::LinuxVideoOutputInfo(::Display* x11Display, i32 screen, XRROutputInfo* outputInfo,
+		XRRCrtcInfo* crtcInfo, XRRScreenResources* screenRes, RROutput outputID, u32 outputIdx)
 			: mOutputID(outputID), mScreen(screen)
 	{
 		RRMode currentMode = crtcInfo->mode;
@@ -72,33 +72,33 @@ namespace bs { namespace ct
 		// Parse output name
 		Atom EDID = XInternAtom(x11Display, "EDID", False);
 
-		INT32 numOutputProps;
+		i32 numOutputProps;
 		Atom* outputProps = XRRListOutputProperties(x11Display, mOutputID, &numOutputProps);
 
-		for(INT32 k = 0; k < numOutputProps; k++)
+		for(i32 k = 0; k < numOutputProps; k++)
 		{
 			if(outputProps[k] != EDID)
 				continue;
 
 			Atom actualType;
 			unsigned long numItems, bytesAfter;
-			INT32 actualFormat;
-			UINT8* data;
+			i32 actualFormat;
+			u8* data;
 
 			Status status = XRRGetOutputProperty(x11Display, mOutputID, outputProps[k], 0, 128, False,
 					False, AnyPropertyType, &actualType, &actualFormat, &numItems, &bytesAfter, &data);
 			if(status == Success)
 			{
 				// Decode EDID to get the name
-				for(UINT32 l = 0; l < 4; l++)
+				for(u32 l = 0; l < 4; l++)
 				{
-					INT32 idx = 0x36 + l * 18;
+					i32 idx = 0x36 + l * 18;
 					if(data[idx] == 0 && data[idx + 1] == 0 && data[idx + 3] == 0xFC)
 					{
-						UINT8* nameSrc = &data[idx + 5];
+						u8* nameSrc = &data[idx + 5];
 
 						char name[14];
-						for(UINT32 m = 0; m < 13; m++)
+						for(u32 m = 0; m < 13; m++)
 						{
 							if(nameSrc[m] == 0x0a)
 							{
@@ -130,11 +130,11 @@ namespace bs { namespace ct
 			mName = outputInfo->name;
 
 		// Enumerate all valid resolutions
-		for(INT32 k = 0; k < screenRes->nmode; k++)
+		for(i32 k = 0; k < screenRes->nmode; k++)
 		{
 			const XRRModeInfo& modeInfo = screenRes->modes[k];
 
-			UINT32 width, height;
+			u32 width, height;
 
 			if(crtcInfo->rotation & (XRANDR_ROTATION_LEFT | XRANDR_ROTATION_RIGHT))
 			{
@@ -159,7 +159,7 @@ namespace bs { namespace ct
 		}
 
 		// Save current desktop mode
-		for(INT32 k = 0; k < screenRes->nmode; k++)
+		for(i32 k = 0; k < screenRes->nmode; k++)
 		{
 			if(screenRes->modes[k].id == currentMode)
 			{
@@ -171,11 +171,11 @@ namespace bs { namespace ct
 		}
 	}
 
-	LinuxVideoMode::LinuxVideoMode(UINT32 width, UINT32 height, float refreshRate, UINT32 outputIdx)
+	LinuxVideoMode::LinuxVideoMode(u32 width, u32 height, float refreshRate, u32 outputIdx)
 		:VideoMode(width, height, refreshRate, outputIdx), mModeID((RRMode)-1)
 	{ }
 
-	LinuxVideoMode::LinuxVideoMode(UINT32 width, UINT32 height, float refreshRate, UINT32 outputIdx, RRMode modeID)
+	LinuxVideoMode::LinuxVideoMode(u32 width, u32 height, float refreshRate, u32 outputIdx, RRMode modeID)
 		:VideoMode(width, height, refreshRate, outputIdx), mModeID(modeID)
 	{
 		isCustom = false;

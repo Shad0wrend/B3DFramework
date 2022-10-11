@@ -21,19 +21,19 @@ namespace bs { namespace ct
 		void AddDependency(const SPtr<CommandBuffer>& buffer);
 
 		/** Returns a combined mask that contains all the required dependencies. */
-		UINT32 GetMask() const { return mMask; }
+		u32 GetMask() const { return mMask; }
 
 		/** Uses the queue type and index to generate a mask with a bit set for that queue's global index. */
-		static UINT32 GetGlobalQueueMask(GpuQueueType type, UINT32 queueIdx);
+		static u32 GetGlobalQueueMask(GpuQueueType type, u32 queueIdx);
 
 		/** Uses the queue type and index to generate a global queue index. */
-		static UINT32 GetGlobalQueueIdx(GpuQueueType type, UINT32 queueIdx);
+		static u32 GetGlobalQueueIdx(GpuQueueType type, u32 queueIdx);
 
 		/** Uses the global queue index to retrieve local queue index and queue type. */
-		static UINT32 GetQueueIdxAndType(UINT32 globalQueueIdx, GpuQueueType& type);
+		static u32 GetQueueIdxAndType(u32 globalQueueIdx, GpuQueueType& type);
 
 	private:
-		UINT32 mMask = 0;
+		u32 mMask = 0;
 	};
 
 	/** Possible states that a CommandBuffer can be in. */
@@ -86,17 +86,17 @@ namespace bs { namespace ct
 		 *							be appended to a primary command buffer.
 		 * @return					New CommandBuffer instance.
 		 */
-		static SPtr<CommandBuffer> Create(GpuQueueType type, UINT32 deviceIdx = 0, UINT32 queueIdx = 0,
+		static SPtr<CommandBuffer> Create(GpuQueueType type, u32 deviceIdx = 0, u32 queueIdx = 0,
 			bool secondary = false);
 
 		/** Returns the type of queue the command buffer will execute on. */
 		GpuQueueType GetType() const { return mType; }
 
 		/** Returns the index of the queue the command buffer will execute on. */
-		UINT32 GetQueueIdx() const { return mQueueIdx; }
+		u32 GetQueueIdx() const { return mQueueIdx; }
 
 		/** Returns the device index this buffer will execute on. */
-		UINT32 GetDeviceIdx() const { return mDeviceIdx; }
+		u32 GetDeviceIdx() const { return mDeviceIdx; }
 
 		/** Returns the current state of the command buffer. */
 		virtual CommandBufferState GetState() const = 0;
@@ -108,11 +108,11 @@ namespace bs { namespace ct
 		virtual void Reset() = 0;
 
 	protected:
-		CommandBuffer(GpuQueueType type, UINT32 deviceIdx, UINT32 queueIdx, bool secondary);
+		CommandBuffer(GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary);
 
 		GpuQueueType mType;
-		UINT32 mDeviceIdx;
-		UINT32 mQueueIdx;
+		u32 mDeviceIdx;
+		u32 mQueueIdx;
 		bool mIsSecondary;
 	};
 

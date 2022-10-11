@@ -19,7 +19,7 @@ namespace bs
 	struct GPUInfo
 	{
 		String Names[5];
-		UINT32 NumGpUs;
+		u32 NumGpUs;
 	};
 
 	/** Contains information about the system hardware and operating system. */
@@ -27,9 +27,9 @@ namespace bs
 	{
 		String CpuManufacturer;
 		String CpuModel;
-		UINT32 CpuClockSpeedMhz;
-		UINT32 CpuNumCores;
-		UINT32 MemoryAmountMb;
+		u32 CpuClockSpeedMhz;
+		u32 CpuNumCores;
+		u32 MemoryAmountMb;
 		String OsName;
 		bool OsIs64Bit;
 

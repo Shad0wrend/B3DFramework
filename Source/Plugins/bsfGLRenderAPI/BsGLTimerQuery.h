@@ -15,7 +15,7 @@ namespace bs { namespace ct
 	class GLTimerQuery : public TimerQuery
 	{
 	public:
-		GLTimerQuery(UINT32 deviceIdx);
+		GLTimerQuery(u32 deviceIdx);
 		~GLTimerQuery();
 
 		/** @copydoc TimerQuery::begin */

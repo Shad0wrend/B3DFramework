@@ -23,7 +23,7 @@ namespace bs
 			bs_delete(mImageSprite);
 	}
 
-	UINT32 GUILabel::GetRenderElementDepthRangeInternal() const
+	u32 GUILabel::GetRenderElementDepthRangeInternal() const
 	{
 		return 2;
 	}
@@ -60,7 +60,7 @@ namespace bs
 			mImageDesc.BorderBottom = GetStyleInternal()->Border.Bottom;
 			mImageDesc.Color = GetTint();
 
-			mImageSprite->Update(mImageDesc, (UINT64)GetParentWidgetInternal());
+			mImageSprite->Update(mImageDesc, (u64)GetParentWidgetInternal());
 		}
 
 		mDesc.Font = GetStyleInternal()->Font;
@@ -73,7 +73,7 @@ namespace bs
 		mDesc.Text = mContent.Text;
 		mDesc.Color = GetTint() * GetStyleInternal()->Normal.TextColor;;
 
-		mTextSprite->Update(mDesc, (UINT64)GetParentWidgetInternal());
+		mTextSprite->Update(mDesc, (u64)GetParentWidgetInternal());
 
 		// Populate GUI render elements from the sprites
 		{
@@ -90,21 +90,21 @@ namespace bs
 	}
 
 	void GUILabel::FillBuffer(
-		UINT8* vertices,
-		UINT32* indices,
-		UINT32 vertexOffset,
-		UINT32 indexOffset,
+		u8* vertices,
+		u32* indices,
+		u32 vertexOffset,
+		u32 indexOffset,
 		const Vector2I& offset,
-		UINT32 maxNumVerts,
-		UINT32 maxNumIndices,
-		UINT32 renderElementIdx) const
+		u32 maxNumVerts,
+		u32 maxNumIndices,
+		u32 renderElementIdx) const
 	{
-		UINT8* uvs = vertices + sizeof(Vector2);
-		UINT32 vertexStride = sizeof(Vector2) * 2;
-		UINT32 indexStride = sizeof(UINT32);
+		u8* uvs = vertices + sizeof(Vector2);
+		u32 vertexStride = sizeof(Vector2) * 2;
+		u32 indexStride = sizeof(u32);
 		Vector2I layoutOffset = Vector2I(mLayoutData.Area.X, mLayoutData.Area.Y) + offset;
 
-		UINT32 imageSpriteIdx = mTextSprite->GetNumRenderElements();
+		u32 imageSpriteIdx = mTextSprite->GetNumRenderElements();
 
 		if (renderElementIdx < imageSpriteIdx)
 		{

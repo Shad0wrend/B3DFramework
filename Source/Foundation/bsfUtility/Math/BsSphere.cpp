@@ -28,7 +28,7 @@ namespace bs
 	void Sphere::Transform(const Matrix4& matrix)
 	{
 		float lengthSqrd[3];
-		for(UINT32 i = 0; i < 3; i++)
+		for(u32 i = 0; i < 3; i++)
 		{
 			Vector3 column = matrix.GetColumn(i);
 			lengthSqrd[i] = column.Dot(column);

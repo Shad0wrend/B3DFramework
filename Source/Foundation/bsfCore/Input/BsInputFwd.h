@@ -26,7 +26,7 @@ namespace bs
 	 * When storing these sequentially make sure to only reference the low order 2 bytes. Two high order bytes are used for
 	 * various flags.
 	 */
-	enum ButtonCode : UINT32
+	enum ButtonCode : u32
 	{
 		BC_UNASSIGNED  = 0x00,
 		BC_ESCAPE      = 0x01,
@@ -258,8 +258,8 @@ namespace bs
 		{ }
 
 		ButtonCode ButtonCode; /**< Button code this event is referring to. */
-		UINT64 Timestamp; /**< Timestamp in ticks when the event happened. */
-		UINT32 DeviceIdx; /**< Index of the device that the event originated from. */
+		u64 Timestamp; /**< Timestamp in ticks when the event happened. */
+		u32 DeviceIdx; /**< Index of the device that the event originated from. */
 
 		/**	Query is the pressed button a keyboard button. */
 		bool IsKeyboard() const { return (ButtonCode & 0xC0000000) == 0; }
@@ -318,7 +318,7 @@ namespace bs
 		Vector2I ScreenPos; /**< Screen position where the input event occurred. */
 		Vector2I Delta; /**< Change in movement since last sent event. */
 		/** States of the pointer buttons (for example mouse buttons). */
-		bool ButtonStates[(UINT32)PointerEventButton::Count];
+		bool ButtonStates[(u32)PointerEventButton::Count];
 		/**
 		 * Button that triggered the pointer event. Might be irrelevant depending on event type. (for example move events
 		 * don't correspond to a button.
@@ -365,7 +365,7 @@ namespace bs
 			:mIsUsed(false)
 		{ }
 
-		UINT32 TextChar; /**< Character the that was input. */
+		u32 TextChar; /**< Character the that was input. */
 
 		/**
 		 * Check if the event has been marked as used. Internally this means nothing but caller might choose to ignore an

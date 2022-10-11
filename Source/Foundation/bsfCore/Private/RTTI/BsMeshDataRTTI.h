@@ -27,20 +27,20 @@ namespace bs
 		IndexType& GetIndexType(MeshData* obj) { return obj->mIndexType; }
 		void SetIndexType(MeshData* obj, IndexType& value) { obj->mIndexType = value; }
 
-		UINT32& GetNumVertices(MeshData* obj) { return obj->mNumVertices; }
-		void SetNumVertices(MeshData* obj, UINT32& value) { obj->mNumVertices = value; }
+		u32& GetNumVertices(MeshData* obj) { return obj->mNumVertices; }
+		void SetNumVertices(MeshData* obj, u32& value) { obj->mNumVertices = value; }
 
-		UINT32& GetNumIndices(MeshData* obj) { return obj->mNumIndices; }
-		void SetNumIndices(MeshData* obj, UINT32& value) { obj->mNumIndices = value; }
+		u32& GetNumIndices(MeshData* obj) { return obj->mNumIndices; }
+		void SetNumIndices(MeshData* obj, u32& value) { obj->mNumIndices = value; }
 
-		SPtr<DataStream> GetData(MeshData* obj, UINT32& size)
+		SPtr<DataStream> GetData(MeshData* obj, u32& size)
 		{
 			size = obj->GetInternalBufferSize();
 
 			return bs_shared_ptr_new<MemoryDataStream>(obj->GetData(), size);
 		}
 
-		void SetData(MeshData* obj, const SPtr<DataStream>& value, UINT32 size)
+		void SetData(MeshData* obj, const SPtr<DataStream>& value, u32 size)
 		{
 			obj->AllocateInternalBuffer(size);
 			value->Read(obj->GetData(), size);
@@ -69,7 +69,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_MeshData;
 		}

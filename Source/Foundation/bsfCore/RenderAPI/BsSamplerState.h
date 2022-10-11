@@ -39,7 +39,7 @@ namespace bs
 		FilterOptions MipFilter = FO_LINEAR;
 
 		/** Maximum number of samples if anisotropic filtering is enabled. Max is 16. */
-		UINT32 MaxAniso = 0;
+		u32 MaxAniso = 0;
 
 		/**
 		 * Mipmap bias allows you to adjust the mipmap selection calculation. Negative values  force a larger mipmap to be
@@ -105,7 +105,7 @@ namespace bs
 		const Color& GetBorderColor() const;
 
 		/**	Returns the hash value generated from the sampler state properties. */
-		UINT64 GetHash() const { return mHash; }
+		u64 GetHash() const { return mHash; }
 
 		/**	Returns the descriptor originally used for creating the sampler state. */
 		SAMPLER_STATE_DESC GetDesc() const { return mData; }
@@ -116,7 +116,7 @@ namespace bs
 		friend class SamplerStateRTTI;
 
 		SAMPLER_STATE_DESC mData;
-		UINT64 mHash;
+		u64 mHash;
 	};
 
 	/**
@@ -146,7 +146,7 @@ namespace bs
 		static const SPtr<SamplerState>& GetDefault();
 
 		/**	Generates a hash value from a sampler state descriptor. */
-		static UINT64 GenerateHash(const SAMPLER_STATE_DESC& desc);
+		static u64 GenerateHash(const SAMPLER_STATE_DESC& desc);
 
 	protected:
 		SamplerState(const SAMPLER_STATE_DESC& desc);

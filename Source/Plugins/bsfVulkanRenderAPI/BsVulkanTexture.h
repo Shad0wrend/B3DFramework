@@ -22,9 +22,9 @@ namespace bs { namespace ct
 		VkImageLayout Layout; /**< Initial layout of the image. */
 		TextureType Type; /**< Type of the image. */
 		VkFormat Format; /**< Pixel format of the image. */
-		UINT32 NumFaces; /**< Number of faces (array slices, or cube-map faces). */
-		UINT32 NumMipLevels; /**< Number of mipmap levels per face. */
-		UINT32 Usage; /** Determines how will the image be used. */
+		u32 NumFaces; /**< Number of faces (array slices, or cube-map faces). */
+		u32 NumMipLevels; /**< Number of mipmap levels per face. */
+		u32 Usage; /** Determines how will the image be used. */
 	};
 
 	/** Wrapper around a Vulkan image object that manages its usage and lifetime. */
@@ -108,7 +108,7 @@ namespace bs { namespace ct
 		 * Retrieves a separate resource for a specific image face & mip level. This allows the caller to track subresource
 		 * usage individually, instead for the entire image.
 		 */
-		VulkanImageSubresource* GetSubresource(UINT32 face, UINT32 mipLevel);
+		VulkanImageSubresource* GetSubresource(u32 face, u32 mipLevel);
 
 		/**
 		 * Returns a pointer to internal image memory for the specified sub-resource. Must be followed by unmap(). Caller
@@ -119,14 +119,14 @@ namespace bs { namespace ct
 		 * @param[in]	mipLevel	Index of the mip level to map.
 		 * @param[in]	output		Output object containing the pointer to the sub-resource data.
 		 */
-		void Map(UINT32 face, UINT32 mipLevel, PixelData& output) const;
+		void Map(u32 face, u32 mipLevel, PixelData& output) const;
 
 		/**
 		 * Returns a pointer to internal image memory for the entire resource. Must be followed by unmap(). Caller
 		 * must ensure the image was created in CPU readable memory, and that image isn't currently being written to by the
 		 * GPU.
 		 */
-		UINT8* Map(UINT32 offset, UINT32 size) const;
+		u8* Map(u32 offset, u32 size) const;
 
 		/** Unmaps a buffer previously mapped with map(). */
 		void Unmap();
@@ -172,11 +172,11 @@ namespace bs { namespace ct
 		VmaAllocation mAllocation;
 		VkImageView mMainView;
 		VkImageView mFramebufferMainView;
-		INT32 mUsage;
+		i32 mUsage;
 		bool mOwnsImage;
 
-		UINT32 mNumFaces;
-		UINT32 mNumMipLevels;
+		u32 mNumFaces;
+		u32 mNumMipLevels;
 		VulkanImageSubresource** mSubresources;
 
 		mutable VkImageViewCreateInfo mImageViewCI;
@@ -213,7 +213,7 @@ namespace bs { namespace ct
 		 * Gets the resource wrapping the Vulkan image object, on the specified device. If texture device mask doesn't
 		 * include the provided device, null is returned.
 		 */
-		VulkanImage* GetResource(UINT32 deviceIdx) const { return mImages[deviceIdx]; }
+		VulkanImage* GetResource(u32 deviceIdx) const { return mImages[deviceIdx]; }
 
 	protected:
 		friend class VulkanTextureManager;
@@ -224,8 +224,8 @@ namespace bs { namespace ct
 		void Initialize() ;
 
 		/** @copydoc Texture::lockImpl */
-		PixelData LockImpl(GpuLockOptions options, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 deviceIdx = 0,
-						   UINT32 queueIdx = 0) ;
+		PixelData LockImpl(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0,
+						   u32 queueIdx = 0) ;
 
 		/** @copydoc Texture::unlockImpl */
 		void UnlockImpl() ;
@@ -235,12 +235,12 @@ namespace bs { namespace ct
 			const SPtr<CommandBuffer>& commandBuffer) ;
 
 		/** @copydoc Texture::readData */
-		void ReadDataImpl(PixelData& dest, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 deviceIdx = 0,
-					  UINT32 queueIdx = 0) ;
+		void ReadDataImpl(PixelData& dest, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0,
+					  u32 queueIdx = 0) ;
 
 		/** @copydoc Texture::writeData */
-		void WriteDataImpl(const PixelData& src, UINT32 mipLevel = 0, UINT32 face = 0, bool discardWholeBuffer = false,
-					   UINT32 queueIdx = 0) ;
+		void WriteDataImpl(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false,
+					   u32 queueIdx = 0) ;
 
 	private:
 		/** Creates a new image for the specified device, matching the current properties. */
@@ -269,12 +269,12 @@ namespace bs { namespace ct
 		GpuDeviceFlags mDeviceMask;
 
 		VulkanBuffer* mStagingBuffer;
-		UINT32 mMappedDeviceIdx;
-		UINT32 mMappedGlobalQueueIdx;
-		UINT32 mMappedMip;
-		UINT32 mMappedFace;
-		UINT32 mMappedRowPitch;
-		UINT32 mMappedSlicePitch;
+		u32 mMappedDeviceIdx;
+		u32 mMappedGlobalQueueIdx;
+		u32 mMappedMip;
+		u32 mMappedFace;
+		u32 mMappedRowPitch;
+		u32 mMappedSlicePitch;
 		GpuLockOptions mMappedLockOptions;
 
 		VkImageCreateInfo mImageCI;

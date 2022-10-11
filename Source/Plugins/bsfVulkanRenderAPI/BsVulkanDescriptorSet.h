@@ -22,7 +22,7 @@ namespace bs { namespace ct
 		VkDescriptorSet GetHandle() const { return mSet; }
 
 		/** Updates the descriptor set with the provided values. */
-		void Write(VkWriteDescriptorSet* entries, UINT32 count);
+		void Write(VkWriteDescriptorSet* entries, u32 count);
 
 	protected:
 		VkDescriptorSet mSet;

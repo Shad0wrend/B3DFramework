@@ -115,7 +115,7 @@ namespace bs
 						{
 							if (lineStream >> token && token == ":")
 							{
-								UINT32 numCores;
+								u32 numCores;
 								if (lineStream >> numCores)
 									output.cpuNumCores = numCores;
 							}
@@ -128,7 +128,7 @@ namespace bs
 		// Get CPU frequency
 		{
 			std::ifstream file("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq");
-			UINT32 frequency;
+			u32 frequency;
 			if(file >> frequency)
 				output.cpuClockSpeedMhz = frequency / 1000;
 		}
@@ -141,7 +141,7 @@ namespace bs
 			{
 				if(token == "MemTotal:")
 				{
-					UINT32 memTotal;
+					u32 memTotal;
 					if(file >> memTotal)
 						output.memoryAmountMb = memTotal / 1024;
 					else
@@ -181,7 +181,7 @@ namespace bs
 		int32_t bufferLen = 0;
 		u_strFromUTF8(nullptr, 0, &bufferLen, input.data(), inputLen, &errorCode);
 
-		auto uStr = bs_stack_alloc<UChar>((UINT32)bufferLen);
+		auto uStr = bs_stack_alloc<UChar>((u32)bufferLen);
 		int32_t uStrLen = 0;
 		errorCode = U_ZERO_ERROR;
 		u_strFromUTF8(uStr, bufferLen * sizeof(UChar), &uStrLen, input.data(), inputLen, &errorCode);
@@ -192,7 +192,7 @@ namespace bs
 		else
 			bufferLen = u_strToLower(nullptr, 0, uStr, uStrLen, nullptr, &errorCode);
 
-		auto convertedUStr = bs_stack_alloc<UChar>((UINT32) bufferLen);
+		auto convertedUStr = bs_stack_alloc<UChar>((u32) bufferLen);
 		int32_t convertedUStrLen = 0;
 
 		errorCode = U_ZERO_ERROR;
@@ -225,9 +225,9 @@ namespace bs
 		uuid_generate(nativeUUID);
 
 		return UUID(
-				*(UINT32*)&nativeUUID[0],
-				*(UINT32*)&nativeUUID[4],
-				*(UINT32*)&nativeUUID[8],
-				*(UINT32*)&nativeUUID[12]);
+				*(u32*)&nativeUUID[0],
+				*(u32*)&nativeUUID[4],
+				*(u32*)&nativeUUID[8],
+				*(u32*)&nativeUUID[12]);
 	}
 }

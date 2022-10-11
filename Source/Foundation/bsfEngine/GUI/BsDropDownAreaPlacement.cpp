@@ -41,7 +41,7 @@ namespace bs
 		return instance;
 	}
 
-	Rect2I DropDownAreaPlacement::GetOptimalBounds(UINT32 width, UINT32 height, const Rect2I& availableArea, HorzDir& horzDir, VertDir& vertDir) const
+	Rect2I DropDownAreaPlacement::GetOptimalBounds(u32 width, u32 height, const Rect2I& availableArea, HorzDir& horzDir, VertDir& vertDir) const
 	{
 		Rect2I output;
 
@@ -77,8 +77,8 @@ namespace bs
 		}
 
 		// Determine x position and whether to align to left or right side of the drop down list
-		UINT32 availableRightwardWidth = (UINT32)std::max(0, (availableArea.X + (INT32)availableArea.Width) - potentialRightStart);
-		UINT32 availableLeftwardWidth = (UINT32)std::max(0, potentialLeftStart - availableArea.X);
+		u32 availableRightwardWidth = (u32)std::max(0, (availableArea.X + (i32)availableArea.Width) - potentialRightStart);
+		u32 availableLeftwardWidth = (u32)std::max(0, potentialLeftStart - availableArea.X);
 
 		//// Prefer right if possible
 		if (width <= availableRightwardWidth)
@@ -104,8 +104,8 @@ namespace bs
 		}
 
 		// Determine y position and whether to open upward or downward
-		UINT32 availableDownwardHeight = (UINT32)std::max(0, (availableArea.Y + (INT32)availableArea.Height) - potentialBottomStart);
-		UINT32 availableUpwardHeight = (UINT32)std::max(0, potentialTopStart - availableArea.Y);
+		u32 availableDownwardHeight = (u32)std::max(0, (availableArea.Y + (i32)availableArea.Height) - potentialBottomStart);
+		u32 availableUpwardHeight = (u32)std::max(0, potentialTopStart - availableArea.Y);
 
 		//// Prefer down if possible
 		if (height <= availableDownwardHeight)
@@ -124,7 +124,7 @@ namespace bs
 			}
 			else
 			{
-				output.Y = potentialTopStart - (INT32)std::min(height, availableUpwardHeight);
+				output.Y = potentialTopStart - (i32)std::min(height, availableUpwardHeight);
 				output.Height = std::min(height, availableUpwardHeight);
 				vertDir = VertDir::Up;
 			}

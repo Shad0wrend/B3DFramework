@@ -15,35 +15,35 @@ namespace bs
 	 *
 	 * @tparam elementSize	Size of a single pixel in bytes.
 	 */
-	template<UINT32 elementSize> struct NearestResampler
+	template<u32 elementSize> struct NearestResampler
 	{
 		static void Scale(const PixelData& source, const PixelData& dest)
 		{
-			UINT8* sourceData = source.GetData();
-			UINT8* destPtr = dest.GetData();
+			u8* sourceData = source.GetData();
+			u8* destPtr = dest.GetData();
 
 			// Get steps for traversing source data in 16/48 fixed point format
-			UINT64 stepX = ((UINT64)source.GetWidth() << 48) / dest.GetWidth();
-			UINT64 stepY = ((UINT64)source.GetHeight() << 48) / dest.GetHeight();
-			UINT64 stepZ = ((UINT64)source.GetDepth() << 48) / dest.GetDepth();
+			u64 stepX = ((u64)source.GetWidth() << 48) / dest.GetWidth();
+			u64 stepY = ((u64)source.GetHeight() << 48) / dest.GetHeight();
+			u64 stepZ = ((u64)source.GetDepth() << 48) / dest.GetDepth();
 
-			UINT64 curZ = (stepZ >> 1) - 1; // Offset half a pixel to start at pixel center
-			for (UINT32 z = dest.GetFront(); z < dest.GetBack(); z++, curZ += stepZ)
+			u64 curZ = (stepZ >> 1) - 1; // Offset half a pixel to start at pixel center
+			for (u32 z = dest.GetFront(); z < dest.GetBack(); z++, curZ += stepZ)
 			{
-				UINT32 offsetZ = (UINT32)(curZ >> 48) * source.GetSlicePitch();
+				u32 offsetZ = (u32)(curZ >> 48) * source.GetSlicePitch();
 
-				UINT64 curY = (stepY >> 1) - 1; // Offset half a pixel to start at pixel center
-				for (UINT32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
+				u64 curY = (stepY >> 1) - 1; // Offset half a pixel to start at pixel center
+				for (u32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
 				{
-					UINT32 offsetY = (UINT32)(curY >> 48) * source.GetRowPitch();
+					u32 offsetY = (u32)(curY >> 48) * source.GetRowPitch();
 
-					UINT64 curX = (stepX >> 1) - 1; // Offset half a pixel to start at pixel center
-					for (UINT32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
+					u64 curX = (stepX >> 1) - 1; // Offset half a pixel to start at pixel center
+					for (u32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
 					{
-						UINT32 offsetX = (UINT32)(curX >> 48);
-						UINT32 offsetBytes = elementSize*offsetX + offsetY + offsetZ;
+						u32 offsetX = (u32)(curX >> 48);
+						u32 offsetBytes = elementSize*offsetX + offsetY + offsetZ;
 
-						UINT8* curSourcePtr = sourceData + offsetBytes;
+						u8* curSourcePtr = sourceData + offsetBytes;
 
 						memcpy(destPtr, curSourcePtr, elementSize);
 						destPtr += elementSize;
@@ -62,48 +62,48 @@ namespace bs
 	{
 		static void Scale(const PixelData& source, const PixelData& dest)
 		{
-			UINT32 sourceElemSize = PixelUtil::GetNumElemBytes(source.GetFormat());
-			UINT32 destElemSize = PixelUtil::GetNumElemBytes(dest.GetFormat());
+			u32 sourceElemSize = PixelUtil::GetNumElemBytes(source.GetFormat());
+			u32 destElemSize = PixelUtil::GetNumElemBytes(dest.GetFormat());
 
-			UINT8* sourceData = source.GetData();
-			UINT8* destPtr = dest.GetData();
+			u8* sourceData = source.GetData();
+			u8* destPtr = dest.GetData();
 
 			// Get steps for traversing source data in 16/48 fixed point precision format
-			UINT64 stepX = ((UINT64)source.GetWidth() << 48) / dest.GetWidth();
-			UINT64 stepY = ((UINT64)source.GetHeight() << 48) / dest.GetHeight();
-			UINT64 stepZ = ((UINT64)source.GetDepth() << 48) / dest.GetDepth();
+			u64 stepX = ((u64)source.GetWidth() << 48) / dest.GetWidth();
+			u64 stepY = ((u64)source.GetHeight() << 48) / dest.GetHeight();
+			u64 stepZ = ((u64)source.GetDepth() << 48) / dest.GetDepth();
 
 			// Contains 16/16 fixed point precision format. Most significant
 			// 16 bits will contain the coordinate in the source image, and the
 			// least significant 16 bits will contain the fractional part of the coordinate
 			// that will be used for determining the blend amount.
-			UINT32 temp = 0;
+			u32 temp = 0;
 
-			UINT64 curZ = (stepZ >> 1) - 1; // Offset half a pixel to start at pixel center
-			for (UINT32 z = dest.GetFront(); z < dest.GetBack(); z++, curZ += stepZ)
+			u64 curZ = (stepZ >> 1) - 1; // Offset half a pixel to start at pixel center
+			for (u32 z = dest.GetFront(); z < dest.GetBack(); z++, curZ += stepZ)
 			{
-				temp = UINT32(curZ >> 32);
+				temp = u32(curZ >> 32);
 				temp = (temp > 0x8000)? temp - 0x8000 : 0;
-				UINT32 sampleCoordZ1 = temp >> 16;
-				UINT32 sampleCoordZ2 = std::min(sampleCoordZ1 + 1, (UINT32)source.GetDepth() - 1);
+				u32 sampleCoordZ1 = temp >> 16;
+				u32 sampleCoordZ2 = std::min(sampleCoordZ1 + 1, (u32)source.GetDepth() - 1);
 				float sampleWeightZ = (temp & 0xFFFF) / 65536.0f;
 
-				UINT64 curY = (stepY >> 1) - 1; // Offset half a pixel to start at pixel center
-				for (UINT32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
+				u64 curY = (stepY >> 1) - 1; // Offset half a pixel to start at pixel center
+				for (u32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
 				{
-					temp = (UINT32)(curY >> 32);
+					temp = (u32)(curY >> 32);
 					temp = (temp > 0x8000)? temp - 0x8000 : 0;
-					UINT32 sampleCoordY1 = temp >> 16;
-					UINT32 sampleCoordY2 = std::min(sampleCoordY1 + 1, (UINT32)source.GetHeight() - 1);
+					u32 sampleCoordY1 = temp >> 16;
+					u32 sampleCoordY2 = std::min(sampleCoordY1 + 1, (u32)source.GetHeight() - 1);
 					float sampleWeightY = (temp & 0xFFFF) / 65536.0f;
 
-					UINT64 curX = (stepX >> 1) - 1; // Offset half a pixel to start at pixel center
-					for (UINT32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
+					u64 curX = (stepX >> 1) - 1; // Offset half a pixel to start at pixel center
+					for (u32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
 					{
-						temp = (UINT32)(curX >> 32);
+						temp = (u32)(curX >> 32);
 						temp = (temp > 0x8000)? temp - 0x8000 : 0;
-						UINT32 sampleCoordX1 = temp >> 16;
-						UINT32 sampleCoordX2 = std::min(sampleCoordX1 + 1, (UINT32)source.GetWidth() - 1);
+						u32 sampleCoordX1 = temp >> 16;
+						u32 sampleCoordX2 = std::min(sampleCoordX1 + 1, (u32)source.GetWidth() - 1);
 						float sampleWeightX = (temp & 0xFFFF) / 65536.0f;
 
 						Color x1y1z1, x2y1z1, x1y2z1, x2y2z1;
@@ -153,54 +153,54 @@ namespace bs
 	{
 		static void Scale(const PixelData& source, const PixelData& dest)
 		{
-			UINT32 sourcePixelSize = PixelUtil::GetNumElemBytes(source.GetFormat());
-			UINT32 destPixelSize = PixelUtil::GetNumElemBytes(dest.GetFormat());
+			u32 sourcePixelSize = PixelUtil::GetNumElemBytes(source.GetFormat());
+			u32 destPixelSize = PixelUtil::GetNumElemBytes(dest.GetFormat());
 
-			UINT32 numSourceChannels = sourcePixelSize / sizeof(float);
-			UINT32 numDestChannels = destPixelSize / sizeof(float);
+			u32 numSourceChannels = sourcePixelSize / sizeof(float);
+			u32 numDestChannels = destPixelSize / sizeof(float);
 
 			float* sourceData = (float*)source.GetData();
 			float* destPtr = (float*)dest.GetData();
 
 			// Get steps for traversing source data in 16/48 fixed point precision format
-			UINT64 stepX = ((UINT64)source.GetWidth() << 48) / dest.GetWidth();
-			UINT64 stepY = ((UINT64)source.GetHeight() << 48) / dest.GetHeight();
-			UINT64 stepZ = ((UINT64)source.GetDepth() << 48) / dest.GetDepth();
+			u64 stepX = ((u64)source.GetWidth() << 48) / dest.GetWidth();
+			u64 stepY = ((u64)source.GetHeight() << 48) / dest.GetHeight();
+			u64 stepZ = ((u64)source.GetDepth() << 48) / dest.GetDepth();
 
-			UINT32 sourceRowPitch = source.GetRowPitch() / sourcePixelSize;
-			UINT32 sourceSlicePitch = source.GetSlicePitch() / sourcePixelSize;
+			u32 sourceRowPitch = source.GetRowPitch() / sourcePixelSize;
+			u32 sourceSlicePitch = source.GetSlicePitch() / sourcePixelSize;
 
 			// Contains 16/16 fixed point precision format. Most significant
 			// 16 bits will contain the coordinate in the source image, and the
 			// least significant 16 bits will contain the fractional part of the coordinate
 			// that will be used for determining the blend amount.
-			UINT32 temp = 0;
+			u32 temp = 0;
 
-			UINT64 curZ = (stepZ >> 1) - 1; // Offset half a pixel to start at pixel center
-			for (UINT32 z = dest.GetFront(); z < dest.GetBack(); z++, curZ += stepZ)
+			u64 curZ = (stepZ >> 1) - 1; // Offset half a pixel to start at pixel center
+			for (u32 z = dest.GetFront(); z < dest.GetBack(); z++, curZ += stepZ)
 			{
-				temp = (UINT32)(curZ >> 32);
+				temp = (u32)(curZ >> 32);
 				temp = (temp > 0x8000)? temp - 0x8000 : 0;
-				UINT32 sampleCoordZ1 = temp >> 16;
-				UINT32 sampleCoordZ2 = std::min(sampleCoordZ1 + 1, (UINT32)source.GetDepth() - 1);
+				u32 sampleCoordZ1 = temp >> 16;
+				u32 sampleCoordZ2 = std::min(sampleCoordZ1 + 1, (u32)source.GetDepth() - 1);
 				float sampleWeightZ = (temp & 0xFFFF) / 65536.0f;
 
-				UINT64 curY = (stepY >> 1) - 1; // Offset half a pixel to start at pixel center
-				for (UINT32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
+				u64 curY = (stepY >> 1) - 1; // Offset half a pixel to start at pixel center
+				for (u32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
 				{
-					temp = (UINT32)(curY >> 32);
+					temp = (u32)(curY >> 32);
 					temp = (temp > 0x8000)? temp - 0x8000 : 0;
-					UINT32 sampleCoordY1 = temp >> 16;
-					UINT32 sampleCoordY2 = std::min(sampleCoordY1 + 1, (UINT32)source.GetHeight() - 1);
+					u32 sampleCoordY1 = temp >> 16;
+					u32 sampleCoordY2 = std::min(sampleCoordY1 + 1, (u32)source.GetHeight() - 1);
 					float sampleWeightY = (temp & 0xFFFF) / 65536.0f;
 
-					UINT64 curX = (stepX >> 1) - 1; // Offset half a pixel to start at pixel center
-					for (UINT32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
+					u64 curX = (stepX >> 1) - 1; // Offset half a pixel to start at pixel center
+					for (u32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
 					{
-						temp = (UINT32)(curX >> 32);
+						temp = (u32)(curX >> 32);
 						temp = (temp > 0x8000)? temp - 0x8000 : 0;
-						UINT32 sampleCoordX1 = temp >> 16;
-						UINT32 sampleCoordX2 = std::min(sampleCoordX1 + 1, (UINT32)source.GetWidth() - 1);
+						u32 sampleCoordX1 = temp >> 16;
+						u32 sampleCoordX2 = std::min(sampleCoordX1 + 1, (u32)source.GetWidth() - 1);
 						float sampleWeightX = (temp & 0xFFFF) / 65536.0f;
 
 						// process R,G,B,A simultaneously for cache coherence?
@@ -209,13 +209,13 @@ namespace bs
 
 #define ACCUM3(x,y,z,factor) \
 						{ float f = factor; \
-						UINT32 offset = (x + y*sourceRowPitch + z*sourceSlicePitch)*numSourceChannels; \
+						u32 offset = (x + y*sourceRowPitch + z*sourceSlicePitch)*numSourceChannels; \
 						accum[0] += sourceData[offset + 0] * f; accum[1] += sourceData[offset + 1] * f; \
 						accum[2] += sourceData[offset + 2] * f; }
 
 #define ACCUM4(x,y,z,factor) \
 						{ float f = factor; \
-						UINT32 offset = (x + y*sourceRowPitch + z*sourceSlicePitch)*numSourceChannels; \
+						u32 offset = (x + y*sourceRowPitch + z*sourceSlicePitch)*numSourceChannels; \
 						accum[0] += sourceData[offset + 0] * f; accum[1] += sourceData[offset + 1] * f; \
 						accum[2] += sourceData[offset + 2] * f; accum[3] += sourceData[offset + 3] * f; }
 
@@ -275,7 +275,7 @@ namespace bs
 	 *
 	 * @tparam	channels	Number of channels in the pixel format.
 	 */
-	template<UINT32 channels> struct LinearResampler_Byte
+	template<u32 channels> struct LinearResampler_Byte
 	{
 		static void Scale(const PixelData& source, const PixelData& dest)
 		{
@@ -286,51 +286,51 @@ namespace bs
 				return;
 			}
 
-			UINT8* sourceData = (UINT8*)source.GetData();
-			UINT8* destPtr = (UINT8*)dest.GetData();
+			u8* sourceData = (u8*)source.GetData();
+			u8* destPtr = (u8*)dest.GetData();
 
 			// Get steps for traversing source data in 16/48 fixed point precision format
-			UINT64 stepX = ((UINT64)source.GetWidth() << 48) / dest.GetWidth();
-			UINT64 stepY = ((UINT64)source.GetHeight() << 48) / dest.GetHeight();
+			u64 stepX = ((u64)source.GetWidth() << 48) / dest.GetWidth();
+			u64 stepY = ((u64)source.GetHeight() << 48) / dest.GetHeight();
 
 			// Contains 16/16 fixed point precision format. Most significant
 			// 16 bits will contain the coordinate in the source image, and the
 			// least significant 16 bits will contain the fractional part of the coordinate
 			// that will be used for determining the blend amount.
-			UINT32 temp;
+			u32 temp;
 
-			UINT64 curY = (stepY >> 1) - 1; // Offset half a pixel to start at pixel center
-			for (UINT32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
+			u64 curY = (stepY >> 1) - 1; // Offset half a pixel to start at pixel center
+			for (u32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
 			{
-				temp = (UINT32)(curY >> 36);
+				temp = (u32)(curY >> 36);
 				temp = (temp > 0x800)? temp - 0x800: 0;
-				UINT32 sampleWeightY = temp & 0xFFF;
-				UINT32 sampleCoordY1 = temp >> 12;
-				UINT32 sampleCoordY2 = std::min(sampleCoordY1 + 1, (UINT32)source.GetBottom() - source.GetTop() - 1);
+				u32 sampleWeightY = temp & 0xFFF;
+				u32 sampleCoordY1 = temp >> 12;
+				u32 sampleCoordY2 = std::min(sampleCoordY1 + 1, (u32)source.GetBottom() - source.GetTop() - 1);
 
-				UINT32 sampleY1Offset = sampleCoordY1 * source.GetRowPitch();
-				UINT32 sampleY2Offset = sampleCoordY2 * source.GetRowPitch();
+				u32 sampleY1Offset = sampleCoordY1 * source.GetRowPitch();
+				u32 sampleY2Offset = sampleCoordY2 * source.GetRowPitch();
 
-				UINT64 curX = (stepX >> 1) - 1; // Offset half a pixel to start at pixel center
-				for (UINT32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
+				u64 curX = (stepX >> 1) - 1; // Offset half a pixel to start at pixel center
+				for (u32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
 				{
-					temp = (UINT32)(curX >> 36);
+					temp = (u32)(curX >> 36);
 					temp = (temp > 0x800)? temp - 0x800 : 0;
-					UINT32 sampleWeightX = temp & 0xFFF;
-					UINT32 sampleCoordX1 = temp >> 12;
-					UINT32 sampleCoordX2 = std::min(sampleCoordX1 + 1, (UINT32)source.GetRight() - source.GetLeft() - 1);
+					u32 sampleWeightX = temp & 0xFFF;
+					u32 sampleCoordX1 = temp >> 12;
+					u32 sampleCoordX2 = std::min(sampleCoordX1 + 1, (u32)source.GetRight() - source.GetLeft() - 1);
 
-					UINT32 sxfsyf = sampleWeightX*sampleWeightY;
-					for (UINT32 k = 0; k < channels; k++)
+					u32 sxfsyf = sampleWeightX*sampleWeightY;
+					for (u32 k = 0; k < channels; k++)
 					{
-						UINT32 accum =
+						u32 accum =
 							sourceData[sampleCoordX1 * channels + sampleY1Offset + k]*(0x1000000-(sampleWeightX<<12)-(sampleWeightY<<12)+sxfsyf) +
 							sourceData[sampleCoordX2 * channels + sampleY1Offset + k]*((sampleWeightX<<12)-sxfsyf) +
 							sourceData[sampleCoordX1 * channels + sampleY2Offset + k]*((sampleWeightY<<12)-sxfsyf) +
 							sourceData[sampleCoordX2 * channels + sampleY2Offset + k]*sxfsyf;
 
 						// Round up to byte size
-						*destPtr = (UINT8)((accum + 0x800000) >> 24);
+						*destPtr = (u8)((accum + 0x800000) >> 24);
 						destPtr++;
 					}
 				}
@@ -343,15 +343,15 @@ namespace bs
 	struct PixelFormatDescription
 	{
 		const char* Name; /**< Name of the format. */
-		UINT8 ElemBytes; /**< Number of bytes one element (color value) uses. */
-		UINT32 Flags; /**< PixelFormatFlags set by the pixel format. */
+		u8 ElemBytes; /**< Number of bytes one element (color value) uses. */
+		u32 Flags; /**< PixelFormatFlags set by the pixel format. */
 		PixelComponentType ComponentType; /**< Data type of a single element of the format. */
-		UINT8 ComponentCount; /**< Number of elements in the format. */
+		u8 ComponentCount; /**< Number of elements in the format. */
 
-		UINT8 Rbits, Gbits, Bbits, Abits; /**< Number of bits per element in the format. */
+		u8 Rbits, Gbits, Bbits, Abits; /**< Number of bits per element in the format. */
 
-		UINT32 Rmask, Gmask, Bmask, Amask; /**< Masks used by packers/unpackers. */
-		UINT8 Rshift, Gshift, Bshift, Ashift; /**< Shifts used by packers/unpackers. */
+		u32 Rmask, Gmask, Bmask, Amask; /**< Masks used by packers/unpackers. */
+		u8 Rshift, Gshift, Bshift, Ashift; /**< Shifts used by packers/unpackers. */
 	};
 
 	/**	A list of all available pixel formats. */
@@ -1194,7 +1194,7 @@ namespace bs
 	/**	Handles compression output from NVTT library for a single image. */
 	struct NVTTCompressOutputHandler : public nvtt::OutputHandler
 	{
-		NVTTCompressOutputHandler(UINT8* buffer, UINT32 sizeBytes)
+		NVTTCompressOutputHandler(u8* buffer, u32 sizeBytes)
 			:Buffer(buffer), BufferWritePos(buffer), BufferEnd(buffer + sizeBytes)
 		{ }
 
@@ -1213,9 +1213,9 @@ namespace bs
 		void endImage() override
 		{ }
 
-		UINT8* Buffer;
-		UINT8* BufferWritePos;
-		UINT8* BufferEnd;
+		u8* Buffer;
+		u8* BufferWritePos;
+		u8* BufferEnd;
 	};
 
 	/**	Handles output from NVTT library for a mip-map chain. */
@@ -1228,7 +1228,7 @@ namespace bs
 		void beginImage(int size, int width, int height, int depth, int face, int miplevel) override
 		{
 			assert(miplevel >= 0 && miplevel < (int)Buffers.size());
-			assert((UINT32)size == Buffers[miplevel]->GetConsecutiveSize());
+			assert((u32)size == Buffers[miplevel]->GetConsecutiveSize());
 
 			ActiveBuffer = Buffers[miplevel];
 
@@ -1251,8 +1251,8 @@ namespace bs
 		Vector<SPtr<PixelData>> Buffers;
 		SPtr<PixelData> ActiveBuffer;
 
-		UINT8* BufferWritePos;
-		UINT8* BufferEnd;
+		u8* BufferWritePos;
+		u8* BufferEnd;
 	};
 
 	nvtt::Format toNVTTFormat(PixelFormat format)
@@ -1330,12 +1330,12 @@ namespace bs
 		return nvtt::WrapMode_Mirror;
 	}
 
-	UINT32 PixelUtil::GetNumElemBytes(PixelFormat format)
+	u32 PixelUtil::GetNumElemBytes(PixelFormat format)
 	{
 		return getDescriptionFor(format).ElemBytes;
 	}
 
-	UINT32 PixelUtil::GetBlockSize(PixelFormat format)
+	u32 PixelUtil::GetBlockSize(PixelFormat format)
 	{
 		switch (format)
 		{
@@ -1373,7 +1373,7 @@ namespace bs
 		}
 	}
 
-	UINT32 PixelUtil::GetMemorySize(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format)
+	u32 PixelUtil::GetMemorySize(u32 width, u32 height, u32 depth, PixelFormat format)
 	{
 		if(IsCompressed(format))
 		{
@@ -1399,10 +1399,10 @@ namespace bs
 		return width*height*depth*GetBlockSize(format);
 	}
 
-	void PixelUtil::GetPitch(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format,
-						 UINT32& rowPitch, UINT32& depthPitch)
+	void PixelUtil::GetPitch(u32 width, u32 height, u32 depth, PixelFormat format,
+						 u32& rowPitch, u32& depthPitch)
 	{
-		UINT32 blockSize = GetBlockSize(format);
+		u32 blockSize = GetBlockSize(format);
 
 		if (IsCompressed(format))
 		{
@@ -1429,14 +1429,14 @@ namespace bs
 		depthPitch = width * height * blockSize;
 	}
 
-	void PixelUtil::GetSizeForMipLevel(UINT32 width, UINT32 height, UINT32 depth, UINT32 mipLevel,
-		UINT32& mipWidth, UINT32& mipHeight, UINT32& mipDepth)
+	void PixelUtil::GetSizeForMipLevel(u32 width, u32 height, u32 depth, u32 mipLevel,
+		u32& mipWidth, u32& mipHeight, u32& mipDepth)
 	{
 		mipWidth = width;
 		mipHeight = height;
 		mipDepth = depth;
 
-		for (UINT32 i = 0; i < mipLevel; i++)
+		for (u32 i = 0; i < mipLevel; i++)
 		{
 			if (mipWidth != 1) mipWidth /= 2;
 			if (mipHeight != 1) mipHeight /= 2;
@@ -1444,12 +1444,12 @@ namespace bs
 		}
 	}
 
-	UINT32 PixelUtil::GetNumElemBits(PixelFormat format)
+	u32 PixelUtil::GetNumElemBits(PixelFormat format)
 	{
 		return getDescriptionFor(format).ElemBytes * 8;
 	}
 
-	UINT32 PixelUtil::GetFlags(PixelFormat format)
+	u32 PixelUtil::GetFlags(PixelFormat format)
 	{
 		return getDescriptionFor(format).Flags;
 	}
@@ -1546,7 +1546,7 @@ namespace bs
 		}
 	}
 
-	bool PixelUtil::IsValidExtent(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format)
+	bool PixelUtil::IsValidExtent(u32 width, u32 height, u32 depth, PixelFormat format)
 	{
 		if(IsCompressed(format))
 		{
@@ -1580,7 +1580,7 @@ namespace bs
 		rgba[3] = des.Abits;
 	}
 
-	void PixelUtil::GetBitMasks(PixelFormat format, UINT32(&rgba)[4])
+	void PixelUtil::GetBitMasks(PixelFormat format, u32(&rgba)[4])
 	{
 		const PixelFormatDescription& des = getDescriptionFor(format);
 		rgba[0] = des.Rmask;
@@ -1589,7 +1589,7 @@ namespace bs
 		rgba[3] = des.Amask;
 	}
 
-	void PixelUtil::GetBitShifts(PixelFormat format, UINT8(&rgba)[4])
+	void PixelUtil::GetBitShifts(PixelFormat format, u8(&rgba)[4])
 	{
 		const PixelFormatDescription& des = getDescriptionFor(format);
 		rgba[0] = des.Rshift;
@@ -1608,7 +1608,7 @@ namespace bs
 		if (srcformat == PF_UNKNOWN)
 			return false;
 
-		UINT32 flags = GetFlags(srcformat);
+		u32 flags = GetFlags(srcformat);
 		return !((flags & PFF_COMPRESSED) || (flags & PFF_DEPTH));
 	}
 
@@ -1618,15 +1618,15 @@ namespace bs
 		return des.ComponentType;
 	}
 
-	UINT32 PixelUtil::GetNumElements(PixelFormat format)
+	u32 PixelUtil::GetNumElements(PixelFormat format)
 	{
 		const PixelFormatDescription& des = getDescriptionFor(format);
 		return des.ComponentCount;
 	}
 
-	UINT32 PixelUtil::GetMaxMipmaps(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format)
+	u32 PixelUtil::GetMaxMipmaps(u32 width, u32 height, u32 depth, PixelFormat format)
 	{
-		UINT32 count = 0;
+		u32 count = 0;
 		if ((width > 0) && (height > 0))
 		{
 			while (!(width == 1 && height == 1 && depth == 1))
@@ -1647,14 +1647,14 @@ namespace bs
 		PackColor(color.R, color.G, color.B, color.A, format, dest);
 	}
 
-	void PixelUtil::PackColor(UINT8 r, UINT8 g, UINT8 b, UINT8 a, PixelFormat format, void* dest)
+	void PixelUtil::PackColor(u8 r, u8 g, u8 b, u8 a, PixelFormat format, void* dest)
 	{
 		const PixelFormatDescription &des = getDescriptionFor(format);
 
 		if (des.Flags & PFF_INTEGER)
 		{
 			// Shortcut for integer formats packing
-			UINT32 value = ((Bitwise::FixedToFixed(r, 8, des.Rbits) << des.Rshift) & des.Rmask) |
+			u32 value = ((Bitwise::FixedToFixed(r, 8, des.Rbits) << des.Rshift) & des.Rmask) |
 				((Bitwise::FixedToFixed(g, 8, des.Gbits) << des.Gshift) & des.Gmask) |
 				((Bitwise::FixedToFixed(b, 8, des.Bbits) << des.Bshift) & des.Bmask) |
 				((Bitwise::FixedToFixed(a, 8, des.Abits) << des.Ashift) & des.Amask);
@@ -1674,12 +1674,12 @@ namespace bs
 		// Special cases
 		if (format == PF_RG11B10F)
 		{
-			UINT32 value;
+			u32 value;
 			value = Bitwise::FloatToFloat11(r);
 			value |= Bitwise::FloatToFloat11(g) << 11;
 			value |= Bitwise::FloatToFloat10(b) << 22;
 
-			((UINT32*)dest)[0] = value;
+			((u32*)dest)[0] = value;
 			return;
 		}
 
@@ -1694,23 +1694,23 @@ namespace bs
 		assert(des.ComponentCount <= 4);
 
 		float inputs[] = { r, g, b, a };
-		UINT8 bits[] = { des.Rbits, des.Gbits, des.Bbits, des.Abits };
-		UINT32 masks[] = { des.Rmask, des.Gmask, des.Bmask, des.Amask };
-		UINT8 shifts[] = { des.Rshift, des.Gshift, des.Bshift, des.Ashift };
+		u8 bits[] = { des.Rbits, des.Gbits, des.Bbits, des.Abits };
+		u32 masks[] = { des.Rmask, des.Gmask, des.Bmask, des.Amask };
+		u8 shifts[] = { des.Rshift, des.Gshift, des.Bshift, des.Ashift };
 
 		memset(dest, 0, des.ElemBytes);
 
-		UINT32 curBit = 0;
-		UINT32 prevDword = 0;
-		UINT32 dwordValue = 0;
-		for (UINT32 i = 0; i < des.ComponentCount; i++)
+		u32 curBit = 0;
+		u32 prevDword = 0;
+		u32 dwordValue = 0;
+		for (u32 i = 0; i < des.ComponentCount; i++)
 		{
-			UINT32 curDword = curBit / 32;
+			u32 curDword = curBit / 32;
 
 			// New dword reached, write current one and advance
 			if(curDword > prevDword)
 			{
-				UINT32* curDst = ((UINT32*)dest) + prevDword;
+				u32* curDst = ((u32*)dest) + prevDword;
 				Bitwise::IntWrite(curDst, 4, dwordValue);
 
 				dwordValue = 0;
@@ -1730,7 +1730,7 @@ namespace bs
 				{
 					// Note: Casting integer to float. A better option would be to have a separate unpackColor that has
 					// integer output parameters.
-					dwordValue |= (((UINT32)inputs[i]) << shifts[i]) & masks[i];
+					dwordValue |= (((u32)inputs[i]) << shifts[i]) & masks[i];
 				}
 			}
 			else if (des.Flags & PFF_FLOAT)
@@ -1740,7 +1740,7 @@ namespace bs
 				if (des.ComponentType == PCT_FLOAT16)
 					dwordValue |= (Bitwise::FloatToHalf(inputs[i]) << shifts[i]) & masks[i];
 				else
-					dwordValue |= *(UINT32*)&inputs[i];
+					dwordValue |= *(u32*)&inputs[i];
 			}
 			else
 			{
@@ -1752,8 +1752,8 @@ namespace bs
 		}
 
 		// Write last dword
-		UINT32 numBytes = std::min((prevDword + 1) * 4, (UINT32)des.ElemBytes) - (prevDword * 4);
-		UINT32* curDst = ((UINT32*)dest) + prevDword;
+		u32 numBytes = std::min((prevDword + 1) * 4, (u32)des.ElemBytes) - (prevDword * 4);
+		u32* curDst = ((u32*)dest) + prevDword;
 		Bitwise::IntWrite(curDst, numBytes, dwordValue);
 	}
 
@@ -1762,22 +1762,22 @@ namespace bs
 		UnpackColor(&color->R, &color->G, &color->B, &color->A, format, src);
 	}
 
-	void PixelUtil::UnpackColor(UINT8* r, UINT8* g, UINT8* b, UINT8* a, PixelFormat format, const void* src)
+	void PixelUtil::UnpackColor(u8* r, u8* g, u8* b, u8* a, PixelFormat format, const void* src)
 	{
 		const PixelFormatDescription &des = getDescriptionFor(format);
 
 		if (des.Flags & PFF_INTEGER)
 		{
 			// Shortcut for integer formats unpacking
-			const UINT32 value = Bitwise::IntRead(src, des.ElemBytes);
+			const u32 value = Bitwise::IntRead(src, des.ElemBytes);
 
-			*r = (UINT8)Bitwise::FixedToFixed((value & des.Rmask) >> des.Rshift, des.Rbits, 8);
-			*g = (UINT8)Bitwise::FixedToFixed((value & des.Gmask) >> des.Gshift, des.Gbits, 8);
-			*b = (UINT8)Bitwise::FixedToFixed((value & des.Bmask) >> des.Bshift, des.Bbits, 8);
+			*r = (u8)Bitwise::FixedToFixed((value & des.Rmask) >> des.Rshift, des.Rbits, 8);
+			*g = (u8)Bitwise::FixedToFixed((value & des.Gmask) >> des.Gshift, des.Gbits, 8);
+			*b = (u8)Bitwise::FixedToFixed((value & des.Bmask) >> des.Bshift, des.Bbits, 8);
 
 			if (des.Flags & PFF_HASALPHA)
 			{
-				*a = (UINT8)Bitwise::FixedToFixed((value & des.Amask) >> des.Ashift, des.Abits, 8);
+				*a = (u8)Bitwise::FixedToFixed((value & des.Amask) >> des.Ashift, des.Abits, 8);
 			}
 			else
 			{
@@ -1790,10 +1790,10 @@ namespace bs
 			float rr, gg, bb, aa;
 			UnpackColor(&rr, &gg, &bb, &aa, format, src);
 
-			*r = (UINT8)Bitwise::UnormToUint(rr, 8);
-			*g = (UINT8)Bitwise::UnormToUint(gg, 8);
-			*b = (UINT8)Bitwise::UnormToUint(bb, 8);
-			*a = (UINT8)Bitwise::UnormToUint(aa, 8);
+			*r = (u8)Bitwise::UnormToUint(rr, 8);
+			*g = (u8)Bitwise::UnormToUint(gg, 8);
+			*b = (u8)Bitwise::UnormToUint(bb, 8);
+			*a = (u8)Bitwise::UnormToUint(aa, 8);
 		}
 	}
 
@@ -1802,7 +1802,7 @@ namespace bs
 		// Special cases
 		if(format == PF_RG11B10F)
 		{
-			UINT32 value = ((UINT32*)src)[0];
+			u32 value = ((u32*)src)[0];
 			*r = Bitwise::Float11ToFloat(value);
 			*g = Bitwise::Float11ToFloat(value >> 11);
 			*b = Bitwise::Float10ToFloat(value >> 22);
@@ -1821,18 +1821,18 @@ namespace bs
 		assert(des.ComponentCount <= 4);
 
 		float* outputs[] = { r, g, b, a };
-		UINT8 bits[] = { des.Rbits, des.Gbits, des.Bbits, des.Abits };
-		UINT32 masks[] = { des.Rmask, des.Gmask, des.Bmask, des.Amask };
-		UINT8 shifts[] = { des.Rshift, des.Gshift, des.Bshift, des.Ashift };
+		u8 bits[] = { des.Rbits, des.Gbits, des.Bbits, des.Abits };
+		u32 masks[] = { des.Rmask, des.Gmask, des.Bmask, des.Amask };
+		u8 shifts[] = { des.Rshift, des.Gshift, des.Bshift, des.Ashift };
 
-		UINT32 curBit = 0;
-		for(UINT32 i = 0; i < des.ComponentCount; i++)
+		u32 curBit = 0;
+		for(u32 i = 0; i < des.ComponentCount; i++)
 		{
-			UINT32 curDword = curBit / 32;
-			UINT32 numBytes = std::min((curDword + 1) * 4, (UINT32)des.ElemBytes) - (curDword * 4);
+			u32 curDword = curBit / 32;
+			u32 numBytes = std::min((curDword + 1) * 4, (u32)des.ElemBytes) - (curDword * 4);
 
-			UINT32* curSrc = ((UINT32*)src) + curDword;
-			UINT32 value = Bitwise::IntRead(curSrc, numBytes);
+			u32* curSrc = ((u32*)src) + curDword;
+			u32 value = Bitwise::IntRead(curSrc, numBytes);
 			if(des.Flags & PFF_INTEGER)
 			{
 				if(des.Flags & PFF_NORMALIZED)
@@ -1854,7 +1854,7 @@ namespace bs
 				// Note: Not handling unsigned floats
 
 				if (des.ComponentType == PCT_FLOAT16)
-					*outputs[i] = Bitwise::HalfToFloat((UINT16)((value & masks[i]) >> shifts[i]));
+					*outputs[i] = Bitwise::HalfToFloat((u16)((value & masks[i]) >> shifts[i]));
 				else
 					*outputs[i] = *(float*)&value;
 			}
@@ -1868,7 +1868,7 @@ namespace bs
 		}
 
 		// Fill empty components
-		for (UINT32 i = des.ComponentCount; i < 3; i++)
+		for (u32 i = des.ComponentCount; i < 3; i++)
 			*outputs[i] = 0.0f;
 
 		if (des.ComponentCount < 4)
@@ -1895,8 +1895,8 @@ namespace bs
 			return 0;
 		}
 
-		UINT32* color = (UINT32 *)src;
-		UINT32 masked = 0;
+		u32* color = (u32 *)src;
+		u32 masked = 0;
 		switch (format)
 		{
 		case PF_D24S8:
@@ -1939,12 +1939,12 @@ namespace bs
 			}
 
 			PixelFormat format = src.GetFormat();
-			UINT32 pixelSize = GetNumElemBytes(format);
+			u32 pixelSize = GetNumElemBytes(format);
 
 			Vector2I blockDim = GetBlockDimensions(format);
 			if(IsCompressed(format))
 			{
-				UINT32 blockSize = GetBlockSize(format);
+				u32 blockSize = GetBlockSize(format);
 				pixelSize = blockSize / blockDim.X;
 
 				if(src.GetLeft() % blockDim.X != 0 || src.GetTop() % blockDim.Y != 0)
@@ -1960,23 +1960,23 @@ namespace bs
 				}
 			}
 
-			UINT8* srcPtr = static_cast<UINT8*>(src.GetData())
+			u8* srcPtr = static_cast<u8*>(src.GetData())
 				+ src.GetLeft() * pixelSize + src.GetTop() * src.GetRowPitch() + src.GetFront() * src.GetSlicePitch();
-			UINT8* dstPtr = static_cast<UINT8*>(dst.GetData())
+			u8* dstPtr = static_cast<u8*>(dst.GetData())
 				+ dst.GetLeft() * pixelSize + dst.GetTop() * dst.GetRowPitch() + dst.GetFront() * dst.GetSlicePitch();
 
 			// Get pitches+skips in bytes
-			const UINT32 srcRowPitchBytes = src.GetRowPitch();
-			const UINT32 srcSliceSkipBytes = src.GetSliceSkip();
+			const u32 srcRowPitchBytes = src.GetRowPitch();
+			const u32 srcSliceSkipBytes = src.GetSliceSkip();
 
-			const UINT32 dstRowPitchBytes = dst.GetRowPitch();
-			const UINT32 dstSliceSkipBytes = dst.GetSliceSkip();
+			const u32 dstRowPitchBytes = dst.GetRowPitch();
+			const u32 dstSliceSkipBytes = dst.GetSliceSkip();
 
 			// Otherwise, copy per row
-			const UINT32 rowSize = src.GetWidth()*pixelSize;
-			for (UINT32 z = src.GetFront(); z < src.GetBack(); z++)
+			const u32 rowSize = src.GetWidth()*pixelSize;
+			for (u32 z = src.GetFront(); z < src.GetBack(); z++)
 			{
-				for (UINT32 y = src.GetTop(); y < src.GetBottom(); y += blockDim.Y)
+				for (u32 y = src.GetTop(); y < src.GetBottom(); y += blockDim.Y)
 				{
 					memcpy(dstPtr, srcPtr, rowSize);
 
@@ -2014,26 +2014,26 @@ namespace bs
 			}
 		}
 
-		UINT32 srcPixelSize = GetNumElemBytes(src.GetFormat());
-		UINT32 dstPixelSize = GetNumElemBytes(dst.GetFormat());
-		UINT8 *srcptr = static_cast<UINT8*>(src.GetData())
+		u32 srcPixelSize = GetNumElemBytes(src.GetFormat());
+		u32 dstPixelSize = GetNumElemBytes(dst.GetFormat());
+		u8 *srcptr = static_cast<u8*>(src.GetData())
 			+ src.GetLeft() * srcPixelSize + src.GetTop() * src.GetRowPitch() + src.GetFront() * src.GetSlicePitch();
-		UINT8 *dstptr = static_cast<UINT8*>(dst.GetData())
+		u8 *dstptr = static_cast<u8*>(dst.GetData())
 			+ dst.GetLeft() * dstPixelSize + dst.GetTop() * dst.GetRowPitch() + dst.GetFront() * dst.GetSlicePitch();
 
 		// Get pitches+skips in bytes
-		UINT32 srcRowSkipBytes = src.GetRowSkip();
-		UINT32 srcSliceSkipBytes = src.GetSliceSkip();
-		UINT32 dstRowSkipBytes = dst.GetRowSkip();
-		UINT32 dstSliceSkipBytes = dst.GetSliceSkip();
+		u32 srcRowSkipBytes = src.GetRowSkip();
+		u32 srcSliceSkipBytes = src.GetSliceSkip();
+		u32 dstRowSkipBytes = dst.GetRowSkip();
+		u32 dstSliceSkipBytes = dst.GetSliceSkip();
 
 		// The brute force fallback
 		float r, g, b, a;
-		for (UINT32 z = src.GetFront(); z < src.GetBack(); z++)
+		for (u32 z = src.GetFront(); z < src.GetBack(); z++)
 		{
-			for (UINT32 y = src.GetTop(); y < src.GetBottom(); y++)
+			for (u32 y = src.GetTop(); y < src.GetBottom(); y++)
 			{
-				for (UINT32 x = src.GetLeft(); x < src.GetRight(); x++)
+				for (u32 x = src.GetLeft(); x < src.GetRight(); x++)
 				{
 					UnpackColor(&r, &g, &b, &a, src.GetFormat(), srcptr);
 					PackColor(r, g, b, a, dst.GetFormat(), dstptr);
@@ -2088,8 +2088,8 @@ namespace bs
 
 		struct CompData
 		{
-			UINT32 Mask;
-			UINT8 Shift;
+			u32 Mask;
+			u8 Shift;
 		};
 
 		std::array<CompData, 4> compData =
@@ -2111,24 +2111,24 @@ namespace bs
 			[&](const CompData& lhs, const CompData& rhs) { return lhs.Shift < rhs.Shift; }
 		);
 
-		UINT8* dataPtr = data.GetData();
+		u8* dataPtr = data.GetData();
 
-		UINT32 pixelSize = pfd.ElemBytes;
-		UINT32 rowSkipBytes = data.GetRowSkip();
-		UINT32 sliceSkipBytes = data.GetSliceSkip();
+		u32 pixelSize = pfd.ElemBytes;
+		u32 rowSkipBytes = data.GetRowSkip();
+		u32 sliceSkipBytes = data.GetSliceSkip();
 
-		for (UINT32 z = 0; z < data.GetDepth(); z++)
+		for (u32 z = 0; z < data.GetDepth(); z++)
 		{
-			for (UINT32 y = 0; y < data.GetHeight(); y++)
+			for (u32 y = 0; y < data.GetHeight(); y++)
 			{
-				for (UINT32 x = 0; x < data.GetWidth(); x++)
+				for (u32 x = 0; x < data.GetWidth(); x++)
 				{
 					if(pfd.ComponentCount == 2)
 					{
-						UINT64 pixelData = 0;
+						u64 pixelData = 0;
 						memcpy(&pixelData, dataPtr, pixelSize);
 
-						UINT64 output = 0;
+						u64 output = 0;
 						output |= (pixelData & compData[1].Mask) >> compData[1].Shift;
 						output |= (pixelData & compData[0].Mask) << compData[1].Shift;
 
@@ -2136,10 +2136,10 @@ namespace bs
 					}
 					else if(pfd.ComponentCount == 3)
 					{
-						UINT64 pixelData = 0;
+						u64 pixelData = 0;
 						memcpy(&pixelData, dataPtr, pixelSize);
 
-						UINT64 output = 0;
+						u64 output = 0;
 						output |= (pixelData & compData[2].Mask) >> compData[2].Shift;
 						output |= (pixelData & compData[0].Mask) << compData[2].Shift;
 
@@ -2147,10 +2147,10 @@ namespace bs
 					}
 					else if(pfd.ComponentCount == 4)
 					{
-						UINT64 pixelData = 0;
+						u64 pixelData = 0;
 						memcpy(&pixelData, dataPtr, pixelSize);
 
-						UINT64 output = 0;
+						u64 output = 0;
 						output |= (pixelData & compData[3].Mask) >> compData[3].Shift;
 						output |= (pixelData & compData[0].Mask) << compData[3].Shift;
 
@@ -2273,7 +2273,7 @@ namespace bs
 		}
 	}
 
-	void PixelUtil::Copy(const PixelData& src, PixelData& dst, UINT32 offsetX, UINT32 offsetY, UINT32 offsetZ)
+	void PixelUtil::Copy(const PixelData& src, PixelData& dst, u32 offsetX, u32 offsetY, u32 offsetZ)
 	{
 		if(src.GetFormat() != dst.GetFormat())
 		{
@@ -2282,9 +2282,9 @@ namespace bs
 			return;
 		}
 
-		UINT32 right = offsetX + dst.GetWidth();
-		UINT32 bottom = offsetY + dst.GetHeight();
-		UINT32 back = offsetZ + dst.GetDepth();
+		u32 right = offsetX + dst.GetWidth();
+		u32 bottom = offsetY + dst.GetHeight();
+		u32 back = offsetZ + dst.GetDepth();
 
 		if(right > src.GetWidth() || bottom > src.GetHeight() || back > src.GetDepth())
 		{
@@ -2293,18 +2293,18 @@ namespace bs
 			return;
 		}
 
-		UINT8* srcPtr = (UINT8*)src.GetData() + offsetZ * src.GetSlicePitch();
-		UINT8* dstPtr = (UINT8*)dst.GetData();
+		u8* srcPtr = (u8*)src.GetData() + offsetZ * src.GetSlicePitch();
+		u8* dstPtr = (u8*)dst.GetData();
 
-		UINT32 elemSize = GetNumElemBytes(dst.GetFormat());
-		UINT32 rowSize = dst.GetWidth() * elemSize;
+		u32 elemSize = GetNumElemBytes(dst.GetFormat());
+		u32 rowSize = dst.GetWidth() * elemSize;
 
-		for(UINT32 z = 0; z < dst.GetDepth(); z++)
+		for(u32 z = 0; z < dst.GetDepth(); z++)
 		{
-			UINT8* srcRowPtr = srcPtr + offsetY * src.GetRowPitch();
-			UINT8* dstRowPtr = dstPtr;
+			u8* srcRowPtr = srcPtr + offsetY * src.GetRowPitch();
+			u8* dstRowPtr = dstPtr;
 
-			for(UINT32 y = 0; y < dst.GetHeight(); y++)
+			for(u32 y = 0; y < dst.GetHeight(); y++)
 			{
 				memcpy(dstRowPtr, srcRowPtr + offsetX * elemSize, rowSize);
 
@@ -2319,23 +2319,23 @@ namespace bs
 
 	void PixelUtil::Mirror(PixelData& pixelData, MirrorMode mode)
 	{
-		UINT32 width = pixelData.GetWidth();
-		UINT32 height = pixelData.GetHeight();
-		UINT32 depth = pixelData.GetDepth();
+		u32 width = pixelData.GetWidth();
+		u32 height = pixelData.GetHeight();
+		u32 depth = pixelData.GetDepth();
 
-		UINT32 elemSize = GetNumElemBytes(pixelData.GetFormat());
+		u32 elemSize = GetNumElemBytes(pixelData.GetFormat());
 
 		if (mode.IsSet(MirrorModeBits::Z))
 		{
-			UINT32 sliceSize = width * height * elemSize;
-			UINT8* sliceTemp = bs_stack_alloc<UINT8>(sliceSize);
+			u32 sliceSize = width * height * elemSize;
+			u8* sliceTemp = bs_stack_alloc<u8>(sliceSize);
 
-			UINT8* dataPtr = pixelData.GetData();
-			UINT32 halfDepth = depth / 2;
-			for (UINT32 z = 0; z < halfDepth; z++)
+			u8* dataPtr = pixelData.GetData();
+			u32 halfDepth = depth / 2;
+			for (u32 z = 0; z < halfDepth; z++)
 			{
-				UINT32 srcZ = z * sliceSize;
-				UINT32 dstZ = (depth - z - 1) * sliceSize;
+				u32 srcZ = z * sliceSize;
+				u32 dstZ = (depth - z - 1) * sliceSize;
 
 				memcpy(sliceTemp, &dataPtr[dstZ], sliceSize);
 				memcpy(&dataPtr[dstZ], &dataPtr[srcZ], sliceSize);
@@ -2349,17 +2349,17 @@ namespace bs
 
 		if(mode.IsSet(MirrorModeBits::Y))
 		{
-			UINT32 rowSize = width * elemSize;
-			UINT8* rowTemp = bs_stack_alloc<UINT8>(rowSize);
+			u32 rowSize = width * elemSize;
+			u8* rowTemp = bs_stack_alloc<u8>(rowSize);
 
-			UINT8* slicePtr = pixelData.GetData();
-			for (UINT32 z = 0; z < depth; z++)
+			u8* slicePtr = pixelData.GetData();
+			for (u32 z = 0; z < depth; z++)
 			{
-				UINT32 halfHeight = height / 2;
-				for (UINT32 y = 0; y < halfHeight; y++)
+				u32 halfHeight = height / 2;
+				for (u32 y = 0; y < halfHeight; y++)
 				{
-					UINT32 srcY = y * rowSize;
-					UINT32 dstY = (height - y - 1) * rowSize;
+					u32 srcY = y * rowSize;
+					u32 dstY = (height - y - 1) * rowSize;
 
 					memcpy(rowTemp, &slicePtr[dstY], rowSize);
 					memcpy(&slicePtr[dstY], &slicePtr[srcY], rowSize);
@@ -2376,19 +2376,19 @@ namespace bs
 
 		if (mode.IsSet(MirrorModeBits::X))
 		{
-			UINT8* elemTemp = bs_stack_alloc<UINT8>(elemSize);
+			u8* elemTemp = bs_stack_alloc<u8>(elemSize);
 
-			UINT8* slicePtr = pixelData.GetData();
-			for (UINT32 z = 0; z < depth; z++)
+			u8* slicePtr = pixelData.GetData();
+			for (u32 z = 0; z < depth; z++)
 			{
-				UINT8* rowPtr = slicePtr;
-				for (UINT32 y = 0; y < height; y++)
+				u8* rowPtr = slicePtr;
+				for (u32 y = 0; y < height; y++)
 				{
-					UINT32 halfWidth = width / 2;
-					for (UINT32 x = 0; x < halfWidth; x++)
+					u32 halfWidth = width / 2;
+					for (u32 x = 0; x < halfWidth; x++)
 					{
-						UINT32 srcX = x * elemSize;
-						UINT32 dstX = (width - x - 1) * elemSize;
+						u32 srcX = x * elemSize;
+						u32 dstX = (width - x - 1) * elemSize;
 
 						memcpy(elemTemp, &rowPtr[dstX], elemSize);
 						memcpy(&rowPtr[dstX], &rowPtr[srcX], elemSize);
@@ -2407,25 +2407,25 @@ namespace bs
 
 	void PixelUtil::LinearToSrgb(PixelData& pixelData)
 	{
-		UINT32 depth = pixelData.GetDepth();
-		UINT32 height = pixelData.GetHeight();
-		UINT32 width = pixelData.GetWidth();
+		u32 depth = pixelData.GetDepth();
+		u32 height = pixelData.GetHeight();
+		u32 width = pixelData.GetWidth();
 
-		UINT32 pixelSize = PixelUtil::GetNumElemBytes(pixelData.GetFormat());
-		UINT8* data = pixelData.GetData();
+		u32 pixelSize = PixelUtil::GetNumElemBytes(pixelData.GetFormat());
+		u8* data = pixelData.GetData();
 
-		for (UINT32 z = 0; z < depth; z++)
+		for (u32 z = 0; z < depth; z++)
 		{
-			UINT32 zDataIdx = z * pixelData.GetSlicePitch();
+			u32 zDataIdx = z * pixelData.GetSlicePitch();
 
-			for (UINT32 y = 0; y < height; y++)
+			for (u32 y = 0; y < height; y++)
 			{
-				UINT32 yDataIdx = y * pixelData.GetRowPitch();
+				u32 yDataIdx = y * pixelData.GetRowPitch();
 
-				for (UINT32 x = 0; x < width; x++)
+				for (u32 x = 0; x < width; x++)
 				{
-					UINT32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
-					UINT8* dest = data + dataIdx;
+					u32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
+					u8* dest = data + dataIdx;
 
 					Color color;
 
@@ -2439,25 +2439,25 @@ namespace bs
 
 	void PixelUtil::SRGBToLinear(PixelData& pixelData)
 	{
-		UINT32 depth = pixelData.GetDepth();
-		UINT32 height = pixelData.GetHeight();
-		UINT32 width = pixelData.GetWidth();
+		u32 depth = pixelData.GetDepth();
+		u32 height = pixelData.GetHeight();
+		u32 width = pixelData.GetWidth();
 
-		UINT32 pixelSize = PixelUtil::GetNumElemBytes(pixelData.GetFormat());
-		UINT8* data = pixelData.GetData();
+		u32 pixelSize = PixelUtil::GetNumElemBytes(pixelData.GetFormat());
+		u8* data = pixelData.GetData();
 
-		for (UINT32 z = 0; z < depth; z++)
+		for (u32 z = 0; z < depth; z++)
 		{
-			UINT32 zDataIdx = z * pixelData.GetSlicePitch();
+			u32 zDataIdx = z * pixelData.GetSlicePitch();
 
-			for (UINT32 y = 0; y < height; y++)
+			for (u32 y = 0; y < height; y++)
 			{
-				UINT32 yDataIdx = y * pixelData.GetRowPitch();
+				u32 yDataIdx = y * pixelData.GetRowPitch();
 
-				for (UINT32 x = 0; x < width; x++)
+				for (u32 x = 0; x < width; x++)
 				{
-					UINT32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
-					UINT8* dest = data + dataIdx;
+					u32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
+					u8* dest = data + dataIdx;
 
 					Color color;
 
@@ -2595,16 +2595,16 @@ namespace bs
 			co.setPixelFormat(32, 0x0000FF00, 0x00FF0000, 0xFF000000, 0x000000FF);
 		}
 
-		UINT32 numMips = GetMaxMipmaps(src.GetWidth(), src.GetHeight(), 1, src.GetFormat());
+		u32 numMips = GetMaxMipmaps(src.GetWidth(), src.GetHeight(), 1, src.GetFormat());
 
 		Vector<SPtr<PixelData>> rgbaMipBuffers;
 
 		// Note: This can be done more effectively without creating so many temp buffers
 		// and working with the original formats directly, but it would complicate the code
 		// too much at the moment.
-		UINT32 curWidth = src.GetWidth();
-		UINT32 curHeight = src.GetHeight();
-		for (UINT32 i = 0; i < numMips; i++)
+		u32 curWidth = src.GetWidth();
+		u32 curHeight = src.GetHeight();
+		for (u32 i = 0; i < numMips; i++)
 		{
 			rgbaMipBuffers.push_back(bs_shared_ptr_new<PixelData>(curWidth, curHeight, 1, interimFormat));
 			rgbaMipBuffers.back()->AllocateInternalBuffer();
@@ -2634,7 +2634,7 @@ namespace bs
 
 		interimData.FreeInternalBuffer();
 
-		for (UINT32 i = 0; i < (UINT32)rgbaMipBuffers.size(); i++)
+		for (u32 i = 0; i < (u32)rgbaMipBuffers.size(); i++)
 		{
 			SPtr<PixelData> argbBuffer = rgbaMipBuffers[i];
 			SPtr<PixelData> outputBuffer = bs_shared_ptr_new<PixelData>(argbBuffer->GetWidth(), argbBuffer->GetHeight(), 1, src.GetFormat());

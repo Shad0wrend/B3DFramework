@@ -51,18 +51,18 @@ namespace bs
 	struct BS_UTILITY_EXPORT RTTIFieldSchema : IReflectable
 	{
 		RTTIFieldSchema() = default;
-		RTTIFieldSchema(INT16 id, bool isArray, bool hasDynamicSize, BitLength size, SerializableFieldType type,
-			UINT32 fieldTypeId, SPtr<RTTISchema> fieldTypeSchema, const RTTIFieldInfo& info)
+		RTTIFieldSchema(i16 id, bool isArray, bool hasDynamicSize, BitLength size, SerializableFieldType type,
+			u32 fieldTypeId, SPtr<RTTISchema> fieldTypeSchema, const RTTIFieldInfo& info)
 			: Id(id), IsArray(isArray), HasDynamicSize(hasDynamicSize), Size(size), Type(type)
 			, FieldTypeId(fieldTypeId), FieldTypeSchema(std::move(fieldTypeSchema)), Info(info)
 		{ }
 		
-		UINT16 Id = 0;
+		u16 Id = 0;
 		bool IsArray = false;
 		bool HasDynamicSize = false;
 		BitLength Size = 0;
 		SerializableFieldType Type = SerializableFT_Plain;
-		UINT32 FieldTypeId = 0;
+		u32 FieldTypeId = 0;
 		SPtr<RTTISchema> FieldTypeSchema;
 		RTTIFieldInfo Info;
 
@@ -92,13 +92,13 @@ namespace bs
 		 * Gets the size of an array contained by the field, if the field represents an array. Throws exception if field
 		 * is not an array.
 		 */
-		virtual UINT32 GetArraySize(RTTITypeBase* rtti, void* object) = 0;
+		virtual u32 GetArraySize(RTTITypeBase* rtti, void* object) = 0;
 
 		/**
 		 * Changes the size of an array contained by the field, if the field represents an array. Throws exception if field
 		 * is not an array.
 		 */
-		virtual void SetArraySize(RTTITypeBase* rtti, void* object, UINT32 size) = 0;
+		virtual void SetArraySize(RTTITypeBase* rtti, void* object, u32 size) = 0;
 
 		/** Initializes the field's RTTI schema. Should be called once after construction. */
 		virtual void InitSchema() {}

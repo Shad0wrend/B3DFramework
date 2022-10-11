@@ -6,7 +6,7 @@
 
 namespace bs
 {
-	bool TextureAtlasLayout::AddElement(UINT32 width, UINT32 height, UINT32& x, UINT32& y)
+	bool TextureAtlasLayout::AddElement(u32 width, u32 height, u32& x, u32& y)
 	{
 		if(width == 0 || height == 0)
 		{
@@ -46,12 +46,12 @@ namespace bs
 		mHeight = mInitialHeight;
 	}
 
-	bool TextureAtlasLayout::AddToNode(UINT32 nodeIdx, UINT32 width, UINT32 height, UINT32& x, UINT32& y, bool allowGrowth)
+	bool TextureAtlasLayout::AddToNode(u32 nodeIdx, u32 width, u32 height, u32& x, u32& y, bool allowGrowth)
 	{
 		TexAtlasNode* node = &mNodes[nodeIdx];
 		float aspect = node->Width / (float)node->Height;
 
-		if (node->Children[0] != (UINT32)-1)
+		if (node->Children[0] != (u32)-1)
 		{
 			if (AddToNode(node->Children[0], width, height, x, y, allowGrowth))
 				return true;
@@ -84,7 +84,7 @@ namespace bs
 			float dw = (float)(node->Width - width);
 			float dh = (node->Height - height) * aspect;
 
-			UINT32 nextChildIdx = (UINT32)mNodes.size();
+			u32 nextChildIdx = (u32)mNodes.size();
 			node->Children[0] = nextChildIdx;
 			node->Children[1] = nextChildIdx + 1;
 
@@ -105,12 +105,12 @@ namespace bs
 		}
 	}
 
-	Vector<TextureAtlasUtility::Page> TextureAtlasUtility::CreateAtlasLayout(Vector<Element>& elements, UINT32 width,
-		UINT32 height, UINT32 maxWidth, UINT32 maxHeight, bool pow2)
+	Vector<TextureAtlasUtility::Page> TextureAtlasUtility::CreateAtlasLayout(Vector<Element>& elements, u32 width,
+		u32 height, u32 maxWidth, u32 maxHeight, bool pow2)
 	{
 		for (size_t i = 0; i < elements.size(); i++)
 		{
-			elements[i].Output.Idx = (UINT32)i; // Preserve original index before sorting
+			elements[i].Output.Idx = (u32)i; // Preserve original index before sorting
 			elements[i].Output.Page = -1;
 		}
 
@@ -121,24 +121,24 @@ namespace bs
 		});
 
 		Vector<TextureAtlasLayout> layouts;
-		UINT32 remainingCount = (UINT32)elements.size();
+		u32 remainingCount = (u32)elements.size();
 		while (remainingCount > 0)
 		{
 			layouts.push_back(TextureAtlasLayout(width, height, maxWidth, maxHeight, pow2));
 			TextureAtlasLayout& curLayout = layouts.back();
 
 			// Find largest unassigned element that fits
-			UINT32 sizeLimit = std::numeric_limits<UINT32>::max();
+			u32 sizeLimit = std::numeric_limits<u32>::max();
 			while (true)
 			{
-				UINT32 largestId = -1;
+				u32 largestId = -1;
 
 				// Assumes elements are sorted from largest to smallest
-				for (UINT32 i = 0; i < (UINT32)elements.size(); i++)
+				for (u32 i = 0; i < (u32)elements.size(); i++)
 				{
 					if (elements[i].Output.Page == -1)
 					{
-						UINT32 size = elements[i].Input.Width * elements[i].Input.Height;
+						u32 size = elements[i].Input.Width * elements[i].Input.Height;
 						if (size < sizeLimit)
 						{
 							largestId = i;
@@ -147,7 +147,7 @@ namespace bs
 					}
 				}
 
-				if (largestId == (UINT32)-1)
+				if (largestId == (u32)-1)
 					break; // Nothing fits, start a new page
 
 				Element& element = elements[largestId];
@@ -162,7 +162,7 @@ namespace bs
 
 				if (curLayout.AddElement(element.Input.Width, element.Input.Height, element.Output.X, element.Output.Y))
 				{
-					element.Output.Page = (UINT32)layouts.size() - 1;
+					element.Output.Page = (u32)layouts.size() - 1;
 					remainingCount--;
 				}
 				else

@@ -33,7 +33,7 @@ namespace bs
 		BaseConnectionData* Prev = nullptr;
 		BaseConnectionData* Next = nullptr;
 		bool IsActive = true;
-		UINT32 HandleLinks = 0;
+		u32 HandleLinks = 0;
 	};
 
 	/** Internal data for an Event, storing all connections. */

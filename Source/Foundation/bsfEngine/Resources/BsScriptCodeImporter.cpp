@@ -16,7 +16,7 @@ namespace bs
 		return lowerCaseExt == u8"cs";
 	}
 
-	bool ScriptCodeImporter::IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
+	bool ScriptCodeImporter::IsMagicNumberSupported(const u8* magicNumPtr, u32 numBytes) const
 	{
 		return true; // Plain-text so we don't even check for magic number
 	}

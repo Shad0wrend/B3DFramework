@@ -9,17 +9,17 @@
 
 namespace bs { namespace ct
 {
-	VulkanTransferBuffer::VulkanTransferBuffer(VulkanDevice* device, GpuQueueType type, UINT32 queueIdx)
+	VulkanTransferBuffer::VulkanTransferBuffer(VulkanDevice* device, GpuQueueType type, u32 queueIdx)
 		:mDevice(device), mType(type), mQueueIdx(queueIdx)
 	{
-		UINT32 numQueues = device->GetNumQueues(mType);
+		u32 numQueues = device->GetNumQueues(mType);
 		if (numQueues == 0)
 		{
 			mType = GQT_GRAPHICS;
 			numQueues = device->GetNumQueues(GQT_GRAPHICS);
 		}
 
-		UINT32 physicalQueueIdx = queueIdx % numQueues;
+		u32 physicalQueueIdx = queueIdx % numQueues;
 		mQueue = device->GetQueue(mType, physicalQueueIdx);
 		mQueueMask = device->GetQueueMask(mType, queueIdx);
 	}
@@ -35,7 +35,7 @@ namespace bs { namespace ct
 		if (mCB != nullptr)
 			return;
 
-		UINT32 queueFamily = mDevice->GetQueueFamily(mType);
+		u32 queueFamily = mDevice->GetQueueFamily(mType);
 		mCB = mDevice->GetCmdBufferPool().GetBuffer(queueFamily, false);
 	}
 
@@ -59,8 +59,8 @@ namespace bs { namespace ct
 		if (mBarriersTemp.size() == 0)
 			return;
 
-		INT32 count = (INT32)mBarriersTemp.size();
-		for(INT32 i = 0; i < count; i++)
+		i32 count = (i32)mBarriersTemp.size();
+		for(i32 i = 0; i < count; i++)
 		{
 			VkImageMemoryBarrier& barrier = mBarriersTemp[i];
 
@@ -87,7 +87,7 @@ namespace bs { namespace ct
 							 VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 							 0, 0, nullptr,
 							 0, nullptr,
-							 (UINT32)mBarriersTemp.size(), mBarriersTemp.data());
+							 (u32)mBarriersTemp.size(), mBarriersTemp.data());
 
 		mBarriersTemp.clear();		
 	}
@@ -97,7 +97,7 @@ namespace bs { namespace ct
 		if (mCB == nullptr)
 			return;
 
-		UINT32 syncMask = mSyncMask & ~mQueueMask; // Don't sync with itself
+		u32 syncMask = mSyncMask & ~mQueueMask; // Don't sync with itself
 
 		mCB->End();
 		mCB->Submit(mQueue, mQueueIdx, syncMask);
@@ -117,15 +117,15 @@ namespace bs { namespace ct
 		:mRapi(rapi), mDeviceData(nullptr), mNumDevices(rapi.GetNumDevices())
 	{
 		mDeviceData = bs_newN<PerDeviceData>(mNumDevices);
-		for (UINT32 i = 0; i < mNumDevices; i++)
+		for (u32 i = 0; i < mNumDevices; i++)
 		{
 			SPtr<VulkanDevice> device = rapi.GetDeviceInternal(i);
 
-			for (UINT32 j = 0; j < GQT_COUNT; j++)
+			for (u32 j = 0; j < GQT_COUNT; j++)
 			{
 				GpuQueueType queueType = (GpuQueueType)j;
 
-				for (UINT32 k = 0; k < BS_MAX_QUEUES_PER_TYPE; k++)
+				for (u32 k = 0; k < BS_MAX_QUEUES_PER_TYPE; k++)
 					mDeviceData[i].TransferBuffers[j][k] = VulkanTransferBuffer(device.get(), queueType, k);
 			}
 		}
@@ -136,10 +136,10 @@ namespace bs { namespace ct
 		bs_deleteN(mDeviceData, mNumDevices);
 	}
 
-	SPtr<CommandBuffer> VulkanCommandBufferManager::CreateInternal(GpuQueueType type, UINT32 deviceIdx,
-		UINT32 queueIdx, bool secondary)
+	SPtr<CommandBuffer> VulkanCommandBufferManager::CreateInternal(GpuQueueType type, u32 deviceIdx,
+		u32 queueIdx, bool secondary)
 	{
-		UINT32 numDevices = mRapi.GetNumDevicesInternal();
+		u32 numDevices = mRapi.GetNumDevicesInternal();
 		if(deviceIdx >= numDevices)
 		{
 			BS_LOG(Error, RenderBackend, "Cannot create command buffer, invalid device index: {0}. Valid range: [0, {1}).",
@@ -156,19 +156,19 @@ namespace bs { namespace ct
 		return bs_shared_ptr(buffer);
 	}
 
-	void VulkanCommandBufferManager::GetSyncSemaphores(UINT32 deviceIdx, UINT32 syncMask, VulkanSemaphore** semaphores,
-													   UINT32& count)
+	void VulkanCommandBufferManager::GetSyncSemaphores(u32 deviceIdx, u32 syncMask, VulkanSemaphore** semaphores,
+													   u32& count)
 	{
 		bool semaphoreRequestFailed = false;
 		SPtr<VulkanDevice> device = mRapi.GetDeviceInternal(deviceIdx);
 
-		UINT32 semaphoreIdx = 0;
-		for (UINT32 i = 0; i < GQT_COUNT; i++)
+		u32 semaphoreIdx = 0;
+		for (u32 i = 0; i < GQT_COUNT; i++)
 		{
 			GpuQueueType queueType = (GpuQueueType)i;
 
-			UINT32 numQueues = device->GetNumQueues(queueType);
-			for (UINT32 j = 0; j < numQueues; j++)
+			u32 numQueues = device->GetNumQueues(queueType);
+			for (u32 j = 0; j < numQueues; j++)
 			{
 				VulkanQueue* queue = device->GetQueue(queueType, j);
 				VulkanCmdBuffer* lastCB = queue->GetLastCommandBuffer();
@@ -178,7 +178,7 @@ namespace bs { namespace ct
 					continue;
 
 				// Check if we care about this specific queue
-				UINT32 queueMask = device->GetQueueMask(queueType, j);
+				u32 queueMask = device->GetQueueMask(queueType, j);
 				if ((syncMask & queueMask) == 0)
 					continue;
 
@@ -204,8 +204,8 @@ namespace bs { namespace ct
 		}
 	}
 
-	VulkanTransferBuffer* VulkanCommandBufferManager::GetTransferBuffer(UINT32 deviceIdx, GpuQueueType type,
-		UINT32 queueIdx)
+	VulkanTransferBuffer* VulkanCommandBufferManager::GetTransferBuffer(u32 deviceIdx, GpuQueueType type,
+		u32 queueIdx)
 	{
 		assert(deviceIdx < mNumDevices);
 
@@ -216,14 +216,14 @@ namespace bs { namespace ct
 		return transferBuffer;
 	}
 
-	void VulkanCommandBufferManager::FlushTransferBuffers(UINT32 deviceIdx)
+	void VulkanCommandBufferManager::FlushTransferBuffers(u32 deviceIdx)
 	{
 		assert(deviceIdx < mNumDevices);
 
 		PerDeviceData& deviceData = mDeviceData[deviceIdx];
-		for (UINT32 i = 0; i < GQT_COUNT; i++)
+		for (u32 i = 0; i < GQT_COUNT; i++)
 		{
-			for (UINT32 j = 0; j < BS_MAX_QUEUES_PER_TYPE; j++)
+			for (u32 j = 0; j < BS_MAX_QUEUES_PER_TYPE; j++)
 				deviceData.TransferBuffers[i][j].Flush(false);
 		}
 	}

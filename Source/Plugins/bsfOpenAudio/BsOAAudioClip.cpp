@@ -9,13 +9,13 @@
 
 namespace bs
 {
-	OAAudioClip::OAAudioClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples, const AUDIO_CLIP_DESC& desc)
+	OAAudioClip::OAAudioClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc)
 		:AudioClip(samples, streamSize, numSamples, desc)
 	{ }
 
 	OAAudioClip::~OAAudioClip()
 	{
-		if (mBufferId != (UINT32)-1)
+		if (mBufferId != (u32)-1)
 			alDeleteBuffers(1, &mBufferId);
 	}
 
@@ -52,7 +52,7 @@ namespace bs
 			{
 				// Read all data into memory
 				SPtr<DataStream> stream;
-				UINT32 offset = 0;
+				u32 offset = 0;
 				if (mSourceStreamData != nullptr) // If it's already loaded in memory, use it directly
 					stream = mSourceStreamData;
 				else
@@ -61,8 +61,8 @@ namespace bs
 					offset = mStreamOffset;
 				}
 
-				UINT32 bufferSize = info.NumSamples * (info.BitDepth / 8);
-				UINT8* sampleBuffer = (UINT8*)bs_stack_alloc(bufferSize);
+				u32 bufferSize = info.NumSamples * (info.BitDepth / 8);
+				u8* sampleBuffer = (u8*)bs_stack_alloc(bufferSize);
 
 				// Decompress from Ogg
 				if (mDesc.Format == AudioFormat::VORBIS)
@@ -131,7 +131,7 @@ namespace bs
 		AudioClip::Initialize();
 	}
 
-	void OAAudioClip::GetSamples(UINT8* samples, UINT32 offset, UINT32 count) const
+	void OAAudioClip::GetSamples(u8* samples, u32 offset, u32 count) const
 	{
 		Lock lock(mMutex);
 
@@ -145,9 +145,9 @@ namespace bs
 			}
 			else
 			{
-				UINT32 bytesPerSample = mDesc.BitDepth / 8;
-				UINT32 size = count * bytesPerSample;
-				UINT32 streamOffset = mStreamOffset + offset * bytesPerSample;
+				u32 bytesPerSample = mDesc.BitDepth / 8;
+				u32 size = count * bytesPerSample;
+				u32 streamOffset = mStreamOffset + offset * bytesPerSample;
 
 				mStreamData->Seek(streamOffset);
 				mStreamData->Read(samples, size);
@@ -160,9 +160,9 @@ namespace bs
 		{
 			assert(!mNeedsDecompression); // Normal stream must exist if decompressing
 
-			const UINT32 bytesPerSample = mDesc.BitDepth / 8;
-			UINT32 size = count * bytesPerSample;
-			UINT32 streamOffset = offset * bytesPerSample;
+			const u32 bytesPerSample = mDesc.BitDepth / 8;
+			u32 size = count * bytesPerSample;
+			u32 streamOffset = offset * bytesPerSample;
 
 			mSourceStreamData->Seek(streamOffset);
 			mSourceStreamData->Read(samples, size);
@@ -172,7 +172,7 @@ namespace bs
 		BS_LOG(Warning, RenderBackend, "Attempting to read samples while sample data is not available.");
 	}
 
-	SPtr<DataStream> OAAudioClip::GetSourceStream(UINT32& size)
+	SPtr<DataStream> OAAudioClip::GetSourceStream(u32& size)
 	{
 		Lock lock(mMutex);
 

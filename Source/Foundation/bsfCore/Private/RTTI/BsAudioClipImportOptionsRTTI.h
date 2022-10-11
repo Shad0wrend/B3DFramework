@@ -32,7 +32,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIType::getRTTIId */
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_AudioClipImportOptions;
 		}

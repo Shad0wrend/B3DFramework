@@ -23,7 +23,7 @@ namespace bs { namespace ct
 	protected:
 		friend class D3D11RenderStateManager;
 
-		D3D11DepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc, UINT32 id);
+		D3D11DepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc, u32 id);
 
 		/** @copydoc DepthStencilState::createInternal() */
 		void CreateInternal() ;

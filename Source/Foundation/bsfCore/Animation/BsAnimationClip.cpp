@@ -86,7 +86,7 @@ namespace bs
 
 	}
 
-	AnimationClip::AnimationClip(const SPtr<AnimationCurves>& curves, bool isAdditive, UINT32 sampleRate,
+	AnimationClip::AnimationClip(const SPtr<AnimationCurves>& curves, bool isAdditive, u32 sampleRate,
 		const SPtr<RootMotion>& rootMotion)
 		: Resource(false), mVersion(0), mCurves(curves), mRootMotion(rootMotion), mIsAdditive(isAdditive), mLength(0.0f)
 		, mSampleRate(sampleRate)
@@ -107,7 +107,7 @@ namespace bs
 			CreatePtrInternal(bs_shared_ptr_new<AnimationCurves>(), isAdditive)));
 	}
 
-	HAnimationClip AnimationClip::Create(const SPtr<AnimationCurves>& curves, bool isAdditive, UINT32 sampleRate,
+	HAnimationClip AnimationClip::Create(const SPtr<AnimationCurves>& curves, bool isAdditive, u32 sampleRate,
 		const SPtr<RootMotion>& rootMotion)
 	{
 		return static_resource_cast<AnimationClip>(gResources().CreateResourceHandleInternal(
@@ -124,7 +124,7 @@ namespace bs
 		return newClip;
 	}
 
-	SPtr<AnimationClip> AnimationClip::CreatePtrInternal(const SPtr<AnimationCurves>& curves, bool isAdditive, UINT32 sampleRate,
+	SPtr<AnimationClip> AnimationClip::CreatePtrInternal(const SPtr<AnimationCurves>& curves, bool isAdditive, u32 sampleRate,
 		const SPtr<RootMotion>& rootMotion)
 	{
 		AnimationClip* rawPtr = new (bs_alloc<AnimationClip>()) AnimationClip(curves, isAdditive, sampleRate, rootMotion);
@@ -174,17 +174,17 @@ namespace bs
 
 		auto registerEntries = [&](auto& curve, CurveType type)
 		{
-			UINT32 typeIdx = (UINT32)type;
+			u32 typeIdx = (u32)type;
 
-			for (UINT32 i = 0; i < (UINT32)curve.size(); i++)
+			for (u32 i = 0; i < (u32)curve.size(); i++)
 			{
 				auto& entry = curve[i];
 
 				auto iterFind = mNameMapping.find(entry.Name);
 				if (iterFind == mNameMapping.end())
 				{
-					UINT32* indices = mNameMapping[entry.Name].data();
-					memset(indices, -1, sizeof(UINT32) * (int)CurveType::Count);
+					u32* indices = mNameMapping[entry.Name].data();
+					memset(indices, -1, sizeof(u32) * (int)CurveType::Count);
 
 					indices[typeIdx] = i;
 				}
@@ -200,23 +200,23 @@ namespace bs
 		// Generic and morph curves
 		{
 			Vector<TNamedAnimationCurve<float>>& curve = mCurves->Generic;
-			for (UINT32 i = 0; i < (UINT32)curve.size(); i++)
+			for (u32 i = 0; i < (u32)curve.size(); i++)
 			{
 				auto& entry = curve[i];
 
-				UINT32 typeIdx;
+				u32 typeIdx;
 				if (entry.Flags.IsSet(AnimationCurveFlag::MorphFrame))
-					typeIdx = (UINT32)CurveType::MorphFrame;
+					typeIdx = (u32)CurveType::MorphFrame;
 				else if (entry.Flags.IsSet(AnimationCurveFlag::MorphWeight))
-					typeIdx = (UINT32)CurveType::MorphWeight;
+					typeIdx = (u32)CurveType::MorphWeight;
 				else
-					typeIdx = (UINT32)CurveType::Generic;
+					typeIdx = (u32)CurveType::Generic;
 
 				auto iterFind = mNameMapping.find(entry.Name);
 				if (iterFind == mNameMapping.end())
 				{
-					UINT32* indices = mNameMapping[entry.Name].data();
-					memset(indices, -1, sizeof(UINT32) * (int)CurveType::Count);
+					u32* indices = mNameMapping[entry.Name].data();
+					memset(indices, -1, sizeof(u32) * (int)CurveType::Count);
 
 					indices[typeIdx] = i;
 				}
@@ -235,8 +235,8 @@ namespace bs
 
 	void AnimationClip::GetBoneMapping(const Skeleton& skeleton, AnimationCurveMapping* mapping) const
 	{
-		UINT32 numBones = skeleton.GetNumBones();
-		for(UINT32 i = 0; i < numBones; i++)
+		u32 numBones = skeleton.GetNumBones();
+		for(u32 i = 0; i < numBones; i++)
 		{
 			const SkeletonBoneInfo& boneInfo = skeleton.GetBoneInfo(i);
 
@@ -249,30 +249,30 @@ namespace bs
 		auto iterFind = mNameMapping.find(name);
 		if (iterFind != mNameMapping.end())
 		{
-			const UINT32* indices = iterFind->second.data();
+			const u32* indices = iterFind->second.data();
 
-			mapping.Position = indices[(UINT32)CurveType::Position];
-			mapping.Rotation = indices[(UINT32)CurveType::Rotation];
-			mapping.Scale = indices[(UINT32)CurveType::Scale];
+			mapping.Position = indices[(u32)CurveType::Position];
+			mapping.Rotation = indices[(u32)CurveType::Rotation];
+			mapping.Scale = indices[(u32)CurveType::Scale];
 		}
 		else
-			mapping = { (UINT32)-1, (UINT32)-1, (UINT32)-1 };
+			mapping = { (u32)-1, (u32)-1, (u32)-1 };
 	}
 
-	void AnimationClip::GetMorphMapping(const String& name, UINT32& frameIdx, UINT32& weightIdx) const
+	void AnimationClip::GetMorphMapping(const String& name, u32& frameIdx, u32& weightIdx) const
 	{
 		auto iterFind = mNameMapping.find(name);
 		if (iterFind != mNameMapping.end())
 		{
-			const UINT32* indices = iterFind->second.data();
+			const u32* indices = iterFind->second.data();
 
-			frameIdx = indices[(UINT32)CurveType::MorphFrame];
-			weightIdx = indices[(UINT32)CurveType::MorphWeight];
+			frameIdx = indices[(u32)CurveType::MorphFrame];
+			weightIdx = indices[(u32)CurveType::MorphWeight];
 		}
 		else
 		{
-			frameIdx = (UINT32)-1;
-			weightIdx = (UINT32)-1;
+			frameIdx = (u32)-1;
+			weightIdx = (u32)-1;
 		}
 	}
 

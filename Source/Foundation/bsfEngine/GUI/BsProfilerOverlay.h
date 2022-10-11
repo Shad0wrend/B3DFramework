@@ -133,7 +133,7 @@ namespace bs
 		 */
 		void UpdateGpuSampleContents(const GPUProfileSample& gpuReport);
 
-		static constexpr UINT32 GPU_NUM_SAMPLE_COLUMNS = 3;
+		static constexpr u32 GPU_NUM_SAMPLE_COLUMNS = 3;
 
 		ProfilerOverlayType mType;
 		SPtr<Viewport> mTarget;
@@ -217,7 +217,7 @@ namespace bs
 
 		HEvent mTargetResizedConn;
 		bool mIsShown;
-		UINT32 mNumGPUSamplesPerColumn = 20;
+		u32 mNumGPUSamplesPerColumn = 20;
 	};
 
 	/** @} */

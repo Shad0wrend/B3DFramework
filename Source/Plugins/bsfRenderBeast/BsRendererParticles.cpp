@@ -75,19 +75,19 @@ namespace bs { namespace ct
 	ParticlesParamDef gParticlesParamDef;
 	GpuParticlesParamDef gGpuParticlesParamDef;
 
-	void writeIndices(GpuBuffer* buffer, const Vector<UINT32>& input, UINT32 texSize)
+	void writeIndices(GpuBuffer* buffer, const Vector<u32>& input, u32 texSize)
 	{
-		const auto numParticles = (UINT32)input.size();
+		const auto numParticles = (u32)input.size();
 		if (numParticles == 0)
 			return;
 
-		auto* const indices = (UINT32*)buffer->Lock(GBL_WRITE_ONLY_DISCARD);
+		auto* const indices = (u32*)buffer->Lock(GBL_WRITE_ONLY_DISCARD);
 
-		UINT32 idx = 0;
+		u32 idx = 0;
 		for(auto& entry : input)
 		{
-			const UINT32 x = entry % texSize;
-			const UINT32 y = entry / texSize;
+			const u32 x = entry % texSize;
+			const u32 y = entry / texSize;
 
 			indices[idx++] = (x & 0xFFFF) | (y << 16);
 		}
@@ -109,7 +109,7 @@ namespace bs { namespace ct
 	void RendererParticles::UpdatePerObjectBuffer()
 	{
 		const ParticleSystemSettings& settings = ParticleSystem->GetSettings();
-		const UINT32 layer = Bitwise::MostSignificantBit(ParticleSystem->GetLayer());
+		const u32 layer = Bitwise::MostSignificantBit(ParticleSystem->GetLayer());
 		Matrix4 localToWorldNoScale;
 		if (settings.SimulationSpace == ParticleSimulationSpace::Local)
 		{
@@ -127,7 +127,7 @@ namespace bs { namespace ct
 		ParticleTexturePool& particlesTexPool = ParticleRenderer::Instance().GetTexturePool();
 
 		const ParticleSystemSettings& settings = ParticleSystem->GetSettings();
-		UINT32 texSize;
+		u32 texSize;
 		switch (settings.RenderMode)
 		{
 		default:
@@ -166,10 +166,10 @@ namespace bs { namespace ct
 		gParticlesParamDef.gBufferOffset.Set(ParticlesParamBuffer, 0);
 
 		SPtr<GpuParams> gpuParams = RenderElement.Params->GetGpuParams();
-		for (UINT32 j = 0; j < GPT_COUNT; j++)
+		for (u32 j = 0; j < GPT_COUNT; j++)
 		{
 			const GpuParamBinding& binding = RenderElement.PerCameraBindings[j];
-			if (binding.Slot != (UINT32)-1)
+			if (binding.Slot != (u32)-1)
 				gpuParams->SetParamBlockBuffer(binding.Set, binding.Slot, view.GetPerViewBuffer());
 		}
 	}
@@ -198,14 +198,14 @@ namespace bs { namespace ct
 			gParticlesParamDef.gBufferOffset.Set(ParticlesParamBuffer, 0);
 		}
 
-		const UINT32 texSize = GpuParticleResources::TEX_SIZE;
+		const u32 texSize = GpuParticleResources::TEX_SIZE;
 		gParticlesParamDef.gTexSize.Set(ParticlesParamBuffer, texSize);
 
 		SPtr<GpuParams> gpuParams = RenderElement.Params->GetGpuParams();
-		for (UINT32 j = 0; j < GPT_COUNT; j++)
+		for (u32 j = 0; j < GPT_COUNT; j++)
 		{
 			const GpuParamBinding& binding = RenderElement.PerCameraBindings[j];
-			if (binding.Slot != (UINT32)-1)
+			if (binding.Slot != (u32)-1)
 				gpuParams->SetParamBlockBuffer(binding.Set, binding.Slot, view.GetPerViewBuffer());
 		}
 	}
@@ -227,11 +227,11 @@ namespace bs { namespace ct
 
 	const ParticleBillboardTextures* ParticleTexturePool::Alloc(const ParticleBillboardRenderData& simulationData)
 	{
-		const UINT32 size = simulationData.Color.GetWidth();
+		const u32 size = simulationData.Color.GetWidth();
 
 		const ParticleBillboardTextures* output = nullptr;
 		BillboardBuffersPerSize& buffers = mBillboardBufferList[size];
-		if (buffers.NextFreeIdx < (UINT32)buffers.Buffers.size())
+		if (buffers.NextFreeIdx < (u32)buffers.Buffers.size())
 		{
 			output = buffers.Buffers[buffers.NextFreeIdx];
 			buffers.NextFreeIdx++;
@@ -256,11 +256,11 @@ namespace bs { namespace ct
 
 	const ParticleMeshTextures* ParticleTexturePool::Alloc(const ParticleMeshRenderData& simulationData)
 	{
-		const UINT32 size = simulationData.Color.GetWidth();
+		const u32 size = simulationData.Color.GetWidth();
 
 		const ParticleMeshTextures* output = nullptr;
 		MeshBuffersPerSize& buffers = mMeshBufferList[size];
-		if (buffers.NextFreeIdx < (UINT32)buffers.Buffers.size())
+		if (buffers.NextFreeIdx < (u32)buffers.Buffers.size())
 		{
 			output = buffers.Buffers[buffers.NextFreeIdx];
 			buffers.NextFreeIdx++;
@@ -293,7 +293,7 @@ namespace bs { namespace ct
 			buffers.second.NextFreeIdx = 0;
 	}
 
-	ParticleBillboardTextures* ParticleTexturePool::CreateNewBillboardTextures(UINT32 size)
+	ParticleBillboardTextures* ParticleTexturePool::CreateNewBillboardTextures(u32 size)
 	{
 		ParticleBillboardTextures* output = mBillboardAlloc.Construct<ParticleBillboardTextures>();
 
@@ -323,7 +323,7 @@ namespace bs { namespace ct
 		return output;
 	}
 
-	ParticleMeshTextures* ParticleTexturePool::CreateNewMeshTextures(UINT32 size)
+	ParticleMeshTextures* ParticleTexturePool::CreateNewMeshTextures(u32 size)
 	{
 		ParticleMeshTextures* output = mMeshAlloc.Construct<ParticleMeshTextures>();
 
@@ -390,20 +390,20 @@ namespace bs { namespace ct
 		uvIter.AddValue(Vector2(1.0f, 1.0f));
 		uvIter.AddValue(Vector2(1.0f, 0.0f));
 
-		UINT32 stride = meshData.GetVertexDesc()->GetVertexStride(0);
+		u32 stride = meshData.GetVertexDesc()->GetVertexStride(0);
 
 		Vector3 normal = Vector3::UNIT_Y;
 		Vector4 tangent(1.0f, 0.0f, 0.0f, 1.0f);
 
-		UINT8* normalDst = meshData.GetElementData(VES_NORMAL);
-		for(UINT32 i = 0; i < 4; i++)
+		u8* normalDst = meshData.GetElementData(VES_NORMAL);
+		for(u32 i = 0; i < 4; i++)
 		{
 			MeshUtility::PackNormals(&normal, normalDst, 1, sizeof(Vector3), stride);
 			normalDst += stride;
 		}
 
-		UINT8* tangentDst = meshData.GetElementData(VES_TANGENT);
-		for(UINT32 i = 0; i < 4; i++)
+		u8* tangentDst = meshData.GetElementData(VES_TANGENT);
+		for(u32 i = 0; i < 4; i++)
 		{
 			MeshUtility::PackNormals(&tangent, tangentDst, 1, sizeof(Vector4), stride);
 			tangentDst += stride;
@@ -417,7 +417,7 @@ namespace bs { namespace ct
 		bs_delete(m);
 	}
 
-	void ParticleRenderer::DrawBillboards(UINT32 count)
+	void ParticleRenderer::DrawBillboards(u32 count)
 	{
 		SPtr<VertexBuffer> vertexBuffers[] = { m->BillboardVb };
 
@@ -428,29 +428,29 @@ namespace bs { namespace ct
 		rapi.Draw(0, 4, count);
 	}
 
-	void ParticleRenderer::SortByDistance(const Vector3& refPoint, const PixelData& positions, UINT32 numParticles,
-		UINT32 stride, Vector<UINT32>& indices)
+	void ParticleRenderer::SortByDistance(const Vector3& refPoint, const PixelData& positions, u32 numParticles,
+		u32 stride, Vector<u32>& indices)
 	{
 		struct ParticleSortData
 		{
-			ParticleSortData(float key, UINT32 idx)
+			ParticleSortData(float key, u32 idx)
 				:Key(key), Idx(idx)
 			{ }
 
 			float Key;
-			UINT32 Idx;
+			u32 Idx;
 		};
 
-		const UINT32 size = positions.GetWidth();
-		UINT8* positionPtr = positions.GetData();
+		const u32 size = positions.GetWidth();
+		u8* positionPtr = positions.GetData();
 
 		bs_frame_mark();
 		{
 			FrameVector<ParticleSortData> sortData;
 			sortData.reserve(numParticles);
 
-			UINT32 x = 0;
-			for (UINT32 i = 0; i < numParticles; i++)
+			u32 x = 0;
+			for (u32 i = 0; i < numParticles; i++)
 			{
 				const Vector3& position = *(Vector3*)positionPtr;
 
@@ -473,7 +473,7 @@ namespace bs { namespace ct
 				return rhs.Key < lhs.Key;
 			});
 
-			for (UINT32 i = 0; i < numParticles; i++)
+			for (u32 i = 0; i < numParticles; i++)
 				indices[i] = sortData[i].Idx;
 		}
 		bs_frame_clear();

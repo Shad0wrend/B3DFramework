@@ -36,7 +36,7 @@ namespace bs { namespace ct
 		mNumBoundHandles++;
 	}
 
-	void VulkanResource::NotifyUsed(UINT32 globalQueueIdx, UINT32 queueFamily, VulkanAccessFlags useFlags)
+	void VulkanResource::NotifyUsed(u32 globalQueueIdx, u32 queueFamily, VulkanAccessFlags useFlags)
 	{
 		Lock lock(mMutex);
 		assert(useFlags != VulkanAccessFlag::None);
@@ -66,7 +66,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void VulkanResource::NotifyDone(UINT32 globalQueueIdx, VulkanAccessFlags useFlags)
+	void VulkanResource::NotifyDone(u32 globalQueueIdx, VulkanAccessFlags useFlags)
 	{
 		bool destroy;
 		{
@@ -111,13 +111,13 @@ namespace bs { namespace ct
 			mOwner->Destroy(this);
 	}
 
-	UINT32 VulkanResource::GetUseInfo(VulkanAccessFlags useFlags) const
+	u32 VulkanResource::GetUseInfo(VulkanAccessFlags useFlags) const
 	{
-		UINT32 mask = 0;
+		u32 mask = 0;
 
 		if(useFlags.IsSet(VulkanAccessFlag::Read))
 		{
-			for (UINT32 i = 0; i < MAX_UNIQUE_QUEUES; i++)
+			for (u32 i = 0; i < MAX_UNIQUE_QUEUES; i++)
 			{
 				if (mReadUses[i] > 0)
 					mask |= 1 << i;
@@ -126,7 +126,7 @@ namespace bs { namespace ct
 
 		if (useFlags.IsSet(VulkanAccessFlag::Write))
 		{
-			for (UINT32 i = 0; i < MAX_UNIQUE_QUEUES; i++)
+			for (u32 i = 0; i < MAX_UNIQUE_QUEUES; i++)
 			{
 				if (mWriteUses[i] > 0)
 					mask |= 1 << i;

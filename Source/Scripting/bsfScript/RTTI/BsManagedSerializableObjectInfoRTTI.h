@@ -29,23 +29,23 @@ namespace bs
 			obj->MName = val;
 		}
 
-		SPtr<ManagedSerializableObjectInfo> GetSerializableObjectInfo(ManagedSerializableAssemblyInfo* obj, UINT32 idx)
+		SPtr<ManagedSerializableObjectInfo> GetSerializableObjectInfo(ManagedSerializableAssemblyInfo* obj, u32 idx)
 		{
 			auto iter = obj->MObjectInfos.begin();
-			for(UINT32 i = 0; i < idx; i++)
+			for(u32 i = 0; i < idx; i++)
 				iter++;
 
 			return iter->second;
 		}
 
-		void SetSerializableObjectInfo(ManagedSerializableAssemblyInfo* obj, UINT32 idx, SPtr<ManagedSerializableObjectInfo> val)
+		void SetSerializableObjectInfo(ManagedSerializableAssemblyInfo* obj, u32 idx, SPtr<ManagedSerializableObjectInfo> val)
 		{
 			obj->MTypeNameToId[val->GetFullTypeName()] = val->MTypeInfo->MTypeId;
 			obj->MObjectInfos[val->MTypeInfo->MTypeId] = val;
 		}
 		
-		UINT32 GetSerializableObjectInfoArraySize(ManagedSerializableAssemblyInfo* obj) { return (UINT32)obj->MObjectInfos.size(); }
-		void SetSerializableObjectInfoArraySize(ManagedSerializableAssemblyInfo* obj, UINT32 size) {  }
+		u32 GetSerializableObjectInfoArraySize(ManagedSerializableAssemblyInfo* obj) { return (u32)obj->MObjectInfos.size(); }
+		void SetSerializableObjectInfoArraySize(ManagedSerializableAssemblyInfo* obj, u32 size) {  }
 
 	public:
 		ManagedSerializableAssemblyInfoRTTI()
@@ -62,7 +62,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_SerializableAssemblyInfo;
 		}
@@ -98,23 +98,23 @@ namespace bs
 			obj->MBaseClass = val;
 		}
 
-		SPtr<ManagedSerializableMemberInfo> GetSerializableFieldInfo(ManagedSerializableObjectInfo* obj, UINT32 idx)
+		SPtr<ManagedSerializableMemberInfo> GetSerializableFieldInfo(ManagedSerializableObjectInfo* obj, u32 idx)
 		{
 			auto iter = obj->MFields.begin();
-			for(UINT32 i = 0; i < idx; i++)
+			for(u32 i = 0; i < idx; i++)
 				iter++;
 
 			return iter->second;
 		}
 
-		void SetSerializableFieldInfo(ManagedSerializableObjectInfo* obj, UINT32 idx, SPtr<ManagedSerializableMemberInfo> val)
+		void SetSerializableFieldInfo(ManagedSerializableObjectInfo* obj, u32 idx, SPtr<ManagedSerializableMemberInfo> val)
 		{
 			obj->MFieldNameToId[val->MName] = val->MFieldId;
 			obj->MFields[val->MFieldId] = val;
 		}
 
-		UINT32 GetSerializableFieldInfoArraySize(ManagedSerializableObjectInfo* obj) { return (UINT32)obj->MFields.size(); }
-		void SetSerializableFieldInfoArraySize(ManagedSerializableObjectInfo* obj, UINT32 size) {  }
+		u32 GetSerializableFieldInfoArraySize(ManagedSerializableObjectInfo* obj) { return (u32)obj->MFields.size(); }
+		void SetSerializableFieldInfoArraySize(ManagedSerializableObjectInfo* obj, u32 size) {  }
 
 	public:
 		ManagedSerializableObjectInfoRTTI()
@@ -133,7 +133,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableObjectInfo;
 		}
@@ -166,7 +166,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableMemberInfo;
 		}
@@ -193,7 +193,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldInfo;
 		}
@@ -218,7 +218,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializablePropertyInfo;
 		}
@@ -243,7 +243,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfo;
 		}
@@ -273,7 +273,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfoPrimitive;
 		}
@@ -304,7 +304,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfoEnum;
 		}
@@ -336,7 +336,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfoRef;
 		}
@@ -366,7 +366,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfoRRef;
 		}
@@ -400,7 +400,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfoObject;
 		}
@@ -430,7 +430,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfoArray;
 		}
@@ -459,7 +459,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfoList;
 		}
@@ -490,7 +490,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableTypeInfoDictionary;
 		}

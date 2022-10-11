@@ -108,11 +108,11 @@ namespace bs
 
 		/** @copydoc CharacterController::getLayer */
 		BS_SCRIPT_EXPORT(n:Layer,pr:getter,layerMask)
-		UINT64 GetLayer() const { return mLayer; }
+		u64 GetLayer() const { return mLayer; }
 
 		/** @copydoc CharacterController::setLayer */
 		BS_SCRIPT_EXPORT(n:Layer,pr:setter,layerMask)
-		void SetLayer(UINT64 layer);
+		void SetLayer(u64 layer);
 
 		/** @copydoc CharacterController::onColliderHit */
 		BS_SCRIPT_EXPORT(n:OnColliderHit)
@@ -170,7 +170,7 @@ namespace bs
 
 		SPtr<CharacterController> mInternal;
 		CHAR_CONTROLLER_DESC mDesc;
-		UINT64 mLayer = 1;
+		u64 mLayer = 1;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

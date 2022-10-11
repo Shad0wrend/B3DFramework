@@ -25,7 +25,7 @@ namespace bs
 	Event<void(const Vector2I&, const OSPointerButtonStates&)> Platform::onCursorDoubleClick;
 	Event<void(InputCommandType)> Platform::onInputCommand;
 	Event<void(float)> Platform::onMouseWheelScrolled;
-	Event<void(UINT32)> Platform::onCharInput;
+	Event<void(u32)> Platform::onCharInput;
 
 	Event<void()> Platform::onMouseCaptureChanged;
 
@@ -89,18 +89,18 @@ namespace bs
 		bool cursorClipEnabled = false;
 	};
 
-	static const UINT32 DOUBLE_CLICK_MS = 500;
+	static const u32 DOUBLE_CLICK_MS = 500;
 
 	Vector2I GetCursorPositionInternal(Platform::Pimpl* data)
 	{
 		Vector2I pos;
-		UINT32 screenCount = (UINT32)XScreenCount(data->xDisplay);
+		u32 screenCount = (u32)XScreenCount(data->xDisplay);
 
-		for (UINT32 i = 0; i < screenCount; ++i)
+		for (u32 i = 0; i < screenCount; ++i)
 		{
 			::Window outRoot, outChild;
-			INT32 childX, childY;
-			UINT32 mask;
+			i32 childX, childY;
+			u32 mask;
 			if(XQueryPointer(data->xDisplay, XRootWindow(data->xDisplay, i), &outRoot, &outChild, &pos.x,
 					&pos.y, &childX, &childY, &mask))
 				break;
@@ -111,14 +111,14 @@ namespace bs
 
 	void SetCursorPositionInternal(Platform::Pimpl* data, const Vector2I& screenPos)
 	{
-		UINT32 screenCount = (UINT32)XScreenCount(data->xDisplay);
+		u32 screenCount = (u32)XScreenCount(data->xDisplay);
 
 		// Note assuming screens are laid out horizontally left to right
-		INT32 screenX = 0;
-		for(UINT32 i = 0; i < screenCount; ++i)
+		i32 screenX = 0;
+		for(u32 i = 0; i < screenCount; ++i)
 		{
 			::Window root = XRootWindow(data->xDisplay, i);
-			INT32 screenXEnd = screenX + XDisplayWidth(data->xDisplay, i);
+			i32 screenXEnd = screenX + XDisplayWidth(data->xDisplay, i);
 
 			if(screenPos.x >= screenX && screenPos.x < screenXEnd)
 			{
@@ -160,17 +160,17 @@ namespace bs
 		if(!data->cursorClipEnabled)
 			return false;
 
-		INT32 clippedX = pos.x - data->cursorClipRect.x;
-		INT32 clippedY = pos.y - data->cursorClipRect.y;
+		i32 clippedX = pos.x - data->cursorClipRect.x;
+		i32 clippedY = pos.y - data->cursorClipRect.y;
 
 		if(clippedX < 0)
 			clippedX = 0;
-		else if(clippedX >= (INT32)data->cursorClipRect.width)
+		else if(clippedX >= (i32)data->cursorClipRect.width)
 			clippedX = data->cursorClipRect.width > 0 ? data->cursorClipRect.width - 1 : 0;
 
 		if(clippedY < 0)
 			clippedY = 0;
-		else if(clippedY >= (INT32)data->cursorClipRect.height)
+		else if(clippedY >= (i32)data->cursorClipRect.height)
 			clippedY = data->cursorClipRect.height > 0 ? data->cursorClipRect.height - 1 : 0;
 
 		clippedX += data->cursorClipRect.x;
@@ -211,13 +211,13 @@ namespace bs
 	{
 		::Window outRoot, outParent;
 		::Window* children;
-		UINT32 numChildren;
+		u32 numChildren;
 		XQueryTree(display, window, &outRoot, &outParent, &children, &numChildren);
 
 		if(children == nullptr || numChildren == 0)
 			return window;
 
-		for(UINT32 j = 0; j < numChildren; j++)
+		for(u32 j = 0; j < numChildren; j++)
 		{
 			::Window curWindow = children[numChildren - j - 1];
 
@@ -233,7 +233,7 @@ namespace bs
 			if(!XTranslateCoordinates(display, curWindow, rootWindow, 0, 0, &pos.x, &pos.y, &outChild))
 				continue;
 
-			Rect2I area(pos.x, pos.y, (UINT32)xwa.width, (UINT32)xwa.height);
+			Rect2I area(pos.x, pos.y, (u32)xwa.width, (u32)xwa.height);
 			if(area.contains(screenPos))
 			{
 				XFree(children);
@@ -281,7 +281,7 @@ namespace bs
 		LinuxWindow* linuxWindow;
 		window.getCustomAttribute("LINUX_WINDOW", &linuxWindow);
 
-		UINT32 mask = ButtonPressMask | ButtonReleaseMask | PointerMotionMask | FocusChangeMask;
+		u32 mask = ButtonPressMask | ButtonReleaseMask | PointerMotionMask | FocusChangeMask;
 		XGrabPointer(mData->xDisplay, linuxWindow->GetXWindowInternal(), False, mask, GrabModeAsync,
 				GrabModeAsync, None, None, CurrentTime);
 		XSync(mData->xDisplay, False);
@@ -303,9 +303,9 @@ namespace bs
 		window.getCustomAttribute("LINUX_WINDOW", &linuxWindow);
 		::Window xWindow = linuxWindow->GetXWindowInternal();
 
-		UINT32 screenCount = (UINT32)XScreenCount(mData->xDisplay);
+		u32 screenCount = (u32)XScreenCount(mData->xDisplay);
 
-		for (UINT32 i = 0; i < screenCount; ++i)
+		for (u32 i = 0; i < screenCount; ++i)
 		{
 			::Window rootWindow = XRootWindow(mData->xDisplay, i);
 
@@ -442,7 +442,7 @@ namespace bs
 		linuxWindow->SetDragZonesInternal({});
 	}
 
-	void Platform::sleep(UINT32 duration)
+	void Platform::sleep(u32 duration)
 	{
 		usleep(duration * 1000);
 	}
@@ -484,17 +484,17 @@ namespace bs
 		}
 
 		Atom actualType;
-		INT32 actualFormat;
+		i32 actualFormat;
 		unsigned long length;
 		unsigned long bytesRemaining;
-		UINT8* data;
+		u8* data;
 		XGetWindowProperty(mData->xDisplay, mData->mainXWindow, clipboardAtom,
 				0, 0, False, AnyPropertyType, &actualType, &actualFormat, &length, &bytesRemaining, &data);
 
 		if(bytesRemaining > 0)
 		{
 			unsigned long unused;
-			INT32 result = XGetWindowProperty(mData->xDisplay, mData->mainXWindow, clipboardAtom,
+			i32 result = XGetWindowProperty(mData->xDisplay, mData->mainXWindow, clipboardAtom,
 					0, bytesRemaining, False, AnyPropertyType, &actualType, &actualFormat, &length,
 					&unused, &data);
 
@@ -675,7 +675,7 @@ namespace bs
 		return nullptr;
 	}
 
-	String Platform::keyCodeToUnicode(UINT32 buttonCode)
+	String Platform::keyCodeToUnicode(u32 buttonCode)
 	{
 		Lock lock(mData->lock);
 
@@ -705,7 +705,7 @@ namespace bs
 		Status status;
 		char buffer[16];
 
-		INT32 length = Xutf8LookupString(mData->IC, &event, buffer, sizeof(buffer), nullptr, &status);
+		i32 length = Xutf8LookupString(mData->IC, &event, buffer, sizeof(buffer), nullptr, &status);
 		if(length > 0)
 		{
 			buffer[length] = '\0';
@@ -722,7 +722,7 @@ namespace bs
 
 		const char* commandPattern = "xdg-open '%s'";
 
-		char* commandStr = (char*)bs_stack_alloc((UINT32)pathString.size() + (UINT32)strlen(commandPattern) + 1);
+		char* commandStr = (char*)bs_stack_alloc((u32)pathString.size() + (u32)strlen(commandPattern) + 1);
 		sprintf(commandStr, commandPattern, pathString.c_str());
 
 		if(system(commandStr)){};
@@ -803,7 +803,7 @@ namespace bs
 	 * @param pressed   true if the button was pressed, false if it was released
 	 * @param timestamp Time when the event happened
 	 */
-	void enqueueButtonEvent(ButtonCode bc, bool pressed, UINT64 timestamp)
+	void enqueueButtonEvent(ButtonCode bc, bool pressed, Ui64 timestamp)
 	{
 		if (bc == BC_UNASSIGNED)
 			return;
@@ -889,7 +889,7 @@ namespace bs
 			case KeyPress:
 			{
 				XKeyPressedEvent* keyEvent = (XKeyPressedEvent*) &event;
-				enqueueButtonEvent(mData->keyCodeMap[keyEvent->keycode], true, (UINT64) keyEvent->time);
+				enqueueButtonEvent(mData->keyCodeMap[keyEvent->keycode], true, (Ui64) keyEvent->time);
 
 				// Process text input
 				KeySym keySym = XkbKeycodeToKeysym(mData->xDisplay, (KeyCode)event.xkey.keycode, 0, 0);
@@ -907,7 +907,7 @@ namespace bs
 					Status status;
 					char buffer[16];
 
-					INT32 length = Xutf8LookupString(mData->IC, &event.xkey, buffer, sizeof(buffer), nullptr,
+					i32 length = Xutf8LookupString(mData->IC, &event.xkey, buffer, sizeof(buffer), nullptr,
 							&status);
 
 					if (length > 0)
@@ -916,7 +916,7 @@ namespace bs
 
 						U32String utfStr = UTF8::toUTF32(String(buffer));
 						if (utfStr.length() > 0)
-							onCharInput((UINT32) utfStr[0]);
+							onCharInput((u32) utfStr[0]);
 					}
 				}
 
@@ -931,14 +931,14 @@ namespace bs
 			case KeyRelease:
 			{
 				XKeyReleasedEvent* keyEvent = (XKeyReleasedEvent*) &event;
-				enqueueButtonEvent(mData->keyCodeMap[keyEvent->keycode], false, (UINT64) keyEvent->time);
+				enqueueButtonEvent(mData->keyCodeMap[keyEvent->keycode], false, (Ui64) keyEvent->time);
 			}
 				break;
 			case ButtonPress:
 			{
 				XButtonPressedEvent* buttonEvent = (XButtonPressedEvent*) &event;
-				UINT32 button = event.xbutton.button;
-				enqueueButtonEvent(xButtonToButtonCode(button), true, (UINT64) buttonEvent->time);
+				u32 button = event.xbutton.button;
+				enqueueButtonEvent(xButtonToButtonCode(button), true, (Ui64) buttonEvent->time);
 
 				OSPointerButtonStates btnStates;
 				btnStates.mouseButtons[0] = (event.xbutton.state & Button1Mask) != 0;
@@ -1007,8 +1007,8 @@ namespace bs
 			case ButtonRelease:
 			{
 				XButtonReleasedEvent* buttonEvent = (XButtonReleasedEvent*) &event;
-				UINT32 button = event.xbutton.button;
-				enqueueButtonEvent(xButtonToButtonCode(button), false, (UINT64) buttonEvent->time);
+				u32 button = event.xbutton.button;
+				enqueueButtonEvent(xButtonToButtonCode(button), false, (Ui64) buttonEvent->time);
 
 				Vector2I pos;
 				pos.x = event.xbutton.x_root;
@@ -1038,7 +1038,7 @@ namespace bs
 				case Button4: // Vertical mouse wheel
 				case Button5:
 				{
-					INT32 delta = button == Button4 ? 1 : -1;
+					i32 delta = button == Button4 ? 1 : -1;
 					onMouseWheelScrolled((float)delta);
 				}
 					break;
@@ -1161,8 +1161,8 @@ namespace bs
 				{
 					String utf8data = mData->clipboardData;
 
-					const UINT8* data = (const UINT8*)utf8data.c_str();
-					INT32 dataLength = (INT32)utf8data.length();
+					const u8* data = (const u8*)utf8data.c_str();
+					i32 dataLength = (i32)utf8data.length();
 
 					XChangeProperty(mData->xDisplay, selReq.requestor, selReq.property,
 							selReq.target, 8, PropModeReplace, data, dataLength);
@@ -1204,11 +1204,11 @@ namespace bs
 						break;
 
 					Atom type;
-					INT32 format;
+					i32 format;
 					unsigned long count, bytesRemaining;
-					UINT8* data = nullptr;
+					u8* data = nullptr;
 
-					INT32 result = XGetWindowProperty(mData->xDisplay, event.xproperty.window, mData->atomWmState,
+					i32 result = XGetWindowProperty(mData->xDisplay, event.xproperty.window, mData->atomWmState,
 							0, 1024, False, AnyPropertyType, &type, &format,
 							&count, &bytesRemaining, &data);
 
@@ -1325,7 +1325,7 @@ namespace bs
 		XkbDescPtr desc = XkbGetMap(mData->xDisplay, 0, XkbUseCoreKbd);
 		XkbGetNames(mData->xDisplay, XkbKeyNamesMask, desc);
 
-		for (UINT32 keyCode = desc->min_key_code; keyCode <= desc->max_key_code; keyCode++)
+		for (u32 keyCode = desc->min_key_code; keyCode <= desc->max_key_code; keyCode++)
 		{
 			memcpy(name, desc->names->keys[keyCode].name, XkbKeyNameLength);
 			name[XkbKeyNameLength] = '\0';
@@ -1339,7 +1339,7 @@ namespace bs
 		XkbFreeNames(desc, XkbKeyNamesMask, True);
 		XkbFreeKeyboard(desc, 0, True);
 
-		for (UINT32 buttonCodeNum = BC_UNASSIGNED; buttonCodeNum <= BC_NumKeys; buttonCodeNum++)
+		for (u32 buttonCodeNum = BC_UNASSIGNED; buttonCodeNum <= BC_NumKeys; buttonCodeNum++)
 		{
 			ButtonCode buttonCode = (ButtonCode) buttonCodeNum;
 			const char* keyNameCStr = buttonCodeToKeyName(buttonCode);
@@ -1460,7 +1460,7 @@ namespace bs
 			mData->mainXWindow = 0;
 	}
 
-	Pixmap LinuxPlatform::createPixmap(const PixelData& data, UINT32 depth)
+	Pixmap LinuxPlatform::createPixmap(const PixelData& data, u32 depth)
 	{
 		// Premultiply alpha
 		Vector<Color> colors = data.getColors();

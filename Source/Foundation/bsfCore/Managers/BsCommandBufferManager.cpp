@@ -4,7 +4,7 @@
 
 namespace bs { namespace ct
 {
-	SPtr<CommandBuffer> CommandBufferManager::Create(GpuQueueType type, UINT32 deviceIdx, UINT32 queueIdx,
+	SPtr<CommandBuffer> CommandBufferManager::Create(GpuQueueType type, u32 deviceIdx, u32 queueIdx,
 		bool secondary)
 	{
 		assert(deviceIdx < BS_MAX_DEVICES);

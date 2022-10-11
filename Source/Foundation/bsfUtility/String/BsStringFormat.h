@@ -23,13 +23,13 @@ namespace bs
 		struct FormatParamRange
 		{
 			FormatParamRange() = default;
-			FormatParamRange(UINT32 start, UINT32 identifierSize, UINT32 paramIdx)
+			FormatParamRange(u32 start, u32 identifierSize, u32 paramIdx)
 				:Start(start), IdentifierSize(identifierSize), ParamIdx(paramIdx)
 			{ }
 
-			UINT32 Start = 0;
-			UINT32 IdentifierSize = 0;
-			UINT32 ParamIdx = 0;
+			u32 Start = 0;
+			u32 IdentifierSize = 0;
+			u32 ParamIdx = 0;
 		};
 
 		/** Structure that holds value of a parameter during string formatting. */
@@ -37,7 +37,7 @@ namespace bs
 		struct ParamData
 		{
 			T* Buffer = nullptr;
-			UINT32 Size = 0;
+			u32 Size = 0;
 		};
 
 	public:
@@ -57,29 +57,29 @@ namespace bs
 		template<class T, class... Args>
 		static BasicString<T> Format(const T* source, Args&& ...args)
 		{
-			UINT32 strLength = GetLength(source);
+			u32 strLength = GetLength(source);
 
 			ParamData<T> parameters[MAX_PARAMS];
 			memset(parameters, 0, sizeof(parameters));
 			GetParams(parameters, 0U, std::forward<Args>(args)...);
 
 			T bracketChars[MAX_IDENTIFIER_SIZE + 1];
-			UINT32 bracketWriteIdx = 0;
+			u32 bracketWriteIdx = 0;
 
 			FormatParamRange paramRanges[MAX_PARAM_REFERENCES];
 			memset(paramRanges, 0, sizeof(paramRanges));
-			UINT32 paramRangeWriteIdx = 0;
+			u32 paramRangeWriteIdx = 0;
 
 			// Determine parameter positions
-			INT32 lastBracket = -1;
+			i32 lastBracket = -1;
 			bool escaped = false;
-			UINT32 charWriteIdx = 0;
-			for (UINT32 i = 0; i < strLength; i++)
+			u32 charWriteIdx = 0;
+			for (u32 i = 0; i < strLength; i++)
 			{
 				if (source[i] == '\\' && !escaped && paramRangeWriteIdx < MAX_PARAM_REFERENCES)
 				{
 					escaped = true;
-					paramRanges[paramRangeWriteIdx++] = FormatParamRange(charWriteIdx, 1, (UINT32)-1);
+					paramRanges[paramRangeWriteIdx++] = FormatParamRange(charWriteIdx, 1, (u32)-1);
 					continue;
 				}
 
@@ -98,12 +98,12 @@ namespace bs
 					else
 					{
 						// If current char is non-escaped closing bracket end parameter definition
-						UINT32 numParamChars = bracketWriteIdx;
+						u32 numParamChars = bracketWriteIdx;
 						bool processedBracket = false;
 						if (source[i] == '}' && numParamChars > 0 && !escaped)
 						{
 							bracketChars[bracketWriteIdx] = '\0';
-							UINT32 paramIdx = StrToInt(bracketChars);
+							u32 paramIdx = StrToInt(bracketChars);
 							if (paramIdx < MAX_PARAMS && paramRangeWriteIdx < MAX_PARAM_REFERENCES) // Check if exceeded maximum parameter limit
 							{
 								paramRanges[paramRangeWriteIdx++] = FormatParamRange(charWriteIdx, numParamChars + 2, paramIdx);
@@ -116,7 +116,7 @@ namespace bs
 						if (!processedBracket)
 						{
 							// Last bracket wasn't really a parameter
-							for (UINT32 j = lastBracket; j <= i; j++)
+							for (u32 j = lastBracket; j <= i; j++)
 								charWriteIdx++;
 						}
 
@@ -129,24 +129,24 @@ namespace bs
 			}
 
 			// Copy the clean string into output buffer
-			UINT32 finalStringSize = charWriteIdx;
+			u32 finalStringSize = charWriteIdx;
 
 			T* outputBuffer = (T*)bs_alloc(finalStringSize * sizeof(T));
-			UINT32 copySourceIdx = 0;
-			UINT32 copyDestIdx = 0;
-			for (UINT32 i = 0; i < paramRangeWriteIdx; i++)
+			u32 copySourceIdx = 0;
+			u32 copyDestIdx = 0;
+			for (u32 i = 0; i < paramRangeWriteIdx; i++)
 			{
 				const FormatParamRange& rangeInfo = paramRanges[i];
-				UINT32 copySize = rangeInfo.Start - copyDestIdx;
+				u32 copySize = rangeInfo.Start - copyDestIdx;
 				
 				memcpy(outputBuffer + copyDestIdx, source + copySourceIdx, copySize * sizeof(T));
 				copySourceIdx += copySize + rangeInfo.IdentifierSize;
 				copyDestIdx += copySize;
 
-				if (rangeInfo.ParamIdx == (UINT32)-1)
+				if (rangeInfo.ParamIdx == (u32)-1)
 					continue;
 
-				UINT32 paramSize = parameters[rangeInfo.ParamIdx].Size;
+				u32 paramSize = parameters[rangeInfo.ParamIdx].Size;
 				memcpy(outputBuffer + copyDestIdx, parameters[rangeInfo.ParamIdx].Buffer, paramSize * sizeof(T));
 				copyDestIdx += paramSize;
 			}
@@ -156,7 +156,7 @@ namespace bs
 			BasicString<T> outputStr(outputBuffer, finalStringSize);
 			bs_free(outputBuffer);
 
-			for (UINT32 i = 0; i < MAX_PARAMS; i++)
+			for (u32 i = 0; i < MAX_PARAMS; i++)
 			{
 				if (parameters[i].Buffer != nullptr)
 					bs_free(parameters[i].Buffer);
@@ -170,24 +170,24 @@ namespace bs
 		 * Set of methods that can be specialized so we have a generalized way for retrieving length of strings of
 		 * different types.
 		 */
-		static UINT32 GetLength(const char* source) { return (UINT32)strlen(source); }
+		static u32 GetLength(const char* source) { return (u32)strlen(source); }
 
 		/**
 		 * Set of methods that can be specialized so we have a generalized way for retrieving length of strings of
 		 * different types.
 		 */
-		static UINT32 GetLength(const wchar_t* source) { return (UINT32)wcslen(source); }
+		static u32 GetLength(const wchar_t* source) { return (u32)wcslen(source); }
 
 		/** Parses the string and returns an integer value extracted from string characters. */
-		static UINT32 StrToInt(const char* buffer)
+		static u32 StrToInt(const char* buffer)
 		{
-			return (UINT32)strtoul(buffer, nullptr, 10);
+			return (u32)strtoul(buffer, nullptr, 10);
 		}
 
 		/** Parses the string and returns an integer value extracted from string characters. */
-		static UINT32 StrToInt(const wchar_t* buffer)
+		static u32 StrToInt(const wchar_t* buffer)
 		{
-			return (UINT32)wcstoul(buffer, nullptr, 10);
+			return (u32)wcstoul(buffer, nullptr, 10);
 		}
 
 		/**	Helper method for converting any data type to a narrow string. */
@@ -256,14 +256,14 @@ namespace bs
 		 * Converts all the provided parameters into string representations and populates the provided @p parameters array.
 		 */
 		template<class P, class... Args>
-		static void GetParams(ParamData<char>* parameters, UINT32 idx, P&& param, Args&& ...args)
+		static void GetParams(ParamData<char>* parameters, u32 idx, P&& param, Args&& ...args)
 		{
 			if (idx >= MAX_PARAMS)
 				return;
 
 			BasicString<char> sourceParam = toString(param);
-			parameters[idx].Buffer = (char*)bs_alloc((UINT32)sourceParam.size() * sizeof(char));
-			parameters[idx].Size = (UINT32)sourceParam.size();
+			parameters[idx].Buffer = (char*)bs_alloc((u32)sourceParam.size() * sizeof(char));
+			parameters[idx].Size = (u32)sourceParam.size();
 
 			sourceParam.copy(parameters[idx].Buffer, parameters[idx].Size, 0);
 			
@@ -274,14 +274,14 @@ namespace bs
 		 * Converts all the provided parameters into string representations and populates the provided @p parameters array.
 		 */
 		template<class P, class... Args>
-		static void GetParams(ParamData<wchar_t>* parameters, UINT32 idx, P&& param, Args&& ...args)
+		static void GetParams(ParamData<wchar_t>* parameters, u32 idx, P&& param, Args&& ...args)
 		{
 			if (idx >= MAX_PARAMS)
 				return;
 
 			BasicString<wchar_t> sourceParam = toWString(param);
-			parameters[idx].buffer = (wchar_t*)bs_alloc((UINT32)sourceParam.size() * sizeof(wchar_t));
-			parameters[idx].size = (UINT32)sourceParam.size();
+			parameters[idx].buffer = (wchar_t*)bs_alloc((u32)sourceParam.size() * sizeof(wchar_t));
+			parameters[idx].size = (u32)sourceParam.size();
 			
 			sourceParam.copy(parameters[idx].buffer, parameters[idx].size, 0);
 
@@ -289,20 +289,20 @@ namespace bs
 		}
 
 		/** Helper method for parameter size calculation. Used as a stopping point in template recursion. */
-		static void GetParams(ParamData<char>* parameters, UINT32 idx)
+		static void GetParams(ParamData<char>* parameters, u32 idx)
 		{
 			// Do nothing
 		}
 
 		/**	Helper method for parameter size calculation. Used as a stopping point in template recursion. */
-		static void GetParams(ParamData<wchar_t>* parameters, UINT32 idx)
+		static void GetParams(ParamData<wchar_t>* parameters, u32 idx)
 		{
 			// Do nothing
 		}
 
-		static constexpr const UINT32 MAX_PARAMS = 20;
-		static constexpr const UINT32 MAX_IDENTIFIER_SIZE = 2;
-		static constexpr const UINT32 MAX_PARAM_REFERENCES = 200;
+		static constexpr const u32 MAX_PARAMS = 20;
+		static constexpr const u32 MAX_IDENTIFIER_SIZE = 2;
+		static constexpr const u32 MAX_PARAM_REFERENCES = 200;
 	};
 
 	/** @} */

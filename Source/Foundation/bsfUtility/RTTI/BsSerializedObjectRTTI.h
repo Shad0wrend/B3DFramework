@@ -24,7 +24,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_SerializedInstance;
 		}
@@ -38,16 +38,16 @@ namespace bs
 	class BS_UTILITY_EXPORT SerializedFieldRTTI : public RTTIType <SerializedField, SerializedInstance, SerializedFieldRTTI>
 	{
 	private:
-		SPtr<DataStream> GetData(SerializedField* obj, UINT32& size)
+		SPtr<DataStream> GetData(SerializedField* obj, u32& size)
 		{
 			size = obj->Size;
 
 			return bs_shared_ptr_new<MemoryDataStream>(obj->Value, obj->Size);
 		}
 
-		void SetData(SerializedField* obj, const SPtr<DataStream>& value, UINT32 size)
+		void SetData(SerializedField* obj, const SPtr<DataStream>& value, u32 size)
 		{
-			obj->Value = (UINT8*)bs_alloc(size);
+			obj->Value = (u8*)bs_alloc(size);
 			obj->Size = size;
 			obj->OwnsMemory = true;
 
@@ -66,7 +66,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_SerializedField;
 		}
@@ -80,7 +80,7 @@ namespace bs
 	class BS_UTILITY_EXPORT SerializedDataBlockRTTI : public RTTIType <SerializedDataBlock, SerializedInstance, SerializedDataBlockRTTI>
 	{
 	private:
-		SPtr<DataStream> GetData(SerializedDataBlock* obj, UINT32& size)
+		SPtr<DataStream> GetData(SerializedDataBlock* obj, u32& size)
 		{
 			size = obj->Size;
 			obj->Stream->Seek(obj->Offset);
@@ -88,7 +88,7 @@ namespace bs
 			return obj->Stream;
 		}
 
-		void SetData(SerializedDataBlock* obj, const SPtr<DataStream>& value, UINT32 size)
+		void SetData(SerializedDataBlock* obj, const SPtr<DataStream>& value, u32 size)
 		{
 			SPtr<MemoryDataStream> memStream = bs_shared_ptr_new<MemoryDataStream>(size);
 			value->Read(memStream->Data(), size);
@@ -109,7 +109,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_SerializedDataBlock;
 		}
@@ -123,22 +123,22 @@ namespace bs
 	class BS_UTILITY_EXPORT SerializedObjectRTTI : public RTTIType <SerializedObject, SerializedInstance, SerializedObjectRTTI>
 	{
 	private:
-		SerializedSubObject& GetEntry(SerializedObject* obj, UINT32 arrayIdx)
+		SerializedSubObject& GetEntry(SerializedObject* obj, u32 arrayIdx)
 		{
 			return obj->SubObjects[arrayIdx];
 		}
 
-		void SetEntry(SerializedObject* obj, UINT32 arrayIdx, SerializedSubObject& val)
+		void SetEntry(SerializedObject* obj, u32 arrayIdx, SerializedSubObject& val)
 		{
 			obj->SubObjects[arrayIdx] = val;
 		}
 
-		UINT32 GetNumEntries(SerializedObject* obj)
+		u32 GetNumEntries(SerializedObject* obj)
 		{
-			return (UINT32)obj->SubObjects.size();
+			return (u32)obj->SubObjects.size();
 		}
 
-		void SetNumEntries(SerializedObject* obj, UINT32 numEntries)
+		void SetNumEntries(SerializedObject* obj, u32 numEntries)
 		{
 			obj->SubObjects = Vector<SerializedSubObject>(numEntries);
 		}
@@ -155,7 +155,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializedObject;
 		}
@@ -169,34 +169,34 @@ namespace bs
 	class BS_UTILITY_EXPORT SerializedArrayRTTI : public RTTIType <SerializedArray, SerializedInstance, SerializedArrayRTTI>
 	{
 	private:
-		UINT32& GetNumElements(SerializedArray* obj)
+		u32& GetNumElements(SerializedArray* obj)
 		{
 			return obj->NumElements;
 		}
 
-		void SetNumElements(SerializedArray* obj, UINT32& val)
+		void SetNumElements(SerializedArray* obj, u32& val)
 		{
 			obj->NumElements = val;
 		}
 
-		SerializedArrayEntry& GetEntry(SerializedArray* obj, UINT32 arrayIdx)
+		SerializedArrayEntry& GetEntry(SerializedArray* obj, u32 arrayIdx)
 		{
 			return mSequentialEntries[arrayIdx];
 		}
 
-		void SetEntry(SerializedArray* obj, UINT32 arrayIdx, SerializedArrayEntry& val)
+		void SetEntry(SerializedArray* obj, u32 arrayIdx, SerializedArrayEntry& val)
 		{
 			obj->Entries[val.Index] = val;
 		}
 
-		UINT32 GetNumEntries(SerializedArray* obj)
+		u32 GetNumEntries(SerializedArray* obj)
 		{
-			return (UINT32)mSequentialEntries.size();
+			return (u32)mSequentialEntries.size();
 		}
 
-		void SetNumEntries(SerializedArray* obj, UINT32 numEntries)
+		void SetNumEntries(SerializedArray* obj, u32 numEntries)
 		{
-			obj->Entries = UnorderedMap<UINT32, SerializedArrayEntry>();
+			obj->Entries = UnorderedMap<u32, SerializedArrayEntry>();
 		}
 	public:
 		SerializedArrayRTTI()
@@ -220,7 +220,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializedArray;
 		}
@@ -237,34 +237,34 @@ namespace bs
 	class BS_UTILITY_EXPORT SerializedSubObjectRTTI : public RTTIType <SerializedSubObject, IReflectable, SerializedSubObjectRTTI>
 	{
 	private:
-		UINT32& GetTypeId(SerializedSubObject* obj)
+		u32& GetTypeId(SerializedSubObject* obj)
 		{
 			return obj->TypeId;
 		}
 
-		void SetTypeId(SerializedSubObject* obj, UINT32& val)
+		void SetTypeId(SerializedSubObject* obj, u32& val)
 		{
 			obj->TypeId = val;
 		}
 
-		SerializedEntry& GetEntry(SerializedSubObject* obj, UINT32 arrayIdx)
+		SerializedEntry& GetEntry(SerializedSubObject* obj, u32 arrayIdx)
 		{
 			return mSequentialEntries[arrayIdx];
 		}
 
-		void SetEntry(SerializedSubObject* obj, UINT32 arrayIdx, SerializedEntry& val)
+		void SetEntry(SerializedSubObject* obj, u32 arrayIdx, SerializedEntry& val)
 		{
 			obj->Entries[val.FieldId] = val;
 		}
 
-		UINT32 GetNumEntries(SerializedSubObject* obj)
+		u32 GetNumEntries(SerializedSubObject* obj)
 		{
-			return (UINT32)mSequentialEntries.size();
+			return (u32)mSequentialEntries.size();
 		}
 
-		void SetNumEntries(SerializedSubObject* obj, UINT32 numEntries)
+		void SetNumEntries(SerializedSubObject* obj, u32 numEntries)
 		{
-			obj->Entries = UnorderedMap<UINT32, SerializedEntry>();
+			obj->Entries = UnorderedMap<u32, SerializedEntry>();
 		}
 	public:
 		SerializedSubObjectRTTI()
@@ -288,7 +288,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializedSubObject;
 		}
@@ -305,12 +305,12 @@ namespace bs
 	class BS_UTILITY_EXPORT SerializedEntryRTTI : public RTTIType <SerializedEntry, IReflectable, SerializedEntryRTTI>
 	{
 	private:
-		UINT32& GetFieldId(SerializedEntry* obj)
+		u32& GetFieldId(SerializedEntry* obj)
 		{
 			return obj->FieldId;
 		}
 
-		void SetFieldId(SerializedEntry* obj, UINT32& val)
+		void SetFieldId(SerializedEntry* obj, u32& val)
 		{
 			obj->FieldId = val;
 		}
@@ -338,7 +338,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializedEntry;
 		}
@@ -352,12 +352,12 @@ namespace bs
 	class BS_UTILITY_EXPORT SerializedArrayEntryRTTI : public RTTIType <SerializedArrayEntry, IReflectable, SerializedArrayEntryRTTI>
 	{
 	private:
-		UINT32& GetArrayIdx(SerializedArrayEntry* obj)
+		u32& GetArrayIdx(SerializedArrayEntry* obj)
 		{
 			return obj->Index;
 		}
 
-		void SetArrayIdx(SerializedArrayEntry* obj, UINT32& val)
+		void SetArrayIdx(SerializedArrayEntry* obj, u32& val)
 		{
 			obj->Index = val;
 		}
@@ -385,7 +385,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializedArrayEntry;
 		}

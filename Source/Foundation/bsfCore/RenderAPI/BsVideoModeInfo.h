@@ -28,7 +28,7 @@ namespace bs
 		 * @param[in]	outputIdx	Output index of the output device. Normally this means output monitor. 0th index always
 		 *							represents the primary device while order of others is undefined.
 		 */
-		VideoMode(UINT32 width, UINT32 height, float refreshRate = 60.0f, UINT32 outputIdx = 0)
+		VideoMode(u32 width, u32 height, float refreshRate = 60.0f, u32 outputIdx = 0)
 			:Width(width), Height(height), RefreshRate(refreshRate), OutputIdx(outputIdx)
 		{ }
 		virtual ~VideoMode() = default;
@@ -36,16 +36,16 @@ namespace bs
 		bool operator== (const VideoMode& other) const;
 
 		/**	Width of the front/back buffer in pixels. */
-		UINT32 Width = 1280;
+		u32 Width = 1280;
 
 		/**	Height of the front/back buffer in pixels. */
-		UINT32 Height = 720;
+		u32 Height = 720;
 
 		/**	Refresh rate in hertz. */
 		float RefreshRate = 60.0f;
 
 		/**	Index of the parent video output. */
-		UINT32 OutputIdx = 0;
+		u32 OutputIdx = 0;
 
 		/**
 		 * Determines was video mode user created or provided by the API/OS. API/OS created video modes can contain
@@ -68,10 +68,10 @@ namespace bs
 		const String& GetName() const { return mName; }
 
 		/**	Number of available video modes for this output. */
-		UINT32 GetNumVideoModes() const { return (UINT32)mVideoModes.size(); }
+		u32 GetNumVideoModes() const { return (u32)mVideoModes.size(); }
 
 		/**	Returns video mode at the specified index. */
-		const VideoMode& GetVideoMode(UINT32 idx) const { return *mVideoModes.at(idx); }
+		const VideoMode& GetVideoMode(u32 idx) const { return *mVideoModes.at(idx); }
 
 		/**	Returns the video mode currently used by the desktop. */
 		const VideoMode& GetDesktopVideoMode() const { return *mDesktopVideoMode; }
@@ -93,13 +93,13 @@ namespace bs
 		VideoModeInfo& operator=(const VideoModeInfo&) = delete; // Make non-copyable
 
 		/**	Returns the number of available output devices. */
-		UINT32 GetNumOutputs() const { return (UINT32)mOutputs.size(); }
+		u32 GetNumOutputs() const { return (u32)mOutputs.size(); }
 
 		/**
 		 * Returns video mode information about a specific output device. 0th index always represents the primary device
 		 * while order of others is undefined.
 		 */
-		const VideoOutputInfo& GetOutputInfo(UINT32 idx) const { return *mOutputs[idx]; }
+		const VideoOutputInfo& GetOutputInfo(u32 idx) const { return *mOutputs[idx]; }
 
 	protected:
 		Vector<VideoOutputInfo*> mOutputs;

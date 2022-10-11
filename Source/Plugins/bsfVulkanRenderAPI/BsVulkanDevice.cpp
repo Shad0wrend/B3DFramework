@@ -12,12 +12,12 @@
 
 namespace bs { namespace ct
 {
-	VulkanDevice::VulkanDevice(VkPhysicalDevice device, UINT32 deviceIdx)
+	VulkanDevice::VulkanDevice(VkPhysicalDevice device, u32 deviceIdx)
 		: mPhysicalDevice(device), mDeviceIdx(deviceIdx), mQueueInfos()
 	{
 		// Set to default
-		for (UINT32 i = 0; i < GQT_COUNT; i++)
-			mQueueInfos[i].FamilyIdx = (UINT32)-1;
+		for (u32 i = 0; i < GQT_COUNT; i++)
+			mQueueInfos[i].FamilyIdx = (u32)-1;
 
 		vkGetPhysicalDeviceProperties(device, &mDeviceProperties);
 		vkGetPhysicalDeviceFeatures(device, &mDeviceFeatures);
@@ -50,7 +50,7 @@ namespace bs { namespace ct
 		};
 
 		// Look for dedicated compute queues
-		for (UINT32 i = 0; i < (UINT32)queueFamilyProperties.size(); i++)
+		for (u32 i = 0; i < (u32)queueFamilyProperties.size(); i++)
 		{
 			if ((queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) && (queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0)
 			{
@@ -60,7 +60,7 @@ namespace bs { namespace ct
 		}
 
 		// Look for dedicated upload queues
-		for (UINT32 i = 0; i < (UINT32)queueFamilyProperties.size(); i++)
+		for (u32 i = 0; i < (u32)queueFamilyProperties.size(); i++)
 		{
 			if ((queueFamilyProperties[i].queueFlags & VK_QUEUE_TRANSFER_BIT) &&
 				((queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0) &&
@@ -72,7 +72,7 @@ namespace bs { namespace ct
 		}
 
 		// Looks for graphics queues
-		for (UINT32 i = 0; i < (UINT32)queueFamilyProperties.size(); i++)
+		for (u32 i = 0; i < (u32)queueFamilyProperties.size(); i++)
 		{
 			if (queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
 			{
@@ -132,10 +132,10 @@ namespace bs { namespace ct
 		assert(result == VK_SUCCESS);
 
 		// Retrieve queues
-		for(UINT32 i = 0; i < GQT_COUNT; i++)
+		for(u32 i = 0; i < GQT_COUNT; i++)
 		{
-			UINT32 numQueues = (UINT32)mQueueInfos[i].Queues.size();
-			for (UINT32 j = 0; j < numQueues; j++)
+			u32 numQueues = (u32)mQueueInfos[i].Queues.size();
+			for (u32 j = 0; j < numQueues; j++)
 			{
 				VkQueue queue;
 				vkGetDeviceQueue(mLogicalDevice, mQueueInfos[i].FamilyIdx, j, &queue);
@@ -167,10 +167,10 @@ namespace bs { namespace ct
 		VkResult result = vkDeviceWaitIdle(mLogicalDevice);
 		assert(result == VK_SUCCESS);
 
-		for (UINT32 i = 0; i < GQT_COUNT; i++)
+		for (u32 i = 0; i < GQT_COUNT; i++)
 		{
-			UINT32 numQueues = (UINT32)mQueueInfos[i].Queues.size();
-			for (UINT32 j = 0; j < numQueues; j++)
+			u32 numQueues = (u32)mQueueInfos[i].Queues.size();
+			for (u32 j = 0; j < numQueues; j++)
 			{
 				mQueueInfos[i].Queues[j]->RefreshStates(true, true);
 				bs_delete(mQueueInfos[i].Queues[j]);
@@ -198,10 +198,10 @@ namespace bs { namespace ct
 
 	void VulkanDevice::RefreshStates(bool forceWait)
 	{
-		for (UINT32 i = 0; i < GQT_COUNT; i++)
+		for (u32 i = 0; i < GQT_COUNT; i++)
 		{
-			UINT32 numQueues = GetNumQueues((GpuQueueType)i);
-			for (UINT32 j = 0; j < numQueues; j++)
+			u32 numQueues = GetNumQueues((GpuQueueType)i);
+			for (u32 j = 0; j < numQueues; j++)
 			{
 				VulkanQueue* queue = GetQueue((GpuQueueType)i, j);
 				queue->RefreshStates(forceWait, false);
@@ -209,14 +209,14 @@ namespace bs { namespace ct
 		}
 	}
 
-	UINT32 VulkanDevice::GetQueueMask(GpuQueueType type, UINT32 queueIdx) const
+	u32 VulkanDevice::GetQueueMask(GpuQueueType type, u32 queueIdx) const
 	{
-		UINT32 numQueues = GetNumQueues(type);
+		u32 numQueues = GetNumQueues(type);
 		if (numQueues == 0)
 			return 0;
 
-		UINT32 idMask = 0;
-		UINT32 curIdx = queueIdx % numQueues;
+		u32 idMask = 0;
+		u32 curIdx = queueIdx % numQueues;
 		while (curIdx < BS_MAX_QUEUES_PER_TYPE)
 		{
 			idMask |= CommandSyncMask::GetGlobalQueueMask(type, curIdx);
@@ -280,7 +280,7 @@ namespace bs { namespace ct
 				VK_FORMAT_B8G8R8_SRGB
 			};
 
-			UINT32 numWantedFormats;
+			u32 numWantedFormats;
 			VkFormat* wantedFormats;
 			if (gamma)
 			{
@@ -293,9 +293,9 @@ namespace bs { namespace ct
 				wantedFormats = wantedFormatsUNORM;
 			}
 
-			for(UINT32 i = 0; i < numWantedFormats; i++)
+			for(u32 i = 0; i < numWantedFormats; i++)
 			{
-				for(UINT32 j = 0; j < numFormats; j++)
+				for(u32 j = 0; j < numFormats; j++)
 				{
 					if(surfaceFormats[j].format == wantedFormats[i])
 					{

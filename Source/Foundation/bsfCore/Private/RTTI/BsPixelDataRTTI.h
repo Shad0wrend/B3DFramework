@@ -17,7 +17,7 @@ namespace bs
 
 	class BS_CORE_EXPORT PixelDataRTTI : public RTTIType<PixelData, GpuResourceData, PixelDataRTTI>
 	{
-		static UINT32 VERSION;
+		static u32 VERSION;
 
 		BS_BEGIN_RTTI_MEMBERS
 			BS_RTTI_MEMBER_PLAIN_NAMED(left, mExtents.Left, 0)
@@ -31,17 +31,17 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mFormat, 8)
 		BS_END_RTTI_MEMBERS
 
-		UINT32& GetVersion(PixelData* obj) { return VERSION; }
-		void SetVersion(PixelData* obj, UINT32& val) { mVersion = val; }
+		u32& GetVersion(PixelData* obj) { return VERSION; }
+		void SetVersion(PixelData* obj, u32& val) { mVersion = val; }
 
-		SPtr<DataStream> GetData(PixelData* obj, UINT32& size)
+		SPtr<DataStream> GetData(PixelData* obj, u32& size)
 		{
 			size = obj->GetConsecutiveSize();
 
 			return bs_shared_ptr_new<MemoryDataStream>(obj->GetData(), size);
 		}
 
-		void SetData(PixelData* obj, const SPtr<DataStream>& value, UINT32 size)
+		void SetData(PixelData* obj, const SPtr<DataStream>& value, u32 size)
 		{
 			obj->AllocateInternalBuffer(size);
 			value->Read(obj->GetData(), size);
@@ -61,7 +61,7 @@ namespace bs
 			// Convert row & slice pitch from pixels to bytes, in case pixel data was stored with an older version
 			if(mVersion == 0)
 			{
-				UINT32 pixelSize = PixelUtil::GetNumElemBytes(pixelData->GetFormat());
+				u32 pixelSize = PixelUtil::GetNumElemBytes(pixelData->GetFormat());
 				pixelData->mRowPitch *= pixelSize;
 				pixelData->mSlicePitch *= pixelSize;
 			}
@@ -73,7 +73,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_PixelData;
 		}
@@ -86,10 +86,10 @@ namespace bs
 		}
 
 	private:
-		UINT32 mVersion = 0;
+		u32 mVersion = 0;
 	};
 
-	UINT32 PixelDataRTTI::VERSION = 1;
+	u32 PixelDataRTTI::VERSION = 1;
 
 	/** @} */
 	/** @endcond */

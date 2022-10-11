@@ -34,8 +34,8 @@ namespace bs
 		/** Binding location for a single GPU param block buffer. */
 		struct BlockBinding
 		{
-			UINT32 Set;
-			UINT32 Slot;
+			u32 Set;
+			u32 Slot;
 		};
 
 		/** All bindings for GPU param block buffers, for a single pass. */
@@ -47,14 +47,14 @@ namespace bs
 		/** Information about a parameter block buffer. */
 		struct BlockInfo
 		{
-			BlockInfo(const String& name, UINT32 set, UINT32 slot, const ParamBlockPtrType& buffer, bool shareable)
+			BlockInfo(const String& name, u32 set, u32 slot, const ParamBlockPtrType& buffer, bool shareable)
 				: Name(name), Set(set), Slot(slot), Buffer(buffer), Shareable(shareable), AllowUpdate(true), IsUsed(true)
 				, PassData(nullptr)
 			{ }
 
 			String Name;
-			UINT32 Set;
-			UINT32 Slot;
+			u32 Set;
+			u32 Slot;
 			ParamBlockPtrType Buffer;
 			bool Shareable;
 			bool AllowUpdate;
@@ -66,31 +66,31 @@ namespace bs
 		/** Information about how a data parameter maps from a material parameter into a parameter block buffer. */
 		struct DataParamInfo
 		{
-			UINT32 ParamIdx;
-			UINT32 BlockIdx;
-			UINT32 Offset;
-			UINT32 ArrayStride;
+			u32 ParamIdx;
+			u32 BlockIdx;
+			u32 Offset;
+			u32 ArrayStride;
 		};
 
 		/** Information about how an object parameter maps from a material parameter to a GPU stage slot. */
 		struct ObjectParamInfo
 		{
-			UINT32 ParamIdx;
-			UINT32 SlotIdx;
-			UINT32 SetIdx;
+			u32 ParamIdx;
+			u32 SlotIdx;
+			u32 SetIdx;
 		};
 
 		/** Information about all object parameters for a specific GPU programmable stage. */
 		struct StageParamInfo
 		{
 			ObjectParamInfo* Textures;
-			UINT32 NumTextures;
+			u32 NumTextures;
 			ObjectParamInfo* LoadStoreTextures;
-			UINT32 NumLoadStoreTextures;
+			u32 NumLoadStoreTextures;
 			ObjectParamInfo* Buffers;
-			UINT32 NumBuffers;
+			u32 NumBuffers;
 			ObjectParamInfo* SamplerStates;
-			UINT32 NumSamplerStates;
+			u32 NumSamplerStates;
 		};
 
 		/** Information about all object parameters for a specific pass. */
@@ -112,13 +112,13 @@ namespace bs
 		 * @return					GPU parameters object that can be used for setting parameters of all GPU programs
 		 *							in a pass. Returns null if pass doesn't exist.
 		 */
-		SPtr<GpuParamsType> GetGpuParams(UINT32 passIdx = 0);
+		SPtr<GpuParamsType> GetGpuParams(u32 passIdx = 0);
 
 		/**
 		 * Searches for a parameter block buffer with the specified name, and returns an index you can use for accessing it.
 		 * Returns -1 if buffer was not found.
 		 */
-		UINT32 GetParamBlockBufferIndex(const String& name) const;
+		u32 GetParamBlockBufferIndex(const String& name) const;
 
 		/**
 		 * Assign a parameter block buffer with the specified index to all the relevant child GpuParams.
@@ -134,7 +134,7 @@ namespace bs
 		 * potentially sharing parameters between multiple materials. This reduces driver overhead as the parameters
 		 * in the buffers need only be set once and then reused multiple times.
 		 */
-		void SetParamBlockBuffer(UINT32 index, const ParamBlockPtrType& paramBlock, bool ignoreInUpdate = false);
+		void SetParamBlockBuffer(u32 index, const ParamBlockPtrType& paramBlock, bool ignoreInUpdate = false);
 
 		/**
 		 * Assign a parameter block buffer with the specified name to all the relevant child GpuParams.
@@ -153,7 +153,7 @@ namespace bs
 		void SetParamBlockBuffer(const String& name, const ParamBlockPtrType& paramBlock, bool ignoreInUpdate = false);
 
 		/** Returns the number of passes the set contains the parameters for. */
-		UINT32 GetNumPasses() const { return (UINT32)mPassParams.size(); }
+		u32 GetNumPasses() const { return (u32)mPassParams.size(); }
 
 		/**
 		 * Updates parameter data in this object from the provided material parameters object.
@@ -167,7 +167,7 @@ namespace bs
 		 */
 		void Update(const SPtr<MaterialParamsType>& params, float t = 0.0f, bool updateAll = false);
 
-		static const UINT32 NUM_STAGES;
+		static const u32 NUM_STAGES;
 	private:
 		template<bool Core2> friend class TMaterial;
 
@@ -176,8 +176,8 @@ namespace bs
 		Vector<DataParamInfo> mDataParamInfos;
 		PassParamInfo* mPassParamInfos;
 
-		UINT64 mParamVersion;
-		UINT8* mData;
+		u64 mParamVersion;
+		u8* mData;
 	};
 
 	/** Sim thread version of TGpuParamsSet<Core>. */

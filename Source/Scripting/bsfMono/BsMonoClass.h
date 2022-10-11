@@ -28,10 +28,10 @@ namespace bs
 				bool operator()(const MethodId& a, const MethodId& b) const;
 			};
 
-			MethodId(const String& name, UINT32 numParams);
+			MethodId(const String& name, u32 numParams);
 
 			String Name;
-			UINT32 NumParams;
+			u32 NumParams;
 		};
 
 		/** @endcond */
@@ -56,7 +56,7 @@ namespace bs
 		 * Does not query base class methods.
 		 * Returns null if method cannot be found.
 		 */
-		MonoMethod* GetMethod(const String& name, UINT32 numParams = 0) const;
+		MonoMethod* GetMethod(const String& name, u32 numParams = 0) const;
 
 		/**
 		 * Returns an object referencing a field with the specified name.
@@ -132,7 +132,7 @@ namespace bs
 		bool IsInstanceOfType(MonoObject* object) const;
 
 		/** Returns the size of an instance of this class, in bytes. */
-		UINT32 GetInstanceSize() const;
+		u32 GetInstanceSize() const;
 
 		/**
 		 * Shortcut for invoking a method on a class. Invokes a method with the provided name and number of parameters.
@@ -148,7 +148,7 @@ namespace bs
 		 * You cannot use this to call overloaded methods that have the same number of parameters. Use getMethodExact() and
 		 * then invoke the method from the returned method object.
 		 */
-		MonoObject* InvokeMethod(const String& name, MonoObject* instance = nullptr, void** params = nullptr, UINT32 numParams = 0);
+		MonoObject* InvokeMethod(const String& name, MonoObject* instance = nullptr, void** params = nullptr, u32 numParams = 0);
 
 		/**
 		 * Hooks up an internal call that will trigger the provided method callback when the managed method with the
@@ -173,7 +173,7 @@ namespace bs
 		 * @note	If the class have multiple constructors with the same number of parameters use the other
 		 *			createInstance(const String&, void**) overload that allows you to provide exact signature.
 		 */
-		MonoObject* CreateInstance(void** params, UINT32 numParams);
+		MonoObject* CreateInstance(void** params, u32 numParams);
 
 		/**
 		 * Creates a new instance of this class and then constructs it using the constructor with the specified signature.

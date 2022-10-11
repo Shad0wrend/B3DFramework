@@ -174,7 +174,7 @@ namespace bs
 		::MonoClass* GetMonoClass() const override;
 
 		ScriptReferenceType MType;
-		UINT32 MRtiiTypeId;
+		u32 MRtiiTypeId;
 		String MTypeNamespace;
 		String MTypeName;
 
@@ -227,9 +227,9 @@ namespace bs
 		String MTypeNamespace;
 		String MTypeName;
 		bool MValueType;
-		UINT32 MRtiiTypeId;
+		u32 MRtiiTypeId;
 		ScriptTypeFlags MFlags;
-		UINT32 MTypeId;
+		u32 MTypeId;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -254,7 +254,7 @@ namespace bs
 		::MonoClass* GetMonoClass() const override;
 
 		SPtr<ManagedSerializableTypeInfo> MElementType;
-		UINT32 MRank;
+		u32 MRank;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -348,8 +348,8 @@ namespace bs
 		virtual MonoObject* GetAttribute(MonoClass* monoClass) = 0;
 
 		String MName;
-		UINT32 MFieldId = 0;
-		UINT32 MParentTypeId;
+		u32 MFieldId = 0;
+		u32 MParentTypeId;
 
 		SPtr<ManagedSerializableTypeInfo> MTypeInfo;
 		ScriptFieldFlags MFlags;
@@ -440,8 +440,8 @@ namespace bs
 		SPtr<ManagedSerializableTypeInfoObject> MTypeInfo;
 		MonoClass* MMonoClass = nullptr;
 
-		UnorderedMap<String, UINT32> MFieldNameToId;
-		UnorderedMap<UINT32, SPtr<ManagedSerializableMemberInfo>> MFields;
+		UnorderedMap<String, u32> MFieldNameToId;
+		UnorderedMap<u32, SPtr<ManagedSerializableMemberInfo>> MFields;
 
 		SPtr<ManagedSerializableObjectInfo> MBaseClass;
 		Vector<std::weak_ptr<ManagedSerializableObjectInfo>> MDerivedClasses;
@@ -461,8 +461,8 @@ namespace bs
 	public:
 		String MName;
 
-		UnorderedMap<String, UINT32> MTypeNameToId;
-		UnorderedMap<UINT32, SPtr<ManagedSerializableObjectInfo>> MObjectInfos;
+		UnorderedMap<String, u32> MTypeNameToId;
+		UnorderedMap<u32, SPtr<ManagedSerializableObjectInfo>> MObjectInfos;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

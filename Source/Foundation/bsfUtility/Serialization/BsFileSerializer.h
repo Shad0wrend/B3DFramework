@@ -51,7 +51,7 @@ namespace bs
 		SPtr<IReflectable> Decode(SerializationContext* context = nullptr);
 
 		/** Gets the size in bytes of the next object in the file. Returns 0 if no next object. */
-		UINT32 GetSize() const;
+		u32 GetSize() const;
 
 		/** Skips over than object in the file. Calling decode() will decode the next object. */
 		void Skip();

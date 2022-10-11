@@ -164,7 +164,7 @@ namespace bs
 		 * buffers (shared between all particle systems).
 		 */
 		BS_SCRIPT_EXPORT()
-		UINT32 MaxParticles = 2000;
+		u32 MaxParticles = 2000;
 
 		/**
 		 * If true the particle system will be simulated on the GPU. This allows much higher particle counts at lower
@@ -212,7 +212,7 @@ namespace bs
 		 * between different runs. Only relevant if automatic seed is disabled.
 		 */
 		BS_SCRIPT_EXPORT(order:2)
-		UINT32 ManualSeed = 0;
+		u32 ManualSeed = 0;
 
 		/**
 		 * Determines should the particle system bounds be automatically calculated, or should the fixed value provided
@@ -493,10 +493,10 @@ namespace bs
 		 * Determines the layer bitfield that controls whether a system is considered visible in a specific camera.
 		 * Layer must match camera layer in order for the camera to render the component.
 		 */
-		void SetLayer(UINT64 layer);
+		void SetLayer(u64 layer);
 
 		/** @copydoc setLayer() */
-		UINT64 GetLayer() const { return mLayer; }
+		u64 GetLayer() const { return mLayer; }
 
 		/** Starts the particle system. New particles will be emitted and existing particles will be evolved. */
 		void Play();
@@ -573,7 +573,7 @@ namespace bs
 		 *								calculating spacing. Should be in range [0, 1). 0 = beginning of the current
 		 *								time step, 1 = start of next particle.
 		 */
-		void PreSimulate(const ParticleSystemState& state, UINT32 startIdx, UINT32 count, bool spacing, float spacingOffset);
+		void PreSimulate(const ParticleSystemState& state, u32 startIdx, u32 count, bool spacing, float spacingOffset);
 
 		/**
 		 * Integrates particle properties, advancing the simulation.
@@ -588,7 +588,7 @@ namespace bs
 		 *								calculating spacing. Should be in range [0, 1). 0 = beginning of the current
 		 *								time step, 1 = start of next particle.
 		 */
-		void Simulate(const ParticleSystemState& state, UINT32 startIdx, UINT32 count, bool spacing, float spacingOffset);
+		void Simulate(const ParticleSystemState& state, u32 startIdx, u32 count, bool spacing, float spacingOffset);
 
 		/**
 		 * Executes evolvers that need to run after the simulation.
@@ -603,7 +603,7 @@ namespace bs
 		 *								calculating spacing. Should be in range [0, 1). 0 = beginning of the current
 		 *								time step, 1 = start of next particle.
 		 */
-		void PostSimulate(const ParticleSystemState& state, UINT32 startIdx, UINT32 count, bool spacing, float spacingOffset);
+		void PostSimulate(const ParticleSystemState& state, u32 startIdx, u32 count, bool spacing, float spacingOffset);
 
 		/** @copydoc CoreObject::createCore */
 		SPtr<ct::CoreObject> CreateCore() const ;
@@ -625,13 +625,13 @@ namespace bs
 		ParticleGpuSimulationSettings mGpuSimulationSettings;
 		Vector<SPtr<ParticleEmitter>> mEmitters;
 		Vector<SPtr<ParticleEvolver>> mEvolvers;
-		UINT64 mLayer = 1;
+		u64 mLayer = 1;
 
 		// Internal state
-		UINT32 mId = 0;
+		u32 mId = 0;
 		State mState = State::Uninitialized;
 		float mTime = 0.0f;
-		UINT32 mSeed = 0;
+		u32 mSeed = 0;
 
 		Random mRandom;
 		ParticleSet* mParticleSet = nullptr;
@@ -670,41 +670,41 @@ namespace bs
 			 * Determines the layer bitfield that controls whether a system is considered visible in a specific camera.
 			 * Layer must match camera layer in order for the camera to render the component.
 			 */
-			void SetLayer(UINT64 layer);
+			void SetLayer(u64 layer);
 
 			/** @copydoc setLayer() */
-			UINT64 GetLayer() const { return mLayer; }
+			u64 GetLayer() const { return mLayer; }
 
 			/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-			void SetRendererId(UINT32 id) { mRendererId = id; }
+			void SetRendererId(u32 id) { mRendererId = id; }
 
 			/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-			UINT32 GetRendererId() const { return mRendererId; }
+			u32 GetRendererId() const { return mRendererId; }
 
 			/**
 			 * Returns an ID that uniquely identifies the particle system. Can be used for locating evaluated particle
 			 * system render data in the structure output by the ParticlesManager.
 			 */
-			UINT32 GetId() const { return mId; }
+			u32 GetId() const { return mId; }
 
 			/** @copydoc CoreObject::initialize */
 			void Initialize() override;
 		private:
 			friend class bs::ParticleSystem;
 
-			ParticleSystem(UINT32 id)
+			ParticleSystem(u32 id)
 				:mId(id)
 			{ }
 
 			/** @copydoc CoreObject::syncToCore */
 			void SyncToCore(const CoreSyncData& data) override;
 
-			UINT32 mRendererId = 0;
-			UINT32 mId;
+			u32 mRendererId = 0;
+			u32 mId;
 
 			ParticleSystemSettings mSettings;
 			ParticleGpuSimulationSettings mGpuSimulationSettings;
-			UINT64 mLayer = 1;
+			u64 mLayer = 1;
 		};
 	}
 

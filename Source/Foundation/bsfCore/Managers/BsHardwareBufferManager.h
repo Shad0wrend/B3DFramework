@@ -52,7 +52,7 @@ namespace bs
 		 * @param[in]	size	Size of the parameter buffer in bytes.
 		 * @param[in]	usage	Usage that tells the hardware how will be buffer be used.
 		 */
-		SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBuffer(UINT32 size, GpuBufferUsage usage = GBU_DYNAMIC);
+		SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBuffer(u32 size, GpuBufferUsage usage = GBU_DYNAMIC);
 
 		/**
 		 * Creates a generic buffer that can be passed as a parameter to a GPU program. This type of buffer can hold various
@@ -118,7 +118,7 @@ namespace bs
 		 * @copydoc bs::HardwareBufferManager::createGpuParamBlockBuffer
 		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
-		SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBuffer(UINT32 size,
+		SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBuffer(u32 size,
 			GpuBufferUsage usage = GBU_DYNAMIC, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		/**
@@ -172,7 +172,7 @@ namespace bs
 			GpuDeviceFlags deviceMask = GDF_DEFAULT) = 0;
 
 		/** @copydoc createGpuParamBlockBuffer */
-		virtual SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBufferInternal(UINT32 size,
+		virtual SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBufferInternal(u32 size,
 			GpuBufferUsage usage = GBU_DYNAMIC, GpuDeviceFlags deviceMask = GDF_DEFAULT) = 0;
 
 		/** @copydoc createGpuBuffer(const GPU_BUFFER_DESC&, GpuDeviceFlags) */

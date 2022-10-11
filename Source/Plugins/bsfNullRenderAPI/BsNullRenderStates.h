@@ -19,20 +19,20 @@ namespace bs { namespace ct
 		SPtr<SamplerState> CreateSamplerStateInternalInternal(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask) const ;
 
 		/** @copydoc RenderStateManager::createBlendStateInternal */
-		SPtr<BlendState> CreateBlendStateInternalInternal(const BLEND_STATE_DESC& desc, UINT32 id) const ;
+		SPtr<BlendState> CreateBlendStateInternalInternal(const BLEND_STATE_DESC& desc, u32 id) const ;
 
 		/** @copydoc RenderStateManager::createRasterizerStateInternal */
-		SPtr<RasterizerState> CreateRasterizerStateInternalInternal(const RASTERIZER_STATE_DESC& desc, UINT32 id) const ;
+		SPtr<RasterizerState> CreateRasterizerStateInternalInternal(const RASTERIZER_STATE_DESC& desc, u32 id) const ;
 
 		/** @copydoc RenderStateManager::createDepthStencilStateInternal */
-		SPtr<DepthStencilState> CreateDepthStencilStateInternalInternal(const DEPTH_STENCIL_STATE_DESC& desc, UINT32 id) const ;
+		SPtr<DepthStencilState> CreateDepthStencilStateInternalInternal(const DEPTH_STENCIL_STATE_DESC& desc, u32 id) const ;
 	};
 
 	/** @copydoc BlendState */
 	class NullBlendState : public BlendState
 	{
 	public:
-		NullBlendState(const BLEND_STATE_DESC& desc, UINT32 id)
+		NullBlendState(const BLEND_STATE_DESC& desc, u32 id)
 			:BlendState(desc, id)
 		{ }
 	};
@@ -41,7 +41,7 @@ namespace bs { namespace ct
 	class NullDepthStencilState : public DepthStencilState
 	{
 	public:
-		NullDepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc, UINT32 id)
+		NullDepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc, u32 id)
 			:DepthStencilState(desc, id)
 		{ }
 	};
@@ -50,7 +50,7 @@ namespace bs { namespace ct
 	class NullRasterizerState : public RasterizerState
 	{
 	public:
-		NullRasterizerState(const RASTERIZER_STATE_DESC& desc, UINT32 id)
+		NullRasterizerState(const RASTERIZER_STATE_DESC& desc, u32 id)
 			:RasterizerState(desc, id)
 		{ }
 	};

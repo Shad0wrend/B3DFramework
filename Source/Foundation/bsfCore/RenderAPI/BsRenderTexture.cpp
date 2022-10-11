@@ -12,22 +12,22 @@ namespace bs
 {
 	RenderTextureProperties::RenderTextureProperties(const RENDER_TEXTURE_DESC& desc, bool requiresFlipping)
 	{
-		UINT32 firstIdx = (UINT32)-1;
+		u32 firstIdx = (u32)-1;
 		bool requiresHwGamma = false;
-		for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			HTexture texture = desc.ColorSurfaces[i].Texture;
 
 			if (!texture.IsLoaded())
 				continue;
 
-			if (firstIdx == (UINT32)-1)
+			if (firstIdx == (u32)-1)
 				firstIdx = i;
 
 			requiresHwGamma |= texture->GetProperties().IsHardwareGammaEnabled();
 		}
 
-		if (firstIdx == (UINT32)-1)
+		if (firstIdx == (u32)-1)
 		{
 			HTexture texture = desc.DepthStencilSurface.Texture;
 			if (texture.IsLoaded())
@@ -49,22 +49,22 @@ namespace bs
 
 	RenderTextureProperties::RenderTextureProperties(const ct::RENDER_TEXTURE_DESC& desc, bool requiresFlipping)
 	{
-		UINT32 firstIdx = (UINT32)-1;
+		u32 firstIdx = (u32)-1;
 		bool requiresHwGamma = false;
-		for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			SPtr<ct::Texture> texture = desc.ColorSurfaces[i].Texture;
 
 			if (texture == nullptr)
 				continue;
 
-			if (firstIdx == (UINT32)-1)
+			if (firstIdx == (u32)-1)
 				firstIdx = i;
 
 			requiresHwGamma |= texture->GetProperties().IsHardwareGammaEnabled();
 		}
 
-		if(firstIdx == (UINT32)-1)
+		if(firstIdx == (u32)-1)
 		{
 			SPtr<ct::Texture> texture = desc.DepthStencilSurface.Texture;
 			if(texture != nullptr)
@@ -84,8 +84,8 @@ namespace bs
 		}
 	}
 
-	void RenderTextureProperties::Construct(const TextureProperties* textureProps, UINT32 numSlices,
-											UINT32 mipLevel, bool requiresFlipping, bool hwGamma)
+	void RenderTextureProperties::Construct(const TextureProperties* textureProps, u32 numSlices,
+											u32 mipLevel, bool requiresFlipping, bool hwGamma)
 	{
 		if (textureProps != nullptr)
 		{
@@ -120,7 +120,7 @@ namespace bs
 	RenderTexture::RenderTexture(const RENDER_TEXTURE_DESC& desc)
 		:mDesc(desc)
 	{
-		for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			if (desc.ColorSurfaces[i].Texture != nullptr)
 				mBindableColorTex[i] = desc.ColorSurfaces[i].Texture;
@@ -134,7 +134,7 @@ namespace bs
 	{
 		ct::RENDER_TEXTURE_DESC coreDesc;
 
-		for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			ct::RENDER_SURFACE_DESC surfaceDesc;
 			if (mDesc.ColorSurfaces[i].Texture.IsLoaded())
@@ -159,8 +159,8 @@ namespace bs
 
 	CoreSyncData RenderTexture::SyncToCore(FrameAlloc* allocator)
 	{
-		UINT32 size = sizeof(RenderTextureProperties);
-		UINT8* buffer = allocator->Alloc(size);
+		u32 size = sizeof(RenderTextureProperties);
+		u8* buffer = allocator->Alloc(size);
 
 		RenderTextureProperties& props = const_cast<RenderTextureProperties&>(GetProperties());
 
@@ -189,7 +189,7 @@ namespace bs
 
 	namespace ct
 	{
-	RenderTexture::RenderTexture(const RENDER_TEXTURE_DESC& desc, UINT32 deviceIdx)
+	RenderTexture::RenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 		:mDesc(desc)
 	{ }
 
@@ -197,7 +197,7 @@ namespace bs
 	{
 		RenderTarget::Initialize();
 
-		for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			if (mDesc.ColorSurfaces[i].Texture != nullptr)
 			{
@@ -225,7 +225,7 @@ namespace bs
 		ThrowIfBuffersDontMatch();
 	}
 
-	SPtr<RenderTexture> RenderTexture::Create(const RENDER_TEXTURE_DESC& desc, UINT32 deviceIdx)
+	SPtr<RenderTexture> RenderTexture::Create(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 	{
 		return TextureManager::Instance().CreateRenderTexture(desc, deviceIdx);
 	}
@@ -243,13 +243,13 @@ namespace bs
 
 	void RenderTexture::ThrowIfBuffersDontMatch() const
 	{
-		UINT32 firstSurfaceIdx = (UINT32)-1;
-		for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		u32 firstSurfaceIdx = (u32)-1;
+		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			if (mColorSurfaces[i] == nullptr)
 				continue;
 
-			if (firstSurfaceIdx == (UINT32)-1)
+			if (firstSurfaceIdx == (u32)-1)
 			{
 				firstSurfaceIdx = i;
 				continue;
@@ -258,11 +258,11 @@ namespace bs
 			const TextureProperties& curTexProps = mDesc.ColorSurfaces[i].Texture->GetProperties();
 			const TextureProperties& firstTexProps = mDesc.ColorSurfaces[firstSurfaceIdx].Texture->GetProperties();
 
-			UINT32 curMsCount = curTexProps.GetNumSamples();
-			UINT32 firstMsCount = firstTexProps.GetNumSamples();
+			u32 curMsCount = curTexProps.GetNumSamples();
+			u32 firstMsCount = firstTexProps.GetNumSamples();
 
-			UINT32 curNumSlices = mColorSurfaces[i]->GetNumArraySlices();
-			UINT32 firstNumSlices = mColorSurfaces[firstSurfaceIdx]->GetNumArraySlices();
+			u32 curNumSlices = mColorSurfaces[i]->GetNumArraySlices();
+			u32 firstNumSlices = mColorSurfaces[firstSurfaceIdx]->GetNumArraySlices();
 
 			if (curMsCount == 0)
 				curMsCount = 1;
@@ -286,12 +286,12 @@ namespace bs
 			}
 		}
 
-		if (firstSurfaceIdx != (UINT32)-1)
+		if (firstSurfaceIdx != (u32)-1)
 		{
 			const TextureProperties& firstTexProps = mDesc.ColorSurfaces[firstSurfaceIdx].Texture->GetProperties();
 			SPtr<TextureView> firstSurfaceView = mColorSurfaces[firstSurfaceIdx];
 
-			UINT32 numSlices;
+			u32 numSlices;
 			if (firstTexProps.GetTextureType() == TEX_TYPE_3D)
 				numSlices = firstTexProps.GetDepth();
 			else
@@ -313,8 +313,8 @@ namespace bs
 				return;
 
 			const TextureProperties& depthTexProps = mDesc.DepthStencilSurface.Texture->GetProperties();
-			UINT32 depthMsCount = depthTexProps.GetNumSamples();
-			UINT32 colorMsCount = firstTexProps.GetNumSamples();
+			u32 depthMsCount = depthTexProps.GetNumSamples();
+			u32 colorMsCount = firstTexProps.GetNumSamples();
 
 			if (depthMsCount == 0)
 				depthMsCount = 1;

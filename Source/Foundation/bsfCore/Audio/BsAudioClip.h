@@ -46,13 +46,13 @@ namespace bs
 		AudioFormat Format = AudioFormat::PCM;
 
 		/** Sample rate (frequency) of the audio data. */
-		UINT32 Frequency = 44100;
+		u32 Frequency = 44100;
 
 		/** Number of bits per sample. Not used for compressed formats. */
-		UINT32 BitDepth = 16;
+		u32 BitDepth = 16;
 		
 		/** Number of channels. Each channel has its own step of samples. */
-		UINT32 NumChannels = 2;
+		u32 NumChannels = 2;
 
 		/** Determines should the audio clip be played using 3D positioning. Only valid for mono audio. */
 		bool Is3D = true;
@@ -79,15 +79,15 @@ namespace bs
 
 		/** Returns the size of a single sample, in bits. */
 		BS_SCRIPT_EXPORT(n:BitDepth,pr:getter)
-		UINT32 GetBitDepth() const { return mDesc.BitDepth; }
+		u32 GetBitDepth() const { return mDesc.BitDepth; }
 		
 		/** Returns how many samples per second is the audio encoded in. */
 		BS_SCRIPT_EXPORT(n:SampleRate,pr:getter)
-		UINT32 GetFrequency() const { return mDesc.Frequency; }
+		u32 GetFrequency() const { return mDesc.Frequency; }
 
 		/** Returns the number of channels provided by the clip. */
 		BS_SCRIPT_EXPORT(n:NumChannels,pr:getter)
-		UINT32 GetNumChannels() const { return mDesc.NumChannels; }
+		u32 GetNumChannels() const { return mDesc.NumChannels; }
 
 		/**
 		 * Returns in which format is audio data stored in.
@@ -111,7 +111,7 @@ namespace bs
 
 		/** Returns the total number of samples in the clip (includes all channels). */
 		BS_SCRIPT_EXPORT(n:NumSamples,pr:getter)
-		UINT32 GetNumSamples() const { return mNumSamples; }
+		u32 GetNumSamples() const { return mNumSamples; }
 
 		/** Determines will the clip be played a spatial 3D sound, or as a normal sound (for example music). */
 		BS_SCRIPT_EXPORT(n:Is3D,pr:getter)
@@ -130,7 +130,7 @@ namespace bs
 		 *
 		 * @note	If the provided samples are in PCM format, they should be signed integers of provided bit depth.
 		 */
-		static HAudioClip Create(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples,
+		static HAudioClip Create(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples,
 			const AUDIO_CLIP_DESC& desc);
 
 	public: // ***** INTERNAL ******
@@ -139,12 +139,12 @@ namespace bs
 		 */
 
 		/** Creates a new AudioClip without initializing it. Use create() for normal use. */
-		static SPtr<AudioClip> CreatePtrInternal(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples,
+		static SPtr<AudioClip> CreatePtrInternal(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples,
 			const AUDIO_CLIP_DESC& desc);
 
 		/** @} */
 	protected:
-		AudioClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples, const AUDIO_CLIP_DESC& desc);
+		AudioClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc);
 
 		/** @copydoc Resource::initialize */
 		void Initialize() ;
@@ -153,13 +153,13 @@ namespace bs
 		bool IsCompressible() const override { return false; } // Compression handled on a case by case basis manually by the audio system
 
 		/** Returns original audio data. Only available if @p keepSourceData has been provided on creation. */
-		virtual SPtr<DataStream> GetSourceStream(UINT32& size) = 0;
+		virtual SPtr<DataStream> GetSourceStream(u32& size) = 0;
 
 	protected:
 		AUDIO_CLIP_DESC mDesc;
-		UINT32 mNumSamples;
-		UINT32 mStreamSize;
-		UINT32 mStreamOffset = 0;
+		u32 mNumSamples;
+		u32 mStreamSize;
+		u32 mStreamOffset = 0;
 		float mLength = 0.0f;
 		SPtr<DataStream> mStreamData;
 

@@ -30,7 +30,7 @@ namespace bs
 		 * Maximum mip level to generate when generating mipmaps. If 0 then maximum amount of mip levels will be generated.
 		 */
 		BS_SCRIPT_EXPORT()
-		UINT32 MaxMip = 0;
+		u32 MaxMip = 0;
 
 		/** Determines whether the texture data is also stored in main memory, available for fast CPU access. */
 		BS_SCRIPT_EXPORT()

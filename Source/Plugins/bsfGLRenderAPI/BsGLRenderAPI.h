@@ -42,14 +42,14 @@ namespace bs { namespace ct
 		void SetViewport(const Rect2& area, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::setScissorRect() */
-		void SetScissorRect(UINT32 left, UINT32 top, UINT32 right, UINT32 bottom,
+		void SetScissorRect(u32 left, u32 top, u32 right, u32 bottom,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::setStencilRef */
-		void SetStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
+		void SetStencilRef(u32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::setVertexBuffers() */
-		void SetVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers,
+		void SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u32 numBuffers,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::setIndexBuffer() */
@@ -64,37 +64,37 @@ namespace bs { namespace ct
 		void SetDrawOperation(DrawOperationType op, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::draw() */
-		void Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount = 0,
+		void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::drawIndexed() */
-		void DrawIndexed(UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 vertexCount
-			, UINT32 instanceCount = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
+		void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount
+			, u32 instanceCount = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::dispatchCompute() */
-		void DispatchCompute(UINT32 numGroupsX, UINT32 numGroupsY = 1, UINT32 numGroupsZ = 1,
+		void DispatchCompute(u32 numGroupsX, u32 numGroupsY = 1, u32 numGroupsZ = 1,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::swapBuffers() */
-		void SwapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask = 0xFFFFFFFF) ;
+		void SwapBuffers(const SPtr<RenderTarget>& target, u32 syncMask = 0xFFFFFFFF) ;
 
 		/** @copydoc RenderAPI::setRenderTarget() */
-		void SetRenderTarget(const SPtr<RenderTarget>& target, UINT32 readOnlyFlags = 0,
+		void SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags = 0,
 			RenderSurfaceMask loadMask = RT_NONE, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::clearRenderTarget() */
-		void ClearRenderTarget(UINT32 buffers, const Color& color = Color::Black, float depth = 1.0f, UINT16 stencil = 0,
-			UINT8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
+		void ClearRenderTarget(u32 buffers, const Color& color = Color::Black, float depth = 1.0f, u16 stencil = 0,
+			u8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::clearViewport() */
-		void ClearViewport(UINT32 buffers, const Color& color = Color::Black, float depth = 1.0f, UINT16 stencil = 0,
-			UINT8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
+		void ClearViewport(u32 buffers, const Color& color = Color::Black, float depth = 1.0f, u16 stencil = 0,
+			u8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::addCommands() */
 		void AddCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary) ;
 
 		/** @copydoc RenderAPI::submitCommandBuffer() */
-		void SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask = 0xFFFFFFFF) ;
+		void SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, u32 syncMask = 0xFFFFFFFF) ;
 
 		/** @copydoc RenderAPI::getMainCommandBuffer() */
 		SPtr<CommandBuffer> GetMainCommandBuffer() const ;
@@ -135,13 +135,13 @@ namespace bs { namespace ct
 		void EndDraw();
 
 		/**	Clear a part of a render target. */
-		void ClearArea(UINT32 buffers, const Color& color = Color::Black, float depth = 1.0f, UINT16 stencil = 0,
-			const Rect2I& clearArea = Rect2I::EMPTY, UINT8 targetMask = 0xFF);
+		void ClearArea(u32 buffers, const Color& color = Color::Black, float depth = 1.0f, u16 stencil = 0,
+			const Rect2I& clearArea = Rect2I::EMPTY, u8 targetMask = 0xFF);
 
 		/**
 		 * Changes the currently active texture unit. Any texture related operations will then be performed on this unit.
 		 */
-		bool ActivateGlTextureUnit(UINT16 unit);
+		bool ActivateGlTextureUnit(u16 unit);
 
 		/**	Retrieves the active GPU program of the specified type. */
 		SPtr<GLSLGpuProgram> GetActiveProgram(GpuProgramType gptype) const;
@@ -184,45 +184,45 @@ namespace bs { namespace ct
 		 * Sets the texture addressing mode for a texture unit. This determines how are UV address values outside of [0, 1]
 		 * range handled when sampling from texture.
 		 */
-		void SetTextureAddressingMode(UINT16 unit, const UVWAddressingMode& uvw);
+		void SetTextureAddressingMode(u16 unit, const UVWAddressingMode& uvw);
 
 		/**
 		 * Sets the texture border color for a texture unit. Border color determines color returned by the texture sampler
 		 * when border addressing mode is used and texture address is outside of [0, 1] range.
 		 */
-		void SetTextureBorderColor(UINT16 unit, const Color& color);
+		void SetTextureBorderColor(u16 unit, const Color& color);
 
 		/**
 		 * Sets the mipmap bias value for a given texture unit. Bias allows	you to adjust the mipmap selection calculation.
 		 * Negative values force a larger mipmap to be used, and positive values smaller. Units are in values of mip levels,
 		 * so -1 means use a mipmap one level higher than default.
 		 */
-		void SetTextureMipmapBias(UINT16 unit, float bias);
+		void SetTextureMipmapBias(u16 unit, float bias);
 
 		/**
 		 * Sets a valid range for mipmaps (LOD) for a given texture unit. @p min limits the selection of the highest
 		 * resolution mipmap (lowest level), and @p max limits the selection of the lowest resolution mipmap (highest
 		 * level).
 		 */
-		void SetTextureMipmapRange(UINT16 unit, float min, float max);
+		void SetTextureMipmapRange(u16 unit, float min, float max);
 
 		/**
 		 * Allows you to specify how is the texture bound to the specified texture unit filtered. Different filter types are
 		 * used for different situations like magnifying or minifying a texture.
 		 */
-		void SetTextureFiltering(UINT16 unit, FilterType ftype, FilterOptions filter);
+		void SetTextureFiltering(u16 unit, FilterType ftype, FilterOptions filter);
 
 		/**	Sets anisotropy value for the specified texture unit. */
-		void SetTextureAnisotropy(UINT16 unit, UINT32 maxAnisotropy);
+		void SetTextureAnisotropy(u16 unit, u32 maxAnisotropy);
 		
 		/**
 		 * Sets the compare mode to use when sampling the texture (anything but "always" implies the use of a shadow
 		 * sampler.
 		 */
-		void SetTextureCompareMode(UINT16 unit, CompareFunction compare);
+		void SetTextureCompareMode(u16 unit, CompareFunction compare);
 
 		/**	Gets anisotropy value for the specified texture unit. */
-		GLfloat GetCurrentAnisotropy(UINT16 unit);
+		GLfloat GetCurrentAnisotropy(u16 unit);
 
 		/************************************************************************/
 		/* 								Blend states                      		*/
@@ -232,7 +232,7 @@ namespace bs { namespace ct
 		 * Sets up blending mode that allows you to combine new pixels with pixels already in the render target.
 		 * Final pixel value = (renderTargetPixel * sourceFactor) op (pixel * destFactor).
 		 */
-		void SetSceneBlending(UINT32 target, BlendFactor sourceFactor, BlendFactor destFactor, BlendOperation op);
+		void SetSceneBlending(u32 target, BlendFactor sourceFactor, BlendFactor destFactor, BlendOperation op);
 
 		/**
 		 * Sets up blending mode that allows you to combine new pixels with pixels already in the render target.
@@ -240,7 +240,7 @@ namespace bs { namespace ct
 		 *	
 		 * Final pixel value = (renderTargetPixel * sourceFactor) op (pixel * destFactor). (And the same for alpha)
 		 */
-		void SetSceneBlending(UINT32 target, BlendFactor sourceFactor, BlendFactor destFactor, BlendFactor sourceFactorAlpha,
+		void SetSceneBlending(u32 target, BlendFactor sourceFactor, BlendFactor destFactor, BlendFactor sourceFactorAlpha,
 			BlendFactor destFactorAlpha, BlendOperation op, BlendOperation alphaOp);
 
 		/**
@@ -251,7 +251,7 @@ namespace bs { namespace ct
 		void SetAlphaToCoverage(bool enabled);
 
 		/**	Enables or disables writing to certain color channels of the render target. */
-		void SetColorBufferWriteEnabled(UINT32 target, bool red, bool green, bool blue, bool alpha);
+		void SetColorBufferWriteEnabled(u32 target, bool red, bool green, bool blue, bool alpha);
 
 		/************************************************************************/
 		/* 								Rasterizer states                  		*/
@@ -333,16 +333,16 @@ namespace bs { namespace ct
 		 * @param[in] ccw	If set to true, the stencil operations will be applied to counterclockwise
 		 *					faces. Otherwise they will be applied to clockwise faces.
 		 */
-		void SetStencilBufferFunc(CompareFunction func = CMPF_ALWAYS_PASS, UINT32 mask = 0xFFFFFFFF, bool ccw = true);
+		void SetStencilBufferFunc(CompareFunction func = CMPF_ALWAYS_PASS, u32 mask = 0xFFFFFFFF, bool ccw = true);
 
 		/**	The bitmask applied to the stencil value before writing it to the stencil buffer. */
-		void SetStencilBufferWriteMask(UINT32 mask = 0xFFFFFFFF);
+		void SetStencilBufferWriteMask(u32 mask = 0xFFFFFFFF);
 
 		/**
 		 * Sets a reference values used for stencil buffer comparisons. Actual comparison function and stencil operations
 		 * are set by setting the DepthStencilState.
 		 */
-		void SetStencilRefValue(UINT32 refValue);
+		void SetStencilRefValue(u32 refValue);
 
 		/************************************************************************/
 		/* 							UTILITY METHODS                      		*/
@@ -373,23 +373,23 @@ namespace bs { namespace ct
 			GLenum Type = GL_TEXTURE_2D;
 		};
 
-		static const UINT32 MAX_VB_COUNT = 32;
+		static const u32 MAX_VB_COUNT = 32;
 
 		Rect2 mViewportNorm = Rect2(0.0f, 0.0f, 1.0f, 1.0f);
-		UINT32 mScissorTop = 0;
-		UINT32 mScissorBottom = 720;
-		UINT32 mScissorLeft = 0;
-		UINT32 mScissorRight = 1280;
-		UINT32 mViewportLeft = 0;
-		UINT32 mViewportTop = 0;
-		UINT32 mViewportWidth = 0;
-		UINT32 mViewportHeight = 0;
+		u32 mScissorTop = 0;
+		u32 mScissorBottom = 720;
+		u32 mScissorLeft = 0;
+		u32 mScissorRight = 1280;
+		u32 mViewportLeft = 0;
+		u32 mViewportTop = 0;
+		u32 mViewportWidth = 0;
+		u32 mViewportHeight = 0;
 		bool mScissorEnabled = false;
 		bool mScissorRectDirty = false;
 
-		UINT32 mStencilReadMask = 0xFFFFFFFF;
-		UINT32 mStencilWriteMask = 0xFFFFFFFF;
-		UINT32 mStencilRefValue = 0;
+		u32 mStencilReadMask = 0xFFFFFFFF;
+		u32 mStencilWriteMask = 0xFFFFFFFF;
+		u32 mStencilRefValue = 0;
 		CompareFunction mStencilCompareFront = CMPF_ALWAYS_PASS;
 		CompareFunction mStencilCompareBack = CMPF_ALWAYS_PASS;
 
@@ -398,7 +398,7 @@ namespace bs { namespace ct
 		FilterOptions mMipFilter;
 
 		// Holds texture type settings for every stage
-		UINT32 mNumTextureUnits = 0;
+		u32 mNumTextureUnits = 0;
 		TextureInfo* mTextureInfos = nullptr;
 		bool mDepthWrite = true;
 		bool mColorWrite[BS_MAX_MULTIPLE_RENDER_TARGETS][4];
@@ -429,7 +429,7 @@ namespace bs { namespace ct
 
 		bool mDrawCallInProgress = false;
 
-		UINT16 mActiveTextureUnit = -1;
+		u16 mActiveTextureUnit = -1;
 	};
 
 	/** @} */

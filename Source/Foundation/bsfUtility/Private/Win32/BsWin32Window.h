@@ -26,12 +26,12 @@ namespace bs
 		HWND Parent = nullptr; /**< Optional handle to the parent window if this window is to be a child of an existing window. */
 		HWND External = nullptr; /**< Optional external window handle if the window was created externally. */
 		void* CreationParams = nullptr; /**< Parameter that will be passed through the WM_CREATE message. */
-		UINT32 Width = 0; /**< Width of the window in pixels. */
-		UINT32 Height = 0; /**< Height of the window in pixels. */
+		u32 Width = 0; /**< Width of the window in pixels. */
+		u32 Height = 0; /**< Height of the window in pixels. */
 		bool Fullscreen = false; /**< Should the window be opened in fullscreen mode. */
 		bool Hidden = false; /**< Should the window be hidden initially. */
-		INT32 Left = -1; /**< Window origin on X axis in pixels. -1 == screen center. Relative to provided monitor. */
-		INT32 Top = -1; /**< Window origin on Y axis in pixels. -1 == screen center. Relative to provided monitor. */
+		i32 Left = -1; /**< Window origin on X axis in pixels. -1 == screen center. Relative to provided monitor. */
+		i32 Top = -1; /**< Window origin on Y axis in pixels. -1 == screen center. Relative to provided monitor. */
 		String Title; /**< Title of the window. */
 		bool ShowTitleBar = true; /**< Determines if the title-bar should be shown or not. */
 		bool ShowBorder = true; /**< Determines if the window border should be shown or not. */
@@ -44,8 +44,8 @@ namespace bs
 		 * backgroundWidth * backgroundHeight.
 		 */
 		Color* BackgroundPixels = nullptr;
-		UINT32 BackgroundWidth = 0; /** Width of the background image. Only relevant if backgroundPixels is not null. */
-		UINT32 BackgroundHeight = 0; /** Width of the background image. Only relevant if backgroundPixels is not null. */
+		u32 BackgroundWidth = 0; /** Width of the background image. Only relevant if backgroundPixels is not null. */
+		u32 BackgroundHeight = 0; /** Width of the background image. Only relevant if backgroundPixels is not null. */
 		/** If true the window will support transparency based on the alpha channel of the background image. */
 		bool AlphaBlending = false;
 		bool Modal = false; /**< When a modal window is open all other windows will be locked until modal window is closed. */
@@ -60,16 +60,16 @@ namespace bs
 		~Win32Window();
 
 		/**	Returns position of the left-most border of the window, relative to the screen. */
-		INT32 GetLeft() const;
+		i32 GetLeft() const;
 
 		/**	Returns position of the top-most border of the window, relative to the screen. */
-		INT32 GetTop() const;
+		i32 GetTop() const;
 
 		/**	Returns width of the window in pixels. */
-		UINT32 GetWidth() const;
+		u32 GetWidth() const;
 
 		/**	Returns height of the window in pixels. */
-		UINT32 GetHeight() const;
+		u32 GetHeight() const;
 
 		/**	Returns the native window handle. */
 		HWND GetHWnd() const;
@@ -90,10 +90,10 @@ namespace bs
 		void Restore();
 
 		/**	Change the size of the window. */
-		void Resize(UINT32 width, UINT32 height);
+		void Resize(u32 width, u32 height);
 
 		/**	Reposition the window. */
-		void Move(INT32 left, INT32 top);
+		void Move(i32 left, i32 top);
 
 		/**	Converts screen position into window local position. */
 		Vector2I ScreenToWindowPos(const Vector2I& screenPos) const;

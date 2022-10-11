@@ -58,18 +58,18 @@ namespace bs
 		/**
 		 * Triggered when a pointer is being dragged over the drop area. Provides window coordinates of the pointer position.
 		 */
-		Event<void(INT32, INT32)> OnDragOver;
+		Event<void(i32, i32)> OnDragOver;
 
 		/**
 		 * Triggered when the user completes a drop while pointer is over the drop area. Provides window coordinates of the
 		 * pointer position.
 		 */
-		Event<void(INT32, INT32)> OnDrop;
+		Event<void(i32, i32)> OnDrop;
 
 		/**
 		 * Triggered when a pointer enters the drop area. Provides window coordinates of the pointer position.
 		 */
-		Event<void(INT32, INT32)> OnEnter;
+		Event<void(i32, i32)> OnEnter;
 
 		/** Triggered when a pointer leaves the drop area. */
 		Event<void()> OnLeave;

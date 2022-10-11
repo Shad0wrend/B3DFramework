@@ -75,7 +75,7 @@ int main(int argc, char * argv[])
 	if (FileSystem::Exists(sInputFolder))
 	{
 		time_t lastUpdateTime;
-		UINT32 modifications = BuiltinResourcesHelper::CheckForModifications(
+		u32 modifications = BuiltinResourcesHelper::CheckForModifications(
 			sInputFolder,
 			sOutputFolder + TIMESTAMP_NAME,
 			lastUpdateTime);
@@ -168,8 +168,8 @@ namespace bs
 		vertexDesc->AddVertElem(VET_FLOAT4, VES_TANGENT);
 		vertexDesc->AddVertElem(VET_COLOR, VES_COLOR);
 
-		UINT32 boxNumVertices = 0;
-		UINT32 boxNumIndices = 0;
+		u32 boxNumVertices = 0;
+		u32 boxNumIndices = 0;
 		ShapeMeshes3D::GetNumElementsAaBox(boxNumVertices, boxNumIndices);
 		SPtr<MeshData> boxMeshData = MeshData::Create(boxNumVertices, boxNumIndices, vertexDesc);
 		AABox box(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f));
@@ -177,32 +177,32 @@ namespace bs
 		ShapeMeshes3D::SolidAaBox(box, boxMeshData, 0, 0);
 		SPtr<Mesh> boxMesh = Mesh::CreatePtrInternal(RendererMeshData::Convert(boxMeshData));
 
-		UINT32 sphereNumVertices = 0;
-		UINT32 sphereNumIndices = 0;
+		u32 sphereNumVertices = 0;
+		u32 sphereNumIndices = 0;
 		ShapeMeshes3D::GetNumElementsSphere(3, sphereNumVertices, sphereNumIndices);
 		SPtr<MeshData> sphereMeshData = bs_shared_ptr_new<MeshData>(sphereNumVertices, sphereNumIndices, vertexDesc);
 
 		ShapeMeshes3D::SolidSphere(Sphere(Vector3::ZERO, 1.0f), sphereMeshData, 0, 0, 3);
 		SPtr<Mesh> sphereMesh = Mesh::CreatePtrInternal(RendererMeshData::Convert(sphereMeshData));
 
-		UINT32 coneNumVertices = 0;
-		UINT32 coneNumIndices = 0;
+		u32 coneNumVertices = 0;
+		u32 coneNumIndices = 0;
 		ShapeMeshes3D::GetNumElementsCone(10, coneNumVertices, coneNumIndices);
 		SPtr<MeshData> coneMeshData = bs_shared_ptr_new<MeshData>(coneNumVertices, coneNumIndices, vertexDesc);
 
 		ShapeMeshes3D::SolidCone(Vector3::ZERO, Vector3::UNIT_Y, 1.0f, 1.0f, Vector2::ONE, coneMeshData, 0, 0);
 		SPtr<Mesh> coneMesh = Mesh::CreatePtrInternal(RendererMeshData::Convert(coneMeshData));
 
-		UINT32 cylinderNumVertices = 0;
-		UINT32 cylinderNumIndices = 0;
+		u32 cylinderNumVertices = 0;
+		u32 cylinderNumIndices = 0;
 		ShapeMeshes3D::GetNumElementsCylinder(10, cylinderNumVertices, cylinderNumIndices);
 		SPtr<MeshData> cylinderMeshData = bs_shared_ptr_new<MeshData>(cylinderNumVertices, cylinderNumIndices, vertexDesc);
 
 		ShapeMeshes3D::SolidCylinder(Vector3::ZERO, Vector3::UNIT_Y, 1.0f, 1.0f, Vector2::ONE, cylinderMeshData, 0, 0);
 		SPtr<Mesh> cylinderMesh = Mesh::CreatePtrInternal(RendererMeshData::Convert(cylinderMeshData));
 
-		UINT32 quadNumVertices = 8;
-		UINT32 quadNumIndices = 12;
+		u32 quadNumVertices = 8;
+		u32 quadNumIndices = 12;
 		ShapeMeshes3D::GetNumElementsQuad(quadNumVertices, quadNumIndices);
 		SPtr<MeshData> quadMeshData = bs_shared_ptr_new<MeshData>(quadNumVertices, quadNumIndices, vertexDesc);
 
@@ -212,8 +212,8 @@ namespace bs
 		ShapeMeshes3D::SolidQuad(rect, quadMeshData, 0, 0);
 		SPtr<Mesh> quadMesh = Mesh::CreatePtrInternal(RendererMeshData::Convert(quadMeshData));
 
-		UINT32 discNumVertices = 0;
-		UINT32 discNumIndices = 0;
+		u32 discNumVertices = 0;
+		u32 discNumIndices = 0;
 		ShapeMeshes3D::GetNumElementsDisc(10, discNumVertices, discNumIndices);
 		SPtr<MeshData> discMeshData = bs_shared_ptr_new<MeshData>(discNumVertices, discNumIndices, vertexDesc);
 
@@ -715,7 +715,7 @@ namespace bs
 				const bool antialiasing = entry["Antialiasing"];
 
 				json fontSizesJSON = entry["Sizes"];
-				Vector<UINT32> fontSizes;
+				Vector<u32> fontSizes;
 				for (auto& sizeEntry : fontSizesJSON)
 					fontSizes.push_back(sizeEntry);
 

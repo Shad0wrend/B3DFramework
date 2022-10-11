@@ -6,9 +6,9 @@
 
 namespace bs
 {
-	UINT8* FrameAlloc::MemBlock::Alloc(UINT32 amount)
+	u8* FrameAlloc::MemBlock::Alloc(u32 amount)
 	{
-		UINT8* freePtr = &MData[MFreePtr];
+		u8* freePtr = &MData[MFreePtr];
 		MFreePtr += amount;
 
 		return freePtr;
@@ -19,7 +19,7 @@ namespace bs
 		MFreePtr = 0;
 	}
 
-	FrameAlloc::FrameAlloc(UINT32 blockSize)
+	FrameAlloc::FrameAlloc(u32 blockSize)
 		: mBlockSize(blockSize), mFreeBlock(nullptr), mNextBlockIdx(0), mTotalAllocBytes(0), mLastFrame(nullptr)
 	{
 	}
@@ -30,59 +30,59 @@ namespace bs
 			DeallocBlock(block);
 	}
 
-	UINT8* FrameAlloc::Alloc(UINT32 amount)
+	u8* FrameAlloc::Alloc(u32 amount)
 	{
 #if BS_DEBUG_MODE
-		amount += sizeof(UINT32);
+		amount += sizeof(u32);
 #endif
-		UINT32 freeMem = 0;
+		u32 freeMem = 0;
 		if(mFreeBlock != nullptr)
 			freeMem = mFreeBlock->MSize - mFreeBlock->MFreePtr;
 
 		if(amount > freeMem)
 			AllocBlock(amount);
 
-		UINT8* data = mFreeBlock->Alloc(amount);
+		u8* data = mFreeBlock->Alloc(amount);
 
 #if BS_DEBUG_MODE
 		mTotalAllocBytes += amount;
 
-		UINT32* storedSize = reinterpret_cast<UINT32*>(data);
+		u32* storedSize = reinterpret_cast<u32*>(data);
 		*storedSize = amount;
 
-		return data + sizeof(UINT32);
+		return data + sizeof(u32);
 #else
 		return data;
 #endif
 	}
 
-	UINT8* FrameAlloc::AllocAligned(UINT32 amount, UINT32 alignment)
+	u8* FrameAlloc::AllocAligned(u32 amount, u32 alignment)
 	{
 #if BS_DEBUG_MODE
-		amount += sizeof(UINT32);
+		amount += sizeof(u32);
 #endif
 
-		UINT32 freeMem = 0;
-		UINT32 freePtr = 0;
+		u32 freeMem = 0;
+		u32 freePtr = 0;
 		if(mFreeBlock != nullptr)
 		{
 			freeMem = mFreeBlock->MSize - mFreeBlock->MFreePtr;
 
 #if BS_DEBUG_MODE
-			freePtr = mFreeBlock->MFreePtr + sizeof(UINT32);
+			freePtr = mFreeBlock->MFreePtr + sizeof(u32);
 #else
 			freePtr = mFreeBlock->mFreePtr;
 #endif
 		}
 
-		UINT32 alignOffset = (alignment - (freePtr & (alignment - 1))) & (alignment - 1);
+		u32 alignOffset = (alignment - (freePtr & (alignment - 1))) & (alignment - 1);
 		if ((amount + alignOffset) > freeMem)
 		{
 			// New blocks are allocated on a 16 byte boundary, ensure enough space is allocated taking into account
 			// the requested alignment
 
 #if BS_DEBUG_MODE
-			alignOffset = (alignment - (sizeof(UINT32) & (alignment - 1))) & (alignment - 1);
+			alignOffset = (alignment - (sizeof(u32) & (alignment - 1))) & (alignment - 1);
 #else
 			if (alignment > 16)
 				alignOffset = alignment - 16;
@@ -94,21 +94,21 @@ namespace bs
 		}
 
 		amount += alignOffset;
-		UINT8* data = mFreeBlock->Alloc(amount);
+		u8* data = mFreeBlock->Alloc(amount);
 
 #if BS_DEBUG_MODE
 		mTotalAllocBytes += amount;
 
-		UINT32* storedSize = reinterpret_cast<UINT32*>(data + alignOffset);
+		u32* storedSize = reinterpret_cast<u32*>(data + alignOffset);
 		*storedSize = amount;
 
-		return data + sizeof(UINT32) + alignOffset;
+		return data + sizeof(u32) + alignOffset;
 #else
 		return data + alignOffset;
 #endif
 	}
 
-	void FrameAlloc::Free(UINT8* data)
+	void FrameAlloc::Free(u8* data)
 	{
 		// Dealloc is only used for debug and can be removed if needed. All the actual deallocation
 		// happens in clear()
@@ -116,8 +116,8 @@ namespace bs
 #if BS_DEBUG_MODE
 		if(data)
 		{
-			data -= sizeof(UINT32);
-			UINT32* storedSize = reinterpret_cast<UINT32*>(data);
+			data -= sizeof(u32);
+			u32* storedSize = reinterpret_cast<u32*>(data);
 			mTotalAllocBytes -= *storedSize;
 		}
 #endif
@@ -136,25 +136,25 @@ namespace bs
 		{
 			assert(mBlocks.size() > 0 && mNextBlockIdx > 0);
 
-			Free((UINT8*)mLastFrame);
+			Free((u8*)mLastFrame);
 
-			UINT8* framePtr = (UINT8*)mLastFrame;
+			u8* framePtr = (u8*)mLastFrame;
 			mLastFrame = *(void**)mLastFrame;
 
 #if BS_DEBUG_MODE
-			framePtr -= sizeof(UINT32);
+			framePtr -= sizeof(u32);
 #endif
 
-			UINT32 startBlockIdx = mNextBlockIdx - 1;
-			UINT32 numFreedBlocks = 0;
-			for (INT32 i = startBlockIdx; i >= 0; i--)
+			u32 startBlockIdx = mNextBlockIdx - 1;
+			u32 numFreedBlocks = 0;
+			for (i32 i = startBlockIdx; i >= 0; i--)
 			{
 				MemBlock* curBlock = mBlocks[i];
-				UINT8* blockEnd = curBlock->MData + curBlock->MSize;
+				u8* blockEnd = curBlock->MData + curBlock->MSize;
 				if (framePtr >= curBlock->MData && framePtr < blockEnd)
 				{
-					UINT8* dataEnd = curBlock->MData + curBlock->MFreePtr;
-					UINT32 sizeInBlock = (UINT32)(dataEnd - framePtr);
+					u8* dataEnd = curBlock->MData + curBlock->MFreePtr;
+					u32 sizeInBlock = (u32)(dataEnd - framePtr);
 					assert(sizeInBlock <= curBlock->MFreePtr);
 
 					curBlock->MFreePtr -= sizeInBlock;
@@ -164,7 +164,7 @@ namespace bs
 
 						// Reset block counter if we're gonna reallocate this one
 						if (numFreedBlocks > 1)
-							mNextBlockIdx = (UINT32)i;
+							mNextBlockIdx = (u32)i;
 					}
 
 					break;
@@ -172,15 +172,15 @@ namespace bs
 				else
 				{
 					curBlock->MFreePtr = 0;
-					mNextBlockIdx = (UINT32)i;
+					mNextBlockIdx = (u32)i;
 					numFreedBlocks++;
 				}
 			}
 
 			if (numFreedBlocks > 1)
 			{
-				UINT32 totalBytes = 0;
-				for (UINT32 i = 0; i < numFreedBlocks; i++)
+				u32 totalBytes = 0;
+				for (u32 i = 0; i < numFreedBlocks; i++)
 				{
 					MemBlock* curBlock = mBlocks[mNextBlockIdx];
 					totalBytes += curBlock->MSize;
@@ -189,7 +189,7 @@ namespace bs
 					mBlocks.erase(mBlocks.begin() + mNextBlockIdx);
 				}
 
-				UINT32 oldNextBlockIdx = mNextBlockIdx;
+				u32 oldNextBlockIdx = mNextBlockIdx;
 				AllocBlock(totalBytes);
 
 				// Point to the first non-full block, or if none available then point the the block we just allocated
@@ -211,7 +211,7 @@ namespace bs
 			if (mBlocks.size() > 1)
 			{
 				// Merge all blocks into one
-				UINT32 totalBytes = 0;
+				u32 totalBytes = 0;
 				for (auto& block : mBlocks)
 				{
 					totalBytes += block->MSize;
@@ -228,9 +228,9 @@ namespace bs
 		}
 	}
 
-	FrameAlloc::MemBlock* FrameAlloc::AllocBlock(UINT32 wantedSize)
+	FrameAlloc::MemBlock* FrameAlloc::AllocBlock(u32 wantedSize)
 	{
-		UINT32 blockSize = mBlockSize;
+		u32 blockSize = mBlockSize;
 		if(wantedSize > blockSize)
 			blockSize = wantedSize;
 
@@ -254,9 +254,9 @@ namespace bs
 
 		if (newBlock == nullptr)
 		{
-			UINT32 alignOffset = 16 - (sizeof(MemBlock) & (16 - 1));
+			u32 alignOffset = 16 - (sizeof(MemBlock) & (16 - 1));
 
-			UINT8* data = (UINT8*)reinterpret_cast<UINT8*>(bs_alloc_aligned16(blockSize + sizeof(MemBlock) + alignOffset));
+			u8* data = (u8*)reinterpret_cast<u8*>(bs_alloc_aligned16(blockSize + sizeof(MemBlock) + alignOffset));
 			newBlock = new (data) MemBlock(blockSize);
 			data += sizeof(MemBlock) + alignOffset;
 			newBlock->MData = data;
@@ -294,24 +294,24 @@ namespace bs
 		return *_GlobalFrameAlloc;
 	}
 
-	BS_UTILITY_EXPORT UINT8* bs_frame_alloc(UINT32 numBytes)
+	BS_UTILITY_EXPORT u8* bs_frame_alloc(u32 numBytes)
 	{
 		return gFrameAlloc().Alloc(numBytes);
 	}
 
-	BS_UTILITY_EXPORT UINT8* bs_frame_alloc_aligned(UINT32 count, UINT32 align)
+	BS_UTILITY_EXPORT u8* bs_frame_alloc_aligned(u32 count, u32 align)
 	{
 		return gFrameAlloc().AllocAligned(count, align);
 	}
 
 	BS_UTILITY_EXPORT void bs_frame_free(void* data)
 	{
-		gFrameAlloc().Free((UINT8*)data);
+		gFrameAlloc().Free((u8*)data);
 	}
 
 	BS_UTILITY_EXPORT void bs_frame_free_aligned(void* data)
 	{
-		gFrameAlloc().Free((UINT8*)data);
+		gFrameAlloc().Free((u8*)data);
 	}
 
 	BS_UTILITY_EXPORT void bs_frame_mark()

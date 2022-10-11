@@ -149,17 +149,17 @@ namespace bs
 			ev.Button, ev.Shift, ev.Control, ev.Alt, ev.MouseWheelScrollAmount, ev.IsUsed());
 	}
 
-	bool ScriptInput::InternalIsButtonHeld(ButtonCode code, UINT32 deviceIdx)
+	bool ScriptInput::InternalIsButtonHeld(ButtonCode code, u32 deviceIdx)
 	{
 		return Input::Instance().IsButtonHeld(code, deviceIdx);
 	}
 
-	bool ScriptInput::InternalIsButtonDown(ButtonCode code, UINT32 deviceIdx)
+	bool ScriptInput::InternalIsButtonDown(ButtonCode code, u32 deviceIdx)
 	{
 		return Input::Instance().IsButtonDown(code, deviceIdx);
 	}
 
-	bool ScriptInput::InternalIsButtonUp(ButtonCode code, UINT32 deviceIdx)
+	bool ScriptInput::InternalIsButtonUp(ButtonCode code, u32 deviceIdx)
 	{
 		return Input::Instance().IsButtonUp(code, deviceIdx);
 	}
@@ -184,7 +184,7 @@ namespace bs
 		return Input::Instance().IsPointerDoubleClicked();
 	}
 
-	float ScriptInput::InternalGetAxisValue(UINT32 axisType, UINT32 deviceIdx)
+	float ScriptInput::InternalGetAxisValue(u32 axisType, u32 deviceIdx)
 	{
 		return Input::Instance().GetAxisValue(axisType, deviceIdx);
 	}

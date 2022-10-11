@@ -9,14 +9,14 @@
 
 namespace bs { namespace ct
 {
-	void VertexData::SetBuffer(UINT32 index, SPtr<VertexBuffer> buffer)
+	void VertexData::SetBuffer(u32 index, SPtr<VertexBuffer> buffer)
 	{
 		mVertexBuffers[index] = buffer;
 
 		RecalculateMaxIndex();
 	}
 
-	SPtr<VertexBuffer> VertexData::GetBuffer(UINT32 index) const
+	SPtr<VertexBuffer> VertexData::GetBuffer(u32 index) const
 	{
 		auto iterFind = mVertexBuffers.find(index);
 		if(iterFind != mVertexBuffers.end())
@@ -27,7 +27,7 @@ namespace bs { namespace ct
 		return nullptr;
 	}
 
-	bool VertexData::IsBufferBound(UINT32 index) const
+	bool VertexData::IsBufferBound(u32 index) const
 	{
 		auto iterFind = mVertexBuffers.find(index);
 		if(iterFind != mVertexBuffers.end())

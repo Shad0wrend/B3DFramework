@@ -65,9 +65,9 @@ namespace bs
 		struct ModifiedArrayEntry : IReflectable
 		{
 			ModifiedArrayEntry() = default;
-			ModifiedArrayEntry(UINT32 idx, const SPtr<Modification>& modification);
+			ModifiedArrayEntry(u32 idx, const SPtr<Modification>& modification);
 
-			UINT32 Idx; /**< Index of the array/list entry that is modified. */
+			u32 Idx; /**< Index of the array/list entry that is modified. */
 			SPtr<Modification> Modification; /**< Recorded modification(s) on the entry. */
 
 			/************************************************************************/
@@ -122,8 +122,8 @@ namespace bs
 			static SPtr<ModifiedArray> Create();
 
 			Vector<ModifiedArrayEntry> Entries; /**< A list of all modified array/list entries along with their indices. */
-			Vector<UINT32> OrigSizes; /**< Original size of the array/list (one size per dimension). */
-			Vector<UINT32> NewSizes; /**< New size of the array/list (one size per dimension). */
+			Vector<u32> OrigSizes; /**< Original size of the array/list (one size per dimension). */
+			Vector<u32> NewSizes; /**< New size of the array/list (one size per dimension). */
 
 			/************************************************************************/
 			/* 								RTTI		                     		*/
@@ -205,7 +205,7 @@ namespace bs
 		 * identical data.
 		 */
 		SPtr<Modification> GenerateDiff(const SPtr<ManagedSerializableFieldData>& oldData, const SPtr<ManagedSerializableFieldData>& newData,
-			UINT32 fieldTypeId);
+			u32 fieldTypeId);
 
 		/**
 		 * Applies an object modification to a managed object. Modifications are applied recursively.

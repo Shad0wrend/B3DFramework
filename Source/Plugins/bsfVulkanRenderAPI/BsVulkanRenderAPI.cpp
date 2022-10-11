@@ -264,7 +264,7 @@ namespace bs { namespace ct
 		GPUInfo gpuInfo;
 		gpuInfo.NumGpUs = std::min(5U, mNumDevices);
 
-		for(UINT32 i = 0; i < gpuInfo.NumGpUs; i++)
+		for(u32 i = 0; i < gpuInfo.NumGpUs; i++)
 			gpuInfo.Names[i] = mDevices[i]->GetDeviceProperties().deviceName;
 
 		PlatformUtility::SetGPUInfoInternal(gpuInfo);
@@ -350,7 +350,7 @@ namespace bs { namespace ct
 		mMainCommandBuffer = nullptr;
 
 		// Make sure everything finishes and all resources get freed
-		for (UINT32 i = 0; i < (UINT32)mDevices.size(); i++)
+		for (u32 i = 0; i < (u32)mDevices.size(); i++)
 			mDevices[i]->WaitIdle();
 
 		CommandBufferManager::ShutDown();
@@ -395,9 +395,9 @@ namespace bs { namespace ct
 		VulkanCommandBuffer* cb = GetCb(commandBuffer);
 		VulkanCmdBuffer* vkCB = cb->GetInternal();
 
-		UINT32 globalQueueIdx = CommandSyncMask::GetGlobalQueueIdx(cb->GetType(), cb->GetQueueIdx());
+		u32 globalQueueIdx = CommandSyncMask::GetGlobalQueueIdx(cb->GetType(), cb->GetQueueIdx());
 
-		for (UINT32 i = 0; i < GPT_COUNT; i++)
+		for (u32 i = 0; i < GPT_COUNT; i++)
 		{
 			SPtr<GpuParamDesc> paramDesc = gpuParams->GetParamDesc((GpuProgramType)i);
 			if (paramDesc == nullptr)
@@ -426,7 +426,7 @@ namespace bs { namespace ct
 		vkCB->SetViewport(vp);
 	}
 
-	void VulkanRenderAPI::SetVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers,
+	void VulkanRenderAPI::SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u32 numBuffers,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = GetCb(commandBuffer);
@@ -464,10 +464,10 @@ namespace bs { namespace ct
 		vkCB->SetDrawOp(op);
 	}
 
-	void VulkanRenderAPI::Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount,
+	void VulkanRenderAPI::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
-		UINT32 primCount = 0;
+		u32 primCount = 0;
 
 		VulkanCommandBuffer* cb = GetCb(commandBuffer);
 		VulkanCmdBuffer* vkCB = cb->GetInternal();
@@ -479,10 +479,10 @@ namespace bs { namespace ct
 		BS_ADD_RENDER_STAT(NumPrimitives, primCount);
 	}
 
-	void VulkanRenderAPI::DrawIndexed(UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 vertexCount,
-		UINT32 instanceCount, const SPtr<CommandBuffer>& commandBuffer)
+	void VulkanRenderAPI::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount,
+		u32 instanceCount, const SPtr<CommandBuffer>& commandBuffer)
 	{
-		UINT32 primCount = 0;
+		u32 primCount = 0;
 
 		VulkanCommandBuffer* cb = GetCb(commandBuffer);
 		VulkanCmdBuffer* vkCB = cb->GetInternal();
@@ -494,7 +494,7 @@ namespace bs { namespace ct
 		BS_ADD_RENDER_STAT(NumPrimitives, primCount);
 	}
 
-	void VulkanRenderAPI::DispatchCompute(UINT32 numGroupsX, UINT32 numGroupsY, UINT32 numGroupsZ,
+	void VulkanRenderAPI::DispatchCompute(u32 numGroupsX, u32 numGroupsY, u32 numGroupsZ,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = GetCb(commandBuffer);
@@ -505,7 +505,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumComputeCalls);
 	}
 
-	void VulkanRenderAPI::SetScissorRect(UINT32 left, UINT32 top, UINT32 right, UINT32 bottom,
+	void VulkanRenderAPI::SetScissorRect(u32 left, u32 top, u32 right, u32 bottom,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = GetCb(commandBuffer);
@@ -515,7 +515,7 @@ namespace bs { namespace ct
 		vkCB->SetScissorRect(area);
 	}
 
-	void VulkanRenderAPI::SetStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer)
+	void VulkanRenderAPI::SetStencilRef(u32 value, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = GetCb(commandBuffer);
 		VulkanCmdBuffer* vkCB = cb->GetInternal();
@@ -523,7 +523,7 @@ namespace bs { namespace ct
 		vkCB->SetStencilRef(value);
 	}
 
-	void VulkanRenderAPI::ClearViewport(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask,
+	void VulkanRenderAPI::ClearViewport(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = GetCb(commandBuffer);
@@ -534,8 +534,8 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumClears);
 	}
 
-	void VulkanRenderAPI::ClearRenderTarget(UINT32 buffers, const Color& color, float depth, UINT16 stencil,
-		UINT8 targetMask, const SPtr<CommandBuffer>& commandBuffer)
+	void VulkanRenderAPI::ClearRenderTarget(u32 buffers, const Color& color, float depth, u16 stencil,
+		u8 targetMask, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = GetCb(commandBuffer);
 		VulkanCmdBuffer* vkCB = cb->GetInternal();
@@ -545,7 +545,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumClears);
 	}
 
-	void VulkanRenderAPI::SetRenderTarget(const SPtr<RenderTarget>& target, UINT32 readOnlyFlags,
+	void VulkanRenderAPI::SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags,
 		RenderSurfaceMask loadMask, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		VulkanCommandBuffer* cb = GetCb(commandBuffer);
@@ -556,7 +556,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumRenderTargetChanges);
 	}
 
-	void VulkanRenderAPI::SwapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask)
+	void VulkanRenderAPI::SwapBuffers(const SPtr<RenderTarget>& target, u32 syncMask)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -564,7 +564,7 @@ namespace bs { namespace ct
 		target->SwapBuffers(syncMask);
 
 		// See if any command buffers finished executing
-		for (UINT32 i = 0; i < (UINT32)mDevices.size(); i++)
+		for (u32 i = 0; i < (u32)mDevices.size(); i++)
 			mDevices[i]->RefreshStates();
 
 		BS_INC_RENDER_STAT(NumPresents);
@@ -575,7 +575,7 @@ namespace bs { namespace ct
 		BS_EXCEPT(NotImplementedException, "Secondary command buffers not implemented");
 	}
 
-	void VulkanRenderAPI::SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask)
+	void VulkanRenderAPI::SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, u32 syncMask)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -621,7 +621,7 @@ namespace bs { namespace ct
 
 		for (auto& param : params)
 		{
-			UINT32 size;
+			u32 size;
 			if(param.Type == GPDT_STRUCT)
 			{
 				// Structs are always aligned and rounded up to vec4
@@ -649,10 +649,10 @@ namespace bs { namespace ct
 
 	void VulkanRenderAPI::InitCapabilites()
 	{
-		mNumDevices = (UINT32)mDevices.size();
+		mNumDevices = (u32)mDevices.size();
 		mCurrentCapabilities = bs_newN<RenderAPICapabilities>(mNumDevices);
 
-		UINT32 deviceIdx = 0;
+		u32 deviceIdx = 0;
 		for (auto& device : mDevices)
 		{
 			RenderAPICapabilities& caps = mCurrentCapabilities[deviceIdx];

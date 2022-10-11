@@ -45,7 +45,7 @@ namespace bs
 		Lock lock(GetMutex());
 
 		Vector<RendererMaterialData>& materials = GetMaterials();
-		for (UINT32 i = 0; i < materials.size(); i++)
+		for (u32 i = 0; i < materials.size(); i++)
 		{
 			materials[i].MetaData->ShaderPath = materials[i].ShaderPath;
 			materials[i].MetaData->Shader = shaders[i];
@@ -58,7 +58,7 @@ namespace bs
 
 			// Note: Making the assumption here that all the techniques are generated due to shader variations
 			Vector<SPtr<ct::Technique>> techniques = shaders[i]->GetCompatibleTechniques();
-			materials[i].MetaData->Instances.Resize((UINT32)techniques.size());
+			materials[i].MetaData->Instances.Resize((u32)techniques.size());
 
 			for(auto& entry : techniques)
 				materials[i].MetaData->Variations.Add(entry->GetVariation());
@@ -90,7 +90,7 @@ namespace bs
 		Lock lock(GetMutex());
 
 		Vector<RendererMaterialData>& materials = GetMaterials();
-		for (UINT32 i = 0; i < materials.size(); i++)
+		for (u32 i = 0; i < materials.size(); i++)
 		{
 			materials[i].MetaData->Shader = nullptr;
 			materials[i].MetaData->OverrideShader = nullptr;

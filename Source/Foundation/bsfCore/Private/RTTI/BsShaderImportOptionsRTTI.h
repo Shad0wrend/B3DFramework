@@ -23,18 +23,18 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(Languages, 1)
 		BS_END_RTTI_MEMBERS
 
-		std::pair<String, String>& GetDefinePair(ShaderImportOptions* obj, UINT32 idx)
+		std::pair<String, String>& GetDefinePair(ShaderImportOptions* obj, u32 idx)
 		{
 			return mDefinePairs[idx];
 		}
 
-		void SetDefinePair(ShaderImportOptions* obj, UINT32 idx, std::pair<String, String>& val)
+		void SetDefinePair(ShaderImportOptions* obj, u32 idx, std::pair<String, String>& val)
 		{
 			obj->mDefines[val.first] = val.second;
 		}
 
-		UINT32 GetNumDefines(ShaderImportOptions* obj) { return (UINT32)obj->mDefines.size(); }
-		void SetNumDefines(ShaderImportOptions* obj, UINT32 val) { /* Do nothing */ }
+		u32 GetNumDefines(ShaderImportOptions* obj) { return (u32)obj->mDefines.size(); }
+		void SetNumDefines(ShaderImportOptions* obj, u32 val) { /* Do nothing */ }
 
 	public:
 		ShaderImportOptionsRTTI()
@@ -62,7 +62,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIType::getRTTIId */
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_ShaderImportOptions;
 		}

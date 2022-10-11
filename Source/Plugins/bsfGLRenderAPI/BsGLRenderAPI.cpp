@@ -48,7 +48,7 @@ namespace bs { namespace ct
 		return nullptr;
 	}
 
-	void bs_check_gl_error(const char* function, const char* file, INT32 line)
+	void bs_check_gl_error(const char* function, const char* file, i32 line)
 	{
 		GLenum errorCode = glGetError();
 		if (errorCode != GL_NO_ERROR)
@@ -83,7 +83,7 @@ namespace bs { namespace ct
 		// Get our GLSupport
 		mGLSupport = ct::getGLSupport();
 
-		for(UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 			mColorWrite[i][0] = mColorWrite[i][1] = mColorWrite[i][2] = mColorWrite[i][3] = true;
 
 		mCurrentContext = 0;
@@ -193,7 +193,7 @@ namespace bs { namespace ct
 		bs::HardwareBufferManager::ShutDown();
 		GLRTTManager::ShutDown();
 
-		for (UINT32 i = 0; i < MAX_VB_COUNT; i++)
+		for (u32 i = 0; i < MAX_VB_COUNT; i++)
 			mBoundVertexBuffers[i] = nullptr;
 
 		mBoundVertexDeclaration = nullptr;
@@ -288,7 +288,7 @@ namespace bs { namespace ct
 				// Alpha to coverage
 				SetAlphaToCoverage(stateProps.GetAlphaToCoverageEnabled());
 
-				for(UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+				for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 				{
 					// Blending
 					if (stateProps.GetBlendEnabled(i))
@@ -305,7 +305,7 @@ namespace bs { namespace ct
 						SetSceneBlending(i, BF_ONE, BF_ZERO, BO_ADD);
 
 					// Color write mask
-					UINT8 writeMask = stateProps.GetRenderTargetWriteMask(i);
+					u8 writeMask = stateProps.GetRenderTargetWriteMask(i);
 					SetColorBufferWriteEnabled(i,
 						(writeMask & 0x1) != 0,
 						(writeMask & 0x2) != 0,
@@ -392,7 +392,7 @@ namespace bs { namespace ct
 			THROW_IF_NOT_CORE_THREAD;
 
 #if BS_OPENGL_4_2 || BS_OPENGLES_3_1
-			for (UINT32 i = 0; i < 8; i++)
+			for (u32 i = 0; i < 8; i++)
 			{
 				glBindImageTexture(i, 0, 0, false, 0, GL_READ_WRITE, GL_R32F);
 				BS_CHECK_GL_ERROR();
@@ -401,50 +401,50 @@ namespace bs { namespace ct
 
 			bs_frame_mark();
 			{
-				FrameVector<UINT32> textureUnits;
+				FrameVector<u32> textureUnits;
 				textureUnits.reserve(12);
 
-				auto getTexUnit = [&](UINT32 binding)
+				auto getTexUnit = [&](u32 binding)
 				{
-					for(UINT32 i = 0; i < (UINT32)textureUnits.size(); i++)
+					for(u32 i = 0; i < (u32)textureUnits.size(); i++)
 					{
 						if (textureUnits[i] == binding)
 							return i;
 					}
 
-					UINT32 unit = (UINT32)textureUnits.size();
+					u32 unit = (u32)textureUnits.size();
 					textureUnits.push_back(binding);
 
 					return unit;
 				};
 
 #if BS_OPENGL_4_2 || BS_OPENGLES_3_1
-				UINT32 imageUnitCount = 0;
-				auto getImageUnit = [&](UINT32 binding)
+				u32 imageUnitCount = 0;
+				auto getImageUnit = [&](u32 binding)
 				{
 					return imageUnitCount++;
 				};
 #endif
 
-				UINT32 uniformUnitCount = 0;
-				auto getUniformUnit = [&](UINT32 binding)
+				u32 uniformUnitCount = 0;
+				auto getUniformUnit = [&](u32 binding)
 				{
 					return uniformUnitCount++;
 				};
 
 #if BS_OPENGL_4_3 || BS_OPENGLES_3_1
-				UINT32 sharedStorageUnitCount = 0;
-				auto getSharedStorageUnit = [&](UINT32 binding)
+				u32 sharedStorageUnitCount = 0;
+				auto getSharedStorageUnit = [&](u32 binding)
 				{
 					return sharedStorageUnitCount++;
 				};
 #endif
 
-				const UINT32 numStages = 6;
-				for(UINT32 i = 0; i < numStages; i++)
+				const u32 numStages = 6;
+				for(u32 i = 0; i < numStages; i++)
 				{
 					for(auto& entry : textureUnits)
-						entry = (UINT32)-1;
+						entry = (u32)-1;
 
 					GpuProgramType type = (GpuProgramType)i;
 
@@ -454,11 +454,11 @@ namespace bs { namespace ct
 
 					for (auto& entry : paramDesc->Textures)
 					{
-						UINT32 binding = entry.second.Slot;
+						u32 binding = entry.second.Slot;
 						SPtr<Texture> texture = gpuParams->GetTexture(entry.second.Set, binding);
 						const TextureSurface& surface = gpuParams->GetTextureSurface(entry.second.Set, binding);
 
-						UINT32 unit = getTexUnit(binding);
+						u32 unit = getTexUnit(binding);
 						if (!ActivateGlTextureUnit(unit))
 							continue;
 
@@ -528,13 +528,13 @@ namespace bs { namespace ct
 
 					for(auto& entry : paramDesc->Samplers)
 					{
-						UINT32 binding = entry.second.Slot;
+						u32 binding = entry.second.Slot;
 						SPtr<SamplerState> samplerState = gpuParams->GetSamplerState(entry.second.Set, binding);
 
 						if (samplerState == nullptr)
 							samplerState = SamplerState::GetDefault();
 
-						UINT32 unit = getTexUnit(binding);
+						u32 unit = getTexUnit(binding);
 						if (!ActivateGlTextureUnit(unit))
 							continue;
 
@@ -566,7 +566,7 @@ namespace bs { namespace ct
 
 					for(auto& entry : paramDesc->Buffers)
 					{
-						UINT32 binding = entry.second.Slot;
+						u32 binding = entry.second.Slot;
 						SPtr<GpuBuffer> buffer = gpuParams->GetBuffer(entry.second.Set, binding);
 
 						GLGpuBuffer* glBuffer = static_cast<GLGpuBuffer*>(buffer.get());
@@ -575,7 +575,7 @@ namespace bs { namespace ct
 						{
 						case GPOT_BYTE_BUFFER: // Texture buffer (read-only, unstructured)
 							{
-								UINT32 unit = getTexUnit(binding);
+								u32 unit = getTexUnit(binding);
 								if (!ActivateGlTextureUnit(unit))
 									continue;
 
@@ -607,7 +607,7 @@ namespace bs { namespace ct
 #if BS_OPENGL_4_2 || BS_OPENGLES_3_1
 						case GPOT_RWBYTE_BUFFER: // Storage buffer (read/write, unstructured)
 							{
-								UINT32 unit = getImageUnit(binding);
+								u32 unit = getImageUnit(binding);
 
 								GLuint texId = 0;
 								GLuint format = GL_R32F;
@@ -634,7 +634,7 @@ namespace bs { namespace ct
 #if BS_OPENGL_4_3 || BS_OPENGLES_3_1
 						case GPOT_RWSTRUCTURED_BUFFER: // Shared storage block (read/write, structured)
 							{
-								UINT32 unit = getSharedStorageUnit(binding);
+								u32 unit = getSharedStorageUnit(binding);
 
 								GLuint bufferId = 0;
 								if (glBuffer != nullptr)
@@ -662,15 +662,15 @@ namespace bs { namespace ct
 #if BS_OPENGL_4_2 || BS_OPENGLES_3_1
 					for(auto& entry : paramDesc->LoadStoreTextures)
 					{
-						UINT32 binding = entry.second.Slot;
+						u32 binding = entry.second.Slot;
 
 						SPtr<Texture> texture = gpuParams->GetLoadStoreTexture(entry.second.Set, binding);
 						const TextureSurface& surface = gpuParams->GetLoadStoreSurface(entry.second.Set, binding);
 
-						UINT32 unit = getImageUnit(binding);
+						u32 unit = getImageUnit(binding);
 						GLuint texId = 0;
-						UINT32 mipLevel = 0;
-						UINT32 face = 0;
+						u32 mipLevel = 0;
+						u32 face = 0;
 						bool bindAllLayers = false;
 						GLenum format = GL_R32F;
 
@@ -716,7 +716,7 @@ namespace bs { namespace ct
 
 					for (auto& entry : paramDesc->ParamBlocks)
 					{
-						UINT32 binding = entry.second.Slot;
+						u32 binding = entry.second.Slot;
 						SPtr<GpuParamBlockBuffer> buffer = gpuParams->GetParamBlockBuffer(entry.second.Set, binding);
 						
 						if (buffer == nullptr)
@@ -730,7 +730,7 @@ namespace bs { namespace ct
 						// 0 means uniforms are not in block, in which case we handle it specially
 						if (binding == 0)
 						{
-							UINT8* uniformBufferData = (UINT8*)bs_stack_alloc(buffer->GetSize());
+							u8* uniformBufferData = (u8*)bs_stack_alloc(buffer->GetSize());
 							buffer->Read(0, uniformBufferData, buffer->GetSize());
 
 							for (auto iter = paramDesc->Params.begin(); iter != paramDesc->Params.end(); ++iter)
@@ -740,7 +740,7 @@ namespace bs { namespace ct
 								if (param.ParamBlockSlot != 0) // 0 means uniforms are not in a block
 									continue;
 
-								const UINT8* ptrData = uniformBufferData + param.CpuMemOffset * sizeof(UINT32);
+								const u8* ptrData = uniformBufferData + param.CpuMemOffset * sizeof(u32);
 
 								// Note: We don't transpose matrices here even though we don't use column major format
 								// because they are assumed to be pre-transposed in the GpuParams buffer
@@ -876,7 +876,7 @@ namespace bs { namespace ct
 						{
 							const GLGpuParamBlockBuffer* glParamBlockBuffer = static_cast<const GLGpuParamBlockBuffer*>(buffer.get());
 
-							UINT32 unit = getUniformUnit(binding - 1);
+							u32 unit = getUniformUnit(binding - 1);
 							glUniformBlockBinding(glProgram, binding - 1, unit);
 							BS_CHECK_GL_ERROR();
 
@@ -899,9 +899,9 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumGpuParamBinds);
 	}
 
-	void GLRenderAPI::SetStencilRef(UINT32 stencilRefValue, const SPtr<CommandBuffer>& commandBuffer)
+	void GLRenderAPI::SetStencilRef(u32 stencilRefValue, const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](UINT32 stencilRefValue)
+		auto executeRef = [&](u32 stencilRefValue)
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
@@ -931,10 +931,10 @@ namespace bs { namespace ct
 		cb->QueueCommand(execute);
 	}
 
-	void GLRenderAPI::SetRenderTarget(const SPtr<RenderTarget>& target, UINT32 readOnlyFlags,
+	void GLRenderAPI::SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags,
 		RenderSurfaceMask loadMask, const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](const SPtr<RenderTarget>& target, UINT32 readOnlyFlags)
+		auto executeRef = [&](const SPtr<RenderTarget>& target, u32 readOnlyFlags)
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
@@ -993,11 +993,11 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumRenderTargetChanges);
 	}
 
-	void GLRenderAPI::SetVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers,
+	void GLRenderAPI::SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u32 numBuffers,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
 #if BS_DEBUG_MODE
-		UINT32 lastIdx = index + numBuffers;
+		u32 lastIdx = index + numBuffers;
 		if(lastIdx > MAX_VB_COUNT)
 		{
 			BS_LOG(Error, RenderBackend, "Provided vertex buffer slot range is invalid: {0} to {1}.",
@@ -1006,16 +1006,16 @@ namespace bs { namespace ct
 		}
 #endif
 
-		auto executeRef = [&](UINT32 index, const SmallVector<SPtr<VertexBuffer>, 8>& buffers, UINT32 numBuffers)
+		auto executeRef = [&](u32 index, const SmallVector<SPtr<VertexBuffer>, 8>& buffers, u32 numBuffers)
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
-			for (UINT32 i = 0; i < numBuffers; i++)
+			for (u32 i = 0; i < numBuffers; i++)
 				mBoundVertexBuffers[index + i] = buffers[i];
 		};
 
 		SmallVector<SPtr<VertexBuffer>, 8> _buffers;
-		for (UINT32 i = 0; i < numBuffers; i++)
+		for (u32 i = 0; i < numBuffers; i++)
 			_buffers.Add(buffers[i]);
 
 		auto execute = [executeRef, index, buffers = std::move(_buffers), numBuffers]()
@@ -1071,10 +1071,10 @@ namespace bs { namespace ct
 		cb->QueueCommand(execute);
 	}
 
-	void GLRenderAPI::Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount,
+	void GLRenderAPI::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount)
+		auto executeRef = [&](u32 vertexOffset, u32 vertexCount, u32 instanceCount)
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
@@ -1101,18 +1101,18 @@ namespace bs { namespace ct
 		SPtr<GLCommandBuffer> cb = GetCb(commandBuffer);
 		cb->QueueCommand(execute);
 
-		UINT32 primCount = VertexCountToPrimCount(mCurrentDrawOperation, vertexCount);
+		u32 primCount = VertexCountToPrimCount(mCurrentDrawOperation, vertexCount);
 
 		BS_INC_RENDER_STAT(NumDrawCalls);
 		BS_ADD_RENDER_STAT(NumVertices, vertexCount);
 		BS_ADD_RENDER_STAT(NumPrimitives, primCount);
 	}
 
-	void GLRenderAPI::DrawIndexed(UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 vertexCount,
-		UINT32 instanceCount, const SPtr<CommandBuffer>& commandBuffer)
+	void GLRenderAPI::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount,
+		u32 instanceCount, const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 vertexCount,
-			UINT32 instanceCount)
+		auto executeRef = [&](u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount,
+			u32 instanceCount)
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
@@ -1140,7 +1140,7 @@ namespace bs { namespace ct
 					primType,
 					indexCount,
 					indexType,
-					(GLvoid*)(UINT64)(ibProps.GetIndexSize() * startIndex),
+					(GLvoid*)(u64)(ibProps.GetIndexSize() * startIndex),
 					vertexOffset);
 				BS_CHECK_GL_ERROR();
 			}
@@ -1150,7 +1150,7 @@ namespace bs { namespace ct
 					primType,
 					indexCount,
 					indexType,
-					(GLvoid*)(UINT64)(ibProps.GetIndexSize() * startIndex),
+					(GLvoid*)(u64)(ibProps.GetIndexSize() * startIndex),
 					instanceCount,
 					vertexOffset);
 				BS_CHECK_GL_ERROR();
@@ -1164,7 +1164,7 @@ namespace bs { namespace ct
 		SPtr<GLCommandBuffer> cb = GetCb(commandBuffer);
 		cb->QueueCommand(execute);
 
-		UINT32 primCount = VertexCountToPrimCount(mCurrentDrawOperation, vertexCount);
+		u32 primCount = VertexCountToPrimCount(mCurrentDrawOperation, vertexCount);
 
 		BS_INC_RENDER_STAT(NumDrawCalls);
 		BS_ADD_RENDER_STAT(NumVertices, vertexCount);
@@ -1173,10 +1173,10 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumIndexBufferBinds);
 	}
 
-	void GLRenderAPI::DispatchCompute(UINT32 numGroupsX, UINT32 numGroupsY, UINT32 numGroupsZ,
+	void GLRenderAPI::DispatchCompute(u32 numGroupsX, u32 numGroupsY, u32 numGroupsZ,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](UINT32 numGroupsX, UINT32 numGroupsY, UINT32 numGroupsZ)
+		auto executeRef = [&](u32 numGroupsX, u32 numGroupsY, u32 numGroupsZ)
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
@@ -1207,10 +1207,10 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumComputeCalls);
 	}
 
-	void GLRenderAPI::SetScissorRect(UINT32 left, UINT32 top, UINT32 right, UINT32 bottom,
+	void GLRenderAPI::SetScissorRect(u32 left, u32 top, u32 right, u32 bottom,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](UINT32 left, UINT32 top, UINT32 right, UINT32 bottom)
+		auto executeRef = [&](u32 left, u32 top, u32 right, u32 bottom)
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
@@ -1229,10 +1229,10 @@ namespace bs { namespace ct
 		cb->QueueCommand(execute);
 	}
 
-	void GLRenderAPI::ClearRenderTarget(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask,
+	void GLRenderAPI::ClearRenderTarget(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask)
+		auto executeRef = [&](u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
 		{
 			if (mActiveRenderTarget == nullptr)
 				return;
@@ -1249,10 +1249,10 @@ namespace bs { namespace ct
 		cb->QueueCommand(execute);
 	}
 
-	void GLRenderAPI::ClearViewport(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask,
+	void GLRenderAPI::ClearViewport(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask)
+		auto executeRef = [&](u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
 		{
 			Rect2I clearRect(mViewportLeft, mViewportTop, mViewportWidth, mViewportHeight);
 
@@ -1265,7 +1265,7 @@ namespace bs { namespace ct
 		cb->QueueCommand(execute);
 	}
 
-	void GLRenderAPI::SwapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask)
+	void GLRenderAPI::SwapBuffers(const SPtr<RenderTarget>& target, u32 syncMask)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -1296,7 +1296,7 @@ namespace bs { namespace ct
 		BS_LOG(Error, RenderBackend, "Secondary command buffers not supported on OpenGL.");
 	}
 
-	void GLRenderAPI::SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask)
+	void GLRenderAPI::SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, u32 syncMask)
 	{
 		SPtr<GLCommandBuffer> cb = GetCb(commandBuffer);
 		cb->ExecuteCommands();
@@ -1318,21 +1318,21 @@ namespace bs { namespace ct
 		return std::static_pointer_cast<GLCommandBuffer>(mMainCommandBuffer);
 	}
 
-	void GLRenderAPI::ClearArea(UINT32 buffers, const Color& color, float depth, UINT16 stencil, const Rect2I& clearRect,
-		UINT8 targetMask)
+	void GLRenderAPI::ClearArea(u32 buffers, const Color& color, float depth, u16 stencil, const Rect2I& clearRect,
+		u8 targetMask)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
 		if(mActiveRenderTarget == nullptr)
 			return;
 
-		UINT32 numColorBuffers = 1;
+		u32 numColorBuffers = 1;
 		bool colorMasks[BS_MAX_MULTIPLE_RENDER_TARGETS] = { 0 };
 		if(!mActiveRenderTarget->GetProperties().IsWindow)
 		{
 			RenderTexture* renderTexture = static_cast<RenderTexture*>(mActiveRenderTarget.get());
 
-			for(UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+			for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 			{
 				SPtr<Texture> texture = renderTexture->GetColorTexture(i);
 				if(texture)
@@ -1344,10 +1344,10 @@ namespace bs { namespace ct
 
 		// Disable scissor test as we want to clear the entire render surface
 		GLboolean scissorTestEnabled = glIsEnabled(GL_SCISSOR_TEST);
-		UINT32 oldScissorTop = mScissorTop;
-		UINT32 oldScissorBottom = mScissorBottom;
-		UINT32 oldScissorLeft = mScissorLeft;
-		UINT32 oldScissorRight = mScissorRight;
+		u32 oldScissorTop = mScissorTop;
+		u32 oldScissorBottom = mScissorBottom;
+		u32 oldScissorLeft = mScissorLeft;
+		u32 oldScissorRight = mScissorRight;
 
 		if (scissorTestEnabled)
 		{
@@ -1369,7 +1369,7 @@ namespace bs { namespace ct
 		if (buffers & FBT_COLOR)
 		{
 			// Enable buffer for writing if it isn't
-			for(UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+			for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 			{
 				if (colorMasks[i])
 				{
@@ -1432,7 +1432,7 @@ namespace bs { namespace ct
 
 			if (buffers & FBT_COLOR)
 			{
-				for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+				for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 				{
 					if (fbo->HasColorBuffer(i) && ((1 << i) & targetMask) != 0)
 					{
@@ -1457,7 +1457,7 @@ namespace bs { namespace ct
 			}
 			else if (buffers & FBT_STENCIL)
 			{
-				INT32 stencilClear = (INT32)stencil;
+				i32 stencilClear = (i32)stencil;
 				glClearBufferiv(GL_STENCIL, 0, &stencilClear);
 				BS_CHECK_GL_ERROR();
 			}
@@ -1489,7 +1489,7 @@ namespace bs { namespace ct
 
 		if ((buffers & FBT_COLOR))
 		{
-			for(UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+			for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 			{
 				if(colorMasks[i])
 				{
@@ -1513,7 +1513,7 @@ namespace bs { namespace ct
 	/* 								PRIVATE		                     		*/
 	/************************************************************************/
 
-	void GLRenderAPI::SetTextureAddressingMode(UINT16 unit, const UVWAddressingMode& uvw)
+	void GLRenderAPI::SetTextureAddressingMode(u16 unit, const UVWAddressingMode& uvw)
 	{
 		glTexParameteri(mTextureInfos[unit].Type, GL_TEXTURE_WRAP_S, GetTextureAddressingMode(uvw.U));
 		BS_CHECK_GL_ERROR();
@@ -1525,20 +1525,20 @@ namespace bs { namespace ct
 		BS_CHECK_GL_ERROR();
 	}
 
-	void GLRenderAPI::SetTextureBorderColor(UINT16 unit, const Color& color)
+	void GLRenderAPI::SetTextureBorderColor(u16 unit, const Color& color)
 	{
 		GLfloat border[4] = { color.R, color.G, color.B, color.A };
 		glTexParameterfv(mTextureInfos[unit].Type, GL_TEXTURE_BORDER_COLOR, border);
 		BS_CHECK_GL_ERROR();
 	}
 
-	void GLRenderAPI::SetTextureMipmapBias(UINT16 unit, float bias)
+	void GLRenderAPI::SetTextureMipmapBias(u16 unit, float bias)
 	{
 		glTexParameterf(mTextureInfos[unit].Type, GL_TEXTURE_LOD_BIAS, bias);
 		BS_CHECK_GL_ERROR();
 	}
 
-	void GLRenderAPI::SetTextureMipmapRange(UINT16 unit, float min, float max)
+	void GLRenderAPI::SetTextureMipmapRange(u16 unit, float min, float max)
 	{
 		glTexParameterf(mTextureInfos[unit].Type, GL_TEXTURE_MIN_LOD, min);
 		BS_CHECK_GL_ERROR();
@@ -1547,7 +1547,7 @@ namespace bs { namespace ct
 		BS_CHECK_GL_ERROR();
 	}
 
-	void GLRenderAPI::SetSceneBlending(UINT32 target, BlendFactor sourceFactor, BlendFactor destFactor, BlendOperation op)
+	void GLRenderAPI::SetSceneBlending(u32 target, BlendFactor sourceFactor, BlendFactor destFactor, BlendOperation op)
 	{
 		GLint sourceBlend = GetBlendMode(sourceFactor);
 		GLint destBlend = GetBlendMode(destFactor);
@@ -1589,7 +1589,7 @@ namespace bs { namespace ct
 		BS_CHECK_GL_ERROR();
 	}
 
-	void GLRenderAPI::SetSceneBlending(UINT32 target, BlendFactor sourceFactor, BlendFactor destFactor,
+	void GLRenderAPI::SetSceneBlending(u32 target, BlendFactor sourceFactor, BlendFactor destFactor,
 		BlendFactor sourceFactorAlpha, BlendFactor destFactorAlpha, BlendOperation op, BlendOperation alphaOp)
 	{
 		GLint sourceBlend = GetBlendMode(sourceFactor);
@@ -1846,7 +1846,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void GLRenderAPI::SetColorBufferWriteEnabled(UINT32 target, bool red, bool green, bool blue, bool alpha)
+	void GLRenderAPI::SetColorBufferWriteEnabled(u32 target, bool red, bool green, bool blue, bool alpha)
 	{
 		glColorMaski(target, red, green, blue, alpha);
 		BS_CHECK_GL_ERROR();
@@ -1915,7 +1915,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void GLRenderAPI::SetStencilBufferFunc(CompareFunction func, UINT32 mask, bool front)
+	void GLRenderAPI::SetStencilBufferFunc(CompareFunction func, u32 mask, bool front)
 	{
 		mStencilReadMask = mask;
 
@@ -1933,7 +1933,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void GLRenderAPI::SetStencilBufferWriteMask(UINT32 mask)
+	void GLRenderAPI::SetStencilBufferWriteMask(u32 mask)
 	{
 		mStencilWriteMask = mask;
 
@@ -1941,7 +1941,7 @@ namespace bs { namespace ct
 		BS_CHECK_GL_ERROR();
 	}
 
-	void GLRenderAPI::SetStencilRefValue(UINT32 refValue)
+	void GLRenderAPI::SetStencilRefValue(u32 refValue)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -1954,7 +1954,7 @@ namespace bs { namespace ct
 		BS_CHECK_GL_ERROR();
 	}
 
-	void GLRenderAPI::SetTextureFiltering(UINT16 unit, FilterType ftype, FilterOptions fo)
+	void GLRenderAPI::SetTextureFiltering(u16 unit, FilterType ftype, FilterOptions fo)
 	{
 		switch(ftype)
 		{
@@ -1990,14 +1990,14 @@ namespace bs { namespace ct
 		}
 	}
 
-	void GLRenderAPI::SetTextureAnisotropy(UINT16 unit, UINT32 maxAnisotropy)
+	void GLRenderAPI::SetTextureAnisotropy(u16 unit, u32 maxAnisotropy)
 	{
 		GLfloat maxSupportAnisotropy = 0;
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxSupportAnisotropy);
 		BS_CHECK_GL_ERROR();
 
 		if (maxAnisotropy > maxSupportAnisotropy)
-			maxAnisotropy = maxSupportAnisotropy ? static_cast<UINT32>(maxSupportAnisotropy) : 1;
+			maxAnisotropy = maxSupportAnisotropy ? static_cast<u32>(maxSupportAnisotropy) : 1;
 
 		if(maxAnisotropy < 1)
 			maxAnisotropy = 1;
@@ -2006,7 +2006,7 @@ namespace bs { namespace ct
 		BS_CHECK_GL_ERROR();
 	}
 
-	void GLRenderAPI::SetTextureCompareMode(UINT16 unit, CompareFunction compare)
+	void GLRenderAPI::SetTextureCompareMode(u16 unit, CompareFunction compare)
 	{
 		if (compare == CMPF_ALWAYS_PASS)
 		{
@@ -2023,7 +2023,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	bool GLRenderAPI::ActivateGlTextureUnit(UINT16 unit)
+	bool GLRenderAPI::ActivateGlTextureUnit(u16 unit)
 	{
 		if (mActiveTextureUnit != unit)
 		{
@@ -2116,7 +2116,7 @@ namespace bs { namespace ct
 		mDrawCallInProgress = false;
 	}
 
-	GLfloat GLRenderAPI::GetCurrentAnisotropy(UINT16 unit)
+	GLfloat GLRenderAPI::GetCurrentAnisotropy(u16 unit)
 	{
 		GLfloat curAniso = 0;
 		glGetTexParameterfv(mTextureInfos[unit].Type, GL_TEXTURE_MAX_ANISOTROPY_EXT, &curAniso);
@@ -2375,7 +2375,7 @@ namespace bs { namespace ct
 		glDepthMask(mDepthWrite);
 		BS_CHECK_GL_ERROR();
 
-		for(UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 			glColorMask(mColorWrite[i][0], mColorWrite[i][1], mColorWrite[i][2], mColorWrite[i][3]);
 		BS_CHECK_GL_ERROR();
 
@@ -2390,11 +2390,11 @@ namespace bs { namespace ct
 		DriverVersion driverVersion;
 		if (!tokens.empty())
 		{
-			driverVersion.Major = parseINT32(tokens[0]);
+			driverVersion.Major = parsei32(tokens[0]);
 			if (tokens.size() > 1)
-				driverVersion.Minor = parseINT32(tokens[1]);
+				driverVersion.Minor = parsei32(tokens[1]);
 			if (tokens.size() > 2)
-				driverVersion.Release = parseINT32(tokens[2]);
+				driverVersion.Release = parsei32(tokens[2]);
 		}
 		driverVersion.Build = 0;
 
@@ -2464,14 +2464,14 @@ namespace bs { namespace ct
 		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &units);
 		BS_CHECK_GL_ERROR();
 
-		caps.NumTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = static_cast<UINT16>(units);
+		caps.NumTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = static_cast<u16>(units);
 
 		// Max number of vertex shader textures
 		GLint vUnits;
 		glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, &vUnits);
 		BS_CHECK_GL_ERROR();
 
-		caps.NumTextureUnitsPerStage[GPT_VERTEX_PROGRAM] = static_cast<UINT16>(vUnits);
+		caps.NumTextureUnitsPerStage[GPT_VERTEX_PROGRAM] = static_cast<u16>(vUnits);
 
 		GLint numUniformBlocks;
 		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS, &numUniformBlocks);
@@ -2494,7 +2494,7 @@ namespace bs { namespace ct
 			geomUnits = 0;
 #endif
 
-			caps.NumTextureUnitsPerStage[GPT_GEOMETRY_PROGRAM] = static_cast<UINT16>(geomUnits);
+			caps.NumTextureUnitsPerStage[GPT_GEOMETRY_PROGRAM] = static_cast<u16>(geomUnits);
 
 #if BS_OPENGL_4_1 || BS_OPENGLES_3_2
 			glGetIntegerv(GL_MAX_GEOMETRY_UNIFORM_BLOCKS, &numUniformBlocks);
@@ -2546,7 +2546,7 @@ namespace bs { namespace ct
 			computeUnits = 0;
 #endif
 
-			caps.NumTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = static_cast<UINT16>(computeUnits);
+			caps.NumTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = static_cast<u16>(computeUnits);
 
 #if BS_OPENGL_4_3 || BS_OPENGLES_3_1
 			glGetIntegerv(GL_MAX_COMPUTE_UNIFORM_BLOCKS, &numUniformBlocks);
@@ -2567,7 +2567,7 @@ namespace bs { namespace ct
 			lsfUnits = 0;
 #endif
 
-			caps.NumLoadStoreTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = static_cast<UINT16>(lsfUnits);
+			caps.NumLoadStoreTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] = static_cast<u16>(lsfUnits);
 
 			GLint lscUnits;
 
@@ -2578,7 +2578,7 @@ namespace bs { namespace ct
 			lscUnits = 0;
 #endif
 
-			caps.NumLoadStoreTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = static_cast<UINT16>(lscUnits);
+			caps.NumLoadStoreTextureUnitsPerStage[GPT_COMPUTE_PROGRAM] = static_cast<u16>(lscUnits);
 
 			GLint combinedLoadStoreTextureUnits;
 
@@ -2589,29 +2589,29 @@ namespace bs { namespace ct
 			combinedLoadStoreTextureUnits = 0;
 #endif
 
-			caps.NumCombinedLoadStoreTextureUnits = static_cast<UINT16>(combinedLoadStoreTextureUnits);
+			caps.NumCombinedLoadStoreTextureUnits = static_cast<u16>(combinedLoadStoreTextureUnits);
 		}
 
 		GLint combinedTexUnits;
 		glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &combinedTexUnits);
 		BS_CHECK_GL_ERROR();
 
-		caps.NumCombinedTextureUnits = static_cast<UINT16>(combinedTexUnits);
+		caps.NumCombinedTextureUnits = static_cast<u16>(combinedTexUnits);
 
 		GLint combinedUniformBlockUnits;
 		glGetIntegerv(GL_MAX_COMBINED_UNIFORM_BLOCKS, &combinedUniformBlockUnits);
 		BS_CHECK_GL_ERROR();
 
-		caps.NumCombinedParamBlockBuffers = static_cast<UINT16>(combinedUniformBlockUnits);
+		caps.NumCombinedParamBlockBuffers = static_cast<u16>(combinedUniformBlockUnits);
 		caps.NumMultiRenderTargets = 8;
 	}
 
 	void GLRenderAPI::MakeGlMatrix(GLfloat gl_matrix[16], const Matrix4& m)
 	{
-		UINT32 x = 0;
-		for (UINT32 i = 0; i < 4; i++)
+		u32 x = 0;
+		for (u32 i = 0; i < 4; i++)
 		{
-			for (UINT32 j = 0; j < 4; j++)
+			for (u32 j = 0; j < 4; j++)
 			{
 				gl_matrix[x] = m[j][i];
 				x++;
@@ -2627,10 +2627,10 @@ namespace bs { namespace ct
 		const RenderTargetProperties& rtProps = mActiveRenderTarget->GetProperties();
 
 		// Calculate the "lower-left" corner of the viewport
-		mViewportLeft = (UINT32)(rtProps.Width * mViewportNorm.X);
-		mViewportTop = (UINT32)(rtProps.Height * mViewportNorm.Y);
-		mViewportWidth = (UINT32)(rtProps.Width * mViewportNorm.Width);
-		mViewportHeight = (UINT32)(rtProps.Height * mViewportNorm.Height);
+		mViewportLeft = (u32)(rtProps.Width * mViewportNorm.X);
+		mViewportTop = (u32)(rtProps.Height * mViewportNorm.Y);
+		mViewportWidth = (u32)(rtProps.Width * mViewportNorm.Width);
+		mViewportHeight = (u32)(rtProps.Height * mViewportNorm.Height);
 
 		glViewport(mViewportLeft, mViewportTop, mViewportWidth, mViewportHeight);
 		BS_CHECK_GL_ERROR();
@@ -2675,7 +2675,7 @@ namespace bs { namespace ct
 
 		for (auto& param : params)
 		{
-			UINT32 size;
+			u32 size;
 			
 			if(param.Type == GPDT_STRUCT)
 			{

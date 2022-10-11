@@ -7,7 +7,7 @@
 
 namespace bs { namespace ct
 {
-	SPtr<EventQuery> GLQueryManager::CreateEventQuery(UINT32 deviceIdx) const
+	SPtr<EventQuery> GLQueryManager::CreateEventQuery(u32 deviceIdx) const
 	{
 		SPtr<EventQuery> query = SPtr<GLEventQuery>(bs_new<GLEventQuery>(deviceIdx),
 			&QueryManager::DeleteEventQuery, StdAlloc<GLEventQuery>());
@@ -16,7 +16,7 @@ namespace bs { namespace ct
 		return query;
 	}
 
-	SPtr<TimerQuery> GLQueryManager::CreateTimerQuery(UINT32 deviceIdx) const
+	SPtr<TimerQuery> GLQueryManager::CreateTimerQuery(u32 deviceIdx) const
 	{
 		SPtr<TimerQuery> query = SPtr<GLTimerQuery>(bs_new<GLTimerQuery>(deviceIdx),
 			&QueryManager::DeleteTimerQuery, StdAlloc<GLTimerQuery>());
@@ -25,7 +25,7 @@ namespace bs { namespace ct
 		return query;
 	}
 
-	SPtr<OcclusionQuery> GLQueryManager::CreateOcclusionQuery(bool binary, UINT32 deviceIdx) const
+	SPtr<OcclusionQuery> GLQueryManager::CreateOcclusionQuery(bool binary, u32 deviceIdx) const
 	{
 		SPtr<OcclusionQuery> query = SPtr<GLOcclusionQuery>(bs_new<GLOcclusionQuery>(binary, deviceIdx),
 			&QueryManager::DeleteOcclusionQuery, StdAlloc<GLOcclusionQuery>());

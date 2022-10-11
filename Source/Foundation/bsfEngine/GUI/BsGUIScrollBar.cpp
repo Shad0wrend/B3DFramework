@@ -14,7 +14,7 @@ using namespace std::placeholders;
 
 namespace bs
 {
-	const UINT32 GUIScrollBar::ButtonScrollAmount = 10;
+	const u32 GUIScrollBar::ButtonScrollAmount = 10;
 
 	const String& GUIScrollBar::GetHScrollHandleType()
 	{
@@ -100,7 +100,7 @@ namespace bs
 		desc.Height = mLayoutData.Area.Height;
 		desc.Color = GetTint();
 
-		mImageSprite->Update(desc, (UINT64)GetParentWidgetInternal());
+		mImageSprite->Update(desc, (u64)GetParentWidgetInternal());
 
 		// Populate GUI render elements from the sprites
 		{
@@ -121,24 +121,24 @@ namespace bs
 		return mLayout->GetOptimalSizeInternal();
 	}
 
-	UINT32 GUIScrollBar::GetRenderElementDepthRangeInternal() const
+	u32 GUIScrollBar::GetRenderElementDepthRangeInternal() const
 	{
 		return 3;
 	}
 
 	void GUIScrollBar::FillBuffer(
-		UINT8* vertices,
-		UINT32* indices,
-		UINT32 vertexOffset,
-		UINT32 indexOffset,
+		u8* vertices,
+		u32* indices,
+		u32 vertexOffset,
+		u32 indexOffset,
 		const Vector2I& offset,
-		UINT32 maxNumVerts,
-		UINT32 maxNumIndices,
-		UINT32 renderElementIdx) const
+		u32 maxNumVerts,
+		u32 maxNumIndices,
+		u32 renderElementIdx) const
 	{
-		UINT8* uvs = vertices + sizeof(Vector2);
-		UINT32 vertexStride = sizeof(Vector2) * 2;
-		UINT32 indexStride = sizeof(UINT32);
+		u8* uvs = vertices + sizeof(Vector2);
+		u32 vertexStride = sizeof(Vector2) * 2;
+		u32 indexStride = sizeof(u32);
 
 		Vector2I layoutOffset = Vector2I(mLayoutData.Area.X, mLayoutData.Area.Y) + offset;
 		mImageSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,
@@ -232,7 +232,7 @@ namespace bs
 		mHandleBtn->MarkLayoutAsDirtyInternal();
 	}
 
-	UINT32 GUIScrollBar::GetScrollableSize() const
+	u32 GUIScrollBar::GetScrollableSize() const
 	{
 		return mHandleBtn->GetScrollableSize();
 	}

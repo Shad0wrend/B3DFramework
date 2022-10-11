@@ -239,12 +239,12 @@ namespace bs
 
 	CoreSyncData Light::SyncToCore(FrameAlloc* allocator)
 	{
-		UINT32 size = 0;
+		u32 size = 0;
 		size += rtti_size(GetCoreDirtyFlags()).Bytes;
 		size += csync_size((SceneActor&)*this);
 		size += csync_size(*this);
 
-		UINT8* buffer = allocator->Alloc(size);
+		u8* buffer = allocator->Alloc(size);
 
 		Bitstream stream(buffer, size);
 		rtti_write(GetCoreDirtyFlags(), stream);
@@ -256,7 +256,7 @@ namespace bs
 
 	void Light::MarkCoreDirtyInternal(ActorDirtyFlag flag)
 	{
-		MarkCoreDirty((UINT32)flag);
+		MarkCoreDirty((u32)flag);
 	}
 
 	RTTITypeBase* Light::GetRttiStatic()
@@ -271,8 +271,8 @@ namespace bs
 
 	namespace ct
 	{
-	const UINT32 Light::LIGHT_CONE_NUM_SIDES = 20;
-	const UINT32 Light::LIGHT_CONE_NUM_SLICES = 10;
+	const u32 Light::LIGHT_CONE_NUM_SIDES = 20;
+	const u32 Light::LIGHT_CONE_NUM_SLICES = 10;
 
 	Light::Light(LightType type, Color color,
 		float intensity, float attRadius, float srcRadius, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle)
@@ -298,7 +298,7 @@ namespace bs
 	{
 		Bitstream stream(data.GetBuffer(), data.GetBufferSize());
 
-		UINT32 dirtyFlags = 0;
+		u32 dirtyFlags = 0;
 		bool oldIsActive = mActive;
 		LightType oldType = mType;
 
@@ -308,7 +308,7 @@ namespace bs
 
 		UpdateBounds();
 
-		if((dirtyFlags & ((UINT32)ActorDirtyFlag::Everything | (UINT32)ActorDirtyFlag::Active)) != 0)
+		if((dirtyFlags & ((u32)ActorDirtyFlag::Everything | (u32)ActorDirtyFlag::Active)) != 0)
 		{
 			if (oldIsActive != mActive)
 			{
@@ -332,12 +332,12 @@ namespace bs
 				gRenderer()->NotifyLightAdded(this);
 			}
 		}
-		else if((dirtyFlags & (UINT32)ActorDirtyFlag::Mobility) != 0)
+		else if((dirtyFlags & (u32)ActorDirtyFlag::Mobility) != 0)
 		{
 			gRenderer()->NotifyLightRemoved(this);
 			gRenderer()->NotifyLightAdded(this);
 		}
-		else if ((dirtyFlags & (UINT32)ActorDirtyFlag::Transform) != 0)
+		else if ((dirtyFlags & (u32)ActorDirtyFlag::Transform) != 0)
 		{
 			if (mActive)
 				gRenderer()->NotifyLightUpdated(this);

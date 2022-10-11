@@ -61,7 +61,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializedGpuProgramData;
 		}
@@ -210,7 +210,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_Pass;
 		}

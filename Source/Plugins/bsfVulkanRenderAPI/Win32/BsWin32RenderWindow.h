@@ -40,7 +40,7 @@ namespace bs
 		friend class VulkanRenderWindowManager;
 		friend class ct::Win32RenderWindow;
 
-		Win32RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId);
+		Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId);
 
 		/** @copydoc RenderWindow::getProperties */
 		const RenderTargetProperties& GetPropertiesInternal() const { return mProperties; }
@@ -65,14 +65,14 @@ namespace bs
 	class Win32RenderWindow : public RenderWindow
 	{
 	public:
-		Win32RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId, VulkanRenderAPI& renderAPI);
+		Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, VulkanRenderAPI& renderAPI);
 		~Win32RenderWindow();
 
 		/** @copydoc RenderWindow::move */
-		void Move(INT32 left, INT32 top) ;
+		void Move(i32 left, i32 top) ;
 
 		/** @copydoc RenderWindow::resize */
-		void Resize(UINT32 width, UINT32 height) ;
+		void Resize(u32 width, u32 height) ;
 
 		/** @copydoc RenderWindow::setHidden */
 		void SetHidden(bool hidden) ;
@@ -89,23 +89,23 @@ namespace bs
 		/** @copydoc RenderWindow::restore */
 		void Restore() ;
 
-		/** @copydoc RenderWindow::setFullscreen(UINT32, UINT32, float, UINT32) */
-		void SetFullscreen(UINT32 width, UINT32 height, float refreshRate = 60.0f, UINT32 monitorIdx = 0) override;
+		/** @copydoc RenderWindow::setFullscreen(u32, u32, float, u32) */
+		void SetFullscreen(u32 width, u32 height, float refreshRate = 60.0f, u32 monitorIdx = 0) override;
 
 		/** @copydoc RenderWindow::setFullscreen(const VideoMode&) */
 		void SetFullscreen(const VideoMode& videoMode) override;
 
 		/** @copydoc RenderWindow::setWindowed */
-		void SetWindowed(UINT32 width, UINT32 height) override;
+		void SetWindowed(u32 width, u32 height) override;
 	
 		/** @copydoc RenderWindow::setVSync */
-		void SetVSync(bool enabled, UINT32 interval = 1) override;
+		void SetVSync(bool enabled, u32 interval = 1) override;
 
 		/** Prepares the back buffer for rendering. Should be called before it is bound to the GPU. */
 		void AcquireBackBuffer();
 
 		/** @copydoc RenderWindow::swapBuffers */
-		void SwapBuffers(UINT32 syncMask = 0xFFFFFFFF) override;
+		void SwapBuffers(u32 syncMask = 0xFFFFFFFF) override;
 
 		/** @copydoc RenderWindow::getCustomAttribute */
 		void GetCustomAttribute(const String& name, void* data) const override;
@@ -137,14 +137,14 @@ namespace bs
 		Win32Window* mWindow;
 		bool mIsChild;
 		bool mShowOnSwap;
-		INT32 mDisplayFrequency;
+		i32 mDisplayFrequency;
 
 		VulkanRenderAPI& mRenderAPI;
 		VkSurfaceKHR mSurface;
 		VkColorSpaceKHR mColorSpace;
 		VkFormat mColorFormat;
 		VkFormat mDepthFormat;
-		UINT32 mPresentQueueFamily;
+		u32 mPresentQueueFamily;
 		VulkanSwapChain* mSwapChain = nullptr;
 		VulkanSemaphore* mSemaphoresTemp[BS_MAX_UNIQUE_QUEUES + 1]; // +1 for present semaphore
 		bool mRequiresNewBackBuffer;

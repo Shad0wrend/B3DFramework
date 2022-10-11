@@ -780,7 +780,7 @@ namespace bs { namespace ct
 		if (format >= BF_COUNT)
 			return DXGI_FORMAT_UNKNOWN;
 
-		return lookup[(UINT32)format];
+		return lookup[(u32)format];
 	}
 
 	DXGI_FORMAT D3D11Mappings::GetTypelessDepthStencilPf(PixelFormat format)
@@ -906,12 +906,12 @@ namespace bs { namespace ct
 		return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	}
 
-	UINT32 D3D11Mappings::GetSizeInBytes(PixelFormat pf, UINT32 width, UINT32 height)
+	u32 D3D11Mappings::GetSizeInBytes(PixelFormat pf, u32 width, u32 height)
 	{
 		if(PixelUtil::IsCompressed(pf))
 		{
-			UINT32 blockWidth = Math::DivideAndRoundUp(width, 4U);
-			UINT32 blockHeight = Math::DivideAndRoundUp(height, 4U);
+			u32 blockWidth = Math::DivideAndRoundUp(width, 4U);
+			u32 blockHeight = Math::DivideAndRoundUp(height, 4U);
 
 			// D3D wants the width of one row of cells in bytes
 			if (pf == PF_BC1 || pf == PF_BC4)

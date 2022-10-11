@@ -148,7 +148,7 @@ namespace bs
 		 * Indices that can be used for rendering a box constructed from 8 corner vertices, using AABox::Corner for
 		 * mapping.
 		 */
-		static const UINT32 CUBE_INDICES[36];
+		static const u32 CUBE_INDICES[36];
 
 	protected:
 		Vector3 mMinimum{Vector3::ZERO};

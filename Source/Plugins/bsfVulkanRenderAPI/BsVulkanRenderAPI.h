@@ -34,29 +34,29 @@ namespace bs { namespace ct
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::clearRenderTarget */
-		void ClearRenderTarget(UINT32 buffers, const Color& color = Color::Black, float depth = 1.0f, UINT16 stencil = 0,
-			UINT8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
+		void ClearRenderTarget(u32 buffers, const Color& color = Color::Black, float depth = 1.0f, u16 stencil = 0,
+			u8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::clearViewport */
-		void ClearViewport(UINT32 buffers, const Color& color = Color::Black, float depth = 1.0f, UINT16 stencil = 0,
-			UINT8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
+		void ClearViewport(u32 buffers, const Color& color = Color::Black, float depth = 1.0f, u16 stencil = 0,
+			u8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::setRenderTarget */
-		void SetRenderTarget(const SPtr<RenderTarget>& target, UINT32 readOnlyFlags = 0,
+		void SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags = 0,
 			RenderSurfaceMask loadMask = RT_NONE, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::setViewport */
 		void SetViewport(const Rect2& area, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::setScissorRect */
-		void SetScissorRect(UINT32 left, UINT32 top, UINT32 right, UINT32 bottom,
+		void SetScissorRect(u32 left, u32 top, u32 right, u32 bottom,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::setStencilRef */
-		void SetStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
+		void SetStencilRef(u32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::setVertexBuffers */
-		void SetVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers,
+		void SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u32 numBuffers,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::setIndexBuffer */
@@ -72,25 +72,25 @@ namespace bs { namespace ct
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::draw */
-		void Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount = 0,
+		void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::drawIndexed */
-		void DrawIndexed(UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 vertexCount,
-			UINT32 instanceCount = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
+		void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount,
+			u32 instanceCount = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::dispatchCompute */
-		void DispatchCompute(UINT32 numGroupsX, UINT32 numGroupsY = 1, UINT32 numGroupsZ = 1,
+		void DispatchCompute(u32 numGroupsX, u32 numGroupsY = 1, u32 numGroupsZ = 1,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::swapBuffers() */
-		void SwapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask = 0xFFFFFFFF) ;
+		void SwapBuffers(const SPtr<RenderTarget>& target, u32 syncMask = 0xFFFFFFFF) ;
 
 		/** @copydoc RenderAPI::addCommands() */
 		void AddCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary) ;
 
 		/** @copydoc RenderAPI::submitCommandBuffer() */
-		void SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask = 0xFFFFFFFF) ;
+		void SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, u32 syncMask = 0xFFFFFFFF) ;
 
 		/** @copydoc RenderAPI::getMainCommandBuffer() */
 		SPtr<CommandBuffer> GetMainCommandBuffer() const ;
@@ -110,13 +110,13 @@ namespace bs { namespace ct
 		VkInstance GetInstanceInternal() const { return mInstance; }
 
 		/** Returns a Vulkan device at the specified index. Must be in range [0, GetNumDevicesInternal()) */
-		SPtr<VulkanDevice> GetDeviceInternal(UINT32 idx) const { return mDevices[idx]; }
+		SPtr<VulkanDevice> GetDeviceInternal(u32 idx) const { return mDevices[idx]; }
 
 		/** Returns the primary device that supports swap chain present operations. */
 		const SPtr<VulkanDevice>& GetPresentDeviceInternal() const { return mPrimaryDevices[0]; }
 
 		/** Gets the total number of Vulkan compatible devices available on this system. */
-		UINT32 GetNumDevicesInternal() const { return (UINT32)mDevices.size(); }
+		u32 GetNumDevicesInternal() const { return (u32)mDevices.size(); }
 
 		/**
 		 * Returns one or multiple devices recognized as primary. This will be a single device in most cases, or multiple

@@ -20,7 +20,7 @@
 
 namespace bs
 {
-	D3D11RenderWindow::D3D11RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId)
+	D3D11RenderWindow::D3D11RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId)
 		:RenderWindow(desc, windowId), mProperties(desc)
 	{
 
@@ -30,8 +30,8 @@ namespace bs
 	{
 		if (name == "WINDOW")
 		{
-			UINT64 *pHwnd = (UINT64*)pData;
-			*pHwnd = (UINT64)GetHWnd();
+			u64 *pHwnd = (u64*)pData;
+			*pHwnd = (u64)GetHWnd();
 			return;
 		}
 	}
@@ -89,7 +89,7 @@ namespace bs
 
 	namespace ct
 	{
-	D3D11RenderWindow::D3D11RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId, D3D11Device& device,
+	D3D11RenderWindow::D3D11RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, D3D11Device& device,
 		IDXGIFactory1* DXGIFactory)
 		: RenderWindow(desc, windowId), mProperties(desc), mSyncedProperties(desc), mDevice(device), mDXGIFactory(DXGIFactory)
 	{ }
@@ -149,11 +149,11 @@ namespace bs
 
 		auto opt = mDesc.PlatformSpecific.find("parentWindowHandle");
 		if (opt != mDesc.PlatformSpecific.end())
-			windowDesc.Parent = (HWND)parseUINT64(opt->second);
+			windowDesc.Parent = (HWND)parseu64(opt->second);
 
 		opt = mDesc.PlatformSpecific.find("externalWindowHandle");
 		if (opt != mDesc.PlatformSpecific.end())
-			windowDesc.External = (HWND)parseUINT64(opt->second);
+			windowDesc.External = (HWND)parseu64(opt->second);
 
 		mIsChild = windowDesc.Parent != nullptr;
 		props.IsFullScreen = mDesc.Fullscreen && !mIsChild;
@@ -173,10 +173,10 @@ namespace bs
 		const D3D11VideoOutputInfo* outputInfo = nullptr;
 
 		const D3D11VideoModeInfo& videoModeInfo = static_cast<const D3D11VideoModeInfo&>(RenderAPI::Instance().GetVideoModeInfo());
-		UINT32 numOutputs = videoModeInfo.GetNumOutputs();
+		u32 numOutputs = videoModeInfo.GetNumOutputs();
 		if (numOutputs > 0)
 		{
-			UINT32 actualMonitorIdx = std::min(mDesc.VideoMode.OutputIdx, numOutputs - 1);
+			u32 actualMonitorIdx = std::min(mDesc.VideoMode.OutputIdx, numOutputs - 1);
 			outputInfo = static_cast<const D3D11VideoOutputInfo*>(&videoModeInfo.GetOutputInfo(actualMonitorIdx));
 
 			DXGI_OUTPUT_DESC desc;
@@ -220,7 +220,7 @@ namespace bs
 		RenderWindow::Initialize();
 	}
 
-	void D3D11RenderWindow::SwapBuffers(UINT32 syncMask)
+	void D3D11RenderWindow::SwapBuffers(u32 syncMask)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -236,7 +236,7 @@ namespace bs
 		}
 	}
 
-	void D3D11RenderWindow::Move(INT32 left, INT32 top)
+	void D3D11RenderWindow::Move(i32 left, i32 top)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -259,7 +259,7 @@ namespace bs
 		}
 	}
 
-	void D3D11RenderWindow::Resize(UINT32 width, UINT32 height)
+	void D3D11RenderWindow::Resize(u32 width, u32 height)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -331,7 +331,7 @@ namespace bs
 		mWindow->Restore();
 	}
 
-	void D3D11RenderWindow::SetFullscreen(UINT32 width, UINT32 height, float refreshRate, UINT32 monitorIdx)
+	void D3D11RenderWindow::SetFullscreen(u32 width, u32 height, float refreshRate, u32 monitorIdx)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -339,11 +339,11 @@ namespace bs
 			return;
 
 		const D3D11VideoModeInfo& videoModeInfo = static_cast<const D3D11VideoModeInfo&>(RenderAPI::Instance().GetVideoModeInfo());
-		UINT32 numOutputs = videoModeInfo.GetNumOutputs();
+		u32 numOutputs = videoModeInfo.GetNumOutputs();
 		if (numOutputs == 0)
 			return;
 
-		UINT32 actualMonitorIdx = std::min(monitorIdx, numOutputs - 1);
+		u32 actualMonitorIdx = std::min(monitorIdx, numOutputs - 1);
 		const D3D11VideoOutputInfo& outputInfo = static_cast<const D3D11VideoOutputInfo&>(videoModeInfo.GetOutputInfo(actualMonitorIdx));
 
 		DXGI_MODE_DESC modeDesc;
@@ -395,11 +395,11 @@ namespace bs
 		}
 
 		const D3D11VideoModeInfo& videoModeInfo = static_cast<const D3D11VideoModeInfo&>(RenderAPI::Instance().GetVideoModeInfo());
-		UINT32 numOutputs = videoModeInfo.GetNumOutputs();
+		u32 numOutputs = videoModeInfo.GetNumOutputs();
 		if (numOutputs == 0)
 			return;
 
-		UINT32 actualMonitorIdx = std::min(mode.OutputIdx, numOutputs - 1);
+		u32 actualMonitorIdx = std::min(mode.OutputIdx, numOutputs - 1);
 		const D3D11VideoOutputInfo& outputInfo = static_cast<const D3D11VideoOutputInfo&>(videoModeInfo.GetOutputInfo(actualMonitorIdx));
 
 		const D3D11VideoMode& videoMode = static_cast<const D3D11VideoMode&>(mode);
@@ -423,7 +423,7 @@ namespace bs
 		bs::RenderWindowManager::Instance().NotifyMovedOrResized(this);
 	}
 
-	void D3D11RenderWindow::SetWindowed(UINT32 width, UINT32 height)
+	void D3D11RenderWindow::SetWindowed(u32 width, u32 height)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -461,7 +461,7 @@ namespace bs
 		bs::RenderWindowManager::Instance().NotifyMovedOrResized(this);
 	}
 
-	void D3D11RenderWindow::SetVSync(bool enabled, UINT32 interval)
+	void D3D11RenderWindow::SetVSync(bool enabled, u32 interval)
 	{
 		mProperties.Vsync = enabled;
 		mProperties.VsyncInterval = interval;
@@ -484,8 +484,8 @@ namespace bs
 	{
 		if(name == "WINDOW")
 		{
-			UINT64 *pWnd = (UINT64*)pData;
-			*pWnd = (UINT64)mWindow->GetHWnd();
+			u64 *pWnd = (u64*)pData;
+			*pWnd = (u64)mWindow->GetHWnd();
 			return;
 		}
 
@@ -613,7 +613,7 @@ namespace bs
 
 		// Copy the the texture to the dest
 		PixelData src(GetProperties().Width, GetProperties().Height, 1, PF_RGBA8);
-		src.SetExternalBuffer((UINT8*)mappedTex2D.pData);
+		src.SetExternalBuffer((u8*)mappedTex2D.pData);
 		PixelUtil::BulkPixelConversion(src, dst);
 
 		// Unmap the temp buffer
@@ -763,7 +763,7 @@ namespace bs
 		mDepthStencilBuffer = nullptr;
 	}
 
-	void D3D11RenderWindow::ResizeSwapChainBuffers(UINT32 width, UINT32 height)
+	void D3D11RenderWindow::ResizeSwapChainBuffers(u32 width, u32 height)
 	{
 		DestroySizeDependedD3DResources();
 

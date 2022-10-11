@@ -46,7 +46,7 @@ namespace bs
 		 * the default action of the log will be skipped.
 		 */
 		BS_SCRIPT_EXPORT(ex:true)
-		std::function<bool(const String& message, LogVerbosity verbosity, UINT32 category)> LogCallback;
+		std::function<bool(const String& message, LogVerbosity verbosity, u32 category)> LogCallback;
 
 		/** Crash handling customization */
 		BS_SCRIPT_EXPORT(ex:true)
@@ -79,7 +79,7 @@ namespace bs
 		bool IsMainLoopRunning() const { return mRunMainLoop; }
 
 		/** Changes the maximum FPS the application is allowed to run in. Zero means unlimited. */
-		void SetFpsLimit(UINT32 limit);
+		void SetFpsLimit(u32 limit);
 
 		/**
 		 * Issues a request for the application to close. Application may choose to ignore the request depending on the
@@ -160,8 +160,8 @@ namespace bs
 		START_UP_DESC mStartUpDesc;
 
 		// Frame limiting
-		UINT64 mFrameStep = 16666; // 60 times a second in microseconds
-		UINT64 mLastFrameTime = 0; // Microseconds
+		u64 mFrameStep = 16666; // 60 times a second in microseconds
+		u64 mLastFrameTime = 0; // Microseconds
 
 		DynLib* mRendererPlugin;
 

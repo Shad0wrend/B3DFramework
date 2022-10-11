@@ -57,12 +57,12 @@ namespace bs { namespace ct
 		assert(result == VK_SUCCESS);
 
 		Vector<PoolInfo>& poolInfos = type == VK_QUERY_TYPE_TIMESTAMP ? mTimerPools : mOcclusionPools;
-		poolInfo.StartIdx = (UINT32)poolInfos.size() * NUM_QUERIES_PER_POOL;
+		poolInfo.StartIdx = (u32)poolInfos.size() * NUM_QUERIES_PER_POOL;
 
 		poolInfos.push_back(poolInfo);
 
 		Vector<VulkanQuery*>& queries = type == VK_QUERY_TYPE_TIMESTAMP ? mTimerQueries : mOcclusionQueries;
-		for (UINT32 i = 0; i < NUM_QUERIES_PER_POOL; i++)
+		for (u32 i = 0; i < NUM_QUERIES_PER_POOL; i++)
 			queries.push_back(nullptr);
 
 		return poolInfos.back();
@@ -73,14 +73,14 @@ namespace bs { namespace ct
 		Vector<VulkanQuery*>& queries = type == VK_QUERY_TYPE_TIMESTAMP ? mTimerQueries : mOcclusionQueries;
 		Vector<PoolInfo>& poolInfos = type == VK_QUERY_TYPE_TIMESTAMP ? mTimerPools : mOcclusionPools;
 
-		for (UINT32 i = 0; i < (UINT32)queries.size(); i++)
+		for (u32 i = 0; i < (u32)queries.size(); i++)
 		{
 			VulkanQuery* curQuery = queries[i];
 			if (curQuery == nullptr)
 			{
-				div_t divResult = std::div(i, (INT32)NUM_QUERIES_PER_POOL);
-				UINT32 poolIdx = (UINT32)divResult.quot;
-				UINT32 queryIdx = (UINT32)divResult.rem;
+				div_t divResult = std::div(i, (i32)NUM_QUERIES_PER_POOL);
+				u32 poolIdx = (u32)divResult.quot;
+				u32 queryIdx = (u32)divResult.rem;
 
 				curQuery = mDevice.GetResourceManager().Create<VulkanQuery>(poolInfos[poolIdx].Pool, queryIdx);
 				queries[i] = curQuery;
@@ -92,7 +92,7 @@ namespace bs { namespace ct
 		}
 
 		PoolInfo& poolInfo = AllocatePool(type);
-		UINT32 queryIdx = poolInfo.StartIdx % NUM_QUERIES_PER_POOL;
+		u32 queryIdx = poolInfo.StartIdx % NUM_QUERIES_PER_POOL;
 
 		VulkanQuery* query = mDevice.GetResourceManager().Create<VulkanQuery>(poolInfo.Pool, queryIdx);
 		queries[poolInfo.StartIdx] = query;
@@ -153,7 +153,7 @@ namespace bs { namespace ct
 		:mRenderAPI(rapi)
 	{ }
 
-	SPtr<EventQuery> VulkanQueryManager::CreateEventQuery(UINT32 deviceIdx) const
+	SPtr<EventQuery> VulkanQueryManager::CreateEventQuery(u32 deviceIdx) const
 	{
 		SPtr<VulkanDevice> device = mRenderAPI.GetDeviceInternal(deviceIdx);
 
@@ -164,7 +164,7 @@ namespace bs { namespace ct
 		return query;
 	}
 
-	SPtr<TimerQuery> VulkanQueryManager::CreateTimerQuery(UINT32 deviceIdx) const
+	SPtr<TimerQuery> VulkanQueryManager::CreateTimerQuery(u32 deviceIdx) const
 	{
 		SPtr<VulkanDevice> device = mRenderAPI.GetDeviceInternal(deviceIdx);
 
@@ -175,7 +175,7 @@ namespace bs { namespace ct
 		return query;
 	}
 
-	SPtr<OcclusionQuery> VulkanQueryManager::CreateOcclusionQuery(bool binary, UINT32 deviceIdx) const
+	SPtr<OcclusionQuery> VulkanQueryManager::CreateOcclusionQuery(bool binary, u32 deviceIdx) const
 	{
 		SPtr<VulkanDevice> device = mRenderAPI.GetDeviceInternal(deviceIdx);
 
@@ -186,12 +186,12 @@ namespace bs { namespace ct
 		return query;
 	}
 
-	VulkanQuery::VulkanQuery(VulkanResourceManager* owner, VkQueryPool pool, UINT32 queryIdx)
+	VulkanQuery::VulkanQuery(VulkanResourceManager* owner, VkQueryPool pool, u32 queryIdx)
 		:VulkanResource(owner, false), mPool(pool), mQueryIdx(queryIdx)
 	{
 	}
 
-	bool VulkanQuery::GetResult(UINT64& result) const
+	bool VulkanQuery::GetResult(u64& result) const
 	{
 		// Note: A potentially better approach to get results is to make the query pool a VulkanResource, which we attach
 		// to a command buffer upon use. Then when CB finishes executing we perform vkGetQueryPoolResults on all queries

@@ -99,7 +99,7 @@ namespace bs
 		 * @param[in]	vertDir			Output parameter that signals the preferred vertical direction of the bounds
 		 *								(up or down).
 		 */
-		Rect2I GetOptimalBounds(UINT32 width, UINT32 height, const Rect2I& availableArea, HorzDir& horzDir,
+		Rect2I GetOptimalBounds(u32 width, u32 height, const Rect2I& availableArea, HorzDir& horzDir,
 			VertDir& vertDir) const;
 
 	private:

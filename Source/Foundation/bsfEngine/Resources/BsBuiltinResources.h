@@ -176,7 +176,7 @@ namespace bs
 		static constexpr const char* TEXTURE_NORMAL_FILE = u8"Normal.asset";
 
 		static constexpr const char* DEFAULT_FONT_NAME = u8"arial.ttf";
-		static constexpr const UINT32 DEFAULT_FONT_SIZE = 8;
+		static constexpr const u32 DEFAULT_FONT_SIZE = 8;
 
 		static constexpr const char* GUI_SKIN_FILE = u8"GUISkin";
 	private:

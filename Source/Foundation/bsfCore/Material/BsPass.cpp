@@ -31,7 +31,7 @@ namespace bs
 	{
 		bool transparent = false;
 
-		for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			// Transparent if destination color is taken into account
 			if (mData.BlendStateDesc.RenderTargetDesc[i].DstBlend != BF_ZERO ||
@@ -149,8 +149,8 @@ namespace bs
 
 	CoreSyncData Pass::SyncToCore(FrameAlloc* allocator)
 	{
-		UINT32 size = csync_size(*this);
-		UINT8* data = allocator->Alloc(size);
+		u32 size = csync_size(*this);
+		u8* data = allocator->Alloc(size);
 
 		Bitstream stream(data, size);
 		csync_write(*this, stream);

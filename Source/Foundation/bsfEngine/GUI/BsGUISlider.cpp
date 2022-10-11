@@ -73,7 +73,7 @@ namespace bs
 		{
 			Vector2I optimalSize = mBackground->GetOptimalSizeInternal();
 			childData.Area.Height = optimalSize.Y;
-			childData.Area.Y = data.Area.Y + (INT32)((data.Area.Height - childData.Area.Height) * 0.5f);
+			childData.Area.Y = data.Area.Y + (i32)((data.Area.Height - childData.Area.Height) * 0.5f);
 
 			childData.ClipRect = data.Area;
 			childData.ClipRect.Clip(data.ClipRect);
@@ -82,17 +82,17 @@ namespace bs
 
 			optimalSize = mSliderHandle->GetOptimalSizeInternal();
 			childData.Area.Height = optimalSize.Y;
-			childData.Area.Y = data.Area.Y + (INT32)((data.Area.Height - childData.Area.Height) * 0.5f);
+			childData.Area.Y = data.Area.Y + (i32)((data.Area.Height - childData.Area.Height) * 0.5f);
 
 			childData.ClipRect = data.Area;
 			childData.ClipRect.Clip(data.ClipRect);
 
 			mSliderHandle->SetLayoutDataInternal(childData);
-			UINT32 handleWidth = optimalSize.X;
+			u32 handleWidth = optimalSize.X;
 
 			optimalSize = mFillBackground->GetOptimalSizeInternal();
 			childData.Area.Height = optimalSize.Y;
-			childData.Area.Y = data.Area.Y + (INT32)((data.Area.Height - childData.Area.Height) * 0.5f);
+			childData.Area.Y = data.Area.Y + (i32)((data.Area.Height - childData.Area.Height) * 0.5f);
 			childData.Area.Width = mSliderHandle->GetHandlePosPx() + handleWidth / 2;
 
 			childData.ClipRect = data.Area;
@@ -104,7 +104,7 @@ namespace bs
 		{
 			Vector2I optimalSize = mBackground->GetOptimalSizeInternal();
 			childData.Area.Width = optimalSize.X;
-			childData.Area.X = data.Area.X + (INT32)((data.Area.Width - childData.Area.Width) * 0.5f);
+			childData.Area.X = data.Area.X + (i32)((data.Area.Width - childData.Area.Width) * 0.5f);
 
 			childData.ClipRect = data.Area;
 			childData.ClipRect.Clip(data.ClipRect);
@@ -113,17 +113,17 @@ namespace bs
 
 			optimalSize = mSliderHandle->GetOptimalSizeInternal();
 			childData.Area.Width = optimalSize.X;
-			childData.Area.X = data.Area.X + (INT32)((data.Area.Width - childData.Area.Width) * 0.5f);
+			childData.Area.X = data.Area.X + (i32)((data.Area.Width - childData.Area.Width) * 0.5f);
 
 			childData.ClipRect = data.Area;
 			childData.ClipRect.Clip(data.ClipRect);
 
 			mSliderHandle->SetLayoutDataInternal(childData);
-			UINT32 handleHeight = optimalSize.Y;
+			u32 handleHeight = optimalSize.Y;
 
 			optimalSize = mFillBackground->GetOptimalSizeInternal();
 			childData.Area.Width = optimalSize.X;
-			childData.Area.X = data.Area.X + (INT32)((data.Area.Width - childData.Area.Width) * 0.5f);
+			childData.Area.X = data.Area.X + (i32)((data.Area.Width - childData.Area.Width) * 0.5f);
 			childData.Area.Height = mSliderHandle->GetHandlePosPx() + handleHeight / 2;
 
 			childData.ClipRect = data.Area;

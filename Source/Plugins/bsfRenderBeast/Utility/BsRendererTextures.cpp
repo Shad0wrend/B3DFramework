@@ -14,9 +14,9 @@ namespace bs { namespace ct
 {
 	SPtr<Texture> generate4x4RandomizationTexture()
 	{
-		UINT32 mapping[16] = { 13, 5, 1, 9, 14, 3, 7, 11, 15, 2, 6, 12, 4, 8, 0, 10 };
+		u32 mapping[16] = { 13, 5, 1, 9, 14, 3, 7, 11, 15, 2, 6, 12, 4, 8, 0, 10 };
 		Vector2 bases[16];
-		for (UINT32 i = 0; i < 16; ++i)
+		for (u32 i = 0; i < 16; ++i)
 		{
 			float angle = (mapping[i] / 16.0f) * Math::PI;
 			bases[i].X = cos(angle);
@@ -24,10 +24,10 @@ namespace bs { namespace ct
 		}
 
 		SPtr<PixelData> pixelData = PixelData::Create(4, 4, 1, PF_RG8);
-		for(UINT32 y = 0; y < 4; ++y)
-			for(UINT32 x = 0; x < 4; ++x)
+		for(u32 y = 0; y < 4; ++y)
+			for(u32 x = 0; x < 4; ++x)
 			{
-				UINT32 base = (y * 4) + x;
+				u32 base = (y * 4) + x;
 
 				Color color;
 				color.R = bases[base].X * 0.5f + 0.5f;
@@ -40,7 +40,7 @@ namespace bs { namespace ct
 	}
 
 	// Reverse bits functions used for Hammersley sequence
-	float reverseBits(UINT32 bits)
+	float reverseBits(u32 bits)
 	{
 		bits = (bits << 16u) | (bits >> 16u);
 		bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
@@ -51,7 +51,7 @@ namespace bs { namespace ct
 		return (float)(double(bits) / (double)0x100000000LL);
 	}
 
-	void hammersleySequence(UINT32 i, UINT32 count, float& e0, float& e1)
+	void hammersleySequence(u32 i, u32 count, float& e0, float& e1)
 	{
 		e0 = i / (float)count;
 		e1 = reverseBits(i);
@@ -96,13 +96,13 @@ namespace bs { namespace ct
 		SPtr<Texture> texture = Texture::Create(desc);
 		PixelData pixelData = texture->Lock(GBL_WRITE_ONLY_DISCARD);
 
-		for (UINT32 y = 0; y < desc.Height; y++)
+		for (u32 y = 0; y < desc.Height; y++)
 		{
 			float roughness = (float)(y + 0.5f) / desc.Height;
 			float m = roughness * roughness;
 			float m2 = m*m;
 
-			for (UINT32 x = 0; x < desc.Width; x++)
+			for (u32 x = 0; x < desc.Width; x++)
 			{
 				float NoV = (float)(x + 0.5f) / desc.Width;
 
@@ -119,8 +119,8 @@ namespace bs { namespace ct
 
 				// We use the same importance sampling function we use for reflection cube importance sampling, only we
 				// sample G and F, instead of D factors of the microfactet BRDF. See GGXImportanceSample.nb for derivation.
-				constexpr UINT32 NumSamples = 128;
-				for (UINT32 i = 0; i < NumSamples; i++)
+				constexpr u32 NumSamples = 128;
+				for (u32 i = 0; i < NumSamples; i++)
 				{
 					float e0, e1;
 					hammersleySequence(i, NumSamples, e0, e1);
@@ -188,8 +188,8 @@ namespace bs { namespace ct
 		Color skyColor = Color::White * intensity;
 		SPtr<Texture> skyTexture = Texture::Create(dummySkyDesc);
 		
-		UINT32 sides[] = { CF_PositiveX, CF_NegativeX, CF_PositiveZ, CF_NegativeZ };
-		for(UINT32 i = 0; i < 4; ++i)
+		u32 sides[] = { CF_PositiveX, CF_NegativeX, CF_PositiveZ, CF_NegativeZ };
+		for(u32 i = 0; i < 4; ++i)
 		{
 			PixelData data = skyTexture->Lock(GBL_WRITE_ONLY_DISCARD, 0, sides[i]);
 
@@ -253,11 +253,11 @@ namespace bs { namespace ct
 		ColorGradient gradient(keys);
 
 		SPtr<PixelData> pixels = PixelData::Create(32, 1, 1, PF_RGBA8);
-		for(UINT32 i = 0; i < 16; i++)
+		for(u32 i = 0; i < 16; i++)
 			pixels->SetColorAt(Color::FromRgba(gradient.Evaluate(i/16.0f)), i, 0);
 
 		// We keep the second half of the texture empty, to avoid a mul in shader
-		for(UINT32 i = 16; i < 32; i++)
+		for(u32 i = 16; i < 32; i++)
 			pixels->SetColorAt(Color::Black, i, 0);
 
 		return Texture::Create(pixels);

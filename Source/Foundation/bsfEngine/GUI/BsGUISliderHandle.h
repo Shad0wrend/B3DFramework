@@ -79,13 +79,13 @@ namespace bs
 		float GetStep() const;
 
 		/**	Returns the position of the slider handle, in pixels. Relative to this object. */
-		INT32 GetHandlePosPx() const;
+		i32 GetHandlePosPx() const;
 
 		/**	Returns remaining length of the scrollable area not covered by the handle, in pixels. */
-		UINT32 GetScrollableSize() const;
+		u32 GetScrollableSize() const;
 
 		/**	Returns the total length of the area the handle can move in, in pixels. */
-		UINT32 GetMaxSize() const;
+		u32 GetMaxSize() const;
 
 		/**	
 		 * Sets a step that defines the minimal increment the value can be increased/decreased by. Set to zero to have no
@@ -135,14 +135,14 @@ namespace bs
 
 		/** @copydoc GUIElement::FillBufferInternal() */
 		void FillBuffer(
-			UINT8* vertices,
-			UINT32* indices,
-			UINT32 vertexOffset,
-			UINT32 indexOffset,
+			u8* vertices,
+			u32* indices,
+			u32 vertexOffset,
+			u32 indexOffset,
 			const Vector2I& offset,
-			UINT32 maxNumVerts,
-			UINT32 maxNumIndices,
-			UINT32 renderElementIdx) const ;
+			u32 maxNumVerts,
+			u32 maxNumIndices,
+			u32 renderElementIdx) const ;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal() */
 		void UpdateRenderElementsInternal() ;
@@ -159,10 +159,10 @@ namespace bs
 		bool IsOnHandle(const Vector2I& pos) const;
 
 		/**	Sets the position of the slider handle, in pixels. Relative to this object. */
-		void SetHandlePosPx(INT32 pos);
+		void SetHandlePosPx(i32 pos);
 
 		/** Returns the size of the handle button, in pixels. */
-		UINT32 GetHandleSize() const;
+		u32 GetHandleSize() const;
 
 		/**	Gets the currently active texture, depending on handle state. */
 		const HSpriteTexture& GetActiveTexture() const;
@@ -170,16 +170,16 @@ namespace bs
 		/** @copydoc GUIElement::styleUpdated */
 		void StyleUpdated() ;
 
-		static const UINT32 RESIZE_HANDLE_SIZE;
+		static const u32 RESIZE_HANDLE_SIZE;
 
 		ImageSprite* mImageSprite;
 
 		GUISliderHandleFlags mFlags;
-		UINT32 mMinHandleSize = 0;
+		u32 mMinHandleSize = 0;
 		float mPctHandlePos = 0.0f;
 		float mPctHandleSize = 0.0f;
 		float mStep = 0.0f;
-		INT32 mDragStartPos = 0;
+		i32 mDragStartPos = 0;
 		DragState mDragState = DragState::Normal;
 		bool mMouseOverHandle = false;
 		bool mHandleDragged = false;

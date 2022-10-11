@@ -159,7 +159,7 @@ namespace bs
 
 	void ResourceListenerManager::SendResourceLoaded(const HResource& resource)
 	{
-		UINT64 handleId = (UINT64)resource.GetHandleData().get();
+		u64 handleId = (u64)resource.GetHandleData().get();
 
 		auto iterFind = mResourceToListenerMap.find(handleId);
 		if (iterFind == mResourceToListenerMap.end())
@@ -178,7 +178,7 @@ namespace bs
 
 	void ResourceListenerManager::SendResourceModified(const HResource& resource)
 	{
-		UINT64 handleId = (UINT64)resource.GetHandleData().get();
+		u64 handleId = (u64)resource.GetHandleData().get();
 
 		auto iterFind = mResourceToListenerMap.find(handleId);
 		if (iterFind == mResourceToListenerMap.end())
@@ -201,7 +201,7 @@ namespace bs
 		if (iterFind == mListenerToResourceMap.end())
 			return;
 
-		const Vector<UINT64>& dependantResources = iterFind->second;
+		const Vector<u64>& dependantResources = iterFind->second;
 		for (auto& resourceHandleId : dependantResources)
 		{
 			auto iterFind2 = mResourceToListenerMap.find(resourceHandleId);
@@ -227,11 +227,11 @@ namespace bs
 
 		if (mTempResourceBuffer.size() > 0)
 		{
-			Vector<UINT64> resourceHandleIds(mTempResourceBuffer.size());
-			UINT32 idx = 0;
+			Vector<u64> resourceHandleIds(mTempResourceBuffer.size());
+			u32 idx = 0;
 			for (auto& resource : mTempResourceBuffer)
 			{
-				UINT64 handleId = (UINT64)resource.GetHandleData().get();
+				u64 handleId = (u64)resource.GetHandleData().get();
 				resourceHandleIds[idx] = handleId;
 				mResourceToListenerMap[handleId].push_back(listener);
 

@@ -28,7 +28,7 @@ namespace bs
 			lowerCaseExt == u8"fsb" || lowerCaseExt == u8"aif" || lowerCaseExt == u8"aiff";
 	}
 
-	bool FMODImporter::IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
+	bool FMODImporter::IsMagicNumberSupported(const u8* magicNumPtr, u32 numBytes) const
 	{
 		// Don't check for magic number, rely on extension
 		return true;
@@ -56,8 +56,8 @@ namespace bs
 		}
 
 		FMOD_SOUND_FORMAT format;
-		INT32 numChannels = 0;
-		INT32 numBits = 0;
+		i32 numChannels = 0;
+		i32 numBits = 0;
 
 		sound->getFormat(nullptr, &format, &numChannels, &numBits);
 
@@ -71,34 +71,34 @@ namespace bs
 		float frequency = 0.0f;
 		sound->getDefaults(&frequency, nullptr);
 
-		UINT32 size;
+		u32 size;
 		sound->getLength(&size, FMOD_TIMEUNIT_PCMBYTES);
 		
 		info.bitDepth = numBits;
 		info.numChannels = numChannels;
-		info.sampleRate = (UINT32)frequency;
+		info.sampleRate = (u32)frequency;
 		info.numSamples = size / (info.bitDepth / 8);
 
-		UINT32 bytesPerSample = info.bitDepth / 8;
-		UINT32 bufferSize = info.numSamples * bytesPerSample;
-		UINT8* sampleBuffer = (UINT8*)bs_alloc(bufferSize);
+		u32 bytesPerSample = info.bitDepth / 8;
+		u32 bufferSize = info.numSamples * bytesPerSample;
+		u8* sampleBuffer = (u8*)bs_alloc(bufferSize);
 		assert(bufferSize == size);
 		
-		UINT8* startData = nullptr;
-		UINT8* endData = nullptr;
-		UINT32 startSize = 0;
-		UINT32 endSize = 0;
+		u8* startData = nullptr;
+		u8* endData = nullptr;
+		u32 startSize = 0;
+		u32 endSize = 0;
 		sound->lock(0, size, (void**)&startData, (void**)&endData, &startSize, &endSize);
 
 		if(format == FMOD_SOUND_FORMAT_PCMFLOAT)
 		{
 			assert(info.bitDepth == 32);
 
-			UINT32* output = (UINT32*)sampleBuffer;
-			for(UINT32 i = 0; i < info.numSamples; i++)
+			u32* output = (u32*)sampleBuffer;
+			for(u32 i = 0; i < info.numSamples; i++)
 			{
 				float value = *(((float*)startData) + i);
-				*output = (UINT32)(value * 2147483647.0f);
+				*output = (u32)(value * 2147483647.0f);
 				output++;
 			}
 		}
@@ -115,10 +115,10 @@ namespace bs
 		// If 3D, convert to mono
 		if (clipIO->is3D && info.numChannels > 1)
 		{
-			UINT32 numSamplesPerChannel = info.numSamples / info.numChannels;
+			u32 numSamplesPerChannel = info.numSamples / info.numChannels;
 
-			UINT32 monoBufferSize = numSamplesPerChannel * bytesPerSample;
-			UINT8* monoBuffer = (UINT8*)bs_alloc(monoBufferSize);
+			u32 monoBufferSize = numSamplesPerChannel * bytesPerSample;
+			u8* monoBuffer = (u8*)bs_alloc(monoBufferSize);
 
 			AudioUtility::ConvertToMono(sampleBuffer, monoBuffer, info.bitDepth, numSamplesPerChannel, info.numChannels);
 
@@ -134,8 +134,8 @@ namespace bs
 		// Convert bit depth if needed
 		if (clipIO->bitDepth != info.bitDepth)
 		{
-			UINT32 outBufferSize = info.numSamples * (clipIO->bitDepth / 8);
-			UINT8* outBuffer = (UINT8*)bs_alloc(outBufferSize);
+			u32 outBufferSize = info.numSamples * (clipIO->bitDepth / 8);
+			u8* outBuffer = (u8*)bs_alloc(outBufferSize);
 
 			AudioUtility::ConvertBitDepth(sampleBuffer, info.bitDepth, outBuffer, clipIO->bitDepth, info.numSamples);
 

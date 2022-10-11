@@ -4,7 +4,7 @@
 
 #include "Allocators/BsMemoryAllocator.h"
 #include "Prerequisites/BsFwdDeclUtil.h"      // For TIDs
-#include "Prerequisites/BsTypes.h"            // For UINT32
+#include "Prerequisites/BsTypes.h"            // For u32
 #include "Utility/BsBitstream.h"
 #include "Utility/BsBitLength.h"
 
@@ -202,7 +202,7 @@ namespace bs
 				return sizeof(data);
 			else
 			{
-				UINT8 buffer[5];
+				u8 buffer[5];
 				return Bitwise::EncodeVarInt(data, buffer);
 			}
 		}
@@ -236,7 +236,7 @@ namespace bs
 				return sizeof(data);
 			else
 			{
-				UINT8 buffer[5];
+				u8 buffer[5];
 				return Bitwise::EncodeVarInt(data, buffer);
 			}
 		}

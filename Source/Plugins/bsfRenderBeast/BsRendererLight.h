@@ -22,7 +22,7 @@ namespace ct
 	 */
 
 	/** Maximum number of lights that can influence an object when basic forward rendering is used. */
-	static constexpr UINT32 STANDARD_FORWARD_MAX_NUM_LIGHTS = 8;
+	static constexpr u32 STANDARD_FORWARD_MAX_NUM_LIGHTS = 8;
 
 	/** Information about a single light, as seen by the lighting shader. */
 	struct LightData
@@ -169,33 +169,33 @@ namespace ct
 			Vector3I& counts) const;
 
 		/** Returns the number of directional lights in the lights buffer. */
-		UINT32 GetNumDirLights() const { return mNumLights[0]; }
+		u32 GetNumDirLights() const { return mNumLights[0]; }
 
 		/** Returns the number of radial point lights in the lights buffer. */
-		UINT32 GetNumRadialLights() const { return mNumLights[1]; }
+		u32 GetNumRadialLights() const { return mNumLights[1]; }
 
 		/** Returns the number of spot point lights in the lights buffer. */
-		UINT32 GetNumSpotLights() const { return mNumLights[2]; }
+		u32 GetNumSpotLights() const { return mNumLights[2]; }
 
 		/** Returns the number of visible lights of the specified type. */
-		UINT32 GetNumLights(LightType type) const { return mNumLights[(UINT32)type]; }
+		u32 GetNumLights(LightType type) const { return mNumLights[(u32)type]; }
 
 		/** Returns the number of visible shadowed lights of the specified type. */
-		UINT32 GetNumShadowedLights(LightType type) const { return mNumShadowedLights[(UINT32)type]; }
+		u32 GetNumShadowedLights(LightType type) const { return mNumShadowedLights[(u32)type]; }
 
 		/** Returns the number of visible unshadowed lights of the specified type. */
-		UINT32 GetNumUnshadowedLights(LightType type) const { return mNumLights[(UINT32)type] - mNumShadowedLights[(UINT32)type]; }
+		u32 GetNumUnshadowedLights(LightType type) const { return mNumLights[(u32)type] - mNumShadowedLights[(u32)type]; }
 
 		/** Returns a list of all visible lights of the specified type. */
-		const Vector<const RendererLight*>& GetLights(LightType type) const { return mVisibleLights[(UINT32)type]; }
+		const Vector<const RendererLight*>& GetLights(LightType type) const { return mVisibleLights[(u32)type]; }
 	private:
 		SPtr<GpuBuffer> mLightBuffer;
 
-		UINT32 mNumLights[(UINT32)LightType::Count];
-		UINT32 mNumShadowedLights[(UINT32)LightType::Count];
+		u32 mNumLights[(u32)LightType::Count];
+		u32 mNumShadowedLights[(u32)LightType::Count];
 
 		// These are rebuilt every call to update()
-		Vector<const RendererLight*> mVisibleLights[(UINT32)LightType::Count];
+		Vector<const RendererLight*> mVisibleLights[(u32)LightType::Count];
 		Vector<LightData> mVisibleLightData;
 	};
 

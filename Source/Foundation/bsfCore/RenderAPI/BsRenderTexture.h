@@ -30,7 +30,7 @@ namespace bs
 		virtual ~RenderTextureProperties() { }
 
 	private:
-		void Construct(const TextureProperties* textureProps, UINT32 numSlices, UINT32 mipLevel, bool requiresFlipping,
+		void Construct(const TextureProperties* textureProps, u32 numSlices, u32 mipLevel, bool requiresFlipping,
 					   bool hwGamma);
 
 		friend class ct::RenderTexture;
@@ -60,7 +60,7 @@ namespace bs
 		 *
 		 * @note	Be aware that you cannot bind a render texture for reading and writing at the same time.
 		 */
-		const HTexture& GetColorTexture(UINT32 idx) const { return mBindableColorTex[idx]; }
+		const HTexture& GetColorTexture(u32 idx) const { return mBindableColorTex[idx]; }
 
 		/**
 		 * Returns a depth/stencil surface texture you may bind as an input to an GPU program.
@@ -132,21 +132,21 @@ namespace bs
 	class BS_CORE_EXPORT RenderTexture : public RenderTarget
 	{
 	public:
-		RenderTexture(const RENDER_TEXTURE_DESC& desc, UINT32 deviceIdx);
+		RenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx);
 		virtual ~RenderTexture() = default;
 
 		/** @copydoc CoreObject::initialize */
 		void Initialize() override;
 
-		/** @copydoc TextureManager::createRenderTexture(const RENDER_TEXTURE_DESC&, UINT32) */
-		static SPtr<RenderTexture> Create(const RENDER_TEXTURE_DESC& desc, UINT32 deviceIdx = 0);
+		/** @copydoc TextureManager::createRenderTexture(const RENDER_TEXTURE_DESC&, u32) */
+		static SPtr<RenderTexture> Create(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx = 0);
 
 		/**
 		 * Returns a color surface texture you may bind as an input to an GPU program.
 		 *
 		 * @note	Be aware that you cannot bind a render texture for reading and writing at the same time.
 		 */
-		SPtr<Texture> GetColorTexture(UINT32 idx) const { return mDesc.ColorSurfaces[idx].Texture; }
+		SPtr<Texture> GetColorTexture(u32 idx) const { return mDesc.ColorSurfaces[idx].Texture; }
 
 		/**
 		 * Returns a depth/stencil surface texture you may bind as an input to an GPU program.

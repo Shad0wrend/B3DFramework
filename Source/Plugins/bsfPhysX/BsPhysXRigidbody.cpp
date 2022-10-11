@@ -115,7 +115,7 @@ namespace bs
 
 	void PhysXRigidbody::SetMass(float mass)
 	{
-		if(((UINT32)mFlags & (UINT32)RigidbodyFlag::AutoMass) != 0)
+		if(((u32)mFlags & (u32)RigidbodyFlag::AutoMass) != 0)
 		{
 			BS_LOG(Warning, Physics, "Attempting to set Rigidbody mass, but it has automatic mass calculation turned on.");
 			return;
@@ -136,7 +136,7 @@ namespace bs
 
 	bool PhysXRigidbody::GetIsKinematic() const
 	{
-		return ((UINT32)mInternal->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC) != 0;
+		return ((u32)mInternal->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC) != 0;
 	}
 
 	bool PhysXRigidbody::IsSleeping() const
@@ -171,7 +171,7 @@ namespace bs
 
 	bool PhysXRigidbody::GetUseGravity() const
 	{
-		return ((UINT32)mInternal->getActorFlags() & PxActorFlag::eDISABLE_GRAVITY) == 0;
+		return ((u32)mInternal->getActorFlags() & PxActorFlag::eDISABLE_GRAVITY) == 0;
 	}
 
 	void PhysXRigidbody::SetVelocity(const Vector3& velocity)
@@ -216,7 +216,7 @@ namespace bs
 
 	void PhysXRigidbody::SetInertiaTensor(const Vector3& tensor)
 	{
-		if (((UINT32)mFlags & (UINT32)RigidbodyFlag::AutoTensors) != 0)
+		if (((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) != 0)
 		{
 			BS_LOG(Warning, Physics,
 				"Attempting to set Rigidbody inertia tensor, but it has automatic tensor calculation turned on.");
@@ -243,7 +243,7 @@ namespace bs
 
 	void PhysXRigidbody::SetCenterOfMass(const Vector3& position, const Quaternion& rotation)
 	{
-		if (((UINT32)mFlags & (UINT32)RigidbodyFlag::AutoTensors) != 0)
+		if (((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) != 0)
 		{
 			BS_LOG(Warning, Physics,
 				"Attempting to set Rigidbody center of mass, but it has automatic tensor calculation turned on.");
@@ -265,29 +265,29 @@ namespace bs
 		return fromPxQuaternion(cMassTfrm.q);
 	}
 
-	void PhysXRigidbody::SetPositionSolverCount(UINT32 count)
+	void PhysXRigidbody::SetPositionSolverCount(u32 count)
 	{
 		mInternal->setSolverIterationCounts(std::max(1U, count), GetVelocitySolverCount());
 	}
 
-	UINT32 PhysXRigidbody::GetPositionSolverCount() const
+	u32 PhysXRigidbody::GetPositionSolverCount() const
 	{
-		UINT32 posCount = 1;
-		UINT32 velCount = 1;
+		u32 posCount = 1;
+		u32 velCount = 1;
 
 		mInternal->getSolverIterationCounts(posCount, velCount);
 		return posCount;
 	}
 
-	void PhysXRigidbody::SetVelocitySolverCount(UINT32 count)
+	void PhysXRigidbody::SetVelocitySolverCount(u32 count)
 	{
 		mInternal->setSolverIterationCounts(GetPositionSolverCount(), std::max(1U, count));
 	}
 
-	UINT32 PhysXRigidbody::GetVelocitySolverCount() const
+	u32 PhysXRigidbody::GetVelocitySolverCount() const
 	{
-		UINT32 posCount = 1;
-		UINT32 velCount = 1;
+		u32 posCount = 1;
+		u32 velCount = 1;
 
 		mInternal->getSolverIterationCounts(posCount, velCount);
 		return velCount;
@@ -296,19 +296,19 @@ namespace bs
 	void PhysXRigidbody::SetFlags(RigidbodyFlag flags)
 	{
 		bool ccdEnabledOld = mInternal->getRigidBodyFlags() & PxRigidBodyFlag::eENABLE_CCD;
-		bool ccdEnabledNew = ((UINT32)flags & (UINT32)RigidbodyFlag::CCD) != 0;
+		bool ccdEnabledNew = ((u32)flags & (u32)RigidbodyFlag::CCD) != 0;
 		
 		if(ccdEnabledOld != ccdEnabledNew)
 		{
 			mInternal->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, ccdEnabledNew);
 
 			// Enable/disable CCD on shapes so the filter can handle them properly
-			UINT32 numShapes = mInternal->getNbShapes();
+			u32 numShapes = mInternal->getNbShapes();
 			PxShape** shapes = (PxShape**)bs_stack_alloc(sizeof(PxShape*) * numShapes);
 
 			mInternal->getShapes(shapes, sizeof(PxShape*) * numShapes);
 
-			for (UINT32 i = 0; i < numShapes; i++)
+			for (u32 i = 0; i < numShapes; i++)
 			{
 				Collider* collider = (Collider*)shapes[i]->userData;
 				collider->GetInternalInternal()->SetCCDInternal(ccdEnabledNew);
@@ -359,16 +359,16 @@ namespace bs
 
 	void PhysXRigidbody::UpdateMassDistribution()
 	{
-		if (((UINT32)mFlags & (UINT32)RigidbodyFlag::AutoTensors) == 0)
+		if (((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) == 0)
 			return;
 
-		if (((UINT32)mFlags & (UINT32)RigidbodyFlag::AutoMass) == 0)
+		if (((u32)mFlags & (u32)RigidbodyFlag::AutoMass) == 0)
 		{
 			PxRigidBodyExt::setMassAndUpdateInertia(*mInternal, mInternal->getMass());
 		}
 		else
 		{
-			UINT32 numShapes = mInternal->getNbShapes();
+			u32 numShapes = mInternal->getNbShapes();
 			if (numShapes == 0)
 			{
 				PxRigidBodyExt::setMassAndUpdateInertia(*mInternal, mInternal->getMass());
@@ -379,7 +379,7 @@ namespace bs
 			mInternal->getShapes(shapes, numShapes);
 
 			float* masses = (float*)bs_stack_alloc(sizeof(float) * numShapes);
-			for (UINT32 i = 0; i < numShapes; i++)
+			for (u32 i = 0; i < numShapes; i++)
 				masses[i] = ((Collider*)shapes[i]->userData)->GetMass();
 
 			PxRigidBodyExt::setMassAndUpdateInertia(*mInternal, masses, numShapes);
@@ -395,7 +395,7 @@ namespace bs
 			return;
 
 		FPhysXCollider* physxCollider = static_cast<FPhysXCollider*>(collider->GetInternalInternal());
-		physxCollider->SetCCDInternal(((UINT32)mFlags & (UINT32)RigidbodyFlag::CCD) != 0);
+		physxCollider->SetCCDInternal(((u32)mFlags & (u32)RigidbodyFlag::CCD) != 0);
 
 		mInternal->attachShape(*physxCollider->GetShapeInternal());
 	}
@@ -413,12 +413,12 @@ namespace bs
 
 	void PhysXRigidbody::RemoveColliders()
 	{
-		UINT32 numShapes = mInternal->getNbShapes();
+		u32 numShapes = mInternal->getNbShapes();
 		PxShape** shapes = (PxShape**)bs_stack_alloc(sizeof(PxShape*) * numShapes);
 
 		mInternal->getShapes(shapes, sizeof(PxShape*) * numShapes);
 
-		for (UINT32 i = 0; i < numShapes; i++)
+		for (u32 i = 0; i < numShapes; i++)
 		{
 			Collider* collider = (Collider*)shapes[i]->userData;
 			collider->GetInternalInternal()->SetCCDInternal(false);

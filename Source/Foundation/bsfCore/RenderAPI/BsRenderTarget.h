@@ -22,16 +22,16 @@ namespace bs
 		HTexture Texture;
 
 		/** First face of the texture to bind (array index in texture arrays, or Z slice in 3D textures). */
-		UINT32 Face = 0;
+		u32 Face = 0;
 
 		/**
 		 * Number of faces to bind (entries in a texture array, or Z slices in 3D textures). When zero the entire resource
 		 * will be bound.
 		 */
-		UINT32 NumFaces = 0;
+		u32 NumFaces = 0;
 
 		/** If the texture has multiple mips, which one to bind (only one can be bound for rendering). */
-		UINT32 MipLevel = 0;
+		u32 MipLevel = 0;
 	};
 
 	namespace ct
@@ -48,16 +48,16 @@ namespace bs
 		SPtr<Texture> Texture;
 
 		/** First face of the texture to bind (array index in texture arrays, or Z slice in 3D textures). */
-		UINT32 Face = 0;
+		u32 Face = 0;
 
 		/**
 		 * Number of faces to bind (entries in a texture array, or Z slices in 3D textures). When zero the entire resource
 		 * will be bound.
 		 */
-		UINT32 NumFaces = 0;
+		u32 NumFaces = 0;
 
 		/** If the texture has multiple mips, which one to bind (only one can be bound for rendering). */
-		UINT32 MipLevel = 0;
+		u32 MipLevel = 0;
 	};
 	}
 
@@ -68,22 +68,22 @@ namespace bs
 		virtual ~RenderTargetProperties() = default;
 
 		/** Width of the render target, in pixels. */
-		UINT32 Width = 0;
+		u32 Width = 0;
 
 		/** Height of the render target, in pixels. */
-		UINT32 Height = 0;
+		u32 Height = 0;
 
 		/**
 		 * Number of three dimensional slices of the render target. This will be number of layers for array
 		 * textures or number of faces cube textures.
 		 */
-		UINT32 NumSlices = 0;
+		u32 NumSlices = 0;
 
 		/**
 		 * Controls in what order is the render target rendered to compared to other render targets. Targets with higher
 		 * priority will be rendered before ones with lower priority.
 		 */
-		INT32 Priority = 0;
+		i32 Priority = 0;
 
 		/**
 		 * True if the render target will wait for vertical sync before swapping buffers. This will eliminate
@@ -96,7 +96,7 @@ namespace bs
 		 * where it will match the refresh rate. Higher values will decrease the frame rate (for example present interval of
 		 * 2 on 60Hz refresh rate will display at most 30 frames per second).
 		 */
-		UINT32 VsyncInterval = 1;
+		u32 VsyncInterval = 1;
 
 		/** True if pixels written to the render target will be gamma corrected. */
 		bool HwGamma = false;
@@ -111,7 +111,7 @@ namespace bs
 		bool IsWindow = false;
 
 		/** Controls how many samples are used for multisampling. (0 or 1 if multisampling is not used). */
-		UINT32 MultisampleCount = 0;
+		u32 MultisampleCount = 0;
 	};
 
 	/**
@@ -134,7 +134,7 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		void SetPriority(INT32 priority);
+		void SetPriority(i32 priority);
 
 		/**
 		 * Returns properties that describe the render target.
@@ -200,7 +200,7 @@ namespace bs
 		 * 			
 		 * @param[in]	priority	The priority. Higher value means the target will be rendered sooner.
 		 */
-		void SetPriority(INT32 priority);
+		void SetPriority(i32 priority);
 
 		/**
 		 * Swaps the frame buffers to display the next frame.
@@ -211,7 +211,7 @@ namespace bs
 		 *							related to this render target, you can exclude them from the sync mask for potentially
 		 *							better performance. You can use CommandSyncMask to generate a valid sync mask.
 		 */
-		virtual void SwapBuffers(UINT32 syncMask = 0xFFFFFFFF) {}
+		virtual void SwapBuffers(u32 syncMask = 0xFFFFFFFF) {}
 
 		/** Queries the render target for a custom attribute. This may be anything and is implementation specific. */
 		virtual void GetCustomAttribute(const String& name, void* pData) const;
@@ -223,7 +223,7 @@ namespace bs
 		 * Returns a number that increments each time the target is rendered to. External systems can use this to
 		 * determine when the target's contents changed.
 		 */
-		UINT64 GetUpdateCount() const { return mUpdateCount; }
+		u64 GetUpdateCount() const { return mUpdateCount; }
 
 		/**
 		 * @name Internal
@@ -241,7 +241,7 @@ namespace bs
 		virtual const RenderTargetProperties& GetPropertiesInternal() const = 0;
 
 	private:
-		UINT64 mUpdateCount = 0;
+		u64 mUpdateCount = 0;
 	};
 
 	/** @} */

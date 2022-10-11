@@ -23,7 +23,7 @@ namespace bs { namespace ct
 		Initialize();
 	}
 
-	VulkanBuffer* VulkanIndexBuffer::GetResource(UINT32 deviceIdx) const
+	VulkanBuffer* VulkanIndexBuffer::GetResource(u32 deviceIdx) const
 	{
 		return static_cast<VulkanHardwareBuffer*>(mBuffer)->GetResource(deviceIdx);
 	}

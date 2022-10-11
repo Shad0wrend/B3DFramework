@@ -8,9 +8,9 @@
 
 namespace bs
 {
-	UINT32 getBufferSize(const GPU_BUFFER_DESC& desc)
+	u32 getBufferSize(const GPU_BUFFER_DESC& desc)
 	{
-		UINT32 elementSize;
+		u32 elementSize;
 
 		if (desc.Type == GBT_STANDARD)
 			elementSize = GpuBuffer::GetFormatSize(desc.Format);
@@ -42,11 +42,11 @@ namespace bs
 		return ct::HardwareBufferManager::Instance().CreateGpuBufferInternal(mProperties.mDesc);
 	}
 
-	UINT32 GpuBuffer::GetFormatSize(GpuBufferFormat format)
+	u32 GpuBuffer::GetFormatSize(GpuBufferFormat format)
 	{
 		static bool lookupInitialized = false;
 
-		static UINT32 lookup[BF_COUNT];
+		static u32 lookup[BF_COUNT];
 		if (!lookupInitialized)
 		{
 			lookup[BF_16X1F] = 2;
@@ -89,7 +89,7 @@ namespace bs
 		if (format >= BF_COUNT)
 			return 0;
 
-		return lookup[(UINT32)format];
+		return lookup[(u32)format];
 	}
 
 	SPtr<GpuBuffer> GpuBuffer::Create(const GPU_BUFFER_DESC& desc)
@@ -135,7 +135,7 @@ namespace bs
 		CoreObject::Initialize();
 	}
 
-	void* GpuBuffer::Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
+	void* GpuBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx)
 	{
 #if BS_PROFILING_ENABLED
 		if (options == GBL_READ_ONLY || options == GBL_READ_WRITE)
@@ -157,31 +157,31 @@ namespace bs
 		mBuffer->Unlock();
 	}
 
-	void GpuBuffer::ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
+	void GpuBuffer::ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx, u32 queueIdx)
 	{
 		BS_INC_RENDER_STAT_CAT(ResRead, RenderStatObject_GpuBuffer);
 
 		mBuffer->ReadData(offset, length, dest, deviceIdx, queueIdx);
 	}
 
-	void GpuBuffer::WriteData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags,
-		UINT32 queueIdx)
+	void GpuBuffer::WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags,
+		u32 queueIdx)
 	{
 		BS_INC_RENDER_STAT_CAT(ResWrite, RenderStatObject_GpuBuffer);
 
 		mBuffer->WriteData(offset, length, source, writeFlags, queueIdx);
 	}
 
-	void GpuBuffer::CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
+	void GpuBuffer::CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length,
 		bool discardWholeBuffer, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto& srcGpuBuffer = static_cast<GpuBuffer&>(srcBuffer);
 		mBuffer->CopyData(*srcGpuBuffer.mBuffer, srcOffset, dstOffset, length, discardWholeBuffer, commandBuffer);
 	}
 
-	SPtr<GpuBuffer> GpuBuffer::GetView(GpuBufferType type, GpuBufferFormat format, UINT32 elementSize)
+	SPtr<GpuBuffer> GpuBuffer::GetView(GpuBufferType type, GpuBufferFormat format, u32 elementSize)
 	{
-		const UINT32 elemSize = type == GBT_STANDARD ? bs::GpuBuffer::GetFormatSize(format) : elementSize;
+		const u32 elemSize = type == GBT_STANDARD ? bs::GpuBuffer::GetFormatSize(format) : elementSize;
 		if((mBuffer->GetSize() % elemSize) != 0)
 		{
 			BS_LOG(Error, RenderBackend,

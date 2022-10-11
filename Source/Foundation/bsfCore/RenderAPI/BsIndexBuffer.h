@@ -16,7 +16,7 @@ namespace bs
 	struct INDEX_BUFFER_DESC
 	{
 		IndexType IndexType; /**< Index type, determines the size of a single index. */
-		UINT32 NumIndices; /**< Number of indices can buffer can hold. */
+		u32 NumIndices; /**< Number of indices can buffer can hold. */
 		GpuBufferUsage Usage = GBU_STATIC; /**< Usage that tells the hardware how will be buffer be used. */
 	};
 
@@ -24,24 +24,24 @@ namespace bs
 	class BS_CORE_EXPORT IndexBufferProperties
 	{
 	public:
-		IndexBufferProperties(IndexType idxType, UINT32 numIndexes);
+		IndexBufferProperties(IndexType idxType, u32 numIndexes);
 
 		/**	Returns the type of indices stored. */
 		IndexType GetType() const { return mIndexType; }
 
 		/**	Returns the number of indices this buffer can hold. */
-		UINT32 GetNumIndices() const { return mNumIndices; }
+		u32 GetNumIndices() const { return mNumIndices; }
 
 		/**	Returns the size of a single index in bytes. */
-		UINT32 GetIndexSize() const { return mIndexSize; }
+		u32 GetIndexSize() const { return mIndexSize; }
 
 	protected:
 		friend class IndexBuffer;
 		friend class ct::IndexBuffer;
 
 		IndexType mIndexType;
-		UINT32 mNumIndices;
-		UINT32 mIndexSize;
+		u32 mNumIndices;
+		u32 mIndexSize;
 	};
 
 	/** Hardware buffer that hold indices that reference vertices in a vertex buffer. */
@@ -94,14 +94,14 @@ namespace bs
 		const IndexBufferProperties& GetProperties() const { return mProperties; }
 
 		/** @copydoc HardwareBuffer::readData */
-		void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
+		void ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx = 0, u32 queueIdx = 0) override;
 
 		/** @copydoc HardwareBuffer::writeData */
-		void WriteData(UINT32 offset, UINT32 length, const void* source,
-			BufferWriteType writeFlags = BWT_NORMAL, UINT32 queueIdx = 0) override;
+		void WriteData(u32 offset, u32 length, const void* source,
+			BufferWriteType writeFlags = BWT_NORMAL, u32 queueIdx = 0) override;
 
 		/** @copydoc HardwareBuffer::copyData */
-		void CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
+		void CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length,
 			bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/**
@@ -120,7 +120,7 @@ namespace bs
 		*								can happen if the buffer hasn't been created with GBU_LOADSTORE usage or if the
 		*								element size doesn't divide the current buffer size.
 		*/
-		SPtr<GpuBuffer> GetLoadStore(GpuBufferType type, GpuBufferFormat format, UINT32 elementSize = 0);
+		SPtr<GpuBuffer> GetLoadStore(GpuBufferType type, GpuBufferFormat format, u32 elementSize = 0);
 
 		/** @copydoc HardwareBufferManager::createIndexBuffer */
 		static SPtr<IndexBuffer> Create(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
@@ -129,7 +129,7 @@ namespace bs
 		friend class HardwareBufferManager;
 
 		/** @copydoc HardwareBuffer::map */
-		void* Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx) override;
+		void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx) override;
 
 		/** @copydoc HardwareBuffer::unmap */
 		void Unmap() override;

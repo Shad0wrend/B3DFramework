@@ -27,7 +27,7 @@ namespace bs
 		 * @param[in]	stringTableId	Unique identifier of the string table to retrieve the string from.
 		 */
 		BS_SCRIPT_EXPORT()
-		explicit HString(const String& identifier, UINT32 stringTableId = 0);
+		explicit HString(const String& identifier, u32 stringTableId = 0);
 
 		/**
 		 * Creates a new localized string with the specified identifier and sets the default language version of the
@@ -39,7 +39,7 @@ namespace bs
 		 * @param[in]	stringTableId	Unique identifier of the string table to retrieve the string from.
 		 */
 		BS_SCRIPT_EXPORT()
-		explicit HString(const String& identifier, const String& defaultString, UINT32 stringTableId = 0);
+		explicit HString(const String& identifier, const String& defaultString, u32 stringTableId = 0);
 
 		/**
 		 * Creates a new empty localized string.
@@ -47,7 +47,7 @@ namespace bs
 		 * @param[in]	stringTableId	Unique identifier of the string table to retrieve the string from.
 		 */
 		BS_SCRIPT_EXPORT()
-		HString(UINT32 stringTableId);
+		HString(u32 stringTableId);
 
 		/** Creates a new empty localized string. */
 		BS_SCRIPT_EXPORT()
@@ -70,7 +70,7 @@ namespace bs
 		 * @note	This is useful for strings that have dynamically changing values, like numbers, embedded in them.
 		 */
 		BS_SCRIPT_EXPORT()
-		void SetParameter(UINT32 idx, const String& value);
+		void SetParameter(u32 idx, const String& value);
 		
 		/** Returns an empty string. */
 		static const HString& Dummy();

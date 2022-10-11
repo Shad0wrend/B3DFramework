@@ -38,7 +38,7 @@ namespace bs { namespace ct
 
 			mFullScreenQuadVB = VertexBuffer::Create(vbDesc);
 
-			UINT32 indices[] { 0, 1, 2, 1, 3, 2 };
+			u32 indices[] { 0, 1, 2, 1, 3, 2 };
 			mFullScreenQuadIB->WriteData(0, sizeof(indices), indices, BWT_DISCARD);
 		}
 
@@ -46,14 +46,14 @@ namespace bs { namespace ct
 			SPtr<VertexDataDesc> vertexDesc = bs_shared_ptr_new<VertexDataDesc>();
 			vertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
 
-			UINT32 numVertices = 0;
-			UINT32 numIndices = 0;
+			u32 numVertices = 0;
+			u32 numIndices = 0;
 
 			ShapeMeshes3D::GetNumElementsSphere(3, numVertices, numIndices);
 			SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(numVertices, numIndices, vertexDesc);
 
-			UINT32* indexData = meshData->GetIndices32();
-			UINT8* positionData = meshData->GetElementData(VES_POSITION);
+			u32* indexData = meshData->GetIndices32();
+			u8* positionData = meshData->GetElementData(VES_POSITION);
 
 			Sphere localSphere(Vector3::ZERO, 1.0f);
 			ShapeMeshes3D::SolidSphere(localSphere, positionData, nullptr, nullptr, 0,
@@ -66,14 +66,14 @@ namespace bs { namespace ct
 			SPtr<VertexDataDesc> vertexDesc = bs_shared_ptr_new<VertexDataDesc>();
 			vertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
 
-			UINT32 numVertices = 0;
-			UINT32 numIndices = 0;
+			u32 numVertices = 0;
+			u32 numIndices = 0;
 
 			ShapeMeshes3D::GetNumElementsAaBox(numVertices, numIndices);
 			SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(numVertices, numIndices, vertexDesc);
 
-			UINT32* indexData = meshData->GetIndices32();
-			UINT8* positionData = meshData->GetElementData(VES_POSITION);
+			u32* indexData = meshData->GetIndices32();
+			u8* positionData = meshData->GetElementData(VES_POSITION);
 
 			AABox localBox(-Vector3::ONE, Vector3::ONE);
 			ShapeMeshes3D::SolidAaBox(localBox, positionData, nullptr, nullptr, 0,
@@ -83,33 +83,33 @@ namespace bs { namespace ct
 		}
 
 		{
-			UINT32 numSides = Light::LIGHT_CONE_NUM_SIDES;
-			UINT32 numSlices = Light::LIGHT_CONE_NUM_SLICES;
+			u32 numSides = Light::LIGHT_CONE_NUM_SIDES;
+			u32 numSlices = Light::LIGHT_CONE_NUM_SLICES;
 
 			SPtr<VertexDataDesc> vertexDesc = bs_shared_ptr_new<VertexDataDesc>();
 			vertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
 
-			UINT32 numVertices = numSides * numSlices * 2;
-			UINT32 numIndices = ((numSides * 2) * (numSlices - 1) * 2) * 3;
+			u32 numVertices = numSides * numSlices * 2;
+			u32 numIndices = ((numSides * 2) * (numSlices - 1) * 2) * 3;
 
 			SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(numVertices, numIndices, vertexDesc);
 
-			UINT32* indexData = meshData->GetIndices32();
-			UINT8* positionData = meshData->GetElementData(VES_POSITION);
-			UINT32 stride = vertexDesc->GetVertexStride();
+			u32* indexData = meshData->GetIndices32();
+			u8* positionData = meshData->GetElementData(VES_POSITION);
+			u32 stride = vertexDesc->GetVertexStride();
 
 			// Dummy vertex positions, actual ones generated in shader
-			for (UINT32 i = 0; i < numVertices; i++)
+			for (u32 i = 0; i < numVertices; i++)
 			{
 				memcpy(positionData, &Vector3::ZERO, sizeof(Vector3));
 				positionData += stride;
 			}
 
 			// Cone indices
-			UINT32 curIdx = 0;
-			for (UINT32 sliceIdx = 0; sliceIdx < (numSlices - 1); sliceIdx++)
+			u32 curIdx = 0;
+			for (u32 sliceIdx = 0; sliceIdx < (numSlices - 1); sliceIdx++)
 			{
-				for (UINT32 sideIdx = 0; sideIdx < numSides; sideIdx++)
+				for (u32 sideIdx = 0; sideIdx < numSides; sideIdx++)
 				{
 					indexData[curIdx++] = sliceIdx * numSides + sideIdx;
 					indexData[curIdx++] = sliceIdx * numSides + (sideIdx + 1) % numSides;
@@ -122,10 +122,10 @@ namespace bs { namespace ct
 			}
 
 			// Sphere cap indices
-			UINT32 coneOffset = numSides * numSlices;
-			for (UINT32 sliceIdx = 0; sliceIdx < (numSlices - 1); sliceIdx++)
+			u32 coneOffset = numSides * numSlices;
+			for (u32 sliceIdx = 0; sliceIdx < (numSlices - 1); sliceIdx++)
 			{
-				for (UINT32 sideIdx = 0; sideIdx < numSides; sideIdx++)
+				for (u32 sideIdx = 0; sideIdx < numSides; sideIdx++)
 				{
 					indexData[curIdx++] = coneOffset + sliceIdx * numSides + sideIdx;
 					indexData[curIdx++] = coneOffset + sliceIdx * numSides + (sideIdx + 1) % numSides;
@@ -144,14 +144,14 @@ namespace bs { namespace ct
 			SPtr<VertexDataDesc> vertexDesc = bs_shared_ptr_new<VertexDataDesc>();
 			vertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
 
-			UINT32 numVertices = 0;
-			UINT32 numIndices = 0;
+			u32 numVertices = 0;
+			u32 numIndices = 0;
 
 			ShapeMeshes3D::GetNumElementsAaBox(numVertices, numIndices);
 			SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(numVertices, numIndices, vertexDesc);
 
-			UINT32* indexData = meshData->GetIndices32();
-			UINT8* positionData = meshData->GetElementData(VES_POSITION);
+			u32* indexData = meshData->GetIndices32();
+			u8* positionData = meshData->GetElementData(VES_POSITION);
 
 			AABox localBox(-Vector3::ONE * 1500.0f, Vector3::ONE * 1500.0f);
 			ShapeMeshes3D::SolidAaBox(localBox, positionData, nullptr, nullptr, 0,
@@ -161,7 +161,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void RendererUtility::SetPass(const SPtr<Material>& material, UINT32 passIdx, UINT32 techniqueIdx)
+	void RendererUtility::SetPass(const SPtr<Material>& material, u32 passIdx, u32 techniqueIdx)
 	{
 		RenderAPI& rapi = RenderAPI::Instance();
 
@@ -170,7 +170,7 @@ namespace bs { namespace ct
 		rapi.SetStencilRef(pass->GetStencilRefValue());
 	}
 
-	void RendererUtility::SetComputePass(const SPtr<Material>& material, UINT32 passIdx)
+	void RendererUtility::SetComputePass(const SPtr<Material>& material, u32 passIdx)
 	{
 		RenderAPI& rapi = RenderAPI::Instance();
 
@@ -178,7 +178,7 @@ namespace bs { namespace ct
 		rapi.SetComputePipeline(pass->GetComputePipelineState());
 	}
 
-	void RendererUtility::SetPassParams(const SPtr<GpuParamsSet>& params, UINT32 passIdx)
+	void RendererUtility::SetPassParams(const SPtr<GpuParamsSet>& params, u32 passIdx)
 	{
 		SPtr<GpuParams> gpuParams = params->GetGpuParams(passIdx);
 		if (gpuParams == nullptr)
@@ -188,12 +188,12 @@ namespace bs { namespace ct
 		rapi.SetGpuParams(gpuParams);
 	}
 
-	void RendererUtility::Draw(const SPtr<MeshBase>& mesh, UINT32 numInstances)
+	void RendererUtility::Draw(const SPtr<MeshBase>& mesh, u32 numInstances)
 	{
 		Draw(mesh, mesh->GetProperties().GetSubMesh(0), numInstances);
 	}
 
-	void RendererUtility::Draw(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, UINT32 numInstances)
+	void RendererUtility::Draw(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u32 numInstances)
 	{
 		RenderAPI& rapi = RenderAPI::Instance();
 		SPtr<VertexData> vertexData = mesh->GetVertexData();
@@ -205,8 +205,8 @@ namespace bs { namespace ct
 		{
 			SPtr<VertexBuffer> buffers[BS_MAX_BOUND_VERTEX_BUFFERS];
 
-			UINT32 endSlot = 0;
-			UINT32 startSlot = BS_MAX_BOUND_VERTEX_BUFFERS;
+			u32 endSlot = 0;
+			u32 startSlot = BS_MAX_BOUND_VERTEX_BUFFERS;
 			for (auto iter = vertexBuffers.begin(); iter != vertexBuffers.end(); ++iter)
 			{
 				if (iter->first >= BS_MAX_BOUND_VERTEX_BUFFERS)
@@ -229,7 +229,7 @@ namespace bs { namespace ct
 
 		rapi.SetDrawOperation(subMesh.DrawOp);
 
-		UINT32 indexCount = subMesh.IndexCount;
+		u32 indexCount = subMesh.IndexCount;
 		rapi.DrawIndexed(subMesh.IndexOffset + mesh->GetIndexOffset(), indexCount, mesh->GetVertexOffset(),
 			vertexData->VertexCount, numInstances);
 
@@ -248,8 +248,8 @@ namespace bs { namespace ct
 		auto& meshBuffers = vertexData->GetBuffers();
 		SPtr<VertexBuffer> allBuffers[BS_MAX_BOUND_VERTEX_BUFFERS];
 
-		UINT32 endSlot = 0;
-		UINT32 startSlot = BS_MAX_BOUND_VERTEX_BUFFERS;
+		u32 endSlot = 0;
+		u32 startSlot = BS_MAX_BOUND_VERTEX_BUFFERS;
 		for (auto iter = meshBuffers.begin(); iter != meshBuffers.end(); ++iter)
 		{
 			if (iter->first >= BS_MAX_BOUND_VERTEX_BUFFERS)
@@ -273,7 +273,7 @@ namespace bs { namespace ct
 
 		rapi.SetDrawOperation(subMesh.DrawOp);
 
-		UINT32 indexCount = subMesh.IndexCount;
+		u32 indexCount = subMesh.IndexCount;
 		rapi.DrawIndexed(subMesh.IndexOffset + mesh->GetIndexOffset(), indexCount, mesh->GetVertexOffset(),
 			vertexData->VertexCount, 1);
 
@@ -297,7 +297,7 @@ namespace bs { namespace ct
 		blitMat->Execute(texture, fArea, flipUV);
 	}
 
-	void RendererUtility::DrawScreenQuad(const Rect2& uv, const Vector2I& textureSize, UINT32 numInstances, bool flipUV)
+	void RendererUtility::DrawScreenQuad(const Rect2& uv, const Vector2I& textureSize, u32 numInstances, bool flipUV)
 	{
 		// Note: Consider drawing the quad using a single large triangle for possibly better performance
 		// Note2: Consider setting quad size in shader instead of rebuilding the mesh every time
@@ -345,15 +345,15 @@ namespace bs { namespace ct
 		SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(4, 6, mFullscreenQuadVDesc);
 
 		auto vecIter = meshData->GetVec3DataIter(VES_POSITION);
-		for (UINT32 i = 0; i < 4; i++)
+		for (u32 i = 0; i < 4; i++)
 			vecIter.AddValue(vertices[i]);
 
 		auto uvIter = meshData->GetVec2DataIter(VES_TEXCOORD);
-		for (UINT32 i = 0; i < 4; i++)
+		for (u32 i = 0; i < 4; i++)
 			uvIter.AddValue(uvs[i]);
 
-		UINT32 bufferSize = meshData->GetStreamSize(0);
-		UINT8* srcVertBufferData = meshData->GetStreamData(0);
+		u32 bufferSize = meshData->GetStreamSize(0);
+		u8* srcVertBufferData = meshData->GetStreamData(0);
 
 		void* dstData = mFullScreenQuadVB->Lock(mNextQuadVBSlot * bufferSize, bufferSize, GBL_WRITE_ONLY_NO_OVERWRITE);
 		memcpy(dstData, srcVertBufferData, bufferSize);
@@ -370,7 +370,7 @@ namespace bs { namespace ct
 		mNextQuadVBSlot = (mNextQuadVBSlot + 1) % NUM_QUAD_VB_SLOTS;
 	}
 
-	void RendererUtility::Clear(UINT32 value)
+	void RendererUtility::Clear(u32 value)
 	{
 		ClearMat* clearMat = ClearMat::Get();
 		clearMat->Execute(value);
@@ -400,7 +400,7 @@ namespace bs { namespace ct
 			gRendererUtility().DrawScreenQuad(Rect2(0, 0, 1, 1), Vector2I(1, 1), 1, flipUV);
 	}
 
-	BlitMat* BlitMat::GetVariation(UINT32 msaaCount, bool isColor, bool isFiltered)
+	BlitMat* BlitMat::GetVariation(u32 msaaCount, bool isColor, bool isFiltered)
 	{
 		if (msaaCount > 1)
 		{
@@ -448,7 +448,7 @@ namespace bs { namespace ct
 		mParams->SetParamBlockBuffer("Params", mParamBuffer);
 	}
 
-	void ClearMat::Execute(UINT32 value)
+	void ClearMat::Execute(u32 value)
 	{
 		BS_RENMAT_PROFILE_BLOCK
 

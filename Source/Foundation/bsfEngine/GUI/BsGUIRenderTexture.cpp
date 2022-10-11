@@ -84,7 +84,7 @@ namespace bs
 		mDesc.Transparent = mTransparent;
 		mDesc.Color = GetTint();
 
-		mImageSprite->Update(mDesc, (UINT64)GetParentWidgetInternal());
+		mImageSprite->Update(mDesc, (u64)GetParentWidgetInternal());
 
 		// Populate GUI render elements from the sprites
 		{

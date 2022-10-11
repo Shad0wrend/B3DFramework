@@ -35,9 +35,9 @@ namespace bs { namespace ct
 		BS_PARAM_BLOCK_ENTRY(Vector2, gUVOffset)
 		BS_PARAM_BLOCK_ENTRY(Vector2, gUVScale)
 		BS_PARAM_BLOCK_ENTRY(Vector3, gAxisUp)
-		BS_PARAM_BLOCK_ENTRY(INT32, gTexSize)
+		BS_PARAM_BLOCK_ENTRY(i32, gTexSize)
 		BS_PARAM_BLOCK_ENTRY(Vector3, gAxisRight)
-		BS_PARAM_BLOCK_ENTRY(INT32, gBufferOffset)
+		BS_PARAM_BLOCK_ENTRY(i32, gBufferOffset)
 	BS_PARAM_BLOCK_END
 
 	extern ParticlesParamDef gParticlesParamDef;
@@ -78,7 +78,7 @@ namespace bs { namespace ct
 	{
 		static bool initialized = false;
 		static SmallVector<ShaderVariation::Param, 4> params({
-			ShaderVariation::Param("ORIENT", (UINT32)ORIENT),
+			ShaderVariation::Param("ORIENT", (u32)ORIENT),
 			ShaderVariation::Param("LOCK_Y", LOCK_Y),
 			ShaderVariation::Param("GPU", GPU),
 			ShaderVariation::Param("IS_3D", IS_3D),
@@ -191,7 +191,7 @@ namespace bs { namespace ct
 		ImageBasedLightingParams ImageBasedParams;
 
 		/** Number of particles to render. */
-		UINT32 NumParticles = 0;
+		u32 NumParticles = 0;
 
 		/** True if the particle should be drawn as a 3D mesh instead of a billboard. */
 		bool Is3D = false;
@@ -294,14 +294,14 @@ namespace bs { namespace ct
 		struct BillboardBuffersPerSize
 		{
 			Vector<ParticleBillboardTextures*> Buffers;
-			UINT32 NextFreeIdx = 0;
+			u32 NextFreeIdx = 0;
 		};
 
 		/** A set of created textures for mesh rendering, per size. */
 		struct MeshBuffersPerSize
 		{
 			Vector<ParticleMeshTextures*> Buffers;
-			UINT32 NextFreeIdx = 0;
+			u32 NextFreeIdx = 0;
 		};
 
 	public:
@@ -324,15 +324,15 @@ namespace bs { namespace ct
 
 	private:
 		/** Creates a new set of textures for billboard rendering, with @p size width and height. */
-		ParticleBillboardTextures* CreateNewBillboardTextures(UINT32 size);
+		ParticleBillboardTextures* CreateNewBillboardTextures(u32 size);
 
 		/** Creates a new set of textures for mesh rendering, with @p size width and height. */
-		ParticleMeshTextures* CreateNewMeshTextures(UINT32 size);
+		ParticleMeshTextures* CreateNewMeshTextures(u32 size);
 
-		UnorderedMap<UINT32, BillboardBuffersPerSize> mBillboardBufferList;
+		UnorderedMap<u32, BillboardBuffersPerSize> mBillboardBufferList;
 		PoolAlloc<sizeof(ParticleBillboardTextures), 32> mBillboardAlloc;
 
-		UnorderedMap<UINT32, MeshBuffersPerSize> mMeshBufferList;
+		UnorderedMap<u32, MeshBuffersPerSize> mMeshBufferList;
 		PoolAlloc<sizeof(ParticleMeshTextures), 32> mMeshAlloc;
 	};
 
@@ -351,7 +351,7 @@ namespace bs { namespace ct
 		ParticleTexturePool& GetTexturePool() { return mTexturePool; }
 
 		/** Draws @p count quads used for billboard rendering, using instanced drawing. */
-		void DrawBillboards(UINT32 count);
+		void DrawBillboards(u32 count);
 
 		/**
 		 * Updates the provided indices buffer so they particles are sorted from further to nearest with respect to
@@ -365,8 +365,8 @@ namespace bs { namespace ct
 		 * @param[out]	indices			Index buffer that will be sorted according to the particle distance, in descending
 		 *								order.
 		 */
-		static void SortByDistance(const Vector3& refPoint, const PixelData& positions, UINT32 numParticles,
-			UINT32 stride, Vector<UINT32>& indices);
+		static void SortByDistance(const Vector3& refPoint, const PixelData& positions, u32 numParticles,
+			u32 stride, Vector<u32>& indices);
 	private:
 		ParticleTexturePool mTexturePool;
 		Members* m;

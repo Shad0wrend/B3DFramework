@@ -22,16 +22,16 @@ namespace bs
 		/** Contains meta-data about a calculated skeleton pose. Actual data maps to the @p transforms buffer. */
 		struct PoseInfo
 		{
-			UINT64 AnimId;
-			UINT32 StartIdx;
-			UINT32 NumBones;
+			u64 AnimId;
+			u32 StartIdx;
+			u32 NumBones;
 		};
 
 		/** Contains data about a calculated morph shape. */
 		struct MorphShapeInfo
 		{
 			SPtr<MeshData> MeshData;
-			UINT32 Version;
+			u32 Version;
 		};
 
 		/** Contains meta-data about where calculated animation data is stored. */
@@ -44,7 +44,7 @@ namespace bs
 		/**
 		 * Maps animation ID to a animation information structure, which points to relevant skeletal or morph shape data.
 		 */
-		UnorderedMap<UINT64, AnimInfo> Infos;
+		UnorderedMap<u64, AnimInfo> Infos;
 
 		/** Global joint transforms for all skeletons in the scene. */
 		Vector<Matrix4> Transforms;
@@ -71,7 +71,7 @@ namespace bs
 		 *
 		 * @param[in]	fps		Number of frames per second to evaluate the animation. Default is 60.
 		 */
-		void SetUpdateRate(UINT32 fps);
+		void SetUpdateRate(u32 fps);
 
 		/**
 		 * Evaluates animations for all animated objects, and returns the evaluated skeleton bone poses and morph shape
@@ -103,10 +103,10 @@ namespace bs
 		/**
 		 * Registers a new animation and returns a unique ID for it. Must be called whenever an Animation is constructed.
 		 */
-		UINT64 RegisterAnimation(Animation* anim);
+		u64 RegisterAnimation(Animation* anim);
 
 		/** Unregisters an animation with the specified ID. Must be called before an Animation is destroyed. */
-		void UnregisterAnimation(UINT64 id);
+		void UnregisterAnimation(u64 id);
 
 		/**
 		 * Evaluates animation for a single object and writes the result in the currently active write buffer.
@@ -115,10 +115,10 @@ namespace bs
 		 * @param[in]	boneIdx		Index in the output buffer in which to write evaluated bone information. This will be
 		 *							automatically advanced by the number of written bone transforms.
 		 */
-		void EvaluateAnimation(AnimationProxy* anim, UINT32& boneIdx);
+		void EvaluateAnimation(AnimationProxy* anim, u32& boneIdx);
 
-		UINT64 mNextId = 1;
-		UnorderedMap<UINT64, Animation*> mAnimations;
+		u64 mNextId = 1;
+		UnorderedMap<u64, Animation*> mAnimations;
 		
 		float mUpdateRate = 1.0f / 60.0f;
 		float mAnimationTime = 0.0f;
@@ -134,13 +134,13 @@ namespace bs
 		Vector<ConvexVolume> mCullFrustums;
 		EvaluatedAnimationData mAnimData[CoreThread::NUM_SYNC_BUFFERS + 1];
 
-		UINT32 mPoseReadBufferIdx = 2;
-		UINT32 mPoseWriteBufferIdx = 0;
+		u32 mPoseReadBufferIdx = 2;
+		u32 mPoseWriteBufferIdx = 0;
 		
 		Signal mWorkerDoneSignal;
 		Mutex mMutex;
 
-		UINT32 mNumActiveWorkers = 0;
+		u32 mNumActiveWorkers = 0;
 		bool mSwapBuffers = false;
 	};
 

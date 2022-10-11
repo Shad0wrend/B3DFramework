@@ -194,7 +194,7 @@ namespace bs
 	struct BuiltinComponentInfo
 	{
 		const ScriptMeta* MetaData;
-		UINT32 TypeId;
+		u32 TypeId;
 		MonoClass* MonoClass;
 		std::function<ScriptComponentBase*(const HComponent&)> CreateCallback;
 	};
@@ -211,7 +211,7 @@ namespace bs
 	struct BuiltinResourceInfo
 	{
 		const ScriptMeta* MetaData;
-		UINT32 TypeId;
+		u32 TypeId;
 		MonoClass* MonoClass;
 		ScriptResourceType ResType;
 		std::function<ScriptResourceBase*(const HResource&, MonoObject*)> CreateCallback;
@@ -221,7 +221,7 @@ namespace bs
 	struct ReflectableTypeInfo
 	{
 		const ScriptMeta* MetaData;
-		UINT32 TypeId;
+		u32 TypeId;
 		MonoClass* MonoClass;
 		std::function<MonoObject*(const SPtr<IReflectable>&)> CreateCallback;
 	};

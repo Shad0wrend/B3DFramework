@@ -55,7 +55,7 @@ namespace bs
 		 * are registered in the provided resource manifest.
 		 */
 		static void ImportFont(const Path& inputFile, const String& outputName, const Path& outputFolder,
-			const Vector<UINT32>& fontSizes, bool antialiasing, const UUID& UUID, const SPtr<ResourceManifest>& manifest);
+			const Vector<u32>& fontSizes, bool antialiasing, const UUID& UUID, const SPtr<ResourceManifest>& manifest);
 
 		/**
 		 * Iterates over all the provided entries and generates a list of flags that determine should the asset be imported
@@ -107,7 +107,7 @@ namespace bs
 		 * Timestamp file must have been saved using writeTimestamp(). Returns 0 if no changes, 1 if timestamp is out date,
 		 * or 2 if timestamp doesn't exist. @p lastUpdateTime will contain the time stored in the timestamp, if it exist.
 		 */
-		static UINT32 CheckForModifications(const Path& folder, const Path& timeStampFile, time_t& lastUpdateTime);
+		static u32 CheckForModifications(const Path& folder, const Path& timeStampFile, time_t& lastUpdateTime);
 
 		/** Checks if the shader compiled properly and reports the problem if it hasn't. Returns true if shader is valid. */
 		static bool VerifyAndReportShader(const HShader& shader);

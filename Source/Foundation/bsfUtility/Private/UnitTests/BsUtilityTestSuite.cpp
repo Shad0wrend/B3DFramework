@@ -31,20 +31,20 @@ namespace bs
 		enum { MaxElementsPerNode = 16 };
 		enum { MaxDepth = 12};
 
-		static simd::AABox getBounds(UINT32 elem, void* context)
+		static simd::AABox getBounds(u32 elem, void* context)
 		{
 			DebugOctreeData* octreeData = (DebugOctreeData*)context;
 			return simd::AABox(octreeData->elements[elem].box);
 		}
 
-		static void setElementId(UINT32 elem, const OctreeElementId& id, void* context)
+		static void setElementId(u32 elem, const OctreeElementId& id, void* context)
 		{
 			DebugOctreeData* octreeData = (DebugOctreeData*)context;
 			octreeData->elements[elem].octreeId = id;
 		}
 	};
 
-	typedef Octree<UINT32, DebugOctreeOptions> DebugOctree;
+	typedef Octree<u32, DebugOctreeOptions> DebugOctree;
 
 	struct DebugQuadtreeElem
 	{
@@ -64,20 +64,20 @@ namespace bs
 		enum { MaxElementsPerNode = 8 };
 		enum { MaxDepth = 6 };
 
-		static simd::Rect2 getBounds(UINT32 elem, void* context)
+		static simd::Rect2 getBounds(u32 elem, void* context)
 		{
 			DebugQuadtreeData* quadtreeData = (DebugQuadtreeData*)context;
 			return simd::Rect2(quadtreeData->elements[elem].box);
 		}
 
-		static void setElementId(UINT32 elem, const QuadtreeElementId& id, void* context)
+		static void setElementId(u32 elem, const QuadtreeElementId& id, void* context)
 		{
 			DebugQuadtreeData* quadtreeData = (DebugQuadtreeData*)context;
 			quadtreeData->elements[elem].quadtreeId = id;
 		}
 	};
 
-	typedef Quadtree<UINT32, DebugQuadtreeOptions> DebugQuadtree;
+	typedef Quadtree<u32, DebugQuadtreeOptions> DebugQuadtree;
 	void UtilityTestSuite::StartUp()
 	{
 		SPtr<TestSuite> fileSystemTests = create<FileSystemTestSuite>();
@@ -103,20 +103,20 @@ namespace bs
 
 	void UtilityTestSuite::testBitfield()
 	{
-		static constexpr UINT32 COUNT = 100;
-		static constexpr UINT32 EXTRA_COUNT = 32;
+		static constexpr u32 COUNT = 100;
+		static constexpr u32 EXTRA_COUNT = 32;
 
 		Bitfield bitfield(true, COUNT);
 
 		// Basic iteration
-		UINT32 i = 0;
+		u32 i = 0;
 		for (auto iter : bitfield)
 		{
 			BS_TEST_ASSERT(iter == true)
 				i++;
 		}
 
-		UINT32 curCount = COUNT;
+		u32 curCount = COUNT;
 		BS_TEST_ASSERT(i == curCount);
 
 		// Dynamic additon
@@ -152,7 +152,7 @@ namespace bs
 		bitfield[5] = false;
 		bitfield[6] = false;
 
-		for (UINT32 j = 50; j < 70; j++)
+		for (u32 j = 50; j < 70; j++)
 			BS_TEST_ASSERT(bitfield[j] == false);
 
 		BS_TEST_ASSERT(bitfield[5] == false);
@@ -163,7 +163,7 @@ namespace bs
 		bitfield.remove(10);
 		curCount -= 2;
 
-		for (UINT32 j = 48; j < 68; j++)
+		for (u32 j = 48; j < 68; j++)
 			BS_TEST_ASSERT(bitfield[j] == false);
 
 		BS_TEST_ASSERT(bitfield[5] == false);
@@ -185,7 +185,7 @@ namespace bs
 		{
 			float sizeMin;
 			float sizeMax;
-			UINT32 count;
+			u32 count;
 		};
 
 		SizeAndCount types[]
@@ -198,9 +198,9 @@ namespace bs
 		};
 
 		float placementExtents = 750.0f;
-		for(UINT32 i = 0; i < sizeof(types)/sizeof(types[0]); i++)
+		for(u32 i = 0; i < sizeof(types)/sizeof(types[0]); i++)
 		{
-			for (UINT32 j = 0; j < types[i].count; j++)
+			for (u32 j = 0; j < types[i].count; j++)
 			{
 				Vector3 position(
 					((rand() / (float)RAND_MAX) * 2.0f - 1.0f) * placementExtents,
@@ -217,7 +217,7 @@ namespace bs
 				DebugOctreeElem elem;
 				elem.box = AABox(position - extents, position + extents);
 
-				UINT32 elemIdx = (UINT32)octreeData.elements.size();
+				u32 elemIdx = (u32)octreeData.elements.size();
 				octreeData.elements.push_back(elem);
 				octree.AddElement(elemIdx);
 			}
@@ -229,9 +229,9 @@ namespace bs
 		manualElems[2].box = AABox(Vector3(90.0f, 90.0f, 90.f), Vector3(105.0f, 105.0f, 110.0f));
 
 		
-		for(UINT32 i = 0; i < 3; i++)
+		for(u32 i = 0; i < 3; i++)
 		{
-			UINT32 elemIdx = (UINT32)octreeData.elements.size();
+			u32 elemIdx = (u32)octreeData.elements.size();
 			octreeData.elements.push_back(manualElems[i]);
 			octree.AddElement(elemIdx);
 		}
@@ -239,10 +239,10 @@ namespace bs
 		AABox queryBounds = manualElems[0].box;
 		DebugOctree::BoxIntersectIterator interIter(octree, queryBounds);
 
-		Vector<UINT32> overlapElements;
+		Vector<u32> overlapElements;
 		while(interIter.moveNext())
 		{
-			UINT32 element = interIter.getElement();
+			u32 element = interIter.getElement();
 			overlapElements.push_back(element);
 
 			// Manually check for intersections
@@ -250,7 +250,7 @@ namespace bs
 		}
 
 		// Ensure that all we have found all possible overlaps by manually testing all elements
-		UINT32 elemIdx = 0;
+		u32 elemIdx = 0;
 		for(auto& entry : octreeData.elements)
 		{
 			if(entry.box.intersects(queryBounds))
@@ -598,7 +598,7 @@ namespace bs
 		{
 			float sizeMin;
 			float sizeMax;
-			UINT32 count;
+			u32 count;
 		};
 
 		SizeAndCount types[]
@@ -611,9 +611,9 @@ namespace bs
 		};
 
 		float placementExtents = 750.0f;
-		for (UINT32 i = 0; i < sizeof(types) / sizeof(types[0]); i++)
+		for (u32 i = 0; i < sizeof(types) / sizeof(types[0]); i++)
 		{
-			for (UINT32 j = 0; j < types[i].count; j++)
+			for (u32 j = 0; j < types[i].count; j++)
 			{
 				Vector2 position(
 					((rand() / (float)RAND_MAX) * 2.0f - 1.0f) * placementExtents,
@@ -628,7 +628,7 @@ namespace bs
 				DebugQuadtreeElem elem;
 				elem.box = Rect2(position - extents, extents);
 
-				UINT32 elemIdx = (UINT32)quadtreeData.elements.size();
+				u32 elemIdx = (u32)quadtreeData.elements.size();
 				quadtreeData.elements.push_back(elem);
 				quadtree.AddElement(elemIdx);
 			}
@@ -640,9 +640,9 @@ namespace bs
 		manualElems[2].box = Rect2(Vector2(90.0f, 90.0f), Vector2(105.0f, 105.0f));
 
 
-		for (UINT32 i = 0; i < 3; i++)
+		for (u32 i = 0; i < 3; i++)
 		{
-			UINT32 elemIdx = (UINT32)quadtreeData.elements.size();
+			u32 elemIdx = (u32)quadtreeData.elements.size();
 			quadtreeData.elements.push_back(manualElems[i]);
 			quadtree.AddElement(elemIdx);
 		}
@@ -650,10 +650,10 @@ namespace bs
 		Rect2 queryBounds = manualElems[0].box;
 		DebugQuadtree::BoxIntersectIterator interIter(quadtree, queryBounds);
 
-		Vector<UINT32> overlapElements;
+		Vector<u32> overlapElements;
 		while (interIter.moveNext())
 		{
-			UINT32 element = interIter.getElement();
+			u32 element = interIter.getElement();
 			overlapElements.push_back(element);
 
 			// Manually check for intersections
@@ -661,7 +661,7 @@ namespace bs
 		}
 
 		// Ensure that all we have found all possible overlaps by manually testing all elements
-		UINT32 elemIdx = 0;
+		u32 elemIdx = 0;
 		for (auto& entry : quadtreeData.elements)
 		{
 			if (entry.box.overlaps(queryBounds))
@@ -680,20 +680,20 @@ namespace bs
 
 	void UtilityTestSuite::testVarInt()
 	{
-		UINT32 u0 = 0;
-		UINT32 u1 = 127;
-		UINT32 u2 = 255;
-		UINT32 u3 = 123456;
+		u32 u0 = 0;
+		u32 u1 = 127;
+		u32 u2 = 255;
+		u32 u3 = 123456;
 
-		INT32 i0 = 0;
-		INT32 i1 = 127;
-		INT32 i2 = -1;
-		INT32 i3 = -123456;
-		INT32 i4 = 123456;
+		i32 i0 = 0;
+		i32 i1 = 127;
+		i32 i2 = -1;
+		i32 i3 = -123456;
+		i32 i4 = 123456;
 
-		UINT8 output[50];
+		u8 output[50];
 
-		UINT32 writeIdx = Bitwise::encodeVarInt(u0, output);
+		u32 writeIdx = Bitwise::encodeVarInt(u0, output);
 		BS_TEST_ASSERT(writeIdx == 1);
 
 		writeIdx += Bitwise::encodeVarInt(u1, output + writeIdx);
@@ -710,8 +710,8 @@ namespace bs
 		writeIdx += Bitwise::encodeVarInt(i3, output + writeIdx);
 		writeIdx += Bitwise::encodeVarInt(i4, output + writeIdx);
 
-		UINT32 readIdx = 0;
-		UINT32 uv;
+		u32 readIdx = 0;
+		u32 uv;
 		readIdx += Bitwise::decodeVarInt(uv, output + readIdx, writeIdx - readIdx);
 		BS_TEST_ASSERT(uv == u0);
 		BS_TEST_ASSERT(writeIdx > readIdx);
@@ -728,7 +728,7 @@ namespace bs
 		BS_TEST_ASSERT(uv == u3);
 		BS_TEST_ASSERT(writeIdx > readIdx);
 
-		INT32 iv;
+		i32 iv;
 		readIdx += Bitwise::decodeVarInt(iv, output + readIdx, writeIdx - readIdx);
 		BS_TEST_ASSERT(iv == i0);
 		BS_TEST_ASSERT(writeIdx > readIdx);

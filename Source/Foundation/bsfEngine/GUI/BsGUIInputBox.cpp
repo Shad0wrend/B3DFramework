@@ -117,10 +117,10 @@ namespace bs
 		if(SpriteTexture::CheckIsLoaded(activeTex))
 			mImageDesc.Texture = activeTex;
 
-		mImageSprite->Update(mImageDesc, (UINT64)GetParentWidgetInternal());
+		mImageSprite->Update(mImageDesc, (u64)GetParentWidgetInternal());
 
 		TEXT_SPRITE_DESC textDesc = GetTextDesc();
-		mTextSprite->Update(textDesc, (UINT64)GetParentWidgetInternal());
+		mTextSprite->Update(textDesc, (u64)GetParentWidgetInternal());
 
 		ImageSprite* caretSprite = nullptr;
 		if(mCaretShown && gGUIManager().GetCaretBlinkState())
@@ -152,7 +152,7 @@ namespace bs
 				const Vector<ImageSprite*>& sprites = gGUIManager().GetInputSelectionTool()->GetSprites();
 				for (auto& entry : sprites)
 				{
-					for (UINT32 i = 0; i < entry->GetNumRenderElements(); i++)
+					for (u32 i = 0; i < entry->GetNumRenderElements(); i++)
 					{
 						mRenderElements.Add(GUIRenderElement());
 						GUIRenderElement& renderElement = mRenderElements.Back();
@@ -175,10 +175,10 @@ namespace bs
 		mClippedBounds = mImageSprite->GetBounds(offset, mLayoutData.GetLocalClipRect());
 	}
 
-	Sprite* GUIInputBox::RenderElemToSprite(UINT32 renderElemIdx, UINT32& localRenderElemIdx) const
+	Sprite* GUIInputBox::RenderElemToSprite(u32 renderElemIdx, u32& localRenderElemIdx) const
 	{
-		UINT32 oldNumElements = 0;
-		UINT32 newNumElements = oldNumElements + mTextSprite->GetNumRenderElements();
+		u32 oldNumElements = 0;
+		u32 newNumElements = oldNumElements + mTextSprite->GetNumRenderElements();
 		if(renderElemIdx < newNumElements)
 		{
 			localRenderElemIdx = renderElemIdx - oldNumElements;
@@ -226,10 +226,10 @@ namespace bs
 		return nullptr;
 	}
 
-	Vector2I GUIInputBox::RenderElemToOffset(UINT32 renderElemIdx) const
+	Vector2I GUIInputBox::RenderElemToOffset(u32 renderElemIdx) const
 	{
-		UINT32 oldNumElements = 0;
-		UINT32 newNumElements = oldNumElements + mTextSprite->GetNumRenderElements();
+		u32 oldNumElements = 0;
+		u32 newNumElements = oldNumElements + mTextSprite->GetNumRenderElements();
 		if(renderElemIdx < newNumElements)
 			return GetTextOffset();
 
@@ -250,7 +250,7 @@ namespace bs
 
 		if(mSelectionShown)
 		{
-			UINT32 spriteIdx = 0;
+			u32 spriteIdx = 0;
 			const Vector<ImageSprite*>& sprites = gGUIManager().GetInputSelectionTool()->GetSprites();
 			for(auto& selectionSprite : sprites)
 			{
@@ -267,10 +267,10 @@ namespace bs
 		return Vector2I();
 	}
 
-	Rect2I GUIInputBox::RenderElemToClipRect(UINT32 renderElemIdx) const
+	Rect2I GUIInputBox::RenderElemToClipRect(u32 renderElemIdx) const
 	{
-		UINT32 oldNumElements = 0;
-		UINT32 newNumElements = oldNumElements + mTextSprite->GetNumRenderElements();
+		u32 oldNumElements = 0;
+		u32 newNumElements = oldNumElements + mTextSprite->GetNumRenderElements();
 		if(renderElemIdx < newNumElements)
 			return GetTextClipRect();
 
@@ -293,7 +293,7 @@ namespace bs
 
 		if(mSelectionShown)
 		{
-			UINT32 spriteIdx = 0;
+			u32 spriteIdx = 0;
 			const Vector<ImageSprite*>& sprites = gGUIManager().GetInputSelectionTool()->GetSprites();
 			for(auto& selectionSprite : sprites)
 			{
@@ -312,8 +312,8 @@ namespace bs
 
 	Vector2I GUIInputBox::GetOptimalSizeInternal() const
 	{
-		UINT32 imageWidth = 0;
-		UINT32 imageHeight = 0;
+		u32 imageWidth = 0;
+		u32 imageHeight = 0;
 
 		const HSpriteTexture& activeTex = GetActiveTexture();
 		if(SpriteTexture::CheckIsLoaded(activeTex))
@@ -323,8 +323,8 @@ namespace bs
 		}
 
 		Vector2I contentSize = GUIHelper::CalcOptimalContentsSize(mText, *GetStyleInternal(), GetDimensionsInternal());
-		UINT32 contentWidth = std::max(imageWidth, (UINT32)contentSize.X);
-		UINT32 contentHeight = std::max(imageHeight, (UINT32)contentSize.Y);
+		u32 contentWidth = std::max(imageWidth, (u32)contentSize.X);
+		u32 contentHeight = std::max(imageHeight, (u32)contentSize.Y);
 
 		return Vector2I(contentWidth, contentHeight);
 	}
@@ -343,7 +343,7 @@ namespace bs
 		return textBounds;
 	}
 
-	UINT32 GUIInputBox::GetRenderElementDepthRangeInternal() const
+	u32 GUIInputBox::GetRenderElementDepthRangeInternal() const
 	{
 		return 4;
 	}
@@ -360,20 +360,20 @@ namespace bs
 	}
 
 	void GUIInputBox::FillBuffer(
-		UINT8* vertices,
-		UINT32* indices,
-		UINT32 vertexOffset,
-		UINT32 indexOffset,
+		u8* vertices,
+		u32* indices,
+		u32 vertexOffset,
+		u32 indexOffset,
 		const Vector2I& offset,
-		UINT32 maxNumVerts,
-		UINT32 maxNumIndices,
-		UINT32 renderElementIdx) const
+		u32 maxNumVerts,
+		u32 maxNumIndices,
+		u32 renderElementIdx) const
 	{
-		UINT8* uvs = vertices + sizeof(Vector2);
-		UINT32 vertexStride = sizeof(Vector2) * 2;
-		UINT32 indexStride = sizeof(UINT32);
+		u8* uvs = vertices + sizeof(Vector2);
+		u32 vertexStride = sizeof(Vector2) * 2;
+		u32 indexStride = sizeof(u32);
 
-		UINT32 localRenderElementIdx;
+		u32 localRenderElementIdx;
 		Sprite* sprite = RenderElemToSprite(renderElementIdx, localRenderElementIdx);
 		Vector2I layoutOffset = RenderElemToOffset(renderElementIdx) + offset;
 		Rect2I clipRect = RenderElemToClipRect(renderElementIdx);
@@ -480,7 +480,7 @@ namespace bs
 				{
 					mDragInProgress = true;
 
-					UINT32 caretPos = gGUIManager().GetInputCaretTool()->GetCaretPos();
+					u32 caretPos = gGUIManager().GetInputCaretTool()->GetCaretPos();
 					ShowSelection(caretPos);
 					gGUIManager().GetInputSelectionTool()->SelectionDragStart(caretPos);
 					MarkContentAsDirtyInternal();
@@ -536,13 +536,13 @@ namespace bs
 		if(mSelectionShown)
 			DeleteSelectedText(true);
 
-		UINT32 charIdx = gGUIManager().GetInputCaretTool()->GetCharIdxAtCaretPos();
+		u32 charIdx = gGUIManager().GetInputCaretTool()->GetCharIdxAtCaretPos();
 
 		bool filterOkay = true;
 		if(mFilter != nullptr)
 		{
 			String newText = mText;
-			UINT32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
+			u32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
 			String utf8chars = UTF8::FromUtF32(U32String(1, ev.GetInputChar()));
 			newText.insert(newText.begin() + byteIdx, utf8chars.begin(), utf8chars.end());
 
@@ -632,7 +632,7 @@ namespace bs
 				}
 				else
 				{
-					UINT32 charIdx = gGUIManager().GetInputCaretTool()->GetCharIdxAtCaretPos() - 1;
+					u32 charIdx = gGUIManager().GetInputCaretTool()->GetCharIdxAtCaretPos() - 1;
 
 					if(charIdx < mNumChars)
 					{
@@ -640,8 +640,8 @@ namespace bs
 						if(mFilter != nullptr)
 						{
 							String newText = mText;
-							UINT32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
-							UINT32 byteCount = UTF8::CharByteCount(mText, charIdx);
+							u32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
+							u32 byteCount = UTF8::CharByteCount(mText, charIdx);
 							newText.erase(byteIdx, byteCount);
 
 							filterOkay = mFilter(newText);
@@ -689,15 +689,15 @@ namespace bs
 				}
 				else
 				{
-					UINT32 charIdx = gGUIManager().GetInputCaretTool()->GetCharIdxAtCaretPos();
+					u32 charIdx = gGUIManager().GetInputCaretTool()->GetCharIdxAtCaretPos();
 					if(charIdx < mNumChars)
 					{
 						bool filterOkay = true;
 						if(mFilter != nullptr)
 						{
 							String newText = mText;
-							UINT32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
-							UINT32 byteCount = UTF8::CharByteCount(mText, charIdx);
+							u32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
+							u32 byteCount = UTF8::CharByteCount(mText, charIdx);
 							newText.erase(byteIdx, byteCount);
 
 							filterOkay = mFilter(newText);
@@ -734,7 +734,7 @@ namespace bs
 		{
 			if(mSelectionShown)
 			{
-				UINT32 selStart = gGUIManager().GetInputSelectionTool()->GetSelectionStart();
+				u32 selStart = gGUIManager().GetInputSelectionTool()->GetSelectionStart();
 				ClearSelection();
 
 				if (!mCaretShown)
@@ -770,7 +770,7 @@ namespace bs
 		{
 			if(mSelectionShown)
 			{
-				UINT32 selEnd = gGUIManager().GetInputSelectionTool()->GetSelectionEnd();
+				u32 selEnd = gGUIManager().GetInputSelectionTool()->GetSelectionEnd();
 				ClearSelection();
 
 				if (!mCaretShown)
@@ -867,13 +867,13 @@ namespace bs
 				if (mSelectionShown)
 					DeleteSelectedText();
 
-				UINT32 charIdx = gGUIManager().GetInputCaretTool()->GetCharIdxAtCaretPos();
+				u32 charIdx = gGUIManager().GetInputCaretTool()->GetCharIdxAtCaretPos();
 
 				bool filterOkay = true;
 				if (mFilter != nullptr)
 				{
 					String newText = mText;
-					UINT32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
+					u32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
 					newText.insert(newText.begin() + byteIdx, '\n');
 
 					filterOkay = mFilter(newText);
@@ -956,7 +956,7 @@ namespace bs
 		mCaretShown = false;
 	}
 
-	void GUIInputBox::ShowSelection(UINT32 anchorCaretPos)
+	void GUIInputBox::ShowSelection(u32 anchorCaretPos)
 	{
 		TEXT_SPRITE_DESC textDesc = GetTextDesc();
 		gGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
@@ -977,20 +977,20 @@ namespace bs
 
 		Vector2I textOffset = GetTextOffset();
 		Vector2I caretPos = gGUIManager().GetInputCaretTool()->GetCaretPosition(textOffset);
-		UINT32 caretHeight = gGUIManager().GetInputCaretTool()->GetCaretHeight();
-		UINT32 caretWidth = 1;
+		u32 caretHeight = gGUIManager().GetInputCaretTool()->GetCaretHeight();
+		u32 caretWidth = 1;
 
-		INT32 left = textOffset.X - mTextOffset.X;
+		i32 left = textOffset.X - mTextOffset.X;
 		// Include caret width here because we don't want to scroll if just the caret is outside the bounds
 		// (Possible if the text width is exactly the maximum width)
-		INT32 right = left + (INT32)textDesc.Width + caretWidth;
-		INT32 top = textOffset.Y - mTextOffset.Y;
-		INT32 bottom = top + (INT32)textDesc.Height;
+		i32 right = left + (i32)textDesc.Width + caretWidth;
+		i32 top = textOffset.Y - mTextOffset.Y;
+		i32 bottom = top + (i32)textDesc.Height;
 
 		// If caret is too high to display we don't want the offset to keep adjusting itself
-		caretHeight = std::min(caretHeight, (UINT32)(bottom - top));
-		INT32 caretRight = caretPos.X + (INT32)caretWidth;
-		INT32 caretBottom = caretPos.Y + (INT32)caretHeight;
+		caretHeight = std::min(caretHeight, (u32)(bottom - top));
+		i32 caretRight = caretPos.X + (i32)caretWidth;
+		i32 caretBottom = caretPos.Y + (i32)caretHeight;
 
 		Vector2I offset;
 		if(caretPos.X < left)
@@ -1022,8 +1022,8 @@ namespace bs
 		TEXT_SPRITE_DESC textDesc = GetTextDesc();
 
 		Vector2I newTextOffset;
-		INT32 maxScrollableWidth = std::max(0, (INT32)unclippedTextBounds.Width - (INT32)textDesc.Width);
-		INT32 maxScrollableHeight = std::max(0, (INT32)unclippedTextBounds.Height - (INT32)textDesc.Height);
+		i32 maxScrollableWidth = std::max(0, (i32)unclippedTextBounds.Width - (i32)textDesc.Width);
+		i32 maxScrollableHeight = std::max(0, (i32)unclippedTextBounds.Height - (i32)textDesc.Height);
 		newTextOffset.X = Math::Clamp(mTextOffset.X, -maxScrollableWidth, 0);
 		newTextOffset.Y = Math::Clamp(mTextOffset.Y, -maxScrollableHeight, 0);
 
@@ -1036,9 +1036,9 @@ namespace bs
 		}
 	}
 
-	void GUIInputBox::InsertString(UINT32 charIdx, const String& string)
+	void GUIInputBox::InsertString(u32 charIdx, const String& string)
 	{
-		UINT32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
+		u32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
 
 		mText.insert(mText.begin() + byteIdx, string.begin(), string.end());
 		mNumChars = UTF8::Count(mText);
@@ -1049,9 +1049,9 @@ namespace bs
 		gGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
 	}
 
-	void GUIInputBox::InsertChar(UINT32 charIdx, UINT32 charCode)
+	void GUIInputBox::InsertChar(u32 charIdx, u32 charCode)
 	{
-		UINT32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
+		u32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
 		String utf8chars = UTF8::FromUtF32(U32String(1, (char32_t)charCode));
 
 		mText.insert(mText.begin() + byteIdx, utf8chars.begin(), utf8chars.end());
@@ -1063,10 +1063,10 @@ namespace bs
 		gGUIManager().GetInputSelectionTool()->UpdateText(this, textDesc);
 	}
 
-	void GUIInputBox::EraseChar(UINT32 charIdx)
+	void GUIInputBox::EraseChar(u32 charIdx)
 	{
-		UINT32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
-		UINT32 byteCount = UTF8::CharByteCount(mText, charIdx);
+		u32 byteIdx = UTF8::CharToByteIndex(mText, charIdx);
+		u32 byteCount = UTF8::CharByteCount(mText, charIdx);
 
 		mText.erase(byteIdx, byteCount);
 		mNumChars = UTF8::Count(mText);
@@ -1079,11 +1079,11 @@ namespace bs
 
 	void GUIInputBox::DeleteSelectedText(bool internal)
 	{
-		UINT32 selStart = gGUIManager().GetInputSelectionTool()->GetSelectionStart();
-		UINT32 selEnd = gGUIManager().GetInputSelectionTool()->GetSelectionEnd();
+		u32 selStart = gGUIManager().GetInputSelectionTool()->GetSelectionStart();
+		u32 selEnd = gGUIManager().GetInputSelectionTool()->GetSelectionEnd();
 
-		UINT32 byteStart = UTF8::CharToByteIndex(mText, selStart);
-		UINT32 byteEnd = UTF8::CharToByteIndex(mText, selEnd);
+		u32 byteStart = UTF8::CharToByteIndex(mText, selStart);
+		u32 byteEnd = UTF8::CharToByteIndex(mText, selEnd);
 
 		bool filterOkay = true;
 		if (!internal && mFilter != nullptr)
@@ -1108,7 +1108,7 @@ namespace bs
 
 			if(selStart > 0)
 			{
-				UINT32 newCaretPos = selStart - 1;
+				u32 newCaretPos = selStart - 1;
 				gGUIManager().GetInputCaretTool()->MoveCaretToChar(newCaretPos, CARET_AFTER);
 			}
 			else
@@ -1127,11 +1127,11 @@ namespace bs
 
 	String GUIInputBox::GetSelectedText()
 	{
-		UINT32 selStart = gGUIManager().GetInputSelectionTool()->GetSelectionStart();
-		UINT32 selEnd = gGUIManager().GetInputSelectionTool()->GetSelectionEnd();
+		u32 selStart = gGUIManager().GetInputSelectionTool()->GetSelectionStart();
+		u32 selEnd = gGUIManager().GetInputSelectionTool()->GetSelectionEnd();
 
-		UINT32 byteStart = UTF8::CharToByteIndex(mText, selStart);
-		UINT32 byteEnd = UTF8::CharToByteIndex(mText, selEnd);
+		u32 byteStart = UTF8::CharToByteIndex(mText, selStart);
+		u32 byteEnd = UTF8::CharToByteIndex(mText, selEnd);
 
 		return mText.substr(byteStart, byteEnd - byteStart);
 	}
@@ -1243,14 +1243,14 @@ namespace bs
 		DeleteSelectedText(true);
 
 		String textInClipboard = Platform::CopyFromClipboard();
-		UINT32 charIdx = gGUIManager().GetInputCaretTool()->GetCharIdxAtCaretPos();
+		u32 charIdx = gGUIManager().GetInputCaretTool()->GetCharIdxAtCaretPos();
 
 		bool filterOkay = true;
 		if(mFilter != nullptr)
 		{
 			String newText = mText;
 
-			UINT32 byteIdx = UTF8::CharToByteIndex(newText, charIdx);
+			u32 byteIdx = UTF8::CharToByteIndex(newText, charIdx);
 			newText.insert(newText.begin() + byteIdx, textInClipboard.begin(), textInClipboard.end());
 
 			filterOkay = mFilter(newText);
@@ -1261,7 +1261,7 @@ namespace bs
 			Vector2I origSize = mDimensions.CalculateSizeRange(GetOptimalSizeInternal()).Optimal;
 			InsertString(charIdx, textInClipboard);
 
-			UINT32 numChars = UTF8::Count(textInClipboard);
+			u32 numChars = UTF8::Count(textInClipboard);
 			if(numChars > 0)
 				gGUIManager().GetInputCaretTool()->MoveCaretToChar(charIdx + (numChars - 1), CARET_AFTER);
 

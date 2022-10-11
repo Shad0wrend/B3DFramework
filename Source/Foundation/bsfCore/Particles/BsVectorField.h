@@ -20,13 +20,13 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true,n:VectorFieldOptions) VECTOR_FIELD_DESC
 	{
 		/** Number of entries in the vector field along the X axis. */
-		UINT32 CountX = 1;
+		u32 CountX = 1;
 
 		/** Number of entries in the vector field along the Y axis. */
-		UINT32 CountY = 1;
+		u32 CountY = 1;
 
 		/** Number of entries in the vector field along the Z axis. */
-		UINT32 CountZ = 1;
+		u32 CountZ = 1;
 
 		/** Spatial bounds of the vector field. */
 		AABox Bounds = AABox::BOX_EMPTY;
@@ -154,7 +154,7 @@ namespace bs
 		bool IsExtensionSupported(const String& ext) const override;
 
 		/** @copydoc SpecificImporter::isMagicNumberSupported */
-		bool IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const override;
+		bool IsMagicNumberSupported(const u8* magicNumPtr, u32 numBytes) const override;
 
 		/** @copydoc SpecificImporter::import */
 		SPtr<Resource> Import(const Path& filePath, SPtr<const ImportOptions> importOptions) ;

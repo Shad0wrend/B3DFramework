@@ -11,7 +11,7 @@ namespace bs { namespace ct
 	PerCallParamDef gPerCallParamDef;
 
 	void PerObjectBuffer::Update(SPtr<GpuParamBlockBuffer>& buffer, const Matrix4& tfrm, const Matrix4& tfrmNoScale,
-		const Matrix4& prevTfrm, UINT32 layer)
+		const Matrix4& prevTfrm, u32 layer)
 	{
 		gPerObjectParamDef.gMatWorld.Set(buffer, tfrm);
 		gPerObjectParamDef.gMatInvWorld.Set(buffer, tfrm.InverseAffine());
@@ -19,7 +19,7 @@ namespace bs { namespace ct
 		gPerObjectParamDef.gMatInvWorldNoScale.Set(buffer, tfrmNoScale.InverseAffine());
 		gPerObjectParamDef.gMatPrevWorld.Set(buffer, prevTfrm);
 		gPerObjectParamDef.gWorldDeterminantSign.Set(buffer, tfrm.Determinant3x3() >= 0.0f ? 1.0f : -1.0f);
-		gPerObjectParamDef.gLayer.Set(buffer, (INT32)layer);
+		gPerObjectParamDef.gLayer.Set(buffer, (i32)layer);
 	}
 
 	void RenderableElement::Draw() const
@@ -39,7 +39,7 @@ namespace bs { namespace ct
 	void RendererRenderable::UpdatePerObjectBuffer()
 	{
 		const Matrix4 worldNoScaleTransform = Renderable->GetMatrixNoScale();
-		const UINT32 layer = Bitwise::MostSignificantBit(Renderable->GetLayer());
+		const u32 layer = Bitwise::MostSignificantBit(Renderable->GetLayer());
 
 		PerObjectBuffer::Update(PerObjectParamBuffer, WorldTfrm, worldNoScaleTransform, PrevWorldTfrm, layer);
 	}

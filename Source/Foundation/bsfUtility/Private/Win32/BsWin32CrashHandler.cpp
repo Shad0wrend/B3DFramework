@@ -36,11 +36,11 @@ namespace bs
 	 * 							called function and following address is its caller and so on.
 	 * @return					Number of functions in the call stack.
 	 */
-	UINT32 win32_getRawStackTrace(CONTEXT context, UINT64 stackTrace[BS_MAX_STACKTRACE_DEPTH])
+	u32 win32_getRawStackTrace(CONTEXT context, u64 stackTrace[BS_MAX_STACKTRACE_DEPTH])
 	{
 		HANDLE hProcess = GetCurrentProcess();
 		HANDLE hThread = GetCurrentThread();
-		UINT32 machineType;
+		u32 machineType;
 
 		STACKFRAME64 stackFrame;
 		memset(&stackFrame, 0, sizeof(stackFrame));
@@ -63,7 +63,7 @@ namespace bs
 		machineType = IMAGE_FILE_MACHINE_I386;
 #endif
 
-		UINT32 numEntries = 0;
+		u32 numEntries = 0;
 		while (true)
 		{
 			if (!StackWalk64(machineType, hProcess, hThread, &stackFrame, &context, nullptr,
@@ -92,15 +92,15 @@ namespace bs
 	 * @param[in]	skip		Number of bottom-most call stack entries to skip.
 	 * @return					String containing the call stack with each function on its own line.
 	 */
-	String win32_getStackTrace(CONTEXT context, UINT32 skip = 0)
+	String win32_getStackTrace(CONTEXT context, u32 skip = 0)
 	{
-		UINT64 rawStackTrace[BS_MAX_STACKTRACE_DEPTH];
-		UINT32 numEntries = win32_getRawStackTrace(context, rawStackTrace);
+		u64 rawStackTrace[BS_MAX_STACKTRACE_DEPTH];
+		u32 numEntries = win32_getRawStackTrace(context, rawStackTrace);
 
-		numEntries = std::min((UINT32)BS_MAX_STACKTRACE_DEPTH, numEntries);
+		numEntries = std::min((u32)BS_MAX_STACKTRACE_DEPTH, numEntries);
 
-		UINT32 bufferSize = sizeof(PIMAGEHLP_SYMBOL64) + BS_MAX_STACKTRACE_NAME_BYTES;
-		UINT8* buffer = (UINT8*)bs_alloc(bufferSize);
+		u32 bufferSize = sizeof(PIMAGEHLP_SYMBOL64) + BS_MAX_STACKTRACE_NAME_BYTES;
+		u8* buffer = (u8*)bs_alloc(bufferSize);
 
 		PIMAGEHLP_SYMBOL64 symbol = (PIMAGEHLP_SYMBOL64)buffer;
 		symbol->SizeOfStruct = bufferSize;
@@ -109,7 +109,7 @@ namespace bs
 		HANDLE hProcess = GetCurrentProcess();
 
 		StringStream outputStream;
-		for (UINT32 i = skip; i < numEntries; i++)
+		for (u32 i = skip; i < numEntries; i++)
 		{
 			if (i > skip)
 				outputStream << std::endl;
@@ -133,7 +133,7 @@ namespace bs
 				Path filePath = lineData.FileName;
 
 				outputStream << StringUtil::Format("0x{0} File[{1}:{2} ({3})]", addressString,
-					filePath.GetFilename(), (UINT32)lineData.LineNumber, (UINT32)column);
+					filePath.GetFilename(), (u32)lineData.LineNumber, (u32)column);
 			}
 			else
 			{
@@ -205,7 +205,7 @@ namespace bs
 			return;
 
 		HANDLE hProcess = GetCurrentProcess();
-		UINT32 options = SymGetOptions();
+		u32 options = SymGetOptions();
 
 		options |= SYMOPT_LOAD_LINES;
 		options |= SYMOPT_EXACT_SYMBOLS;
@@ -216,7 +216,7 @@ namespace bs
 		SymSetOptions(options);
 		if(!SymInitialize(hProcess, nullptr, false))
 		{
-			BS_LOG(Error, Generic, "SymInitialize failed. Error code: {0}", + (UINT32)GetLastError());
+			BS_LOG(Error, Generic, "SymInitialize failed. Error code: {0}", + (u32)GetLastError());
 			return;
 		}
 
@@ -226,8 +226,8 @@ namespace bs
 		HMODULE* modules = (HMODULE*)bs_alloc(bufferSize);
 		gEnumProcessModules(hProcess, modules, bufferSize, &bufferSize);
 
-		UINT32 numModules = bufferSize / sizeof(HMODULE);
-		for (UINT32 i = 0; i < numModules; i++)
+		u32 numModules = bufferSize / sizeof(HMODULE);
+		for (u32 i = 0; i < numModules; i++)
 		{
 			MODULEINFO moduleInfo;
 
@@ -257,7 +257,7 @@ namespace bs
 				if(!SymGetModuleInfo64(GetCurrentProcess(), moduleAddress, &imageInfo))
 				{
 					BS_LOG(Warning, Platform, "Failed retrieving module info for module: {0}. Error code: {1}",
-						moduleName, (UINT32)GetLastError());
+						moduleName, (u32)GetLastError());
 				}
 				else
 				{
@@ -271,7 +271,7 @@ namespace bs
 			else
 			{
 				BS_LOG(Warning, Platform, "Failed loading module {0}.Error code: {1}. Search path: {2}. Image name: {3}",
-					moduleName, (UINT32)GetLastError(), pdbSearchPath, imageName);
+					moduleName, (u32)GetLastError(), pdbSearchPath, imageName);
 			}
 		}
 
@@ -282,7 +282,7 @@ namespace bs
 	/**	Converts an exception record into a human readable error message. */
 	String win32_getExceptionMessage(EXCEPTION_RECORD* record)
 	{
-		String exceptionAddress = toString((UINT64)record->ExceptionAddress, 0, ' ', std::ios::hex);
+		String exceptionAddress = toString((u64)record->ExceptionAddress, 0, ' ', std::ios::hex);
 
 		String format;
 		switch (record->ExceptionCode)
@@ -304,7 +304,7 @@ namespace bs
 				else
 					format = "Unhandled exception at 0x{0}. Access violation.";
 
-				String violatedAddressStr = toString((UINT64)violatedAddress, 0, ' ', std::ios::hex);
+				String violatedAddressStr = toString((u64)violatedAddress, 0, ' ', std::ios::hex);
 				return StringUtil::Format(format, exceptionAddress, violatedAddressStr);
 			}
 		case EXCEPTION_IN_PAGE_ERROR:
@@ -326,8 +326,8 @@ namespace bs
 			else
 				format = "Unhandled exception at 0x{0}. Page fault.";
 
-			String violatedAddressStr = toString((UINT64)violatedAddress, 0, ' ', std::ios::hex);
-			String codeStr = toString((UINT64)code, 0, ' ', std::ios::hex);
+			String violatedAddressStr = toString((u64)violatedAddress, 0, ' ', std::ios::hex);
+			String codeStr = toString((u64)code, 0, ' ', std::ios::hex);
 			return StringUtil::Format(format, exceptionAddress, violatedAddressStr, codeStr);
 		}
 		case STATUS_ARRAY_BOUNDS_EXCEEDED:
@@ -399,7 +399,7 @@ namespace bs
 		{
 			format = "Unhandled exception at 0x{0}. Code 0x{1}.";
 
-			String exceptionCode = toString((UINT32)record->ExceptionCode, 0, ' ', std::ios::hex);
+			String exceptionCode = toString((u32)record->ExceptionCode, 0, ' ', std::ios::hex);
 			return StringUtil::Format(format, exceptionAddress, exceptionCode);
 		}
 		}
@@ -466,7 +466,7 @@ namespace bs
 
 	}
 	void CrashHandler::ReportCrash(const String& type, const String& description, const String& function,
-		const String& file, UINT32 line) const
+		const String& file, u32 line) const
 	{
 		if(mSettings.OnBeforeReportCrash)
 		{

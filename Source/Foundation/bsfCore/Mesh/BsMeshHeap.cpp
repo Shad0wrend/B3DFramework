@@ -13,13 +13,13 @@
 
 namespace bs
 {
-	MeshHeap::MeshHeap(UINT32 numVertices, UINT32 numIndices,
+	MeshHeap::MeshHeap(u32 numVertices, u32 numIndices,
 		const SPtr<VertexDataDesc>& vertexDesc, IndexType indexType)
 		:mNumVertices(numVertices), mNumIndices(numIndices), mVertexDesc(vertexDesc), mIndexType(indexType), mNextFreeId(0)
 	{
 	}
 
-	SPtr<MeshHeap> MeshHeap::Create(UINT32 numVertices, UINT32 numIndices, const SPtr<VertexDataDesc>& vertexDesc,
+	SPtr<MeshHeap> MeshHeap::Create(u32 numVertices, u32 numIndices, const SPtr<VertexDataDesc>& vertexDesc,
 		IndexType indexType)
 	{
 		MeshHeap* meshHeap = new (bs_alloc<MeshHeap>()) MeshHeap(numVertices, numIndices, vertexDesc, indexType);
@@ -33,7 +33,7 @@ namespace bs
 
 	SPtr<TransientMesh> MeshHeap::Alloc(const SPtr<MeshData>& meshData, DrawOperationType drawOp)
 	{
-		UINT32 meshIdx = mNextFreeId++;
+		u32 meshIdx = mNextFreeId++;
 
 		SPtr<MeshHeap> thisPtr = std::static_pointer_cast<MeshHeap>(GetThisPtr());
 		TransientMesh* transientMesh = new (bs_alloc<TransientMesh>()) TransientMesh(thisPtr, meshIdx,
@@ -82,12 +82,12 @@ namespace bs
 	{
 	const float MeshHeap::GrowPercent = 1.5f;
 
-	MeshHeap::MeshHeap(UINT32 numVertices, UINT32 numIndices,
+	MeshHeap::MeshHeap(u32 numVertices, u32 numIndices,
 		const SPtr<VertexDataDesc>& vertexDesc, IndexType indexType, GpuDeviceFlags deviceMask)
 		: mNumVertices(numVertices), mNumIndices(numIndices), mCPUIndexData(nullptr), mVertexDesc(vertexDesc)
 		, mIndexType(indexType), mDeviceMask(deviceMask), mNextQueryId(0)
 	{
-		for (UINT32 i = 0; i <= mVertexDesc->GetMaxStreamIdx(); i++)
+		for (u32 i = 0; i <= mVertexDesc->GetMaxStreamIdx(); i++)
 		{
 			mCPUVertexData.push_back(nullptr);
 		}
@@ -121,12 +121,12 @@ namespace bs
 	void MeshHeap::Alloc(SPtr<TransientMesh> mesh, const SPtr<MeshData>& meshData)
 	{
 		// Find free vertex chunk and grow if needed
-		UINT32 smallestVertFit = 0;
-		UINT32 smallestVertFitIdx = 0;
+		u32 smallestVertFit = 0;
+		u32 smallestVertFitIdx = 0;
 
 		while (smallestVertFit == 0)
 		{
-			UINT32 curIdx = 0;
+			u32 curIdx = 0;
 			for (auto& chunkIdx : mFreeVertChunks)
 			{
 				ChunkData& chunk = mVertChunks[chunkIdx];
@@ -143,7 +143,7 @@ namespace bs
 			if (smallestVertFit > 0)
 				break;
 
-			UINT32 newNumVertices = mNumVertices;
+			u32 newNumVertices = mNumVertices;
 			while (newNumVertices < (mNumVertices + meshData->GetNumVertices()))
 			{
 				newNumVertices = Math::RoundToInt(newNumVertices * GrowPercent);
@@ -153,12 +153,12 @@ namespace bs
 		}
 
 		// Find free index chunk and grow if needed
-		UINT32 smallestIdxFit = 0;
-		UINT32 smallestIdxFitIdx = 0;
+		u32 smallestIdxFit = 0;
+		u32 smallestIdxFitIdx = 0;
 
 		while (smallestIdxFit == 0)
 		{
-			UINT32 curIdx = 0;
+			u32 curIdx = 0;
 			for (auto& chunkIdx : mFreeIdxChunks)
 			{
 				ChunkData& chunk = mIdxChunks[chunkIdx];
@@ -175,7 +175,7 @@ namespace bs
 			if (smallestIdxFit > 0)
 				break;
 
-			UINT32 newNumIndices = mNumIndices;
+			u32 newNumIndices = mNumIndices;
 			while (newNumIndices < (mNumIndices + meshData->GetNumIndices()))
 			{
 				newNumIndices = Math::RoundToInt(newNumIndices * GrowPercent);
@@ -184,12 +184,12 @@ namespace bs
 			GrowIndexBuffer(newNumIndices);
 		}
 
-		UINT32 freeVertChunkIdx = 0;
-		UINT32 freeIdxChunkIdx = 0;
+		u32 freeVertChunkIdx = 0;
+		u32 freeIdxChunkIdx = 0;
 
 		auto freeVertIter = mFreeVertChunks.begin();
 		freeVertChunkIdx = (*freeVertIter);
-		for (UINT32 i = 0; i < smallestVertFitIdx; i++)
+		for (u32 i = 0; i < smallestVertFitIdx; i++)
 		{
 			freeVertIter++;
 			freeVertChunkIdx = (*freeVertIter);
@@ -199,7 +199,7 @@ namespace bs
 
 		auto freeIdxIter = mFreeIdxChunks.begin();
 		freeIdxChunkIdx = (*freeIdxIter);
-		for (UINT32 i = 0; i < smallestIdxFitIdx; i++)
+		for (u32 i = 0; i < smallestIdxFitIdx; i++)
 		{
 			freeIdxIter++;
 			freeIdxChunkIdx = (*freeIdxIter);
@@ -210,11 +210,11 @@ namespace bs
 		ChunkData& vertChunk = mVertChunks[freeVertChunkIdx];
 		ChunkData& idxChunk = mIdxChunks[freeIdxChunkIdx];
 
-		UINT32 vertChunkStart = vertChunk.Start;
-		UINT32 idxChunkStart = idxChunk.Start;
+		u32 vertChunkStart = vertChunk.Start;
+		u32 idxChunkStart = idxChunk.Start;
 
-		UINT32 remainingNumVerts = vertChunk.Size - meshData->GetNumVertices();
-		UINT32 remainingNumIdx = idxChunk.Size - meshData->GetNumIndices();
+		u32 remainingNumVerts = vertChunk.Size - meshData->GetNumVertices();
+		u32 remainingNumIdx = idxChunk.Size - meshData->GetNumIndices();
 
 		vertChunk.Size = meshData->GetNumVertices();
 		idxChunk.Size = meshData->GetNumIndices();
@@ -223,7 +223,7 @@ namespace bs
 		{
 			if (!mEmptyVertChunks.empty())
 			{
-				UINT32 emptyChunkIdx = mEmptyVertChunks.top();
+				u32 emptyChunkIdx = mEmptyVertChunks.top();
 				ChunkData& emptyChunk = mVertChunks[emptyChunkIdx];
 				mEmptyVertChunks.pop();
 
@@ -237,7 +237,7 @@ namespace bs
 				newChunk.Start = vertChunkStart + meshData->GetNumVertices();
 
 				mVertChunks.push_back(newChunk);
-				mFreeVertChunks.push_back((UINT32)(mVertChunks.size() - 1));
+				mFreeVertChunks.push_back((u32)(mVertChunks.size() - 1));
 			}
 		}
 
@@ -245,7 +245,7 @@ namespace bs
 		{
 			if (!mEmptyIdxChunks.empty())
 			{
-				UINT32 emptyChunkIdx = mEmptyIdxChunks.top();
+				u32 emptyChunkIdx = mEmptyIdxChunks.top();
 				ChunkData& emptyChunk = mIdxChunks[emptyChunkIdx];
 				mEmptyIdxChunks.pop();
 
@@ -259,7 +259,7 @@ namespace bs
 				newChunk.Start = idxChunkStart + meshData->GetNumIndices();
 
 				mIdxChunks.push_back(newChunk);
-				mFreeIdxChunks.push_back((UINT32)(mIdxChunks.size() - 1));
+				mFreeIdxChunks.push_back((u32)(mIdxChunks.size() - 1));
 			}
 		}
 
@@ -273,7 +273,7 @@ namespace bs
 		mMeshAllocData[mesh->GetMeshHeapId()] = newAllocData;
 
 		// Actually copy data
-		for (UINT32 i = 0; i <= mVertexDesc->GetMaxStreamIdx(); i++)
+		for (u32 i = 0; i <= mVertexDesc->GetMaxStreamIdx(); i++)
 		{
 			if (!mVertexDesc->HasStream(i))
 				continue;
@@ -282,8 +282,8 @@ namespace bs
 				continue;
 
 			// Ensure vertex sizes match
-			UINT32 vertSize = mVertexData->VertexDeclaration->GetProperties().GetVertexSize(i);
-			UINT32 otherVertSize = meshData->GetVertexDesc()->GetVertexStride(i);
+			u32 vertSize = mVertexData->VertexDeclaration->GetProperties().GetVertexSize(i);
+			u32 otherVertSize = meshData->GetVertexDesc()->GetVertexStride(i);
 			if (otherVertSize != vertSize)
 			{
 				BS_EXCEPT(InvalidParametersException, "Provided vertex size for stream " + toString(i) + " doesn't match meshes vertex size. Needed: " +
@@ -292,7 +292,7 @@ namespace bs
 
 			SPtr<VertexBuffer> vertexBuffer = mVertexData->GetBuffer(i);
 
-			UINT8* vertDest = mCPUVertexData[i] + vertChunkStart * vertSize;
+			u8* vertDest = mCPUVertexData[i] + vertChunkStart * vertSize;
 			memcpy(vertDest, meshData->GetStreamData(i), meshData->GetNumVertices() * vertSize);
 
 			vertexBuffer->WriteData(vertChunkStart * vertSize, meshData->GetNumVertices() * vertSize, vertDest, BTW_NO_OVERWRITE);
@@ -300,7 +300,7 @@ namespace bs
 
 		const IndexBufferProperties& ibProps = mIndexBuffer->GetProperties();
 
-		UINT32 idxSize = ibProps.GetIndexSize();
+		u32 idxSize = ibProps.GetIndexSize();
 
 		// Ensure index sizes match
 		if (meshData->GetIndexElementSize() != idxSize)
@@ -309,7 +309,7 @@ namespace bs
 				toString(idxSize) + ". Got: " + toString(meshData->GetIndexElementSize()));
 		}
 
-		UINT8* idxDest = mCPUIndexData + idxChunkStart * idxSize;
+		u8* idxDest = mCPUIndexData + idxChunkStart * idxSize;
 		memcpy(idxDest, meshData->GetIndexData(), meshData->GetNumIndices() * idxSize);
 		mIndexBuffer->WriteData(idxChunkStart * idxSize, meshData->GetNumIndices() * idxSize, idxDest, BTW_NO_OVERWRITE);
 	}
@@ -336,7 +336,7 @@ namespace bs
 			allocData.UseFlags = UseFlags::CPUFree;
 	}
 
-	void MeshHeap::GrowVertexBuffer(UINT32 numVertices)
+	void MeshHeap::GrowVertexBuffer(u32 numVertices)
 	{
 		mNumVertices = numVertices;
 		mVertexData = SPtr<VertexData>(bs_new<VertexData>());
@@ -345,12 +345,12 @@ namespace bs
 		mVertexData->VertexDeclaration = VertexDeclaration::Create(mVertexDesc, mDeviceMask);
 
 		// Create buffers and copy data
-		for (UINT32 i = 0; i <= mVertexDesc->GetMaxStreamIdx(); i++)
+		for (u32 i = 0; i <= mVertexDesc->GetMaxStreamIdx(); i++)
 		{
 			if (!mVertexDesc->HasStream(i))
 				continue;
 
-			UINT32 vertSize = mVertexData->VertexDeclaration->GetProperties().GetVertexSize(i);
+			u32 vertSize = mVertexData->VertexDeclaration->GetProperties().GetVertexSize(i);
 
 			VERTEX_BUFFER_DESC desc;
 			desc.VertexSize = vertSize;
@@ -361,17 +361,17 @@ namespace bs
 			mVertexData->SetBuffer(i, vertexBuffer);
 
 			// Copy all data to the new buffer
-			UINT8* oldBuffer = mCPUVertexData[i];
-			UINT8* buffer = (UINT8*)bs_alloc(vertSize * numVertices);
+			u8* oldBuffer = mCPUVertexData[i];
+			u8* buffer = (u8*)bs_alloc(vertSize * numVertices);
 
-			UINT32 destOffset = 0;
+			u32 destOffset = 0;
 			if (oldBuffer != nullptr)
 			{
 				for (auto& allocData : mMeshAllocData)
 				{
 					ChunkData& oldChunk = mVertChunks[allocData.second.VertChunkIdx];
 
-					UINT8* oldData = oldBuffer + oldChunk.Start * vertSize;
+					u8* oldData = oldBuffer + oldChunk.Start * vertSize;
 					memcpy(buffer + destOffset * vertSize, oldData, oldChunk.Size * vertSize);
 
 					destOffset += oldChunk.Size;
@@ -387,9 +387,9 @@ namespace bs
 		}
 
 		// Reorder chunks
-		UINT32 destOffset = 0;
+		u32 destOffset = 0;
 		Vector<ChunkData> newVertChunks;
-		List<UINT32> freeVertChunks;
+		List<u32> freeVertChunks;
 
 		for (auto& allocData : mMeshAllocData)
 		{
@@ -399,7 +399,7 @@ namespace bs
 			newChunk.Start = destOffset;
 			newChunk.Size = oldChunk.Size;
 
-			allocData.second.VertChunkIdx = (UINT32)newVertChunks.size();
+			allocData.second.VertChunkIdx = (u32)newVertChunks.size();
 			newVertChunks.push_back(newChunk);
 
 			destOffset += oldChunk.Size;
@@ -413,7 +413,7 @@ namespace bs
 			newChunk.Size = mNumVertices - destOffset;
 
 			newVertChunks.push_back(newChunk);
-			freeVertChunks.push_back((UINT32)(newVertChunks.size() - 1));
+			freeVertChunks.push_back((u32)(newVertChunks.size() - 1));
 		}
 
 		mVertChunks = newVertChunks;
@@ -423,7 +423,7 @@ namespace bs
 			mEmptyVertChunks.pop();
 	}
 
-	void MeshHeap::GrowIndexBuffer(UINT32 numIndices)
+	void MeshHeap::GrowIndexBuffer(u32 numIndices)
 	{
 		mNumIndices = numIndices;
 
@@ -437,19 +437,19 @@ namespace bs
 		const IndexBufferProperties& ibProps = mIndexBuffer->GetProperties();
 
 		// Copy all data to the new buffer
-		UINT32 idxSize = ibProps.GetIndexSize();
+		u32 idxSize = ibProps.GetIndexSize();
 
-		UINT8* oldBuffer = mCPUIndexData;
-		UINT8* buffer = (UINT8*)bs_alloc(idxSize * numIndices);
+		u8* oldBuffer = mCPUIndexData;
+		u8* buffer = (u8*)bs_alloc(idxSize * numIndices);
 
-		UINT32 destOffset = 0;
+		u32 destOffset = 0;
 		if (oldBuffer != nullptr)
 		{
 			for (auto& allocData : mMeshAllocData)
 			{
 				ChunkData& oldChunk = mIdxChunks[allocData.second.IdxChunkIdx];
 
-				UINT8* oldData = oldBuffer + oldChunk.Start * idxSize;
+				u8* oldData = oldBuffer + oldChunk.Start * idxSize;
 				memcpy(buffer + destOffset * idxSize, oldData, oldChunk.Size * idxSize);
 
 				destOffset += oldChunk.Size;
@@ -466,7 +466,7 @@ namespace bs
 		// Reorder chunks
 		destOffset = 0;
 		Vector<ChunkData> newIdxChunks;
-		List<UINT32> freeIdxChunks;
+		List<u32> freeIdxChunks;
 
 		for (auto& allocData : mMeshAllocData)
 		{
@@ -476,7 +476,7 @@ namespace bs
 			newChunk.Start = destOffset;
 			newChunk.Size = oldChunk.Size;
 
-			allocData.second.IdxChunkIdx = (UINT32)newIdxChunks.size();
+			allocData.second.IdxChunkIdx = (u32)newIdxChunks.size();
 			newIdxChunks.push_back(newChunk);
 
 			destOffset += oldChunk.Size;
@@ -490,7 +490,7 @@ namespace bs
 			newChunk.Size = mNumIndices - destOffset;
 
 			newIdxChunks.push_back(newChunk);
-			freeIdxChunks.push_back((UINT32)(newIdxChunks.size() - 1));
+			freeIdxChunks.push_back((u32)(newIdxChunks.size() - 1));
 		}
 
 		mIdxChunks = newIdxChunks;
@@ -500,9 +500,9 @@ namespace bs
 			mEmptyIdxChunks.pop();
 	}
 
-	UINT32 MeshHeap::CreateEventQuery()
+	u32 MeshHeap::CreateEventQuery()
 	{
-		UINT32 idx = 0;
+		u32 idx = 0;
 		if (mFreeEventQueries.size() > 0)
 		{
 			idx = mFreeEventQueries.top();
@@ -515,13 +515,13 @@ namespace bs
 			newQuery.QueryId = 0;
 
 			mEventQueries.push_back(newQuery);
-			idx = (UINT32)(mEventQueries.size() - 1);
+			idx = (u32)(mEventQueries.size() - 1);
 		}
 
 		return idx;
 	}
 
-	void MeshHeap::FreeEventQuery(UINT32 idx)
+	void MeshHeap::FreeEventQuery(u32 idx)
 	{
 		mEventQueries[idx].Query->OnTriggered.Clear();
 		mEventQueries[idx].QueryId = 0;
@@ -543,25 +543,25 @@ namespace bs
 		return mVertexDesc;
 	}
 
-	UINT32 MeshHeap::GetVertexOffset(UINT32 meshId) const
+	u32 MeshHeap::GetVertexOffset(u32 meshId) const
 	{
 		auto findIter = mMeshAllocData.find(meshId);
 		assert(findIter != mMeshAllocData.end());
 
-		UINT32 chunkIdx = findIter->second.VertChunkIdx;
+		u32 chunkIdx = findIter->second.VertChunkIdx;
 		return mVertChunks[chunkIdx].Start;
 	}
 
-	UINT32 MeshHeap::GetIndexOffset(UINT32 meshId) const
+	u32 MeshHeap::GetIndexOffset(u32 meshId) const
 	{
 		auto findIter = mMeshAllocData.find(meshId);
 		assert(findIter != mMeshAllocData.end());
 
-		UINT32 chunkIdx = findIter->second.IdxChunkIdx;
+		u32 chunkIdx = findIter->second.IdxChunkIdx;
 		return mIdxChunks[chunkIdx].Start;
 	}
 
-	void MeshHeap::NotifyUsedOnGpu(UINT32 meshId)
+	void MeshHeap::NotifyUsedOnGpu(u32 meshId)
 	{
 		auto findIter = mMeshAllocData.find(meshId);
 		assert(findIter != mMeshAllocData.end());
@@ -582,7 +582,7 @@ namespace bs
 	}
 
 	// Note: Need to use a shared ptr here to ensure MeshHeap doesn't get deallocated sometime during this callback
-	void MeshHeap::QueryTriggered(SPtr<MeshHeap> thisPtr, UINT32 meshId, UINT32 queryId)
+	void MeshHeap::QueryTriggered(SPtr<MeshHeap> thisPtr, u32 meshId, u32 queryId)
 	{
 		auto findIter = thisPtr->mMeshAllocData.find(meshId);
 		assert(findIter != thisPtr->mMeshAllocData.end());
@@ -615,7 +615,7 @@ namespace bs
 		queryData.Query->OnTriggered.Clear();
 	}
 
-	void MeshHeap::MergeWithNearbyChunks(UINT32 chunkVertIdx, UINT32 chunkIdxIdx)
+	void MeshHeap::MergeWithNearbyChunks(u32 chunkVertIdx, u32 chunkIdxIdx)
 	{
 		// Merge vertex chunks
 		ChunkData& vertChunk = mVertChunks[chunkVertIdx];

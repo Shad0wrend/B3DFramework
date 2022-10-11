@@ -62,12 +62,12 @@ namespace bs
 
 	void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const SerializedObject* serializableObject)
 	{
-		UINT32 numSubObjects = (UINT32)serializableObject->SubObjects.size();
+		u32 numSubObjects = (u32)serializableObject->SubObjects.size();
 		if (numSubObjects == 0)
 			return;
 
 		FrameStack<RTTITypeBase*> rttiInstances;
-		for (INT32 subObjectIdx = numSubObjects - 1; subObjectIdx >= 0; subObjectIdx--)
+		for (i32 subObjectIdx = numSubObjects - 1; subObjectIdx >= 0; subObjectIdx--)
 		{
 			const SerializedSubObject& subObject = serializableObject->SubObjects[subObjectIdx];
 
@@ -79,8 +79,8 @@ namespace bs
 			rttiInstance->OnDeserializationStarted(object.get(), mContext);
 			rttiInstances.push(rttiInstance);
 
-			UINT32 numFields = rtti->GetNumFields();
-			for (UINT32 fieldIdx = 0; fieldIdx < numFields; fieldIdx++)
+			u32 numFields = rtti->GetNumFields();
+			for (u32 fieldIdx = 0; fieldIdx < numFields; fieldIdx++)
 			{
 				RTTIField* curGenericField = rtti->GetField(fieldIdx);
 
@@ -93,7 +93,7 @@ namespace bs
 				{
 					SPtr<SerializedArray> arrayData = std::static_pointer_cast<SerializedArray>(entryData);
 
-					UINT32 arrayNumElems = (UINT32)arrayData->NumElements;
+					u32 arrayNumElems = (u32)arrayData->NumElements;
 					curGenericField->SetArraySize(rttiInstance, object.get(), arrayNumElems);
 
 					switch (curGenericField->Schema.Type)
@@ -337,8 +337,8 @@ namespace bs
 			SerializedSubObject& subObject = output->SubObjects.back();
 			subObject.TypeId = rtti->GetRttiId();
 
-			const UINT32 numFields = rtti->GetNumFields();
-			for (UINT32 i = 0; i < numFields; i++)
+			const u32 numFields = rtti->GetNumFields();
+			for (u32 i = 0; i < numFields; i++)
 			{
 				RTTIField* curGenericField = rtti->GetField(i);
 
@@ -348,7 +348,7 @@ namespace bs
 						continue;
 				}
 
-				SPtr<SerializedInstance> serializedEntry = EncodeFieldInternal(object, rttiInstance, curGenericField, (UINT32)-1,
+				SPtr<SerializedInstance> serializedEntry = EncodeFieldInternal(object, rttiInstance, curGenericField, (u32)-1,
 					flags, context, alloc);
 
 				SerializedEntry entry;
@@ -367,7 +367,7 @@ namespace bs
 		return output;
 	}
 
-	SPtr<SerializedInstance> IntermediateSerializer::EncodeFieldInternal(IReflectable* object, RTTITypeBase* rtti, RTTIField* field, UINT32 arrayIdx,
+	SPtr<SerializedInstance> IntermediateSerializer::EncodeFieldInternal(IReflectable* object, RTTITypeBase* rtti, RTTIField* field, u32 arrayIdx,
 		SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc)
 	{
 		bool shallow = flags.IsSet(SerializedObjectEncodeFlag::Shallow);
@@ -375,10 +375,10 @@ namespace bs
 		SPtr<SerializedInstance> output;
 		if (field->Schema.IsArray)
 		{
-			const UINT32 arrayNumElems = field->GetArraySize(rtti, object);
-			bool wholeArray = arrayIdx == (UINT32)-1;
+			const u32 arrayNumElems = field->GetArraySize(rtti, object);
+			bool wholeArray = arrayIdx == (u32)-1;
 
-			UINT32 arrayEndIdx;
+			u32 arrayEndIdx;
 			if (wholeArray)
 			{
 				arrayIdx = 0;
@@ -402,7 +402,7 @@ namespace bs
 			{
 				auto curField = static_cast<RTTIReflectablePtrFieldBase*>(field);
 
-				for (UINT32 arrIdx = arrayIdx; arrIdx < arrayEndIdx; arrIdx++)
+				for (u32 arrIdx = arrayIdx; arrIdx < arrayEndIdx; arrIdx++)
 				{
 					SPtr<SerializedObject> serializedChildObj = nullptr;
 
@@ -432,7 +432,7 @@ namespace bs
 			{
 				auto curField = static_cast<RTTIReflectableFieldBase*>(field);
 
-				for (UINT32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
+				for (u32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
 				{
 					IReflectable& childObject = curField->GetArrayValue(rtti, object, arrIdx);
 
@@ -456,16 +456,16 @@ namespace bs
 			{
 				auto curField = static_cast<RTTIPlainFieldBase*>(field);
 
-				for (UINT32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
+				for (u32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
 				{
-					UINT32 typeSize = 0;
+					u32 typeSize = 0;
 					if (curField->Schema.HasDynamicSize)
 						typeSize = curField->GetArrayElemDynamicSize(rtti, object, arrIdx, false).Bytes;
 					else
 						typeSize = curField->Schema.Size.Bytes;
 
 					const auto serializedField = bs_shared_ptr_new<SerializedField>();
-					serializedField->Value = (UINT8*)bs_alloc(typeSize);
+					serializedField->Value = (u8*)bs_alloc(typeSize);
 					serializedField->OwnsMemory = true;
 					serializedField->Size = typeSize;
 
@@ -488,7 +488,7 @@ namespace bs
 			}
 			default:
 				BS_EXCEPT(InternalErrorException,
-					"Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(UINT32(field->Schema.Type)) +
+					"Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(u32(field->Schema.Type)) +
 					", Is array: " + toString(field->Schema.IsArray));
 			}
 		}
@@ -523,14 +523,14 @@ namespace bs
 			{
 				auto curField = static_cast<RTTIPlainFieldBase*>(field);
 
-				UINT32 typeSize = 0;
+				u32 typeSize = 0;
 				if (curField->Schema.HasDynamicSize)
 					typeSize = curField->GetDynamicSize(rtti, object, false).Bytes;
 				else
 					typeSize = curField->Schema.Size.Bytes;
 
 				const auto serializedField = bs_shared_ptr_new<SerializedField>();
-				serializedField->Value = (UINT8*)bs_alloc(typeSize);
+				serializedField->Value = (u8*)bs_alloc(typeSize);
 				serializedField->OwnsMemory = true;
 				serializedField->Size = typeSize;
 
@@ -545,7 +545,7 @@ namespace bs
 			{
 				auto curField = static_cast<RTTIManagedDataBlockFieldBase*>(field);
 
-				UINT32 dataBlockSize = 0;
+				u32 dataBlockSize = 0;
 				SPtr<DataStream> blockStream = curField->GetValue(rtti, object, dataBlockSize);
 
 				SPtr<MemoryDataStream> stream = bs_shared_ptr_new<MemoryDataStream>(dataBlockSize);
@@ -562,7 +562,7 @@ namespace bs
 			}
 			default:
 				BS_EXCEPT(InternalErrorException,
-					"Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(UINT32(field->Schema.Type)) +
+					"Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(u32(field->Schema.Type)) +
 					", Is array: " + toString(field->Schema.IsArray));
 			}
 		}

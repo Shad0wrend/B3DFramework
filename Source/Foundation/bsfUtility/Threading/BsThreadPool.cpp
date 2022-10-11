@@ -19,7 +19,7 @@ namespace bs
 	/** The thread pool will check for unused threads every UNUSED_CHECK_PERIOD getThread() calls*/
 	static constexpr int UNUSED_CHECK_PERIOD = 32;
 
-	HThread::HThread(ThreadPool* pool, UINT32 threadId)
+	HThread::HThread(ThreadPool* pool, u32 threadId)
 		:mThreadId(threadId), mPool(pool)
 	{ }
 
@@ -62,7 +62,7 @@ namespace bs
 			mStartedCond.wait(lock);
 	}
 
-	void PooledThread::Start(std::function<void()> workerMethod, UINT32 id)
+	void PooledThread::Start(std::function<void()> workerMethod, u32 id)
 	{
 		{
 			Lock lock(mMutex);
@@ -181,14 +181,14 @@ namespace bs
 		mName = name;
 	}
 
-	UINT32 PooledThread::GetId() const
+	u32 PooledThread::GetId() const
 	{
 		Lock lock(mMutex);
 
 		return mId;
 	}
 
-	ThreadPool::ThreadPool(UINT32 threadCapacity, UINT32 maxCapacity, UINT32 idleTimeout)
+	ThreadPool::ThreadPool(u32 threadCapacity, u32 maxCapacity, u32 idleTimeout)
 		:mDefaultCapacity(threadCapacity), mMaxCapacity(maxCapacity), mIdleTimeout(idleTimeout)
 	{
 
@@ -248,9 +248,9 @@ namespace bs
 		}
 
 		idleThreads.insert(idleThreads.end(), expiredThreads.begin(), expiredThreads.end());
-		UINT32 limit = std::min((UINT32)idleThreads.size(), mDefaultCapacity);
+		u32 limit = std::min((u32)idleThreads.size(), mDefaultCapacity);
 
-		UINT32 i = 0;
+		u32 i = 0;
 		mThreads.clear();
 
 		for(auto& thread : idleThreads)
@@ -275,7 +275,7 @@ namespace bs
 
 	PooledThread* ThreadPool::GetThread(const String& name)
 	{
-		UINT32 age = 0;
+		u32 age = 0;
 		{
 			Lock lock(mMutex);
 			age = ++mAge;
@@ -304,9 +304,9 @@ namespace bs
 		return newThread;
 	}
 
-	UINT32 ThreadPool::GetNumAvailable() const
+	u32 ThreadPool::GetNumAvailable() const
 	{
-		UINT32 numAvailable = mMaxCapacity;
+		u32 numAvailable = mMaxCapacity;
 
 		Lock lock(mMutex);
 		for(auto& thread : mThreads)
@@ -318,9 +318,9 @@ namespace bs
 		return numAvailable;
 	}
 
-	UINT32 ThreadPool::GetNumActive() const
+	u32 ThreadPool::GetNumActive() const
 	{
-		UINT32 numActive = 0;
+		u32 numActive = 0;
 
 		Lock lock(mMutex);
 		for(auto& thread : mThreads)
@@ -332,10 +332,10 @@ namespace bs
 		return numActive;
 	}
 
-	UINT32 ThreadPool::GetNumAllocated() const
+	u32 ThreadPool::GetNumAllocated() const
 	{
 		Lock lock(mMutex);
 
-		return (UINT32)mThreads.size();
+		return (u32)mThreads.size();
 	}
 }

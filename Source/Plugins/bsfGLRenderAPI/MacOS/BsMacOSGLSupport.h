@@ -19,7 +19,7 @@ namespace bs::ct
 	{
 	public:
 		/** @copydoc GLSupport::newWindow */
-		SPtr<bs::RenderWindow> newWindow(RENDER_WINDOW_DESC& desc, UINT32 windowId, SPtr<bs::RenderWindow> parentWindow) override;
+		SPtr<bs::RenderWindow> newWindow(RENDER_WINDOW_DESC& desc, u32 windowId, SPtr<bs::RenderWindow> parentWindow) override;
 
 		/** @copydoc GLSupport::start */
 		void start() override;
@@ -31,7 +31,7 @@ namespace bs::ct
 		void* getProcAddress(const String& procname) override;
 
 		/** Creates a new OpenGL context. */
-		SPtr<MacOSContext> createContext(bool depthStencil, UINT32 msaaCount);
+		SPtr<MacOSContext> createContext(bool depthStencil, u32 msaaCount);
 
 		/** @copydoc GLSupport::getVideoModeInfo */
 		SPtr<VideoModeInfo> getVideoModeInfo() const override;

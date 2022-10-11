@@ -13,9 +13,9 @@ namespace bs { namespace ct
 		mMask |= GetGlobalQueueMask(buffer->GetType(), buffer->GetQueueIdx());
 	}
 
-	UINT32 CommandSyncMask::GetGlobalQueueMask(GpuQueueType type, UINT32 queueIdx)
+	u32 CommandSyncMask::GetGlobalQueueMask(GpuQueueType type, u32 queueIdx)
 	{
-		UINT32 bitShift = 0;
+		u32 bitShift = 0;
 		switch (type)
 		{
 		case GQT_GRAPHICS:
@@ -33,7 +33,7 @@ namespace bs { namespace ct
 		return (1 << queueIdx) << bitShift;
 	}
 
-	UINT32 CommandSyncMask::GetGlobalQueueIdx(GpuQueueType type, UINT32 queueIdx)
+	u32 CommandSyncMask::GetGlobalQueueIdx(GpuQueueType type, u32 queueIdx)
 	{
 		switch (type)
 		{
@@ -46,7 +46,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	UINT32 CommandSyncMask::GetQueueIdxAndType(UINT32 globalQueueIdx, GpuQueueType& type)
+	u32 CommandSyncMask::GetQueueIdxAndType(u32 globalQueueIdx, GpuQueueType& type)
 	{
 		if(globalQueueIdx >= 16)
 		{
@@ -64,13 +64,13 @@ namespace bs { namespace ct
 		return globalQueueIdx;
 	}
 
-	CommandBuffer::CommandBuffer(GpuQueueType type, UINT32 deviceIdx, UINT32 queueIdx, bool secondary)
+	CommandBuffer::CommandBuffer(GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary)
 		:mType(type), mDeviceIdx(deviceIdx), mQueueIdx(queueIdx), mIsSecondary(secondary)
 	{
 
 	}
 
-	SPtr<CommandBuffer> CommandBuffer::Create(GpuQueueType type, UINT32 deviceIdx, UINT32 queueIdx,
+	SPtr<CommandBuffer> CommandBuffer::Create(GpuQueueType type, u32 deviceIdx, u32 queueIdx,
 		bool secondary)
 	{
 		return CommandBufferManager::Instance().Create(type, deviceIdx, queueIdx, secondary);

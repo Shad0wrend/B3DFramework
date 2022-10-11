@@ -8,38 +8,38 @@ namespace bs
 
 	struct BMP_HEADER
 	{
-		UINT16 BM;
-		UINT32 SizeOfFile;
-		UINT32 Reserve;
-		UINT32 OffsetOfPixelData;
-		UINT32 SizeOfHeader;
-		UINT32 Width;
-		UINT32 Hight;
-		UINT16 NumOfColorPlane;
-		UINT16 NumOfBitPerPix;
-		UINT32 Compression;
-		UINT32 SizeOfPixData;
-		UINT32 HResolution;
-		UINT32 VResolution;
-		UINT32 NumOfColorInPalette;
-		UINT32 ImportantColors;
+		u16 BM;
+		u32 SizeOfFile;
+		u32 Reserve;
+		u32 OffsetOfPixelData;
+		u32 SizeOfHeader;
+		u32 Width;
+		u32 Hight;
+		u16 NumOfColorPlane;
+		u16 NumOfBitPerPix;
+		u32 Compression;
+		u32 SizeOfPixData;
+		u32 HResolution;
+		u32 VResolution;
+		u32 NumOfColorInPalette;
+		u32 ImportantColors;
 
 	};
 
 #pragma pack(pop)
 
-	void BitmapWriter::RawPixelsToBmp(const UINT8* input, UINT8* output, UINT32 width, UINT32 height, UINT32 bytesPerPixel)
+	void BitmapWriter::RawPixelsToBmp(const u8* input, u8* output, u32 width, u32 height, u32 bytesPerPixel)
 	{
-		UINT16 bmpBytesPerPixel = 3;
+		u16 bmpBytesPerPixel = 3;
 		if(bytesPerPixel >= 4)
 			bmpBytesPerPixel = 4;
 
-		UINT32 padding = (width * bmpBytesPerPixel) % 4;
+		u32 padding = (width * bmpBytesPerPixel) % 4;
 		if(padding != 0)
 			padding = 4 - padding;
 
-		UINT32 rowPitch = (width * bmpBytesPerPixel) + padding;
-		UINT32 dataSize = height * rowPitch;
+		u32 rowPitch = (width * bmpBytesPerPixel) + padding;
+		u32 dataSize = height * rowPitch;
 
 		BMP_HEADER header;
 		header.BM = 0x4d42;
@@ -63,14 +63,14 @@ namespace bs
 		output += sizeof(header);
 
 		// Write bytes
-		UINT32 widthBytes = width * bytesPerPixel;
+		u32 widthBytes = width * bytesPerPixel;
 		
 		// BPP matches so we can just copy directly
 		if(bmpBytesPerPixel == bytesPerPixel)
 		{
-			for(INT32 y = height - 1; y >= 0 ; y--)
+			for(i32 y = height - 1; y >= 0 ; y--)
 			{
-				UINT8* outputPtr = output + y * rowPitch;
+				u8* outputPtr = output + y * rowPitch;
 
 				memcpy(outputPtr, input, widthBytes);
 				memset(outputPtr + widthBytes, 0, padding);
@@ -80,11 +80,11 @@ namespace bs
 		}
 		else if(bmpBytesPerPixel < bytesPerPixel) // More bytes in source than supported in BMP, just truncate excess data
 		{
-			for(INT32 y = height - 1; y >= 0 ; y--)
+			for(i32 y = height - 1; y >= 0 ; y--)
 			{
-				UINT8* outputPtr = output + y * rowPitch;
+				u8* outputPtr = output + y * rowPitch;
 
-				for(UINT32 x = 0; x < width; x++)
+				for(u32 x = 0; x < width; x++)
 				{
 					memcpy(outputPtr, input, bmpBytesPerPixel);
 					outputPtr += bmpBytesPerPixel;
@@ -96,16 +96,16 @@ namespace bs
 		}
 		else // More bytes in BMP than in source (BMP must be 24bit minimum)
 		{
-			for(INT32 y = height - 1; y >= 0 ; y--)
+			for(i32 y = height - 1; y >= 0 ; y--)
 			{
-				UINT8* outputPtr = output + y * rowPitch;
+				u8* outputPtr = output + y * rowPitch;
 
-				for(UINT32 x = 0; x < width; x++)
+				for(u32 x = 0; x < width; x++)
 				{
 					memcpy(outputPtr, input, bytesPerPixel);
 
 					// Fill the empty bytes with the last available byte from input
-					UINT32 remainingBytes = bmpBytesPerPixel - bytesPerPixel;
+					u32 remainingBytes = bmpBytesPerPixel - bytesPerPixel;
 					while(remainingBytes > 0)
 					{
 						memcpy(outputPtr + (bmpBytesPerPixel - remainingBytes), input, 1);
@@ -121,18 +121,18 @@ namespace bs
 		}
 	}
 
-	UINT32 BitmapWriter::GetBmpSize(UINT32 width, UINT32 height, UINT32 bytesPerPixel)
+	u32 BitmapWriter::GetBmpSize(u32 width, u32 height, u32 bytesPerPixel)
 	{
-		UINT16 bmpBytesPerPixel = 3;
+		u16 bmpBytesPerPixel = 3;
 		if(bytesPerPixel >= 4)
 			bmpBytesPerPixel = 4;
 
-		UINT32 padding = (width * bmpBytesPerPixel) % 4;
+		u32 padding = (width * bmpBytesPerPixel) % 4;
 		if(padding != 0)
 			padding = 4 - padding;
 
-		UINT32 rowPitch = (width * bmpBytesPerPixel) + padding;
-		UINT32 dataSize = height * rowPitch;
+		u32 rowPitch = (width * bmpBytesPerPixel) + padding;
+		u32 dataSize = height * rowPitch;
 
 		return sizeof(BMP_HEADER) + dataSize;
 	}

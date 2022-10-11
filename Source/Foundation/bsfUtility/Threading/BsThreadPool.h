@@ -18,13 +18,13 @@ namespace bs
 	{
 	public:
 		HThread() = default;;
-		HThread(ThreadPool* pool, UINT32 threadId);
+		HThread(ThreadPool* pool, u32 threadId);
 
 		/**	Block the calling thread until the thread this handle points to completes. */
 		void BlockUntilComplete();
 
 	private:
-		UINT32 mThreadId = 0;
+		u32 mThreadId = 0;
 		ThreadPool* mPool = nullptr;
 	};
 
@@ -57,7 +57,7 @@ namespace bs
 		 * Caller must ensure worker method is not null and that the thread is currently idle, otherwise undefined behavior
 		 * will occur.
 		 */
-		void Start(std::function<void()> workerMethod, UINT32 id);
+		void Start(std::function<void()> workerMethod, u32 id);
 
 		/**
 		 * Attempts to join the currently running thread and destroys it. Caller must ensure that any worker method
@@ -75,7 +75,7 @@ namespace bs
 		void SetName(const String& name);
 
 		/**	Gets unique ID of the currently executing thread. */
-		UINT32 GetId() const;
+		u32 GetId() const;
 
 		/**	Blocks the current thread until this thread completes. Returns immediately if the thread is idle. */
 		void BlockUntilComplete();
@@ -100,7 +100,7 @@ namespace bs
 	protected:
 		std::function<void()> mWorkerMethod;
 		String mName;
-		UINT32 mId = 0;
+		u32 mId = 0;
 		bool mIdle = true;
 		bool mThreadStarted = false;
 		bool mThreadReady = false;
@@ -161,7 +161,7 @@ namespace bs
 		 *								exception will be thrown.
 		 * @param[in]	idleTimeout   	(optional) How many seconds do threads need to be idle before we remove them from the pool.
 		 */
-		ThreadPool(UINT32 threadCapacity, UINT32 maxCapacity = 16, UINT32 idleTimeout = 60);
+		ThreadPool(u32 threadCapacity, u32 maxCapacity = 16, u32 idleTimeout = 60);
 		virtual ~ThreadPool();
 
 		/**
@@ -183,13 +183,13 @@ namespace bs
 		void ClearUnused();
 
 		/**	Returns the number of unused threads in the pool. */
-		UINT32 GetNumAvailable() const;
+		u32 GetNumAvailable() const;
 
 		/**	Returns the number of running threads in the pool. */
-		UINT32 GetNumActive() const;
+		u32 GetNumActive() const;
 
 		/**	Returns the total number of created threads in the pool	(both running and unused). */
-		UINT32 GetNumAllocated() const;
+		u32 GetNumAllocated() const;
 
 	protected:
 		friend class HThread;
@@ -211,11 +211,11 @@ namespace bs
 		 */
 		PooledThread* GetThread(const String& name);
 
-		UINT32 mDefaultCapacity;
-		UINT32 mMaxCapacity;
-		UINT32 mIdleTimeout;
+		u32 mDefaultCapacity;
+		u32 mMaxCapacity;
+		u32 mIdleTimeout;
 		/** unused check counter */
-		UINT32 mAge = 0;
+		u32 mAge = 0;
 
 		std::atomic_uint mUniqueId;
 		mutable Mutex mMutex;
@@ -248,7 +248,7 @@ namespace bs
 	class TThreadPool : public ThreadPool
 	{
 	public:
-		TThreadPool(UINT32 threadCapacity, UINT32 maxCapacity = 16, UINT32 idleTimeout = 60)
+		TThreadPool(u32 threadCapacity, u32 maxCapacity = 16, u32 idleTimeout = 60)
 			:ThreadPool(threadCapacity, maxCapacity, idleTimeout)
 		{
 

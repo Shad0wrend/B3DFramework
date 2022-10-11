@@ -9,7 +9,7 @@
 
 namespace bs { namespace ct
 {
-	D3D11RasterizerState::D3D11RasterizerState(const RASTERIZER_STATE_DESC& desc, UINT32 id)
+	D3D11RasterizerState::D3D11RasterizerState(const RASTERIZER_STATE_DESC& desc, u32 id)
 		:RasterizerState(desc, id)
 	{ }
 
@@ -22,7 +22,7 @@ namespace bs { namespace ct
 
 	void D3D11RasterizerState::CreateInternal()
 	{
-		INT32 scaledDepthBias = Math::FloorToInt(-mProperties.GetDepthBias() * float((1 << 24))); // Note: Assumes 24-bit depth buffer
+		i32 scaledDepthBias = Math::FloorToInt(-mProperties.GetDepthBias() * float((1 << 24))); // Note: Assumes 24-bit depth buffer
 
 		D3D11_RASTERIZER_DESC rasterizerStateDesc;
 		ZeroMemory(&rasterizerStateDesc, sizeof(D3D11_RASTERIZER_DESC));

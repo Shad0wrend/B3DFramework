@@ -168,7 +168,7 @@ namespace bs
 	}
 
 	SPtr<RenderTexture> VulkanTextureManager::CreateRenderTextureInternal(const RENDER_TEXTURE_DESC& desc,
-																				  UINT32 deviceIdx)
+																				  u32 deviceIdx)
 	{
 		SPtr<VulkanRenderTexture> texPtr = bs_shared_ptr_new<VulkanRenderTexture>(desc, deviceIdx);
 		texPtr->SetThisPtrInternal(texPtr);

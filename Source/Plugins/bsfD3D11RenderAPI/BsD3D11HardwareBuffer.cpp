@@ -9,7 +9,7 @@
 
 namespace bs { namespace ct
 {
-	D3D11HardwareBuffer::D3D11HardwareBuffer(BufferType btype, GpuBufferUsage usage, UINT32 elementCount, UINT32 elementSize,
+	D3D11HardwareBuffer::D3D11HardwareBuffer(BufferType btype, GpuBufferUsage usage, u32 elementCount, u32 elementSize,
 		D3D11Device& device, bool useSystemMem, bool streamOut)
 		: HardwareBuffer(elementCount * elementSize, usage, GDF_DEFAULT)
 		, mBufferType(btype), mElementCount(elementCount), mElementSize(elementSize), mUsage(usage), mDevice(device)
@@ -123,7 +123,7 @@ namespace bs { namespace ct
 			bs_delete(mpTempStagingBuffer);
 	}
 
-	void* D3D11HardwareBuffer::Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
+	void* D3D11HardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx)
 	{
 		if (length > mSize)
 			BS_EXCEPT(RenderingAPIException, "Provided length " + toString(length) + " larger than the buffer " + toString(mSize) + ".");		
@@ -249,10 +249,10 @@ namespace bs { namespace ct
 		}
 	}
 
-	void D3D11HardwareBuffer::CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset,
-		UINT32 dstOffset, UINT32 length, bool discardWholeBuffer, const SPtr<ct::CommandBuffer>& commandBuffer)
+	void D3D11HardwareBuffer::CopyData(HardwareBuffer& srcBuffer, u32 srcOffset,
+		u32 dstOffset, u32 length, bool discardWholeBuffer, const SPtr<ct::CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [this](HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length)
+		auto executeRef = [this](HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length)
 		{
 			// If we're copying same-size buffers in their entirety
 			if (srcOffset == 0 && dstOffset == 0 &&
@@ -299,7 +299,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void D3D11HardwareBuffer::ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
+	void D3D11HardwareBuffer::ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx, u32 queueIdx)
 	{
 		// There is no functional interface in D3D, just do via manual lock, copy & unlock
 		void* pSrc = this->Lock(offset, length, GBL_READ_ONLY);
@@ -307,8 +307,8 @@ namespace bs { namespace ct
 		this->Unlock();
 	}
 
-	void D3D11HardwareBuffer::WriteData(UINT32 offset, UINT32 length, const void* pSource, BufferWriteType writeFlags,
-		UINT32 queueIdx)
+	void D3D11HardwareBuffer::WriteData(u32 offset, u32 length, const void* pSource, BufferWriteType writeFlags,
+		u32 queueIdx)
 	{
 		if(mDesc.Usage == D3D11_USAGE_DYNAMIC || mDesc.Usage == D3D11_USAGE_STAGING)
 		{

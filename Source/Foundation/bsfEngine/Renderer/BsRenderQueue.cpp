@@ -26,14 +26,14 @@ namespace bs { namespace ct
 		mSortedRenderElements.clear();
 	}
 
-	void RenderQueue::Add(const RenderElement* element, float distFromCamera, UINT32 techniqueIdx)
+	void RenderQueue::Add(const RenderElement* element, float distFromCamera, u32 techniqueIdx)
 	{
 		SPtr<Material> material = element->Material;
 		SPtr<Shader> shader = material->GetShader();
 		
-		UINT32 queuePriority = shader->GetQueuePriority();
+		u32 queuePriority = shader->GetQueuePriority();
 		QueueSortType sortType = shader->GetQueueSortType();
-		UINT32 shaderId = shader->GetId();
+		u32 shaderId = shader->GetId();
 		bool separablePasses = shader->GetAllowSeparablePasses();
 
 		switch (sortType)
@@ -48,13 +48,13 @@ namespace bs { namespace ct
 			break;
 		}
 
-		UINT32 numPasses = material->GetNumPasses(techniqueIdx);
+		u32 numPasses = material->GetNumPasses(techniqueIdx);
 		if (!separablePasses)
 			numPasses = std::min(1U, numPasses);
 
-		for (UINT32 i = 0; i < numPasses; i++)
+		for (u32 i = 0; i < numPasses; i++)
 		{
-			UINT32 idx = (UINT32)mSortableElementIdx.size();
+			u32 idx = (u32)mSortableElementIdx.size();
 			mSortableElementIdx.push_back(idx);
 
 			mSortableElements.push_back(SortableElement());
@@ -73,7 +73,7 @@ namespace bs { namespace ct
 
 	void RenderQueue::Sort()
 	{
-		std::function<bool(UINT32, UINT32, const Vector<SortableElement>&)> sortMethod;
+		std::function<bool(u32, u32, const Vector<SortableElement>&)> sortMethod;
 
 		switch (mStateReductionMode)
 		{
@@ -91,12 +91,12 @@ namespace bs { namespace ct
 		// Sort only indices since we generate an entirely new data set anyway, it doesn't make sense to move sortable elements
 		std::sort(mSortableElementIdx.begin(), mSortableElementIdx.end(), std::bind(sortMethod, _1, _2, mSortableElements));
 
-		UINT32 prevShaderId = (UINT32)-1;
-		UINT32 prevTechniqueIdx = (UINT32)-1;
-		UINT32 prevPassIdx = (UINT32)-1;
-		for (UINT32 i = 0; i < (UINT32)mSortableElementIdx.size(); i++)
+		u32 prevShaderId = (u32)-1;
+		u32 prevTechniqueIdx = (u32)-1;
+		u32 prevPassIdx = (u32)-1;
+		for (u32 i = 0; i < (u32)mSortableElementIdx.size(); i++)
 		{
-			const UINT32 idx = mSortableElementIdx[i];
+			const u32 idx = mSortableElementIdx[i];
 			const SortableElement& elem = mSortableElements[idx];
 			const RenderElement* renderElem = mElements[idx];
 
@@ -123,8 +123,8 @@ namespace bs { namespace ct
 			}
 			else
 			{
-				const UINT32 numPasses = renderElem->Material->GetNumPasses(elem.TechniqueIdx);
-				for (UINT32 j = 0; j < numPasses; j++)
+				const u32 numPasses = renderElem->Material->GetNumPasses(elem.TechniqueIdx);
+				for (u32 j = 0; j < numPasses; j++)
 				{
 					mSortedRenderElements.push_back(RenderQueueElement());
 
@@ -147,35 +147,35 @@ namespace bs { namespace ct
 		}
 	}
 
-	bool RenderQueue::ElementSorterNoGroup(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup)
+	bool RenderQueue::ElementSorterNoGroup(u32 aIdx, u32 bIdx, const Vector<SortableElement>& lookup)
 	{
 		const SortableElement& a = lookup[aIdx];
 		const SortableElement& b = lookup[bIdx];
 
-		UINT8 isHigher = (a.Priority > b.Priority) << 2 |
+		u8 isHigher = (a.Priority > b.Priority) << 2 |
 			(a.DistFromCamera < b.DistFromCamera) << 1 |
 			(a.SeqIdx < b.SeqIdx);
 
-		UINT8 isLower = (a.Priority < b.Priority) << 2 |
+		u8 isLower = (a.Priority < b.Priority) << 2 |
 			(a.DistFromCamera > b.DistFromCamera) << 1 |
 			(a.SeqIdx > b.SeqIdx);
 
 		return isHigher > isLower;
 	}
 
-	bool RenderQueue::ElementSorterPreferGroup(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup)
+	bool RenderQueue::ElementSorterPreferGroup(u32 aIdx, u32 bIdx, const Vector<SortableElement>& lookup)
 	{
 		const SortableElement& a = lookup[aIdx];
 		const SortableElement& b = lookup[bIdx];
 		
-		UINT8 isHigher = (a.Priority > b.Priority) << 5 |
+		u8 isHigher = (a.Priority > b.Priority) << 5 |
 			(a.ShaderId < b.ShaderId) << 4 |
 			(a.TechniqueIdx < b.TechniqueIdx) << 3 |
 			(a.PassIdx < b.PassIdx) << 2 |
 			(a.DistFromCamera < b.DistFromCamera) << 1 |
 			(a.SeqIdx < b.SeqIdx);
 
-		UINT8 isLower = (a.Priority < b.Priority) << 5 |
+		u8 isLower = (a.Priority < b.Priority) << 5 |
 			(a.ShaderId > b.ShaderId) << 4 |
 			(a.TechniqueIdx > b.TechniqueIdx) << 3 |
 			(a.PassIdx > b.PassIdx) << 2 |
@@ -185,19 +185,19 @@ namespace bs { namespace ct
 		return isHigher > isLower;
 	}
 
-	bool RenderQueue::ElementSorterPreferDistance(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup)
+	bool RenderQueue::ElementSorterPreferDistance(u32 aIdx, u32 bIdx, const Vector<SortableElement>& lookup)
 	{
 		const SortableElement& a = lookup[aIdx];
 		const SortableElement& b = lookup[bIdx];
 
-		UINT8 isHigher = (a.Priority > b.Priority) << 5 |
+		u8 isHigher = (a.Priority > b.Priority) << 5 |
 			(a.DistFromCamera < b.DistFromCamera) << 4 |
 			(a.ShaderId < b.ShaderId) << 3 |
 			(a.TechniqueIdx < b.TechniqueIdx) << 2 |
 			(a.PassIdx < b.PassIdx) << 1 |
 			(a.SeqIdx < b.SeqIdx);
 
-		UINT8 isLower = (a.Priority < b.Priority) << 5 |
+		u8 isLower = (a.Priority < b.Priority) << 5 |
 			(a.DistFromCamera > b.DistFromCamera) << 4 |
 			(a.ShaderId > b.ShaderId) << 3 |
 			(a.TechniqueIdx > b.TechniqueIdx) << 2 |

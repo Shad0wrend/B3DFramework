@@ -19,26 +19,26 @@ namespace bs
 		String Name; /**< Name of the sample for easier identification. */
 		float TimeMs; /**< Time in milliseconds it took to execute the sampled block. */
 
-		UINT32 NumDrawCalls; /**< Number of draw calls that happened. */
-		UINT32 NumRenderTargetChanges; /**< How many times was render target changed. */
-		UINT32 NumPresents; /**< How many times did a buffer swap happen on a double buffered render target. */
-		UINT32 NumClears; /**< How many times was render target cleared. */
+		u32 NumDrawCalls; /**< Number of draw calls that happened. */
+		u32 NumRenderTargetChanges; /**< How many times was render target changed. */
+		u32 NumPresents; /**< How many times did a buffer swap happen on a double buffered render target. */
+		u32 NumClears; /**< How many times was render target cleared. */
 
-		UINT32 NumVertices; /**< Total number of vertices sent to the GPU. */
-		UINT32 NumPrimitives; /**< Total number of primitives sent to the GPU. */
-		UINT32 NumDrawnSamples; /**< Number of samples drawn by the GPU. */
+		u32 NumVertices; /**< Total number of vertices sent to the GPU. */
+		u32 NumPrimitives; /**< Total number of primitives sent to the GPU. */
+		u32 NumDrawnSamples; /**< Number of samples drawn by the GPU. */
 
-		UINT32 NumPipelineStateChanges; /**< How many times did the pipeline state change. */
+		u32 NumPipelineStateChanges; /**< How many times did the pipeline state change. */
 
-		UINT32 NumGpuParamBinds; /**< How many times were GPU parameters bound. */
-		UINT32 NumVertexBufferBinds; /**< How many times was a vertex buffer bound. */
-		UINT32 NumIndexBufferBinds; /**< How many times was an index buffer bound. */
+		u32 NumGpuParamBinds; /**< How many times were GPU parameters bound. */
+		u32 NumVertexBufferBinds; /**< How many times was a vertex buffer bound. */
+		u32 NumIndexBufferBinds; /**< How many times was an index buffer bound. */
 
-		UINT32 NumResourceWrites; /**< How many times were GPU resources written to. */
-		UINT32 NumResourceReads; /**< How many times were GPU resources read from. */
+		u32 NumResourceWrites; /**< How many times were GPU resources written to. */
+		u32 NumResourceReads; /**< How many times were GPU resources read from. */
 
-		UINT32 NumObjectsCreated; /**< How many GPU objects were created. */
-		UINT32 NumObjectsDestroyed; /**< How many GPU objects were destroyed. */
+		u32 NumObjectsCreated; /**< How many GPU objects were created. */
+		u32 NumObjectsDestroyed; /**< How many GPU objects were destroyed. */
 
 		Vector<GPUProfileSample> Children;
 	};
@@ -46,7 +46,7 @@ namespace bs
 	/** Contains various profiler statistics for a particular view. */
 	struct GPUProfileViewSample : GPUProfileSample
 	{
-		UINT64 ViewId;
+		u64 ViewId;
 	};
 
 	/** Profiler report containing information about GPU sampling data from a single frame. */
@@ -77,7 +77,7 @@ namespace bs
 
 		struct ProfiledViewSample : ProfiledSample
 		{
-			UINT64 ViewId;
+			u64 ViewId;
 		};
 
 		struct ProfiledFrame
@@ -113,7 +113,7 @@ namespace bs
 		 * @param[in]	id			Identifier that can be used to uniquely identify the view.
 		 * @param[in]	title		Title describing the view.
 		 */
-		void BeginView(UINT64 id, ProfilerString title);
+		void BeginView(u64 id, ProfilerString title);
 
 		/** Signals the end of rendering for a particular view. Must match the corresponding beginView() call. */
 		void EndView();
@@ -147,7 +147,7 @@ namespace bs
 		 * @note
 		 * Thread safe.
 		 */
-		UINT32 GetNumAvailableReports();
+		u32 GetNumAvailableReports();
 
 		/**
 		 * Gets the oldest report available and removes it from the internal list. Throws an exception if no reports are
@@ -201,9 +201,9 @@ namespace bs
 		Queue<ProfiledFrame> mUnresolvedFrames;
 		GPUProfilerReport* mReadyReports = nullptr;
 
-		static const UINT32 MAX_QUEUE_ELEMENTS;
-		UINT32 mReportHeadPos = 0;
-		UINT32 mReportCount = 0;
+		static const u32 MAX_QUEUE_ELEMENTS;
+		u32 mReportHeadPos = 0;
+		u32 mReportCount = 0;
 
 		PoolAlloc<sizeof(ProfiledViewSample), 16> mViewSamplePool;
 		PoolAlloc<sizeof(ProfiledSample), 256> mSamplePool;

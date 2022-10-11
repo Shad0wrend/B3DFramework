@@ -18,7 +18,7 @@
 
 namespace bs
 {
-	Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId)
+	Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId)
 		: RenderWindow(desc, windowId), mProperties(desc)
 	{ }
 
@@ -26,8 +26,8 @@ namespace bs
 	{
 		if (name == "WINDOW")
 		{
-			UINT64 *pHwnd = (UINT64*)pData;
-			*pHwnd = (UINT64)GetHWnd();
+			u64 *pHwnd = (u64*)pData;
+			*pHwnd = (u64)GetHWnd();
 			return;
 		}
 	}
@@ -82,7 +82,7 @@ namespace bs
 
 	namespace ct
 	{
-		Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId, VulkanRenderAPI& renderAPI)
+		Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, VulkanRenderAPI& renderAPI)
 		: RenderWindow(desc, windowId), mProperties(desc), mSyncedProperties(desc), mWindow(nullptr), mIsChild(false)
 		, mShowOnSwap(false), mDisplayFrequency(0), mRenderAPI(renderAPI), mRequiresNewBackBuffer(true)
 	{ }
@@ -135,17 +135,17 @@ namespace bs
 
 		auto opt = mDesc.PlatformSpecific.find("parentWindowHandle");
 		if (opt != mDesc.PlatformSpecific.end())
-			windowDesc.Parent = (HWND)parseUINT64(opt->second);
+			windowDesc.Parent = (HWND)parseu64(opt->second);
 
 		opt = mDesc.PlatformSpecific.find("externalWindowHandle");
 		if (opt != mDesc.PlatformSpecific.end())
-			windowDesc.External = (HWND)parseUINT64(opt->second);
+			windowDesc.External = (HWND)parseu64(opt->second);
 		
 		const Win32VideoModeInfo& videoModeInfo = static_cast<const Win32VideoModeInfo&>(RenderAPI::Instance().GetVideoModeInfo());
-		UINT32 numOutputs = videoModeInfo.GetNumOutputs();
+		u32 numOutputs = videoModeInfo.GetNumOutputs();
 		if (numOutputs > 0)
 		{
-			UINT32 actualMonitorIdx = std::min(mDesc.VideoMode.OutputIdx, numOutputs - 1);
+			u32 actualMonitorIdx = std::min(mDesc.VideoMode.OutputIdx, numOutputs - 1);
 			const Win32VideoOutputInfo& outputInfo = static_cast<const Win32VideoOutputInfo&>(videoModeInfo.GetOutputInfo(actualMonitorIdx));
 			windowDesc.Monitor = outputInfo.GetMonitorHandle();
 		}
@@ -265,7 +265,7 @@ namespace bs
 		mRequiresNewBackBuffer = false;
 	}
 
-	void Win32RenderWindow::SwapBuffers(UINT32 syncMask)
+	void Win32RenderWindow::SwapBuffers(u32 syncMask)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -280,15 +280,15 @@ namespace bs
 
 		// Find an appropriate queue to execute on
 		VulkanQueue* queue = presentDevice->GetQueue(GQT_GRAPHICS, 0);
-		UINT32 queueMask = presentDevice->GetQueueMask(GQT_GRAPHICS, 0);
+		u32 queueMask = presentDevice->GetQueueMask(GQT_GRAPHICS, 0);
 
 		// Ignore myself
 		syncMask &= ~queueMask;
 
-		UINT32 deviceIdx = presentDevice->GetIndex();
+		u32 deviceIdx = presentDevice->GetIndex();
 		VulkanCommandBufferManager& cbm = static_cast<VulkanCommandBufferManager&>(CommandBufferManager::Instance());
 
-		UINT32 numSemaphores;
+		u32 numSemaphores;
 		cbm.GetSyncSemaphores(deviceIdx, syncMask, mSemaphoresTemp, numSemaphores);
 
 		// Wait on present (i.e. until the back buffer becomes available), if we haven't already done so
@@ -308,7 +308,7 @@ namespace bs
 		mRequiresNewBackBuffer = true;
 	}
 
-	void Win32RenderWindow::Move(INT32 left, INT32 top)
+	void Win32RenderWindow::Move(i32 left, i32 top)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -331,7 +331,7 @@ namespace bs
 		}
 	}
 
-	void Win32RenderWindow::Resize(UINT32 width, UINT32 height)
+	void Win32RenderWindow::Resize(u32 width, u32 height)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -394,7 +394,7 @@ namespace bs
 		mWindow->Restore();
 	}
 
-	void Win32RenderWindow::SetFullscreen(UINT32 width, UINT32 height, float refreshRate, UINT32 monitorIdx)
+	void Win32RenderWindow::SetFullscreen(u32 width, u32 height, float refreshRate, u32 monitorIdx)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -402,13 +402,13 @@ namespace bs
 			return;
 
 		const Win32VideoModeInfo& videoModeInfo = static_cast<const Win32VideoModeInfo&>(RenderAPI::Instance().GetVideoModeInfo());
-		UINT32 numOutputs = videoModeInfo.GetNumOutputs();
+		u32 numOutputs = videoModeInfo.GetNumOutputs();
 		if (numOutputs == 0)
 			return;
 
 		RenderWindowProperties& props = mProperties;
 
-		UINT32 actualMonitorIdx = std::min(monitorIdx, numOutputs - 1);
+		u32 actualMonitorIdx = std::min(monitorIdx, numOutputs - 1);
 		const Win32VideoOutputInfo& outputInfo = static_cast<const Win32VideoOutputInfo&>(videoModeInfo.GetOutputInfo(actualMonitorIdx));
 
 		mDisplayFrequency = Math::RoundToInt(refreshRate);
@@ -454,7 +454,7 @@ namespace bs
 		SetFullscreen(mode.Width, mode.Height, mode.RefreshRate, mode.OutputIdx);
 	}
 
-	void Win32RenderWindow::SetWindowed(UINT32 width, UINT32 height)
+	void Win32RenderWindow::SetWindowed(u32 width, u32 height)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -470,8 +470,8 @@ namespace bs
 		// Drop out of fullscreen
 		ChangeDisplaySettingsEx(NULL, NULL, NULL, 0, NULL);
 
-		UINT32 winWidth = width;
-		UINT32 winHeight = height;
+		u32 winWidth = width;
+		u32 winHeight = height;
 
 		RECT rect;
 		SetRect(&rect, 0, 0, winWidth, winHeight);
@@ -490,8 +490,8 @@ namespace bs
 		LONG screenw = monitorInfo.rcWork.right - monitorInfo.rcWork.left;
 		LONG screenh = monitorInfo.rcWork.bottom - monitorInfo.rcWork.top;
 
-		INT32 left = screenw > INT32(winWidth) ? ((screenw - INT32(winWidth)) / 2) : 0;
-		INT32 top = screenh > INT32(winHeight) ? ((screenh - INT32(winHeight)) / 2) : 0;
+		i32 left = screenw > i32(winWidth) ? ((screenw - i32(winWidth)) / 2) : 0;
+		i32 top = screenh > i32(winHeight) ? ((screenh - i32(winHeight)) / 2) : 0;
 
 		SetWindowLong(mWindow->GetHWnd(), GWL_STYLE, mWindow->GetStyle() | WS_VISIBLE);
 		SetWindowLong(mWindow->GetHWnd(), GWL_EXSTYLE, mWindow->GetStyleEx());
@@ -508,7 +508,7 @@ namespace bs
 		bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
 	}
 
-	void Win32RenderWindow::SetVSync(bool enabled, UINT32 interval)
+	void Win32RenderWindow::SetVSync(bool enabled, u32 interval)
 	{
 		mProperties.Vsync = enabled;
 		mProperties.VsyncInterval = interval;
@@ -547,8 +547,8 @@ namespace bs
 
 		if(name == "WINDOW")
 		{
-			UINT64 *pWnd = (UINT64*)data;
-			*pWnd = (UINT64)mWindow->GetHWnd();
+			u64 *pWnd = (u64*)data;
+			*pWnd = (u64)mWindow->GetHWnd();
 			return;
 		}
 

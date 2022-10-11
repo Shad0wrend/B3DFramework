@@ -33,14 +33,14 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void InternalLog(MonoString* message, UINT32 category);
-		static void InternalLogWarning(MonoString* message, UINT32 category);
-		static void InternalLogError(MonoString* message, UINT32 category);
-		static void InternalLogMessage(MonoString* message, LogVerbosity verbosity, UINT32 category);
-		static void InternalClear(LogVerbosity verbosity, UINT32 category);
+		static void InternalLog(MonoString* message, u32 category);
+		static void InternalLogWarning(MonoString* message, u32 category);
+		static void InternalLogError(MonoString* message, u32 category);
+		static void InternalLogMessage(MonoString* message, LogVerbosity verbosity, u32 category);
+		static void InternalClear(LogVerbosity verbosity, u32 category);
 		static MonoArray* InternalGetMessages();
 
-		typedef void(BS_THUNKCALL *OnAddedThunkDef) (MonoString*, UINT32, UINT32, MonoException**);
+		typedef void(BS_THUNKCALL *OnAddedThunkDef) (MonoString*, u32, u32, MonoException**);
 
 		static OnAddedThunkDef onAddedThunk;
 	};

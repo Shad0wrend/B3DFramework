@@ -16,13 +16,13 @@ namespace bs
 	struct GPU_BUFFER_DESC
 	{
 		/** Number of elements in the buffer. */
-		UINT32 ElementCount = 0;
+		u32 ElementCount = 0;
 
 		/**
 		 * Size of each individual element in the buffer, in bytes. Only needed if using non-standard buffer. If using
 		 * standard buffers element size is calculated from format and this must be zero.
 		 */
-		UINT32 ElementSize = 0;
+		u32 ElementSize = 0;
 
 		/** Type of the buffer. Determines how is buffer seen by the GPU program and in what ways can it be used. */
 		GpuBufferType Type = GBT_STANDARD;
@@ -56,10 +56,10 @@ namespace bs
 		GpuBufferUsage GetUsage() const { return mDesc.Usage; }
 
 		/**	Returns number of elements in the buffer. */
-		UINT32 GetElementCount() const { return mDesc.ElementCount; }
+		u32 GetElementCount() const { return mDesc.ElementCount; }
 
 		/**	Returns size of a single element in the buffer in bytes. */
-		UINT32 GetElementSize() const { return mDesc.ElementSize; }
+		u32 GetElementSize() const { return mDesc.ElementSize; }
 
 	protected:
 		friend class GpuBuffer;
@@ -85,7 +85,7 @@ namespace bs
 		SPtr<ct::GpuBuffer> GetCore() const;
 
 		/** Returns the size of a single element in the buffer, of the provided format, in bytes. */
-		static UINT32 GetFormatSize(GpuBufferFormat format);
+		static u32 GetFormatSize(GpuBufferFormat format);
 
 		/** @copydoc HardwareBufferManager::createGpuBuffer */
 		static SPtr<GpuBuffer> Create(const GPU_BUFFER_DESC& desc);
@@ -123,14 +123,14 @@ namespace bs
 		const GpuBufferProperties& GetProperties() const { return mProperties; }
 
 		/** @copydoc HardwareBuffer::readData */
-		void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
+		void ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx = 0, u32 queueIdx = 0) override;
 
 		/** @copydoc HardwareBuffer::writeData */
-		void WriteData(UINT32 offset, UINT32 length, const void* source,
-			BufferWriteType writeFlags = BWT_NORMAL, UINT32 queueIdx = 0) override;
+		void WriteData(u32 offset, u32 length, const void* source,
+			BufferWriteType writeFlags = BWT_NORMAL, u32 queueIdx = 0) override;
 
 		/** @copydoc HardwareBuffer::copyData */
-		void CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
+		void CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length,
 			bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/**
@@ -146,7 +146,7 @@ namespace bs
 		 *								deduced from format).
 		 * @return						New view of the buffer, using the provided format and type.
 		 */
-		SPtr<GpuBuffer> GetView(GpuBufferType type, GpuBufferFormat format, UINT32 elementSize = 0);
+		SPtr<GpuBuffer> GetView(GpuBufferType type, GpuBufferFormat format, u32 elementSize = 0);
 
 		/** @copydoc bs::HardwareBufferManager::createGpuBuffer */
 		static SPtr<GpuBuffer> Create(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
@@ -164,7 +164,7 @@ namespace bs
 		GpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer);
 
 		/** @copydoc HardwareBuffer::map */
-		void* Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
+		void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx = 0, u32 queueIdx = 0) override;
 
 		/** @copydoc HardwareBuffer::unmap */
 		void Unmap() override;

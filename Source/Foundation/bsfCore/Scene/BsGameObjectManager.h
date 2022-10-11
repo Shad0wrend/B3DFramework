@@ -66,7 +66,7 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		GameObjectHandleBase GetObject(UINT64 id) const;
+		GameObjectHandleBase GetObject(u64 id) const;
 
 		/**
 		 * Attempts to find a GameObject handle based on the GameObject instance ID. Returns true if object with the
@@ -74,14 +74,14 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		bool TryGetObject(UINT64 id, GameObjectHandleBase& object) const;
+		bool TryGetObject(u64 id, GameObjectHandleBase& object) const;
 
 		/**	
 		 * Checks if the GameObject with the specified instance ID exists.
 		 *
 		 * @note	Thread safe.
 		 */
-		bool ObjectExists(UINT64 id) const;
+		bool ObjectExists(u64 id) const;
 
 		/**
 		 * Changes the instance ID by which an object can be retrieved by.
@@ -89,14 +89,14 @@ namespace bs
 		 * @note	Caller is required to update the object itself with the new ID.
 		 * @note	Thread safe.
 		 */
-		void RemapId(UINT64 oldId, UINT64 newId);
+		void RemapId(u64 oldId, u64 newId);
 
 		/**
 		 * Allocates a new unique game object ID.
 		 *
 		 * @note	Thread safe.
 		 */
-		UINT64 ReserveId();
+		u64 ReserveId();
 
 		/**	Queues the object to be destroyed at the end of a GameObject update cycle. */
 		void QueueForDestroy(const GameObjectHandleBase& object);
@@ -108,9 +108,9 @@ namespace bs
 		Event<void(const HGameObject&)> OnDestroyed;
 
 	private:
-		std::atomic<UINT64> mNextAvailableID = { 1 } ; // 0 is not a valid ID
-		Map<UINT64, GameObjectHandleBase> mObjects;
-		Map<UINT64, GameObjectHandleBase> mQueuedForDestroy;
+		std::atomic<u64> mNextAvailableID = { 1 } ; // 0 is not a valid ID
+		Map<u64, GameObjectHandleBase> mObjects;
+		Map<u64, GameObjectHandleBase> mQueuedForDestroy;
 
 		mutable Mutex mMutex;
 	};
@@ -122,7 +122,7 @@ namespace bs
 		/**	Contains data for an yet unresolved game object handle. */
 		struct UnresolvedHandle
 		{
-			UINT64 OriginalInstanceId;
+			u64 OriginalInstanceId;
 			GameObjectHandleBase Handle;
 		};
 
@@ -133,14 +133,14 @@ namespace bs
 		 * @param[in]	options		One or a combination of GameObjectDeserializationModeFlags, controlling how
 		 *							are game objects deserialized.
 		 */
-		GameObjectDeserializationState(UINT32 options = GODM_UseNewIds | GODM_BreakExternal);
+		GameObjectDeserializationState(u32 options = GODM_UseNewIds | GODM_BreakExternal);
 		~GameObjectDeserializationState();
 
 		/**	Queues the specified handle and resolves it when deserialization ends. */
-		void RegisterUnresolvedHandle(UINT64 originalId, GameObjectHandleBase& object);
+		void RegisterUnresolvedHandle(u64 originalId, GameObjectHandleBase& object);
 
 		/** Notifies the system about a new deserialized game object and its original ID. */
-		void RegisterObject(UINT64 originalId, GameObjectHandleBase& object);
+		void RegisterObject(u64 originalId, GameObjectHandleBase& object);
 
 		/**	Registers a callback that will be triggered when GameObject serialization ends. */
 		void RegisterOnDeserializationEndCallback(std::function<void()> callback);
@@ -152,12 +152,12 @@ namespace bs
 		bool GetUseNewUuiDs() const { return (mOptions & GODM_UseNewUUID) != 0; }
 
 	private:
-		UnorderedMap<UINT64, UINT64> mIdMapping;
-		UnorderedMap<UINT64, SPtr<GameObjectHandleData>> mUnresolvedHandleData;
-		UnorderedMap<UINT64, GameObjectHandleBase> mDeserializedObjects;
+		UnorderedMap<u64, u64> mIdMapping;
+		UnorderedMap<u64, SPtr<GameObjectHandleData>> mUnresolvedHandleData;
+		UnorderedMap<u64, GameObjectHandleBase> mDeserializedObjects;
 		Vector<UnresolvedHandle> mUnresolvedHandles;
 		Vector<std::function<void()>> mEndCallbacks;
-		UINT32 mOptions;
+		u32 mOptions;
 	};
 
 	/** @} */

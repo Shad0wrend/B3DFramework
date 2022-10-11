@@ -86,7 +86,7 @@ namespace bs
 		
 		/** Returns the number of sub-meshes contained in this mesh. */
 		BS_SCRIPT_EXPORT(e:Mesh,pr:getter,n:SubMeshCount)
-		static UINT32 GetSubMeshCount(const HMesh& thisPtr);
+		static u32 GetSubMeshCount(const HMesh& thisPtr);
 		
 		BS_SCRIPT_EXPORT(e:Mesh,in:true)
 		static void GetBounds(const HMesh& thisPtr, AABox* box, Sphere* sphere);

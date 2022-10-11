@@ -107,7 +107,7 @@ namespace bs
 		 * @copydoc bs::TextureManager::createRenderTexture(const RENDER_TEXTURE_DESC&)
 		 * @param[in]	deviceIdx		Index of the GPU device to create the object on.
 		 */
-		SPtr<RenderTexture> CreateRenderTexture(const RENDER_TEXTURE_DESC& desc, UINT32 deviceIdx = 0);
+		SPtr<RenderTexture> CreateRenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx = 0);
 
 	protected:
 		friend class bs::Texture;
@@ -123,7 +123,7 @@ namespace bs
 
 		/** @copydoc createRenderTexture */
 		virtual SPtr<RenderTexture> CreateRenderTextureInternal(const RENDER_TEXTURE_DESC& desc,
-			UINT32 deviceIdx = 0) = 0;
+			u32 deviceIdx = 0) = 0;
 	};
 		}
 

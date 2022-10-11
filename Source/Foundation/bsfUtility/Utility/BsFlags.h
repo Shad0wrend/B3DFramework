@@ -9,7 +9,7 @@ namespace bs
 	 */
 
 	/** Wrapper around an enum that allows simple use of bitwise logic operations. */
-	template<typename Enum, typename Storage = UINT32>
+	template<typename Enum, typename Storage = u32>
 	class Flags
 	{
 	public:
@@ -206,19 +206,19 @@ namespace bs
 			return mBits ? true : false;
 		}
 
-		operator UINT8() const
+		operator u8() const
 		{
-			return static_cast<UINT8>(mBits);
+			return static_cast<u8>(mBits);
 		}
 
-		operator UINT16() const
+		operator u16() const
 		{
-			return static_cast<UINT16>(mBits);
+			return static_cast<u16>(mBits);
 		}
 
-		operator UINT32() const
+		operator u32() const
 		{
-			return static_cast<UINT32>(mBits);
+			return static_cast<u32>(mBits);
 		}
 
 		friend Flags<Enum, Storage> operator&(Enum a, Flags<Enum, Storage> &b)
@@ -233,7 +233,7 @@ namespace bs
 	};
 
 /** Defines global operators for a Flags<Enum, Storage> implementation. */
-#define BS_FLAGS_OPERATORS(Enum) BS_FLAGS_OPERATORS_EXT(Enum, UINT32)
+#define BS_FLAGS_OPERATORS(Enum) BS_FLAGS_OPERATORS_EXT(Enum, u32)
 
 /** Defines global operators for a Flags<Enum, Storage> implementation. */
 #define BS_FLAGS_OPERATORS_EXT(Enum, Storage)																   \

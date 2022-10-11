@@ -119,10 +119,10 @@ namespace bs
 		mInternal = bs_new<FPhysXJoint>(joint, desc);
 
 		// Calls to virtual methods are okay here
-		for (UINT32 i = 0; i < (UINT32)D6JointAxis::Count; i++)
+		for (u32 i = 0; i < (u32)D6JointAxis::Count; i++)
 			SetMotion((D6JointAxis)i, desc.Motion[i]);
 
-		for (UINT32 i = 0; i < (UINT32)D6JointDriveType::Count; i++)
+		for (u32 i = 0; i < (u32)D6JointDriveType::Count; i++)
 			SetDrive((D6JointDriveType)i, desc.Drive[i]);
 
 		SetLimitLinear(desc.LimitLinear);

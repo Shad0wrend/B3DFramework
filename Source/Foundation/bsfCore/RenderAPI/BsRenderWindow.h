@@ -57,7 +57,7 @@ namespace bs
 		bool Vsync = false;
 
 		/** Determines how many vsync intervals occur per frame. FPS = refreshRate/interval. Usually 1 when vsync active. */
-		UINT32 VsyncInterval = 1;
+		u32 VsyncInterval = 1;
 
 		/** Should the window be hidden initially. */
 		bool Hidden = false;
@@ -66,7 +66,7 @@ namespace bs
 		bool DepthBuffer = false;
 
 		/** If higher than 1, texture containing multiple samples per pixel is created. */
-		UINT32 MultisampleCount = 0;
+		u32 MultisampleCount = 0;
 
 		/** Hint about what kind of multisampling to use. Render system specific. */
 		String MultisampleHint = "";
@@ -75,10 +75,10 @@ namespace bs
 		bool Gamma = false;
 
 		/** Window origin on X axis in pixels. -1 == screen center. Relative to monitor provided in videoMode. */
-		INT32 Left = -1;
+		i32 Left = -1;
 
 		/** Window origin on Y axis in pixels. -1 == screen center. Relative to monitor provided in videoMode. */
-		INT32 Top = -1;
+		i32 Top = -1;
 
 		/** Title of the window. */
 		String Title = "";
@@ -117,10 +117,10 @@ namespace bs
 		bool IsFullScreen = false;
 
 		/**	Horizontal origin of the window in pixels. */
-		INT32 Left = 0;
+		i32 Left = 0;
 
 		/**	Vertical origin of the window in pixels. */
-		INT32 Top = 0;
+		i32 Top = 0;
 
 		/**	Indicates whether the window currently has keyboard focus. */
 		bool HasFocus = false;
@@ -156,7 +156,7 @@ namespace bs
 		 * @param[in]	width		Width of the window in pixels.
 		 * @param[in]	height		Height of the window in pixels.
 		 */
-		virtual void Resize(UINT32 width, UINT32 height);
+		virtual void Resize(u32 width, u32 height);
 
 		/**	
 		 * Move the window to specified screen coordinates.
@@ -166,7 +166,7 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		virtual void Move(INT32 left, INT32 top);
+		virtual void Move(i32 left, i32 top);
 
 		/**
 		 * Hides the window.
@@ -204,11 +204,11 @@ namespace bs
 		virtual void Restore();
 
 		/**
-		 * @copydoc ct::RenderWindow::setFullscreen(UINT32, UINT32, float, UINT32)
+		 * @copydoc ct::RenderWindow::setFullscreen(u32, u32, float, u32)
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		virtual void SetFullscreen(UINT32 width, UINT32 height, float refreshRate = 60.0f, UINT32 monitorIdx = 0);
+		virtual void SetFullscreen(u32 width, u32 height, float refreshRate = 60.0f, u32 monitorIdx = 0);
 
 		/**
 		 * @copydoc ct::RenderWindow::setFullscreen(const VideoMode&)
@@ -222,7 +222,7 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		virtual void SetWindowed(UINT32 width, UINT32 height);
+		virtual void SetWindowed(u32 width, u32 height);
 
 		/**	Retrieves a core implementation of a render window usable only from the core thread. */
 		SPtr<ct::RenderWindow> GetCore() const;
@@ -251,8 +251,8 @@ namespace bs
 
 		// Methods to notify this window of external events that change the properties.
 		// These are useful when using "externalWindowHandle"
-		void OnExternalResizeInternal(UINT32 width, UINT32 height);
-		void OnExternalMoveInternal(INT32 top, INT32 left);
+		void OnExternalResizeInternal(u32 width, u32 height);
+		void OnExternalMoveInternal(i32 top, i32 left);
 		void OnExternalFocusInternal(bool focused);
 		void OnExternalMaximizedInternal(bool maximized);
 
@@ -264,7 +264,7 @@ namespace bs
 	protected:
 		friend class RenderWindowManager;
 
-		RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId);
+		RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId);
 
 		/** Returns render window properties that may be edited. */
 		RenderWindowProperties& GetMutableProperties();
@@ -274,7 +274,7 @@ namespace bs
 
 	protected:
 		RENDER_WINDOW_DESC mDesc;
-		UINT32 mWindowId;
+		u32 mWindowId;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
@@ -297,7 +297,7 @@ namespace bs
 	class BS_CORE_EXPORT RenderWindow : public RenderTarget
 	{
 	public:
-		RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId);
+		RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId);
 		virtual ~RenderWindow();
 
 		/**
@@ -310,7 +310,7 @@ namespace bs
 		 *
 		 * @note	If the exact provided mode isn't available, closest one is used instead.
 		 */
-		virtual void SetFullscreen(UINT32 width, UINT32 height, float refreshRate = 60.0f, UINT32 monitorIdx = 0) { }
+		virtual void SetFullscreen(u32 width, u32 height, float refreshRate = 60.0f, u32 monitorIdx = 0) { }
 
 		/**
 		 * Switches the window to fullscreen mode. Child windows cannot go into fullscreen mode.
@@ -325,7 +325,7 @@ namespace bs
 		 * @param[in]	width	Window width in pixels.
 		 * @param[in]	height	Window height in pixels.
 		 */
-		virtual void SetWindowed(UINT32 width, UINT32 height) { }
+		virtual void SetWindowed(u32 width, u32 height) { }
 
 		/**	Hide or show the window. */
 		virtual void SetHidden(bool hidden);
@@ -346,10 +346,10 @@ namespace bs
 		virtual void Restore() { }
 
 		/**	Change the size of the window. */
-		virtual void Resize(UINT32 width, UINT32 height) = 0;
+		virtual void Resize(u32 width, u32 height) = 0;
 
 		/**	Reposition the window. */
-		virtual void Move(INT32 left, INT32 top) = 0;
+		virtual void Move(i32 left, i32 top) = 0;
 
 		/**
 		 * Enables or disables vertical synchronization. When enabled the system will wait for monitor refresh before
@@ -360,7 +360,7 @@ namespace bs
 		 * 						each monitor refresh, value of two means it will be performs for every second (half the
 		 * 						rate), and so on.
 		 */
-		virtual void SetVSync(bool enabled, UINT32 interval = 1) = 0;
+		virtual void SetVSync(bool enabled, u32 interval = 1) = 0;
 
 		/**	Returns properties that describe the render window. */
 		const RenderWindowProperties& GetProperties() const;
@@ -387,7 +387,7 @@ namespace bs
 
 		RENDER_WINDOW_DESC mDesc;
 		SpinLock mLock;
-		UINT32 mWindowId;
+		u32 mWindowId;
 	};
 
 	/** @} */

@@ -37,9 +37,9 @@ namespace bs
 			scaledAxes[1] = mExtentVert * mAxisVert;;
 
 			distance = std::numeric_limits<float>::max();
-			for (UINT32 i = 0; i < 2; i++)
+			for (u32 i = 0; i < 2; i++)
 			{
-				for (UINT32 j = 0; j < 2; j++)
+				for (u32 j = 0; j < 2; j++)
 				{
 					float sign = (float)(2 * j - 1);
 					Vector3 segCenter = mCenter + sign * scaledAxes[i];

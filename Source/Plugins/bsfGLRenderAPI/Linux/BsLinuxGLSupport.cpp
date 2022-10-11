@@ -81,14 +81,14 @@ namespace bs { namespace ct
 	LinuxGLSupport::LinuxGLSupport()
 	{ }
 
-	SPtr<bs::RenderWindow> LinuxGLSupport::newWindow(RENDER_WINDOW_DESC& desc, UINT32 windowId,
+	SPtr<bs::RenderWindow> LinuxGLSupport::newWindow(RENDER_WINDOW_DESC& desc, u32 windowId,
 		SPtr<bs::RenderWindow> parentWindow)
 	{
 		if(parentWindow != nullptr)
 		{
 			::Window x11window;
 			parentWindow->GetCustomAttribute("WINDOW", &x11window);
-			desc.platformSpecific["parentWindowHandle"] = toString((UINT64)x11window);
+			desc.platformSpecific["parentWindowHandle"] = toString((u64)x11window);
 		}
 
 		bs::LinuxRenderWindow* window = new (bs_alloc<bs::LinuxRenderWindow>()) bs::LinuxRenderWindow(desc, windowId, *this);
@@ -113,8 +113,8 @@ namespace bs { namespace ct
 			const char* end = iter;
 			std::string name(start, end);
 
-			UINT32 numExtensions = sizeof(gExtensionMap) / sizeof(gExtensionMap[0]);
-			for (UINT32 i = 0; i < numExtensions; ++i)
+			u32 numExtensions = sizeof(gExtensionMap) / sizeof(gExtensionMap[0]);
+			for (u32 i = 0; i < numExtensions; ++i)
 			{
 				if(strcmp(name.c_str(), gExtensionMap[i].name) == 0)
 				{
@@ -167,9 +167,9 @@ namespace bs { namespace ct
 		return (void*)glXGetProcAddressARB((const GLubyte*)procname.c_str());
 	}
 
-	GLVisualConfig LinuxGLSupport::findBestVisual(::Display* display, bool depthStencil, UINT32 multisample, bool srgb) const
+	GLVisualConfig LinuxGLSupport::findBestVisual(::Display* display, bool depthStencil, u32 multisample, bool srgb) const
 	{
-		INT32 VISUAL_ATTRIBS[] =
+		i32 VISUAL_ATTRIBS[] =
 		{
 			GLX_X_RENDERABLE, 		True,
 			GLX_DRAWABLE_TYPE, 		GLX_WINDOW_BIT,
@@ -186,26 +186,26 @@ namespace bs { namespace ct
 			0
 		};
 
-		INT32 numConfigs;
+		i32 numConfigs;
 		GLXFBConfig* configs = glXChooseFBConfig(display, DefaultScreen(display), VISUAL_ATTRIBS, &numConfigs);
 		GLVisualCapabilities* caps = bs_stack_new<GLVisualCapabilities>(numConfigs);
 
 		// Find a config that best matches the requested properties
-		INT32 bestScore = 0;
-		INT32 bestConfig = -1;
+		i32 bestScore = 0;
+		i32 bestConfig = -1;
 		for (int i = 0; i < numConfigs; ++i)
 		{
-			INT32 configScore = 0;
+			i32 configScore = 0;
 
 			// Depth buffer contributes the most to score
-			INT32 depth, stencil;
+			i32 depth, stencil;
 			glXGetFBConfigAttrib(display, configs[i], GLX_DEPTH_SIZE, &depth);
 			glXGetFBConfigAttrib(display, configs[i], GLX_STENCIL_SIZE, &stencil);
 
 			// Depth buffer was requested
 			if(depthStencil)
 			{
-				INT32 score = 0;
+				i32 score = 0;
 				if (depth == 24 && stencil == 8)
 					score = 10000;
 				else if (depth == 32 && stencil == 8)
@@ -232,7 +232,7 @@ namespace bs { namespace ct
 			// sRGB contributes second most
 			if(srgb)
 			{
-				INT32 hasSRGB = 0;
+				i32 hasSRGB = 0;
 
 				if(extGLX_EXT_framebuffer_sRGB)
 					glXGetFBConfigAttrib(display, configs[i], GLX_FRAMEBUFFER_SRGB_CAPABLE_EXT, &hasSRGB);
@@ -249,14 +249,14 @@ namespace bs { namespace ct
 
 			if((multisample >= 1) && extGLX_ARB_multisample)
 			{
-				INT32 hasMultisample, numSamples;
+				i32 hasMultisample, numSamples;
 				glXGetFBConfigAttrib(display, configs[i], GLX_SAMPLE_BUFFERS, &hasMultisample);
 				glXGetFBConfigAttrib(display, configs[i], GLX_SAMPLES, &numSamples);
 
-				if(hasMultisample && (numSamples <= (INT32)multisample))
+				if(hasMultisample && (numSamples <= (i32)multisample))
 				{
 					configScore += (32 - (multisample - numSamples)) * 10;
-					caps[i].numSamples = (UINT32)numSamples;
+					caps[i].numSamples = (u32)numSamples;
 				}
 			}
 
@@ -277,7 +277,7 @@ namespace bs { namespace ct
 			{
 				// Something went wrong
 				XFree(configs);
-				bs_stack_delete(caps, (UINT32) numConfigs);
+				bs_stack_delete(caps, (u32) numConfigs);
 
 				return output;
 			}

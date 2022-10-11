@@ -50,7 +50,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_ScriptSerializableDictionaryKeyValue;
 		}
@@ -67,22 +67,22 @@ namespace bs
 		SPtr<ManagedSerializableTypeInfoDictionary> GetTypeInfo(ManagedSerializableDictionary* obj) { return obj->mDictionaryTypeInfo; }
 		void SetTypeInfo(ManagedSerializableDictionary* obj, SPtr<ManagedSerializableTypeInfoDictionary> val) { obj->mDictionaryTypeInfo = val; }
 
-		ManagedSerializableDictionaryKeyValue& GetEntry(ManagedSerializableDictionary* obj, UINT32 arrayIdx)
+		ManagedSerializableDictionaryKeyValue& GetEntry(ManagedSerializableDictionary* obj, u32 arrayIdx)
 		{
 			return mSequentialData[arrayIdx];
 		}
 
-		void SetEntry(ManagedSerializableDictionary* obj, UINT32 arrayIdx, ManagedSerializableDictionaryKeyValue& val)
+		void SetEntry(ManagedSerializableDictionary* obj, u32 arrayIdx, ManagedSerializableDictionaryKeyValue& val)
 		{
 			obj->SetFieldData(val.Key, val.Value);
 		}
 
-		UINT32 GetNumEntries(ManagedSerializableDictionary* obj)
+		u32 GetNumEntries(ManagedSerializableDictionary* obj)
 		{
-			return (UINT32)mSequentialData.size();
+			return (u32)mSequentialData.size();
 		}
 
-		void SetNumEntries(ManagedSerializableDictionary* obj, UINT32 numEntries)
+		void SetNumEntries(ManagedSerializableDictionary* obj, u32 numEntries)
 		{
 			// Do nothing
 		}
@@ -110,7 +110,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_ScriptSerializableDictionary;
 		}

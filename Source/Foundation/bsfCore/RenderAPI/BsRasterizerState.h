@@ -110,7 +110,7 @@ namespace bs
 		bool GetAntialiasedLineEnable() const { return mData.AntialiasedLineEnable; }
 
 		/** Returns the hash value generated from the rasterizer state properties. */
-		UINT64 GetHash() const { return mHash; }
+		u64 GetHash() const { return mHash; }
 
 	protected:
 		friend class RasterizerState;
@@ -118,7 +118,7 @@ namespace bs
 		friend class RasterizerStateRTTI;
 
 		RASTERIZER_STATE_DESC mData;
-		UINT64 mHash;
+		u64 mHash;
 	};
 
 	/**
@@ -145,7 +145,7 @@ namespace bs
 		static const SPtr<RasterizerState>& GetDefault();
 
 		/**	Generates a hash value from a rasterizer state descriptor. */
-		static UINT64 GenerateHash(const RASTERIZER_STATE_DESC& desc);
+		static u64 GenerateHash(const RASTERIZER_STATE_DESC& desc);
 
 	protected:
 		friend class RenderStateManager;
@@ -156,7 +156,7 @@ namespace bs
 		SPtr<ct::CoreObject> CreateCore() const ;
 
 		RasterizerProperties mProperties;
-		mutable UINT32 mId;
+		mutable u32 mId;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -190,7 +190,7 @@ namespace bs
 		const RasterizerProperties& GetProperties() const;
 
 		/**	Returns a unique state ID. Only the lowest 10 bits are used. */
-		UINT32 GetId() const { return mId; }
+		u32 GetId() const { return mId; }
 
 		/** Creates a new rasterizer state using the specified rasterizer state descriptor structure. */
 		static SPtr<RasterizerState> Create(const RASTERIZER_STATE_DESC& desc);
@@ -201,7 +201,7 @@ namespace bs
 	protected:
 		friend class RenderStateManager;
 
-		RasterizerState(const RASTERIZER_STATE_DESC& desc, UINT32 id);
+		RasterizerState(const RASTERIZER_STATE_DESC& desc, u32 id);
 
 		/** @copydoc CoreObject::initialize */
 		void Initialize() override;
@@ -210,7 +210,7 @@ namespace bs
 		virtual void CreateInternal() { }
 
 		RasterizerProperties mProperties;
-		UINT32 mId;
+		u32 mId;
 	};
 
 	/** @} */

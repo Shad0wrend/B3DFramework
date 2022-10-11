@@ -81,7 +81,7 @@ namespace bs
 		verts[2] = Vector4(X, Y + Height, 0.0f, 1.0f);
 		verts[3] = Vector4(X + Width, Y + Height, 0.0f, 1.0f);
 
-		for(UINT32 i = 0; i < 4; i++)
+		for(u32 i = 0; i < 4; i++)
 			verts[i] = matrix.Multiply(verts[i]);
 
 		float minX = std::numeric_limits<float>::max();
@@ -89,7 +89,7 @@ namespace bs
 		float minY = std::numeric_limits<float>::max();
 		float maxY = std::numeric_limits<float>::min();
 
-		for(UINT32 i = 0; i < 4; i++)
+		for(u32 i = 0; i < 4; i++)
 		{
 			if(verts[i].X < minX)
 				minX = verts[i].X;

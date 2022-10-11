@@ -22,7 +22,7 @@ namespace bs
 	{ }
 
 	template<class T, bool Core>
-	void TGpuDataParam<T, Core>::Set(const T& value, UINT32 arrayIdx) const
+	void TGpuDataParam<T, Core>::Set(const T& value, u32 arrayIdx) const
 	{
 		if (mParent == nullptr)
 			return;
@@ -39,30 +39,30 @@ namespace bs
 		}
 #endif
 
-		UINT32 elementSizeBytes = mParamDesc->ElementSize * sizeof(UINT32);
-		UINT32 sizeBytes = std::min(elementSizeBytes, (UINT32)sizeof(T)); // Truncate if it doesn't fit within parameter size
+		u32 elementSizeBytes = mParamDesc->ElementSize * sizeof(u32);
+		u32 sizeBytes = std::min(elementSizeBytes, (u32)sizeof(T)); // Truncate if it doesn't fit within parameter size
 
 		const bool transposeMatrices = ct::gCaps().Conventions.MatrixOrder == Conventions::MatrixOrder::ColumnMajor;
 		if (TransposePolicy<T>::TransposeEnabled(transposeMatrices))
 		{
 			auto transposed = TransposePolicy<T>::Transpose(value);
-			paramBlock->Write((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride) * sizeof(UINT32), &transposed, sizeBytes);
+			paramBlock->Write((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride) * sizeof(u32), &transposed, sizeBytes);
 		}
 		else
-			paramBlock->Write((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride) * sizeof(UINT32), &value, sizeBytes);
+			paramBlock->Write((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride) * sizeof(u32), &value, sizeBytes);
 
 		// Set unused bytes to 0
 		if (sizeBytes < elementSizeBytes)
 		{
-			UINT32 diffSize = elementSizeBytes - sizeBytes;
-			paramBlock->ZeroOut((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride)  * sizeof(UINT32) + sizeBytes, diffSize);
+			u32 diffSize = elementSizeBytes - sizeBytes;
+			paramBlock->ZeroOut((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride)  * sizeof(u32) + sizeBytes, diffSize);
 		}
 
 		mParent->MarkCoreDirtyInternal();
 	}
 
 	template<class T, bool Core>
-	T TGpuDataParam<T, Core>::Get(UINT32 arrayIdx) const
+	T TGpuDataParam<T, Core>::Get(u32 arrayIdx) const
 	{
 		if (mParent == nullptr)
 			return T();
@@ -79,11 +79,11 @@ namespace bs
 		}
 #endif
 
-		UINT32 elementSizeBytes = mParamDesc->ElementSize * sizeof(UINT32);
-		UINT32 sizeBytes = std::min(elementSizeBytes, (UINT32)sizeof(T));
+		u32 elementSizeBytes = mParamDesc->ElementSize * sizeof(u32);
+		u32 sizeBytes = std::min(elementSizeBytes, (u32)sizeof(T));
 
 		T value;
-		paramBlock->Read((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride) * sizeof(UINT32), &value, sizeBytes);
+		paramBlock->Read((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride) * sizeof(u32), &value, sizeBytes);
 
 		return value;
 	}
@@ -99,7 +99,7 @@ namespace bs
 	{ }
 
 	template<bool Core>
-	void TGpuParamStruct<Core>::Set(const void* value, UINT32 sizeBytes, UINT32 arrayIdx) const
+	void TGpuParamStruct<Core>::Set(const void* value, u32 sizeBytes, u32 arrayIdx) const
 	{
 		if (mParent == nullptr)
 			return;
@@ -108,7 +108,7 @@ namespace bs
 		if (paramBlock == nullptr)
 			return;
 
-		UINT32 elementSizeBytes = mParamDesc->ElementSize * sizeof(UINT32);
+		u32 elementSizeBytes = mParamDesc->ElementSize * sizeof(u32);
 
 #if BS_DEBUG_MODE
 		if (sizeBytes > elementSizeBytes)
@@ -126,20 +126,20 @@ namespace bs
 
 		sizeBytes = std::min(elementSizeBytes, sizeBytes);
 
-		paramBlock->Write((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride) * sizeof(UINT32), value, sizeBytes);
+		paramBlock->Write((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride) * sizeof(u32), value, sizeBytes);
 
 		// Set unused bytes to 0
 		if (sizeBytes < elementSizeBytes)
 		{
-			UINT32 diffSize = elementSizeBytes - sizeBytes;
-			paramBlock->ZeroOut((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride)  * sizeof(UINT32) + sizeBytes, diffSize);
+			u32 diffSize = elementSizeBytes - sizeBytes;
+			paramBlock->ZeroOut((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride)  * sizeof(u32) + sizeBytes, diffSize);
 		}
 
 		mParent->MarkCoreDirtyInternal();
 	}
 
 	template<bool Core>
-	void TGpuParamStruct<Core>::Get(void* value, UINT32 sizeBytes, UINT32 arrayIdx) const
+	void TGpuParamStruct<Core>::Get(void* value, u32 sizeBytes, u32 arrayIdx) const
 	{
 		if (mParent == nullptr)
 			return;
@@ -148,7 +148,7 @@ namespace bs
 		if (paramBlock == nullptr)
 			return;
 
-		UINT32 elementSizeBytes = mParamDesc->ElementSize * sizeof(UINT32);
+		u32 elementSizeBytes = mParamDesc->ElementSize * sizeof(u32);
 
 #if BS_DEBUG_MODE
 		if (sizeBytes > elementSizeBytes)
@@ -165,16 +165,16 @@ namespace bs
 #endif
 		sizeBytes = std::min(elementSizeBytes, sizeBytes);
 
-		paramBlock->Read((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride) * sizeof(UINT32), value, sizeBytes);
+		paramBlock->Read((mParamDesc->CpuMemOffset + arrayIdx * mParamDesc->ArrayElementStride) * sizeof(u32), value, sizeBytes);
 	}
 
 	template<bool Core>
-	UINT32 TGpuParamStruct<Core>::GetElementSize() const
+	u32 TGpuParamStruct<Core>::GetElementSize() const
 	{
 		if (mParent == nullptr)
 			return 0;
 
-		return mParamDesc->ElementSize * sizeof(UINT32);
+		return mParamDesc->ElementSize * sizeof(u32);
 	}
 
 	template<bool Core>

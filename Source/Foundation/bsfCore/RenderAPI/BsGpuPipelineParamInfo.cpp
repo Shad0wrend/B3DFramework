@@ -29,8 +29,8 @@ namespace bs
 			mNumElements++;
 		};
 
-		UINT32 numParamDescs = sizeof(mParamDescs) / sizeof(mParamDescs[0]);
-		for (UINT32 i = 0; i < numParamDescs; i++)
+		u32 numParamDescs = sizeof(mParamDescs) / sizeof(mParamDescs[0]);
+		for (u32 i = 0; i < numParamDescs; i++)
 		{
 			const SPtr<GpuParamDesc>& paramDesc = mParamDescs[i];
 			if (paramDesc == nullptr)
@@ -52,10 +52,10 @@ namespace bs
 				countElements(sampler.second, ParamType::SamplerState);
 		}
 
-		UINT32* numSlotsPerSet = (UINT32*)bs_stack_alloc(mNumSets * sizeof(UINT32));
+		u32* numSlotsPerSet = (u32*)bs_stack_alloc(mNumSets * sizeof(u32));
 		bs_zero_out(numSlotsPerSet, mNumSets);
 
-		for (UINT32 i = 0; i < numParamDescs; i++)
+		for (u32 i = 0; i < numParamDescs; i++)
 		{
 			const SPtr<GpuParamDesc>& paramDesc = mParamDescs[i];
 			if (paramDesc == nullptr)
@@ -82,16 +82,16 @@ namespace bs
 					std::max(numSlotsPerSet[sampler.second.Set], sampler.second.Slot + 1);
 		}
 
-		UINT32 totalNumSlots = 0;
-		for (UINT32 i = 0; i < mNumSets; i++)
+		u32 totalNumSlots = 0;
+		for (u32 i = 0; i < mNumSets; i++)
 			totalNumSlots += numSlotsPerSet[i];
 
 		mAlloc.Reserve<SetInfo>(mNumSets)
-			.Reserve<UINT32>(totalNumSlots)
+			.Reserve<u32>(totalNumSlots)
 			.Reserve<ParamType>(totalNumSlots)
-			.Reserve<UINT32>(totalNumSlots);
+			.Reserve<u32>(totalNumSlots);
 
-		for (UINT32 i = 0; i < (UINT32)ParamType::Count; i++)
+		for (u32 i = 0; i < (u32)ParamType::Count; i++)
 			mAlloc.Reserve<ResourceInfo>(mNumElementsPerType[i]);
 
 		mAlloc.Init();
@@ -101,23 +101,23 @@ namespace bs
 		if(mSetInfos != nullptr)
 			bs_zero_out(mSetInfos, mNumSets);
 
-		for (UINT32 i = 0; i < mNumSets; i++)
+		for (u32 i = 0; i < mNumSets; i++)
 			mSetInfos[i].NumSlots = numSlotsPerSet[i];
 
 		bs_stack_free(numSlotsPerSet);
 
-		for(UINT32 i = 0; i < mNumSets; i++)
+		for(u32 i = 0; i < mNumSets; i++)
 		{
-			mSetInfos[i].SlotIndices = mAlloc.Alloc<UINT32>(mSetInfos[i].NumSlots);
-			memset(mSetInfos[i].SlotIndices, -1, sizeof(UINT32) * mSetInfos[i].NumSlots);
+			mSetInfos[i].SlotIndices = mAlloc.Alloc<u32>(mSetInfos[i].NumSlots);
+			memset(mSetInfos[i].SlotIndices, -1, sizeof(u32) * mSetInfos[i].NumSlots);
 
 			mSetInfos[i].SlotTypes = mAlloc.Alloc<ParamType>(mSetInfos[i].NumSlots);
 
-			mSetInfos[i].SlotSamplers = mAlloc.Alloc<UINT32>(mSetInfos[i].NumSlots);
-			memset(mSetInfos[i].SlotSamplers, -1, sizeof(UINT32) * mSetInfos[i].NumSlots);
+			mSetInfos[i].SlotSamplers = mAlloc.Alloc<u32>(mSetInfos[i].NumSlots);
+			memset(mSetInfos[i].SlotSamplers, -1, sizeof(u32) * mSetInfos[i].NumSlots);
 		}
 
-		for (UINT32 i = 0; i < (UINT32)ParamType::Count; i++)
+		for (u32 i = 0; i < (u32)ParamType::Count; i++)
 		{
 			mResourceInfos[i] = mAlloc.Alloc<ResourceInfo>(mNumElementsPerType[i]);
 			mNumElementsPerType[i] = 0;
@@ -127,7 +127,7 @@ namespace bs
 		{
 			int typeIdx = (int)type;
 
-			UINT32 sequentialIdx = mNumElementsPerType[typeIdx];
+			u32 sequentialIdx = mNumElementsPerType[typeIdx];
 
 			SetInfo& setInfo = mSetInfos[entry.Set];
 			setInfo.SlotIndices[entry.Slot] = sequentialIdx;
@@ -139,7 +139,7 @@ namespace bs
 			mNumElementsPerType[typeIdx]++;
 		};
 
-		for (UINT32 i = 0; i < numParamDescs; i++)
+		for (u32 i = 0; i < numParamDescs; i++)
 		{
 			const SPtr<GpuParamDesc>& paramDesc = mParamDescs[i];
 			if (paramDesc == nullptr)
@@ -163,10 +163,10 @@ namespace bs
 				for (auto& entry : paramDesc->Samplers)
 				{
 					const GpuParamObjectDesc& samplerDesc = entry.second;
-					UINT32 sequentialIdx = mNumElementsPerType[typeIdx];
+					u32 sequentialIdx = mNumElementsPerType[typeIdx];
 
 					SetInfo& setInfo = mSetInfos[samplerDesc.Set];
-					if (setInfo.SlotIndices[samplerDesc.Slot] == (UINT32)-1) // Slot is sampler only
+					if (setInfo.SlotIndices[samplerDesc.Slot] == (u32)-1) // Slot is sampler only
 					{
 						setInfo.SlotIndices[samplerDesc.Slot] = sequentialIdx;
 						setInfo.SlotTypes[samplerDesc.Slot] = ParamType::SamplerState;
@@ -185,7 +185,7 @@ namespace bs
 		}
 	}
 
-	UINT32 GpuPipelineParamInfoBase::GetSequentialSlot(ParamType type, UINT32 set, UINT32 slot) const
+	u32 GpuPipelineParamInfoBase::GetSequentialSlot(ParamType type, u32 set, u32 slot) const
 	{
 #if BS_DEBUG_MODE
 		if (set >= mNumSets)
@@ -207,12 +207,12 @@ namespace bs
 			// Allow sampler states & textures/buffers to share the same slot, as some APIs combine them
 			if(type == ParamType::SamplerState)
 			{
-				if (mSetInfos[set].SlotSamplers[slot] != (UINT32)-1)
+				if (mSetInfos[set].SlotSamplers[slot] != (u32)-1)
 					return mSetInfos[set].SlotSamplers[slot];
 			}
 
 			BS_LOG(Error, RenderBackend, "Requested parameter is not of the valid type. Requested: {0}. Actual: {1}.",
-				(UINT32)type, (UINT32)mSetInfos[set].SlotTypes[slot]);
+				(u32)type, (u32)mSetInfos[set].SlotTypes[slot]);
 			return -1;
 		}
 
@@ -221,7 +221,7 @@ namespace bs
 		return mSetInfos[set].SlotIndices[slot];
 	}
 
-	void GpuPipelineParamInfoBase::GetBinding(ParamType type, UINT32 sequentialSlot, UINT32& set, UINT32& slot) const
+	void GpuPipelineParamInfoBase::GetBinding(ParamType type, u32 sequentialSlot, u32& set, u32& slot) const
 	{
 #if BS_DEBUG_MODE
 		if(sequentialSlot >= mNumElementsPerType[(int)type])
@@ -241,13 +241,13 @@ namespace bs
 
 	void GpuPipelineParamInfoBase::GetBindings(ParamType type, const String& name, GpuParamBinding (& bindings)[GPT_COUNT])
 	{
-		constexpr UINT32 numParamDescs = sizeof(mParamDescs) / sizeof(mParamDescs[0]);
+		constexpr u32 numParamDescs = sizeof(mParamDescs) / sizeof(mParamDescs[0]);
 		static_assert(
 			numParamDescs == GPT_COUNT,
 			"Number of param descriptor structures must match the number of GPU program stages."
 		);
 
-		for (UINT32 i = 0; i < numParamDescs; i++)
+		for (u32 i = 0; i < numParamDescs; i++)
 			GetBinding((GpuProgramType)i, type, name, bindings[i]);
 	}
 
@@ -263,13 +263,13 @@ namespace bs
 				binding.Slot = iterFind->second.Slot;
 			}
 			else
-				binding.Set = binding.Slot = (UINT32)-1;
+				binding.Set = binding.Slot = (u32)-1;
 		};
 
-		const SPtr<GpuParamDesc>& paramDesc = mParamDescs[(UINT32)progType];
+		const SPtr<GpuParamDesc>& paramDesc = mParamDescs[(u32)progType];
 		if (paramDesc == nullptr)
 		{
-			binding.Set = binding.Slot = (UINT32)-1;
+			binding.Set = binding.Slot = (u32)-1;
 			return;
 		}
 

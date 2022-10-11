@@ -57,10 +57,10 @@ namespace bs
 
 	void SceneManager::ClearScene(bool forceAll)
 	{
-		UINT32 numChildren = mMainScene->mRoot->GetNumChildren();
+		u32 numChildren = mMainScene->mRoot->GetNumChildren();
 
-		UINT32 curIdx = 0;
-		for (UINT32 i = 0; i < numChildren; i++)
+		u32 curIdx = 0;
+		for (u32 i = 0; i < numChildren; i++)
 		{
 			HSceneObject child = mMainScene->mRoot->GetChild(curIdx);
 
@@ -95,13 +95,13 @@ namespace bs
 
 		HSceneObject oldRoot = mMainScene->mRoot;
 
-		UINT32 numChildren = oldRoot->GetNumChildren();
+		u32 numChildren = oldRoot->GetNumChildren();
 		// Make sure to keep persistent objects
 
 		bs_frame_mark();
 		{
 			FrameVector<HSceneObject> toRemove;
-			for (UINT32 i = 0; i < numChildren; i++)
+			for (u32 i = 0; i < numChildren; i++)
 			{
 				HSceneObject child = oldRoot->GetChild(i);
 
@@ -319,7 +319,7 @@ namespace bs
 			}
 
 			// Move from active to inactive list
-			for (INT32 i = 0; i < (INT32)mActiveComponents.size(); i++)
+			for (i32 i = 0; i < (i32)mActiveComponents.size(); i++)
 			{
 				// Note: Purposely not a reference since the list changes in the add/remove methods below
 				const HComponent component = mActiveComponents[i];
@@ -419,8 +419,8 @@ namespace bs
 			// Since the state change wasn't queued, remove the component from the list right away. Its expected the caller
 			// knows what is he doing.
 
-			UINT32 existingListType;
-			UINT32 existingIdx;
+			u32 existingListType;
+			u32 existingIdx;
 			DecodeComponentId(component->GetSceneManagerId(), existingIdx, existingListType);
 
 			if(existingListType != 0)
@@ -428,14 +428,14 @@ namespace bs
 		}
 	}
 
-	void SceneManager::AddToStateList(const HComponent& component, UINT32 listType)
+	void SceneManager::AddToStateList(const HComponent& component, u32 listType)
 	{
 		if(listType == 0)
 			return;
 
 		Vector<HComponent>& list = *mComponentsPerState[listType - 1];
 
-		const auto idx = (UINT32)list.size();
+		const auto idx = (u32)list.size();
 		list.push_back(component);
 
 		component->SetSceneManagerId(EncodeComponentId(idx, listType));
@@ -443,8 +443,8 @@ namespace bs
 
 	void SceneManager::RemoveFromStateList(const HComponent& component)
 	{
-		UINT32 listType;
-		UINT32 idx;
+		u32 listType;
+		u32 idx;
 		DecodeComponentId(component->GetSceneManagerId(), idx, listType);
 
 		if(listType == 0)
@@ -452,7 +452,7 @@ namespace bs
 
 		Vector<HComponent>& list = *mComponentsPerState[listType - 1];
 
-		UINT32 lastIdx;
+		u32 lastIdx;
 		DecodeComponentId(list.back()->GetSceneManagerId(), lastIdx, listType);
 
 		assert(list[idx] == component);
@@ -476,14 +476,14 @@ namespace bs
 			if(component.IsDestroyed(false))
 				continue;
 
-			UINT32 existingListType;
-			UINT32 existingIdx;
+			u32 existingListType;
+			u32 existingIdx;
 			DecodeComponentId(component->GetSceneManagerId(), existingIdx, existingListType);
 
 			const bool alwaysRun = component->HasFlag(ComponentFlag::AlwaysRun);
 			const bool isActive = component->SO()->GetActive();
 
-			UINT32 listType = 0;
+			u32 listType = 0;
 			switch(entry.Type)
 			{
 			case ComponentStateEventType::Created:
@@ -518,20 +518,20 @@ namespace bs
 	}
 
 
-	UINT32 SceneManager::EncodeComponentId(UINT32 idx, UINT32 type)
+	u32 SceneManager::EncodeComponentId(u32 idx, u32 type)
 	{
 		assert(idx <= (0x3FFFFFFF));
 
 		return (type << 30) | idx;
 	}
 
-	void SceneManager::DecodeComponentId(UINT32 id, UINT32& idx, UINT32& type)
+	void SceneManager::DecodeComponentId(u32 id, u32& idx, u32& type)
 	{
 		idx = id & 0x3FFFFFFF;
 		type = id >> 30;
 	}
 
-	bool SceneManager::IsComponentOfType(const HComponent& component, UINT32 rttiId)
+	bool SceneManager::IsComponentOfType(const HComponent& component, u32 rttiId)
 	{
 		return component->GetRtti()->GetRttiId() == rttiId;
 	}

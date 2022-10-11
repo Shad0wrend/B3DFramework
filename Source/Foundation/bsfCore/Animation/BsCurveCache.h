@@ -21,7 +21,7 @@ namespace bs
 		friend class TAnimationCurve<T>;
 
 		/** Left-most key the curve was last evaluated at. -1 if no cached data. */
-		mutable UINT32 cachedKey = (UINT32)-1;
+		mutable u32 cachedKey = (u32)-1;
 		
 		/** Time relative to the animation curve, at which the cached data starts. */
 		mutable float cachedCurveStart = std::numeric_limits<float>::infinity();
@@ -52,14 +52,14 @@ namespace bs
 		friend class TAnimationCurve<T>;
 
 		/** Initializes the memory required for single integration cache. */
-		void Init(UINT32 numKeys) const
+		void Init(u32 numKeys) const
 		{
 			segmentSums = (T*)bs_alloc(sizeof(T) * numKeys * 5);
 			coeffs = (T(*)[4])(segmentSums + numKeys);
 		}
 
 		/** Initializes the memory required for double integration cache. */
-		void InitDouble(UINT32 numKeys) const
+		void InitDouble(u32 numKeys) const
 		{
 			segmentSums = (T*)bs_alloc(sizeof(T) * numKeys * 6);
 			doubleSegmentSums = (T*)(segmentSums + numKeys);

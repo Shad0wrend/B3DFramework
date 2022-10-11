@@ -88,7 +88,7 @@ namespace bs { namespace ct
 		return gpuProg;
 	}
 
-	UINT32 parseErrorMessage(const char* message)
+	u32 parseErrorMessage(const char* message)
 	{
 		if (message == nullptr)
 			return 0;
@@ -177,7 +177,7 @@ namespace bs { namespace ct
 		if (messages != nullptr)
 		{
 			const char* message = static_cast<const char*>(messages->GetBufferPointer());
-			UINT32 lineIdx = parseErrorMessage(message);
+			u32 lineIdx = parseErrorMessage(message);
 
 			Vector<String> sourceLines = StringUtil::Split(source, "\n");
 			String sourceLine;
@@ -204,8 +204,8 @@ namespace bs { namespace ct
 
 		if (microcode != nullptr)
 		{
-			bytecode->Instructions.Size = (UINT32)microcode->GetBufferSize();
-			bytecode->Instructions.Data = (UINT8*)bs_alloc(bytecode->Instructions.Size);
+			bytecode->Instructions.Size = (u32)microcode->GetBufferSize();
+			bytecode->Instructions.Data = (u8*)bs_alloc(bytecode->Instructions.Size);
 
 			memcpy(bytecode->Instructions.Data, microcode->GetBufferPointer(), bytecode->Instructions.Size);
 

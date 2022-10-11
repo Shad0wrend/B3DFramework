@@ -22,7 +22,7 @@ namespace bs
 		float NrmTimeEnd;
 		float Length;
 		float TimeStep;
-		UINT32 MaxParticles;
+		u32 MaxParticles;
 		bool WorldSpace;
 		bool GpuSimulated;
 		Matrix4 LocalToWorld;

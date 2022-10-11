@@ -93,14 +93,14 @@ namespace bs
 
 	void CDistanceJoint::SetFlag(DistanceJointFlag flag, bool enabled)
 	{
-		bool isEnabled = ((UINT32)mDesc.Flag & (UINT32)flag) != 0;
+		bool isEnabled = ((u32)mDesc.Flag & (u32)flag) != 0;
 		if (isEnabled == enabled)
 			return;
 
 		if (enabled)
-			mDesc.Flag = (DistanceJointFlag)((UINT32)mDesc.Flag | (UINT32)flag);
+			mDesc.Flag = (DistanceJointFlag)((u32)mDesc.Flag | (u32)flag);
 		else
-			mDesc.Flag = (DistanceJointFlag)((UINT32)mDesc.Flag & ~(UINT32)flag);
+			mDesc.Flag = (DistanceJointFlag)((u32)mDesc.Flag & ~(u32)flag);
 
 		if (mInternal != nullptr)
 			GetInternalInternal()->SetFlag(flag, enabled);
@@ -108,7 +108,7 @@ namespace bs
 
 	bool CDistanceJoint::HasFlag(DistanceJointFlag flag) const
 	{
-		return ((UINT32)mDesc.Flag & (UINT32)flag) != 0;
+		return ((u32)mDesc.Flag & (u32)flag) != 0;
 	}
 
 	SPtr<Joint> CDistanceJoint::CreateInternal()

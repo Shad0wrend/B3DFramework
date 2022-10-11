@@ -52,12 +52,12 @@ namespace bs
 		/**	Stores information about a queued input event that is to be triggered later. */
 		struct QueuedEvent
 		{
-			QueuedEvent(EventType type, UINT32 idx)
+			QueuedEvent(EventType type, u32 idx)
 				:Type(type), Idx(idx)
 			{ }
 
 			EventType Type;
-			UINT32 Idx;
+			u32 Idx;
 		};
 
 	public:
@@ -71,7 +71,7 @@ namespace bs
 		 * @param[in]	type		Type of axis to query. Usually a type from InputAxis but can be a custom value.
 		 * @param[in]	deviceIdx	Index of the device in case more than one is hooked up (0 - primary).
 		 */
-		float GetAxisValue(UINT32 type, UINT32 deviceIdx = 0) const;
+		float GetAxisValue(u32 type, u32 deviceIdx = 0) const;
 
 		/**
 		 * Query if the provided button is currently being held (this frame or previous frames).
@@ -79,7 +79,7 @@ namespace bs
 		 * @param[in]	keyCode		Code of the button to query.
 		 * @param[in]	deviceIdx	Device to query the button on (0 - primary).
 		 */
-		bool IsButtonHeld(ButtonCode keyCode, UINT32 deviceIdx = 0) const;
+		bool IsButtonHeld(ButtonCode keyCode, u32 deviceIdx = 0) const;
 
 		/**
 		 * Query if the provided button is currently being released (only true for one frame).
@@ -87,7 +87,7 @@ namespace bs
 		 * @param[in]	keyCode		Code of the button to query.
 		 * @param[in]	deviceIdx	Device to query the button on (0 - primary).
 		 */
-		bool IsButtonUp(ButtonCode keyCode, UINT32 deviceIdx = 0) const;
+		bool IsButtonUp(ButtonCode keyCode, u32 deviceIdx = 0) const;
 
 		/**
 		 * Query if the provided button is currently being pressed (only true for one frame).
@@ -95,7 +95,7 @@ namespace bs
 		 * @param[in]	keyCode		Code of the button to query.
 		 * @param[in]	deviceIdx	Device to query the button on (0 - primary).
 		 */
-		bool IsButtonDown(ButtonCode keyCode, UINT32 deviceIdx = 0) const;
+		bool IsButtonDown(ButtonCode keyCode, u32 deviceIdx = 0) const;
 
 		/** Returns position of the pointer (for example mouse cursor) relative to the screen. */
 		Vector2I GetPointerPosition() const;
@@ -131,10 +131,10 @@ namespace bs
 		void SetMouseSmoothing(bool enabled);
 
 		/** Returns the number of detected devices of the specified type. */
-		UINT32 GetDeviceCount(InputDevice device) const;
+		u32 GetDeviceCount(InputDevice device) const;
 
 		/** Returns the name of a specific input device. Returns empty string if the device doesn't exist. */
-		String GetDeviceName(InputDevice type, UINT32 idx);
+		String GetDeviceName(InputDevice type, u32 idx);
 
 		/** Triggered whenever a button is first pressed. */
 		Event<void(const ButtonEvent&)> OnButtonDown;
@@ -179,19 +179,19 @@ namespace bs
 		InputPrivateData* GetPrivateDataInternal() const { return mPlatformData; }
 
 		/** Returns a handle to the window that is currently receiving input. */
-		UINT64 GetWindowHandleInternal() const { return mWindowHandle; }
+		u64 GetWindowHandleInternal() const { return mWindowHandle; }
 
 		/** Called by Mouse when mouse movement is detected. */
-		void NotifyMouseMovedInternal(INT32 relX, INT32 relY, INT32 relZ);
+		void NotifyMouseMovedInternal(i32 relX, i32 relY, i32 relZ);
 
 		/** Called by any of the raw input devices when analog axis movement is detected. */
-		void NotifyAxisMovedInternal(UINT32 gamepadIdx, UINT32 axisIdx, INT32 value);
+		void NotifyAxisMovedInternal(u32 gamepadIdx, u32 axisIdx, i32 value);
 
 		/** Called by any of the raw input devices when a button is pressed. */
-		void NotifyButtonPressedInternal(UINT32 deviceIdx, ButtonCode code, UINT64 timestamp);
+		void NotifyButtonPressedInternal(u32 deviceIdx, ButtonCode code, u64 timestamp);
 
 		/** Called by any of the raw input devices when a button is released. */
-		void NotifyButtonReleasedInternal(UINT32 deviceIdx, ButtonCode code, UINT64 timestamp);
+		void NotifyButtonReleasedInternal(u32 deviceIdx, ButtonCode code, u64 timestamp);
 
 		/** @} */
 
@@ -210,23 +210,23 @@ namespace bs
 		 * @param[in]	idx		Index of the mouse axis to smooth, 0 - horizontal, 1 - vertical.
 		 * @return				Smoothed value.
 		 */
-		float SmoothMouse(float value, UINT32 idx);
+		float SmoothMouse(float value, u32 idx);
 
 		/**	Triggered by input handler when a button is pressed. */
-		void ButtonDown(UINT32 deviceIdx, ButtonCode code, UINT64 timestamp);
+		void ButtonDown(u32 deviceIdx, ButtonCode code, u64 timestamp);
 
 		/**	Triggered by input handler when a button is released. */
-		void ButtonUp(UINT32 deviceIdx, ButtonCode code, UINT64 timestamp);
+		void ButtonUp(u32 deviceIdx, ButtonCode code, u64 timestamp);
 
 		/**	Triggered by input handler when a mouse/joystick axis is moved. */
-		void AxisMoved(UINT32 deviceIdx, float value, UINT32 axis);
+		void AxisMoved(u32 deviceIdx, float value, u32 axis);
 
 		/**
 		 * Called from the message loop to notify user has entered a character.
 		 * 			
 		 * @see		onCharInput
 		 */
-		void CharInput(UINT32 character);
+		void CharInput(u32 character);
 
 		/**
 		 * Called from the message loop to notify user has moved the cursor.
@@ -316,20 +316,20 @@ namespace bs
 
 		// Raw input
 		bool mMouseSmoothingEnabled = false;
-		UINT64 mWindowHandle;
+		u64 mWindowHandle;
 
 		Mouse* mMouse = nullptr;
 		Keyboard* mKeyboard = nullptr;
 		Vector<Gamepad*> mGamepads;
 
 		float mTotalMouseSamplingTime[2];
-		UINT32 mTotalMouseNumSamples[2];
+		u32 mTotalMouseNumSamples[2];
 		float mMouseZeroTime[2];
-		INT32 mMouseSampleAccumulator[2];
+		i32 mMouseSampleAccumulator[2];
 		float mMouseSmoothedAxis[2];
-		UINT64 mLastMouseUpdateFrame;
+		u64 mLastMouseUpdateFrame;
 
-		UINT64 mTimestampClockOffset;
+		u64 mTimestampClockOffset;
 
 		InputPrivateData* mPlatformData;
 

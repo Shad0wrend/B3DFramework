@@ -43,7 +43,7 @@ namespace bs
 		}
 		
 		/** Returns the unique identifier for the type owned by the field. */
-		virtual UINT32 GetTypeId()
+		virtual u32 GetTypeId()
 		{
 			return 0;
 		}
@@ -101,10 +101,10 @@ namespace bs
 		typedef DataType& (InterfaceType::*GetterType)(ObjectType*);
 		typedef void (InterfaceType::*SetterType)(ObjectType*, DataType&);
 
-		typedef DataType& (InterfaceType::*ArrayGetterType)(ObjectType*, UINT32);
-		typedef void (InterfaceType::*ArraySetterType)(ObjectType*, UINT32, DataType&);
-		typedef UINT32(InterfaceType::*ArrayGetSizeType)(ObjectType*);
-		typedef void(InterfaceType::*ArraySetSizeType)(ObjectType*, UINT32);
+		typedef DataType& (InterfaceType::*ArrayGetterType)(ObjectType*, u32);
+		typedef void (InterfaceType::*ArraySetterType)(ObjectType*, u32, DataType&);
+		typedef u32(InterfaceType::*ArrayGetSizeType)(ObjectType*);
+		typedef void(InterfaceType::*ArraySetSizeType)(ObjectType*, u32);
 
 		/**
 		 * Initializes a plain field containing a single value.
@@ -117,7 +117,7 @@ namespace bs
 		 * @param[in]	setter  	The setter method for the field.
 		 * @param[in]	info		Various optional information about the field.
 		 */
-		void InitSingle(String name, UINT16 uniqueId, GetterType getter, SetterType setter, const RTTIFieldInfo& info)
+		void InitSingle(String name, u16 uniqueId, GetterType getter, SetterType setter, const RTTIFieldInfo& info)
 		{
 			static_assert(sizeof(RTTIPlainType<DataType>::id) > 0, "Type has no RTTI ID."); // Just making sure provided type has a type ID
 
@@ -149,7 +149,7 @@ namespace bs
 		 * @param[in]	setSize 	Setter method that allows you to resize an array. Can be null.
 		 * @param[in]	info		Various optional information about the field.
 		 */
-		void InitArray(String name, UINT16 uniqueId, ArrayGetterType getter,
+		void InitArray(String name, u16 uniqueId, ArrayGetterType getter,
 			ArrayGetSizeType getSize, ArraySetterType setter, ArraySetSizeType setSize, const RTTIFieldInfo& info)
 		{
 			static_assert((RTTIPlainType<DataType>::id != 0) || true, ""); // Just making sure provided type has a type ID
@@ -172,7 +172,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIPlainFieldBase::getTypeId */
-		UINT32 GetTypeId() override
+		u32 GetTypeId() override
 		{
 			return RTTIPlainType<DataType>::id;
 		}
@@ -204,7 +204,7 @@ namespace bs
 		}
 
 		/** Returns the size of the array managed by the field. */
-		UINT32 GetArraySize(RTTITypeBase* rtti, void* object) override
+		u32 GetArraySize(RTTITypeBase* rtti, void* object) override
 		{
 			CheckIsArray(true);
 
@@ -214,7 +214,7 @@ namespace bs
 		}
 
 		/** Changes the size of the array managed by the field. Array must be re-populated after. */
-		void SetArraySize(RTTITypeBase* rtti, void* object, UINT32 size) override
+		void SetArraySize(RTTITypeBase* rtti, void* object, u32 size) override
 		{
 			CheckIsArray(true);
 

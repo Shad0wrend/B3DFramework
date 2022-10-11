@@ -85,7 +85,7 @@ namespace bs { namespace ct
 
 	BS_PARAM_BLOCK_BEGIN(IrradianceEvaluateParamDef)
 		BS_PARAM_BLOCK_ENTRY(float, gSkyBrightness)
-		BS_PARAM_BLOCK_ENTRY(INT32, gNumTetrahedra)
+		BS_PARAM_BLOCK_ENTRY(i32, gNumTetrahedra)
 	BS_PARAM_BLOCK_END
 
 	extern IrradianceEvaluateParamDef gIrradianceEvaluateParamDef;
@@ -174,7 +174,7 @@ namespace bs { namespace ct
 		SPtr<Mesh> TetrahedraVolume;
 
 		/** Total number of valid tetrahedra in the @p tetrahedra buffer. */
-		UINT32 NumTetrahedra;
+		u32 NumTetrahedra;
 	};
 
 	/** Handles any pre-processing for light (irradiance) probe lighting. */
@@ -206,11 +206,11 @@ namespace bs { namespace ct
 		 */
 		struct TetrahedronFaceData
 		{
-			UINT32 InnerVertices[3];
-			UINT32 OuterVertices[3];
+			u32 InnerVertices[3];
+			u32 OuterVertices[3];
 			Vector3 Normals[3];
 			Matrix4 Transform;
-			UINT32 Tetrahedron;
+			u32 Tetrahedron;
 			bool Quadratic;
 		};
 	public:
@@ -257,23 +257,23 @@ namespace bs { namespace ct
 			Vector<TetrahedronFaceData>& faces, bool generateExtrapolationVolume = false);
 
 		/** Resizes the GPU buffer used for holding tetrahedron data, to the specified size (in number of tetraheda). */
-		void ResizeTetrahedronBuffer(UINT32 count);
+		void ResizeTetrahedronBuffer(u32 count);
 
 		/** Resizes the GPU buffer used for holding tetrahedron face data, to the specified size (in number of faces). */
-		void ResizeTetrahedronFaceBuffer(UINT32 count);
+		void ResizeTetrahedronFaceBuffer(u32 count);
 
 		/**
 		 * Resized the GPU buffer that stores light probe SH coefficients, to the specified number of rows (each row
 		 * holds 4096 coefficients, and each volume starts in its own row.).
 		 */
-		void ResizeCoefficientTexture(UINT32 numRows);
+		void ResizeCoefficientTexture(u32 numRows);
 
 		Vector<VolumeInfo> mVolumes;
 		bool mTetrahedronVolumeDirty;
 
-		UINT32 mMaxCoefficientRows;
-		UINT32 mMaxTetrahedra;
-		UINT32 mMaxFaces;
+		u32 mMaxCoefficientRows;
+		u32 mMaxTetrahedra;
+		u32 mMaxFaces;
 
 		Vector<TetrahedronData> mTetrahedronInfos;
 
@@ -281,11 +281,11 @@ namespace bs { namespace ct
 		SPtr<GpuBuffer> mTetrahedronInfosGPU;
 		SPtr<GpuBuffer> mTetrahedronFaceInfosGPU;
 		SPtr<Mesh> mVolumeMesh;
-		UINT32 mNumValidTetrahedra;
+		u32 mNumValidTetrahedra;
 
 		// Temporary buffers
 		Vector<Vector3> mTempTetrahedronPositions;
-		Vector<UINT32> mTempTetrahedronBufferIndices;
+		Vector<u32> mTempTetrahedronBufferIndices;
 		Vector<Vector2I> mTempTetrahedronBufferOffsets;
 	};
 

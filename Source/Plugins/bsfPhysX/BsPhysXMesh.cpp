@@ -22,7 +22,7 @@ namespace bs
 	 * data buffer, and its size in @p size. The data buffer will be allocated used the generic allocator and is up to the
 	 * caller to free it.
 	 */
-	bool cookConvex(PxCooking* cooking, const SPtr<MeshData>& meshData, UINT8** data, UINT32& size)
+	bool cookConvex(PxCooking* cooking, const SPtr<MeshData>& meshData, u8** data, u32& size)
 	{
 		SPtr<VertexDataDesc> vertexDesc = meshData->GetVertexDesc();
 		
@@ -37,7 +37,7 @@ namespace bs
 		if (cooking->cookConvexMesh(convexDesc, output))
 		{
 			size = output.getSize();
-			*data = (UINT8*)bs_alloc(size);
+			*data = (u8*)bs_alloc(size);
 
 			memcpy(*data, output.getData(), size);
 			return true;
@@ -48,7 +48,7 @@ namespace bs
 		if (cooking->cookConvexMesh(convexDesc, output))
 		{
 			size = output.getSize();
-			*data = (UINT8*)bs_alloc(size);
+			*data = (u8*)bs_alloc(size);
 
 			memcpy(*data, output.getData(), size);
 			return true;
@@ -83,7 +83,7 @@ namespace bs
 		if (cooking->cookConvexMesh(convexDesc, output))
 		{
 			size = output.getSize();
-			*data = (UINT8*)bs_alloc(size);
+			*data = (u8*)bs_alloc(size);
 
 			memcpy(*data, output.getData(), size);
 			return true;
@@ -98,7 +98,7 @@ namespace bs
 	 * and its size in @p size. The data buffer will be allocated used the generic allocator and is up to the caller to
 	 * free it.
 	 */
-	bool cookMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type, UINT8** data, UINT32& size)
+	bool cookMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type, u8** data, u32& size)
 	{
 		if (meshData == nullptr)
 			return false;
@@ -154,7 +154,7 @@ namespace bs
 				return false;
 
 			size = output.getSize();
-			*data = (UINT8*)bs_alloc(size);
+			*data = (u8*)bs_alloc(size);
 
 			memcpy(*data, output.getData(), size);
 		}
@@ -242,15 +242,15 @@ namespace bs
 		if (mConvexMesh == nullptr && mTriangleMesh == nullptr)
 			return MeshData::Create(0, 0, vertexDesc);
 
-		UINT32 numVertices = 0;
-		UINT32 numIndices = 0;
+		u32 numVertices = 0;
+		u32 numIndices = 0;
 
 		if(mConvexMesh != nullptr)
 		{
 			numVertices = mConvexMesh->getNbVertices();
 
-			UINT32 numPolygons = mConvexMesh->getNbPolygons();
-			for (UINT32 i = 0; i < numPolygons; i++)
+			u32 numPolygons = mConvexMesh->getNbPolygons();
+			for (u32 i = 0; i < numPolygons; i++)
 			{
 				PxHullPolygon face;
 				bool status = mConvexMesh->getPolygonData(i, face);
@@ -268,25 +268,25 @@ namespace bs
 		SPtr<MeshData> meshData = MeshData::Create(numVertices, numIndices, vertexDesc);
 
 		auto posIter = meshData->GetVec3DataIter(VES_POSITION);
-		UINT32* outIndices = meshData->GetIndices32();
+		u32* outIndices = meshData->GetIndices32();
 
 		if (mConvexMesh != nullptr)
 		{
 			const PxVec3* convexVertices = mConvexMesh->getVertices();
-			const UINT8* convexIndices = mConvexMesh->getIndexBuffer();
+			const u8* convexIndices = mConvexMesh->getIndexBuffer();
 
-			for (UINT32 i = 0; i < numVertices; i++)
+			for (u32 i = 0; i < numVertices; i++)
 				posIter.AddValue(fromPxVector(convexVertices[i]));
 
-			UINT32 numPolygons = mConvexMesh->getNbPolygons();
-			for (UINT32 i = 0; i < numPolygons; i++)
+			u32 numPolygons = mConvexMesh->getNbPolygons();
+			for (u32 i = 0; i < numPolygons; i++)
 			{
 				PxHullPolygon face;
 				bool status = mConvexMesh->getPolygonData(i, face);
 				assert(status);
 
 				const PxU8* faceIndices = convexIndices + face.mIndexBase;
-				for (UINT32 j = 2; j < face.mNbVerts; j++)
+				for (u32 j = 2; j < face.mNbVerts; j++)
 				{
 					*outIndices++ = faceIndices[0];
 					*outIndices++ = faceIndices[j];
@@ -297,28 +297,28 @@ namespace bs
 		else
 		{
 			const PxVec3* vertices = mTriangleMesh->getVertices();
-			for (UINT32 i = 0; i < numVertices; i++)
+			for (u32 i = 0; i < numVertices; i++)
 				posIter.AddValue(fromPxVector(vertices[i]));
 
 			if(mTriangleMesh->getTriangleMeshFlags() & PxTriangleMeshFlag::e16_BIT_INDICES)
 			{
-				const UINT16* indices = (const UINT16*)mTriangleMesh->getTriangles();
+				const u16* indices = (const u16*)mTriangleMesh->getTriangles();
 
-				UINT32 numTriangles = numIndices / 3;
-				for (UINT32 i = 0; i < numTriangles; i++)
+				u32 numTriangles = numIndices / 3;
+				for (u32 i = 0; i < numTriangles; i++)
 				{
 					// Flip triangles as PhysX keeps them opposite to what framework expects
-					outIndices[i * 3 + 0] = (UINT32)indices[i * 3 + 0];
-					outIndices[i * 3 + 1] = (UINT32)indices[i * 3 + 2];
-					outIndices[i * 3 + 2] = (UINT32)indices[i * 3 + 1];
+					outIndices[i * 3 + 0] = (u32)indices[i * 3 + 0];
+					outIndices[i * 3 + 1] = (u32)indices[i * 3 + 2];
+					outIndices[i * 3 + 2] = (u32)indices[i * 3 + 1];
 				}
 			}
 			else
 			{
-				const UINT32* indices = (const UINT32*)mTriangleMesh->getTriangles();
+				const u32* indices = (const u32*)mTriangleMesh->getTriangles();
 
-				UINT32 numTriangles = numIndices / 3;
-				for (UINT32 i = 0; i < numTriangles; i++)
+				u32 numTriangles = numIndices / 3;
+				for (u32 i = 0; i < numTriangles; i++)
 				{
 					// Flip triangles as PhysX keeps them opposite to what framework expects
 					outIndices[i * 3 + 0] = indices[i * 3 + 0];

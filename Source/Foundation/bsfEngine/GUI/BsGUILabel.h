@@ -80,18 +80,18 @@ namespace bs
 		~GUILabel();
 
 		/** @copydoc GUIElement::GetRenderElementDepthRangeInternal */
-		UINT32 GetRenderElementDepthRangeInternal() const override;
+		u32 GetRenderElementDepthRangeInternal() const override;
 
 		/** @copydoc GUIElement::_fillBuffer */
 		void FillBuffer(
-			UINT8* vertices,
-			UINT32* indices,
-			UINT32 vertexOffset,
-			UINT32 indexOffset,
+			u8* vertices,
+			u32* indices,
+			u32 vertexOffset,
+			u32 indexOffset,
 			const Vector2I& offset,
-			UINT32 maxNumVerts,
-			UINT32 maxNumIndices,
-			UINT32 renderElementIdx) const override;
+			u32 maxNumVerts,
+			u32 maxNumIndices,
+			u32 renderElementIdx) const override;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal */
 		void UpdateRenderElementsInternal() override;

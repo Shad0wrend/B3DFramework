@@ -19,7 +19,7 @@ namespace bs
 	bool LinuxDragAndDrop::sDragActive = false;
 	Vector<LinuxDragAndDrop::DropArea> LinuxDragAndDrop::sDropAreas;
 	Mutex LinuxDragAndDrop::sMutex;
-	INT32 LinuxDragAndDrop::sDNDVersion = 0;
+	i32 LinuxDragAndDrop::sDNDVersion = 0;
 	Atom LinuxDragAndDrop::sDNDType = 0;
 	::Window LinuxDragAndDrop::sDNDSource = 0;
 	Vector2I LinuxDragAndDrop::sDragPosition;
@@ -40,9 +40,9 @@ namespace bs
 
 	struct X11Property
 	{
-		UINT8* data;
-		INT32 format;
-		UINT32 count;
+		u8* data;
+		i32 format;
+		u32 count;
 		Atom type;
 	};
 
@@ -77,12 +77,12 @@ namespace bs
 		if(uri == nullptr)
 			return;
 
-		UINT32 length = (UINT32)strlen(uri);
-		UINT8 decodedChar = '\0';
-		UINT32 writeIdx = 0;
-		UINT32 decodeState = 0; // 0 - Not decoding, 1 - found a % char, 2- found a % and following char
+		u32 length = (u32)strlen(uri);
+		u8 decodedChar = '\0';
+		u32 writeIdx = 0;
+		u32 decodeState = 0; // 0 - Not decoding, 1 - found a % char, 2- found a % and following char
 
-		for(UINT32 i = 0; i < length; i++)
+		for(u32 i = 0; i < length; i++)
 		{
 			// Not currently decoding, check for % or write as-is
 			if(decodeState == 0)
@@ -109,7 +109,7 @@ namespace bs
 				if(!isHex)
 				{
 					// If not a hex, this can't be an encoded character. Write the last "decodeState" characters as normal
-					for(UINT32 j = decodeState; j > 0; j--)
+					for(u32 j = decodeState; j > 0; j--)
 					{
 						uri[writeIdx] = uri[i - j];
 						writeIdx++;
@@ -236,7 +236,7 @@ namespace bs
 
 	void LinuxDragAndDrop::makeDNDAware(::Window xWindow)
 	{
-		UINT32 dndVersion = 5;
+		u32 dndVersion = 5;
 		XChangeProperty(sXDisplay, xWindow, sXdndAware, XA_ATOM, 32, PropModeReplace, (unsigned char*)&dndVersion, 1);
 	}
 
@@ -314,11 +314,11 @@ namespace bs
 		{
 			sDNDSource = (::Window)event.data.l[0];
 			bool isList = (event.data.l[1] & 1) != 0;
-			sDNDVersion = (INT32)(event.data.l[1] >> 24);
+			sDNDVersion = (i32)(event.data.l[1] >> 24);
 
 			// Get a list of properties are determine if there are any relevant ones
 			Atom* propertyList = nullptr;
-			UINT32 numProperties = 0;
+			u32 numProperties = 0;
 
 			// If more than 3 properties we need to read the list property to get them all
 			if(isList)
@@ -344,7 +344,7 @@ namespace bs
 
 			// Scan the list for URI list (file list), which is the only one we support (currently)
 			bool foundSupportedType = false;
-			for (UINT32 i = 0; i < numProperties; ++i)
+			for (u32 i = 0; i < numProperties; ++i)
 			{
 				char* name = XGetAtomName(sXDisplay, propertyList[i]);
 				if(strcmp(name, "text/uri-list") == 0)
@@ -372,8 +372,8 @@ namespace bs
 		{
 			::Window source = (::Window)event.data.l[0];
 
-			sDragPosition.x = (INT32)((event.data.l[2] >> 16) & 0xFFFF);
-			sDragPosition.y = (INT32)((event.data.l[2]) & 0xFFFF);
+			sDragPosition.x = (i32)((event.data.l[2] >> 16) & 0xFFFF);
+			sDragPosition.y = (i32)((event.data.l[2]) & 0xFFFF);
 
 			// Respond with a status message, we either accept or reject the dnd
 			XClientMessageEvent response;

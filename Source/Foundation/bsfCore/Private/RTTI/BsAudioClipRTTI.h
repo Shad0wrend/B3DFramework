@@ -31,7 +31,7 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mLength, 10)
 		BS_END_RTTI_MEMBERS
 
-		SPtr<DataStream> GetData(AudioClip* obj, UINT32& size)
+		SPtr<DataStream> GetData(AudioClip* obj, u32& size)
 		{
 			SPtr<DataStream> stream = obj->GetSourceStream(size);
 			if (stream != nullptr && stream->IsFile())
@@ -43,11 +43,11 @@ namespace bs
 			return stream;
 		}
 
-		void SetData(AudioClip* obj, const SPtr<DataStream>& val, UINT32 size)
+		void SetData(AudioClip* obj, const SPtr<DataStream>& val, u32 size)
 		{
 			obj->mStreamData = val->Clone(); // Making sure that the AudioClip cannot modify the source stream, which is still used by the deserializer
 			obj->mStreamSize = size;
-			obj->mStreamOffset = (UINT32)val->Tell();
+			obj->mStreamOffset = (u32)val->Tell();
 		}
 
 	public:
@@ -68,7 +68,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_AudioClip;
 		}

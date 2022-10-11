@@ -53,7 +53,7 @@ namespace bs
 	{
 		GUIDrawGroup mainDrawGroup;
 		mainDrawGroup.MinDepth = 0;
-		mainDrawGroup.DepthRange = std::numeric_limits<UINT32>::max();
+		mainDrawGroup.DepthRange = std::numeric_limits<u32>::max();
 		mainDrawGroup.Id = mNextDrawGroupId++;
 		
 		mDrawGroups.push_back(mainDrawGroup);
@@ -68,22 +68,22 @@ namespace bs
 		groupElement.Bounds = element->GetClippedBoundsInternal();
 		groupElement.Groups.Resize(renderElements.Size());
 
-		for (UINT32 i = 0; i < renderElements.Size(); i++)
+		for (u32 i = 0; i < renderElements.Size(); i++)
 			Add(groupElement, i);
 
 		mGroupsCoreDirty = true;
 	}
 
-	void GUIDrawGroups::Add(GUIGroupElement& groupElement, UINT32 renderElementIdx)
+	void GUIDrawGroups::Add(GUIGroupElement& groupElement, u32 renderElementIdx)
 	{
 		GUIElement* element = groupElement.Element;
 		const SmallVector<GUIRenderElement, 4> & renderElements = element->GetRenderElementsInternal();
 
 		const GUIRenderElement& renderElement = renderElements[renderElementIdx];
-		UINT32 elemDepth = element->GetDepthInternal() + renderElement.Depth;
+		u32 elemDepth = element->GetDepthInternal() + renderElement.Depth;
 
 		// Groups are expected to be sorted by minDepth
-		for (UINT32 j = 0; j < (UINT32)mDrawGroups.size(); j++)
+		for (u32 j = 0; j < (u32)mDrawGroups.size(); j++)
 		{
 			if (elemDepth < mDrawGroups[j].MinDepth || elemDepth >= (mDrawGroups[j].MinDepth + mDrawGroups[j].DepthRange))
 				continue;
@@ -93,13 +93,13 @@ namespace bs
 		}
 	}
 
-	void GUIDrawGroups::Add(GUIGroupElement& groupElement, UINT32 renderElementIdx, UINT32 groupIdx)
+	void GUIDrawGroups::Add(GUIGroupElement& groupElement, u32 renderElementIdx, u32 groupIdx)
 	{
 		GUIElement* element = groupElement.Element;
 		const SmallVector<GUIRenderElement, 4> & renderElements = element->GetRenderElementsInternal();
 
 		const GUIRenderElement& renderElement = renderElements[renderElementIdx];
-		UINT32 elemDepth = element->GetDepthInternal() + renderElement.Depth;
+		u32 elemDepth = element->GetDepthInternal() + renderElement.Depth;
 
 		SpriteMaterial* spriteMaterial = renderElement.Material;
 		assert(spriteMaterial != nullptr);
@@ -144,16 +144,16 @@ namespace bs
 		if (iterFind == mElements.end())
 			return;
 
-		for (UINT32 i = 0; i < iterFind->second.Groups.Size(); i++)
+		for (u32 i = 0; i < iterFind->second.Groups.Size(); i++)
 			Remove(iterFind->second, i);
 
 		mElements.erase(element);
 		mGroupsCoreDirty = true;
 	}
 
-	void GUIDrawGroups::Remove(GUIGroupElement& groupElement, UINT32 renderElementIdx)
+	void GUIDrawGroups::Remove(GUIGroupElement& groupElement, u32 renderElementIdx)
 	{
-		if (renderElementIdx >= (UINT32)groupElement.Groups.Size())
+		if (renderElementIdx >= (u32)groupElement.Groups.Size())
 			return;
 		
 		GUIElement* element = groupElement.Element;
@@ -165,12 +165,12 @@ namespace bs
 		assert(iterFind != mDrawGroups.end());
 		if (iterFind != mDrawGroups.end())
 		{
-			UINT32 idx = (UINT32)(iterFind - mDrawGroups.begin());
+			u32 idx = (u32)(iterFind - mDrawGroups.begin());
 			Remove(groupElement, renderElementIdx, idx);
 		}
 	}
 
-	void GUIDrawGroups::Remove(GUIGroupElement& groupElement, UINT32 renderElementIdx, UINT32 groupIdx)
+	void GUIDrawGroups::Remove(GUIGroupElement& groupElement, u32 renderElementIdx, u32 groupIdx)
 	{
 		GUIElement* element = groupElement.Element;
 		const SmallVector<GUIRenderElement, 4>& renderElements = element->GetRenderElementsInternal();
@@ -204,7 +204,7 @@ namespace bs
 		{
 			assert(groupIdx > 0);
 
-			UINT32 prevGroupIdx = groupIdx - 1;
+			u32 prevGroupIdx = groupIdx - 1;
 			GUIDrawGroup& prevGroup = mDrawGroups[prevGroupIdx];
 
 			prevGroup.DepthRange += group.DepthRange;
@@ -266,10 +266,10 @@ namespace bs
 				}
 			}
 				
-			for (UINT32 i = 0; i < renderElements.Size(); i++)
+			for (u32 i = 0; i < renderElements.Size(); i++)
 			{
 				const GUIRenderElement& renderElement = renderElements[i];
-				INT32 drawGroupId = groupElement.Groups[i];
+				i32 drawGroupId = groupElement.Groups[i];
 
 				// All render elements draw group IDs should be assigned at this point
 				assert(drawGroupId != -1);
@@ -288,7 +288,7 @@ namespace bs
 					bool needsGroupChange = false;
 					if((entry.second & DirtyMesh) != 0)
 					{
-						UINT32 depth = element->GetDepthInternal() + renderElement.Depth;
+						u32 depth = element->GetDepthInternal() + renderElement.Depth;
 
 						// If same as min-depth, no group change is necessary in any case
 						if (depth != group.MinDepth)
@@ -326,7 +326,7 @@ namespace bs
 
 					if(needsGroupChange)
 					{
-						UINT32 groupIdx = (UINT32)(iterFind2 - mDrawGroups.begin());
+						u32 groupIdx = (u32)(iterFind2 - mDrawGroups.begin());
 						Remove(groupElement, i, groupIdx);
 						Add(groupElement, i);
 
@@ -452,10 +452,10 @@ namespace bs
 			SpriteMaterial* Material;
 			SpriteMaterialInfo MatInfo;
 			GUIMeshType MeshType;
-			UINT32 NumVertices;
-			UINT32 NumIndices;
-			UINT32 Depth;
-			UINT32 MinDepth;
+			u32 NumVertices;
+			u32 NumIndices;
+			u32 Depth;
+			u32 MinDepth;
 			Rect2I Bounds;
 			GUIDrawGroup* DrawGroup;
 			Vector<GUIGroupRenderElement> Elements;
@@ -465,9 +465,9 @@ namespace bs
 		{
 			using SortedGroupSet = FrameSet<GUIMaterialGroup, std::function<bool(const GUIMaterialGroup&, const GUIMaterialGroup&)>>;
 			
-			UINT32 NumMeshes = 0;
-			UINT32 NumIndices[2] = { 0, 0 };
-			UINT32 NumVertices[2] = { 0, 0 };
+			u32 NumMeshes = 0;
+			u32 NumIndices[2] = { 0, 0 };
+			u32 NumVertices[2] = { 0, 0 };
 
 			SortedGroupSet SortedGroups;
 		};
@@ -477,8 +477,8 @@ namespace bs
 			// Make a list of all GUI elements, sorted from farthest to nearest (highest depth to lowest)
 			auto elemComp = [](const GUIGroupRenderElement& a, const GUIGroupRenderElement& b)
 			{
-				UINT32 aDepth = a.Element->GetDepthInternal() + a.Element->GetRenderElementsInternal()[a.RenderElementIdx].Depth;
-				UINT32 bDepth = b.Element->GetDepthInternal() + b.Element->GetRenderElementsInternal()[b.RenderElementIdx].Depth;
+				u32 aDepth = a.Element->GetDepthInternal() + a.Element->GetRenderElementsInternal()[a.RenderElementIdx].Depth;
+				u32 bDepth = b.Element->GetDepthInternal() + b.Element->GetRenderElementsInternal()[b.RenderElementIdx].Depth;
 
 				// Compare pointers just to differentiate between two elements with the same depth, their order doesn't really matter, but std::set
 				// requires all elements to be unique
@@ -513,21 +513,21 @@ namespace bs
 
 				// Group the elements in such a way so that we end up with a smallest amount of
 				// meshes, without breaking back to front rendering order
-				FrameUnorderedMap<UINT64, FrameVector<GUIMaterialGroup>> materialGroups;
+				FrameUnorderedMap<u64, FrameVector<GUIMaterialGroup>> materialGroups;
 				for (auto& elem : allElements)
 				{
 					GUIElement* guiElem = elem.Element;
-					UINT32 renderElemIdx = elem.RenderElementIdx;
+					u32 renderElemIdx = elem.RenderElementIdx;
 					const GUIRenderElement& renderElem = elem.Element->GetRenderElementsInternal()[renderElemIdx];
 
-					UINT32 elemDepth = guiElem->GetDepthInternal() + renderElem.Depth;
+					u32 elemDepth = guiElem->GetDepthInternal() + renderElem.Depth;
 					Rect2I bounds = guiElem->GetClippedBoundsInternal();
 
 					SpriteMaterial* spriteMaterial = renderElem.Material;
 					const SpriteMaterialInfo& matInfo = *renderElem.MatInfo;
 					assert(spriteMaterial != nullptr);
 
-					UINT64 hash = spriteMaterial->GetMergeHash(matInfo);
+					u64 hash = spriteMaterial->GetMergeHash(matInfo);
 					FrameVector<GUIMaterialGroup>& groupsPerMaterial = materialGroups[hash];
 
 					// Try to find a group this material will fit in:
@@ -548,8 +548,8 @@ namespace bs
 							}
 							else
 							{
-								UINT32 startDepth = elemDepth;
-								UINT32 endDepth = group.Depth;
+								u32 startDepth = elemDepth;
+								u32 endDepth = group.Depth;
 
 								Rect2I potentialGroupBounds = group.Bounds;
 								potentialGroupBounds.Encapsulate(bounds);
@@ -636,7 +636,7 @@ namespace bs
 					{
 						groupSet.SortedGroups.insert(std::move(group));
 
-						UINT32 typeIdx = (UINT32)group.MeshType;
+						u32 typeIdx = (u32)group.MeshType;
 						groupSet.NumIndices[typeIdx] += group.NumIndices;
 						groupSet.NumVertices[typeIdx] += group.NumVertices;
 
@@ -648,15 +648,15 @@ namespace bs
 			mTriangleMesh = nullptr;
 			mLineMesh = nullptr;
 
-			UINT32 totalNumIndices[2] = { 0, 0 };
-			UINT32 totalNumVertices[2] = { 0, 0 };
+			u32 totalNumIndices[2] = { 0, 0 };
+			u32 totalNumVertices[2] = { 0, 0 };
 
-			for (UINT32 i = 0; i < (UINT32)mDrawGroups.size(); i++)
+			for (u32 i = 0; i < (u32)mDrawGroups.size(); i++)
 			{
 				GUIMaterialGroupSet& set = groupSets[i];
 				mDrawGroups[i].Meshes.resize(set.NumMeshes);
 
-				for (UINT32 j = 0; j < 2; j++)
+				for (u32 j = 0; j < 2; j++)
 				{
 					totalNumIndices[j] += set.NumIndices[j];
 					totalNumVertices[j] += set.NumVertices[j];
@@ -666,10 +666,10 @@ namespace bs
 			SPtr<MeshData> meshData[2];
 			SPtr<VertexDataDesc> vertexDesc[2] = { impl::gGUITriangleMeshDesc(), impl::gGUILineMeshDesc() };
 
-			UINT8* vertices[2] = { nullptr, nullptr };
-			UINT32* indices[2] = { nullptr, nullptr };
+			u8* vertices[2] = { nullptr, nullptr };
+			u32* indices[2] = { nullptr, nullptr };
 
-			for (UINT32 i = 0; i < 2; i++)
+			for (u32 i = 0; i < 2; i++)
 			{
 				if (totalNumVertices[i] > 0 && totalNumIndices[i] > 0)
 				{
@@ -680,15 +680,15 @@ namespace bs
 				}
 			}
 
-			UINT32 vertexOffset[2] = { 0, 0 };
-			UINT32 indexOffset[2] = { 0, 0 };
+			u32 vertexOffset[2] = { 0, 0 };
+			u32 indexOffset[2] = { 0, 0 };
 
-			for (UINT32 i = 0; i < (UINT32)mDrawGroups.size(); i++)
+			for (u32 i = 0; i < (u32)mDrawGroups.size(); i++)
 			{
 				GUIMaterialGroupSet& set = groupSets[i];
 
 				// Fill buffers for each group and update their meshes
-				UINT32 meshIdx = 0;
+				u32 meshIdx = 0;
 
 				for (auto& group : set.SortedGroups)
 				{
@@ -697,14 +697,14 @@ namespace bs
 					guiMesh.Material = group.Material;
 					guiMesh.IsLine = group.MeshType == GUIMeshType::Line;
 
-					auto typeIdx = (UINT32)group.MeshType;
+					auto typeIdx = (u32)group.MeshType;
 					guiMesh.IndexOffset = indexOffset[typeIdx];
 
 					Vector2I groupOffset(0, 0);
 					if(guiMesh.Material->AllowBatching())
 						groupOffset = Vector2I(-group.DrawGroup->Bounds.X, -group.DrawGroup->Bounds.Y);
 					
-					UINT32 groupNumIndices = 0;
+					u32 groupNumIndices = 0;
 					for (auto& matElement : group.Elements)
 					{
 						matElement.Element->FillBuffer(
@@ -715,10 +715,10 @@ namespace bs
 
 						const GUIRenderElement& renderElement = matElement.Element->GetRenderElementsInternal()[matElement.RenderElementIdx];
 
-						UINT32 indexStart = indexOffset[typeIdx];
-						UINT32 indexEnd = indexStart + renderElement.NumIndices;
+						u32 indexStart = indexOffset[typeIdx];
+						u32 indexEnd = indexStart + renderElement.NumIndices;
 
-						for (UINT32 j = indexStart; j < indexEnd; j++)
+						for (u32 j = indexStart; j < indexEnd; j++)
 							indices[typeIdx][j] += vertexOffset[typeIdx];
 
 						indexOffset[typeIdx] += renderElement.NumIndices;
@@ -743,12 +743,12 @@ namespace bs
 		bs_frame_clear();
 	}
 
-	GUIDrawGroups::GUIDrawGroup& GUIDrawGroups::Split(UINT32 groupIdx, UINT32 depth)
+	GUIDrawGroups::GUIDrawGroup& GUIDrawGroups::Split(u32 groupIdx, u32 depth)
 	{
 		GUIDrawGroup& group = mDrawGroups[groupIdx];
 		assert(depth > group.MinDepth);
 		
-		UINT32 maxDepth = group.MinDepth + group.DepthRange;
+		u32 maxDepth = group.MinDepth + group.DepthRange;
 		group.DepthRange = depth - group.MinDepth;
 
 		GUIDrawGroup newSplitGroup;
@@ -759,7 +759,7 @@ namespace bs
 		auto it = std::partition(group.CachedElements.begin(), group.CachedElements.end(),
 			[depth](const GUIGroupRenderElement& x)
 		{
-				UINT32 elemDepth = x.Element->GetDepthInternal() + x.Element->GetRenderElementsInternal()[x.RenderElementIdx].Depth;
+				u32 elemDepth = x.Element->GetDepthInternal() + x.Element->GetRenderElementsInternal()[x.RenderElementIdx].Depth;
 				return elemDepth < depth;
 		});
 
@@ -821,8 +821,8 @@ namespace bs
 		output.Bounds = drawGroup.Bounds;
 		output.RequiresRedraw = true;
 		
-		auto numElements = (UINT32)drawGroup.Meshes.size();
-		for(UINT32 i = 0; i < numElements; i++)
+		auto numElements = (u32)drawGroup.Meshes.size();
+		for(u32 i = 0; i < numElements; i++)
 		{
 			GUIMeshRenderData meshData = GetRenderData(drawGroup.Meshes[i]);
 			if (meshData.SubMesh.IndexCount == 0)
@@ -924,7 +924,7 @@ namespace bs
 		mDirtyContents.clear();
 	}
 
-	void GUIWidget::SetDepth(UINT8 depth)
+	void GUIWidget::SetDepth(u8 depth)
 	{
 		mDepth = depth;
 		mWidgetIsDirty = true;
@@ -976,7 +976,7 @@ namespace bs
 	void GUIWidget::UpdateRTInternal()
 	{
 		SPtr<RenderTarget> rt;
-		UINT64 newRTId = 0;
+		u64 newRTId = 0;
 		if(mCamera != nullptr)
 		{
 			rt = mCamera->GetViewport()->GetTarget();
@@ -1001,8 +1001,8 @@ namespace bs
 		if (target != nullptr)
 		{
 			Rect2I area = target->GetPixelArea();
-			UINT32 width = area.Width;
-			UINT32 height = area.Height;
+			u32 width = area.Width;
+			u32 height = area.Height;
 
 			const Rect2I& panelArea = mPanel->GetLayoutDataInternal().Area;
 			if(panelArea.Width != width || panelArea.Height != height)
@@ -1035,8 +1035,8 @@ namespace bs
 			}
 			else
 			{
-				UINT32 numChildren = currentElem->GetNumChildrenInternal();
-				for (UINT32 i = 0; i < numChildren; i++)
+				u32 numChildren = currentElem->GetNumChildrenInternal();
+				for (u32 i = 0; i < numChildren; i++)
 					todo.push(currentElem->GetChildInternal(i));
 			}
 		}
@@ -1094,8 +1094,8 @@ namespace bs
 				MarkContentDirtyInternal(currentElem);
 				currentElem->MarkAsCleanInternal();
 
-				UINT32 numChildren = currentElem->GetNumChildrenInternal();
-				for (UINT32 i = 0; i < numChildren; i++)
+				u32 numChildren = currentElem->GetNumChildrenInternal();
+				for (u32 i = 0; i < numChildren; i++)
 					todo.push(currentElem->GetChildInternal(i));
 			}
 		}
@@ -1267,8 +1267,8 @@ namespace bs
 			return;
 
 		Rect2I area = target->GetPixelArea();
-		UINT32 width = area.Width;
-		UINT32 height = area.Height;
+		u32 width = area.Width;
+		u32 height = area.Height;
 
 		GUILayoutData layoutData;
 		layoutData.Area.Width = width;

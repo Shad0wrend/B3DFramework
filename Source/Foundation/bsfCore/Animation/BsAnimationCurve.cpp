@@ -30,7 +30,7 @@ namespace bs
 
 		void setStepCoefficients(const TKeyframe<Vector3>& lhs, const TKeyframe<Vector3>& rhs, Vector3(&coefficients)[4])
 		{
-			for (UINT32 i = 0; i < 3; i++)
+			for (u32 i = 0; i < 3; i++)
 			{
 				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
 					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
@@ -45,7 +45,7 @@ namespace bs
 
 		void setStepCoefficients(const TKeyframe<Vector2>& lhs, const TKeyframe<Vector2>& rhs, Vector2(&coefficients)[4])
 		{
-			for (UINT32 i = 0; i < 2; i++)
+			for (u32 i = 0; i < 2; i++)
 			{
 				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
 					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
@@ -60,7 +60,7 @@ namespace bs
 
 		void setStepCoefficients(const TKeyframe<Quaternion>& lhs, const TKeyframe<Quaternion>& rhs, Quaternion(&coefficients)[4])
 		{
-			for (UINT32 i = 0; i < 4; i++)
+			for (u32 i = 0; i < 4; i++)
 			{
 				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
 					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
@@ -85,7 +85,7 @@ namespace bs
 
 		void setStepValue(const TKeyframe<Vector3>& lhs, const TKeyframe<Vector3>& rhs, Vector3& value)
 		{
-			for (UINT32 i = 0; i < 3; i++)
+			for (u32 i = 0; i < 3; i++)
 			{
 				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
 					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
@@ -97,7 +97,7 @@ namespace bs
 
 		void setStepValue(const TKeyframe<Vector2>& lhs, const TKeyframe<Vector2>& rhs, Vector2& value)
 		{
-			for (UINT32 i = 0; i < 2; i++)
+			for (u32 i = 0; i < 2; i++)
 			{
 				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
 					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
@@ -109,7 +109,7 @@ namespace bs
 
 		void setStepValue(const TKeyframe<Quaternion>& lhs, const TKeyframe<Quaternion>& rhs, Quaternion& value)
 		{
-			for (UINT32 i = 0; i < 4; i++)
+			for (u32 i = 0; i < 4; i++)
 			{
 				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
 					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
@@ -131,7 +131,7 @@ namespace bs
 
 		void setStepTangent(const TKeyframe<Vector3>& lhs, const TKeyframe<Vector3>& rhs, Vector3& tangent)
 		{
-			for (UINT32 i = 0; i < 3; i++)
+			for (u32 i = 0; i < 3; i++)
 			{
 				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
 					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
@@ -143,7 +143,7 @@ namespace bs
 
 		void setStepTangent(const TKeyframe<Vector2>& lhs, const TKeyframe<Vector2>& rhs, Vector2& tangent)
 		{
-			for (UINT32 i = 0; i < 2; i++)
+			for (u32 i = 0; i < 2; i++)
 			{
 				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
 					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
@@ -155,7 +155,7 @@ namespace bs
 
 		void setStepTangent(const TKeyframe<Quaternion>& lhs, const TKeyframe<Quaternion>& rhs, Quaternion& tangent)
 		{
-			for (UINT32 i = 0; i < 4; i++)
+			for (u32 i = 0; i < 4; i++)
 			{
 				if (lhs.OutTangent[i] != std::numeric_limits<float>::infinity() &&
 					rhs.InTangent[i] != std::numeric_limits<float>::infinity())
@@ -186,7 +186,7 @@ namespace bs
 			return rhs.Inverse() * lhs;
 		}
 
-		INT32 getDiff(INT32 lhs, INT32 rhs)
+		i32 getDiff(i32 lhs, i32 rhs)
 		{
 			return lhs - rhs;
 		}
@@ -207,43 +207,43 @@ namespace bs
 		Quaternion getZero<Quaternion>() { return Quaternion(BsZero); }
 
 		template<>
-		INT32 getZero<INT32>() { return 0; }
+		i32 getZero<i32>() { return 0; }
 
 		template <class T>
-		constexpr UINT32 getNumComponents() { return 1; }
+		constexpr u32 getNumComponents() { return 1; }
 
 		template<>
-		constexpr UINT32 getNumComponents<Vector3>() { return 3; }
+		constexpr u32 getNumComponents<Vector3>() { return 3; }
 
 		template<>
-		constexpr UINT32 getNumComponents<Vector2>() { return 2; }
+		constexpr u32 getNumComponents<Vector2>() { return 2; }
 
 		template<>
-		constexpr UINT32 getNumComponents<Quaternion>() { return 4; }
+		constexpr u32 getNumComponents<Quaternion>() { return 4; }
 
 		template <class T>
-		float& GetComponent(T& val, UINT32 idx) { return val; }
+		float& GetComponent(T& val, u32 idx) { return val; }
 
 		template<>
-		float& GetComponent(Vector3& val, UINT32 idx) { return val[idx]; }
+		float& GetComponent(Vector3& val, u32 idx) { return val[idx]; }
 
 		template<>
-		float& GetComponent(Vector2& val, UINT32 idx) { return val[idx]; }
+		float& GetComponent(Vector2& val, u32 idx) { return val[idx]; }
 
 		template<>
-		float& GetComponent(Quaternion& val, UINT32 idx) { return val[idx]; }
+		float& GetComponent(Quaternion& val, u32 idx) { return val[idx]; }
 
 		template <class T>
-		float GetComponent(const T& val, UINT32 idx) { return val; }
+		float GetComponent(const T& val, u32 idx) { return val; }
 
 		template<>
-		float GetComponent(const Vector3& val, UINT32 idx) { return val[idx]; }
+		float GetComponent(const Vector3& val, u32 idx) { return val[idx]; }
 
 		template<>
-		float GetComponent(const Vector2& val, UINT32 idx) { return val[idx]; }
+		float GetComponent(const Vector2& val, u32 idx) { return val[idx]; }
 
 		template<>
-		float GetComponent(const Quaternion& val, UINT32 idx) { return val[idx]; }
+		float GetComponent(const Quaternion& val, u32 idx) { return val[idx]; }
 
 		template <class T>
 		void getMinMax(std::pair<T, T>& minmax, const T& value)
@@ -301,9 +301,9 @@ namespace bs
 		}
 
 		template<>
-		TKeyframe<INT32> evaluateKey(const TKeyframe<INT32>& lhs, const TKeyframe<INT32>& rhs, float time)
+		TKeyframe<i32> evaluateKey(const TKeyframe<i32>& lhs, const TKeyframe<i32>& rhs, float time)
 		{
-			TKeyframe<INT32> output;
+			TKeyframe<i32> output;
 			output.Time = time;
 			output.Value = time >= rhs.Time ? rhs.Value : lhs.Value;
 
@@ -318,7 +318,7 @@ namespace bs
 		}
 
 		template <>
-		INT32 evaluateCubic(float time, float start, float end, INT32 (&coeffs)[4])
+		i32 evaluateCubic(float time, float start, float end, i32 (&coeffs)[4])
 		{
 			return time >= end ? coeffs[1] : coeffs[0];
 		}
@@ -343,7 +343,7 @@ namespace bs
 		}
 
 		template<>
-		void calculateCoeffs(const TKeyframe<INT32>& lhs, const TKeyframe<INT32>& rhs, float time, INT32 (&coeffs)[4])
+		void calculateCoeffs(const TKeyframe<i32>& lhs, const TKeyframe<i32>& rhs, float time, i32 (&coeffs)[4])
 		{
 			coeffs[0] = lhs.Value;
 			coeffs[1] = rhs.Value;
@@ -358,8 +358,8 @@ namespace bs
 		}
 
 		template<>
-		INT32 evaluateAndUpdateCache(const TKeyframe<INT32>& lhs, const TKeyframe<INT32>& rhs, float time,
-			INT32 (&coeffs)[4])
+		i32 evaluateAndUpdateCache(const TKeyframe<i32>& lhs, const TKeyframe<i32>& rhs, float time,
+			i32 (&coeffs)[4])
 		{
 			coeffs[0] = lhs.Value;
 			coeffs[1] = rhs.Value;
@@ -398,7 +398,7 @@ namespace bs
 		}
 
 		template<>
-		INT32 evaluate(const TKeyframe<INT32>& lhs, const TKeyframe<INT32>& rhs, float time)
+		i32 evaluate(const TKeyframe<i32>& lhs, const TKeyframe<i32>& rhs, float time)
 		{
 			return time >= rhs.Time ? rhs.Value : lhs.Value;
 		}
@@ -419,18 +419,18 @@ namespace bs
 			T b = (T)(2.0f * coeffs[1]);
 			T c = (T)(1.0f * coeffs[2]);
 
-			const UINT32 numComponents = getNumComponents<T>();
+			const u32 numComponents = getNumComponents<T>();
 
-			for (UINT32 i = 0; i < numComponents; i++)
+			for (u32 i = 0; i < numComponents; i++)
 			{
 				float roots[2];
-				const UINT32 numRoots = Math::SolveQuadratic(
+				const u32 numRoots = Math::SolveQuadratic(
 					GetComponent(a, i),
 					GetComponent(b, i),
 					GetComponent(c, i),
 					roots);
 
-				for (UINT32 j = 0; j < numRoots; j++)
+				for (u32 j = 0; j < numRoots; j++)
 				{
 					if ((roots[j] >= 0.0f) && ((start + roots[j]) < end))
 					{
@@ -452,7 +452,7 @@ namespace bs
 		}
 
 		template <>
-		void calcMinMax(std::pair<INT32, INT32>& minmax, float start, float end, INT32(&coeffs)[4])
+		void calcMinMax(std::pair<i32, i32>& minmax, float start, float end, i32(&coeffs)[4])
 		{
 			getMinMax(minmax, coeffs[0]);
 			getMinMax(minmax, coeffs[1]);
@@ -467,19 +467,19 @@ namespace bs
 			T c = 2.0f * coeffs[2];
 			T d = 1.0f * coeffs[3];
 
-			const UINT32 numComponents = getNumComponents<T>();
+			const u32 numComponents = getNumComponents<T>();
 
-			for (UINT32 i = 0; i < numComponents; i++)
+			for (u32 i = 0; i < numComponents; i++)
 			{
 				float roots[3];
-				const UINT32 numRoots = Math::SolveCubic(
+				const u32 numRoots = Math::SolveCubic(
 					GetComponent(a, i),
 					GetComponent(b, i),
 					GetComponent(c, i),
 					GetComponent(d, i),
 					roots);
 
-				for (UINT32 j = 0; j < numRoots; j++)
+				for (u32 j = 0; j < numRoots; j++)
 				{
 					if ((roots[j] >= 0.0f) && ((start + roots[j]) < end))
 					{
@@ -501,8 +501,8 @@ namespace bs
 		}
 
 		template <>
-		void calcMinMaxIntegrated(std::pair<INT32, INT32>& minmax, float start, float end, const INT32& sum,
-			INT32(&coeffs)[4])
+		void calcMinMaxIntegrated(std::pair<i32, i32>& minmax, float start, float end, const i32& sum,
+			i32(&coeffs)[4])
 		{
 			assert(false && "Not implemented");
 		}
@@ -517,12 +517,12 @@ namespace bs
 			T c = 3.0f * coeffs[2];
 			T d = 2.0f * coeffs[3];
 
-			const UINT32 numComponents = getNumComponents<T>();
+			const u32 numComponents = getNumComponents<T>();
 
-			for (UINT32 i = 0; i < numComponents; i++)
+			for (u32 i = 0; i < numComponents; i++)
 			{
 				float roots[4];
-				const UINT32 numRoots = Math::SolveQuartic(
+				const u32 numRoots = Math::SolveQuartic(
 					GetComponent(a, i),
 					GetComponent(b, i),
 					GetComponent(c, i),
@@ -530,7 +530,7 @@ namespace bs
 					0.0f,
 					roots);
 
-				for (UINT32 j = 0; j < numRoots; j++)
+				for (u32 j = 0; j < numRoots; j++)
 				{
 					if ((roots[j] >= 0.0f) && ((start + roots[j]) < end))
 					{
@@ -554,15 +554,15 @@ namespace bs
 		}
 
 		template <>
-		void calcMinMaxIntegratedDouble(std::pair<INT32, INT32>& minmax, float start, float end,
-			const INT32& doubleSum, const INT32& sum, INT32(&coeffs)[4])
+		void calcMinMaxIntegratedDouble(std::pair<i32, i32>& minmax, float start, float end,
+			const i32& doubleSum, const i32& sum, i32(&coeffs)[4])
 		{
 			assert(false && "Not implemented");
 		}
 	}
 
 	template <class T>
-	const UINT32 TAnimationCurve<T>::CACHE_LOOKAHEAD = 3;
+	const u32 TAnimationCurve<T>::CACHE_LOOKAHEAD = 3;
 
 	template <class T>
 	TAnimationCurve<T>::TAnimationCurve(const Vector<KeyFrame>& keyframes)
@@ -573,7 +573,7 @@ namespace bs
 		if(!keyframes.empty())
 		{
 			float time = keyframes[0].Time;
-			for (UINT32 i = 1; i < (UINT32)keyframes.size(); i++)
+			for (u32 i = 1; i < (u32)keyframes.size(); i++)
 			{
 				assert(keyframes[i].Time >= time);
 				time = keyframes[i].Time;
@@ -628,7 +628,7 @@ namespace bs
 		
 		if(time >= mEnd) // Clamp to end, cache constant of the final key and return
 		{
-			UINT32 lastKey = (UINT32)mKeyframes.size() - 1;
+			u32 lastKey = (u32)mKeyframes.size() - 1;
 
 			cache.cachedCurveStart = mEnd;
 			cache.cachedCurveEnd = std::numeric_limits<float>::infinity();
@@ -642,8 +642,8 @@ namespace bs
 		}
 
 		// Since our value is not in cache, search for the valid pair of keys of interpolate
-		UINT32 leftKeyIdx;
-		UINT32 rightKeyIdx;
+		u32 leftKeyIdx;
+		u32 rightKeyIdx;
 
 		FindKeys(time, cache, leftKeyIdx, rightKeyIdx);
 
@@ -665,8 +665,8 @@ namespace bs
 
 		AnimationUtility::WrapTime(time, mStart, mEnd, loop);
 
-		UINT32 leftKeyIdx;
-		UINT32 rightKeyIdx;
+		u32 leftKeyIdx;
+		u32 rightKeyIdx;
 
 		FindKeys(time, leftKeyIdx, rightKeyIdx);
 
@@ -683,7 +683,7 @@ namespace bs
 	template <class T>
 	T TAnimationCurve<T>::EvaluateIntegrated(float time, const TCurveIntegrationCache<T>& integrationCache) const
 	{
-		const auto numKeyframes = (UINT32)mKeyframes.size();
+		const auto numKeyframes = (u32)mKeyframes.size();
 		if (numKeyframes == 0)
 			return impl::getZero<T>();
 
@@ -697,8 +697,8 @@ namespace bs
 		if(numKeyframes == 1)
 			return (T)(mKeyframes[0].Value * (time - mKeyframes[0].Time));
 
-		UINT32 leftKeyIdx;
-		UINT32 rightKeyIdx;
+		u32 leftKeyIdx;
+		u32 rightKeyIdx;
 
 		FindKeys(time, leftKeyIdx, rightKeyIdx);
 
@@ -715,7 +715,7 @@ namespace bs
 	template <class T>
 	T TAnimationCurve<T>::EvaluateIntegratedDouble(float time, const TCurveIntegrationCache<T>& integrationCache) const
 	{
-		const auto numKeyframes = (UINT32)mKeyframes.size();
+		const auto numKeyframes = (u32)mKeyframes.size();
 		if (numKeyframes == 0)
 			return impl::getZero<T>();
 
@@ -732,8 +732,8 @@ namespace bs
 			return (T)(mKeyframes[0].Value * t * t * 0.5f);
 		}
 
-		UINT32 leftKeyIdx;
-		UINT32 rightKeyIdx;
+		u32 leftKeyIdx;
+		u32 rightKeyIdx;
 
 		FindKeys(time, leftKeyIdx, rightKeyIdx);
 
@@ -756,8 +756,8 @@ namespace bs
 
 		AnimationUtility::WrapTime(time, mStart, mEnd, loop);
 
-		UINT32 leftKeyIdx;
-		UINT32 rightKeyIdx;
+		u32 leftKeyIdx;
+		u32 rightKeyIdx;
 
 		FindKeys(time, leftKeyIdx, rightKeyIdx);
 
@@ -771,16 +771,16 @@ namespace bs
 	}
 
 	template <class T>
-	void TAnimationCurve<T>::FindKeys(float time, const TCurveCache<T>& animInstance, UINT32& leftKey, UINT32& rightKey) const
+	void TAnimationCurve<T>::FindKeys(float time, const TCurveCache<T>& animInstance, u32& leftKey, u32& rightKey) const
 	{
 		// Check nearby keys first if there is cached data
-		if (animInstance.cachedKey != (UINT32)-1)
+		if (animInstance.cachedKey != (u32)-1)
 		{
 			const KeyFrame& curKey = mKeyframes[animInstance.cachedKey];
 			if (time >= curKey.Time)
 			{
-				const UINT32 end = std::min((UINT32)mKeyframes.size(), animInstance.cachedKey + CACHE_LOOKAHEAD + 1);
-				for (UINT32 i = animInstance.cachedKey + 1; i < end; i++)
+				const u32 end = std::min((u32)mKeyframes.size(), animInstance.cachedKey + CACHE_LOOKAHEAD + 1);
+				for (u32 i = animInstance.cachedKey + 1; i < end; i++)
 				{
 					const KeyFrame& nextKey = mKeyframes[i];
 
@@ -796,8 +796,8 @@ namespace bs
 			}
 			else
 			{
-				const UINT32 start = (UINT32)std::max(0, (INT32)animInstance.cachedKey - (INT32)CACHE_LOOKAHEAD);
-				for(UINT32 i = start; i < animInstance.cachedKey; i++)
+				const u32 start = (u32)std::max(0, (i32)animInstance.cachedKey - (i32)CACHE_LOOKAHEAD);
+				for(u32 i = start; i < animInstance.cachedKey; i++)
 				{
 					const KeyFrame& prevKey = mKeyframes[i];
 
@@ -819,15 +819,15 @@ namespace bs
 	}
 
 	template <class T>
-	void TAnimationCurve<T>::FindKeys(float time, UINT32& leftKey, UINT32& rightKey) const
+	void TAnimationCurve<T>::FindKeys(float time, u32& leftKey, u32& rightKey) const
 	{
-		INT32 start = 0;
-		auto searchLength = (INT32)mKeyframes.size();
+		i32 start = 0;
+		auto searchLength = (i32)mKeyframes.size();
 		
 		while(searchLength > 0)
 		{
-			INT32 half = searchLength >> 1;
-			INT32 mid = start + half;
+			i32 half = searchLength >> 1;
+			i32 mid = start + half;
 
 			if(time < mKeyframes[mid].Time)
 			{
@@ -841,14 +841,14 @@ namespace bs
 		}
 
 		leftKey = std::max(0, start - 1);
-		rightKey = std::min(start, (INT32)mKeyframes.size() - 1);
+		rightKey = std::min(start, (i32)mKeyframes.size() - 1);
 	}
 
 	template <class T>
-	UINT32 TAnimationCurve<T>::FindKey(float time)
+	u32 TAnimationCurve<T>::FindKey(float time)
 	{
-		UINT32 leftKeyIdx;
-		UINT32 rightKeyIdx;
+		u32 leftKeyIdx;
+		u32 rightKeyIdx;
 
 		FindKeys(time, leftKeyIdx, rightKeyIdx);
 
@@ -875,8 +875,8 @@ namespace bs
 		start = Math::Clamp(start, mStart, mEnd);
 		end = Math::Clamp(end, mStart, mEnd);
 
-		UINT32 startKeyIdx = FindKey(start);
-		UINT32 endKeyIdx = FindKey(end);
+		u32 startKeyIdx = FindKey(start);
+		u32 endKeyIdx = FindKey(end);
 
 		keyFrames.reserve(endKeyIdx - startKeyIdx + 2);
 
@@ -952,7 +952,7 @@ namespace bs
 				}
 			}
 
-			if (startKeyIdx < (UINT32)mKeyframes.size() && endKeyIdx > startKeyIdx)
+			if (startKeyIdx < (u32)mKeyframes.size() && endKeyIdx > startKeyIdx)
 				keyFrames.insert(keyFrames.begin() + 1, mKeyframes.begin() + startKeyIdx, mKeyframes.begin() + endKeyIdx + 1);
 		}
 
@@ -969,9 +969,9 @@ namespace bs
 			return;
 
 		const KeyFrame& refKey = mKeyframes[0];
-		const auto numKeys = (UINT32)mKeyframes.size();
+		const auto numKeys = (u32)mKeyframes.size();
 
-		for(UINT32 i = 1; i < numKeys; i++)
+		for(u32 i = 1; i < numKeys; i++)
 			mKeyframes[i].Value = impl::getDiff(mKeyframes[i].Value, refKey.Value);
 	}
 
@@ -990,14 +990,14 @@ namespace bs
 	template <class T>
 	std::pair<T, T> TAnimationCurve<T>::CalculateRange() const
 	{
-		const auto numKeys = (UINT32)mKeyframes.size();
+		const auto numKeys = (u32)mKeyframes.size();
 		if(numKeys == 0)
 			return std::make_pair(impl::getZero<T>(), impl::getZero<T>());
 
 		std::pair<T, T> output = { std::numeric_limits<T>::infinity(), -std::numeric_limits<T>::infinity() };
 		impl::getMinMax(output, mKeyframes[0].Value);
 
-		for(UINT32 i = 1; i < numKeys; i++)
+		for(u32 i = 1; i < numKeys; i++)
 		{
 			const KeyFrame& lhs = mKeyframes[i - 1];
 			const KeyFrame& rhs = mKeyframes[i];
@@ -1018,14 +1018,14 @@ namespace bs
 	{
 		std::pair<T, T> output = std::make_pair(impl::getZero<T>(), impl::getZero<T>());
 
-		const auto numKeys = (UINT32)mKeyframes.size();
+		const auto numKeys = (u32)mKeyframes.size();
 		if(numKeys == 0)
 			return output;
 
 		if(!cache.segmentSums)
 			BuildIntegrationCache(cache);
 
-		for(UINT32 i = 1; i < numKeys; i++)
+		for(u32 i = 1; i < numKeys; i++)
 		{
 			const KeyFrame& lhs = mKeyframes[i - 1];
 			const KeyFrame& rhs = mKeyframes[i];
@@ -1046,14 +1046,14 @@ namespace bs
 	{
 		std::pair<T, T> output = std::make_pair(impl::getZero<T>(), impl::getZero<T>());
 
-		const auto numKeys = (UINT32)mKeyframes.size();
+		const auto numKeys = (u32)mKeyframes.size();
 		if(numKeys == 0)
 			return output;
 
 		if(!cache.segmentSums)
 			BuildDoubleIntegrationCache(cache);
 
-		for(UINT32 i = 1; i < numKeys; i++)
+		for(u32 i = 1; i < numKeys; i++)
 		{
 			const KeyFrame& lhs = mKeyframes[i - 1];
 			const KeyFrame& rhs = mKeyframes[i];
@@ -1076,14 +1076,14 @@ namespace bs
 	{
 		assert(!cache.segmentSums);
 
-		const auto numKeyframes = (UINT32)mKeyframes.size();
+		const auto numKeyframes = (u32)mKeyframes.size();
 		if(numKeyframes <= 1)
 			return;
 
 		cache.Init(numKeyframes);
 		cache.segmentSums[0] = impl::getZero<T>();
 
-		for (UINT32 i = 1; i < numKeyframes; i++)
+		for (u32 i = 1; i < numKeyframes; i++)
 		{
 			const TKeyframe<T>& lhs = mKeyframes[i - 1];
 			const TKeyframe<T>& rhs = mKeyframes[i];
@@ -1105,7 +1105,7 @@ namespace bs
 	{
 		assert(!cache.segmentSums);
 
-		const auto numKeyframes = (UINT32)mKeyframes.size();
+		const auto numKeyframes = (u32)mKeyframes.size();
 		if(numKeyframes <= 1)
 			return;
 
@@ -1113,7 +1113,7 @@ namespace bs
 		cache.segmentSums[0] = impl::getZero<T>();
 		cache.doubleSegmentSums[0] = impl::getZero<T>();
 
-		for (UINT32 i = 1; i < numKeyframes; i++)
+		for (u32 i = 1; i < numKeyframes; i++)
 		{
 			const TKeyframe<T>& lhs = mKeyframes[i - 1];
 			const TKeyframe<T>& rhs = mKeyframes[i];
@@ -1152,5 +1152,5 @@ namespace bs
 	template class TAnimationCurve<Vector2>;
 	template class TAnimationCurve<Quaternion>;
 	template class TAnimationCurve<float>;
-	template class TAnimationCurve<INT32>;
+	template class TAnimationCurve<i32>;
 }

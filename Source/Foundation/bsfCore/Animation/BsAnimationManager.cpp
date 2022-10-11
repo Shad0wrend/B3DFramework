@@ -25,7 +25,7 @@ namespace bs
 		mPaused = paused;
 	}
 
-	void AnimationManager::SetUpdateRate(UINT32 fps)
+	void AnimationManager::SetUpdateRate(u32 fps)
 	{
 		if (fps == 0)
 			fps = 1;
@@ -101,7 +101,7 @@ namespace bs
 		}
 
 		// Prepare the write buffer
-		UINT32 totalNumBones = 0;
+		u32 totalNumBones = 0;
 		for (auto& anim : mProxies)
 		{
 			if (anim->Skeleton != nullptr)
@@ -116,15 +116,15 @@ namespace bs
 		// Queue animation evaluation tasks
 		{
 			Lock lock(mMutex);
-			mNumActiveWorkers = (UINT32)mProxies.size();
+			mNumActiveWorkers = (u32)mProxies.size();
 		}
 
-		UINT32 curBoneIdx = 0;
+		u32 curBoneIdx = 0;
 		for (auto& anim : mProxies)
 		{
 			auto evaluateAnimWorker = [this, anim, curBoneIdx]()
 			{
-				UINT32 boneIdx = curBoneIdx;
+				u32 boneIdx = curBoneIdx;
 				EvaluateAnimation(anim.get(), boneIdx);
 
 				Lock lock(mMutex);
@@ -173,7 +173,7 @@ namespace bs
 		return output;
 	}
 
-	void AnimationManager::EvaluateAnimation(AnimationProxy* anim, UINT32& curBoneIdx)
+	void AnimationManager::EvaluateAnimation(AnimationProxy* anim, u32& curBoneIdx)
 	{
 		// Culling
 		if (anim->MCullEnabled)
@@ -200,7 +200,7 @@ namespace bs
 		// Evaluation
 		EvaluatedAnimationData& renderData = mAnimData[mPoseWriteBufferIdx];
 		
-		UINT32 prevPoseBufferIdx = (mPoseWriteBufferIdx + CoreThread::NUM_SYNC_BUFFERS) % (CoreThread::NUM_SYNC_BUFFERS + 1);
+		u32 prevPoseBufferIdx = (mPoseWriteBufferIdx + CoreThread::NUM_SYNC_BUFFERS) % (CoreThread::NUM_SYNC_BUFFERS + 1);
 		EvaluatedAnimationData& prevRenderData = mAnimData[prevPoseBufferIdx];
 
 		EvaluatedAnimationData::AnimInfo animInfo;
@@ -209,7 +209,7 @@ namespace bs
 		// Evaluate skeletal animation
 		if (anim->Skeleton != nullptr)
 		{
-			UINT32 numBones = anim->Skeleton->GetNumBones();
+			u32 numBones = anim->Skeleton->GetNumBones();
 
 			EvaluatedAnimationData::PoseInfo& poseInfo = animInfo.PoseInfo;
 			poseInfo.AnimId = anim->Id;
@@ -220,8 +220,8 @@ namespace bs
 			Matrix4* boneDst = renderData.Transforms.data() + curBoneIdx;
 
 			// Copy transforms from mapped scene objects
-			UINT32 boneTfrmIdx = 0;
-			for (UINT32 i = 0; i < anim->NumSceneObjects; i++)
+			u32 boneTfrmIdx = 0;
+			for (u32 i = 0; i < anim->NumSceneObjects; i++)
 			{
 				const AnimatedSceneObjectInfo& soInfo = anim->SceneObjectInfos[i];
 
@@ -248,7 +248,7 @@ namespace bs
 		}
 
 		// Reset mapped SO transform
-		for (UINT32 i = 0; i < anim->SceneObjectPose.NumBones; i++)
+		for (u32 i = 0; i < anim->SceneObjectPose.NumBones; i++)
 		{
 			anim->SceneObjectPose.Positions[i] = Vector3::ZERO;
 			anim->SceneObjectPose.Rotations[i] = Quaternion::IDENTITY;
@@ -259,7 +259,7 @@ namespace bs
 		memset(anim->SceneObjectPose.HasOverride, 1, sizeof(bool) * 3 * anim->NumSceneObjects);
 
 		// Update scene object transforms
-		for (UINT32 i = 0; i < anim->NumSceneObjects; i++)
+		for (u32 i = 0; i < anim->NumSceneObjects; i++)
 		{
 			const AnimatedSceneObjectInfo& soInfo = anim->SceneObjectInfos[i];
 
@@ -275,8 +275,8 @@ namespace bs
 				continue;
 
 			{
-				UINT32 curveIdx = soInfo.CurveIndices.Position;
-				if (curveIdx != (UINT32)-1)
+				u32 curveIdx = soInfo.CurveIndices.Position;
+				if (curveIdx != (u32)-1)
 				{
 					const TAnimationCurve<Vector3>& curve = state.Curves->Position[curveIdx].Curve;
 					anim->SceneObjectPose.Positions[curveIdx] = curve.Evaluate(state.Time, state.PositionCaches[curveIdx], false);
@@ -285,8 +285,8 @@ namespace bs
 			}
 
 			{
-				UINT32 curveIdx = soInfo.CurveIndices.Rotation;
-				if (curveIdx != (UINT32)-1)
+				u32 curveIdx = soInfo.CurveIndices.Rotation;
+				if (curveIdx != (u32)-1)
 				{
 					const TAnimationCurve<Quaternion>& curve = state.Curves->Rotation[curveIdx].Curve;
 					anim->SceneObjectPose.Rotations[curveIdx] = curve.Evaluate(state.Time, state.RotationCaches[curveIdx], false);
@@ -296,8 +296,8 @@ namespace bs
 			}
 
 			{
-				UINT32 curveIdx = soInfo.CurveIndices.Scale;
-				if (curveIdx != (UINT32)-1)
+				u32 curveIdx = soInfo.CurveIndices.Scale;
+				if (curveIdx != (u32)-1)
 				{
 					const TAnimationCurve<Vector3>& curve = state.Curves->Scale[curveIdx].Curve;
 					anim->SceneObjectPose.Scales[curveIdx] = curve.Evaluate(state.Time, state.ScaleCaches[curveIdx], false);
@@ -313,8 +313,8 @@ namespace bs
 			const AnimationState& state = anim->Layers[0].States[0];
 			if (!state.Disabled)
 			{
-				UINT32 numCurves = (UINT32)state.Curves->Generic.size();
-				for (UINT32 i = 0; i < numCurves; i++)
+				u32 numCurves = (u32)state.Curves->Generic.size();
+				for (u32 i = 0; i < numCurves; i++)
 				{
 					const TAnimationCurve<float>& curve = state.Curves->Generic[i].Curve;
 					anim->GenericCurveOutputs[i] = curve.Evaluate(state.Time, state.GenericCaches[i], false);
@@ -333,17 +333,17 @@ namespace bs
 
 			// Recalculate weights if curves are present
 			bool hasMorphCurves = false;
-			for (UINT32 i = 0; i < anim->NumMorphChannels; i++)
+			for (u32 i = 0; i < anim->NumMorphChannels; i++)
 			{
 				MorphChannelInfo& channelInfo = anim->MorphChannelInfos[i];
-				if (channelInfo.WeightCurveIdx != (UINT32)-1)
+				if (channelInfo.WeightCurveIdx != (u32)-1)
 				{
 					channelInfo.Weight = Math::Clamp01(anim->GenericCurveOutputs[channelInfo.WeightCurveIdx]);
 					hasMorphCurves = true;
 				}
 
 				float frameWeight;
-				if (channelInfo.FrameCurveIdx != (UINT32)-1)
+				if (channelInfo.FrameCurveIdx != (u32)-1)
 				{
 					frameWeight = Math::Clamp01(anim->GenericCurveOutputs[channelInfo.FrameCurveIdx]);
 					hasMorphCurves = true;
@@ -373,7 +373,7 @@ namespace bs
 				}
 				else if (channelInfo.ShapeCount > 1)
 				{
-					for (UINT32 j = 0; j < channelInfo.ShapeCount - 1; j++)
+					for (u32 j = 0; j < channelInfo.ShapeCount - 1; j++)
 					{
 						float prevShapeWeight;
 						if (j > 0)
@@ -411,7 +411,7 @@ namespace bs
 
 					// Last frame
 					{
-						UINT32 lastFrame = channelInfo.ShapeStart + channelInfo.ShapeCount - 1;
+						u32 lastFrame = channelInfo.ShapeStart + channelInfo.ShapeCount - 1;
 						MorphShapeInfo& prevShapeInfo = anim->MorphShapeInfos[lastFrame - 1];
 						MorphShapeInfo& shapeInfo = anim->MorphShapeInfos[lastFrame];
 
@@ -432,7 +432,7 @@ namespace bs
 					}
 				}
 
-				for (UINT32 j = 0; j < channelInfo.ShapeCount; j++)
+				for (u32 j = 0; j < channelInfo.ShapeCount; j++)
 				{
 					MorphShapeInfo& shapeInfo = anim->MorphShapeInfos[channelInfo.ShapeStart + j];
 					shapeInfo.FinalWeight *= channelInfo.Weight;
@@ -444,22 +444,22 @@ namespace bs
 			{
 				SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(anim->NumMorphVertices, 0, mBlendShapeVertexDesc);
 
-				UINT8* bufferData = meshData->GetData();
+				u8* bufferData = meshData->GetData();
 				memset(bufferData, 0, meshData->GetSize());
 
-				UINT32 tempDataSize = (sizeof(Vector3) + sizeof(float)) * anim->NumMorphVertices;
-				UINT8* tempData = (UINT8*)bs_stack_alloc(tempDataSize);
+				u32 tempDataSize = (sizeof(Vector3) + sizeof(float)) * anim->NumMorphVertices;
+				u8* tempData = (u8*)bs_stack_alloc(tempDataSize);
 				memset(tempData, 0, tempDataSize);
 
 				Vector3* tempNormals = (Vector3*)tempData;
 				float* accumulatedWeight = (float*)(tempData + sizeof(Vector3) * anim->NumMorphVertices);
 
-				UINT8* positions = meshData->GetElementData(VES_POSITION, 1, 1);
-				UINT8* normals = meshData->GetElementData(VES_NORMAL, 1, 1);
+				u8* positions = meshData->GetElementData(VES_POSITION, 1, 1);
+				u8* normals = meshData->GetElementData(VES_NORMAL, 1, 1);
 
-				UINT32 stride = mBlendShapeVertexDesc->GetVertexStride(1);
+				u32 stride = mBlendShapeVertexDesc->GetVertexStride(1);
 
-				for (UINT32 i = 0; i < anim->NumMorphShapes; i++)
+				for (u32 i = 0; i < anim->NumMorphShapes; i++)
 				{
 					const MorphShapeInfo& info = anim->MorphShapeInfos[i];
 					float absWeight = Math::Abs(info.FinalWeight);
@@ -468,8 +468,8 @@ namespace bs
 						continue;
 
 					const Vector<MorphVertex>& morphVertices = info.Shape->GetVertices();
-					UINT32 numVertices = (UINT32)morphVertices.size();
-					for (UINT32 j = 0; j < numVertices; j++)
+					u32 numVertices = (u32)morphVertices.size();
+					for (u32 j = 0; j < numVertices; j++)
 					{
 						const MorphVertex& vertex = morphVertices[j];
 
@@ -481,7 +481,7 @@ namespace bs
 					}
 				}
 
-				for (UINT32 i = 0; i < anim->NumMorphVertices; i++)
+				for (u32 i = 0; i < anim->NumMorphVertices; i++)
 				{
 					PackedNormal* destNrm = (PackedNormal*)(normals + i * stride);
 
@@ -490,8 +490,8 @@ namespace bs
 						Vector3 normal = tempNormals[i] / accumulatedWeight[i];
 						normal /= 2.0f; // Accumulated normal is in range [-2, 2] but our normal packing method assumes [-1, 1] range
 
-						MeshUtility::PackNormals(&normal, (UINT8*)destNrm, 1, sizeof(Vector3), stride);
-						destNrm->W = (UINT8)(std::min(1.0f, accumulatedWeight[i]) * 255.999f);
+						MeshUtility::PackNormals(&normal, (u8*)destNrm, 1, sizeof(Vector3), stride);
+						destNrm->W = (u8)(std::min(1.0f, accumulatedWeight[i]) * 255.999f);
 					}
 					else
 					{
@@ -519,13 +519,13 @@ namespace bs
 		}
 	}
 
-	UINT64 AnimationManager::RegisterAnimation(Animation* anim)
+	u64 AnimationManager::RegisterAnimation(Animation* anim)
 	{
 		mAnimations[mNextId] = anim;
 		return mNextId++;
 	}
 
-	void AnimationManager::UnregisterAnimation(UINT64 animId)
+	void AnimationManager::UnregisterAnimation(u64 animId)
 	{
 		mAnimations.erase(animId);
 	}

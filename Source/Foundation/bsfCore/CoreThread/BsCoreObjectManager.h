@@ -33,13 +33,13 @@ namespace bs
 				:InternalId(0)
 			{ }
 
-			CoreStoredSyncObjData(const SPtr<ct::CoreObject> destObj, UINT64 internalId, const CoreSyncData& syncData)
+			CoreStoredSyncObjData(const SPtr<ct::CoreObject> destObj, u64 internalId, const CoreSyncData& syncData)
 				:DestinationObj(destObj), SyncData(syncData), InternalId(internalId)
 			{ }
 
 			SPtr<ct::CoreObject> DestinationObj;
 			CoreSyncData SyncData;
-			UINT64 InternalId;
+			u64 InternalId;
 		};
 
 		/**
@@ -57,7 +57,7 @@ namespace bs
 		struct DirtyObjectData
 		{
 			CoreObject* Object;
-			INT32 SyncDataId;
+			i32 SyncDataId;
 		};
 
 	public:
@@ -65,7 +65,7 @@ namespace bs
 		~CoreObjectManager();
 
 		/** Generates a new unique ID for a core object. */
-		UINT64 GenerateId();
+		u64 GenerateId();
 
 		/** Registers a new CoreObject notifying the manager the object	is created. */
 		void RegisterObject(CoreObject* object);
@@ -125,11 +125,11 @@ namespace bs
 		 */
 		void UpdateDependencies(CoreObject* object, Vector<CoreObject*>* dependencies);
 
-		UINT64 mNextAvailableID;
-		Map<UINT64, CoreObject*> mObjects;
-		Map<UINT64, DirtyObjectData> mDirtyObjects;
-		Map<UINT64, Vector<CoreObject*>> mDependencies;
-		Map<UINT64, Vector<CoreObject*>> mDependants;
+		u64 mNextAvailableID;
+		Map<u64, CoreObject*> mObjects;
+		Map<u64, DirtyObjectData> mDirtyObjects;
+		Map<u64, Vector<CoreObject*>> mDependencies;
+		Map<u64, Vector<CoreObject*>> mDependants;
 
 		Vector<CoreStoredSyncObjData> mDestroyedSyncData;
 		List<CoreStoredSyncData> mCoreSyncData;

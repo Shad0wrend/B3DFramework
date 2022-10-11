@@ -52,7 +52,7 @@ namespace bs
 		 *  Returns a window based on its ID. Returns null if window cannot be found. Expects the caller to lock windows
 		 *  using lockWindows() in case this is called from non-main thread.
 		 */
-		static CocoaWindow* getWindow(UINT32 windowId);
+		static CocoaWindow* getWindow(u32 windowId);
 
 		/** Generates a Cocoa image from the provided pixel data. */
 		static NSImage* createNSImage(const PixelData& data);
@@ -61,7 +61,7 @@ namespace bs
 		static void sendInputCommandEvent(InputCommandType inputCommand);
 
 		/** Sends an event notifying the system that the user typed some text. */
-		static void sendCharInputEvent(UINT32 character);
+		static void sendCharInputEvent(u32 character);
 
 		/** Sends an event notifying the system that a pointer button was pressed. */
 		static void sendPointerButtonPressedEvent(
@@ -85,7 +85,7 @@ namespace bs
 		static void sendMouseWheelScrollEvent(float delta);
 
 		/** Notifies the system that some window-related event has occurred. */
-		static void notifyWindowEvent(WindowEventType type, UINT32 windowId);
+		static void notifyWindowEvent(WindowEventType type, u32 windowId);
 
 		/** Returns the currently assigned custom cursor. */
 		static NSCursor* GetCurrentCursorInternal();

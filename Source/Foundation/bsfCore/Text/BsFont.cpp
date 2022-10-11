@@ -6,7 +6,7 @@
 
 namespace bs
 {
-	const CharDesc& FontBitmap::GetCharDesc(UINT32 charId) const
+	const CharDesc& FontBitmap::GetCharDesc(u32 charId) const
 	{
 		auto iterFind = Characters.find(charId);
 		if(iterFind != Characters.end())
@@ -47,7 +47,7 @@ namespace bs
 		Resource::Initialize();
 	}
 
-	SPtr<FontBitmap> Font::GetBitmap(UINT32 size) const
+	SPtr<FontBitmap> Font::GetBitmap(u32 size) const
 	{
 		auto iterFind = mFontDataPerSize.find(size);
 
@@ -57,10 +57,10 @@ namespace bs
 		return iterFind->second;
 	}
 
-	INT32 Font::GetClosestSize(UINT32 size) const
+	i32 Font::GetClosestSize(u32 size) const
 	{
-		UINT32 minDiff = std::numeric_limits<UINT32>::max();
-		UINT32 bestSize = size;
+		u32 minDiff = std::numeric_limits<u32>::max();
+		u32 bestSize = size;
 
 		for(auto iter = mFontDataPerSize.begin(); iter != mFontDataPerSize.end(); ++iter)
 		{
@@ -68,7 +68,7 @@ namespace bs
 				return size;
 			else if(iter->first > size)
 			{
-				UINT32 diff = iter->first - size;
+				u32 diff = iter->first - size;
 				if(diff < minDiff)
 				{
 					minDiff = diff;
@@ -77,7 +77,7 @@ namespace bs
 			}
 			else
 			{
-				UINT32 diff = size - iter->first;
+				u32 diff = size - iter->first;
 				if(diff < minDiff)
 				{
 					minDiff = diff;

@@ -25,7 +25,7 @@ namespace bs
 		mDropCallbacks.push_back(dropCallback);
 	}
 
-	void DragAndDropManager::StartDrag(UINT32 typeId, void* data, std::function<void(bool)> dropCallback, bool needsValidDropTarget)
+	void DragAndDropManager::StartDrag(u32 typeId, void* data, std::function<void(bool)> dropCallback, bool needsValidDropTarget)
 	{
 		if (mIsDragInProgress)
 			EndDrag(false);

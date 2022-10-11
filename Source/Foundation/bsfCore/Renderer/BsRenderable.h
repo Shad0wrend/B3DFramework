@@ -55,7 +55,7 @@ namespace bs
 		 * Sets a material that will be used for rendering a sub-mesh with the specified index. If a sub-mesh doesn't have
 		 * a specific material set then the primary material will be used.
 		 */
-		void SetMaterial(UINT32 idx, const MaterialType& material);
+		void SetMaterial(u32 idx, const MaterialType& material);
 
 		/**
 		 * Sets the primary material to use for rendering. Any sub-mesh that doesn't have an explicit material set will use
@@ -79,7 +79,7 @@ namespace bs
 		 * Determines the layer bitfield that controls whether a renderable is considered visible in a specific camera.
 		 * Renderable layer must match camera layer in order for the camera to render the component.
 		 */
-		void SetLayer(UINT64 layer);
+		void SetLayer(u64 layer);
 
 		/**
 		 * Sets bounds that will be used when determining if object is visible. Only relevant if setUseOverrideBounds() is
@@ -112,13 +112,13 @@ namespace bs
 		float GetCullDistanceFactor() const { return mCullDistanceFactor; }
 
 		/** @copydoc setLayer() */
-		UINT64 GetLayer() const { return mLayer; }
+		u64 GetLayer() const { return mLayer; }
 
 		/**	@copydoc setMesh() */
 		MeshType GetMesh() const { return mMesh; }
 
 		/**	Returns the material used for rendering a sub-mesh with the specified index. */
-		MaterialType GetMaterial(UINT32 idx) const;
+		MaterialType GetMaterial(u32 idx) const;
 
 		/**	Returns the transform matrix that is applied to the object when its being rendered. */
 		Matrix4 GetMatrix() const { return mTfrmMatrix; }
@@ -145,7 +145,7 @@ namespace bs
 
 		MeshType mMesh;
 		Vector<MaterialType> mMaterials;
-		UINT64 mLayer = 1;
+		u64 mLayer = 1;
 		AABox mOverrideBounds;
 		bool mUseOverrideBounds = false;
 		bool mWriteVelocity = true;
@@ -221,7 +221,7 @@ namespace bs
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) ;
 
 		/** @copydoc CoreObject::onDependencyDirty */
-		void OnDependencyDirty(CoreObject* dependency, UINT32 dirtyFlags) override;
+		void OnDependencyDirty(CoreObject* dependency, u32 dirtyFlags) override;
 
 		/** @copydoc IResourceListener::getListenerResources */
 		void GetListenerResources(Vector<HResource>& resources) ;
@@ -258,16 +258,16 @@ namespace bs
 		Bounds GetBounds() const;
 
 		/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-		void SetRendererId(UINT32 id) { mRendererId = id; }
+		void SetRendererId(u32 id) { mRendererId = id; }
 
 		/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-		UINT32 GetRendererId() const { return mRendererId; }
+		u32 GetRendererId() const { return mRendererId; }
 
 		/** Returns the type of animation influencing this renderable, if any. */
 		RenderableAnimType GetAnimType() const { return mAnimType; }
 
 		/** Returns the identifier of the animation, if this object is animated using skeleton or blend shape animation. */
-		UINT64 GetAnimationId() const { return mAnimationId; }
+		u64 GetAnimationId() const { return mAnimationId; }
 
 		/**
 		 * Updates internal animation buffers from the contents of the provided animation data object. Does nothing if
@@ -307,9 +307,9 @@ namespace bs
 		/** Creates any buffers required for renderable animation. Should be called whenever animation properties change. */
 		void CreateAnimationBuffers();
 
-		UINT32 mRendererId;
-		UINT64 mAnimationId;
-		UINT32 mMorphShapeVersion;
+		u32 mRendererId;
+		u64 mAnimationId;
+		u32 mMorphShapeVersion;
 
 		SPtr<GpuBuffer> mBoneMatrixBuffer;
 		SPtr<GpuBuffer> mBonePrevMatrixBuffer;

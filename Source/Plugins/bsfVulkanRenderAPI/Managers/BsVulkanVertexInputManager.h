@@ -16,16 +16,16 @@ namespace bs { namespace ct
 	class VulkanVertexInput
 	{
 	public:
-		VulkanVertexInput(UINT32 id, const VkPipelineVertexInputStateCreateInfo& createInfo);
+		VulkanVertexInput(u32 id, const VkPipelineVertexInputStateCreateInfo& createInfo);
 
 		/** Returns an object contining the necessary information to initialize the vertex input on a pipeline. */
 		const VkPipelineVertexInputStateCreateInfo* GetCreateInfo() const { return &mCreateInfo; }
 
 		/** Returns an identifier which uniquely represents this vertex input configuration. */
-		UINT32 GetId() const { return mId; }
+		u32 GetId() const { return mId; }
 
 	private:
-		UINT32 mId;
+		u32 mId;
 		VkPipelineVertexInputStateCreateInfo mCreateInfo;
 	};
 
@@ -38,8 +38,8 @@ namespace bs { namespace ct
 		/**	Key uniquely identifying buffer and shader vertex declarations. */
 		struct VertexDeclarationKey
 		{
-			UINT32 BufferDeclId;
-			UINT32 ShaderDeclId;
+			u32 BufferDeclId;
+			u32 ShaderDeclId;
 		};
 
 		/**	Creates a hash from vertex declaration key. */
@@ -62,7 +62,7 @@ namespace bs { namespace ct
 			VkVertexInputAttributeDescription* Attributes;
 			VkVertexInputBindingDescription* Bindings;
 			SPtr<VulkanVertexInput> VertexInput;
-			UINT32 LastUsedIdx;
+			u32 LastUsedIdx;
 
 			GroupAlloc Allocator;
 		};
@@ -94,9 +94,9 @@ namespace bs { namespace ct
 
 		UnorderedMap<VertexDeclarationKey, VertexInputEntry, HashFunc, EqualFunc> mVertexInputMap;
 
-		UINT32 mNextId;
+		u32 mNextId;
 		bool mWarningShown;
-		UINT32 mLastUsedCounter;
+		u32 mLastUsedCounter;
 
 		Mutex mMutex;
     };

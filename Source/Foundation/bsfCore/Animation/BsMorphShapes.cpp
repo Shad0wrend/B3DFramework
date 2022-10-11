@@ -57,13 +57,13 @@ namespace bs
 		return GetRttiStatic();
 	}
 
-	MorphShapes::MorphShapes(const Vector<SPtr<MorphChannel>>& channels, UINT32 numVertices)
+	MorphShapes::MorphShapes(const Vector<SPtr<MorphChannel>>& channels, u32 numVertices)
 		:mChannels(channels), mNumVertices(numVertices)
 	{
 
 	}
 
-	SPtr<MorphShapes> MorphShapes::Create(const Vector<SPtr<MorphChannel>>& channels, UINT32 numVertices)
+	SPtr<MorphShapes> MorphShapes::Create(const Vector<SPtr<MorphChannel>>& channels, u32 numVertices)
 	{
 		MorphShapes* raw = new (bs_alloc<MorphShapes>()) MorphShapes(channels, numVertices);
 		return bs_shared_ptr(raw);

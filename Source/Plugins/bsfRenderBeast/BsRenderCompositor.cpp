@@ -57,7 +57,7 @@ namespace bs { namespace ct
 
 		bs_frame_mark();
 		{
-			FrameUnorderedMap<StringID, UINT32> processedNodes;
+			FrameUnorderedMap<StringID, u32> processedNodes;
 			mIsValid = true;
 
 			std::function<bool(const StringID&)> registerNode = [&](const StringID& nodeId)
@@ -91,14 +91,14 @@ namespace bs { namespace ct
 				}
 
 				// Register current node
-				UINT32 curIdx;
+				u32 curIdx;
 
 				// New node, properly populate its index
 				if (iterFind2 == processedNodes.end())
 				{
 					iterFind2 = processedNodes.find(nodeId);
 
-					curIdx = (UINT32)mNodeInfos.size();
+					curIdx = (u32)mNodeInfos.size();
 					mNodeInfos.push_back(NodeInfo());
 					processedNodes[nodeId] = curIdx;
 
@@ -120,7 +120,7 @@ namespace bs { namespace ct
 					curIdx = iterFind2->second;
 
 					// Check if invalid
-					if (curIdx == (UINT32)-1)
+					if (curIdx == (u32)-1)
 					{
 						BS_LOG(Error, Renderer, "Render compositor nodes recursion detected. Node \"{0}\" "
 							"depends on node \"{1}\" which is not available at this stage.",
@@ -135,7 +135,7 @@ namespace bs { namespace ct
 					iterFind2 = processedNodes.find(dep);
 
 					NodeInfo& depNodeInfo = mNodeInfos[iterFind2->second];
-					if (depNodeInfo.LastUseIdx == (UINT32)-1)
+					if (depNodeInfo.LastUseIdx == (u32)-1)
 						depNodeInfo.LastUseIdx = curIdx;
 					else
 						depNodeInfo.LastUseIdx = std::max(depNodeInfo.LastUseIdx, curIdx);
@@ -161,7 +161,7 @@ namespace bs { namespace ct
 		{
 			FrameVector<const NodeInfo*> activeNodes;
 
-			UINT32 idx = 0;
+			u32 idx = 0;
 			for (auto& entry : mNodeInfos)
 			{
 				inputs.InputNodes = entry.Inputs;
@@ -181,7 +181,7 @@ namespace bs { namespace ct
 
 				activeNodes.push_back(&entry);
 
-				for (UINT32 i = 0; i < (UINT32)activeNodes.size(); ++i)
+				for (u32 i = 0; i < (u32)activeNodes.size(); ++i)
 				{
 					if (activeNodes[i] == nullptr)
 						continue;
@@ -215,9 +215,9 @@ namespace bs { namespace ct
 	{
 		const RendererViewProperties& viewProps = inputs.View.GetProperties();
 
-		UINT32 width = viewProps.Target.ViewRect.Width;
-		UINT32 height = viewProps.Target.ViewRect.Height;
-		UINT32 numSamples = viewProps.Target.NumSamples;
+		u32 width = viewProps.Target.ViewRect.Width;
+		u32 height = viewProps.Target.ViewRect.Height;
+		u32 numSamples = viewProps.Target.NumSamples;
 
 		DepthTex = gGpuResourcePool().Get(POOLED_RENDER_TEXTURE_DESC::Create2D(PF_D32_S8X24, width, height, TU_DEPTHSTENCIL,
 			numSamples, false));
@@ -239,9 +239,9 @@ namespace bs { namespace ct
 		GpuResourcePool& resPool = gGpuResourcePool();
 		const RendererViewProperties& viewProps = inputs.View.GetProperties();
 
-		const UINT32 width = viewProps.Target.ViewRect.Width;
-		const UINT32 height = viewProps.Target.ViewRect.Height;
-		const UINT32 numSamples = viewProps.Target.NumSamples;
+		const u32 width = viewProps.Target.ViewRect.Width;
+		const u32 height = viewProps.Target.ViewRect.Height;
+		const u32 numSamples = viewProps.Target.NumSamples;
 
 		bool needsVelocity = inputs.View.RequiresVelocityWrites();
 
@@ -269,7 +269,7 @@ namespace bs { namespace ct
 		bool rebuildRT = false;
 		if (RenderTarget != nullptr)
 		{
-			UINT32 targetIdx = 0;
+			u32 targetIdx = 0;
 			rebuildRT |= RenderTarget->GetColorTexture(targetIdx++) != sceneColorTex->Texture;
 			rebuildRT |= RenderTarget->GetColorTexture(targetIdx++) != AlbedoTex->Texture;
 			rebuildRT |= RenderTarget->GetColorTexture(targetIdx++) != NormalTex->Texture;
@@ -283,7 +283,7 @@ namespace bs { namespace ct
 
 		if (RenderTarget == nullptr || rebuildRT)
 		{
-			UINT32 targetIdx = 0;
+			u32 targetIdx = 0;
 			
 			RENDER_TEXTURE_DESC gbufferDesc;
 			gbufferDesc.ColorSurfaces[targetIdx].Texture = sceneColorTex->Texture;
@@ -337,8 +337,8 @@ namespace bs { namespace ct
 		// Prepare all visible objects. Note that this also prepares non-opaque objects.
 		//// Prepare normal renderables
 		const VisibilityInfo& visibility = inputs.View.GetVisibilityMasks();
-		const auto numRenderables = (UINT32)inputs.Scene.Renderables.size();
-		for (UINT32 i = 0; i < numRenderables; i++)
+		const auto numRenderables = (u32)inputs.Scene.Renderables.size();
+		for (u32 i = 0; i < numRenderables; i++)
 		{
 			if (!visibility.Renderables[i])
 				continue;
@@ -349,10 +349,10 @@ namespace bs { namespace ct
 			for (auto& element : inputs.Scene.Renderables[i]->Elements)
 			{
 				SPtr<GpuParams> gpuParams = element.Params->GetGpuParams();
-				for(UINT32 j = 0; j < GPT_COUNT; j++)
+				for(u32 j = 0; j < GPT_COUNT; j++)
 				{
 					const GpuParamBinding& binding = element.PerCameraBindings[j];
-					if(binding.Slot != (UINT32)-1)
+					if(binding.Slot != (u32)-1)
 						gpuParams->SetParamBlockBuffer(binding.Set, binding.Slot, inputs.View.GetPerViewBuffer());
 				}
 			}
@@ -362,10 +362,10 @@ namespace bs { namespace ct
 		const ParticlePerFrameData* particleData = inputs.FrameInfo.PerFrameData.Particles;
 		if(particleData)
 		{
-			const auto numParticleSystems = (UINT32)inputs.Scene.ParticleSystems.size();
+			const auto numParticleSystems = (u32)inputs.Scene.ParticleSystems.size();
 
 			const GpuParticleResources& gpuSimResources = GpuParticleSimulation::Instance().GetResources();
-			for (UINT32 i = 0; i < numParticleSystems; i++)
+			for (u32 i = 0; i < numParticleSystems; i++)
 			{
 				if (!visibility.ParticleSystems[i])
 					continue;
@@ -392,8 +392,8 @@ namespace bs { namespace ct
 		}
 
 		//// Prepare decals
-		const auto numDecals = (UINT32)inputs.Scene.Decals.size();
-		for (UINT32 i = 0; i < numDecals; i++)
+		const auto numDecals = (u32)inputs.Scene.Decals.size();
+		for (u32 i = 0; i < numDecals; i++)
 		{
 			if (!visibility.Decals[i])
 				continue;
@@ -404,10 +404,10 @@ namespace bs { namespace ct
 			rendererDecal.UpdatePerCallBuffer(viewProps.ViewProjTransform);
 
 			SPtr<GpuParams> gpuParams = renderElement.Params->GetGpuParams();
-			for (UINT32 j = 0; j < GPT_COUNT; j++)
+			for (u32 j = 0; j < GPT_COUNT; j++)
 			{
 				const GpuParamBinding& binding = renderElement.PerCameraBindings[j];
-				if (binding.Slot != (UINT32)-1)
+				if (binding.Slot != (u32)-1)
 					gpuParams->SetParamBlockBuffer(binding.Set, binding.Slot, inputs.View.GetPerViewBuffer());
 			}
 
@@ -506,11 +506,11 @@ namespace bs { namespace ct
 		GpuResourcePool& resPool = gGpuResourcePool();
 		const RendererViewProperties& viewProps = inputs.View.GetProperties();
 
-		UINT32 width = viewProps.Target.ViewRect.Width;
-		UINT32 height = viewProps.Target.ViewRect.Height;
-		UINT32 numSamples = viewProps.Target.NumSamples;
+		u32 width = viewProps.Target.ViewRect.Width;
+		u32 height = viewProps.Target.ViewRect.Height;
+		u32 numSamples = viewProps.Target.NumSamples;
 
-		UINT32 usageFlags = TU_RENDERTARGET;
+		u32 usageFlags = TU_RENDERTARGET;
 
 		bool tiledDeferredSupported = inputs.FeatureSet != RenderBeastFeatureSet::DesktopMacOS;
 		if(tiledDeferredSupported && numSamples == 1)
@@ -606,8 +606,8 @@ namespace bs { namespace ct
 			return;
 		}
 
-		UINT32 width = viewProps.Target.ViewRect.Width;
-		UINT32 height = viewProps.Target.ViewRect.Height;
+		u32 width = viewProps.Target.ViewRect.Width;
+		u32 height = viewProps.Target.ViewRect.Height;
 
 		// We just allocate the texture, while the base pass is responsible for filling it out
 		Output = gGpuResourcePool().Get(POOLED_RENDER_TEXTURE_DESC::Create2D(PF_R8, width, height, TU_RENDERTARGET));
@@ -662,7 +662,7 @@ namespace bs { namespace ct
 
 		const RendererViewProperties& viewProps = inputs.View.GetProperties();
 		const VisibilityInfo& visibility = inputs.View.GetVisibilityMasks();
-		const auto numParticleSystems = (UINT32)inputs.Scene.ParticleSystems.size();
+		const auto numParticleSystems = (u32)inputs.Scene.ParticleSystems.size();
 
 		// Sort particles
 		bs_frame_mark();
@@ -674,7 +674,7 @@ namespace bs { namespace ct
 			};
 
 			FrameVector<SortData> systemsToSort;
-			for (UINT32 i = 0; i < numParticleSystems; i++)
+			for (u32 i = 0; i < numParticleSystems; i++)
 			{
 				if (!visibility.ParticleSystems[i])
 					continue;
@@ -691,7 +691,7 @@ namespace bs { namespace ct
 					systemsToSort.push_back({ particleSystem, simulationData });
 			}
 
-			const auto worker = [&systemsToSort, viewOrigin = viewProps.ViewOrigin](UINT32 idx)
+			const auto worker = [&systemsToSort, viewOrigin = viewProps.ViewOrigin](u32 idx)
 			{
 				const SortData& data = systemsToSort[idx];
 
@@ -716,7 +716,7 @@ namespace bs { namespace ct
 				}
 			};
 
-			SPtr<TaskGroup> sortTask = TaskGroup::Create("ParticleSort", worker, (UINT32)systemsToSort.size());
+			SPtr<TaskGroup> sortTask = TaskGroup::Create("ParticleSort", worker, (u32)systemsToSort.size());
 
 			TaskScheduler::Instance().AddTaskGroup(sortTask);
 			sortTask->Wait();
@@ -753,11 +753,11 @@ namespace bs { namespace ct
 
 		RCNodeSceneDepth* depthNode = static_cast<RCNodeSceneDepth*>(inputs.InputNodes[0]);
 
-		UINT32 width = viewProps.Target.ViewRect.Width;
-		UINT32 height = viewProps.Target.ViewRect.Height;
-		UINT32 numSamples = viewProps.Target.NumSamples;
+		u32 width = viewProps.Target.ViewRect.Width;
+		u32 height = viewProps.Target.ViewRect.Height;
+		u32 numSamples = viewProps.Target.NumSamples;
 
-		UINT32 usage = TU_RENDERTARGET;
+		u32 usage = TU_RENDERTARGET;
 		if (numSamples > 1)
 		{
 			resPool.Get(LightAccumulationTexArray,
@@ -766,7 +766,7 @@ namespace bs { namespace ct
 			ClearLoadStoreMat* clearMat = ClearLoadStoreMat::GetVariation(ClearLoadStoreType::TextureArray,
 					ClearLoadStoreDataType::Float, 4);
 
-			for(UINT32 i = 0; i < numSamples; i++)
+			for(u32 i = 0; i < numSamples; i++)
 			{
 				TextureSurface surface;
 				surface.Face = i;
@@ -891,9 +891,9 @@ namespace bs { namespace ct
 		}
 
 		// Standard deferred used for shadowed lights, or when tiled deferred isn't supported
-		UINT32 width = viewProps.Target.ViewRect.Width;
-		UINT32 height = viewProps.Target.ViewRect.Height;
-		UINT32 numSamples = viewProps.Target.NumSamples;
+		u32 width = viewProps.Target.ViewRect.Width;
+		u32 height = viewProps.Target.ViewRect.Height;
+		u32 numSamples = viewProps.Target.NumSamples;
 
 		const VisibleLightData& lightData = inputs.ViewGroup.GetVisibleLightData();
 
@@ -906,16 +906,16 @@ namespace bs { namespace ct
 
 			rapi.SetRenderTarget(Output->RenderTarget, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
 
-			for (UINT32 i = 0; i < (UINT32)LightType::Count; i++)
+			for (u32 i = 0; i < (u32)LightType::Count; i++)
 			{
 				LightType lightType = (LightType)i;
 
 				auto& lights = lightData.GetLights(lightType);
-				UINT32 count = lightData.GetNumUnshadowedLights(lightType);
+				u32 count = lightData.GetNumUnshadowedLights(lightType);
 
-				for (UINT32 j = 0; j < count; j++)
+				for (u32 j = 0; j < count; j++)
 				{
-					UINT32 lightIdx = j;
+					u32 lightIdx = j;
 					const RendererLight& light = *lights[lightIdx];
 
 					StandardDeferred::Instance().RenderLight(lightType, light, inputs.View, gbuffer, Texture::BLACK);
@@ -957,15 +957,15 @@ namespace bs { namespace ct
 			ProfileGPUBlock sampleBlock("Standard deferred shadowed lights");
 
 			const ShadowRendering& shadowRenderer = inputs.ViewGroup.GetShadowRenderer();
-			for (UINT32 i = 0; i < (UINT32)LightType::Count; i++)
+			for (u32 i = 0; i < (u32)LightType::Count; i++)
 			{
 				LightType lightType = (LightType)i;
 
 				auto& lights = lightData.GetLights(lightType);
-				UINT32 count = lightData.GetNumShadowedLights(lightType);
-				UINT32 offset = lightData.GetNumUnshadowedLights(lightType);
+				u32 count = lightData.GetNumShadowedLights(lightType);
+				u32 offset = lightData.GetNumUnshadowedLights(lightType);
 
-				for (UINT32 j = 0; j < count; j++)
+				for (u32 j = 0; j < count; j++)
 				{
 					rapi.SetRenderTarget(mLightOcclusionRT, FBT_DEPTH, RT_DEPTH_STENCIL);
 
@@ -974,7 +974,7 @@ namespace bs { namespace ct
 
 					rapi.ClearViewport(FBT_COLOR, Color::ZERO);
 
-					UINT32 lightIdx = offset + j;
+					u32 lightIdx = offset + j;
 					const RendererLight& light = *lights[lightIdx];
 					shadowRenderer.RenderShadowOcclusion(inputs.View, light, gbuffer);
 
@@ -1146,9 +1146,9 @@ namespace bs { namespace ct
 		{
 			SPtr<RenderTexture>	outputRT = lightAccumNode->RenderTarget;
 
-			UINT32 width = viewProps.Target.ViewRect.Width;
-			UINT32 height = viewProps.Target.ViewRect.Height;
-			UINT32 numSamples = viewProps.Target.NumSamples;
+			u32 width = viewProps.Target.ViewRect.Width;
+			u32 height = viewProps.Target.ViewRect.Height;
+			u32 numSamples = viewProps.Target.NumSamples;
 
 			RenderAPI& rapi = RenderAPI::Instance();
 
@@ -1196,8 +1196,8 @@ namespace bs { namespace ct
 			if (!viewProps.CapturingReflections)
 			{
 				// Render refl. probes
-				UINT32 numProbes = probeData.GetNumProbes();
-				for (UINT32 i = 0; i < numProbes; i++)
+				u32 numProbes = probeData.GetNumProbes();
+				for (u32 i = 0; i < numProbes; i++)
 				{
 					const ReflProbeData& probe = probeData.GetProbeData(i);
 
@@ -1321,10 +1321,10 @@ namespace bs { namespace ct
 		const auto bindParamsForClustered = [&lightGridOutputs, &visibleLightData, &visibleReflProbeData]
 			(GpuParams& gpuParams, const ForwardLightingParams& fwdParams, const ImageBasedLightingParams& iblParams)
 		{
-			for (UINT32 j = 0; j < GPT_COUNT; j++)
+			for (u32 j = 0; j < GPT_COUNT; j++)
 			{
 				const GpuParamBinding& binding = fwdParams.GridParamsBindings[j];
-				if (binding.Slot != (UINT32)-1)
+				if (binding.Slot != (u32)-1)
 					gpuParams.SetParamBlockBuffer(binding.Set, binding.Slot, lightGridOutputs.GridParams);
 			}
 
@@ -1353,11 +1353,11 @@ namespace bs { namespace ct
 			lightOffsets.Z = lightOffsets.Y + lightCounts.Y;
 			lightOffsets.W = lightOffsets.Z + lightCounts.Z;
 
-			for (INT32 j = 0; j < lightOffsets.W; j++)
+			for (i32 j = 0; j < lightOffsets.W; j++)
 				gLightsParamDef.gLights.Set(standardForwardBuffers.LightsParamBlock, *lights[j], j);
 
-			INT32 numReflProbes = std::min(visibleReflProbeData.GetNumProbes(), STANDARD_FORWARD_MAX_NUM_PROBES);
-			for (INT32 j = 0; j < numReflProbes; j++)
+			i32 numReflProbes = std::min(visibleReflProbeData.GetNumProbes(), STANDARD_FORWARD_MAX_NUM_PROBES);
+			for (i32 j = 0; j < numReflProbes; j++)
 			{
 				gReflProbesParamDef.gReflectionProbes.Set(standardForwardBuffers.ReflProbesParamBlock,
 					visibleReflProbeData.GetProbeData(j), j);
@@ -1368,7 +1368,7 @@ namespace bs { namespace ct
 			gLightAndReflProbeParamsParamDef.gReflProbeCount.Set(standardForwardBuffers.LightAndReflProbeParamsParamBlock,
 				numReflProbes);
 
-			if (iblParams.ReflProbesBinding.Set != (UINT32)-1)
+			if (iblParams.ReflProbesBinding.Set != (u32)-1)
 			{
 				gpuParams.SetParamBlockBuffer(
 					iblParams.ReflProbesBinding.Set,
@@ -1376,7 +1376,7 @@ namespace bs { namespace ct
 					standardForwardBuffers.ReflProbesParamBlock);
 			}
 
-			if (fwdParams.LightsParamBlockBinding.Set != (UINT32)-1)
+			if (fwdParams.LightsParamBlockBinding.Set != (u32)-1)
 			{
 				gpuParams.SetParamBlockBuffer(
 					fwdParams.LightsParamBlockBinding.Set,
@@ -1384,7 +1384,7 @@ namespace bs { namespace ct
 					standardForwardBuffers.LightsParamBlock);
 			}
 
-			if (fwdParams.LightAndReflProbeParamsParamBlockBinding.Set != (UINT32)-1)
+			if (fwdParams.LightAndReflProbeParamsParamBlockBinding.Set != (u32)-1)
 			{
 				gpuParams.SetParamBlockBuffer(
 					fwdParams.LightAndReflProbeParamsParamBlockBinding.Set,
@@ -1397,7 +1397,7 @@ namespace bs { namespace ct
 			(GpuParams& gpuParams, ImageBasedLightingParams& iblParams)
 		{
 			// Note: Ideally these should be bound once (they are the same for all renderables)
-			if (iblParams.ReflProbeParamBindings.Set != (UINT32)-1)
+			if (iblParams.ReflProbeParamBindings.Set != (u32)-1)
 			{
 				gpuParams.SetParamBlockBuffer(
 					iblParams.ReflProbeParamBindings.Set,
@@ -1446,8 +1446,8 @@ namespace bs { namespace ct
 		// Prepare objects for rendering by binding forward lighting data
 		//// Normal renderables
 		const VisibilityInfo& visibility = inputs.View.GetVisibilityMasks();
-		const auto numRenderables = (UINT32)sceneInfo.Renderables.size();
-		for (UINT32 i = 0; i < numRenderables; i++)
+		const auto numRenderables = (u32)sceneInfo.Renderables.size();
+		for (u32 i = 0; i < numRenderables; i++)
 		{
 			if (!visibility.Renderables[i])
 				continue;
@@ -1480,9 +1480,9 @@ namespace bs { namespace ct
 		const ParticlePerFrameData* particleData = inputs.FrameInfo.PerFrameData.Particles;
 		if(particleData)
 		{
-			const auto numParticleSystems = (UINT32)inputs.Scene.ParticleSystems.size();
+			const auto numParticleSystems = (u32)inputs.Scene.ParticleSystems.size();
 
-			for (UINT32 i = 0; i < numParticleSystems; i++)
+			for (u32 i = 0; i < numParticleSystems; i++)
 			{
 				if (!visibility.ParticleSystems[i])
 					continue;
@@ -1689,8 +1689,8 @@ namespace bs { namespace ct
 	void RCNodePostProcess::GetAndSwitch(const RendererView& view, SPtr<RenderTexture>& output, SPtr<Texture>& lastFrame) const
 	{
 		const RendererViewProperties& viewProps = view.GetProperties();
-		UINT32 width = viewProps.Target.ViewRect.Width;
-		UINT32 height = viewProps.Target.ViewRect.Height;
+		u32 width = viewProps.Target.ViewRect.Width;
+		u32 height = viewProps.Target.ViewRect.Height;
 
 		if(!mOutput[mCurrentIdx])
 		{
@@ -1700,7 +1700,7 @@ namespace bs { namespace ct
 
 		output = mOutput[mCurrentIdx]->RenderTexture;
 
-		UINT32 otherIdx = (mCurrentIdx + 1) % 2;
+		u32 otherIdx = (mCurrentIdx + 1) % 2;
 		if (mOutput[otherIdx])
 			lastFrame = mOutput[otherIdx]->Texture;
 
@@ -1709,7 +1709,7 @@ namespace bs { namespace ct
 
 	SPtr<Texture> RCNodePostProcess::GetLastOutput() const
 	{
-		UINT32 otherIdx = (mCurrentIdx + 1) % 2;
+		u32 otherIdx = (mCurrentIdx + 1) % 2;
 		if (mOutput[otherIdx])
 			return mOutput[otherIdx]->Texture;
 		
@@ -1799,7 +1799,7 @@ namespace bs { namespace ct
 				luminanceTex = nullptr;
 
 				// Downsample some more
-				for(UINT32 i = 0; i < 5; i++)
+				for(u32 i = 0; i < 5; i++)
 				{
 					DownsampleMat* downsampleMat = DownsampleMat::GetVariation(1, false);
 					SPtr<PooledRenderTexture> downsampledLuminance =
@@ -1882,7 +1882,7 @@ namespace bs { namespace ct
 		{
 			if (settings.EnableTonemapping)
 			{
-				const UINT64 latestHash = inputs.View.GetRenderSettingsHash();
+				const u64 latestHash = inputs.View.GetRenderSettingsHash();
 				const bool tonemapLUTDirty = mTonemapLastUpdateHash != latestHash;
 
 				if (tonemapLUTDirty) // Rebuild LUT if PP settings changed
@@ -2049,8 +2049,8 @@ namespace bs { namespace ct
 		GpuResourcePool& resPool = gGpuResourcePool();
 		const RendererViewProperties& viewProps = inputs.View.GetProperties();
 
-		UINT32 width = viewProps.Target.ViewRect.Width;
-		UINT32 height = viewProps.Target.ViewRect.Height;
+		u32 width = viewProps.Target.ViewRect.Width;
+		u32 height = viewProps.Target.ViewRect.Height;
 
 		// Resolve multiple samples if MSAA is used
 		SPtr<PooledRenderTexture> resolvedSceneColor;
@@ -2344,7 +2344,7 @@ namespace bs { namespace ct
 		return { RCNodeSceneColor::GetNodeId() };
 	}
 
-	constexpr UINT32 RCNodeSceneColorDownsamples::MAX_NUM_DOWNSAMPLES;
+	constexpr u32 RCNodeSceneColorDownsamples::MAX_NUM_DOWNSAMPLES;
 
 	void RCNodeSceneColorDownsamples::Render(const RenderCompositorNodeInputs& inputs)
 	{
@@ -2353,7 +2353,7 @@ namespace bs { namespace ct
 		auto* halfSceneColorNode = static_cast<RCNodeHalfSceneColor*>(inputs.InputNodes[0]);
 		const TextureProperties& halfSceneProps = halfSceneColorNode->Output->Texture->GetProperties();
 
-		const UINT32 totalDownsampleLevels = PixelUtil::GetMaxMipmaps(
+		const u32 totalDownsampleLevels = PixelUtil::GetMaxMipmaps(
 			halfSceneProps.GetWidth(),
 			halfSceneProps.GetHeight(),
 			1,
@@ -2366,7 +2366,7 @@ namespace bs { namespace ct
 			Output[0] = halfSceneColorNode->Output;
 
 			DownsampleMat* downsampleMat = DownsampleMat::GetVariation(1, false);
-			for (UINT32 i = 1; i < AvailableDownsamples; i++)
+			for (u32 i = 1; i < AvailableDownsamples; i++)
 			{
 				Output[i] = resPool.Get(DownsampleMat::GetOutputDesc(Output[i - 1]->Texture));
 				downsampleMat->Execute(Output[i - 1]->Texture, Output[i]->RenderTexture);
@@ -2376,7 +2376,7 @@ namespace bs { namespace ct
 
 	void RCNodeSceneColorDownsamples::Clear()
 	{
-		for(UINT32 i = 0; i < MAX_NUM_DOWNSAMPLES; i++)
+		for(u32 i = 0; i < MAX_NUM_DOWNSAMPLES; i++)
 			Output[i] = nullptr;
 	}
 
@@ -2392,8 +2392,8 @@ namespace bs { namespace ct
 
 		if (viewProps.Target.NumSamples > 1)
 		{
-			UINT32 width = viewProps.Target.ViewRect.Width;
-			UINT32 height = viewProps.Target.ViewRect.Height;
+			u32 width = viewProps.Target.ViewRect.Width;
+			u32 height = viewProps.Target.ViewRect.Height;
 
 			Output = gGpuResourcePool().Get(
 				POOLED_RENDER_TEXTURE_DESC::Create2D(PF_D32_S8X24, width, height, TU_DEPTHSTENCIL, 1, false));
@@ -2424,11 +2424,11 @@ namespace bs { namespace ct
 
 		RCNodeResolvedSceneDepth* resolvedSceneDepth = static_cast<RCNodeResolvedSceneDepth*>(inputs.InputNodes[0]);
 
-		UINT32 width = viewProps.Target.ViewRect.Width;
-		UINT32 height = viewProps.Target.ViewRect.Height;
+		u32 width = viewProps.Target.ViewRect.Width;
+		u32 height = viewProps.Target.ViewRect.Height;
 
-		UINT32 size = Bitwise::NextPow2(std::max(width, height));
-		UINT32 numMips = PixelUtil::GetMaxMipmaps(size, size, 1, PF_R32F);
+		u32 size = Bitwise::NextPow2(std::max(width, height));
+		u32 numMips = PixelUtil::GetMaxMipmaps(size, size, 1, PF_R32F);
 		size = 1 << numMips;
 
 		// Note: Use the 32-bit buffer here as 16-bit causes too much banding (most of the scene gets assigned 4-5 different
@@ -2476,17 +2476,17 @@ namespace bs { namespace ct
 			rapi.SetViewport(destRect);
 
 			Rect2I srcAreaInt;
-			srcAreaInt.X = (INT32)(srcRect.X * viewProps.Target.ViewRect.Width);
-			srcAreaInt.Y = (INT32)(srcRect.Y * viewProps.Target.ViewRect.Height);
-			srcAreaInt.Width = (UINT32)(srcRect.Width * viewProps.Target.ViewRect.Width);
-			srcAreaInt.Height = (UINT32)(srcRect.Height * viewProps.Target.ViewRect.Height);
+			srcAreaInt.X = (i32)(srcRect.X * viewProps.Target.ViewRect.Width);
+			srcAreaInt.Y = (i32)(srcRect.Y * viewProps.Target.ViewRect.Height);
+			srcAreaInt.Width = (u32)(srcRect.Width * viewProps.Target.ViewRect.Width);
+			srcAreaInt.Height = (u32)(srcRect.Height * viewProps.Target.ViewRect.Height);
 
 			gRendererUtility().Blit(resolvedSceneDepth->Output->Texture, srcAreaInt);
 			rapi.SetViewport(Rect2(0, 0, 1, 1));
 		}
 
 		// Generate remaining mip levels
-		for(UINT32 i = 1; i <= numMips; i++)
+		for(u32 i = 1; i <= numMips; i++)
 		{
 			rtDesc.ColorSurfaces[0].MipLevel = i;
 			rt = RenderTexture::Create(rtDesc);
@@ -2548,8 +2548,8 @@ namespace bs { namespace ct
 
 		// Multiple downsampled AO levels are used to minimize cache trashing. Downsampled AO targets use larger radius,
 		// whose contents are then blended with the higher level.
-		UINT32 quality = settings.Quality;
-		UINT32 numDownsampleLevels = 0;
+		u32 quality = settings.Quality;
+		u32 numDownsampleLevels = 0;
 		if (quality == 2)
 			numDownsampleLevels = 1;
 		else if (quality > 2)
@@ -2561,8 +2561,8 @@ namespace bs { namespace ct
 		if(numDownsampleLevels > 0)
 		{
 			Vector2I downsampledSize(
-				std::max(1, Math::DivideAndRoundUp((INT32)viewProps.Target.ViewRect.Width, 2)),
-				std::max(1, Math::DivideAndRoundUp((INT32)viewProps.Target.ViewRect.Height, 2))
+				std::max(1, Math::DivideAndRoundUp((i32)viewProps.Target.ViewRect.Width, 2)),
+				std::max(1, Math::DivideAndRoundUp((i32)viewProps.Target.ViewRect.Height, 2))
 			);
 
 			POOLED_RENDER_TEXTURE_DESC desc = POOLED_RENDER_TEXTURE_DESC::Create2D(PF_RGBA16F, downsampledSize.X,
@@ -2576,8 +2576,8 @@ namespace bs { namespace ct
 		if(numDownsampleLevels > 1)
 		{
 			Vector2I downsampledSize(
-				std::max(1, Math::DivideAndRoundUp((INT32)viewProps.Target.ViewRect.Width, 4)),
-				std::max(1, Math::DivideAndRoundUp((INT32)viewProps.Target.ViewRect.Height, 4))
+				std::max(1, Math::DivideAndRoundUp((i32)viewProps.Target.ViewRect.Width, 4)),
+				std::max(1, Math::DivideAndRoundUp((i32)viewProps.Target.ViewRect.Height, 4))
 			);
 
 			POOLED_RENDER_TEXTURE_DESC desc = POOLED_RENDER_TEXTURE_DESC::Create2D(PF_RGBA16F, downsampledSize.X,
@@ -2598,8 +2598,8 @@ namespace bs { namespace ct
 			textures.AoSetup = setupTex1->Texture;
 
 			Vector2I downsampledSize(
-				std::max(1, Math::DivideAndRoundUp((INT32)viewProps.Target.ViewRect.Width, 4)),
-				std::max(1, Math::DivideAndRoundUp((INT32)viewProps.Target.ViewRect.Height, 4))
+				std::max(1, Math::DivideAndRoundUp((i32)viewProps.Target.ViewRect.Width, 4)),
+				std::max(1, Math::DivideAndRoundUp((i32)viewProps.Target.ViewRect.Height, 4))
 			);
 
 			POOLED_RENDER_TEXTURE_DESC desc = POOLED_RENDER_TEXTURE_DESC::Create2D(PF_R8, downsampledSize.X,
@@ -2621,8 +2621,8 @@ namespace bs { namespace ct
 				textures.AoDownsampled = downAOTex1->Texture;
 
 			Vector2I downsampledSize(
-				std::max(1, Math::DivideAndRoundUp((INT32)viewProps.Target.ViewRect.Width, 2)),
-				std::max(1, Math::DivideAndRoundUp((INT32)viewProps.Target.ViewRect.Height, 2))
+				std::max(1, Math::DivideAndRoundUp((i32)viewProps.Target.ViewRect.Width, 2)),
+				std::max(1, Math::DivideAndRoundUp((i32)viewProps.Target.ViewRect.Height, 2))
 			);
 
 			POOLED_RENDER_TEXTURE_DESC desc = POOLED_RENDER_TEXTURE_DESC::Create2D(PF_R8, downsampledSize.X,
@@ -2637,8 +2637,8 @@ namespace bs { namespace ct
 				downAOTex1 = nullptr;
 		}
 
-		UINT32 width = viewProps.Target.ViewRect.Width;
-		UINT32 height = viewProps.Target.ViewRect.Height;
+		u32 width = viewProps.Target.ViewRect.Width;
+		u32 height = viewProps.Target.ViewRect.Height;
 		mPooledOutput = resPool.Get(POOLED_RENDER_TEXTURE_DESC::Create2D(PF_R8, width, height, TU_RENDERTARGET));
 
 		{
@@ -2722,8 +2722,8 @@ namespace bs { namespace ct
 		GpuResourcePool& resPool = gGpuResourcePool();
 		const RendererViewProperties& viewProps = inputs.View.GetProperties();
 
-		UINT32 width = viewProps.Target.ViewRect.Width;
-		UINT32 height = viewProps.Target.ViewRect.Height;
+		u32 width = viewProps.Target.ViewRect.Width;
+		u32 height = viewProps.Target.ViewRect.Height;
 
 		SPtr<Texture> hiZ = hiZNode->Output->Texture;
 
@@ -2832,14 +2832,14 @@ namespace bs { namespace ct
 		// Grab downsampled scene color to use as input
 		auto* sceneDownsamplesNode = static_cast<RCNodeSceneColorDownsamples*>(inputs.InputNodes[1]);
 
-		constexpr UINT32 PREFERRED_NUM_DOWNSAMPLE_LEVELS = 6;
-		const UINT32 availableDownsamples = sceneDownsamplesNode->AvailableDownsamples;
-		const UINT32 numDownsamples = Math::Min(availableDownsamples, PREFERRED_NUM_DOWNSAMPLE_LEVELS);
+		constexpr u32 PREFERRED_NUM_DOWNSAMPLE_LEVELS = 6;
+		const u32 availableDownsamples = sceneDownsamplesNode->AvailableDownsamples;
+		const u32 numDownsamples = Math::Min(availableDownsamples, PREFERRED_NUM_DOWNSAMPLE_LEVELS);
 		assert(numDownsamples >= 1);
 
 		// Blur & clip the downsampled entries and add them together
-		const UINT32 quality = Math::Clamp(settings.Bloom.Quality, 0U, 3U);
-		constexpr UINT32 NUM_STEPS_PER_QUALITY[] = { 3, 4, 5, 6  };
+		const u32 quality = Math::Clamp(settings.Bloom.Quality, 0U, 3U);
+		constexpr u32 NUM_STEPS_PER_QUALITY[] = { 3, 4, 5, 6  };
 
 		GaussianBlurMat* filterMat = GaussianBlurMat::GetVariation(true);
 
@@ -2855,11 +2855,11 @@ namespace bs { namespace ct
 				eyeAdaptationTex = eyeAdapatationNode->Output->Texture;
 		}
 
-		const UINT32 numSteps = NUM_STEPS_PER_QUALITY[quality];
+		const u32 numSteps = NUM_STEPS_PER_QUALITY[quality];
 		SPtr<PooledRenderTexture> prevOutput;
-		for(UINT32 i = 0; i < numSteps; i++)
+		for(u32 i = 0; i < numSteps; i++)
 		{
-			const UINT32 srcIdx = numDownsamples - i - 1;
+			const u32 srcIdx = numDownsamples - i - 1;
 			const SPtr<PooledRenderTexture> downsampledTex = sceneDownsamplesNode->Output[srcIdx];
 
 			const TextureProperties& inputProps = downsampledTex->Texture->GetProperties();
@@ -2922,8 +2922,8 @@ namespace bs { namespace ct
 		// Grab downsampled scene color to use as input
 		auto* sceneDownsamplesNode = static_cast<RCNodeSceneColorDownsamples*>(inputs.InputNodes[2]);
 
-		const UINT32 availableDownsamples = sceneDownsamplesNode->AvailableDownsamples;
-		const UINT32 numDownsamples = Math::Clamp(settings.ScreenSpaceLensFlare.DownsampleCount, 1U, availableDownsamples);
+		const u32 availableDownsamples = sceneDownsamplesNode->AvailableDownsamples;
+		const u32 numDownsamples = Math::Clamp(settings.ScreenSpaceLensFlare.DownsampleCount, 1U, availableDownsamples);
 		assert(numDownsamples >= 1);
 
 		SPtr<PooledRenderTexture> downsampledTex = sceneDownsamplesNode->Output[numDownsamples - 1];

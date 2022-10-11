@@ -37,7 +37,7 @@ namespace bs { namespace ct
 		friend class D3D11CommandBufferManager;
 		friend class D3D11RenderAPI;
 
-		D3D11CommandBuffer(GpuQueueType type, UINT32 deviceIdx, UINT32 queueIdx, bool secondary);
+		D3D11CommandBuffer(GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary);
 
 		/** Returns true if the command buffer has finished executing on the GPU. */
 		bool IsComplete() const;

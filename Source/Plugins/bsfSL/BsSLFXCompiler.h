@@ -45,8 +45,8 @@ namespace bs
 			BLEND_STATE_DESC BlendDesc;
 			RASTERIZER_STATE_DESC RasterizerDesc;
 			DEPTH_STENCIL_STATE_DESC DepthStencilDesc;
-			UINT32 StencilRefValue = 0;
-			UINT32 SeqIdx = 0;
+			u32 StencilRefValue = 0;
+			u32 SeqIdx = 0;
 
 			bool BlendIsDefault = true;
 			bool RasterizerIsDefault = true;
@@ -65,14 +65,14 @@ namespace bs
 		/** A set of attributes describing a BSL construct. */
 		struct AttributeData
 		{
-			Vector<std::pair<INT32, String>> Attributes;
+			Vector<std::pair<i32, String>> Attributes;
 		};
 
 		/** Value of a single variation option along with an optional name. */
 		struct VariationOption
 		{
 			String Name;
-			UINT32 Value;
+			u32 Value;
 		};
 
 		/** Information about different variations of a single shader. */
@@ -109,7 +109,7 @@ namespace bs
 		struct SubShaderData
 		{
 			String Name;
-			UINT32 CodeBlockIndex;
+			u32 CodeBlockIndex;
 		};
 
 	public:
@@ -188,7 +188,7 @@ namespace bs
 		 * Populates blend state descriptor for a single render target from the provided AST node. Which target gets
 		 * updated depends on the index set in the AST node.
 		 */
-		static void ParseRenderTargetBlendState(BLEND_STATE_DESC& desc, ASTFXNode* targetNode, UINT32& index);
+		static void ParseRenderTargetBlendState(BLEND_STATE_DESC& desc, ASTFXNode* targetNode, u32& index);
 
 		/**
 		 * Parses the blend state AST node and populates the pass' blend state descriptor. Returns false if the descriptor

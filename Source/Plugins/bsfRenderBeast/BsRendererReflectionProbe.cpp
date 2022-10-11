@@ -10,7 +10,7 @@
 
 namespace bs { namespace ct
 {
-	static const UINT32 REFL_PROBE_BUFFER_INCREMENT = 16 * sizeof(ReflProbeData);
+	static const u32 REFL_PROBE_BUFFER_INCREMENT = 16 * sizeof(ReflProbeData);
 	
 	ReflProbeParamsParamDef gReflProbeParamsParamDef;
 
@@ -21,8 +21,8 @@ namespace bs { namespace ct
 		const VisibilityInfo& visibility = viewGroup.GetVisibilityInfo();
 
 		// Generate refl. probe data for the visible ones
-		UINT32 numProbes = (UINT32)sceneInfo.ReflProbes.size();
-		for(UINT32 i = 0; i < numProbes; i++)
+		u32 numProbes = (u32)sceneInfo.ReflProbes.size();
+		for(u32 i = 0; i < numProbes; i++)
 		{
 			if (!visibility.ReflProbes[i])
 				continue;
@@ -40,14 +40,14 @@ namespace bs { namespace ct
 
 		std::sort(mReflProbeData.begin(), mReflProbeData.end(), sorter);
 
-		mNumProbes = (UINT32)mReflProbeData.size();
+		mNumProbes = (u32)mReflProbeData.size();
 
 		// Move refl. probe data into a GPU buffer
 		bool supportsStructuredBuffers = gRenderBeast()->GetFeatureSet() == RenderBeastFeatureSet::Desktop;
 		if(supportsStructuredBuffers)
 		{
-			UINT32 size = mNumProbes * sizeof(ReflProbeData);
-			UINT32 curBufferSize;
+			u32 size = mNumProbes * sizeof(ReflProbeData);
+			u32 curBufferSize;
 
 			if (mProbeBuffer != nullptr)
 				curBufferSize = mProbeBuffer->GetSize();
@@ -57,7 +57,7 @@ namespace bs { namespace ct
 			if (size > curBufferSize || curBufferSize == 0)
 			{
 				// Allocate at least one block even if no probes, to avoid issues with null buffers
-				UINT32 bufferSize = std::max(1, Math::CeilToInt(size / (float) REFL_PROBE_BUFFER_INCREMENT)) * REFL_PROBE_BUFFER_INCREMENT;
+				u32 bufferSize = std::max(1, Math::CeilToInt(size / (float) REFL_PROBE_BUFFER_INCREMENT)) * REFL_PROBE_BUFFER_INCREMENT;
 
 				GPU_BUFFER_DESC bufferDesc;
 				bufferDesc.Type = GBT_STRUCTURED;
@@ -153,12 +153,12 @@ namespace bs { namespace ct
 		Buffer = gReflProbeParamsParamDef.CreateBuffer();
 	}
 
-	void ReflProbeParamBuffer::Populate(const Skybox* sky, UINT32 numProbes, const SPtr<Texture>& reflectionCubemaps,
+	void ReflProbeParamBuffer::Populate(const Skybox* sky, u32 numProbes, const SPtr<Texture>& reflectionCubemaps,
 		bool capturingReflections)
 	{
 		float brightness = 1.0f;
-		UINT32 skyReflectionsAvailable = 0;
-		UINT32 numSkyMips = 0;
+		u32 skyReflectionsAvailable = 0;
+		u32 numSkyMips = 0;
 
 		if(sky != nullptr)
 		{
@@ -176,7 +176,7 @@ namespace bs { namespace ct
 		gReflProbeParamsParamDef.gSkyCubemapAvailable.Set(Buffer, skyReflectionsAvailable);
 		gReflProbeParamsParamDef.gNumProbes.Set(Buffer, numProbes);
 
-		UINT32 numReflProbeMips = 0;
+		u32 numReflProbeMips = 0;
 		if (reflectionCubemaps != nullptr)
 			numReflProbeMips = reflectionCubemaps->GetProperties().GetNumMipmaps() + 1;
 

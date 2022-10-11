@@ -54,25 +54,25 @@ namespace bs
 		 * @param[in]	newSizes	Array of sizes, one per array dimension. Number of sizes must match number of array
 		 *							dimensions as specified by its type.
 		 */
-		void Resize(const Vector<UINT32>& newSizes);
+		void Resize(const Vector<u32>& newSizes);
 
 		/**
 		 * Returns the size of a specific dimension of the array. Operates on managed object if in linked state, or on
 		 * cached data otherwise.
 		 */
-		UINT32 GetLength(UINT32 dimension) const { return mNumElements[dimension]; }
+		u32 GetLength(u32 dimension) const { return mNumElements[dimension]; }
 
 		/**
 		 * Returns the sizes of a all dimensions of the array. Operates on managed object if in linked state, or on cached
 		 * data otherwise.
 		 */
-		Vector<UINT32> GetLengths() const { return mNumElements; }
+		Vector<u32> GetLengths() const { return mNumElements; }
 
 		/**
 		 * Returns the total of all sizes of all dimensions of the array. Operates on managed object if in linked state, or
 		 * on cached data otherwise.
 		 */
-		UINT32 GetTotalLength() const;
+		u32 GetTotalLength() const;
 
 		/**
 		 * Sets a new element value at the specified array index. Operates on managed object if in linked state, or on
@@ -81,7 +81,7 @@ namespace bs
 		 * @param[in]	arrayIdx	Index at which to set the value.
 		 * @param[in]	val			Wrapper around the value to store in the array. Must be of the array element type.
 		 */
-		void SetFieldData(UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val);
+		void SetFieldData(u32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val);
 
 		/**
 		 * Returns the element value at the specified array index. Operates on managed object if in linked state, or on
@@ -90,7 +90,7 @@ namespace bs
 		 * @param[in]	arrayIdx	Index at which to retrieve the value.
 		 * @return					A wrapper around the element value in the array.
 		 */
-		SPtr<ManagedSerializableFieldData> GetFieldData(UINT32 arrayIdx);
+		SPtr<ManagedSerializableFieldData> GetFieldData(u32 arrayIdx);
 
 		/**
 		 * Serializes the internal managed object into a set of cached data that can be saved in memory/disk and can be
@@ -124,7 +124,7 @@ namespace bs
 		 * @param[in]	sizes		Array of sizes, one per array dimension. Number of sizes must match number of array
 		 *							dimensions as specified by its type.
 		 */
-		static SPtr<ManagedSerializableArray> CreateNew(const SPtr<ManagedSerializableTypeInfoArray>& typeInfo, const Vector<UINT32>& sizes);
+		static SPtr<ManagedSerializableArray> CreateNew(const SPtr<ManagedSerializableTypeInfoArray>& typeInfo, const Vector<u32>& sizes);
 
 		/**
 		 * Creates a managed array instance.
@@ -133,7 +133,7 @@ namespace bs
 		 * @param[in]	sizes		Array of sizes, one per array dimension. Number of sizes must match number of array
 		 *							dimensions as specified by its type.
 		 */
-		static MonoObject* CreateManagedInstance(const SPtr<ManagedSerializableTypeInfoArray>& typeInfo, const Vector<UINT32>& sizes);
+		static MonoObject* CreateManagedInstance(const SPtr<ManagedSerializableTypeInfoArray>& typeInfo, const Vector<u32>& sizes);
 
 	protected:
 		/**
@@ -143,7 +143,7 @@ namespace bs
 		void InitMonoObjects();
 
 		/** Returns the size of the specified dimension of the array. Operates on the internal managed object. */
-		UINT32 GetLengthInternal(UINT32 dimension) const;
+		u32 GetLengthInternal(u32 dimension) const;
 
 		/**
 		 * Sets a new element value at the specified array index. Operates on the provided managed instance.
@@ -152,13 +152,13 @@ namespace bs
 		 * @param[in]	arrayIdx	Index at which to set the value.
 		 * @param[in]	val			Wrapper around the value to store in the array. Must be of the array element type.
 		 */
-		void SetFieldData(MonoArray* obj, UINT32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val);
+		void SetFieldData(MonoArray* obj, u32 arrayIdx, const SPtr<ManagedSerializableFieldData>& val);
 
 		/**	Sets a value at the specified index in the array. Operates on the provided managed object. */
-		void SetValueInternal(MonoArray* obj, UINT32 arrayIdx, void* val);
+		void SetValueInternal(MonoArray* obj, u32 arrayIdx, void* val);
 
 		/** Converts a multi-dimensional array index into a sequential one-dimensional index. */
-		UINT32 ToSequentialIdx(const Vector<UINT32>& idx) const;
+		u32 ToSequentialIdx(const Vector<u32>& idx) const;
 
 		uint32_t mGCHandle = 0;
 		::MonoClass* mElementMonoClass = nullptr;
@@ -166,8 +166,8 @@ namespace bs
 
 		SPtr<ManagedSerializableTypeInfoArray> mArrayTypeInfo;
 		Vector<SPtr<ManagedSerializableFieldData>> mCachedEntries;
-		Vector<UINT32> mNumElements;
-		UINT32 mElemSize = 0;
+		Vector<u32> mNumElements;
+		u32 mElemSize = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

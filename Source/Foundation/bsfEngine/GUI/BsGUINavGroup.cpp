@@ -37,7 +37,7 @@ namespace bs
 			return;
 		}
 
-		const INT32 tabIdx = mElements[anchor];
+		const i32 tabIdx = mElements[anchor];
 
 		// Find next element using the explicit index
 		if(tabIdx != 0)
@@ -72,7 +72,7 @@ namespace bs
 			//// We search by rows in order to make the navigation perceptually nicer. Sometimes elements appear to be
 			//// in the same row, but might be off by a few pixels, in which case the simpler approach would 'jump'
 			//// over an element.
-			constexpr static INT32 ROW_HEIGHT = 5;
+			constexpr static i32 ROW_HEIGHT = 5;
 
 			const auto unindexedRange = mOrderedElements.equal_range(0);
 			bs_frame_mark();
@@ -113,8 +113,8 @@ namespace bs
 				auto iterElem = elements.begin();
 				auto iterRowStart = iterElem;
 
-				INT32 firstRowY = 0;
-				INT32 rowY = 0;
+				i32 firstRowY = 0;
+				i32 rowY = 0;
 				for(; iterElem != elements.end(); ++iterElem)
 				{
 					GUIElement* element = *iterElem;
@@ -127,7 +127,7 @@ namespace bs
 					}
 					else
 					{
-						const INT32 yDiff = elemBounds.Y - rowY;
+						const i32 yDiff = elemBounds.Y - rowY;
 
 						// New row
 						if (yDiff >= ROW_HEIGHT)
@@ -147,7 +147,7 @@ namespace bs
 
 				// Try to find the next element in the current row (to the right of the current one)
 				GUIElement* nextElement = nullptr;
-				INT32 nearestX = std::numeric_limits<INT32>::max();
+				i32 nearestX = std::numeric_limits<i32>::max();
 				iterElem = iterRowStart;
 				for(; iterElem != elements.end(); ++iterElem)
 				{
@@ -156,7 +156,7 @@ namespace bs
 						continue;
 
 					const Rect2I elemBounds = element->GetClippedBoundsInternal();
-					const INT32 yDiff = elemBounds.Y - rowY;
+					const i32 yDiff = elemBounds.Y - rowY;
 
 					// New row
 					if(yDiff >= ROW_HEIGHT)
@@ -170,7 +170,7 @@ namespace bs
 					// order to avoid the issue.
 					if(elemBounds.X > focusedElemBounds.X)
 					{
-						const INT32 xDiff = elemBounds.X - focusedElemBounds.X;
+						const i32 xDiff = elemBounds.X - focusedElemBounds.X;
 						if (xDiff < nearestX)
 						{
 							nearestX = xDiff;
@@ -182,13 +182,13 @@ namespace bs
 				// If no element in the current row, find the left-most element in the next row
 				if(!nextElement)
 				{
-					nearestX = std::numeric_limits<INT32>::max();
+					nearestX = std::numeric_limits<i32>::max();
 					for (; iterElem != elements.end(); ++iterElem)
 					{
 						GUIElement* element = *iterElem;
 
 						const Rect2I elemBounds = element->GetClippedBoundsInternal();
-						const INT32 yDiff = elemBounds.Y - rowY;
+						const i32 yDiff = elemBounds.Y - rowY;
 
 						// New row
 						if (yDiff >= ROW_HEIGHT)
@@ -226,7 +226,7 @@ namespace bs
 
 	void GUINavGroup::FocusTopLeft()
 	{
-		UINT32 lowestDist = std::numeric_limits<UINT32>::max();
+		u32 lowestDist = std::numeric_limits<u32>::max();
 		GUIElement* topLeftElement = nullptr;
 
 		// Grab only elements without an explicit index
@@ -247,7 +247,7 @@ namespace bs
 
 			Vector2I elementPos(elemBounds.X, elemBounds.Y);
 
-			const UINT32 dist = elementPos.SquaredLength();
+			const u32 dist = elementPos.SquaredLength();
 			if (dist < lowestDist)
 			{
 				lowestDist = dist;
@@ -259,18 +259,18 @@ namespace bs
 			topLeftElement->SetFocus(true, true);
 	}
 	
-	void GUINavGroup::RegisterElement(GUIElement* element, INT32 tabIdx)
+	void GUINavGroup::RegisterElement(GUIElement* element, i32 tabIdx)
 	{
 		mElements[element] = tabIdx;
 		mOrderedElements.insert(std::make_pair(tabIdx, element));
 	}
 
-	void GUINavGroup::SetIndex(GUIElement* element, INT32 tabIdx)
+	void GUINavGroup::SetIndex(GUIElement* element, i32 tabIdx)
 	{
 		const auto iterFind = mElements.find(element);
 		assert(iterFind != mElements.end());
 
-		const INT32 existingTabIdx = iterFind->second;
+		const i32 existingTabIdx = iterFind->second;
 		mElements[element] = tabIdx;
 
 		const auto iterPair = mOrderedElements.equal_range(existingTabIdx);
@@ -292,7 +292,7 @@ namespace bs
 		if(iterFind == mElements.end())
 			return;
 
-		const INT32 existingTabIdx = iterFind->second;
+		const i32 existingTabIdx = iterFind->second;
 		const auto iterPair = mOrderedElements.equal_range(existingTabIdx);
 		for(auto iter = iterPair.first; iter != iterPair.second; ++iter)
 		{

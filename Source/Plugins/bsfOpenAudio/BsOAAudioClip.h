@@ -16,7 +16,7 @@ namespace bs
 	class OAAudioClip : public AudioClip
 	{
 	public:
-		OAAudioClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples, const AUDIO_CLIP_DESC& desc);
+		OAAudioClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc);
 		virtual ~OAAudioClip();
 
 		/**
@@ -31,14 +31,14 @@ namespace bs
 		 *
 		 * @note	Implementation must be thread safe as this will get called from audio streaming thread.
 		 */
-		void GetSamples(UINT8* samples, UINT32 offset, UINT32 count) const;
+		void GetSamples(u8* samples, u32 offset, u32 count) const;
 
 		/** @name Internal
 		 *  @{
 		 */
 
 		/** Returns the internal OpenAL buffer. Only valid if the audio clip was created without AudioReadMode::Stream. */
-		UINT32 GetOpenALBufferInternal() const { return mBufferId; }
+		u32 GetOpenALBufferInternal() const { return mBufferId; }
 
 		/** @} */
 	protected:
@@ -46,17 +46,17 @@ namespace bs
 		void Initialize() ;
 
 		/** @copydoc AudioClip::getSourceStream */
-		SPtr<DataStream> GetSourceStream(UINT32& size) ;
+		SPtr<DataStream> GetSourceStream(u32& size) ;
 	private:
 		mutable Mutex mMutex;
 		mutable OggVorbisDecoder mVorbisReader;
 		bool mNeedsDecompression = false;
-		UINT32 mBufferId = (UINT32)-1;
+		u32 mBufferId = (u32)-1;
 
 		// These streams exist to save original audio data in case it's needed later (usually for saving with the editor, or
 		// manual data manipulation). In normal usage (in-game) these will be null so no memory is wasted.
 		SPtr<DataStream> mSourceStreamData;
-		UINT32 mSourceStreamSize = 0;
+		u32 mSourceStreamSize = 0;
 	};
 
 	/** @} */

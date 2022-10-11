@@ -16,13 +16,13 @@ namespace bs
 	struct BS_CORE_EXPORT MorphVertex
 	{
 		MorphVertex() = default;
-		MorphVertex(const Vector3& deltaPosition, const Vector3& deltaNormal, UINT32 sourceIdx)
+		MorphVertex(const Vector3& deltaPosition, const Vector3& deltaNormal, u32 sourceIdx)
 			:DeltaPosition(deltaPosition), DeltaNormal(deltaNormal), SourceIdx(sourceIdx)
 		{ }
 
 		Vector3 DeltaPosition;
 		Vector3 DeltaNormal;
-		UINT32 SourceIdx;
+		u32 SourceIdx;
 	};
 
 	/**
@@ -91,10 +91,10 @@ namespace bs
 		const String& GetName() const { return mName; }
 
 		/** Returns the number of available morph shapes. */
-		UINT32 GetNumShapes() const { return (UINT32)mShapes.size(); }
+		u32 GetNumShapes() const { return (u32)mShapes.size(); }
 
 		/** Returns the morph shape at the specified index. */
-		SPtr<MorphShape> GetShape(UINT32 idx) const { return mShapes[idx]; }
+		SPtr<MorphShape> GetShape(u32 idx) const { return mShapes[idx]; }
 
 		/** Returns all morph shapes within this channel, in order from lowest to highest. */
 		BS_SCRIPT_EXPORT(pr:getter,n:Shapes)
@@ -135,27 +135,27 @@ namespace bs
 	{
 	public:
 		/** Returns the number of available morph channels. */
-		UINT32 GetNumChannels() const { return (UINT32)mChannels.size(); }
+		u32 GetNumChannels() const { return (u32)mChannels.size(); }
 
 		/** Returns the morph channel at the specified index. */
-		SPtr<MorphChannel> GetChannel(UINT32 idx) const { return mChannels[idx]; }
+		SPtr<MorphChannel> GetChannel(u32 idx) const { return mChannels[idx]; }
 
 		/** Returns a list of all morph channels in the morph animation. */
 		BS_SCRIPT_EXPORT(pr:getter,n:Channels)
 		const Vector<SPtr<MorphChannel>>& GetChannels() const { return mChannels; }
 
 		/** Returns the number of vertices per morph shape. */
-		UINT32 GetNumVertices() const { return mNumVertices; }
+		u32 GetNumVertices() const { return mNumVertices; }
 
 		/** Creates a new set of morph shapes. */
-		static SPtr<MorphShapes> Create(const Vector<SPtr<MorphChannel>>& channels, UINT32 numVertices);
+		static SPtr<MorphShapes> Create(const Vector<SPtr<MorphChannel>>& channels, u32 numVertices);
 
 	private:
 		MorphShapes() = default;
-		MorphShapes(const Vector<SPtr<MorphChannel>>& channels, UINT32 numVertices);
+		MorphShapes(const Vector<SPtr<MorphChannel>>& channels, u32 numVertices);
 
 		Vector<SPtr<MorphChannel>> mChannels;
-		UINT32 mNumVertices;
+		u32 mNumVertices;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

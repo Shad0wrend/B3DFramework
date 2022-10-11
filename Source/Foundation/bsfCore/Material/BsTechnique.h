@@ -28,7 +28,7 @@ namespace bs
 		bool HasTag(const StringID& tag);
 
 		/** Checks if the technique has any tags. */
-		UINT32 HasTags() const { return !mTags.empty(); }
+		u32 HasTags() const { return !mTags.empty(); }
 
 		/** Returns a set of preprocessor defines used for compiling this particular technique. */
 		const ShaderVariation& GetVariation() const { return mVariation; }
@@ -52,10 +52,10 @@ namespace bs
 		virtual ~TTechnique() = default;
 
 		/**	Returns a pass with the specified index. */
-		SPtr<PassType> GetPass(UINT32 idx) const;
+		SPtr<PassType> GetPass(u32 idx) const;
 
 		/**	Returns total number of passes. */
-		UINT32 GetNumPasses() const { return (UINT32)mPasses.size(); }
+		u32 GetNumPasses() const { return (u32)mPasses.size(); }
 
 		/** Compiles all the passes in a technique. @see Pass::compile. */
 		void Compile();

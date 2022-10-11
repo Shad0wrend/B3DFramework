@@ -36,13 +36,13 @@ namespace bs
 		virtual ~GameObject() = default;
 
 		/**	Returns the unique instance ID of the GameObject. */
-		UINT64 GetInstanceId() const { return mInstanceData->MInstanceId; }
+		u64 GetInstanceId() const { return mInstanceData->MInstanceId; }
 
 		/**
 		 * Returns an ID that identifies a link between this object and its equivalent in the linked prefab. This will be
 		 * -1 if the object has no prefab link, or if the object is specific to the instance and has no prefab equivalent.
 		 */
-		UINT32 GetLinkId() const { return mLinkId; }
+		u32 GetLinkId() const { return mLinkId; }
 
 		/**	Globally unique identifier of the game object that persists scene save/load. */
 		const UUID& GetUuid() const { return mUUID; }
@@ -68,7 +68,7 @@ namespace bs
 		bool GetIsDestroyedInternal() const { return mIsDestroyed; }
 
 		/** Changes the prefab link ID for this object. See getLinkId(). */
-		void SetLinkIdInternal(UINT32 id) { mLinkId = id; }
+		void SetLinkIdInternal(u32 id) { mLinkId = id; }
 
 		/** @copydoc getUUID */
 		void SetUUIDInternal(const UUID& uuid) { mUUID = uuid; }
@@ -94,7 +94,7 @@ namespace bs
 		friend class PrefabUtility;
 
 		/**	Initializes the GameObject after construction. */
-		void Initialize(const SPtr<GameObject>& object, UINT64 instanceId);
+		void Initialize(const SPtr<GameObject>& object, u64 instanceId);
 
 		/**
 		 * Destroys this object.
@@ -108,7 +108,7 @@ namespace bs
 	protected:
 		String mName;
 		UUID mUUID;
-		UINT32 mLinkId = (UINT32)-1;
+		u32 mLinkId = (u32)-1;
 
 		Any mRTTIData; // RTTI only
 	private:

@@ -44,7 +44,7 @@ namespace bs
 		 * @param[in]	index		Index of the value to retrieve.
 		 * @return					A boxed value of the property.
 		 */
-		MonoObject* GetIndexed(MonoObject* instance, UINT32 index) const;
+		MonoObject* GetIndexed(MonoObject* instance, u32 index) const;
 
 		/**
 		 * Sets a value of the property in the specified instance. Used for properties with indexers.
@@ -54,7 +54,7 @@ namespace bs
 		 * @param[in]	value		Value to set on the property. For value type it should be a pointer to the value and for
 		 *							reference type it should be a pointer to MonoObject.
 		 */
-		void SetIndexed(MonoObject* instance, UINT32 index, void* value) const;
+		void SetIndexed(MonoObject* instance, u32 index, void* value) const;
 
 		/** Checks does the property contains indexed data, or just a single value. */
 		bool IsIndexed() const;

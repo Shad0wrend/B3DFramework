@@ -77,7 +77,7 @@ namespace bs
 
 			stream.ReadBytes((uint8_t*)buffer, stringSize);
 
-			UINT32 numChars = stringSize / sizeof(WString::value_type);
+			u32 numChars = stringSize / sizeof(WString::value_type);
 			buffer[numChars] = L'\0';
 			data = WString((WString::value_type*)buffer);
 

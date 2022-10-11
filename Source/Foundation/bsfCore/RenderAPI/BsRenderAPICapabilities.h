@@ -20,7 +20,7 @@ namespace bs
 	 */
 
 	/** Categories of render API capabilities. */
-	enum CapabilitiesCategory : UINT64
+	enum CapabilitiesCategory : u64
 	{
 		CAPS_CATEGORY_COMMON = 0,
 		CAPS_CATEGORY_GL = 1,
@@ -30,7 +30,7 @@ namespace bs
 	};
 
 	/** Enum describing the different hardware capabilities we can check for. */
-	enum Capabilities : UINT64
+	enum Capabilities : u64
 	{
 		/** Supports compressed textures in the BC formats. */
 		RSC_TEXTURE_COMPRESSION_BC		= BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 0),
@@ -64,12 +64,12 @@ namespace bs
 	/** Conventions used for a specific render backend. */
 	struct BS_CORE_EXPORT Conventions
 	{
-		enum class Axis : UINT8
+		enum class Axis : u8
 		{
 			Up, Down
 		};
 
-		enum class MatrixOrder : UINT8
+		enum class MatrixOrder : u8
 		{
 			ColumnMajor, RowMajor
 		};
@@ -103,21 +103,21 @@ namespace bs
 			Vector<bs::String> tokens = StringUtil::Split(versionString, ".");
 			if(!tokens.empty())
 			{
-				Major = parseINT32(tokens[0]);
+				Major = parsei32(tokens[0]);
 				if (tokens.size() > 1)
-					Minor = parseINT32(tokens[1]);
+					Minor = parsei32(tokens[1]);
 				if (tokens.size() > 2)
-					Release = parseINT32(tokens[2]);
+					Release = parsei32(tokens[2]);
 				if (tokens.size() > 3)
-					Build = parseINT32(tokens[3]);
+					Build = parsei32(tokens[3]);
 			}
 
 		}
 
-		INT32 Major = 0;
-		INT32 Minor = 0;
-		INT32 Release = 0;
-		INT32 Build = 0;
+		i32 Major = 0;
+		i32 Minor = 0;
+		i32 Release = 0;
+		i32 Build = 0;
 	};
 
 	/** Types of GPU vendors. */
@@ -147,31 +147,31 @@ namespace bs
 		GPUVendor DeviceVendor = GPU_UNKNOWN;
 
 		/** The number of texture units available per stage. */
-		UINT16 NumTextureUnitsPerStage[GPT_COUNT] { 0 };
+		u16 NumTextureUnitsPerStage[GPT_COUNT] { 0 };
 
 		/** Total number of texture units available. */
-		UINT16 NumCombinedTextureUnits = 0;
+		u16 NumCombinedTextureUnits = 0;
 
 		/** The number of parameter block buffers available per stage. */
-		UINT16 NumGpuParamBlockBuffersPerStage[GPT_COUNT] { 0 };
+		u16 NumGpuParamBlockBuffersPerStage[GPT_COUNT] { 0 };
 
 		/** Total number of parameter block buffers available. */
-		UINT16 NumCombinedParamBlockBuffers = 0;
+		u16 NumCombinedParamBlockBuffers = 0;
 
 		/** The number of load-store texture unitss available per stage. */
-		UINT16 NumLoadStoreTextureUnitsPerStage[GPT_COUNT] { 0 };
+		u16 NumLoadStoreTextureUnitsPerStage[GPT_COUNT] { 0 };
 
 		/** Total number of load-store texture units available. */
-		UINT16 NumCombinedLoadStoreTextureUnits = 0;
+		u16 NumCombinedLoadStoreTextureUnits = 0;
 
 		/** Maximum number of vertex buffers we can bind at once. */
-		UINT32 MaxBoundVertexBuffers = 0;
+		u32 MaxBoundVertexBuffers = 0;
 
 		/** The number of simultaneous render targets supported. */
-		UINT16 NumMultiRenderTargets = 0;
+		u16 NumMultiRenderTargets = 0;
 
 		/** The number of vertices a geometry program can emit in a single run. */
-		UINT32 GeometryProgramNumOutputVertices = 0;
+		u32 GeometryProgramNumOutputVertices = 0;
 
 		/** Horizontal texel offset used for mapping texels to pixels. */
 		float HorizontalTexelOffset = 0.0f;
@@ -194,21 +194,21 @@ namespace bs
 		/**	Sets a capability flag indicating this capability is supported. */
 		void SetCapability(const Capabilities c)
 		{
-			UINT64 index = (CAPS_CATEGORY_MASK & c) >> BS_CAPS_BITSHIFT;
+			u64 index = (CAPS_CATEGORY_MASK & c) >> BS_CAPS_BITSHIFT;
 			mCapabilities[index] |= (c & ~CAPS_CATEGORY_MASK);
 		}
 
 		/**	Remove a capability flag indicating this capability is not supported (default). */
 		void UnsetCapability(const Capabilities c)
 		{
-			UINT64 index = (CAPS_CATEGORY_MASK & c) >> BS_CAPS_BITSHIFT;
+			u64 index = (CAPS_CATEGORY_MASK & c) >> BS_CAPS_BITSHIFT;
 			mCapabilities[index] &= (~c | CAPS_CATEGORY_MASK);
 		}
 
 		/**	Checks is the specified capability supported. */
 		bool HasCapability(const Capabilities c) const
 		{
-			UINT64 index = (CAPS_CATEGORY_MASK & c) >> BS_CAPS_BITSHIFT;
+			u64 index = (CAPS_CATEGORY_MASK & c) >> BS_CAPS_BITSHIFT;
 
 			return (mCapabilities[index] & (c & ~CAPS_CATEGORY_MASK)) != 0;
 		}
@@ -241,7 +241,7 @@ namespace bs
 		static char const * const GPU_VENDOR_STRINGS[GPU_VENDOR_COUNT];
 
 		/** Stores the capabilities flags. */
-		UINT32 mCapabilities[CAPS_CATEGORY_COUNT] { 0 };
+		u32 mCapabilities[CAPS_CATEGORY_COUNT] { 0 };
 
 		/** The list of supported shader profiles. */
 		UnorderedSet<String> mSupportedShaderProfiles;

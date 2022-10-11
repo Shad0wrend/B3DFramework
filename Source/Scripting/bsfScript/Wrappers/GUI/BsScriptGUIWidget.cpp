@@ -109,12 +109,12 @@ namespace bs
 			widget->SetCamera(nativeCamera);
 	}
 
-	void ScriptGUIWidget::InternalSetDepth(ScriptGUIWidget* instance, INT8 value)
+	void ScriptGUIWidget::InternalSetDepth(ScriptGUIWidget* instance, i8 value)
 	{
 		instance->GetInternal()->SetDepth(value);
 	}
 
-	INT8 ScriptGUIWidget::InternalGetDepth(ScriptGUIWidget* instance)
+	i8 ScriptGUIWidget::InternalGetDepth(ScriptGUIWidget* instance)
 	{
 		return instance->GetInternal()->GetDepth();
 	}

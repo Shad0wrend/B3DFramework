@@ -41,7 +41,7 @@ namespace bs
 		fmod->set3DListenerAttributes(mId, nullptr, &value, nullptr, nullptr);
 	}
 
-	void FMODAudioListener::Rebuild(INT32 id)
+	void FMODAudioListener::Rebuild(i32 id)
 	{
 		mId = id;
 

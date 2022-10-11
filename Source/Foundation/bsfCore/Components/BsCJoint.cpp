@@ -263,10 +263,10 @@ namespace bs
 
 	void CJoint::GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation)
 	{
-		position = mPositions[(UINT32)body];
-		rotation = mRotations[(UINT32)body];
+		position = mPositions[(u32)body];
+		rotation = mRotations[(u32)body];
 
-		HRigidbody rigidbody = mBodies[(UINT32)body];
+		HRigidbody rigidbody = mBodies[(u32)body];
 		if (rigidbody == nullptr) // Get world space transform if no relative to any body
 		{
 			const Transform& tfrm = SO()->GetTransform();

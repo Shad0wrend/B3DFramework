@@ -15,7 +15,7 @@ namespace bs { namespace ct
 	{
 	public:
 		/** Constructs a new object from the adapter number provided by DX11 runtime, and DXGI adapter object. */
-		D3D11Driver(UINT32 adapterNumber, IDXGIAdapter* dxgiAdapter);
+		D3D11Driver(u32 adapterNumber, IDXGIAdapter* dxgiAdapter);
 		D3D11Driver(const D3D11Driver &ob);
 		~D3D11Driver();
 
@@ -28,10 +28,10 @@ namespace bs { namespace ct
 		String GetDriverDescription() const;
 
 		/**	Returns adapter index of the adapter the driver is managing. */
-		UINT32 GetAdapterNumber() const { return mAdapterNumber; }
+		u32 GetAdapterNumber() const { return mAdapterNumber; }
 
 		/**	Returns number of outputs connected to the adapter the driver is managing. */
-		UINT32 GetNumAdapterOutputs() const { return mNumOutputs; }
+		u32 GetNumAdapterOutputs() const { return mNumOutputs; }
 
 		/**	Returns a description of the adapter the driver is managing. */
 		const DXGI_ADAPTER_DESC& GetAdapterIdentifier() const { return mAdapterIdentifier; }
@@ -40,7 +40,7 @@ namespace bs { namespace ct
 		IDXGIAdapter* GetDeviceAdapter() const { return mDXGIAdapter; }
 
 		/**	Returns description of an output device at the specified index. */
-		DXGI_OUTPUT_DESC GetOutputDesc(UINT32 adapterOutputIdx) const;
+		DXGI_OUTPUT_DESC GetOutputDesc(u32 adapterOutputIdx) const;
 
 		/**	Returns a list of all available video modes for all output devices. */
 		SPtr<VideoModeInfo> GetVideoModeInfo() const { return mVideoModeInfo; }
@@ -50,8 +50,8 @@ namespace bs { namespace ct
 		void Construct();
 
 	private:
-		UINT32 mAdapterNumber;
-		UINT32 mNumOutputs;
+		u32 mAdapterNumber;
+		u32 mNumOutputs;
 		DXGI_ADAPTER_DESC mAdapterIdentifier;
 		IDXGIAdapter* mDXGIAdapter;
 		SPtr<VideoModeInfo> mVideoModeInfo;

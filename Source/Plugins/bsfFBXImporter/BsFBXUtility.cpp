@@ -99,12 +99,12 @@ namespace bs
 
 		normals.resize(indices.size(), Vector3::ZERO);
 
-		UINT32 numPolygons = (UINT32)(indices.size() / 3);
+		u32 numPolygons = (u32)(indices.size() / 3);
 
 		int idx = 0;
-		for (UINT32 i = 0; i < numPolygons; i++)
+		for (u32 i = 0; i < numPolygons; i++)
 		{
-			for (UINT32 j = 0; j < 3; j++)
+			for (u32 j = 0; j < 3; j++)
 			{
 				int prevOffset = (j > 0 ? j - 1 : 2);
 				int nextOffset = (j < 2 ? j + 1 : 0);
@@ -128,9 +128,9 @@ namespace bs
 			smoothNormals[i].Normalize();
 
 		idx = 0;
-		for (UINT32 i = 0; i < numPolygons; i++)
+		for (u32 i = 0; i < numPolygons; i++)
 		{
-			for (UINT32 j = 0; j < 3; j++)
+			for (u32 j = 0; j < 3; j++)
 			{
 				if (smoothing[idx + j] != 0)
 				{
@@ -153,7 +153,7 @@ namespace bs
 		dest.BoneInfluences = source.BoneInfluences;
 
 		// Make room for minimal set of vertices
-		UINT32 vertexCount = (UINT32)source.Positions.size();
+		u32 vertexCount = (u32)source.Positions.size();
 		if (!source.Normals.empty())
 			dest.Normals.resize(vertexCount);
 
@@ -166,24 +166,24 @@ namespace bs
 		if (!source.Colors.empty())
 			dest.Colors.resize(vertexCount);
 
-		for (UINT32 i = 0; i < FBX_IMPORT_MAX_UV_LAYERS; i++)
+		for (u32 i = 0; i < FBX_IMPORT_MAX_UV_LAYERS; i++)
 		{
 			if (!source.UV[i].empty())
 				dest.UV[i].resize(vertexCount);
 		}
 
-		UINT32 numBlendShapes = (UINT32)source.BlendShapes.size();
+		u32 numBlendShapes = (u32)source.BlendShapes.size();
 		dest.BlendShapes.resize(numBlendShapes);
-		for (UINT32 i = 0; i < numBlendShapes; i++)
+		for (u32 i = 0; i < numBlendShapes; i++)
 		{
 			const FBXBlendShape& sourceShape = source.BlendShapes[i];
 			FBXBlendShape& destShape = dest.BlendShapes[i];
 
-			UINT32 numFrames = (UINT32)sourceShape.Frames.size();
+			u32 numFrames = (u32)sourceShape.Frames.size();
 			destShape.Frames.resize(numFrames);
 			destShape.Name = sourceShape.Name;
 
-			for (UINT32 j = 0; j < numFrames; j++)
+			for (u32 j = 0; j < numFrames; j++)
 			{
 				const FBXBlendShapeFrame& sourceFrame = sourceShape.Frames[j];
 				FBXBlendShapeFrame& destFrame = destShape.Frames[j];
@@ -246,12 +246,12 @@ namespace bs
 
 	void FBXUtility::FlipWindingOrder(FBXImportMesh& input)
 	{
-		for (UINT32 i = 0; i < (UINT32)input.Materials.size(); i += 3)
+		for (u32 i = 0; i < (u32)input.Materials.size(); i += 3)
 		{
 			std::swap(input.Materials[i + 1], input.Materials[i + 2]);
 		}
 
-		for (UINT32 i = 0; i < (UINT32)input.Indices.size(); i += 3)
+		for (u32 i = 0; i < (u32)input.Indices.size(); i += 3)
 		{
 			std::swap(input.Indices[i + 1], input.Indices[i + 2]);
 		}
@@ -271,20 +271,20 @@ namespace bs
 		if (!srcMesh.Colors.empty())
 			destMesh.Colors[dstIdx] = srcMesh.Colors[srcIdx];
 
-		for (UINT32 i = 0; i < FBX_IMPORT_MAX_UV_LAYERS; i++)
+		for (u32 i = 0; i < FBX_IMPORT_MAX_UV_LAYERS; i++)
 		{
 			if (!srcMesh.UV[i].empty())
 				destMesh.UV[i][dstIdx] = srcMesh.UV[i][srcIdx];
 		}
 
-		UINT32 numBlendShapes = (UINT32)srcMesh.BlendShapes.size();
-		for (UINT32 i = 0; i < numBlendShapes; i++)
+		u32 numBlendShapes = (u32)srcMesh.BlendShapes.size();
+		for (u32 i = 0; i < numBlendShapes; i++)
 		{
 			const FBXBlendShape& sourceShape = srcMesh.BlendShapes[i];
 			FBXBlendShape& destShape = destMesh.BlendShapes[i];
 
-			UINT32 numFrames = (UINT32)sourceShape.Frames.size();
-			for (UINT32 j = 0; j < numFrames; j++)
+			u32 numFrames = (u32)sourceShape.Frames.size();
+			for (u32 j = 0; j < numFrames; j++)
 			{
 				const FBXBlendShapeFrame& sourceFrame = sourceShape.Frames[j];
 				FBXBlendShapeFrame& destFrame = destShape.Frames[j];
@@ -320,20 +320,20 @@ namespace bs
 		if (!srcMesh.Colors.empty())
 			destMesh.Colors.push_back(srcMesh.Colors[srcIdx]);
 
-		for (UINT32 i = 0; i < FBX_IMPORT_MAX_UV_LAYERS; i++)
+		for (u32 i = 0; i < FBX_IMPORT_MAX_UV_LAYERS; i++)
 		{
 			if (!srcMesh.UV[i].empty())
 				destMesh.UV[i].push_back(srcMesh.UV[i][srcIdx]);
 		}
 
-		UINT32 numBlendShapes = (UINT32)srcMesh.BlendShapes.size();
-		for (UINT32 i = 0; i < numBlendShapes; i++)
+		u32 numBlendShapes = (u32)srcMesh.BlendShapes.size();
+		for (u32 i = 0; i < numBlendShapes; i++)
 		{
 			const FBXBlendShape& sourceShape = srcMesh.BlendShapes[i];
 			FBXBlendShape& destShape = destMesh.BlendShapes[i];
 
-			UINT32 numFrames = (UINT32)sourceShape.Frames.size();
-			for (UINT32 j = 0; j < numFrames; j++)
+			u32 numFrames = (u32)sourceShape.Frames.size();
+			for (u32 j = 0; j < numFrames; j++)
 			{
 				const FBXBlendShapeFrame& sourceFrame = sourceShape.Frames[j];
 				FBXBlendShapeFrame& destFrame = destShape.Frames[j];
@@ -384,7 +384,7 @@ namespace bs
 				return true;
 		}
 
-		for (UINT32 i = 0; i < FBX_IMPORT_MAX_UV_LAYERS; i++)
+		for (u32 i = 0; i < FBX_IMPORT_MAX_UV_LAYERS; i++)
 		{
 			if (!meshA.UV[i].empty())
 			{
@@ -393,14 +393,14 @@ namespace bs
 			}
 		}
 
-		UINT32 numBlendShapes = (UINT32)meshA.BlendShapes.size();
-		for (UINT32 i = 0; i < numBlendShapes; i++)
+		u32 numBlendShapes = (u32)meshA.BlendShapes.size();
+		for (u32 i = 0; i < numBlendShapes; i++)
 		{
 			const FBXBlendShape& shapeA = meshA.BlendShapes[i];
 			const FBXBlendShape& shapeB = meshB.BlendShapes[i];
 
-			UINT32 numFrames = (UINT32)shapeA.Frames.size();
-			for (UINT32 j = 0; j < numFrames; j++)
+			u32 numFrames = (u32)shapeA.Frames.size();
+			for (u32 j = 0; j < numFrames; j++)
 			{
 				const FBXBlendShapeFrame& frameA = shapeA.Frames[j];
 				const FBXBlendShapeFrame& frameB = shapeB.Frames[j];

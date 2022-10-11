@@ -101,35 +101,35 @@ namespace bs
 		 * @note
 		 * Child elements are guaranteed to be fully deserialized before their parents, except for fields marked with WeakRef flag.
 		 */
-		SPtr<IReflectable> Decode(const SPtr<DataStream>& stream, UINT32 dataLength,
+		SPtr<IReflectable> Decode(const SPtr<DataStream>& stream, u32 dataLength,
 			BinarySerializerFlags flags = BinarySerializerFlag::None, SerializationContext* context = nullptr,
 			std::function<void(float)> progress = nullptr, SPtr<RTTISchema> schema = nullptr);
 	private:
 		/** Determines how many bytes need to be read before the progress report callback is triggered. */
-		static constexpr UINT32 REPORT_AFTER_BYTES = 32768;
+		static constexpr u32 REPORT_AFTER_BYTES = 32768;
 
 		/** Determines the size of the temporary write buffer. Should be greater than FLUSH_AFTER_BYTES. */
-		static constexpr UINT32 WRITE_BUFFER_SIZE = 4096;
+		static constexpr u32 WRITE_BUFFER_SIZE = 4096;
 
 		/** Determines how often to flush from the local buffer into the output stream, when writing. */
-		static constexpr UINT32 FLUSH_AFTER_BYTES = (UINT32)(WRITE_BUFFER_SIZE * 0.75f);
+		static constexpr u32 FLUSH_AFTER_BYTES = (u32)(WRITE_BUFFER_SIZE * 0.75f);
 
 		/** Determines the minimum amount of bytes to preload into the temporary buffer. */
-		static constexpr UINT32 PRELOAD_CHUNK_BYTES = (UINT32)(WRITE_BUFFER_SIZE * 0.25f);
+		static constexpr u32 PRELOAD_CHUNK_BYTES = (u32)(WRITE_BUFFER_SIZE * 0.25f);
 
 		struct ObjectMetaData
 		{
-			UINT32 ObjectMeta;
-			UINT32 TypeId;
+			u32 ObjectMeta;
+			u32 TypeId;
 		};
 
 		struct ObjectToEncode
 		{
-			ObjectToEncode(UINT32 objectId, SPtr<IReflectable> object)
+			ObjectToEncode(u32 objectId, SPtr<IReflectable> object)
 				:ObjectId(objectId), Object(std::move(object))
 			{ }
 
-			UINT32 ObjectId;
+			u32 ObjectId;
 			SPtr<IReflectable> Object;
 		};
 
@@ -147,7 +147,7 @@ namespace bs
 		};
 
 		/** Encodes a single IReflectable object. */
-		bool EncodeEntry(IReflectable* object, UINT32 objectId, BufferedBitstreamWriter& stream, BinarySerializerFlags flags);
+		bool EncodeEntry(IReflectable* object, u32 objectId, BufferedBitstreamWriter& stream, BinarySerializerFlags flags);
 
 		/**	Decodes a single IReflectable object. */
 		bool DecodeEntry(BufferedBitstreamReader& stream, size_t dataLength, BinarySerializerFlags flags, const SPtr<IReflectable>& output,
@@ -157,34 +157,34 @@ namespace bs
 		bool ComplexTypeToStream(IReflectable* object, BufferedBitstreamWriter& stream, BinarySerializerFlags flags);
 
 		/**	Finds an existing, or creates a unique unique identifier for the specified object. */
-		UINT32 FindOrCreatePersistentId(IReflectable* object);
+		u32 FindOrCreatePersistentId(IReflectable* object);
 
 		/**
 		 * Finds or creates an id for the provided object and returns it. And it adds the object to a list of objects that
 		 * need to be encoded, if it's not already there.
 		 */
-		UINT32 RegisterObjectPtr(SPtr<IReflectable> object);
+		u32 RegisterObjectPtr(SPtr<IReflectable> object);
 
 		/**
 		 * Decodes object meta-data from the current location in the stream. Decoding accounts for the serializer flags to decode
 		 * using the correct format. Returns number of bits read.
 		 */
-		static UINT32 ReadObjectMetaData(BufferedBitstreamReader& stream, BinarySerializerFlags flags, UINT32& objId, UINT32& objTypeId, bool& isBaseType);
+		static u32 ReadObjectMetaData(BufferedBitstreamReader& stream, BinarySerializerFlags flags, u32& objId, u32& objTypeId, bool& isBaseType);
 		
 		/** Encodes data required for representing a serialized field, into 4 bytes. */
-		static UINT32 EncodeFieldMetaData(const RTTIFieldSchema& fieldSchema, bool terminator);
+		static u32 EncodeFieldMetaData(const RTTIFieldSchema& fieldSchema, bool terminator);
 
 		/** Decode meta field that was encoded using encodeFieldMetaData().*/
-		static RTTIFieldSchema DecodeFieldMetaData(UINT32 encodedData, bool& terminator);
+		static RTTIFieldSchema DecodeFieldMetaData(u32 encodedData, bool& terminator);
 
 		/** Encodes data representing a field terminator into 1 byte. */
-		static UINT8 EncodeFieldTerminator();
+		static u8 EncodeFieldTerminator();
 
 		/** Skips the builtin type at the current location in the stream. */
-		static void SkipBuiltinType(UINT32 fieldType, BufferedBitstreamReader& stream, bool compressed);
+		static void SkipBuiltinType(u32 fieldType, BufferedBitstreamReader& stream, bool compressed);
 		
 		/** Returns true if the data in the provided byte represents a field terminator as encoded with encodeFieldTerminator(). */
-		static bool IsFieldTerminator(UINT8 data);
+		static bool IsFieldTerminator(u8 data);
 
 		/**
 		 * Encodes an object identifier, its type and other meta-data into 8 bytes.
@@ -194,13 +194,13 @@ namespace bs
 		 * @param[in]	isBaseClass	True if this object is base class (that is, just a part of a larger object).
 		 * @return		Encoded object id, type ID and other meta-data.
 		 */
-		static ObjectMetaData EncodeObjectMetaData(UINT32 objId, UINT32 objTypeId, bool isBaseClass);
+		static ObjectMetaData EncodeObjectMetaData(u32 objId, u32 objTypeId, bool isBaseClass);
 
-		/** Decode meta field that was encoded using encodeObjectMetaData(UINT32, UINT32, bool). */
-		static void DecodeObjectMetaData(ObjectMetaData encodedData, UINT32& objId, UINT32& objTypeId, bool& isBaseClass);
+		/** Decode meta field that was encoded using encodeObjectMetaData(u32, u32, bool). */
+		static void DecodeObjectMetaData(ObjectMetaData encodedData, u32& objId, u32& objTypeId, bool& isBaseClass);
 
 		/** Returns true if the provided encoded meta data represents object meta data. */
-		static bool IsObjectMetaData(UINT32 encodedData);
+		static bool IsObjectMetaData(u32 encodedData);
 
 		/**
 		 * Encodes an object identifier and meta-data into 4 bytes. 
@@ -209,17 +209,17 @@ namespace bs
 		 * @param[in]	isBaseClass	true if this object is base class (that is, just a part of a larger object).
 		 * @return		Encoded object id and other meta-data.
 		 */
-		static UINT32 EncodeObjectMetaData(UINT32 objId,  bool isBaseClass);
+		static u32 EncodeObjectMetaData(u32 objId,  bool isBaseClass);
 
-		/** Decode meta field that was encoded using encodeObjectMetaData(UINT32, bool). */
-		static void DecodeObjectMetaData(UINT32 encodedData, UINT32& objId, bool& isBaseClass);
+		/** Decode meta field that was encoded using encodeObjectMetaData(u32, bool). */
+		static void DecodeObjectMetaData(u32 encodedData, u32& objId, bool& isBaseClass);
 
-		Map<UINT32, ObjectToDecode> mDecodeObjectMap;
+		Map<u32, ObjectToDecode> mDecodeObjectMap;
 		Vector<ObjectToEncode> mObjectsToEncode;
-		UnorderedMap<void*, UINT32> mObjectAddrToId;
-		UINT32 mLastUsedObjectId = 1;
-		UINT32 mTotalBytesToRead = 0;
-		UINT32 mNextProgressReport = REPORT_AFTER_BYTES;
+		UnorderedMap<void*, u32> mObjectAddrToId;
+		u32 mLastUsedObjectId = 1;
+		u32 mTotalBytesToRead = 0;
+		u32 mNextProgressReport = REPORT_AFTER_BYTES;
 		FrameAlloc* mAlloc = nullptr;
 		Bitstream mBuffer;
 

@@ -20,30 +20,30 @@ namespace bs
 		/** Wraps an existing array and allows you to get/set its values. */
 		ScriptArray(MonoArray* existingArray);
 		/** Creates a new array of specified size with elements of the specified type. */
-		ScriptArray(MonoClass& klass, UINT32 size);
+		ScriptArray(MonoClass& klass, u32 size);
 		/** Creates a new array of specified size with elements of the specified type. */
-		ScriptArray(::MonoClass* klass, UINT32 size);
+		ScriptArray(::MonoClass* klass, u32 size);
 
 		/** Retrieves an entry from the array at the specified index. */
 		template<class T>
-		T Get(UINT32 idx);
+		T Get(u32 idx);
 
 		/** Assigns a value to the specified index. */
 		template<class T>
-		void Set(UINT32 idx, const T& value);
+		void Set(u32 idx, const T& value);
 
 		/**
 		 * Assigns some data represented as raw memory to the array at the specified index. User must provide the size of
 		 * the data, and it must match the element size expected by the array. Multiple array elements can be provided
 		 * sequentially by setting the @p count parameter.
 		 */
-		void SetRaw(UINT32 idx, const UINT8* value, UINT32 size, UINT32 count = 1);
+		void SetRaw(u32 idx, const u8* value, u32 size, u32 count = 1);
 
 		/**
 		 * Returns the raw memory of the data at the specified array index. Returned value should not be used for writing
 		 * to the array and set() or setRaw() methods should be used instead.
 		 */
-		UINT8* GetRaw(UINT32 idx, UINT32 size)
+		u8* GetRaw(u32 idx, u32 size)
 		{
 #if BS_DEBUG_MODE
 			assert(size == ElementSize());
@@ -55,7 +55,7 @@ namespace bs
 		 * to the array and set() or setRaw() methods should be used instead.
 		 */
 		template<class T>
-		T* GetRaw(UINT32 idx = 0)
+		T* GetRaw(u32 idx = 0)
 		{
 #if BS_DEBUG_MODE
 			assert(sizeof(T) == ElementSize());
@@ -69,13 +69,13 @@ namespace bs
 		 * @tparam	T	ScriptObject wrapper for the specified managed type.
 		 */
 		template<class T>
-		static ScriptArray Create(UINT32 size);
+		static ScriptArray Create(u32 size);
 
 		/** Returns number of elements in the array. */
-		UINT32 Size() const;
+		u32 Size() const;
 
 		/** Returns the size of an individual element in the array, in bytes. */
-		UINT32 ElementSize() const;
+		u32 ElementSize() const;
 
 		/** Returns the managed object representing this array. */
 		MonoArray* GetInternal() const { return mInternal; }
@@ -84,10 +84,10 @@ namespace bs
 		static ::MonoClass* GetElementClass(::MonoClass* arrayClass);
 
 		/** Returns the rank of the provided array class. */
-		static UINT32 GetRank(::MonoClass* arrayClass);
+		static u32 GetRank(::MonoClass* arrayClass);
 
 		/** Builds an array class from the provided element class and a rank. */
-		static ::MonoClass* BuildArrayClass(::MonoClass* elementClass, UINT32 rank);
+		static ::MonoClass* BuildArrayClass(::MonoClass* elementClass, u32 rank);
 
 		/**
 		 * @name Internal
@@ -102,13 +102,13 @@ namespace bs
 		 * @param[in]	idx		Index of the item to retrieve.
 		 * @return				Address of the array item at the requested index.
 		 */
-		static UINT8* GetArrayAddrInternal(MonoArray* array, UINT32 size, UINT32 idx);
+		static u8* GetArrayAddrInternal(MonoArray* array, u32 size, u32 idx);
 
 		/**
 		 * Sets one or multiple entries from the array at the specified index, from raw memory. User must provide the size
 		 * of the element, and it must match the element size expected by the array.
 		 */
-		static void SetArrayValInternal(MonoArray* array, UINT32 idx, const UINT8* value, UINT32 size, UINT32 count = 1);
+		static void SetArrayValInternal(MonoArray* array, u32 idx, const u8* value, u32 size, u32 count = 1);
 
 		/**
 		 * @}
@@ -128,136 +128,136 @@ namespace bs
 		// A layer of indirection for all methods specialized by ScriptArray. */
 
 		template<class T>
-		T ScriptArray_get(MonoArray* array, UINT32 idx)
+		T ScriptArray_get(MonoArray* array, u32 idx)
 		{
 			return *(T*)ScriptArray::GetArrayAddrInternal(array, sizeof(T), idx);
 		}
 
 		template<class T>
-		void ScriptArray_set(MonoArray* array, UINT32 idx, const T& value)
+		void ScriptArray_set(MonoArray* array, u32 idx, const T& value)
 		{
-			ScriptArray::SetArrayValInternal(array, idx, (UINT8*)&value, sizeof(T));
+			ScriptArray::SetArrayValInternal(array, idx, (u8*)&value, sizeof(T));
 		}
 
 		template<>
-		BS_MONO_EXPORT String ScriptArray_get(MonoArray* array, UINT32 idx);
+		BS_MONO_EXPORT String ScriptArray_get(MonoArray* array, u32 idx);
 
 		template<>
-		BS_MONO_EXPORT WString ScriptArray_get(MonoArray* array, UINT32 idx);
+		BS_MONO_EXPORT WString ScriptArray_get(MonoArray* array, u32 idx);
 
 		template<>
-		BS_MONO_EXPORT Path ScriptArray_get(MonoArray* array, UINT32 idx);
+		BS_MONO_EXPORT Path ScriptArray_get(MonoArray* array, u32 idx);
 
 		template<>
-		BS_MONO_EXPORT void ScriptArray_set<String>(MonoArray* array, UINT32 idx, const String& value);
+		BS_MONO_EXPORT void ScriptArray_set<String>(MonoArray* array, u32 idx, const String& value);
 
 		template<>
-		BS_MONO_EXPORT void ScriptArray_set<WString>(MonoArray* array, UINT32 idx, const WString& value);
+		BS_MONO_EXPORT void ScriptArray_set<WString>(MonoArray* array, u32 idx, const WString& value);
 
 		template<>
-		BS_MONO_EXPORT void ScriptArray_set<Path>(MonoArray* array, UINT32 idx, const Path& value);
+		BS_MONO_EXPORT void ScriptArray_set<Path>(MonoArray* array, u32 idx, const Path& value);
 
 		template<>
-		BS_MONO_EXPORT void ScriptArray_set<std::nullptr_t>(MonoArray* array, UINT32 idx, const std::nullptr_t& value);
+		BS_MONO_EXPORT void ScriptArray_set<std::nullptr_t>(MonoArray* array, u32 idx, const std::nullptr_t& value);
 
 		template<class T>
-		inline ScriptArray ScriptArray_create(UINT32 size)
+		inline ScriptArray ScriptArray_create(u32 size)
 		{
 			return ScriptArray(*T::GetMetaData()->ScriptClass, size);
 		}
 
 		template<>
-		inline ScriptArray ScriptArray_create<UINT8>(UINT32 size)
+		inline ScriptArray ScriptArray_create<u8>(u32 size)
 		{
 			return ScriptArray(MonoUtil::GetByteClass(), size);
 		}
 
 		template<>
-		inline ScriptArray ScriptArray_create<INT8>(UINT32 size)
+		inline ScriptArray ScriptArray_create<i8>(u32 size)
 		{
 			return ScriptArray(MonoUtil::GetSByteClass(), size);
 		}
 
 		template<>
-		inline ScriptArray ScriptArray_create<char>(UINT32 size)
+		inline ScriptArray ScriptArray_create<char>(u32 size)
 		{
 			return ScriptArray(MonoUtil::GetSByteClass(), size);
 		}
 
 		template<>
-		inline ScriptArray ScriptArray_create<UINT16>(UINT32 size)
+		inline ScriptArray ScriptArray_create<u16>(u32 size)
 		{
 			return ScriptArray(MonoUtil::GetUinT16Class(), size);
 		}
 
 		template<>
-		inline ScriptArray ScriptArray_create<INT16>(UINT32 size)
+		inline ScriptArray ScriptArray_create<i16>(u32 size)
 		{
 			return ScriptArray(MonoUtil::GetInT16Class(), size);
 		}
 
 		template<>
-		inline ScriptArray ScriptArray_create<UINT32>(UINT32 size)
+		inline ScriptArray ScriptArray_create<u32>(u32 size)
 		{
 			return ScriptArray(MonoUtil::GetUinT32Class(), size);
 		}
 
 		template<>
-		inline ScriptArray ScriptArray_create<INT32>(UINT32 size)
+		inline ScriptArray ScriptArray_create<i32>(u32 size)
 		{
 			return ScriptArray(MonoUtil::GetInT32Class(), size);
 		}
 
 		template<>
-		inline ScriptArray ScriptArray_create<UINT64>(UINT32 size)
+		inline ScriptArray ScriptArray_create<u64>(u32 size)
 		{
 			return ScriptArray(MonoUtil::GetUinT64Class(), size);
 		}
 
 		template<>
-		inline ScriptArray ScriptArray_create<INT64>(UINT32 size)
+		inline ScriptArray ScriptArray_create<i64>(u32 size)
 		{
 			return ScriptArray(MonoUtil::GetInT64Class(), size);
 		}
 
 		template<>
-		inline ScriptArray ScriptArray_create<WString>(UINT32 size)
+		inline ScriptArray ScriptArray_create<WString>(u32 size)
 		{
 			return ScriptArray(MonoUtil::GetStringClass(), size);
 		}
 
 		template<>
-		inline ScriptArray ScriptArray_create<String>(UINT32 size)
+		inline ScriptArray ScriptArray_create<String>(u32 size)
 		{
 			return ScriptArray(MonoUtil::GetStringClass(), size);
 		}
 
 		template<>
-		inline ScriptArray ScriptArray_create<Path>(UINT32 size)
+		inline ScriptArray ScriptArray_create<Path>(u32 size)
 		{
 			return ScriptArray(MonoUtil::GetStringClass(), size);
 		}
 
 		template<>
-		inline ScriptArray ScriptArray_create<float>(UINT32 size)
+		inline ScriptArray ScriptArray_create<float>(u32 size)
 		{
 			return ScriptArray(MonoUtil::GetFloatClass(), size);
 		}
 
 		template<>
-		inline ScriptArray ScriptArray_create<double>(UINT32 size)
+		inline ScriptArray ScriptArray_create<double>(u32 size)
 		{
 			return ScriptArray(MonoUtil::GetDoubleClass(), size);
 		}
 
 		template<>
-		inline ScriptArray ScriptArray_create<bool>(UINT32 size)
+		inline ScriptArray ScriptArray_create<bool>(u32 size)
 		{
 			return ScriptArray(MonoUtil::GetBoolClass(), size);
 		}
 
 		template<>
-		inline ScriptArray ScriptArray_create<MonoObject*>(UINT32 size)
+		inline ScriptArray ScriptArray_create<MonoObject*>(u32 size)
 		{
 			return ScriptArray(MonoUtil::GetObjectClass(), size);
 		}
@@ -266,20 +266,20 @@ namespace bs
 	/** @} */
 
 	template<class T>
-	T ScriptArray::Get(UINT32 idx)
+	T ScriptArray::Get(u32 idx)
 	{
 		return Detail::ScriptArray_get<T>(mInternal, idx);
 	}
 
 	/** Sets an entry from the array at the specified index. */
 	template<class T>
-	void ScriptArray::Set(UINT32 idx, const T& value)
+	void ScriptArray::Set(u32 idx, const T& value)
 	{
 		Detail::ScriptArray_set<T>(mInternal, idx, value);
 	}
 
 	template<class T>
-	ScriptArray ScriptArray::Create(UINT32 size)
+	ScriptArray ScriptArray::Create(u32 size)
 	{
 		return Detail::ScriptArray_create<T>(size);
 	}

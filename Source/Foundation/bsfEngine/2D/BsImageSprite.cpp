@@ -12,7 +12,7 @@ namespace bs
 		ClearMesh();
 	}
 
-	void ImageSprite::Update(const IMAGE_SPRITE_DESC& desc, UINT64 groupId)
+	void ImageSprite::Update(const IMAGE_SPRITE_DESC& desc, u64 groupId)
 	{
 		if(!SpriteTexture::CheckIsLoaded(desc.Texture))
 		{
@@ -27,17 +27,17 @@ namespace bs
 		bool useScale9Grid = desc.BorderLeft > 0 || desc.BorderRight > 0 ||
 			desc.BorderTop > 0 || desc.BorderBottom > 0;
 
-		UINT32 numQuads = 1;
+		u32 numQuads = 1;
 		if(useScale9Grid)
 			numQuads = 9;
 
 		SpriteRenderElementData& renderElem = mCachedRenderElements[0];
 		{
-			UINT32 newNumQuads = numQuads;
+			u32 newNumQuads = numQuads;
 			if(newNumQuads != renderElem.NumQuads)
 			{
-				UINT32 oldVertexCount = renderElem.NumQuads * 4;
-				UINT32 oldIndexCount = renderElem.NumQuads * 6;
+				u32 oldVertexCount = renderElem.NumQuads * 4;
+				u32 oldIndexCount = renderElem.NumQuads * 6;
 
 				if(renderElem.Vertices != nullptr) bs_deleteN(renderElem.Vertices, oldVertexCount);
 				if(renderElem.Uvs != nullptr) bs_deleteN(renderElem.Uvs, oldVertexCount);
@@ -45,7 +45,7 @@ namespace bs
 
 				renderElem.Vertices = bs_newN<Vector2>(newNumQuads * 4);
 				renderElem.Uvs = bs_newN<Vector2>(newNumQuads * 4);
-				renderElem.Indexes = bs_newN<UINT32>(newNumQuads * 6);
+				renderElem.Indexes = bs_newN<u32>(newNumQuads * 6);
 				renderElem.NumQuads = newNumQuads;
 			}
 
@@ -65,7 +65,7 @@ namespace bs
 				desc.Transparent ? SpriteMaterialTransparency::Alpha : SpriteMaterialTransparency::Opaque, animated);
 		}
 
-		for(UINT32 i = 0; i < numQuads; i++)
+		for(u32 i = 0; i < numQuads; i++)
 		{
 			renderElem.Indexes[i * 6 + 0] = i * 4 + 0;
 			renderElem.Indexes[i * 6 + 1] = i * 4 + 1;
@@ -81,13 +81,13 @@ namespace bs
 		
 		if(useScale9Grid)
 		{
-			UINT32 leftBorder = desc.BorderLeft;
-			UINT32 rightBorder = desc.BorderRight;
-			UINT32 topBorder = desc.BorderTop;
-			UINT32 bottomBorder = desc.BorderBottom;
+			u32 leftBorder = desc.BorderLeft;
+			u32 rightBorder = desc.BorderRight;
+			u32 topBorder = desc.BorderTop;
+			u32 bottomBorder = desc.BorderBottom;
 
-			float centerWidth = (float)std::max((INT32)0, (INT32)desc.Width - (INT32)leftBorder - (INT32)rightBorder);
-			float centerHeight = (float)std::max((INT32)0, (INT32)desc.Height - (INT32)topBorder - (INT32)bottomBorder);
+			float centerWidth = (float)std::max((i32)0, (i32)desc.Width - (i32)leftBorder - (i32)rightBorder);
+			float centerHeight = (float)std::max((i32)0, (i32)desc.Height - (i32)topBorder - (i32)bottomBorder);
 
 			float topCenterStart = (float)(offset.X + leftBorder);
 			float topRightStart = (float)(topCenterStart + centerWidth);
@@ -240,8 +240,8 @@ namespace bs
 	{
 		for (auto& renderElem : mCachedRenderElements)
 		{
-			UINT32 vertexCount = renderElem.NumQuads * 4;
-			UINT32 indexCount = renderElem.NumQuads * 6;
+			u32 vertexCount = renderElem.NumQuads * 4;
+			u32 indexCount = renderElem.NumQuads * 6;
 
 			if (renderElem.Vertices != nullptr)
 			{

@@ -18,17 +18,17 @@ namespace bs
 	/** Floating point number broken down into components for easier access. */
 	union Float754
 	{
-		UINT32 Raw;
+		u32 Raw;
 		float Value;
 		struct {
 #if BS_ENDIAN == BS_ENDIAN_BIG
-			UINT32 negative : 1;
-			UINT32 exponent : 8;
-			UINT32 mantissa : 23;
+			u32 negative : 1;
+			u32 exponent : 8;
+			u32 mantissa : 23;
 #else
-			UINT32 Mantissa : 23;
-			UINT32 Exponent : 8;
-			UINT32 Negative : 1;
+			u32 Mantissa : 23;
+			u32 Exponent : 8;
+			u32 Negative : 1;
 #endif
 		} Field;
 	};
@@ -36,14 +36,14 @@ namespace bs
 	/** 10-bit floating point number broken down into components for easier access. */
 	union Float10
 	{
-		UINT32 Raw;
+		u32 Raw;
 		struct {
 #if BS_ENDIAN == BS_ENDIAN_BIG
-			UINT32 exponent : 5;
-			UINT32 mantissa : 5;
+			u32 exponent : 5;
+			u32 mantissa : 5;
 #else
-			UINT32 Mantissa : 5;
-			UINT32 Exponent : 5;
+			u32 Mantissa : 5;
+			u32 Exponent : 5;
 #endif
 		} Field;
 	};
@@ -51,14 +51,14 @@ namespace bs
 	/** 11-bit floating point number broken down into components for easier access. */
 	union Float11
 	{
-		UINT32 Raw;
+		u32 Raw;
 		struct {
 #if BS_ENDIAN == BS_ENDIAN_BIG
-			UINT32 exponent : 5;
-			UINT32 mantissa : 6;
+			u32 exponent : 5;
+			u32 mantissa : 6;
 #else
-			UINT32 Mantissa : 6;
-			UINT32 Exponent : 5;
+			u32 Mantissa : 6;
+			u32 Exponent : 5;
 #endif
 		} Field;
 	};
@@ -68,7 +68,7 @@ namespace bs
 	{
 	public:
 		/** Returns the power-of-two number greater or equal to the provided value. */
-		static UINT32 NextPow2(UINT32 n)
+		static u32 NextPow2(u32 n)
 		{
 			--n;
 			n |= n >> 16;
@@ -81,11 +81,11 @@ namespace bs
 		}
 
 		/** Returns the power-of-two number closest to the provided value. */
-		static UINT32 ClosestPow2(UINT32 n)
+		static u32 ClosestPow2(u32 n)
 		{
-			UINT32 next = NextPow2(n);
+			u32 next = NextPow2(n);
 
-			UINT32 prev = next >> 1;
+			u32 prev = next >> 1;
 			if (n - prev < next - n)
 				return prev;
 			
@@ -94,7 +94,7 @@ namespace bs
 
 
 		/** Returns base-2 logarithm for common bit counts (8, 16, 32, 64), as a constant expression. */
-		static constexpr UINT32 BitsLog2(UINT32 v)
+		static constexpr u32 BitsLog2(u32 v)
 		{
 			switch(v)
 			{
@@ -107,7 +107,7 @@ namespace bs
 		}
 
 		/** Returns modular exponentiation for integers. */
-		static UINT32 ModPow(UINT32 val1, UINT32 val2, UINT32 t)
+		static u32 ModPow(u32 val1, u32 val2, u32 t)
 		{
 			int res = 1;
 
@@ -127,7 +127,7 @@ namespace bs
 #endif
 
 		/** Finds the most-significant non-zero bit in the provided value and returns the index of that bit. */
-		static UINT32 MostSignificantBit(UINT32 val)
+		static u32 MostSignificantBit(u32 val)
 		{
 #if BS_COMPILER == BS_COMPILER_MSVC
 			unsigned long index;
@@ -140,7 +140,7 @@ namespace bs
 #endif
 		}
 		/** Finds the least-significant non-zero bit in the provided value and returns the index of that bit. */
-		static UINT32 LeastSignificantBit(UINT32 val)
+		static u32 LeastSignificantBit(u32 val)
 		{
 #if BS_COMPILER == BS_COMPILER_MSVC
 			unsigned long index;
@@ -154,7 +154,7 @@ namespace bs
 		}
 
 		/** Finds the most-significant non-zero bit in the provided value and returns the index of that bit. */
-		static UINT32 MostSignificantBit(UINT64 val)
+		static u32 MostSignificantBit(u64 val)
 		{
 #if BS_COMPILER == BS_COMPILER_MSVC
 #if BS_ARCH_TYPE == BS_ARCHITECTURE_x86_64
@@ -162,14 +162,14 @@ namespace bs
 			_BitScanReverse64(&index, val);
 			return index;
 #else // BS_ARCH_TYPE
-			if (static_cast<UINT32>(val >> 32) != 0)
+			if (static_cast<u32>(val >> 32) != 0)
 			{
-				_BitScanReverse(&index, static_cast<UINT32>(val >> 32));
+				_BitScanReverse(&index, static_cast<u32>(val >> 32));
 				return index + 32;
 		}
 			else
 			{
-				_BitScanReverse(&index, static_cast<UINT32>(val));
+				_BitScanReverse(&index, static_cast<u32>(val));
 				return index;
 			}
 #endif // BS_ARCH_TYPE
@@ -180,7 +180,7 @@ namespace bs
 #endif // BS_COMPILER
 		}
 		/** Finds the least-significant non-zero bit in the provided value and returns the index of that bit. */
-		static UINT32 LeastSignificantBit(UINT64 val)
+		static u32 LeastSignificantBit(u64 val)
 		{
 #if BS_COMPILER == BS_COMPILER_MSVC
 #if BS_ARCH_TYPE == BS_ARCHITECTURE_x86_64
@@ -188,14 +188,14 @@ namespace bs
 			_BitScanForward64(&index, val);
 			return index;
 #else // BS_ARCH_TYPE
-			if (static_cast<UINT32>(val) != 0)
+			if (static_cast<u32>(val) != 0)
 			{
-				_BitScanForward(&index, static_cast<UINT32>(val));
+				_BitScanForward(&index, static_cast<u32>(val));
 				return index;
 			}
 			else
 			{
-				_BitScanForward(&index, static_cast<UINT32>(val >> 32));
+				_BitScanForward(&index, static_cast<u32>(val >> 32));
 				return index + 32;
 			}
 #endif // BS_ARCH_TYPE
@@ -265,7 +265,7 @@ namespace bs
 		 * Convert N bit color channel value to P bits. It fills P bits with the bit pattern repeated.
 		 * (this is /((1<<n)-1) in fixed point).
 		 */
-		static uint32_t FixedToFixed(UINT32 value, uint32_t n, uint32_t p)
+		static uint32_t FixedToFixed(u32 value, uint32_t n, uint32_t p)
 		{
 			if (n > p)
 			{
@@ -418,24 +418,24 @@ namespace bs
 		{
 			switch(n) {
 				case 1:
-					((UINT8*)dest)[0] = (UINT8)value;
+					((u8*)dest)[0] = (u8)value;
 					break;
 				case 2:
-					((UINT16*)dest)[0] = (UINT16)value;
+					((u16*)dest)[0] = (u16)value;
 					break;
 				case 3:
 #if BS_ENDIAN == BS_ENDIAN_BIG
-					((UINT8*)dest)[0] = (UINT8)((value >> 16) & 0xFF);
-					((UINT8*)dest)[1] = (UINT8)((value >> 8) & 0xFF);
-					((UINT8*)dest)[2] = (UINT8)(value & 0xFF);
+					((u8*)dest)[0] = (u8)((value >> 16) & 0xFF);
+					((u8*)dest)[1] = (u8)((value >> 8) & 0xFF);
+					((u8*)dest)[2] = (u8)(value & 0xFF);
 #else
-					((UINT8*)dest)[2] = (UINT8)((value >> 16) & 0xFF);
-					((UINT8*)dest)[1] = (UINT8)((value >> 8) & 0xFF);
-					((UINT8*)dest)[0] = (UINT8)(value & 0xFF);
+					((u8*)dest)[2] = (u8)((value >> 16) & 0xFF);
+					((u8*)dest)[1] = (u8)((value >> 8) & 0xFF);
+					((u8*)dest)[0] = (u8)(value & 0xFF);
 #endif
 					break;
 				case 4:
-					((UINT32*)dest)[0] = (UINT32)value;
+					((u32*)dest)[0] = (u32)value;
 					break;
 			}
 		}
@@ -444,35 +444,35 @@ namespace bs
 		static uint32_t IntRead(const void *src, int32_t n) {
 			switch(n) {
 				case 1:
-					return ((UINT8*)src)[0];
+					return ((u8*)src)[0];
 				case 2:
-					return ((UINT16*)src)[0];
+					return ((u16*)src)[0];
 				case 3:
 #if BS_ENDIAN == BS_ENDIAN_BIG
-					return ((UINT32)((UINT8*)src)[0]<<16)|
-							((UINT32)((UINT8*)src)[1]<<8)|
-							((UINT32)((UINT8*)src)[2]);
+					return ((u32)((u8*)src)[0]<<16)|
+							((u32)((u8*)src)[1]<<8)|
+							((u32)((u8*)src)[2]);
 #else
-					return ((UINT32)((UINT8*)src)[0])|
-							((UINT32)((UINT8*)src)[1]<<8)|
-							((UINT32)((UINT8*)src)[2]<<16);
+					return ((u32)((u8*)src)[0])|
+							((u32)((u8*)src)[1]<<8)|
+							((u32)((u8*)src)[2]<<16);
 #endif
 				case 4:
-					return ((UINT32*)src)[0];
+					return ((u32*)src)[0];
 			}
 			return 0; // ?
 		}
 
 		/** Convert a float32 to a float16 (NV_half_float). */
-		static UINT16 FloatToHalf(float i)
+		static u16 FloatToHalf(float i)
 		{
-			union { float F; UINT32 I; } v;
+			union { float F; u32 I; } v;
 			v.F = i;
 			return FloatToHalfI(v.I);
 		}
 
-		/** Converts float in UINT32 format to a a half in UINT16 format. */
-		static UINT16 FloatToHalfI(UINT32 i)
+		/** Converts float in u32 format to a a half in u16 format. */
+		static u16 FloatToHalfI(u32 i)
 		{
 			int32_t s =  (i >> 16) & 0x00008000;
 			int32_t e = ((i >> 23) & 0x000000ff) - (127 - 15);
@@ -486,41 +486,41 @@ namespace bs
 				}
 				m = (m | 0x00800000) >> (1 - e);
 		
-				return static_cast<UINT16>(s | (m >> 13));
+				return static_cast<u16>(s | (m >> 13));
 			}
 			else if (e == 0xff - (127 - 15))
 			{
 				if (m == 0) // Inf
 				{
-					return static_cast<UINT16>(s | 0x7c00);
+					return static_cast<u16>(s | 0x7c00);
 				}
 				else    // NAN
 				{
 					m >>= 13;
-					return static_cast<UINT16>(s | 0x7c00 | m | (m == 0));
+					return static_cast<u16>(s | 0x7c00 | m | (m == 0));
 				}
 			}
 			else
 			{
 				if (e > 30) // Overflow
 				{
-					return static_cast<UINT16>(s | 0x7c00);
+					return static_cast<u16>(s | 0x7c00);
 				}
 		
-				return static_cast<UINT16>(s | (e << 10) | (m >> 13));
+				return static_cast<u16>(s | (e << 10) | (m >> 13));
 			}
 		}
 		
 		/** Convert a float16 (NV_half_float) to a float32. */
-		static float HalfToFloat(UINT16 y)
+		static float HalfToFloat(u16 y)
 		{
-			union { float F; UINT32 I; } v;
+			union { float F; u32 I; } v;
 			v.I = HalfToFloatI(y);
 			return v.F;
 		}
 
-		/** Converts a half in UINT16 format to a float in UINT32 format. */
-		static UINT32 HalfToFloatI(UINT16 y)
+		/** Converts a half in u16 format to a float in u32 format. */
+		static u32 HalfToFloatI(u16 y)
 		{
 			int32_t s = (y >> 15) & 0x00000001;
 			int32_t e = (y >> 10) & 0x0000001f;
@@ -563,7 +563,7 @@ namespace bs
 		}
 
 		/** Converts a 32-bit float to a 10-bit float according to OpenGL packed_float extension. */
-		static UINT32 FloatToFloat10(float v)
+		static u32 FloatToFloat10(float v)
 		{
 			Float754 f;
 			f.Value = v;
@@ -585,11 +585,11 @@ namespace bs
 				return 0x3DF; // Too large, clamp to max value
 			else
 			{
-				UINT32 val;
+				u32 val;
 				if (f.Raw < 0x38800000U)
 				{
 					// Too small to be represented as a normalized float, convert to denormalized value
-					UINT32 shift = 113 - f.Field.Exponent;
+					u32 shift = 113 - f.Field.Exponent;
 					val = (0x800000U | f.Field.Mantissa) >> shift;
 				}
 				else
@@ -603,7 +603,7 @@ namespace bs
 		}
 
 		/** Converts a 32-bit float to a 11-bit float according to OpenGL packed_float extension. */
-		static UINT32 FloatToFloat11(float v)
+		static u32 FloatToFloat11(float v)
 		{
 			Float754 f;
 			f.Value = v;
@@ -625,11 +625,11 @@ namespace bs
 				return 0x7BF; // Too large, clamp to max value
 			else
 			{
-				UINT32 val;
+				u32 val;
 				if(f.Raw < 0x38800000U)
 				{
 					// Too small to be represented as a normalized float, convert to denormalized value
-					UINT32 shift = 113 - f.Field.Exponent;
+					u32 shift = 113 - f.Field.Exponent;
 					val = (0x800000U | f.Field.Mantissa) >> shift;
 				}
 				else
@@ -643,20 +643,20 @@ namespace bs
 		}
 
 		/** Converts a 10-bit float to a 32-bit float according to OpenGL packed_float extension. */
-		static float Float10ToFloat(UINT32 v)
+		static float Float10ToFloat(u32 v)
 		{
 			Float10 f;
 			f.Raw = v;
 
-			UINT32 output;
+			u32 output;
 			if (f.Field.Exponent == 0x1F) // INF or NAN
 			{
 				output = 0x7f800000 | (f.Field.Mantissa << 17);
 			}
 			else
 			{
-				UINT32 exponent;
-				UINT32 mantissa = f.Field.Mantissa;
+				u32 exponent;
+				u32 mantissa = f.Field.Mantissa;
 
 				if (f.Field.Exponent != 0) // The value is normalized
 					exponent = f.Field.Exponent;
@@ -674,7 +674,7 @@ namespace bs
 					mantissa &= 0x1F;
 				}
 				else // The value is zero
-					exponent = (UINT32)-112;
+					exponent = (u32)-112;
 
 				output = ((exponent + 112) << 23) | (mantissa << 18);
 			}
@@ -685,20 +685,20 @@ namespace bs
 		}
 
 		/** Converts a 11-bit float to a 32-bit float according to OpenGL packed_float extension. */
-		static float Float11ToFloat(UINT32 v)
+		static float Float11ToFloat(u32 v)
 		{
 			Float11 f;
 			f.Raw = v;
 
-			UINT32 output;
+			u32 output;
 			if (f.Field.Exponent == 0x1F) // INF or NAN
 			{
 				output = 0x7f800000 | (f.Field.Mantissa << 17);
 			}
 			else
 			{
-				UINT32 exponent;
-				UINT32 mantissa = f.Field.Mantissa;
+				u32 exponent;
+				u32 mantissa = f.Field.Mantissa;
 
 				if (f.Field.Exponent != 0) // The value is normalized
 					exponent = f.Field.Exponent;
@@ -716,7 +716,7 @@ namespace bs
 					mantissa &= 0x3F;
 				}
 				else // The value is zero
-					exponent = (UINT32)-112;
+					exponent = (u32)-112;
 
 				output = ((exponent + 112) << 23) | (mantissa << 17);
 			}
@@ -734,66 +734,66 @@ namespace bs
 		 * @param[out]	output		Buffer to store the encoded bytes in. Must be at least 5 bytes in length.
 		 * @return					Number of bytes required to store the value, in range [1, 5]
 		 */
-		static UINT32 EncodeVarInt(UINT32 value, UINT8* output)
+		static u32 EncodeVarInt(u32 value, u8* output)
 		{
-			UINT32 idx = 0;
+			u32 idx = 0;
 			if (value & 0xFFFFFF80U)
 			{
-				output[idx++] = (UINT8)(value | 0x80);
+				output[idx++] = (u8)(value | 0x80);
 				value >>= 7;
 
 				if (value & 0xFFFFFF80U)
 				{
-					output[idx++] = (UINT8)(value | 0x80);
+					output[idx++] = (u8)(value | 0x80);
 					value >>= 7;
 
 					if (value & 0xFFFFFF80U)
 					{
-						output[idx++] = (UINT8)(value | 0x80);
+						output[idx++] = (u8)(value | 0x80);
 						value >>= 7;
 
 						if (value & 0xFFFFFF80U)
 						{
-							output[idx++] = (UINT8)(value | 0x80);
+							output[idx++] = (u8)(value | 0x80);
 							value >>= 7;
 						}
 					}
 				}
 			}
 
-			output[idx++] = (UINT8)value;
+			output[idx++] = (u8)value;
 			return idx;
 		}
 
 		/**
-		 * Decodes a value encoded using encodeVarInt(UINT32, UINT8*).
+		 * Decodes a value encoded using encodeVarInt(u32, u8*).
 		 *
 		 * @param[out]	value	Variable to receive the decoded value.
 		 * @param[in]	input	Input buffer to decode the data from.
 		 * @param[in]	size	Size of the input buffer.
 		 * @return				Number of bytes read.
 		 */
-		static UINT32 DecodeVarInt(UINT32& value, const UINT8* input, UINT32 size)
+		static u32 DecodeVarInt(u32& value, const u8* input, u32 size)
 		{
 			if(size == 0)
 				return 0;
 
-			UINT32 idx = 0;
-			value = (UINT32)(input[idx] & 0x7F);
+			u32 idx = 0;
+			value = (u32)(input[idx] & 0x7F);
 			if (input[idx++] & 0x80 && --size)
 			{
-				value |= (UINT32)(input[idx] & 0x7F) << 7;
+				value |= (u32)(input[idx] & 0x7F) << 7;
 
 				if (input[idx++] & 0x80 && --size)
 				{
-					value |= (UINT32)(input[idx] & 0x7F) << 14;
+					value |= (u32)(input[idx] & 0x7F) << 14;
 
 					if (input[idx++] & 0x80 && --size)
 					{
-						value |= (UINT32)(input[idx] & 0x7F) << 21;
+						value |= (u32)(input[idx] & 0x7F) << 21;
 
 						if (input[idx++] & 0x80 && --size)
-							value |= (UINT32)(input[idx++]) << 28;
+							value |= (u32)(input[idx++]) << 28;
 					}
 				}
 			}
@@ -801,21 +801,21 @@ namespace bs
 			return !size || input[idx - 1] & 0x80 ? 0 : idx;
 		}
 
-		/** @copydoc encodeVarInt(UINT32, UINT8*) */
-		static UINT32 EncodeVarInt(INT32 value, UINT8* output)
+		/** @copydoc encodeVarInt(u32, u8*) */
+		static u32 EncodeVarInt(i32 value, u8* output)
 		{
 			// Encode using zig-zag pattern so that negative values don't take up max byte count
-			UINT32 temp = (value << 1) ^ (value >> 31);
+			u32 temp = (value << 1) ^ (value >> 31);
 			return EncodeVarInt(temp, output);
 		}
 
-		/** @copydoc decodeVarInt(UINT32&, const UINT8*, UINT32) */
-		static UINT32 DecodeVarInt(INT32& value, const UINT8* input, UINT32 size)
+		/** @copydoc decodeVarInt(u32&, const u8*, u32) */
+		static u32 DecodeVarInt(i32& value, const u8* input, u32 size)
 		{
-			UINT32 temp;
+			u32 temp;
 			
-			UINT32 readBytes = DecodeVarInt(temp, input, size);
-			value = (INT32)((temp >> 1) ^ -((INT32)temp & 1));
+			u32 readBytes = DecodeVarInt(temp, input, size);
+			value = (i32)((temp >> 1) ^ -((i32)temp & 1));
 
 			return readBytes;
 		}
@@ -828,52 +828,52 @@ namespace bs
 		 * @param[out]	output		Buffer to store the encoded bytes in. Must be at least 10 bytes in length.
 		 * @return					Number of bytes required to store the value, in range [1, 10]
 		 */
-		static UINT32 EncodeVarInt(UINT64 value, UINT8* output)
+		static u32 EncodeVarInt(u64 value, u8* output)
 		{
-			UINT32 idx = 0;
+			u32 idx = 0;
 			if (value & 0xFFFFFFFFFFFFFF80ULL)
 			{
-				output[idx++] = (UINT8)(value | 0x80);
+				output[idx++] = (u8)(value | 0x80);
 				value >>= 7;
 
 				if (value & 0xFFFFFFFFFFFFFF80ULL)
 				{
-					output[idx++] = (UINT8)(value | 0x80);
+					output[idx++] = (u8)(value | 0x80);
 					value >>= 7;
 
 					if (value & 0xFFFFFFFFFFFFFF80ULL)
 					{
-						output[idx++] = (UINT8)(value | 0x80);
+						output[idx++] = (u8)(value | 0x80);
 						value >>= 7;
 
 						if (value & 0xFFFFFFFFFFFFFF80ULL)
 						{
-							output[idx++] = (UINT8)(value | 0x80);
+							output[idx++] = (u8)(value | 0x80);
 							value >>= 7;
 
 							if (value & 0xFFFFFFFFFFFFFF80ULL)
 							{
-								output[idx++] = (UINT8)(value | 0x80);
+								output[idx++] = (u8)(value | 0x80);
 								value >>= 7;
 
 								if (value & 0xFFFFFFFFFFFFFF80ULL)
 								{
-									output[idx++] = (UINT8)(value | 0x80);
+									output[idx++] = (u8)(value | 0x80);
 									value >>= 7;
 
 									if (value & 0xFFFFFFFFFFFFFF80ULL)
 									{
-										output[idx++] = (UINT8)(value | 0x80);
+										output[idx++] = (u8)(value | 0x80);
 										value >>= 7;
 
 										if (value & 0xFFFFFFFFFFFFFF80ULL)
 										{
-											output[idx++] = (UINT8)(value | 0x80);
+											output[idx++] = (u8)(value | 0x80);
 											value >>= 7;
 
 											if (value & 0xFFFFFFFFFFFFFF80ULL)
 											{
-												output[idx++] = (UINT8)(value | 0x80);
+												output[idx++] = (u8)(value | 0x80);
 												value >>= 7;
 											}
 										}
@@ -885,59 +885,59 @@ namespace bs
 				}
 			}
 
-			output[idx++] = (UINT8)value;
+			output[idx++] = (u8)value;
 			return idx;
 		}
 
 		/**
-		 * Decodes a value encoded using encodeVarInt(UINT64, UINT8*).
+		 * Decodes a value encoded using encodeVarInt(u64, u8*).
 		 *
 		 * @param[out]	value	Variable to receive the decoded value.
 		 * @param[in]	input	Input buffer to decode the data from.
 		 * @param[in]	size	Size of the input buffer.
 		 * @return				Number of bytes read.
 		 */
-		static UINT32 DecodeVarInt(UINT64& value, const UINT8* input, UINT32 size)
+		static u32 DecodeVarInt(u64& value, const u8* input, u32 size)
 		{
 			if(size == 0)
 				return 0;
 
-			UINT32 idx = 0;
-			value = (UINT64)(input[idx] & 0x7F);
+			u32 idx = 0;
+			value = (u64)(input[idx] & 0x7F);
 			if (input[idx++] & 0x80 && --size)
 			{
-				value |= (UINT64)(input[idx] & 0x7F) << 7;
+				value |= (u64)(input[idx] & 0x7F) << 7;
 
 				if (input[idx++] & 0x80 && --size)
 				{
-					value |= (UINT64)(input[idx] & 0x7F) << 14;
+					value |= (u64)(input[idx] & 0x7F) << 14;
 
 					if (input[idx++] & 0x80 && --size)
 					{
-						value |= (UINT64)(input[idx] & 0x7F) << 21;
+						value |= (u64)(input[idx] & 0x7F) << 21;
 
 						if (input[idx++] & 0x80 && --size)
 						{
-							value |= (UINT64)(input[idx] & 0x7F) << 28;
+							value |= (u64)(input[idx] & 0x7F) << 28;
 
 							if (input[idx++] & 0x80 && --size)
 							{
-								value |= (UINT64)(input[idx] & 0x7F) << 35;
+								value |= (u64)(input[idx] & 0x7F) << 35;
 
 								if (input[idx++] & 0x80 && --size)
 								{
-									value |= (UINT64)(input[idx] & 0x7F) << 42;
+									value |= (u64)(input[idx] & 0x7F) << 42;
 
 									if (input[idx++] & 0x80 && --size)
 									{
-										value |= (UINT64)(input[idx] & 0x7F) << 49;
+										value |= (u64)(input[idx] & 0x7F) << 49;
 
 										if (input[idx++] & 0x80 && --size)
 										{
-											value |= (UINT64)(input[idx] & 0x7F) << 56;
+											value |= (u64)(input[idx] & 0x7F) << 56;
 
 											if (input[idx++] & 0x80 && --size)
-												value |= (UINT64)(input[idx++]) << 63;
+												value |= (u64)(input[idx++]) << 63;
 										}
 									}
 								}
@@ -950,35 +950,35 @@ namespace bs
 			return !size || input[idx - 1] & 0x80 ? 0 : idx;
 		}
 
-		/** @copydoc encodeVarInt(UINT64, UINT8*) */
-		static UINT32 EncodeVarInt(INT64 value, UINT8* output)
+		/** @copydoc encodeVarInt(u64, u8*) */
+		static u32 EncodeVarInt(i64 value, u8* output)
 		{
 			// Encode using zig-zag pattern so that negative values don't take up max byte count
-			UINT64 temp = (value << 1) ^ (value >> 63);
+			u64 temp = (value << 1) ^ (value >> 63);
 			return EncodeVarInt(temp, output);
 		}
 
-		/** @copydoc decodeVarInt(UINT64&, const UINT8*, UINT32) */
-		static UINT32 DecodeVarInt(INT64& value, const UINT8* input, UINT32 size)
+		/** @copydoc decodeVarInt(u64&, const u8*, u32) */
+		static u32 DecodeVarInt(i64& value, const u8* input, u32 size)
 		{
-			UINT64 temp;
+			u64 temp;
 
-			UINT32 readBytes = DecodeVarInt(temp, input, size);
-			value = (INT64)((temp >> 1) ^ -((INT64)temp & 1));
+			u32 readBytes = DecodeVarInt(temp, input, size);
+			value = (i64)((temp >> 1) ^ -((i64)temp & 1));
 
 			return readBytes;
 		}
 
 		/** Converts a float in range [-1,1] into an unsigned 8-bit integer. */
-		static UINT8 Quantize8BitSigned(float v)
+		static u8 Quantize8BitSigned(float v)
 		{
 			return Quantize8BitUnsigned(v * 0.5f + 0.5f);
 		}
 
 		/** Converts a float in range [0,1] into an unsigned 8-bit integer. */
-		static UINT8 Quantize8BitUnsigned(float v)
+		static u8 Quantize8BitUnsigned(float v)
 		{
-			return (UINT8)(v * 255.999f);
+			return (u8)(v * 255.999f);
 		}
 	};
 

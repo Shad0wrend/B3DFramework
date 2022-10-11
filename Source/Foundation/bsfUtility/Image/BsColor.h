@@ -10,10 +10,10 @@ namespace bs
 	 *  @{
 	 */
 
-	typedef UINT32 RGBA;
-	typedef UINT32 ARGB;
-	typedef UINT32 ABGR;
-	typedef UINT32 BGRA;
+	typedef u32 RGBA;
+	typedef u32 ARGB;
+	typedef u32 ABGR;
+	typedef u32 BGRA;
 
 	/**
 	 * Color represented as 4 components, each being a floating point value ranging from 0 to 1. Color components are
@@ -97,14 +97,14 @@ namespace bs
 			return ret;
 		}
 
-		float operator[] (const UINT32 i) const
+		float operator[] (const u32 i) const
 		{
 			assert(i < 4);
 
 			return *(&R+i);
 		}
 
-		float& operator[] (const UINT32 i)
+		float& operator[] (const u32 i)
 		{
 			assert(i < 4);
 
@@ -237,21 +237,21 @@ namespace bs
 		 * to the left color, while t = 1 corresponds to the right color. Operates directly on 8-bit per channel
 		 * encoded color instead of on floating point values.
 		 */
-		static constexpr RGBA Lerp(UINT8 t, RGBA from, RGBA to)
+		static constexpr RGBA Lerp(u8 t, RGBA from, RGBA to)
 		{
-			constexpr UINT32 RB_MASK = 0x00FF00FF;
-			constexpr UINT32 GA_MASK = 0xFF00FF00;
+			constexpr u32 RB_MASK = 0x00FF00FF;
+			constexpr u32 GA_MASK = 0xFF00FF00;
 
 			// Lerp two channels at a time (this leaves 8 extra bits for each channel for results)
 			//// Red-blue first
-			const UINT32 rbFrom = from & RB_MASK;
-			const UINT32 rbTo = to & RB_MASK;
-			const UINT32 rb = (rbFrom + (((rbTo - rbFrom) * t) >> 8)) & RB_MASK;
+			const u32 rbFrom = from & RB_MASK;
+			const u32 rbTo = to & RB_MASK;
+			const u32 rb = (rbFrom + (((rbTo - rbFrom) * t) >> 8)) & RB_MASK;
 
 			//// Then green-alpha
-			const UINT32 gaFrom = from & GA_MASK;
-			const UINT32 gaTo = to & GA_MASK;
-			const UINT32 ga = (((gaFrom >> 8) + ((((gaTo >> 8) - (gaFrom >> 8)) * t) >> 8)) << 8) & GA_MASK;
+			const u32 gaFrom = from & GA_MASK;
+			const u32 gaTo = to & GA_MASK;
+			const u32 ga = (((gaFrom >> 8) + ((((gaTo >> 8) - (gaFrom >> 8)) * t) >> 8)) << 8) & GA_MASK;
 
 			return rb | ga;
 		}

@@ -37,7 +37,7 @@ namespace bs
 	}
 
 	SPtr<RenderTexture> D3D11TextureManager::CreateRenderTextureInternal(const RENDER_TEXTURE_DESC& desc,
-																				 UINT32 deviceIdx)
+																				 u32 deviceIdx)
 	{
 		SPtr<D3D11RenderTexture> texPtr = bs_shared_ptr_new<D3D11RenderTexture>(desc, deviceIdx);
 		texPtr->SetThisPtrInternal(texPtr);

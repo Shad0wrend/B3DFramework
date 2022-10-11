@@ -21,12 +21,12 @@ namespace bs { namespace ct
 		VkDescriptorPool GetHandle() const { return mPool; }
 
 	private:
-		static const UINT32 sMaxSets = 8192;
-		static const UINT32 sMaxSampledImages = 4096;
-		static const UINT32 sMaxImages = 2048;
-		static const UINT32 sMaxSampledBuffers = 2048;
-		static const UINT32 sMaxBuffers = 2048;
-		static const UINT32 sMaxUniformBuffers = 2048;
+		static const u32 sMaxSets = 8192;
+		static const u32 sMaxSampledImages = 4096;
+		static const u32 sMaxImages = 2048;
+		static const u32 sMaxSampledBuffers = 2048;
+		static const u32 sMaxBuffers = 2048;
+		static const u32 sMaxUniformBuffers = 2048;
 
 		VulkanDevice& mDevice;
 		VkDescriptorPool mPool;

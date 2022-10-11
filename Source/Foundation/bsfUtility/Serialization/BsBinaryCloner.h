@@ -31,7 +31,7 @@ namespace bs
 		struct FieldId
 		{
 			RTTIField* Field;
-			INT32 ArrayIdx;
+			i32 ArrayIdx;
 		};
 
 		/** A saved reference to an object with a field identifier that owns it. */

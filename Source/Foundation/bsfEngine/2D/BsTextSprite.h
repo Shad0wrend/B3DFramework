@@ -36,13 +36,13 @@ namespace bs
 	{
 		TEXT_SPRITE_DESC() = default;
 
-		UINT32 Width = 0; /**< Width of the bounds to render the text within, in pixels. */
-		UINT32 Height = 0; /**< Height of the bounds to render the text within, in pixels. */
+		u32 Width = 0; /**< Width of the bounds to render the text within, in pixels. */
+		u32 Height = 0; /**< Height of the bounds to render the text within, in pixels. */
 		SpriteAnchor Anchor = SA_TopLeft; /**< Determines how to anchor the text within the bounds. */
 
 		String Text; /**< UTF-8 encoded text to generate geometry for. */
 		HFont Font; /**< Font containing the data about character glyphs. */
-		UINT32 FontSize = 0; /**< Size of the font to use when displaying the text. */
+		u32 FontSize = 0; /**< Size of the font to use when displaying the text. */
 		Color Color; /**< Color tint of the text. */
 		TextHorzAlign HorzAlign = THA_Left; /**< Specifies how is text horizontally aligned within its bounds. */
 		TextVertAlign VertAlign = TVA_Top; /**< Specifies how is text vertically aligned within its bounds. */
@@ -65,7 +65,7 @@ namespace bs
 		 *						example you don't want the sprites to share the same group if they use different world
 		 *						transform matrices).
 		 */
-		void Update(const TEXT_SPRITE_DESC& desc, UINT64 groupId);
+		void Update(const TEXT_SPRITE_DESC& desc, u64 groupId);
 
 		/**
 		 * Calculates and returns offset for each individual text line. The offsets provide information on how much to
@@ -80,7 +80,7 @@ namespace bs
 		 *							for every line in @p textData.
 		 */
 		static void GetAlignmentOffsets(const TextDataBase& textData,
-			UINT32 width, UINT32 height, TextHorzAlign horzAlign, TextVertAlign vertAlign, Vector2I* output);
+			u32 width, u32 height, TextHorzAlign horzAlign, TextVertAlign vertAlign, Vector2I* output);
 
 		/**
 		 * Calculates text quads you may use for text rendering, based on the specified text data. Only generates quads for
@@ -101,9 +101,9 @@ namespace bs
 		 * @param[in]	bufferSizeQuads	Size of the output buffers, in number of quads.
 		 * @return						Number of generated quads.
 		 */
-		static UINT32 GenTextQuads(UINT32 page, const TextDataBase& textData, UINT32 width, UINT32 height,
-			TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, UINT32* indices,
-			UINT32 bufferSizeQuads);
+		static u32 GenTextQuads(u32 page, const TextDataBase& textData, u32 width, u32 height,
+			TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices,
+			u32 bufferSizeQuads);
 
 		/**
 		 * Calculates text quads you may use for text rendering, based on the specified text data. Generates quads for all
@@ -123,13 +123,13 @@ namespace bs
 		 * @param[in]	bufferSizeQuads	Size of the output buffers, in number of quads.
 		 * @return						Number of generated quads.
 		 */
-		static UINT32 GenTextQuads(const TextDataBase& textData, UINT32 width, UINT32 height,
-			TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, UINT32* indices,
-			UINT32 bufferSizeQuads);
+		static u32 GenTextQuads(const TextDataBase& textData, u32 width, u32 height,
+			TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices,
+			u32 bufferSizeQuads);
 
 	private:
 		static const int STATIC_CHARS_TO_BUFFER = 25;
-		static const int STATIC_BUFFER_SIZE = STATIC_CHARS_TO_BUFFER * (4 * (2 * sizeof(Vector2)) + (6 * sizeof(UINT32)));
+		static const int STATIC_BUFFER_SIZE = STATIC_CHARS_TO_BUFFER * (4 * (2 * sizeof(Vector2)) + (6 * sizeof(u32)));
 
 		/**	Clears internal geometry buffers. */
 		void ClearMesh();

@@ -61,7 +61,7 @@ namespace bs { namespace ct
 				props.GetElementSize(), rapi->GetPrimaryDevice(), false, false);
 		}
 
-		UINT32 usage = GVU_DEFAULT;
+		u32 usage = GVU_DEFAULT;
 		if ((props.GetUsage() & GBU_LOADSTORE) == GBU_LOADSTORE)
 			usage |= GVU_RANDOMWRITE;
 
@@ -78,7 +78,7 @@ namespace bs { namespace ct
 		return static_cast<D3D11HardwareBuffer*>(mBuffer)->GetD3DBuffer();
 	}
 
-	GpuBufferView* D3D11GpuBuffer::RequestView(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 numElements,
+	GpuBufferView* D3D11GpuBuffer::RequestView(D3D11GpuBuffer* buffer, u32 firstElement, u32 numElements,
 		GpuViewUsage usage)
 	{
 		const auto& props = buffer->GetProperties();

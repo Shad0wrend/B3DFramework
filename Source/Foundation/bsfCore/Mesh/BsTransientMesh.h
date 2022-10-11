@@ -35,8 +35,8 @@ namespace bs
 		 *
 		 * @see		MeshHeap::alloc
 		 */
-		TransientMesh(const SPtr<MeshHeap>& parentHeap, UINT32 id, UINT32 numVertices,
-			UINT32 numIndices, DrawOperationType drawOp = DOT_TRIANGLE_LIST);
+		TransientMesh(const SPtr<MeshHeap>& parentHeap, u32 id, u32 numVertices,
+			u32 numIndices, DrawOperationType drawOp = DOT_TRIANGLE_LIST);
 
 		/** Marks the mesh as destroyed so we know that we don't need to destroy it ourselves. */
 		void MarkAsDestroyed() { mIsDestroyed = true; }
@@ -47,7 +47,7 @@ namespace bs
 	protected:
 		bool mIsDestroyed;
 		SPtr<MeshHeap> mParentHeap;
-		UINT32 mId;
+		u32 mId;
 	};
 
 	/** @} */
@@ -66,8 +66,8 @@ namespace bs
 	class BS_CORE_EXPORT TransientMesh : public MeshBase
 	{
 	public:
-		TransientMesh(const SPtr<MeshHeap>& parentHeap, UINT32 id, UINT32 numVertices,
-			UINT32 numIndices, const Vector<SubMesh>& subMeshes);
+		TransientMesh(const SPtr<MeshHeap>& parentHeap, u32 id, u32 numVertices,
+			u32 numIndices, const Vector<SubMesh>& subMeshes);
 
 		/** @copydoc MeshBase::getVertexData */
 		SPtr<VertexData> GetVertexData() const ;
@@ -79,13 +79,13 @@ namespace bs
 		SPtr<VertexDataDesc> GetVertexDesc() const ;
 
 		/**	Returns the ID that uniquely identifies this mesh in the parent heap. */
-		UINT32 GetMeshHeapId() const { return mId; }
+		u32 GetMeshHeapId() const { return mId; }
 
 		/** @copydoc MeshBase::getVertexOffset */
-		UINT32 GetVertexOffset() const ;
+		u32 GetVertexOffset() const ;
 
 		 /** @copydoc MeshBase::getIndexOffset */
-		UINT32 GetIndexOffset() const ;
+		u32 GetIndexOffset() const ;
 
 		 /** @copydoc MeshBase::_notifyUsedOnGPU */
 		void NotifyUsedOnGPUInternal() override;
@@ -94,7 +94,7 @@ namespace bs
 		friend class bs::TransientMesh;
 
 		SPtr<MeshHeap> mParentHeap;
-		UINT32 mId;
+		u32 mId;
 	};
 
 	/** @} */

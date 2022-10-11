@@ -21,7 +21,7 @@ namespace bs
 		{ }
 
 		SPtr<GameObject> Object;
-		UINT64 MInstanceId;
+		u64 MInstanceId;
 	};
 
 	typedef SPtr<GameObjectInstanceData> GameObjectInstanceDataPtr;
@@ -65,7 +65,7 @@ namespace bs
 		bool IsDestroyed(bool checkQueued = false) const;
 
 		/**	Returns the instance ID of the object the handle is referencing. */
-		UINT64 GetInstanceId() const { return mData->MPtr != nullptr ? mData->MPtr->MInstanceId : 0; }
+		u64 GetInstanceId() const { return mData->MPtr != nullptr ? mData->MPtr->MInstanceId : 0; }
 
 		/**
 		 * Returns pointer to the referenced GameObject.

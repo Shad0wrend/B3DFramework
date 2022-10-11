@@ -96,12 +96,12 @@ namespace bs
 		std::ios::fmtflags flags = std::ios::fmtflags(0) );
 
 	/**	Converts an 64bit integer to a string. */
-	BS_UTILITY_EXPORT WString toWString(INT64 val,
+	BS_UTILITY_EXPORT WString toWString(i64 val,
 		unsigned short width = 0, char fill = ' ',
 		std::ios::fmtflags flags = std::ios::fmtflags(0) );
 
 	/**	Converts an 64bit unsigned to a string. */
-	BS_UTILITY_EXPORT WString toWString(UINT64 val,
+	BS_UTILITY_EXPORT WString toWString(u64 val,
 		unsigned short width = 0, char fill = ' ',
 		std::ios::fmtflags flags = std::ios::fmtflags(0) );
 
@@ -219,12 +219,12 @@ namespace bs
 		std::ios::fmtflags flags = std::ios::fmtflags(0) );
 
 	/**	Converts a 64bit int to a string. */
-	BS_UTILITY_EXPORT String toString(INT64 val,
+	BS_UTILITY_EXPORT String toString(i64 val,
 		unsigned short width = 0, char fill = ' ',
 		std::ios::fmtflags flags = std::ios::fmtflags(0) );
 
 	/**	Converts an 64bit unsigned int to a string. */
-	BS_UTILITY_EXPORT String toString(UINT64 val,
+	BS_UTILITY_EXPORT String toString(u64 val,
 		unsigned short width = 0, char fill = ' ',
 		std::ios::fmtflags flags = std::ios::fmtflags(0) );
 
@@ -343,28 +343,28 @@ namespace bs
 	 *
 	 * @note	0 if the value could not be parsed, otherwise the numeric version of the string.
 	 */
-	BS_UTILITY_EXPORT INT32 parseINT32(const String& val, INT32 defaultValue = 0);
+	BS_UTILITY_EXPORT i32 parsei32(const String& val, i32 defaultValue = 0);
 
 	/**
 	 * Converts a String to a whole number.
 	 *
 	 * @note	0 if the value could not be parsed, otherwise the numeric version of the string.
 	 */
-	BS_UTILITY_EXPORT UINT32 parseUINT32(const String& val, UINT32 defaultValue = 0);
+	BS_UTILITY_EXPORT u32 parseu32(const String& val, u32 defaultValue = 0);
 
 	/**
 	 * Converts a String to a whole number.
 	 *
 	 * @note	0 if the value could not be parsed, otherwise the numeric version of the string.
 	 */
-	BS_UTILITY_EXPORT INT64 parseINT64(const String& val, INT64 defaultValue = 0);
+	BS_UTILITY_EXPORT i64 parsei64(const String& val, i64 defaultValue = 0);
 
 	/**
 	 * Converts a String to a whole number.
 	 *
 	 * @note	0 if the value could not be parsed, otherwise the numeric version of the string.
 	 */
-	BS_UTILITY_EXPORT UINT64 parseUINT64(const String& val, UINT64 defaultValue = 0);
+	BS_UTILITY_EXPORT u64 parseu64(const String& val, u64 defaultValue = 0);
 
 	/**
 	 * Converts a String to a boolean.
@@ -389,28 +389,28 @@ namespace bs
 	 *
 	 * @note	0 if the value could not be parsed, otherwise the numeric version of the string.
 	 */
-	BS_UTILITY_EXPORT INT32 parseINT32(const WString& val, INT32 defaultValue = 0);
+	BS_UTILITY_EXPORT i32 parsei32(const WString& val, i32 defaultValue = 0);
 
 	/**
 	 * Converts a WString to a whole number.
 	 *
 	 * @note	0 if the value could not be parsed, otherwise the numeric version of the string.
 	 */
-	BS_UTILITY_EXPORT UINT32 parseUINT32(const WString& val, UINT32 defaultValue = 0);
+	BS_UTILITY_EXPORT u32 parseu32(const WString& val, u32 defaultValue = 0);
 
 	/**
 	 * Converts a WString to a whole number.
 	 *
 	 * @note	0 if the value could not be parsed, otherwise the numeric version of the string.
 	 */
-	BS_UTILITY_EXPORT INT64 parseINT64(const WString& val, INT64 defaultValue = 0);
+	BS_UTILITY_EXPORT i64 parsei64(const WString& val, i64 defaultValue = 0);
 
 	/**
 	 * Converts a WString to a whole number.
 	 *
 	 * @note	0 if the value could not be parsed, otherwise the numeric version of the string.
 	 */
-	BS_UTILITY_EXPORT UINT64 parseUINT64(const WString& val, UINT64 defaultValue = 0);
+	BS_UTILITY_EXPORT u64 parseu64(const WString& val, u64 defaultValue = 0);
 
 	/**
 	 * Converts a WString to a boolean.

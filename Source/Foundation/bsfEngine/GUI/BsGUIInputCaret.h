@@ -70,10 +70,10 @@ namespace bs
 		 * @param[in]	charIdx		Index of the character to move the caret to.
 		 * @param[in]	caretPos	Whether to place the caret before or after the character.
 		 */
-		void MoveCaretToChar(UINT32 charIdx, CaretPos caretPos);
+		void MoveCaretToChar(u32 charIdx, CaretPos caretPos);
 
 		/**	Returns character index after the current caret position. */
-		UINT32 GetCharIdxAtCaretPos() const;
+		u32 GetCharIdxAtCaretPos() const;
 
 		/**
 		 * Returns current caret position, relative to parent widget. Requires you to provide offset to text the caret is
@@ -82,18 +82,18 @@ namespace bs
 		Vector2I GetCaretPosition(const Vector2I& offset) const;
 
 		/**	Returns height of the caret, in pixels. */
-		UINT32 GetCaretHeight() const;
+		u32 GetCaretHeight() const;
 
 		/**	Returns true if the character after the caret is newline. */
 		bool IsCaretAtNewline() const;
 
 		/**	Returns maximum valid caret index. */
-		UINT32 GetMaxCaretPos() const;
+		u32 GetMaxCaretPos() const;
 
 		/**	Returns current caret index (not equal to character index). */
-		UINT32 GetCaretPos() const { return mCaretPos; }
+		u32 GetCaretPos() const { return mCaretPos; }
 	private:
-		UINT32 mCaretPos = 0;
+		u32 mCaretPos = 0;
 		ImageSprite* mCaretSprite;
 	};
 

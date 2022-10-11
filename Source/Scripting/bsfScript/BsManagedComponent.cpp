@@ -54,7 +54,7 @@ namespace bs
 
 				bs.Encode(serializableObject.get(), stream);
 
-				backupData.Size = (UINT32)stream->Size();
+				backupData.Size = (u32)stream->Size();
 				backupData.Data = stream->DisownMemory();
 			}
 			else
@@ -73,7 +73,7 @@ namespace bs
 				bs.Encode(mSerializedObjectData.get(), stream);
 			}
 
-			backupData.Size = (UINT32)stream->Size();
+			backupData.Size = (u32)stream->Size();
 			backupData.Data = stream->DisownMemory();
 		}
 

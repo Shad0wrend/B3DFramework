@@ -71,11 +71,11 @@ namespace bs
 		RenderWindow* GetNonCore(const ct::RenderWindow* window) const;
 
 		/** @copydoc create */
-		virtual SPtr<RenderWindow> CreateImpl(RENDER_WINDOW_DESC& desc, UINT32 windowId, const SPtr<RenderWindow>& parentWindow) = 0;
+		virtual SPtr<RenderWindow> CreateImpl(RENDER_WINDOW_DESC& desc, u32 windowId, const SPtr<RenderWindow>& parentWindow) = 0;
 
 	protected:
 		mutable Mutex mWindowMutex;
-		Map<UINT32, RenderWindow*> mWindows;
+		Map<u32, RenderWindow*> mWindows;
 		Vector<RenderWindow*> mModalWindowStack;
 
 		RenderWindow* mWindowInFocus = nullptr;

@@ -33,7 +33,7 @@ namespace bs { namespace ct
 		RMAT_DEF_CUSTOMIZED("TiledDeferredLighting.bsl");
 
 		/** Helper method used for initializing variations of this material. */
-		template<UINT32 msaa>
+		template<u32 msaa>
 		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
@@ -52,10 +52,10 @@ namespace bs { namespace ct
 			const SPtr<Texture>& msaaCoverage);
 
 		/** Returns the material variation matching the provided parameters. */
-		static TiledDeferredLightingMat* GetVariation(UINT32 msaaCount);
+		static TiledDeferredLightingMat* GetVariation(u32 msaaCount);
 
 	private:
-		UINT32 mSampleCount;
+		u32 mSampleCount;
 		GBufferParams mGBufferParams;
 
 		GpuParamBuffer mLightBufferParam;
@@ -66,7 +66,7 @@ namespace bs { namespace ct
 
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 
-		static const UINT32 TILE_SIZE;
+		static const u32 TILE_SIZE;
 	};
 
 	/**
@@ -134,13 +134,13 @@ namespace bs { namespace ct
 		 * @return							Material variation matching the provided values.
 		 */
 		static ClearLoadStoreMat* GetVariation(ClearLoadStoreType objType, ClearLoadStoreDataType dataType,
-				UINT32 numComponents);
+				u32 numComponents);
 	private:
 		/** TILE_SIZE * TILE_SIZE is the number of pixels to process per thread. */
-		static constexpr UINT32 TILE_SIZE = 4;
+		static constexpr u32 TILE_SIZE = 4;
 
 		/** Number of threads to launch per work group. */
-		static constexpr UINT32 NUM_THREADS = 128;
+		static constexpr u32 NUM_THREADS = 128;
 
 		GpuParamLoadStoreTexture mOutputTextureParam;
 		GpuParamBuffer mOutputBufferParam;
@@ -159,7 +159,7 @@ namespace bs { namespace ct
 		RMAT_DEF_CUSTOMIZED("TiledDeferredImageBasedLighting.bsl");
 
 		/** Helper method used for initializing variations of this material. */
-		template<UINT32 msaa>
+		template<u32 msaa>
 		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
@@ -190,10 +190,10 @@ namespace bs { namespace ct
 			const Inputs& inputs);
 
 		/** Returns the material variation matching the provided parameters. */
-		static TiledDeferredImageBasedLightingMat* GetVariation(UINT32 msaaCount);
+		static TiledDeferredImageBasedLightingMat* GetVariation(u32 msaaCount);
 
 	private:
-		UINT32 mSampleCount;
+		u32 mSampleCount;
 
 		GpuParamTexture mGBufferA;
 		GpuParamTexture mGBufferB;
@@ -210,7 +210,7 @@ namespace bs { namespace ct
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 		ReflProbeParamBuffer mReflProbeParamBuffer;
 
-		static const UINT32 TILE_SIZE;
+		static const u32 TILE_SIZE;
 	};
 
 	/** @} */

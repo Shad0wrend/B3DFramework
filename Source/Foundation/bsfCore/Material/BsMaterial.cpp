@@ -44,9 +44,9 @@ namespace bs
 	}
 
 	template<bool Core>
-	SPtr<typename TMaterial<Core>::GpuParamsSetType> TMaterial<Core>::CreateParamsSet(UINT32 techniqueIdx)
+	SPtr<typename TMaterial<Core>::GpuParamsSetType> TMaterial<Core>::CreateParamsSet(u32 techniqueIdx)
 	{
-		if (techniqueIdx >= (UINT32)mTechniques.size())
+		if (techniqueIdx >= (u32)mTechniques.size())
 			return nullptr;
 
 		SPtr<TechniqueType> technique = mTechniques[techniqueIdx];
@@ -60,16 +60,16 @@ namespace bs
 	}
 	
 	template<bool Core>
-	UINT32 TMaterial<Core>::FindTechnique(const FIND_TECHNIQUE_DESC& desc) const
+	u32 TMaterial<Core>::FindTechnique(const FIND_TECHNIQUE_DESC& desc) const
 	{
-		UINT32 bestTechniqueIdx = (UINT32)-1;
-		UINT32 bestTechniqueScore = std::numeric_limits<UINT32>::max();
+		u32 bestTechniqueIdx = (u32)-1;
+		u32 bestTechniqueScore = std::numeric_limits<u32>::max();
 
-		for(UINT32 i = 0; i < (UINT32)mTechniques.size(); i++)
+		for(u32 i = 0; i < (u32)mTechniques.size(); i++)
 		{
 			// Make sure tags match
 			bool foundMatch = true;
-			for(UINT32 j = 0; j < desc.NumTags; j++)
+			for(u32 j = 0; j < desc.NumTags; j++)
 			{
 				if (!mTechniques[i]->HasTag(desc.Tags[j]))
 				{
@@ -85,9 +85,9 @@ namespace bs
 			const auto& curVarParams = curVariation.GetParams();
 			const auto& internalVarParams = mVariation.GetParams();
 
-			UINT32 numMatchedSearchParams = 0;
-			UINT32 numMatchedInternalParams = 0;
-			UINT32 currentScore = 0;
+			u32 numMatchedSearchParams = 0;
+			u32 numMatchedInternalParams = 0;
+			u32 currentScore = 0;
 			for(auto& param : curVarParams)
 			{
 				enum SearchResult
@@ -186,11 +186,11 @@ namespace bs
 			if(desc.Variation)
 			{
 				const auto& searchVarParams = desc.Variation->GetParams();
-				if(numMatchedSearchParams != (UINT32)searchVarParams.size())
+				if(numMatchedSearchParams != (u32)searchVarParams.size())
 					continue;
 			}
 
-			if(numMatchedInternalParams != (UINT32)internalVarParams.size())
+			if(numMatchedInternalParams != (u32)internalVarParams.size())
 				continue;
 
 			if (currentScore < bestTechniqueScore)
@@ -204,12 +204,12 @@ namespace bs
 	}
 
 	template<bool Core>
-	UINT32 TMaterial<Core>::GetDefaultTechnique() const
+	u32 TMaterial<Core>::GetDefaultTechnique() const
 	{
-		UINT32 bestTechniqueIdx = 0;
-		UINT32 bestTechniqueScore = std::numeric_limits<UINT32>::max();
+		u32 bestTechniqueIdx = 0;
+		u32 bestTechniqueScore = std::numeric_limits<u32>::max();
 
-		for (UINT32 i = 0; i < (UINT32)mTechniques.size(); i++)
+		for (u32 i = 0; i < (u32)mTechniques.size(); i++)
 		{
 			if (mTechniques[i]->HasTags())
 				continue;
@@ -219,8 +219,8 @@ namespace bs
 			const auto& internalVarParams = mVariation.GetParams();
 
 			bool foundMatch = true;
-			UINT32 numMatchedParams = 0;
-			UINT32 currentScore = 0;
+			u32 numMatchedParams = 0;
+			u32 currentScore = 0;
 			for(auto& param : curVarParams)
 			{
 				enum SearchResult
@@ -257,7 +257,7 @@ namespace bs
 			if (!foundMatch)
 				continue;
 
-			if(numMatchedParams != (UINT32)internalVarParams.size())
+			if(numMatchedParams != (u32)internalVarParams.size())
 				continue;
 
 			if (currentScore < bestTechniqueScore)
@@ -271,24 +271,24 @@ namespace bs
 	}
 
 	template<bool Core>
-	UINT32 TMaterial<Core>::GetNumPasses(UINT32 techniqueIdx) const
+	u32 TMaterial<Core>::GetNumPasses(u32 techniqueIdx) const
 	{
 		if (mShader == nullptr)
 			return 0;
 
-		if (techniqueIdx >= (UINT32)mTechniques.size())
+		if (techniqueIdx >= (u32)mTechniques.size())
 			return 0;
 
 		return mTechniques[techniqueIdx]->GetNumPasses();
 	}
 
 	template<bool Core>
-	SPtr<typename TMaterial<Core>::PassType> TMaterial<Core>::GetPass(UINT32 passIdx, UINT32 techniqueIdx) const
+	SPtr<typename TMaterial<Core>::PassType> TMaterial<Core>::GetPass(u32 passIdx, u32 techniqueIdx) const
 	{
 		if (mShader == nullptr)
 			return nullptr;
 
-		if (techniqueIdx >= (UINT32)mTechniques.size())
+		if (techniqueIdx >= (u32)mTechniques.size())
 			return nullptr;
 
 		if (passIdx < 0 || passIdx >= mTechniques[techniqueIdx]->GetNumPasses())
@@ -362,7 +362,7 @@ namespace bs
 	}
 
 	template <bool Core>
-	bool TMaterial<Core>::IsAnimated(const String& name, UINT32 arrayIdx)
+	bool TMaterial<Core>::IsAnimated(const String& name, u32 arrayIdx)
 	{
 		return mParams->IsAnimated(name, arrayIdx);
 	}
@@ -390,13 +390,13 @@ namespace bs
 
 	template <bool Core>
 	template <typename T>
-	void TMaterial<Core>::SetParamValue(const String& name, UINT8* buffer, UINT32 numElements)
+	void TMaterial<Core>::SetParamValue(const String& name, u8* buffer, u32 numElements)
 	{
 		TMaterialDataParam<T, Core> param;
 		GetParam(name, param);
 
 		T* ptr = (T*)buffer;
-		for (UINT32 i = 0; i < numElements; i++)
+		for (u32 i = 0; i < numElements; i++)
 			param.Set(ptr[i], i);
 	}
 
@@ -406,10 +406,10 @@ namespace bs
 		const Map<String, SHADER_DATA_PARAM_DESC>& dataParams = mShader->GetDataParams();
 		for (auto& paramData : dataParams)
 		{
-			if (paramData.second.DefaultValueIdx == (UINT32)-1)
+			if (paramData.second.DefaultValueIdx == (u32)-1)
 				continue;
 
-			UINT8* buffer = (UINT8*)mShader->GetDefaultValue(paramData.second.DefaultValueIdx);
+			u8* buffer = (u8*)mShader->GetDefaultValue(paramData.second.DefaultValueIdx);
 			if (buffer == nullptr)
 				continue;
 
@@ -476,9 +476,9 @@ namespace bs
 			{
 				TMaterialParamStruct<Core> param = GetParamStruct(paramData.first);
 
-				UINT32 elementSizeBytes = paramData.second.ElementSize * sizeof(UINT32);
-				UINT8* ptr = buffer;
-				for (UINT32 i = 0; i < paramData.second.ArraySize; i++)
+				u32 elementSizeBytes = paramData.second.ElementSize * sizeof(u32);
+				u8* ptr = buffer;
+				for (u32 i = 0; i < paramData.second.ArraySize; i++)
 				{
 					param.Set(ptr, elementSizeBytes, i);
 					ptr += elementSizeBytes;
@@ -493,7 +493,7 @@ namespace bs
 		const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams = mShader->GetTextureParams();
 		for (auto& param : textureParams)
 		{
-			if (param.second.DefaultValueIdx == (UINT32)-1)
+			if (param.second.DefaultValueIdx == (u32)-1)
 				continue;
 
 			TextureType defaultTex = mShader->GetDefaultTexture(param.second.DefaultValueIdx);
@@ -503,7 +503,7 @@ namespace bs
 		const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams = mShader->GetSamplerParams();
 		for (auto& param : samplerParams)
 		{
-			if (param.second.DefaultValueIdx == (UINT32)-1)
+			if (param.second.DefaultValueIdx == (u32)-1)
 				continue;
 
 			SamplerStateType defaultSampler = mShader->GetDefaultSampler(param.second.DefaultValueIdx);
@@ -620,7 +620,7 @@ namespace bs
 
 	void Material::MarkCoreDirtyInternal(MaterialDirtyFlags flags)
 	{
-		MarkCoreDirty((UINT32)flags);
+		MarkCoreDirty((u32)flags);
 	}
 
 	void Material::MarkDependenciesDirtyInternal()
@@ -648,7 +648,7 @@ namespace bs
 			shader = mShader->GetCore();
 
 			Vector<SPtr<ct::Technique>> techniques(mTechniques.size());
-			for (UINT32 i = 0; i < (UINT32)mTechniques.size(); i++)
+			for (u32 i = 0; i < (u32)mTechniques.size(); i++)
 				techniques[i] = mTechniques[i]->GetCore();
 			
 			SPtr<ct::MaterialParams> materialParams = bs_shared_ptr_new<ct::MaterialParams>(shader, mParams);
@@ -667,20 +667,20 @@ namespace bs
 
 	CoreSyncData Material::SyncToCore(FrameAlloc* allocator)
 	{
-		const UINT32 dirtyParam = (UINT32)MaterialDirtyFlags::Param;
+		const u32 dirtyParam = (u32)MaterialDirtyFlags::Param;
 		const bool syncAllParams = (GetCoreDirtyFlags() & ~dirtyParam) != 0;
 
-		UINT32 paramsSize = 0;
+		u32 paramsSize = 0;
 		if (mParams != nullptr)
 			mParams->GetSyncData(nullptr, paramsSize, syncAllParams);
 
-		UINT32 numTechniques = (UINT32)mTechniques.size();
-		UINT32 size = sizeof(bool) + sizeof(UINT32) * 2 + sizeof(SPtr<ct::Shader>) +
+		u32 numTechniques = (u32)mTechniques.size();
+		u32 size = sizeof(bool) + sizeof(u32) * 2 + sizeof(SPtr<ct::Shader>) +
 			sizeof(SPtr<ct::Technique>) * numTechniques + paramsSize;
 
 		size += csync_size(mVariation);
 
-		UINT8* buffer = allocator->Alloc(size);
+		u8* buffer = allocator->Alloc(size);
 		Bitstream stream(buffer, size);
 
 		rtti_write(syncAllParams, stream);
@@ -694,7 +694,7 @@ namespace bs
 		stream.SkipBytes(sizeof(SPtr<ct::Shader>));
 		rtti_write(numTechniques, stream);
 
-		for(UINT32 i = 0; i < numTechniques; i++)
+		for(u32 i = 0; i < numTechniques; i++)
 		{
 			SPtr<ct::Technique>* technique = new (stream.Cursor()) SPtr<ct::Technique>();
 			*technique = mTechniques[i]->GetCore();
@@ -795,20 +795,20 @@ namespace bs
 
 		serializer.Encode(this, outputStream);
 		outputStream->Seek(0);
-		SPtr<Material> cloneObj = std::static_pointer_cast<Material>(serializer.Decode(outputStream, (UINT32)outputStream->Size()));
+		SPtr<Material> cloneObj = std::static_pointer_cast<Material>(serializer.Decode(outputStream, (u32)outputStream->Size()));
 
 		return static_resource_cast<Material>(gResources().CreateResourceHandleInternal(cloneObj));
 	}
 
 	template<class T>
 	void copyParam(const SPtr<MaterialParams>& from, Material* to, const String& name,
-		const MaterialParams::ParamData& paramRef, UINT32 arraySize)
+		const MaterialParams::ParamData& paramRef, u32 arraySize)
 	{
 		TMaterialDataParam<T, false> param;
 		to->GetParam(name, param);
 
 		T paramData;
-		for (UINT32 i = 0; i < arraySize; i++)
+		for (u32 i = 0; i < arraySize; i++)
 		{
 			from->GetDataParam(paramRef, i, paramData);
 			param.Set(paramData, i);
@@ -821,7 +821,7 @@ namespace bs
 			return;
 
 		std::function<
-			void(const SPtr<MaterialParams>&, Material*, const String&, const MaterialParams::ParamData&, UINT32)>
+			void(const SPtr<MaterialParams>&, Material*, const String&, const MaterialParams::ParamData&, u32)>
 			copyParamLookup[GPDT_COUNT];
 
 		copyParamLookup[GPDT_FLOAT1] = &copyParam<float>;
@@ -852,7 +852,7 @@ namespace bs
 		auto& dataParams = mShader->GetDataParams();
 		for (auto& param : dataParams)
 		{
-			UINT32 arraySize = param.second.ArraySize > 1 ? param.second.ArraySize : 1;
+			u32 arraySize = param.second.ArraySize > 1 ? param.second.ArraySize : 1;
 
 			const MaterialParams::ParamData* paramData = nullptr;
 			auto result = params->GetParamData(param.first, MaterialParams::ParamType::Data, param.second.Type, 0, &paramData);
@@ -860,7 +860,7 @@ namespace bs
 			if (result != MaterialParams::GetParamResult::Success)
 				continue;
 
-			UINT32 elemsToCopy = std::min(arraySize, paramData->ArraySize);
+			u32 elemsToCopy = std::min(arraySize, paramData->ArraySize);
 
 			auto& copyFunction = copyParamLookup[param.second.Type];
 			if (copyFunction != nullptr)
@@ -871,12 +871,12 @@ namespace bs
 				{
 					TMaterialParamStruct<false> curParam = GetParamStruct(param.first);
 
-					UINT32 structSize = params->GetStructSize(*paramData);
+					u32 structSize = params->GetStructSize(*paramData);
 					if (param.second.ElementSize != structSize)
 						continue;
 
-					UINT8* structData = (UINT8*)bs_stack_alloc(structSize);
-					for (UINT32 i = 0; i < elemsToCopy; i++)
+					u8* structData = (u8*)bs_stack_alloc(structSize);
+					for (u32 i = 0; i < elemsToCopy; i++)
 					{
 						params->GetStructData(*paramData, structData, structSize, i);
 						curParam.Set(structData, structSize, i);
@@ -886,7 +886,7 @@ namespace bs
 				}
 			}
 
-			for(UINT32 i = 0; i < arraySize; i++)
+			for(u32 i = 0; i < arraySize; i++)
 			{
 				const bool isAnimated = params->IsAnimated(*paramData, i);
 				if(!isAnimated)
@@ -1059,7 +1059,7 @@ namespace bs
 		bool syncAllParams;
 		rtti_read(syncAllParams, stream);
 
-		UINT64 initialParamVersion = mParams != nullptr ? mParams->GetParamVersion() : 1;
+		u64 initialParamVersion = mParams != nullptr ? mParams->GetParamVersion() : 1;
 		if(syncAllParams)
 			mParams = nullptr;
 
@@ -1069,11 +1069,11 @@ namespace bs
 		shader->~SPtr<Shader>();
 		stream.SkipBytes(sizeof(SPtr<Shader>));
 
-		UINT32 numTechniques;
+		u32 numTechniques;
 		rtti_read(numTechniques, stream);
 
 		mTechniques.resize(numTechniques);
-		for(UINT32 i = 0; i < numTechniques; i++)
+		for(u32 i = 0; i < numTechniques; i++)
 		{
 			SPtr<Technique>* technique = (SPtr<Technique>*)stream.Cursor();
 			mTechniques[i] = *technique;
@@ -1081,7 +1081,7 @@ namespace bs
 			stream.SkipBytes(sizeof(SPtr<Technique>));
 		}
 
-		UINT32 paramsSize = 0;
+		u32 paramsSize = 0;
 		rtti_read(paramsSize, stream);
 		if (mParams == nullptr && mShader != nullptr)
 			mParams = bs_shared_ptr_new<MaterialParams>(mShader, initialParamVersion);

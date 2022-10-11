@@ -7,12 +7,12 @@
 
 namespace bs
 {
-	GpuParamBlockBuffer::GpuParamBlockBuffer(UINT32 size, GpuBufferUsage usage)
+	GpuParamBlockBuffer::GpuParamBlockBuffer(u32 size, GpuBufferUsage usage)
 		:mUsage(usage), mSize(size), mCachedData(nullptr)
 	{
 		if (mSize > 0)
 		{
-			mCachedData = (UINT8*)bs_alloc(mSize);
+			mCachedData = (u8*)bs_alloc(mSize);
 			memset(mCachedData, 0, mSize);
 		}
 	}
@@ -23,7 +23,7 @@ namespace bs
 			bs_free(mCachedData);
 	}
 
-	void GpuParamBlockBuffer::Write(UINT32 offset, const void* data, UINT32 size)
+	void GpuParamBlockBuffer::Write(u32 offset, const void* data, u32 size)
 	{
 #if BS_DEBUG_MODE
 		if ((offset + size) > mSize)
@@ -38,7 +38,7 @@ namespace bs
 		MarkCoreDirty();
 	}
 
-	void GpuParamBlockBuffer::Read(UINT32 offset, void* data, UINT32 size)
+	void GpuParamBlockBuffer::Read(u32 offset, void* data, u32 size)
 	{
 #if BS_DEBUG_MODE
 		if ((offset + size) > mSize)
@@ -52,7 +52,7 @@ namespace bs
 		memcpy(data, mCachedData + offset, size);
 	}
 
-	void GpuParamBlockBuffer::ZeroOut(UINT32 offset, UINT32 size)
+	void GpuParamBlockBuffer::ZeroOut(u32 offset, u32 size)
 	{
 #if BS_DEBUG_MODE
 		if ((offset + size) > mSize)
@@ -79,25 +79,25 @@ namespace bs
 
 	CoreSyncData GpuParamBlockBuffer::SyncToCore(FrameAlloc* allocator)
 	{
-		UINT8* buffer = allocator->Alloc(mSize);
+		u8* buffer = allocator->Alloc(mSize);
 		Read(0, buffer, mSize);
 
 		return CoreSyncData(buffer, mSize);
 	}
 
-	SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(UINT32 size, GpuBufferUsage usage)
+	SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(u32 size, GpuBufferUsage usage)
 	{
 		return HardwareBufferManager::Instance().CreateGpuParamBlockBuffer(size, usage);
 	}
 
 	namespace ct
 	{
-	GpuParamBlockBuffer::GpuParamBlockBuffer(UINT32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+	GpuParamBlockBuffer::GpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 		:mUsage(usage), mSize(size), mCachedData(nullptr), mGPUBufferDirty(false)
 	{
 		if (mSize > 0)
 		{
-			mCachedData = (UINT8*)bs_alloc(mSize);
+			mCachedData = (u8*)bs_alloc(mSize);
 			memset(mCachedData, 0, mSize);
 		}
 	}
@@ -117,7 +117,7 @@ namespace bs
 		CoreObject::Initialize();
 	}
 
-	void GpuParamBlockBuffer::Write(UINT32 offset, const void* data, UINT32 size)
+	void GpuParamBlockBuffer::Write(u32 offset, const void* data, u32 size)
 	{
 #if BS_DEBUG_MODE
 		if ((offset + size) > mSize)
@@ -132,7 +132,7 @@ namespace bs
 		mGPUBufferDirty = true;
 	}
 
-	void GpuParamBlockBuffer::Read(UINT32 offset, void* data, UINT32 size)
+	void GpuParamBlockBuffer::Read(u32 offset, void* data, u32 size)
 	{
 #if BS_DEBUG_MODE
 		if ((offset + size) > mSize)
@@ -146,7 +146,7 @@ namespace bs
 		memcpy(data, mCachedData + offset, size);
 	}
 
-	void GpuParamBlockBuffer::ZeroOut(UINT32 offset, UINT32 size)
+	void GpuParamBlockBuffer::ZeroOut(u32 offset, u32 size)
 	{
 #if BS_DEBUG_MODE
 		if ((offset + size) > mSize)
@@ -161,7 +161,7 @@ namespace bs
 		mGPUBufferDirty = true;
 	}
 
-	void GpuParamBlockBuffer::FlushToGpu(UINT32 queueIdx)
+	void GpuParamBlockBuffer::FlushToGpu(u32 queueIdx)
 	{
 		if (mGPUBufferDirty)
 		{
@@ -170,7 +170,7 @@ namespace bs
 		}
 	}
 
-	void GpuParamBlockBuffer::WriteToGpu(const UINT8* data, UINT32 queueIdx)
+	void GpuParamBlockBuffer::WriteToGpu(const u8* data, u32 queueIdx)
 	{
 		mBuffer->WriteData(0, mSize, data, BWT_DISCARD, queueIdx);
 
@@ -184,7 +184,7 @@ namespace bs
 		Write(0, data.GetBuffer(), data.GetBufferSize());
 	}
 
-	SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(UINT32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+	SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 	{
 		return HardwareBufferManager::Instance().CreateGpuParamBlockBuffer(size, usage, deviceMask);
 	}

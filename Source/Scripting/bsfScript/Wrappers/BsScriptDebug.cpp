@@ -18,7 +18,7 @@ namespace bs
 	{
 		MonoString* Message;
 		LogVerbosity Verbosity;
-		UINT32 Category;
+		u32 Category;
 	};
 
 	ScriptDebug::ScriptDebug(MonoObject* instance)
@@ -51,30 +51,30 @@ namespace bs
 	{
 		MonoString* message = MonoUtil::StringToMono(entry.GetMessage());
 
-		MonoUtil::InvokeThunk(onAddedThunk, message, (INT32)entry.GetVerbosity(), entry.GetCategory());
+		MonoUtil::InvokeThunk(onAddedThunk, message, (i32)entry.GetVerbosity(), entry.GetCategory());
 	}
 
-	void ScriptDebug::InternalLog(MonoString* message, UINT32 category)
+	void ScriptDebug::InternalLog(MonoString* message, u32 category)
 	{
 		gDebug().Log(MonoUtil::MonoToString(message), LogVerbosity::Info, category);
 	}
 
-	void ScriptDebug::InternalLogWarning(MonoString* message, UINT32 category)
+	void ScriptDebug::InternalLogWarning(MonoString* message, u32 category)
 	{
 		gDebug().Log(MonoUtil::MonoToString(message), LogVerbosity::Warning, category);
 	}
 
-	void ScriptDebug::InternalLogError(MonoString* message, UINT32 category)
+	void ScriptDebug::InternalLogError(MonoString* message, u32 category)
 	{
 		gDebug().Log(MonoUtil::MonoToString(message), LogVerbosity::Error, category);
 	}
 
-	void ScriptDebug::InternalLogMessage(MonoString* message, LogVerbosity type, UINT32 category)
+	void ScriptDebug::InternalLogMessage(MonoString* message, LogVerbosity type, u32 category)
 	{
 		gDebug().Log(MonoUtil::MonoToString(message), type, category);
 	}
 
-	void ScriptDebug::InternalClear(LogVerbosity verbosity, UINT32 category)
+	void ScriptDebug::InternalClear(LogVerbosity verbosity, u32 category)
 	{
 		gDebug().GetLog().Clear(verbosity, category);
 	}
@@ -83,9 +83,9 @@ namespace bs
 	{
 		Vector<LogEntry> entries = gDebug().GetLog().GetEntries();
 
-		UINT32 numEntries = (UINT32)entries.size();
+		u32 numEntries = (u32)entries.size();
 		ScriptArray output = ScriptArray::Create<ScriptLogEntry>(numEntries);
-		for (UINT32 i = 0; i < numEntries; i++)
+		for (u32 i = 0; i < numEntries; i++)
 		{
 			MonoString* message = MonoUtil::StringToMono(entries[i].GetMessage());
 

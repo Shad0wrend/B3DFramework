@@ -9,7 +9,7 @@
 
 namespace bs { namespace ct
 {
-	VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, VkSurfaceKHR surface, UINT32 width, UINT32 height,
+	VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, VkSurfaceKHR surface, u32 width, u32 height,
 		bool vsync, VkFormat colorFormat, VkColorSpaceKHR colorSpace, bool createDepth, VkFormat depthFormat,
 		VulkanSwapChain* oldSwapChain)
 		: VulkanResource(owner, false)
@@ -51,7 +51,7 @@ namespace bs { namespace ct
 		VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
 		if(!vsync)
 		{
-			for (UINT32 i = 0; i < numPresentModes; i++)
+			for (u32 i = 0; i < numPresentModes; i++)
 			{
 				if (presentModes[i] == VK_PRESENT_MODE_IMMEDIATE_KHR)
 				{
@@ -68,7 +68,7 @@ namespace bs { namespace ct
 			// Mailbox comes with lower input latency than FIFO, but can waste GPU power by rendering frames that are never
 			// displayed, especially if the app runs much faster than the refresh rate. This is a concern for mobiles.
 #if BS_PLATFORM != BS_PLATFORM_ANDROID && BS_PLATFORM != BS_PLATFORM_IOS
-			for (UINT32 i = 0; i < numPresentModes; i++)
+			for (u32 i = 0; i < numPresentModes; i++)
 			{
 
 				if (presentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR)
@@ -131,7 +131,7 @@ namespace bs { namespace ct
 		imageDesc.Allocation = VK_NULL_HANDLE;
 
 		mSurfaces.resize(numImages);
-		for (UINT32 i = 0; i < numImages; i++)
+		for (u32 i = 0; i < numImages; i++)
 		{
 			imageDesc.Image = images[i];
 
@@ -193,8 +193,8 @@ namespace bs { namespace ct
 		VulkanRenderPass* renderPass = VulkanRenderPasses::Instance().Get(mDevice, rpDesc);
 
 		// Create a framebuffer for each swap chain buffer
-		UINT32 numFramebuffers = (UINT32)mSurfaces.size();
-		for (UINT32 i = 0; i < numFramebuffers; i++)
+		u32 numFramebuffers = (u32)mSurfaces.size();
+		for (u32 i = 0; i < numFramebuffers; i++)
 		{
 			VULKAN_FRAMEBUFFER_DESC& desc = mSurfaces[i].FramebufferDesc;
 			desc.Width = mWidth;
@@ -268,7 +268,7 @@ namespace bs { namespace ct
 		return VK_SUCCESS;
 	}
 
-	bool VulkanSwapChain::PrepareForPresent(UINT32& backBufferIdx)
+	bool VulkanSwapChain::PrepareForPresent(u32& backBufferIdx)
 	{
 		if (!mSurfaces[mCurrentBackBufferIdx].Acquired)
 			return false;

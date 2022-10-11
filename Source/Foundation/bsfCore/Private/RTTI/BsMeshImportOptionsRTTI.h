@@ -40,7 +40,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_MeshImportOptions;
 		}
@@ -65,7 +65,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_ImportedAnimationEvents;
 		}
@@ -92,7 +92,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_AnimationSplitInfo;
 		}

@@ -24,7 +24,7 @@ namespace bs { namespace ct
 	class VulkanDevice
 	{
 	public:
-		VulkanDevice(VkPhysicalDevice device, UINT32 deviceIdx);
+		VulkanDevice(VkPhysicalDevice device, u32 deviceIdx);
 		~VulkanDevice();
 
 		/** Returns an object describing the physical properties of the device. */
@@ -37,7 +37,7 @@ namespace bs { namespace ct
 		bool IsPrimary() const { return mIsPrimary; }
 
 		/** Returns the unique index of the device. */
-		UINT32 GetIndex() const { return mDeviceIdx; }
+		u32 GetIndex() const { return mDeviceIdx; }
 
 		/** Blocks the calling thread until all operations on the device finish. */
 		void WaitIdle();
@@ -58,22 +58,22 @@ namespace bs { namespace ct
 		const VkPhysicalDeviceMemoryProperties& GetMemoryProperties() const { return mMemoryProperties; }
 
 		/** Returns the number of queue supported on the device, per type. */
-		UINT32 GetNumQueues(GpuQueueType type) const { return (UINT32)mQueueInfos[(int)type].Queues.size(); }
+		u32 GetNumQueues(GpuQueueType type) const { return (u32)mQueueInfos[(int)type].Queues.size(); }
 
 		/** Returns queue of the specified type at the specified index. Index must be in range [0, getNumQueues()). */
-		VulkanQueue* GetQueue(GpuQueueType type, UINT32 idx) const { return mQueueInfos[(int)type].Queues[idx]; }
+		VulkanQueue* GetQueue(GpuQueueType type, u32 idx) const { return mQueueInfos[(int)type].Queues[idx]; }
 
 		/**
 		 * Returns index of the queue family for the specified queue type. Returns -1 if no queues for the specified type
 		 * exist. There will always be a queue family for the graphics type.
 		 */
-		UINT32 GetQueueFamily(GpuQueueType type) const { return mQueueInfos[(int)type].FamilyIdx; }
+		u32 GetQueueFamily(GpuQueueType type) const { return mQueueInfos[(int)type].FamilyIdx; }
 
 		/**
 		 * Fills out a mask that has bits set for every queue index that maps to the same physical queue as the provided
 		 * index. This is useful as different queue indices will sometimes map to the same physical queue.
 		 */
-		UINT32 GetQueueMask(GpuQueueType type, UINT32 queueIdx) const;
+		u32 GetQueueMask(GpuQueueType type, u32 queueIdx) const;
 
 		/** Returns the best matching surface format according to the provided parameters. */
 		SurfaceFormat GetSurfaceFormat(const VkSurfaceKHR& surface, bool gamma) const;
@@ -118,12 +118,12 @@ namespace bs { namespace ct
 		void SetIsPrimary() { mIsPrimary = true; }
 
 		/** Changes the index of the device in the global device list. */
-		void SetIndex(UINT32 index) { mDeviceIdx = index; }
+		void SetIndex(u32 index) { mDeviceIdx = index; }
 
 		VkPhysicalDevice mPhysicalDevice;
 		VkDevice mLogicalDevice = nullptr;
 		bool mIsPrimary = false;
-		UINT32 mDeviceIdx;
+		u32 mDeviceIdx;
 
 		VulkanCmdBufferPool* mCommandBufferPool;
 		VulkanQueryPool* mQueryPool;
@@ -138,7 +138,7 @@ namespace bs { namespace ct
 		/** Contains data about a set of queues of a specific type. */
 		struct QueueInfo
 		{
-			UINT32 FamilyIdx;
+			u32 FamilyIdx;
 			Vector<VulkanQueue*> Queues;
 		};
 

@@ -16,7 +16,7 @@ namespace bs
 		metaData.ScriptClass->AddInternalCall("Internal_InitVirtualButton", (void*)&ScriptVirtualButton::InternalInitVirtualButton);
 	}
 
-	UINT32 ScriptVirtualButton::InternalInitVirtualButton(MonoString* name)
+	u32 ScriptVirtualButton::InternalInitVirtualButton(MonoString* name)
 	{
 		String nameStr = MonoUtil::MonoToString(name);
 

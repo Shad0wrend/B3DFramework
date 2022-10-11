@@ -24,14 +24,14 @@ namespace bs
 		}
 	}
 
-	UINT8* MemStack::Alloc(UINT32 numBytes)
+	u8* MemStack::Alloc(u32 numBytes)
 	{
 		assert(ThreadMemStack != nullptr && "Stack allocation failed. Did you call beginThread?");
 
 		return ThreadMemStack->Alloc(numBytes);
 	}
 
-	void MemStack::DeallocLast(UINT8* data)
+	void MemStack::DeallocLast(u8* data)
 	{
 		assert(ThreadMemStack != nullptr && "Stack deallocation failed. Did you call beginThread?");
 

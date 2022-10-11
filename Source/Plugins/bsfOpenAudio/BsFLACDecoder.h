@@ -16,11 +16,11 @@ namespace bs
 	struct FLACDecoderData
 	{
 		SPtr<DataStream> Stream;
-		UINT32 StreamOffset = 0;
+		u32 StreamOffset = 0;
 		AudioDataInfo Info;
-		UINT8* Output = nullptr;
-		Vector<UINT8> Overflow;
-		UINT32 SamplesToRead = 0;
+		u8* Output = nullptr;
+		Vector<u8> Overflow;
+		u32 SamplesToRead = 0;
 		bool Error = false;
 	};
 
@@ -32,16 +32,16 @@ namespace bs
 		~FLACDecoder();
 
 		/** @copydoc AudioDecoder::open */
-		bool Open(const SPtr<DataStream>& stream, AudioDataInfo& info, UINT32 offset = 0) ;
+		bool Open(const SPtr<DataStream>& stream, AudioDataInfo& info, u32 offset = 0) ;
 
 		/** @copydoc AudioDecoder::seek */
-		void Seek(UINT32 offset) ;
+		void Seek(u32 offset) ;
 
 		/** @copydoc AudioDecoder::read */
-		UINT32 Read(UINT8* samples, UINT32 numSamples) ;
+		u32 Read(u8* samples, u32 numSamples) ;
 
 		/** @copydoc AudioDecoder::isValid */
-		bool IsValid(const SPtr<DataStream>& stream, UINT32 offset = 0) ;
+		bool IsValid(const SPtr<DataStream>& stream, u32 offset = 0) ;
 	private:
 		/** Cleans up the FLAC decoder. */
 		void Close();

@@ -36,7 +36,7 @@ namespace bs
 		 * @return				String table with the specified identifier.
 		 */
 		BS_SCRIPT_EXPORT()
-		HStringTable GetTable(UINT32 id);
+		HStringTable GetTable(u32 id);
 
 		/**
 		 * Removes the string table with the specified id.
@@ -44,7 +44,7 @@ namespace bs
 		 * @param[in]	id		Identifier of the string table.
 		 */
 		BS_SCRIPT_EXPORT()
-		void RemoveTable(UINT32 id);
+		void RemoveTable(u32 id);
 
 		/**
 		 * Registers a new string table or replaces an old one at the specified id.
@@ -53,11 +53,11 @@ namespace bs
 		 * @param[in]	table	New string table to assign to the specified identifier.
 		 */
 		BS_SCRIPT_EXPORT()
-		void SetTable(UINT32 id, const HStringTable& table);
+		void SetTable(u32 id, const HStringTable& table);
 
 	private:
 		Language mActiveLanguage = StringTable::DEFAULT_LANGUAGE;
-		UnorderedMap<UINT32, HStringTable> mTables;
+		UnorderedMap<u32, HStringTable> mTables;
 	};
 
 	/** Provides easier access to StringTableManager. */

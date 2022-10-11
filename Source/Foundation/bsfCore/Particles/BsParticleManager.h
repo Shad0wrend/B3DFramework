@@ -25,10 +25,10 @@ namespace bs
 	struct BS_CORE_EXPORT ParticleRenderData
 	{
 		/** Contains mapping from unsorted to sorted particle indices. */
-		Vector<UINT32> Indices;
+		Vector<u32> Indices;
 
 		/** Total number of particles in the particle system. */
-		UINT32 NumParticles;
+		u32 NumParticles;
 
 		/** Bounds of the particle system, in the system's simulation space. */
 		AABox Bounds;
@@ -114,8 +114,8 @@ namespace bs
 	/** Contains simulation data resulting from all particle systems, for a single frame. */
 	struct ParticlePerFrameData
 	{
-		UnorderedMap<UINT32, ParticleRenderData*> CpuData;
-		UnorderedMap<UINT32, ParticleGPUSimulationData*> GpuData;
+		UnorderedMap<u32, ParticleRenderData*> CpuData;
+		UnorderedMap<u32, ParticleGPUSimulationData*> GpuData;
 	};
 
 	/** Keeps track of all active ParticleSystem%s and performs per-frame updates. */
@@ -136,7 +136,7 @@ namespace bs
 		friend class ParticleSystem;
 
 		/** Must be called by a ParticleSystem upon construction. */
-		UINT32 RegisterParticleSystem(ParticleSystem* system);
+		u32 RegisterParticleSystem(ParticleSystem* system);
 
 		/** Must be called by a ParticleSystem before destruction. */
 		void UnregisterParticleSystem(ParticleSystem* system);
@@ -146,11 +146,11 @@ namespace bs
 		 * @p indices array which is expected to be pre-allocated with enough space to hold an index for each particle
 		 * in a set. @p viewPoint is used as a reference point when using the Distance sort mode.
 		 */
-		void SortParticles(const ParticleSet& set, ParticleSortMode sortMode, const Vector3& viewPoint, UINT32* indices);
+		void SortParticles(const ParticleSet& set, ParticleSortMode sortMode, const Vector3& viewPoint, u32* indices);
 
 		Members* m;
 
-		UINT32 mNextId = 1;
+		u32 mNextId = 1;
 		UnorderedSet<ParticleSystem*> mSystems;
 
 		bool mPaused = false;
@@ -158,13 +158,13 @@ namespace bs
 		// Worker threads
 		ParticlePerFrameData mSimulationData[CoreThread::NUM_SYNC_BUFFERS];
 
-		UINT32 mReadBufferIdx = 1;
-		UINT32 mWriteBufferIdx = 0;
+		u32 mReadBufferIdx = 1;
+		u32 mWriteBufferIdx = 0;
 		
 		Signal mWorkerDoneSignal;
 		Mutex mMutex;
 
-		UINT32 mNumActiveWorkers = 0;
+		u32 mNumActiveWorkers = 0;
 		bool mSwapBuffers = false;
 	};
 

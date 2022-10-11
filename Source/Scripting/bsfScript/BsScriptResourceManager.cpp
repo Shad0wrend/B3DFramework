@@ -51,7 +51,7 @@ namespace bs
 		if (!resource.IsLoaded(false))
 			return nullptr;
 
-		UINT32 rttiId = resource->GetRtti()->GetRttiId();
+		u32 rttiId = resource->GetRtti()->GetRttiId();
 		BuiltinResourceInfo* info = ScriptAssemblyManager::Instance().GetBuiltinResourceInfo(rttiId);
 
 		if (info == nullptr)

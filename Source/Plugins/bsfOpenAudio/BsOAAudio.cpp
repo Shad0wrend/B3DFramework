@@ -194,8 +194,8 @@ namespace bs
 		{
 			assert(mListeners.size() == mContexts.size());
 
-			UINT32 numContexts = (UINT32)mContexts.size();
-			for(UINT32 i = 0; i < numContexts; i++)
+			u32 numContexts = (u32)mContexts.size();
+			for(u32 i = 0; i < numContexts; i++)
 			{
 				if (mListeners[i] == listener)
 					return mContexts[i];
@@ -208,7 +208,7 @@ namespace bs
 		return nullptr;
 	}
 
-	SPtr<AudioClip> OAAudio::CreateClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples,
+	SPtr<AudioClip> OAAudio::CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples,
 		const AUDIO_CLIP_DESC& desc)
 	{
 		return bs_core_ptr_new<OAAudioClip>(samples, streamSize, numSamples, desc);
@@ -234,10 +234,10 @@ namespace bs
 		if (mDevice == nullptr)
 			return;
 
-		UINT32 numListeners = (UINT32)mListeners.size();
-		UINT32 numContexts = numListeners > 1 ? numListeners : 1;
+		u32 numListeners = (u32)mListeners.size();
+		u32 numContexts = numListeners > 1 ? numListeners : 1;
 
-		for(UINT32 i = 0; i < numContexts; i++)
+		for(u32 i = 0; i < numContexts; i++)
 		{
 			ALCcontext* context = alcCreateContext(mDevice, nullptr);
 			mContexts.push_back(context);
@@ -303,7 +303,7 @@ namespace bs
 		}
 	}
 
-	ALenum OAAudio::GetOpenALBufferFormatInternal(UINT32 numChannels, UINT32 bitDepth)
+	ALenum OAAudio::GetOpenALBufferFormatInternal(u32 numChannels, u32 bitDepth)
 	{
 		switch (bitDepth)
 		{
@@ -358,7 +358,7 @@ namespace bs
 		}
 	}
 
-	void OAAudio::WriteToOpenALBufferInternal(UINT32 bufferId, UINT8* samples, const AudioDataInfo& info)
+	void OAAudio::WriteToOpenALBufferInternal(u32 bufferId, u8* samples, const AudioDataInfo& info)
 	{
 		if (info.NumChannels <= 2) // Mono or stereo
 		{
@@ -366,7 +366,7 @@ namespace bs
 			{
 				if (IsExtensionSupportedInternal("AL_EXT_float32"))
 				{
-					UINT32 bufferSize = info.NumSamples * sizeof(float);
+					u32 bufferSize = info.NumSamples * sizeof(float);
 					float* sampleBufferFloat = (float*)bs_stack_alloc(bufferSize);
 
 					AudioUtility::ConvertToFloat(samples, info.BitDepth, sampleBufferFloat, info.NumSamples);
@@ -381,8 +381,8 @@ namespace bs
 					BS_LOG(Warning, RenderBackend,
 						"OpenAL doesn't support bit depth larger than 16. Your audio data will be truncated.");
 
-					UINT32 bufferSize = info.NumSamples * 2;
-					UINT8* sampleBuffer16 = (UINT8*)bs_stack_alloc(bufferSize);
+					u32 bufferSize = info.NumSamples * 2;
+					u8* sampleBuffer16 = (u8*)bs_stack_alloc(bufferSize);
 
 					AudioUtility::ConvertBitDepth(samples, info.BitDepth, sampleBuffer16, 16, info.NumSamples);
 
@@ -395,11 +395,11 @@ namespace bs
 			else if(info.BitDepth == 8)
 			{
 				// OpenAL expects unsigned 8-bit data, but engine stores it as signed, so convert
-				UINT32 bufferSize = info.NumSamples * (info.BitDepth / 8);
-				UINT8* sampleBuffer = (UINT8*)bs_stack_alloc(bufferSize);
+				u32 bufferSize = info.NumSamples * (info.BitDepth / 8);
+				u8* sampleBuffer = (u8*)bs_stack_alloc(bufferSize);
 
-				for(UINT32 i = 0; i < info.NumSamples; i++)
-					sampleBuffer[i] = ((INT8*)samples)[i] + 128;
+				for(u32 i = 0; i < info.NumSamples; i++)
+					sampleBuffer[i] = ((i8*)samples)[i] + 128;
 
 				ALenum format = GetOpenALBufferFormatInternal(info.NumChannels, 16);
 				alBufferData(bufferId, format, sampleBuffer, bufferSize, info.SampleRate);
@@ -418,8 +418,8 @@ namespace bs
 
 			if (info.BitDepth == 24) // 24-bit not supported, convert to 32-bit
 			{
-				UINT32 bufferSize = info.NumSamples * sizeof(INT32);
-				UINT8* sampleBuffer32 = (UINT8*)bs_stack_alloc(bufferSize);
+				u32 bufferSize = info.NumSamples * sizeof(i32);
+				u8* sampleBuffer32 = (u8*)bs_stack_alloc(bufferSize);
 
 				AudioUtility::ConvertBitDepth(samples, info.BitDepth, sampleBuffer32, 32, info.NumSamples);
 
@@ -431,11 +431,11 @@ namespace bs
 			else if (info.BitDepth == 8)
 			{
 				// OpenAL expects unsigned 8-bit data, but engine stores it as signed, so convert
-				UINT32 bufferSize = info.NumSamples * (info.BitDepth / 8);
-				UINT8* sampleBuffer = (UINT8*)bs_stack_alloc(bufferSize);
+				u32 bufferSize = info.NumSamples * (info.BitDepth / 8);
+				u8* sampleBuffer = (u8*)bs_stack_alloc(bufferSize);
 
-				for (UINT32 i = 0; i < info.NumSamples; i++)
-					sampleBuffer[i] = ((INT8*)samples)[i] + 128;
+				for (u32 i = 0; i < info.NumSamples; i++)
+					sampleBuffer[i] = ((i8*)samples)[i] + 128;
 
 				ALenum format = GetOpenALBufferFormatInternal(info.NumChannels, 16);
 				alBufferData(bufferId, format, sampleBuffer, bufferSize, info.SampleRate);

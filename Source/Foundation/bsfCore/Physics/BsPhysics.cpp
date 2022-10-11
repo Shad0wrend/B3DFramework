@@ -12,7 +12,7 @@ namespace bs
 		memset(mCollisionMap, 1, CollisionMapSize * CollisionMapSize * sizeof(bool));
 	}
 
-	void Physics::ToggleCollision(UINT64 groupA, UINT64 groupB, bool enabled)
+	void Physics::ToggleCollision(u64 groupA, u64 groupB, bool enabled)
 	{
 		assert(groupA < CollisionMapSize && groupB < CollisionMapSize);
 
@@ -20,7 +20,7 @@ namespace bs
 		mCollisionMap[groupA][groupB] = enabled;
 	}
 
-	bool Physics::IsCollisionEnabled(UINT64 groupA, UINT64 groupB) const
+	bool Physics::IsCollisionEnabled(u64 groupA, u64 groupB) const
 	{
 		assert(groupA < CollisionMapSize && groupB < CollisionMapSize);
 
@@ -35,17 +35,17 @@ namespace bs
 		return mCollisionMap[groupA][groupB];
 	}
 
-	bool PhysicsScene::RayCast(const Ray& ray, PhysicsQueryHit& hit, UINT64 layer, float max) const
+	bool PhysicsScene::RayCast(const Ray& ray, PhysicsQueryHit& hit, u64 layer, float max) const
 	{
 		return RayCast(ray.GetOrigin(), ray.GetDirection(), hit, layer, max);
 	}
 
-	Vector<PhysicsQueryHit> PhysicsScene::RayCastAll(const Ray& ray, UINT64 layer, float max) const
+	Vector<PhysicsQueryHit> PhysicsScene::RayCastAll(const Ray& ray, u64 layer, float max) const
 	{
 		return RayCastAll(ray.GetOrigin(), ray.GetDirection(), layer, max);
 	}
 
-	bool PhysicsScene::RayCastAny(const Ray& ray, UINT64 layer, float max) const
+	bool PhysicsScene::RayCastAny(const Ray& ray, u64 layer, float max) const
 	{
 		return RayCastAny(ray.GetOrigin(), ray.GetDirection(), layer, max);
 	}
@@ -71,23 +71,23 @@ namespace bs
 		return output;
 	}
 
-	Vector<HCollider> PhysicsScene::BoxOverlap(const AABox& box, const Quaternion& rotation, UINT64 layer) const
+	Vector<HCollider> PhysicsScene::BoxOverlap(const AABox& box, const Quaternion& rotation, u64 layer) const
 	{
 		return rawToComponent(BoxOverlapInternal(box, rotation, layer));
 	}
 
-	Vector<HCollider> PhysicsScene::SphereOverlap(const Sphere& sphere, UINT64 layer) const
+	Vector<HCollider> PhysicsScene::SphereOverlap(const Sphere& sphere, u64 layer) const
 	{
 		return rawToComponent(SphereOverlapInternal(sphere, layer));
 	}
 
-	Vector<HCollider> PhysicsScene::CapsuleOverlap(const Capsule& capsule, const Quaternion& rotation, UINT64 layer) const
+	Vector<HCollider> PhysicsScene::CapsuleOverlap(const Capsule& capsule, const Quaternion& rotation, u64 layer) const
 	{
 		return rawToComponent(CapsuleOverlapInternal(capsule, rotation, layer));
 	}
 
 	Vector<HCollider> PhysicsScene::ConvexOverlap(const HPhysicsMesh& mesh, const Vector3& position,
-		const Quaternion& rotation, UINT64 layer) const
+		const Quaternion& rotation, u64 layer) const
 	{
 		return rawToComponent(ConvexOverlapInternal(mesh, position, rotation, layer));
 	}

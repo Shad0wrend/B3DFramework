@@ -58,19 +58,19 @@ namespace bs
 		{
 			ParamType Type;
 			GpuParamDataType DataType;
-			UINT32 Index;
-			UINT32 ArraySize;
-			mutable UINT64 Version;
+			u32 Index;
+			u32 ArraySize;
+			mutable u64 Version;
 		};
 
 		/** Information about a single data parameter in a material. */
 		struct DataParamInfo
 		{
-			UINT32 Offset;
+			u32 Offset;
 
 			TAnimationCurve<float>* FloatCurve;
 			ColorGradientHDR* ColorGradient;
-			UINT32 SpriteTextureIdx;
+			u32 SpriteTextureIdx;
 		};
 
 		/**
@@ -81,7 +81,7 @@ namespace bs
 			const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams,
 			const Map<String, SHADER_OBJECT_PARAM_DESC>& bufferParams,
 			const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams,
-			UINT64 initialParamVersion
+			u64 initialParamVersion
 		);
 
 		/** Constructor for serialization use only. */
@@ -99,7 +99,7 @@ namespace bs
 		 * @tparam		T			Native type of the parameter.
 		 */
 		template <typename T>
-		void GetDataParam(const String& name, UINT32 arrayIdx, T& output) const
+		void GetDataParam(const String& name, u32 arrayIdx, T& output) const
 		{
 			GpuParamDataType dataType = TGpuDataParamInfo<T>::TypeId;
 
@@ -111,7 +111,7 @@ namespace bs
 			const DataParamInfo& paramInfo = mDataParams[param->index + arrayIdx];
 
 			const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.lookup[dataType];
-			UINT32 paramTypeSize = typeInfo.numColumns * typeInfo.numRows * typeInfo.baseTypeSize;
+			u32 paramTypeSize = typeInfo.numColumns * typeInfo.numRows * typeInfo.baseTypeSize;
 
 			memcpy(output, &mDataParamsBuffer[paramInfo.offset], sizeof(paramTypeSize));
 		}
@@ -127,7 +127,7 @@ namespace bs
 		 * @tparam		T			Native type of the parameter.
 		 */
 		template <typename T>
-		void SetDataParam(const String& name, UINT32 arrayIdx, const T& input) const
+		void SetDataParam(const String& name, u32 arrayIdx, const T& input) const
 		{
 			GpuParamDataType dataType = TGpuDataParamInfo<T>::TypeId;
 
@@ -139,7 +139,7 @@ namespace bs
 			const DataParamInfo& paramInfo = mDataParams[param->index + arrayIdx];
 
 			const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.lookup[dataType];
-			UINT32 paramTypeSize = typeInfo.numColumns * typeInfo.numRows * typeInfo.baseTypeSize;
+			u32 paramTypeSize = typeInfo.numColumns * typeInfo.numRows * typeInfo.baseTypeSize;
 
 			memcpy(&mDataParamsBuffer[paramInfo.offset], input, sizeof(paramTypeSize));
 		}
@@ -156,7 +156,7 @@ namespace bs
 		 * @tparam		T			Native type of the parameter.
 		 */
 		template <typename T>
-		const TAnimationCurve<T>& GetCurveParam(const String& name, UINT32 arrayIdx) const
+		const TAnimationCurve<T>& GetCurveParam(const String& name, u32 arrayIdx) const
 		{
 			static TAnimationCurve<T> EMPTY_CURVE;
 			GpuParamDataType dataType = TGpuDataParamInfo<T>::TypeId;
@@ -180,7 +180,7 @@ namespace bs
 		 * @tparam		T			Native type of the parameter.
 		 */
 		template <typename T>
-		void SetCurveParam(const String& name, UINT32 arrayIdx, TAnimationCurve<T> input) const
+		void SetCurveParam(const String& name, u32 arrayIdx, TAnimationCurve<T> input) const
 		{
 			GpuParamDataType dataType = TGpuDataParamInfo<T>::TypeId;
 
@@ -201,7 +201,7 @@ namespace bs
 		 * @param[in]	arrayIdx	If the parameter is an array, index of the entry to access.
 		 * @return					Color gradient assigned to the parameter.
 		 */
-		const ColorGradientHDR& GetColorGradientParam(const String& name, UINT32 arrayIdx) const;
+		const ColorGradientHDR& GetColorGradientParam(const String& name, u32 arrayIdx) const;
 
 		/**
 		 * Sets a color gradient to a shader color parameter with the specified name at the specified array index. If the
@@ -211,19 +211,19 @@ namespace bs
 		 * @param[in]	arrayIdx	If the parameter is an array, index of the entry to access.
 		 * @param[in]	input		New value of the parameter.
 		 */
-		void SetColorGradientParam(const String& name, UINT32 arrayIdx, const ColorGradientHDR& input) const;
+		void SetColorGradientParam(const String& name, u32 arrayIdx, const ColorGradientHDR& input) const;
 
 		/**
-		 * Returns an index of the parameter with the specified name. Index can be used in a call to getParamData(UINT32) to
+		 * Returns an index of the parameter with the specified name. Index can be used in a call to getParamData(u32) to
 		 * get the actual parameter data.
 		 *
 		 * @param[in]	name		Name of the shader parameter.
 		 * @return					Index of the parameter, or -1 if not found.
 		 */
-		UINT32 GetParamIndex(const String& name) const;
+		u32 GetParamIndex(const String& name) const;
 
 		/**
-		 * Returns an index of the parameter with the specified name. Index can be used in a call to getParamData(UINT32) to
+		 * Returns an index of the parameter with the specified name. Index can be used in a call to getParamData(u32) to
 		 * get the actual parameter data.
 		 *
 		 * @param[in]	name		Name of the shader parameter.
@@ -235,8 +235,8 @@ namespace bs
 		 * @param[out]	output		Index of the requested parameter, only valid if success is returned.
 		 * @return					Success or error state of the request.
 		 */
-		GetParamResult GetParamIndex(const String& name, ParamType type, GpuParamDataType dataType, UINT32 arrayIdx,
-			UINT32& output) const;
+		GetParamResult GetParamIndex(const String& name, ParamType type, GpuParamDataType dataType, u32 arrayIdx,
+			u32& output) const;
 
 		/**
 		 * Returns data about a parameter and reports an error if there is a type or size mismatch, or if the parameter
@@ -253,16 +253,16 @@ namespace bs
 		 *							some other error was reported.
 		 * @return					Success or error state of the request.
 		 */
-		GetParamResult GetParamData(const String& name, ParamType type, GpuParamDataType dataType, UINT32 arrayIdx,
+		GetParamResult GetParamData(const String& name, ParamType type, GpuParamDataType dataType, u32 arrayIdx,
 			const ParamData** output) const;
 
 		/**
 		 * Returns information about a parameter at the specified global index, as retrieved by getParamIndex().
 		 */
-		const ParamData* GetParamData(UINT32 index) const { return &mParams[index]; }
+		const ParamData* GetParamData(u32 index) const { return &mParams[index]; }
 
 		/** Returns the total number of parameters managed by this object. */
-		UINT32 GetNumParams() const { return (UINT32)mParams.size(); }
+		u32 GetNumParams() const { return (u32)mParams.size(); }
 
 		/**
 		 * Logs an error that was reported by getParamData().
@@ -271,34 +271,34 @@ namespace bs
 		 * @param[in]	name		Name of the shader parameter for which the error occurred.
 		 * @param[in]	arrayIdx	Array index for which the error occurred.
 		 */
-		void ReportGetParamError(GetParamResult errorCode, const String& name, UINT32 arrayIdx) const;
+		void ReportGetParamError(GetParamResult errorCode, const String& name, u32 arrayIdx) const;
 
 		/**
-		 * Equivalent to getDataParam(const String&, UINT32, T&) except it uses the internal parameter reference
+		 * Equivalent to getDataParam(const String&, u32, T&) except it uses the internal parameter reference
 		 * directly, avoiding the name lookup. Caller must guarantee the parameter reference is valid and belongs to this
 		 * object.
 		 */
 		template <typename T>
-		void GetDataParam(const ParamData& param, UINT32 arrayIdx, T& output) const
+		void GetDataParam(const ParamData& param, u32 arrayIdx, T& output) const
 		{
 			GpuParamDataType dataType = (GpuParamDataType)TGpuDataParamInfo<T>::TypeId;
 
 			const DataParamInfo& paramInfo = mDataParams[param.Index + arrayIdx];
 
 			const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.Lookup[dataType];
-			UINT32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
+			u32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 			assert(sizeof(output) == paramTypeSize);
 			memcpy(&output, &mDataParamsBuffer[paramInfo.Offset], paramTypeSize);
 		}
 
 		/**
-		 * Equivalent to setDataParam(const String&, UINT32, T&) except it uses the internal parameter reference
+		 * Equivalent to setDataParam(const String&, u32, T&) except it uses the internal parameter reference
 		 * directly, avoiding the name lookup. Caller must guarantee the parameter reference is valid and belongs to this
 		 * object.
 		 */
 		template <typename T>
-		void SetDataParam(const ParamData& param, UINT32 arrayIdx, const T& input) const
+		void SetDataParam(const ParamData& param, u32 arrayIdx, const T& input) const
 		{
 			GpuParamDataType dataType = (GpuParamDataType)TGpuDataParamInfo<T>::TypeId;
 
@@ -316,7 +316,7 @@ namespace bs
 			}
 
 			const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.Lookup[dataType];
-			UINT32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
+			u32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 			assert(sizeof(input) == paramTypeSize);
 			memcpy(&mDataParamsBuffer[paramInfo.Offset], &input, paramTypeSize);
@@ -325,12 +325,12 @@ namespace bs
 		}
 
 		/**
-		 * Equivalent to getCurveParam(const String&, UINT32) except it uses the internal parameter reference directly,
+		 * Equivalent to getCurveParam(const String&, u32) except it uses the internal parameter reference directly,
 		 * avoiding the name lookup. Caller must guarantee the parameter reference is valid and belongs to this
 		 * object.
 		 */
 		template <typename T>
-		const TAnimationCurve<T>& GetCurveParam(const ParamData& param, UINT32 arrayIdx) const
+		const TAnimationCurve<T>& GetCurveParam(const ParamData& param, u32 arrayIdx) const
 		{
 			GpuParamDataType dataType = (GpuParamDataType)TGpuDataParamInfo<T>::TypeId;
 
@@ -347,12 +347,12 @@ namespace bs
 		}
 
 		/**
-		 * Equivalent to setCurveParam(const String&, UINT32, const TAnimationCurve<T>&) except it uses the internal
+		 * Equivalent to setCurveParam(const String&, u32, const TAnimationCurve<T>&) except it uses the internal
 		 * parameter reference directly, avoiding the name lookup. Caller must guarantee the parameter reference is valid
 		 * and belongs to this object.
 		 */
 		template <typename T>
-		void SetCurveParam(const ParamData& param, UINT32 arrayIdx, TAnimationCurve<T> input) const
+		void SetCurveParam(const ParamData& param, u32 arrayIdx, TAnimationCurve<T> input) const
 		{
 			GpuParamDataType dataType = (GpuParamDataType)TGpuDataParamInfo<T>::TypeId;
 
@@ -370,45 +370,45 @@ namespace bs
 		}
 
 		/**
-		 * Equivalent to getColorGradientParam(const String&, UINT32) except it uses the internal parameter reference
+		 * Equivalent to getColorGradientParam(const String&, u32) except it uses the internal parameter reference
 		 * directly, avoiding the name lookup. Caller must guarantee the parameter reference is valid and belongs to this
 		 * object.
 		 */
-		const ColorGradientHDR& GetColorGradientParam(const ParamData& param, UINT32 arrayIdx) const;
+		const ColorGradientHDR& GetColorGradientParam(const ParamData& param, u32 arrayIdx) const;
 
 		/**
-		 * Equivalent to setColorGradientParam(const String&, UINT32, const ColorGradient&) except it uses the internal
+		 * Equivalent to setColorGradientParam(const String&, u32, const ColorGradient&) except it uses the internal
 		 * parameter reference directly, avoiding the name lookup. Caller must guarantee the parameter reference is valid
 		 * and belongs to this object.
 		 */
-		void SetColorGradientParam(const ParamData& param, UINT32 arrayIdx, const ColorGradientHDR& input) const;
+		void SetColorGradientParam(const ParamData& param, u32 arrayIdx, const ColorGradientHDR& input) const;
 
 		/** Returns pointer to the internal data buffer for a data parameter at the specified index. */
-		UINT8* GetData(UINT32 index) const
+		u8* GetData(u32 index) const
 		{
 			return &mDataParamsBuffer[mDataParams[index].Offset];
 		}
 
 		/** Returns a counter that gets incremented whenever a parameter gets updated. */
-		UINT64 GetParamVersion() const { return mParamVersion; }
+		u64 GetParamVersion() const { return mParamVersion; }
 
 	protected:
-		const static UINT32 STATIC_BUFFER_SIZE = 256;
+		const static u32 STATIC_BUFFER_SIZE = 256;
 
-		UnorderedMap<String, UINT32> mParamLookup;
+		UnorderedMap<String, u32> mParamLookup;
 		Vector<ParamData> mParams;
 
 		DataParamInfo* mDataParams = nullptr;
-		UINT8* mDataParamsBuffer = nullptr;
+		u8* mDataParamsBuffer = nullptr;
 
-		UINT32 mDataSize = 0;
-		UINT32 mNumDataParams = 0;
-		UINT32 mNumStructParams = 0;
-		UINT32 mNumTextureParams = 0;
-		UINT32 mNumBufferParams = 0;
-		UINT32 mNumSamplerParams = 0;
+		u32 mDataSize = 0;
+		u32 mNumDataParams = 0;
+		u32 mNumStructParams = 0;
+		u32 mNumTextureParams = 0;
+		u32 mNumBufferParams = 0;
+		u32 mNumSamplerParams = 0;
 
-		mutable UINT64 mParamVersion = 1;
+		mutable u64 mParamVersion = 1;
 		mutable StaticAlloc<STATIC_BUFFER_SIZE> mAlloc;
 	};
 
@@ -416,16 +416,16 @@ namespace bs
 	class BS_CORE_EXPORT MaterialParamStructDataCore
 	{
 	public:
-		UINT8* Data;
-		UINT32 DataSize;
+		u8* Data;
+		u32 DataSize;
 	};
 
 	/** Raw data for a single structure parameter. */
 	class BS_CORE_EXPORT MaterialParamStructData : public IReflectable
 	{
 	public:
-		UINT8* Data;
-		UINT32 DataSize;
+		u8* Data;
+		u32 DataSize;
 
 		friend class MaterialParamStructDataRTTI;
 		static RTTITypeBase* GetRttiStatic();
@@ -527,7 +527,7 @@ namespace bs
 		 *										you are replacing an existing MaterialParams object and wish to ensure
 		 *										version number keeps getting incremented.
 		 */
-		TMaterialParams(const ShaderType& shader, UINT64 initialParamVersion);
+		TMaterialParams(const ShaderType& shader, u64 initialParamVersion);
 
 		/** Constructor for serialization use only. */
 		TMaterialParams() = default;
@@ -543,7 +543,7 @@ namespace bs
 		 * @param[in]	size		Size of the buffer into which to write the value. Must match parameter struct's size.
 		 * @param[in]	arrayIdx	If the parameter is an array, index of the entry to access.
 		 */
-		void GetStructData(const String& name, void* value, UINT32 size, UINT32 arrayIdx) const;
+		void GetStructData(const String& name, void* value, u32 size, u32 arrayIdx) const;
 
 		/**
 		 * Sets the value of a shader structure parameter with the specified name at the specified array index. If the
@@ -554,7 +554,7 @@ namespace bs
 		 * @param[in]	size		Size of the buffer from which to retrieve the value. Must match parameter struct's size.
 		 * @param[in]	arrayIdx	If the parameter is an array, index of the entry to access.
 		 */
-		void SetStructData(const String& name, const void* value, UINT32 size, UINT32 arrayIdx);
+		void SetStructData(const String& name, const void* value, u32 size, u32 arrayIdx);
 
 		/**
 		 * Returns the value of a shader texture parameter with the specified name. If the parameter name or type is not
@@ -656,27 +656,27 @@ namespace bs
 		 * Checks does the data parameter with the specified name currently contains animated data. This could be
 		 * an animation curve or a color gradient.
 		 */
-		bool IsAnimated(const String& name, UINT32 arrayIdx = 0);
+		bool IsAnimated(const String& name, u32 arrayIdx = 0);
 
 		/**
-		 * Equivalent to getStructData(const String&, UINT32, void*, UINT32) except it uses the internal parameter reference
+		 * Equivalent to getStructData(const String&, u32, void*, u32) except it uses the internal parameter reference
 		 * directly, avoiding the name lookup. Caller must guarantee the parameter reference is valid and belongs to this
 		 * object.
 		 */
-		void GetStructData(const ParamData& param, void* value, UINT32 size, UINT32 arrayIdx) const;
+		void GetStructData(const ParamData& param, void* value, u32 size, u32 arrayIdx) const;
 
 		/**
-		 * Equivalent to setStructData(const String&, UINT32, void*, UINT32) except it uses the internal parameter reference
+		 * Equivalent to setStructData(const String&, u32, void*, u32) except it uses the internal parameter reference
 		 * directly, avoiding the name lookup. Caller must guarantee the parameter reference is valid and belongs to this
 		 * object.
 		 */
-		void SetStructData(const ParamData& param, const void* value, UINT32 size, UINT32 arrayIdx);
+		void SetStructData(const ParamData& param, const void* value, u32 size, u32 arrayIdx);
 
 		/**
 		 * Returns a size of a struct parameter in bytes, using the internal parameter reference. Caller must guarantee the
 		 * parameter reference is valid and belongs to this object.
 		 */
-		UINT32 GetStructSize(const ParamData& param) const;
+		u32 GetStructSize(const ParamData& param) const;
 
 		/**
 		 * Equivalent to getTexture(const String&, HTexture&, TextureSurface&) except it uses the internal parameter
@@ -747,7 +747,7 @@ namespace bs
 		 * Caller must guarantee the parameter reference is valid, is of a data type and belongs to this object.
 
 		 */
-		bool IsAnimated(const ParamData& param, UINT32 arrayIdx) const;
+		bool IsAnimated(const ParamData& param, u32 arrayIdx) const;
 
 		/**
 		 * Returns a sprite texture that is used for populating the specified data parameter. This is only relevant
@@ -810,8 +810,8 @@ namespace bs
 	class BS_CORE_EXPORT MaterialParams : public IReflectable, public TMaterialParams<false>
 	{
 	public:
-		/** @copydoc TMaterialParams::TMaterialParams(const ShaderType&, UINT64) */
-		MaterialParams(const HShader& shader, UINT64 initialParamVersion = 1);
+		/** @copydoc TMaterialParams::TMaterialParams(const ShaderType&, u64) */
+		MaterialParams(const HShader& shader, u64 initialParamVersion = 1);
 
 		/**
 		 * Populates the provided buffer with parameters that can be used for syncing this object with its core-thread
@@ -824,7 +824,7 @@ namespace bs
 		 * @param[in]		forceAll	If false, only the parameters that were changed since the last call will be synced.
 		 *								Otherwise all parameters will be synced.
 		 */
-		void GetSyncData(UINT8* buffer, UINT32& size, bool forceAll);
+		void GetSyncData(u8* buffer, u32& size, bool forceAll);
 
 		/** Appends any resources stored by this object to the provided vector. */
 		void GetResourceDependencies(Vector<HResource>& resources);
@@ -835,7 +835,7 @@ namespace bs
 	private:
 		friend class ct::MaterialParams;
 
-		UINT64 mLastSyncVersion;
+		u64 mLastSyncVersion;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -857,8 +857,8 @@ namespace bs
 		/** Initializes the core thread version of MaterialParams from its sim thread counterpart. */
 		MaterialParams(const SPtr<Shader>& shader, const SPtr<bs::MaterialParams>& params);
 		
-		/** @copydoc TMaterialParams::TMaterialParams(const ShaderType&, UINT64) */
-		MaterialParams(const SPtr<Shader>& shader, UINT64 initialParamVersion = 1);
+		/** @copydoc TMaterialParams::TMaterialParams(const ShaderType&, u64) */
+		MaterialParams(const SPtr<Shader>& shader, u64 initialParamVersion = 1);
 
 		/**
 		 * Updates the stored parameters from the provided buffer, allowing changes to be transfered between the sim and
@@ -867,7 +867,7 @@ namespace bs
 		 * @param[in]		buffer		Buffer containing the dirty data.
 		 * @param[in, out]	size		Size of the provided buffer.
 		 */
-		void SetSyncData(UINT8* buffer, UINT32 size);
+		void SetSyncData(u8* buffer, u32 size);
 	};
 	}
 	/** @} */

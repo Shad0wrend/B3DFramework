@@ -40,8 +40,8 @@ namespace bs
 			shape->setContactOffset(mShape->getContactOffset());
 			shape->setRestOffset(mShape->getRestOffset());
 
-			UINT32 numMaterials = mShape->getNbMaterials();
-			UINT32 bufferSize = sizeof(PxMaterial*) * numMaterials;
+			u32 numMaterials = mShape->getNbMaterials();
+			u32 bufferSize = sizeof(PxMaterial*) * numMaterials;
 			PxMaterial** materials = (PxMaterial**)bs_stack_alloc(bufferSize);
 
 			mShape->getMaterials(materials, bufferSize);
@@ -102,7 +102,7 @@ namespace bs
 
 	bool FPhysXCollider::GetIsTrigger() const
 	{
-		return (UINT32)(mShape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE) != 0;
+		return (u32)(mShape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE) != 0;
 	}
 
 	void FPhysXCollider::SetIsStatic(bool value)
@@ -171,12 +171,12 @@ namespace bs
 		mShape->setMaterials(materials, sizeof(materials) / sizeof(materials[0]));
 	}
 
-	UINT64 FPhysXCollider::GetLayer() const
+	u64 FPhysXCollider::GetLayer() const
 	{
 		return mLayer;
 	}
 
-	void FPhysXCollider::SetLayer(UINT64 layer)
+	void FPhysXCollider::SetLayer(u64 layer)
 	{
 		mLayer = layer;
 		UpdateFilter();

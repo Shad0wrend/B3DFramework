@@ -12,10 +12,10 @@ namespace bs
 	struct Win32Window::Pimpl
 	{
 		HWND HWnd = nullptr;
-		INT32 Left = 0;
-		INT32 Top = 0;
-		UINT32 Width = 0;
-		UINT32 Height = 0;
+		i32 Left = 0;
+		i32 Top = 0;
+		u32 Width = 0;
+		u32 Height = 0;
 		bool IsExternal = false;
 		bool IsModal = false;
 		bool IsHidden = false;
@@ -35,8 +35,8 @@ namespace bs
 		{
 			m->Style = WS_CLIPCHILDREN;
 
-			INT32 left = desc.Left;
-			INT32 top = desc.Top;
+			i32 left = desc.Left;
+			i32 top = desc.Top;
 
 			// If we didn't specified the adapter index, or if we didn't find it
 			if (hMonitor == nullptr)
@@ -57,8 +57,8 @@ namespace bs
 			monitorInfo.cbSize = sizeof(MONITORINFO);
 			GetMonitorInfo(hMonitor, &monitorInfo);
 
-			UINT32 width = desc.Width;
-			UINT32 height = desc.Height;
+			u32 width = desc.Width;
+			u32 height = desc.Height;
 
 			// No specified top left -> Center the window in the middle of the monitor
 			if (left == -1 || top == -1)
@@ -336,7 +336,7 @@ namespace bs
 		bs_delete(m);
 	}
 
-	void Win32Window::Move(INT32 left, INT32 top)
+	void Win32Window::Move(i32 left, i32 top)
 	{
 		if (m->HWnd)
 		{
@@ -347,7 +347,7 @@ namespace bs
 		}
 	}
 
-	void Win32Window::Resize(UINT32 width, UINT32 height)
+	void Win32Window::Resize(u32 width, u32 height)
 	{
 		if (m->HWnd)
 		{
@@ -462,22 +462,22 @@ namespace bs
 		return Vector2I(pos.x, pos.y);
 	}
 
-	INT32 Win32Window::GetLeft() const
+	i32 Win32Window::GetLeft() const
 	{
 		return m->Left;
 	}
 
-	INT32 Win32Window::GetTop() const
+	i32 Win32Window::GetTop() const
 	{
 		return m->Top;
 	}
 
-	UINT32 Win32Window::GetWidth() const
+	u32 Win32Window::GetWidth() const
 	{
 		return m->Width;
 	}
 
-	UINT32 Win32Window::GetHeight() const
+	u32 Win32Window::GetHeight() const
 	{
 		return m->Height;
 	}

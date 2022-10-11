@@ -220,22 +220,22 @@ namespace bs
 		{
 			ParamOffset() = default;
 
-			ParamOffset(UINT32 _paramIdx, UINT32 _location)
+			ParamOffset(u32 _paramIdx, u32 _location)
 				:ParamIdx(_paramIdx), Location(_location)
 			{ }
 
-			UINT32 ParamIdx = 0;
-			UINT32 Location = 0;
+			u32 ParamIdx = 0;
+			u32 Location = 0;
 		};
 
 		LocalizedStringData() = default;
 		~LocalizedStringData();
 
 		String String;
-		UINT32 NumParameters = 0;
+		u32 NumParameters = 0;
 		ParamOffset* ParameterOffsets = nullptr;
 
-		void ConcatenateString(bs::String& outputString, bs::String* parameters, UINT32 numParameterValues) const;
+		void ConcatenateString(bs::String& outputString, bs::String* parameters, u32 numParameterValues) const;
 		void UpdateString(const bs::String& string);
 	};
 
@@ -270,7 +270,7 @@ namespace bs
 
 		/** Returns a total number of strings in the table. */
 		BS_SCRIPT_EXPORT(n:NumStrings,pr:getter)
-		UINT32 GetNumStrings() const { return (UINT32)mIdentifiers.size(); }
+		u32 GetNumStrings() const { return (u32)mIdentifiers.size(); }
 
 		/** Returns all identifiers that the string table contains localized strings for. */
 		BS_SCRIPT_EXPORT(n:Identifiers,pr:getter)

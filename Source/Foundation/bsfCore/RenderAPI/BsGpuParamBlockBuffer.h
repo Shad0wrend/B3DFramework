@@ -24,7 +24,7 @@ namespace bs
 	class BS_CORE_EXPORT GpuParamBlockBuffer : public CoreObject
 	{
 	public:
-		GpuParamBlockBuffer(UINT32 size, GpuBufferUsage usage);
+		GpuParamBlockBuffer(u32 size, GpuBufferUsage usage);
 		virtual ~GpuParamBlockBuffer();
 
 		/**
@@ -32,33 +32,33 @@ namespace bs
 		 *
 		 * @note	All values are in bytes. Actual hardware buffer update is delayed until rendering.
 		 */
-		void Write(UINT32 offset, const void* data, UINT32 size);
+		void Write(u32 offset, const void* data, u32 size);
 
 		/**
 		 * Read some data from the specified offset in the buffer.
 		 *			
 		 * @note	All values are in bytes. This reads from the cached CPU buffer and not from the GPU.
 		 */
-		void Read(UINT32 offset, void* data, UINT32 size);
+		void Read(u32 offset, void* data, u32 size);
 
 		/**
 		 * Clear specified section of the buffer to zero.
 		 *
 		 * @note	All values are in bytes. Actual hardware buffer update is delayed until rendering.
 		 */
-		void ZeroOut(UINT32 offset, UINT32 size);
+		void ZeroOut(u32 offset, u32 size);
 
 		/** Returns internal cached data of the buffer. */
-		const UINT8* GetCachedData() const { return mCachedData; }
+		const u8* GetCachedData() const { return mCachedData; }
 
 		/**	Returns the size of the buffer in bytes. */
-		UINT32 GetSize() const { return mSize; }
+		u32 GetSize() const { return mSize; }
 
 		/**	Retrieves a core implementation of a GPU param block buffer usable only from the core thread. */
 		SPtr<ct::GpuParamBlockBuffer> GetCore() const;
 
 		/** @copydoc HardwareBufferManager::createGpuParamBlockBuffer */
-		static SPtr<GpuParamBlockBuffer> Create(UINT32 size, GpuBufferUsage usage = GBU_DYNAMIC);
+		static SPtr<GpuParamBlockBuffer> Create(u32 size, GpuBufferUsage usage = GBU_DYNAMIC);
 
 	protected:
 		/** @copydoc CoreObject::createCore */
@@ -68,8 +68,8 @@ namespace bs
 		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		GpuBufferUsage mUsage;
-		UINT32 mSize;
-		UINT8* mCachedData;
+		u32 mSize;
+		u8* mCachedData;
 	};
 
 	/** @} */
@@ -88,7 +88,7 @@ namespace bs
 	class BS_CORE_EXPORT GpuParamBlockBuffer : public CoreObject
 	{
 	public:
-		GpuParamBlockBuffer(UINT32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);
+		GpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);
 		virtual ~GpuParamBlockBuffer();
 
 		/**
@@ -97,14 +97,14 @@ namespace bs
 		 * @param[in]	data		Data to write. Must match the size of the buffer.
 		 * @param[in]	queueIdx	Device queue to perform the write operation on. See @ref queuesDoc.
 		 */
-		void WriteToGpu(const UINT8* data, UINT32 queueIdx = 0);
+		void WriteToGpu(const u8* data, u32 queueIdx = 0);
 
 		/**
 		 * Flushes any cached data into the actual GPU buffer.
 		 *
 		 * @param[in]	queueIdx	Device queue to perform the write operation on. See @ref queuesDoc.
 		 */
-		void FlushToGpu(UINT32 queueIdx = 0);
+		void FlushToGpu(u32 queueIdx = 0);
 
 		/**
 		 * Write some data to the specified offset in the buffer.
@@ -112,14 +112,14 @@ namespace bs
 		 * @note	All values are in bytes. Actual hardware buffer update is delayed until rendering or until
 		 *			flushToGPU() is called.
 		 */
-		void Write(UINT32 offset, const void* data, UINT32 size);
+		void Write(u32 offset, const void* data, u32 size);
 
 		/**
 		 * Read some data from the specified offset in the buffer.
 		 *			
 		 * @note	All values are in bytes. This reads from the cached CPU buffer and not directly from the GPU.
 		 */
-		void Read(UINT32 offset, void* data, UINT32 size);
+		void Read(u32 offset, void* data, u32 size);
 
 		/**
 		 * Clear specified section of the buffer to zero.
@@ -127,13 +127,13 @@ namespace bs
 		 * @note	All values are in bytes. Actual hardware buffer update is delayed until rendering or until
 		 *			flushToGPU() is called.
 		 */
-		void ZeroOut(UINT32 offset, UINT32 size);
+		void ZeroOut(u32 offset, u32 size);
 
 		/**	Returns the size of the buffer in bytes. */
-		UINT32 GetSize() const { return mSize; }
+		u32 GetSize() const { return mSize; }
 
 		/** @copydoc HardwareBufferManager::createGpuParamBlockBuffer */
-		static SPtr<GpuParamBlockBuffer> Create(UINT32 size, GpuBufferUsage usage = GBU_DYNAMIC,
+		static SPtr<GpuParamBlockBuffer> Create(u32 size, GpuBufferUsage usage = GBU_DYNAMIC,
 			GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 	protected:
@@ -148,9 +148,9 @@ namespace bs
 		HardwareBuffer* mBuffer;
 
 		GpuBufferUsage mUsage;
-		UINT32 mSize;
+		u32 mSize;
 
-		UINT8* mCachedData;
+		u8* mCachedData;
 		bool mGPUBufferDirty;
 	};
 

@@ -9,7 +9,7 @@ namespace bs
 	{
 		FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
-		INT64 count = (INT64)data->Stream->Read(buffer, *bytes);
+		i64 count = (i64)data->Stream->Read(buffer, *bytes);
 		if (count > 0)
 		{
 			*bytes = (size_t)count;
@@ -26,8 +26,8 @@ namespace bs
 	{
 		FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
-		data->Stream->Seek(data->StreamOffset + (UINT32)absoluteByteOffset);
-		INT64 position = (INT64)(data->Stream->Tell() - data->StreamOffset);
+		data->Stream->Seek(data->StreamOffset + (u32)absoluteByteOffset);
+		i64 position = (i64)(data->Stream->Tell() - data->StreamOffset);
 		if (position >= 0)
 			return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
 		else
@@ -38,7 +38,7 @@ namespace bs
 	{
 		FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
-		INT64 position = (INT64)(data->Stream->Tell() - data->StreamOffset);
+		i64 position = (i64)(data->Stream->Tell() - data->StreamOffset);
 		if (position >= 0)
 		{
 			*absoluteByteOffset = position;
@@ -72,21 +72,21 @@ namespace bs
 		if (!data->Output) // Seek
 			return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 
-		UINT32 bytesPerSample = data->Info.BitDepth / 8;
+		u32 bytesPerSample = data->Info.BitDepth / 8;
 		
 		// If we received more data than we need, store it in the overflow buffer
-		UINT32 frameSamples = frame->header.blocksize * frame->header.channels;
+		u32 frameSamples = frame->header.blocksize * frame->header.channels;
 		if (data->SamplesToRead < frameSamples)
 		{
-			UINT32 numExtraSamples = frameSamples - data->SamplesToRead;
-			UINT32 extraBytes = numExtraSamples * bytesPerSample;
+			u32 numExtraSamples = frameSamples - data->SamplesToRead;
+			u32 extraBytes = numExtraSamples * bytesPerSample;
 			data->Overflow.reserve(extraBytes);
 		}
 
 		assert(bytesPerSample <= 4);
-		for (UINT32 i = 0; i < frame->header.blocksize; i++)
+		for (u32 i = 0; i < frame->header.blocksize; i++)
 		{
-			for (UINT32 j = 0; j < frame->header.channels; j++)
+			for (u32 j = 0; j < frame->header.channels; j++)
 			{
 				if (data->SamplesToRead > 0)
 				{
@@ -97,10 +97,10 @@ namespace bs
 				}
 				else
 				{
-					UINT8 sample[4];
+					u8 sample[4];
 					memcpy(sample, &buffer[j][i], bytesPerSample);
 
-					for(UINT32 k = 0; k < bytesPerSample; k++)
+					for(u32 k = 0; k < bytesPerSample; k++)
 						data->Overflow.push_back(sample[k]);
 				}
 			}
@@ -115,7 +115,7 @@ namespace bs
 
 		if (meta->type == FLAC__METADATA_TYPE_STREAMINFO)
 		{
-			data->Info.NumSamples = (UINT32)meta->data.stream_info.total_samples * meta->data.stream_info.channels;
+			data->Info.NumSamples = (u32)meta->data.stream_info.total_samples * meta->data.stream_info.channels;
 			data->Info.SampleRate = meta->data.stream_info.sample_rate;
 			data->Info.NumChannels = meta->data.stream_info.channels;
 			data->Info.BitDepth = meta->data.stream_info.bits_per_sample;
@@ -133,7 +133,7 @@ namespace bs
 		Close();
 	}
 
-	bool FLACDecoder::IsValid(const SPtr<DataStream>& stream, UINT32 offset)
+	bool FLACDecoder::IsValid(const SPtr<DataStream>& stream, u32 offset)
 	{
 		stream->Seek(offset);
 
@@ -155,7 +155,7 @@ namespace bs
 		return valid && !data.Error;
 	}
 
-	bool FLACDecoder::Open(const SPtr<DataStream>& stream, AudioDataInfo& info, UINT32 offset)
+	bool FLACDecoder::Open(const SPtr<DataStream>& stream, AudioDataInfo& info, u32 offset)
 	{
 		if (stream == nullptr)
 			return false;
@@ -186,7 +186,7 @@ namespace bs
 		return true;
 	}
 
-	void FLACDecoder::Seek(UINT32 offset)
+	void FLACDecoder::Seek(u32 offset)
 	{
 		mData.Output = nullptr;
 		mData.SamplesToRead = 0;
@@ -195,15 +195,15 @@ namespace bs
 		FLAC__stream_decoder_seek_absolute(mDecoder, offset);
 	}
 
-	UINT32 FLACDecoder::Read(UINT8* samples, UINT32 numSamples)
+	u32 FLACDecoder::Read(u8* samples, u32 numSamples)
 	{
-		UINT32 overflowSize = (UINT32)mData.Overflow.size();
-		UINT32 overflowNumSamples = 0;
+		u32 overflowSize = (u32)mData.Overflow.size();
+		u32 overflowNumSamples = 0;
 		
-		UINT32 bytesPerSample = mData.Info.BitDepth / 8;
+		u32 bytesPerSample = mData.Info.BitDepth / 8;
 		if (overflowSize > 0)
 		{
-			UINT32 sampleSize = numSamples * bytesPerSample;
+			u32 sampleSize = numSamples * bytesPerSample;
 			if (overflowSize > sampleSize)
 			{
 				std::copy(mData.Overflow.begin(), mData.Overflow.begin() + sampleSize, samples);

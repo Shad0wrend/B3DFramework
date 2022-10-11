@@ -17,7 +17,7 @@ namespace bs
 			const String& description,
 			const String& function,
 			const String& file,
-			UINT32 line)> OnBeforeReportCrash;
+			u32 line)> OnBeforeReportCrash;
 
 #if BS_PLATFORM == BS_PLATFORM_WIN32
 		/** Called when a windows SEH exception is started to be handled. Return true to skip default action */
@@ -83,7 +83,7 @@ namespace bs
 		 * @param[in]	line		Optional source code line at which the crash was triggered at.
 		 */
 		void ReportCrash(const String& type, const String& description, const String& function = StringUtil::BLANK,
-			const String& file = StringUtil::BLANK, UINT32 line = 0) const;
+			const String& file = StringUtil::BLANK, u32 line = 0) const;
 
 #if BS_PLATFORM == BS_PLATFORM_WIN32
 		/**
@@ -112,7 +112,7 @@ namespace bs
 		                           const String& description,
 		                           const String& function,
 		                           const String& file,
-		                           UINT32 line) const;
+		                           u32 line) const;
 		/** Does what it says. Internal utility function used by reportCrash(). */
 		void SaveCrashLog() const;
 		/** Creates the crash report directory and returns its path. */

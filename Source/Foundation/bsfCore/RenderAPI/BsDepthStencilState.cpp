@@ -67,25 +67,25 @@ namespace bs
 		return RenderStateManager::Instance().CreateDepthStencilState(desc);
 	}
 
-	UINT64 DepthStencilState::GenerateHash(const DEPTH_STENCIL_STATE_DESC& desc)
+	u64 DepthStencilState::GenerateHash(const DEPTH_STENCIL_STATE_DESC& desc)
 	{
 		size_t hash = 0;
 		bs_hash_combine(hash, desc.DepthReadEnable);
 		bs_hash_combine(hash, desc.DepthWriteEnable);
-		bs_hash_combine(hash, (UINT32)desc.DepthComparisonFunc);
+		bs_hash_combine(hash, (u32)desc.DepthComparisonFunc);
 		bs_hash_combine(hash, desc.StencilEnable);
 		bs_hash_combine(hash, desc.StencilReadMask);
 		bs_hash_combine(hash, desc.StencilWriteMask);
-		bs_hash_combine(hash, (UINT32)desc.FrontStencilFailOp);
-		bs_hash_combine(hash, (UINT32)desc.FrontStencilZFailOp);
-		bs_hash_combine(hash, (UINT32)desc.FrontStencilPassOp);
-		bs_hash_combine(hash, (UINT32)desc.FrontStencilComparisonFunc);
-		bs_hash_combine(hash, (UINT32)desc.BackStencilFailOp);
-		bs_hash_combine(hash, (UINT32)desc.BackStencilZFailOp);
-		bs_hash_combine(hash, (UINT32)desc.BackStencilPassOp);
-		bs_hash_combine(hash, (UINT32)desc.BackStencilComparisonFunc);
+		bs_hash_combine(hash, (u32)desc.FrontStencilFailOp);
+		bs_hash_combine(hash, (u32)desc.FrontStencilZFailOp);
+		bs_hash_combine(hash, (u32)desc.FrontStencilPassOp);
+		bs_hash_combine(hash, (u32)desc.FrontStencilComparisonFunc);
+		bs_hash_combine(hash, (u32)desc.BackStencilFailOp);
+		bs_hash_combine(hash, (u32)desc.BackStencilZFailOp);
+		bs_hash_combine(hash, (u32)desc.BackStencilPassOp);
+		bs_hash_combine(hash, (u32)desc.BackStencilComparisonFunc);
 
-		return (UINT64)hash;
+		return (u64)hash;
 	}
 
 	/************************************************************************/
@@ -104,7 +104,7 @@ namespace bs
 
 	namespace ct
 	{
-	DepthStencilState::DepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc, UINT32 id)
+	DepthStencilState::DepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc, u32 id)
 		: mProperties(desc), mId(id)
 	{
 

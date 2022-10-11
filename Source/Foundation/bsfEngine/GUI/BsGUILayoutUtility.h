@@ -33,7 +33,7 @@ namespace bs
 		 *									are up to date to avoid recalculating them. (Normally that is true if this is
 		 *									being called during GUI layout update)
 		 */
-		static Vector2I CalcActualSize(UINT32 width, UINT32 height, GUILayout* layout, bool updateOptimalSizes = true);
+		static Vector2I CalcActualSize(u32 width, u32 height, GUILayout* layout, bool updateOptimalSizes = true);
 
 	private:
 		/**
@@ -44,7 +44,7 @@ namespace bs
 		 * @param[in]	height				Height of the layout.
 		 * @param[in]	layout				Parent layout of the children to calculate the area for.
 		 */
-		static Vector2I CalcActualSizeInternal(UINT32 width, UINT32 height, GUILayout* layout);
+		static Vector2I CalcActualSizeInternal(u32 width, u32 height, GUILayout* layout);
 	};
 
 	/** @} */

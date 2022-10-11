@@ -33,16 +33,16 @@ namespace bs
 		{
 			VirtualButton Button;
 			ButtonState State;
-			UINT64 Timestamp;
-			UINT64 UpdateFrameIdx;
+			u64 Timestamp;
+			u64 UpdateFrameIdx;
 			bool AllowRepeat;
 		};
 
 		/**	Contains button data for a specific input device. */
 		struct DeviceData
 		{
-			Map<UINT32, ButtonData> CachedStates;
-			DynArray<UINT32> HeldButtons;
+			Map<u32, ButtonData> CachedStates;
+			DynArray<u32> HeldButtons;
 		};
 
 		/**	Data container for a virtual button event. */
@@ -50,7 +50,7 @@ namespace bs
 		{
 			VirtualButton Button;
 			ButtonState State;
-			UINT32 DeviceIdx;
+			u32 DeviceIdx;
 		};
 
 	public:
@@ -71,7 +71,7 @@ namespace bs
 		 * @param[in]	button		Virtual button identifier.
 		 * @param[in]	deviceIdx	Optional device index in case multiple input devices are available.
 		 */
-		bool IsButtonDown(const VirtualButton& button, UINT32 deviceIdx = 0) const;
+		bool IsButtonDown(const VirtualButton& button, u32 deviceIdx = 0) const;
 
 		/**
 		 * Check is the virtual button just getting released. This state is only active for one frame.
@@ -79,7 +79,7 @@ namespace bs
 		 * @param[in]	button		Virtual button identifier.
 		 * @param[in]	deviceIdx	Optional device index in case multiple input devices are available.
 		 */
-		bool IsButtonUp(const VirtualButton& button, UINT32 deviceIdx = 0) const;
+		bool IsButtonUp(const VirtualButton& button, u32 deviceIdx = 0) const;
 
 		/**
 		 * Check is the virtual button is being held. This state is active as long as the button is being held down,
@@ -88,7 +88,7 @@ namespace bs
 		 * @param[in]	button		Virtual button identifier.
 		 * @param[in]	deviceIdx	Optional device index in case multiple input devices are available.
 		 */
-		bool IsButtonHeld(const VirtualButton& button, UINT32 deviceIdx = 0) const;
+		bool IsButtonHeld(const VirtualButton& button, u32 deviceIdx = 0) const;
 
 		/**
 		 * Returns normalized value for the specified input axis. Returned value will usually be in [-1.0, 1.0] range, but
@@ -97,16 +97,16 @@ namespace bs
 		 * @param[in]	axis		Virtual axis identifier.
 		 * @param[in]	deviceIdx	Optional device index in case multiple input devices are available.
 		 */
-		float GetAxisValue(const VirtualAxis& axis, UINT32 deviceIdx = 0) const;
+		float GetAxisValue(const VirtualAxis& axis, u32 deviceIdx = 0) const;
 
 		/**	Triggered when a virtual button is pressed. */
-		Event<void(const VirtualButton&, UINT32 deviceIdx)> OnButtonDown;
+		Event<void(const VirtualButton&, u32 deviceIdx)> OnButtonDown;
 
 		/**	Triggered when a virtual button is released. */
-		Event<void(const VirtualButton&, UINT32 deviceIdx)> OnButtonUp;
+		Event<void(const VirtualButton&, u32 deviceIdx)> OnButtonUp;
 
 		/**	Triggered every frame when a virtual button is being held down. */
-		Event<void(const VirtualButton&, UINT32 deviceIdx)> OnButtonHeld;
+		Event<void(const VirtualButton&, u32 deviceIdx)> OnButtonHeld;
 
 		/** @name Internal
 		 *  @{
@@ -128,7 +128,7 @@ namespace bs
 		SPtr<InputConfiguration> mInputConfiguration;
 		Vector<DeviceData> mDevices;
 		Queue<VirtualButtonEvent> mEvents;
-		UINT32 mActiveModifiers = (UINT32)ButtonModifier::None;
+		u32 mActiveModifiers = (u32)ButtonModifier::None;
 
 		// Transient
 		Vector<VirtualButton> tempButtons;

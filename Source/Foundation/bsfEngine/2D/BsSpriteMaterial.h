@@ -63,7 +63,7 @@ namespace bs
 			return info;
 		}
 
-		UINT64 GroupId = 0;
+		u64 GroupId = 0;
 		HTexture Texture;
 		HSpriteTexture SpriteTexture;
 		Color Tint;
@@ -75,12 +75,12 @@ namespace bs
 	class BS_EXPORT SpriteMaterial
 	{
 	public:
-		SpriteMaterial(UINT32 id, const HMaterial& material, ShaderVariation variation = ShaderVariation::EMPTY,
+		SpriteMaterial(u32 id, const HMaterial& material, ShaderVariation variation = ShaderVariation::EMPTY,
 			bool allowBatching = true);
 		virtual ~SpriteMaterial();
 
 		/** Returns the unique ID of the sprite material. */
-		UINT32 GetId() const { return mId; };
+		u32 GetId() const { return mId; };
 
 		/** Determines is this material allowed to be batched with other materials with the same merge hash. */
 		bool AllowBatching() const { return mAllowBatching; }
@@ -90,7 +90,7 @@ namespace bs
 		 * guarantee that the two objects with the same hash are identical, but rather that the objects are mergeable via
 		 * merge().
 		 */
-		virtual UINT64 GetMergeHash(const SpriteMaterialInfo& info) const;
+		virtual u64 GetMergeHash(const SpriteMaterialInfo& info) const;
 
 		/**
 		 * Merges two SpriteMaterialInfo%s into one structure. User must guarantee that the two objects are mergeable
@@ -128,19 +128,19 @@ namespace bs
 		/** Destroys the core thread material. */
 		static void Destroy(const SPtr<ct::Material>& material, const SPtr<ct::GpuParamsSet>& params, const SPtr<ct::GpuParamsSet>& alphaParams);
 
-		UINT32 mId;
+		u32 mId;
 		bool mAllowBatching;
 
 		// Core thread only (everything below)
 		SPtr<ct::Material> mMaterial;
-		UINT32 mTechnique;
-		UINT32 mAlphaTechnique;
+		u32 mTechnique;
+		u32 mAlphaTechnique;
 		std::atomic<bool> mMaterialStored;
 
 		SPtr<ct::GpuParamsSet> mParams;
 		SPtr<ct::GpuParamsSet> mAlphaParams;
-		UINT32 mParamBufferIdx;
-		UINT32 mAlphaParamBufferIdx;
+		u32 mParamBufferIdx;
+		u32 mAlphaParamBufferIdx;
 		mutable ct::MaterialParamTexture mTextureParam;
 		mutable ct::MaterialParamSampState mSamplerParam;
 	};

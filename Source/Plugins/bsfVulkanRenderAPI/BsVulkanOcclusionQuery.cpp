@@ -102,7 +102,7 @@ namespace bs { namespace ct
 		if (mQueryFinalized)
 			return true;
 
-		UINT64 numSamples;
+		u64 numSamples;
 		bool ready = true;
 		for (auto& query : mQueries)
 			ready &= !query->IsBound() && query->GetResult(numSamples);
@@ -110,15 +110,15 @@ namespace bs { namespace ct
 		return ready;
 	}
 
-	UINT32 VulkanOcclusionQuery::GetNumSamples()
+	u32 VulkanOcclusionQuery::GetNumSamples()
 	{
 		if(!mQueryFinalized)
 		{
-			UINT64 totalNumSamples = 0;
+			u64 totalNumSamples = 0;
 			bool ready = true;
 			for (auto& query : mQueries)
 			{
-				UINT64 numSamples = 0;
+				u64 numSamples = 0;
 				ready &= !query->IsBound() && query->GetResult(numSamples);
 
 				totalNumSamples += numSamples;
@@ -140,6 +140,6 @@ namespace bs { namespace ct
 		if (mBinary)
 			return mNumSamples == 0 ? 0 : 1;
 
-		return (UINT32)mNumSamples;
+		return (u32)mNumSamples;
 	}
 }}

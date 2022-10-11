@@ -18,10 +18,10 @@ namespace bs { namespace ct
 	{
 		LinuxPlatform::lockX();
 
-		INT32 dummy;
+		i32 dummy;
 		XVisualInfo* windowVisualInfo = XGetVisualInfo(display, VisualIDMask | VisualScreenMask, &visualInfo, &dummy);
 
-		INT32 majorVersion, minorVersion;
+		i32 majorVersion, minorVersion;
 		glXQueryVersion(display, &majorVersion, &minorVersion);
 
 		GLXContext context = 0;
@@ -33,10 +33,10 @@ namespace bs { namespace ct
 			// Find the config used to create the window's visual
 			GLXFBConfig* windowConfig = nullptr;
 
-			INT32 numConfigs;
+			i32 numConfigs;
 			GLXFBConfig* configs = glXChooseFBConfig(display, DefaultScreen(display), nullptr, &numConfigs);
 
-			for (INT32 i = 0; i < numConfigs; ++i)
+			for (i32 i = 0; i < numConfigs; ++i)
 			{
 				XVisualInfo* configVisualInfo = glXGetVisualFromFBConfig(display, configs[i]);
 

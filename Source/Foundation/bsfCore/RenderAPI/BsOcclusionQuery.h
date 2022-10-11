@@ -45,10 +45,10 @@ namespace bs { namespace ct
 		 * If the query is binary, this will return 0 or 1. 1 meaning one or more samples were rendered, but will not give
 		 * you the exact count.
 		 */
-		virtual UINT32 GetNumSamples() = 0;
+		virtual u32 GetNumSamples() = 0;
 
 		/** Triggered when the query has completed. Argument provided is the number of samples counted by the query. */
-		Event<void(UINT32)> OnComplete;
+		Event<void(u32)> OnComplete;
 
 		/**
 		 * Creates a new occlusion query.
@@ -59,7 +59,7 @@ namespace bs { namespace ct
 		 *							until all of the geometry is rendered.
 		 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
 		 */
-		static SPtr<OcclusionQuery> Create(bool binary, UINT32 deviceIdx = 0);
+		static SPtr<OcclusionQuery> Create(bool binary, u32 deviceIdx = 0);
 
 	protected:
 		friend class QueryManager;

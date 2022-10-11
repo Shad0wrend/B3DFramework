@@ -59,7 +59,7 @@ namespace bs { namespace ct
 		gDecalParamDef.gDecalNormal.Set(DecalParamBuffer, decalNormal);
 		gDecalParamDef.gNormalTolerance.Set(DecalParamBuffer, normalTolerance);
 		gDecalParamDef.gFlipDerivatives.Set(DecalParamBuffer, flipDerivatives);
-		gDecalParamDef.gLayerMask.Set(DecalParamBuffer, (INT32)Decal->GetLayerMask());
+		gDecalParamDef.gLayerMask.Set(DecalParamBuffer, (i32)Decal->GetLayerMask());
 	}
 
 	void RendererDecal::UpdatePerCallBuffer(const Matrix4& viewProj, bool flush) const

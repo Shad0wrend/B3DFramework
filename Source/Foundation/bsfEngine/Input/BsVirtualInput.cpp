@@ -32,12 +32,12 @@ namespace bs
 			deviceData.CachedStates.clear();
 	}
 
-	bool VirtualInput::IsButtonDown(const VirtualButton& button, UINT32 deviceIdx) const
+	bool VirtualInput::IsButtonDown(const VirtualButton& button, u32 deviceIdx) const
 	{
-		if (deviceIdx >= (UINT32)mDevices.size())
+		if (deviceIdx >= (u32)mDevices.size())
 			return false;
 
-		const Map<UINT32, ButtonData>& cachedStates = mDevices[deviceIdx].CachedStates;
+		const Map<u32, ButtonData>& cachedStates = mDevices[deviceIdx].CachedStates;
 		auto iterFind = cachedStates.find(button.ButtonIdentifier);
 
 		if (iterFind != cachedStates.end())
@@ -46,12 +46,12 @@ namespace bs
 		return false;
 	}
 
-	bool VirtualInput::IsButtonUp(const VirtualButton& button, UINT32 deviceIdx) const
+	bool VirtualInput::IsButtonUp(const VirtualButton& button, u32 deviceIdx) const
 	{
-		if (deviceIdx >= (UINT32)mDevices.size())
+		if (deviceIdx >= (u32)mDevices.size())
 			return false;
 
-		const Map<UINT32, ButtonData>& cachedStates = mDevices[deviceIdx].CachedStates;
+		const Map<u32, ButtonData>& cachedStates = mDevices[deviceIdx].CachedStates;
 		auto iterFind = cachedStates.find(button.ButtonIdentifier);
 
 		if (iterFind != cachedStates.end())
@@ -60,12 +60,12 @@ namespace bs
 		return false;
 	}
 
-	bool VirtualInput::IsButtonHeld(const VirtualButton& button, UINT32 deviceIdx) const
+	bool VirtualInput::IsButtonHeld(const VirtualButton& button, u32 deviceIdx) const
 	{
-		if (deviceIdx >= (UINT32)mDevices.size())
+		if (deviceIdx >= (u32)mDevices.size())
 			return false;
 
-		const Map<UINT32, ButtonData>& cachedStates = mDevices[deviceIdx].CachedStates;
+		const Map<u32, ButtonData>& cachedStates = mDevices[deviceIdx].CachedStates;
 		auto iterFind = cachedStates.find(button.ButtonIdentifier);
 
 		if (iterFind != cachedStates.end())
@@ -74,14 +74,14 @@ namespace bs
 		return false;
 	}
 
-	float VirtualInput::GetAxisValue(const VirtualAxis& axis, UINT32 deviceIdx) const
+	float VirtualInput::GetAxisValue(const VirtualAxis& axis, u32 deviceIdx) const
 	{
 		VIRTUAL_AXIS_DESC axisDesc;
 		if (mInputConfiguration->GetAxisInternal(axis, axisDesc))
 		{
-			float axisValue = gInput().GetAxisValue((UINT32)axisDesc.Type, deviceIdx);
+			float axisValue = gInput().GetAxisValue((u32)axisDesc.Type, deviceIdx);
 
-			bool isMouseAxis = (UINT32)axisDesc.Type <= (UINT32)InputAxis::MouseZ;
+			bool isMouseAxis = (u32)axisDesc.Type <= (u32)InputAxis::MouseZ;
 			bool isNormalized = axisDesc.Normalize || !isMouseAxis;
 
 			if (isNormalized && axisDesc.DeadZone > 0.0f)
@@ -118,7 +118,7 @@ namespace bs
 
 	void VirtualInput::UpdateInternal()
 	{
-		UINT64 frameIdx = gTime().GetFrameIdx();
+		u64 frameIdx = gTime().GetFrameIdx();
 		for (auto& deviceData : mDevices)
 		{
 			for (auto& state : deviceData.CachedStates)
@@ -135,8 +135,8 @@ namespace bs
 		}
 
 		bool hasEvents = true;
-		UINT64 repeatInternal = mInputConfiguration->GetRepeatInterval();
-		UINT64 currentTime = gTime().GetTimeMs();
+		u64 repeatInternal = mInputConfiguration->GetRepeatInterval();
+		u64 currentTime = gTime().GetTimeMs();
 
 		// Trigger all events
 		while(hasEvents)
@@ -172,7 +172,7 @@ namespace bs
 					if (!state.second.AllowRepeat)
 						continue;
 
-					UINT64 diff = currentTime - state.second.Timestamp;
+					u64 diff = currentTime - state.second.Timestamp;
 					if (diff >= repeatInternal)
 					{
 						state.second.Timestamp += repeatInternal;
@@ -192,12 +192,12 @@ namespace bs
 		}
 
 		// Send button held events
-		UINT32 deviceIdx = 0;
+		u32 deviceIdx = 0;
 		for (auto& deviceData : mDevices)
 		{
 			for (auto& btnIdentifier : deviceData.HeldButtons)
 			{
-				Map<UINT32, ButtonData>& cachedStates = deviceData.CachedStates;
+				Map<u32, ButtonData>& cachedStates = deviceData.CachedStates;
 				ButtonData& data = cachedStates[btnIdentifier];
 
 				OnButtonHeld(data.Button, deviceIdx);
@@ -211,25 +211,25 @@ namespace bs
 	void VirtualInput::ButtonDown(const ButtonEvent& event)
 	{
 		if(event.ButtonCode == BC_LSHIFT || event.ButtonCode == BC_RSHIFT)
-			mActiveModifiers |= (UINT32)ButtonModifier::Shift;
+			mActiveModifiers |= (u32)ButtonModifier::Shift;
 		else if(event.ButtonCode == BC_LCONTROL || event.ButtonCode == BC_RCONTROL)
-			mActiveModifiers |= (UINT32)ButtonModifier::Ctrl;
+			mActiveModifiers |= (u32)ButtonModifier::Ctrl;
 		else if(event.ButtonCode == BC_LMENU || event.ButtonCode == BC_RMENU)
-			mActiveModifiers |= (UINT32)ButtonModifier::Alt;
+			mActiveModifiers |= (u32)ButtonModifier::Alt;
 
 		tempButtons.clear();
 		tempBtnDescs.clear();
 
 		if (mInputConfiguration->GetButtonsInternal(event.ButtonCode, mActiveModifiers, tempButtons, tempBtnDescs))
 		{
-			while (event.DeviceIdx >= (UINT32)mDevices.size())
+			while (event.DeviceIdx >= (u32)mDevices.size())
 				mDevices.push_back(DeviceData());
 
-			Map<UINT32, ButtonData>& cachedStates = mDevices[event.DeviceIdx].CachedStates;
-			DynArray<UINT32>& heldButtons = mDevices[event.DeviceIdx].HeldButtons;
+			Map<u32, ButtonData>& cachedStates = mDevices[event.DeviceIdx].CachedStates;
+			DynArray<u32>& heldButtons = mDevices[event.DeviceIdx].HeldButtons;
 
-			UINT32 numButtons = (UINT32)tempButtons.size();
-			for (UINT32 i = 0; i < numButtons; i++)
+			u32 numButtons = (u32)tempButtons.size();
+			for (u32 i = 0; i < numButtons; i++)
 			{
 				const VirtualButton& btn = tempButtons[i];
 				const VIRTUAL_BUTTON_DESC& btnDesc = tempBtnDescs[i];
@@ -256,25 +256,25 @@ namespace bs
 	void VirtualInput::ButtonUp(const ButtonEvent& event)
 	{
 		if(event.ButtonCode == BC_LSHIFT || event.ButtonCode == BC_RSHIFT)
-			mActiveModifiers &= ~(UINT32)ButtonModifier::Shift;
+			mActiveModifiers &= ~(u32)ButtonModifier::Shift;
 		else if(event.ButtonCode == BC_LCONTROL || event.ButtonCode == BC_RCONTROL)
-			mActiveModifiers &= ~(UINT32)ButtonModifier::Ctrl;
+			mActiveModifiers &= ~(u32)ButtonModifier::Ctrl;
 		else if(event.ButtonCode == BC_LMENU || event.ButtonCode == BC_RMENU)
-			mActiveModifiers &= ~(UINT32)ButtonModifier::Alt;
+			mActiveModifiers &= ~(u32)ButtonModifier::Alt;
 
 		tempButtons.clear();
 		tempBtnDescs.clear();
 
 		if (mInputConfiguration->GetButtonsInternal(event.ButtonCode, mActiveModifiers, tempButtons, tempBtnDescs))
 		{
-			while (event.DeviceIdx >= (UINT32)mDevices.size())
+			while (event.DeviceIdx >= (u32)mDevices.size())
 				mDevices.push_back(DeviceData());
 
-			Map<UINT32, ButtonData>& cachedStates = mDevices[event.DeviceIdx].CachedStates;
-			DynArray<UINT32>& heldButtons = mDevices[event.DeviceIdx].HeldButtons;
+			Map<u32, ButtonData>& cachedStates = mDevices[event.DeviceIdx].CachedStates;
+			DynArray<u32>& heldButtons = mDevices[event.DeviceIdx].HeldButtons;
 
-			UINT32 numButtons = (UINT32)tempButtons.size();
-			for (UINT32 i = 0; i < numButtons; i++)
+			u32 numButtons = (u32)tempButtons.size();
+			for (u32 i = 0; i < numButtons; i++)
 			{
 				const VirtualButton& btn = tempButtons[i];
 				const VIRTUAL_BUTTON_DESC& btnDesc = tempBtnDescs[i];

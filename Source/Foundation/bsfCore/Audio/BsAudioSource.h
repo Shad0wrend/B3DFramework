@@ -71,10 +71,10 @@ namespace bs
 		 * some might get disabled. By setting a higher priority the audio source is guaranteed to be disabled after sources
 		 * with lower priority.
 		 */
-		virtual void SetPriority(INT32 priority);
+		virtual void SetPriority(i32 priority);
 
 		/** @copydoc setPriority() */
-		UINT32 GetPriority() const { return mPriority; }
+		u32 GetPriority() const { return mPriority; }
 
 		/**
 		 * Minimum distance at which audio attenuation starts. When the listener is closer to the source
@@ -134,7 +134,7 @@ namespace bs
 		float mVolume = 1.0f;
 		float mPitch = 1.0f;
 		bool mLoop = false;
-		INT32 mPriority = 0;
+		i32 mPriority = 0;
 		float mMinDistance = 1.0f;
 		float mAttenuation = 1.0f;
 

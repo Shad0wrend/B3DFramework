@@ -7,11 +7,11 @@
 
 namespace bs
 {
-	AudioClip::AudioClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples, const AUDIO_CLIP_DESC& desc)
+	AudioClip::AudioClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc)
 		: Resource(false), mDesc(desc), mNumSamples(numSamples), mStreamSize(streamSize), mStreamData(samples)
 	{
 		if (samples != nullptr)
-			mStreamOffset = (UINT32)samples->Tell();
+			mStreamOffset = (u32)samples->Tell();
 
 		mKeepSourceData = desc.KeepSourceData;
 	}
@@ -23,12 +23,12 @@ namespace bs
 		Resource::Initialize();
 	}
 
-	HAudioClip AudioClip::Create(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples, const AUDIO_CLIP_DESC& desc)
+	HAudioClip AudioClip::Create(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc)
 	{
 		return static_resource_cast<AudioClip>(gResources().CreateResourceHandleInternal(CreatePtrInternal(samples, streamSize, numSamples, desc)));
 	}
 
-	SPtr<AudioClip> AudioClip::CreatePtrInternal(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples, const AUDIO_CLIP_DESC& desc)
+	SPtr<AudioClip> AudioClip::CreatePtrInternal(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc)
 	{
 		SPtr<AudioClip> newClip = gAudio().CreateClip(samples, streamSize, numSamples, desc);
 		newClip->SetThisPtrInternal(newClip);

@@ -41,7 +41,7 @@ namespace bs
 		BS_NORREF HFont Font; /**< Font to use for all text within the GUI element. */
 
 		BS_SCRIPT_EXPORT()
-		UINT32 FontSize = 8; /**< Font size to use for all text within the GUI element. */
+		u32 FontSize = 8; /**< Font size to use for all text within the GUI element. */
 
 		BS_SCRIPT_EXPORT()
 		TextHorzAlign TextHorzAlign = THA_Left; /**< Horizontal alignment of text within the GUI element. */
@@ -122,22 +122,22 @@ namespace bs
 		RectOffset Padding; /**< Determines extra distance between this and other elements in a layout. */
 
 		BS_SCRIPT_EXPORT()
-		UINT32 Width = 0; /**< Wanted width of the GUI element in pixels. Only used if fixedWidth is enabled. */
+		u32 Width = 0; /**< Wanted width of the GUI element in pixels. Only used if fixedWidth is enabled. */
 
 		BS_SCRIPT_EXPORT()
-		UINT32 Height = 0; /**< Wanted height of the GUI element in pixels. Only used if fixedHeight is enabled. */
+		u32 Height = 0; /**< Wanted height of the GUI element in pixels. Only used if fixedHeight is enabled. */
 
 		BS_SCRIPT_EXPORT()
-		UINT32 MinWidth = 0; /**< Minimum width allowed for the GUI element. Used by the layout only when exact width is not specified. */
+		u32 MinWidth = 0; /**< Minimum width allowed for the GUI element. Used by the layout only when exact width is not specified. */
 
 		BS_SCRIPT_EXPORT()
-		UINT32 MaxWidth = 0; /**< Maximum width allowed for the GUI element. Used by the layout only when exact width is not specified. */
+		u32 MaxWidth = 0; /**< Maximum width allowed for the GUI element. Used by the layout only when exact width is not specified. */
 
 		BS_SCRIPT_EXPORT()
-		UINT32 MinHeight = 0; /**< Minimum height allowed for the GUI element. Used by the layout only when exact height is not specified. */
+		u32 MinHeight = 0; /**< Minimum height allowed for the GUI element. Used by the layout only when exact height is not specified. */
 
 		BS_SCRIPT_EXPORT()
-		UINT32 MaxHeight = 0; /**< Maximum height allowed for the GUI element. Used by the layout only when exact height is not specified. */
+		u32 MaxHeight = 0; /**< Maximum height allowed for the GUI element. Used by the layout only when exact height is not specified. */
 
 		BS_SCRIPT_EXPORT()
 		bool FixedWidth = false; /**< Determines should the layout resize the element depending on available size. If true no resizing will be done. */

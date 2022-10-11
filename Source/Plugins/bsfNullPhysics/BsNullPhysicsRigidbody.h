@@ -114,16 +114,16 @@ namespace bs
 		Quaternion GetCenterOfMassRotation() const override { return mCenterOfMassRotation; }
 
 		/** @copydoc Rigidbody::setPositionSolverCount */
-		void SetPositionSolverCount(UINT32 count) override { mPositionSolverCount = count; }
+		void SetPositionSolverCount(u32 count) override { mPositionSolverCount = count; }
 
 		/** @copydoc Rigidbody::getPositionSolverCount */
-		UINT32 GetPositionSolverCount() const override { return mPositionSolverCount; }
+		u32 GetPositionSolverCount() const override { return mPositionSolverCount; }
 
 		/** @copydoc Rigidbody::setVelocitySolverCount */
-		void SetVelocitySolverCount(UINT32 count) override { mVelocitySolverCount = count; }
+		void SetVelocitySolverCount(u32 count) override { mVelocitySolverCount = count; }
 
 		/** @copydoc Rigidbody::getVelocitySolverCount */
-		UINT32 GetVelocitySolverCount() const override { return mVelocitySolverCount; }
+		u32 GetVelocitySolverCount() const override { return mVelocitySolverCount; }
 
 		/** @copydoc Rigidbody::addForce */
 		void AddForce(const Vector3& force, ForceMode mode = ForceMode::Force) override { }
@@ -162,8 +162,8 @@ namespace bs
 		float mMaxAngularVelocity = std::numeric_limits<float>::max();
 		Vector3 mCenterOfMassPosition = Vector3::ZERO;
 		Quaternion mCenterOfMassRotation = Quaternion::IDENTITY;
-		UINT32 mPositionSolverCount = 0;
-		UINT32 mVelocitySolverCount = 0;
+		u32 mPositionSolverCount = 0;
+		u32 mVelocitySolverCount = 0;
 	};
 
 	/** @} */

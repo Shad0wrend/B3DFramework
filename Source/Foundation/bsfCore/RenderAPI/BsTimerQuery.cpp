@@ -5,7 +5,7 @@
 
 namespace bs { namespace ct
 {
-	SPtr<TimerQuery> TimerQuery::Create(UINT32 deviceIdx)
+	SPtr<TimerQuery> TimerQuery::Create(u32 deviceIdx)
 	{
 		return QueryManager::Instance().CreateTimerQuery(deviceIdx);
 	}

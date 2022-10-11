@@ -131,7 +131,7 @@ namespace bs
 		String CompilerId;
 
 		/** Version of the compiler that compiled the bytecode. */
-		UINT32 CompilerVersion = 0;
+		u32 CompilerVersion = 0;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

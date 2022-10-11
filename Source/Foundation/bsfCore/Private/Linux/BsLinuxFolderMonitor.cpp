@@ -17,15 +17,15 @@ namespace bs
 
 		void addPath(const Path& path);
 		void removePath(const Path& path);
-		Path getPath(INT32 handle);
+		Path getPath(i32 handle);
 
 		Path folderToMonitor;
 		int dirHandle;
 		bool monitorSubdirectories;
 		FolderChangeBits filter;
 
-		UnorderedMap<Path, INT32> pathToHandle;
-		UnorderedMap<INT32, Path> handleToPath;
+		UnorderedMap<Path, i32> pathToHandle;
+		UnorderedMap<i32, Path> handleToPath;
 	};
 
 	FolderMonitor::FolderWatchInfo::FolderWatchInfo(const Path& folderToMonitor, int inHandle, bool monitorSubdirectories,
@@ -65,7 +65,7 @@ namespace bs
 	{
 		String pathString = path.toString();
 
-		INT32 watchHandle = inotify_add_watch(dirHandle, pathString.c_str(), IN_ALL_EVENTS);
+		i32 watchHandle = inotify_add_watch(dirHandle, pathString.c_str(), IN_ALL_EVENTS);
 		if(watchHandle == -1)
 		{
 			String error = strerror(errno);
@@ -81,14 +81,14 @@ namespace bs
 		auto iterFind = pathToHandle.find(path);
 		if(iterFind != pathToHandle.end())
 		{
-			INT32 watchHandle = iterFind->second;
+			i32 watchHandle = iterFind->second;
 			pathToHandle.erase(iterFind);
 
 			handleToPath.erase(watchHandle);
 		}
 	}
 
-	Path FolderMonitor::FolderWatchInfo::getPath(INT32 handle)
+	Path FolderMonitor::FolderWatchInfo::getPath(i32 handle)
 	{
 		auto iterFind = handleToPath.find(handle);
 		if(iterFind != handleToPath.end())
@@ -113,7 +113,7 @@ namespace bs
 	{
 		static FileAction* createAdded(const String& fileName)
 		{
-			UINT8* bytes = (UINT8*)bs_alloc((UINT32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
+			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
 			bytes += sizeof(FileAction);
@@ -132,7 +132,7 @@ namespace bs
 
 		static FileAction* createRemoved(const String& fileName)
 		{
-			UINT8* bytes = (UINT8*)bs_alloc((UINT32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
+			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
 			bytes += sizeof(FileAction);
@@ -151,7 +151,7 @@ namespace bs
 
 		static FileAction* createModified(const String& fileName)
 		{
-			UINT8* bytes = (UINT8*)bs_alloc((UINT32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
+			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
 			bytes += sizeof(FileAction);
@@ -170,7 +170,7 @@ namespace bs
 
 		static FileAction* createRenamed(const String& oldFilename, const String& newfileName)
 		{
-			UINT8* bytes = (UINT8*)bs_alloc((UINT32)(sizeof(FileAction) +
+			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) +
 				(oldFilename.size() + newfileName.size() + 2) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
@@ -202,7 +202,7 @@ namespace bs
 		String::value_type* newName;
 		FileActionType type;
 
-		UINT64 lastSize;
+		u64 lastSize;
 		bool checkForWriteStarted;
 	};
 
@@ -364,21 +364,21 @@ namespace bs
 
 	void FolderMonitor::workerThreadMain()
 	{
-		static const UINT32 BUFFER_SIZE = 16384;
+		static const u32 BUFFER_SIZE = 16384;
 
 		bool shouldRun;
-		INT32 watchHandle;
+		i32 watchHandle;
 		{
 			Lock(m->mainMutex);
 			watchHandle = m->inHandle;
 			shouldRun = m->started;
 		}
 
-		UINT8 buffer[BUFFER_SIZE];
+		u8 buffer[BUFFER_SIZE];
 
 		while(shouldRun)
 		{
-			INT32 length = (INT32)read(watchHandle, buffer, sizeof(buffer));
+			i32 length = (i32)read(watchHandle, buffer, sizeof(buffer));
 
 			// Handle was closed, shutdown thread
 			if (length < 0)
@@ -390,7 +390,7 @@ namespace bs
 				shouldRun = m->started;
 			}
 
-			INT32 readPos = 0;
+			i32 readPos = 0;
 			while(readPos < length)
 			{
 				inotify_event* event = (inotify_event*)&buffer[readPos];

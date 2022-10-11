@@ -128,7 +128,7 @@ namespace bs
 			mInternal->SetSlopeLimit(value);
 	}
 
-	void CCharacterController::SetLayer(UINT64 layer)
+	void CCharacterController::SetLayer(u64 layer)
 	{
 		mLayer = layer;
 

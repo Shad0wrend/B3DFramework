@@ -70,23 +70,23 @@ namespace bs
 		return RenderStateManager::Instance().GetDefaultSamplerState();
 	}
 
-	UINT64 SamplerState::GenerateHash(const SAMPLER_STATE_DESC& desc)
+	u64 SamplerState::GenerateHash(const SAMPLER_STATE_DESC& desc)
 	{
 		size_t hash = 0;
-		bs_hash_combine(hash, (UINT32)desc.AddressMode.U);
-		bs_hash_combine(hash, (UINT32)desc.AddressMode.V);
-		bs_hash_combine(hash, (UINT32)desc.AddressMode.W);
-		bs_hash_combine(hash, (UINT32)desc.MinFilter);
-		bs_hash_combine(hash, (UINT32)desc.MagFilter);
-		bs_hash_combine(hash, (UINT32)desc.MipFilter);
+		bs_hash_combine(hash, (u32)desc.AddressMode.U);
+		bs_hash_combine(hash, (u32)desc.AddressMode.V);
+		bs_hash_combine(hash, (u32)desc.AddressMode.W);
+		bs_hash_combine(hash, (u32)desc.MinFilter);
+		bs_hash_combine(hash, (u32)desc.MagFilter);
+		bs_hash_combine(hash, (u32)desc.MipFilter);
 		bs_hash_combine(hash, desc.MaxAniso);
 		bs_hash_combine(hash, desc.MipmapBias);
 		bs_hash_combine(hash, desc.MipMin);
 		bs_hash_combine(hash, desc.MipMax);
 		bs_hash_combine(hash, desc.BorderColor);
-		bs_hash_combine(hash, (UINT32)desc.ComparisonFunc);
+		bs_hash_combine(hash, (u32)desc.ComparisonFunc);
 
-		return (UINT64)hash;
+		return (u64)hash;
 	}
 
 	const SamplerProperties& SamplerState::GetProperties() const

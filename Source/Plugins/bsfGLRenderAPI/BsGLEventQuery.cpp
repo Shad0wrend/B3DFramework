@@ -6,7 +6,7 @@
 
 namespace bs { namespace ct
 {
-	GLEventQuery::GLEventQuery(UINT32 deviceIdx)
+	GLEventQuery::GLEventQuery(u32 deviceIdx)
 	{
 		assert(deviceIdx == 0 && "Multiple GPUs not supported natively on OpenGL.");
 

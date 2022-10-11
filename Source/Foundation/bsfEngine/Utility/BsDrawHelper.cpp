@@ -14,8 +14,8 @@
 
 namespace bs
 {
-	const UINT32 DrawHelper::VERTEX_BUFFER_GROWTH = 4096;
-	const UINT32 DrawHelper::INDEX_BUFFER_GROWTH = 4096 * 2;
+	const u32 DrawHelper::VERTEX_BUFFER_GROWTH = 4096;
+	const u32 DrawHelper::INDEX_BUFFER_GROWTH = 4096 * 2;
 
 	DrawHelper::DrawHelper()
 		:mLayer(1)
@@ -51,7 +51,7 @@ namespace bs
 		mTransform = transform;
 	}
 
-	void DrawHelper::SetLayer(UINT64 layer)
+	void DrawHelper::SetLayer(u64 layer)
 	{
 		mLayer = layer;
 	}
@@ -69,7 +69,7 @@ namespace bs
 		cubeData.Center = mTransform.MultiplyAffine(position);
 	}
 
-	void DrawHelper::Sphere(const Vector3& position, float radius, UINT32 quality)
+	void DrawHelper::Sphere(const Vector3& position, float radius, u32 quality)
 	{
 		mSolidSphereData.push_back(SphereData());
 		SphereData& sphereData = mSolidSphereData.back();
@@ -96,7 +96,7 @@ namespace bs
 		cubeData.Center = mTransform.MultiplyAffine(position);
 	}
 
-	void DrawHelper::WireSphere(const Vector3& position, float radius, UINT32 quality)
+	void DrawHelper::WireSphere(const Vector3& position, float radius, u32 quality)
 	{
 		mWireSphereData.push_back(SphereData());
 		SphereData& sphereData = mWireSphereData.back();
@@ -110,7 +110,7 @@ namespace bs
 		sphereData.Center = mTransform.MultiplyAffine(position);
 	}
 
-	void DrawHelper::WireHemisphere(const Vector3& position, float radius, UINT32 quality)
+	void DrawHelper::WireHemisphere(const Vector3& position, float radius, u32 quality)
 	{
 		mWireHemisphereData.push_back(SphereData());
 		SphereData& sphereData = mWireHemisphereData.back();
@@ -173,7 +173,7 @@ namespace bs
 	}
 
 	void DrawHelper::Cone(const Vector3& base, const Vector3& normal, float height, float radius, const Vector2& scale,
-		UINT32 quality)
+		u32 quality)
 	{
 		mConeData.push_back(ConeData());
 		ConeData& coneData = mConeData.back();
@@ -191,7 +191,7 @@ namespace bs
 	}
 
 	void DrawHelper::WireCone(const Vector3& base, const Vector3& normal, float height, float radius, const Vector2& scale,
-		UINT32 quality)
+		u32 quality)
 	{
 		mWireConeData.push_back(ConeData());
 		ConeData& coneData = mWireConeData.back();
@@ -208,7 +208,7 @@ namespace bs
 		coneData.Center = mTransform.MultiplyAffine(base + normal * height * 0.5f);
 	}
 
-	void DrawHelper::Disc(const Vector3& position, const Vector3& normal, float radius, UINT32 quality)
+	void DrawHelper::Disc(const Vector3& position, const Vector3& normal, float radius, u32 quality)
 	{
 		mDiscData.push_back(DiscData());
 		DiscData& discData = mDiscData.back();
@@ -223,7 +223,7 @@ namespace bs
 		discData.Center = mTransform.MultiplyAffine(position);
 	}
 
-	void DrawHelper::WireDisc(const Vector3& position, const Vector3& normal, float radius, UINT32 quality)
+	void DrawHelper::WireDisc(const Vector3& position, const Vector3& normal, float radius, u32 quality)
 	{
 		mWireDiscData.push_back(DiscData());
 		DiscData& discData = mWireDiscData.back();
@@ -239,7 +239,7 @@ namespace bs
 	}
 
 	void DrawHelper::Arc(const Vector3& position, const Vector3& normal, float radius,
-		Degree startAngle, Degree amountAngle, UINT32 quality)
+		Degree startAngle, Degree amountAngle, u32 quality)
 	{
 		mArcData.push_back(ArcData());
 		ArcData& arcData = mArcData.back();
@@ -257,7 +257,7 @@ namespace bs
 	}
 
 	void DrawHelper::WireArc(const Vector3& position, const Vector3& normal, float radius,
-		Degree startAngle, Degree amountAngle, UINT32 quality)
+		Degree startAngle, Degree amountAngle, u32 quality)
 	{
 		mWireArcData.push_back(ArcData());
 		ArcData& arcData = mWireArcData.back();
@@ -286,7 +286,7 @@ namespace bs
 		rectData.Center = mTransform.MultiplyAffine(area.GetCenter());
 	}
 
-	void DrawHelper::Text(const Vector3& position, const String& text, const HFont& font, UINT32 size)
+	void DrawHelper::Text(const Vector3& position, const String& text, const HFont& font, u32 size)
 	{
 		if (!font.IsLoaded() || text.empty())
 			return;
@@ -340,7 +340,7 @@ namespace bs
 		mWireMeshData.clear();
 	}
 
-	Vector<DrawHelper::ShapeMeshData> DrawHelper::BuildMeshes(SortType sorting, const Camera* camera, UINT64 layers)
+	Vector<DrawHelper::ShapeMeshData> DrawHelper::BuildMeshes(SortType sorting, const Camera* camera, u64 layers)
 	{
 		Vector<ShapeMeshData> meshInfos;
 
@@ -354,25 +354,25 @@ namespace bs
 		{
 			ShapeType ShapeType;
 			MeshType MeshType;
-			UINT32 Idx;
-			UINT32 TextIdx;
+			u32 Idx;
+			u32 TextIdx;
 			float Distance;
-			UINT32 NumVertices;
-			UINT32 NumIndices;
+			u32 NumVertices;
+			u32 NumIndices;
 		};
 
 		/************************************************************************/
 		/* 			Sort everything according to specified sorting rule         */
 		/************************************************************************/
 
-		UINT32 idx = 0;
+		u32 idx = 0;
 		Vector<RawData> allShapes;
 		Vector3 reference = Vector3::ZERO;
 		
 		if(camera)
 			reference = camera->GetTransform().GetPosition();
 
-		UINT32 localIdx = 0;
+		u32 localIdx = 0;
 		for (auto& shapeData : mSolidCubeData)
 		{
 			if ((shapeData.Layer & layers) == 0)
@@ -622,7 +622,7 @@ namespace bs
 			allShapes.push_back(RawData());
 			RawData& rawData = allShapes.back();
 
-			UINT32 numLines = (UINT32)shapeData.Lines.size() / 2;
+			u32 numLines = (u32)shapeData.Lines.size() / 2;
 			rawData.Idx = localIdx++;
 			rawData.TextIdx = 0;
 			rawData.MeshType = MeshType::Line;
@@ -720,12 +720,12 @@ namespace bs
 
 		struct TextRenderData
 		{
-			UINT32 Page;
+			u32 Page;
 			SPtr<TextData<>> TextData;
 		};
 
-		UnorderedMap<UINT32, TextRenderData> textRenderData;
-		UINT32 textIdx = 0;
+		UnorderedMap<u32, TextRenderData> textRenderData;
+		u32 textIdx = 0;
 
 		localIdx = 0;
 		for (auto& shapeData : mText2DData)
@@ -739,10 +739,10 @@ namespace bs
 			U32String utf32text = UTF8::ToUtF32(shapeData.Text);
 			SPtr<TextData<>> textData = bs_shared_ptr_new<TextData<>>(utf32text, shapeData.Font, shapeData.Size);
 
-			UINT32 numPages = textData->GetNumPages();
-			for (UINT32 j = 0; j < numPages; j++)
+			u32 numPages = textData->GetNumPages();
+			for (u32 j = 0; j < numPages; j++)
 			{
-				UINT32 numQuads = textData->GetNumQuadsForPage(j);
+				u32 numQuads = textData->GetNumQuadsForPage(j);
 
 				allShapes.push_back(RawData());
 				RawData& rawData = allShapes.back();
@@ -790,13 +790,13 @@ namespace bs
 		{
 			MeshType Type;
 			HTexture Texture;
-			UINT32 StartIdx;
-			UINT32 EndIdx;
-			UINT32 NumVertices;
-			UINT32 NumIndices;
+			u32 StartIdx;
+			u32 EndIdx;
+			u32 NumVertices;
+			u32 NumIndices;
 		};
 
-		UINT32 numShapes = (UINT32)allShapes.size();
+		u32 numShapes = (u32)allShapes.size();
 
 		Vector<Batch> batches;
 		if (numShapes > 0)
@@ -817,7 +817,7 @@ namespace bs
 				}
 			}
 
-			for (UINT32 i = 1; i < numShapes; i++)
+			for (u32 i = 1; i < numShapes; i++)
 			{
 				Batch& currentBatch = batches.back();
 
@@ -857,11 +857,11 @@ namespace bs
 		}
 
 		// Allocate space for all the batch vertices/indices, per type
-		UINT32 vertexCount[4] = { 0, 0, 0, 0 };
-		UINT32 indexCount[4] = { 0, 0, 0, 0 };
+		u32 vertexCount[4] = { 0, 0, 0, 0 };
+		u32 indexCount[4] = { 0, 0, 0, 0 };
 		for (auto& batch : batches)
 		{
-			UINT32 typeIdx = (UINT32)batch.Type;
+			u32 typeIdx = (u32)batch.Type;
 
 			vertexCount[typeIdx] += batch.NumVertices;
 			indexCount[typeIdx] += batch.NumIndices;
@@ -869,7 +869,7 @@ namespace bs
 
 		SPtr<VertexDataDesc> vertexDesc[4] = { mSolidVertexDesc, mWireVertexDesc, mLineVertexDesc, mTextVertexDesc };
 		SPtr<MeshData> meshData[4];
-		for(UINT32 i = 0; i < 4; i++)
+		for(u32 i = 0; i < 4; i++)
 		{
 			if(vertexCount[i] > 0 && indexCount[i] > 0)
 				meshData[i] = MeshData::Create(vertexCount[i], indexCount[i], vertexDesc[i]);
@@ -878,13 +878,13 @@ namespace bs
 		/************************************************************************/
 		/* 					Generate geometry for each batch                    */
 		/************************************************************************/
-		UINT32 vertexOffset[4] = { 0, 0, 0, 0 };
-		UINT32 indexOffset[4] = { 0, 0, 0, 0 };
+		u32 vertexOffset[4] = { 0, 0, 0, 0 };
+		u32 indexOffset[4] = { 0, 0, 0, 0 };
 
 		VertexElemIter<Vector3> positionIter[4];
-		VertexElemIter<UINT32> colorIter[4];
+		VertexElemIter<u32> colorIter[4];
 
-		for(UINT32 i = 0; i < 4; i++)
+		for(u32 i = 0; i < 4; i++)
 		{
 			if(!meshData[i])
 				continue;
@@ -904,7 +904,7 @@ namespace bs
 
 		for (auto& batch : batches)
 		{
-			UINT32 typeIdx = (UINT32)batch.Type;
+			u32 typeIdx = (u32)batch.Type;
 
 			if (batch.Type == MeshType::Solid)
 			{
@@ -915,7 +915,7 @@ namespace bs
 				newMesh.SubMesh.DrawOp = DOT_TRIANGLE_LIST;
 				newMesh.Type = MeshType::Solid;
 
-				for (UINT32 i = batch.StartIdx; i <= batch.EndIdx; i++)
+				for (u32 i = batch.StartIdx; i <= batch.EndIdx; i++)
 				{
 					RawData& shapeData = allShapes[i];
 
@@ -991,7 +991,7 @@ namespace bs
 					}
 
 					Matrix4 transformIT = transform->InverseAffine().Transpose();
-					for (UINT32 i = 0; i < shapeData.NumVertices; i++)
+					for (u32 i = 0; i < shapeData.NumVertices; i++)
 					{
 						Vector3 worldPos = transform->MultiplyAffine(positionIter[typeIdx].GetValue());
 						Vector3 worldNormal = transformIT.MultiplyAffine(solidNormalIter.GetValue());
@@ -1014,7 +1014,7 @@ namespace bs
 				newMesh.SubMesh.DrawOp = DOT_TRIANGLE_LIST;
 				newMesh.Type = MeshType::Wire;
 
-				for (UINT32 i = batch.StartIdx; i <= batch.EndIdx; i++)
+				for (u32 i = batch.StartIdx; i <= batch.EndIdx; i++)
 				{
 					RawData& shapeData = allShapes[i];
 
@@ -1031,7 +1031,7 @@ namespace bs
 						color = wireMeshData.Color.GetAsRgba();
 
 						auto vertIterRead = wireMeshData.MeshData->GetVec3DataIter(VES_POSITION);
-						for (UINT32 j = 0; j < vertIterRead.GetNumElements(); j++)
+						for (u32 j = 0; j < vertIterRead.GetNumElements(); j++)
 						{
 							Vector3 worldPos = transform->MultiplyAffine(vertIterRead.GetValue());
 
@@ -1041,10 +1041,10 @@ namespace bs
 							vertIterRead.MoveNext();
 						}
 
-						UINT32* srcIndexData = wireMeshData.MeshData->GetIndices32();
-						UINT32* destIndexData = meshData[typeIdx]->GetIndices32() + indexOffset[typeIdx];
+						u32* srcIndexData = wireMeshData.MeshData->GetIndices32();
+						u32* destIndexData = meshData[typeIdx]->GetIndices32() + indexOffset[typeIdx];
 
-						for(UINT32 j = 0; j < shapeData.NumIndices; j++)
+						for(u32 j = 0; j < shapeData.NumIndices; j++)
 							destIndexData[j] = srcIndexData[j] + vertexOffset[typeIdx];
 
 						vertexOffset[typeIdx] += shapeData.NumVertices;
@@ -1065,7 +1065,7 @@ namespace bs
 				newMesh.SubMesh.DrawOp = DOT_LINE_LIST;
 				newMesh.Type = MeshType::Line;
 
-				for (UINT32 i = batch.StartIdx; i <= batch.EndIdx; i++)
+				for (u32 i = batch.StartIdx; i <= batch.EndIdx; i++)
 				{
 					RawData& shapeData = allShapes[i];
 
@@ -1180,7 +1180,7 @@ namespace bs
 						break;
 					}
 
-					for (UINT32 i = 0; i < shapeData.NumVertices; i++)
+					for (u32 i = 0; i < shapeData.NumVertices; i++)
 					{
 						Vector3 worldPos = transform->MultiplyAffine(positionIter[typeIdx].GetValue());
 
@@ -1206,32 +1206,32 @@ namespace bs
 				newMesh.Type = MeshType::Text;
 				newMesh.Texture = batch.Texture;
 
-				for (UINT32 i = batch.StartIdx; i <= batch.EndIdx; i++)
+				for (u32 i = batch.StartIdx; i <= batch.EndIdx; i++)
 				{
 					RawData& shapeData = allShapes[i];
 					Text2DData& text2DData = mText2DData[shapeData.Idx];
 
 					TextRenderData& renderData = textRenderData[shapeData.TextIdx];
-					UINT32 numQuads = renderData.TextData->GetNumQuadsForPage(renderData.Page);
+					u32 numQuads = renderData.TextData->GetNumQuadsForPage(renderData.Page);
 
-					UINT32* indices = meshData[typeIdx]->GetIndices32() + indexOffset[typeIdx];
+					u32* indices = meshData[typeIdx]->GetIndices32() + indexOffset[typeIdx];
 
 					// Note: Need temporary buffers because TextLine doesn't support arbitrary vertex stride. Eventually
 					// that should be supported (should be almost trivial to implement)
 					Vector2* tempVertices = bs_stack_alloc<Vector2>(shapeData.NumVertices);
 					Vector2* tempUVs = bs_stack_alloc<Vector2>(shapeData.NumVertices);
 
-					UINT32 numLines = renderData.TextData->GetNumLines();
-					UINT32 quadOffset = 0;
-					for (UINT32 j = 0; j < numLines; j++)
+					u32 numLines = renderData.TextData->GetNumLines();
+					u32 quadOffset = 0;
+					for (u32 j = 0; j < numLines; j++)
 					{
 						const TextDataBase::TextLine& line = renderData.TextData->GetLine(j);
-						UINT32 writtenQuads = line.FillBuffer(renderData.Page, tempVertices, tempUVs, indices, quadOffset, numQuads);
+						u32 writtenQuads = line.FillBuffer(renderData.Page, tempVertices, tempUVs, indices, quadOffset, numQuads);
 
 						quadOffset += writtenQuads;
 					}
 
-					for(UINT32 j = 0; j < shapeData.NumIndices; j++)
+					for(u32 j = 0; j < shapeData.NumIndices; j++)
 						indices[j] += vertexOffset[typeIdx];
 
 					Vector3 worldSpacePos = text2DData.Transform.MultiplyAffine(text2DData.Position);
@@ -1241,7 +1241,7 @@ namespace bs
 
 					float z = camera->ProjectPoint(camera->WorldToViewPoint(worldSpacePos)).Z;
 
-					for (UINT32 j = 0; j < shapeData.NumVertices; j++)
+					for (u32 j = 0; j < shapeData.NumVertices; j++)
 					{
 						Vector3 vertexPos(screenPos.X + tempVertices[j].X, screenPos.Y + tempVertices[j].Y, z);
 
@@ -1260,7 +1260,7 @@ namespace bs
 		}
 
 		SPtr<Mesh> meshes[4];
-		for(UINT32 i = 0; i < 4; i++)
+		for(u32 i = 0; i < 4; i++)
 		{
 			if(meshData[i])
 				meshes[i] = Mesh::CreatePtrInternal(meshData[i]);

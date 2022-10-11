@@ -19,8 +19,8 @@ namespace bs
 	{
 	public:
 		BS_SCRIPT_EXPORT(ec:Texture,v:private)
-		static HTexture Create(PixelFormat format, UINT32 width, UINT32 height, UINT32 depth, TextureType texType,
-			TextureUsage usage, UINT32 numSamples, bool hasMipmaps, bool gammaCorrection);
+		static HTexture Create(PixelFormat format, u32 width, u32 height, u32 depth, TextureType texType,
+			TextureUsage usage, u32 numSamples, bool hasMipmaps, bool gammaCorrection);
 
 		/** @copydoc TextureProperties::getFormat */
 		BS_SCRIPT_EXPORT(e:Texture,n:PixelFormat,pr:getter)
@@ -36,15 +36,15 @@ namespace bs
 
 		/** @copydoc TextureProperties::getWidth */
 		BS_SCRIPT_EXPORT(e:Texture,n:Width,pr:getter)
-		static UINT32 GetWidth(const HTexture& thisPtr);
+		static u32 GetWidth(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::getHeight */
 		BS_SCRIPT_EXPORT(e:Texture,n:Height,pr:getter)
-		static UINT32 GetHeight(const HTexture& thisPtr);
+		static u32 GetHeight(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::getDepth */
 		BS_SCRIPT_EXPORT(e:Texture,n:Depth,pr:getter)
-		static UINT32 GetDepth(const HTexture& thisPtr);
+		static u32 GetDepth(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::isHardwareGammaEnabled */
 		BS_SCRIPT_EXPORT(e:Texture,n:GammaSpace,pr:getter)
@@ -52,11 +52,11 @@ namespace bs
 
 		/** @copydoc TextureProperties::getNumSamples */
 		BS_SCRIPT_EXPORT(e:Texture,n:SampleCount,pr:getter)
-		static UINT32 GetSampleCount(const HTexture& thisPtr);
+		static u32 GetSampleCount(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::getNumMipmaps */
 		BS_SCRIPT_EXPORT(e:Texture,n:MipMapCount,pr:getter)
-		static UINT32 GetMipmapCount(const HTexture& thisPtr);
+		static u32 GetMipmapCount(const HTexture& thisPtr);
 
 		/**
 		 * Returns pixels for the specified mip level & face. Pixels will be read from system memory, which means the
@@ -70,7 +70,7 @@ namespace bs
 		 * @return			A set of pixels for the specified mip level.
 		 */
 		BS_SCRIPT_EXPORT(e:Texture,n:GetPixels)
-		static SPtr<PixelData> GetPixels(const HTexture& thisPtr, UINT32 face = 0, UINT32 mipLevel = 0);
+		static SPtr<PixelData> GetPixels(const HTexture& thisPtr, u32 face = 0, u32 mipLevel = 0);
 
 		/**
 		 * Sets pixels for the specified mip level and face.
@@ -83,7 +83,7 @@ namespace bs
 		 *					cubemap array it has to be a multiple of 6).
 		 */
 		BS_SCRIPT_EXPORT(e:Texture,n:SetPixels)
-		static void SetPixels(const HTexture& thisPtr, const SPtr<PixelData>& data, UINT32 face = 0, UINT32 mipLevel = 0);
+		static void SetPixels(const HTexture& thisPtr, const SPtr<PixelData>& data, u32 face = 0, u32 mipLevel = 0);
 
 		/**
 		 * Sets pixels for the specified mip level and face.
@@ -97,7 +97,7 @@ namespace bs
 		 *					cubemap array it has to be a multiple of 6).
 		 */
 		BS_SCRIPT_EXPORT(e:Texture,n:SetPixels)
-		static void SetPixelsArray(const HTexture& thisPtr, const Vector<Color>& colors, UINT32 face = 0, UINT32 mipLevel = 0);
+		static void SetPixelsArray(const HTexture& thisPtr, const Vector<Color>& colors, u32 face = 0, u32 mipLevel = 0);
 	};
 
 	/** @endcond */

@@ -34,7 +34,7 @@ namespace bs
 		mLoop = loop;
 	}
 
-	void AudioSource::SetPriority(INT32 priority)
+	void AudioSource::SetPriority(i32 priority)
 	{
 		mPriority = priority;
 	}

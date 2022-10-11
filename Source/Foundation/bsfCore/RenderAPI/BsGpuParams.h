@@ -57,7 +57,7 @@ namespace bs
 		/**
 		 * Returns the size of a data parameter with the specified name, in bytes. Returns 0 if such parameter doesn't exist.
 		 */
-		UINT32 GetDataParamSize(GpuProgramType type, const String& name) const;
+		u32 GetDataParamSize(GpuProgramType type, const String& name) const;
 
 		/** Checks if parameter with the specified name exists. */
 		bool HasParam(GpuProgramType type, const String& name) const;
@@ -134,25 +134,25 @@ namespace bs
 		void GetSamplerStateParam(GpuProgramType type, const String& name, TGpuParamSampState<Core>& output) const;
 
 		/**	Gets a parameter block buffer from the specified set/slot combination. */
-		ParamsBufferType GetParamBlockBuffer(UINT32 set, UINT32 slot) const;
+		ParamsBufferType GetParamBlockBuffer(u32 set, u32 slot) const;
 
 		/**	Gets a texture bound to the specified set/slot combination. */
-		TextureType GetTexture(UINT32 set, UINT32 slot) const;
+		TextureType GetTexture(u32 set, u32 slot) const;
 
 		/**	Gets a load/store texture bound to the specified set/slot combination. */
-		TextureType GetLoadStoreTexture(UINT32 set, UINT32 slot) const;
+		TextureType GetLoadStoreTexture(u32 set, u32 slot) const;
 
 		/**	Gets a buffer bound to the specified set/slot combination. */
-		BufferType GetBuffer(UINT32 set, UINT32 slot) const;
+		BufferType GetBuffer(u32 set, u32 slot) const;
 
 		/**	Gets a sampler state bound to the specified set/slot combination. */
-		SamplerType GetSamplerState(UINT32 set, UINT32 slot) const;
+		SamplerType GetSamplerState(u32 set, u32 slot) const;
 
 		/** Gets information that determines which texture surfaces to bind as a sampled texture parameter. */
-		const TextureSurface& GetTextureSurface(UINT32 set, UINT32 slot) const;
+		const TextureSurface& GetTextureSurface(u32 set, u32 slot) const;
 
 		/** Gets information that determines which texture surfaces to bind as a load/store parameter. */
-		const TextureSurface& GetLoadStoreSurface(UINT32 set, UINT32 slot) const;
+		const TextureSurface& GetLoadStoreSurface(u32 set, u32 slot) const;
 
 		/**
 		 * Assigns the provided parameter block buffer to a buffer with the specified name, for the specified GPU program
@@ -178,20 +178,20 @@ namespace bs
 		 *
 		 * It is up to the caller to guarantee the provided buffer matches parameter block descriptor for this slot.
 		 */
-		virtual void SetParamBlockBuffer(UINT32 set, UINT32 slot, const ParamsBufferType& paramBlockBuffer);
+		virtual void SetParamBlockBuffer(u32 set, u32 slot, const ParamsBufferType& paramBlockBuffer);
 
 		/**	Sets a texture at the specified set/slot combination. */
-		virtual void SetTexture(UINT32 set, UINT32 slot, const TextureType& texture,
+		virtual void SetTexture(u32 set, u32 slot, const TextureType& texture,
 								const TextureSurface& surface = TextureSurface::COMPLETE);
 
 		/**	Sets a load/store texture at the specified set/slot combination. */
-		virtual void SetLoadStoreTexture(UINT32 set, UINT32 slot, const TextureType& texture, const TextureSurface& surface);
+		virtual void SetLoadStoreTexture(u32 set, u32 slot, const TextureType& texture, const TextureSurface& surface);
 
 		/**	Sets a buffer at the specified set/slot combination. */
-		virtual void SetBuffer(UINT32 set, UINT32 slot, const BufferType& buffer);
+		virtual void SetBuffer(u32 set, u32 slot, const BufferType& buffer);
 
 		/**	Sets a sampler state at the specified set/slot combination. */
-		virtual void SetSamplerState(UINT32 set, UINT32 slot, const SamplerType& sampler);
+		virtual void SetSamplerState(u32 set, u32 slot, const SamplerType& sampler);
 
 		/**	Assigns a data value to the parameter with the specified name. */
 		template<class T> void SetParam(GpuProgramType type, const String& name, const T& value)

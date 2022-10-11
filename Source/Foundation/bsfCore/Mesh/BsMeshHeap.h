@@ -54,26 +54,26 @@ namespace bs
 		 * @param[in]	vertexDesc	Description of the stored vertices.
 		 * @param[in]	indexType	Type of the stored indices.
 		 */
-		static SPtr<MeshHeap> Create(UINT32 numVertices, UINT32 numIndices,
+		static SPtr<MeshHeap> Create(u32 numVertices, u32 numIndices,
 			const SPtr<VertexDataDesc>& vertexDesc, IndexType indexType = IT_32BIT);
 
 	private:
 		/** @copydoc create */
-		MeshHeap(UINT32 numVertices, UINT32 numIndices,
+		MeshHeap(u32 numVertices, u32 numIndices,
 			const SPtr<VertexDataDesc>& vertexDesc, IndexType indexType = IT_32BIT);
 
 		/** @copydoc CoreObject::createCore */
 		SPtr<ct::CoreObject> CreateCore() const ;
 
 	private:
-		UINT32 mNumVertices;
-		UINT32 mNumIndices;
+		u32 mNumVertices;
+		u32 mNumIndices;
 
 		SPtr<VertexDataDesc> mVertexDesc;
 		IndexType mIndexType;
 
-		Map<UINT32, SPtr<TransientMesh>> mMeshes;
-		UINT32 mNextFreeId;
+		Map<u32, SPtr<TransientMesh>> mMeshes;
+		u32 mNextFreeId;
 	};
 
 	/** @} */
@@ -103,17 +103,17 @@ namespace bs
 		/**	Represents a continuous chunk of memory. */
 		struct ChunkData
 		{
-			UINT32 Start, Size;
+			u32 Start, Size;
 		};
 
 		/**	Represents an allocated piece of data representing a mesh. */
 		struct AllocatedData
 		{
-			UINT32 VertChunkIdx;
-			UINT32 IdxChunkIdx;
+			u32 VertChunkIdx;
+			u32 IdxChunkIdx;
 
 			UseFlags UseFlags;
-			UINT32 EventQueryIdx;
+			u32 EventQueryIdx;
 			SPtr<TransientMesh> Mesh;
 		};
 
@@ -121,7 +121,7 @@ namespace bs
 		struct QueryData
 		{
 			SPtr<EventQuery> Query;
-			UINT32 QueryId;
+			u32 QueryId;
 		};
 
 	public:
@@ -132,7 +132,7 @@ namespace bs
 		friend class bs::TransientMesh;
 		friend class TransientMesh;
 
-		MeshHeap(UINT32 numVertices, UINT32 numIndices,
+		MeshHeap(u32 numVertices, u32 numIndices,
 			const SPtr<VertexDataDesc>& vertexDesc, IndexType indexType, GpuDeviceFlags deviceMask);
 
 		/** @copydoc CoreObject::Initialize() */
@@ -150,19 +150,19 @@ namespace bs
 		void Dealloc(SPtr<TransientMesh> mesh);
 
 		/** Resizes the vertex buffers so they max contain the provided number of vertices. */
-		void GrowVertexBuffer(UINT32 numVertices);
+		void GrowVertexBuffer(u32 numVertices);
 
 		/** Resizes the index buffer so they max contain the provided number of indices. */
-		void GrowIndexBuffer(UINT32 numIndices);
+		void GrowIndexBuffer(u32 numIndices);
 
 		/**
 		 * Creates a new event query or returns an existing one from the pool if available. Returned value is an index
 		 * into event query array.
 		 */
-		UINT32 CreateEventQuery();
+		u32 CreateEventQuery();
 
 		/** Frees the event query with the specified index and returns it to the pool so it may be reused later. */
-		void FreeEventQuery(UINT32 idx);
+		void FreeEventQuery(u32 idx);
 
 		/**	Gets internal vertex data for all the meshes. */
 		SPtr<VertexData> GetVertexData() const;
@@ -176,21 +176,21 @@ namespace bs
 		/**
 		 * Returns the offset in vertices from the start of the buffer to the first vertex of the mesh with the provided ID.
 		 */
-		UINT32 GetVertexOffset(UINT32 meshId) const;
+		u32 GetVertexOffset(u32 meshId) const;
 
 		/**
 		 * Returns the offset in indices from the start of the buffer to the first index of the mesh with the provided ID.
 		 */
-		UINT32 GetIndexOffset(UINT32 meshId) const;
+		u32 GetIndexOffset(u32 meshId) const;
 
 		/** Called by the render system when a mesh gets queued to the GPU. */
-		void NotifyUsedOnGpu(UINT32 meshId);
+		void NotifyUsedOnGpu(u32 meshId);
 
 		/**
 		 * Called by an GPU event query when GPU processes the query. Normally signals the heap that the GPU is done with
 		 * the mesh.
 		 */
-		static void QueryTriggered(SPtr<MeshHeap> thisPtr, UINT32 meshId, UINT32 queryId);
+		static void QueryTriggered(SPtr<MeshHeap> thisPtr, u32 meshId, u32 queryId);
 
 		/**
 		 * Attempts to reorganize the vertex and index buffer chunks in order to in order to make free memory contigous.
@@ -198,19 +198,19 @@ namespace bs
 		 * @note	
 		 * This will not actually copy any data from index/vertex buffers, and will only modify the chunk descriptors.
 		 */
-		void MergeWithNearbyChunks(UINT32 chunkVertIdx, UINT32 chunkIdxIdx);
+		void MergeWithNearbyChunks(u32 chunkVertIdx, u32 chunkIdxIdx);
 
 	private:
-		UINT32 mNumVertices;
-		UINT32 mNumIndices;
+		u32 mNumVertices;
+		u32 mNumIndices;
 
-		Vector<UINT8*> mCPUVertexData;
-		UINT8* mCPUIndexData;
+		Vector<u8*> mCPUVertexData;
+		u8* mCPUIndexData;
 
 		SPtr<VertexData> mVertexData;
 		SPtr<IndexBuffer> mIndexBuffer;
 
-		Map<UINT32, AllocatedData> mMeshAllocData;
+		Map<u32, AllocatedData> mMeshAllocData;
 
 		SPtr<VertexDataDesc> mVertexDesc;
 		IndexType mIndexType;
@@ -219,16 +219,16 @@ namespace bs
 		Vector<ChunkData> mVertChunks;
 		Vector<ChunkData> mIdxChunks;
 
-		Stack<UINT32> mEmptyVertChunks;
-		Stack<UINT32> mEmptyIdxChunks;
+		Stack<u32> mEmptyVertChunks;
+		Stack<u32> mEmptyIdxChunks;
 
-		List<UINT32> mFreeVertChunks;
-		List<UINT32> mFreeIdxChunks;
+		List<u32> mFreeVertChunks;
+		List<u32> mFreeIdxChunks;
 
 		Vector<QueryData> mEventQueries;
-		Stack<UINT32> mFreeEventQueries;
+		Stack<u32> mFreeEventQueries;
 
-		UINT32 mNextQueryId;
+		u32 mNextQueryId;
 
 		static const float GrowPercent;
 	};

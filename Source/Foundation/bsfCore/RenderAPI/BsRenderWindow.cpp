@@ -33,16 +33,16 @@ namespace bs
 		RenderTarget::Destroy();
 	}
 
-	RenderWindow::RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId)
+	RenderWindow::RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId)
 		:mDesc(desc), mWindowId(windowId)
 	{
 
 	}
 
-	void RenderWindow::Resize(UINT32 width, UINT32 height)
+	void RenderWindow::Resize(u32 width, u32 height)
 	{
-		std::function<void(SPtr<ct::RenderWindow>, UINT32, UINT32)> resizeFunc =
-			[](SPtr<ct::RenderWindow> renderWindow, UINT32 width, UINT32 height)
+		std::function<void(SPtr<ct::RenderWindow>, u32, u32)> resizeFunc =
+			[](SPtr<ct::RenderWindow> renderWindow, u32 width, u32 height)
 		{
 			renderWindow->Resize(width, height);
 		};
@@ -60,10 +60,10 @@ namespace bs
 		}
 	}
 
-	void RenderWindow::Move(INT32 left, INT32 top)
+	void RenderWindow::Move(i32 left, i32 top)
 	{
-		std::function<void(SPtr<ct::RenderWindow>, INT32, INT32)> moveFunc =
-			[](SPtr<ct::RenderWindow> renderWindow, INT32 left, INT32 top)
+		std::function<void(SPtr<ct::RenderWindow>, i32, i32)> moveFunc =
+			[](SPtr<ct::RenderWindow> renderWindow, i32 left, i32 top)
 		{
 			renderWindow->Move(left, top);
 		};
@@ -166,10 +166,10 @@ namespace bs
 		}
 	}
 
-	void RenderWindow::SetFullscreen(UINT32 width, UINT32 height, float refreshRate, UINT32 monitorIdx)
+	void RenderWindow::SetFullscreen(u32 width, u32 height, float refreshRate, u32 monitorIdx)
 	{
-		std::function<void(SPtr<ct::RenderWindow>, UINT32, UINT32, float, UINT32)> fullscreenFunc =
-			[](SPtr<ct::RenderWindow> renderWindow, UINT32 width, UINT32 height, float refreshRate, UINT32 monitorIdx)
+		std::function<void(SPtr<ct::RenderWindow>, u32, u32, float, u32)> fullscreenFunc =
+			[](SPtr<ct::RenderWindow> renderWindow, u32 width, u32 height, float refreshRate, u32 monitorIdx)
 		{
 			renderWindow->SetFullscreen(width, height, refreshRate, monitorIdx);
 		};
@@ -208,10 +208,10 @@ namespace bs
 		}
 	}
 
-	void RenderWindow::SetWindowed(UINT32 width, UINT32 height)
+	void RenderWindow::SetWindowed(u32 width, u32 height)
 	{
-		std::function<void(SPtr<ct::RenderWindow>, UINT32, UINT32)> windowedFunc =
-			[](SPtr<ct::RenderWindow> renderWindow, UINT32 width, UINT32 height)
+		std::function<void(SPtr<ct::RenderWindow>, u32, u32)> windowedFunc =
+			[](SPtr<ct::RenderWindow> renderWindow, u32 width, u32 height)
 		{
 			renderWindow->SetWindowed(width, height);
 		};
@@ -364,7 +364,7 @@ namespace bs
 		}
 	}
 
-	void RenderWindow::OnExternalResizeInternal(UINT32 width, UINT32 height)
+	void RenderWindow::OnExternalResizeInternal(u32 width, u32 height)
 	{
 		RenderWindowProperties& props = GetMutableProperties();
 		props.Width = width;
@@ -372,7 +372,7 @@ namespace bs
 		NotifyWindowEventInternal(WindowEventType::Resized);
 	}
 
-	void RenderWindow::OnExternalMoveInternal(INT32 top, INT32 left)
+	void RenderWindow::OnExternalMoveInternal(i32 top, i32 left)
 	{
 		RenderWindowProperties& props = GetMutableProperties();
 		props.Top = top;
@@ -420,7 +420,7 @@ namespace bs
 
 	namespace ct
 	{
-	RenderWindow::RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId)
+	RenderWindow::RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId)
 		:mDesc(desc), mWindowId(windowId)
 	{
 		RenderWindowManager::Instance().WindowCreated(this);

@@ -321,7 +321,7 @@ namespace bs
 		*bounds = nativeInstance->GetGuiElement()->GetScreenBounds();
 	}
 
-	void ScriptGUIElement::InternalSetPosition(ScriptGUIElementBaseTBase* nativeInstance, INT32 x, INT32 y)
+	void ScriptGUIElement::InternalSetPosition(ScriptGUIElementBaseTBase* nativeInstance, i32 x, i32 y)
 	{
 		if (nativeInstance->IsDestroyed())
 			return;
@@ -329,7 +329,7 @@ namespace bs
 		nativeInstance->GetGuiElement()->SetPosition(x, y);
 	}
 
-	void ScriptGUIElement::InternalSetWidth(ScriptGUIElementBaseTBase* nativeInstance, UINT32 width)
+	void ScriptGUIElement::InternalSetWidth(ScriptGUIElementBaseTBase* nativeInstance, u32 width)
 	{
 		if (nativeInstance->IsDestroyed())
 			return;
@@ -337,7 +337,7 @@ namespace bs
 		nativeInstance->GetGuiElement()->SetWidth(width);
 	}
 
-	void ScriptGUIElement::InternalSetFlexibleWidth(ScriptGUIElementBaseTBase* nativeInstance, UINT32 minWidth, UINT32 maxWidth)
+	void ScriptGUIElement::InternalSetFlexibleWidth(ScriptGUIElementBaseTBase* nativeInstance, u32 minWidth, u32 maxWidth)
 	{
 		if (nativeInstance->IsDestroyed())
 			return;
@@ -345,7 +345,7 @@ namespace bs
 		nativeInstance->GetGuiElement()->SetFlexibleWidth(minWidth, maxWidth);
 	}
 
-	void ScriptGUIElement::InternalSetHeight(ScriptGUIElementBaseTBase* nativeInstance, UINT32 height)
+	void ScriptGUIElement::InternalSetHeight(ScriptGUIElementBaseTBase* nativeInstance, u32 height)
 	{
 		if (nativeInstance->IsDestroyed())
 			return;
@@ -353,7 +353,7 @@ namespace bs
 		nativeInstance->GetGuiElement()->SetHeight(height);
 	}
 
-	void ScriptGUIElement::InternalSetFlexibleHeight(ScriptGUIElementBaseTBase* nativeInstance, UINT32 minHeight, UINT32 maxHeight)
+	void ScriptGUIElement::InternalSetFlexibleHeight(ScriptGUIElementBaseTBase* nativeInstance, u32 minHeight, u32 maxHeight)
 	{
 		if (nativeInstance->IsDestroyed())
 			return;

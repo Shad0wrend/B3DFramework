@@ -30,7 +30,7 @@ namespace bs { namespace ct
 		 * Maximum number of samples to be used when performing anisotropic filtering. Only relevant if #filtering is set to
 		 * RenderBeastFiltering::Anisotropic.
 		 */
-		UINT32 AnisotropyMax = 16;
+		u32 AnisotropyMax = 16;
 
 		/**
 		 * Controls if and how a render queue groups renderable objects by material in order to reduce number of state
@@ -42,7 +42,7 @@ namespace bs { namespace ct
 		 * Determines the maximum shadow map size, in pixels. The system might decide to use smaller resolution maps for
 		 * shadows far away, but will never increase the resolution past the provided value.
 		 */
-		UINT32 ShadowMapSize = 2048;
+		u32 ShadowMapSize = 2048;
 	};
 
 	/** @} */

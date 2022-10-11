@@ -80,7 +80,7 @@ namespace bs
 		}
 
 		// Calculate the largest area projection plane in X, Y or Z.
-		UINT32 i0, i1;
+		u32 i0, i1;
 		{
 			float n0 = Math::Abs(normal[0]);
 			float n1 = Math::Abs(normal[1]);

@@ -23,7 +23,7 @@ namespace bs { namespace ct
 		VertexBuffer::Initialize();
 	}
 
-	VulkanBuffer* VulkanVertexBuffer::GetResource(UINT32 deviceIdx) const
+	VulkanBuffer* VulkanVertexBuffer::GetResource(u32 deviceIdx) const
 	{
 		return static_cast<VulkanHardwareBuffer*>(mBuffer)->GetResource(deviceIdx);
 	}

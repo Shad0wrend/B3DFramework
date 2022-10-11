@@ -23,7 +23,7 @@ namespace bs { namespace ct
 	protected:
 		friend class D3D11RenderStateManager;
 
-		D3D11BlendState(const BLEND_STATE_DESC& desc, UINT32 id);
+		D3D11BlendState(const BLEND_STATE_DESC& desc, u32 id);
 
 		/** @copydoc BlendState::createInternal */
 		void CreateInternal() ;

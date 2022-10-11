@@ -50,13 +50,13 @@ namespace bs
 		
 		PxDistanceJointFlags flags;
 		
-		if(((UINT32)desc.Flag & (UINT32)DistanceJointFlag::MaxDistance) != 0)
+		if(((u32)desc.Flag & (u32)DistanceJointFlag::MaxDistance) != 0)
 			flags |= PxDistanceJointFlag::eMAX_DISTANCE_ENABLED;
 
-		if (((UINT32)desc.Flag & (UINT32)DistanceJointFlag::MinDistance) != 0)
+		if (((u32)desc.Flag & (u32)DistanceJointFlag::MinDistance) != 0)
 			flags |= PxDistanceJointFlag::eMIN_DISTANCE_ENABLED;
 
-		if (((UINT32)desc.Flag & (UINT32)DistanceJointFlag::Spring) != 0)
+		if (((u32)desc.Flag & (u32)DistanceJointFlag::Spring) != 0)
 			flags |= PxDistanceJointFlag::eSPRING_ENABLED;
 
 		joint->setDistanceJointFlags(flags);

@@ -61,7 +61,7 @@ namespace bs
 		return mCachedReturnType;
 	}
 
-	UINT32 MonoMethod::GetNumParameters() const
+	u32 MonoMethod::GetNumParameters() const
 	{
 		if (!mHasCachedSignature)
 			CacheSignature();
@@ -69,7 +69,7 @@ namespace bs
 		return mCachedNumParameters;
 	}
 
-	MonoClass* MonoMethod::GetParameterType(UINT32 paramIdx) const
+	MonoClass* MonoMethod::GetParameterType(u32 paramIdx) const
 	{
 		if (!mHasCachedSignature)
 			CacheSignature();
@@ -150,7 +150,7 @@ namespace bs
 				mCachedReturnType = MonoManager::Instance().FindClass(returnClass);
 		}
 
-		mCachedNumParameters = (UINT32)mono_signature_get_param_count(methodSignature);
+		mCachedNumParameters = (u32)mono_signature_get_param_count(methodSignature);
 		if (mCachedParameters != nullptr)
 		{
 			bs_free(mCachedParameters);
@@ -162,7 +162,7 @@ namespace bs
 			mCachedParameters = (MonoClass**)bs_alloc(mCachedNumParameters * sizeof(MonoClass*));
 
 			void* iter = nullptr;
-			for (UINT32 i = 0; i < mCachedNumParameters; i++)
+			for (u32 i = 0; i < mCachedNumParameters; i++)
 			{
 				MonoType* curParamType = mono_signature_get_params(methodSignature, &iter);
 				::MonoClass* rawClass = mono_class_from_mono_type(curParamType);

@@ -149,27 +149,27 @@ namespace bs
 
 		/** @copydoc Camera::setPriority */
 		BS_SCRIPT_EXPORT(n:Priority,pr:setter)
-		void SetPriority(INT32 priority) { mInternal->SetPriority(priority); }
+		void SetPriority(i32 priority) { mInternal->SetPriority(priority); }
 
 		/** @copydoc Camera::getPriority */
 		BS_SCRIPT_EXPORT(n:Priority,pr:getter)
-		INT32 GetPriority() const { return mInternal->GetPriority(); }
+		i32 GetPriority() const { return mInternal->GetPriority(); }
 
 		/** @copydoc Camera::setLayers */
 		BS_SCRIPT_EXPORT(n:Layers,pr:setter,layerMask)
-		void SetLayers(UINT64 layers) { mInternal->SetLayers(layers); }
+		void SetLayers(u64 layers) { mInternal->SetLayers(layers); }
 
 		/** @copydoc Camera::getLayers */
 		BS_SCRIPT_EXPORT(n:Layers,pr:getter,layerMask)
-		UINT64 GetLayers() const { return mInternal->GetLayers(); }
+		u64 GetLayers() const { return mInternal->GetLayers(); }
 
 		/** @copydoc Camera::setMSAACount */
 		BS_SCRIPT_EXPORT(n:SampleCount,pr:setter)
-		void SetMsaaCount(UINT32 count) { mInternal->SetMsaaCount(count); }
+		void SetMsaaCount(u32 count) { mInternal->SetMsaaCount(count); }
 
 		/** @copydoc Camera::getMSAACount */
 		BS_SCRIPT_EXPORT(n:SampleCount,pr:getter)
-		UINT32 GetMsaaCount() const { return mInternal->GetMsaaCount(); }
+		u32 GetMsaaCount() const { return mInternal->GetMsaaCount(); }
 
 		/** @copydoc Camera::setRenderSettings() */
 		BS_SCRIPT_EXPORT(n:RenderSettings,pr:setter,applyOnDirty)

@@ -28,13 +28,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 		// For compability with old version
-		Vector<std::pair<UINT32, UINT32>>& GetCharIndexRangesOld(FontImportOptions* obj)
+		Vector<std::pair<u32, u32>>& GetCharIndexRangesOld(FontImportOptions* obj)
 		{
-			static Vector<std::pair<UINT32, UINT32>> dummy;
+			static Vector<std::pair<u32, u32>> dummy;
 			return dummy;
 		}
 
-		void SetCharIndexRangesOld(FontImportOptions* obj, Vector<std::pair<UINT32, UINT32>>& value)
+		void SetCharIndexRangesOld(FontImportOptions* obj, Vector<std::pair<u32, u32>>& value)
 		{
 			// If already set it's assumed the new version already populated it
 			if(!obj->CharIndexRanges.empty())
@@ -57,7 +57,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_FontImportOptions;
 		}

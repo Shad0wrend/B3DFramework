@@ -50,14 +50,14 @@ namespace bs
 	/** SH coefficients for a specific light probe, and its handle. */
 	struct LightProbeCoefficientInfo
 	{
-		UINT32 Handle;
+		u32 Handle;
 		LightProbeSHCoefficients Coefficients;
 	};
 
 	/** Information about a single probe in the light probe volume. */
 	struct BS_SCRIPT_EXPORT(m:Rendering,pl:true) LightProbeInfo
 	{
-		UINT32 Handle;
+		u32 Handle;
 		Vector3 Position;
 
 		BS_SCRIPT_EXPORT(ex:true)
@@ -94,19 +94,19 @@ namespace bs
 		 * Adds a new probe at the specified position and returns a handle to the probe. The position is relative to
 		 * the volume origin.
 		 */
-		UINT32 AddProbe(const Vector3& position);
+		u32 AddProbe(const Vector3& position);
 
 		/** Updates the position of the probe with the specified handle. */
-		void SetProbePosition(UINT32 handle, const Vector3& position);
+		void SetProbePosition(u32 handle, const Vector3& position);
 
 		/** Retrieves the position of the probe with the specified handle. */
-		Vector3 GetProbePosition(UINT32 handle) const;
+		Vector3 GetProbePosition(u32 handle) const;
 
 		/**
 		 * Removes the probe with the specified handle. Note that if this is one of the last four remaining probes in the
 		 * volume it cannot be removed.
 		 */
-		void RemoveProbe(UINT32 handle);
+		void RemoveProbe(u32 handle);
 
 		/** Returns a list of positions of all light probes in the volume. */
 		Vector<LightProbeInfo> GetProbes() const;
@@ -115,7 +115,7 @@ namespace bs
 		 * Causes the information for this specific light probe to be updated. You generally want to call this when the
 		 * probe is moved or the scene around the probe changes.
 		 */
-		void RenderProbe(UINT32 handle);
+		void RenderProbe(u32 handle);
 
 		/**
 		 * Causes the information for all lights probes to be updated. You generally want to call this if you move the
@@ -195,11 +195,11 @@ namespace bs
 		static SPtr<LightProbeVolume> CreateEmpty();
 
 	private:
-		UnorderedMap<UINT32, ProbeInfo> mProbes;
+		UnorderedMap<u32, ProbeInfo> mProbes;
 		AABox mVolume = AABox::UNIT_BOX;
 		Vector3I mCellCount = { 1, 1, 1 };
 
-		UINT32 mNextProbeId = 0;
+		u32 mNextProbeId = 0;
 		SPtr<ct::RendererTask> mRendererTask;
 
 		/************************************************************************/
@@ -220,13 +220,13 @@ namespace bs
 	struct LightProbeInfo
 	{
 		/** Unique handle representing the probe. Always remains the same. */
-		UINT32 Handle;
+		u32 Handle;
 
 		/** Flags representing the current state of the probe. */
 		LightProbeFlags Flags;
 
 		/** Index into the GPU buffer where probe coefficients are stored. -1 if not assigned. Transient. */
-		UINT32 BufferIdx;
+		u32 BufferIdx;
 	};
 
 	/** Core thread usable version of bs::LightProbeVolume. */
@@ -236,13 +236,13 @@ namespace bs
 		~LightProbeVolume();
 
 		/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-		void SetRendererId(UINT32 id) { mRendererId = id; }
+		void SetRendererId(u32 id) { mRendererId = id; }
 
 		/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-		UINT32 GetRendererId() const { return mRendererId; }
+		u32 GetRendererId() const { return mRendererId; }
 
 		/** Returns the number of light probes that are active. */
-		UINT32 GetNumActiveProbes() const { return (UINT32)mProbeMap.size(); }
+		u32 GetNumActiveProbes() const { return (u32)mProbeMap.size(); }
 
 		/** Returns a list of positions for all light probes. Only the first getNumActiveProbes() entries are active. */
 		const Vector<Vector3>& GetLightProbePositions() const { return mProbePositions; }
@@ -261,7 +261,7 @@ namespace bs
 	protected:
 		friend class bs::LightProbeVolume;
 
-		LightProbeVolume(const UnorderedMap<UINT32, bs::LightProbeVolume::ProbeInfo>& probes);
+		LightProbeVolume(const UnorderedMap<u32, bs::LightProbeVolume::ProbeInfo>& probes);
 
 		/** @copydoc CoreObject::initialize */
 		void Initialize() ;
@@ -276,24 +276,24 @@ namespace bs
 		 *							number of probes allows the rendering to be distributed over multiple frames.
 		 * @return					True if there are no more dirty probes to process.
 		 */
-		bool RenderProbes(UINT32 maxProbes);
+		bool RenderProbes(u32 maxProbes);
 
 		/**
 		 * Resizes the internal texture that stores light probe SH coefficients, to the specified size (in the number
 		 * of probes).
 		 */
-		void ResizeCoefficientTexture(UINT32 count);
+		void ResizeCoefficientTexture(u32 count);
 
-		UINT32 mRendererId = 0;
-		UnorderedMap<UINT32, UINT32> mProbeMap; // Map from static indices to compact list of probes
-		UINT32 mFirstDirtyProbe = 0;
+		u32 mRendererId = 0;
+		UnorderedMap<u32, u32> mProbeMap; // Map from static indices to compact list of probes
+		u32 mFirstDirtyProbe = 0;
 
 		Vector<Vector3> mProbePositions;
 		Vector<LightProbeInfo> mProbeInfos;
 
 		// Contains SH coefficients for the probes
 		SPtr<Texture> mCoefficients;
-		UINT32 mCoeffBufferSize = 0;
+		u32 mCoeffBufferSize = 0;
 
 		// Temporary until initialization
 		Vector<LightProbeSHCoefficients> mInitCoefficients;

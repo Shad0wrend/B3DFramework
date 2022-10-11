@@ -6,7 +6,7 @@
 
 namespace bs { namespace ct
 {
-	VulkanGpuParamBlockBuffer::VulkanGpuParamBlockBuffer(UINT32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+	VulkanGpuParamBlockBuffer::VulkanGpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 		:GpuParamBlockBuffer(size, usage, deviceMask), mDeviceMask(deviceMask)
 	{ }
 
@@ -23,7 +23,7 @@ namespace bs { namespace ct
 		GpuParamBlockBuffer::Initialize();
 	}
 
-	VulkanBuffer* VulkanGpuParamBlockBuffer::GetResource(UINT32 deviceIdx) const
+	VulkanBuffer* VulkanGpuParamBlockBuffer::GetResource(u32 deviceIdx) const
 	{
 		return static_cast<VulkanHardwareBuffer*>(mBuffer)->GetResource(deviceIdx);
 	}

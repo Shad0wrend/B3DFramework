@@ -16,7 +16,7 @@ namespace bs
 			BS_EXCEPT(InvalidParametersException, "Vertex buffer vertex count is not allowed to be zero.");
 	}
 
-	VertexBufferProperties::VertexBufferProperties(UINT32 numVertices, UINT32 vertexSize)
+	VertexBufferProperties::VertexBufferProperties(u32 numVertices, u32 vertexSize)
 		:mNumVertices(numVertices), mVertexSize(vertexSize)
 	{ }
 
@@ -73,7 +73,7 @@ namespace bs
 		CoreObject::Initialize();
 	}
 
-	void* VertexBuffer::Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
+	void* VertexBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx)
 	{
 #if BS_PROFILING_ENABLED
 		if (options == GBL_READ_ONLY || options == GBL_READ_WRITE)
@@ -95,27 +95,27 @@ namespace bs
 		mBuffer->Unlock();
 	}
 
-	void VertexBuffer::ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
+	void VertexBuffer::ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx, u32 queueIdx)
 	{
 		mBuffer->ReadData(offset, length, dest, deviceIdx, queueIdx);
 		BS_INC_RENDER_STAT_CAT(ResRead, RenderStatObject_VertexBuffer);
 	}
 
-	void VertexBuffer::WriteData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags,
-		UINT32 queueIdx)
+	void VertexBuffer::WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags,
+		u32 queueIdx)
 	{
 		mBuffer->WriteData(offset, length, source, writeFlags, queueIdx);
 		BS_INC_RENDER_STAT_CAT(ResWrite, RenderStatObject_VertexBuffer);
 	}
 
-	void VertexBuffer::CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset,
-		UINT32 dstOffset, UINT32 length, bool discardWholeBuffer, const SPtr<CommandBuffer>& commandBuffer)
+	void VertexBuffer::CopyData(HardwareBuffer& srcBuffer, u32 srcOffset,
+		u32 dstOffset, u32 length, bool discardWholeBuffer, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto& srcVertexBuffer = static_cast<VertexBuffer&>(srcBuffer);
 		mBuffer->CopyData(*srcVertexBuffer.mBuffer, srcOffset, dstOffset, length, discardWholeBuffer, commandBuffer);
 	}
 
-	SPtr<GpuBuffer> VertexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat format, UINT32 elementSize)
+	SPtr<GpuBuffer> VertexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat format, u32 elementSize)
 	{
 		if((mUsage & GBU_LOADSTORE) != GBU_LOADSTORE)
 			return nullptr;
@@ -133,7 +133,7 @@ namespace bs
 			}
 		}
 
-		UINT32 elemSize = type == GBT_STANDARD ? bs::GpuBuffer::GetFormatSize(format) : elementSize;
+		u32 elemSize = type == GBT_STANDARD ? bs::GpuBuffer::GetFormatSize(format) : elementSize;
 		if((mBuffer->GetSize() % elemSize) != 0)
 		{
 			BS_LOG(Error, RenderBackend,

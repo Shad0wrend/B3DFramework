@@ -35,14 +35,14 @@ namespace bs
 		GpuResourceData& operator=(const GpuResourceData& rhs);
 
 		/** Returns pointer to the internal buffer. */
-		UINT8* GetData() const;
+		u8* GetData() const;
 
 		/**
 		 * Sets the internal pointer to point at provided data. GpuResourceData takes ownership of provided memory.
 		 *
 		 * @note If any internal data is allocated, it is freed.
 		 */
-		void SetData(UPtr<UINT8[]> &data);
+		void SetData(UPtr<u8[]> &data);
 
 		/**
 		 * Allocates an internal buffer of a certain size. If there is another buffer already allocated, it will be freed
@@ -56,7 +56,7 @@ namespace bs
 		 *
 		 * @param[in]	size	The size of the buffer in bytes.
 		 */
-		void AllocateInternalBuffer(UINT32 size);
+		void AllocateInternalBuffer(u32 size);
 
 		/**
 		 * Frees the internal buffer that was allocated using allocateInternalBuffer(). Called automatically when the
@@ -71,7 +71,7 @@ namespace bs
 		 *
 		 * @note	If any internal data is allocated, it is freed.
 		 */
-		void SetExternalBuffer(UINT8* data);
+		void SetExternalBuffer(u8* data);
 
 		/** Checks if the internal buffer is locked due to some other thread using it. */
 		bool IsLocked() const { return mLocked; }
@@ -87,10 +87,10 @@ namespace bs
 		 * Returns the size of the internal buffer in bytes. This is calculated based on parameters provided upon
 		 * construction and specific implementation details.
 		 */
-		virtual UINT32 GetInternalBufferSize() const = 0;
+		virtual u32 GetInternalBufferSize() const = 0;
 
 	private:
-		UINT8* mData = nullptr;
+		u8* mData = nullptr;
 		bool mOwnsData = false;
 		mutable bool mLocked = false;
 

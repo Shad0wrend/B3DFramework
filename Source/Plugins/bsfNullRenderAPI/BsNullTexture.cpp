@@ -26,7 +26,7 @@ namespace bs
 			return texPtr;
 		}
 
-		SPtr<RenderTexture> NullTextureManager::CreateRenderTextureInternal(const RENDER_TEXTURE_DESC& desc, UINT32 deviceIdx)
+		SPtr<RenderTexture> NullTextureManager::CreateRenderTextureInternal(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 		{
 			SPtr<NullRenderTexture> texPtr = bs_shared_ptr_new<NullRenderTexture>(desc, deviceIdx);
 			texPtr->SetThisPtrInternal(texPtr);
@@ -43,11 +43,11 @@ namespace bs
 			ClearBufferViews();
 		}
 
-		PixelData NullTexture::LockImpl(GpuLockOptions options, UINT32 mipLevel, UINT32 face, UINT32 deviceIdx, UINT32 queueIdx)
+		PixelData NullTexture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
 		{
-			UINT32 mipWidth = std::max(1u, mProperties.GetWidth() >> mipLevel);
-			UINT32 mipHeight = std::max(1u, mProperties.GetHeight() >> mipLevel);
-			UINT32 mipDepth = std::max(1u, mProperties.GetDepth() >> mipLevel);
+			u32 mipWidth = std::max(1u, mProperties.GetWidth() >> mipLevel);
+			u32 mipHeight = std::max(1u, mProperties.GetHeight() >> mipLevel);
+			u32 mipDepth = std::max(1u, mProperties.GetDepth() >> mipLevel);
 
 			mMappedBuffer = bs_new<PixelData>(mipWidth, mipHeight, mipDepth, mProperties.GetFormat());
 			mMappedBuffer->AllocateInternalBuffer();

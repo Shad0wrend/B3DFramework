@@ -64,11 +64,11 @@ namespace bs
 		return RenderStateManager::Instance().CreateRasterizerState(desc);
 	}
 
-	UINT64 RasterizerState::GenerateHash(const RASTERIZER_STATE_DESC& desc)
+	u64 RasterizerState::GenerateHash(const RASTERIZER_STATE_DESC& desc)
 	{
 		size_t hash = 0;
-		bs_hash_combine(hash, (UINT32)desc.PolygonMode);
-		bs_hash_combine(hash, (UINT32)desc.CullMode);
+		bs_hash_combine(hash, (u32)desc.PolygonMode);
+		bs_hash_combine(hash, (u32)desc.CullMode);
 		bs_hash_combine(hash, desc.DepthBias);
 		bs_hash_combine(hash, desc.DepthBiasClamp);
 		bs_hash_combine(hash, desc.SlopeScaledDepthBias);
@@ -77,7 +77,7 @@ namespace bs
 		bs_hash_combine(hash, desc.MultisampleEnable);
 		bs_hash_combine(hash, desc.AntialiasedLineEnable);
 
-		return (UINT64)hash;
+		return (u64)hash;
 	}
 
 	/************************************************************************/
@@ -96,7 +96,7 @@ namespace bs
 
 	namespace ct
 	{
-	RasterizerState::RasterizerState(const RASTERIZER_STATE_DESC& desc, UINT32 id)
+	RasterizerState::RasterizerState(const RASTERIZER_STATE_DESC& desc, u32 id)
 		: mProperties(desc), mId(id)
 	{
 

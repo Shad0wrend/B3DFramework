@@ -103,7 +103,7 @@ namespace bs
 			if(mBufferPieces.empty() || mBufferPieces.back().Buffer != data)
 			{
 				BufferPiece piece;
-				piece.Buffer = (char*)bs_alloc((UINT32)n);
+				piece.Buffer = (char*)bs_alloc((u32)n);
 				piece.Size = n;
 
 				memcpy(piece.Buffer, data, n);
@@ -121,7 +121,7 @@ namespace bs
 		char* GetAppendBuffer(size_t len, char* scratch) override
 		{
 			BufferPiece piece;
-			piece.Buffer = (char*)bs_alloc((UINT32)len);
+			piece.Buffer = (char*)bs_alloc((u32)len);
 			piece.Size = 0;
 
 			mBufferPieces.push_back(piece);
@@ -132,7 +132,7 @@ namespace bs
 			size_t* allocated_size) override
 		{
 			BufferPiece piece;
-			piece.Buffer = (char*)bs_alloc((UINT32)desired_size_hint);
+			piece.Buffer = (char*)bs_alloc((u32)desired_size_hint);
 			piece.Size = 0;
 
 			mBufferPieces.push_back(piece);

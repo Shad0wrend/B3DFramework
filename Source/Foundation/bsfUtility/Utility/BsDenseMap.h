@@ -125,7 +125,7 @@ namespace bs
 	 * @tparam	Size	Initial capacity of the map.
 	 * 
 	*/
-	template<class Key, class Value, class KeyInfo = DenseMapInfo<Key>, UINT32 Size = 64>
+	template<class Key, class Value, class KeyInfo = DenseMapInfo<Key>, u32 Size = 64>
 	class DenseMap
 	{
 	public:
@@ -148,7 +148,7 @@ namespace bs
 				copy(std::move(other));
 		}
 
-		DenseMap(UINT32 n)
+		DenseMap(u32 n)
 		{
 			append(n);
 		}
@@ -212,10 +212,10 @@ namespace bs
 		}
 
 		bool empty() const { return mEntries == 0; }
-		UINT32 size() const { return mEntries; }
+		u32 size() const { return mEntries; }
 
 		/** Grow so that it has at least n mBuckets. */
-		void resize(UINT32 n)
+		void resize(u32 n)
 		{
 			grow(n);
 		}
@@ -364,7 +364,7 @@ namespace bs
 			if (std::is_pod<Key>() && std::is_pod<Value>())
 				memcpy(getBuckets(), other.getBuckets(), other.getCount() * sizeof(DensePair));
 			else
-				for (UINT32 i = 0; i < other.getCount(); ++i)
+				for (u32 i = 0; i < other.getCount(); ++i)
 				{
 					new (&mBuckets[i].first) Key(other.mBuckets[i].first);
 
@@ -405,8 +405,8 @@ namespace bs
 		 */
 		bool lookup(const Key& key, DensePair*& f) const
 		{
-			UINT32 bucketN = getHashValue(key);
-			UINT32 probe = 1;
+			u32 bucketN = getHashValue(key);
+			u32 probe = 1;
 			DensePair* bucket = getBuckets();
 
 			// Keep track of whether we find a tombstone while probing.
@@ -452,7 +452,7 @@ namespace bs
 			}
 		}
 
-		void append(UINT32 n)
+		void append(u32 n)
 		{
 			mEntries = 0;
 			mTombstones = 0;
@@ -461,13 +461,13 @@ namespace bs
 
 			mBuckets = bs_allocN<DensePair>(n);
 
-			for (UINT32 i = 0; i != n; ++i)
+			for (u32 i = 0; i != n; ++i)
 				new (&mBuckets[i].first) Key(getEmptyKey());
 		}
 
-		void grow(UINT32 n)
+		void grow(u32 n)
 		{
-			const UINT32 oldCount = getCount();
+			const u32 oldCount = getCount();
 			DensePair* oldBuckets = getBuckets();
 
 			// Double the number of buckets
@@ -479,7 +479,7 @@ namespace bs
 
 			// Initialize all the keys to EmptyKey
 			const Key EmptyKey = getEmptyKey();
-			for (UINT32 i = 0, e = mCount; i != e; ++i)
+			for (u32 i = 0, e = mCount; i != e; ++i)
 				new (&mBuckets[i].first) Key(EmptyKey);
 
 			// Insert all the old elements
@@ -511,7 +511,7 @@ namespace bs
 
 		void shrink()
 		{
-			const UINT32 oldCount = getCount();
+			const u32 oldCount = getCount();
 			DensePair* oldBuckets = getBuckets();
 
 			// Reduce the number of mBuckets
@@ -521,7 +521,7 @@ namespace bs
 
 			// Initialize the keys to EmptyKey
 			const Key EmptyKey = getEmptyKey();
-			for (UINT32 i = 0, e = mCount; i != e; ++i)
+			for (u32 i = 0, e = mCount; i != e; ++i)
 				new (&mBuckets[i].first) Key(EmptyKey);
 
 			// Free the old mBuckets
@@ -539,19 +539,19 @@ namespace bs
 			mEntries = 0;
 		}
 
-		UINT32 getCount() const { return mCount; }
+		u32 getCount() const { return mCount; }
 		DensePair* getBuckets() const { return mBuckets; }
-		UINT32 getTombstones() const { return mTombstones; }
+		u32 getTombstones() const { return mTombstones; }
 
-		static UINT32 getHashValue(const Key& key) { return bs_hash(key); }
+		static u32 getHashValue(const Key& key) { return bs_hash(key); }
 		static const Key getEmptyKey() { return KeyInfo::getEmptyKey(); }
 		static const Key getTombstoneKey() { return KeyInfo::getTombstoneKey(); }
 
 	private:
 		DensePair* mBuckets = nullptr;
-		UINT32 mCount = 0;
-		UINT32 mEntries = 0;
-		UINT32 mTombstones = 0;
+		u32 mCount = 0;
+		u32 mEntries = 0;
+		u32 mTombstones = 0;
 	};
 
 	/** @} */

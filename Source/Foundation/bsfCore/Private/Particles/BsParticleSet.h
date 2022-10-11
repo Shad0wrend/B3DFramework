@@ -19,7 +19,7 @@ namespace bs
 	struct ParticleSetData
 	{
 		/** Creates a new set and allocates enough space for @p capacity particles. */
-		ParticleSetData(UINT32 capacity)
+		ParticleSetData(u32 capacity)
 			:Capacity(capacity)
 		{
 			Allocate();
@@ -29,7 +29,7 @@ namespace bs
 		 * Creates a new set, allocates enough space for @p capacity particles and initializes the particles by copying
 		 * them from the @p other set.
 		 */
-		ParticleSetData(UINT32 capacity, const ParticleSetData& other)
+		ParticleSetData(u32 capacity, const ParticleSetData& other)
 			:Capacity(capacity)
 		{
 			Allocate();
@@ -59,7 +59,7 @@ namespace bs
 			Free();
 		}
 
-		UINT32 Capacity = 0;
+		u32 Capacity = 0;
 
 		Vector3* PrevPosition = nullptr;
 		Vector3* Position = nullptr;
@@ -69,9 +69,9 @@ namespace bs
 		float* InitialLifetime = nullptr;
 		float* Lifetime = nullptr;
 		RGBA* Color = nullptr;
-		UINT32* Seed = nullptr;
+		u32* Seed = nullptr;
 		float* Frame = nullptr;
-		UINT32* Indices = nullptr;
+		u32* Indices = nullptr;
 
 	private:
 		/**
@@ -89,9 +89,9 @@ namespace bs
 				Reserve<float>(Capacity).
 				Reserve<float>(Capacity).
 				Reserve<RGBA>(Capacity).
-				Reserve<UINT32>(Capacity).
+				Reserve<u32>(Capacity).
 				Reserve<float>(Capacity).
-				Reserve<UINT32>(Capacity).
+				Reserve<u32>(Capacity).
 				Init();
 
 			PrevPosition = alloc.Alloc<Vector3>(Capacity);
@@ -102,9 +102,9 @@ namespace bs
 			Lifetime = alloc.Alloc<float>(Capacity);
 			InitialLifetime = alloc.Alloc<float>(Capacity);
 			Color = alloc.Alloc<RGBA>(Capacity);
-			Seed = alloc.Alloc<UINT32>(Capacity);
+			Seed = alloc.Alloc<u32>(Capacity);
 			Frame = alloc.Alloc<float>(Capacity);
-			Indices = alloc.Alloc<UINT32>(Capacity);
+			Indices = alloc.Alloc<u32>(Capacity);
 		}
 
 		/** Frees the internal buffers. */
@@ -176,7 +176,7 @@ namespace bs
 		 * Constructs a new particle set with enough space to hold @p capacity particles. The set will automatically
 		 * grow to larger capacity if the limit is reached.
 		 */
-		ParticleSet(UINT32 capacity)
+		ParticleSet(u32 capacity)
 			:mParticles(capacity)
 		{ }
 
@@ -185,19 +185,19 @@ namespace bs
 		 * persistent and can become invalid after a call to freeParticle(). Returns the index to the first allocated
 		 * particle.
 		 */
-		UINT32 AllocParticles(UINT32 count)
+		u32 AllocParticles(u32 count)
 		{
-			const UINT32 particleIdx = mCount;
+			const u32 particleIdx = mCount;
 			mCount += count;
 
 			if(mCount > mParticles.Capacity)
 			{
-				const auto newCapacity = (UINT32)(mCount * CAPACITY_SCALE);
+				const auto newCapacity = (u32)(mCount * CAPACITY_SCALE);
 				ParticleSetData newData(newCapacity, mParticles);
 				mParticles = std::move(newData);
 			}
 
-			const UINT32 particleEnd = particleIdx + count;
+			const u32 particleEnd = particleIdx + count;
 			if(particleEnd > mMaxIndex)
 			{
 				for (; mMaxIndex < particleEnd; mMaxIndex++)
@@ -208,7 +208,7 @@ namespace bs
 		}
 
 		/** Deallocates a particle. Can invalidate particle indices. */
-		void FreeParticle(UINT32 idx)
+		void FreeParticle(u32 idx)
 		{
 			// Note: We always keep the active particles sequential. This makes it faster to iterate over all particles, but
 			// increases the cost when removing particles. Considering iteration should happen many times per-particle,
@@ -217,7 +217,7 @@ namespace bs
 
 			assert(idx < mCount);
 
-			const UINT32 lastIdx = mCount - 1;
+			const u32 lastIdx = mCount - 1;
 			if(idx != lastIdx)
 			{
 				std::swap(mParticles.PrevPosition[idx], mParticles.PrevPosition[lastIdx]);
@@ -237,7 +237,7 @@ namespace bs
 		}
 
 		/** Frees all active partices past the provided particle count (0 to clear all particles). */
-		void Clear(UINT32 numPartices = 0)
+		void Clear(u32 numPartices = 0)
 		{
 			if(mCount > numPartices)
 				mCount = numPartices;
@@ -250,18 +250,18 @@ namespace bs
 		const ParticleSetData& GetParticles() const { return mParticles; }
 
 		/** Returns the number of particles that are currently active. */
-		UINT32 GetParticleCount() const { return mCount; }
+		u32 GetParticleCount() const { return mCount; }
 
 		/**
 		 * Calculates the size of a texture required for storing the data of this particle set. The texture is assumed
 		 * to be square.
 		 */
-		UINT32 DetermineTextureSize() const
+		u32 DetermineTextureSize() const
 		{
-			const UINT32 count = std::max(2U, GetParticleCount());
+			const u32 count = std::max(2U, GetParticleCount());
 
-			UINT32 width = Bitwise::NextPow2(count);
-			UINT32 height = 1;
+			u32 width = Bitwise::NextPow2(count);
+			u32 height = 1;
 
 			while (width > height)
 			{
@@ -275,8 +275,8 @@ namespace bs
 
 	private:
 		ParticleSetData mParticles;
-		UINT32 mCount = 0;
-		UINT32 mMaxIndex = 0;
+		u32 mCount = 0;
+		u32 mMaxIndex = 0;
 	};
 
 	/** @} */

@@ -88,13 +88,13 @@ namespace bs { namespace ct
 	{
 		const TextureProperties& rtProps = target->GetProperties();
 		
-		UINT32 width = std::max(1, Math::CeilToInt(rtProps.GetWidth() * 0.5f));
-		UINT32 height = std::max(1, Math::CeilToInt(rtProps.GetHeight() * 0.5f));
+		u32 width = std::max(1, Math::CeilToInt(rtProps.GetWidth() * 0.5f));
+		u32 height = std::max(1, Math::CeilToInt(rtProps.GetHeight() * 0.5f));
 
 		return POOLED_RENDER_TEXTURE_DESC::Create2D(rtProps.GetFormat(), width, height, TU_RENDERTARGET);
 	}
 
-	DownsampleMat* DownsampleMat::GetVariation(UINT32 quality, bool msaa)
+	DownsampleMat* DownsampleMat::GetVariation(u32 quality, bool msaa)
 	{
 		if(quality == 0)
 		{
@@ -140,7 +140,7 @@ namespace bs { namespace ct
 		mSceneColor.Set(input);
 
 		const TextureProperties& props = input->GetProperties();
-		Vector4I offsetAndSize(0, 0, (INT32)props.GetWidth(), (INT32)props.GetHeight());
+		Vector4I offsetAndSize(0, 0, (i32)props.GetWidth(), (i32)props.GetHeight());
 
 		gEyeAdaptHistogramParamDef.gHistogramParams.Set(mParamBuffer, GetHistogramScaleOffset(settings));
 		gEyeAdaptHistogramParamDef.gPixelOffsetAndSize.Set(mParamBuffer, offsetAndSize);
@@ -160,7 +160,7 @@ namespace bs { namespace ct
 	POOLED_RENDER_TEXTURE_DESC EyeAdaptHistogramMat::GetOutputDesc(const SPtr<Texture>& target)
 	{
 		Vector2I threadGroupCount = GetThreadGroupCount(target);
-		UINT32 numHistograms = threadGroupCount.X * threadGroupCount.Y;
+		u32 numHistograms = threadGroupCount.X * threadGroupCount.Y;
 
 		return POOLED_RENDER_TEXTURE_DESC::Create2D(PF_RGBA16F, HISTOGRAM_NUM_TEXELS, numHistograms,
 			TU_LOADSTORE);
@@ -168,14 +168,14 @@ namespace bs { namespace ct
 
 	Vector2I EyeAdaptHistogramMat::GetThreadGroupCount(const SPtr<Texture>& target)
 	{
-		const UINT32 texelsPerThreadGroupX = THREAD_GROUP_SIZE_X * LOOP_COUNT_X;
-		const UINT32 texelsPerThreadGroupY = THREAD_GROUP_SIZE_Y * LOOP_COUNT_Y;
+		const u32 texelsPerThreadGroupX = THREAD_GROUP_SIZE_X * LOOP_COUNT_X;
+		const u32 texelsPerThreadGroupY = THREAD_GROUP_SIZE_Y * LOOP_COUNT_Y;
 
 		const TextureProperties& props = target->GetProperties();
 	
 		Vector2I threadGroupCount;
-		threadGroupCount.X = ((INT32)props.GetWidth() + texelsPerThreadGroupX - 1) / texelsPerThreadGroupX;
-		threadGroupCount.Y = ((INT32)props.GetHeight() + texelsPerThreadGroupY - 1) / texelsPerThreadGroupY;
+		threadGroupCount.X = ((i32)props.GetWidth() + texelsPerThreadGroupX - 1) / texelsPerThreadGroupX;
+		threadGroupCount.Y = ((i32)props.GetHeight() + texelsPerThreadGroupY - 1) / texelsPerThreadGroupY;
 
 		return threadGroupCount;
 	}
@@ -217,7 +217,7 @@ namespace bs { namespace ct
 		mEyeAdaptationTex.Set(eyeAdaptationTex);
 
 		Vector2I threadGroupCount = EyeAdaptHistogramMat::GetThreadGroupCount(sceneColor);
-		UINT32 numHistograms = threadGroupCount.X * threadGroupCount.Y;
+		u32 numHistograms = threadGroupCount.X * threadGroupCount.Y;
 
 		gEyeAdaptHistogramReduceParamDef.gThreadGroupCount.Set(mParamBuffer, numHistograms);
 
@@ -381,7 +381,7 @@ namespace bs { namespace ct
 		EyeAdaptationMat::PopulateParams(mEyeAdaptationParamsBuffer, frameDelta, settings, exposureScale);
 
 		auto& texProps = curFrame->GetProperties();
-		Vector2I texSize = { (INT32)texProps.GetWidth(), (INT32)texProps.GetHeight() };
+		Vector2I texSize = { (i32)texProps.GetWidth(), (i32)texProps.GetHeight() };
 
 		gEyeAdaptationBasicParamsMatDef.gInputTexSize.Set(mParamsBuffer, texSize);
 
@@ -888,11 +888,11 @@ namespace bs { namespace ct
 		}
 	}
 
-	UINT32 GaussianBlurMat::CalcStdDistribution(float filterRadius, std::array<float, MAX_BLUR_SAMPLES>& weights,
+	u32 GaussianBlurMat::CalcStdDistribution(float filterRadius, std::array<float, MAX_BLUR_SAMPLES>& weights,
 		std::array<float, MAX_BLUR_SAMPLES>& offsets)
 	{
 		filterRadius = Math::Clamp(filterRadius, 0.00001f, (float)(MAX_BLUR_SAMPLES - 1));
-		INT32 intFilterRadius = std::min(Math::CeilToInt(filterRadius), MAX_BLUR_SAMPLES - 1);
+		i32 intFilterRadius = std::min(Math::CeilToInt(filterRadius), MAX_BLUR_SAMPLES - 1);
 
 		// Note: Does not include the scaling factor since we normalize later anyway
 		auto normalDistribution = [](int i, float scale)
@@ -926,7 +926,7 @@ namespace bs { namespace ct
 		// w3 = w1 + w2
 
 		float scale = 1.0f / filterRadius;
-		UINT32 numSamples = 0;
+		u32 numSamples = 0;
 		float totalWeight = 0.0f;
 		for(int i = -intFilterRadius; i < intFilterRadius; i += 2)
 		{
@@ -953,7 +953,7 @@ namespace bs { namespace ct
 
 		// Normalize weights
 		float invTotalWeight = 1.0f / totalWeight;
-		for(UINT32 i = 0; i < numSamples; i++)
+		for(u32 i = 0; i < numSamples; i++)
 			weights[i] *= invTotalWeight;
 
 		return numSamples;
@@ -963,7 +963,7 @@ namespace bs { namespace ct
 	{
 		scale = Math::Clamp01(scale);
 
-		UINT32 length;
+		u32 length;
 		if (filterDir == DirHorizontal)
 			length = source->GetProperties().GetWidth();
 		else
@@ -984,9 +984,9 @@ namespace bs { namespace ct
 		std::array<float, MAX_BLUR_SAMPLES> sampleWeights;
 
 		const float kernelRadius = CalcKernelRadius(source, filterSize, direction);
-		const UINT32 numSamples = CalcStdDistribution(kernelRadius, sampleWeights, sampleOffsets);
+		const u32 numSamples = CalcStdDistribution(kernelRadius, sampleWeights, sampleOffsets);
 
-		for (UINT32 i = 0; i < numSamples; ++i)
+		for (u32 i = 0; i < numSamples; ++i)
 		{
 			Vector4 weight(tint.R, tint.G, tint.B, tint.A);
 			weight *= sampleWeights[i];
@@ -994,12 +994,12 @@ namespace bs { namespace ct
 			gGaussianBlurParamDef.gSampleWeights.Set(buffer, weight, i);
 		}
 
-		UINT32 axis0 = direction == DirHorizontal ? 0 : 1;
-		UINT32 axis1 = (axis0 + 1) % 2;
+		u32 axis0 = direction == DirHorizontal ? 0 : 1;
+		u32 axis1 = (axis0 + 1) % 2;
 
-		for (UINT32 i = 0; i < (numSamples + 1) / 2; ++i)
+		for (u32 i = 0; i < (numSamples + 1) / 2; ++i)
 		{
-			UINT32 remainder = std::min(2U, numSamples - i * 2);
+			u32 remainder = std::min(2U, numSamples - i * 2);
 
 			Vector4 offset;
 			offset[axis0] = sampleOffsets[i * 2 + 0] * invTexSize[axis0];
@@ -1059,8 +1059,8 @@ namespace bs { namespace ct
 
 		const TextureProperties& srcProps = color->GetProperties();
 
-		UINT32 outputWidth = std::max(1U, srcProps.GetWidth() / 2);
-		UINT32 outputHeight = std::max(1U, srcProps.GetHeight() / 2);
+		u32 outputWidth = std::max(1U, srcProps.GetWidth() / 2);
+		u32 outputHeight = std::max(1U, srcProps.GetHeight() / 2);
 
 		POOLED_RENDER_TEXTURE_DESC outputTexDesc = POOLED_RENDER_TEXTURE_DESC::Create2D(srcProps.GetFormat(),
 			outputWidth, outputHeight, TU_RENDERTARGET);
@@ -1104,7 +1104,7 @@ namespace bs { namespace ct
 		gRendererUtility().DrawScreenQuad();
 	}
 
-	SPtr<PooledRenderTexture> GaussianDOFSeparateMat::GetOutput(UINT32 idx)
+	SPtr<PooledRenderTexture> GaussianDOFSeparateMat::GetOutput(u32 idx)
 	{
 		if (idx == 0)
 			return mOutput0;
@@ -1242,8 +1242,8 @@ namespace bs { namespace ct
 	{
 		const TextureProperties& rtProps = target->GetProperties();
 
-		UINT32 width = std::max(1U, Math::DivideAndRoundUp(rtProps.GetWidth(), 2U));
-		UINT32 height = std::max(1U, Math::DivideAndRoundUp(rtProps.GetHeight(), 2U));
+		u32 width = std::max(1U, Math::DivideAndRoundUp(rtProps.GetWidth(), 2U));
+		u32 height = std::max(1U, Math::DivideAndRoundUp(rtProps.GetHeight(), 2U));
 
 		return POOLED_RENDER_TEXTURE_DESC::Create2D(PF_RGBA16F, width, height, TU_RENDERTARGET);
 	}
@@ -1258,8 +1258,8 @@ namespace bs { namespace ct
 
 	BokehDOFParamDef gBokehDOFParamDef;
 
-	constexpr UINT32 BokehDOFMat::NEAR_FAR_PADDING;
-	constexpr UINT32 BokehDOFMat::QUADS_PER_TILE;
+	constexpr u32 BokehDOFMat::NEAR_FAR_PADDING;
+	constexpr u32 BokehDOFMat::QUADS_PER_TILE;
 
 	BokehDOFMat::BokehDOFMat()
 	{
@@ -1286,7 +1286,7 @@ namespace bs { namespace ct
 		mTileVertexBuffer = VertexBuffer::Create(tileVertexBufferDesc);
 
 		auto* const vertexData = (Vector2*)mTileVertexBuffer->Lock(GBL_WRITE_ONLY_DISCARD);
-		for (UINT32 i = 0; i < QUADS_PER_TILE; i++)
+		for (u32 i = 0; i < QUADS_PER_TILE; i++)
 		{
 			vertexData[i * 4 + 0] = Vector2(0.0f, 0.0f);
 			vertexData[i * 4 + 1] = Vector2(1.0f, 0.0f);
@@ -1303,10 +1303,10 @@ namespace bs { namespace ct
 
 		mTileIndexBuffer = IndexBuffer::Create(tileIndexBufferDesc);
 
-		auto* const indices = (UINT16*)mTileIndexBuffer->Lock(GBL_WRITE_ONLY_DISCARD);
+		auto* const indices = (u16*)mTileIndexBuffer->Lock(GBL_WRITE_ONLY_DISCARD);
 
 		const Conventions& rapiConventions = gCaps().Conventions;
-		for (UINT32 i = 0; i < QUADS_PER_TILE; i++)
+		for (u32 i = 0; i < QUADS_PER_TILE; i++)
 		{
 			// If UV is flipped, then our tile will be upside down so we need to change index order so it doesn't
 			// get culled.
@@ -1344,7 +1344,7 @@ namespace bs { namespace ct
 		gBokehDOFParamDef.gInvOutputSize.Set(mParamBuffer, outputInvTexSize);
 		gBokehDOFParamDef.gAdaptiveThresholdCOC.Set(mParamBuffer, settings.AdaptiveRadiusThreshold);
 		gBokehDOFParamDef.gAdaptiveThresholdColor.Set(mParamBuffer, settings.AdaptiveColorThreshold);
-		gBokehDOFParamDef.gLayerPixelOffset.Set(mParamBuffer, (INT32)srcProps.GetHeight() + (INT32)NEAR_FAR_PADDING);
+		gBokehDOFParamDef.gLayerPixelOffset.Set(mParamBuffer, (i32)srcProps.GetHeight() + (i32)NEAR_FAR_PADDING);
 		gBokehDOFParamDef.gInvDepthRange.Set(mParamBuffer, 1.0f / settings.OcclusionDepthRange);
 
 		float bokehSize = settings.MaxBokehSize * srcProps.GetWidth();
@@ -1375,12 +1375,12 @@ namespace bs { namespace ct
 		rapi.SetVertexDeclaration(mTileVertexDecl);
 
 		SPtr<VertexBuffer> buffers[] = { mTileVertexBuffer };
-		rapi.SetVertexBuffers(0, buffers, (UINT32)bs_size(buffers));
+		rapi.SetVertexBuffers(0, buffers, (u32)bs_size(buffers));
 		rapi.SetIndexBuffer(mTileIndexBuffer);
 		rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
 
 		Bind();
-		const UINT32 numInstances = Math::DivideAndRoundUp((UINT32)(tileCount.X * tileCount.Y), QUADS_PER_TILE);
+		const u32 numInstances = Math::DivideAndRoundUp((u32)(tileCount.X * tileCount.Y), QUADS_PER_TILE);
 		rapi.DrawIndexed(0, QUADS_PER_TILE * 6, 0, QUADS_PER_TILE * 4, numInstances);
 	}
 
@@ -1388,8 +1388,8 @@ namespace bs { namespace ct
 	{
 		const TextureProperties& rtProps = target->GetProperties();
 
-		UINT32 width = rtProps.GetWidth();
-		UINT32 height = rtProps.GetHeight() * 2 + NEAR_FAR_PADDING;
+		u32 width = rtProps.GetWidth();
+		u32 height = rtProps.GetHeight() * 2 + NEAR_FAR_PADDING;
 
 		return POOLED_RENDER_TEXTURE_DESC::Create2D(PF_RGBA16F, width, height, TU_RENDERTARGET);
 	}
@@ -1452,7 +1452,7 @@ namespace bs { namespace ct
 
 		const TextureProperties& focusedProps = focused->GetProperties();
 		const TextureProperties& unfocusedProps = unfocused->GetProperties();
-		UINT32 halfHeight = std::max(1U, Math::DivideAndRoundUp(focusedProps.GetHeight(), 2U));
+		u32 halfHeight = std::max(1U, Math::DivideAndRoundUp(focusedProps.GetHeight(), 2U));
 
 		float uvScale = halfHeight / (float)unfocusedProps.GetHeight();
 		float uvOffset = (halfHeight + BokehDOFMat::NEAR_FAR_PADDING) / (float)unfocusedProps.GetHeight();
@@ -1522,7 +1522,7 @@ namespace bs { namespace ct
 	{
 		BS_RENMAT_PROFILE_BLOCK
 
-		UINT32 numSamples;
+		u32 numSamples;
 		switch(settings.Quality)
 		{
 		default:
@@ -1572,7 +1572,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void BuildHiZMat::Execute(const SPtr<Texture>& source, UINT32 srcMip, const Rect2& srcRect, const Rect2& dstRect,
+	void BuildHiZMat::Execute(const SPtr<Texture>& source, u32 srcMip, const Rect2& srcRect, const Rect2& dstRect,
 		const SPtr<RenderTexture>& output)
 	{
 		BS_RENMAT_PROFILE_BLOCK
@@ -1765,12 +1765,12 @@ namespace bs { namespace ct
 
 		// Generate a scale which we need to use in order to achieve tiling
 		const TextureProperties& rndProps = textures.RandomRotations->GetProperties();
-		UINT32 rndWidth = rndProps.GetWidth();
-		UINT32 rndHeight = rndProps.GetHeight();
+		u32 rndWidth = rndProps.GetWidth();
+		u32 rndHeight = rndProps.GetHeight();
 
 		//// Multiple of random texture size, rounded up
-		UINT32 scaleWidth = (rtProps.Width + rndWidth - 1) / rndWidth;
-		UINT32 scaleHeight = (rtProps.Height + rndHeight - 1) / rndHeight;
+		u32 scaleWidth = (rtProps.Width + rndWidth - 1) / rndWidth;
+		u32 scaleHeight = (rtProps.Height + rndHeight - 1) / rndHeight;
 
 		Vector2 randomTileScale((float)scaleWidth, (float)scaleHeight);
 		gSSAOParamDef.gRandomTileScale.Set(mParamBuffer, randomTileScale);
@@ -2079,7 +2079,7 @@ namespace bs { namespace ct
 		// Used for roughness fading
 		Vector2 roughnessScaleBias = CalcRoughnessFadeScaleBias(settings.MaxRoughness);
 
-		UINT32 temporalJitter = (viewProps.FrameIdx % 8) * 1503;
+		u32 temporalJitter = (viewProps.FrameIdx % 8) * 1503;
 
 		Vector2I bufferSize(viewRect.Width, viewRect.Height);
 		gSSRTraceParamDef.gHiZSize.Set(mParamBuffer, bufferSize);
@@ -2115,7 +2115,7 @@ namespace bs { namespace ct
 		return scaleBias;
 	}
 
-	SSRTraceMat* SSRTraceMat::GetVariation(UINT32 quality, bool msaa, bool singleSampleMSAA)
+	SSRTraceMat* SSRTraceMat::GetVariation(u32 quality, bool msaa, bool singleSampleMSAA)
 	{
 #define PICK_MATERIAL(QUALITY)											\
 		if(msaa)														\
@@ -2265,7 +2265,7 @@ namespace bs { namespace ct
 				{  0.0f,  1.0f },
 			};
 
-			for (UINT32 i = 0; i < 5; ++i)
+			for (u32 i = 0; i < 5; ++i)
 			{
 				// Get rid of jitter introduced by the projection matrix
 				Vector2 offset = sampleOffsets[i] - jitterUV * Vector2(0.5f, -0.5f);
@@ -2275,7 +2275,7 @@ namespace bs { namespace ct
 				totalWeights += sampleWeights[i];
 			}
 
-			for (UINT32 i = 5; i < 9; ++i)
+			for (u32 i = 5; i < 9; ++i)
 				sampleWeights[i] = 0.0f;
 			
 			memset(sampleWeightsLowPass, 0, sizeof(sampleWeightsLowPass));
@@ -2296,7 +2296,7 @@ namespace bs { namespace ct
 				{  1.0f,  1.0f },
 			};
 
-			for (UINT32 i = 0; i < 9; ++i)
+			for (u32 i = 0; i < 9; ++i)
 			{
 				// Get rid of jitter introduced by the projection matrix
 				Vector2 offset = sampleOffsets[i] - jitterUV;
@@ -2312,7 +2312,7 @@ namespace bs { namespace ct
 			}
 		}
 
-		for (UINT32 i = 0; i < 9; ++i)
+		for (u32 i = 0; i < 9; ++i)
 		{
 			gTemporalResolveParamDef.gSampleWeights.Set(mTemporalParamBuffer, sampleWeights[i] / totalWeights, i);
 			gTemporalResolveParamDef.gSampleWeightsLowpass.Set(mTemporalParamBuffer, sampleWeightsLowPass[i] / totalWeightsLowPass, i);
@@ -2424,7 +2424,7 @@ namespace bs { namespace ct
 		gRendererUtility().DrawScreenQuad(Rect2(0, 0, (float)viewRect.Width, (float)viewRect.Height));
 	}
 
-	MSAACoverageMat* MSAACoverageMat::GetVariation(UINT32 msaaCount)
+	MSAACoverageMat* MSAACoverageMat::GetVariation(u32 msaaCount)
 	{
 		switch(msaaCount)
 		{

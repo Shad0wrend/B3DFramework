@@ -61,7 +61,7 @@ namespace bs
 			mInternal->Play(clip);
 	}
 
-	void CAnimation::BlendAdditive(const HAnimationClip& clip, float weight, float fadeLength, UINT32 layer)
+	void CAnimation::BlendAdditive(const HAnimationClip& clip, float weight, float fadeLength, u32 layer)
 	{
 		if (mInternal != nullptr && !mPreviewMode)
 			mInternal->BlendAdditive(clip, weight, fadeLength, layer);
@@ -91,7 +91,7 @@ namespace bs
 			mInternal->Sample(clip, time);
 	}
 
-	void CAnimation::Stop(UINT32 layer)
+	void CAnimation::Stop(u32 layer)
 	{
 		if (mInternal != nullptr && !mPreviewMode)
 			mInternal->Stop(layer);
@@ -142,7 +142,7 @@ namespace bs
 			return;
 
 		const Vector<SPtr<MorphChannel>>& channels = morphShapes->GetChannels();
-		for (UINT32 i = 0; i < (UINT32)channels.size(); i++)
+		for (u32 i = 0; i < (u32)channels.size(); i++)
 		{
 			if (channels[i]->GetName() == name)
 			{
@@ -190,7 +190,7 @@ namespace bs
 			mInternal->SetCulling(enable);
 	}
 
-	UINT32 CAnimation::GetNumClips() const
+	u32 CAnimation::GetNumClips() const
 	{
 		if (mInternal != nullptr)
 			return mInternal->GetNumClips();
@@ -198,7 +198,7 @@ namespace bs
 		return 0;
 	}
 
-	HAnimationClip CAnimation::GetClip(UINT32 idx) const
+	HAnimationClip CAnimation::GetClip(u32 idx) const
 	{
 		if (mInternal != nullptr)
 			return mInternal->GetClip(idx);
@@ -256,8 +256,8 @@ namespace bs
 							if(!entry.IsMappedToBone || entry.Bone == nullptr)
 								continue;
 
-							const UINT32 numBones = skeleton->GetNumBones();
-							for (UINT32 j = 0; j < numBones; j++)
+							const u32 numBones = skeleton->GetNumBones();
+							for (u32 j = 0; j < numBones; j++)
 							{
 								if (skeleton->GetBoneInfo(j).Name == entry.Bone->GetBoneName())
 								{
@@ -387,7 +387,7 @@ namespace bs
 		}
 	}
 
-	bool CAnimation::GetGenericCurveValueInternal(UINT32 curveIdx, float& value)
+	bool CAnimation::GetGenericCurveValueInternal(u32 curveIdx, float& value)
 	{
 		if (mInternal == nullptr)
 			return false;
@@ -429,7 +429,7 @@ namespace bs
 	void CAnimation::RemoveBoneInternal(const HBone& bone)
 	{
 		HSceneObject newSO;
-		for (UINT32 i = 0; i < (UINT32)mMappingInfos.size(); i++)
+		for (u32 i = 0; i < (u32)mMappingInfos.size(); i++)
 		{
 			if (mMappingInfos[i].Bone == bone)
 			{
@@ -447,7 +447,7 @@ namespace bs
 		if (mInternal == nullptr)
 			return;
 
-		for (UINT32 i = 0; i < (UINT32)mMappingInfos.size(); i++)
+		for (u32 i = 0; i < (u32)mMappingInfos.size(); i++)
 		{
 			if (mMappingInfos[i].Bone == bone)
 			{
@@ -547,7 +547,7 @@ namespace bs
 				HSceneObject currentSO = root->FindPath(name);
 
 				bool found = false;
-				for (UINT32 i = 0; i < (UINT32)newMappingInfos.size(); i++)
+				for (u32 i = 0; i < (u32)newMappingInfos.size(); i++)
 				{
 					if (newMappingInfos[i].SceneObject == currentSO)
 					{

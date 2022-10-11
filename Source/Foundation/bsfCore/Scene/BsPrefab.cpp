@@ -59,8 +59,8 @@ namespace bs
 			HSceneObject current = todo.top();
 			todo.pop();
 
-			UINT32 childCount = current->GetNumChildren();
-			for (UINT32 i = 0; i < childCount; i++)
+			u32 childCount = current->GetNumChildren();
+			for (u32 i = 0; i < childCount; i++)
 			{
 				HSceneObject child = current->GetChild(i);
 
@@ -91,8 +91,8 @@ namespace bs
 				current->Destroy();
 			else
 			{
-				UINT32 numChildren = current->GetNumChildren();
-				for (UINT32 i = 0; i < numChildren; i++)
+				u32 numChildren = current->GetNumChildren();
+				for (u32 i = 0; i < numChildren; i++)
 					todo.push(current->GetChild(i));
 			}
 		}
@@ -117,8 +117,8 @@ namespace bs
 			HSceneObject current = todo.top();
 			todo.pop();
 
-			UINT32 childCount = current->GetNumChildren();
-			for (UINT32 i = 0; i < childCount; i++)
+			u32 childCount = current->GetNumChildren();
+			for (u32 i = 0; i < childCount; i++)
 			{
 				HSceneObject child = current->GetChild(i);
 

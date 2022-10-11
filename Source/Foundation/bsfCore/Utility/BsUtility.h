@@ -19,7 +19,7 @@ namespace bs
 		ResourceDependency() = default;
 
 		HResource Resource;
-		UINT32 NumReferences = 0;
+		u32 NumReferences = 0;
 	};
 
 	/** Static class containing various utility methods that do not fit anywhere else. */
@@ -43,10 +43,10 @@ namespace bs
 		 * @param[in]	typeId		RTTI type ID of the component type to search for.
 		 * @return					A list of all components of the specified type.
 		 */
-		static Vector<HComponent> FindComponents(const HSceneObject& object, UINT32 typeId);
+		static Vector<HComponent> FindComponents(const HSceneObject& object, u32 typeId);
 
 		/** Calculates how deep in the scene object hierarchy is the provided object. Zero means root. */
-		static UINT32 GetSceneObjectDepth(const HSceneObject& so);
+		static u32 GetSceneObjectDepth(const HSceneObject& so);
 	};
 
 	/** Provides extra information and maintains state during serialization of various RTTI types in the core. */

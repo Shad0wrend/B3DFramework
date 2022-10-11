@@ -25,12 +25,12 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Text,pl:true,api:bsf,api:bed) CharRange
 	{
 		CharRange() = default;
-		CharRange(UINT32 start, UINT32 end)
+		CharRange(u32 start, u32 end)
 			: Start(start), End(end)
 		{ }
 
-		UINT32 Start = 0;
-		UINT32 End = 0;
+		u32 Start = 0;
+		u32 End = 0;
 	};
 
 	/**	Import options that allow you to control how is a font imported. */
@@ -41,7 +41,7 @@ namespace bs
 
 		/**	Determines font sizes that are to be imported. Sizes are in points. */
 		BS_SCRIPT_EXPORT()
-		Vector<UINT32> FontSizes = { 10 };
+		Vector<u32> FontSizes = { 10 };
 
 		/**	Determines character index ranges to import. Ranges are defined as unicode numbers. */
 		BS_SCRIPT_EXPORT()
@@ -49,7 +49,7 @@ namespace bs
 
 		/**	Determines dots per inch scale that will be used when rendering the characters. */
 		BS_SCRIPT_EXPORT()
-		UINT32 Dpi = 96;
+		u32 Dpi = 96;
 
 		/**	Determines the render mode used for rendering the characters into a bitmap. */
 		BS_SCRIPT_EXPORT()

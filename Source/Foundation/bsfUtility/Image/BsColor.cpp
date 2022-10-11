@@ -17,7 +17,7 @@ namespace bs
 	Color Color::FromRgba(RGBA val)
 	{
 		Color output;
-		const UINT32 val32 = val;
+		const u32 val32 = val;
 
 		output.A = ((val32 >> 24) & 0xFF) / 255.0f;
 		output.B = ((val32 >> 16) & 0xFF) / 255.0f;
@@ -27,10 +27,10 @@ namespace bs
 		return output;
 	}
 
-	Color Color::FromAbgr(UINT32 val)
+	Color Color::FromAbgr(u32 val)
 	{
 		Color output;
-		const UINT32 val32 = val;
+		const u32 val32 = val;
 
 		output.R = ((val32 >> 24) & 0xFF) / 255.0f;
 		output.G = ((val32 >> 16) & 0xFF) / 255.0f;
@@ -43,7 +43,7 @@ namespace bs
 	Color Color::FromArgb(ARGB val)
 	{
 		Color output;
-		const UINT32 val32 = val;
+		const u32 val32 = val;
 
 		output.B = ((val32 >> 24) & 0xFF) / 255.0f;
 		output.G = ((val32 >> 16) & 0xFF) / 255.0f;
@@ -56,7 +56,7 @@ namespace bs
 	Color Color::FromBgra(BGRA val)
 	{
 		Color output;
-		const UINT32 val32 = val;
+		const u32 val32 = val;
 
 		output.A = ((val32 >> 24) & 0xFF) / 255.0f;
 		output.R = ((val32 >> 16) & 0xFF) / 255.0f;
@@ -154,26 +154,26 @@ namespace bs
 
 	ABGR Color::GetAsAbgr() const
 	{
-		UINT8 val8;
-		UINT32 val32 = 0;
+		u8 val8;
+		u32 val32 = 0;
 
 		// Convert to 32bit pattern
 		// (RGBA = 8888)
 
 		// Red
-		val8 = static_cast<UINT8>(R * 255);
+		val8 = static_cast<u8>(R * 255);
 		val32 = val8 << 24;
 
 		// Green
-		val8 = static_cast<UINT8>(G * 255);
+		val8 = static_cast<u8>(G * 255);
 		val32 += val8 << 16;
 
 		// Blue
-		val8 = static_cast<UINT8>(B * 255);
+		val8 = static_cast<u8>(B * 255);
 		val32 += val8 << 8;
 
 		// Alpha
-		val8 = static_cast<UINT8>(A * 255);
+		val8 = static_cast<u8>(A * 255);
 		val32 += val8;
 
 		return val32;
@@ -181,26 +181,26 @@ namespace bs
 
 	BGRA Color::GetAsBgra() const
 	{
-		UINT8 val8;
-		UINT32 val32 = 0;
+		u8 val8;
+		u32 val32 = 0;
 
 		// Convert to 32bit pattern
 		// (ARGB = 8888)
 
 		// Alpha
-		val8 = static_cast<UINT8>(A * 255);
+		val8 = static_cast<u8>(A * 255);
 		val32 = val8 << 24;
 
 		// Red
-		val8 = static_cast<UINT8>(R * 255);
+		val8 = static_cast<u8>(R * 255);
 		val32 += val8 << 16;
 
 		// Green
-		val8 = static_cast<UINT8>(G * 255);
+		val8 = static_cast<u8>(G * 255);
 		val32 += val8 << 8;
 
 		// Blue
-		val8 = static_cast<UINT8>(B * 255);
+		val8 = static_cast<u8>(B * 255);
 		val32 += val8;
 
 		return val32;
@@ -208,26 +208,26 @@ namespace bs
 
 	ARGB Color::GetAsArgb() const
 	{
-		UINT8 val8;
-		UINT32 val32 = 0;
+		u8 val8;
+		u32 val32 = 0;
 
 		// Convert to 32bit pattern
 		// (ARGB = 8888)
 
 		// Blue
-		val8 = static_cast<UINT8>(B * 255);
+		val8 = static_cast<u8>(B * 255);
 		val32 = val8 << 24;
 
 		// Green
-		val8 = static_cast<UINT8>(G * 255);
+		val8 = static_cast<u8>(G * 255);
 		val32 += val8 << 16;
 
 		// Red
-		val8 = static_cast<UINT8>(R * 255);
+		val8 = static_cast<u8>(R * 255);
 		val32 += val8 << 8;
 
 		// Alpha
-		val8 = static_cast<UINT8>(A * 255);
+		val8 = static_cast<u8>(A * 255);
 		val32 += val8;
 
 
@@ -236,26 +236,26 @@ namespace bs
 
 	RGBA Color::GetAsRgba() const
 	{
-		UINT8 val8;
-		UINT32 val32 = 0;
+		u8 val8;
+		u32 val32 = 0;
 
 		// Convert to 32bit pattern
 		// (ABRG = 8888)
 
 		// Alpha
-		val8 = static_cast<UINT8>(A * 255);
+		val8 = static_cast<u8>(A * 255);
 		val32 = val8 << 24;
 
 		// Blue
-		val8 = static_cast<UINT8>(B * 255);
+		val8 = static_cast<u8>(B * 255);
 		val32 += val8 << 16;
 
 		// Green
-		val8 = static_cast<UINT8>(G * 255);
+		val8 = static_cast<u8>(G * 255);
 		val32 += val8 << 8;
 
 		// Red
-		val8 = static_cast<UINT8>(R * 255);
+		val8 = static_cast<u8>(R * 255);
 		val32 += val8;
 
 

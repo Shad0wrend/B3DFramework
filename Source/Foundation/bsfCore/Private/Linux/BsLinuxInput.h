@@ -10,20 +10,20 @@ namespace bs
 	/** Infomation about an analog axis that's part of a gamepad. */
 	struct AxisInfo
 	{
-		INT32 axisIdx;
-		INT32 min;
-		INT32 max;
+		i32 axisIdx;
+		i32 min;
+		i32 max;
 	};
 
 	/** Information about a gamepad. */
 	struct GamepadInfo
 	{
-		UINT32 id;
-		UINT32 eventHandlerIdx;
+		u32 id;
+		u32 eventHandlerIdx;
 		String name;
 
-		UnorderedMap<INT32, ButtonCode> buttonMap;
-		UnorderedMap<INT32, AxisInfo> axisMap;
+		UnorderedMap<i32, ButtonCode> buttonMap;
+		UnorderedMap<i32, AxisInfo> axisMap;
 	};
 
 	/**
@@ -46,7 +46,7 @@ namespace bs
 	/** Data about a single button press or release. */
 	struct LinuxButtonEvent
 	{
-		UINT64 timestamp;
+		u64 timestamp;
 		ButtonCode button;
 		bool pressed;
 	};

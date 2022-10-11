@@ -43,7 +43,7 @@ namespace bs
 		 */
 		void FreeManagedInstance();
 
-		UINT32 mGCHandle = 0;
+		u32 mGCHandle = 0;
 	};
 
 	/**	Interop class between C++ & CLR for GameObject. */
@@ -58,7 +58,7 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static UINT64 InternalGetInstanceId(ScriptGameObject* nativeInstance);
+		static u64 InternalGetInstanceId(ScriptGameObject* nativeInstance);
 		static void InternalGetUuid(ScriptGameObject* nativeInstance, UUID* uuid);
 		static bool InternalGetIsDestroyed(ScriptGameObject* nativeInstance);
 	};

@@ -37,17 +37,17 @@ namespace bs
 
 	/** Keyframe specialization for integers (no tangents). */
 	template <>
-	struct BS_SCRIPT_EXPORT(m:Animation,n:KeyFrameInt,pl:true) TKeyframe<INT32>
+	struct BS_SCRIPT_EXPORT(m:Animation,n:KeyFrameInt,pl:true) TKeyframe<i32>
 	{
-		INT32 Value; /**< Value of the key. */
+		i32 Value; /**< Value of the key. */
 		float Time; /**< Position of the key along the animation spline. */
 
-		bool operator== (const TKeyframe<INT32>& rhs) const
+		bool operator== (const TKeyframe<i32>& rhs) const
 		{
 			return (Value == rhs.Value && Time == rhs.Time);
 		}
 
-		bool operator!= (const TKeyframe<INT32>& rhs) const
+		bool operator!= (const TKeyframe<i32>& rhs) const
 		{
 			return !operator==(rhs);
 		}
@@ -174,10 +174,10 @@ namespace bs
 		float GetLength() const { return mEnd; }
 
 		/** Returns the total number of key-frames in the curve. */
-		UINT32 GetNumKeyFrames() const { return (UINT32)mKeyframes.size(); }
+		u32 GetNumKeyFrames() const { return (u32)mKeyframes.size(); }
 
 		/** Returns a keyframe at the specified index. */
-		const TKeyframe<T>& GetKeyFrame(UINT32 idx) const { return mKeyframes[idx]; }
+		const TKeyframe<T>& GetKeyFrame(u32 idx) const { return mKeyframes[idx]; }
 
 		/** Returns a list of all keyframes in the curve. */
 		BS_SCRIPT_EXPORT(n:KeyFrames,pr:getter)
@@ -200,7 +200,7 @@ namespace bs
 		 * @param[out]	leftKey			Index of the key to interpolate from.
 		 * @param[out]	rightKey		Index of the key to interpolate to.
 		 */
-		void FindKeys(float time, const TCurveCache<T>& cache, UINT32& leftKey, UINT32& rightKey) const;
+		void FindKeys(float time, const TCurveCache<T>& cache, u32& leftKey, u32& rightKey) const;
 
 		/**
 		 * Returns a pair of keys that can be used for interpolating to field the value at the provided time.
@@ -210,10 +210,10 @@ namespace bs
 		 * @param[out]	leftKey			Index of the key to interpolate from.
 		 * @param[out]	rightKey		Index of the key to interpolate to.
 		 */
-		void FindKeys(float time, UINT32& leftKey, UINT32& rightKey) const;
+		void FindKeys(float time, u32& leftKey, u32& rightKey) const;
 
 		/** Returns a keyframe index nearest to the provided time. */
-		UINT32 FindKey(float time);
+		u32 FindKey(float time);
 
 		/**
 		 * Calculates a key in-between the provided two keys.
@@ -231,7 +231,7 @@ namespace bs
 		/** Creates a cache used for quick evaluation of double integrated curves. */
 		void BuildDoubleIntegrationCache(const TCurveIntegrationCache<T>& cache) const;
 
-		static const UINT32 CACHE_LOOKAHEAD;
+		static const u32 CACHE_LOOKAHEAD;
 
 		Vector<KeyFrame> mKeyframes;
 		float mStart = 0.0f;
@@ -244,7 +244,7 @@ namespace bs
 	template class BS_SCRIPT_EXPORT(m:Animation,n:Vector3Curve) TAnimationCurve<Vector3>;
 	template class BS_SCRIPT_EXPORT(m:Animation,n:Vector2Curve) TAnimationCurve<Vector2>;
 	template class BS_SCRIPT_EXPORT(m:Animation,n:QuaternionCurve) TAnimationCurve<Quaternion>;
-	template class BS_SCRIPT_EXPORT(m:Animation,n:IntegerCurve) TAnimationCurve<INT32>;
+	template class BS_SCRIPT_EXPORT(m:Animation,n:IntegerCurve) TAnimationCurve<i32>;
 #endif
 
 	/** Flags that describe an animation curve. */
@@ -307,7 +307,7 @@ namespace bs
 	template class BS_SCRIPT_EXPORT(m:Animation,n:NamedVector3Curve,pl:true) TNamedAnimationCurve<Vector3>;
 	template class BS_SCRIPT_EXPORT(m:Animation,n:NamedVector2Curve,pl:true) TNamedAnimationCurve<Vector2>;
 	template class BS_SCRIPT_EXPORT(m:Animation,n:NamedQuaternionCurve,pl:true) TNamedAnimationCurve<Quaternion>;
-	template class BS_SCRIPT_EXPORT(m:Animation,n:NamedIntegerCurve,pl:true) TNamedAnimationCurve<INT32>;
+	template class BS_SCRIPT_EXPORT(m:Animation,n:NamedIntegerCurve,pl:true) TNamedAnimationCurve<i32>;
 #endif
 
 	/** @} */

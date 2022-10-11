@@ -9,7 +9,7 @@
 
 namespace bs { namespace ct
 {
-	D3D11OcclusionQuery::D3D11OcclusionQuery(bool binary, UINT32 deviceIdx)
+	D3D11OcclusionQuery::D3D11OcclusionQuery(bool binary, u32 deviceIdx)
 		:OcclusionQuery(binary)
 	{
 		assert(deviceIdx == 0 && "Multiple GPUs not supported natively on DirectX 11.");
@@ -90,12 +90,12 @@ namespace bs { namespace ct
 		}
 		else
 		{
-			UINT64 numSamples = 0;
+			u64 numSamples = 0;
 			return mContext->GetData(mQuery, &numSamples, sizeof(numSamples), 0) == S_OK;
 		}
 	}
 
-	UINT32 D3D11OcclusionQuery::GetNumSamples()
+	u32 D3D11OcclusionQuery::GetNumSamples()
 	{
 		if (!mFinalized && IsReady())
 		{
@@ -118,10 +118,10 @@ namespace bs { namespace ct
 		}
 		else
 		{
-			UINT64 numSamples = 0;
+			u64 numSamples = 0;
 			mContext->GetData(mQuery, &numSamples, sizeof(numSamples), 0);
 
-			mNumSamples = (UINT32)numSamples;
+			mNumSamples = (u32)numSamples;
 		}
 	}
 }}

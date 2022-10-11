@@ -195,19 +195,19 @@ namespace bs
 		 * Determines the number of iterations to use when solving for position. Higher values can improve precision and
 		 * numerical stability of the simulation.
 		 */
-		virtual void SetPositionSolverCount(UINT32 count) = 0;
+		virtual void SetPositionSolverCount(u32 count) = 0;
 
 		/** @copydoc setPositionSolverCount() */
-		virtual UINT32 GetPositionSolverCount() const = 0;
+		virtual u32 GetPositionSolverCount() const = 0;
 
 		/**
 		 * Determines the number of iterations to use when solving for velocity. Higher values can improve precision and
 		 * numerical stability of the simulation.
 		 */
-		virtual void SetVelocitySolverCount(UINT32 count) = 0;
+		virtual void SetVelocitySolverCount(u32 count) = 0;
 
 		/** @copydoc setVelocitySolverCount() */
-		virtual UINT32 GetVelocitySolverCount() const = 0;
+		virtual u32 GetVelocitySolverCount() const = 0;
 
 		/** Flags that control the behaviour of the rigidbody. */
 		virtual void SetFlags(RigidbodyFlag flags) { mFlags = flags; }
@@ -294,10 +294,10 @@ namespace bs
 		 * Sets the priority of the physics update. Bodies with a higher priority will be updated before the bodies with
 		 * lower priority. This allows you to control the order of updated in case rigidbodies are in some way dependant.
 		 */
-		void SetPriorityInternal(UINT32 priority);
+		void SetPriorityInternal(u32 priority);
 
 		/** Sets a unique ID of the rigidbody, so it can be recognized by the physics system. */
-		void SetPhysicsIdInternal(UINT32 id) { mPhysicsId = id; }
+		void SetPhysicsIdInternal(u32 id) { mPhysicsId = id; }
 
 		/**
 		 * Applies new transform values retrieved from the most recent physics update (values resulting from physics
@@ -322,7 +322,7 @@ namespace bs
 	protected:
 		RigidbodyFlag mFlags = RigidbodyFlag::None;
 		PhysicsObjectOwner mOwner;
-		UINT32 mPhysicsId = 0;
+		u32 mPhysicsId = 0;
 		HSceneObject mLinkedSO;
 	};
 

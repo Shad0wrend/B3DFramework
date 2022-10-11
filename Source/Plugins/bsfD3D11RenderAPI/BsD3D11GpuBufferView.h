@@ -17,9 +17,9 @@ namespace bs { namespace ct
 	 */
 	struct BS_CORE_EXPORT GPU_BUFFER_VIEW_DESC
 	{
-		UINT32 FirstElement;
-		UINT32 ElementWidth;
-		UINT32 NumElements;
+		u32 FirstElement;
+		u32 ElementWidth;
+		u32 NumElements;
 		bool UseCounter;
 		GpuViewUsage Usage;
 		GpuBufferFormat Format;
@@ -60,13 +60,13 @@ namespace bs { namespace ct
 		D3D11GpuBuffer* GetBuffer() const { return mBuffer; }
 
 		/** Returns index of first element in the buffer that this view provides access to. */
-		UINT32 GetFirstElement() const { return mDesc.FirstElement; }
+		u32 GetFirstElement() const { return mDesc.FirstElement; }
 
 		/** Returns width of an element in the buffer, in bytes. */
-		UINT32 GetElementWidth() const { return mDesc.ElementWidth; }
+		u32 GetElementWidth() const { return mDesc.ElementWidth; }
 
 		/**	Returns the total number of elements this buffer provides access to. */
-		UINT32 GetNumElements() const { return mDesc.NumElements; }
+		u32 GetNumElements() const { return mDesc.NumElements; }
 
 		/**	Returns true if this view allows a GPU program to use counters on the bound buffer. */
 		bool GetUseCounter() const { return mDesc.UseCounter; }
@@ -95,7 +95,7 @@ namespace bs { namespace ct
 		 *								number of bytes for raw buffers or number of structures for structured buffers.
 		 * @return						Constructed DX11 shader resource view object.
 		 */
-		ID3D11ShaderResourceView* CreateSrv(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 elementWidth, UINT32 numElements);
+		ID3D11ShaderResourceView* CreateSrv(D3D11GpuBuffer* buffer, u32 firstElement, u32 elementWidth, u32 numElements);
 
 		/**
 		 * Creates a DX11 unordered access view that allows a buffer to be bound to a shader for random reading or writing.
@@ -108,7 +108,7 @@ namespace bs { namespace ct
 		 *								number of bytes for raw buffers or number of structures for structured buffers.
 		 * @return						Constructed DX11 unordered access view object.
 		 */
-		ID3D11UnorderedAccessView* CreateUav(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 numElements, bool useCounter);
+		ID3D11UnorderedAccessView* CreateUav(D3D11GpuBuffer* buffer, u32 firstElement, u32 numElements, bool useCounter);
 
 		ID3D11ShaderResourceView* mSRV = nullptr;
 		ID3D11UnorderedAccessView* mUAV = nullptr;

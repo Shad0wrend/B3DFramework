@@ -25,7 +25,7 @@ namespace bs
 			mInternal->Destroy();
 	}
 
-	void CLightProbeVolume::RenderProbe(UINT32 handle)
+	void CLightProbeVolume::RenderProbe(u32 handle)
 	{
 		if (mInternal != nullptr && SO()->GetActive())
 		{

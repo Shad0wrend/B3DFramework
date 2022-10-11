@@ -65,7 +65,7 @@ namespace bs
 			Ctrl = false;
 		}
 
-		bool MouseButtons[(UINT32)OSMouseButton::Count];
+		bool MouseButtons[(u32)OSMouseButton::Count];
 		bool Shift, Ctrl;
 	};
 
@@ -228,7 +228,7 @@ namespace bs
 		 * @note	This method relies on timer granularity being set to 1 millisecond. If it is not, you can expect
 		 *			this method to potentially take significantly longer if you are providing it with low ms values (<10).
 		 */
-		static void Sleep(UINT32 duration);
+		static void Sleep(u32 duration);
 
 		/**
 		 * Opens the provided folder using the default application, as specified by the operating system.
@@ -262,7 +262,7 @@ namespace bs
 		 * Normally this will output a single character, but it can happen it outputs multiple in case a accent/diacritic
 		 * character could not be combined with the virtual key into a single character.
 		 */
-		static String KeyCodeToUnicode(UINT32 keyCode);
+		static String KeyCodeToUnicode(u32 keyCode);
 
 		/**
 		 * Message pump. Processes OS messages and returns when it's free.
@@ -330,7 +330,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		static Event<void(UINT32)> onCharInput;
+		static Event<void(u32)> onCharInput;
 
 		/**
 		 * Triggered whenever mouse capture state for the window is changed (it receives or loses it).

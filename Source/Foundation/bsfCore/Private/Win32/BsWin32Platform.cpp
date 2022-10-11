@@ -57,7 +57,7 @@ namespace bs
 	Event<void(const Vector2I&, const OSPointerButtonStates&)> Platform::onCursorDoubleClick;
 	Event<void(InputCommandType)> Platform::onInputCommand;
 	Event<void(float)> Platform::onMouseWheelScrolled;
-	Event<void(UINT32)> Platform::onCharInput;
+	Event<void(u32)> Platform::onCharInput;
 
 	Event<void()> Platform::onMouseCaptureChanged;
 
@@ -117,7 +117,7 @@ namespace bs
 	void Platform::CaptureMouse(const RenderWindow& window)
 	{
 		SPtr<RenderWindow> primaryWindow = gCoreApplication().GetPrimaryWindow();
-		UINT64 hwnd;
+		u64 hwnd;
 		primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
 		
 		PostMessage((HWND)hwnd, WM_BS_SETCAPTURE, WPARAM((HWND)hwnd), 0);
@@ -126,7 +126,7 @@ namespace bs
 	void Platform::ReleaseMouseCapture()
 	{
 		SPtr<RenderWindow> primaryWindow = gCoreApplication().GetPrimaryWindow();
-		UINT64 hwnd;
+		u64 hwnd;
 		primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
 
 		PostMessage((HWND)hwnd, WM_BS_RELEASECAPTURE, WPARAM((HWND)hwnd), 0);
@@ -140,7 +140,7 @@ namespace bs
 		point.x = screenPos.X;
 		point.y = screenPos.Y;
 
-		UINT64 hwndToCheck;
+		u64 hwndToCheck;
 		window.GetCustomAttribute("WINDOW", &hwndToCheck);
 
 		HWND hwndUnderPos = WindowFromPoint(point);
@@ -158,7 +158,7 @@ namespace bs
 		// WM_SETCURSOR in message loop to hide the cursor is smarter solution anyway.
 
 		SPtr<RenderWindow> primaryWindow = gCoreApplication().GetPrimaryWindow();
-		UINT64 hwnd;
+		u64 hwnd;
 		primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
 
 		PostMessage((HWND)hwnd, WM_SETCURSOR, WPARAM((HWND)hwnd), (LPARAM)MAKELONG(HTCLIENT, WM_MOUSEMOVE));
@@ -175,7 +175,7 @@ namespace bs
 		// WM_SETCURSOR in message loop to hide the cursor is smarter solution anyway.
 
 		SPtr<RenderWindow> primaryWindow = gCoreApplication().GetPrimaryWindow();
-		UINT64 hwnd;
+		u64 hwnd;
 		primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
 
 		PostMessage((HWND)hwnd, WM_SETCURSOR, WPARAM((HWND)hwnd), (LPARAM)MAKELONG(HTCLIENT, WM_MOUSEMOVE));
@@ -188,7 +188,7 @@ namespace bs
 
 	void Platform::ClipCursorToWindow(const RenderWindow& window)
 	{
-		UINT64 hwnd;
+		u64 hwnd;
 		window.GetCustomAttribute("WINDOW", &hwnd);
 
 		mData->MCursorClipping = true;
@@ -233,8 +233,8 @@ namespace bs
 		mData->MUsingCustomCursor = true;
 
 		Vector<Color> pixels = pixelData.GetColors();
-		UINT32 width = pixelData.GetWidth();
-		UINT32 height = pixelData.GetHeight();
+		u32 width = pixelData.GetWidth();
+		u32 height = pixelData.GetHeight();
 
 		HBITMAP hBitmap = Win32PlatformUtility::CreateBitmap((Color*)pixels.data(), width, height, false);
 		HBITMAP hMonoBitmap = CreateBitmap(width, height, 1, 1, nullptr);
@@ -253,7 +253,7 @@ namespace bs
 
 		// Make sure we notify the message loop to perform the actual cursor update
 		SPtr<RenderWindow> primaryWindow = gCoreApplication().GetPrimaryWindow();
-		UINT64 hwnd;
+		u64 hwnd;
 		primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
 
 		PostMessage((HWND)hwnd, WM_SETCURSOR, WPARAM((HWND)hwnd), (LPARAM)MAKELONG(HTCLIENT, WM_MOUSEMOVE));
@@ -262,8 +262,8 @@ namespace bs
 	void Platform::SetIcon(const PixelData& pixelData)
 	{
 		Vector<Color> pixels = pixelData.GetColors();
-		UINT32 width = pixelData.GetWidth();
-		UINT32 height = pixelData.GetHeight();
+		u32 width = pixelData.GetWidth();
+		u32 height = pixelData.GetHeight();
 
 		HBITMAP hBitmap = Win32PlatformUtility::CreateBitmap((Color*)pixels.data(), width, height, false);
 		HBITMAP hMonoBitmap = CreateBitmap(width, height, 1, 1, nullptr);
@@ -282,7 +282,7 @@ namespace bs
 
 		// Make sure we notify the message loop to perform the actual cursor update
 		SPtr<RenderWindow> primaryWindow = gCoreApplication().GetPrimaryWindow();
-		UINT64 hwnd;
+		u64 hwnd;
 		primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
 		
 		PostMessage((HWND)hwnd, WM_SETICON, WPARAM(ICON_BIG), (LPARAM)icon);
@@ -312,7 +312,7 @@ namespace bs
 			mData->MNonClientAreas.erase(iterFind);
 	}
 
-	void Platform::Sleep(UINT32 duration)
+	void Platform::Sleep(u32 duration)
 	{
 		::Sleep((DWORD)duration);
 	}
@@ -325,7 +325,7 @@ namespace bs
 		auto iterFind = mData->MDropTargets.DropTargetsPerWindow.find(window);
 		if (iterFind == mData->MDropTargets.DropTargetsPerWindow.end())
 		{
-			UINT64 hwnd;
+			u64 hwnd;
 			window->GetCustomAttribute("WINDOW", &hwnd);
 
 			win32DropTarget = bs_new<Win32DropTarget>((HWND)hwnd);
@@ -415,10 +415,10 @@ namespace bs
 		return u8"";
 	}
 
-	String Platform::KeyCodeToUnicode(UINT32 keyCode)
+	String Platform::KeyCodeToUnicode(u32 keyCode)
 	{
 		static HKL keyboardLayout = GetKeyboardLayout(0);
-		static UINT8 keyboarState[256];
+		static u8 keyboarState[256];
 
 		if (GetKeyboardState(keyboarState) == FALSE)
 			return 0;
@@ -949,7 +949,7 @@ namespace bs
 			}
 		case WM_MOUSEWHEEL:
 			{
-				INT16 wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+				i16 wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
 
 				float wheelDeltaFlt = wheelDelta / (float)WHEEL_DELTA;
 				if(!onMouseWheelScrolled.Empty())
@@ -993,7 +993,7 @@ namespace bs
 					break;
 				default:    // displayable character
 					{
-						UINT32 finalChar = (UINT32)wParam;
+						u32 finalChar = (u32)wParam;
 
 						if(!onCharInput.Empty())
 							onCharInput(finalChar);

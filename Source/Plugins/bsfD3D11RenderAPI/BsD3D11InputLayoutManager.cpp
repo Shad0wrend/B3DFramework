@@ -84,7 +84,7 @@ namespace bs { namespace ct
 		const Vector<VertexElement>& bufferElems = bufferDeclProps.GetElements();
 		const Vector<VertexElement>& shaderElems = shaderDeclProps.GetElements();
 
-		INT32 maxStreamIdx = -1;
+		i32 maxStreamIdx = -1;
 		for (auto iter = bufferElems.begin(); iter != bufferElems.end(); ++iter)
 		{
 			declElements.push_back(D3D11_INPUT_ELEMENT_DESC());
@@ -107,7 +107,7 @@ namespace bs { namespace ct
 				elementDesc.InstanceDataStepRate = iter->GetInstanceStepRate();
 			}
 
-			maxStreamIdx = std::max(maxStreamIdx, (INT32)iter->GetStreamIdx());
+			maxStreamIdx = std::max(maxStreamIdx, (i32)iter->GetStreamIdx());
 		}
 
 		// Find elements missing in buffer and add a dummy stream for them
@@ -131,7 +131,7 @@ namespace bs { namespace ct
 				elementDesc.SemanticName = D3D11Mappings::Get(shaderIter->GetSemantic());
 				elementDesc.SemanticIndex = shaderIter->GetSemanticIdx();
 				elementDesc.Format = D3D11Mappings::Get(shaderIter->GetType());
-				elementDesc.InputSlot = (UINT32)(maxStreamIdx + 1);
+				elementDesc.InputSlot = (u32)(maxStreamIdx + 1);
 				elementDesc.AlignedByteOffset = 0;
 				elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 				elementDesc.InstanceDataStepRate = 0;
@@ -148,7 +148,7 @@ namespace bs { namespace ct
 		newEntry->InputLayout = nullptr;
 		HRESULT hr = device.GetD3D11Device()->CreateInputLayout(
 			&declElements[0],
-			(UINT32)declElements.size(),
+			(u32)declElements.size(),
 			microcode.Data,
 			microcode.Size,
 			&newEntry->InputLayout);
@@ -178,12 +178,12 @@ namespace bs { namespace ct
 			mWarningShown = true;
 		}
 
-		Map<UINT32, VertexDeclarationKey> leastFrequentlyUsedMap;
+		Map<u32, VertexDeclarationKey> leastFrequentlyUsedMap;
 
 		for(auto iter = mInputLayoutMap.begin(); iter != mInputLayoutMap.end(); ++iter)
 			leastFrequentlyUsedMap[iter->second->LastUsedIdx] = iter->first;
 
-		UINT32 elemsRemoved = 0;
+		u32 elemsRemoved = 0;
 		for(auto iter = leastFrequentlyUsedMap.begin(); iter != leastFrequentlyUsedMap.end(); ++iter)
 		{
 			auto inputLayoutIter = mInputLayoutMap.find(iter->second);

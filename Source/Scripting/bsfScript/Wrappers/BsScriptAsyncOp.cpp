@@ -24,7 +24,7 @@ namespace bs
 	}
 
 	MonoObject* ScriptAsyncOpBase::CreateInternal(const AsyncOpBase& op,
-		const std::function<MonoObject*(const Any&)>& convertCallback, UINT32 rttiId)
+		const std::function<MonoObject*(const Any&)>& convertCallback, u32 rttiId)
 	{
 		MonoClass* returnTypeClass = nullptr;
 		BuiltinResourceInfo* resInfo = ScriptAssemblyManager::Instance().GetBuiltinResourceInfo(rttiId);

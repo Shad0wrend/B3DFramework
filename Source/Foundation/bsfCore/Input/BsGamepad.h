@@ -32,7 +32,7 @@ namespace bs
 		friend class Input;
 
 		/** Changes the capture context. Should be called when focus is moved to a new window. */
-		void ChangeCaptureContext(UINT64 windowHandle);
+		void ChangeCaptureContext(u64 windowHandle);
 
 		String mName;
 		Input* mOwner;

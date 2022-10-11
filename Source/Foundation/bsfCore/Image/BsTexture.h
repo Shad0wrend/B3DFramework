@@ -54,19 +54,19 @@ namespace bs
 		PixelFormat Format = PF_RGBA8;
 
 		/** Width of the texture in pixels. */
-		UINT32 Width = 1;
+		u32 Width = 1;
 
 		/** Height of the texture in pixels. */
-		UINT32 Height = 1;
+		u32 Height = 1;
 
 		/** Depth of the texture in pixels (Must be 1 for 2D textures). */
-		UINT32 Depth = 1;
+		u32 Depth = 1;
 
 		/** Number of mip-maps the texture has. This number excludes the full resolution map. */
-		UINT32 NumMips = 0;
+		u32 NumMips = 0;
 
 		/** Describes how the caller plans on using the texture in the pipeline. */
-		INT32 Usage = TU_DEFAULT;
+		i32 Usage = TU_DEFAULT;
 
 		/**
 		 * If true the texture data is assumed to have been gamma corrected and will be converted back to linear space when
@@ -75,10 +75,10 @@ namespace bs
 		bool HwGamma = false;
 
 		/** Number of samples per pixel. Set to 1 or 0 to use the default of a single sample per pixel. */
-		UINT32 NumSamples = 0;
+		u32 NumSamples = 0;
 
 		/** Number of texture slices to create if creating a texture array. Ignored for 3D textures. */
-		UINT32 NumArraySlices = 1;
+		u32 NumArraySlices = 1;
 	};
 
 	/** Structure used for specifying information about a texture copy operation. */
@@ -88,10 +88,10 @@ namespace bs
 		 * Face from which to copy. This can be an entry in an array of textures, or a single face of a cube map. If cubemap
 		 * array, then each array entry takes up six faces.
 		 */
-		UINT32 SrcFace = 0;
+		u32 SrcFace = 0;
 
 		/** Mip level from which to copy. */
-		UINT32 SrcMip = 0;
+		u32 SrcMip = 0;
 
 		/** Pixel volume from which to copy from. This defaults to all pixels of the face. */
 		PixelVolume SrcVolume = PixelVolume(0, 0, 0, 0, 0, 0);
@@ -100,10 +100,10 @@ namespace bs
 		 * Face to which to copy. This can be an entry in an array of textures, or a single face of a cube map. If cubemap
 		 * array, then each array entry takes up six faces.
 		 */
-		UINT32 DstFace = 0;
+		u32 DstFace = 0;
 
 		/** Mip level to which to copy. */
-		UINT32 DstMip = 0;
+		u32 DstMip = 0;
 
 		/**
 		 * Coordinates to write the source pixels to. The destination texture must have enough pixels to fit the entire
@@ -128,7 +128,7 @@ namespace bs
 		 * Gets the number of mipmaps to be used for this texture. This number excludes the top level map (which is always
 		 * assumed to be present).
 		 */
-		UINT32 GetNumMipmaps() const { return mDesc.NumMips; }
+		u32 GetNumMipmaps() const { return mDesc.NumMips; }
 
 		/**
 		 * Determines does the texture contain gamma corrected data. If true then the GPU will automatically convert the
@@ -138,16 +138,16 @@ namespace bs
 		bool IsHardwareGammaEnabled() const { return mDesc.HwGamma; }
 
 		/**	Gets the number of samples used for multisampling (0 or 1 if multisampling is not used). */
-		UINT32 GetNumSamples() const { return mDesc.NumSamples; }
+		u32 GetNumSamples() const { return mDesc.NumSamples; }
 
 		/**	Returns the height of the texture.  */
-		UINT32 GetHeight() const { return mDesc.Height; }
+		u32 GetHeight() const { return mDesc.Height; }
 
 		/**	Returns the width of the texture. */
-		UINT32 GetWidth() const { return mDesc.Width; }
+		u32 GetWidth() const { return mDesc.Width; }
 
 		/**	Returns the depth of the texture (only applicable for 3D textures). */
-		UINT32 GetDepth() const { return mDesc.Depth; }
+		u32 GetDepth() const { return mDesc.Depth; }
 
 		/**	Returns a value that signals the engine in what way is the texture expected to be used. */
 		int GetUsage() const { return mDesc.Usage; }
@@ -162,10 +162,10 @@ namespace bs
 		 * Returns the number of faces this texture has. This includes array slices (if texture is an array texture),
 		 * as well as cube-map faces.
 		 */
-		UINT32 GetNumFaces() const;
+		u32 GetNumFaces() const;
 
 		/** Returns the number of array slices of the texture (if the texture is an array texture). */
-		UINT32 GetNumArraySlices() const { return mDesc.NumArraySlices; }
+		u32 GetNumArraySlices() const { return mDesc.NumArraySlices; }
 
 		/**
 		 * Allocates a buffer that exactly matches the format of the texture described by these properties, for the provided
@@ -174,7 +174,7 @@ namespace bs
 		 * 			
 		 * @note	Thread safe.
 		 */
-		SPtr<PixelData> AllocBuffer(UINT32 face, UINT32 mipLevel) const;
+		SPtr<PixelData> AllocBuffer(u32 face, u32 mipLevel) const;
 
 	protected:
 		friend class TextureRTTI;
@@ -184,12 +184,12 @@ namespace bs
 		 * Maps a sub-resource index to an exact face and mip level. Sub-resource indexes are used when reading or writing
 		 * to the resource.
 		 */
-		void MapFromSubresourceIdx(UINT32 subresourceIdx, UINT32& face, UINT32& mip) const;
+		void MapFromSubresourceIdx(u32 subresourceIdx, u32& face, u32& mip) const;
 
 		/**
 		 * Map a face and a mip level to a sub-resource index you can use for updating or reading a specific sub-resource.
 		 */
-		UINT32 MapToSubresourceIdx(UINT32 face, UINT32 mip) const;
+		u32 MapToSubresourceIdx(u32 face, u32 mip) const;
 
 		TEXTURE_DESC mDesc;
 	};
@@ -218,7 +218,7 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		AsyncOp WriteData(const SPtr<PixelData>& data, UINT32 face = 0, UINT32 mipLevel = 0,
+		AsyncOp WriteData(const SPtr<PixelData>& data, u32 face = 0, u32 mipLevel = 0,
 			bool discardEntireBuffer = false);
 
 		/**
@@ -233,7 +233,7 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		AsyncOp ReadData(const SPtr<PixelData>& data, UINT32 face = 0, UINT32 mipLevel = 0);
+		AsyncOp ReadData(const SPtr<PixelData>& data, u32 face = 0, u32 mipLevel = 0);
 
 		/**
 		 * Reads internal texture data into a newly allocated buffer.
@@ -246,7 +246,7 @@ namespace bs
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
 		BS_SCRIPT_EXPORT(n:GetGPUPixels)
-		TAsyncOp<SPtr<PixelData>> ReadData(UINT32 face = 0, UINT32 mipLevel = 0);
+		TAsyncOp<SPtr<PixelData>> ReadData(u32 face = 0, u32 mipLevel = 0);
 
 		/**
 		 * Reads data from the cached system memory texture buffer into the provided buffer.
@@ -262,7 +262,7 @@ namespace bs
 		 * @note
 		 * The texture must have been created with TU_CPUCACHED usage otherwise this method will not return any data.
 		 */
-		void ReadCachedData(PixelData& data, UINT32 face = 0, UINT32 mipLevel = 0);
+		void ReadCachedData(PixelData& data, u32 face = 0, u32 mipLevel = 0);
 
 		/**	Returns properties that contain information about the texture. */
 		const TextureProperties& GetProperties() const { return mProperties; }
@@ -317,7 +317,7 @@ namespace bs
 		SPtr<ct::CoreObject> CreateCore() const ;
 
 		/** Calculates the size of the texture, in bytes. */
-		UINT32 CalculateSize() const;
+		u32 CalculateSize() const;
 
 		/**
 		 * Creates buffers used for caching of CPU texture data.
@@ -327,7 +327,7 @@ namespace bs
 		void CreateCpuBuffers();
 
 		/**	Updates the cached CPU buffers with new data. */
-		void UpdateCpuBuffers(UINT32 subresourceIdx, const PixelData& data);
+		void UpdateCpuBuffers(u32 subresourceIdx, const PixelData& data);
 
 	protected:
 		Vector<SPtr<PixelData>> mCPUSubresourceData;
@@ -382,8 +382,8 @@ namespace bs
 		 * If you are just reading or writing one block of data use readData()/writeData() methods as they can be much faster
 		 * in certain situations.
 		 */
-		PixelData Lock(GpuLockOptions options, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 deviceIdx = 0,
-					   UINT32 queueIdx = 0);
+		PixelData Lock(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0,
+					   u32 queueIdx = 0);
 
 		/**
 		 * Unlocks a previously locked buffer. After the buffer is unlocked, any data returned by lock becomes invalid.
@@ -415,7 +415,7 @@ namespace bs
 		 * @param[in]	face			Face (array index or cubemap face) to clear.
 		 * @param[in]	queueIdx		Device queue to perform the write operation on. See @ref queuesDoc.
 		 */
-		void Clear(const Color& value, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 queueIdx = 0);
+		void Clear(const Color& value, u32 mipLevel = 0, u32 face = 0, u32 queueIdx = 0);
 
 		/**
 		 * Reads data from the texture buffer into the provided buffer.
@@ -427,8 +427,8 @@ namespace bs
 		 *							no data will be read.
 		 * @param[in]	queueIdx	Device queue to perform the read operation on. See @ref queuesDoc.
 		 */
-		void ReadData(PixelData& dest, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 deviceIdx = 0,
-							  UINT32 queueIdx = 0);
+		void ReadData(PixelData& dest, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0,
+							  u32 queueIdx = 0);
 
 		/**
 		 * Writes data from the provided buffer into the texture buffer.
@@ -440,8 +440,8 @@ namespace bs
 		 *									performance of the write operation.
 		 * @param[in]	queueIdx			Device queue to perform the write operation on. See @ref queuesDoc.
 		 */
-		void WriteData(const PixelData& src, UINT32 mipLevel = 0, UINT32 face = 0, bool discardWholeBuffer = false,
-							   UINT32 queueIdx = 0);
+		void WriteData(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false,
+							   u32 queueIdx = 0);
 
 		/**	Returns properties that contain information about the texture. */
 		const TextureProperties& GetProperties() const { return mProperties; }
@@ -473,7 +473,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		SPtr<TextureView> RequestView(UINT32 mostDetailMip, UINT32 numMips, UINT32 firstArraySlice, UINT32 numArraySlices,
+		SPtr<TextureView> RequestView(u32 mostDetailMip, u32 numMips, u32 firstArraySlice, u32 numArraySlices,
 									  GpuViewUsage usage);
 
 		/** Returns a plain white texture. */
@@ -486,8 +486,8 @@ namespace bs
 		static SPtr<Texture> NORMAL;
 	protected:
 		/** @copydoc lock */
-		virtual PixelData LockImpl(GpuLockOptions options, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 deviceIdx = 0,
-			UINT32 queueIdx = 0) = 0;
+		virtual PixelData LockImpl(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0,
+			u32 queueIdx = 0) = 0;
 
 		/** @copydoc unlock */
 		virtual void UnlockImpl() = 0;
@@ -497,15 +497,15 @@ namespace bs
 			const SPtr<CommandBuffer>& commandBuffer) = 0;
 
 		/** @copydoc readData */
-		virtual void ReadDataImpl(PixelData& dest, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 deviceIdx = 0,
-			UINT32 queueIdx = 0) = 0;
+		virtual void ReadDataImpl(PixelData& dest, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0,
+			u32 queueIdx = 0) = 0;
 
 		/** @copydoc writeData */
-		virtual void WriteDataImpl(const PixelData& src, UINT32 mipLevel = 0, UINT32 face = 0,
-			bool discardWholeBuffer = false, UINT32 queueIdx = 0) = 0;
+		virtual void WriteDataImpl(const PixelData& src, u32 mipLevel = 0, u32 face = 0,
+			bool discardWholeBuffer = false, u32 queueIdx = 0) = 0;
 
 		/** @copydoc clear */
-		virtual void ClearImpl(const Color& value, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 queueIdx = 0);
+		virtual void ClearImpl(const Color& value, u32 mipLevel = 0, u32 face = 0, u32 queueIdx = 0);
 
 		/************************************************************************/
 		/* 								TEXTURE VIEW                      		*/

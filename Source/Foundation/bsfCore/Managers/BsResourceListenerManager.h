@@ -80,8 +80,8 @@ namespace bs
 		HEvent mResourceModifiedConn;
 		
 		Set<IResourceListener*> mDirtyListeners;
-		Map<UINT64, Vector<IResourceListener*>> mResourceToListenerMap;
-		Map<IResourceListener*, Vector<UINT64>> mListenerToResourceMap;
+		Map<u64, Vector<IResourceListener*>> mResourceToListenerMap;
+		Map<IResourceListener*, Vector<u64>> mListenerToResourceMap;
 
 		Map<UUID, HResource> mLoadedResources;
 		Map<UUID, HResource> mModifiedResources;

@@ -32,7 +32,7 @@ namespace bs { namespace ct
 		 * @note Only Default and RandomWrite views are supported for this type of buffer.
 		 */
 		// TODO Low Priority: Perhaps reflect usage flag limitation by having an enum with only the supported two options?
-		static GpuBufferView* RequestView(D3D11GpuBuffer* buffer, UINT32 firstElement, UINT32 numElements,
+		static GpuBufferView* RequestView(D3D11GpuBuffer* buffer, u32 firstElement, u32 numElements,
 			GpuViewUsage usage);
 
 		/**
@@ -72,7 +72,7 @@ namespace bs { namespace ct
 			{ }
 
 			GpuBufferView* View;
-			UINT32 RefCount;
+			u32 RefCount;
 		};
 
 		GpuBufferView* mBufferView = nullptr;

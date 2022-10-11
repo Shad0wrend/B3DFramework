@@ -27,7 +27,7 @@ namespace bs
 		return a.Name == b.Name && a.NumParams == b.NumParams;
 	}
 
-	MonoClass::MethodId::MethodId(const String& name, UINT32 numParams)
+	MonoClass::MethodId::MethodId(const String& name, u32 numParams)
 		:Name(name), NumParams(numParams)
 	{
 		
@@ -64,7 +64,7 @@ namespace bs
 		mProperties.clear();
 	}
 
-	MonoMethod* MonoClass::GetMethod(const String& name, UINT32 numParams) const
+	MonoMethod* MonoClass::GetMethod(const String& name, u32 numParams) const
 	{
 		MethodId mehodId(name, numParams);
 		auto iterFind = mMethods.find(mehodId);
@@ -239,7 +239,7 @@ namespace bs
 		if (attrInfo == nullptr)
 			return attributes;
 
-		for (INT32 i = 0; i < attrInfo->num_attrs; i++)
+		for (i32 i = 0; i < attrInfo->num_attrs; i++)
 		{
 			::MonoClass* attribClass = mono_method_get_class(attrInfo->attrs[i].ctor);
 			MonoClass* klass = MonoManager::Instance().FindClass(attribClass);
@@ -253,7 +253,7 @@ namespace bs
 		return attributes;
 	}
 
-	MonoObject* MonoClass::InvokeMethod(const String& name, MonoObject* instance, void** params, UINT32 numParams)
+	MonoObject* MonoClass::InvokeMethod(const String& name, MonoObject* instance, void** params, u32 numParams)
 	{
 		return GetMethod(name, numParams)->Invoke(instance, params);
 	}
@@ -274,7 +274,7 @@ namespace bs
 		return obj;
 	}
 
-	MonoObject* MonoClass::CreateInstance(void** params, UINT32 numParams)
+	MonoObject* MonoClass::CreateInstance(void** params, u32 numParams)
 	{
 		MonoObject* obj = mono_object_new(MonoManager::Instance().GetDomain(), mClass);
 		GetMethod(".ctor", numParams)->Invoke(obj, params);
@@ -348,9 +348,9 @@ namespace bs
 		return mono_class_is_subclass_of(monoClass, mClass, false) != 0;
 	}
 
-	UINT32 MonoClass::GetInstanceSize() const
+	u32 MonoClass::GetInstanceSize() const
 	{
-		UINT32 dummy = 0;
+		u32 dummy = 0;
 
 		if (mono_class_is_valuetype(mClass))
 			return mono_class_value_size(mClass, &dummy);

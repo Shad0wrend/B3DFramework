@@ -32,10 +32,10 @@ namespace bs
 		GUIPanel* GetPanel() const;
 
 		/** @copydoc GUIWidget::getDepth */
-		UINT8 GetDepth() const;
+		u8 GetDepth() const;
 
 		/** @copydoc GUIWidget::setDepth */
-		void SetDepth(UINT8 depth);
+		void SetDepth(u8 depth);
 
 		/** @copydoc GUIWidget::inBounds */
 		bool InBounds(const Vector2I& position) const;
@@ -100,7 +100,7 @@ namespace bs
 		HEvent mOwnerWindowFocusChangedConn;
 
 		SPtr<Camera> mCamera;
-		UINT32 mParentHash;
+		u32 mParentHash;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

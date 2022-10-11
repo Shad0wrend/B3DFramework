@@ -38,12 +38,12 @@ namespace bs
 		return gTime().GetFrameDelta();
 	}
 
-	UINT64 ScriptTime::InternalGetFrameNumber()
+	u64 ScriptTime::InternalGetFrameNumber()
 	{
 		return gTime().GetFrameIdx();
 	}
 
-	UINT64 ScriptTime::InternalGetPrecise()
+	u64 ScriptTime::InternalGetPrecise()
 	{
 		return gTime().GetTimePrecise();
 	}

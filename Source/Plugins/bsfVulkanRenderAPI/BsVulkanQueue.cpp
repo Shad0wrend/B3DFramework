@@ -6,10 +6,10 @@
 
 namespace bs { namespace ct
 {
-	VulkanQueue::VulkanQueue(VulkanDevice& device, VkQueue queue, GpuQueueType type, UINT32 index)
+	VulkanQueue::VulkanQueue(VulkanDevice& device, VkQueue queue, GpuQueueType type, u32 index)
 		: mDevice(device), mQueue(queue), mType(type), mIndex(index)
 	{
-		for (UINT32 i = 0; i < BS_MAX_UNIQUE_QUEUES; i++)
+		for (u32 i = 0; i < BS_MAX_UNIQUE_QUEUES; i++)
 			mSubmitDstWaitMask[i] = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
 	}
 
@@ -21,7 +21,7 @@ namespace bs { namespace ct
 		return mLastCommandBuffer->IsSubmitted();
 	}
 
-	void VulkanQueue::Submit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount)
+	void VulkanQueue::Submit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, u32 semaphoresCount)
 	{
 		VkSemaphore signalSemaphores[BS_MAX_VULKAN_CB_DEPENDENCIES + 1];
 		cmdBuffer->AllocateSemaphores(signalSemaphores);
@@ -46,26 +46,26 @@ namespace bs { namespace ct
 		mActiveBuffers.push(cmdBuffer);
 	}
 
-	void VulkanQueue::QueueSubmit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount)
+	void VulkanQueue::QueueSubmit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, u32 semaphoresCount)
 	{
 		mQueuedBuffers.push_back(SubmitInfo(cmdBuffer, 0, semaphoresCount, 1));
 
-		for (UINT32 i = 0; i < semaphoresCount; i++)
+		for (u32 i = 0; i < semaphoresCount; i++)
 			mQueuedSemaphores.push_back(waitSemaphores[i]);
 	}
 
 	void VulkanQueue::SubmitQueued()
 	{
-		UINT32 numCBs = (UINT32)mQueuedBuffers.size();
+		u32 numCBs = (u32)mQueuedBuffers.size();
 		if (numCBs == 0)
 			return;
 
-		UINT32 totalNumWaitSemaphores = (UINT32)mQueuedSemaphores.size() + numCBs;
-		UINT32 signalSemaphoresPerCB = (BS_MAX_VULKAN_CB_DEPENDENCIES + 1);
+		u32 totalNumWaitSemaphores = (u32)mQueuedSemaphores.size() + numCBs;
+		u32 signalSemaphoresPerCB = (BS_MAX_VULKAN_CB_DEPENDENCIES + 1);
 
-		UINT8* data = (UINT8*)bs_stack_alloc((sizeof(VkSubmitInfo) + sizeof(VkCommandBuffer)) *
+		u8* data = (u8*)bs_stack_alloc((sizeof(VkSubmitInfo) + sizeof(VkCommandBuffer)) *
 			numCBs + sizeof(VkSemaphore) * signalSemaphoresPerCB * numCBs + sizeof(VkSemaphore) * totalNumWaitSemaphores);
-		UINT8* dataPtr = data;
+		u8* dataPtr = data;
 
 		VkSubmitInfo* submitInfos = (VkSubmitInfo*)dataPtr;
 		dataPtr += sizeof(VkSubmitInfo) * numCBs;
@@ -79,17 +79,17 @@ namespace bs { namespace ct
 		VkSemaphore* waitSemaphores = (VkSemaphore*)dataPtr;
 		dataPtr += sizeof(VkSemaphore) * totalNumWaitSemaphores;
 
-		UINT32 readSemaphoreIdx = 0;
-		UINT32 writeSemaphoreIdx = 0;
-		UINT32 signalSemaphoreIdx = 0;
-		for(UINT32 i = 0; i < numCBs; i++)
+		u32 readSemaphoreIdx = 0;
+		u32 writeSemaphoreIdx = 0;
+		u32 signalSemaphoreIdx = 0;
+		for(u32 i = 0; i < numCBs; i++)
 		{
 			const SubmitInfo& entry = mQueuedBuffers[i];
 
 			commandBuffers[i] = entry.CmdBuffer->GetHandle();
 			entry.CmdBuffer->AllocateSemaphores(&signalSemaphores[signalSemaphoreIdx]);
 
-			UINT32 semaphoresCount = entry.NumSemaphores;
+			u32 semaphoresCount = entry.NumSemaphores;
 			PrepareSemaphores(mQueuedSemaphores.data() + readSemaphoreIdx, &waitSemaphores[writeSemaphoreIdx], semaphoresCount);
 
 			GetSubmitInfo(&commandBuffers[i], &signalSemaphores[signalSemaphoreIdx], signalSemaphoresPerCB,
@@ -107,7 +107,7 @@ namespace bs { namespace ct
 		}
 
 		VulkanCmdBuffer* lastCB = mQueuedBuffers[numCBs - 1].CmdBuffer;
-		UINT32 totalNumSemaphores = writeSemaphoreIdx;
+		u32 totalNumSemaphores = writeSemaphoreIdx;
 		mActiveSubmissions.push_back(SubmitInfo(lastCB, mNextSubmitIdx++, totalNumSemaphores, numCBs));
 
 		VkResult result = vkQueueSubmit(mQueue, numCBs, submitInfos, mLastCommandBuffer->GetFence());
@@ -119,8 +119,8 @@ namespace bs { namespace ct
 		bs_stack_free(data);
 	}
 
-	void VulkanQueue::GetSubmitInfo(VkCommandBuffer* cmdBuffer, VkSemaphore* signalSemaphores, UINT32 numSignalSemaphores,
-									VkSemaphore* waitSemaphores, UINT32 numWaitSemaphores, VkSubmitInfo& submitInfo)
+	void VulkanQueue::GetSubmitInfo(VkCommandBuffer* cmdBuffer, VkSemaphore* signalSemaphores, u32 numSignalSemaphores,
+									VkSemaphore* waitSemaphores, u32 numWaitSemaphores, VkSubmitInfo& submitInfo)
 	{
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submitInfo.pNext = nullptr;
@@ -142,9 +142,9 @@ namespace bs { namespace ct
 		}
 	}
 
-	VkResult VulkanQueue::Present(VulkanSwapChain* swapChain, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount)
+	VkResult VulkanQueue::Present(VulkanSwapChain* swapChain, VulkanSemaphore** waitSemaphores, u32 semaphoresCount)
 	{
-		UINT32 backBufferIdx;
+		u32 backBufferIdx;
 		if (!swapChain->PrepareForPresent(backBufferIdx))
 			return VK_SUCCESS; // Nothing to present (back buffer wasn't even acquired)
 
@@ -187,7 +187,7 @@ namespace bs { namespace ct
 
 	void VulkanQueue::RefreshStates(bool forceWait, bool queueEmpty)
 	{
-		UINT32 lastFinishedSubmission = 0;
+		u32 lastFinishedSubmission = 0;
 
 		auto iter = mActiveSubmissions.begin();
 		while (iter != mActiveSubmissions.end())
@@ -221,7 +221,7 @@ namespace bs { namespace ct
 			if (iter->SubmitIdx > lastFinishedSubmission)
 				break;
 
-			for (UINT32 i = 0; i < iter->NumSemaphores; i++)
+			for (u32 i = 0; i < iter->NumSemaphores; i++)
 			{
 				VulkanSemaphore* semaphore = mActiveSemaphores.front();
 				mActiveSemaphores.pop();
@@ -229,7 +229,7 @@ namespace bs { namespace ct
 				semaphore->NotifyDone(0, VulkanAccessFlag::Read | VulkanAccessFlag::Write);
 			}
 
-			for(UINT32 i = 0; i < iter->NumCommandBuffers; i++)
+			for(u32 i = 0; i < iter->NumCommandBuffers; i++)
 			{
 				VulkanCmdBuffer* cb = mActiveBuffers.front();
 				mActiveBuffers.pop();
@@ -241,10 +241,10 @@ namespace bs { namespace ct
 		}
 	}
 
-	void VulkanQueue::PrepareSemaphores(VulkanSemaphore** inSemaphores, VkSemaphore* outSemaphores, UINT32& semaphoresCount)
+	void VulkanQueue::PrepareSemaphores(VulkanSemaphore** inSemaphores, VkSemaphore* outSemaphores, u32& semaphoresCount)
 	{
-		UINT32 semaphoreIdx = 0;
-		for (UINT32 i = 0; i < semaphoresCount; i++)
+		u32 semaphoreIdx = 0;
+		for (u32 i = 0; i < semaphoresCount; i++)
 		{
 			VulkanSemaphore* semaphore = inSemaphores[i];
 

@@ -36,23 +36,23 @@ namespace bs
 	{
 	public:
 		MeshProperties();
-		MeshProperties(UINT32 numVertices, UINT32 numIndices, DrawOperationType drawOp);
-		MeshProperties(UINT32 numVertices, UINT32 numIndices, const Vector<SubMesh>& subMeshes);
+		MeshProperties(u32 numVertices, u32 numIndices, DrawOperationType drawOp);
+		MeshProperties(u32 numVertices, u32 numIndices, const Vector<SubMesh>& subMeshes);
 
 		/**
 		 * Retrieves a sub-mesh containing data used for rendering a certain portion of this mesh. If no sub-meshes are
 		 * specified manually a special sub-mesh containing all indices is returned.
 		 */
-		const SubMesh& GetSubMesh(UINT32 subMeshIdx = 0) const;
+		const SubMesh& GetSubMesh(u32 subMeshIdx = 0) const;
 
 		/** Retrieves a total number of sub-meshes in this mesh. */
-		UINT32 GetNumSubMeshes() const;
+		u32 GetNumSubMeshes() const;
 
 		/**	Returns maximum number of vertices the mesh may store. */
-		UINT32 GetNumVertices() const { return mNumVertices; }
+		u32 GetNumVertices() const { return mNumVertices; }
 
 		/**	Returns maximum number of indices the mesh may store. */
-		UINT32 GetNumIndices() const { return mNumIndices; }
+		u32 GetNumIndices() const { return mNumIndices; }
 
 		/**	Returns bounds of the geometry contained in the vertex buffers for all sub-meshes. */
 		const Bounds& GetBounds() const { return mBounds; }
@@ -67,8 +67,8 @@ namespace bs
 		friend class MeshBaseRTTI;
 
 		Vector<SubMesh> mSubMeshes;
-		UINT32 mNumVertices;
-		UINT32 mNumIndices;
+		u32 mNumVertices;
+		u32 mNumIndices;
 		Bounds mBounds;
 	};
 
@@ -95,7 +95,7 @@ namespace bs
 		 * @param[in]	drawOp			Determines how should the provided indices be interpreted by the pipeline. Default
 		 *								option is triangles, where three indices represent a single triangle.
 		 */
-		MeshBase(UINT32 numVertices, UINT32 numIndices, DrawOperationType drawOp = DOT_TRIANGLE_LIST);
+		MeshBase(u32 numVertices, u32 numIndices, DrawOperationType drawOp = DOT_TRIANGLE_LIST);
 
 		/**
 		 * Constructs a new mesh with one or multiple sub-meshes. (When using just one sub-mesh it is equivalent to using
@@ -106,7 +106,7 @@ namespace bs
 		 * @param[in]	subMeshes		Defines how are indices separated into sub-meshes, and how are those sub-meshes
 		 *								rendered.
 		 */
-		MeshBase(UINT32 numVertices, UINT32 numIndices, const Vector<SubMesh>& subMeshes);
+		MeshBase(u32 numVertices, u32 numIndices, const Vector<SubMesh>& subMeshes);
 
 		virtual ~MeshBase();
 
@@ -146,7 +146,7 @@ namespace bs
 	class BS_CORE_EXPORT MeshBase : public CoreObject
 	{
 	public:
-		MeshBase(UINT32 numVertices, UINT32 numIndices, const Vector<SubMesh>& subMeshes);
+		MeshBase(u32 numVertices, u32 numIndices, const Vector<SubMesh>& subMeshes);
 		virtual ~MeshBase() { }
 
 		/**	Get vertex data used for rendering. */
@@ -161,7 +161,7 @@ namespace bs
 		 * 			
 		 * @note	Used when multiple meshes share the same buffers.
 		 */
-		virtual UINT32 GetVertexOffset() const { return 0; }
+		virtual u32 GetVertexOffset() const { return 0; }
 
 		/**
 		 * Returns an offset into the index buffer that is returned by getIndexData() that signifies where this meshes
@@ -169,7 +169,7 @@ namespace bs
 		 * 			
 		 * @note	Used when multiple meshes share the same buffers.
 		 */
-		virtual UINT32 GetIndexOffset() const { return 0; }
+		virtual u32 GetIndexOffset() const { return 0; }
 
 		/** Returns a structure that describes how are the vertices stored in the mesh's vertex buffer. */
 		virtual SPtr<VertexDataDesc> GetVertexDesc() const = 0;

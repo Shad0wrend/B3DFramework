@@ -42,7 +42,7 @@ namespace bs
 		struct RendererMaterial
 		{
 			Vector<SPtr<GpuParamsSet>> Params;
-			UINT32 MatVersion;
+			u32 MatVersion;
 		};
 
 	public:
@@ -85,7 +85,7 @@ namespace bs
 		void NotifyCameraAdded(Camera* camera) override;
 
 		/** @copydoc Renderer::notifyCameraUpdated */
-		void NotifyCameraUpdated(Camera* camera, UINT32 updateFlag) override;
+		void NotifyCameraUpdated(Camera* camera, u32 updateFlag) override;
 
 		/** @copydoc Renderer::notifyCameraRemoved */
 		void NotifyCameraRemoved(Camera* camera) override;

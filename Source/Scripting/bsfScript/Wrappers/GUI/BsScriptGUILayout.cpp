@@ -63,7 +63,7 @@ namespace bs
 		mChildren.push_back(childInfo);
 	}
 
-	void ScriptGUILayout::InsertChild(UINT32 idx, ScriptGUIElementBaseTBase* element)
+	void ScriptGUILayout::InsertChild(u32 idx, ScriptGUIElementBaseTBase* element)
 	{
 		ChildInfo childInfo;
 
@@ -97,8 +97,8 @@ namespace bs
 		GUIOptions options;
 
 		ScriptArray scriptArray(guiOptions);
-		UINT32 arrayLen = scriptArray.Size();
-		for (UINT32 i = 0; i < arrayLen; i++)
+		u32 arrayLen = scriptArray.Size();
+		for (u32 i = 0; i < arrayLen; i++)
 			options.AddOption(scriptArray.Get<GUIOption>(i));
 
 		GUILayout* layout = GUILayoutX::Create(options);
@@ -111,8 +111,8 @@ namespace bs
 		GUIOptions options;
 
 		ScriptArray scriptArray(guiOptions);
-		UINT32 arrayLen = scriptArray.Size();
-		for (UINT32 i = 0; i < arrayLen; i++)
+		u32 arrayLen = scriptArray.Size();
+		for (u32 i = 0; i < arrayLen; i++)
 			options.AddOption(scriptArray.Get<GUIOption>(i));
 
 		GUILayout* layout = GUILayoutY::Create(options);
@@ -120,13 +120,13 @@ namespace bs
 		new (bs_alloc<ScriptGUILayout>()) ScriptGUILayout(instance, layout);
 	}
 
-	void ScriptGUILayout::InternalCreateInstancePanel(MonoObject* instance, INT16 depth, UINT16 depthRangeMin, UINT32 depthRangeMax, MonoArray* guiOptions)
+	void ScriptGUILayout::InternalCreateInstancePanel(MonoObject* instance, i16 depth, u16 depthRangeMin, u32 depthRangeMax, MonoArray* guiOptions)
 	{
 		GUIOptions options;
 
 		ScriptArray scriptArray(guiOptions);
-		UINT32 arrayLen = scriptArray.Size();
-		for (UINT32 i = 0; i < arrayLen; i++)
+		u32 arrayLen = scriptArray.Size();
+		for (u32 i = 0; i < arrayLen; i++)
 			options.AddOption(scriptArray.Get<GUIOption>(i));
 
 		GUILayout* layout = GUIPanel::Create(depth, depthRangeMin, depthRangeMax, options);
@@ -162,7 +162,7 @@ namespace bs
 		instance->AddChild(element);
 	}
 
-	void ScriptGUILayout::InternalInsertElement(ScriptGUILayout* instance, UINT32 index, ScriptGUIElementBaseTBase* element)
+	void ScriptGUILayout::InternalInsertElement(ScriptGUILayout* instance, u32 index, ScriptGUIElementBaseTBase* element)
 	{
 		if (instance->IsDestroyed() || element->IsDestroyed())
 			return;
@@ -176,7 +176,7 @@ namespace bs
 		instance->InsertChild(index, element);
 	}
 
-	UINT32 ScriptGUILayout::InternalGetChildCount(ScriptGUILayout* instance)
+	u32 ScriptGUILayout::InternalGetChildCount(ScriptGUILayout* instance)
 	{
 		if (instance->IsDestroyed())
 			return 0;
@@ -184,7 +184,7 @@ namespace bs
 		return instance->mLayout->GetNumChildren();
 	}
 
-	MonoObject* ScriptGUILayout::InternalGetChild(ScriptGUILayout* instance, UINT32 index)
+	MonoObject* ScriptGUILayout::InternalGetChild(ScriptGUILayout* instance, u32 index)
 	{
 		if (instance->IsDestroyed() || index >= instance->mChildren.size())
 			return nullptr;

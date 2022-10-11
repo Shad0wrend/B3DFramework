@@ -15,7 +15,7 @@ namespace bs { namespace ct
 	class Win32VideoMode : public VideoMode
 	{
 	public:
-		Win32VideoMode(UINT32 width, UINT32 height, float refreshRate, UINT32 outputIdx);
+		Win32VideoMode(u32 width, u32 height, float refreshRate, u32 outputIdx);
 
 	private:
 		friend class Win32VideoOutputInfo;
@@ -25,7 +25,7 @@ namespace bs { namespace ct
 	class Win32VideoOutputInfo : public VideoOutputInfo
 	{
 	public:
-		Win32VideoOutputInfo(HMONITOR monitorHandle, UINT32 outputIdx);
+		Win32VideoOutputInfo(HMONITOR monitorHandle, u32 outputIdx);
 
 		/**	Gets a Win32 handle to the monitor referenced by this object. */
 		HMONITOR GetMonitorHandle() const { return mMonitorHandle; }

@@ -67,7 +67,7 @@ namespace bs
 		 */
 		virtual bool IsCompressible() const { return true; }
 
-		UINT32 mSize;
+		u32 mSize;
 		SPtr<ResourceMetaData> mMetaData;
 
 		/**

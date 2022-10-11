@@ -25,18 +25,18 @@ namespace bs
 	struct RTTIManagedDataBlockFieldBase : public RTTIField
 	{
 		/** Retrieves a managed data block from the specified instance. */
-		virtual SPtr<DataStream> GetValue(RTTITypeBase* rtti, void* object, UINT32& size) = 0;
+		virtual SPtr<DataStream> GetValue(RTTITypeBase* rtti, void* object, u32& size) = 0;
 
 		/** Sets a managed data block on the specified instance. */
-		virtual void SetValue(RTTITypeBase* rtti, void* object, const SPtr<DataStream>& data, UINT32 size) = 0;
+		virtual void SetValue(RTTITypeBase* rtti, void* object, const SPtr<DataStream>& data, u32 size) = 0;
 	};
 
 	/** Class containing a managed data block field containing a specific type. */
 	template <class InterfaceType, class DataType, class ObjectType>
 	struct RTTIManagedDataBlockField : public RTTIManagedDataBlockFieldBase
 	{
-		typedef SPtr<DataStream> (InterfaceType::*GetterType)(ObjectType*, UINT32&);
-		typedef void (InterfaceType::*SetterType)(ObjectType*, const SPtr<DataStream>&, UINT32);
+		typedef SPtr<DataStream> (InterfaceType::*GetterType)(ObjectType*, u32&);
+		typedef void (InterfaceType::*SetterType)(ObjectType*, const SPtr<DataStream>&, u32);
 
 		/**
 		 * Initializes a field that returns a block of bytes. Can be used for serializing pretty much anything.
@@ -49,7 +49,7 @@ namespace bs
 		 * @param[in]	setter  		The setter method for the field.
 		 * @param[in]	info			Various optional information about the field.
 		 */
-		void InitSingle(String name, UINT16 uniqueId, GetterType getter, SetterType setter, const RTTIFieldInfo& info)
+		void InitSingle(String name, u16 uniqueId, GetterType getter, SetterType setter, const RTTIFieldInfo& info)
 		{
 			this->getter = getter;
 			this->setter = setter;
@@ -58,7 +58,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIField::getArraySize */
-		UINT32 GetArraySize(RTTITypeBase* rtti, void* object) override
+		u32 GetArraySize(RTTITypeBase* rtti, void* object) override
 		{
 			BS_EXCEPT(InternalErrorException,
 				"Data block types don't support arrays.");
@@ -67,14 +67,14 @@ namespace bs
 		}
 
 		/** @copydoc RTTIField::setArraySize */
-		void SetArraySize(RTTITypeBase* rtti, void* object, UINT32 size) override
+		void SetArraySize(RTTITypeBase* rtti, void* object, u32 size) override
 		{
 			BS_EXCEPT(InternalErrorException,
 				"Data block types don't support arrays.");
 		}
 
 		/** @copydoc RTTIManagedDataBlockFieldBase::getValue */
-		SPtr<DataStream> GetValue(RTTITypeBase* rtti, void* object, UINT32& size) 
+		SPtr<DataStream> GetValue(RTTITypeBase* rtti, void* object, u32& size)
 		{
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObj = static_cast<ObjectType*>(object);
@@ -83,7 +83,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIManagedDataBlockFieldBase::setValue */
-		void SetValue(RTTITypeBase* rtti, void* object, const SPtr<DataStream>& value, UINT32 size) 
+		void SetValue(RTTITypeBase* rtti, void* object, const SPtr<DataStream>& value, u32 size)
 		{
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
 			ObjectType* castObj = static_cast<ObjectType*>(object);

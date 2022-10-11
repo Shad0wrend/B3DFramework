@@ -18,25 +18,25 @@ namespace bs { namespace ct
 	public:
 		~VulkanGpuParams();
 
-		/** @copydoc GpuParams::setParamBlockBuffer(UINT32, UINT32, const ParamsBufferType&) */
-		void SetParamBlockBuffer(UINT32 set, UINT32 slot, const SPtr<GpuParamBlockBuffer>& paramBlockBuffer) ;
+		/** @copydoc GpuParams::setParamBlockBuffer(u32, u32, const ParamsBufferType&) */
+		void SetParamBlockBuffer(u32 set, u32 slot, const SPtr<GpuParamBlockBuffer>& paramBlockBuffer) ;
 
 		/** @copydoc GpuParams::setTexture */
-		void SetTexture(UINT32 set, UINT32 slot, const SPtr<Texture>& texture,
+		void SetTexture(u32 set, u32 slot, const SPtr<Texture>& texture,
 						const TextureSurface& surface = TextureSurface::COMPLETE) ;
 
 		/** @copydoc GpuParams::setLoadStoreTexture */
-		void SetLoadStoreTexture(UINT32 set, UINT32 slot, const SPtr<Texture>& texture,
+		void SetLoadStoreTexture(u32 set, u32 slot, const SPtr<Texture>& texture,
 			const TextureSurface& surface) ;
 
 		/** @copydoc GpuParams::setBuffer */
-		void SetBuffer(UINT32 set, UINT32 slot, const SPtr<GpuBuffer>& buffer) ;
+		void SetBuffer(u32 set, u32 slot, const SPtr<GpuBuffer>& buffer) ;
 
 		/** @copydoc GpuParams::setSamplerState */
-		void SetSamplerState(UINT32 set, UINT32 slot, const SPtr<SamplerState>& sampler) ;
+		void SetSamplerState(u32 set, u32 slot, const SPtr<SamplerState>& sampler) ;
 
 		/** Returns the total number of descriptor sets used by this object. */
-		UINT32 GetNumSets() const;
+		u32 GetNumSets() const;
 
 		/**
 		 * Prepares the internal descriptor sets for a bind operation on the provided command buffer. It generates and/or
@@ -71,7 +71,7 @@ namespace bs { namespace ct
 			VkWriteDescriptorSet* WriteSetInfos;
 			WriteInfo* WriteInfos;
 
-			UINT32 NumElements;
+			u32 NumElements;
 		};
 
 		/** All GPU param data beloning to a single device. */

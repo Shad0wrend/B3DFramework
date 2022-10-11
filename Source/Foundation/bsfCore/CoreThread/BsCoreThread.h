@@ -160,7 +160,7 @@ namespace bs
 		 * you should be able to easily add more).
 		 */
 		FrameAlloc* mFrameAllocs[NUM_SYNC_BUFFERS];
-		UINT32 mActiveFrameAlloc = 0;
+		u32 mActiveFrameAlloc = 0;
 
 		static QueueData mPerThreadQueue;
 		Vector<ThreadQueueContainer*> mAllQueues;
@@ -187,8 +187,8 @@ namespace bs
 
 		CommandQueue<CommandQueueSync>* mCommandQueue = nullptr;
 
-		UINT32 mMaxCommandNotifyId = 0; /**< ID that will be assigned to the next command with a notifier callback. */
-		Vector<UINT32> mCommandsCompleted; /**< Completed commands that have notifier callbacks set up */
+		u32 mMaxCommandNotifyId = 0; /**< ID that will be assigned to the next command with a notifier callback. */
+		Vector<u32> mCommandsCompleted; /**< Completed commands that have notifier callbacks set up */
 
 		/** Starts the core thread worker method. Should only be called once. */
 		void InitCoreThread();
@@ -212,7 +212,7 @@ namespace bs
 		 * Blocks the calling thread until the command with the specified ID completes. Make sure that the specified ID
 		 * actually exists, otherwise this will block forever.
 		 */
-		void BlockUntilCommandCompleted(UINT32 commandId);
+		void BlockUntilCommandCompleted(u32 commandId);
 
 		/**
 		 * Callback called by the command list when a specific command finishes executing. This is only called on commands that
@@ -220,7 +220,7 @@ namespace bs
 		 *
 		 * @param[in]	commandId	Identifier for the command.
 		 */
-		void CommandCompletedNotify(UINT32 commandId);
+		void CommandCompletedNotify(u32 commandId);
 	};
 
 	/**

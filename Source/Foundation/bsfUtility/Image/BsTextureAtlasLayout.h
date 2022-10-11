@@ -19,15 +19,15 @@ namespace bs
 		{
 		public:
 			constexpr TexAtlasNode() = default;
-			constexpr TexAtlasNode(UINT32 x, UINT32 y, UINT32 width, UINT32 height)
+			constexpr TexAtlasNode(u32 x, u32 y, u32 width, u32 height)
 				: X(x), Y(y), Width(width), Height(height)
 			{ }
 
-			UINT32 X = 0;
-			UINT32 Y = 0;
-			UINT32 Width = 0;
-			UINT32 Height = 0;
-			UINT32 Children[2] { std::numeric_limits<UINT32>::max(), std::numeric_limits<UINT32>::max() };
+			u32 X = 0;
+			u32 Y = 0;
+			u32 Width = 0;
+			u32 Height = 0;
+			u32 Children[2] { std::numeric_limits<u32>::max(), std::numeric_limits<u32>::max() };
 			bool NodeFull = false;
 		};
 
@@ -43,7 +43,7 @@ namespace bs
 		 * @param[in]	maxHeight		Maximum height the atlas texture is allowed to grow to, when elements don't fit.
 		 * @param[in]	pow2			When true the resulting atlas size will always be a power of two.
 		 */
-		TextureAtlasLayout(UINT32 width, UINT32 height, UINT32 maxWidth, UINT32 maxHeight, bool pow2 = false)
+		TextureAtlasLayout(u32 width, u32 height, u32 maxWidth, u32 maxHeight, bool pow2 = false)
 			: mInitialWidth(width), mInitialHeight(height), mWidth(width), mHeight(height), mPow2(pow2)
 		{
 			mNodes.push_back(TexAtlasNode(0, 0, maxWidth, maxHeight));
@@ -59,7 +59,7 @@ namespace bs
 		 * @param[out]	y		Vertical position of the new element within the atlas. Only valid if method returns true.
 		 * @return				True if the element was added to the atlas, false if the element doesn't fit.
 		 */
-		bool AddElement(UINT32 width, UINT32 height, UINT32& x, UINT32& y);
+		bool AddElement(u32 width, u32 height, u32& x, u32& y);
 
 		/** Removes all entries from the layout. */
 		void Clear();
@@ -68,10 +68,10 @@ namespace bs
 		bool IsEmpty() const { return mNodes.size() == 1; }
 
 		/** Returns the width of the atlas texture, in pixels. */
-		UINT32 GetWidth() const { return mWidth; }
+		u32 GetWidth() const { return mWidth; }
 
 		/** Returns the height of the atlas texture, in pixels. */
-		UINT32 GetHeight() const { return mHeight; }
+		u32 GetHeight() const { return mHeight; }
 
 	private:
 		/*
@@ -87,12 +87,12 @@ namespace bs
 		 * @param[in]	allowGrowth		When true, the width/height of the atlas will be allowed to grow to fit the element.
 		 * @return						True if the element was added to the atlas, false if the element doesn't fit.
 		 */
-		bool AddToNode(UINT32 nodeIdx, UINT32 width, UINT32 height, UINT32& x, UINT32& y, bool allowGrowth);
+		bool AddToNode(u32 nodeIdx, u32 width, u32 height, u32& x, u32& y, bool allowGrowth);
 
-		UINT32 mInitialWidth = 0;
-		UINT32 mInitialHeight = 0;
-		UINT32 mWidth = 0;
-		UINT32 mHeight = 0;
+		u32 mInitialWidth = 0;
+		u32 mInitialHeight = 0;
+		u32 mWidth = 0;
+		u32 mHeight = 0;
 		bool mPow2 = false;
 
 		Vector<TexAtlasNode> mNodes;
@@ -112,21 +112,21 @@ namespace bs
 		{
 			struct
 			{
-				UINT32 Width, Height;
+				u32 Width, Height;
 			} Input;
 		
 			struct
 			{
-				UINT32 X, Y;
-				UINT32 Idx;
-				INT32 Page;
+				u32 X, Y;
+				u32 Idx;
+				i32 Page;
 			} Output;
 		};
 
 		/** Describes a single page of the texture atlas. */
 		struct Page
 		{
-			UINT32 Width, Height;
+			u32 Width, Height;
 		};
 
 		/**
@@ -143,8 +143,8 @@ namespace bs
 		 * @return					One or more descriptors that determine the size of the final atlas textures.
 		 *							Texture elements will reference these pages with their output.page parameter.
 		 */
-		static Vector<Page> CreateAtlasLayout(Vector<Element>& elements, UINT32 width, UINT32 height, UINT32 maxWidth,
-			UINT32 maxHeight, bool pow2 = false);
+		static Vector<Page> CreateAtlasLayout(Vector<Element>& elements, u32 width, u32 height, u32 maxWidth,
+			u32 maxHeight, bool pow2 = false);
 	};
 
 	/** @} */

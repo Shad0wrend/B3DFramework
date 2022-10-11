@@ -21,17 +21,17 @@ namespace bs
 		void Reset();
 
 		/** Returns time in milliseconds since timer was initialized or last reset. */
-		UINT64 GetMilliseconds() const;
+		u64 GetMilliseconds() const;
 
 		/** Returns time in microseconds since timer was initialized or last reset. */
-		UINT64 GetMicroseconds() const;
+		u64 GetMicroseconds() const;
 
 		/**
 		 * Returns the time at which the timer was initialized, in milliseconds.
 		 *
 		 * @return	Time in milliseconds.
 		 */
-		UINT64 GetStartMs() const;
+		u64 GetStartMs() const;
 
 	private:
 		std::chrono::high_resolution_clock mHRClock;

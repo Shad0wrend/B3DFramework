@@ -232,10 +232,10 @@ namespace bs
 							auto& jsonAnimation = entry["Animation"];
 
 							SpriteSheetGridAnimation animation;
-							animation.NumRows = jsonAnimation["NumRows"].get<UINT32>();
-							animation.NumColumns = jsonAnimation["NumColumns"].get<UINT32>();
-							animation.Count = jsonAnimation["Count"].get<UINT32>();
-							animation.Fps = jsonAnimation["FPS"].get<UINT32>();
+							animation.NumRows = jsonAnimation["NumRows"].get<u32>();
+							animation.NumColumns = jsonAnimation["NumColumns"].get<u32>();
+							animation.Count = jsonAnimation["Count"].get<u32>();
+							animation.Fps = jsonAnimation["FPS"].get<u32>();
 
 							generateAnimatedSprite(tex, name.c_str(), UUID(spriteUUID.c_str()),
 								SpriteAnimationPlayback::Loop, animation);
@@ -276,7 +276,7 @@ namespace bs
 			}
 		}
 
-		for(UINT32 i = 0; i < (UINT32)iconsToGenerate.size(); i++)
+		for(u32 i = 0; i < (u32)iconsToGenerate.size(); i++)
 		{
 			IconData& data = iconsToGenerate[i];
 
@@ -297,7 +297,7 @@ namespace bs
 			return static_resource_cast<Texture>(texture);
 		};
 
-		for (UINT32 i = 0; i < (UINT32)iconsToGenerate.size(); i++)
+		for (u32 i = 0; i < (u32)iconsToGenerate.size(); i++)
 		{
 			SPtr<PixelData> src = iconsToGenerate[i].SrcData;
 
@@ -328,7 +328,7 @@ namespace bs
 	}
 
 	void BuiltinResourcesHelper::ImportFont(const Path& inputFile, const String& outputName, const Path& outputFolder,
-		const Vector<UINT32>& fontSizes, bool antialiasing, const UUID& UUID, const SPtr<ResourceManifest>& manifest)
+		const Vector<u32>& fontSizes, bool antialiasing, const UUID& UUID, const SPtr<ResourceManifest>& manifest)
 	{
 		SPtr<ImportOptions> fontImportOptions = Importer::Instance().CreateImportOptions(inputFile);
 		if (rtti_is_of_type<FontImportOptions>(fontImportOptions))
@@ -357,7 +357,7 @@ namespace bs
 
 			Path texPageOutputPath = outputFolder;
 
-			UINT32 pageIdx = 0;
+			u32 pageIdx = 0;
 			for (auto tex : fontData->TexturePages)
 			{
 				texPageOutputPath.SetFilename(fontName + u8"_" + toString(size) + u8"_texpage_" +
@@ -375,7 +375,7 @@ namespace bs
 		time_t lastUpdateTime, bool forceImport, const nlohmann::json* dependencies, const Path& dependencyFolder)
 	{
 		Vector<bool> output(entries.size());
-		UINT32 idx = 0;
+		u32 idx = 0;
 		for (auto& entry : entries)
 		{
 			std::string name = entry["Path"];
@@ -589,7 +589,7 @@ namespace bs
 		fileStream->Close();
 	}
 
-	UINT32 BuiltinResourcesHelper::CheckForModifications(const Path& folder, const Path& timeStampFile,
+	u32 BuiltinResourcesHelper::CheckForModifications(const Path& folder, const Path& timeStampFile,
 		time_t& lastUpdateTime)
 	{
 		lastUpdateTime = 0;
@@ -638,8 +638,8 @@ namespace bs
 		{
 			technique->Compile();
 
-			UINT32 numPasses = technique->GetNumPasses();
-			for(UINT32 i = 0; i < numPasses; i++)
+			u32 numPasses = technique->GetNumPasses();
+			for(u32 i = 0; i < numPasses; i++)
 			{
 				SPtr<Pass> pass = technique->GetPass(i);
 
@@ -694,12 +694,12 @@ namespace bs
 		bool hasBytecode = true;
 		for (auto& technique : techniques)
 		{
-			UINT32 numPasses = technique->GetNumPasses();
-			for (UINT32 i = 0; i < numPasses; i++)
+			u32 numPasses = technique->GetNumPasses();
+			for (u32 i = 0; i < numPasses; i++)
 			{
 				SPtr<Pass> pass = technique->GetPass(i);
 
-				for (UINT32 j = 0; j < GPT_COUNT; j++)
+				for (u32 j = 0; j < GPT_COUNT; j++)
 				{
 					const GPU_PROGRAM_DESC& desc = pass->GetProgramDesc((GpuProgramType)j);
 					if (desc.Source.empty())

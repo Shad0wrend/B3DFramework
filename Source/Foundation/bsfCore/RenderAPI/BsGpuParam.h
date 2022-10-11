@@ -89,7 +89,7 @@ namespace bs
 		 * Like with all GPU parameters, the actual GPU buffer will not be updated until rendering with material this
 		 * parameter was created from starts on the core thread.
 		 */
-		void Set(const T& value, UINT32 arrayIdx = 0) const;
+		void Set(const T& value, u32 arrayIdx = 0) const;
 
 		/**
 		 * Returns a value of a parameter at the specified array index. If parameter does not contain an array leave the
@@ -97,7 +97,7 @@ namespace bs
 		 *
 		 * @note	No GPU reads are done. Data returned was cached when it was written.
 		 */
-		T Get(UINT32 arrayIdx = 0) const;
+		T Get(u32 arrayIdx = 0) const;
 
 		/** Returns meta-data about the parameter. */
 		const GpuParamDataDesc& GetDesc() const { return *mParamDesc; }
@@ -125,13 +125,13 @@ namespace bs
 		TGpuParamStruct(GpuParamDataDesc* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::set */
-		void Set(const void* value, UINT32 sizeBytes, UINT32 arrayIdx = 0) const;
+		void Set(const void* value, u32 sizeBytes, u32 arrayIdx = 0) const;
 
 		/** @copydoc TGpuDataParam::get */
-		void Get(void* value, UINT32 sizeBytes, UINT32 arrayIdx = 0) const;
+		void Get(void* value, u32 sizeBytes, u32 arrayIdx = 0) const;
 
 		/**	Returns the size of the struct in bytes. */
-		UINT32 GetElementSize() const;
+		u32 GetElementSize() const;
 
 		/** Returns meta-data about the parameter. */
 		const GpuParamDataDesc& GetDesc() const { return *mParamDesc; }

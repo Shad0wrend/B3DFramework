@@ -4,7 +4,7 @@
 
 namespace bs { namespace ct
 {
-	NullBlendState::NullBlendState(const BLEND_STATE_DESC& desc, UINT32 id)
+	NullBlendState::NullBlendState(const BLEND_STATE_DESC& desc, u32 id)
 		:BlendState(desc, id)
 	{ }
 
@@ -16,7 +16,7 @@ namespace bs { namespace ct
 		blendStateDesc.AlphaToCoverageEnable = mProperties.getAlphaToCoverageEnabled();
 		blendStateDesc.IndependentBlendEnable = mProperties.getIndependantBlendEnable();
 		
-		for(UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			blendStateDesc.RenderTarget[i].BlendEnable = mProperties.getBlendEnabled(i);
 			blendStateDesc.RenderTarget[i].BlendOp = D3D11Mappings::Get(mProperties.getBlendOperation(i));

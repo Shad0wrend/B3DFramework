@@ -34,7 +34,7 @@ namespace bs
 		 *
 		 * @return	The time since application start, in miliseconds.
 		 */
-		UINT64 GetTimeMs() const { return mTimeSinceStartMs; }
+		u64 GetTimeMs() const { return mTimeSinceStartMs; }
 
 		/**
 		 * Gets the time since last frame was executed. Only gets updated once per frame.
@@ -59,7 +59,7 @@ namespace bs
 		 *
 		 * @note	Thread safe, but only counts sim thread frames.
 		 */
-		UINT64 GetFrameIdx() const { return mCurrentFrame.load(); }
+		u64 GetFrameIdx() const { return mCurrentFrame.load(); }
 
 		/**
 		 * Returns the precise time since application start, in microseconds. Unlike other time methods this is not only
@@ -71,14 +71,14 @@ namespace bs
 		 * You will generally only want to use this for performance measurements and similar. Use non-precise methods in
 		 * majority of code as it is useful to keep the time value equal in all methods during a single frame.
 		 */
-		UINT64 GetTimePrecise() const;
+		u64 GetTimePrecise() const;
 
 		/**
 		 * Gets the time at which the application was started, counting from system start.
 		 *
 		 * @return	The time since system to application start, in milliseconds.
 		 */
-		UINT64 GetStartTimeMs() const { return mAppStartTime; }
+		u64 GetStartTimeMs() const { return mAppStartTime; }
 
 		/**
 		 * Gets the current date and time in textual form.
@@ -137,13 +137,13 @@ namespace bs
 		 *							cases this will be either 1 or 0, or a larger amount of frames are taking a long time
 		 *							to execute (longer than a multiple of fixed frame step).
 		 */
-		UINT32 GetFixedUpdateStepInternal(UINT64& step);
+		u32 GetFixedUpdateStepInternal(u64& step);
 
 		/**
 		 * Advances the fixed update timers by @p step microseconds. Should be called once for each iteration as returned
 		* by GetFixedUpdateStepInternal(), per frame.
 		 */
-		void AdvanceFixedUpdateInternal(UINT64 step);
+		void AdvanceFixedUpdateInternal(u64 step);
 
 		/** @} */
 
@@ -151,25 +151,25 @@ namespace bs
 		static const double MICROSEC_TO_SEC;
 	private:
 		/** Maximum number of fixed updates that can ever be accumulated. */
-		static constexpr UINT32 MAX_ACCUM_FIXED_UPDATES = 200;
+		static constexpr u32 MAX_ACCUM_FIXED_UPDATES = 200;
 
 		/** Determines how many new fixed updates are regenerated per frame. */
-		static constexpr UINT32 NEW_FIXED_UPDATES_PER_FRAME = 4;
+		static constexpr u32 NEW_FIXED_UPDATES_PER_FRAME = 4;
 
 		float mFrameDelta = 0.0f; /**< Frame delta in seconds */
 		float mTimeSinceStart = 0.0f; /**< Time since start in seconds */
-		UINT64 mTimeSinceStartMs = 0u;
+		u64 mTimeSinceStartMs = 0u;
 		bool mFirstFrame = true;
 
-		UINT64 mAppStartTime = 0u; /**< Time the application started, in microseconds */
-		UINT64 mLastFrameTime = 0u; /**< Time since last runOneFrame call, In microseconds */
+		u64 mAppStartTime = 0u; /**< Time the application started, in microseconds */
+		u64 mLastFrameTime = 0u; /**< Time since last runOneFrame call, In microseconds */
 		std::atomic<unsigned long> mCurrentFrame{0UL};
 
 		// Fixed update
-		UINT64 mFixedStep = 16666; // 60 times a second in microseconds
-		UINT64 mLastFixedUpdateTime = 0;
+		u64 mFixedStep = 16666; // 60 times a second in microseconds
+		u64 mLastFixedUpdateTime = 0;
 		bool mFirstFixedFrame = true;
-		UINT32 mNumRemainingFixedUpdates = MAX_ACCUM_FIXED_UPDATES;
+		u32 mNumRemainingFixedUpdates = MAX_ACCUM_FIXED_UPDATES;
 
 		std::time_t mAppStartUpDate;
 

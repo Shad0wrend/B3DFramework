@@ -7,7 +7,7 @@
 
 namespace bs { namespace ct
 {
-	GLTimerQuery::GLTimerQuery(UINT32 deviceIdx)
+	GLTimerQuery::GLTimerQuery(u32 deviceIdx)
 	{
 		assert(deviceIdx == 0 && "Multiple GPUs not supported natively on OpenGL.");
 

@@ -27,32 +27,32 @@ namespace bs
 			obj->mListTypeInfo = val;
 		}
 
-		UINT32& GetNumElements(ManagedSerializableList* obj)
+		u32& GetNumElements(ManagedSerializableList* obj)
 		{
-			return (UINT32&)obj->mNumElements;
+			return (u32&)obj->mNumElements;
 		}
 
-		void SetNumElements(ManagedSerializableList* obj, UINT32& numElements)
+		void SetNumElements(ManagedSerializableList* obj, u32& numElements)
 		{
 			obj->mNumElements = numElements;
 		}
 
-		SPtr<ManagedSerializableFieldData> GetListEntry(ManagedSerializableList* obj, UINT32 arrayIdx)
+		SPtr<ManagedSerializableFieldData> GetListEntry(ManagedSerializableList* obj, u32 arrayIdx)
 		{
 			return obj->GetFieldData(arrayIdx);
 		}
 
-		void SetListEntry(ManagedSerializableList* obj, UINT32 arrayIdx, SPtr<ManagedSerializableFieldData> val)
+		void SetListEntry(ManagedSerializableList* obj, u32 arrayIdx, SPtr<ManagedSerializableFieldData> val)
 		{
 			obj->SetFieldData(arrayIdx, val);
 		}
 
-		UINT32 GetNumListEntries(ManagedSerializableList* obj)
+		u32 GetNumListEntries(ManagedSerializableList* obj)
 		{
-			return (UINT32)obj->mNumElements;
+			return (u32)obj->mNumElements;
 		}
 
-		void SetNumListEntries(ManagedSerializableList* obj, UINT32 numEntries)
+		void SetNumListEntries(ManagedSerializableList* obj, u32 numEntries)
 		{
 			obj->mCachedEntries = Vector<SPtr<ManagedSerializableFieldData>>(numEntries);
 		}
@@ -72,7 +72,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_ScriptSerializableList;
 		}

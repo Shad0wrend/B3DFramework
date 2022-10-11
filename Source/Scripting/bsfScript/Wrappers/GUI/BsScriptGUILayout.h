@@ -34,7 +34,7 @@ namespace bs
 		void AddChild(ScriptGUIElementBaseTBase* element);
 
 		/**	Registers a new managed child GUI element and inserts it at a specific location in the layout. */
-		void InsertChild(UINT32 index, ScriptGUIElementBaseTBase* element);
+		void InsertChild(u32 index, ScriptGUIElementBaseTBase* element);
 
 		/**	Removes a managed GUI element from the layout. */
 		void RemoveChild(ScriptGUIElementBaseTBase* element);
@@ -69,11 +69,11 @@ namespace bs
 		/************************************************************************/
 		static void InternalCreateInstanceX(MonoObject* instance, MonoArray* guiOptions);
 		static void InternalCreateInstanceY(MonoObject* instance, MonoArray* guiOptions);
-		static void InternalCreateInstancePanel(MonoObject* instance, INT16 depth, UINT16 depthRangeMin, UINT32 depthRangeMax, MonoArray* guiOptions);
+		static void InternalCreateInstancePanel(MonoObject* instance, i16 depth, u16 depthRangeMin, u32 depthRangeMax, MonoArray* guiOptions);
 		static void InternalAddElement(ScriptGUILayout* instance, ScriptGUIElementBaseTBase* element);
-		static void InternalInsertElement(ScriptGUILayout* instance, UINT32 index, ScriptGUIElementBaseTBase* element);
-		static UINT32 InternalGetChildCount(ScriptGUILayout* instance);
-		static MonoObject* InternalGetChild(ScriptGUILayout* instance, UINT32 index);
+		static void InternalInsertElement(ScriptGUILayout* instance, u32 index, ScriptGUIElementBaseTBase* element);
+		static u32 InternalGetChildCount(ScriptGUILayout* instance);
+		static MonoObject* InternalGetChild(ScriptGUILayout* instance, u32 index);
 		static void InternalClear(ScriptGUILayout* instance);
 
 		static void InternalCreateInstanceYFromScrollArea(MonoObject* instance, MonoObject* parentScrollArea);

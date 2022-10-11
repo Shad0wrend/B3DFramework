@@ -33,7 +33,7 @@ namespace bs
 		class StringIDUtil
 		{
 		public:
-			static UINT32 Size(T const& input) { return 0; }
+			static u32 Size(T const& input) { return 0; }
 			static void Copy(T const& input, char* dest) { }
 			static bool Compare(T const& a, char* b) { return 0; }
 		};
@@ -41,7 +41,7 @@ namespace bs
 		/**	Internal data that is shared by all instances for a specific string. */
 		struct InternalData
 		{
-			UINT32 Id;
+			u32 Id;
 			InternalData* Next;
 			char Chars[STRING_SIZE];
 		};
@@ -102,7 +102,7 @@ namespace bs
 		}
 
 		/** Returns the unique identifier of the string. */
-		UINT32 Id() const { return mData ? mData->Id : -1; }
+		u32 Id() const { return mData ? mData->Id : -1; }
 
 		static const StringID NONE;
 
@@ -113,7 +113,7 @@ namespace bs
 
 		/**	Calculates a hash value for the provided null-terminated string. */
 		template<class T>
-		UINT32 CalcHash(T const& input);
+		u32 CalcHash(T const& input);
 
 		/**
 		 * Allocates a new string entry and assigns it a unique ID. Optionally expands the chunks buffer if the new entry
@@ -127,8 +127,8 @@ namespace bs
 		static InternalData* mStringHashTable[HASH_TABLE_SIZE];
 		static InternalData* mChunks[MAX_CHUNK_COUNT];
 
-		static UINT32 mNextId;
-		static UINT32 mNumChunks;
+		static u32 mNextId;
+		static u32 mNumChunks;
 		static SpinLock mSync;
 	};
 

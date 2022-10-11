@@ -53,14 +53,14 @@ namespace bs
 	void GUIButtonBase::SetOnInternal(bool on)
 	{
 		if(on)
-			SetStateInternal((GUIElementState)((INT32)mActiveState | (INT32)GUIElementState::OnFlag));
+			SetStateInternal((GUIElementState)((i32)mActiveState | (i32)GUIElementState::OnFlag));
 		else
-			SetStateInternal((GUIElementState)((INT32)mActiveState & ~(INT32)GUIElementState::OnFlag));
+			SetStateInternal((GUIElementState)((i32)mActiveState & ~(i32)GUIElementState::OnFlag));
 	}
 
 	bool GUIButtonBase::IsOnInternal() const
 	{
-		return ((INT32)mActiveState & (INT32)GUIElementState::OnFlag) != 0;
+		return ((i32)mActiveState & (i32)GUIElementState::OnFlag) != 0;
 	}
 
 	void GUIButtonBase::UpdateRenderElementsInternal()
@@ -80,19 +80,19 @@ namespace bs
 		mImageDesc.BorderBottom = GetStyleInternal()->Border.Bottom;
 		mImageDesc.Color = GetTint();
 
-		mImageSprite->Update(mImageDesc, (UINT64)GetParentWidgetInternal());
-		mTextSprite->Update(GetTextDesc(), (UINT64)GetParentWidgetInternal());
+		mImageSprite->Update(mImageDesc, (u64)GetParentWidgetInternal());
+		mTextSprite->Update(GetTextDesc(), (u64)GetParentWidgetInternal());
 
 		if(mContentImageSprite != nullptr)
 		{
 			Rect2I contentBounds = GetCachedContentBounds();
 
 			HSpriteTexture image = mContent.GetImage(mActiveState);
-			UINT32 contentWidth = image->GetWidth();
-			UINT32 contentHeight = image->GetHeight();
+			u32 contentWidth = image->GetWidth();
+			u32 contentHeight = image->GetHeight();
 
-			UINT32 contentMaxWidth = std::min((UINT32)contentBounds.Width, contentWidth);
-			UINT32 contentMaxHeight = std::min((UINT32)contentBounds.Height, contentHeight);
+			u32 contentMaxWidth = std::min((u32)contentBounds.Width, contentWidth);
+			u32 contentMaxHeight = std::min((u32)contentBounds.Height, contentHeight);
 
 			float horzRatio = contentMaxWidth / (float)contentWidth;
 			float vertRatio = contentMaxHeight / (float)contentHeight;
@@ -115,7 +115,7 @@ namespace bs
 			contentImgDesc.Color = GetTint();
 			contentImgDesc.AnimationStartTime = mContentAnimationStartTime;
 
-			mContentImageSprite->Update(contentImgDesc, (UINT64)GetParentWidgetInternal());
+			mContentImageSprite->Update(contentImgDesc, (u64)GetParentWidgetInternal());
 		}
 
 		// Populate GUI render elements from the sprites
@@ -129,8 +129,8 @@ namespace bs
 
 	Vector2I GUIButtonBase::GetOptimalSizeInternal() const
 	{
-		UINT32 imageWidth = 0;
-		UINT32 imageHeight = 0;
+		u32 imageWidth = 0;
+		u32 imageHeight = 0;
 
 		const HSpriteTexture& activeTex = GetActiveTexture();
 		if(SpriteTexture::CheckIsLoaded(activeTex))
@@ -140,33 +140,33 @@ namespace bs
 		}
 
 		Vector2I contentSize = GUIHelper::CalcOptimalContentsSize(mContent, *GetStyleInternal(), GetDimensionsInternal(), mActiveState);
-		UINT32 contentWidth = std::max(imageWidth, (UINT32)contentSize.X);
-		UINT32 contentHeight = std::max(imageHeight, (UINT32)contentSize.Y);
+		u32 contentWidth = std::max(imageWidth, (u32)contentSize.X);
+		u32 contentHeight = std::max(imageHeight, (u32)contentSize.Y);
 
 		return Vector2I(contentWidth, contentHeight);
 	}
 
-	UINT32 GUIButtonBase::GetRenderElementDepthRangeInternal() const
+	u32 GUIButtonBase::GetRenderElementDepthRangeInternal() const
 	{
 		return 2;
 	}
 
 	void GUIButtonBase::FillBuffer(
-		UINT8* vertices,
-		UINT32* indices,
-		UINT32 vertexOffset,
-		UINT32 indexOffset,
+		u8* vertices,
+		u32* indices,
+		u32 vertexOffset,
+		u32 indexOffset,
 		const Vector2I& offset,
-		UINT32 maxNumVerts,
-		UINT32 maxNumIndices,
-		UINT32 renderElementIdx) const
+		u32 maxNumVerts,
+		u32 maxNumIndices,
+		u32 renderElementIdx) const
 	{
-		UINT8* uvs = vertices + sizeof(Vector2);
-		UINT32 vertexStride = sizeof(Vector2) * 2;
-		UINT32 indexStride = sizeof(UINT32);
+		u8* uvs = vertices + sizeof(Vector2);
+		u32 vertexStride = sizeof(Vector2) * 2;
+		u32 indexStride = sizeof(u32);
 
-		UINT32 textSpriteIdx = mImageSprite->GetNumRenderElements();
-		UINT32 contentImgSpriteIdx = textSpriteIdx + mTextSprite->GetNumRenderElements();
+		u32 textSpriteIdx = mImageSprite->GetNumRenderElements();
+		u32 contentImgSpriteIdx = textSpriteIdx + mTextSprite->GetNumRenderElements();
 
 		if(renderElementIdx < textSpriteIdx)
 		{
@@ -190,20 +190,20 @@ namespace bs
 		if(mContentImageSprite != nullptr)
 		{
 			Rect2I imageBounds = mContentImageSprite->GetBounds(Vector2I(), Rect2I());
-			INT32 imageXOffset = 0;
-			INT32 textImageSpacing = 0;
+			i32 imageXOffset = 0;
+			i32 textImageSpacing = 0;
 			
 			if (textBounds.Width == 0)
 			{
-				UINT32 freeWidth = (UINT32)std::max(0, (INT32)contentBounds.Width - (INT32)textBounds.Width - (INT32)imageBounds.Width);
-				imageXOffset = (INT32)(freeWidth / 2);
+				u32 freeWidth = (u32)std::max(0, (i32)contentBounds.Width - (i32)textBounds.Width - (i32)imageBounds.Width);
+				imageXOffset = (i32)(freeWidth / 2);
 			}
 			else
 				textImageSpacing = GUIContent::IMAGE_TEXT_SPACING;
 
 			if(GetStyleInternal()->ImagePosition == GUIImagePosition::Right)
 			{
-				INT32 imageReservedWidth = std::max(0, (INT32)contentBounds.Width - (INT32)textBounds.Width);
+				i32 imageReservedWidth = std::max(0, (i32)contentBounds.Width - (i32)textBounds.Width);
 
 				textOffset = Vector2I(contentBounds.X, contentBounds.Y);
 				textClipRect = contentClipRect;
@@ -215,19 +215,19 @@ namespace bs
 			}
 			else
 			{
-				INT32 imageReservedWidth = imageBounds.Width + imageXOffset;
+				i32 imageReservedWidth = imageBounds.Width + imageXOffset;
 
 				contentOffset = Vector2I(contentBounds.X + imageXOffset, contentBounds.Y) + offset;
 				imageClipRect = contentClipRect;
 				imageClipRect.X -= imageXOffset;
-				imageClipRect.Width = std::min(imageReservedWidth, (INT32)imageClipRect.Width);
+				imageClipRect.Width = std::min(imageReservedWidth, (i32)imageClipRect.Width);
 
 				textOffset = Vector2I(contentBounds.X + imageReservedWidth + textImageSpacing, contentBounds.Y);
 				textClipRect = contentClipRect;
 				textClipRect.X -= imageReservedWidth;
 			}
 
-			INT32 imageYOffset = (contentBounds.Height - imageBounds.Height) / 2;
+			i32 imageYOffset = (contentBounds.Height - imageBounds.Height) / 2;
 			imageClipRect.Y -= imageYOffset;
 			contentOffset.Y += imageYOffset;
 		}
@@ -315,7 +315,7 @@ namespace bs
 	{
 		const bool baseReturnValue = GUIElement::CommandEventInternal(ev);
 
-		GUIElementState state = (GUIElementState)((UINT32)mActiveState & (UINT32)GUIElementState::TypeMask);
+		GUIElementState state = (GUIElementState)((u32)mActiveState & (u32)GUIElementState::TypeMask);
 		if(ev.GetType() == GUICommandEventType::FocusGained)
 		{
 			mHasFocus = true;

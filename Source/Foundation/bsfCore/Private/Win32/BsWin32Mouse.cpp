@@ -109,11 +109,11 @@ namespace bs
 				return;
 		}
 
-		INT32 relX, relY, relZ;
+		i32 relX, relY, relZ;
 		relX = relY = relZ = 0;
 
 		bool axesMoved = false;
-		for (UINT32 i = 0; i < numEntries; ++i)
+		for (u32 i = 0; i < numEntries; ++i)
 		{
 			switch (diBuff[i].dwOfs)
 			{
@@ -162,7 +162,7 @@ namespace bs
 
 	}
 
-	void Mouse::ChangeCaptureContext(UINT64 windowHandle)
+	void Mouse::ChangeCaptureContext(u64 windowHandle)
 	{
 		HWND newhWnd = (HWND)windowHandle;
 
@@ -170,7 +170,7 @@ namespace bs
 		{
 			releaseDirectInput(m);
 
-			if (windowHandle != (UINT64)-1)
+			if (windowHandle != (u64)-1)
 				initializeDirectInput(m, newhWnd);
 			else
 				m->HWnd = (HWND)-1;

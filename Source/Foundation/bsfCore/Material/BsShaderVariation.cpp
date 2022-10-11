@@ -10,12 +10,12 @@ namespace bs
 		mDefines[name] = toString(value);
 	}
 
-	void ShaderDefines::Set(const String& name, INT32 value)
+	void ShaderDefines::Set(const String& name, i32 value)
 	{
 		mDefines[name] = toString(value);
 	}
 
-	void ShaderDefines::Set(const String& name, UINT32 value)
+	void ShaderDefines::Set(const String& name, u32 value)
 	{
 		mDefines[name] = toString(value);
 	}
@@ -33,7 +33,7 @@ namespace bs
 			mParams[entry.Name] = entry;
 	}
 
-	INT32 ShaderVariation::GetInt(const StringID& name)
+	i32 ShaderVariation::GetInt(const StringID& name)
 	{
 		auto iterFind = mParams.find(name);
 		if (iterFind == mParams.end())
@@ -42,7 +42,7 @@ namespace bs
 			return iterFind->second.I;
 	}
 
-	UINT32 ShaderVariation::GetUInt(const StringID& name)
+	u32 ShaderVariation::GetUInt(const StringID& name)
 	{
 		auto iterFind = mParams.find(name);
 		if (iterFind == mParams.end())
@@ -69,12 +69,12 @@ namespace bs
 			return iterFind->second.I > 0 ? true : false;
 	}
 
-	void ShaderVariation::SetInt(const StringID& name, INT32 value)
+	void ShaderVariation::SetInt(const StringID& name, i32 value)
 	{
 		AddParam(Param(name, value));
 	}
 
-	void ShaderVariation::SetUInt(const StringID& name, UINT32 value)
+	void ShaderVariation::SetUInt(const StringID& name, u32 value)
 	{
 		AddParam(Param(name, value));
 	}
@@ -163,9 +163,9 @@ namespace bs
 		mVariations.Add(variation);
 	}
 	
-	UINT32 ShaderVariations::Find(const ShaderVariation& variation) const
+	u32 ShaderVariations::Find(const ShaderVariation& variation) const
 	{
-		UINT32 idx = 0;
+		u32 idx = 0;
 		for(auto& entry : mVariations)
 		{
 			if(entry == variation)
@@ -174,7 +174,7 @@ namespace bs
 			idx++;
 		}
 
-		return (UINT32)-1;
+		return (u32)-1;
 	}
 	
 	RTTITypeBase* ShaderVariation::GetRttiStatic()

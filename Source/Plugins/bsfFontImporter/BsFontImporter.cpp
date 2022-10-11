@@ -32,7 +32,7 @@ namespace bs
 		return find(mExtensions.begin(), mExtensions.end(), lowerCaseExt) != mExtensions.end();
 	}
 
-	bool FontImporter::IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
+	bool FontImporter::IsMagicNumberSupported(const u8* magicNumPtr, u32 numBytes) const
 	{
 		// Not used
 		return false;
@@ -70,8 +70,8 @@ namespace bs
 		}
 
 		Vector<CharRange> charIndexRanges = fontImportOptions->CharIndexRanges;
-		Vector<UINT32> fontSizes = fontImportOptions->FontSizes;
-		UINT32 dpi = fontImportOptions->Dpi;
+		Vector<u32> fontSizes = fontImportOptions->FontSizes;
+		u32 dpi = fontImportOptions->Dpi;
 
 		FT_Int32 loadFlags;
 		switch (fontImportOptions->RenderMode)
@@ -123,10 +123,10 @@ namespace bs
 
 			// Get all char sizes so we can generate texture layout
 			Vector<TextureAtlasUtility::Element> atlasElements;
-			Map<UINT32, UINT32> seqIdxToCharIdx;
+			Map<u32, u32> seqIdxToCharIdx;
 			for(auto iter = charIndexRanges.begin(); iter != charIndexRanges.end(); ++iter)
 			{
-				for(UINT32 charIdx = iter->Start; charIdx <= iter->End; charIdx++)
+				for(u32 charIdx = iter->Start; charIdx <= iter->End; charIdx++)
 				{
 					error = FT_Load_Char(face, (FT_ULong)charIdx, loadFlags);
 
@@ -145,7 +145,7 @@ namespace bs
 					atlasElement.Input.Height = slot->bitmap.rows;
 
 					atlasElements.push_back(atlasElement);
-					seqIdxToCharIdx[(UINT32)atlasElements.size() - 1] = charIdx;
+					seqIdxToCharIdx[(u32)atlasElements.size() - 1] = charIdx;
 				}
 			}
 
@@ -174,37 +174,37 @@ namespace bs
 			Vector<TextureAtlasUtility::Page> pages = TextureAtlasUtility::CreateAtlasLayout(atlasElements, 64, 64,
 				MAXIMUM_TEXTURE_SIZE, MAXIMUM_TEXTURE_SIZE, true);
 
-			INT32 baselineOffset = 0;
-			UINT32 lineHeight = 0;
+			i32 baselineOffset = 0;
+			u32 lineHeight = 0;
 
 			// Create char bitmap atlas textures and load character information
-			UINT32 pageIdx = 0;
+			u32 pageIdx = 0;
 			for(auto pageIter = pages.begin(); pageIter != pages.end(); ++pageIter)
 			{
-				UINT32 bufferSize = pageIter->Width * pageIter->Height * 2;
+				u32 bufferSize = pageIter->Width * pageIter->Height * 2;
 
 				// TODO - I don't actually need a 2 channel texture
 				SPtr<PixelData> pixelData = bs_shared_ptr_new<PixelData>(pageIter->Width, pageIter->Height, 1, PF_RG8);
 
 				pixelData->AllocateInternalBuffer();
-				UINT8* pixelBuffer = pixelData->GetData();
+				u8* pixelBuffer = pixelData->GetData();
 				memset(pixelBuffer, 0, bufferSize);
 
 				for(size_t i = 0; i < atlasElements.size(); i++)
 				{
 					// Copy character bitmap
-					if(atlasElements[i].Output.Page != (INT32)pageIdx)
+					if(atlasElements[i].Output.Page != (i32)pageIdx)
 						continue;
 
 					TextureAtlasUtility::Element curElement = atlasElements[i];
-					UINT32 elementIdx = curElement.Output.Idx;
+					u32 elementIdx = curElement.Output.Idx;
 					
 					bool isMissingGlypth = elementIdx == (atlasElements.size() - 1); // It's always the last element
 
-					UINT32 charIdx = 0;
+					u32 charIdx = 0;
 					if(!isMissingGlypth)
 					{
-						charIdx = seqIdxToCharIdx[(UINT32)elementIdx];
+						charIdx = seqIdxToCharIdx[(u32)elementIdx];
 
 						error = FT_Load_Char(face, charIdx, loadFlags);
 					}
@@ -226,14 +226,14 @@ namespace bs
 					if(slot->bitmap.buffer == nullptr && slot->bitmap.rows > 0 && slot->bitmap.width > 0)
 						BS_EXCEPT(InternalErrorException, "Failed to render glyph bitmap");
 
-					UINT8* sourceBuffer = slot->bitmap.buffer;
-					UINT8* dstBuffer = pixelBuffer + (curElement.Output.Y * pageIter->Width * 2) + curElement.Output.X * 2;
+					u8* sourceBuffer = slot->bitmap.buffer;
+					u8* dstBuffer = pixelBuffer + (curElement.Output.Y * pageIter->Width * 2) + curElement.Output.X * 2;
 
 					if(slot->bitmap.pixel_mode == ft_pixel_mode_grays)
 					{
-						for(INT32 bitmapRow = 0; bitmapRow < slot->bitmap.rows; bitmapRow++)
+						for(i32 bitmapRow = 0; bitmapRow < slot->bitmap.rows; bitmapRow++)
 						{
-							for(INT32 bitmapColumn = 0; bitmapColumn < slot->bitmap.width; bitmapColumn++)
+							for(i32 bitmapColumn = 0; bitmapColumn < slot->bitmap.width; bitmapColumn++)
 							{
 								dstBuffer[bitmapColumn * 2 + 0] = sourceBuffer[bitmapColumn];
 								dstBuffer[bitmapColumn * 2 + 1] = sourceBuffer[bitmapColumn];
@@ -246,12 +246,12 @@ namespace bs
 					else if(slot->bitmap.pixel_mode == ft_pixel_mode_mono)
 					{
 						// 8 pixels are packed into a byte, so do some unpacking
-						for(INT32 bitmapRow = 0; bitmapRow < slot->bitmap.rows; bitmapRow++)
+						for(i32 bitmapRow = 0; bitmapRow < slot->bitmap.rows; bitmapRow++)
 						{
-							for(INT32 bitmapColumn = 0; bitmapColumn < slot->bitmap.width; bitmapColumn++)
+							for(i32 bitmapColumn = 0; bitmapColumn < slot->bitmap.width; bitmapColumn++)
 							{
-								UINT8 srcValue = sourceBuffer[bitmapColumn >> 3];
-								UINT8 dstValue = (srcValue & (128 >> (bitmapColumn & 7))) != 0 ? 255 : 0;
+								u8 srcValue = sourceBuffer[bitmapColumn >> 3];
+								u8 dstValue = (srcValue & (128 >> (bitmapColumn & 7))) != 0 ? 255 : 0;
 
 								dstBuffer[bitmapColumn * 2 + 0] = dstValue;
 								dstBuffer[bitmapColumn * 2 + 1] = dstValue;
@@ -283,7 +283,7 @@ namespace bs
 					charDesc.XAdvance = slot->advance.x >> 6;
 					charDesc.YAdvance = slot->advance.y >> 6;
 
-					baselineOffset = std::max(baselineOffset, (INT32)(slot->metrics.horiBearingY >> 6));
+					baselineOffset = std::max(baselineOffset, (i32)(slot->metrics.horiBearingY >> 6));
 					lineHeight = std::max(lineHeight, charDesc.Height);
 
 					// Load kerning and store char
@@ -292,7 +292,7 @@ namespace bs
 						FT_Vector resultKerning;
 						for(auto kerningIter = charIndexRanges.begin(); kerningIter != charIndexRanges.end(); ++kerningIter)
 						{
-							for(UINT32 kerningCharIdx = kerningIter->Start; kerningCharIdx <= kerningIter->End; kerningCharIdx++)
+							for(u32 kerningCharIdx = kerningIter->Start; kerningCharIdx <= kerningIter->End; kerningCharIdx++)
 							{
 								if(kerningCharIdx == charIdx)
 									continue;
@@ -302,7 +302,7 @@ namespace bs
 								if(error)
 									BS_EXCEPT(InternalErrorException, "Failed to get kerning information for character: " + toString(charIdx));
 
-								INT32 kerningX = (INT32)(resultKerning.x >> 6); // Y kerning is ignored because it is so rare
+								i32 kerningX = (i32)(resultKerning.x >> 6); // Y kerning is ignored because it is so rare
 								if(kerningX == 0) // We don't store 0 kerning, this is assumed default
 									continue;
 
@@ -342,7 +342,7 @@ namespace bs
 					newTex->WriteData(pixelData);
 				}
 
-				newTex->SetName(u8"FontPage" + toString((UINT32)fontData->TexturePages.size()));
+				newTex->SetName(u8"FontPage" + toString((u32)fontData->TexturePages.size()));
 
 				fontData->TexturePages.push_back(newTex);
 				pageIdx++;

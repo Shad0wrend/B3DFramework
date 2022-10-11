@@ -5,7 +5,7 @@
 
 namespace bs { namespace ct
 {
-	GLGpuParamBlockBuffer::GLGpuParamBlockBuffer(UINT32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+	GLGpuParamBlockBuffer::GLGpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 		:GpuParamBlockBuffer(size, usage, deviceMask)
 	{
 		assert((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on OpenGL.");

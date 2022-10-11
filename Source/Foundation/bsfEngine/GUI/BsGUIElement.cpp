@@ -80,13 +80,13 @@ namespace bs
 		MarkContentAsDirtyInternal();
 	}
 
-	void GUIElement::SetElementDepthInternal(UINT8 depth)
+	void GUIElement::SetElementDepthInternal(u8 depth)
 	{
 		mLayoutData.Depth = depth | (mLayoutData.Depth & 0xFFFFFF00);
 		MarkMeshAsDirtyInternal();
 	}
 
-	UINT8 GUIElement::GetElementDepthInternal() const
+	u8 GUIElement::GetElementDepthInternal() const
 	{
 		return mLayoutData.Depth & 0xFF;
 	}
@@ -95,7 +95,7 @@ namespace bs
 	{
 		// Preserve element depth as that is not controlled by layout but is stored
 		// there only for convenience
-		UINT8 elemDepth = GetElementDepthInternal();
+		u8 elemDepth = GetElementDepthInternal();
 		GUIElementBase::SetLayoutDataInternal(data);
 		SetElementDepthInternal(elemDepth);
 
@@ -156,7 +156,7 @@ namespace bs
 		mNavGroup = navGroup;
 	}
 
-	void GUIElement::SetNavGroupIndex(INT32 index)
+	void GUIElement::SetNavGroupIndex(i32 index)
 	{
 		SPtr<GUINavGroup> navGroup = GetNavGroupInternal();
 		if(navGroup != nullptr)
@@ -200,8 +200,8 @@ namespace bs
 		
 		bounds.X += mStyle->Margins.Left;
 		bounds.Y += mStyle->Margins.Top;
-		bounds.Width = (UINT32)std::max(0, (INT32)bounds.Width - (INT32)(mStyle->Margins.Left + mStyle->Margins.Right));
-		bounds.Height = (UINT32)std::max(0, (INT32)bounds.Height - (INT32)(mStyle->Margins.Top + mStyle->Margins.Bottom));
+		bounds.Width = (u32)std::max(0, (i32)bounds.Width - (i32)(mStyle->Margins.Left + mStyle->Margins.Right));
+		bounds.Height = (u32)std::max(0, (i32)bounds.Height - (i32)(mStyle->Margins.Top + mStyle->Margins.Bottom));
 
 		return bounds;
 	}
@@ -212,10 +212,10 @@ namespace bs
 
 		bounds.X = mLayoutData.Area.X + mStyle->Margins.Left + mStyle->ContentOffset.Left;
 		bounds.Y = mLayoutData.Area.Y + mStyle->Margins.Top + mStyle->ContentOffset.Top;
-		bounds.Width = (UINT32)std::max(0, (INT32)mLayoutData.Area.Width -
-			(INT32)(mStyle->Margins.Left + mStyle->Margins.Right + mStyle->ContentOffset.Left + mStyle->ContentOffset.Right));
-		bounds.Height = (UINT32)std::max(0, (INT32)mLayoutData.Area.Height -
-			(INT32)(mStyle->Margins.Top + mStyle->Margins.Bottom + mStyle->ContentOffset.Top + mStyle->ContentOffset.Bottom));
+		bounds.Width = (u32)std::max(0, (i32)mLayoutData.Area.Width -
+			(i32)(mStyle->Margins.Left + mStyle->Margins.Right + mStyle->ContentOffset.Left + mStyle->ContentOffset.Right));
+		bounds.Height = (u32)std::max(0, (i32)mLayoutData.Area.Height -
+			(i32)(mStyle->Margins.Top + mStyle->Margins.Bottom + mStyle->ContentOffset.Top + mStyle->ContentOffset.Bottom));
 
 		return bounds;
 	}
@@ -317,8 +317,8 @@ namespace bs
 
 		bounds.X += mStyle->Margins.Left;
 		bounds.Y += mStyle->Margins.Top;
-		bounds.Width = (UINT32)std::max(0, (INT32)bounds.Width - (INT32)(mStyle->Margins.Left + mStyle->Margins.Right));
-		bounds.Height = (UINT32)std::max(0, (INT32)bounds.Height - (INT32)(mStyle->Margins.Top + mStyle->Margins.Bottom));
+		bounds.Width = (u32)std::max(0, (i32)bounds.Width - (i32)(mStyle->Margins.Left + mStyle->Margins.Right));
+		bounds.Height = (u32)std::max(0, (i32)bounds.Height - (i32)(mStyle->Margins.Top + mStyle->Margins.Bottom));
 
 		return bounds;
 	}

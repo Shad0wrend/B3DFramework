@@ -15,7 +15,7 @@ namespace bs { namespace ct
 	struct ClearVertex
 	{
 		Vector3 Pos;
-		UINT32 Col;
+		u32 Col;
 	};
 
 	D3D11RenderUtility::D3D11RenderUtility(D3D11Device* device)
@@ -34,7 +34,7 @@ namespace bs { namespace ct
 		SAFE_RELEASE(mClearQuadVB);
 	}
 
-	void D3D11RenderUtility::DrawClearQuad(UINT32 clearBuffers, const Color& color, float depth, UINT16 stencil)
+	void D3D11RenderUtility::DrawClearQuad(u32 clearBuffers, const Color& color, float depth, u16 stencil)
 	{
 		// Set states
 		if((clearBuffers & FBT_COLOR) != 0)
@@ -98,8 +98,8 @@ namespace bs { namespace ct
 		ID3D11Buffer* buffers[1];
 		buffers[0] = mClearQuadVB;
 
-		UINT32 strides[1] = { sizeof(ClearVertex) };
-		UINT32 offsets[1] = { 0 };
+		u32 strides[1] = { sizeof(ClearVertex) };
+		u32 offsets[1] = { 0 };
 
 		mDevice->GetImmediateContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		mDevice->GetImmediateContext()->IASetIndexBuffer(mClearQuadIB, DXGI_FORMAT_R16_UINT, 0);
@@ -284,7 +284,7 @@ namespace bs { namespace ct
 		// Create index buffer
 		D3D11_BUFFER_DESC mIBDesc;
 
-		mIBDesc.ByteWidth = sizeof(UINT16) * 6;
+		mIBDesc.ByteWidth = sizeof(u16) * 6;
 		mIBDesc.MiscFlags = 0;
 		mIBDesc.StructureByteStride = 0;
 
@@ -292,7 +292,7 @@ namespace bs { namespace ct
 		mIBDesc.CPUAccessFlags = 0;
 		mIBDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
-		UINT16 indexData[6];
+		u16 indexData[6];
 		indexData[0] = 0;
 		indexData[1] = 1;
 		indexData[2] = 2;

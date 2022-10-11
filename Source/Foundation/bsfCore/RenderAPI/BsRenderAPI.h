@@ -59,7 +59,7 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void SetVertexBuffers(UINT32 index, const Vector<SPtr<VertexBuffer>>& buffers);
+		static void SetVertexBuffers(u32 index, const Vector<SPtr<VertexBuffer>>& buffers);
 
 		/**
 		 * @see ct::RenderAPI::setIndexBuffer()
@@ -87,7 +87,7 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void SetStencilRef(UINT32 value);
+		static void SetStencilRef(u32 value);
 
 		/**
 		 * @see ct::RenderAPI::setDrawOperation()
@@ -101,14 +101,14 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void SetScissorRect(UINT32 left = 0, UINT32 top = 0, UINT32 right = 800, UINT32 bottom = 600);
+		static void SetScissorRect(u32 left = 0, u32 top = 0, u32 right = 800, u32 bottom = 600);
 
 		/**
 		 * @see ct::RenderAPI::setRenderTarget()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void SetRenderTarget(const SPtr<RenderTarget>& target, UINT32 readOnlyFlags = 0,
+		static void SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags = 0,
 			RenderSurfaceMask loadMask = RT_NONE);
 
 		/**
@@ -116,16 +116,16 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void ClearRenderTarget(UINT32 buffers, const Color& color = Color::Black, float depth = 1.0f,
-			UINT16 stencil = 0, UINT8 targetMask = 0xFF);
+		static void ClearRenderTarget(u32 buffers, const Color& color = Color::Black, float depth = 1.0f,
+			u16 stencil = 0, u8 targetMask = 0xFF);
 
 		/**
 		 * @see ct::RenderAPI::clearViewport()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void ClearViewport(UINT32 buffers, const Color& color = Color::Black, float depth = 1.0f, UINT16 stencil = 0,
-			UINT8 targetMask = 0xFF);
+		static void ClearViewport(u32 buffers, const Color& color = Color::Black, float depth = 1.0f, u16 stencil = 0,
+			u8 targetMask = 0xFF);
 
 		/**
 		 * @see ct::RenderAPI::swapBuffers()
@@ -139,22 +139,22 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount = 0);
+		static void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0);
 
 		/**
 		 * @see ct::RenderAPI::drawIndexed()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void DrawIndexed(UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 vertexCount,
-			UINT32 instanceCount = 0);
+		static void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount,
+			u32 instanceCount = 0);
 
 		/**
 		 * @see ct::RenderAPI::dispatchCompute()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void DispatchCompute(UINT32 numGroupsX, UINT32 numGroupsY = 1, UINT32 numGroupsZ = 1);
+		static void DispatchCompute(u32 numGroupsX, u32 numGroupsY = 1, u32 numGroupsZ = 1);
 
 		/** @copydoc ct::RenderAPI::getVideoModeInfo */
 		static const VideoModeInfo& GetVideoModeInfo();
@@ -251,7 +251,7 @@ namespace bs
 		 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 		 *								Buffer must support graphics operations.
 		 */
-		virtual void SetScissorRect(UINT32 left, UINT32 top, UINT32 right, UINT32 bottom,
+		virtual void SetScissorRect(u32 left, u32 top, u32 right, u32 bottom,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
@@ -262,7 +262,7 @@ namespace bs
 		 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 		 *								Buffer must support graphics operations.
 		 */
-		virtual void SetStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+		virtual void SetStencilRef(u32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
 		 * Sets the provided vertex buffers starting at the specified source index.	Set buffer to nullptr to clear the
@@ -275,7 +275,7 @@ namespace bs
 		 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 		 *								Buffer must support graphics operations.
 		 */
-		virtual void SetVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers,
+		virtual void SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u32 numBuffers,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
@@ -325,7 +325,7 @@ namespace bs
 		 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 		 *								Buffer must support graphics operations.
 		 */
-		virtual void Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount = 0,
+		virtual void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
@@ -341,8 +341,8 @@ namespace bs
 		 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 		 *								Buffer must support graphics operations.
 		 */
-		virtual void DrawIndexed(UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 vertexCount,
-			UINT32 instanceCount = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+		virtual void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount,
+			u32 instanceCount = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
 		 * Executes the currently bound compute shader.
@@ -354,7 +354,7 @@ namespace bs
 		 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 		 *								Buffer must support compute or graphics operations.
 		 */
-		virtual void DispatchCompute(UINT32 numGroupsX, UINT32 numGroupsY = 1, UINT32 numGroupsZ = 1,
+		virtual void DispatchCompute(u32 numGroupsX, u32 numGroupsY = 1, u32 numGroupsZ = 1,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
@@ -367,7 +367,7 @@ namespace bs
 		 *							related to the provided render target, you can exclude them from the sync mask for
 		 *							potentially better performance. You can use CommandSyncMask to generate a valid sync mask.
 		 */
-		virtual void SwapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask = 0xFFFFFFFF) = 0;
+		virtual void SwapBuffers(const SPtr<RenderTarget>& target, u32 syncMask = 0xFFFFFFFF) = 0;
 
 		/**
 		 * Change the render target into which we want to draw.
@@ -388,7 +388,7 @@ namespace bs
 		 *										is executed immediately. Otherwise it is executed when executeCommands() is
 		 *										called. Buffer must support graphics operations.
 		 */
-		virtual void SetRenderTarget(const SPtr<RenderTarget>& target, UINT32 readOnlyFlags = 0,
+		virtual void SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags = 0,
 			RenderSurfaceMask loadMask = RT_NONE, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
@@ -405,8 +405,8 @@ namespace bs
 		 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 		 *								Buffer must support graphics operations.
 		 */
-		virtual void ClearRenderTarget(UINT32 buffers, const Color& color = Color::Black, float depth = 1.0f,
-			UINT16 stencil = 0, UINT8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+		virtual void ClearRenderTarget(u32 buffers, const Color& color = Color::Black, float depth = 1.0f,
+			u16 stencil = 0, u8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
 		 * Clears the currently active viewport (meaning it clears just a sub-area of a render-target that is covered by the
@@ -423,8 +423,8 @@ namespace bs
 		 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 		 *								Buffer must support graphics operations.
 		 */
-		virtual void ClearViewport(UINT32 buffers, const Color& color = Color::Black, float depth = 1.0f,
-			UINT16 stencil = 0, UINT8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+		virtual void ClearViewport(u32 buffers, const Color& color = Color::Black, float depth = 1.0f,
+			u16 stencil = 0, u8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/** Appends all commands from the provided secondary command buffer into the primary command buffer. */
 		virtual void AddCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary) = 0;
@@ -445,7 +445,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		virtual void SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask = 0xFFFFFFFF) = 0;
+		virtual void SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, u32 syncMask = 0xFFFFFFFF) = 0;
 
 		/**
 		 * Returns the currently active main command buffer instance. All commands queues without a user-provided command
@@ -460,10 +460,10 @@ namespace bs
 		 *
 		 * @note	Thread safe.
 		 */
-		const RenderAPICapabilities& GetCapabilities(UINT32 deviceIdx) const;
+		const RenderAPICapabilities& GetCapabilities(u32 deviceIdx) const;
 
 		/** Returns the number of devices supported by this render API. */
-		UINT32 GetNumDevices() const { return mNumDevices; }
+		u32 GetNumDevices() const { return mNumDevices; }
 
 		/**
 		 * Returns information about available output devices and their video modes.
@@ -528,7 +528,7 @@ namespace bs
 		virtual void DestroyCore();
 
 		/** Converts the number of vertices to number of primitives based on the specified draw operation. */
-		UINT32 VertexCountToPrimCount(DrawOperationType type, UINT32 elementCount);
+		u32 VertexCountToPrimCount(DrawOperationType type, u32 elementCount);
 
 		/************************************************************************/
 		/* 								INTERNAL DATA					       	*/
@@ -540,12 +540,12 @@ namespace bs
 		bool mActiveRenderTargetModified = false;
 
 		RenderAPICapabilities* mCurrentCapabilities;
-		UINT32 mNumDevices;
+		u32 mNumDevices;
 		SPtr<VideoModeInfo> mVideoModeInfo;
 	};
 
 	/** Shorthand for RenderAPI::getCapabilities(). */
-	inline const RenderAPICapabilities& gCaps(UINT32 deviceIdx = 0)
+	inline const RenderAPICapabilities& gCaps(u32 deviceIdx = 0)
 	{
 		return RenderAPI::Instance().GetCapabilities(deviceIdx);
 	}

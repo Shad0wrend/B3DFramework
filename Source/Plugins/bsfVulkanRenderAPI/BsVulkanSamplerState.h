@@ -36,7 +36,7 @@ namespace bs { namespace ct
 		 * Gets the resource wrapping the sampler object, on the specified device. If sampler state device mask doesn't
 		 * include the provided device, null is returned.
 		 */
-		VulkanSampler* GetResource(UINT32 deviceIdx) const { return mSamplers[deviceIdx]; }
+		VulkanSampler* GetResource(u32 deviceIdx) const { return mSamplers[deviceIdx]; }
 
 	protected:
 		friend class VulkanRenderStateManager;

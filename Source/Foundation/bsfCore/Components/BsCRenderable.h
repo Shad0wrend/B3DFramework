@@ -31,7 +31,7 @@ namespace bs
 
 		/** @copydoc Renderable::setMaterial */
 		BS_SCRIPT_EXPORT(n:SetMaterial)
-		void SetMaterial(UINT32 idx, HMaterial material) { mInternal->SetMaterial(idx, material); }
+		void SetMaterial(u32 idx, HMaterial material) { mInternal->SetMaterial(idx, material); }
 
 		/** @copydoc Renderable::setMaterial */
 		BS_SCRIPT_EXPORT(n:SetMaterial)
@@ -39,7 +39,7 @@ namespace bs
 
 		/** @copydoc Renderable::getMaterial */
 		BS_SCRIPT_EXPORT(n:GetMaterial)
-		HMaterial GetMaterial(UINT32 idx) const { return mInternal->GetMaterial(idx); }
+		HMaterial GetMaterial(u32 idx) const { return mInternal->GetMaterial(idx); }
 
 		/** @copydoc Renderable::setMaterials */
 		BS_SCRIPT_EXPORT(n:Materials,pr:setter)
@@ -67,11 +67,11 @@ namespace bs
 		
 		/** @copydoc Renderable::setLayer */
 		BS_SCRIPT_EXPORT(n:Layers,pr:setter)
-		void SetLayer(UINT64 layer) { mInternal->SetLayer(layer); }
+		void SetLayer(u64 layer) { mInternal->SetLayer(layer); }
 
 		/** @copydoc Renderable::getLayer */
 		BS_SCRIPT_EXPORT(n:Layers,pr:getter)
-		UINT64 GetLayer() const { return mInternal->GetLayer(); }
+		u64 GetLayer() const { return mInternal->GetLayer(); }
 
 		/**	Gets world bounds of the mesh rendered by this object. */
 		BS_SCRIPT_EXPORT(n:Bounds,pr:getter)

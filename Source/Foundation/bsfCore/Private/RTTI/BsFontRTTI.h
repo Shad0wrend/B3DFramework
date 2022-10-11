@@ -35,7 +35,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_FontBitmap;
 		}
@@ -49,30 +49,30 @@ namespace bs
 	class BS_CORE_EXPORT FontRTTI : public RTTIType<Font, Resource, FontRTTI>
 	{
 	private:
-		FontBitmap& GetBitmap(Font* obj, UINT32 idx)
+		FontBitmap& GetBitmap(Font* obj, u32 idx)
 		{
 			if(idx >= obj->mFontDataPerSize.size())
 				BS_EXCEPT(InternalErrorException, "Index out of range: " + toString(idx) + ". Valid range: 0 .. " + toString((int)obj->mFontDataPerSize.size()));
 
 			auto iter = obj->mFontDataPerSize.begin();
-			for(UINT32 i = 0; i < idx; i++, ++iter)
+			for(u32 i = 0; i < idx; i++, ++iter)
 			{ }
 
 			return *iter->second;
 		}
 
-		void SetBitmap(Font* obj, UINT32 idx, FontBitmap& value)
+		void SetBitmap(Font* obj, u32 idx, FontBitmap& value)
 		{
 			mFontDataPerSize[idx] = bs_shared_ptr_new<FontBitmap>();
 			*mFontDataPerSize[idx] = value;
 		}
 
-		UINT32 GetNumBitmaps(Font* obj)
+		u32 GetNumBitmaps(Font* obj)
 		{
-			return (UINT32)obj->mFontDataPerSize.size();
+			return (u32)obj->mFontDataPerSize.size();
 		}
 
-		void SetNumBitmaps(Font* obj, UINT32 size)
+		void SetNumBitmaps(Font* obj, u32 size)
 		{
 			mFontDataPerSize.resize(size);
 		}
@@ -89,7 +89,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_Font;
 		}

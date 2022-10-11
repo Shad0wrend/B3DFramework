@@ -62,13 +62,13 @@ namespace bs { namespace ct
 	}
 
 	ID3D11ShaderResourceView* D3D11TextureView::CreateSrv(const D3D11Texture* texture,
-		UINT32 mostDetailMip, UINT32 numMips, UINT32 firstArraySlice, UINT32 numArraySlices)
+		u32 mostDetailMip, u32 numMips, u32 firstArraySlice, u32 numArraySlices)
 	{
 		D3D11_SHADER_RESOURCE_VIEW_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 
 		const TextureProperties& texProps = texture->GetProperties();
-		UINT32 numFaces = texProps.GetNumFaces();
+		u32 numFaces = texProps.GetNumFaces();
 
 		switch (texProps.GetTextureType())
 		{
@@ -174,13 +174,13 @@ namespace bs { namespace ct
 	}
 
 	ID3D11RenderTargetView* D3D11TextureView::CreateRtv(const D3D11Texture* texture,
-		UINT32 mipSlice, UINT32 firstArraySlice, UINT32 numArraySlices)
+		u32 mipSlice, u32 firstArraySlice, u32 numArraySlices)
 	{
 		D3D11_RENDER_TARGET_VIEW_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 
 		const TextureProperties& texProps = texture->GetProperties();
-		UINT32 numFaces = texProps.GetNumFaces();
+		u32 numFaces = texProps.GetNumFaces();
 
 		switch (texProps.GetTextureType())
 		{
@@ -261,13 +261,13 @@ namespace bs { namespace ct
 	}
 
 	ID3D11UnorderedAccessView* D3D11TextureView::CreateUav(const D3D11Texture* texture,
-		UINT32 mipSlice, UINT32 firstArraySlice, UINT32 numArraySlices)
+		u32 mipSlice, u32 firstArraySlice, u32 numArraySlices)
 	{
 		D3D11_UNORDERED_ACCESS_VIEW_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 
 		const TextureProperties& texProps = texture->GetProperties();
-		UINT32 numFaces = texProps.GetNumFaces();
+		u32 numFaces = texProps.GetNumFaces();
 
 		switch (texProps.GetTextureType())
 		{
@@ -332,13 +332,13 @@ namespace bs { namespace ct
 	}
 
 	ID3D11DepthStencilView* D3D11TextureView::CreateDsv(const D3D11Texture* texture,
-		UINT32 mipSlice, UINT32 firstArraySlice, UINT32 numArraySlices, bool readOnlyDepth, bool readOnlyStencil)
+		u32 mipSlice, u32 firstArraySlice, u32 numArraySlices, bool readOnlyDepth, bool readOnlyStencil)
 	{
 		D3D11_DEPTH_STENCIL_VIEW_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 
 		const TextureProperties& texProps = texture->GetProperties();
-		UINT32 numFaces = texProps.GetNumFaces();
+		u32 numFaces = texProps.GetNumFaces();
 
 		switch (texProps.GetTextureType())
 		{

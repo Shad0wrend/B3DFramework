@@ -20,7 +20,7 @@ namespace bs
 			-std::numeric_limits<float>::infinity(),
 			-std::numeric_limits<float>::infinity()));
 
-	const UINT32 AABox::CUBE_INDICES[36] =
+	const u32 AABox::CUBE_INDICES[36] =
 	{
 		// Near
 		NEAR_LEFT_BOTTOM, NEAR_LEFT_TOP, NEAR_RIGHT_TOP,
@@ -167,9 +167,9 @@ namespace bs
 	{
 		Vector3 min = m.GetTranslation();
 		Vector3 max = m.GetTranslation();
-		for(UINT32 i = 0; i < 3; i++)
+		for(u32 i = 0; i < 3; i++)
 		{
-			for(UINT32 j = 0; j < 3; j++)
+			for(u32 j = 0; j < 3; j++)
 			{
 				float e = m[i][j] * mMinimum[j];
 				float f = m[i][j] * mMaximum[j];

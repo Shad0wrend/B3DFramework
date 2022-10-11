@@ -81,7 +81,7 @@ namespace bs
 	{
 		FBXBoneInfluence()
 		{
-			for (UINT32 i = 0; i < FBX_IMPORT_MAX_BONE_INFLUENCES; i++)
+			for (u32 i = 0; i < FBX_IMPORT_MAX_BONE_INFLUENCES; i++)
 			{
 				Weights[i] = 0.0f;
 				Indices[i] = -1;
@@ -89,7 +89,7 @@ namespace bs
 		}
 
 		float Weights[FBX_IMPORT_MAX_BONE_INFLUENCES];
-		INT32 Indices[FBX_IMPORT_MAX_BONE_INFLUENCES];
+		i32 Indices[FBX_IMPORT_MAX_BONE_INFLUENCES];
 	};
 
 	/**	Animation curves required to animate a single bone. */
@@ -115,7 +115,7 @@ namespace bs
 		String Name;
 		float Start;
 		float End;
-		UINT32 SampleRate;
+		u32 SampleRate;
 
 		Vector<FBXBoneAnimation> BoneAnimations;
 		Vector<FBXBlendShapeAnimation> BlendShapeAnimations;
@@ -124,14 +124,14 @@ namespace bs
 	/** All information required for creating an animation clip. */
 	struct FBXAnimationClipData
 	{
-		FBXAnimationClipData(const String& name, bool isAdditive, UINT32 sampleRate, const SPtr<AnimationCurves>& curves,
+		FBXAnimationClipData(const String& name, bool isAdditive, u32 sampleRate, const SPtr<AnimationCurves>& curves,
 			const SPtr<RootMotion>& rootMotion)
 			:Name(name), IsAdditive(isAdditive), SampleRate(sampleRate), Curves(curves), RootMotion(rootMotion)
 		{ }
 
 		String Name;
 		bool IsAdditive;
-		UINT32 SampleRate;
+		u32 SampleRate;
 		SPtr<AnimationCurves> Curves;
 		SPtr<RootMotion> RootMotion;
 	};
@@ -172,7 +172,7 @@ namespace bs
 		FBXImportNode* RootNode = nullptr;
 
 		UnorderedMap<FbxNode*, FBXImportNode*> NodeMap;
-		UnorderedMap<FbxMesh*, UINT32> MeshMap;
+		UnorderedMap<FbxMesh*, u32> MeshMap;
 
 		Vector<FBXAnimationClip> Clips;
 	};

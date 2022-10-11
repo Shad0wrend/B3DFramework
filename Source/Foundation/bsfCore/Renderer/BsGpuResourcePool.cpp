@@ -128,7 +128,7 @@ namespace bs { namespace ct
 		Prune(3);
 	}
 
-	void GpuResourcePool::Prune(UINT32 age)
+	void GpuResourcePool::Prune(u32 age)
 	{
 		for(auto iter = mTextures.begin(); iter != mTextures.end();)
 		{
@@ -141,7 +141,7 @@ namespace bs { namespace ct
 				continue;
 			}
 
-			UINT32 entryAge = mCurrentFrame - entry->mLastUsedFrame;
+			u32 entryAge = mCurrentFrame - entry->mLastUsedFrame;
 			if(entryAge >= age)
 				mTextures.SwapAndErase(iter);
 			else
@@ -159,7 +159,7 @@ namespace bs { namespace ct
 				continue;
 			}
 
-			UINT32 entryAge = mCurrentFrame - entry->mLastUsedFrame;
+			u32 entryAge = mCurrentFrame - entry->mLastUsedFrame;
 			if(entryAge >= age)
 				mBuffers.SwapAndErase(iter);
 			else
@@ -210,8 +210,8 @@ namespace bs { namespace ct
 		return match;
 	}
 
-	POOLED_RENDER_TEXTURE_DESC POOLED_RENDER_TEXTURE_DESC::Create2D(PixelFormat format, UINT32 width, UINT32 height,
-		INT32 usage, UINT32 samples, bool hwGamma, UINT32 arraySize, UINT32 mipCount)
+	POOLED_RENDER_TEXTURE_DESC POOLED_RENDER_TEXTURE_DESC::Create2D(PixelFormat format, u32 width, u32 height,
+		i32 usage, u32 samples, bool hwGamma, u32 arraySize, u32 mipCount)
 	{
 		POOLED_RENDER_TEXTURE_DESC desc;
 		desc.width = width;
@@ -228,8 +228,8 @@ namespace bs { namespace ct
 		return desc;
 	}
 
-	POOLED_RENDER_TEXTURE_DESC POOLED_RENDER_TEXTURE_DESC::Create3D(PixelFormat format, UINT32 width, UINT32 height,
-		UINT32 depth, INT32 usage)
+	POOLED_RENDER_TEXTURE_DESC POOLED_RENDER_TEXTURE_DESC::Create3D(PixelFormat format, u32 width, u32 height,
+		u32 depth, i32 usage)
 	{
 		POOLED_RENDER_TEXTURE_DESC desc;
 		desc.width = width;
@@ -246,8 +246,8 @@ namespace bs { namespace ct
 		return desc;
 	}
 
-	POOLED_RENDER_TEXTURE_DESC POOLED_RENDER_TEXTURE_DESC::CreateCube(PixelFormat format, UINT32 width, UINT32 height,
-		INT32 usage, UINT32 arraySize)
+	POOLED_RENDER_TEXTURE_DESC POOLED_RENDER_TEXTURE_DESC::CreateCube(PixelFormat format, u32 width, u32 height,
+		i32 usage, u32 arraySize)
 	{
 		POOLED_RENDER_TEXTURE_DESC desc;
 		desc.width = width;
@@ -264,7 +264,7 @@ namespace bs { namespace ct
 		return desc;
 	}
 
-	POOLED_STORAGE_BUFFER_DESC POOLED_STORAGE_BUFFER_DESC::CreateStandard(GpuBufferFormat format, UINT32 numElements,
+	POOLED_STORAGE_BUFFER_DESC POOLED_STORAGE_BUFFER_DESC::CreateStandard(GpuBufferFormat format, u32 numElements,
 		GpuBufferUsage usage)
 	{
 		POOLED_STORAGE_BUFFER_DESC desc;
@@ -277,7 +277,7 @@ namespace bs { namespace ct
 		return desc;
 	}
 
-	POOLED_STORAGE_BUFFER_DESC POOLED_STORAGE_BUFFER_DESC::CreateStructured(UINT32 elementSize, UINT32 numElements,
+	POOLED_STORAGE_BUFFER_DESC POOLED_STORAGE_BUFFER_DESC::CreateStructured(u32 elementSize, u32 numElements,
 		GpuBufferUsage usage)
 	{
 		POOLED_STORAGE_BUFFER_DESC desc;

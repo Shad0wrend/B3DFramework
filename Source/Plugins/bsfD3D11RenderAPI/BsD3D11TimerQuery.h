@@ -15,7 +15,7 @@ namespace bs { namespace ct
 	class D3D11TimerQuery : public TimerQuery
 	{
 	public:
-		D3D11TimerQuery(UINT32 deviceIdx);
+		D3D11TimerQuery(u32 deviceIdx);
 		~D3D11TimerQuery();
 
 		/** @copydoc TimerQuery::begin */

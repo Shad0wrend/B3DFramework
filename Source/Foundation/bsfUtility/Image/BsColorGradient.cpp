@@ -8,7 +8,7 @@
 namespace bs
 {
 	template<class COLOR, class TIME>
-	constexpr UINT32 TColorGradient<COLOR, TIME>::MAX_KEYS;
+	constexpr u32 TColorGradient<COLOR, TIME>::MAX_KEYS;
 
 	template<class COLOR, class TIME>
 	TColorGradient<COLOR, TIME>::TColorGradient(const Color& color)
@@ -62,7 +62,7 @@ namespace bs
 		if(!keys.empty())
 		{
 			float time = keys[0].Time;
-			for (UINT32 i = 1; i < (UINT32)keys.size(); i++)
+			for (u32 i = 1; i < (u32)keys.size(); i++)
 			{
 				assert(keys[i].Time >= time);
 				time = keys[i].Time;
@@ -95,7 +95,7 @@ namespace bs
 	Vector<ColorGradientKey> TColorGradient<COLOR, TIME>::GetKeys() const
 	{
 		Vector<ColorGradientKey> output(mNumKeys);
-		for(UINT32 i = 0; i < mNumKeys; i++)
+		for(u32 i = 0; i < mNumKeys; i++)
 		{
 			output[i].Color = impl::TGradientHelper<COLOR>::FromInternalColor(mColors[i]);
 			output[i].Time = impl::TGradientHelper<COLOR>::FromInternalTime(mTimes[i]);
@@ -105,7 +105,7 @@ namespace bs
 	}
 
 	template<class COLOR, class TIME>
-	ColorGradientKey TColorGradient<COLOR, TIME>::GetKey(UINT32 idx) const
+	ColorGradientKey TColorGradient<COLOR, TIME>::GetKey(u32 idx) const
 	{
 		if(idx >= mNumKeys)
 			return ColorGradientKey(Color::Black, 0.0f);

@@ -11,7 +11,7 @@ namespace bs
 	 *  @{
 	 */
 
-	static constexpr UINT8 NETWORK_BACKEND_FIRST_FREE_ID = 134;
+	static constexpr u8 NETWORK_BACKEND_FIRST_FREE_ID = 134;
 
 	// TODO - Doc
 	enum NetworkMessageType
@@ -28,7 +28,7 @@ namespace bs
 	 *  @{
 	 */
 
-	static constexpr UINT8 NETWORK_USER_MESSAGE_ID = NWM_User;
+	static constexpr u8 NETWORK_USER_MESSAGE_ID = NWM_User;
 
 	/** Supported versions of internet protocol (IP) and they're representative address formats. */
 	enum IPType
@@ -57,7 +57,7 @@ namespace bs
 		 * @param[in]		ip		Null-terminated string such as "192.0.0.1" or "2001:db8:63b3:1::3490".
 		 * @param[in]		port	Port in range [0, 65535].
 		 */
-		NetworkAddress(const char* ip, UINT16 port);
+		NetworkAddress(const char* ip, u16 port);
 
 		/**
 		 * Converts the network address into printable string, with an optional port component.
@@ -84,20 +84,20 @@ namespace bs
 		/** Represents the default unassigned (null) network address. */
 		static NetworkAddress UNASSIGNED;
 
-		UINT8 ip[16] = { 0 };
-		UINT16 port = 0;
+		u8 ip[16] = { 0 };
+		u16 port = 0;
 		IPType ipType = IPV4;
-		UINT64 ip6FlowInfo = 0;
-		UINT64 ip6ScopeId = 0;
+		u64 ip6FlowInfo = 0;
+		u64 ip6ScopeId = 0;
 	};
 
 	/** ID uniquely representing a network connection. */
 	struct NetworkId
 	{
 		NetworkId() = default;
-		NetworkId(INT32 id) : id(id) { }
+		NetworkId(i32 id) : id(id) { }
 
-		INT32 id = -1;
+		i32 id = -1;
 	};
 
 	/** List of possible events that can be returned by the networking system. */
@@ -203,8 +203,8 @@ namespace bs
 	/** Raw bytes representing data sent or received over a network. First byte always contains the message ID. */
 	struct PacketData
 	{
-		UINT8* bytes = nullptr;
-		UINT32 length = 0;
+		u8* bytes = nullptr;
+		u32 length = 0;
 	};
 
 	/** Represents a piece of information received by the network peer. */
@@ -241,14 +241,14 @@ namespace bs
 		 * Maximum number of connections (both incoming and outgoing) allowed to be established by the peer. In a regular
 		 * client-server model, this should be 1 for client, and same as @p maxNumIncomingConnections for server.
 		 */
-		UINT32 maxNumConnections = 1;
+		u32 maxNumConnections = 1;
 
 		/**
 		 * Maximum number of incoming connections allowed to be accepted by the peer. In a regular client-server model
 		 * this should be 0 for the client, and N for server, where N is the maximum number of clients allowed to be
 		 * connected at once.
 		 */
-		UINT32 maxNumIncomingConnections = 0;
+		u32 maxNumIncomingConnections = 0;
 	};
 
 	/**
@@ -275,7 +275,7 @@ namespace bs
 		 * @return						True if the connection attempt succesfully started, and false otherwise. If false
 		 *								the relevant error message will be printed in the log.
 		 */
-		bool connect(const char* host, UINT16 port);
+		bool connect(const char* host, u16 port);
 
 		/**
 		 * Disconnects from a previously connected remote peer.
@@ -424,19 +424,19 @@ namespace bs
 	// TODO - Doc
 	class NetworkEncoder
 	{
-		static constexpr const UINT32 WRITE_BUFFER_SIZE = 16384;
+		static constexpr const u32 WRITE_BUFFER_SIZE = 16384;
 
 		struct BufferPiece
 		{
-			UINT8* buffer = nullptr;
-			UINT32 size = 0;
+			u8* buffer = nullptr;
+			u32 size = 0;
 		};
 	public:
 		NetworkEncoder();
 		~NetworkEncoder();
 
-		void encode(UINT8 type, const UUID& uuid, IReflectable* object, SerializationContext* context = nullptr);
-		UINT8* getOutput(UINT32& size);
+		void encode(u8 type, const UUID& uuid, IReflectable* object, SerializationContext* context = nullptr);
+		u8* getOutput(u32& size);
 		void clear();
 
 	private:
@@ -445,12 +445,12 @@ namespace bs
 		Vector<BufferPiece> mBufferPieces;
 		Vector<BufferPiece> mBufferPiecePool;
 
-		UINT8* mWriteBuffer = nullptr;
-		UINT32 mWriteBufferOffset = 0;
+		u8* mWriteBuffer = nullptr;
+		u32 mWriteBufferOffset = 0;
 
-		UINT32 mResultBufferSize = 0;
-		UINT8* mResultBuffer = nullptr;
-		UINT32 mBytesWritten = 0;
+		u32 mResultBufferSize = 0;
+		u8* mResultBuffer = nullptr;
+		u32 mBytesWritten = 0;
 	};
 
 	class NetworkDecoder
@@ -458,7 +458,7 @@ namespace bs
 	public:
 		NetworkDecoder(const SPtr<MemoryDataStream>& data);
 
-		SPtr<IReflectable> decode(UINT8& type, UUID& uuid, SerializationContext* context = nullptr);
+		SPtr<IReflectable> decode(u8& type, UUID& uuid, SerializationContext* context = nullptr);
 
 	private:
 		SPtr<MemoryDataStream> mInputStream;
@@ -477,8 +477,8 @@ namespace bs
 		bool isClient() const { return mState == NetworkState::Connected || mState == NetworkState::Connecting; }
 
 		// TODO - Handle cases when network is already in host or client state when one of these is called again
-		void host(const SmallVector<NetworkAddress, 4>& listenAddresses, UINT32 tickRate = 30, UINT32 maxConnections = 64);
-		void connect(const char* host, UINT16 port);
+		void host(const SmallVector<NetworkAddress, 4>& listenAddresses, u32 tickRate = 30, u32 maxConnections = 64);
+		void connect(const char* host, u16 port);
 		void disconnect();
 
 		void update(float dt);
@@ -522,7 +522,7 @@ namespace bs
 		};
 
 		NetworkState mState = NetworkState::Disconnected;
-		UINT32 mTickRate = 30; // TODO - Allow different objects to have different tick rates (globally perhaps provide a multiplier? and a default rate?)
+		u32 mTickRate = 30; // TODO - Allow different objects to have different tick rates (globally perhaps provide a multiplier? and a default rate?)
 
 		Vector<ObjectAction> mActions;
 		UnorderedMap<UUID, ObjectInfo> mNetworkObjects;

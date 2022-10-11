@@ -115,16 +115,16 @@ namespace bs
 		Quaternion GetCenterOfMassRotation() const override;
 
 		/** @copydoc Rigidbody::setPositionSolverCount */
-		void SetPositionSolverCount(UINT32 count) override;
+		void SetPositionSolverCount(u32 count) override;
 
 		/** @copydoc Rigidbody::getPositionSolverCount */
-		UINT32 GetPositionSolverCount() const override;
+		u32 GetPositionSolverCount() const override;
 
 		/** @copydoc Rigidbody::setVelocitySolverCount */
-		void SetVelocitySolverCount(UINT32 count) override;
+		void SetVelocitySolverCount(u32 count) override;
 
 		/** @copydoc Rigidbody::getVelocitySolverCount */
-		UINT32 GetVelocitySolverCount() const override;
+		u32 GetVelocitySolverCount() const override;
 
 		/** @copydoc Rigidbody::setFlags */
 		void SetFlags(RigidbodyFlag flags) override;

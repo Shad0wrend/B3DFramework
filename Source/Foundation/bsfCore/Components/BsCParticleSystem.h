@@ -57,11 +57,11 @@ namespace bs
 
 		/** @copydoc ParticleSystem::setLayer() */
 		BS_SCRIPT_EXPORT(pr:setter,n:Layer,layerMask)
-		void SetLayer(UINT64 layer);
+		void SetLayer(u64 layer);
 
 		/** @copydoc ParticleSystem::getLayer() */
 		BS_SCRIPT_EXPORT(pr:getter,n:Layer,layerMask)
-		UINT64 GetLayer() const { return mLayer; }
+		u64 GetLayer() const { return mLayer; }
 
 		/** @name Internal
 		 *  @{
@@ -110,7 +110,7 @@ namespace bs
 		ParticleGpuSimulationSettings mGpuSimulationSettings;
 		Vector<SPtr<ParticleEmitter>> mEmitters;
 		Vector<SPtr<ParticleEvolver>> mEvolvers;
-		UINT64 mLayer = 1;
+		u64 mLayer = 1;
 
 		bool mPreviewMode = false;
 

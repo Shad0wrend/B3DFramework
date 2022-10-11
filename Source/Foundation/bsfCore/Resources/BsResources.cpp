@@ -306,7 +306,7 @@ namespace bs
 		}
 
 		// Load dependencies (before the main resource)
-		const auto numDependencies = (UINT32)dependenciesToLoad.size();
+		const auto numDependencies = (u32)dependenciesToLoad.size();
 		if(numDependencies > 0)
 		{
 			ResourceLoadFlags depLoadFlags = ResourceLoadFlag::LoadDependencies;
@@ -314,8 +314,8 @@ namespace bs
 				depLoadFlags |= ResourceLoadFlag::KeepSourceData;
 
 			Vector<HResource> dependencies(numDependencies);
-			UINT32 dependencySize = 0;
-			for (UINT32 i = 0; i < numDependencies; i++)
+			u32 dependencySize = 0;
+			for (u32 i = 0; i < numDependencies; i++)
 			{
 				const UUID& depUUID = dependenciesToLoad[i];
 
@@ -432,10 +432,10 @@ namespace bs
 		if (stream == nullptr)
 			return nullptr;
 
-		if (stream->Size() > std::numeric_limits<UINT32>::max())
+		if (stream->Size() > std::numeric_limits<u32>::max())
 		{
 			BS_EXCEPT(InternalErrorException,
-				"File size is larger that UINT32 can hold. Ask a programmer to use a bigger data type.");
+				"File size is larger that u32 can hold. Ask a programmer to use a bigger data type.");
 		}
 
 		CoreSerializationContext serzContext;
@@ -446,7 +446,7 @@ namespace bs
 		{
 			if (!stream->Eof())
 			{
-				UINT32 objectSize = 0;
+				u32 objectSize = 0;
 				stream->Read(&objectSize, sizeof(objectSize));
 
 				BinarySerializer bs;
@@ -459,7 +459,7 @@ namespace bs
 		{
 			if(metaData && !stream->Eof())
 			{
-				UINT32 objectSize = 0;
+				u32 objectSize = 0;
 				stream->Read(&objectSize, sizeof(objectSize));
 
 				if (metaData->GetCompressionMethod() != 0)
@@ -695,10 +695,10 @@ namespace bs
 
 		Vector<ResourceDependency> dependencyList = Utility::FindResourceDependencies(*resource);
 		Vector<UUID> dependencyUUIDs(dependencyList.size());
-		for (UINT32 i = 0; i < (UINT32)dependencyList.size(); i++)
+		for (u32 i = 0; i < (u32)dependencyList.size(); i++)
 			dependencyUUIDs[i] = dependencyList[i].Resource.GetUuid();
 
-		UINT32 compressionMethod = (compress && resource->IsCompressible()) ? 1 : 0;
+		u32 compressionMethod = (compress && resource->IsCompressible()) ? 1 : 0;
 		SPtr<SavedResourceData> resourceData = bs_shared_ptr_new<SavedResourceData>(dependencyUUIDs,
 			resource->AllowAsyncLoading(), compressionMethod);
 
@@ -718,7 +718,7 @@ namespace bs
 			savePath = FileSystem::GetTempDirectoryPath();
 			savePath.SetFilename(UUIDGenerator::GenerateRandom().ToString());
 
-			UINT32 safetyCounter = 0;
+			u32 safetyCounter = 0;
 			while(FileSystem::Exists(savePath))
 			{
 				if(safetyCounter > 10)
@@ -743,7 +743,7 @@ namespace bs
 		// Write meta-data
 		{
 			size_t sizePos = stream->Tell();
-			stream->Skip(sizeof(UINT32));
+			stream->Skip(sizeof(u32));
 
 			BinarySerializer bs;
 			bs.Encode(resourceData.get(), stream);
@@ -751,7 +751,7 @@ namespace bs
 			size_t curPos = stream->Tell();
 			stream->Seek(sizePos);
 
-			UINT32 size = (UINT32)(curPos - sizePos - sizeof(UINT32));
+			u32 size = (u32)(curPos - sizePos - sizeof(u32));
 			stream->Write(&size, sizeof(size));
 			stream->Seek(curPos);
 		}
@@ -759,7 +759,7 @@ namespace bs
 		// Write object data
 		{
 			size_t sizePos = stream->Tell();
-			stream->Skip(sizeof(UINT32));
+			stream->Skip(sizeof(u32));
 
 			BinarySerializer bs;
 			uint32_t size = 0;
@@ -780,7 +780,7 @@ namespace bs
 			else
 			{
 				bs.Encode(resource.get(), stream);
-				size = (uint32_t)(stream->Tell() - sizePos - sizeof(UINT32));
+				size = (uint32_t)(stream->Tell() - sizePos - sizeof(u32));
 			}
 			
 			size_t curPos = stream->Tell();

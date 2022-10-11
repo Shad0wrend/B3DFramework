@@ -14,7 +14,7 @@
 
 namespace bs { namespace ct
 {
-	UINT32 D3D11GpuProgram::GlobalProgramId = 0;
+	u32 D3D11GpuProgram::GlobalProgramId = 0;
 
 	D3D11GpuProgram::D3D11GpuProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)
 		: GpuProgram(desc, deviceMask)

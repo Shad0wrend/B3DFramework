@@ -118,7 +118,7 @@ namespace bs { namespace ct
 		if (mQueryFinalized)
 			return true;
 
-		UINT64 timeBegin, timeEnd;
+		u64 timeBegin, timeEnd;
 		bool ready = true;
 		for (auto& entry : mQueries)
 		{
@@ -133,12 +133,12 @@ namespace bs { namespace ct
 	{
 		if (!mQueryFinalized)
 		{
-			UINT64 totalTimeDiff = 0;
+			u64 totalTimeDiff = 0;
 			bool ready = true;
 			for (auto& entry : mQueries)
 			{
-				UINT64 timeBegin = 0;
-				UINT64 timeEnd = 0;
+				u64 timeBegin = 0;
+				u64 timeEnd = 0;
 				ready &= !entry.first->IsBound() && entry.first->GetResult(timeBegin);
 				ready &= !entry.second->IsBound() && entry.second->GetResult(timeEnd);
 

@@ -197,12 +197,12 @@ namespace bs
 
 	CoreSyncData ReflectionProbe::SyncToCore(FrameAlloc* allocator)
 	{
-		UINT32 size = 0;
+		u32 size = 0;
 		size += rtti_size(GetCoreDirtyFlags()).Bytes;
 		size += csync_size((SceneActor&)*this);
 		size += csync_size(*this);
 
-		UINT8* buffer = allocator->Alloc(size);
+		u8* buffer = allocator->Alloc(size);
 
 		Bitstream stream(buffer, size);
 		rtti_write(GetCoreDirtyFlags(), stream);
@@ -214,7 +214,7 @@ namespace bs
 
 	void ReflectionProbe::MarkCoreDirtyInternal(ActorDirtyFlag flags)
 	{
-		MarkCoreDirty((UINT32)flags);
+		MarkCoreDirty((u32)flags);
 	}
 
 	RTTITypeBase* ReflectionProbe::GetRttiStatic()
@@ -256,7 +256,7 @@ namespace bs
 	{
 		Bitstream stream(data.GetBuffer(), data.GetBufferSize());
 
-		UINT32 dirtyFlags = 0;
+		u32 dirtyFlags = 0;
 		bool oldIsActive = mActive;
 		ReflectionProbeType oldType = mType;
 
@@ -266,7 +266,7 @@ namespace bs
 
 		UpdateBounds();
 
-		if (dirtyFlags == (UINT32)ActorDirtyFlag::Transform)
+		if (dirtyFlags == (u32)ActorDirtyFlag::Transform)
 		{
 			if (mActive)
 				gRenderer()->NotifyReflectionProbeUpdated(this, false);

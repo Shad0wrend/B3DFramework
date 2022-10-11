@@ -12,7 +12,7 @@ namespace bs
 	 * Dynamically sized container that statically allocates enough room for @p N elements of type @p Type. If the element 
 	 * count exceeds the statically allocated buffer size the vector falls back to general purpose dynamic allocator.
 	 */
-	template <class Type, UINT32 N>
+	template <class Type, u32 N>
 	class SmallVector final
 	{
 	public:
@@ -35,7 +35,7 @@ namespace bs
 				*this = std::move(other);
 		}
 
-		SmallVector(UINT32 size, const Type& value = Type())
+		SmallVector(u32 size, const Type& value = Type())
 		{
 			Append(size, value);
 		}
@@ -59,8 +59,8 @@ namespace bs
 			if(this == &other)
 				return *this;
 
-			UINT32 mySize = Size();
-			const UINT32 otherSize = other.Size();
+			u32 mySize = Size();
+			const u32 otherSize = other.Size();
 
 			// Use assignment copy if we have more elements than the other array, and destroy any excess elements
 			if(mySize > otherSize)
@@ -119,8 +119,8 @@ namespace bs
 			// vector
 			else
 			{
-				UINT32 mySize = Size();
-				const UINT32 otherSize = other.Size();
+				u32 mySize = Size();
+				const u32 otherSize = other.Size();
 
 				// Use assignment copy if we have more elements than the other array, and destroy any excess elements
 				if(mySize > otherSize)
@@ -161,8 +161,8 @@ namespace bs
 
 		SmallVector<ValueType, N>& operator=(std::initializer_list<Type> list)
 		{
-			UINT32 mySize = Size();
-			const UINT32 otherSize = (UINT32)list.size();
+			u32 mySize = Size();
+			const u32 otherSize = (u32)list.size();
 
 			// Use assignment copy if we have more elements than the list, and destroy any excess elements
 			if(mySize > otherSize)
@@ -229,14 +229,14 @@ namespace bs
 			return !(*this < other);
 		}
 
-		Type& operator[] (UINT32 index)
+		Type& operator[] (u32 index)
 		{
 			assert(index < mSize && "Array index out-of-range.");
 
 			return mElements[index];
 		}
 
-		const Type& operator[] (UINT32 index) const
+		const Type& operator[] (u32 index) const
 		{
 			assert(index < mSize && "Array index out-of-range.");
 
@@ -263,8 +263,8 @@ namespace bs
 		ConstReverseIterator Crbegin() const { return ConstReverseIterator(End()); }
 		ConstReverseIterator Crend() const { return ConstReverseIterator(Begin()); }
 
-		UINT32 Size() const { return mSize; }
-		UINT32 Capacity() const { return mCapacity; }
+		u32 Size() const { return mSize; }
+		u32 Capacity() const { return mCapacity; }
 
 		Type* Data() { return mElements; }
 		const Type* Data() const { return mElements; }
@@ -311,7 +311,7 @@ namespace bs
 
 		void Append(ConstIterator start, ConstIterator end) 
 		{
-			const UINT32 count = (UINT32)std::distance(start, end);
+			const u32 count = (u32)std::distance(start, end);
 
 			if ((Size() + count) > Capacity())
 				this->Grow(Size() + count);
@@ -320,7 +320,7 @@ namespace bs
 			mSize += count;
 		}
 
-		void Append(UINT32 count, const Type& element) 
+		void Append(u32 count, const Type& element)
 		{
 			if ((Size() + count) > Capacity())
 				this->Grow(Size() + count);
@@ -353,14 +353,14 @@ namespace bs
 			return toErase;
 		}
 
-		void Remove(UINT32 index)
+		void Remove(u32 index)
 		{
 			Erase(Begin() + index);
 		}
 
 		bool Contains(const Type& element)
 		{
-			for (UINT32 i = 0; i < mSize; i++)
+			for (u32 i = 0; i < mSize; i++)
 			{
 				if (mElements[i] == element)
 					return true;
@@ -371,7 +371,7 @@ namespace bs
 
 		void RemoveValue(const Type& element)
 		{
-			for (UINT32 i = 0; i < mSize; i++)
+			for (u32 i = 0; i < mSize; i++)
 			{
 				if (mElements[i] == element)
 				{
@@ -383,31 +383,31 @@ namespace bs
 
 		void Clear()
 		{
-			for (UINT32 i = 0; i < mSize; ++i)
+			for (u32 i = 0; i < mSize; ++i)
 				mElements[i].~Type();
 
 			mSize = 0;
 		}
 
-		void Reserve(UINT32 capacity)
+		void Reserve(u32 capacity)
 		{
 			if (capacity > mCapacity)
 				Grow(capacity);
 		}
 
-		void Resize(UINT32 size, const Type& value = Type())
+		void Resize(u32 size, const Type& value = Type())
 		{
 			if(size > mCapacity)
 				Grow(size);
 
 			if(size > mSize)
 			{
-				for(UINT32 i = mSize; i < size; i++)
+				for(u32 i = mSize; i < size; i++)
 					new (&mElements[i]) Type(value);
 			}
 			else
 			{
-				for(UINT32 i = size; i < mSize; i++)
+				for(u32 i = size; i < mSize; i++)
 					mElements[i].~Type();
 			}
 
@@ -433,8 +433,8 @@ namespace bs
 		ConstReverseIterator crbegin() const { return Crbegin(); } // NOLINT
 		ConstReverseIterator crend() const { return Crend(); } // NOLINT
 
-		UINT32 size() const { return Size(); } // NOLINT
-		UINT32 capacity() const { return Capacity(); } // NOLINT
+		u32 size() const { return Size(); } // NOLINT
+		u32 capacity() const { return Capacity(); } // NOLINT
 
 		Type* data() { return Data(); } // NOLINT
 		const Type* data() const { return Data(); } // NOLINT
@@ -448,15 +448,15 @@ namespace bs
 		Iterator erase(ConstIterator iter) { return Erase(iter); }  // NOLINT
 		void clear() { Clear(); } // NOLINT
 
-		void reserve(UINT32 capacity) { Reserve(capacity); } // NOLINT
-		void resize(UINT32 size, const Type& value = Type()) { Resize(size, value); } // NOLINT
+		void reserve(u32 capacity) { Reserve(capacity); } // NOLINT
+		void resize(u32 size, const Type& value = Type()) { Resize(size, value); } // NOLINT
 
 
 	private:
 		/** Returns true if the vector is still using its static memory and hasn't made any dynamic allocations. */
 		bool IsSmall() const { return mElements == (Type*)mStorage; }
 
-		void Grow(UINT32 capacity)
+		void Grow(u32 capacity)
 		{
 			assert(capacity > N);
 
@@ -485,8 +485,8 @@ namespace bs
 		std::aligned_storage_t<sizeof(Type), alignof(Type)> mStorage[N];
 		Type* mElements = (Type*)mStorage;
 
-		UINT32 mSize = 0;
-		UINT32 mCapacity = N;
+		u32 mSize = 0;
+		u32 mCapacity = N;
 	};
 
 	/** @} */

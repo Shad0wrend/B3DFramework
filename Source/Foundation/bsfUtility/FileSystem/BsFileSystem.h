@@ -35,7 +35,7 @@ namespace bs
 		 *
 		 * @param[in]	fullPath	Full path to a file.
 		 */
-		static UINT64 GetFileSize(const Path& fullPath);
+		static u64 GetFileSize(const Path& fullPath);
 
 		/**
 		 * Deletes a file or a folder at the specified path.

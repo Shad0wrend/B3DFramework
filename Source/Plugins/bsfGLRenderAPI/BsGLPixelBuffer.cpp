@@ -12,7 +12,7 @@
 
 namespace bs { namespace ct
 {
-	GLPixelBuffer::GLPixelBuffer(UINT32 inWidth, UINT32 inHeight, UINT32 inDepth, PixelFormat inFormat, GpuBufferUsage usage)
+	GLPixelBuffer::GLPixelBuffer(u32 inWidth, u32 inHeight, u32 inDepth, PixelFormat inFormat, GpuBufferUsage usage)
 		: mUsage(usage), mWidth(inWidth), mHeight(inHeight), mDepth(inDepth), mFormat(inFormat)
 		, mBuffer(inWidth, inHeight, inDepth, inFormat)
 	{
@@ -40,7 +40,7 @@ namespace bs { namespace ct
 			mBuffer.FreeInternalBuffer();
 	}
 
-	void* GLPixelBuffer::Lock(UINT32 offset, UINT32 length, GpuLockOptions options)
+	void* GLPixelBuffer::Lock(u32 offset, u32 length, GpuLockOptions options)
 	{
 		assert(!mIsLocked && "Cannot lock this buffer, it is already locked!");
 		assert(offset == 0 && length == mSizeInBytes && "Cannot lock memory region, most lock box or entire buffer");
@@ -106,13 +106,13 @@ namespace bs { namespace ct
 		BS_EXCEPT(RenderingAPIException, "BlitFromTexture not possible for this pixel buffer type");
 	}
 
-	void GLPixelBuffer::BindToFramebuffer(GLenum attachment, UINT32 zoffset, bool allLayers)
+	void GLPixelBuffer::BindToFramebuffer(GLenum attachment, u32 zoffset, bool allLayers)
 	{
 		BS_EXCEPT(RenderingAPIException, "Framebuffer bind not possible for this pixel buffer type");
 	}
 
 	GLTextureBuffer::GLTextureBuffer(GLenum target, GLuint id, GLint face, GLint level, PixelFormat format,
-		GpuBufferUsage usage, bool hwGamma, UINT32 multisampleCount)
+		GpuBufferUsage usage, bool hwGamma, u32 multisampleCount)
 		: GLPixelBuffer(0, 0, 0, format, usage), mTarget(target), mTextureID(id), mFace(face)
 		, mLevel(level), mMultisampleCount(multisampleCount), mHwGamma(hwGamma)
 	{
@@ -175,12 +175,12 @@ namespace bs { namespace ct
 		if(PixelUtil::IsCompressed(data.GetFormat()))
 		{
 			// Block-compressed data cannot be smaller than 4x4, and must be a multiple of 4
-			const UINT32 widthInBlocks = Math::DivideAndRoundUp(std::max(mWidth, 4U), 4U);
-			const UINT32 heightInBlocks = Math::DivideAndRoundUp(std::max(mHeight, 4U), 4U);
+			const u32 widthInBlocks = Math::DivideAndRoundUp(std::max(mWidth, 4U), 4U);
+			const u32 heightInBlocks = Math::DivideAndRoundUp(std::max(mHeight, 4U), 4U);
 
-			const UINT32 blockSize = PixelUtil::GetBlockSize(data.GetFormat());
-			const UINT32 expectedRowPitch = widthInBlocks * blockSize;
-			const UINT32 expectedSlicePitch = widthInBlocks * heightInBlocks * blockSize;
+			const u32 blockSize = PixelUtil::GetBlockSize(data.GetFormat());
+			const u32 expectedRowPitch = widthInBlocks * blockSize;
+			const u32 expectedSlicePitch = widthInBlocks * heightInBlocks * blockSize;
 
 			const bool isConsecutive = data.GetRowPitch() == expectedRowPitch && data.GetSlicePitch() == expectedSlicePitch;
 			if (data.GetFormat() != mFormat || !isConsecutive)
@@ -224,9 +224,9 @@ namespace bs { namespace ct
 		}
 		else
 		{
-			UINT32 pixelSize = PixelUtil::GetNumElemBytes(data.GetFormat());
-			UINT32 rowPitchInPixels = data.GetRowPitch() / pixelSize;
-			UINT32 slicePitchInPixels = data.GetSlicePitch() / pixelSize;
+			u32 pixelSize = PixelUtil::GetNumElemBytes(data.GetFormat());
+			u32 rowPitchInPixels = data.GetRowPitch() / pixelSize;
+			u32 slicePitchInPixels = data.GetSlicePitch() / pixelSize;
 
 			if (data.GetWidth() != rowPitchInPixels)
 			{
@@ -315,12 +315,12 @@ namespace bs { namespace ct
 		if(PixelUtil::IsCompressed(data.GetFormat()))
 		{
 			// Block-compressed data cannot be smaller than 4x4, and must be a multiple of 4
-			const UINT32 widthInBlocks = Math::DivideAndRoundUp(std::max(mWidth, 4U), 4U);
-			const UINT32 heightInBlocks = Math::DivideAndRoundUp(std::max(mHeight, 4U), 4U);
+			const u32 widthInBlocks = Math::DivideAndRoundUp(std::max(mWidth, 4U), 4U);
+			const u32 heightInBlocks = Math::DivideAndRoundUp(std::max(mHeight, 4U), 4U);
 
-			const UINT32 blockSize = PixelUtil::GetBlockSize(data.GetFormat());
-			const UINT32 expectedRowPitch = widthInBlocks * blockSize;
-			const UINT32 expectedSlicePitch = widthInBlocks * heightInBlocks * blockSize;
+			const u32 blockSize = PixelUtil::GetBlockSize(data.GetFormat());
+			const u32 expectedRowPitch = widthInBlocks * blockSize;
+			const u32 expectedSlicePitch = widthInBlocks * heightInBlocks * blockSize;
 
 			const bool isConsecutive = data.GetRowPitch() == expectedRowPitch && data.GetSlicePitch() == expectedSlicePitch;
 			if (data.GetFormat() != mFormat || !isConsecutive)
@@ -336,9 +336,9 @@ namespace bs { namespace ct
 		}
 		else
 		{
-			UINT32 pixelSize = PixelUtil::GetNumElemBytes(data.GetFormat());
-			UINT32 rowPitchInPixels = data.GetRowPitch() / pixelSize;
-			UINT32 slicePitchInPixels = data.GetSlicePitch() / pixelSize;
+			u32 pixelSize = PixelUtil::GetNumElemBytes(data.GetFormat());
+			u32 rowPitchInPixels = data.GetRowPitch() / pixelSize;
+			u32 slicePitchInPixels = data.GetSlicePitch() / pixelSize;
 
 			if (data.GetWidth() != rowPitchInPixels)
 			{
@@ -388,7 +388,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResRead, RenderStatObject_Texture);
 	}
 
-	void GLTextureBuffer::BindToFramebuffer(GLenum attachment, UINT32 zoffset, bool allLayers)
+	void GLTextureBuffer::BindToFramebuffer(GLenum attachment, u32 zoffset, bool allLayers)
 	{
 		if(mTarget == GL_TEXTURE_1D || mTarget == GL_TEXTURE_2D)
 			allLayers = true;
@@ -437,7 +437,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void GLTextureBuffer::CopyFromFramebuffer(UINT32 zoffset)
+	void GLTextureBuffer::CopyFromFramebuffer(u32 zoffset)
 	{
 		glBindTexture(mTarget, mTextureID);
 		BS_CHECK_GL_ERROR();

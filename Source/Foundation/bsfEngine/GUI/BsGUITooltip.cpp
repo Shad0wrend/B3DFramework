@@ -17,8 +17,8 @@ using namespace std::placeholders;
 
 namespace bs
 {
-	const UINT32 GUITooltip::TOOLTIP_WIDTH = 200;
-	const UINT32 GUITooltip::CURSOR_SIZE = 16;
+	const u32 GUITooltip::TOOLTIP_WIDTH = 200;
+	const u32 GUITooltip::CURSOR_SIZE = 16;
 
 	String GUITooltip::GetFrameStyleName()
 	{
@@ -48,8 +48,8 @@ namespace bs
 			size = GUIHelper::CalcOptimalContentsSize(text, *multiLineLabelStyle, dimensions);
 		}
 
-		INT32 contentOffsetX = 0;
-		INT32 contentOffsetY = 0;
+		i32 contentOffsetX = 0;
+		i32 contentOffsetY = 0;
 		if(backgroundStyle != nullptr)
 		{
 			size.X += backgroundStyle->Margins.Left + backgroundStyle->Margins.Right;
@@ -61,14 +61,14 @@ namespace bs
 
 		// Content area
 		GUIPanel* contentPanel = GetPanel()->AddNewElement<GUIPanel>();
-		contentPanel->SetWidth((UINT32)size.X);
-		contentPanel->SetHeight((UINT32)size.Y);
+		contentPanel->SetWidth((u32)size.X);
+		contentPanel->SetHeight((u32)size.Y);
 		contentPanel->SetDepthRange(-1);
 
 		// Background frame
 		GUIPanel* backgroundPanel = GetPanel()->AddNewElement<GUIPanel>();
-		backgroundPanel->SetWidth((UINT32)size.X);
-		backgroundPanel->SetHeight((UINT32)size.Y);
+		backgroundPanel->SetWidth((u32)size.X);
+		backgroundPanel->SetHeight((u32)size.Y);
 		backgroundPanel->SetDepthRange(0);
 
 		GUILayout* backgroundLayout = backgroundPanel->AddNewElement<GUILayoutX>();
@@ -90,7 +90,7 @@ namespace bs
 		DropDownAreaPlacement::HorzDir horzDir;
 		DropDownAreaPlacement::VertDir vertDir;
 		DropDownAreaPlacement placement = DropDownAreaPlacement::AroundBounds(positionBounds);
-		Rect2I placementBounds = placement.GetOptimalBounds((UINT32)size.X, (UINT32)size.Y, availableBounds, horzDir, vertDir);
+		Rect2I placementBounds = placement.GetOptimalBounds((u32)size.X, (u32)size.Y, availableBounds, horzDir, vertDir);
 
 		backgroundPanel->SetPosition(placementBounds.X, placementBounds.Y);
 		contentPanel->SetPosition(placementBounds.X + contentOffsetX, placementBounds.Y + contentOffsetY);

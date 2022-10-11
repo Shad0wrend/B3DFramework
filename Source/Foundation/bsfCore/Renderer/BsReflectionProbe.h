@@ -218,10 +218,10 @@ namespace bs
 		~ReflectionProbe();
 
 		/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-		void SetRendererId(UINT32 id) { mRendererId = id; }
+		void SetRendererId(u32 id) { mRendererId = id; }
 
 		/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-		UINT32 GetRendererId() const { return mRendererId; }
+		u32 GetRendererId() const { return mRendererId; }
 
 	protected:
 		friend class bs::ReflectionProbe;
@@ -235,7 +235,7 @@ namespace bs
 		/** @copydoc CoreObject::syncToCore */
 		void SyncToCore(const CoreSyncData& data) ;
 
-		UINT32 mRendererId;
+		u32 mRendererId;
 	};
 	}
 

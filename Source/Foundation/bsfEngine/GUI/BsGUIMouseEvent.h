@@ -70,7 +70,7 @@ namespace bs
 		bool IsButtonDown(GUIMouseButton button) const { return mButtonStates[(int)button]; }
 
 		/**	Gets the current drag and drop operation type id. Only valid if event is drag and drop related. */
-		UINT32 GetDragAndDropTypeId() const { return mDragTypeId; }
+		u32 GetDragAndDropTypeId() const { return mDragTypeId; }
 
 		/** Returns internal data being dragged by a drag and drop event. . Only valid if event is drag and drop related. */
 		void* GetDragAndDropData() const { return mDragData; }
@@ -117,13 +117,13 @@ namespace bs
 		void SetMouseDragEndData(const Vector2I& position);
 
 		/**	Initializes the event with DragAndDropDropped event data. */
-		void SetDragAndDropDroppedData(const Vector2I& position, UINT32 dragTypeId, void* dragData);
+		void SetDragAndDropDroppedData(const Vector2I& position, u32 dragTypeId, void* dragData);
 
 		/**	Initializes the event with DragAndDropDragged event data. */
-		void SetDragAndDropDraggedData(const Vector2I& position, UINT32 dragTypeId, void* dragData);
+		void SetDragAndDropDraggedData(const Vector2I& position, u32 dragTypeId, void* dragData);
 
 		/**	Initializes the event with DragAndDropLeft event data. */
-		void SetDragAndDropLeftData(const Vector2I& position, UINT32 dragTypeId, void* dragData);
+		void SetDragAndDropLeftData(const Vector2I& position, u32 dragTypeId, void* dragData);
 
 		bool mButtonStates[(int)GUIMouseButton::Count];
 		Vector2I mPosition;
@@ -132,7 +132,7 @@ namespace bs
 		float mWheelScrollAmount = 0.0f;
 		GUIMouseEventType mType = GUIMouseEventType::MouseMove;
 		GUIMouseButton mButton = GUIMouseButton::Left;
-		UINT32 mDragTypeId;
+		u32 mDragTypeId;
 		void* mDragData;
 
 		bool mShift = false;

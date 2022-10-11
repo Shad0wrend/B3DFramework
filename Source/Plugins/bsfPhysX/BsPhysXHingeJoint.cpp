@@ -42,10 +42,10 @@ namespace bs
 
 		PxRevoluteJointFlags flags;
 
-		if (((UINT32)desc.Flag & (UINT32)HingeJointFlag::Limit) != 0)
+		if (((u32)desc.Flag & (u32)HingeJointFlag::Limit) != 0)
 			flags |= PxRevoluteJointFlag::eLIMIT_ENABLED;
 
-		if (((UINT32)desc.Flag & (UINT32)HingeJointFlag::Drive) != 0)
+		if (((u32)desc.Flag & (u32)HingeJointFlag::Drive) != 0)
 			flags |= PxRevoluteJointFlag::eDRIVE_ENABLED;
 
 		joint->setRevoluteJointFlags(flags);

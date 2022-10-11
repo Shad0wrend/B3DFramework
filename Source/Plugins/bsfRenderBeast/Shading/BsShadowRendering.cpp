@@ -237,7 +237,7 @@ namespace bs { namespace ct
 		RendererMaterial::Bind();
 	}
 
-	ShadowProjectMat* ShadowProjectMat::GetVariation(UINT32 quality, bool directional, bool MSAA)
+	ShadowProjectMat* ShadowProjectMat::GetVariation(u32 quality, bool directional, bool MSAA)
 	{
 #define BIND_MAT(QUALITY)											\
 	{																\
@@ -309,7 +309,7 @@ namespace bs { namespace ct
 		RendererMaterial::Bind();
 	}
 
-	ShadowProjectOmniMat* ShadowProjectOmniMat::GetVariation(UINT32 quality, bool inside, bool MSAA)
+	ShadowProjectOmniMat* ShadowProjectOmniMat::GetVariation(u32 quality, bool inside, bool MSAA)
 	{
 #define BIND_MAT(QUALITY)											\
 	{																\
@@ -337,7 +337,7 @@ namespace bs { namespace ct
 #undef BIND_MAT
 	}
 
-	void ShadowInfo::UpdateNormArea(UINT32 atlasSize)
+	void ShadowInfo::UpdateNormArea(u32 atlasSize)
 	{
 		NormArea.X = Area.X / (float)atlasSize;
 		NormArea.Y = Area.Y / (float)atlasSize;
@@ -345,18 +345,18 @@ namespace bs { namespace ct
 		NormArea.Height = Area.Height / (float)atlasSize;
 	}
 
-	ShadowMapAtlas::ShadowMapAtlas(UINT32 size)
+	ShadowMapAtlas::ShadowMapAtlas(u32 size)
 		: mLayout(0, 0, size, size, true), mLastUsedCounter(0)
 	{
 		mAtlas = GpuResourcePool::Instance().Get(
 			POOLED_RENDER_TEXTURE_DESC::Create2D(SHADOW_MAP_FORMAT, size, size, TU_DEPTHSTENCIL));
 	}
 
-	bool ShadowMapAtlas::AddMap(UINT32 size, Rect2I& area, UINT32 border)
+	bool ShadowMapAtlas::AddMap(u32 size, Rect2I& area, u32 border)
 	{
-		UINT32 sizeWithBorder = size + border * 2;
+		u32 sizeWithBorder = size + border * 2;
 
-		UINT32 x, y;
+		u32 x, y;
 		if (!mLayout.AddElement(sizeWithBorder, sizeWithBorder, x, y))
 			return false;
 
@@ -389,7 +389,7 @@ namespace bs { namespace ct
 		return mAtlas->RenderTexture;
 	}
 
-	ShadowMapBase::ShadowMapBase(UINT32 size)
+	ShadowMapBase::ShadowMapBase(u32 size)
 		: mSize(size), mIsUsed(false), mLastUsedCounter (0)
 	{ }
 
@@ -398,7 +398,7 @@ namespace bs { namespace ct
 		return mShadowMap->Texture;
 	}
 
-	ShadowCubemap::ShadowCubemap(UINT32 size)
+	ShadowCubemap::ShadowCubemap(u32 size)
 		:ShadowMapBase(size)
 	{
 		mShadowMap = GpuResourcePool::Instance().Get(
@@ -410,7 +410,7 @@ namespace bs { namespace ct
 		return mShadowMap->RenderTexture;
 	}
 
-	ShadowCascadedMap::ShadowCascadedMap(UINT32 size, UINT32 numCascades)
+	ShadowCascadedMap::ShadowCascadedMap(u32 size, u32 numCascades)
 		:ShadowMapBase(size), mNumCascades(numCascades), mTargets(numCascades), mShadowInfos(numCascades)
 	{
 		mShadowMap = GpuResourcePool::Instance().Get(POOLED_RENDER_TEXTURE_DESC::Create2D(SHADOW_MAP_FORMAT, size, size,
@@ -420,14 +420,14 @@ namespace bs { namespace ct
 		rtDesc.DepthStencilSurface.Texture = mShadowMap->Texture;
 		rtDesc.DepthStencilSurface.NumFaces = 1;
 
-		for (UINT32 i = 0; i < mNumCascades; ++i)
+		for (u32 i = 0; i < mNumCascades; ++i)
 		{
 			rtDesc.DepthStencilSurface.Face = i;
 			mTargets[i] = RenderTexture::Create(rtDesc);
 		}
 	}
 
-	SPtr<RenderTexture> ShadowCascadedMap::GetTarget(UINT32 cascadeIdx) const
+	SPtr<RenderTexture> ShadowCascadedMap::GetTarget(u32 cascadeIdx) const
 	{
 		return mTargets[cascadeIdx];
 	}
@@ -457,13 +457,13 @@ namespace bs { namespace ct
 
 
 			bool IsElement : 1;
-			UINT32 Mask : 6;
+			u32 Mask : 6;
 		};
 
 		template<class Options>
 		static void Execute(RendererScene& scene, const FrameInfo& frameInfo, const Options& opt)
 		{
-			static_assert((UINT32)RenderableAnimType::Count == 4, "RenderableAnimType is expected to have four sequential entries.");
+			static_assert((u32)RenderableAnimType::Count == 4, "RenderableAnimType is expected to have four sequential entries.");
 
 			const SceneInfo& sceneInfo = scene.GetSceneInfo();
 
@@ -472,7 +472,7 @@ namespace bs { namespace ct
 				FrameVector<Command> commands[4];
 
 				// Make a list of relevant renderables and prepare them for rendering
-				for (UINT32 i = 0; i < sceneInfo.Renderables.size(); i++)
+				for (u32 i = 0; i < sceneInfo.Renderables.size(); i++)
 				{
 					const Sphere& bounds = sceneInfo.RenderableCullInfos[i].Bounds.GetSphere();
 					if (!opt.Intersects(bounds))
@@ -494,7 +494,7 @@ namespace bs { namespace ct
 
 					for (auto& element : renderable->Elements)
 					{
-						UINT32 arrayIdx = (int)element.AnimType;
+						u32 arrayIdx = (int)element.AnimType;
 
 						if (!renderableBound[arrayIdx])
 						{
@@ -512,7 +512,7 @@ namespace bs { namespace ct
 				VAR_LOOKUP[2] = &getVertexInputVariation<false, true, false>(false);
 				VAR_LOOKUP[3] = &getVertexInputVariation<true, true, false>(false);
 
-				for (UINT32 i = 0; i < (UINT32)RenderableAnimType::Count; i++)
+				for (u32 i = 0; i < (u32)RenderableAnimType::Count; i++)
 				{
 					opt.BindMaterial(*VAR_LOOKUP[i]);
 
@@ -557,7 +557,7 @@ namespace bs { namespace ct
 
 		void Prepare(ShadowRenderQueue::Command& command, const Sphere& bounds) const
 		{
-			for (UINT32 j = 0; j < 6; j++)
+			for (u32 j = 0; j < 6; j++)
 				command.Mask |= (Frustums[j].Intersects(bounds) ? 1 : 0) << j;
 		}
 
@@ -571,7 +571,7 @@ namespace bs { namespace ct
 		{
 			RendererRenderable* renderable = command.Renderable;
 
-			for (UINT32 j = 0; j < 6; j++)
+			for (u32 j = 0; j < 6; j++)
 				gShadowCubeMasksDef.gFaceMasks.Set(ShadowCubeMasksBuffer, (command.Mask & (1 << j)), j);
 
 			Material->SetPerObjectBuffer(renderable->PerObjectParamBuffer, ShadowCubeMasksBuffer);
@@ -697,14 +697,14 @@ namespace bs { namespace ct
 		mutable ShadowDepthDirectionalMat* Material = nullptr;
 	};
 
-	const UINT32 ShadowRendering::MAX_ATLAS_SIZE = 4096;
-	const UINT32 ShadowRendering::MAX_UNUSED_FRAMES = 60;
-	const UINT32 ShadowRendering::MIN_SHADOW_MAP_SIZE = 32;
-	const UINT32 ShadowRendering::SHADOW_MAP_FADE_SIZE = 64;
-	const UINT32 ShadowRendering::SHADOW_MAP_BORDER = 4;
+	const u32 ShadowRendering::MAX_ATLAS_SIZE = 4096;
+	const u32 ShadowRendering::MAX_UNUSED_FRAMES = 60;
+	const u32 ShadowRendering::MIN_SHADOW_MAP_SIZE = 32;
+	const u32 ShadowRendering::SHADOW_MAP_FADE_SIZE = 64;
+	const u32 ShadowRendering::SHADOW_MAP_BORDER = 4;
 	const float ShadowRendering::CASCADE_FRACTION_FADE = 0.1f;
 
-	ShadowRendering::ShadowRendering(UINT32 shadowMapSize)
+	ShadowRendering::ShadowRendering(u32 shadowMapSize)
 		: mShadowMapSize(shadowMapSize)
 	{
 		SPtr<VertexDataDesc> vertexDesc = VertexDataDesc::Create();
@@ -727,7 +727,7 @@ namespace bs { namespace ct
 
 			mPlaneIB = IndexBuffer::Create(ibDesc);
 
-			UINT32 indices[] =
+			u32 indices[] =
 			{
 				// Far plane, back facing
 				4, 7, 6,
@@ -759,7 +759,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void ShadowRendering::SetShadowMapSize(UINT32 size)
+	void ShadowRendering::SetShadowMapSize(u32 size)
 	{
 		if (mShadowMapSize == size)
 			return;
@@ -806,8 +806,8 @@ namespace bs { namespace ct
 			entry.Clear();
 
 		// Determine shadow map sizes and sort them
-		UINT32 shadowInfoCount = 0;
-		for (UINT32 i = 0; i < (UINT32)sceneInfo.SpotLights.size(); ++i)
+		u32 shadowInfoCount = 0;
+		for (u32 i = 0; i < (u32)sceneInfo.SpotLights.size(); ++i)
 		{
 			const RendererLight& light = sceneInfo.SpotLights[i];
 			mSpotLightShadows[i].StartIdx = shadowInfoCount;
@@ -832,7 +832,7 @@ namespace bs { namespace ct
 			shadowInfoCount++; // For now, always a single fully dynamic shadow for a single light, but that may change
 		}
 
-		for (UINT32 i = 0; i < (UINT32)sceneInfo.RadialLights.size(); ++i)
+		for (u32 i = 0; i < (u32)sceneInfo.RadialLights.size(); ++i)
 		{
 			const RendererLight& light = sceneInfo.RadialLights[i];
 			mRadialLightShadows[i].StartIdx = shadowInfoCount;
@@ -893,29 +893,29 @@ namespace bs { namespace ct
 		}
 
 		// Render shadow maps
-		for (UINT32 i = 0; i < (UINT32)sceneInfo.DirectionalLights.size(); ++i)
+		for (u32 i = 0; i < (u32)sceneInfo.DirectionalLights.size(); ++i)
 		{
 			const RendererLight& light = sceneInfo.DirectionalLights[i];
 
 			if (!light.Internal->GetCastsShadow())
 				return;
 
-			UINT32 numViews = viewGroup.GetNumViews();
+			u32 numViews = viewGroup.GetNumViews();
 			mDirectionalLightShadows[i].ViewShadows.Resize(numViews);
 
-			for (UINT32 j = 0; j < numViews; ++j)
+			for (u32 j = 0; j < numViews; ++j)
 				RenderCascadedShadowMaps(*viewGroup.GetView(j), i, scene, frameInfo);
 		}
 
 		for(auto& entry : mSpotLightShadowOptions)
 		{
-			UINT32 lightIdx = entry.LightIdx;
+			u32 lightIdx = entry.LightIdx;
 			RenderSpotShadowMap(sceneInfo.SpotLights[lightIdx], entry, scene, frameInfo);
 		}
 
 		for (auto& entry : mRadialLightShadowOptions)
 		{
-			UINT32 lightIdx = entry.LightIdx;
+			u32 lightIdx = entry.LightIdx;
 			RenderRadialShadowMap(sceneInfo.RadialLights[lightIdx], entry, scene, frameInfo);
 		}
 	}
@@ -1004,10 +1004,10 @@ namespace bs { namespace ct
 	void ShadowRendering::RenderShadowOcclusion(const RendererView& view, const RendererLight& rendererLight,
 		GBufferTextures gbuffer) const
 	{
-		UINT32 shadowQuality = view.GetRenderSettings().ShadowSettings.ShadowFilteringQuality;
+		u32 shadowQuality = view.GetRenderSettings().ShadowSettings.ShadowFilteringQuality;
 
 		const Light* light = rendererLight.Internal;
-		UINT32 lightIdx = light->GetRendererId();
+		u32 lightIdx = light->GetRendererId();
 
 		auto viewProps = view.GetProperties();
 
@@ -1024,22 +1024,22 @@ namespace bs { namespace ct
 		SPtr<GpuParamBlockBuffer> shadowParamBuffer = gShadowProjectParamsDef.CreateBuffer();
 		SPtr<GpuParamBlockBuffer> shadowOmniParamBuffer = gShadowProjectOmniParamsDef.CreateBuffer();
 
-		UINT32 viewIdx = view.GetViewIdx();
+		u32 viewIdx = view.GetViewIdx();
 		Vector<const ShadowInfo*> shadowInfos;
 
 		if(light->GetType() == LightType::Radial)
 		{
 			const LightShadows& shadows = mRadialLightShadows[lightIdx];
 
-			for(UINT32 i = 0; i < shadows.NumShadows; ++i)
+			for(u32 i = 0; i < shadows.NumShadows; ++i)
 			{
-				UINT32 shadowIdx = shadows.StartIdx + i;
+				u32 shadowIdx = shadows.StartIdx + i;
 				const ShadowInfo& shadowInfo = mShadowInfos[shadowIdx];
 
 				if (shadowInfo.FadePerView[viewIdx] < 0.005f)
 					continue;
 
-				for(UINT32 j = 0; j < 6; j++)
+				for(u32 j = 0; j < 6; j++)
 					gShadowProjectOmniParamsDef.gFaceVPMatrices.Set(shadowOmniParamBuffer, shadowInfo.ShadowVpTransforms[j], j);
 
 				gShadowProjectOmniParamsDef.gDepthBias.Set(shadowOmniParamBuffer, shadowInfo.DepthBias);
@@ -1051,7 +1051,7 @@ namespace bs { namespace ct
 				gShadowProjectOmniParamsDef.gLightPosAndRadius.Set(shadowOmniParamBuffer, lightPosAndRadius);
 
 				// Reduce shadow quality based on shadow map resolution for spot lights
-				UINT32 effectiveShadowQuality = GetShadowQuality(shadowQuality, shadowInfo.Area.Width, 2);
+				u32 effectiveShadowQuality = GetShadowQuality(shadowQuality, shadowInfo.Area.Width, 2);
 
 				// Check if viewer is inside the light bounds
 				//// Expand the light bounds slightly to handle the case when the near plane is intersecting the light volume
@@ -1076,9 +1076,9 @@ namespace bs { namespace ct
 			if(!isCSM)
 			{
 				const LightShadows& shadows = mSpotLightShadows[lightIdx];
-				for (UINT32 i = 0; i < shadows.NumShadows; ++i)
+				for (u32 i = 0; i < shadows.NumShadows; ++i)
 				{
-					UINT32 shadowIdx = shadows.StartIdx + i;
+					u32 shadowIdx = shadows.StartIdx + i;
 					const ShadowInfo& shadowInfo = mShadowInfos[shadowIdx];
 
 					if (shadowInfo.FadePerView[viewIdx] < 0.005f)
@@ -1092,12 +1092,12 @@ namespace bs { namespace ct
 				const LightShadows& shadows = mDirectionalLightShadows[lightIdx].ViewShadows[viewIdx];
 				if (shadows.NumShadows > 0)
 				{
-					UINT32 mapIdx = shadows.StartIdx;
+					u32 mapIdx = shadows.StartIdx;
 					const ShadowCascadedMap& cascadedMap = mCascadedShadowMaps[mapIdx];
 
 					// Render cascades in far to near order.
 					// Note: If rendering other non-cascade maps they should be rendered after cascades.
-					for (INT32 i = cascadedMap.GetNumCascades() - 1; i >= 0; i--)
+					for (i32 i = cascadedMap.GetNumCascades() - 1; i >= 0; i--)
 						shadowInfos.push_back(&cascadedMap.GetShadowInfo(i));
 				}
 			}
@@ -1120,7 +1120,7 @@ namespace bs { namespace ct
 				}
 
 				SPtr<Texture> shadowMap;
-				UINT32 shadowMapFace = 0;
+				u32 shadowMapFace = 0;
 				if(!isCSM)
 					shadowMap = mDynamicShadowMaps[shadowInfo->TextureIdx].GetTexture();
 				else
@@ -1156,7 +1156,7 @@ namespace bs { namespace ct
 
 				// Generate a stencil buffer to avoid evaluating pixels without any receiver geometry in the shadow area
 				std::array<Vector3, 8> frustumVertices;
-				UINT32 effectiveShadowQuality = shadowQuality;
+				u32 effectiveShadowQuality = shadowQuality;
 				if(!isCSM)
 				{
 					ConvexVolume shadowFrustum;
@@ -1203,10 +1203,10 @@ namespace bs { namespace ct
 		}
 	}
 
-	void ShadowRendering::RenderCascadedShadowMaps(const RendererView& view, UINT32 lightIdx, RendererScene& scene,
+	void ShadowRendering::RenderCascadedShadowMaps(const RendererView& view, u32 lightIdx, RendererScene& scene,
 		const FrameInfo& frameInfo)
 	{
-		UINT32 viewIdx = view.GetViewIdx();
+		u32 viewIdx = view.GetViewIdx();
 		LightShadows& lightShadows = mDirectionalLightShadows[lightIdx].ViewShadows[viewIdx];
 
 		if (!view.GetRenderSettings().EnableShadows)
@@ -1236,12 +1236,12 @@ namespace bs { namespace ct
 		shadowInfo.LightIdx = lightIdx;
 		shadowInfo.TextureIdx = -1;
 
-		UINT32 mapSize = std::min(mShadowMapSize, MAX_ATLAS_SIZE);
+		u32 mapSize = std::min(mShadowMapSize, MAX_ATLAS_SIZE);
 		shadowInfo.Area = Rect2I(0, 0, mapSize, mapSize);
 		shadowInfo.UpdateNormArea(mapSize);
 
-		UINT32 numCascades = view.GetRenderSettings().ShadowSettings.NumCascades;
-		for (UINT32 i = 0; i < (UINT32)mCascadedShadowMaps.size(); i++)
+		u32 numCascades = view.GetRenderSettings().ShadowSettings.NumCascades;
+		for (u32 i = 0; i < (u32)mCascadedShadowMaps.size(); i++)
 		{
 			ShadowCascadedMap& shadowMap = mCascadedShadowMaps[i];
 
@@ -1254,9 +1254,9 @@ namespace bs { namespace ct
 			}
 		}
 
-		if (shadowInfo.TextureIdx == (UINT32)-1)
+		if (shadowInfo.TextureIdx == (u32)-1)
 		{
-			shadowInfo.TextureIdx = (UINT32)mCascadedShadowMaps.size();
+			shadowInfo.TextureIdx = (u32)mCascadedShadowMaps.size();
 			mCascadedShadowMaps.push_back(ShadowCascadedMap(mapSize, numCascades));
 
 			ShadowCascadedMap& shadowMap = mCascadedShadowMaps.back();
@@ -1270,7 +1270,7 @@ namespace bs { namespace ct
 
 		ProfileGPUBlock profileSample("Project directional light shadow");
 
-		for (UINT32 i = 0; i < numCascades; ++i)
+		for (u32 i = 0; i < numCascades; ++i)
 		{
 			Sphere frustumBounds;
 			ConvexVolume cascadeCullVolume = GetCsmSplitFrustum(view, lightDir, i, numCascades, frustumBounds);
@@ -1315,7 +1315,7 @@ namespace bs { namespace ct
 			shadowInfo.DepthFade = splitFar;
 			shadowInfo.SubjectBounds = frustumBounds;
 			
-			if ((UINT32)(i + 1) < numCascades)
+			if ((u32)(i + 1) < numCascades)
 				shadowInfo.FadeRange = CASCADE_FRACTION_FADE * (shadowInfo.DepthFade - shadowInfo.DepthNear);
 			else
 				shadowInfo.FadeRange = 0.0f;
@@ -1361,7 +1361,7 @@ namespace bs { namespace ct
 		mapInfo.CascadeIdx = -1;
 
 		bool foundSpace = false;
-		for (UINT32 i = 0; i < (UINT32)mDynamicShadowMaps.size(); i++)
+		for (u32 i = 0; i < (u32)mDynamicShadowMaps.size(); i++)
 		{
 			ShadowMapAtlas& atlas = mDynamicShadowMaps[i];
 
@@ -1376,7 +1376,7 @@ namespace bs { namespace ct
 
 		if (!foundSpace)
 		{
-			mapInfo.TextureIdx = (UINT32)mDynamicShadowMaps.size();
+			mapInfo.TextureIdx = (u32)mDynamicShadowMaps.size();
 			mDynamicShadowMaps.push_back(ShadowMapAtlas(MAX_ATLAS_SIZE));
 
 			ShadowMapAtlas& atlas = mDynamicShadowMaps.back();
@@ -1420,7 +1420,7 @@ namespace bs { namespace ct
 		Matrix4 worldMatrix = view.InverseAffine();
 
 		Vector<Plane> worldPlanes(frustumPlanes.size());
-		UINT32 j = 0;
+		u32 j = 0;
 		for (auto& plane : frustumPlanes)
 		{
 			worldPlanes[j] = worldMatrix.MultiplyAffine(plane);
@@ -1460,7 +1460,7 @@ namespace bs { namespace ct
 		mapInfo.Area = Rect2I(0, 0, options.MapSize, options.MapSize);
 		mapInfo.UpdateNormArea(options.MapSize);
 
-		for (UINT32 i = 0; i < (UINT32)mShadowCubemaps.size(); i++)
+		for (u32 i = 0; i < (u32)mShadowCubemaps.size(); i++)
 		{
 			ShadowCubemap& cubemap = mShadowCubemaps[i];
 
@@ -1473,9 +1473,9 @@ namespace bs { namespace ct
 			}
 		}
 
-		if (mapInfo.TextureIdx == (UINT32)-1)
+		if (mapInfo.TextureIdx == (u32)-1)
 		{
-			mapInfo.TextureIdx = (UINT32)mShadowCubemaps.size();
+			mapInfo.TextureIdx = (u32)mShadowCubemaps.size();
 			mShadowCubemaps.push_back(ShadowCubemap(options.MapSize));
 
 			ShadowCubemap& cubemap = mShadowCubemaps.back();
@@ -1534,7 +1534,7 @@ namespace bs { namespace ct
 
 		ConvexVolume frustums[6];
 		Vector<Plane> boundingPlanes;
-		for (UINT32 i = 0; i < 6; i++)
+		for (u32 i = 0; i < 6; i++)
 		{
 			// Calculate view matrix
 			Vector3 forward;
@@ -1581,7 +1581,7 @@ namespace bs { namespace ct
 			Matrix4 worldMatrix = Matrix4::Translation(lightPos) * Matrix4(viewRotationMat);
 
 			Vector<Plane> worldPlanes(frustumPlanes.size());
-			UINT32 j = 0;
+			u32 j = 0;
 			for (auto& plane : frustumPlanes)
 			{
 				worldPlanes[j] = worldMatrix.MultiplyAffine(plane);
@@ -1648,7 +1648,7 @@ namespace bs { namespace ct
 	}
 
 	void ShadowRendering::CalcShadowMapProperties(const RendererLight& light, const RendererViewGroup& viewGroup,
-		UINT32 border, UINT32& size, SmallVector<float, 6>& fadePercents, float& maxFadePercent) const
+		u32 border, u32& size, SmallVector<float, 6>& fadePercents, float& maxFadePercent) const
 	{
 		const static float SHADOW_TEXELS_PER_PIXEL = 1.0f;
 
@@ -1698,7 +1698,7 @@ namespace bs { namespace ct
 
 		// If light fully (or nearly fully) covers the screen, use full shadow map resolution, otherwise
 		// scale it down to smaller power of two, while clamping to minimal allowed resolution
-		UINT32 effectiveMapSize = Bitwise::NextPow2((UINT32)maxMapSize);
+		u32 effectiveMapSize = Bitwise::NextPow2((u32)maxMapSize);
 		effectiveMapSize = Math::Clamp(effectiveMapSize, MIN_SHADOW_MAP_SIZE, mShadowMapSize);
 
 		// Leave room for border
@@ -1754,9 +1754,9 @@ namespace bs { namespace ct
 		rapi.DrawIndexed(0, 36, 0, 8);
 	}
 
-	UINT32 ShadowRendering::GetShadowQuality(UINT32 requestedQuality, UINT32 shadowMapResolution, UINT32 minAllowedQuality)
+	u32 ShadowRendering::GetShadowQuality(u32 requestedQuality, u32 shadowMapResolution, u32 minAllowedQuality)
 	{
-		static const UINT32 TARGET_RESOLUTION = 512;
+		static const u32 TARGET_RESOLUTION = 512;
 
 		// If shadow map resolution is smaller than some target resolution drop the number of PCF samples (shadow quality)
 		// so that the penumbra better matches with larger sized shadow maps.
@@ -1769,15 +1769,15 @@ namespace bs { namespace ct
 		return requestedQuality;
 	}
 
-	ConvexVolume ShadowRendering::GetCsmSplitFrustum(const RendererView& view, const Vector3& lightDir, UINT32 cascade,
-		UINT32 numCascades, Sphere& outBounds)
+	ConvexVolume ShadowRendering::GetCsmSplitFrustum(const RendererView& view, const Vector3& lightDir, u32 cascade,
+		u32 numCascades, Sphere& outBounds)
 	{
 		// Determine split range
 		float splitNear = GetCsmSplitDistance(view, cascade, numCascades);
 		float splitFar = GetCsmSplitDistance(view, cascade + 1, numCascades);
 
 		// Increase by fade range, unless last cascade
-		if ((UINT32)(cascade + 1) < numCascades)
+		if ((u32)(cascade + 1) < numCascades)
 				splitFar += CASCADE_FRACTION_FADE * (splitFar - splitNear);
 		
 		// Calculate the eight vertices of the split frustum
@@ -1862,7 +1862,7 @@ namespace bs { namespace ct
 
 		//// Determine edge planes by testing adjacent planes with different facing
 		////// Pairs of frustum planes that share an edge
-		UINT32 adjacentPlanes[][2] =
+		u32 adjacentPlanes[][2] =
 		{
 			{ FRUSTUM_PLANE_NEAR, FRUSTUM_PLANE_LEFT },
 			{ FRUSTUM_PLANE_NEAR, FRUSTUM_PLANE_RIGHT },
@@ -1881,14 +1881,14 @@ namespace bs { namespace ct
 		};
 
 		////// Vertex indices of edges on the boundary between two planes
-		UINT32 sharedEdges[][2] =
+		u32 sharedEdges[][2] =
 		{
 			{ 3, 0 },{ 1, 2 },{ 0, 1 },{ 2, 3 },
 			{ 4, 7 },{ 6, 5 },{ 5, 4 },{ 7, 6 },
 			{ 4, 0 },{ 5, 1 },{ 6, 2 },{ 7, 3 }
 		};
 
-		for(UINT32 i = 0; i < 12; i++)
+		for(u32 i = 0; i < 12; i++)
 		{
 			const Plane& planeA = viewPlanes[adjacentPlanes[i][0]];
 			const Plane& planeB = viewPlanes[adjacentPlanes[i][1]];
@@ -1912,7 +1912,7 @@ namespace bs { namespace ct
 		return ConvexVolume(lightVolume);
 	}
 
-	float ShadowRendering::GetCsmSplitDistance(const RendererView& view, UINT32 index, UINT32 numCascades)
+	float ShadowRendering::GetCsmSplitDistance(const RendererView& view, u32 index, u32 numCascades)
 	{
 		auto& shadowSettings = view.GetRenderSettings().ShadowSettings;
 		float distributionExponent = shadowSettings.CascadeDistributionExponent;
@@ -1925,7 +1925,7 @@ namespace bs { namespace ct
 		//// Split 0 corresponds to near plane
 		if (index > 0)
 		{
-			for (UINT32 i = 0; i < numCascades; i++)
+			for (u32 i = 0; i < numCascades; i++)
 			{
 				if (i < index)
 					scale += scaleModifier;
@@ -1945,7 +1945,7 @@ namespace bs { namespace ct
 		return near + (far - near) * scale;
 	}
 
-	float ShadowRendering::GetDepthBias(const Light& light, float radius, float depthRange, UINT32 mapSize)
+	float ShadowRendering::GetDepthBias(const Light& light, float radius, float depthRange, u32 mapSize)
 	{
 		const static float RADIAL_LIGHT_BIAS = 0.005f;
 		const static float SPOT_DEPTH_BIAS = 0.01f;
@@ -1988,7 +1988,7 @@ namespace bs { namespace ct
 		return defaultBias * light.GetShadowBias() * resolutionScale * rangeScale;
 	}
 
-	float ShadowRendering::GetFadeTransition(const Light& light, float radius, float depthRange, UINT32 mapSize)
+	float ShadowRendering::GetFadeTransition(const Light& light, float radius, float depthRange, u32 mapSize)
 	{
 		const static float SPOT_LIGHT_SCALE = 1000.0f;
 		const static float DIR_LIGHT_SCALE = 50000000.0f;

@@ -60,7 +60,7 @@ namespace bs
 		}
 
 		Vector<ScriptObjectBase*> scriptObjCopy(mScriptObjects.size()); // Store originals as we could add new objects during the next iteration
-		UINT32 idx = 0;
+		u32 idx = 0;
 		for (auto& scriptObject : mScriptObjects)
 			scriptObjCopy[idx++] = scriptObject;
 
@@ -90,7 +90,7 @@ namespace bs
 
 	void ScriptObjectManager::ProcessFinalizedObjects(bool assemblyRefresh)
 	{
-		UINT32 readQueueIdx = 0;
+		u32 readQueueIdx = 0;
 		{
 			Lock lock(mMutex);
 			readQueueIdx = mFinalizedQueueIdx;

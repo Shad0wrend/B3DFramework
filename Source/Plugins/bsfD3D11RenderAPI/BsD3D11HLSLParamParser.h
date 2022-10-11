@@ -55,7 +55,7 @@ namespace bs { namespace ct
 			GpuParamBlockDesc& paramBlock);
 
 		/** Maps a parameter in a specific shader stage, of a specific type to a unique set index. */
-		static UINT32 MapParameterToSet(GpuProgramType progType, ParamType paramType);
+		static u32 MapParameterToSet(GpuProgramType progType, ParamType paramType);
 	};
 
 	/** @} */

@@ -5,7 +5,7 @@
 
 namespace bs
 {
-	const UINT32 ProfilingManager::NUM_SAVED_FRAMES = 200;
+	const u32 ProfilingManager::NUM_SAVED_FRAMES = 200;
 
 	ProfilingManager::ProfilingManager()
 	{
@@ -45,22 +45,22 @@ namespace bs
 #endif
 	}
 
-	const ProfilerReport& ProfilingManager::GetReport(ProfiledThread thread, UINT32 idx) const
+	const ProfilerReport& ProfilingManager::GetReport(ProfiledThread thread, u32 idx) const
 	{
-		idx = Math::Clamp(idx, 0U, (UINT32)(NUM_SAVED_FRAMES - 1));
+		idx = Math::Clamp(idx, 0U, (u32)(NUM_SAVED_FRAMES - 1));
 
 		if(thread == ProfiledThread::Core)
 		{
 			Lock lock(mSync);
 
-			UINT32 reportIdx = mNextCoreReportIdx + (UINT32)((INT32)NUM_SAVED_FRAMES - ((INT32)idx + 1));
+			u32 reportIdx = mNextCoreReportIdx + (u32)((i32)NUM_SAVED_FRAMES - ((i32)idx + 1));
 			reportIdx = (reportIdx) % NUM_SAVED_FRAMES;
 
 			return mSavedCoreReports[reportIdx];
 		}
 		else
 		{
-			UINT32 reportIdx = mNextSimReportIdx + (UINT32)((INT32)NUM_SAVED_FRAMES - ((INT32)idx + 1));
+			u32 reportIdx = mNextSimReportIdx + (u32)((i32)NUM_SAVED_FRAMES - ((i32)idx + 1));
 			reportIdx = (reportIdx) % NUM_SAVED_FRAMES;
 
 			return mSavedSimReports[reportIdx];

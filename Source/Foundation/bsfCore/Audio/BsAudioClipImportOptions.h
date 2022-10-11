@@ -35,7 +35,7 @@ namespace bs
 
 		/** Size of a single sample in bits. The clip will be converted to this bit depth on import. */
 		BS_SCRIPT_EXPORT()
-		UINT32 BitDepth = 16;
+		u32 BitDepth = 16;
 
 		// Note: Add options to resample to a different frequency
 

@@ -153,7 +153,7 @@ namespace bs
 		static bool sDragActive;
 		static Vector<DropArea> sDropAreas;
 		static Mutex sMutex;
-		static INT32 sDNDVersion;
+		static i32 sDNDVersion;
 		static Atom sDNDType;
 		static ::Window sDNDSource;
 		static Vector2I sDragPosition;

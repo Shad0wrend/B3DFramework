@@ -11,7 +11,7 @@
 
 namespace bs
 {
-	SpriteMaterial::SpriteMaterial(UINT32 id, const HMaterial& material, ShaderVariation variation, bool allowBatching)
+	SpriteMaterial::SpriteMaterial(u32 id, const HMaterial& material, ShaderVariation variation, bool allowBatching)
 		:mId(id), mAllowBatching(allowBatching), mMaterialStored(false), mParamBufferIdx(-1)
 	{
 		mMaterial = material->GetCore();
@@ -64,7 +64,7 @@ namespace bs
 		mParamBufferIdx = mParams->GetParamBlockBufferIndex("GUIParams");
 		mAlphaParamBufferIdx = mAlphaParams->GetParamBlockBufferIndex("GUIParams");
 
-		if(mParamBufferIdx == (UINT32)-1 || mAlphaParamBufferIdx == (UINT32)-1)
+		if(mParamBufferIdx == (u32)-1 || mAlphaParamBufferIdx == (u32)-1)
 			BS_LOG(Error, GUI, "Sprite material shader missing \"GUIParams\" block.");
 	}
 
@@ -73,9 +73,9 @@ namespace bs
 		// Do nothing, we just need to make sure the material pointer's last reference is lost while on the core thread
 	}
 
-	UINT64 SpriteMaterial::GetMergeHash(const SpriteMaterialInfo& info) const
+	u64 SpriteMaterial::GetMergeHash(const SpriteMaterialInfo& info) const
 	{
-		UINT64 textureId = 0;
+		u64 textureId = 0;
 		if (info.Texture.IsLoaded())
 			textureId = info.Texture->GetInternalId();
 
@@ -85,7 +85,7 @@ namespace bs
 		bs_hash_combine(hash, textureId);
 		bs_hash_combine(hash, info.Tint);
 
-		return (UINT64)hash;
+		return (u64)hash;
 	}
 
 	void SpriteMaterial::Render(const SPtr<ct::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<ct::Texture>& texture,
@@ -103,7 +103,7 @@ namespace bs
 
 		if(!alphaOnly)
 		{
-			if(mParamBufferIdx != (UINT32)-1)
+			if(mParamBufferIdx != (u32)-1)
 				mParams->SetParamBlockBuffer(mParamBufferIdx, paramBuffer, true);
 
 			mMaterial->UpdateParamsSet(mParams);
@@ -112,7 +112,7 @@ namespace bs
 		}
 		else
 		{
-			if(mAlphaParamBufferIdx != (UINT32)-1)
+			if(mAlphaParamBufferIdx != (u32)-1)
 				mAlphaParams->SetParamBlockBuffer(mAlphaParamBufferIdx, paramBuffer, true);
 
 			mMaterial->UpdateParamsSet(mAlphaParams);

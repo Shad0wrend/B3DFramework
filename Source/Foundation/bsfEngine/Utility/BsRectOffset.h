@@ -15,7 +15,7 @@ namespace bs
 	{
 		RectOffset() = default;
 
-		RectOffset(INT32 left, INT32 right, INT32 top, INT32 bottom)
+		RectOffset(i32 left, i32 right, i32 top, i32 bottom)
 			:Left(left), Right(right), Top(top), Bottom(bottom)
 		{ }
 
@@ -29,10 +29,10 @@ namespace bs
 			return !operator==(rhs);
 		}
 
-		INT32 Left = 0;
-		INT32 Right = 0;
-		INT32 Top = 0;
-		INT32 Bottom = 0;
+		i32 Left = 0;
+		i32 Right = 0;
+		i32 Top = 0;
+		i32 Bottom = 0;
 	};
 
 	/** @} */

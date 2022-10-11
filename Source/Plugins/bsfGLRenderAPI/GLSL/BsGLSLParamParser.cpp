@@ -5,14 +5,14 @@
 
 namespace bs { namespace ct
 {
-	INT32 GLSLAttribute::MatchesName(const String& name)
+	i32 GLSLAttribute::MatchesName(const String& name)
 	{
 		if (name.length() >= mName.length())
 		{
 			if (name.substr(0, mName.length()) == mName)
 			{
 				String indexStr = name.substr(mName.length(), name.length());
-				return parseUINT32(indexStr, 0);
+				return parseu32(indexStr, 0);
 			}
 		}
 
@@ -40,11 +40,11 @@ namespace bs { namespace ct
 			BS_CHECK_GL_ERROR();
 
 			VertexElementSemantic semantic = VES_POSITION;
-			UINT16 index = 0;
+			u16 index = 0;
 			if (AttribNameToElementSemantic(attributeName, semantic, index))
 			{
 				VertexElementType type = GlTypeToAttributeType(attribType);
-				UINT32 slot = glGetAttribLocation(glProgram, attributeName);
+				u32 slot = glGetAttribLocation(glProgram, attributeName);
 				BS_CHECK_GL_ERROR();
 
 				elementList.push_back(VertexElement(0, slot, type, semantic, index));
@@ -65,17 +65,17 @@ namespace bs { namespace ct
 		return elementList;
 	}
 
-	UINT32 GLSLParamParser::CalcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, UINT32 arraySize, UINT32& offset)
+	u32 GLSLParamParser::CalcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, u32 arraySize, u32& offset)
 	{
 		const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::PARAM_SIZES.Lookup[type];
-		UINT32 size = (typeInfo.BaseTypeSize * typeInfo.NumColumns * typeInfo.NumRows) / 4;
-		UINT32 alignment = typeInfo.Alignment / 4;
+		u32 size = (typeInfo.BaseTypeSize * typeInfo.NumColumns * typeInfo.NumRows) / 4;
+		u32 alignment = typeInfo.Alignment / 4;
 
 		// Fix alignment if needed
-		UINT32 alignOffset = offset % alignment;
+		u32 alignOffset = offset % alignment;
 		if (alignOffset != 0)
 		{
-			UINT32 padding = (alignment - alignOffset);
+			u32 padding = (alignment - alignOffset);
 			offset += padding;
 		}
 
@@ -85,14 +85,14 @@ namespace bs { namespace ct
 			alignOffset = size % 4;
 			if (alignOffset != 0)
 			{
-				UINT32 padding = (4 - alignOffset);
+				u32 padding = (4 - alignOffset);
 				size += padding;
 			}
 
 			alignOffset = offset % 4;
 			if (alignOffset != 0)
 			{
-				UINT32 padding = (4 - alignOffset);
+				u32 padding = (4 - alignOffset);
 				offset += padding;
 			}
 
@@ -137,7 +137,7 @@ namespace bs { namespace ct
 		return VET_FLOAT4;
 	}
 
-	bool GLSLParamParser::AttribNameToElementSemantic(const String& name, VertexElementSemantic& semantic, UINT16& index)
+	bool GLSLParamParser::AttribNameToElementSemantic(const String& name, VertexElementSemantic& semantic, u16& index)
 	{
 		static GLSLAttribute attributes[] =
 		{
@@ -159,11 +159,11 @@ namespace bs { namespace ct
 			GLSLAttribute("BLENDINDICES", VES_BLEND_INDICES)
 		};
 
-		static const UINT32 numAttribs = sizeof(attributes) / sizeof(attributes[0]);
+		static const u32 numAttribs = sizeof(attributes) / sizeof(attributes[0]);
 
-		for (UINT32 i = 0; i < numAttribs; i++)
+		for (u32 i = 0; i < numAttribs; i++)
 		{
-			INT32 attribIndex = attributes[i].MatchesName(name);
+			i32 attribIndex = attributes[i].MatchesName(name);
 			if (attribIndex != -1)
 			{
 				index = attribIndex;
@@ -221,7 +221,7 @@ namespace bs { namespace ct
 		BS_CHECK_GL_ERROR();
 #endif
 
-		Map<UINT32, String> blockSlotToName;
+		Map<u32, String> blockSlotToName;
 		Set<String> blockNames;
 		for (GLuint index = 0; index < (GLuint)uniformBlockCount; index++)
 		{
@@ -269,7 +269,7 @@ namespace bs { namespace ct
 		}
 #endif
 
-		Map<String, UINT32> foundFirstArrayIndex;
+		Map<String, u32> foundFirstArrayIndex;
 		Map<String, GpuParamDataDesc> foundStructs;
 
 		// Get the number of active uniforms
@@ -321,7 +321,7 @@ namespace bs { namespace ct
 			String cleanParamName = paramName; // Param name without array indexes
 
 			// Check if the parameter is in an array
-			UINT32 arrayIdx = 0;
+			u32 arrayIdx = 0;
 			bool isInArray = false;
 			if (inStruct)
 			{
@@ -331,7 +331,7 @@ namespace bs { namespace ct
 				if (arrayStart != String::npos)
 				{
 					String strArrIdx = structName.substr(arrayStart + 1, arrayEnd - (arrayStart + 1));
-					arrayIdx = parseUINT32(strArrIdx, 0);
+					arrayIdx = parseu32(strArrIdx, 0);
 					isInArray = true;
 
 					structName = structName.substr(0, arrayStart);
@@ -349,7 +349,7 @@ namespace bs { namespace ct
 					// If in struct, we don't care about individual element array indices
 					if(!inStruct)
 					{
-						arrayIdx = parseUINT32(strArrIdx, 0);
+						arrayIdx = parseu32(strArrIdx, 0);
 						isInArray = true;
 					}
 
@@ -650,7 +650,7 @@ namespace bs { namespace ct
 				// Update struct with size of the new parameter
 				GpuParamDataDesc& structDesc = foundStructs[structName];
 
-				if (arrayIdx == (UINT32)firstArrayIndex) // Determine element size only using the first array element
+				if (arrayIdx == (u32)firstArrayIndex) // Determine element size only using the first array element
 				{
 					structDesc.ElementSize = std::max(structDesc.ElementSize, gpuParam.CpuMemOffset +
 						gpuParam.ArrayElementStride * gpuParam.ArraySize);
@@ -694,7 +694,7 @@ namespace bs { namespace ct
 			assert(blockSize % 4 == 0);
 			blockSize = blockSize / 4;
 
-			if ((INT32)iter->second.BlockSize != blockSize)
+			if ((i32)iter->second.BlockSize != blockSize)
 				BS_EXCEPT(InternalErrorException, "OpenGL specified and manual uniform block buffer sizes don't match!");
 		}
 #endif
@@ -814,11 +814,11 @@ namespace bs { namespace ct
 			desc.ArrayElementStride = desc.ElementSize;
 	}
 
-	UINT32 GLSLParamParser::MapParameterToSet(GpuProgramType progType, ParamType paramType)
+	u32 GLSLParamParser::MapParameterToSet(GpuProgramType progType, ParamType paramType)
 	{
-		UINT32 progTypeIdx = (UINT32)progType;
-		UINT32 paramTypeIdx = (UINT32)paramType;
+		u32 progTypeIdx = (u32)progType;
+		u32 paramTypeIdx = (u32)paramType;
 
-		return progTypeIdx * (UINT32)ParamType::Count + paramTypeIdx;
+		return progTypeIdx * (u32)ParamType::Count + paramTypeIdx;
 	}
 }}

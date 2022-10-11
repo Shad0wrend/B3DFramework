@@ -16,7 +16,7 @@ namespace bs { namespace ct
 	class GLGpuParamBlockBuffer : public GpuParamBlockBuffer
 	{
 	public:
-		GLGpuParamBlockBuffer(UINT32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);
+		GLGpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);
 		~GLGpuParamBlockBuffer();
 
 		/**	Returns internal OpenGL uniform buffer handle. */

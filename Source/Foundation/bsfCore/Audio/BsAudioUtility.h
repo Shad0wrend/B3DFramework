@@ -26,7 +26,7 @@ namespace bs
 		 * @param[in]	numSamples	Number of samples per a single channel.
 		 * @param[in]	numChannels	Number of channels in the input data.
 		 */
-		static void ConvertToMono(const UINT8* input, UINT8* output, UINT32 bitDepth, UINT32 numSamples, UINT32 numChannels);
+		static void ConvertToMono(const u8* input, u8* output, u32 bitDepth, u32 numSamples, u32 numChannels);
 
 		/**
 		 * Converts a set of audio samples of a certain bit depth to a new bit depth.
@@ -39,7 +39,7 @@ namespace bs
 		 * @param[in]	outBitDepth	Size of a single sample in the @p output array, in bits.
 		 * @param[in]	numSamples	Total number of samples to process.
 		 */
-		static void ConvertBitDepth(const UINT8* input, UINT32 inBitDepth, UINT8* output, UINT32 outBitDepth, UINT32 numSamples);
+		static void ConvertBitDepth(const u8* input, u32 inBitDepth, u8* output, u32 outBitDepth, u32 numSamples);
 
 		/**
 		 * Converts a set of audio samples of a certain bit depth to a set of floating point samples in range [-1, 1].
@@ -51,7 +51,7 @@ namespace bs
 		 *							@p numSamples * sizeof(float).
 		 * @param[in]	numSamples	Total number of samples to process.
 		 */
-		static void ConvertToFloat(const UINT8* input, UINT32 inBitDepth, float* output, UINT32 numSamples);
+		static void ConvertToFloat(const u8* input, u32 inBitDepth, float* output, u32 numSamples);
 
 		/**
 		 * Converts a 24-bit signed integer into a 32-bit signed integer.
@@ -59,7 +59,7 @@ namespace bs
 		 * @param[in]	input	24-bit signed integer as an array of 3 bytes.
 		 * @return				32-bit signed integer.
 		 */
-		static INT32 Convert24To32Bits(const UINT8* input);
+		static i32 Convert24To32Bits(const u8* input);
 	};
 
 	/** @} */

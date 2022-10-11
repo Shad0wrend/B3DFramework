@@ -27,7 +27,7 @@ namespace bs
 		Matrix4 worldMatrix = SO()->GetWorldMatrix();
 
 		Vector<Plane> worldPlanes(frustumPlanes.size());
-		UINT32 i = 0;
+		u32 i = 0;
 		for (auto& plane : frustumPlanes)
 		{
 			worldPlanes[i] = worldMatrix.MultiplyAffine(plane);

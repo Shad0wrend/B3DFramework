@@ -16,7 +16,7 @@ namespace bs
 	{
 	public:
 		GUIPanel() = default;
-		GUIPanel(INT16 depth, UINT16 depthRangeMin, UINT16 depthRangeMax, const GUIDimensions& dimensions);
+		GUIPanel(i16 depth, u16 depthRangeMin, u16 depthRangeMax, const GUIDimensions& dimensions);
 		~GUIPanel() = default;
 
 		/**
@@ -32,7 +32,7 @@ namespace bs
 		 *								depth outside of the range [depth - depthRangeMin, depth + depthRangeMax] it will
 		 *								be clamped to nearest extreme. Value of -1 means infinite range.
 		 */
-		void SetDepthRange(INT16 depth = 0, UINT16 depthRangeMin = -1, UINT16 depthRangeMax = -1);
+		void SetDepthRange(i16 depth = 0, u16 depthRangeMin = -1, u16 depthRangeMax = -1);
 
 		/**
 		 * Creates a new GUI panel.
@@ -47,7 +47,7 @@ namespace bs
 		 *								depth outside of the range [depth - depthRangeMin, depth + depthRangeMax] it will
 		 *								be clamped to nearest extreme. Value of -1 means infinite range.
 		 */
-		static GUIPanel* Create(INT16 depth = 0, UINT16 depthRangeMin = -1, UINT16 depthRangeMax = -1);
+		static GUIPanel* Create(i16 depth = 0, u16 depthRangeMin = -1, u16 depthRangeMax = -1);
 
 		/**
 		 * Creates a new GUI panel.
@@ -70,7 +70,7 @@ namespace bs
 		 *								clamped to nearest extreme. Value of -1 means infinite range.
 		 * @param[in]	options			Options that allow you to control how is the element positioned and sized.
 		 */
-		static GUIPanel* Create(INT16 depth, UINT16 depthRangeMin, UINT16 depthRangeMax, const GUIOptions& options);
+		static GUIPanel* Create(i16 depth, u16 depthRangeMin, u16 depthRangeMax, const GUIOptions& options);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -87,7 +87,7 @@ namespace bs
 		LayoutSizeRange CalculateLayoutSizeRangeInternal() const override;
 
 		/** @copydoc GUILayout::_getElementAreas */
-		void GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, UINT32 numElements,
+		void GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements,
 			const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const override;
 
 		/** Calculates the size of the provided child within this layout with the provided dimensions. */
@@ -114,9 +114,9 @@ namespace bs
 		/** @} */
 
 	protected:
-		INT16 mDepthOffset;
-		UINT16 mDepthRangeMin;
-		UINT16 mDepthRangeMax;
+		i16 mDepthOffset;
+		u16 mDepthRangeMin;
+		u16 mDepthRangeMax;
 	};
 
 	/** @} */

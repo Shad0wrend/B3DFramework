@@ -62,20 +62,20 @@ namespace bs
 	{
 	public:
 		VertexElement() = default;
-		VertexElement(UINT16 source, UINT32 offset, VertexElementType theType,
-			VertexElementSemantic semantic, UINT16 index = 0, UINT32 instanceStepRate = 0);
+		VertexElement(u16 source, u32 offset, VertexElementType theType,
+			VertexElementSemantic semantic, u16 index = 0, u32 instanceStepRate = 0);
 
 		bool operator== (const VertexElement& rhs) const;
 		bool operator!= (const VertexElement& rhs) const;
 
 		/**	Returns index of the vertex buffer from which this element is stored. */
-		UINT16 GetStreamIdx() const { return mSource; }
+		u16 GetStreamIdx() const { return mSource; }
 
 		/**
 		 * Returns an offset into the buffer where this vertex is stored. This value might be in bytes but doesn't have to
 		 * be, it's likely to be render API specific.
 		 */
-		UINT32 GetOffset() const { return mOffset; }
+		u32 GetOffset() const { return mOffset; }
 
 		/** Gets the base data type of this element. */
 		VertexElementType GetType() const { return mType; }
@@ -87,10 +87,10 @@ namespace bs
 		 * Gets an index of this element. Only relevant when you have multiple elements with the same semantic,
 		 * for example uv0, uv1.
 		 */
-		UINT16 GetSemanticIdx() const { return mIndex; }
+		u16 GetSemanticIdx() const { return mIndex; }
 
 		/** Returns the size of this element in bytes. */
-		UINT32 GetSize() const;
+		u32 GetSize() const;
 
 		/**
 		 * Returns at what rate do the vertex elements advance during instanced rendering. Provide zero for default
@@ -99,13 +99,13 @@ namespace bs
 		 * each instance will retrieve a new value from the vertex buffer, a value of 2 means each second instance will,
 		 * etc.).
 		 */
-		UINT32 GetInstanceStepRate() const { return mInstanceStepRate; }
+		u32 GetInstanceStepRate() const { return mInstanceStepRate; }
 
 		/**	Returns the size of a base element type. */
-		static UINT32 GetTypeSize(VertexElementType etype);
+		static u32 GetTypeSize(VertexElementType etype);
 
 		/** Returns the number of values in the provided base element type. For example float4 has four values. */
-		static UINT16 GetTypeCount(VertexElementType etype);
+		static u16 GetTypeCount(VertexElementType etype);
 
 		/**	Gets packed color vertex element type used by the active render system. */
 		static VertexElementType GetBestColorVertexElementType();
@@ -113,12 +113,12 @@ namespace bs
 		/** Calculates a hash value for the provided vertex element. */
 		static size_t GetHash(const VertexElement& element);
 	protected:
-		UINT16 mSource;
-		UINT32 mOffset;
+		u16 mSource;
+		u32 mOffset;
 		VertexElementType mType;
 		VertexElementSemantic mSemantic;
-		UINT16 mIndex;
-		UINT32 mInstanceStepRate;
+		u16 mIndex;
+		u32 mInstanceStepRate;
 	};
 
 	/**	Contains information about a vertex declaration. */
@@ -131,24 +131,24 @@ namespace bs
 		bool operator!= (const VertexDeclarationProperties& rhs) const;
 
 		/**	Get the number of elements in the declaration. */
-		UINT32 GetElementCount() const { return (UINT32)mElementList.size(); }
+		u32 GetElementCount() const { return (u32)mElementList.size(); }
 		
 		/**	Returns a list of vertex elements in the declaration. */
 		const Vector<VertexElement>& GetElements() const { return mElementList; }
 
 		/**	Returns a single vertex element at the specified index. */
-		const VertexElement* GetElement(UINT16 index) const;
+		const VertexElement* GetElement(u16 index) const;
 
 		/**
 		 * Attempts to find an element by the given semantic and semantic index. If no element can be found null is returned.
 		 */
-		const VertexElement* FindElementBySemantic(VertexElementSemantic sem, UINT16 index = 0) const;
+		const VertexElement* FindElementBySemantic(VertexElementSemantic sem, u16 index = 0) const;
 
 		/**	Returns a list of all elements that use the provided source index. */
-		Vector<VertexElement> FindElementsBySource(UINT16 source) const;
+		Vector<VertexElement> FindElementsBySource(u16 source) const;
 
 		/**	Returns the total size of all vertex elements using the provided source index. */
-		UINT32 GetVertexSize(UINT16 source) const;
+		u32 GetVertexSize(u16 source) const;
 
 	protected:
 		friend class VertexDeclaration;
@@ -224,7 +224,7 @@ namespace bs
 		const VertexDeclarationProperties& GetProperties() const { return mProperties; }
 
 		/**	Returns an ID unique to this declaration. */
-		UINT32 GetId() const { return mId; }
+		u32 GetId() const { return mId; }
 
 		/**
 		 * Checks can a vertex buffer declared with this declaration be bound to a shader defined with the provided
@@ -247,9 +247,9 @@ namespace bs
 		VertexDeclaration(const Vector<VertexElement>& elements, GpuDeviceFlags deviceMask);
 
 		VertexDeclarationProperties mProperties;
-		UINT32 mId;
+		u32 mId;
 
-		static UINT32 NextFreeId;
+		static u32 NextFreeId;
 	};
 
 	/** @} */

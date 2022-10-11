@@ -33,9 +33,9 @@ namespace bs
 		m->hid.capture(nullptr, !m->HasInputFocus);
 	}
 
-	void Keyboard::changeCaptureContext(UINT64 windowHandle)
+	void Keyboard::changeCaptureContext(u64 windowHandle)
 	{
-		m->HasInputFocus = windowHandle != (UINT64)-1;
+		m->HasInputFocus = windowHandle != (u64)-1;
 	}
 }
 

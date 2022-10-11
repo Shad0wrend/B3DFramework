@@ -21,10 +21,10 @@ namespace bs
 		MESH_DESC() { }
 
 		/** Number of vertices in the mesh. */
-		UINT32 NumVertices = 0;
+		u32 NumVertices = 0;
 
 		/** Number of indices in the mesh. */
-		UINT32 NumIndices = 0;
+		u32 NumIndices = 0;
 
 		/**
 		 * Vertex description structure that describes how are vertices organized in the vertex buffer. When binding a mesh
@@ -40,7 +40,7 @@ namespace bs
 		Vector<SubMesh> SubMeshes;
 
 		/** Optimizes performance depending on planned usage of the mesh. */
-		INT32 Usage = MU_STATIC;
+		i32 Usage = MU_STATIC;
 
 		/**
 		 * Size of indices, use smaller size for better performance, however be careful not to go over the number of
@@ -147,7 +147,7 @@ namespace bs
 		void CreateCpuBuffer();
 
 		/**	Updates the cached CPU buffers with new data. */
-		void UpdateCpuBuffer(UINT32 subresourceIdx, const MeshData& data);
+		void UpdateCpuBuffer(u32 subresourceIdx, const MeshData& data);
 
 		mutable SPtr<MeshData> mCPUData;
 
@@ -188,7 +188,7 @@ namespace bs
 		 * @param[in]	indexType		Size of indices, use smaller size for better performance, however be careful not to
 		 *								go over the number of vertices limited by the size.
 		 */
-		static HMesh Create(UINT32 numVertices, UINT32 numIndices, const SPtr<VertexDataDesc>& vertexDesc,
+		static HMesh Create(u32 numVertices, u32 numIndices, const SPtr<VertexDataDesc>& vertexDesc,
 			int usage = MU_STATIC, DrawOperationType drawOp = DOT_TRIANGLE_LIST, IndexType indexType = IT_32BIT);
 
 		/**
@@ -308,7 +308,7 @@ namespace bs
 		 * @param[in]	queueIdx			Device queue to perform the write operation on. See @ref queuesDoc.
 		 */
 		virtual void WriteData(const MeshData& data, bool discardEntireBuffer, bool updateBounds = true,
-			UINT32 queueIdx = 0);
+			u32 queueIdx = 0);
 
 		/**
 		 * Reads the current mesh data into the provided @p data parameter. Data buffer needs to be pre-allocated.
@@ -320,7 +320,7 @@ namespace bs
 		 *									device, no data will be read.
 		 * @param[in]	queueIdx			Device queue to perform the read operation on. See @ref queuesDoc.
 		 */
-		virtual void ReadData(MeshData& data, UINT32 deviceIdx = 0, UINT32 queueIdx = 0);
+		virtual void ReadData(MeshData& data, u32 deviceIdx = 0, u32 queueIdx = 0);
 
 		/**
 		 * Creates a new empty mesh. Created mesh will have no sub-meshes.
@@ -338,7 +338,7 @@ namespace bs
 		 *								go over the number of vertices limited by the size.
 		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
-		static SPtr<Mesh> Create(UINT32 numVertices, UINT32 numIndices, const SPtr<VertexDataDesc>& vertexDesc,
+		static SPtr<Mesh> Create(u32 numVertices, u32 numIndices, const SPtr<VertexDataDesc>& vertexDesc,
 			int usage = MU_STATIC, DrawOperationType drawOp = DOT_TRIANGLE_LIST, IndexType indexType = IT_32BIT,
 			GpuDeviceFlags deviceMask = GDF_DEFAULT);
 

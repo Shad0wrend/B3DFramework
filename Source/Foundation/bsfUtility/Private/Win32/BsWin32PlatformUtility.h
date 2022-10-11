@@ -22,7 +22,7 @@ namespace bs
 		 * Creates a new bitmap usable by various Win32 methods from the provided pixel data. Caller must ensure to call
 		 * DeleteObject() on the bitmap handle when finished.
 		 */
-		static HBITMAP CreateBitmap(const Color* pixels, UINT32 width, UINT32 height, bool premultiplyAlpha);
+		static HBITMAP CreateBitmap(const Color* pixels, u32 width, u32 height, bool premultiplyAlpha);
 	};
 
 	/** @} */

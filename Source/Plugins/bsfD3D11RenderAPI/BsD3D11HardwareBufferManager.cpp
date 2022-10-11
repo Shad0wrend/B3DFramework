@@ -31,7 +31,7 @@ namespace bs { namespace ct
 		return ret;
 	}
 
-	SPtr<GpuParamBlockBuffer> D3D11HardwareBufferManager::CreateGpuParamBlockBufferInternal(UINT32 size,
+	SPtr<GpuParamBlockBuffer> D3D11HardwareBufferManager::CreateGpuParamBlockBufferInternal(u32 size,
 		GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 	{
 		D3D11GpuParamBlockBuffer* paramBlockBuffer =

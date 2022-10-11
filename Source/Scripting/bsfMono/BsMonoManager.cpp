@@ -46,10 +46,10 @@ namespace bs
 			"debug"
 		};
 
-		UINT32 errorLevel = 0;
+		u32 errorLevel = 0;
 		if (logLevel != nullptr)
 		{
-			for (UINT32 i = 1; i < 7; i++)
+			for (u32 i = 1; i < 7; i++)
 			{
 				if (strcmp(monoErrorLevels[i], logLevel) == 0)
 				{

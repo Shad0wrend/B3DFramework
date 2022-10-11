@@ -124,7 +124,7 @@ namespace bs
 		Vector3Distribution dist = curve;
 		auto lookupTable = dist.toLookupTable(128);
 
-		for(UINT32 i = 0; i < 10; i++)
+		for(u32 i = 0; i < 10; i++)
 		{
 			const float* left;
 			const float* right;
@@ -139,7 +139,7 @@ namespace bs
 			Vector3 valueLookup = Vector3::lerp(lerp, *leftVec, *rightVec);
 			Vector3 valueCurve = curve.evaluate(t);
 
-			for(UINT32 j = 0; j < 3; j++)
+			for(u32 j = 0; j < 3; j++)
 				BS_TEST_ASSERT(Math::ApproxEquals(valueLookup[j], valueCurve[j], EPSILON));
 		}
 	}

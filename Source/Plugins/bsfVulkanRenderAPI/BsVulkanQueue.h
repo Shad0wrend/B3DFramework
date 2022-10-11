@@ -14,7 +14,7 @@ namespace bs { namespace ct
 	class VulkanQueue
 	{
 	public:
-		VulkanQueue(VulkanDevice& device, VkQueue queue, GpuQueueType type, UINT32 index);
+		VulkanQueue(VulkanDevice& device, VkQueue queue, GpuQueueType type, u32 index);
 
 		/** Returns the internal handle to the Vulkan queue object. */
 		VkQueue GetHandle() const { return mQueue; }
@@ -26,7 +26,7 @@ namespace bs { namespace ct
 		GpuQueueType GetType() const { return mType; }
 
 		/** Returns the unique index of the queue, for its type. */
-		UINT32 GetIndex() const { return mIndex; }
+		u32 GetIndex() const { return mIndex; }
 
 		/**
 		 * Checks if anything is currently executing on this queue.
@@ -36,14 +36,14 @@ namespace bs { namespace ct
 		bool IsExecuting() const;
 
 		/** Submits the provided command buffer on the queue. */
-		void Submit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount);
+		void Submit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, u32 semaphoresCount);
 
 		/**
 		 * Stores information about a submit internally, but doesn't actually execute it. The intended use is to queue
 		 * multiple submits and execute them all at once using submitQueued(), ensuring better performance than queuing them
 		 * all individually.
 		 */
-		void QueueSubmit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount);
+		void QueueSubmit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, u32 semaphoresCount);
 
 		/** Submits all previously queued commands buffers, as recorded by queueSubmit(). */
 		void SubmitQueued();
@@ -56,7 +56,7 @@ namespace bs { namespace ct
 		 * @param[in]	semaphoresCount		Number of semaphores in the @p semaphores array.
 		 * @return							Return code of the present operation.
 		 */
-		VkResult Present(VulkanSwapChain* swapChain, VulkanSemaphore** waitSemaphores, UINT32 semaphoresCount);
+		VkResult Present(VulkanSwapChain* swapChain, VulkanSemaphore** waitSemaphores, u32 semaphoresCount);
 
 		/** Blocks the calling thread until all operations on the queue finish. */
 		void WaitIdle() const;
@@ -79,8 +79,8 @@ namespace bs { namespace ct
 		 * Generates a submit-info structure that can be used for submitting the command buffer to the queue, but doesn't
 		 * perform the actual submit.
 		 */
-		void GetSubmitInfo(VkCommandBuffer* cmdBuffer, VkSemaphore* signalSemaphores, UINT32 numSignalSemaphores,
-						   VkSemaphore* waitSemaphores, UINT32 numWaitSemaphores, VkSubmitInfo& submitInfo);
+		void GetSubmitInfo(VkCommandBuffer* cmdBuffer, VkSemaphore* signalSemaphores, u32 numSignalSemaphores,
+						   VkSemaphore* waitSemaphores, u32 numWaitSemaphores, VkSubmitInfo& submitInfo);
 
 		/**
 		 * Prepares a list of semaphores that can be provided to submit or present calls. *
@@ -90,26 +90,26 @@ namespace bs { namespace ct
 		 * @param[in, out]	semaphoresCount	Number of semaphores in @p inSemaphores when calling. When method returns this
 		 *									will contain number of semaphores in @p outSemaphores.
 		 */
-		void PrepareSemaphores(VulkanSemaphore** inSemaphores, VkSemaphore* outSemaphores, UINT32& semaphoresCount);
+		void PrepareSemaphores(VulkanSemaphore** inSemaphores, VkSemaphore* outSemaphores, u32& semaphoresCount);
 
 		/** Information about a single submitted command buffer. */
 		struct SubmitInfo
 		{
-			SubmitInfo(VulkanCmdBuffer* cmdBuffer, UINT32 submitIdx, UINT32 numSemaphores, UINT32 numCommandBuffers)
+			SubmitInfo(VulkanCmdBuffer* cmdBuffer, u32 submitIdx, u32 numSemaphores, u32 numCommandBuffers)
 				: CmdBuffer(cmdBuffer), SubmitIdx(submitIdx), NumSemaphores(numSemaphores)
 				, NumCommandBuffers(numCommandBuffers)
 			{ }
 
 			VulkanCmdBuffer* CmdBuffer;
-			UINT32 SubmitIdx;
-			UINT32 NumSemaphores;
-			UINT32 NumCommandBuffers;
+			u32 SubmitIdx;
+			u32 NumSemaphores;
+			u32 NumCommandBuffers;
 		};
 
 		VulkanDevice& mDevice;
 		VkQueue mQueue;
 		GpuQueueType mType;
-		UINT32 mIndex;
+		u32 mIndex;
 		VkPipelineStageFlags mSubmitDstWaitMask[BS_MAX_UNIQUE_QUEUES];
 
 		Vector<SubmitInfo> mQueuedBuffers;
@@ -120,7 +120,7 @@ namespace bs { namespace ct
 		Queue<VulkanSemaphore*> mActiveSemaphores;
 		VulkanCmdBuffer* mLastCommandBuffer = nullptr;
 		bool mLastCBSemaphoreUsed = false;
-		UINT32 mNextSubmitIdx = 1;
+		u32 mNextSubmitIdx = 1;
 
 		Vector<VkSemaphore> mSemaphoresTemp;
 	};

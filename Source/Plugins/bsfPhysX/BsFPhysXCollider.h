@@ -57,10 +57,10 @@ namespace bs
 		void SetMaterial(const HPhysicsMaterial& material) override;
 
 		/** @copydoc FCollider::getLayer */
-		UINT64 GetLayer() const override;
+		u64 GetLayer() const override;
 
 		/** @copydoc FCollider::setLayer */
-		void SetLayer(UINT64 layer) override;
+		void SetLayer(u64 layer) override;
 
 		/** @copydoc FCollider::getCollisionReportMode */
 		CollisionReportMode GetCollisionReportMode() const override;
@@ -88,7 +88,7 @@ namespace bs
 		physx::PxRigidStatic* mStaticBody = nullptr;
 		bool mIsTrigger = false;
 		bool mIsStatic = true;
-		UINT64 mLayer = 1;
+		u64 mLayer = 1;
 		bool mCCD = false;
 		CollisionReportMode mCollisionReportMode = CollisionReportMode::None;
 	};

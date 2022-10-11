@@ -192,7 +192,7 @@ namespace bs { namespace ct
 		mScene->RegisterCamera(camera);
 	}
 
-	void RenderBeast::NotifyCameraUpdated(Camera* camera, UINT32 updateFlag)
+	void RenderBeast::NotifyCameraUpdated(Camera* camera, u32 updateFlag)
 	{
 		mScene->UpdateCamera(camera, updateFlag);
 	}
@@ -400,13 +400,13 @@ namespace bs { namespace ct
 		UpdateReflProbeArray();
 
 		// Update per-frame data for all renderable objects
-		for (UINT32 i = 0; i < sceneInfo.Renderables.size(); i++)
+		for (u32 i = 0; i < sceneInfo.Renderables.size(); i++)
 			mScene->PrepareRenderable(i, frameInfo);
 
-		for (UINT32 i = 0; i < sceneInfo.ParticleSystems.size(); i++)
+		for (u32 i = 0; i < sceneInfo.ParticleSystems.size(); i++)
 			mScene->PrepareParticleSystem(i, frameInfo);
 
-		for (UINT32 i = 0; i < sceneInfo.Decals.size(); i++)
+		for (u32 i = 0; i < sceneInfo.Decals.size(); i++)
 			mScene->PrepareDecal(i, frameInfo);
 
 		// Gather all views
@@ -416,15 +416,15 @@ namespace bs { namespace ct
 			SPtr<RenderTarget> target = rtInfo.Target;
 			const Vector<Camera*>& cameras = rtInfo.Cameras;
 
-			UINT32 numCameras = (UINT32)cameras.size();
-			for (UINT32 i = 0; i < numCameras; i++)
+			u32 numCameras = (u32)cameras.size();
+			for (u32 i = 0; i < numCameras; i++)
 			{
-				UINT32 viewIdx = sceneInfo.CameraToView.at(cameras[i]);
+				u32 viewIdx = sceneInfo.CameraToView.at(cameras[i]);
 				RendererView* viewInfo = sceneInfo.Views[viewIdx];
 				views.push_back(viewInfo);
 			}
 
-			mMainViewGroup->SetViews(views.data(), (UINT32)views.size());
+			mMainViewGroup->SetViews(views.data(), (u32)views.size());
 			PROFILE_CALL(mMainViewGroup->DetermineVisibility(sceneInfo), "Determine visibility")
 
 			// Render everything
@@ -444,8 +444,8 @@ namespace bs { namespace ct
 	bool RenderBeast::RenderViews(RendererViewGroup& viewGroup, const FrameInfo& frameInfo)
 	{
 		bool needs3DRender = false;
-		UINT32 numViews = viewGroup.GetNumViews();
-		for (UINT32 i = 0; i < numViews; i++)
+		u32 numViews = viewGroup.GetNumViews();
+		for (u32 i = 0; i < numViews; i++)
 		{
 			RendererView* view = viewGroup.GetView(i);
 
@@ -466,8 +466,8 @@ namespace bs { namespace ct
 			shadowRenderer.RenderShadowMaps(*mScene, viewGroup, frameInfo);
 
 			// Update various buffers required by each renderable
-			UINT32 numRenderables = (UINT32)sceneInfo.Renderables.size();
-			for (UINT32 i = 0; i < numRenderables; i++)
+			u32 numRenderables = (u32)sceneInfo.Renderables.size();
+			for (u32 i = 0; i < numRenderables; i++)
 			{
 				if (!visibility.Renderables[i])
 					continue;
@@ -477,12 +477,12 @@ namespace bs { namespace ct
 		}
 
 		bool anythingDrawn = false;
-		for (UINT32 i = 0; i < numViews; i++)
+		for (u32 i = 0; i < numViews; i++)
 		{
 			RendererView* view = viewGroup.GetView(i);
 			view->UpdateAsyncOperations();
 			
-			auto viewId = (UINT64)view;
+			auto viewId = (u64)view;
 			const RendererViewTargetData& viewTarget = view->GetProperties().Target;
 			String title = StringUtil::Format("({0} x {1})", viewTarget.TargetWidth, viewTarget.TargetHeight);
 			gProfilerGPU().BeginView(viewId, ProfilerString(title.data(), title.size()));
@@ -585,7 +585,7 @@ namespace bs { namespace ct
 		SPtr<Viewport> viewport = camera->GetViewport();
 
 		ClearFlags clearFlags = viewport->GetClearFlags();
-		UINT32 clearBuffers = 0;
+		u32 clearBuffers = 0;
 		if (clearFlags.IsSet(ClearFlagBits::Color))
 			clearBuffers |= FBT_COLOR;
 
@@ -646,11 +646,11 @@ namespace bs { namespace ct
 	void RenderBeast::UpdateReflProbeArray()
 	{
 		SceneInfo& sceneInfo = mScene->GetSceneInfoInternal();
-		UINT32 numProbes = (UINT32)sceneInfo.ReflProbes.size();
+		u32 numProbes = (u32)sceneInfo.ReflProbes.size();
 
 		bs_frame_mark();
 		{		
-			UINT32 currentCubeArraySize = 0;
+			u32 currentCubeArraySize = 0;
 
 			if(sceneInfo.ReflProbeCubemapsTex != nullptr)
 				currentCubeArraySize = sceneInfo.ReflProbeCubemapsTex->GetProperties().GetNumArraySlices();
@@ -673,8 +673,8 @@ namespace bs { namespace ct
 
 			auto& cubemapArrayProps = sceneInfo.ReflProbeCubemapsTex->GetProperties();
 
-			FrameQueue<UINT32> emptySlots;
-			for (UINT32 i = 0; i < numProbes; i++)
+			FrameQueue<u32> emptySlots;
+			for (u32 i = 0; i < numProbes; i++)
 			{
 				const RendererReflectionProbe& probeInfo = sceneInfo.ReflProbes[i];
 
@@ -706,9 +706,9 @@ namespace bs { namespace ct
 					}
 					else
 					{
-						for(UINT32 face = 0; face < 6; face++)
+						for(u32 face = 0; face < 6; face++)
 						{
-							for(UINT32 mip = 0; mip <= srcProps.GetNumMipmaps(); mip++)
+							for(u32 mip = 0; mip <= srcProps.GetNumMipmaps(); mip++)
 							{
 								TEXTURE_COPY_DESC copyDesc;
 								copyDesc.SrcFace = face;
@@ -786,7 +786,7 @@ namespace bs { namespace ct
 		// flip is required due to the fact how cubemap faces are defined. Another option would be to change the view
 		// orientation matrix, but that also requires a culling mode flip which is inconvenient to do globally.
 		RendererView views[6];
-		for(UINT32 i = 0; i < 6; i++)
+		for(u32 i = 0; i < 6; i++)
 		{
 			// Calculate view matrix
 			Vector3 forward;
@@ -831,7 +831,7 @@ namespace bs { namespace ct
 			Matrix4 worldMatrix = viewDesc.ViewTransform.Transpose();
 
 			Vector<Plane> worldPlanes(frustumPlanes.size());
-			UINT32 j = 0;
+			u32 j = 0;
 			for (auto& plane : frustumPlanes)
 			{
 				worldPlanes[j] = worldMatrix.MultiplyAffine(plane);

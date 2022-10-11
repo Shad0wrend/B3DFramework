@@ -30,7 +30,7 @@ namespace bs
 		float AnimationStartTime;
 		SPtr<SpriteMaterialExtraInfo> AdditionalData;
 		bool IsLine;
-		UINT32 BufferIdx;
+		u32 BufferIdx;
 	};
 
 	/** Information about a GUI element that is displaying a render target. */
@@ -42,18 +42,18 @@ namespace bs
 		{ }
 		
 		SPtr<ct::RenderTarget> Target;
-		UINT64 LastUpdateCount = (UINT64)-1;
+		u64 LastUpdateCount = (u64)-1;
 	};
 
 	/** Data required for rendering all the batches in a single GUI draw group. */
 	struct GUIDrawGroupRenderData
 	{
-		INT32 Id = 0;
+		i32 Id = 0;
 		SPtr<ct::RenderTexture> Destination;
 		Rect2I Bounds;
 		SubMesh SubMesh;
 		bool RequiresRedraw = true;
-		UINT32 BufferIdx = 0;
+		u32 BufferIdx = 0;
 
 		Vector<GUIMeshRenderData> CachedElements;
 		Vector<GUIMeshRenderData> NonCachedElements;
@@ -107,27 +107,27 @@ namespace bs
 		struct GUIGroupRenderElement
 		{
 			GUIGroupRenderElement() = default;
-			GUIGroupRenderElement(GUIElement* element, UINT32 renderElementIdx)
+			GUIGroupRenderElement(GUIElement* element, u32 renderElementIdx)
 				:Element(element), RenderElementIdx(renderElementIdx)
 			{ }
 
 			GUIElement* Element = nullptr;
-			UINT32 RenderElementIdx = 0;
+			u32 RenderElementIdx = 0;
 		};
 
 		/** Contains information about all draw groups a GUI element is part of. */
 		struct GUIGroupElement
 		{
 			GUIElement* Element = nullptr;
-			SmallVector<INT32, 4> Groups;
+			SmallVector<i32, 4> Groups;
 			Rect2I Bounds;
 		};
 		
 		/** Data required for rendering a single GUI mesh. */
 		struct GUIMesh
 		{
-			UINT32 IndexOffset = 0;
-			UINT32 IndexCount = 0;
+			u32 IndexOffset = 0;
+			u32 IndexCount = 0;
 			SpriteMaterial* Material;
 			SpriteMaterialInfo MatInfo;
 			bool IsLine;
@@ -136,9 +136,9 @@ namespace bs
 		/** Holds information about a set of GUI elements that can be drawn together. */
 		struct GUIDrawGroup
 		{
-			INT32 Id = 0;
-			UINT32 DepthRange = 0;
-			UINT32 MinDepth = 0;
+			i32 Id = 0;
+			u32 DepthRange = 0;
+			u32 MinDepth = 0;
 			bool DirtyBounds = true;
 			bool NeedsRedraw = true;
 			bool DirtyTexture = true;
@@ -150,7 +150,7 @@ namespace bs
 		};
 
 		/** Splits the provided draw group at the specified depth. Returns the second half of the group. */
-		GUIDrawGroup& Split(UINT32 groupIdx, UINT32 depth);
+		GUIDrawGroup& Split(u32 groupIdx, u32 depth);
 
 		/** Rebuilds the GUI element meshes. */
 		void RebuildMeshes();
@@ -159,19 +159,19 @@ namespace bs
 		 * Adds a specific render element of a GUI element to the specified draw group. Caller is responsible for
 		 * ensuring the element is a valid match for the group.
 		 */
-		void Add(GUIGroupElement& element, UINT32 renderElementIdx, UINT32 groupIdx);
+		void Add(GUIGroupElement& element, u32 renderElementIdx, u32 groupIdx);
 
 		/** Adds a specific render element of a GUI element and adds it to a suitable draw group. */
-		void Add(GUIGroupElement& element, UINT32 renderElementIdx);
+		void Add(GUIGroupElement& element, u32 renderElementIdx);
 
 		/**
 		 * Removes a specific render element in the provided GUI element from the provided draw group. Caller is
 		 * responsible for ensuring the provided draw group is the element's current draw group.
 		 */
-		void Remove(GUIGroupElement& element, UINT32 renderElementIdx, UINT32 groupIdx);
+		void Remove(GUIGroupElement& element, u32 renderElementIdx, u32 groupIdx);
 
 		/** Removes a specific render element in the provided GUI element from their current draw group. */
-		void Remove(GUIGroupElement& element, UINT32 renderElementIdx);
+		void Remove(GUIGroupElement& element, u32 renderElementIdx);
 
 		/** Builds a structure with information required for rendering the provided mesh. */
 		static GUIMeshRenderData GetRenderData(const GUIMesh& guiMesh);
@@ -184,13 +184,13 @@ namespace bs
 
 		Vector<GUIDrawGroup> mDrawGroups;
 		UnorderedMap<GUIElement*, GUIGroupElement> mElements;
-		UnorderedMap<GUIElement*, UINT32> mDirtyElements;
+		UnorderedMap<GUIElement*, u32> mDirtyElements;
 		bool mGroupsCoreDirty = true;
 		GUIWidget* mWidget;
 		
 		SPtr<Mesh> mTriangleMesh;
 		SPtr<Mesh> mLineMesh;
-		mutable INT32 mNextDrawGroupId = 0;
+		mutable i32 mNextDrawGroupId = 0;
 	};
 	
 	/** @} */
@@ -226,13 +226,13 @@ namespace bs
 		 * Returns the depth to render the widget at. If two widgets overlap the widget with the lower depth will be
 		 * rendered in front.
 		 */
-		UINT8 GetDepth() const { return mDepth; }
+		u8 GetDepth() const { return mDepth; }
 
 		/**
 		 * Changes the depth to render the widget at. If two widgets overlap the widget with the lower depth will be
 		 * rendered in front.
 		 */
-		void SetDepth(UINT8 depth);
+		void SetDepth(u8 depth);
 
 		/**
 		 * Checks are the specified coordinates within widget bounds. Coordinates should be relative to the parent window.
@@ -358,20 +358,20 @@ namespace bs
 		struct GUIGroupElement
 		{
 			GUIGroupElement() = default;
-			GUIGroupElement(GUIElement* element, UINT32 renderElement)
+			GUIGroupElement(GUIElement* element, u32 renderElement)
 				:Element(element), RenderElement(renderElement)
 			{ }
 
 			GUIElement* Element = nullptr;
-			UINT32 RenderElement = 0;
+			u32 RenderElement = 0;
 		};
 
 		/** Holds information about a set of GUI elements that can be drawn together. */
 		struct GUIDrawGroup
 		{
-			UINT32 Id = 0;
-			UINT32 DepthRange = 0;
-			UINT32 MinDepth = 0;
+			u32 Id = 0;
+			u32 DepthRange = 0;
+			u32 MinDepth = 0;
 			Rect2I Bounds;
 			Vector<GUIGroupElement> CachedElements;
 			Vector<GUIGroupElement> NonCachedElements;
@@ -387,7 +387,7 @@ namespace bs
 		Vector<GUIElement*> mElements;
 		GUIDrawGroups mDrawGroups;
 		GUIPanel* mPanel = nullptr;
-		UINT8 mDepth = 128;
+		u8 mDepth = 128;
 		bool mIsActive = true;
 		SPtr<GUINavGroup> mDefaultNavGroup;
 
@@ -399,7 +399,7 @@ namespace bs
 		Set<GUIElement*> mDirtyContents;
 		Set<GUIElement*> mDirtyContentsTemp;
 
-		mutable UINT64 mCachedRTId = 0;
+		mutable u64 mCachedRTId = 0;
 		mutable bool mWidgetIsDirty = false;
 		mutable Rect2I mBounds;
 

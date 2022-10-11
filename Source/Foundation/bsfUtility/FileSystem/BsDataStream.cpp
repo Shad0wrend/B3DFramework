@@ -7,34 +7,34 @@
 
 namespace bs
 {
-	const UINT32 DataStream::StreamTempSize = 128;
+	const u32 DataStream::StreamTempSize = 128;
 
 	/** Checks does the provided buffer has an UTF32 byte order mark in little endian order. */
-	bool isUTF32LE(const UINT8* buffer)
+	bool isUTF32LE(const u8* buffer)
 	{
 		return buffer[0] == 0xFF && buffer[1] == 0xFE && buffer[2] == 0x00 && buffer[3] == 0x00;
 	}
 
 	/** Checks does the provided buffer has an UTF32 byte order mark in big endian order. */
-	bool isUTF32BE(const UINT8* buffer)
+	bool isUTF32BE(const u8* buffer)
 	{
 		return buffer[0] == 0x00 && buffer[1] == 0x00 && buffer[2] == 0xFE && buffer[3] == 0xFF;
 	}
 
 	/** Checks does the provided buffer has an UTF16 byte order mark in little endian order. */
-	bool isUTF16LE(const UINT8* buffer)
+	bool isUTF16LE(const u8* buffer)
 	{
 		return buffer[0] == 0xFF && buffer[1] == 0xFE;
 	}
 
 	/**	Checks does the provided buffer has an UTF16 byte order mark in big endian order. */
-	bool isUTF16BE(const UINT8* buffer)
+	bool isUTF16BE(const u8* buffer)
 	{
 		return buffer[0] == 0xFE && buffer[1] == 0xFF;
 	}
 
 	/**	Checks does the provided buffer has an UTF8 byte order mark. */
-	bool isUTF8(const UINT8* buffer)
+	bool isUTF8(const u8* buffer)
 	{
 		return (buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF);
 	}
@@ -51,7 +51,7 @@ namespace bs
 		if (encoding == StringEncoding::UTF16)
 		{
 			// Write BOM
-			UINT8 bom[2] = { 0xFF, 0xFE };
+			u8 bom[2] = { 0xFF, 0xFE };
 			Write(bom, sizeof(bom));
 
 			U16String u16string = UTF8::ToUtF16(string);
@@ -60,7 +60,7 @@ namespace bs
 		else
 		{
 			// Write BOM
-			UINT8 bom[3] = { 0xEF, 0xBB, 0xBF };
+			u8 bom[3] = { 0xEF, 0xBB, 0xBF };
 			Write(bom, sizeof(bom));
 
 			Write(string.data(), string.length());
@@ -72,7 +72,7 @@ namespace bs
 		if (encoding == StringEncoding::UTF16)
 		{
 			// Write BOM
-			UINT8 bom[2] = { 0xFF, 0xFE };
+			u8 bom[2] = { 0xFF, 0xFE };
 			Write(bom, sizeof(bom));
 
 			String u8string = UTF8::FromWide(string);
@@ -82,7 +82,7 @@ namespace bs
 		else
 		{
 			// Write BOM
-			UINT8 bom[3] = { 0xEF, 0xBB, 0xBF };
+			u8 bom[3] = { 0xEF, 0xBB, 0xBF };
 			Write(bom, sizeof(bom));
 
 			String u8string = UTF8::FromWide(string);
@@ -96,7 +96,7 @@ namespace bs
 		Seek(0);
 
 		// Try reading header
-		UINT8 headerBytes[4];
+		u8 headerBytes[4];
 		size_t numHeaderBytes = Read(headerBytes, 4);
 
 		size_t dataOffset = 0;
@@ -133,7 +133,7 @@ namespace bs
 		// Read the entire buffer - ideally in one read, but if the size of the buffer is unknown, do multiple fixed size
 		// reads.
 		size_t bufSize = (mSize > 0 ? mSize : 4096);
-		auto tempBuffer = bs_stack_alloc<std::stringstream::char_type>((UINT32)bufSize);
+		auto tempBuffer = bs_stack_alloc<std::stringstream::char_type>((u32)bufSize);
 
 		std::stringstream result;
 		while (!Eof())
@@ -154,13 +154,13 @@ namespace bs
 			return String(string.data(), string.length());
 		case 2: // UTF-16
 			{
-			UINT32 numElems = (UINT32)string.length() / 2;
+			u32 numElems = (u32)string.length() / 2;
 
 			return UTF8::FromUtF16(U16String((char16_t*)string.data(), numElems));
 			}
 		case 4: // UTF-32
 			{
-			UINT32 numElems = (UINT32)string.length() / 4;
+			u32 numElems = (u32)string.length() / 4;
 
 			return UTF8::FromUtF32(U32String((char32_t*)string.data(), numElems));
 			}
@@ -368,7 +368,7 @@ namespace bs
 		if (count <= 1)
 			return;
 
-		UINT32 alignOffset = (count - (Tell() & (count - 1))) & (count - 1);
+		u32 alignOffset = (count - (Tell() & (count - 1))) & (count - 1);
 		Skip(alignOffset);
 	}
 

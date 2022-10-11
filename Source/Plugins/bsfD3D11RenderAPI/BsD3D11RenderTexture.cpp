@@ -13,7 +13,7 @@ namespace bs
 
 	namespace ct
 	{
-	D3D11RenderTexture::D3D11RenderTexture(const RENDER_TEXTURE_DESC& desc, UINT32 deviceIdx)
+	D3D11RenderTexture::D3D11RenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 		:RenderTexture(desc, deviceIdx), mProperties(desc, false)
 	{
 		assert(deviceIdx == 0 && "Multiple GPUs not supported natively on DirectX 11.");
@@ -24,7 +24,7 @@ namespace bs
 		if(name == "RTV")
 		{
 			ID3D11RenderTargetView** rtvs = (ID3D11RenderTargetView**)data;
-			for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; ++i)
+			for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; ++i)
 			{
 				if (mColorSurfaces[i] == nullptr)
 					continue;

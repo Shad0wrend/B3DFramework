@@ -14,8 +14,8 @@ namespace bs
 	size_t ManagedSerializableObject::Hash::operator()(const ManagedSerializableFieldKey& x) const
 	{
 		size_t seed = 0;
-		bs_hash_combine(seed, (UINT32)x.MFieldId);
-		bs_hash_combine(seed, (UINT32)x.MTypeId);
+		bs_hash_combine(seed, (u32)x.MFieldId);
+		bs_hash_combine(seed, (u32)x.MTypeId);
 
 		return seed;
 	}
@@ -156,7 +156,7 @@ namespace bs
 			fieldEntry.second->Deserialize();
 
 		// Scan all fields and ensure the fields still exist
-		UINT32 i = 0;
+		u32 i = 0;
 		SPtr<ManagedSerializableObjectInfo> curType = mObjInfo;
 		while (curType != nullptr)
 		{
@@ -164,8 +164,8 @@ namespace bs
 			{
 				if (field.second->IsSerializable())
 				{
-					UINT32 fieldId = field.second->MFieldId;
-					UINT32 typeID = field.second->MParentTypeId;
+					u32 fieldId = field.second->MFieldId;
+					u32 typeID = field.second->MParentTypeId;
 
 					ManagedSerializableFieldKey key(typeID, fieldId);
 

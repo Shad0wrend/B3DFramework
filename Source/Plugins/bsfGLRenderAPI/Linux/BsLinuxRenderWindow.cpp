@@ -16,7 +16,7 @@
 
 namespace bs
 {
-	LinuxRenderWindow::LinuxRenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId, ct::LinuxGLSupport& glSupport)
+	LinuxRenderWindow::LinuxRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, ct::LinuxGLSupport& glSupport)
 		:RenderWindow(desc, windowId), mGLSupport(glSupport), mProperties(desc)
 	{ }
 
@@ -74,7 +74,7 @@ namespace bs
 
 	namespace ct
 	{
-	LinuxRenderWindow::LinuxRenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId, LinuxGLSupport& glsupport)
+	LinuxRenderWindow::LinuxRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, LinuxGLSupport& glsupport)
 			: RenderWindow(desc, windowId), mWindow(nullptr), mGLSupport(glsupport), mContext(nullptr), mProperties(desc)
 			, mSyncedProperties(desc), mIsChild(false), mShowOnSwap(false)
 	{ }
@@ -126,14 +126,14 @@ namespace bs
 
 		auto opt = mDesc.platformSpecific.find("parentWindowHandle");
 		if (opt != mDesc.platformSpecific.end())
-			windowDesc.parent = (::Window)parseUINT64(opt->second);
+			windowDesc.parent = (::Window)parseu64(opt->second);
 		else
 			windowDesc.parent = 0;
 
 		// TODO: add passing the XDisplay here as well. Right now the default display is assumed
 		opt = mDesc.platformSpecific.find("externalWindowHandle");
 		if (opt != mDesc.platformSpecific.end())
-			windowDesc.external = (::Window)parseUINT64(opt->second);
+			windowDesc.external = (::Window)parseu64(opt->second);
 		else
 			windowDesc.external = 0;
 
@@ -180,7 +180,7 @@ namespace bs
 		RenderWindow::Initialize();
 	}
 
-	void LinuxRenderWindow::setFullscreen(UINT32 width, UINT32 height, float refreshRate, UINT32 monitorIdx)
+	void LinuxRenderWindow::setFullscreen(u32 width, u32 height, float refreshRate, u32 monitorIdx)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -188,7 +188,7 @@ namespace bs
 		setFullscreen(videoMode);
 	}
 
-	void LinuxRenderWindow::setVideoMode(INT32 screen, RROutput output, RRMode mode)
+	void LinuxRenderWindow::setVideoMode(i32 screen, RROutput output, RRMode mode)
 	{
 		::Display* display = LinuxPlatform::getXDisplay();
 		::Window rootWindow = RootWindow(display, screen);
@@ -205,7 +205,7 @@ namespace bs
 		{
 			XRRFreeScreenResources(screenRes);
 
-			BS_LOG(Error, Platform, "XRR: Failed to retrieve output info for output: {0}", (UINT32)output);
+			BS_LOG(Error, Platform, "XRR: Failed to retrieve output info for output: {0}", (u32)output);
 			return;
 		}
 
@@ -215,7 +215,7 @@ namespace bs
 			XRRFreeScreenResources(screenRes);
 			XRRFreeOutputInfo(outputInfo);
 
-			BS_LOG(Error, Platform, "XRR: Failed to retrieve CRTC info for output: {0}", (UINT32)output);
+			BS_LOG(Error, Platform, "XRR: Failed to retrieve CRTC info for output: {0}", (u32)output);
 			return;
 		}
 
@@ -242,7 +242,7 @@ namespace bs
 		const LinuxVideoModeInfo& videoModeInfo =
 				static_cast<const LinuxVideoModeInfo&>(RenderAPI::Instance().getVideoModeInfo());
 
-		UINT32 outputIdx = mode.outputIdx;
+		u32 outputIdx = mode.outputIdx;
 		if(outputIdx >= videoModeInfo.getNumOutputs())
 		{
 			BS_LOG(Error, Platform, "Invalid output device index.");
@@ -252,7 +252,7 @@ namespace bs
 		const LinuxVideoOutputInfo& outputInfo =
 				static_cast<const LinuxVideoOutputInfo&>(videoModeInfo.getOutputInfo (outputIdx));
 
-		INT32 screen = outputInfo.GetScreenInternal();
+		i32 screen = outputInfo.GetScreenInternal();
 		RROutput outputID = outputInfo.GetOutputIDInternal();
 
 		RRMode modeID = 0;
@@ -281,7 +281,7 @@ namespace bs
 			{
 				XRRFreeScreenResources(screenRes);
 
-				BS_LOG(Error, Platform, "XRR: Failed to retrieve output info for output: {0}", (UINT32)outputID);
+				BS_LOG(Error, Platform, "XRR: Failed to retrieve output info for output: {0}", (u32)outputID);
 				return;
 			}
 
@@ -291,16 +291,16 @@ namespace bs
 				XRRFreeScreenResources(screenRes);
 				XRRFreeOutputInfo(outputInfo);
 
-				BS_LOG(Error, Platform, "XRR: Failed to retrieve CRTC info for output: {0}", (UINT32)outputID);
+				BS_LOG(Error, Platform, "XRR: Failed to retrieve CRTC info for output: {0}", (u32)outputID);
 				return;
 			}
 
 			bool foundMode = false;
-			for (INT32 i = 0; i < screenRes->nmode; i++)
+			for (i32 i = 0; i < screenRes->nmode; i++)
 			{
 				const XRRModeInfo& modeInfo = screenRes->modes[i];
 
-				UINT32 width, height;
+				u32 width, height;
 
 				if (crtcInfo->rotation & (XRANDR_ROTATION_LEFT | XRANDR_ROTATION_RIGHT))
 				{
@@ -369,7 +369,7 @@ namespace bs
 		bs::RenderWindowManager::Instance().notifyMovedOrResized(this);
 	}
 
-	void LinuxRenderWindow::setWindowed(UINT32 width, UINT32 height)
+	void LinuxRenderWindow::setWindowed(u32 width, u32 height)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -382,7 +382,7 @@ namespace bs
 		const LinuxVideoModeInfo& videoModeInfo =
 				static_cast<const LinuxVideoModeInfo&>(RenderAPI::Instance().getVideoModeInfo());
 
-		UINT32 outputIdx = 0; // 0 is always primary
+		u32 outputIdx = 0; // 0 is always primary
 		if(outputIdx >= videoModeInfo.getNumOutputs())
 		{
 			BS_LOG(Error, Platform, "Invalid output device index.");
@@ -419,7 +419,7 @@ namespace bs
 		bs::RenderWindowManager::Instance().notifyMovedOrResized(this);
 	}
 
-	void LinuxRenderWindow::move(INT32 left, INT32 top)
+	void LinuxRenderWindow::move(i32 left, i32 top)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -443,7 +443,7 @@ namespace bs
 		}
 	}
 
-	void LinuxRenderWindow::resize(UINT32 width, UINT32 height)
+	void LinuxRenderWindow::resize(u32 width, u32 height)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -494,7 +494,7 @@ namespace bs
 		LinuxPlatform::unlockX();
 	}
 
-	void LinuxRenderWindow::setVSync(bool enabled, UINT32 interval)
+	void LinuxRenderWindow::setVSync(bool enabled, u32 interval)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -524,7 +524,7 @@ namespace bs
 		bs::RenderWindowManager::Instance().notifySyncDataDirty(this);
 	}
 
-	void LinuxRenderWindow::swapBuffers(UINT32 syncMask)
+	void LinuxRenderWindow::swapBuffers(u32 syncMask)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -575,8 +575,8 @@ namespace bs
 		{
 			size_t rowSpan = dst.GetWidth() * PixelUtil::getNumElemBytes(dst.GetFormat());
 			size_t height = dst.GetHeight();
-			UINT8* tmpData = (UINT8*)bs_alloc((UINT32)(rowSpan * height));
-			UINT8* srcRow = (UINT8 *)dst.GetData(), *tmpRow = tmpData + (height - 1) * rowSpan;
+			u8* tmpData = (u8*)bs_alloc((u32)(rowSpan * height));
+			u8* srcRow = (u8 *)dst.GetData(), *tmpRow = tmpData + (height - 1) * rowSpan;
 
 			while (tmpRow >= tmpData)
 			{

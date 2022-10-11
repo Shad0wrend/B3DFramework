@@ -28,7 +28,7 @@ namespace bs
 		 * @param[in]	numChannels		Determines the number of audio channels. Channel data will be output interleaved
 		 *								in the output buffer.
 		 */
-		bool Open(std::function<void(UINT8*, UINT32)> writeCallback, UINT32 sampleRate, UINT32 bitDepth, UINT32 numChannels);
+		bool Open(std::function<void(u8*, u32)> writeCallback, u32 sampleRate, u32 bitDepth, u32 numChannels);
 
 		/**
 		 * Writes a new set of samples and converts them to Ogg Vorbis.
@@ -37,7 +37,7 @@ namespace bs
 		 *							Each sample is assumed to be the bit depth that was provided to the open() method.
 		 * @param[in]	numSamples	Number of samples to encode.
 		 */
-		void Write(UINT8* samples, UINT32 numSamples);
+		void Write(u8* samples, u32 numSamples);
 
 		/**
 		 * Flushes the last of the data into the write buffer (triggers the write callback). This is called automatically
@@ -59,18 +59,18 @@ namespace bs
 		 * @param[out]	size		Number of bytes written to the output buffer.
 		 * @return					Memory data stream containing the encoded samples.
 		 */
-		static SPtr<MemoryDataStream> PCMToOggVorbis(UINT8* samples, const AudioDataInfo& info, UINT32& size);
+		static SPtr<MemoryDataStream> PCMToOggVorbis(u8* samples, const AudioDataInfo& info, u32& size);
 	private:
 		/** Writes Vorbis blocks into Ogg packets. */
 		void WriteBlocks();
 
-		static const UINT32 BUFFER_SIZE = 4096;
+		static const u32 BUFFER_SIZE = 4096;
 
-		std::function<void(UINT8*, UINT32)> mWriteCallback;
-		UINT8 mBuffer[BUFFER_SIZE];
-		UINT32 mBufferOffset = 0;
-		UINT32 mNumChannels = 0;
-		UINT32 mBitDepth = 0;
+		std::function<void(u8*, u32)> mWriteCallback;
+		u8 mBuffer[BUFFER_SIZE];
+		u32 mBufferOffset = 0;
+		u32 mNumChannels = 0;
+		u32 mBitDepth = 0;
 		bool mClosed = true;
 
 		ogg_stream_state mOggState;

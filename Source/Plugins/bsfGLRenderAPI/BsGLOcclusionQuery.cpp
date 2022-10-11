@@ -7,7 +7,7 @@
 
 namespace bs { namespace ct
 {
-	GLOcclusionQuery::GLOcclusionQuery(bool binary, UINT32 deviceIdx)
+	GLOcclusionQuery::GLOcclusionQuery(bool binary, u32 deviceIdx)
 		:OcclusionQuery(binary)
 	{
 		assert(deviceIdx == 0 && "Multiple GPUs not supported natively on OpenGL.");
@@ -79,7 +79,7 @@ namespace bs { namespace ct
 		return done == GL_TRUE;
 	}
 
-	UINT32 GLOcclusionQuery::GetNumSamples()
+	u32 GLOcclusionQuery::GetNumSamples()
 	{
 		if (!mFinalized && IsReady())
 		{
@@ -107,7 +107,7 @@ namespace bs { namespace ct
 			glGetQueryObjectuiv(mQueryObj, GL_QUERY_RESULT, &numSamples);
 			BS_CHECK_GL_ERROR();
 
-			mNumSamples = (UINT32)numSamples;
+			mNumSamples = (u32)numSamples;
 		}
 	}
 }}

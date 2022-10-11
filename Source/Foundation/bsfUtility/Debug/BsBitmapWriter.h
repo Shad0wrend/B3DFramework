@@ -24,7 +24,7 @@ namespace bs
 		 * @param[in]	height		  	The height of the image in pixels.
 		 * @param[in]	bytesPerPixel 	Number of bytes per pixel. 3 for RGB images and 4 for RGBA images. Other values not supported.
 		 */
-		static void RawPixelsToBmp(const UINT8* input, UINT8* output, UINT32 width, UINT32 height, UINT32 bytesPerPixel);
+		static void RawPixelsToBmp(const u8* input, u8* output, u32 width, u32 height, u32 bytesPerPixel);
 
 		/**
 		 * Returns the size of the BMP output buffer that needs to be allocated before calling rawPixelsToBMP().
@@ -35,7 +35,7 @@ namespace bs
 		 *
 		 * @return	Size of the BMP output buffer needed to write a BMP of the specified size & bpp.
 		 */
-		static UINT32 GetBmpSize(UINT32 width, UINT32 height, UINT32 bytesPerPixel);
+		static u32 GetBmpSize(u32 width, u32 height, u32 bytesPerPixel);
 	};
 
 	/** @} */

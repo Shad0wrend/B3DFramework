@@ -6,16 +6,16 @@
 
 namespace bs
 {
-	void VertexDataDesc::AddVertElem(VertexElementType type, VertexElementSemantic semantic, UINT32 semanticIdx,
-		UINT32 streamIdx, UINT32 instanceStepRate)
+	void VertexDataDesc::AddVertElem(VertexElementType type, VertexElementSemantic semantic, u32 semanticIdx,
+		u32 streamIdx, u32 instanceStepRate)
 	{
 		ClearIfItExists(type, semantic, semanticIdx, streamIdx);
 
 		VertexElement newElement(streamIdx, 0, type, semantic, semanticIdx, instanceStepRate);
 
 		// Insert it so it is sorted by stream
-		UINT32 insertToIndex = (UINT32)mVertexElements.size();
-		UINT32 idx = 0;
+		u32 insertToIndex = (u32)mVertexElements.size();
+		u32 idx = 0;
 		for(auto& elem : mVertexElements)
 		{
 			if(elem.GetStreamIdx() > streamIdx)
@@ -32,17 +32,17 @@ namespace bs
 
 	Vector<VertexElement> VertexDataDesc::CreateElements() const
 	{
-		UINT32 maxStreamIdx = GetMaxStreamIdx();
+		u32 maxStreamIdx = GetMaxStreamIdx();
 
-		UINT32 numStreams = maxStreamIdx + 1;
-		UINT32* streamOffsets = bs_newN<UINT32>(numStreams);
-		for (UINT32 i = 0; i < numStreams; i++)
+		u32 numStreams = maxStreamIdx + 1;
+		u32* streamOffsets = bs_newN<u32>(numStreams);
+		for (u32 i = 0; i < numStreams; i++)
 			streamOffsets[i] = 0;
 
 		Vector<VertexElement> declarationElements;
 		for (auto& vertElem : mVertexElements)
 		{
-			UINT32 streamIdx = vertElem.GetStreamIdx();
+			u32 streamIdx = vertElem.GetStreamIdx();
 
 			declarationElements.push_back(VertexElement(streamIdx, streamOffsets[streamIdx], vertElem.GetType(),
 				vertElem.GetSemantic(), vertElem.GetSemanticIdx(), vertElem.GetInstanceStepRate()));
@@ -55,22 +55,22 @@ namespace bs
 		return declarationElements;
 	}
 
-	UINT32 VertexDataDesc::GetMaxStreamIdx() const
+	u32 VertexDataDesc::GetMaxStreamIdx() const
 	{
-		UINT32 maxStreamIdx = 0;
-		UINT32 numElems = (UINT32)mVertexElements.size();
-		for(UINT32 i = 0; i < numElems; i++)
+		u32 maxStreamIdx = 0;
+		u32 numElems = (u32)mVertexElements.size();
+		for(u32 i = 0; i < numElems; i++)
 		{
 			for(auto& vertElem : mVertexElements)
 			{
-				maxStreamIdx = std::max((UINT32)maxStreamIdx, (UINT32)vertElem.GetStreamIdx());
+				maxStreamIdx = std::max((u32)maxStreamIdx, (u32)vertElem.GetStreamIdx());
 			}
 		}
 
 		return maxStreamIdx;
 	}
 
-	bool VertexDataDesc::HasStream(UINT32 streamIdx) const
+	bool VertexDataDesc::HasStream(u32 streamIdx) const
 	{
 		for(auto& vertElem : mVertexElements)
 		{
@@ -81,7 +81,7 @@ namespace bs
 		return false;
 	}
 
-	bool VertexDataDesc::HasElement(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx) const
+	bool VertexDataDesc::HasElement(VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx) const
 	{
 		auto findIter = std::find_if(mVertexElements.begin(), mVertexElements.end(),
 			[semantic, semanticIdx, streamIdx] (const VertexElement& x)
@@ -97,7 +97,7 @@ namespace bs
 		return false;
 	}
 
-	UINT32 VertexDataDesc::GetElementSize(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx) const
+	u32 VertexDataDesc::GetElementSize(VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx) const
 	{
 		for(auto& element : mVertexElements)
 		{
@@ -108,9 +108,9 @@ namespace bs
 		return -1;
 	}
 
-	UINT32 VertexDataDesc::GetElementOffsetFromStream(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx) const
+	u32 VertexDataDesc::GetElementOffsetFromStream(VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx) const
 	{
-		UINT32 vertexOffset = 0;
+		u32 vertexOffset = 0;
 		for(auto& element : mVertexElements)
 		{
 			if(element.GetStreamIdx() != streamIdx)
@@ -125,9 +125,9 @@ namespace bs
 		return vertexOffset;
 	}
 
-	UINT32 VertexDataDesc::GetVertexStride(UINT32 streamIdx) const
+	u32 VertexDataDesc::GetVertexStride(u32 streamIdx) const
 	{
-		UINT32 vertexStride = 0;
+		u32 vertexStride = 0;
 		for(auto& element : mVertexElements)
 		{
 			if(element.GetStreamIdx() == streamIdx)
@@ -137,9 +137,9 @@ namespace bs
 		return vertexStride;
 	}
 
-	UINT32 VertexDataDesc::GetVertexStride() const
+	u32 VertexDataDesc::GetVertexStride() const
 	{
-		UINT32 vertexStride = 0;
+		u32 vertexStride = 0;
 		for(auto& element : mVertexElements)
 		{
 			vertexStride += element.GetSize();
@@ -148,9 +148,9 @@ namespace bs
 		return vertexStride;
 	}
 
-	UINT32 VertexDataDesc::GetStreamOffset(UINT32 streamIdx) const
+	u32 VertexDataDesc::GetStreamOffset(u32 streamIdx) const
 	{
-		UINT32 streamOffset = 0;
+		u32 streamOffset = 0;
 		for(auto& element : mVertexElements)
 		{
 			if(element.GetStreamIdx() == streamIdx)
@@ -162,7 +162,7 @@ namespace bs
 		return streamOffset;
 	}
 
-	const VertexElement* VertexDataDesc::GetElement(VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx) const
+	const VertexElement* VertexDataDesc::GetElement(VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx) const
 	{
 		auto findIter = std::find_if(mVertexElements.begin(), mVertexElements.end(),
 									 [semantic, semanticIdx, streamIdx](const VertexElement& x)
@@ -176,7 +176,7 @@ namespace bs
 		return nullptr;
 	}
 
-	void VertexDataDesc::ClearIfItExists(VertexElementType type, VertexElementSemantic semantic, UINT32 semanticIdx, UINT32 streamIdx)
+	void VertexDataDesc::ClearIfItExists(VertexElementType type, VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx)
 	{
 		auto findIter = std::find_if(mVertexElements.begin(), mVertexElements.end(),
 			[semantic, semanticIdx, streamIdx] (const VertexElement& x)

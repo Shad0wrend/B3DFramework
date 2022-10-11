@@ -21,7 +21,7 @@ namespace bs
 		UpdateBounds();
 	}
 
-	void DecalBase::SetLayer(UINT64 layer)
+	void DecalBase::SetLayer(u64 layer)
 	{
 		const bool isPow2 = layer && !((layer - 1) & layer);
 
@@ -125,12 +125,12 @@ namespace bs
 
 	CoreSyncData Decal::SyncToCore(FrameAlloc* allocator)
 	{
-		UINT32 size = 0;
+		u32 size = 0;
 		size += rtti_size(GetCoreDirtyFlags()).Bytes;
 		size += csync_size((SceneActor&)*this);
 		size += csync_size(*this);
 
-		UINT8* buffer = allocator->Alloc(size);
+		u8* buffer = allocator->Alloc(size);
 
 		Bitstream stream(buffer, size);
 		rtti_write(GetCoreDirtyFlags(), stream);
@@ -142,7 +142,7 @@ namespace bs
 
 	void Decal::MarkCoreDirtyInternal(ActorDirtyFlag flags)
 	{
-		MarkCoreDirty((UINT32)flags);
+		MarkCoreDirty((u32)flags);
 	}
 
 	RTTITypeBase* Decal::GetRttiStatic()
@@ -181,7 +181,7 @@ namespace bs
 	{
 		Bitstream stream(data.GetBuffer(), data.GetBufferSize());
 
-		UINT32 dirtyFlags = 0;
+		u32 dirtyFlags = 0;
 		bool oldIsActive = mActive;
 
 		rtti_read(dirtyFlags, stream);
@@ -193,7 +193,7 @@ namespace bs
 
 		UpdateBounds();
 
-		if (dirtyFlags == (UINT32)ActorDirtyFlag::Transform)
+		if (dirtyFlags == (u32)ActorDirtyFlag::Transform)
 		{
 			if (mActive)
 				gRenderer()->NotifyDecalUpdated(this);

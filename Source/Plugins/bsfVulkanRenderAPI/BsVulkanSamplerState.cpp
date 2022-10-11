@@ -22,7 +22,7 @@ namespace bs { namespace ct
 
 	VulkanSamplerState::~VulkanSamplerState()
 	{
-		for(UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+		for(u32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			if (mSamplers[i] == nullptr)
 				return;
@@ -67,7 +67,7 @@ namespace bs { namespace ct
 		VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
 		// Allocate samplers per-device
-		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+		for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			if (devices[i] == nullptr)
 				break;

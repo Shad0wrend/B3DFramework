@@ -19,10 +19,10 @@ namespace bs { namespace ct
 		~D3D11DriverList();
 
 		/**	Returns the number of available drivers. */
-		UINT32 Count() const;
+		u32 Count() const;
 
 		/**	Returns a driver at the specified index. */
-		D3D11Driver* Item(UINT32 idx) const;
+		D3D11Driver* Item(u32 idx) const;
 
 		/**	Returns a driver with the specified name, or null if it cannot be found. */
 		D3D11Driver* Item(const String &name) const;

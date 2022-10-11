@@ -58,19 +58,19 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static bool InternalIsButtonHeld(ButtonCode code, UINT32 deviceIdx);
-		static bool InternalIsButtonDown(ButtonCode code, UINT32 deviceIdx);
-		static bool InternalIsButtonUp(ButtonCode code, UINT32 deviceIdx);
+		static bool InternalIsButtonHeld(ButtonCode code, u32 deviceIdx);
+		static bool InternalIsButtonDown(ButtonCode code, u32 deviceIdx);
+		static bool InternalIsButtonUp(ButtonCode code, u32 deviceIdx);
 		static bool InternalIsPointerButtonHeld(PointerEventButton code);
 		static bool InternalIsPointerButtonDown(PointerEventButton code);
 		static bool InternalIsPointerButtonUp(PointerEventButton code);
 		static bool InternalIsPointerDoubleClicked();
-		static float InternalGetAxisValue(UINT32 axisType, UINT32 deviceIdx);
+		static float InternalGetAxisValue(u32 axisType, u32 deviceIdx);
 		static void InternalGetPointerPosition(Vector2I* position);
 		static void InternalGetPointerDelta(Vector2I* position);
 
-		typedef void(BS_THUNKCALL *OnButtonEventThunkDef) (ButtonCode, UINT32, bool, MonoException**);
-		typedef void(BS_THUNKCALL *OnCharInputEventThunkDef) (UINT32, bool, MonoException**);
+		typedef void(BS_THUNKCALL *OnButtonEventThunkDef) (ButtonCode, u32, bool, MonoException**);
+		typedef void(BS_THUNKCALL *OnCharInputEventThunkDef) (u32, bool, MonoException**);
 		typedef void(BS_THUNKCALL *OnPointerEventThunkDef) (MonoObject*, MonoObject*, PointerEventButton,
 			bool, bool, bool, float, bool, MonoException**);
 

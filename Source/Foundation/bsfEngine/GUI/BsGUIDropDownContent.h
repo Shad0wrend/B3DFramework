@@ -18,7 +18,7 @@ namespace bs
 		/**	Contains various GUI elements used for displaying a single menu entry. */
 		struct VisibleElement
 		{
-			UINT32 Idx = 0;
+			u32 Idx = 0;
 			GUIButtonBase* Button = nullptr;
 			GUITexture* Separator = nullptr;
 			GUILabel* ShortcutLabel = nullptr;
@@ -57,10 +57,10 @@ namespace bs
 		 *
 		 * @note	This must be called at least once after creation.
 		 */
-		void SetRange(UINT32 start, UINT32 end);
+		void SetRange(u32 start, u32 end);
 
 		/**	Returns height of a menu element at the specified index, in pixels. */
-		UINT32 GetElementHeight(UINT32 idx) const;
+		u32 GetElementHeight(u32 idx) const;
 
 		/**
 		 * Enables or disables keyboard focus. When keyboard focus is enabled the contents will respond to keyboard events.
@@ -76,7 +76,7 @@ namespace bs
 			const String& style, const GUIDimensions& dimensions);
 
 		/**	Get localized name of a menu item element with the specified index. */
-		HString GetElementLocalizedName(UINT32 idx) const;
+		HString GetElementLocalizedName(u32 idx) const;
 
 		/** @copydoc GUIElementContainer::GetOptimalSizeInternal */
 		Vector2I GetOptimalSizeInternal() const override;
@@ -98,27 +98,27 @@ namespace bs
 		 * 		
 		 * @param[in]	idx		Index of the displayed element (indexing visible elements).
 		 */
-		void SetSelected(UINT32 idx);
+		void SetSelected(u32 idx);
 
 		/**
 		 * Selects the next available non-separator entry.
 		 * 			
 		 * @param[in]	startIdx	Index of the menu element.
 		 */
-		void SelectNext(UINT32 startIdx);
+		void SelectNext(u32 startIdx);
 
 		/**
 		 * Selects the previous available non-separator entry.
 		 * 			
 		 * @param[in]	startIdx	Index of the menu element.
 		 */
-		void SelectPrevious(UINT32 startIdx);
+		void SelectPrevious(u32 startIdx);
 
 		GUIDropDownData mDropDownData;
 		Vector<bool> mStates;
 		Vector<VisibleElement> mVisibleElements;
-		UINT32 mSelectedIdx;
-		UINT32 mRangeStart, mRangeEnd;
+		u32 mSelectedIdx;
+		u32 mRangeStart, mRangeEnd;
 		GUIDropDownMenu::DropDownSubMenu* mParent;
 		bool mKeyboardFocus;
 		bool mIsToggle;

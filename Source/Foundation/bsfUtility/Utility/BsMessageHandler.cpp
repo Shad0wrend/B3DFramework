@@ -4,8 +4,8 @@
 
 namespace bs
 {
-	Map<String, UINT32> MessageId::UniqueMessageIds;
-	UINT32 MessageId::NextMessageId = 0;
+	Map<String, u32> MessageId::UniqueMessageIds;
+	u32 MessageId::NextMessageId = 0;
 
 	MessageId::MessageId(const String& name)
 	{
@@ -20,7 +20,7 @@ namespace bs
 		}
 	}
 
-	HMessage::HMessage(UINT32 id)
+	HMessage::HMessage(u32 id)
 		:mId(id)
 	{ }
 
@@ -44,7 +44,7 @@ namespace bs
 
 	HMessage MessageHandler::Listen(MessageId message, std::function<void()> callback)
 	{
-		UINT32 callbackId = mNextCallbackId++;
+		u32 callbackId = mNextCallbackId++;
 		
 		MessageHandlerData data;
 		data.Id = callbackId;
@@ -56,9 +56,9 @@ namespace bs
 		return HMessage(callbackId);
 	}
 
-	void MessageHandler::Unsubscribe(UINT32 handleId)
+	void MessageHandler::Unsubscribe(u32 handleId)
 	{
-		UINT32 msgId = mHandlerIdToMessageMap[handleId];
+		u32 msgId = mHandlerIdToMessageMap[handleId];
 
 		auto iterFind = mMessageHandlers.find(msgId);
 		if (iterFind != mMessageHandlers.end())

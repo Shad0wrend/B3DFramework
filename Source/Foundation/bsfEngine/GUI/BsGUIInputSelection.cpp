@@ -18,18 +18,18 @@ namespace bs
 	{
 		mSelectionRects = GetSelectionRects();
 
-		INT32 diff = (INT32)(mSprites.size() - mSelectionRects.size());
+		i32 diff = (i32)(mSprites.size() - mSelectionRects.size());
 
 		if(diff > 0)
 		{
-			for(UINT32 i = (UINT32)mSelectionRects.size(); i < (UINT32)mSprites.size(); i++)
+			for(u32 i = (u32)mSelectionRects.size(); i < (u32)mSprites.size(); i++)
 				bs_delete(mSprites[i]);
 
 			mSprites.erase(mSprites.begin() + mSelectionRects.size(), mSprites.end());
 		}
 		else if(diff < 0)
 		{
-			for(INT32 i = diff; i < 0; i++)
+			for(i32 i = diff; i < 0; i++)
 			{
 				ImageSprite* newSprite = bs_new<ImageSprite>();
 				mSprites.push_back(newSprite);
@@ -40,7 +40,7 @@ namespace bs
 		if (mElement != nullptr)
 			widget = mElement->GetParentWidgetInternal();
 
-		UINT32 idx = 0;
+		u32 idx = 0;
 		for(auto& sprite : mSprites)
 		{
 			IMAGE_SPRITE_DESC desc;
@@ -48,17 +48,17 @@ namespace bs
 			desc.Height = mSelectionRects[idx].Height;
 			desc.Texture = GUIManager::Instance().GetTextSelectionTexture();
 
-			sprite->Update(desc, (UINT64)widget);
+			sprite->Update(desc, (u64)widget);
 			idx++;
 		}
 	}
 
-	Vector2I GUIInputSelection::GetSelectionSpriteOffset(UINT32 spriteIdx) const
+	Vector2I GUIInputSelection::GetSelectionSpriteOffset(u32 spriteIdx) const
 	{
 		return Vector2I(mSelectionRects[spriteIdx].X, mSelectionRects[spriteIdx].Y) + GetTextOffset();
 	}
 
-	Rect2I GUIInputSelection::GetSelectionSpriteClipRect(UINT32 spriteIdx, const Rect2I& parentClipRect) const
+	Rect2I GUIInputSelection::GetSelectionSpriteClipRect(u32 spriteIdx, const Rect2I& parentClipRect) const
 	{
 		Vector2I selectionOffset(mSelectionRects[spriteIdx].X, mSelectionRects[spriteIdx].Y);
 		Vector2I clipOffset = selectionOffset + mElement->GetTextInputOffsetInternal();
@@ -87,18 +87,18 @@ namespace bs
 		if(mSelectionStart == mSelectionEnd)
 			return selectionRects;
 
-		UINT32 startLine = GetLineForChar(mSelectionStart);
+		u32 startLine = GetLineForChar(mSelectionStart);
 
-		UINT32 endLine = startLine;
+		u32 endLine = startLine;
 		if(mSelectionEnd > 0)
 			endLine = GetLineForChar(mSelectionEnd - 1, true);
 
 		{
 			const GUIInputLineDesc& lineDesc = GetLineDesc(startLine);
 
-			UINT32 startCharIdx = mSelectionStart;
+			u32 startCharIdx = mSelectionStart;
 
-			UINT32 endCharIdx = mSelectionEnd - 1;
+			u32 endCharIdx = mSelectionEnd - 1;
 			if(startLine != endLine)
 			{
 				endCharIdx = lineDesc.GetEndChar(false);
@@ -121,13 +121,13 @@ namespace bs
 			}
 		}
 
-		for(UINT32 i = startLine + 1; i < endLine; i++)
+		for(u32 i = startLine + 1; i < endLine; i++)
 		{
 			const GUIInputLineDesc& lineDesc = GetLineDesc(i);
 			if(lineDesc.GetStartChar() == lineDesc.GetEndChar() || IsNewlineChar(lineDesc.GetStartChar()))
 				continue;
 
-			UINT32 endCharIdx = lineDesc.GetEndChar(false);
+			u32 endCharIdx = lineDesc.GetEndChar(false);
 			if(endCharIdx > 0)
 				endCharIdx = endCharIdx - 1;
 
@@ -149,7 +149,7 @@ namespace bs
 
 			if(lineDesc.GetStartChar() != lineDesc.GetEndChar() && !IsNewlineChar(lineDesc.GetStartChar()))
 			{
-				UINT32 endCharIdx = mSelectionEnd - 1;
+				u32 endCharIdx = mSelectionEnd - 1;
 
 				if(!IsNewlineChar(endCharIdx))
 				{
@@ -170,9 +170,9 @@ namespace bs
 		return selectionRects;
 	}
 
-	void GUIInputSelection::ShowSelection(UINT32 anchorCaretPos)
+	void GUIInputSelection::ShowSelection(u32 anchorCaretPos)
 	{
-		UINT32 charIdx = GetCharIdxAtInputIdx(anchorCaretPos);
+		u32 charIdx = GetCharIdxAtInputIdx(anchorCaretPos);
 
 		mSelectionStart = charIdx;
 		mSelectionEnd = charIdx;
@@ -187,7 +187,7 @@ namespace bs
 		mSprites.clear();
 	}
 
-	void GUIInputSelection::SelectionDragStart(UINT32 caretPos)
+	void GUIInputSelection::SelectionDragStart(u32 caretPos)
 	{
 		ClearSelectionVisuals();
 
@@ -195,7 +195,7 @@ namespace bs
 		mSelectionDragAnchor = caretPos;
 	}
 
-	void GUIInputSelection::SelectionDragUpdate(UINT32 caretPos)
+	void GUIInputSelection::SelectionDragUpdate(u32 caretPos)
 	{
 		if(caretPos < mSelectionDragAnchor)
 		{
@@ -226,9 +226,9 @@ namespace bs
 			ClearSelectionVisuals();
 	}
 
-	void GUIInputSelection::MoveSelectionToCaret(UINT32 caretPos)
+	void GUIInputSelection::MoveSelectionToCaret(u32 caretPos)
 	{
-		UINT32 charIdx = GetCharIdxAtInputIdx(caretPos);
+		u32 charIdx = GetCharIdxAtInputIdx(caretPos);
 
 		if(charIdx > mSelectionAnchor)
 		{

@@ -83,7 +83,7 @@ namespace bs
 		bool operator!= (const Path& path) const { return !Equals(path); }
 
 		/** Gets a directory name with the specified index from the path. */
-		const String& operator[] (UINT32 idx) const { return GetDirectory(idx); }
+		const String& operator[] (u32 idx) const { return GetDirectory(idx); }
 
 		/** Swap internal data with another Path object. */
 		void Swap(Path& path);
@@ -231,10 +231,10 @@ namespace bs
 		String GetExtension() const;
 
 		/** Gets the number of directories in the path. */
-		UINT32 GetNumDirectories() const { return (UINT32)mDirectories.size(); }
+		u32 GetNumDirectories() const { return (u32)mDirectories.size(); }
 
 		/** Gets a directory name with the specified index from the path. */
-		const String& GetDirectory(UINT32 idx) const;
+		const String& GetDirectory(u32 idx) const;
 
 		/** Returns path device (for example drive, volume, etc.) if one exists in the path. */
 		const String& GetDevice() const { return mDevice; }
@@ -280,15 +280,15 @@ namespace bs
 		 *							application is being compiled to. Otherwise it will be parsed according to provided
 		 *							type.
 		 */
-		void Assign(const char* pathStr, UINT32 numChars, PathType type = PathType::Default);
+		void Assign(const char* pathStr, u32 numChars, PathType type = PathType::Default);
 
 		/** Parses a Windows path and stores the parsed data internally. Throws an exception if parsing fails. */
 		template<class T>
-		void ParseWindows(const T* pathStr, UINT32 numChars)
+		void ParseWindows(const T* pathStr, u32 numChars)
 		{
 			Clear();
 
-			UINT32 idx = 0;
+			u32 idx = 0;
 			BasicStringStream<T> tempStream;
 
 			if (idx < numChars)
@@ -363,11 +363,11 @@ namespace bs
 
 		/** Parses a Unix path and stores the parsed data internally. Throws an exception if parsing fails. */
 		template<class T>
-		void ParseUnix(const T* pathStr, UINT32 numChars)
+		void ParseUnix(const T* pathStr, u32 numChars)
 		{
 			Clear();
 
-			UINT32 idx = 0;
+			u32 idx = 0;
 			BasicStringStream<T> tempStream;
 
 			if (idx < numChars)

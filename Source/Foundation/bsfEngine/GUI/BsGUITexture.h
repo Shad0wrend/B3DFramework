@@ -161,14 +161,14 @@ namespace bs
 
 		/** @copydoc GUIElement::_fillBuffer */
 		void FillBuffer(
-			UINT8* vertices,
-			UINT32* indices,
-			UINT32 vertexOffset,
-			UINT32 indexOffset,
+			u8* vertices,
+			u32* indices,
+			u32 vertexOffset,
+			u32 indexOffset,
 			const Vector2I& offset,
-			UINT32 maxNumVerts,
-			UINT32 maxNumIndices,
-			UINT32 renderElementIdx) const ;
+			u32 maxNumVerts,
+			u32 maxNumIndices,
+			u32 renderElementIdx) const ;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal */
 		void UpdateRenderElementsInternal() ;
@@ -179,8 +179,8 @@ namespace bs
 		ImageSprite* mImageSprite;
 		Vector2I mImageSpriteOffset;
 		HSpriteTexture mActiveTexture;
-		UINT32 mActiveTextureWidth = 0;
-		UINT32 mActiveTextureHeight = 0;
+		u32 mActiveTextureWidth = 0;
+		u32 mActiveTextureHeight = 0;
 		IMAGE_SPRITE_DESC mDesc;
 		TextureScaleMode mScaleMode;
 		bool mTransparent;

@@ -15,7 +15,7 @@ namespace bs
 		return lowerCaseExt == u8"bslinc";
 	}
 
-	bool ShaderIncludeImporter::IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
+	bool ShaderIncludeImporter::IsMagicNumberSupported(const u8* magicNumPtr, u32 numBytes) const
 	{
 		return true; // Plain-text so I don't even check for magic number
 	}

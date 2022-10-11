@@ -15,7 +15,7 @@ namespace bs
 		DWORD CoopSettings;
 		HWND HWnd;
 
-		UINT8 KeyBuffer[256];
+		u8 KeyBuffer[256];
 	};
 
 	/**
@@ -112,11 +112,11 @@ namespace bs
 			return;
 		}
 
-		for (UINT32 i = 0; i < numEntries; ++i)
+		for (u32 i = 0; i < numEntries; ++i)
 		{
 			ButtonCode buttonCode = (ButtonCode)diBuff[i].dwOfs;
 
-			m->KeyBuffer[buttonCode] = (UINT8)(diBuff[i].dwData);
+			m->KeyBuffer[buttonCode] = (u8)(diBuff[i].dwData);
 
 			if (diBuff[i].dwData & 0x80)
 				mOwner->NotifyButtonPressedInternal(0, buttonCode, diBuff[i].dwTimeStamp);
@@ -128,7 +128,7 @@ namespace bs
 		if (verifyAfterAltTab)
 		{
 			// Store old buffer
-			UINT8 keyBufferCopy[256];
+			u8 keyBufferCopy[256];
 			memcpy(keyBufferCopy, m->KeyBuffer, 256);
 
 			// Read immediate state
@@ -141,7 +141,7 @@ namespace bs
 					m->Keyboard->GetDeviceState(sizeof(m->KeyBuffer), &m->KeyBuffer);
 			}
 
-			for (UINT32 i = 0; i < 256; i++)
+			for (u32 i = 0; i < 256; i++)
 			{
 				if (keyBufferCopy[i] != m->KeyBuffer[i])
 				{
@@ -156,7 +156,7 @@ namespace bs
 		}
 	}
 
-	void Keyboard::ChangeCaptureContext(UINT64 windowHandle)
+	void Keyboard::ChangeCaptureContext(u64 windowHandle)
 	{
 		HWND newhWnd = (HWND)windowHandle;
 
@@ -164,7 +164,7 @@ namespace bs
 		{
 			releaseDirectInput(m);
 
-			if (windowHandle != (UINT64)-1)
+			if (windowHandle != (u64)-1)
 				initializeDirectInput(m, newhWnd);
 			else
 				m->HWnd = (HWND)-1;

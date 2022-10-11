@@ -302,7 +302,7 @@ namespace bs
 		 * of performance.
 		 */
 		BS_SCRIPT_EXPORT(range:[0,4],slider)
-		UINT32 Quality = 3;
+		u32 Quality = 3;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -608,7 +608,7 @@ namespace bs
 		 * re-used from the start.
 		 */
 		BS_SCRIPT_EXPORT(range:[4,128])
-		UINT32 JitteredPositionCount = 8;
+		u32 JitteredPositionCount = 8;
 
 		/** Determines the distance between temporal AA samples. Larger values result in a sharper image. */
 		BS_SCRIPT_EXPORT(range:[0, 1] )
@@ -650,7 +650,7 @@ namespace bs
 		 * [0, 4], default is 2.
 		 */
 		BS_SCRIPT_EXPORT(range:[0,4],slider)
-		UINT32 Quality = 2;
+		u32 Quality = 2;
 
 		/** Intensity of the screen space reflections. Valid range is [0, 1]. Default is 1 (100%). */
 		BS_SCRIPT_EXPORT(range:[0,1],slider)
@@ -691,7 +691,7 @@ namespace bs
 		 * of lower performance. Valid range is [0, 3], default is 2.
 		 */
 		BS_SCRIPT_EXPORT()
-		UINT32 Quality = 2;
+		u32 Quality = 2;
 
 		/**
 		 * Determines the minimal threshold of pixel luminance to be included in the bloom calculations. Any pixel with
@@ -748,7 +748,7 @@ namespace bs
 		 * Valid range is [1, 6], default is 4.
 		 */
 		BS_SCRIPT_EXPORT(range:[1,6])
-		UINT32 DownsampleCount = 4;
+		u32 DownsampleCount = 4;
 
 		/**
 		 * Determines the minimal threshold of pixel luminance to be included in the lens flare calculations. Any pixel
@@ -760,7 +760,7 @@ namespace bs
 
 		/** Determines the number of ghost features to appear, shown as blurred blobs of bright areas of the scene. */
 		BS_SCRIPT_EXPORT(range:[1,10])
-		UINT32 GhostCount = 2;
+		u32 GhostCount = 2;
 
 		/**
 		 * Determines the distance between ghost features. Value is in normalized screen space, in range [0,1] where
@@ -981,7 +981,7 @@ namespace bs
 		 * increase in memory cost. Valid range is roughly [1, 6].
 		 */
 		BS_SCRIPT_EXPORT(range:[1,6],slider)
-		UINT32 NumCascades = 4;
+		u32 NumCascades = 4;
 
 		/**
 		 * Allows you to control how are directional shadow cascades distributed. Value of 1 means the cascades will be
@@ -998,7 +998,7 @@ namespace bs
 		 * quality shadows, at the cost of performance. Valid range is [1, 4].
 		 */
 		BS_SCRIPT_EXPORT(range:[1,4],slider)
-		UINT32 ShadowFilteringQuality = 4;
+		u32 ShadowFilteringQuality = 4;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

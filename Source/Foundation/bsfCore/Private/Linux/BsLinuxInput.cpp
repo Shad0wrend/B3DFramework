@@ -13,14 +13,14 @@ namespace bs
 	/** Information about events reported from a specific input event device. */
 	struct EventInfo
 	{
-		Vector<INT32> buttons;
-		Vector<INT32> relAxes;
-		Vector<INT32> absAxes;
-		Vector<INT32> hats;
+		Vector<i32> buttons;
+		Vector<i32> relAxes;
+		Vector<i32> absAxes;
+		Vector<i32> hats;
 	};
 
 	/** Checks is the bit at the specified location in a byte array is set. */
-	bool isBitSet(UINT8 bits[], UINT32 bit)
+	bool isBitSet(u8 bits[], u32 bit)
 	{
 		return ((bits[bit/8] >> (bit%8)) & 1) != 0;
 	}
@@ -28,19 +28,19 @@ namespace bs
 	/** Returns information about an input event device attached to he provided file handle. */
 	bool getEventInfo(int fileHandle, EventInfo& eventInfo)
 	{
-		UINT8 eventBits[1 + EV_MAX/8];
+		u8 eventBits[1 + EV_MAX/8];
 		bs_zero_out(eventBits);
 
 		if (ioctl(fileHandle, EVIOCGBIT(0, sizeof(eventBits)), eventBits) == -1)
 			return false;
 
-		for (UINT32 i = 0; i < EV_MAX; i++)
+		for (u32 i = 0; i < EV_MAX; i++)
 		{
 			if(isBitSet(eventBits, i))
 			{
 				if(i == EV_ABS)
 				{
-					UINT8 absAxisBits[1 + ABS_MAX/8];
+					u8 absAxisBits[1 + ABS_MAX/8];
 					bs_zero_out(absAxisBits);
 
 					if (ioctl(fileHandle, EVIOCGBIT(i, sizeof(absAxisBits)), absAxisBits) == -1)
@@ -49,7 +49,7 @@ namespace bs
 						continue;
 					}
 
-					for (UINT32 j = 0; j < ABS_MAX; j++)
+					for (u32 j = 0; j < ABS_MAX; j++)
 					{
 						if(isBitSet(absAxisBits, j))
 						{
@@ -62,7 +62,7 @@ namespace bs
 				}
 				else if(i == EV_REL)
 				{
-					UINT8 relAxisBits[1 + REL_MAX/8];
+					u8 relAxisBits[1 + REL_MAX/8];
 					bs_zero_out(relAxisBits);
 
 					if (ioctl(fileHandle, EVIOCGBIT(i, sizeof(relAxisBits)), relAxisBits) == -1)
@@ -71,7 +71,7 @@ namespace bs
 						continue;
 					}
 
-					for (UINT32 j = 0; j < REL_MAX; j++)
+					for (u32 j = 0; j < REL_MAX; j++)
 					{
 						if(isBitSet(relAxisBits, j))
 							eventInfo.relAxes.push_back(j);
@@ -79,7 +79,7 @@ namespace bs
 				}
 				else if(i == EV_KEY)
 				{
-					UINT8 keyBits[1 + KEY_MAX/8];
+					u8 keyBits[1 + KEY_MAX/8];
 					bs_zero_out(keyBits);
 
 					if (ioctl(fileHandle, EVIOCGBIT(i, sizeof(keyBits)), keyBits) == -1)
@@ -88,7 +88,7 @@ namespace bs
 						continue;
 					}
 
-					for (UINT32 j = 0; j < KEY_MAX; j++)
+					for (u32 j = 0; j < KEY_MAX; j++)
 					{
 						if(isBitSet(keyBits, j))
 							eventInfo.buttons.push_back(j);
@@ -101,7 +101,7 @@ namespace bs
 	}
 
 	/** Converts a Linux button code to Banshee ButtonCode. */
-	ButtonCode gamepadMapCommonButton(INT32 code)
+	ButtonCode gamepadMapCommonButton(i32 code)
 	{
 		// Note: Assuming XBox controller layout here
 		switch (code)
@@ -143,16 +143,16 @@ namespace bs
 	 * Maps an absolute axis as reported by the Linux system, to a Banshee axis. This will be one of the InputAxis enum
 	 * members, or -1 if it cannot be mapped.
 	 */
-	INT32 gamepadMapCommonAxis(INT32 axis)
+	i32 gamepadMapCommonAxis(i32 axis)
 	{
 		switch(axis)
 		{
-		case ABS_X: return (INT32)InputAxis::LeftStickX;
-		case ABS_Y: return (INT32)InputAxis::LeftStickY;
-		case ABS_RX: return (INT32)InputAxis::RightStickX;
-		case ABS_RY: return (INT32)InputAxis::RightStickY;
-		case ABS_Z: return (INT32)InputAxis::LeftTrigger;
-		case ABS_RZ: return (INT32)InputAxis::RightTrigger;
+		case ABS_X: return (i32)InputAxis::LeftStickX;
+		case ABS_Y: return (i32)InputAxis::LeftStickY;
+		case ABS_RX: return (i32)InputAxis::RightStickX;
+		case ABS_RY: return (i32)InputAxis::RightStickY;
+		case ABS_Z: return (i32)InputAxis::LeftTrigger;
+		case ABS_RZ: return (i32)InputAxis::RightTrigger;
 		}
 
 		return -1;
@@ -171,7 +171,7 @@ namespace bs
 		bool isGamepad = false;
 
 		// Check for gamepad buttons
-		UINT32 unknownButtonIdx = 0;
+		u32 unknownButtonIdx = 0;
 		for(auto& entry : eventInfo.buttons)
 		{
 			if((entry >= BTN_JOYSTICK && entry < BTN_GAMEPAD)
@@ -184,7 +184,7 @@ namespace bs
 					// Map to unnamed buttons
 					if(unknownButtonIdx < 20)
 					{
-						bc = (ButtonCode)((INT32)BC_GAMEPAD_BTN1 + unknownButtonIdx);
+						bc = (ButtonCode)((i32)BC_GAMEPAD_BTN1 + unknownButtonIdx);
 						info.buttonMap[entry] = bc;
 
 						unknownButtonIdx++;
@@ -209,7 +209,7 @@ namespace bs
 				BS_LOG(Error, Platform, "Could not read device name.");
 
 			// Get axis ranges
-			UINT32 unknownAxisIdx = 0;
+			u32 unknownAxisIdx = 0;
 			for(auto& entry : eventInfo.absAxes)
 			{
 				AxisInfo& axisInfo = info.axisMap[entry];
@@ -229,7 +229,7 @@ namespace bs
 				axisInfo.axisIdx = gamepadMapCommonAxis(entry);
 				if(axisInfo.axisIdx == -1)
 				{
-					axisInfo.axisIdx = (INT32)InputAxis::Count + unknownAxisIdx;
+					axisInfo.axisIdx = (i32)InputAxis::Count + unknownAxisIdx;
 					unknownAxisIdx++;
 				}
 			}
@@ -257,7 +257,7 @@ namespace bs
 			GamepadInfo info;
 			if(parseGamepadInfo(file, i, info))
 			{
-				info.id = (UINT32)mPlatformData->gamepadInfos.size();
+				info.id = (u32)mPlatformData->gamepadInfos.size();
 				mPlatformData->gamepadInfos.push_back(info);
 			}
 
@@ -267,8 +267,8 @@ namespace bs
 		mKeyboard = bs_new<Keyboard>("Keyboard", this);
 		mMouse = bs_new<Mouse>("Mouse", this);
 
-		UINT32 numGamepads = getDeviceCount(InputDevice::Gamepad);
-		for (UINT32 i = 0; i < numGamepads; i++)
+		u32 numGamepads = getDeviceCount(InputDevice::Gamepad);
+		for (u32 i = 0; i < numGamepads; i++)
 			mGamepads.push_back(bs_new<Gamepad>(mPlatformData->gamepadInfos[i].name, mPlatformData->gamepadInfos[i], this));
 	}
 
@@ -286,13 +286,13 @@ namespace bs
 		bs_delete(mPlatformData);
 	}
 
-	UINT32 Input::getDeviceCount(InputDevice device) const
+	u32 Input::getDeviceCount(InputDevice device) const
 	{
 		switch(device)
 		{
 		case InputDevice::Keyboard: return 1;
 		case InputDevice::Mouse: return 1;
-		case InputDevice::Gamepad: return (UINT32)mPlatformData->gamepadInfos.size();
+		case InputDevice::Gamepad: return (u32)mPlatformData->gamepadInfos.size();
 		case InputDevice::Count: return 0;
 		}
 

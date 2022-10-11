@@ -70,7 +70,7 @@ namespace bs
 			BS_LOG(Error, FileSystem, "Negative seek.");
 			break;
 		default:
-			BS_LOG(Error, FileSystem, "Undefined file system exception: {0}", (UINT32)error);
+			BS_LOG(Error, FileSystem, "Undefined file system exception: {0}", (u32)error);
 			break;
 		}
 	}
@@ -215,7 +215,7 @@ namespace bs
 		return true;
 	}
 
-	UINT64 win32_getFileSize(const WString& path)
+	u64 win32_getFileSize(const WString& path)
 	{
 		WIN32_FILE_ATTRIBUTE_DATA attrData;
 		if (GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &attrData) == FALSE)
@@ -224,7 +224,7 @@ namespace bs
 		LARGE_INTEGER li;
 		li.LowPart = attrData.nFileSizeLow;
 		li.HighPart = attrData.nFileSizeHigh;
-		return (UINT64)li.QuadPart;
+		return (u64)li.QuadPart;
 	}
 
 	std::time_t win32_getLastModifiedTime(const WString& path)
@@ -286,7 +286,7 @@ namespace bs
 
 		DataStream::AccessMode accessMode = DataStream::READ;
 		if (!readOnly)
-			accessMode = (DataStream::AccessMode)(accessMode | (UINT32)DataStream::WRITE);
+			accessMode = (DataStream::AccessMode)(accessMode | (u32)DataStream::WRITE);
 
 		return bs_shared_ptr_new<FileDataStream>(fullPath, accessMode, true);
 	}
@@ -296,7 +296,7 @@ namespace bs
 		return bs_shared_ptr_new<FileDataStream>(fullPath, DataStream::AccessMode::WRITE, true);
 	}
 
-	UINT64 FileSystem::GetFileSize(const Path& fullPath)
+	u64 FileSystem::GetFileSize(const Path& fullPath)
 	{
 		return win32_getFileSize(UTF8::ToWide(fullPath.ToString()));
 	}
@@ -328,7 +328,7 @@ namespace bs
 			parentPath = parentPath.GetParent();
 		}
 
-		for (UINT32 i = parentPath.GetNumDirectories(); i < fullPath.GetNumDirectories(); i++)
+		for (u32 i = parentPath.GetNumDirectories(); i < fullPath.GetNumDirectories(); i++)
 		{
 			parentPath.Append(fullPath[i]);
 			win32_createDirectory(UTF8::ToWide(parentPath.ToString()));

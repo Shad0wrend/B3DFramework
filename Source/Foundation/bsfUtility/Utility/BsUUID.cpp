@@ -9,7 +9,7 @@ namespace
 	constexpr const char HEX_TO_LITERAL[16] =
 		{ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
-	constexpr const bs::UINT8 LITERAL_TO_HEX[256] =
+	constexpr const bs::u8 LITERAL_TO_HEX[256] =
 		{	0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,
 			0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,
 			0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,  0xFF,
@@ -43,13 +43,13 @@ namespace bs
 		if (uuid.size() < 36)
 			return;
 
-		UINT32 idx = 0;
+		u32 idx = 0;
 
 		// First group: 8 digits
-		for(INT32 i = 7; i >= 0; --i)
+		for(i32 i = 7; i >= 0; --i)
 		{
 			char charVal = uuid[idx++];
-			UINT8 hexVal = LITERAL_TO_HEX[(int)charVal];
+			u8 hexVal = LITERAL_TO_HEX[(int)charVal];
 
 			mData[0] |= hexVal << (i * 4);
 		}
@@ -57,10 +57,10 @@ namespace bs
 		idx++;
 		
 		// Second group: 4 digits
-		for(INT32 i = 7; i >= 4; --i)
+		for(i32 i = 7; i >= 4; --i)
 		{
 			char charVal = uuid[idx++];
-			UINT8 hexVal = LITERAL_TO_HEX[(int)charVal];
+			u8 hexVal = LITERAL_TO_HEX[(int)charVal];
 
 			mData[1] |= hexVal << (i * 4);
 		}
@@ -68,10 +68,10 @@ namespace bs
 		idx++;
 
 		// Third group: 4 digits
-		for(INT32 i = 3; i >= 0; --i)
+		for(i32 i = 3; i >= 0; --i)
 		{
 			char charVal = uuid[idx++];
-			UINT8 hexVal = LITERAL_TO_HEX[(int)charVal];
+			u8 hexVal = LITERAL_TO_HEX[(int)charVal];
 
 			mData[1] |= hexVal << (i * 4);
 		}
@@ -79,10 +79,10 @@ namespace bs
 		idx++;
 
 		// Fourth group: 4 digits
-		for(INT32 i = 7; i >= 4; --i)
+		for(i32 i = 7; i >= 4; --i)
 		{
 			char charVal = uuid[idx++];
-			UINT8 hexVal = LITERAL_TO_HEX[(int)charVal];
+			u8 hexVal = LITERAL_TO_HEX[(int)charVal];
 
 			mData[2] |= hexVal << (i * 4);
 		}
@@ -90,18 +90,18 @@ namespace bs
 		idx++;
 
 		// Fifth group: 12 digits
-		for(INT32 i = 3; i >= 0; --i)
+		for(i32 i = 3; i >= 0; --i)
 		{
 			char charVal = uuid[idx++];
-			UINT8 hexVal = LITERAL_TO_HEX[(int)charVal];
+			u8 hexVal = LITERAL_TO_HEX[(int)charVal];
 
 			mData[2] |= hexVal << (i * 4);
 		}
 
-		for(INT32 i = 7; i >= 0; --i)
+		for(i32 i = 7; i >= 0; --i)
 		{
 			char charVal = uuid[idx++];
-			UINT8 hexVal = LITERAL_TO_HEX[(int)charVal];
+			u8 hexVal = LITERAL_TO_HEX[(int)charVal];
 
 			mData[3] |= hexVal << (i * 4);
 		}
@@ -109,55 +109,55 @@ namespace bs
 
 	String UUID::ToString() const
 	{
-		UINT8 output[36];
-		UINT32 idx = 0;
+		u8 output[36];
+		u32 idx = 0;
 
 		// First group: 8 digits
-		for(INT32 i = 7; i >= 0; --i)
+		for(i32 i = 7; i >= 0; --i)
 		{
-			UINT32 hexVal = (mData[0] >> (i * 4)) & 0xF;
+			u32 hexVal = (mData[0] >> (i * 4)) & 0xF;
 			output[idx++] = HEX_TO_LITERAL[hexVal];
 		}
 
 		output[idx++] = '-';
 
 		// Second group: 4 digits
-		for(INT32 i = 7; i >= 4; --i)
+		for(i32 i = 7; i >= 4; --i)
 		{
-			UINT32 hexVal = (mData[1] >> (i * 4)) & 0xF;
+			u32 hexVal = (mData[1] >> (i * 4)) & 0xF;
 			output[idx++] = HEX_TO_LITERAL[hexVal];
 		}
 
 		output[idx++] = '-';
 
 		// Third group: 4 digits
-		for(INT32 i = 3; i >= 0; --i)
+		for(i32 i = 3; i >= 0; --i)
 		{
-			UINT32 hexVal = (mData[1] >> (i * 4)) & 0xF;
+			u32 hexVal = (mData[1] >> (i * 4)) & 0xF;
 			output[idx++] = HEX_TO_LITERAL[hexVal];
 		}
 
 		output[idx++] = '-';
 
 		// Fourth group: 4 digits
-		for(INT32 i = 7; i >= 4; --i)
+		for(i32 i = 7; i >= 4; --i)
 		{
-			UINT32 hexVal = (mData[2] >> (i * 4)) & 0xF;
+			u32 hexVal = (mData[2] >> (i * 4)) & 0xF;
 			output[idx++] = HEX_TO_LITERAL[hexVal];
 		}
 
 		output[idx++] = '-';
 
 		// Fifth group: 12 digits
-		for(INT32 i = 3; i >= 0; --i)
+		for(i32 i = 3; i >= 0; --i)
 		{
-			UINT32 hexVal = (mData[2] >> (i * 4)) & 0xF;
+			u32 hexVal = (mData[2] >> (i * 4)) & 0xF;
 			output[idx++] = HEX_TO_LITERAL[hexVal];
 		}
 
-		for(INT32 i = 7; i >= 0; --i)
+		for(i32 i = 7; i >= 0; --i)
 		{
-			UINT32 hexVal = (mData[3] >> (i * 4)) & 0xF;
+			u32 hexVal = (mData[3] >> (i * 4)) & 0xF;
 			output[idx++] = HEX_TO_LITERAL[hexVal];
 		}
 

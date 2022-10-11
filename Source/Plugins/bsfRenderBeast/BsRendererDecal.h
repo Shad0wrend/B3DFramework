@@ -22,7 +22,7 @@ namespace bs { namespace ct
 		BS_PARAM_BLOCK_ENTRY(Vector3, gDecalNormal)
 		BS_PARAM_BLOCK_ENTRY(float, gNormalTolerance)
 		BS_PARAM_BLOCK_ENTRY(float, gFlipDerivatives)
-		BS_PARAM_BLOCK_ENTRY(INT32, gLayerMask)
+		BS_PARAM_BLOCK_ENTRY(i32, gLayerMask)
 	BS_PARAM_BLOCK_END
 
 	extern DecalParamDef gDecalParamDef;
@@ -52,7 +52,7 @@ namespace bs { namespace ct
 		static ShaderVariation variation = ShaderVariation(
 		{
 			ShaderVariation::Param("INSIDE_GEOMETRY", INSIDE_GEOMETRY),
-			ShaderVariation::Param("MSAA_MODE", (INT32)MSAA_MODE),
+			ShaderVariation::Param("MSAA_MODE", (i32)MSAA_MODE),
 		});
 
 		return variation;
@@ -72,7 +72,7 @@ namespace bs { namespace ct
 		GpuParamBinding PerCameraBindings[GPT_COUNT];
 
 		/** Indices for different variations of the used material. */
-		UINT32 TechniqueIndices[2][3];
+		u32 TechniqueIndices[2][3];
 
 		/** Time to used for evaluating material animation. */
 		float MaterialAnimationTime = 0.0f;

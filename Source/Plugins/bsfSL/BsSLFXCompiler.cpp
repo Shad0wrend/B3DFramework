@@ -184,7 +184,7 @@ namespace bs
 			{
 				if (!headline.empty())
 				{
-					String s = toString((UINT32)reports.size()) + " " + headline;
+					String s = toString((u32)reports.size()) + " " + headline;
 					output << s << std::endl;
 					output << String(s.size(), '-') << std::endl;
 				}
@@ -274,7 +274,7 @@ namespace bs
 		}
 	}
 
-	HTexture getBuiltinTexture(UINT32 idx)
+	HTexture getBuiltinTexture(u32 idx)
 	{
 		if (idx == 1)
 			return BuiltinResources::GetTexture(BuiltinTexture::White);
@@ -286,12 +286,12 @@ namespace bs
 		return HTexture();
 	}
 
-	UINT32 getStructSize(INT32 structIdx, const std::vector<Xsc::Reflection::Struct>& structLookup)
+	u32 getStructSize(i32 structIdx, const std::vector<Xsc::Reflection::Struct>& structLookup)
 	{
-		if(structIdx < 0 || structIdx >= (INT32)structLookup.size())
+		if(structIdx < 0 || structIdx >= (i32)structLookup.size())
 			return 0;
 
-		UINT32 size = 0;
+		u32 size = 0;
 
 		const Xsc::Reflection::Struct& structInfo = structLookup[structIdx];
 		for(auto& entry : structInfo.members)
@@ -451,7 +451,7 @@ namespace bs
 				{
 					SHADER_PARAM_ATTRIBUTE attribute;
 					attribute.Value.assign(entry.readableName.data(), entry.readableName.size());
-					attribute.NextParamIdx = (UINT32)-1;
+					attribute.NextParamIdx = (u32)-1;
 					attribute.Type = ShaderParamAttributeType::Name;
 
 					desc.SetParameterAttribute(ident, attribute);
@@ -460,7 +460,7 @@ namespace bs
 				if ((entry.flags & Xsc::Reflection::Uniform::Flags::HideInInspector) != 0)
 				{
 					SHADER_PARAM_ATTRIBUTE attribute;
-					attribute.NextParamIdx = (UINT32)-1;
+					attribute.NextParamIdx = (u32)-1;
 					attribute.Type = ShaderParamAttributeType::HideInInspector;
 
 					desc.SetParameterAttribute(ident, attribute);
@@ -469,7 +469,7 @@ namespace bs
 				if ((entry.flags & Xsc::Reflection::Uniform::Flags::HDR) != 0)
 				{
 					SHADER_PARAM_ATTRIBUTE attribute;
-					attribute.NextParamIdx = (UINT32)-1;
+					attribute.NextParamIdx = (u32)-1;
 					attribute.Type = ShaderParamAttributeType::HDR;
 
 					desc.SetParameterAttribute(ident, attribute);
@@ -575,7 +575,7 @@ namespace bs
 						type = GPDT_COLOR;
 					}
 
-					UINT32 arraySize = entry.arraySize;
+					u32 arraySize = entry.arraySize;
 
 					if (entry.defaultValue == -1)
 						desc.AddParameter(SHADER_DATA_PARAM_DESC(ident, ident, type, StringID::NONE, arraySize));
@@ -584,14 +584,14 @@ namespace bs
 						const Xsc::Reflection::DefaultValue& defVal = reflData.defaultValues[entry.defaultValue];
 
 						desc.AddParameter(SHADER_DATA_PARAM_DESC(ident, ident, type, StringID::NONE, arraySize, 0),
-							(UINT8*)defVal.matrix);
+							(u8*)defVal.matrix);
 					}
 
 					if(!entry.spriteUVRef.empty() && (type == GPDT_FLOAT4))
 					{
 						SHADER_PARAM_ATTRIBUTE attribute;
 						attribute.Value.assign(entry.spriteUVRef.data(), entry.spriteUVRef.size());
-						attribute.NextParamIdx = (UINT32)-1;
+						attribute.NextParamIdx = (u32)-1;
 						attribute.Type = ShaderParamAttributeType::SpriteUV;
 
 						desc.SetParameterAttribute(ident, attribute);
@@ -603,8 +603,8 @@ namespace bs
 				break;
 			case Xsc::Reflection::VariableType::Struct:
 			{
-				INT32 structIdx = entry.baseType;
-				UINT32 structSize = getStructSize(structIdx, reflData.structs);
+				i32 structIdx = entry.baseType;
+				u32 structSize = getStructSize(structIdx, reflData.structs);
 
 				desc.AddParameter(SHADER_DATA_PARAM_DESC(ident, ident, GPDT_STRUCT, StringID::NONE, entry.arraySize,
 					structSize));
@@ -625,7 +625,7 @@ namespace bs
 	};
 
 	String crossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput outputType, bool optionalEntry,
-		UINT32& startBindingSlot, SHADER_DESC* shaderDesc = nullptr, Vector<GpuProgramType>* detectedTypes = nullptr)
+		u32& startBindingSlot, SHADER_DESC* shaderDesc = nullptr, Vector<GpuProgramType>* detectedTypes = nullptr)
 	{
 		SPtr<StringStream> input = bs_shared_ptr_new<StringStream>();
 
@@ -789,14 +789,14 @@ namespace bs
 		return output.str();
 	}
 
-	String crossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput outputType, UINT32& startBindingSlot)
+	String crossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput outputType, u32& startBindingSlot)
 	{
 		return crossCompile(hlsl, type, outputType, false, startBindingSlot);
 	}
 
 	void reflectHLSL(const String& hlsl, SHADER_DESC& shaderDesc, Vector<GpuProgramType>& entryPoints)
 	{
-		UINT32 dummy = 0;
+		u32 dummy = 0;
 		crossCompile(hlsl, GPT_VERTEX_PROGRAM, CrossCompileOutput::GLSL45, true, dummy, &shaderDesc, &entryPoints);
 	}
 
@@ -1057,10 +1057,10 @@ cleanup:
 			switch (option->Type)
 			{
 			case OT_AttrName:
-				attributeData.Attributes.push_back(std::pair<INT32, String>(OT_AttrName, RemoveQuotes(option->Value.StrValue)));
+				attributeData.Attributes.push_back(std::pair<i32, String>(OT_AttrName, RemoveQuotes(option->Value.StrValue)));
 				break;
 			case OT_AttrShow:
-				attributeData.Attributes.push_back(std::pair<INT32, String>(OT_AttrShow, ""));
+				attributeData.Attributes.push_back(std::pair<i32, String>(OT_AttrShow, ""));
 				break;
 			default:
 				break;
@@ -1324,7 +1324,7 @@ cleanup:
 		}
 	}
 
-	void BSLFXCompiler::ParseRenderTargetBlendState(BLEND_STATE_DESC& desc, ASTFXNode* targetNode, UINT32& index)
+	void BSLFXCompiler::ParseRenderTargetBlendState(BLEND_STATE_DESC& desc, ASTFXNode* targetNode, u32& index)
 	{
 		if (targetNode == nullptr || targetNode->Type != NT_Target)
 			return;
@@ -1406,7 +1406,7 @@ cleanup:
 
 		// Parse targets in reverse as their order matters and we want to visit them in the top-down order as defined in
 		// the source code
-		UINT32 index = 0;
+		u32 index = 0;
 		for(auto iter = targets.rbegin(); iter != targets.rend(); ++iter)
 			ParseRenderTargetBlendState(desc.BlendDesc, *iter, index);
 
@@ -1517,11 +1517,11 @@ cleanup:
 				isDefault = false;
 				break;
 			case OT_StencilReadMask:
-				passData.DepthStencilDesc.StencilReadMask = (UINT8)option->Value.IntValue;
+				passData.DepthStencilDesc.StencilReadMask = (u8)option->Value.IntValue;
 				isDefault = false;
 				break;
 			case OT_StencilWriteMask:
-				passData.DepthStencilDesc.StencilWriteMask = (UINT8)option->Value.IntValue;
+				passData.DepthStencilDesc.StencilWriteMask = (u8)option->Value.IntValue;
 				isDefault = false;
 				break;
 			case OT_StencilOpFront:
@@ -1550,14 +1550,14 @@ cleanup:
 			return;
 		}
 
-		UINT32 index = (UINT32)-1;
+		u32 index = (u32)-1;
 		for (int j = 0; j < codeNode->Options->Count; j++)
 		{
 			if (codeNode->Options->Entries[j].Type == OT_Index)
 				index = codeNode->Options->Entries[j].Value.IntValue;
 		}
 
-		if (index != (UINT32)-1 && index < (UINT32)codeBlocks.size())
+		if (index != (u32)-1 && index < (u32)codeBlocks.size())
 		{
 			passData.Code += codeBlocks[index];
 		}
@@ -1609,7 +1609,7 @@ cleanup:
 
 		PassData combinedCommonPassData;
 
-		UINT32 nextPassIdx = 0;
+		u32 nextPassIdx = 0;
 		// Go in reverse because options are added in reverse order during parsing
 		for (int i = shaderNode->Options->Count - 1; i >= 0; i--)
 		{
@@ -1619,7 +1619,7 @@ cleanup:
 			{
 			case OT_Pass:
 			{
-				UINT32 passIdx = nextPassIdx;
+				u32 passIdx = nextPassIdx;
 				PassData* passData = nullptr;
 				for (auto& entry : shaderData.Passes)
 				{
@@ -1751,7 +1751,7 @@ cleanup:
 		BSLFXCompileResult output;
 
 		// Inherit variations from mixins
-		bool* mixinWasParsed = bs_stack_alloc<bool>((UINT32)shaderMetaData.size());
+		bool* mixinWasParsed = bs_stack_alloc<bool>((u32)shaderMetaData.size());
 
 		std::function<bool(const ShaderMetaData&, ShaderMetaData&)> parseInherited =
 			[&](const ShaderMetaData& metaData, ShaderMetaData& combinedMetaData)
@@ -1760,8 +1760,8 @@ cleanup:
 			{
 				const String& include = *riter;
 
-				UINT32 baseIdx = -1;
-				for (UINT32 i = 0; i < (UINT32)shaderMetaData.size(); i++)
+				u32 baseIdx = -1;
+				for (u32 i = 0; i < (u32)shaderMetaData.size(); i++)
 				{
 					auto& entry = shaderMetaData[i];
 					if (!entry.second.IsMixin)
@@ -1777,7 +1777,7 @@ cleanup:
 					}
 				}
 
-				if (baseIdx != (UINT32)-1)
+				if (baseIdx != (u32)-1)
 				{
 					auto& entry = shaderMetaData[baseIdx];
 
@@ -1871,7 +1871,7 @@ cleanup:
 			else
 			{
 				Vector<const VariationData*> todo;
-				for (UINT32 i = 0; i < (UINT32)metaData.Variations.size(); i++)
+				for (u32 i = 0; i < (u32)metaData.Variations.size(); i++)
 					todo.push_back(&metaData.Variations[i]);
 
 				while (!todo.empty())
@@ -1895,8 +1895,8 @@ cleanup:
 						}
 						else // Duplicate existing variations, and add the parameter
 						{
-							UINT32 numVariations = (UINT32)variations.size();
-							for (UINT32 i = 0; i < numVariations; i++)
+							u32 numVariations = (u32)variations.size();
+							for (u32 i = 0; i < numVariations; i++)
 							{
 								// Make a copy
 								variations.push_back(variations[i]);
@@ -1911,7 +1911,7 @@ cleanup:
 						// This is the first variation parameter, register new variations
 						if (variations.empty())
 						{
-							for (UINT32 i = 0; i < (UINT32)current->Values.size(); i++)
+							for (u32 i = 0; i < (u32)current->Values.size(); i++)
 							{
 								ShaderVariation variation;
 								variation.AddParam(ShaderVariation::Param(current->Identifier, current->Values[i].Value));
@@ -1921,10 +1921,10 @@ cleanup:
 						}
 						else // Duplicate existing variations, and add the parameter
 						{
-							UINT32 numVariations = (UINT32)variations.size();
-							for (UINT32 i = 0; i < numVariations; i++)
+							u32 numVariations = (u32)variations.size();
+							for (u32 i = 0; i < numVariations; i++)
 							{
-								for (UINT32 j = 1; j < (UINT32)current->Values.size(); j++)
+								for (u32 j = 1; j < (u32)current->Values.size(); j++)
 								{
 									ShaderVariation copy = variations[i];
 									copy.AddParam(ShaderVariation::Param(current->Identifier, current->Values[j].Value));
@@ -1959,7 +1959,7 @@ cleanup:
 					RawCode* rawCode = variationParseState->RawCodeBlock[RCT_CodeBlock];
 					while (rawCode != nullptr)
 					{
-						while ((INT32)codeBlocks.size() <= rawCode->Index)
+						while ((i32)codeBlocks.size() <= rawCode->Index)
 							codeBlocks.push_back(String());
 
 						codeBlocks[rawCode->Index] = String(rawCode->Code, rawCode->Size);
@@ -1987,10 +1987,10 @@ cleanup:
 			if(!technique->IsSupported())
 				continue;
 
-			UINT32 numPasses = technique->GetNumPasses();
+			u32 numPasses = technique->GetNumPasses();
 			technique->Compile();
 
-			for (UINT32 i = 0; i < numPasses; i++)
+			for (u32 i = 0; i < numPasses; i++)
 			{
 				SPtr<Pass> pass = technique->GetPass(i);
 
@@ -2066,7 +2066,7 @@ cleanup:
 		RawCode* rawCode = parseState->RawCodeBlock[RCT_SubShaderBlock];
 		while (rawCode != nullptr)
 		{
-			while ((INT32)subShaderCodeBlocks.size() <= rawCode->Index)
+			while ((i32)subShaderCodeBlocks.size() <= rawCode->Index)
 				subShaderCodeBlocks.push_back(String());
 
 			subShaderCodeBlocks[rawCode->Index] = String(rawCode->Code, rawCode->Size);
@@ -2097,7 +2097,7 @@ cleanup:
 		// Parse sub-shaders
 		for (auto& entry : subShaderData)
 		{
-			if(entry.CodeBlockIndex > (UINT32)subShaderCodeBlocks.size())
+			if(entry.CodeBlockIndex > (u32)subShaderCodeBlocks.size())
 				continue;
 
 			const String& subShaderCode = subShaderCodeBlocks[entry.CodeBlockIndex];
@@ -2189,7 +2189,7 @@ cleanup:
 			}
 		}
 
-		bool* mixinWasParsed = bs_stack_alloc<bool>((UINT32)shaderData.size());
+		bool* mixinWasParsed = bs_stack_alloc<bool>((u32)shaderData.size());
 		std::function<bool(const ShaderMetaData&, ShaderData&)> parseInherited =
 			[&](const ShaderMetaData& metaData, ShaderData& outShader)
 		{
@@ -2197,8 +2197,8 @@ cleanup:
 			{
 				const String& includes = *riter;
 
-				UINT32 baseIdx = -1;
-				for(UINT32 i = 0; i < (UINT32)shaderData.size(); i++)
+				u32 baseIdx = -1;
+				for(u32 i = 0; i < (u32)shaderData.size(); i++)
 				{
 					auto& entry = shaderData[i];
 					if (!entry.second.MetaData.IsMixin)
@@ -2216,7 +2216,7 @@ cleanup:
 					}
 				}
 
-				if (baseIdx != (UINT32)-1)
+				if (baseIdx != (u32)-1)
 				{
 					auto& entry = shaderData[baseIdx];
 
@@ -2277,9 +2277,9 @@ cleanup:
 		parseStateDelete(parseState);
 
 		// Parse extended HLSL code and generate per-program code, also convert to GLSL/VKSL/MSL
-		const auto end = (UINT32)shaderData.size();
+		const auto end = (u32)shaderData.size();
 		Vector<pair<ASTFXNode*, ShaderData>> outputShaderData;
-		for(UINT32 i = 0; i < end; i++)
+		for(u32 i = 0; i < end; i++)
 		{
 			const ShaderMetaData& metaData = shaderData[i].second.MetaData;
 			if (metaData.IsMixin)
@@ -2306,8 +2306,8 @@ cleanup:
 			ShaderData mvksl = shaderData[i].second;
 			mvksl.MetaData.Language = "mvksl";
 
-			const auto numPasses = (UINT32)shaderDataEntry.Passes.size();
-			for(UINT32 j = 0; j < numPasses; j++)
+			const auto numPasses = (u32)shaderDataEntry.Passes.size();
+			for(u32 j = 0; j < numPasses; j++)
 			{
 				PassData& passData = shaderDataEntry.Passes[j];
 
@@ -2320,7 +2320,7 @@ cleanup:
 
 				auto crossCompilePass = [&types](PassData& passData, CrossCompileOutput language)
 				{
-					UINT32 binding = 0;
+					u32 binding = 0;
 
 					for (auto& type : types)
 					{
@@ -2431,7 +2431,7 @@ cleanup:
 			if (metaData.IsMixin)
 				continue;
 
-			Map<UINT32, SPtr<Pass>, std::greater<UINT32>> passes;
+			Map<u32, SPtr<Pass>, std::greater<u32>> passes;
 			for (auto& passData : entry.second.Passes)
 			{
 				PASS_DESC passDesc;
@@ -2511,10 +2511,10 @@ cleanup:
 
 	String BSLFXCompiler::RemoveQuotes(const char* input)
 	{
-		UINT32 len = (UINT32)strlen(input);
+		u32 len = (u32)strlen(input);
 		String output(len - 2, ' ');
 
-		for (UINT32 i = 0; i < (len - 2); i++)
+		for (u32 i = 0; i < (len - 2); i++)
 			output[i] = input[i + 1];
 
 		return output;

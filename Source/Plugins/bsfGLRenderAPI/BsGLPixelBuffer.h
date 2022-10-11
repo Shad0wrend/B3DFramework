@@ -30,17 +30,17 @@ namespace bs { namespace ct
 		 * @param[in]	format			Format of each pixel in the buffer.
 		 * @param[in]	usage			Usage signaling the render system how we plan on using the buffer.
 		 */
-		GLPixelBuffer(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format, GpuBufferUsage usage);
+		GLPixelBuffer(u32 width, u32 height, u32 depth, PixelFormat format, GpuBufferUsage usage);
 		virtual ~GLPixelBuffer();
 
 		/**	Returns width of the surface in pixels. */
-		UINT32 GetWidth() const { return mWidth; }
+		u32 GetWidth() const { return mWidth; }
 
 		/**	Returns height of the surface in pixels. */
-		UINT32 GetHeight() const { return mHeight; }
+		u32 GetHeight() const { return mHeight; }
 
 		/**	Returns depth of the surface in pixels. */
-		UINT32 GetDepth() const { return mDepth; }
+		u32 GetDepth() const { return mDepth; }
 
 		/**	Returns format of the pixels in the surface. */
 		PixelFormat GetFormat() const { return mFormat; }
@@ -64,7 +64,7 @@ namespace bs { namespace ct
 		 *						anything he hasn't requested (for example don't try to read from the buffer unless you
 		 *						requested it here).
 		 */
-		void* Lock(UINT32 offset, UINT32 length, GpuLockOptions options);
+		void* Lock(u32 offset, u32 length, GpuLockOptions options);
 
 		/**
 		 * Locks the entire buffer and returns pointer to the locked area. You must call unlock() when done.
@@ -102,7 +102,7 @@ namespace bs { namespace ct
 		 * @param[in]	zoffset		Depth slice to bind, in the case of a 3D texture.
 		 * @param[in]	allLayers	Should all layers of the texture be bound, or just one (zoffset is ignored if true).
 		 */
-		virtual void BindToFramebuffer(GLenum attachment, UINT32 zoffset, bool allLayers);
+		virtual void BindToFramebuffer(GLenum attachment, u32 zoffset, bool allLayers);
 
 		/**
 		 * Blits the contents of the provided buffer into this pixel buffer. Data is bilinearily interpolated in case buffer
@@ -124,11 +124,11 @@ namespace bs { namespace ct
 		void FreeBuffer();
 
 	protected:
-		UINT32 mSizeInBytes;
+		u32 mSizeInBytes;
 		GpuBufferUsage mUsage;
 		bool mIsLocked = false;
 
-		UINT32 mWidth, mHeight, mDepth;
+		u32 mWidth, mHeight, mDepth;
 		PixelFormat mFormat;
 
 		PixelData mCurrentLock;
@@ -155,11 +155,11 @@ namespace bs { namespace ct
 		 * @param[in]	multisampleCount	Number of samples the parent texture was created with.
 		 */
 		GLTextureBuffer(GLenum target, GLuint id, GLint face,
-			GLint level, PixelFormat format, GpuBufferUsage usage, bool hwGamma, UINT32 multisampleCount);
+			GLint level, PixelFormat format, GpuBufferUsage usage, bool hwGamma, u32 multisampleCount);
 		~GLTextureBuffer() = default;
 		
 		/** @copydoc GLPixelBuffer::bindToFramebuffer */
-		void BindToFramebuffer(GLenum attachment, UINT32 zoffset, bool allLayers) override;
+		void BindToFramebuffer(GLenum attachment, u32 zoffset, bool allLayers) override;
 
 		/** @copydoc GLPixelBuffer::upload */
 		void Upload(const PixelData &data, const PixelVolume &dest) override;
@@ -178,7 +178,7 @@ namespace bs { namespace ct
 		 *
 		 * @param[in]	zoffset		3D slice of the texture to copy to. 0 if texture is not 3D.
 		 */
-		void CopyFromFramebuffer(UINT32 zoffset);
+		void CopyFromFramebuffer(u32 zoffset);
 
 	protected:
 		GLenum mTarget;
@@ -186,7 +186,7 @@ namespace bs { namespace ct
 		GLuint mTextureID;
 		GLint mFace;
 		GLint mLevel;
-		UINT32 mMultisampleCount;
+		u32 mMultisampleCount;
 		bool mHwGamma;
 	};
 

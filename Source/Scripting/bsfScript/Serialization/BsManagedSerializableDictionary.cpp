@@ -38,7 +38,7 @@ namespace bs
 		{
 			MonoObject* managedInstance = MonoUtil::GetObjectFromGcHandle(parent->mGCHandle);
 
-			mNumEntries = *(UINT32*)MonoUtil::Unbox(parent->mCountProp->Get(managedInstance));
+			mNumEntries = *(u32*)MonoUtil::Unbox(parent->mCountProp->Get(managedInstance));
 			MonoObject* keyCollection = parent->mKeysProp->Get(managedInstance);
 			MonoObject* valueCollection = parent->mValuesProp->Get(managedInstance);
 
@@ -48,7 +48,7 @@ namespace bs
 			ScriptArray keys(mKeyType, mNumEntries);
 			ScriptArray values(mValueType, mNumEntries);
 
-			UINT32 offset = 0;
+			u32 offset = 0;
 			void* keyParams[2] = { keys.GetInternal(), &offset };
 			parent->mKeysCopyTo->Invoke(keyCollection, keyParams);
 
@@ -59,7 +59,7 @@ namespace bs
 			valuesArray = values.GetInternal();
 		}
 		else
-			mNumEntries = (UINT32)parent->mCachedEntries.size();
+			mNumEntries = (u32)parent->mCachedEntries.size();
 
 		// Note: Handle needed since Enumerator will be on the stack? meaning the GC should be able to find the references.
 		if(keysArray && valuesArray)
@@ -137,7 +137,7 @@ namespace bs
 			MonoArray* keysArray = (MonoArray*)MonoUtil::GetObjectFromGcHandle(mKeysArrayHandle);
 			ScriptArray keys(keysArray);
 
-			if(mCurrentIdx != (UINT32)-1)
+			if(mCurrentIdx != (u32)-1)
 			{
 				void* val = (void*)keys.GetRaw(mCurrentIdx, keys.ElementSize());
 
@@ -168,7 +168,7 @@ namespace bs
 			MonoArray* valuesArray = (MonoArray*)MonoUtil::GetObjectFromGcHandle(mValuesArrayHandle);
 			ScriptArray values(valuesArray);
 
-			if(mCurrentIdx != (UINT32)-1)
+			if(mCurrentIdx != (u32)-1)
 			{
 				void* val = (void*)values.GetRaw(mCurrentIdx, values.ElementSize());
 
@@ -343,7 +343,7 @@ namespace bs
 			fieldEntry.second->Deserialize();
 		}
 
-		UINT32 idx = 0;
+		u32 idx = 0;
 		for (auto& entry : mCachedEntries)
 		{
 			SetFieldData(managedInstance, entry.first, entry.second);

@@ -112,15 +112,15 @@ namespace bs
 		}
 
 		/** Returns a row of the matrix. */
-		float* operator[] (UINT32 row) const
+		float* operator[] (u32 row) const
 		{
 			assert(row < 3);
 
 			return (float*)m[row];
 		}
 
-		Vector3 GetColumn(UINT32 col) const;
-		void SetColumn(UINT32 col, const Vector3& vec);
+		Vector3 GetColumn(u32 col) const;
+		void SetColumn(u32 col, const Vector3& vec);
 
 		bool operator== (const Matrix3& rhs) const;
 		bool operator!= (const Matrix3& rhs) const;

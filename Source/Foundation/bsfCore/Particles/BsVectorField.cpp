@@ -25,36 +25,36 @@ namespace bs
 		mDesc.CountY = std::max(1U, mDesc.CountY);
 		mDesc.CountZ = std::max(1U, mDesc.CountZ);
 
-		const UINT32 count = mDesc.CountX * mDesc.CountY * mDesc.CountZ;
-		if(count != (UINT32)values.size())
+		const u32 count = mDesc.CountX * mDesc.CountY * mDesc.CountZ;
+		if(count != (u32)values.size())
 		{
 			BS_LOG(Warning, Particles, "Number of values provided to the vector field does not match the expected number. "
-				"Expected: {0}. Got: {1}.", count, (UINT32)values.size());
+				"Expected: {0}. Got: {1}.", count, (u32)values.size());
 		}
 
-		const UINT32 valuesToCopy = std::min(count, (UINT32)values.size());
+		const u32 valuesToCopy = std::min(count, (u32)values.size());
 
 		const SPtr<PixelData> pixelData = PixelData::Create(mDesc.CountX, mDesc.CountY, mDesc.CountZ, PF_RGBA16F);
 
-		const UINT32 pixelSize = PixelUtil::GetNumElemBytes(PF_RGBA16F);
-		UINT8* data = pixelData->GetData();
-		for(UINT32 z = 0; z < (UINT32)mDesc.CountZ; z++)
+		const u32 pixelSize = PixelUtil::GetNumElemBytes(PF_RGBA16F);
+		u8* data = pixelData->GetData();
+		for(u32 z = 0; z < (u32)mDesc.CountZ; z++)
 		{
-			const UINT32 zArrayIdx = z * mDesc.CountY * mDesc.CountX;
-			const UINT32 zDataIdx = z * pixelData->GetSlicePitch();
+			const u32 zArrayIdx = z * mDesc.CountY * mDesc.CountX;
+			const u32 zDataIdx = z * pixelData->GetSlicePitch();
 
-			for(UINT32 y = 0; y < (UINT32)mDesc.CountY; y++)
+			for(u32 y = 0; y < (u32)mDesc.CountY; y++)
 			{
-				const UINT32 yArrayIdx = y * mDesc.CountX;
-				const UINT32 yDataIdx = y * pixelData->GetRowPitch();
+				const u32 yArrayIdx = y * mDesc.CountX;
+				const u32 yDataIdx = y * pixelData->GetRowPitch();
 
-				for(UINT32 x = 0; x < (UINT32)mDesc.CountX; x++)
+				for(u32 x = 0; x < (u32)mDesc.CountX; x++)
 				{
-					const UINT32 arrayIdx = x + yArrayIdx + zArrayIdx;
-					const UINT32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
+					const u32 arrayIdx = x + yArrayIdx + zArrayIdx;
+					const u32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
 
 					const Vector3& source = arrayIdx < valuesToCopy ? values[arrayIdx] : Vector3::ZERO;
-					UINT8* dest = data + dataIdx;
+					u8* dest = data + dataIdx;
 					PixelUtil::PackColor(source.X, source.Y, source.Z, 1.0f, PF_RGBA16F, dest);
 				}
 			}
@@ -140,7 +140,7 @@ namespace bs
 		return lowerCaseExt == u8"fga";
 	}
 
-	bool FGAImporter::IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
+	bool FGAImporter::IsMagicNumberSupported(const u8* magicNumPtr, u32 numBytes) const
 	{
 		return true; // Plain-text so we don't even check for magic number
 	}
@@ -155,11 +155,11 @@ namespace bs
 			data = stream->GetAsString();
 		}
 
-		auto chars = bs_managed_stack_alloc<char>((UINT32)data.size() + 1);
+		auto chars = bs_managed_stack_alloc<char>((u32)data.size() + 1);
 		memcpy(chars, data.data(), data.size());
 		chars[data.size()] = '\0';
 
-		const auto parseInt = [](char* input, INT32& output)
+		const auto parseInt = [](char* input, i32& output)
 		{
 			char* start = input;
 			while(*input != '\0')
@@ -167,7 +167,7 @@ namespace bs
 				if(*input == ',')
 				{
 					*input = '\0';
-					output = (INT32)atoi(start);
+					output = (i32)atoi(start);
 
 					return input + 1;
 				}
@@ -212,9 +212,9 @@ namespace bs
 			return nullptr;
 		}
 
-		desc.CountX = (UINT32)size.X;
-		desc.CountY = (UINT32)size.Y;
-		desc.CountZ = (UINT32)size.Z;
+		desc.CountX = (u32)size.X;
+		desc.CountY = (u32)size.Y;
+		desc.CountZ = (u32)size.Z;
 		
 		if(*readPos == '\0')
 		{
@@ -238,11 +238,11 @@ namespace bs
 
 		desc.Bounds = AABox(minBounds, maxBounds);
 
-		const UINT32 count = size.X * size.Y * size.Z;
+		const u32 count = size.X * size.Y * size.Z;
 		Vector<Vector3> values;
 		values.resize(count);
 
-		for(UINT32 i = 0; i < count; i++)
+		for(u32 i = 0; i < count; i++)
 		{
 			readPos = parseFloat(readPos, values[i].X);
 			readPos = parseFloat(readPos, values[i].Y);

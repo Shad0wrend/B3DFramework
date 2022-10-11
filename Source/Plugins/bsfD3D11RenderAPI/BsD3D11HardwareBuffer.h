@@ -35,34 +35,34 @@ namespace bs { namespace ct
 			BT_INDIRECTARGUMENT = 1 << 6,
 		};
 
-		D3D11HardwareBuffer(BufferType btype, GpuBufferUsage usage, UINT32 elementCount, UINT32 elementSize,
+		D3D11HardwareBuffer(BufferType btype, GpuBufferUsage usage, u32 elementCount, u32 elementSize,
 			D3D11Device& device, bool systemMemory = false, bool streamOut = false);
 		~D3D11HardwareBuffer();
 
 		/** @copydoc HardwareBuffer::readData */
-		void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) ;
+		void ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx = 0, u32 queueIdx = 0) ;
 
 		/** @copydoc HardwareBuffer::writeData */
-		void WriteData(UINT32 offset, UINT32 length, const void* source,
-			BufferWriteType writeFlags = BWT_NORMAL, UINT32 queueIdx = 0) ;
+		void WriteData(u32 offset, u32 length, const void* source,
+			BufferWriteType writeFlags = BWT_NORMAL, u32 queueIdx = 0) ;
 
 		/** @copydoc HardwareBuffer::copyData */
-		void CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset,
-			UINT32 length, bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
+		void CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset,
+			u32 length, bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/**	Returns the internal DX11 buffer object. */
 		ID3D11Buffer* GetD3DBuffer() const { return mD3DBuffer; }
 
 	protected:
 		/** @copydoc HardwareBuffer::map */
-		void* Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx) ;
+		void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx) ;
 
 		/** @copydoc HardwareBuffer::unmap */
 		void Unmap() ;
 
 		BufferType mBufferType;
-		UINT32 mElementCount;
-		UINT32 mElementSize;
+		u32 mElementCount;
+		u32 mElementSize;
 		GpuBufferUsage mUsage;
 
 		ID3D11Buffer* mD3DBuffer = nullptr;

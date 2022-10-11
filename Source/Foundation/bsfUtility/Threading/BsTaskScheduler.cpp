@@ -30,7 +30,7 @@ namespace bs
 
 	bool Task::HasStarted() const
 	{
-		UINT32 state = mState;
+		u32 state = mState;
 
 		return state == 1 || state == 2;
 	}
@@ -46,15 +46,15 @@ namespace bs
 		mState = 3;
 	}
 
-	TaskGroup::TaskGroup(const PrivatelyConstruct& dummy, String name, std::function<void(UINT32)> taskWorker,
-		UINT32 count, TaskPriority priority, SPtr<Task> dependency)
+	TaskGroup::TaskGroup(const PrivatelyConstruct& dummy, String name, std::function<void(u32)> taskWorker,
+		u32 count, TaskPriority priority, SPtr<Task> dependency)
 		: mName(std::move(name)), mCount(count), mPriority(priority), mTaskWorker(std::move(taskWorker))
 		, mTaskDependency(std::move(dependency))
 	{
 
 	}
 
-	SPtr<TaskGroup> TaskGroup::Create(String name, std::function<void(UINT32)> taskWorker, UINT32 count,
+	SPtr<TaskGroup> TaskGroup::Create(String name, std::function<void(u32)> taskWorker, u32 count,
 		TaskPriority priority, SPtr<Task> dependency)
 	{
 		return bs_shared_ptr_new<TaskGroup>(PrivatelyConstruct(), std::move(name), std::move(taskWorker), count, priority,
@@ -129,7 +129,7 @@ namespace bs
 	{
 		Lock lock(mReadyMutex);
 
-		for(UINT32 i = 0; i < taskGroup->mCount; i++)
+		for(u32 i = 0; i < taskGroup->mCount; i++)
 		{
 			const auto worker = [i, taskGroup]
 			{
@@ -176,7 +176,7 @@ namespace bs
 		{
 			Lock lock(mReadyMutex);
 
-			while((!mCheckTasks || (UINT32)mActiveTasks.size() >= mMaxActiveTasks) && !mShutdown)
+			while((!mCheckTasks || (u32)mActiveTasks.size() >= mMaxActiveTasks) && !mShutdown)
 				mTaskReadyCond.wait(lock);
 
 			mCheckTasks = false;
@@ -186,7 +186,7 @@ namespace bs
 
 			for(auto iter = mTaskQueue.begin(); iter != mTaskQueue.end();)
 			{
-				if ((UINT32)mActiveTasks.size() >= mMaxActiveTasks)
+				if ((u32)mActiveTasks.size() >= mMaxActiveTasks)
 					break;	
 
 				SPtr<Task> curTask = *iter;

@@ -56,7 +56,7 @@ namespace bs
 		ClearFlags GetClearFlags() const { return mClearFlags; }
 
 		/**	Sets values to clear color, depth and stencil buffers to. */
-		void SetClearValues(const Color& clearColor, float clearDepth = 0.0f, UINT16 clearStencil = 0);
+		void SetClearValues(const Color& clearColor, float clearDepth = 0.0f, u16 clearStencil = 0);
 
 		/** Determines the color to clear the viewport to before rendering, if color clear is enabled. */
 		BS_SCRIPT_EXPORT(n:ClearColor,pr:setter)
@@ -76,11 +76,11 @@ namespace bs
 
 		/** Determines the value to clear the stencil buffer to before rendering, if stencil clear is enabled. */
 		BS_SCRIPT_EXPORT(n:ClearStencil,pr:setter)
-		void SetClearStencilValue(UINT16 value);
+		void SetClearStencilValue(u16 value);
 
 		/** @copydoc setClearStencilValue() */
 		BS_SCRIPT_EXPORT(n:ClearStencil,pr:getter)
-		UINT16 GetClearStencilValue() const { return mClearStencilValue; }
+		u16 GetClearStencilValue() const { return mClearStencilValue; }
 
 	protected:
 		ViewportBase(float x = 0.0f, float y = 0.0f, float width = 1.0f, float height = 1.0f);
@@ -92,17 +92,17 @@ namespace bs
 		virtual void MarkCoreDirtyInternal() { }
 
 		/** Gets the render target width. */
-		virtual UINT32 GetTargetWidth() const = 0;
+		virtual u32 GetTargetWidth() const = 0;
 
 		/**	Gets the render target width. */
-		virtual UINT32 GetTargetHeight() const = 0;
+		virtual u32 GetTargetHeight() const = 0;
 
 		Rect2 mNormArea;
 
 		ClearFlags mClearFlags;
 		Color mClearColorValue;
 		float mClearDepthValue;
-		UINT16 mClearStencilValue;
+		u16 mClearStencilValue;
 
 		static const Color DEFAULT_CLEAR_COLOR;
 	};
@@ -168,10 +168,10 @@ namespace bs
 		void MarkCoreDirtyInternal() override;
 
 		/** @copydoc ViewportBase::getTargetWidth */
-		UINT32 GetTargetWidth() const override;
+		u32 GetTargetWidth() const override;
 
 		/** @copydoc ViewportBase::getTargetHeight */
-		UINT32 GetTargetHeight() const override;
+		u32 GetTargetHeight() const override;
 
 		/** @copydoc CoreObject::syncToCore */
 		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
@@ -223,10 +223,10 @@ namespace bs
 		Viewport(const SPtr<RenderTarget>& target, float x = 0.0f, float y = 0.0f, float width = 1.0f, float height = 1.0f);
 
 		/** @copydoc ViewportBase::getTargetWidth */
-		UINT32 GetTargetWidth() const override;
+		u32 GetTargetWidth() const override;
 
 		/** @copydoc ViewportBase::getTargetHeight */
-		UINT32 GetTargetHeight() const override;
+		u32 GetTargetHeight() const override;
 
 		/** @copydoc CoreObject::syncToCore */
 		void SyncToCore(const CoreSyncData& data) override;

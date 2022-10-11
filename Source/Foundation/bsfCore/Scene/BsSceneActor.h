@@ -109,7 +109,7 @@ namespace bs
 		Transform mTransform;
 		ObjectMobility mMobility = ObjectMobility::Movable;
 		bool mActive = true;
-		UINT32 mHash = 0;
+		u32 mHash = 0;
 	};
 
 	/** @} */

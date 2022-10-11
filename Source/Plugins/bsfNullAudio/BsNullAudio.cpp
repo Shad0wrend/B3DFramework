@@ -13,7 +13,7 @@ namespace bs
 		mAllDevices.push_back(mActiveDevice);
 	}
 
-	SPtr<AudioClip> NullAudio::CreateClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples,
+	SPtr<AudioClip> NullAudio::CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples,
 		const AUDIO_CLIP_DESC& desc)
 	{
 		return bs_core_ptr_new<NullAudioClip>(samples, streamSize, numSamples, desc);
@@ -29,7 +29,7 @@ namespace bs
 		return bs_shared_ptr_new<NullAudioSource>();
 	}
 
-	NullAudioClip::NullAudioClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples, const AUDIO_CLIP_DESC& desc)
+	NullAudioClip::NullAudioClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc)
 		:AudioClip(samples, streamSize, numSamples, desc)
 	{ }
 
@@ -40,7 +40,7 @@ namespace bs
 		{
 			mStreamData->Seek(mStreamOffset);
 
-			UINT8* sampleBuffer = (UINT8*)bs_alloc(mStreamSize);
+			u8* sampleBuffer = (u8*)bs_alloc(mStreamSize);
 			mStreamData->Read(sampleBuffer, mStreamSize);
 
 			mSourceStreamData = bs_shared_ptr_new<MemoryDataStream>(sampleBuffer, mStreamSize);
@@ -50,7 +50,7 @@ namespace bs
 		AudioClip::Initialize();
 	}
 
-	SPtr<DataStream> NullAudioClip::GetSourceStream(UINT32& size)
+	SPtr<DataStream> NullAudioClip::GetSourceStream(u32& size)
 	{
 		size = mSourceStreamSize;
 		mSourceStreamData->Seek(0);

@@ -15,31 +15,31 @@ namespace bs
 			bs_deleteN(ParameterOffsets, NumParameters);
 	}
 
-	void LocalizedStringData::ConcatenateString(bs::String& outputString, bs::String* parameters, UINT32 numParameterValues) const
+	void LocalizedStringData::ConcatenateString(bs::String& outputString, bs::String* parameters, u32 numParameterValues) const
 	{
 		// A safeguard in case translated strings have different number of parameters
-		UINT32 actualNumParameters = std::min(numParameterValues, NumParameters);
+		u32 actualNumParameters = std::min(numParameterValues, NumParameters);
 		
 		if(parameters != nullptr)
 		{
-			UINT32 totalNumChars = 0;
-			UINT32 prevIdx = 0;
-			for(UINT32 i = 0; i < actualNumParameters; i++)
+			u32 totalNumChars = 0;
+			u32 prevIdx = 0;
+			for(u32 i = 0; i < actualNumParameters; i++)
 			{
-				totalNumChars += (ParameterOffsets[i].Location - prevIdx) + (UINT32)parameters[ParameterOffsets[i].ParamIdx].size();;
+				totalNumChars += (ParameterOffsets[i].Location - prevIdx) + (u32)parameters[ParameterOffsets[i].ParamIdx].size();;
 
 				prevIdx = ParameterOffsets[i].Location;
 			}
 
-			totalNumChars += (UINT32)String.size() - prevIdx;
+			totalNumChars += (u32)String.size() - prevIdx;
 
 			outputString.resize(totalNumChars);
 			char* strData = &outputString[0]; // String contiguity required by C++11, but this should work elsewhere as well
 
 			prevIdx = 0;
-			for(UINT32 i = 0; i < actualNumParameters; i++)
+			for(u32 i = 0; i < actualNumParameters; i++)
 			{
-				UINT32 strSize = ParameterOffsets[i].Location - prevIdx;
+				u32 strSize = ParameterOffsets[i].Location - prevIdx;
 				memcpy(strData, &String[prevIdx], strSize * sizeof(char));
 				strData += strSize;
 
@@ -68,12 +68,12 @@ namespace bs
 
 		Vector<ParamOffset> paramOffsets;
 
-		INT32 lastBracket = -1;
+		i32 lastBracket = -1;
 		StringStream bracketChars;
 		StringStream cleanString;
 		bool escaped = false;
-		UINT32 numRemovedChars = 0;
-		for(UINT32 i = 0; i < (UINT32)_string.size(); i++)
+		u32 numRemovedChars = 0;
+		for(u32 i = 0; i < (u32)_string.size(); i++)
 		{
 			if(_string[i] == '^' && !escaped)
 			{
@@ -97,18 +97,18 @@ namespace bs
 				else
 				{
 					// If current char is non-escaped closing bracket end parameter definition
-					UINT32 numParamChars = (UINT32)bracketChars.tellp();
+					u32 numParamChars = (u32)bracketChars.tellp();
 					if(_string[i] == '}' && numParamChars > 0 && !escaped)
 					{
 						numRemovedChars += numParamChars + 2; // +2 for open and closed brackets
 
-						UINT32 paramIdx = parseUINT32(bracketChars.str());
+						u32 paramIdx = parseu32(bracketChars.str());
 						paramOffsets.push_back(ParamOffset(paramIdx, i + 1 - numRemovedChars));
 					}
 					else
 					{
 						// Last bracket wasn't really a parameter
-						for(UINT32 j = lastBracket; j <= i; j++)
+						for(u32 j = lastBracket; j <= i; j++)
 							cleanString<<_string[j];
 					}
 
@@ -123,7 +123,7 @@ namespace bs
 		}
 
 		String = cleanString.str();
-		NumParameters = (UINT32)paramOffsets.size();
+		NumParameters = (u32)paramOffsets.size();
 
 		// Try to find out of order param offsets and fix them
 		std::sort(begin(paramOffsets), end(paramOffsets),
@@ -131,9 +131,9 @@ namespace bs
 
 		if(paramOffsets.size() > 0)
 		{
-			UINT32 sequentialIdx = 0;
-			UINT32 lastParamIdx = paramOffsets[0].ParamIdx;
-			for(UINT32 i = 0; i < NumParameters; i++)
+			u32 sequentialIdx = 0;
+			u32 lastParamIdx = paramOffsets[0].ParamIdx;
+			for(u32 i = 0; i < NumParameters; i++)
 			{
 				if(paramOffsets[i].ParamIdx == lastParamIdx)
 				{
@@ -153,23 +153,23 @@ namespace bs
 			[&] (const ParamOffset& a, const ParamOffset& b) { return a.Location < b.Location; } );
 
 		ParameterOffsets = bs_newN<ParamOffset>(NumParameters);
-		for(UINT32 i = 0; i < NumParameters; i++)
+		for(u32 i = 0; i < NumParameters; i++)
 			ParameterOffsets[i] = paramOffsets[i];
 	}
 
 	StringTable::StringTable()
 		:Resource(false), mActiveLanguageData(nullptr), mDefaultLanguageData(nullptr), mAllLanguages(nullptr)
 	{
-		mAllLanguages = bs_newN<LanguageData>((UINT32)Language::Count);
+		mAllLanguages = bs_newN<LanguageData>((u32)Language::Count);
 
-		mDefaultLanguageData = &(mAllLanguages[(UINT32)DEFAULT_LANGUAGE]);
+		mDefaultLanguageData = &(mAllLanguages[(u32)DEFAULT_LANGUAGE]);
 		mActiveLanguageData = mDefaultLanguageData;
 		mActiveLanguage = DEFAULT_LANGUAGE;
 	}
 	
 	StringTable::~StringTable()
 	{
-		bs_deleteN(mAllLanguages, (UINT32)Language::Count);
+		bs_deleteN(mAllLanguages, (u32)Language::Count);
 	}
 
 	void StringTable::SetActiveLanguage(Language language)
@@ -177,7 +177,7 @@ namespace bs
 		if(language == mActiveLanguage)
 			return;
 
-		mActiveLanguageData = &(mAllLanguages[(UINT32)language]);
+		mActiveLanguageData = &(mAllLanguages[(u32)language]);
 		mActiveLanguage = language;
 	}
 
@@ -197,7 +197,7 @@ namespace bs
 
 	void StringTable::SetString(const String& identifier, Language language, const String& value)
 	{
-		LanguageData* curLanguage = &(mAllLanguages[(UINT32)language]);
+		LanguageData* curLanguage = &(mAllLanguages[(u32)language]);
 
 		auto iterFind = curLanguage->Strings.find(identifier);
 
@@ -218,7 +218,7 @@ namespace bs
 
 	String StringTable::GetString(const String& identifier, Language language)
 	{
-		LanguageData* curLanguage = &(mAllLanguages[(UINT32)language]);
+		LanguageData* curLanguage = &(mAllLanguages[(u32)language]);
 
 		auto iterFind = curLanguage->Strings.find(identifier);
 		if (iterFind != curLanguage->Strings.end())
@@ -229,7 +229,7 @@ namespace bs
 
 	void StringTable::RemoveString(const String& identifier)
 	{
-		for(UINT32 i = 0; i < (UINT32)Language::Count; i++)
+		for(u32 i = 0; i < (u32)Language::Count; i++)
 		{
 			mAllLanguages[i].Strings.erase(identifier);
 		}
@@ -244,7 +244,7 @@ namespace bs
 
 	SPtr<LocalizedStringData> StringTable::GetStringData(const String& identifier, Language language, bool insertIfNonExisting)
 	{
-		LanguageData* curLanguage = &(mAllLanguages[(UINT32)language]);
+		LanguageData* curLanguage = &(mAllLanguages[(u32)language]);
 
 		auto iterFind = curLanguage->Strings.find(identifier);
 		if(iterFind != curLanguage->Strings.end())

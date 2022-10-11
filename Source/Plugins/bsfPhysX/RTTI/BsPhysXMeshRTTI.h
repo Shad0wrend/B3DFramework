@@ -17,16 +17,16 @@ namespace bs
 	class FPhysXMeshRTTI : public RTTIType<FPhysXMesh, FPhysicsMesh, FPhysXMeshRTTI>
 	{
 	private:
-		SPtr<DataStream> GetCookedData(FPhysXMesh* obj, UINT32& size)
+		SPtr<DataStream> GetCookedData(FPhysXMesh* obj, u32& size)
 		{
 			size = obj->mCookedDataSize;
 
 			return bs_shared_ptr_new<MemoryDataStream>(obj->mCookedData, obj->mCookedDataSize);
 		}
 
-		void SetCookedData(FPhysXMesh* obj, const SPtr<DataStream>& value, UINT32 size)
+		void SetCookedData(FPhysXMesh* obj, const SPtr<DataStream>& value, u32 size)
 		{
-			obj->mCookedData = (UINT8*)bs_alloc(size);
+			obj->mCookedData = (u8*)bs_alloc(size);
 			obj->mCookedDataSize = size;
 
 			value->Read(obj->mCookedData, size);
@@ -50,7 +50,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_FPhysXMesh;
 		}

@@ -143,14 +143,14 @@ namespace bs
 		}
 	}
 
-	bool CocoaDragAndDrop::NotifyDragEnteredInternal(UINT32 windowId, const Vector2I& position)
+	bool CocoaDragAndDrop::NotifyDragEnteredInternal(u32 windowId, const Vector2I& position)
 	{
 		THROW_IF_CORE_THREAD
 
 		bool eventAccepted = false;
 		for(auto& entry : sDropAreas)
 		{
-			UINT32 areaWindowId = 0;
+			u32 areaWindowId = 0;
 			entry.target->GetOwnerWindowInternal()->GetCustomAttribute("WINDOW_ID", &areaWindowId);
 			if(areaWindowId != windowId)
 				continue;
@@ -173,14 +173,14 @@ namespace bs
 		return eventAccepted;
 	}
 
-	bool CocoaDragAndDrop::NotifyDragMovedInternal(UINT32 windowId, const Vector2I& position)
+	bool CocoaDragAndDrop::NotifyDragMovedInternal(u32 windowId, const Vector2I& position)
 	{
 		THROW_IF_CORE_THREAD
 
 		bool eventAccepted = false;
 		for(auto& entry : sDropAreas)
 		{
-			UINT32 areaWindowId = 0;
+			u32 areaWindowId = 0;
 			entry.target->GetOwnerWindowInternal()->GetCustomAttribute("WINDOW_ID", &areaWindowId);
 			if(areaWindowId != windowId)
 				continue;
@@ -218,13 +218,13 @@ namespace bs
 		return eventAccepted;
 	}
 
-	void CocoaDragAndDrop::NotifyDragLeftInternal(UINT32 windowId)
+	void CocoaDragAndDrop::NotifyDragLeftInternal(u32 windowId)
 	{
 		THROW_IF_CORE_THREAD
 
 		for(auto& entry : sDropAreas)
 		{
-			UINT32 areaWindowId = 0;
+			u32 areaWindowId = 0;
 			entry.target->GetOwnerWindowInternal()->GetCustomAttribute("WINDOW_ID", &areaWindowId);
 			if(areaWindowId != windowId)
 				continue;
@@ -241,14 +241,14 @@ namespace bs
 		}
 	}
 
-	bool CocoaDragAndDrop::NotifyDragDroppedInternal(UINT32 windowId, const Vector2I& position, const Vector<Path>& paths)
+	bool CocoaDragAndDrop::NotifyDragDroppedInternal(u32 windowId, const Vector2I& position, const Vector<Path>& paths)
 	{
 		THROW_IF_CORE_THREAD
 
 		bool eventAccepted = false;
 		for(auto& entry : sDropAreas)
 		{
-			UINT32 areaWindowId = 0;
+			u32 areaWindowId = 0;
 			entry.target->GetOwnerWindowInternal()->GetCustomAttribute("WINDOW_ID", &areaWindowId);
 			if(areaWindowId != windowId)
 				continue;

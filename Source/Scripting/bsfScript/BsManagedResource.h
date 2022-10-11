@@ -82,8 +82,8 @@ namespace bs
 	/**	Contains serialized resource data buffer. */
 	struct ResourceBackupData
 	{
-		UINT8* Data;
-		UINT32 Size;
+		u8* Data;
+		u32 Size;
 	};
 
 	/** @} */

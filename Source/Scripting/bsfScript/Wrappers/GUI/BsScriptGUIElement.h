@@ -57,7 +57,7 @@ namespace bs
 		bool mIsDestroyed = false;
 		GUIElementBase* mElement = nullptr;
 		ScriptGUILayout* mParent = nullptr;
-		UINT32 mGCHandle = 0;
+		u32 mGCHandle = 0;
 	};
 
 	/**
@@ -145,11 +145,11 @@ namespace bs
 		static void InternalSetBounds(ScriptGUIElementBaseTBase* nativeInstance, Rect2I* bounds);
 		static void InternalGetVisibleBounds(ScriptGUIElementBaseTBase* nativeInstance, Rect2I* bounds);
 		static void InternalGetScreenBounds(ScriptGUIElementBaseTBase* nativeInstance, Rect2I* bounds);
-		static void InternalSetPosition(ScriptGUIElementBaseTBase* nativeInstance, INT32 x, INT32 y);
-		static void InternalSetWidth(ScriptGUIElementBaseTBase* nativeInstance, UINT32 width);
-		static void InternalSetFlexibleWidth(ScriptGUIElementBaseTBase* nativeInstance, UINT32 minWidth, UINT32 maxWidth);
-		static void InternalSetHeight(ScriptGUIElementBaseTBase* nativeInstance, UINT32 height);
-		static void InternalSetFlexibleHeight(ScriptGUIElementBaseTBase* nativeInstance, UINT32 minHeight, UINT32 maxHeight);
+		static void InternalSetPosition(ScriptGUIElementBaseTBase* nativeInstance, i32 x, i32 y);
+		static void InternalSetWidth(ScriptGUIElementBaseTBase* nativeInstance, u32 width);
+		static void InternalSetFlexibleWidth(ScriptGUIElementBaseTBase* nativeInstance, u32 minWidth, u32 maxWidth);
+		static void InternalSetHeight(ScriptGUIElementBaseTBase* nativeInstance, u32 height);
+		static void InternalSetFlexibleHeight(ScriptGUIElementBaseTBase* nativeInstance, u32 minHeight, u32 maxHeight);
 		static void InternalSetContextMenu(ScriptGUIElementBaseTBase* nativeInstance, ScriptContextMenu* contextMenu);
 		static void InternalResetDimensions(ScriptGUIElementBaseTBase* nativeInstance);
 		static MonoString* InternalGetStyle(ScriptGUIElementBaseTBase* nativeInstance);

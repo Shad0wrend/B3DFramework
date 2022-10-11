@@ -9,14 +9,14 @@
 
 namespace bs
 {
-	Map<UINT64, ScriptInputConfiguration*> ScriptInputConfiguration::ScriptInputConfigurations;
+	Map<u64, ScriptInputConfiguration*> ScriptInputConfiguration::ScriptInputConfigurations;
 
 	ScriptInputConfiguration::ScriptInputConfiguration(MonoObject* instance, const SPtr<InputConfiguration>& inputConfig)
 		:ScriptObject(instance), mInputConfig(inputConfig)
 	{
 		mGCHandle = MonoUtil::NewWeakGcHandle(instance);
 
-		UINT64 configId = (UINT64)inputConfig.get();
+		u64 configId = (u64)inputConfig.get();
 		ScriptInputConfigurations[configId] = this;
 	}
 
@@ -38,7 +38,7 @@ namespace bs
 
 	ScriptInputConfiguration* ScriptInputConfiguration::GetScriptInputConfig(const SPtr<InputConfiguration>& inputConfig)
 	{
-		UINT64 configId = (UINT64)inputConfig.get();
+		u64 configId = (u64)inputConfig.get();
 
 		auto iterFind = ScriptInputConfigurations.find(configId);
 		if (iterFind != ScriptInputConfigurations.end())
@@ -83,7 +83,7 @@ namespace bs
 		String nameStr = MonoUtil::MonoToString(name);
 
 		VIRTUAL_AXIS_DESC axisDesc;
-		axisDesc.Type = (UINT32)type;
+		axisDesc.Type = (u32)type;
 		axisDesc.DeadZone = deadZone;
 		axisDesc.Invert = invert;
 		axisDesc.Sensitivity = sensitivity;
@@ -98,19 +98,19 @@ namespace bs
 		thisPtr->GetInternalValue()->UnregisterAxis(nameStr);
 	}
 
-	void ScriptInputConfiguration::InternalSetRepeatInterval(ScriptInputConfiguration* thisPtr, UINT64 milliseconds)
+	void ScriptInputConfiguration::InternalSetRepeatInterval(ScriptInputConfiguration* thisPtr, u64 milliseconds)
 	{
 		thisPtr->GetInternalValue()->SetRepeatInterval(milliseconds);
 	}
 
-	UINT64 ScriptInputConfiguration::InternalGetRepeatInterval(ScriptInputConfiguration* thisPtr)
+	u64 ScriptInputConfiguration::InternalGetRepeatInterval(ScriptInputConfiguration* thisPtr)
 	{
 		return thisPtr->GetInternalValue()->GetRepeatInterval();
 	}
 
 	void ScriptInputConfiguration::OnManagedInstanceDeletedInternal(bool assemblyRefresh)
 	{
-		UINT64 configId = (UINT64)mInputConfig.get();
+		u64 configId = (u64)mInputConfig.get();
 		ScriptInputConfigurations.erase(configId);
 
 		ScriptObject::OnManagedInstanceDeletedInternal(assemblyRefresh);
@@ -125,7 +125,7 @@ namespace bs
 		metaData.ScriptClass->AddInternalCall("Internal_InitVirtualAxis", (void*)&ScriptVirtualAxis::InternalInitVirtualAxis);
 	}
 
-	UINT32 ScriptVirtualAxis::InternalInitVirtualAxis(MonoString* name)
+	u32 ScriptVirtualAxis::InternalInitVirtualAxis(MonoString* name)
 	{
 		String nameStr = MonoUtil::MonoToString(name);
 

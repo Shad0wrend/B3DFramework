@@ -31,7 +31,7 @@ namespace bs
 	template<> struct RTTIPlainType<SavedLightProbeInfo>
 	{
 		enum { id = TID_SavedLightProbeInfo }; enum { hasDynamicSize = 1 };
-		static constexpr UINT32 VERSION = 0;
+		static constexpr u32 VERSION = 0;
 
 		static BitLength ToMemory(const SavedLightProbeInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
@@ -94,11 +94,11 @@ namespace bs
 		{
 			obj->UpdateCoefficients();
 
-			UINT32 numProbes = (UINT32)obj->mProbes.size();
+			u32 numProbes = (u32)obj->mProbes.size();
 			mSavedLightProbeInfo.Coefficients.resize(numProbes);
 			mSavedLightProbeInfo.Positions.resize(numProbes);
 
-			UINT32 idx = 0;
+			u32 idx = 0;
 			for(auto& entry : obj->mProbes)
 			{
 				mSavedLightProbeInfo.Positions[idx] = entry.second.Position;
@@ -114,10 +114,10 @@ namespace bs
 		{
 			obj->mProbes.clear();
 
-			UINT32 numProbes = (UINT32)data.Positions.size();
-			for(UINT32 i = 0; i < numProbes; ++i)
+			u32 numProbes = (u32)data.Positions.size();
+			for(u32 i = 0; i < numProbes; ++i)
 			{
-				UINT32 handle = obj->mNextProbeId++;
+				u32 handle = obj->mNextProbeId++;
 
 				LightProbeVolume::ProbeInfo probeInfo;
 				probeInfo.Flags = LightProbeFlags::Clean;
@@ -148,7 +148,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_LightProbeVolume;
 		}

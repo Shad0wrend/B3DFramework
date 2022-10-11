@@ -167,7 +167,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		virtual void NotifyCameraUpdated(Camera* camera, UINT32 updateFlag) { }
+		virtual void NotifyCameraUpdated(Camera* camera, u32 updateFlag) { }
 
 		/**
 		 * Called whenever a camera is destroyed.
@@ -335,7 +335,7 @@ namespace bs
 		 *			
 		 * @see		RendererMeshData
 		 */
-		virtual SPtr<RendererMeshData> CreateMeshDataInternal(UINT32 numVertices, UINT32 numIndices, VertexLayout layout, IndexType indexType = IT_32BIT);
+		virtual SPtr<RendererMeshData> CreateMeshDataInternal(u32 numVertices, u32 numIndices, VertexLayout layout, IndexType indexType = IT_32BIT);
 
 		/**
 		 * Creates a new renderer mesh data using an existing generic mesh data buffer.
@@ -413,12 +413,12 @@ namespace bs
 		/** Information about a renderer task queued to be executed. */
 		struct RendererTaskQueuedInfo
 		{
-			RendererTaskQueuedInfo(const SPtr<RendererTask>& task, UINT64 frameIdx)
+			RendererTaskQueuedInfo(const SPtr<RendererTask>& task, u64 frameIdx)
 				:Task(task), FrameIdx(frameIdx)
 			{ }
 
 			SPtr<RendererTask> Task;
-			UINT64 FrameIdx;
+			u64 FrameIdx;
 		};
 
 		/**
@@ -430,7 +430,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		void ProcessTasks(bool forceAll, UINT64 upToFrame = std::numeric_limits<UINT64>::max());
+		void ProcessTasks(bool forceAll, u64 upToFrame = std::numeric_limits<u64>::max());
 
 		/**
 		 * Executes the provided renderer task.
@@ -505,7 +505,7 @@ namespace bs
 
 		String mName;
 		std::function<bool()> mTaskWorker;
-		std::atomic<UINT32> mState{0}; /**< 0 - Inactive, 1 - In progress, 2 - Completed, 3 - Canceled */
+		std::atomic<u32> mState{0}; /**< 0 - Inactive, 1 - In progress, 2 - Completed, 3 - Canceled */
 	};
 
 	/** @} */

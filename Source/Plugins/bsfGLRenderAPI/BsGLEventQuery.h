@@ -15,7 +15,7 @@ namespace bs { namespace ct
 	class GLEventQuery : public EventQuery
 	{
 	public:
-		GLEventQuery(UINT32 deviceIdx);
+		GLEventQuery(u32 deviceIdx);
 		~GLEventQuery();
 
 		/** @copydoc EventQuery::begin */

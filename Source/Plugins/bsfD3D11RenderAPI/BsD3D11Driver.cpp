@@ -18,7 +18,7 @@ namespace bs { namespace ct
 		Construct();
 	}
 
-	D3D11Driver::D3D11Driver(UINT32 adapterNumber, IDXGIAdapter* pDXGIAdapter)
+	D3D11Driver::D3D11Driver(u32 adapterNumber, IDXGIAdapter* pDXGIAdapter)
 	{
 		mAdapterNumber = adapterNumber;
 		mDXGIAdapter = pDXGIAdapter;
@@ -40,7 +40,7 @@ namespace bs { namespace ct
 	{
 		assert(mDXGIAdapter != nullptr);
 
-		UINT32 outputIdx = 0;
+		u32 outputIdx = 0;
 		IDXGIOutput* output = nullptr;
 		while(mDXGIAdapter->EnumOutputs(outputIdx, &output) != DXGI_ERROR_NOT_FOUND)
 		{
@@ -70,7 +70,7 @@ namespace bs { namespace ct
 	String D3D11Driver::GetDriverName() const
 	{
 		size_t size = wcslen(mAdapterIdentifier.Description);
-		char* str = (char*)bs_alloc((UINT32)(size + 1));
+		char* str = (char*)bs_alloc((u32)(size + 1));
 
 		wcstombs(str, mAdapterIdentifier.Description, size);
 		str[size] = '\0';
@@ -83,7 +83,7 @@ namespace bs { namespace ct
 	String D3D11Driver::GetDriverDescription() const
 	{
 		size_t size = wcslen(mAdapterIdentifier.Description);
-		char* str = (char*)bs_alloc((UINT32)(size + 1));
+		char* str = (char*)bs_alloc((u32)(size + 1));
 
 		wcstombs(str, mAdapterIdentifier.Description, size);
 		str[size] = '\0';
@@ -95,7 +95,7 @@ namespace bs { namespace ct
 		return driverDescription;
 	}
 
-	DXGI_OUTPUT_DESC D3D11Driver::GetOutputDesc(UINT32 adapterOutputIdx) const
+	DXGI_OUTPUT_DESC D3D11Driver::GetOutputDesc(u32 adapterOutputIdx) const
 	{
 		DXGI_OUTPUT_DESC desc;
 		

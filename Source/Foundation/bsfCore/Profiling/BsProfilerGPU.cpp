@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	const UINT32 ProfilerGPU::MAX_QUEUE_ELEMENTS = 5;
+	const u32 ProfilerGPU::MAX_QUEUE_ELEMENTS = 5;
 
 	ProfilerGPU::ProfilerGPU()
 	{
@@ -66,7 +66,7 @@ namespace bs
 		mIsFrameActive = false;
 	}
 
-	void ProfilerGPU::BeginView(UINT64 id, ProfilerString title)
+	void ProfilerGPU::BeginView(u64 id, ProfilerString title)
 	{
 		if (!mIsFrameActive)
 		{
@@ -149,7 +149,7 @@ namespace bs
 		mActiveSamples.pop();
 	}
 
-	UINT32 ProfilerGPU::GetNumAvailableReports()
+	u32 ProfilerGPU::GetNumAvailableReports()
 	{
 		Lock lock(mMutex);
 
@@ -272,25 +272,25 @@ namespace bs
 		else
 			reportSample.NumDrawnSamples = 0;
 
-		reportSample.NumDrawCalls = (UINT32)(sample.EndStats.NumDrawCalls - sample.StartStats.NumDrawCalls);
-		reportSample.NumRenderTargetChanges = (UINT32)(sample.EndStats.NumRenderTargetChanges - sample.StartStats.NumRenderTargetChanges);
-		reportSample.NumPresents = (UINT32)(sample.EndStats.NumPresents - sample.StartStats.NumPresents);
-		reportSample.NumClears = (UINT32)(sample.EndStats.NumClears - sample.StartStats.NumClears);
+		reportSample.NumDrawCalls = (u32)(sample.EndStats.NumDrawCalls - sample.StartStats.NumDrawCalls);
+		reportSample.NumRenderTargetChanges = (u32)(sample.EndStats.NumRenderTargetChanges - sample.StartStats.NumRenderTargetChanges);
+		reportSample.NumPresents = (u32)(sample.EndStats.NumPresents - sample.StartStats.NumPresents);
+		reportSample.NumClears = (u32)(sample.EndStats.NumClears - sample.StartStats.NumClears);
 
-		reportSample.NumVertices = (UINT32)(sample.EndStats.NumVertices - sample.StartStats.NumVertices);
-		reportSample.NumPrimitives = (UINT32)(sample.EndStats.NumPrimitives - sample.StartStats.NumPrimitives);
+		reportSample.NumVertices = (u32)(sample.EndStats.NumVertices - sample.StartStats.NumVertices);
+		reportSample.NumPrimitives = (u32)(sample.EndStats.NumPrimitives - sample.StartStats.NumPrimitives);
 
-		reportSample.NumPipelineStateChanges = (UINT32)(sample.EndStats.NumPipelineStateChanges - sample.StartStats.NumPipelineStateChanges);
+		reportSample.NumPipelineStateChanges = (u32)(sample.EndStats.NumPipelineStateChanges - sample.StartStats.NumPipelineStateChanges);
 
-		reportSample.NumGpuParamBinds = (UINT32)(sample.EndStats.NumGpuParamBinds - sample.StartStats.NumGpuParamBinds);
-		reportSample.NumVertexBufferBinds = (UINT32)(sample.EndStats.NumVertexBufferBinds - sample.StartStats.NumVertexBufferBinds);
-		reportSample.NumIndexBufferBinds = (UINT32)(sample.EndStats.NumIndexBufferBinds - sample.StartStats.NumIndexBufferBinds);
+		reportSample.NumGpuParamBinds = (u32)(sample.EndStats.NumGpuParamBinds - sample.StartStats.NumGpuParamBinds);
+		reportSample.NumVertexBufferBinds = (u32)(sample.EndStats.NumVertexBufferBinds - sample.StartStats.NumVertexBufferBinds);
+		reportSample.NumIndexBufferBinds = (u32)(sample.EndStats.NumIndexBufferBinds - sample.StartStats.NumIndexBufferBinds);
 
-		reportSample.NumResourceWrites = (UINT32)(sample.EndStats.NumResourceWrites - sample.StartStats.NumResourceWrites);
-		reportSample.NumResourceReads = (UINT32)(sample.EndStats.NumResourceReads - sample.StartStats.NumResourceReads);
+		reportSample.NumResourceWrites = (u32)(sample.EndStats.NumResourceWrites - sample.StartStats.NumResourceWrites);
+		reportSample.NumResourceReads = (u32)(sample.EndStats.NumResourceReads - sample.StartStats.NumResourceReads);
 
-		reportSample.NumObjectsCreated = (UINT32)(sample.EndStats.NumObjectsCreated - sample.StartStats.NumObjectsCreated);
-		reportSample.NumObjectsDestroyed = (UINT32)(sample.EndStats.NumObjectsDestroyed - sample.StartStats.NumObjectsDestroyed);
+		reportSample.NumObjectsCreated = (u32)(sample.EndStats.NumObjectsCreated - sample.StartStats.NumObjectsCreated);
+		reportSample.NumObjectsDestroyed = (u32)(sample.EndStats.NumObjectsDestroyed - sample.StartStats.NumObjectsDestroyed);
 
 		for(auto& entry : sample.Children)
 		{

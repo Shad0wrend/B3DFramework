@@ -62,15 +62,15 @@ namespace bs
 
 	void Path::Assign(const String& pathStr, PathType type)
 	{
-		Assign(pathStr.data(), (UINT32)pathStr.length(), type);
+		Assign(pathStr.data(), (u32)pathStr.length(), type);
 	}
 
 	void Path::Assign(const char* pathStr, PathType type)
 	{
-		Assign(pathStr, (UINT32)strlen(pathStr), type);
+		Assign(pathStr, (u32)strlen(pathStr), type);
 	}
 
-	void Path::Assign(const char* pathStr, UINT32 numChars, PathType type)
+	void Path::Assign(const char* pathStr, u32 numChars, PathType type)
 	{
 		switch (type)
 		{
@@ -272,8 +272,8 @@ namespace bs
 		if (!ComparePathElem(mNode, other.mNode))
 			return false;
 
-		UINT32 myNumElements = (UINT32)mDirectories.size();
-		UINT32 otherNumElements = (UINT32)other.mDirectories.size();
+		u32 myNumElements = (u32)mDirectories.size();
+		u32 otherNumElements = (u32)other.mDirectories.size();
 
 		if (!mFilename.empty())
 			myNumElements++;
@@ -289,7 +289,7 @@ namespace bs
 			auto iterMe = mDirectories.begin();
 			auto iterOther = other.mDirectories.begin();
 
-			for(UINT32 i = 0; i < (myNumElements - 1); i++, ++iterMe, ++iterOther)
+			for(u32 i = 0; i < (myNumElements - 1); i++, ++iterMe, ++iterOther)
 			{
 				if (!ComparePathElem(*iterMe, *iterOther))
 					return false;
@@ -376,12 +376,12 @@ namespace bs
 			return String();
 	}
 
-	const String& Path::GetDirectory(UINT32 idx) const
+	const String& Path::GetDirectory(u32 idx) const
 	{
-		if (idx >= (UINT32)mDirectories.size())
+		if (idx >= (u32)mDirectories.size())
 		{
 			BS_EXCEPT(InvalidParametersException, "Index out of range: " + bs::toString(idx) + ". Valid range: [0, " +
-					bs::toString((UINT32)mDirectories.size() - 1) + "]");
+					bs::toString((u32)mDirectories.size() - 1) + "]");
 		}
 
 		return mDirectories[idx];

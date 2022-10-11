@@ -35,7 +35,7 @@ namespace bs { namespace ct
 		friend class GLCommandBufferManager;
 		friend class GLRenderAPI;
 
-		GLCommandBuffer(GpuQueueType type, UINT32 deviceIdx, UINT32 queueIdx, bool secondary);
+		GLCommandBuffer(GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary);
 
 		/** Returns true if the command buffer has finished executing on the GPU. */
 		bool IsComplete() const;

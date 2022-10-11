@@ -10,7 +10,7 @@ namespace bs
 		DestroyQueuedObjects();
 	}
 
-	GameObjectHandleBase GameObjectManager::GetObject(UINT64 id) const
+	GameObjectHandleBase GameObjectManager::GetObject(u64 id) const
 	{
 		Lock lock(mMutex);
 
@@ -21,7 +21,7 @@ namespace bs
 		return nullptr;
 	}
 
-	bool GameObjectManager::TryGetObject(UINT64 id, GameObjectHandleBase& object) const
+	bool GameObjectManager::TryGetObject(u64 id, GameObjectHandleBase& object) const
 	{
 		Lock lock(mMutex);
 
@@ -35,14 +35,14 @@ namespace bs
 		return false;
 	}
 
-	bool GameObjectManager::ObjectExists(UINT64 id) const
+	bool GameObjectManager::ObjectExists(u64 id) const
 	{
 		Lock lock(mMutex);
 
 		return mObjects.find(id) != mObjects.end();
 	}
 
-	void GameObjectManager::RemapId(UINT64 oldId, UINT64 newId)
+	void GameObjectManager::RemapId(u64 oldId, u64 newId)
 	{
 		if (oldId == newId)
 			return;
@@ -52,7 +52,7 @@ namespace bs
 		mObjects.erase(oldId);
 	}
 
-	UINT64 GameObjectManager::ReserveId()
+	u64 GameObjectManager::ReserveId()
 	{
 		return mNextAvailableID.fetch_add(1, std::memory_order_relaxed);
 	}
@@ -62,7 +62,7 @@ namespace bs
 		if (object.IsDestroyed())
 			return;
 
-		const UINT64 instanceId = object->GetInstanceId();
+		const u64 instanceId = object->GetInstanceId();
 		mQueuedForDestroy[instanceId] = object;
 	}
 
@@ -76,7 +76,7 @@ namespace bs
 
 	GameObjectHandleBase GameObjectManager::RegisterObject(const SPtr<GameObject>& object)
 	{
-		const UINT64 id = mNextAvailableID.fetch_add(1, std::memory_order_relaxed);
+		const u64 id = mNextAvailableID.fetch_add(1, std::memory_order_relaxed);
 		object->Initialize(object, id);
 
 		GameObjectHandleBase handle(object);
@@ -99,7 +99,7 @@ namespace bs
 		object.Destroy();
 	}
 
-	GameObjectDeserializationState::GameObjectDeserializationState(UINT32 options)
+	GameObjectDeserializationState::GameObjectDeserializationState(u32 options)
 		:mOptions(options)
 	{ }
 
@@ -113,7 +113,7 @@ namespace bs
 	{
 		for (auto& entry : mUnresolvedHandles)
 		{
-			UINT64 instanceId = entry.OriginalInstanceId;
+			u64 instanceId = entry.OriginalInstanceId;
 
 			bool isInternalReference = false;
 
@@ -168,7 +168,7 @@ namespace bs
 		mDeserializedObjects.clear();
 	}
 
-	void GameObjectDeserializationState::RegisterUnresolvedHandle(UINT64 originalId, GameObjectHandleBase& object)
+	void GameObjectDeserializationState::RegisterUnresolvedHandle(u64 originalId, GameObjectHandleBase& object)
 	{
 		// All handles that are deserialized during a single begin/endDeserialization session pointing to the same object
 		// must share the same GameObjectHandleData as that makes certain operations in other systems much simpler.
@@ -208,7 +208,7 @@ namespace bs
 		mUnresolvedHandles.push_back({ originalId, object });
 	}
 
-	void GameObjectDeserializationState::RegisterObject(UINT64 originalId, GameObjectHandleBase& object)
+	void GameObjectDeserializationState::RegisterObject(u64 originalId, GameObjectHandleBase& object)
 	{
 		assert(originalId != 0 && "Invalid game object ID.");
 
@@ -221,7 +221,7 @@ namespace bs
 			object.SetHandleDataInternal(ptr);
 		}
 
-		const UINT64 newId = object->GetInstanceId();
+		const u64 newId = object->GetInstanceId();
 		mIdMapping[originalId] = newId;
 		mDeserializedObjects[newId] = object;
 	}

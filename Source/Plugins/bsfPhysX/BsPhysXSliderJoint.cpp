@@ -41,7 +41,7 @@ namespace bs
 
 		PxPrismaticJointFlags flags;
 
-		if (((UINT32)desc.Flag & (UINT32)SliderJointFlag::Limit) != 0)
+		if (((u32)desc.Flag & (u32)SliderJointFlag::Limit) != 0)
 			flags |= PxPrismaticJointFlag::eLIMIT_ENABLED;
 
 		joint->setPrismaticJointFlags(flags);

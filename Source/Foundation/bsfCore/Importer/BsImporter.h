@@ -125,7 +125,7 @@ namespace bs
 		template<class T>
 		SPtr<T> CreateImportOptions(const Path& inputFilePath)
 		{
-			return std::static_pointer_cast<T>(createImportOptions(inputFilePath));
+			return std::static_pointer_cast<T>(CreateImportOptions(inputFilePath));
 		}
 
 		/**
@@ -142,7 +142,7 @@ namespace bs
 		 * @param[in]	magicNumber 	The buffer containing the magic number.
 		 * @param[in]	magicNumSize	Size of the magic number buffer.
 		 */
-		bool SupportsFileType(const UINT8* magicNumber, UINT32 magicNumSize) const;
+		bool SupportsFileType(const u8* magicNumber, u32 magicNumSize) const;
 
 		/** @name Internal
 		 *  @{
@@ -196,7 +196,7 @@ namespace bs
 		 * calls to the same method appropriately wait), and return an index of the task. The caller must check to
 		 * remove the task when import is done.
 		 */
-		UINT64 WaitForAsync(SpecificImporter* importer);
+		u64 WaitForAsync(SpecificImporter* importer);
 
 		Vector<SpecificImporter*> mAssetImporters;
 
@@ -204,19 +204,19 @@ namespace bs
 		mutable Mutex mLastTaskMutex;
 		mutable Signal mTaskCompleted;
 		mutable Mutex mImportMutex;
-		mutable UINT64 mTaskId = 0;
+		mutable u64 mTaskId = 0;
 
 		/** Information about a task queued for a specific import operation. */
 		struct QueuedTask
 		{
 			QueuedTask() = default;
 
-			QueuedTask(SPtr<Task> task, UINT64 id)
+			QueuedTask(SPtr<Task> task, u64 id)
 				:Task(std::move(task)), Id(id)
 			{ }
 
 			SPtr<Task> Task;
-			UINT64 Id;
+			u64 Id;
 		};
 
 		UnorderedMap<SpecificImporter*, QueuedTask> mLastQueuedTask;

@@ -71,7 +71,7 @@ namespace bs { namespace ct
 	{
 		float Time = 0.0f;
 		float TimeDelta = 0.0f;
-		UINT64 FrameIdx = 0;
+		u64 FrameIdx = 0;
 	};
 
 	/** @} */

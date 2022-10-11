@@ -21,7 +21,7 @@ namespace bs { namespace ct
 		const DataBlob& GetMicroCode() const { return mBytecode->Instructions; }
 
 		/**	Returns unique GPU program ID. */
-		UINT32 GetProgramId() const { return mProgramId; }
+		u32 GetProgramId() const { return mProgramId; }
 
 	protected:
 		D3D11GpuProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask);
@@ -33,9 +33,9 @@ namespace bs { namespace ct
 		virtual void LoadFromMicrocode(D3D11Device& device, const DataBlob& microcode) = 0;
 
 	protected:
-		static UINT32 GlobalProgramId;
+		static u32 GlobalProgramId;
 
-		UINT32 mProgramId = 0;
+		u32 mProgramId = 0;
 	};
 
 	/**	Implementation of a DX11 vertex shader. */

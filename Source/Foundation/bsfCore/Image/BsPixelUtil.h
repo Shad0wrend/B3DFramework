@@ -91,13 +91,13 @@ namespace bs
 		};
 
 		/**	Returns the size of a single pixel of the provided pixel format, in bytes. */
-		static UINT32 GetNumElemBytes(PixelFormat format);
+		static u32 GetNumElemBytes(PixelFormat format);
 
 		/**
 		 * Returns the size of a single compressed block, in bytes. Returns pixel size if the format is not block
 		 * compressed.
 		 */
-		static UINT32 GetBlockSize(PixelFormat format);
+		static u32 GetBlockSize(PixelFormat format);
 
 		/**
 		 * Returns the dimensions of a single compressed block, in number of pixels. Returns 1x1 for non-block-compressed
@@ -106,14 +106,14 @@ namespace bs
 		static Vector2I GetBlockDimensions(PixelFormat format);
 
 		/**	Returns the size of a single pixel of the provided pixel format, in bits. */
-		static UINT32 GetNumElemBits(PixelFormat format);
+		static u32 GetNumElemBits(PixelFormat format);
 
 		/**	Returns the size of the memory region required to hold pixels of the provided size ana format. */
-		static UINT32 GetMemorySize(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format);
+		static u32 GetMemorySize(u32 width, u32 height, u32 depth, PixelFormat format);
 		
 		/**	Calculates the size of a mip level of a texture with the provided size. */
-		static void GetSizeForMipLevel(UINT32 width, UINT32 height, UINT32 depth, UINT32 mipLevel,
-			UINT32& mipWidth, UINT32& mipHeight, UINT32& mipDepth);
+		static void GetSizeForMipLevel(u32 width, u32 height, u32 depth, u32 mipLevel,
+			u32& mipWidth, u32& mipHeight, u32& mipDepth);
 
 		/**
 		 * Calculates row and depth pitch for a texture surface of the specified size and format. For most formats row
@@ -122,15 +122,15 @@ namespace bs
 		 * ones) might require extra padding. Input width/height/depth values are in pixels, while output pitch values
 		 * are in bytes.
 		 */
-		static void GetPitch(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format,
-			UINT32& rowPitch, UINT32& depthPitch);
+		static void GetPitch(u32 width, u32 height, u32 depth, PixelFormat format,
+			u32& rowPitch, u32& depthPitch);
 
 		/**
 		 * Returns property flags for this pixel format.
 		 *
 		 * @see		PixelFormatFlags
 		 */
-		static UINT32 GetFlags(PixelFormat format);
+		static u32 GetFlags(PixelFormat format);
 
 		/**	Checks if the provided pixel format has an alpha channel. */
 		static bool HasAlpha(PixelFormat format);
@@ -170,7 +170,7 @@ namespace bs
 		 * Checks are the provided dimensions valid for the specified pixel format. Some formats (like BC) require
 		 * width/height to be multiples of four and some formats dont allow depth larger than 1.
 		 */
-		static bool IsValidExtent(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format);
+		static bool IsValidExtent(u32 width, u32 height, u32 depth, PixelFormat format);
 
 		/**
 		 * Returns the number of bits per each element in the provided pixel format. This will return all zero for
@@ -182,19 +182,19 @@ namespace bs
 		 * Returns bit masks that determine in what bit range is each channel stored.
 		 *
 		 * @note	
-		 * For example if your color is stored in an UINT32 and you want to extract the red channel you should AND the color
-		 * UINT32 with the bit-mask for the red channel and then right shift it by the red channel bit shift amount.
+		 * For example if your color is stored in an u32 and you want to extract the red channel you should AND the color
+		 * u32 with the bit-mask for the red channel and then right shift it by the red channel bit shift amount.
 		 */
-		static void GetBitMasks(PixelFormat format, UINT32(&rgba)[4]);
+		static void GetBitMasks(PixelFormat format, u32(&rgba)[4]);
 
 		/**
 		 * Returns number of bits you need to shift a pixel element in order to move it to the start of the data type.
 		 *
 		 * @note	
-		 * For example if your color is stored in an UINT32 and you want to extract the red channel you should AND the color
-		 * UINT32 with the bit-mask for the red channel and then right shift it by the red channel bit shift amount.
+		 * For example if your color is stored in an u32 and you want to extract the red channel you should AND the color
+		 * u32 with the bit-mask for the red channel and then right shift it by the red channel bit shift amount.
 		 */
-		static void GetBitShifts(PixelFormat format, UINT8 (&rgba)[4]);
+		static void GetBitShifts(PixelFormat format, u8 (&rgba)[4]);
 
 		/**	Returns the name of the pixel format. */
 		static String GetFormatName(PixelFormat srcformat);
@@ -209,13 +209,13 @@ namespace bs
 		static PixelComponentType GetElementType(PixelFormat format);
 
 		/**	Returns the number of pixel elements in the provided format. */
-		static UINT32 GetNumElements(PixelFormat format);
+		static u32 GetNumElements(PixelFormat format);
 
 		/**
 		 * Returns the maximum number of mip maps that can be generated until we reach the minimum size possible. This
 		 * does not count the base level.
 		 */
-		static UINT32 GetMaxMipmaps(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format);
+		static u32 GetMaxMipmaps(u32 width, u32 height, u32 depth, PixelFormat format);
 
 		/**	Writes the color to the provided memory location. */
 		static void PackColor(const Color& color, PixelFormat format, void* dest);
@@ -224,7 +224,7 @@ namespace bs
 		 * Writes the color to the provided memory location. If the destination	format is floating point, the byte values
 		 * will be converted into [0.0, 1.0] range.
 		 */
-		static void PackColor(UINT8 r, UINT8 g, UINT8 b, UINT8 a, PixelFormat format, void* dest);
+		static void PackColor(u8 r, u8 g, u8 b, u8 a, PixelFormat format, void* dest);
 
 		/**
 		 * Writes the color to the provided memory location. If the destination format in non-floating point, the float
@@ -239,7 +239,7 @@ namespace bs
 		 * Reads the color from the provided memory location and stores it into the provided color elements, as bytes
 		 * clamped to [0, 255] range.
 		 */
-		static void UnpackColor(UINT8* r, UINT8* g, UINT8* b, UINT8* a, PixelFormat format, const void* src);
+		static void UnpackColor(u8* r, u8* g, u8* b, u8* a, PixelFormat format, const void* src);
 
 		/**
 		 * Reads the color from the provided memory location and stores it into the provided color elements. If the format
@@ -290,7 +290,7 @@ namespace bs
 		 * by the size of the @p dst buffer. First pixel copied from @p src is determined by offset provided in
 		 * @p offsetX, @p offsetY and @p offsetZ parameters.
 		 */
-		static void Copy(const PixelData& src, PixelData& dst, UINT32 offsetX = 0, UINT32 offsetY = 0, UINT32 offsetZ = 0);
+		static void Copy(const PixelData& src, PixelData& dst, u32 offsetX = 0, u32 offsetY = 0, u32 offsetZ = 0);
 
 		/** Converts pixel data in linear space to one in sRGB space. Only converts the RGB components. */
 		static void LinearToSrgb(PixelData& pixelData);

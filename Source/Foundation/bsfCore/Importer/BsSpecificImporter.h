@@ -50,7 +50,7 @@ namespace bs
 		virtual bool IsExtensionSupported(const String& ext) const = 0;
 
 		/** Check if the provided magic number is supported by this importer. */
-		virtual bool IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const = 0;
+		virtual bool IsMagicNumberSupported(const u8* magicNumPtr, u32 numBytes) const = 0;
 
 		/** Returns the level of asynchronous import supported by this importer. */
 		virtual ImporterAsyncMode GetAsyncMode() const { return ImporterAsyncMode::Multi; }

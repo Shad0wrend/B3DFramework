@@ -48,7 +48,7 @@ namespace bs
 		friend class NullAudioSource;
 
 		/** @copydoc Audio::createClip */
-		SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples,
+		SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples,
 			const AUDIO_CLIP_DESC& desc) ;
 
 		/** @copydoc Audio::createListener */
@@ -69,20 +69,20 @@ namespace bs
 	class NullAudioClip final : public AudioClip
 	{
 	public:
-		NullAudioClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples, const AUDIO_CLIP_DESC& desc);
+		NullAudioClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc);
 
 	protected:
 		/** @copydoc Resource::initialize */
 		void Initialize() override;
 
 		/** @copydoc AudioClip::getSourceStream */
-		SPtr<DataStream> GetSourceStream(UINT32& size) ;
+		SPtr<DataStream> GetSourceStream(u32& size) ;
 
 	private:
 		// These streams exist to save original audio data in case it's needed later (usually for saving with the editor, or
 		// manual data manipulation). In normal usage (in-game) these will be null so no memory is wasted.
 		SPtr<DataStream> mSourceStreamData;
-		UINT32 mSourceStreamSize;
+		u32 mSourceStreamSize;
 	};
 
 	/** Null implementation of an AudioListener. */

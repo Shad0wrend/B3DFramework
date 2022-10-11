@@ -47,7 +47,7 @@ namespace bs
 	{
 		SystemInfo output;
 
-		INT32 CPUInfo[4] = { -1 };
+		i32 CPUInfo[4] = { -1 };
 
 		// Get CPU manufacturer
 		__cpuid(CPUInfo, 0);
@@ -61,8 +61,8 @@ namespace bs
 
 		//// Get the information associated with each extended ID.
 		__cpuid(CPUInfo, 0x80000000);
-		UINT32 numExtensionIds = CPUInfo[0];
-		for (UINT32 i = 0x80000000; i <= numExtensionIds; ++i)
+		u32 numExtensionIds = CPUInfo[0];
+		for (u32 i = 0x80000000; i <= numExtensionIds; ++i)
 		{
 			__cpuid(CPUInfo, i);
 
@@ -79,7 +79,7 @@ namespace bs
 		// Get number of CPU cores
 		SYSTEM_INFO sysInfo;
 		::GetSystemInfo(&sysInfo);
-		output.CpuNumCores = (UINT32)sysInfo.dwNumberOfProcessors;
+		output.CpuNumCores = (u32)sysInfo.dwNumberOfProcessors;
 
 		// Get CPU clock speed
 		HKEY hKey;
@@ -93,7 +93,7 @@ namespace bs
 			DWORD bufferSize = 4;
 			RegQueryValueEx(hKey, "~MHz", NULL, NULL, (LPBYTE) &mhz, &bufferSize);
 
-			output.CpuClockSpeedMhz = (UINT32)mhz;
+			output.CpuClockSpeedMhz = (u32)mhz;
 		}
 		else
 			output.CpuClockSpeedMhz = 0;
@@ -103,7 +103,7 @@ namespace bs
 		statex.dwLength = sizeof(statex);
 		GlobalMemoryStatusEx(&statex);
 
-		output.MemoryAmountMb = (UINT32)(statex.ullTotalPhys / (1024 * 1024));
+		output.MemoryAmountMb = (u32)(statex.ullTotalPhys / (1024 * 1024));
 
 		if (BS_ARCH_TYPE == BS_ARCHITECTURE_x86_64)
 			output.OsIs64Bit = true;
@@ -117,7 +117,7 @@ namespace bs
 		}
 
 		// Get OS version
-		output.OsName = "Windows " + toString((UINT32)GetRealOSVersion().dwMajorVersion);
+		output.OsName = "Windows " + toString((u32)GetRealOSVersion().dwMajorVersion);
 
 		// Get GPU info
 		output.GpuInfo = sGPUInfo;
@@ -131,10 +131,10 @@ namespace bs
 		UuidCreate(&uuid);
 
 		// Endianess might not be correct, but it shouldn't matter
-		UINT32 data1 = uuid.Data1;
-		UINT32 data2 = uuid.Data2 | (uuid.Data3 << 16);
-		UINT32 data3 = uuid.Data3 | (uuid.Data4[0] << 16) | (uuid.Data4[1] << 24);
-		UINT32 data4 = uuid.Data4[2] | (uuid.Data4[3] << 8) | (uuid.Data4[4] << 16) | (uuid.Data4[5] << 24);
+		u32 data1 = uuid.Data1;
+		u32 data2 = uuid.Data2 | (uuid.Data3 << 16);
+		u32 data3 = uuid.Data3 | (uuid.Data4[0] << 16) | (uuid.Data4[1] << 24);
+		u32 data4 = uuid.Data4[2] | (uuid.Data4[3] << 8) | (uuid.Data4[4] << 16) | (uuid.Data4[5] << 24);
 
 		return UUID(data1, data2, data3, data4);
 	}
@@ -149,7 +149,7 @@ namespace bs
 		DWORD flags = LCMAP_LINGUISTIC_CASING;
 		flags |= toUpper ? LCMAP_UPPERCASE : LCMAP_LOWERCASE;
 
-		UINT32 requiredNumChars = LCMapStringEx(
+		u32 requiredNumChars = LCMapStringEx(
 			LOCALE_NAME_USER_DEFAULT,
 			flags,
 			wideString.data(),
@@ -176,7 +176,7 @@ namespace bs
 		return UTF8::FromWide(outputWideString);
 	}
 
-	HBITMAP Win32PlatformUtility::CreateBitmap(const Color* pixels, UINT32 width, UINT32 height, bool premultiplyAlpha)
+	HBITMAP Win32PlatformUtility::CreateBitmap(const Color* pixels, u32 width, u32 height, bool premultiplyAlpha)
 	{
 		BITMAPINFO bi;
 
@@ -202,11 +202,11 @@ namespace bs
 		//Scan each pixel of the source bitmap and create the masks
 		Color pixel;
 		DWORD *dst = (DWORD*)data;
-		for (UINT32 y = 0; y < height; ++y)
+		for (u32 y = 0; y < height; ++y)
 		{
-			for (UINT32 x = 0; x < width; ++x)
+			for (u32 x = 0; x < width; ++x)
 			{
-				UINT32 revY = height - y - 1;
+				u32 revY = height - y - 1;
 				pixel = pixels[revY * width + x];
 
 				if (premultiplyAlpha)

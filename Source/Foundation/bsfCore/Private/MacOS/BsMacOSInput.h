@@ -7,8 +7,8 @@
 
 namespace bs
 {
-	static constexpr UINT32 HID_NUM_MOUSE_AXES = 3;
-	static constexpr UINT32 HID_NUM_GAMEPAD_AXES = 24;
+	static constexpr u32 HID_NUM_MOUSE_AXES = 3;
+	static constexpr u32 HID_NUM_GAMEPAD_AXES = 24;
 
 	/** Available types of devices supported by the HIDManager. */
 	enum class HIDType
@@ -27,9 +27,9 @@ namespace bs
 		IOHIDElementRef ref;
 		IOHIDElementCookie cookie;
 
-		INT32 min, max;
-		mutable INT32 detectedMin, detectedMax;
-		UINT32 usage;
+		i32 min, max;
+		mutable i32 detectedMin, detectedMax;
+		u32 usage;
 	};
 
 	/** Contains information about a single input device and its elements, as reported by the HIDManager. */
@@ -39,13 +39,13 @@ namespace bs
 		IOHIDQueueRef queueRef;
 
 		String name;
-		UINT32 id;
+		u32 id;
 
 		Vector<HIDElement> axes;
 		Vector<HIDElement> buttons;
 		Vector<HIDElement> hats;
 
-		UINT64 gamepadAxisTimestamps[HID_NUM_GAMEPAD_AXES];
+		u64 gamepadAxisTimestamps[HID_NUM_GAMEPAD_AXES];
 	};
 
 	/** Contains information about all enumerated input devices for a specific HIDManager. */
@@ -55,7 +55,7 @@ namespace bs
 		HIDType type;
 		Input* owner = nullptr;
 
-		INT32 mouseAxisValues[HID_NUM_MOUSE_AXES];
+		i32 mouseAxisValues[HID_NUM_MOUSE_AXES];
 	};
 
 	/**
@@ -92,7 +92,7 @@ namespace bs
 	/** Information about a gamepad. */
 	struct GamepadInfo
 	{
-		UINT32 id;
+		u32 id;
 		String name;
 		IOHIDDeviceRef deviceRef;
 		HIDManager* hid;

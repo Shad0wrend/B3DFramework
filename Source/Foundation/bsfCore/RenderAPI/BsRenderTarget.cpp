@@ -15,10 +15,10 @@ namespace bs
 		MarkCoreClean();
 	}
 
-	void RenderTarget::SetPriority(INT32 priority)
+	void RenderTarget::SetPriority(i32 priority)
 	{
-		std::function<void(SPtr<ct::RenderTarget>, INT32)> windowedFunc =
-			[](SPtr<ct::RenderTarget> renderTarget, INT32 priority)
+		std::function<void(SPtr<ct::RenderTarget>, i32)> windowedFunc =
+			[](SPtr<ct::RenderTarget> renderTarget, i32 priority)
 		{
 			renderTarget->SetPriority(priority);
 		};
@@ -64,7 +64,7 @@ namespace bs
 
 		}
 
-		void RenderTarget::SetPriority(INT32 priority)
+		void RenderTarget::SetPriority(i32 priority)
 		{
 			RenderTargetProperties& props = const_cast<RenderTargetProperties&>(GetProperties());
 

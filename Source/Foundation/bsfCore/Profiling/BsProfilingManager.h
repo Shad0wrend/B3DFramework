@@ -58,15 +58,15 @@ namespace bs
 		 * Profiler reports get updated every frame. Oldest reports that no longer fit in the saved reports buffer are
 		 * discarded.
 		 */
-		const ProfilerReport& GetReport(ProfiledThread thread, UINT32 idx = 0) const;
+		const ProfilerReport& GetReport(ProfiledThread thread, u32 idx = 0) const;
 
 	private:
-		static const UINT32 NUM_SAVED_FRAMES;
+		static const u32 NUM_SAVED_FRAMES;
 		ProfilerReport* mSavedSimReports = nullptr;
-		UINT32 mNextSimReportIdx = 0;
+		u32 mNextSimReportIdx = 0;
 
 		ProfilerReport* mSavedCoreReports = nullptr;
-		UINT32 mNextCoreReportIdx = 0;
+		u32 mNextCoreReportIdx = 0;
 
 		mutable Mutex mSync;
 	};

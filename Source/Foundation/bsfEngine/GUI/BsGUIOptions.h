@@ -33,37 +33,37 @@ namespace bs
 		 * Constructs a GUI option notifying the GUI layout that this element should be positioned at this offset from the
 		 * parent GUI panel. This option is ignored if element is part of a layout since it controls its placement.
 		 */
-		static GUIOption Position(INT32 x, INT32 y);
+		static GUIOption Position(i32 x, i32 y);
 
 		/**
 		 * Constructs a GUI option notifying the GUI layout that this element has a fixed width. This will override the
 		 * width property set in element style.
 		 */
-		static GUIOption FixedWidth(UINT32 value);
+		static GUIOption FixedWidth(u32 value);
 
 		/**
 		 * Constructs a GUI option notifying the GUI layout that this element has a flexible width with optional min/max
 		 * constraints (value of 0 means no constraint). This will override the width property set in element style.
 		 */
-		static GUIOption FlexibleWidth(UINT32 min = 0, UINT32 max = 0);
+		static GUIOption FlexibleWidth(u32 min = 0, u32 max = 0);
 
 		/**
 		 * Constructs a GUI option notifying the GUI layout that this element has a fixed height. This will override the
 		 * height property set in element style.
 		 */
-		static GUIOption FixedHeight(UINT32 value);
+		static GUIOption FixedHeight(u32 value);
 
 		/**
 		 * Constructs a GUI option notifying the GUI layout that this element has a flexible height with optional min/max
 		 * constraints (value of 0 means no constraint). This will override the height property set in element style.
 		 */
-		static GUIOption FlexibleHeight(UINT32 min = 0, UINT32 max = 0);
+		static GUIOption FlexibleHeight(u32 min = 0, u32 max = 0);
 
 	private:
 		friend struct GUIDimensions;
 
-		UINT32 min = 0;
-		UINT32 max = 0;
+		u32 min = 0;
+		u32 max = 0;
 		Type type = Type::FixedWidth;
 	};
 

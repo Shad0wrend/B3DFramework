@@ -18,10 +18,10 @@ namespace bs
 		void Set(const String& name, float value);
 
 		/** Adds a new define with an integer value. */
-		void Set(const String& name, INT32 value);
+		void Set(const String& name, i32 value);
 
 		/** Adds a new define with an integer value. */
-		void Set(const String& name, UINT32 value);
+		void Set(const String& name, u32 value);
 
 		/** Adds a new define with a string point value. */
 		void Set(const String& name, const String& value);
@@ -59,11 +59,11 @@ namespace bs
 				:I(0), Type(Int)
 			{ }
 
-			Param(const String& name, INT32 val)
+			Param(const String& name, i32 val)
 				:I(val), Name(name), Type(Int)
 			{ }
 
-			Param(const String& name, UINT32 val)
+			Param(const String& name, u32 val)
 				:Ui(val), Name(name), Type(Int)
 			{ }
 
@@ -77,8 +77,8 @@ namespace bs
 
 			union
 			{
-				INT32 I;
-				UINT32 Ui;
+				i32 I;
+				u32 Ui;
 				float F;
 			};
 
@@ -97,14 +97,14 @@ namespace bs
 		 * found.
 		 */
 		BS_SCRIPT_EXPORT()
-		INT32 GetInt(const StringID& name);
+		i32 GetInt(const StringID& name);
 
 		/**
 		 * Returns the value of a unsigned integer parameter with the specified name. Returns 0 if the parameter cannot be
 		 * found.
 		 */
 		BS_SCRIPT_EXPORT()
-		UINT32 GetUInt(const StringID& name);
+		u32 GetUInt(const StringID& name);
 
 		/** Returns the value of a float parameter with the specified name. Returns 0 if the parameter cannot be found.  */
 		BS_SCRIPT_EXPORT()
@@ -122,14 +122,14 @@ namespace bs
 		 * will be overwritten.
 		 */
 		BS_SCRIPT_EXPORT()
-		void SetInt(const StringID& name, INT32 value);
+		void SetInt(const StringID& name, i32 value);
 
 		/**
 		 * Sets the value of the parameter for the provided name. Any previous value for a parameter with the same name
 		 * will be overwritten.
 		 */
 		BS_SCRIPT_EXPORT()
-		void SetUInt(const StringID& name, UINT32 value);
+		void SetUInt(const StringID& name, u32 value);
 
 		/**
 		 * Sets the value of the parameter for the provided name. Any previous value for a parameter with the same name
@@ -194,10 +194,10 @@ namespace bs
 		/**
 		 * Returns a unique index of this variation, relative to all other variations registered in ShaderVariations object.
 		 */
-		UINT32 GetIdx() const { return mIdx;  }
+		u32 GetIdx() const { return mIdx;  }
 
 		/** Assigns a unique index to the variation that can later be used for quick lookup. */
-		void SetIdx(UINT32 idx) const { mIdx = idx; }
+		void SetIdx(u32 idx) const { mIdx = idx; }
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
 		template<class P>
@@ -211,7 +211,7 @@ namespace bs
 		friend class ShaderVariations;
 
 		UnorderedMap<StringID, Param> mParams;
-		mutable UINT32 mIdx = -1;
+		mutable u32 mIdx = -1;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -231,20 +231,20 @@ namespace bs
 		void Add(const ShaderVariation& variation);
 
 		/** Returns a variation at the specified index. Variations are indexed sequentially as they are added. */
-		const ShaderVariation& Get(UINT32 idx) { return mVariations[idx]; }
+		const ShaderVariation& Get(u32 idx) { return mVariations[idx]; }
 
 		/**
 		 * Scans a list of stored variations and returns an index of a variation that has the same parameters as the
 		 * provided one, or -1 if one is not found.
 		 */
-		UINT32 Find(const ShaderVariation& variation) const;
+		u32 Find(const ShaderVariation& variation) const;
 
 		/** Returns a list of all variations. */
 		const SmallVector<ShaderVariation, 4>& GetVariations() const { return mVariations; }
 
 	private:
 		SmallVector<ShaderVariation, 4> mVariations;
-		UINT32 mNextIdx = 0;
+		u32 mNextIdx = 0;
 	};
 
 	/** @} */

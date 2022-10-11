@@ -32,7 +32,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_PrefabComponentDiff;
 		}
@@ -71,7 +71,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_PrefabObjectDiff;
 		}
@@ -148,7 +148,7 @@ namespace bs
 
 			Vector<SerializedHandle> handleData(handleObjects.size());
 
-			UINT32 idx = 0;
+			u32 idx = 0;
 			for (auto& handleObject : handleObjects)
 			{
 				SerializedHandle& handle = handleData[idx];
@@ -233,7 +233,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_PrefabDiff;
 		}

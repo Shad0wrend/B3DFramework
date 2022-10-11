@@ -33,10 +33,10 @@ namespace bs
 		UnregisterChildElementInternal(element);
 	}
 
-	void GUILayout::InsertElement(UINT32 idx, GUIElementBase* element)
+	void GUILayout::InsertElement(u32 idx, GUIElementBase* element)
 	{
-		if(idx > (UINT32)mChildren.size())
-			BS_EXCEPT(InvalidParametersException, "Index out of range: " + toString(idx) + ". Valid range: 0 .. " + toString((UINT32)mChildren.size()));
+		if(idx > (u32)mChildren.size())
+			BS_EXCEPT(InvalidParametersException, "Index out of range: " + toString(idx) + ". Valid range: 0 .. " + toString((u32)mChildren.size()));
 
 		if (element->IsDestroyedInternal())
 			return;
@@ -62,10 +62,10 @@ namespace bs
 		DestroyChildElements();
 	}
 
-	void GUILayout::RemoveElementAt(UINT32 idx)
+	void GUILayout::RemoveElementAt(u32 idx)
 	{
-		if(idx >= (UINT32)mChildren.size())
-			BS_EXCEPT(InvalidParametersException, "Index out of range: " + toString(idx) + ". Valid range: 0 .. " + toString((UINT32)mChildren.size()));
+		if(idx >= (u32)mChildren.size())
+			BS_EXCEPT(InvalidParametersException, "Index out of range: " + toString(idx) + ". Valid range: 0 .. " + toString((u32)mChildren.size()));
 
 		GUIElementBase* child = mChildren[idx];
 		mChildren.erase(mChildren.begin() + idx);

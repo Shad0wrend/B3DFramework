@@ -35,9 +35,9 @@ namespace bs
 		MatrixNxM<M, N> Transpose() const
 		{
 			MatrixNxM<M, N> matTranspose;
-			for (UINT32 row = 0; row < N; row++)
+			for (u32 row = 0; row < N; row++)
 			{
-				for (UINT32 col = 0; col < M; col++)
+				for (u32 col = 0; col < M; col++)
 					matTranspose[col][row] = Data[row][col];
 			}
 
@@ -45,7 +45,7 @@ namespace bs
 		}
 
 		/** Returns a row of the matrix. */
-        float* operator[] (UINT32 row) const
+        float* operator[] (u32 row) const
 		{
 			assert(row < N);
 
@@ -54,9 +54,9 @@ namespace bs
 
 		bool operator== (const MatrixNxM& rhs) const
 		{
-			for (UINT32 row = 0; row < N; row++)
+			for (u32 row = 0; row < N; row++)
 			{
-				for (UINT32 col = 0; col < M; col++)
+				for (u32 col = 0; col < M; col++)
 				{
 					if (Data[row][col] != rhs.Data[row][col])
 						return false;

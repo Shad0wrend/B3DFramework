@@ -56,10 +56,10 @@ namespace bs
 		StringID RendererSemantic;
 
 		/** Index of the default value inside the Shader. Should not be set externally by the user. */
-		UINT32 DefaultValueIdx = (UINT32)-1;
+		u32 DefaultValueIdx = (u32)-1;
 
 		/** Index to a set of optional attributes attached to the parameter. Should not be set externally by the user. */
-		UINT32 AttribIdx = (UINT32)-1;
+		u32 AttribIdx = (u32)-1;
 	};
 
 	/** @} */
@@ -77,7 +77,7 @@ namespace bs
 	{
 		SHADER_DATA_PARAM_DESC() = default;
 		SHADER_DATA_PARAM_DESC(String name, String gpuVariableName, GpuParamDataType type,
-			StringID rendererSemantic = StringID::NONE, UINT32 arraySize = 1, UINT32 elementSize = 0)
+			StringID rendererSemantic = StringID::NONE, u32 arraySize = 1, u32 elementSize = 0)
 			:SHADER_PARAM_COMMON(std::move(name), std::move(gpuVariableName), rendererSemantic)
 			, Type(type), ArraySize(arraySize), ElementSize(elementSize)
 		{ }
@@ -86,13 +86,13 @@ namespace bs
 		GpuParamDataType Type = GPDT_FLOAT1;
 
 		/** If the parameter is an array, the number of elements in the array. Size of 1 means its not an array. */
-		UINT32 ArraySize = 1;
+		u32 ArraySize = 1;
 
 		/**
 		 * Size of an individual element in the array, in bytes. You only need to set this if you are setting variable
 		 * length parameters, like structs. Otherwise the size is determined from the type.
 		 */
-		UINT32 ElementSize = 0;
+		u32 ElementSize = 0;
 	};
 
 	/**
@@ -156,7 +156,7 @@ namespace bs
 		String Value;
 
 		/** Index of the next attribute in the linked list for this parameter. Should not be set externally by the user. */
-		UINT32 NextParamIdx = (UINT32)-1;
+		u32 NextParamIdx = (u32)-1;
 	};
 
 	/** Represents a single potential value of a shader variation parameter and optionally its name. */
@@ -166,7 +166,7 @@ namespace bs
 		String Name;
 
 		/** Integer value of the parameter. */
-		INT32 Value = 0;
+		i32 Value = 0;
 	};
 
 	/** Represents a single shader variation parameter and a set of all possible values. */
@@ -236,7 +236,7 @@ namespace bs
 		 *
 		 * @note	If multiple parameters are given with the same name but different types behavior is undefined.
 		 */
-		void AddParameter(SHADER_DATA_PARAM_DESC paramDesc, UINT8* defaultValue = nullptr);
+		void AddParameter(SHADER_DATA_PARAM_DESC paramDesc, u8* defaultValue = nullptr);
 
 		/**
 		 * Registers a new object (texture, sampler state, etc.) parameter you that you may then use via Material by
@@ -323,7 +323,7 @@ namespace bs
 		 * guidance and feel free to increase them or decrease them for finer tuning. (for example QueuePriority::Opaque +
 		 * 1).
 		 */
-		INT32 QueuePriority;
+		i32 QueuePriority;
 
 		/**
 		 * Enables or disables separable passes. When separable passes are disabled all shader passes will be executed in a
@@ -356,7 +356,7 @@ namespace bs
 		Map<String, SHADER_OBJECT_PARAM_DESC> SamplerParams;
 		Map<String, SHADER_PARAM_BLOCK_DESC> ParamBlocks;
 
-		Vector<UINT8> DataDefaultValues;
+		Vector<u8> DataDefaultValues;
 		Vector<SamplerStateType> SamplerDefaultValues;
 		Vector<TextureType> TextureDefaultValues;
 		Vector<SHADER_PARAM_ATTRIBUTE> ParamAttributes;
@@ -367,7 +367,7 @@ namespace bs
 		 *
 		 * @note	Common method shared by different addParameter overloads.
 		 */
-		void AddParameterInternal(SHADER_OBJECT_PARAM_DESC paramDesc, UINT32 defaultValueIdx);
+		void AddParameterInternal(SHADER_OBJECT_PARAM_DESC paramDesc, u32 defaultValueIdx);
 	};
 
 	/**	Templated version of Shader used for implementing both sim and core thread variants. */
@@ -380,12 +380,12 @@ namespace bs
 		using SamplerStateType = typename TSHADER_DESC<Core>::SamplerStateType;
 		using SubShaderType = typename TSubShaderType<Core>::Type;
 
-		TShader(UINT32 id);
-		TShader(const String& name, const TSHADER_DESC<Core>& desc, UINT32 id);
+		TShader(u32 id);
+		TShader(const String& name, const TSHADER_DESC<Core>& desc, u32 id);
 		virtual ~TShader();
 	
 		/** Returns the total number of techniques in this shader. */
-		UINT32 GetNumTechniques() const { return (UINT32)mDesc.Techniques.size(); }
+		u32 GetNumTechniques() const { return (u32)mDesc.Techniques.size(); }
 
 		/** Returns the list of all supported techniques based on current render API and renderer. */
 		Vector<SPtr<TechniqueType>> GetCompatibleTechniques() const;
@@ -427,7 +427,7 @@ namespace bs
 		 *
 		 * @see		SHADER_DESC::queuePriority
 		 */
-		INT32 GetQueuePriority() const { return mDesc.QueuePriority; }
+		i32 GetQueuePriority() const { return mDesc.QueuePriority; }
 
 		/**
 		 * Returns if separable passes are allowed.
@@ -505,27 +505,27 @@ namespace bs
 		 * Returns a default texture for a parameter that has the specified default value index (retrieved from the
 		 * parameters descriptor).
 		 */
-		TextureType GetDefaultTexture(UINT32 index) const;
+		TextureType GetDefaultTexture(u32 index) const;
 
 		/**
 		 * Returns a default sampler state for a parameter that has the specified default value index (retrieved from the
 		 * parameters descriptor).
 		 */
-		SamplerStateType GetDefaultSampler(UINT32 index) const;
+		SamplerStateType GetDefaultSampler(u32 index) const;
 
 		/**
 		 * Returns a pointer to the internal buffer containing the default value for a data parameter that has the
 		 * specified default value index (retrieved from the parameters descriptor).
 		 */
-		UINT8* GetDefaultValue(UINT32 index) const;
+		u8* GetDefaultValue(u32 index) const;
 
 		/** Returns the unique shader ID. */
-		UINT32 GetId() const { return mId; }
+		u32 GetId() const { return mId; }
 
 	protected:
 		String mName;
 		TSHADER_DESC<Core> mDesc;
-		UINT32 mId;
+		u32 mId;
 	};
 
 	/** @} */
@@ -597,7 +597,7 @@ namespace bs
 		 *
 		 * @note	Returns 0 for variable size types like structures.
 		 */
-		static UINT32 GetDataParamSize(GpuParamDataType type);
+		static u32 GetDataParamSize(GpuParamDataType type);
 
 		/**	Creates a new shader resource using the provided descriptor and techniques. */
 		static HShader Create(const String& name, const SHADER_DESC& desc);
@@ -620,7 +620,7 @@ namespace bs
 		/** @} */
 
 	private:
-		Shader(const String& name, const SHADER_DESC& desc, UINT32 id);
+		Shader(const String& name, const SHADER_DESC& desc, u32 id);
 
 		/** @copydoc CoreObject::getCoreDependencies */
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) ;
@@ -635,7 +635,7 @@ namespace bs
 		/************************************************************************/
 		/* 								RTTI		                     		*/
 		/************************************************************************/
-		Shader(UINT32 id);
+		Shader(u32 id);
 
 	public:
 		friend class ShaderRTTI;
@@ -681,9 +681,9 @@ namespace bs
 	protected:
 		friend class bs::Shader;
 
-		Shader(const String& name, const SHADER_DESC& desc, UINT32 id);
+		Shader(const String& name, const SHADER_DESC& desc, u32 id);
 
-		static std::atomic<UINT32> mNextShaderId;
+		static std::atomic<u32> mNextShaderId;
 	};
 
 	/** @} */

@@ -88,7 +88,7 @@ namespace bs
 		 * @param[in]	desc		Descriptor describing the type of the audio stream (format, sample rate, etc.).
 		 * @return					Newly created AudioClip. Must be manually initialized.
 		 */
-		virtual SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples,
+		virtual SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples,
 			const AUDIO_CLIP_DESC& desc) = 0;
 
 		/** Creates a new AudioListener. */

@@ -9,7 +9,7 @@
 
 namespace bs
 {
-	static constexpr UINT32 WRITE_STEADY_WAIT = 2000;
+	static constexpr u32 WRITE_STEADY_WAIT = 2000;
 	CFStringRef FolderMonitorMode = CFSTR("BSFolderMonitor");
 
 	enum class FileActionType
@@ -23,7 +23,7 @@ namespace bs
 	struct CreatedFileInfo
 	{
 		Path path;
-		UINT64 lastSize;
+		u64 lastSize;
 		Timer timer;
 	};
 
@@ -31,7 +31,7 @@ namespace bs
 	{
 		static FileAction* createAdded(const String& fileName)
 		{
-			UINT8* bytes = (UINT8*)bs_alloc((UINT32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
+			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
 			bytes += sizeof(FileAction);
@@ -48,7 +48,7 @@ namespace bs
 
 		static FileAction* createRemoved(const String& fileName)
 		{
-			UINT8* bytes = (UINT8*)bs_alloc((UINT32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
+			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
 			bytes += sizeof(FileAction);
@@ -65,7 +65,7 @@ namespace bs
 
 		static FileAction* createModified(const String& fileName)
 		{
-			UINT8* bytes = (UINT8*)bs_alloc((UINT32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
+			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) + (fileName.size() + 1) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
 			bytes += sizeof(FileAction);
@@ -82,7 +82,7 @@ namespace bs
 
 		static FileAction* createRenamed(const String& oldFilename, const String& newfileName)
 		{
-			UINT8* bytes = (UINT8*)bs_alloc((UINT32)(sizeof(FileAction) +
+			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) +
 					(oldFilename.size() + newfileName.size() + 2) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
@@ -456,7 +456,7 @@ namespace bs
 			}
 
 			// Run the loop in order to receive events
-			INT32 result = CFRunLoopRunInMode(FolderMonitorMode, 0.1f, false);
+			i32 result = CFRunLoopRunInMode(FolderMonitorMode, 0.1f, false);
 
 			// Delete any stopped monitors
 			{
@@ -484,7 +484,7 @@ namespace bs
 					{
 						CreatedFileInfo& entry = *iter;
 
-						UINT64 fileSize = FileSystem::GetFileSize(entry.path);
+						u64 fileSize = FileSystem::GetFileSize(entry.path);
 						if(fileSize != entry.lastSize)
 						{
 							entry.lastSize = fileSize;

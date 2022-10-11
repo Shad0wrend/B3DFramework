@@ -68,7 +68,7 @@ namespace bs
 		/** @} */
 	private:
 		/** @copydoc Audio::createClip */
-		SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples,
+		SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples,
 			const AUDIO_CLIP_DESC& desc) ;
 
 		/** @copydoc Audio::createListener */

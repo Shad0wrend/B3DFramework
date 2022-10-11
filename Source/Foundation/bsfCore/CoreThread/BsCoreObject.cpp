@@ -96,7 +96,7 @@ namespace bs
 		CoreObjectManager::Instance().SyncToCore(this);
 	}
 
-	void CoreObject::MarkCoreDirty(UINT32 flags)
+	void CoreObject::MarkCoreDirty(u32 flags)
 	{
 		bool wasDirty = IsCoreDirty();
 

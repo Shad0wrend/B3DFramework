@@ -13,7 +13,7 @@ namespace bs { namespace ct
 		glGenFramebuffers(1, &mFB);
 		BS_CHECK_GL_ERROR();
 
-		for (UINT32 x = 0; x < BS_MAX_MULTIPLE_RENDER_TARGETS; ++x)
+		for (u32 x = 0; x < BS_MAX_MULTIPLE_RENDER_TARGETS; ++x)
 			mColor[x].Buffer = nullptr;
 
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_FrameBufferObject);
@@ -27,13 +27,13 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_FrameBufferObject);
 	}
 
-	void GLFrameBufferObject::BindSurface(UINT32 attachment, const GLSurfaceDesc &target)
+	void GLFrameBufferObject::BindSurface(u32 attachment, const GLSurfaceDesc &target)
 	{
 		assert(attachment < BS_MAX_MULTIPLE_RENDER_TARGETS);
 		mColor[attachment] = target;
 	}
 
-	void GLFrameBufferObject::UnbindSurface(UINT32 attachment)
+	void GLFrameBufferObject::UnbindSurface(u32 attachment)
 	{
 		assert(attachment < BS_MAX_MULTIPLE_RENDER_TARGETS);
 		mColor[attachment].Buffer = nullptr;
@@ -53,14 +53,14 @@ namespace bs { namespace ct
 	void GLFrameBufferObject::Rebuild()
 	{
 		// Store basic stats
-		UINT16 maxSupportedMRTs = RenderAPI::InstancePtr()->GetCapabilities(0).NumMultiRenderTargets;
+		u16 maxSupportedMRTs = RenderAPI::InstancePtr()->GetCapabilities(0).NumMultiRenderTargets;
 
 		// Bind simple buffer to add color attachments
 		glBindFramebuffer(GL_FRAMEBUFFER, mFB);
 		BS_CHECK_GL_ERROR();
 
 		// Bind all attachment points to frame buffer
-		for (UINT16 x = 0; x < maxSupportedMRTs; ++x)
+		for (u16 x = 0; x < maxSupportedMRTs; ++x)
 		{
 			if (mColor[x].Buffer)
 			{
@@ -93,7 +93,7 @@ namespace bs { namespace ct
 		// Do glDrawBuffer calls
 		GLenum bufs[BS_MAX_MULTIPLE_RENDER_TARGETS];
 		GLsizei n = 0;
-		for (UINT32 x = 0; x < BS_MAX_MULTIPLE_RENDER_TARGETS; ++x)
+		for (u32 x = 0; x < BS_MAX_MULTIPLE_RENDER_TARGETS; ++x)
 		{
 			// Fill attached colour buffers
 			if (mColor[x].Buffer)

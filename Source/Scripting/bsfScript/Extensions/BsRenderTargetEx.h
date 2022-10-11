@@ -18,11 +18,11 @@ namespace bs
 	public:
 		/** @copydoc RenderTargetProperties::width */
 		BS_SCRIPT_EXPORT(e:RenderTarget,n:Width,pr:getter)
-		static UINT32 GetWidth(const SPtr<RenderTarget>& thisPtr);
+		static u32 GetWidth(const SPtr<RenderTarget>& thisPtr);
 
 		/** @copydoc RenderTargetProperties::height */
 		BS_SCRIPT_EXPORT(e:RenderTarget,n:Height,pr:getter)
-		static UINT32 GetHeight(const SPtr<RenderTarget>& thisPtr);
+		static u32 GetHeight(const SPtr<RenderTarget>& thisPtr);
 
 		/** @copydoc RenderTargetProperties::hwGamma */
 		BS_SCRIPT_EXPORT(e:RenderTarget,n:GammaCorrection,pr:getter)
@@ -30,15 +30,15 @@ namespace bs
 
 		/** @copydoc RenderTargetProperties::priority */
 		BS_SCRIPT_EXPORT(e:RenderTarget,n:Priority,pr:getter)
-		static INT32 GetPriority(const SPtr<RenderTarget>& thisPtr);
+		static i32 GetPriority(const SPtr<RenderTarget>& thisPtr);
 
 		/** @copydoc RenderTargetProperties::priority */
 		BS_SCRIPT_EXPORT(e:RenderTarget,n:Priority,pr:setter)
-		static void SetPriority(const SPtr<RenderTarget>& thisPtr, INT32 priority);
+		static void SetPriority(const SPtr<RenderTarget>& thisPtr, i32 priority);
 
 		/** @copydoc RenderTargetProperties::multisampleCount */
 		BS_SCRIPT_EXPORT(e:RenderTarget,n:SampleCount,pr:getter)
-		static UINT32 GetSampleCount(const SPtr<RenderTarget>& thisPtr);
+		static u32 GetSampleCount(const SPtr<RenderTarget>& thisPtr);
 	};
 
 	/** Extension class for RenderTexture, for adding additional functionality for the script interface. */

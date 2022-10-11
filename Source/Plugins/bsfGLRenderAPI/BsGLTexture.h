@@ -36,12 +36,12 @@ namespace bs { namespace ct
 		 *
 		 * @note	Cube face indices: +X (0), -X (1), +Y (2), -Y (3), +Z (4), -Z (5)
 		 */
-		SPtr<GLPixelBuffer> GetBuffer(UINT32 face, UINT32 mipmap);
+		SPtr<GLPixelBuffer> GetBuffer(u32 face, u32 mipmap);
 
 		/**
 		 * Picks an OpenGL texture target based on the texture type, number of samples per pixel, and number of faces.
 		 */
-		static GLenum GetGlTextureTarget(TextureType type, UINT32 numSamples, UINT32 numFaces);
+		static GLenum GetGlTextureTarget(TextureType type, u32 numSamples, u32 numFaces);
 
 		/** Picks an OpenGL texture target based on a GPU program parameter type. */
 		static GLenum GetGlTextureTarget(GpuParamObjectType type);
@@ -56,8 +56,8 @@ namespace bs { namespace ct
 		void Initialize() override;
 
 		/** @copydoc Texture::lock */
-		PixelData LockImpl(GpuLockOptions options, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 deviceIdx = 0,
-						   UINT32 queueIdx = 0) override;
+		PixelData LockImpl(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0,
+						   u32 queueIdx = 0) override;
 
 		/** @copydoc Texture::unlock */
 		void UnlockImpl() override;
@@ -67,12 +67,12 @@ namespace bs { namespace ct
 			const SPtr<CommandBuffer>& commandBuffer) ;
 
 		/** @copydoc Texture::readData */
-		void ReadDataImpl(PixelData& dest, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 deviceIdx = 0,
-					  UINT32 queueIdx = 0) override;
+		void ReadDataImpl(PixelData& dest, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0,
+					  u32 queueIdx = 0) override;
 
 		/** @copydoc Texture::writeData */
-		void WriteDataImpl(const PixelData& src, UINT32 mipLevel = 0, UINT32 face = 0, bool discardWholeBuffer = false,
-					   UINT32 queueIdx = 0) override;
+		void WriteDataImpl(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false,
+					   u32 queueIdx = 0) override;
 
 		/** Creates pixel buffers for each face and mip level. Texture must have been created previously. */
 		void CreateSurfaceList();

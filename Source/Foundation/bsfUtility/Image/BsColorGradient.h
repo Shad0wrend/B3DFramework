@@ -75,7 +75,7 @@ namespace bs
 		using ColorType = COLOR;
 		using TimeType = TIME;
 
-		static constexpr UINT32 MAX_KEYS = 8;
+		static constexpr u32 MAX_KEYS = 8;
 
 		BS_SCRIPT_EXPORT()
 		TColorGradient() = default;
@@ -99,11 +99,11 @@ namespace bs
 
 		/** Returns the number of color keys in the gradient. */
 		BS_SCRIPT_EXPORT(pr:getter,n:NumKeys)
-		UINT32 GetNumKeys() const { return mNumKeys; }
+		u32 GetNumKeys() const { return mNumKeys; }
 
 		/** Returns the color key at the specified index. If out of range an empty key is returned. */
 		BS_SCRIPT_EXPORT()
-		ColorGradientKey GetKey(UINT32 idx) const;
+		ColorGradientKey GetKey(u32 idx) const;
 
 		/** Specify a "gradient" that represents a single color value. */
 		BS_SCRIPT_EXPORT()

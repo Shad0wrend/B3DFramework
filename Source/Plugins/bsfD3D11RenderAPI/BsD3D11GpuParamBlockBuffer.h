@@ -15,7 +15,7 @@ namespace bs { namespace ct
 	class D3D11GpuParamBlockBuffer : public GpuParamBlockBuffer
 	{
 	public:
-		D3D11GpuParamBlockBuffer(UINT32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);
+		D3D11GpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);
 		~D3D11GpuParamBlockBuffer();
 
 		/**	Returns internal DX11 buffer object. */

@@ -24,7 +24,7 @@ namespace bs
 		BLEND_STATE_DESC BlendStateDesc;
 		RASTERIZER_STATE_DESC RasterizerStateDesc;
 		DEPTH_STENCIL_STATE_DESC DepthStencilStateDesc;
-		UINT32 StencilRefValue;
+		u32 StencilRefValue;
 
 		GPU_PROGRAM_DESC VertexProgramDesc;
 		GPU_PROGRAM_DESC FragmentProgramDesc;
@@ -62,7 +62,7 @@ namespace bs
 		bool IsCompute() const { return !mData.ComputeProgramDesc.Source.empty(); }
 
 		/** Gets the stencil reference value that is used when performing operations using the stencil buffer. */
-		UINT32 GetStencilRefValue() const { return mData.StencilRefValue; }
+		u32 GetStencilRefValue() const { return mData.StencilRefValue; }
 
 		/** Returns the GPU program descriptor for the specified GPU program type. */
 		const GPU_PROGRAM_DESC& GetProgramDesc(bs::GpuProgramType type) const;

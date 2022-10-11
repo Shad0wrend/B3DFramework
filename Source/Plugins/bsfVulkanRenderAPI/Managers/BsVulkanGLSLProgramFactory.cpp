@@ -16,10 +16,10 @@ namespace bs { namespace ct
 	template<class T, class CB>
 	void iterateSorted(const Map<String, T>& entries, CB callback)
 	{
-		auto count = (UINT32)entries.size();
+		auto count = (u32)entries.size();
 		auto sortedEntries = bs_managed_stack_alloc<const T*>(count);
 
-		UINT32 i = 0;
+		u32 i = 0;
 		for(auto& entry : entries)
 			sortedEntries[i++] = &entry.second;
 
@@ -84,10 +84,10 @@ namespace bs { namespace ct
 			return msl;
 		}
 
-		assert((spirv->instructions.size % sizeof(UINT32)) == 0);
+		assert((spirv->instructions.size % sizeof(u32)) == 0);
 
 		// Compile to MSL
-		spirv_cross::CompilerMSL compiler((UINT32*)spirv->instructions.data, spirv->instructions.size / sizeof(UINT32));
+		spirv_cross::CompilerMSL compiler((u32*)spirv->instructions.data, spirv->instructions.size / sizeof(u32));
 
 		// Remap resource bindings
 		if(msl->paramDesc)
@@ -125,7 +125,7 @@ namespace bs { namespace ct
 				+ msl->paramDesc->loadStoreTextures.size()
 				+ msl->paramDesc->buffers.size();
 
-			auto sortedEntries = bs_managed_stack_alloc<spirv_cross::MSLResourceBinding>((UINT32)count);
+			auto sortedEntries = bs_managed_stack_alloc<spirv_cross::MSLResourceBinding>((u32)count);
 			size_t i = 0;
 
 			for(auto& entry : msl->paramDesc->paramBlocks)
@@ -187,9 +187,9 @@ namespace bs { namespace ct
 					return a.desc_set < b.desc_set;
 				});
 
-			UINT32 bufferIdx = 0;
-			UINT32 samplerIdx = 0;
-			UINT32 textureIdx = 0;
+			u32 bufferIdx = 0;
+			u32 samplerIdx = 0;
+			u32 textureIdx = 0;
 
 			for(i = 0; i < count; i++)
 			{
@@ -225,7 +225,7 @@ namespace bs { namespace ct
 		std::string source = compiler.Compile();
 
 		// Parse workgroup size for compute shaders
-		UINT32 workgroupSize[3] = { 1, 1, 1 };
+		u32 workgroupSize[3] = { 1, 1, 1 };
 		if(desc.type == GPT_COMPUTE_PROGRAM)
 		{
 			spirv_cross::SPIREntryPoint spvEP;
@@ -252,16 +252,16 @@ namespace bs { namespace ct
 		}
 
 		// Magic numbers as defined in vk_mvk_moltenvk.h
-		constexpr UINT32 MVK_MSL_Source = 0x19960412;
+		constexpr u32 MVK_MSL_Source = 0x19960412;
 
-		UINT32 size = (UINT32)source.size() + sizeof(MVK_MSL_Source) + 1;
+		u32 size = (u32)source.size() + sizeof(MVK_MSL_Source) + 1;
 		if(desc.type == GPT_COMPUTE_PROGRAM)
 			size += sizeof(workgroupSize);
 
-		UINT32 wordSize = Math::DivideAndRoundUp(size, 4U);
+		u32 wordSize = Math::DivideAndRoundUp(size, 4U);
 
-		UINT8* buffer = (UINT8*)bs_alloc(wordSize * 4);
-		UINT8* dst = buffer;
+		u8* buffer = (u8*)bs_alloc(wordSize * 4);
+		u8* dst = buffer;
 
 		if(desc.type == GPT_COMPUTE_PROGRAM)
 		{
@@ -274,7 +274,7 @@ namespace bs { namespace ct
 
 		memcpy(dst, source.data(), source.size());
 
-		for(UINT32 i = size - 1; i < wordSize * 4; i++)
+		for(u32 i = size - 1; i < wordSize * 4; i++)
 			buffer[i] = '\0';
 
 		msl->instructions.size = wordSize * 4;

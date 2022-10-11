@@ -7,8 +7,8 @@
 
 namespace bs
 {
-	constexpr UINT32 Time::MAX_ACCUM_FIXED_UPDATES;
-	constexpr UINT32 Time::NEW_FIXED_UPDATES_PER_FRAME;
+	constexpr u32 Time::MAX_ACCUM_FIXED_UPDATES;
+	constexpr u32 Time::NEW_FIXED_UPDATES_PER_FRAME;
 
 	const double Time::MICROSEC_TO_SEC = 1.0/1000000.0;
 
@@ -27,7 +27,7 @@ namespace bs
 
 	void Time::UpdateInternal()
 	{
-		UINT64 currentFrameTime = mTimer->GetMicroseconds();
+		u64 currentFrameTime = mTimer->GetMicroseconds();
 
 		if(!mFirstFrame)
 			mFrameDelta = (float)((currentFrameTime - mLastFrameTime) * MICROSEC_TO_SEC);
@@ -37,7 +37,7 @@ namespace bs
 			mFirstFrame = false;
 		}
 
-		mTimeSinceStartMs = (UINT64)(currentFrameTime / 1000);
+		mTimeSinceStartMs = (u64)(currentFrameTime / 1000);
 		mTimeSinceStart = mTimeSinceStartMs / 1000.0f;
 		
 		mLastFrameTime = currentFrameTime;
@@ -45,9 +45,9 @@ namespace bs
 		mCurrentFrame.fetch_add(1, std::memory_order_relaxed);
 	}
 	
-	UINT32 Time::GetFixedUpdateStepInternal(UINT64& step)
+	u32 Time::GetFixedUpdateStepInternal(u64& step)
 	{
-		const UINT64 currentTime = GetTimePrecise();
+		const u64 currentTime = GetTimePrecise();
 
 		// Skip fixed update first frame (time delta is zero, and no input received yet)
 		if (mFirstFixedFrame)
@@ -56,11 +56,11 @@ namespace bs
 			mFirstFixedFrame = false;
 		}
 
-		const UINT64 nextFrameTime = mLastFixedUpdateTime + mFixedStep;
+		const u64 nextFrameTime = mLastFixedUpdateTime + mFixedStep;
 		if (nextFrameTime <= currentTime)
 		{
-			const INT64 simulationAmount = (INT64)std::max(currentTime - mLastFixedUpdateTime, mFixedStep); // At least one step
-			auto numIterations = (UINT32)Math::DivideAndRoundUp(simulationAmount, (INT64)mFixedStep);
+			const i64 simulationAmount = (i64)std::max(currentTime - mLastFixedUpdateTime, mFixedStep); // At least one step
+			auto numIterations = (u32)Math::DivideAndRoundUp(simulationAmount, (i64)mFixedStep);
 
 			// Prevent physics from completely hogging the CPU. If the framerate is low, the physics will want to run many
 			// iterations per frame, slowing down the game even further. Therefore we limit the number of physics updates
@@ -76,11 +76,11 @@ namespace bs
 			// performance is consistently low (not just a spike), then the pool will get exhausted and physics updates
 			// will slow down to free up the CPU (at the cost of stability, but this time we have no other option).
 
-			auto stepus = (INT64)mFixedStep;
+			auto stepus = (i64)mFixedStep;
 			if (numIterations > mNumRemainingFixedUpdates)
 			{
-				stepus = Math::DivideAndRoundUp(simulationAmount, (INT64)mNumRemainingFixedUpdates);
-				numIterations = (UINT32)Math::DivideAndRoundUp(simulationAmount, (INT64)stepus);
+				stepus = Math::DivideAndRoundUp(simulationAmount, (i64)mNumRemainingFixedUpdates);
+				numIterations = (u32)Math::DivideAndRoundUp(simulationAmount, (i64)stepus);
 			}
 
 			assert(numIterations <= mNumRemainingFixedUpdates);
@@ -96,12 +96,12 @@ namespace bs
 		return 0;
 	}
 
-	void Time::AdvanceFixedUpdateInternal(UINT64 step)
+	void Time::AdvanceFixedUpdateInternal(u64 step)
 	{
 		mLastFixedUpdateTime += step;
 	}
 
-	UINT64 Time::GetTimePrecise() const
+	u64 Time::GetTimePrecise() const
 	{
 		return mTimer->GetMicroseconds();
 	}

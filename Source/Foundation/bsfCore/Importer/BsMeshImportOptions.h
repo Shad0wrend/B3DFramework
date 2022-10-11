@@ -27,7 +27,7 @@ namespace bs
 		AnimationSplitInfo() = default;
 
 		BS_SCRIPT_EXPORT()
-		AnimationSplitInfo(const String& name, UINT32 startFrame, UINT32 endFrame, bool isAdditive = false)
+		AnimationSplitInfo(const String& name, u32 startFrame, u32 endFrame, bool isAdditive = false)
 			: Name(name), StartFrame(startFrame), EndFrame(endFrame), IsAdditive(isAdditive)
 		{ }
 
@@ -35,10 +35,10 @@ namespace bs
 		String Name;
 
 		BS_SCRIPT_EXPORT()
-		UINT32 StartFrame = 0;
+		u32 StartFrame = 0;
 
 		BS_SCRIPT_EXPORT()
-		UINT32 EndFrame = 0;
+		u32 EndFrame = 0;
 
 		BS_SCRIPT_EXPORT()
 		bool IsAdditive = false;

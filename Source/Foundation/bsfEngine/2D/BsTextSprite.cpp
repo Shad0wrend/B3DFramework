@@ -13,7 +13,7 @@ namespace bs
 		ClearMesh();
 	}
 
-	void TextSprite::Update(const TEXT_SPRITE_DESC& desc, UINT64 groupId)
+	void TextSprite::Update(const TEXT_SPRITE_DESC& desc, u64 groupId)
 	{
 		bs_frame_mark();
 		{
@@ -21,7 +21,7 @@ namespace bs
 			TextData<FrameAlloc> textData(utf32text, desc.Font, desc.FontSize, desc.Width, desc.Height, desc.WordWrap,
 				desc.WordBreak);
 
-			UINT32 numPages = textData.GetNumPages();
+			u32 numPages = textData.GetNumPages();
 
 			// Free all previous memory
 			for (auto& cachedElem : mCachedRenderElements)
@@ -38,14 +38,14 @@ namespace bs
 				mCachedRenderElements.resize(numPages);
 
 			// Actually generate a mesh
-			UINT32 texPage = 0;
+			u32 texPage = 0;
 			for (auto& cachedElem : mCachedRenderElements)
 			{
-				UINT32 newNumQuads = textData.GetNumQuadsForPage(texPage);
+				u32 newNumQuads = textData.GetNumQuadsForPage(texPage);
 
 				cachedElem.Vertices = (Vector2*)mAlloc.Alloc(sizeof(Vector2) * newNumQuads * 4);
 				cachedElem.Uvs = (Vector2*)mAlloc.Alloc(sizeof(Vector2) * newNumQuads * 4);
-				cachedElem.Indexes = (UINT32*)mAlloc.Alloc(sizeof(UINT32) * newNumQuads * 6);
+				cachedElem.Indexes = (u32*)mAlloc.Alloc(sizeof(u32) * newNumQuads * 6);
 				cachedElem.NumQuads = newNumQuads;
 
 				const HTexture& tex = textData.GetTextureForPage(texPage);
@@ -62,7 +62,7 @@ namespace bs
 			}
 
 			// Calc alignment and anchor offsets and set final line positions
-			for (UINT32 j = 0; j < numPages; j++)
+			for (u32 j = 0; j < numPages; j++)
 			{
 				SpriteRenderElementData& renderElem = mCachedRenderElements[j];
 
@@ -76,25 +76,25 @@ namespace bs
 		UpdateBounds();
 	}
 
-	UINT32 TextSprite::GenTextQuads(UINT32 page, const TextDataBase& textData, UINT32 width, UINT32 height,
-		TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, UINT32* indices, UINT32 bufferSizeQuads)
+	u32 TextSprite::GenTextQuads(u32 page, const TextDataBase& textData, u32 width, u32 height,
+		TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
 	{
-		UINT32 numLines = textData.GetNumLines();
-		UINT32 newNumQuads = textData.GetNumQuadsForPage(page);
+		u32 numLines = textData.GetNumLines();
+		u32 newNumQuads = textData.GetNumQuadsForPage(page);
 
 		Vector2I* alignmentOffsets = bs_stack_new<Vector2I>(numLines);
 		GetAlignmentOffsets(textData, width, height, horzAlign, vertAlign, alignmentOffsets);
 		Vector2I offset = GetAnchorOffset(anchor, width, height);
 
-		UINT32 quadOffset = 0;
-		for(UINT32 i = 0; i < numLines; i++)
+		u32 quadOffset = 0;
+		for(u32 i = 0; i < numLines; i++)
 		{
 			const TextDataBase::TextLine& line = textData.GetLine(i);
-			UINT32 writtenQuads = line.FillBuffer(page, vertices, uv, indices, quadOffset, bufferSizeQuads);
+			u32 writtenQuads = line.FillBuffer(page, vertices, uv, indices, quadOffset, bufferSizeQuads);
 
 			Vector2I position = offset + alignmentOffsets[i];
-			UINT32 numVertices = writtenQuads * 4;
-			for(UINT32 j = 0; j < numVertices; j++)
+			u32 numVertices = writtenQuads * 4;
+			for(u32 j = 0; j < numVertices; j++)
 			{
 				vertices[quadOffset * 4 + j].X += (float)position.X;
 				vertices[quadOffset * 4 + j].Y += (float)position.Y;
@@ -108,29 +108,29 @@ namespace bs
 	}
 
 
-	UINT32 TextSprite::GenTextQuads(const TextDataBase& textData, UINT32 width, UINT32 height,
-		TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, UINT32* indices, UINT32 bufferSizeQuads)
+	u32 TextSprite::GenTextQuads(const TextDataBase& textData, u32 width, u32 height,
+		TextHorzAlign horzAlign, TextVertAlign vertAlign, SpriteAnchor anchor, Vector2* vertices, Vector2* uv, u32* indices, u32 bufferSizeQuads)
 	{
-		UINT32 numLines = textData.GetNumLines();
-		UINT32 numPages = textData.GetNumPages();
+		u32 numLines = textData.GetNumLines();
+		u32 numPages = textData.GetNumPages();
 
 		Vector2I* alignmentOffsets = bs_stack_new<Vector2I>(numLines);
 		GetAlignmentOffsets(textData, width, height, horzAlign, vertAlign, alignmentOffsets);
 		Vector2I offset = GetAnchorOffset(anchor, width, height);
 
-		UINT32 quadOffset = 0;
+		u32 quadOffset = 0;
 		
-		for(UINT32 i = 0; i < numLines; i++)
+		for(u32 i = 0; i < numLines; i++)
 		{
 			const TextDataBase::TextLine& line = textData.GetLine(i);
-			for(UINT32 j = 0; j < numPages; j++)
+			for(u32 j = 0; j < numPages; j++)
 			{
-				UINT32 writtenQuads = line.FillBuffer(j, vertices, uv, indices, quadOffset, bufferSizeQuads);
+				u32 writtenQuads = line.FillBuffer(j, vertices, uv, indices, quadOffset, bufferSizeQuads);
 
 				Vector2I position = offset + alignmentOffsets[i];
 
-				UINT32 numVertices = writtenQuads * 4;
-				for(UINT32 k = 0; k < numVertices; k++)
+				u32 numVertices = writtenQuads * 4;
+				for(u32 k = 0; k < numVertices; k++)
 				{
 					vertices[quadOffset * 4 + k].X += (float)position.X;
 					vertices[quadOffset * 4 + k].Y += (float)position.Y;
@@ -145,49 +145,49 @@ namespace bs
 	}
 
 	void TextSprite::GetAlignmentOffsets(const TextDataBase& textData,
-		UINT32 width, UINT32 height, TextHorzAlign horzAlign, TextVertAlign vertAlign, Vector2I* output)
+		u32 width, u32 height, TextHorzAlign horzAlign, TextVertAlign vertAlign, Vector2I* output)
 	{
-		UINT32 numLines = textData.GetNumLines();
-		UINT32 curHeight = 0;
-		for(UINT32 i = 0; i < numLines; i++)
+		u32 numLines = textData.GetNumLines();
+		u32 curHeight = 0;
+		for(u32 i = 0; i < numLines; i++)
 		{
 			const TextDataBase::TextLine& line = textData.GetLine(i);
 			curHeight += line.GetYOffset();
 		}
 
 		// Calc vertical alignment offset
-		UINT32 vertDiff = (UINT32)std::max(0, (INT32)height - (INT32)curHeight);
-		UINT32 vertOffset = 0;
+		u32 vertDiff = (u32)std::max(0, (i32)height - (i32)curHeight);
+		u32 vertOffset = 0;
 		switch(vertAlign)
 		{
 		case TVA_Top:
 			vertOffset = 0;
 			break;
 		case TVA_Bottom:
-			vertOffset = (UINT32)std::max(0, (INT32)vertDiff);
+			vertOffset = (u32)std::max(0, (i32)vertDiff);
 			break;
 		case TVA_Center:
-			vertOffset = (UINT32)std::max(0, (INT32)vertDiff) / 2;
+			vertOffset = (u32)std::max(0, (i32)vertDiff) / 2;
 			break;
 		}
 
 		// Calc horizontal alignment offset
-		UINT32 curY = 0;
-		for(UINT32 i = 0; i < numLines; i++)
+		u32 curY = 0;
+		for(u32 i = 0; i < numLines; i++)
 		{
 			const TextDataBase::TextLine& line = textData.GetLine(i);
 
-			UINT32 horzOffset = 0;
+			u32 horzOffset = 0;
 			switch(horzAlign)
 			{
 			case THA_Left:
 				horzOffset = 0;
 				break;
 			case THA_Right:
-				horzOffset = (UINT32)std::max(0, (INT32)(width - line.GetWidth()));
+				horzOffset = (u32)std::max(0, (i32)(width - line.GetWidth()));
 				break;
 			case THA_Center:
-				horzOffset = (UINT32)std::max(0, (INT32)(width - line.GetWidth())) / 2;
+				horzOffset = (u32)std::max(0, (i32)(width - line.GetWidth())) / 2;
 				break;
 			}
 

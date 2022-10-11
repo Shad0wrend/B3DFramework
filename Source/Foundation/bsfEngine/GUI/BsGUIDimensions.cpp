@@ -20,8 +20,8 @@ namespace bs
 			switch(option.type)
 			{
 			case GUIOption::Type::Position:
-				dimensions.X = (INT32)option.min;
-				dimensions.Y = (INT32)option.max;
+				dimensions.X = (i32)option.min;
+				dimensions.Y = (i32)option.max;
 				break;
 			case GUIOption::Type::FixedWidth:
 				dimensions.Flags |= GUIDF_FixedWidth | GUIDF_OverWidth;
@@ -88,7 +88,7 @@ namespace bs
 
 		if (FixedHeight())
 		{
-			sizeRange.Optimal.Y = std::max(0, (INT32)MinHeight);
+			sizeRange.Optimal.Y = std::max(0, (i32)MinHeight);
 			sizeRange.Min.Y = sizeRange.Optimal.Y;
 			sizeRange.Max.Y = sizeRange.Optimal.Y;
 		}
@@ -98,20 +98,20 @@ namespace bs
 
 			if (MinHeight > 0)
 			{
-				sizeRange.Optimal.Y = std::max(std::max(0, (INT32)MinHeight), sizeRange.Optimal.Y);
-				sizeRange.Min.Y = std::max(0, (INT32)MinHeight);
+				sizeRange.Optimal.Y = std::max(std::max(0, (i32)MinHeight), sizeRange.Optimal.Y);
+				sizeRange.Min.Y = std::max(0, (i32)MinHeight);
 			}
 
 			if (MaxHeight > 0)
 			{
-				sizeRange.Optimal.Y = std::min(std::max(0, (INT32)MaxHeight), sizeRange.Optimal.Y);
-				sizeRange.Max.Y = std::max(0, (INT32)MaxHeight);
+				sizeRange.Optimal.Y = std::min(std::max(0, (i32)MaxHeight), sizeRange.Optimal.Y);
+				sizeRange.Max.Y = std::max(0, (i32)MaxHeight);
 			}
 		}
 
 		if (FixedWidth())
 		{
-			sizeRange.Optimal.X = std::max(0, (INT32)MinWidth);
+			sizeRange.Optimal.X = std::max(0, (i32)MinWidth);
 			sizeRange.Min.X = sizeRange.Optimal.X;
 			sizeRange.Max.X = sizeRange.Optimal.X;
 		}
@@ -121,14 +121,14 @@ namespace bs
 
 			if (MinWidth > 0)
 			{
-				sizeRange.Optimal.X = std::max(std::max(0, (INT32)MinWidth), sizeRange.Optimal.X);
-				sizeRange.Min.X = std::max(0, (INT32)MinWidth);
+				sizeRange.Optimal.X = std::max(std::max(0, (i32)MinWidth), sizeRange.Optimal.X);
+				sizeRange.Min.X = std::max(0, (i32)MinWidth);
 			}
 
 			if (MaxWidth > 0)
 			{
-				sizeRange.Optimal.X = std::min(std::max(0, (INT32)MaxWidth), sizeRange.Optimal.X);
-				sizeRange.Max.X = std::max(0, (INT32)MaxWidth);
+				sizeRange.Optimal.X = std::min(std::max(0, (i32)MaxWidth), sizeRange.Optimal.X);
+				sizeRange.Max.X = std::max(0, (i32)MaxWidth);
 			}
 		}
 

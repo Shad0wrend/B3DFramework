@@ -23,7 +23,7 @@ namespace bs { namespace ct
 		desc.NumFaces = props.GetNumFaces();
 		desc.NumMipLevels = props.GetNumMipmaps() + 1;
 		desc.Layout = layout;
-		desc.Usage = (UINT32)props.GetUsage();
+		desc.Usage = (u32)props.GetUsage();
 
 		return desc;
 	}
@@ -95,9 +95,9 @@ namespace bs { namespace ct
 			mImageInfos.push_back(fbMainViewInfo);
 		}
 
-		UINT32 numSubresources = mNumFaces * mNumMipLevels;
+		u32 numSubresources = mNumFaces * mNumMipLevels;
 		mSubresources = (VulkanImageSubresource**)bs_alloc(sizeof(VulkanImageSubresource*) * numSubresources);
-		for (UINT32 i = 0; i < numSubresources; i++)
+		for (u32 i = 0; i < numSubresources; i++)
 			mSubresources[i] = owner->Create<VulkanImageSubresource>(desc.Layout);
 	}
 
@@ -106,8 +106,8 @@ namespace bs { namespace ct
 		VulkanDevice& device = mOwner->GetDevice();
 		VkDevice vkDevice = device.GetLogical();
 
-		UINT32 numSubresources = mNumFaces * mNumMipLevels;
-		for (UINT32 i = 0; i < numSubresources; i++)
+		u32 numSubresources = mNumFaces * mNumMipLevels;
+		for (u32 i = 0; i < numSubresources; i++)
 		{
 			assert(!mSubresources[i]->IsBound()); // Image beeing freed but its subresources are still bound somewhere
 
@@ -188,7 +188,7 @@ namespace bs { namespace ct
 		VkImageViewType oldViewType = mImageViewCI.viewType;
 		VkFormat oldFormat = mImageViewCI.format;
 
-		const UINT32 numFaces = surface.NumFaces == 0 ? mNumFaces : surface.NumFaces;
+		const u32 numFaces = surface.NumFaces == 0 ? mNumFaces : surface.NumFaces;
 
 		switch (oldViewType)
 		{
@@ -292,13 +292,13 @@ namespace bs { namespace ct
 		return range;
 	}
 
-	VulkanImageSubresource* VulkanImage::GetSubresource(UINT32 face, UINT32 mipLevel)
+	VulkanImageSubresource* VulkanImage::GetSubresource(u32 face, u32 mipLevel)
 	{
 		assert(mipLevel * mNumFaces + face < mNumFaces * mNumMipLevels);
 		return mSubresources[mipLevel * mNumFaces + face];
 	}
 
-	void VulkanImage::Map(UINT32 face, UINT32 mipLevel, PixelData& output) const
+	void VulkanImage::Map(u32 face, u32 mipLevel, PixelData& output) const
 	{
 		VulkanDevice& device = mOwner->GetDevice();
 
@@ -314,21 +314,21 @@ namespace bs { namespace ct
 		VkSubresourceLayout layout;
 		vkGetImageSubresourceLayout(device.GetLogical(), mImage, &range, &layout);
 
-		output.SetRowPitch((UINT32)layout.rowPitch);
-		output.SetSlicePitch((UINT32)layout.depthPitch);
+		output.SetRowPitch((u32)layout.rowPitch);
+		output.SetSlicePitch((u32)layout.depthPitch);
 
 		VkDeviceMemory memory;
 		VkDeviceSize memoryOffset;
 		device.GetAllocationInfo(mAllocation, memory, memoryOffset);
 
-		UINT8* data;
+		u8* data;
 		VkResult result = vkMapMemory(device.GetLogical(), memory, memoryOffset + layout.offset, layout.size, 0, (void**)&data);
 		assert(result == VK_SUCCESS);
 
 		output.SetExternalBuffer(data);
 	}
 
-	UINT8* VulkanImage::Map(UINT32 offset, UINT32 size) const
+	u8* VulkanImage::Map(u32 offset, u32 size) const
 	{
 		VulkanDevice& device = mOwner->GetDevice();
 
@@ -336,7 +336,7 @@ namespace bs { namespace ct
 		VkDeviceSize memoryOffset;
 		device.GetAllocationInfo(mAllocation, memory, memoryOffset);
 
-		UINT8* data;
+		u8* data;
 		VkResult result = vkMapMemory(device.GetLogical(), memory, memoryOffset + offset, size, 0, (void**)&data);
 		assert(result == VK_SUCCESS);
 
@@ -440,16 +440,16 @@ namespace bs { namespace ct
 
 	void VulkanImage::GetBarriers(const VkImageSubresourceRange& range, Vector<VkImageMemoryBarrier>& barriers)
 	{
-		UINT32 numSubresources = range.levelCount * range.layerCount;
+		u32 numSubresources = range.levelCount * range.layerCount;
 
 		// Nothing to do
 		if (numSubresources == 0)
 			return;
 
-		UINT32 mip = range.baseMipLevel;
-		UINT32 face = range.baseArrayLayer;
-		UINT32 lastMip = range.baseMipLevel + range.levelCount - 1;
-		UINT32 lastFace = range.baseArrayLayer + range.layerCount - 1;
+		u32 mip = range.baseMipLevel;
+		u32 face = range.baseArrayLayer;
+		u32 lastMip = range.baseMipLevel + range.levelCount - 1;
+		u32 lastFace = range.baseArrayLayer + range.layerCount - 1;
 
 		VkImageMemoryBarrier defaultBarrier;
 		defaultBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -463,7 +463,7 @@ namespace bs { namespace ct
 		defaultBarrier.subresourceRange.baseArrayLayer = 0;
 		defaultBarrier.subresourceRange.baseMipLevel = 0;
 
-		auto addNewBarrier = [&](VulkanImageSubresource* subresource, UINT32 face, UINT32 mip)
+		auto addNewBarrier = [&](VulkanImageSubresource* subresource, u32 face, u32 mip)
 		{
 			barriers.push_back(defaultBarrier);
 			VkImageMemoryBarrier* barrier = &barriers.back();
@@ -497,9 +497,9 @@ namespace bs { namespace ct
 					bool expandedFace = true;
 					if (face < lastFace)
 					{
-						for (UINT32 i = 0; i < barrier->subresourceRange.levelCount; i++)
+						for (u32 i = 0; i < barrier->subresourceRange.levelCount; i++)
 						{
-							UINT32 curMip = barrier->subresourceRange.baseMipLevel + i;
+							u32 curMip = barrier->subresourceRange.baseMipLevel + i;
 							VulkanImageSubresource* subresource = GetSubresource(face + 1, curMip);
 							if (barrier->oldLayout != subresource->GetLayout())
 							{
@@ -514,10 +514,10 @@ namespace bs { namespace ct
 							numSubresources -= barrier->subresourceRange.levelCount;
 							face++;
 
-							for (UINT32 i = 0; i < barrier->subresourceRange.levelCount; i++)
+							for (u32 i = 0; i < barrier->subresourceRange.levelCount; i++)
 							{
-								UINT32 curMip = (barrier->subresourceRange.baseMipLevel + i) - range.baseMipLevel;
-								UINT32 idx = curMip * range.layerCount + (face - range.baseArrayLayer);
+								u32 curMip = (barrier->subresourceRange.baseMipLevel + i) - range.baseMipLevel;
+								u32 idx = curMip * range.layerCount + (face - range.baseArrayLayer);
 								processed[idx] = true;
 							}
 						}
@@ -529,9 +529,9 @@ namespace bs { namespace ct
 					bool expandedMip = true;
 					if (mip < lastMip)
 					{
-						for (UINT32 i = 0; i < barrier->subresourceRange.layerCount; i++)
+						for (u32 i = 0; i < barrier->subresourceRange.layerCount; i++)
 						{
-							UINT32 curFace = barrier->subresourceRange.baseArrayLayer + i;
+							u32 curFace = barrier->subresourceRange.baseArrayLayer + i;
 							VulkanImageSubresource* subresource = GetSubresource(curFace, mip + 1);
 							if (barrier->oldLayout != subresource->GetLayout())
 							{
@@ -546,10 +546,10 @@ namespace bs { namespace ct
 							numSubresources -= barrier->subresourceRange.layerCount;
 							mip++;
 
-							for (UINT32 i = 0; i < barrier->subresourceRange.layerCount; i++)
+							for (u32 i = 0; i < barrier->subresourceRange.layerCount; i++)
 							{
-								UINT32 curFace = (barrier->subresourceRange.baseArrayLayer + i) - range.baseArrayLayer;
-								UINT32 idx = (mip - range.baseMipLevel) * range.layerCount + curFace;
+								u32 curFace = (barrier->subresourceRange.baseArrayLayer + i) - range.baseArrayLayer;
+								u32 idx = (mip - range.baseMipLevel) * range.layerCount + curFace;
 								processed[idx] = true;
 							}
 						}
@@ -563,12 +563,12 @@ namespace bs { namespace ct
 				}
 
 				// Look for a new starting point (sub-resource we haven't processed yet)
-				for (UINT32 i = 0; i < range.levelCount; i++)
+				for (u32 i = 0; i < range.levelCount; i++)
 				{
 					bool found = false;
-					for (UINT32 j = 0; j < range.layerCount; j++)
+					for (u32 j = 0; j < range.layerCount; j++)
 					{
-						UINT32 idx = i * range.layerCount + j;
+						u32 idx = i * range.layerCount + j;
 						if (!processed[idx])
 						{
 							mip = range.baseMipLevel + i;
@@ -600,7 +600,7 @@ namespace bs { namespace ct
 	VulkanTexture::VulkanTexture(const TEXTURE_DESC& desc, const SPtr<PixelData>& initialData,
 										 GpuDeviceFlags deviceMask)
 		: Texture(desc, initialData, deviceMask), mImages(), mInternalFormats(), mDeviceMask(deviceMask)
-		, mStagingBuffer(nullptr), mMappedDeviceIdx((UINT32)-1), mMappedGlobalQueueIdx((UINT32)-1)
+		, mStagingBuffer(nullptr), mMappedDeviceIdx((u32)-1), mMappedGlobalQueueIdx((u32)-1)
 		, mMappedMip(0), mMappedFace(0), mMappedRowPitch(0), mMappedSlicePitch(0)
 		, mMappedLockOptions(GBL_WRITE_ONLY), mDirectlyMappable(false), mSupportsGPUWrites(false), mIsMapped(false)
 	{
@@ -609,7 +609,7 @@ namespace bs { namespace ct
 
 	VulkanTexture::~VulkanTexture()
 	{
-		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+		for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			if (mImages[i] == nullptr)
 				return;
@@ -696,9 +696,9 @@ namespace bs { namespace ct
 		if((usage & TU_MUTABLEFORMAT) != 0)
 			mImageCI.flags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
 
-		UINT32 width = mProperties.GetWidth();
-		UINT32 height = mProperties.GetHeight();
-		UINT32 depth = mProperties.GetDepth();
+		u32 width = mProperties.GetWidth();
+		u32 height = mProperties.GetHeight();
+		u32 depth = mProperties.GetDepth();
 
 		// 0-sized textures aren't supported by the API
 		width = std::max(width, 1U);
@@ -720,7 +720,7 @@ namespace bs { namespace ct
 		VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
 		// Allocate buffers per-device
-		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+		for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			if (devices[i] == nullptr)
 				continue;
@@ -783,13 +783,13 @@ namespace bs { namespace ct
 		VkMemoryPropertyFlags flags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 		VmaAllocation allocation = device.AllocateMemory(buffer, flags);
 
-		UINT32 blockSize = PixelUtil::GetBlockSize(pixelData.GetFormat());
+		u32 blockSize = PixelUtil::GetBlockSize(pixelData.GetFormat());
 
 		assert(pixelData.GetRowPitch() % blockSize == 0);
 		assert(pixelData.GetSlicePitch() % blockSize == 0);
 
-		UINT32 rowPitchInPixels = pixelData.GetRowPitch() / blockSize;
-		UINT32 slicePitchInPixels = pixelData.GetSlicePitch() / blockSize;
+		u32 rowPitchInPixels = pixelData.GetRowPitch() / blockSize;
+		u32 slicePitchInPixels = pixelData.GetSlicePitch() / blockSize;
 
 		if(PixelUtil::IsCompressed(pixelData.GetFormat()))
 		{
@@ -805,16 +805,16 @@ namespace bs { namespace ct
 	void VulkanTexture::CopyImage(VulkanTransferBuffer* cb, VulkanImage* srcImage, VulkanImage* dstImage,
 									  VkImageLayout srcFinalLayout, VkImageLayout dstFinalLayout)
 	{
-		UINT32 numFaces = mProperties.GetNumFaces();
-		UINT32 numMipmaps = mProperties.GetNumMipmaps() + 1;
+		u32 numFaces = mProperties.GetNumFaces();
+		u32 numMipmaps = mProperties.GetNumMipmaps() + 1;
 
-		UINT32 mipWidth = mProperties.GetWidth();
-		UINT32 mipHeight = mProperties.GetHeight();
-		UINT32 mipDepth = mProperties.GetDepth();
+		u32 mipWidth = mProperties.GetWidth();
+		u32 mipHeight = mProperties.GetHeight();
+		u32 mipDepth = mProperties.GetDepth();
 
 		VkImageCopy* imageRegions = bs_stack_alloc<VkImageCopy>(numMipmaps);
 
-		for(UINT32 i = 0; i < numMipmaps; i++)
+		for(u32 i = 0; i < numMipmaps; i++)
 		{
 			VkImageCopy& imageRegion = imageRegions[i];
 
@@ -907,7 +907,7 @@ namespace bs { namespace ct
 		VkImageLayout transferSrcLayout = mDirectlyMappable ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 		VkImageLayout transferDstLayout = other->mDirectlyMappable ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 
-		UINT32 mipWidth, mipHeight, mipDepth;
+		u32 mipWidth, mipHeight, mipDepth;
 
 		bool copyEntireSurface = desc.SrcVolume.GetWidth() == 0 ||
 			desc.SrcVolume.GetHeight() == 0 ||
@@ -932,7 +932,7 @@ namespace bs { namespace ct
 		}
 
 		VkImageResolve resolveRegion;
-		resolveRegion.srcOffset = { (INT32)desc.SrcVolume.Left, (INT32)desc.SrcVolume.Top, (INT32)desc.SrcVolume.Front };
+		resolveRegion.srcOffset = { (i32)desc.SrcVolume.Left, (i32)desc.SrcVolume.Top, (i32)desc.SrcVolume.Front };
 		resolveRegion.dstOffset = { desc.DstPosition.X, desc.DstPosition.Y, desc.DstPosition.Z };
 		resolveRegion.extent = { mipWidth, mipHeight, mipDepth };
 		resolveRegion.srcSubresource.baseArrayLayer = desc.SrcFace;
@@ -945,7 +945,7 @@ namespace bs { namespace ct
 		resolveRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 		VkImageCopy imageRegion;
-		imageRegion.srcOffset = { (INT32)desc.SrcVolume.Left, (INT32)desc.SrcVolume.Top, (INT32)desc.SrcVolume.Front };
+		imageRegion.srcOffset = { (i32)desc.SrcVolume.Left, (i32)desc.SrcVolume.Top, (i32)desc.SrcVolume.Front };
 		imageRegion.dstOffset = { desc.DstPosition.X, desc.DstPosition.Y, desc.DstPosition.Z };
 		imageRegion.extent = { mipWidth, mipHeight, mipDepth };
 		imageRegion.srcSubresource.baseArrayLayer = desc.SrcFace;
@@ -979,7 +979,7 @@ namespace bs { namespace ct
 		else
 			vkCB = rapi.GetMainCommandBufferInternal()->GetInternal();
 
-		UINT32 deviceIdx = vkCB->GetDeviceIdx();
+		u32 deviceIdx = vkCB->GetDeviceIdx();
 
 		VulkanImage* srcImage = mImages[deviceIdx];
 		VulkanImage* dstImage = other->GetResource(deviceIdx);
@@ -1021,8 +1021,8 @@ namespace bs { namespace ct
 		vkCB->RegisterImageTransfer(dstImage, dstRange, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VulkanAccessFlag::Write);
 	}
 
-	PixelData VulkanTexture::LockImpl(GpuLockOptions options, UINT32 mipLevel, UINT32 face, UINT32 deviceIdx,
-										  UINT32 queueIdx)
+	PixelData VulkanTexture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face, u32 deviceIdx,
+										  u32 queueIdx)
 	{
 		const TextureProperties& props = GetProperties();
 
@@ -1044,9 +1044,9 @@ namespace bs { namespace ct
 		}
 #endif
 
-		UINT32 mipWidth = std::max(1u, props.GetWidth() >> mipLevel);
-		UINT32 mipHeight = std::max(1u, props.GetHeight() >> mipLevel);
-		UINT32 mipDepth = std::max(1u, props.GetDepth() >> mipLevel);
+		u32 mipWidth = std::max(1u, props.GetWidth() >> mipLevel);
+		u32 mipHeight = std::max(1u, props.GetHeight() >> mipLevel);
+		u32 mipDepth = std::max(1u, props.GetDepth() >> mipLevel);
 
 		PixelData lockedArea(mipWidth, mipHeight, mipDepth, mInternalFormats[deviceIdx]);
 
@@ -1067,7 +1067,7 @@ namespace bs { namespace ct
 
 		VulkanCommandBufferManager& cbManager = gVulkanCBManager();
 		GpuQueueType queueType;
-		UINT32 localQueueIdx = CommandSyncMask::GetQueueIdxAndType(queueIdx, queueType);
+		u32 localQueueIdx = CommandSyncMask::GetQueueIdxAndType(queueIdx, queueType);
 
 		VulkanImageSubresource* subresource = image->GetSubresource(face, mipLevel);
 
@@ -1084,7 +1084,7 @@ namespace bs { namespace ct
 			assert(!mSupportsGPUWrites);
 
 			// Check is the GPU currently reading from the image
-			UINT32 useMask = subresource->GetUseInfo(VulkanAccessFlag::Read);
+			u32 useMask = subresource->GetUseInfo(VulkanAccessFlag::Read);
 			bool isUsedOnGPU = useMask != 0;
 
 			// We're safe to map directly since GPU isn't using the subresource
@@ -1103,8 +1103,8 @@ namespace bs { namespace ct
 						VkMemoryRequirements memReqs;
 						vkGetImageMemoryRequirements(device.GetLogical(), image->GetHandle(), &memReqs);
 
-						UINT8* src = image->Map(0, (UINT32)memReqs.size);
-						UINT8* dst = newImage->Map(0, (UINT32)memReqs.size);
+						u8* src = image->Map(0, (u32)memReqs.size);
+						u8* dst = newImage->Map(0, (u32)memReqs.size);
 
 						memcpy(dst, src, memReqs.size);
 
@@ -1168,8 +1168,8 @@ namespace bs { namespace ct
 					VkMemoryRequirements memReqs;
 					vkGetImageMemoryRequirements(device.GetLogical(), image->GetHandle(), &memReqs);
 
-					UINT8* src = image->Map(0, (UINT32)memReqs.size);
-					UINT8* dst = newImage->Map(0, (UINT32)memReqs.size);
+					u8* src = image->Map(0, (u32)memReqs.size);
+					u8* dst = newImage->Map(0, (u32)memReqs.size);
 
 					memcpy(dst, src, memReqs.size);
 
@@ -1207,7 +1207,7 @@ namespace bs { namespace ct
 
 			// Similar to above, if image supports GPU writes or is currently being written to, we need to wait on any
 			// potential writes to complete
-			UINT32 writeUseMask = subresource->GetUseInfo(VulkanAccessFlag::Write);
+			u32 writeUseMask = subresource->GetUseInfo(VulkanAccessFlag::Write);
 
 			if (mSupportsGPUWrites || writeUseMask != 0)
 			{
@@ -1269,7 +1269,7 @@ namespace bs { namespace ct
 			transferCB->Flush(true);
 		}
 
-		UINT8* data = mStagingBuffer->Map(0, lockedArea.GetSize());
+		u8* data = mStagingBuffer->Map(0, lockedArea.GetSize());
 		lockedArea.SetExternalBuffer(data);
 
 		return lockedArea;
@@ -1300,7 +1300,7 @@ namespace bs { namespace ct
 
 				VulkanCommandBufferManager& cbManager = gVulkanCBManager();
 				GpuQueueType queueType;
-				UINT32 localQueueIdx = CommandSyncMask::GetQueueIdxAndType(mMappedGlobalQueueIdx, queueType);
+				u32 localQueueIdx = CommandSyncMask::GetQueueIdxAndType(mMappedGlobalQueueIdx, queueType);
 
 				VulkanImage* image = mImages[mMappedDeviceIdx];
 				VulkanTransferBuffer* transferCB = cbManager.GetTransferBuffer(mMappedDeviceIdx, queueType, localQueueIdx);
@@ -1310,7 +1310,7 @@ namespace bs { namespace ct
 
 				// If the subresource is used in any way on the GPU, we need to wait for that use to finish before
 				// we issue our copy
-				UINT32 useMask = subresource->GetUseInfo(VulkanAccessFlag::Read | VulkanAccessFlag::Write);
+				u32 useMask = subresource->GetUseInfo(VulkanAccessFlag::Read | VulkanAccessFlag::Write);
 				bool isNormalWrite = false;
 				if (useMask != 0) // Subresource is currently used on the GPU
 				{
@@ -1346,8 +1346,8 @@ namespace bs { namespace ct
 				// Check if the subresource will still be bound somewhere after the CBs using it finish
 				if (isNormalWrite)
 				{
-					UINT32 useCount = subresource->GetUseCount();
-					UINT32 boundCount = subresource->GetBoundCount();
+					u32 useCount = subresource->GetUseCount();
+					u32 boundCount = subresource->GetBoundCount();
 
 					bool isBoundWithoutUse = boundCount > useCount;
 
@@ -1425,7 +1425,7 @@ namespace bs { namespace ct
 		mIsMapped = false;
 	}
 
-	void VulkanTexture::ReadDataImpl(PixelData& dest, UINT32 mipLevel, UINT32 face, UINT32 deviceIdx, UINT32 queueIdx)
+	void VulkanTexture::ReadDataImpl(PixelData& dest, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
 	{
 		if (mProperties.GetNumSamples() > 1)
 		{
@@ -1440,8 +1440,8 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResRead, RenderStatObject_Texture);
 	}
 
-	void VulkanTexture::WriteDataImpl(const PixelData& src, UINT32 mipLevel, UINT32 face, bool discardWholeBuffer,
-									  UINT32 queueIdx)
+	void VulkanTexture::WriteDataImpl(const PixelData& src, u32 mipLevel, u32 face, bool discardWholeBuffer,
+									  u32 queueIdx)
 	{
 		if(src.GetSize() == 0)
 			return;
@@ -1452,8 +1452,8 @@ namespace bs { namespace ct
 			return;
 		}
 
-		mipLevel = Math::Clamp(mipLevel, (UINT32)mipLevel, mProperties.GetNumMipmaps());
-		face = Math::Clamp(face, (UINT32)0, mProperties.GetNumFaces() - 1);
+		mipLevel = Math::Clamp(mipLevel, (u32)mipLevel, mProperties.GetNumMipmaps());
+		face = Math::Clamp(face, (u32)0, mProperties.GetNumFaces() - 1);
 
 		if (face > 0 && mProperties.GetTextureType() == TEX_TYPE_3D)
 		{
@@ -1462,7 +1462,7 @@ namespace bs { namespace ct
 		}
 
 		// Write to every device
-		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+		for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			if (mImages[i] == nullptr)
 				continue;

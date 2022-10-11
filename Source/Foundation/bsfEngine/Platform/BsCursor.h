@@ -110,10 +110,10 @@ namespace bs
 		/**	Sends the cursor image to the OS, making it active. */
 		void UpdateCursorImage();
 
-		UnorderedMap<String, UINT32> mCustomIconNameToId;
-		UnorderedMap<UINT32, CustomIcon> mCustomIcons;
-		UINT32 mNextUniqueId = (UINT32)CursorType::Count;
-		INT32 mActiveCursorId = -1;
+		UnorderedMap<String, u32> mCustomIconNameToId;
+		UnorderedMap<u32, CustomIcon> mCustomIcons;
+		u32 mNextUniqueId = (u32)CursorType::Count;
+		i32 mActiveCursorId = -1;
 	};
 
 	/** Easy way to access Cursor. */

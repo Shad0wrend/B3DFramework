@@ -80,10 +80,10 @@ namespace bs
 		float GetRestOffset();
 
 		/** @copydoc FCollider::setLayer */
-		void SetLayer(UINT64 layer);
+		void SetLayer(u64 layer);
 
 		/** @copydoc FCollider::getLayer */
-		UINT64 GetLayer() const;
+		u64 GetLayer() const;
 
 		/** @copydoc FCollider::setCollisionReportMode */
 		void SetCollisionReportMode(CollisionReportMode mode);

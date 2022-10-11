@@ -22,7 +22,7 @@ namespace bs { namespace ct
 		RMAT_DEF("Blit.bsl");
 
 		/** Helper method used for initializing variations of this material. */
-		template<UINT32 MSAA, UINT32 MODE>
+		template<u32 MSAA, u32 MODE>
 		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
@@ -51,7 +51,7 @@ namespace bs { namespace ct
 		 * @param	isFiltered		True if to apply bilinear filtering to the sampled texture. Only relevant for color
 		 *							textures with no multiple samples.
 		 */
-		static BlitMat* GetVariation(UINT32 msaaCount, bool isColor, bool isFiltered);
+		static BlitMat* GetVariation(u32 msaaCount, bool isColor, bool isFiltered);
 	private:
 		GpuParamTexture mSource;
 		bool mIsFiltered = false;
@@ -137,7 +137,7 @@ namespace bs { namespace ct
 	};
 
 	BS_PARAM_BLOCK_BEGIN(ClearParamDef)
-		BS_PARAM_BLOCK_ENTRY(INT32, gClearValue)
+		BS_PARAM_BLOCK_ENTRY(i32, gClearValue)
 	BS_PARAM_BLOCK_END
 
 	extern ClearParamDef gClearParamDef;
@@ -151,7 +151,7 @@ namespace bs { namespace ct
 		ClearMat();
 
 		/** Executes the material on the currently bound render target, clearing to to @p value. */
-		void Execute(UINT32 value);
+		void Execute(u32 value);
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 	};
@@ -176,7 +176,7 @@ namespace bs { namespace ct
 		 *
 		 * @note	Core thread.
 		 */
-		void SetPass(const SPtr<Material>& material, UINT32 passIdx = 0, UINT32 techniqueIdx = 0);
+		void SetPass(const SPtr<Material>& material, u32 passIdx = 0, u32 techniqueIdx = 0);
 
 		/**
 		 * Activates the specified material pass for compute. Any further dispatch calls will be executed using this pass.
@@ -186,7 +186,7 @@ namespace bs { namespace ct
 		 *
 		 * @note	Core thread.
 		 */
-		void SetComputePass(const SPtr<Material>& material, UINT32 passIdx = 0);
+		void SetComputePass(const SPtr<Material>& material, u32 passIdx = 0);
 
 		/**
 		 * Sets parameters (textures, samplers, buffers) for the currently active pass.
@@ -196,7 +196,7 @@ namespace bs { namespace ct
 		 *					
 		 * @note	Core thread.
 		 */
-		void SetPassParams(const SPtr<GpuParamsSet>& params, UINT32 passIdx = 0);
+		void SetPassParams(const SPtr<GpuParamsSet>& params, u32 passIdx = 0);
 
 		/**
 		 * Draws the specified mesh.
@@ -206,7 +206,7 @@ namespace bs { namespace ct
 		 *
 		 * @note	Core thread.
 		 */
-		void Draw(const SPtr<MeshBase>& mesh, UINT32 numInstances = 1);
+		void Draw(const SPtr<MeshBase>& mesh, u32 numInstances = 1);
 
 		/**
 		 * Draws the specified mesh.
@@ -217,7 +217,7 @@ namespace bs { namespace ct
 		 *
 		 * @note	Core thread.
 		 */
-		void Draw(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, UINT32 numInstances = 1);
+		void Draw(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u32 numInstances = 1);
 
 		/**
 		 * Draws the specified mesh with an additional vertex buffer containing morph shape vertices.
@@ -266,7 +266,7 @@ namespace bs { namespace ct
 		 * @note	Core thread.
 		 */
 		void DrawScreenQuad(const Rect2& uv, const Vector2I& textureSize = Vector2I(1, 1),
-			UINT32 numInstances = 1, bool flipUV = false);
+			u32 numInstances = 1, bool flipUV = false);
 
 		/**
 		 * Draws a quad over the entire viewport in normalized device coordinates.
@@ -276,7 +276,7 @@ namespace bs { namespace ct
 		 * 			
 		 * @note	Core thread.
 		 */
-		void DrawScreenQuad(UINT32 numInstances = 1)
+		void DrawScreenQuad(u32 numInstances = 1)
 		{
 			Rect2 uv(0.0f, 0.0f, 1.0f, 1.0f);
 			Vector2I textureSize(1, 1);
@@ -288,7 +288,7 @@ namespace bs { namespace ct
 		 * Clears the currently bound render target to the provided integer value. This is similar to
 		 * RenderAPI::clearRenderTarget(), except it supports integer clears.
 		 */
-		void Clear(UINT32 value);
+		void Clear(u32 value);
 
 		/** Returns a unit sphere stencil mesh. */
 		SPtr<Mesh> GetSphereStencil() const { return mUnitSphereStencilMesh; }
@@ -306,13 +306,13 @@ namespace bs { namespace ct
 		SPtr<Mesh> GetSkyBoxMesh() const { return mSkyBoxMesh; }
 
 	private:
-		static constexpr UINT32 NUM_QUAD_VB_SLOTS = 1024;
+		static constexpr u32 NUM_QUAD_VB_SLOTS = 1024;
 
 		SPtr<IndexBuffer> mFullScreenQuadIB;
 		SPtr<VertexBuffer> mFullScreenQuadVB;
 		SPtr<VertexDataDesc> mFullscreenQuadVDesc;
 		SPtr<VertexDeclaration> mFullscreenQuadVDecl;
-		UINT32 mNextQuadVBSlot = 0;
+		u32 mNextQuadVBSlot = 0;
 
 		SPtr<Mesh> mUnitSphereStencilMesh;
 		SPtr<Mesh> mUnitBoxStencilMesh;

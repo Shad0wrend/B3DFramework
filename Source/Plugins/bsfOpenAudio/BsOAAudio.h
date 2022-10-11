@@ -75,13 +75,13 @@ namespace bs
 		 * Returns optimal format for the provided number of channels and bit depth. It is assumed the user has checked if
 		 * extensions providing these formats are actually available.
 		 */
-		INT32 GetOpenALBufferFormatInternal(UINT32 numChannels, UINT32 bitDepth);
+		i32 GetOpenALBufferFormatInternal(u32 numChannels, u32 bitDepth);
 
 		/**
 		 * Writes provided samples into the OpenAL buffer with the provided ID. If the provided format is not supported the
 		 * samples will first be converted into a valid format.
 		 */
-		void WriteToOpenALBufferInternal(UINT32 bufferId, UINT8* samples, const AudioDataInfo& info);
+		void WriteToOpenALBufferInternal(u32 bufferId, u8* samples, const AudioDataInfo& info);
 
 		/** @} */
 
@@ -103,7 +103,7 @@ namespace bs
 		};
 
 		/** @copydoc Audio::createClip */
-		SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples,
+		SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples,
 			const AUDIO_CLIP_DESC& desc) ;
 
 		/** @copydoc Audio::createListener */

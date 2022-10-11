@@ -20,7 +20,7 @@ namespace bs
 	{
 		struct MessageHandlerData
 		{
-			UINT32 Id;
+			u32 Id;
 			std::function<void()> Callback;
 		};
 
@@ -40,12 +40,12 @@ namespace bs
 
 	private:
 		friend class HMessage;
-		void Unsubscribe(UINT32 handleId);
+		void Unsubscribe(u32 handleId);
 
-		Map<UINT32, Vector<MessageHandlerData>> mMessageHandlers;
-		Map<UINT32, UINT32> mHandlerIdToMessageMap;
+		Map<u32, Vector<MessageHandlerData>> mMessageHandlers;
+		Map<u32, u32> mHandlerIdToMessageMap;
 
-		UINT32 mNextCallbackId = 1;
+		u32 mNextCallbackId = 1;
 	};
 
 	/** @} */

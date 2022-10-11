@@ -7,19 +7,19 @@
 
 namespace bs
 {
-	VertexElement::VertexElement(UINT16 source, UINT32 offset,
-		VertexElementType theType, VertexElementSemantic semantic, UINT16 index, UINT32 instanceStepRate)
+	VertexElement::VertexElement(u16 source, u32 offset,
+		VertexElementType theType, VertexElementSemantic semantic, u16 index, u32 instanceStepRate)
 		: mSource(source), mOffset(offset), mType(theType), mSemantic(semantic), mIndex(index)
 		, mInstanceStepRate(instanceStepRate)
 	{
 	}
 
-	UINT32 VertexElement::GetSize(void) const
+	u32 VertexElement::GetSize(void) const
 	{
 		return GetTypeSize(mType);
 	}
 
-	UINT32 VertexElement::GetTypeSize(VertexElementType etype)
+	u32 VertexElement::GetTypeSize(VertexElementType etype)
 	{
 		switch(etype)
 		{
@@ -28,7 +28,7 @@ namespace bs
 		case VET_COLOR_ARGB:
 			return sizeof(RGBA);
 		case VET_UBYTE4_NORM:
-			return sizeof(UINT32);
+			return sizeof(u32);
 		case VET_FLOAT1:
 			return sizeof(float);
 		case VET_FLOAT2:
@@ -38,35 +38,35 @@ namespace bs
 		case VET_FLOAT4:
 			return sizeof(float) * 4;
 		case VET_USHORT1:
-			return sizeof(UINT16);
+			return sizeof(u16);
 		case VET_USHORT2:
-			return sizeof(UINT16) * 2;
+			return sizeof(u16) * 2;
 		case VET_USHORT4:
-			return sizeof(UINT16) * 4;
+			return sizeof(u16) * 4;
 		case VET_SHORT1:
-			return sizeof(INT16);
+			return sizeof(i16);
 		case VET_SHORT2:
-			return sizeof(INT16) * 2;
+			return sizeof(i16) * 2;
 		case VET_SHORT4:
-			return sizeof(INT16) * 4;
+			return sizeof(i16) * 4;
 		case VET_UINT1:
-			return sizeof(UINT32);
+			return sizeof(u32);
 		case VET_UINT2:
-			return sizeof(UINT32) * 2;
+			return sizeof(u32) * 2;
 		case VET_UINT3:
-			return sizeof(UINT32) * 3;
+			return sizeof(u32) * 3;
 		case VET_UINT4:
-			return sizeof(UINT32) * 4;
+			return sizeof(u32) * 4;
 		case VET_INT4:
-			return sizeof(INT32) * 4;
+			return sizeof(i32) * 4;
 		case VET_INT1:
-			return sizeof(INT32);
+			return sizeof(i32);
 		case VET_INT2:
-			return sizeof(INT32) * 2;
+			return sizeof(i32) * 2;
 		case VET_INT3:
-			return sizeof(INT32) * 3;
+			return sizeof(i32) * 3;
 		case VET_UBYTE4:
-			return sizeof(UINT8) * 4;
+			return sizeof(u8) * 4;
 		default:
 			break;
 		}
@@ -198,19 +198,19 @@ namespace bs
 		return !(*this == rhs);
 	}
 
-	const VertexElement* VertexDeclarationProperties::GetElement(UINT16 index) const
+	const VertexElement* VertexDeclarationProperties::GetElement(u16 index) const
 	{
 		assert(index < mElementList.size() && "Index out of bounds");
 
 		auto iter = mElementList.begin();
-		for (UINT16 i = 0; i < index; ++i)
+		for (u16 i = 0; i < index; ++i)
 			++iter;
 
 		return &(*iter);
 
 	}
 	
-	const VertexElement* VertexDeclarationProperties::FindElementBySemantic(VertexElementSemantic sem, UINT16 index) const
+	const VertexElement* VertexDeclarationProperties::FindElementBySemantic(VertexElementSemantic sem, u16 index) const
 	{
 		for (auto& elem : mElementList)
 		{
@@ -223,7 +223,7 @@ namespace bs
 		return nullptr;
 	}
 
-	Vector<VertexElement> VertexDeclarationProperties::FindElementsBySource(UINT16 source) const
+	Vector<VertexElement> VertexDeclarationProperties::FindElementsBySource(u16 source) const
 	{
 		Vector<VertexElement> retList;
 		for (auto& elem : mElementList)
@@ -235,9 +235,9 @@ namespace bs
 		return retList;
 	}
 
-	UINT32 VertexDeclarationProperties::GetVertexSize(UINT16 source) const
+	u32 VertexDeclarationProperties::GetVertexSize(u16 source) const
 	{
-		UINT32 size = 0;
+		u32 size = 0;
 
 		for (auto& elem : mElementList)
 		{
@@ -315,7 +315,7 @@ namespace bs
 
 	namespace ct
 	{
-	UINT32 VertexDeclaration::NextFreeId = 0;
+	u32 VertexDeclaration::NextFreeId = 0;
 
 	VertexDeclaration::VertexDeclaration(const Vector<VertexElement>& elements, GpuDeviceFlags deviceMask)
 		:mProperties(elements)

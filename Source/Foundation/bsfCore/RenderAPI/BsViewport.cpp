@@ -47,7 +47,7 @@ namespace bs
 		MarkCoreDirtyInternal();
 	}
 
-	void ViewportBase::SetClearValues(const Color& clearColor, float clearDepth, UINT16 clearStencil)
+	void ViewportBase::SetClearValues(const Color& clearColor, float clearDepth, u16 clearStencil)
 	{
 		mClearColorValue = clearColor;
 		mClearDepthValue = clearDepth;
@@ -70,7 +70,7 @@ namespace bs
 		MarkCoreDirtyInternal();
 	}
 
-	void ViewportBase::SetClearStencilValue(UINT16 value)
+	void ViewportBase::SetClearStencilValue(u16 value)
 	{
 		mClearStencilValue = value;
 
@@ -112,7 +112,7 @@ namespace bs
 		MarkCoreDirty();
 	}
 
-	UINT32 Viewport::GetTargetWidth() const
+	u32 Viewport::GetTargetWidth() const
 	{
 		if (mTarget != nullptr)
 			return mTarget->GetProperties().Width;
@@ -120,7 +120,7 @@ namespace bs
 		return 0;
 	}
 
-	UINT32 Viewport::GetTargetHeight() const
+	u32 Viewport::GetTargetHeight() const
 	{
 		if(mTarget != nullptr)
 			return mTarget->GetProperties().Height;
@@ -145,9 +145,9 @@ namespace bs
 
 	CoreSyncData Viewport::SyncToCore(FrameAlloc* allocator)
 	{
-		UINT32 size = csync_size(*this);
+		u32 size = csync_size(*this);
 
-		UINT8* buffer = allocator->Alloc(size);
+		u8* buffer = allocator->Alloc(size);
 		Bitstream stream(buffer, size);
 
 		csync_write(*this, stream);
@@ -207,7 +207,7 @@ namespace bs
 		return viewportPtr;
 	}
 
-	UINT32 Viewport::GetTargetWidth() const
+	u32 Viewport::GetTargetWidth() const
 	{
 		if (mTarget != nullptr)
 			return mTarget->GetProperties().Width;
@@ -215,7 +215,7 @@ namespace bs
 		return 0;
 	}
 
-	UINT32 Viewport::GetTargetHeight() const
+	u32 Viewport::GetTargetHeight() const
 	{
 		if (mTarget != nullptr)
 			return mTarget->GetProperties().Height;

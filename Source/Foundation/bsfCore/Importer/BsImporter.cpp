@@ -45,7 +45,7 @@ namespace bs
 		return false;
 	}
 
-	bool Importer::SupportsFileType(const UINT8* magicNumber, UINT32 magicNumSize) const
+	bool Importer::SupportsFileType(const u8* magicNumber, u32 magicNumSize) const
 	{
 		for(auto iter = mAssetImporters.begin(); iter != mAssetImporters.end(); ++iter)
 		{
@@ -118,7 +118,7 @@ namespace bs
 		if(importer == nullptr)
 			return nullptr;
 
-		const UINT64 taskId = WaitForAsync(importer);
+		const u64 taskId = WaitForAsync(importer);
 		SPtr<Resource> output = importer->Import(inputFilePath, importOptions);
 		
 		if(importer->GetAsyncMode() == ImporterAsyncMode::Single)
@@ -143,7 +143,7 @@ namespace bs
 		if(!importer)
 			return Vector<SubResourceRaw>();
 
-		const UINT64 taskId = WaitForAsync(importer);
+		const u64 taskId = WaitForAsync(importer);
 		Vector<SubResourceRaw> output = importer->ImportAll(inputFilePath, importOptions);
 
 		if(importer->GetAsyncMode() == ImporterAsyncMode::Single)
@@ -188,9 +188,9 @@ namespace bs
 		return importer;
 	}
 
-	UINT64 Importer::WaitForAsync(SpecificImporter* importer)
+	u64 Importer::WaitForAsync(SpecificImporter* importer)
 	{
-		UINT64 taskId = 0;
+		u64 taskId = 0;
 
 		const ImporterAsyncMode asyncMode = importer->GetAsyncMode();
 		if(asyncMode == ImporterAsyncMode::Single)
@@ -261,7 +261,7 @@ namespace bs
 
 		// If the importer only supports single thread import, the tasks need to be chained using dependencies so they get
 		// executed in sequence
-		UINT64 taskId = 0;
+		u64 taskId = 0;
 		SPtr<Task> dependency;
 		if(asyncMode == ImporterAsyncMode::Single)
 		{

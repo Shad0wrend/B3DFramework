@@ -45,19 +45,19 @@ namespace bs
 
 		/** @copydoc Decal::setLayer */
 		BS_SCRIPT_EXPORT(n:Layer,pr:setter)
-		void SetLayer(UINT64 layer) { mInternal->SetLayer(layer); }
+		void SetLayer(u64 layer) { mInternal->SetLayer(layer); }
 
 		/** @copydoc setLayer() */
 		BS_SCRIPT_EXPORT(n:Layer,pr:getter)
-		UINT64 GetLayer() const { return mInternal->GetLayer(); }
+		u64 GetLayer() const { return mInternal->GetLayer(); }
 
 		BS_SCRIPT_EXPORT(n:LayerMask,pr:setter)
 		/** @copydoc Decal::setLayerMask */
-		void SetLayerMask(UINT32 mask) { mInternal->SetLayerMask(mask); }
+		void SetLayerMask(u32 mask) { mInternal->SetLayerMask(mask); }
 
 		BS_SCRIPT_EXPORT(n:LayerMask,pr:getter)
 		/** @copydoc setLayerMask */
-		UINT32 GetLayerMask() const { return mInternal->GetLayerMask(); }
+		u32 GetLayerMask() const { return mInternal->GetLayerMask(); }
 
 		/** @name Internal
 		 *  @{

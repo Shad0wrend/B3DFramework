@@ -8,11 +8,11 @@ namespace bs
 #define WAVE_FORMAT_PCM			0x0001
 #define WAVE_FORMAT_EXTENDED	0xFFFE
 
-	bool WaveDecoder::IsValid(const SPtr<DataStream>& stream, UINT32 offset)
+	bool WaveDecoder::IsValid(const SPtr<DataStream>& stream, u32 offset)
 	{
 		stream->Seek(offset);
 
-		INT8 header[MAIN_CHUNK_SIZE];
+		i8 header[MAIN_CHUNK_SIZE];
 		if (stream->Read(header, sizeof(header)) < (sizeof(header)))
 			return false;
 
@@ -20,7 +20,7 @@ namespace bs
 			&& (header[8] == 'W') && (header[9] == 'A') && (header[10] == 'V') && (header[11] == 'E');
 	}
 
-	bool WaveDecoder::Open(const SPtr<DataStream>& stream, AudioDataInfo& info, UINT32 offset)
+	bool WaveDecoder::Open(const SPtr<DataStream>& stream, AudioDataInfo& info, u32 offset)
 	{
 		if (stream == nullptr)
 			return false;
@@ -37,21 +37,21 @@ namespace bs
 		return true;
 	}
 
-	void WaveDecoder::Seek(UINT32 offset)
+	void WaveDecoder::Seek(u32 offset)
 	{
 		mStream->Seek(mDataOffset + offset * mBytesPerSample);
 	}
 
-	UINT32 WaveDecoder::Read(UINT8* samples, UINT32 numSamples)
+	u32 WaveDecoder::Read(u8* samples, u32 numSamples)
 	{
-		UINT32 numRead = (UINT32)mStream->Read(samples, numSamples * mBytesPerSample);
+		u32 numRead = (u32)mStream->Read(samples, numSamples * mBytesPerSample);
 
 		if(mBytesPerSample == 1) // 8-bit samples are stored as unsigned, but engine convention is to store all bit depths as signed
 		{
-			for(UINT32 i = 0; i < numRead; i++)
+			for(u32 i = 0; i < numRead; i++)
 			{
-				INT8 val = samples[i] - 128;
-				samples[i] = *((UINT8*)&val);
+				i8 val = samples[i] - 128;
+				samples[i] = *((u8*)&val);
 			}
 		}
 
@@ -64,18 +64,18 @@ namespace bs
 		while (!foundData)
 		{
 			// Get sub-chunk ID and size
-			UINT8 subChunkId[4];
+			u8 subChunkId[4];
 			if (mStream->Read(subChunkId, sizeof(subChunkId)) != sizeof(subChunkId))
 				return false;
 
-			UINT32 subChunkSize = 0;
+			u32 subChunkSize = 0;
 			if (mStream->Read(&subChunkSize, sizeof(subChunkSize)) != sizeof(subChunkSize))
 				return false;
 
 			// FMT chunk
 			if (subChunkId[0] == 'f' && subChunkId[1] == 'm' && subChunkId[2] == 't' && subChunkId[3] == ' ')
 			{
-				UINT16 format = 0;
+				u16 format = 0;
 				if (mStream->Read(&format, sizeof(format)) != sizeof(format))
 					return false;
 
@@ -85,23 +85,23 @@ namespace bs
 					return false;
 				}
 
-				UINT16 numChannels = 0;
+				u16 numChannels = 0;
 				if (mStream->Read(&numChannels, sizeof(numChannels)) != sizeof(numChannels))
 					return false;
 
-				UINT32 sampleRate = 0;
+				u32 sampleRate = 0;
 				if (mStream->Read(&sampleRate, sizeof(sampleRate)) != sizeof(sampleRate))
 					return false;
 
-				UINT32 byteRate = 0;
+				u32 byteRate = 0;
 				if (mStream->Read(&byteRate, sizeof(byteRate)) != sizeof(byteRate))
 					return false;
 
-				UINT16 blockAlign = 0;
+				u16 blockAlign = 0;
 				if (mStream->Read(&blockAlign, sizeof(blockAlign)) != sizeof(blockAlign))
 					return false;
 
-				UINT16 bitDepth = 0;
+				u16 bitDepth = 0;
 				if (mStream->Read(&bitDepth, sizeof(bitDepth)) != sizeof(bitDepth))
 					return false;
 
@@ -118,7 +118,7 @@ namespace bs
 				// Read extension data, and get the actual format
 				if(format == WAVE_FORMAT_EXTENDED)
 				{
-					UINT16 extensionSize = 0;
+					u16 extensionSize = 0;
 					if (mStream->Read(&extensionSize, sizeof(extensionSize)) != sizeof(extensionSize))
 						return false;
 
@@ -128,15 +128,15 @@ namespace bs
 						return false;
 					}
 
-					UINT16 validBitDepth = 0;
+					u16 validBitDepth = 0;
 					if (mStream->Read(&validBitDepth, sizeof(validBitDepth)) != sizeof(validBitDepth))
 						return false;
 
-					UINT32 channelMask = 0;
+					u32 channelMask = 0;
 					if (mStream->Read(&channelMask, sizeof(channelMask)) != sizeof(channelMask))
 						return false;
 
-					UINT8 subFormat[16];
+					u8 subFormat[16];
 					if (mStream->Read(subFormat, sizeof(subFormat)) != sizeof(subFormat))
 						return false;
 
@@ -154,7 +154,7 @@ namespace bs
 			else if (subChunkId[0] == 'd' && subChunkId[1] == 'a' && subChunkId[2] == 't' && subChunkId[3] == 'a')
 			{
 				info.NumSamples = subChunkSize / mBytesPerSample;
-				mDataOffset = (UINT32)mStream->Tell();
+				mDataOffset = (u32)mStream->Tell();
 
 				foundData = true;
 			}

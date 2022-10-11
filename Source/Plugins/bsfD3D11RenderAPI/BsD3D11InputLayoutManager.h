@@ -18,8 +18,8 @@ namespace bs { namespace ct
 		/**	Key uniquely identifying vertex declaration and vertex shader combination. */
 		struct VertexDeclarationKey
 		{
-			UINT64 VertxDeclId;
-			UINT32 VertexProgramId;
+			u64 VertxDeclId;
+			u32 VertexProgramId;
 		};
 
 		/**	Creates a hash from vertex declaration key. */
@@ -42,7 +42,7 @@ namespace bs { namespace ct
 			InputLayoutEntry() {}
 
 			ID3D11InputLayout* InputLayout;
-			UINT32 LastUsedIdx;
+			u32 LastUsedIdx;
 		};
 
 	public:
@@ -78,7 +78,7 @@ namespace bs { namespace ct
 		UnorderedMap<VertexDeclarationKey, InputLayoutEntry*, HashFunc, EqualFunc> mInputLayoutMap;
 
 		bool mWarningShown = false;
-		UINT32 mLastUsedCounter = 0;
+		u32 mLastUsedCounter = 0;
 	};
 
 	/** @} */

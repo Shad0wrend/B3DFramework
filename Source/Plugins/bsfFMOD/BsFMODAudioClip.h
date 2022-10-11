@@ -16,7 +16,7 @@ namespace bs
 	/** Contains data used for decompressing an Ogg Vorbis stream. */
 	struct FMODOggDecompressorData
 	{
-		UINT32 readPos = 0;
+		u32 readPos = 0;
 		OggVorbisDecoder vorbisReader;
 		const FMODAudioClip* clip = nullptr;
 	};
@@ -25,7 +25,7 @@ namespace bs
 	class FMODAudioClip : public AudioClip
 	{
 	public:
-		FMODAudioClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples, const AUDIO_CLIP_DESC& desc);
+		FMODAudioClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc);
 		virtual ~FMODAudioClip();
 
 		/**
@@ -51,14 +51,14 @@ namespace bs
 		void Initialize() override;
 
 		/** @copydoc AudioClip::getSourceStream */
-		SPtr<DataStream> GetSourceStream(UINT32& size) ;
+		SPtr<DataStream> GetSourceStream(u32& size) ;
 
 		FMOD::Sound* mSound = nullptr;
 
 		// These streams exist to save original audio data in case it's needed later (usually for saving with the editor, or
 		// manual data manipulation). In normal usage (in-game) these will be null so no memory is wasted.
 		SPtr<DataStream> mSourceStreamData;
-		UINT32 mSourceStreamSize = 0;
+		u32 mSourceStreamSize = 0;
 	};
 
 	/** @} */

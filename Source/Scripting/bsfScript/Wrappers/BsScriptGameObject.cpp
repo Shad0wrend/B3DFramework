@@ -61,7 +61,7 @@ namespace bs
 		metaData.ScriptClass->AddInternalCall("Internal_GetIsDestroyed", (void*)&ScriptGameObject::InternalGetIsDestroyed);
 	}
 
-	UINT64 ScriptGameObject::InternalGetInstanceId(ScriptGameObject* nativeInstance)
+	u64 ScriptGameObject::InternalGetInstanceId(ScriptGameObject* nativeInstance)
 	{
 		return nativeInstance->GetNativeHandle().GetInstanceId();
 	}

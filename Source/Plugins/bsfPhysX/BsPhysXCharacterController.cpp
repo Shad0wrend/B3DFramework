@@ -253,7 +253,7 @@ namespace bs
 		const PxRigidActor* actor, PxHitFlags& queryFlags)
 	{
 		PxFilterData colliderFilterData = shape->getSimulationFilterData();
-		UINT64 colliderLayer = *(UINT64*)&colliderFilterData.word0;
+		u64 colliderLayer = *(u64*)&colliderFilterData.word0;
 
 		bool canCollide = gPhysics().IsCollisionEnabled(colliderLayer, GetLayer());
 

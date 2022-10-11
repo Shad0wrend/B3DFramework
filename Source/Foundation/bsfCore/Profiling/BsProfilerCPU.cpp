@@ -73,7 +73,7 @@ namespace bs
 		Cycles = 0;
 	}
 
-	inline UINT64 ProfilerCPU::TimerPrecise::GetNumCycles()
+	inline u64 ProfilerCPU::TimerPrecise::GetNumCycles()
 	{
 #if BS_COMPILER == BS_COMPILER_GNUC || BS_COMPILER == BS_COMPILER_CLANG
 		unsigned int a = 0;
@@ -81,11 +81,11 @@ namespace bs
 		__get_cpuid(a, &b[0], &b[1], &b[2], &b[3]);
 
 #if BS_ARCH_TYPE == BS_ARCHITECTURE_x86_64
-		UINT32 __a, __d;
+		u32 __a, __d;
 		__asm__ __volatile__ ("rdtsc" : "=a" (__a), "=d" (__d));
-		return (UINT64(__a) | UINT64(__d) << 32);
+		return (u64(__a) | u64(__d) << 32);
 #else
-		UINT64 x;
+		u64 x;
 		__asm__ volatile (".byte 0x0f, 0x31" : "=A" (x));
 		return x;
 #endif
@@ -116,8 +116,8 @@ namespace bs
 	{
 		Timer.Stop();
 
-		UINT64 numAllocs = MemoryCounter::GetNumAllocs() - MemAllocs;
-		UINT64 numFrees = MemoryCounter::GetNumFrees() - MemFrees;
+		u64 numAllocs = MemoryCounter::GetNumAllocs() - MemAllocs;
+		u64 numFrees = MemoryCounter::GetNumFrees() - MemFrees;
 
 		Samples.push_back(ProfileSample(Timer.Time, numAllocs, numFrees));
 	}
@@ -145,8 +145,8 @@ namespace bs
 	{
 		Timer.Stop();
 
-		UINT64 numAllocs = MemoryCounter::GetNumAllocs() - MemAllocs;
-		UINT64 numFrees = MemoryCounter::GetNumFrees() - MemFrees;
+		u64 numAllocs = MemoryCounter::GetNumAllocs() - MemAllocs;
+		u64 numFrees = MemoryCounter::GetNumFrees() - MemFrees;
 
 		Samples.push_back(PreciseProfileSample(Timer.Cycles, numAllocs, numFrees));
 	}
@@ -237,7 +237,7 @@ namespace bs
 	ProfilerCPU::ProfiledBlock* ProfilerCPU::ThreadInfo::GetBlock(const char* name)
 	{
 		ProfiledBlock* block = FrameAlloc.Construct<ProfiledBlock>(&FrameAlloc);
-		block->Name = (char*)FrameAlloc.Alloc(((UINT32)strlen(name) + 1) * sizeof(char));
+		block->Name = (char*)FrameAlloc.Alloc(((u32)strlen(name) + 1) * sizeof(char));
 		strcpy(block->Name, name);
 
 		return block;
@@ -245,7 +245,7 @@ namespace bs
 
 	void ProfilerCPU::ThreadInfo::ReleaseBlock(ProfiledBlock* block)
 	{
-		FrameAlloc.Free((UINT8*)block->Name);
+		FrameAlloc.Free((u8*)block->Name);
 		FrameAlloc.Free(block);
 	}
 
@@ -474,30 +474,30 @@ namespace bs
 
 		struct TempEntry
 		{
-			TempEntry(ProfiledBlock* _parentBlock, UINT32 _entryIdx)
+			TempEntry(ProfiledBlock* _parentBlock, u32 _entryIdx)
 				:ParentBlock(_parentBlock), EntryIdx(_entryIdx)
 			{ }
 
 			ProfiledBlock* ParentBlock;
-			UINT32 EntryIdx;
-			ProfilerVector<UINT32> ChildIndexes;
+			u32 EntryIdx;
+			ProfilerVector<u32> ChildIndexes;
 		};
 
 		ProfilerVector<CPUProfilerBasicSamplingEntry> basicEntries;
 		ProfilerVector<CPUProfilerPreciseSamplingEntry> preciseEntries;	
 
 		// Fill up flatHierarchy array in a way so we always process children before parents
-		ProfilerStack<UINT32> todo;
+		ProfilerStack<u32> todo;
 		ProfilerVector<TempEntry> flatHierarchy;
 
-		UINT32 entryIdx = 0;
+		u32 entryIdx = 0;
 		todo.push(entryIdx);
 		flatHierarchy.push_back(TempEntry(thread->RootBlock, entryIdx));
 
 		entryIdx++;
 		while(!todo.empty())
 		{
-			UINT32 curDataIdx = todo.top();
+			u32 curDataIdx = todo.top();
 			ProfiledBlock* curBlock = flatHierarchy[curDataIdx].ParentBlock;
 
 			todo.pop();
@@ -540,7 +540,7 @@ namespace bs
 				entryBasic->Data.MemFrees += sample.NumFrees;
 			}
 
-			entryBasic->Data.NumCalls = (UINT32)curBlock->Basic.Samples.size();
+			entryBasic->Data.NumCalls = (u32)curBlock->Basic.Samples.size();
 
 			if(entryBasic->Data.NumCalls > 0)
 				entryBasic->Data.AvgTimeMs = entryBasic->Data.TotalTimeMs / entryBasic->Data.NumCalls;
@@ -580,12 +580,12 @@ namespace bs
 				entryPrecise->Data.MemFrees += sample.NumFrees;
 			}
 
-			entryPrecise->Data.NumCalls = (UINT32)curBlock->Precise.Samples.size();
+			entryPrecise->Data.NumCalls = (u32)curBlock->Precise.Samples.size();
 
 			if(entryPrecise->Data.NumCalls > 0)
 				entryPrecise->Data.AvgCycles = entryPrecise->Data.TotalCycles / entryPrecise->Data.NumCalls;
 
-			UINT64 totalChildCycles = 0;
+			u64 totalChildCycles = 0;
 			for(auto& childIdx : curData.ChildIndexes)
 			{
 				CPUProfilerPreciseSamplingEntry* childEntry = &preciseEntries[childIdx];
@@ -607,8 +607,8 @@ namespace bs
 		}
 
 		// Prune empty basic entries
-		ProfilerStack<UINT32> finalBasicHierarchyTodo;
-		ProfilerStack<UINT32> parentBasicEntryIndexes;
+		ProfilerStack<u32> finalBasicHierarchyTodo;
+		ProfilerStack<u32> parentBasicEntryIndexes;
 		ProfilerVector<TempEntry> newBasicEntries;
 
 		finalBasicHierarchyTodo.push(0);
@@ -621,10 +621,10 @@ namespace bs
 
 		while(!finalBasicHierarchyTodo.empty())
 		{
-			UINT32 parentEntryIdx = parentBasicEntryIndexes.top();
+			u32 parentEntryIdx = parentBasicEntryIndexes.top();
 			parentBasicEntryIndexes.pop();
 
-			UINT32 curEntryIdx = finalBasicHierarchyTodo.top();
+			u32 curEntryIdx = finalBasicHierarchyTodo.top();
 			TempEntry& curEntry = flatHierarchy[curEntryIdx];
 			finalBasicHierarchyTodo.pop();
 
@@ -658,7 +658,7 @@ namespace bs
 
 			while(!finalBasicHierarchyTodo.empty())
 			{
-				UINT32 curEntryIdx = finalBasicHierarchyTodo.top();
+				u32 curEntryIdx = finalBasicHierarchyTodo.top();
 				finalBasicHierarchyTodo.pop();
 
 				TempEntry& curEntry = newBasicEntries[curEntryIdx];
@@ -666,7 +666,7 @@ namespace bs
 				CPUProfilerBasicSamplingEntry* basicEntry = finalBasicEntries[curEntryIdx];
 
 				basicEntry->ChildEntries.resize(curEntry.ChildIndexes.size());
-				UINT32 idx = 0;
+				u32 idx = 0;
 
 				for(auto& childIdx : curEntry.ChildIndexes)
 				{
@@ -681,8 +681,8 @@ namespace bs
 		}
 
 		// Prune empty precise entries
-		ProfilerStack<UINT32> finalPreciseHierarchyTodo;
-		ProfilerStack<UINT32> parentPreciseEntryIndexes;
+		ProfilerStack<u32> finalPreciseHierarchyTodo;
+		ProfilerStack<u32> parentPreciseEntryIndexes;
 		ProfilerVector<TempEntry> newPreciseEntries;
 
 		finalPreciseHierarchyTodo.push(0);
@@ -695,10 +695,10 @@ namespace bs
 
 		while(!finalPreciseHierarchyTodo.empty())
 		{
-			UINT32 parentEntryIdx = parentPreciseEntryIndexes.top();
+			u32 parentEntryIdx = parentPreciseEntryIndexes.top();
 			parentPreciseEntryIndexes.pop();
 
-			UINT32 curEntryIdx = finalPreciseHierarchyTodo.top();
+			u32 curEntryIdx = finalPreciseHierarchyTodo.top();
 			TempEntry& curEntry = flatHierarchy[curEntryIdx];
 			finalPreciseHierarchyTodo.pop();
 
@@ -732,7 +732,7 @@ namespace bs
 
 			while(!finalPreciseHierarchyTodo.empty())
 			{
-				UINT32 curEntryIdx = finalPreciseHierarchyTodo.top();
+				u32 curEntryIdx = finalPreciseHierarchyTodo.top();
 				finalPreciseHierarchyTodo.pop();
 
 				TempEntry& curEntry = newPreciseEntries[curEntryIdx];
@@ -740,7 +740,7 @@ namespace bs
 				CPUProfilerPreciseSamplingEntry* preciseEntry = finalPreciseEntries[curEntryIdx];
 
 				preciseEntry->ChildEntries.resize(curEntry.ChildIndexes.size());
-				UINT32 idx = 0;
+				u32 idx = 0;
 
 				for(auto& childIdx : curEntry.ChildIndexes)
 				{
@@ -760,14 +760,14 @@ namespace bs
 	void ProfilerCPU::EstimateTimerOverhead()
 	{
 		// Get an idea of how long timer calls and RDTSC takes
-		const UINT32 reps = 1000, sampleReps = 20;
+		const u32 reps = 1000, sampleReps = 20;
 
 		mBasicTimerOverhead = 1000000.0;
 		mPreciseTimerOverhead = 1000000;
-		for (UINT32 tries = 0; tries < 20; tries++)
+		for (u32 tries = 0; tries < 20; tries++)
 		{
 			Timer timer;
-			for (UINT32 i = 0; i < reps; i++)
+			for (u32 i = 0; i < reps; i++)
 			{
 				timer.Start();
 				timer.Stop();
@@ -778,13 +778,13 @@ namespace bs
 				mBasicTimerOverhead = avgTime;
 
 			TimerPrecise timerPrecise;
-			for (UINT32 i = 0; i < reps; i++)
+			for (u32 i = 0; i < reps; i++)
 			{
 				timerPrecise.Start();
 				timerPrecise.Stop();
 			}
 
-			UINT64 avgCycles = timerPrecise.Cycles/reps;
+			u64 avgCycles = timerPrecise.Cycles/reps;
 			if (avgCycles < mPreciseTimerOverhead)
 				mPreciseTimerOverhead = avgCycles;
 		}
@@ -793,7 +793,7 @@ namespace bs
 		mPreciseSamplingOverheadMs = 1000000.0;
 		mBasicSamplingOverheadCycles = 1000000;
 		mPreciseSamplingOverheadCycles = 1000000;
-		for (UINT32 tries = 0; tries < 3; tries++)
+		for (u32 tries = 0; tries < 3; tries++)
 		{
 			/************************************************************************/
 			/* 				AVERAGE TIME IN MS FOR BASIC SAMPLING                   */
@@ -806,7 +806,7 @@ namespace bs
 
 			// Two different cases that can effect performance, one where
 			// sample already exists and other where new one needs to be created
-			for (UINT32 i = 0; i < sampleReps; i++)
+			for (u32 i = 0; i < sampleReps; i++)
 			{
 				BeginSample("TestAvg1");
 				EndSample("TestAvg1");
@@ -830,7 +830,7 @@ namespace bs
 				EndSample("TestAvg10");
 			}
 
-			for (UINT32 i = 0; i < sampleReps * 5; i++)
+			for (u32 i = 0; i < sampleReps * 5; i++)
 			{
 				BeginSample(("TestAvg#" + toString(i)).c_str());
 				EndSample(("TestAvg#" + toString(i)).c_str());
@@ -857,7 +857,7 @@ namespace bs
 
 			// Two different cases that can effect performance, one where
 			// sample already exists and other where new one needs to be created
-			for (UINT32 i = 0; i < sampleReps; i++)
+			for (u32 i = 0; i < sampleReps; i++)
 			{
 				BeginSample("TestAvg1");
 				EndSample("TestAvg1");
@@ -881,7 +881,7 @@ namespace bs
 				EndSample("TestAvg10");
 			}
 
-			for (UINT32 i = 0; i < sampleReps * 5; i++)
+			for (u32 i = 0; i < sampleReps * 5; i++)
 			{
 				BeginSample(("TestAvg#" + toString(i)).c_str());
 				EndSample(("TestAvg#" + toString(i)).c_str());
@@ -892,7 +892,7 @@ namespace bs
 
 			Reset();
 
-			UINT64 avgCyclesBasic = timerPreciseA.Cycles/(sampleReps * 10 + sampleReps * 5) - mPreciseTimerOverhead;
+			u64 avgCyclesBasic = timerPreciseA.Cycles/(sampleReps * 10 + sampleReps * 5) - mPreciseTimerOverhead;
 			if (avgCyclesBasic < mBasicSamplingOverheadCycles)
 				mBasicSamplingOverheadCycles = avgCyclesBasic;
 
@@ -906,7 +906,7 @@ namespace bs
 
 			// Two different cases that can effect performance, one where
 			// sample already exists and other where new one needs to be created
-			for (UINT32 i = 0; i < sampleReps; i++)
+			for (u32 i = 0; i < sampleReps; i++)
 			{
 				BeginSamplePrecise("TestAvg1");
 				EndSamplePrecise("TestAvg1");
@@ -930,7 +930,7 @@ namespace bs
 				EndSamplePrecise("TestAvg10");
 			}
 
-			for (UINT32 i = 0; i < sampleReps * 5; i++)
+			for (u32 i = 0; i < sampleReps * 5; i++)
 			{
 				BeginSamplePrecise(("TestAvg#" + toString(i)).c_str());
 				EndSamplePrecise(("TestAvg#" + toString(i)).c_str());
@@ -955,7 +955,7 @@ namespace bs
 
 			// Two different cases that can effect performance, one where
 			// sample already exists and other where new one needs to be created
-			for (UINT32 i = 0; i < sampleReps; i++)
+			for (u32 i = 0; i < sampleReps; i++)
 			{
 				BeginSamplePrecise("TestAvg1");
 				EndSamplePrecise("TestAvg1");
@@ -979,7 +979,7 @@ namespace bs
 				EndSamplePrecise("TestAvg10");
 			}
 
-			for (UINT32 i = 0; i < sampleReps * 5; i++)
+			for (u32 i = 0; i < sampleReps * 5; i++)
 			{
 				BeginSamplePrecise(("TestAvg#" + toString(i)).c_str());
 				EndSamplePrecise(("TestAvg#" + toString(i)).c_str());
@@ -990,7 +990,7 @@ namespace bs
 
 			Reset();
 
-			UINT64 avgCyclesPrecise = timerPreciseB.Cycles/(sampleReps * 10 + sampleReps * 5);
+			u64 avgCyclesPrecise = timerPreciseB.Cycles/(sampleReps * 10 + sampleReps * 5);
 			if (avgCyclesPrecise < mPreciseSamplingOverheadCycles)
 				mPreciseSamplingOverheadCycles = avgCyclesPrecise;
 		}

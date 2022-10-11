@@ -259,7 +259,7 @@ namespace bs
 		void OnInputCommandEntered(InputCommandType commandType);
 
 		/**	Called whenever a virtual button is pressed. */
-		void OnVirtualButtonDown(const VirtualButton& button, UINT32 deviceIdx);
+		void OnVirtualButtonDown(const VirtualButton& button, u32 deviceIdx);
 
 		/**	Called by the drag and drop managed to notify us the drag ended. */
 		void OnMouseDragEnded(const PointerEvent& event, DragCallbackInfo& dragInfo);
@@ -320,11 +320,11 @@ namespace bs
 		 */
 		bool SendVirtualButtonEvent(GUIElement* element, const GUIVirtualButtonEvent& event);
 
-		static const UINT32 DRAG_DISTANCE;
+		static const u32 DRAG_DISTANCE;
 		static const float TOOLTIP_HOVER_TIME;
 
-		static const UINT32 MESH_HEAP_INITIAL_NUM_VERTS;
-		static const UINT32 MESH_HEAP_INITIAL_NUM_INDICES;
+		static const u32 MESH_HEAP_INITIAL_NUM_VERTS;
+		static const u32 MESH_HEAP_INITIAL_NUM_INDICES;
 
 		Vector<WidgetInfo> mWidgets;
 		SPtr<ct::GUIRenderer> mRenderer;
@@ -429,11 +429,11 @@ namespace bs
 		void Update(float time);
 
 		/** Updates the data required for rendering draw groups on the specified widget. */
-		void UpdateDrawGroups(const SPtr<Camera>& camera, UINT64 widgetId, UINT32 widgetDepth, const Matrix4& worldTransform, 
+		void UpdateDrawGroups(const SPtr<Camera>& camera, u64 widgetId, u32 widgetDepth, const Matrix4& worldTransform,
 			const GUIDrawGroupRenderDataUpdate& data);
 
 		/** Clears all draw groups from the specified widget. */
-		void ClearDrawGroups(const SPtr<Camera>& camera, UINT64 widgetId);
+		void ClearDrawGroups(const SPtr<Camera>& camera, u64 widgetId);
 
 		/** Updates the parameter block buffer for the specified mesh. */
 		void UpdateParamBlockBuffer(const SPtr<GpuParamBlockBuffer>& buffer, float invViewportWidth, float invViewportHeight, bool flipY,
@@ -441,8 +441,8 @@ namespace bs
 		
 		struct GUIWidgetRenderData
 		{
-			UINT64 WidgetId;
-			UINT32 WidgetDepth = 0;
+			u64 WidgetId;
+			u32 WidgetDepth = 0;
 			Vector<GUIDrawGroupRenderData> DrawGroups;
 			Vector<SPtr<GpuParamBlockBuffer>> ParamBlocks;
 

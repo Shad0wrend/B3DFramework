@@ -18,7 +18,7 @@ namespace bs
 	{
 	public:
 		BS_SCRIPT_EXPORT(ec:RendererMeshData)
-		static SPtr<RendererMeshData> Create(UINT32 numVertices, UINT32 numIndices, VertexLayout layout,
+		static SPtr<RendererMeshData> Create(u32 numVertices, u32 numIndices, VertexLayout layout,
 			IndexType indexType = IT_32BIT);
 
 		/** An array of all vertex positions. Only valid if the vertex layout contains vertex positions. */
@@ -71,9 +71,9 @@ namespace bs
 
 		/** An array of all indices. */
 		BS_SCRIPT_EXPORT(e:RendererMeshData,pr:getter,n:Indices)
-		static Vector<UINT32> GetIndices(const SPtr<RendererMeshData>& thisPtr);
+		static Vector<u32> GetIndices(const SPtr<RendererMeshData>& thisPtr);
 		BS_SCRIPT_EXPORT(e:RendererMeshData,pr:setter,n:Indices)
-		static void SetIndices(const SPtr<RendererMeshData>& thisPtr, const Vector<UINT32>& value);
+		static void SetIndices(const SPtr<RendererMeshData>& thisPtr, const Vector<u32>& value);
 
 		/** Returns the number of vertices contained in the mesh. */
 		BS_SCRIPT_EXPORT(e:RendererMeshData,pr:getter,n:VertexCount)

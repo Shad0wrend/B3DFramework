@@ -25,7 +25,7 @@ namespace bs
 	 */
 
 	// Limited by max number of array elements in texture for DX11 hardware
-	constexpr UINT32 MaxReflectionCubemaps = 2048 / 6;
+	constexpr u32 MaxReflectionCubemaps = 2048 / 6;
 
 	/** Contains most scene objects relevant to the renderer. */
 	struct SceneInfo
@@ -33,7 +33,7 @@ namespace bs
 		// Cameras and render targets
 		Vector<RendererRenderTarget> RenderTargets;
 		Vector<RendererView*> Views;
-		UnorderedMap<const Camera*, UINT32> CameraToView;
+		UnorderedMap<const Camera*, u32> CameraToView;
 		
 		// Renderables
 		Vector<RendererRenderable*> Renderables;
@@ -82,7 +82,7 @@ namespace bs
 		void RegisterCamera(Camera* camera);
 
 		/** Updates information about a previously registered camera. */
-		void UpdateCamera(Camera* camera, UINT32 updateFlag);
+		void UpdateCamera(Camera* camera, u32 updateFlag);
 
 		/** Removes a camera from the scene. */
 		void UnregisterCamera(Camera* camera);
@@ -115,7 +115,7 @@ namespace bs
 		void UnregisterReflectionProbe(ReflectionProbe* probe);
 
 		/** Updates the index at which the reflection probe's texture is stored at, in the global array. */
-		void SetReflectionProbeArrayIndex(UINT32 probeIdx, UINT32 arrayIdx, bool markAsClean);
+		void SetReflectionProbeArrayIndex(u32 probeIdx, u32 arrayIdx, bool markAsClean);
 
 		/** Registers a new light probe volume in the scene. */
 		void RegisterLightProbeVolume(LightProbeVolume* volume);
@@ -179,7 +179,7 @@ namespace bs
 		 * @param[in]	idx			Index of the renderable to prepare.
 		 * @param[in]	frameInfo	Global information describing the current frame.
 		 */
-		void PrepareRenderable(UINT32 idx, const FrameInfo& frameInfo);
+		void PrepareRenderable(u32 idx, const FrameInfo& frameInfo);
 
 		/**
 		 * Performs necessary steps to make a renderable ready for rendering. This must be called at least once every frame
@@ -189,7 +189,7 @@ namespace bs
 		 * @param[in]	idx			Index of the renderable to prepare.
 		 * @param[in]	frameInfo	Global information describing the current frame.
 		 */
-		void PrepareVisibleRenderable(UINT32 idx, const FrameInfo& frameInfo);
+		void PrepareVisibleRenderable(u32 idx, const FrameInfo& frameInfo);
 
 		/**
 		 * Performs necessary steps to make a particle system ready for rendering. This must be called at least once every
@@ -198,7 +198,7 @@ namespace bs
 		 * @param[in]	idx			Index of the particle system to prepare.
 		 * @param[in]	frameInfo	Global information describing the current frame.
 		 */
-		void PrepareParticleSystem(UINT32 idx, const FrameInfo& frameInfo);
+		void PrepareParticleSystem(u32 idx, const FrameInfo& frameInfo);
 
 		/**
 		 * Performs necessary steps to make a decal ready for rendering. This must be called at least once every frame
@@ -207,7 +207,7 @@ namespace bs
 		 * @param[in]	idx			Index of the decal to prepare.
 		 * @param[in]	frameInfo	Global information describing the current frame.
 		 */
-		void PrepareDecal(UINT32 idx, const FrameInfo& frameInfo);
+		void PrepareDecal(u32 idx, const FrameInfo& frameInfo);
 
 		/** Updates the bounds for all the particle systems from the provided object. */
 		void UpdateParticleSystemBounds(const ParticlePerFrameData* particleRenderData);

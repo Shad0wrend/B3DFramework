@@ -10,12 +10,12 @@ namespace bs { namespace ct
 	/** Used as a key in a hash map containing VulkanDescriptorLayout%s. */
 	struct VulkanLayoutKey
 	{
-		VulkanLayoutKey(VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings);
+		VulkanLayoutKey(VkDescriptorSetLayoutBinding* bindings, u32 numBindings);
 
 		/** Compares two descriptor layouts. */
 		bool operator==(const VulkanLayoutKey& rhs) const;
 
-		UINT32 NumBindings;
+		u32 NumBindings;
 		VkDescriptorSetLayoutBinding* Bindings;
 
 		VulkanDescriptorLayout* Layout = nullptr;
@@ -24,7 +24,7 @@ namespace bs { namespace ct
 	/** Used as a key in a hash map containing pipeline layouts. */
 	struct VulkanPipelineLayoutKey
 	{
-		VulkanPipelineLayoutKey(VulkanDescriptorLayout** layouts, UINT32 numLayouts);
+		VulkanPipelineLayoutKey(VulkanDescriptorLayout** layouts, u32 numLayouts);
 
 		/** Compares two pipeline layouts. */
 		bool operator==(const VulkanPipelineLayoutKey& rhs) const;
@@ -32,7 +32,7 @@ namespace bs { namespace ct
 		/** Calculates a has value for the provided descriptor layouts. */
 		size_t CalculateHash() const;
 
-		UINT32 NumLayouts;
+		u32 NumLayouts;
 		VulkanDescriptorLayout** Layouts;
 	};
 }}
@@ -85,13 +85,13 @@ namespace bs { namespace ct
 		~VulkanDescriptorManager();
 
 		/** Attempts to find an existing one, or allocates a new descriptor set layout from the provided set of bindings. */
-		VulkanDescriptorLayout* GetLayout(VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings);
+		VulkanDescriptorLayout* GetLayout(VkDescriptorSetLayoutBinding* bindings, u32 numBindings);
 
 		/** Allocates a new empty descriptor set matching the provided layout. */
 		VulkanDescriptorSet* CreateSet(VulkanDescriptorLayout* layout);
 
 		/** Attempts to find an existing one, or allocates a new pipeline layout based on the provided descriptor layouts. */
-		VkPipelineLayout GetPipelineLayout(VulkanDescriptorLayout** layouts, UINT32 numLayouts);
+		VkPipelineLayout GetPipelineLayout(VulkanDescriptorLayout** layouts, u32 numLayouts);
 
 	protected:
 		VulkanDevice& mDevice;

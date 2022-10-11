@@ -64,10 +64,10 @@ namespace bs
 		void SetElements(const Vector<HString>& elements);
 
 		/**	Makes the element with the specified index selected. */
-		void SelectElement(UINT32 idx);
+		void SelectElement(u32 idx);
 
 		/**	Deselect element the element with the specified index. Only relevant for multi-select list boxes. */
-		void DeselectElement(UINT32 idx);
+		void DeselectElement(u32 idx);
 
 		/**	Returns states of all element in the list box (enabled or disabled). */
 		const Vector<bool>& GetElementStates() const { return mElementStates; }
@@ -82,7 +82,7 @@ namespace bs
 		 * Triggered whenever user selects or deselects an element in the list box. Returned index maps to the element in
 		 * the elements array that the list box was initialized with.
 		 */
-		Event<void(UINT32, bool)> OnSelectionToggled;
+		Event<void(u32, bool)> OnSelectionToggled;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -107,7 +107,7 @@ namespace bs
 		bool CommandEventInternal(const GUICommandEvent& ev) override;
 
 		/**	Triggered when user clicks on an element. */
-		void ElementSelected(UINT32 idx);
+		void ElementSelected(u32 idx);
 
 		/**	Opens the list box drop down menu. */
 		void OpenListBox();

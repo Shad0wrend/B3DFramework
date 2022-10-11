@@ -85,7 +85,7 @@ namespace bs
 			mInternal->SetRestOffset(value);
 	}
 
-	void CCollider::SetLayer(UINT64 layer)
+	void CCollider::SetLayer(u64 layer)
 	{
 		mLayer = layer;
 

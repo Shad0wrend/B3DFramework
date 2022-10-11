@@ -69,7 +69,7 @@ namespace bs
 		void BlockUntilCoreInitialized() const;
 
 		/** Returns an unique identifier for this object. */
-		UINT64 GetInternalId() const { return mInternalID; }
+		u64 GetInternalId() const { return mInternalID; }
 
 		/** Returns a shared_ptr version of "this" pointer. */
 		SPtr<CoreObject> GetThisPtr() const { return mThis.lock(); }
@@ -151,9 +151,9 @@ namespace bs
 	private:
 		friend class CoreObjectManager;
 
-		volatile UINT8 mFlags;
-		UINT32 mCoreDirtyFlags;
-		UINT64 mInternalID; // ID == 0 is not a valid ID
+		volatile u8 mFlags;
+		u32 mCoreDirtyFlags;
+		u64 mInternalID; // ID == 0 is not a valid ID
 		std::weak_ptr<CoreObject> mThis;
 
 		/**
@@ -196,7 +196,7 @@ namespace bs
 		 *									syncToCore() will be called regardless and it's up to the implementation to read
 		 *									the flags value if needed.
 		 */
-		void MarkCoreDirty(UINT32 flags = 0xFFFFFFFF);
+		void MarkCoreDirty(u32 flags = 0xFFFFFFFF);
 
 		/** Marks the core data as clean. Normally called right after syncToCore() has been called. */
 		void MarkCoreClean() { mCoreDirtyFlags = 0; }
@@ -217,7 +217,7 @@ namespace bs
 		/**
 		 * Returns the exact value of the internal flag that signals whether an object needs to be synced with the core thread.
 		 */
-		UINT32 GetCoreDirtyFlags() const { return mCoreDirtyFlags; }
+		u32 GetCoreDirtyFlags() const { return mCoreDirtyFlags; }
 
 		/**
 		 * Copy internal dirty data to a memory buffer that will be used for updating core thread version of that data.
@@ -242,7 +242,7 @@ namespace bs
 		 * change. Dirty flags of the dependency object can be examined for more information on what part of the dependency
 		 * was modified.
 		 */
-		virtual void OnDependencyDirty(CoreObject* dependency, UINT32 dirtyFlags)
+		virtual void OnDependencyDirty(CoreObject* dependency, u32 dirtyFlags)
 		{
 			// By default any changes on a dependency mark the parent dirty as well
 			mCoreDirtyFlags |= DIRTY_DEPENDENCY_MASK;

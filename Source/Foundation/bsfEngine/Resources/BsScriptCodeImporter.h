@@ -19,7 +19,7 @@ namespace bs
 		bool IsExtensionSupported(const String& ext) const override;
 
 		/** @copydoc SpecificImporter::isMagicNumberSupported */
-		bool IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const override;
+		bool IsMagicNumberSupported(const u8* magicNumPtr, u32 numBytes) const override;
 
 		/** @copydoc SpecificImporter::import */
 		SPtr<Resource> Import(const Path& filePath, SPtr<const ImportOptions> importOptions) ;

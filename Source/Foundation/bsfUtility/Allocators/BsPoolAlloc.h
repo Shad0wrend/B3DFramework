@@ -31,13 +31,13 @@ namespace bs
 		class MemBlock
 		{
 		public:
-			MemBlock(UINT8* blockData)
+			MemBlock(u8* blockData)
 				:BlockData(blockData), FreePtr(0), FreeElems(ElemsPerBlock), NextBlock(nullptr)
 			{
-				UINT32 offset = 0;
-				for(UINT32 i = 0; i < ElemsPerBlock; i++)
+				u32 offset = 0;
+				for(u32 i = 0; i < ElemsPerBlock; i++)
 				{
-					UINT32* entryPtr = (UINT32*)&blockData[offset];
+					u32* entryPtr = (u32*)&blockData[offset];
 
 					offset += ActualElemSize;
 					*entryPtr = offset;
@@ -53,10 +53,10 @@ namespace bs
 			 * Returns the first free address and increments the free pointer. Caller needs to ensure the remaining block
 			 * size is adequate before calling.
 			 */
-			UINT8* Alloc()
+			u8* Alloc()
 			{
-				UINT8* freeEntry = &BlockData[FreePtr];
-				FreePtr = *(UINT32*)freeEntry;
+				u8* freeEntry = &BlockData[FreePtr];
+				FreePtr = *(u32*)freeEntry;
 				--FreeElems;
 
 				return freeEntry;
@@ -65,16 +65,16 @@ namespace bs
 			/** Deallocates the provided pointer. */
 			void Dealloc(void* data)
 			{
-				UINT32* entryPtr = (UINT32*)data;
+				u32* entryPtr = (u32*)data;
 				*entryPtr = FreePtr;
 				++FreeElems;
 
-				FreePtr = (UINT32)(((UINT8*)data) - BlockData);
+				FreePtr = (u32)(((u8*)data) - BlockData);
 			}
 
-			UINT8* BlockData;
-			UINT32 FreePtr;
-			UINT32 FreeElems;
+			u8* BlockData;
+			u32 FreePtr;
+			u32 FreeElems;
 			MemBlock* NextBlock;
 		};
 
@@ -101,7 +101,7 @@ namespace bs
 		}
 
 		/** Allocates enough memory for a single element in the pool. */
-		UINT8* Alloc()
+		u8* Alloc()
 		{
 			ScopedLock<Lock> lock(mLockPolicy);
 
@@ -109,7 +109,7 @@ namespace bs
 				AllocBlock();
 
 			mTotalNumElems++;
-			UINT8* output = mFreeBlock->Alloc();
+			u8* output = mFreeBlock->Alloc();
 
 			return output;
 		}
@@ -122,7 +122,7 @@ namespace bs
 			MemBlock* curBlock = mFreeBlock;
 			while(curBlock)
 			{
-				constexpr UINT32 blockDataSize = ActualElemSize * ElemsPerBlock;
+				constexpr u32 blockDataSize = ActualElemSize * ElemsPerBlock;
 				if(data >= curBlock->BlockData && data < (curBlock->BlockData + blockDataSize))
 				{
 					curBlock->Dealloc(data);
@@ -131,8 +131,8 @@ namespace bs
 					if(curBlock->FreeElems == 0 && curBlock->NextBlock)
 					{
 						// Free the block, but only if there is some extra free space in other blocks
-						const UINT32 totalSpace = (mNumBlocks - 1) * ElemsPerBlock;
-						const UINT32 freeSpace = totalSpace - mTotalNumElems;
+						const u32 totalSpace = (mNumBlocks - 1) * ElemsPerBlock;
+						const u32 freeSpace = totalSpace - mTotalNumElems;
 
 						if(freeSpace > ElemsPerBlock / 2)
 						{
@@ -194,15 +194,15 @@ namespace bs
 
 			if (newBlock == nullptr)
 			{
-				constexpr UINT32 blockDataSize = ActualElemSize * ElemsPerBlock;
+				constexpr u32 blockDataSize = ActualElemSize * ElemsPerBlock;
 				size_t paddedBlockDataSize = blockDataSize + (Alignment - 1); // Padding for potential alignment correction
 
-				UINT8* data = (UINT8*)bs_alloc(sizeof(MemBlock) + (UINT32)paddedBlockDataSize);
+				u8* data = (u8*)bs_alloc(sizeof(MemBlock) + (u32)paddedBlockDataSize);
 
 				void* blockData = data + sizeof(MemBlock);
 				blockData = std::align(Alignment, blockDataSize, blockData, paddedBlockDataSize);
 
-				newBlock = new (data) MemBlock((UINT8*)blockData);
+				newBlock = new (data) MemBlock((u8*)blockData);
 				mNumBlocks++;
 
 				newBlock->NextBlock = mFreeBlock;
@@ -225,8 +225,8 @@ namespace bs
 
 		LockingPolicy<Lock> mLockPolicy;
 		MemBlock* mFreeBlock = nullptr;
-		UINT32 mTotalNumElems = 0;
-		UINT32 mNumBlocks = 0;
+		u32 mTotalNumElems = 0;
+		u32 mNumBlocks = 0;
 	};
 
 	/**

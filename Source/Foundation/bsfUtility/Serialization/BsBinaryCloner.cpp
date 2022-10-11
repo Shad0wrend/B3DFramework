@@ -33,7 +33,7 @@ namespace bs
 		bs.Encode(object, stream, shallow ? BinarySerializerFlag::Shallow : BinarySerializerFlag::None);
 
 		stream->Seek(0);
-		SPtr<IReflectable> clonedObj = bs.Decode(stream, (UINT32)stream->Size());
+		SPtr<IReflectable> clonedObj = bs.Decode(stream, (u32)stream->Size());
 
 		if (shallow)
 		{
@@ -61,8 +61,8 @@ namespace bs
 			rttiInstance->OnSerializationStarted(object, nullptr);
 			SubObjectReferenceData* subObjectData = nullptr;
 
-			UINT32 numFields = rtti->GetNumFields();
-			for (UINT32 i = 0; i < numFields; i++)
+			u32 numFields = rtti->GetNumFields();
+			for (u32 i = 0; i < numFields; i++)
 			{
 				RTTIField* field = rtti->GetField(i);
 				FieldId fieldId;
@@ -71,9 +71,9 @@ namespace bs
 
 				if (field->Schema.IsArray)
 				{
-					const UINT32 numElements = field->GetArraySize(rttiInstance, object);
+					const u32 numElements = field->GetArraySize(rttiInstance, object);
 
-					for (UINT32 j = 0; j < numElements; j++)
+					for (u32 j = 0; j < numElements; j++)
 					{
 						fieldId.ArrayIdx = j;
 

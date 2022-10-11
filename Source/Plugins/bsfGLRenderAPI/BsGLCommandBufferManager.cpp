@@ -5,8 +5,8 @@
 
 namespace bs { namespace ct
 {
-	SPtr<CommandBuffer> GLCommandBufferManager::CreateInternal(GpuQueueType type, UINT32 deviceIdx,
-		UINT32 queueIdx, bool secondary)
+	SPtr<CommandBuffer> GLCommandBufferManager::CreateInternal(GpuQueueType type, u32 deviceIdx,
+		u32 queueIdx, bool secondary)
 	{
 		CommandBuffer* buffer = new (bs_alloc<GLCommandBuffer>()) GLCommandBuffer(type, deviceIdx, queueIdx, secondary);
 		return bs_shared_ptr(buffer);

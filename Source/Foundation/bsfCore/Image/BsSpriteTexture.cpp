@@ -14,8 +14,8 @@ namespace bs
 		if(mPlayback == SpriteAnimationPlayback::None)
 			return Rect2(mUVOffset.X, mUVOffset.Y, mUVScale.X, mUVScale.Y);
 
-		UINT32 row;
-		UINT32 column;
+		u32 row;
+		u32 column;
 		GetAnimationFrame(t, row, column);
 
 		Rect2 output;
@@ -30,7 +30,7 @@ namespace bs
 		return output;
 	}
 
-	void SpriteTextureBase::GetAnimationFrame(float t, UINT32& row, UINT32& column) const
+	void SpriteTextureBase::GetAnimationFrame(float t, u32& row, u32& column) const
 	{
 		if(mPlayback == SpriteAnimationPlayback::None)
 		{
@@ -60,7 +60,7 @@ namespace bs
 		}
 
 		const float pct = t / duration;
-		UINT32 frame = 0;
+		u32 frame = 0;
 		
 		if(mAnimation.Count > 0)
 			frame = Math::Clamp(Math::FloorToPosInt(pct * mAnimation.Count), 0U, mAnimation.Count - 1);
@@ -103,22 +103,22 @@ namespace bs
 		MarkDependenciesDirty();
 	}
 
-	UINT32 SpriteTexture::GetWidth() const
+	u32 SpriteTexture::GetWidth() const
 	{
 		return Math::RoundToInt(mAtlasTexture->GetProperties().GetWidth() * mUVScale.X);
 	}
 
-	UINT32 SpriteTexture::GetHeight() const
+	u32 SpriteTexture::GetHeight() const
 	{
 		return Math::RoundToInt(mAtlasTexture->GetProperties().GetHeight() * mUVScale.Y);
 	}
 
-	UINT32 SpriteTexture::GetFrameWidth() const
+	u32 SpriteTexture::GetFrameWidth() const
 	{
 		return GetWidth() / std::max(1U, mAnimation.NumColumns);
 	}
 
-	UINT32 SpriteTexture::GetFrameHeight() const
+	u32 SpriteTexture::GetFrameHeight() const
 	{
 		return GetHeight() / std::max(1U, mAnimation.NumRows);
 	}
@@ -152,9 +152,9 @@ namespace bs
 
 	CoreSyncData SpriteTexture::SyncToCore(FrameAlloc* allocator)
 	{
-		UINT32 size = csync_size(*this);
+		u32 size = csync_size(*this);
 
-		UINT8* buffer = allocator->Alloc(size);
+		u8* buffer = allocator->Alloc(size);
 		Bitstream stream(buffer, size);
 		csync_write(*this, stream);
 

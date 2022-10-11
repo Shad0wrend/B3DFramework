@@ -4,18 +4,18 @@
 
 namespace bs
 {
-	GUIOption GUIOption::Position(INT32 x, INT32 y)
+	GUIOption GUIOption::Position(i32 x, i32 y)
 	{
 		GUIOption option;
 
-		option.min = (UINT32)x;
-		option.max = (UINT32)y;
+		option.min = (u32)x;
+		option.max = (u32)y;
 		option.type = Type::Position;
 
 		return option;
 	}
 
-	GUIOption GUIOption::FixedWidth(UINT32 value)
+	GUIOption GUIOption::FixedWidth(u32 value)
 	{
 		GUIOption option;
 
@@ -25,7 +25,7 @@ namespace bs
 		return option;
 	}
 
-	GUIOption GUIOption::FlexibleWidth(UINT32 min, UINT32 max)
+	GUIOption GUIOption::FlexibleWidth(u32 min, u32 max)
 	{
 		GUIOption option;
 
@@ -36,7 +36,7 @@ namespace bs
 		return option;
 	}
 
-	GUIOption GUIOption::FixedHeight(UINT32 value)
+	GUIOption GUIOption::FixedHeight(u32 value)
 	{
 		GUIOption option;
 
@@ -46,7 +46,7 @@ namespace bs
 		return option;
 	}
 
-	GUIOption GUIOption::FlexibleHeight(UINT32 min, UINT32 max)
+	GUIOption GUIOption::FlexibleHeight(u32 min, u32 max)
 	{
 		GUIOption option;
 

@@ -60,7 +60,7 @@ namespace bs
 			assert(mData == nullptr);
 
 			if (mNumBytes > 0)
-				mData = (UINT8*)bs_alloc(mNumBytes);
+				mData = (u8*)bs_alloc(mNumBytes);
 
 			mDataPtr = mData;
 		}
@@ -69,7 +69,7 @@ namespace bs
 		 * Reserves the specified amount of bytes to allocate. Multiple calls to reserve() are cumulative. After all needed
 		 * memory is reserved, call init(), followed by actual allocation via construct() or alloc() methods.
 		 */
-		GroupAlloc& Reserve(UINT32 amount)
+		GroupAlloc& Reserve(u32 amount)
 		{
 			assert(mData == nullptr);
 
@@ -84,7 +84,7 @@ namespace bs
 		 * reserve(), init() and alloc() again.
 		 */
 		template<class T>
-		GroupAlloc& Reserve(UINT32 count = 1)
+		GroupAlloc& Reserve(u32 count = 1)
 		{
 			assert(mData == nullptr);
 
@@ -97,11 +97,11 @@ namespace bs
 		 *
 		 * @param[in]	amount	Amount of memory to allocate, in bytes.
 		 */
-		UINT8* Alloc(UINT32 amount)
+		u8* Alloc(u32 amount)
 		{
 			assert(mDataPtr + amount <= (mData + mNumBytes));
 
-			UINT8* output = mDataPtr;
+			u8* output = mDataPtr;
 			mDataPtr += amount;
 
 			return output;
@@ -113,7 +113,7 @@ namespace bs
 		 * @param[in]	count	Number of elements to allocate.
 		 */
 		template<class T>
-		T* Alloc(UINT32 count = 1)
+		T* Alloc(u32 count = 1)
 		{
 			return (T*)Alloc(sizeof(T) * count);
 		}
@@ -140,7 +140,7 @@ namespace bs
 		 * Allocates enough memory to hold the object(s) of specified type using the static allocator, and constructs them.
 		 */
 		template<class T>
-		T* Construct(UINT32 count = 1)
+		T* Construct(u32 count = 1)
 		{
 			T* data = (T*)alloc(sizeof(T) * count);
 
@@ -154,7 +154,7 @@ namespace bs
 		 * Allocates enough memory to hold the object(s) of specified type using the static allocator, and constructs them.
 		 */
 		template<class T, class... Args>
-		T* Construct(Args &&...args, UINT32 count = 1)
+		T* Construct(Args &&...args, u32 count = 1)
 		{
 			T* data = (T*)alloc(sizeof(T) * count);
 
@@ -175,7 +175,7 @@ namespace bs
 
 		/** Destructs and deallocates an array of objects allocated with the static frame allocator. */
 		template<class T>
-		void Destruct(T* data, UINT32 count)
+		void Destruct(T* data, u32 count)
 		{
 			for(unsigned int i = 0; i < count; i++)
 				data[i].~T();
@@ -184,9 +184,9 @@ namespace bs
 		}
 
 	private:
-		UINT8* mData = nullptr;
-		UINT8* mDataPtr = nullptr;
-		UINT32 mNumBytes = 0;
+		u8* mData = nullptr;
+		u8* mDataPtr = nullptr;
+		u32 mNumBytes = 0;
 	};
 
 	/** @} */

@@ -36,7 +36,7 @@ namespace bs {
 		friend class D3D11RenderWindowManager;
 		friend class ct::D3D11RenderWindow;
 
-		D3D11RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId);
+		D3D11RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId);
 
 		/** @copydoc RenderWindow::getProperties */
 		const RenderTargetProperties& GetPropertiesInternal() const { return mProperties; }
@@ -64,15 +64,15 @@ namespace bs {
 	class D3D11RenderWindow : public RenderWindow
 	{
 	public:
-		D3D11RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId,
+		D3D11RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId,
 			D3D11Device& device, IDXGIFactory1* DXGIFactory);
 		~D3D11RenderWindow();
 
 		/** @copydoc RenderWindow::move */
-		void Move(INT32 left, INT32 top) ;
+		void Move(i32 left, i32 top) ;
 
 		/** @copydoc RenderWindow::resize */
-		void Resize(UINT32 width, UINT32 height) ;
+		void Resize(u32 width, u32 height) ;
 
 		/** @copydoc RenderWindow::setHidden */
 		void SetHidden(bool hidden) ;
@@ -89,17 +89,17 @@ namespace bs {
 		/** @copydoc RenderWindow::restore */
 		void Restore() ;
 
-		/** @copydoc RenderWindow::setFullscreen(UINT32, UINT32, float, UINT32) */
-		void SetFullscreen(UINT32 width, UINT32 height, float refreshRate = 60.0f, UINT32 monitorIdx = 0) ;
+		/** @copydoc RenderWindow::setFullscreen(u32, u32, float, u32) */
+		void SetFullscreen(u32 width, u32 height, float refreshRate = 60.0f, u32 monitorIdx = 0) ;
 
 		/** @copydoc RenderWindow::setFullscreen(const VideoMode&) */
 		void SetFullscreen(const VideoMode& videoMode) override;
 
 		/** @copydoc RenderWindow::setWindowed */
-		void SetWindowed(UINT32 width, UINT32 height) override;
+		void SetWindowed(u32 width, u32 height) override;
 
 		/** @copydoc RenderWindow::setVSync */
-		void SetVSync(bool enabled, UINT32 interval = 1) override;
+		void SetVSync(bool enabled, u32 interval = 1) override;
 
 		/**
 		 * Copies the contents of a frame buffer into the pre-allocated buffer.
@@ -110,7 +110,7 @@ namespace bs {
 		void CopyToMemory(PixelData &dst, FrameBuffer buffer);
 
 		/** @copydoc RenderWindow::swapBuffers */
-		void SwapBuffers(UINT32 syncMask = 0xFFFFFFFF) override;
+		void SwapBuffers(u32 syncMask = 0xFFFFFFFF) override;
 
 		/** @copydoc RenderWindow::getCustomAttribute */
 		void GetCustomAttribute(const String& name, void* pData) const override;
@@ -143,7 +143,7 @@ namespace bs {
 		void CreateSwapChain();
 
 		/**	Resizes all buffers attached to the swap chain to the specified size. */
-		void ResizeSwapChainBuffers(UINT32 width, UINT32 height);
+		void ResizeSwapChainBuffers(u32 width, u32 height);
 
 		/** @copydoc RenderWindow::getProperties */
 		const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
@@ -162,8 +162,8 @@ namespace bs {
 		bool mShowOnSwap = false;
 
 		DXGI_SAMPLE_DESC mMultisampleType;
-		UINT32 mRefreshRateNumerator = 0;
-		UINT32 mRefreshRateDenominator = 0;
+		u32 mRefreshRateNumerator = 0;
+		u32 mRefreshRateDenominator = 0;
 
 		ID3D11Texture2D* mBackBuffer = nullptr;
 		ID3D11RenderTargetView* mRenderTargetView = nullptr;

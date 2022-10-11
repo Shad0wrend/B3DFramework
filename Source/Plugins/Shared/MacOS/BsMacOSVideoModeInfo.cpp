@@ -15,7 +15,7 @@ namespace bs::ct
 		auto displays = (CGDirectDisplayID*)bs_stack_alloc(sizeof(CGDirectDisplayID) * numDisplays);
 		CGGetOnlineDisplayList(numDisplays, displays, &numDisplays);
 
-		for(UINT32 i = 0; i < numDisplays; i++)
+		for(u32 i = 0; i < numDisplays; i++)
 		{
 			if(CGDisplayMirrorsDisplay(displays[i]) != kCGNullDirectDisplay)
 				continue;
@@ -35,7 +35,7 @@ namespace bs::ct
 		bs_stack_free(displays);
 	}
 
-	MacOSVideoOutputInfo::MacOSVideoOutputInfo(CGDirectDisplayID displayID, UINT32 outputIdx)
+	MacOSVideoOutputInfo::MacOSVideoOutputInfo(CGDirectDisplayID displayID, u32 outputIdx)
 		:mDisplayID(displayID)
 	{
 		CGDisplayModeRef desktopModeRef = CGDisplayCopyDisplayMode(displayID);
@@ -62,7 +62,7 @@ namespace bs::ct
 				else
 				{
 					CFIndex stringLength = CFStringGetLength(value) + 1;
-					auto buffer = bs_stack_alloc<char>((UINT32)stringLength);
+					auto buffer = bs_stack_alloc<char>((u32)stringLength);
 
 					CFStringGetCString(value, buffer, stringLength, kCFStringEncodingUTF8);
 
@@ -98,15 +98,15 @@ namespace bs::ct
 		}
 	}
 
-	MacOSVideoMode::MacOSVideoMode(UINT32 width, UINT32 height, float refreshRate, UINT32 outputIdx)
+	MacOSVideoMode::MacOSVideoMode(u32 width, u32 height, float refreshRate, u32 outputIdx)
 			:VideoMode(width, height, refreshRate, outputIdx), mModeRef(nullptr)
 	{ }
 
-	MacOSVideoMode::MacOSVideoMode(CGDisplayModeRef mode, CVDisplayLinkRef linkRef, UINT32 outputIdx)
+	MacOSVideoMode::MacOSVideoMode(CGDisplayModeRef mode, CVDisplayLinkRef linkRef, u32 outputIdx)
 			:VideoMode(0, 0, 0.0f, outputIdx), mModeRef(mode)
 	{
-		width = (UINT32)CGDisplayModeGetPixelWidth(mModeRef);
-		height = (UINT32)CGDisplayModeGetPixelHeight(mModeRef);
+		width = (u32)CGDisplayModeGetPixelWidth(mModeRef);
+		height = (u32)CGDisplayModeGetPixelHeight(mModeRef);
 
 		refreshRate = (float)CGDisplayModeGetRefreshRate(mModeRef);
 		if(refreshRate == 0.0f && linkRef != nullptr)

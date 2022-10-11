@@ -25,8 +25,8 @@ namespace bs { namespace ct
 	/** Contains information about a single tile allocated in the particle texture used for GPU simulation. */
 	struct GpuParticleTile
 	{
-		UINT32 Id = (UINT32)-1;
-		UINT32 NumFreeParticles = 0;
+		u32 Id = (u32)-1;
+		u32 NumFreeParticles = 0;
 		float Lifetime = 0.0f;
 	};
 
@@ -52,7 +52,7 @@ namespace bs { namespace ct
 		 * @return							True if any new tiles were allocated, false otherwise.
 		 */
 		bool AllocateTiles(GpuParticleResources& resources, Vector<GpuParticle>& newParticles,
-			Vector<UINT32>& newTiles);
+			Vector<u32>& newTiles);
 
 		/**
 		 * Detects which tiles had all of their particle's expire and marks the inactive so they can be re-used on the
@@ -73,7 +73,7 @@ namespace bs { namespace ct
 		 * Returns the total number of tiles used by this particle system. This may include inactive tiles unless you have
 		 * freed them using freeInactiveTiles earlier.
 		 */
-		UINT32 GetNumTiles() const { return (UINT32)mTiles.size(); }
+		u32 GetNumTiles() const { return (u32)mTiles.size(); }
 
 		/** Rebuilds ths internal buffers that contain tile UVs and per-particle UVs. */
 		void UpdateGpuBuffers();
@@ -99,7 +99,7 @@ namespace bs { namespace ct
 		 * @param[in]	sorted		True if the system has information in the sorted index buffer.
 		 * @param[in]	offset		Offset into the sorted index buffer. Only relevant if @p sorted is true.
 		 */
-		void SetSortInfo(bool sorted, UINT32 offset)
+		void SetSortInfo(bool sorted, u32 offset)
 		{
 			mSorted = sorted;
 
@@ -114,17 +114,17 @@ namespace bs { namespace ct
 		 * Returns offset into the sorted index buffer at which indices of the particle system start. Only available if
 		 * hasSortInfo() returns true.
 		 */
-		UINT32 GetSortOffset() const { return mSortOffset; }
+		u32 GetSortOffset() const { return mSortOffset; }
 
 	private:
 		ParticleSystem* mParent = nullptr;
 		Vector<GpuParticleTile> mTiles;
 		Bitfield mActiveTiles;
-		UINT32 mNumActiveTiles = 0;
-		UINT32 mLastAllocatedTile = (UINT32)-1;
+		u32 mNumActiveTiles = 0;
+		u32 mLastAllocatedTile = (u32)-1;
 		float mTime = 0.0f;
 		bool mSorted = false;
-		UINT32 mSortOffset = 0;
+		u32 mSortOffset = 0;
 		Random mRandom;
 
 		SPtr<GpuBuffer> mTileUVs;
@@ -174,7 +174,7 @@ namespace bs { namespace ct
 		void PrepareBuffers(const GpuParticleSystem* system, const RendererParticles& rendererInfo);
 
 		/** Clears out all the areas in particle textures as marked by the provided tiles to their default values. */
-		void ClearTiles(const Vector<UINT32>& tiles);
+		void ClearTiles(const Vector<u32>& tiles);
 
 		/** Inserts the provided set of particles into the particle textures. */
 		void InjectParticles(const Vector<GpuParticle>& particles);
@@ -198,8 +198,8 @@ namespace bs { namespace ct
 	/** Contains a texture containing quantized versions of all curves used for the GPU particle system. */
 	class GpuParticleCurves
 	{
-		static constexpr UINT32 TEX_SIZE = 1024;
-		static constexpr UINT32 SCRATCH_NUM_VERTICES = 16384;
+		static constexpr u32 TEX_SIZE = 1024;
+		static constexpr u32 SCRATCH_NUM_VERTICES = 16384;
 	public:
 		GpuParticleCurves();
 		~GpuParticleCurves();
@@ -264,11 +264,11 @@ namespace bs { namespace ct
 	class GpuParticleResources
 	{
 	public:
-		static constexpr UINT32 TEX_SIZE = 1024;
-		static constexpr UINT32 TILE_SIZE = 4;
-		static constexpr UINT32 PARTICLES_PER_TILE = TILE_SIZE * TILE_SIZE;
-		static constexpr UINT32 TILE_COUNT_1D = TEX_SIZE / TILE_SIZE;
-		static constexpr UINT32 TILE_COUNT = TILE_COUNT_1D * TILE_COUNT_1D;
+		static constexpr u32 TEX_SIZE = 1024;
+		static constexpr u32 TILE_SIZE = 4;
+		static constexpr u32 PARTICLES_PER_TILE = TILE_SIZE * TILE_SIZE;
+		static constexpr u32 TILE_COUNT_1D = TEX_SIZE / TILE_SIZE;
+		static constexpr u32 TILE_COUNT = TILE_COUNT_1D * TILE_COUNT_1D;
 
 		static_assert((TEX_SIZE & (TEX_SIZE - 1)) == 0, "Particle texture size not a power of two");
 		static_assert((TILE_SIZE & (TILE_SIZE - 1)) == 0, "Particle tile size not a power of two");
@@ -309,28 +309,28 @@ namespace bs { namespace ct
 		 * Attempts to allocate a new tile in particle textures. Returns index of the tile if successful or -1 if no more
 		 * room.
 		 */
-		UINT32 AllocTile();
+		u32 AllocTile();
 
 		/** Frees a tile previously allocated with allocTile(). */
-		void FreeTile(UINT32 tile);
+		void FreeTile(u32 tile);
 
 		/** Returns offset (in pixels) at which the tile with the specified index starts at. */
-		static Vector2I GetTileOffset(UINT32 tileId);
+		static Vector2I GetTileOffset(u32 tileId);
 
 		/** Returns the UV coordinates at which the tile with the specified index starts at. */
-		static Vector2 GetTileCoords(UINT32 tileId);
+		static Vector2 GetTileCoords(u32 tileId);
 
 		/**
 		 * Returns the particle offset (in pixels) relative to the tile. @p subTileIdx represents he index of the particle
 		 * in a tile.
 		 */
-		static Vector2I GetParticleOffset(UINT32 subTileId);
+		static Vector2I GetParticleOffset(u32 subTileId);
 
 		/**
 		 * Returns the particle coordinates relative to the tile. @p subTileIdx represents the index of the particle in
 		 * a tile.
 		 */
-		static Vector2 GetParticleCoords(UINT32 subTileIdx);
+		static Vector2 GetParticleCoords(u32 subTileIdx);
 
 	private:
 		friend class GpuParticleSimulation;
@@ -340,15 +340,15 @@ namespace bs { namespace ct
 		GpuParticleCurves mCurveTexture;
 		GpuSortBuffers mSortBuffers;
 		SPtr<GpuBuffer> mSortedIndices[2];
-		UINT32 mSortedIndicesBufferIdx = 0;
+		u32 mSortedIndicesBufferIdx = 0;
 		
 		SPtr<RenderTexture> mSimulateRT[2];
 		SPtr<RenderTexture> mInjectRT[2];
 
-		UINT32 mWriteBufferIdx = 0;
+		u32 mWriteBufferIdx = 0;
 
-		UINT32 mFreeTiles[TILE_COUNT];
-		UINT32 mNumFreeTiles = TILE_COUNT;
+		u32 mFreeTiles[TILE_COUNT];
+		u32 mNumFreeTiles = TILE_COUNT;
 	};
 
 	/** @} */

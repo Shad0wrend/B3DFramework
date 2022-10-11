@@ -123,7 +123,7 @@ namespace bs
 		systemToNetworkAddress(sysAddress, *this);
 	}
 
-	NetworkAddress::NetworkAddress(const char* ip, UINT16 port)
+	NetworkAddress::NetworkAddress(const char* ip, u16 port)
 	{
 		SystemAddress sysAddress(ip, port);
 		systemToNetworkAddress(sysAddress, *this);
@@ -185,7 +185,7 @@ namespace bs
 		/** Maps a network ID into a RakNet system address. Returns null if the ID is not valid. */
 		const SystemAddress* getSystemAddress(const NetworkId& id)
 		{
-			if(id.id < 0 || id.id >= (INT32)networkIdMapping.size())
+			if(id.id < 0 || id.id >= (i32)networkIdMapping.size())
 				return nullptr;
 
 			return &networkIdMapping[id.id].systemAddress;
@@ -194,7 +194,7 @@ namespace bs
 		/** Maps a network ID into a RakNet GUID. Returns null if the ID is not valid. */
 		const RakNetGUID* getGUID(const NetworkId& id)
 		{
-			if(id.id < 0 || id.id >= (INT32)networkIdMapping.size())
+			if(id.id < 0 || id.id >= (i32)networkIdMapping.size())
 				return nullptr;
 
 			return &networkIdMapping[id.id].guid;
@@ -206,8 +206,8 @@ namespace bs
 		 */
 		NetworkId getOrRegisterNetworkId(const SystemAddress& address, const RakNetGUID& guid)
 		{
-			INT32 systemIndex = address.systemIndex;
-			assert(systemIndex >= 0 && systemIndex < (INT32)networkIdMapping.size());
+			i32 systemIndex = address.systemIndex;
+			assert(systemIndex >= 0 && systemIndex < (i32)networkIdMapping.size());
 
 			NetworkConnection& connection = networkIdMapping[systemIndex];
 			if(connection.systemAddress != address || connection.guid != guid)
@@ -276,13 +276,13 @@ namespace bs
 		m->peer = RakPeerInterface::GetInstance();
 		m->networkIdMapping.resize(desc.maxNumConnections);
 
-		for(INT32 i = 0; i < (INT32)m->networkIdMapping.size(); i++)
+		for(i32 i = 0; i < (i32)m->networkIdMapping.size(); i++)
 			m->networkIdMapping[i].id = NetworkId(i);
 
-		UINT32 numDescriptors = (UINT32)desc.listenAddresses.size();
+		u32 numDescriptors = (u32)desc.listenAddresses.size();
 		SocketDescriptor* descriptors = bs_stack_alloc<SocketDescriptor>(numDescriptors);
 
-		for(UINT32 i = 0; i < numDescriptors; i++)
+		for(u32 i = 0; i < numDescriptors; i++)
 		{
 			const NetworkAddress& address = desc.listenAddresses[i];
 
@@ -362,7 +362,7 @@ namespace bs
 		bs_delete(m);
 	}
 
-	bool NetworkPeer::connect(const char* host, UINT16 port)
+	bool NetworkPeer::connect(const char* host, u16 port)
 	{
 		ConnectionAttemptResult result = m->peer->Connect(host, port, nullptr, 0);
 		
@@ -436,7 +436,7 @@ namespace bs
 
 		mapChannelToRakNet(channel, reliability, priority);
 
-		m->peer->Send((const char*)data.bytes, (INT32)data.length, priority, reliability, 0,
+		m->peer->Send((const char*)data.bytes, (i32)data.length, priority, reliability, 0,
 			networkToSystemAddress(address), false);
 	}
 
@@ -454,7 +454,7 @@ namespace bs
 
 		mapChannelToRakNet(channel, reliability, priority);
 
-		m->peer->Send((const char*)data.bytes, (INT32)data.length, priority, reliability, 0,
+		m->peer->Send((const char*)data.bytes, (i32)data.length, priority, reliability, 0,
 			*guid, false);
 	}
 
@@ -465,7 +465,7 @@ namespace bs
 
 		mapChannelToRakNet(channel, reliability, priority);
 
-		m->peer->Send((const char*)data.bytes, (INT32)data.length, priority, reliability, 0,
+		m->peer->Send((const char*)data.bytes, (i32)data.length, priority, reliability, 0,
 			UNASSIGNED_RAKNET_GUID, true);
 	}
 
@@ -508,7 +508,7 @@ namespace bs
 
 	NetworkEncoder::NetworkEncoder()
 	{
-		mWriteBuffer = (UINT8*)bs_alloc(WRITE_BUFFER_SIZE);
+		mWriteBuffer = (u8*)bs_alloc(WRITE_BUFFER_SIZE);
 	}
 
 	NetworkEncoder::~NetworkEncoder()
@@ -524,20 +524,20 @@ namespace bs
 		bs_free(mWriteBuffer);
 	}
 
-	void NetworkEncoder::encode(UINT8 type, const UUID& uuid, IReflectable* object, SerializationContext* context)
+	void NetworkEncoder::encode(u8 type, const UUID& uuid, IReflectable* object, SerializationContext* context)
 	{
 		BinarySerializer bs;
 		
-		auto flushToBuffer = [this](UINT8* bufferStart, UINT32 bytesWritten, UINT32& newBufferSize)
+		auto flushToBuffer = [this](u8* bufferStart, u32 bytesWritten, u32& newBufferSize)
 		{
 			if(mBufferPieces.empty())
 				allocBufferPiece();
 
 			assert(bytesWritten <= WRITE_BUFFER_SIZE);
 
-			UINT32 bufferSize = WRITE_BUFFER_SIZE - mBufferPieces.back().size;
+			u32 bufferSize = WRITE_BUFFER_SIZE - mBufferPieces.back().size;
 
-			UINT32 amountToCopy = std::min(bufferSize, bytesWritten);
+			u32 amountToCopy = std::min(bufferSize, bytesWritten);
 			memcpy(mBufferPieces.back().buffer + mBufferPieces.back().size, bufferStart, amountToCopy);
 			mBufferPieces.back().size += amountToCopy;
 
@@ -555,10 +555,10 @@ namespace bs
 
 		auto writeToBuffer = [this, &flushToBuffer](auto data)
 		{
-			UINT32 size = rttiGetElemSize(data);
+			u32 size = rttiGetElemSize(data);
 			if ((mWriteBufferOffset + size) > WRITE_BUFFER_SIZE)
 			{
-				UINT32 newBufferSize;
+				u32 newBufferSize;
 				flushToBuffer(mWriteBuffer, mWriteBufferOffset, newBufferSize);
 			}
 
@@ -568,14 +568,14 @@ namespace bs
 			mBytesWritten += size;
 		};
 
-		auto writeToOffset = [this](UINT32 offset, auto data)
+		auto writeToOffset = [this](u32 offset, auto data)
 		{
-			UINT32 curOffset = 0;
+			u32 curOffset = 0;
 			for(auto& entry : mBufferPieces)
 			{
 				if(offset >= curOffset && offset < (curOffset + entry.size))
 				{
-					UINT32 localOffset = offset - curOffset;
+					u32 localOffset = offset - curOffset;
 					rttiWriteElem(data, (char*)entry.buffer + localOffset);
 					break;
 				}
@@ -585,14 +585,14 @@ namespace bs
 		writeToBuffer(type);
 		writeToBuffer(uuid);
 
-		UINT32 sizeWriteOffset = mBytesWritten;
+		u32 sizeWriteOffset = mBytesWritten;
 		writeToBuffer(0);
 
 		if(object)
 		{
-			UINT8* writeStart = mWriteBuffer + mWriteBufferOffset;
-			UINT32 remainingBufferSize = WRITE_BUFFER_SIZE - mWriteBufferOffset;
-			UINT32 objBytesWritten = 0;
+			u8* writeStart = mWriteBuffer + mWriteBufferOffset;
+			u32 remainingBufferSize = WRITE_BUFFER_SIZE - mWriteBufferOffset;
+			u32 objBytesWritten = 0;
 			bs.encode(object, writeStart, remainingBufferSize, &objBytesWritten, flushToBuffer, false, context);
 			mBytesWritten += objBytesWritten;
 
@@ -600,22 +600,22 @@ namespace bs
 		}
 	}
 
-	UINT8* NetworkEncoder::getOutput(UINT32& size)
+	u8* NetworkEncoder::getOutput(u32& size)
 	{
-		UINT32 bytesRequired = mBytesWritten + 1; // Reserve first byte for message type
+		u32 bytesRequired = mBytesWritten + 1; // Reserve first byte for message type
 
 		if(mResultBufferSize < bytesRequired)
 		{
 			if(mResultBuffer)
 				bs_free(mResultBuffer);
 
-			UINT32 bufferSize = (UINT32)(bytesRequired * 1.25f); // 25% extra
+			u32 bufferSize = (u32)(bytesRequired * 1.25f); // 25% extra
 
-			mResultBuffer = (UINT8*)bs_alloc(bufferSize);
+			mResultBuffer = (u8*)bs_alloc(bufferSize);
 			mResultBufferSize = bufferSize;
 		}
 
-		UINT32 offset = 1; // First byte reserved for message type, set externally
+		u32 offset = 1; // First byte reserved for message type, set externally
 		for(auto iter = mBufferPieces.begin(); iter != mBufferPieces.end(); ++iter)
 		{
 			if(iter->size > 0)
@@ -649,7 +649,7 @@ namespace bs
 			mBufferPiecePool.pop_back();
 		}
 		else
-			piece.buffer = (UINT8*)bs_alloc(WRITE_BUFFER_SIZE);
+			piece.buffer = (u8*)bs_alloc(WRITE_BUFFER_SIZE);
 
 		piece.size = 0;
 		mBufferPieces.push_back(piece);
@@ -662,19 +662,19 @@ namespace bs
 		mInputStream->skip(1); // Skip the network message type byte
 	}
 
-	SPtr<IReflectable> NetworkDecoder::decode(UINT8& type, UUID& uuid, SerializationContext* context)
+	SPtr<IReflectable> NetworkDecoder::decode(u8& type, UUID& uuid, SerializationContext* context)
 	{
 		if (mInputStream->eof())
 			return nullptr;
 
 		char* data = (char*)mInputStream->GetCurrentPtr();
-		UINT32 offset = 0;
+		u32 offset = 0;
 		data = rtti_read(type, data, offset);
 		data = rtti_read(uuid, data, offset);
 
 		mInputStream->skip(offset);
 
-		UINT32 objectSize = 0;
+		u32 objectSize = 0;
 		mInputStream->read(&objectSize, sizeof(objectSize));
 
 		if(objectSize > 0)
@@ -731,7 +731,7 @@ namespace bs
 		Despawn
 	};
 
-	void Network::host(const SmallVector<NetworkAddress, 4>& listenAddresses, UINT32 tickRate, UINT32 maxConnections)
+	void Network::host(const SmallVector<NetworkAddress, 4>& listenAddresses, u32 tickRate, u32 maxConnections)
 	{
 		if(mPeer)
 		{
@@ -750,7 +750,7 @@ namespace bs
 		mTimeAccumulator = 0.0f;
 	}
 
-	void Network::connect(const char* host, UINT16 port)
+	void Network::connect(const char* host, u16 port)
 	{
 		if(mPeer)
 		{
@@ -832,13 +832,13 @@ namespace bs
 					switch (entry.type)
 					{
 					case Spawning:
-						mEncoder.encode((UINT32)NetworkActionType::Spawn, entry.uuid, objInfo.state.state.get());
+						mEncoder.encode((u32)NetworkActionType::Spawn, entry.uuid, objInfo.state.state.get());
 						break;
 					case Spawned:
 						// TODO - No purpose. Remove this?
 						break;
 					case Despawning:
-						mEncoder.encode((UINT32)NetworkActionType::Despawn, entry.uuid, nullptr);
+						mEncoder.encode((u32)NetworkActionType::Despawn, entry.uuid, nullptr);
 						mNetworkObjects.erase(iterFind);
 						break;
 					default:
@@ -876,7 +876,7 @@ namespace bs
 
 					entry.second.state.state = newState;
 
-					mEncoder.encode((UINT32)NetworkActionType::Sync, entry.first, diff.get());
+					mEncoder.encode((u32)NetworkActionType::Sync, entry.first, diff.get());
 				}
 
 				// TODO - Perhaps allow an object to force sync to be reliable?

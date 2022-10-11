@@ -151,8 +151,8 @@ namespace bs
 				current->Destroy();
 			else
 			{
-				UINT32 numChildren = current->GetNumChildren();
-				for (UINT32 i = 0; i < numChildren; i++)
+				u32 numChildren = current->GetNumChildren();
+				for (u32 i = 0; i < numChildren; i++)
 					todo.push(current->GetChild(i));
 			}
 		}

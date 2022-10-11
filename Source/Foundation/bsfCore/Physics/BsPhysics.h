@@ -73,11 +73,11 @@ namespace bs
 		 * you can determine which layers can interact with each other.
 		 */
 		BS_SCRIPT_EXPORT(n:ToggleCollision)
-		void ToggleCollision(UINT64 groupA, UINT64 groupB, bool enabled);
+		void ToggleCollision(u64 groupA, u64 groupB, bool enabled);
 
 		/** Checks if two collision layers are allowed to interact. */
 		BS_SCRIPT_EXPORT(n:IsCollisionEnabled)
-		bool IsCollisionEnabled(UINT64 groupA, UINT64 groupB) const;
+		bool IsCollisionEnabled(u64 groupA, u64 groupB) const;
 
 		/** @name Internal
 		 *  @{
@@ -128,7 +128,7 @@ namespace bs
 
 		/** @} */
 
-		static const UINT64 CollisionMapSize = 64;
+		static const u64 CollisionMapSize = 64;
 	protected:
 		friend class Rigidbody;
 
@@ -174,7 +174,7 @@ namespace bs
 		 * @return				True if something was hit, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT(n:RayCast)
-		virtual bool RayCast(const Ray& ray, PhysicsQueryHit& hit, UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const;
+		virtual bool RayCast(const Ray& ray, PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const;
 
 		/**
 		 * Casts a ray into the scene and returns the closest found hit, if any.
@@ -189,7 +189,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:RayCast)
 		virtual bool RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit,
-			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a box and returns the closest found hit, if any.
@@ -205,7 +205,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:BoxCast)
 		virtual bool BoxCast(const AABox& box, const Quaternion& rotation, const Vector3& unitDir, PhysicsQueryHit& hit,
-			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a sphere and returns the closest found hit, if any.
@@ -220,7 +220,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:SphereCast)
 		virtual bool SphereCast(const Sphere& sphere, const Vector3& unitDir, PhysicsQueryHit& hit,
-			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a capsule and returns the closest found hit, if any.
@@ -236,7 +236,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:CapsuleCast)
 		virtual bool CapsuleCast(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir,
-			PhysicsQueryHit& hit, UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+			PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a convex mesh and returns the closest found hit, if any.
@@ -253,7 +253,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:ConvexCast)
 		virtual bool ConvexCast(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
-			const Vector3& unitDir, PhysicsQueryHit& hit, UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+			const Vector3& unitDir, PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Casts a ray into the scene and returns all found hits.
@@ -265,7 +265,7 @@ namespace bs
 		 * @return				List of all detected hits.
 		 */
 		BS_SCRIPT_EXPORT(n:RayCastAll)
-		virtual Vector<PhysicsQueryHit> RayCastAll(const Ray& ray, UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const;
+		virtual Vector<PhysicsQueryHit> RayCastAll(const Ray& ray, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const;
 
 		/**
 		 * Casts a ray into the scene and returns all found hits.
@@ -279,7 +279,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:RayCastAll)
 		virtual Vector<PhysicsQueryHit> RayCastAll(const Vector3& origin, const Vector3& unitDir,
-			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a box and returns all found hits.
@@ -294,7 +294,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:BoxCastAll)
 		virtual Vector<PhysicsQueryHit> BoxCastAll(const AABox& box, const Quaternion& rotation,
-			const Vector3& unitDir, UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+			const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a sphere and returns all found hits.
@@ -308,7 +308,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:SphereCastAll)
 		virtual Vector<PhysicsQueryHit> SphereCastAll(const Sphere& sphere, const Vector3& unitDir,
-			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a capsule and returns all found hits.
@@ -323,7 +323,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:CapsuleCastAll)
 		virtual Vector<PhysicsQueryHit> CapsuleCastAll(const Capsule& capsule, const Quaternion& rotation,
-			const Vector3& unitDir, UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+			const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a convex mesh and returns all found hits.
@@ -339,7 +339,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:ConvexCastAll)
 		virtual Vector<PhysicsQueryHit> ConvexCastAll(const HPhysicsMesh& mesh, const Vector3& position,
-			const Quaternion& rotation, const Vector3& unitDir, UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+			const Quaternion& rotation, const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Casts a ray into the scene and checks if it has hit anything. This can be significantly more efficient than other
@@ -352,7 +352,7 @@ namespace bs
 		 * @return				True if something was hit, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT(n:RayCastAny)
-		virtual bool RayCastAny(const Ray& ray, UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const;
+		virtual bool RayCastAny(const Ray& ray, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const;
 
 		/**
 		 * Casts a ray into the scene and checks if it has hit anything. This can be significantly more efficient than other
@@ -367,7 +367,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:RayCastAny)
 		virtual bool RayCastAny(const Vector3& origin, const Vector3& unitDir,
-			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a box and checks if it has hit anything. This can be significantly more
@@ -383,7 +383,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:BoxCastAny)
 		virtual bool BoxCastAny(const AABox& box, const Quaternion& rotation, const Vector3& unitDir,
-			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a sphere and checks if it has hit anything. This can be significantly more
@@ -398,7 +398,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:SphereCastAny)
 		virtual bool SphereCastAny(const Sphere& sphere, const Vector3& unitDir,
-			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a capsule and checks if it has hit anything. This can be significantly more
@@ -414,7 +414,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:CapsuleCastAny)
 		virtual bool CapsuleCastAny(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir,
-			UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a convex mesh and checks if it has hit anything. This can be significantly
@@ -431,7 +431,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:ConvexCastAny)
 		virtual bool ConvexCastAny(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
-			const Vector3& unitDir, UINT64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+			const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Returns a list of all colliders in the scene that overlap the provided box.
@@ -443,7 +443,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:BoxOverlap)
 		virtual Vector<HCollider> BoxOverlap(const AABox& box, const Quaternion& rotation,
-			UINT64 layer = BS_ALL_LAYERS) const;
+			u64 layer = BS_ALL_LAYERS) const;
 
 		/**
 		 * Returns a list of all colliders in the scene that overlap the provided sphere.
@@ -453,7 +453,7 @@ namespace bs
 		 * @return					List of all colliders that overlap the sphere.
 		 */
 		BS_SCRIPT_EXPORT(n:SphereOverlap)
-		virtual Vector<HCollider> SphereOverlap(const Sphere& sphere, UINT64 layer = BS_ALL_LAYERS) const;
+		virtual Vector<HCollider> SphereOverlap(const Sphere& sphere, u64 layer = BS_ALL_LAYERS) const;
 
 		/**
 		 * Returns a list of all colliders in the scene that overlap the provided capsule.
@@ -465,7 +465,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:CapsuleOverlap)
 		virtual Vector<HCollider> CapsuleOverlap(const Capsule& capsule, const Quaternion& rotation,
-			UINT64 layer = BS_ALL_LAYERS) const;
+			u64 layer = BS_ALL_LAYERS) const;
 
 		/**
 		 * Returns a list of all colliders in the scene that overlap the provided convex mesh.
@@ -478,7 +478,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:ConvexOverlap)
 		virtual Vector<HCollider> ConvexOverlap(const HPhysicsMesh& mesh, const Vector3& position,
-			const Quaternion& rotation, UINT64 layer = BS_ALL_LAYERS) const;
+			const Quaternion& rotation, u64 layer = BS_ALL_LAYERS) const;
 
 		/**
 		 * Checks if the provided box overlaps any other collider in the scene.
@@ -489,7 +489,7 @@ namespace bs
 		 * @return					True if there is overlap with another object, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT(n:BoxOverlapAny)
-		virtual bool BoxOverlapAny(const AABox& box, const Quaternion& rotation, UINT64 layer = BS_ALL_LAYERS) const = 0;
+		virtual bool BoxOverlapAny(const AABox& box, const Quaternion& rotation, u64 layer = BS_ALL_LAYERS) const = 0;
 
 		/**
 		 * Checks if the provided sphere overlaps any other collider in the scene.
@@ -499,7 +499,7 @@ namespace bs
 		 * @return					True if there is overlap with another object, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT(n:SphereOverlapAny)
-		virtual bool SphereOverlapAny(const Sphere& sphere, UINT64 layer = BS_ALL_LAYERS) const = 0;
+		virtual bool SphereOverlapAny(const Sphere& sphere, u64 layer = BS_ALL_LAYERS) const = 0;
 
 		/**
 		 * Checks if the provided capsule overlaps any other collider in the scene.
@@ -511,7 +511,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:CapsuleOverlapAny)
 		virtual bool CapsuleOverlapAny(const Capsule& capsule, const Quaternion& rotation,
-			UINT64 layer = BS_ALL_LAYERS) const = 0;
+			u64 layer = BS_ALL_LAYERS) const = 0;
 
 		/**
 		 * Checks if the provided convex mesh overlaps any other collider in the scene.
@@ -524,7 +524,7 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT(n:ConvexOverlapAny)
 		virtual bool ConvexOverlapAny(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
-			UINT64 layer = BS_ALL_LAYERS) const = 0;
+			u64 layer = BS_ALL_LAYERS) const = 0;
 
 		/******************************************************************************************************************/
 		/************************************************* OPTIONS ********************************************************/
@@ -564,11 +564,11 @@ namespace bs
 		 * up these regions by default.
 		 */
 		BS_SCRIPT_EXPORT(n:AddPhysicsRegion)
-		virtual UINT32 AddBroadPhaseRegion(const AABox& region) = 0;
+		virtual u32 AddBroadPhaseRegion(const AABox& region) = 0;
 
 		/** Removes a physics region. */
 		BS_SCRIPT_EXPORT(n:RemovePhysicsRegion)
-		virtual void RemoveBroadPhaseRegion(UINT32 handle) = 0;
+		virtual void RemoveBroadPhaseRegion(u32 handle) = 0;
 
 		/** Removes all physics regions. */
 		BS_SCRIPT_EXPORT(n:ClearPhysicsRegions)
@@ -684,18 +684,18 @@ namespace bs
 
 		/** @copydoc PhysicsScene::boxOverlap() */
 		virtual Vector<Collider*> BoxOverlapInternal(const AABox& box, const Quaternion& rotation,
-			UINT64 layer = BS_ALL_LAYERS) const = 0;
+			u64 layer = BS_ALL_LAYERS) const = 0;
 
 		/** @copydoc PhysicsScene::sphereOverlap() */
-		virtual Vector<Collider*> SphereOverlapInternal(const Sphere& sphere, UINT64 layer = BS_ALL_LAYERS) const = 0;
+		virtual Vector<Collider*> SphereOverlapInternal(const Sphere& sphere, u64 layer = BS_ALL_LAYERS) const = 0;
 
 		/** @copydoc PhysicsScene::capsuleOverlap() */
 		virtual Vector<Collider*> CapsuleOverlapInternal(const Capsule& capsule, const Quaternion& rotation,
-			UINT64 layer = BS_ALL_LAYERS) const = 0;
+			u64 layer = BS_ALL_LAYERS) const = 0;
 
 		/** @copydoc PhysicsScene::convexOverlap() */
 		virtual Vector<Collider*> ConvexOverlapInternal(const HPhysicsMesh& mesh, const Vector3& position,
-			const Quaternion& rotation, UINT64 layer = BS_ALL_LAYERS) const = 0;
+			const Quaternion& rotation, u64 layer = BS_ALL_LAYERS) const = 0;
 
 		/** @} */
 	protected:

@@ -13,7 +13,7 @@ namespace bs
 		: Clip(clip)
 	{ }
 
-	AnimationProxy::AnimationProxy(UINT64 id)
+	AnimationProxy::AnimationProxy(u64 id)
 		: Id(id)
 	{ }
 
@@ -27,50 +27,50 @@ namespace bs
 		if (Layers == nullptr)
 			return;
 
-		for(UINT32 i = 0; i < NumLayers; i++)
+		for(u32 i = 0; i < NumLayers; i++)
 		{
 			AnimationStateLayer& layer = Layers[i];
-			for(UINT32 j = 0; j < layer.NumStates; j++)
+			for(u32 j = 0; j < layer.NumStates; j++)
 			{
 				AnimationState& state = layer.States[j];
 
 				if(state.Curves != nullptr)
 				{
 					{
-						UINT32 numCurves = (UINT32)state.Curves->Position.size();
-						for (UINT32 k = 0; k < numCurves; k++)
+						u32 numCurves = (u32)state.Curves->Position.size();
+						for (u32 k = 0; k < numCurves; k++)
 							state.PositionCaches[k].~TCurveCache();
 					}
 
 					{
-						UINT32 numCurves = (UINT32)state.Curves->Rotation.size();
-						for (UINT32 k = 0; k < numCurves; k++)
+						u32 numCurves = (u32)state.Curves->Rotation.size();
+						for (u32 k = 0; k < numCurves; k++)
 							state.RotationCaches[k].~TCurveCache();
 					}
 
 					{
-						UINT32 numCurves = (UINT32)state.Curves->Scale.size();
-						for (UINT32 k = 0; k < numCurves; k++)
+						u32 numCurves = (u32)state.Curves->Scale.size();
+						for (u32 k = 0; k < numCurves; k++)
 							state.ScaleCaches[k].~TCurveCache();
 					}
 
 					{
-						UINT32 numCurves = (UINT32)state.Curves->Generic.size();
-						for (UINT32 k = 0; k < numCurves; k++)
+						u32 numCurves = (u32)state.Curves->Generic.size();
+						for (u32 k = 0; k < numCurves; k++)
 							state.GenericCaches[k].~TCurveCache();
 					}
 				}
 
 				if(Skeleton != nullptr)
 				{
-					UINT32 numBones = Skeleton->GetNumBones();
-					for (UINT32 k = 0; k < numBones; k++)
+					u32 numBones = Skeleton->GetNumBones();
+					for (u32 k = 0; k < numBones; k++)
 						state.BoneToCurveMapping[k].~AnimationCurveMapping();
 				}
 
 				if(state.SoToCurveMapping != nullptr)
 				{
-					for(UINT32 k = 0; k < NumSceneObjects; k++)
+					for(u32 k = 0; k < NumSceneObjects; k++)
 						state.SoToCurveMapping[k].~AnimationCurveMapping();
 				}
 
@@ -80,7 +80,7 @@ namespace bs
 			layer.~AnimationStateLayer();
 		}
 
-		for(UINT32 i = 0; i < NumMorphShapes; i++)
+		for(u32 i = 0; i < NumMorphShapes; i++)
 		{
 			MorphShapeInfos[i].Shape.~SPtr<MorphShape>();
 		}
@@ -108,7 +108,7 @@ namespace bs
 		if (skeleton != nullptr)
 			SkeletonPose = LocalSkeletonPose(skeleton->GetNumBones());
 
-		NumSceneObjects = (UINT32)sceneObjects.size();
+		NumSceneObjects = (u32)sceneObjects.size();
 		if (NumSceneObjects > 0)
 			SceneObjectPose = LocalSkeletonPose(NumSceneObjects, true);
 		else
@@ -126,11 +126,11 @@ namespace bs
 		{
 			FrameVector<bool> clipLoadState(clipInfos.size());
 			FrameVector<AnimationStateLayer> tempLayers;
-			UINT32 clipIdx = 0;
+			u32 clipIdx = 0;
 			for (auto& clipInfo : clipInfos)
 			{
-				UINT32 layer = clipInfo.State.Layer;
-				if (layer == (UINT32)-1)
+				u32 layer = clipInfo.State.Layer;
+				if (layer == (u32)-1)
 					layer = 0;
 				else
 					layer += 1;
@@ -162,18 +162,18 @@ namespace bs
 				return x.Index < y.Index;
 			});
 
-			NumLayers = (UINT32)tempLayers.size();
-			UINT32 numClips = (UINT32)clipInfos.size();
-			UINT32 numBones;
+			NumLayers = (u32)tempLayers.size();
+			u32 numClips = (u32)clipInfos.size();
+			u32 numBones;
 
 			if (Skeleton != nullptr)
 				numBones = Skeleton->GetNumBones();
 			else
 				numBones = 0;
 
-			UINT32 numPosCurves = 0;
-			UINT32 numRotCurves = 0;
-			UINT32 numScaleCurves = 0;
+			u32 numPosCurves = 0;
+			u32 numRotCurves = 0;
+			u32 numScaleCurves = 0;
 
 			clipIdx = 0;
 			for (auto& clipInfo : clipInfos)
@@ -183,26 +183,26 @@ namespace bs
 					continue;
 
 				SPtr<AnimationCurves> curves = clipInfo.Clip->GetCurves();
-				numPosCurves += (UINT32)curves->Position.size();
-				numRotCurves += (UINT32)curves->Rotation.size();
-				numScaleCurves += (UINT32)curves->Scale.size();
+				numPosCurves += (u32)curves->Position.size();
+				numRotCurves += (u32)curves->Rotation.size();
+				numScaleCurves += (u32)curves->Scale.size();
 			}
 
 			NumGenericCurves = 0;
 			if(clipInfos.size() > 0 && clipLoadState[0])
 			{
 				SPtr<AnimationCurves> curves = clipInfos[0].Clip->GetCurves();
-				NumGenericCurves = (UINT32)curves->Generic.size();
+				NumGenericCurves = (u32)curves->Generic.size();
 			}
 
-			UINT32* mappedBoneIndices = (UINT32*)bs_frame_alloc(sizeof(UINT32) * NumSceneObjects);
-			for (UINT32 i = 0; i < NumSceneObjects; i++)
+			u32* mappedBoneIndices = (u32*)bs_frame_alloc(sizeof(u32) * NumSceneObjects);
+			for (u32 i = 0; i < NumSceneObjects; i++)
 				mappedBoneIndices[i] = -1;
 
-			UINT32 numBoneMappedSOs = 0;
+			u32 numBoneMappedSOs = 0;
 			if (Skeleton != nullptr)
 			{
-				for (UINT32 i = 0; i < NumSceneObjects; i++)
+				for (u32 i = 0; i < NumSceneObjects; i++)
 				{
 					if (sceneObjects[i].So.IsDestroyed(true))
 						continue;
@@ -210,8 +210,8 @@ namespace bs
 					// Empty string always means root bone
 					if (sceneObjects[i].CurveName.empty())
 					{
-						UINT32 rootBoneIdx = Skeleton->GetRootBoneIndex();
-						if (rootBoneIdx != (UINT32)-1)
+						u32 rootBoneIdx = Skeleton->GetRootBoneIndex();
+						if (rootBoneIdx != (u32)-1)
 						{
 							mappedBoneIndices[i] = rootBoneIdx;
 							numBoneMappedSOs++;
@@ -219,7 +219,7 @@ namespace bs
 					}
 					else
 					{
-						for (UINT32 j = 0; j < numBones; j++)
+						for (u32 j = 0; j < numBones; j++)
 						{
 							if (Skeleton->GetBoneInfo(j).Name == sceneObjects[i].CurveName)
 							{
@@ -239,7 +239,7 @@ namespace bs
 				NumMorphVertices = morphShapes->GetNumVertices();
 
 				NumMorphShapes = 0;
-				for (UINT32 i = 0; i < NumMorphChannels; i++)
+				for (u32 i = 0; i < NumMorphChannels; i++)
 					NumMorphShapes += morphShapes->GetChannel(i)->GetNumShapes();
 			}
 			else
@@ -249,21 +249,21 @@ namespace bs
 				NumMorphVertices = 0;
 			}
 
-			UINT32 numBoneMappings = numBones * numClips;
-			UINT32 layersSize = sizeof(AnimationStateLayer) * NumLayers;
-			UINT32 clipsSize = sizeof(AnimationState) * numClips;
-			UINT32 boneMappingSize = numBoneMappings * sizeof(AnimationCurveMapping);
-			UINT32 posCacheSize = numPosCurves * sizeof(TCurveCache<Vector3>);
-			UINT32 rotCacheSize = numRotCurves * sizeof(TCurveCache<Quaternion>);
-			UINT32 scaleCacheSize = numScaleCurves * sizeof(TCurveCache<Vector3>);
-			UINT32 genCacheSize = NumGenericCurves * sizeof(TCurveCache<float>);
-			UINT32 genericCurveOutputSize = NumGenericCurves * sizeof(float);
-			UINT32 sceneObjectIdsSize = NumSceneObjects * sizeof(AnimatedSceneObjectInfo);
-			UINT32 sceneObjectTransformsSize = numBoneMappedSOs * sizeof(Matrix4);
-			UINT32 morphChannelSize = NumMorphChannels * sizeof(MorphChannelInfo);
-			UINT32 morphShapeSize = NumMorphShapes * sizeof(MorphShapeInfo);
+			u32 numBoneMappings = numBones * numClips;
+			u32 layersSize = sizeof(AnimationStateLayer) * NumLayers;
+			u32 clipsSize = sizeof(AnimationState) * numClips;
+			u32 boneMappingSize = numBoneMappings * sizeof(AnimationCurveMapping);
+			u32 posCacheSize = numPosCurves * sizeof(TCurveCache<Vector3>);
+			u32 rotCacheSize = numRotCurves * sizeof(TCurveCache<Quaternion>);
+			u32 scaleCacheSize = numScaleCurves * sizeof(TCurveCache<Vector3>);
+			u32 genCacheSize = NumGenericCurves * sizeof(TCurveCache<float>);
+			u32 genericCurveOutputSize = NumGenericCurves * sizeof(float);
+			u32 sceneObjectIdsSize = NumSceneObjects * sizeof(AnimatedSceneObjectInfo);
+			u32 sceneObjectTransformsSize = numBoneMappedSOs * sizeof(Matrix4);
+			u32 morphChannelSize = NumMorphChannels * sizeof(MorphChannelInfo);
+			u32 morphShapeSize = NumMorphShapes * sizeof(MorphShapeInfo);
 
-			UINT8* data = (UINT8*)bs_alloc(layersSize + clipsSize + boneMappingSize + posCacheSize + rotCacheSize +
+			u8* data = (u8*)bs_alloc(layersSize + clipsSize + boneMappingSize + posCacheSize + rotCacheSize +
 				scaleCacheSize + genCacheSize + genericCurveOutputSize + sceneObjectIdsSize + sceneObjectTransformsSize +
 				morphChannelSize + morphShapeSize);
 
@@ -272,37 +272,37 @@ namespace bs
 			data += layersSize;
 
 			AnimationState* states = (AnimationState*)data;
-			for(UINT32 i = 0; i < numClips; i++)
+			for(u32 i = 0; i < numClips; i++)
 				new (&states[i]) AnimationState();
 
 			data += clipsSize;
 
 			AnimationCurveMapping* boneMappings = (AnimationCurveMapping*)data;
-			for (UINT32 i = 0; i < numBoneMappings; i++)
+			for (u32 i = 0; i < numBoneMappings; i++)
 				new (&boneMappings[i]) AnimationCurveMapping();
 
 			data += boneMappingSize;
 
 			TCurveCache<Vector3>* posCache = (TCurveCache<Vector3>*)data;
-			for (UINT32 i = 0; i < numPosCurves; i++)
+			for (u32 i = 0; i < numPosCurves; i++)
 				new (&posCache[i]) TCurveCache<Vector3>();
 
 			data += posCacheSize;
 
 			TCurveCache<Quaternion>* rotCache = (TCurveCache<Quaternion>*)data;
-			for (UINT32 i = 0; i < numRotCurves; i++)
+			for (u32 i = 0; i < numRotCurves; i++)
 				new (&rotCache[i]) TCurveCache<Quaternion>();
 
 			data += rotCacheSize;
 
 			TCurveCache<Vector3>* scaleCache = (TCurveCache<Vector3>*)data;
-			for (UINT32 i = 0; i < numScaleCurves; i++)
+			for (u32 i = 0; i < numScaleCurves; i++)
 				new (&scaleCache[i]) TCurveCache<Vector3>();
 
 			data += scaleCacheSize;
 
 			TCurveCache<float>* genCache = (TCurveCache<float>*)data;
-			for (UINT32 i = 0; i < NumGenericCurves; i++)
+			for (u32 i = 0; i < NumGenericCurves; i++)
 				new (&genCache[i]) TCurveCache<float>();
 
 			data += genCacheSize;
@@ -314,7 +314,7 @@ namespace bs
 			data += sceneObjectIdsSize;
 
 			SceneObjectTransforms = (Matrix4*)data;
-			for (UINT32 i = 0; i < numBoneMappedSOs; i++)
+			for (u32 i = 0; i < numBoneMappedSOs; i++)
 				SceneObjectTransforms[i] = Matrix4::IDENTITY;
 
 			data += sceneObjectTransformsSize;
@@ -328,20 +328,20 @@ namespace bs
 			// Generate data required for morph shape animation
 			if (morphShapes != nullptr)
 			{
-				UINT32 currentShapeIdx = 0;
-				for (UINT32 i = 0; i < NumMorphChannels; i++)
+				u32 currentShapeIdx = 0;
+				for (u32 i = 0; i < NumMorphChannels; i++)
 				{
 					SPtr<MorphChannel> morphChannel = morphShapes->GetChannel(i);
-					UINT32 numShapes = morphChannel->GetNumShapes();
+					u32 numShapes = morphChannel->GetNumShapes();
 
 					MorphChannelInfo& channelInfo = MorphChannelInfos[i];
 					channelInfo.Weight = 0.0f;
 					channelInfo.ShapeStart = currentShapeIdx;
 					channelInfo.ShapeCount = numShapes;
-					channelInfo.FrameCurveIdx = (UINT32)-1;
-					channelInfo.WeightCurveIdx = (UINT32)-1;
+					channelInfo.FrameCurveIdx = (u32)-1;
+					channelInfo.WeightCurveIdx = (u32)-1;
 
-					for (UINT32 j = 0; j < numShapes; j++)
+					for (u32 j = 0; j < numShapes; j++)
 					{
 						MorphShapeInfo& shapeInfo = MorphShapeInfos[currentShapeIdx];
 						new (&shapeInfo.Shape) SPtr<MorphShape>();
@@ -363,7 +363,7 @@ namespace bs
 					{
 						AnimationClipInfo& clipInfo = clipInfos[0];
 
-						for (UINT32 i = 0; i < NumMorphChannels; i++)
+						for (u32 i = 0; i < NumMorphChannels; i++)
 						{
 							SPtr<MorphChannel> morphChannel = morphShapes->GetChannel(i);
 							MorphChannelInfo& channelInfo = MorphChannelInfos[i];
@@ -377,25 +377,25 @@ namespace bs
 				MorphChannelWeightsDirty = true;
 			}
 
-			UINT32 curLayerIdx = 0;
-			UINT32 curStateIdx = 0;
+			u32 curLayerIdx = 0;
+			u32 curStateIdx = 0;
 
 			// Note: Hidden dependency. First clip info must be in layers[0].states[0] (needed for generic curves which only
 			// use the primary clip).
-			for(UINT32 i = 0; i < NumLayers; i++)
+			for(u32 i = 0; i < NumLayers; i++)
 			{
 				AnimationStateLayer& layer = Layers[i];
 
 				layer.States = &states[curStateIdx];
 				layer.NumStates = 0;
 
-				UINT32 localStateIdx = 0;
-				for(UINT32 j = 0; j < (UINT32)clipInfos.size(); j++)
+				u32 localStateIdx = 0;
+				for(u32 j = 0; j < (u32)clipInfos.size(); j++)
 				{
 					AnimationClipInfo& clipInfo = clipInfos[j];
 
-					UINT32 clipLayer = clipInfo.State.Layer;
-					if (clipLayer == (UINT32)-1)
+					u32 clipLayer = clipInfo.State.Layer;
+					if (clipLayer == (u32)-1)
 						clipLayer = 0;
 					else
 						clipLayer += 1;
@@ -474,9 +474,9 @@ namespace bs
 						}
 						else
 						{
-							AnimationCurveMapping emptyMapping = { (UINT32)-1, (UINT32)-1, (UINT32)-1 };
+							AnimationCurveMapping emptyMapping = { (u32)-1, (u32)-1, (u32)-1 };
 
-							for (UINT32 i = 0; i < numBones; i++)
+							for (u32 i = 0; i < numBones; i++)
 								state.BoneToCurveMapping[i] = emptyMapping;
 						}
 					}
@@ -495,7 +495,7 @@ namespace bs
 			}
 
 			Matrix4 invRootTransform(BsIdentity);
-			for (UINT32 i = 0; i < NumSceneObjects; i++)
+			for (u32 i = 0; i < NumSceneObjects; i++)
 			{
 				if(sceneObjects[i].CurveName.empty())
 				{
@@ -507,8 +507,8 @@ namespace bs
 				}
 			}
 
-			UINT32 boneIdx = 0;
-			for(UINT32 i = 0; i < NumSceneObjects; i++)
+			u32 boneIdx = 0;
+			for(u32 i = 0; i < NumSceneObjects; i++)
 			{
 				HSceneObject so = sceneObjects[i].So;
 				AnimatedSceneObjectInfo& soInfo = SceneObjectInfos[i];
@@ -521,17 +521,17 @@ namespace bs
 				else
 					soInfo.Hash = 0;
 
-				soInfo.LayerIdx = (UINT32)-1;
-				soInfo.StateIdx = (UINT32)-1;
+				soInfo.LayerIdx = (u32)-1;
+				soInfo.StateIdx = (u32)-1;
 
 				// If no bone mapping, find curves directly
 				if(soInfo.BoneIdx == -1)
 				{
-					soInfo.CurveIndices = { (UINT32)-1, (UINT32)-1, (UINT32)-1 };
+					soInfo.CurveIndices = { (u32)-1, (u32)-1, (u32)-1 };
 
 					if (isSOValid)
 					{
-						for (UINT32 j = 0; j < (UINT32)clipInfos.size(); j++)
+						for (u32 j = 0; j < (u32)clipInfos.size(); j++)
 						{
 							AnimationClipInfo& clipInfo = clipInfos[j];
 
@@ -584,8 +584,8 @@ namespace bs
 
 	void AnimationProxy::UpdateMorphChannelWeights(const Vector<float>& weights)
 	{
-		UINT32 numWeights = (UINT32)weights.size();
-		for(UINT32 i = 0; i < NumMorphChannels; i++)
+		u32 numWeights = (u32)weights.size();
+		for(u32 i = 0; i < NumMorphChannels; i++)
 		{
 			if (i < numWeights)
 				MorphChannelInfos[i].Weight = weights[i];
@@ -599,7 +599,7 @@ namespace bs
 	void AnimationProxy::UpdateTransforms(const Vector<AnimatedSceneObject>& sceneObjects)
 	{
 		Matrix4 invRootTransform(BsIdentity);
-		for (UINT32 i = 0; i < NumSceneObjects; i++)
+		for (u32 i = 0; i < NumSceneObjects; i++)
 		{
 			if (sceneObjects[i].CurveName.empty())
 			{
@@ -611,8 +611,8 @@ namespace bs
 			}
 		}
 
-		UINT32 boneIdx = 0;
-		for (UINT32 i = 0; i < NumSceneObjects; i++)
+		u32 boneIdx = 0;
+		for (u32 i = 0; i < NumSceneObjects; i++)
 		{
 			HSceneObject so = sceneObjects[i].So;
 			if (so.IsDestroyed(true))
@@ -669,7 +669,7 @@ namespace bs
 	{
 		mMorphShapes = morphShapes;
 
-		UINT32 numChannels;
+		u32 numChannels;
 		if (mMorphShapes != nullptr)
 			numChannels = mMorphShapes->GetNumChannels();
 		else
@@ -683,9 +683,9 @@ namespace bs
 		mDirty |= AnimDirtyStateFlag::MorphWeights;
 	}
 
-	void Animation::SetMorphChannelWeight(UINT32 idx, float weight)
+	void Animation::SetMorphChannelWeight(u32 idx, float weight)
 	{
-		UINT32 numShapes = (UINT32)mMorphChannelWeights.size();
+		u32 numShapes = (u32)mMorphChannelWeights.size();
 		if (idx >= numShapes)
 			return;
 
@@ -739,7 +739,7 @@ namespace bs
 
 	void Animation::Play(const HAnimationClip& clip)
 	{
-		AnimationClipInfo* clipInfo = AddClip(clip, (UINT32)-1);
+		AnimationClipInfo* clipInfo = AddClip(clip, (u32)-1);
 		if(clipInfo != nullptr)
 		{
 			clipInfo->State.Time = 0.0f;
@@ -753,7 +753,7 @@ namespace bs
 		mDirty |= AnimDirtyStateFlag::Value;
 	}
 
-	void Animation::BlendAdditive(const HAnimationClip& clip, float weight, float fadeLength, UINT32 layer)
+	void Animation::BlendAdditive(const HAnimationClip& clip, float weight, float fadeLength, u32 layer)
 	{
 		if(clip != nullptr && !clip->IsAdditive())
 		{
@@ -799,7 +799,7 @@ namespace bs
 		float startPos = 0.0f;
 		float endPos = 0.0f;
 
-		for (UINT32 i = 0; i < (UINT32)info.Clips.size(); i++)
+		for (u32 i = 0; i < (u32)info.Clips.size(); i++)
 		{
 			startPos = std::min(startPos, info.Clips[i].Position);
 			endPos = std::min(endPos, info.Clips[i].Position);
@@ -831,16 +831,16 @@ namespace bs
 		}
 
 		// Find keys to blend between
-		UINT32 leftKey = 0;
-		UINT32 rightKey = 0;
+		u32 leftKey = 0;
+		u32 rightKey = 0;
 
-		INT32 start = 0;
-		INT32 searchLength = (INT32)info.Clips.size();
+		i32 start = 0;
+		i32 searchLength = (i32)info.Clips.size();
 
 		while (searchLength > 0)
 		{
-			INT32 half = searchLength >> 1;
-			INT32 mid = start + half;
+			i32 half = searchLength >> 1;
+			i32 mid = start + half;
 
 			if (t < info.Clips[mid].Position)
 			{
@@ -854,15 +854,15 @@ namespace bs
 		}
 
 		leftKey = std::max(0, start - 1);
-		rightKey = std::min(start, (INT32)info.Clips.size() - 1);
+		rightKey = std::min(start, (i32)info.Clips.size() - 1);
 
 		float interpLength = info.Clips[rightKey].Position - info.Clips[leftKey].Position;
 		t = (t - info.Clips[leftKey].Position) / interpLength;
 
 		// Add clips and set weights
-		for(UINT32 i = 0; i < (UINT32)info.Clips.size(); i++)
+		for(u32 i = 0; i < (u32)info.Clips.size(); i++)
 		{
-			AnimationClipInfo* clipInfo = AddClip(info.Clips[i].Clip, (UINT32)-1, i == 0);
+			AnimationClipInfo* clipInfo = AddClip(info.Clips[i].Clip, (u32)-1, i == 0);
 			if (clipInfo != nullptr)
 			{
 				clipInfo->State.Time = 0.0f;
@@ -887,7 +887,7 @@ namespace bs
 
 	void Animation::Blend2D(const Blend2DInfo& info, const Vector2& t)
 	{
-		AnimationClipInfo* topLeftClipInfo = AddClip(info.TopLeftClip, (UINT32)-1, true);
+		AnimationClipInfo* topLeftClipInfo = AddClip(info.TopLeftClip, (u32)-1, true);
 		if (topLeftClipInfo != nullptr)
 		{
 			topLeftClipInfo->State.Time = 0.0f;
@@ -899,7 +899,7 @@ namespace bs
 			topLeftClipInfo->PlaybackType = AnimPlaybackType::Normal;
 		}
 
-		AnimationClipInfo* topRightClipInfo = AddClip(info.TopRightClip, (UINT32)-1, false);
+		AnimationClipInfo* topRightClipInfo = AddClip(info.TopRightClip, (u32)-1, false);
 		if (topRightClipInfo != nullptr)
 		{
 			topRightClipInfo->State.Time = 0.0f;
@@ -911,7 +911,7 @@ namespace bs
 			topRightClipInfo->PlaybackType = AnimPlaybackType::Normal;
 		}
 
-		AnimationClipInfo* botLeftClipInfo = AddClip(info.BotLeftClip, (UINT32)-1, false);
+		AnimationClipInfo* botLeftClipInfo = AddClip(info.BotLeftClip, (u32)-1, false);
 		if (botLeftClipInfo != nullptr)
 		{
 			botLeftClipInfo->State.Time = 0.0f;
@@ -923,7 +923,7 @@ namespace bs
 			botLeftClipInfo->PlaybackType = AnimPlaybackType::Normal;
 		}
 
-		AnimationClipInfo* botRightClipInfo = AddClip(info.BotRightClip, (UINT32)-1, false);
+		AnimationClipInfo* botRightClipInfo = AddClip(info.BotRightClip, (u32)-1, false);
 		if (botRightClipInfo != nullptr)
 		{
 			botRightClipInfo->State.Time = 0.0f;
@@ -948,7 +948,7 @@ namespace bs
 			return;
 		}
 
-		AnimationClipInfo* clipInfo = AddClip(clip, (UINT32)-1, false);
+		AnimationClipInfo* clipInfo = AddClip(clip, (u32)-1, false);
 		if (clipInfo != nullptr)
 		{
 			clipInfo->State.Time = 0.0f;
@@ -964,7 +964,7 @@ namespace bs
 
 			for (auto& entry : mClipInfos)
 			{
-				if (entry.State.Layer == (UINT32)-1 && entry.Clip != clip)
+				if (entry.State.Layer == (u32)-1 && entry.Clip != clip)
 				{
 					// If other clips are already cross-fading, we need to persist their current weight before starting
 					// a new crossfade. We do that by adjusting the fade times.
@@ -990,7 +990,7 @@ namespace bs
 
 	void Animation::Sample(const HAnimationClip& clip, float time)
 	{
-		AnimationClipInfo* clipInfo = AddClip(clip, (UINT32)-1);
+		AnimationClipInfo* clipInfo = AddClip(clip, (u32)-1);
 		if (clipInfo != nullptr)
 		{
 			clipInfo->State.Time = time;
@@ -1004,7 +1004,7 @@ namespace bs
 		mDirty |= AnimDirtyStateFlag::Value;
 	}
 
-	void Animation::Stop(UINT32 layer)
+	void Animation::Stop(u32 layer)
 	{
 		bs_frame_mark();
 		{
@@ -1018,7 +1018,7 @@ namespace bs
 			}
 
 			mClipInfos.resize(newClips.size());
-			for(UINT32 i = 0; i < (UINT32)newClips.size(); i++)
+			for(u32 i = 0; i < (u32)newClips.size(); i++)
 				mClipInfos[i] = newClips[i];
 		}
 		bs_frame_clear();
@@ -1032,7 +1032,7 @@ namespace bs
 		mDirty |= AnimDirtyStateFlag::Layout;
 	}
 
-	AnimationClipInfo* Animation::AddClip(const HAnimationClip& clip, UINT32 layer, bool stopExisting)
+	AnimationClipInfo* Animation::AddClip(const HAnimationClip& clip, u32 layer, bool stopExisting)
 	{
 		AnimationClipInfo* output = nullptr;
 		bool hasExisting = false;
@@ -1065,7 +1065,7 @@ namespace bs
 					newClips.push_back(AnimationClipInfo());
 
 				mClipInfos.resize(newClips.size());
-				for(UINT32 i = 0; i < (UINT32)newClips.size(); i++)
+				for(u32 i = 0; i < (u32)newClips.size(); i++)
 					mClipInfos[i] = newClips[i];
 
 				mDirty |= AnimDirtyStateFlag::Layout;
@@ -1091,8 +1091,8 @@ namespace bs
 		if (mSkeleton == nullptr)
 			return false;
 
-		UINT32 rootBoneIdx = mSkeleton->GetRootBoneIndex();
-		if (rootBoneIdx == (UINT32)-1)
+		u32 rootBoneIdx = mSkeleton->GetRootBoneIndex();
+		if (rootBoneIdx == (u32)-1)
 			return false;
 
 		String rootBoneName = mSkeleton->GetBoneInfo(rootBoneIdx).Name;
@@ -1106,13 +1106,13 @@ namespace bs
 					AnimationCurveMapping mapping;
 					clip->GetCurveMapping(rootBoneName, mapping);
 
-					if (mapping.Position != (UINT32)-1)
+					if (mapping.Position != (u32)-1)
 						return true;
 
-					if (mapping.Rotation != (UINT32)-1)
+					if (mapping.Rotation != (u32)-1)
 						return true;
 
-					if (mapping.Scale != (UINT32)-1)
+					if (mapping.Scale != (u32)-1)
 						return true;
 				}
 			}
@@ -1162,7 +1162,7 @@ namespace bs
 			{
 				state = clipInfo.State;
 
-				if (state.Layer == (UINT32)-1)
+				if (state.Layer == (u32)-1)
 					state.Layer = 0;
 				else
 					state.Layer += 1;
@@ -1185,7 +1185,7 @@ namespace bs
 	void Animation::SetState(const HAnimationClip& clip, AnimationClipState state)
 	{
 		if (state.Layer == 0)
-			state.Layer = (UINT32)-1;
+			state.Layer = (u32)-1;
 		else
 			state.Layer -= 1;
 
@@ -1201,14 +1201,14 @@ namespace bs
 		mDirty |= AnimDirtyStateFlag::Value;
 	}
 
-	UINT32 Animation::GetNumClips() const
+	u32 Animation::GetNumClips() const
 	{
-		return (UINT32)mClipInfos.size();
+		return (u32)mClipInfos.size();
 	}
 
-	HAnimationClip Animation::GetClip(UINT32 idx) const
+	HAnimationClip Animation::GetClip(u32 idx) const
 	{
-		if (idx >= (UINT32)mClipInfos.size())
+		if (idx >= (u32)mClipInfos.size())
 			return HAnimationClip();
 
 		return mClipInfos[idx].Clip;
@@ -1279,9 +1279,9 @@ namespace bs
 		mDirty |= AnimDirtyStateFlag::All;
 	}
 
-	bool Animation::GetGenericCurveValue(UINT32 curveIdx, float& value)
+	bool Animation::GetGenericCurveValue(u32 curveIdx, float& value)
 	{
-		if (!mGenericCurveValuesValid || curveIdx >= (UINT32)mGenericCurveOutputs.size())
+		if (!mGenericCurveValuesValid || curveIdx >= (u32)mGenericCurveOutputs.size())
 			return false;
 
 		value = mGenericCurveOutputs[curveIdx];
@@ -1339,7 +1339,7 @@ namespace bs
 		auto getAnimatedSOList = [&]()
 		{
 			Vector<AnimatedSceneObject> animatedSO(mSceneObjects.size());
-			UINT32 idx = 0;
+			u32 idx = 0;
 			for (auto& entry : mSceneObjects)
 				animatedSO[idx++] = entry.second;
 
@@ -1347,7 +1347,7 @@ namespace bs
 		};
 
 		bool didFullRebuild = false;
-		if((UINT32)mDirty == 0) // Clean
+		if((u32)mDirty == 0) // Clean
 		{
 			mAnimProxy->UpdateTime(mClipInfos);
 		}
@@ -1377,7 +1377,7 @@ namespace bs
 		// Check if there are dirty transforms
 		if (!didFullRebuild)
 		{
-			for (UINT32 i = 0; i < mAnimProxy->NumSceneObjects; i++)
+			for (u32 i = 0; i < mAnimProxy->NumSceneObjects; i++)
 			{
 				AnimatedSceneObjectInfo& soInfo = mAnimProxy->SceneObjectInfos[i];
 
@@ -1388,7 +1388,7 @@ namespace bs
 					continue;
 				}
 
-				UINT32 hash;
+				u32 hash;
 
 				HSceneObject so = iterFind->second.So;
 				if (so.IsDestroyed(true))
@@ -1423,7 +1423,7 @@ namespace bs
 		HSceneObject rootSO;
 
 		// Write TRS animation results to relevant SceneObjects
-		for(UINT32 i = 0; i < mAnimProxy->NumSceneObjects; i++)
+		for(u32 i = 0; i < mAnimProxy->NumSceneObjects; i++)
 		{
 			AnimatedSceneObjectInfo& soInfo = mAnimProxy->SceneObjectInfos[i];
 
@@ -1449,8 +1449,8 @@ namespace bs
 
 				const SPtr<Skeleton>& skeleton = mAnimProxy->Skeleton;
 
-				UINT32 parentBoneIdx = skeleton->GetBoneInfo(soInfo.BoneIdx).Parent;
-				if (parentBoneIdx == (UINT32)-1)
+				u32 parentBoneIdx = skeleton->GetBoneInfo(soInfo.BoneIdx).Parent;
+				if (parentBoneIdx == (u32)-1)
 				{
 					so->SetPosition(position);
 					so->SetRotation(rotation);
@@ -1458,7 +1458,7 @@ namespace bs
 				}
 				else
 				{
-					while(parentBoneIdx != (UINT32)-1)
+					while(parentBoneIdx != (u32)-1)
 					{
 						// Update rotation
 						const Quaternion& parentOrientation = mAnimProxy->SkeletonPose.Rotations[parentBoneIdx];
@@ -1540,7 +1540,7 @@ namespace bs
 				{
 					if (clipInfo.Clip.IsLoaded() && clipInfo.CurveVersion == clipInfo.Clip->GetVersion())
 					{
-						UINT32 numGenericCurves = (UINT32)clipInfo.Clip->GetCurves()->Generic.size();
+						u32 numGenericCurves = (u32)clipInfo.Clip->GetCurves()->Generic.size();
 						mGenericCurveValuesValid = numGenericCurves == mAnimProxy->NumGenericCurves;
 					}
 				}

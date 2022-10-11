@@ -7,7 +7,7 @@
 
 namespace bs { namespace ct
 {
-	VulkanVertexInput::VulkanVertexInput(UINT32 id, const VkPipelineVertexInputStateCreateInfo& createInfo)
+	VulkanVertexInput::VulkanVertexInput(u32 id, const VkPipelineVertexInputStateCreateInfo& createInfo)
 		:mId(id), mCreateInfo(createInfo)
 	{ }
 
@@ -83,8 +83,8 @@ namespace bs { namespace ct
 		const Vector<VertexElement>& vbElements = vbDecl->GetProperties().GetElements();
 		const Vector<VertexElement>& inputElements = shaderInputDecl->GetProperties().GetElements();
 
-		UINT32 numAttributes = 0;
-		UINT32 numBindings = 0;
+		u32 numAttributes = 0;
+		u32 numBindings = 0;
 
 		for (auto& vbElem : vbElements)
 		{
@@ -102,7 +102,7 @@ namespace bs { namespace ct
 				continue;
 
 			numAttributes++;
-			numBindings = std::max(numBindings, (UINT32)vbElem.GetStreamIdx() + 1);
+			numBindings = std::max(numBindings, (u32)vbElem.GetStreamIdx() + 1);
 		}
 
 		VertexInputEntry newEntry;
@@ -115,7 +115,7 @@ namespace bs { namespace ct
 		newEntry.Attributes = alloc.Alloc<VkVertexInputAttributeDescription>(numAttributes);
 		newEntry.Bindings = alloc.Alloc<VkVertexInputBindingDescription>(numBindings);
 
-		for (UINT32 i = 0; i < numBindings; i++)
+		for (u32 i = 0; i < numBindings; i++)
 		{
 			VkVertexInputBindingDescription& binding = newEntry.Bindings[i];
 			binding.binding = i;
@@ -123,7 +123,7 @@ namespace bs { namespace ct
 			binding.stride = vbDecl->GetProperties().GetVertexSize(i);
 		}
 
-		UINT32 attribIdx = 0;
+		u32 attribIdx = 0;
 		bool isFirstInBinding = true;
 		for (auto& vbElem : vbElements)
 		{
@@ -205,12 +205,12 @@ namespace bs { namespace ct
 			mWarningShown = true;
 		}
 
-		Map<UINT32, VertexDeclarationKey> leastFrequentlyUsedMap;
+		Map<u32, VertexDeclarationKey> leastFrequentlyUsedMap;
 
 		for (auto iter = mVertexInputMap.begin(); iter != mVertexInputMap.end(); ++iter)
 			leastFrequentlyUsedMap[iter->second.LastUsedIdx] = iter->first;
 
-		UINT32 elemsRemoved = 0;
+		u32 elemsRemoved = 0;
 		for (auto iter = leastFrequentlyUsedMap.begin(); iter != leastFrequentlyUsedMap.end(); ++iter)
 		{
 			auto inputLayoutIter = mVertexInputMap.find(iter->second);

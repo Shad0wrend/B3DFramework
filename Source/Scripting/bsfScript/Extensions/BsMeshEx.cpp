@@ -39,7 +39,7 @@ namespace bs
 		if (data != nullptr)
 			meshData = data->GetData();
 
-		UINT32 numIndices = 0;
+		u32 numIndices = 0;
 		if (meshData != nullptr)
 			numIndices = meshData->GetNumIndices();
 
@@ -65,15 +65,15 @@ namespace bs
 
 	Vector<SubMesh> MeshEx::GetSubMeshes(const HMesh& thisPtr)
 	{
-		UINT32 numSubMeshes = thisPtr->GetProperties().GetNumSubMeshes();
+		u32 numSubMeshes = thisPtr->GetProperties().GetNumSubMeshes();
 		Vector<SubMesh> output(numSubMeshes);
-		for (UINT32 i = 0; i < numSubMeshes; i++)
+		for (u32 i = 0; i < numSubMeshes; i++)
 			output[i] = thisPtr->GetProperties().GetSubMesh(i);
 
 		return output;
 	}
 
-	UINT32 MeshEx::GetSubMeshCount(const HMesh& thisPtr)
+	u32 MeshEx::GetSubMeshCount(const HMesh& thisPtr)
 	{
 		return thisPtr->GetProperties().GetNumSubMeshes();
 	}

@@ -37,14 +37,14 @@ namespace bs
 	
 	void CSphericalJoint::SetFlag(SphericalJointFlag flag, bool enabled)
 	{
-		bool isEnabled = ((UINT32)mDesc.Flag & (UINT32)flag) != 0;
+		bool isEnabled = ((u32)mDesc.Flag & (u32)flag) != 0;
 		if (isEnabled == enabled)
 			return;
 
 		if (enabled)
-			mDesc.Flag = (SphericalJointFlag)((UINT32)mDesc.Flag | (UINT32)flag);
+			mDesc.Flag = (SphericalJointFlag)((u32)mDesc.Flag | (u32)flag);
 		else
-			mDesc.Flag = (SphericalJointFlag)((UINT32)mDesc.Flag & ~(UINT32)flag);
+			mDesc.Flag = (SphericalJointFlag)((u32)mDesc.Flag & ~(u32)flag);
 
 		if (mInternal != nullptr)
 			GetInternalInternal()->SetFlag(flag, enabled);
@@ -52,7 +52,7 @@ namespace bs
 
 	bool CSphericalJoint::HasFlag(SphericalJointFlag flag) const
 	{
-		return ((UINT32)mDesc.Flag & (UINT32)flag) != 0;
+		return ((u32)mDesc.Flag & (u32)flag) != 0;
 	}
 
 	SPtr<Joint> CSphericalJoint::CreateInternal()

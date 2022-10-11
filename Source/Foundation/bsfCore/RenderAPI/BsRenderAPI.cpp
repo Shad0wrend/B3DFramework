@@ -35,16 +35,16 @@ namespace bs
 							  pipelineState->GetCore(), nullptr));
 	}
 
-	void RenderAPI::SetVertexBuffers(UINT32 index, const Vector<SPtr<VertexBuffer>>& buffers)
+	void RenderAPI::SetVertexBuffers(u32 index, const Vector<SPtr<VertexBuffer>>& buffers)
 	{
 		Vector<SPtr<ct::VertexBuffer>> coreBuffers(buffers.size());
-		for (UINT32 i = 0; i < (UINT32)buffers.size(); i++)
+		for (u32 i = 0; i < (u32)buffers.size(); i++)
 			coreBuffers[i] = buffers[i] != nullptr ? buffers[i]->GetCore() : nullptr;
 
-		std::function<void(ct::RenderAPI*, UINT32, const Vector<SPtr<ct::VertexBuffer>>&)> resizeFunc =
-			[](ct::RenderAPI* rs, UINT32 idx, const Vector<SPtr<ct::VertexBuffer>>& _buffers)
+		std::function<void(ct::RenderAPI*, u32, const Vector<SPtr<ct::VertexBuffer>>&)> resizeFunc =
+			[](ct::RenderAPI* rs, u32 idx, const Vector<SPtr<ct::VertexBuffer>>& _buffers)
 		{
-			rs->SetVertexBuffers(idx, (SPtr<ct::VertexBuffer>*)_buffers.data(), (UINT32)_buffers.size());
+			rs->SetVertexBuffers(idx, (SPtr<ct::VertexBuffer>*)_buffers.data(), (u32)_buffers.size());
 		};
 
 		gCoreThread().QueueCommand(std::bind(resizeFunc, ct::RenderAPI::InstancePtr(), index, coreBuffers));
@@ -67,7 +67,7 @@ namespace bs
 		gCoreThread().QueueCommand(std::bind(&ct::RenderAPI::SetViewport, ct::RenderAPI::InstancePtr(), vp, nullptr));
 	}
 
-	void RenderAPI::SetStencilRef(UINT32 value)
+	void RenderAPI::SetStencilRef(u32 value)
 	{
 		gCoreThread().QueueCommand(std::bind(&ct::RenderAPI::SetStencilRef, ct::RenderAPI::InstancePtr(), value, nullptr));
 	}
@@ -78,28 +78,28 @@ namespace bs
 			nullptr));
 	}
 
-	void RenderAPI::SetScissorRect(UINT32 left, UINT32 top, UINT32 right, UINT32 bottom)
+	void RenderAPI::SetScissorRect(u32 left, u32 top, u32 right, u32 bottom)
 	{
 		gCoreThread().QueueCommand(std::bind(&ct::RenderAPI::SetScissorRect, ct::RenderAPI::InstancePtr(), left, top, right, bottom,
 			nullptr));
 	}
 
-	void RenderAPI::SetRenderTarget(const SPtr<RenderTarget>& target, UINT32 readOnlyFlags,
+	void RenderAPI::SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags,
 									RenderSurfaceMask loadMask)
 	{
 		gCoreThread().QueueCommand(std::bind(&ct::RenderAPI::SetRenderTarget,
 			ct::RenderAPI::InstancePtr(), target->GetCore(), readOnlyFlags, loadMask, nullptr));
 	}
 
-	void RenderAPI::ClearRenderTarget(UINT32 buffers, const Color& color, float depth,
-		UINT16 stencil, UINT8 targetMask)
+	void RenderAPI::ClearRenderTarget(u32 buffers, const Color& color, float depth,
+		u16 stencil, u8 targetMask)
 	{
 		gCoreThread().QueueCommand(std::bind(&ct::RenderAPI::ClearRenderTarget, ct::RenderAPI::InstancePtr(), buffers, color,
 			depth, stencil, targetMask, nullptr));
 	}
 
-	void RenderAPI::ClearViewport(UINT32 buffers, const Color& color, float depth, UINT16 stencil,
-		UINT8 targetMask)
+	void RenderAPI::ClearViewport(u32 buffers, const Color& color, float depth, u16 stencil,
+		u8 targetMask)
 	{
 		gCoreThread().QueueCommand(std::bind(&ct::RenderAPI::ClearViewport, ct::RenderAPI::InstancePtr(), buffers, color, depth,
 			stencil, targetMask, nullptr));
@@ -110,20 +110,20 @@ namespace bs
 		gCoreThread().QueueCommand(std::bind(&ct::RenderAPI::SwapBuffers, ct::RenderAPI::InstancePtr(), target->GetCore(), 1));
 	}
 
-	void RenderAPI::Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount)
+	void RenderAPI::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount)
 	{
 		gCoreThread().QueueCommand(std::bind(&ct::RenderAPI::Draw, ct::RenderAPI::InstancePtr(), vertexOffset,
 			vertexCount, instanceCount, nullptr));
 	}
 
-	void RenderAPI::DrawIndexed(UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset,
-		UINT32 vertexCount, UINT32 instanceCount)
+	void RenderAPI::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset,
+		u32 vertexCount, u32 instanceCount)
 	{
 		gCoreThread().QueueCommand(std::bind(&ct::RenderAPI::DrawIndexed, ct::RenderAPI::InstancePtr(), startIndex, indexCount,
 			vertexOffset, vertexCount, instanceCount, nullptr));
 	}
 
-	void RenderAPI::DispatchCompute(UINT32 numGroupsX, UINT32 numGroupsY, UINT32 numGroupsZ)
+	void RenderAPI::DispatchCompute(u32 numGroupsX, u32 numGroupsY, u32 numGroupsZ)
 	{
 		gCoreThread().QueueCommand(std::bind(&ct::RenderAPI::DispatchCompute, ct::RenderAPI::InstancePtr(), numGroupsX,
 			numGroupsY, numGroupsZ, nullptr));
@@ -192,7 +192,7 @@ namespace bs
 		mActiveRenderTarget = nullptr;
 	}
 
-	const RenderAPICapabilities& RenderAPI::GetCapabilities(UINT32 deviceIdx) const
+	const RenderAPICapabilities& RenderAPI::GetCapabilities(u32 deviceIdx) const
 	{
 		if(deviceIdx >= mNumDevices)
 		{
@@ -204,9 +204,9 @@ namespace bs
 		return mCurrentCapabilities[deviceIdx];
 	}
 
-	UINT32 RenderAPI::VertexCountToPrimCount(DrawOperationType type, UINT32 elementCount)
+	u32 RenderAPI::VertexCountToPrimCount(DrawOperationType type, u32 elementCount)
 	{
-		UINT32 primCount = 0;
+		u32 primCount = 0;
 		switch (type)
 		{
 		case DOT_POINT_LIST:

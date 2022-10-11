@@ -36,8 +36,8 @@ namespace bs
 		}
 
 	protected:
-		UINT32 mParamIndex;
-		UINT32 mArraySize;
+		u32 mParamIndex;
+		u32 mArraySize;
 		MaterialPtrType mMaterial;
 	};
 
@@ -66,10 +66,10 @@ namespace bs
 		using TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>::TMaterialDataCommon;
 
 		/** @copydoc TGpuDataParam::set */
-		void Set(const T& value, UINT32 arrayIdx = 0) const;
+		void Set(const T& value, u32 arrayIdx = 0) const;
 
 		/** @copydoc TGpuDataParam::get */
-		T Get(UINT32 arrayIdx = 0) const;
+		T Get(u32 arrayIdx = 0) const;
 	};
 
 	/** @copydoc TMaterialDataParam */
@@ -82,10 +82,10 @@ namespace bs
 		using TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>::TMaterialDataCommon;
 
 		/** @copydoc TGpuDataParam::set */
-		void Set(TAnimationCurve<T> value, UINT32 arrayIdx = 0) const;
+		void Set(TAnimationCurve<T> value, u32 arrayIdx = 0) const;
 
 		/** @copydoc TGpuDataParam::get */
-		const TAnimationCurve<T>& Get(UINT32 arrayIdx = 0) const;
+		const TAnimationCurve<T>& Get(u32 arrayIdx = 0) const;
 	};
 	
 	/** @copydoc TMaterialDataParam */
@@ -98,10 +98,10 @@ namespace bs
 		using TMaterialDataCommon<GPDT_COLOR, Core>::TMaterialDataCommon;
 
 		/** @copydoc TGpuDataParam::set */
-		void Set(const ColorGradientHDR& value, UINT32 arrayIdx = 0) const;
+		void Set(const ColorGradientHDR& value, u32 arrayIdx = 0) const;
 
 		/** @copydoc TGpuDataParam::get */
-		const ColorGradientHDR& Get(UINT32 arrayIdx = 0) const;
+		const ColorGradientHDR& Get(u32 arrayIdx = 0) const;
 	};
 
 	/** @copydoc TMaterialDataParam */
@@ -114,13 +114,13 @@ namespace bs
 		using TMaterialDataCommon<GPDT_STRUCT, Core>::TMaterialDataCommon;
 
 		/** @copydoc TGpuParamStruct::set */
-		void Set(const void* value, UINT32 sizeBytes, UINT32 arrayIdx = 0) const;
+		void Set(const void* value, u32 sizeBytes, u32 arrayIdx = 0) const;
 
 		/** @copydoc TGpuParamStruct::get */
-		void Get(void* value, UINT32 sizeBytes, UINT32 arrayIdx = 0) const;
+		void Get(void* value, u32 sizeBytes, u32 arrayIdx = 0) const;
 
 		/** @copydoc TGpuParamStruct::getElementSize */
-		UINT32 GetElementSize() const;
+		u32 GetElementSize() const;
 	};
 
 	/** @copydoc TMaterialDataParam */
@@ -148,7 +148,7 @@ namespace bs
 		}
 
 	protected:
-		UINT32 mParamIndex;
+		u32 mParamIndex;
 		MaterialPtrType mMaterial;
 	};
 
@@ -178,7 +178,7 @@ namespace bs
 		}
 
 	protected:
-		UINT32 mParamIndex;
+		u32 mParamIndex;
 		MaterialPtrType mMaterial;
 	};
 
@@ -207,7 +207,7 @@ namespace bs
 		}
 
 	protected:
-		UINT32 mParamIndex;
+		u32 mParamIndex;
 		MaterialPtrType mMaterial;
 	};
 	
@@ -236,7 +236,7 @@ namespace bs
 		}
 
 	protected:
-		UINT32 mParamIndex;
+		u32 mParamIndex;
 		MaterialPtrType mMaterial;
 	};
 
@@ -265,7 +265,7 @@ namespace bs
 		}
 
 	protected:
-		UINT32 mParamIndex;
+		u32 mParamIndex;
 		MaterialPtrType mMaterial;
 	};
 

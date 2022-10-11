@@ -24,7 +24,7 @@ namespace bs { namespace ct
 		GLuint GetGlHandle() const { return mGLHandle; }
 
 		/** Gets an unique index for this GPU program. Each created GPU program is assigned a unique index on creation. */
-		UINT32 GetProgramId() const { return mProgramID; }
+		u32 GetProgramId() const { return mProgramID; }
 
 	private:
 		friend class GLSLProgramFactory;
@@ -35,15 +35,15 @@ namespace bs { namespace ct
 		void Initialize() ;
 
 	private:
-		UINT32 mProgramID = 0;
+		u32 mProgramID = 0;
 		GLuint mGLHandle = 0;
 
-		static UINT32 sVertexShaderCount;
-		static UINT32 sFragmentShaderCount;
-		static UINT32 sGeometryShaderCount;
-		static UINT32 sHullShaderCount;
-		static UINT32 sDomainShaderCount;
-		static UINT32 sComputeShaderCount;
+		static u32 sVertexShaderCount;
+		static u32 sFragmentShaderCount;
+		static u32 sGeometryShaderCount;
+		static u32 sHullShaderCount;
+		static u32 sDomainShaderCount;
+		static u32 sComputeShaderCount;
 	};
 
 	/** Identifier of the compiler used for compiling OpenGL GPU programs. */

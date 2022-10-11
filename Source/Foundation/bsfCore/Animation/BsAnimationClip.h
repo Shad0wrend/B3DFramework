@@ -210,7 +210,7 @@ namespace bs
 		 * @param[out]	frameIdx	Index of the curve animating the morph shape frames, or -1 if not found.
 		 * @param[out]	weightIdx	Index of the curve animating the channel weight, or -1 if not found.
 		 */
-		void GetMorphMapping(const String& name, UINT32& frameIdx, UINT32& weightIdx) const;
+		void GetMorphMapping(const String& name, u32& frameIdx, u32& weightIdx) const;
 
 		/**
 		 * Checks are the curves contained within the clip additive. Additive clips are intended to be added on top of
@@ -225,7 +225,7 @@ namespace bs
 
 		/** @copydoc setSampleRate() */
 		BS_SCRIPT_EXPORT(n:SampleRate,pr:getter)
-		UINT32 GetSampleRate() const { return mSampleRate; }
+		u32 GetSampleRate() const { return mSampleRate; }
 
 		/**
 		 * Number of samples per second the animation clip curves were sampled at. This value is not used by the animation
@@ -233,13 +233,13 @@ namespace bs
 		 * the original sample rate of an imported animation or similar.
 		 */
 		BS_SCRIPT_EXPORT(n:SampleRate,pr:setter)
-		void SetSampleRate(UINT32 sampleRate) { mSampleRate = sampleRate; }
+		void SetSampleRate(u32 sampleRate) { mSampleRate = sampleRate; }
 
 		/**
 		 * Returns a version that can be used for detecting modifications on the clip by external systems. Whenever the clip
 		 * is modified the version is increased by one.
 		 */
-		UINT64 GetVersion() const { return mVersion; }
+		u64 GetVersion() const { return mVersion; }
 
 		/**
 		 * Creates an animation clip with no curves. After creation make sure to register some animation curves before
@@ -260,7 +260,7 @@ namespace bs
 		 *							animation system directly but is instead provided to the user for manual evaluation.
 		 */
 		BS_SCRIPT_EXPORT(ec:AnimationClip)
-		static HAnimationClip Create(const SPtr<AnimationCurves>& curves, bool isAdditive = false, UINT32 sampleRate = 1,
+		static HAnimationClip Create(const SPtr<AnimationCurves>& curves, bool isAdditive = false, u32 sampleRate = 1,
 			const SPtr<RootMotion>& rootMotion = nullptr);
 
 	public: // ***** INTERNAL ******
@@ -270,13 +270,13 @@ namespace bs
 
 		/** Creates a new AnimationClip without initializing it. Use create() for normal use. */
 		static SPtr<AnimationClip> CreatePtrInternal(const SPtr<AnimationCurves>& curves, bool isAdditive = false,
-			UINT32 sampleRate = 1, const SPtr<RootMotion>& rootMotion = nullptr);
+			u32 sampleRate = 1, const SPtr<RootMotion>& rootMotion = nullptr);
 
 		/** @} */
 
 	protected:
 		AnimationClip();
-		AnimationClip(const SPtr<AnimationCurves>& curves, bool isAdditive, UINT32 sampleRate,
+		AnimationClip(const SPtr<AnimationCurves>& curves, bool isAdditive, u32 sampleRate,
 			const SPtr<RootMotion>& rootMotion);
 
 		/** @copydoc Resource::Initialize() */
@@ -288,7 +288,7 @@ namespace bs
 		/** Calculate the length of the clip based on assigned curves. */
 		void CalculateLength();
 
-		UINT64 mVersion;
+		u64 mVersion;
 
 		/**
 		 * Contains all the animation curves in the clip. It's important this field is immutable so it may be used on other
@@ -307,12 +307,12 @@ namespace bs
 		/**
 		 * Contains a map from curve name to curve index. Indices are stored as specified in CurveType enum.
 		 */
-		UnorderedMap<String, std::array<UINT32, (int)CurveType::Count>> mNameMapping;
+		UnorderedMap<String, std::array<u32, (int)CurveType::Count>> mNameMapping;
 
 		Vector<AnimationEvent> mEvents;
 		bool mIsAdditive;
 		float mLength;
-		UINT32 mSampleRate;
+		u32 mSampleRate;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

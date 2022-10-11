@@ -58,8 +58,8 @@ namespace bs
 		physx::PxTriangleMesh* mTriangleMesh = nullptr;
 		physx::PxConvexMesh* mConvexMesh = nullptr;
 
-		UINT8* mCookedData = nullptr;
-		UINT32 mCookedDataSize = 0;
+		u8* mCookedData = nullptr;
+		u32 mCookedDataSize = 0;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

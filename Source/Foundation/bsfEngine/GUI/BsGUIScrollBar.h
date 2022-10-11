@@ -41,7 +41,7 @@ namespace bs
 		void Scroll(float amount);
 
 		/**	Returns the maximum scrollable size the handle can move within (for example scroll bar length). */
-		UINT32 GetScrollableSize() const;
+		u32 GetScrollableSize() const;
 
 		/** @copydoc GUIElement::setTint */
 		void SetTint(const Color& color) ;
@@ -92,14 +92,14 @@ namespace bs
 
 		/** @copydoc GUIElement::_fillBuffer */
 		void FillBuffer(
-			UINT8* vertices,
-			UINT32* indices,
-			UINT32 vertexOffset,
-			UINT32 indexOffset,
+			u8* vertices,
+			u32* indices,
+			u32 vertexOffset,
+			u32 indexOffset,
 			const Vector2I& offset,
-			UINT32 maxNumVerts,
-			UINT32 maxNumIndices,
-			UINT32 renderElementIdx) const ;
+			u32 maxNumVerts,
+			u32 maxNumIndices,
+			u32 renderElementIdx) const ;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal */
 		void UpdateRenderElementsInternal() ;
@@ -108,7 +108,7 @@ namespace bs
 		void UpdateClippedBounds() ;
 
 		/** @copydoc	GUIElement::GetRenderElementDepthRangeInternal */
-		UINT32 GetRenderElementDepthRangeInternal() const override;
+		u32 GetRenderElementDepthRangeInternal() const override;
 
 		/** @copydoc GUIElement::styleUpdated */
 		void StyleUpdated() ;
@@ -146,7 +146,7 @@ namespace bs
 		GUISliderHandle* mHandleBtn;
 		bool mHorizontal;
 
-		static const UINT32 ButtonScrollAmount;
+		static const u32 ButtonScrollAmount;
 	};
 
 	/** @} */

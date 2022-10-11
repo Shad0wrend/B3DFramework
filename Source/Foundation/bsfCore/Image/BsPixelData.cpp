@@ -17,7 +17,7 @@ namespace bs
 			mSlicePitch);
 	}
 
-	PixelData::PixelData(UINT32 width, UINT32 height, UINT32 depth, PixelFormat pixelFormat)
+	PixelData::PixelData(u32 width, u32 height, u32 depth, PixelFormat pixelFormat)
 		: mExtents(0, 0, 0, width, height, depth), mFormat(pixelFormat)
 	{
 		PixelUtil::GetPitch(width, height, depth, pixelFormat, mRowPitch, mSlicePitch);
@@ -44,30 +44,30 @@ namespace bs
 		return *this;
 	}
 
-	UINT32 PixelData::GetRowSkip() const
+	u32 PixelData::GetRowSkip() const
 	{
-		UINT32 optimalRowPitch, optimalSlicePitch;
+		u32 optimalRowPitch, optimalSlicePitch;
 		PixelUtil::GetPitch(GetWidth(), GetHeight(), GetDepth(), mFormat, optimalRowPitch,
 			optimalSlicePitch);
 
 		return mRowPitch - optimalRowPitch;
 	}
 
-	UINT32 PixelData::GetSliceSkip() const
+	u32 PixelData::GetSliceSkip() const
 	{
-		UINT32 optimalRowPitch, optimalSlicePitch;
+		u32 optimalRowPitch, optimalSlicePitch;
 		PixelUtil::GetPitch(GetWidth(), GetHeight(), GetDepth(), mFormat, optimalRowPitch,
 			optimalSlicePitch);
 
 		return mSlicePitch - optimalSlicePitch;
 	}
 
-	UINT32 PixelData::GetConsecutiveSize() const
+	u32 PixelData::GetConsecutiveSize() const
 	{
 		return PixelUtil::GetMemorySize(GetWidth(), GetHeight(), GetDepth(), mFormat);
 	}
 
-	UINT32 PixelData::GetSize() const
+	u32 PixelData::GetSize() const
 	{
 		return mSlicePitch * GetDepth();
 	}
@@ -94,7 +94,7 @@ namespace bs
 		const size_t elemSize = PixelUtil::GetNumElemBytes(mFormat);
 		PixelData rval(volume.GetWidth(), volume.GetHeight(), volume.GetDepth(), mFormat);
 
-		rval.SetExternalBuffer(((UINT8*)GetData()) + ((volume.Left - GetLeft())*elemSize)
+		rval.SetExternalBuffer(((u8*)GetData()) + ((volume.Left - GetLeft())*elemSize)
 			+ ((volume.Top - GetTop())*mRowPitch)
 			+ ((volume.Front - GetFront())*mSlicePitch));
 
@@ -109,24 +109,24 @@ namespace bs
 	{
 		Vector2 pixelCoords = coords * Vector2((float)mExtents.GetWidth(), (float)mExtents.GetHeight());
 
-		INT32 maxExtentX = std::max(0, (INT32)mExtents.GetWidth() - 1);
-		INT32 maxExtentY = std::max(0, (INT32)mExtents.GetHeight() - 1);
+		i32 maxExtentX = std::max(0, (i32)mExtents.GetWidth() - 1);
+		i32 maxExtentY = std::max(0, (i32)mExtents.GetHeight() - 1);
 
 		if(filter == TF_BILINEAR)
 		{
 			pixelCoords -= Vector2(0.5f, 0.5f);
 
-			UINT32 x = (UINT32)Math::Clamp(Math::FloorToInt(pixelCoords.X), 0, maxExtentX);
-			UINT32 y = (UINT32)Math::Clamp(Math::FloorToInt(pixelCoords.Y), 0, maxExtentY);
+			u32 x = (u32)Math::Clamp(Math::FloorToInt(pixelCoords.X), 0, maxExtentX);
+			u32 y = (u32)Math::Clamp(Math::FloorToInt(pixelCoords.Y), 0, maxExtentY);
 
 			float fracX = pixelCoords.X - x;
 			float fracY = pixelCoords.Y - y;
 
-			x = Math::Clamp(x, 0U, (UINT32)maxExtentX);
-			y = Math::Clamp(y, 0U, (UINT32)maxExtentY);
+			x = Math::Clamp(x, 0U, (u32)maxExtentX);
+			y = Math::Clamp(y, 0U, (u32)maxExtentY);
 
-			INT32 x1 = Math::Clamp(x + 1, 0U, (UINT32)maxExtentX);
-			INT32 y1 = Math::Clamp(y + 1, 0U, (UINT32)maxExtentY);
+			i32 x1 = Math::Clamp(x + 1, 0U, (u32)maxExtentX);
+			i32 y1 = Math::Clamp(y + 1, 0U, (u32)maxExtentY);
 
 			Color color = Color::ZERO;
 			color += (1.0f - fracX) * (1.0f - fracY) * GetColorAt(x, y);
@@ -138,57 +138,57 @@ namespace bs
 		}
 		else
 		{
-			UINT32 x = (UINT32)Math::Clamp(Math::FloorToInt(pixelCoords.X), 0, maxExtentX);
-			UINT32 y = (UINT32)Math::Clamp(Math::FloorToInt(pixelCoords.Y), 0, maxExtentY);
+			u32 x = (u32)Math::Clamp(Math::FloorToInt(pixelCoords.X), 0, maxExtentX);
+			u32 y = (u32)Math::Clamp(Math::FloorToInt(pixelCoords.Y), 0, maxExtentY);
 
 			return GetColorAt(x, y);
 		}
 	}
 
-	Color PixelData::GetColorAt(UINT32 x, UINT32 y, UINT32 z) const
+	Color PixelData::GetColorAt(u32 x, u32 y, u32 z) const
 	{
 		Color cv;
 
-		UINT32 pixelSize = PixelUtil::GetNumElemBytes(mFormat);
-		UINT32 pixelOffset = z * mSlicePitch + y * mRowPitch + x * pixelSize;
+		u32 pixelSize = PixelUtil::GetNumElemBytes(mFormat);
+		u32 pixelOffset = z * mSlicePitch + y * mRowPitch + x * pixelSize;
 		PixelUtil::UnpackColor(&cv, mFormat, (unsigned char *)GetData() + pixelOffset);
 
 		return cv;
 	}
 
-	void PixelData::SetColorAt(const Color& color, UINT32 x, UINT32 y, UINT32 z)
+	void PixelData::SetColorAt(const Color& color, u32 x, u32 y, u32 z)
 	{
-		UINT32 pixelSize = PixelUtil::GetNumElemBytes(mFormat);
-		UINT32 pixelOffset = z * mSlicePitch + y * mRowPitch + x * pixelSize;
+		u32 pixelSize = PixelUtil::GetNumElemBytes(mFormat);
+		u32 pixelOffset = z * mSlicePitch + y * mRowPitch + x * pixelSize;
 		PixelUtil::PackColor(color, mFormat, (unsigned char *)GetData() + pixelOffset);
 	}
 
 	Vector<Color> PixelData::GetColors() const
 	{
-		UINT32 depth = mExtents.GetDepth();
-		UINT32 height = mExtents.GetHeight();
-		UINT32 width = mExtents.GetWidth();
+		u32 depth = mExtents.GetDepth();
+		u32 height = mExtents.GetHeight();
+		u32 width = mExtents.GetWidth();
 
-		UINT32 pixelSize = PixelUtil::GetNumElemBytes(mFormat);
-		UINT8* data = GetData();
+		u32 pixelSize = PixelUtil::GetNumElemBytes(mFormat);
+		u8* data = GetData();
 
 		Vector<Color> colors(width * height * depth);
-		for (UINT32 z = 0; z < depth; z++)
+		for (u32 z = 0; z < depth; z++)
 		{
-			UINT32 zArrayIdx = z * width * height;
-			UINT32 zDataIdx = z * mSlicePitch;
+			u32 zArrayIdx = z * width * height;
+			u32 zDataIdx = z * mSlicePitch;
 
-			for (UINT32 y = 0; y < height; y++)
+			for (u32 y = 0; y < height; y++)
 			{
-				UINT32 yArrayIdx = y * width;
-				UINT32 yDataIdx = y * mRowPitch;
+				u32 yArrayIdx = y * width;
+				u32 yDataIdx = y * mRowPitch;
 
-				for (UINT32 x = 0; x < width; x++)
+				for (u32 x = 0; x < width; x++)
 				{
-					UINT32 arrayIdx = x + yArrayIdx + zArrayIdx;
-					UINT32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
+					u32 arrayIdx = x + yArrayIdx + zArrayIdx;
+					u32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
 
-					UINT8* dest = data + dataIdx;
+					u8* dest = data + dataIdx;
 					PixelUtil::UnpackColor(&colors[arrayIdx], mFormat, dest);
 				}
 			}
@@ -198,122 +198,122 @@ namespace bs
 	}
 
 	template<class T>
-	void PixelData::SetColorsInternal(const T& colors, UINT32 numElements)
+	void PixelData::SetColorsInternal(const T& colors, u32 numElements)
 	{
-		UINT32 depth = mExtents.GetDepth();
-		UINT32 height = mExtents.GetHeight();
-		UINT32 width = mExtents.GetWidth();
+		u32 depth = mExtents.GetDepth();
+		u32 height = mExtents.GetHeight();
+		u32 width = mExtents.GetWidth();
 
-		UINT32 totalNumElements = width * height * depth;
+		u32 totalNumElements = width * height * depth;
 		if (numElements != totalNumElements)
 		{
 			BS_LOG(Error, PixelUtility, "Unable to set colors, invalid array size.");
 			return;
 		}
 
-		UINT32 pixelSize = PixelUtil::GetNumElemBytes(mFormat);
-		UINT8* data = GetData();
+		u32 pixelSize = PixelUtil::GetNumElemBytes(mFormat);
+		u8* data = GetData();
 
-		for (UINT32 z = 0; z < depth; z++)
+		for (u32 z = 0; z < depth; z++)
 		{
-			UINT32 zArrayIdx = z * width * height;
-			UINT32 zDataIdx = z * mSlicePitch;
+			u32 zArrayIdx = z * width * height;
+			u32 zDataIdx = z * mSlicePitch;
 
-			for (UINT32 y = 0; y < height; y++)
+			for (u32 y = 0; y < height; y++)
 			{
-				UINT32 yArrayIdx = y * width;
-				UINT32 yDataIdx = y * mRowPitch;
+				u32 yArrayIdx = y * width;
+				u32 yDataIdx = y * mRowPitch;
 
-				for (UINT32 x = 0; x < width; x++)
+				for (u32 x = 0; x < width; x++)
 				{
-					UINT32 arrayIdx = x + yArrayIdx + zArrayIdx;
-					UINT32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
+					u32 arrayIdx = x + yArrayIdx + zArrayIdx;
+					u32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
 
-					UINT8* dest = data + dataIdx;
+					u8* dest = data + dataIdx;
 					PixelUtil::PackColor(colors[arrayIdx], mFormat, dest);
 				}
 			}
 		}
 	}
 
-	template BS_CORE_EXPORT void PixelData::SetColorsInternal(Color* const &, UINT32);
-	template BS_CORE_EXPORT void PixelData::SetColorsInternal(const Vector<Color>&, UINT32);
+	template BS_CORE_EXPORT void PixelData::SetColorsInternal(Color* const &, u32);
+	template BS_CORE_EXPORT void PixelData::SetColorsInternal(const Vector<Color>&, u32);
 
 	void PixelData::SetColors(const Vector<Color>& colors)
 	{
-		SetColorsInternal(colors, (UINT32)colors.size());
+		SetColorsInternal(colors, (u32)colors.size());
 	}
 
-	void PixelData::SetColors(Color* colors, UINT32 numElements)
+	void PixelData::SetColors(Color* colors, u32 numElements)
 	{
 		SetColorsInternal(colors, numElements);
 	}
 
 	void PixelData::SetColors(const Color& color)
 	{
-		UINT32 depth = mExtents.GetDepth();
-		UINT32 height = mExtents.GetHeight();
-		UINT32 width = mExtents.GetWidth();
+		u32 depth = mExtents.GetDepth();
+		u32 height = mExtents.GetHeight();
+		u32 width = mExtents.GetWidth();
 
-		UINT32 pixelSize = PixelUtil::GetNumElemBytes(mFormat);
-		UINT32 packedColor[4];
+		u32 pixelSize = PixelUtil::GetNumElemBytes(mFormat);
+		u32 packedColor[4];
 		assert(pixelSize <= sizeof(packedColor));
 
 		PixelUtil::PackColor(color, mFormat, packedColor);
 
-		UINT8* data = GetData();
-		for (UINT32 z = 0; z < depth; z++)
+		u8* data = GetData();
+		for (u32 z = 0; z < depth; z++)
 		{
-			UINT32 zDataIdx = z * mSlicePitch;
+			u32 zDataIdx = z * mSlicePitch;
 
-			for (UINT32 y = 0; y < height; y++)
+			for (u32 y = 0; y < height; y++)
 			{
-				UINT32 yDataIdx = y * mRowPitch;
+				u32 yDataIdx = y * mRowPitch;
 
-				for (UINT32 x = 0; x < width; x++)
+				for (u32 x = 0; x < width; x++)
 				{
-					UINT32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
+					u32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
 
-					UINT8* dest = data + dataIdx;
+					u8* dest = data + dataIdx;
 					memcpy(dest, packedColor, pixelSize);
 				}
 			}
 		}
 	}
 
-	float PixelData::GetDepthAt(UINT32 x, UINT32 y, UINT32 z) const
+	float PixelData::GetDepthAt(u32 x, u32 y, u32 z) const
 	{
-		UINT32 pixelSize = PixelUtil::GetNumElemBytes(mFormat);
-		UINT32 pixelOffset = z * mSlicePitch + y * mRowPitch + x * pixelSize;
+		u32 pixelSize = PixelUtil::GetNumElemBytes(mFormat);
+		u32 pixelOffset = z * mSlicePitch + y * mRowPitch + x * pixelSize;
 		return PixelUtil::UnpackDepth(mFormat, (unsigned char *)GetData() + pixelOffset);;
 	}
 
 	Vector<float> PixelData::GetDepths() const
 	{
-		UINT32 depth = mExtents.GetDepth();
-		UINT32 height = mExtents.GetHeight();
-		UINT32 width = mExtents.GetWidth();
+		u32 depth = mExtents.GetDepth();
+		u32 height = mExtents.GetHeight();
+		u32 width = mExtents.GetWidth();
 
-		UINT32 pixelSize = PixelUtil::GetNumElemBytes(mFormat);
-		UINT8* data = GetData();
+		u32 pixelSize = PixelUtil::GetNumElemBytes(mFormat);
+		u8* data = GetData();
 
 		Vector<float> depths(width * height * depth);
-		for (UINT32 z = 0; z < depth; z++)
+		for (u32 z = 0; z < depth; z++)
 		{
-			UINT32 zArrayIdx = z * width * height;
-			UINT32 zDataIdx = z * mSlicePitch;
+			u32 zArrayIdx = z * width * height;
+			u32 zDataIdx = z * mSlicePitch;
 
-			for (UINT32 y = 0; y < height; y++)
+			for (u32 y = 0; y < height; y++)
 			{
-				UINT32 yArrayIdx = y * width;
-				UINT32 yDataIdx = y * mRowPitch;
+				u32 yArrayIdx = y * width;
+				u32 yDataIdx = y * mRowPitch;
 
-				for (UINT32 x = 0; x < width; x++)
+				for (u32 x = 0; x < width; x++)
 				{
-					UINT32 arrayIdx = x + yArrayIdx + zArrayIdx;
-					UINT32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
+					u32 arrayIdx = x + yArrayIdx + zArrayIdx;
+					u32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
 
-					UINT8* dest = data + dataIdx;
+					u8* dest = data + dataIdx;
 					depths[arrayIdx] = PixelUtil::UnpackDepth(mFormat, dest);
 				}
 			}
@@ -330,7 +330,7 @@ namespace bs
 		return pixelData;
 	}
 
-	SPtr<PixelData> PixelData::Create(UINT32 width, UINT32 height, UINT32 depth, PixelFormat pixelFormat)
+	SPtr<PixelData> PixelData::Create(u32 width, u32 height, u32 depth, PixelFormat pixelFormat)
 	{
 		SPtr<PixelData> pixelData = bs_shared_ptr_new<PixelData>(width, height, depth, pixelFormat);
 		pixelData->AllocateInternalBuffer();
@@ -338,7 +338,7 @@ namespace bs
 		return pixelData;
 	}
 
-	UINT32 PixelData::GetInternalBufferSize() const
+	u32 PixelData::GetInternalBufferSize() const
 	{
 		return GetSize();
 	}

@@ -29,7 +29,7 @@ namespace bs { namespace ct
 		 * @param[in]	depth			(optional) The value to initialize the depth buffer with, if enabled.
 		 * @param[in]	stencil			(optional) The value to initialize the stencil buffer with, if enabled.
 		 */
-		void DrawClearQuad(UINT32 clearBuffers, const Color& color, float depth, UINT16 stencil);
+		void DrawClearQuad(u32 clearBuffers, const Color& color, float depth, u16 stencil);
 
 	protected:
 		/**	Initializes resources needed for drawing the clear quad. Should be called one time at start-up. */

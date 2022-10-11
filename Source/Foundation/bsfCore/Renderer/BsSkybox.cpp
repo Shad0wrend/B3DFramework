@@ -154,12 +154,12 @@ namespace bs
 
 	CoreSyncData Skybox::SyncToCore(FrameAlloc* allocator)
 	{
-		UINT32 size = 0;
+		u32 size = 0;
 		size += rtti_size(GetCoreDirtyFlags()).Bytes;
 		size += csync_size((SceneActor&)*this);
 		size += csync_size(*this);
 
-		UINT8* buffer = allocator->Alloc(size);
+		u8* buffer = allocator->Alloc(size);
 
 		Bitstream stream(buffer, size);
 		rtti_write(GetCoreDirtyFlags(), stream);
@@ -171,7 +171,7 @@ namespace bs
 
 	void Skybox::MarkCoreDirtyInternal(ActorDirtyFlag flags)
 	{
-		MarkCoreDirty((UINT32)flags);
+		MarkCoreDirty((u32)flags);
 	}
 
 	RTTITypeBase* Skybox::GetRttiStatic()

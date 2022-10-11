@@ -140,7 +140,7 @@ namespace bs
 
 		DataStream::AccessMode accessMode = DataStream::READ;
 		if (!readOnly)
-			accessMode = (DataStream::AccessMode)((UINT32)accessMode | (UINT32)DataStream::WRITE);
+			accessMode = (DataStream::AccessMode)((u32)accessMode | (u32)DataStream::WRITE);
 
 		return bs_shared_ptr_new<FileDataStream>(path, accessMode, true);
 	}
@@ -150,18 +150,18 @@ namespace bs
 		return bs_shared_ptr_new<FileDataStream>(path, DataStream::AccessMode::WRITE, true);
 	}
 
-	UINT64 FileSystem::GetFileSize(const Path& path)
+	u64 FileSystem::GetFileSize(const Path& path)
 	{
 		struct stat st_buf;
 
 		if (stat(path.toString().c_str(), &st_buf) == 0)
 		{
-			return (UINT64)st_buf.st_size;
+			return (u64)st_buf.st_size;
 		}
 		else
 		{
 			HANDLE_PATH_ERROR(path.toString(), errno);
-			return (UINT64)-1;
+			return (u64)-1;
 		}
 	}
 
@@ -190,7 +190,7 @@ namespace bs
 			parentPath = parentPath.getParent();
 		}
 
-		for (UINT32 i = parentPath.getNumDirectories(); i < path.getNumDirectories(); i++)
+		for (u32 i = parentPath.getNumDirectories(); i < path.getNumDirectories(); i++)
 		{
 			parentPath.append(path[i]);
 			unix_createDirectory(parentPath.toString());

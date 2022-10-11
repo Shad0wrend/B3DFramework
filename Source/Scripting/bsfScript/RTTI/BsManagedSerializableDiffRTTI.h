@@ -61,7 +61,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_ScriptModifiedField;
 		}
@@ -76,12 +76,12 @@ namespace bs
 		public RTTIType < ManagedSerializableDiff::ModifiedArrayEntry, IReflectable, ModifiedArrayEntryRTTI >
 	{
 	private:
-		UINT32& GetIdx(ManagedSerializableDiff::ModifiedArrayEntry* obj)
+		u32& GetIdx(ManagedSerializableDiff::ModifiedArrayEntry* obj)
 		{
 			return obj->Idx;
 		}
 
-		void SetIdx(ManagedSerializableDiff::ModifiedArrayEntry* obj, UINT32& val)
+		void SetIdx(ManagedSerializableDiff::ModifiedArrayEntry* obj, u32& val)
 		{
 			obj->Idx = val;
 		}
@@ -108,7 +108,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_ScriptModifiedArrayEntry;
 		}
@@ -155,7 +155,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_ScriptModifiedDictionaryEntry;
 		}
@@ -179,7 +179,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_ScriptModification;
 		}
@@ -194,22 +194,22 @@ namespace bs
 		public RTTIType < ManagedSerializableDiff::ModifiedObject, ManagedSerializableDiff::Modification, ModifiedObjectRTTI >
 	{
 	private:
-		ManagedSerializableDiff::ModifiedField& GetFieldEntry(ManagedSerializableDiff::ModifiedObject* obj, UINT32 arrayIdx)
+		ManagedSerializableDiff::ModifiedField& GetFieldEntry(ManagedSerializableDiff::ModifiedObject* obj, u32 arrayIdx)
 		{
 			return obj->Entries[arrayIdx];
 		}
 
-		void SetFieldEntry(ManagedSerializableDiff::ModifiedObject* obj, UINT32 arrayIdx, ManagedSerializableDiff::ModifiedField& val)
+		void SetFieldEntry(ManagedSerializableDiff::ModifiedObject* obj, u32 arrayIdx, ManagedSerializableDiff::ModifiedField& val)
 		{
 			obj->Entries[arrayIdx] = val;
 		}
 
-		UINT32 GetNumFieldEntries(ManagedSerializableDiff::ModifiedObject* obj)
+		u32 GetNumFieldEntries(ManagedSerializableDiff::ModifiedObject* obj)
 		{
-			return (UINT32)obj->Entries.size();
+			return (u32)obj->Entries.size();
 		}
 
-		void SetNumFieldEntries(ManagedSerializableDiff::ModifiedObject* obj, UINT32 numEntries)
+		void SetNumFieldEntries(ManagedSerializableDiff::ModifiedObject* obj, u32 numEntries)
 		{
 			obj->Entries = Vector<ManagedSerializableDiff::ModifiedField>(numEntries);
 		}
@@ -227,7 +227,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_ScriptModifiedObject;
 		}
@@ -242,42 +242,42 @@ namespace bs
 		public RTTIType < ManagedSerializableDiff::ModifiedArray, ManagedSerializableDiff::Modification, ModifiedArrayRTTI >
 	{
 	private:
-		Vector<UINT32>& GetOrigSizes(ManagedSerializableDiff::ModifiedArray* obj)
+		Vector<u32>& GetOrigSizes(ManagedSerializableDiff::ModifiedArray* obj)
 		{
 			return obj->OrigSizes;
 		}
 
-		void SetOrigSizes(ManagedSerializableDiff::ModifiedArray* obj, Vector<UINT32>& val)
+		void SetOrigSizes(ManagedSerializableDiff::ModifiedArray* obj, Vector<u32>& val)
 		{
 			obj->OrigSizes = val;
 		}
 
-		Vector<UINT32>& GetNewSizes(ManagedSerializableDiff::ModifiedArray* obj)
+		Vector<u32>& GetNewSizes(ManagedSerializableDiff::ModifiedArray* obj)
 		{
 			return obj->NewSizes;
 		}
 
-		void SetNewSizes(ManagedSerializableDiff::ModifiedArray* obj, Vector<UINT32>& val)
+		void SetNewSizes(ManagedSerializableDiff::ModifiedArray* obj, Vector<u32>& val)
 		{
 			obj->NewSizes = val;
 		}
 
-		ManagedSerializableDiff::ModifiedArrayEntry& GetFieldEntry(ManagedSerializableDiff::ModifiedArray* obj, UINT32 arrayIdx)
+		ManagedSerializableDiff::ModifiedArrayEntry& GetFieldEntry(ManagedSerializableDiff::ModifiedArray* obj, u32 arrayIdx)
 		{
 			return obj->Entries[arrayIdx];
 		}
 
-		void SetFieldEntry(ManagedSerializableDiff::ModifiedArray* obj, UINT32 arrayIdx, ManagedSerializableDiff::ModifiedArrayEntry& val)
+		void SetFieldEntry(ManagedSerializableDiff::ModifiedArray* obj, u32 arrayIdx, ManagedSerializableDiff::ModifiedArrayEntry& val)
 		{
 			obj->Entries[arrayIdx] = val;
 		}
 
-		UINT32 GetNumFieldEntries(ManagedSerializableDiff::ModifiedArray* obj)
+		u32 GetNumFieldEntries(ManagedSerializableDiff::ModifiedArray* obj)
 		{
-			return (UINT32)obj->Entries.size();
+			return (u32)obj->Entries.size();
 		}
 
-		void SetNumFieldEntries(ManagedSerializableDiff::ModifiedArray* obj, UINT32 numEntries)
+		void SetNumFieldEntries(ManagedSerializableDiff::ModifiedArray* obj, u32 numEntries)
 		{
 			obj->Entries = Vector<ManagedSerializableDiff::ModifiedArrayEntry>(numEntries);
 		}
@@ -297,7 +297,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_ScriptModifiedArray;
 		}
@@ -312,42 +312,42 @@ namespace bs
 		public RTTIType < ManagedSerializableDiff::ModifiedDictionary, ManagedSerializableDiff::Modification, ModifiedDictionaryRTTI >
 	{
 	private:
-		SPtr<ManagedSerializableFieldData> GetRemovedEntry(ManagedSerializableDiff::ModifiedDictionary* obj, UINT32 arrayIdx)
+		SPtr<ManagedSerializableFieldData> GetRemovedEntry(ManagedSerializableDiff::ModifiedDictionary* obj, u32 arrayIdx)
 		{
 			return obj->Removed[arrayIdx];
 		}
 
-		void SetRemovedEntry(ManagedSerializableDiff::ModifiedDictionary* obj, UINT32 arrayIdx, SPtr<ManagedSerializableFieldData> val)
+		void SetRemovedEntry(ManagedSerializableDiff::ModifiedDictionary* obj, u32 arrayIdx, SPtr<ManagedSerializableFieldData> val)
 		{
 			obj->Removed[arrayIdx] = val;
 		}
 
-		UINT32 GetNumRemovedEntries(ManagedSerializableDiff::ModifiedDictionary* obj)
+		u32 GetNumRemovedEntries(ManagedSerializableDiff::ModifiedDictionary* obj)
 		{
-			return (UINT32)obj->Removed.size();
+			return (u32)obj->Removed.size();
 		}
 
-		void SetNumRemovedEntries(ManagedSerializableDiff::ModifiedDictionary* obj, UINT32 numEntries)
+		void SetNumRemovedEntries(ManagedSerializableDiff::ModifiedDictionary* obj, u32 numEntries)
 		{
 			obj->Removed = Vector<SPtr<ManagedSerializableFieldData>>(numEntries);
 		}
 
-		ManagedSerializableDiff::ModifiedDictionaryEntry& GetFieldEntry(ManagedSerializableDiff::ModifiedDictionary* obj, UINT32 arrayIdx)
+		ManagedSerializableDiff::ModifiedDictionaryEntry& GetFieldEntry(ManagedSerializableDiff::ModifiedDictionary* obj, u32 arrayIdx)
 		{
 			return obj->Entries[arrayIdx];
 		}
 
-		void SetFieldEntry(ManagedSerializableDiff::ModifiedDictionary* obj, UINT32 arrayIdx, ManagedSerializableDiff::ModifiedDictionaryEntry& val)
+		void SetFieldEntry(ManagedSerializableDiff::ModifiedDictionary* obj, u32 arrayIdx, ManagedSerializableDiff::ModifiedDictionaryEntry& val)
 		{
 			obj->Entries[arrayIdx] = val;
 		}
 
-		UINT32 GetNumFieldEntries(ManagedSerializableDiff::ModifiedDictionary* obj)
+		u32 GetNumFieldEntries(ManagedSerializableDiff::ModifiedDictionary* obj)
 		{
-			return (UINT32)obj->Entries.size();
+			return (u32)obj->Entries.size();
 		}
 
-		void SetNumFieldEntries(ManagedSerializableDiff::ModifiedDictionary* obj, UINT32 numEntries)
+		void SetNumFieldEntries(ManagedSerializableDiff::ModifiedDictionary* obj, u32 numEntries)
 		{
 			obj->Entries = Vector<ManagedSerializableDiff::ModifiedDictionaryEntry>(numEntries);
 		}
@@ -367,7 +367,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_ScriptModifiedDictionary;
 		}
@@ -404,7 +404,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_ScriptModifiedEntry;
 		}
@@ -442,7 +442,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_ScriptSerializableDiff;
 		}

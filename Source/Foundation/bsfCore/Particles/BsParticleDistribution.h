@@ -208,7 +208,7 @@ namespace bs
 		 *									the maximum curve values will follow the minimum curve values of each sample.
 		 * @return							Resampled lookup table.
 		 */
-		LookupTable ToLookupTable(UINT32 numSamples = 128, bool ignoreRange = false) const;
+		LookupTable ToLookupTable(u32 numSamples = 128, bool ignoreRange = false) const;
 
 		bool operator== (const TColorDistribution<T>& rhs) const
 		{
@@ -397,7 +397,7 @@ namespace bs
 		 *									the maximum curve values will follow the minimum curve values of each sample.
 		 * @return							Resampled lookup table.
 		 */
-		LookupTable ToLookupTable(UINT32 numSamples = 128, bool ignoreRange = false) const;
+		LookupTable ToLookupTable(u32 numSamples = 128, bool ignoreRange = false) const;
 
 		bool operator== (const TDistribution<T>& rhs) const
 		{

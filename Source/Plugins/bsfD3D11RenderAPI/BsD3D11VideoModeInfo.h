@@ -15,23 +15,23 @@ namespace bs { namespace ct
 	class D3D11VideoMode : public VideoMode
 	{
 	public:
-		D3D11VideoMode(UINT32 width, UINT32 height, float refreshRate, UINT32 outputIdx, UINT32 refreshRateNumerator,
-			UINT32 refreshRateDenominator, DXGI_MODE_DESC mode);
+		D3D11VideoMode(u32 width, u32 height, float refreshRate, u32 outputIdx, u32 refreshRateNumerator,
+			u32 refreshRateDenominator, DXGI_MODE_DESC mode);
 
 		/**	Returns an internal DXGI representation of this video mode. */
 		const DXGI_MODE_DESC& GetDxgiModeDesc() const { return mD3D11Mode; }
 
 		/**	Gets internal DX11 refresh rate numerator. */
-		UINT32 GetRefreshRateNumerator() const { return mRefreshRateNumerator; }
+		u32 GetRefreshRateNumerator() const { return mRefreshRateNumerator; }
 
 		/**	Gets internal DX11 refresh rate denominator. */
-		UINT32 GetRefreshRateDenominator() const { return mRefreshRateDenominator; }
+		u32 GetRefreshRateDenominator() const { return mRefreshRateDenominator; }
 
 	private:
 		friend class D3D11VideoOutputInfo;
 
-		UINT32 mRefreshRateNumerator;
-		UINT32 mRefreshRateDenominator;
+		u32 mRefreshRateNumerator;
+		u32 mRefreshRateDenominator;
 		DXGI_MODE_DESC mD3D11Mode;
 	};
 
@@ -39,7 +39,7 @@ namespace bs { namespace ct
 	class D3D11VideoOutputInfo : public VideoOutputInfo
 	{
 	public:
-		D3D11VideoOutputInfo(IDXGIOutput* output, UINT32 outputIdx);
+		D3D11VideoOutputInfo(IDXGIOutput* output, u32 outputIdx);
 		~D3D11VideoOutputInfo();
 
 		/**	Returns the internal DXGI object representing an output device. */

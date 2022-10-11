@@ -15,7 +15,7 @@ namespace bs
 		}
 	}
 
-	HStringTable StringTableManager::GetTable(UINT32 id)
+	HStringTable StringTableManager::GetTable(u32 id)
 	{
 		auto iterFind = mTables.find(id);
 		if (iterFind != mTables.end())
@@ -27,12 +27,12 @@ namespace bs
 		return newTable;
 	}
 
-	void StringTableManager::RemoveTable(UINT32 id)
+	void StringTableManager::RemoveTable(u32 id)
 	{
 		mTables.erase(id);
 	}
 
-	void StringTableManager::SetTable(UINT32 id, const HStringTable& table)
+	void StringTableManager::SetTable(u32 id, const HStringTable& table)
 	{
 		mTables[id] = table;
 

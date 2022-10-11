@@ -104,7 +104,7 @@ namespace bs
 		 * Maps a type id to information about a wrapped built-in component. Returns null if type id doesn't correspond to
 		 * a builtin component.
 		 */
-		BuiltinComponentInfo* GetBuiltinComponentInfo(UINT32 rttiTypeId);
+		BuiltinComponentInfo* GetBuiltinComponentInfo(u32 rttiTypeId);
 
 		/**
 		 * Maps a mono type to information about a wrapped built-in resource. Returns null if type doesn't correspond to
@@ -116,7 +116,7 @@ namespace bs
 		 * Maps a type id to information about a wrapped built-in resource. Returns null if type id doesn't correspond to
 		 * a builtin resource.
 		 */
-		BuiltinResourceInfo* GetBuiltinResourceInfo(UINT32 rttiTypeId);
+		BuiltinResourceInfo* GetBuiltinResourceInfo(u32 rttiTypeId);
 
 		/**
 		 * Maps a resource type to information about a wrapped built-in resource. Returns null if type id doesn't correspond to
@@ -134,7 +134,7 @@ namespace bs
 		 * Maps a type id to information about a wrapped reflectable object. Returns null if type id doesn't correspond to
 		 * a reflectable object.
 		 */
-		ReflectableTypeInfo* GetReflectableTypeInfo(UINT32 rttiTypeId);
+		ReflectableTypeInfo* GetReflectableTypeInfo(u32 rttiTypeId);
 
 		/**
 		 * Checks if the managed serializable object info for the specified type exists.
@@ -178,11 +178,11 @@ namespace bs
 
 		UnorderedMap<String, SPtr<ManagedSerializableAssemblyInfo>> mAssemblyInfos;
 		UnorderedMap<::MonoReflectionType*, BuiltinComponentInfo> mBuiltinComponentInfos;
-		UnorderedMap<UINT32, BuiltinComponentInfo> mBuiltinComponentInfosByTID;
+		UnorderedMap<u32, BuiltinComponentInfo> mBuiltinComponentInfosByTID;
 		UnorderedMap<::MonoReflectionType*, BuiltinResourceInfo> mBuiltinResourceInfos;
-		UnorderedMap<UINT32, BuiltinResourceInfo> mBuiltinResourceInfosByTID;
-		UnorderedMap<UINT32, BuiltinResourceInfo> mBuiltinResourceInfosByType;
-		UnorderedMap<UINT32, ReflectableTypeInfo> mReflectableTypeInfosByTID;
+		UnorderedMap<u32, BuiltinResourceInfo> mBuiltinResourceInfosByTID;
+		UnorderedMap<u32, BuiltinResourceInfo> mBuiltinResourceInfosByType;
+		UnorderedMap<u32, ReflectableTypeInfo> mReflectableTypeInfosByTID;
 		UnorderedMap<::MonoReflectionType*, ReflectableTypeInfo> mReflectableTypeInfos;
 		bool mBaseTypesInitialized = false;
 

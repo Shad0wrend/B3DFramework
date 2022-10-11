@@ -40,7 +40,7 @@ namespace bs { namespace ct
 		if (inputParams != nullptr)
 		{
 			D3D11_SIGNATURE_PARAMETER_DESC inputParamDesc;
-			for (UINT32 i = 0; i < shaderDesc.InputParameters; i++)
+			for (u32 i = 0; i < shaderDesc.InputParameters; i++)
 			{
 				hr = shaderReflection->GetInputParameterDesc(i, &inputParamDesc);
 
@@ -56,7 +56,7 @@ namespace bs { namespace ct
 			}
 		}
 
-		for(UINT32 i = 0; i < shaderDesc.BoundResources; i++)
+		for(u32 i = 0; i < shaderDesc.BoundResources; i++)
 		{
 			D3D11_SHADER_INPUT_BIND_DESC bindingDesc;
 			hr = shaderReflection->GetResourceBindingDesc(i, &bindingDesc);
@@ -67,7 +67,7 @@ namespace bs { namespace ct
 			ParseResource(bindingDesc, type, desc);
 		}
 
-		for(UINT32 i = 0; i < shaderDesc.ConstantBuffers; i++)
+		for(u32 i = 0; i < shaderDesc.ConstantBuffers; i++)
 		{
 			ID3D11ShaderReflectionConstantBuffer* shaderReflectionConstantBuffer;
 			shaderReflectionConstantBuffer = shaderReflection->GetConstantBufferByIndex(i);
@@ -81,7 +81,7 @@ namespace bs { namespace ct
 	void D3D11HLSLParamParser::ParseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceDesc, GpuProgramType type,
 		GpuParamDesc& desc)
 	{
-		for(UINT32 i = 0; i < resourceDesc.BindCount; i++)
+		for(u32 i = 0; i < resourceDesc.BindCount; i++)
 		{
 			if(resourceDesc.Type == D3D_SIT_CBUFFER || resourceDesc.Type == D3D_SIT_TBUFFER)
 			{
@@ -276,7 +276,7 @@ namespace bs { namespace ct
 
 		GpuParamBlockDesc& blockDesc = desc.ParamBlocks[constantBufferDesc.Name];
 
-		for(UINT32 j = 0; j < constantBufferDesc.Variables; j++)
+		for(u32 j = 0; j < constantBufferDesc.Variables; j++)
 		{
 			ID3D11ShaderReflectionVariable* varRef = bufferReflection->GetVariableByIndex(j);
 			D3D11_SHADER_VARIABLE_DESC varDesc;
@@ -452,11 +452,11 @@ namespace bs { namespace ct
 		desc.Params.insert(std::make_pair(memberDesc.Name, memberDesc));
 	}
 
-	UINT32 D3D11HLSLParamParser::MapParameterToSet(GpuProgramType progType, ParamType paramType)
+	u32 D3D11HLSLParamParser::MapParameterToSet(GpuProgramType progType, ParamType paramType)
 	{
-		UINT32 progTypeIdx = (UINT32)progType;
-		UINT32 paramTypeIdx = (UINT32)paramType;
+		u32 progTypeIdx = (u32)progType;
+		u32 paramTypeIdx = (u32)paramType;
 		
-		return progTypeIdx * (UINT32)ParamType::Count + paramTypeIdx;
+		return progTypeIdx * (u32)ParamType::Count + paramTypeIdx;
 	}
 }}

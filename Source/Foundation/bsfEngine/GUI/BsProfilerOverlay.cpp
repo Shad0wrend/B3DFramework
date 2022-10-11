@@ -22,12 +22,12 @@
 
 namespace bs
 {
-	constexpr UINT32 MAX_DEPTH = 4;
+	constexpr u32 MAX_DEPTH = 4;
 
 	class BasicRowFiller
 	{
 	public:
-		UINT32 CurIdx;
+		u32 CurIdx;
 		GUILayout& LabelLayout;
 		GUILayout& ContentLayout;
 		GUIWidget& Widget;
@@ -39,8 +39,8 @@ namespace bs
 
 		~BasicRowFiller()
 		{
-			UINT32 excessEntries = (UINT32)Rows.size() - CurIdx;
-			for(UINT32 i = 0; i < excessEntries; i++)
+			u32 excessEntries = (u32)Rows.size() - CurIdx;
+			for(u32 i = 0; i < excessEntries; i++)
 			{
 				ProfilerOverlay::BasicRow& row = Rows[CurIdx + i];
 
@@ -55,8 +55,8 @@ namespace bs
 			Rows.resize(CurIdx);
 		}
 
-		void AddData(UINT32 depth, const String& name, float pctOfParent, UINT32 numCalls, UINT64 numAllocs,
-			UINT64 numFrees, double avgTime, double totalTime, double avgSelfTime, double totalSelfTime)
+		void AddData(u32 depth, const String& name, float pctOfParent, u32 numCalls, u64 numAllocs,
+			u64 numFrees, double avgTime, double totalTime, double avgSelfTime, double totalSelfTime)
 		{
 			if(CurIdx >= Rows.size())
 			{
@@ -128,7 +128,7 @@ namespace bs
 	class PreciseRowFiller
 	{
 	public:
-		UINT32 CurIdx;
+		u32 CurIdx;
 		GUILayout& LabelLayout;
 		GUILayout& ContentLayout;
 		GUIWidget& Widget;
@@ -140,8 +140,8 @@ namespace bs
 
 		~PreciseRowFiller()
 		{
-			UINT32 excessEntries = (UINT32)Rows.size() - CurIdx;
-			for(UINT32 i = 0; i < excessEntries; i++)
+			u32 excessEntries = (u32)Rows.size() - CurIdx;
+			for(u32 i = 0; i < excessEntries; i++)
 			{
 				ProfilerOverlay::PreciseRow& row = Rows[CurIdx + i];
 
@@ -156,8 +156,8 @@ namespace bs
 			Rows.resize(CurIdx);
 		}
 
-		void AddData(UINT32 depth, const String& name, float pctOfParent, UINT32 numCalls, UINT64 numAllocs,
-			UINT64 numFrees, UINT64 avgCycles, UINT64 totalCycles, UINT64 avgSelfCycles, UINT64 totalSelfCycles)
+		void AddData(u32 depth, const String& name, float pctOfParent, u32 numCalls, u64 numAllocs,
+			u64 numFrees, u64 avgCycles, u64 totalCycles, u64 avgSelfCycles, u64 totalSelfCycles)
 		{
 			if(CurIdx >= Rows.size())
 			{
@@ -229,7 +229,7 @@ namespace bs
 	class GPUSampleRowFiller
 	{
 	public:
-		UINT32 CurIdx;
+		u32 CurIdx;
 		GUILayout& LabelLayout;
 		GUILayout& ContentLayout;
 		GUIWidget& Widget;
@@ -242,8 +242,8 @@ namespace bs
 
 		~GPUSampleRowFiller()
 		{
-			UINT32 excessEntries = (UINT32)Rows.size() - CurIdx;
-			for (UINT32 i = 0; i < excessEntries; i++)
+			u32 excessEntries = (u32)Rows.size() - CurIdx;
+			for (u32 i = 0; i < excessEntries; i++)
 			{
 				ProfilerOverlay::GPUSampleRow& row = Rows[CurIdx + i];
 
@@ -258,7 +258,7 @@ namespace bs
 			Rows.resize(CurIdx);
 		}
 
-		void AddData(UINT32 depth, const String& name, float timeMs)
+		void AddData(u32 depth, const String& name, float timeMs)
 		{
 			if (CurIdx >= Rows.size())
 			{
@@ -403,7 +403,7 @@ namespace bs
 		HString gpuSamplesStr(u8"__ProfOvGPUSamples", u8"Samples");
 		mGPULayoutSamples->AddNewElement<GUILabel>(gpuSamplesStr);
 
-		for(UINT32 i = 0; i < GPU_NUM_SAMPLE_COLUMNS; i++)
+		for(u32 i = 0; i < GPU_NUM_SAMPLE_COLUMNS; i++)
 		{
 			mGPULayoutSampleLabels[i] = mGPULayoutSamples->AddNewElement<GUILayoutY>();
 			mGPULayoutSampleContents[i] = mGPULayoutSamples->AddNewElement<GUILayoutY>();
@@ -554,14 +554,14 @@ namespace bs
 
 	void ProfilerOverlay::UpdateCpuSampleAreaSizes()
 	{
-		static const INT32 PADDING = 10;
+		static const i32 PADDING = 10;
 		static const float LABELS_CONTENT_RATIO = 0.3f;
 
-		UINT32 width = (UINT32)std::max(0, (INT32)mTarget->GetPixelArea().Width - PADDING * 2);
-		UINT32 height = (UINT32)std::max(0, (INT32)(mTarget->GetPixelArea().Height - PADDING * 3));
+		u32 width = (u32)std::max(0, (i32)mTarget->GetPixelArea().Width - PADDING * 2);
+		u32 height = (u32)std::max(0, (i32)(mTarget->GetPixelArea().Height - PADDING * 3));
 
-		UINT32 labelsWidth = Math::CeilToInt(width * LABELS_CONTENT_RATIO);
-		UINT32 contentWidth = width - labelsWidth;
+		u32 labelsWidth = Math::CeilToInt(width * LABELS_CONTENT_RATIO);
+		u32 contentWidth = width - labelsWidth;
 
 		mBasicLayoutLabels->SetPosition(PADDING, PADDING);
 		mBasicLayoutLabels->SetWidth(labelsWidth);
@@ -582,17 +582,17 @@ namespace bs
 
 	void ProfilerOverlay::UpdateGpuSampleAreaSizes()
 	{
-		static const INT32 PADDING = 10;
+		static const i32 PADDING = 10;
 		static const float SAMPLES_FRAME_RATIO = 0.25f;
-		static const INT32 HEADER_HEIGHT = 20;
-		static const INT32 NUM_COLUMNS = 3;
-		static const INT32 HEIGHT_PER_ENTRY = 15;
+		static const i32 HEADER_HEIGHT = 20;
+		static const i32 NUM_COLUMNS = 3;
+		static const i32 HEIGHT_PER_ENTRY = 15;
 
-		UINT32 width = (UINT32)std::max(0, (INT32)mTarget->GetPixelArea().Width - PADDING * 2);
-		UINT32 height = (UINT32)std::max(0, (INT32)(mTarget->GetPixelArea().Height - PADDING * 3));
+		u32 width = (u32)std::max(0, (i32)mTarget->GetPixelArea().Width - PADDING * 2);
+		u32 height = (u32)std::max(0, (i32)(mTarget->GetPixelArea().Height - PADDING * 3));
 
-		UINT32 frameHeight = Math::CeilToInt(height * SAMPLES_FRAME_RATIO);
-		UINT32 samplesHeight = height - frameHeight;
+		u32 frameHeight = Math::CeilToInt(height * SAMPLES_FRAME_RATIO);
+		u32 samplesHeight = height - frameHeight;
 
 		mGPULayoutFrameContents->SetPosition(PADDING, PADDING);
 		mGPULayoutFrameContents->SetWidth(width);
@@ -602,9 +602,9 @@ namespace bs
 		mGPULayoutSamples->SetWidth(width);
 		mGPULayoutSamples->SetHeight(samplesHeight);
 
-		UINT32 columnWidth = width / NUM_COLUMNS;
-		UINT32 columnHeight = samplesHeight - HEADER_HEIGHT;
-		for(UINT32 i = 0; i < NUM_COLUMNS; i++)
+		u32 columnWidth = width / NUM_COLUMNS;
+		u32 columnHeight = samplesHeight - HEADER_HEIGHT;
+		for(u32 i = 0; i < NUM_COLUMNS; i++)
 		{
 			mGPULayoutSampleLabels[i]->SetPosition(columnWidth * i, HEADER_HEIGHT);
 			mGPULayoutSampleLabels[i]->SetWidth(columnWidth / 2);
@@ -620,7 +620,7 @@ namespace bs
 
 	void ProfilerOverlay::UpdateCpuSampleContents(const ProfilerReport& simReport, const ProfilerReport& coreReport)
 	{
-		static const UINT32 NUM_ROOT_ENTRIES = 2;
+		static const u32 NUM_ROOT_ENTRIES = 2;
 
 		const CPUProfilerBasicSamplingEntry& simBasicRootEntry = simReport.CpuReport.GetBasicSamplingData();
 		const CPUProfilerPreciseSamplingEntry& simPreciseRootEntry = simReport.CpuReport.GetPreciseSamplingData();
@@ -630,22 +630,22 @@ namespace bs
 
 		struct TodoBasic
 		{
-			TodoBasic(const CPUProfilerBasicSamplingEntry& _entry, UINT32 _depth)
+			TodoBasic(const CPUProfilerBasicSamplingEntry& _entry, u32 _depth)
 				:Entry(_entry), Depth(_depth)
 			{ }
 
 			const CPUProfilerBasicSamplingEntry& Entry;
-			UINT32 Depth;
+			u32 Depth;
 		};
 
 		struct TodoPrecise
 		{
-			TodoPrecise(const CPUProfilerPreciseSamplingEntry& _entry, UINT32 _depth)
+			TodoPrecise(const CPUProfilerPreciseSamplingEntry& _entry, u32 _depth)
 				:Entry(_entry), Depth(_depth)
 			{ }
 
 			const CPUProfilerPreciseSamplingEntry& Entry;
-			UINT32 Depth;
+			u32 Depth;
 		};
 
 		BasicRowFiller basicRowFiller(mBasicRows, *mBasicLayoutLabels, *mBasicLayoutContents, *mWidget->GetInternalInternal());
@@ -655,7 +655,7 @@ namespace bs
 		basicRootEntries[0] = &simBasicRootEntry;
 		basicRootEntries[1] = &coreBasicRootEntry;
 
-		for(UINT32 i = 0; i < NUM_ROOT_ENTRIES; i++)
+		for(u32 i = 0; i < NUM_ROOT_ENTRIES; i++)
 		{
 			todoBasic.push(TodoBasic(*basicRootEntries[i], 0));
 
@@ -685,7 +685,7 @@ namespace bs
 		preciseRootEntries[0] = &simPreciseRootEntry;
 		preciseRootEntries[1] = &corePreciseRootEntry;
 
-		for(UINT32 i = 0; i < NUM_ROOT_ENTRIES; i++)
+		for(u32 i = 0; i < NUM_ROOT_ENTRIES; i++)
 		{
 			todoPrecise.push(TodoPrecise(*preciseRootEntries[i], 0));
 
@@ -711,7 +711,7 @@ namespace bs
 
 	void ProfilerOverlay::UpdateGpuSampleContents(const GPUProfileSample& frameSample)
 	{
-		mGPUFrameNumStr.SetParameter(0, toString((UINT64)gTime().GetFrameIdx()));
+		mGPUFrameNumStr.SetParameter(0, toString((u64)gTime().GetFrameIdx()));
 		mGPUTimeStr.SetParameter(0, toString(frameSample.TimeMs));
 		mGPUDrawCallsStr.SetParameter(0, toString(frameSample.NumDrawCalls));
 		mGPURenTargetChangesStr.SetParameter(0, toString(frameSample.NumRenderTargetChanges));
@@ -758,16 +758,16 @@ namespace bs
 
 		struct Todo
 		{
-			Todo(const GPUProfileSample& entry, UINT32 depth)
+			Todo(const GPUProfileSample& entry, u32 depth)
 				:Entry(entry), Depth(depth)
 			{ }
 
 			const GPUProfileSample& Entry;
-			UINT32 Depth;
+			u32 Depth;
 		};
 
-		UINT32 column = 0;
-		UINT32 currentCount = 0;
+		u32 column = 0;
+		u32 currentCount = 0;
 
 		Stack<Todo> todo;
 		todo.push(Todo(frameSample, 0));

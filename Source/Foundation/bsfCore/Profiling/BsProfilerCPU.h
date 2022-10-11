@@ -59,12 +59,12 @@ namespace bs
 			/**	Resets the cycle count to zero. */
 			void Reset();
 
-			UINT64 Cycles;
+			u64 Cycles;
 		private:
-			UINT64 startCycles;
+			u64 startCycles;
 
 			/** Queries the CPU for the current number of CPU cycles executed since the program was started. */
-			static inline UINT64 GetNumCycles();
+			static inline u64 GetNumCycles();
 		};
 
 		/**
@@ -76,13 +76,13 @@ namespace bs
 		 */
 		struct ProfileSample
 		{
-			ProfileSample(double _time, UINT64 _numAllocs, UINT64 _numFrees)
+			ProfileSample(double _time, u64 _numAllocs, u64 _numFrees)
 				:Time(_time), NumAllocs(_numAllocs), NumFrees(_numFrees)
 			{ }
 
 			double Time;
-			UINT64 NumAllocs;
-			UINT64 NumFrees;
+			u64 NumAllocs;
+			u64 NumFrees;
 		};
 
 		/**
@@ -94,13 +94,13 @@ namespace bs
 		 */
 		struct PreciseProfileSample
 		{
-			PreciseProfileSample(UINT64 _cycles, UINT64 _numAllocs, UINT64 _numFrees)
+			PreciseProfileSample(u64 _cycles, u64 _numAllocs, u64 _numFrees)
 				:Cycles(_cycles), NumAllocs(_numAllocs), NumFrees(_numFrees)
 			{ }
 
-			UINT64 Cycles;
-			UINT64 NumAllocs;
-			UINT64 NumFrees;
+			u64 Cycles;
+			u64 NumAllocs;
+			u64 NumFrees;
 		};
 
 		/**	Contains basic (time based) profiling data contained in a profiling block. */
@@ -126,8 +126,8 @@ namespace bs
 			Vector<ProfileSample, StdFrameAlloc<ProfileSample>> Samples;
 			Timer Timer;
 
-			UINT64 MemAllocs;
-			UINT64 MemFrees;
+			u64 MemAllocs;
+			u64 MemFrees;
 		};
 
 		/**	Contains precise (CPU cycle based) profiling data contained in a profiling block. */
@@ -153,8 +153,8 @@ namespace bs
 			Vector<PreciseProfileSample, StdFrameAlloc<PreciseProfileSample>> Samples;
 			TimerPrecise Timer;
 
-			UINT64 MemAllocs;
-			UINT64 MemFrees;
+			u64 MemAllocs;
+			u64 MemFrees;
 		};
 
 		/**
@@ -313,12 +313,12 @@ namespace bs
 
 	private:
 		double mBasicTimerOverhead = 0.0;
-		UINT64 mPreciseTimerOverhead = 0;
+		u64 mPreciseTimerOverhead = 0;
 
 		double mBasicSamplingOverheadMs = 0.0;
 		double mPreciseSamplingOverheadMs = 0.0;
-		UINT64 mBasicSamplingOverheadCycles = 0;
-		UINT64 mPreciseSamplingOverheadCycles = 0;
+		u64 mBasicSamplingOverheadCycles = 0;
+		u64 mPreciseSamplingOverheadCycles = 0;
 
 		ProfilerVector<ThreadInfo*> mActiveThreads;
 		Mutex mThreadSync;
@@ -332,10 +332,10 @@ namespace bs
 			Data() = default;
 
 			String Name; /**< Name of the profiling block. */
-			UINT32 NumCalls = 0; /**< Number of times the block was entered. */
+			u32 NumCalls = 0; /**< Number of times the block was entered. */
 
-			UINT64 MemAllocs; /**< Number of memory allocations that happened within the block. */
-			UINT64 MemFrees; /**< Number of memory deallocations that happened within the block. */
+			u64 MemAllocs; /**< Number of memory allocations that happened within the block. */
+			u64 MemFrees; /**< Number of memory deallocations that happened within the block. */
 
 			double AvgTimeMs = 0.0; /**< Average time it took to execute the block, per call. In milliseconds. */
 			double MaxTimeMs = 0.0; /**< Maximum time of a single call in the block. In milliseconds. */
@@ -364,20 +364,20 @@ namespace bs
 			Data() = default;
 
 			String Name; /**< Name of the profiling block. */
-			UINT32 NumCalls = 0; /**< Number of times the block was entered. */
+			u32 NumCalls = 0; /**< Number of times the block was entered. */
 
-			UINT64 MemAllocs; /**< Number of memory allocations that happened within the block. */
-			UINT64 MemFrees; /**< Number of memory deallocations that happened within the block. */
+			u64 MemAllocs; /**< Number of memory allocations that happened within the block. */
+			u64 MemFrees; /**< Number of memory deallocations that happened within the block. */
 
-			UINT64 AvgCycles = 0; /**< Average number of cycles it took to execute the block, per call. */
-			UINT64 MaxCycles = 0; /**< Maximum number of cycles of a single call in the block. */
-			UINT64 TotalCycles = 0; /**< Total number of cycles across all calls in the block. */
+			u64 AvgCycles = 0; /**< Average number of cycles it took to execute the block, per call. */
+			u64 MaxCycles = 0; /**< Maximum number of cycles of a single call in the block. */
+			u64 TotalCycles = 0; /**< Total number of cycles across all calls in the block. */
 
-			UINT64 AvgSelfCycles = 0; /**< Average number of cycles it took to execute the block, per call. Ignores cycles used by child blocks. */
-			UINT64 TotalSelfCycles = 0; /**< Total number of cycles across all calls in the block. Ignores time used by child blocks. */
+			u64 AvgSelfCycles = 0; /**< Average number of cycles it took to execute the block, per call. Ignores cycles used by child blocks. */
+			u64 TotalSelfCycles = 0; /**< Total number of cycles across all calls in the block. Ignores time used by child blocks. */
 
-			UINT64 EstimatedSelfOverhead = 0; /**< Estimated overhead of profiling methods, only for this exact block. In cycles. */
-			UINT64 EstimatedOverhead = 0; /**< Estimated overhead of profiling methods for this block and all children. In cycles. */
+			u64 EstimatedSelfOverhead = 0; /**< Estimated overhead of profiling methods, only for this exact block. In cycles. */
+			u64 EstimatedOverhead = 0; /**< Estimated overhead of profiling methods for this block and all children. In cycles. */
 
 			float PctOfParent = 1.0f; /**< Percent of parent block cycles used by this block. Ranging [0.0, 1.0]. */
 		} Data;

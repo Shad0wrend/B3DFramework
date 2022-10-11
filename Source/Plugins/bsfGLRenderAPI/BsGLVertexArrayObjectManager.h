@@ -43,12 +43,12 @@ namespace bs { namespace ct
 		friend class GLVertexArrayObjectManager;
 
 		GLVertexArrayObject() = default;
-		GLVertexArrayObject(GLuint handle, UINT64 vertexProgramId, GLVertexBuffer** attachedBuffers, UINT32 numBuffers);
+		GLVertexArrayObject(GLuint handle, u64 vertexProgramId, GLVertexBuffer** attachedBuffers, u32 numBuffers);
 
 		GLuint mHandle = 0;
-		UINT64 mVertProgId = 0;
+		u64 mVertProgId = 0;
 		GLVertexBuffer** mAttachedBuffers = nullptr;
-		UINT32 mNumBuffers = 0;
+		u32 mNumBuffers = 0;
 	};
 
 	/**	Manager that handles creation and destruction of vertex array objects. */

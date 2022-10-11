@@ -22,7 +22,7 @@ namespace bs
 	{
 	public:
 		ManagedSerializableFieldKey() = default;
-		ManagedSerializableFieldKey(UINT16 typeId, UINT16 fieldId);
+		ManagedSerializableFieldKey(u16 typeId, u16 fieldId);
 
 		/**
 		 * Creates a new field key.
@@ -30,10 +30,10 @@ namespace bs
 		 * @param[in]	typeId	Unique ID of the parent type the field belongs to. See ManagedSerializableTypeInfoObject.
 		 * @param[in]	fieldId	Unique ID of the field within its parent class. See ManagedSerializableObjectInfo.
 		 */
-		static SPtr<ManagedSerializableFieldKey> Create(UINT16 typeId, UINT16 fieldId);
+		static SPtr<ManagedSerializableFieldKey> Create(u16 typeId, u16 fieldId);
 
-		UINT16 MTypeId = 0;
-		UINT16 MFieldId = 0;
+		u16 MTypeId = 0;
+		u16 MFieldId = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -248,7 +248,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		INT8 Value = 0;
+		i8 Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -282,7 +282,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		UINT8 Value = 0;
+		u8 Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -316,7 +316,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		INT16 Value = 0;
+		i16 Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -350,7 +350,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		UINT16 Value = 0;
+		u16 Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -384,7 +384,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		INT32 Value = 0;
+		i32 Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -418,7 +418,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		UINT32 Value = 0;
+		u32 Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -452,7 +452,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		INT64 Value = 0;
+		i64 Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -486,7 +486,7 @@ namespace bs
 		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
-		UINT64 Value = 0;
+		u64 Value = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

@@ -47,7 +47,7 @@ namespace bs
 	BS_LOG_CATEGORY_IMPL(Generic)
 	BS_LOG_CATEGORY_IMPL(Platform)
 
-	void Debug::Log(const String& message, LogVerbosity verbosity, UINT32 category)
+	void Debug::Log(const String& message, LogVerbosity verbosity, u32 category)
 	{
 		if(mCustomLogCallback)
 		{
@@ -85,7 +85,7 @@ namespace bs
 		}
 	}
 
-	void Debug::WriteAsBmp(UINT8* rawPixels, UINT32 bytesPerPixel, UINT32 width, UINT32 height, const Path& filePath,
+	void Debug::WriteAsBmp(u8* rawPixels, u32 bytesPerPixel, u32 width, u32 height, const Path& filePath,
 		bool overwrite) const
 	{
 		if(FileSystem::IsFile(filePath))
@@ -98,8 +98,8 @@ namespace bs
 
 		SPtr<DataStream> ds = FileSystem::CreateAndOpenFile(filePath);
 
-		UINT32 bmpDataSize = BitmapWriter::GetBmpSize(width, height, bytesPerPixel);
-		UINT8* bmpBuffer = bs_newN<UINT8>(bmpDataSize);
+		u32 bmpDataSize = BitmapWriter::GetBmpSize(width, height, bytesPerPixel);
+		u8* bmpBuffer = bs_newN<u8>(bmpDataSize);
 
 		BitmapWriter::RawPixelsToBmp(rawPixels, bmpBuffer, width, height, bytesPerPixel);
 
@@ -117,7 +117,7 @@ namespace bs
 			OnLogEntryAdded(entry);
 		}
 
-		UINT64 hash = mLog.GetHash();
+		u64 hash = mLog.GetHash();
 		if(mLogHash != hash)
 		{
 			OnLogModified();
@@ -299,7 +299,7 @@ table td
 			stream << "<p>GPU: " << systemInfo.GpuInfo.Names[0] << "</p>\n";
 		else
 		{
-			for(UINT32 i = 0; i < systemInfo.GpuInfo.NumGpUs; i++)
+			for(u32 i = 0; i < systemInfo.GpuInfo.NumGpUs; i++)
 				stream << "<p>GPU #" << i << ": " << systemInfo.GpuInfo.Names[i] << "</p>\n";
 		}
 
@@ -367,7 +367,7 @@ table td
 	String GetSpacesIndentationInternal(size_t numSpaces)
 	{
 		String tmp;
-		for (UINT8 i = 0; i < numSpaces; i++)
+		for (u8 i = 0; i < numSpaces; i++)
 			tmp.append(" ");
 		return tmp;
 	}
@@ -411,7 +411,7 @@ table td
 			stream << "GPU: " << systemInfo.GpuInfo.Names[0] << "\n";
 		else
 		{
-			for(UINT32 i = 0; i < systemInfo.GpuInfo.NumGpUs; i++)
+			for(u32 i = 0; i < systemInfo.GpuInfo.NumGpUs; i++)
 				stream << "GPU #" << i << ": " << systemInfo.GpuInfo.Names[i] << "\n";
 		}
 		

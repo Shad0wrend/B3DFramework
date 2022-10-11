@@ -21,10 +21,10 @@ namespace bs
 		Language& GetActiveLanguage(StringTable* obj) { return obj->mActiveLanguage; }
 		void SetActiveLanguage(StringTable* obj, Language& val) { obj->mActiveLanguage = val; }
 
-		LanguageData& GetLanguageData(StringTable* obj, UINT32 idx) { return obj->mAllLanguages[idx]; }
-		void SetLanguageData(StringTable* obj, UINT32 idx, LanguageData& val) { obj->mAllLanguages[idx] = val; }
-		UINT32 GetNumLanguages(StringTable* obj) { return (UINT32)Language::Count; }
-		void SetNumLanguages(StringTable* obj, UINT32 val) { /* Do nothing */ }
+		LanguageData& GetLanguageData(StringTable* obj, u32 idx) { return obj->mAllLanguages[idx]; }
+		void SetLanguageData(StringTable* obj, u32 idx, LanguageData& val) { obj->mAllLanguages[idx] = val; }
+		u32 GetNumLanguages(StringTable* obj) { return (u32)Language::Count; }
+		void SetNumLanguages(StringTable* obj, u32 val) { /* Do nothing */ }
 
 		UnorderedSet<String>& GetIdentifiers(StringTable* obj) { return obj->mIdentifiers; }
 		void SetIdentifiers(StringTable* obj, UnorderedSet<String>& val) { obj->mIdentifiers = val; }
@@ -50,7 +50,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_StringTable;
 		}

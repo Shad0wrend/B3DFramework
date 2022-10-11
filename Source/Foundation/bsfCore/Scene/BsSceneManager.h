@@ -228,7 +228,7 @@ namespace bs
 		 * Adds a component to the specified state list. Caller is expected to first remove the component from any
 		 * existing state lists.
 		 */
-		void AddToStateList(const HComponent& component, UINT32 listType);
+		void AddToStateList(const HComponent& component, u32 listType);
 
 		/** Removes a component from its current scene manager state list (if any). */
 		void RemoveFromStateList(const HComponent& component);
@@ -240,13 +240,13 @@ namespace bs
 		 * Encodes an index and a type into a single 32-bit integer. Top 2 bits represent the type, while the rest represent
 		 * the index.
 		 */
-		static UINT32 EncodeComponentId(UINT32 idx, UINT32 type);
+		static u32 EncodeComponentId(u32 idx, u32 type);
 
 		/** Decodes an id encoded with encodeComponentId(). */
-		static void DecodeComponentId(UINT32 id, UINT32& idx, UINT32& type);
+		static void DecodeComponentId(u32 id, u32& idx, u32& type);
 
 		/** Checks does the specified component type match the provided RTTI id. */
-		static bool IsComponentOfType(const HComponent& component, UINT32 rttiId);
+		static bool IsComponentOfType(const HComponent& component, u32 rttiId);
 
 	protected:
 		SPtr<SceneInstance> mMainScene;
@@ -276,7 +276,7 @@ namespace bs
 	template<class T>
 	Vector<GameObjectHandle<T>> SceneManager::FindComponents(bool activeOnly)
 	{
-		UINT32 rttiId = T::GetRttiStatic()->GetRttiId();
+		u32 rttiId = T::GetRttiStatic()->GetRttiId();
 
 		Vector<GameObjectHandle<T>> output;
 		for(auto& entry : mActiveComponents)

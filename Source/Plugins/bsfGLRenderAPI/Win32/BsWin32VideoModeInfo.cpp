@@ -40,14 +40,14 @@ namespace bs { namespace ct
 			}
 		}
 
-		UINT32 idx = 0;
+		u32 idx = 0;
 		for (auto& handle : handles)
 		{
 			mOutputs.push_back(bs_new<Win32VideoOutputInfo>(handle, idx++));
 		}
 	}
 
-	Win32VideoOutputInfo::Win32VideoOutputInfo(HMONITOR monitorHandle, UINT32 outputIdx)
+	Win32VideoOutputInfo::Win32VideoOutputInfo(HMONITOR monitorHandle, u32 outputIdx)
 		:mMonitorHandle(monitorHandle)
 	{
 		MONITORINFOEX monitorInfo;
@@ -62,7 +62,7 @@ namespace bs { namespace ct
 		devMode.dmSize = sizeof(DEVMODE);
 		devMode.dmDriverExtra = 0;
 
-		UINT32 i = 0;
+		u32 i = 0;
 		while (EnumDisplaySettings(monitorInfo.szDevice, i++, &devMode))
 		{
 			bool foundVideoMode = false;
@@ -70,7 +70,7 @@ namespace bs { namespace ct
 			{
 				Win32VideoMode* win32VideoMode = static_cast<Win32VideoMode*>(videoMode);
 
-				UINT32 intRefresh = Math::RoundToInt(win32VideoMode->RefreshRate);
+				u32 intRefresh = Math::RoundToInt(win32VideoMode->RefreshRate);
 				if (win32VideoMode->Width == devMode.dmPelsWidth && win32VideoMode->Height == devMode.dmPelsHeight
 					&& intRefresh == devMode.dmDisplayFrequency)
 				{
@@ -99,7 +99,7 @@ namespace bs { namespace ct
 		mDesktopVideoMode = desktopVideoMode;
 	}
 
-	Win32VideoMode::Win32VideoMode(UINT32 width, UINT32 height, float refreshRate, UINT32 outputIdx)
+	Win32VideoMode::Win32VideoMode(u32 width, u32 height, float refreshRate, u32 outputIdx)
 		:VideoMode(width, height, refreshRate, outputIdx)
 	{ }
 }}

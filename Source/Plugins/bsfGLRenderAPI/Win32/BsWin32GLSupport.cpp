@@ -26,11 +26,11 @@ namespace bs { namespace ct
 		InitialiseWgl();
 	}
 
-	SPtr<bs::RenderWindow> Win32GLSupport::NewWindow(RENDER_WINDOW_DESC& desc, UINT32 windowId, SPtr<bs::RenderWindow> parentWindow)
+	SPtr<bs::RenderWindow> Win32GLSupport::NewWindow(RENDER_WINDOW_DESC& desc, u32 windowId, SPtr<bs::RenderWindow> parentWindow)
 	{		
 		if(parentWindow != nullptr)
 		{
-			UINT64 hWnd;
+			u64 hWnd;
 			parentWindow->GetCustomAttribute("WINDOW", &hWnd);
 			desc.PlatformSpecific["parentWindowHandle"] = toString(hWnd);
 		}

@@ -65,18 +65,18 @@ namespace bs
 			OpenListBox();
 	}
 
-	void GUIListBox::SelectElement(UINT32 idx)
+	void GUIListBox::SelectElement(u32 idx)
 	{
-		if (idx >= (UINT32)mElements.size())
+		if (idx >= (u32)mElements.size())
 			return;
 
 		if (mElementStates[idx] != true)
 			ElementSelected(idx);
 	}
 
-	void GUIListBox::DeselectElement(UINT32 idx)
+	void GUIListBox::DeselectElement(u32 idx)
 	{
-		if (!mIsMultiselect || idx >= (UINT32)mElements.size())
+		if (!mIsMultiselect || idx >= (u32)mElements.size())
 			return;
 
 		if (mElementStates[idx] != false)
@@ -85,13 +85,13 @@ namespace bs
 
 	void GUIListBox::SetElementStates(const Vector<bool>& states)
 	{
-		UINT32 numElements = (UINT32)mElementStates.size();
-		UINT32 min = std::min(numElements, (UINT32)states.size());
+		u32 numElements = (u32)mElementStates.size();
+		u32 min = std::min(numElements, (u32)states.size());
 
 		bool anythingModified = min != numElements;
 		if (!anythingModified)
 		{
-			for (UINT32 i = 0; i < numElements; i++)
+			for (u32 i = 0; i < numElements; i++)
 			{
 				if (mElementStates[i] != states[i])
 				{
@@ -109,13 +109,13 @@ namespace bs
 		if (wasOpen)
 			CloseListBox();
 
-		for (UINT32 i = 0; i < min; i++)
+		for (u32 i = 0; i < min; i++)
 		{
 			mElementStates[i] = states[i];
 
 			if (mElementStates[i] && !mIsMultiselect)
 			{
-				for (UINT32 j = i + 1; j < numElements; j++)
+				for (u32 j = i + 1; j < numElements; j++)
 					mElementStates[j] = false;
 
 				break;
@@ -168,9 +168,9 @@ namespace bs
 		return processed;
 	}
 
-	void GUIListBox::ElementSelected(UINT32 idx)
+	void GUIListBox::ElementSelected(u32 idx)
 	{
-		if (idx >= (UINT32)mElements.size())
+		if (idx >= (u32)mElements.size())
 			return;
 
 		if (mIsMultiselect)
@@ -183,7 +183,7 @@ namespace bs
 		}
 		else
 		{
-			for (UINT32 i = 0; i < (UINT32)mElementStates.size(); i++)
+			for (u32 i = 0; i < (u32)mElementStates.size(); i++)
 				mElementStates[i] = false;
 
 			mElementStates[idx] = true;
@@ -203,7 +203,7 @@ namespace bs
 
 		DROP_DOWN_BOX_DESC desc;
 
-		UINT32 i = 0;
+		u32 i = 0;
 		for(auto& elem : mElements)
 		{
 			String identifier = toString(i);
@@ -244,9 +244,9 @@ namespace bs
 
 	void GUIListBox::UpdateContents()
 	{
-		UINT32 selectedIdx = 0;
-		UINT32 numSelected = 0;
-		for (UINT32 i = 0; i < (UINT32)mElementStates.size(); i++)
+		u32 selectedIdx = 0;
+		u32 numSelected = 0;
+		for (u32 i = 0; i < (u32)mElementStates.size(); i++)
 		{
 			if (mElementStates[i])
 			{

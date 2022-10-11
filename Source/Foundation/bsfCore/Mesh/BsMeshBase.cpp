@@ -12,19 +12,19 @@ namespace bs
 		mSubMeshes.reserve(10);
 	}
 
-	MeshProperties::MeshProperties(UINT32 numVertices, UINT32 numIndices, DrawOperationType drawOp)
+	MeshProperties::MeshProperties(u32 numVertices, u32 numIndices, DrawOperationType drawOp)
 		:mNumVertices(numVertices), mNumIndices(numIndices)
 	{
 		mSubMeshes.push_back(SubMesh(0, numIndices, drawOp));
 	}
 
-	MeshProperties::MeshProperties(UINT32 numVertices, UINT32 numIndices, const Vector<SubMesh>& subMeshes)
+	MeshProperties::MeshProperties(u32 numVertices, u32 numIndices, const Vector<SubMesh>& subMeshes)
 		:mNumVertices(numVertices), mNumIndices(numIndices)
 	{
 		mSubMeshes = subMeshes;
 	}
 
-	const SubMesh& MeshProperties::GetSubMesh(UINT32 subMeshIdx) const
+	const SubMesh& MeshProperties::GetSubMesh(u32 subMeshIdx) const
 	{
 		if (subMeshIdx >= mSubMeshes.size())
 		{
@@ -35,16 +35,16 @@ namespace bs
 		return mSubMeshes[subMeshIdx];
 	}
 
-	UINT32 MeshProperties::GetNumSubMeshes() const
+	u32 MeshProperties::GetNumSubMeshes() const
 	{
-		return (UINT32)mSubMeshes.size();
+		return (u32)mSubMeshes.size();
 	}
 
-	MeshBase::MeshBase(UINT32 numVertices, UINT32 numIndices, DrawOperationType drawOp)
+	MeshBase::MeshBase(u32 numVertices, u32 numIndices, DrawOperationType drawOp)
 		:mProperties(numVertices, numIndices, drawOp)
 	{ }
 
-	MeshBase::MeshBase(UINT32 numVertices, UINT32 numIndices, const Vector<SubMesh>& subMeshes)
+	MeshBase::MeshBase(u32 numVertices, u32 numIndices, const Vector<SubMesh>& subMeshes)
 		:mProperties(numVertices, numIndices, subMeshes)
 	{ }
 
@@ -53,8 +53,8 @@ namespace bs
 
 	CoreSyncData MeshBase::SyncToCore(FrameAlloc* allocator)
 	{
-		UINT32 size = sizeof(Bounds);
-		UINT8* buffer = allocator->Alloc(size);
+		u32 size = sizeof(Bounds);
+		u8* buffer = allocator->Alloc(size);
 
 		memcpy(buffer, &mProperties.mBounds, size);
 		return CoreSyncData(buffer, size);
@@ -81,7 +81,7 @@ namespace bs
 
 	namespace ct
 	{
-	MeshBase::MeshBase(UINT32 numVertices, UINT32 numIndices, const Vector<SubMesh>& subMeshes)
+	MeshBase::MeshBase(u32 numVertices, u32 numIndices, const Vector<SubMesh>& subMeshes)
 		:mProperties(numVertices, numIndices, subMeshes)
 	{ }
 

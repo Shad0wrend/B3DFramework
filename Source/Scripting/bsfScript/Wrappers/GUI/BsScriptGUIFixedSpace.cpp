@@ -38,14 +38,14 @@ namespace bs
 		}
 	}
 
-	void ScriptGUIFixedSpace::InternalCreateInstance(MonoObject* instance, UINT32 size)
+	void ScriptGUIFixedSpace::InternalCreateInstance(MonoObject* instance, u32 size)
 	{
 		GUIFixedSpace* space = GUIFixedSpace::Create(size);
 
 		new (bs_alloc<ScriptGUIFixedSpace>()) ScriptGUIFixedSpace(instance, space);
 	}
 
-	void ScriptGUIFixedSpace::InternalSetSize(ScriptGUIFixedSpace* nativeInstance, UINT32 size)
+	void ScriptGUIFixedSpace::InternalSetSize(ScriptGUIFixedSpace* nativeInstance, u32 size)
 	{
 		nativeInstance->mFixedSpace->SetSize(size);
 	}

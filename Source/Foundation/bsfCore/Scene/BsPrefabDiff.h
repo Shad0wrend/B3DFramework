@@ -23,7 +23,7 @@ namespace bs
 	 */
 	struct BS_CORE_EXPORT PrefabComponentDiff : public IReflectable
 	{
-		INT32 Id;
+		i32 Id;
 		SPtr<SerializedObject> Data;
 
 		/************************************************************************/
@@ -55,21 +55,21 @@ namespace bs
 	{
 		PrefabObjectDiff() { }
 
-		UINT32 Id = 0;
+		u32 Id = 0;
 
 		String Name;
 		Vector3 Position = Vector3::ZERO;
 		Quaternion Rotation = Quaternion::IDENTITY;
 		Vector3 Scale = Vector3::ZERO;
 		bool IsActive = false;
-		UINT32 SoFlags = 0;
+		u32 SoFlags = 0;
 
 		Vector<SPtr<PrefabComponentDiff>> ComponentDiffs;
-		Vector<UINT32> RemovedComponents;
+		Vector<u32> RemovedComponents;
 		Vector<SPtr<SerializedObject>> AddedComponents;
 
 		Vector<SPtr<PrefabObjectDiff>> ChildDiffs;
-		Vector<UINT32> RemovedChildren;
+		Vector<u32> RemovedChildren;
 		Vector<SPtr<SerializedObject>> AddedChildren;
 
 		/************************************************************************/
@@ -110,7 +110,7 @@ namespace bs
 		struct RenamedGameObject
 		{
 			GameObjectInstanceDataPtr InstanceData;
-			UINT64 OriginalId;
+			u64 OriginalId;
 		};
 
 		/**

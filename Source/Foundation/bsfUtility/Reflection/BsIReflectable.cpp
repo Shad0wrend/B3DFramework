@@ -18,7 +18,7 @@ namespace bs
 		GetAllRttiTypes()[rttiType->GetRttiId()] = rttiType;
 	}
 
-	SPtr<IReflectable> IReflectable::CreateInstanceFromTypeId(UINT32 rttiTypeId)
+	SPtr<IReflectable> IReflectable::CreateInstanceFromTypeId(u32 rttiTypeId)
 	{
 		RTTITypeBase* type = GetRttifromTypeIdInternal(rttiTypeId);
 
@@ -29,7 +29,7 @@ namespace bs
 		return output;
 	}
 
-	RTTITypeBase* IReflectable::GetRttifromTypeIdInternal(UINT32 rttiTypeId)
+	RTTITypeBase* IReflectable::GetRttifromTypeIdInternal(u32 rttiTypeId)
 	{
 		const auto iterFind = GetAllRttiTypes().find(rttiTypeId);
 		if(iterFind != GetAllRttiTypes().end())
@@ -38,7 +38,7 @@ namespace bs
 		return nullptr;
 	}
 
-	bool IReflectable::IsTypeIdDuplicateInternal(UINT32 typeId)
+	bool IReflectable::IsTypeIdDuplicateInternal(u32 typeId)
 	{
 		if(typeId == TID_Abstract)
 			return false;
@@ -55,13 +55,13 @@ namespace bs
 	{
 		Stack<RTTITypeBase*> todo;
 
-		const UnorderedMap<UINT32, RTTITypeBase*>& allTypes = GetAllRttiTypes();
+		const UnorderedMap<u32, RTTITypeBase*>& allTypes = GetAllRttiTypes();
 		for(auto& entry : allTypes)
 		{
 			RTTITypeBase* myType = entry.second;
 
-			UINT32 myNumFields = myType->GetNumFields();
-			for (UINT32 i = 0; i < myNumFields; i++)
+			u32 myNumFields = myType->GetNumFields();
+			for (u32 i = 0; i < myNumFields; i++)
 			{
 				RTTIField* myField = myType->GetField(i);
 
@@ -71,8 +71,8 @@ namespace bs
 				auto* myReflectablePtrField = static_cast<RTTIReflectablePtrFieldBase*>(myField);
 				
 				RTTITypeBase* otherType = myReflectablePtrField->GetType();
-				UINT32 otherNumFields = otherType->GetNumFields();
-				for (UINT32 j = 0; j < otherNumFields; j++)
+				u32 otherNumFields = otherType->GetNumFields();
+				for (u32 j = 0; j < otherNumFields; j++)
 				{
 					RTTIField* otherField = otherType->GetField(j);
 
@@ -94,7 +94,7 @@ namespace bs
 		}
 	}
 
-	UINT32 IReflectable::GetTypeId() const
+	u32 IReflectable::GetTypeId() const
 	{
 		return GetRtti()->GetRttiId();
 	}

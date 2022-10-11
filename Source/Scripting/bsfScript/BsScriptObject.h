@@ -30,8 +30,8 @@ namespace bs
 	/** Contains backup data in the form of a raw memory buffer. */
 	struct RawBackupData
 	{
-		UINT8* Data = nullptr;
-		UINT32 Size = 0;
+		u8* Data = nullptr;
+		u32 Size = 0;
 	};
 
 	/**

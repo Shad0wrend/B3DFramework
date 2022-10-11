@@ -14,7 +14,7 @@ namespace bs
 			mParameters = bs_newN<String>(mStringData->NumParameters);
 	}
 
-	HString::HString(UINT32 stringTableId)
+	HString::HString(u32 stringTableId)
 	{
 		mStringData = StringTableManager::Instance().GetTable(stringTableId)->GetStringData(u8"");
 
@@ -22,7 +22,7 @@ namespace bs
 			mParameters = bs_newN<String>(mStringData->NumParameters);
 	}
 
-	HString::HString(const String& identifierString, UINT32 stringTableId)
+	HString::HString(const String& identifierString, u32 stringTableId)
 	{
 		mStringData = StringTableManager::Instance().GetTable(stringTableId)->GetStringData(identifierString);
 
@@ -30,7 +30,7 @@ namespace bs
 			mParameters = bs_newN<String>(mStringData->NumParameters);
 	}
 
-	HString::HString(const String& identifierString, const String& defaultString, UINT32 stringTableId)
+	HString::HString(const String& identifierString, const String& defaultString, u32 stringTableId)
 	{
 		HStringTable table = StringTableManager::Instance().GetTable(stringTableId);
 		table->SetString(identifierString, StringTable::DEFAULT_LANGUAGE, defaultString);
@@ -52,7 +52,7 @@ namespace bs
 			mParameters = bs_newN<String>(mStringData->NumParameters);
 			if (copy.mParameters != nullptr)
 			{
-				for (UINT32 i = 0; i < mStringData->NumParameters; i++)
+				for (u32 i = 0; i < mStringData->NumParameters; i++)
 					mParameters[i] = copy.mParameters[i];
 			}
 
@@ -93,7 +93,7 @@ namespace bs
 			mParameters = bs_newN<String>(mStringData->NumParameters);
 			if (rhs.mParameters != nullptr)
 			{
-				for (UINT32 i = 0; i < mStringData->NumParameters; i++)
+				for (u32 i = 0; i < mStringData->NumParameters; i++)
 					mParameters[i] = rhs.mParameters[i];
 			}
 
@@ -128,7 +128,7 @@ namespace bs
 		return *mStringPtr;
 	}
 
-	void HString::SetParameter(UINT32 idx, const String& value)
+	void HString::SetParameter(u32 idx, const String& value)
 	{
 		if (idx >= mStringData->NumParameters)
 			return;

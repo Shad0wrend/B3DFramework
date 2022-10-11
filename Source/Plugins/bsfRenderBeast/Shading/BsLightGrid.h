@@ -18,10 +18,10 @@ namespace bs { namespace ct
 	BS_PARAM_BLOCK_BEGIN(LightGridParamDef)
 		BS_PARAM_BLOCK_ENTRY(Vector4I, gLightCounts)
 		BS_PARAM_BLOCK_ENTRY(Vector2I, gLightStrides)
-		BS_PARAM_BLOCK_ENTRY(INT32, gNumReflProbes)
-		BS_PARAM_BLOCK_ENTRY(INT32, gNumCells)
+		BS_PARAM_BLOCK_ENTRY(i32, gNumReflProbes)
+		BS_PARAM_BLOCK_ENTRY(i32, gNumCells)
 		BS_PARAM_BLOCK_ENTRY(Vector3I, gGridSize)
-		BS_PARAM_BLOCK_ENTRY(INT32, gMaxNumLightsPerCell)
+		BS_PARAM_BLOCK_ENTRY(i32, gMaxNumLightsPerCell)
 		BS_PARAM_BLOCK_ENTRY(Vector2I, gGridPixelSize)
 	BS_PARAM_BLOCK_END
 
@@ -98,7 +98,7 @@ namespace bs { namespace ct
 		SPtr<GpuBuffer> mProbesLLHeads;
 		SPtr<GpuBuffer> mProbesLL;
 
-		UINT32 mBufferNumCells = 0;
+		u32 mBufferNumCells = 0;
 		Vector3I mGridSize;
 	};
 
@@ -144,7 +144,7 @@ namespace bs { namespace ct
 		SPtr<GpuBuffer> mGridProbeOffsetAndSize;
 		SPtr<GpuBuffer> mGridProbeIndices;
 
-		UINT32 mBufferNumCells;
+		u32 mBufferNumCells;
 		Vector3I mGridSize;
 	};
 

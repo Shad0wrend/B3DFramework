@@ -20,7 +20,7 @@ namespace bs
 		constexpr UUID() = default;
 
 		/** Initializes an UUID using framework's UUID representation. */
-		constexpr UUID(UINT32 data1, UINT32 data2, UINT32 data3, UINT32 data4)
+		constexpr UUID(u32 data1, u32 data2, u32 data3, u32 data4)
 		: mData{data1, data2, data3, data4}
 		{ }
 
@@ -39,7 +39,7 @@ namespace bs
 
 		constexpr bool operator<(const UUID& rhs) const
 		{
-			for(UINT32 i = 0; i < 4; i++)
+			for(u32 i = 0; i < 4; i++)
 			{
 				if (mData[i] < rhs.mData[i])
 					return true;
@@ -66,7 +66,7 @@ namespace bs
 	private:
 		friend struct std::hash<UUID>;
 
-		UINT32 mData[4] = {0, 0, 0, 0};
+		u32 mData[4] = {0, 0, 0, 0};
 	};
 
 	/**

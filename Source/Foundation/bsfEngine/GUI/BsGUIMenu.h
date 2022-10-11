@@ -36,7 +36,7 @@ namespace bs
 		 * @param[in]	key			Keyboard shortcut that can be used for triggering the menu item.
 		 */
 		GUIMenuItem(GUIMenuItem* parent, const String& name, std::function<void()> callback,
-			INT32 priority, UINT32 seqIdx, const ShortcutKey& key);
+			i32 priority, u32 seqIdx, const ShortcutKey& key);
 
 		/**
 		 * Constructs a new separator menu item.
@@ -46,14 +46,14 @@ namespace bs
 		 * @param[in]	seqIdx		Sequential index of the menu item that specifies in what order was it added to the menu
 		 * 							compared to other items.
 		 */
-		GUIMenuItem(GUIMenuItem* parent, INT32 priority, UINT32 seqIdx);
+		GUIMenuItem(GUIMenuItem* parent, i32 priority, u32 seqIdx);
 		~GUIMenuItem();
 
 		/**	Registers a new child with the item. */
 		void AddChild(GUIMenuItem* child) { mChildren.insert(child); }
 
 		/**	Returns number of child menu items. */
-		UINT32 GetNumChildren() const { return (UINT32)mChildren.size(); }
+		u32 GetNumChildren() const { return (u32)mChildren.size(); }
 
 		/**	Returns the parent menu item, or null if none. */
 		GUIMenuItem* GetParent() const { return mParent; }
@@ -90,9 +90,9 @@ namespace bs
 		bool mIsSeparator;
 		String mName;
 		std::function<void()> mCallback;
-		INT32 mPriority;
+		i32 mPriority;
 		ShortcutKey mShortcut;
-		UINT32 mSeqIdx;
+		u32 mSeqIdx;
 		Set<GUIMenuItem*, GUIMenuItemComparer> mChildren;
 	};
 
@@ -126,7 +126,7 @@ namespace bs
 		 * @return					A menu item object that you may use for removing the menu item later. Its lifetime is
 		 *							managed internally.
 		 */
-		GUIMenuItem* AddMenuItem(const String& path, std::function<void()> callback, INT32 priority, const ShortcutKey& key = ShortcutKey::NONE);
+		GUIMenuItem* AddMenuItem(const String& path, std::function<void()> callback, i32 priority, const ShortcutKey& key = ShortcutKey::NONE);
 
 		/**
 		 * Adds a new separator menu item with the specified callback.
@@ -138,7 +138,7 @@ namespace bs
 		 * @return					A menu item object that you may use for removing the menu item later. Its lifetime is
 		 *							managed internally.
 		 */
-		GUIMenuItem* AddSeparator(const String& path, INT32 priority);
+		GUIMenuItem* AddSeparator(const String& path, i32 priority);
 
 		/**	Returns a menu item at the specified path, or null if one is not found. */
 		GUIMenuItem* GetMenuItem(const String& path);
@@ -163,14 +163,14 @@ namespace bs
 	protected:
 		/**	Adds a menu item at the specified path, as a normal button or as a separator. */
 		GUIMenuItem* AddMenuItemInternal(const String& path, std::function<void()> callback, bool isSeparator,
-			INT32 priority, const ShortcutKey& key);
+			i32 priority, const ShortcutKey& key);
 
 		/**	Return drop down data for the specified menu. */
 		GUIDropDownData GetDropDownDataInternal(const GUIMenuItem& menu) const;
 
 		GUIMenuItem mRootElement;
 		UnorderedMap<String, HString> mLocalizedEntryNames;
-		UINT32 mNextIdx;
+		u32 mNextIdx;
 	};
 
 	/** @} */

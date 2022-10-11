@@ -15,7 +15,7 @@ namespace bs { namespace ct
 	class D3D11OcclusionQuery : public OcclusionQuery
 	{
 	public:
-		D3D11OcclusionQuery(bool binary, UINT32 deviceIdx);
+		D3D11OcclusionQuery(bool binary, u32 deviceIdx);
 		~D3D11OcclusionQuery();
 
 		/** @copydoc OcclusionQuery::begin */
@@ -28,7 +28,7 @@ namespace bs { namespace ct
 		bool IsReady() const ;
 
 		/** @copydoc OcclusionQuery::getNumSamples */
-		UINT32 GetNumSamples() ;
+		u32 GetNumSamples() ;
 
 	private:
 		friend class QueryManager;
@@ -41,7 +41,7 @@ namespace bs { namespace ct
 		bool mFinalized = false;
 		bool mQueryEndCalled = false;
 
-		UINT32 mNumSamples = 0;
+		u32 mNumSamples = 0;
 	};
 
 	/** @} */

@@ -144,7 +144,7 @@ namespace bs { namespace ct
 		 */
 		float DepthEncodeFar = 0.0f;
 
-		UINT64 VisibleLayers;
+		u64 VisibleLayers;
 		ConvexVolume CullFrustum;
 	};
 
@@ -155,14 +155,14 @@ namespace bs { namespace ct
 
 		Rect2I ViewRect;
 		Rect2 NrmViewRect;
-		UINT32 TargetWidth;
-		UINT32 TargetHeight;
-		UINT32 NumSamples;
+		u32 TargetWidth;
+		u32 TargetHeight;
+		u32 NumSamples;
 
-		UINT32 ClearFlags;
+		u32 ClearFlags;
 		Color ClearColor;
 		float ClearDepthValue;
-		UINT16 ClearStencilValue;
+		u16 ClearStencilValue;
 	};
 
 	/** Set of properties describing the output render target used by a renderer view. */
@@ -188,7 +188,7 @@ namespace bs { namespace ct
 		Matrix4 PrevViewProjTransform;
 		Matrix4 ProjTransformNoAa;
 		Vector2 TemporalJitter { BsZero };
-		UINT32 FrameIdx;
+		u32 FrameIdx;
 
 		RendererViewTargetData Target;
 	};
@@ -207,11 +207,11 @@ namespace bs { namespace ct
 	/** Information used for culling an object against a view. */
 	struct CullInfo
 	{
-		CullInfo(const Bounds& bounds, UINT64 layer = -1, float cullDistanceFactor = 1.0f)
+		CullInfo(const Bounds& bounds, u64 layer = -1, float cullDistanceFactor = 1.0f)
 			:Layer(layer), Bounds(bounds), CullDistanceFactor(cullDistanceFactor)
 		{ }
 
-		UINT64 Layer;
+		u64 Layer;
 		Bounds Bounds;
 		float CullDistanceFactor;
 	};
@@ -398,7 +398,7 @@ namespace bs { namespace ct
 		 * Retrieves a hash value that is updated whenever render settings change. This can be used by external systems
 		 * to detect when they need to update.
 		 */
-		UINT64 GetRenderSettingsHash() const { return mRenderSettingsHash; }
+		u64 GetRenderSettingsHash() const { return mRenderSettingsHash; }
 
 		/** Updates the GPU buffer containing per-view information, with the latest internal data. */
 		void UpdatePerViewBuffer();
@@ -427,7 +427,7 @@ namespace bs { namespace ct
 		Vector4 GetNdcToUv() const;
 
 		/** Returns an index of this view within the parent view group. */
-		UINT32 GetViewIdx() const { return mViewIdx; }
+		u32 GetViewIdx() const { return mViewIdx; }
 
 		/** Determines if a view should be rendered this frame. */
 		bool ShouldDraw() const;
@@ -457,7 +457,7 @@ namespace bs { namespace ct
 		float GetCurrentExposure() const;
 
 		/** Assigns a view index to the view. To be called by the parent view group when the view is added to it. */
-		void SetViewIdxInternal(UINT32 viewIdx) { mViewIdx = viewIdx; }
+		void SetViewIdxInternal(u32 viewIdx) { mViewIdx = viewIdx; }
 
 		/** Lets an on-demand view know that it should be redrawn this frame. */
 		void NotifyNeedsRedrawInternal();
@@ -474,7 +474,7 @@ namespace bs { namespace ct
 		 * Notifies the view that a new average luminance is being calculated on the provided command buffer. The results
 		 * will be read from the provided texture when the command buffer finishes executing.
 		 */
-		void NotifyLuminanceUpdatedInternal(UINT64 frameIdx, SPtr<CommandBuffer> cb, SPtr<PooledRenderTexture> texture) const;
+		void NotifyLuminanceUpdatedInternal(u64 frameIdx, SPtr<CommandBuffer> cb, SPtr<PooledRenderTexture> texture) const;
 		
 		/**
 		 * Extracts the necessary values from the projection matrix that allow you to transform device Z value (range [0, 1]
@@ -504,11 +504,11 @@ namespace bs { namespace ct
 	private:
 		struct LuminanceUpdate
 		{
-			LuminanceUpdate(UINT64 frameIdx, SPtr<CommandBuffer> commandBuffer, SPtr<PooledRenderTexture> outputTexture)
+			LuminanceUpdate(u64 frameIdx, SPtr<CommandBuffer> commandBuffer, SPtr<PooledRenderTexture> outputTexture)
 				: FrameIdx(frameIdx), CommandBuffer(std::move(commandBuffer)), OutputTexture(std::move(outputTexture))
 			{ }
 
-			UINT64 FrameIdx;
+			u64 FrameIdx;
 			SPtr<CommandBuffer> CommandBuffer;
 			SPtr<PooledRenderTexture> OutputTexture;
 		};
@@ -524,21 +524,21 @@ namespace bs { namespace ct
 
 		RenderCompositor mCompositor;
 		SPtr<RenderSettings> mRenderSettings;
-		UINT32 mRenderSettingsHash;
+		u32 mRenderSettingsHash;
 
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 		VisibilityInfo mVisibility;
 		LightGrid mLightGrid;
-		UINT32 mViewIdx;
+		u32 mViewIdx;
 
 		// Temporal anti-aliasing
-		UINT32 mTemporalPositionIdx;
+		u32 mTemporalPositionIdx;
 
 		// On-demand drawing
 		bool mRedrawThisFrame = false;
 		float mRedrawForSeconds = 0.0f;
-		UINT32 mRedrawForFrames = 0;
-		UINT64 mWaitingOnAutoExposureFrame = std::numeric_limits<UINT64>::max();
+		u32 mRedrawForFrames = 0;
+		u64 mWaitingOnAutoExposureFrame = std::numeric_limits<u64>::max();
 		mutable Vector<LuminanceUpdate> mLuminanceUpdates;
 
 		// Exposure
@@ -554,19 +554,19 @@ namespace bs { namespace ct
 	class RendererViewGroup
 	{
 	public:
-		RendererViewGroup(RendererView** views, UINT32 numViews, bool mainPass, UINT32 shadowMapSize = 2048);
+		RendererViewGroup(RendererView** views, u32 numViews, bool mainPass, u32 shadowMapSize = 2048);
 
 		/**
 		 * Updates the internal list of views. This is more efficient than always constructing a new instance of this class
 		 * when views change, as internal buffers don't need to be re-allocated.
 		 */
-		void SetViews(RendererView** views, UINT32 numViews);
+		void SetViews(RendererView** views, u32 numViews);
 
 		/** Returns a view at the specified index. Index must be less than the value returned by getNumViews(). */
-		RendererView* GetView(UINT32 idx) const { return mViews[idx]; }
+		RendererView* GetView(u32 idx) const { return mViews[idx]; }
 
 		/** Returns the total number of views in the group. */
-		UINT32 GetNumViews() const { return (UINT32)mViews.size(); }
+		u32 GetNumViews() const { return (u32)mViews.size(); }
 
 		/** Determines is this the primary rendering pass for this frame. There can only be one primary pass per frame. */
 		bool IsMainPass() const { return mIsMainPass; }

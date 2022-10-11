@@ -105,7 +105,7 @@ namespace bs {	namespace ct
 	}
 
 	/** Initializes a specific base pass technique on the provided material and returns the technique index. */
-	static UINT32 initAndRetrieveBasePassTechnique(Material& material, bool useForwardRendering, bool supportsClusteredForward,
+	static u32 initAndRetrieveBasePassTechnique(Material& material, bool useForwardRendering, bool supportsClusteredForward,
 		bool shaderCanWriteVelocity, bool writeVelocity, RenderableAnimType animType)
 	{
 		const ShaderVariation* variation = writeVelocity ?
@@ -116,9 +116,9 @@ namespace bs {	namespace ct
 		findDesc.Variation = variation;
 		findDesc.Override = true;
 
-		UINT32 techniqueIdx = material.FindTechnique(findDesc);
+		u32 techniqueIdx = material.FindTechnique(findDesc);
 
-		if (techniqueIdx == (UINT32)-1)
+		if (techniqueIdx == (u32)-1)
 			techniqueIdx = material.GetDefaultTechnique();
 
 		// Make sure the technique shaders are compiled
@@ -129,11 +129,11 @@ namespace bs {	namespace ct
 		return techniqueIdx;
 	}
 
-	static void validateBasePassMaterial(Material& material, RenderableAnimType animType, UINT32 techniqueIdx, VertexDeclaration& vertexDecl)
+	static void validateBasePassMaterial(Material& material, RenderableAnimType animType, u32 techniqueIdx, VertexDeclaration& vertexDecl)
 	{
 		// Validate mesh <-> shader vertex bindings
-		UINT32 numPasses = material.GetNumPasses(techniqueIdx);
-		for (UINT32 j = 0; j < numPasses; j++)
+		u32 numPasses = material.GetNumPasses(techniqueIdx);
+		for (u32 j = 0; j < numPasses; j++)
 		{
 			SPtr<Pass> pass = material.GetPass(j, techniqueIdx);
 			SPtr<GraphicsPipelineState> graphicsPipeline = pass->GetGraphicsPipelineState();
@@ -196,7 +196,7 @@ namespace bs {	namespace ct
 		view->SetRenderSettings(camera->GetRenderSettings());
 		view->UpdatePerViewBuffer();
 
-		UINT32 viewIdx = (UINT32)mInfo.Views.size();
+		u32 viewIdx = (u32)mInfo.Views.size();
 		mInfo.Views.push_back(view);
 
 		mInfo.CameraToView[camera] = viewIdx;
@@ -205,17 +205,17 @@ namespace bs {	namespace ct
 		UpdateCameraRenderTargets(camera);
 	}
 
-	void RendererScene::UpdateCamera(Camera* camera, UINT32 updateFlag)
+	void RendererScene::UpdateCamera(Camera* camera, u32 updateFlag)
 	{
-		UINT32 cameraId = camera->GetRendererId();
+		u32 cameraId = camera->GetRendererId();
 		RendererView* view = mInfo.Views[cameraId];
 
-		if ((updateFlag & (UINT32)CameraDirtyFlag::Redraw) != 0)
+		if ((updateFlag & (u32)CameraDirtyFlag::Redraw) != 0)
 			view->NotifyNeedsRedrawInternal();
 
-		UINT32 updateEverythingFlag = (UINT32)ActorDirtyFlag::Everything
-			| (UINT32)ActorDirtyFlag::Active
-			| (UINT32)CameraDirtyFlag::Viewport;
+		u32 updateEverythingFlag = (u32)ActorDirtyFlag::Everything
+			| (u32)ActorDirtyFlag::Active
+			| (u32)CameraDirtyFlag::Viewport;
 
 		if((updateFlag & updateEverythingFlag) != 0)
 		{
@@ -228,7 +228,7 @@ namespace bs {	namespace ct
 			return;
 		}
 
-		if ((updateFlag & (UINT32)CameraDirtyFlag::RenderSettings) != 0)
+		if ((updateFlag & (u32)CameraDirtyFlag::RenderSettings) != 0)
 			view->SetRenderSettings(camera->GetRenderSettings());
 
 		const Transform& tfrm = camera->GetTransform();
@@ -244,10 +244,10 @@ namespace bs {	namespace ct
 
 	void RendererScene::UnregisterCamera(Camera* camera)
 	{
-		UINT32 cameraId = camera->GetRendererId();
+		u32 cameraId = camera->GetRendererId();
 
 		Camera* lastCamera = mInfo.Views.back()->GetSceneCamera();
-		UINT32 lastCameraId = lastCamera->GetRendererId();
+		u32 lastCameraId = lastCamera->GetRendererId();
 		
 		if (cameraId != lastCameraId)
 		{
@@ -275,7 +275,7 @@ namespace bs {	namespace ct
 	{
 		if (light->GetType() == LightType::Directional)
 		{
-			UINT32 lightId = (UINT32)mInfo.DirectionalLights.size();
+			u32 lightId = (u32)mInfo.DirectionalLights.size();
 			light->SetRendererId(lightId);
 
 			mInfo.DirectionalLights.push_back(RendererLight(light));
@@ -284,7 +284,7 @@ namespace bs {	namespace ct
 		{
 			if (light->GetType() == LightType::Radial)
 			{
-				UINT32 lightId = (UINT32)mInfo.RadialLights.size();
+				u32 lightId = (u32)mInfo.RadialLights.size();
 				light->SetRendererId(lightId);
 
 				mInfo.RadialLights.push_back(RendererLight(light));
@@ -292,7 +292,7 @@ namespace bs {	namespace ct
 			}
 			else // Spot
 			{
-				UINT32 lightId = (UINT32)mInfo.SpotLights.size();
+				u32 lightId = (u32)mInfo.SpotLights.size();
 				light->SetRendererId(lightId);
 
 				mInfo.SpotLights.push_back(RendererLight(light));
@@ -303,7 +303,7 @@ namespace bs {	namespace ct
 
 	void RendererScene::UpdateLight(Light* light)
 	{
-		UINT32 lightId = light->GetRendererId();
+		u32 lightId = light->GetRendererId();
 
 		if (light->GetType() == LightType::Radial)
 			mInfo.RadialLightWorldBounds[lightId] = light->GetBounds();
@@ -313,11 +313,11 @@ namespace bs {	namespace ct
 
 	void RendererScene::UnregisterLight(Light* light)
 	{
-		UINT32 lightId = light->GetRendererId();
+		u32 lightId = light->GetRendererId();
 		if (light->GetType() == LightType::Directional)
 		{
 			Light* lastLight = mInfo.DirectionalLights.back().Internal;
-			UINT32 lastLightId = lastLight->GetRendererId();
+			u32 lastLightId = lastLight->GetRendererId();
 
 			if (lightId != lastLightId)
 			{
@@ -334,7 +334,7 @@ namespace bs {	namespace ct
 			if (light->GetType() == LightType::Radial)
 			{
 				Light* lastLight = mInfo.RadialLights.back().Internal;
-				UINT32 lastLightId = lastLight->GetRendererId();
+				u32 lastLightId = lastLight->GetRendererId();
 
 				if (lightId != lastLightId)
 				{
@@ -352,7 +352,7 @@ namespace bs {	namespace ct
 			else // Spot
 			{
 				Light* lastLight = mInfo.SpotLights.back().Internal;
-				UINT32 lastLightId = lastLight->GetRendererId();
+				u32 lastLightId = lastLight->GetRendererId();
 
 				if (lightId != lastLightId)
 				{
@@ -372,7 +372,7 @@ namespace bs {	namespace ct
 
 	void RendererScene::RegisterRenderable(Renderable* renderable)
 	{
-		UINT32 renderableId = (UINT32)mInfo.Renderables.size();
+		u32 renderableId = (u32)mInfo.Renderables.size();
 
 		renderable->SetRendererId(renderableId);
 
@@ -392,12 +392,12 @@ namespace bs {	namespace ct
 			const MeshProperties& meshProps = mesh->GetProperties();
 			SPtr<VertexDeclaration> vertexDecl = mesh->GetVertexData()->VertexDeclaration;
 
-			for (UINT32 i = 0; i < meshProps.GetNumSubMeshes(); i++)
+			for (u32 i = 0; i < meshProps.GetNumSubMeshes(); i++)
 			{
 				rendererRenderable->Elements.push_back(RenderableElement());
 				RenderableElement& renElement = rendererRenderable->Elements.back();
 
-				renElement.Type = (UINT32)RenderElementType::Renderable;
+				renElement.Type = (u32)RenderElementType::Renderable;
 				renElement.Mesh = mesh;
 				renElement.SubMesh = meshProps.GetSubMesh(i);
 				renElement.AnimType = renderable->GetAnimType();
@@ -420,7 +420,7 @@ namespace bs {	namespace ct
 					renElement.Material = Material::Create(DefaultMaterial::Get()->GetShader());
 
 				// Determine which technique to use
-				static_assert((UINT32)RenderableAnimType::Count == 4, "RenderableAnimType is expected to have four sequential entries.");
+				static_assert((u32)RenderableAnimType::Count == 4, "RenderableAnimType is expected to have four sequential entries.");
 
 				const SPtr<Shader>& shader = renElement.Material->GetShader();
 				ShaderFlags shaderFlags = shader->GetFlags();
@@ -458,7 +458,7 @@ namespace bs {	namespace ct
 					// Note: Using the same params as the non-velocity technique. There are assumed to be no differences
 				}
 				else
-					renElement.WriteVelocityTechniqueIdx = (UINT32)-1;
+					renElement.WriteVelocityTechniqueIdx = (u32)-1;
 				
 				// Generate or assign sampler state overrides
 				renElement.SamplerOverrides = AllocSamplerStateOverrides(renElement);
@@ -511,7 +511,7 @@ namespace bs {	namespace ct
 
 	void RendererScene::UpdateRenderable(Renderable* renderable)
 	{
-		UINT32 renderableId = renderable->GetRendererId();
+		u32 renderableId = renderable->GetRendererId();
 
 		RendererRenderable* rendererRenderable = mInfo.Renderables[renderableId];
 
@@ -528,9 +528,9 @@ namespace bs {	namespace ct
 
 	void RendererScene::UnregisterRenderable(Renderable* renderable)
 	{
-		UINT32 renderableId = renderable->GetRendererId();
+		u32 renderableId = renderable->GetRendererId();
 		Renderable* lastRenerable = mInfo.Renderables.back()->Renderable;
-		UINT32 lastRenderableId = lastRenerable->GetRendererId();
+		u32 lastRenderableId = lastRenerable->GetRendererId();
 
 		RendererRenderable* rendererRenderable = mInfo.Renderables[renderableId];
 		Vector<RenderableElement>& elements = rendererRenderable->Elements;
@@ -558,7 +558,7 @@ namespace bs {	namespace ct
 
 	void RendererScene::RegisterReflectionProbe(ReflectionProbe* probe)
 	{
-		UINT32 probeId = (UINT32)mInfo.ReflProbes.size();
+		u32 probeId = (u32)mInfo.ReflProbes.size();
 		probe->SetRendererId(probeId);
 
 		mInfo.ReflProbes.push_back(RendererReflectionProbe(probe));
@@ -567,8 +567,8 @@ namespace bs {	namespace ct
 		mInfo.ReflProbeWorldBounds.push_back(probe->GetBounds());
 
 		// Find a spot in cubemap array
-		UINT32 numArrayEntries = (UINT32)mInfo.ReflProbeCubemapArrayUsedSlots.size();
-		for(UINT32 i = 0; i < numArrayEntries; i++)
+		u32 numArrayEntries = (u32)mInfo.ReflProbeCubemapArrayUsedSlots.size();
+		for(u32 i = 0; i < numArrayEntries; i++)
 		{
 			if(!mInfo.ReflProbeCubemapArrayUsedSlots[i])
 			{
@@ -579,7 +579,7 @@ namespace bs {	namespace ct
 		}
 
 		// No empty slot was found
-		if (probeInfo.ArrayIdx == (UINT32)-1)
+		if (probeInfo.ArrayIdx == (u32)-1)
 		{
 			SetReflectionProbeArrayIndex(probeId, numArrayEntries, false);
 			mInfo.ReflProbeCubemapArrayUsedSlots.push_back(true);
@@ -595,7 +595,7 @@ namespace bs {	namespace ct
 	void RendererScene::UpdateReflectionProbe(ReflectionProbe* probe, bool texture)
 	{
 		// Should only get called if transform changes, any other major changes and ReflProbeInfo entry gets rebuild
-		UINT32 probeId = probe->GetRendererId();
+		u32 probeId = probe->GetRendererId();
 		mInfo.ReflProbeWorldBounds[probeId] = probe->GetBounds();
 
 		if (texture)
@@ -607,14 +607,14 @@ namespace bs {	namespace ct
 
 	void RendererScene::UnregisterReflectionProbe(ReflectionProbe* probe)
 	{
-		UINT32 probeId = probe->GetRendererId();
-		UINT32 arrayIdx = mInfo.ReflProbes[probeId].ArrayIdx;
+		u32 probeId = probe->GetRendererId();
+		u32 arrayIdx = mInfo.ReflProbes[probeId].ArrayIdx;
 
-		if (arrayIdx != (UINT32)-1)
+		if (arrayIdx != (u32)-1)
 			mInfo.ReflProbeCubemapArrayUsedSlots[arrayIdx] = false;
 
 		ReflectionProbe* lastProbe = mInfo.ReflProbes.back().Probe;
-		UINT32 lastProbeId = lastProbe->GetRendererId();
+		u32 lastProbeId = lastProbe->GetRendererId();
 
 		if (probeId != lastProbeId)
 		{
@@ -630,7 +630,7 @@ namespace bs {	namespace ct
 		mInfo.ReflProbeWorldBounds.erase(mInfo.ReflProbeWorldBounds.end() - 1);
 	}
 
-	void RendererScene::SetReflectionProbeArrayIndex(UINT32 probeIdx, UINT32 arrayIdx, bool markAsClean)
+	void RendererScene::SetReflectionProbeArrayIndex(u32 probeIdx, u32 arrayIdx, bool markAsClean)
 	{
 		RendererReflectionProbe* probe = &mInfo.ReflProbes[probeIdx];
 		probe->ArrayIdx = arrayIdx;
@@ -672,7 +672,7 @@ namespace bs {	namespace ct
 
 	void RendererScene::RegisterParticleSystem(ParticleSystem* particleSystem)
 	{
-		const auto rendererId = (UINT32)mInfo.ParticleSystems.size();
+		const auto rendererId = (u32)mInfo.ParticleSystems.size();
 		particleSystem->SetRendererId(rendererId);
 
 		mInfo.ParticleSystems.push_back(RendererParticles());
@@ -689,7 +689,7 @@ namespace bs {	namespace ct
 
 	void RendererScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tfrmOnly)
 	{
-		const UINT32 rendererId = particleSystem->GetRendererId();
+		const u32 rendererId = particleSystem->GetRendererId();
 		RendererParticles& rendererParticles = mInfo.ParticleSystems[rendererId];
 
 		rendererParticles.PrevLocalToWorld = rendererParticles.LocalToWorld;
@@ -744,7 +744,7 @@ namespace bs {	namespace ct
 		}
 
 		ParticlesRenderElement& renElement = rendererParticles.RenderElement;
-		renElement.Type = (UINT32)RenderElementType::Particle;
+		renElement.Type = (u32)RenderElementType::Particle;
 
 		renElement.Material = settings.Material;
 
@@ -805,9 +805,9 @@ namespace bs {	namespace ct
 		findDesc.Variation = variation;
 		findDesc.Override = true;
 
-		UINT32 techniqueIdx = renElement.Material->FindTechnique(findDesc);
+		u32 techniqueIdx = renElement.Material->FindTechnique(findDesc);
 
-		if (techniqueIdx == (UINT32)-1)
+		if (techniqueIdx == (u32)-1)
 			techniqueIdx = renElement.Material->GetDefaultTechnique();
 
 		renElement.DefaultTechniqueIdx = techniqueIdx;
@@ -890,7 +890,7 @@ namespace bs {	namespace ct
 			curves.Free(rendererParticles.ColorCurveAlloc);
 			curves.Free(rendererParticles.SizeScaleFrameIdxCurveAlloc);
 
-			static constexpr UINT32 NUM_CURVE_SAMPLES = 128;
+			static constexpr u32 NUM_CURVE_SAMPLES = 128;
 			Color samples[NUM_CURVE_SAMPLES];
 
 			const ParticleGpuSimulationSettings& gpuSimSettings = particleSystem->GetGpuSimulationSettings();
@@ -898,7 +898,7 @@ namespace bs {	namespace ct
 			// Write color over lifetime curve
 			LookupTable colorLookup = gpuSimSettings.ColorOverLifetime.ToLookupTable(NUM_CURVE_SAMPLES, true);
 
-			for (UINT32 i = 0; i < NUM_CURVE_SAMPLES; i++)
+			for (u32 i = 0; i < NUM_CURVE_SAMPLES; i++)
 			{
 				const float* sample = colorLookup.GetSample(i);
 				samples[i] = Color(sample[0], sample[1], sample[2], sample[3]);
@@ -913,7 +913,7 @@ namespace bs {	namespace ct
 			if (spriteTexture && spriteTexture->GetAnimationPlayback() != SpriteAnimationPlayback::None)
 			{
 				const SpriteSheetGridAnimation& anim = spriteTexture->GetAnimation();
-				for (UINT32 i = 0; i < NUM_CURVE_SAMPLES; i++)
+				for (u32 i = 0; i < NUM_CURVE_SAMPLES; i++)
 				{
 					const float t = i / (float)(NUM_CURVE_SAMPLES - 1);
 					frameSamples[i] = t * (anim.Count - 1);
@@ -922,7 +922,7 @@ namespace bs {	namespace ct
 			else
 				memset(frameSamples, 0, sizeof(frameSamples));
 
-			for (UINT32 i = 0; i < NUM_CURVE_SAMPLES; i++)
+			for (u32 i = 0; i < NUM_CURVE_SAMPLES; i++)
 			{
 				const float* sample = sizeLookup.GetSample(i);
 				samples[i] = Color(sample[0], sample[1], frameSamples[i], 0.0f);
@@ -978,7 +978,7 @@ namespace bs {	namespace ct
 
 	void RendererScene::UnregisterParticleSystem(ParticleSystem* particleSystem)
 	{
-		const UINT32 rendererId = particleSystem->GetRendererId();
+		const u32 rendererId = particleSystem->GetRendererId();
 		RendererParticles& rendererParticles = mInfo.ParticleSystems[rendererId];
 
 		// Free curves
@@ -993,7 +993,7 @@ namespace bs {	namespace ct
 		}
 
 		ParticleSystem* lastSystem = mInfo.ParticleSystems.back().ParticleSystem;
-		const UINT32 lastRendererId = lastSystem->GetRendererId();
+		const u32 lastRendererId = lastSystem->GetRendererId();
 
 		if (rendererId != lastRendererId)
 		{
@@ -1011,7 +1011,7 @@ namespace bs {	namespace ct
 
 	void RendererScene::RegisterDecal(Decal* decal)
 	{
-		const auto renderableId = (UINT32)mInfo.Decals.size();
+		const auto renderableId = (u32)mInfo.Decals.size();
 		decal->SetRendererId(renderableId);
 
 		mInfo.Decals.emplace_back();
@@ -1022,7 +1022,7 @@ namespace bs {	namespace ct
 		rendererDecal.UpdatePerObjectBuffer();
 
 		DecalRenderElement& renElement = rendererDecal.RenderElement;
-		renElement.Type = (UINT32)RenderElementType::Decal;
+		renElement.Type = (u32)RenderElementType::Decal;
 		renElement.Mesh = RendererUtility::Instance().GetBoxStencil();
 		renElement.SubMesh = renElement.Mesh->GetProperties().GetSubMesh();
 
@@ -1035,16 +1035,16 @@ namespace bs {	namespace ct
 		if (renElement.Material == nullptr)
 			renElement.Material = Material::Create(DefaultDecalMat::Get()->GetShader());
 
-		for(UINT32 i = 0; i < 2; i++)
+		for(u32 i = 0; i < 2; i++)
 		{
-			for(UINT32 j = 0; j < 3; j++)
+			for(u32 j = 0; j < 3; j++)
 			{
 				FIND_TECHNIQUE_DESC findDesc;
 				findDesc.Variation = DECAL_VAR_LOOKUP[i][j];
 				findDesc.Override = true;
 
-				UINT32 techniqueIdx = renElement.Material->FindTechnique(findDesc);
-				if(techniqueIdx == (UINT32)-1)
+				u32 techniqueIdx = renElement.Material->FindTechnique(findDesc);
+				if(techniqueIdx == (u32)-1)
 					techniqueIdx = 0;
 
 				const SPtr<Technique>& technique = renElement.Material->GetTechnique(techniqueIdx);
@@ -1090,7 +1090,7 @@ namespace bs {	namespace ct
 
 	void RendererScene::UpdateDecal(Decal* decal)
 	{
-		const UINT32 rendererId = decal->GetRendererId();
+		const u32 rendererId = decal->GetRendererId();
 
 		mInfo.Decals[rendererId].UpdatePerObjectBuffer();
 		mInfo.DecalCullInfos[rendererId].Bounds = decal->GetBounds();
@@ -1098,9 +1098,9 @@ namespace bs {	namespace ct
 
 	void RendererScene::UnregisterDecal(Decal* decal)
 	{
-		const UINT32 rendererId = decal->GetRendererId();
+		const u32 rendererId = decal->GetRendererId();
 		Decal* lastDecal = mInfo.Decals.back().Decal;
-		const UINT32 lastDecalId = lastDecal->GetRendererId();
+		const u32 lastDecalId = lastDecal->GetRendererId();
 
 		RendererDecal& rendererDecal = mInfo.Decals[rendererId];
 		DecalRenderElement& renElement = rendererDecal.RenderElement;
@@ -1275,7 +1275,7 @@ namespace bs {	namespace ct
 			SPtr<MaterialParams> materialParams = entry.first.Material->GetInternalParamsInternal();
 
 			MaterialSamplerOverrides* materialOverrides = entry.second;
-			for(UINT32 i = 0; i < materialOverrides->NumOverrides; i++)
+			for(u32 i = 0; i < materialOverrides->NumOverrides; i++)
 			{
 				SamplerOverride& override = materialOverrides->Overrides[i];
 				const MaterialParamsBase::ParamData* materialParamData = materialParams->GetParamData(override.ParamIdx);
@@ -1283,7 +1283,7 @@ namespace bs {	namespace ct
 				SPtr<SamplerState> samplerState;
 				materialParams->GetSamplerState(*materialParamData, samplerState);
 
-				UINT64 hash = 0;
+				u64 hash = 0;
 				if (samplerState != nullptr)
 					hash = samplerState->GetProperties().GetHash();
 
@@ -1308,21 +1308,21 @@ namespace bs {	namespace ct
 		if (!anyDirty)
 			return;
 
-		UINT32 numRenderables = (UINT32)mInfo.Renderables.size();
-		for (UINT32 i = 0; i < numRenderables; i++)
+		u32 numRenderables = (u32)mInfo.Renderables.size();
+		for (u32 i = 0; i < numRenderables; i++)
 		{
 			for(auto& element : mInfo.Renderables[i]->Elements)
 			{
 				MaterialSamplerOverrides* overrides = element.SamplerOverrides;
 				if(overrides != nullptr && overrides->IsDirty)
 				{
-					UINT32 numPasses = element.Material->GetNumPasses();
-					for(UINT32 j = 0; j < numPasses; j++)
+					u32 numPasses = element.Material->GetNumPasses();
+					for(u32 j = 0; j < numPasses; j++)
 					{
 						SPtr<GpuParams> params = element.Params->GetGpuParams(j);
 
-						const UINT32 numStages = 6;
-						for (UINT32 k = 0; k < numStages; k++)
+						const u32 numStages = 6;
+						for (u32 k = 0; k < numStages; k++)
 						{
 							GpuProgramType type = (GpuProgramType)k;
 
@@ -1332,11 +1332,11 @@ namespace bs {	namespace ct
 
 							for (auto& samplerDesc : paramDesc->Samplers)
 							{
-								UINT32 set = samplerDesc.second.Set;
-								UINT32 slot = samplerDesc.second.Slot;
+								u32 set = samplerDesc.second.Set;
+								u32 slot = samplerDesc.second.Slot;
 
-								UINT32 overrideIndex = overrides->Passes[j].StateOverrides[set][slot];
-								if (overrideIndex == (UINT32)-1)
+								u32 overrideIndex = overrides->Passes[j].StateOverrides[set][slot];
+								if (overrideIndex == (u32)-1)
 									continue;
 
 								params->SetSamplerState(set, slot, overrides->Overrides[overrideIndex].State);
@@ -1356,7 +1356,7 @@ namespace bs {	namespace ct
 		gPerFrameParamDef.gTime.Set(mPerFrameParamBuffer, time);
 	}
 
-	void RendererScene::PrepareRenderable(UINT32 idx, const FrameInfo& frameInfo)
+	void RendererScene::PrepareRenderable(u32 idx, const FrameInfo& frameInfo)
 	{
 		RendererRenderable* rendererRenderable = mInfo.Renderables[idx];
 		
@@ -1379,7 +1379,7 @@ namespace bs {	namespace ct
 		}
 	}
 
-	void RendererScene::PrepareVisibleRenderable(UINT32 idx, const FrameInfo& frameInfo)
+	void RendererScene::PrepareVisibleRenderable(u32 idx, const FrameInfo& frameInfo)
 	{
 		if (mInfo.RenderableReady[idx])
 			return;
@@ -1399,7 +1399,7 @@ namespace bs {	namespace ct
 		mInfo.RenderableReady[idx] = true;
 	}
 
-	void RendererScene::PrepareParticleSystem(UINT32 idx, const FrameInfo& frameInfo)
+	void RendererScene::PrepareParticleSystem(u32 idx, const FrameInfo& frameInfo)
 	{
 		RendererParticles& rendererParticles = mInfo.ParticleSystems[idx];
 		
@@ -1421,7 +1421,7 @@ namespace bs {	namespace ct
 		mInfo.ParticleSystems[idx].PerObjectParamBuffer->FlushToGpu();
 	}
 
-	void RendererScene::PrepareDecal(UINT32 idx, const FrameInfo& frameInfo)
+	void RendererScene::PrepareDecal(u32 idx, const FrameInfo& frameInfo)
 	{
 		DecalRenderElement& renElement = mInfo.Decals[idx].RenderElement;
 		renElement.MaterialAnimationTime += frameInfo.Timings.TimeDelta;
@@ -1437,7 +1437,7 @@ namespace bs {	namespace ct
 
 		for(auto& entry : mInfo.ParticleSystems)
 		{
-			const UINT32 rendererId = entry.ParticleSystem->GetRendererId();
+			const u32 rendererId = entry.ParticleSystem->GetRendererId();
 
 			AABox worldAABox = AABox::INF_BOX;
 			const auto iterFind = particleRenderData->CpuData.find(entry.ParticleSystem->GetId());

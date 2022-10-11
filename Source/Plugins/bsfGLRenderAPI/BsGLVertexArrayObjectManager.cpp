@@ -11,8 +11,8 @@
 
 namespace bs { namespace ct
 {
-	GLVertexArrayObject::GLVertexArrayObject(GLuint handle, UINT64 vertexProgramId,
-		GLVertexBuffer** attachedBuffers, UINT32 numBuffers)
+	GLVertexArrayObject::GLVertexArrayObject(GLuint handle, u64 vertexProgramId,
+		GLVertexBuffer** attachedBuffers, u32 numBuffers)
 		:mHandle(handle), mVertProgId(vertexProgramId), mAttachedBuffers(attachedBuffers), mNumBuffers(numBuffers)
 	{ }
 
@@ -21,7 +21,7 @@ namespace bs { namespace ct
 		std::size_t seed = 0;
 		bs_hash_combine(seed, vao.mVertProgId);
 
-		for (UINT32 i = 0; i < vao.mNumBuffers; i++)
+		for (u32 i = 0; i < vao.mNumBuffers; i++)
 			bs_hash_combine(seed, vao.mAttachedBuffers[i]->GetGlBufferId());
 
 		return seed;
@@ -35,7 +35,7 @@ namespace bs { namespace ct
 		if (a.mNumBuffers != b.mNumBuffers)
 			return false;
 
-		for (UINT32 i = 0; i < a.mNumBuffers; i++)
+		for (u32 i = 0; i < a.mNumBuffers; i++)
 		{
 			if (a.mAttachedBuffers[i]->GetGlBufferId() != b.mAttachedBuffers[i]->GetGlBufferId())
 				return false;
@@ -52,7 +52,7 @@ namespace bs { namespace ct
 		if (mNumBuffers != obj.mNumBuffers)
 			return false;
 
-		for (UINT32 i = 0; i < mNumBuffers; i++)
+		for (u32 i = 0; i < mNumBuffers; i++)
 		{
 			if (mAttachedBuffers[i]->GetGlBufferId() != obj.mAttachedBuffers[i]->GetGlBufferId())
 				return false;
@@ -74,32 +74,32 @@ namespace bs { namespace ct
 	const GLVertexArrayObject& GLVertexArrayObjectManager::GetVao(const SPtr<GLSLGpuProgram>& vertexProgram,
 		const SPtr<VertexDeclaration>& vertexDecl, const std::array<SPtr<VertexBuffer>, 32>& boundBuffers)
 	{
-		UINT16 maxStreamIdx = 0;
+		u16 maxStreamIdx = 0;
 		const Vector<VertexElement>& decl = vertexDecl->GetProperties().GetElements();
 		for (auto& elem : decl)
 			maxStreamIdx = std::max(maxStreamIdx, elem.GetStreamIdx());
 
-		UINT32 numStreams = maxStreamIdx + 1;
-		UINT32 numUsedBuffers = 0;
-		INT32* streamToSeqIdx = bs_stack_alloc<INT32>(numStreams);
-		GLVertexBuffer** usedBuffers = bs_stack_alloc<GLVertexBuffer*>((UINT32)boundBuffers.size());
+		u32 numStreams = maxStreamIdx + 1;
+		u32 numUsedBuffers = 0;
+		i32* streamToSeqIdx = bs_stack_alloc<i32>(numStreams);
+		GLVertexBuffer** usedBuffers = bs_stack_alloc<GLVertexBuffer*>((u32)boundBuffers.size());
 		
-		memset(usedBuffers, 0, (UINT32)boundBuffers.size() * sizeof(GLVertexBuffer*));
+		memset(usedBuffers, 0, (u32)boundBuffers.size() * sizeof(GLVertexBuffer*));
 
-		for (UINT32 i = 0; i < numStreams; i++)
+		for (u32 i = 0; i < numStreams; i++)
 			streamToSeqIdx[i] = -1;
 
 		for (auto& elem : decl)
 		{
-			UINT16 streamIdx = elem.GetStreamIdx();
-			if (streamIdx >= (UINT32)boundBuffers.size())
+			u16 streamIdx = elem.GetStreamIdx();
+			if (streamIdx >= (u32)boundBuffers.size())
 				continue;
 
 			if (streamToSeqIdx[streamIdx] != -1) // Already visited
 				continue;
 
 			SPtr<VertexBuffer> vertexBuffer = boundBuffers[streamIdx];
-			streamToSeqIdx[streamIdx] = (INT32)numUsedBuffers;
+			streamToSeqIdx[streamIdx] = (i32)numUsedBuffers;
 
 			if (vertexBuffer != nullptr)
 				usedBuffers[numUsedBuffers] = static_cast<GLVertexBuffer*>(vertexBuffer.get());
@@ -131,8 +131,8 @@ namespace bs { namespace ct
 
 		for (auto& elem : decl)
 		{
-			UINT16 streamIdx = elem.GetStreamIdx();
-			INT32 seqIdx = streamToSeqIdx[streamIdx];
+			u16 streamIdx = elem.GetStreamIdx();
+			i32 seqIdx = streamToSeqIdx[streamIdx];
 
 			if (seqIdx == -1)
 				continue;
@@ -162,7 +162,7 @@ namespace bs { namespace ct
 
 			void* bufferData = VBO_BUFFER_OFFSET(elem.GetOffset());
 
-			UINT16 typeCount = VertexElement::GetTypeCount(elem.GetType());
+			u16 typeCount = VertexElement::GetTypeCount(elem.GetType());
 			GLenum glType = GLHardwareBufferManager::GetGlType(elem.GetType());
 			bool isInteger = glType == GL_SHORT || glType == GL_UNSIGNED_SHORT || glType == GL_INT
 				|| glType == GL_UNSIGNED_INT || glType == GL_UNSIGNED_BYTE;
@@ -201,7 +201,7 @@ namespace bs { namespace ct
 		}
 
 		wantedVAO.mAttachedBuffers = (GLVertexBuffer**)bs_alloc(numUsedBuffers * sizeof(GLVertexBuffer*));
-		for (UINT32 i = 0; i < numUsedBuffers; i++)
+		for (u32 i = 0; i < numUsedBuffers; i++)
 		{
 			wantedVAO.mAttachedBuffers[i] = usedBuffers[i];
 			usedBuffers[i]->RegisterVao(wantedVAO);
@@ -221,7 +221,7 @@ namespace bs { namespace ct
 	{
 		mVAObjects.erase(vao);
 
-		for (UINT32 i = 0; i < vao.mNumBuffers; i++)
+		for (u32 i = 0; i < vao.mNumBuffers; i++)
 		{
 			vao.mAttachedBuffers[i]->UnregisterVao(vao);
 		}

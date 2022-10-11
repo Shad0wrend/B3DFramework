@@ -24,11 +24,11 @@ namespace bs
 			offset += decoderData->Stream->Tell();
 			break;
 		case SEEK_END:
-			offset = std::max(0, (INT32)decoderData->Stream->Size() - 1);
+			offset = std::max(0, (i32)decoderData->Stream->Size() - 1);
 			break;
 		}
 
-		decoderData->Stream->Seek((UINT32)offset);
+		decoderData->Stream->Seek((u32)offset);
 		return (int)(decoderData->Stream->Tell() - decoderData->Offset);
 	}
 
@@ -51,7 +51,7 @@ namespace bs
 			ov_clear(&mOggVorbisFile);
 	}
 
-	bool OggVorbisDecoder::IsValid(const SPtr<DataStream>& stream, UINT32 offset)
+	bool OggVorbisDecoder::IsValid(const SPtr<DataStream>& stream, u32 offset)
 	{
 		stream->Seek(offset);
 		mDecoderData.Stream = stream;
@@ -67,7 +67,7 @@ namespace bs
 		return false;
 	}
 
-	bool OggVorbisDecoder::Open(const SPtr<DataStream>& stream, AudioDataInfo& info, UINT32 offset)
+	bool OggVorbisDecoder::Open(const SPtr<DataStream>& stream, AudioDataInfo& info, u32 offset)
 	{
 		if (stream == nullptr)
 			return false;
@@ -86,30 +86,30 @@ namespace bs
 		vorbis_info* vorbisInfo = ov_info(&mOggVorbisFile, -1);
 		info.NumChannels = vorbisInfo->channels;
 		info.SampleRate = vorbisInfo->rate;
-		info.NumSamples = (UINT32)(ov_pcm_total(&mOggVorbisFile, -1) * vorbisInfo->channels);
+		info.NumSamples = (u32)(ov_pcm_total(&mOggVorbisFile, -1) * vorbisInfo->channels);
 		info.BitDepth = 16;
 
 		mChannelCount = info.NumChannels;
 		return true;
 	}
 
-	void OggVorbisDecoder::Seek(UINT32 offset)
+	void OggVorbisDecoder::Seek(u32 offset)
 	{
 		ov_pcm_seek(&mOggVorbisFile, offset / mChannelCount);
 	}
 
-	UINT32 OggVorbisDecoder::Read(UINT8* samples, UINT32 numSamples)
+	u32 OggVorbisDecoder::Read(u8* samples, u32 numSamples)
 	{
-		UINT32 numReadSamples = 0;
+		u32 numReadSamples = 0;
 		while (numReadSamples < numSamples)
 		{
-			INT32 bytesToRead = (INT32)(numSamples - numReadSamples) * sizeof(INT16);
-			UINT32 bytesRead = ov_read(&mOggVorbisFile, (char*)samples, bytesToRead, 0, 2, 1, nullptr);
+			i32 bytesToRead = (i32)(numSamples - numReadSamples) * sizeof(i16);
+			u32 bytesRead = ov_read(&mOggVorbisFile, (char*)samples, bytesToRead, 0, 2, 1, nullptr);
 			if (bytesRead > 0)
 			{
-				UINT32 samplesRead = bytesRead / sizeof(INT16);
+				u32 samplesRead = bytesRead / sizeof(i16);
 				numReadSamples += samplesRead;
-				samples += samplesRead * sizeof(INT16);
+				samples += samplesRead * sizeof(i16);
 			}
 			else
 				break;

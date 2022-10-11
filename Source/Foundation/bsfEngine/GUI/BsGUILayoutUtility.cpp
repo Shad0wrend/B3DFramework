@@ -11,7 +11,7 @@ namespace bs
 		return elem->CalculateLayoutSizeRangeInternal().Optimal;
 	}
 
-	Vector2I GUILayoutUtility::CalcActualSize(UINT32 width, UINT32 height, GUILayout* layout, bool updateOptimalSizes)
+	Vector2I GUILayoutUtility::CalcActualSize(u32 width, u32 height, GUILayout* layout, bool updateOptimalSizes)
 	{
 		if (updateOptimalSizes)
 			layout->UpdateOptimalLayoutSizesInternal();
@@ -19,9 +19,9 @@ namespace bs
 		return CalcActualSizeInternal(width, height, layout);
 	}
 
-	Vector2I GUILayoutUtility::CalcActualSizeInternal(UINT32 width, UINT32 height, GUILayout* layout)
+	Vector2I GUILayoutUtility::CalcActualSizeInternal(u32 width, u32 height, GUILayout* layout)
 	{
-		UINT32 numElements = (UINT32)layout->GetNumChildrenInternal();
+		u32 numElements = (u32)layout->GetNumChildrenInternal();
 		Rect2I* elementAreas = nullptr;
 
 		if (numElements > 0)
@@ -34,7 +34,7 @@ namespace bs
 		layout->GetElementAreasInternal(parentArea, elementAreas, numElements, layout->GetCachedChildSizeRangesInternal(), layout->GetCachedSizeRangeInternal());
 
 		Rect2I* actualAreas = elementAreas; // We re-use the same array
-		for (UINT32 i = 0; i < numElements; i++)
+		for (u32 i = 0; i < numElements; i++)
 		{
 			GUIElementBase* child = layout->GetChildInternal(i);
 			Rect2I childArea = elementAreas[i];
@@ -42,8 +42,8 @@ namespace bs
 			if (child->GetTypeInternal() == GUIElementBase::Type::Layout || child->GetTypeInternal() == GUIElementBase::Type::Panel)
 			{
 				Vector2I childActualSize = CalcActualSizeInternal(childArea.Width, childArea.Height, static_cast<GUILayout*>(child));
-				actualAreas[i].Width = (UINT32)childActualSize.X;
-				actualAreas[i].Height = (UINT32)childActualSize.Y;
+				actualAreas[i].Width = (u32)childActualSize.X;
+				actualAreas[i].Height = (u32)childActualSize.Y;
 			}
 			else if (child->GetTypeInternal() == GUIElementBase::Type::Element)
 			{
@@ -70,15 +70,15 @@ namespace bs
 			max = Vector2I(childArea.X + childArea.Width, childArea.Y + childArea.Height);
 		}
 
-		for (UINT32 i = 1; i < numElements; i++)
+		for (u32 i = 1; i < numElements; i++)
 		{
 			Rect2I childArea = actualAreas[i];
 
 			min.X = std::min(min.X, childArea.X);
 			min.Y = std::min(min.Y, childArea.Y);
 
-			max.X = std::max(max.X, childArea.X + (INT32)childArea.Width);
-			max.Y = std::max(max.Y, childArea.Y + (INT32)childArea.Height);
+			max.X = std::max(max.X, childArea.X + (i32)childArea.Width);
+			max.Y = std::max(max.Y, childArea.Y + (i32)childArea.Height);
 		}
 
 		Vector2I actualSize = max - min;

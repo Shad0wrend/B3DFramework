@@ -4,7 +4,7 @@
 
 namespace bs { namespace ct
 {
-	SPtr<EventQuery> NullQueryManager::CreateEventQuery(UINT32 deviceIdx) const
+	SPtr<EventQuery> NullQueryManager::CreateEventQuery(u32 deviceIdx) const
 	{
 		SPtr<EventQuery> query = SPtr<NullEventQuery>(bs_new<NullEventQuery>(), &QueryManager::DeleteEventQuery,
 			StdAlloc<NullEventQuery>());
@@ -13,7 +13,7 @@ namespace bs { namespace ct
 		return query;
 	}
 
-	SPtr<TimerQuery> NullQueryManager::CreateTimerQuery(UINT32 deviceIdx) const
+	SPtr<TimerQuery> NullQueryManager::CreateTimerQuery(u32 deviceIdx) const
 	{
 		SPtr<TimerQuery> query = SPtr<NullTimerQuery>(bs_new<NullTimerQuery>(), &QueryManager::DeleteTimerQuery,
 			StdAlloc<NullTimerQuery>());
@@ -22,7 +22,7 @@ namespace bs { namespace ct
 		return query;
 	}
 
-	SPtr<OcclusionQuery> NullQueryManager::CreateOcclusionQuery(bool binary, UINT32 deviceIdx) const
+	SPtr<OcclusionQuery> NullQueryManager::CreateOcclusionQuery(bool binary, u32 deviceIdx) const
 	{
 		SPtr<OcclusionQuery> query = SPtr<NullOcclusionQuery>(bs_new<NullOcclusionQuery>(binary),
 			&QueryManager::DeleteOcclusionQuery, StdAlloc<NullOcclusionQuery>());

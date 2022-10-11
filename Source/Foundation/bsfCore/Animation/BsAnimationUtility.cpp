@@ -9,7 +9,7 @@ namespace bs
 	void setStepTangent(const TKeyframe<Vector3>& lhsIn, const TKeyframe<Vector3>& rhsIn,
 		TKeyframe<Quaternion>& lhsOut, TKeyframe<Quaternion>& rhsOut)
 	{
-		for (UINT32 i = 0; i < 3; i++)
+		for (u32 i = 0; i < 3; i++)
 		{
 			if (lhsIn.OutTangent[i] != std::numeric_limits<float>::infinity() &&
 				rhsIn.InTangent[i] != std::numeric_limits<float>::infinity())
@@ -23,7 +23,7 @@ namespace bs
 	void setStepTangent(const TKeyframe<Quaternion>& lhsIn, const TKeyframe<Quaternion>& rhsIn,
 		TKeyframe<Vector3>& lhsOut, TKeyframe<Vector3>& rhsOut)
 	{
-		for (UINT32 i = 0; i < 4; i++)
+		for (u32 i = 0; i < 4; i++)
 		{
 			if (lhsIn.OutTangent[i] != std::numeric_limits<float>::infinity() &&
 				rhsIn.InTangent[i] != std::numeric_limits<float>::infinity())
@@ -73,7 +73,7 @@ namespace bs
 		// a curve.
 		const float FIT_TIME = 0.001f;
 
-		auto eulerToQuaternion = [&](INT32 keyIdx, Vector3& angles, const Quaternion& lastQuat)
+		auto eulerToQuaternion = [&](i32 keyIdx, Vector3& angles, const Quaternion& lastQuat)
 		{
 			Quaternion quat(
 				Degree(angles.X),
@@ -91,7 +91,7 @@ namespace bs
 			return quat;
 		};
 
-		INT32 numKeys = (INT32)eulerCurve->GetNumKeyFrames();
+		i32 numKeys = (i32)eulerCurve->GetNumKeyFrames();
 		Vector<TKeyframe<Quaternion>> quatKeyframes;
 		quatKeyframes.reserve(numKeys);
 
@@ -110,7 +110,7 @@ namespace bs
 		Quaternion lastQuat(BsZero);
 		Vector3 lastAngles(BsZero);
 		float lastTime = 0.0f;
-		for (INT32 i = 0; i < numKeys; i++)
+		for (i32 i = 0; i < numKeys; i++)
 		{
 			float time = eulerCurve->GetKeyFrame(i).Time;
 			Vector3 angles = eulerCurve->GetKeyFrame(i).Value;
@@ -126,11 +126,11 @@ namespace bs
 			if(i > 0 && maxAngle > 180.0f)
 			{
 				constexpr float SPLIT_INTERVAL = 175.0f; // Not exactly 180 to ensure no precision issues
-				INT32 numSplits = Math::FloorToPosInt(maxAngle / SPLIT_INTERVAL) + 1;
+				i32 numSplits = Math::FloorToPosInt(maxAngle / SPLIT_INTERVAL) + 1;
 
 				Vector3 partAngles = diff / (float)numSplits;
 				float partTime = (time - lastTime) / numSplits;
-				for (INT32 j = 0; j < numSplits; j++)
+				for (i32 j = 0; j < numSplits; j++)
 				{
 					Quaternion partQuat(
 						Degree(partAngles.X),
@@ -162,8 +162,8 @@ namespace bs
 
 		// Calculate extra values between keys so we can approximate tangents. If we're sampling very close to the key
 		// the values should pretty much exactly match the tangent (assuming the curves are cubic hermite)
-		INT32 numQuatKeys = (INT32)quatKeyframes.size();
-		for (INT32 i = 0; i < numQuatKeys - 1; i++)
+		i32 numQuatKeys = (i32)quatKeyframes.size();
+		for (i32 i = 0; i < numQuatKeys - 1; i++)
 		{
 			TKeyframe<Quaternion>& currentKey = quatKeyframes[i];
 			TKeyframe<Quaternion>& nextKey = quatKeyframes[i + 1];
@@ -209,11 +209,11 @@ namespace bs
 			return euler;
 		};
 
-		INT32 numKeys = (INT32)quatCurve->GetNumKeyFrames();
+		i32 numKeys = (i32)quatCurve->GetNumKeyFrames();
 		Vector<TKeyframe<Vector3>> eulerKeyframes(numKeys);
 
 		// Calculate key values
-		for (INT32 i = 0; i < numKeys; i++)
+		for (i32 i = 0; i < numKeys; i++)
 		{
 			float time = quatCurve->GetKeyFrame(i).Time;
 			Quaternion quat = quatCurve->GetKeyFrame(i).Value;
@@ -227,7 +227,7 @@ namespace bs
 
 		// Calculate extra values between keys so we can approximate tangents. If we're sampling very close to the key
 		// the values should pretty much exactly match the tangent (assuming the curves are cubic hermite)
-		for (INT32 i = 0; i < numKeys - 1; i++)
+		for (i32 i = 0; i < numKeys - 1; i++)
 		{
 			TKeyframe<Vector3>& currentKey = eulerKeyframes[i];
 			TKeyframe<Vector3>& nextKey = eulerKeyframes[i + 1];
@@ -266,17 +266,17 @@ namespace bs
 		const TAnimationCurve<T>& compoundCurve,
 		Vector<TKeyframe<float>> (&keyFrames)[TCurveProperties<T>::NumComponents])
 	{
-		constexpr UINT32 NUM_COMPONENTS = TCurveProperties<T>::NumComponents;
+		constexpr u32 NUM_COMPONENTS = TCurveProperties<T>::NumComponents;
 
-		const UINT32 numKeyFrames = compoundCurve.GetNumKeyFrames();
-		for (UINT32 i = 0; i < numKeyFrames; i++)
+		const u32 numKeyFrames = compoundCurve.GetNumKeyFrames();
+		for (u32 i = 0; i < numKeyFrames; i++)
 		{
 			const TKeyframe<T>& key = compoundCurve.GetKeyFrame(i);
 
 			TKeyframe<float> newKey;
 			newKey.Time = key.Time;
 
-			for (UINT32 j = 0; j < NUM_COMPONENTS; j++)
+			for (u32 j = 0; j < NUM_COMPONENTS; j++)
 			{
 				bool addNew = true;
 				if (i > 0)
@@ -306,14 +306,14 @@ namespace bs
 		const TAnimationCurve<float>* (& curveComponents)[TCurveProperties<T>::NumComponents],
 		Vector<TKeyframe<T>>& output)
 	{
-		constexpr UINT32 NUM_COMPONENTS = TCurveProperties<T>::NumComponents;
+		constexpr u32 NUM_COMPONENTS = TCurveProperties<T>::NumComponents;
 
 		// Find unique keyframe times
 		Map<float, TKeyframe<T>> keyFrames;
-		for(UINT32 i = 0; i < NUM_COMPONENTS; i++)
+		for(u32 i = 0; i < NUM_COMPONENTS; i++)
 		{
-			UINT32 numKeyFrames = curveComponents[i]->GetNumKeyFrames();
-			for (UINT32 j = 0; j < numKeyFrames; j++)
+			u32 numKeyFrames = curveComponents[i]->GetNumKeyFrames();
+			for (u32 j = 0; j < numKeyFrames; j++)
 			{
 				const TKeyframe<float>& keyFrame = curveComponents[i]->GetKeyFrame(j);
 
@@ -330,12 +330,12 @@ namespace bs
 
 		// Populate keyframe values
 		output.resize(keyFrames.size());
-		UINT32 idx = 0;
+		u32 idx = 0;
 		for(auto& entry : keyFrames)
 		{
 			TKeyframe<T>& keyFrame = entry.second;
 			
-			for(UINT32 j = 0; j < NUM_COMPONENTS; j++)
+			for(u32 j = 0; j < NUM_COMPONENTS; j++)
 			{
 				TKeyframe<float> currentKey = curveComponents[j]->EvaluateKey(keyFrame.Time, false);
 				TCurveProperties<T>::SetComponent(keyFrame.Value, j, currentKey.Value);
@@ -356,7 +356,7 @@ namespace bs
 			bs::SplitCurve(*compoundCurve, keyFrames);
 
 		Vector<SPtr<TAnimationCurve<float>>> output(3);
-		for (UINT32 i = 0; i < 3; i++)
+		for (u32 i = 0; i < 3; i++)
 			output[i] = bs_shared_ptr_new<TAnimationCurve<float>>(keyFrames[i]);
 
 		return output;
@@ -384,7 +384,7 @@ namespace bs
 			bs::SplitCurve(*compoundCurve, keyFrames);
 
 		Vector<SPtr<TAnimationCurve<float>>> output(2);
-		for (UINT32 i = 0; i < 2; i++)
+		for (u32 i = 0; i < 2; i++)
 			output[i] = bs_shared_ptr_new<TAnimationCurve<float>>(keyFrames[i]);
 
 		return output;
@@ -408,12 +408,12 @@ namespace bs
 	void AnimationUtility::SplitCurve(const TAnimationCurve<T>& compoundCurve,
 		TAnimationCurve<float> (& output)[TCurveProperties<T>::NumComponents])
 	{
-		constexpr UINT32 NUM_COMPONENTS = TCurveProperties<T>::NumComponents;
+		constexpr u32 NUM_COMPONENTS = TCurveProperties<T>::NumComponents;
 
 		Vector<TKeyframe<float>> keyFrames[NUM_COMPONENTS];
 		bs::SplitCurve(compoundCurve, keyFrames);
 
-		for (UINT32 i = 0; i < NUM_COMPONENTS; i++)
+		for (u32 i = 0; i < NUM_COMPONENTS; i++)
 			output[i] = TAnimationCurve<float>(keyFrames[i]);
 	}
 
@@ -422,10 +422,10 @@ namespace bs
 		const TAnimationCurve<float> (& curveComponents)[TCurveProperties<T>::NumComponents],
 		TAnimationCurve<T>& output)
 	{
-		constexpr UINT32 NUM_COMPONENTS = TCurveProperties<T>::NumComponents;
+		constexpr u32 NUM_COMPONENTS = TCurveProperties<T>::NumComponents;
 
 		const TAnimationCurve<float>* curves[NUM_COMPONENTS];
-		for(UINT32 i = 0; i < NUM_COMPONENTS; i++)
+		for(u32 i = 0; i < NUM_COMPONENTS; i++)
 			curves[i] = &curveComponents[i];
 
 		Vector<TKeyframe<T>> keyFrames;
@@ -501,10 +501,10 @@ namespace bs
 	template<class T>
 	TAnimationCurve<T> AnimationUtility::ScaleCurve(const TAnimationCurve<T>& curve, float factor)
 	{
-		INT32 numKeys = (INT32)curve.GetNumKeyFrames();
+		i32 numKeys = (i32)curve.GetNumKeyFrames();
 
 		Vector<TKeyframe<T>> newKeyframes(numKeys);
-		for (INT32 i = 0; i < numKeys; i++)
+		for (i32 i = 0; i < numKeys; i++)
 		{
 			const TKeyframe<T>& key = curve.GetKeyFrame(i);
 			newKeyframes[i].Time = key.Time;
@@ -519,10 +519,10 @@ namespace bs
 	template<class T>
 	TAnimationCurve<T> AnimationUtility::OffsetCurve(const TAnimationCurve<T>& curve, float offset)
 	{
-		INT32 numKeys = (INT32)curve.GetNumKeyFrames();
+		i32 numKeys = (i32)curve.GetNumKeyFrames();
 
 		Vector<TKeyframe<T>> newKeyframes(numKeys);
-		for (INT32 i = 0; i < numKeys; i++)
+		for (i32 i = 0; i < numKeys; i++)
 		{
 			const TKeyframe<T>& key = curve.GetKeyFrame(i);
 			newKeyframes[i].Time = key.Time + offset;
@@ -569,7 +569,7 @@ namespace bs
 		}
 
 		// Inner keyframes
-		for (UINT32 i = 1; i < (UINT32)keyframes.size() - 1; i++)
+		for (u32 i = 1; i < (u32)keyframes.size() - 1; i++)
 		{
 			const Keyframe& keyPrev = keyframes[i - 1];
 			Keyframe& keyThis = keyframes[i];

@@ -35,8 +35,8 @@ namespace bs
 	{
 		::Window xWindow = 0;
 
-		INT32 x, y;
-		UINT32 width, height;
+		i32 x, y;
+		u32 width, height;
 		bool hasTitleBar = true;
 		bool dragInProgress = false;
 		bool resizeDisabled = false;
@@ -66,22 +66,22 @@ namespace bs
 			::Display* display = LinuxPlatform::getXDisplay();
 
 			// Find the screen of the chosen monitor, as well as its current dimensions
-			INT32 screen = XDefaultScreen(display);
-			UINT32 outputIdx = 0;
+			i32 screen = XDefaultScreen(display);
+			u32 outputIdx = 0;
 
 			RROutput primaryOutput = XRRGetOutputPrimary(display, RootWindow(display, screen));
-			INT32 monitorX = 0;
-			INT32 monitorY = 0;
-			UINT32 monitorWidth = 0;
-			UINT32 monitorHeight = 0;
+			i32 monitorX = 0;
+			i32 monitorY = 0;
+			u32 monitorWidth = 0;
+			u32 monitorHeight = 0;
 
-			INT32 screenCount = XScreenCount(display);
-			for(INT32 i = 0; i < screenCount; i++)
+			i32 screenCount = XScreenCount(display);
+			for(i32 i = 0; i < screenCount; i++)
 			{
 				XRRScreenResources* screenRes = XRRGetScreenResources(display, RootWindow(display, i));
 
 				bool foundMonitor = false;
-				for (INT32 j = 0; j < screenRes->noutput; j++)
+				for (i32 j = 0; j < screenRes->noutput; j++)
 				{
 					XRROutputInfo* outputInfo = XRRGetOutputInfo(display, screenRes, screenRes->outputs[j]);
 					if (outputInfo == nullptr || outputInfo->crtc == 0 || outputInfo->connection == RR_Disconnected)
@@ -100,7 +100,7 @@ namespace bs
 						continue;
 					}
 
-					if(desc.screen == (UINT32)-1)
+					if(desc.screen == (u32)-1)
 					{
 						if(screenRes->outputs[j] == primaryOutput)
 							foundMonitor = true;
@@ -139,14 +139,14 @@ namespace bs
 			// If no position specified, center on the requested monitor
 			if (desc.x == -1)
 				m->x = monitorX + (monitorWidth - desc.width) / 2;
-			else if (desc.screen != (UINT32)-1)
+			else if (desc.screen != (u32)-1)
 				m->x = monitorX + desc.x;
 			else
 				m->x = desc.x;
 
 			if (desc.y == -1)
 				m->y = monitorY + (monitorHeight - desc.height) / 2;
-			else if (desc.screen != (UINT32)-1)
+			else if (desc.screen != (u32)-1)
 				m->y = monitorY + desc.y;
 			else
 				m->y = desc.y;
@@ -223,7 +223,7 @@ namespace bs
 			// Set background image if assigned
 			if(desc.background)
 			{
-				Pixmap pixmap = LinuxPlatform::createPixmap(*desc.background, (UINT32)desc.visualInfo.depth);
+				Pixmap pixmap = LinuxPlatform::createPixmap(*desc.background, (u32)desc.visualInfo.depth);
 
 				XSetWindowBackgroundPixmap(display, m->xWindow, pixmap);
 				XFreePixmap(display, pixmap);
@@ -252,7 +252,7 @@ namespace bs
 		bs_delete(m);
 	}
 
-	void LinuxWindow::move(INT32 x, INT32 y)
+	void LinuxWindow::move(i32 x, i32 y)
 	{
 		m->x = x;
 		m->y = y;
@@ -260,7 +260,7 @@ namespace bs
 		XMoveWindow(LinuxPlatform::getXDisplay(), m->xWindow, x, y);
 	}
 
-	void LinuxWindow::resize(UINT32 width, UINT32 height)
+	void LinuxWindow::resize(u32 width, u32 height)
 	{
 		// If resize is disabled on WM level, we need to force it
 		if(m->resizeDisabled)
@@ -312,9 +312,9 @@ namespace bs
 			minimize(false);
 	}
 
-	INT32 LinuxWindow::getLeft() const
+	i32 LinuxWindow::getLeft() const
 	{
-		INT32 x, y;
+		i32 x, y;
 		::Window child;
 		XTranslateCoordinates(LinuxPlatform::getXDisplay(), m->xWindow, DefaultRootWindow(LinuxPlatform::getXDisplay()),
 				0, 0, &x, &y, &child);
@@ -322,9 +322,9 @@ namespace bs
 		return x;
 	}
 
-	INT32 LinuxWindow::getTop() const
+	i32 LinuxWindow::getTop() const
 	{
-		INT32 x, y;
+		i32 x, y;
 		::Window child;
 		XTranslateCoordinates(LinuxPlatform::getXDisplay(), m->xWindow, DefaultRootWindow(LinuxPlatform::getXDisplay()),
 				0, 0, &x, &y, &child);
@@ -332,20 +332,20 @@ namespace bs
 		return y;
 	}
 
-	UINT32 LinuxWindow::getWidth() const
+	u32 LinuxWindow::getWidth() const
 	{
 		XWindowAttributes xwa;
 		XGetWindowAttributes(LinuxPlatform::getXDisplay(), m->xWindow, &xwa);
 
-		return (UINT32)xwa.width;
+		return (u32)xwa.width;
 	}
 
-	UINT32 LinuxWindow::getHeight() const
+	u32 LinuxWindow::getHeight() const
 	{
 		XWindowAttributes xwa;
 		XGetWindowAttributes(LinuxPlatform::getXDisplay(), m->xWindow, &xwa);
 
-		return (UINT32)xwa.height;
+		return (u32)xwa.height;
 	}
 
 	Vector2I LinuxWindow::windowToScreenPos(const Vector2I& windowPos) const
@@ -372,8 +372,8 @@ namespace bs
 
 	void LinuxWindow::setIcon(const PixelData& data)
 	{
-		constexpr UINT32 WIDTH = 128;
-		constexpr UINT32 HEIGHT = 128;
+		constexpr u32 WIDTH = 128;
+		constexpr u32 HEIGHT = 128;
 
 		PixelData resizedData(WIDTH, HEIGHT, 1, PF_RGBA8);
 		resizedData.allocateInternalBuffer();
@@ -383,7 +383,7 @@ namespace bs
 		::Display* display = LinuxPlatform::getXDisplay();
 
 		// Set icon the old way using IconPixmapHint.
-		Pixmap iconPixmap = LinuxPlatform::createPixmap(resizedData, (UINT32)XDefaultDepth(display,
+		Pixmap iconPixmap = LinuxPlatform::createPixmap(resizedData, (u32)XDefaultDepth(display,
 				XDefaultScreen(display)));
 
 		XWMHints* hints = XAllocWMHints();
@@ -401,8 +401,8 @@ namespace bs
 		Vector<long> wmIconData(2 + WIDTH * HEIGHT, 0);
 		wmIconData[0] = WIDTH;
 		wmIconData[1] = HEIGHT;
-		for (UINT32 y = 0; y < HEIGHT; y++)
-			for (UINT32 x = 0; x < WIDTH; x++)
+		for (u32 y = 0; y < HEIGHT; y++)
+			for (u32 x = 0; x < WIDTH; x++)
 				wmIconData[y * WIDTH + x + 2] = resizedData.getColorAt(x, y).getAsBGRA();
 
 		Atom iconAtom = XInternAtom(display, "_NET_WM_ICON", False);
@@ -524,12 +524,12 @@ namespace bs
 	{
 		Atom wmState = XInternAtom(LinuxPlatform::getXDisplay(), "_NET_WM_STATE", False);
 		Atom type;
-		INT32 format;
+		i32 format;
 		uint64_t length;
 		uint64_t remaining;
 		uint8_t* data = nullptr;
 
-		INT32 result = XGetWindowProperty(LinuxPlatform::getXDisplay(), m->xWindow, wmState,
+		i32 result = XGetWindowProperty(LinuxPlatform::getXDisplay(), m->xWindow, wmState,
 				0, 1024, False, XA_ATOM, &type, &format,
 				&length, &remaining, &data);
 
@@ -541,7 +541,7 @@ namespace bs
 
 			bool foundHorz = false;
 			bool foundVert = false;
-			for (UINT32 i = 0; i < length; i++)
+			for (u32 i = 0; i < length; i++)
 			{
 				if (atoms[i] == wmMaxHorz)
 					foundHorz = true;
@@ -562,12 +562,12 @@ namespace bs
 	{
 		Atom wmState = XInternAtom(LinuxPlatform::getXDisplay(), "WM_STATE", True);
 		Atom type;
-		INT32 format;
+		i32 format;
 		uint64_t length;
 		uint64_t remaining;
 		uint8_t* data = nullptr;
 
-		INT32 result = XGetWindowProperty(LinuxPlatform::getXDisplay(), m->xWindow, wmState,
+		i32 result = XGetWindowProperty(LinuxPlatform::getXDisplay(), m->xWindow, wmState,
 				0, 1024, False, AnyPropertyType, &type, &format,
 				&length, &remaining, &data);
 
@@ -650,7 +650,7 @@ namespace bs
 			Atom wmBypassCompositor = XInternAtom(LinuxPlatform::getXDisplay(), "_NET_WM_BYPASS_COMPOSITOR", False);
 			if (wmBypassCompositor)
 			{
-				static constexpr UINT32 enabled = 1;
+				static constexpr u32 enabled = 1;
 
 				XChangeProperty(LinuxPlatform::getXDisplay(), m->xWindow, wmBypassCompositor,
 						XA_CARDINAL, 32, PropModeReplace, (unsigned char*) &enabled, 1);
@@ -677,15 +677,15 @@ namespace bs
 
 	void LinuxWindow::setShowDecorations(bool show)
 	{
-		static constexpr UINT32 MWM_HINTS_DECORATIONS		= (1 << 1);
+		static constexpr u32 MWM_HINTS_DECORATIONS		= (1 << 1);
 
 		struct MotifHints
 		{
-			UINT32       flags;
-			UINT32       functions;
-			UINT32       decorations;
-			INT32        inputMode;
-			UINT32       status;
+			u32       flags;
+			u32       functions;
+			u32       decorations;
+			i32        inputMode;
+			u32       status;
 		};
 
 		if(show)

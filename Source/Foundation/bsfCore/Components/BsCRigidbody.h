@@ -145,19 +145,19 @@ namespace bs
 
 		/** @copydoc Rigidbody::setPositionSolverCount */
 		BS_SCRIPT_EXPORT(n:PositionSolverCount,pr:setter,hide)
-		void SetPositionSolverCount(UINT32 count);
+		void SetPositionSolverCount(u32 count);
 
 		/** @copydoc Rigidbody::getPositionSolverCount */
 		BS_SCRIPT_EXPORT(n:PositionSolverCount,pr:getter)
-		UINT32 GetPositionSolverCount() const { return mPositionSolverCount; }
+		u32 GetPositionSolverCount() const { return mPositionSolverCount; }
 
 		/** @copydoc Rigidbody::setVelocitySolverCount */
 		BS_SCRIPT_EXPORT(n:VelocitySolverCount,pr:setter,hide)
-		void SetVelocitySolverCount(UINT32 count);
+		void SetVelocitySolverCount(u32 count);
 
 		/** @copydoc Rigidbody::getVelocitySolverCount */
 		BS_SCRIPT_EXPORT(n:VelocitySolverCount,pr:getter)
-		UINT32 GetVelocitySolverCount() const { return mVelocitySolverCount; }
+		u32 GetVelocitySolverCount() const { return mVelocitySolverCount; }
 
 		/** Sets a value that determines which (if any) collision events are reported. */
 		BS_SCRIPT_EXPORT(n:CollisionReportMode,pr:setter)
@@ -284,9 +284,9 @@ namespace bs
 		Vector<HCollider> mChildren;
 		HJoint mParentJoint;
 
-		UINT32 mPositionSolverCount = 4;
-		UINT32 mVelocitySolverCount = 1;
-		RigidbodyFlag mFlags = (RigidbodyFlag)((UINT32)RigidbodyFlag::AutoTensors | (UINT32)RigidbodyFlag::AutoMass);
+		u32 mPositionSolverCount = 4;
+		u32 mVelocitySolverCount = 1;
+		RigidbodyFlag mFlags = (RigidbodyFlag)((u32)RigidbodyFlag::AutoTensors | (u32)RigidbodyFlag::AutoMass);
 		CollisionReportMode mCollisionReportMode = CollisionReportMode::None;
 		Vector3 mCMassPosition = Vector3::ZERO;
 		Quaternion mCMassRotation = Quaternion::IDENTITY;

@@ -24,13 +24,13 @@ namespace bs { namespace ct
 		bs_frame_mark();
 		{
 			// Generate a list of all sampler state overrides
-			FrameUnorderedMap<String, UINT32> overrideLookup;
+			FrameUnorderedMap<String, u32> overrideLookup;
 			Vector<SamplerOverride> overrides;
 
 			auto& samplerParams = shader->GetSamplerParams();
 			for(auto& samplerParam : samplerParams)
 			{
-				UINT32 paramIdx;
+				u32 paramIdx;
 				auto result = params->GetParamIndex(samplerParam.first, MaterialParams::ParamType::Sampler, GPDT_UNKNOWN,
 					0, paramIdx);
 
@@ -38,7 +38,7 @@ namespace bs { namespace ct
 				assert(result == MaterialParams::GetParamResult::Success);
 				const MaterialParamsBase::ParamData* materialParamData = params->GetParamData(paramIdx);
 
-				UINT32 overrideIdx = (UINT32)overrides.size();
+				u32 overrideIdx = (u32)overrides.size();
 				overrides.push_back(SamplerOverride());
 				SamplerOverride& override = overrides.back();
 
@@ -61,19 +61,19 @@ namespace bs { namespace ct
 					overrideLookup[entry] = overrideIdx;
 			}
 
-			UINT32 numPasses = paramsSet->GetNumPasses();
+			u32 numPasses = paramsSet->GetNumPasses();
 
 			// First pass just determine if we even need to override and count the number of sampler states
-			UINT32* numSetsPerPass = (UINT32*)bs_stack_alloc<UINT32>(numPasses);
-			memset(numSetsPerPass, 0, sizeof(UINT32) * numPasses);
+			u32* numSetsPerPass = (u32*)bs_stack_alloc<u32>(numPasses);
+			memset(numSetsPerPass, 0, sizeof(u32) * numPasses);
 
-			UINT32 totalNumSets = 0;
-			for (UINT32 i = 0; i < numPasses; i++)
+			u32 totalNumSets = 0;
+			for (u32 i = 0; i < numPasses; i++)
 			{
-				UINT32 maxSamplerSet = 0;
+				u32 maxSamplerSet = 0;
 
 				SPtr<GpuParams> paramsPtr = paramsSet->GetGpuParams(i);
-				for (UINT32 j = 0; j < GpuParamsSet::NUM_STAGES; j++)
+				for (u32 j = 0; j < GpuParamsSet::NUM_STAGES; j++)
 				{
 					GpuProgramType progType = (GpuProgramType)j;
 					SPtr<GpuParamDesc> paramDesc = paramsPtr->GetParamDesc(progType);
@@ -82,7 +82,7 @@ namespace bs { namespace ct
 
 					for (auto iter = paramDesc->Samplers.begin(); iter != paramDesc->Samplers.end(); ++iter)
 					{
-						UINT32 set = iter->second.Set;
+						u32 set = iter->second.Set;
 						maxSamplerSet = std::max(maxSamplerSet, set + 1);
 					}
 				}
@@ -91,15 +91,15 @@ namespace bs { namespace ct
 				totalNumSets += maxSamplerSet;
 			}
 			
-			UINT32 totalNumSamplerStates = 0;
-			UINT32* slotsPerSet = (UINT32*)bs_stack_alloc<UINT32>(totalNumSets);
-			memset(slotsPerSet, 0, sizeof(UINT32) * totalNumSets);
+			u32 totalNumSamplerStates = 0;
+			u32* slotsPerSet = (u32*)bs_stack_alloc<u32>(totalNumSets);
+			memset(slotsPerSet, 0, sizeof(u32) * totalNumSets);
 
-			UINT32* slotsPerSetIter = slotsPerSet;
-			for (UINT32 i = 0; i < numPasses; i++)
+			u32* slotsPerSetIter = slotsPerSet;
+			for (u32 i = 0; i < numPasses; i++)
 			{
 				SPtr<GpuParams> paramsPtr = paramsSet->GetGpuParams(i);
-				for (UINT32 j = 0; j < GpuParamsSet::NUM_STAGES; j++)
+				for (u32 j = 0; j < GpuParamsSet::NUM_STAGES; j++)
 				{
 					GpuProgramType progType = (GpuProgramType)j;
 					SPtr<GpuParamDesc> paramDesc = paramsPtr->GetParamDesc(progType);
@@ -108,25 +108,25 @@ namespace bs { namespace ct
 
 					for (auto iter = paramDesc->Samplers.begin(); iter != paramDesc->Samplers.end(); ++iter)
 					{
-						UINT32 set = iter->second.Set;
-						UINT32 slot = iter->second.Slot;
+						u32 set = iter->second.Set;
+						u32 slot = iter->second.Slot;
 						slotsPerSetIter[set] = std::max(slotsPerSetIter[set], slot + 1);
 					}
 				}
 
-				for(UINT32 j = 0; j < numSetsPerPass[i]; j++)
+				for(u32 j = 0; j < numSetsPerPass[i]; j++)
 					totalNumSamplerStates += slotsPerSetIter[j];
 
 				slotsPerSetIter += numSetsPerPass[i];
 			}
 
-			UINT32 outputSize = sizeof(MaterialSamplerOverrides) +
+			u32 outputSize = sizeof(MaterialSamplerOverrides) +
 				numPasses * sizeof(PassSamplerOverrides) +
-				totalNumSets * sizeof(UINT32*) +
-				totalNumSamplerStates * sizeof(UINT32) +
-				(UINT32)overrides.size() * sizeof(SamplerOverride);
+				totalNumSets * sizeof(u32*) +
+				totalNumSamplerStates * sizeof(u32) +
+				(u32)overrides.size() * sizeof(SamplerOverride);
 
-			UINT8* outputData = (UINT8*)bs_alloc(outputSize);
+			u8* outputData = (u8*)bs_alloc(outputSize);
 			output = (MaterialSamplerOverrides*)outputData;
 			outputData += sizeof(MaterialSamplerOverrides);
 
@@ -137,36 +137,36 @@ namespace bs { namespace ct
 			outputData += sizeof(PassSamplerOverrides) * numPasses;
 
 			slotsPerSetIter = slotsPerSet;
-			for (UINT32 i = 0; i < numPasses; i++)
+			for (u32 i = 0; i < numPasses; i++)
 			{
 				SPtr<GpuParams> paramsPtr = paramsSet->GetGpuParams(i);
 
 				PassSamplerOverrides& passOverrides = output->Passes[i];
 				passOverrides.NumSets = numSetsPerPass[i];
-				passOverrides.StateOverrides = (UINT32**)outputData;
-				outputData += sizeof(UINT32*) * passOverrides.NumSets;
+				passOverrides.StateOverrides = (u32**)outputData;
+				outputData += sizeof(u32*) * passOverrides.NumSets;
 
-				for (UINT32 j = 0; j < passOverrides.NumSets; j++)
+				for (u32 j = 0; j < passOverrides.NumSets; j++)
 				{
-					passOverrides.StateOverrides[j] = (UINT32*)outputData;
-					outputData += sizeof(UINT32) * slotsPerSetIter[j];
+					passOverrides.StateOverrides[j] = (u32*)outputData;
+					outputData += sizeof(u32) * slotsPerSetIter[j];
 				}
 
-				for (UINT32 j = 0; j < GpuParamsSet::NUM_STAGES; j++)
+				for (u32 j = 0; j < GpuParamsSet::NUM_STAGES; j++)
 				{
 					GpuProgramType progType = (GpuProgramType)j;
 					SPtr<GpuParamDesc> paramDesc = paramsPtr->GetParamDesc(progType);
 					if (paramDesc == nullptr)
 						continue;
 
-					UINT32 numStates = 0;
+					u32 numStates = 0;
 					for (auto iter = paramDesc->Samplers.begin(); iter != paramDesc->Samplers.end(); ++iter)
 					{
-						UINT32 set = iter->second.Set;
-						UINT32 slot = iter->second.Slot;
+						u32 set = iter->second.Set;
+						u32 slot = iter->second.Slot;
 						while (slot > numStates)
 						{
-							passOverrides.StateOverrides[set][numStates] = (UINT32)-1;
+							passOverrides.StateOverrides[set][numStates] = (u32)-1;
 							numStates++;
 						}
 
@@ -176,17 +176,17 @@ namespace bs { namespace ct
 						if (iterFind != overrideLookup.end())
 							passOverrides.StateOverrides[set][slot] = iterFind->second;
 						else
-							passOverrides.StateOverrides[set][slot] = (UINT32)-1;
+							passOverrides.StateOverrides[set][slot] = (u32)-1;
 					}
 				}
 
 				slotsPerSetIter += passOverrides.NumSets;
 			}
 
-			output->NumOverrides = (UINT32)overrides.size();
+			output->NumOverrides = (u32)overrides.size();
 			output->Overrides = (SamplerOverride*)outputData;
 
-			for(UINT32 i = 0; i < output->NumOverrides; i++)
+			for(u32 i = 0; i < output->NumOverrides; i++)
 			{
 				new (&output->Overrides[i].State) SPtr<SamplerState>();
 				output->Overrides[i] = overrides[i];
@@ -204,7 +204,7 @@ namespace bs { namespace ct
 	{
 		if (overrides != nullptr)
 		{
-			for (UINT32 i = 0; i < overrides->NumOverrides; i++)
+			for (u32 i = 0; i < overrides->NumOverrides; i++)
 				overrides->Overrides[i].State.~SPtr<SamplerState>();
 
 			bs_free(overrides);

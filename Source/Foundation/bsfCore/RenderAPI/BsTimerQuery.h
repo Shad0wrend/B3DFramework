@@ -59,7 +59,7 @@ namespace bs { namespace ct
 		 *
 		 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
 		 */
-		static SPtr<TimerQuery> Create(UINT32 deviceIdx = 0);
+		static SPtr<TimerQuery> Create(u32 deviceIdx = 0);
 
 	protected:
 		friend class QueryManager;

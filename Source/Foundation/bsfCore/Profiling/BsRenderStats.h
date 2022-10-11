@@ -28,26 +28,26 @@ namespace bs
 	{
 		RenderStatsData() = default;
 
-		UINT64 NumDrawCalls = 0;
-		UINT64 NumComputeCalls = 0;
-		UINT64 NumRenderTargetChanges = 0;
-		UINT64 NumPresents = 0;
-		UINT64 NumClears = 0;
+		u64 NumDrawCalls = 0;
+		u64 NumComputeCalls = 0;
+		u64 NumRenderTargetChanges = 0;
+		u64 NumPresents = 0;
+		u64 NumClears = 0;
 
-		UINT64 NumVertices = 0;
-		UINT64 NumPrimitives = 0;
+		u64 NumVertices = 0;
+		u64 NumPrimitives = 0;
 
-		UINT64 NumPipelineStateChanges = 0;
+		u64 NumPipelineStateChanges = 0;
 
-		UINT64 NumGpuParamBinds = 0;
-		UINT64 NumVertexBufferBinds = 0;
-		UINT64 NumIndexBufferBinds = 0;
+		u64 NumGpuParamBinds = 0;
+		u64 NumVertexBufferBinds = 0;
+		u64 NumIndexBufferBinds = 0;
 
-		UINT64 NumResourceWrites;
-		UINT64 NumResourceReads;
+		u64 NumResourceWrites;
+		u64 NumResourceReads;
 
-		UINT64 NumObjectsCreated;
-		UINT64 NumObjectsDestroyed;
+		u64 NumObjectsCreated;
+		u64 NumObjectsDestroyed;
 	};
 
 	/**
@@ -77,10 +77,10 @@ namespace bs
 		void IncNumClears() { mData.NumClears++; }
 
 		/** Increments vertex draw counter indicating how many vertices were sent to the pipeline. */
-		void AddNumVertices(UINT32 count) { mData.NumVertices += count; }
+		void AddNumVertices(u32 count) { mData.NumVertices += count; }
 
 		/** Increments primitive draw counter indicating how many primitives were sent to the pipeline. */
-		void AddNumPrimitives(UINT32 count) { mData.NumPrimitives += count; }
+		void AddNumPrimitives(u32 count) { mData.NumPrimitives += count; }
 
 		/** Increments pipeline state change counter indicating how many times was a pipeline state bound. */
 		void IncNumPipelineStateChanges() { mData.NumPipelineStateChanges++; }
@@ -99,7 +99,7 @@ namespace bs
 		 *
 		 * @param[in]	category	Category of the resource.
 		 */
-		void IncResCreated(UINT32 category)
+		void IncResCreated(u32 category)
 		{
 			// TODO - I'm ignoring resourceType for now. Later I will want to
 			// count object creation/destruction/read/write per type. I will
@@ -117,21 +117,21 @@ namespace bs
 		 *
 		 * @param[in]	category	Category of the resource.
 		 */
-		void IncResDestroyed(UINT32 category) { mData.NumObjectsDestroyed++; }
+		void IncResDestroyed(u32 category) { mData.NumObjectsDestroyed++; }
 
 		/**
 		 * Increments GPU resource read counter.
 		 *
 		 * @param[in]	category	Category of the resource.
 		 */
-		void IncResRead(UINT32 category) { mData.NumResourceReads++; }
+		void IncResRead(u32 category) { mData.NumResourceReads++; }
 
 		/**
 		 * Increments GPU resource write counter.
 		 *
 		 * @param[in]	category	Category of the resource.
 		 */
-		void IncResWrite(UINT32 category) { mData.NumResourceWrites++; }
+		void IncResWrite(u32 category) { mData.NumResourceWrites++; }
 
 		/**
 		 * Returns an object containing various rendering statistics.
@@ -146,7 +146,7 @@ namespace bs
 	};
 
 #if BS_PROFILING_ENABLED
-	#define BS_INC_RENDER_STAT_CAT(Stat, Category) RenderStats::Instance().Inc##Stat((UINT32)Category)
+	#define BS_INC_RENDER_STAT_CAT(Stat, Category) RenderStats::Instance().Inc##Stat((u32)Category)
 	#define BS_INC_RENDER_STAT(Stat) RenderStats::Instance().Inc##Stat()
 	#define BS_ADD_RENDER_STAT(Stat, Count) RenderStats::Instance().Add##Stat(Count)
 #else

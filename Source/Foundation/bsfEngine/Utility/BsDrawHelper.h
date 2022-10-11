@@ -53,22 +53,22 @@ namespace bs
 		void SetTransform(const Matrix4& transform);
 
 		/** Sets the layer bitfield that can be used for filtering which objects are output into the final mesh. */
-		void SetLayer(UINT64 layer);
+		void SetLayer(u64 layer);
 
 		/**	Records a solid cuboid with the specified properties in the internal draw queue. */
 		void Cube(const Vector3& position, const Vector3& extents);
 
 		/**	Records a solid sphere with the specified properties in the internal draw queue. */
-		void Sphere(const Vector3& position, float radius, UINT32 quality = 1);
+		void Sphere(const Vector3& position, float radius, u32 quality = 1);
 
 		/**	Records a wireframe cube with the specified properties in the internal draw queue. */
 		void WireCube(const Vector3& position, const Vector3& extents);
 
 		/**	Records a wireframe sphere with the specified properties in the internal draw queue. */
-		void WireSphere(const Vector3& position, float radius, UINT32 quality = 10);
+		void WireSphere(const Vector3& position, float radius, u32 quality = 10);
 
 		/**	Records a wireframe hemisphere with the specified properties in the internal draw queue. */
-		void WireHemisphere(const Vector3& position, float radius, UINT32 quality = 10);
+		void WireHemisphere(const Vector3& position, float radius, u32 quality = 10);
 
 		/**	Records a line with the specified properties in the internal draw queue. */
 		void Line(const Vector3& start, const Vector3& end);
@@ -84,25 +84,25 @@ namespace bs
 
 		/**	Records a solid cone with the specified properties in the internal draw queue. */
 		void Cone(const Vector3& base, const Vector3& normal, float height, float radius,
-			const Vector2& scale = Vector2::ONE, UINT32 quality = 10);
+			const Vector2& scale = Vector2::ONE, u32 quality = 10);
 
 		/**	Records a wire cone with the specified properties in the internal draw queue. */
 		void WireCone(const Vector3& base, const Vector3& normal, float height, float radius,
-			const Vector2& scale = Vector2::ONE, UINT32 quality = 10);
+			const Vector2& scale = Vector2::ONE, u32 quality = 10);
 
 		/**	Records a solid disc with the specified properties in the internal draw queue. */
-		void Disc(const Vector3& position, const Vector3& normal, float radius, UINT32 quality = 10);
+		void Disc(const Vector3& position, const Vector3& normal, float radius, u32 quality = 10);
 
 		/**	Records a wireframe disc with the specified properties in the internal draw queue. */
-		void WireDisc(const Vector3& position, const Vector3& normal, float radius, UINT32 quality = 10);
+		void WireDisc(const Vector3& position, const Vector3& normal, float radius, u32 quality = 10);
 
 		/**	Records a solid arc with the specified properties in the internal draw queue. */
 		void Arc(const Vector3& position, const Vector3& normal, float radius, Degree startAngle, Degree amountAngle,
-			UINT32 quality = 10);
+			u32 quality = 10);
 
 		/**	Records a wireframe arc with the specified properties in the internal draw queue. */
 		void WireArc(const Vector3& position, const Vector3& normal, float radius, Degree startAngle, Degree amountAngle,
-			UINT32 quality = 10);
+			u32 quality = 10);
 
 		/** Records a 3D mesh to be drawn as wireframe in the internal draw queue. */
 		void WireMesh(const SPtr<MeshData>& meshData);
@@ -118,7 +118,7 @@ namespace bs
 		 * @param[in]	font		Font to use for rendering the text's characters.
 		 * @param[in]	size		Size of the characters, in points.
 		 */
-		void Text(const Vector3& position, const String& text, const HFont& font, UINT32 size = 10);
+		void Text(const Vector3& position, const String& text, const HFont& font, u32 size = 10);
 
 		/**	Clears all recorded shapes. */
 		void Clear();
@@ -135,7 +135,7 @@ namespace bs
 		 * @return				Generated mesh data.
 		 */
 		Vector<ShapeMeshData> BuildMeshes(SortType sorting = SortType::None,
-			const Camera* camera = nullptr, UINT64 layers = 0xFFFFFFFFFFFFFFFF);
+			const Camera* camera = nullptr, u64 layers = 0xFFFFFFFFFFFFFFFF);
 
 	private:
 		struct CommonData
@@ -143,7 +143,7 @@ namespace bs
 			Color Color;
 			Matrix4 Transform;
 			Vector3 Center;
-			UINT64 Layer;
+			u64 Layer;
 		};
 
 		struct CubeData : CommonData
@@ -156,7 +156,7 @@ namespace bs
 		{
 			Vector3 Position;
 			float Radius;
-			UINT32 Quality;
+			u32 Quality;
 		};
 
 		struct LineData : CommonData
@@ -191,7 +191,7 @@ namespace bs
 			float Height;
 			float Radius;
 			Vector2 Scale;
-			UINT32 Quality;
+			u32 Quality;
 		};
 
 		struct DiscData : CommonData
@@ -199,7 +199,7 @@ namespace bs
 			Vector3 Position;
 			Vector3 Normal;
 			float Radius;
-			UINT32 Quality;
+			u32 Quality;
 		};
 
 		struct ArcData : CommonData
@@ -209,7 +209,7 @@ namespace bs
 			float Radius;
 			Degree StartAngle;
 			Degree AmountAngle;
-			UINT32 Quality;
+			u32 Quality;
 		};
 
 		struct Text2DData : CommonData
@@ -217,7 +217,7 @@ namespace bs
 			Vector3 Position;
 			String Text;
 			HFont Font;
-			UINT32 Size;
+			u32 Size;
 		};
 
 		struct WireMeshData : CommonData
@@ -225,12 +225,12 @@ namespace bs
 			SPtr<MeshData> MeshData;
 		};
 
-		static const UINT32 VERTEX_BUFFER_GROWTH;
-		static const UINT32 INDEX_BUFFER_GROWTH;
+		static const u32 VERTEX_BUFFER_GROWTH;
+		static const u32 INDEX_BUFFER_GROWTH;
 
 		Color mColor;
 		Matrix4 mTransform;
-		UINT64 mLayer;
+		u64 mLayer;
 
 		Vector<CubeData> mSolidCubeData;
 		Vector<CubeData> mWireCubeData;

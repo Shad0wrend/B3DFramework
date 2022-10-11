@@ -42,7 +42,7 @@ namespace bs
 	{
 		SerializedEntry() = default;
 
-		UINT32 FieldId = 0;
+		u32 FieldId = 0;
 		SPtr<SerializedInstance> Serialized;
 
 		/************************************************************************/
@@ -59,8 +59,8 @@ namespace bs
 	{
 		SerializedSubObject() = default;
 
-		UINT32 TypeId = 0;
-		UnorderedMap<UINT32, SerializedEntry> Entries;
+		u32 TypeId = 0;
+		UnorderedMap<u32, SerializedEntry> Entries;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -92,7 +92,7 @@ namespace bs
 	struct BS_UTILITY_EXPORT SerializedObject : SerializedInstance
 	{
 		/** Returns the RTTI type ID for the most-derived class of this object. */
-		UINT32 GetRootTypeId() const;
+		u32 GetRootTypeId() const;
 
 		/** @copydoc SerializedInstance::clone */
 		SPtr<SerializedInstance> Clone(bool cloneData = true) ;
@@ -146,8 +146,8 @@ namespace bs
 		/** @copydoc SerializedInstance::clone */
 		SPtr<SerializedInstance> Clone(bool cloneData = true) ;
 
-		UINT8* Value = nullptr;
-		UINT32 Size = 0;
+		u8* Value = nullptr;
+		u32 Size = 0;
 		bool OwnsMemory = false;
 
 		/************************************************************************/
@@ -168,8 +168,8 @@ namespace bs
 		SPtr<SerializedInstance> Clone(bool cloneData = true) ;
 
 		SPtr<DataStream> Stream;
-		UINT32 Offset = 0;
-		UINT32 Size = 0;
+		u32 Offset = 0;
+		u32 Size = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -185,7 +185,7 @@ namespace bs
 	{
 		SerializedArrayEntry() = default;
 
-		UINT32 Index = 0;
+		u32 Index = 0;
 		SPtr<SerializedInstance> Serialized;
 
 		/************************************************************************/
@@ -205,8 +205,8 @@ namespace bs
 		/** @copydoc SerializedInstance::clone */
 		SPtr<SerializedInstance> Clone(bool cloneData = true) ;
 
-		UnorderedMap<UINT32, SerializedArrayEntry> Entries;
-		UINT32 NumElements = 0;
+		UnorderedMap<u32, SerializedArrayEntry> Entries;
+		u32 NumElements = 0;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/

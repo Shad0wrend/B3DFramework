@@ -89,7 +89,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializationContext;
 		}
@@ -111,7 +111,7 @@ namespace bs
 		return GetRttiStatic();
 	}
 
-	SPtr<IReflectable> rtti_create(UINT32 rttiId)
+	SPtr<IReflectable> rtti_create(u32 rttiId)
 	{
 		return IReflectable::CreateInstanceFromTypeId(rttiId);
 	}

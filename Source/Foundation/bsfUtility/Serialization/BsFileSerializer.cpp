@@ -29,13 +29,13 @@ namespace bs
 			return;
 
 		size_t startPos = mOutputStream->Tell();
-		mOutputStream->Skip(sizeof(UINT32));
+		mOutputStream->Skip(sizeof(u32));
 
 		BinarySerializer bs;
 		bs.Encode(object, mOutputStream, BinarySerializerFlag::None, context);
 
 		size_t endPos = mOutputStream->Tell();
-		auto size = (UINT32)(endPos - startPos - sizeof(UINT32));
+		auto size = (u32)(endPos - startPos - sizeof(u32));
 		
 		mOutputStream->Seek(startPos);
 		mOutputStream->Write((char*)&size, sizeof(size));
@@ -49,10 +49,10 @@ namespace bs
 		if (mInputStream == nullptr)
 			return;
 
-		if (mInputStream->Size() > std::numeric_limits<UINT32>::max())
+		if (mInputStream->Size() > std::numeric_limits<u32>::max())
 		{
 			BS_EXCEPT(InternalErrorException,
-				"File size is larger that UINT32 can hold. Ask a programmer to use a bigger data type.");
+				"File size is larger that u32 can hold. Ask a programmer to use a bigger data type.");
 		}
 	}
 
@@ -61,7 +61,7 @@ namespace bs
 		if (mInputStream->Eof())
 			return nullptr;
 
-		UINT32 objectSize = 0;
+		u32 objectSize = 0;
 		mInputStream->Read(&objectSize, sizeof(objectSize));
 
 		BinarySerializer bs;
@@ -70,12 +70,12 @@ namespace bs
 		return object;
 	}
 
-	UINT32 FileDecoder::GetSize() const
+	u32 FileDecoder::GetSize() const
 	{
 		if (mInputStream->Eof())
 			return 0;
 
-		UINT32 objectSize = 0;
+		u32 objectSize = 0;
 		mInputStream->Read(&objectSize, sizeof(objectSize));
 		mInputStream->Seek(mInputStream->Tell() - sizeof(objectSize));
 
@@ -87,7 +87,7 @@ namespace bs
 		if (mInputStream->Eof())
 			return;
 
-		UINT32 objectSize = 0;
+		u32 objectSize = 0;
 		mInputStream->Read(&objectSize, sizeof(objectSize));
 		mInputStream->Skip(objectSize);
 	}

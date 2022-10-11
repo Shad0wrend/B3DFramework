@@ -12,11 +12,11 @@
 
 namespace bs
 {
-	SPtr<RenderWindow> VulkanRenderWindowManager::CreateImpl(RENDER_WINDOW_DESC& desc, UINT32 windowId, const SPtr<RenderWindow>& parentWindow)
+	SPtr<RenderWindow> VulkanRenderWindowManager::CreateImpl(RENDER_WINDOW_DESC& desc, u32 windowId, const SPtr<RenderWindow>& parentWindow)
 	{
 		if(parentWindow != nullptr)
 		{
-			UINT64 hWnd;
+			u64 hWnd;
 			parentWindow->GetCustomAttribute("WINDOW", &hWnd);
 			desc.PlatformSpecific["parentWindowHandle"] = toString(hWnd);
 		}

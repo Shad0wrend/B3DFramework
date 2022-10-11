@@ -13,9 +13,9 @@ namespace bs
 			return begin;
 
 		// Determine the number of bytes used by the character
-		UINT32 numBytes;
+		u32 numBytes;
 
-		UINT8 firstByte = (UINT8)*begin;
+		u8 firstByte = (u8)*begin;
 		if (firstByte < 192)
 			numBytes = 1;
 		else if (firstByte < 224)
@@ -40,16 +40,16 @@ namespace bs
 		output = 0;
 		switch(numBytes)
 		{
-		case 6: output += (UINT8)(*begin); ++begin; output <<= 6; BS_FALLTHROUGH;
-		case 5: output += (UINT8)(*begin); ++begin; output <<= 6; BS_FALLTHROUGH;
-		case 4: output += (UINT8)(*begin); ++begin; output <<= 6; BS_FALLTHROUGH;
-		case 3: output += (UINT8)(*begin); ++begin; output <<= 6; BS_FALLTHROUGH;
-		case 2: output += (UINT8)(*begin); ++begin; output <<= 6; BS_FALLTHROUGH;
-		case 1: output += (UINT8)(*begin); ++begin; BS_FALLTHROUGH;
+		case 6: output += (u8)(*begin); ++begin; output <<= 6; BS_FALLTHROUGH;
+		case 5: output += (u8)(*begin); ++begin; output <<= 6; BS_FALLTHROUGH;
+		case 4: output += (u8)(*begin); ++begin; output <<= 6; BS_FALLTHROUGH;
+		case 3: output += (u8)(*begin); ++begin; output <<= 6; BS_FALLTHROUGH;
+		case 2: output += (u8)(*begin); ++begin; output <<= 6; BS_FALLTHROUGH;
+		case 1: output += (u8)(*begin); ++begin; BS_FALLTHROUGH;
 		default: break;
 		}
 
-		constexpr UINT32 offsets[6] = { 0x00000000, 0x00003080, 0x000E2080, 0x03C82080, 0xFA082080, 0x82082080 };
+		constexpr u32 offsets[6] = { 0x00000000, 0x00003080, 0x000E2080, 0x03C82080, 0xFA082080, 0x82082080 };
 		output -= offsets[numBytes - 1];
 
 		return begin;
@@ -57,7 +57,7 @@ namespace bs
 
 	/** Converts an UTF-32 encoded character into an (possibly multibyte) UTF-8 character. */
 	template<typename T>
-	T UTF32To8(char32_t input, T output, UINT32 maxElems, char invalidChar = 0)
+	T UTF32To8(char32_t input, T output, u32 maxElems, char invalidChar = 0)
 	{
 		// No place to write the character
 		if (maxElems == 0)
@@ -73,7 +73,7 @@ namespace bs
 		}
 
 		// Determine the number of bytes used by the character
-		UINT32 numBytes;
+		u32 numBytes;
 		if (input <  0x80)
 			numBytes = 1;
 		else if (input < 0x800)
@@ -93,7 +93,7 @@ namespace bs
 		}
 
 		// Encode the character
-		constexpr UINT8 headers[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
+		constexpr u8 headers[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
 
 		char bytes[4];
 		switch (numBytes)
@@ -149,7 +149,7 @@ namespace bs
 
 	/** Converts an UTF-32 encoded character into an UTF-16 character. */
 	template<typename T>
-	T UTF32To16(char32_t input, T output, UINT32 maxElems, char16_t invalidChar = 0)
+	T UTF32To16(char32_t input, T output, u32 maxElems, char16_t invalidChar = 0)
 	{
 		// No place to write the character
 		if (maxElems == 0)
@@ -232,7 +232,7 @@ namespace bs
 	}
 
 	template<typename T>
-	T UTF32ToWide(char32_t input, T output, UINT32 maxElems, wchar_t invalidChar = 0)
+	T UTF32ToWide(char32_t input, T output, u32 maxElems, wchar_t invalidChar = 0)
 	{
 		if(sizeof(wchar_t) == 4) // Assuming UTF-32 (i.e. Unix)
 		{
@@ -392,9 +392,9 @@ namespace bs
 		return output;
 	}
 
-	UINT32 UTF8::Count(const String& input)
+	u32 UTF8::Count(const String& input)
 	{
-		UINT32 length = 0;
+		u32 length = 0;
 		for (char i : input)
 		{
 			// Include only characters that don't start with bits 10
@@ -404,10 +404,10 @@ namespace bs
 		return length;
 	}
 
-	UINT32 UTF8::CharToByteIndex(const String& input, UINT32 charIdx)
+	u32 UTF8::CharToByteIndex(const String& input, u32 charIdx)
 	{
-		UINT32 curChar = 0;
-		UINT32 curByte = 0;
+		u32 curChar = 0;
+		u32 curByte = 0;
 		for (char i : input)
 		{
 			// Include only characters that don't start with bits 10
@@ -422,14 +422,14 @@ namespace bs
 			curByte++;
 		}
 
-		return (UINT32)input.size();
+		return (u32)input.size();
 	}
 
-	UINT32 UTF8::CharByteCount(const String& input, UINT32 charIdx)
+	u32 UTF8::CharByteCount(const String& input, u32 charIdx)
 	{
-		const UINT32 byteIdx = CharToByteIndex(input, charIdx);
+		const u32 byteIdx = CharToByteIndex(input, charIdx);
 
-		UINT32 count = 1;
+		u32 count = 1;
 		for(auto i = (size_t)byteIdx + 1; i < input.size(); i++)
 		{
 			if((i & 0xc0) != 0x80)

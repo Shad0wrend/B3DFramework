@@ -29,7 +29,7 @@ namespace bs { namespace ct
 		RMAT_DEF("PPDownsample.bsl");
 
 		/** Helper method used for initializing variations of this material. */
-		template<UINT32 quality, bool MSAA>
+		template<u32 quality, bool MSAA>
 		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
@@ -51,7 +51,7 @@ namespace bs { namespace ct
 		static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& target);
 
 		/** Returns the downsample material variation matching the provided parameters. */
-		static DownsampleMat* GetVariation(UINT32 quality, bool msaa);
+		static DownsampleMat* GetVariation(u32 quality, bool msaa);
 
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
@@ -89,17 +89,17 @@ namespace bs { namespace ct
 		 */
 		static Vector2 GetHistogramScaleOffset(const AutoExposureSettings& settings);
 
-		static const UINT32 THREAD_GROUP_SIZE_X = 8;
-		static const UINT32 THREAD_GROUP_SIZE_Y = 8;
+		static const u32 THREAD_GROUP_SIZE_X = 8;
+		static const u32 THREAD_GROUP_SIZE_Y = 8;
 		
-		static const UINT32 HISTOGRAM_NUM_TEXELS = (THREAD_GROUP_SIZE_X * THREAD_GROUP_SIZE_Y) / 4;
+		static const u32 HISTOGRAM_NUM_TEXELS = (THREAD_GROUP_SIZE_X * THREAD_GROUP_SIZE_Y) / 4;
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 		GpuParamTexture mSceneColor;
 		GpuParamLoadStoreTexture mOutputTex;
 
-		static const UINT32 LOOP_COUNT_X = 8;
-		static const UINT32 LOOP_COUNT_Y = 8;
+		static const u32 LOOP_COUNT_X = 8;
+		static const u32 LOOP_COUNT_Y = 8;
 	};
 
 	BS_PARAM_BLOCK_BEGIN(EyeAdaptHistogramReduceParamDef)
@@ -283,7 +283,7 @@ namespace bs { namespace ct
 		static CreateTonemapLUTMat* GetVariation(bool is3D);
 
 		/** Size of the 3D color lookup table. */
-		static const UINT32 LUT_SIZE = 32;
+		static const u32 LUT_SIZE = 32;
 	private:
 		/** Populates the parameter block buffers using the provided settings. */
 		void PopulateParamBuffers(const RenderSettings& settings);
@@ -402,7 +402,7 @@ namespace bs { namespace ct
 	BS_PARAM_BLOCK_BEGIN(ScreenSpaceLensFlareParamDef)
 		BS_PARAM_BLOCK_ENTRY(float, gThreshold)
 		BS_PARAM_BLOCK_ENTRY(float, gGhostSpacing)
-		BS_PARAM_BLOCK_ENTRY(INT32, gGhostCount)
+		BS_PARAM_BLOCK_ENTRY(i32, gGhostCount)
 		BS_PARAM_BLOCK_ENTRY(float, gHaloRadius)
 		BS_PARAM_BLOCK_ENTRY(float, gHaloThickness)
 		BS_PARAM_BLOCK_ENTRY(float, gHaloThreshold)
@@ -418,7 +418,7 @@ namespace bs { namespace ct
 		RMAT_DEF("PPScreenSpaceLensFlare.bsl");
 
 		/** Helper method used for initializing variations of this material. */
-		template<UINT32 HALO_MODE, bool CHROMATIC_ABERRATION>
+		template<u32 HALO_MODE, bool CHROMATIC_ABERRATION>
 		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
@@ -616,7 +616,7 @@ namespace bs { namespace ct
 		static GaussianBlurMat* GetVariation(bool additive);
 	private:
 		/** Calculates weights and offsets for the standard distribution of the specified filter size. */
-		static UINT32 CalcStdDistribution(float filterRadius, std::array<float, MAX_BLUR_SAMPLES>& weights,
+		static u32 CalcStdDistribution(float filterRadius, std::array<float, MAX_BLUR_SAMPLES>& weights,
 			std::array<float, MAX_BLUR_SAMPLES>& offsets);
 
 		/** Calculates the radius of the blur kernel depending on the source texture size and provided scale. */
@@ -678,7 +678,7 @@ namespace bs { namespace ct
 		 * Returns the texture generated after the shader was executed. Only valid to call this in-between calls to
 		 * execute() & release(), with @p idx value 0 or 1.
 		 */
-		SPtr<PooledRenderTexture> GetOutput(UINT32 idx);
+		SPtr<PooledRenderTexture> GetOutput(u32 idx);
 
 		/**
 		 * Releases the interally allocated output render textures. Must be called after each call to execute(), when the
@@ -855,8 +855,8 @@ namespace bs { namespace ct
 			return variation;
 		}
 	public:
-		static constexpr UINT32 NEAR_FAR_PADDING = 128;
-		static constexpr UINT32 QUADS_PER_TILE = 8;
+		static constexpr u32 NEAR_FAR_PADDING = 128;
+		static constexpr u32 QUADS_PER_TILE = 8;
 
 		BokehDOFMat();
 
@@ -909,7 +909,7 @@ namespace bs { namespace ct
 		{
 			static ShaderVariation variation = ShaderVariation(
 			{
-				ShaderVariation::Param("MSAA_MODE", (INT32)MSAA_MODE)
+				ShaderVariation::Param("MSAA_MODE", (i32)MSAA_MODE)
 			});
 
 			return variation;
@@ -943,7 +943,7 @@ namespace bs { namespace ct
 	};
 
 	BS_PARAM_BLOCK_BEGIN(MotionBlurParamDef)
-		BS_PARAM_BLOCK_ENTRY(UINT32, gHalfNumSamples)
+		BS_PARAM_BLOCK_ENTRY(u32, gHalfNumSamples)
 	BS_PARAM_BLOCK_END
 
 	/** Shader that blurs the scene depending on camera and/or object movement. */
@@ -1007,7 +1007,7 @@ namespace bs { namespace ct
 		 * @param[in]	dstRect		Destination rectangle to limit the writes to.
 		 * @param[in]	output		Output target to which to write to results.
 		 */
-		void Execute(const SPtr<Texture>& source, UINT32 srcMip, const Rect2& srcRect, const Rect2& dstRect,
+		void Execute(const SPtr<Texture>& source, u32 srcMip, const Rect2& srcRect, const Rect2& dstRect,
 			const SPtr<RenderTexture>& output);
 
 		/**
@@ -1291,7 +1291,7 @@ namespace bs { namespace ct
 		RMAT_DEF("PPSSRTrace.bsl");
 
 		/** Helper method used for initializing variations of this material. */
-		template<UINT32 quality, bool msaa, bool singleSampleMSAA>
+		template<u32 quality, bool msaa, bool singleSampleMSAA>
 		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
@@ -1336,7 +1336,7 @@ namespace bs { namespace ct
 		 *									evaluated. Otherwise all samples will be evaluated.
 		 * @return							Requested variation of the material.
 		 */
-		static SSRTraceMat* GetVariation(UINT32 quality, bool msaa, bool singleSampleMSAA = false);
+		static SSRTraceMat* GetVariation(u32 quality, bool msaa, bool singleSampleMSAA = false);
 	private:
 		SPtr<GpuParamBlockBuffer> mParamBuffer;
 		GBufferParams mGBufferParams;
@@ -1474,7 +1474,7 @@ namespace bs { namespace ct
 		RMAT_DEF("MSAACoverage.bsl");
 
 		/** Helper method used for initializing variations of this material. */
-		template<UINT32 msaa>
+		template<u32 msaa>
 		static const ShaderVariation& GetVariation()
 		{
 			static ShaderVariation variation = ShaderVariation(
@@ -1496,7 +1496,7 @@ namespace bs { namespace ct
 		void Execute(const RendererView& view, GBufferTextures gbuffer);
 
 		/** Returns the material variation matching the provided parameters. */
-		static MSAACoverageMat* GetVariation(UINT32 msaaCount);
+		static MSAACoverageMat* GetVariation(u32 msaaCount);
 	private:
 		GBufferParams mGBufferParams;
 	};

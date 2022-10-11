@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	UINT32 calcIndexSize(IndexType type)
+	u32 calcIndexSize(IndexType type)
 	{
 		switch (type)
 		{
@@ -26,7 +26,7 @@ namespace bs
 			BS_EXCEPT(InvalidParametersException, "Index buffer index count is not allowed to be zero.");
 	}
 
-	IndexBufferProperties::IndexBufferProperties(IndexType idxType, UINT32 numIndices)
+	IndexBufferProperties::IndexBufferProperties(IndexType idxType, u32 numIndices)
 		:mIndexType(idxType), mNumIndices(numIndices), mIndexSize(calcIndexSize(idxType))
 	{ }
 
@@ -83,7 +83,7 @@ namespace bs
 		CoreObject::Initialize();
 	}
 
-	void* IndexBuffer::Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
+	void* IndexBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx)
 	{
 #if BS_PROFILING_ENABLED
 		if (options == GBL_READ_ONLY || options == GBL_READ_WRITE)
@@ -105,29 +105,29 @@ namespace bs
 		mBuffer->Unlock();
 	}
 
-	void IndexBuffer::ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
+	void IndexBuffer::ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx, u32 queueIdx)
 	{
 		mBuffer->ReadData(offset, length, dest, deviceIdx, queueIdx);
 
 		BS_INC_RENDER_STAT_CAT(ResRead, RenderStatObject_IndexBuffer);
 	}
 
-	void IndexBuffer::WriteData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags,
-		UINT32 queueIdx)
+	void IndexBuffer::WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags,
+		u32 queueIdx)
 	{
 		mBuffer->WriteData(offset, length, source, writeFlags, queueIdx);
 
 		BS_INC_RENDER_STAT_CAT(ResWrite, RenderStatObject_IndexBuffer);
 	}
 
-	void IndexBuffer::CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
+	void IndexBuffer::CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length,
 		bool discardWholeBuffer, const SPtr<CommandBuffer>& commandBuffer)
 	{
 		auto& srcIndexBuffer = static_cast<IndexBuffer&>(srcBuffer);
 		mBuffer->CopyData(*srcIndexBuffer.mBuffer, srcOffset, dstOffset, length, discardWholeBuffer, commandBuffer);
 	}
 
-	SPtr<GpuBuffer> IndexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat format, UINT32 elementSize)
+	SPtr<GpuBuffer> IndexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat format, u32 elementSize)
 	{
 		if((mUsage & GBU_LOADSTORE) != GBU_LOADSTORE)
 			return nullptr;
@@ -145,7 +145,7 @@ namespace bs
 			}
 		}
 
-		UINT32 elemSize = type == GBT_STANDARD ? bs::GpuBuffer::GetFormatSize(format) : elementSize;
+		u32 elemSize = type == GBT_STANDARD ? bs::GpuBuffer::GetFormatSize(format) : elementSize;
 		if((mBuffer->GetSize() % elemSize) != 0)
 		{
 			BS_LOG(Error, RenderBackend,

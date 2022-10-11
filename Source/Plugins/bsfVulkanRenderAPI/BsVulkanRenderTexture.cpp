@@ -18,7 +18,7 @@ namespace bs
 
 	namespace ct
 	{
-	VulkanRenderTexture::VulkanRenderTexture(const RENDER_TEXTURE_DESC& desc, UINT32 deviceIdx)
+	VulkanRenderTexture::VulkanRenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 		:RenderTexture(desc, deviceIdx), mProperties(desc, false), mDeviceIdx(deviceIdx), mFramebuffer(nullptr)
 	{
 		
@@ -42,7 +42,7 @@ namespace bs
 		fbDesc.Height = mProperties.Height;
 		fbDesc.Layers = mProperties.NumSlices;
 
-		for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; ++i)
+		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; ++i)
 		{
 			if (mColorSurfaces[i] == nullptr)
 				continue;

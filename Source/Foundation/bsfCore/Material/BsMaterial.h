@@ -39,13 +39,13 @@ namespace bs
 	/** Structure used when searching for a specific technique in a Material. */
 	struct FIND_TECHNIQUE_DESC
 	{
-		static constexpr UINT32 MAX_NUM_TAGS = 10;
+		static constexpr u32 MAX_NUM_TAGS = 10;
 
 		/** A set of tags that the technique must have. */
 		StringID Tags[MAX_NUM_TAGS];
 
 		/** Number of valid tags in the @p tags array. */
-		UINT32 NumTags = 0;
+		u32 NumTags = 0;
 
 		/** Specified variation of the technique. Parameters not specified in the variation are assumed to be irrelevant. */
 		const ShaderVariation* Variation = nullptr;
@@ -83,7 +83,7 @@ namespace bs
 				:Data(nullptr), Size(0)
 			{ }
 
-			StructData(UINT32 _size)
+			StructData(u32 _size)
 				:Size(_size)
 			{
 				Data = std::shared_ptr<void>(bs_alloc(_size), (void(*)(void*))&bs_free);
@@ -98,7 +98,7 @@ namespace bs
 			}
 
 			SPtr<void> Data;
-			UINT32 Size;
+			u32 Size;
 		};
 
 		MaterialBase() = default;
@@ -153,10 +153,10 @@ namespace bs
 		const ShaderVariation& GetVariation() const { return mVariation; }
 
 		/** Returns the total number of techniques supported by this material. */
-		UINT32 GetNumTechniques() const { return (UINT32)mTechniques.size(); }
+		u32 GetNumTechniques() const { return (u32)mTechniques.size(); }
 
 		/** Returns the technique at the specified index. */
-		const SPtr<TechniqueType>& GetTechnique(UINT32 idx) const { return mTechniques[idx]; }
+		const SPtr<TechniqueType>& GetTechnique(u32 idx) const { return mTechniques[idx]; }
 
 		/**
 		 * Attempts to find a technique matching the specified variation and tags among the supported techniques.
@@ -166,13 +166,13 @@ namespace bs
 		 * @return							First technique that matches the tags & variation parameters specified in
 		 *									@p desc.
 		 */
-		UINT32 FindTechnique(const FIND_TECHNIQUE_DESC& desc) const;
+		u32 FindTechnique(const FIND_TECHNIQUE_DESC& desc) const;
 
 		/**
 		 * Finds the index of the default (primary) technique to use. This will be the first technique that matches the
 		 * currently set variation parameters (if any).
 		 */
-		UINT32 GetDefaultTechnique() const;
+		u32 GetDefaultTechnique() const;
 
 		/**
 		 * Returns the number of passes that are used by the technique at the specified index.
@@ -181,7 +181,7 @@ namespace bs
 		 *								to be the default technique.
 		 * @return						Number of passes used by the technique.
 		 */
-		UINT32 GetNumPasses(UINT32 techniqueIdx = 0) const;
+		u32 GetNumPasses(u32 techniqueIdx = 0) const;
 
 		/**
 		 * Retrieves a specific shader pass from the provided technique.
@@ -191,7 +191,7 @@ namespace bs
 		 *								the default technique.
 		 * @return						Pass if found, null otherwise.
 		 */
-		SPtr<PassType> GetPass(UINT32 passIdx = 0, UINT32 techniqueIdx = 0) const;
+		SPtr<PassType> GetPass(u32 passIdx = 0, u32 techniqueIdx = 0) const;
 
 		/**
 		 * Creates a set of GpuParams that may be used for binding material parameters to the GPU. The expected behaviour
@@ -200,7 +200,7 @@ namespace bs
 		 * use the parameter set to manually modify parameters on a per-program basis, in which case no further updates from
 		 * the material are necessary.
 		 */
-		SPtr<GpuParamsSetType> CreateParamsSet(UINT32 techniqueIdx = 0);
+		SPtr<GpuParamsSetType> CreateParamsSet(u32 techniqueIdx = 0);
 
 		/**
 		 * Copies internal material parameter data to the provided params set.
@@ -219,7 +219,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT()
-		void SetFloat(const String& name, float value, UINT32 arrayIdx = 0)	{ return GetParamFloat(name).Set(value, arrayIdx); }
+		void SetFloat(const String& name, float value, u32 arrayIdx = 0)	{ return GetParamFloat(name).Set(value, arrayIdx); }
 
 		/*
 		 * Assigns a curve to the the float shader parameter with the specified name. The system will automatically
@@ -228,7 +228,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT()
-		void SetFloatCurve(const String& name, TAnimationCurve<float> value, UINT32 arrayIdx = 0)
+		void SetFloatCurve(const String& name, TAnimationCurve<float> value, u32 arrayIdx = 0)
 		{ return GetParamFloatCurve(name).Set(std::move(value), arrayIdx); }
 
 		/**
@@ -237,7 +237,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT()
-		void SetColor(const String& name, const Color& value, UINT32 arrayIdx = 0) { return GetParamColor(name).Set(value, arrayIdx); }
+		void SetColor(const String& name, const Color& value, u32 arrayIdx = 0) { return GetParamColor(name).Set(value, arrayIdx); }
 
 		/**
 		 * Assigns a color gradient to the shader parameter with the specified name. The system will automatically
@@ -246,7 +246,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT()
-		void SetColorGradient(const String& name, const ColorGradientHDR& value, UINT32 arrayIdx = 0)
+		void SetColorGradient(const String& name, const ColorGradientHDR& value, u32 arrayIdx = 0)
 		{ return GetParamColorGradient(name).Set(value, arrayIdx); }
 
 		/**
@@ -255,7 +255,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT(n:SetVector2)
-		void SetVec2(const String& name, const Vector2& value, UINT32 arrayIdx = 0)	{ return GetParamVec2(name).Set(value, arrayIdx); }
+		void SetVec2(const String& name, const Vector2& value, u32 arrayIdx = 0)	{ return GetParamVec2(name).Set(value, arrayIdx); }
 
 		/**
 		 * Assigns a 3D vector to the shader parameter with the specified name.
@@ -263,7 +263,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT(n:SetVector3)
-		void SetVec3(const String& name, const Vector3& value, UINT32 arrayIdx = 0)	{ return GetParamVec3(name).Set(value, arrayIdx); }
+		void SetVec3(const String& name, const Vector3& value, u32 arrayIdx = 0)	{ return GetParamVec3(name).Set(value, arrayIdx); }
 
 		/**
 		 * Assigns a 4D vector to the shader parameter with the specified name.
@@ -271,7 +271,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT(n:SetVector4)
-		void SetVec4(const String& name, const Vector4& value, UINT32 arrayIdx = 0)	{ return GetParamVec4(name).Set(value, arrayIdx); }
+		void SetVec4(const String& name, const Vector4& value, u32 arrayIdx = 0)	{ return GetParamVec4(name).Set(value, arrayIdx); }
 
 		/**
 		 * Assigns a 3x3 matrix to the shader parameter with the specified name.
@@ -279,7 +279,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT(n:SetMatrix3)
-		void SetMat3(const String& name, const Matrix3& value, UINT32 arrayIdx = 0)	{ return GetParamMat3(name).Set(value, arrayIdx); }
+		void SetMat3(const String& name, const Matrix3& value, u32 arrayIdx = 0)	{ return GetParamMat3(name).Set(value, arrayIdx); }
 
 		/**
 		 * Assigns a 4x4 matrix to the shader parameter with the specified name.
@@ -287,7 +287,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT(n:SetMatrix4)
-		void SetMat4(const String& name, const Matrix4& value, UINT32 arrayIdx = 0)	{ return GetParamMat4(name).Set(value, arrayIdx); }
+		void SetMat4(const String& name, const Matrix4& value, u32 arrayIdx = 0)	{ return GetParamMat4(name).Set(value, arrayIdx); }
 
 		/**
 		 * Assigns a structure to the shader parameter with the specified name.
@@ -296,7 +296,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
-		void SetStructData(const String& name, void* value, UINT32 size, UINT32 arrayIdx = 0) { return GetParamStruct(name).Set(value, size, arrayIdx); }
+		void SetStructData(const String& name, void* value, u32 size, u32 arrayIdx = 0) { return GetParamStruct(name).Set(value, size, arrayIdx); }
 
 		/** Assigns a texture to the shader parameter with the specified name. */
 		void SetTexture(const String& name, const TextureType& value, const TextureSurface& surface = TextureSurface::COMPLETE)
@@ -339,7 +339,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT()
-		float GetFloat(const String& name, UINT32 arrayIdx = 0) const { return GetParamFloat(name).Get(arrayIdx); }
+		float GetFloat(const String& name, u32 arrayIdx = 0) const { return GetParamFloat(name).Get(arrayIdx); }
 
 		/**
 		 * Returns a curve value assigned to the parameter with the specified name. If the parameter has a constant
@@ -349,7 +349,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT()
-		const TAnimationCurve<float>& GetFloatCurve(const String& name, UINT32 arrayIdx = 0) const
+		const TAnimationCurve<float>& GetFloatCurve(const String& name, u32 arrayIdx = 0) const
 		{ return GetParamFloatCurve(name).Get(arrayIdx); }
 
 		/**
@@ -360,7 +360,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT()
-		Color GetColor(const String& name, UINT32 arrayIdx = 0) const { return GetParamColor(name).Get(arrayIdx); }
+		Color GetColor(const String& name, u32 arrayIdx = 0) const { return GetParamColor(name).Get(arrayIdx); }
 
 		/**
 		 * Returns a color gradient assigned with the parameter with the specified name. If the parameter has a constant
@@ -370,7 +370,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT()
-		const ColorGradientHDR& GetColorGradient(const String& name, UINT32 arrayIdx = 0) const
+		const ColorGradientHDR& GetColorGradient(const String& name, u32 arrayIdx = 0) const
 		{ return GetParamColorGradient(name).Get(arrayIdx); }
 
 		/**
@@ -379,7 +379,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT(n:GetVector2)
-		Vector2 GetVec2(const String& name, UINT32 arrayIdx = 0) const { return GetParamVec2(name).Get(arrayIdx); }
+		Vector2 GetVec2(const String& name, u32 arrayIdx = 0) const { return GetParamVec2(name).Get(arrayIdx); }
 
 		/**
 		 * Returns a 3D vector assigned with the parameter with the specified name.
@@ -387,7 +387,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT(n:GetVector3)
-		Vector3 GetVec3(const String& name, UINT32 arrayIdx = 0) const { return GetParamVec3(name).Get(arrayIdx); }
+		Vector3 GetVec3(const String& name, u32 arrayIdx = 0) const { return GetParamVec3(name).Get(arrayIdx); }
 
 		/**
 		 * Returns a 4D vector assigned with the parameter with the specified name.
@@ -395,7 +395,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT(n:GetVector4)
-		Vector4 GetVec4(const String& name, UINT32 arrayIdx = 0) const { return GetParamVec4(name).Get(arrayIdx); }
+		Vector4 GetVec4(const String& name, u32 arrayIdx = 0) const { return GetParamVec4(name).Get(arrayIdx); }
 
 		/**
 		 * Returns a 3x3 matrix assigned with the parameter with the specified name.
@@ -403,7 +403,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT(n:GetMatrix3)
-		Matrix3 GetMat3(const String& name, UINT32 arrayIdx = 0) const { return GetParamMat3(name).Get(arrayIdx); }
+		Matrix3 GetMat3(const String& name, u32 arrayIdx = 0) const { return GetParamMat3(name).Get(arrayIdx); }
 
 		/**
 		 * Returns a 4x4 matrix assigned with the parameter with the specified name.
@@ -411,14 +411,14 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT(n:GetMatrix4)
-		Matrix4 GetMat4(const String& name, UINT32 arrayIdx = 0) const { return GetParamMat4(name).Get(arrayIdx); }
+		Matrix4 GetMat4(const String& name, u32 arrayIdx = 0) const { return GetParamMat4(name).Get(arrayIdx); }
 
 		/**
 		 * Checks does the data parameter with the specified name currently contains animated data. This could be
 		 * an animation curve or a color gradient.
 		 */
 		BS_SCRIPT_EXPORT()
-		bool IsAnimated(const String& name, UINT32 arrayIdx = 0);
+		bool IsAnimated(const String& name, u32 arrayIdx = 0);
 
 		/** Returns a texture assigned with the parameter with the specified name. */
 		TextureType GetTexture(const String& name) const { return GetParamTexture(name).Get(); }
@@ -438,7 +438,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
-		MaterialBase::StructData GetStructData(const String& name, UINT32 arrayIdx = 0) const
+		MaterialBase::StructData GetStructData(const String& name, u32 arrayIdx = 0) const
 		{
 			TMaterialParamStruct<Core> structParam = GetParamStruct(name);
 
@@ -710,7 +710,7 @@ namespace bs
 		 * @note	Provided parameter must exist, no checking is done.
 		 */
 		template <typename T>
-		void SetParamValue(const String& name, UINT8* buffer, UINT32 numElements);
+		void SetParamValue(const String& name, u8* buffer, u32 numElements);
 
 		/**
 		 * Initializes the material by using the compatible techniques from the currently set shader. Shader must contain
@@ -832,7 +832,7 @@ namespace bs
 		/**	Creates a new empty material but doesn't initialize it. */
 		static SPtr<Material> CreateEmpty();
 
-		UINT32 mLoadFlags;
+		u32 mLoadFlags;
 		
 		/************************************************************************/
 		/* 								RTTI		                     		*/

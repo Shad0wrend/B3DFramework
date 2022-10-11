@@ -280,7 +280,7 @@ namespace bs
 			for(UINT i = 0; i < numFiles; i++)
 			{
 				UINT numChars = DragQueryFileW(hDrop, i, nullptr, 0) + 1;
-				wchar_t* buffer = (wchar_t*)bs_alloc((UINT32)numChars * sizeof(wchar_t));
+				wchar_t* buffer = (wchar_t*)bs_alloc((u32)numChars * sizeof(wchar_t));
 
 				DragQueryFileW(hDrop, i, buffer, numChars);
 

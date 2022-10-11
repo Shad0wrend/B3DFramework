@@ -74,7 +74,7 @@ namespace bs
 		 * Attempts to find the interop object for a component with the specified instance ID. If one cannot be
 		 * found null is returned.
 		 */
-		ScriptComponentBase* GetScriptComponent(UINT64 instanceId) const;
+		ScriptComponentBase* GetScriptComponent(u64 instanceId) const;
 
 		/** Attempts to find the interop object for the specified SceneObject. If one cannot be found null is returned. */
 		ScriptSceneObject* GetScriptSceneObject(const HSceneObject& sceneObject) const;
@@ -83,13 +83,13 @@ namespace bs
 		 * Attempts to find the interop object for a managed scene object with the specified instance ID. If one cannot be
 		 * found null is returned.
 		 */
-		ScriptSceneObject* GetScriptSceneObject(UINT64 instanceId) const;
+		ScriptSceneObject* GetScriptSceneObject(u64 instanceId) const;
 
 		/**
 		 * Attempts to find the interop object for a GameObject with the specified instance ID. If one cannot be found null
 		 * is returned.
 		 */
-		ScriptGameObjectBase* GetScriptGameObject(UINT64 instanceId) const;
+		ScriptGameObjectBase* GetScriptGameObject(u64 instanceId) const;
 
 		/**	Destroys and unregisters the specified SceneObject interop object. */
 		void DestroyScriptSceneObject(ScriptSceneObject* sceneObject);
@@ -108,8 +108,8 @@ namespace bs
 		/**	Triggered when the any game object is destroyed. */
 		void OnGameObjectDestroyed(const HGameObject& go);
 
-		UnorderedMap<UINT64, ScriptComponentBase*> mScriptComponents;
-		UnorderedMap<UINT64, ScriptSceneObject*> mScriptSceneObjects;
+		UnorderedMap<u64, ScriptComponentBase*> mScriptComponents;
+		UnorderedMap<u64, ScriptSceneObject*> mScriptSceneObjects;
 
 		HEvent mOnAssemblyReloadDoneConn;
 		HEvent onGameObjectDestroyedConn;

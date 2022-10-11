@@ -12,8 +12,8 @@ namespace bs
 	 */
 	bool hasReflectableChildren(RTTITypeBase* type)
 	{
-		UINT32 numFields = type->GetNumFields();
-		for (UINT32 i = 0; i < numFields; i++)
+		u32 numFields = type->GetNumFields();
+		for (u32 i = 0; i < numFields; i++)
 		{
 			RTTIField* field = type->GetField(i);
 			if (field->Schema.Type == SerializableFT_Reflectable || field->Schema.Type == SerializableFT_ReflectablePtr)
@@ -24,7 +24,7 @@ namespace bs
 		for (auto& derivedClass : derivedClasses)
 		{
 			numFields = derivedClass->GetNumFields();
-			for (UINT32 i = 0; i < numFields; i++)
+			for (u32 i = 0; i < numFields; i++)
 			{
 				RTTIField* field = derivedClass->GetField(i);
 				if (field->Schema.Type == SerializableFT_Reflectable || field->Schema.Type == SerializableFT_ReflectablePtr)
@@ -43,8 +43,8 @@ namespace bs
 			RTTITypeBase* rttiInstance = rtti->CloneInternal(alloc);
 			rttiInstance->OnSerializationStarted(&obj, nullptr);
 
-			const UINT32 numFields = rtti->GetNumFields();
-			for (UINT32 i = 0; i < numFields; i++)
+			const u32 numFields = rtti->GetNumFields();
+			for (u32 i = 0; i < numFields; i++)
 			{
 				RTTIField* field = rtti->GetField(i);
 				if (field->Schema.Info.Flags.IsSet(RTTIFieldFlag::SkipInReferenceSearch))
@@ -58,8 +58,8 @@ namespace bs
 					{
 						if (reflectableField->Schema.IsArray)
 						{
-							const UINT32 numElements = reflectableField->GetArraySize(rttiInstance, &obj);
-							for (UINT32 j = 0; j < numElements; j++)
+							const u32 numElements = reflectableField->GetArraySize(rttiInstance, &obj);
+							for (u32 j = 0; j < numElements; j++)
 							{
 								HResource resource = (HResource&)reflectableField->GetArrayValue(rttiInstance, &obj, j);
 								if (!resource.GetUuid().Empty())
@@ -89,8 +89,8 @@ namespace bs
 						{
 							if (reflectableField->Schema.IsArray)
 							{
-								const UINT32 numElements = reflectableField->GetArraySize(rttiInstance, &obj);
-								for (UINT32 j = 0; j < numElements; j++)
+								const u32 numElements = reflectableField->GetArraySize(rttiInstance, &obj);
+								for (u32 j = 0; j < numElements; j++)
 								{
 									IReflectable& childObj = reflectableField->GetArrayValue(rttiInstance, &obj, j);
 									findResourceDependenciesInternal(childObj, alloc, true, dependencies);
@@ -114,8 +114,8 @@ namespace bs
 					{
 						if (reflectablePtrField->Schema.IsArray)
 						{
-							const UINT32 numElements = reflectablePtrField->GetArraySize(rttiInstance, &obj);
-							for (UINT32 j = 0; j < numElements; j++)
+							const u32 numElements = reflectablePtrField->GetArraySize(rttiInstance, &obj);
+							for (u32 j = 0; j < numElements; j++)
 							{
 								const SPtr<IReflectable>& childObj =
 									reflectablePtrField->GetArrayValue(rttiInstance, &obj, j);
@@ -152,7 +152,7 @@ namespace bs
 		gFrameAlloc().Clear();
 
 		Vector<ResourceDependency> dependencyList(dependencies.size());
-		UINT32 i = 0;
+		u32 i = 0;
 		for (auto& entry : dependencies)
 		{
 			dependencyList[i] = entry.second;
@@ -162,11 +162,11 @@ namespace bs
 		return dependencyList;
 	}
 
-	UINT32 Utility::GetSceneObjectDepth(const HSceneObject& so)
+	u32 Utility::GetSceneObjectDepth(const HSceneObject& so)
 	{
 		HSceneObject parent = so->GetParent();
 		
-		UINT32 depth = 0;
+		u32 depth = 0;
 		while (parent != nullptr)
 		{
 			depth++;
@@ -176,7 +176,7 @@ namespace bs
 		return depth;
 	}
 
-	Vector<HComponent> Utility::FindComponents(const HSceneObject& object, UINT32 typeId)
+	Vector<HComponent> Utility::FindComponents(const HSceneObject& object, u32 typeId)
 	{
 		Vector<HComponent> output;
 
@@ -195,8 +195,8 @@ namespace bs
 					output.push_back(entry);
 			}
 
-			UINT32 numChildren = curSO->GetNumChildren();
-			for (UINT32 i = 0; i < numChildren; i++)
+			u32 numChildren = curSO->GetNumChildren();
+			for (u32 i = 0; i < numChildren; i++)
 				todo.push(curSO->GetChild(i));
 		}
 
@@ -212,7 +212,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_CoreSerializationContext;
 		}

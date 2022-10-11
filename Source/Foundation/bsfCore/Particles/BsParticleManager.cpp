@@ -13,12 +13,12 @@ namespace bs
 {
 	/** Helper method used for writing particle data into the @p pixels buffer. */
 	template<class T, class PR>
-	void iterateOverPixels(PixelData& pixels, UINT32 count, UINT32 stride, PR predicate)
+	void iterateOverPixels(PixelData& pixels, u32 count, u32 stride, PR predicate)
 	{
-		auto dest = (UINT8*)pixels.GetData();
+		auto dest = (u8*)pixels.GetData();
 
-		UINT32 x = 0;
-		for (UINT32 i = 0; i < count; i++)
+		u32 x = 0;
+		for (u32 i = 0; i < count; i++)
 		{
 			predicate((T*)dest, i);
 
@@ -35,7 +35,7 @@ namespace bs
 
 	/** Helper method used for writing particle data into the @p pixels buffer. */
 	template<class T, class PR>
-	void iterateOverPixels(PixelData& pixels, UINT32 count, PR predicate)
+	void iterateOverPixels(PixelData& pixels, u32 count, PR predicate)
 	{
 		iterateOverPixels<T>(pixels, count, sizeof(T), predicate);
 	}
@@ -50,7 +50,7 @@ namespace bs
 		struct BuffersPerSize
 		{
 			Vector<ParticleRenderData*> Buffers;
-			UINT32 NextFreeIdx = 0;
+			u32 NextFreeIdx = 0;
 		};
 
 	public:
@@ -80,7 +80,7 @@ namespace bs
 		 */
 		ParticleBillboardRenderData* AllocCpuBillboard(const ParticleSet& particleSet)
 		{
-			const UINT32 size = particleSet.DetermineTextureSize();
+			const u32 size = particleSet.DetermineTextureSize();
 
 			ParticleBillboardRenderData* output = nullptr;
 
@@ -88,7 +88,7 @@ namespace bs
 				Lock lock(mMutex);
 
 				BuffersPerSize& buffers = mBillboardBufferList[size];
-				if (buffers.NextFreeIdx < (UINT32)buffers.Buffers.size())
+				if (buffers.NextFreeIdx < (u32)buffers.Buffers.size())
 				{
 					output = static_cast<ParticleBillboardRenderData*>(buffers.Buffers[buffers.NextFreeIdx]);
 					buffers.NextFreeIdx++;
@@ -107,12 +107,12 @@ namespace bs
 			}
 
 			// Populate buffer contents
-			const UINT32 count = particleSet.GetParticleCount();
+			const u32 count = particleSet.GetParticleCount();
 			const ParticleSetData& particles = particleSet.GetParticles();
 
 			// TODO: Use non-temporal writes?
 			iterateOverPixels<Vector4>(output->PositionAndRotation, count,
-				[&particles](Vector4* dst, UINT32 idx)
+				[&particles](Vector4* dst, u32 idx)
 			{
 				dst->X = particles.Position[idx].X;
 				dst->Y = particles.Position[idx].Y;
@@ -122,13 +122,13 @@ namespace bs
 			});
 
 			iterateOverPixels<RGBA>(output->Color, count,
-				[&particles](RGBA* dst, UINT32 idx)
+				[&particles](RGBA* dst, u32 idx)
 			{
 				*dst = particles.Color[idx];
 			});
 
-			iterateOverPixels<UINT16>(output->SizeAndFrameIdx, count, sizeof(UINT16) * 4,
-				[&particles](UINT16* dst, UINT32 idx)
+			iterateOverPixels<u16>(output->SizeAndFrameIdx, count, sizeof(u16) * 4,
+				[&particles](u16* dst, u32 idx)
 			{
 				dst[0] = Bitwise::FloatToHalf(particles.Size[idx].X);
 				dst[1] = Bitwise::FloatToHalf(particles.Size[idx].Y);
@@ -147,7 +147,7 @@ namespace bs
 		 */
 		ParticleMeshRenderData* AllocCpuMesh(const ParticleSet& particleSet)
 		{
-			const UINT32 size = particleSet.DetermineTextureSize();
+			const u32 size = particleSet.DetermineTextureSize();
 
 			ParticleMeshRenderData* output = nullptr;
 
@@ -155,7 +155,7 @@ namespace bs
 				Lock lock(mMutex);
 
 				BuffersPerSize& buffers = mMeshBufferList[size];
-				if (buffers.NextFreeIdx < (UINT32)buffers.Buffers.size())
+				if (buffers.NextFreeIdx < (u32)buffers.Buffers.size())
 				{
 					output = static_cast<ParticleMeshRenderData*>(buffers.Buffers[buffers.NextFreeIdx]);
 					buffers.NextFreeIdx++;
@@ -174,12 +174,12 @@ namespace bs
 			}
 
 			// Populate buffer contents
-			const UINT32 count = particleSet.GetParticleCount();
+			const u32 count = particleSet.GetParticleCount();
 			const ParticleSetData& particles = particleSet.GetParticles();
 
 			// TODO: Use non-temporal writes?
 			iterateOverPixels<Vector4>(output->Position, count,
-				[&particles](Vector4* dst, UINT32 idx)
+				[&particles](Vector4* dst, u32 idx)
 			{
 				dst->X = particles.Position[idx].X;
 				dst->Y = particles.Position[idx].Y;
@@ -188,21 +188,21 @@ namespace bs
 			});
 
 			iterateOverPixels<RGBA>(output->Color, count,
-				[&particles](RGBA* dst, UINT32 idx)
+				[&particles](RGBA* dst, u32 idx)
 			{
 				*dst = particles.Color[idx];
 			});
 
-			iterateOverPixels<UINT16>(output->Rotation, count, sizeof(UINT16) * 4,
-				[&particles](UINT16* dst, UINT32 idx)
+			iterateOverPixels<u16>(output->Rotation, count, sizeof(u16) * 4,
+				[&particles](u16* dst, u32 idx)
 			{
 				dst[0] = Bitwise::FloatToHalf(particles.Rotation[idx].X * Math::DEG2RAD);
 				dst[1] = Bitwise::FloatToHalf(particles.Rotation[idx].Y * Math::DEG2RAD);
 				dst[2] = Bitwise::FloatToHalf(particles.Rotation[idx].Z * Math::DEG2RAD);
 			});
 
-			iterateOverPixels<UINT16>(output->Size, count, sizeof(UINT16) * 4,
-				[&particles](UINT16* dst, UINT32 idx)
+			iterateOverPixels<u16>(output->Size, count, sizeof(u16) * 4,
+				[&particles](u16* dst, u32 idx)
 			{
 				dst[0] = Bitwise::FloatToHalf(particles.Size[idx].X);
 				dst[1] = Bitwise::FloatToHalf(particles.Size[idx].Y);
@@ -226,7 +226,7 @@ namespace bs
 			{
 				Lock lock(mMutex);
 
-				if (mNextFreeGPUBuffer < (UINT32)mGPUBufferList.size())
+				if (mNextFreeGPUBuffer < (u32)mGPUBufferList.size())
 				{
 					output = mGPUBufferList[mNextFreeGPUBuffer];
 					mNextFreeGPUBuffer++;
@@ -244,14 +244,14 @@ namespace bs
 			}
 
 			// Populate buffer contents
-			const UINT32 count = particleSet.GetParticleCount();
+			const u32 count = particleSet.GetParticleCount();
 			const ParticleSetData& particles = particleSet.GetParticles();
 
 			output->Particles.clear();
 			output->Particles.resize(count);
 
 			// TODO: Use non-temporal writes?
-			for (UINT32 i = 0; i < count; i++)
+			for (u32 i = 0; i < count; i++)
 			{
 				GpuParticle particle;
 				particle.Position = particles.Position[i];
@@ -283,7 +283,7 @@ namespace bs
 
 	private:
 		/** Allocates a new set of CPU buffers used for billboard rendering of the provided @p size width and height. */
-		ParticleBillboardRenderData* CreateNewBillboardBuffersCpu(UINT32 size)
+		ParticleBillboardRenderData* CreateNewBillboardBuffersCpu(u32 size)
 		{
 			auto output = mBillboardAlloc.Construct<ParticleBillboardRenderData>();
 
@@ -300,7 +300,7 @@ namespace bs
 		}
 
 		/** Allocates a new set of CPU buffers used for mesh rendering of the provided @p size width and height. */
-		ParticleMeshRenderData* CreateNewMeshBuffersCpu(UINT32 size)
+		ParticleMeshRenderData* CreateNewMeshBuffersCpu(u32 size)
 		{
 			auto output = mMeshAlloc.Construct<ParticleMeshRenderData>();
 
@@ -324,10 +324,10 @@ namespace bs
 			return mGPUAlloc.Construct<ParticleGPUSimulationData>();
 		}
 
-		UnorderedMap<UINT32, BuffersPerSize> mBillboardBufferList;
-		UnorderedMap<UINT32, BuffersPerSize> mMeshBufferList;
+		UnorderedMap<u32, BuffersPerSize> mBillboardBufferList;
+		UnorderedMap<u32, BuffersPerSize> mMeshBufferList;
 		Vector<ParticleGPUSimulationData*> mGPUBufferList;
-		UINT32 mNextFreeGPUBuffer = 0;
+		u32 mNextFreeGPUBuffer = 0;
 
 		PoolAlloc<sizeof(ParticleBillboardRenderData), 32, 4, true> mBillboardAlloc;
 		PoolAlloc<sizeof(ParticleMeshRenderData), 32, 4, true> mMeshAlloc;
@@ -378,7 +378,7 @@ namespace bs
 		// Queue evaluation tasks
 		{
 			Lock lock(mMutex);
-			mNumActiveWorkers = (UINT32)mSystems.size();
+			mNumActiveWorkers = (u32)mSystems.size();
 		}
 
 		float timeDelta = gTime().GetFrameDelta();
@@ -398,7 +398,7 @@ namespace bs
 				if(system->mParticleSet)
 				{
 					// Generate simulation data to transfer to the core thread
-					const UINT32 numParticles = system->mParticleSet->GetParticleCount();
+					const u32 numParticles = system->mParticleSet->GetParticleCount();
 					const ParticleSystemSettings& settings = system->GetSettings();
 
 					if(settings.GpuSimulation)
@@ -422,7 +422,7 @@ namespace bs
 						{
 						default:
 						case ParticleSortMode::None: // No sort, just point the indices back to themselves
-							for (UINT32 i = 0; i < numParticles; i++)
+							for (u32 i = 0; i < numParticles; i++)
 								simulationDataCPU->Indices[i] = i;
 							break;
 						case ParticleSortMode::OldToYoung:
@@ -469,21 +469,21 @@ namespace bs
 	}
 
 	void ParticleManager::SortParticles(const ParticleSet& set, ParticleSortMode sortMode, const Vector3& viewPoint,
-		UINT32* indices)
+		u32* indices)
 	{
 		assert(sortMode != ParticleSortMode::None);
 
 		struct ParticleSortData
 		{
-			ParticleSortData(float key, UINT32 idx)
+			ParticleSortData(float key, u32 idx)
 				:Key(key), Idx(idx)
 			{ }
 
 			float Key;
-			UINT32 Idx;
+			u32 Idx;
 		};
 
-		const UINT32 count = set.GetParticleCount();
+		const u32 count = set.GetParticleCount();
 		const ParticleSetData& particles = set.GetParticles();
 
 		bs_frame_mark();
@@ -495,21 +495,21 @@ namespace bs
 			{
 			default:
 			case ParticleSortMode::Distance:
-				for(UINT32 i = 0; i < count; i++)
+				for(u32 i = 0; i < count; i++)
 				{
 					float distance = viewPoint.SquaredDistance(particles.Position[i]);
 					sortData.emplace_back(distance, i);
 				}
 				break;
 			case ParticleSortMode::OldToYoung:
-				for(UINT32 i = 0; i < count; i++)
+				for(u32 i = 0; i < count; i++)
 				{
 					float lifetime = particles.Lifetime[i];
 					sortData.emplace_back(lifetime, i);
 				}
 				break;
 			case ParticleSortMode::YoungToOld:
-				for(UINT32 i = 0; i < count; i++)
+				for(u32 i = 0; i < count; i++)
 				{
 					float lifetime = particles.InitialLifetime[i] - particles.Lifetime[i];
 					sortData.emplace_back(lifetime, i);
@@ -523,13 +523,13 @@ namespace bs
 				return rhs.Key < lhs.Key;
 			});
 
-			for (UINT32 i = 0; i < count; i++)
+			for (u32 i = 0; i < count; i++)
 				indices[i] = sortData[i].Idx;
 		}
 		bs_frame_clear();
 	}
 
-	UINT32 ParticleManager::RegisterParticleSystem(ParticleSystem* system)
+	u32 ParticleManager::RegisterParticleSystem(ParticleSystem* system)
 	{
 		mSystems.insert(system);
 

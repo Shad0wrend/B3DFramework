@@ -47,11 +47,11 @@ namespace bs
 				{
 				default:
 				case SpriteMaterialTransparency::Opaque:
-					return GetMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageOpaque]);
+					return GetMaterial(builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageOpaque]);
 				case SpriteMaterialTransparency::Alpha: 
-					return GetMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentAlpha]);
+					return GetMaterial(builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentAlpha]);
 				case SpriteMaterialTransparency::Premultiplied:
-					return GetMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentPremultiplied]);
+					return GetMaterial(builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentPremultiplied]);
 				}
 			}
 			else
@@ -60,25 +60,25 @@ namespace bs
 				{
 				default:
 				case SpriteMaterialTransparency::Opaque:
-					return GetMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageOpaqueAnimated]);
+					return GetMaterial(builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageOpaqueAnimated]);
 				case SpriteMaterialTransparency::Alpha: 
-					return GetMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentAlphaAnimated]);
+					return GetMaterial(builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentAlphaAnimated]);
 				case SpriteMaterialTransparency::Premultiplied:
-					return GetMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentPremultipliedAnimated]);
+					return GetMaterial(builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentPremultipliedAnimated]);
 				}
 			}
 		}
 
 		/** Returns the material used for rendering text sprites. */
 		SpriteMaterial* GetTextMaterial() const
-			{ return GetMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::Text]); }
+			{ return GetMaterial(builtinMaterialIds[(u32)BuiltinSpriteMaterialType::Text]); }
 
 		/** Returns the material used for rendering antialiased lines. */
 		SpriteMaterial* GetLineMaterial() const
-			{ return GetMaterial(builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::Line]); }
+			{ return GetMaterial(builtinMaterialIds[(u32)BuiltinSpriteMaterialType::Line]); }
 
 		/** Returns a sprite material with the specified ID. Returns null if one cannot be found. */
-		SpriteMaterial* GetMaterial(UINT32 id) const;
+		SpriteMaterial* GetMaterial(u32 id) const;
 
 		/**
 		 * Registers a new material in the sprite manager. Caller must ensure the material has a unique ID that doesn't
@@ -91,7 +91,7 @@ namespace bs
 		{
 			SpriteMaterial* newMaterial = bs_new<T>(std::forward<Args>(args)...);
 			
-			UINT32 id = newMaterial->GetId();
+			u32 id = newMaterial->GetId();
 			auto iterFind = mMaterials.find(id);
 			if (iterFind != mMaterials.end())
 			{
@@ -105,8 +105,8 @@ namespace bs
 			return newMaterial;
 		}
 	private:
-		UnorderedMap<UINT32, SpriteMaterial*> mMaterials;
-		UINT32 builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::Count]{};
+		UnorderedMap<u32, SpriteMaterial*> mMaterials;
+		u32 builtinMaterialIds[(u32)BuiltinSpriteMaterialType::Count]{};
 	};
 
 	/** @} */

@@ -21,7 +21,7 @@ namespace bs
 	struct GODeserializationData
 	{
 		SPtr<GameObject> Ptr;
-		UINT64 OriginalId = 0;
+		u64 OriginalId = 0;
 	};
 
 	class BS_CORE_EXPORT GameObjectRTTI : public RTTIType<GameObject, IReflectable, GameObjectRTTI>
@@ -33,8 +33,8 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mUUID, 3)
 		BS_END_RTTI_MEMBERS
 
-		UINT64& GetInstanceId(GameObject* obj) { return obj->mInstanceData->MInstanceId; }
-		void SetInstanceId(GameObject* obj, UINT64& instanceId)
+		u64& GetInstanceId(GameObject* obj) { return obj->mInstanceData->MInstanceId; }
+		void SetInstanceId(GameObject* obj, u64& instanceId)
 		{
 			// We record the ID for later use. Any child RTTI of GameObject must call GameObjectManager::registerObject
 			// with this ID, so we know how to map deserialized GO handles to live objects, otherwise the handle
@@ -76,7 +76,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_GameObject;
 		}

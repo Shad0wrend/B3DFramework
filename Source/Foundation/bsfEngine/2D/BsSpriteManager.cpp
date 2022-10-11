@@ -17,14 +17,14 @@ namespace bs
 		SpriteMaterial* textMat = RegisterMaterial<SpriteTextMaterial>();
 		SpriteMaterial* lineMat = RegisterMaterial<SpriteLineMaterial>();
 
-		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageOpaque] = imageOpaqueMat->GetId();
-		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentAlpha] = imageAlphaMat->GetId();
-		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentPremultiplied] = imagePremultipliedMat->GetId();
-		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageOpaqueAnimated] = imageOpaqueAnimMat->GetId();
-		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentAlphaAnimated] = imageAlphaAnimMat->GetId();
-		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::ImageTransparentPremultipliedAnimated] = imagePremultipliedAnimMat->GetId();
-		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::Text] = textMat->GetId();
-		builtinMaterialIds[(UINT32)BuiltinSpriteMaterialType::Line] = lineMat->GetId();
+		builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageOpaque] = imageOpaqueMat->GetId();
+		builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentAlpha] = imageAlphaMat->GetId();
+		builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentPremultiplied] = imagePremultipliedMat->GetId();
+		builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageOpaqueAnimated] = imageOpaqueAnimMat->GetId();
+		builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentAlphaAnimated] = imageAlphaAnimMat->GetId();
+		builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentPremultipliedAnimated] = imagePremultipliedAnimMat->GetId();
+		builtinMaterialIds[(u32)BuiltinSpriteMaterialType::Text] = textMat->GetId();
+		builtinMaterialIds[(u32)BuiltinSpriteMaterialType::Line] = lineMat->GetId();
 #endif
 	}
 
@@ -34,7 +34,7 @@ namespace bs
 			bs_delete(entry.second);
 	}
 
-	SpriteMaterial* SpriteManager::GetMaterial(UINT32 id) const
+	SpriteMaterial* SpriteManager::GetMaterial(u32 id) const
 	{
 		auto iterFind = mMaterials.find(id);
 		if (iterFind != mMaterials.end())

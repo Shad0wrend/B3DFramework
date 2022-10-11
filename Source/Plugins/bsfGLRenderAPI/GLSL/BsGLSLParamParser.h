@@ -27,7 +27,7 @@ namespace bs { namespace ct
 		 * of the two compared strings must match, and the remaining non-matching bit will be assumed to be the semantic
 		 * index. Returns -1 if no match is made.
 		 */
-		INT32 MatchesName(const String& name);
+		i32 MatchesName(const String& name);
 
 		/**	Returns the semantic of this attribute. */
 		VertexElementSemantic GetSemantic() const { return mSemantic; }
@@ -69,7 +69,7 @@ namespace bs { namespace ct
 		 *								alignment. In multiples of 4 bytes.
 		 * @return						Size of the element, in multiples of 4 bytes.
 		 */
-		static UINT32 CalcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, UINT32 arraySize, UINT32& offset);
+		static u32 CalcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, u32 arraySize, u32& offset);
 	private:
 		/** Types of HLSL parameters. */
 		enum class ParamType
@@ -110,13 +110,13 @@ namespace bs { namespace ct
 		 *
 		 * @return	True if it succeeds, false if it fails.
 		 */
-		bool AttribNameToElementSemantic(const String& name, VertexElementSemantic& semantic, UINT16& index);
+		bool AttribNameToElementSemantic(const String& name, VertexElementSemantic& semantic, u16& index);
 
 		/**	Converts an OpenGL type to vertex element type. */
 		VertexElementType GlTypeToAttributeType(GLenum glType);
 
 		/** Maps a parameter in a specific shader stage, of a specific type to a unique set index. */
-		static UINT32 MapParameterToSet(GpuProgramType progType, ParamType paramType);
+		static u32 MapParameterToSet(GpuProgramType progType, ParamType paramType);
 	};
 
 	/** @} */

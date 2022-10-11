@@ -43,7 +43,7 @@ using namespace std::placeholders;
 
 namespace bs
 {
-	const UINT32 GUIManager::DRAG_DISTANCE = 3;
+	const u32 GUIManager::DRAG_DISTANCE = 3;
 	const float GUIManager::TOOLTIP_HOVER_TIME = 1.0f;
 
 	GUIManager::GUIManager()
@@ -166,7 +166,7 @@ namespace bs
 		SPtr<Camera> camera = widget->GetCamera();
 		if(camera != nullptr)
 		{
-			auto widgetId = (UINT64)widget;
+			auto widgetId = (u64)widget;
 			gCoreThread().QueueCommand([
 				renderer = mRenderer.get(),
 				camera = camera->GetCore(),
@@ -355,7 +355,7 @@ namespace bs
 			if (camera == nullptr)
 				continue;
 			
-			auto widgetId = (UINT64)widget;
+			auto widgetId = (u64)widget;
 			gCoreThread().QueueCommand([
 				renderer = mRenderer.get(),
 				updateData = std::move(updateData),
@@ -460,7 +460,7 @@ namespace bs
 
 		if(mDragState == DragState::HeldWithoutDrag)
 		{
-			UINT32 dist = mLastPointerClickPos.ManhattanDist(event.ScreenPos);
+			u32 dist = mLastPointerClickPos.ManhattanDist(event.ScreenPos);
 
 			if(dist > DRAG_DISTANCE)
 			{
@@ -906,7 +906,7 @@ namespace bs
 			SendCommandEvent(elementInfo.Element, mCommandEvent);
 	}
 
-	void GUIManager::OnVirtualButtonDown(const VirtualButton& button, UINT32 deviceIdx)
+	void GUIManager::OnVirtualButtonDown(const VirtualButton& button, u32 deviceIdx)
 	{
 		HideTooltip();
 		mVirtualButtonEvent.SetButton(button);
@@ -974,7 +974,7 @@ namespace bs
 		{
 			Vector2I windowPos = windowUnderPointer->ScreenToWindowPos(pointerScreenPos);
 
-			UINT32 widgetIdx = 0;
+			u32 widgetIdx = 0;
 			for(auto& widgetInfo : mWidgets)
 			{
 				if(widgetWindows[widgetIdx] == nullptr)
@@ -1477,7 +1477,7 @@ namespace bs
 
 	void GUIManager::TabFocusFirst()
 	{
-		UINT32 nearestDist = std::numeric_limits<UINT32>::max();
+		u32 nearestDist = std::numeric_limits<u32>::max();
 		GUIElement* closestElement = nullptr;
 
 		// Find to top-left most element
@@ -1502,7 +1502,7 @@ namespace bs
 				Vector2I elementPos(elemBounds.X, elemBounds.Y);
 				Vector2I screenPos = window->WindowToScreenPos(elementPos);
 
-				const UINT32 dist = screenPos.SquaredLength();
+				const u32 dist = screenPos.SquaredLength();
 				if (dist < nearestDist)
 				{
 					nearestDist = dist;
@@ -1765,7 +1765,7 @@ namespace bs
 		mTime = time;
 	}
 
-	void GUIRenderer::UpdateDrawGroups(const SPtr<Camera>& camera, UINT64 widgetId, UINT32 widgetDepth, const Matrix4& worldTransform,
+	void GUIRenderer::UpdateDrawGroups(const SPtr<Camera>& camera, u64 widgetId, u32 widgetDepth, const Matrix4& worldTransform,
 		 const GUIDrawGroupRenderDataUpdate& data)
 	{
 		auto iterFind = mPerCameraData.find(camera.get());
@@ -1791,20 +1791,20 @@ namespace bs
 			widget->DrawGroups = data.NewDrawGroups;
 
 			// Allocate GPU buffers containing the material parameters
-			UINT32 numBuffers = (UINT32)widget->DrawGroups.size();
+			u32 numBuffers = (u32)widget->DrawGroups.size();
 			for (auto& drawGroup : widget->DrawGroups)
-				numBuffers += (UINT32)drawGroup.NonCachedElements.size() + (UINT32)drawGroup.CachedElements.size();
+				numBuffers += (u32)drawGroup.NonCachedElements.size() + (u32)drawGroup.CachedElements.size();
 
-			auto numAllocatedBuffers = (UINT32)widget->ParamBlocks.size();
+			auto numAllocatedBuffers = (u32)widget->ParamBlocks.size();
 			if (numBuffers > numAllocatedBuffers)
 			{
 				widget->ParamBlocks.resize(numBuffers);
 
-				for (UINT32 i = numAllocatedBuffers; i < numBuffers; i++)
+				for (u32 i = numAllocatedBuffers; i < numBuffers; i++)
 					widget->ParamBlocks[i] = gGUISpriteParamBlockDef.CreateBuffer();
 			}
 
-			UINT32 curBufferIdx = 0;
+			u32 curBufferIdx = 0;
 			for (auto& drawGroup : widget->DrawGroups)
 			{
 				drawGroup.BufferIdx = curBufferIdx++;
@@ -1817,15 +1817,15 @@ namespace bs
 			}
 
 			// Rebuild draw group mesh
-			auto numQuads = (UINT32)widget->DrawGroups.size();
+			auto numQuads = (u32)widget->DrawGroups.size();
 			if (numQuads > 0)
 			{
 				bool flipUVY = gCaps().Conventions.UvYAxis == Conventions::Axis::Up;
 				float uvTop = flipUVY ? 1.0f : 0.0f;
 				float uvBottom = flipUVY ? 0.0f : 1.0f;
 			
-				UINT32 numVertices = numQuads * 4;
-				UINT32 numIndices = numQuads * 6;
+				u32 numVertices = numQuads * 4;
+				u32 numIndices = numQuads * 6;
 
 				SPtr<VertexDataDesc> vertexDesc = bs_shared_ptr_new<VertexDataDesc>();
 				vertexDesc->AddVertElem(VET_FLOAT2, VES_POSITION);
@@ -1834,9 +1834,9 @@ namespace bs
 				SPtr<MeshData> meshData = MeshData::Create(numVertices, numIndices, vertexDesc);
 
 				auto vertexData = (Vector2*)meshData->GetElementData(VES_POSITION);
-				UINT32* indices = meshData->GetIndices32();
+				u32* indices = meshData->GetIndices32();
 
-				UINT32 quadIdx = 0;
+				u32 quadIdx = 0;
 				for (auto& drawGroup : widget->DrawGroups)
 				{
 					float left = (float)drawGroup.Bounds.X;
@@ -1887,7 +1887,7 @@ namespace bs
 
 		assert(data.GroupDirtyState.size() == widget->DrawGroups.size());
 
-		for(UINT32 i = 0; i < (UINT32)data.GroupDirtyState.size(); i++)
+		for(u32 i = 0; i < (u32)data.GroupDirtyState.size(); i++)
 		{
 			if (data.GroupDirtyState[i])
 				widget->DrawGroups[i].RequiresRedraw = true;
@@ -1908,7 +1908,7 @@ namespace bs
 		}
 	}
 
-	void GUIRenderer::ClearDrawGroups(const SPtr<Camera>& camera, UINT64 widgetId)
+	void GUIRenderer::ClearDrawGroups(const SPtr<Camera>& camera, u64 widgetId)
 	{
 		auto iterFind = mPerCameraData.find(camera.get());
 		if (iterFind == mPerCameraData.end())
@@ -1940,8 +1940,8 @@ namespace bs
 		float t = std::max(0.0f, mTime - renderData.AnimationStartTime);
 		if(renderData.SpriteTexture)
 		{
-			UINT32 row;
-			UINT32 column;
+			u32 row;
+			u32 column;
 			renderData.SpriteTexture->GetAnimationFrame(t, row, column);
 
 			float invWidth = 1.0f / renderData.SpriteTexture->GetAnimation().NumColumns;

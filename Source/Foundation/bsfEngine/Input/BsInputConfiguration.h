@@ -47,10 +47,10 @@ namespace bs
 		 *
 		 * @param[in]	type		@copydoc VIRTUAL_AXIS_DESC::type
 		 */
-		VIRTUAL_AXIS_DESC(UINT32 type);
+		VIRTUAL_AXIS_DESC(u32 type);
 
 		/** Type of physical axis to map to. See InputAxis type for common types, but you are not limited to those values. */
-		UINT32 Type = (UINT32)InputAxis::MouseX;
+		u32 Type = (u32)InputAxis::MouseX;
 
 		/** Value below which to ignore axis value and consider it 0. */
 		float DeadZone = 0.0001f;
@@ -91,12 +91,12 @@ namespace bs
 			return (ButtonIdentifier == rhs.ButtonIdentifier);
 		}
 
-		UINT32 ButtonIdentifier = 0;
+		u32 ButtonIdentifier = 0;
 	private:
 		/** Returns a static map of all virtual button identifiers and their buttons. */
-		static Map<String, UINT32>& GetUniqueButtonIds();
+		static Map<String, u32>& GetUniqueButtonIds();
 
-		static UINT32 NextButtonId;
+		static u32 NextButtonId;
 	};
 
 	/**
@@ -117,7 +117,7 @@ namespace bs
 		VirtualAxis() = default;
 		VirtualAxis(const String& name);
 
-		UINT32 AxisIdentifier = 0;
+		u32 AxisIdentifier = 0;
 
 		bool operator== (const VirtualAxis& rhs) const
 		{
@@ -125,15 +125,15 @@ namespace bs
 		}
 
 	private:
-		static Map<String, UINT32> UniqueAxisIds;
-		static UINT32 NextAxisId;
+		static Map<String, u32> UniqueAxisIds;
+		static u32 NextAxisId;
 	};
 
 	/**	Contains virtual <-> physical key mappings. */
 	class BS_EXPORT InputConfiguration
 	{
 		static const int MAX_NUM_DEVICES_PER_TYPE = 8;
-		static const int MAX_NUM_DEVICES = (UINT32)InputDevice::Count * MAX_NUM_DEVICES_PER_TYPE;
+		static const int MAX_NUM_DEVICES = (u32)InputDevice::Count * MAX_NUM_DEVICES_PER_TYPE;
 
 		/**	Internal virtual button data container. */
 		struct VirtualButtonData
@@ -154,7 +154,7 @@ namespace bs
 		/**	Internal container for holding axis data for all devices. */
 		struct DeviceAxisData
 		{
-			VirtualAxisData Axes[(UINT32)InputAxis::Count];
+			VirtualAxisData Axes[(u32)InputAxis::Count];
 		};
 
 	public:
@@ -192,10 +192,10 @@ namespace bs
 		 * Sets repeat interval for held virtual buttons. Buttons will be continously triggered in interval increments as
 		 * long as they button is being held.
 		 */
-		void SetRepeatInterval(UINT64 milliseconds) { mRepeatInterval = milliseconds; }
+		void SetRepeatInterval(u64 milliseconds) { mRepeatInterval = milliseconds; }
 
 		/**	Gets the currently set repeat interval for held virtual buttons. */
-		UINT64 GetRepeatInterval() const { return mRepeatInterval; }
+		u64 GetRepeatInterval() const { return mRepeatInterval; }
 
 		/** @name Internal
 		 *  @{
@@ -204,7 +204,7 @@ namespace bs
 		/**
 		 * Returns data about virtual buttons that are triggered by the specified physical button code and modifier flags.
 		 */
-		bool GetButtonsInternal(ButtonCode code, UINT32 modifiers, Vector<VirtualButton>& btns, Vector<VIRTUAL_BUTTON_DESC>& btnDescs) const;
+		bool GetButtonsInternal(ButtonCode code, u32 modifiers, Vector<VirtualButton>& btns, Vector<VIRTUAL_BUTTON_DESC>& btnDescs) const;
 
 		/**	Retrieves virtual axis descriptor for the provided axis. */
 		bool GetAxisInternal(const VirtualAxis& axis, VIRTUAL_AXIS_DESC& axisDesc) const;
@@ -215,7 +215,7 @@ namespace bs
 		Vector<VirtualButtonData> mButtons[BC_Count];
 		Vector<VirtualAxisData> mAxes;
 
-		UINT64 mRepeatInterval = 300;
+		u64 mRepeatInterval = 300;
 	};
 
 	/** @} */

@@ -28,7 +28,7 @@ namespace bs
 
 	void SceneActor::UpdateStateInternal(const SceneObject& so, bool force)
 	{
-		UINT32 curHash = so.GetTransformHash();
+		u32 curHash = so.GetTransformHash();
 		if (curHash != mHash || force)
 		{
 			SetTransform(so.GetTransform());

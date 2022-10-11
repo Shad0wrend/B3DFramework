@@ -11,7 +11,7 @@ namespace bs::ct
 {
 	SPtr<bs::RenderWindow> MacOSGLSupport::newWindow(
 		RENDER_WINDOW_DESC& desc,
-		UINT32 windowId,
+		u32 windowId,
 		SPtr<bs::RenderWindow> parentWindow)
 	{
 		bs::MacOSRenderWindow* window = new (bs_alloc<bs::MacOSRenderWindow>()) bs::MacOSRenderWindow(desc, windowId, *this);
@@ -28,7 +28,7 @@ namespace bs::ct
 		// Do nothing
 	}
 
-	SPtr<MacOSContext> MacOSGLSupport::createContext(bool depthStencil, UINT32 msaaCount)
+	SPtr<MacOSContext> MacOSGLSupport::createContext(bool depthStencil, u32 msaaCount)
 	{
 		GLRenderAPI* rapi = static_cast<GLRenderAPI*>(RenderAPI::InstancePtr());
 

@@ -17,14 +17,14 @@ namespace bs { namespace ct
 		class MacOSVideoMode : public VideoMode
 		{
 		public:
-			MacOSVideoMode(UINT32 width, UINT32 height, float refreshRate, UINT32 outputIdx);
+			MacOSVideoMode(u32 width, u32 height, float refreshRate, u32 outputIdx);
 			~MacOSVideoMode() override;
 
 			/** Returns internal Core Graphics video mode reference. */
 			CGDisplayModeRef GetModeRefInternal() const { return mModeRef; }
 
 		private:
-			MacOSVideoMode(CGDisplayModeRef modeRef, CVDisplayLinkRef linkRef, UINT32 outputIdx);
+			MacOSVideoMode(CGDisplayModeRef modeRef, CVDisplayLinkRef linkRef, u32 outputIdx);
 			friend class MacOSVideoOutputInfo;
 
 			CGDisplayModeRef mModeRef;
@@ -34,7 +34,7 @@ namespace bs { namespace ct
 		class MacOSVideoOutputInfo : public VideoOutputInfo
 		{
 		public:
-			MacOSVideoOutputInfo(CGDirectDisplayID displayID, UINT32 outputIdx);
+			MacOSVideoOutputInfo(CGDirectDisplayID displayID, u32 outputIdx);
 
 			/** Returns the Core Graphics identifier for this display. */
 			CGDirectDisplayID GetDisplayIDInternal() const { return mDisplayID; }

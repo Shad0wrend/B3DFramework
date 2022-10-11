@@ -41,7 +41,7 @@ namespace bs
 	struct GUIRenderElement : SpriteRenderElement
 	{
 		GUIMeshType Type = GUIMeshType::Triangle;
-		UINT32 Depth = 0;
+		u32 Depth = 0;
 	};
 
 	/**
@@ -117,7 +117,7 @@ namespace bs
 		 * elements. The applied index is tied to the nav-group, so if the nav-group changes the index will need to be
 		 * re-applied.
 		 */
-		void SetNavGroupIndex(INT32 index);
+		void SetNavGroupIndex(i32 index);
 
 		/** @copydoc GUIElementBase::getVisibleBounds */
 		Rect2I GetVisibleBounds() override;
@@ -160,14 +160,14 @@ namespace bs
 		 *
 		 */
 		virtual void FillBuffer(
-			UINT8* vertices,
-			UINT32* indices,
-			UINT32 vertexOffset,
-			UINT32 indexOffset,
+			u8* vertices,
+			u32* indices,
+			u32 vertexOffset,
+			u32 indexOffset,
 			const Vector2I& offset,
-			UINT32 maxNumVerts,
-			UINT32 maxNumIndices,
-			UINT32 renderElementIdx) const = 0;
+			u32 maxNumVerts,
+			u32 maxNumIndices,
+			u32 renderElementIdx) const = 0;
 
 		/**
 		 * Recreates the internal render elements. Must be called before fillBuffer if element is dirty. Marks the element
@@ -203,10 +203,10 @@ namespace bs
 		virtual bool VirtualButtonEventInternal(const GUIVirtualButtonEvent& ev);
 
 		/** Set element part of element depth. Less significant than both widget and area depth. */
-		void SetElementDepthInternal(UINT8 depth);
+		void SetElementDepthInternal(u8 depth);
 
 		/** Retrieve element part of element depth. Less significant than both widget and area depth. */
-		UINT8 GetElementDepthInternal() const;
+		u8 GetElementDepthInternal() const;
 
 		/** @copydoc GUIElementBase::_setLayoutData */
 		void SetLayoutDataInternal(const GUILayoutData& data) override;
@@ -221,7 +221,7 @@ namespace bs
 		 * For example if you are rendering a button with an image and a text you will want the text to be rendered in front
 		 * of the image at a different depth, which means the depth range is 2 (0 for text, 1 for background image).
 		 */
-		virtual UINT32 GetRenderElementDepthRangeInternal() const { return 1; }
+		virtual u32 GetRenderElementDepthRangeInternal() const { return 1; }
 
 		/** Gets internal element style representing the exact type of GUI element in this object. */
 		Type GetTypeInternal() const override { return GUIElementBase::Type::Element; }
@@ -248,7 +248,7 @@ namespace bs
 		 * Returns GUI element depth. This includes widget and area depth, but does not include specific per-render-element
 		 * depth.
 		 */
-		UINT32 GetDepthInternal() const { return mLayoutData.Depth; }
+		u32 GetDepthInternal() const { return mLayoutData.Depth; }
 
 		/** Returns the navigation group this element belongs to. See setNavGroup(). */
 		SPtr<GUINavGroup> GetNavGroupInternal() const;
@@ -260,7 +260,7 @@ namespace bs
 		virtual bool HasCustomCursorInternal(const Vector2I position, CursorType& type) const { return false; }
 
 		/**	Checks if the GUI element accepts a drag and drop operation of the specified type. */
-		virtual bool AcceptDragAndDropInternal(const Vector2I position, UINT32 typeId) const { return false; }
+		virtual bool AcceptDragAndDropInternal(const Vector2I position, u32 typeId) const { return false; }
 
 		/**	Returns a context menu if a GUI element has one. Otherwise returns nullptr. */
 		virtual SPtr<GUIContextMenu> GetContextMenuInternal() const;
@@ -351,12 +351,12 @@ namespace bs
 			 */
 			struct SpriteInfo
 			{
-				SpriteInfo(Sprite* sprite, UINT32 depth = 0, GUIMeshType meshType = GUIMeshType::Triangle)
+				SpriteInfo(Sprite* sprite, u32 depth = 0, GUIMeshType meshType = GUIMeshType::Triangle)
 					: Sprite(sprite), Depth(depth), MeshType(meshType)
 				{ }
 				
 				Sprite* Sprite;
-				UINT32 Depth = 0;
+				u32 Depth = 0;
 				GUIMeshType MeshType = GUIMeshType::Triangle;
 			};
 
@@ -364,22 +364,22 @@ namespace bs
 			 * Determines the total number of requires render elements from the provided set of sprites, and initializes that
 			 * many render elements from the sprite render elements and the extra information provided in SpriteInfo.
 			 */
-			template<UINT32 N>
+			template<u32 N>
 			static void Populate(const SpriteInfo (&spriteInfos)[N], SmallVector<GUIRenderElement, 4>& output)
 			{
-				UINT32 totalCount = 0;
-				for (UINT32 i = 0; i < N; i++)
+				u32 totalCount = 0;
+				for (u32 i = 0; i < N; i++)
 					totalCount += spriteInfos[i].Sprite ? spriteInfos[i].Sprite->GetNumRenderElements() : 0;
 
 				output.Resize(totalCount);
 
-				UINT32 globalIdx = 0;
-				for (UINT32 i = 0; i < N; i++)
+				u32 globalIdx = 0;
+				for (u32 i = 0; i < N; i++)
 				{
 					const SpriteInfo& spriteInfo = spriteInfos[i];
 					
-					UINT32 count = spriteInfo.Sprite ? spriteInfo.Sprite->GetNumRenderElements() : 0;
-					for(UINT32 j = 0; j < count; j++)
+					u32 count = spriteInfo.Sprite ? spriteInfo.Sprite->GetNumRenderElements() : 0;
+					for(u32 j = 0; j < count; j++)
 					{
 						GUIRenderElement& renderElem = output[globalIdx];
 						spriteInfo.Sprite->GetRenderElementInfo(j, renderElem);

@@ -19,7 +19,7 @@ namespace bs { namespace ct
 		:mCallbacks(&CompareCallback)
 	{ }
 
-	SPtr<RendererMeshData> Renderer::CreateMeshDataInternal(UINT32 numVertices, UINT32 numIndices, VertexLayout layout, IndexType indexType)
+	SPtr<RendererMeshData> Renderer::CreateMeshDataInternal(u32 numVertices, u32 numIndices, VertexLayout layout, IndexType indexType)
 	{
 		return bs_shared_ptr<RendererMeshData>(new (bs_alloc<RendererMeshData>())
 			RendererMeshData(numVertices, numIndices, layout, indexType));
@@ -50,7 +50,7 @@ namespace bs { namespace ct
 				return a->GetPriority() > b->GetPriority();
 		}
 		else
-			return (UINT32)a->GetLocation() < (UINT32)b->GetLocation();
+			return (u32)a->GetLocation() < (u32)b->GetLocation();
 	}
 
 	void Renderer::Update()
@@ -78,13 +78,13 @@ namespace bs { namespace ct
 		mUnresolvedTasks.push_back(task);
 	}
 
-	void Renderer::ProcessTasks(bool forceAll, UINT64 upToFrame)
+	void Renderer::ProcessTasks(bool forceAll, u64 upToFrame)
 	{
 		// Move all tasks to the core thread queue
 		{
 			Lock lock(mTaskMutex);
 
-			for(UINT32 i = 0; i < (UINT32)mQueuedTasks.size();)
+			for(u32 i = 0; i < (u32)mQueuedTasks.size();)
 			{
 				if(mQueuedTasks[i].FrameIdx <= upToFrame)
 				{
@@ -130,7 +130,7 @@ namespace bs { namespace ct
 		{
 			Lock lock(mTaskMutex);
 
-			for(UINT32 i = 0; i < (UINT32)mQueuedTasks.size(); i++)
+			for(u32 i = 0; i < (u32)mQueuedTasks.size(); i++)
 			{
 				if(mQueuedTasks[i].Task.get() == &task)
 				{

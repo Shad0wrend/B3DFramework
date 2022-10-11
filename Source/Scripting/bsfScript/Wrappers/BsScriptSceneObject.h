@@ -53,13 +53,13 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void InternalCreateInstance(MonoObject* instance, MonoString* name, UINT32 flags);
+		static void InternalCreateInstance(MonoObject* instance, MonoString* name, u32 flags);
 
 		static void InternalSetName(ScriptSceneObject* nativeInstance, MonoString* name);
 		static MonoString* InternalGetName(ScriptSceneObject* nativeInstance);
 		static void InternalSetActive(ScriptSceneObject* nativeInstance, bool value);
 		static bool InternalGetActive(ScriptSceneObject* nativeInstance);
-		static bool InternalHasFlag(ScriptSceneObject* nativeInstance, UINT32 flag);
+		static bool InternalHasFlag(ScriptSceneObject* nativeInstance, u32 flag);
 
 		static void InternalSetMobility(ScriptSceneObject* nativeInstance, int value);
 		static int InternalGetMobility(ScriptSceneObject* nativeInstance);
@@ -68,8 +68,8 @@ namespace bs
 		static MonoObject* InternalGetParent(ScriptSceneObject* nativeInstance);
 		static MonoObject* InternalGetScene(ScriptSceneObject* nativeInstance);
 
-		static void InternalGetNumChildren(ScriptSceneObject* nativeInstance, UINT32* value);
-		static MonoObject* InternalGetChild(ScriptSceneObject* nativeInstance, UINT32 idx);
+		static void InternalGetNumChildren(ScriptSceneObject* nativeInstance, u32* value);
+		static MonoObject* InternalGetChild(ScriptSceneObject* nativeInstance, u32 idx);
 		static MonoObject* InternalFindChild(ScriptSceneObject* nativeInstance, MonoString* name, bool recursive);
 		static MonoArray* InternalFindChildren(ScriptSceneObject* nativeInstance, MonoString* name, bool recursive);
 

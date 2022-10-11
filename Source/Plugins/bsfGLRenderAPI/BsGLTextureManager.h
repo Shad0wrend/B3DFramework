@@ -47,7 +47,7 @@ namespace bs
 
 		/** @copydoc TextureManager::createRenderTextureInternal */
 		SPtr<RenderTexture> CreateRenderTextureInternal(const RENDER_TEXTURE_DESC& desc,
-			UINT32 deviceIdx = 0) ;
+			u32 deviceIdx = 0) ;
 
 		GLSupport& mGLSupport;
 	};

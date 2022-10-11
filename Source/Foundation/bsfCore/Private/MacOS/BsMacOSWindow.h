@@ -34,10 +34,10 @@ namespace bs
 	struct WINDOW_DESC
 	{
 		String title;
-		INT32 x = -1;
-		INT32 y = -1;
-		UINT32 width = 20;
-		UINT32 height = 20;
+		i32 x = -1;
+		i32 y = -1;
+		u32 width = 20;
+		u32 height = 20;
 		bool showDecorations = true;
 		bool allowResize = true;
 		bool modal = false;
@@ -60,7 +60,7 @@ namespace bs
 			BSWindowListener* responder = nil;
 			BSWindowDelegate* delegate = nil;
             CALayer* layer = nil;
-			UINT32 numDropTargets = 0;
+			u32 numDropTargets = 0;
 			bool isModal = false;
 			NSUInteger style = 0;
 			bool isFullscreen;
@@ -94,10 +94,10 @@ namespace bs
 		void restore();
 
 		/**	Change the size of the window. */
-		void resize(UINT32 width, UINT32 height);
+		void resize(u32 width, u32 height);
 
 		/**	Reposition the window. */
-		void move(INT32 left, INT32 top);
+		void move(i32 left, i32 top);
 
 		/** Switches from fullscreen to windowed mode. */
 		void setWindowed();
@@ -123,7 +123,7 @@ namespace bs
 		void DestroyInternal();
 
 		/** Returns an identifier that unique identifies this window. */
-		UINT32 GetWindowIdInternal() const { return mWindowId; }
+		u32 GetWindowIdInternal() const { return mWindowId; }
 
 		/**
 		 * Sets a portion of the window in which the user can click and drag in order to move the window. This is needed
@@ -169,7 +169,7 @@ namespace bs
 
 	private:
 		Pimpl* m;
-		UINT32 mWindowId;
+		u32 mWindowId;
 	};
 
 	/** @} */

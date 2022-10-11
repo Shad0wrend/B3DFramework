@@ -67,8 +67,8 @@ namespace bs { namespace ct
 
 		if (mInfoQueue != nullptr)
 		{
-			UINT64 numStoredMessages = mInfoQueue->GetNumStoredMessagesAllowedByRetrievalFilter();
-			for (UINT64 i = 0 ; i < numStoredMessages ; i++ )
+			u64 numStoredMessages = mInfoQueue->GetNumStoredMessagesAllowedByRetrievalFilter();
+			for (u64 i = 0 ; i < numStoredMessages ; i++ )
 			{
 				// Get the size of the message
 				SIZE_T messageLength = 0;
@@ -91,7 +91,7 @@ namespace bs { namespace ct
 	{
 		if (mInfoQueue != nullptr)
 		{
-			const UINT64 numStoredMessages = mInfoQueue->GetNumStoredMessagesAllowedByRetrievalFilter();
+			const u64 numStoredMessages = mInfoQueue->GetNumStoredMessagesAllowedByRetrievalFilter();
 			return numStoredMessages > 0;
 		}
 		else

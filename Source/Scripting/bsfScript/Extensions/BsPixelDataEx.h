@@ -21,7 +21,7 @@ namespace bs
 		static SPtr<PixelData> Create(const PixelVolume& volume, PixelFormat format = PF_BGRA8);
 
 		BS_SCRIPT_EXPORT(ec:PixelData)
-		static SPtr<PixelData> Create(UINT32 width, UINT32 height, UINT32 depth = 1, PixelFormat pixelFormat = PF_BGRA8);
+		static SPtr<PixelData> Create(u32 width, u32 height, u32 depth = 1, PixelFormat pixelFormat = PF_BGRA8);
 
 		/**
 		 * Returns a pixel at the specified location in the buffer.

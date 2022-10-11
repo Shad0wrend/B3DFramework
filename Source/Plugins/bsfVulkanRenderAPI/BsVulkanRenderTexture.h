@@ -43,7 +43,7 @@ namespace bs
 	class VulkanRenderTexture : public RenderTexture
 	{
 	public:
-		VulkanRenderTexture(const RENDER_TEXTURE_DESC& desc, UINT32 deviceIdx);
+		VulkanRenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx);
 		virtual ~VulkanRenderTexture();
 
 		/** @copydoc RenderTexture::getCustomAttribute */
@@ -57,7 +57,7 @@ namespace bs
 		const RenderTargetProperties& GetPropertiesInternal() const { return mProperties; }
 
 		RenderTextureProperties mProperties;
-		UINT32 mDeviceIdx;
+		u32 mDeviceIdx;
 		VulkanFramebuffer* mFramebuffer;
 	};
 		

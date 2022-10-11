@@ -160,15 +160,15 @@ namespace bs
 			}
 
 			mImageSpriteOffset = Vector2I(
-				((INT32)mLayoutData.Area.Width - destSize.X) / 2,
-				((INT32)mLayoutData.Area.Height - destSize.Y) / 2
+				((i32)mLayoutData.Area.Width - destSize.X) / 2,
+				((i32)mLayoutData.Area.Height - destSize.Y) / 2
 			);
 		}
 		else
 			mImageSpriteOffset = Vector2I();
 
-		mDesc.Width = (UINT32)destSize.X;
-		mDesc.Height = (UINT32)destSize.Y;
+		mDesc.Width = (u32)destSize.X;
+		mDesc.Height = (u32)destSize.Y;
 
 		mDesc.BorderLeft = GetStyleInternal()->Border.Left;
 		mDesc.BorderRight = GetStyleInternal()->Border.Right;
@@ -182,7 +182,7 @@ namespace bs
 		else
 			mDesc.UvScale = Vector2::ONE;
 		
-		mImageSprite->Update(mDesc, (UINT64)GetParentWidgetInternal());
+		mImageSprite->Update(mDesc, (u64)GetParentWidgetInternal());
 
 		// Populate GUI render elements from the sprites
 		{
@@ -239,18 +239,18 @@ namespace bs
 	}
 
 	void GUITexture::FillBuffer(
-		UINT8* vertices,
-		UINT32* indices,
-		UINT32 vertexOffset,
-		UINT32 indexOffset,
+		u8* vertices,
+		u32* indices,
+		u32 vertexOffset,
+		u32 indexOffset,
 		const Vector2I& offset,
-		UINT32 maxNumVerts,
-		UINT32 maxNumIndices,
-		UINT32 renderElementIdx) const
+		u32 maxNumVerts,
+		u32 maxNumIndices,
+		u32 renderElementIdx) const
 	{
-		UINT8* uvs = vertices + sizeof(Vector2);
-		UINT32 vertexStride = sizeof(Vector2) * 2;
-		UINT32 indexStride = sizeof(UINT32);
+		u8* uvs = vertices + sizeof(Vector2);
+		u32 vertexStride = sizeof(Vector2) * 2;
+		u32 indexStride = sizeof(u32);
 
 		Vector2I layoutOffset = Vector2I(mLayoutData.Area.X, mLayoutData.Area.Y) + mImageSpriteOffset + offset;
 		mImageSprite->FillBuffer(vertices, uvs, indices, vertexOffset, indexOffset, maxNumVerts, maxNumIndices,

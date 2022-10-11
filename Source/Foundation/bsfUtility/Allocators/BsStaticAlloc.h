@@ -33,14 +33,14 @@ namespace bs
 		class MemBlock
 		{
 		public:
-			MemBlock(UINT8* data, UINT32 size)
+			MemBlock(u8* data, u32 size)
 				:mData(data), mSize(size)
 			{ }
 
 			/** Allocates a piece of memory within the block. Caller must ensure the block has enough empty space. */
-			UINT8* Alloc(UINT32 amount)
+			u8* Alloc(u32 amount)
 			{
-				UINT8* freePtr = &mData[mFreePtr];
+				u8* freePtr = &mData[mFreePtr];
 				mFreePtr += amount;
 
 				return freePtr;
@@ -50,7 +50,7 @@ namespace bs
 			 * Frees a piece of memory within the block. If the memory isn't the last allocated memory, no deallocation
 			 * happens and that memory is instead orphaned.
 			 */
-			void Free(UINT8* data, UINT32 allocSize)
+			void Free(u8* data, u32 allocSize)
 			{
 				if((data + allocSize) == (mData + mFreePtr))
 					mFreePtr -= allocSize;
@@ -62,9 +62,9 @@ namespace bs
 				mFreePtr = 0;
 			}
 
-			UINT8* MData = nullptr;
-			UINT32 MFreePtr = 0;
-			UINT32 MSize = 0;
+			u8* MData = nullptr;
+			u32 MFreePtr = 0;
+			u32 MSize = 0;
 			MemBlock* MNextBlock = nullptr;
 		};
 
@@ -77,18 +77,18 @@ namespace bs
 		 *
 		 * @param[in]	amount	Amount of memory to allocate, in bytes.
 		 */
-		UINT8* Alloc(UINT32 amount)
+		u8* Alloc(u32 amount)
 		{
 			if (amount == 0)
 				return nullptr;
 
 #if BS_DEBUG_MODE
-			amount += sizeof(UINT32);
+			amount += sizeof(u32);
 #endif
 
-			UINT32 freeMem = BlockSize - mFreePtr;
+			u32 freeMem = BlockSize - mFreePtr;
 			
-			UINT8* data;
+			u8* data;
 			if (amount > freeMem)
 				data = mDynamicAlloc.Alloc(amount);
 			else
@@ -100,32 +100,32 @@ namespace bs
 #if BS_DEBUG_MODE
 			mTotalAllocBytes += amount;
 
-			UINT32* storedSize = reinterpret_cast<UINT32*>(data);
+			u32* storedSize = reinterpret_cast<u32*>(data);
 			*storedSize = amount;
 
-			return data + sizeof(UINT32);
+			return data + sizeof(u32);
 #else
 			return data;
 #endif
 		}
 
 		/** Deallocates a previously allocated piece of memory. */
-		void Free(void* data, UINT32 allocSize)
+		void Free(void* data, u32 allocSize)
 		{
 			if (data == nullptr)
 				return;
 
-			UINT8* dataPtr = (UINT8*)data;
+			u8* dataPtr = (u8*)data;
 #if BS_DEBUG_MODE
-			dataPtr -= sizeof(UINT32);
+			dataPtr -= sizeof(u32);
 
-			UINT32* storedSize = (UINT32*)(dataPtr);
+			u32* storedSize = (u32*)(dataPtr);
 			mTotalAllocBytes -= *storedSize;
 #endif
 
 			if(data > mStaticData && data < (mStaticData + BlockSize))
 			{
-				if((((UINT8*)data) + allocSize) == (mStaticData + mFreePtr))
+				if((((u8*)data) + allocSize) == (mStaticData + mFreePtr))
 					mFreePtr -= allocSize;
 			}
 			else
@@ -138,11 +138,11 @@ namespace bs
 			if (data == nullptr)
 				return;
 
-			UINT8* dataPtr = (UINT8*)data;
+			u8* dataPtr = (u8*)data;
 #if BS_DEBUG_MODE
-			dataPtr -= sizeof(UINT32);
+			dataPtr -= sizeof(u32);
 
-			UINT32* storedSize = (UINT32*)(dataPtr);
+			u32* storedSize = (u32*)(dataPtr);
 			mTotalAllocBytes -= *storedSize;
 #endif
 			if(data < mStaticData || data >= (mStaticData + BlockSize))
@@ -153,7 +153,7 @@ namespace bs
 		 * Allocates enough memory to hold the object(s) of specified type using the static allocator, and constructs them.
 		 */
 		template<class T>
-		T* Construct(UINT32 count = 0)
+		T* Construct(u32 count = 0)
 		{
 			T* data = (T*)Alloc(sizeof(T) * count);
 
@@ -167,7 +167,7 @@ namespace bs
 		 * Allocates enough memory to hold the object(s) of specified type using the static allocator, and constructs them.
 		 */
 		template<class T, class... Args>
-		T* Construct(Args &&...args, UINT32 count = 0)
+		T* Construct(Args &&...args, u32 count = 0)
 		{
 			T* data = (T*)Alloc(sizeof(T) * count);
 
@@ -188,7 +188,7 @@ namespace bs
 
 		/** Destructs and deallocates an array of objects allocated with the static frame allocator. */
 		template<class T>
-		void Destruct(T* data, UINT32 count)
+		void Destruct(T* data, u32 count)
 		{
 			for(unsigned int i = 0; i < count; i++)
 				data[i].~T();
@@ -206,11 +206,11 @@ namespace bs
 		}
 
 	private:
-		UINT8 mStaticData[BlockSize];
-		UINT32 mFreePtr = 0;
+		u8 mStaticData[BlockSize];
+		u32 mFreePtr = 0;
 		DynamicAllocator mDynamicAlloc;
 
-		UINT32 mTotalAllocBytes = 0;
+		u32 mTotalAllocBytes = 0;
 	};
 
 	//NOLINTBEGIN(readability-identifier-naming)
@@ -248,7 +248,7 @@ namespace bs
 			if (num > static_cast<size_t>(-1) / sizeof(T))
 				return nullptr; // Error
 
-			void* const pv = mStaticAlloc->alloc((UINT32)(num * sizeof(T)));
+			void* const pv = mStaticAlloc->alloc((u32)(num * sizeof(T)));
 			if (!pv)
 				return nullptr; // Error
 
@@ -258,12 +258,12 @@ namespace bs
 		/** Deallocate storage p of deleted elements. */
 		void deallocate(T* p, size_t num) const noexcept
 		{
-			mStaticAlloc->Free((UINT8*)p, (UINT32)num);
+			mStaticAlloc->Free((u8*)p, (u32)num);
 		}
 
 		StaticAlloc<BlockSize, FreeAlloc>* mStaticAlloc = nullptr;
 
-		size_t max_size() const { return std::numeric_limits<UINT32>::max() / sizeof(T); }
+		size_t max_size() const { return std::numeric_limits<u32>::max() / sizeof(T); }
 		void construct(pointer p, const_reference t) { new (p) T(t); }
 		void destroy(pointer p) { p->~T(); }
 		template<class U, class... Args>

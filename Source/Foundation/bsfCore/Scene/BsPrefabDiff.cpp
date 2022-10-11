@@ -70,19 +70,19 @@ namespace bs
 	void PrefabDiff::ApplyDiff(const SPtr<PrefabObjectDiff>& diff, const HSceneObject& object,
 		SerializationContext* context)
 	{
-		if ((diff->SoFlags & (UINT32)SceneObjectDiffFlags::Name) != 0)
+		if ((diff->SoFlags & (u32)SceneObjectDiffFlags::Name) != 0)
 			object->SetName(diff->Name);
 
-		if ((diff->SoFlags & (UINT32)SceneObjectDiffFlags::Position) != 0)
+		if ((diff->SoFlags & (u32)SceneObjectDiffFlags::Position) != 0)
 			object->SetPosition(diff->Position);
 
-		if ((diff->SoFlags & (UINT32)SceneObjectDiffFlags::Rotation) != 0)
+		if ((diff->SoFlags & (u32)SceneObjectDiffFlags::Rotation) != 0)
 			object->SetRotation(diff->Rotation);
 
-		if ((diff->SoFlags & (UINT32)SceneObjectDiffFlags::Scale) != 0)
+		if ((diff->SoFlags & (u32)SceneObjectDiffFlags::Scale) != 0)
 			object->SetScale(diff->Scale);
 
-		if ((diff->SoFlags & (UINT32)SceneObjectDiffFlags::Active) != 0)
+		if ((diff->SoFlags & (u32)SceneObjectDiffFlags::Active) != 0)
 			object->SetActive(diff->IsActive);
 
 		// Note: It is important to remove objects and components first, before adding them.
@@ -103,8 +103,8 @@ namespace bs
 
 		for (auto& removedId : diff->RemovedChildren)
 		{
-			UINT32 childCount = object->GetNumChildren();
-			for (UINT32 i = 0; i < childCount; i++)
+			u32 childCount = object->GetNumChildren();
+			for (u32 i = 0; i < childCount; i++)
 			{
 				HSceneObject child = object->GetChild(i);
 				if (removedId == child->GetLinkId())
@@ -135,7 +135,7 @@ namespace bs
 		{
 			for (auto& component : components)
 			{
-				if (componentDiff->Id == (INT32)component->GetLinkId())
+				if (componentDiff->Id == (i32)component->GetLinkId())
 				{
 					IDiff& diffHandler = component->GetRtti()->GetDiffHandler();
 					diffHandler.ApplyDiff(component.GetInternalPtr(), componentDiff->Data, context);
@@ -146,8 +146,8 @@ namespace bs
 
 		for (auto& childDiff : diff->ChildDiffs)
 		{
-			UINT32 childCount = object->GetNumChildren();
-			for (UINT32 i = 0; i < childCount; i++)
+			u32 childCount = object->GetNumChildren();
+			for (u32 i = 0; i < childCount; i++)
 			{
 				HSceneObject child = object->GetChild(i);
 				if (childDiff->Id == child->GetLinkId())
@@ -169,7 +169,7 @@ namespace bs
 				output = bs_shared_ptr_new<PrefabObjectDiff>();
 
 			output->Name = instance->GetName();
-			output->SoFlags |= (UINT32)SceneObjectDiffFlags::Name;
+			output->SoFlags |= (u32)SceneObjectDiffFlags::Name;
 		}
 
 		const Transform& prefabTfrm = prefab->GetLocalTransform();
@@ -180,7 +180,7 @@ namespace bs
 				output = bs_shared_ptr_new<PrefabObjectDiff>();
 
 			output->Position = instanceTfrm.GetPosition();
-			output->SoFlags |= (UINT32)SceneObjectDiffFlags::Position;
+			output->SoFlags |= (u32)SceneObjectDiffFlags::Position;
 		}
 
 		if (prefabTfrm.GetRotation() != instanceTfrm.GetRotation())
@@ -189,7 +189,7 @@ namespace bs
 				output = bs_shared_ptr_new<PrefabObjectDiff>();
 
 			output->Rotation = instanceTfrm.GetRotation();
-			output->SoFlags |= (UINT32)SceneObjectDiffFlags::Rotation;
+			output->SoFlags |= (u32)SceneObjectDiffFlags::Rotation;
 		}
 
 		if (prefabTfrm.GetScale() != instanceTfrm.GetScale())
@@ -198,7 +198,7 @@ namespace bs
 				output = bs_shared_ptr_new<PrefabObjectDiff>();
 
 			output->Scale = instanceTfrm.GetScale();
-			output->SoFlags |= (UINT32)SceneObjectDiffFlags::Scale;
+			output->SoFlags |= (u32)SceneObjectDiffFlags::Scale;
 		}
 
 		if (prefab->GetActive() != instance->GetActive())
@@ -207,20 +207,20 @@ namespace bs
 				output = bs_shared_ptr_new<PrefabObjectDiff>();
 
 			output->IsActive = instance->GetActive();
-			output->SoFlags |= (UINT32)SceneObjectDiffFlags::Active;
+			output->SoFlags |= (u32)SceneObjectDiffFlags::Active;
 		}
 
-		UINT32 prefabChildCount = prefab->GetNumChildren();
-		UINT32 instanceChildCount = instance->GetNumChildren();
+		u32 prefabChildCount = prefab->GetNumChildren();
+		u32 instanceChildCount = instance->GetNumChildren();
 
 		// Find modified and removed children
-		for (UINT32 i = 0; i < prefabChildCount; i++)
+		for (u32 i = 0; i < prefabChildCount; i++)
 		{
 			HSceneObject prefabChild = prefab->GetChild(i);
 
 			SPtr<PrefabObjectDiff> childDiff;
 			bool foundMatching = false;
-			for (UINT32 j = 0; j < instanceChildCount; j++)
+			for (u32 j = 0; j < instanceChildCount; j++)
 			{
 				HSceneObject instanceChild = instance->GetChild(j);
 
@@ -254,7 +254,7 @@ namespace bs
 		}
 
 		// Find added children
-		for (UINT32 i = 0; i < instanceChildCount; i++)
+		for (u32 i = 0; i < instanceChildCount; i++)
 		{
 			HSceneObject instanceChild = instance->GetChild(i);
 
@@ -262,9 +262,9 @@ namespace bs
 				continue;
 
 			bool foundMatching = false;
-			if (instanceChild->GetLinkId() != (UINT32)-1)
+			if (instanceChild->GetLinkId() != (u32)-1)
 			{
-				for (UINT32 j = 0; j < prefabChildCount; j++)
+				for (u32 j = 0; j < prefabChildCount; j++)
 				{
 					HSceneObject prefabChild = prefab->GetChild(j);
 
@@ -290,17 +290,17 @@ namespace bs
 		const Vector<HComponent>& prefabComponents = prefab->GetComponents();
 		const Vector<HComponent>& instanceComponents = instance->GetComponents();
 
-		UINT32 prefabComponentCount = (UINT32)prefabComponents.size();
-		UINT32 instanceComponentCount = (UINT32)instanceComponents.size();
+		u32 prefabComponentCount = (u32)prefabComponents.size();
+		u32 instanceComponentCount = (u32)instanceComponents.size();
 
 		// Find modified and removed components
-		for (UINT32 i = 0; i < prefabComponentCount; i++)
+		for (u32 i = 0; i < prefabComponentCount; i++)
 		{
 			HComponent prefabComponent = prefabComponents[i];
 
 			SPtr<PrefabComponentDiff> childDiff;
 			bool foundMatching = false;
-			for (UINT32 j = 0; j < instanceComponentCount; j++)
+			for (u32 j = 0; j < instanceComponentCount; j++)
 			{
 				HComponent instanceComponent = instanceComponents[j];
 
@@ -344,14 +344,14 @@ namespace bs
 		}
 
 		// Find added components
-		for (UINT32 i = 0; i < instanceComponentCount; i++)
+		for (u32 i = 0; i < instanceComponentCount; i++)
 		{
 			HComponent instanceComponent = instanceComponents[i];
 
 			bool foundMatching = false;
-			if (instanceComponent->GetLinkId() != (UINT32)-1)
+			if (instanceComponent->GetLinkId() != (u32)-1)
 			{
-				for (UINT32 j = 0; j < prefabComponentCount; j++)
+				for (u32 j = 0; j < prefabComponentCount; j++)
 				{
 					HComponent prefabComponent = prefabComponents[j];
 
@@ -382,7 +382,7 @@ namespace bs
 
 	void PrefabDiff::RenameInstanceIds(const HSceneObject& prefab, const HSceneObject& instance, Vector<RenamedGameObject>& output)
 	{
-		UnorderedMap<UUID, UnorderedMap<UINT32, UINT64>> linkToInstanceId;
+		UnorderedMap<UUID, UnorderedMap<u32, u64>> linkToInstanceId;
 
 		struct StackEntry
 		{
@@ -407,21 +407,21 @@ namespace bs
 			else
 				childParentUUID = current.So->mPrefabLinkUUID;
 
-			UnorderedMap<UINT32, UINT64>& idMap = linkToInstanceId[childParentUUID];
+			UnorderedMap<u32, u64>& idMap = linkToInstanceId[childParentUUID];
 
 			const Vector<HComponent>& components = current.So->GetComponents();
 			for (auto& component : components)
 			{
-				if (component->GetLinkId() != (UINT32)-1)
+				if (component->GetLinkId() != (u32)-1)
 					idMap[component->GetLinkId()] = component->GetInstanceId();
 			}
 
-			UINT32 numChildren = current.So->GetNumChildren();
-			for (UINT32 i = 0; i < numChildren; i++)
+			u32 numChildren = current.So->GetNumChildren();
+			for (u32 i = 0; i < numChildren; i++)
 			{
 				HSceneObject child = current.So->GetChild(i);
 
-				if (child->GetLinkId() != (UINT32)-1)
+				if (child->GetLinkId() != (u32)-1)
 					idMap[child->GetLinkId()] = child->GetInstanceId();
 
 				todo.push({ child, childParentUUID });
@@ -453,7 +453,7 @@ namespace bs
 			auto iterFind = linkToInstanceId.find(childParentUUID);
 			if (iterFind != linkToInstanceId.end())
 			{
-				UnorderedMap<UINT32, UINT64>& idMap = iterFind->second;
+				UnorderedMap<u32, u64>& idMap = iterFind->second;
 
 				const Vector<HComponent>& components = current.So->GetComponents();
 				for (auto& component : components)
@@ -471,16 +471,16 @@ namespace bs
 				}
 			}
 
-			UINT32 numChildren = current.So->GetNumChildren();
-			for (UINT32 i = 0; i < numChildren; i++)
+			u32 numChildren = current.So->GetNumChildren();
+			for (u32 i = 0; i < numChildren; i++)
 			{
 				HSceneObject child = current.So->GetChild(i);
 
 				if (iterFind != linkToInstanceId.end())
 				{
-					if (child->GetLinkId() != (UINT32)-1)
+					if (child->GetLinkId() != (u32)-1)
 					{
-						UnorderedMap<UINT32, UINT64>& idMap = iterFind->second;
+						UnorderedMap<u32, u64>& idMap = iterFind->second;
 
 						auto iterFind2 = idMap.find(child->GetLinkId());
 						if (iterFind2 != idMap.end())

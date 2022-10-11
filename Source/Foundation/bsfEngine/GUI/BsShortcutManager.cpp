@@ -29,15 +29,15 @@ namespace bs
 
 	void ShortcutManager::OnButtonDown(const ButtonEvent& event)
 	{
-		UINT32 modifiers = 0;
+		u32 modifiers = 0;
 		if (Input::Instance().IsButtonHeld(BC_LSHIFT) || Input::Instance().IsButtonHeld(BC_RSHIFT))
-			modifiers |= (UINT32)ButtonModifier::Shift;
+			modifiers |= (u32)ButtonModifier::Shift;
 
 		if (Input::Instance().IsButtonHeld(BC_LCONTROL) || Input::Instance().IsButtonHeld(BC_RCONTROL))
-			modifiers |= (UINT32)ButtonModifier::Ctrl;
+			modifiers |= (u32)ButtonModifier::Ctrl;
 
 		if (Input::Instance().IsButtonHeld(BC_LMENU) || Input::Instance().IsButtonHeld(BC_RMENU))
-			modifiers |= (UINT32)ButtonModifier::Alt;
+			modifiers |= (u32)ButtonModifier::Alt;
 
 		ShortcutKey searchKey((ButtonModifier)modifiers, event.ButtonCode);
 

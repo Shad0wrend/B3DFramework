@@ -26,19 +26,19 @@ namespace bs
 
 		/** @copydoc LightProbeVolume::addProbe() */
 		BS_SCRIPT_EXPORT()
-		UINT32 AddProbe(const Vector3& position) { return mInternal->AddProbe(position); }
+		u32 AddProbe(const Vector3& position) { return mInternal->AddProbe(position); }
 
 		/** @copydoc LightProbeVolume::setProbePosition() */
 		BS_SCRIPT_EXPORT()
-		void SetProbePosition(UINT32 handle, const Vector3& position) { mInternal->SetProbePosition(handle, position); }
+		void SetProbePosition(u32 handle, const Vector3& position) { mInternal->SetProbePosition(handle, position); }
 
 		/** @copydoc LightProbeVolume::getProbePosition() */
 		BS_SCRIPT_EXPORT()
-		Vector3 GetProbePosition(UINT32 handle) const { return mInternal->GetProbePosition(handle); }
+		Vector3 GetProbePosition(u32 handle) const { return mInternal->GetProbePosition(handle); }
 
 		/** @copydoc LightProbeVolume::removeProbe() */
 		BS_SCRIPT_EXPORT()
-		void RemoveProbe(UINT32 handle) { mInternal->RemoveProbe(handle); }
+		void RemoveProbe(u32 handle) { mInternal->RemoveProbe(handle); }
 
 		/** @copydoc LightProbeVolume::getProbes() */
 		BS_SCRIPT_EXPORT()
@@ -46,7 +46,7 @@ namespace bs
 
 		/** @copydoc LightProbeVolume::renderProbe() */
 		BS_SCRIPT_EXPORT()
-		void RenderProbe(UINT32 handle);
+		void RenderProbe(u32 handle);
 
 		/** @copydoc LightProbeVolume::renderProbes() */
 		BS_SCRIPT_EXPORT()

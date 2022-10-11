@@ -17,11 +17,11 @@ namespace bs
 	class BS_CORE_EXPORT VertexDataDescRTTI : public RTTIType<VertexDataDesc, IReflectable, VertexDataDescRTTI>
 	{
 	private:
-		VertexElement& GetVertexElementData(VertexDataDesc* obj, UINT32 arrayIdx) { return obj->mVertexElements[arrayIdx]; }
-		void SetVertexElementData(VertexDataDesc* obj, UINT32 arrayIdx, VertexElement& value) { obj->mVertexElements[arrayIdx] = value; }
+		VertexElement& GetVertexElementData(VertexDataDesc* obj, u32 arrayIdx) { return obj->mVertexElements[arrayIdx]; }
+		void SetVertexElementData(VertexDataDesc* obj, u32 arrayIdx, VertexElement& value) { obj->mVertexElements[arrayIdx] = value; }
 
-		UINT32 GetNumVertexElementData(VertexDataDesc* obj) { return (UINT32)obj->mVertexElements.size(); }
-		void SetNumVertexElementData(VertexDataDesc* obj, UINT32 numElements) { obj->mVertexElements.resize(numElements); }
+		u32 GetNumVertexElementData(VertexDataDesc* obj) { return (u32)obj->mVertexElements.size(); }
+		void SetNumVertexElementData(VertexDataDesc* obj, u32 numElements) { obj->mVertexElements.resize(numElements); }
 
 	public:
 		VertexDataDescRTTI()
@@ -41,7 +41,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_VertexDataDesc;
 		}

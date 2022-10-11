@@ -27,7 +27,7 @@ namespace bs
 		HWND HWnd;
 
 		POVState PovState[4];
-		INT32 AxisState[6]; // Only for XInput
+		i32 AxisState[6]; // Only for XInput
 		bool ButtonState[16]; // Only for XInput
 	};
 
@@ -153,7 +153,7 @@ namespace bs
 	}
 
 	/** Converts a DirectInput or XInput button code to BSF ButtonCode. */
-	ButtonCode gamepadButtonToButtonCode(INT32 code)
+	ButtonCode gamepadButtonToButtonCode(i32 code)
 	{
 		switch (code)
 		{
@@ -235,7 +235,7 @@ namespace bs
 			struct AxisState
 			{
 				bool Moved;
-				INT32 Value;
+				i32 Value;
 			};
 
 			AxisState axisState[6];
@@ -256,7 +256,7 @@ namespace bs
 			// Right trigger
 			axisState[5].Value = std::min((int)inputState.Gamepad.bRightTrigger * 129, MAX_AXIS);
 
-			for (UINT32 i = 0; i < 6; i++)
+			for (u32 i = 0; i < 6; i++)
 			{
 				axisState[i].Moved = axisState[i].Value != m->AxisState[i];
 				m->AxisState[i] = axisState[i].Value;
@@ -304,7 +304,7 @@ namespace bs
 			}
 
 			// Buttons
-			for (UINT32 i = 0; i < 16; i++)
+			for (u32 i = 0; i < 16; i++)
 			{
 				bool buttonState = (inputState.Gamepad.wButtons & (1 << i)) != 0;
 
@@ -352,14 +352,14 @@ namespace bs
 			struct AxisState
 			{
 				bool Moved;
-				INT32 Value;
+				i32 Value;
 			};
 
 			AxisState axisState[24];
 			bs_zero_out(axisState);
 
 			// Note: Not reporting slider or POV events
-			for (UINT32 i = 0; i < numEntries; ++i)
+			for (u32 i = 0; i < numEntries; ++i)
 			{
 				switch (diBuff[i].dwOfs)
 				{
@@ -412,7 +412,7 @@ namespace bs
 		}
 	}
 
-	void Gamepad::ChangeCaptureContext(UINT64 windowHandle)
+	void Gamepad::ChangeCaptureContext(u64 windowHandle)
 	{
 		HWND newhWnd = (HWND)windowHandle;
 
@@ -420,7 +420,7 @@ namespace bs
 		{
 			releaseDirectInput(m);
 
-			if (!m->Info.IsXInput && windowHandle != (UINT64)-1)
+			if (!m->Info.IsXInput && windowHandle != (u64)-1)
 				initializeDirectInput(m, newhWnd);
 			else
 				m->HWnd = newhWnd;

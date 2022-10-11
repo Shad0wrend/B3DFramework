@@ -19,7 +19,7 @@ namespace bs
 	public:
 		BS_SCRIPT_EXPORT(e:Material,in:true)
 		static void SetTexture(const HMaterial& thisPtr, const String& name, const HTexture& value,
-			UINT32 mipLevel, UINT32 numMipLevels, UINT32 arraySlice, UINT32 numArraySlices);
+			u32 mipLevel, u32 numMipLevels, u32 arraySlice, u32 numArraySlices);
 
 		BS_SCRIPT_EXPORT(e:Material,in:true)
 		static HTexture GetTexture(const HMaterial& thisPtr, const String& name);

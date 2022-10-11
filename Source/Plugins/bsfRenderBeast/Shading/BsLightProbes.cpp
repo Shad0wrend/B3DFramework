@@ -63,9 +63,9 @@ namespace bs { namespace ct
 		POOLED_RENDER_TEXTURE_DESC& depthDesc)
 	{
 		const RendererViewProperties& viewProps = view.GetProperties();
-		UINT32 width = viewProps.Target.ViewRect.Width;
-		UINT32 height = viewProps.Target.ViewRect.Height;
-		UINT32 numSamples = viewProps.Target.NumSamples;
+		u32 width = viewProps.Target.ViewRect.Width;
+		u32 height = viewProps.Target.ViewRect.Height;
+		u32 numSamples = viewProps.Target.NumSamples;
 
 		colorDesc = POOLED_RENDER_TEXTURE_DESC::Create2D(PF_R16U, width, height, TU_RENDERTARGET, numSamples);
 		depthDesc = POOLED_RENDER_TEXTURE_DESC::Create2D(PF_D32, width, height, TU_DEPTHSTENCIL, numSamples);
@@ -191,10 +191,10 @@ namespace bs { namespace ct
 		}
 	}
 
-	/** Hash value generator for std::pair<INT32, INT32>. */
+	/** Hash value generator for std::pair<i32, i32>. */
 	struct pair_hash
 	{
-		size_t operator()(const std::pair<INT32, INT32>& key) const
+		size_t operator()(const std::pair<i32, i32>& key) const
 		{
 			size_t hash = 0;
 			bs::bs_hash_combine(hash, key.first);
@@ -207,7 +207,7 @@ namespace bs { namespace ct
 	/** Information about a single tetrahedron, for use on the GPU. */
 	struct TetrahedronDataGPU
 	{
-		UINT32 Indices[4];
+		u32 Indices[4];
 		Vector2I Offsets[4];
 		Matrix3x4 Transform;
 	};
@@ -217,7 +217,7 @@ namespace bs { namespace ct
 	{
 		Vector4 Corners[3];
 		Vector4 Normals[3];
-		UINT32 IsQuadratic;
+		u32 IsQuadratic;
 		float Padding[3];
 	};
 
@@ -227,7 +227,7 @@ namespace bs { namespace ct
 
 	void LightProbes::NotifyAdded(LightProbeVolume* volume)
 	{
-		UINT32 handle = (UINT32)mVolumes.size();
+		u32 handle = (u32)mVolumes.size();
 
 		VolumeInfo info;
 		info.Volume = volume;
@@ -241,7 +241,7 @@ namespace bs { namespace ct
 
 	void LightProbes::NotifyDirty(LightProbeVolume* volume)
 	{
-		UINT32 handle = volume->GetRendererId();
+		u32 handle = volume->GetRendererId();
 		mVolumes[handle].IsDirty = true;
 
 		mTetrahedronVolumeDirty = true;
@@ -249,10 +249,10 @@ namespace bs { namespace ct
 
 	void LightProbes::NotifyRemoved(LightProbeVolume* volume)
 	{
-		UINT32 handle = volume->GetRendererId();
+		u32 handle = volume->GetRendererId();
 
 		LightProbeVolume* lastVolume = mVolumes.back().Volume;
-		UINT32 lastHandle = lastVolume->GetRendererId();
+		u32 lastHandle = lastVolume->GetRendererId();
 		
 		if (handle != lastHandle)
 		{
@@ -273,7 +273,7 @@ namespace bs { namespace ct
 			return;
 
 		// Move all coefficients into the global buffer
-		UINT32 numRows = 0;
+		u32 numRows = 0;
 		for(auto& entry : mVolumes)
 		{
 			SPtr<Texture> localTexture = entry.Volume->GetCoefficientsTexture();
@@ -283,7 +283,7 @@ namespace bs { namespace ct
 		if(numRows > mMaxCoefficientRows)
 			ResizeCoefficientTexture(numRows + 4);
 
-		UINT32 rowIdx = 0;
+		u32 rowIdx = 0;
 		for(auto& entry : mVolumes)
 		{
 			TEXTURE_COPY_DESC copyDesc;
@@ -296,14 +296,14 @@ namespace bs { namespace ct
 		}
 
 		// Gather all positions
-		UINT32 bufferOffset = 0;
+		u32 bufferOffset = 0;
 		rowIdx = 0;
 		for(auto& entry : mVolumes)
 		{
 			const Vector<LightProbeInfo>& infos = entry.Volume->GetLightProbeInfos();
 			const Vector<Vector3>& positions = entry.Volume->GetLightProbePositions();
 
-			UINT32 numProbes = entry.Volume->GetNumActiveProbes();
+			u32 numProbes = entry.Volume->GetNumActiveProbes();
 
 			if (numProbes == 0)
 				continue;
@@ -312,7 +312,7 @@ namespace bs { namespace ct
 			Vector3 offset = tfrm.GetPosition();
 			Quaternion rotation = tfrm.GetRotation();
 
-			for (UINT32 i = 0; i < numProbes; i++)
+			for (u32 i = 0; i < numProbes; i++)
 			{
 				Vector3 localPos = positions[i];
 				Vector3 transformedPos = rotation.Rotate(localPos) + offset;
@@ -326,7 +326,7 @@ namespace bs { namespace ct
 
 			SPtr<Texture> localTexture = entry.Volume->GetCoefficientsTexture();
 			rowIdx += localTexture->GetProperties().GetHeight();
-			bufferOffset += (UINT32)positions.size();
+			bufferOffset += (u32)positions.size();
 		}
 
 		mTetrahedronInfos.clear();
@@ -335,11 +335,11 @@ namespace bs { namespace ct
 		GenerateTetrahedronData(mTempTetrahedronPositions, mTetrahedronInfos, outerFaces, true);
 
 		// Find valid tetrahedrons
-		UINT32 numTetrahedra = (UINT32)mTetrahedronInfos.size();
+		u32 numTetrahedra = (u32)mTetrahedronInfos.size();
 
 		bool* validTets = (bool*)bs_stack_alloc(sizeof(bool) * numTetrahedra);
 		mNumValidTetrahedra = 0;
-		for (UINT32 i = 0; i < (UINT32)mTetrahedronInfos.size(); i++)
+		for (u32 i = 0; i < (u32)mTetrahedronInfos.size(); i++)
 		{
 			const TetrahedronData& entry = mTetrahedronInfos[i];
 
@@ -361,7 +361,7 @@ namespace bs { namespace ct
 				mNumValidTetrahedra++;
 		}
 
-		UINT32 numValidFaces = 0;
+		u32 numValidFaces = 0;
 		for(auto& entry : outerFaces)
 		{
 			if (validTets[entry.Tetrahedron])
@@ -372,7 +372,7 @@ namespace bs { namespace ct
 		// Note: Currently the entire volume is rendered as a single large mesh, which will isn't optimal as we can't
 		// perform frustum culling. A better option would be to split the mesh into multiple smaller volumes, do
 		// frustum culling and possibly even sort by distance from camera.
-		UINT32 numVertices = mNumValidTetrahedra * 4 * 3 + numValidFaces * 9 * 3;
+		u32 numVertices = mNumValidTetrahedra * 4 * 3 + numValidFaces * 9 * 3;
 
 		SPtr<VertexDataDesc> vertexDesc = bs_shared_ptr_new<VertexDataDesc>();
 		vertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
@@ -381,11 +381,11 @@ namespace bs { namespace ct
 		SPtr<MeshData> meshData = MeshData::Create(numVertices, numVertices, vertexDesc);
 		auto posIter = meshData->GetVec3DataIter(VES_POSITION);
 		auto idIter = meshData->GetDwordDataIter(VES_TEXCOORD);
-		UINT32* indices = meshData->GetIndices32();
+		u32* indices = meshData->GetIndices32();
 
 		// Insert inner tetrahedron triangles
-		UINT32 tetIdx = 0;
-		for (UINT32 i = 0; i < (UINT32)mTetrahedronInfos.size(); i++)
+		u32 tetIdx = 0;
+		for (u32 i = 0; i < (u32)mTetrahedronInfos.size(); i++)
 		{
 			if (!validTets[i])
 				continue;
@@ -393,12 +393,12 @@ namespace bs { namespace ct
 			const Tetrahedron& volume = mTetrahedronInfos[i].Volume;
 
 			Vector3 center(BsZero);
-			for(UINT32 j = 0; j < 4; j++)
+			for(u32 j = 0; j < 4; j++)
 				center += mTempTetrahedronPositions[volume.Vertices[j]];
 
 			center /= 4.0f;
 
-			static const UINT32 Permutations[4][3] =
+			static const u32 Permutations[4][3] =
 			{
 				{ 0, 1, 2 },
 				{ 0, 1, 3 },
@@ -406,7 +406,7 @@ namespace bs { namespace ct
 				{ 1, 2, 3 }
 			};
 
-			for(UINT32 j = 0; j < 4; j++)
+			for(u32 j = 0; j < 4; j++)
 			{
 				Vector3 A = mTempTetrahedronPositions[volume.Vertices[Permutations[j][0]]];
 				Vector3 B = mTempTetrahedronPositions[volume.Vertices[Permutations[j][1]]];
@@ -441,27 +441,27 @@ namespace bs { namespace ct
 		// Generate an edge map for outer faces (required for step below)
 		struct Edge
 		{
-			UINT32 VertInner[2];
-			UINT32 VertOuter[2];
-			UINT32 Face[2];
+			u32 VertInner[2];
+			u32 VertOuter[2];
+			u32 Face[2];
 		};
 
-		FrameUnorderedMap<std::pair<INT32, INT32>, Edge, pair_hash> edgeMap;
-		for(UINT32 i = 0; i < (UINT32)outerFaces.size(); i++)
+		FrameUnorderedMap<std::pair<i32, i32>, Edge, pair_hash> edgeMap;
+		for(u32 i = 0; i < (u32)outerFaces.size(); i++)
 		{
 			if (!validTets[outerFaces[i].Tetrahedron])
 				continue;
 
-			for (UINT32 j = 0; j < 3; ++j)
+			for (u32 j = 0; j < 3; ++j)
 			{
-				UINT32 v0 = outerFaces[i].InnerVertices[j];
-				UINT32 v1 = outerFaces[i].InnerVertices[(j + 1) % 3];
+				u32 v0 = outerFaces[i].InnerVertices[j];
+				u32 v1 = outerFaces[i].InnerVertices[(j + 1) % 3];
 
 				// Keep the same ordering so other faces can find the same edge
 				if (v0 > v1)
 					std::swap(v0, v1);
 
-				auto iterFind = edgeMap.find(std::make_pair((INT32)v0, (INT32)v1));
+				auto iterFind = edgeMap.find(std::make_pair((i32)v0, (i32)v1));
 				if (iterFind != edgeMap.end())
 				{
 					iterFind->second.Face[1] = i;
@@ -476,25 +476,25 @@ namespace bs { namespace ct
 					edge.Face[0] = i;
 					edge.Face[1] = -1;
 
-					edgeMap.insert(std::make_pair(std::make_pair((INT32)v0, (INT32)v1), edge));
+					edgeMap.insert(std::make_pair(std::make_pair((i32)v0, (i32)v1), edge));
 				}
 			}
 		}
 
 		// Generate front and back triangles for extruded outer faces
-		UINT32 faceIdx = 0;
-		for(UINT32 i = 0; i < (UINT32)outerFaces.size(); i++)
+		u32 faceIdx = 0;
+		for(u32 i = 0; i < (u32)outerFaces.size(); i++)
 		{
 			if (!validTets[outerFaces[i].Tetrahedron])
 				continue;
 
 			const TetrahedronFaceData& entry = outerFaces[i];
 
-			static const UINT32 Permutations[2][3] = { {0, 1, 2 }, { 3, 4, 5} };
+			static const u32 Permutations[2][3] = { {0, 1, 2 }, { 3, 4, 5} };
 
 			// Make sure the triangle is clockwise, facing away from the center
 			Vector3 center(BsZero);
-			for (UINT32 k = 0; k < 3; k++)
+			for (u32 k = 0; k < 3; k++)
 			{
 				center += mTempTetrahedronPositions[entry.InnerVertices[k]];
 				center += mTempTetrahedronPositions[entry.OuterVertices[k]];
@@ -502,11 +502,11 @@ namespace bs { namespace ct
 
 			center /= 6.0f;
 
-			for(UINT32 j = 0; j < 2; ++j)
+			for(u32 j = 0; j < 2; ++j)
 			{
-				UINT32 idxA = Permutations[j][0];
-				UINT32 idxB = Permutations[j][1];
-				UINT32 idxC = Permutations[j][2];
+				u32 idxA = Permutations[j][0];
+				u32 idxB = Permutations[j][1];
+				u32 idxC = Permutations[j][2];
 
 				idxA = idxA > 2 ? entry.OuterVertices[idxA - 3] : entry.InnerVertices[idxA];
 				idxB = idxB > 2 ? entry.OuterVertices[idxB - 3] : entry.InnerVertices[idxB];
@@ -542,18 +542,18 @@ namespace bs { namespace ct
 		}
 
 		// Generate sides for extruded outer faces
-		UINT32 sideIdx = 0;
+		u32 sideIdx = 0;
 		for(auto& entry : edgeMap)
 		{
 			const Edge& edge = entry.second;
 
-			for (UINT32 i = 0; i < 2; i++)
+			for (u32 i = 0; i < 2; i++)
 			{
 				const TetrahedronFaceData& face = outerFaces[edge.Face[i]];
 
 				// Make sure the triangle is clockwise, facing away from the center
 				Vector3 center(BsZero);
-				for (UINT32 k = 0; k < 3; k++)
+				for (u32 k = 0; k < 3; k++)
 				{
 					center += mTempTetrahedronPositions[face.InnerVertices[k]];
 					center += mTempTetrahedronPositions[face.OuterVertices[k]];
@@ -561,12 +561,12 @@ namespace bs { namespace ct
 
 				center /= 6.0f;
 
-				static const UINT32 Permutations[2][3] = { {0, 1, 2 }, { 1, 2, 3} };
-				for(UINT32 j = 0; j < 2; ++j)
+				static const u32 Permutations[2][3] = { {0, 1, 2 }, { 1, 2, 3} };
+				for(u32 j = 0; j < 2; ++j)
 				{
-					UINT32 idxA = Permutations[j][0];
-					UINT32 idxB = Permutations[j][1];
-					UINT32 idxC = Permutations[j][2];
+					u32 idxA = Permutations[j][0];
+					u32 idxB = Permutations[j][1];
+					u32 idxC = Permutations[j][2];
 
 					idxA = idxA > 1 ? edge.VertOuter[idxA - 2] : edge.VertInner[idxA];
 					idxB = idxB > 1 ? edge.VertOuter[idxB - 2] : edge.VertInner[idxB];
@@ -603,8 +603,8 @@ namespace bs { namespace ct
 		}
 
 		// Generate "caps" on the end of the extruded volume
-		UINT32 capIdx = 0;
-		for(UINT32 i = 0; i < (UINT32)outerFaces.size(); i++)
+		u32 capIdx = 0;
+		for(u32 i = 0; i < (u32)outerFaces.size(); i++)
 		{
 			if (!validTets[outerFaces[i].Tetrahedron])
 				continue;
@@ -619,7 +619,7 @@ namespace bs { namespace ct
 			const Tetrahedron& tet = mTetrahedronInfos[entry.Tetrahedron].Volume;
 
 			Vector3 center(BsZero);
-			for(UINT32 j = 0; j < 4; j++)
+			for(u32 j = 0; j < 4; j++)
 				center += mTempTetrahedronPositions[tet.Vertices[j]];
 
 			center /= 4.0f;
@@ -652,7 +652,7 @@ namespace bs { namespace ct
 		// Map vertices to actual SH coefficient indices, and write GPU buffer with tetrahedron information
 		if ((mNumValidTetrahedra + numValidFaces) > mMaxTetrahedra)
 		{
-			UINT32 newSize = Math::DivideAndRoundUp(mNumValidTetrahedra + numValidFaces, 64U) * 64U;
+			u32 newSize = Math::DivideAndRoundUp(mNumValidTetrahedra + numValidFaces, 64U) * 64U;
 			ResizeTetrahedronBuffer(newSize);
 		}
 
@@ -660,7 +660,7 @@ namespace bs { namespace ct
 			GBL_WRITE_ONLY_DISCARD);
 
 		// Write inner tetrahedron data
-		for (UINT32 i = 0; i < (UINT32)mTetrahedronInfos.size(); i++)
+		for (u32 i = 0; i < (u32)mTetrahedronInfos.size(); i++)
 		{
 			if (!validTets[i])
 				continue;
@@ -668,13 +668,13 @@ namespace bs { namespace ct
 			TetrahedronData& entry = mTetrahedronInfos[i];
 
 			Vector2I offsets[4];
-			for(UINT32 j = 0; j < 4; ++j)
+			for(u32 j = 0; j < 4; ++j)
 			{
 				entry.Volume.Vertices[j] = mTempTetrahedronBufferIndices[entry.Volume.Vertices[j]];
 				offsets[j] = mTempTetrahedronBufferOffsets[entry.Volume.Vertices[j]];
 			}
 
-			memcpy(dst->Indices, entry.Volume.Vertices, sizeof(UINT32) * 4);
+			memcpy(dst->Indices, entry.Volume.Vertices, sizeof(u32) * 4);
 			memcpy(dst->Offsets, &offsets, sizeof(offsets));
 			memcpy(&dst->Transform, &entry.Transform, sizeof(float) * 12);
 
@@ -682,16 +682,16 @@ namespace bs { namespace ct
 		}
 
 		// Write extruded face data
-		for (UINT32 i = 0; i < (UINT32)outerFaces.size(); i++)
+		for (u32 i = 0; i < (u32)outerFaces.size(); i++)
 		{
 			if (!validTets[outerFaces[i].Tetrahedron])
 				continue;
 
 			const TetrahedronFaceData& entry = outerFaces[i];
 
-			UINT32 indices[4];
+			u32 indices[4];
 			Vector2I offsets[4];
-			for(UINT32 j = 0; j < 3; j++)
+			for(u32 j = 0; j < 3; j++)
 			{
 				indices[j] = mTempTetrahedronBufferIndices[entry.InnerVertices[j]];
 				offsets[j] = mTempTetrahedronBufferOffsets[entry.InnerVertices[j]];
@@ -699,7 +699,7 @@ namespace bs { namespace ct
 
 			indices[3] = -1;
 
-			memcpy(dst->Indices, indices, sizeof(UINT32) * 4);
+			memcpy(dst->Indices, indices, sizeof(u32) * 4);
 			memcpy(dst->Offsets, offsets, sizeof(offsets));
 			memcpy(&dst->Transform, &entry.Transform, sizeof(float) * 12);
 
@@ -711,21 +711,21 @@ namespace bs { namespace ct
 		// Write data specific to faces
 		if (numValidFaces > mMaxFaces)
 		{
-			UINT32 newSize = Math::DivideAndRoundUp(numValidFaces, 64U) * 64U;
+			u32 newSize = Math::DivideAndRoundUp(numValidFaces, 64U) * 64U;
 			ResizeTetrahedronFaceBuffer(newSize);
 		}
 
 		TetrahedronFaceDataGPU* faceDst = (TetrahedronFaceDataGPU*)mTetrahedronFaceInfosGPU->Lock(0,
 			mTetrahedronFaceInfosGPU->GetSize(), GBL_WRITE_ONLY_DISCARD);
 
-		for (UINT32 i = 0; i < (UINT32)outerFaces.size(); i++)
+		for (u32 i = 0; i < (u32)outerFaces.size(); i++)
 		{
 			if (!validTets[outerFaces[i].Tetrahedron])
 				continue;
 
 			const TetrahedronFaceData& entry = outerFaces[i];
 
-			for (UINT32 j = 0; j < 3; j++)
+			for (u32 j = 0; j < 3; j++)
 			{
 				faceDst->Corners[j] = mTempTetrahedronPositions[entry.InnerVertices[j]];
 				faceDst->Normals[j] = entry.Normals[j];
@@ -748,7 +748,7 @@ namespace bs { namespace ct
 	{
 		for(auto& entry : mVolumes)
 		{
-			UINT32 numProbes = entry.Volume->GetNumActiveProbes();
+			u32 numProbes = entry.Volume->GetNumActiveProbes();
 			if (numProbes > 0)
 				return true;
 		}
@@ -768,9 +768,9 @@ namespace bs { namespace ct
 		return info;
 	}
 
-	void LightProbes::ResizeTetrahedronBuffer(UINT32 count)
+	void LightProbes::ResizeTetrahedronBuffer(u32 count)
 	{
-		static constexpr UINT32 ELEMENT_SIZE = Math::DivideAndRoundUp((UINT32)sizeof(TetrahedronDataGPU), 4U);
+		static constexpr u32 ELEMENT_SIZE = Math::DivideAndRoundUp((u32)sizeof(TetrahedronDataGPU), 4U);
 
 		GPU_BUFFER_DESC desc;
 		desc.Type = GBT_STANDARD;
@@ -783,9 +783,9 @@ namespace bs { namespace ct
 		mMaxTetrahedra = count;
 	}
 
-	void LightProbes::ResizeTetrahedronFaceBuffer(UINT32 count)
+	void LightProbes::ResizeTetrahedronFaceBuffer(u32 count)
 	{
-		static constexpr UINT32 ELEMENT_SIZE = Math::DivideAndRoundUp((UINT32)sizeof(TetrahedronFaceDataGPU), 4U);
+		static constexpr u32 ELEMENT_SIZE = Math::DivideAndRoundUp((u32)sizeof(TetrahedronFaceDataGPU), 4U);
 
 		GPU_BUFFER_DESC desc;
 		desc.Type = GBT_STANDARD;
@@ -798,7 +798,7 @@ namespace bs { namespace ct
 		mMaxFaces = count;
 	}
 
-	void LightProbes::ResizeCoefficientTexture(UINT32 numRows)
+	void LightProbes::ResizeCoefficientTexture(u32 numRows)
 	{
 		TEXTURE_DESC desc;
 		desc.Width = 4096;
@@ -825,23 +825,23 @@ namespace bs { namespace ct
 			{
 				// Add geometry so we can handle the case when the interpolation position falls outside of the tetrahedra
 				// volume. We use this geometry to project the position to the nearest face.
-				UINT32 numOuterFaces = (UINT32)volume.OuterFaces.size();
+				u32 numOuterFaces = (u32)volume.OuterFaces.size();
 
 				// Calculate face normals for outer faces
 				//// Make an edge map
 				struct Edge
 				{
-					INT32 Faces[2];
-					INT32 OppositeVerts[2];
+					i32 Faces[2];
+					i32 OppositeVerts[2];
 				};
 
-				FrameUnorderedMap<std::pair<INT32, INT32>, Edge, pair_hash> edgeMap;
-				for (UINT32 i = 0; i < numOuterFaces; ++i)
+				FrameUnorderedMap<std::pair<i32, i32>, Edge, pair_hash> edgeMap;
+				for (u32 i = 0; i < numOuterFaces; ++i)
 				{
-					for (UINT32 j = 0; j < 3; ++j)
+					for (u32 j = 0; j < 3; ++j)
 					{
-						INT32 v0 = volume.OuterFaces[i].Vertices[j];
-						INT32 v1 = volume.OuterFaces[i].Vertices[(j + 1) % 3];
+						i32 v0 = volume.OuterFaces[i].Vertices[j];
+						i32 v1 = volume.OuterFaces[i].Vertices[(j + 1) % 3];
 
 						// Keep the same ordering so other faces can find the same edge
 						if (v0 > v1)
@@ -868,11 +868,11 @@ namespace bs { namespace ct
 				struct FaceVertex
 				{
 					Vector3 Normal = Vector3::ZERO;
-					UINT32 OuterIdx = -1;
+					u32 OuterIdx = -1;
 				};
 
 				FrameVector<Vector3> faceNormals(volume.OuterFaces.size());
-				for (UINT32 i = 0; i < (UINT32)volume.OuterFaces.size(); ++i)
+				for (u32 i = 0; i < (u32)volume.OuterFaces.size(); ++i)
 				{
 					const Vector3& v0 = positions[volume.OuterFaces[i].Vertices[0]];
 					const Vector3& v1 = positions[volume.OuterFaces[i].Vertices[1]];
@@ -885,7 +885,7 @@ namespace bs { namespace ct
 					const Tetrahedron& tet = volume.Tetrahedra[volume.OuterFaces[i].Tetrahedron];
 
 					Vector3 center(BsZero);
-					for(UINT32 j = 0; j < 4; j++)
+					for(u32 j = 0; j < 4; j++)
 						center += positions[tet.Vertices[j]];
 
 					center /= 4.0f;
@@ -898,19 +898,19 @@ namespace bs { namespace ct
 				}
 
 				//// Generate vertex normals
-				FrameUnorderedMap<INT32, FaceVertex> faceVertices;
+				FrameUnorderedMap<i32, FaceVertex> faceVertices;
 				for (auto& entry : edgeMap)
 				{
 					const Edge& edge = entry.second;
 
-					auto accumulateNormalForEdgeVertex = [&](UINT32 v0Idx, UINT32 v1Idx)
+					auto accumulateNormalForEdgeVertex = [&](u32 v0Idx, u32 v1Idx)
 					{
 						auto iter = faceVertices.insert(std::make_pair(v0Idx, FaceVertex()));
 
 						FaceVertex& accum = iter.first->second;
 						const Vector3& v0 = positions[v0Idx];
 
-						auto accumulateNormalForFace = [&](INT32 faceIdx, INT32 v2LocIdx)
+						auto accumulateNormalForFace = [&](i32 faceIdx, i32 v2LocIdx)
 						{
 							const TetrahedronFace& face = volume.OuterFaces[faceIdx];
 
@@ -941,21 +941,21 @@ namespace bs { namespace ct
 				static const float ExtrapolationDistance = 5.0f;
 				for(auto& entry : faceVertices)
 				{
-					entry.second.OuterIdx = (UINT32)positions.size();
+					entry.second.OuterIdx = (u32)positions.size();
 
 					Vector3 outerPos = positions[entry.first] + entry.second.Normal * ExtrapolationDistance;
 					positions.push_back(outerPos);
 				}
 
 				// Generate face data
-				for (UINT32 i = 0; i < numOuterFaces; ++i)
+				for (u32 i = 0; i < numOuterFaces; ++i)
 				{
 					const TetrahedronFace& face = volume.OuterFaces[i];
 
 					TetrahedronFaceData faceData;
 					faceData.Tetrahedron = face.Tetrahedron;
 
-					for (UINT32 j = 0; j < 3; j++)
+					for (u32 j = 0; j < 3; j++)
 					{
 						const FaceVertex& faceVertex = faceVertices[face.Vertices[j]];
 
@@ -966,13 +966,13 @@ namespace bs { namespace ct
 
 					// Add a link on the source tetrahedron to the face data
 					Tetrahedron& innerTet = volume.Tetrahedra[face.Tetrahedron];
-					for(UINT32 j = 0; j < 4; j++)
+					for(u32 j = 0; j < 4; j++)
 					{
 						if (innerTet.Neighbors[j] == -1)
 						{
 							// Note: Not searching for opposite neighbor here. If tet. has multiple free faces then we
 							// can't just pick the first one
-							innerTet.Neighbors[j] = (UINT32)volume.Tetrahedra.size() + (UINT32)faces.size();
+							innerTet.Neighbors[j] = (u32)volume.Tetrahedra.size() + (u32)faces.size();
 							break;
 						}
 					}
@@ -1120,12 +1120,12 @@ namespace bs { namespace ct
 			}
 			else
 			{
-				for (UINT32 i = 0; i < (UINT32)volume.OuterFaces.size(); ++i)
+				for (u32 i = 0; i < (u32)volume.OuterFaces.size(); ++i)
 				{
 					const TetrahedronFace& face = volume.OuterFaces[i];
 					TetrahedronFaceData faceData;
 
-					for (UINT32 j = 0; j < 3; j++)
+					for (u32 j = 0; j < 3; j++)
 					{
 						faceData.InnerVertices[j] = face.Vertices[j];
 						faceData.OuterVertices[j] = -1;
@@ -1141,11 +1141,11 @@ namespace bs { namespace ct
 			}
 
 			// Generate matrices
-			UINT32 numOutputTets = (UINT32)volume.Tetrahedra.size();
+			u32 numOutputTets = (u32)volume.Tetrahedra.size();
 			tetrahedra.reserve(numOutputTets);
 
 			//// For inner tetrahedrons
-			for(UINT32 i = 0; i < (UINT32)numOutputTets; ++i)
+			for(u32 i = 0; i < (u32)numOutputTets; ++i)
 			{
 				TetrahedronData entry;
 				entry.Volume = volume.Tetrahedra[i];

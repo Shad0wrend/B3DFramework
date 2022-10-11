@@ -31,52 +31,52 @@ namespace bs
 			obj->mArrayTypeInfo = val;
 		}
 
-		UINT32& GetElementSize(ManagedSerializableArray* obj)
+		u32& GetElementSize(ManagedSerializableArray* obj)
 		{
-			return (UINT32&)obj->mElemSize;
+			return (u32&)obj->mElemSize;
 		}
 
-		void SetElementSize(ManagedSerializableArray* obj, UINT32& numElements)
+		void SetElementSize(ManagedSerializableArray* obj, u32& numElements)
 		{
 			obj->mElemSize = numElements;
 		}
 
-		UINT32& GetNumElements(ManagedSerializableArray* obj, UINT32 arrayIdx)
+		u32& GetNumElements(ManagedSerializableArray* obj, u32 arrayIdx)
 		{
-			return (UINT32&)obj->mNumElements[arrayIdx];
+			return (u32&)obj->mNumElements[arrayIdx];
 		}
 
-		void SetNumElements(ManagedSerializableArray* obj, UINT32 arrayIdx, UINT32& numElements)
+		void SetNumElements(ManagedSerializableArray* obj, u32 arrayIdx, u32& numElements)
 		{
 			obj->mNumElements[arrayIdx] = numElements;
 		}
 
-		UINT32 GetNumElementsNumEntries(ManagedSerializableArray* obj)
+		u32 GetNumElementsNumEntries(ManagedSerializableArray* obj)
 		{
-			return (UINT32)obj->mNumElements.size();
+			return (u32)obj->mNumElements.size();
 		}
 
-		void SetNumElementsNumEntries(ManagedSerializableArray* obj, UINT32 numEntries)
+		void SetNumElementsNumEntries(ManagedSerializableArray* obj, u32 numEntries)
 		{
 			obj->mNumElements.resize(numEntries);
 		}
 
-		SPtr<ManagedSerializableFieldData> GetArrayEntry(ManagedSerializableArray* obj, UINT32 arrayIdx)
+		SPtr<ManagedSerializableFieldData> GetArrayEntry(ManagedSerializableArray* obj, u32 arrayIdx)
 		{
 			return obj->GetFieldData(arrayIdx);
 		}
 
-		void SetArrayEntry(ManagedSerializableArray* obj, UINT32 arrayIdx, SPtr<ManagedSerializableFieldData> val)
+		void SetArrayEntry(ManagedSerializableArray* obj, u32 arrayIdx, SPtr<ManagedSerializableFieldData> val)
 		{
 			obj->SetFieldData(arrayIdx, val);
 		}
 
-		UINT32 GetNumArrayEntries(ManagedSerializableArray* obj)
+		u32 GetNumArrayEntries(ManagedSerializableArray* obj)
 		{
 			return obj->GetTotalLength();
 		}
 
-		void SetNumArrayEntries(ManagedSerializableArray* obj, UINT32 numEntries)
+		void SetNumArrayEntries(ManagedSerializableArray* obj, u32 numEntries)
 		{
 			obj->mCachedEntries = Vector<SPtr<ManagedSerializableFieldData>>(numEntries);
 		}
@@ -98,7 +98,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_ScriptSerializableArray;
 		}

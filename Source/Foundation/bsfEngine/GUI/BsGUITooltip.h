@@ -30,8 +30,8 @@ namespace bs
 		~GUITooltip() = default;
 
 	private:
-		static const UINT32 TOOLTIP_WIDTH;
-		static const UINT32 CURSOR_SIZE;
+		static const u32 TOOLTIP_WIDTH;
+		static const u32 CURSOR_SIZE;
 	};
 
 	/** @} */

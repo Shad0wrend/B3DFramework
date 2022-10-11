@@ -24,7 +24,7 @@ namespace bs
 {
 	#define _MAX_CLASS_NAME_ 128
 
-	Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId, ct::Win32GLSupport &glsupport)
+	Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, ct::Win32GLSupport &glsupport)
 		:RenderWindow(desc, windowId), mGLSupport(glsupport), mProperties(desc)
 	{
 
@@ -38,8 +38,8 @@ namespace bs
 	{
 		if (name == "WINDOW")
 		{
-			UINT64 *pHwnd = (UINT64*)pData;
-			*pHwnd = (UINT64)GetHWnd();
+			u64 *pHwnd = (u64*)pData;
+			*pHwnd = (u64)GetHWnd();
 			return;
 		}
 	}
@@ -93,7 +93,7 @@ namespace bs
 
 	namespace ct
 	{
-	Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId, Win32GLSupport& glsupport)
+	Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, Win32GLSupport& glsupport)
 		: RenderWindow(desc, windowId), mWindow(nullptr), mGLSupport(glsupport), mHDC(nullptr), mIsChild(false)
 		, mDeviceName(nullptr), mDisplayFrequency(0), mShowOnSwap(false), mContext(nullptr), mProperties(desc)
 		, mSyncedProperties(desc)
@@ -156,17 +156,17 @@ namespace bs
 
 		auto opt = mDesc.PlatformSpecific.find("parentWindowHandle");
 		if (opt != mDesc.PlatformSpecific.end())
-			windowDesc.Parent = (HWND)parseUINT64(opt->second);
+			windowDesc.Parent = (HWND)parseu64(opt->second);
 
 		opt = mDesc.PlatformSpecific.find("externalWindowHandle");
 		if (opt != mDesc.PlatformSpecific.end())
-			windowDesc.External = (HWND)parseUINT64(opt->second);
+			windowDesc.External = (HWND)parseu64(opt->second);
 		
 		const Win32VideoModeInfo& videoModeInfo = static_cast<const Win32VideoModeInfo&>(RenderAPI::Instance().GetVideoModeInfo());
-		UINT32 numOutputs = videoModeInfo.GetNumOutputs();
+		u32 numOutputs = videoModeInfo.GetNumOutputs();
 		if (numOutputs > 0)
 		{
-			UINT32 actualMonitorIdx = std::min(mDesc.VideoMode.OutputIdx, numOutputs - 1);
+			u32 actualMonitorIdx = std::min(mDesc.VideoMode.OutputIdx, numOutputs - 1);
 			const Win32VideoOutputInfo& outputInfo = static_cast<const Win32VideoOutputInfo&>(videoModeInfo.GetOutputInfo(actualMonitorIdx));
 			windowDesc.Monitor = outputInfo.GetMonitorHandle();
 		}
@@ -272,7 +272,7 @@ namespace bs
 		RenderWindow::Initialize();
 	}
 
-	void Win32RenderWindow::SetFullscreen(UINT32 width, UINT32 height, float refreshRate, UINT32 monitorIdx)
+	void Win32RenderWindow::SetFullscreen(u32 width, u32 height, float refreshRate, u32 monitorIdx)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -280,13 +280,13 @@ namespace bs
 			return;
 
 		const Win32VideoModeInfo& videoModeInfo = static_cast<const Win32VideoModeInfo&>(RenderAPI::Instance().GetVideoModeInfo());
-		UINT32 numOutputs = videoModeInfo.GetNumOutputs();
+		u32 numOutputs = videoModeInfo.GetNumOutputs();
 		if (numOutputs == 0)
 			return;
 
 		RenderWindowProperties& props = mProperties;
 
-		UINT32 actualMonitorIdx = std::min(monitorIdx, numOutputs - 1);
+		u32 actualMonitorIdx = std::min(monitorIdx, numOutputs - 1);
 		const Win32VideoOutputInfo& outputInfo = static_cast<const Win32VideoOutputInfo&>(videoModeInfo.GetOutputInfo(actualMonitorIdx));
 
 		mDisplayFrequency = Math::RoundToInt(refreshRate);
@@ -345,7 +345,7 @@ namespace bs
 		SetFullscreen(mode.Width, mode.Height, mode.RefreshRate, mode.OutputIdx);
 	}
 
-	void Win32RenderWindow::SetWindowed(UINT32 width, UINT32 height)
+	void Win32RenderWindow::SetWindowed(u32 width, u32 height)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -361,8 +361,8 @@ namespace bs
 		// Drop out of fullscreen
 		ChangeDisplaySettingsEx(mDeviceName, NULL, NULL, 0, NULL);
 
-		UINT32 winWidth = width;
-		UINT32 winHeight = height;
+		u32 winWidth = width;
+		u32 winHeight = height;
 
 		RECT rect;
 		SetRect(&rect, 0, 0, winWidth, winHeight);
@@ -381,8 +381,8 @@ namespace bs
 		LONG screenw = monitorInfo.rcWork.right - monitorInfo.rcWork.left;
 		LONG screenh = monitorInfo.rcWork.bottom - monitorInfo.rcWork.top;
 
-		INT32 left = screenw > INT32(winWidth) ? ((screenw - INT32(winWidth)) / 2) : 0;
-		INT32 top = screenh > INT32(winHeight) ? ((screenh - INT32(winHeight)) / 2) : 0;
+		i32 left = screenw > i32(winWidth) ? ((screenw - i32(winWidth)) / 2) : 0;
+		i32 top = screenh > i32(winHeight) ? ((screenh - i32(winHeight)) / 2) : 0;
 
 		SetWindowLong(mWindow->GetHWnd(), GWL_STYLE, mWindow->GetStyle() | WS_VISIBLE);
 		SetWindowLong(mWindow->GetHWnd(), GWL_EXSTYLE, mWindow->GetStyleEx());
@@ -403,7 +403,7 @@ namespace bs
 		bs::RenderWindowManager::Instance().NotifyMovedOrResized(this);
 	}
 
-	void Win32RenderWindow::Move(INT32 left, INT32 top)
+	void Win32RenderWindow::Move(i32 left, i32 top)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -425,7 +425,7 @@ namespace bs
 		}
 	}
 
-	void Win32RenderWindow::Resize(UINT32 width, UINT32 height)
+	void Win32RenderWindow::Resize(u32 width, u32 height)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -468,7 +468,7 @@ namespace bs
 		mWindow->Restore();
 	}
 
-	void Win32RenderWindow::SetVSync(bool enabled, UINT32 interval)
+	void Win32RenderWindow::SetVSync(bool enabled, u32 interval)
 	{
 		wglSwapIntervalEXT(interval);
 		BS_CHECK_GL_ERROR();
@@ -485,7 +485,7 @@ namespace bs
 		bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
 	}
 
-	void Win32RenderWindow::SwapBuffers(UINT32 syncMask)
+	void Win32RenderWindow::SwapBuffers(u32 syncMask)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -539,8 +539,8 @@ namespace bs
 		{
 			size_t rowSpan = dst.GetWidth() * PixelUtil::GetNumElemBytes(dst.GetFormat());
 			size_t height = dst.GetHeight();
-			UINT8* tmpData = (UINT8*)bs_alloc((UINT32)(rowSpan * height));
-			UINT8* srcRow = (UINT8 *)dst.GetData(), *tmpRow = tmpData + (height - 1) * rowSpan;
+			u8* tmpData = (u8*)bs_alloc((u32)(rowSpan * height));
+			u8* srcRow = (u8 *)dst.GetData(), *tmpRow = tmpData + (height - 1) * rowSpan;
 
 			while (tmpRow >= tmpData)
 			{
@@ -564,8 +564,8 @@ namespace bs
 		}
 		else if(name == "WINDOW")
 		{
-			UINT64 *pHwnd = (UINT64*)pData;
-			*pHwnd = (UINT64)GetHWndInternal();
+			u64 *pHwnd = (u64*)pData;
+			*pHwnd = (u64)GetHWndInternal();
 			return;
 		}
 	}

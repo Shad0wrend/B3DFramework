@@ -47,7 +47,7 @@ namespace bs
 		bs.Encode(data.get(), stream);
 
 		stream->Seek(0);
-		SPtr<ManagedSerializableFieldData> clonedData = std::static_pointer_cast<ManagedSerializableFieldData>(bs.Decode(stream, (UINT32)stream->Size()));
+		SPtr<ManagedSerializableFieldData> clonedData = std::static_pointer_cast<ManagedSerializableFieldData>(bs.Decode(stream, (u32)stream->Size()));
 		clonedData->Deserialize();
 
 		return clonedData->GetValueBoxed(typeInfo);
@@ -78,7 +78,7 @@ namespace bs
 		bs.Encode(data.get(), stream);
 
 		stream->Seek(0);
-		SPtr<ManagedSerializableFieldData> createdData = std::static_pointer_cast<ManagedSerializableFieldData>(bs.Decode(stream, (UINT32)stream->Size()));
+		SPtr<ManagedSerializableFieldData> createdData = std::static_pointer_cast<ManagedSerializableFieldData>(bs.Decode(stream, (u32)stream->Size()));
 		createdData->Deserialize();
 
 		return createdData->GetValueBoxed(typeInfo);

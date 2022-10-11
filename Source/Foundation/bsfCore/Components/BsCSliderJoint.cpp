@@ -54,14 +54,14 @@ namespace bs
 
 	void CSliderJoint::SetFlag(SliderJointFlag flag, bool enabled)
 	{
-		bool isEnabled = ((UINT32)mDesc.Flag & (UINT32)flag) != 0;
+		bool isEnabled = ((u32)mDesc.Flag & (u32)flag) != 0;
 		if (isEnabled == enabled)
 			return;
 
 		if (enabled)
-			mDesc.Flag = (SliderJointFlag)((UINT32)mDesc.Flag | (UINT32)flag);
+			mDesc.Flag = (SliderJointFlag)((u32)mDesc.Flag | (u32)flag);
 		else
-			mDesc.Flag = (SliderJointFlag)((UINT32)mDesc.Flag & ~(UINT32)flag);
+			mDesc.Flag = (SliderJointFlag)((u32)mDesc.Flag & ~(u32)flag);
 
 		if (mInternal != nullptr)
 			GetInternalInternal()->SetFlag(flag, enabled);
@@ -69,7 +69,7 @@ namespace bs
 
 	bool CSliderJoint::HasFlag(SliderJointFlag flag) const
 	{
-		return ((UINT32)mDesc.Flag & (UINT32)flag) != 0;
+		return ((u32)mDesc.Flag & (u32)flag) != 0;
 	}
 
 	SPtr<Joint> CSliderJoint::CreateInternal()
@@ -83,10 +83,10 @@ namespace bs
 
 	void CSliderJoint::GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation)
 	{
-		position = mPositions[(UINT32)body];
-		rotation = mRotations[(UINT32)body];
+		position = mPositions[(u32)body];
+		rotation = mRotations[(u32)body];
 
-		HRigidbody rigidbody = mBodies[(UINT32)body];
+		HRigidbody rigidbody = mBodies[(u32)body];
 		const Transform& tfrm = SO()->GetTransform();
 		if (rigidbody == nullptr) // Get world space transform if no relative to any body
 		{

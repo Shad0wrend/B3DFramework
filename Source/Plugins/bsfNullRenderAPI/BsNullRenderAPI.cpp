@@ -114,7 +114,7 @@ namespace bs { namespace ct
 			if (param.ArraySize > 1)
 			{
 				// Arrays perform no packing and their elements are always padded and aligned to four component vectors
-				UINT32 size;
+				u32 size;
 				if(param.Type == GPDT_STRUCT)
 					size = Math::DivideAndRoundUp(param.ElementSize, 16U) * 4;
 				else
@@ -138,7 +138,7 @@ namespace bs { namespace ct
 			}
 			else
 			{
-				UINT32 size;
+				u32 size;
 				if(param.Type == GPDT_STRUCT)
 				{
 					// Structs are always aligned and arounded up to 4 component vectors
@@ -150,10 +150,10 @@ namespace bs { namespace ct
 					size = typeInfo.BaseTypeSize * (typeInfo.NumRows * typeInfo.NumColumns) / 4;
 
 					// Pack everything as tightly as possible as long as the data doesn't cross 16 byte boundary
-					UINT32 alignOffset = block.BlockSize % 4;
+					u32 alignOffset = block.BlockSize % 4;
 					if (alignOffset != 0 && size > (4 - alignOffset))
 					{
-						UINT32 padding = (4 - alignOffset);
+						u32 padding = (4 - alignOffset);
 						block.BlockSize += padding;
 					}
 				}

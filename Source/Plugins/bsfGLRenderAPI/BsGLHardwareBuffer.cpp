@@ -7,7 +7,7 @@
 
 namespace bs { namespace ct
 {
-	GLHardwareBuffer::GLHardwareBuffer(GLenum target, UINT32 size, GpuBufferUsage usage)
+	GLHardwareBuffer::GLHardwareBuffer(GLenum target, u32 size, GpuBufferUsage usage)
 		: HardwareBuffer(size, usage, GDF_DEFAULT), mTarget(target)
 	{
 		glGenBuffers(1, &mBufferId);
@@ -32,7 +32,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void* GLHardwareBuffer::Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
+	void* GLHardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx)
 	{
 		// If no buffer ID it's assumed this type of buffer is unsupported and we silently fail (it's up to the creator
 		// if the buffer to check for support and potentially print a warning)
@@ -94,7 +94,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void GLHardwareBuffer::ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
+	void GLHardwareBuffer::ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx, u32 queueIdx)
 	{
 		if(mBufferId == 0)
 			return;
@@ -104,7 +104,7 @@ namespace bs { namespace ct
 		Unlock();
 	}
 
-	void GLHardwareBuffer::WriteData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags, UINT32 queueIdx)
+	void GLHardwareBuffer::WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags, u32 queueIdx)
 	{
 		if(mBufferId == 0)
 			return;
@@ -120,13 +120,13 @@ namespace bs { namespace ct
 		Unlock();
 	}
 
-	void GLHardwareBuffer::CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
+	void GLHardwareBuffer::CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length,
 			bool discardWholeBuffer, const SPtr<ct::CommandBuffer>& commandBuffer)
 	{
 		if(mBufferId == 0)
 			return;
 
-		auto executeRef = [this](HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length)
+		auto executeRef = [this](HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length)
 		{
 			GLHardwareBuffer& glSrcBuffer = static_cast<GLHardwareBuffer&>(srcBuffer);
 

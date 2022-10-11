@@ -98,8 +98,8 @@ namespace bs
 		private:
 			uint32_t mKeysArrayHandle = 0;
 			uint32_t mValuesArrayHandle = 0;
-			UINT32 mNumEntries = 0;
-			UINT32 mCurrentIdx = (UINT32)-1;
+			u32 mNumEntries = 0;
+			u32 mCurrentIdx = (u32)-1;
 			::MonoClass* mKeyType = nullptr;
 			::MonoClass* mValueType = nullptr;
 

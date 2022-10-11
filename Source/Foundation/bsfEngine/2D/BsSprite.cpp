@@ -20,36 +20,36 @@ namespace bs
 		return bounds;
 	}
 
-	UINT32 Sprite::FillBuffer(UINT8* vertices, UINT8* uv, UINT32* indices, UINT32 vertexOffset, UINT32 indexOffset,
-		UINT32 maxNumVerts, UINT32 maxNumIndices, UINT32 vertexStride, UINT32 indexStride, UINT32 renderElementIdx,
+	u32 Sprite::FillBuffer(u8* vertices, u8* uv, u32* indices, u32 vertexOffset, u32 indexOffset,
+		u32 maxNumVerts, u32 maxNumIndices, u32 vertexStride, u32 indexStride, u32 renderElementIdx,
 		const Vector2I& offset, const Rect2I& clipRect, bool clip) const
 	{
 		const auto& renderElem = mCachedRenderElements.at(renderElementIdx);
 
-		UINT32 startVert = vertexOffset;
-		UINT32 startIndex = indexOffset;
+		u32 startVert = vertexOffset;
+		u32 startIndex = indexOffset;
 
-		UINT32 maxVertIdx = maxNumVerts;
-		UINT32 maxIndexIdx = maxNumIndices;
+		u32 maxVertIdx = maxNumVerts;
+		u32 maxIndexIdx = maxNumIndices;
 
-		UINT32 numVertices = renderElem.NumQuads * 4;
-		UINT32 numIndices = renderElem.NumQuads * 6;
+		u32 numVertices = renderElem.NumQuads * 4;
+		u32 numIndices = renderElem.NumQuads * 6;
 
 		assert((startVert + numVertices) <= maxVertIdx);
 		assert((startIndex + numIndices) <= maxIndexIdx);
 
-		UINT8* vertDst = vertices + startVert * vertexStride;
-		UINT8* uvDst = uv + startVert * vertexStride;
+		u8* vertDst = vertices + startVert * vertexStride;
+		u8* uvDst = uv + startVert * vertexStride;
 
 		// TODO - I'm sure this can be done in a more cache friendly way. Profile it later.
 		Vector2 vecOffset((float)offset.X, (float)offset.Y);
 		if(clip)
 		{
-			for(UINT32 i = 0; i < renderElem.NumQuads; i++)
+			for(u32 i = 0; i < renderElem.NumQuads; i++)
 			{
-				UINT8* vecStart = vertDst;
-				UINT8* uvStart = uvDst;
-				UINT32 vertIdx = i * 4;
+				u8* vecStart = vertDst;
+				u8* uvStart = uvDst;
+				u32 vertIdx = i * 4;
 
 				memcpy(vertDst, &renderElem.Vertices[vertIdx + 0], sizeof(Vector2));
 				memcpy(uvDst, &renderElem.Uvs[vertIdx + 0], sizeof(Vector2));
@@ -96,10 +96,10 @@ namespace bs
 		}
 		else
 		{
-			for(UINT32 i = 0; i < renderElem.NumQuads; i++)
+			for(u32 i = 0; i < renderElem.NumQuads; i++)
 			{
-				UINT8* vecStart = vertDst;
-				UINT32 vertIdx = i * 4;
+				u8* vecStart = vertDst;
+				u32 vertIdx = i * 4;
 
 				memcpy(vertDst, &renderElem.Vertices[vertIdx + 0], sizeof(Vector2));
 				memcpy(uvDst, &renderElem.Uvs[vertIdx + 0], sizeof(Vector2));
@@ -144,12 +144,12 @@ namespace bs
 		}
 
 		if(indices != nullptr)
-			memcpy(&indices[startIndex], renderElem.Indexes, numIndices * sizeof(UINT32));
+			memcpy(&indices[startIndex], renderElem.Indexes, numIndices * sizeof(u32));
 
 		return renderElem.NumQuads;
 	}
 
-	Vector2I Sprite::GetAnchorOffset(SpriteAnchor anchor, UINT32 width, UINT32 height)
+	Vector2I Sprite::GetAnchorOffset(SpriteAnchor anchor, u32 width, u32 height)
 	{
 		switch(anchor)
 		{
@@ -205,9 +205,9 @@ namespace bs
 		{
 			if(renderElem.Vertices != nullptr && renderElem.NumQuads > 0)
 			{
-				UINT32 vertexCount = renderElem.NumQuads * 4;
+				u32 vertexCount = renderElem.NumQuads * 4;
 
-				for(UINT32 i = 0; i < vertexCount; i++)
+				for(u32 i = 0; i < vertexCount; i++)
 				{
 					min = Vector2::Min(min, renderElem.Vertices[i]);
 					max = Vector2::Max(max, renderElem.Vertices[i]);
@@ -221,14 +221,14 @@ namespace bs
 	// This will only properly clip an array of quads
 	// Vertices in the quad must be in a specific order: top left, top right, bottom left, bottom right
 	// (0, 0) represents top left of the screen
-	void Sprite::ClipQuadsToRect(UINT8* vertices, UINT8* uv, UINT32 numQuads, UINT32 vertStride, const Rect2I& clipRect)
+	void Sprite::ClipQuadsToRect(u8* vertices, u8* uv, u32 numQuads, u32 vertStride, const Rect2I& clipRect)
 	{
 		float left = (float)clipRect.X;
 		float right = (float)clipRect.X + clipRect.Width;
 		float top = (float)clipRect.Y;
 		float bottom = (float)clipRect.Y + clipRect.Height;
 
-		for(UINT32 i = 0; i < numQuads; i++)
+		for(u32 i = 0; i < numQuads; i++)
 		{
 			Vector2* vecA = (Vector2*)(vertices);
 			Vector2* vecB = (Vector2*)(vertices + vertStride);
@@ -297,15 +297,15 @@ namespace bs
 		}
 	}
 
-	void Sprite::ClipTrianglesToRect(UINT8* vertices, UINT8* uv, UINT32 numTris, UINT32 vertStride, const Rect2I& clipRect,
-		const std::function<void(Vector2*, Vector2*, UINT32)>& writeCallback)
+	void Sprite::ClipTrianglesToRect(u8* vertices, u8* uv, u32 numTris, u32 vertStride, const Rect2I& clipRect,
+		const std::function<void(Vector2*, Vector2*, u32)>& writeCallback)
 	{
 		Vector<Plane> clipPlanes =
 		{
 			Plane(Vector3(1.0f, 0.0f, 0.0f), (float)clipRect.X),
-			Plane(Vector3(-1.0f, 0.0f, 0.0f), (float)-(clipRect.X + (INT32)clipRect.Width)),
+			Plane(Vector3(-1.0f, 0.0f, 0.0f), (float)-(clipRect.X + (i32)clipRect.Width)),
 			Plane(Vector3(0.0f, 1.0f, 0.0f), (float)clipRect.Y),
-			Plane(Vector3(0.0f, -1.0f, 0.0f), (float)-(clipRect.Y + (INT32)clipRect.Height))
+			Plane(Vector3(0.0f, -1.0f, 0.0f), (float)-(clipRect.Y + (i32)clipRect.Height))
 		};
 
 		MeshUtility::Clip2D(vertices, uv, numTris, vertStride, clipPlanes, writeCallback);

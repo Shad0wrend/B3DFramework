@@ -10,7 +10,7 @@ namespace bs
 {
 	Cursor::Cursor()
 	{
-		for(UINT32 i = 0; i < (UINT32)CursorType::Count; i++)
+		for(u32 i = 0; i < (u32)CursorType::Count; i++)
 			RestoreCursorIcon((CursorType)i);
 	}
 
@@ -51,8 +51,8 @@ namespace bs
 
 	void Cursor::SetCursor(CursorType type)
 	{
-		UINT32 id = (UINT32)type;
-		if((UINT32)mActiveCursorId != id)
+		u32 id = (u32)type;
+		if((u32)mActiveCursorId != id)
 		{
 			mActiveCursorId = id;
 			UpdateCursorImage();
@@ -68,8 +68,8 @@ namespace bs
 			return;
 		}
 
-		UINT32 id = iterFind->second;
-		if((UINT32)mActiveCursorId != id)
+		u32 id = iterFind->second;
+		if((u32)mActiveCursorId != id)
 		{
 			mActiveCursorId = id;
 			UpdateCursorImage();
@@ -81,15 +81,15 @@ namespace bs
 		auto iterFind = mCustomIconNameToId.find(name);
 		if(iterFind != mCustomIconNameToId.end())
 		{
-			UINT32 id = iterFind->second;
+			u32 id = iterFind->second;
 			mCustomIcons[id] = CustomIcon(pixelData, hotSpot);
 
-			if((UINT32)mActiveCursorId == id)
+			if((u32)mActiveCursorId == id)
 				UpdateCursorImage(); // Refresh active
 		}
 		else
 		{
-			UINT32 id = mNextUniqueId++;
+			u32 id = mNextUniqueId++;
 			mCustomIconNameToId[name] = id;
 			mCustomIcons[id] = CustomIcon(pixelData, hotSpot);
 		}
@@ -97,12 +97,12 @@ namespace bs
 
 	void Cursor::SetCursorIcon(CursorType type, const PixelData& pixelData, const Vector2I& hotSpot)
 	{
-		UINT32 id = (UINT32)type;
+		u32 id = (u32)type;
 
 		mCustomIcons[id].PixelData = pixelData;
 		mCustomIcons[id].HotSpot = hotSpot;
 
-		if((UINT32)mActiveCursorId == id)
+		if((u32)mActiveCursorId == id)
 			UpdateCursorImage(); // Refresh active
 	}
 
@@ -120,13 +120,13 @@ namespace bs
 	{
 		RestoreCursorIcon(type);
 
-		if(mActiveCursorId == (INT32)type)
+		if(mActiveCursorId == (i32)type)
 			UpdateCursorImage(); // Refresh active
 	}
 
 	void Cursor::RestoreCursorIcon(CursorType type)
 	{
-		UINT32 id = (UINT32)type;
+		u32 id = (u32)type;
 		mCustomIcons[id] = CustomIcon();
 
 		switch (type)
@@ -165,7 +165,7 @@ namespace bs
 			break;
 		}
 
-		BS_EXCEPT(InvalidParametersException, "Invalid cursor type: " + toString((UINT32)type));
+		BS_EXCEPT(InvalidParametersException, "Invalid cursor type: " + toString((u32)type));
 	}
 
 	void Cursor::UpdateCursorImage()

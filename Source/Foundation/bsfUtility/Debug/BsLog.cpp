@@ -5,14 +5,14 @@
 
 namespace bs
 {
-	UnorderedMap<UINT32, String> Log::sCategories;
+	UnorderedMap<u32, String> Log::sCategories;
 
 	Log::~Log()
 	{
 		Clear();
 	}
 
-	void Log::LogMsg(const String& message, LogVerbosity verbosity, UINT32 category)
+	void Log::LogMsg(const String& message, LogVerbosity verbosity, u32 category)
 	{
 		RecursiveLock lock(mMutex);
 
@@ -31,7 +31,7 @@ namespace bs
 		mHash++;
 	}
 
-	void Log::Clear(LogVerbosity verbosity, UINT32 category)
+	void Log::Clear(LogVerbosity verbosity, u32 category)
 	{
 		RecursiveLock lock(mMutex);
 
@@ -39,7 +39,7 @@ namespace bs
 		for(auto& entry : mEntries)
 		{
 			if (((verbosity == LogVerbosity::Any) || entry.GetVerbosity() == verbosity) &&
-				(category == (UINT32)-1 || entry.GetCategory() == category))
+				(category == (u32)-1 || entry.GetCategory() == category))
 				continue;
 
 			newEntries.push_back(entry);
@@ -54,7 +54,7 @@ namespace bs
 			mUnreadEntries.pop();
 
 			if (((verbosity == LogVerbosity::Any) || entry.GetVerbosity() == verbosity) &&
-				(category == (UINT32)-1 || entry.GetCategory() == category))
+				(category == (u32)-1 || entry.GetCategory() == category))
 				continue;
 
 			newUnreadEntries.push(entry);
@@ -95,7 +95,7 @@ namespace bs
 		return mEntries;
 	}
 	
-	bool Log::RegisterCategoryInternal(UINT32 id, const char* name)
+	bool Log::RegisterCategoryInternal(u32 id, const char* name)
 	{
 		if (!CategoryExists(id))
 		{
@@ -106,12 +106,12 @@ namespace bs
 		return false;
 	}
 	
-	bool Log::CategoryExists(UINT32 id)
+	bool Log::CategoryExists(u32 id)
 	{
 		return sCategories.find(id) != sCategories.end();
 	}
 	
-	bool Log::GetCategoryName(UINT32 id, String& name)
+	bool Log::GetCategoryName(u32 id, String& name)
 	{
 		auto search = sCategories.find(id);
 		if (search != sCategories.end())

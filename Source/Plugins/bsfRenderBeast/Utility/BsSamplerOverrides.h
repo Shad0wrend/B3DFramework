@@ -13,18 +13,18 @@ namespace bs { namespace ct
 	/**	Contains data about an overridden sampler states for a single pass. */
 	struct PassSamplerOverrides
 	{
-		UINT32** StateOverrides;
-		UINT32 NumSets;
+		u32** StateOverrides;
+		u32 NumSets;
 	};
 
 	/** Contains data about a single overriden sampler state. */
 	struct SamplerOverride
 	{
-		UINT32 ParamIdx;
-		UINT64 OriginalStateHash;
+		u32 ParamIdx;
+		u64 OriginalStateHash;
 		SPtr<SamplerState> State;
-		UINT32 Set;
-		UINT32 Slot;
+		u32 Set;
+		u32 Slot;
 	};
 
 	/**	Contains data about an overridden sampler states in the entire material. */
@@ -32,16 +32,16 @@ namespace bs { namespace ct
 	{
 		PassSamplerOverrides* Passes;
 		SamplerOverride* Overrides;
-		UINT32 NumPasses;
-		UINT32 NumOverrides;
-		UINT32 RefCount;
+		u32 NumPasses;
+		u32 NumOverrides;
+		u32 RefCount;
 		bool IsDirty;
 	};
 
 	/** Key used for uniquely identifying a sampler override entry. */
 	struct SamplerOverrideKey
 	{
-		SamplerOverrideKey(const SPtr<Material>& material, UINT32 techniqueIdx)
+		SamplerOverrideKey(const SPtr<Material>& material, u32 techniqueIdx)
 			:Material(material), TechniqueIdx(techniqueIdx)
 		{ }
 
@@ -56,7 +56,7 @@ namespace bs { namespace ct
 		}
 
 		SPtr<Material> Material;
-		UINT32 TechniqueIdx;
+		u32 TechniqueIdx;
 	};
 
 	/**	Helper class for generating sampler overrides. */

@@ -681,7 +681,7 @@ namespace bs
 		 * @note	Only returns real roots.
 		 */
 		template <typename T>
-		static UINT32 SolveLinear(T A, T B, T* roots)
+		static u32 SolveLinear(T A, T B, T* roots)
 		{
 			if (!ApproxEquals(A, (T)0))
 			{
@@ -705,7 +705,7 @@ namespace bs
 		 * @note	Only returns real roots.
 		 */
 		template <typename T>
-		static UINT32 SolveQuadratic(T A, T B, T C, T* roots)
+		static u32 SolveQuadratic(T A, T B, T C, T* roots)
 		{
 			if (!ApproxEquals(A, (T)0))
 			{
@@ -751,7 +751,7 @@ namespace bs
 		 * @note	Only returns real roots.
 		 */
 		template <typename T>
-		static UINT32 SolveCubic(T A, T B, T C, T D, T* roots)
+		static u32 SolveCubic(T A, T B, T C, T D, T* roots)
 		{
 			static const T THIRD = (1 / (T)3);
 
@@ -767,7 +767,7 @@ namespace bs
 			T cbp = p * p * p;
 			D = q * q + cbp;
 
-			UINT32 numRoots = 0;
+			u32 numRoots = 0;
 			if (!ApproxEquals(D, (T)0))
 			{
 				if (D < 0.0)
@@ -812,7 +812,7 @@ namespace bs
 			}
 
 			T sub = THIRD * A;
-			for (UINT32 i = 0; i < numRoots; i++)
+			for (u32 i = 0; i < numRoots; i++)
 				roots[i] -= sub;
 
 			return numRoots;
@@ -832,7 +832,7 @@ namespace bs
 		 * @note	Only returns real roots.
 		 */
 		template <typename T>
-		static UINT32 SolveQuartic(T A, T B, T C, T D, T E, T* roots)
+		static u32 SolveQuartic(T A, T B, T C, T D, T E, T* roots)
 		{
 			T invA = 1 / A;
 			A = B * invA;
@@ -845,7 +845,7 @@ namespace bs
 			T q = (1 / (T)8) * sqA * A - (T)0.5 * A * B + C;
 			T r = -(3 / (T)256) * sqA * sqA + (1 / (T)16) * sqA * B - (1 / (T)4) * A * C + D;
 
-			UINT32 numRoots = 0;
+			u32 numRoots = 0;
 			if (!ApproxEquals(r, (T)0))
 			{
 				T cubicA = 1;
@@ -892,7 +892,7 @@ namespace bs
 			}
 
 			T sub = (1/(T)4) * A;
-			for (UINT32 i = 0; i < numRoots; i++)
+			for (u32 i = 0; i < numRoots; i++)
 				roots[i] -= sub;
 
 			return numRoots;
@@ -1054,7 +1054,7 @@ namespace bs
 			const T center = half * (b + a);
 			T res = (T)0;
 
-			for (UINT32 i = 0; i < sizeof(roots) / sizeof(*roots); ++i)
+			for (u32 i = 0; i < sizeof(roots) / sizeof(*roots); ++i)
 				res += coefficients[i] * integrand(radius * roots[i] + center);
 
 			res *= radius;
@@ -1070,7 +1070,7 @@ namespace bs
 		 *
 		 */
 		template <typename T>
-		static T HaltonSequence(UINT32 index, UINT32 base)
+		static T HaltonSequence(u32 index, u32 base)
 		{
 			T output = (T)0.0;
 			T invBase = (T)1.0 / base;

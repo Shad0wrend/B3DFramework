@@ -64,14 +64,14 @@ namespace bs
 		/**	Checks do the dimensions contain fixed height. */
 		bool FixedHeight() const { return (Flags & GUIDF_FixedHeight) != 0; }
 
-		INT32 X = 0;
-		INT32 Y = 0;
+		i32 X = 0;
+		i32 Y = 0;
 
-		UINT32 MinWidth = 0;
-		UINT32 MaxWidth = 0;
-		UINT32 MinHeight = 0;
-		UINT32 MaxHeight = 0;
-		UINT32 Flags = 0;
+		u32 MinWidth = 0;
+		u32 MaxWidth = 0;
+		u32 MinHeight = 0;
+		u32 MaxHeight = 0;
+		u32 Flags = 0;
 	};
 
 	/** @} */

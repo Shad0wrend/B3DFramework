@@ -28,7 +28,7 @@ namespace bs { namespace ct
 		return lhs.LoadMask == rhs.LoadMask && lhs.ReadMask == rhs.ReadMask && lhs.ClearMask == rhs.ClearMask;
 	}
 
-	UINT32 VulkanRenderPass::sNextValidId = 1;
+	u32 VulkanRenderPass::sNextValidId = 1;
 
 	VulkanRenderPass::VulkanRenderPass(const VkDevice& device, const VULKAN_RENDER_PASS_DESC& desc)
 		:mDevice(device)
@@ -36,8 +36,8 @@ namespace bs { namespace ct
 		mId = sNextValidId++;
 		mSampleFlags = VulkanUtility::GetSampleFlags(desc.NumSamples);
 
-		UINT32 attachmentIdx = 0;
-		for(UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		u32 attachmentIdx = 0;
+		for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			if(!desc.Color[i].Enabled)
 				continue;
@@ -152,11 +152,11 @@ namespace bs { namespace ct
 	VkRenderPass VulkanRenderPass::CreateVariant(RenderSurfaceMask loadMask, RenderSurfaceMask readMask,
 		ClearMask clearMask) const
 	{
-		for (UINT32 i = 0; i < mNumColorAttachments; i++)
+		for (u32 i = 0; i < mNumColorAttachments; i++)
 		{
 			VkAttachmentDescription& attachmentDesc = mAttachments[i];
 			VkAttachmentReference& attachmentRef = mColorReferences[i];
-			UINT32 index = mIndices[i];
+			u32 index = mIndices[i];
 
 			if (loadMask.IsSet((RenderSurfaceMaskBits)(1 << index)))
 			{
@@ -248,19 +248,19 @@ namespace bs { namespace ct
 		return newVariant;
 	}
 
-	UINT32 VulkanRenderPass::GetNumClearEntries(ClearMask clearMask) const
+	u32 VulkanRenderPass::GetNumClearEntries(ClearMask clearMask) const
 	{
 		if (clearMask == CLEAR_NONE)
 			return 0;
 		else if (clearMask == CLEAR_ALL)
 			return GetNumAttachments();
-		else if (((UINT32)clearMask & (UINT32)(CLEAR_DEPTH | CLEAR_STENCIL)) != 0 && HasDepthAttachment())
+		else if (((u32)clearMask & (u32)(CLEAR_DEPTH | CLEAR_STENCIL)) != 0 && HasDepthAttachment())
 			return GetNumAttachments();
 
-		UINT32 numAttachments = 0;
-		for(INT32 i = BS_MAX_MULTIPLE_RENDER_TARGETS - 1; i >= 0; i--)
+		u32 numAttachments = 0;
+		for(i32 i = BS_MAX_MULTIPLE_RENDER_TARGETS - 1; i >= 0; i--)
 		{
-			if(((1 << i) & (UINT32)clearMask) != 0)
+			if(((1 << i) & (u32)clearMask) != 0)
 			{
 				numAttachments = i + 1;
 				break;
@@ -309,7 +309,7 @@ namespace bs { namespace ct
 		bs_hash_combine(hash, v.Desc.Depth.Enabled);
 		bs_hash_combine(hash, v.Desc.Depth.Format);
 
-		for(UINT32 i = 0; i < bs_size(v.Desc.Color); i++)
+		for(u32 i = 0; i < bs_size(v.Desc.Color); i++)
 		{
 			bs_hash_combine(hash, v.Desc.Color[i].Enabled);
 			bs_hash_combine(hash, v.Desc.Color[i].Format);
@@ -327,7 +327,7 @@ namespace bs { namespace ct
 			lhs.Desc.Depth.Format != rhs.Desc.Depth.Format)
 			return false;
 
-		for(UINT32 i = 0; i < bs_size(lhs.Desc.Color); i++)
+		for(u32 i = 0; i < bs_size(lhs.Desc.Color); i++)
 		{
 			if(lhs.Desc.Color[i].Enabled != rhs.Desc.Color[i].Enabled ||
 				lhs.Desc.Color[i].Format != rhs.Desc.Color[i].Format)

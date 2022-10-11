@@ -20,25 +20,25 @@ namespace bs { namespace ct
 		~VulkanGpuPipelineParamInfo() = default;
 
 		/** Returns the number of bindings present at the layout at the specified index. */
-		UINT32 GetNumBindings(UINT32 layoutIdx) const { return mLayoutInfos[layoutIdx].NumBindings; }
+		u32 GetNumBindings(u32 layoutIdx) const { return mLayoutInfos[layoutIdx].NumBindings; }
 
 		/** Returns a pointer to an array of bindings for the layout at the specified index. */
-		VkDescriptorSetLayoutBinding* GetBindings(UINT32 layoutIdx) const { return mLayoutInfos[layoutIdx].Bindings; }
+		VkDescriptorSetLayoutBinding* GetBindings(u32 layoutIdx) const { return mLayoutInfos[layoutIdx].Bindings; }
 
 		/** Returns a pointer to any array of types expected by layout bindings. */
-		GpuParamObjectType* GetLayoutTypes(UINT32 layoutIdx) const { return mLayoutInfos[layoutIdx].Types; }
+		GpuParamObjectType* GetLayoutTypes(u32 layoutIdx) const { return mLayoutInfos[layoutIdx].Types; }
 
 		/** Returns a pointer to any array of underlying element types for textures/buffers. */
-		GpuBufferFormat* GetLayoutElementTypes(UINT32 layoutIdx) const { return mLayoutInfos[layoutIdx].ElementTypes; }
+		GpuBufferFormat* GetLayoutElementTypes(u32 layoutIdx) const { return mLayoutInfos[layoutIdx].ElementTypes; }
 
 		/** Returns the sequential index of the binding at the specificn set/slot. Returns -1 if slot is not used. */
-		UINT32 GetBindingIdx(UINT32 set, UINT32 slot) const { return mSetExtraInfos[set].SlotIndices[slot]; }
+		u32 GetBindingIdx(u32 set, u32 slot) const { return mSetExtraInfos[set].SlotIndices[slot]; }
 
 		/**
 		 * Returns a layout for the specified device, at the specified index. Returns null if no layout for the specified
 		 * device index.
 		 */
-		VulkanDescriptorLayout* GetLayout(UINT32 deviceIdx, UINT32 layoutIdx) const;
+		VulkanDescriptorLayout* GetLayout(u32 deviceIdx, u32 layoutIdx) const;
 
 	private:
 		/**	@copydoc GpuPipelineParamInfo::initialize */
@@ -50,13 +50,13 @@ namespace bs { namespace ct
 			VkDescriptorSetLayoutBinding* Bindings;
 			GpuParamObjectType* Types;
 			GpuBufferFormat* ElementTypes;
-			UINT32 NumBindings;
+			u32 NumBindings;
 		};
 
 		/** Information about a single set in the param info object. Complements SetInfo. */
 		struct SetExtraInfo
 		{
-			UINT32* SlotIndices;
+			u32* SlotIndices;
 		};
 
 		GpuDeviceFlags mDeviceMask;

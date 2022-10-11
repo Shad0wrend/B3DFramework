@@ -5,7 +5,7 @@
 
 namespace bs
 {
-	SavedResourceData::SavedResourceData(const Vector<UUID>& dependencies, bool allowAsync, UINT32 compressionMethod)
+	SavedResourceData::SavedResourceData(const Vector<UUID>& dependencies, bool allowAsync, u32 compressionMethod)
 		:mDependencies(dependencies), mAllowAsync(allowAsync), mCompressionMethod(compressionMethod)
 	{ }
 

@@ -44,7 +44,7 @@ namespace bs
 	}
 
 	void CrashHandler::LogErrorAndStackTrace(const String& type, const String& description, const String& function,
-		const String& file, UINT32 line) const
+		const String& file, u32 line) const
 	{
 		StringStream errorMessage;
 		errorMessage << "  - Error: " << type << std::endl;

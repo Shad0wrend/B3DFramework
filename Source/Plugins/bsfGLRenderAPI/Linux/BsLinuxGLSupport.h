@@ -52,7 +52,7 @@ namespace bs { namespace ct
 	struct GLVisualCapabilities
 	{
 		bool depthStencil = false;
-		UINT32 numSamples = 1;
+		u32 numSamples = 1;
 		bool srgb = false;
 	};
 
@@ -70,7 +70,7 @@ namespace bs { namespace ct
 		LinuxGLSupport();
 
 		/** @copydoc GLSupport::newWindow */
-		SPtr<bs::RenderWindow> newWindow(RENDER_WINDOW_DESC& desc, UINT32 windowId, SPtr<bs::RenderWindow> parentWindow) override;
+		SPtr<bs::RenderWindow> newWindow(RENDER_WINDOW_DESC& desc, u32 windowId, SPtr<bs::RenderWindow> parentWindow) override;
 
 		/** @copydoc GLSupport::start */
 		void start() override;
@@ -96,7 +96,7 @@ namespace bs { namespace ct
 		 * 							will automatically be encoded into gamma space on write.
 		 * @return					X11 visual info structure you may use to initialize a window.
 		 */
-		GLVisualConfig findBestVisual(::Display* display, bool depthStencil, UINT32 multisample, bool srgb) const;
+		GLVisualConfig findBestVisual(::Display* display, bool depthStencil, u32 multisample, bool srgb) const;
 
 		/** @copydoc GLSupport::getVideoModeInfo */
 		SPtr<VideoModeInfo> getVideoModeInfo() const override;

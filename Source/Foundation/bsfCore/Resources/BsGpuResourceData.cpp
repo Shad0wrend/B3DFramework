@@ -43,13 +43,13 @@ namespace bs
 		return *this;
 	}
 
-	UINT8* GpuResourceData::GetData() const
+	u8* GpuResourceData::GetData() const
 	{
 		verifyLockAndThread(this);
 		return mData;
 	}
 
-	void GpuResourceData::SetData(UPtr<UINT8[]> &data)
+	void GpuResourceData::SetData(UPtr<u8[]> &data)
 	{
 		verifyLockAndThread(this);
 
@@ -64,13 +64,13 @@ namespace bs
 		AllocateInternalBuffer(GetInternalBufferSize());
 	}
 
-	void GpuResourceData::AllocateInternalBuffer(UINT32 size)
+	void GpuResourceData::AllocateInternalBuffer(u32 size)
 	{
 		verifyLockAndThread(this);
 
 		FreeInternalBuffer();
 
-		mData = (UINT8*)bs_alloc(size);
+		mData = (u8*)bs_alloc(size);
 		mOwnsData = true;
 	}
 
@@ -85,7 +85,7 @@ namespace bs
 		mData = nullptr;
 	}
 
-	void GpuResourceData::SetExternalBuffer(UINT8* data)
+	void GpuResourceData::SetExternalBuffer(u8* data)
 	{
 		verifyLockAndThread(this);
 

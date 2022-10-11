@@ -24,8 +24,8 @@ namespace bs
 		Close();
 	}
 
-	bool OggVorbisEncoder::Open(std::function<void(UINT8*, UINT32)> writeCallback, UINT32 sampleRate, UINT32 bitDepth,
-		UINT32 numChannels)
+	bool OggVorbisEncoder::Open(std::function<void(u8*, u32)> writeCallback, u32 sampleRate, u32 bitDepth,
+		u32 numChannels)
 	{
 		mNumChannels = numChannels;
 		mBitDepth = bitDepth;
@@ -36,7 +36,7 @@ namespace bs
 		vorbis_info_init(&mVorbisInfo);
 
 		// Automatic bitrate management with quality 0.4 (~128 kbps for 44 KHz stereo sound)
-		INT32 status = vorbis_encode_init_vbr(&mVorbisInfo, numChannels, sampleRate, 0.4f);
+		i32 status = vorbis_encode_init_vbr(&mVorbisInfo, numChannels, sampleRate, 0.4f);
 		if (status != 0)
 		{
 			BS_LOG(Error, Audio, "Failed to write Ogg Vorbis file.");
@@ -77,23 +77,23 @@ namespace bs
 		return true;
 	}
 
-	void OggVorbisEncoder::Write(UINT8* samples, UINT32 numSamples)
+	void OggVorbisEncoder::Write(u8* samples, u32 numSamples)
 	{
-		static const UINT32 WRITE_LENGTH = 1024;
+		static const u32 WRITE_LENGTH = 1024;
 
-		UINT32 numFrames = numSamples / mNumChannels;
+		u32 numFrames = numSamples / mNumChannels;
 		while (numFrames > 0)
 		{
-			UINT32 numFramesToWrite = std::min(numFrames, WRITE_LENGTH);
+			u32 numFramesToWrite = std::min(numFrames, WRITE_LENGTH);
 			float** buffer = vorbis_analysis_buffer(&mVorbisState, numFramesToWrite);
 
 			if (mBitDepth == 8)
 			{
-				for (UINT32 i = 0; i < numFramesToWrite; i++)
+				for (u32 i = 0; i < numFramesToWrite; i++)
 				{
-					for (UINT32 j = 0; j < mNumChannels; j++)
+					for (u32 j = 0; j < mNumChannels; j++)
 					{
-						INT8 sample = *(INT8*)samples;
+						i8 sample = *(i8*)samples;
 						float encodedSample = sample / 127.0f;
 						buffer[j][i] = encodedSample;
 
@@ -103,11 +103,11 @@ namespace bs
 			}
 			else if (mBitDepth == 16)
 			{
-				for (UINT32 i = 0; i < numFramesToWrite; i++)
+				for (u32 i = 0; i < numFramesToWrite; i++)
 				{
-					for (UINT32 j = 0; j < mNumChannels; j++)
+					for (u32 j = 0; j < mNumChannels; j++)
 					{
-						INT16 sample = *(INT16*)samples;
+						i16 sample = *(i16*)samples;
 						float encodedSample = sample / 32767.0f;
 						buffer[j][i] = encodedSample;
 
@@ -117,11 +117,11 @@ namespace bs
 			}
 			else if (mBitDepth == 24)
 			{
-				for (UINT32 i = 0; i < numFramesToWrite; i++)
+				for (u32 i = 0; i < numFramesToWrite; i++)
 				{
-					for (UINT32 j = 0; j < mNumChannels; j++)
+					for (u32 j = 0; j < mNumChannels; j++)
 					{
-						INT32 sample = AudioUtility::Convert24To32Bits(samples);
+						i32 sample = AudioUtility::Convert24To32Bits(samples);
 						float encodedSample = sample / 2147483647.0f;
 						buffer[j][i] = encodedSample;
 
@@ -131,11 +131,11 @@ namespace bs
 			}
 			else if (mBitDepth == 32)
 			{
-				for (UINT32 i = 0; i < numFramesToWrite; i++)
+				for (u32 i = 0; i < numFramesToWrite; i++)
 				{
-					for (UINT32 j = 0; j < mNumChannels; j++)
+					for (u32 j = 0; j < mNumChannels; j++)
 					{
-						INT32 sample = *(INT32*)samples;
+						i32 sample = *(i32*)samples;
 						float encodedSample = sample / 2147483647.0f;
 						buffer[j][i] = encodedSample;
 
@@ -205,17 +205,17 @@ namespace bs
 		mClosed = true;
 	}
 
-	SPtr<MemoryDataStream> OggVorbisEncoder::PCMToOggVorbis(UINT8* samples, const AudioDataInfo& info, UINT32& size)
+	SPtr<MemoryDataStream> OggVorbisEncoder::PCMToOggVorbis(u8* samples, const AudioDataInfo& info, u32& size)
 	{
 		struct EncodedBlock
 		{
-			UINT8* Data;
-			UINT32 Size;
+			u8* Data;
+			u32 Size;
 		};
 
 		Vector<EncodedBlock> blocks;
-		UINT32 totalEncodedSize = 0;
-		auto writeCallback = [&](UINT8* buffer, UINT32 size)
+		u32 totalEncodedSize = 0;
+		auto writeCallback = [&](u8* buffer, u32 size)
 		{
 			EncodedBlock newBlock;
 			newBlock.Data = bs_frame_alloc(size);
@@ -235,7 +235,7 @@ namespace bs
 		writer.Close();
 
 		auto output = bs_shared_ptr_new<MemoryDataStream>(totalEncodedSize);
-		UINT32 offset = 0;
+		u32 offset = 0;
 		for (auto& block : blocks)
 		{
 			memcpy(output->Data() + offset, block.Data, block.Size);

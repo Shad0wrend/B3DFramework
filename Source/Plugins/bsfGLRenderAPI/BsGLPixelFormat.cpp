@@ -396,6 +396,6 @@ namespace bs { namespace ct
 		if (format >= BF_COUNT)
 			return GL_NONE;
 
-		return lookup[(UINT32)format];
+		return lookup[(u32)format];
 	}
 }}

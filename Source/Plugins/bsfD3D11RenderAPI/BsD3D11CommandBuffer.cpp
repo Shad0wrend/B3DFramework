@@ -6,7 +6,7 @@
 
 namespace bs { namespace ct
 {
-	D3D11CommandBuffer::D3D11CommandBuffer(GpuQueueType type, UINT32 deviceIdx, UINT32 queueIdx, bool secondary)
+	D3D11CommandBuffer::D3D11CommandBuffer(GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary)
 		: CommandBuffer(type, deviceIdx, queueIdx, secondary)
 	{
 		if (deviceIdx != 0)

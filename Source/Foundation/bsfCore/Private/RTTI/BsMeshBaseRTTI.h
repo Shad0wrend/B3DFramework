@@ -19,16 +19,16 @@ namespace bs
 
 	class MeshBaseRTTI : public RTTIType<MeshBase, Resource, MeshBaseRTTI>
 	{
-		SubMesh& GetSubMesh(MeshBase* obj, UINT32 arrayIdx) { return obj->mProperties.mSubMeshes[arrayIdx]; }
-		void SetSubMesh(MeshBase* obj, UINT32 arrayIdx, SubMesh& value) { obj->mProperties.mSubMeshes[arrayIdx] = value; }
-		UINT32 GetNumSubmeshes(MeshBase* obj) { return (UINT32)obj->mProperties.mSubMeshes.size(); }
-		void SetNumSubmeshes(MeshBase* obj, UINT32 numElements) { obj->mProperties.mSubMeshes.resize(numElements); }
+		SubMesh& GetSubMesh(MeshBase* obj, u32 arrayIdx) { return obj->mProperties.mSubMeshes[arrayIdx]; }
+		void SetSubMesh(MeshBase* obj, u32 arrayIdx, SubMesh& value) { obj->mProperties.mSubMeshes[arrayIdx] = value; }
+		u32 GetNumSubmeshes(MeshBase* obj) { return (u32)obj->mProperties.mSubMeshes.size(); }
+		void SetNumSubmeshes(MeshBase* obj, u32 numElements) { obj->mProperties.mSubMeshes.resize(numElements); }
 
-		UINT32& GetNumVertices(MeshBase* obj) { return obj->mProperties.mNumVertices; }
-		void SetNumVertices(MeshBase* obj, UINT32& value) { obj->mProperties.mNumVertices = value; }
+		u32& GetNumVertices(MeshBase* obj) { return obj->mProperties.mNumVertices; }
+		void SetNumVertices(MeshBase* obj, u32& value) { obj->mProperties.mNumVertices = value; }
 
-		UINT32& GetNumIndices(MeshBase* obj) { return obj->mProperties.mNumIndices; }
-		void SetNumIndices(MeshBase* obj, UINT32& value) { obj->mProperties.mNumIndices = value; }
+		u32& GetNumIndices(MeshBase* obj) { return obj->mProperties.mNumIndices; }
+		void SetNumIndices(MeshBase* obj, u32& value) { obj->mProperties.mNumIndices = value; }
 
 	public:
 		MeshBaseRTTI()
@@ -52,7 +52,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_MeshBase;
 		}

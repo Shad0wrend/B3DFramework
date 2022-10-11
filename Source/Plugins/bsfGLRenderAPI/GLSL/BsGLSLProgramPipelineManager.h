@@ -40,11 +40,11 @@ namespace bs { namespace ct
 		/**	Key that uniquely identifies a pipeline object. */
 		struct ProgramPipelineKey
 		{
-			UINT32 VertexProgKey;
-			UINT32 FragmentProgKey;
-			UINT32 GeometryProgKey;
-			UINT32 HullProgKey;
-			UINT32 DomainProgKey;
+			u32 VertexProgKey;
+			u32 FragmentProgKey;
+			u32 GeometryProgKey;
+			u32 HullProgKey;
+			u32 DomainProgKey;
 		};
 
 		/**	Used for calculating a hash code from pipeline object key. */

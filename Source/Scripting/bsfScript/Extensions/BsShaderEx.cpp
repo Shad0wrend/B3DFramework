@@ -17,14 +17,14 @@ namespace bs
 
 		Vector<ShaderParameter> paramInfos;
 		auto parseParam = [&paramInfos, &attributes](const String& identifier, ShaderParameterType type, bool isInternal,
-			UINT32 attribIdx)
+			u32 attribIdx)
 		{
 			ShaderParameter output;
 			output.Identifier = identifier;
 			output.Type = type;
 			output.Flags = isInternal ? ShaderParameterFlag::Internal : ShaderParameterFlag::None;
 
-			while (attribIdx != (UINT32)-1)
+			while (attribIdx != (u32)-1)
 			{
 				const SHADER_PARAM_ATTRIBUTE& attrib = attributes[attribIdx];
 				if (attrib.Type == ShaderParamAttributeType::Name)

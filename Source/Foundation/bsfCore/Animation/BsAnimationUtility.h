@@ -20,15 +20,15 @@ namespace bs
 	{
 		enum { NumComponents = 1 };
 		static float GetZero() { return 0.0f; }
-		static float GetComponent(float val, UINT32 i) { return val; }
-		static void SetComponent(float& val, UINT32 i, float newVal) { val = newVal; }
+		static float GetComponent(float val, u32 i) { return val; }
+		static void SetComponent(float& val, u32 i, float newVal) { val = newVal; }
 	};
 
 	template<>
-	struct TCurveProperties<INT32>
+	struct TCurveProperties<i32>
 	{
 		enum { NumComponents = 1 };
-		static INT32 GetZero() { return 0; }
+		static i32 GetZero() { return 0; }
 	};
 
 	template<>
@@ -36,8 +36,8 @@ namespace bs
 	{
 		enum { NumComponents = 2 };
 		static Vector2 GetZero() { return Vector2::ZERO; }
-		static float GetComponent(const Vector2& val, UINT32 i) { return val[i]; }
-		static void SetComponent(Vector2& val, UINT32 i, float newVal) { val[i] = newVal; }
+		static float GetComponent(const Vector2& val, u32 i) { return val[i]; }
+		static void SetComponent(Vector2& val, u32 i, float newVal) { val[i] = newVal; }
 	};
 
 	template<>
@@ -45,8 +45,8 @@ namespace bs
 	{
 		enum { NumComponents = 3 };
 		static Vector3 GetZero() { return Vector3::ZERO; }
-		static float GetComponent(const Vector3& val, UINT32 i) { return val[i]; }
-		static void SetComponent(Vector3& val, UINT32 i, float newVal) { val[i] = newVal; }
+		static float GetComponent(const Vector3& val, u32 i) { return val[i]; }
+		static void SetComponent(Vector3& val, u32 i, float newVal) { val[i] = newVal; }
 	};
 
 	template<>
@@ -54,8 +54,8 @@ namespace bs
 	{
 		enum { NumComponents = 4 };
 		static Quaternion GetZero() { return Quaternion::ZERO; }
-		static float GetComponent(const Quaternion& val, UINT32 i) { return val[i]; }
-		static void SetComponent(Quaternion& val, UINT32 i, float newVal) { val[i] = newVal; }
+		static float GetComponent(const Quaternion& val, u32 i) { return val[i]; }
+		static void SetComponent(Quaternion& val, u32 i, float newVal) { val[i] = newVal; }
 	};
 
 	/** Helper class for dealing with animations, animation clips and curves. */
@@ -178,12 +178,12 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(pl:true,m:Animation) KeyframeRef
 	{
 		KeyframeRef() = default;
-		KeyframeRef(INT32 curveIdx, INT32 keyIdx)
+		KeyframeRef(i32 curveIdx, i32 keyIdx)
 			:CurveIdx(curveIdx), KeyIdx(keyIdx)
 		{ }
 
-		INT32 CurveIdx = 0;
-		INT32 KeyIdx = 0;
+		i32 CurveIdx = 0;
+		i32 KeyIdx = 0;
 	};
 
 	/** Structure containing a reference to a keyframe tangent, as a keyframe reference and type of the tangent. */

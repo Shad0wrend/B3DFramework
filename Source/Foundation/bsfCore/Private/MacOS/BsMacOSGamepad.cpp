@@ -32,9 +32,9 @@ namespace bs
 		m->hid->capture(m->ref, !m->HasInputFocus);
 	}
 
-	void Gamepad::changeCaptureContext(UINT64 windowHandle)
+	void Gamepad::changeCaptureContext(u64 windowHandle)
 	{
-		m->HasInputFocus = windowHandle != (UINT64)-1;
+		m->HasInputFocus = windowHandle != (u64)-1;
 	}
 }
 

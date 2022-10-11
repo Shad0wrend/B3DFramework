@@ -6,7 +6,7 @@
 namespace bs { namespace ct
 {
 	VulkanDescriptorLayout::VulkanDescriptorLayout(VulkanDevice& device, VkDescriptorSetLayoutBinding* bindings,
-		UINT32 numBindings)
+		u32 numBindings)
 		:mDevice(device)
 	{
 		mHash = CalculateHash(bindings, numBindings);
@@ -27,10 +27,10 @@ namespace bs { namespace ct
 		vkDestroyDescriptorSetLayout(mDevice.GetLogical(), mLayout, gVulkanAllocator);
 	}
 
-	size_t VulkanDescriptorLayout::CalculateHash(VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings)
+	size_t VulkanDescriptorLayout::CalculateHash(VkDescriptorSetLayoutBinding* bindings, u32 numBindings)
 	{
 		size_t hash = 0;
-		for (UINT32 i = 0; i < numBindings; i++)
+		for (u32 i = 0; i < numBindings; i++)
 		{
 			size_t bindingHash = 0;
 			bs_hash_combine(bindingHash, bindings[i].binding);

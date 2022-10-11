@@ -26,7 +26,7 @@ namespace bs { namespace ct
 	{
 		if (mBuffer)
 		{
-			for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+			for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 			{
 				if (mBufferViews[i] == VK_NULL_HANDLE)
 					continue;
@@ -55,7 +55,7 @@ namespace bs { namespace ct
 			else
 				bufferType = VulkanHardwareBuffer::BT_GENERIC;
 
-			UINT32 size = props.GetElementCount() * props.GetElementSize();
+			u32 size = props.GetElementCount() * props.GetElementSize();
 			mBuffer = bs_pool_new<VulkanHardwareBuffer>(bufferType, props.GetFormat(), props.GetUsage(), size, mDeviceMask);
 		}
 
@@ -64,7 +64,7 @@ namespace bs { namespace ct
 		GpuBuffer::Initialize();
 	}
 
-	void* VulkanGpuBuffer::Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
+	void* VulkanGpuBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx)
 	{
 		void* data = GpuBuffer::Map(offset, length, options, deviceIdx, queueIdx);
 		UpdateViews();
@@ -78,25 +78,25 @@ namespace bs { namespace ct
 		UpdateViews();
 	}
 
-	void VulkanGpuBuffer::ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx, UINT32 queueIdx)
+	void VulkanGpuBuffer::ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx, u32 queueIdx)
 	{
 		GpuBuffer::ReadData(offset, length, dest, deviceIdx, queueIdx);
 		UpdateViews();
 	}
 
-	void VulkanGpuBuffer::WriteData(UINT32 offset, UINT32 length, const void* source, BufferWriteType writeFlags,
-		UINT32 queueIdx)
+	void VulkanGpuBuffer::WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags,
+		u32 queueIdx)
 	{
 		GpuBuffer::WriteData(offset, length, source, writeFlags, queueIdx);
 		UpdateViews();
 	}
 
-	VulkanBuffer* VulkanGpuBuffer::GetResource(UINT32 deviceIdx) const
+	VulkanBuffer* VulkanGpuBuffer::GetResource(u32 deviceIdx) const
 	{
 		return static_cast<VulkanHardwareBuffer*>(mBuffer)->GetResource(deviceIdx);
 	}
 
-	VkBufferView VulkanGpuBuffer::GetView(UINT32 deviceIdx) const
+	VkBufferView VulkanGpuBuffer::GetView(u32 deviceIdx) const
 	{
 		return mBufferViews[deviceIdx];
 	}
@@ -106,7 +106,7 @@ namespace bs { namespace ct
 		if(mProperties.GetType() == GBT_STRUCTURED)
 			return;
 
-		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+		for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			VulkanBuffer* buffer = static_cast<VulkanHardwareBuffer*>(mBuffer)->GetResource(i);
 

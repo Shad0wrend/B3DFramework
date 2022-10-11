@@ -36,14 +36,14 @@ namespace bs
 		mono_runtime_invoke(mSetMethod, instance, args, nullptr);
 	}	
 
-	MonoObject* MonoProperty::GetIndexed(MonoObject* instance, UINT32 index) const
+	MonoObject* MonoProperty::GetIndexed(MonoObject* instance, u32 index) const
 	{
 		void* args[1];
 		args[0] = &index;
 		return mono_runtime_invoke(mGetMethod, instance, args, nullptr);
 	}
 
-	void MonoProperty::SetIndexed(MonoObject* instance, UINT32 index, void* value) const
+	void MonoProperty::SetIndexed(MonoObject* instance, u32 index, void* value) const
 	{
 		void* args[2];
 		args[0] = &index;
@@ -136,7 +136,7 @@ namespace bs
 					mReturnType = MonoManager::Instance().FindClass(returnClass);
 			}
 
-			UINT32 numParams = mono_signature_get_param_count(signature);
+			u32 numParams = mono_signature_get_param_count(signature);
 			mIsIndexed = numParams == 1;
 		}
 		else if(mSetMethod != nullptr)
@@ -151,7 +151,7 @@ namespace bs
 					mReturnType = MonoManager::Instance().FindClass(returnClass);
 			}
 
-			UINT32 numParams = mono_signature_get_param_count(signature);
+			u32 numParams = mono_signature_get_param_count(signature);
 			mIsIndexed = numParams == 2;
 		}
 

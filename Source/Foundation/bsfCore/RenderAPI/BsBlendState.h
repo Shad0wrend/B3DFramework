@@ -70,7 +70,7 @@ namespace bs
 		 * Only the first four bits are used. First bit representing red, second green, third blue and fourth alpha value.
 		 * Set bits means pixel shader will output those channels.
 		 */
-		UINT8 RenderTargetWriteMask = 0xFF;
+		u8 RenderTargetWriteMask = 0xFF;
 	};
 
 	/** Structure that describes render pipeline blend states. Used for initializing BlendState. */
@@ -113,31 +113,31 @@ namespace bs
 		bool GetIndependantBlendEnable() const { return mData.IndependantBlendEnable; }
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::blendEnable */
-		bool GetBlendEnabled(UINT32 renderTargetIdx) const;
+		bool GetBlendEnabled(u32 renderTargetIdx) const;
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::srcBlend */
-		BlendFactor GetSrcBlend(UINT32 renderTargetIdx) const;
+		BlendFactor GetSrcBlend(u32 renderTargetIdx) const;
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::dstBlend */
-		BlendFactor GetDstBlend(UINT32 renderTargetIdx) const;
+		BlendFactor GetDstBlend(u32 renderTargetIdx) const;
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::blendOp */
-		BlendOperation GetBlendOperation(UINT32 renderTargetIdx) const;
+		BlendOperation GetBlendOperation(u32 renderTargetIdx) const;
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::srcBlendAlpha */
-		BlendFactor GetAlphaSrcBlend(UINT32 renderTargetIdx) const;
+		BlendFactor GetAlphaSrcBlend(u32 renderTargetIdx) const;
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::dstBlendAlpha */
-		BlendFactor GetAlphaDstBlend(UINT32 renderTargetIdx) const;
+		BlendFactor GetAlphaDstBlend(u32 renderTargetIdx) const;
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::blendOpAlpha */
-		BlendOperation GetAlphaBlendOperation(UINT32 renderTargetIdx) const;
+		BlendOperation GetAlphaBlendOperation(u32 renderTargetIdx) const;
 
 		/** @copydoc RENDER_TARGET_BLEND_STATE_DESC::renderTargetWriteMask */
-		UINT8 GetRenderTargetWriteMask(UINT32 renderTargetIdx) const;
+		u8 GetRenderTargetWriteMask(u32 renderTargetIdx) const;
 
 		/** Returns the hash value generated from the blend state properties. */
-		UINT64 GetHash() const { return mHash; }
+		u64 GetHash() const { return mHash; }
 
 	protected:
 		friend class BlendState;
@@ -145,7 +145,7 @@ namespace bs
 		friend class BlendStateRTTI;
 
 		BLEND_STATE_DESC mData;
-		UINT64 mHash;
+		u64 mHash;
 	};
 
 	/**
@@ -172,7 +172,7 @@ namespace bs
 		static const SPtr<BlendState>& GetDefault();
 
 		/**	Generates a hash value from a blend state descriptor. */
-		static UINT64 GenerateHash(const BLEND_STATE_DESC& desc);
+		static u64 GenerateHash(const BLEND_STATE_DESC& desc);
 
 	protected:
 		friend class RenderStateManager;
@@ -183,7 +183,7 @@ namespace bs
 		SPtr<ct::CoreObject> CreateCore() const ;
 
 		BlendProperties mProperties;
-		mutable UINT32 mId;
+		mutable u32 mId;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -217,7 +217,7 @@ namespace bs
 		const BlendProperties& GetProperties() const;
 
 		/** Returns a unique state ID. Only the lowest 10 bits are used. */
-		UINT32 GetId() const { return mId; }
+		u32 GetId() const { return mId; }
 
 		/**	Creates a new blend state using the specified blend state description structure. */
 		static SPtr<BlendState> Create(const BLEND_STATE_DESC& desc);
@@ -228,7 +228,7 @@ namespace bs
 	protected:
 		friend class RenderStateManager;
 
-		BlendState(const BLEND_STATE_DESC& desc, UINT32 id);
+		BlendState(const BLEND_STATE_DESC& desc, u32 id);
 
 		/** @copydoc CoreObject::initialize */
 		void Initialize() override;
@@ -237,7 +237,7 @@ namespace bs
 		virtual void CreateInternal() { }
 
 		BlendProperties mProperties;
-		UINT32 mId;
+		u32 mId;
 	};
 
 	/** @} */

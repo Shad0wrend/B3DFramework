@@ -14,15 +14,15 @@ namespace bs
 	struct GpuParamDataDesc
 	{
 		String Name;
-		UINT32 ElementSize; /**< In multiples of 4 bytes. */
-		UINT32 ArraySize;
-		UINT32 ArrayElementStride; /**< In multiples of 4 bytes. */
+		u32 ElementSize; /**< In multiples of 4 bytes. */
+		u32 ArraySize;
+		u32 ArrayElementStride; /**< In multiples of 4 bytes. */
 		GpuParamDataType Type;
 
-		UINT32 ParamBlockSlot;
-		UINT32 ParamBlockSet;
-		UINT32 GpuMemOffset; /**< In multiples of 4 bytes, or index for parameters not in a buffer. */
-		UINT32 CpuMemOffset; /**< In multiples of 4 bytes. */
+		u32 ParamBlockSlot;
+		u32 ParamBlockSet;
+		u32 GpuMemOffset; /**< In multiples of 4 bytes, or index for parameters not in a buffer. */
+		u32 CpuMemOffset; /**< In multiples of 4 bytes. */
 	};
 
 	/**	Describes a single GPU program object (for example texture, sampler state) parameter. */
@@ -32,10 +32,10 @@ namespace bs
 		GpuParamObjectType Type;
 
 		/** Slot within a set. Uniquely identifies bind location in the GPU pipeline, together with the set. */
-		UINT32 Slot;
+		u32 Slot;
 
 		/** Uniquely identifies the bind location in the GPU pipeline, together with the slot. */
-		UINT32 Set;
+		u32 Set;
 
 		/** Underlying type of individual elements in the buffer or texture. */
 		GpuBufferFormat ElementType = BF_UNKNOWN;
@@ -45,9 +45,9 @@ namespace bs
 	struct GpuParamBlockDesc
 	{
 		String Name;
-		UINT32 Slot; /** Slot within a set. Uniquely identifies bind location in the GPU pipeline, together with the set. */
-		UINT32 Set; /** Uniquely identifies the bind location in the GPU pipeline, together with the slot. */
-		UINT32 BlockSize; /**< In multiples of 4 bytes. */
+		u32 Slot; /** Slot within a set. Uniquely identifies bind location in the GPU pipeline, together with the set. */
+		u32 Set; /** Uniquely identifies the bind location in the GPU pipeline, together with the slot. */
+		u32 BlockSize; /**< In multiples of 4 bytes. */
 		bool IsShareable; /** True for blocks that can be shared between different GPU pipeline stages. */
 	};
 

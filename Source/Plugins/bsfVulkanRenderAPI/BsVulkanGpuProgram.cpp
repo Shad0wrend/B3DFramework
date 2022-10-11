@@ -36,7 +36,7 @@ namespace bs { namespace ct
 
 	VulkanGpuProgram::~VulkanGpuProgram()
 	{
-		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+		for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			if (mModules[i] != nullptr)
 				mModules[i]->Destroy();
@@ -84,11 +84,11 @@ namespace bs { namespace ct
 			VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 			VulkanDevice* devices[BS_MAX_DEVICES];
 
-			UINT32 codeSize = mBytecode->Instructions.Size;
-			UINT8* code = mBytecode->Instructions.Data;
+			u32 codeSize = mBytecode->Instructions.Size;
+			u8* code = mBytecode->Instructions.Data;
 
 #if BS_PLATFORM == BS_PLATFORM_OSX
-			UINT32 workgroupSize[3] = { 1, 1, 1 };
+			u32 workgroupSize[3] = { 1, 1, 1 };
 			if(mType == GPT_COMPUTE_PROGRAM)
 			{
 				assert(codeSize > sizeof(workgroupSize));
@@ -109,7 +109,7 @@ namespace bs { namespace ct
 
 			VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
-			for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+			for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 			{
 				if (devices[i] != nullptr)
 				{

@@ -9,13 +9,13 @@
 
 namespace bs
 {
-	INT32 SIGNALS[] = { SIGFPE, SIGILL, SIGSEGV, SIGTERM };
+	i32 SIGNALS[] = { SIGFPE, SIGILL, SIGSEGV, SIGTERM };
 	struct sigaction gSavedSignals[4];
 
 	void signalHandler(int signal, siginfo_t* info, void* context)
 	{
 		// Restore old signal handlers
-		INT32 i = 0;
+		i32 i = 0;
 		for(auto& entry : SIGNALS)
 		{
 			sigaction(entry, &gSavedSignals[i], nullptr);
@@ -49,7 +49,7 @@ namespace bs
 		action.sa_sigaction = &signalHandler;
 		action.sa_flags = SA_SIGINFO;
 
-		INT32 i = 0;
+		i32 i = 0;
 		for(auto& entry : SIGNALS)
 		{
 			memset(&gSavedSignals[i], 0, sizeof(struct sigaction));
@@ -176,7 +176,7 @@ namespace bs
 								   const String& description,
 								   const String& function,
 								   const String& file,
-								   UINT32 line) const
+								   u32 line) const
 	{
 		if(mSettings.onBeforeReportCrash)
 		{

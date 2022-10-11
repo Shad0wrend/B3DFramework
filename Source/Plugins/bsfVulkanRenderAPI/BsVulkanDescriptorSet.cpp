@@ -15,9 +15,9 @@ namespace bs { namespace ct
 		assert(result == VK_SUCCESS);
 	}
 
-	void VulkanDescriptorSet::Write(VkWriteDescriptorSet* entries, UINT32 count)
+	void VulkanDescriptorSet::Write(VkWriteDescriptorSet* entries, u32 count)
 	{
-		for (UINT32 i = 0; i < count; i++)
+		for (u32 i = 0; i < count; i++)
 			entries[i].dstSet = mSet;
 
 		vkUpdateDescriptorSets(mOwner->GetDevice().GetLogical(), count, entries, 0, nullptr);

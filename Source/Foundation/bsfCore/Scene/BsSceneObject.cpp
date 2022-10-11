@@ -15,7 +15,7 @@
 
 namespace bs
 {
-	SceneObject::SceneObject(const String& name, UINT32 flags)
+	SceneObject::SceneObject(const String& name, u32 flags)
 		: GameObject(), mFlags(flags)
 	{
 		SetName(name);
@@ -30,7 +30,7 @@ namespace bs
 		}
 	}
 
-	HSceneObject SceneObject::Create(const String& name, UINT32 flags)
+	HSceneObject SceneObject::Create(const String& name, u32 flags)
 	{
 		HSceneObject newObject = CreateInternal(name, flags);
 
@@ -40,7 +40,7 @@ namespace bs
 		return newObject;
 	}
 
-	HSceneObject SceneObject::CreateInternal(const String& name, UINT32 flags)
+	HSceneObject SceneObject::CreateInternal(const String& name, u32 flags)
 	{
 		SPtr<SceneObject> sceneObjectPtr = SPtr<SceneObject>(new (bs_alloc<SceneObject>()) SceneObject(name, flags),
 			&bs_delete<SceneObject>, StdAlloc<SceneObject>());
@@ -174,12 +174,12 @@ namespace bs
 		}
 	}
 
-	bool SceneObject::HasFlag(UINT32 flag) const
+	bool SceneObject::HasFlag(u32 flag) const
 	{
 		return (mFlags & flag) != 0;
 	}
 
-	void SceneObject::SetFlagsInternal(UINT32 flags)
+	void SceneObject::SetFlagsInternal(u32 flags)
 	{
 		mFlags |= flags;
 
@@ -187,7 +187,7 @@ namespace bs
 			child->SetFlagsInternal(flags);
 	}
 
-	void SceneObject::UnsetFlagsInternal(UINT32 flags)
+	void SceneObject::UnsetFlagsInternal(u32 flags)
 	{
 		mFlags &= ~flags;
 
@@ -575,7 +575,7 @@ namespace bs
 			child->SetScene(scene);
 	}
 
-	HSceneObject SceneObject::GetChild(UINT32 idx) const
+	HSceneObject SceneObject::GetChild(u32 idx) const
 	{
 		if(idx >= mChildren.size())
 		{
@@ -628,8 +628,8 @@ namespace bs
 
 		// Find scene object referenced by the path
 		HSceneObject so = GetHandle();
-		UINT32 pathIdx = 0;
-		for (; pathIdx < (UINT32)entries.size(); pathIdx++)
+		u32 pathIdx = 0;
+		for (; pathIdx < (u32)entries.size(); pathIdx++)
 		{
 			String entry = entries[pathIdx];
 
@@ -776,7 +776,7 @@ namespace bs
 
 		stream->Seek(0);
 		SPtr<SceneObject> cloneObj = std::static_pointer_cast<SceneObject>(
-			serializer.Decode(stream, (UINT32)stream->Size(), BinarySerializerFlag::None, &serzContext));
+			serializer.Decode(stream, (u32)stream->Size(), BinarySerializerFlag::None, &serzContext));
 
 		if(isInstantiated)
 			UnsetFlagsInternal(SOF_DontInstantiate);
@@ -841,7 +841,7 @@ namespace bs
 		}
 	}
 
-	HComponent SceneObject::AddComponent(UINT32 typeId)
+	HComponent SceneObject::AddComponent(u32 typeId)
 	{
 		SPtr<IReflectable> newObj = rtti_create(typeId);
 

@@ -11,8 +11,8 @@ namespace bs
 	StringID::InternalData* StringID::mStringHashTable[HASH_TABLE_SIZE];
 	StringID::InternalData* StringID::mChunks[MAX_CHUNK_COUNT];
 
-	UINT32 StringID::mNextId = 0;
-	UINT32 StringID::mNumChunks = 0;
+	u32 StringID::mNextId = 0;
+	u32 StringID::mNumChunks = 0;
 	SpinLock StringID::mSync;
 
 	StringID::InitStatics::InitStatics()
@@ -33,7 +33,7 @@ namespace bs
 	{
 		assert(StringIDUtil<T>::Size(name) <= STRING_SIZE);
 
-		UINT32 hash = CalcHash(name) & (sizeof(mStringHashTable) / sizeof(mStringHashTable[0]) - 1);
+		u32 hash = CalcHash(name) & (sizeof(mStringHashTable) / sizeof(mStringHashTable[0]) - 1);
 		InternalData* existingEntry = mStringHashTable[hash];
 		
 		while (existingEntry != nullptr)
@@ -74,12 +74,12 @@ namespace bs
 	}
 
 	template<class T>
-	UINT32 StringID::CalcHash(T const& input)
+	u32 StringID::CalcHash(T const& input)
 	{
-		UINT32 size = StringIDUtil<T>::Size(input);
+		u32 size = StringIDUtil<T>::Size(input);
 
-		UINT32 hash = 0;
-		for (UINT32 i = 0; i < size; i++)
+		u32 hash = 0;
+		for (u32 i = 0; i < size; i++)
 			hash = hash * 101 + input[i];
 
 		return hash;
@@ -87,7 +87,7 @@ namespace bs
 
 	StringID::InternalData* StringID::AllocEntry()
 	{
-		UINT32 chunkIdx = mNextId / ELEMENTS_PER_CHUNK;
+		u32 chunkIdx = mNextId / ELEMENTS_PER_CHUNK;
 
 		assert(chunkIdx < MAX_CHUNK_COUNT);
 		assert(chunkIdx <= mNumChunks); // Can only increment sequentially
@@ -101,7 +101,7 @@ namespace bs
 		}
 
 		InternalData* chunk = mChunks[chunkIdx];
-		UINT32 chunkSpecificIndex = mNextId % ELEMENTS_PER_CHUNK;
+		u32 chunkSpecificIndex = mNextId % ELEMENTS_PER_CHUNK;
 
 		InternalData* newEntry = &chunk[chunkSpecificIndex];
 		newEntry->Id = mNextId++;
@@ -114,7 +114,7 @@ namespace bs
 	class StringID::StringIDUtil<const char*>
 	{
 	public:
-		static UINT32 Size(const char* const& input) { return (UINT32)strlen(input); }
+		static u32 Size(const char* const& input) { return (u32)strlen(input); }
 		static void Copy(const char* const& input, char* dest) { memcpy(dest, input, strlen(input) + 1); }
 		static bool Compare(const char* const& a, char* b) { return strcmp(a, b) == 0; }
 	};
@@ -123,10 +123,10 @@ namespace bs
 	class StringID::StringIDUtil <String>
 	{
 	public:
-		static UINT32 Size(String const& input) { return (UINT32)input.length(); }
+		static u32 Size(String const& input) { return (u32)input.length(); }
 		static void Copy(String const& input, char* dest)
 		{
-			UINT32 len = (UINT32)input.length();
+			u32 len = (u32)input.length();
 			input.copy(dest, len);
 			dest[len] = '\0';
 		}
@@ -136,6 +136,6 @@ namespace bs
 	template BS_UTILITY_EXPORT void StringID::Construct(const char* const&);
 	template BS_UTILITY_EXPORT void StringID::Construct(String const&);
 	
-	template BS_UTILITY_EXPORT UINT32 StringID::CalcHash(const char* const&);
-	template BS_UTILITY_EXPORT UINT32 StringID::CalcHash(String const&);
+	template BS_UTILITY_EXPORT u32 StringID::CalcHash(const char* const&);
+	template BS_UTILITY_EXPORT u32 StringID::CalcHash(String const&);
 }

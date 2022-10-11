@@ -128,7 +128,7 @@ namespace bs
 		 * Higher number means the extension will execute before extensions with lower numbers. Priorities only matter for
 		 * extensions that share the same RenderLocation.
 		 */
-		UINT32 GetPriority() const { return mPriority; }
+		u32 GetPriority() const { return mPriority; }
 
 		/**
 		 * Returns a location that determines at which point in rendering should the system call the render() method. See
@@ -137,7 +137,7 @@ namespace bs
 		RenderLocation GetLocation() const { return mLocation; }
 
 	protected:
-		RendererExtension(RenderLocation location, UINT32 priority)
+		RendererExtension(RenderLocation location, u32 priority)
 			:mLocation(location), mPriority(priority)
 		{ }
 
@@ -150,7 +150,7 @@ namespace bs
 		static void DeleterInternal(RendererExtension* obj);
 
 		RenderLocation mLocation;
-		UINT32 mPriority;
+		u32 mPriority;
 	};
 
 	/** @} */

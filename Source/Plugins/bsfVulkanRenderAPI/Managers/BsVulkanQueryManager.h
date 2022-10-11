@@ -60,7 +60,7 @@ namespace bs { namespace ct
 		struct PoolInfo
 		{
 			VkQueryPool Pool = VK_NULL_HANDLE;
-			UINT32 StartIdx;
+			u32 StartIdx;
 		};
 
 		/** Attempts to find a free query of the specified type, or allocates a new one. Creates new pools as needed. */
@@ -69,7 +69,7 @@ namespace bs { namespace ct
 		/** Creates a new Vulkan query pool object. */
 		PoolInfo& AllocatePool(VkQueryType type);
 
-		static const UINT32 NUM_QUERIES_PER_POOL = 16;
+		static const u32 NUM_QUERIES_PER_POOL = 16;
 
 		VulkanDevice& mDevice;
 
@@ -89,13 +89,13 @@ namespace bs { namespace ct
 		VulkanQueryManager(VulkanRenderAPI& rapi);
 
 		/** @copydoc QueryManager::createEventQuery */
-		SPtr<EventQuery> CreateEventQuery(UINT32 deviceIdx = 0) const ;
+		SPtr<EventQuery> CreateEventQuery(u32 deviceIdx = 0) const ;
 
 		/** @copydoc QueryManager::createTimerQuery */
-		SPtr<TimerQuery> CreateTimerQuery(UINT32 deviceIdx = 0) const ;
+		SPtr<TimerQuery> CreateTimerQuery(u32 deviceIdx = 0) const ;
 
 		/** @copydoc QueryManager::createOcclusionQuery */
-		SPtr<OcclusionQuery> CreateOcclusionQuery(bool binary, UINT32 deviceIdx = 0) const ;
+		SPtr<OcclusionQuery> CreateOcclusionQuery(bool binary, u32 deviceIdx = 0) const ;
 
 	private:
 		VulkanRenderAPI& mRenderAPI;
@@ -105,7 +105,7 @@ namespace bs { namespace ct
 	class VulkanQuery : public VulkanResource
 	{
 	public:
-		VulkanQuery(VulkanResourceManager* owner, VkQueryPool pool, UINT32 queryIdx);
+		VulkanQuery(VulkanResourceManager* owner, VkQueryPool pool, u32 queryIdx);
 
 		/**
 		 * Attempts to retrieve the result from the query. The result is only valid if the query stopped executing on the
@@ -114,7 +114,7 @@ namespace bs { namespace ct
 		 * @param[out]	result	Value of the query, if the method return true. Undefined otherwise.
 		 * @return				True if the result is ready, false otherwise.
 		 */
-		bool GetResult(UINT64& result) const;
+		bool GetResult(u64& result) const;
 
 		/** Queues a command for the query reset, on the provided command buffer. */
 		void Reset(VkCommandBuffer cmdBuf);
@@ -123,7 +123,7 @@ namespace bs { namespace ct
 		friend class VulkanQueryPool;
 
 		VkQueryPool mPool;
-		UINT32 mQueryIdx;
+		u32 mQueryIdx;
 		bool mFree = true;
 	};
 

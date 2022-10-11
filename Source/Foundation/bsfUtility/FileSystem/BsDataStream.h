@@ -33,18 +33,18 @@ namespace bs
 
 	public:
 		/** Creates an unnamed stream. */
-		DataStream(UINT16 accessMode = READ)
+		DataStream(u16 accessMode = READ)
 			: mAccess(accessMode)
 		{ }
 
 		/** Creates a named stream. */
-		DataStream(const String& name, UINT16 accessMode = READ)
+		DataStream(const String& name, u16 accessMode = READ)
 			:mName(name), mAccess(accessMode) {}
 
 		virtual ~DataStream() = default;
 
 		const String& GetName() const { return mName; }
-		UINT16 GetAccessMode() const { return mAccess; }
+		u16 GetAccessMode() const { return mAccess; }
 
 		virtual bool IsReadable() const { return (mAccess & READ) != 0; }
 		virtual bool IsWriteable() const { return (mAccess & WRITE) != 0; }
@@ -177,11 +177,11 @@ namespace bs
 		virtual void Close() = 0;
 		
 	protected:
-		static const UINT32 StreamTempSize;
+		static const u32 StreamTempSize;
 
 		String mName;		
 		size_t mSize = 0;
-		UINT16 mAccess;
+		u16 mAccess;
 	};
 
 	/** Data stream for handling data from memory. */

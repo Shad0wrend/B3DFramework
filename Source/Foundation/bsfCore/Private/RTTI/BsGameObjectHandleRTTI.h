@@ -19,9 +19,9 @@ namespace bs
 	class BS_CORE_EXPORT GameObjectHandleRTTI : public RTTIType<GameObjectHandleBase, IReflectable, GameObjectHandleRTTI>
 	{
 	private:
-		UINT64& GetInstanceId(GameObjectHandleBase* obj)
+		u64& GetInstanceId(GameObjectHandleBase* obj)
 		{
-			static UINT64 invalidId = 0;
+			static u64 invalidId = 0;
 
 			if (obj->mData->MPtr != nullptr)
 				return obj->mData->MPtr->MInstanceId;
@@ -29,7 +29,7 @@ namespace bs
 			return invalidId;
 		}
 
-		void SetInstanceId(GameObjectHandleBase* obj, UINT64& value) { mOriginalInstanceId = value; }
+		void SetInstanceId(GameObjectHandleBase* obj, u64& value) { mOriginalInstanceId = value; }
 
 	public:
 		GameObjectHandleRTTI()
@@ -56,7 +56,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_GameObjectHandleBase;
 		}
@@ -69,7 +69,7 @@ namespace bs
 		}
 
 	private:
-		UINT64 mOriginalInstanceId;
+		u64 mOriginalInstanceId;
 	};
 
 	/** @} */

@@ -46,7 +46,7 @@ namespace bs
 
 			if (!empty)
 			{
-				UINT32 length = (size.Bytes - sizeof(UINT32) - sizeof(bool)) / sizeof(char);
+				u32 length = (size.Bytes - sizeof(u32) - sizeof(bool)) / sizeof(char);
 
 				auto name = (uint8_t*)bs_stack_alloc(length + 1);
 				stream.ReadBytes(name, length);

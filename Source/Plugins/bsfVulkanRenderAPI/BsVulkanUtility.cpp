@@ -269,7 +269,7 @@ namespace bs { namespace ct
 		if (format >= BF_COUNT)
 			return VK_FORMAT_UNDEFINED;
 
-		return lookup[(UINT32)format];
+		return lookup[(u32)format];
 	}
 
 	VkFormat VulkanUtility::GetVertexType(VertexElementType type)
@@ -309,10 +309,10 @@ namespace bs { namespace ct
 		if (type >= VET_COUNT)
 			return VK_FORMAT_UNDEFINED;
 
-		return lookup[(UINT32)type];
+		return lookup[(u32)type];
 	}
 
-	VkSampleCountFlagBits VulkanUtility::GetSampleFlags(UINT32 numSamples)
+	VkSampleCountFlagBits VulkanUtility::GetSampleFlags(u32 numSamples)
 	{
 		switch(numSamples)
 		{
@@ -589,9 +589,9 @@ namespace bs { namespace ct
 
 	void VulkanUtility::GetDevices(const VulkanRenderAPI& rapi, GpuDeviceFlags flags, VulkanDevice*(&devices)[BS_MAX_DEVICES])
 	{
-		UINT32 numDevices = rapi.GetNumDevicesInternal();
+		u32 numDevices = rapi.GetNumDevicesInternal();
 
-		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+		for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			if(i >= numDevices)
 			{
@@ -633,7 +633,7 @@ namespace bs { namespace ct
 		return output;
 	}
 
-	bool VulkanUtility::IsDeviceIdxSet(const VulkanRenderAPI& rapi, UINT32 idx, GpuDeviceFlags flags)
+	bool VulkanUtility::IsDeviceIdxSet(const VulkanRenderAPI& rapi, u32 idx, GpuDeviceFlags flags)
 	{
 		VulkanDevice* device = rapi.GetDeviceInternal(idx).get();
 
@@ -641,14 +641,14 @@ namespace bs { namespace ct
 	}
 
 	void cutHorizontal(const VkImageSubresourceRange& toCut, const VkImageSubresourceRange& cutWith,
-					   VkImageSubresourceRange* output, UINT32& numAreas)
+					   VkImageSubresourceRange* output, u32& numAreas)
 	{
 		numAreas = 0;
 
-		INT32 leftCut = Math::Clamp((INT32)cutWith.baseArrayLayer - (INT32)toCut.baseArrayLayer, 0, (INT32)toCut.layerCount);
-		INT32 rightCut = Math::Clamp((INT32)(cutWith.baseArrayLayer + cutWith.layerCount) - (INT32)toCut.baseArrayLayer, 0, (INT32)toCut.layerCount);
+		i32 leftCut = Math::Clamp((i32)cutWith.baseArrayLayer - (i32)toCut.baseArrayLayer, 0, (i32)toCut.layerCount);
+		i32 rightCut = Math::Clamp((i32)(cutWith.baseArrayLayer + cutWith.layerCount) - (i32)toCut.baseArrayLayer, 0, (i32)toCut.layerCount);
 
-		if (leftCut > 0 && leftCut < (INT32)toCut.layerCount)
+		if (leftCut > 0 && leftCut < (i32)toCut.layerCount)
 		{
 			output[numAreas] = toCut;
 			VkImageSubresourceRange& range = output[numAreas];
@@ -659,7 +659,7 @@ namespace bs { namespace ct
 			numAreas++;
 		}
 
-		if (rightCut > 0 && rightCut < (INT32)toCut.layerCount)
+		if (rightCut > 0 && rightCut < (i32)toCut.layerCount)
 		{
 			output[numAreas] = toCut;
 			VkImageSubresourceRange& range = output[numAreas];
@@ -691,14 +691,14 @@ namespace bs { namespace ct
 	}
 
 	void cutVertical(const VkImageSubresourceRange& toCut, const VkImageSubresourceRange& cutWith,
-					 VkImageSubresourceRange* output, UINT32& numAreas)
+					 VkImageSubresourceRange* output, u32& numAreas)
 	{
 		numAreas = 0;
 
-		INT32 topCut = Math::Clamp((INT32)cutWith.baseMipLevel - (INT32)toCut.baseMipLevel, 0, (INT32)toCut.levelCount);
-		INT32 bottomCut = Math::Clamp((INT32)(cutWith.baseMipLevel + cutWith.levelCount) - (INT32)toCut.baseMipLevel, 0, (INT32)toCut.levelCount);
+		i32 topCut = Math::Clamp((i32)cutWith.baseMipLevel - (i32)toCut.baseMipLevel, 0, (i32)toCut.levelCount);
+		i32 bottomCut = Math::Clamp((i32)(cutWith.baseMipLevel + cutWith.levelCount) - (i32)toCut.baseMipLevel, 0, (i32)toCut.levelCount);
 
-		if (topCut > 0 && topCut < (INT32)toCut.levelCount)
+		if (topCut > 0 && topCut < (i32)toCut.levelCount)
 		{
 			output[numAreas] = toCut;
 			VkImageSubresourceRange& range = output[numAreas];
@@ -709,7 +709,7 @@ namespace bs { namespace ct
 			numAreas++;
 		}
 
-		if (bottomCut > 0 && bottomCut < (INT32)toCut.levelCount)
+		if (bottomCut > 0 && bottomCut < (i32)toCut.levelCount)
 		{
 			output[numAreas] = toCut;
 			VkImageSubresourceRange& range = output[numAreas];
@@ -741,24 +741,24 @@ namespace bs { namespace ct
 	}
 
 	void VulkanUtility::CutRange(const VkImageSubresourceRange& toCut, const VkImageSubresourceRange& cutWith,
-				  std::array<VkImageSubresourceRange, 5>& output, UINT32& numAreas)
+				  std::array<VkImageSubresourceRange, 5>& output, u32& numAreas)
 	{
 		numAreas = 0;
 
 		// Cut horizontally
-		UINT32 numHorzCuts = 0;
+		u32 numHorzCuts = 0;
 		std::array<VkImageSubresourceRange, 3> horzCuts;
 		cutHorizontal(toCut, cutWith, horzCuts.data(), numHorzCuts);
 
 		// Cut vertically
-		for (UINT32 i = 0; i < numHorzCuts; i++)
+		for (u32 i = 0; i < numHorzCuts; i++)
 		{
 			VkImageSubresourceRange& range = horzCuts[i];
 
 			if (range.baseArrayLayer >= cutWith.baseArrayLayer &&
 				(range.baseArrayLayer + range.layerCount) <= (cutWith.baseArrayLayer + cutWith.layerCount))
 			{
-				UINT32 numVertCuts = 0;
+				u32 numVertCuts = 0;
 				cutVertical(range, cutWith, output.data() + numAreas, numVertCuts);
 
 				numAreas += numVertCuts;
@@ -775,30 +775,30 @@ namespace bs { namespace ct
 
 	bool VulkanUtility::RangeOverlaps(const VkImageSubresourceRange& a, const VkImageSubresourceRange& b)
 	{
-		INT32 aRight = a.baseArrayLayer + (INT32)a.layerCount;
-		INT32 bRight = b.baseArrayLayer + (INT32)b.layerCount;
+		i32 aRight = a.baseArrayLayer + (i32)a.layerCount;
+		i32 bRight = b.baseArrayLayer + (i32)b.layerCount;
 
-		INT32 aBottom = a.baseMipLevel + (INT32)a.levelCount;
-		INT32 bBottom = b.baseMipLevel + (INT32)b.levelCount;
+		i32 aBottom = a.baseMipLevel + (i32)a.levelCount;
+		i32 bBottom = b.baseMipLevel + (i32)b.levelCount;
 
-		if ((INT32)a.baseArrayLayer < bRight && aRight >(INT32)b.baseArrayLayer &&
-			(INT32)a.baseMipLevel < bBottom && aBottom >(INT32)b.baseMipLevel)
+		if ((i32)a.baseArrayLayer < bRight && aRight >(i32)b.baseArrayLayer &&
+			(i32)a.baseMipLevel < bBottom && aBottom >(i32)b.baseMipLevel)
 			return true;
 
 		return false;
 	}
 
-	UINT32 VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, UINT32 arraySize, UINT32& offset)
+	u32 VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, u32 arraySize, u32& offset)
 	{
 		const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::PARAM_SIZES.Lookup[type];
-		UINT32 size = (typeInfo.BaseTypeSize * typeInfo.NumColumns * typeInfo.NumRows) / 4;
-		UINT32 alignment = typeInfo.Alignment / 4;
+		u32 size = (typeInfo.BaseTypeSize * typeInfo.NumColumns * typeInfo.NumRows) / 4;
+		u32 alignment = typeInfo.Alignment / 4;
 
 		// Fix alignment if needed
-		UINT32 alignOffset = offset % alignment;
+		u32 alignOffset = offset % alignment;
 		if (alignOffset != 0)
 		{
-			UINT32 padding = (alignment - alignOffset);
+			u32 padding = (alignment - alignOffset);
 			offset += padding;
 		}
 
@@ -808,14 +808,14 @@ namespace bs { namespace ct
 			alignOffset = size % 4;
 			if (alignOffset != 0)
 			{
-				UINT32 padding = (4 - alignOffset);
+				u32 padding = (4 - alignOffset);
 				size += padding;
 			}
 
 			alignOffset = offset % 4;
 			if (alignOffset != 0)
 			{
-				UINT32 padding = (4 - alignOffset);
+				u32 padding = (4 - alignOffset);
 				offset += padding;
 			}
 

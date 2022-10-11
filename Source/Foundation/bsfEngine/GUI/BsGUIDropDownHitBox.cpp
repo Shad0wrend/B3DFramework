@@ -55,7 +55,7 @@ namespace bs
 		{
 			mClippedBounds = mBounds[0];
 
-			for (UINT32 i = 1; i < (UINT32)mBounds.size(); i++)
+			for (u32 i = 1; i < (u32)mBounds.size(); i++)
 				mClippedBounds.Encapsulate(mBounds[i]);
 		}
 	}

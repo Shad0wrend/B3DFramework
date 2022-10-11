@@ -20,7 +20,7 @@ namespace bs
 		return range;
 	}
 
-	GUIFixedSpace* GUIFixedSpace::Create(UINT32 size)
+	GUIFixedSpace* GUIFixedSpace::Create(u32 size)
 	{
 		return bs_new<GUIFixedSpace>(size);
 	}

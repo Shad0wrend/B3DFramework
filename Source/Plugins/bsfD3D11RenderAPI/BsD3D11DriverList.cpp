@@ -23,7 +23,7 @@ namespace bs { namespace ct
 
 	void D3D11DriverList::Enumerate(IDXGIFactory1* dxgiFactory)
 	{
-		UINT32 adapterIdx = 0;
+		u32 adapterIdx = 0;
 		IDXGIAdapter* dxgiAdapter = nullptr;
 		HRESULT hr;
 
@@ -42,12 +42,12 @@ namespace bs { namespace ct
 		}
 	}
 
-	UINT32 D3D11DriverList::Count() const
+	u32 D3D11DriverList::Count() const
 	{
-		return (UINT32)mDriverList.size();
+		return (u32)mDriverList.size();
 	}
 
-	D3D11Driver* D3D11DriverList::Item(UINT32 idx) const
+	D3D11Driver* D3D11DriverList::Item(u32 idx) const
 	{
 		return mDriverList.at(idx);
 	}

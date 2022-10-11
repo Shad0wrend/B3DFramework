@@ -55,7 +55,7 @@ namespace bs
 			mInternal->SetEmitters(emitters);
 	}
 
-	void CParticleSystem::SetLayer(UINT64 layer)
+	void CParticleSystem::SetLayer(u64 layer)
 	{
 		mLayer = layer;
 

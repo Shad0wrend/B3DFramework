@@ -19,7 +19,7 @@ namespace bs
 	{
 	protected:
 		/** @copydoc RenderWindowManager::createImpl */
-		SPtr<RenderWindow> CreateImpl(RENDER_WINDOW_DESC& desc, UINT32 windowId,
+		SPtr<RenderWindow> CreateImpl(RENDER_WINDOW_DESC& desc, u32 windowId,
 			const SPtr<RenderWindow>& parentWindow) ;
 	};
 
@@ -63,7 +63,7 @@ namespace bs
 		friend class NullRenderWindowManager;
 		friend class ct::NullRenderWindow;
 
-		NullRenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId);
+		NullRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId);
 
 		/** @copydoc RenderWindow::getProperties */
 		const RenderTargetProperties& GetPropertiesInternal() const override { return mProperties; }
@@ -84,7 +84,7 @@ namespace bs
 		class NullRenderTexture : public RenderTexture
 		{
 		public:
-			NullRenderTexture(const RENDER_TEXTURE_DESC& desc, UINT32 deviceIdx)
+			NullRenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 				:RenderTexture(desc, deviceIdx), mProperties(desc, false)
 			{ }
 
@@ -101,16 +101,16 @@ namespace bs
 		class NullRenderWindow final : public RenderWindow
 		{
 		public:
-			NullRenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId);
+			NullRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId);
 
 			/** @copydoc RenderWindow::move */
-			void Move(INT32 left, INT32 top) override { }
+			void Move(i32 left, i32 top) override { }
 
 			/** @copydoc RenderWindow::resize */
-			void Resize(UINT32 width, UINT32 height) override { }
+			void Resize(u32 width, u32 height) override { }
 
 			/** @copydoc RenderWindow::setVSync */
-			void SetVSync(bool enabled, UINT32 interval = 1) override { }
+			void SetVSync(bool enabled, u32 interval = 1) override { }
 
 			/** @copydoc RenderWindow::getCustomAttribute */
 			void GetCustomAttribute(const String& name, void* pData) const override;

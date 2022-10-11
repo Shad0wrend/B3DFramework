@@ -16,10 +16,10 @@
 
 namespace bs
 {
-	constexpr UINT32 BinarySerializer::REPORT_AFTER_BYTES;
-	constexpr UINT32 BinarySerializer::WRITE_BUFFER_SIZE;
-	constexpr UINT32 BinarySerializer::FLUSH_AFTER_BYTES;
-	constexpr UINT32 BinarySerializer::PRELOAD_CHUNK_BYTES;
+	constexpr u32 BinarySerializer::REPORT_AFTER_BYTES;
+	constexpr u32 BinarySerializer::WRITE_BUFFER_SIZE;
+	constexpr u32 BinarySerializer::FLUSH_AFTER_BYTES;
+	constexpr u32 BinarySerializer::PRELOAD_CHUNK_BYTES;
 
 	BinarySerializer::BinarySerializer()
 		:mAlloc(&gFrameAlloc())
@@ -38,7 +38,7 @@ namespace bs
 		BufferedBitstreamWriter bufferedStream(&mBuffer, stream, WRITE_BUFFER_SIZE, FLUSH_AFTER_BYTES);
 
 		Vector<SPtr<IReflectable>> encodedObjects;
-		UINT32 objectId = FindOrCreatePersistentId(object);
+		u32 objectId = FindOrCreatePersistentId(object);
 		
 		// Encode primary object and its value types
 		if (!EncodeEntry(object, objectId, bufferedStream, flags))
@@ -48,7 +48,7 @@ namespace bs
 		}
 
 		// Encode pointed to objects and their value types
-		UnorderedSet<UINT32> serializedObjects;
+		UnorderedSet<u32> serializedObjects;
 		while(true)
 		{
 			auto iter = mObjectsToEncode.begin();
@@ -60,7 +60,7 @@ namespace bs
 					continue; // Already processed
 
 				SPtr<IReflectable> curObject = iter->Object;
-				UINT32 curObjectid = iter->ObjectId;
+				u32 curObjectid = iter->ObjectId;
 				serializedObjects.insert(curObjectid);
 				mObjectsToEncode.erase(iter);
 
@@ -94,7 +94,7 @@ namespace bs
 		mAlloc->Clear();
 	}
 
-	SPtr<IReflectable> BinarySerializer::Decode(const SPtr<DataStream>& stream, UINT32 dataLength,
+	SPtr<IReflectable> BinarySerializer::Decode(const SPtr<DataStream>& stream, u32 dataLength,
 		BinarySerializerFlags flags, SerializationContext* context, std::function<void(float)> progress,
 		SPtr<RTTISchema> schema)
 	{
@@ -135,17 +135,17 @@ namespace bs
 
 		// Note: Ideally we can avoid iterating twice over the stream data
 		// We need to find offsets at which all objects start at so we can map object id to offset
-		UINT32 rootObjectId = (UINT32)-1;
+		u32 rootObjectId = (u32)-1;
 		SPtr<RTTISchema> curSchema = schema;
 		do
 		{
-			bool isRoot = rootObjectId == (UINT32)-1;
+			bool isRoot = rootObjectId == (u32)-1;
 			
-			UINT32 objectId = 0;
-			UINT32 objectTypeId = 0;
+			u32 objectId = 0;
+			u32 objectTypeId = 0;
 			bool objectIsBaseClass = false;
 
-			UINT32 bitsRead = ReadObjectMetaData(bufferedStream, flags, objectId, objectTypeId, objectIsBaseClass);
+			u32 bitsRead = ReadObjectMetaData(bufferedStream, flags, objectId, objectTypeId, objectIsBaseClass);
 			bufferedStream.Skip(-(int64_t)bitsRead);
 
 			if (objectIsBaseClass)
@@ -216,7 +216,7 @@ namespace bs
 		return rootObject;
 	}
 
-	bool BinarySerializer::EncodeEntry(IReflectable* object, UINT32 objectId, BufferedBitstreamWriter& stream, BinarySerializerFlags flags)
+	bool BinarySerializer::EncodeEntry(IReflectable* object, u32 objectId, BufferedBitstreamWriter& stream, BinarySerializerFlags flags)
 	{
 		const bool writeMeta = !flags.IsSet(BinarySerializerFlag::NoMeta);
 		const bool compress = flags.IsSet(BinarySerializerFlag::Compress);
@@ -255,7 +255,7 @@ namespace bs
 			else
 			{
 				// Encode object ID
-				UINT32 objectMetaData = EncodeObjectMetaData(objectId, isBaseClass);
+				u32 objectMetaData = EncodeObjectMetaData(objectId, isBaseClass);
 
 				if (compress)
 					stream.WriteVarInt(objectMetaData);
@@ -263,8 +263,8 @@ namespace bs
 					stream.WriteBytes(objectMetaData);
 			}
 
-			const UINT32 numFields = rtti->GetNumFields();
-			for(UINT32 i = 0; i < numFields; i++)
+			const u32 numFields = rtti->GetNumFields();
+			for(u32 i = 0; i < numFields; i++)
 			{
 				RTTIField* curGenericField = rtti->GetField(i);
 
@@ -278,7 +278,7 @@ namespace bs
 
 				if(curGenericField->Schema.IsArray)
 				{
-					UINT32 arrayNumElems = curGenericField->GetArraySize(rttiInstance, object);
+					u32 arrayNumElems = curGenericField->GetArraySize(rttiInstance, object);
 
 					// Copy num vector elements
 					if (compress)
@@ -292,14 +292,14 @@ namespace bs
 						{
 							auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(curGenericField);
 
-							for(UINT32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
+							for(u32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
 							{
 								SPtr<IReflectable> childObject;
 								
 								if (!flags.IsSet(BinarySerializerFlag::Shallow))
 									childObject = curField->GetArrayValue(rttiInstance, object, arrIdx);
 
-								UINT32 objId = RegisterObjectPtr(childObject);
+								u32 objId = RegisterObjectPtr(childObject);
 								if (compress)
 									stream.WriteVarInt(objId);
 								else
@@ -312,7 +312,7 @@ namespace bs
 						{
 							auto* curField = static_cast<RTTIReflectableFieldBase*>(curGenericField);
 
-							for(UINT32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
+							for(u32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
 							{
 								IReflectable& childObject = curField->GetArrayValue(rttiInstance, object, arrIdx);
 
@@ -329,7 +329,7 @@ namespace bs
 						{
 							auto* curField = static_cast<RTTIPlainFieldBase*>(curGenericField);
 
-							for(UINT32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
+							for(u32 arrIdx = 0; arrIdx < arrayNumElems; arrIdx++)
 								curField->ArrayElemToStream(rttiInstance, object, arrIdx, stream.GetBitstream(), compress);
 
 							break;
@@ -352,7 +352,7 @@ namespace bs
 							if (!flags.IsSet(BinarySerializerFlag::Shallow))
 								childObject = curField->GetValue(rttiInstance, object);
 
-							UINT32 objId = RegisterObjectPtr(childObject);
+							u32 objId = RegisterObjectPtr(childObject);
 							if (compress)
 								stream.WriteVarInt(objId);
 							else
@@ -384,7 +384,7 @@ namespace bs
 						{
 							auto* curField = static_cast<RTTIManagedDataBlockFieldBase*>(curGenericField);
 
-							UINT32 dataBlockSize = 0;
+							u32 dataBlockSize = 0;
 							SPtr<DataStream> blockStream = curField->GetValue(rttiInstance, object, dataBlockSize);
 
 							// Data block size
@@ -394,7 +394,7 @@ namespace bs
 								stream.WriteBytes(dataBlockSize);
 
 							// Data block data
-							auto dataToStore = (UINT8*)bs_stack_alloc(dataBlockSize);
+							auto dataToStore = (u8*)bs_stack_alloc(dataBlockSize);
 							blockStream->Read(dataToStore, dataBlockSize);
 
 							stream.Align();
@@ -429,8 +429,8 @@ namespace bs
 		const bool hasMeta = !flags.IsSet(BinarySerializerFlag::NoMeta);
 		const bool compressed = flags.IsSet(BinarySerializerFlag::Compress);
 
-		UINT32 objectId = 0;
-		UINT32 objectTypeId = 0;
+		u32 objectId = 0;
+		u32 objectTypeId = 0;
 		bool objectIsBaseClass = false;
 
 		ReadObjectMetaData(stream, flags, objectId, objectTypeId, objectIsBaseClass);
@@ -479,7 +479,7 @@ namespace bs
 			(*iter)->OnDeserializationStarted(output.get(), mContext);
 
 		RTTITypeBase* rttiInstance = nullptr;
-		UINT32 rttiInstanceIdx = 0;
+		u32 rttiInstanceIdx = 0;
 		if(!rttiInstances.empty())
 			rttiInstance = rttiInstances[0];
 
@@ -493,19 +493,19 @@ namespace bs
 			SPtr<RTTISchema> fieldTypeSchema;
 			bool terminator = false;
 
-			UINT32 baseObjId = 0;
-			UINT32 baseObjTypeId = 0;
+			u32 baseObjId = 0;
+			u32 baseObjTypeId = 0;
 			bool objIsBaseClass = false;
 
 			if(hasMeta)
 			{
-				UINT8 metaDataHeader = 0;
+				u8 metaDataHeader = 0;
 				stream.ReadBytes(metaDataHeader);
 				stream.SkipBytes(-(int32_t)sizeof(metaDataHeader));
 
 				if (IsObjectMetaData(metaDataHeader)) // We've reached a new object or a base class of the current one
 				{
-					UINT32 readBits = ReadObjectMetaData(stream, flags, baseObjId, baseObjTypeId, objIsBaseClass);
+					u32 readBits = ReadObjectMetaData(stream, flags, baseObjId, baseObjTypeId, objIsBaseClass);
 
 					if (!objIsBaseClass)
 					{
@@ -523,7 +523,7 @@ namespace bs
 
 					if (!terminator)
 					{
-						UINT32 fieldMetaData;
+						u32 fieldMetaData;
 						stream.ReadBytes(fieldMetaData);
 
 						fieldSchema = DecodeFieldMetaData(fieldMetaData, terminator);
@@ -607,11 +607,11 @@ namespace bs
 				if (curGenericField->Schema.Type != fieldSchema.Type)
 				{
 					BS_EXCEPT(InternalErrorException,
-						"Data type mismatch. Field types don't match. " + toString(UINT32(curGenericField->Schema.Type)) + " vs. " + toString(UINT32(fieldSchema.Type)));
+						"Data type mismatch. Field types don't match. " + toString(u32(curGenericField->Schema.Type)) + " vs. " + toString(u32(fieldSchema.Type)));
 				}
 			}
 
-			UINT32 arrayNumElems = 1;
+			u32 arrayNumElems = 1;
 			if (fieldSchema.IsArray)
 			{
 				if (compressed)
@@ -628,9 +628,9 @@ namespace bs
 				{
 					auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(curGenericField);
 
-					for (UINT32 i = 0; i < arrayNumElems; i++)
+					for (u32 i = 0; i < arrayNumElems; i++)
 					{
-						UINT32 childObjectId = 0;
+						u32 childObjectId = 0;
 						if (compressed)
 							stream.ReadVarInt(childObjectId);
 						else
@@ -644,7 +644,7 @@ namespace bs
 							if (findObj == mDecodeObjectMap.end())
 							{
 								SPtr<IReflectable> childObj = IReflectable::CreateInstanceFromTypeId(fieldTypeSchema->TypeId);
-								mDecodeObjectMap.insert(std::make_pair(objectId, ObjectToDecode(childObj, (UINT32)-1, fieldTypeSchema)));
+								mDecodeObjectMap.insert(std::make_pair(objectId, ObjectToDecode(childObj, (u32)-1, fieldTypeSchema)));
 							}
 						}
 						
@@ -700,7 +700,7 @@ namespace bs
 				{
 					auto* curField = static_cast<RTTIReflectableFieldBase*>(curGenericField);
 
-					for (UINT32 i = 0; i < arrayNumElems; i++)
+					for (u32 i = 0; i < arrayNumElems; i++)
 					{
 						SPtr<IReflectable> childObj;
 						if(curField)
@@ -720,7 +720,7 @@ namespace bs
 				{
 					auto* curField = static_cast<RTTIPlainFieldBase*>(curGenericField);
 
-					for (UINT32 i = 0; i < arrayNumElems; i++)
+					for (u32 i = 0; i < arrayNumElems; i++)
 					{
 						uint64_t typeSizeBits = fieldSchema.Size.GetBits();
 						if (fieldSchema.HasDynamicSize)
@@ -763,7 +763,7 @@ namespace bs
 				}
 				default:
 					BS_EXCEPT(InternalErrorException,
-						"Error decoding data. Encountered a type I don't know how to decode. Type: " + toString(UINT32(fieldSchema.Type)) +
+						"Error decoding data. Encountered a type I don't know how to decode. Type: " + toString(u32(fieldSchema.Type)) +
 						", Is array: " + toString(fieldSchema.IsArray));
 				}
 			}
@@ -775,7 +775,7 @@ namespace bs
 				{
 					auto* curField = static_cast<RTTIReflectablePtrFieldBase*>(curGenericField);
 
-					UINT32 childObjectId = 0;
+					u32 childObjectId = 0;
 					if (compressed)
 						stream.ReadVarInt(childObjectId);
 					else
@@ -789,7 +789,7 @@ namespace bs
 						if (findObj == mDecodeObjectMap.end())
 						{
 							SPtr<IReflectable> childObj = IReflectable::CreateInstanceFromTypeId(fieldTypeSchema->TypeId);
-							mDecodeObjectMap.insert(std::make_pair(objectId, ObjectToDecode(childObj, (UINT32)-1, fieldTypeSchema)));
+							mDecodeObjectMap.insert(std::make_pair(objectId, ObjectToDecode(childObj, (u32)-1, fieldTypeSchema)));
 						}
 					}
 						
@@ -907,7 +907,7 @@ namespace bs
 					auto* curField = static_cast<RTTIManagedDataBlockFieldBase*>(curGenericField);
 
 					// Data block size
-					UINT32 dataBlockSize = 0;
+					u32 dataBlockSize = 0;
 					if (compressed)
 						stream.ReadVarInt(dataBlockSize);
 					else
@@ -947,17 +947,17 @@ namespace bs
 				}
 				default:
 					BS_EXCEPT(InternalErrorException,
-						"Error decoding data. Encountered a type I don't know how to decode. Type: " + toString(UINT32(fieldSchema.Type)) +
+						"Error decoding data. Encountered a type I don't know how to decode. Type: " + toString(u32(fieldSchema.Type)) +
 						", Is array: " + toString(fieldSchema.IsArray));
 				}
 
 				stream.ClearBuffered(false);
 			}
 
-			UINT32 bytesRead = (UINT32)Math::DivideAndRoundUp(stream.Tell(), (uint64_t)8);
+			u32 bytesRead = (u32)Math::DivideAndRoundUp(stream.Tell(), (uint64_t)8);
 			if (mReportProgress && (bytesRead >= mNextProgressReport))
 			{
-				UINT32 lastReport = (bytesRead / REPORT_AFTER_BYTES) * REPORT_AFTER_BYTES;
+				u32 lastReport = (bytesRead / REPORT_AFTER_BYTES) * REPORT_AFTER_BYTES;
 				mNextProgressReport = lastReport + REPORT_AFTER_BYTES;
 
 				mReportProgress(bytesRead / (float)mTotalBytesToRead);
@@ -982,7 +982,7 @@ namespace bs
 				// to know when their fields end and parent's resume
 				if(flags.IsSet(BinarySerializerFlag::Compress))
 				{
-					UINT8 metaData = EncodeFieldTerminator();
+					u8 metaData = EncodeFieldTerminator();
 					stream.WriteBytes(metaData);
 				}
 				else
@@ -996,7 +996,7 @@ namespace bs
 		return true;
 	}
 
-	UINT32 BinarySerializer::EncodeFieldMetaData(const RTTIFieldSchema& schema, bool terminator)
+	u32 BinarySerializer::EncodeFieldMetaData(const RTTIFieldSchema& schema, bool terminator)
 	{
 		// If O == 0 - Meta contains field information (Encoded using this method)
 		//// Encoding if E = 0: IIII IIII IIII IIII SSSS SSSS ETYP DCAO
@@ -1014,7 +1014,7 @@ namespace bs
 		//// B - Built-in type ID
 
 		bool isBuiltin = schema.GetTypeId() < 16;
-		UINT32 sizeBytes = schema.HasDynamicSize ? 0 : schema.Size.Bytes;
+		u32 sizeBytes = schema.HasDynamicSize ? 0 : schema.Size.Bytes;
 
 		if(!isBuiltin)
 			return (schema.Id << 16 | sizeBytes << 8 |
@@ -1036,7 +1036,7 @@ namespace bs
 
 	}
 
-	RTTIFieldSchema BinarySerializer::DecodeFieldMetaData(UINT32 encodedData, bool& terminator)
+	RTTIFieldSchema BinarySerializer::DecodeFieldMetaData(u32 encodedData, bool& terminator)
 	{
 		if(IsObjectMetaData(encodedData))
 		{
@@ -1059,24 +1059,24 @@ namespace bs
 			schema.Type = SerializableFT_Plain;
 
 		schema.IsArray = (encodedData & 0x02) != 0;
-		schema.Id = (UINT16)((encodedData >> 16) & 0xFFFF);
+		schema.Id = (u16)((encodedData >> 16) & 0xFFFF);
 
 		bool extended = (encodedData & 0x80) != 0;
 		if (!extended)
-			schema.Size = (UINT8)((encodedData >> 8) & 0xFF);
+			schema.Size = (u8)((encodedData >> 8) & 0xFF);
 		else
-			schema.FieldTypeId = (UINT8)((encodedData >> 12) & 0xF);
+			schema.FieldTypeId = (u8)((encodedData >> 12) & 0xF);
 
 		return schema;
 	}
 
-	UINT8 BinarySerializer::EncodeFieldTerminator()
+	u8 BinarySerializer::EncodeFieldTerminator()
 	{
 		// See the documentation for encodeFieldMetaData() on why we're using this format
 		return 0x40;
 	}
 
-	void BinarySerializer::SkipBuiltinType(UINT32 fieldType, BufferedBitstreamReader& stream, bool compressed)
+	void BinarySerializer::SkipBuiltinType(u32 fieldType, BufferedBitstreamReader& stream, bool compressed)
 	{
 		switch(fieldType)
 		{
@@ -1107,7 +1107,7 @@ namespace bs
 		}
 	}
 
-	bool BinarySerializer::IsFieldTerminator(UINT8 data)
+	bool BinarySerializer::IsFieldTerminator(u8 data)
 	{
 		if(IsObjectMetaData(data))
 		{
@@ -1118,7 +1118,7 @@ namespace bs
 		return (data & 0x40) != 0;
 	}
 
-	BinarySerializer::ObjectMetaData BinarySerializer::EncodeObjectMetaData(UINT32 objId, UINT32 objTypeId, bool isBaseClass)
+	BinarySerializer::ObjectMetaData BinarySerializer::EncodeObjectMetaData(u32 objId, u32 objTypeId, bool isBaseClass)
 	{
 		// If O == 1 - Meta contains object instance information (Encoded using encodeObjectMetaData)
 		//// Encoding: SSSS SSSS SSSS SSSS xxxx xxxx xxxx xxBO
@@ -1137,7 +1137,7 @@ namespace bs
 		return metaData;
 	}
 
-	void BinarySerializer::DecodeObjectMetaData(ObjectMetaData encodedData, UINT32& objId, UINT32& objTypeId, bool& isBaseClass)
+	void BinarySerializer::DecodeObjectMetaData(ObjectMetaData encodedData, u32& objId, u32& objTypeId, bool& isBaseClass)
 	{
 		if(!IsObjectMetaData(encodedData.ObjectMeta))
 		{
@@ -1149,7 +1149,7 @@ namespace bs
 		objTypeId = encodedData.TypeId;
 	}
 
-	UINT32 BinarySerializer::EncodeObjectMetaData(UINT32 objId, bool isBaseClass)
+	u32 BinarySerializer::EncodeObjectMetaData(u32 objId, bool isBaseClass)
 	{
 		// If O == 1 - Meta contains object instance information (Encoded using encodeObjectMetaData)
 		//// Encoding: SSSS SSSS SSSS SSSS xxxx xxxx xxxx xxBO
@@ -1165,7 +1165,7 @@ namespace bs
 		return (objId << 2) | (isBaseClass ? 0x02 : 0) | 0x01;
 	}
 
-	void BinarySerializer::DecodeObjectMetaData(UINT32 encodedData, UINT32& objId, bool& isBaseClass)
+	void BinarySerializer::DecodeObjectMetaData(u32 encodedData, u32& objId, bool& isBaseClass)
 	{
 		if(!IsObjectMetaData(encodedData))
 		{
@@ -1177,12 +1177,12 @@ namespace bs
 		isBaseClass = (encodedData & 0x02) != 0;
 	}
 
-	bool BinarySerializer::IsObjectMetaData(UINT32 encodedData)
+	bool BinarySerializer::IsObjectMetaData(u32 encodedData)
 	{
 		return ((encodedData & 0x01) != 0);
 	}
 
-	UINT32 BinarySerializer::ReadObjectMetaData(BufferedBitstreamReader& stream, BinarySerializerFlags flags, uint32_t& objId, uint32_t& objTypeId, bool& isBaseType)
+	u32 BinarySerializer::ReadObjectMetaData(BufferedBitstreamReader& stream, BinarySerializerFlags flags, uint32_t& objId, uint32_t& objTypeId, bool& isBaseType)
 	{
 		if (!flags.IsSet(BinarySerializerFlag::NoMeta))
 		{
@@ -1198,9 +1198,9 @@ namespace bs
 		}
 		else
 		{
-			UINT32 objectMetaData = 0;
+			u32 objectMetaData = 0;
 
-			UINT32 bitsRead = 0;
+			u32 bitsRead = 0;
 			if (flags.IsSet(BinarySerializerFlag::Compress))
 				bitsRead = stream.ReadVarInt(objectMetaData);
 			else
@@ -1218,7 +1218,7 @@ namespace bs
 		}
 	}
 
-	UINT32 BinarySerializer::FindOrCreatePersistentId(IReflectable* object)
+	u32 BinarySerializer::FindOrCreatePersistentId(IReflectable* object)
 	{
 		void* ptrAddress = (void*)object;
 
@@ -1226,13 +1226,13 @@ namespace bs
 		if(findIter != mObjectAddrToId.end())
 			return findIter->second;
 
-		UINT32 objId = mLastUsedObjectId++;
+		u32 objId = mLastUsedObjectId++;
 		mObjectAddrToId.insert(std::make_pair(ptrAddress, objId));
 
 		return objId;
 	}
 
-	UINT32 BinarySerializer::RegisterObjectPtr(SPtr<IReflectable> object)
+	u32 BinarySerializer::RegisterObjectPtr(SPtr<IReflectable> object)
 	{
 		if(object == nullptr)
 			return 0;
@@ -1242,7 +1242,7 @@ namespace bs
 		auto iterFind = mObjectAddrToId.find(ptrAddress);
 		if(iterFind == mObjectAddrToId.end())
 		{
-			UINT32 objId = FindOrCreatePersistentId(object.get());
+			u32 objId = FindOrCreatePersistentId(object.get());
 
 			mObjectsToEncode.push_back(ObjectToEncode(objId, object));
 			mObjectAddrToId.insert(std::make_pair(ptrAddress, objId));

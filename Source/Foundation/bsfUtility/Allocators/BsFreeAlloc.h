@@ -18,9 +18,9 @@ namespace bs
 	{
 	public:
 		/** Allocates memory. */
-		UINT8* Alloc(UINT32 amount)
+		u8* Alloc(u32 amount)
 		{
-			return (UINT8*)malloc(amount);
+			return (u8*)malloc(amount);
 		}
 
 		/** Deallocates a previously allocated piece of memory. */

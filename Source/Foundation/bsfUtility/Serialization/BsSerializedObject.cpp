@@ -23,7 +23,7 @@ namespace bs
 		SPtr<SerializedObject> copy = bs_shared_ptr_new<SerializedObject>();
 		copy->SubObjects = Vector<SerializedSubObject>(SubObjects.size());
 
-		UINT32 i = 0;
+		u32 i = 0;
 		for (auto& subObject : SubObjects)
 		{
 			copy->SubObjects[i].TypeId = subObject.TypeId;
@@ -51,7 +51,7 @@ namespace bs
 
 		if (cloneData)
 		{
-			copy->Value = (UINT8*)bs_alloc(Size);
+			copy->Value = (u8*)bs_alloc(Size);
 			memcpy(copy->Value, Value, Size);
 			copy->OwnsMemory = true;
 		}
@@ -138,7 +138,7 @@ namespace bs
 		return SerializedField::GetRttiStatic();
 	}
 
-	UINT32 SerializedObject::GetRootTypeId() const
+	u32 SerializedObject::GetRootTypeId() const
 	{
 		if(SubObjects.size() > 0)
 			return SubObjects[0].TypeId;

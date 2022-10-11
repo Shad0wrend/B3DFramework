@@ -59,7 +59,7 @@ namespace bs
 		 *							Note that pinning can have an impact on memory fragmentation as it prevents the GC from
 		 *							moving the object, so use it sparingly.
 		 */
-		static UINT32 NewGcHandle(MonoObject* object, bool pinned = true);
+		static u32 NewGcHandle(MonoObject* object, bool pinned = true);
 
 		/**
 		 * Creates a new GC handle for the provided managed object. The handle can be stored and later used for retrieving
@@ -67,13 +67,13 @@ namespace bs
 		 * prevent the garbage collector from collecting the object. getObjectFromGCHandle() will return null if the GC
 		 * collected the object and handle is no longer valid.
 		 */
-		static UINT32 NewWeakGcHandle(MonoObject* object);
+		static u32 NewWeakGcHandle(MonoObject* object);
 
 		/** Frees a GC handle previously allocated with newGCHandle. */
-		static void FreeGcHandle(UINT32 handle);
+		static void FreeGcHandle(u32 handle);
 
 		/** Returns a MonoObject from an allocated GC handle. */
-		static MonoObject* GetObjectFromGcHandle(UINT32 handle);
+		static MonoObject* GetObjectFromGcHandle(u32 handle);
 
 		/** Converts a managed value type into a reference type by boxing it. */
 		static MonoObject* Box(::MonoClass* klass, void* value);
@@ -111,21 +111,21 @@ namespace bs
 		static MonoPrimitiveType GetPrimitiveType(::MonoClass* monoClass);
 
 		/** Binds parameters to a generic class, and returns a new instantiable class with the bound parameters. */
-		static ::MonoClass* BindGenericParameters(::MonoClass* klass, ::MonoClass** params, UINT32 numParams);
+		static ::MonoClass* BindGenericParameters(::MonoClass* klass, ::MonoClass** params, u32 numParams);
 
 		/**
 		 * Returns the generic parameters of the provided type. @p params must be a pre-allocated buffer able to hold the
 		 * class types for each parameter. If @p params is null, then @p numParams will be populated with the number of
 		 * available parameters.
 		 */
-		static void GetGenericParameters(::MonoClass* klass, ::MonoClass** params, UINT32& numParams);
+		static void GetGenericParameters(::MonoClass* klass, ::MonoClass** params, u32& numParams);
 
 		/**
 		 * Returns the generic parameters of the provided type. @p params must be a pre-allocated buffer able to hold the
 		 * class types for each parameter. If @p params is null, then @p numParams will be populated with the number of
 		 * available parameters.
 		 */
-		static void GetGenericParameters(::MonoReflectionType* type, ::MonoClass** params, UINT32& numParams);
+		static void GetGenericParameters(::MonoReflectionType* type, ::MonoClass** params, u32& numParams);
 
 		/** Returns Mono class for a 16-bit unsigned integer. */
 		static ::MonoClass* GetUinT16Class();

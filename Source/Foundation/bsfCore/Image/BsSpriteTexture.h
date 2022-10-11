@@ -22,7 +22,7 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Rendering,pl:true) SpriteSheetGridAnimation
 	{
 		SpriteSheetGridAnimation() = default;
-		SpriteSheetGridAnimation(UINT32 numRows, UINT32 numColumns, UINT32 count, UINT32 fps)
+		SpriteSheetGridAnimation(u32 numRows, u32 numColumns, u32 count, u32 fps)
 			: NumRows(numRows), NumColumns(numColumns), Count(count), Fps(fps)
 		{ }
 
@@ -30,19 +30,19 @@ namespace bs
 		 * Number of rows to divide the parent's texture area. Determines height of the individual frame (depends on
 		 * parent texture size).
 		 */
-		UINT32 NumRows = 1;
+		u32 NumRows = 1;
 
 		/**
 		 * Number of columns to divide the parent's texture area. Determines column of the individual frame (depends on
 		 * parent texture size).
 		 */
-		UINT32 NumColumns = 1;
+		u32 NumColumns = 1;
 
 		/** Number of frames in the animation. Must be less or equal than @p numRows * @p numColumns. */
-		UINT32 Count = 1;
+		u32 Count = 1;
 
 		/** How many frames to evaluate each second. Determines the animation speed. */
-		UINT32 Fps = 8;
+		u32 Fps = 8;
 	};
 
 	/** Type of playback to use for an animation of a SpriteTexture. */
@@ -103,7 +103,7 @@ namespace bs
 		Rect2 Evaluate(float t) const;
 
 		/** Returns the row and column of the current animation frame for time @p t. */
-		void GetAnimationFrame(float t, UINT32& row, UINT32& column) const;
+		void GetAnimationFrame(float t, u32& row, u32& column) const;
 
 		/**
 		 * Sets properties describing sprite animation. The animation splits the sprite area into a grid of sub-images
@@ -182,25 +182,25 @@ namespace bs
 
 		/**	Returns width of the sprite texture in pixels. */
 		BS_SCRIPT_EXPORT(n:Width,pr:getter)
-		UINT32 GetWidth() const;
+		u32 GetWidth() const;
 
 		/**	Returns height of the sprite texture in pixels. */
 		BS_SCRIPT_EXPORT(n:Height,pr:getter)
-		UINT32 GetHeight() const;
+		u32 GetHeight() const;
 
 		/**	
 		 * Returns width of a single animation frame sprite texture in pixels. If the texture has no animation this
 		 * is the same as getWidth().
 		 */
 		BS_SCRIPT_EXPORT(n:FrameWidth,pr:getter)
-		UINT32 GetFrameWidth() const;
+		u32 GetFrameWidth() const;
 
 		/**	
 		 * Returns height of a single animation frame sprite texture in pixels. If the texture has no animation this
 		 * is the same as getHeight().
 		 */
 		BS_SCRIPT_EXPORT(n:FrameHeight,pr:getter)
-		UINT32 GetFrameHeight() const;
+		u32 GetFrameHeight() const;
 
 		/**	Retrieves a core implementation of a sprite texture usable only from the core thread. */
 		SPtr<ct::SpriteTexture> GetCore() const;

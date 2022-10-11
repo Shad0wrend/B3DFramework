@@ -25,39 +25,39 @@ namespace bs
 		 *								line usually).
 		 * @param[in]	includesNewline	True if the lines end character is a newline character.
 		 */
-		GUIInputLineDesc(UINT32 startChar, UINT32 endChar, UINT32 lineHeight, INT32 lineYStart, bool includesNewline);
+		GUIInputLineDesc(u32 startChar, u32 endChar, u32 lineHeight, i32 lineYStart, bool includesNewline);
 
 		/**
 		 * Returns index of the last character on the line. If lines contains a newline character it will be returned unless
 		 * you set @p includeNewLine to false, in which case the next end-most character is returned. (If newline is the
 		 * only character on the line, its index will still be returned).
 		 */
-		UINT32 GetEndChar(bool includeNewline = true) const;
+		u32 GetEndChar(bool includeNewline = true) const;
 
 		/**	Returns index of the first character on the line. */
-		UINT32 GetStartChar() const { return mStartChar; }
+		u32 GetStartChar() const { return mStartChar; }
 
 		/**	Returns line height in pixels. */
-		UINT32 GetLineHeight() const { return mLineHeight; }
+		u32 GetLineHeight() const { return mLineHeight; }
 
 		/**	Returns vertical offset from the top of the text to the start of this line (0 for first line usually). */
-		INT32 GetLineYStart() const { return mLineYStart; }
+		i32 GetLineYStart() const { return mLineYStart; }
 
 		/**
 		 * Checks is the specified character index a newline. Character index is a global character index, not relative to
 		 * the start character index of this line. If the index is out of range of this line character indices, it will
 		 * always return false.
 		 */
-		bool IsNewline(UINT32 charIdx) const;
+		bool IsNewline(u32 charIdx) const;
 
 		/**	Returns true if the last character on this line is a newline. */
 		bool HasNewlineChar() const { return mIncludesNewline; }
 
 	private:
-		UINT32 mStartChar;
-		UINT32 mEndChar;
-		UINT32 mLineHeight;
-		INT32 mLineYStart;
+		u32 mStartChar;
+		u32 mEndChar;
+		u32 mLineHeight;
+		i32 mLineYStart;
 		bool mIncludesNewline;
 	};
 
@@ -78,10 +78,10 @@ namespace bs
 		Vector2I GetTextOffset() const;
 
 		/**	Returns number of lines in the current text string. */
-		UINT32 GetNumLines() const { return (UINT32)mLineDescs.size(); }
+		u32 GetNumLines() const { return (u32)mLineDescs.size(); }
 
 		/**	Returns descriptor for a line with the specified index. */
-		const GUIInputLineDesc& GetLineDesc(UINT32 lineIdx) const { return mLineDescs.at(lineIdx); }
+		const GUIInputLineDesc& GetLineDesc(u32 lineIdx) const { return mLineDescs.at(lineIdx); }
 
 		/**
 		 * Returns index of a line containing the specified character.
@@ -90,22 +90,22 @@ namespace bs
 		 * @param[in]	newlineCountsOnNextLine	If true, newline characters will return the next line and not the line
 		 *										they're actually on.
 		 */
-		UINT32 GetLineForChar(UINT32 charIdx, bool newlineCountsOnNextLine = false) const;
+		u32 GetLineForChar(u32 charIdx, bool newlineCountsOnNextLine = false) const;
 
 		/**
 		 * Returns a rectangle containing position and size of the character with the provided index, relative to parent
 		 * widget.
 		 */
-		Rect2I GetCharRect(UINT32 charIdx) const;
+		Rect2I GetCharRect(u32 charIdx) const;
 
 		/**
 		 * Returns a rectangle containing position and size of the character with the provided index, relative to parent
 		 * element.
 		 */
-		Rect2I GetLocalCharRect(UINT32 charIdx) const;
+		Rect2I GetLocalCharRect(u32 charIdx) const;
 
 		/** Returns character index nearest to the specified position. Position should be relative to parent widget. */
-		INT32 GetCharIdxAtPos(const Vector2I& pos) const;
+		i32 GetCharIdxAtPos(const Vector2I& pos) const;
 
 		/**	Returns true if the currently set text desctiptor is valid (has any characters). */
 		bool IsDescValid() const;
@@ -118,26 +118,26 @@ namespace bs
 		 * @note	
 		 * This can return an out of range character index, in case the input index is specified after the last character.
 		 */
-		UINT32 GetCharIdxAtInputIdx(UINT32 inputIdx) const;
+		u32 GetCharIdxAtInputIdx(u32 inputIdx) const;
 
 		/**	Checks is the specified character index a newline. */
-		bool IsNewlineChar(UINT32 charIdx) const;
+		bool IsNewlineChar(u32 charIdx) const;
 
 		/**
 		 * Checks is the character after the specified input index a newline.
 		 *
 		 * @see		getCharIdxAtInputIdx
 		 */
-		bool IsNewline(UINT32 inputIdx) const;
+		bool IsNewline(u32 inputIdx) const;
 
 	protected:
 		const GUIElement* mElement = nullptr;
 
 		Vector2* mQuads = nullptr;
-		UINT32 mNumQuads = 0;
+		u32 mNumQuads = 0;
 
 		TEXT_SPRITE_DESC mTextDesc;
-		UINT32 mNumChars = 0;
+		u32 mNumChars = 0;
 
 		Vector<GUIInputLineDesc> mLineDescs;
 	};

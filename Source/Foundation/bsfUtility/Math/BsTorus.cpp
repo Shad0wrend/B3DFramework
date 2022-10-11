@@ -27,13 +27,13 @@ namespace bs
 		float E = d * d - 4 * OuterRadius * OuterRadius * c;
 
 		float roots[4];
-		UINT32 numRoots = Math::SolveQuartic(A, B, C, D, E, roots);
+		u32 numRoots = Math::SolveQuartic(A, B, C, D, E, roots);
 
 		if (numRoots > 0)
 		{
 			float nearestT = std::numeric_limits<float>::max();
 
-			for (UINT32 i = 0; i < numRoots; i++)
+			for (u32 i = 0; i < numRoots; i++)
 			{
 				float t = roots[i];
 				if (t > 0 && t < nearestT)

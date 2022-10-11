@@ -22,7 +22,7 @@ namespace bs::ct
 		 * @param[in]	depthStencil	True if the framebuffer using the context can have a depth-stencil buffer.
 		 * @param[in]	msaaCount		Number of samples the framebuffer using the context is allowed to have.
 		 */
-		MacOSContext(bool depthStencil, UINT32 msaaCount);
+		MacOSContext(bool depthStencil, u32 msaaCount);
 		virtual ~MacOSContext();
 
 		/** @copydoc GLContext::setCurrent */

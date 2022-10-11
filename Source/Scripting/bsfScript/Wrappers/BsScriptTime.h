@@ -26,8 +26,8 @@ namespace bs
 		static float InternalGetRealElapsed();
 		static float InternalGetElapsed();
 		static float InternalGetFrameDelta();
-		static UINT64 InternalGetFrameNumber();
-		static UINT64 InternalGetPrecise();
+		static u64 InternalGetFrameNumber();
+		static u64 InternalGetPrecise();
 	};
 
 	/** @} */

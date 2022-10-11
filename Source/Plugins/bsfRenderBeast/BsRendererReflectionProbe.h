@@ -19,7 +19,7 @@ namespace bs { namespace ct
 	 */
 
 	/** Maximum number of refl. probes that can influence an object when basic forward rendering is used. */
-	static constexpr UINT32 STANDARD_FORWARD_MAX_NUM_PROBES = 8;
+	static constexpr u32 STANDARD_FORWARD_MAX_NUM_PROBES = 8;
 
 	/** Information about a single reflection probe, as seen by the lighting shader. */
 	struct ReflProbeData
@@ -29,8 +29,8 @@ namespace bs { namespace ct
 		Vector3 BoxExtents;
 		float TransitionDistance;
 		Matrix4 InvBoxTransform;
-		UINT32 CubemapIdx;
-		UINT32 Type; // 0 - Sphere, 1 - Box
+		u32 CubemapIdx;
+		u32 Type; // 0 - Sphere, 1 - Box
 		Vector2 Padding;
 	};
 
@@ -50,23 +50,23 @@ namespace bs { namespace ct
 		SPtr<GpuBuffer> GetProbeBuffer() const { return mProbeBuffer; }
 
 		/** Returns the number of reflection probes in the probe buffer. */
-		UINT32 GetNumProbes() const { return mNumProbes; }
+		u32 GetNumProbes() const { return mNumProbes; }
 
 		/** Returns information about a probe at the specified index. */
-		const ReflProbeData& GetProbeData(UINT32 idx) const { return mReflProbeData[idx]; }
+		const ReflProbeData& GetProbeData(u32 idx) const { return mReflProbeData[idx]; }
 
 	private:
 		Vector<ReflProbeData> mReflProbeData;
 		SPtr<GpuBuffer> mProbeBuffer;
-		UINT32 mNumProbes = 0;
+		u32 mNumProbes = 0;
 	};
 
 	BS_PARAM_BLOCK_BEGIN(ReflProbeParamsParamDef)
-		BS_PARAM_BLOCK_ENTRY(INT32, gReflCubemapNumMips)
-		BS_PARAM_BLOCK_ENTRY(INT32, gNumProbes)
-		BS_PARAM_BLOCK_ENTRY(INT32, gSkyCubemapAvailable)
-		BS_PARAM_BLOCK_ENTRY(INT32, gUseReflectionMaps)
-		BS_PARAM_BLOCK_ENTRY(INT32, gSkyCubemapNumMips)
+		BS_PARAM_BLOCK_ENTRY(i32, gReflCubemapNumMips)
+		BS_PARAM_BLOCK_ENTRY(i32, gNumProbes)
+		BS_PARAM_BLOCK_ENTRY(i32, gSkyCubemapAvailable)
+		BS_PARAM_BLOCK_ENTRY(i32, gUseReflectionMaps)
+		BS_PARAM_BLOCK_ENTRY(i32, gSkyCubemapNumMips)
 		BS_PARAM_BLOCK_ENTRY(float, gSkyBrightness)
 	BS_PARAM_BLOCK_END
 
@@ -82,7 +82,7 @@ namespace bs { namespace ct
 		void GetParameters(ReflProbeData& output) const;
 
 		ReflectionProbe* Probe;
-		UINT32 ArrayIdx;
+		u32 ArrayIdx;
 		bool ArrayDirty : 1;
 		mutable bool ErrorFlagged : 1;
 	};
@@ -123,7 +123,7 @@ namespace bs { namespace ct
 		ReflProbeParamBuffer();
 
 		/** Updates the parameter buffer contents with required refl. probe data. */
-		void Populate(const Skybox* sky, UINT32 numProbes, const SPtr<Texture>& reflectionCubemaps,
+		void Populate(const Skybox* sky, u32 numProbes, const SPtr<Texture>& reflectionCubemaps,
 			bool capturingReflections);
 
 		SPtr<GpuParamBlockBuffer> Buffer;

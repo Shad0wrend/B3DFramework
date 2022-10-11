@@ -8,7 +8,7 @@ namespace bs { namespace ct
 {
 	D3D11VideoModeInfo::D3D11VideoModeInfo(IDXGIAdapter* dxgiAdapter)
 	{
-		UINT32 outputIdx = 0;
+		u32 outputIdx = 0;
 		IDXGIOutput* output = nullptr;
 		while (dxgiAdapter->EnumOutputs(outputIdx, &output) != DXGI_ERROR_NOT_FOUND)
 		{
@@ -17,14 +17,14 @@ namespace bs { namespace ct
 		}
 	}
 
-	D3D11VideoOutputInfo::D3D11VideoOutputInfo(IDXGIOutput* output, UINT32 outputIdx)
+	D3D11VideoOutputInfo::D3D11VideoOutputInfo(IDXGIOutput* output, u32 outputIdx)
 		:mDXGIOutput(output)
 	{
 		DXGI_OUTPUT_DESC outputDesc;
 		output->GetDesc(&outputDesc);
 		mName = UTF8::FromWide(WString(outputDesc.DeviceName));
 
-		UINT32 numModes = 0;
+		u32 numModes = 0;
 
 		HRESULT hr = output->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, 0, &numModes, nullptr);
 		if (FAILED(hr))
@@ -44,7 +44,7 @@ namespace bs { namespace ct
 			BS_EXCEPT(InternalErrorException, "Error while enumerating adapter output video modes.");
 		}
 
-		for (UINT32 i = 0; i < numModes; i++)
+		for (u32 i = 0; i < numModes; i++)
 		{
 			DXGI_MODE_DESC displayMode = modeDesc[i];
 
@@ -110,8 +110,8 @@ namespace bs { namespace ct
 		SAFE_RELEASE(mDXGIOutput);
 	}
 
-	D3D11VideoMode::D3D11VideoMode(UINT32 width, UINT32 height, float refreshRate, UINT32 outputIdx,
-		UINT32 refreshRateNumerator, UINT32 refreshRateDenominator, DXGI_MODE_DESC mode)
+	D3D11VideoMode::D3D11VideoMode(u32 width, u32 height, float refreshRate, u32 outputIdx,
+		u32 refreshRateNumerator, u32 refreshRateDenominator, DXGI_MODE_DESC mode)
 		:VideoMode(width, height, refreshRate, outputIdx), mRefreshRateNumerator(refreshRateNumerator),
 		mRefreshRateDenominator(refreshRateDenominator), mD3D11Mode(mode)
 	{ }

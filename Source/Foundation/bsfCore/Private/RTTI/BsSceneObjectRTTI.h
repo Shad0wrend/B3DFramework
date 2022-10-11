@@ -31,8 +31,8 @@ namespace bs
 		bool& GetActive(SceneObject* obj) { return obj->mActiveSelf; }
 		void SetActive(SceneObject* obj, bool& value) { obj->mActiveSelf = value; }
 
-		SPtr<SceneObject> GetChild(SceneObject* obj, UINT32 idx) { return obj->mChildren[idx].GetInternalPtr(); }
-		void SetChild(SceneObject* obj, UINT32 idx, SPtr<SceneObject> param)
+		SPtr<SceneObject> GetChild(SceneObject* obj, u32 idx) { return obj->mChildren[idx].GetInternalPtr(); }
+		void SetChild(SceneObject* obj, u32 idx, SPtr<SceneObject> param)
 		{
 			// It's important that child indices remain the same after deserialization, as some systems (like SO
 			// record/restore) depend on it
@@ -42,12 +42,12 @@ namespace bs
 			mChildren[idx] = param;
 		}
 
-		UINT32 GetNumChildren(SceneObject* obj) { return (UINT32)obj->mChildren.size(); }
-		void SetNumChildren(SceneObject* obj, UINT32 size) { /* DO NOTHING */ }
+		u32 GetNumChildren(SceneObject* obj) { return (u32)obj->mChildren.size(); }
+		void SetNumChildren(SceneObject* obj, u32 size) { /* DO NOTHING */ }
 
 		// NOTE - These can only be set sequentially, specific array index is ignored
-		SPtr<Component> GetComponent(SceneObject* obj, UINT32 idx) { return obj->mComponents[idx].GetInternalPtr(); }
-		void SetComponent(SceneObject* obj, UINT32 idx, SPtr<Component> param)
+		SPtr<Component> GetComponent(SceneObject* obj, u32 idx) { return obj->mComponents[idx].GetInternalPtr(); }
+		void SetComponent(SceneObject* obj, u32 idx, SPtr<Component> param)
 		{
 			// It's important that child indices remain the same after deserialization, as some systems (like SO
 			// record/restore) depend on it
@@ -56,8 +56,8 @@ namespace bs
 
 			mComponents[idx] = param;
 		}
-		UINT32 GetNumComponents(SceneObject* obj) { return (UINT32)obj->mComponents.size(); }
-		void SetNumComponents(SceneObject* obj, UINT32 size) { /* DO NOTHING */ }
+		u32 GetNumComponents(SceneObject* obj) { return (u32)obj->mComponents.size(); }
+		void SetNumComponents(SceneObject* obj, u32 size) { /* DO NOTHING */ }
 
 		UUID& GetPrefabLink(SceneObject* obj) { return obj->mPrefabLinkUUID; }
 		void SetPrefabLink(SceneObject* obj, UUID& value) { obj->mPrefabLinkUUID = value; }
@@ -65,11 +65,11 @@ namespace bs
 		SPtr<PrefabDiff> GetPrefabDiff(SceneObject* obj) { return obj->mPrefabDiff; }
 		void SetPrefabDiff(SceneObject* obj, SPtr<PrefabDiff> value) { obj->mPrefabDiff = value; }
 
-		UINT32& GetFlags(SceneObject* obj) { return obj->mFlags; }
-		void SetFlags(SceneObject* obj, UINT32& value) { obj->mFlags = value; }
+		u32& GetFlags(SceneObject* obj) { return obj->mFlags; }
+		void SetFlags(SceneObject* obj, u32& value) { obj->mFlags = value; }
 
-		UINT32& GetPrefabHash(SceneObject* obj) { return obj->mPrefabHash; }
-		void SetPrefabHash(SceneObject* obj, UINT32& value) { obj->mPrefabHash = value; }
+		u32& GetPrefabHash(SceneObject* obj) { return obj->mPrefabHash; }
+		void SetPrefabHash(SceneObject* obj, u32& value) { obj->mPrefabHash = value; }
 
 		ObjectMobility& GetMobility(SceneObject* obj) { return obj->mMobility; }
 		void SetMobility(SceneObject* obj, ObjectMobility& value) { obj->mMobility = value; }
@@ -177,7 +177,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SceneObject;
 		}

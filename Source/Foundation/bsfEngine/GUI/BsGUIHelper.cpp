@@ -12,10 +12,10 @@ namespace bs
 	Vector2I GUIHelper::CalcOptimalContentsSize(const Vector2I& contentSize, const GUIElementStyle& style,
 		const GUIDimensions& dimensions)
 	{
-		UINT32 contentWidth = style.Margins.Left + style.Margins.Right + style.ContentOffset.Left + style.ContentOffset.Right;
-		UINT32 contentHeight = style.Margins.Top + style.Margins.Bottom + style.ContentOffset.Top + style.ContentOffset.Bottom;
+		u32 contentWidth = style.Margins.Left + style.Margins.Right + style.ContentOffset.Left + style.ContentOffset.Right;
+		u32 contentHeight = style.Margins.Top + style.Margins.Bottom + style.ContentOffset.Top + style.ContentOffset.Bottom;
 
-		return Vector2I(std::max((UINT32)contentSize.X, contentWidth), std::max((UINT32)contentSize.Y, contentHeight));
+		return Vector2I(std::max((u32)contentSize.X, contentWidth), std::max((u32)contentSize.Y, contentHeight));
 	}
 
 	Vector2I GUIHelper::CalcOptimalContentsSize(const GUIContent& content, const GUIElementStyle& style,
@@ -27,7 +27,7 @@ namespace bs
 		if (SpriteTexture::CheckIsLoaded(image))
 		{
 			contentBounds.X += image->GetWidth() + GUIContent::IMAGE_TEXT_SPACING;
-			contentBounds.Y = std::max(image->GetHeight(), (UINT32)contentBounds.Y);
+			contentBounds.Y = std::max(image->GetHeight(), (u32)contentBounds.Y);
 		}
 
 		return contentBounds;
@@ -36,13 +36,13 @@ namespace bs
 	Vector2I GUIHelper::CalcOptimalContentsSize(const String& text, const GUIElementStyle& style, const
 		GUIDimensions& dimensions)
 	{
-		UINT32 wordWrapWidth = 0;
+		u32 wordWrapWidth = 0;
 
 		if(style.WordWrap)
 			wordWrapWidth = dimensions.MaxWidth;
 
-		UINT32 contentWidth = style.Margins.Left + style.Margins.Right + style.ContentOffset.Left + style.ContentOffset.Right;
-		UINT32 contentHeight = style.Margins.Top + style.Margins.Bottom + style.ContentOffset.Top + style.ContentOffset.Bottom;
+		u32 contentWidth = style.Margins.Left + style.Margins.Right + style.ContentOffset.Left + style.ContentOffset.Right;
+		u32 contentHeight = style.Margins.Top + style.Margins.Bottom + style.ContentOffset.Top + style.ContentOffset.Bottom;
 
 		if(style.Font != nullptr && !text.empty())
 		{
@@ -60,7 +60,7 @@ namespace bs
 		return Vector2I(contentWidth, contentHeight);
 	}
 
-	Vector2I GUIHelper::CalcTextSize(const String& text, const HFont& font, UINT32 fontSize)
+	Vector2I GUIHelper::CalcTextSize(const String& text, const HFont& font, u32 fontSize)
 	{
 		Vector2I size;
 		if (font != nullptr)

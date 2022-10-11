@@ -15,7 +15,7 @@ namespace bs
 		return lowerCaseExt == u8"txt" || lowerCaseExt == u8"xml" || lowerCaseExt == u8"json";
 	}
 
-	bool PlainTextImporter::IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
+	bool PlainTextImporter::IsMagicNumberSupported(const u8* magicNumPtr, u32 numBytes) const
 	{
 		return true; // Plain-text so we don't even check for magic number
 	}

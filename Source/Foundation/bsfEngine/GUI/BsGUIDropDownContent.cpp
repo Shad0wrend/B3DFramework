@@ -71,17 +71,17 @@ namespace bs
 		}
 	}
 
-	void GUIDropDownContent::SetRange(UINT32 start, UINT32 end)
+	void GUIDropDownContent::SetRange(u32 start, u32 end)
 	{
-		std::function<void(UINT32, UINT32)> onHover =
-			[&](UINT32 idx, UINT32 visIdx)
+		std::function<void(u32, u32)> onHover =
+			[&](u32 idx, u32 visIdx)
 		{
 			SetSelected(visIdx);
 			mParent->ElementSelected(idx);
 		};
 
-		std::function<void(UINT32, UINT32)> onClick =
-			[&](UINT32 idx, UINT32 visIdx)
+		std::function<void(u32, u32)> onClick =
+			[&](u32 idx, u32 visIdx)
 		{
 			SetSelected(visIdx);
 
@@ -103,13 +103,13 @@ namespace bs
 		mRangeStart = start;
 		mRangeEnd = end;
 		
-		UINT32 range = end - start;
+		u32 range = end - start;
 		if (mSelectedIdx != UINT_MAX && mSelectedIdx >= range)
 			mSelectedIdx = UINT_MAX;
 
 		mVisibleElements.clear();
-		UINT32 curVisIdx = 0;
-		for (UINT32 i = start; i < end; i++)
+		u32 curVisIdx = 0;
+		for (u32 i = start; i < end; i++)
 		{
 			mVisibleElements.push_back(VisibleElement());
 			VisibleElement& visElem = mVisibleElements.back();
@@ -158,7 +158,7 @@ namespace bs
 		MarkLayoutAsDirtyInternal();
 	}
 
-	UINT32 GUIDropDownContent::GetElementHeight(UINT32 idx) const
+	u32 GUIDropDownContent::GetElementHeight(u32 idx) const
 	{
 		if (GetParentWidgetInternal() == nullptr)
 			return 14; // Arbitrary
@@ -176,7 +176,7 @@ namespace bs
 		}
 	}
 
-	HString GUIDropDownContent::GetElementLocalizedName(UINT32 idx) const
+	HString GUIDropDownContent::GetElementLocalizedName(u32 idx) const
 	{
 		const String& label = mDropDownData.Entries[idx].GetLabel();
 
@@ -263,7 +263,7 @@ namespace bs
 		return false;
 	}
 
-	void GUIDropDownContent::SetSelected(UINT32 idx)
+	void GUIDropDownContent::SetSelected(u32 idx)
 	{
 		if (mSelectedIdx != UINT_MAX)
 		{
@@ -282,13 +282,13 @@ namespace bs
 		mParent->ElementSelected(mVisibleElements[mSelectedIdx].Idx);
 	}
 
-	void GUIDropDownContent::SelectNext(UINT32 startIdx)
+	void GUIDropDownContent::SelectNext(u32 startIdx)
 	{
-		UINT32 numElements = (UINT32)mDropDownData.Entries.size();
+		u32 numElements = (u32)mDropDownData.Entries.size();
 
 		bool gotNextIndex = false;
-		UINT32 nextIdx = startIdx;
-		for (UINT32 i = 0; i < numElements; i++)
+		u32 nextIdx = startIdx;
+		for (u32 i = 0; i < numElements; i++)
 		{
 			if (nextIdx >= numElements)
 				nextIdx = 0; // Wrap around
@@ -308,7 +308,7 @@ namespace bs
 			while (nextIdx < mRangeStart || nextIdx >= mRangeEnd)
 				mParent->ScrollDown();
 
-			UINT32 visIdx = 0;
+			u32 visIdx = 0;
 			for (auto& visElem : mVisibleElements)
 			{
 				if (visElem.Idx == nextIdx)
@@ -322,14 +322,14 @@ namespace bs
 		}
 	}
 
-	void GUIDropDownContent::SelectPrevious(UINT32 startIdx)
+	void GUIDropDownContent::SelectPrevious(u32 startIdx)
 	{
-		UINT32 numElements = (UINT32)mDropDownData.Entries.size();
+		u32 numElements = (u32)mDropDownData.Entries.size();
 
 		bool gotNextIndex = false;
-		INT32 prevIdx = (INT32)startIdx;
+		i32 prevIdx = (i32)startIdx;
 
-		for (UINT32 i = 0; i < numElements; i++)
+		for (u32 i = 0; i < numElements; i++)
 		{
 			if (prevIdx < 0)
 				prevIdx = numElements - 1; // Wrap around
@@ -346,13 +346,13 @@ namespace bs
 
 		if (gotNextIndex)
 		{
-			while (prevIdx < (INT32)mRangeStart || prevIdx >= (INT32)mRangeEnd)
+			while (prevIdx < (i32)mRangeStart || prevIdx >= (i32)mRangeEnd)
 				mParent->ScrollUp();
 
-			UINT32 visIdx = 0;
+			u32 visIdx = 0;
 			for (auto& visElem : mVisibleElements)
 			{
-				if (visElem.Idx == (UINT32)prevIdx)
+				if (visElem.Idx == (u32)prevIdx)
 				{
 					SetSelected(visIdx);
 					break;
@@ -370,7 +370,7 @@ namespace bs
 		{
 			const GUIDropDownDataEntry& element = mDropDownData.Entries[visElem.Idx];
 
-			optimalSize.Y += (INT32)GetElementHeight(visElem.Idx);
+			optimalSize.Y += (i32)GetElementHeight(visElem.Idx);
 
 			if (element.IsSeparator())
 				optimalSize.X = std::max(optimalSize.X, visElem.Separator->GetOptimalSizeInternal().X);
@@ -384,7 +384,7 @@ namespace bs
 	void GUIDropDownContent::UpdateLayoutInternalInternal(const GUILayoutData& data)
 	{
 		GUILayoutData childData = data;
-		INT32 yOffset = data.Area.Y;
+		i32 yOffset = data.Area.Y;
 
 		for (auto& visElem : mVisibleElements)
 		{

@@ -140,10 +140,10 @@ namespace bs
 		virtual void SetSlopeLimit(Radian value) = 0;
 
 		/** Determines the layer that controls what can the controller collide with. */
-		virtual void SetLayer(UINT64 layer) { mLayer = layer; }
+		virtual void SetLayer(u64 layer) { mLayer = layer; }
 
 		/** @copydoc setLayer() */
-		virtual UINT64 GetLayer() const { return mLayer; }
+		virtual u64 GetLayer() const { return mLayer; }
 
 		/**
 		 * Creates a new character controller.
@@ -178,7 +178,7 @@ namespace bs
 		/** @} */
 	private:
 		PhysicsObjectOwner mOwner;
-		UINT64 mLayer = 1;
+		u64 mLayer = 1;
 	};
 
 	/** Contains all the information required for initializing a character controller. */
@@ -255,7 +255,7 @@ namespace bs
 
 		BS_SCRIPT_EXPORT(ex:true)
 		bs::Collider* ColliderRaw; /**< Collider that was touched. */
-		UINT32 TriangleIndex; /**< Touched triangle index for mesh colliders. */
+		u32 TriangleIndex; /**< Touched triangle index for mesh colliders. */
 	};
 
 	/** Contains data about a collision between two character controllers. */

@@ -13,8 +13,8 @@ using namespace std::placeholders;
 
 namespace bs
 {
-	const UINT32 GUIScrollArea::ScrollBarWidth = 16;
-	const UINT32 GUIScrollArea::WheelScrollAmount = 50;
+	const u32 GUIScrollArea::ScrollBarWidth = 16;
+	const u32 GUIScrollArea::WheelScrollAmount = 50;
 
 	GUIScrollArea::GUIScrollArea(ScrollBarType vertBarType, ScrollBarType horzBarType,
 		const String& scrollBarStyle, const String& scrollAreaStyle, const GUIDimensions& dimensions)
@@ -78,7 +78,7 @@ namespace bs
 		if (mChildren.size() != mChildSizeRanges.size())
 			mChildSizeRanges.resize(mChildren.size());
 
-		UINT32 childIdx = 0;
+		u32 childIdx = 0;
 		for (auto& child : mChildren)
 		{
 			if (child->IsActiveInternal())
@@ -92,22 +92,22 @@ namespace bs
 		mSizeRange = mDimensions.CalculateSizeRange(GetOptimalSizeInternal());
 	}
 
-	void GUIScrollArea::GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, UINT32 numElements,
+	void GUIScrollArea::GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements,
 		const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const
 	{
 		Vector2I visibleSize, contentSize;
 		GetElementAreasInternal(layoutArea, elementAreas, numElements, sizeRanges, visibleSize, contentSize);
 	}
 
-	void GUIScrollArea::GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, UINT32 numElements,
+	void GUIScrollArea::GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements,
 		const Vector<LayoutSizeRange>& sizeRanges, Vector2I& visibleSize, Vector2I& contentSize) const
 	{
 		assert(mChildren.size() == numElements && numElements == 3);
 
-		UINT32 layoutIdx = 0;
-		UINT32 horzScrollIdx = 0;
-		UINT32 vertScrollIdx = 0;
-		UINT32 idx = 0;
+		u32 layoutIdx = 0;
+		u32 horzScrollIdx = 0;
+		u32 vertScrollIdx = 0;
+		u32 idx = 0;
 		for (auto& child : mChildren)
 		{
 			if (child == mContentLayout)
@@ -126,16 +126,16 @@ namespace bs
 
 		//// We want elements to use their optimal height, since scroll area
 		//// technically provides "infinite" space
-		UINT32 optimalContentWidth = layoutArea.Width;
+		u32 optimalContentWidth = layoutArea.Width;
 		if (mHorzBarType != ScrollBarType::NeverShow)
 			optimalContentWidth = sizeRanges[layoutIdx].Optimal.X;
 
-		UINT32 optimalContentHeight = layoutArea.Height;
+		u32 optimalContentHeight = layoutArea.Height;
 		if (mVertBarType != ScrollBarType::NeverShow)
 			optimalContentHeight = sizeRanges[layoutIdx].Optimal.Y;
 
-		UINT32 layoutWidth = std::max(optimalContentWidth, (UINT32)layoutArea.Width);
-		UINT32 layoutHeight = std::max(optimalContentHeight, (UINT32)layoutArea.Height);
+		u32 layoutWidth = std::max(optimalContentWidth, (u32)layoutArea.Width);
+		u32 layoutHeight = std::max(optimalContentHeight, (u32)layoutArea.Height);
 
 		contentSize = GUILayoutUtility::CalcActualSize(layoutWidth, layoutHeight, mContentLayout, false);
 		visibleSize = Vector2I(layoutArea.Width, layoutArea.Height);
@@ -148,13 +148,13 @@ namespace bs
 		if (addHorzScrollbar)
 		{
 			// Make room for scrollbar
-			visibleSize.Y = (UINT32)std::max(0, (INT32)layoutArea.Height - (INT32)ScrollBarWidth);
-			optimalContentHeight = (UINT32)std::max(0, (INT32)optimalContentHeight - (INT32)ScrollBarWidth);
+			visibleSize.Y = (u32)std::max(0, (i32)layoutArea.Height - (i32)ScrollBarWidth);
+			optimalContentHeight = (u32)std::max(0, (i32)optimalContentHeight - (i32)ScrollBarWidth);
 
 			if (sizeRanges[layoutIdx].Min.Y > 0)
-				optimalContentHeight = std::max((UINT32)sizeRanges[layoutIdx].Min.Y, optimalContentHeight);
+				optimalContentHeight = std::max((u32)sizeRanges[layoutIdx].Min.Y, optimalContentHeight);
 
-			layoutHeight = std::max(optimalContentHeight, (UINT32)visibleSize.Y); // Never go below optimal size
+			layoutHeight = std::max(optimalContentHeight, (u32)visibleSize.Y); // Never go below optimal size
 
 			contentSize = GUILayoutUtility::CalcActualSize(layoutWidth, layoutHeight, mContentLayout, true);
 			hasHorzScrollbar = true;
@@ -166,13 +166,13 @@ namespace bs
 		if (addVertScrollbar)
 		{
 			// Make room for scrollbar
-			visibleSize.X = (UINT32)std::max(0, (INT32)layoutArea.Width - (INT32)ScrollBarWidth);
-			optimalContentWidth = (UINT32)std::max(0, (INT32)optimalContentWidth - (INT32)ScrollBarWidth);
+			visibleSize.X = (u32)std::max(0, (i32)layoutArea.Width - (i32)ScrollBarWidth);
+			optimalContentWidth = (u32)std::max(0, (i32)optimalContentWidth - (i32)ScrollBarWidth);
 
 			if (sizeRanges[layoutIdx].Min.X > 0)
-				optimalContentWidth = std::max((UINT32)sizeRanges[layoutIdx].Min.X, optimalContentWidth);
+				optimalContentWidth = std::max((u32)sizeRanges[layoutIdx].Min.X, optimalContentWidth);
 
-			layoutWidth = std::max(optimalContentWidth, (UINT32)visibleSize.X); // Never go below optimal size
+			layoutWidth = std::max(optimalContentWidth, (u32)visibleSize.X); // Never go below optimal size
 
 			contentSize = GUILayoutUtility::CalcActualSize(layoutWidth, layoutHeight, mContentLayout, true);
 			hasVertScrollbar = true;
@@ -184,13 +184,13 @@ namespace bs
 				if (addHorzScrollbar)
 				{
 					// Make room for scrollbar
-					visibleSize.Y = (UINT32)std::max(0, (INT32)layoutArea.Height - (INT32)ScrollBarWidth);
-					optimalContentHeight = (UINT32)std::max(0, (INT32)optimalContentHeight - (INT32)ScrollBarWidth);
+					visibleSize.Y = (u32)std::max(0, (i32)layoutArea.Height - (i32)ScrollBarWidth);
+					optimalContentHeight = (u32)std::max(0, (i32)optimalContentHeight - (i32)ScrollBarWidth);
 
 					if (sizeRanges[layoutIdx].Min.Y > 0)
-						optimalContentHeight = std::max((UINT32)sizeRanges[layoutIdx].Min.Y, optimalContentHeight);
+						optimalContentHeight = std::max((u32)sizeRanges[layoutIdx].Min.Y, optimalContentHeight);
 
-					layoutHeight = std::max(optimalContentHeight, (UINT32)visibleSize.Y); // Never go below optimal size
+					layoutHeight = std::max(optimalContentHeight, (u32)visibleSize.Y); // Never go below optimal size
 
 					contentSize = GUILayoutUtility::CalcActualSize(layoutWidth, layoutHeight, mContentLayout, true);
 					hasHorzScrollbar = true;
@@ -203,10 +203,10 @@ namespace bs
 		// Calculate vertical scrollbar bounds
 		if (hasVertScrollbar)
 		{
-			INT32 scrollBarOffset = (UINT32)std::max(0, (INT32)layoutArea.Width - (INT32)ScrollBarWidth);
-			UINT32 scrollBarHeight = layoutArea.Height;
+			i32 scrollBarOffset = (u32)std::max(0, (i32)layoutArea.Width - (i32)ScrollBarWidth);
+			u32 scrollBarHeight = layoutArea.Height;
 			if (hasHorzScrollbar)
-				scrollBarHeight = (UINT32)std::max(0, (INT32)scrollBarHeight - (INT32)ScrollBarWidth);
+				scrollBarHeight = (u32)std::max(0, (i32)scrollBarHeight - (i32)ScrollBarWidth);
 
 			elementAreas[vertScrollIdx] = Rect2I(layoutArea.X + scrollBarOffset, layoutArea.Y, ScrollBarWidth, scrollBarHeight);
 		}
@@ -218,10 +218,10 @@ namespace bs
 		// Calculate horizontal scrollbar bounds
 		if (hasHorzScrollbar)
 		{
-			INT32 scrollBarOffset = (UINT32)std::max(0, (INT32)layoutArea.Height - (INT32)ScrollBarWidth);
-			UINT32 scrollBarWidth = layoutArea.Width;
+			i32 scrollBarOffset = (u32)std::max(0, (i32)layoutArea.Height - (i32)ScrollBarWidth);
+			u32 scrollBarWidth = layoutArea.Width;
 			if (hasVertScrollbar)
-				scrollBarWidth = (UINT32)std::max(0, (INT32)scrollBarWidth - (INT32)ScrollBarWidth);
+				scrollBarWidth = (u32)std::max(0, (i32)scrollBarWidth - (i32)ScrollBarWidth);
 
 			elementAreas[horzScrollIdx] = Rect2I(layoutArea.X, layoutArea.Y + scrollBarOffset, scrollBarWidth, ScrollBarWidth);
 		}
@@ -233,16 +233,16 @@ namespace bs
 
 	void GUIScrollArea::UpdateLayoutInternalInternal(const GUILayoutData& data)
 	{
-		UINT32 numElements = (UINT32)mChildren.size();
+		u32 numElements = (u32)mChildren.size();
 		Rect2I* elementAreas = nullptr;
 
 		if (numElements > 0)
 			elementAreas = bs_stack_new<Rect2I>(numElements);
 
-		UINT32 layoutIdx = 0;
-		UINT32 horzScrollIdx = 0;
-		UINT32 vertScrollIdx = 0;
-		for (UINT32 i = 0; i < numElements; i++)
+		u32 layoutIdx = 0;
+		u32 horzScrollIdx = 0;
+		u32 vertScrollIdx = 0;
+		for (u32 i = 0; i < numElements; i++)
 		{
 			GUIElementBase* child = GetChildInternal(i);
 
@@ -264,7 +264,7 @@ namespace bs
 
 		// Recalculate offsets in case scroll percent got updated externally (this needs to be delayed to this point because
 		// at the time of the update content and visible sizes might be out of date).
-		UINT32 scrollableHeight = (UINT32)std::max(0, INT32(mContentSize.Y) - INT32(mVisibleSize.Y));
+		u32 scrollableHeight = (u32)std::max(0, i32(mContentSize.Y) - i32(mVisibleSize.Y));
 		if (mRecalculateVertOffset)
 		{
 			mVertOffset = scrollableHeight * Math::Clamp01(mVertScroll->GetScrollPos());
@@ -272,7 +272,7 @@ namespace bs
 			mRecalculateVertOffset = false;
 		}
 
-		UINT32 scrollableWidth = (UINT32)std::max(0, INT32(mContentSize.X) - INT32(mVisibleSize.X));
+		u32 scrollableWidth = (u32)std::max(0, i32(mContentSize.X) - i32(mVisibleSize.X));
 		if (mRecalculateHorzOffset)
 		{
 			mHorzOffset = scrollableWidth * Math::Clamp01(mHorzScroll->GetScrollPos());
@@ -291,8 +291,8 @@ namespace bs
 			layoutBounds.Y -= Math::FloorToInt(mVertOffset);
 
 			Rect2I layoutClipRect = data.ClipRect;
-			layoutClipRect.Width = (UINT32)mVisibleSize.X;
-			layoutClipRect.Height = (UINT32)mVisibleSize.Y;
+			layoutClipRect.Width = (u32)mVisibleSize.X;
+			layoutClipRect.Height = (u32)mVisibleSize.Y;
 			layoutClipRect.Clip(data.ClipRect);
 
 			GUILayoutData layoutData = data;
@@ -315,7 +315,7 @@ namespace bs
 			mVertScroll->UpdateLayoutInternalInternal(vertScrollData);
 
 			// Set new handle size and update position to match the new size
-			UINT32 scrollableHeight = (UINT32)std::max(0, INT32(mContentSize.Y) - INT32(vertScrollBounds.Height));
+			u32 scrollableHeight = (u32)std::max(0, i32(mContentSize.Y) - i32(vertScrollBounds.Height));
 			float newScrollPct = 0.0f;
 
 			if (scrollableHeight > 0)
@@ -337,7 +337,7 @@ namespace bs
 			mHorzScroll->UpdateLayoutInternalInternal(horzScrollData);
 
 			// Set new handle size and update position to match the new size
-			UINT32 scrollableWidth = (UINT32)std::max(0, INT32(mContentSize.X) - INT32(horzScrollBounds.Width));
+			u32 scrollableWidth = (u32)std::max(0, i32(mContentSize.X) - i32(horzScrollBounds.Width));
 			float newScrollPct = 0.0f;
 
 			if (scrollableWidth > 0)
@@ -353,7 +353,7 @@ namespace bs
 
 	void GUIScrollArea::VertScrollUpdate(float scrollPos)
 	{
-		UINT32 scrollableHeight = (UINT32)std::max(0, INT32(mContentSize.Y) - INT32(mVisibleSize.Y));
+		u32 scrollableHeight = (u32)std::max(0, i32(mContentSize.Y) - i32(mVisibleSize.Y));
 		mVertOffset = scrollableHeight * Math::Clamp01(scrollPos);
 
 		MarkLayoutAsDirtyInternal();
@@ -361,7 +361,7 @@ namespace bs
 
 	void GUIScrollArea::HorzScrollUpdate(float scrollPos)
 	{
-		UINT32 scrollableWidth = (UINT32)std::max(0, INT32(mContentSize.X) - INT32(mVisibleSize.X));
+		u32 scrollableWidth = (u32)std::max(0, i32(mContentSize.X) - i32(mVisibleSize.X));
 		mHorzOffset = scrollableWidth * Math::Clamp01(scrollPos);
 
 		MarkLayoutAsDirtyInternal();
@@ -412,11 +412,11 @@ namespace bs
 		return bounds;
 	}
 
-	void GUIScrollArea::ScrollUpPx(UINT32 pixels)
+	void GUIScrollArea::ScrollUpPx(u32 pixels)
 	{
 		if(mVertScroll != nullptr)
 		{
-			UINT32 scrollableSize = (UINT32)std::max(0, INT32(mContentSize.Y) - INT32(mVisibleSize.Y));
+			u32 scrollableSize = (u32)std::max(0, i32(mContentSize.Y) - i32(mVisibleSize.Y));
 
 			float offset = 0.0f;
 			if(scrollableSize > 0)
@@ -426,11 +426,11 @@ namespace bs
 		}
 	}
 
-	void GUIScrollArea::ScrollDownPx(UINT32 pixels)
+	void GUIScrollArea::ScrollDownPx(u32 pixels)
 	{
 		if(mVertScroll != nullptr)
 		{
-			UINT32 scrollableSize = (UINT32)std::max(0, INT32(mContentSize.Y) - INT32(mVisibleSize.Y));
+			u32 scrollableSize = (u32)std::max(0, i32(mContentSize.Y) - i32(mVisibleSize.Y));
 
 			float offset = 0.0f;
 			if(scrollableSize > 0)
@@ -440,11 +440,11 @@ namespace bs
 		}
 	}
 
-	void GUIScrollArea::ScrollLeftPx(UINT32 pixels)
+	void GUIScrollArea::ScrollLeftPx(u32 pixels)
 	{
 		if(mHorzScroll != nullptr)
 		{
-			UINT32 scrollableSize = (UINT32)std::max(0, INT32(mContentSize.X) - INT32(mVisibleSize.X));
+			u32 scrollableSize = (u32)std::max(0, i32(mContentSize.X) - i32(mVisibleSize.X));
 
 			float offset = 0.0f;
 			if(scrollableSize > 0)
@@ -454,11 +454,11 @@ namespace bs
 		}
 	}
 
-	void GUIScrollArea::ScrollRightPx(UINT32 pixels)
+	void GUIScrollArea::ScrollRightPx(u32 pixels)
 	{
 		if(mHorzScroll != nullptr)
 		{
-			UINT32 scrollableSize = (UINT32)std::max(0, INT32(mContentSize.X) - INT32(mVisibleSize.X));
+			u32 scrollableSize = (u32)std::max(0, i32(mContentSize.X) - i32(mVisibleSize.X));
 
 			float offset = 0.0f;
 			if(scrollableSize > 0)
@@ -499,7 +499,7 @@ namespace bs
 			// Mouse wheel only scrolls on the Y axis
 			if(mVertScroll != nullptr)
 			{
-				UINT32 scrollableHeight = (UINT32)std::max(0, INT32(mContentSize.Y) - INT32(mVisibleSize.Y));
+				u32 scrollableHeight = (u32)std::max(0, i32(mContentSize.Y) - i32(mVisibleSize.Y));
 				float additionalScroll = (float)WheelScrollAmount / scrollableHeight;
 
 				mVertScroll->Scroll(additionalScroll * ev.GetWheelScrollAmount());

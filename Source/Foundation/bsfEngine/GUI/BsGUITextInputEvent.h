@@ -19,14 +19,14 @@ namespace bs
 		GUITextInputEvent() = default;
 
 		/**	Character code that was input. */
-		const UINT32& GetInputChar() const { return mInputChar; }
+		const u32& GetInputChar() const { return mInputChar; }
 	private:
 		friend class GUIManager;
 
 		/**	Initializes the event data with the character that was input. */
-		void SetData(UINT32 inputChar);
+		void SetData(u32 inputChar);
 
-		UINT32 mInputChar = 0;
+		u32 mInputChar = 0;
 	};
 
 	/** @} */

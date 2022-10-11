@@ -12,7 +12,7 @@ namespace bs
 	struct Gamepad::Pimpl
 	{
 		GamepadInfo info;
-		INT32 fileHandle;
+		i32 fileHandle;
 		ButtonCode povState;
 		bool hasInputFocus;
 	};
@@ -48,7 +48,7 @@ namespace bs
 		struct AxisState
 		{
 			bool moved;
-			INT32 value;
+			i32 value;
 		};
 
 		AxisState axisState[24];
@@ -64,8 +64,8 @@ namespace bs
 			if(!m->HasInputFocus)
 				continue;
 
-			UINT32 numEvents = numReadBytes / sizeof(input_event);
-			for(UINT32 i = 0; i < numEvents; ++i)
+			u32 numEvents = numReadBytes / sizeof(input_event);
+			for(u32 i = 0; i < numEvents; ++i)
 			{
 				switch(events[i].type)
 				{
@@ -76,9 +76,9 @@ namespace bs
 						continue;
 
 					if(events[i].value)
-						mOwner->NotifyButtonPressedInternal(m->info.id, findIter->second, (UINT64)events[i].time.tv_usec);
+						mOwner->NotifyButtonPressedInternal(m->info.id, findIter->second, (u64)events[i].time.tv_usec);
 					else
-						mOwner->NotifyButtonReleasedInternal(m->info.id, findIter->second, (UINT64)events[i].time.tv_usec);
+						mOwner->NotifyButtonReleasedInternal(m->info.id, findIter->second, (u64)events[i].time.tv_usec);
 				}
 					break;
 				case EV_ABS:
@@ -102,14 +102,14 @@ namespace bs
 							float normalizedValue = (axisInfo.max - events[i].value) / range;
 
 							range = (float)(Gamepad::MAX_AXIS - Gamepad::MIN_AXIS);
-							axisState[axisInfo.axisIdx].value = Gamepad::MIN_AXIS + (INT32)(normalizedValue * range);
+							axisState[axisInfo.axisIdx].value = Gamepad::MIN_AXIS + (i32)(normalizedValue * range);
 						}
 					}
 					else if(events[i].code <= ABS_HAT3Y) // POV
 					{
 						// Note: We only support a single POV and report events from all POVs as if they were from the
 						// same source
-						INT32 povIdx = events[i].code - ABS_HAT0X;
+						i32 povIdx = events[i].code - ABS_HAT0X;
 
 						ButtonCode povButton = BC_UNASSIGNED;
 						if((povIdx & 0x1) == 0) // Even, x axis
@@ -130,10 +130,10 @@ namespace bs
 						if(m->povState != povButton)
 						{
 							if(m->povState != BC_UNASSIGNED)
-								mOwner->NotifyButtonReleasedInternal(m->info.id, m->povState, (UINT64)events[i].time.tv_usec);
+								mOwner->NotifyButtonReleasedInternal(m->info.id, m->povState, (u64)events[i].time.tv_usec);
 
 							if(povButton != BC_UNASSIGNED)
-								mOwner->NotifyButtonPressedInternal(m->info.id, povButton, (UINT64)events[i].time.tv_usec);
+								mOwner->NotifyButtonPressedInternal(m->info.id, povButton, (u64)events[i].time.tv_usec);
 
 
 							m->povState = povButton;
@@ -146,16 +146,16 @@ namespace bs
 			}
 		}
 
-		for(UINT32 i = 0; i < 24; i++)
+		for(u32 i = 0; i < 24; i++)
 		{
 			if(axisState[i].moved)
 				mOwner->NotifyAxisMovedInternal(m->info.id, i, axisState[i].value);
 		}
 	}
 
-	void Gamepad::changeCaptureContext(UINT64 windowHandle)
+	void Gamepad::changeCaptureContext(u64 windowHandle)
 	{
-		m->HasInputFocus = windowHandle != (UINT64)-1;
+		m->HasInputFocus = windowHandle != (u64)-1;
 	}
 }
 

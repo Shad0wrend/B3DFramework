@@ -69,7 +69,7 @@ namespace bs { namespace ct
 		static VkSamplerMipmapMode GetMipFilter(FilterOptions filter);
 
 		/** Gets Vulkan flags representing the number of samples in an image. Sample count must be a power of 2. */
-		static VkSampleCountFlagBits GetSampleFlags(UINT32 numSamples);
+		static VkSampleCountFlagBits GetSampleFlags(u32 numSamples);
 
 		/** Gets Vulkan flags representing a certain shader stage. */
 		static VkShaderStageFlagBits GetShaderStage(GpuProgramType type);
@@ -84,7 +84,7 @@ namespace bs { namespace ct
 		static void GetDevices(const VulkanRenderAPI& rapi, GpuDeviceFlags flags, VulkanDevice* (&devices)[BS_MAX_DEVICES]);
 
 		/** Checks is a flag for a particular device enabled. */
-		static bool IsDeviceIdxSet(const VulkanRenderAPI& rapi, UINT32 idx, GpuDeviceFlags flags);
+		static bool IsDeviceIdxSet(const VulkanRenderAPI& rapi, u32 idx, GpuDeviceFlags flags);
 
 		/**
 		 * Subdivides an image subresource range by cutting it with another range. If the ranges don't overlap, or the
@@ -96,7 +96,7 @@ namespace bs { namespace ct
 		 * @param[out]	numAreas	Number of pieces in the @p output array.
 		 */
 		static void CutRange(const VkImageSubresourceRange& toCut, const VkImageSubresourceRange& cutWith,
-							 std::array<VkImageSubresourceRange, 5>& output, UINT32& numAreas);
+							 std::array<VkImageSubresourceRange, 5>& output, u32& numAreas);
 
 		/** Checks if the two image subresource ranges have any overlapping subresources. */
 		static bool RangeOverlaps(const VkImageSubresourceRange& a, const VkImageSubresourceRange& b);
@@ -111,7 +111,7 @@ namespace bs { namespace ct
 		 *								alignment. In multiples of 4 bytes.
 		 * @return						Size of the element, in multiples of 4 bytes.
 		 */
-		static UINT32 CalcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, UINT32 arraySize, UINT32& offset);
+		static u32 CalcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, u32 arraySize, u32& offset);
 	};
 
 	/** @} */

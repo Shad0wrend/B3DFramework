@@ -38,7 +38,7 @@ namespace bs
 		void SetIsLooping(bool loop) override;
 
 		/** @copydoc AudioSource::setPriority */
-		void SetPriority(INT32 priority) override;
+		void SetPriority(i32 priority) override;
 
 		/** @copydoc AudioSource::setTime */
 		void SetTime(float time) override;

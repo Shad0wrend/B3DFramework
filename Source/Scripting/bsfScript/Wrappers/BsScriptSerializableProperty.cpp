@@ -97,10 +97,10 @@ namespace bs
 	{
 		ScriptArray scriptArray(sizes);
 
-		Vector<UINT32> nativeSizes;
-		UINT32 arrayLen = scriptArray.Size();
-		for (UINT32 i = 0; i < arrayLen; i++)
-			nativeSizes.push_back(scriptArray.Get<UINT32>(i));
+		Vector<u32> nativeSizes;
+		u32 arrayLen = scriptArray.Size();
+		for (u32 i = 0; i < arrayLen; i++)
+			nativeSizes.push_back(scriptArray.Get<u32>(i));
 
 		SPtr<ManagedSerializableTypeInfoArray> arrayTypeInfo = std::static_pointer_cast<ManagedSerializableTypeInfoArray>(nativeInstance->mTypeInfo);
 		return ManagedSerializableArray::CreateManagedInstance(arrayTypeInfo, nativeSizes);

@@ -19,22 +19,22 @@ namespace bs
 		 * First mip level of the parent texture the view binds (0 - base level). This applied to all array slices
 		 * specified below.
 		 */
-		UINT32 MostDetailMip;
+		u32 MostDetailMip;
 
 		/** Number of mip levels to bind to the view. This applied to all array slices specified below. */
-		UINT32 NumMips;
+		u32 NumMips;
 
 		/**
 		 * First array slice the view binds to. This will be array index for 1D and 2D array textures, texture slice index
 		 * for 3D textures, and face index for cube textures(cube index * 6).
 		 */
-		UINT32 FirstArraySlice;
+		u32 FirstArraySlice;
 
 		/**
 		 * Number of array slices to bind tot he view. This will be number of array elements for 1D and 2D array textures,
 		 * number of slices for 3D textures, and number of cubes for cube textures.
 		 */
-		UINT32 NumArraySlices;
+		u32 NumArraySlices;
 
 		/** Type of texture view. */
 		GpuViewUsage Usage;
@@ -66,16 +66,16 @@ namespace bs
 		virtual ~TextureView() = default;
 
 		/**	Returns the most detailed mip level visible by the view. */
-		UINT32 GetMostDetailedMip() const { return mDesc.MostDetailMip; }
+		u32 GetMostDetailedMip() const { return mDesc.MostDetailMip; }
 
 		/**	Returns the number of mip levels in a single slice visible by the view. */
-		UINT32 GetNumMips() const { return mDesc.NumMips; }
+		u32 GetNumMips() const { return mDesc.NumMips; }
 
 		/**	Returns the first array slice index visible by this view. */
-		UINT32 GetFirstArraySlice() const { return mDesc.FirstArraySlice; }
+		u32 GetFirstArraySlice() const { return mDesc.FirstArraySlice; }
 
 		/**	Returns the number of array slices visible by this view. */
-		UINT32 GetNumArraySlices() const { return mDesc.NumArraySlices; }
+		u32 GetNumArraySlices() const { return mDesc.NumArraySlices; }
 
 		/**	Returns texture view usage. This determines where on the pipeline can be bind the view. */
 		GpuViewUsage GetUsage() const { return mDesc.Usage; }

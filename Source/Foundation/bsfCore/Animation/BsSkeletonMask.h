@@ -18,13 +18,13 @@ namespace bs
 	{
 	public:
 		SkeletonMask() = default;
-		SkeletonMask(UINT32 numBones);
+		SkeletonMask(u32 numBones);
 
 		/**
 		 * Checks is the bone at the specified index enabled. Caller is expected to know which skeleton is the skeleton
 		 * mask tied with, in order to determine the bone index.
 		 */
-		bool IsEnabled(UINT32 boneIdx) const;
+		bool IsEnabled(u32 boneIdx) const;
 
 	private:
 		friend class SkeletonMaskBuilder;

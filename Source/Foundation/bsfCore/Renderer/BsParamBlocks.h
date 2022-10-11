@@ -28,7 +28,7 @@ namespace bs { namespace ct
 		 * Sets the parameter in the provided parameter block buffer. Caller is responsible for ensuring the param block
 		 * buffer contains this parameter.
 		 */
-		void Set(const SPtr<GpuParamBlockBuffer>& paramBlock, const T& value, UINT32 arrayIdx = 0) const
+		void Set(const SPtr<GpuParamBlockBuffer>& paramBlock, const T& value, u32 arrayIdx = 0) const
 		{
 #if BS_DEBUG_MODE
 			if (arrayIdx >= mParamDesc.ArraySize)
@@ -38,25 +38,25 @@ namespace bs { namespace ct
 			}
 #endif
 
-			UINT32 elementSizeBytes = mParamDesc.ElementSize * sizeof(UINT32);
-			UINT32 sizeBytes = std::min(elementSizeBytes, (UINT32)sizeof(T)); // Truncate if it doesn't fit within parameter size
+			u32 elementSizeBytes = mParamDesc.ElementSize * sizeof(u32);
+			u32 sizeBytes = std::min(elementSizeBytes, (u32)sizeof(T)); // Truncate if it doesn't fit within parameter size
 
 			const bool transposeMatrices = gCaps().Conventions.MatrixOrder == Conventions::MatrixOrder::ColumnMajor;
 			if (TransposePolicy<T>::TransposeEnabled(transposeMatrices))
 			{
 				auto transposed = TransposePolicy<T>::Transpose(value);
-				paramBlock->Write((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(UINT32),
+				paramBlock->Write((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32),
 					&transposed, sizeBytes);
 			}
 			else
-				paramBlock->Write((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(UINT32),
+				paramBlock->Write((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32),
 					&value, sizeBytes);
 
 			// Set unused bytes to 0
 			if (sizeBytes < elementSizeBytes)
 			{
-				UINT32 diffSize = elementSizeBytes - sizeBytes;
-				paramBlock->ZeroOut((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(UINT32) +
+				u32 diffSize = elementSizeBytes - sizeBytes;
+				paramBlock->ZeroOut((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32) +
 					sizeBytes, diffSize);
 			}
 		}
@@ -65,7 +65,7 @@ namespace bs { namespace ct
 		 * Gets the parameter in the provided parameter block buffer. Caller is responsible for ensuring the param block
 		 * buffer contains this parameter.
 		 */
-		T Get(const SPtr<GpuParamBlockBuffer>& paramBlock, UINT32 arrayIdx = 0) const
+		T Get(const SPtr<GpuParamBlockBuffer>& paramBlock, u32 arrayIdx = 0) const
 		{
 #if BS_DEBUG_MODE
 			if (arrayIdx >= mParamDesc.ArraySize)
@@ -76,11 +76,11 @@ namespace bs { namespace ct
 			}
 #endif
 
-			UINT32 elementSizeBytes = mParamDesc.ElementSize * sizeof(UINT32);
-			UINT32 sizeBytes = std::min(elementSizeBytes, (UINT32)sizeof(T));
+			u32 elementSizeBytes = mParamDesc.ElementSize * sizeof(u32);
+			u32 sizeBytes = std::min(elementSizeBytes, (u32)sizeof(T));
 
 			T value;
-			paramBlock->Read((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(UINT32), &value,
+			paramBlock->Read((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32), &value,
 				sizeBytes);
 
 			return value;
@@ -140,14 +140,14 @@ namespace bs { namespace ct
 			RenderAPI& rapi = RenderAPI::Instance();																		\
 																															\
 			GpuParamBlockDesc blockDesc = rapi.GenerateParamBlockDesc(#Name, mParams);										\
-			mBlockSize = blockDesc.BlockSize * sizeof(UINT32);																\
+			mBlockSize = blockDesc.BlockSize * sizeof(u32);																\
 																															\
 			InitEntries();																									\
 		}																													\
 																															\
 		struct META_FirstEntry {};																							\
 		static void META_GetPrevEntries(Vector<GpuParamDataDesc>& params, META_FirstEntry id) { }							\
-		void META_InitPrevEntry(const Vector<GpuParamDataDesc>& params, UINT32 idx, META_FirstEntry id) { }					\
+		void META_InitPrevEntry(const Vector<GpuParamDataDesc>& params, u32 idx, META_FirstEntry id) { }					\
 																															\
 		typedef META_FirstEntry
 
@@ -170,7 +170,7 @@ namespace bs { namespace ct
 			newEntry.ElementSize = sizeof(Type_);																			\
 		}																													\
 																															\
-		void META_InitPrevEntry(const Vector<GpuParamDataDesc>& params, UINT32 idx, META_NextEntry_##Name_ id)				\
+		void META_InitPrevEntry(const Vector<GpuParamDataDesc>& params, u32 idx, META_NextEntry_##Name_ id)				\
 		{																													\
 			META_InitPrevEntry(params, idx - 1, META_Entry_##Name_());														\
 			Name_ = ParamBlockParam<Type_>(params[idx]);																		\
@@ -200,11 +200,11 @@ namespace bs { namespace ct
 																															\
 		void InitEntries()																									\
 		{																													\
-			META_InitPrevEntry(mParams, (UINT32)mParams.size() - 1, META_LastEntry());										\
+			META_InitPrevEntry(mParams, (u32)mParams.size() - 1, META_LastEntry());										\
 		}																													\
 																															\
 		Vector<GpuParamDataDesc> mParams;																					\
-		UINT32 mBlockSize;																									\
+		u32 mBlockSize;																									\
 	};
 
 	/** @} */

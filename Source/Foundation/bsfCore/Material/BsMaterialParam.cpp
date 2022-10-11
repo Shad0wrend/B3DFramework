@@ -16,7 +16,7 @@ namespace bs
 		{
 			SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
 
-			UINT32 paramIndex;
+			u32 paramIndex;
 			auto result = params->GetParamIndex(name, MaterialParams::ParamType::Data, (GpuParamDataType)DATA_TYPE, 0,
 				paramIndex);
 
@@ -34,7 +34,7 @@ namespace bs
 	}
 
 	template<class T, bool Core>
-	void TMaterialDataParam<T, Core>::Set(const T& value, UINT32 arrayIdx) const
+	void TMaterialDataParam<T, Core>::Set(const T& value, u32 arrayIdx) const
 	{
 		if (this->mMaterial == nullptr)
 			return;
@@ -54,7 +54,7 @@ namespace bs
 	}
 
 	template<class T, bool Core>
-	T TMaterialDataParam<T, Core>::Get(UINT32 arrayIdx) const
+	T TMaterialDataParam<T, Core>::Get(u32 arrayIdx) const
 	{
 		T output{};
 		if (this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
@@ -68,7 +68,7 @@ namespace bs
 	}
 
 	template<class T, bool Core>
-	void TMaterialCurveParam<T, Core>::Set(TAnimationCurve<T> value, UINT32 arrayIdx) const
+	void TMaterialCurveParam<T, Core>::Set(TAnimationCurve<T> value, u32 arrayIdx) const
 	{
 		if (this->mMaterial == nullptr)
 			return;
@@ -88,7 +88,7 @@ namespace bs
 	}
 
 	template<class T, bool Core>
-	const TAnimationCurve<T>& TMaterialCurveParam<T, Core>::Get(UINT32 arrayIdx) const
+	const TAnimationCurve<T>& TMaterialCurveParam<T, Core>::Get(u32 arrayIdx) const
 	{
 		static TAnimationCurve<T> EMPTY_CURVE;
 
@@ -102,7 +102,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialColorGradientParam<Core>::Set(const ColorGradientHDR& value, UINT32 arrayIdx) const
+	void TMaterialColorGradientParam<Core>::Set(const ColorGradientHDR& value, u32 arrayIdx) const
 	{
 		if (this->mMaterial == nullptr)
 			return;
@@ -122,7 +122,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	const ColorGradientHDR& TMaterialColorGradientParam<Core>::Get(UINT32 arrayIdx) const
+	const ColorGradientHDR& TMaterialColorGradientParam<Core>::Get(u32 arrayIdx) const
 	{
 		static ColorGradientHDR EMPTY_GRADIENT;
 
@@ -136,7 +136,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParamStruct<Core>::Set(const void* value, UINT32 sizeBytes, UINT32 arrayIdx) const
+	void TMaterialParamStruct<Core>::Set(const void* value, u32 sizeBytes, u32 arrayIdx) const
 	{
 		if (this->mMaterial == nullptr)
 			return;
@@ -156,7 +156,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TMaterialParamStruct<Core>::Get(void* value, UINT32 sizeBytes, UINT32 arrayIdx) const
+	void TMaterialParamStruct<Core>::Get(void* value, u32 sizeBytes, u32 arrayIdx) const
 	{
 		if (this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
 			return;
@@ -168,7 +168,7 @@ namespace bs
 	}
 
 	template<bool Core>
-	UINT32 TMaterialParamStruct<Core>::GetElementSize() const
+	u32 TMaterialParamStruct<Core>::GetElementSize() const
 	{
 		if (this->mMaterial == nullptr)
 			return 0;
@@ -187,7 +187,7 @@ namespace bs
 		{
 			SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
 
-			UINT32 paramIndex;
+			u32 paramIndex;
 			auto result = params->GetParamIndex(name, MaterialParams::ParamType::Texture, GPDT_UNKNOWN, 0, paramIndex);
 
 			if (result == MaterialParams::GetParamResult::Success)
@@ -244,7 +244,7 @@ namespace bs
 		{
 			SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
 
-			UINT32 paramIndex;
+			u32 paramIndex;
 			auto result = params->GetParamIndex(name, MaterialParams::ParamType::Texture, GPDT_UNKNOWN, 0, paramIndex);
 
 			if (result == MaterialParams::GetParamResult::Success)
@@ -304,7 +304,7 @@ namespace bs
 		{
 			SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
 
-			UINT32 paramIndex;
+			u32 paramIndex;
 			auto result = params->GetParamIndex(name, MaterialParams::ParamType::Texture, GPDT_UNKNOWN, 0, paramIndex);
 
 			if (result == MaterialParams::GetParamResult::Success)
@@ -357,7 +357,7 @@ namespace bs
 		{
 			SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
 
-			UINT32 paramIndex;
+			u32 paramIndex;
 			auto result = params->GetParamIndex(name, MaterialParams::ParamType::Buffer, GPDT_UNKNOWN, 0, paramIndex);
 
 			if (result == MaterialParams::GetParamResult::Success)
@@ -406,7 +406,7 @@ namespace bs
 		{
 			SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
 
-			UINT32 paramIndex;
+			u32 paramIndex;
 			auto result = params->GetParamIndex(name, MaterialParams::ParamType::Sampler, GPDT_UNKNOWN, 0, paramIndex);
 
 			if (result == MaterialParams::GetParamResult::Success)

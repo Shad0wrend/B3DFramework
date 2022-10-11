@@ -75,7 +75,7 @@ namespace bs
 		Vector3 Normal; /**< Normal to the surface that was hit. */
 		Vector2 Uv; /**< Barycentric coordinates of the triangle that was hit (only applicable when triangle meshes are hit). */
 		float Distance = 0.0f; /**< Distance from the query origin to the hit position. */
-		UINT32 TriangleIdx = 0; /**< Index of the triangle that was hit (only applicable when triangle meshes are hit). */
+		u32 TriangleIdx = 0; /**< Index of the triangle that was hit (only applicable when triangle meshes are hit). */
 
 		/**
 		 * Unmapped index of the triangle that was hit (only applicable when triangle meshes are hit).
@@ -83,7 +83,7 @@ namespace bs
 		 * In contrast, @p triangleIdx is only a valid index for the MeshData directly obtained from #collider which can
 		 * differ from the original MeshData due to the internal implementation.
 		 */
-		UINT32 UnmappedTriangleIdx = 0;
+		u32 UnmappedTriangleIdx = 0;
 
 		/**
 		 * Component of the collider that was hit. This may be null if the hit collider has no owner component, in which

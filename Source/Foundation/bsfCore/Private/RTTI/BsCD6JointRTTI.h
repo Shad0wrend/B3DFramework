@@ -17,25 +17,25 @@ namespace bs
 
 	class BS_CORE_EXPORT CD6JointRTTI : public RTTIType<CD6Joint, CJoint, CD6JointRTTI>
 	{
-		D6JointMotion& GetMotion(CD6Joint* obj, UINT32 idx) { return obj->mDesc.Motion[idx]; }
-		void SetMotion(CD6Joint* obj, UINT32 idx, D6JointMotion& value) { obj->mDesc.Motion[idx] = value; }
-		UINT32 GetMotionCount(CD6Joint* obj) { return (UINT32)D6JointMotion::Count; }
-		void SetMotionCount(CD6Joint* obj, UINT32 size) { /* Do nothing */ }
+		D6JointMotion& GetMotion(CD6Joint* obj, u32 idx) { return obj->mDesc.Motion[idx]; }
+		void SetMotion(CD6Joint* obj, u32 idx, D6JointMotion& value) { obj->mDesc.Motion[idx] = value; }
+		u32 GetMotionCount(CD6Joint* obj) { return (u32)D6JointMotion::Count; }
+		void SetMotionCount(CD6Joint* obj, u32 size) { /* Do nothing */ }
 
-		float& GetDriveStiffness(CD6Joint* obj, UINT32 idx) { return obj->mDesc.Drive[idx].Stiffness; }
-		void SetDriveStiffness(CD6Joint* obj, UINT32 idx, float& value) { obj->mDesc.Drive[idx].Stiffness = value; }
+		float& GetDriveStiffness(CD6Joint* obj, u32 idx) { return obj->mDesc.Drive[idx].Stiffness; }
+		void SetDriveStiffness(CD6Joint* obj, u32 idx, float& value) { obj->mDesc.Drive[idx].Stiffness = value; }
 
-		float& GetDriveDamping(CD6Joint* obj, UINT32 idx) { return obj->mDesc.Drive[idx].Damping; }
-		void SetDriveDamping(CD6Joint* obj, UINT32 idx, float& value) { obj->mDesc.Drive[idx].Damping = value; }
+		float& GetDriveDamping(CD6Joint* obj, u32 idx) { return obj->mDesc.Drive[idx].Damping; }
+		void SetDriveDamping(CD6Joint* obj, u32 idx, float& value) { obj->mDesc.Drive[idx].Damping = value; }
 
-		float& GetDriveForceLimit(CD6Joint* obj, UINT32 idx) { return obj->mDesc.Drive[idx].ForceLimit; }
-		void SetDriveForceLimit(CD6Joint* obj, UINT32 idx, float& value) { obj->mDesc.Drive[idx].ForceLimit = value; }
+		float& GetDriveForceLimit(CD6Joint* obj, u32 idx) { return obj->mDesc.Drive[idx].ForceLimit; }
+		void SetDriveForceLimit(CD6Joint* obj, u32 idx, float& value) { obj->mDesc.Drive[idx].ForceLimit = value; }
 
-		bool& GetDriveAcceleration(CD6Joint* obj, UINT32 idx) { return obj->mDesc.Drive[idx].Acceleration; }
-		void SetDriveAcceleration(CD6Joint* obj, UINT32 idx, bool& value) { obj->mDesc.Drive[idx].Acceleration = value; }
+		bool& GetDriveAcceleration(CD6Joint* obj, u32 idx) { return obj->mDesc.Drive[idx].Acceleration; }
+		void SetDriveAcceleration(CD6Joint* obj, u32 idx, bool& value) { obj->mDesc.Drive[idx].Acceleration = value; }
 
-		UINT32 GetDriveCount(CD6Joint* obj) { return (UINT32)D6JointDriveType::Count; }
-		void SetDriveCount(CD6Joint* obj, UINT32 size) { /* Do nothing */ }
+		u32 GetDriveCount(CD6Joint* obj) { return (u32)D6JointDriveType::Count; }
+		void SetDriveCount(CD6Joint* obj, u32 size) { /* Do nothing */ }
 
 		BS_BEGIN_RTTI_MEMBERS
 			BS_RTTI_MEMBER_PLAIN_NAMED(mLimitLinearExtent, mDesc.LimitLinear.Extent, 5)
@@ -85,7 +85,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_CD6Joint;
 		}

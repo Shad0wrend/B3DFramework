@@ -11,7 +11,7 @@ namespace bs { namespace ct
 {
 	TiledLightingParamDef gTiledLightingParamDef;
 
-	const UINT32 TiledDeferredLightingMat::TILE_SIZE = 16;
+	const u32 TiledDeferredLightingMat::TILE_SIZE = 16;
 
 	TiledDeferredLightingMat::TiledDeferredLightingMat()
 		:mGBufferParams(GPT_COMPUTE_PROGRAM, mParams)
@@ -47,8 +47,8 @@ namespace bs { namespace ct
 
 		mLightBufferParam.Set(lightData.GetLightBuffer());
 
-		UINT32 width = viewProps.Target.ViewRect.Width;
-		UINT32 height = viewProps.Target.ViewRect.Height;
+		u32 width = viewProps.Target.ViewRect.Width;
+		u32 height = viewProps.Target.ViewRect.Height;
 
 		Vector2I framebufferSize;
 		framebufferSize[0] = width;
@@ -110,14 +110,14 @@ namespace bs { namespace ct
 		else
 			mOutputTextureParam.Set(lightAccumTex);
 
-		UINT32 numTilesX = (UINT32)Math::CeilToInt(width / (float)TILE_SIZE);
-		UINT32 numTilesY = (UINT32)Math::CeilToInt(height / (float)TILE_SIZE);
+		u32 numTilesX = (u32)Math::CeilToInt(width / (float)TILE_SIZE);
+		u32 numTilesY = (u32)Math::CeilToInt(height / (float)TILE_SIZE);
 
 		Bind();
 		RenderAPI::Instance().DispatchCompute(numTilesX, numTilesY);
 	}
 
-	TiledDeferredLightingMat* TiledDeferredLightingMat::GetVariation(UINT32 msaaCount)
+	TiledDeferredLightingMat* TiledDeferredLightingMat::GetVariation(u32 msaaCount)
 	{
 		switch(msaaCount)
 		{
@@ -161,7 +161,7 @@ namespace bs { namespace ct
 
 	ClearLoadStoreMat::ClearLoadStoreMat()
 	{
-		INT32 objType = mVariation.GetInt("OBJ_TYPE");
+		i32 objType = mVariation.GetInt("OBJ_TYPE");
 
 		if(objType == 0 || objType == 1)
 			mParams->GetLoadStoreTextureParam(GPT_COMPUTE_PROGRAM, "gOutput", mOutputTextureParam);
@@ -190,18 +190,18 @@ namespace bs { namespace ct
 
 		mOutputTextureParam.Set(target, surface);
 
-		UINT32 width = props.GetWidth();
-		UINT32 height = props.GetHeight();
-		gClearLoadStoreParamDef.gSize.Set(mParamBuffer, Vector2I((INT32)width, (INT32)height));
+		u32 width = props.GetWidth();
+		u32 height = props.GetHeight();
+		gClearLoadStoreParamDef.gSize.Set(mParamBuffer, Vector2I((i32)width, (i32)height));
 		gClearLoadStoreParamDef.gFloatClearVal.Set(mParamBuffer,
 			Vector4(clearValue.R, clearValue.G, clearValue.A, clearValue.A));
 		gClearLoadStoreParamDef.gIntClearVal.Set(mParamBuffer,
-			Vector4I(*(INT32*)&clearValue.R, *(INT32*)&clearValue.G, *(INT32*)&clearValue.A, *(INT32*)&clearValue.A));
+			Vector4I(*(i32*)&clearValue.R, *(i32*)&clearValue.G, *(i32*)&clearValue.A, *(i32*)&clearValue.A));
 
 		Bind();
 
-		UINT32 numGroupsX = Math::DivideAndRoundUp(width, NUM_THREADS * TILE_SIZE);
-		UINT32 numGroupsY = Math::DivideAndRoundUp(height, NUM_THREADS * TILE_SIZE);
+		u32 numGroupsX = Math::DivideAndRoundUp(width, NUM_THREADS * TILE_SIZE);
+		u32 numGroupsY = Math::DivideAndRoundUp(height, NUM_THREADS * TILE_SIZE);
 		
 		RenderAPI::Instance().DispatchCompute(numGroupsX, numGroupsY);
 	}
@@ -212,22 +212,22 @@ namespace bs { namespace ct
 
 		mOutputBufferParam.Set(target);
 
-		UINT32 width = target->GetProperties().GetElementCount();
-		UINT32 height = 1;
-		gClearLoadStoreParamDef.gSize.Set(mParamBuffer, Vector2I((INT32)width, (INT32)height));
+		u32 width = target->GetProperties().GetElementCount();
+		u32 height = 1;
+		gClearLoadStoreParamDef.gSize.Set(mParamBuffer, Vector2I((i32)width, (i32)height));
 		gClearLoadStoreParamDef.gFloatClearVal.Set(mParamBuffer,
 			Vector4(clearValue.R, clearValue.G, clearValue.A, clearValue.A));
 		gClearLoadStoreParamDef.gIntClearVal.Set(mParamBuffer,
-			Vector4I(*(INT32*)&clearValue.R, *(INT32*)&clearValue.G, *(INT32*)&clearValue.A, *(INT32*)&clearValue.A));
+			Vector4I(*(i32*)&clearValue.R, *(i32*)&clearValue.G, *(i32*)&clearValue.A, *(i32*)&clearValue.A));
 
 		Bind();
 
-		UINT32 numGroupsX = Math::DivideAndRoundUp(width, NUM_THREADS * (TILE_SIZE * TILE_SIZE));
+		u32 numGroupsX = Math::DivideAndRoundUp(width, NUM_THREADS * (TILE_SIZE * TILE_SIZE));
 		RenderAPI::Instance().DispatchCompute(numGroupsX, 1);
 	}
 
 	/** Helper method used for initializing variations of the ClearLoadStore material. */
-	template<ClearLoadStoreType OBJ_TYPE, ClearLoadStoreDataType DATA_TYPE, UINT32 NUM_COMPONENTS>
+	template<ClearLoadStoreType OBJ_TYPE, ClearLoadStoreDataType DATA_TYPE, u32 NUM_COMPONENTS>
 	static const ShaderVariation& getClearLoadStoreVariation()
 	{
 		static ShaderVariation variation = ShaderVariation(
@@ -242,7 +242,7 @@ namespace bs { namespace ct
 	}
 
 	template<ClearLoadStoreType BUFFER_TYPE, ClearLoadStoreDataType DATA_TYPE>
-	const ShaderVariation& getClearLoadStoreVariation(UINT32 numComponents)
+	const ShaderVariation& getClearLoadStoreVariation(u32 numComponents)
 	{
 		switch (numComponents)
 		{
@@ -259,7 +259,7 @@ namespace bs { namespace ct
 	}
 
 	ClearLoadStoreMat* ClearLoadStoreMat::GetVariation(ClearLoadStoreType objType, ClearLoadStoreDataType dataType,
-									UINT32 numComponents)
+									u32 numComponents)
 	{
 		switch(objType)
 		{
@@ -294,7 +294,7 @@ namespace bs { namespace ct
 	//
 	// The theory is that using larger tiles will amortize the cost of computing tile AABB's (which this shader uses,
 	// compared to the cheaper-to-compute frustums).
-	const UINT32 TiledDeferredImageBasedLightingMat::TILE_SIZE = 16;
+	const u32 TiledDeferredImageBasedLightingMat::TILE_SIZE = 16;
 
 	TiledDeferredImageBasedLightingMat::TiledDeferredImageBasedLightingMat()
 	{
@@ -330,8 +330,8 @@ namespace bs { namespace ct
 		BS_RENMAT_PROFILE_BLOCK
 
 		const RendererViewProperties& viewProps = view.GetProperties();
-		UINT32 width = viewProps.Target.ViewRect.Width;
-		UINT32 height = viewProps.Target.ViewRect.Height;
+		u32 width = viewProps.Target.ViewRect.Width;
+		u32 height = viewProps.Target.ViewRect.Height;
 
 		Vector2I framebufferSize;
 		framebufferSize[0] = width;
@@ -375,14 +375,14 @@ namespace bs { namespace ct
 		else
 			mOutputTextureParam.Set(inputs.SceneColorTex);
 
-		UINT32 numTilesX = (UINT32)Math::CeilToInt(width / (float)TILE_SIZE);
-		UINT32 numTilesY = (UINT32)Math::CeilToInt(height / (float)TILE_SIZE);
+		u32 numTilesX = (u32)Math::CeilToInt(width / (float)TILE_SIZE);
+		u32 numTilesY = (u32)Math::CeilToInt(height / (float)TILE_SIZE);
 
 		Bind();
 		RenderAPI::Instance().DispatchCompute(numTilesX, numTilesY);
 	}
 
-	TiledDeferredImageBasedLightingMat* TiledDeferredImageBasedLightingMat::GetVariation(UINT32 msaaCount)
+	TiledDeferredImageBasedLightingMat* TiledDeferredImageBasedLightingMat::GetVariation(u32 msaaCount)
 	{
 		switch(msaaCount)
 		{

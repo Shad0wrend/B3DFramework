@@ -33,7 +33,7 @@ namespace bs { namespace ct
 	}
 
 	VulkanGraphicsPipelineState::GpuPipelineKey::GpuPipelineKey(
-		UINT32 framebufferId, UINT32 vertexInputId, UINT32 readOnlyFlags, DrawOperationType drawOp)
+		u32 framebufferId, u32 vertexInputId, u32 readOnlyFlags, DrawOperationType drawOp)
 		: FramebufferId(framebufferId), VertexInputId(vertexInputId), ReadOnlyFlags(readOnlyFlags)
 		, DrawOp(drawOp)
 	{
@@ -72,7 +72,7 @@ namespace bs { namespace ct
 																	 GpuDeviceFlags deviceMask)
 		:GraphicsPipelineState(desc, deviceMask), mScissorEnabled(false), mDeviceMask(deviceMask)
 	{
-		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+		for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			mPerDeviceData[i].Device = nullptr;
 			mPerDeviceData[i].PipelineLayout = VK_NULL_HANDLE;
@@ -81,7 +81,7 @@ namespace bs { namespace ct
 
 	VulkanGraphicsPipelineState::~VulkanGraphicsPipelineState()
 	{
-		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+		for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			if (mPerDeviceData[i].Device == nullptr)
 				continue;
@@ -108,9 +108,9 @@ namespace bs { namespace ct
 				{ VK_SHADER_STAGE_FRAGMENT_BIT, mData.FragmentProgram.get() }
 			};
 
-		UINT32 stageOutputIdx = 0;
-		UINT32 numStages = sizeof(stages) / sizeof(stages[0]);
-		for(UINT32 i = 0; i < numStages; i++)
+		u32 stageOutputIdx = 0;
+		u32 numStages = sizeof(stages) / sizeof(stages[0]);
+		for(u32 i = 0; i < numStages; i++)
 		{
 			VulkanGpuProgram* program = static_cast<VulkanGpuProgram*>(stages[i].second);
 			if (program == nullptr)
@@ -128,7 +128,7 @@ namespace bs { namespace ct
 			stageOutputIdx++;
 		}
 
-		UINT32 numUsedStages = stageOutputIdx;
+		u32 numUsedStages = stageOutputIdx;
 
 		bool tesselationEnabled = mData.HullProgram != nullptr && mData.DomainProgram != nullptr;
 
@@ -197,8 +197,8 @@ namespace bs { namespace ct
 		stencilFrontInfo.passOp = VulkanUtility::GetStencilOp(dsProps.GetStencilFrontPassOp());
 		stencilFrontInfo.failOp = VulkanUtility::GetStencilOp(dsProps.GetStencilFrontFailOp());
 		stencilFrontInfo.reference = 0; // Dynamic
-		stencilFrontInfo.compareMask = (UINT32)dsProps.GetStencilReadMask();
-		stencilFrontInfo.writeMask = (UINT32)dsProps.GetStencilWriteMask();
+		stencilFrontInfo.compareMask = (u32)dsProps.GetStencilReadMask();
+		stencilFrontInfo.writeMask = (u32)dsProps.GetStencilWriteMask();
 
 		VkStencilOpState stencilBackInfo;
 		stencilBackInfo.compareOp = VulkanUtility::GetCompareOp(dsProps.GetStencilBackCompFunc());
@@ -206,8 +206,8 @@ namespace bs { namespace ct
 		stencilBackInfo.passOp = VulkanUtility::GetStencilOp(dsProps.GetStencilBackPassOp());
 		stencilBackInfo.failOp = VulkanUtility::GetStencilOp(dsProps.GetStencilBackFailOp());
 		stencilBackInfo.reference = 0; // Dynamic
-		stencilBackInfo.compareMask = (UINT32)dsProps.GetStencilReadMask();
-		stencilBackInfo.writeMask = (UINT32)dsProps.GetStencilWriteMask();
+		stencilBackInfo.compareMask = (u32)dsProps.GetStencilReadMask();
+		stencilBackInfo.writeMask = (u32)dsProps.GetStencilWriteMask();
 
 		mDepthStencilInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 		mDepthStencilInfo.pNext = nullptr;
@@ -222,9 +222,9 @@ namespace bs { namespace ct
 		mDepthStencilInfo.back = stencilBackInfo;
 		mDepthStencilInfo.stencilTestEnable = dsProps.GetStencilEnable();
 
-		for(UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
-			UINT32 rtIdx = 0;
+			u32 rtIdx = 0;
 			if (blendProps.GetIndependantBlendEnable())
 				rtIdx = i;
 
@@ -255,7 +255,7 @@ namespace bs { namespace ct
 		mDynamicStates[1] = VK_DYNAMIC_STATE_SCISSOR;
 		mDynamicStates[2] = VK_DYNAMIC_STATE_STENCIL_REFERENCE;
 
-		UINT32 numDynamicStates = sizeof(mDynamicStates) / sizeof(mDynamicStates[0]);
+		u32 numDynamicStates = sizeof(mDynamicStates) / sizeof(mDynamicStates[0]);
 		assert(numDynamicStates == 3);
 
 		mDynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
@@ -294,7 +294,7 @@ namespace bs { namespace ct
 		VulkanDevice* devices[BS_MAX_DEVICES];
 		VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
-		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+		for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			if (devices[i] == nullptr)
 				continue;
@@ -304,10 +304,10 @@ namespace bs { namespace ct
 			VulkanDescriptorManager& descManager = mPerDeviceData[i].Device->GetDescriptorManager();
 			VulkanGpuPipelineParamInfo& vkParamInfo = static_cast<VulkanGpuPipelineParamInfo&>(*mParamInfo);
 
-			UINT32 numLayouts = vkParamInfo.GetNumSets();
+			u32 numLayouts = vkParamInfo.GetNumSets();
 			VulkanDescriptorLayout** layouts = (VulkanDescriptorLayout**)bs_stack_alloc(sizeof(VulkanDescriptorLayout*) * numLayouts);
 
-			for (UINT32 j = 0; j < numLayouts; j++)
+			for (u32 j = 0; j < numLayouts; j++)
 				layouts[j] = vkParamInfo.GetLayout(i, j);
 
 			mPerDeviceData[i].PipelineLayout = descManager.GetPipelineLayout(layouts, numLayouts);
@@ -319,7 +319,7 @@ namespace bs { namespace ct
 	}
 
 	VulkanPipeline* VulkanGraphicsPipelineState::GetPipeline(
-		UINT32 deviceIdx, VulkanRenderPass* renderPass, UINT32 readOnlyFlags, DrawOperationType drawOp,
+		u32 deviceIdx, VulkanRenderPass* renderPass, u32 readOnlyFlags, DrawOperationType drawOp,
 			const SPtr<VulkanVertexInput>& vertexInput)
 	{
 		Lock lock(mMutex);
@@ -341,14 +341,14 @@ namespace bs { namespace ct
 		return newPipeline;
 	}
 
-	VkPipelineLayout VulkanGraphicsPipelineState::GetPipelineLayout(UINT32 deviceIdx) const
+	VkPipelineLayout VulkanGraphicsPipelineState::GetPipelineLayout(u32 deviceIdx) const
 	{
 		return mPerDeviceData[deviceIdx].PipelineLayout;
 	}
 
 	void VulkanGraphicsPipelineState::RegisterPipelineResources(VulkanCmdBuffer* cmdBuffer)
 	{
-		UINT32 deviceIdx = cmdBuffer->GetDeviceIdx();
+		u32 deviceIdx = cmdBuffer->GetDeviceIdx();
 
 		std::array<VulkanGpuProgram*, 5> programs = {
 			static_cast<VulkanGpuProgram*>(mData.VertexProgram.get()),
@@ -370,8 +370,8 @@ namespace bs { namespace ct
 		}
 	}
 
-	VulkanPipeline* VulkanGraphicsPipelineState::CreatePipeline(UINT32 deviceIdx, VulkanRenderPass* renderPass,
-		UINT32 readOnlyFlags, DrawOperationType drawOp, const SPtr<VulkanVertexInput>& vertexInput)
+	VulkanPipeline* VulkanGraphicsPipelineState::CreatePipeline(u32 deviceIdx, VulkanRenderPass* renderPass,
+		u32 readOnlyFlags, DrawOperationType drawOp, const SPtr<VulkanVertexInput>& vertexInput)
 	{
 		mInputAssemblyInfo.topology = VulkanUtility::GetDrawOp(drawOp);
 		mTesselationInfo.patchControlPoints = 3; // Not provided by our shaders for now
@@ -432,7 +432,7 @@ namespace bs { namespace ct
 		{
 			mPipelineInfo.pColorBlendState = &mColorBlendStateInfo;
 
-			for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+			for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 			{
 				VkPipelineColorBlendAttachmentState& blendState = mAttachmentBlendStates[i];
 				colorReadOnly[i] = blendState.colorWriteMask == 0;
@@ -442,7 +442,7 @@ namespace bs { namespace ct
 		{
 			mPipelineInfo.pColorBlendState = nullptr;
 
-			for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+			for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 				colorReadOnly[i] = true;
 		}
 
@@ -455,9 +455,9 @@ namespace bs { namespace ct
 			{ VK_SHADER_STAGE_FRAGMENT_BIT, mData.FragmentProgram.get() }
 		};
 
-		UINT32 stageOutputIdx = 0;
-		UINT32 numStages = sizeof(stages) / sizeof(stages[0]);
-		for (UINT32 i = 0; i < numStages; i++)
+		u32 stageOutputIdx = 0;
+		u32 numStages = sizeof(stages) / sizeof(stages[0]);
+		for (u32 i = 0; i < numStages; i++)
 		{
 			VulkanGpuProgram* program = static_cast<VulkanGpuProgram*>(stages[i].second);
 			if (program == nullptr)
@@ -503,7 +503,7 @@ namespace bs { namespace ct
 
 	VulkanComputePipelineState::~VulkanComputePipelineState()
 	{
-		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+		for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			if (mPerDeviceData[i].Device == nullptr)
 				continue;
@@ -545,7 +545,7 @@ namespace bs { namespace ct
 		VulkanDevice* devices[BS_MAX_DEVICES];
 		VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
-		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+		for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			if (devices[i] == nullptr)
 				continue;
@@ -556,10 +556,10 @@ namespace bs { namespace ct
 			VulkanResourceManager& rescManager = devices[i]->GetResourceManager();
 			VulkanGpuPipelineParamInfo& vkParamInfo = static_cast<VulkanGpuPipelineParamInfo&>(*mParamInfo);
 
-			UINT32 numLayouts = vkParamInfo.GetNumSets();
+			u32 numLayouts = vkParamInfo.GetNumSets();
 			VulkanDescriptorLayout** layouts = (VulkanDescriptorLayout**)bs_stack_alloc(sizeof(VulkanDescriptorLayout*) * numLayouts);
 
-			for (UINT32 j = 0; j < numLayouts; j++)
+			for (u32 j = 0; j < numLayouts; j++)
 				layouts[j] = vkParamInfo.GetLayout(i, j);
 
 			VulkanShaderModule* module = vkProgram->GetShaderModule(i);
@@ -585,19 +585,19 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_PipelineState);
 	}
 
-	VulkanPipeline* VulkanComputePipelineState::GetPipeline(UINT32 deviceIdx) const
+	VulkanPipeline* VulkanComputePipelineState::GetPipeline(u32 deviceIdx) const
 	{
 		return mPerDeviceData[deviceIdx].Pipeline;
 	}
 
-	VkPipelineLayout VulkanComputePipelineState::GetPipelineLayout(UINT32 deviceIdx) const
+	VkPipelineLayout VulkanComputePipelineState::GetPipelineLayout(u32 deviceIdx) const
 	{
 		return mPerDeviceData[deviceIdx].PipelineLayout;
 	}
 
 	void VulkanComputePipelineState::RegisterPipelineResources(VulkanCmdBuffer* cmdBuffer)
 	{
-		UINT32 deviceIdx = cmdBuffer->GetDeviceIdx();
+		u32 deviceIdx = cmdBuffer->GetDeviceIdx();
 
 		VulkanGpuProgram* program = static_cast<VulkanGpuProgram*>(mProgram.get());
 		if(program != nullptr)

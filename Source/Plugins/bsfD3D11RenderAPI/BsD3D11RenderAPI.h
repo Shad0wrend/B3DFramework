@@ -36,29 +36,29 @@ namespace bs { namespace ct
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::clearRenderTarget */
-		void ClearRenderTarget(UINT32 buffers, const Color& color = Color::Black, float depth = 1.0f, UINT16 stencil = 0,
-			UINT8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
+		void ClearRenderTarget(u32 buffers, const Color& color = Color::Black, float depth = 1.0f, u16 stencil = 0,
+			u8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::clearViewport */
-		void ClearViewport(UINT32 buffers, const Color& color = Color::Black, float depth = 1.0f, UINT16 stencil = 0,
-			UINT8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
+		void ClearViewport(u32 buffers, const Color& color = Color::Black, float depth = 1.0f, u16 stencil = 0,
+			u8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::setRenderTarget */
-		void SetRenderTarget(const SPtr<RenderTarget>& target, UINT32 readOnlyFlags,
+		void SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags,
 			RenderSurfaceMask loadMask = RT_NONE, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 		/** @copydoc RenderAPI::setViewport */
 		void SetViewport(const Rect2& area, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::setScissorRect */
-		void SetScissorRect(UINT32 left, UINT32 top, UINT32 right, UINT32 bottom,
+		void SetScissorRect(u32 left, u32 top, u32 right, u32 bottom,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::setStencilRef */
-		void SetStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
+		void SetStencilRef(u32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::setVertexBuffers */
-		void SetVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers,
+		void SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u32 numBuffers,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::setIndexBuffer */
@@ -74,25 +74,25 @@ namespace bs { namespace ct
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::draw */
-		void Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount = 0,
+		void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::drawIndexed */
-		void DrawIndexed(UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 vertexCount,
-			UINT32 instanceCount = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
+		void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount,
+			u32 instanceCount = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::dispatchCompute */
-		void DispatchCompute(UINT32 numGroupsX, UINT32 numGroupsY = 1, UINT32 numGroupsZ = 1,
+		void DispatchCompute(u32 numGroupsX, u32 numGroupsY = 1, u32 numGroupsZ = 1,
 			const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/** @copydoc RenderAPI::swapBuffers() */
-		void SwapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask = 0xFFFFFFFF) ;
+		void SwapBuffers(const SPtr<RenderTarget>& target, u32 syncMask = 0xFFFFFFFF) ;
 
 		/** @copydoc RenderAPI::addCommands() */
 		void AddCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary) ;
 
 		/** @copydoc RenderAPI::submitCommandBuffer() */
-		void SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask = 0xFFFFFFFF) ;
+		void SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, u32 syncMask = 0xFFFFFFFF) ;
 
 		/** @copydoc RenderAPI::getMainCommandBuffer() */
 		SPtr<CommandBuffer> GetMainCommandBuffer() const override;
@@ -114,7 +114,7 @@ namespace bs { namespace ct
 		 * @param[in]	format				Pixel format used by the render target.
 		 * @param[out]	outputSampleDesc	Output structure that will contain the requested multisample settings.
 		 */
-		void DetermineMultisampleSettings(UINT32 multisampleCount, DXGI_FORMAT format, DXGI_SAMPLE_DESC* outputSampleDesc);
+		void DetermineMultisampleSettings(u32 multisampleCount, DXGI_FORMAT format, DXGI_SAMPLE_DESC* outputSampleDesc);
 
 		/**	Returns the main DXGI factory object. */
 		IDXGIFactory1* GetDxgiFactory() const { return mDXGIFactory; }
@@ -177,7 +177,7 @@ namespace bs { namespace ct
 		bool mPSUAVsBound = false;
 		bool mCSUAVsBound = false;
 
-		UINT32 mStencilRef = 0;
+		u32 mStencilRef = 0;
 		Rect2 mViewportNorm = Rect2(0.0f, 0.0f, 1.0f, 1.0f);
 		D3D11_VIEWPORT mViewport;
 		D3D11_RECT mScissorRect;

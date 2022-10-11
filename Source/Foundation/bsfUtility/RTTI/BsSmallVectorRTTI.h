@@ -13,7 +13,7 @@ namespace bs
 	*  @{
 	*/
 
-	template<class T, UINT32 N> struct RTTIPlainType<SmallVector<T, N>>
+	template<class T, u32 N> struct RTTIPlainType<SmallVector<T, N>>
 	{
 		enum { id = TID_SmallVector }; enum { hasDynamicSize = 1 };
 

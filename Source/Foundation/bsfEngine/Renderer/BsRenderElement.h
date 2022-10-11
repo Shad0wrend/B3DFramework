@@ -25,16 +25,16 @@ namespace bs { namespace ct
 		SPtr<Material> Material;
 
 		/** Index of the technique in the material to render the element with. */
-		UINT32 DefaultTechniqueIdx = 0;
+		u32 DefaultTechniqueIdx = 0;
 
 		/** Index of the technique in the material to render the element with when velocity writes are supported. */
-		UINT32 WriteVelocityTechniqueIdx = (UINT32)-1;
+		u32 WriteVelocityTechniqueIdx = (u32)-1;
 
 		/** All GPU parameters from the material used by the renderable. */
 		SPtr<GpuParamsSet> Params;
 
 		/** Renderer specific value that identifies the type of this renderable element. */
-		UINT32 Type = 0;
+		u32 Type = 0;
 
 		/** Executes the draw call for the render element. */
 		virtual void Draw() const = 0;

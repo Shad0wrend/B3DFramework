@@ -14,7 +14,7 @@ namespace bs
 		struct ComponentProxy
 		{
 			GameObjectInstanceDataPtr InstanceData;
-			UINT32 LinkId;
+			u32 LinkId;
 			UUID Uuid;
 		};
 
@@ -22,7 +22,7 @@ namespace bs
 		struct SceneObjectProxy
 		{
 			GameObjectInstanceDataPtr InstanceData;
-			UINT32 LinkId;
+			u32 LinkId;
 			UUID Uuid;
 
 			Vector<ComponentProxy> Components;
@@ -49,7 +49,7 @@ namespace bs
 		 * @note	Does not recurse into child prefab instances.
 		 */
 		void recordInstanceData(const HSceneObject& so, SceneObjectProxy& output,
-			UnorderedMap<UINT32, LinkedInstanceData>& linkedInstanceData)
+			UnorderedMap<u32, LinkedInstanceData>& linkedInstanceData)
 		{
 			struct StackData
 			{
@@ -62,7 +62,7 @@ namespace bs
 
 			output.InstanceData = so->GetInstanceDataInternal();
 			output.Uuid = so->GetUuid();
-			output.LinkId = (UINT32)-1;
+			output.LinkId = (u32)-1;
 
 			while (!todo.empty())
 			{
@@ -82,10 +82,10 @@ namespace bs
 					linkedInstanceData[componentProxy.LinkId] = { componentProxy.InstanceData, componentProxy.Uuid };
 				}
 
-				UINT32 numChildren = curData.So->GetNumChildren();
+				u32 numChildren = curData.So->GetNumChildren();
 				curData.Proxy->Children.resize(numChildren);
 
-				for (UINT32 i = 0; i < numChildren; i++)
+				for (u32 i = 0; i < numChildren; i++)
 				{
 					HSceneObject child = curData.So->GetChild(i);
 
@@ -114,7 +114,7 @@ namespace bs
 		 * @note	Does not recurse into child prefab instances.
 		 */
 		void restoreLinkedInstanceData(const HSceneObject& so, SceneObjectProxy& proxy,
-			UnorderedMap<UINT32, LinkedInstanceData>& linkedInstanceData)
+			UnorderedMap<u32, LinkedInstanceData>& linkedInstanceData)
 		{
 			Stack<HSceneObject> todo;
 			todo.push(so);
@@ -127,7 +127,7 @@ namespace bs
 				Vector<HComponent>& components = current->GetComponentsInternal();
 				for (auto& component : components)
 				{
-					if (component->GetLinkId() != (UINT32)-1)
+					if (component->GetLinkId() != (u32)-1)
 					{
 						auto iterFind = linkedInstanceData.find(component->GetLinkId());
 						if (iterFind != linkedInstanceData.end())
@@ -139,12 +139,12 @@ namespace bs
 					}
 				}
 
-				UINT32 numChildren = current->GetNumChildren();
-				for (UINT32 i = 0; i < numChildren; i++)
+				u32 numChildren = current->GetNumChildren();
+				for (u32 i = 0; i < numChildren; i++)
 				{
 					HSceneObject child = current->GetChild(i);
 
-					if (child->GetLinkId() != (UINT32)-1)
+					if (child->GetLinkId() != (u32)-1)
 					{
 						auto iterFind = linkedInstanceData.find(child->GetLinkId());
 						if (iterFind != linkedInstanceData.end())
@@ -190,24 +190,24 @@ namespace bs
 				StackEntry current = todo.top();
 				todo.pop();
 
-				if (current.Proxy->LinkId == (UINT32)-1)
+				if (current.Proxy->LinkId == (u32)-1)
 				{
 					current.So->SetInstanceDataInternal(current.Proxy->InstanceData);
 					current.So->SetUUIDInternal(current.Proxy->Uuid);
 				}
 
 				Vector<HComponent>& components = current.So->GetComponentsInternal();
-				UINT32 componentProxyIdx = 0;
-				UINT32 numComponentProxies = (UINT32)current.Proxy->Components.size();
+				u32 componentProxyIdx = 0;
+				u32 numComponentProxies = (u32)current.Proxy->Components.size();
 				for (auto& component : components)
 				{
-					if (component->GetLinkId() == (UINT32)-1)
+					if (component->GetLinkId() == (u32)-1)
 					{
 						bool foundInstanceData = false;
 						(void)foundInstanceData;
 						for (; componentProxyIdx < numComponentProxies; componentProxyIdx++)
 						{
-							if (current.Proxy->Components[componentProxyIdx].LinkId != (UINT32)-1)
+							if (current.Proxy->Components[componentProxyIdx].LinkId != (u32)-1)
 								continue;
 
 							component->SetInstanceDataInternal(current.Proxy->Components[componentProxyIdx].InstanceData);
@@ -222,23 +222,23 @@ namespace bs
 					}
 				}
 
-				UINT32 numChildren = current.So->GetNumChildren();
-				UINT32 childProxyIdx = 0;
-				UINT32 numChildProxies = (UINT32)current.Proxy->Children.size();
-				for (UINT32 i = 0; i < numChildren; i++)
+				u32 numChildren = current.So->GetNumChildren();
+				u32 childProxyIdx = 0;
+				u32 numChildProxies = (u32)current.Proxy->Children.size();
+				for (u32 i = 0; i < numChildren; i++)
 				{
 					HSceneObject child = current.So->GetChild(i);
 
-					if (child->GetLinkId() == (UINT32)-1)
+					if (child->GetLinkId() == (u32)-1)
 					{
 						bool foundInstanceData = false;
 						(void)foundInstanceData;
 						for (; childProxyIdx < numChildProxies; childProxyIdx++)
 						{
-							if (current.Proxy->Children[childProxyIdx].LinkId != (UINT32)-1)
+							if (current.Proxy->Children[childProxyIdx].LinkId != (u32)-1)
 								continue;
 
-							assert(current.Proxy->Children[childProxyIdx].LinkId == (UINT32)-1);
+							assert(current.Proxy->Children[childProxyIdx].LinkId == (u32)-1);
 							child->SetInstanceDataInternal(current.Proxy->Children[childProxyIdx].InstanceData);
 							child->SetUUIDInternal(current.Proxy->Children[childProxyIdx].Uuid);
 
@@ -262,7 +262,7 @@ namespace bs
 						if (!child->GetPrefabLinkUUIDInternal().Empty())
 							continue;
 
-						for (UINT32 j = 0; j < numChildProxies; j++)
+						for (u32 j = 0; j < numChildProxies; j++)
 						{
 							if (child->GetLinkId() == current.Proxy->Children[j].LinkId)
 							{
@@ -290,7 +290,7 @@ namespace bs
 
 		// Save IDs, destroy original, create new, restore IDs
 		impl::SceneObjectProxy soProxy;
-		UnorderedMap<UINT32, impl::LinkedInstanceData> linkedInstanceData;
+		UnorderedMap<u32, impl::LinkedInstanceData> linkedInstanceData;
 		impl::recordInstanceData(so, soProxy, linkedInstanceData);
 
 		HSceneObject parent = so->GetParent();
@@ -340,8 +340,8 @@ namespace bs
 			if (!current->mPrefabLinkUUID.Empty())
 				prefabInstanceRoots.push_back(current);
 
-			UINT32 childCount = current->GetNumChildren();
-			for (UINT32 i = 0; i < childCount; i++)
+			u32 childCount = current->GetNumChildren();
+			for (u32 i = 0; i < childCount; i++)
 			{
 				HSceneObject child = current->GetChild(i);
 				todo.push(child);
@@ -355,7 +355,7 @@ namespace bs
 			HSceneObject NewInstance;
 			HSceneObject OriginalParent;
 			SPtr<PrefabDiff> Diff;
-			UINT32 OriginalLinkId;
+			u32 OriginalLinkId;
 		};
 
 		Vector<RestoredPrefabInstance> newPrefabInstanceData;
@@ -377,7 +377,7 @@ namespace bs
 			{
 				// Save IDs, destroy original, create new, restore IDs
 				impl::SceneObjectProxy soProxy;
-				UnorderedMap<UINT32, impl::LinkedInstanceData> linkedInstanceData;
+				UnorderedMap<u32, impl::LinkedInstanceData> linkedInstanceData;
 				impl::recordInstanceData(current, soProxy, linkedInstanceData);
 
 				HSceneObject parent = current->GetParent();
@@ -425,7 +425,7 @@ namespace bs
 
 	void PrefabUtility::GeneratePrefabIds(const HSceneObject& sceneObject)
 	{
-		UINT32 startingId = 0;
+		u32 startingId = 0;
 
 		Stack<HSceneObject> todo;
 		todo.push(sceneObject);
@@ -437,18 +437,18 @@ namespace bs
 
 			for (auto& component : currentSO->mComponents)
 			{
-				if (component->GetLinkId() != (UINT32)-1)
+				if (component->GetLinkId() != (u32)-1)
 					startingId = std::max(component->mLinkId + 1, startingId);
 			}
 
-			UINT32 numChildren = (UINT32)currentSO->GetNumChildren();
-			for (UINT32 i = 0; i < numChildren; i++)
+			u32 numChildren = (u32)currentSO->GetNumChildren();
+			for (u32 i = 0; i < numChildren; i++)
 			{
 				HSceneObject child = currentSO->GetChild(i);
 
 				if (!child->HasFlag(SOF_DontSave))
 				{
-					if (child->GetLinkId() != (UINT32)-1)
+					if (child->GetLinkId() != (u32)-1)
 						startingId = std::max(child->mLinkId + 1, startingId);
 
 					if (child->mPrefabLinkUUID.Empty())
@@ -457,7 +457,7 @@ namespace bs
 			}
 		}
 
-		UINT32 currentId = startingId;
+		u32 currentId = startingId;
 		todo.push(sceneObject);
 
 		while (!todo.empty())
@@ -467,18 +467,18 @@ namespace bs
 
 			for (auto& component : currentSO->mComponents)
 			{
-				if (component->GetLinkId() == (UINT32)-1)
+				if (component->GetLinkId() == (u32)-1)
 					component->mLinkId = currentId++;
 			}
 
-			UINT32 numChildren = (UINT32)currentSO->GetNumChildren();
-			for (UINT32 i = 0; i < numChildren; i++)
+			u32 numChildren = (u32)currentSO->GetNumChildren();
+			for (u32 i = 0; i < numChildren; i++)
 			{
 				HSceneObject child = currentSO->GetChild(i);
 
 				if (!child->HasFlag(SOF_DontSave))
 				{
-					if (child->GetLinkId() == (UINT32)-1)
+					if (child->GetLinkId() == (u32)-1)
 						child->mLinkId = currentId++;
 
 					if(child->mPrefabLinkUUID.Empty())
@@ -500,7 +500,7 @@ namespace bs
 		todo.push(sceneObject);
 
 		if (clearRoot)
-			sceneObject->mLinkId = (UINT32)-1;
+			sceneObject->mLinkId = (u32)-1;
 
 		while (!todo.empty())
 		{
@@ -508,15 +508,15 @@ namespace bs
 			todo.pop();
 
 			for (auto& component : currentSO->mComponents)
-				component->mLinkId = (UINT32)-1;
+				component->mLinkId = (u32)-1;
 
 			if (recursive)
 			{
-				UINT32 numChildren = (UINT32)currentSO->GetNumChildren();
-				for (UINT32 i = 0; i < numChildren; i++)
+				u32 numChildren = (u32)currentSO->GetNumChildren();
+				for (u32 i = 0; i < numChildren; i++)
 				{
 					HSceneObject child = currentSO->GetChild(i);
-					child->mLinkId = (UINT32)-1;
+					child->mLinkId = (u32)-1;
 
 					if (child->mPrefabLinkUUID.Empty())
 						todo.push(child);
@@ -560,8 +560,8 @@ namespace bs
 					current->mPrefabDiff = PrefabDiff::Create(prefabLink->GetRootInternal(), current->GetHandle());
 			}
 
-			UINT32 childCount = current->GetNumChildren();
-			for (UINT32 i = 0; i < childCount; i++)
+			u32 childCount = current->GetNumChildren();
+			for (u32 i = 0; i < childCount; i++)
 			{
 				HSceneObject child = current->GetChild(i);
 				todo.push(child);

@@ -62,7 +62,7 @@ namespace bs
 		 * @param[in]	name	Name of the scene object.
 		 * @param[in]	flags	Optional flags that control object behavior. See SceneObjectFlags.
 		 */
-		static HSceneObject Create(const String& name, UINT32 flags = 0);
+		static HSceneObject Create(const String& name, u32 flags = 0);
 
 		/**
 		 * Destroys this object and any of its held components.
@@ -96,7 +96,7 @@ namespace bs
 		void BreakPrefabLink();
 
 		/**	Checks if the scene object has a specific bit flag set. */
-		bool HasFlag(UINT32 flag) const;
+		bool HasFlag(u32 flag) const;
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -142,15 +142,15 @@ namespace bs
 		void SetPrefabDiffInternal(const SPtr<PrefabDiff>& diff) { mPrefabDiff = diff; }
 
 		/** Recursively enables the provided set of flags on this object and all children. */
-		void SetFlagsInternal(UINT32 flags);
+		void SetFlagsInternal(u32 flags);
 
 		/** Recursively disables the provided set of flags on this object and all children. */
-		void UnsetFlagsInternal(UINT32 flags);
+		void UnsetFlagsInternal(u32 flags);
 
 		/** @} */
 
 	private:
-		SceneObject(const String& name, UINT32 flags);
+		SceneObject(const String& name, u32 flags);
 
 		/**
 		 * Creates a new SceneObject instance, registers it with the game object manager, creates and returns a handle to
@@ -160,7 +160,7 @@ namespace bs
 		 * When creating objects with DontInstantiate flag it is the callers responsibility to manually destroy the object,
 		 * otherwise it will leak.
 		 */
-		static HSceneObject CreateInternal(const String& name, UINT32 flags = 0);
+		static HSceneObject CreateInternal(const String& name, u32 flags = 0);
 
 		/**
 		 * Creates a new SceneObject instance from an existing pointer, registers it with the game object manager, creates
@@ -188,8 +188,8 @@ namespace bs
 		HSceneObject mThisHandle;
 		UUID mPrefabLinkUUID;
 		SPtr<PrefabDiff> mPrefabDiff;
-		UINT32 mPrefabHash = 0;
-		UINT32 mFlags;
+		u32 mPrefabHash = 0;
+		u32 mFlags;
 
 		/************************************************************************/
 		/* 								Transform	                     		*/
@@ -301,7 +301,7 @@ namespace bs
 		 * Returns a hash value that changes whenever a scene objects transform gets updated. It allows you to detect
 		 * changes with the local or world transforms without directly comparing their values with some older state.
 		 */
-		UINT32 GetTransformHash() const { return mDirtyHash; }
+		u32 GetTransformHash() const { return mDirtyHash; }
 
 	private:
 		Transform mLocalTfrm;
@@ -310,8 +310,8 @@ namespace bs
 		mutable Matrix4 mCachedLocalTfrm = Matrix4::IDENTITY;
 		mutable Matrix4 mCachedWorldTfrm = Matrix4::IDENTITY;
 
-		mutable UINT32 mDirtyFlags = 0xFFFFFFFF;
-		mutable UINT32 mDirtyHash = 0;
+		mutable u32 mDirtyFlags = 0xFFFFFFFF;
+		mutable u32 mDirtyHash = 0;
 
 		/**
 		 * Notifies components and child scene object that a transform has been changed.
@@ -363,7 +363,7 @@ namespace bs
 		 * @param[in]	idx	The zero based index of the child.
 		 * @return		SceneObject of the child.
 		 */
-		HSceneObject GetChild(UINT32 idx) const;
+		HSceneObject GetChild(u32 idx) const;
 
 		/**
 		 * Find the index of the specified child. Don't persist this value as it may change whenever you add/remove children.
@@ -374,7 +374,7 @@ namespace bs
 		int IndexOfChild(const HSceneObject& child) const;
 
 		/**	Gets the number of all child GameObjects. */
-		UINT32 GetNumChildren() const { return (UINT32)mChildren.size(); }
+		u32 GetNumChildren() const { return (u32)mChildren.size(); }
 
 		/** Returns the scene this object is part of. Can be null if scene object hasn't been instantiated. */
 		const SPtr<SceneInstance>& GetScene() const;
@@ -509,7 +509,7 @@ namespace bs
 		 * Constructs a new component of the specified type id and adds it to the internal component list. Component must
 		 * have a parameterless constructor.
 		 */
-		HComponent AddComponent(UINT32 typeId);
+		HComponent AddComponent(u32 typeId);
 
 		/**
 		 * Searches for a component with the specific type and returns the first one it finds. Will also return components

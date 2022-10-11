@@ -35,7 +35,7 @@ namespace bs
 			InitializeBaseTypes();
 
 		// Process all classes and fields
-		UINT32 mUniqueTypeId = 1;
+		u32 mUniqueTypeId = 1;
 
 		MonoAssembly* curAssembly = MonoManager::Instance().GetAssembly(assemblyName);
 		if(curAssembly == nullptr)
@@ -109,7 +109,7 @@ namespace bs
 		{
 			SPtr<ManagedSerializableObjectInfo> objInfo = curClassInfo.second;
 
-			UINT32 mUniqueFieldId = 1;
+			u32 mUniqueFieldId = 1;
 
 			const Vector<MonoField*>& fields = objInfo->MMonoClass->GetAllFields();
 			for(auto& field : fields)
@@ -763,7 +763,7 @@ namespace bs
 
 			mBuiltinResourceInfos[type] = info;
 			mBuiltinResourceInfosByTID[info.TypeId] = info;
-			mBuiltinResourceInfosByType[(UINT32)info.ResType] = info;
+			mBuiltinResourceInfosByType[(u32)info.ResType] = info;
 		}
 
 		for(auto& entry : mapping.ReflectableObjects)
@@ -787,7 +787,7 @@ namespace bs
 		return &(iterFind->second);
 	}
 
-	BuiltinComponentInfo* ScriptAssemblyManager::GetBuiltinComponentInfo(UINT32 rttiTypeId)
+	BuiltinComponentInfo* ScriptAssemblyManager::GetBuiltinComponentInfo(u32 rttiTypeId)
 	{
 		auto iterFind = mBuiltinComponentInfosByTID.find(rttiTypeId);
 		if (iterFind == mBuiltinComponentInfosByTID.end())
@@ -805,7 +805,7 @@ namespace bs
 		return &(iterFind->second);
 	}
 
-	BuiltinResourceInfo* ScriptAssemblyManager::GetBuiltinResourceInfo(UINT32 rttiTypeId)
+	BuiltinResourceInfo* ScriptAssemblyManager::GetBuiltinResourceInfo(u32 rttiTypeId)
 	{
 		auto iterFind = mBuiltinResourceInfosByTID.find(rttiTypeId);
 		if (iterFind == mBuiltinResourceInfosByTID.end())
@@ -816,7 +816,7 @@ namespace bs
 
 	BuiltinResourceInfo* ScriptAssemblyManager::GetBuiltinResourceInfo(ScriptResourceType type)
 	{
-		auto iterFind = mBuiltinResourceInfosByType.find((UINT32)type);
+		auto iterFind = mBuiltinResourceInfosByType.find((u32)type);
 		if (iterFind == mBuiltinResourceInfosByType.end())
 			return nullptr;
 

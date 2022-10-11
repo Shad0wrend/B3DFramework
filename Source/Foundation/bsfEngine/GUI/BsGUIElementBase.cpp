@@ -20,7 +20,7 @@ namespace bs
 		DestroyChildElements();
 	}
 
-	void GUIElementBase::SetPosition(INT32 x, INT32 y)
+	void GUIElementBase::SetPosition(i32 x, i32 y)
 	{
 		mDimensions.X = x;
 		mDimensions.Y = y;
@@ -30,7 +30,7 @@ namespace bs
 		MarkLayoutAsDirtyInternal();
 	}
 
-	void GUIElementBase::SetSize(UINT32 width, UINT32 height)
+	void GUIElementBase::SetSize(u32 width, u32 height)
 	{
 		bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
@@ -46,7 +46,7 @@ namespace bs
 		MarkLayoutAsDirtyInternal();
 	}
 
-	void GUIElementBase::SetWidth(UINT32 width)
+	void GUIElementBase::SetWidth(u32 width)
 	{
 		bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
@@ -61,7 +61,7 @@ namespace bs
 		MarkLayoutAsDirtyInternal();
 	}
 
-	void GUIElementBase::SetFlexibleWidth(UINT32 minWidth, UINT32 maxWidth)
+	void GUIElementBase::SetFlexibleWidth(u32 minWidth, u32 maxWidth)
 	{
 		if (maxWidth < minWidth)
 			std::swap(minWidth, maxWidth);
@@ -81,7 +81,7 @@ namespace bs
 		MarkLayoutAsDirtyInternal();
 	}
 
-	void GUIElementBase::SetHeight(UINT32 height)
+	void GUIElementBase::SetHeight(u32 height)
 	{
 		bool isFixedBefore = (mDimensions.Flags & GUIDF_FixedWidth) != 0 && (mDimensions.Flags & GUIDF_FixedHeight) != 0;
 
@@ -96,7 +96,7 @@ namespace bs
 		MarkLayoutAsDirtyInternal();
 	}
 
-	void GUIElementBase::SetFlexibleHeight(UINT32 minHeight, UINT32 maxHeight)
+	void GUIElementBase::SetFlexibleHeight(u32 minHeight, u32 maxHeight)
 	{
 		if (maxHeight < minHeight)
 			std::swap(minHeight, maxHeight);
@@ -290,7 +290,7 @@ namespace bs
 
 	void GUIElementBase::SetActive(bool active)
 	{
-		static const UINT8 ACTIVE_FLAGS = GUIElem_InactiveSelf | GUIElem_HiddenSelf;
+		static const u8 ACTIVE_FLAGS = GUIElem_InactiveSelf | GUIElem_HiddenSelf;
 
 		bool activeSelf = (mFlags & GUIElem_InactiveSelf) == 0;
 		if (activeSelf != active)
@@ -430,7 +430,7 @@ namespace bs
 		return CalculateLayoutSizeRangeInternal();
 	}
 
-	void GUIElementBase::GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, UINT32 numElements,
+	void GUIElementBase::GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements,
 		const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const
 	{
 		assert(mChildren.size() == 0);

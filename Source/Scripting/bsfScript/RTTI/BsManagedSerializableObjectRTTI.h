@@ -30,7 +30,7 @@ namespace bs
 			obj->mObjInfo = val;
 		}
 
-		SPtr<ManagedSerializableFieldDataEntry> GetFieldEntry(ManagedSerializableObject* obj, UINT32 arrayIdx)
+		SPtr<ManagedSerializableFieldDataEntry> GetFieldEntry(ManagedSerializableObject* obj, u32 arrayIdx)
 		{
 			SPtr<ManagedSerializableMemberInfo> field = mSequentialFields[arrayIdx];
 
@@ -40,17 +40,17 @@ namespace bs
 			return ManagedSerializableFieldDataEntry::Create(fieldKey, fieldData);
 		}
 
-		void SetFieldsEntry(ManagedSerializableObject* obj, UINT32 arrayIdx, SPtr<ManagedSerializableFieldDataEntry> val)
+		void SetFieldsEntry(ManagedSerializableObject* obj, u32 arrayIdx, SPtr<ManagedSerializableFieldDataEntry> val)
 		{
 			obj->mCachedData[*val->MKey] = val->MValue;
 		}
 
-		UINT32 GetNumFieldEntries(ManagedSerializableObject* obj)
+		u32 GetNumFieldEntries(ManagedSerializableObject* obj)
 		{
-			return (UINT32)mSequentialFields.size();
+			return (u32)mSequentialFields.size();
 		}
 
-		void SetNumFieldEntries(ManagedSerializableObject* obj, UINT32 numEntries)
+		void SetNumFieldEntries(ManagedSerializableObject* obj, u32 numEntries)
 		{
 			// Do nothing
 		}
@@ -98,7 +98,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_ScriptSerializableObject;
 		}

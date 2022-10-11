@@ -38,10 +38,10 @@ namespace bs
 		Vector2I windowToScreenPos(const Vector2I& windowPos) const override;
 
 		/** @copydoc RenderWindow::resize */
-		void resize(UINT32 width, UINT32 height) override;
+		void resize(u32 width, u32 height) override;
 
 		/** @copydoc RenderWindow::move */
-		void move(INT32 left, INT32 top) override;
+		void move(i32 left, i32 top) override;
 
 		/** @copydoc RenderWindow::hide */
 		void hide() override;
@@ -58,14 +58,14 @@ namespace bs
 		/** @copydoc RenderWindow::restore */
 		void restore() override;
 
-		/** @copydoc RenderWindow::setFullscreen(UINT32, UINT32, float, UINT32) */
-		void setFullscreen(UINT32 width, UINT32 height, float refreshRate = 60.0f, UINT32 monitorIdx = 0) override;
+		/** @copydoc RenderWindow::setFullscreen(u32, u32, float, u32) */
+		void setFullscreen(u32 width, u32 height, float refreshRate = 60.0f, u32 monitorIdx = 0) override;
 
 		/** @copydoc RenderWindow::setFullscreen(const VideoMode&) */
 		void setFullscreen(const VideoMode& videoMode) override;
 
 		/** @copydoc RenderWindow::setWindowed */
-		void setWindowed(UINT32 width, UINT32 height) override;
+		void setWindowed(u32 width, u32 height) override;
 
 		/** @copydoc RenderWindow::getCore */
 		SPtr<ct::MacOSRenderWindow> getCore() const;
@@ -77,7 +77,7 @@ namespace bs
 		friend class VulkanRenderWindowManager;
 		friend class ct::MacOSRenderWindow;
 
-		MacOSRenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId);
+		MacOSRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId);
 
 		/** Changes the display mode (resolution, refresh rate) of the specified output device. */
 		void setDisplayMode(const VideoOutputInfo& output, const VideoMode& mode);
@@ -114,23 +114,23 @@ namespace bs
 		class MacOSRenderWindow : public RenderWindow
 		{
 		public:
-			MacOSRenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 renderWindowId, UINT32 cocoaWindowId);
+			MacOSRenderWindow(const RENDER_WINDOW_DESC& desc, u32 renderWindowId, u32 cocoaWindowId);
 			~MacOSRenderWindow();
 
 			/** @copydoc RenderWindow::move */
-			void move(INT32 left, INT32 top) override;
+			void move(i32 left, i32 top) override;
 
 			/** @copydoc RenderWindow::resize */
-			void resize(UINT32 width, UINT32 height) override;
+			void resize(u32 width, u32 height) override;
 
 			/** @copydoc RenderWindow::setVSync */
-			void setVSync(bool enabled, UINT32 interval = 1) override;
+			void setVSync(bool enabled, u32 interval = 1) override;
 
 			/** Prepares the back buffer for rendering. Should be called before it is bound to the GPU. */
 			void acquireBackBuffer();
 
 			/** @copydoc RenderWindow::swapBuffers */
-			void swapBuffers(UINT32 syncMask) override;
+			void swapBuffers(u32 syncMask) override;
 
 			/** @copydoc RenderWindow::getCustomAttribute */
 			void getCustomAttribute(const String& name, void* pData) const override;
@@ -163,12 +163,12 @@ namespace bs
 			VkColorSpaceKHR mColorSpace;
 			VkFormat mColorFormat;
 			VkFormat mDepthFormat;
-			UINT32 mPresentQueueFamily;
+			u32 mPresentQueueFamily;
 			VulkanSwapChain* mSwapChain = nullptr;
 			VulkanSemaphore* mSemaphoresTemp[BS_MAX_UNIQUE_QUEUES + 1]; // +1 for present semaphore
 			bool mRequiresNewBackBuffer = true;
 			bool mShowOnSwap;
-			UINT32 mCocoaWindowId;
+			u32 mCocoaWindowId;
 
 			RenderWindowProperties mProperties;
 			RenderWindowProperties mSyncedProperties;

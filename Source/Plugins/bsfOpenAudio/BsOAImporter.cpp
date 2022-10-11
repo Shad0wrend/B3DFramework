@@ -26,7 +26,7 @@ namespace bs
 		return lowerCaseExt == u8"wav" || lowerCaseExt == u8"flac" || lowerCaseExt == u8"ogg";
 	}
 
-	bool OAImporter::IsMagicNumberSupported(const UINT8* magicNumPtr, UINT32 numBytes) const
+	bool OAImporter::IsMagicNumberSupported(const u8* magicNumPtr, u32 numBytes) const
 	{
 		// Don't check for magic number, rely on extension
 		return true;
@@ -40,8 +40,8 @@ namespace bs
 	SPtr<Resource> OAImporter::Import(const Path& filePath, SPtr<const ImportOptions> importOptions)
 	{
 		AudioDataInfo info;
-		UINT32 bytesPerSample;
-		UINT32 bufferSize;
+		u32 bytesPerSample;
+		u32 bufferSize;
 		SPtr<MemoryDataStream> sampleStream;
 		{
 			Lock fileLock = FileScheduler::GetLock(filePath);
@@ -79,9 +79,9 @@ namespace bs
 		// If 3D, convert to mono
 		if(clipIO->Is3D && info.NumChannels > 1)
 		{
-			UINT32 numSamplesPerChannel = info.NumSamples / info.NumChannels;
+			u32 numSamplesPerChannel = info.NumSamples / info.NumChannels;
 
-			UINT32 monoBufferSize = numSamplesPerChannel * bytesPerSample;
+			u32 monoBufferSize = numSamplesPerChannel * bytesPerSample;
 			auto monoStream = bs_shared_ptr_new<MemoryDataStream>(monoBufferSize);
 
 			AudioUtility::ConvertToMono(sampleStream->Data(), monoStream->Data(), info.BitDepth, numSamplesPerChannel, info.NumChannels);
@@ -96,7 +96,7 @@ namespace bs
 		// Convert bit depth if needed
 		if(clipIO->BitDepth != info.BitDepth)
 		{
-			UINT32 outBufferSize = info.NumSamples * (clipIO->BitDepth / 8);
+			u32 outBufferSize = info.NumSamples * (clipIO->BitDepth / 8);
 			auto outStream = bs_shared_ptr_new<MemoryDataStream>(outBufferSize);
 
 			AudioUtility::ConvertBitDepth(sampleStream->Data(), info.BitDepth, outStream->Data(), clipIO->BitDepth, info.NumSamples);

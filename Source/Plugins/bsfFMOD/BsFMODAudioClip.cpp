@@ -12,18 +12,18 @@ namespace bs
 		((FMOD::Sound*)sound)->getUserData((void**)&decompressor);
 
 		const FMODAudioClip* clip = decompressor->clip;
-		UINT32 bytesPerSample = (clip->GetBitDepth() / 8);
+		u32 bytesPerSample = (clip->GetBitDepth() / 8);
 
 		assert(dataLen % bytesPerSample == 0);
-		UINT32 numSamples = dataLen / bytesPerSample;
+		u32 numSamples = dataLen / bytesPerSample;
 
 		decompressor->vorbisReader.Seek(decompressor->readPos);
-		UINT32 readSamples = decompressor->vorbisReader.Read((UINT8*)data, numSamples);
+		u32 readSamples = decompressor->vorbisReader.Read((u8*)data, numSamples);
 		while(readSamples < numSamples) // Looping
 		{
 			decompressor->vorbisReader.Seek(0);
 
-			UINT8* writePtr = (UINT8*)data;
+			u8* writePtr = (u8*)data;
 			writePtr += readSamples * bytesPerSample;
 
 			readSamples += decompressor->vorbisReader.Read(writePtr, numSamples - readSamples);
@@ -43,12 +43,12 @@ namespace bs
 		((FMOD::Sound*)sound)->getUserData((void**)&decompressor);
 
 		const FMODAudioClip* clip = decompressor->clip;
-		UINT32 bytesPerSample = (clip->GetBitDepth() / 8);
+		u32 bytesPerSample = (clip->GetBitDepth() / 8);
 
 		switch(posType)
 		{
 		case FMOD_TIMEUNIT_MS:
-			decompressor->readPos = (UINT32)((clip->GetFrequency() * clip->GetNumChannels()) * (position / 1000.0f));
+			decompressor->readPos = (u32)((clip->GetFrequency() * clip->GetNumChannels()) * (position / 1000.0f));
 			break;
 		case FMOD_TIMEUNIT_PCM:
 			decompressor->readPos = clip->GetNumChannels() * position;
@@ -67,7 +67,7 @@ namespace bs
 		return FMOD_OK;
 	}
 
-	FMODAudioClip::FMODAudioClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples, const AUDIO_CLIP_DESC& desc)
+	FMODAudioClip::FMODAudioClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc)
 		:AudioClip(samples, streamSize, numSamples, desc)
 	{ }
 
@@ -90,7 +90,7 @@ namespace bs
 		{
 			mStreamData->Seek(mStreamOffset);
 
-			UINT8* sampleBuffer = (UINT8*)bs_alloc(mStreamSize);
+			u8* sampleBuffer = (u8*)bs_alloc(mStreamSize);
 			mStreamData->Read(sampleBuffer, mStreamSize);
 
 			mSourceStreamData = bs_shared_ptr_new<MemoryDataStream>(sampleBuffer, mStreamSize);
@@ -101,7 +101,7 @@ namespace bs
 		if(!RequiresStreaming())
 		{
 			SPtr<DataStream> stream;
-			UINT32 offset = 0;
+			u32 offset = 0;
 			if (mSourceStreamData != nullptr) // If it's already loaded in memory, use it directly
 				stream = mSourceStreamData;
 			else
@@ -110,7 +110,7 @@ namespace bs
 				offset = mStreamOffset;
 			}
 
-			UINT32 bufferSize = info.numSamples * (info.bitDepth / 8);
+			u32 bufferSize = info.numSamples * (info.bitDepth / 8);
 
 			FMOD_CREATESOUNDEXINFO exInfo;
 			memset(&exInfo, 0, sizeof(exInfo));
@@ -151,7 +151,7 @@ namespace bs
 				exInfo.defaultfrequency = mDesc.frequency;
 			}
 
-			UINT8* sampleBuffer = (UINT8*)bs_stack_alloc(bufferSize);
+			u8* sampleBuffer = (u8*)bs_stack_alloc(bufferSize);
 			stream->Seek(offset);
 			stream->Read(sampleBuffer, bufferSize);
 
@@ -180,7 +180,7 @@ namespace bs
 					mStreamData = mSourceStreamData;
 				else
 				{
-					UINT8* data = (UINT8*)bs_alloc(mStreamSize);
+					u8* data = (u8*)bs_alloc(mStreamSize);
 
 					mStreamData->Seek(mStreamOffset);
 					mStreamData->Read(data, mStreamSize);
@@ -326,7 +326,7 @@ namespace bs
 		sound->release();
 	}
 
-	SPtr<DataStream> FMODAudioClip::GetSourceStream(UINT32& size)
+	SPtr<DataStream> FMODAudioClip::GetSourceStream(u32& size)
 	{
 		size = mSourceStreamSize;
 		mSourceStreamData->Seek(0);

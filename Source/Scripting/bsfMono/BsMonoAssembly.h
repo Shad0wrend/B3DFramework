@@ -99,7 +99,7 @@ namespace bs
 		Path mPath;
 		MonoImage* mMonoImage;
 		::MonoAssembly* mMonoAssembly;
-		UINT8* mDebugData;
+		u8* mDebugData;
 		bool mIsLoaded;
 		bool mIsDependency;
 		

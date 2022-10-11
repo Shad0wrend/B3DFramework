@@ -70,7 +70,7 @@ namespace bs
 		metaData.ScriptClass->AddInternalCall("Internal_Destroy", (void*)&ScriptSceneObject::InternalDestroy);
 	}
 
-	void ScriptSceneObject::InternalCreateInstance(MonoObject* instance, MonoString* name, UINT32 flags)
+	void ScriptSceneObject::InternalCreateInstance(MonoObject* instance, MonoString* name, u32 flags)
 	{
 		HSceneObject sceneObject = SceneObject::Create(MonoUtil::MonoToString(name), flags);
 
@@ -110,7 +110,7 @@ namespace bs
 		return nativeInstance->mSceneObject->GetActive(true);
 	}
 
-	bool ScriptSceneObject::InternalHasFlag(ScriptSceneObject* nativeInstance, bs::UINT32 flag)
+	bool ScriptSceneObject::InternalHasFlag(ScriptSceneObject* nativeInstance, bs::u32 flag)
 	{
 		if (CheckIfDestroyed(nativeInstance))
 			return false;
@@ -167,7 +167,7 @@ namespace bs
 		return ScriptSceneInstance::Create(nativeInstance->mSceneObject->GetScene());
 	}
 
-	void ScriptSceneObject::InternalGetNumChildren(ScriptSceneObject* nativeInstance, UINT32* value)
+	void ScriptSceneObject::InternalGetNumChildren(ScriptSceneObject* nativeInstance, u32* value)
 	{
 		if (!CheckIfDestroyed(nativeInstance))
 			*value = nativeInstance->mSceneObject->GetNumChildren();
@@ -175,12 +175,12 @@ namespace bs
 			*value = 0;
 	}
 
-	MonoObject* ScriptSceneObject::InternalGetChild(ScriptSceneObject* nativeInstance, UINT32 idx)
+	MonoObject* ScriptSceneObject::InternalGetChild(ScriptSceneObject* nativeInstance, u32 idx)
 	{
 		if (CheckIfDestroyed(nativeInstance))
 			return nullptr;
 
-		UINT32 numChildren = nativeInstance->mSceneObject->GetNumChildren();
+		u32 numChildren = nativeInstance->mSceneObject->GetNumChildren();
 		if(idx >= numChildren)
 		{
 			BS_LOG(Warning, Scene, "Attempting to access an out of range SceneObject child. Provided index: \"{0}\". "
@@ -220,10 +220,10 @@ namespace bs
 		String nativeName = MonoUtil::MonoToString(name);
 		Vector<HSceneObject> children = nativeInstance->GetHandle()->FindChildren(nativeName, recursive);
 
-		UINT32 numChildren = (UINT32)children.size();
+		u32 numChildren = (u32)children.size();
 		ScriptArray output = ScriptArray::Create<ScriptSceneObject>(numChildren);
 
-		for (UINT32 i = 0; i < numChildren; i++)
+		for (u32 i = 0; i < numChildren; i++)
 		{
 			HSceneObject child = children[i];
 			ScriptSceneObject* scriptChild = ScriptGameObjectManager::Instance().GetOrCreateScriptSceneObject(child);

@@ -18,11 +18,11 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldKeyRTTI : public RTTIType<ManagedSerializableFieldKey, IReflectable, ManagedSerializableFieldKeyRTTI>
 	{
 	private:
-		UINT16& GetTypeId(ManagedSerializableFieldKey* obj) { return obj->MTypeId; }
-		void SetTypeId(ManagedSerializableFieldKey* obj, UINT16& val) { obj->MTypeId = val; }
+		u16& GetTypeId(ManagedSerializableFieldKey* obj) { return obj->MTypeId; }
+		void SetTypeId(ManagedSerializableFieldKey* obj, u16& val) { obj->MTypeId = val; }
 
-		UINT16& GetFieldId(ManagedSerializableFieldKey* obj) { return obj->MFieldId; }
-		void SetFieldId(ManagedSerializableFieldKey* obj, UINT16& val) { obj->MFieldId = val; }
+		u16& GetFieldId(ManagedSerializableFieldKey* obj) { return obj->MFieldId; }
+		void SetFieldId(ManagedSerializableFieldKey* obj, u16& val) { obj->MFieldId = val; }
 
 	public:
 		ManagedSerializableFieldKeyRTTI()
@@ -37,7 +37,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_SerializableFieldKey;
 		}
@@ -64,7 +64,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_SerializableFieldData;
 		}
@@ -98,7 +98,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataEntry;
 		}
@@ -127,7 +127,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataBool;
 		}
@@ -156,7 +156,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataChar;
 		}
@@ -170,8 +170,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataI8RTTI : public RTTIType<ManagedSerializableFieldDataI8, ManagedSerializableFieldData, ManagedSerializableFieldDataI8RTTI>
 	{
 	private:
-		INT8& GetValue(ManagedSerializableFieldDataI8* obj) { return obj->Value; }
-		void SetValue(ManagedSerializableFieldDataI8* obj, INT8& val) { obj->Value = val; }
+		i8& GetValue(ManagedSerializableFieldDataI8* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataI8* obj, i8& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataI8RTTI()
@@ -185,7 +185,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataI8;
 		}
@@ -199,8 +199,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataU8RTTI : public RTTIType<ManagedSerializableFieldDataU8, ManagedSerializableFieldData, ManagedSerializableFieldDataU8RTTI>
 	{
 	private:
-		UINT8& GetValue(ManagedSerializableFieldDataU8* obj) { return obj->Value; }
-		void SetValue(ManagedSerializableFieldDataU8* obj, UINT8& val) { obj->Value = val; }
+		u8& GetValue(ManagedSerializableFieldDataU8* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataU8* obj, u8& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataU8RTTI()
@@ -214,7 +214,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataU8;
 		}
@@ -228,8 +228,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataI16RTTI : public RTTIType<ManagedSerializableFieldDataI16, ManagedSerializableFieldData, ManagedSerializableFieldDataI16RTTI>
 	{
 	private:
-		INT16& GetValue(ManagedSerializableFieldDataI16* obj) { return obj->Value; }
-		void SetValue(ManagedSerializableFieldDataI16* obj, INT16& val) { obj->Value = val; }
+		i16& GetValue(ManagedSerializableFieldDataI16* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataI16* obj, i16& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataI16RTTI()
@@ -243,7 +243,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataI16;
 		}
@@ -257,8 +257,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataU16RTTI : public RTTIType<ManagedSerializableFieldDataU16, ManagedSerializableFieldData, ManagedSerializableFieldDataU16RTTI>
 	{
 	private:
-		UINT16& GetValue(ManagedSerializableFieldDataU16* obj) { return obj->Value; }
-		void SetValue(ManagedSerializableFieldDataU16* obj, UINT16& val) { obj->Value = val; }
+		u16& GetValue(ManagedSerializableFieldDataU16* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataU16* obj, u16& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataU16RTTI()
@@ -272,7 +272,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataU16;
 		}
@@ -286,8 +286,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataI32RTTI : public RTTIType<ManagedSerializableFieldDataI32, ManagedSerializableFieldData, ManagedSerializableFieldDataI32RTTI>
 	{
 	private:
-		INT32& GetValue(ManagedSerializableFieldDataI32* obj) { return obj->Value; }
-		void SetValue(ManagedSerializableFieldDataI32* obj, INT32& val) { obj->Value = val; }
+		i32& GetValue(ManagedSerializableFieldDataI32* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataI32* obj, i32& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataI32RTTI()
@@ -301,7 +301,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataI32;
 		}
@@ -315,8 +315,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataU32RTTI : public RTTIType<ManagedSerializableFieldDataU32, ManagedSerializableFieldData, ManagedSerializableFieldDataU32RTTI>
 	{
 	private:
-		UINT32& GetValue(ManagedSerializableFieldDataU32* obj) { return obj->Value; }
-		void SetValue(ManagedSerializableFieldDataU32* obj, UINT32& val) { obj->Value = val; }
+		u32& GetValue(ManagedSerializableFieldDataU32* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataU32* obj, u32& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataU32RTTI()
@@ -330,7 +330,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataU32;
 		}
@@ -344,8 +344,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataI64RTTI : public RTTIType<ManagedSerializableFieldDataI64, ManagedSerializableFieldData, ManagedSerializableFieldDataI64RTTI>
 	{
 	private:
-		INT64& GetValue(ManagedSerializableFieldDataI64* obj) { return obj->Value; }
-		void SetValue(ManagedSerializableFieldDataI64* obj, INT64& val) { obj->Value = val; }
+		i64& GetValue(ManagedSerializableFieldDataI64* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataI64* obj, i64& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataI64RTTI()
@@ -359,7 +359,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataI64;
 		}
@@ -373,8 +373,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataU64RTTI : public RTTIType<ManagedSerializableFieldDataU64, ManagedSerializableFieldData, ManagedSerializableFieldDataU64RTTI>
 	{
 	private:
-		UINT64& GetValue(ManagedSerializableFieldDataU64* obj) { return obj->Value; }
-		void SetValue(ManagedSerializableFieldDataU64* obj, UINT64& val) { obj->Value = val; }
+		u64& GetValue(ManagedSerializableFieldDataU64* obj) { return obj->Value; }
+		void SetValue(ManagedSerializableFieldDataU64* obj, u64& val) { obj->Value = val; }
 
 	public:
 		ManagedSerializableFieldDataU64RTTI()
@@ -388,7 +388,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataU64;
 		}
@@ -417,7 +417,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataFloat;
 		}
@@ -446,7 +446,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataDouble;
 		}
@@ -475,7 +475,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataString;
 		}
@@ -504,7 +504,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataResourceRef;
 		}
@@ -533,7 +533,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataGameObjectRef;
 		}
@@ -562,7 +562,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataReflectableRef;
 		}
@@ -591,7 +591,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataObject;
 		}
@@ -620,7 +620,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataArray;
 		}
@@ -649,7 +649,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataList;
 		}
@@ -678,7 +678,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_SerializableFieldDataDictionary;
 		}

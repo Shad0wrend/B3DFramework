@@ -15,20 +15,20 @@ namespace bs
 	class BS_EXPORT GUIFixedSpace : public GUIElementBase
 	{
 	public:
-		GUIFixedSpace(UINT32 size)
+		GUIFixedSpace(u32 size)
 			:mSize(size)
 		{ }
 
 		~GUIFixedSpace();
 
 		/**	Returns the size of the space in pixels. */
-		UINT32 GetSize() const { return mSize; }
+		u32 GetSize() const { return mSize; }
 
 		/**	Changes the size of the space to the specified value, in pixels. */
-		void SetSize(UINT32 size) { if (mSize != size) { mSize = size; MarkLayoutAsDirtyInternal(); } }
+		void SetSize(u32 size) { if (mSize != size) { mSize = size; MarkLayoutAsDirtyInternal(); } }
 
 		/**	Creates a new fixed space GUI element. */
-		static GUIFixedSpace* Create(UINT32 size);
+		static GUIFixedSpace* Create(u32 size);
 
 		/**	Destroys the space and removes it from its parent. */
 		static void Destroy(GUIFixedSpace* space);
@@ -57,7 +57,7 @@ namespace bs
 
 		/** @} */
 	protected:
-		UINT32 mSize;
+		u32 mSize;
 	};
 
 	/**

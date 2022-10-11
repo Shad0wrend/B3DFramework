@@ -26,8 +26,8 @@ namespace bs { namespace ct
 	struct RenderQueueElement
 	{
 		const RenderElement* RenderElem = nullptr;
-		UINT32 PassIdx = 0;
-		UINT32 TechniqueIdx = 0;
+		u32 PassIdx = 0;
+		u32 TechniqueIdx = 0;
 		bool ApplyPass = true;
 	};
 
@@ -41,12 +41,12 @@ namespace bs { namespace ct
 		/**	Data used for renderable element sorting. Represents a single pass for a single mesh. */
 		struct SortableElement
 		{
-			UINT32 SeqIdx;
-			INT32 Priority;
+			u32 SeqIdx;
+			i32 Priority;
 			float DistFromCamera;
-			UINT32 ShaderId;
-			UINT32 TechniqueIdx;
-			UINT32 PassIdx;
+			u32 ShaderId;
+			u32 TechniqueIdx;
+			u32 PassIdx;
 		};
 
 	public:
@@ -61,7 +61,7 @@ namespace bs { namespace ct
 		 * @param[in]	techniqueIdx	Index of the technique within @p element's material that's to be used to render the
 		 *								element with.
 		 */
-		void Add(const RenderElement* element, float distFromCamera, UINT32 techniqueIdx);
+		void Add(const RenderElement* element, float distFromCamera, u32 techniqueIdx);
 
 		/**	Clears all render operations from the queue. */
 		void Clear();
@@ -80,16 +80,16 @@ namespace bs { namespace ct
 
 	protected:
 		/**	Callback used for sorting elements with no material grouping. */
-		static bool ElementSorterNoGroup(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup);
+		static bool ElementSorterNoGroup(u32 aIdx, u32 bIdx, const Vector<SortableElement>& lookup);
 
 		/**	Callback used for sorting elements with preferred material grouping. */
-		static bool ElementSorterPreferGroup(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup);
+		static bool ElementSorterPreferGroup(u32 aIdx, u32 bIdx, const Vector<SortableElement>& lookup);
 
 		/**	Callback used for sorting elements with material grouping after sorting. */
-		static bool ElementSorterPreferDistance(UINT32 aIdx, UINT32 bIdx, const Vector<SortableElement>& lookup);
+		static bool ElementSorterPreferDistance(u32 aIdx, u32 bIdx, const Vector<SortableElement>& lookup);
 
 		Vector<SortableElement> mSortableElements;
-		Vector<UINT32> mSortableElementIdx;
+		Vector<u32> mSortableElementIdx;
 		Vector<const RenderElement*> mElements;
 
 		Vector<RenderQueueElement> mSortedRenderElements;

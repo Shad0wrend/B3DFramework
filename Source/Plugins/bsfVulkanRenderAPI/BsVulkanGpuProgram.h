@@ -36,7 +36,7 @@ namespace bs { namespace ct
 		 * Returns the shader module for the specified device. If program device mask doesn't include the provided device,
 		 * null is returned.
 		 */
-		VulkanShaderModule* GetShaderModule(UINT32 deviceIdx) const { return mModules[deviceIdx]; }
+		VulkanShaderModule* GetShaderModule(u32 deviceIdx) const { return mModules[deviceIdx]; }
 
 		/** Returns the name of the program entry point function. */
 		const String& GetEntryPoint() const { return mEntryPoint; }
@@ -61,7 +61,7 @@ namespace bs { namespace ct
 	 * Version of the compiler used for compiling Vulkan GPU programs. Tick this whenever the compiler updates in order
 	 * to force bytecode to rebuild.
 	 */
-	static constexpr UINT32 VULKAN_COMPILER_VERSION = 1;
+	static constexpr u32 VULKAN_COMPILER_VERSION = 1;
 
 	/** Identifier of the compiler used for compiling MoltenVK GPU programs. */
 	static constexpr const char* MOLTENVK_COMPILER_ID = "MoltenVK";
@@ -70,7 +70,7 @@ namespace bs { namespace ct
 	 * Version of the compiler used for compiling MoltenVK GPU programs. Tick this whenever the compiler updates in order
 	 * to force bytecode to rebuild.
 	 */
-	static constexpr UINT32 MOLTENVK_COMPILER_VERSION = 1;
+	static constexpr u32 MOLTENVK_COMPILER_VERSION = 1;
 
 	/** @} */
 }}

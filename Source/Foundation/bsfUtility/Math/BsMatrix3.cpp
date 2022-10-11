@@ -9,14 +9,14 @@ namespace bs
 	const Matrix3 Matrix3::ZERO{BS_ZERO()};
 	const Matrix3 Matrix3::IDENTITY{BS_IDENTITY()};
 
-	Vector3 Matrix3::GetColumn(UINT32 col) const
+	Vector3 Matrix3::GetColumn(u32 col) const
 	{
 		assert(col < 3);
 
 		return Vector3(m[0][col],m[1][col], m[2][col]);
 	}
 
-	void Matrix3::SetColumn(UINT32 col, const Vector3& vec)
+	void Matrix3::SetColumn(u32 col, const Vector3& vec)
 	{
 		assert(col < 3);
 
@@ -34,9 +34,9 @@ namespace bs
 
 	bool Matrix3::operator== (const Matrix3& rhs) const
 	{
-		for (UINT32 row = 0; row < 3; row++)
+		for (u32 row = 0; row < 3; row++)
 		{
-			for (UINT32 col = 0; col < 3; col++)
+			for (u32 col = 0; col < 3; col++)
 			{
 				if (m[row][col] != rhs.m[row][col])
 					return false;
@@ -54,9 +54,9 @@ namespace bs
 	Matrix3 Matrix3::operator+ (const Matrix3& rhs) const
 	{
 		Matrix3 sum;
-		for (UINT32 row = 0; row < 3; row++)
+		for (u32 row = 0; row < 3; row++)
 		{
-			for (UINT32 col = 0; col < 3; col++)
+			for (u32 col = 0; col < 3; col++)
 			{
 				sum.m[row][col] = m[row][col] + rhs.m[row][col];
 			}
@@ -68,9 +68,9 @@ namespace bs
 	Matrix3 Matrix3::operator- (const Matrix3& rhs) const
 	{
 		Matrix3 diff;
-		for (UINT32 row = 0; row < 3; row++)
+		for (u32 row = 0; row < 3; row++)
 		{
-			for (UINT32 col = 0; col < 3; col++)
+			for (u32 col = 0; col < 3; col++)
 			{
 				diff.m[row][col] = m[row][col] -
 					rhs.m[row][col];
@@ -83,9 +83,9 @@ namespace bs
 	Matrix3 Matrix3::operator* (const Matrix3& rhs) const
 	{
 		Matrix3 prod;
-		for (UINT32 row = 0; row < 3; row++)
+		for (u32 row = 0; row < 3; row++)
 		{
-			for (UINT32 col = 0; col < 3; col++)
+			for (u32 col = 0; col < 3; col++)
 			{
 				prod.m[row][col] = m[row][0]*rhs.m[0][col] +
 					m[row][1]*rhs.m[1][col] + m[row][2]*rhs.m[2][col];
@@ -98,9 +98,9 @@ namespace bs
 	Matrix3 Matrix3::operator- () const
 	{
 		Matrix3 neg;
-		for (UINT32 row = 0; row < 3; row++)
+		for (u32 row = 0; row < 3; row++)
 		{
-			for (UINT32 col = 0; col < 3; col++)
+			for (u32 col = 0; col < 3; col++)
 				neg[row][col] = -m[row][col];
 		}
 
@@ -110,9 +110,9 @@ namespace bs
 	Matrix3 Matrix3::operator* (float rhs) const
 	{
 		Matrix3 prod;
-		for (UINT32 row = 0; row < 3; row++)
+		for (u32 row = 0; row < 3; row++)
 		{
-			for (UINT32 col = 0; col < 3; col++)
+			for (u32 col = 0; col < 3; col++)
 				prod[row][col] = rhs*m[row][col];
 		}
 
@@ -122,9 +122,9 @@ namespace bs
 	Matrix3 operator* (float lhs, const Matrix3& rhs)
 	{
 		Matrix3 prod;
-		for (UINT32 row = 0; row < 3; row++)
+		for (u32 row = 0; row < 3; row++)
 		{
-			for (UINT32 col = 0; col < 3; col++)
+			for (u32 col = 0; col < 3; col++)
 				prod[row][col] = lhs*rhs.m[row][col];
 		}
 
@@ -134,7 +134,7 @@ namespace bs
 	Vector3 Matrix3::Multiply(const Vector3& vec) const
 	{
 		Vector3 prod;
-		for (UINT32 row = 0; row < 3; row++)
+		for (u32 row = 0; row < 3; row++)
 		{
 			prod[row] =
 				m[row][0]*vec[0] +
@@ -148,9 +148,9 @@ namespace bs
 	Matrix3 Matrix3::Transpose() const
 	{
 		Matrix3 matTranspose;
-		for (UINT32 row = 0; row < 3; row++)
+		for (u32 row = 0; row < 3; row++)
 		{
-			for (UINT32 col = 0; col < 3; col++)
+			for (u32 col = 0; col < 3; col++)
 				matTranspose[row][col] = m[col][row];
 		}
 
@@ -175,9 +175,9 @@ namespace bs
 			return false;
 
 		float invDet = 1.0f/det;
-		for (UINT32 row = 0; row < 3; row++)
+		for (u32 row = 0; row < 3; row++)
 		{
-			for (UINT32 col = 0; col < 3; col++)
+			for (u32 col = 0; col < 3; col++)
 				matInv[row][col] *= invDet;
 		}
 
@@ -340,7 +340,7 @@ namespace bs
 		matA[1][0] = -sin*matA[1][1];
 		matA[1][1] *= cos;
 
-		UINT32 row;
+		u32 row;
 		for (row = 0; row < 3; row++)
 		{
 			tmp0 = matR[0][row];
@@ -364,7 +364,7 @@ namespace bs
 		matA[0][2] = -sin*matA[1][2];
 		matA[1][2] *= cos;
 
-		UINT32 col;
+		u32 col;
 		for (col = 0; col < 3; col++)
 		{
 			tmp0 = matL[col][0];
@@ -420,7 +420,7 @@ namespace bs
 
 	void Matrix3::SingularValueDecomposition(Matrix3& matL, Vector3& matS, Matrix3& matR) const
 	{
-		UINT32 row, col;
+		u32 row, col;
 
 		Matrix3 mat = *this;
 		Bidiagonalize(mat, matL, matR);
@@ -617,8 +617,8 @@ namespace bs
 
 		if (fDet < 0.0f)
 		{
-			for (UINT32 row = 0; row < 3; row++)
-				for (UINT32 col = 0; col < 3; col++)
+			for (u32 row = 0; row < 3; row++)
+				for (u32 col = 0; col < 3; col++)
 					matQ[row][col] = -matQ[row][col];
 		}
 
@@ -997,7 +997,7 @@ namespace bs
 		mat.Tridiagonal(eigenValues, subDiag);
 		mat.QLAlgorithm(eigenValues, subDiag);
 
-		for (UINT32 i = 0; i < 3; i++)
+		for (u32 i = 0; i < 3; i++)
 		{
 			eigenVectors[i][0] = mat[0][i];
 			eigenVectors[i][1] = mat[1][i];

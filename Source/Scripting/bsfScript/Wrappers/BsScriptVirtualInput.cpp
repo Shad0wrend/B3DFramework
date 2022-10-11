@@ -54,7 +54,7 @@ namespace bs
 		OnButtonHeldConn.Disconnect();
 	}
 
-	void ScriptVirtualInput::OnButtonDown(const VirtualButton& btn, UINT32 deviceIdx)
+	void ScriptVirtualInput::OnButtonDown(const VirtualButton& btn, u32 deviceIdx)
 	{
 		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
@@ -63,7 +63,7 @@ namespace bs
 		MonoUtil::InvokeThunk(OnButtonDownThunk, virtualButton, deviceIdx);
 	}
 
-	void ScriptVirtualInput::OnButtonUp(const VirtualButton& btn, UINT32 deviceIdx)
+	void ScriptVirtualInput::OnButtonUp(const VirtualButton& btn, u32 deviceIdx)
 	{
 		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
@@ -72,7 +72,7 @@ namespace bs
 		MonoUtil::InvokeThunk(OnButtonUpThunk, virtualButton, deviceIdx);
 	}
 
-	void ScriptVirtualInput::OnButtonHeld(const VirtualButton& btn, UINT32 deviceIdx)
+	void ScriptVirtualInput::OnButtonHeld(const VirtualButton& btn, u32 deviceIdx)
 	{
 		if (PlayInEditor::Instance().GetState() != PlayInEditorState::Playing)
 			return;
@@ -99,22 +99,22 @@ namespace bs
 		VirtualInput::Instance().SetConfiguration(inputConfig->GetInternalValue());
 	}
 
-	bool ScriptVirtualInput::InternalIsButtonHeld(VirtualButton* btn, UINT32 deviceIdx)
+	bool ScriptVirtualInput::InternalIsButtonHeld(VirtualButton* btn, u32 deviceIdx)
 	{
 		return VirtualInput::Instance().IsButtonHeld(*btn, deviceIdx);
 	}
 
-	bool ScriptVirtualInput::InternalIsButtonDown(VirtualButton* btn, UINT32 deviceIdx)
+	bool ScriptVirtualInput::InternalIsButtonDown(VirtualButton* btn, u32 deviceIdx)
 	{
 		return VirtualInput::Instance().IsButtonDown(*btn, deviceIdx);
 	}
 
-	bool ScriptVirtualInput::InternalIsButtonUp(VirtualButton* btn, UINT32 deviceIdx)
+	bool ScriptVirtualInput::InternalIsButtonUp(VirtualButton* btn, u32 deviceIdx)
 	{
 		return VirtualInput::Instance().IsButtonUp(*btn, deviceIdx);
 	}
 
-	float ScriptVirtualInput::InternalGetAxisValue(VirtualAxis* axis, UINT32 deviceIdx)
+	float ScriptVirtualInput::InternalGetAxisValue(VirtualAxis* axis, u32 deviceIdx)
 	{
 		return VirtualInput::Instance().GetAxisValue(*axis, deviceIdx);
 	}

@@ -10,12 +10,12 @@
 
 namespace bs { namespace ct
 {
-	UINT32 GLSLGpuProgram::sVertexShaderCount = 0;
-	UINT32 GLSLGpuProgram::sFragmentShaderCount = 0;
-	UINT32 GLSLGpuProgram::sGeometryShaderCount = 0;
-	UINT32 GLSLGpuProgram::sDomainShaderCount = 0;
-	UINT32 GLSLGpuProgram::sHullShaderCount = 0;
-	UINT32 GLSLGpuProgram::sComputeShaderCount = 0;
+	u32 GLSLGpuProgram::sVertexShaderCount = 0;
+	u32 GLSLGpuProgram::sFragmentShaderCount = 0;
+	u32 GLSLGpuProgram::sGeometryShaderCount = 0;
+	u32 GLSLGpuProgram::sDomainShaderCount = 0;
+	u32 GLSLGpuProgram::sHullShaderCount = 0;
+	u32 GLSLGpuProgram::sComputeShaderCount = 0;
 
 	bool checkForGLSLError(const GLuint programObj, String& outErrorMsg)
 	{
@@ -134,11 +134,11 @@ namespace bs { namespace ct
 			Vector<GLchar*> lines;
 
 			const char* versionStr = "#version ";
-			UINT32 versionStrLen = (UINT32)strlen(versionStr);
+			u32 versionStrLen = (u32)strlen(versionStr);
 
-			UINT32 lineLength = 0;
-			INT32 versionLineNum = -1;
-			for (UINT32 i = 0; i < source.size(); i++)
+			u32 lineLength = 0;
+			i32 versionLineNum = -1;
+			for (u32 i = 0; i < source.size(); i++)
 			{
 				if (source[i] == '\n' || source[i] == '\r')
 				{
@@ -153,7 +153,7 @@ namespace bs { namespace ct
 					if(versionLineNum == -1 && lineLength >= versionStrLen)
 					{
 						bool isEqual = true;
-						for (UINT32 j = 0; j < versionStrLen; ++j)
+						for (u32 j = 0; j < versionStrLen; ++j)
 						{
 							if(lineData[j] != versionStr[j])
 							{
@@ -163,7 +163,7 @@ namespace bs { namespace ct
 						}
 
 						if (isEqual)
-							versionLineNum = (INT32)lines.size();
+							versionLineNum = (i32)lines.size();
 					}
 
 					lines.push_back(lineData);
@@ -177,7 +177,7 @@ namespace bs { namespace ct
 
 			if (lineLength > 0)
 			{
-				UINT32 end = (UINT32)source.size() - 1;
+				u32 end = (u32)source.size() - 1;
 				assert(sizeof(source[end]) == sizeof(GLchar));
 
 				GLchar* lineData = (GLchar*)bs_stack_alloc(sizeof(GLchar) * (lineLength + 1));
@@ -196,7 +196,7 @@ namespace bs { namespace ct
 				strcat(versionLine, VERSION_CHARS);
 				strcat(versionLine, "\n");
 
-				UINT32 length = (UINT32)strlen(versionLine) + 1;
+				u32 length = (u32)strlen(versionLine) + 1;
 
 				GLchar* extraLineData = (GLchar*)bs_stack_alloc(length);
 				memcpy(extraLineData, versionLine, length);
@@ -216,11 +216,11 @@ namespace bs { namespace ct
 					versionDefine
 				};
 
-			UINT32 numExtraLines = sizeof(EXTRA_LINES) / sizeof(EXTRA_LINES[0]);
-			UINT32 extraLineOffset = versionLineNum != -1 ? versionLineNum + 1 : 0;
-			for (UINT32 i = 0; i < numExtraLines; i++)
+			u32 numExtraLines = sizeof(EXTRA_LINES) / sizeof(EXTRA_LINES[0]);
+			u32 extraLineOffset = versionLineNum != -1 ? versionLineNum + 1 : 0;
+			for (u32 i = 0; i < numExtraLines; i++)
 			{
-				UINT32 length = (UINT32)strlen(EXTRA_LINES[i]) + 1;
+				u32 length = (u32)strlen(EXTRA_LINES[i]) + 1;
 
 				GLchar* extraLineData = (GLchar*)bs_stack_alloc(length);
 				memcpy(extraLineData, EXTRA_LINES[i], length);
@@ -233,7 +233,7 @@ namespace bs { namespace ct
 			for(auto& entry : lines)
 				codeStream << entry;
 
-			for (INT32 i = numInsertedLines - 1; i >= 0; i--)
+			for (i32 i = numInsertedLines - 1; i >= 0; i--)
 				bs_stack_free(lines[extraLineOffset + i]);
 
 			if (numInsertedLines > 0)

@@ -47,7 +47,7 @@ namespace bs { namespace ct
 		 * @param[in]		outputIdx	Index in the output buffer at which to write the output coefficients to.
 		 */
 		virtual void FilterCubemapForIrradiance(const SPtr<Texture>& cubemap, const SPtr<Texture>& output,
-			UINT32 outputIdx) const = 0;
+			u32 outputIdx) const = 0;
 
 		/**
 		 * Scales a cubemap and outputs it in the destination texture, using hardware acceleration. If both textures are the
@@ -58,19 +58,19 @@ namespace bs { namespace ct
 		 * @param[in]   dst				Desination texture to output the scaled data to. Must be usable as a render target.
 		 * @param[in]   dstMip			Determines which mip level of the destination texture to scale.
 		 */
-		virtual void ScaleCubemap(const SPtr<Texture>& src, UINT32 srcMip, const SPtr<Texture>& dst, UINT32 dstMip) const = 0;
+		virtual void ScaleCubemap(const SPtr<Texture>& src, u32 srcMip, const SPtr<Texture>& dst, u32 dstMip) const = 0;
 
 
 		/** Returns the size of the texture required to store the provided number of SH coefficient sets. */
-		static Vector2I GetShCoeffTextureSize(UINT32 numCoeffSets, UINT32 shOrder);
+		static Vector2I GetShCoeffTextureSize(u32 numCoeffSets, u32 shOrder);
 		
 		/**
 		 * Determines the position of a set of coefficients in the coefficient texture, depending on the coefficient index.
 		 */
-		static Vector2I GetShCoeffXyFromIdx(UINT32 idx, UINT32 shOrder);
+		static Vector2I GetShCoeffXyFromIdx(u32 idx, u32 shOrder);
 
-		static const UINT32 REFLECTION_CUBEMAP_SIZE;
-		static const UINT32 IRRADIANCE_CUBEMAP_SIZE;
+		static const u32 REFLECTION_CUBEMAP_SIZE;
+		static const u32 IRRADIANCE_CUBEMAP_SIZE;
 	};
 
 	/**	Provides easy access to IBLUtility. */

@@ -22,7 +22,7 @@ namespace bs { namespace ct
 		return ret;
 	}
 
-	SPtr<GpuParamBlockBuffer> NullHardwareBufferManager::CreateGpuParamBlockBufferInternal(UINT32 size,
+	SPtr<GpuParamBlockBuffer> NullHardwareBufferManager::CreateGpuParamBlockBufferInternal(u32 size,
 		GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 	{
 		SPtr<GpuParamBlockBuffer> paramBlockBufferPtr = bs_shared_ptr_new<NullGpuParamBlockBuffer>(size, usage, deviceMask);
@@ -74,7 +74,7 @@ namespace bs { namespace ct
 		GpuBuffer::Initialize();
 	}
 
-	NullGpuParamBlockBuffer::NullGpuParamBlockBuffer(UINT32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+	NullGpuParamBlockBuffer::NullGpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 		:GpuParamBlockBuffer(size, usage, deviceMask)
 	{ }
 
@@ -84,11 +84,11 @@ namespace bs { namespace ct
 		GpuParamBlockBuffer::Initialize();
 	}
 
-	NullHardwareBuffer::NullHardwareBuffer(GpuBufferUsage usage, UINT32 elementCount, UINT32 elementSize)
+	NullHardwareBuffer::NullHardwareBuffer(GpuBufferUsage usage, u32 elementCount, u32 elementSize)
 		: HardwareBuffer(elementCount * elementSize, usage, GDF_DEFAULT)
 	{ }
 
-	void* NullHardwareBuffer::Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx)
+	void* NullHardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx)
 	{
 		assert(mStagingBuffer == nullptr);
 

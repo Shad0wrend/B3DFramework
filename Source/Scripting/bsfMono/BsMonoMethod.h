@@ -57,10 +57,10 @@ namespace bs
 		MonoClass* GetReturnType() const;
 
 		/**	Returns the number of parameters the method expects. */
-		UINT32 GetNumParameters() const;
+		u32 GetNumParameters() const;
 
 		/**	Returns the type of the method parameter at the specified index. */
-		MonoClass* GetParameterType(UINT32 paramIdx) const;
+		MonoClass* GetParameterType(u32 paramIdx) const;
 
 		/**	Returns true if the method doesn't require a class instance. */
 		bool IsStatic() const;
@@ -89,7 +89,7 @@ namespace bs
 
 		mutable MonoClass* mCachedReturnType;
 		mutable MonoClass** mCachedParameters;
-		mutable UINT32 mCachedNumParameters;
+		mutable u32 mCachedNumParameters;
 		mutable bool mIsStatic;
 		mutable bool mHasCachedSignature;
 	};

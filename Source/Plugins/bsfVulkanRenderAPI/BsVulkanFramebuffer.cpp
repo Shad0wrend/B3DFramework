@@ -8,7 +8,7 @@
 
 namespace bs { namespace ct
 {
-	UINT32 VulkanFramebuffer::sNextValidId = 1;
+	u32 VulkanFramebuffer::sNextValidId = 1;
 
 	VulkanFramebuffer::VulkanFramebuffer(VulkanResourceManager* owner, VulkanRenderPass* renderPass,
 		const VULKAN_FRAMEBUFFER_DESC& desc)
@@ -20,8 +20,8 @@ namespace bs { namespace ct
 		VkImageView attachmentViews[BS_MAX_MULTIPLE_RENDER_TARGETS + 1];
 		VkFramebufferCreateInfo framebufferCI;
 
-		UINT32 attachmentIdx = 0;
-		for(UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		u32 attachmentIdx = 0;
+		for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			if (desc.Color[i].Image == nullptr)
 				continue;

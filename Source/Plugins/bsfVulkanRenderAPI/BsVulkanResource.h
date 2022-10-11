@@ -56,7 +56,7 @@ namespace bs { namespace ct
 		 * @param[in]	queueFamily		Family of the queue the resource is being used in.
 		 * @param[in]	useFlags		Flags that determine in what way is the resource being used.
 		 */
-		void NotifyUsed(UINT32 globalQueueIdx, UINT32 queueFamily, VulkanAccessFlags useFlags);
+		void NotifyUsed(u32 globalQueueIdx, u32 queueFamily, VulkanAccessFlags useFlags);
 
 		/**
 		 * Notifies the resource that it is no longer used by on the GPU. This makes the resource usable on other command
@@ -67,7 +67,7 @@ namespace bs { namespace ct
 		 * @param[in]	globalQueueIdx	Global index of the queue that finished using the resource.
 		 * @param[in]	useFlags		Use flags that specify how was the resource being used.
 		 */
-		virtual void NotifyDone(UINT32 globalQueueIdx, VulkanAccessFlags useFlags);
+		virtual void NotifyDone(u32 globalQueueIdx, VulkanAccessFlags useFlags);
 
 		/**
 		 * Notifies the resource that it is no longer queued on the command buffer. This is similar to notifyDone(), but
@@ -102,7 +102,7 @@ namespace bs { namespace ct
 		 * @note	If resource concurrency is enabled, then this value has no meaning as the resource can be used on
 		 *			multiple queue families at once.
 		 */
-		UINT32 GetQueueFamily() const { Lock lock(mMutex); return mQueueFamily; }
+		u32 GetQueueFamily() const { Lock lock(mMutex); return mQueueFamily; }
 
 		/**
 		 * Returns a mask that has bits set for every queue that the resource is currently used (read or written) by.
@@ -111,13 +111,13 @@ namespace bs { namespace ct
 		 * @return					Bitmask of which queues is the resource used on. This has the same format as sync mask
 		 *							created by CommandSyncMask.
 		 */
-		UINT32 GetUseInfo(VulkanAccessFlags useFlags) const;
+		u32 GetUseInfo(VulkanAccessFlags useFlags) const;
 
 		/** Returns on how many command buffers is the buffer currently used on. */
-		UINT32 GetUseCount() const { return mNumUsedHandles; }
+		u32 GetUseCount() const { return mNumUsedHandles; }
 
 		/** Returns on how many command buffers is the buffer currently bound on. */
-		UINT32 GetBoundCount() const { return mNumBoundHandles; }
+		u32 GetBoundCount() const { return mNumBoundHandles; }
 
 		/** Returns true if the resource is only allowed to be used by a single queue family at once. */
 		bool IsExclusive() const { Lock lock(mMutex); return mState != State::Shared; }
@@ -140,17 +140,17 @@ namespace bs { namespace ct
 			Destroyed
 		};
 
-		static const UINT32 MAX_UNIQUE_QUEUES = BS_MAX_QUEUES_PER_TYPE * GQT_COUNT;
+		static const u32 MAX_UNIQUE_QUEUES = BS_MAX_QUEUES_PER_TYPE * GQT_COUNT;
 
 		VulkanResourceManager* mOwner;
-		UINT32 mQueueFamily;
+		u32 mQueueFamily;
 		State mState;
 
-		UINT8 mReadUses[MAX_UNIQUE_QUEUES];
-		UINT8 mWriteUses[MAX_UNIQUE_QUEUES];
+		u8 mReadUses[MAX_UNIQUE_QUEUES];
+		u8 mWriteUses[MAX_UNIQUE_QUEUES];
 		
-		UINT32 mNumUsedHandles;
-		UINT32 mNumBoundHandles;
+		u32 mNumUsedHandles;
+		u32 mNumBoundHandles;
 
 		mutable Mutex mMutex;
 	};

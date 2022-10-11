@@ -39,16 +39,16 @@ namespace bs
 			 * @param[in]	desc		Character description from the font.
 			 * @return					How many pixels did the added character expand the word by.
 			 */
-			UINT32 AddChar(UINT32 charIdx, const CharDesc& desc);
+			u32 AddChar(u32 charIdx, const CharDesc& desc);
 
 			/** Adds a space to the word. Word must have previously have been declared as a "spacer". */
-			void AddSpace(UINT32 spaceWidth);
+			void AddSpace(u32 spaceWidth);
 
 			/**	Returns the width of the word in pixels. */
-			UINT32 GetWidth() const { return mWidth; }
+			u32 GetWidth() const { return mWidth; }
 
 			/**	Returns height of the word in pixels. */
-			UINT32 GetHeight() const { return mHeight; }
+			u32 GetHeight() const { return mHeight; }
 
 			/**
 			 * Calculates new width of the word if we were to add the provided character, without actually adding it.
@@ -56,7 +56,7 @@ namespace bs
 			 * @param[in]	desc	Character description from the font.
 			 * @return				Width of the word in pixels with the character appended to it.
 			 */
-			UINT32 CalcWidthWithChar(const CharDesc& desc);
+			u32 CalcWidthWithChar(const CharDesc& desc);
 
 			/**
 			 * Returns true if word is a spacer. Spacers contain just a space of a certain length with no actual characters.
@@ -64,13 +64,13 @@ namespace bs
 			bool IsSpacer() const { return mSpacer; }
 
 			/**	Returns the number of characters in the word. */
-			UINT32 GetNumChars() const { return mLastChar == nullptr ? 0 : (mCharsEnd - mCharsStart + 1); }
+			u32 GetNumChars() const { return mLastChar == nullptr ? 0 : (mCharsEnd - mCharsStart + 1); }
 
 			/**	Returns the index of the starting character in the word. */
-			UINT32 GetCharsStart() const { return mCharsStart; }
+			u32 GetCharsStart() const { return mCharsStart; }
 
 			/**	Returns the index of the last character in the word. */
-			UINT32 GetCharsEnd() const { return mCharsEnd; }
+			u32 GetCharsEnd() const { return mCharsEnd; }
 
 			/**
 			 * Calculates width of the character by which it would expand the width of the word if it was added to it.
@@ -79,17 +79,17 @@ namespace bs
 			 * @param[in]	desc		Character description from the font.
 			 * @return 					How many pixels would the added character expand the word by.
 			 */
-			static UINT32 CalcCharWidth(const CharDesc* prevDesc, const CharDesc& desc);
+			static u32 CalcCharWidth(const CharDesc* prevDesc, const CharDesc& desc);
 
 		private:
-			UINT32 mCharsStart, mCharsEnd;
-			UINT32 mWidth;
-			UINT32 mHeight;
+			u32 mCharsStart, mCharsEnd;
+			u32 mWidth;
+			u32 mHeight;
 
 			const CharDesc* mLastChar;
 
 			bool mSpacer;
-			UINT32 mSpaceWidth;
+			u32 mSpaceWidth;
 		};
 
 		/**
@@ -99,7 +99,7 @@ namespace bs
 		 */
 		struct PageInfo
 		{
-			UINT32 NumQuads;
+			u32 NumQuads;
 			HTexture Texture;
 		};
 
@@ -113,13 +113,13 @@ namespace bs
 		{
 		public:
 			/**	Returns width of the line in pixels. */
-			UINT32 GetWidth() const { return mWidth; }
+			u32 GetWidth() const { return mWidth; }
 
 			/**	Returns height of the line in pixels. */
-			UINT32 GetHeight() const { return mHeight; }
+			u32 GetHeight() const { return mHeight; }
 
 			/**	Returns an offset used to separate two lines. */
-			UINT32 GetYOffset() const { return mTextData->GetLineHeight(); }
+			u32 GetYOffset() const { return mTextData->GetLineHeight(); }
 
 			/**
 			 * Calculates new width of the line if we were to add the provided character, without actually adding it.
@@ -127,7 +127,7 @@ namespace bs
 			 * @param[in]	desc	Character description from the font.
 			 * @return				Width of the line in pixels with the character appended to it.
 			 */
-			UINT32 CalcWidthWithChar(const CharDesc& desc);
+			u32 CalcWidthWithChar(const CharDesc& desc);
 
 			/**
 			 * Fills the vertex/uv/index buffers for the specified page, with all the character data needed for rendering.
@@ -141,13 +141,13 @@ namespace bs
 			 * @param[in]	size		Total number of quads that can fit into the specified buffers.
 			 * @return					Number of quads that were written.
 			 */
-			UINT32 FillBuffer(UINT32 page, Vector2* vertices, Vector2* uvs, UINT32* indexes, UINT32 offset, UINT32 size) const;
+			u32 FillBuffer(u32 page, Vector2* vertices, Vector2* uvs, u32* indexes, u32 offset, u32 size) const;
 
 			/**	Checks are we at a word boundary (meaning the next added character will start a new word). */
 			bool IsAtWordBoundary() const;
 
 			/**	Returns the total number of characters on this line. */
-			UINT32 GetNumChars() const;
+			u32 GetNumChars() const;
 
 			/**
 			 * Query if this line was created explicitly due to a newline character. As opposed to a line that was created
@@ -163,10 +163,10 @@ namespace bs
 			 * @param[in]	charIdx		Sequential index of the character in the original string.
 			 * @param[in]	charDesc	Character description from the font.
 			 */
-			void Add(UINT32 charIdx, const CharDesc& charDesc);
+			void Add(u32 charIdx, const CharDesc& charDesc);
 
 			/**	Appends a space to the line. */
-			void AddSpace(UINT32 spaceWidth);
+			void AddSpace(u32 spaceWidth);
 
 			/**
 			 * Adds a new word to the line.
@@ -175,7 +175,7 @@ namespace bs
 			 *							well.
 			 * @param[in]	word		Description of the word.
 			 */
-			void AddWord(UINT32 wordIdx, const TextWord& word);
+			void AddWord(u32 wordIdx, const TextWord& word);
 
 			/** Initializes the line. Must be called after construction. */
 			void Init(TextDataBase* textData);
@@ -192,17 +192,17 @@ namespace bs
 			bool IsEmpty() const { return mIsEmpty; }
 
 			/**	Removes last word from the line and returns its sequential index. */
-			UINT32 RemoveLastWord();
+			u32 RemoveLastWord();
 
 			/**	Calculates the line width and height in pixels. */
 			void CalculateBounds();
 
 		private:
 			TextDataBase* mTextData;
-			UINT32 mWordsStart, mWordsEnd;
+			u32 mWordsStart, mWordsEnd;
 
-			UINT32 mWidth;
-			UINT32 mHeight;
+			u32 mWidth;
+			u32 mHeight;
 
 			bool mIsEmpty;
 			bool mHasNewline;
@@ -217,33 +217,33 @@ namespace bs
 		 *
 		 * After this object is constructed you may call various getter methods to get needed information.
 		 */
-		BS_CORE_EXPORT TextDataBase(const U32String& text, const HFont& font, UINT32 fontSize,
-			UINT32 width = 0, UINT32 height = 0, bool wordWrap = false, bool wordBreak = true);
+		BS_CORE_EXPORT TextDataBase(const U32String& text, const HFont& font, u32 fontSize,
+			u32 width = 0, u32 height = 0, bool wordWrap = false, bool wordBreak = true);
 		BS_CORE_EXPORT virtual ~TextDataBase() = default;
 
 		/**	Returns the number of lines that were generated. */
-		BS_CORE_EXPORT UINT32 GetNumLines() const { return mNumLines; }
+		BS_CORE_EXPORT u32 GetNumLines() const { return mNumLines; }
 
 		/**	Returns the number of font pages references by the used characters. */
-		BS_CORE_EXPORT UINT32 GetNumPages() const { return mNumPageInfos; }
+		BS_CORE_EXPORT u32 GetNumPages() const { return mNumPageInfos; }
 
 		/**	Returns the height of a line in pixels. */
-		BS_CORE_EXPORT UINT32 GetLineHeight() const;
+		BS_CORE_EXPORT u32 GetLineHeight() const;
 
 		/**	Gets information describing a single line at the specified index. */
-		BS_CORE_EXPORT const TextLine& GetLine(UINT32 idx) const { return mLines[idx]; }
+		BS_CORE_EXPORT const TextLine& GetLine(u32 idx) const { return mLines[idx]; }
 
 		/**	Returns font texture for the provided page index.  */
-		BS_CORE_EXPORT const HTexture& GetTextureForPage(UINT32 page) const;
+		BS_CORE_EXPORT const HTexture& GetTextureForPage(u32 page) const;
 
 		/**	Returns the number of quads used by all the characters in the provided page. */
-		BS_CORE_EXPORT UINT32 GetNumQuadsForPage(UINT32 page) const { return mPageInfos[page].NumQuads; }
+		BS_CORE_EXPORT u32 GetNumQuadsForPage(u32 page) const { return mPageInfos[page].NumQuads; }
 
 		/**	Returns the width of the actual text in pixels. */
-		BS_CORE_EXPORT UINT32 GetWidth() const;
+		BS_CORE_EXPORT u32 GetWidth() const;
 
 		/**	Returns the height of the actual text in pixels. */
-		BS_CORE_EXPORT UINT32 GetHeight() const;
+		BS_CORE_EXPORT u32 GetHeight() const;
 
 	protected:
 		/**
@@ -258,35 +258,35 @@ namespace bs
 		 *
 		 * @note	Must be called after text data has been constructed and is in the temporary buffers.
 		 */
-		BS_CORE_EXPORT void GeneratePersistentData(const U32String& text, UINT8* buffer, UINT32& size,
+		BS_CORE_EXPORT void GeneratePersistentData(const U32String& text, u8* buffer, u32& size,
 			bool freeTemporary = true);
 	private:
 		friend class TextLine;
 
 		/**	Returns Y offset that determines the line on which the characters are placed. In pixels. */
-		INT32 GetBaselineOffset() const;
+		i32 GetBaselineOffset() const;
 
 		/**	Returns the width of a single space in pixels. */
-		UINT32 GetSpaceWidth() const;
+		u32 GetSpaceWidth() const;
 
 		/** Gets a description of a single character referenced by its sequential index based on the original string. */
-		const CharDesc& GetChar(UINT32 idx) const { return *mChars[idx]; }
+		const CharDesc& GetChar(u32 idx) const { return *mChars[idx]; }
 
 		/** Gets a description of a single word referenced by its sequential index based on the original string. */
-		const TextWord& GetWord(UINT32 idx) const { return mWords[idx]; }
+		const TextWord& GetWord(u32 idx) const { return mWords[idx]; }
 
 	protected:
 		const CharDesc** mChars;
-		UINT32 mNumChars;
+		u32 mNumChars;
 
 		TextWord* mWords;
-		UINT32 mNumWords;
+		u32 mNumWords;
 
 		TextLine* mLines;
-		UINT32 mNumLines;
+		u32 mNumLines;
 
 		PageInfo* mPageInfos;
-		UINT32 mNumPageInfos;
+		u32 mNumPageInfos;
 
 		HFont mFont;
 		SPtr<const FontBitmap> mFontData;
@@ -306,31 +306,31 @@ namespace bs
 			 * @param[in]	spacer	Specify true if the word is only to contain spaces. (Spaces are considered a special
 			 *						type of word).
 			 */
-			UINT32 AllocWord(bool spacer);
+			u32 AllocWord(bool spacer);
 
 			/** Allocates a new line and adds it to the buffer. Returns index of the line in the line buffer. */
-			UINT32 AllocLine(TextDataBase* textData);
+			u32 AllocLine(TextDataBase* textData);
 
 			/**
 			 * Increments the count of characters for the referenced page, and optionally creates page info if it doesn't
 			 * already exist.
 			 */
-			void AddCharToPage(UINT32 page, const FontBitmap& fontData);
+			void AddCharToPage(u32 page, const FontBitmap& fontData);
 
 			/**	Resets all allocation counters, but doesn't actually release memory. */
 			void DeallocAll();
 
 			TextWord* WordBuffer;
-			UINT32 WordBufferSize;
-			UINT32 NextFreeWord;
+			u32 WordBufferSize;
+			u32 NextFreeWord;
 
 			TextLine* LineBuffer;
-			UINT32 LineBufferSize;
-			UINT32 NextFreeLine;
+			u32 LineBufferSize;
+			u32 NextFreeLine;
 
 			PageInfo* PageBuffer;
-			UINT32 PageBufferSize;
-			UINT32 NextFreePageInfo;
+			u32 PageBufferSize;
+			u32 NextFreePageInfo;
 		};
 
 		static BS_THREADLOCAL BufferData* MemBuffer;
@@ -351,15 +351,15 @@ namespace bs
 	{
 	public:
 		/** @copydoc TextDataBase::TextDataBase */
-		TextData(const U32String& text, const HFont& font, UINT32 fontSize,
-			UINT32 width = 0, UINT32 height = 0, bool wordWrap = false, bool wordBreak = true)
+		TextData(const U32String& text, const HFont& font, u32 fontSize,
+			u32 width = 0, u32 height = 0, bool wordWrap = false, bool wordBreak = true)
 			:TextDataBase(text, font, fontSize, width, height, wordWrap, wordBreak), mData(nullptr)
 		{
-			UINT32 totalBufferSize = 0;
+			u32 totalBufferSize = 0;
 			GeneratePersistentData(text, nullptr, totalBufferSize);
 
-			mData = (UINT8*)bs_alloc<Alloc>(totalBufferSize);
-			GeneratePersistentData(text, (UINT8*)mData, totalBufferSize);
+			mData = (u8*)bs_alloc<Alloc>(totalBufferSize);
+			GeneratePersistentData(text, (u8*)mData, totalBufferSize);
 		}
 
 		~TextData()
@@ -369,7 +369,7 @@ namespace bs
 		}
 
 	private:
-		UINT8* mData;
+		u8* mData;
 	};
 
 	/** @} */

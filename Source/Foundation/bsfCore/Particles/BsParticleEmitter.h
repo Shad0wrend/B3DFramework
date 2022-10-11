@@ -80,7 +80,7 @@ namespace bs
 		 * @return					Index at which the first of the particles was inserted, with other particles following
 		 *							sequentially.
 		 */
-		virtual UINT32 SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count, const ParticleSystemState& state) const = 0;
+		virtual u32 SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const = 0;
 
 		/** @} */
 	protected:
@@ -177,7 +177,7 @@ namespace bs
 		 */
 
 		/** @copydoc ParticleEmitterShape::SpawnInternal */
-		UINT32 SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+		u32 SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 			const ParticleSystemState& state) const override;
 
 		/** Spawns a single particle randomly, generating its position and normal. */
@@ -252,7 +252,7 @@ namespace bs
 		 */
 
 		/** @copydoc ParticleEmitterShape::SpawnInternal */
-		UINT32 SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+		u32 SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 			const ParticleSystemState& state) const override;
 
 		/** Spawns a single particle, generating its position and normal. */
@@ -321,7 +321,7 @@ namespace bs
 		 */
 
 		/** @copydoc ParticleEmitterShape::SpawnInternal */
-		UINT32 SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+		u32 SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 			const ParticleSystemState& state) const override;
 
 		/** Spawns a single particle, generating its position and normal. */
@@ -396,7 +396,7 @@ namespace bs
 		 */
 
 		/** @copydoc ParticleEmitterShape::SpawnInternal */
-		UINT32 SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+		u32 SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 			const ParticleSystemState& state) const override;
 
 		/** Spawns a single particle, generating its position and normal. */
@@ -460,7 +460,7 @@ namespace bs
 		 */
 
 		/** @copydoc ParticleEmitterShape::SpawnInternal */
-		UINT32 SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+		u32 SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 			const ParticleSystemState& state) const override;
 
 		/** Spawns a single particle randomly, generating its position and normal. */
@@ -539,7 +539,7 @@ namespace bs
 		 */
 
 		/** @copydoc ParticleEmitterShape::SpawnInternal */
-		UINT32 SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+		u32 SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 			const ParticleSystemState& state) const override;
 
 		/** Spawns a single particle randomly, generating its position and normal. */
@@ -600,7 +600,7 @@ namespace bs
 		 */
 
 		/** @copydoc ParticleEmitterShape::SpawnInternal */
-		UINT32 SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+		u32 SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 			const ParticleSystemState& state) const override;
 
 		/** Spawns a single particle, generating its position and normal. */
@@ -662,7 +662,7 @@ namespace bs
 		struct TriangleWeight
 		{
 			float CumulativeWeight;
-			UINT32 Indices[3];
+			u32 Indices[3];
 		};
 
 	public:
@@ -673,7 +673,7 @@ namespace bs
 		void Calculate(const MeshData& meshData);
 
 		/** Find a random triangle on the mesh and outputs its vertex indices. */
-		void GetTriangle(const Random& random, std::array<UINT32, 3>& indices) const;
+		void GetTriangle(const Random& random, std::array<u32, 3>& indices) const;
 
 	private:
 		Vector<TriangleWeight> mWeights;
@@ -698,38 +698,38 @@ namespace bs
 		 * Returns the next sequential vertex on the mesh and increments the internal counter so the next vertex is
 		 * returned on the following call. Loops around if end is reached. Returns vertex position, normal and index.
 		 */
-		void GetSequentialVertex(Vector3& position, Vector3& normal, UINT32& idx) const;
+		void GetSequentialVertex(Vector3& position, Vector3& normal, u32& idx) const;
 
 		/** Randomly picks a vertex on the mesh and returns its position, normal and index. */
-		void GetRandomVertex(const Random& random, Vector3& position, Vector3& normal, UINT32& idx) const;
+		void GetRandomVertex(const Random& random, Vector3& position, Vector3& normal, u32& idx) const;
 
 		/** Randomly picks an edge on the mesh and returns the position, normal and indices of its vertices. */
 		void GetRandomEdge(const Random& random, std::array<Vector3, 2>& position, std::array<Vector3, 2>& normal,
-			std::array<UINT32, 2>& idx) const;
+			std::array<u32, 2>& idx) const;
 
 		/** Randomly picks an triangle on the mesh and returns the position, normal and indices of its vertices. */
 		void GetRandomTriangle(const Random& random, std::array<Vector3, 3>& position, std::array<Vector3, 3>& normal,
-			std::array<UINT32, 3>& idx) const;
+			std::array<u32, 3>& idx) const;
 
 		/** Evaluates a blend matrix for a vertex at the specified index. */
-		Matrix4 GetBlendMatrix(const Matrix4* bones, UINT32 vertexIdx) const;
+		Matrix4 GetBlendMatrix(const Matrix4* bones, u32 vertexIdx) const;
 
 	private:
 		MeshWeightedTriangles mWeightedTriangles;
 
-		UINT8* mVertices = nullptr;
-		UINT8* mNormals = nullptr;
-		UINT32 mNumVertices = 0;
-		UINT32 mVertexStride = 0;
+		u8* mVertices = nullptr;
+		u8* mNormals = nullptr;
+		u32 mNumVertices = 0;
+		u32 mVertexStride = 0;
 		bool m32BitNormals = true;
 
-		UINT8* mBoneIndices = nullptr;
-		UINT8* mBoneWeights = nullptr;
+		u8* mBoneIndices = nullptr;
+		u8* mBoneWeights = nullptr;
 
 		SPtr<MeshData> mMeshData;
 
 		// Transient
-		mutable UINT32 mNextSequentialIdx = 0;
+		mutable u32 mNextSequentialIdx = 0;
 	};
 
 	/**
@@ -766,7 +766,7 @@ namespace bs
 		 */
 
 		/** @copydoc ParticleEmitterShape::SpawnInternal */
-		UINT32 SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+		u32 SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 			const ParticleSystemState& state) const override;
 
 		/** @} */
@@ -841,7 +841,7 @@ namespace bs
 		 */
 
 		/** @copydoc ParticleEmitterShape::SpawnInternal */
-		UINT32 SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+		u32 SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 			const ParticleSystemState& state) const override;
 
 		/** @} */
@@ -865,7 +865,7 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(m:Particles,pl:true) ParticleBurst
 	{
 		ParticleBurst() = default;
-		ParticleBurst(float time, FloatDistribution count, UINT32 cycles = 1, float interval = 1.0f)
+		ParticleBurst(float time, FloatDistribution count, u32 cycles = 1, float interval = 1.0f)
 			:Time(time), Count(std::move(count)), Cycles(cycles), Interval(interval)
 		{ }
 
@@ -879,7 +879,7 @@ namespace bs
 		 * Determines how many times to trigger the burst. If 0 the burst will trigger infinitely. Use @p interval to
 		 * to control the time between each cycle.
 		 */
-		UINT32 Cycles = 1;
+		u32 Cycles = 1;
 
 		/** Controls how much time needs to pass before triggering another burst cycle, in seconds. */
 		float Interval = 1.0f;
@@ -1066,7 +1066,7 @@ namespace bs
 		 *								unifomly distributed in this time range.
 		 * @return						Actual number of spawned particles.
 		 */
-		UINT32 Spawn(UINT32 count, Random& random, const ParticleSystemState& state, ParticleSet& set, bool spacing) const;
+		u32 Spawn(u32 count, Random& random, const ParticleSystemState& state, ParticleSet& set, bool spacing) const;
 
 		// User-visible properties
 		SPtr<ParticleEmitterShape> mShape;

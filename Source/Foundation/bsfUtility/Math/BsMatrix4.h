@@ -78,7 +78,7 @@ namespace bs
 		}
 
 		/** Returns a row of the matrix. */
-		Vector4& operator[] (UINT32 row)
+		Vector4& operator[] (u32 row)
 		{
 			assert(row < 4);
 
@@ -86,7 +86,7 @@ namespace bs
 		}
 
 		/** Returns a row of the matrix. */
-		const Vector4& operator[] (UINT32 row) const
+		const Vector4& operator[] (u32 row) const
 		{
 			assert(row < 4);
 
@@ -200,7 +200,7 @@ namespace bs
 		}
 
 		/** Returns the specified column of the matrix, ignoring the last row. */
-		Vector3 GetColumn(UINT32 col) const
+		Vector3 GetColumn(u32 col) const
 		{
 			assert(col < 4);
 
@@ -208,7 +208,7 @@ namespace bs
 		}
 
 		/** Returns the specified column of the matrix. */
-		Vector4 GetColumn4D(UINT32 col) const
+		Vector4 GetColumn4D(u32 col) const
 		{
 			assert(col < 4);
 
@@ -225,7 +225,7 @@ namespace bs
 		}
 
 		/** Assigns the vector to a column of the matrix. */
-		void SetColumn(UINT32 idx, const Vector4& column)
+		void SetColumn(u32 idx, const Vector4& column)
 		{
 			m[0][idx] = column.X;
 			m[1][idx] = column.Y;
@@ -234,7 +234,7 @@ namespace bs
 		}
 
 		/** Assigns the vector to a row of the matrix. */
-		void SetRow(UINT32 idx, const Vector4& column)
+		void SetRow(u32 idx, const Vector4& column)
 		{
 			m[idx][0] = column.X;
 			m[idx][1] = column.Y;

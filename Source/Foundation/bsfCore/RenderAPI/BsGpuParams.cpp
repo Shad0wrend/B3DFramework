@@ -29,7 +29,7 @@ namespace bs
 		return mParamInfo->GetParamDesc(type);
 	}
 
-	UINT32 GpuParamsBase::GetDataParamSize(GpuProgramType type, const String& name) const
+	u32 GpuParamsBase::GetDataParamSize(GpuProgramType type, const String& name) const
 	{
 		GpuParamDataDesc* desc = GetParamDesc(type, name);
 		if(desc != nullptr)
@@ -138,28 +138,28 @@ namespace bs
 	TGpuParams<Core>::TGpuParams(const SPtr<GpuPipelineParamInfoBase>& paramInfo)
 		: GpuParamsBase(paramInfo)
 	{
-		UINT32 numParamBlocks = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::ParamBlock);
-		UINT32 numTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Texture);
-		UINT32 numStorageTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
-		UINT32 numBuffers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Buffer);
-		UINT32 numSamplers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::SamplerState);
+		u32 numParamBlocks = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::ParamBlock);
+		u32 numTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Texture);
+		u32 numStorageTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
+		u32 numBuffers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Buffer);
+		u32 numSamplers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::SamplerState);
 		
-		UINT32 paramBlocksSize = sizeof(ParamsBufferType) * numParamBlocks;
-		UINT32 texturesSize = (sizeof(TextureType) + sizeof(TextureSurface)) * numTextures;
-		UINT32 loadStoreTexturesSize = (sizeof(TextureType) + sizeof(TextureSurface)) * numStorageTextures;
-		UINT32 buffersSize = sizeof(BufferType) * numBuffers;
-		UINT32 samplerStatesSize = sizeof(SamplerType) * numSamplers;
+		u32 paramBlocksSize = sizeof(ParamsBufferType) * numParamBlocks;
+		u32 texturesSize = (sizeof(TextureType) + sizeof(TextureSurface)) * numTextures;
+		u32 loadStoreTexturesSize = (sizeof(TextureType) + sizeof(TextureSurface)) * numStorageTextures;
+		u32 buffersSize = sizeof(BufferType) * numBuffers;
+		u32 samplerStatesSize = sizeof(SamplerType) * numSamplers;
 
-		UINT32 totalSize = paramBlocksSize + texturesSize + loadStoreTexturesSize + buffersSize + samplerStatesSize;
+		u32 totalSize = paramBlocksSize + texturesSize + loadStoreTexturesSize + buffersSize + samplerStatesSize;
 
-		UINT8* data = (UINT8*)bs_alloc(totalSize);
+		u8* data = (u8*)bs_alloc(totalSize);
 		mParamBlockBuffers = (ParamsBufferType*)data;
-		for (UINT32 i = 0; i < numParamBlocks; i++)
+		for (u32 i = 0; i < numParamBlocks; i++)
 			new (&mParamBlockBuffers[i]) ParamsBufferType();
 
 		data += paramBlocksSize;
 		mSampledTextureData = (TextureData*)data;
-		for (UINT32 i = 0; i < numTextures; i++)
+		for (u32 i = 0; i < numTextures; i++)
 		{
 			new (&mSampledTextureData[i].Texture) TextureType();
 			new (&mSampledTextureData[i].Surface) TextureSurface(0, 0, 0, 0);
@@ -167,7 +167,7 @@ namespace bs
 
 		data += texturesSize;
 		mLoadStoreTextureData = (TextureData*)data;
-		for (UINT32 i = 0; i < numStorageTextures; i++)
+		for (u32 i = 0; i < numStorageTextures; i++)
 		{
 			new (&mLoadStoreTextureData[i].Texture) TextureType();
 			new (&mLoadStoreTextureData[i].Surface) TextureSurface(0, 0, 0, 0);
@@ -175,12 +175,12 @@ namespace bs
 
 		data += loadStoreTexturesSize;
 		mBuffers = (BufferType*)data;
-		for (UINT32 i = 0; i < numBuffers; i++)
+		for (u32 i = 0; i < numBuffers; i++)
 			new (&mBuffers[i]) BufferType();
 
 		data += buffersSize;
 		mSamplerStates = (SamplerType*)data;
-		for (UINT32 i = 0; i < numSamplers; i++)
+		for (u32 i = 0; i < numSamplers; i++)
 			new (&mSamplerStates[i]) SamplerType();
 
 		data += samplerStatesSize;
@@ -189,31 +189,31 @@ namespace bs
 	template<bool Core>
 	TGpuParams<Core>::~TGpuParams()
 	{
-		UINT32 numParamBlocks = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::ParamBlock);
-		UINT32 numTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Texture);
-		UINT32 numStorageTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
-		UINT32 numBuffers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Buffer);
-		UINT32 numSamplers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::SamplerState);
+		u32 numParamBlocks = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::ParamBlock);
+		u32 numTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Texture);
+		u32 numStorageTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
+		u32 numBuffers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Buffer);
+		u32 numSamplers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::SamplerState);
 
-		for (UINT32 i = 0; i < numParamBlocks; i++)
+		for (u32 i = 0; i < numParamBlocks; i++)
 			mParamBlockBuffers[i].~ParamsBufferType();
 
-		for (UINT32 i = 0; i < numTextures; i++)
+		for (u32 i = 0; i < numTextures; i++)
 		{
 			mSampledTextureData[i].Texture.~TextureType();
 			mSampledTextureData[i].Surface.~TextureSurface();
 		}
 
-		for (UINT32 i = 0; i <  numStorageTextures; i++)
+		for (u32 i = 0; i <  numStorageTextures; i++)
 		{
 			mLoadStoreTextureData[i].Texture.~TextureType();
 			mLoadStoreTextureData[i].Surface.~TextureSurface();
 		}
 
-		for (UINT32 i = 0; i < numBuffers; i++)
+		for (u32 i = 0; i < numBuffers; i++)
 			mBuffers[i].~BufferType();
 
-		for (UINT32 i = 0; i < numSamplers; i++)
+		for (u32 i = 0; i < numSamplers; i++)
 			mSamplerStates[i].~SamplerType();
 
 		// Everything is allocated in a single block, so it's enough to free the first element
@@ -221,10 +221,10 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParams<Core>::SetParamBlockBuffer(UINT32 set, UINT32 slot, const ParamsBufferType& paramBlockBuffer)
+	void TGpuParams<Core>::SetParamBlockBuffer(u32 set, u32 slot, const ParamsBufferType& paramBlockBuffer)
 	{
-		UINT32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::ParamBlock, set, slot);
-		if (globalSlot == (UINT32)-1)
+		u32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::ParamBlock, set, slot);
+		if (globalSlot == (u32)-1)
 			return;
 
 		mParamBlockBuffers[globalSlot] = paramBlockBuffer;
@@ -255,7 +255,7 @@ namespace bs
 	template<bool Core>
 	void TGpuParams<Core>::SetParamBlockBuffer(const String& name, const ParamsBufferType& paramBlockBuffer)
 	{
-		for (UINT32 i = 0; i < 6; i++)
+		for (u32 i = 0; i < 6; i++)
 		{
 			const SPtr<GpuParamDesc>& paramDescs = mParamInfo->GetParamDesc((GpuProgramType)i);
 			if (paramDescs == nullptr)
@@ -397,74 +397,74 @@ namespace bs
 	}
 
 	template<bool Core>
-	typename TGpuParams<Core>::ParamsBufferType TGpuParams<Core>::GetParamBlockBuffer(UINT32 set, UINT32 slot) const
+	typename TGpuParams<Core>::ParamsBufferType TGpuParams<Core>::GetParamBlockBuffer(u32 set, u32 slot) const
 	{
-		UINT32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::ParamBlock, set, slot);
-		if (globalSlot == (UINT32)-1)
+		u32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::ParamBlock, set, slot);
+		if (globalSlot == (u32)-1)
 			return nullptr;
 
 		return mParamBlockBuffers[globalSlot];
 	}
 
 	template<bool Core>
-	typename TGpuParams<Core>::TextureType TGpuParams<Core>::GetTexture(UINT32 set, UINT32 slot) const
+	typename TGpuParams<Core>::TextureType TGpuParams<Core>::GetTexture(u32 set, u32 slot) const
 	{
-		UINT32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::Texture, set, slot);
-		if (globalSlot == (UINT32)-1)
+		u32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::Texture, set, slot);
+		if (globalSlot == (u32)-1)
 			return TGpuParams<Core>::TextureType();
 
 		return mSampledTextureData[globalSlot].Texture;
 	}
 
 	template<bool Core>
-	typename TGpuParams<Core>::TextureType TGpuParams<Core>::GetLoadStoreTexture(UINT32 set, UINT32 slot) const
+	typename TGpuParams<Core>::TextureType TGpuParams<Core>::GetLoadStoreTexture(u32 set, u32 slot) const
 	{
-		UINT32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::LoadStoreTexture, set, slot);
-		if (globalSlot == (UINT32)-1)
+		u32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::LoadStoreTexture, set, slot);
+		if (globalSlot == (u32)-1)
 			return TGpuParams<Core>::TextureType();
 
 		return mLoadStoreTextureData[globalSlot].Texture;
 	}
 
 	template<bool Core>
-	typename TGpuParams<Core>::BufferType TGpuParams<Core>::GetBuffer(UINT32 set, UINT32 slot) const
+	typename TGpuParams<Core>::BufferType TGpuParams<Core>::GetBuffer(u32 set, u32 slot) const
 	{
-		UINT32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::Buffer, set, slot);
-		if (globalSlot == (UINT32)-1)
+		u32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::Buffer, set, slot);
+		if (globalSlot == (u32)-1)
 			return nullptr;
 
 		return mBuffers[globalSlot];
 	}
 
 	template<bool Core>
-	typename TGpuParams<Core>::SamplerType TGpuParams<Core>::GetSamplerState(UINT32 set, UINT32 slot) const
+	typename TGpuParams<Core>::SamplerType TGpuParams<Core>::GetSamplerState(u32 set, u32 slot) const
 	{
-		UINT32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::SamplerState, set, slot);
-		if (globalSlot == (UINT32)-1)
+		u32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::SamplerState, set, slot);
+		if (globalSlot == (u32)-1)
 			return nullptr;
 
 		return mSamplerStates[globalSlot];
 	}
 
 	template<bool Core>
-	const TextureSurface& TGpuParams<Core>::GetTextureSurface(UINT32 set, UINT32 slot) const
+	const TextureSurface& TGpuParams<Core>::GetTextureSurface(u32 set, u32 slot) const
 	{
 		static TextureSurface emptySurface;
 
-		UINT32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::Texture, set, slot);
-		if (globalSlot == (UINT32)-1)
+		u32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::Texture, set, slot);
+		if (globalSlot == (u32)-1)
 			return emptySurface;
 
 		return mSampledTextureData[globalSlot].Surface;
 	}
 
 	template<bool Core>
-	const TextureSurface& TGpuParams<Core>::GetLoadStoreSurface(UINT32 set, UINT32 slot) const
+	const TextureSurface& TGpuParams<Core>::GetLoadStoreSurface(u32 set, u32 slot) const
 	{
 		static TextureSurface emptySurface;
 
-		UINT32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::LoadStoreTexture, set, slot);
-		if (globalSlot == (UINT32)-1)
+		u32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::LoadStoreTexture, set, slot);
+		if (globalSlot == (u32)-1)
 			return emptySurface;
 
 		return mLoadStoreTextureData[globalSlot].Surface;
@@ -472,10 +472,10 @@ namespace bs
 
 
 	template<bool Core>
-	void TGpuParams<Core>::SetTexture(UINT32 set, UINT32 slot, const TextureType& texture, const TextureSurface& surface)
+	void TGpuParams<Core>::SetTexture(u32 set, u32 slot, const TextureType& texture, const TextureSurface& surface)
 	{
-		UINT32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::Texture, set, slot);
-		if (globalSlot == (UINT32)-1)
+		u32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::Texture, set, slot);
+		if (globalSlot == (u32)-1)
 			return;
 
 		mSampledTextureData[globalSlot].Texture = texture;
@@ -486,10 +486,10 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParams<Core>::SetLoadStoreTexture(UINT32 set, UINT32 slot, const TextureType& texture, const TextureSurface& surface)
+	void TGpuParams<Core>::SetLoadStoreTexture(u32 set, u32 slot, const TextureType& texture, const TextureSurface& surface)
 	{
-		UINT32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::LoadStoreTexture, set, slot);
-		if (globalSlot == (UINT32)-1)
+		u32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::LoadStoreTexture, set, slot);
+		if (globalSlot == (u32)-1)
 			return;
 
 		mLoadStoreTextureData[globalSlot].Texture = texture;
@@ -500,10 +500,10 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParams<Core>::SetBuffer(UINT32 set, UINT32 slot, const BufferType& buffer)
+	void TGpuParams<Core>::SetBuffer(u32 set, u32 slot, const BufferType& buffer)
 	{
-		UINT32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::Buffer, set, slot);
-		if (globalSlot == (UINT32)-1)
+		u32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::Buffer, set, slot);
+		if (globalSlot == (u32)-1)
 			return;
 
 		mBuffers[globalSlot] = buffer;
@@ -513,10 +513,10 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TGpuParams<Core>::SetSamplerState(UINT32 set, UINT32 slot, const SamplerType& sampler)
+	void TGpuParams<Core>::SetSamplerState(u32 set, u32 slot, const SamplerType& sampler)
 	{
-		UINT32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::SamplerState, set, slot);
-		if (globalSlot == (UINT32)-1)
+		u32 globalSlot = mParamInfo->GetSequentialSlot(GpuPipelineParamInfo::ParamType::SamplerState, set, slot);
+		if (globalSlot == (u32)-1)
 			return;
 
 		mSamplerStates[globalSlot] = sampler;
@@ -618,32 +618,32 @@ namespace bs
 
 	CoreSyncData GpuParams::SyncToCore(FrameAlloc* allocator)
 	{
-		UINT32 numParamBlocks = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::ParamBlock);
-		UINT32 numTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Texture);
-		UINT32 numStorageTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
-		UINT32 numBuffers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Buffer);
-		UINT32 numSamplers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::SamplerState);
+		u32 numParamBlocks = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::ParamBlock);
+		u32 numTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Texture);
+		u32 numStorageTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
+		u32 numBuffers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Buffer);
+		u32 numSamplers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::SamplerState);
 
-		UINT32 sampledSurfacesSize = numTextures * sizeof(TextureSurface);
-		UINT32 loadStoreSurfacesSize = numStorageTextures * sizeof(TextureSurface);
-		UINT32 paramBufferSize = numParamBlocks * sizeof(SPtr<ct::GpuParamBlockBuffer>);
-		UINT32 textureArraySize = numTextures * sizeof(SPtr<ct::Texture>);
-		UINT32 loadStoreTextureArraySize = numStorageTextures * sizeof(SPtr<ct::Texture>);
-		UINT32 bufferArraySize = numBuffers * sizeof(SPtr<ct::GpuBuffer>);
-		UINT32 samplerArraySize = numSamplers * sizeof(SPtr<ct::SamplerState>);
+		u32 sampledSurfacesSize = numTextures * sizeof(TextureSurface);
+		u32 loadStoreSurfacesSize = numStorageTextures * sizeof(TextureSurface);
+		u32 paramBufferSize = numParamBlocks * sizeof(SPtr<ct::GpuParamBlockBuffer>);
+		u32 textureArraySize = numTextures * sizeof(SPtr<ct::Texture>);
+		u32 loadStoreTextureArraySize = numStorageTextures * sizeof(SPtr<ct::Texture>);
+		u32 bufferArraySize = numBuffers * sizeof(SPtr<ct::GpuBuffer>);
+		u32 samplerArraySize = numSamplers * sizeof(SPtr<ct::SamplerState>);
 
-		UINT32 totalSize = sampledSurfacesSize + loadStoreSurfacesSize + paramBufferSize + textureArraySize
+		u32 totalSize = sampledSurfacesSize + loadStoreSurfacesSize + paramBufferSize + textureArraySize
 			+ loadStoreTextureArraySize + bufferArraySize + samplerArraySize;
 
-		UINT32 sampledSurfaceOffset = 0;
-		UINT32 loadStoreSurfaceOffset = sampledSurfaceOffset + sampledSurfacesSize;
-		UINT32 paramBufferOffset = loadStoreSurfaceOffset + loadStoreSurfacesSize;
-		UINT32 textureArrayOffset = paramBufferOffset + paramBufferSize;
-		UINT32 loadStoreTextureArrayOffset = textureArrayOffset + textureArraySize;
-		UINT32 bufferArrayOffset = loadStoreTextureArrayOffset + loadStoreTextureArraySize;
-		UINT32 samplerArrayOffset = bufferArrayOffset + bufferArraySize;
+		u32 sampledSurfaceOffset = 0;
+		u32 loadStoreSurfaceOffset = sampledSurfaceOffset + sampledSurfacesSize;
+		u32 paramBufferOffset = loadStoreSurfaceOffset + loadStoreSurfacesSize;
+		u32 textureArrayOffset = paramBufferOffset + paramBufferSize;
+		u32 loadStoreTextureArrayOffset = textureArrayOffset + textureArraySize;
+		u32 bufferArrayOffset = loadStoreTextureArrayOffset + loadStoreTextureArraySize;
+		u32 samplerArrayOffset = bufferArrayOffset + bufferArraySize;
 
-		UINT8* data = allocator->Alloc(totalSize);
+		u8* data = allocator->Alloc(totalSize);
 
 		TextureSurface* sampledSurfaces = (TextureSurface*)(data + sampledSurfaceOffset);
 		TextureSurface* loadStoreSurfaces = (TextureSurface*)(data + loadStoreSurfaceOffset);
@@ -654,7 +654,7 @@ namespace bs
 		SPtr<ct::SamplerState>* samplers = (SPtr<ct::SamplerState>*)(data + samplerArrayOffset);
 
 		// Construct & copy
-		for (UINT32 i = 0; i < numParamBlocks; i++)
+		for (u32 i = 0; i < numParamBlocks; i++)
 		{
 			new (&paramBuffers[i]) SPtr<ct::GpuParamBlockBuffer>();
 
@@ -662,7 +662,7 @@ namespace bs
 				paramBuffers[i] = mParamBlockBuffers[i]->GetCore();
 		}
 
-		for (UINT32 i = 0; i < numTextures; i++)
+		for (u32 i = 0; i < numTextures; i++)
 		{
 			new (&sampledSurfaces[i]) TextureSurface();
 			sampledSurfaces[i] = mSampledTextureData[i].Surface;
@@ -675,7 +675,7 @@ namespace bs
 				textures[i] = nullptr;
 		}
 
-		for (UINT32 i = 0; i < numStorageTextures; i++)
+		for (u32 i = 0; i < numStorageTextures; i++)
 		{
 			new (&loadStoreSurfaces[i]) TextureSurface();
 			loadStoreSurfaces[i] = mLoadStoreTextureData[i].Surface;
@@ -688,7 +688,7 @@ namespace bs
 				loadStoreTextures[i] = nullptr;
 		}
 
-		for (UINT32 i = 0; i < numBuffers; i++)
+		for (u32 i = 0; i < numBuffers; i++)
 		{
 			new (&buffers[i]) SPtr<ct::GpuBuffer>();
 
@@ -698,7 +698,7 @@ namespace bs
 				buffers[i] = nullptr;
 		}
 
-		for (UINT32 i = 0; i < numSamplers; i++)
+		for (u32 i = 0; i < numSamplers; i++)
 		{
 			new (&samplers[i]) SPtr<ct::SamplerState>();
 
@@ -713,16 +713,16 @@ namespace bs
 
 	void GpuParams::GetListenerResources(Vector<HResource>& resources)
 	{
-		UINT32 numTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Texture);
-		UINT32 numStorageTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
+		u32 numTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Texture);
+		u32 numStorageTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
 
-		for (UINT32 i = 0; i < numTextures; i++)
+		for (u32 i = 0; i < numTextures; i++)
 		{
 			if (mSampledTextureData[i].Texture != nullptr)
 				resources.push_back(mSampledTextureData[i].Texture);
 		}
 
-		for (UINT32 i = 0; i < numStorageTextures; i++)
+		for (u32 i = 0; i < numStorageTextures; i++)
 		{
 			if (mLoadStoreTextureData[i].Texture != nullptr)
 				resources.push_back(mLoadStoreTextureData[i].Texture);
@@ -744,34 +744,34 @@ namespace bs
 
 	void GpuParams::SyncToCore(const CoreSyncData& data)
 	{
-		UINT32 numParamBlocks = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::ParamBlock);
-		UINT32 numTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Texture);
-		UINT32 numStorageTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
-		UINT32 numBuffers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Buffer);
-		UINT32 numSamplers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::SamplerState);
+		u32 numParamBlocks = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::ParamBlock);
+		u32 numTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Texture);
+		u32 numStorageTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
+		u32 numBuffers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Buffer);
+		u32 numSamplers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::SamplerState);
 
-		UINT32 sampledSurfacesSize = numTextures * sizeof(TextureSurface);
-		UINT32 loadStoreSurfacesSize = numStorageTextures * sizeof(TextureSurface);
-		UINT32 paramBufferSize = numParamBlocks * sizeof(SPtr<GpuParamBlockBuffer>);
-		UINT32 textureArraySize = numTextures * sizeof(SPtr<Texture>);
-		UINT32 loadStoreTextureArraySize = numStorageTextures * sizeof(SPtr<Texture>);
-		UINT32 bufferArraySize = numBuffers * sizeof(SPtr<GpuBuffer>);
-		UINT32 samplerArraySize = numSamplers * sizeof(SPtr<SamplerState>);
+		u32 sampledSurfacesSize = numTextures * sizeof(TextureSurface);
+		u32 loadStoreSurfacesSize = numStorageTextures * sizeof(TextureSurface);
+		u32 paramBufferSize = numParamBlocks * sizeof(SPtr<GpuParamBlockBuffer>);
+		u32 textureArraySize = numTextures * sizeof(SPtr<Texture>);
+		u32 loadStoreTextureArraySize = numStorageTextures * sizeof(SPtr<Texture>);
+		u32 bufferArraySize = numBuffers * sizeof(SPtr<GpuBuffer>);
+		u32 samplerArraySize = numSamplers * sizeof(SPtr<SamplerState>);
 
-		UINT32 totalSize = sampledSurfacesSize + loadStoreSurfacesSize + paramBufferSize + textureArraySize
+		u32 totalSize = sampledSurfacesSize + loadStoreSurfacesSize + paramBufferSize + textureArraySize
 			+ loadStoreTextureArraySize + bufferArraySize + samplerArraySize;
 
-		UINT32 sampledSurfacesOffset = 0;
-		UINT32 loadStoreSurfaceOffset = sampledSurfacesOffset + sampledSurfacesSize;
-		UINT32 paramBufferOffset = loadStoreSurfaceOffset + loadStoreSurfacesSize;
-		UINT32 textureArrayOffset = paramBufferOffset + paramBufferSize;
-		UINT32 loadStoreTextureArrayOffset = textureArrayOffset + textureArraySize;
-		UINT32 bufferArrayOffset = loadStoreTextureArrayOffset + loadStoreTextureArraySize;
-		UINT32 samplerArrayOffset = bufferArrayOffset + bufferArraySize;
+		u32 sampledSurfacesOffset = 0;
+		u32 loadStoreSurfaceOffset = sampledSurfacesOffset + sampledSurfacesSize;
+		u32 paramBufferOffset = loadStoreSurfaceOffset + loadStoreSurfacesSize;
+		u32 textureArrayOffset = paramBufferOffset + paramBufferSize;
+		u32 loadStoreTextureArrayOffset = textureArrayOffset + textureArraySize;
+		u32 bufferArrayOffset = loadStoreTextureArrayOffset + loadStoreTextureArraySize;
+		u32 samplerArrayOffset = bufferArrayOffset + bufferArraySize;
 
 		assert(data.GetBufferSize() == totalSize);
 
-		UINT8* dataPtr = data.GetBuffer();
+		u8* dataPtr = data.GetBuffer();
 
 		TextureSurface* sampledSurfaces = (TextureSurface*)(dataPtr + sampledSurfacesOffset);
 		TextureSurface* loadStoreSurfaces = (TextureSurface*)(dataPtr + loadStoreSurfaceOffset);
@@ -782,13 +782,13 @@ namespace bs
 		SPtr<SamplerState>* samplers = (SPtr<SamplerState>*)(dataPtr + samplerArrayOffset);
 
 		// Copy & destruct
-		for (UINT32 i = 0; i < numParamBlocks; i++)
+		for (u32 i = 0; i < numParamBlocks; i++)
 		{
 			mParamBlockBuffers[i] = paramBuffers[i];
 			paramBuffers[i].~SPtr<GpuParamBlockBuffer>();
 		}
 
-		for (UINT32 i = 0; i < numTextures; i++)
+		for (u32 i = 0; i < numTextures; i++)
 		{
 			mSampledTextureData[i].Surface = sampledSurfaces[i];
 			loadStoreSurfaces[i].~TextureSurface();
@@ -797,7 +797,7 @@ namespace bs
 			textures[i].~SPtr<Texture>();
 		}
 
-		for (UINT32 i = 0; i < numStorageTextures; i++)
+		for (u32 i = 0; i < numStorageTextures; i++)
 		{
 			mLoadStoreTextureData[i].Surface = loadStoreSurfaces[i];
 			loadStoreSurfaces[i].~TextureSurface();
@@ -806,13 +806,13 @@ namespace bs
 			loadStoreTextures[i].~SPtr<Texture>();
 		}
 
-		for (UINT32 i = 0; i < numBuffers; i++)
+		for (u32 i = 0; i < numBuffers; i++)
 		{
 			mBuffers[i] = buffers[i];
 			buffers[i].~SPtr<GpuBuffer>();
 		}
 
-		for (UINT32 i = 0; i < numSamplers; i++)
+		for (u32 i = 0; i < numSamplers; i++)
 		{
 			mSamplerStates[i] = samplers[i];
 			samplers[i].~SPtr<SamplerState>();

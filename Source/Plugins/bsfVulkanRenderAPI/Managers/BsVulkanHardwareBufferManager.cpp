@@ -55,7 +55,7 @@ namespace bs { namespace ct
 		return ret;
 	}
 
-	SPtr<GpuParamBlockBuffer> VulkanHardwareBufferManager::CreateGpuParamBlockBufferInternal(UINT32 size,
+	SPtr<GpuParamBlockBuffer> VulkanHardwareBufferManager::CreateGpuParamBlockBufferInternal(u32 size,
 		GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 	{
 		VulkanGpuParamBlockBuffer* paramBlockBuffer =

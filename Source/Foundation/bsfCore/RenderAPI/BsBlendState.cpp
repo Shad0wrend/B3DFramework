@@ -27,7 +27,7 @@ namespace bs
 
 		if (equals)
 		{
-			for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+			for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 			{
 				equals &= RenderTargetDesc[i] == rhs.RenderTargetDesc[i];
 			}
@@ -40,56 +40,56 @@ namespace bs
 		:mData(desc), mHash(BlendState::GenerateHash(desc))
 	{ }
 
-	bool BlendProperties::GetBlendEnabled(UINT32 renderTargetIdx) const
+	bool BlendProperties::GetBlendEnabled(u32 renderTargetIdx) const
 	{
 		assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
 		return mData.RenderTargetDesc[renderTargetIdx].BlendEnable;
 	}
 
-	BlendFactor BlendProperties::GetSrcBlend(UINT32 renderTargetIdx) const
+	BlendFactor BlendProperties::GetSrcBlend(u32 renderTargetIdx) const
 	{
 		assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
 		return mData.RenderTargetDesc[renderTargetIdx].SrcBlend;
 	}
 
-	BlendFactor BlendProperties::GetDstBlend(UINT32 renderTargetIdx) const
+	BlendFactor BlendProperties::GetDstBlend(u32 renderTargetIdx) const
 	{
 		assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
 		return mData.RenderTargetDesc[renderTargetIdx].DstBlend;
 	}
 
-	BlendOperation BlendProperties::GetBlendOperation(UINT32 renderTargetIdx) const
+	BlendOperation BlendProperties::GetBlendOperation(u32 renderTargetIdx) const
 	{
 		assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
 		return mData.RenderTargetDesc[renderTargetIdx].BlendOp;
 	}
 
-	BlendFactor BlendProperties::GetAlphaSrcBlend(UINT32 renderTargetIdx) const
+	BlendFactor BlendProperties::GetAlphaSrcBlend(u32 renderTargetIdx) const
 	{
 		assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
 		return mData.RenderTargetDesc[renderTargetIdx].SrcBlendAlpha;
 	}
 
-	BlendFactor BlendProperties::GetAlphaDstBlend(UINT32 renderTargetIdx) const
+	BlendFactor BlendProperties::GetAlphaDstBlend(u32 renderTargetIdx) const
 	{
 		assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
 		return mData.RenderTargetDesc[renderTargetIdx].DstBlendAlpha;
 	}
 
-	BlendOperation BlendProperties::GetAlphaBlendOperation(UINT32 renderTargetIdx) const
+	BlendOperation BlendProperties::GetAlphaBlendOperation(u32 renderTargetIdx) const
 	{
 		assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
 		return mData.RenderTargetDesc[renderTargetIdx].BlendOpAlpha;
 	}
 
-	UINT8 BlendProperties::GetRenderTargetWriteMask(UINT32 renderTargetIdx) const
+	u8 BlendProperties::GetRenderTargetWriteMask(u32 renderTargetIdx) const
 	{
 		assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
@@ -133,25 +133,25 @@ namespace bs
 		return RenderStateManager::Instance().CreateBlendState(desc);
 	}
 
-	UINT64 BlendState::GenerateHash(const BLEND_STATE_DESC& desc)
+	u64 BlendState::GenerateHash(const BLEND_STATE_DESC& desc)
 	{
 		size_t hash = 0;
 		bs_hash_combine(hash, desc.AlphaToCoverageEnable);
 		bs_hash_combine(hash, desc.IndependantBlendEnable);
 
-		for (UINT32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			bs_hash_combine(hash, desc.RenderTargetDesc[i].BlendEnable);
-			bs_hash_combine(hash, (UINT32)desc.RenderTargetDesc[i].SrcBlend);
-			bs_hash_combine(hash, (UINT32)desc.RenderTargetDesc[i].DstBlend);
-			bs_hash_combine(hash, (UINT32)desc.RenderTargetDesc[i].BlendOp);
-			bs_hash_combine(hash, (UINT32)desc.RenderTargetDesc[i].SrcBlendAlpha);
-			bs_hash_combine(hash, (UINT32)desc.RenderTargetDesc[i].DstBlendAlpha);
-			bs_hash_combine(hash, (UINT32)desc.RenderTargetDesc[i].BlendOpAlpha);
+			bs_hash_combine(hash, (u32)desc.RenderTargetDesc[i].SrcBlend);
+			bs_hash_combine(hash, (u32)desc.RenderTargetDesc[i].DstBlend);
+			bs_hash_combine(hash, (u32)desc.RenderTargetDesc[i].BlendOp);
+			bs_hash_combine(hash, (u32)desc.RenderTargetDesc[i].SrcBlendAlpha);
+			bs_hash_combine(hash, (u32)desc.RenderTargetDesc[i].DstBlendAlpha);
+			bs_hash_combine(hash, (u32)desc.RenderTargetDesc[i].BlendOpAlpha);
 			bs_hash_combine(hash, desc.RenderTargetDesc[i].RenderTargetWriteMask);
 		}
 
-		return (UINT64)hash;
+		return (u64)hash;
 	}
 
 	/************************************************************************/
@@ -170,7 +170,7 @@ namespace bs
 
 	namespace ct
 	{
-	BlendState::BlendState(const BLEND_STATE_DESC& desc, UINT32 id)
+	BlendState::BlendState(const BLEND_STATE_DESC& desc, u32 id)
 		:mProperties(desc), mId(id)
 	{
 

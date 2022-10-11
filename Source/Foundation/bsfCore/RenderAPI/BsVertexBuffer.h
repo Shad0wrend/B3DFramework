@@ -15,8 +15,8 @@ namespace bs
 	/** Descriptor structure used for initialization of a VertexBuffer. */
 	struct VERTEX_BUFFER_DESC
 	{
-		UINT32 VertexSize; /**< Size of a single vertex in the buffer, in bytes. */
-		UINT32 NumVerts; /**< Number of vertices the buffer can hold. */
+		u32 VertexSize; /**< Size of a single vertex in the buffer, in bytes. */
+		u32 NumVerts; /**< Number of vertices the buffer can hold. */
 		GpuBufferUsage Usage = GBU_STATIC; /**< Usage that tells the hardware how will be buffer be used. */
 		bool StreamOut = false; /**< If true the buffer will be usable for streaming out data from the GPU. */
 	};
@@ -25,20 +25,20 @@ namespace bs
 	class BS_CORE_EXPORT VertexBufferProperties
 	{
 	public:
-		VertexBufferProperties(UINT32 numVertices, UINT32 vertexSize);
+		VertexBufferProperties(u32 numVertices, u32 vertexSize);
 
 		/**	Gets the size in bytes of a single vertex in this buffer. */
-		UINT32 GetVertexSize() const { return mVertexSize; }
+		u32 GetVertexSize() const { return mVertexSize; }
 
 		/**	Get the number of vertices in this buffer. */
-		UINT32 GetNumVertices() const { return mNumVertices; }
+		u32 GetNumVertices() const { return mNumVertices; }
 
 	protected:
 		friend class VertexBuffer;
 		friend class ct::VertexBuffer;
 
-		UINT32 mNumVertices;
-		UINT32 mVertexSize;
+		u32 mNumVertices;
+		u32 mVertexSize;
 	};
 
 	/**	Specialization of a hardware buffer used for holding vertex data. */
@@ -90,14 +90,14 @@ namespace bs
 		const VertexBufferProperties& GetProperties() const { return mProperties; }
 
 		/** @copydoc HardwareBuffer::readData */
-		void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override;
+		void ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx = 0, u32 queueIdx = 0) override;
 
 		/** @copydoc HardwareBuffer::writeData */
-		void WriteData(UINT32 offset, UINT32 length, const void* source,
-			BufferWriteType writeFlags = BWT_NORMAL, UINT32 queueIdx = 0) override;
+		void WriteData(u32 offset, u32 length, const void* source,
+			BufferWriteType writeFlags = BWT_NORMAL, u32 queueIdx = 0) override;
 
 		/** @copydoc HardwareBuffer::copyData */
-		void CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
+		void CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length,
 			bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/**
@@ -116,7 +116,7 @@ namespace bs
 		 *								can happen if the buffer hasn't been created with GBU_LOADSTORE usage or if the
 		 *								element size doesn't divide the current buffer size.
 		 */
-		SPtr<GpuBuffer> GetLoadStore(GpuBufferType type, GpuBufferFormat format, UINT32 elementSize = 0);
+		SPtr<GpuBuffer> GetLoadStore(GpuBufferType type, GpuBufferFormat format, u32 elementSize = 0);
 
 		/** @copydoc HardwareBufferManager::createVertexBuffer */
 		static SPtr<VertexBuffer> Create(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
@@ -125,7 +125,7 @@ namespace bs
 		friend class HardwareBufferManager;
 
 		/** @copydoc HardwareBuffer::map */
-		void* Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx) override;
+		void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx) override;
 
 		/** @copydoc HardwareBuffer::unmap */
 		void Unmap() override;

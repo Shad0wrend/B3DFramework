@@ -110,10 +110,10 @@ namespace bs
 			/**	Represents a single sub-menu page. */
 			struct PageInfo
 			{
-				UINT32 Idx;
-				UINT32 Start;
-				UINT32 End;
-				UINT32 Height;
+				u32 Idx;
+				u32 Start;
+				u32 End;
+				u32 Height;
 			};
 
 		public:
@@ -131,7 +131,7 @@ namespace bs
 			 *								each level of the sub-menu hierarchy.
 			 */
 			DropDownSubMenu(GUIDropDownMenu* owner, DropDownSubMenu* parent, const DropDownAreaPlacement& placement,
-				const Rect2I& availableBounds, const GUIDropDownData& dropDownData, GUIDropDownType type, UINT32 depthOffset);
+				const Rect2I& availableBounds, const GUIDropDownData& dropDownData, GUIDropDownType type, u32 depthOffset);
 			~DropDownSubMenu();
 
 			/**	Recreates all internal GUI elements for the entries of the current sub-menu page. */
@@ -159,14 +159,14 @@ namespace bs
 			 * @param[in]	bounds	Bounds of the GUI element that is used as a visual representation of this drop down
 			 *						element.
 			 */
-			void ElementActivated(UINT32 idx, const Rect2I& bounds);
+			void ElementActivated(u32 idx, const Rect2I& bounds);
 
 			/**
 			 * Called when the user selects an element with the specified index.
 			 *
 			 * @param[in]	idx		Index of the element that was selected.
 			 */
-			void ElementSelected(UINT32 idx);
+			void ElementSelected(u32 idx);
 
 			/**	Called when the user wants to close the currently open sub-menu. */
 			void CloseSubMenu();
@@ -188,12 +188,12 @@ namespace bs
 
 			GUIDropDownType MType;
 			GUIDropDownData MData;
-			UINT32 MPage;
-			INT32 X, Y;
-			UINT32 Width, Height;
+			u32 MPage;
+			i32 X, Y;
+			u32 Width, Height;
 			Rect2I MVisibleBounds;
 			Rect2I MAvailableBounds;
-			UINT32 MDepthOffset;
+			u32 MDepthOffset;
 			bool MOpenedUpward;
 
 			GUIDropDownContent* MContent;
@@ -227,7 +227,7 @@ namespace bs
 		void OnDestroyed() ;
 
 	private:
-		static const UINT32 DROP_DOWN_BOX_WIDTH;
+		static const u32 DROP_DOWN_BOX_WIDTH;
 
 		String mScrollUpStyle;
 		String mScrollDownStyle;

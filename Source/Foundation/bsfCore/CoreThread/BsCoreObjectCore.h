@@ -85,7 +85,7 @@ namespace bs
 		void SetIsInitialized(bool initialized) { mFlags = initialized ? mFlags | CGCO_INITIALIZED : mFlags & ~CGCO_INITIALIZED; }
 		void SetScheduledToBeInitialized(bool scheduled) { mFlags = scheduled ? mFlags | CGCO_SCHEDULED_FOR_INIT : mFlags & ~CGCO_SCHEDULED_FOR_INIT; }
 
-		volatile UINT8 mFlags;
+		volatile u8 mFlags;
 		std::weak_ptr<CoreObject> mThis;
 
 		static Signal mCoreGpuObjectLoadedCondition;

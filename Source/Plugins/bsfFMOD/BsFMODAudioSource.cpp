@@ -77,7 +77,7 @@ namespace bs
 			mChannel->setMode(loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF);
 	}
 
-	void FMODAudioSource::SetPriority(INT32 priority)
+	void FMODAudioSource::SetPriority(i32 priority)
 	{
 		AudioSource::SetPriority(priority);
 
@@ -131,7 +131,7 @@ namespace bs
 			mChannel->setPitch(mVolume);
 			mChannel->setMode(mLoop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF);
 			mChannel->setPriority(mPriority);
-			mChannel->setPosition((UINT32)(mTime * 1000.0f), FMOD_TIMEUNIT_MS);
+			mChannel->setPosition((u32)(mTime * 1000.0f), FMOD_TIMEUNIT_MS);
 
 			Vector3 position = GetTransform().GetPosition();
 
@@ -215,7 +215,7 @@ namespace bs
 	void FMODAudioSource::SetTime(float time)
 	{
 		if (mChannel != nullptr)
-			mChannel->setPosition((UINT32)(time * 1000.0f), FMOD_TIMEUNIT_MS);
+			mChannel->setPosition((u32)(time * 1000.0f), FMOD_TIMEUNIT_MS);
 		else
 			mTime = time;
 	}
@@ -224,7 +224,7 @@ namespace bs
 	{
 		if(mChannel != nullptr)
 		{
-			UINT32 position = 0;
+			u32 position = 0;
 			mChannel->getPosition(&position, FMOD_TIMEUNIT_MS);
 
 			return position / 1000.0f;

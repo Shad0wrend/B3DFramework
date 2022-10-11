@@ -77,7 +77,7 @@ namespace bs
 		if(objInfo != nullptr)
 		{
 			sortedFields.resize(objInfo->MFields.size());
-			UINT32 i = 0;
+			u32 i = 0;
 			for (auto& fieldPair : objInfo->MFields)
 			{
 				sortedFields[i] = fieldPair.second;
@@ -92,9 +92,9 @@ namespace bs
 		});
 
 		::MonoClass* serializableFieldClass = ScriptSerializableField::GetMetaData()->ScriptClass->GetInternalClassInternal();
-		ScriptArray scriptArray(serializableFieldClass, (UINT32)sortedFields.size());
+		ScriptArray scriptArray(serializableFieldClass, (u32)sortedFields.size());
 
-		UINT32 i = 0;
+		u32 i = 0;
 		for (auto& field : sortedFields)
 		{
 			MonoObject* fieldManagedInstance = ScriptSerializableField::Create(instance, field);

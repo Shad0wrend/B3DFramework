@@ -9,7 +9,7 @@ namespace bs { namespace ct
 		:mActive(false), mBinary(binary)
 	{ }
 
-	SPtr<OcclusionQuery> OcclusionQuery::Create(bool binary, UINT32 deviceIdx)
+	SPtr<OcclusionQuery> OcclusionQuery::Create(bool binary, u32 deviceIdx)
 	{
 		return QueryManager::Instance().CreateOcclusionQuery(binary, deviceIdx);
 	}

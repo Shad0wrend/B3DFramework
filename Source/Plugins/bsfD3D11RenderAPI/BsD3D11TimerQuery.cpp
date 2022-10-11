@@ -9,7 +9,7 @@
 
 namespace bs { namespace ct
 {
-	D3D11TimerQuery::D3D11TimerQuery(UINT32 deviceIdx)
+	D3D11TimerQuery::D3D11TimerQuery(u32 deviceIdx)
 	{
 		assert(deviceIdx == 0 && "Multiple GPUs not supported natively on DirectX 11.");
 
@@ -120,7 +120,7 @@ namespace bs { namespace ct
 
 	void D3D11TimerQuery::Finalize()
 	{
-		UINT64 timeStart, timeEnd;
+		u64 timeStart, timeEnd;
 
 		mContext->GetData(mBeginQuery, &timeStart, sizeof(timeStart), 0);
 		mContext->GetData(mEndQuery, &timeEnd, sizeof(timeEnd), 0);
@@ -133,7 +133,7 @@ namespace bs { namespace ct
 		{
 			float frequency = static_cast<float>(disjointData.Frequency);
 
-			UINT64 delta = timeEnd - timeStart;
+			u64 delta = timeEnd - timeStart;
 			mTimeDelta = (delta / (float)frequency) * 1000.0f;
 		}
 		else

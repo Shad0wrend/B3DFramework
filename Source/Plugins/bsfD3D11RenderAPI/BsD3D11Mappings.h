@@ -125,7 +125,7 @@ namespace bs { namespace ct
 		 * Returns size in bytes of a pixel surface of the specified size and format, while using DX11 allocation rules for
 		 * padding.
 		 */
-		static UINT32 GetSizeInBytes(PixelFormat pf, UINT32 width = 1, UINT32 height = 1);
+		static u32 GetSizeInBytes(PixelFormat pf, u32 width = 1, u32 height = 1);
 	};
 
 	/** @} */

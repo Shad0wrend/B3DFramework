@@ -16,7 +16,7 @@ namespace bs
 	{
 		K key;
 		V value;
-		UINT32 index;
+		u32 index;
 	};
 
 	/**
@@ -33,7 +33,7 @@ namespace bs
 			*this = other;
 		}
 
-		MinHeap(UINT32 elements)
+		MinHeap(u32 elements)
 		{
 			resize(elements);
 		}
@@ -50,11 +50,11 @@ namespace bs
 			return *this;
 		}
 
-		HeapNode<K, V> operator[] (UINT32 index) { return mNode[index]; }
-		const HeapNode<K, V> operator[] (UINT32 index) const { return mNode[index]; }
+		HeapNode<K, V> operator[] (u32 index) { return mNode[index]; }
+		const HeapNode<K, V> operator[] (u32 index) const { return mNode[index]; }
 
 		bool empty() const { return mSize == 0; }
-		UINT32 size() const { return mSize; }
+		u32 size() const { return mSize; }
 
 		void minimum(K& key, V& value)
 		{
@@ -200,7 +200,7 @@ namespace bs
 			}
 		}
 
-		void resize(UINT32 elements)
+		void resize(u32 elements)
 		{
 			mSize = 0;
 			if (elements > 0)
@@ -208,7 +208,7 @@ namespace bs
 				mNode.resize(elements);
 				mPtr.resize(elements);
 
-				for (UINT32 i = 0; i < elements; ++i)
+				for (u32 i = 0; i < elements; ++i)
 				{
 					mPtr[i] = &mNode[i];
 					mPtr[i]->index = i;
@@ -238,7 +238,7 @@ namespace bs
 		}
 
 	private:
-		UINT32 mSize;
+		u32 mSize;
 		DynArray<HeapNode<K, V>> mNode;
 		DynArray<HeapNode<K, V>*> mPtr;
 	};

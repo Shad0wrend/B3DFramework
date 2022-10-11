@@ -49,13 +49,13 @@ namespace bs
 		 * 										Additionally this will determine the cursor displayed (whether or not it
 		 *										can have a "denied" state).
 		 */
-		void StartDrag(UINT32 typeId, void* data, std::function<void(bool)> dropCallback, bool needsValidDropTarget = false);
+		void StartDrag(u32 typeId, void* data, std::function<void(bool)> dropCallback, bool needsValidDropTarget = false);
 
 		/**	Returns true if drag is currently in progress. */
 		bool IsDragInProgress() const { return mIsDragInProgress; }
 
 		/**	Get type ID of drag currently in progress. Only valid if drag is in progress. */
-		UINT32 GetDragTypeId() const { return mDragTypeId; }
+		u32 GetDragTypeId() const { return mDragTypeId; }
 
 		/**	Gets drag specific data specified when the drag started. Only valid if drag is in progress. */
 		void* GetDragData() const { return mData; }
@@ -103,7 +103,7 @@ namespace bs
 		void CursorReleased(const PointerEvent& event);
 
 	private:
-		UINT32 mDragTypeId = 0;
+		u32 mDragTypeId = 0;
 		void* mData = nullptr;
 		Vector<std::function<void(bool)>> mDropCallbacks;
 		bool mIsDragInProgress = false;
@@ -112,7 +112,7 @@ namespace bs
 
 		std::atomic<bool> mCaptureChanged { false };
 		std::atomic<int> mCaptureActive { 0 };
-		std::atomic<UINT64> mCaptureChangeFrame;
+		std::atomic<u64> mCaptureChangeFrame;
 	};
 
 	/** @} */

@@ -47,7 +47,7 @@ namespace bs
 	}
 
 	SPtr<RenderTexture> GLTextureManager::CreateRenderTextureInternal(const RENDER_TEXTURE_DESC& desc,
-																			  UINT32 deviceIdx)
+																			  u32 deviceIdx)
 	{
 		SPtr<GLRenderTexture> texPtr = bs_shared_ptr_new<GLRenderTexture>(desc, deviceIdx);
 		texPtr->SetThisPtrInternal(texPtr);

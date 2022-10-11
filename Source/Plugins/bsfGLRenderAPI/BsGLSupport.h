@@ -31,7 +31,7 @@ namespace bs { namespace ct
 		 *								window cannot have a parent.
 		 * @return						Returns newly created window.
 		 */
-		virtual SPtr<bs::RenderWindow> NewWindow(RENDER_WINDOW_DESC& desc, UINT32 windowId, SPtr<bs::RenderWindow> parentWindow) = 0;
+		virtual SPtr<bs::RenderWindow> NewWindow(RENDER_WINDOW_DESC& desc, u32 windowId, SPtr<bs::RenderWindow> parentWindow) = 0;
 
 		/**	Called when OpenGL is being initialized. */
 		virtual void Start() = 0;

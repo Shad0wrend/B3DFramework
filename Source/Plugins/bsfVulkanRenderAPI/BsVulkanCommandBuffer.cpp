@@ -51,11 +51,11 @@ namespace bs { namespace ct
 	VulkanCmdBufferPool::VulkanCmdBufferPool(VulkanDevice& device)
 		:mDevice(device)
 	{
-		for (UINT32 i = 0; i < GQT_COUNT; i++)
+		for (u32 i = 0; i < GQT_COUNT; i++)
 		{
-			UINT32 familyIdx = device.GetQueueFamily((GpuQueueType)i);
+			u32 familyIdx = device.GetQueueFamily((GpuQueueType)i);
 
-			if (familyIdx == (UINT32)-1)
+			if (familyIdx == (u32)-1)
 				continue;
 
 			VkCommandPoolCreateInfo poolCI;
@@ -80,7 +80,7 @@ namespace bs { namespace ct
 		for(auto& entry : mPools)
 		{
 			PoolInfo& poolInfo = entry.second;
-			for (UINT32 i = 0; i < BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY; i++)
+			for (u32 i = 0; i < BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY; i++)
 			{
 				VulkanCmdBuffer* buffer = poolInfo.Buffers[i];
 				if (buffer == nullptr)
@@ -93,7 +93,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	VulkanCmdBuffer* VulkanCmdBufferPool::GetBuffer(UINT32 queueFamily, bool secondary)
+	VulkanCmdBuffer* VulkanCmdBufferPool::GetBuffer(u32 queueFamily, bool secondary)
 	{
 		auto iterFind = mPools.find(queueFamily);
 		if (iterFind == mPools.end())
@@ -101,7 +101,7 @@ namespace bs { namespace ct
 
 		VulkanCmdBuffer** buffers = iterFind->second.Buffers;
 
-		UINT32 i = 0;
+		u32 i = 0;
 		for(; i < BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY; i++)
 		{
 			if (buffers[i] == nullptr)
@@ -123,7 +123,7 @@ namespace bs { namespace ct
 		return buffers[i];
 	}
 
-	VulkanCmdBuffer* VulkanCmdBufferPool::CreateBuffer(UINT32 queueFamily, bool secondary)
+	VulkanCmdBuffer* VulkanCmdBufferPool::CreateBuffer(u32 queueFamily, bool secondary)
 	{
 		auto iterFind = mPools.find(queueFamily);
 		if (iterFind == mPools.end())
@@ -197,13 +197,13 @@ namespace bs { namespace ct
 			dst = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 	}
 
-	VulkanCmdBuffer::VulkanCmdBuffer(VulkanDevice& device, UINT32 id, VkCommandPool pool, UINT32 queueFamily, bool secondary)
+	VulkanCmdBuffer::VulkanCmdBuffer(VulkanDevice& device, u32 id, VkCommandPool pool, u32 queueFamily, bool secondary)
 		: mId(id), mQueueFamily(queueFamily), mDevice(device), mPool(pool)
 		, mNeedsWARMemoryBarrier(false), mNeedsRAWMemoryBarrier(false), mGfxPipelineRequiresBind(true)
 		, mCmpPipelineRequiresBind(true), mViewportRequiresBind(true), mStencilRefRequiresBind(true)
 		, mScissorRequiresBind(true), mBoundParamsDirty(false), mVertexInputsDirty(false)
 	{
-		UINT32 maxBoundDescriptorSets = device.GetDeviceProperties().limits.maxBoundDescriptorSets;
+		u32 maxBoundDescriptorSets = device.GetDeviceProperties().limits.maxBoundDescriptorSets;
 		mDescriptorSetsTemp = (VkDescriptorSet*)bs_alloc(sizeof(VkDescriptorSet) * maxBoundDescriptorSets);
 
 		VkCommandBufferAllocateInfo cmdBufferAllocInfo;
@@ -232,7 +232,7 @@ namespace bs { namespace ct
 		if(mState == State::Submitted)
 		{
 			// Wait 1s
-			UINT64 waitTime = 1000 * 1000 * 1000;
+			u64 waitTime = 1000 * 1000 * 1000;
 			VkResult result = vkWaitForFences(device, 1, &mFence, true, waitTime);
 			assert(result == VK_SUCCESS || result == VK_TIMEOUT);
 
@@ -255,7 +255,7 @@ namespace bs { namespace ct
 
 			for (auto& entry : mImages)
 			{
-				UINT32 imageInfoIdx = entry.second;
+				u32 imageInfoIdx = entry.second;
 				ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
 				ResourceUseHandle& useHandle = imageInfo.UseHandle;
@@ -285,7 +285,7 @@ namespace bs { namespace ct
 		if (mIntraQueueSemaphore != nullptr)
 			mIntraQueueSemaphore->Destroy();
 		
-		for(UINT32 i = 0; i < BS_MAX_VULKAN_CB_DEPENDENCIES; i++)
+		for(u32 i = 0; i < BS_MAX_VULKAN_CB_DEPENDENCIES; i++)
 		{
 			if (mInterQueueSemaphores[i] != nullptr)
 				mInterQueueSemaphores[i]->Destroy();
@@ -297,7 +297,7 @@ namespace bs { namespace ct
 		bs_free(mDescriptorSetsTemp);
 	}
 
-	UINT32 VulkanCmdBuffer::GetDeviceIdx() const
+	u32 VulkanCmdBuffer::GetDeviceIdx() const
 	{
 		return mDevice.GetIndex();
 	}
@@ -418,7 +418,7 @@ namespace bs { namespace ct
 		mIntraQueueSemaphore = mDevice.GetResourceManager().Create<VulkanSemaphore>();
 		semaphores[0] = mIntraQueueSemaphore->GetHandle();
 
-		for (UINT32 i = 0; i < BS_MAX_VULKAN_CB_DEPENDENCIES; i++)
+		for (u32 i = 0; i < BS_MAX_VULKAN_CB_DEPENDENCIES; i++)
 		{
 			if (mInterQueueSemaphores[i] != nullptr)
 				mInterQueueSemaphores[i]->Destroy();
@@ -438,7 +438,7 @@ namespace bs { namespace ct
 		return mInterQueueSemaphores[mNumUsedInterQueueSemaphores++];
 	}
 
-	void VulkanCmdBuffer::Submit(VulkanQueue* queue, UINT32 queueIdx, UINT32 syncMask)
+	void VulkanCmdBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask)
 	{
 		assert(IsReadyForSubmit());
 
@@ -470,8 +470,8 @@ namespace bs { namespace ct
 			if (!resource->IsExclusive())
 				continue;
 
-			UINT32 currentQueueFamily = resource->GetQueueFamily();
-			if (currentQueueFamily != (UINT32)-1 && currentQueueFamily != mQueueFamily)
+			u32 currentQueueFamily = resource->GetQueueFamily();
+			if (currentQueueFamily != (u32)-1 && currentQueueFamily != mQueueFamily)
 			{
 				Vector<VkBufferMemoryBarrier>& barriers = mTransitionInfoTemp[currentQueueFamily].BufferBarriers;
 
@@ -496,8 +496,8 @@ namespace bs { namespace ct
 			VulkanImage* resource = static_cast<VulkanImage*>(entry.first);
 			ImageInfo& imageInfo = mImageInfos[entry.second];
 
-			UINT32 currentQueueFamily = resource->GetQueueFamily();
-			bool queueMismatch = resource->IsExclusive() && currentQueueFamily != (UINT32)-1
+			u32 currentQueueFamily = resource->GetQueueFamily();
+			bool queueMismatch = resource->IsExclusive() && currentQueueFamily != (u32)-1
 				&& currentQueueFamily != mQueueFamily;
 
 			ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
@@ -505,14 +505,14 @@ namespace bs { namespace ct
 			{
 				Vector<VkImageMemoryBarrier>& barriers = mTransitionInfoTemp[currentQueueFamily].ImageBarriers;
 
-				for (UINT32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
+				for (u32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
 				{
 					ImageSubresourceInfo& subresourceInfo = subresourceInfos[i];
 
-					UINT32 startIdx = (UINT32)barriers.size();
+					u32 startIdx = (u32)barriers.size();
 					resource->GetBarriers(subresourceInfo.Range, barriers);
 
-					for(UINT32 j = startIdx; j < (UINT32)barriers.size(); j++)
+					for(u32 j = startIdx; j < (u32)barriers.size(); j++)
 					{
 						VkImageMemoryBarrier& barrier = barriers[j];
 
@@ -524,21 +524,21 @@ namespace bs { namespace ct
 				}
 			}
 
-			for (UINT32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
+			for (u32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
 			{
 				ImageSubresourceInfo& subresourceInfo = subresourceInfos[i];
 
 				const VkImageSubresourceRange& range = subresourceInfo.Range;
-				UINT32 mipEnd = range.baseMipLevel + range.levelCount;
-				UINT32 faceEnd = range.baseArrayLayer + range.layerCount;
+				u32 mipEnd = range.baseMipLevel + range.levelCount;
+				u32 faceEnd = range.baseArrayLayer + range.layerCount;
 
 				VkImageLayout initialLayout = subresourceInfo.InitialLayout;
 				if (initialLayout != VK_IMAGE_LAYOUT_UNDEFINED)
 				{
 					bool layoutMismatch = false;
-					for (UINT32 mip = range.baseMipLevel; mip < mipEnd; mip++)
+					for (u32 mip = range.baseMipLevel; mip < mipEnd; mip++)
 					{
-						for (UINT32 face = range.baseArrayLayer; face < faceEnd; face++)
+						for (u32 face = range.baseArrayLayer; face < faceEnd; face++)
 						{
 							VulkanImageSubresource* subresource = resource->GetSubresource(face, mip);
 							if (subresource->GetLayout() != initialLayout)
@@ -554,10 +554,10 @@ namespace bs { namespace ct
 
 					if (layoutMismatch)
 					{
-						UINT32 startIdx = (UINT32)localBarriers.size();
+						u32 startIdx = (u32)localBarriers.size();
 						resource->GetBarriers(subresourceInfo.Range, localBarriers);
 
-						for (UINT32 j = startIdx; j < (UINT32)localBarriers.size(); j++)
+						for (u32 j = startIdx; j < (u32)localBarriers.size(); j++)
 						{
 							VkImageMemoryBarrier& barrier = localBarriers[j];
 
@@ -567,9 +567,9 @@ namespace bs { namespace ct
 					}
 				}
 
-				for (UINT32 mip = range.baseMipLevel; mip < mipEnd; mip++)
+				for (u32 mip = range.baseMipLevel; mip < mipEnd; mip++)
 				{
-					for (UINT32 face = range.baseArrayLayer; face < faceEnd; face++)
+					for (u32 face = range.baseArrayLayer; face < faceEnd; face++)
 					{
 						VulkanImageSubresource* subresource = resource->GetSubresource(face, mip);
 						subresource->SetLayout(subresourceInfo.CurrentLayout);
@@ -584,18 +584,18 @@ namespace bs { namespace ct
 			if (empty)
 				continue;
 
-			UINT32 entryQueueFamily = entry.first;
+			u32 entryQueueFamily = entry.first;
 
 			// No queue transition needed for entries on this queue (this entry is most likely an image layout transition)
-			if (entryQueueFamily == (UINT32)-1 || entryQueueFamily == mQueueFamily)
+			if (entryQueueFamily == (u32)-1 || entryQueueFamily == mQueueFamily)
 				continue;
 
 			VulkanCmdBuffer* cmdBuffer = device.GetCmdBufferPool().GetBuffer(entryQueueFamily, false);
 			VkCommandBuffer vkCmdBuffer = cmdBuffer->GetHandle();
 
 			TransitionInfo& barriers = entry.second;
-			UINT32 numImgBarriers = (UINT32)barriers.ImageBarriers.size();
-			UINT32 numBufferBarriers = (UINT32)barriers.BufferBarriers.size();
+			u32 numImgBarriers = (u32)barriers.ImageBarriers.size();
+			u32 numBufferBarriers = (u32)barriers.BufferBarriers.size();
 
 			VkPipelineStageFlags srcStage = 0;
 			VkPipelineStageFlags dstStage = 0;
@@ -608,17 +608,17 @@ namespace bs { namespace ct
 								 numImgBarriers, barriers.ImageBarriers.data());
 
 			// Find an appropriate queue to execute on
-			UINT32 otherQueueIdx = 0;
+			u32 otherQueueIdx = 0;
 			VulkanQueue* otherQueue = nullptr;
 			GpuQueueType otherQueueType = GQT_GRAPHICS;
-			for (UINT32 i = 0; i < GQT_COUNT; i++)
+			for (u32 i = 0; i < GQT_COUNT; i++)
 			{
 				otherQueueType = (GpuQueueType)i;
 				if (device.GetQueueFamily(otherQueueType) != entryQueueFamily)
 					continue;
 
-				UINT32 numQueues = device.GetNumQueues(otherQueueType);
-				for (UINT32 j = 0; j < numQueues; j++)
+				u32 numQueues = device.GetNumQueues(otherQueueType);
+				for (u32 j = 0; j < numQueues; j++)
 				{
 					// Try to find a queue not currently executing
 					VulkanQueue* curQueue = device.GetQueue(otherQueueType, j);
@@ -647,10 +647,10 @@ namespace bs { namespace ct
 			otherQueue->Submit(cmdBuffer, nullptr, 0);
 		}
 
-		UINT32 deviceIdx = device.GetIndex();
+		u32 deviceIdx = device.GetIndex();
 		VulkanCommandBufferManager& cbm = static_cast<VulkanCommandBufferManager&>(CommandBufferManager::Instance());
 
-		UINT32 numSemaphores;
+		u32 numSemaphores;
 		cbm.GetSyncSemaphores(deviceIdx, syncMask, mSemaphoresTemp.data(), numSemaphores);
 
 		// Wait on present (i.e. until the back buffer becomes available) for any swap chains
@@ -661,7 +661,7 @@ namespace bs { namespace ct
 			{
 				VulkanSemaphore* semaphore = entry->GetBackBuffer().Sync;
 
-				if (numSemaphores >= (UINT32)mSemaphoresTemp.size())
+				if (numSemaphores >= (u32)mSemaphoresTemp.size())
 					mSemaphoresTemp.push_back(semaphore);
 				else
 					mSemaphoresTemp[numSemaphores] = semaphore;
@@ -683,8 +683,8 @@ namespace bs { namespace ct
 			VkCommandBuffer vkCmdBuffer = cmdBuffer->GetHandle();
 
 			TransitionInfo& barriers = entry.second;
-			UINT32 numImgBarriers = (UINT32)barriers.ImageBarriers.size();
-			UINT32 numBufferBarriers = (UINT32)barriers.BufferBarriers.size();
+			u32 numImgBarriers = (u32)barriers.ImageBarriers.size();
+			u32 numBufferBarriers = (u32)barriers.BufferBarriers.size();
 
 			VkPipelineStageFlags srcStage = 0;
 			VkPipelineStageFlags dstStage = 0;
@@ -717,7 +717,7 @@ namespace bs { namespace ct
 
 		for (auto& entry : mImages)
 		{
-			UINT32 imageInfoIdx = entry.second;
+			u32 imageInfoIdx = entry.second;
 			ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
 			ResourceUseHandle& useHandle = imageInfo.UseHandle;
@@ -797,7 +797,7 @@ namespace bs { namespace ct
 
 			for (auto& entry : mImages)
 			{
-				UINT32 imageInfoIdx = entry.second;
+				u32 imageInfoIdx = entry.second;
 				ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
 				ResourceUseHandle& useHandle = imageInfo.UseHandle;
@@ -856,7 +856,7 @@ namespace bs { namespace ct
 		mMemoryBarrierSrcStages = 0;
 	}
 
-	void VulkanCmdBuffer::SetRenderTarget(const SPtr<RenderTarget>& rt, UINT32 readOnlyFlags, RenderSurfaceMask loadMask)
+	void VulkanCmdBuffer::SetRenderTarget(const SPtr<RenderTarget>& rt, u32 readOnlyFlags, RenderSurfaceMask loadMask)
 	{
 		assert(mState != State::Submitted);
 
@@ -922,15 +922,15 @@ namespace bs { namespace ct
 		if(mFramebuffer != nullptr)
 		{
 			VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
-			UINT32 numColorAttachments = renderPass->GetNumColorAttachments();
-			for(UINT32 i = 0; i < numColorAttachments; i++)
+			u32 numColorAttachments = renderPass->GetNumColorAttachments();
+			for(u32 i = 0; i < numColorAttachments; i++)
 			{
 				const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetColorAttachment(i);
-				UINT32 imageInfoIdx = mImages[fbAttachment.Image];
+				u32 imageInfoIdx = mImages[fbAttachment.Image];
 				ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
 				ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
-				for(UINT32 j = 0; j < imageInfo.NumSubresourceInfos; j++)
+				for(u32 j = 0; j < imageInfo.NumSubresourceInfos; j++)
 				{
 					ImageSubresourceInfo& entry = subresourceInfos[j];
 					entry.UseFlags.Unset(ImageUseFlagBits::Framebuffer);
@@ -942,11 +942,11 @@ namespace bs { namespace ct
 			if(renderPass->HasDepthAttachment())
 			{
 				const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetDepthStencilAttachment();
-				UINT32 imageInfoIdx = mImages[fbAttachment.Image];
+				u32 imageInfoIdx = mImages[fbAttachment.Image];
 				ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
 				ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
-				for(UINT32 j = 0; j < imageInfo.NumSubresourceInfos; j++)
+				for(u32 j = 0; j < imageInfo.NumSubresourceInfos; j++)
 				{
 					ImageSubresourceInfo& entry = subresourceInfos[j];
 					entry.UseFlags.Unset(ImageUseFlagBits::Framebuffer);
@@ -983,8 +983,8 @@ namespace bs { namespace ct
 		mGfxPipelineRequiresBind = true;
 	}
 
-	void VulkanCmdBuffer::ClearViewport(const Rect2I& area, UINT32 buffers, const Color& color, float depth, UINT16 stencil,
-					   UINT8 targetMask)
+	void VulkanCmdBuffer::ClearViewport(const Rect2I& area, u32 buffers, const Color& color, float depth, u16 stencil,
+					   u8 targetMask)
 	{
 		if (buffers == 0 || mFramebuffer == nullptr)
 			return;
@@ -995,13 +995,13 @@ namespace bs { namespace ct
 		if (IsInRenderPass())
 		{
 			VkClearAttachment attachments[BS_MAX_MULTIPLE_RENDER_TARGETS + 1];
-			UINT32 baseLayer = 0;
+			u32 baseLayer = 0;
 
-			UINT32 attachmentIdx = 0;
+			u32 attachmentIdx = 0;
 			if ((buffers & FBT_COLOR) != 0)
 			{
-				UINT32 numColorAttachments = renderPass->GetNumColorAttachments();
-				for (UINT32 i = 0; i < numColorAttachments; i++)
+				u32 numColorAttachments = renderPass->GetNumColorAttachments();
+				for (u32 i = 0; i < numColorAttachments; i++)
 				{
 					const VulkanFramebufferAttachment& attachment = mFramebuffer->GetColorAttachment(i);
 
@@ -1017,7 +1017,7 @@ namespace bs { namespace ct
 					colorValue.float32[2] = color.B;
 					colorValue.float32[3] = color.A;
 
-					UINT32 curBaseLayer = attachment.BaseLayer;
+					u32 curBaseLayer = attachment.BaseLayer;
 					if (attachmentIdx == 0)
 						baseLayer = curBaseLayer;
 					else
@@ -1055,7 +1055,7 @@ namespace bs { namespace ct
 
 					attachments[attachmentIdx].colorAttachment = 0;
 
-					UINT32 curBaseLayer = mFramebuffer->GetDepthStencilAttachment().BaseLayer;
+					u32 curBaseLayer = mFramebuffer->GetDepthStencilAttachment().BaseLayer;
 					if (attachmentIdx == 0)
 						baseLayer = curBaseLayer;
 					else
@@ -1073,7 +1073,7 @@ namespace bs { namespace ct
 				}
 			}
 
-			UINT32 numAttachments = attachmentIdx;
+			u32 numAttachments = attachmentIdx;
 			if (numAttachments == 0)
 				return;
 
@@ -1093,10 +1093,10 @@ namespace bs { namespace ct
 			ClearMask clearMask;
 			std::array<VkClearValue, BS_MAX_MULTIPLE_RENDER_TARGETS + 1> clearValues = mClearValues;
 
-			UINT32 numColorAttachments = renderPass->GetNumColorAttachments();
+			u32 numColorAttachments = renderPass->GetNumColorAttachments();
 			if ((buffers & FBT_COLOR) != 0)
 			{
-				for (UINT32 i = 0; i < numColorAttachments; i++)
+				for (u32 i = 0; i < numColorAttachments; i++)
 				{
 					const VulkanFramebufferAttachment& attachment = mFramebuffer->GetColorAttachment(i);
 
@@ -1117,7 +1117,7 @@ namespace bs { namespace ct
 			{
 				if (renderPass->HasDepthAttachment())
 				{
-					UINT32 depthAttachmentIdx = numColorAttachments;
+					u32 depthAttachmentIdx = numColorAttachments;
 
 					if ((buffers & FBT_DEPTH) != 0)
 					{
@@ -1150,19 +1150,19 @@ namespace bs { namespace ct
 		NotifyRenderTargetModified();
 	}
 
-	void VulkanCmdBuffer::ClearRenderTarget(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask)
+	void VulkanCmdBuffer::ClearRenderTarget(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
 	{
 		Rect2I area(0, 0, mFramebuffer->GetWidth(), mFramebuffer->GetHeight());
 		ClearViewport(area, buffers, color, depth, stencil, targetMask);
 	}
 
-	void VulkanCmdBuffer::ClearViewport(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask)
+	void VulkanCmdBuffer::ClearViewport(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
 	{
 		Rect2I area;
-		area.X = (UINT32)(mViewport.X * mFramebuffer->GetWidth());
-		area.Y = (UINT32)(mViewport.Y * mFramebuffer->GetHeight());
-		area.Width = (UINT32)(mViewport.Width * mFramebuffer->GetWidth());
-		area.Height = (UINT32)(mViewport.Height * mFramebuffer->GetHeight());
+		area.X = (u32)(mViewport.X * mFramebuffer->GetWidth());
+		area.Y = (u32)(mViewport.Y * mFramebuffer->GetHeight());
+		area.Width = (u32)(mViewport.Width * mFramebuffer->GetWidth());
+		area.Height = (u32)(mViewport.Height * mFramebuffer->GetHeight());
 
 		ClearViewport(area, buffers, color, depth, stencil, targetMask);
 	}
@@ -1222,7 +1222,7 @@ namespace bs { namespace ct
 		mScissorRequiresBind = true;
 	}
 
-	void VulkanCmdBuffer::SetStencilRef(UINT32 value)
+	void VulkanCmdBuffer::SetStencilRef(u32 value)
 	{
 		if (mStencilRef == value)
 			return;
@@ -1240,16 +1240,16 @@ namespace bs { namespace ct
 		mGfxPipelineRequiresBind = true;
 	}
 
-	void VulkanCmdBuffer::SetVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers)
+	void VulkanCmdBuffer::SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u32 numBuffers)
 	{
 		if (numBuffers == 0)
 			return;
 
-		UINT32 endIdx = index + numBuffers;
+		u32 endIdx = index + numBuffers;
 		if(mVertexBuffers.size() < endIdx)
 			mVertexBuffers.resize(endIdx);
 
-		for(UINT32 i = index; i < endIdx; i++)
+		for(u32 i = index; i < endIdx; i++)
 			mVertexBuffers[i] = std::static_pointer_cast<VulkanVertexBuffer>(buffers[i]);
 
 		mVertexInputsDirty = true;
@@ -1296,8 +1296,8 @@ namespace bs { namespace ct
 			return false;
 
 		// Check that pipeline matches the read-only state of any framebuffer attachments
-		UINT32 numColorAttachments = renderPass->GetNumColorAttachments();
-		for (UINT32 i = 0; i < numColorAttachments; i++)
+		u32 numColorAttachments = renderPass->GetNumColorAttachments();
+		for (u32 i = 0; i < numColorAttachments; i++)
 		{
 			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetColorAttachment(i);
 			ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.Image, fbAttachment.Surface.Face,
@@ -1383,8 +1383,8 @@ namespace bs { namespace ct
 	{
 		if (!mVertexBuffers.empty())
 		{
-			UINT32 lastValidIdx = (UINT32)-1;
-			UINT32 curIdx = 0;
+			u32 lastValidIdx = (u32)-1;
+			u32 curIdx = 0;
 			for(auto& vertexBuffer : mVertexBuffers)
 			{
 				bool validBuffer = false;
@@ -1397,31 +1397,31 @@ namespace bs { namespace ct
 
 						RegisterBuffer(resource, BufferUseFlagBits::Vertex, VulkanAccessFlag::Read);
 
-						if(lastValidIdx == (UINT32)-1)
+						if(lastValidIdx == (u32)-1)
 							lastValidIdx = curIdx;
 
 						validBuffer = true;
 					}
 				}
 
-				if(!validBuffer && lastValidIdx != (UINT32)-1)
+				if(!validBuffer && lastValidIdx != (u32)-1)
 				{
-					UINT32 count = curIdx - lastValidIdx;
+					u32 count = curIdx - lastValidIdx;
 					if(count > 0)
 					{
 						vkCmdBindVertexBuffers(mCmdBuffer, lastValidIdx, count, mVertexBuffersTemp,
 							mVertexBufferOffsetsTemp);
 
-						lastValidIdx = (UINT32)-1;
+						lastValidIdx = (u32)-1;
 					}
 				}
 
 				curIdx++;
 			}
 
-			if (lastValidIdx != (UINT32)-1)
+			if (lastValidIdx != (u32)-1)
 			{
-				UINT32 count = curIdx - lastValidIdx;
+				u32 count = curIdx - lastValidIdx;
 				if (count > 0)
 				{
 					vkCmdBindVertexBuffers(mCmdBuffer, lastValidIdx, count, mVertexBuffersTemp,
@@ -1472,7 +1472,7 @@ namespace bs { namespace ct
 		auto createLayoutTransitionBarrier = [&](VulkanImage* image, ImageInfo& imageInfo)
 		{
 			ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
-			for (UINT32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
+			for (u32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
 			{
 				ImageSubresourceInfo& subresourceInfo = subresourceInfos[i];
 
@@ -1506,7 +1506,7 @@ namespace bs { namespace ct
 		// as color attachments, making the layout change redundant.
 		for (auto& entry : mQueuedLayoutTransitions)
 		{
-			UINT32 imageInfoIdx = entry.second;
+			u32 imageInfoIdx = entry.second;
 			ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
 			createLayoutTransitionBarrier(entry.first, imageInfo);
@@ -1523,7 +1523,7 @@ namespace bs { namespace ct
 				srcStage, dstStage,
 				0, 0, nullptr,
 				0, nullptr,
-				(UINT32) mLayoutTransitionBarriersTemp.size(), mLayoutTransitionBarriersTemp.data());
+				(u32) mLayoutTransitionBarriersTemp.size(), mLayoutTransitionBarriersTemp.data());
 		}
 
 		mQueuedLayoutTransitions.clear();
@@ -1591,8 +1591,8 @@ namespace bs { namespace ct
 			return;
 
 		VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
-		UINT32 numColorAttachments = renderPass->GetNumColorAttachments();
-		for (UINT32 i = 0; i < numColorAttachments; i++)
+		u32 numColorAttachments = renderPass->GetNumColorAttachments();
+		for (u32 i = 0; i < numColorAttachments; i++)
 		{
 			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetColorAttachment(i);
 			ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.Image, fbAttachment.Surface.Face,
@@ -1642,7 +1642,7 @@ namespace bs { namespace ct
 		mClearMask = CLEAR_NONE;
 	}
 
-	void VulkanCmdBuffer::Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount)
+	void VulkanCmdBuffer::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount)
 	{
 		if (!IsReadyForRender())
 			return;
@@ -1671,7 +1671,7 @@ namespace bs { namespace ct
 		{
 			if (mNumBoundDescriptorSets > 0)
 			{
-				UINT32 deviceIdx = mDevice.GetIndex();
+				u32 deviceIdx = mDevice.GetIndex();
 				VkPipelineLayout pipelineLayout = mGraphicsPipeline->GetPipelineLayout(deviceIdx);
 
 				vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0,
@@ -1688,7 +1688,7 @@ namespace bs { namespace ct
 		NotifyRenderTargetModified();
 	}
 
-	void VulkanCmdBuffer::DrawIndexed(UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 instanceCount)
+	void VulkanCmdBuffer::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 instanceCount)
 	{
 		if (!IsReadyForRender())
 			return;
@@ -1717,7 +1717,7 @@ namespace bs { namespace ct
 		{
 			if (mNumBoundDescriptorSets > 0)
 			{
-				UINT32 deviceIdx = mDevice.GetIndex();
+				u32 deviceIdx = mDevice.GetIndex();
 				VkPipelineLayout pipelineLayout = mGraphicsPipeline->GetPipelineLayout(deviceIdx);
 
 				vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0,
@@ -1734,7 +1734,7 @@ namespace bs { namespace ct
 		NotifyRenderTargetModified();
 	}
 
-	void VulkanCmdBuffer::Dispatch(UINT32 numGroupsX, UINT32 numGroupsY, UINT32 numGroupsZ)
+	void VulkanCmdBuffer::Dispatch(u32 numGroupsX, u32 numGroupsY, u32 numGroupsZ)
 	{
 		if (mComputePipeline == nullptr)
 			return;
@@ -1751,7 +1751,7 @@ namespace bs { namespace ct
 		ExecuteWriteHazardBarrier();
 		ExecuteLayoutTransitions();
 
-		UINT32 deviceIdx = mDevice.GetIndex();
+		u32 deviceIdx = mDevice.GetIndex();
 		if(mCmpPipelineRequiresBind)
 		{
 			VulkanPipeline* pipeline = mComputePipeline->GetPipeline(deviceIdx);
@@ -1860,8 +1860,8 @@ namespace bs { namespace ct
 	VkImageLayout VulkanCmdBuffer::GetCurrentLayout(VulkanImage* image, const VkImageSubresourceRange& range,
 		bool inRenderPass)
 	{
-		UINT32 face = range.baseArrayLayer;
-		UINT32 mip = range.baseMipLevel;
+		u32 face = range.baseArrayLayer;
+		u32 mip = range.baseMipLevel;
 
 		// The assumption is that all the subresources in the range will have the same layout, as this should be handled
 		// by registerResource(), or by external code (in the case of transfers). So we only check the first subresource.
@@ -1871,7 +1871,7 @@ namespace bs { namespace ct
 		if (iterFind == mImages.end())
 			return subresource->GetLayout();
 
-		UINT32 imageInfoIdx = iterFind->second;
+		u32 imageInfoIdx = iterFind->second;
 		ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
 		VulkanRenderPass* renderPass = nullptr;
@@ -1879,7 +1879,7 @@ namespace bs { namespace ct
 			renderPass = mFramebuffer->GetRenderPass();
 
 		ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
-		for(UINT32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
+		for(u32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
 		{
 			ImageSubresourceInfo& entry = subresourceInfos[i];
 			if(face >= entry.Range.baseArrayLayer && face < (entry.Range.baseArrayLayer + entry.Range.layerCount) &&
@@ -1911,8 +1911,8 @@ namespace bs { namespace ct
 					}
 					else // It is a color attachment
 					{
-						UINT32 numColorAttachments = renderPass->GetNumColorAttachments();
-						for (UINT32 j = 0; j < numColorAttachments; j++)
+						u32 numColorAttachments = renderPass->GetNumColorAttachments();
+						for (u32 j = 0; j < numColorAttachments; j++)
 						{
 							const VulkanFramebufferAttachment& attachment = mFramebuffer->GetColorAttachment(j);
 
@@ -1981,7 +1981,7 @@ namespace bs { namespace ct
 		// if the resource has been used previously then it calculates the overlapping subresource sets and calls a relevant
 		// function and further determines if any layout transitions and/or memory/execution barriers are necessary.
 
-		UINT32 nextImageInfoIdx = (UINT32)mImageInfos.size();
+		u32 nextImageInfoIdx = (u32)mImageInfos.size();
 		auto registerSubresourceInfo = [&](const VkImageSubresourceRange& subresourceRange)
 		{
 			mSubresourceInfoStorage.push_back(ImageSubresourceInfo());
@@ -2015,17 +2015,17 @@ namespace bs { namespace ct
 			subresourceInfo.UseFlags = use;
 
 			if (use == ImageUseFlagBits::Shader)
-				mShaderBoundSubresourceInfos.insert((UINT32)mSubresourceInfoStorage.size() - 1);
+				mShaderBoundSubresourceInfos.insert((u32)mSubresourceInfoStorage.size() - 1);
 		};
 
 		auto insertResult = mImages.insert(std::make_pair(image, nextImageInfoIdx));
 		if (insertResult.second) // New element
 		{
-			UINT32 imageInfoIdx = insertResult.first->second;
+			u32 imageInfoIdx = insertResult.first->second;
 			mImageInfos.push_back(ImageInfo());
 
 			ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
-			imageInfo.SubresourceInfoIdx = (UINT32)mSubresourceInfoStorage.size();
+			imageInfo.SubresourceInfoIdx = (u32)mSubresourceInfoStorage.size();
 			imageInfo.NumSubresourceInfos = 1;
 
 			imageInfo.UseHandle.Used = false;
@@ -2037,7 +2037,7 @@ namespace bs { namespace ct
 		}
 		else // Existing element
 		{
-			UINT32 imageInfoIdx = insertResult.first->second;
+			u32 imageInfoIdx = insertResult.first->second;
 			ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
 			assert(!imageInfo.UseHandle.Used);
@@ -2049,7 +2049,7 @@ namespace bs { namespace ct
 			ImageSubresourceInfo* subresources = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
 
 			bool foundRange = false;
-			for(UINT32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
+			for(u32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
 			{
 				if(VulkanUtility::RangeOverlaps(subresources[i].Range, range))
 				{
@@ -2094,12 +2094,12 @@ namespace bs { namespace ct
 				bs_frame_mark();
 				{
 					// We orphan previously allocated memory (we reset it after submit() anyway)
-					UINT32 newSubresourceIdx = (UINT32)mSubresourceInfoStorage.size();
+					u32 newSubresourceIdx = (u32)mSubresourceInfoStorage.size();
 
-					FrameVector<UINT32> cutOverlappingRanges;
-					for (UINT32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
+					FrameVector<u32> cutOverlappingRanges;
+					for (u32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
 					{
-						UINT32 subresourceIdx = imageInfo.SubresourceInfoIdx + i;
+						u32 subresourceIdx = imageInfo.SubresourceInfoIdx + i;
 						ImageSubresourceInfo& subresource = mSubresourceInfoStorage[subresourceIdx];
 
 						if (!VulkanUtility::RangeOverlaps(subresource.Range, range))
@@ -2108,14 +2108,14 @@ namespace bs { namespace ct
 							mSubresourceInfoStorage.push_back(subresource);
 
 							if (use == ImageUseFlagBits::Shader)
-								mShaderBoundSubresourceInfos.insert((UINT32)mSubresourceInfoStorage.size() - 1);
+								mShaderBoundSubresourceInfos.insert((u32)mSubresourceInfoStorage.size() - 1);
 						}
 						else // Need to cut
 						{
-							UINT32 numCutRanges;
+							u32 numCutRanges;
 							VulkanUtility::CutRange(subresource.Range, range, tempCutRanges, numCutRanges);
 
-							for(UINT32 j = 0; j < numCutRanges; j++)
+							for(u32 j = 0; j < numCutRanges; j++)
 							{
 								// Create a copy of the original subresource with the new range
 								ImageSubresourceInfo newInfo = mSubresourceInfoStorage[subresourceIdx];
@@ -2140,13 +2140,13 @@ namespace bs { namespace ct
 									}
 
 									// Keep track of the overlapping ranges for later
-									cutOverlappingRanges.push_back((UINT32)mSubresourceInfoStorage.size());
+									cutOverlappingRanges.push_back((u32)mSubresourceInfoStorage.size());
 								}
 
 								mSubresourceInfoStorage.push_back(newInfo);
 
 								if(use == ImageUseFlagBits::Shader)
-									mShaderBoundSubresourceInfos.insert((UINT32)mSubresourceInfoStorage.size() - 1);
+									mShaderBoundSubresourceInfos.insert((u32)mSubresourceInfoStorage.size() - 1);
 							}
 						}
 					}
@@ -2165,16 +2165,16 @@ namespace bs { namespace ct
 						{
 							VkImageSubresourceRange& overlappingRange = mSubresourceInfoStorage[entry].Range;
 
-							UINT32 numSourceRanges = (UINT32)sourceRanges.size();
-							for(UINT32 i = 0; i < numSourceRanges; i++)
+							u32 numSourceRanges = (u32)sourceRanges.size();
+							for(u32 i = 0; i < numSourceRanges; i++)
 							{
 								VkImageSubresourceRange sourceRange = sourceRanges.front();
 								sourceRanges.pop();
 
-								UINT32 numCutRanges;
+								u32 numCutRanges;
 								VulkanUtility::CutRange(sourceRange, overlappingRange, tempCutRanges, numCutRanges);
 
-								for(UINT32 j = 0; j < numCutRanges; j++)
+								for(u32 j = 0; j < numCutRanges; j++)
 								{
 									// We only care about ranges outside of the ones we already covered
 									if(!VulkanUtility::RangeOverlaps(tempCutRanges[j], overlappingRange))
@@ -2192,19 +2192,19 @@ namespace bs { namespace ct
 					}
 
 					imageInfo.SubresourceInfoIdx = newSubresourceIdx;
-					imageInfo.NumSubresourceInfos = (UINT32)mSubresourceInfoStorage.size() - newSubresourceIdx;
+					imageInfo.NumSubresourceInfos = (u32)mSubresourceInfoStorage.size() - newSubresourceIdx;
 				}
 				bs_frame_clear();
 			}
 		}
 
 		// Register any sub-resources
-		for(UINT32 i = 0; i < range.layerCount; i++)
+		for(u32 i = 0; i < range.layerCount; i++)
 		{
-			for(UINT32 j = 0; j < range.levelCount; j++)
+			for(u32 j = 0; j < range.levelCount; j++)
 			{
-				UINT32 layer = range.baseArrayLayer + i;
-				UINT32 mipLevel = range.baseMipLevel + j;
+				u32 layer = range.baseArrayLayer + i;
+				u32 mipLevel = range.baseMipLevel + j;
 
 				RegisterResource(image->GetSubresource(layer, mipLevel), access);
 			}
@@ -2315,7 +2315,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void VulkanCmdBuffer::RegisterResource(VulkanFramebuffer* res, RenderSurfaceMask loadMask, UINT32 readMask)
+	void VulkanCmdBuffer::RegisterResource(VulkanFramebuffer* res, RenderSurfaceMask loadMask, u32 readMask)
 	{
 		auto insertResult = mResources.insert(std::make_pair(res, ResourceUseHandle()));
 		if (insertResult.second) // New element
@@ -2336,8 +2336,8 @@ namespace bs { namespace ct
 
 		// Register any sub-resources
 		VulkanRenderPass* renderPass = res->GetRenderPass();
-		UINT32 numColorAttachments = renderPass->GetNumColorAttachments();
-		for (UINT32 i = 0; i < numColorAttachments; i++)
+		u32 numColorAttachments = renderPass->GetNumColorAttachments();
+		for (u32 i = 0; i < numColorAttachments; i++)
 		{
 			const VulkanFramebufferAttachment& attachment = res->GetColorAttachment(i);
 
@@ -2397,7 +2397,7 @@ namespace bs { namespace ct
 		}
 	}
 
-	void VulkanCmdBuffer::UpdateShaderSubresource(VulkanImage* image, UINT32 imageInfoIdx,
+	void VulkanCmdBuffer::UpdateShaderSubresource(VulkanImage* image, u32 imageInfoIdx,
 		ImageSubresourceInfo& subresourceInfo, VkImageLayout layout, VulkanAccessFlags access, VkPipelineStageFlags stages)
 	{
 		// New layout is valid, check for transitions (UNDEFINED signifies the caller doesn't want a layout transition)
@@ -2499,7 +2499,7 @@ namespace bs { namespace ct
 			EndRenderPass();
 	}
 
-	void VulkanCmdBuffer::UpdateFramebufferSubresource(VulkanImage* image, UINT32 imageInfoIdx,
+	void VulkanCmdBuffer::UpdateFramebufferSubresource(VulkanImage* image, u32 imageInfoIdx,
 		ImageSubresourceInfo& subresourceInfo, VkImageLayout layout, VkImageLayout finalLayout, VulkanAccessFlags access,
 		VkPipelineStageFlags stages)
 	{
@@ -2571,7 +2571,7 @@ namespace bs { namespace ct
 			EndRenderPass();
 	}
 
-	void VulkanCmdBuffer::UpdateTransferSubresource(VulkanImage* image, UINT32 imageInfoIdx,
+	void VulkanCmdBuffer::UpdateTransferSubresource(VulkanImage* image, u32 imageInfoIdx,
 		ImageSubresourceInfo& subresourceInfo, VkImageLayout layout, VulkanAccessFlags access, VkPipelineStageFlags stages)
 	{
 		// Note: Currently it is assumed that all images submitted for a transfer operation will have their pre-operation
@@ -2587,13 +2587,13 @@ namespace bs { namespace ct
 		subresourceInfo.UseFlags |= ImageUseFlagBits::Transfer;
 	}
 
-	VulkanCmdBuffer::ImageSubresourceInfo& VulkanCmdBuffer::FindSubresourceInfo(VulkanImage* image, UINT32 face, UINT32 mip)
+	VulkanCmdBuffer::ImageSubresourceInfo& VulkanCmdBuffer::FindSubresourceInfo(VulkanImage* image, u32 face, u32 mip)
 	{
-		UINT32 imageInfoIdx = mImages[image];
+		u32 imageInfoIdx = mImages[image];
 		ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
 		ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
-		for(UINT32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
+		for(u32 i = 0; i < imageInfo.NumSubresourceInfos; i++)
 		{
 			ImageSubresourceInfo& entry = subresourceInfos[i];
 			if(face >= entry.Range.baseArrayLayer && face < (entry.Range.baseArrayLayer + entry.Range.layerCount) &&
@@ -2631,12 +2631,12 @@ namespace bs { namespace ct
 		mRenderTargetModified = true;
 	}
 
-	VulkanCommandBuffer::VulkanCommandBuffer(VulkanDevice& device, GpuQueueType type, UINT32 deviceIdx,
-		UINT32 queueIdx, bool secondary)
+	VulkanCommandBuffer::VulkanCommandBuffer(VulkanDevice& device, GpuQueueType type, u32 deviceIdx,
+		u32 queueIdx, bool secondary)
 		: CommandBuffer(type, deviceIdx, queueIdx, secondary), mBuffer(nullptr)
 		, mDevice(device), mQueue(nullptr), mIdMask(0)
 	{
-		UINT32 numQueues = device.GetNumQueues(mType);
+		u32 numQueues = device.GetNumQueues(mType);
 		if (numQueues == 0) // Fall back to graphics queue
 		{
 			mType = GQT_GRAPHICS;
@@ -2655,8 +2655,8 @@ namespace bs { namespace ct
 		VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
 		RenderSurfaceMask readMask = RT_NONE;
 
-		UINT32 numColorAttachments = renderPass->GetNumColorAttachments();
-		for(UINT32 i = 0; i < numColorAttachments; i++)
+		u32 numColorAttachments = renderPass->GetNumColorAttachments();
+		for(u32 i = 0; i < numColorAttachments; i++)
 		{
 			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetColorAttachment(i);
 			ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.Image, fbAttachment.Surface.Face,
@@ -2696,11 +2696,11 @@ namespace bs { namespace ct
 		if (mBuffer != nullptr)
 			assert(mBuffer->IsSubmitted());
 
-		UINT32 queueFamily = mDevice.GetQueueFamily(mType);
+		u32 queueFamily = mDevice.GetQueueFamily(mType);
 		mBuffer = pool.GetBuffer(queueFamily, mIsSecondary);
 	}
 
-	void VulkanCommandBuffer::Submit(UINT32 syncMask)
+	void VulkanCommandBuffer::Submit(u32 syncMask)
 	{
 		if (GetState() == CommandBufferState::Executing)
 		{

@@ -14,12 +14,12 @@ namespace bs
 	/** A two dimensional vector with integer coordinates.*/
 	struct BS_UTILITY_EXPORT Vector2I
 	{
-		INT32 X = 0;
-		INT32 Y = 0;
+		i32 X = 0;
+		i32 Y = 0;
 
 		constexpr Vector2I() = default;
 
-		constexpr Vector2I(INT32 _x, INT32 _y )
+		constexpr Vector2I(i32 _x, i32 _y )
 			:X(_x), Y(_y)
 		{ }
 
@@ -35,19 +35,19 @@ namespace bs
 		}
 
 		/** Returns the manhattan distance between this and another point. */
-		UINT32 ManhattanDist(const Vector2I& other) const
+		u32 ManhattanDist(const Vector2I& other) const
 		{
-			return (UINT32)std::abs(other.X - X) + (UINT32)std::abs(other.Y - Y);
+			return (u32)std::abs(other.X - X) + (u32)std::abs(other.Y - Y);
 		}
 
-		INT32 operator[] (size_t i) const
+		i32 operator[] (size_t i) const
 		{
 			assert(i < 2);
 
 			return *(&X+i);
 		}
 
-		INT32& operator[] (size_t i)
+		i32& operator[] (size_t i)
 		{
 			assert(i < 2);
 
@@ -152,7 +152,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector2I& operator*= (INT32 val)
+		Vector2I& operator*= (i32 val)
 		{
 			X *= val;
 			Y *= val;
@@ -168,7 +168,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector2I& operator/= (INT32 val)
+		Vector2I& operator/= (i32 val)
 		{
 			assert(val != 0);
 
@@ -187,13 +187,13 @@ namespace bs
 		}
 
 		/** Returns the square of the length(magnitude) of the vector. */
-		INT32 SquaredLength() const
+		i32 SquaredLength() const
 		{
 			return X * X + Y * Y;
 		}
 
 		/** Calculates the dot (scalar) product of this vector with another. */
-		INT32 Dot(const Vector2I& vec) const
+		i32 Dot(const Vector2I& vec) const
 		{
 			return X * vec.X + Y * vec.Y;
 		}

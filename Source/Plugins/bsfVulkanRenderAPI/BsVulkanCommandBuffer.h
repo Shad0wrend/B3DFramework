@@ -52,7 +52,7 @@ namespace bs { namespace ct
 		 * Attempts to find a free command buffer, or creates a new one if not found. Caller must guarantee the provided
 		 * queue family is valid.
 		 */
-		VulkanCmdBuffer* GetBuffer(UINT32 queueFamily, bool secondary);
+		VulkanCmdBuffer* GetBuffer(u32 queueFamily, bool secondary);
 
 	private:
 		/** Command buffer pool and related information. */
@@ -60,15 +60,15 @@ namespace bs { namespace ct
 		{
 			VkCommandPool Pool = VK_NULL_HANDLE;
 			VulkanCmdBuffer* Buffers[BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY];
-			UINT32 QueueFamily = -1;
+			u32 QueueFamily = -1;
 		};
 
 		/** Creates a new command buffer. */
-		VulkanCmdBuffer* CreateBuffer(UINT32 queueFamily, bool secondary);
+		VulkanCmdBuffer* CreateBuffer(u32 queueFamily, bool secondary);
 
 		VulkanDevice& mDevice;
-		UnorderedMap<UINT32, PoolInfo> mPools;
-		UINT32 mNextId = 1;
+		UnorderedMap<u32, PoolInfo> mPools;
+		u32 mNextId = 1;
 	};
 
 	/** Determines where are the current descriptor sets bound to. */
@@ -128,17 +128,17 @@ namespace bs { namespace ct
 		};
 
 	public:
-		VulkanCmdBuffer(VulkanDevice& device, UINT32 id, VkCommandPool pool, UINT32 queueFamily, bool secondary);
+		VulkanCmdBuffer(VulkanDevice& device, u32 id, VkCommandPool pool, u32 queueFamily, bool secondary);
 		~VulkanCmdBuffer();
 
 		/** Returns an unique identifier of this command buffer. */
-		UINT32 GetId() const { return mId; }
+		u32 GetId() const { return mId; }
 
 		/** Returns the index of the queue family this command buffer is executing on. */
-		UINT32 GetQueueFamily() const { return mQueueFamily; }
+		u32 GetQueueFamily() const { return mQueueFamily; }
 
 		/** Returns the index of the device this command buffer will execute on. */
-		UINT32 GetDeviceIdx() const;
+		u32 GetDeviceIdx() const;
 
 		/** Makes the command buffer ready to start recording commands. */
 		void Begin();
@@ -162,7 +162,7 @@ namespace bs { namespace ct
 		 * @param[in]	syncMask	Mask that controls which other command buffers does this command buffer depend upon
 		 *							(if any). See description of @p syncMask parameter in RenderAPI::executeCommands().
 		 */
-		void Submit(VulkanQueue* queue, UINT32 queueIdx, UINT32 syncMask);
+		void Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask);
 
 		/** Returns the handle to the internal Vulkan command buffer wrapped by this object. */
 		VkCommandBuffer GetHandle() const { return mCmdBuffer; }
@@ -259,7 +259,7 @@ namespace bs { namespace ct
 		 * Lets the command buffer know that the provided framebuffer resource has been queued on it, and will be used by
 		 * the device when the command buffer is submitted.
 		 */
-		void RegisterResource(VulkanFramebuffer* res, RenderSurfaceMask loadMask, UINT32 readMask);
+		void RegisterResource(VulkanFramebuffer* res, RenderSurfaceMask loadMask, u32 readMask);
 
 		/**
 		 * Lets the command buffer know that the provided swap chain resource has been queued on it, and will be used by
@@ -281,13 +281,13 @@ namespace bs { namespace ct
 		 * Assigns a render target the the command buffer. This render target's framebuffer and render pass will be used
 		 * when beginRenderPass() is called. Command buffer must not be currently recording a render pass.
 		 */
-		void SetRenderTarget(const SPtr<RenderTarget>& rt, UINT32 readOnlyFlags, RenderSurfaceMask loadMask);
+		void SetRenderTarget(const SPtr<RenderTarget>& rt, u32 readOnlyFlags, RenderSurfaceMask loadMask);
 
 		/** Clears the entirety currently bound render target. */
-		void ClearRenderTarget(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask);
+		void ClearRenderTarget(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask);
 
 		/** Clears the viewport portion of the currently bound render target. */
-		void ClearViewport(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask);
+		void ClearViewport(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask);
 
 		/** Assigns a pipeline state to use for subsequent draw commands. */
 		void SetPipelineState(const SPtr<GraphicsPipelineState>& state);
@@ -308,13 +308,13 @@ namespace bs { namespace ct
 		void SetScissorRect(const Rect2I& area);
 
 		/** Sets a stencil reference value that will be used for comparisons in stencil operations, if enabled. */
-		void SetStencilRef(UINT32 value);
+		void SetStencilRef(u32 value);
 
 		/** Changes how are primitives interpreted as during rendering. */
 		void SetDrawOp(DrawOperationType drawOp);
 
 		/** Sets one or multiple vertex buffers that will be used for subsequent draw() or drawIndexed() calls. */
-		void SetVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers);
+		void SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u32 numBuffers);
 
 		/** Sets an index buffer that will be used for subsequent drawIndexed() calls. */
 		void SetIndexBuffer(const SPtr<IndexBuffer>& buffer);
@@ -323,13 +323,13 @@ namespace bs { namespace ct
 		void SetVertexDeclaration(const SPtr<VertexDeclaration>& decl);
 
 		/** Executes a draw command using the currently bound graphics pipeline, vertex buffer and render target. */
-		void Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount);
+		void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount);
 
 		/** Executes a draw command using the currently bound graphics pipeline, index & vertex buffer and render target. */
-		void DrawIndexed(UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 instanceCount);
+		void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 instanceCount);
 
 		/** Executes a dispatch command using the currently bound compute pipeline. */
-		void Dispatch(UINT32 numGroupsX, UINT32 numGroupsY, UINT32 numGroupsZ);
+		void Dispatch(u32 numGroupsX, u32 numGroupsY, u32 numGroupsZ);
 
 		/**
 		 * Registers a command that signals the event when executed. Will be delayed until the end of the current
@@ -414,8 +414,8 @@ namespace bs { namespace ct
 		{
 			ResourceUseHandle UseHandle;
 
-			UINT32 SubresourceInfoIdx;
-			UINT32 NumSubresourceInfos;
+			u32 SubresourceInfoIdx;
+			u32 NumSubresourceInfos;
 		};
 
 		/** Contains information about a range of Vulkan image sub-resources bound/used on this command buffer. */
@@ -501,8 +501,8 @@ namespace bs { namespace ct
 		void BindGpuParams();
 
 		/** Clears the specified area of the currently bound render target. */
-		void ClearViewport(const Rect2I& area, UINT32 buffers, const Color& color, float depth, UINT16 stencil,
-			UINT8 targetMask);
+		void ClearViewport(const Rect2I& area, u32 buffers, const Color& color, float depth, u16 stencil,
+			u8 targetMask);
 
 		/** Starts and ends a render pass, intended only for a clear operation. */
 		void ExecuteClearPass();
@@ -540,25 +540,25 @@ namespace bs { namespace ct
 		 * Updates an existing image sub-resource with new layout, access and stage flags for the purposes of shader
 		 * read or write. Sets up any necessary execution and memory barriers, as well as layout transitions.
 		 */
-		void UpdateShaderSubresource(VulkanImage* image, UINT32 imageInfoIdx, ImageSubresourceInfo& subresourceInfo,
+		void UpdateShaderSubresource(VulkanImage* image, u32 imageInfoIdx, ImageSubresourceInfo& subresourceInfo,
 			VkImageLayout layout, VulkanAccessFlags access, VkPipelineStageFlags stages);
 
 		/**
 		 * Updates an existing image sub-resource with new layout, access and stage flags for the purposes of being bound
 		 * as a framebuffer attachment. Sets up any necessary execution and memory barriers, as well as layout transitions.
 		 */
-		void UpdateFramebufferSubresource(VulkanImage* image, UINT32 imageInfoIdx, ImageSubresourceInfo& subresourceInfo,
+		void UpdateFramebufferSubresource(VulkanImage* image, u32 imageInfoIdx, ImageSubresourceInfo& subresourceInfo,
 			VkImageLayout layout, VkImageLayout finalLayout, VulkanAccessFlags access, VkPipelineStageFlags stages);
 
 		/**
 		 * Updates an existing image sub-resource with new access and stage flags for the purposes of being used for a
 		 * transfer operation. Sets up any necessary execution and memory barriers, as well as layout transitions.
 		 */
-		void UpdateTransferSubresource(VulkanImage* image, UINT32 imageInfoIdx, ImageSubresourceInfo& subresourceInfo,
+		void UpdateTransferSubresource(VulkanImage* image, u32 imageInfoIdx, ImageSubresourceInfo& subresourceInfo,
 			VkImageLayout layout, VulkanAccessFlags access, VkPipelineStageFlags stages);
 
 		/** Finds a subresource info structure containing the specified face and mip level of the provided image. */
-		ImageSubresourceInfo& FindSubresourceInfo(VulkanImage* image, UINT32 face, UINT32 mip);
+		ImageSubresourceInfo& FindSubresourceInfo(VulkanImage* image, u32 face, u32 mip);
 
 		/** Gets all queries registered on this command buffer that haven't been ended. */
 		void GetInProgressQueries(Vector<VulkanTimerQuery*>& timer, Vector<VulkanOcclusionQuery*>& occlusion) const;
@@ -569,8 +569,8 @@ namespace bs { namespace ct
 		/** Notifies the active render target that a rendering command was queued that will potentially change its contents. */
 		void NotifyRenderTargetModified();
 
-		UINT32 mId;
-		UINT32 mQueueFamily;
+		u32 mId;
+		u32 mQueueFamily;
 		State mState = State::Ready;
 		VulkanDevice& mDevice;
 		VkCommandPool mPool;
@@ -579,22 +579,22 @@ namespace bs { namespace ct
 
 		VulkanSemaphore* mIntraQueueSemaphore = nullptr;
 		VulkanSemaphore* mInterQueueSemaphores[BS_MAX_VULKAN_CB_DEPENDENCIES] { };
-		mutable UINT32 mNumUsedInterQueueSemaphores = 0;
+		mutable u32 mNumUsedInterQueueSemaphores = 0;
 
 		VulkanFramebuffer* mFramebuffer = nullptr;
-		UINT32 mRenderTargetReadOnlyFlags = 0;
+		u32 mRenderTargetReadOnlyFlags = 0;
 		RenderSurfaceMask mRenderTargetLoadMask = RT_NONE;
 
 		UnorderedMap<VulkanResource*, ResourceUseHandle> mResources;
-		UnorderedMap<VulkanResource*, UINT32> mImages;
+		UnorderedMap<VulkanResource*, u32> mImages;
 		UnorderedMap<VulkanResource*, BufferInfo> mBuffers;
 		UnorderedMap<VulkanSwapChain*, ResourceUseHandle> mSwapChains;
 		UnorderedSet<VulkanOcclusionQuery*> mOcclusionQueries;
 		UnorderedSet<VulkanTimerQuery*> mTimerQueries;
 		Vector<ImageInfo> mImageInfos;
 		Vector<ImageSubresourceInfo> mSubresourceInfoStorage;
-		Set<UINT32> mShaderBoundSubresourceInfos;
-		UINT32 mGlobalQueueIdx = -1;
+		Set<u32> mShaderBoundSubresourceInfos;
+		u32 mGlobalQueueIdx = -1;
 
 		bool mNeedsWARMemoryBarrier : 1;
 		bool mNeedsRAWMemoryBarrier : 1;
@@ -610,9 +610,9 @@ namespace bs { namespace ct
 		Vector<SPtr<VulkanVertexBuffer>> mVertexBuffers;
 		Rect2 mViewport { 0.0f, 0.0f, 1.0f, 1.0f };
 		Rect2I mScissor { 0, 0, 0, 0 };
-		UINT32 mStencilRef = 0;
+		u32 mStencilRef = 0;
 		DrawOperationType mDrawOp = DOT_TRIANGLE_LIST;
-		UINT32 mNumBoundDescriptorSets = 0;
+		u32 mNumBoundDescriptorSets = 0;
 		bool mGfxPipelineRequiresBind : 1;
 		bool mCmpPipelineRequiresBind : 1;
 		bool mViewportRequiresBind : 1;
@@ -631,9 +631,9 @@ namespace bs { namespace ct
 		VkBuffer mVertexBuffersTemp[BS_MAX_BOUND_VERTEX_BUFFERS] { };
 		VkDeviceSize mVertexBufferOffsetsTemp[BS_MAX_BOUND_VERTEX_BUFFERS] { };
 		VkDescriptorSet* mDescriptorSetsTemp;
-		UnorderedMap<UINT32, TransitionInfo> mTransitionInfoTemp;
+		UnorderedMap<u32, TransitionInfo> mTransitionInfoTemp;
 		Vector<VkImageMemoryBarrier> mLayoutTransitionBarriersTemp;
-		UnorderedMap<VulkanImage*, UINT32> mQueuedLayoutTransitions;
+		UnorderedMap<VulkanImage*, u32> mQueuedLayoutTransitions;
 		Vector<VulkanEvent*> mQueuedEvents;
 		Vector<VulkanQuery*> mQueuedQueryResets;
 		UnorderedSet<VulkanSwapChain*> mActiveSwapChains;
@@ -652,7 +652,7 @@ namespace bs { namespace ct
 		 * @param[in]	syncMask	Mask that controls which other command buffers does this command buffer depend upon
 		 *							(if any). See description of @p syncMask parameter in RenderAPI::executeCommands().
 		 */
-		void Submit(UINT32 syncMask);
+		void Submit(u32 syncMask);
 
 		/**
 		 * Returns the internal command buffer.
@@ -670,7 +670,7 @@ namespace bs { namespace ct
 	private:
 		friend class VulkanCommandBufferManager;
 
-		VulkanCommandBuffer(VulkanDevice& device, GpuQueueType type, UINT32 deviceIdx, UINT32 queueIdx,
+		VulkanCommandBuffer(VulkanDevice& device, GpuQueueType type, u32 deviceIdx, u32 queueIdx,
 			bool secondary);
 
 		/**
@@ -682,7 +682,7 @@ namespace bs { namespace ct
 		VulkanCmdBuffer* mBuffer;
 		VulkanDevice& mDevice;
 		VulkanQueue* mQueue;
-		UINT32 mIdMask;
+		u32 mIdMask;
 	};
 
 	/** @} */

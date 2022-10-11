@@ -65,7 +65,7 @@ namespace bs
 
 		/** @copydoc Animation::blendAdditive */
 		BS_SCRIPT_EXPORT(n:BlendAdditive)
-		void BlendAdditive(const HAnimationClip& clip, float weight, float fadeLength = 0.0f, UINT32 layer = 0);
+		void BlendAdditive(const HAnimationClip& clip, float weight, float fadeLength = 0.0f, u32 layer = 0);
 
 		/** @copydoc Animation::blend1D */
 		BS_SCRIPT_EXPORT(n:Blend1D)
@@ -85,7 +85,7 @@ namespace bs
 
 		/** @copydoc Animation::stop */
 		BS_SCRIPT_EXPORT(n:Stop)
-		void Stop(UINT32 layer);
+		void Stop(u32 layer);
 
 		/** @copydoc Animation::stopAll */
 		BS_SCRIPT_EXPORT(n:StopAll)
@@ -142,11 +142,11 @@ namespace bs
 
 		/** @copydoc Animation::getNumClips */
 		BS_SCRIPT_EXPORT(in:true)
-		UINT32 GetNumClips() const;
+		u32 GetNumClips() const;
 
 		/** @copydoc Animation::getClip */
 		BS_SCRIPT_EXPORT(in:true)
-		HAnimationClip GetClip(UINT32 idx) const;
+		HAnimationClip GetClip(u32 idx) const;
 
 		/** Triggered whenever an animation event is reached. */
 		Event<void(const HAnimationClip&, const String&)> OnEventTriggered;
@@ -195,7 +195,7 @@ namespace bs
 
 		/** @copydoc Animation::getGenericCurveValue */
 		BS_SCRIPT_EXPORT(in:true)
-		bool GetGenericCurveValueInternal(UINT32 curveIdx, float& value);
+		bool GetGenericCurveValueInternal(u32 curveIdx, float& value);
 
 		/**
 		 * Preview mode allows certain operations on the component to be allowed (like basic animation playback),

@@ -4,12 +4,12 @@
 
 namespace bs
 {
-	SPtr<RenderWindow> NullRenderWindowManager::CreateImpl(RENDER_WINDOW_DESC& desc, UINT32 windowId,
+	SPtr<RenderWindow> NullRenderWindowManager::CreateImpl(RENDER_WINDOW_DESC& desc, u32 windowId,
 		const SPtr<RenderWindow>& parentWindow)
 	{
 		if(parentWindow != nullptr)
 		{
-			UINT64 hWnd;
+			u64 hWnd;
 			parentWindow->GetCustomAttribute("WINDOW", &hWnd);
 			desc.PlatformSpecific["parentWindowHandle"] = toString(hWnd);
 		}
@@ -19,7 +19,7 @@ namespace bs
 		return bs_core_ptr<NullRenderWindow>(renderWindow);
 	}
 
-	NullRenderWindow::NullRenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId)
+	NullRenderWindow::NullRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId)
 		:RenderWindow(desc, windowId), mProperties(desc)
 	{ }
 
@@ -47,7 +47,7 @@ namespace bs
 	{
 		if (name == "WINDOW")
 		{
-			UINT64 *pHwnd = (UINT64*)pData;
+			u64 *pHwnd = (u64*)pData;
 			*pHwnd = 0;
 			return;
 		}
@@ -57,7 +57,7 @@ namespace bs
 
 	namespace ct
 	{
-		NullRenderWindow::NullRenderWindow(const RENDER_WINDOW_DESC& desc, UINT32 windowId)
+		NullRenderWindow::NullRenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId)
 			: RenderWindow(desc, windowId), mProperties(desc), mSyncedProperties(desc)
 		{ }
 
@@ -72,7 +72,7 @@ namespace bs
 		{
 			if(name == "WINDOW")
 			{
-				UINT64 *pWnd = (UINT64*)pData;
+				u64 *pWnd = (u64*)pData;
 				*pWnd = 0;
 				return;
 			}

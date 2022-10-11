@@ -56,7 +56,7 @@ namespace bs { namespace ct
 		GPUInfo gpuInfo;
 		gpuInfo.NumGpUs = std::min(5U, mDriverList->Count());
 
-		for(UINT32 i = 0; i < gpuInfo.NumGpUs; i++)
+		for(u32 i = 0; i < gpuInfo.NumGpUs; i++)
 			gpuInfo.Names[i] = mDriverList->Item(i)->GetDriverName();
 
 		PlatformUtility::SetGPUInfoInternal(gpuInfo);
@@ -73,9 +73,9 @@ namespace bs { namespace ct
 			D3D_FEATURE_LEVEL_9_1
 		};
 
-		const UINT32 numRequestedLevels = sizeof(requestedLevels) / sizeof(requestedLevels[0]);
+		const u32 numRequestedLevels = sizeof(requestedLevels) / sizeof(requestedLevels[0]);
 
-		UINT32 deviceFlags = 0;
+		u32 deviceFlags = 0;
 #if BS_DEBUG_MODE
 		deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
@@ -375,12 +375,12 @@ namespace bs { namespace ct
 
 					for (auto iter = paramDesc->Textures.begin(); iter != paramDesc->Textures.end(); ++iter)
 					{
-						UINT32 slot = iter->second.Slot;
+						u32 slot = iter->second.Slot;
 
 						SPtr<Texture> texture = gpuParams->GetTexture(iter->second.Set, slot);
 						const TextureSurface& surface = gpuParams->GetTextureSurface(iter->second.Set, slot);
 
-						while (slot >= (UINT32)srvs.size())
+						while (slot >= (u32)srvs.size())
 							srvs.push_back(nullptr);
 
 						if (texture != nullptr)
@@ -395,7 +395,7 @@ namespace bs { namespace ct
 
 					for (auto iter = paramDesc->Buffers.begin(); iter != paramDesc->Buffers.end(); ++iter)
 					{
-						UINT32 slot = iter->second.Slot;
+						u32 slot = iter->second.Slot;
 						SPtr<GpuBuffer> buffer = gpuParams->GetBuffer(iter->second.Set, slot);
 
 						bool isLoadStore = iter->second.Type != GPOT_BYTE_BUFFER &&
@@ -403,7 +403,7 @@ namespace bs { namespace ct
 
 						if (!isLoadStore)
 						{
-							while (slot >= (UINT32)srvs.size())
+							while (slot >= (u32)srvs.size())
 								srvs.push_back(nullptr);
 
 							if (buffer != nullptr)
@@ -414,7 +414,7 @@ namespace bs { namespace ct
 						}
 						else
 						{
-							while (slot >= (UINT32)uavs.size())
+							while (slot >= (u32)uavs.size())
 								uavs.push_back(nullptr);
 
 							if (buffer != nullptr)
@@ -427,12 +427,12 @@ namespace bs { namespace ct
 
 					for (auto iter = paramDesc->LoadStoreTextures.begin(); iter != paramDesc->LoadStoreTextures.end(); ++iter)
 					{
-						UINT32 slot = iter->second.Slot;
+						u32 slot = iter->second.Slot;
 
 						SPtr<Texture> texture = gpuParams->GetLoadStoreTexture(iter->second.Set, slot);
 						const TextureSurface& surface = gpuParams->GetLoadStoreSurface(iter->second.Set, slot);
 
-						while (slot >= (UINT32)uavs.size())
+						while (slot >= (u32)uavs.size())
 							uavs.push_back(nullptr);
 
 						if (texture != nullptr)
@@ -451,10 +451,10 @@ namespace bs { namespace ct
 
 					for (auto iter = paramDesc->Samplers.begin(); iter != paramDesc->Samplers.end(); ++iter)
 					{
-						UINT32 slot = iter->second.Slot;
+						u32 slot = iter->second.Slot;
 						SPtr<SamplerState> samplerState = gpuParams->GetSamplerState(iter->second.Set, slot);
 
-						while (slot >= (UINT32)samplers.size())
+						while (slot >= (u32)samplers.size())
 							samplers.push_back(nullptr);
 
 						if (samplerState == nullptr)
@@ -467,10 +467,10 @@ namespace bs { namespace ct
 
 					for (auto iter = paramDesc->ParamBlocks.begin(); iter != paramDesc->ParamBlocks.end(); ++iter)
 					{
-						UINT32 slot = iter->second.Slot;
+						u32 slot = iter->second.Slot;
 						SPtr<GpuParamBlockBuffer> buffer = gpuParams->GetParamBlockBuffer(iter->second.Set, slot);
 
-						while (slot >= (UINT32)constBuffers.size())
+						while (slot >= (u32)constBuffers.size())
 							constBuffers.push_back(nullptr);
 
 						if (buffer != nullptr)
@@ -484,15 +484,15 @@ namespace bs { namespace ct
 					}
 				};
 
-				UINT32 numSRVs = 0;
-				UINT32 numUAVs = 0;
-				UINT32 numConstBuffers = 0;
-				UINT32 numSamplers = 0;
+				u32 numSRVs = 0;
+				u32 numUAVs = 0;
+				u32 numConstBuffers = 0;
+				u32 numSamplers = 0;
 
 				populateViews(GPT_VERTEX_PROGRAM);
-				numSRVs = (UINT32)srvs.size();
-				numConstBuffers = (UINT32)constBuffers.size();
-				numSamplers = (UINT32)samplers.size();
+				numSRVs = (u32)srvs.size();
+				numConstBuffers = (u32)constBuffers.size();
+				numSamplers = (u32)samplers.size();
 
 				if(numSRVs > 0)
 					context->VSSetShaderResources(0, numSRVs, srvs.data());
@@ -504,10 +504,10 @@ namespace bs { namespace ct
 					context->VSSetSamplers(0, numSamplers, samplers.data());
 
 				populateViews(GPT_FRAGMENT_PROGRAM);
-				numSRVs = (UINT32)srvs.size();
-				numUAVs = (UINT32)uavs.size();
-				numConstBuffers = (UINT32)constBuffers.size();
-				numSamplers = (UINT32)samplers.size();
+				numSRVs = (u32)srvs.size();
+				numUAVs = (u32)uavs.size();
+				numConstBuffers = (u32)constBuffers.size();
+				numSamplers = (u32)samplers.size();
 
 				if (numSRVs > 0)
 					context->PSSetShaderResources(0, numSRVs, srvs.data());
@@ -526,9 +526,9 @@ namespace bs { namespace ct
 					context->PSSetSamplers(0, numSamplers, samplers.data());
 
 				populateViews(GPT_GEOMETRY_PROGRAM);
-				numSRVs = (UINT32)srvs.size();
-				numConstBuffers = (UINT32)constBuffers.size();
-				numSamplers = (UINT32)samplers.size();
+				numSRVs = (u32)srvs.size();
+				numConstBuffers = (u32)constBuffers.size();
+				numSamplers = (u32)samplers.size();
 
 				if (numSRVs > 0)
 					context->GSSetShaderResources(0, numSRVs, srvs.data());
@@ -540,9 +540,9 @@ namespace bs { namespace ct
 					context->GSSetSamplers(0, numSamplers, samplers.data());
 
 				populateViews(GPT_HULL_PROGRAM);
-				numSRVs = (UINT32)srvs.size();
-				numConstBuffers = (UINT32)constBuffers.size();
-				numSamplers = (UINT32)samplers.size();
+				numSRVs = (u32)srvs.size();
+				numConstBuffers = (u32)constBuffers.size();
+				numSamplers = (u32)samplers.size();
 
 				if (numSRVs > 0)
 					context->HSSetShaderResources(0, numSRVs, srvs.data());
@@ -554,9 +554,9 @@ namespace bs { namespace ct
 					context->HSSetSamplers(0, numSamplers, samplers.data());
 
 				populateViews(GPT_DOMAIN_PROGRAM);
-				numSRVs = (UINT32)srvs.size();
-				numConstBuffers = (UINT32)constBuffers.size();
-				numSamplers = (UINT32)samplers.size();
+				numSRVs = (u32)srvs.size();
+				numConstBuffers = (u32)constBuffers.size();
+				numSamplers = (u32)samplers.size();
 
 				if (numSRVs > 0)
 					context->DSSetShaderResources(0, numSRVs, srvs.data());
@@ -568,10 +568,10 @@ namespace bs { namespace ct
 					context->DSSetSamplers(0, numSamplers, samplers.data());
 
 				populateViews(GPT_COMPUTE_PROGRAM);
-				numSRVs = (UINT32)srvs.size();
-				numUAVs = (UINT32)uavs.size();
-				numConstBuffers = (UINT32)constBuffers.size();
-				numSamplers = (UINT32)samplers.size();
+				numSRVs = (u32)srvs.size();
+				numUAVs = (u32)uavs.size();
+				numConstBuffers = (u32)constBuffers.size();
+				numSamplers = (u32)samplers.size();
 
 				if (numSRVs > 0)
 					context->CSSetShaderResources(0, numSRVs, srvs.data());
@@ -619,14 +619,14 @@ namespace bs { namespace ct
 		cb->QueueCommand(execute);
 	}
 
-	void D3D11RenderAPI::SetVertexBuffers(UINT32 index, SPtr<VertexBuffer>* buffers, UINT32 numBuffers,
+	void D3D11RenderAPI::SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u32 numBuffers,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](UINT32 index, const SmallVector<SPtr<VertexBuffer>, 8>& buffers, UINT32 numBuffers)
+		auto executeRef = [&](u32 index, const SmallVector<SPtr<VertexBuffer>, 8>& buffers, u32 numBuffers)
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
-			UINT32 maxBoundVertexBuffers = mCurrentCapabilities[0].MaxBoundVertexBuffers;
+			u32 maxBoundVertexBuffers = mCurrentCapabilities[0].MaxBoundVertexBuffers;
 			if (index < 0 || (index + numBuffers) >= maxBoundVertexBuffers)
 			{
 				BS_EXCEPT(InvalidParametersException, "Invalid vertex index: " + toString(index) +
@@ -634,10 +634,10 @@ namespace bs { namespace ct
 			}
 
 			ID3D11Buffer* dx11buffers[BS_MAX_BOUND_VERTEX_BUFFERS];
-			UINT32 strides[BS_MAX_BOUND_VERTEX_BUFFERS];
-			UINT32 offsets[BS_MAX_BOUND_VERTEX_BUFFERS];
+			u32 strides[BS_MAX_BOUND_VERTEX_BUFFERS];
+			u32 offsets[BS_MAX_BOUND_VERTEX_BUFFERS];
 
-			for (UINT32 i = 0; i < numBuffers; i++)
+			for (u32 i = 0; i < numBuffers; i++)
 			{
 				SPtr<D3D11VertexBuffer> vertexBuffer = std::static_pointer_cast<D3D11VertexBuffer>(buffers[i]);
 				const VertexBufferProperties& vbProps = vertexBuffer->GetProperties();
@@ -652,7 +652,7 @@ namespace bs { namespace ct
 		};
 
 		SmallVector<SPtr<VertexBuffer>, 8> _buffers;
-		for (UINT32 i = 0; i < numBuffers; i++)
+		for (u32 i = 0; i < numBuffers; i++)
 			_buffers.Add(buffers[i]);
 
 		auto execute = [executeRef, index, buffers = std::move(_buffers), numBuffers]()
@@ -723,10 +723,10 @@ namespace bs { namespace ct
 		cb->QueueCommand(execute);
 	}
 
-	void D3D11RenderAPI::Draw(UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount,
+	void D3D11RenderAPI::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](UINT32 vertexOffset, UINT32 vertexCount, UINT32 instanceCount)
+		auto executeRef = [&](u32 vertexOffset, u32 vertexCount, u32 instanceCount)
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
@@ -750,18 +750,18 @@ namespace bs { namespace ct
 		SPtr<D3D11CommandBuffer> cb = GetCb(commandBuffer);
 		cb->QueueCommand(execute);
 
-		UINT32 primCount = VertexCountToPrimCount(mActiveDrawOp, vertexCount);
+		u32 primCount = VertexCountToPrimCount(mActiveDrawOp, vertexCount);
 
 		BS_INC_RENDER_STAT(NumDrawCalls);
 		BS_ADD_RENDER_STAT(NumVertices, vertexCount);
 		BS_ADD_RENDER_STAT(NumPrimitives, primCount);
 	}
 
-	void D3D11RenderAPI::DrawIndexed(UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 vertexCount,
-		UINT32 instanceCount, const SPtr<CommandBuffer>& commandBuffer)
+	void D3D11RenderAPI::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount,
+		u32 instanceCount, const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](UINT32 startIndex, UINT32 indexCount, UINT32 vertexOffset, UINT32 vertexCount,
-			UINT32 instanceCount)
+		auto executeRef = [&](u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount,
+			u32 instanceCount)
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
@@ -785,17 +785,17 @@ namespace bs { namespace ct
 		SPtr<D3D11CommandBuffer> cb = GetCb(commandBuffer);
 		cb->QueueCommand(execute);
 
-		UINT32 primCount = VertexCountToPrimCount(mActiveDrawOp, indexCount);
+		u32 primCount = VertexCountToPrimCount(mActiveDrawOp, indexCount);
 
 		BS_INC_RENDER_STAT(NumDrawCalls);
 		BS_ADD_RENDER_STAT(NumVertices, vertexCount);
 		BS_ADD_RENDER_STAT(NumPrimitives, primCount);
 	}
 
-	void D3D11RenderAPI::DispatchCompute(UINT32 numGroupsX, UINT32 numGroupsY, UINT32 numGroupsZ,
+	void D3D11RenderAPI::DispatchCompute(u32 numGroupsX, u32 numGroupsY, u32 numGroupsZ,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](UINT32 numGroupsX, UINT32 numGroupsY, UINT32 numGroupsZ)
+		auto executeRef = [&](u32 numGroupsX, u32 numGroupsY, u32 numGroupsZ)
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
@@ -815,10 +815,10 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumComputeCalls);
 	}
 
-	void D3D11RenderAPI::SetScissorRect(UINT32 left, UINT32 top, UINT32 right, UINT32 bottom,
+	void D3D11RenderAPI::SetScissorRect(u32 left, u32 top, u32 right, u32 bottom,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](UINT32 left, UINT32 top, UINT32 right, UINT32 bottom)
+		auto executeRef = [&](u32 left, u32 top, u32 right, u32 bottom)
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
@@ -836,9 +836,9 @@ namespace bs { namespace ct
 		cb->QueueCommand(execute);
 	}
 
-	void D3D11RenderAPI::SetStencilRef(UINT32 value, const SPtr<CommandBuffer>& commandBuffer)
+	void D3D11RenderAPI::SetStencilRef(u32 value, const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](UINT32 value)
+		auto executeRef = [&](u32 value)
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
@@ -856,10 +856,10 @@ namespace bs { namespace ct
 		cb->QueueCommand(execute);
 	}
 
-	void D3D11RenderAPI::ClearViewport(UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask,
+	void D3D11RenderAPI::ClearViewport(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask,
 		const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask)
+		auto executeRef = [&](u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
@@ -892,10 +892,10 @@ namespace bs { namespace ct
 		cb->QueueCommand(execute);
 	}
 
-	void D3D11RenderAPI::ClearRenderTarget(UINT32 buffers, const Color& color, float depth, UINT16 stencil,
-		UINT8 targetMask, const SPtr<CommandBuffer>& commandBuffer)
+	void D3D11RenderAPI::ClearRenderTarget(u32 buffers, const Color& color, float depth, u16 stencil,
+		u8 targetMask, const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](UINT32 buffers, const Color& color, float depth, UINT16 stencil, UINT8 targetMask)
+		auto executeRef = [&](u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
@@ -905,7 +905,7 @@ namespace bs { namespace ct
 			// Clear render surfaces
 			if (buffers & FBT_COLOR)
 			{
-				UINT32 maxRenderTargets = mCurrentCapabilities[0].NumMultiRenderTargets;
+				u32 maxRenderTargets = mCurrentCapabilities[0].NumMultiRenderTargets;
 
 				ID3D11RenderTargetView** views = bs_newN<ID3D11RenderTargetView*>(maxRenderTargets);
 				memset(views, 0, sizeof(ID3D11RenderTargetView*) * maxRenderTargets);
@@ -923,7 +923,7 @@ namespace bs { namespace ct
 				clearColor[2] = color.B;
 				clearColor[3] = color.A;
 
-				for (UINT32 i = 0; i < maxRenderTargets; i++)
+				for (u32 i = 0; i < maxRenderTargets; i++)
 				{
 					if (views[i] != nullptr && ((1 << i) & targetMask) != 0)
 						mDevice->GetImmediateContext()->ClearRenderTargetView(views[i], clearColor);
@@ -948,7 +948,7 @@ namespace bs { namespace ct
 					clearFlag = D3D11_CLEAR_DEPTH;
 
 				if (depthStencilView != nullptr)
-					mDevice->GetImmediateContext()->ClearDepthStencilView(depthStencilView, clearFlag, depth, (UINT8)stencil);
+					mDevice->GetImmediateContext()->ClearDepthStencilView(depthStencilView, clearFlag, depth, (u8)stencil);
 			}
 
 			NotifyRenderTargetModified();
@@ -962,17 +962,17 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumClears);
 	}
 
-	void D3D11RenderAPI::SetRenderTarget(const SPtr<RenderTarget>& target, UINT32 readOnlyFlags,
+	void D3D11RenderAPI::SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags,
 		RenderSurfaceMask loadMask, const SPtr<CommandBuffer>& commandBuffer)
 	{
-		auto executeRef = [&](const SPtr<RenderTarget>& target, UINT32 readOnlyFlags)
+		auto executeRef = [&](const SPtr<RenderTarget>& target, u32 readOnlyFlags)
 		{
 			THROW_IF_NOT_CORE_THREAD;
 
 			mActiveRenderTarget = target;
 			mActiveRenderTargetModified = false;
 
-			UINT32 maxRenderTargets = mCurrentCapabilities[0].NumMultiRenderTargets;
+			u32 maxRenderTargets = mCurrentCapabilities[0].NumMultiRenderTargets;
 			ID3D11RenderTargetView** views = bs_newN<ID3D11RenderTargetView*>(maxRenderTargets);
 			memset(views, 0, sizeof(ID3D11RenderTargetView*) * maxRenderTargets);
 
@@ -1015,7 +1015,7 @@ namespace bs { namespace ct
 		BS_INC_RENDER_STAT(NumRenderTargetChanges);
 	}
 
-	void D3D11RenderAPI::SwapBuffers(const SPtr<RenderTarget>& target, UINT32 syncMask)
+	void D3D11RenderAPI::SwapBuffers(const SPtr<RenderTarget>& target, u32 syncMask)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -1032,7 +1032,7 @@ namespace bs { namespace ct
 		BS_LOG(Error, RenderBackend, "Secondary command buffers not supported on DirectX 11.");
 	}
 
-	void D3D11RenderAPI::SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, UINT32 syncMask)
+	void D3D11RenderAPI::SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, u32 syncMask)
 	{
 		SPtr<D3D11CommandBuffer> cb = GetCb(commandBuffer);
 		cb->ExecuteCommands();
@@ -1204,7 +1204,7 @@ namespace bs { namespace ct
 		caps.NumMultiRenderTargets = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT;
 	}
 
-	void D3D11RenderAPI::DetermineMultisampleSettings(UINT32 multisampleCount, DXGI_FORMAT format, DXGI_SAMPLE_DESC* outputSampleDesc)
+	void D3D11RenderAPI::DetermineMultisampleSettings(u32 multisampleCount, DXGI_FORMAT format, DXGI_SAMPLE_DESC* outputSampleDesc)
 	{
 		if(multisampleCount == 0 || multisampleCount == 1)
 		{
@@ -1287,7 +1287,7 @@ namespace bs { namespace ct
 					}
 
 					// Return to original requested samples
-					multisampleCount = static_cast<UINT32>(origNumSamples);
+					multisampleCount = static_cast<u32>(origNumSamples);
 				}
 				else
 				{
@@ -1332,7 +1332,7 @@ namespace bs { namespace ct
 			if (param.ArraySize > 1)
 			{
 				// Arrays perform no packing and their elements are always padded and aligned to four component vectors
-				UINT32 size;
+				u32 size;
 				if(param.Type == GPDT_STRUCT)
 					size = Math::DivideAndRoundUp(param.ElementSize, 16U) * 4;
 				else
@@ -1356,7 +1356,7 @@ namespace bs { namespace ct
 			}
 			else
 			{
-				UINT32 size;
+				u32 size;
 				if(param.Type == GPDT_STRUCT)
 				{
 					// Structs are always aligned and arounded up to 4 component vectors
@@ -1368,10 +1368,10 @@ namespace bs { namespace ct
 					size = typeInfo.BaseTypeSize * (typeInfo.NumRows * typeInfo.NumColumns) / 4;
 
 					// Pack everything as tightly as possible as long as the data doesn't cross 16 byte boundary
-					UINT32 alignOffset = block.BlockSize % 4;
+					u32 alignOffset = block.BlockSize % 4;
 					if (alignOffset != 0 && size > (4 - alignOffset))
 					{
-						UINT32 padding = (4 - alignOffset);
+						u32 padding = (4 - alignOffset);
 						block.BlockSize += padding;
 					}
 				}

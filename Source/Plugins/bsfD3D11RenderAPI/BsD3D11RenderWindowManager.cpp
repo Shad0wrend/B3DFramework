@@ -13,7 +13,7 @@ namespace bs
 		assert(mRenderSystem != nullptr);
 	}
 
-	SPtr<RenderWindow> D3D11RenderWindowManager::CreateImpl(RENDER_WINDOW_DESC& desc, UINT32 windowId,
+	SPtr<RenderWindow> D3D11RenderWindowManager::CreateImpl(RENDER_WINDOW_DESC& desc, u32 windowId,
 		const SPtr<RenderWindow>& parentWindow)
 	{
 		ct::RenderAPI* rs = ct::RenderAPI::InstancePtr();
@@ -21,7 +21,7 @@ namespace bs
 
 		if(parentWindow != nullptr)
 		{
-			UINT64 hWnd;
+			u64 hWnd;
 			parentWindow->GetCustomAttribute("WINDOW", &hWnd);
 			desc.PlatformSpecific["parentWindowHandle"] = toString(hWnd);
 		}

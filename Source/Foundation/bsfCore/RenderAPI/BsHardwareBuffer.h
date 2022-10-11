@@ -34,7 +34,7 @@ namespace bs
 		 *							the method returns null.							
 		 * @param[in]	queueIdx	Device queue to perform any read/write operations on. See @ref queuesDoc.
 		 */
-		virtual void* Lock(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx = 0, UINT32 queueIdx = 0)
+		virtual void* Lock(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx = 0, u32 queueIdx = 0)
 		{
 			assert(!IsLocked() && "Cannot lock this buffer, it is already locked!");
 			void* ret = Map(offset, length, options, deviceIdx, queueIdx);
@@ -53,7 +53,7 @@ namespace bs
 		 *							the method returns null.
 		 * @param[in]	queueIdx	Device queue to perform any read/write operations on. See @ref queuesDoc.
 		 */
-		void* Lock(GpuLockOptions options, UINT32 deviceIdx = 0, UINT32 queueIdx = 0)
+		void* Lock(GpuLockOptions options, u32 deviceIdx = 0, u32 queueIdx = 0)
 		{
 			return this->Lock(0, mSize, options, deviceIdx, queueIdx);
 		}
@@ -79,7 +79,7 @@ namespace bs
 		 *							no data will be read.		
 		 * @param[in]	queueIdx	Device queue to perform the read operation on. See @ref queuesDoc.
 		 */
-		virtual void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) = 0;
+		virtual void ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx = 0, u32 queueIdx = 0) = 0;
 
 		/**
 		 * Writes data into a portion of the buffer from the source memory.
@@ -91,8 +91,8 @@ namespace bs
 		 * @param[in]	writeFlags	Optional write flags that may affect performance.
 		 * @param[in]	queueIdx	Device queue to perform the write operation on. See @ref queuesDoc.
 		 */
-		virtual void WriteData(UINT32 offset, UINT32 length, const void* source,
-				BufferWriteType writeFlags = BWT_NORMAL, UINT32 queueIdx = 0) = 0;
+		virtual void WriteData(u32 offset, u32 length, const void* source,
+				BufferWriteType writeFlags = BWT_NORMAL, u32 queueIdx = 0) = 0;
 
 		/**
 		 * Copies data from a specific portion of the source buffer into a specific portion of this buffer.
@@ -106,7 +106,7 @@ namespace bs
 		 * @param[in]	commandBuffer		Command buffer to queue the copy operation on. If null, main command buffer is
 		 *									used.
 		 */
-		virtual void CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
+		virtual void CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length,
 			bool discardWholeBuffer = false, const SPtr<ct::CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
@@ -118,12 +118,12 @@ namespace bs
 		 */
 		virtual void CopyData(HardwareBuffer& srcBuffer, const SPtr<ct::CommandBuffer>& commandBuffer = nullptr)
 		{
-			UINT32 sz = std::min(GetSize(), srcBuffer.GetSize());
+			u32 sz = std::min(GetSize(), srcBuffer.GetSize());
 			CopyData(srcBuffer, 0, 0, sz, true, commandBuffer);
 		}
 			
 		/** Returns the size of this buffer in bytes. */
-		UINT32 GetSize() const { return mSize; }
+		u32 GetSize() const { return mSize; }
 
 		/**	Returns whether or not this buffer is currently locked. */
 		bool IsLocked() const { return mIsLocked; }
@@ -141,19 +141,19 @@ namespace bs
 		 * @param[in]	usage			Hint on how the buffer is intended to be used.
 		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
-		HardwareBuffer(UINT32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+		HardwareBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 			: mSize(size), mUsage(usage), mDeviceMask(deviceMask)
 		{  }
 
 		/** @copydoc lock */
-		virtual void* Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx,
-			UINT32 queueIdx) { return nullptr; }
+		virtual void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx,
+			u32 queueIdx) { return nullptr; }
 
 		/** @copydoc unlock */
 		virtual void Unmap() { }
 
 	protected:
-		UINT32 mSize;
+		u32 mSize;
 		GpuBufferUsage mUsage;
 		GpuDeviceFlags mDeviceMask;
 

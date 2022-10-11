@@ -64,9 +64,9 @@ namespace bs
 	}
 
 	template<bool Core>
-	void TRenderable<Core>::SetMaterial(UINT32 idx, const MaterialType& material)
+	void TRenderable<Core>::SetMaterial(u32 idx, const MaterialType& material)
 	{
-		if (idx >= (UINT32)mMaterials.size())
+		if (idx >= (u32)mMaterials.size())
 			return;
 
 		mMaterials[idx] = material;
@@ -79,13 +79,13 @@ namespace bs
 	template<bool Core>
 	void TRenderable<Core>::SetMaterials(const Vector<MaterialType>& materials)
 	{
-		UINT32 numMaterials = (UINT32)mMaterials.size();
-		UINT32 min = std::min(numMaterials, (UINT32)materials.size());
+		u32 numMaterials = (u32)mMaterials.size();
+		u32 min = std::min(numMaterials, (u32)materials.size());
 
-		for (UINT32 i = 0; i < min; i++)
+		for (u32 i = 0; i < min; i++)
 			mMaterials[i] = materials[i];
 
-		for (UINT32 i = min; i < numMaterials; i++)
+		for (u32 i = min; i < numMaterials; i++)
 			mMaterials[i] = nullptr;
 
 		MarkDependenciesDirtyInternal();
@@ -100,16 +100,16 @@ namespace bs
 	}
 
 	template <bool Core>
-	typename TRenderable<Core>::MaterialType TRenderable<Core>::GetMaterial(UINT32 idx) const
+	typename TRenderable<Core>::MaterialType TRenderable<Core>::GetMaterial(u32 idx) const
 	{
-		if(idx >= (UINT32)mMaterials.size())
+		if(idx >= (u32)mMaterials.size())
 			return nullptr;
 
 		return mMaterials[idx];
 	}
 
 	template<bool Core>
-	void TRenderable<Core>::SetLayer(UINT64 layer)
+	void TRenderable<Core>::SetLayer(u64 layer)
 	{
 		const bool isPow2 = layer && !((layer - 1) & layer);
 
@@ -271,7 +271,7 @@ namespace bs
 
 	void Renderable::UpdateStateInternal(const SceneObject& so, bool force)
 	{
-		UINT32 curHash = so.GetTransformHash();
+		u32 curHash = so.GetTransformHash();
 		if (curHash != mHash || force)
 		{
 			// If skinned animation, don't include own transform since that will be handled by root bone animation
@@ -303,7 +303,7 @@ namespace bs
 
 	void Renderable::MarkCoreDirtyInternal(ActorDirtyFlag flag)
 	{
-		MarkCoreDirty((UINT32)flag);
+		MarkCoreDirty((u32)flag);
 	}
 
 	void Renderable::MarkDependenciesDirtyInternal()
@@ -318,21 +318,21 @@ namespace bs
 
 	CoreSyncData Renderable::SyncToCore(FrameAlloc* allocator)
 	{
-		const UINT32 dirtyFlags = GetCoreDirtyFlags();
-		UINT32 size = rtti_size(dirtyFlags).Bytes;
+		const u32 dirtyFlags = GetCoreDirtyFlags();
+		u32 size = rtti_size(dirtyFlags).Bytes;
 		SceneActor::RttiEnumFields(RttiCoreSyncSize(size), (ActorDirtyFlags)dirtyFlags);
 
 		// The most common case if only the transform changed, so we sync only transform related options
-		UINT32 numMaterials = 0;
-		UINT64 animationId = 0;
-		if(dirtyFlags != (UINT32)ActorDirtyFlag::Transform)
+		u32 numMaterials = 0;
+		u64 animationId = 0;
+		if(dirtyFlags != (u32)ActorDirtyFlag::Transform)
 		{
-			numMaterials = (UINT32)mMaterials.size();
+			numMaterials = (u32)mMaterials.size();
 
 			if (mAnimation != nullptr)
 				animationId = mAnimation->GetIdInternal();
 			else
-				animationId = (UINT64)-1;
+				animationId = (u64)-1;
 
 			size +=
 				rtti_size(mLayer).Bytes +
@@ -348,13 +348,13 @@ namespace bs
 		}
 
 
-		UINT8* data = allocator->Alloc(size);
+		u8* data = allocator->Alloc(size);
 		Bitstream stream(data, size);
 
 		rtti_write(dirtyFlags, stream);
 		SceneActor::RttiEnumFields(RttiCoreSyncWriter(stream), (ActorDirtyFlags)dirtyFlags);
 
-		if(dirtyFlags != (UINT32)ActorDirtyFlag::Transform)
+		if(dirtyFlags != (u32)ActorDirtyFlag::Transform)
 		{
 			rtti_write(mLayer, stream);
 			rtti_write(mOverrideBounds, stream);
@@ -371,7 +371,7 @@ namespace bs
 
 			stream.SkipBytes(sizeof(SPtr<ct::Mesh>));
 
-			for (UINT32 i = 0; i < numMaterials; i++)
+			for (u32 i = 0; i < numMaterials; i++)
 			{
 				SPtr<ct::Material>* material = new (stream.Cursor())SPtr<ct::Material>();
 				if (mMaterials[i].IsLoaded())
@@ -396,7 +396,7 @@ namespace bs
 		}
 	}
 
-	void Renderable::OnDependencyDirty(CoreObject* dependency, UINT32 dirtyFlags)
+	void Renderable::OnDependencyDirty(CoreObject* dependency, u32 dirtyFlags)
 	{
 		if(mMesh.IsLoaded(false) && mMesh.Get() == dependency)
 		{
@@ -404,7 +404,7 @@ namespace bs
 			return;
 		}
 
-		if(((UINT32)MaterialDirtyFlags::Shader & dirtyFlags) != 0)
+		if(((u32)MaterialDirtyFlags::Shader & dirtyFlags) != 0)
 			CoreObject::OnDependencyDirty(dependency, dirtyFlags);
 	}
 
@@ -468,7 +468,7 @@ namespace bs
 	namespace ct
 	{
 	Renderable::Renderable()
-		:mRendererId(0), mAnimationId((UINT64)-1), mMorphShapeVersion(0)
+		:mRendererId(0), mAnimationId((u64)-1), mMorphShapeVersion(0)
 	{
 	}
 
@@ -517,7 +517,7 @@ namespace bs
 		}
 	}
 
-	SPtr<GpuBuffer> createBoneMatrixBuffer(UINT32 numBones)
+	SPtr<GpuBuffer> createBoneMatrixBuffer(u32 numBones)
 	{
 		GPU_BUFFER_DESC desc;
 		desc.ElementCount = numBones * 3;
@@ -527,10 +527,10 @@ namespace bs
 		desc.Usage = GBU_DYNAMIC;
 
 		SPtr<GpuBuffer> buffer = GpuBuffer::Create(desc);
-		UINT8* dest = (UINT8*)buffer->Lock(0, numBones * 3 * sizeof(Vector4), GBL_WRITE_ONLY_DISCARD);
+		u8* dest = (u8*)buffer->Lock(0, numBones * 3 * sizeof(Vector4), GBL_WRITE_ONLY_DISCARD);
 
 		// Initialize bone transforms to identity, so the object renders properly even if no animation is animating it
-		for (UINT32 i = 0; i < numBones; i++)
+		for (u32 i = 0; i < numBones; i++)
 		{
 			memcpy(dest, &Matrix4::IDENTITY, 12 * sizeof(float)); // Assuming row-major format
 			dest += 12 * sizeof(float);
@@ -546,7 +546,7 @@ namespace bs
 		if (mAnimType == RenderableAnimType::Skinned || mAnimType == RenderableAnimType::SkinnedMorph)
 		{
 			SPtr<Skeleton> skeleton = mMesh->GetSkeleton();
-			UINT32 numBones = skeleton != nullptr ? skeleton->GetNumBones() : 0;
+			u32 numBones = skeleton != nullptr ? skeleton->GetNumBones() : 0;
 
 			if (numBones > 0)
 			{
@@ -575,8 +575,8 @@ namespace bs
 			
 			SPtr<MorphShapes> morphShapes = mMesh->GetMorphShapes();
 
-			UINT32 vertexSize = sizeof(Vector3) + sizeof(UINT32);
-			UINT32 numVertices = morphShapes->GetNumVertices();
+			u32 vertexSize = sizeof(Vector3) + sizeof(u32);
+			u32 numVertices = morphShapes->GetNumVertices();
 
 			VERTEX_BUFFER_DESC desc;
 			desc.VertexSize = vertexSize;
@@ -585,8 +585,8 @@ namespace bs
 
 			SPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(desc);
 
-			UINT32 totalSize = vertexSize * numVertices;
-			UINT8* dest = (UINT8*)vertexBuffer->Lock(0, totalSize, GBL_WRITE_ONLY_DISCARD);
+			u32 totalSize = vertexSize * numVertices;
+			u8* dest = (u8*)vertexBuffer->Lock(0, totalSize, GBL_WRITE_ONLY_DISCARD);
 			memset(dest, 0, totalSize);
 			vertexBuffer->Unlock();
 
@@ -600,7 +600,7 @@ namespace bs
 
 	void Renderable::UpdateAnimationBuffers(const EvaluatedAnimationData& animData)
 	{
-		if (mAnimationId == (UINT64)-1)
+		if (mAnimationId == (u64)-1)
 			return;
 
 		const EvaluatedAnimationData::AnimInfo* animInfo = nullptr;
@@ -621,8 +621,8 @@ namespace bs
 
 			// Note: If multiple elements are using the same animation (not possible atm), this buffer should be shared by
 			// all such elements
-			UINT8* dest = (UINT8*)mBoneMatrixBuffer->Lock(0, poseInfo.NumBones * 3 * sizeof(Vector4), GBL_WRITE_ONLY_DISCARD);
-			for (UINT32 j = 0; j < poseInfo.NumBones; j++)
+			u8* dest = (u8*)mBoneMatrixBuffer->Lock(0, poseInfo.NumBones * 3 * sizeof(Vector4), GBL_WRITE_ONLY_DISCARD);
+			for (u32 j = 0; j < poseInfo.NumBones; j++)
 			{
 				const Matrix4& transform = animData.Transforms[poseInfo.StartIdx + j];
 				memcpy(dest, &transform, 12 * sizeof(float)); // Assuming row-major format
@@ -639,8 +639,8 @@ namespace bs
 			{
 				SPtr<MeshData> meshData = animInfo->MorphShapeInfo.MeshData;
 
-				UINT32 bufferSize = meshData->GetSize();
-				UINT8* data = meshData->GetData();
+				u32 bufferSize = meshData->GetSize();
+				u8* data = meshData->GetData();
 
 				mMorphShapeBuffer->WriteData(0, bufferSize, data, BWT_DISCARD);
 				mMorphShapeVersion = animInfo->MorphShapeInfo.Version;
@@ -663,8 +663,8 @@ namespace bs
 
 		mMaterials.clear();
 
-		UINT32 numMaterials = 0;
-		UINT32 dirtyFlags = 0;
+		u32 numMaterials = 0;
+		u32 dirtyFlags = 0;
 		bool oldIsActive = mActive;
 
 		rtti_read(dirtyFlags, stream);
@@ -673,7 +673,7 @@ namespace bs
 		mTfrmMatrix = mTransform.GetMatrix();
 		mTfrmMatrixNoScale = Matrix4::TRS(mTransform.GetPosition(), mTransform.GetRotation(), Vector3::ONE);
 
-		if(dirtyFlags != (UINT32)ActorDirtyFlag::Transform)
+		if(dirtyFlags != (u32)ActorDirtyFlag::Transform)
 		{
 			rtti_read(mLayer, stream);
 			rtti_read(mOverrideBounds, stream);
@@ -689,7 +689,7 @@ namespace bs
 			mesh->~SPtr<Mesh>();
 			stream.SkipBytes(sizeof(SPtr<Mesh>));
 
-			for (UINT32 i = 0; i < numMaterials; i++)
+			for (u32 i = 0; i < numMaterials; i++)
 			{
 				SPtr<Material>* material = (SPtr<Material>*)stream.Cursor();
 				mMaterials.push_back(*material);
@@ -698,9 +698,9 @@ namespace bs
 			}
 		}
 
-		UINT32 updateEverythingFlag = (UINT32)ActorDirtyFlag::Everything
-			| (UINT32)ActorDirtyFlag::Active
-			| (UINT32)ActorDirtyFlag::Dependency;
+		u32 updateEverythingFlag = (u32)ActorDirtyFlag::Everything
+			| (u32)ActorDirtyFlag::Active
+			| (u32)ActorDirtyFlag::Dependency;
 
 		if((dirtyFlags & updateEverythingFlag) != 0)
 		{
@@ -733,12 +733,12 @@ namespace bs
 				gRenderer()->NotifyRenderableAdded(this);
 			}
 		}
-		else if((dirtyFlags & (UINT32)ActorDirtyFlag::Mobility) != 0)
+		else if((dirtyFlags & (u32)ActorDirtyFlag::Mobility) != 0)
 		{
 				gRenderer()->NotifyRenderableRemoved(this);
 				gRenderer()->NotifyRenderableAdded(this);
 		}
-		else if ((dirtyFlags & (UINT32)ActorDirtyFlag::Transform) != 0)
+		else if ((dirtyFlags & (u32)ActorDirtyFlag::Transform) != 0)
 		{
 			if (mActive)
 				gRenderer()->NotifyRenderableUpdated(this);

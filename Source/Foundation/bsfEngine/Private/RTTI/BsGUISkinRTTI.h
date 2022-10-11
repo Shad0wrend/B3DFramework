@@ -51,7 +51,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_GUISkinEntry;
 		}
@@ -65,14 +65,14 @@ namespace bs
 	class BS_EXPORT GUISkinRTTI : public RTTIType <GUISkin, Resource, GUISkinRTTI>
 	{
 	private:
-		GUISkinEntry& GetStyle(GUISkin* obj, UINT32 idx)
+		GUISkinEntry& GetStyle(GUISkin* obj, u32 idx)
 		{
 			return mStyles[idx];
 		}
 
-		void SetStyle(GUISkin* obj, UINT32 idx, GUISkinEntry& val) { obj->mStyles[val.Name] = val.Style; }
-		UINT32 GetStyleArraySize(GUISkin* obj) { return (UINT32)obj->mStyles.size(); }
-		void SetStyleArraySize(GUISkin* obj, UINT32 size) { /* Do nothing */ }
+		void SetStyle(GUISkin* obj, u32 idx, GUISkinEntry& val) { obj->mStyles[val.Name] = val.Style; }
+		u32 GetStyleArraySize(GUISkin* obj) { return (u32)obj->mStyles.size(); }
+		void SetStyleArraySize(GUISkin* obj, u32 size) { /* Do nothing */ }
 
 	public:
 		GUISkinRTTI()
@@ -95,7 +95,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_GUISkin;
 		}

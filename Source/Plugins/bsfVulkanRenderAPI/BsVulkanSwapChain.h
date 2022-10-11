@@ -31,7 +31,7 @@ namespace bs { namespace ct
 		 * Creates the swap chain with the provided properties. Destroys any previously existing swap chain. Caller must
 		 * ensure the swap chain is not used at the device when this is called.
 		 */
-		VulkanSwapChain(VulkanResourceManager* owner, VkSurfaceKHR surface, UINT32 width, UINT32 height, bool vsync,
+		VulkanSwapChain(VulkanResourceManager* owner, VkSurfaceKHR surface, u32 width, u32 height, bool vsync,
 			VkFormat colorFormat, VkColorSpaceKHR colorSpace, bool createDepth, VkFormat depthFormat,
 			VulkanSwapChain* oldSwapChain = nullptr);
 		~VulkanSwapChain();
@@ -40,13 +40,13 @@ namespace bs { namespace ct
 		 * Returns the actual width of the swap chain, in pixels. This might differ from the requested size in case it
 		 * wasn't supported.
 		 */
-		UINT32 GetWidth() const { return mWidth; }
+		u32 GetWidth() const { return mWidth; }
 
 		/**
 		 * Returns the actual height of the swap chain, in pixels. This might differ from the requested size in case it
 		 * wasn't supported.
 		 */
-		UINT32 GetHeight() const { return mHeight; }
+		u32 GetHeight() const { return mHeight; }
 
 		/**
 		 * Attempts to acquire a new back buffer image. Caller can retrieve the surface by calling getBackBuffer(). Caller
@@ -63,7 +63,7 @@ namespace bs { namespace ct
 		 * @param[out] backBufferIdx	Index of the image representing the current back buffer.
 		 * @return						True if there is anything to present, false otherwise.
 		 */
-		bool PrepareForPresent(UINT32& backBufferIdx);
+		bool PrepareForPresent(u32& backBufferIdx);
 
 		/** Notifies the chain that the semaphore waiting for the back buffer to become available is being waited on. */
 		void NotifyBackBufferWaitIssued();
@@ -72,7 +72,7 @@ namespace bs { namespace ct
 		const SwapChainSurface& GetBackBuffer() { return mSurfaces[mCurrentBackBufferIdx]; }
 
 		/** Returns the number of available color surfaces. */
-		UINT32 GetNumColorSurfaces() const { return (UINT32)mSurfaces.size(); }
+		u32 GetNumColorSurfaces() const { return (u32)mSurfaces.size(); }
 
 		/** Returns the internal swap chain handle. */
 		VkSwapchainKHR GetHandle() const { return mSwapChain; }
@@ -83,14 +83,14 @@ namespace bs { namespace ct
 		VkDevice mDevice = VK_NULL_HANDLE;
 		VkSwapchainKHR mSwapChain = VK_NULL_HANDLE;
 
-		UINT32 mWidth = 0;
-		UINT32 mHeight = 0;
+		u32 mWidth = 0;
+		u32 mHeight = 0;
 		Vector<SwapChainSurface> mSurfaces;
 
 		VulkanImage* mDepthStencilImage = nullptr;
 
-		UINT32 mCurrentSemaphoreIdx = 0;
-		UINT32 mCurrentBackBufferIdx = 0;
+		u32 mCurrentSemaphoreIdx = 0;
+		u32 mCurrentBackBufferIdx = 0;
 	};
 
 	/** @} */

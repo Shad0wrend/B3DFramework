@@ -65,7 +65,7 @@ namespace bs
 
 		/** @copydoc create() */
 		static MonoObject* CreateInternal(const AsyncOpBase& op,
-								   const std::function<MonoObject*(const Any&)>& convertCallback, UINT32 rttiId);
+								   const std::function<MonoObject*(const Any&)>& convertCallback, u32 rttiId);
 
 		/** @copydoc create() */
 		static MonoObject* CreateInternal(const AsyncOpBase& op,

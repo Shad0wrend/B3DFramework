@@ -25,12 +25,12 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static void InternalGetMemorySize(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format, UINT32* value);
+		static void InternalGetMemorySize(u32 width, u32 height, u32 depth, PixelFormat format, u32* value);
 		static void InternalHasAlpha(PixelFormat format, bool* value);
 		static void InternalIsFloatingPoint(PixelFormat format, bool* value);
 		static void InternalIsCompressed(PixelFormat format, bool* value);
 		static void InternalIsDepth(PixelFormat format, bool* value);
-		static void InternalGetMaxMipmaps(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format, UINT32* value);
+		static void InternalGetMaxMipmaps(u32 width, u32 height, u32 depth, PixelFormat format, u32* value);
 		static MonoObject* InternalConvertFormat(MonoObject* source, PixelFormat newFormat);
 		static MonoObject* InternalCompress(MonoObject* source, CompressionOptions* options);
 		static MonoArray* InternalGenerateMipmaps(MonoObject* source, MipMapGenOptions* options);

@@ -37,13 +37,13 @@ namespace bs
 		void StartMonitor(HANDLE compPortHandle);
 		void StopMonitor(HANDLE compPortHandle);
 
-		static const UINT32 READ_BUFFER_SIZE = 65536;
+		static const u32 READ_BUFFER_SIZE = 65536;
 
 		Path MFolderToMonitor;
 		HANDLE MDirHandle;
 		OVERLAPPED MOverlapped;
 		MonitorState MState;
-		UINT8 MBuffer[READ_BUFFER_SIZE];
+		u8 MBuffer[READ_BUFFER_SIZE];
 		DWORD MBufferSize;
 		bool MMonitorSubdirectories;
 		DWORD MMonitorFlags;
@@ -119,7 +119,7 @@ namespace bs
 	class FolderMonitor::FileNotifyInfo
 	{
 	public:
-		FileNotifyInfo(UINT8* notifyBuffer, DWORD bufferSize)
+		FileNotifyInfo(u8* notifyBuffer, DWORD bufferSize)
 		:mBuffer(notifyBuffer), mBufferSize(bufferSize)
 		{
 			mCurrentRecord = (PFILE_NOTIFY_INFORMATION)mBuffer;
@@ -132,7 +132,7 @@ namespace bs
 		WString GetFileNameWithPath(const Path& rootPath) const;
 
 	protected:
-		UINT8* mBuffer;
+		u8* mBuffer;
 		DWORD mBufferSize;
 		PFILE_NOTIFY_INFORMATION mCurrentRecord;
 	};
@@ -142,9 +142,9 @@ namespace bs
 		if(mCurrentRecord && mCurrentRecord->NextEntryOffset != 0)
 		{
 			PFILE_NOTIFY_INFORMATION oldRecord = mCurrentRecord;
-			mCurrentRecord = (PFILE_NOTIFY_INFORMATION) ((UINT8*)mCurrentRecord + mCurrentRecord->NextEntryOffset);
+			mCurrentRecord = (PFILE_NOTIFY_INFORMATION) ((u8*)mCurrentRecord + mCurrentRecord->NextEntryOffset);
 
-			if((DWORD)((UINT8*)mCurrentRecord - mBuffer) > mBufferSize)
+			if((DWORD)((u8*)mCurrentRecord - mBuffer) > mBufferSize)
 			{
 				// Gone out of range, something bad happened
 				assert(false);
@@ -204,7 +204,7 @@ namespace bs
 		static FileAction* CreateAdded(const WString& fileName)
 		{
 			String utf8filename = UTF8::FromWide(fileName);
-			UINT8* bytes = (UINT8*)bs_alloc((UINT32)(sizeof(FileAction) + (utf8filename.size() + 1) * sizeof(String::value_type)));
+			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) + (utf8filename.size() + 1) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
 			bytes += sizeof(FileAction);
@@ -224,7 +224,7 @@ namespace bs
 		static FileAction* CreateRemoved(const WString& fileName)
 		{
 			String utf8filename = UTF8::FromWide(fileName);
-			UINT8* bytes = (UINT8*)bs_alloc((UINT32)(sizeof(FileAction) + (utf8filename.size() + 1) * sizeof(String::value_type)));
+			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) + (utf8filename.size() + 1) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
 			bytes += sizeof(FileAction);
@@ -244,7 +244,7 @@ namespace bs
 		static FileAction* CreateModified(const WString& fileName)
 		{
 			String utf8filename = UTF8::FromWide(fileName);
-			UINT8* bytes = (UINT8*)bs_alloc((UINT32)(sizeof(FileAction) + (utf8filename.size() + 1) * sizeof(String::value_type)));
+			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) + (utf8filename.size() + 1) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
 			bytes += sizeof(FileAction);
@@ -266,7 +266,7 @@ namespace bs
 			String utf8Oldfilename = UTF8::FromWide(oldFilename);
 			String utf8Newfilename = UTF8::FromWide(newFileName);
 
-			UINT8* bytes = (UINT8*)bs_alloc((UINT32)(sizeof(FileAction) +
+			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) +
 				(utf8Oldfilename.size() + utf8Newfilename.size() + 2) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
@@ -298,7 +298,7 @@ namespace bs
 		String::value_type* NewName;
 		FileActionType Type;
 
-		UINT64 LastSize;
+		u64 LastSize;
 		bool CheckForWriteStarted;
 	};
 
@@ -352,7 +352,7 @@ namespace bs
 
 		if(dirHandle == INVALID_HANDLE_VALUE)
 		{
-			BS_EXCEPT(InternalErrorException, "Failed to open folder \"" + folderPath.ToString() + "\" for monitoring. Error code: " + toString((UINT64)GetLastError()));
+			BS_EXCEPT(InternalErrorException, "Failed to open folder \"" + folderPath.ToString() + "\" for monitoring. Error code: " + toString((u64)GetLastError()));
 		}
 
 		DWORD filterFlags = 0;
@@ -375,7 +375,7 @@ namespace bs
 		{
 			m->MFoldersToWatch.erase(m->MFoldersToWatch.end() - 1);
 			bs_delete(watchInfo);
-			BS_EXCEPT(InternalErrorException, "Failed to open completion port for folder monitoring. Error code: " + toString((UINT64)GetLastError()));
+			BS_EXCEPT(InternalErrorException, "Failed to open completion port for folder monitoring. Error code: " + toString((u64)GetLastError()));
 		}
 
 		if(m->MWorkerThread == nullptr)
@@ -637,7 +637,7 @@ namespace bs
 			// This takes care of most of the issues and avoids reporting partially written files in almost all cases.
 			if (FileSystem::Exists(action->NewName))
 			{
-				UINT64 size = FileSystem::GetFileSize(action->NewName);
+				u64 size = FileSystem::GetFileSize(action->NewName);
 				if (!action->CheckForWriteStarted)
 				{
 					action->CheckForWriteStarted = true;

@@ -18,7 +18,7 @@ namespace bs
 		OggDecoderData() = default;
 
 		SPtr<DataStream> Stream;
-		UINT32 Offset = 0;
+		u32 Offset = 0;
 	};
 
 	/** Used for reading Ogg Vorbis audio data. */
@@ -29,20 +29,20 @@ namespace bs
 		~OggVorbisDecoder();
 
 		/** @copydoc AudioDecoder::open */
-		bool Open(const SPtr<DataStream>& stream, AudioDataInfo& info, UINT32 offset = 0) ;
+		bool Open(const SPtr<DataStream>& stream, AudioDataInfo& info, u32 offset = 0) ;
 
 		/** @copydoc AudioDecoder::read */
-		UINT32 Read(UINT8* samples, UINT32 numSamples) override;
+		u32 Read(u8* samples, u32 numSamples) override;
 
 		/** @copydoc AudioDecoder::seek */
-		void Seek(UINT32 offset) override;
+		void Seek(u32 offset) override;
 
 		/** @copydoc AudioDecoder::isValid */
-		bool IsValid(const SPtr<DataStream>& stream, UINT32 offset = 0) ;
+		bool IsValid(const SPtr<DataStream>& stream, u32 offset = 0) ;
 	private:
 		OggDecoderData mDecoderData;
 		OggVorbis_File mOggVorbisFile;
-		UINT32 mChannelCount = 0;
+		u32 mChannelCount = 0;
 	};
 
 	/** @} */

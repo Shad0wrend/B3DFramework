@@ -106,8 +106,8 @@ namespace bs { namespace ct {
 		BS_PARAM_BLOCK_ENTRY(Vector3, gExtents)
 		BS_PARAM_BLOCK_ENTRY(float, gTransitionDistance)
 		BS_PARAM_BLOCK_ENTRY(Matrix4, gInvBoxTransform)
-		BS_PARAM_BLOCK_ENTRY(INT32, gCubemapIdx)
-		BS_PARAM_BLOCK_ENTRY(INT32, gType)
+		BS_PARAM_BLOCK_ENTRY(i32, gCubemapIdx)
+		BS_PARAM_BLOCK_ENTRY(i32, gType)
 	BS_PARAM_BLOCK_END
 
 	extern PerProbeParamDef gPerProbeParamDef;

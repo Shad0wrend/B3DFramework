@@ -23,7 +23,7 @@ namespace bs { namespace ct
 		BS_PARAM_BLOCK_ENTRY(Matrix4, gMatInvWorldNoScale)
 		BS_PARAM_BLOCK_ENTRY(Matrix4, gMatPrevWorld)
 		BS_PARAM_BLOCK_ENTRY(float, gWorldDeterminantSign)
-		BS_PARAM_BLOCK_ENTRY(INT32, gLayer)
+		BS_PARAM_BLOCK_ENTRY(i32, gLayer)
 	BS_PARAM_BLOCK_END
 
 	extern PerObjectParamDef gPerObjectParamDef;
@@ -40,7 +40,7 @@ namespace bs { namespace ct
 	public:
 		/** Updates the provided buffer with the data from the provided matrices. */
 		static void Update(SPtr<GpuParamBlockBuffer>& buffer, const Matrix4& tfrm, const Matrix4& tfrmNoScale,
-			const Matrix4& prevTfrm, UINT32 layer);
+			const Matrix4& prevTfrm, u32 layer);
 	};
 
 	struct MaterialSamplerOverrides;
@@ -59,7 +59,7 @@ namespace bs { namespace ct
 		MaterialSamplerOverrides* SamplerOverrides;
 
 		/** Identifier of the animation running on the renderable's mesh. -1 if no animation. */
-		UINT64 AnimationId;
+		u64 AnimationId;
 
 		/** Type of animation applied to this element, if any. */
 		RenderableAnimType AnimType;
@@ -89,7 +89,7 @@ namespace bs { namespace ct
 		float MaterialAnimationTime = 0.0f;
 
 		/** Version of the morph shape vertices in the buffer. */
-		mutable UINT32 MorphShapeVersion;
+		mutable u32 MorphShapeVersion;
 
 		/** @copydoc RenderElement::draw */
 		void Draw() const override;

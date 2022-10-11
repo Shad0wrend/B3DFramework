@@ -18,8 +18,8 @@ namespace bs
 	class BS_CORE_EXPORT ResourceRTTI : public RTTIType<Resource, IReflectable, ResourceRTTI>
 	{
 	private:
-		UINT32& GetSize(Resource* obj) { return obj->mSize; }
-		void SetSize(Resource* obj, UINT32& size) { obj->mSize = size; }
+		u32& GetSize(Resource* obj) { return obj->mSize; }
+		void SetSize(Resource* obj, u32& size) { obj->mSize = size; }
 
 		SPtr<ResourceMetaData> GetMetaData(Resource* obj) { return obj->mMetaData; }
 		void SetMetaData(Resource* obj, SPtr<ResourceMetaData> value) { obj->mMetaData = value; }
@@ -47,7 +47,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return 100;
 		}

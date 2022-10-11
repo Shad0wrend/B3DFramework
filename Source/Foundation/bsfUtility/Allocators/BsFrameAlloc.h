@@ -34,23 +34,23 @@ namespace bs
 		class MemBlock
 		{
 		public:
-			MemBlock(UINT32 size) :MSize(size) { }
+			MemBlock(u32 size) :MSize(size) { }
 
 			~MemBlock() = default;
 
 			/** Allocates a piece of memory within the block. Caller must ensure the block has enough empty space. */
-			UINT8* Alloc(UINT32 amount);
+			u8* Alloc(u32 amount);
 
 			/** Releases all allocations within a block but doesn't actually free the memory. */
 			void Clear();
 
-			UINT8* MData = nullptr;
-			UINT32 MFreePtr = 0;
-			UINT32 MSize;
+			u8* MData = nullptr;
+			u32 MFreePtr = 0;
+			u32 MSize;
 		};
 
 	public:
-		FrameAlloc(UINT32 blockSize = 1024 * 1024);
+		FrameAlloc(u32 blockSize = 1024 * 1024);
 		~FrameAlloc();
 
 		/**
@@ -60,7 +60,7 @@ namespace bs
 		 *
 		 * @note	Not thread safe.
 		 */
-		UINT8* Alloc(UINT32 amount);
+		u8* Alloc(u32 amount);
 
 		/**
 		 * Allocates a new block of memory of the specified size aligned to the specified boundary. If the aligment is less
@@ -71,7 +71,7 @@ namespace bs
 		 *
 		 * @note	Not thread safe.
 		 */
-		UINT8* AllocAligned(UINT32 amount, UINT32 alignment);
+		u8* AllocAligned(u32 amount, u32 alignment);
 
 		/**
 		 * Allocates and constructs a new object.
@@ -93,7 +93,7 @@ namespace bs
 		void Destruct(T* data)
 		{
 			data->~T();
-			Free((UINT8*)data);
+			Free((u8*)data);
 		}
 
 		/**
@@ -105,7 +105,7 @@ namespace bs
 		 * @note
 		 * Thread safe.
 		 */
-		void Free(UINT8* data);
+		void Free(u8* data);
 
 		/**
 		 * Deallocates and destructs a previously allocated object.
@@ -122,7 +122,7 @@ namespace bs
 			if (obj != nullptr)
 				obj->~T();
 
-			Free((UINT8*)obj);
+			Free((u8*)obj);
 		}
 
 		/** Starts a new frame. Next call to clear() will only clear memory allocated past this point. */
@@ -143,11 +143,11 @@ namespace bs
 		void SetOwnerThread(ThreadId thread);
 
 	private:
-		UINT32 mBlockSize;
+		u32 mBlockSize;
 		Vector<MemBlock*> mBlocks;
 		MemBlock* mFreeBlock;
-		UINT32 mNextBlockIdx;
-		std::atomic<UINT32> mTotalAllocBytes;
+		u32 mNextBlockIdx;
+		std::atomic<u32> mTotalAllocBytes;
 		void* mLastFrame;
 
 #if BS_DEBUG_MODE
@@ -158,7 +158,7 @@ namespace bs
 		 * Allocates a dynamic block of memory of the wanted size. The exact allocation size might be slightly higher in
 		 * order to store block meta data.
 		 */
-		MemBlock* AllocBlock(UINT32 wantedSize);
+		MemBlock* AllocBlock(u32 wantedSize);
 
 		/** Frees a memory block. */
 		void DeallocBlock(MemBlock* block);
@@ -213,7 +213,7 @@ namespace bs
 			if (num > static_cast<size_t>(-1) / sizeof(T))
 				return nullptr; // Error
 
-			void* const pv = mFrameAlloc->Alloc((UINT32)(num * sizeof(T)));
+			void* const pv = mFrameAlloc->Alloc((u32)(num * sizeof(T)));
 			if (!pv)
 				return nullptr; // Error
 
@@ -223,7 +223,7 @@ namespace bs
 		/** Deallocate storage p of deleted elements. */
 		void deallocate(T* p, size_t num) const noexcept
 		{
-			mFrameAlloc->Free((UINT8*)p);
+			mFrameAlloc->Free((u8*)p);
 		}
 
 		FrameAlloc* mFrameAlloc = nullptr;
@@ -269,13 +269,13 @@ namespace bs
 	 *
 	 * @param[in]	numBytes	Number of bytes to allocate.
 	 */
-	BS_UTILITY_EXPORT UINT8* bs_frame_alloc(UINT32 numBytes);
+	BS_UTILITY_EXPORT u8* bs_frame_alloc(u32 numBytes);
 
 	/**
 	 * Allocates the specified number of bytes aligned to the provided boundary, using the global frame allocator. Boundary
 	 * is in bytes and must be a power of two.
 	 */
-	BS_UTILITY_EXPORT UINT8* bs_frame_alloc_aligned(UINT32 count, UINT32 align);
+	BS_UTILITY_EXPORT u8* bs_frame_alloc_aligned(u32 count, u32 align);
 
 	/**
 	 * Deallocates memory allocated with the global frame allocator.
@@ -306,7 +306,7 @@ namespace bs
 	 * construct the object.
 	 */
 	template<class T>
-	T* bs_frame_alloc(UINT32 count)
+	T* bs_frame_alloc(u32 count)
 	{
 		return (T*)bs_frame_alloc(sizeof(T) * count);
 	}
@@ -316,7 +316,7 @@ namespace bs
 	 * and constructs them.
 	 */
 	template<class T>
-	T* bs_frame_new(UINT32 count = 0)
+	T* bs_frame_new(u32 count = 0)
 	{
 		T* data = bs_frame_alloc<T>(count);
 
@@ -330,7 +330,7 @@ namespace bs
 	 * Allocates enough memory to hold the object(s) of specified type using the global frame allocator, and constructs them.
 	 */
 	template<class T, class... Args>
-	T* bs_frame_new(Args &&...args, UINT32 count = 0)
+	T* bs_frame_new(Args &&...args, u32 count = 0)
 	{
 		T* data = bs_frame_alloc<T>(count);
 
@@ -350,7 +350,7 @@ namespace bs
 	{
 		data->~T();
 
-		bs_frame_free((UINT8*)data);
+		bs_frame_free((u8*)data);
 	}
 
 	/**
@@ -359,12 +359,12 @@ namespace bs
 	 * @note	Must be called on the same thread the memory was allocated on.
 	 */
 	template<class T>
-	void bs_frame_delete(T* data, UINT32 count)
+	void bs_frame_delete(T* data, u32 count)
 	{
 		for(unsigned int i = 0; i < count; i++)
 			data[i].~T();
 
-		bs_frame_free((UINT8*)data);
+		bs_frame_free((u8*)data);
 	}
 
 	/** @copydoc FrameAlloc::markFrame */
@@ -429,7 +429,7 @@ namespace bs
 		/** @copydoc MemoryAllocator::allocate */
 		static void* Allocate(size_t bytes)
 		{
-			return bs_frame_alloc((UINT32)bytes);
+			return bs_frame_alloc((u32)bytes);
 		}
 
 		/** @copydoc MemoryAllocator::allocateAligned */
@@ -439,7 +439,7 @@ namespace bs
 			IncAllocCount();
 #endif
 
-			return bs_frame_alloc_aligned((UINT32)bytes, (UINT32)alignment);
+			return bs_frame_alloc_aligned((u32)bytes, (u32)alignment);
 		}
 
 		/** @copydoc MemoryAllocator::allocateAligned16 */
@@ -449,7 +449,7 @@ namespace bs
 			IncAllocCount();
 #endif
 
-			return bs_frame_alloc_aligned((UINT32)bytes, 16);
+			return bs_frame_alloc_aligned((u32)bytes, 16);
 		}
 
 		/** @copydoc MemoryAllocator::free */

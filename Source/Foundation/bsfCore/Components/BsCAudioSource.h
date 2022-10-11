@@ -57,11 +57,11 @@ namespace bs
 
 		/** @copydoc AudioSource::setPriority */
 		BS_SCRIPT_EXPORT(n:Priority,pr:setter)
-		void SetPriority(UINT32 priority);
+		void SetPriority(u32 priority);
 
 		/** @copydoc AudioSource::getPriority */
 		BS_SCRIPT_EXPORT(n:Priority,pr:getter)
-		UINT32 GetPriority() const { return mPriority; }
+		u32 GetPriority() const { return mPriority; }
 
 		/** @copydoc AudioSource::setMinDistance */
 		BS_SCRIPT_EXPORT(n:MinDistance,pr:setter)
@@ -166,7 +166,7 @@ namespace bs
 		float mVolume = 1.0f;
 		float mPitch = 1.0f;
 		bool mLoop = false;
-		UINT32 mPriority = 0;
+		u32 mPriority = 0;
 		float mMinDistance = 1.0f;
 		float mAttenuation = 1.0f;
 		bool mPlayOnStart = true;

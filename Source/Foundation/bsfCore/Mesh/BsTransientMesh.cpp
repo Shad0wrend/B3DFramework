@@ -7,7 +7,7 @@
 
 namespace bs
 {
-	TransientMesh::TransientMesh(const SPtr<MeshHeap>& parentHeap, UINT32 id, UINT32 numVertices, UINT32 numIndices, DrawOperationType drawOp)
+	TransientMesh::TransientMesh(const SPtr<MeshHeap>& parentHeap, u32 id, u32 numVertices, u32 numIndices, DrawOperationType drawOp)
 		:MeshBase(numVertices, numIndices, drawOp), mIsDestroyed(false), mParentHeap(parentHeap), mId(id)
 	{
 
@@ -40,8 +40,8 @@ namespace bs
 
 	namespace ct
 	{
-	TransientMesh::TransientMesh(const SPtr<MeshHeap>& parentHeap, UINT32 id,
-		UINT32 numVertices, UINT32 numIndices, const Vector<SubMesh>& subMeshes)
+	TransientMesh::TransientMesh(const SPtr<MeshHeap>& parentHeap, u32 id,
+		u32 numVertices, u32 numIndices, const Vector<SubMesh>& subMeshes)
 		:MeshBase(numVertices, numIndices, subMeshes), mParentHeap(parentHeap), mId(id)
 	{
 
@@ -57,12 +57,12 @@ namespace bs
 		return mParentHeap->GetIndexBuffer();
 	}
 
-	UINT32 TransientMesh::GetVertexOffset() const
+	u32 TransientMesh::GetVertexOffset() const
 	{
 		return mParentHeap->GetVertexOffset(mId);
 	}
 
-	UINT32 TransientMesh::GetIndexOffset() const
+	u32 TransientMesh::GetIndexOffset() const
 	{
 		return mParentHeap->GetIndexOffset(mId);
 	}

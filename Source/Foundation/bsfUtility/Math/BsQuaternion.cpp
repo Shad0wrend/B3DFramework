@@ -32,8 +32,8 @@ namespace bs
 		else
 		{
 			// |w| <= 1/2
-			static UINT32 nextLookup[3] = { 1, 2, 0 };
-			UINT32 i = 0;
+			static u32 nextLookup[3] = { 1, 2, 0 };
+			u32 i = 0;
 
 			if (mat[1][1] > mat[0][0])
 				i = 1;
@@ -41,8 +41,8 @@ namespace bs
 			if (mat[2][2] > mat[i][i])
 				i = 2;
 
-			UINT32 j = nextLookup[i];
-			UINT32 k = nextLookup[j];
+			u32 j = nextLookup[i];
+			u32 k = nextLookup[j];
 
 			root = Math::Sqrt(mat[i][i]-mat[j][j]-mat[k][k] + 1.0f);
 

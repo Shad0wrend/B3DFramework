@@ -223,25 +223,25 @@ namespace bs
 		 * Determines a priority that determines in which orders the cameras are rendered. This only applies to cameras rendering
 		 * to the same render target. Higher value means the camera will be rendered sooner.
 		 */
-		void SetPriority(INT32 priority) { mPriority = priority; MarkCoreDirtyInternal(); }
+		void SetPriority(i32 priority) { mPriority = priority; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setPriority() */
-		INT32 GetPriority() const { return mPriority; }
+		i32 GetPriority() const { return mPriority; }
 
 		/**	Determines layer bitfield that is used when determining which object should the camera render. */
-		void SetLayers(UINT64 layers) { mLayers = layers; MarkCoreDirtyInternal(); }
+		void SetLayers(u64 layers) { mLayers = layers; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setLayers() */
-		UINT64 GetLayers() const { return mLayers; }
+		u64 GetLayers() const { return mLayers; }
 
 		/**
 		 * Determines number of samples to use when rendering to this camera. Values larger than 1 will enable MSAA
 		 * rendering.
 		 */
-		void SetMsaaCount(UINT32 count) { mMSAA = count; MarkCoreDirtyInternal(); }
+		void SetMsaaCount(u32 count) { mMSAA = count; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setMSAACount() */
-		UINT32 GetMsaaCount() const { return mMSAA; }
+		u32 GetMsaaCount() const { return mMSAA; }
 
 		/**
 		 * Notifies a on-demand camera that it should re-draw its contents on the next frame. Ignored for a camera
@@ -425,7 +425,7 @@ namespace bs
 		virtual Rect2I GetViewportRect() const = 0;
 
 	protected:
-		UINT64 mLayers = 0xFFFFFFFFFFFFFFFF; /**< Bitfield that can be used for filtering what objects the camera sees. */
+		u64 mLayers = 0xFFFFFFFFFFFFFFFF; /**< Bitfield that can be used for filtering what objects the camera sees. */
 
 		ProjectionType mProjType = PT_PERSPECTIVE; /**< Type of camera projection. */
 		Radian mHorzFOV = Degree(90.0f); /**< Horizontal field of view represents how wide is the camera angle. */
@@ -433,13 +433,13 @@ namespace bs
 		float mNearDist = 0.05f; /**< Clip any objects close than this. Smaller value decreases depth precision at larger depths. */
 		float mAspect = 1.33333333333333f; /**< Width/height viewport ratio. */
 		float mOrthoHeight = 5; /**< Height in world units used for orthographic cameras. */
-		INT32 mPriority = 0; /**< Determines in what order will the camera be rendered. Higher priority means the camera will be rendered sooner. */
+		i32 mPriority = 0; /**< Determines in what order will the camera be rendered. Higher priority means the camera will be rendered sooner. */
 		bool mMain = false; /**< Determines does this camera render to the main render surface. */
 		CameraFlags mCameraFlags; /**< Flags for controlling various behaviour. */
 
 		bool mCustomViewMatrix = false; /**< Is custom view matrix set. */
 		bool mCustomProjMatrix = false; /**< Is custom projection matrix set. */
-		UINT8 mMSAA = 1; /**< Number of samples to render the scene with. */
+		u8 mMSAA = 1; /**< Number of samples to render the scene with. */
 
 		bool mFrustumExtentsManuallySet = false; /**< Are frustum extents manually set. */
 
@@ -574,10 +574,10 @@ namespace bs
 		bool IsMain() const { return mMain; }
 
 		/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-		void SetRendererId(UINT32 id) { mRendererId = id; }
+		void SetRendererId(u32 id) { mRendererId = id; }
 
 		/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-		UINT32 GetRendererId() const { return mRendererId; }
+		u32 GetRendererId() const { return mRendererId; }
 		
 	protected:
 		friend class bs::Camera;
@@ -596,7 +596,7 @@ namespace bs
 		/** @copydoc CoreObject::syncToCore */
 		void SyncToCore(const CoreSyncData& data) override;
 
-		UINT32 mRendererId;
+		u32 mRendererId;
 	};
 	}
 

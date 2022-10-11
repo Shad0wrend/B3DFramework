@@ -24,16 +24,16 @@ namespace bs
 	  */
 	struct AnimationCurveMapping
 	{
-		UINT32 Position;
-		UINT32 Rotation;
-		UINT32 Scale;
+		u32 Position;
+		u32 Rotation;
+		u32 Scale;
 	};
 
 	/** Information about a single bone used for constructing a skeleton. */
 	struct BONE_DESC
 	{
 		String Name; /**< Unique name of the bone. */
-		UINT32 Parent; /**< Index of the parent bone, if any. -1 if root bone. */
+		u32 Parent; /**< Index of the parent bone, if any. -1 if root bone. */
 
 		Transform LocalTfrm; /**< Local transform of the bone, relative to other bones in the hierarchy. */
 		Matrix4 InvBindPose; /**< Inverse bind pose which transforms vertices from their bind pose into local space. */
@@ -62,9 +62,9 @@ namespace bs
 	struct AnimationStateLayer
 	{
 		AnimationState* States; /**< Array of animation states in the layer. */
-		UINT32 NumStates; /**< Number of states in @p states. */
+		u32 NumStates; /**< Number of states in @p states. */
 
-		UINT8 Index; /**< Unique index of the animation layer. */
+		u8 Index; /**< Unique index of the animation layer. */
 
 		/**
 		 * If true animations from this layer will be added on top of other layers using the per-state weights. If false
@@ -82,8 +82,8 @@ namespace bs
 	struct LocalSkeletonPose
 	{
 		LocalSkeletonPose() = default;
-		LocalSkeletonPose(UINT32 numBones, bool individualOverride = false);
-		LocalSkeletonPose(UINT32 numPos, UINT32 numRot, UINT32 numScale);
+		LocalSkeletonPose(u32 numBones, bool individualOverride = false);
+		LocalSkeletonPose(u32 numPos, u32 numRot, u32 numScale);
 		LocalSkeletonPose(const LocalSkeletonPose& other) = delete;
 		LocalSkeletonPose(LocalSkeletonPose&& other);
 		~LocalSkeletonPose();
@@ -95,14 +95,14 @@ namespace bs
 		Quaternion* Rotations = nullptr; /**< Local bone rotations at specific animation time. */
 		Vector3* Scales = nullptr; /**< Local bone scales at specific animation time. */
 		bool* HasOverride = nullptr; /**< True if the bone transform was overriden externally (local pose was ignored). */
-		UINT32 NumBones = 0; /**< Number of bones in the pose. */
+		u32 NumBones = 0; /**< Number of bones in the pose. */
 	};
 
 	/** Contains internal information about a single bone in a Skeleton. */
 	struct SkeletonBoneInfo
 	{
 		String Name; /**< Unique name of the bone. */
-		UINT32 Parent; /**< Index of the bone parent, or -1 if root (no parent). */
+		u32 Parent; /**< Index of the bone parent, or -1 if root (no parent). */
 	};
 
 	/**
@@ -151,23 +151,23 @@ namespace bs
 		 * @param[in]	numLayers	Number of layers in the @p layers array.
 		 */
 		void GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask,
-			const AnimationStateLayer* layers, UINT32 numLayers);
+			const AnimationStateLayer* layers, u32 numLayers);
 
 		/** Returns the total number of bones in the skeleton. */
 		BS_SCRIPT_EXPORT(pr:getter,n:NumBones)
-		UINT32 GetNumBones() const { return mNumBones; }
+		u32 GetNumBones() const { return mNumBones; }
 
 		/** Returns information about a bone at the provided index. */
-		const SkeletonBoneInfo& GetBoneInfo(UINT32 idx) const { return mBoneInfo[idx]; }
+		const SkeletonBoneInfo& GetBoneInfo(u32 idx) const { return mBoneInfo[idx]; }
 
 		/** Searches all bones to find a root bone. Returns -1 if no root can be found. */
-		UINT32 GetRootBoneIndex() const;
+		u32 GetRootBoneIndex() const;
 
 		/** Returns the inverse bind pose for the bone at the provided index. */
-		const Matrix4& GetInvBindPose(UINT32 idx) const { return mInvBindPoses[idx]; }
+		const Matrix4& GetInvBindPose(u32 idx) const { return mInvBindPoses[idx]; }
 
 		/** Calculates the bind-pose transform of the bone at the specified index. */
-		Transform CalcBoneTransform(UINT32 idx) const;
+		Transform CalcBoneTransform(u32 idx) const;
 
 		/**
 		 * Creates a new Skeleton.
@@ -175,13 +175,13 @@ namespace bs
 		 * @param[in]	bones		An array of bones to initialize the skeleton with. Data will be copied.
 		 * @param[in]	numBones	Number of bones in the @p bones array.
 		 */
-		static SPtr<Skeleton> Create(BONE_DESC* bones, UINT32 numBones);
+		static SPtr<Skeleton> Create(BONE_DESC* bones, u32 numBones);
 
 	private:
 		Skeleton() = default;
-		Skeleton(BONE_DESC* bones, UINT32 numBones);
+		Skeleton(BONE_DESC* bones, u32 numBones);
 
-		UINT32 mNumBones = 0;
+		u32 mNumBones = 0;
 		Transform* mBoneTransforms = nullptr;
 		Matrix4* mInvBindPoses = nullptr;
 		SkeletonBoneInfo* mBoneInfo = nullptr;

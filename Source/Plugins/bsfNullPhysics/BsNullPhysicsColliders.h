@@ -58,10 +58,10 @@ namespace bs
 		float GetRestOffset() const override { return mRestOffset; }
 
 		/** @copydoc FCollider::getLayer */
-		UINT64 GetLayer() const override { return mLayer; }
+		u64 GetLayer() const override { return mLayer; }
 
 		/** @copydoc FCollider::setLayer */
-		void SetLayer(UINT64 layer) override { mLayer = layer; }
+		void SetLayer(u64 layer) override { mLayer = layer; }
 
 		/** @copydoc FCollider::getCollisionReportMode */
 		CollisionReportMode GetCollisionReportMode() const override { return mCollisionReportMode; }
@@ -77,7 +77,7 @@ namespace bs
 		Quaternion mRotation;
 		bool mIsTrigger = false;
 		bool mIsStatic = true;
-		UINT64 mLayer = 1;
+		u64 mLayer = 1;
 		bool mCCD = false;
 		float mContactOffset = 0.005f;
 		float mRestOffset = 0.005f;

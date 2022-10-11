@@ -40,7 +40,7 @@ namespace bs
 		 * 			
 		 * @note	Field type must be an array.
 		 */
-		virtual SPtr<IReflectable> GetArrayValue(RTTITypeBase* rtti, void* object, UINT32 index) = 0;
+		virtual SPtr<IReflectable> GetArrayValue(RTTITypeBase* rtti, void* object, u32 index) = 0;
 
 		/**
 		 * Sets the IReflectable value in the provided instance.
@@ -54,13 +54,13 @@ namespace bs
 		 * 			
 		 * @note	Field type must be an array.
 		 */
-		virtual void SetArrayValue(RTTITypeBase* rtti, void* object, UINT32 index, SPtr<IReflectable> value) = 0;
+		virtual void SetArrayValue(RTTITypeBase* rtti, void* object, u32 index, SPtr<IReflectable> value) = 0;
 
 		/** Creates a new object of the field type. */
 		virtual SPtr<IReflectable> NewObject() = 0;
 
 		/** Returns the RTTI identifier of the class owning the field. */
-		virtual UINT32 GetRttiId() = 0;
+		virtual u32 GetRttiId() = 0;
 
 		/** Returns the name of the class owning the field. */
 		virtual const String& GetRttiName() = 0;
@@ -76,10 +76,10 @@ namespace bs
 		typedef SPtr<DataType> (InterfaceType::*GetterType)(ObjectType*);
 		typedef void (InterfaceType::*SetterType)(ObjectType*, SPtr<DataType>);
 
-		typedef SPtr<DataType> (InterfaceType::*ArrayGetterType)(ObjectType*, UINT32);
-		typedef void (InterfaceType::*ArraySetterType)(ObjectType*, UINT32, SPtr<DataType>);
-		typedef UINT32(InterfaceType::*ArrayGetSizeType)(ObjectType*);
-		typedef void(InterfaceType::*ArraySetSizeType)(ObjectType*, UINT32);
+		typedef SPtr<DataType> (InterfaceType::*ArrayGetterType)(ObjectType*, u32);
+		typedef void (InterfaceType::*ArraySetterType)(ObjectType*, u32, SPtr<DataType>);
+		typedef u32(InterfaceType::*ArrayGetSizeType)(ObjectType*);
+		typedef void(InterfaceType::*ArraySetSizeType)(ObjectType*, u32);
 
 		/**
 		 * Initializes a field pointing to a single data type implementing IReflectable interface.
@@ -92,7 +92,7 @@ namespace bs
 		 * @param[in]	setter  	The setter method for the field.
 		 * @param[in]	info		Various optional information about the field.
 		 */
-		void InitSingle(String name, UINT16 uniqueId, GetterType getter, SetterType setter, const RTTIFieldInfo& info)
+		void InitSingle(String name, u16 uniqueId, GetterType getter, SetterType setter, const RTTIFieldInfo& info)
 		{
 			this->Getter = getter;
 			this->Setter = setter;
@@ -113,7 +113,7 @@ namespace bs
 		 * @param[in]	setSize 	Setter method that allows you to resize an array. Can be null.
 		 * @param[in]	info		Various optional information about the field.
 		 */
-		void InitArray(String name, UINT16 uniqueId, ArrayGetterType getter, ArrayGetSizeType getSize,
+		void InitArray(String name, u16 uniqueId, ArrayGetterType getter, ArrayGetSizeType getSize,
 			ArraySetterType setter, ArraySetSizeType setSize, const RTTIFieldInfo& info)
 		{
 			ArrayGetter = getter;
@@ -146,7 +146,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIReflectablePtrFieldBase::getArrayValue */
-		SPtr<IReflectable> GetArrayValue(RTTITypeBase* rtti, void* object, UINT32 index) 
+		SPtr<IReflectable> GetArrayValue(RTTITypeBase* rtti, void* object, u32 index)
 		{
 			CheckIsArray(true);
 
@@ -176,7 +176,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIReflectablePtrFieldBase::setArrayValue */
-		void SetArrayValue(RTTITypeBase* rtti, void* object, UINT32 index, SPtr<IReflectable> value) 
+		void SetArrayValue(RTTITypeBase* rtti, void* object, u32 index, SPtr<IReflectable> value)
 		{
 			CheckIsArray(true);
 
@@ -194,7 +194,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIField::setArraySize */
-		UINT32 GetArraySize(RTTITypeBase* rtti, void* object) override
+		u32 GetArraySize(RTTITypeBase* rtti, void* object) override
 		{
 			CheckIsArray(true);
 
@@ -205,7 +205,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIField::setArraySize */
-		void SetArraySize(RTTITypeBase* rtti, void* object, UINT32 size) override
+		void SetArraySize(RTTITypeBase* rtti, void* object, u32 size) override
 		{
 			CheckIsArray(true);
 
@@ -228,7 +228,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIReflectablePtrFieldBase::getRTTIId */
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return DataType::GetRttiStatic()->GetRttiId();
 		}

@@ -70,7 +70,7 @@ namespace bs { namespace ct
 		 *								representing this buffer.
 		 * @param[in]	outputCounts	Pre-allocated buffer to contain the resulting per-digit counts for each group.
 		 */
-		void Execute(UINT32 numGroups, const SPtr<GpuParamBlockBuffer>& params, const SPtr<GpuBuffer>& inputKeys,
+		void Execute(u32 numGroups, const SPtr<GpuParamBlockBuffer>& params, const SPtr<GpuBuffer>& inputKeys,
 			const SPtr<GpuBuffer>& outputCounts);
 
 		GpuParamBuffer MInputKeysParam;
@@ -127,8 +127,8 @@ namespace bs { namespace ct
 		 * @return						Index of the buffer that should be used as input for the next iteration of the
 		 *								algorithm. (In case the keys were only partially sorted)
 		 */
-		void Execute(UINT32 numGroups, const SPtr<GpuParamBlockBuffer>& params, const SPtr<GpuBuffer>& inputOffsets,
-			const GpuSortBuffers& buffers, UINT32 inputBufferIdx);
+		void Execute(u32 numGroups, const SPtr<GpuParamBlockBuffer>& params, const SPtr<GpuBuffer>& inputOffsets,
+			const GpuSortBuffers& buffers, u32 inputBufferIdx);
 
 		GpuParamBuffer MInputOffsetsBufferParam;
 		GpuParamBuffer MInputKeysBufferParam;
@@ -167,7 +167,7 @@ namespace bs { namespace ct
 		 *							mask).
 		 * @return					Index of the buffer in @p buffers that will contain the final sorted keys and/or values.
 		 */
-		UINT32 Sort(const GpuSortBuffers& buffers, UINT32 numKeys, UINT32 keyMask = 0xFFFFFFFF);
+		u32 Sort(const GpuSortBuffers& buffers, u32 numKeys, u32 keyMask = 0xFFFFFFFF);
 
 		/**
 		 * Creates a set of buffers buffer that can be used when calling the sort() method.
@@ -178,7 +178,7 @@ namespace bs { namespace ct
 		 * @return						A set of buffers to store unsorted keys (and optionally values), as well as space
 		 *								for the resulting sorted keys (and optionally values).
 		 */
-		static GpuSortBuffers CreateSortBuffers(UINT32 numElements, bool values = false);
+		static GpuSortBuffers CreateSortBuffers(u32 numElements, bool values = false);
 
 	private:
 		SPtr<GpuBuffer> mHelperBuffers[2];

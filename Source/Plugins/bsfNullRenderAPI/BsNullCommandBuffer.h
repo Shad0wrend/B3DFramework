@@ -17,7 +17,7 @@ namespace bs { namespace ct
 	{
 	public:
 		/** @copydoc CommandBufferManager::createInternal() */
-		SPtr<CommandBuffer> CreateInternal(GpuQueueType type, UINT32 deviceIdx = 0, UINT32 queueIdx = 0,
+		SPtr<CommandBuffer> CreateInternal(GpuQueueType type, u32 deviceIdx = 0, u32 queueIdx = 0,
 			bool secondary = false) ;
 	};
 
@@ -27,7 +27,7 @@ namespace bs { namespace ct
 	private:
 		friend class NullCommandBufferManager;
 
-		NullCommandBuffer(GpuQueueType type, UINT32 deviceIdx, UINT32 queueIdx, bool secondary)
+		NullCommandBuffer(GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary)
 			: CommandBuffer(type, deviceIdx, queueIdx, secondary)
 		{ }
 

@@ -41,14 +41,14 @@ namespace bs
 			std::swap(Z, other.Z);
 		}
 
-		float operator[] (UINT32 i) const
+		float operator[] (u32 i) const
 		{
 			assert(i < 3);
 
 			return *(&X + i);
 		}
 
-		float& operator[] (UINT32 i)
+		float& operator[] (u32 i)
 		{
 			assert(i < 3);
 

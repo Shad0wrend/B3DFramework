@@ -36,8 +36,8 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN_NAMED(format, mProperties.mDesc.Format, 10)
 		BS_END_RTTI_MEMBERS
 
-		INT32& GetUsage(Texture* obj) { return obj->mProperties.mDesc.Usage; }
-		void SetUsage(Texture* obj, INT32& val)
+		i32& GetUsage(Texture* obj) { return obj->mProperties.mDesc.Usage; }
+		void SetUsage(Texture* obj, i32& val)
 		{
 			// Render target and depth stencil texture formats are for in-memory use only
 			// and don't make sense when serialized
@@ -50,10 +50,10 @@ namespace bs
 				obj->mProperties.mDesc.Usage = val;
 		}
 
-		SPtr<PixelData> GetPixelData(Texture* obj, UINT32 idx)
+		SPtr<PixelData> GetPixelData(Texture* obj, u32 idx)
 		{
-			UINT32 face = (size_t)Math::Floor(idx / (float)(obj->mProperties.GetNumMipmaps() + 1));
-			UINT32 mipmap = idx % (obj->mProperties.GetNumMipmaps() + 1);
+			u32 face = (size_t)Math::Floor(idx / (float)(obj->mProperties.GetNumMipmaps() + 1));
+			u32 mipmap = idx % (obj->mProperties.GetNumMipmaps() + 1);
 
 			SPtr<PixelData> pixelData = obj->mProperties.AllocBuffer(face, mipmap);
 
@@ -63,17 +63,17 @@ namespace bs
 			return pixelData;
 		}
 
-		void SetPixelData(Texture* obj, UINT32 idx, SPtr<PixelData> data)
+		void SetPixelData(Texture* obj, u32 idx, SPtr<PixelData> data)
 		{
 			mPixelData[idx] = data;
 		}
 
-		UINT32 GetPixelDataArraySize(Texture* obj)
+		u32 GetPixelDataArraySize(Texture* obj)
 		{
 			return obj->mProperties.GetNumFaces() * (obj->mProperties.GetNumMipmaps() + 1);
 		}
 
-		void SetPixelDataArraySize(Texture* obj, UINT32 size)
+		void SetPixelDataArraySize(Texture* obj, u32 size)
 		{
 			mPixelData.resize(size);
 		}
@@ -118,8 +118,8 @@ namespace bs
 
 			for(size_t i = 0; i < mPixelData.size(); i++)
 			{
-				UINT32 face = (size_t)Math::Floor(i / (float)(texProps.GetNumMipmaps() + 1));
-				UINT32 mipmap = i % (texProps.GetNumMipmaps() + 1);
+				u32 face = (size_t)Math::Floor(i / (float)(texProps.GetNumMipmaps() + 1));
+				u32 mipmap = i % (texProps.GetNumMipmaps() + 1);
 
 				texture->WriteData(mPixelData[i], face, mipmap, false);
 			}
@@ -131,7 +131,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() override
+		u32 GetRttiId() override
 		{
 			return TID_Texture;
 		}

@@ -29,7 +29,7 @@ namespace bs
 		metaData.ScriptClass->AddInternalCall("Internal_SRGBToLinear", (void*)&ScriptPixelUtility::InternalSrgbToLinear);
 	}
 
-	void ScriptPixelUtility::InternalGetMemorySize(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format, UINT32* value)
+	void ScriptPixelUtility::InternalGetMemorySize(u32 width, u32 height, u32 depth, PixelFormat format, u32* value)
 	{
 		*value = PixelUtil::GetMemorySize(width, height, depth, format);
 	}
@@ -54,7 +54,7 @@ namespace bs
 		*value = PixelUtil::IsDepth(format);
 	}
 
-	void ScriptPixelUtility::InternalGetMaxMipmaps(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format, UINT32* value)
+	void ScriptPixelUtility::InternalGetMaxMipmaps(u32 width, u32 height, u32 depth, PixelFormat format, u32* value)
 	{
 		*value = PixelUtil::GetMaxMipmaps(width, height, depth, format);
 	}
@@ -100,10 +100,10 @@ namespace bs
 		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
 		Vector<SPtr<PixelData>> mipmaps = PixelUtil::GenMipmaps(*sourcePixelData, *options);
 
-		UINT32 numElements = (UINT32)mipmaps.size();
+		u32 numElements = (u32)mipmaps.size();
 		ScriptArray scriptArray(ScriptPixelData::GetMetaData()->ScriptClass->GetInternalClassInternal(), numElements);
 
-		for (UINT32 i = 0; i < numElements; i++)
+		for (u32 i = 0; i < numElements; i++)
 		{
 			MonoObject* managedPixelData = ScriptPixelData::Create(mipmaps[i]);
 			scriptArray.Set(i, managedPixelData);

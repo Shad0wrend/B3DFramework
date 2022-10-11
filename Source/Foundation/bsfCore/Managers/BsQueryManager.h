@@ -28,14 +28,14 @@ namespace bs { namespace ct
 		 *
 		 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
 		 */
-		virtual SPtr<EventQuery> CreateEventQuery(UINT32 deviceIdx = 0) const = 0;
+		virtual SPtr<EventQuery> CreateEventQuery(u32 deviceIdx = 0) const = 0;
 
 		/**
 		 * Creates a new timer query that allows you to get notified of how much time has passed between query start and end.
 		 *
 		 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
 		 */
-		virtual SPtr<TimerQuery> CreateTimerQuery(UINT32 deviceIdx = 0) const = 0;
+		virtual SPtr<TimerQuery> CreateTimerQuery(u32 deviceIdx = 0) const = 0;
 
 		/**
 		 * Creates a new occlusion query that allows you to know how many fragments were rendered between query start and
@@ -47,7 +47,7 @@ namespace bs { namespace ct
 		 *							until all of the geometry is rendered.
 		 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
 		 */
-		virtual SPtr<OcclusionQuery> CreateOcclusionQuery(bool binary, UINT32 deviceIdx = 0) const = 0;
+		virtual SPtr<OcclusionQuery> CreateOcclusionQuery(bool binary, u32 deviceIdx = 0) const = 0;
 
 		/** Triggers completed queries. Should be called every frame. */
 		void UpdateInternal();

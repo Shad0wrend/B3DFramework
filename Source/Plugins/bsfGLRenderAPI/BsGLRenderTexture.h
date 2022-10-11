@@ -46,7 +46,7 @@ namespace bs
 	class GLRenderTexture : public RenderTexture
 	{
 	public:
-		GLRenderTexture(const RENDER_TEXTURE_DESC& desc, UINT32 deviceIdx);
+		GLRenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx);
 		virtual ~GLRenderTexture();
 
 		/** @copydoc RenderTexture::getCustomAttribute */
@@ -102,8 +102,8 @@ namespace bs
 			/** Allowed modes/properties for this pixel format. */
 			struct Mode
 			{
-				UINT32 Depth;     /**< Depth format (0 = no depth). */
-				UINT32 Stencil;   /**< Stencil format (0 = no stencil). */
+				u32 Depth;     /**< Depth format (0 = no depth). */
+				u32 Stencil;   /**< Stencil format (0 = no stencil). */
 			};
 
 			Vector<Mode> Modes;

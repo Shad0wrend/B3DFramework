@@ -56,10 +56,10 @@ namespace bs
 		barLayoutData.Area.X += style->Margins.Left;
 		barLayoutData.Area.Y += style->Margins.Top;
 
-		UINT32 maxProgressBarWidth = std::max((UINT32)0, (UINT32)(data.Area.Width - style->Margins.Left - style->Margins.Right));
-		UINT32 progressBarHeight = std::max((UINT32)0, (UINT32)(data.Area.Height - style->Margins.Top - style->Margins.Bottom));
+		u32 maxProgressBarWidth = std::max((u32)0, (u32)(data.Area.Width - style->Margins.Left - style->Margins.Right));
+		u32 progressBarHeight = std::max((u32)0, (u32)(data.Area.Height - style->Margins.Top - style->Margins.Bottom));
 
-		barLayoutData.Area.Width = (UINT32)Math::FloorToInt(maxProgressBarWidth * mPercent);
+		barLayoutData.Area.Width = (u32)Math::FloorToInt(maxProgressBarWidth * mPercent);
 		barLayoutData.Area.Height = progressBarHeight;
 
 		mBar->SetLayoutDataInternal(barLayoutData);

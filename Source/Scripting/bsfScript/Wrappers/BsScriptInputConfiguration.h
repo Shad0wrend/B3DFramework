@@ -43,8 +43,8 @@ namespace bs
 		void OnManagedInstanceDeletedInternal(bool assemblyRefresh) override;
 
 		SPtr<InputConfiguration> mInputConfig;
-		UINT32 mGCHandle = 0;
-		static Map<UINT64, ScriptInputConfiguration*> ScriptInputConfigurations;
+		u32 mGCHandle = 0;
+		static Map<u64, ScriptInputConfiguration*> ScriptInputConfigurations;
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
@@ -59,8 +59,8 @@ namespace bs
 			float sensitivity, bool invert);
 		static void InternalUnregisterAxis(ScriptInputConfiguration* thisPtr, MonoString* name);
 
-		static void InternalSetRepeatInterval(ScriptInputConfiguration* thisPtr, UINT64 milliseconds);
-		static UINT64 InternalGetRepeatInterval(ScriptInputConfiguration* thisPtr);
+		static void InternalSetRepeatInterval(ScriptInputConfiguration* thisPtr, u64 milliseconds);
+		static u64 InternalGetRepeatInterval(ScriptInputConfiguration* thisPtr);
 	};
 
 	/**	Interop class between C++ & CLR for VirtualAxis. */
@@ -75,7 +75,7 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static UINT32 InternalInitVirtualAxis(MonoString* name);
+		static u32 InternalInitVirtualAxis(MonoString* name);
 	};
 
 	/** @} */

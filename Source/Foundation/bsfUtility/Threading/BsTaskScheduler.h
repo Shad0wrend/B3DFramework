@@ -72,10 +72,10 @@ namespace bs
 
 		String mName;
 		TaskPriority mPriority;
-		UINT32 mTaskId = 0;
+		u32 mTaskId = 0;
 		std::function<void()> mTaskWorker;
 		SPtr<Task> mTaskDependency;
-		std::atomic<UINT32> mState{0}; /**< 0 - Inactive, 1 - In progress, 2 - Completed, 3 - Canceled */
+		std::atomic<u32> mState{0}; /**< 0 - Inactive, 1 - In progress, 2 - Completed, 3 - Canceled */
 
 		TaskScheduler* mParent = nullptr;
 	};
@@ -90,7 +90,7 @@ namespace bs
 		struct PrivatelyConstruct {};
 
 	public:
-		TaskGroup(const PrivatelyConstruct& dummy, String name, std::function<void(UINT32)> taskWorker, UINT32 count,
+		TaskGroup(const PrivatelyConstruct& dummy, String name, std::function<void(u32)> taskWorker, u32 count,
 			TaskPriority priority, SPtr<Task> dependency);
 
 		/**
@@ -104,7 +104,7 @@ namespace bs
 		 * @param[in]	dependency	(optional) Task dependency if one exists. If provided the task will
 		 * 							not be executed until its dependency is complete.
 		 */
-		static SPtr<TaskGroup> Create(String name, std::function<void(UINT32)> taskWorker, UINT32 count,
+		static SPtr<TaskGroup> Create(String name, std::function<void(u32)> taskWorker, u32 count,
 			TaskPriority priority = TaskPriority::Normal, SPtr<Task> dependency = nullptr);
 
 		/** Returns true if all the tasks in the group have completed. */
@@ -121,11 +121,11 @@ namespace bs
 		friend class TaskScheduler;
 
 		String mName;
-		UINT32 mCount;
+		u32 mCount;
 		TaskPriority mPriority;
-		std::function<void(UINT32)> mTaskWorker;
+		std::function<void(u32)> mTaskWorker;
 		SPtr<Task> mTaskDependency;
-		std::atomic<UINT32> mNumRemainingTasks{mCount};
+		std::atomic<u32> mNumRemainingTasks{mCount};
 
 		TaskScheduler* mParent = nullptr;
 	};
@@ -163,7 +163,7 @@ namespace bs
 		void RemoveWorker();
 
 		/** Returns the maximum available worker threads (maximum number of tasks that can be executed simultaneously). */
-		UINT32 GetNumWorkers() const { return mMaxActiveTasks; }
+		u32 GetNumWorkers() const { return mMaxActiveTasks; }
 	protected:
 		friend class Task;
 		friend class TaskGroup;
@@ -186,8 +186,8 @@ namespace bs
 		HThread mTaskSchedulerThread;
 		Set<SPtr<Task>, std::function<bool(const SPtr<Task>&, const SPtr<Task>&)>> mTaskQueue;
 		Vector<SPtr<Task>> mActiveTasks;
-		UINT32 mMaxActiveTasks = 0;
-		UINT32 mNextTaskId = 0;
+		u32 mMaxActiveTasks = 0;
+		u32 mNextTaskId = 0;
 		bool mShutdown = false;
 		bool mCheckTasks = false;
 

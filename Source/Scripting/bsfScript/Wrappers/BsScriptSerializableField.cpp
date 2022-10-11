@@ -35,7 +35,7 @@ namespace bs
 	{
 		MonoString* monoStrName = MonoUtil::WstringToMono(toWString(fieldInfo->MName));
 		MonoReflectionType* internalType = MonoUtil::GetType(fieldInfo->MTypeInfo->GetMonoClass());
-		UINT32 fieldFlags = (UINT32)fieldInfo->MFlags;
+		u32 fieldFlags = (u32)fieldInfo->MFlags;
 
 		void* params[4] = { parentObject, monoStrName, &fieldFlags, internalType };
 		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance(params, 4);

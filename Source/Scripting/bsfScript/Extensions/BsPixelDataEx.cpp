@@ -13,7 +13,7 @@ namespace bs
 		return pixelData;
 	}
 
-	SPtr<PixelData> PixelDataEx::Create(UINT32 width, UINT32 height, UINT32 depth, PixelFormat format)
+	SPtr<PixelData> PixelDataEx::Create(u32 width, u32 height, u32 depth, PixelFormat format)
 	{
 		SPtr<PixelData> pixelData = bs_shared_ptr_new<PixelData>(width, height, depth, format);
 		pixelData->AllocateInternalBuffer();
@@ -67,14 +67,14 @@ namespace bs
 		if (!CheckIsLocked(thisPtr))
 			return;
 
-		UINT32 arrayLen = (UINT32)value.size();
+		u32 arrayLen = (u32)value.size();
 		if (thisPtr->GetSize() != arrayLen)
 		{
 			BS_LOG(Warning, Texture, "Unable to set colors, invalid array size.");
 			return;
 		}
 
-		UINT8* data = thisPtr->GetData();
+		u8* data = thisPtr->GetData();
 		memcpy(data, value.data(), thisPtr->GetSize());
 	}
 

@@ -50,33 +50,33 @@ namespace bs
 		struct LoadedResourceData
 		{
 			LoadedResourceData() = default;
-			LoadedResourceData(const WeakResourceHandle<Resource>& resource, UINT32 size)
+			LoadedResourceData(const WeakResourceHandle<Resource>& resource, u32 size)
 				:Resource(resource), Size(size)
 			{ }
 
 			WeakResourceHandle<Resource> Resource;
-			UINT32 NumInternalRefs = 0;
-			UINT32 Size = 0;
+			u32 NumInternalRefs = 0;
+			u32 Size = 0;
 		};
 
 		/** Information about a resource that's currently being loaded. */
 		struct ResourceLoadData
 		{
-			ResourceLoadData(const WeakResourceHandle<Resource>& resource, UINT32 numDependencies, UINT32 size)
+			ResourceLoadData(const WeakResourceHandle<Resource>& resource, u32 numDependencies, u32 size)
 				:ResData(resource, size), RemainingDependencies(numDependencies)
 			{ }
 
 			LoadedResourceData ResData;
 			SPtr<Resource> LoadedData;
-			UINT32 RemainingDependencies;
+			u32 RemainingDependencies;
 			Vector<HResource> Dependencies;
 			bool NotifyImmediately;
 			bool LoadStarted = false;
 			SPtr<Task> Task;
 
 			// Progress reporting
-			UINT32 DependencySize = 0;
-			UINT32 DependencyLoadedAmount = 0;
+			u32 DependencySize = 0;
+			u32 DependencyLoadedAmount = 0;
 			std::atomic<float> Progress;
 		};
 
@@ -86,7 +86,7 @@ namespace bs
 			enum State { Loading, Failed, AlreadyInProgress, AlreadyLoaded };
 
 			HResource Resource;
-			UINT32 Size;
+			u32 Size;
 			State State;
 		};
 

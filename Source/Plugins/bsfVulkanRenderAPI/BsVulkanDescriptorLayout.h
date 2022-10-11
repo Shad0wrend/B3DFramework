@@ -14,7 +14,7 @@ namespace bs { namespace ct
 	class VulkanDescriptorLayout
 	{
 	public:
-		VulkanDescriptorLayout(VulkanDevice& device, VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings);
+		VulkanDescriptorLayout(VulkanDevice& device, VkDescriptorSetLayoutBinding* bindings, u32 numBindings);
 		~VulkanDescriptorLayout();
 
 		/** Returns a handle to the Vulkan set layout object. */
@@ -24,7 +24,7 @@ namespace bs { namespace ct
 		size_t GetHash() const { return mHash; }
 
 		/** Calculates a has value for the provided descriptor set layout bindings. */
-		static size_t CalculateHash(VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings);
+		static size_t CalculateHash(VkDescriptorSetLayoutBinding* bindings, u32 numBindings);
 
 	protected:
 		VulkanDevice& mDevice;

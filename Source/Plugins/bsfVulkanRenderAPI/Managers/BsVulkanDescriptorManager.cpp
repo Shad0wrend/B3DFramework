@@ -9,7 +9,7 @@
 
 namespace bs { namespace ct
 {
-	VulkanLayoutKey::VulkanLayoutKey(VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings)
+	VulkanLayoutKey::VulkanLayoutKey(VkDescriptorSetLayoutBinding* bindings, u32 numBindings)
 		:NumBindings(numBindings), Bindings(bindings)
 	{ }
 
@@ -22,7 +22,7 @@ namespace bs { namespace ct
 		if (NumBindings != rhs.NumBindings)
 			return false;
 
-		for (UINT32 i = 0; i < NumBindings; i++)
+		for (u32 i = 0; i < NumBindings; i++)
 		{
 			if (Bindings[i].binding != rhs.Bindings[i].binding)
 				return false;
@@ -40,7 +40,7 @@ namespace bs { namespace ct
 		return true;
 	}
 
-	VulkanPipelineLayoutKey::VulkanPipelineLayoutKey(VulkanDescriptorLayout** layouts, UINT32 numLayouts)
+	VulkanPipelineLayoutKey::VulkanPipelineLayoutKey(VulkanDescriptorLayout** layouts, u32 numLayouts)
 		:NumLayouts(numLayouts), Layouts(layouts)
 	{
 		
@@ -51,7 +51,7 @@ namespace bs { namespace ct
 		if (NumLayouts != rhs.NumLayouts)
 			return false;
 
-		for (UINT32 i = 0; i < NumLayouts; i++)
+		for (u32 i = 0; i < NumLayouts; i++)
 		{
 			if (Layouts[i] != rhs.Layouts[i])
 				return false;
@@ -63,7 +63,7 @@ namespace bs { namespace ct
 	size_t VulkanPipelineLayoutKey::CalculateHash() const
 	{
 		size_t hash = 0;
-		for (UINT32 i = 0; i < NumLayouts; i++)
+		for (u32 i = 0; i < NumLayouts; i++)
 			bs_hash_combine(hash, Layouts[i]->GetHash());
 
 		return hash;
@@ -93,7 +93,7 @@ namespace bs { namespace ct
 			bs_delete(entry);
 	}
 
-	VulkanDescriptorLayout* VulkanDescriptorManager::GetLayout(VkDescriptorSetLayoutBinding* bindings, UINT32 numBindings)
+	VulkanDescriptorLayout* VulkanDescriptorManager::GetLayout(VkDescriptorSetLayoutBinding* bindings, u32 numBindings)
 	{
 		VulkanLayoutKey key(bindings, numBindings);
 
@@ -140,7 +140,7 @@ namespace bs { namespace ct
 		return mDevice.GetResourceManager().Create<VulkanDescriptorSet>(set, allocateInfo.descriptorPool);
 	}
 
-	VkPipelineLayout VulkanDescriptorManager::GetPipelineLayout(VulkanDescriptorLayout** layouts, UINT32 numLayouts)
+	VkPipelineLayout VulkanDescriptorManager::GetPipelineLayout(VulkanDescriptorLayout** layouts, u32 numLayouts)
 	{
 		VulkanPipelineLayoutKey key(layouts, numLayouts);
 
@@ -150,7 +150,7 @@ namespace bs { namespace ct
 
 		// Create new
 		VkDescriptorSetLayout* setLayouts = (VkDescriptorSetLayout*)bs_stack_alloc(sizeof(VkDescriptorSetLayout) * numLayouts);
-		for(UINT32 i = 0; i < numLayouts; i++)
+		for(u32 i = 0; i < numLayouts; i++)
 			setLayouts[i] = layouts[i]->GetHandle();
 
 		VkPipelineLayoutCreateInfo layoutCI;

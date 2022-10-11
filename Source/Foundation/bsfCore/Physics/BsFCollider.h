@@ -92,10 +92,10 @@ namespace bs
 		virtual float GetRestOffset() const = 0;
 
 		/** Determines the layer of the collider. Layer controls with which objects will the collider collide. */
-		virtual void SetLayer(UINT64 layer) = 0;
+		virtual void SetLayer(u64 layer) = 0;
 
 		/** @copydoc setLayer() */
-		virtual UINT64 GetLayer() const = 0;
+		virtual u64 GetLayer() const = 0;
 
 		/** Determines which (if any) collision events are reported. */
 		virtual void SetCollisionReportMode(CollisionReportMode mode) = 0;

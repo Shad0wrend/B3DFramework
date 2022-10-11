@@ -21,7 +21,7 @@ namespace bs
 	/** Information about a gamepad from DirectInput. */
 	struct GamepadInfo
 	{
-		UINT32 Id;
+		u32 Id;
 		GUID GuidInstance;
 		GUID GuidProduct;
 		String Name;

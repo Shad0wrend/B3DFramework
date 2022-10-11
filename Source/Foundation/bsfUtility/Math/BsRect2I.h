@@ -16,14 +16,14 @@ namespace bs
 	public:
 		constexpr Rect2I() = default;
 
-		constexpr Rect2I(INT32 x, INT32 y, UINT32 width, UINT32 height)
+		constexpr Rect2I(i32 x, i32 y, u32 width, u32 height)
 			:X(x), Y(y), Width(width), Height(height)
 		{ }
 
-		INT32 X = 0;
-		INT32 Y = 0;
-		UINT32 Width = 0;
-		UINT32 Height = 0;
+		i32 X = 0;
+		i32 Y = 0;
+		u32 Width = 0;
+		u32 Height = 0;
 
 		/** Returns true if the rectangle contains the provided point. */
 		bool Contains(const Vector2I& point) const;

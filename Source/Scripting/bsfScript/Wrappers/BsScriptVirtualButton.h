@@ -30,7 +30,7 @@ namespace bs
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		static UINT32 InternalInitVirtualButton(MonoString* name);
+		static u32 InternalInitVirtualButton(MonoString* name);
 	};
 
 	/** @} */

@@ -26,7 +26,7 @@ namespace bs
 		return GetRttiStatic();
 	}
 
-	ManagedSerializableDiff::ModifiedArrayEntry::ModifiedArrayEntry(UINT32 idx, const SPtr<ManagedSerializableDiff::Modification>& modification)
+	ManagedSerializableDiff::ModifiedArrayEntry::ModifiedArrayEntry(u32 idx, const SPtr<ManagedSerializableDiff::Modification>& modification)
 		:Idx(idx), Modification(modification)
 	{ }
 
@@ -171,7 +171,7 @@ namespace bs
 				if (!field.second->IsSerializable())
 					continue;
 
-				UINT32 fieldTypeId = field.second->MTypeInfo->GetTypeId();
+				u32 fieldTypeId = field.second->MTypeInfo->GetTypeId();
 
 				SPtr<ManagedSerializableFieldData> oldData = oldObj->GetFieldData(field.second);
 				SPtr<ManagedSerializableFieldData> newData = newObj->GetFieldData(field.second);
@@ -194,7 +194,7 @@ namespace bs
 
 	SPtr<ManagedSerializableDiff::Modification> ManagedSerializableDiff::GenerateDiff(
 		const SPtr<ManagedSerializableFieldData>& oldData, const SPtr<ManagedSerializableFieldData>& newData,
-		UINT32 entryTypeId)
+		u32 entryTypeId)
 	{
 		bool isPrimitive = entryTypeId == TID_SerializableTypeInfoPrimitive ||
 			entryTypeId == TID_SerializableTypeInfoRef ||
@@ -256,11 +256,11 @@ namespace bs
 
 				if (oldArrayData->Value != nullptr && newArrayData->Value != nullptr)
 				{
-					UINT32 oldLength = oldArrayData->Value->GetTotalLength();
-					UINT32 newLength = newArrayData->Value->GetTotalLength();
+					u32 oldLength = oldArrayData->Value->GetTotalLength();
+					u32 newLength = newArrayData->Value->GetTotalLength();
 
 					SPtr<ModifiedArray> arrayMods = nullptr;
-					for (UINT32 i = 0; i < newLength; i++)
+					for (u32 i = 0; i < newLength; i++)
 					{
 						SPtr<Modification> arrayElemMod = nullptr;
 
@@ -269,7 +269,7 @@ namespace bs
 						{
 							SPtr<ManagedSerializableFieldData> oldArrayElem = oldArrayData->Value->GetFieldData(i);
 
-							UINT32 arrayElemTypeId = newArrayData->Value->GetTypeInfo()->MElementType->GetTypeId();
+							u32 arrayElemTypeId = newArrayData->Value->GetTypeInfo()->MElementType->GetTypeId();
 							arrayElemMod = GenerateDiff(oldArrayElem, newArrayElem, arrayElemTypeId);
 						}
 						else
@@ -319,11 +319,11 @@ namespace bs
 
 				if (oldListData->Value != nullptr && newListData->Value != nullptr)
 				{
-					UINT32 oldLength = oldListData->Value->GetLength();
-					UINT32 newLength = newListData->Value->GetLength();
+					u32 oldLength = oldListData->Value->GetLength();
+					u32 newLength = newListData->Value->GetLength();
 
 					SPtr<ModifiedArray> listMods = nullptr;
-					for (UINT32 i = 0; i < newLength; i++)
+					for (u32 i = 0; i < newLength; i++)
 					{
 						SPtr<Modification> listElemMod = nullptr;
 
@@ -332,7 +332,7 @@ namespace bs
 						{
 							SPtr<ManagedSerializableFieldData> oldListElem = oldListData->Value->GetFieldData(i);
 
-							UINT32 arrayElemTypeId = newListData->Value->GetTypeInfo()->MElementType->GetTypeId();
+							u32 arrayElemTypeId = newListData->Value->GetTypeInfo()->MElementType->GetTypeId();
 							listElemMod = GenerateDiff(oldListElem, newListElem, arrayElemTypeId);
 						}
 						else
@@ -392,7 +392,7 @@ namespace bs
 						SPtr<ManagedSerializableFieldData> key = newEnumerator.GetKey();
 						if (oldDictData->Value->Contains(key))
 						{
-							UINT32 dictElemTypeId = newDictData->Value->GetTypeInfo()->MValueType->GetTypeId();
+							u32 dictElemTypeId = newDictData->Value->GetTypeInfo()->MValueType->GetTypeId();
 
 							dictElemMod = GenerateDiff(oldDictData->Value->GetFieldData(key),
 								newEnumerator.GetValue(), dictElemTypeId);
@@ -476,7 +476,7 @@ namespace bs
 	{
 		bool needsResize = false;
 
-		for (UINT32 i = 0; i < (UINT32)mod->NewSizes.size(); i++)
+		for (u32 i = 0; i < (u32)mod->NewSizes.size(); i++)
 		{
 			if (mod->NewSizes[i] != obj->GetLength(i))
 			{
@@ -494,7 +494,7 @@ namespace bs
 
 		for (auto& modEntry : mod->Entries)
 		{
-			UINT32 arrayIdx = modEntry.Idx;
+			u32 arrayIdx = modEntry.Idx;
 
 			SPtr<ManagedSerializableFieldData> origData = obj->GetFieldData(arrayIdx);
 			SPtr<ManagedSerializableFieldData> newData = ApplyDiff(modEntry.Modification, obj->GetTypeInfo()->MElementType, origData);
@@ -519,7 +519,7 @@ namespace bs
 
 		for (auto& modEntry : mod->Entries)
 		{
-			UINT32 arrayIdx = modEntry.Idx;
+			u32 arrayIdx = modEntry.Idx;
 
 			SPtr<ManagedSerializableFieldData> origData = obj->GetFieldData(arrayIdx);
 			SPtr<ManagedSerializableFieldData> newData = ApplyDiff(modEntry.Modification, obj->GetTypeInfo()->MElementType, origData);

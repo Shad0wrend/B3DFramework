@@ -17,19 +17,19 @@ namespace bs
 	{
 		/**	Returns a character description for the character with the specified Unicode key. */
 		BS_SCRIPT_EXPORT()
-		const CharDesc& GetCharDesc(UINT32 charId) const;
+		const CharDesc& GetCharDesc(u32 charId) const;
 
 		/** Font size for which the data is contained. */
 		BS_SCRIPT_EXPORT()
-		UINT32 Size;
+		u32 Size;
 		
 		/** Y offset to the baseline on which the characters are placed, in pixels. */
 		BS_SCRIPT_EXPORT()
-		INT32 BaselineOffset;
+		i32 BaselineOffset;
 
 		/** Height of a single line of the font, in pixels. */
 		BS_SCRIPT_EXPORT()
-		UINT32 LineHeight;
+		u32 LineHeight;
 
 		/** Character to use when data for a character is missing. */
 		BS_SCRIPT_EXPORT()
@@ -37,14 +37,14 @@ namespace bs
 
 		/** Width of a space in pixels. */
 		BS_SCRIPT_EXPORT()
-		UINT32 SpaceWidth;
+		u32 SpaceWidth;
 
 		/** Textures in which the character's pixels are stored. */
 		BS_SCRIPT_EXPORT()
 		Vector<HTexture> TexturePages;
 
 		/** All characters in the font referenced by character ID. */
-		Map<UINT32, CharDesc> Characters;
+		Map<u32, CharDesc> Characters;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
@@ -71,7 +71,7 @@ namespace bs
 		 * @return				Bitmap object if it exists, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT()
-		SPtr<FontBitmap> GetBitmap(UINT32 size) const;
+		SPtr<FontBitmap> GetBitmap(u32 size) const;
 
 		/**	
 		 * Finds the available font bitmap size closest to the provided size.
@@ -80,7 +80,7 @@ namespace bs
 		 * @return				Nearest available bitmap size.
 		 */
 		BS_SCRIPT_EXPORT()
-		INT32 GetClosestSize(UINT32 size) const;
+		i32 GetClosestSize(u32 size) const;
 
 		/**	Creates a new font from the provided per-size font data. */
 		static HFont Create(const Vector<SPtr<FontBitmap>>& fontInitData);
@@ -116,7 +116,7 @@ namespace bs
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) ;
 
 	private:
-		Map<UINT32, SPtr<FontBitmap>> mFontDataPerSize;
+		Map<u32, SPtr<FontBitmap>> mFontDataPerSize;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

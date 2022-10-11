@@ -37,7 +37,7 @@ namespace bs
 		void SetIsLooping(bool loop) ;
 
 		/** @copydoc AudioSource::setPriority */
-		void SetPriority(INT32 priority) ;
+		void SetPriority(i32 priority) ;
 
 		/** @copydoc AudioSource::setMinDistance */
 		void SetMinDistance(float distance) override;
@@ -100,7 +100,7 @@ namespace bs
 		bool RequiresStreaming() const;
 
 		/** Fills the provided buffer with streaming data. */
-		bool FillBuffer(UINT32 buffer, AudioDataInfo& info, UINT32 maxNumSamples);
+		bool FillBuffer(u32 buffer, AudioDataInfo& info, u32 maxNumSamples);
 
 		/** Makes the current audio clip active. Should be called whenever the audio clip changes. */
 		void ApplyClip();
@@ -108,16 +108,16 @@ namespace bs
 		/** @copydoc AudioSource::onClipChanged */
 		void OnClipChanged() override;
 
-		Vector<UINT32> mSourceIDs;
+		Vector<u32> mSourceIDs;
 		float mSavedTime = 0.0f;
 		AudioSourceState mSavedState = AudioSourceState::Stopped;
 		bool mGloballyPaused = false;
 
-		static const UINT32 StreamBufferCount = 3; // Maximum 32
-		UINT32 mStreamBuffers[StreamBufferCount];
-		UINT32 mBusyBuffers[StreamBufferCount];
-		UINT32 mStreamProcessedPosition = 0;
-		UINT32 mStreamQueuedPosition = 0;
+		static const u32 StreamBufferCount = 3; // Maximum 32
+		u32 mStreamBuffers[StreamBufferCount];
+		u32 mBusyBuffers[StreamBufferCount];
+		u32 mStreamProcessedPosition = 0;
+		u32 mStreamQueuedPosition = 0;
 		bool mIsStreaming = false;
 		mutable Mutex mMutex;
 	};

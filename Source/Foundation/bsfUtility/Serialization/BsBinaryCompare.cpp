@@ -75,14 +75,14 @@ namespace bs
 			rttiInstanceA->OnSerializationStarted(&a, mContext);
 			rttiInstanceB->OnSerializationStarted(&b, mContext);
 
-			const UINT32 numFields = rtti->GetNumFields();
-			for (UINT32 i = 0; i < numFields; i++)
+			const u32 numFields = rtti->GetNumFields();
+			for (u32 i = 0; i < numFields; i++)
 			{
 				RTTIField* curGenericField = rtti->GetField(i);
 				if (curGenericField->Schema.IsArray)
 				{
-					const UINT32 arrayNumElemsA = curGenericField->GetArraySize(rttiInstanceA, &a);
-					const UINT32 arrayNumElemsB = curGenericField->GetArraySize(rttiInstanceB, &b);
+					const u32 arrayNumElemsA = curGenericField->GetArraySize(rttiInstanceA, &a);
+					const u32 arrayNumElemsB = curGenericField->GetArraySize(rttiInstanceB, &b);
 
 					if(arrayNumElemsA != arrayNumElemsB)
 						return false;
@@ -93,7 +93,7 @@ namespace bs
 					{
 						auto curField = static_cast<RTTIReflectablePtrFieldBase*>(curGenericField);
 
-						for (UINT32 arrIdx = 0; arrIdx < arrayNumElemsA; arrIdx++)
+						for (u32 arrIdx = 0; arrIdx < arrayNumElemsA; arrIdx++)
 						{
 							SPtr<IReflectable> childObjectA = curField->GetArrayValue(rttiInstanceA, &a, arrIdx);
 							SPtr<IReflectable> childObjectB = curField->GetArrayValue(rttiInstanceB, &b, arrIdx);
@@ -124,7 +124,7 @@ namespace bs
 					{
 						auto curField = static_cast<RTTIReflectableFieldBase*>(curGenericField);
 
-						for (UINT32 arrIdx = 0; arrIdx < arrayNumElemsA; arrIdx++)
+						for (u32 arrIdx = 0; arrIdx < arrayNumElemsA; arrIdx++)
 						{
 							IReflectable& childObjectA = curField->GetArrayValue(rttiInstanceA, &a, arrIdx);
 							IReflectable& childObjectB = curField->GetArrayValue(rttiInstanceB, &b, arrIdx);
@@ -149,10 +149,10 @@ namespace bs
 					{
 						auto curField = static_cast<RTTIPlainFieldBase*>(curGenericField);
 
-						for (UINT32 arrIdx = 0; arrIdx < arrayNumElemsA; arrIdx++)
+						for (u32 arrIdx = 0; arrIdx < arrayNumElemsA; arrIdx++)
 						{
-							UINT32 typeSizeA = 0;
-							UINT32 typeSizeB = 0;
+							u32 typeSizeA = 0;
+							u32 typeSizeB = 0;
 							if (curField->Schema.HasDynamicSize)
 							{
 								typeSizeA = curField->GetArrayElemDynamicSize(rttiInstanceA, &a, arrIdx, false).Bytes;
@@ -182,7 +182,7 @@ namespace bs
 					}
 					default:
 						BS_EXCEPT(InternalErrorException,
-							"Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(UINT32(curGenericField->Schema.Type)) +
+							"Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(u32(curGenericField->Schema.Type)) +
 							", Is array: " + toString(curGenericField->Schema.IsArray));
 					}
 				}
@@ -244,8 +244,8 @@ namespace bs
 					{
 						auto curField = static_cast<RTTIPlainFieldBase*>(curGenericField);
 
-						UINT32 typeSizeA = 0;
-						UINT32 typeSizeB = 0;
+						u32 typeSizeA = 0;
+						u32 typeSizeB = 0;
 						if (curField->Schema.HasDynamicSize)
 						{
 							typeSizeA = curField->GetDynamicSize(rttiInstanceA, &a, false).Bytes;
@@ -276,7 +276,7 @@ namespace bs
 					{
 						auto curField = static_cast<RTTIManagedDataBlockFieldBase*>(curGenericField);
 
-						UINT32 dataBlockSizeA = 0, dataBlockSizeB = 0;
+						u32 dataBlockSizeA = 0, dataBlockSizeB = 0;
 						SPtr<DataStream> blockStreamA = curField->GetValue(rttiInstanceA, &a, dataBlockSizeA);
 						SPtr<DataStream> blockStreamB = curField->GetValue(rttiInstanceB, &b, dataBlockSizeB);
 
@@ -296,7 +296,7 @@ namespace bs
 					}
 					default:
 						BS_EXCEPT(InternalErrorException,
-							"Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(UINT32(curGenericField->Schema.Type)) +
+							"Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(u32(curGenericField->Schema.Type)) +
 							", Is array: " + toString(curGenericField->Schema.IsArray));
 					}
 				}

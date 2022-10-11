@@ -19,15 +19,15 @@ namespace bs { namespace ct
 		VulkanDevice* devices[BS_MAX_DEVICES];
 		VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
-		UINT32 numDevices = 0;
-		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+		u32 numDevices = 0;
+		for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			if (devices[i] != nullptr)
 				numDevices++;
 		}
 
-		UINT32 totalNumSlots = 0;
-		for (UINT32 i = 0; i < mNumSets; i++)
+		u32 totalNumSlots = 0;
+		for (u32 i = 0; i < mNumSets; i++)
 			totalNumSlots += mSetInfos[i].NumSlots;
 
 		mAlloc.Reserve<VkDescriptorSetLayoutBinding>(mNumElements)
@@ -36,7 +36,7 @@ namespace bs { namespace ct
 			.Reserve<LayoutInfo>(mNumSets)
 			.Reserve<VulkanDescriptorLayout*>(mNumSets * numDevices)
 			.Reserve<SetExtraInfo>(mNumSets)
-			.Reserve<UINT32>(totalNumSlots)
+			.Reserve<u32>(totalNumSlots)
 			.Init();
 
 		mLayoutInfos = mAlloc.Alloc<LayoutInfo>(mNumSets);
@@ -44,7 +44,7 @@ namespace bs { namespace ct
 		GpuParamObjectType* types = mAlloc.Alloc<GpuParamObjectType>(mNumElements);
 		GpuBufferFormat* elementTypes = mAlloc.Alloc<GpuBufferFormat>(mNumElements);
 
-		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+		for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			if (devices[i] == nullptr)
 			{
@@ -66,21 +66,21 @@ namespace bs { namespace ct
 		if (elementTypes != nullptr)
 			bs_zero_out(elementTypes, mNumElements);
 
-		UINT32 globalBindingIdx = 0;
-		for (UINT32 i = 0; i < mNumSets; i++)
+		u32 globalBindingIdx = 0;
+		for (u32 i = 0; i < mNumSets; i++)
 		{
-			mSetExtraInfos[i].SlotIndices = mAlloc.Alloc<UINT32>(mSetInfos[i].NumSlots);
+			mSetExtraInfos[i].SlotIndices = mAlloc.Alloc<u32>(mSetInfos[i].NumSlots);
 
 			mLayoutInfos[i].NumBindings = 0;
 			mLayoutInfos[i].Bindings = nullptr;
 			mLayoutInfos[i].Types = nullptr;
 			mLayoutInfos[i].ElementTypes = nullptr;
 
-			for (UINT32 j = 0; j < mSetInfos[i].NumSlots; j++)
+			for (u32 j = 0; j < mSetInfos[i].NumSlots; j++)
 			{
-				if (mSetInfos[i].SlotIndices[j] == (UINT32)-1)
+				if (mSetInfos[i].SlotIndices[j] == (u32)-1)
 				{
-					mSetExtraInfos[i].SlotIndices[j] = (UINT32)-1;
+					mSetExtraInfos[i].SlotIndices[j] = (u32)-1;
 					continue;
 				}
 
@@ -93,8 +93,8 @@ namespace bs { namespace ct
 			}
 		}
 
-		UINT32 offset = 0;
-		for (UINT32 i = 0; i < mNumSets; i++)
+		u32 offset = 0;
+		for (u32 i = 0; i < mNumSets; i++)
 		{
 			mLayoutInfos[i].Bindings = &bindings[offset];
 			mLayoutInfos[i].Types = &types[offset];
@@ -110,8 +110,8 @@ namespace bs { namespace ct
 		stageFlagsLookup[GPT_FRAGMENT_PROGRAM] = VK_SHADER_STAGE_FRAGMENT_BIT;
 		stageFlagsLookup[GPT_COMPUTE_PROGRAM] = VK_SHADER_STAGE_COMPUTE_BIT;
 
-		UINT32 numParamDescs = sizeof(mParamDescs) / sizeof(mParamDescs[0]);
-		for (UINT32 i = 0; i < numParamDescs; i++)
+		u32 numParamDescs = sizeof(mParamDescs) / sizeof(mParamDescs[0]);
+		for (u32 i = 0; i < numParamDescs; i++)
 		{
 			const SPtr<GpuParamDesc>& paramDesc = mParamDescs[i];
 			if (paramDesc == nullptr)
@@ -121,8 +121,8 @@ namespace bs { namespace ct
 			{
 				for (auto& entry : params)
 				{
-					UINT32 bindingIdx = GetBindingIdx(entry.second.Set, entry.second.Slot);
-					assert(bindingIdx != (UINT32)-1);
+					u32 bindingIdx = GetBindingIdx(entry.second.Set, entry.second.Slot);
+					assert(bindingIdx != (u32)-1);
 
 					VkDescriptorSetLayoutBinding& binding = bindings[bindingIdx];
 					binding.descriptorCount = 1;
@@ -135,8 +135,8 @@ namespace bs { namespace ct
 			{
 				for (auto& entry : params)
 				{
-					UINT32 bindingIdx = GetBindingIdx(entry.second.Set, entry.second.Slot);
-					assert(bindingIdx != (UINT32)-1);
+					u32 bindingIdx = GetBindingIdx(entry.second.Set, entry.second.Slot);
+					assert(bindingIdx != (u32)-1);
 
 					VkDescriptorSetLayoutBinding& binding = bindings[bindingIdx];
 					binding.descriptorCount = 1;
@@ -155,8 +155,8 @@ namespace bs { namespace ct
 			// Set up sampler bindings
 			for (auto& entry : paramDesc->Samplers)
 			{
-				UINT32 bindingIdx = GetBindingIdx(entry.second.Set, entry.second.Slot);
-				assert(bindingIdx != (UINT32)-1);
+				u32 bindingIdx = GetBindingIdx(entry.second.Set, entry.second.Slot);
+				assert(bindingIdx != (u32)-1);
 
 				VkDescriptorSetLayoutBinding& binding = bindings[bindingIdx];
 
@@ -177,8 +177,8 @@ namespace bs { namespace ct
 			// Set up buffer bindings
 			for (auto& entry : paramDesc->Buffers)
 			{
-				UINT32 bindingIdx = GetBindingIdx(entry.second.Set, entry.second.Slot);
-				assert(bindingIdx != (UINT32)-1);
+				u32 bindingIdx = GetBindingIdx(entry.second.Set, entry.second.Slot);
+				assert(bindingIdx != (u32)-1);
 
 				VkDescriptorSetLayoutBinding& binding = bindings[bindingIdx];
 				binding.descriptorCount = 1;
@@ -205,18 +205,18 @@ namespace bs { namespace ct
 		}
 
 		// Allocate layouts per-device
-		for (UINT32 i = 0; i < BS_MAX_DEVICES; i++)
+		for (u32 i = 0; i < BS_MAX_DEVICES; i++)
 		{
 			if (mLayouts[i] == nullptr)
 				continue;
 
 			VulkanDescriptorManager& descManager = devices[i]->GetDescriptorManager();
-			for (UINT32 j = 0; j < mNumSets; j++)
+			for (u32 j = 0; j < mNumSets; j++)
 				mLayouts[i][j] = descManager.GetLayout(mLayoutInfos[j].Bindings, mLayoutInfos[j].NumBindings);
 		}
 	}
 
-	VulkanDescriptorLayout* VulkanGpuPipelineParamInfo::GetLayout(UINT32 deviceIdx, UINT32 layoutIdx) const
+	VulkanDescriptorLayout* VulkanGpuPipelineParamInfo::GetLayout(u32 deviceIdx, u32 layoutIdx) const
 	{
 		if (deviceIdx >= BS_MAX_DEVICES || mLayouts[deviceIdx] == nullptr)
 			return nullptr;

@@ -11,14 +11,14 @@ namespace bs
 	}
 
 	GUIMenuItem::GUIMenuItem(GUIMenuItem* parent, const String& name, std::function<void()> callback,
-		INT32 priority, UINT32 seqIdx, const ShortcutKey& key)
+		i32 priority, u32 seqIdx, const ShortcutKey& key)
 		:mParent(parent), mIsSeparator(false), mName(name), mCallback(callback), mPriority(priority),
 		mShortcut(key), mSeqIdx(seqIdx)
 	{
 
 	}
 
-	GUIMenuItem::GUIMenuItem(GUIMenuItem* parent, INT32 priority, UINT32 seqIdx)
+	GUIMenuItem::GUIMenuItem(GUIMenuItem* parent, i32 priority, u32 seqIdx)
 		: mParent(parent), mIsSeparator(true), mCallback(nullptr), mPriority(priority), mSeqIdx(seqIdx)
 	{
 
@@ -83,23 +83,23 @@ namespace bs
 
 	}
 
-	GUIMenuItem* GUIMenu::AddMenuItem(const String& path, std::function<void()> callback, INT32 priority, const ShortcutKey& key)
+	GUIMenuItem* GUIMenu::AddMenuItem(const String& path, std::function<void()> callback, i32 priority, const ShortcutKey& key)
 	{
 		return AddMenuItemInternal(path, callback, false, priority, key);
 	}
 
-	GUIMenuItem* GUIMenu::AddSeparator(const String& path, INT32 priority)
+	GUIMenuItem* GUIMenu::AddSeparator(const String& path, i32 priority)
 	{
 		return AddMenuItemInternal(path, nullptr, true, priority, ShortcutKey::NONE);
 	}
 
 	GUIMenuItem* GUIMenu::AddMenuItemInternal(const String& path, std::function<void()> callback, bool isSeparator,
-		INT32 priority, const ShortcutKey& key)
+		i32 priority, const ShortcutKey& key)
 	{
 		Vector<String> pathElements = StringUtil::Split(path, "/");
 
 		GUIMenuItem* curSubMenu = &mRootElement;
-		for(UINT32 i = 0; i < (UINT32)pathElements.size(); i++)
+		for(u32 i = 0; i < (u32)pathElements.size(); i++)
 		{
 			if(pathElements[i] == "")
 				continue;
@@ -109,7 +109,7 @@ namespace bs
 
 			if(existingItem == nullptr)
 			{
-				bool isLastElem = i == (UINT32)(pathElements.size() - 1);
+				bool isLastElem = i == (u32)(pathElements.size() - 1);
 
 				if(isLastElem)
 					existingItem = bs_new<GUIMenuItem>(curSubMenu, pathElem, callback, priority, mNextIdx++, key);
@@ -141,7 +141,7 @@ namespace bs
 		Vector<String> pathElements = StringUtil::Split(path, "/");
 
 		GUIMenuItem* curSubMenu = &mRootElement;
-		for(UINT32 i = 0; i < (UINT32)pathElements.size(); i++)
+		for(u32 i = 0; i < (u32)pathElements.size(); i++)
 		{
 			const String& pathElem = *(pathElements.begin() + i);
 			GUIMenuItem* existingItem = curSubMenu->FindChild(pathElem);

@@ -21,23 +21,23 @@ namespace bs
 
 	void MeshWeightedTriangles::Calculate(const MeshData& meshData)
 	{
-		const UINT32 numIndices = meshData.GetNumIndices();
+		const u32 numIndices = meshData.GetNumIndices();
 		assert(numIndices % 3 == 0);
 
-		const UINT32 numTriangles = numIndices / 3;
+		const u32 numTriangles = numIndices / 3;
 		mWeights.resize(numTriangles);
 
-		UINT8* vertices = meshData.GetElementData(VES_POSITION);
+		u8* vertices = meshData.GetElementData(VES_POSITION);
 
 		const SPtr<VertexDataDesc>& vertexDesc = meshData.GetVertexDesc();
-		const UINT32 stride = vertexDesc->GetVertexStride();
+		const u32 stride = vertexDesc->GetVertexStride();
 
 		float totalArea = 0.0f;
 		if(meshData.GetIndexType() == IT_32BIT)
 		{
-			UINT32* indices = meshData.GetIndices32();
+			u32* indices = meshData.GetIndices32();
 
-			for(UINT32 i = 0; i < numTriangles; i++)
+			for(u32 i = 0; i < numTriangles; i++)
 			{
 				TriangleWeight& weight = mWeights[i];
 
@@ -48,9 +48,9 @@ namespace bs
 		}
 		else
 		{
-			UINT16* indices = meshData.GetIndices16();
+			u16* indices = meshData.GetIndices16();
 
-			for(UINT32 i = 0; i < numTriangles; i++)
+			for(u32 i = 0; i < numTriangles; i++)
 			{
 				TriangleWeight& weight = mWeights[i];
 
@@ -60,7 +60,7 @@ namespace bs
 			}
 		}
 
-		for (UINT32 i = 0; i < numTriangles; i++)
+		for (u32 i = 0; i < numTriangles; i++)
 		{
 			TriangleWeight& weight = mWeights[i];
 			const Vector3& a = *(Vector3*)(vertices + weight.Indices[0] * stride);
@@ -74,16 +74,16 @@ namespace bs
 		}
 
 		const float invTotalArea = 1.0f / totalArea;
-		for (UINT32 i = 0; i < numTriangles; i++)
+		for (u32 i = 0; i < numTriangles; i++)
 			mWeights[i].CumulativeWeight *= invTotalArea;
 
-		for (UINT32 i = 1; i < numTriangles; i++)
+		for (u32 i = 1; i < numTriangles; i++)
 			mWeights[i].CumulativeWeight += mWeights[i - 1].CumulativeWeight;
 
 		mWeights[numTriangles - 1].CumulativeWeight = 1.0f;
 	}
 
-	void MeshWeightedTriangles::GetTriangle(const Random& random, std::array<UINT32, 3>& indices) const
+	void MeshWeightedTriangles::GetTriangle(const Random& random, std::array<u32, 3>& indices) const
 	{
 		struct Comp
 		{
@@ -108,47 +108,47 @@ namespace bs
 	}
 
 	template <class Pr>
-	UINT32 spawnMultiple(ParticleSet& particles, UINT32 count, Pr predicate)
+	u32 spawnMultiple(ParticleSet& particles, u32 count, Pr predicate)
 	{
-		const UINT32 index = particles.AllocParticles(count);
+		const u32 index = particles.AllocParticles(count);
 		ParticleSetData& particleData = particles.GetParticles();
 
-		const UINT32 end = index + count;
-		for (UINT32 i = index; i < end; i++)
+		const u32 end = index + count;
+		for (u32 i = index; i < end; i++)
 			predicate(i - index, particleData.Position[i], particleData.Velocity[i]);
 
 		return index;
 	}
 
 	template <class T>
-	UINT32 spawnMultipleRandom(T* spawner, const Random& random, ParticleSet& particles, UINT32 count)
+	u32 spawnMultipleRandom(T* spawner, const Random& random, ParticleSet& particles, u32 count)
 	{
-		const UINT32 index = particles.AllocParticles(count);
+		const u32 index = particles.AllocParticles(count);
 		ParticleSetData& particleData = particles.GetParticles();
 
-		const UINT32 end = index + count;
-		for (UINT32 i = index; i < end; i++)
+		const u32 end = index + count;
+		for (u32 i = index; i < end; i++)
 			spawner->SpawnInternal(random, particleData.Position[i], particleData.Velocity[i]);
 
 		return index;
 	}
 
 	template <class T>
-	UINT32 spawnMultipleSpread(T* spawner, float length, float interval, ParticleSet& particles, UINT32 count)
+	u32 spawnMultipleSpread(T* spawner, float length, float interval, ParticleSet& particles, u32 count)
 	{
-		const UINT32 index = particles.AllocParticles(count);
+		const u32 index = particles.AllocParticles(count);
 		ParticleSetData& particleData = particles.GetParticles();
 
 		const float dt = length / (float)count;
 
 		float accum = 0.0f;
-		for (UINT32 i = 0; i < count; i++)
+		for (u32 i = 0; i < count; i++)
 		{
 			float t = accum;
 			if(interval > 0)
 				t = Math::RoundToMultiple(accum, interval);
 
-			const UINT32 particleIdx = index + i;
+			const u32 particleIdx = index + i;
 			spawner->SpawnInternal(t, particleData.Position[particleIdx], particleData.Velocity[particleIdx]);
 
 			accum += dt;
@@ -158,15 +158,15 @@ namespace bs
 	}
 
 	template <class T>
-	UINT32 spawnMultipleLoop(T* spawner, float length, float speed, float interval, ParticleSet& particles,
-		UINT32 count, const ParticleSystemState& state)
+	u32 spawnMultipleLoop(T* spawner, float length, float speed, float interval, ParticleSet& particles,
+		u32 count, const ParticleSystemState& state)
 	{
-		const UINT32 index = particles.AllocParticles(count);
+		const u32 index = particles.AllocParticles(count);
 		ParticleSetData& particleData = particles.GetParticles();
 
 		const float dt = state.TimeStep / (float)count;
 
-		for (UINT32 i = 0; i < count; i++)
+		for (u32 i = 0; i < count; i++)
 		{
 			float t = (state.TimeStart + dt * i) * speed;
 			t = fmod(t, length);
@@ -174,7 +174,7 @@ namespace bs
 			if(interval > 0.0f)
 				t = Math::RoundToMultiple(t, interval);
 
-			const UINT32 particleIdx = index + i;
+			const u32 particleIdx = index + i;
 			spawner->SpawnInternal(t, particleData.Position[particleIdx], particleData.Velocity[particleIdx]);
 		}
 
@@ -182,19 +182,19 @@ namespace bs
 	}
 
 	template <class T>
-	UINT32 spawnMultiplePingPong(T* spawner, float length, float speed, float interval, ParticleSet& particles,
-		UINT32 count, const ParticleSystemState& state)
+	u32 spawnMultiplePingPong(T* spawner, float length, float speed, float interval, ParticleSet& particles,
+		u32 count, const ParticleSystemState& state)
 	{
-		const UINT32 index = particles.AllocParticles(count);
+		const u32 index = particles.AllocParticles(count);
 		ParticleSetData& particleData = particles.GetParticles();
 
 		const float dt = state.TimeStep / (float)count;
 
-		for (UINT32 i = 0; i < count; i++)
+		for (u32 i = 0; i < count; i++)
 		{
 			float t = (state.TimeStart + dt * i) * speed;
 
-			const auto loop = (UINT32)(t / length);
+			const auto loop = (u32)(t / length);
 			if (loop % 2 == 1)
 				t = length - fmod(t, length);
 			else
@@ -203,7 +203,7 @@ namespace bs
 			if(interval > 0.0f)
 				t = Math::RoundToMultiple(t, interval);
 
-			const UINT32 particleIdx = index + i;
+			const u32 particleIdx = index + i;
 			spawner->SpawnInternal(t, particleData.Position[particleIdx], particleData.Velocity[particleIdx]);
 		}
 
@@ -211,8 +211,8 @@ namespace bs
 	}
 
 	template <class T>
-	UINT32 spawnMultipleMode(T* spawner, ParticleEmissionModeType type, float length, float speed, float interval,
-		const Random& random, ParticleSet& particles, UINT32 count, const ParticleSystemState& state)
+	u32 spawnMultipleMode(T* spawner, ParticleEmissionModeType type, float length, float speed, float interval,
+		const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state)
 	{
 		if(count > 0)
 		{
@@ -240,7 +240,7 @@ namespace bs
 		:mInfo(desc)
 	{ }
 
-	UINT32 ParticleEmitterConeShape::SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+	u32 ParticleEmitterConeShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 		const ParticleSystemState& state) const
 	{
 		return spawnMultipleMode(this, mInfo.Mode.Type, mInfo.Arc.ValueRadians(), mInfo.Mode.Speed * Math::DEG2RAD,
@@ -325,7 +325,7 @@ namespace bs
 		:mInfo(desc)
 	{ }
 
-	UINT32 ParticleEmitterSphereShape::SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+	u32 ParticleEmitterSphereShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 		const ParticleSystemState& state) const
 	{
 		return spawnMultipleRandom(this, random, particles, count);
@@ -372,7 +372,7 @@ namespace bs
 		:mInfo(desc)
 	{ }
 
-	UINT32 ParticleEmitterHemisphereShape::SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+	u32 ParticleEmitterHemisphereShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 		const ParticleSystemState& state) const
 	{
 		return spawnMultipleRandom(this, random, particles, count);
@@ -425,7 +425,7 @@ namespace bs
 		case ParticleEmitterBoxType::Surface:
 		{
 			float totalSurfaceArea = 0.0f;
-			for(UINT32 i = 0; i < 3; i++)
+			for(u32 i = 0; i < 3; i++)
 			{
 				mSurfaceArea[i] = Math::Sqr(desc.Extents[i]);
 				totalSurfaceArea += mSurfaceArea[i];
@@ -434,7 +434,7 @@ namespace bs
 			if(totalSurfaceArea > 0.0f)
 			{
 				const float invTotalSurfaceArea = 1.0f / totalSurfaceArea;
-				for(UINT32 i = 0; i < 3; i++)
+				for(u32 i = 0; i < 3; i++)
 					mSurfaceArea[i] *= invTotalSurfaceArea;
 
 				mSurfaceArea[1] += mSurfaceArea[0];
@@ -445,7 +445,7 @@ namespace bs
 		case ParticleEmitterBoxType::Edge:
 		{
 			float totalEdgeLength = 0.0f;
-			for(UINT32 i = 0; i < 3; i++)
+			for(u32 i = 0; i < 3; i++)
 			{
 				mEdgeLengths[i] = desc.Extents[i];
 				totalEdgeLength += mEdgeLengths[i];
@@ -454,7 +454,7 @@ namespace bs
 			if(totalEdgeLength > 0.0f)
 			{
 				const float invTotalEdgeLength = 1.0f / totalEdgeLength;
-				for(UINT32 i = 0; i < 3; i++)
+				for(u32 i = 0; i < 3; i++)
 					mEdgeLengths[i] *= invTotalEdgeLength;
 
 				mEdgeLengths[1] += mEdgeLengths[0];
@@ -467,7 +467,7 @@ namespace bs
 		}
 	}
 
-	UINT32 ParticleEmitterBoxShape::SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+	u32 ParticleEmitterBoxShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 		const ParticleSystemState& state) const
 	{
 		return spawnMultipleRandom(this, random, particles, count);
@@ -491,7 +491,7 @@ namespace bs
 
 			// Determine an axis (based on their size, larger being more likely)
 			const float axisRnd = random.GetUNorm();
-			UINT32 axis = 0;
+			u32 axis = 0;
 			for (; axis < 3; axis++)
 			{
 				if(axisRnd <= mSurfaceArea[axis])
@@ -528,7 +528,7 @@ namespace bs
 
 			// Determine an axis (based on their length, longer being more likely)
 			const float axisRnd = random.GetUNorm();
-			UINT32 axis = 0;
+			u32 axis = 0;
 			for (; axis < 3; axis++)
 			{
 				if(axisRnd <= mEdgeLengths[axis])
@@ -595,7 +595,7 @@ namespace bs
 		:mInfo(desc)
 	{ }
 
-	UINT32 ParticleEmitterLineShape::SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+	u32 ParticleEmitterLineShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 		const ParticleSystemState& state) const
 	{
 		return spawnMultipleMode(this, mInfo.Mode.Type, mInfo.Length, mInfo.Mode.Speed,
@@ -647,7 +647,7 @@ namespace bs
 		:mInfo(desc)
 	{ }
 
-	UINT32 ParticleEmitterCircleShape::SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+	u32 ParticleEmitterCircleShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 		const ParticleSystemState& state) const
 	{
 		return spawnMultipleMode(this, mInfo.Mode.Type, mInfo.Arc.ValueRadians(), mInfo.Mode.Speed * Math::DEG2RAD,
@@ -707,7 +707,7 @@ namespace bs
 		:mInfo(desc)
 	{ }
 
-	UINT32 ParticleEmitterRectShape::SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+	u32 ParticleEmitterRectShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 		const ParticleSystemState& state) const
 	{
 		return spawnMultipleRandom(this, random, particles, count);
@@ -861,7 +861,7 @@ namespace bs
 		return true;
 	}
 
-	void MeshEmissionHelper::GetSequentialVertex(class Vector3& position, class Vector3& normal, UINT32& idx) const
+	void MeshEmissionHelper::GetSequentialVertex(class Vector3& position, class Vector3& normal, u32& idx) const
 	{
 		idx = mNextSequentialIdx;
 		position = *(Vector3*)(mVertices + mVertexStride * idx);
@@ -880,7 +880,7 @@ namespace bs
 	}
 
 	void MeshEmissionHelper::GetRandomVertex(const Random& random, Vector3& position, Vector3& normal,
-		UINT32& idx) const
+		u32& idx) const
 	{
 		idx = random.Get() % mNumVertices;
 		position = *(Vector3*)(mVertices + mVertexStride * idx);
@@ -897,9 +897,9 @@ namespace bs
 	}
 
 	void MeshEmissionHelper::GetRandomEdge(const Random& random, std::array<Vector3, 2>& position,
-		std::array<Vector3, 2>& normal, std::array<UINT32, 2>& idx) const
+		std::array<Vector3, 2>& normal, std::array<u32, 2>& idx) const
 	{
-		std::array<UINT32, 3> triIndices;
+		std::array<u32, 3> triIndices;
 		mWeightedTriangles.GetTriangle(random, triIndices);
 
 		// Pick edge
@@ -946,7 +946,7 @@ namespace bs
 	}
 
 	void MeshEmissionHelper::GetRandomTriangle(const Random& random, std::array<Vector3, 3>& position,
-		std::array<Vector3, 3>& normal, std::array<UINT32, 3>& idx) const
+		std::array<Vector3, 3>& normal, std::array<u32, 3>& idx) const
 	{
 		mWeightedTriangles.GetTriangle(random, idx);
 
@@ -966,11 +966,11 @@ namespace bs
 		}
 	}
 
-	Matrix4 MeshEmissionHelper::GetBlendMatrix(const Matrix4* bones, UINT32 vertexIdx) const
+	Matrix4 MeshEmissionHelper::GetBlendMatrix(const Matrix4* bones, u32 vertexIdx) const
 	{
 		if(bones)
 		{
-			const UINT32 boneIndices = *(UINT32*)(mBoneIndices + vertexIdx * mVertexStride);
+			const u32 boneIndices = *(u32*)(mBoneIndices + vertexIdx * mVertexStride);
 			const Vector4& boneWeights = *(Vector4*)(mBoneWeights + vertexIdx * mVertexStride);
 
 			return
@@ -1000,7 +1000,7 @@ namespace bs
 		mIsValid = mMeshEmissionHelper.Initialize(options.Mesh, options.Type == ParticleEmitterMeshType::Vertex, false);
 	}
 
-	UINT32 ParticleEmitterStaticMeshShape::SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+	u32 ParticleEmitterStaticMeshShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 		const ParticleSystemState& state) const
 	{
 		if(count == 0)
@@ -1011,25 +1011,25 @@ namespace bs
 		case ParticleEmitterMeshType::Vertex:
 			if(mInfo.Sequential)
 			{
-				return spawnMultiple(particles, count, [this](UINT32 idx, Vector3& position, Vector3& normal)
+				return spawnMultiple(particles, count, [this](u32 idx, Vector3& position, Vector3& normal)
 				{
-					UINT32 vertexIdx;
+					u32 vertexIdx;
 					mMeshEmissionHelper.GetSequentialVertex(position, normal, vertexIdx);
 				});
 			}
 			else
 			{
-				return spawnMultiple(particles, count, [this, &random](UINT32 idx, Vector3& position, Vector3& normal)
+				return spawnMultiple(particles, count, [this, &random](u32 idx, Vector3& position, Vector3& normal)
 				{
-					UINT32 vertexIdx;
+					u32 vertexIdx;
 					mMeshEmissionHelper.GetRandomVertex(random, position, normal, vertexIdx);
 				});
 			}
 		case ParticleEmitterMeshType::Edge:
-			return spawnMultiple(particles, count, [this, &random](UINT32 idx, Vector3& position, Vector3& normal)
+			return spawnMultiple(particles, count, [this, &random](u32 idx, Vector3& position, Vector3& normal)
 			{
 				std::array<Vector3, 2> edgePositions, edgeNormals;
-				std::array<UINT32, 2> edgeIndices;
+				std::array<u32, 2> edgeIndices;
 
 				mMeshEmissionHelper.GetRandomEdge(random, edgePositions, edgeNormals, edgeIndices);
 
@@ -1039,10 +1039,10 @@ namespace bs
 			});
 		default:
 		case ParticleEmitterMeshType::Triangle:
-			return spawnMultiple(particles, count, [this, &random](UINT32 idx, Vector3& position, Vector3& normal)
+			return spawnMultiple(particles, count, [this, &random](u32 idx, Vector3& position, Vector3& normal)
 			{
 				std::array<Vector3, 3> triPositions, triNormals;
-				std::array<UINT32, 3> triIndices;
+				std::array<u32, 3> triIndices;
 
 				mMeshEmissionHelper.GetRandomTriangle(random, triPositions, triNormals, triIndices);
 
@@ -1116,7 +1116,7 @@ namespace bs
 		mIsValid = mMeshEmissionHelper.Initialize(mesh, options.Type == ParticleEmitterMeshType::Vertex, false);
 	}
 
-	UINT32 ParticleEmitterSkinnedMeshShape::SpawnInternal(const Random& random, ParticleSet& particles, UINT32 count,
+	u32 ParticleEmitterSkinnedMeshShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count,
 		const ParticleSystemState& state) const
 	{
 		if(count == 0)
@@ -1130,7 +1130,7 @@ namespace bs
 			const SPtr<Animation>& animation = renderable->GetAnimation();;
 			if(animation)
 			{
-				const UINT64 animId = animation->GetIdInternal();
+				const u64 animId = animation->GetIdInternal();
 
 				if(state.AnimData)
 				{
@@ -1147,9 +1147,9 @@ namespace bs
 			if(mInfo.Sequential)
 			{
 				return spawnMultiple(particles, count, [this, bones]
-				(UINT32 idx, Vector3& position, Vector3& normal)
+				(u32 idx, Vector3& position, Vector3& normal)
 				{
-					UINT32 vertexIdx;
+					u32 vertexIdx;
 					mMeshEmissionHelper.GetSequentialVertex(position, normal, vertexIdx);
 
 					Matrix4 blendMatrix = mMeshEmissionHelper.GetBlendMatrix(bones, vertexIdx);
@@ -1160,9 +1160,9 @@ namespace bs
 			else
 			{
 				return spawnMultiple(particles, count, [this, &random, bones]
-				(UINT32 idx, Vector3& position, Vector3& normal)
+				(u32 idx, Vector3& position, Vector3& normal)
 				{
-					UINT32 vertexIdx;
+					u32 vertexIdx;
 					mMeshEmissionHelper.GetRandomVertex(random, position, normal, vertexIdx);
 
 					Matrix4 blendMatrix = mMeshEmissionHelper.GetBlendMatrix(bones, vertexIdx);
@@ -1172,10 +1172,10 @@ namespace bs
 			}
 		case ParticleEmitterMeshType::Edge:
 			return spawnMultiple(particles, count, [this, &random, bones]
-			(UINT32 idx, Vector3& position, Vector3& normal)
+			(u32 idx, Vector3& position, Vector3& normal)
 			{
 				std::array<Vector3, 2> edgePositions, edgeNormals;
-				std::array<UINT32, 2> edgeIndices;
+				std::array<u32, 2> edgeIndices;
 
 				mMeshEmissionHelper.GetRandomEdge(random, edgePositions, edgeNormals, edgeIndices);
 
@@ -1193,10 +1193,10 @@ namespace bs
 		default:
 		case ParticleEmitterMeshType::Triangle:
 			return spawnMultiple(particles, count, [this, &random, bones]
-			(UINT32 idx, Vector3& position, Vector3& normal)
+			(u32 idx, Vector3& position, Vector3& normal)
 			{
 				std::array<Vector3, 3> triPositions, triNormals;
-				std::array<UINT32, 3> triIndices;
+				std::array<u32, 3> triIndices;
 
 				mMeshEmissionHelper.GetRandomTriangle(random, triPositions, triNormals, triIndices);
 
@@ -1290,17 +1290,17 @@ namespace bs
 		const float rate = mEmissionRate.Evaluate(emitterT, random);
 
 		mEmitAccumulator += rate * state.TimeStep;
-		auto numContinous = (UINT32)mEmitAccumulator;
+		auto numContinous = (u32)mEmitAccumulator;
 		mEmitAccumulator -= (float)numContinous;
 
 		// Bursts
-		UINT32 numBurst = 0;
+		u32 numBurst = 0;
 		const auto emitBursts = [this, &emitterT, &random](float start, float end)
 		{
 			constexpr float MIN_BURST_INTERVAL = 0.01f;
 
-			UINT32 numBurst = 0;
-			for (UINT32 i = 0; i < (UINT32)mBursts.size(); i++)
+			u32 numBurst = 0;
+			for (u32 i = 0; i < (u32)mBursts.size(); i++)
 			{
 				const ParticleBurst& burst = mBursts[i];
 
@@ -1311,18 +1311,18 @@ namespace bs
 
 				// Handle initial burst cycle
 				if (relT0 == 0.0f)
-					numBurst += (UINT32)burst.Count.Evaluate(emitterT, random);
+					numBurst += (u32)burst.Count.Evaluate(emitterT, random);
 
 				// Handle remaining cycles
 				const float dt = relT1 - relT0;
 				const float interval = std::max(burst.Interval, MIN_BURST_INTERVAL);
 
 				const float emitDuration = dt + mBurstAccumulator[i];
-				const UINT32 emitCycles = Math::FloorToPosInt(emitDuration / interval);
+				const u32 emitCycles = Math::FloorToPosInt(emitDuration / interval);
 				mBurstAccumulator[i] = emitDuration - emitCycles * interval;
 
-				for (UINT32 j = 0; j < emitCycles; j++)
-					numBurst += (UINT32)burst.Count.Evaluate(emitterT, random);
+				for (u32 j = 0; j < emitCycles; j++)
+					numBurst += (u32)burst.Count.Evaluate(emitterT, random);
 			}
 
 			return numBurst;
@@ -1342,7 +1342,7 @@ namespace bs
 		else
 			numBurst += emitBursts(state.TimeStart, state.TimeEnd);
 
-		const UINT32 startIdx = set.GetParticleCount();
+		const u32 startIdx = set.GetParticleCount();
 		numContinous = Spawn(numContinous, random, state, set, true);
 
 		state.System->PreSimulate(state, startIdx, numContinous, true, mEmitAccumulator);
@@ -1351,27 +1351,27 @@ namespace bs
 		Spawn(numBurst, random, state, set, false);
 	}	
 	
-	UINT32 ParticleEmitter::Spawn(UINT32 count, Random& random, const ParticleSystemState& state, ParticleSet& set,
+	u32 ParticleEmitter::Spawn(u32 count, Random& random, const ParticleSystemState& state, ParticleSet& set,
 		bool spacing) const
 	{
 		const float subFrameSpacing = count > 0 ? 1.0f / count : 1.0f;
 
-		const UINT32 numPartices = set.GetParticleCount() + count;
+		const u32 numPartices = set.GetParticleCount() + count;
 		if(!state.GpuSimulated)
 		{
 			if (numPartices > state.MaxParticles)
 				count = state.MaxParticles - set.GetParticleCount();
 		}
 
-		const UINT32 firstIdx = mShape->SpawnInternal(random, set, count, state);
-		const UINT32 endIdx = firstIdx + count;
+		const u32 firstIdx = mShape->SpawnInternal(random, set, count, state);
+		const u32 endIdx = firstIdx + count;
 
 		ParticleSetData& particles = set.GetParticles();
 		float* emitterT = bs_stack_alloc<float>(sizeof(float) * count);
 
 		if(spacing)
 		{
-			for (UINT32 i = 0; i < count; i++)
+			for (u32 i = 0; i < count; i++)
 			{
 				const float subFrameOffset = (i + mEmitAccumulator) * subFrameSpacing;
 				emitterT[i] = state.NrmTimeStart + state.TimeStep * subFrameOffset;
@@ -1379,11 +1379,11 @@ namespace bs
 		}
 		else
 		{
-			for (UINT32 i = 0; i < count; i++)
+			for (u32 i = 0; i < count; i++)
 				emitterT[i] = state.NrmTimeEnd;
 		}
 
-		for(UINT32 i = firstIdx; i < endIdx; i++)
+		for(u32 i = firstIdx; i < endIdx; i++)
 		{
 			const float lifetime = mInitialLifetime.Evaluate(emitterT[i - firstIdx], random);
 
@@ -1391,12 +1391,12 @@ namespace bs
 			particles.Lifetime[i] = lifetime;
 		}
 
-		for(UINT32 i = firstIdx; i < endIdx; i++)
+		for(u32 i = firstIdx; i < endIdx; i++)
 			particles.Velocity[i] *= mInitialSpeed.Evaluate(emitterT[i - firstIdx], random);
 
 		if(!mUse3DSize)
 		{
-			for (UINT32 i = firstIdx; i < endIdx; i++)
+			for (u32 i = firstIdx; i < endIdx; i++)
 			{
 				const float size = mInitialSize.Evaluate(emitterT[i - firstIdx], random);
 
@@ -1409,7 +1409,7 @@ namespace bs
 		}
 		else
 		{
-			for (UINT32 i = firstIdx; i < endIdx; i++)
+			for (u32 i = firstIdx; i < endIdx; i++)
 			{
 				Vector3 size = mInitialSize3D.Evaluate(emitterT[i - firstIdx], random);
 
@@ -1423,13 +1423,13 @@ namespace bs
 
 		if(mRandomOffset > 0.0f)
 		{
-			for (UINT32 i = firstIdx; i < endIdx; i++)
+			for (u32 i = firstIdx; i < endIdx; i++)
 				particles.Position[i] += Vector3(random.GetSNorm(), random.GetSNorm(), random.GetSNorm()) * mRandomOffset;
 		}
 
 		if(!mUse3DRotation)
 		{
-			for (UINT32 i = firstIdx; i < endIdx; i++)
+			for (u32 i = firstIdx; i < endIdx; i++)
 			{
 				const float rotation = mInitialRotation.Evaluate(emitterT[i - firstIdx], random);
 				particles.Rotation[i] = Vector3(rotation, 0.0f, 0.0f);
@@ -1437,29 +1437,29 @@ namespace bs
 		}
 		else
 		{
-			for (UINT32 i = firstIdx; i < endIdx; i++)
+			for (u32 i = firstIdx; i < endIdx; i++)
 			{
 				const Vector3 rotation = mInitialRotation3D.Evaluate(emitterT[i - firstIdx], random);
 				particles.Rotation[i] = rotation;
 			}
 		}
 
-		for(UINT32 i = firstIdx; i < endIdx; i++)
+		for(u32 i = firstIdx; i < endIdx; i++)
 			particles.Color[i] = mInitialColor.Evaluate(emitterT[i - firstIdx], random);
 
-		for(UINT32 i = firstIdx; i < endIdx; i++)
+		for(u32 i = firstIdx; i < endIdx; i++)
 			particles.Seed[i] = random.Get();
 
-		for(UINT32 i = firstIdx; i < endIdx; i++)
+		for(u32 i = firstIdx; i < endIdx; i++)
 			particles.Frame[i] = 0.0f;
 
 		// If in world-space we apply the transform here, otherwise we apply it in the rendering code
 		if(state.WorldSpace)
 		{
-			for (UINT32 i = firstIdx; i < endIdx; i++)
+			for (u32 i = firstIdx; i < endIdx; i++)
 				particles.Position[i] = state.LocalToWorld.MultiplyAffine(particles.Position[i]);
 
-			for (UINT32 i = firstIdx; i < endIdx; i++)
+			for (u32 i = firstIdx; i < endIdx; i++)
 				particles.Velocity[i] = state.LocalToWorld.MultiplyDirection(particles.Velocity[i]);
 		}
 

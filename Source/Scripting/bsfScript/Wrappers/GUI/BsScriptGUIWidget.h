@@ -45,8 +45,8 @@ namespace bs
 		static void InternalUpdateMainCamera(ScriptGUIWidget* instance, ScriptCCamera* camera);
 		static void InternalSetSkin(ScriptGUIWidget* instance, ScriptGUISkin* skin);
 		static void InternalSetCamera(ScriptGUIWidget* instance, ScriptCCamera* camera);
-		static void InternalSetDepth(ScriptGUIWidget* instance, INT8 value);
-		static INT8 InternalGetDepth(ScriptGUIWidget* instance);
+		static void InternalSetDepth(ScriptGUIWidget* instance, i8 value);
+		static i8 InternalGetDepth(ScriptGUIWidget* instance);
 		static void InternalDestroy(ScriptGUIWidget* instance);
 	};
 

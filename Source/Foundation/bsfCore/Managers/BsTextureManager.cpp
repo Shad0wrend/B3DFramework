@@ -148,7 +148,7 @@ namespace bs
 	}
 
 	SPtr<RenderTexture> TextureManager::CreateRenderTexture(const RENDER_TEXTURE_DESC& desc,
-																	UINT32 deviceIdx)
+																	u32 deviceIdx)
 	{
 		SPtr<RenderTexture> newRT = CreateRenderTextureInternal(desc, deviceIdx);
 		newRT->Initialize();

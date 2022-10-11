@@ -29,8 +29,8 @@ namespace bs
 
 	void Audio::UpdateInternal()
 	{
-		const UINT32 numSources = (UINT32)mManualSources.size();
-		for(UINT32 i = 0; i < numSources; i++)
+		const u32 numSources = (u32)mManualSources.size();
+		for(u32 i = 0; i < numSources; i++)
 		{
 			if (mManualSources[i]->GetState() != AudioSourceState::Stopped)
 				mTempSources.push_back(mManualSources[i]);

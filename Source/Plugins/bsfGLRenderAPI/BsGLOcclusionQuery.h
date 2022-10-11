@@ -15,7 +15,7 @@ namespace bs { namespace ct
 	class GLOcclusionQuery : public OcclusionQuery
 	{
 	public:
-		GLOcclusionQuery(bool binary, UINT32 deviceIdx);
+		GLOcclusionQuery(bool binary, u32 deviceIdx);
 		~GLOcclusionQuery();
 
 		/** @copydoc OcclusionQuery::begin */
@@ -28,7 +28,7 @@ namespace bs { namespace ct
 		bool IsReady() const ;
 
 		/** @copydoc OcclusionQuery::getNumSamples */
-		UINT32 GetNumSamples() ;
+		u32 GetNumSamples() ;
 
 	private:
 		friend class QueryManager;
@@ -41,7 +41,7 @@ namespace bs { namespace ct
 		bool mFinalized = false;
 		bool mEndIssued = false;
 
-		UINT32 mNumSamples = 0;
+		u32 mNumSamples = 0;
 	};
 
 	/** @} */

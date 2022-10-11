@@ -28,20 +28,20 @@ namespace bs
 		 *
 		 * @param[in]	idx		Sequential index of the item that was clicked.
 		 */
-		void OnContextMenuItemTriggered(UINT32 idx);
+		void OnContextMenuItemTriggered(u32 idx);
 
 		SPtr<GUIContextMenu> mContextMenu;
-		UINT32 mGCHandle = 0;
+		u32 mGCHandle = 0;
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
-		typedef void(BS_THUNKCALL *OnEntryTriggeredThunkDef) (MonoObject*, UINT32 callbackIdx, MonoException**);
+		typedef void(BS_THUNKCALL *OnEntryTriggeredThunkDef) (MonoObject*, u32 callbackIdx, MonoException**);
 		static OnEntryTriggeredThunkDef onEntryTriggered;
 
 		static void InternalCreateInstance(MonoObject* instance);
 		static void InternalOpen(ScriptContextMenu* instance, Vector2I* position, ScriptGUILayout* layoutPtr);
-		static void InternalAddItem(ScriptContextMenu* instance, MonoString* path, UINT32 callbackIdx, ShortcutKey* shortcut);
+		static void InternalAddItem(ScriptContextMenu* instance, MonoString* path, u32 callbackIdx, ShortcutKey* shortcut);
 		static void InternalAddSeparator(ScriptContextMenu* instance, MonoString* path);
 		static void InternalSetLocalizedName(ScriptContextMenu* instance, MonoString* label, ScriptHString* name);
 	};

@@ -64,7 +64,7 @@ namespace bs
 			return;
 		}
 
-		UINT32 assemblySize = (UINT32)assemblyStream->Size();
+		u32 assemblySize = (u32)assemblyStream->Size();
 		char* assemblyData = (char*)bs_stack_alloc(assemblySize);
 		assemblyStream->Read(assemblyData, assemblySize);
 
@@ -91,8 +91,8 @@ namespace bs
 
 			if (mdbStream != nullptr)
 			{
-				UINT32 mdbSize = (UINT32)mdbStream->Size();
-				mDebugData = (UINT8*)bs_alloc(mdbSize);
+				u32 mdbSize = (u32)mdbStream->Size();
+				mDebugData = (u8*)bs_alloc(mdbSize);
 				mdbStream->Read(mDebugData, mdbSize);
 
 				mono_debug_open_image_from_memory(image, mDebugData, mdbSize);

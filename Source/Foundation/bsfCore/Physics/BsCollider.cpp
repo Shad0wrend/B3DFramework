@@ -90,12 +90,12 @@ namespace bs
 		return mInternal->GetRestOffset();
 	}
 
-	void Collider::SetLayer(UINT64 layer)
+	void Collider::SetLayer(u64 layer)
 	{
 		mInternal->SetLayer(layer);
 	}
 
-	UINT64 Collider::GetLayer() const
+	u64 Collider::GetLayer() const
 	{
 		return mInternal->GetLayer();
 	}

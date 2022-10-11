@@ -21,36 +21,36 @@ namespace bs
 	class VertexDeclarationRTTI : public RTTIType<VertexDeclaration, IReflectable, VertexDeclarationRTTI>
 	{
 	private:
-		VertexElement& GetElement(VertexDeclaration* obj, UINT32 idx)
+		VertexElement& GetElement(VertexDeclaration* obj, u32 idx)
 		{
 			Vector<VertexElement>& elemList = obj->mProperties.mElementList;
 
 			auto iter = elemList.begin();
-			for(UINT32 i = 0; i < idx; i++)
+			for(u32 i = 0; i < idx; i++)
 				++iter;
 
 			return *iter;
 		}
 
-		void SetElement(VertexDeclaration* obj, UINT32 idx, VertexElement& data)
+		void SetElement(VertexDeclaration* obj, u32 idx, VertexElement& data)
 		{
 			Vector<VertexElement>& elemList = obj->mProperties.mElementList;
 
 			auto iter = elemList.begin();
-			for(UINT32 i = 0; i < idx; i++)
+			for(u32 i = 0; i < idx; i++)
 				++iter;
 
 			*iter = data;
 		}
 
-		UINT32 GetElementArraySize(VertexDeclaration* obj)
+		u32 GetElementArraySize(VertexDeclaration* obj)
 		{
 			Vector<VertexElement>& elemList = obj->mProperties.mElementList;
 
-			return (UINT32)elemList.size();
+			return (u32)elemList.size();
 		}
 
-		void SetElementArraySize(VertexDeclaration* obj, UINT32 size)
+		void SetElementArraySize(VertexDeclaration* obj, u32 size)
 		{
 			Vector<VertexElement>& elemList = obj->mProperties.mElementList;
 
@@ -76,7 +76,7 @@ namespace bs
 			return name;
 		}
 
-		UINT32 GetRttiId() 
+		u32 GetRttiId()
 		{
 			return TID_VertexDeclaration;
 		}

@@ -800,7 +800,7 @@ namespace bs
 	#define BS_ALL_LAYERS 0xFFFFFFFFFFFFFFFF
 
 	/** Used for marking a CoreObject dependency as dirty. */
-	static constexpr INT32 DIRTY_DEPENDENCY_MASK = 1 << 31;
+	static constexpr i32 DIRTY_DEPENDENCY_MASK = 1 << 31;
 
 	template<class T, bool Core>
 	struct CoreVariant { };

@@ -65,7 +65,7 @@ namespace bs
 
 		ResourceHandle<Resource> mResource;
 		ScriptResourceBase* mScriptResource = nullptr;
-		UINT32 mGCHandle;
+		u32 mGCHandle;
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/

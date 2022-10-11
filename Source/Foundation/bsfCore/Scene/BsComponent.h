@@ -160,10 +160,10 @@ namespace bs
 		bool HasFlag(ComponentFlag flag) const { return mFlags.IsSet(flag); }
 
 		/** Sets an index that uniquely identifies a component with the SceneManager. */
-		void SetSceneManagerId(UINT32 id) { mSceneManagerId = id; }
+		void SetSceneManagerId(u32 id) { mSceneManagerId = id; }
 
 		/** Returns an index that unique identifies a component with the SceneManager. */
-		UINT32 GetSceneManagerId() const { return mSceneManagerId; }
+		u32 GetSceneManagerId() const { return mSceneManagerId; }
 
 		/**
 		 * Destroys this component.
@@ -182,7 +182,7 @@ namespace bs
 		HComponent mThisHandle;
 		TransformChangedFlags mNotifyFlags = TCF_None;
 		ComponentFlags mFlags;
-		UINT32 mSceneManagerId = 0;
+		u32 mSceneManagerId = 0;
 
 	private:
 		HSceneObject mParent;

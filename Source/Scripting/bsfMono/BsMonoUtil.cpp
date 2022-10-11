@@ -128,24 +128,24 @@ namespace bs
 		return mono_type_get_object(MonoManager::Instance().GetDomain(), monoType);
 	}
 
-	UINT32 MonoUtil::NewGcHandle(MonoObject* object, bool pinned)
+	u32 MonoUtil::NewGcHandle(MonoObject* object, bool pinned)
 	{
 		return mono_gchandle_new(object, pinned);
 	}
 
-	UINT32 MonoUtil::NewWeakGcHandle(MonoObject* object)
+	u32 MonoUtil::NewWeakGcHandle(MonoObject* object)
 	{
 		return mono_gchandle_new_weakref(object, false);
 	}
 
-	void MonoUtil::FreeGcHandle(UINT32 handle)
+	void MonoUtil::FreeGcHandle(u32 handle)
 	{
 		assert(handle != 0);
 
 		mono_gchandle_free(handle);
 	}
 
-	MonoObject* MonoUtil::GetObjectFromGcHandle(UINT32 handle)
+	MonoObject* MonoUtil::GetObjectFromGcHandle(u32 handle)
 	{
 		return mono_gchandle_get_target(handle);
 	}
@@ -242,24 +242,24 @@ namespace bs
 		return MonoPrimitiveType::Unknown;
 	}
 
-	::MonoClass* MonoUtil::BindGenericParameters(::MonoClass* klass, ::MonoClass** params, UINT32 numParams)
+	::MonoClass* MonoUtil::BindGenericParameters(::MonoClass* klass, ::MonoClass** params, u32 numParams)
 	{
 		auto buffer = bs_managed_stack_alloc<MonoType*>(numParams);
 
 		MonoType** types = buffer;
-		for (UINT32 i = 0; i < numParams; i++)
+		for (u32 i = 0; i < numParams; i++)
 			types[i] = mono_class_get_type(params[i]);
 
 		return mono_class_bind_generic_parameters(klass, numParams, types, false);
 	}
 
-	void MonoUtil::GetGenericParameters(::MonoClass* klass, ::MonoClass** params, UINT32& numParams)
+	void MonoUtil::GetGenericParameters(::MonoClass* klass, ::MonoClass** params, u32& numParams)
 	{
 		MonoType* monoType = mono_class_get_type(klass);
 		GetGenericParameters(mono_type_get_object(MonoManager::Instance().GetDomain(), monoType), params, numParams);
 	}
 
-	void MonoUtil::GetGenericParameters(::MonoReflectionType* type, ::MonoClass** params, UINT32& numParams)
+	void MonoUtil::GetGenericParameters(::MonoReflectionType* type, ::MonoClass** params, u32& numParams)
 	{
 		if(!sGenericHelpersInitialized)
 		{
@@ -279,7 +279,7 @@ namespace bs
 
 			if(params)
 			{
-				for(UINT32 i = 0; i < numParams; i++)
+				for(u32 i = 0; i < numParams; i++)
 				{
 					MonoReflectionType* paramType = scriptArray.Get<MonoReflectionType*>(i);
 					if(paramType)

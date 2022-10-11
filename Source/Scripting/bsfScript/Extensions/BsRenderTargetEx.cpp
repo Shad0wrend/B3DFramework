@@ -5,12 +5,12 @@
 
 namespace bs
 {
-	UINT32 RenderTargetEx::GetWidth(const SPtr<RenderTarget>& thisPtr)
+	u32 RenderTargetEx::GetWidth(const SPtr<RenderTarget>& thisPtr)
 	{
 		return thisPtr->GetProperties().Width;
 	}
 
-	UINT32 RenderTargetEx::GetHeight(const SPtr<RenderTarget>& thisPtr)
+	u32 RenderTargetEx::GetHeight(const SPtr<RenderTarget>& thisPtr)
 	{
 		return thisPtr->GetProperties().Height;
 	}
@@ -20,17 +20,17 @@ namespace bs
 		return thisPtr->GetProperties().HwGamma;
 	}
 
-	INT32 RenderTargetEx::GetPriority(const SPtr<RenderTarget>& thisPtr)
+	i32 RenderTargetEx::GetPriority(const SPtr<RenderTarget>& thisPtr)
 	{
 		return thisPtr->GetProperties().Priority;
 	}
 
-	void RenderTargetEx::SetPriority(const SPtr<RenderTarget>& thisPtr, INT32 priority)
+	void RenderTargetEx::SetPriority(const SPtr<RenderTarget>& thisPtr, i32 priority)
 	{
 		thisPtr->SetPriority(priority);
 	}
 
-	UINT32 RenderTargetEx::GetSampleCount(const SPtr<RenderTarget>& thisPtr)
+	u32 RenderTargetEx::GetSampleCount(const SPtr<RenderTarget>& thisPtr)
 	{
 		return thisPtr->GetProperties().MultisampleCount;
 	}
@@ -78,10 +78,10 @@ namespace bs
 				depthStencilSurfaceDesc.Texture = depthStencilSurface;
 		}
 
-		UINT32 numSurfaces = std::min((UINT32)colorSurfaces.size(), (UINT32)BS_MAX_MULTIPLE_RENDER_TARGETS);
+		u32 numSurfaces = std::min((u32)colorSurfaces.size(), (u32)BS_MAX_MULTIPLE_RENDER_TARGETS);
 
 		RENDER_TEXTURE_DESC desc;
-		for (UINT32 i = 0; i < numSurfaces; i++)
+		for (u32 i = 0; i < numSurfaces; i++)
 		{
 			RENDER_SURFACE_DESC surfaceDesc;
 			surfaceDesc.Face = 0;
@@ -103,12 +103,12 @@ namespace bs
 
 	Vector<HTexture> RenderTextureEx::GetColorSurfaces(const SPtr<RenderTexture>& thisPtr)
 	{
-		UINT32 numColorSurfaces = BS_MAX_MULTIPLE_RENDER_TARGETS;
+		u32 numColorSurfaces = BS_MAX_MULTIPLE_RENDER_TARGETS;
 
 		Vector<HTexture> output;
 		output.reserve(numColorSurfaces);
 
-		for (UINT32 i = 0; i < numColorSurfaces; i++)
+		for (u32 i = 0; i < numColorSurfaces; i++)
 		{
 			HTexture colorTex = thisPtr->GetColorTexture(i);
 

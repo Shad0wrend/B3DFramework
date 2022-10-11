@@ -59,18 +59,18 @@ namespace bs
 
 		mFMOD->getMasterChannelGroup(&mMasterChannelGroup);
 
-		INT32 numDevices;
+		i32 numDevices;
 		mFMOD->getNumDrivers(&numDevices);
 
 		mAllDevices.resize(numDevices);
 		char nameBuffer[256];
-		for(INT32 i = 0; i < numDevices; i++)
+		for(i32 i = 0; i < numDevices; i++)
 		{
 			mFMOD->getDriverInfo(i, nameBuffer, sizeof(nameBuffer), nullptr, nullptr, nullptr, nullptr);
 			mAllDevices[i].name = String(nameBuffer);
 		}
 
-		INT32 defaultDevice = 0;
+		i32 defaultDevice = 0;
 		mFMOD->getDriver(&defaultDevice);
 		if(defaultDevice < numDevices)
 		{
@@ -118,7 +118,7 @@ namespace bs
 
 	void FMODAudio::SetActiveDevice(const AudioDevice& device)
 	{
-		for(UINT32 i = 0; i < (UINT32)mAllDevices.size(); i++)
+		for(u32 i = 0; i < (u32)mAllDevices.size(); i++)
 		{
 			if(device.name == mAllDevices[i].name)
 			{
@@ -130,7 +130,7 @@ namespace bs
 		BS_LOG(Warning, Audio, "Failed changing audio device to: {0}", device.name);
 	}
 
-	SPtr<AudioClip> FMODAudio::CreateClip(const SPtr<DataStream>& samples, UINT32 streamSize, UINT32 numSamples,
+	SPtr<AudioClip> FMODAudio::CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples,
 		const AUDIO_CLIP_DESC& desc)
 	{
 		return bs_core_ptr_new<FMODAudioClip>(samples, streamSize, numSamples, desc);
@@ -164,11 +164,11 @@ namespace bs
 
 	void FMODAudio::RebuildListeners()
 	{
-		INT32 numListeners = (INT32)mListeners.size();
+		i32 numListeners = (i32)mListeners.size();
 		if (numListeners > 0)
 		{
 			mFMOD->set3DNumListeners(numListeners);
-			for (INT32 i = 0; i < numListeners; i++)
+			for (i32 i = 0; i < numListeners; i++)
 				mListeners[i]->Rebuild(i);
 		}
 		else // Always keep at least one listener

@@ -24,7 +24,7 @@ namespace bs
 			gamepadInfo.Name = lpddi->tszInstanceName;
 			gamepadInfo.GuidInstance = lpddi->guidInstance;
 			gamepadInfo.GuidProduct = lpddi->guidProduct;
-			gamepadInfo.Id = (UINT32)data->GamepadInfos.size();
+			gamepadInfo.Id = (u32)data->GamepadInfos.size();
 			gamepadInfo.IsXInput = false;
 			gamepadInfo.XInputDev = 0;
 
@@ -174,7 +174,7 @@ namespace bs
 		// Note: Only enumerating gamepads, assuming there is 1 keyboard and 1 mouse
 		mPlatformData->DirectInput->EnumDevices(NULL, DIEnumDevCallbackInternal, mPlatformData, DIEDFL_ATTACHEDONLY);
 
-		for (UINT32 i = 0; i < 4; ++i)
+		for (u32 i = 0; i < 4; ++i)
 		{
 			XINPUT_STATE state;
 			if (XInputGetState(i, &state) != ERROR_DEVICE_NOT_CONNECTED)
@@ -190,8 +190,8 @@ namespace bs
 		if (GetDeviceCount(InputDevice::Mouse) > 0)
 			mMouse = bs_new<Mouse>("Mouse", this);
 
-		UINT32 numGamepads = GetDeviceCount(InputDevice::Gamepad);
-		for (UINT32 i = 0; i < numGamepads; i++)
+		u32 numGamepads = GetDeviceCount(InputDevice::Gamepad);
+		for (u32 i = 0; i < numGamepads; i++)
 			mGamepads.push_back(bs_new<Gamepad>(mPlatformData->GamepadInfos[i].Name, mPlatformData->GamepadInfos[i], this));
 	}
 
@@ -212,13 +212,13 @@ namespace bs
 		bs_delete(mPlatformData);
 	}
 
-	UINT32 Input::GetDeviceCount(InputDevice device) const
+	u32 Input::GetDeviceCount(InputDevice device) const
 	{
 		switch(device)
 		{
 		case InputDevice::Keyboard: return 1;
 		case InputDevice::Mouse: return 1;
-		case InputDevice::Gamepad: return (UINT32)mPlatformData->GamepadInfos.size();
+		case InputDevice::Gamepad: return (u32)mPlatformData->GamepadInfos.size();
 		default:
 		case InputDevice::Count: return 0;
 		}

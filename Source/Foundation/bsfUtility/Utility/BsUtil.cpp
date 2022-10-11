@@ -8,10 +8,10 @@ namespace bs
 	String md5(const WString& source)
 	{
 		MD5 md5;
-		md5.update((UINT8*)source.data(), (UINT32)source.length() * sizeof(WString::value_type));
+		md5.update((u8*)source.data(), (u32)source.length() * sizeof(WString::value_type));
 		md5.finalize();
 
-		UINT8 digest[16];
+		u8 digest[16];
 		md5.decdigest(digest, sizeof(digest));
 
 		String buf;
@@ -25,10 +25,10 @@ namespace bs
 	String md5(const String& source)
 	{
 		MD5 md5;
-		md5.update((UINT8*)source.data(), (UINT32)source.length() * sizeof(String::value_type));
+		md5.update((u8*)source.data(), (u32)source.length() * sizeof(String::value_type));
 		md5.finalize();
 
-		UINT8 digest[16];
+		u8 digest[16];
 		md5.decdigest(digest, sizeof(digest));
 
 		String buf;

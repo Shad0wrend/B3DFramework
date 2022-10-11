@@ -12,8 +12,8 @@ namespace bs
 	size_t ShortcutKey::Hash::operator()(const ShortcutKey& x) const
 	{
 		size_t seed = 0;
-		bs_hash_combine(seed, (UINT32)x.Button);
-		bs_hash_combine(seed, (UINT32)x.Modifier);
+		bs_hash_combine(seed, (u32)x.Button);
+		bs_hash_combine(seed, (u32)x.Modifier);
 
 		return seed;
 	}
@@ -81,10 +81,10 @@ namespace bs
 		}
 		else
 		{
-			charStr = Platform::KeyCodeToUnicode((UINT32)Button);
+			charStr = Platform::KeyCodeToUnicode((u32)Button);
 			StringUtil::ToUpperCase(charStr);
 		}
 
-		return MODIFIER_TO_NAME[(UINT32)Modifier] + charStr;
+		return MODIFIER_TO_NAME[(u32)Modifier] + charStr;
 	}
 }

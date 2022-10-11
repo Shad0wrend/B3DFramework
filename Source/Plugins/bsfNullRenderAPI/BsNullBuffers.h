@@ -27,7 +27,7 @@ namespace bs { namespace ct
 			GpuDeviceFlags deviceMask = GDF_DEFAULT) ;
 
 		/** @copydoc HardwareBufferManager::createGpuParamBlockBufferInternal  */
-		SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBufferInternal(UINT32 size,
+		SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBufferInternal(u32 size,
 			GpuBufferUsage usage = GBU_DYNAMIC, GpuDeviceFlags deviceMask = GDF_DEFAULT) ;
 
 		/** @copydoc HardwareBufferManager::createGpuBufferInternal(const GPU_BUFFER_DESC&, GpuDeviceFlags) */
@@ -43,22 +43,22 @@ namespace bs { namespace ct
 	class NullHardwareBuffer final : public HardwareBuffer
 	{
 	public:
-		NullHardwareBuffer(GpuBufferUsage usage, UINT32 elementCount, UINT32 elementSize);
+		NullHardwareBuffer(GpuBufferUsage usage, u32 elementCount, u32 elementSize);
 
 		/** @copydoc HardwareBuffer::readData */
-		void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) override { }
+		void ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx = 0, u32 queueIdx = 0) override { }
 
 		/** @copydoc HardwareBuffer::writeData */
-		void WriteData(UINT32 offset, UINT32 length, const void* source,
-			BufferWriteType writeFlags = BWT_NORMAL, UINT32 queueIdx = 0) override { }
+		void WriteData(u32 offset, u32 length, const void* source,
+			BufferWriteType writeFlags = BWT_NORMAL, u32 queueIdx = 0) override { }
 
 		/** @copydoc HardwareBuffer::copyData */
-		void CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset, UINT32 length,
+		void CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length,
 			bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) { }
 
 	protected:
 		/** @copydoc HardwareBuffer::map */
-		void* Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx) override;
+		void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx) override;
 
 		/** @copydoc HardwareBuffer::unmap */
 		void Unmap() override;
@@ -84,7 +84,7 @@ namespace bs { namespace ct
 	class NullGpuParamBlockBuffer final : public GpuParamBlockBuffer
 	{
 	public:
-		NullGpuParamBlockBuffer(UINT32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);
+		NullGpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);
 
 	protected:
 		/** @copydoc GpuParamBlockBuffer::initialize */

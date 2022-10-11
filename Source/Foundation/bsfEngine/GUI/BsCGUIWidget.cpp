@@ -14,7 +14,7 @@ namespace bs
 	}
 
 	CGUIWidget::CGUIWidget(const HSceneObject& parent, const SPtr<Camera>& camera)
-		:Component(parent), mCamera(camera), mParentHash((UINT32)-1)
+		:Component(parent), mCamera(camera), mParentHash((u32)-1)
 	{
 		SetFlag(ComponentFlag::AlwaysRun, true);
 
@@ -49,12 +49,12 @@ namespace bs
 		return mInternal->GetPanel();
 	}
 
-	UINT8 CGUIWidget::GetDepth() const
+	u8 CGUIWidget::GetDepth() const
 	{
 		return mInternal->GetDepth();
 	}
 
-	void CGUIWidget::SetDepth(UINT8 depth)
+	void CGUIWidget::SetDepth(u8 depth)
 	{
 		mInternal->SetDepth(depth);
 	}
@@ -88,7 +88,7 @@ namespace bs
 	{
 		HSceneObject parent = SO();
 
-		UINT32 curHash = parent->GetTransformHash();
+		u32 curHash = parent->GetTransformHash();
 		if (curHash != mParentHash)
 		{
 			mInternal->UpdateTransformInternal(parent);

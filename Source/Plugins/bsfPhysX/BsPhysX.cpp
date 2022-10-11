@@ -35,7 +35,7 @@ namespace bs
 	public:
 		void* allocate(size_t size, const char*, const char*, int) override
 		{
-			void* ptr = bs_alloc_aligned16((UINT32)size);
+			void* ptr = bs_alloc_aligned16((u32)size);
 			PX_ASSERT((reinterpret_cast<size_t>(ptr) & 15) == 0);
 			return ptr;
 		}
@@ -53,7 +53,7 @@ namespace bs
 	{
 			const char* errorCode = nullptr;
 
-			UINT32 severity = 0;
+			u32 severity = 0;
 
 			if ((code & PxErrorCode::eDEBUG_INFO) != 0)
 			{
@@ -143,7 +143,7 @@ namespace bs
 
 				if (flags.IsSet(PhysXObjectFilterFlag::ReportAll))
 				{
-					switch ((UINT32)pair.status)
+					switch ((u32)pair.status)
 					{
 					case PxPairFlag::eNOTIFY_TOUCH_FOUND:
 						type = PhysX::ContactEventType::ContactBegin;
@@ -161,7 +161,7 @@ namespace bs
 				}
 				else if (flags.IsSet(PhysXObjectFilterFlag::ReportBasic))
 				{
-					switch ((UINT32)pair.status)
+					switch ((u32)pair.status)
 					{
 					case PxPairFlag::eNOTIFY_TOUCH_FOUND:
 						type = PhysX::ContactEventType::ContactBegin;
@@ -197,7 +197,7 @@ namespace bs
 
 				PhysX::ContactEventType type;
 				bool ignoreContact = false;
-				switch((UINT32)pair.events)
+				switch((u32)pair.events)
 				{
 				case PxPairFlag::eNOTIFY_TOUCH_FOUND:
 					type = PhysX::ContactEventType::ContactBegin;
@@ -266,7 +266,7 @@ namespace bs
 
 		void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) override
 		{
-			for (UINT32 i = 0; i < count; i++)
+			for (u32 i = 0; i < count; i++)
 			{
 				PxConstraintInfo& constraintInfo = constraints[i];
 
@@ -338,8 +338,8 @@ namespace bs
 			return PxFilterFlags();
 		}
 
-		UINT64 groupA = *(UINT64*)&data0.word0;
-		UINT64 groupB = *(UINT64*)&data1.word0;
+		u64 groupA = *(u64*)&data0.word0;
+		u64 groupB = *(u64*)&data1.word0;
 
 		bool canCollide = gPhysics().IsCollisionEnabled(groupA, groupB);
 		if (!canCollide)
@@ -485,8 +485,8 @@ namespace bs
 	static PhysXEventCallback gPhysXEventCallback;
 	static PhysXBroadPhaseCallback gPhysXBroadphaseCallback;
 
-	static const UINT32 SIZE_16K = 1 << 14;
-	const UINT32 PhysX::SCRATCH_BUFFER_SIZE = SIZE_16K * 64; // 1MB by default
+	static const u32 SIZE_16K = 1 << 14;
+	const u32 PhysX::SCRATCH_BUFFER_SIZE = SIZE_16K * 64; // 1MB by default
 
 	PhysX::PhysX(const PHYSICS_INIT_DESC& input)
 		:Physics(input), mInitDesc(input)
@@ -532,13 +532,13 @@ namespace bs
 		// Note: Consider delaying fetchResults one frame. This could improve performance because Physics update would be
 		//       able to run parallel to the simulation thread, but at a cost to input latency.
 		bs_frame_mark();
-		UINT8* scratchBuffer = bs_frame_alloc_aligned(SCRATCH_BUFFER_SIZE, 16);
+		u8* scratchBuffer = bs_frame_alloc_aligned(SCRATCH_BUFFER_SIZE, 16);
 
 		for(auto& scene : mScenes)
 		{
 			scene->mScene->simulate(step, nullptr, scratchBuffer, SCRATCH_BUFFER_SIZE);
 
-			UINT32 errorState;
+			u32 errorState;
 			if (!scene->mScene->fetchResults(true, &errorState))
 				BS_LOG(Warning, Physics, "Physics simulation failed. Error code: {0}", errorState);
 		}
@@ -852,7 +852,7 @@ namespace bs
 	}
 
 	Vector<PhysicsQueryHit> PhysXScene::SweepAll(const PxGeometry& geometry, const PxTransform& tfrm, const Vector3& unitDir,
-		UINT64 layer, float maxDist) const
+		u64 layer, float maxDist) const
 	{
 		PhysXSweepQueryCallback output;
 
@@ -865,7 +865,7 @@ namespace bs
 		return output.Data;
 	}
 
-	bool PhysXScene::SweepAny(const PxGeometry& geometry, const PxTransform& tfrm, const Vector3& unitDir, UINT64 layer,
+	bool PhysXScene::SweepAny(const PxGeometry& geometry, const PxTransform& tfrm, const Vector3& unitDir, u64 layer,
 		float maxDist) const
 	{
 		PxSweepBuffer output;
@@ -878,7 +878,7 @@ namespace bs
 			PxHitFlag::eDEFAULT | PxHitFlag::eUV | PxHitFlag::eMESH_ANY, filterData);
 	}
 
-	bool PhysXScene::RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit, UINT64 layer, float max) const
+	bool PhysXScene::RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit, u64 layer, float max) const
 	{
 		PxRaycastBuffer output;
 
@@ -895,7 +895,7 @@ namespace bs
 	}
 
 	bool PhysXScene::BoxCast(const AABox& box, const Quaternion& rotation, const Vector3& unitDir, PhysicsQueryHit& hit,
-		UINT64 layer, float max) const
+		u64 layer, float max) const
 	{
 		PxBoxGeometry geometry(toPxVector(box.GetHalfSize()));
 		PxTransform transform = toPxTransform(box.GetCenter(), rotation);
@@ -904,7 +904,7 @@ namespace bs
 	}
 
 	bool PhysXScene::SphereCast(const Sphere& sphere, const Vector3& unitDir, PhysicsQueryHit& hit,
-		UINT64 layer, float max) const
+		u64 layer, float max) const
 	{
 		PxSphereGeometry geometry(sphere.GetRadius());
 		PxTransform transform = toPxTransform(sphere.GetCenter(), Quaternion::IDENTITY);
@@ -913,7 +913,7 @@ namespace bs
 	}
 
 	bool PhysXScene::CapsuleCast(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir,
-		PhysicsQueryHit& hit, UINT64 layer, float max) const
+		PhysicsQueryHit& hit, u64 layer, float max) const
 	{
 		PxCapsuleGeometry geometry(capsule.GetRadius(), capsule.GetHeight() * 0.5f);
 		PxTransform transform = toPxTransform(capsule.GetCenter(), Quaternion::IDENTITY);
@@ -922,7 +922,7 @@ namespace bs
 	}
 
 	bool PhysXScene::ConvexCast(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
-		const Vector3& unitDir, PhysicsQueryHit& hit, UINT64 layer, float max) const
+		const Vector3& unitDir, PhysicsQueryHit& hit, u64 layer, float max) const
 	{
 		if (mesh == nullptr)
 			return false;
@@ -938,7 +938,7 @@ namespace bs
 	}
 
 	Vector<PhysicsQueryHit> PhysXScene::RayCastAll(const Vector3& origin, const Vector3& unitDir,
-		UINT64 layer, float max) const
+		u64 layer, float max) const
 	{
 		PhysXRaycastQueryCallback output;
 
@@ -952,7 +952,7 @@ namespace bs
 	}
 
 	Vector<PhysicsQueryHit> PhysXScene::BoxCastAll(const AABox& box, const Quaternion& rotation,
-		const Vector3& unitDir, UINT64 layer, float max) const
+		const Vector3& unitDir, u64 layer, float max) const
 	{
 		PxBoxGeometry geometry(toPxVector(box.GetHalfSize()));
 		PxTransform transform = toPxTransform(box.GetCenter(), rotation);
@@ -961,7 +961,7 @@ namespace bs
 	}
 
 	Vector<PhysicsQueryHit> PhysXScene::SphereCastAll(const Sphere& sphere, const Vector3& unitDir,
-		UINT64 layer, float max) const
+		u64 layer, float max) const
 	{
 		PxSphereGeometry geometry(sphere.GetRadius());
 		PxTransform transform = toPxTransform(sphere.GetCenter(), Quaternion::IDENTITY);
@@ -970,7 +970,7 @@ namespace bs
 	}
 
 	Vector<PhysicsQueryHit> PhysXScene::CapsuleCastAll(const Capsule& capsule, const Quaternion& rotation,
-		const Vector3& unitDir, UINT64 layer, float max) const
+		const Vector3& unitDir, u64 layer, float max) const
 	{
 		PxCapsuleGeometry geometry(capsule.GetRadius(), capsule.GetHeight() * 0.5f);
 		PxTransform transform = toPxTransform(capsule.GetCenter(), Quaternion::IDENTITY);
@@ -979,7 +979,7 @@ namespace bs
 	}
 
 	Vector<PhysicsQueryHit> PhysXScene::ConvexCastAll(const HPhysicsMesh& mesh, const Vector3& position,
-		const Quaternion& rotation, const Vector3& unitDir, UINT64 layer, float max) const
+		const Quaternion& rotation, const Vector3& unitDir, u64 layer, float max) const
 	{
 		if (mesh == nullptr)
 			return Vector<PhysicsQueryHit>(0);
@@ -995,7 +995,7 @@ namespace bs
 	}
 
 	bool PhysXScene::RayCastAny(const Vector3& origin, const Vector3& unitDir,
-		UINT64 layer, float max) const
+		u64 layer, float max) const
 	{
 		PxRaycastBuffer output;
 
@@ -1008,7 +1008,7 @@ namespace bs
 	}
 
 	bool PhysXScene::BoxCastAny(const AABox& box, const Quaternion& rotation, const Vector3& unitDir,
-		UINT64 layer, float max) const
+		u64 layer, float max) const
 	{
 		PxBoxGeometry geometry(toPxVector(box.GetHalfSize()));
 		PxTransform transform = toPxTransform(box.GetCenter(), rotation);
@@ -1017,7 +1017,7 @@ namespace bs
 	}
 
 	bool PhysXScene::SphereCastAny(const Sphere& sphere, const Vector3& unitDir,
-		UINT64 layer, float max) const
+		u64 layer, float max) const
 	{
 		PxSphereGeometry geometry(sphere.GetRadius());
 		PxTransform transform = toPxTransform(sphere.GetCenter(), Quaternion::IDENTITY);
@@ -1026,7 +1026,7 @@ namespace bs
 	}
 
 	bool PhysXScene::CapsuleCastAny(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir,
-		UINT64 layer, float max) const
+		u64 layer, float max) const
 	{
 		PxCapsuleGeometry geometry(capsule.GetRadius(), capsule.GetHeight() * 0.5f);
 		PxTransform transform = toPxTransform(capsule.GetCenter(), Quaternion::IDENTITY);
@@ -1035,7 +1035,7 @@ namespace bs
 	}
 
 	bool PhysXScene::ConvexCastAny(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
-		const Vector3& unitDir, UINT64 layer, float max) const
+		const Vector3& unitDir, u64 layer, float max) const
 	{
 		if (mesh == nullptr)
 			return false;
@@ -1051,7 +1051,7 @@ namespace bs
 	}
 
 	Vector<Collider*> PhysXScene::BoxOverlapInternal(const AABox& box, const Quaternion& rotation,
-		UINT64 layer) const
+		u64 layer) const
 	{
 		PxBoxGeometry geometry(toPxVector(box.GetHalfSize()));
 		PxTransform transform = toPxTransform(box.GetCenter(), rotation);
@@ -1059,7 +1059,7 @@ namespace bs
 		return Overlap(geometry, transform, layer);
 	}
 
-	Vector<Collider*> PhysXScene::SphereOverlapInternal(const Sphere& sphere, UINT64 layer) const
+	Vector<Collider*> PhysXScene::SphereOverlapInternal(const Sphere& sphere, u64 layer) const
 	{
 		PxSphereGeometry geometry(sphere.GetRadius());
 		PxTransform transform = toPxTransform(sphere.GetCenter(), Quaternion::IDENTITY);
@@ -1068,7 +1068,7 @@ namespace bs
 	}
 
 	Vector<Collider*> PhysXScene::CapsuleOverlapInternal(const Capsule& capsule, const Quaternion& rotation,
-		UINT64 layer) const
+		u64 layer) const
 	{
 		PxCapsuleGeometry geometry(capsule.GetRadius(), capsule.GetHeight() * 0.5f);
 		PxTransform transform = toPxTransform(capsule.GetCenter(), Quaternion::IDENTITY);
@@ -1077,7 +1077,7 @@ namespace bs
 	}
 
 	Vector<Collider*> PhysXScene::ConvexOverlapInternal(const HPhysicsMesh& mesh, const Vector3& position,
-		const Quaternion& rotation, UINT64 layer) const
+		const Quaternion& rotation, u64 layer) const
 	{
 		if (mesh == nullptr)
 			return Vector<Collider*>(0);
@@ -1092,7 +1092,7 @@ namespace bs
 		return Overlap(geometry, transform, layer);
 	}
 
-	bool PhysXScene::BoxOverlapAny(const AABox& box, const Quaternion& rotation, UINT64 layer) const
+	bool PhysXScene::BoxOverlapAny(const AABox& box, const Quaternion& rotation, u64 layer) const
 	{
 		PxBoxGeometry geometry(toPxVector(box.GetHalfSize()));
 		PxTransform transform = toPxTransform(box.GetCenter(), rotation);
@@ -1100,7 +1100,7 @@ namespace bs
 		return OverlapAny(geometry, transform, layer);
 	}
 
-	bool PhysXScene::SphereOverlapAny(const Sphere& sphere, UINT64 layer) const
+	bool PhysXScene::SphereOverlapAny(const Sphere& sphere, u64 layer) const
 	{
 		PxSphereGeometry geometry(sphere.GetRadius());
 		PxTransform transform = toPxTransform(sphere.GetCenter(), Quaternion::IDENTITY);
@@ -1109,7 +1109,7 @@ namespace bs
 	}
 
 	bool PhysXScene::CapsuleOverlapAny(const Capsule& capsule, const Quaternion& rotation,
-		UINT64 layer) const
+		u64 layer) const
 	{
 		PxCapsuleGeometry geometry(capsule.GetRadius(), capsule.GetHeight() * 0.5f);
 		PxTransform transform = toPxTransform(capsule.GetCenter(), Quaternion::IDENTITY);
@@ -1118,7 +1118,7 @@ namespace bs
 	}
 
 	bool PhysXScene::ConvexOverlapAny(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
-		UINT64 layer) const
+		u64 layer) const
 	{
 		if (mesh == nullptr)
 			return false;
@@ -1134,7 +1134,7 @@ namespace bs
 	}
 
 	bool PhysXScene::Sweep(const PxGeometry& geometry, const PxTransform& tfrm, const Vector3& unitDir,
-		PhysicsQueryHit& hit, UINT64 layer, float maxDist) const
+		PhysicsQueryHit& hit, u64 layer, float maxDist) const
 	{
 		PxSweepBuffer output;
 
@@ -1150,7 +1150,7 @@ namespace bs
 		return wasHit;
 	}
 
-	bool PhysXScene::OverlapAny(const PxGeometry& geometry, const PxTransform& tfrm, UINT64 layer) const
+	bool PhysXScene::OverlapAny(const PxGeometry& geometry, const PxTransform& tfrm, u64 layer) const
 	{
 		PxOverlapBuffer output;
 
@@ -1161,7 +1161,7 @@ namespace bs
 		return mScene->overlap(geometry, tfrm, output, filterData);
 	}
 
-	Vector<Collider*> PhysXScene::Overlap(const PxGeometry& geometry, const PxTransform& tfrm, UINT64 layer) const
+	Vector<Collider*> PhysXScene::Overlap(const PxGeometry& geometry, const PxTransform& tfrm, u64 layer) const
 	{
 		PhysXOverlapQueryCallback output;
 
@@ -1198,21 +1198,21 @@ namespace bs
 		mCharManager->setTessellation(mFlags.IsSet(PhysicsFlag::CCT_Tesselation), mTesselationLength);
 	}
 
-	UINT32 PhysXScene::AddBroadPhaseRegion(const AABox& region)
+	u32 PhysXScene::AddBroadPhaseRegion(const AABox& region)
 	{
-		UINT32 id = mNextRegionIdx++;
+		u32 id = mNextRegionIdx++;
 
 		PxBroadPhaseRegion pxRegion;
 		pxRegion.bounds = PxBounds3(toPxVector(region.GetMin()), toPxVector(region.GetMax()));
-		pxRegion.userData = (void*)(UINT64)id;
+		pxRegion.userData = (void*)(u64)id;
 
-		UINT32 handle = mScene->addBroadPhaseRegion(pxRegion, true);
+		u32 handle = mScene->addBroadPhaseRegion(pxRegion, true);
 		mBroadPhaseRegionHandles[id] = handle;
 
 		return handle;
 	}
 
-	void PhysXScene::RemoveBroadPhaseRegion(UINT32 regionId)
+	void PhysXScene::RemoveBroadPhaseRegion(u32 regionId)
 	{
 		auto iterFind = mBroadPhaseRegionHandles.find(regionId);
 		if (iterFind == mBroadPhaseRegionHandles.end())

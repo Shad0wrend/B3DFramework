@@ -15,12 +15,12 @@ namespace bs
 	{
 		SubMesh() = default;
 
-		SubMesh(UINT32 indexOffset, UINT32 indexCount, DrawOperationType drawOp):
+		SubMesh(u32 indexOffset, u32 indexCount, DrawOperationType drawOp):
 			IndexOffset(indexOffset), IndexCount(indexCount), DrawOp(drawOp)
 		{ }
 
-		UINT32 IndexOffset = 0;
-		UINT32 IndexCount = 0;
+		u32 IndexOffset = 0;
+		u32 IndexCount = 0;
 		DrawOperationType DrawOp = DOT_TRIANGLE_LIST;
 	};
 

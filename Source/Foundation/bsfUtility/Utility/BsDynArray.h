@@ -23,7 +23,7 @@ namespace bs
 		typedef ptrdiff_t DifferenceType;
 
 		DynArray() = default;
-		DynArray(UINT32 size, const ValueType& value = ValueType())
+		DynArray(u32 size, const ValueType& value = ValueType())
 		{
 			append(size, value);
 		}
@@ -63,8 +63,8 @@ namespace bs
 			if (this == &other)
 				return *this;
 
-			UINT32 mySize = Size();
-			const UINT32 otherSize = other.Size();
+			u32 mySize = Size();
+			const u32 otherSize = other.Size();
 
 			// Use assignment copy if we have more elements than the other array, and destroy any excess elements
 			if(mySize > otherSize)
@@ -120,8 +120,8 @@ namespace bs
 
 		DynArray<ValueType>& operator= (std::initializer_list<ValueType> list)
 		{
-			UINT32 mySize = Size();
-			const UINT32 otherSize = (UINT32)list.size();
+			u32 mySize = Size();
+			const u32 otherSize = (u32)list.size();
 
 			// Use assignment copy if we have more elements than the list, and destroy any excess elements
 			if(mySize > otherSize)
@@ -188,14 +188,14 @@ namespace bs
 			return !(*this < other);
 		}
 
-		Type& operator[] (UINT32 index)
+		Type& operator[] (u32 index)
 		{
 			assert(index < mSize && "Array index out-of-range.");
 
 			return mElements[index];
 		}
 
-		const Type& operator[] (UINT32 index) const
+		const Type& operator[] (u32 index) const
 		{
 			assert(index < mSize && "Array index out-of-range.");
 
@@ -240,8 +240,8 @@ namespace bs
 		ConstReverseIterator crbegin() const { return Crbegin(); } // NOLINT
 		ConstReverseIterator crend() const { return Crend(); } // NOLINT
 
-		UINT32 Size() const { return mSize; }
-		UINT32 Capacity() const { return mCapacity; }
+		u32 Size() const { return mSize; }
+		u32 Capacity() const { return mCapacity; }
 
 		Type* Data() { return mElements; }
 		const Type* Data() const { return mElements; }
@@ -293,14 +293,14 @@ namespace bs
 			mElements[mSize].~Type();
 		}
 
-		void Remove(UINT32 index)
+		void Remove(u32 index)
 		{
 			erase(begin() + index);
 		}
 
 		bool Contains(const Type& element)
 		{
-			for (UINT32 i = 0; i < mSize; i++)
+			for (u32 i = 0; i < mSize; i++)
 			{
 				if (mElements[i] == element)
 					return true;
@@ -311,7 +311,7 @@ namespace bs
 
 		void RemoveValue(const Type& element)
 		{
-			for (UINT32 i = 0; i < mSize; i++)
+			for (u32 i = 0; i < mSize; i++)
 			{
 				if (mElements[i] == element)
 				{
@@ -323,32 +323,32 @@ namespace bs
 
 		void Clear()
 		{
-			for (UINT32 i = 0; i < mSize; ++i)
+			for (u32 i = 0; i < mSize; ++i)
 				mElements[i].~Type();
 
 			mSize = 0;
 		}
 
-		void Resize(UINT32 size, const Type& value = Type())
+		void Resize(u32 size, const Type& value = Type())
 		{
 			if (size > Capacity())
 				Realloc(size);
 
 			if (size > mSize)
 			{
-				for (UINT32 i = mSize; i < size; i++)
+				for (u32 i = mSize; i < size; i++)
 					new (&mElements[i]) Type(value);
 			}
 			else
 			{
-				for (UINT32 i = size; i < mSize; i++)
+				for (u32 i = size; i < mSize; i++)
 					mElements[i].~Type();
 			}
 
 			mSize = size;
 		}
 
-		void Reserve(UINT32 size)
+		void Reserve(u32 size)
 		{
 			if (size > Capacity())
 				Realloc(size);
@@ -361,7 +361,7 @@ namespace bs
 
 		void Append(ConstIterator start, ConstIterator end)
 		{
-			const UINT32 count = (UINT32)std::distance(start, end);
+			const u32 count = (u32)std::distance(start, end);
 
 			if ((Size() + count) > Capacity())
 				Realloc(Size() + count);
@@ -370,7 +370,7 @@ namespace bs
 			mSize += count;
 		}
 
-		void Append(UINT32 count, const Type& element)
+		void Append(u32 count, const Type& element)
 		{
 			if ((Size() + count) > Capacity())
 				Realloc(Size() + count);
@@ -386,8 +386,8 @@ namespace bs
 
 		void Swap(DynArray<ValueType>& other)
 		{
-			const UINT32 tmpSize = Size();
-			const UINT32 tmpCapacity = Capacity();
+			const u32 tmpSize = Size();
+			const u32 tmpCapacity = Capacity();
 			Type* tmp = Data();
 
 			mSize = other.Size();
@@ -468,7 +468,7 @@ namespace bs
 			return begin() + offset;
 		}
 
-		Iterator Insert(ConstIterator it, UINT32 n, const ValueType& element)
+		Iterator Insert(ConstIterator it, u32 n, const ValueType& element)
 		{
 			Iterator iterc = const_cast<Iterator>(it);
 			DifferenceType offset = iterc - begin();
@@ -480,7 +480,7 @@ namespace bs
 			if (Size() + n > Capacity())
 				Realloc((Size() + n) * 2);
 
-			UINT32 c = n;
+			u32 c = n;
 			while (c--)
 				new (&mElements[mSize++]) Type(element);
 
@@ -495,7 +495,7 @@ namespace bs
 		{
 			Iterator iterc = const_cast<Iterator>(it);
 			DifferenceType offset = iterc - begin();
-			UINT32 n = (UINT32)(last - first);
+			u32 n = (u32)(last - first);
 
 			if (Size() + n > Capacity())
 				Realloc((Size() + n) * 2);
@@ -511,7 +511,7 @@ namespace bs
 			Iterator iterc = const_cast<Iterator>(it);
 			DifferenceType offset = iterc - begin();
 			Iterator iter = &mElements[offset];
-			UINT32 n = (UINT32)list.size();
+			u32 n = (u32)list.size();
 
 			if (!n)
 				return iter;
@@ -559,7 +559,7 @@ namespace bs
 		}
 
 	private:
-		void Realloc(UINT32 capacity)
+		void Realloc(u32 capacity)
 		{
 			Type* buffer = bs_allocN<Type>(capacity);
 
@@ -581,8 +581,8 @@ namespace bs
 		}
 
 		Type* mElements = nullptr;
-		UINT32 mSize = 0;
-		UINT32 mCapacity = 0;
+		u32 mSize = 0;
+		u32 mCapacity = 0;
 	};
 
 	/** @} */

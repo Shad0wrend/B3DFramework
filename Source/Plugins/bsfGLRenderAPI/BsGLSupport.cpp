@@ -31,11 +31,11 @@ namespace bs { namespace ct
 		mVendor = tmpStr.substr(0, tmpStr.find(" "));
 
 		// Set extension list
-		INT32 numExtensions = 0;
+		i32 numExtensions = 0;
 		glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
 		BS_CHECK_GL_ERROR();
 
-		for (INT32 i = 0; i < numExtensions; i++)
+		for (i32 i = 0; i < numExtensions; i++)
 			extensionList.insert(String((char*)glGetStringi(GL_EXTENSIONS, i)));
 	}
 

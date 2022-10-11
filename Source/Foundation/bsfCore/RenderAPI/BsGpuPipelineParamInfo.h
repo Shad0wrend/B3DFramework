@@ -26,8 +26,8 @@ namespace bs
 	/** Binding location for a single GPU program parameter. */
 	struct GpuParamBinding
 	{
-		UINT32 Set = (UINT32)-1;
-		UINT32 Slot = (UINT32)-1;
+		u32 Set = (u32)-1;
+		u32 Slot = (u32)-1;
 	};
 
 	/** Contains code common to both sim and core thread implementations of GpuPipelineParamInfo. */
@@ -45,13 +45,13 @@ namespace bs
 		virtual ~GpuPipelineParamInfoBase() = default;
 
 		/** Gets the total number of sets. */
-		UINT32 GetNumSets() const { return mNumSets; }
+		u32 GetNumSets() const { return mNumSets; }
 
 		/** Returns the total number of elements across all sets. */
-		UINT32 GetNumElements() const { return mNumElements; }
+		u32 GetNumElements() const { return mNumElements; }
 
 		/** Returns the number of elements in all sets for the specified parameter type. */
-		UINT32 GetNumElements(ParamType type) { return mNumElementsPerType[(int)type]; }
+		u32 GetNumElements(ParamType type) { return mNumElementsPerType[(int)type]; }
 
 		/**
 		 * Converts a set/slot combination into a sequential index that maps to the parameter in that parameter type's
@@ -60,10 +60,10 @@ namespace bs
 		 * If the set or slot is out of valid range, the method logs an error and returns -1. Only performs range checking
 		 * in debug mode.
 		 */
-		UINT32 GetSequentialSlot(ParamType type, UINT32 set, UINT32 slot) const;
+		u32 GetSequentialSlot(ParamType type, u32 set, u32 slot) const;
 
 		/** Converts a sequential slot index into a set/slot combination. */
-		void GetBinding(ParamType type, UINT32 sequentialSlot, UINT32& set, UINT32& slot) const;
+		void GetBinding(ParamType type, u32 sequentialSlot, u32& set, u32& slot) const;
 
 		/**
 		 * Finds set/slot indices of a parameter with the specified name for the specified GPU program stage. Set/slot
@@ -84,25 +84,25 @@ namespace bs
 		/** Information about a single set in the param info object. */
 		struct SetInfo
 		{
-			UINT32* SlotIndices;
+			u32* SlotIndices;
 			ParamType* SlotTypes;
-			UINT32* SlotSamplers;
-			UINT32 NumSlots;
+			u32* SlotSamplers;
+			u32 NumSlots;
 		};
 
 		/** Information how a resource maps to a certain set/slot. */
 		struct ResourceInfo
 		{
-			UINT32 Set;
-			UINT32 Slot;
+			u32 Set;
+			u32 Slot;
 		};
 		
 		std::array<SPtr<GpuParamDesc>, 6> mParamDescs;
 
-		UINT32 mNumSets;
-		UINT32 mNumElements;
+		u32 mNumSets;
+		u32 mNumElements;
 		SetInfo* mSetInfos;
-		UINT32 mNumElementsPerType[(int)ParamType::Count];
+		u32 mNumElementsPerType[(int)ParamType::Count];
 		ResourceInfo* mResourceInfos[(int)ParamType::Count];
 
 		GroupAlloc mAlloc;

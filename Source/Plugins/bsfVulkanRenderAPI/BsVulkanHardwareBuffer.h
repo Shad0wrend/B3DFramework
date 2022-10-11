@@ -25,7 +25,7 @@ namespace bs { namespace ct
 		 * @param[in]	slicePitch	If buffer maps to an image sub-resource, size of a single 2D surface (in elements).
 		 */
 		VulkanBuffer(VulkanResourceManager* owner, VkBuffer buffer, VmaAllocation allocation,
-			UINT32 rowPitch = 0, UINT32 slicePitch = 0);
+			u32 rowPitch = 0, u32 slicePitch = 0);
 		~VulkanBuffer();
 
 		/** Returns the internal handle to the Vulkan object. */
@@ -35,19 +35,19 @@ namespace bs { namespace ct
 		 * If buffer represents an image sub-resource, this is the number of elements that separate one row of the
 		 * sub-resource from another (if no padding, it is equal to image width).
 		 */
-		UINT32 GetRowPitch() const { return mRowPitch; }
+		u32 GetRowPitch() const { return mRowPitch; }
 
 		/**
 		 * If buffer represents an image sub-resource, this is the number of elements that separate one column of the
 		 * sub-resource from another (if no padding, it is equal to image height). Only relevant for 3D images.
 		 */
-		UINT32 GetSliceHeight() const { return mSliceHeight; }
+		u32 GetSliceHeight() const { return mSliceHeight; }
 
 		/**
 		 * Returns a pointer to internal buffer memory. Must be followed by unmap(). Caller must ensure the buffer was
 		 * created in CPU readable memory, and that buffer isn't currently being written to by the GPU.
 		 */
-		UINT8* Map(VkDeviceSize offset, VkDeviceSize length) const;
+		u8* Map(VkDeviceSize offset, VkDeviceSize length) const;
 
 		/** Unmaps a buffer previously mapped with map(). */
 		void Unmap();
@@ -72,10 +72,10 @@ namespace bs { namespace ct
 		 * the destination buffer. Caller must ensure the provided offset and length are within valid bounds of
 		 * both buffers. Caller must ensure the offset and size is a multiple of 4, and size is equal to or less then 65536.
 		 */
-		void Update(VulkanCmdBuffer* cb, UINT8* data, VkDeviceSize offset, VkDeviceSize length);
+		void Update(VulkanCmdBuffer* cb, u8* data, VkDeviceSize offset, VkDeviceSize length);
 
 		/** @copydoc VulkanResource::notifyDone */
-		void NotifyDone(UINT32 globalQueueIdx, VulkanAccessFlags useFlags) ;
+		void NotifyDone(u32 globalQueueIdx, VulkanAccessFlags useFlags) ;
 
 		/** @copydoc VulkanResource::notifyUnbound */
 		void NotifyUnbound() ;
@@ -104,7 +104,7 @@ namespace bs { namespace ct
 
 			VkFormat Format = VK_FORMAT_UNDEFINED;
 			VkBufferView View = VK_NULL_HANDLE;
-			UINT32 UseCount = 0;
+			u32 UseCount = 0;
 		};
 
 		/**
@@ -117,8 +117,8 @@ namespace bs { namespace ct
 		Vector<ViewInfo> mViews;
 		VmaAllocation mAllocation;
 
-		UINT32 mRowPitch;
-		UINT32 mSliceHeight;
+		u32 mRowPitch;
+		u32 mSliceHeight;
 	};
 	
 	/**	Class containing common functionality for all Vulkan hardware buffers. */
@@ -140,45 +140,45 @@ namespace bs { namespace ct
 			BT_STRUCTURED
 		};
 
-		VulkanHardwareBuffer(BufferType type, GpuBufferFormat format, GpuBufferUsage usage, UINT32 size,
+		VulkanHardwareBuffer(BufferType type, GpuBufferFormat format, GpuBufferUsage usage, u32 size,
 			GpuDeviceFlags deviceMask = GDF_DEFAULT);
 		~VulkanHardwareBuffer();
 
 		/** @copydoc HardwareBuffer::readData */
-		void ReadData(UINT32 offset, UINT32 length, void* dest, UINT32 deviceIdx = 0, UINT32 queueIdx = 0) ;
+		void ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx = 0, u32 queueIdx = 0) ;
 
 		/** @copydoc HardwareBuffer::writeData */
-		void WriteData(UINT32 offset, UINT32 length, const void* source,
-			BufferWriteType writeFlags = BWT_NORMAL, UINT32 queueIdx = 0) ;
+		void WriteData(u32 offset, u32 length, const void* source,
+			BufferWriteType writeFlags = BWT_NORMAL, u32 queueIdx = 0) ;
 
 		/** @copydoc HardwareBuffer::copyData */
-		void CopyData(HardwareBuffer& srcBuffer, UINT32 srcOffset, UINT32 dstOffset,
-			UINT32 length, bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
+		void CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset,
+			u32 length, bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
 
 		/**
 		 * Gets the resource wrapping the buffer object, on the specified device. If hardware buffer device mask doesn't
 		 * include the provided device, null is returned.
 		 */
-		VulkanBuffer* GetResource(UINT32 deviceIdx) const { return mBuffers[deviceIdx]; }
+		VulkanBuffer* GetResource(u32 deviceIdx) const { return mBuffers[deviceIdx]; }
 
 	protected:
 		/** @copydoc HardwareBuffer::map */
-		void* Map(UINT32 offset, UINT32 length, GpuLockOptions options, UINT32 deviceIdx, UINT32 queueIdx) ;
+		void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx) ;
 
 		/** @copydoc HardwareBuffer::unmap */
 		void Unmap() ;
 
 		/** Creates a new buffer for the specified device, matching the current buffer properties. */
-		VulkanBuffer* CreateBuffer(VulkanDevice& device, UINT32 size, bool staging, bool readable);
+		VulkanBuffer* CreateBuffer(VulkanDevice& device, u32 size, bool staging, bool readable);
 
 		VulkanBuffer* mBuffers[BS_MAX_DEVICES];
 
 		VulkanBuffer* mStagingBuffer;
-		UINT8* mStagingMemory;
-		UINT32 mMappedDeviceIdx;
-		UINT32 mMappedGlobalQueueIdx;
-		UINT32 mMappedOffset;
-		UINT32 mMappedSize;
+		u8* mStagingMemory;
+		u32 mMappedDeviceIdx;
+		u32 mMappedGlobalQueueIdx;
+		u32 mMappedOffset;
+		u32 mMappedSize;
 		GpuLockOptions mMappedLockOptions;
 
 		VkBufferCreateInfo mBufferCI;

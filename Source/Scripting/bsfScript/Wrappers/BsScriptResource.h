@@ -32,19 +32,19 @@ namespace bs
 		 * @param[in]	resource	Handle to the resource to retrieve the reference wrapper for.
 		 * @param[in]	rttiId		Type ID for the resource type to create a RRef for.
 		 */
-		static MonoObject* GetRRef(const HResource& resource, UINT32 rttiId);
+		static MonoObject* GetRRef(const HResource& resource, u32 rttiId);
 
 		/**
 		 * Maps a RTTI ID to a class representing the specified resource type in managed code. Returns null if the ID
 		 * cannot be mapped to a managed resource class.
 		 */
-		static ::MonoClass* GetManagedResourceClass(UINT32 rttiId);
+		static ::MonoClass* GetManagedResourceClass(u32 rttiId);
 
 		/**
 		 * Returns a RRef<T> type that can be used for wrapping a resource of the type represented by the provided
 		 * RTTI ID.
 		 */
-		static ::MonoClass* GetRRefClass(UINT32 rttiId);
+		static ::MonoClass* GetRRefClass(u32 rttiId);
 	protected:
 		friend class ScriptResourceManager;
 
@@ -74,7 +74,7 @@ namespace bs
 		/** Destroys the interop object, unless refresh is in progress in which case it is just prepared for re-creation. */
 		void Destroy();
 
-		UINT32 mGCHandle = 0;
+		u32 mGCHandle = 0;
 	};
 
 	/**	Base class for a specific resource's interop object. */

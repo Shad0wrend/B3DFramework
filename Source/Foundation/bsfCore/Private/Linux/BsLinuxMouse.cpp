@@ -50,9 +50,9 @@ namespace bs
 		}
 	}
 
-	void Mouse::changeCaptureContext(UINT64 windowHandle)
+	void Mouse::changeCaptureContext(u64 windowHandle)
 	{
-		m->HasInputFocus = windowHandle != (UINT64)-1;
+		m->HasInputFocus = windowHandle != (u64)-1;
 	}
 }
 

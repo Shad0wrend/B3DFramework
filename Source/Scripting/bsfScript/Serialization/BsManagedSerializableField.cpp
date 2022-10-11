@@ -55,11 +55,11 @@ namespace bs
 		return false;
 	}
 
-	ManagedSerializableFieldKey::ManagedSerializableFieldKey(UINT16 typeId, UINT16 fieldId)
+	ManagedSerializableFieldKey::ManagedSerializableFieldKey(u16 typeId, u16 fieldId)
 		:MTypeId(typeId), MFieldId(fieldId)
 	{ }
 
-	SPtr<ManagedSerializableFieldKey> ManagedSerializableFieldKey::Create(UINT16 typeId, UINT16 fieldId)
+	SPtr<ManagedSerializableFieldKey> ManagedSerializableFieldKey::Create(u16 typeId, u16 fieldId)
 	{
 		SPtr<ManagedSerializableFieldKey> fieldKey = bs_shared_ptr_new<ManagedSerializableFieldKey>(typeId, fieldId);
 		return fieldKey;
@@ -337,7 +337,7 @@ namespace bs
 				fieldData->Value = ManagedSerializableArray::CreateFromExisting(value, arrayTypeInfo);
 			else if (!allowNull)
 			{
-				Vector<UINT32> sizes(arrayTypeInfo->MRank, 0);
+				Vector<u32> sizes(arrayTypeInfo->MRank, 0);
 				fieldData->Value = ManagedSerializableArray::CreateNew(arrayTypeInfo, sizes);
 			}
 
@@ -615,7 +615,7 @@ namespace bs
 			if (!Value)
 				return nullptr;
 
-			UINT32 rttiId = refTypeInfo->MRtiiTypeId;
+			u32 rttiId = refTypeInfo->MRtiiTypeId;
 			ReflectableTypeInfo* info = ScriptAssemblyManager::Instance().GetReflectableTypeInfo(rttiId);
 
 			if (info == nullptr)
@@ -982,13 +982,13 @@ namespace bs
 			if((!Value && otherObj->Value) || (Value && !otherObj->Value))
 				return false;
 
-			UINT32 oldLength = Value->GetTotalLength();
-			UINT32 newLength = otherObj->Value->GetTotalLength();
+			u32 oldLength = Value->GetTotalLength();
+			u32 newLength = otherObj->Value->GetTotalLength();
 
 			if(oldLength != newLength)
 				return false;
 
-			for (UINT32 i = 0; i < newLength; i++)
+			for (u32 i = 0; i < newLength; i++)
 			{
 				SPtr<ManagedSerializableFieldData> oldData = Value->GetFieldData(i);
 				SPtr<ManagedSerializableFieldData> newData = otherObj->Value->GetFieldData(i);
@@ -1013,13 +1013,13 @@ namespace bs
 			if((!Value && otherObj->Value) || (Value && !otherObj->Value))
 				return false;
 
-			UINT32 oldLength = Value->GetLength();
-			UINT32 newLength = otherObj->Value->GetLength();
+			u32 oldLength = Value->GetLength();
+			u32 newLength = otherObj->Value->GetLength();
 
 			if(oldLength != newLength)
 				return false;
 
-			for (UINT32 i = 0; i < newLength; i++)
+			for (u32 i = 0; i < newLength; i++)
 			{
 				SPtr<ManagedSerializableFieldData> oldData = Value->GetFieldData(i);
 				SPtr<ManagedSerializableFieldData> newData = otherObj->Value->GetFieldData(i);

@@ -28,7 +28,7 @@ namespace bs
 
 	namespace ct
 	{
-	GLRenderTexture::GLRenderTexture(const RENDER_TEXTURE_DESC& desc, UINT32 deviceIdx)
+	GLRenderTexture::GLRenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 		:RenderTexture(desc, deviceIdx), mProperties(desc, true), mFB(nullptr)
 	{
 		assert(deviceIdx == 0 && "Multiple GPUs not supported natively on OpenGL.");
@@ -95,11 +95,11 @@ namespace bs
 					}
 				}
 
-				mFB->BindSurface((UINT32)i, surfaceDesc);
+				mFB->BindSurface((u32)i, surfaceDesc);
 			}
 			else
 			{
-				mFB->UnbindSurface((UINT32)i);
+				mFB->UnbindSurface((u32)i);
 			}
 		}
 
@@ -114,7 +114,7 @@ namespace bs
 
 			if (glDepthStencilTexture->GetProperties().GetTextureType() != TEX_TYPE_3D)
 			{
-				UINT32 firstSlice = 0;
+				u32 firstSlice = 0;
 				if (!allLayers)
 					firstSlice = mDepthStencilSurface->GetFirstArraySlice();
 
@@ -299,7 +299,7 @@ namespace bs
 		glGetIntegerv(GL_READ_BUFFER, &oldReadbuffer);
 		BS_CHECK_GL_ERROR();
 
-		for (UINT32 x = 0; x < PF_COUNT; ++x)
+		for (u32 x = 0; x < PF_COUNT; ++x)
 		{
 			mProps[x].Valid = false;
 
@@ -375,7 +375,7 @@ namespace bs
 				mProps[x].Valid = true;
 
 				// For each depth/stencil formats
-				for (UINT32 depth = 0; depth < DEPTHFORMAT_COUNT; ++depth)
+				for (u32 depth = 0; depth < DEPTHFORMAT_COUNT; ++depth)
 				{
 					if (depthFormats[depth] != GL_DEPTH24_STENCIL8 && depthFormats[depth] != GL_DEPTH32F_STENCIL8)
 					{

@@ -20,9 +20,9 @@ namespace bs
 	/**	Descriptor used for creating a platform specific native window. */
 	struct WINDOW_DESC
 	{
-		INT32 x, y;
-		UINT32 width, height;
-		UINT32 screen;
+		i32 x, y;
+		u32 width, height;
+		u32 screen;
 		String title;
 		bool showDecorations;
 		bool allowResize;
@@ -46,16 +46,16 @@ namespace bs
 		~LinuxWindow();
 
 		/**	Returns position of the left-most border of the window, relative to the screen. */
-		INT32 getLeft() const;
+		i32 getLeft() const;
 
 		/**	Returns position of the top-most border of the window, relative to the screen. */
-		INT32 getTop() const;
+		i32 getTop() const;
 
 		/**	Returns width of the window in pixels. */
-		UINT32 getWidth() const;
+		u32 getWidth() const;
 
 		/**	Returns height of the window in pixels. */
-		UINT32 getHeight() const;
+		u32 getHeight() const;
 
 		/** Hides the window. */
 		void hide();
@@ -73,10 +73,10 @@ namespace bs
 		void restore();
 
 		/**	Change the size of the window. */
-		void resize(UINT32 width, UINT32 height);
+		void resize(u32 width, u32 height);
 
 		/**	Reposition the window. */
-		void move(INT32 left, INT32 top);
+		void move(i32 left, i32 top);
 
 		/** Sets the icon to display for the window. */
 		void setIcon(const PixelData& icon);

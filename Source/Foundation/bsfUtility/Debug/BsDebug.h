@@ -37,13 +37,13 @@ namespace bs
 		 * @param[in]	verbosity	Verbosity of the message, determining its importance.
 		 * @param[in]	category	Category of the message, determining which system is it relevant to.
 		 */
-		void Log(const String& message, LogVerbosity verbosity, UINT32 category = 0);
+		void Log(const String& message, LogVerbosity verbosity, u32 category = 0);
 
 		/** Retrieves the Log used by the Debug instance. */
 		class Log& GetLog() { return mLog; }
 
 		/** Converts raw pixels into a BMP image and saves it as a file */
-		void WriteAsBmp(UINT8* rawPixels, UINT32 bytesPerPixel, UINT32 width, UINT32 height, const Path& filePath,
+		void WriteAsBmp(u8* rawPixels, u32 bytesPerPixel, u32 width, u32 height, const Path& filePath,
 			bool overwrite = true) const;
 
 		/**
@@ -84,7 +84,7 @@ namespace bs
 
 		/** This allows setting a log callback that can override the default action in log */
 		void SetLogCallback(
-			std::function<bool(const String& message, LogVerbosity verbosity, UINT32 category)> callback)
+			std::function<bool(const String& message, LogVerbosity verbosity, u32 category)> callback)
 		{
 			mCustomLogCallback = callback;
 		}
@@ -103,9 +103,9 @@ namespace bs
 
 		/** @} */
 	private:
-		UINT64 mLogHash = 0;
+		u64 mLogHash = 0;
 		class Log mLog;
-		std::function<bool(const String& message, LogVerbosity verbosity, UINT32 category)> mCustomLogCallback;
+		std::function<bool(const String& message, LogVerbosity verbosity, u32 category)> mCustomLogCallback;
 	};
 
 	/** A simpler way of accessing the Debug module. */
@@ -135,7 +135,7 @@ namespace bs
   do																								\
   {																									\
 	using namespace ::bs;																			\
-	if ((INT32)LogVerbosity::verbosity <= (INT32)BS_LOG_VERBOSITY)									\
+	if ((i32)LogVerbosity::verbosity <= (i32)BS_LOG_VERBOSITY)									\
 	{																								\
 	  gDebug().Log(StringUtil::Format(message, ##__VA_ARGS__) + String("\n\t\t in ") +				\
 					   __PRETTY_FUNCTION__ + " [" + __FILE__ + ":" + toString(__LINE__) + "]\n",	\

@@ -22,7 +22,7 @@ namespace bs
 		ScriptGUIListBox(MonoObject* instance, GUIListBox* listBox);
 
 		/**	Triggered when the selected index in the native list box changes. */
-		void OnSelectionChanged(UINT32 index, bool enabled);
+		void OnSelectionChanged(u32 index, bool enabled);
 
 		/************************************************************************/
 		/* 								CLR HOOKS						   		*/
@@ -35,7 +35,7 @@ namespace bs
 		static MonoArray* InternalGetElementStates(ScriptGUIListBox* nativeInstance);
 		static void InternalSetElementStates(ScriptGUIListBox* nativeInstance, MonoArray* states);
 
-		typedef void (BS_THUNKCALL *OnSelectionChangedThunkDef) (MonoObject*, UINT32, MonoException**);
+		typedef void (BS_THUNKCALL *OnSelectionChangedThunkDef) (MonoObject*, u32, MonoException**);
 		static OnSelectionChangedThunkDef onSelectionChangedThunk;
 	};
 

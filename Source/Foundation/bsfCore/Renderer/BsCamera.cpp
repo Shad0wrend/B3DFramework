@@ -118,7 +118,7 @@ namespace bs
 		worldMatrix.SetTrs(tfrm.GetPosition(), tfrm.GetRotation(), Vector3::ONE);
 
 		Vector<Plane> worldPlanes(frustumPlanes.size());
-		UINT32 i = 0;
+		u32 i = 0;
 		for (auto& plane : frustumPlanes)
 		{
 			worldPlanes[i] = worldMatrix.MultiplyAffine(plane);
@@ -754,28 +754,28 @@ namespace bs
 
 	CoreSyncData Camera::SyncToCore(FrameAlloc* allocator)
 	{
-		UINT32 dirtyFlag = GetCoreDirtyFlags();
+		u32 dirtyFlag = GetCoreDirtyFlags();
 
-		UINT32 size = rtti_size(dirtyFlag).Bytes;
+		u32 size = rtti_size(dirtyFlag).Bytes;
 		
-		if((dirtyFlag & ~(INT32)CameraDirtyFlag::Redraw) != 0)
+		if((dirtyFlag & ~(i32)CameraDirtyFlag::Redraw) != 0)
 		{
 			size += csync_size((SceneActor&)*this);
 
-			if (dirtyFlag != (UINT32)ActorDirtyFlag::Transform)
+			if (dirtyFlag != (u32)ActorDirtyFlag::Transform)
 				size += csync_size(*this);
 		}
 
-		UINT8* buffer = allocator->Alloc(size);
+		u8* buffer = allocator->Alloc(size);
 		Bitstream stream(buffer, size);
 
 		rtti_write(dirtyFlag, stream);
 
-		if ((dirtyFlag & ~(INT32)CameraDirtyFlag::Redraw) != 0)
+		if ((dirtyFlag & ~(i32)CameraDirtyFlag::Redraw) != 0)
 		{
 			csync_write((SceneActor&)* this, stream);
 
-			if (dirtyFlag != (UINT32)ActorDirtyFlag::Transform)
+			if (dirtyFlag != (u32)ActorDirtyFlag::Transform)
 				csync_write(*this, stream);
 		}
 
@@ -789,7 +789,7 @@ namespace bs
 
 	void Camera::MarkCoreDirtyInternal(ActorDirtyFlag flag)
 	{
-		MarkCoreDirty((UINT32)flag);
+		MarkCoreDirty((u32)flag);
 	}
 
 	RTTITypeBase* Camera::GetRttiStatic()
@@ -837,14 +837,14 @@ namespace bs
 	{
 		Bitstream stream(data.GetBuffer(), data.GetBufferSize());
 
-		UINT32 dirtyFlag;
+		u32 dirtyFlag;
 		rtti_read(dirtyFlag, stream);
 
-		if ((dirtyFlag & ~(INT32)CameraDirtyFlag::Redraw) != 0)
+		if ((dirtyFlag & ~(i32)CameraDirtyFlag::Redraw) != 0)
 		{
 			csync_read((SceneActor&)* this, stream);
 
-			if (dirtyFlag != (UINT32)ActorDirtyFlag::Transform)
+			if (dirtyFlag != (u32)ActorDirtyFlag::Transform)
 				csync_read(*this, stream);
 
 			mRecalcFrustum = true;
@@ -852,7 +852,7 @@ namespace bs
 			mRecalcView = true;
 		}
 
-		RendererManager::Instance().GetActive()->NotifyCameraUpdated(this, (UINT32)dirtyFlag);
+		RendererManager::Instance().GetActive()->NotifyCameraUpdated(this, (u32)dirtyFlag);
 	}
 	}
 }

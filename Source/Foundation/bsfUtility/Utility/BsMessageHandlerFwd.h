@@ -33,10 +33,10 @@ namespace bs
 	private:
 		friend class MessageHandler;
 
-		static Map<String, UINT32> UniqueMessageIds;
-		static UINT32 NextMessageId;
+		static Map<String, u32> UniqueMessageIds;
+		static u32 NextMessageId;
 
-		UINT32 mMsgIdentifier = 0;
+		u32 mMsgIdentifier = 0;
 	};
 
 	/** Handle to a subscription for a specific message in the global messaging system. */
@@ -51,9 +51,9 @@ namespace bs
 	private:
 		friend class MessageHandler;
 
-		HMessage(UINT32 id);
+		HMessage(u32 id);
 
-		UINT32 mId = 0;
+		u32 mId = 0;
 	};
 
 	/**

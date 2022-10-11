@@ -11,10 +11,10 @@
 
 namespace bs { namespace ct
 {
-	static const UINT32 CELL_XY_SIZE = 64;
-	static const UINT32 NUM_Z_SUBDIVIDES = 32;
-	static const UINT32 MAX_LIGHTS_PER_CELL = 32;
-	static const UINT32 THREADGROUP_SIZE = 4;
+	static const u32 CELL_XY_SIZE = 64;
+	static const u32 NUM_Z_SUBDIVIDES = 32;
+	static const u32 MAX_LIGHTS_PER_CELL = 32;
+	static const u32 THREADGROUP_SIZE = 4;
 
 	LightGridParamDef gLightGridParamDefDef;
 
@@ -53,7 +53,7 @@ namespace bs { namespace ct
 		const SPtr<GpuBuffer>& lightsBuffer, const SPtr<GpuBuffer>& probesBuffer)
 	{
 		mGridSize = gridSize;
-		UINT32 numCells = gridSize[0] * gridSize[1] * gridSize[2];
+		u32 numCells = gridSize[0] * gridSize[1] * gridSize[2];
 
 		if(numCells > mBufferNumCells || mBufferNumCells == 0)
 		{
@@ -92,7 +92,7 @@ namespace bs { namespace ct
 		clearMat->Execute(mLightsCounter);
 		clearMat->Execute(mProbesCounter);
 
-		UINT32 clearValue = 0xFFFFFFFF;
+		u32 clearValue = 0xFFFFFFFF;
 		Color clearColor;
 		clearColor.R = *(float*) &clearValue;
 		clearColor.G = *(float*) &clearValue;
@@ -113,9 +113,9 @@ namespace bs { namespace ct
 
 		mParams->SetParamBlockBuffer("PerCamera", view.GetPerViewBuffer());
 
-		UINT32 numGroupsX = (mGridSize[0] + THREADGROUP_SIZE - 1) / THREADGROUP_SIZE;
-		UINT32 numGroupsY = (mGridSize[1] + THREADGROUP_SIZE - 1) / THREADGROUP_SIZE;
-		UINT32 numGroupsZ = (mGridSize[2] + THREADGROUP_SIZE - 1) / THREADGROUP_SIZE;
+		u32 numGroupsX = (mGridSize[0] + THREADGROUP_SIZE - 1) / THREADGROUP_SIZE;
+		u32 numGroupsY = (mGridSize[1] + THREADGROUP_SIZE - 1) / THREADGROUP_SIZE;
+		u32 numGroupsZ = (mGridSize[2] + THREADGROUP_SIZE - 1) / THREADGROUP_SIZE;
 
 		Bind();
 		RenderAPI::Instance().DispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
@@ -168,7 +168,7 @@ namespace bs { namespace ct
 		const SPtr<GpuBuffer>& probeLLHeads, const SPtr<GpuBuffer>& probeLL)
 	{
 		mGridSize = gridSize;
-		UINT32 numCells = gridSize[0] * gridSize[1] * gridSize[2];
+		u32 numCells = gridSize[0] * gridSize[1] * gridSize[2];
 
 		if (numCells > mBufferNumCells || mBufferNumCells == 0)
 		{
@@ -218,9 +218,9 @@ namespace bs { namespace ct
 
 		mParams->SetParamBlockBuffer("PerCamera", view.GetPerViewBuffer());
 
-		UINT32 numGroupsX = (mGridSize[0] + THREADGROUP_SIZE - 1) / THREADGROUP_SIZE;
-		UINT32 numGroupsY = (mGridSize[1] + THREADGROUP_SIZE - 1) / THREADGROUP_SIZE;
-		UINT32 numGroupsZ = (mGridSize[2] + THREADGROUP_SIZE - 1) / THREADGROUP_SIZE;
+		u32 numGroupsX = (mGridSize[0] + THREADGROUP_SIZE - 1) / THREADGROUP_SIZE;
+		u32 numGroupsY = (mGridSize[1] + THREADGROUP_SIZE - 1) / THREADGROUP_SIZE;
+		u32 numGroupsZ = (mGridSize[2] + THREADGROUP_SIZE - 1) / THREADGROUP_SIZE;
 
 		Bind();
 		RenderAPI::Instance().DispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
@@ -245,8 +245,8 @@ namespace bs { namespace ct
 	{
 		const RendererViewProperties& viewProps = view.GetProperties();
 
-		UINT32 width = viewProps.Target.ViewRect.Width;
-		UINT32 height = viewProps.Target.ViewRect.Height;
+		u32 width = viewProps.Target.ViewRect.Width;
+		u32 height = viewProps.Target.ViewRect.Height;
 
 		Vector3I gridSize;
 		gridSize[0] = (width + CELL_XY_SIZE - 1) / CELL_XY_SIZE;
@@ -276,7 +276,7 @@ namespace bs { namespace ct
 			lightStrides[1] = 0;
 		}
 
-		UINT32 numCells = gridSize[0] * gridSize[1] * gridSize[2];
+		u32 numCells = gridSize[0] * gridSize[1] * gridSize[2];
 
 		gLightGridParamDefDef.gLightCounts.Set(mGridParamBuffer, lightCount);
 		gLightGridParamDefDef.gLightStrides.Set(mGridParamBuffer, lightStrides);

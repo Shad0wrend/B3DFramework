@@ -27,7 +27,7 @@ namespace bs { namespace ct
 		VkPipeline GetHandle() const { return mPipeline; }
 
 		/** Checks is the specified color attachment read-only. Only relevant for graphics pipelines. */
-		bool IsColorReadOnly(UINT32 colorIdx) const { return mReadOnlyColor[colorIdx]; }
+		bool IsColorReadOnly(u32 colorIdx) const { return mReadOnlyColor[colorIdx]; }
 
 		/** Checks is the depth attachment read-only. Only relevant for graphics pipelines. */
 		bool IsDepthReadOnly() const { return mReadOnlyDepth; }
@@ -64,14 +64,14 @@ namespace bs { namespace ct
 		 *
 		 * @note	Thread safe.
 		 */
-		VulkanPipeline* GetPipeline(UINT32 deviceIdx, VulkanRenderPass* renderPass, UINT32 readOnlyFlags,
+		VulkanPipeline* GetPipeline(u32 deviceIdx, VulkanRenderPass* renderPass, u32 readOnlyFlags,
 			DrawOperationType drawOp, const SPtr<VulkanVertexInput>& vertexInput);
 
 		/**
 		 * Returns a pipeline layout object for the specified device index. If the device index doesn't match a bit in the
 		 * device mask provided on pipeline creation, null is returned.
 		 */
-		VkPipelineLayout GetPipelineLayout(UINT32 deviceIdx) const;
+		VkPipelineLayout GetPipelineLayout(u32 deviceIdx) const;
 
 		/**
 		 * Registers any resources used by the pipeline with the provided command buffer. This should be called whenever
@@ -100,17 +100,17 @@ namespace bs { namespace ct
 		 *
 		 * @note	Thread safe.
 		 */
-		VulkanPipeline* CreatePipeline(UINT32 deviceIdx, VulkanRenderPass* renderPass, UINT32 readOnlyFlags,
+		VulkanPipeline* CreatePipeline(u32 deviceIdx, VulkanRenderPass* renderPass, u32 readOnlyFlags,
 			DrawOperationType drawOp, const SPtr<VulkanVertexInput>& vertexInput);
 
 		/**	Key uniquely identifying GPU pipelines. */
 		struct GpuPipelineKey
 		{
-			GpuPipelineKey(UINT32 framebufferId, UINT32 vertexInputId, UINT32 readOnlyFlags, DrawOperationType drawOp);
+			GpuPipelineKey(u32 framebufferId, u32 vertexInputId, u32 readOnlyFlags, DrawOperationType drawOp);
 
-			UINT32 FramebufferId;
-			UINT32 VertexInputId;
-			UINT32 ReadOnlyFlags;
+			u32 FramebufferId;
+			u32 VertexInputId;
+			u32 ReadOnlyFlags;
 			DrawOperationType DrawOp;
 		};
 
@@ -167,13 +167,13 @@ namespace bs { namespace ct
 		 * Returns a pipeline object for the specified device index. If the device index doesn't match a bit in the
 		 * device mask provided on pipeline creation, null is returned.
 		 */
-		VulkanPipeline* GetPipeline(UINT32 deviceIdx) const;
+		VulkanPipeline* GetPipeline(u32 deviceIdx) const;
 
 		/**
 		 * Returns a pipeline layout object for the specified device index. If the device index doesn't match a bit in the
 		 * device mask provided on pipeline creation, null is returned.
 		 */
-		VkPipelineLayout GetPipelineLayout(UINT32 deviceIdx) const;
+		VkPipelineLayout GetPipelineLayout(u32 deviceIdx) const;
 
 		/**
 		 * Registers any resources used by the pipeline with the provided command buffer. This should be called whenever

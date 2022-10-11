@@ -35,13 +35,13 @@ namespace bs { namespace ct
 
 	void GLTexture::Initialize()
 	{
-		UINT32 width = mProperties.GetWidth();
-		UINT32 height = mProperties.GetHeight();
-		UINT32 depth = mProperties.GetDepth();
+		u32 width = mProperties.GetWidth();
+		u32 height = mProperties.GetHeight();
+		u32 depth = mProperties.GetDepth();
 		TextureType texType = mProperties.GetTextureType();
 		int usage = mProperties.GetUsage();
-		UINT32 numMips = mProperties.GetNumMipmaps();
-		UINT32 numFaces = mProperties.GetNumFaces();
+		u32 numMips = mProperties.GetNumMipmaps();
+		u32 numFaces = mProperties.GetNumFaces();
 
 		// 0-sized textures aren't supported by the API
 		width = std::max(width, 1U);
@@ -57,7 +57,7 @@ namespace bs { namespace ct
 		}
 
 		// Check requested number of mipmaps
-		UINT32 maxMips = PixelUtil::GetMaxMipmaps(width, height, depth, mProperties.GetFormat());
+		u32 maxMips = PixelUtil::GetMaxMipmaps(width, height, depth, mProperties.GetFormat());
 		if (numMips > maxMips)
 		{
 			BS_LOG(Error, RenderBackend, "Invalid number of mipmaps. Maximum allowed is: {0}", maxMips);
@@ -95,7 +95,7 @@ namespace bs { namespace ct
 		// Allocate internal buffer so that glTexSubImageXD can be used
 		mGLFormat = GLPixelUtil::GetGlInternalFormat(mInternalFormat, mProperties.IsHardwareGammaEnabled());
 
-		UINT32 sampleCount = mProperties.GetNumSamples();
+		u32 sampleCount = mProperties.GetNumSamples();
 		if((usage & (TU_RENDERTARGET | TU_DEPTHSTENCIL)) != 0 && mProperties.GetTextureType() == TEX_TYPE_2D && sampleCount > 1)
 		{
 			if (numFaces <= 1)
@@ -199,7 +199,7 @@ namespace bs { namespace ct
 				{
 					if (numFaces <= 6)
 					{
-						for (UINT32 face = 0; face < 6; face++)
+						for (u32 face = 0; face < 6; face++)
 						{
 							glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, mGLFormat,
 								width, height, 0, depthStencilFormat, depthStencilType, nullptr);
@@ -223,7 +223,7 @@ namespace bs { namespace ct
 				GLenum baseFormat = GLPixelUtil::getGLOriginFormat(mInternalFormat);
 				GLenum baseDataType = GLPixelUtil::getGLOriginDataType(mInternalFormat);
 
-				for (UINT32 mip = 0; mip < numMips; mip++)
+				for (u32 mip = 0; mip < numMips; mip++)
 				{
 					switch (texType)
 					{
@@ -264,7 +264,7 @@ namespace bs { namespace ct
 					{
 						if (numFaces <= 6)
 						{
-							for (UINT32 face = 0; face < 6; face++)
+							for (u32 face = 0; face < 6; face++)
 							{
 								glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, mip, mGLFormat,
 									width, height, 0, baseFormat, baseDataType, nullptr);
@@ -312,7 +312,7 @@ namespace bs { namespace ct
 		return mTextureID;
 	}
 
-	GLenum GLTexture::GetGlTextureTarget(TextureType type, UINT32 numSamples, UINT32 numFaces)
+	GLenum GLTexture::GetGlTextureTarget(TextureType type, u32 numSamples, u32 numFaces)
 	{
 		switch (type)
 		{
@@ -375,8 +375,8 @@ namespace bs { namespace ct
 		}
 	}
 
-	PixelData GLTexture::LockImpl(GpuLockOptions options, UINT32 mipLevel, UINT32 face, UINT32 deviceIdx,
-									  UINT32 queueIdx)
+	PixelData GLTexture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face, u32 deviceIdx,
+									  u32 queueIdx)
 	{
 		if (mProperties.GetNumSamples() > 1)
 			BS_EXCEPT(InvalidStateException, "Multisampled textures cannot be accessed from the CPU directly.");
@@ -384,14 +384,14 @@ namespace bs { namespace ct
 		if(mLockedBuffer != nullptr)
 			BS_EXCEPT(InternalErrorException, "Trying to lock a buffer that's already locked.");
 
-		UINT32 mipWidth = std::max(1u, mProperties.GetWidth() >> mipLevel);
-		UINT32 mipHeight = std::max(1u, mProperties.GetHeight() >> mipLevel);
-		UINT32 mipDepth = std::max(1u, mProperties.GetDepth() >> mipLevel);
+		u32 mipWidth = std::max(1u, mProperties.GetWidth() >> mipLevel);
+		u32 mipHeight = std::max(1u, mProperties.GetHeight() >> mipLevel);
+		u32 mipDepth = std::max(1u, mProperties.GetDepth() >> mipLevel);
 
 		PixelData lockedArea(mipWidth, mipHeight, mipDepth, mProperties.GetFormat());
 
 		mLockedBuffer = GetBuffer(face, mipLevel);
-		lockedArea.SetExternalBuffer((UINT8*)mLockedBuffer->Lock(options));
+		lockedArea.SetExternalBuffer((u8*)mLockedBuffer->Lock(options));
 
 		return lockedArea;
 	}
@@ -408,7 +408,7 @@ namespace bs { namespace ct
 		mLockedBuffer = nullptr;
 	}
 
-	void GLTexture::ReadDataImpl(PixelData& dest, UINT32 mipLevel, UINT32 face, UINT32 deviceIdx, UINT32 queueIdx)
+	void GLTexture::ReadDataImpl(PixelData& dest, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
 	{
 		if (mProperties.GetNumSamples() > 1)
 		{
@@ -428,8 +428,8 @@ namespace bs { namespace ct
 			GetBuffer(face, mipLevel)->Download(dest);
 	}
 
-	void GLTexture::WriteDataImpl(const PixelData& src, UINT32 mipLevel, UINT32 face, bool discardWholeBuffer,
-								  UINT32 queueIdx)
+	void GLTexture::WriteDataImpl(const PixelData& src, u32 mipLevel, u32 face, bool discardWholeBuffer,
+								  u32 queueIdx)
 	{
 		if (mProperties.GetNumSamples() > 1)
 		{
@@ -465,9 +465,9 @@ namespace bs { namespace ct
 			PixelVolume srcVolume = desc.SrcVolume;
 
 			PixelVolume dstVolume;
-			dstVolume.Left = (UINT32)desc.DstPosition.X;
-			dstVolume.Top = (UINT32)desc.DstPosition.Y;
-			dstVolume.Front = (UINT32)desc.DstPosition.Z;
+			dstVolume.Left = (u32)desc.DstPosition.X;
+			dstVolume.Top = (u32)desc.DstPosition.Y;
+			dstVolume.Front = (u32)desc.DstPosition.Z;
 
 			if(copyEntireSurface)
 			{
@@ -504,9 +504,9 @@ namespace bs { namespace ct
 	{
 		mSurfaceList.clear();
 		
-		for (UINT32 face = 0; face < mProperties.GetNumFaces(); face++)
+		for (u32 face = 0; face < mProperties.GetNumFaces(); face++)
 		{
-			for (UINT32 mip = 0; mip <= mProperties.GetNumMipmaps(); mip++)
+			for (u32 mip = 0; mip <= mProperties.GetNumMipmaps(); mip++)
 			{
 				GLPixelBuffer *buf = bs_new<GLTextureBuffer>(GetGlTextureTarget(), mTextureID, face, mip, mInternalFormat,
 					static_cast<GpuBufferUsage>(mProperties.GetUsage()),
@@ -524,7 +524,7 @@ namespace bs { namespace ct
 		}
 	}
 	
-	SPtr<GLPixelBuffer> GLTexture::GetBuffer(UINT32 face, UINT32 mipmap)
+	SPtr<GLPixelBuffer> GLTexture::GetBuffer(u32 face, u32 mipmap)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 

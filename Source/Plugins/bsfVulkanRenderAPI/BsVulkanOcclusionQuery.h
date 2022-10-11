@@ -28,7 +28,7 @@ namespace bs { namespace ct
 		bool IsReady() const override;
 
 		/** @copydoc OcclusionQuery::getNumSamples */
-		UINT32 GetNumSamples() override;
+		u32 GetNumSamples() override;
 
 		/** Returns true if the query begin() was called, but not end(). */
 		bool IsInProgressInternal() const;
@@ -45,7 +45,7 @@ namespace bs { namespace ct
 		VulkanDevice& mDevice;
 		Vector<VulkanQuery*> mQueries;
 
-		UINT64 mNumSamples = 0;
+		u64 mNumSamples = 0;
 		bool mQueryEndCalled : 1;
 		bool mQueryFinalized : 1;
 	};

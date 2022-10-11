@@ -40,7 +40,7 @@ namespace bs
 	{
 	public:
 		LogEntry() = default;
-		LogEntry(String msg, LogVerbosity verbosity, UINT32 category)
+		LogEntry(String msg, LogVerbosity verbosity, u32 category)
 			:mMsg(std::move(msg)), mVerbosity(verbosity), mCategory(category), mLocalTime(std::time(nullptr))
 		{ }
 
@@ -48,7 +48,7 @@ namespace bs
 		LogVerbosity GetVerbosity() const { return mVerbosity; }
 
 		/** Category of the system the message originated from. */
-		UINT32 GetCategory() const { return mCategory; }
+		u32 GetCategory() const { return mCategory; }
 
 		/** Text of the message. */
 		const String& GetMessage() const { return mMsg; }
@@ -59,7 +59,7 @@ namespace bs
 	private:
 		String mMsg;
 		LogVerbosity mVerbosity;
-		UINT32 mCategory;
+		u32 mCategory;
 		std::time_t mLocalTime;
 	};
 
@@ -82,7 +82,7 @@ namespace bs
 		 * @param[in]	verbosity	Verbosity of the message, determining its importance.
 		 * @param[in]	category	Category of the message, determining which system is it relevant to.
 		 */
-		void LogMsg(const String& message, LogVerbosity verbosity, UINT32 category);
+		void LogMsg(const String& message, LogVerbosity verbosity, u32 category);
 
 		/** Removes all log entries. */
 		void Clear();
@@ -91,7 +91,7 @@ namespace bs
 		 * Removes all log entries for a specific verbosity level and/or category. Specify -1 to clear all verbosity levels
 		 * and/or categories.
 		 */
-		void Clear(LogVerbosity verbosity, UINT32 category);
+		void Clear(LogVerbosity verbosity, u32 category);
 
 		/** Returns all existing log entries. */
 		Vector<LogEntry> GetEntries() const;
@@ -116,7 +116,7 @@ namespace bs
 		 * Returns a hash value that is modified whenever entries in the log change. This can be used for
 		 * checking for changes by external systems.
 		 */
-		UINT64 GetHash() const { return mHash; }
+		u64 GetHash() const { return mHash; }
 		
 		/**
 		 * Checks if the category with the specified ID exists.
@@ -124,10 +124,10 @@ namespace bs
 		 *  @param[in] id	Number representing the category's ID.
 		 *  @return			True if exists, otherwise false.
 		 */
-		static bool CategoryExists(UINT32 id);
+		static bool CategoryExists(u32 id);
 		
 		/** Returns the number of registered log categories. */
-		static UINT32 GetNumCategories() { return (UINT32)sCategories.size(); };
+		static u32 GetNumCategories() { return (u32)sCategories.size(); };
 		
 		/**
 		 *  Get the name of the category based on its ID.
@@ -137,7 +137,7 @@ namespace bs
 		 *  @return				If found will write the name and return true. Otherwise will write the name "Unknown"
 		 *						and return false.
 		 */
-		static bool GetCategoryName(UINT32 id, String& name);
+		static bool GetCategoryName(u32 id, String& name);
 
 		/**
 		 * @name Internal
@@ -151,7 +151,7 @@ namespace bs
 		 *  @param[in] name		Name of the category.
 		 *  @return				False if the ID is already taken, otherwise true.
 		 */
-		static bool RegisterCategoryInternal(UINT32 id, const char* name);
+		static bool RegisterCategoryInternal(u32 id, const char* name);
 		
 		/** @} */
 		
@@ -163,11 +163,11 @@ namespace bs
 
 		Vector<LogEntry> mEntries;
 		Queue<LogEntry> mUnreadEntries;
-		UINT64 mHash = 0;
+		u64 mHash = 0;
 		
 		mutable RecursiveMutex mMutex;
 
-		static UnorderedMap<UINT32, String> sCategories;
+		static UnorderedMap<u32, String> sCategories;
 	};
 
 	/** @} */

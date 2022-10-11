@@ -20,7 +20,7 @@ namespace bs
 	public:
 		OctreeElementId() = default;
 
-		OctreeElementId(void* node, UINT32 elementIdx)
+		OctreeElementId(void* node, u32 elementIdx)
 			:node(node), elementIdx(elementIdx)
 		{ }
 
@@ -29,7 +29,7 @@ namespace bs
 		friend class Octree;
 
 		void* node = nullptr;
-		UINT32 elementIdx = 0u;
+		u32 elementIdx = 0u;
 	};
 
 	/**
@@ -84,7 +84,7 @@ namespace bs
 		{
 			ElementGroup* values = nullptr;
 			ElementBoundGroup* bounds = nullptr;
-			UINT32 count = 0;
+			u32 count = 0;
 		};
 	public:
 		/** Contains a reference to one of the eight child nodes in an octree node. */
@@ -94,16 +94,16 @@ namespace bs
 			{
 				struct
 				{
-					UINT32 x : 1;
-					UINT32 y : 1;
-					UINT32 z : 1;
-					UINT32 empty : 1;
+					u32 x : 1;
+					u32 y : 1;
+					u32 z : 1;
+					u32 empty : 1;
 				};
 
 				struct
 				{
-					UINT32 index : 3;
-					UINT32 empty2 : 1;
+					u32 index : 3;
+					u32 empty2 : 1;
 				};
 			};
 
@@ -111,11 +111,11 @@ namespace bs
 				:empty(true)
 			{ }
 
-			HChildNode(UINT32 x, UINT32 y, UINT32 z)
+			HChildNode(u32 x, u32 y, u32 z)
 				:x(x), y(y), z(z), empty(false)
 			{ }
 
-			HChildNode(UINT32 index)
+			HChildNode(u32 index)
 				:index(index), empty2(false)
 			{ }
 		};
@@ -127,21 +127,21 @@ namespace bs
 			{
 				struct
 				{
-					UINT32 posX : 1;
-					UINT32 posY : 1;
-					UINT32 posZ : 1;
-					UINT32 negX : 1;
-					UINT32 negY : 1;
-					UINT32 negZ : 1;
+					u32 posX : 1;
+					u32 posY : 1;
+					u32 posZ : 1;
+					u32 negX : 1;
+					u32 negY : 1;
+					u32 negZ : 1;
 				};
 
 				struct
 				{
-					UINT32 posBits : 3;
-					UINT32 negBits : 3;
+					u32 posBits : 3;
+					u32 negBits : 3;
 				};
 
-				UINT32 allBits : 6;
+				u32 allBits : 6;
 			};
 
 			/** Constructs a range overlapping no nodes. */
@@ -188,14 +188,14 @@ namespace bs
 			friend class Octree;
 
 			/** Maps a global element index to a set of element groups and an index within those groups. */
-			UINT32 mapToGroup(UINT32 elementIdx, ElementGroup** elements, ElementBoundGroup** bounds)
+			u32 mapToGroup(u32 elementIdx, ElementGroup** elements, ElementBoundGroup** bounds)
 			{
-				UINT32 numGroups = Math::DivideAndRoundUp(mElements.count, (UINT32)Options::MaxElementsPerNode);
-				UINT32 groupIdx = numGroups - elementIdx / Options::MaxElementsPerNode - 1;
+				u32 numGroups = Math::DivideAndRoundUp(mElements.count, (u32)Options::MaxElementsPerNode);
+				u32 groupIdx = numGroups - elementIdx / Options::MaxElementsPerNode - 1;
 
 				*elements = mElements.values;
 				*bounds = mElements.bounds;
-				for (UINT32 i = 0; i < groupIdx; i++)
+				for (u32 i = 0; i < groupIdx; i++)
 				{
 					*elements = (*elements)->next;
 					*bounds = (*bounds)->next;
@@ -210,8 +210,8 @@ namespace bs
 			Node* mChildren[8] = {  nullptr, nullptr, nullptr, nullptr,
 									nullptr, nullptr, nullptr, nullptr };
 
-			UINT32 mTotalNumElements : 31;
-			UINT32 mIsLeaf : 1;
+			u32 mTotalNumElements : 31;
+			u32 mIsLeaf : 1;
 		};
 
 		/**
@@ -444,7 +444,7 @@ namespace bs
 				, mCurrentElemGroup(node->mElements.values)
 				, mCurrentBoundGroup(node->mElements.bounds)
 			{
-				UINT32 numGroups = Math::DivideAndRoundUp(node->mElements.count, (UINT32)Options::MaxElementsPerNode);
+				u32 numGroups = Math::DivideAndRoundUp(node->mElements.count, (u32)Options::MaxElementsPerNode);
 				mElemsInGroup = node->mElements.count - (numGroups - 1) * Options::MaxElementsPerNode;
 			}
 
@@ -460,7 +460,7 @@ namespace bs
 
 				mCurrentIdx++;
 
-				if((UINT32)mCurrentIdx == mElemsInGroup) // Next group
+				if((u32)mCurrentIdx == mElemsInGroup) // Next group
 				{
 					mCurrentElemGroup = mCurrentElemGroup->next;
 					mCurrentBoundGroup = mCurrentBoundGroup->next;
@@ -487,10 +487,10 @@ namespace bs
 			const ElemType& getCurrentElem() const { return mCurrentElemGroup->v[mCurrentIdx]; }
 
 		private:
-			INT32 mCurrentIdx = -1;
+			i32 mCurrentIdx = -1;
 			ElementGroup* mCurrentElemGroup = nullptr;
 			ElementBoundGroup* mCurrentBoundGroup = nullptr;
-			UINT32 mElemsInGroup = 0;
+			u32 mElemsInGroup = 0;
 		};
 
 		/** Iterators that iterates over all elements intersecting the specified AABox. */
@@ -540,7 +540,7 @@ namespace bs
 
 					// Add all intersecting child nodes to the iterator
 					NodeChildRange childRange = nodeRef.getBounds().findIntersectingChildren(mBounds);
-					for(UINT32 i = 0; i < 8; i++)
+					for(u32 i = 0; i < 8; i++)
 					{
 						if(childRange.contains(i) && nodeRef.getNode()->HasChild(i))
 							mNodeIter.pushChild(i);
@@ -615,7 +615,7 @@ namespace bs
 						Node* curNode = todo.top();
 						todo.pop();
 
-						for(UINT32 i = 0; i < 8; i++)
+						for(u32 i = 0; i < 8; i++)
 						{
 							if(curNode->HasChild(i))
 							{
@@ -635,7 +635,7 @@ namespace bs
 				node->mIsLeaf = true;
 
 				// Recursively delete all child nodes
-				for (UINT32 i = 0; i < 8; i++)
+				for (u32 i = 0; i < 8; i++)
 				{
 					if(node->mChildren[i])
 					{
@@ -729,7 +729,7 @@ namespace bs
 		{
 			NodeElements& elements = node->mElements;
 
-			UINT32 freeIdx = elements.count % Options::MaxElementsPerNode;
+			u32 freeIdx = elements.count % Options::MaxElementsPerNode;
 			if(freeIdx == 0) // New group needed
 			{
 				ElementGroup* elementGroup = (ElementGroup*)mElemAlloc.template construct<ElementGroup>();
@@ -745,14 +745,14 @@ namespace bs
 			elements.values->v[freeIdx] = elem;
 			elements.bounds->v[freeIdx] = bounds;
 
-			UINT32 elementIdx = elements.count;
+			u32 elementIdx = elements.count;
 			Options::setElementId(elem, OctreeElementId(node, elementIdx), mContext);
 
 			++elements.count;
 		}
 
 		/** Removes the specified element from the node's element list. */
-		void popElement(Node* node, UINT32 elementIdx)
+		void popElement(Node* node, u32 elementIdx)
 		{
 			NodeElements& elements = node->mElements;
 
@@ -762,7 +762,7 @@ namespace bs
 
 			ElementGroup* lastElemGroup;
 			ElementBoundGroup* lastBoundGroup;
-			UINT32 lastElementIdx = node->mapToGroup(elements.count - 1, &lastElemGroup, &lastBoundGroup);
+			u32 lastElementIdx = node->mapToGroup(elements.count - 1, &lastElemGroup, &lastBoundGroup);
 
 			if(elements.count > 1)
 			{

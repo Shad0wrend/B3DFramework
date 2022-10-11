@@ -4,12 +4,12 @@
 
 namespace bs
 {
-	void convertToMono8(const INT8* input, UINT8* output, UINT32 numSamples, UINT32 numChannels)
+	void convertToMono8(const i8* input, u8* output, u32 numSamples, u32 numChannels)
 	{
-		for (UINT32 i = 0; i < numSamples; i++)
+		for (u32 i = 0; i < numSamples; i++)
 		{
-			INT16 sum = 0;
-			for (UINT32 j = 0; j < numChannels; j++)
+			i16 sum = 0;
+			for (u32 j = 0; j < numChannels; j++)
 			{
 				sum += *input;
 				++input;
@@ -20,12 +20,12 @@ namespace bs
 		}
 	}
 
-	void convertToMono16(const INT16* input, INT16* output, UINT32 numSamples, UINT32 numChannels)
+	void convertToMono16(const i16* input, i16* output, u32 numSamples, u32 numChannels)
 	{
-		for (UINT32 i = 0; i < numSamples; i++)
+		for (u32 i = 0; i < numSamples; i++)
 		{
-			INT32 sum = 0;
-			for (UINT32 j = 0; j < numChannels; j++)
+			i32 sum = 0;
+			for (u32 j = 0; j < numChannels; j++)
 			{
 				sum += *input;
 				++input;
@@ -36,107 +36,107 @@ namespace bs
 		}
 	}
 
-	void convert32To24Bits(const INT32 input, UINT8* output)
+	void convert32To24Bits(const i32 input, u8* output)
 	{
-		UINT32 valToEncode = *(UINT32*)&input;
+		u32 valToEncode = *(u32*)&input;
 		output[0] = (valToEncode >> 8) & 0x000000FF;
 		output[1] = (valToEncode >> 16) & 0x000000FF;
 		output[2] = (valToEncode >> 24) & 0x000000FF;
 	}
 
-	void convertToMono24(const UINT8* input, UINT8* output, UINT32 numSamples, UINT32 numChannels)
+	void convertToMono24(const u8* input, u8* output, u32 numSamples, u32 numChannels)
 	{
-		for (UINT32 i = 0; i < numSamples; i++)
+		for (u32 i = 0; i < numSamples; i++)
 		{
-			INT64 sum = 0;
-			for (UINT32 j = 0; j < numChannels; j++)
+			i64 sum = 0;
+			for (u32 j = 0; j < numChannels; j++)
 			{
 				sum += AudioUtility::Convert24To32Bits(input);
 				input += 3;
 			}
 
-			INT32 avg = (INT32)(sum / numChannels);
+			i32 avg = (i32)(sum / numChannels);
 			convert32To24Bits(avg, output);
 			output += 3;
 		}
 	}
 
-	void convertToMono32(const INT32* input, INT32* output, UINT32 numSamples, UINT32 numChannels)
+	void convertToMono32(const i32* input, i32* output, u32 numSamples, u32 numChannels)
 	{
-		for (UINT32 i = 0; i < numSamples; i++)
+		for (u32 i = 0; i < numSamples; i++)
 		{
-			INT64 sum = 0;
-			for (UINT32 j = 0; j < numChannels; j++)
+			i64 sum = 0;
+			for (u32 j = 0; j < numChannels; j++)
 			{
 				sum += *input;
 				++input;
 			}
 
-			*output = (INT32)(sum / numChannels);
+			*output = (i32)(sum / numChannels);
 			++output;
 		}
 	}
 
-	void convert8To32Bits(const INT8* input, INT32* output, UINT32 numSamples)
+	void convert8To32Bits(const i8* input, i32* output, u32 numSamples)
 	{
-		for (UINT32 i = 0; i < numSamples; i++)
+		for (u32 i = 0; i < numSamples; i++)
 		{
-			INT8 val = input[i];
+			i8 val = input[i];
 			output[i] = val << 24;
 		}
 	}
 
-	void convert16To32Bits(const INT16* input, INT32* output, UINT32 numSamples)
+	void convert16To32Bits(const i16* input, i32* output, u32 numSamples)
 	{
-		for (UINT32 i = 0; i < numSamples; i++)
+		for (u32 i = 0; i < numSamples; i++)
 			output[i] = input[i] << 16;
 	}
 
-	void convert24To32Bits(const UINT8* input, INT32* output, UINT32 numSamples)
+	void convert24To32Bits(const u8* input, i32* output, u32 numSamples)
 	{
-		for (UINT32 i = 0; i < numSamples; i++)
+		for (u32 i = 0; i < numSamples; i++)
 		{
 			output[i] = AudioUtility::Convert24To32Bits(input);
 			input += 3;
 		}
 	}
 
-	void convert32To8Bits(const INT32* input, UINT8* output, UINT32 numSamples)
+	void convert32To8Bits(const i32* input, u8* output, u32 numSamples)
 	{
-		for (UINT32 i = 0; i < numSamples; i++)
-			output[i] = (INT8)(input[i] >> 24);
+		for (u32 i = 0; i < numSamples; i++)
+			output[i] = (i8)(input[i] >> 24);
 	}
 
-	void convert32To16Bits(const INT32* input, INT16* output, UINT32 numSamples)
+	void convert32To16Bits(const i32* input, i16* output, u32 numSamples)
 	{
-		for (UINT32 i = 0; i < numSamples; i++)
-			output[i] = (INT16)(input[i] >> 16);
+		for (u32 i = 0; i < numSamples; i++)
+			output[i] = (i16)(input[i] >> 16);
 	}
 
-	void convert32To24Bits(const INT32* input, UINT8* output, UINT32 numSamples)
+	void convert32To24Bits(const i32* input, u8* output, u32 numSamples)
 	{
-		for (UINT32 i = 0; i < numSamples; i++)
+		for (u32 i = 0; i < numSamples; i++)
 		{
 			convert32To24Bits(input[i], output);
 			output += 3;
 		}
 	}
 
-	void AudioUtility::ConvertToMono(const UINT8* input, UINT8* output, UINT32 bitDepth, UINT32 numSamples, UINT32 numChannels)
+	void AudioUtility::ConvertToMono(const u8* input, u8* output, u32 bitDepth, u32 numSamples, u32 numChannels)
 	{
 		switch (bitDepth)
 		{
 		case 8:
-			convertToMono8((INT8*)input, output, numSamples, numChannels);
+			convertToMono8((i8*)input, output, numSamples, numChannels);
 			break;
 		case 16:
-			convertToMono16((INT16*)input, (INT16*)output, numSamples, numChannels);
+			convertToMono16((i16*)input, (i16*)output, numSamples, numChannels);
 			break;
 		case 24:
 			convertToMono24(input, output, numSamples, numChannels);
 			break;
 		case 32:
-			convertToMono32((INT32*)input, (INT32*)output, numSamples, numChannels);
+			convertToMono32((i32*)input, (i32*)output, numSamples, numChannels);
 			break;
 		default:
 			assert(false);
@@ -144,15 +144,15 @@ namespace bs
 		}
 	}
 
-	void AudioUtility::ConvertBitDepth(const UINT8* input, UINT32 inBitDepth, UINT8* output, UINT32 outBitDepth, UINT32 numSamples)
+	void AudioUtility::ConvertBitDepth(const u8* input, u32 inBitDepth, u8* output, u32 outBitDepth, u32 numSamples)
 	{
-		INT32* srcBuffer = nullptr;
+		i32* srcBuffer = nullptr;
 
 		const bool needTempBuffer = inBitDepth != 32;
 		if (needTempBuffer)
-			srcBuffer = (INT32*)bs_stack_alloc(numSamples * sizeof(INT32));
+			srcBuffer = (i32*)bs_stack_alloc(numSamples * sizeof(i32));
 		else
-			srcBuffer = (INT32*)input;
+			srcBuffer = (i32*)input;
 
 		// Note: I convert to a temporary 32-bit buffer and then use that to convert to actual requested bit depth.
 		//       It would be more efficient to convert directly from source to requested depth without a temporary buffer,
@@ -160,10 +160,10 @@ namespace bs
 		switch (inBitDepth)
 		{
 		case 8:
-			convert8To32Bits((INT8*)input, srcBuffer, numSamples);
+			convert8To32Bits((i8*)input, srcBuffer, numSamples);
 			break;
 		case 16:
-			convert16To32Bits((INT16*)input, srcBuffer, numSamples);
+			convert16To32Bits((i16*)input, srcBuffer, numSamples);
 			break;
 		case 24:
 			bs::convert24To32Bits(input, srcBuffer, numSamples);
@@ -182,13 +182,13 @@ namespace bs
 			convert32To8Bits(srcBuffer, output, numSamples);
 			break;
 		case 16:
-			convert32To16Bits(srcBuffer, (INT16*)output, numSamples);
+			convert32To16Bits(srcBuffer, (i16*)output, numSamples);
 			break;
 		case 24:
 			convert32To24Bits(srcBuffer, output, numSamples);
 			break;
 		case 32:
-			memcpy(output, srcBuffer, numSamples * sizeof(INT32));
+			memcpy(output, srcBuffer, numSamples * sizeof(i32));
 			break;
 		default:
 			assert(false);
@@ -202,13 +202,13 @@ namespace bs
 		}
 	}
 
-	void AudioUtility::ConvertToFloat(const UINT8* input, UINT32 inBitDepth, float* output, UINT32 numSamples)
+	void AudioUtility::ConvertToFloat(const u8* input, u32 inBitDepth, float* output, u32 numSamples)
 	{
 		if (inBitDepth == 8)
 		{
-			for (UINT32 i = 0; i < numSamples; i++)
+			for (u32 i = 0; i < numSamples; i++)
 			{
-				INT8 sample = *(INT8*)input;
+				i8 sample = *(i8*)input;
 				output[i] = sample / 127.0f;
 
 				input++;
@@ -216,9 +216,9 @@ namespace bs
 		}
 		else if (inBitDepth == 16)
 		{
-			for (UINT32 i = 0; i < numSamples; i++)
+			for (u32 i = 0; i < numSamples; i++)
 			{
-				INT16 sample = *(INT16*)input;
+				i16 sample = *(i16*)input;
 				output[i] = sample / 32767.0f;
 
 				input += 2;
@@ -226,9 +226,9 @@ namespace bs
 		}
 		else if (inBitDepth == 24)
 		{
-			for (UINT32 i = 0; i < numSamples; i++)
+			for (u32 i = 0; i < numSamples; i++)
 			{
-				INT32 sample = Convert24To32Bits(input);
+				i32 sample = Convert24To32Bits(input);
 				output[i] = sample / 2147483647.0f;
 
 				input += 3;
@@ -236,9 +236,9 @@ namespace bs
 		}
 		else if (inBitDepth == 32)
 		{
-			for (UINT32 i = 0; i < numSamples; i++)
+			for (u32 i = 0; i < numSamples; i++)
 			{
-				INT32 sample = *(INT32*)input;
+				i32 sample = *(i32*)input;
 				output[i] = sample / 2147483647.0f;
 
 				input += 4;
@@ -248,7 +248,7 @@ namespace bs
 			assert(false);
 	}
 
-	INT32 AudioUtility::Convert24To32Bits(const UINT8* input)
+	i32 AudioUtility::Convert24To32Bits(const u8* input)
 	{
 		return (input[2] << 24) | (input[1] << 16) | (input[0] << 8);
 	}

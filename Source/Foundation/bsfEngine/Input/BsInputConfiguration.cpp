@@ -5,22 +5,22 @@
 namespace bs
 {
 	
-	UINT32 VirtualButton::NextButtonId = 0;
+	u32 VirtualButton::NextButtonId = 0;
 
-	Map<String, UINT32> VirtualAxis::UniqueAxisIds;
-	UINT32 VirtualAxis::NextAxisId = 0;
+	Map<String, u32> VirtualAxis::UniqueAxisIds;
+	u32 VirtualAxis::NextAxisId = 0;
 
 	VIRTUAL_BUTTON_DESC::VIRTUAL_BUTTON_DESC(bs::ButtonCode buttonCode, ButtonModifier modifiers, bool repeatable)
 		:ButtonCode(buttonCode), Modifiers(modifiers), Repeatable(repeatable)
 	{ }
 
-	VIRTUAL_AXIS_DESC::VIRTUAL_AXIS_DESC(UINT32 type)
+	VIRTUAL_AXIS_DESC::VIRTUAL_AXIS_DESC(u32 type)
 		:Type(type)
 	{ }
 
 	VirtualButton::VirtualButton(const String& name)
 	{
-		Map<String, UINT32>& uniqueButtonIds = GetUniqueButtonIds();
+		Map<String, u32>& uniqueButtonIds = GetUniqueButtonIds();
 
 		auto findIter = uniqueButtonIds.find(name);
 
@@ -33,9 +33,9 @@ namespace bs
 		}
 	}
 
-	Map<String, UINT32>& VirtualButton::GetUniqueButtonIds()
+	Map<String, u32>& VirtualButton::GetUniqueButtonIds()
 	{
-		static Map<String, UINT32> uniqueButtonIds;
+		static Map<String, u32> uniqueButtonIds;
 		return uniqueButtonIds;
 	}
 
@@ -56,19 +56,19 @@ namespace bs
 	{
 		Vector<VirtualButtonData>& btnData = mButtons[buttonCode & 0x0000FFFF];
 
-		INT32 idx = -1;
-		for(UINT32 i = 0; i < (UINT32)btnData.size(); i++)
+		i32 idx = -1;
+		for(u32 i = 0; i < (u32)btnData.size(); i++)
 		{
 			if (btnData[i].Name == name)
 			{
-				idx = (INT32)i;
+				idx = (i32)i;
 				break;
 			}
 		}
 
 		if(idx == -1)
 		{
-			idx = (INT32)btnData.size();
+			idx = (i32)btnData.size();
 			btnData.push_back(VirtualButtonData());
 		}
 
@@ -80,17 +80,17 @@ namespace bs
 
 	void InputConfiguration::UnregisterButton(const String& name)
 	{
-		Vector<UINT32> toRemove;
+		Vector<u32> toRemove;
 
-		for(UINT32 i = 0; i < BC_Count; i++)
+		for(u32 i = 0; i < BC_Count; i++)
 		{
-			for(UINT32 j = 0; j < (UINT32)mButtons[i].size(); j++)
+			for(u32 j = 0; j < (u32)mButtons[i].size(); j++)
 			{
 				if(mButtons[i][j].Name == name)
 					toRemove.push_back(j);
 			}
 
-			UINT32 numRemoved = 0;
+			u32 numRemoved = 0;
 			for(auto& toRemoveIdx : toRemove)
 			{
 				mButtons[i].erase(mButtons[i].begin() + toRemoveIdx - numRemoved);
@@ -106,7 +106,7 @@ namespace bs
 	{
 		VirtualAxis axis(name);
 
-		if (axis.AxisIdentifier >= (UINT32)mAxes.size())
+		if (axis.AxisIdentifier >= (u32)mAxes.size())
 			mAxes.resize(axis.AxisIdentifier + 1);
 
 		mAxes[axis.AxisIdentifier].Name = name;
@@ -116,7 +116,7 @@ namespace bs
 
 	void InputConfiguration::UnregisterAxis(const String& name)
 	{
-		for (UINT32 i = 0; i < (UINT32)mAxes.size(); i++)
+		for (u32 i = 0; i < (u32)mAxes.size(); i++)
 		{
 			if (mAxes[i].Name == name)
 			{
@@ -126,14 +126,14 @@ namespace bs
 		}
 	}
 
-	bool InputConfiguration::GetButtonsInternal(ButtonCode code, UINT32 modifiers, Vector<VirtualButton>& btns, Vector<VIRTUAL_BUTTON_DESC>& btnDesc) const
+	bool InputConfiguration::GetButtonsInternal(ButtonCode code, u32 modifiers, Vector<VirtualButton>& btns, Vector<VIRTUAL_BUTTON_DESC>& btnDesc) const
 	{
 		const Vector<VirtualButtonData>& btnData = mButtons[code & 0x0000FFFF];
 
 		bool foundAny = false;
-		for(UINT32 i = 0; i < (UINT32)btnData.size(); i++)
+		for(u32 i = 0; i < (u32)btnData.size(); i++)
 		{
-			if((((UINT32)btnData[i].Desc.Modifiers) & modifiers) == ((UINT32)btnData[i].Desc.Modifiers))
+			if((((u32)btnData[i].Desc.Modifiers) & modifiers) == ((u32)btnData[i].Desc.Modifiers))
 			{
 				btns.push_back(btnData[i].Button);
 				btnDesc.push_back(btnData[i].Desc);
@@ -146,7 +146,7 @@ namespace bs
 
 	bool InputConfiguration::GetAxisInternal(const VirtualAxis& axis, VIRTUAL_AXIS_DESC& axisDesc) const
 	{
-		if (axis.AxisIdentifier >= (UINT32)mAxes.size())
+		if (axis.AxisIdentifier >= (u32)mAxes.size())
 			return false;
 
 		axisDesc = mAxes[axis.AxisIdentifier].Desc;

@@ -86,7 +86,7 @@ namespace bs
 		static U32String ToUtF32(const String& input);
 
 		/** Counts the number of characters in the provided UTF-8 input string. */
-		static UINT32 Count(const String& input);
+		static u32 Count(const String& input);
 
 		/** Converts the provided UTF8 encoded string to lowercase. */
 		static String ToLower(const String& input);
@@ -99,10 +99,10 @@ namespace bs
 		 * encoding. If @p charIdx is out of range the method returns the index past the last byte in the string (same
 		 * as the string length in bytes).
 		 */
-		static UINT32 CharToByteIndex(const String& input, UINT32 charIdx);
+		static u32 CharToByteIndex(const String& input, u32 charIdx);
 
 		/** Calculates the number of bytes taken up by the character at the specified position. */
-		static UINT32 CharByteCount(const String& input, UINT32 charIdx);
+		static u32 CharByteCount(const String& input, u32 charIdx);
 	};
 
 	/** @} */

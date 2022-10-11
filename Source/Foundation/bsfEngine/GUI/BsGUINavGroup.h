@@ -42,7 +42,7 @@ namespace bs
 		 * @param[in]	tabIdx		Index of the element in the tab group. Set setIndex() for more information on how
 		 *							is the index interpreted.
 		 */
-		void RegisterElement(GUIElement* element, INT32 tabIdx = 0);
+		void RegisterElement(GUIElement* element, i32 tabIdx = 0);
 
 		/**
 		 * Sets the index of a previously registered element in the tab group. The index determines in what order will the
@@ -52,7 +52,7 @@ namespace bs
 		 * rest of indices are visited in order from lowest to highest. Negative indices are visited before auto-positioned
 		 * 0-index element, and positive indices are visited after.
 		 */
-		void SetIndex(GUIElement* element, INT32 tabIdx);
+		void SetIndex(GUIElement* element, i32 tabIdx);
 
 		/** Unregisters an element from the tab group. */
 		void UnregisterElement(GUIElement* element);
@@ -60,8 +60,8 @@ namespace bs
 		/** Sets the focus to the top-left element. Only iterates over elements with no explicit tab index. */
 		void FocusTopLeft();
 
-		UnorderedMap<GUIElement*, INT32> mElements;
-		MultiMap<INT32, GUIElement*> mOrderedElements;
+		UnorderedMap<GUIElement*, i32> mElements;
+		MultiMap<i32, GUIElement*> mOrderedElements;
 	};
 
 	/** @} */

@@ -87,7 +87,7 @@ namespace ct
 		{
 			RenderCompositorNode* Node;
 			NodeType* NodeType;
-			UINT32 LastUseIdx;
+			u32 LastUseIdx;
 			SmallVector<RenderCompositorNode*, 4> Inputs;
 		};
 
@@ -499,7 +499,7 @@ namespace ct
 		void Clear() override;
 
 		mutable SPtr<PooledRenderTexture> mOutput[2];
-		mutable UINT32 mCurrentIdx = 0;
+		mutable u32 mCurrentIdx = 0;
 	};
 
 	/** Calculates the eye adaptation values used for automatic exposure. */
@@ -543,7 +543,7 @@ namespace ct
 		void Clear() override;
 
 		SPtr<PooledRenderTexture> mTonemapLUT;
-		UINT64 mTonemapLastUpdateHash = -1;
+		u64 mTonemapLastUpdateHash = -1;
 	};
 
 	/** Renders the depth of field effect with a Bokeh flare simulating camera aperture shape. */
@@ -633,10 +633,10 @@ namespace ct
 	class RCNodeSceneColorDownsamples : public RenderCompositorNode
 	{
 	public:
-		static constexpr UINT32 MAX_NUM_DOWNSAMPLES = 6;
+		static constexpr u32 MAX_NUM_DOWNSAMPLES = 6;
 
 		SPtr<PooledRenderTexture> Output[MAX_NUM_DOWNSAMPLES];
-		UINT32 AvailableDownsamples = 0;
+		u32 AvailableDownsamples = 0;
 
 		static StringID GetNodeId() { return "SceneColorDownsamples"; }
 		static SmallVector<StringID, 4> GetDependencies(const RendererView& view);

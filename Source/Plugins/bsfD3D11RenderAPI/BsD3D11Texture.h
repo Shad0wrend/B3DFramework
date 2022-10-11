@@ -41,8 +41,8 @@ namespace bs { namespace ct
 		void Initialize() ;
 
 		/** @copydoc Texture::lockImpl */
-		PixelData LockImpl(GpuLockOptions options, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 deviceIdx = 0,
-						   UINT32 queueIdx = 0) ;
+		PixelData LockImpl(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0,
+						   u32 queueIdx = 0) ;
 
 		/** @copydoc Texture::unlockImpl */
 		void UnlockImpl() ;
@@ -52,12 +52,12 @@ namespace bs { namespace ct
 			const SPtr<CommandBuffer>& commandBuffer) ;
 
 		/** @copydoc Texture::readData */
-		void ReadDataImpl(PixelData& dest, UINT32 mipLevel = 0, UINT32 face = 0, UINT32 deviceIdx = 0,
-					  UINT32 queueIdx = 0) ;
+		void ReadDataImpl(PixelData& dest, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0,
+					  u32 queueIdx = 0) ;
 
 		/** @copydoc Texture::writeData */
-		void WriteDataImpl(const PixelData& src, UINT32 mipLevel = 0, UINT32 face = 0, bool discardWholeBuffer = false,
-					   UINT32 queueIdx = 0) ;
+		void WriteDataImpl(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false,
+					   u32 queueIdx = 0) ;
 
 		/**	Creates a blank DX11 1D texture object. */
 		void Create1DTex();
@@ -89,7 +89,7 @@ namespace bs { namespace ct
 		 * Non-staging textures must be dynamic in order to be mapped directly and only for writing. No restrictions are
 		 * made on staging textures.
 		 */
-		void* Map(ID3D11Resource* res, D3D11_MAP flags, UINT32 mipLevel, UINT32 face, UINT32& rowPitch, UINT32& slicePitch);
+		void* Map(ID3D11Resource* res, D3D11_MAP flags, u32 mipLevel, u32 face, u32& rowPitch, u32& slicePitch);
 
 		/**	Unmaps a previously mapped texture. */
 		void Unmap(ID3D11Resource* res);
@@ -105,7 +105,7 @@ namespace bs { namespace ct
 		 * @param[out]	slicePitch	Output size of a single slice in bytes (relevant only for 3D textures).
 		 * @return					Pointer to the mapped area of memory.
 		 */
-		void* Mapstagingbuffer(D3D11_MAP flags, UINT32 mipLevel, UINT32 face, UINT32& rowPitch, UINT32& slicePitch);
+		void* Mapstagingbuffer(D3D11_MAP flags, u32 mipLevel, u32 face, u32& rowPitch, u32& slicePitch);
 
 		/**	Unmaps a previously mapped staging buffer. */
 		void Unmapstagingbuffer();
@@ -118,7 +118,7 @@ namespace bs { namespace ct
 		 * @param[in]	mipLevel	Mip level to map (0 being the base level).
 		 * @param[in]	face		Texture face to map, in case texture has more than one.
 		 */
-		void* Mapstaticbuffer(PixelData lock, UINT32 mipLevel, UINT32 face);
+		void* Mapstaticbuffer(PixelData lock, u32 mipLevel, u32 face);
 
 		/**	Unmaps a previously mapped static buffer and flushes its data to the actual GPU buffer. */
 		void Unmapstaticbuffer();
@@ -141,7 +141,7 @@ namespace bs { namespace ct
 
 		ID3D11Resource* mStagingBuffer = nullptr;
 		PixelData* mStaticBuffer = nullptr;
-		UINT32 mLockedSubresourceIdx = -1;
+		u32 mLockedSubresourceIdx = -1;
 		bool mLockedForReading = false;
 	};
 

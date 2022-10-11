@@ -200,7 +200,7 @@ namespace bs
 		return stream.str();
 	}
 
-	WString toWString(INT64 val, unsigned short width, char fill, std::ios::fmtflags flags)
+	WString toWString(i64 val, unsigned short width, char fill, std::ios::fmtflags flags)
 	{
 		WStringStream stream;
 		stream.width(width);
@@ -211,7 +211,7 @@ namespace bs
 		return stream.str();
 	}
 
-	WString toWString(UINT64 val, unsigned short width, char fill, std::ios::fmtflags flags)
+	WString toWString(u64 val, unsigned short width, char fill, std::ios::fmtflags flags)
 	{
 		WStringStream stream;
 		stream.width(width);
@@ -438,7 +438,7 @@ namespace bs
 		return stream.str();
 	}
 
-	String toString(INT64 val,
+	String toString(i64 val,
 		unsigned short width, char fill, std::ios::fmtflags flags)
 	{
 		StringStream stream;
@@ -450,7 +450,7 @@ namespace bs
 		return stream.str();
 	}
 
-	String toString(UINT64 val, unsigned short width, char fill, std::ios::fmtflags flags)
+	String toString(u64 val, unsigned short width, char fill, std::ios::fmtflags flags)
 	{
 		StringStream stream;
 		stream.width(width);
@@ -652,41 +652,41 @@ namespace bs
 		return ret;
 	}
 
-	INT32 parseINT32(const String& val, INT32 defaultValue)
+	i32 parsei32(const String& val, i32 defaultValue)
 	{
 		// Use istringstream for direct correspondence with toString
 		StringStream str(val);
-		INT32 ret = defaultValue;
+		i32 ret = defaultValue;
 		str >> ret;
 
 		return ret;
 	}
 
-	UINT32 parseUINT32(const String& val, UINT32 defaultValue)
+	u32 parseu32(const String& val, u32 defaultValue)
 	{
 		// Use istringstream for direct correspondence with toString
 		StringStream str(val);
-		UINT32 ret = defaultValue;
+		u32 ret = defaultValue;
 		str >> ret;
 
 		return ret;
 	}
 
-	INT64 parseINT64(const String& val, INT64 defaultValue)
+	i64 parsei64(const String& val, i64 defaultValue)
 	{
 		// Use istringstream for direct correspondence with toString
 		StringStream str(val);
-		INT64 ret = defaultValue;
+		i64 ret = defaultValue;
 		str >> ret;
 
 		return ret;
 	}
 
-	UINT64 parseUINT64(const String& val, UINT64 defaultValue)
+	u64 parseu64(const String& val, u64 defaultValue)
 	{
 		// Use istringstream for direct correspondence with toString
 		StringStream str(val);
-		UINT64 ret = defaultValue;
+		u64 ret = defaultValue;
 		str >> ret;
 
 		return ret;
@@ -722,41 +722,41 @@ namespace bs
 		return ret;
 	}
 
-	INT32 parseINT32(const WString& val, INT32 defaultValue)
+	i32 parsei32(const WString& val, i32 defaultValue)
 	{
 		// Use istringstream for direct correspondence with toString
 		WStringStream str(val);
-		INT32 ret = defaultValue;
+		i32 ret = defaultValue;
 		str >> ret;
 
 		return ret;
 	}
 
-	UINT32 parseUINT32(const WString& val, UINT32 defaultValue)
+	u32 parseu32(const WString& val, u32 defaultValue)
 	{
 		// Use istringstream for direct correspondence with toString
 		WStringStream str(val);
-		UINT32 ret = defaultValue;
+		u32 ret = defaultValue;
 		str >> ret;
 
 		return ret;
 	}
 
-	INT64 parseINT64(const WString& val, INT64 defaultValue)
+	i64 parsei64(const WString& val, i64 defaultValue)
 	{
 		// Use istringstream for direct correspondence with toString
 		WStringStream str(val);
-		INT64 ret = defaultValue;
+		i64 ret = defaultValue;
 		str >> ret;
 
 		return ret;
 	}
 
-	UINT64 parseUINT64(const WString& val, UINT64 defaultValue)
+	u64 parseu64(const WString& val, u64 defaultValue)
 	{
 		// Use istringstream for direct correspondence with toString
 		WStringStream str(val);
-		UINT64 ret = defaultValue;
+		u64 ret = defaultValue;
 		str >> ret;
 
 		return ret;

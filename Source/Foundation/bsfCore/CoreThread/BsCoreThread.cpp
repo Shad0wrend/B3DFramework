@@ -20,7 +20,7 @@ namespace bs
 
 	void CoreThread::OnStartUp()
 	{
-		for (UINT32 i = 0; i < NUM_SYNC_BUFFERS; i++)
+		for (u32 i = 0; i < NUM_SYNC_BUFFERS; i++)
 		{
 			mFrameAllocs[i] = bs_new<FrameAlloc>();
 			mFrameAllocs[i]->SetOwnerThread(BS_THREAD_CURRENT_ID); // Sim thread
@@ -53,7 +53,7 @@ namespace bs
 			mCommandQueue = nullptr;
 		}
 
-		for (UINT32 i = 0; i < NUM_SYNC_BUFFERS; i++)
+		for (u32 i = 0; i < NUM_SYNC_BUFFERS; i++)
 		{
 			mFrameAllocs[i]->SetOwnerThread(BS_THREAD_CURRENT_ID); // Sim thread
 			bs_delete(mFrameAllocs[i]);
@@ -192,7 +192,7 @@ namespace bs
 
 	void CoreThread::SubmitAll(bool blockUntilComplete)
 	{
-		UINT32 blockCommandId = (UINT32)-1;
+		u32 blockCommandId = (u32)-1;
 
 		{
 			// This lock is needed mainly because of blocking. Without it another submitting thread might flush a command
@@ -236,7 +236,7 @@ namespace bs
 		CommandQueue<CommandQueueSync>& queue = *GetQueue();
 		Queue<QueuedCommand>* commands = queue.Flush();
 
-		UINT32 commandId = -1;
+		u32 commandId = -1;
 		{
 			Lock lock2(mCommandQueueMutex);
 
@@ -269,7 +269,7 @@ namespace bs
 			bool blockUntilComplete = flags.IsSet(CTQF_BlockUntilComplete);
 
 			AsyncOp op;
-			UINT32 commandId = -1;
+			u32 commandId = -1;
 			{
 				Lock lock(mCommandQueueMutex);
 
@@ -303,7 +303,7 @@ namespace bs
 		{
 			bool blockUntilComplete = flags.IsSet(CTQF_BlockUntilComplete);
 
-			UINT32 commandId = -1;
+			u32 commandId = -1;
 			{
 				Lock lock(mCommandQueueMutex);
 
@@ -325,7 +325,7 @@ namespace bs
 
 	void CoreThread::Update()
 	{
-		for (UINT32 i = 0; i < NUM_SYNC_BUFFERS; i++)
+		for (u32 i = 0; i < NUM_SYNC_BUFFERS; i++)
 			mFrameAllocs[i]->SetOwnerThread(mCoreThreadId);
 
 		mActiveFrameAlloc = (mActiveFrameAlloc + 1) % 2;
@@ -338,7 +338,7 @@ namespace bs
 		return mFrameAllocs[mActiveFrameAlloc];
 	}
 
-	void CoreThread::BlockUntilCommandCompleted(UINT32 commandId)
+	void CoreThread::BlockUntilCommandCompleted(u32 commandId)
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 
@@ -362,7 +362,7 @@ namespace bs
 #endif
 	}
 
-	void CoreThread::CommandCompletedNotify(UINT32 commandId)
+	void CoreThread::CommandCompletedNotify(u32 commandId)
 	{
 		{
 			Lock lock(mCommandNotifyMutex);

@@ -104,12 +104,12 @@ namespace bs
 		{
 			CachedBlendState() = default;
 
-			CachedBlendState(UINT32 id)
+			CachedBlendState(u32 id)
 				:Id(id)
 			{ }
 
 			std::weak_ptr<BlendState> State;
-			UINT32 Id = 0;
+			u32 Id = 0;
 		};
 
 		/**	Contains data about a cached rasterizer state. */
@@ -117,12 +117,12 @@ namespace bs
 		{
 			CachedRasterizerState() = default;
 
-			CachedRasterizerState(UINT32 id)
+			CachedRasterizerState(u32 id)
 				:Id(id)
 			{ }
 
 			std::weak_ptr<RasterizerState> State;
-			UINT32 Id = 0;
+			u32 Id = 0;
 		};
 
 		/** Contains data about a cached depth stencil state. */
@@ -130,12 +130,12 @@ namespace bs
 		{
 			CachedDepthStencilState() = default;
 
-			CachedDepthStencilState(UINT32 id)
+			CachedDepthStencilState(u32 id)
 				:Id(id)
 			{ }
 
 			std::weak_ptr<DepthStencilState> State;
-			UINT32 Id = 0;
+			u32 Id = 0;
 		};
 
 	public:
@@ -229,13 +229,13 @@ namespace bs
 		virtual SPtr<SamplerState> CreateSamplerStateInternalInternal(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask) const;
 
 		/** @copydoc createBlendState */
-		virtual SPtr<BlendState> CreateBlendStateInternalInternal(const BLEND_STATE_DESC& desc, UINT32 id) const;
+		virtual SPtr<BlendState> CreateBlendStateInternalInternal(const BLEND_STATE_DESC& desc, u32 id) const;
 
 		/** @copydoc createRasterizerState */
-		virtual SPtr<RasterizerState> CreateRasterizerStateInternalInternal(const RASTERIZER_STATE_DESC& desc, UINT32 id) const;
+		virtual SPtr<RasterizerState> CreateRasterizerStateInternalInternal(const RASTERIZER_STATE_DESC& desc, u32 id) const;
 
 		/** @copydoc createDepthStencilState */
-		virtual SPtr<DepthStencilState> CreateDepthStencilStateInternalInternal(const DEPTH_STENCIL_STATE_DESC& desc, UINT32 id) const;
+		virtual SPtr<DepthStencilState> CreateDepthStencilStateInternalInternal(const DEPTH_STENCIL_STATE_DESC& desc, u32 id) const;
 
 	private:
 		/**	Triggered when a new sampler state is created. */
@@ -265,19 +265,19 @@ namespace bs
 		/**
 		 * Attempts to find a cached blend state corresponding to the provided descriptor. Returns null if one doesn't exist.
 		 */
-		SPtr<BlendState> FindCachedState(const BLEND_STATE_DESC& desc, UINT32& id) const;
+		SPtr<BlendState> FindCachedState(const BLEND_STATE_DESC& desc, u32& id) const;
 
 		/**
 		 * Attempts to find a cached rasterizer state corresponding to the provided descriptor. Returns null if one doesn't
 		 * exist.
 		 */
-		SPtr<RasterizerState> FindCachedState(const RASTERIZER_STATE_DESC& desc, UINT32& id) const;
+		SPtr<RasterizerState> FindCachedState(const RASTERIZER_STATE_DESC& desc, u32& id) const;
 
 		/**
 		 * Attempts to find a cached depth-stencil state corresponding to the provided descriptor. Returns null if one
 		 * doesn't exist.
 		 */
-		SPtr<DepthStencilState> FindCachedState(const DEPTH_STENCIL_STATE_DESC& desc, UINT32& id) const;
+		SPtr<DepthStencilState> FindCachedState(const DEPTH_STENCIL_STATE_DESC& desc, u32& id) const;
 
 		mutable SPtr<SamplerState> mDefaultSamplerState;
 		mutable SPtr<BlendState> mDefaultBlendState;
@@ -289,9 +289,9 @@ namespace bs
 		mutable UnorderedMap<RASTERIZER_STATE_DESC, CachedRasterizerState> mCachedRasterizerStates;
 		mutable UnorderedMap<DEPTH_STENCIL_STATE_DESC, CachedDepthStencilState> mCachedDepthStencilStates;
 
-		mutable UINT32 mNextBlendStateId = 0;
-		mutable UINT32 mNextRasterizerStateId = 0;
-		mutable UINT32 mNextDepthStencilStateId = 0;
+		mutable u32 mNextBlendStateId = 0;
+		mutable u32 mNextRasterizerStateId = 0;
+		mutable u32 mNextDepthStencilStateId = 0;
 
 		mutable Mutex mMutex;
 	};

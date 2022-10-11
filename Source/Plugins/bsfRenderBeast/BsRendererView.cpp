@@ -144,8 +144,8 @@ namespace bs { namespace ct
 			const SPtr<Viewport>& viewport = mCamera->GetViewport();
 			if(viewport)
 			{
-				UINT32 newTargetWidth = 0;
-				UINT32 newTargetHeight = 0;
+				u32 newTargetWidth = 0;
+				u32 newTargetHeight = 0;
 				if (mProperties.Target.Target != nullptr)
 				{
 					newTargetWidth = mProperties.Target.Target->GetProperties().Width;
@@ -167,10 +167,10 @@ namespace bs { namespace ct
 		// Update projection matrix jitter if temporal AA is enabled
 		if(mRenderSettings->TemporalAa.Enabled)
 		{
-			UINT32 positionCount = mRenderSettings->TemporalAa.JitteredPositionCount;
+			u32 positionCount = mRenderSettings->TemporalAa.JitteredPositionCount;
 			positionCount = Math::Clamp(positionCount, 4U, 128U);
 			
-			UINT32 positionIndex = mTemporalPositionIdx % positionCount;
+			u32 positionIndex = mTemporalPositionIdx % positionCount;
 			
 			if (positionCount == 4)
 			{
@@ -231,7 +231,7 @@ namespace bs { namespace ct
 			if (mRenderSettings->EnableHdr && mRenderSettings->EnableAutoExposure)
 				mWaitingOnAutoExposureFrame = mFrameTimings.FrameIdx;
 			else
-				mWaitingOnAutoExposureFrame = std::numeric_limits<UINT64>::max();
+				mWaitingOnAutoExposureFrame = std::numeric_limits<u64>::max();
 		}
 	}
 
@@ -280,7 +280,7 @@ namespace bs { namespace ct
 			
 			// The view was redrawn but we still haven't received the eye adaptation results from the GPU, so
 			// we keep redrawing until we do
-			if (mWaitingOnAutoExposureFrame != std::numeric_limits<UINT64>::max())
+			if (mWaitingOnAutoExposureFrame != std::numeric_limits<u64>::max())
 				return true;
 			
 			// Need to render until the auto-exposure reaches the target exposure
@@ -322,7 +322,7 @@ namespace bs { namespace ct
 			// is required (technically we're drawing a few frames extra, as this information is always
 			// a few frames too late).
 			if (lastFinishedIter->FrameIdx == mWaitingOnAutoExposureFrame)
-				mWaitingOnAutoExposureFrame = std::numeric_limits<UINT64>::max();
+				mWaitingOnAutoExposureFrame = std::numeric_limits<u64>::max();
 
 			mLuminanceUpdates.erase(mLuminanceUpdates.begin(), lastFinishedIter + 1);
 		}
@@ -347,7 +347,7 @@ namespace bs { namespace ct
 		return Math::Pow(2.0f, mRenderSettings->ExposureScale);
 	}
 
-	void RendererView::NotifyLuminanceUpdatedInternal(UINT64 frameIdx, SPtr<CommandBuffer> cb, SPtr<PooledRenderTexture> texture) const
+	void RendererView::NotifyLuminanceUpdatedInternal(u64 frameIdx, SPtr<CommandBuffer> cb, SPtr<PooledRenderTexture> texture) const
 	{
 		mLuminanceUpdates.emplace_back(frameIdx, cb, texture);
 	}
@@ -365,7 +365,7 @@ namespace bs { namespace ct
 
 		if(visibility != nullptr)
 		{
-			for (UINT32 i = 0; i < (UINT32)renderables.size(); i++)
+			for (u32 i = 0; i < (u32)renderables.size(); i++)
 			{
 				bool visible = (*visibility)[i];
 
@@ -387,7 +387,7 @@ namespace bs { namespace ct
 
 		if(visibility != nullptr)
 		{
-			for (UINT32 i = 0; i < (UINT32)particleSystems.size(); i++)
+			for (u32 i = 0; i < (u32)particleSystems.size(); i++)
 			{
 				bool visible = (*visibility)[i];
 
@@ -409,7 +409,7 @@ namespace bs { namespace ct
 
 		if(visibility != nullptr)
 		{
-			for (UINT32 i = 0; i < (UINT32)decals.size(); i++)
+			for (u32 i = 0; i < (u32)decals.size(); i++)
 			{
 				bool visible = (*visibility)[i];
 
@@ -453,7 +453,7 @@ namespace bs { namespace ct
 
 		if(visibility != nullptr)
 		{
-			for (UINT32 i = 0; i < (UINT32)lights.size(); i++)
+			for (u32 i = 0; i < (u32)lights.size(); i++)
 			{
 				bool visible = (*visibility)[i];
 
@@ -464,12 +464,12 @@ namespace bs { namespace ct
 
 	void RendererView::CalculateVisibility(const Vector<CullInfo>& cullInfos, Vector<bool>& visibility) const
 	{
-		UINT64 cameraLayers = mProperties.VisibleLayers;
+		u64 cameraLayers = mProperties.VisibleLayers;
 		const ConvexVolume& worldFrustum = mProperties.CullFrustum;
 		const Vector3& worldCameraPosition = mProperties.ViewOrigin;
 		float baseCullDistance = mRenderSettings->CullDistance;
 
-		for (UINT32 i = 0; i < (UINT32)cullInfos.size(); i++)
+		for (u32 i = 0; i < (u32)cullInfos.size(); i++)
 		{
 			if ((cullInfos[i].Layer & cameraLayers) == 0)
 				continue;
@@ -503,7 +503,7 @@ namespace bs { namespace ct
 	{
 		const ConvexVolume& worldFrustum = mProperties.CullFrustum;
 
-		for (UINT32 i = 0; i < (UINT32)bounds.size(); i++)
+		for (u32 i = 0; i < (u32)bounds.size(); i++)
 		{
 			if (worldFrustum.Intersects(bounds[i]))
 				visibility[i] = true;
@@ -514,7 +514,7 @@ namespace bs { namespace ct
 	{
 		const ConvexVolume& worldFrustum = mProperties.CullFrustum;
 
-		for (UINT32 i = 0; i < (UINT32)bounds.size(); i++)
+		for (u32 i = 0; i < (u32)bounds.size(); i++)
 		{
 			if (worldFrustum.Intersects(bounds[i]))
 				visibility[i] = true;
@@ -524,7 +524,7 @@ namespace bs { namespace ct
 	void RendererView::QueueRenderElements(const SceneInfo& sceneInfo)
 	{
 		// Queue renderables
-		for(UINT32 i = 0; i < (UINT32)sceneInfo.Renderables.size(); i++)
+		for(u32 i = 0; i < (u32)sceneInfo.Renderables.size(); i++)
 		{
 			if (!mVisibility.Renderables[i])
 				continue;
@@ -535,10 +535,10 @@ namespace bs { namespace ct
 			bool needsVelocity = RequiresVelocityWrites();
 			for (auto& renderElem : sceneInfo.Renderables[i]->Elements)
 			{
-				UINT32 techniqueIdx;
+				u32 techniqueIdx;
 				if (needsVelocity)
 				{
-					techniqueIdx = renderElem.WriteVelocityTechniqueIdx != (UINT32)-1
+					techniqueIdx = renderElem.WriteVelocityTechniqueIdx != (u32)-1
 						? renderElem.WriteVelocityTechniqueIdx
 						: renderElem.DefaultTechniqueIdx;
 				}
@@ -558,7 +558,7 @@ namespace bs { namespace ct
 		}
 
 		// Queue particle systems
-		for(UINT32 i = 0; i < (UINT32)sceneInfo.ParticleSystems.size(); i++)
+		for(u32 i = 0; i < (u32)sceneInfo.ParticleSystems.size(); i++)
 		{
 			if (!mVisibility.ParticleSystems[i])
 				continue;
@@ -582,7 +582,7 @@ namespace bs { namespace ct
 
 		// Queue decals
 		const bool isMSAA = mProperties.Target.NumSamples > 1;
-		for(UINT32 i = 0; i < (UINT32)sceneInfo.Decals.size(); i++)
+		for(u32 i = 0; i < (u32)sceneInfo.Decals.size(); i++)
 		{
 			if (!mVisibility.Decals[i])
 				continue;
@@ -605,15 +605,15 @@ namespace bs { namespace ct
 			// the decal bounds. We need to be conservative since the material for rendering outside will not properly
 			// render the inside of the decal volume.
 			const bool isInside = boundingBox.Contains(mProperties.ViewOrigin, mProperties.NearPlane * 3.0f);
-			const UINT32* techniqueIndices = renderElem.TechniqueIndices[(INT32)isInside];
+			const u32* techniqueIndices = renderElem.TechniqueIndices[(i32)isInside];
 
 			// No MSAA evaluation, or same value for all samples (no divergence between samples)
 			mDecalQueue->Add(&renderElem, distanceToCamera,
-				techniqueIndices[(INT32)(isMSAA ? MSAAMode::Single : MSAAMode::None)]);
+				techniqueIndices[(i32)(isMSAA ? MSAAMode::Single : MSAAMode::None)]);
 
 			// Evaluates all MSAA samples for pixels that are marked as divergent
 			if(isMSAA)
-				mDecalQueue->Add(&renderElem, distanceToCamera, techniqueIndices[(INT32)MSAAMode::Full]);
+				mDecalQueue->Add(&renderElem, distanceToCamera, techniqueIndices[(i32)MSAAMode::Full]);
 		}
 
 		mForwardOpaqueQueue->Sort();
@@ -838,17 +838,17 @@ namespace bs { namespace ct
 		mLightGrid.UpdateGrid(*this, visibleLightData, visibleReflProbeData, !mRenderSettings->EnableLighting);
 	}
 
-	RendererViewGroup::RendererViewGroup(RendererView** views, UINT32 numViews, bool mainPass, UINT32 shadowMapSize)
+	RendererViewGroup::RendererViewGroup(RendererView** views, u32 numViews, bool mainPass, u32 shadowMapSize)
 		: mIsMainPass(mainPass), mShadowRenderer(shadowMapSize)
 	{
 		SetViews(views, numViews);
 	}
 
-	void RendererViewGroup::SetViews(RendererView** views, UINT32 numViews)
+	void RendererViewGroup::SetViews(RendererView** views, u32 numViews)
 	{
 		mViews.clear();
 
-		for (UINT32 i = 0; i < numViews; i++)
+		for (u32 i = 0; i < numViews; i++)
 		{
 			mViews.push_back(views[i]);
 			views[i]->SetViewIdxInternal(i);
@@ -857,11 +857,11 @@ namespace bs { namespace ct
 
 	void RendererViewGroup::DetermineVisibility(const SceneInfo& sceneInfo)
 	{
-		const auto numViews = (UINT32)mViews.size();
+		const auto numViews = (u32)mViews.size();
 
 		// Early exit if no views render scene geometry
 		bool anyViewsNeed3DDrawing = false;
-		for (UINT32 i = 0; i < numViews; i++)
+		for (u32 i = 0; i < numViews; i++)
 		{
 			if (mViews[i]->ShouldDraw3D())
 			{
@@ -883,7 +883,7 @@ namespace bs { namespace ct
 		mVisibility.Decals.resize(sceneInfo.Decals.size(), false);
 		mVisibility.Decals.assign(sceneInfo.Decals.size(), false);
 
-		for(UINT32 i = 0; i < numViews; i++)
+		for(u32 i = 0; i < numViews; i++)
 		{
 			mViews[i]->DetermineVisible(sceneInfo.Renderables, sceneInfo.RenderableCullInfos, &mVisibility.Renderables);
 			mViews[i]->DetermineVisible(sceneInfo.ParticleSystems, sceneInfo.ParticleSystemCullInfos, &mVisibility.ParticleSystems);
@@ -891,22 +891,22 @@ namespace bs { namespace ct
 		}
 		
 		// Generate render queues per camera
-		for (UINT32 i = 0; i < numViews; i++)
+		for (u32 i = 0; i < numViews; i++)
 		{
 			if(mViews[i]->ShouldDraw3D())
 				mViews[i]->QueueRenderElements(sceneInfo);
 		}
 
 		// Calculate light visibility for all views
-		const auto numRadialLights = (UINT32)sceneInfo.RadialLights.size();
+		const auto numRadialLights = (u32)sceneInfo.RadialLights.size();
 		mVisibility.RadialLights.resize(numRadialLights, false);
 		mVisibility.RadialLights.assign(numRadialLights, false);
 
-		const auto numSpotLights = (UINT32)sceneInfo.SpotLights.size();
+		const auto numSpotLights = (u32)sceneInfo.SpotLights.size();
 		mVisibility.SpotLights.resize(numSpotLights, false);
 		mVisibility.SpotLights.assign(numSpotLights, false);
 
-		for (UINT32 i = 0; i < numViews; i++)
+		for (u32 i = 0; i < numViews; i++)
 		{
 			if (!mViews[i]->ShouldDraw3D())
 				continue;
@@ -919,12 +919,12 @@ namespace bs { namespace ct
 		}
 
 		// Calculate refl. probe visibility for all views
-		const auto numProbes = (UINT32)sceneInfo.ReflProbes.size();
+		const auto numProbes = (u32)sceneInfo.ReflProbes.size();
 		mVisibility.ReflProbes.resize(numProbes, false);
 		mVisibility.ReflProbes.assign(numProbes, false);
 
 		// Note: Per-view visibility for refl. probes currently isn't calculated
-		for (UINT32 i = 0; i < numViews; i++)
+		for (u32 i = 0; i < numViews; i++)
 		{
 			const auto& viewProps = mViews[i]->GetProperties();
 
@@ -946,7 +946,7 @@ namespace bs { namespace ct
 		const bool supportsClusteredForward = gRenderBeast()->GetFeatureSet() == RenderBeastFeatureSet::Desktop;
 		if(supportsClusteredForward)
 		{
-			for (UINT32 i = 0; i < numViews; i++)
+			for (u32 i = 0; i < numViews; i++)
 			{
 				if (!mViews[i]->ShouldDraw3D())
 					continue;

@@ -21,7 +21,7 @@ namespace bs { namespace ct
 	/**	Contains data about a single render texture in the GPU resource pool. */
 	struct BS_CORE_EXPORT PooledRenderTexture
 	{
-		PooledRenderTexture(UINT32 lastUsedFrame)
+		PooledRenderTexture(u32 lastUsedFrame)
 			:mLastUsedFrame(lastUsedFrame)
 		{ }
 
@@ -31,13 +31,13 @@ namespace bs { namespace ct
 	private:
 		friend class GpuResourcePool;
 
-		UINT32 mLastUsedFrame = 0;
+		u32 mLastUsedFrame = 0;
 	};
 
 	/**	Contains data about a single storage buffer in the GPU resource pool. */
 	struct BS_CORE_EXPORT PooledStorageBuffer
 	{
-		PooledStorageBuffer(UINT32 lastUsedFrame)
+		PooledStorageBuffer(u32 lastUsedFrame)
 			:mLastUsedFrame(lastUsedFrame)
 		{ }
 
@@ -46,7 +46,7 @@ namespace bs { namespace ct
 	private:
 		friend class GpuResourcePool;
 
-		UINT32 mLastUsedFrame = 0;
+		u32 mLastUsedFrame = 0;
 	};
 
 	/**
@@ -105,7 +105,7 @@ namespace bs { namespace ct
 		 * Destroys all unreferenced resources with that were last used @p age frames ago. Specify 0 to destroy all
 		 * unreferenced resources.
 		 */
-		void Prune(UINT32 age);
+		void Prune(u32 age);
 	private:
 		/**
 		 * Checks does the provided texture match the parameters.
@@ -128,7 +128,7 @@ namespace bs { namespace ct
 		DynArray<SPtr<PooledRenderTexture>> mTextures;
 		DynArray<SPtr<PooledStorageBuffer>> mBuffers;
 
-		UINT32 mCurrentFrame = 0;
+		u32 mCurrentFrame = 0;
 	};
 
 	/** Structure used for creating a new pooled render texture. */
@@ -150,8 +150,8 @@ namespace bs { namespace ct
 		 * @param[in]	mipCount	Number of mip levels, excluding the root mip level.
 		 * @return					Descriptor that is accepted by RenderTexturePool.
 		 */
-		static POOLED_RENDER_TEXTURE_DESC Create2D(PixelFormat format, UINT32 width, UINT32 height,
-			INT32 usage = TU_STATIC, UINT32 samples = 0, bool hwGamma = false, UINT32 arraySize = 1, UINT32 mipCount = 0);
+		static POOLED_RENDER_TEXTURE_DESC Create2D(PixelFormat format, u32 width, u32 height,
+			i32 usage = TU_STATIC, u32 samples = 0, bool hwGamma = false, u32 arraySize = 1, u32 mipCount = 0);
 
 		/**
 		 * Creates a descriptor for a three dimensional render texture.
@@ -163,8 +163,8 @@ namespace bs { namespace ct
 		 * @param[in]	usage		Usage flags that control in which way is the texture going to be used.
 		 * @return					Descriptor that is accepted by RenderTexturePool.
 		 */
-		static POOLED_RENDER_TEXTURE_DESC Create3D(PixelFormat format, UINT32 width, UINT32 height, UINT32 depth,
-			INT32 usage = TU_STATIC);
+		static POOLED_RENDER_TEXTURE_DESC Create3D(PixelFormat format, u32 width, u32 height, u32 depth,
+			i32 usage = TU_STATIC);
 
 		/**
 		 * Creates a descriptor for a cube render texture.
@@ -176,22 +176,22 @@ namespace bs { namespace ct
 		 * @param[in]	arraySize	Number of textures in a texture array. Specify 1 for no array.
 		 * @return					Descriptor that is accepted by RenderTexturePool.
 		 */
-		static POOLED_RENDER_TEXTURE_DESC CreateCube(PixelFormat format, UINT32 width, UINT32 height,
-			INT32 usage = TU_STATIC, UINT32 arraySize = 1);
+		static POOLED_RENDER_TEXTURE_DESC CreateCube(PixelFormat format, u32 width, u32 height,
+			i32 usage = TU_STATIC, u32 arraySize = 1);
 
 	private:
 		friend class GpuResourcePool;
 
-		UINT32 width;
-		UINT32 height;
-		UINT32 depth;
-		UINT32 numSamples;
+		u32 width;
+		u32 height;
+		u32 depth;
+		u32 numSamples;
 		PixelFormat format;
 		TextureUsage flag;
 		TextureType type;
 		bool hwGamma;
-		UINT32 arraySize;
-		UINT32 numMipLevels;
+		u32 arraySize;
+		u32 numMipLevels;
 	};
 
 	/** Structure used for describing a pooled storage buffer. */
@@ -207,7 +207,7 @@ namespace bs { namespace ct
 		 * @param[in]	numElements	Number of elements in the buffer.
 		 * @param[in]	usage		Usage flag hinting the driver how is buffer going to be used.
 		 */
-		static POOLED_STORAGE_BUFFER_DESC CreateStandard(GpuBufferFormat format, UINT32 numElements,
+		static POOLED_STORAGE_BUFFER_DESC CreateStandard(GpuBufferFormat format, u32 numElements,
 			GpuBufferUsage usage = GBU_LOADSTORE);
 
 		/**
@@ -217,7 +217,7 @@ namespace bs { namespace ct
 		 * @param[in]	numElements		Number of elements in the buffer.
 		 * @param[in]	usage		Usage flag hinting the driver how is buffer going to be used.
 		 */
-		static POOLED_STORAGE_BUFFER_DESC CreateStructured(UINT32 elementSize, UINT32 numElements,
+		static POOLED_STORAGE_BUFFER_DESC CreateStructured(u32 elementSize, u32 numElements,
 			GpuBufferUsage usage = GBU_LOADSTORE);
 
 	private:
@@ -226,8 +226,8 @@ namespace bs { namespace ct
 		GpuBufferType type;
 		GpuBufferFormat format;
 		GpuBufferUsage usage;
-		UINT32 numElements;
-		UINT32 elementSize;
+		u32 numElements;
+		u32 elementSize;
 	};
 
 	/**	Provides easy access to the GpuResourcePool. */

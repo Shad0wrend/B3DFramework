@@ -68,7 +68,7 @@ namespace bs
 			mInternal->SetIsLooping(loop);
 	}
 
-	void CAudioSource::SetPriority(UINT32 priority)
+	void CAudioSource::SetPriority(u32 priority)
 	{
 		if (mPriority == priority)
 			return;

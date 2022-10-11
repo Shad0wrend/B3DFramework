@@ -34,7 +34,7 @@ namespace bs
 
 		/**	Creates a new element and inserts it before the element at the specified index. */
 		template<class Type, class... Args>
-		Type* InsertNewElement(UINT32 idx, Args &&...args)
+		Type* InsertNewElement(u32 idx, Args &&...args)
 		{
 			Type* elem = Type::Create(std::forward<Args>(args)...);
 			InsertElement(idx, elem);
@@ -48,16 +48,16 @@ namespace bs
 		void RemoveElement(GUIElementBase* element);
 
 		/**	Removes a child element at the specified index. */
-		void RemoveElementAt(UINT32 idx);
+		void RemoveElementAt(u32 idx);
 
 		/**	Inserts a GUI element before the element at the specified index. */
-		void InsertElement(UINT32 idx, GUIElementBase* element);
+		void InsertElement(u32 idx, GUIElementBase* element);
 
 		/** Removes all child elements and destroys them. */
 		void Clear();
 
 		/**	Returns number of child elements in the layout. */
-		UINT32 GetNumChildren() const { return (UINT32)mChildren.size(); }
+		u32 GetNumChildren() const { return (u32)mChildren.size(); }
 
 		/**	Destroy the layout. Removes it from parent and widget, and deletes it. */
 		static void Destroy(GUILayout* layout);

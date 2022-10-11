@@ -28,9 +28,9 @@ namespace bs
 		friend class FMODAudio;
 
 		/** Called by the FMODAudio system when the listener list changes. */
-		void Rebuild(INT32 id);
+		void Rebuild(i32 id);
 
-		INT32 mId;
+		i32 mId;
 	};
 
 	/** @} */

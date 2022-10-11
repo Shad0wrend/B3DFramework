@@ -40,7 +40,7 @@ namespace bs
 
 		PxSphericalJointFlags flags;
 
-		if (((UINT32)desc.Flag & (UINT32)SphericalJointFlag::Limit) != 0)
+		if (((u32)desc.Flag & (u32)SphericalJointFlag::Limit) != 0)
 			flags |= PxSphericalJointFlag::eLIMIT_ENABLED;
 
 		joint->setSphericalJointFlags(flags);

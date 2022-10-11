@@ -21,9 +21,9 @@ namespace bs
 	}
 
 	// Assumes charIdx is an index right after last char in the list (if any). All chars need to be sequential.
-	UINT32 TextDataBase::TextWord::AddChar(UINT32 charIdx, const CharDesc& desc)
+	u32 TextDataBase::TextWord::AddChar(u32 charIdx, const CharDesc& desc)
 	{
-		UINT32 charWidth = CalcCharWidth(mLastChar, desc);
+		u32 charWidth = CalcCharWidth(mLastChar, desc);
 
 		mWidth += charWidth;
 		mHeight = std::max(mHeight, desc.Height);
@@ -38,17 +38,17 @@ namespace bs
 		return charWidth;
 	}
 
-	UINT32 TextDataBase::TextWord::CalcWidthWithChar(const CharDesc& desc)
+	u32 TextDataBase::TextWord::CalcWidthWithChar(const CharDesc& desc)
 	{
 		return mWidth + CalcCharWidth(mLastChar, desc);
 	}
 
-	UINT32 TextDataBase::TextWord::CalcCharWidth(const CharDesc* prevDesc, const CharDesc& desc)
+	u32 TextDataBase::TextWord::CalcCharWidth(const CharDesc* prevDesc, const CharDesc& desc)
 	{
-		UINT32 charWidth = desc.XAdvance;
+		u32 charWidth = desc.XAdvance;
 		if (prevDesc != nullptr)
 		{
-			UINT32 kerning = 0;
+			u32 kerning = 0;
 			for (size_t j = 0; j < prevDesc->KerningPairs.size(); j++)
 			{
 				if (prevDesc->KerningPairs[j].OtherCharId == desc.CharId)
@@ -64,7 +64,7 @@ namespace bs
 		return charWidth;
 	}
 
-	void TextDataBase::TextWord::AddSpace(UINT32 spaceWidth)
+	void TextDataBase::TextWord::AddSpace(u32 spaceWidth)
 	{
 		mSpaceWidth += spaceWidth;
 		mWidth = mSpaceWidth;
@@ -85,9 +85,9 @@ namespace bs
 		mHasNewline = hasNewlineChar;
 	}
 
-	void TextDataBase::TextLine::Add(UINT32 charIdx, const CharDesc& charDesc)
+	void TextDataBase::TextLine::Add(u32 charIdx, const CharDesc& charDesc)
 	{
-		UINT32 charWidth = 0;
+		u32 charWidth = 0;
 		if(mIsEmpty)
 		{
 			mWordsStart = mWordsEnd = MemBuffer->AllocWord(false);
@@ -106,7 +106,7 @@ namespace bs
 		mHeight = std::max(mHeight, lastWord.GetHeight());
 	}
 
-	void TextDataBase::TextLine::AddSpace(UINT32 spaceWidth)
+	void TextDataBase::TextLine::AddSpace(u32 spaceWidth)
 	{
 		if(mIsEmpty)
 		{
@@ -123,7 +123,7 @@ namespace bs
 	}
 
 	// Assumes wordIdx is an index right after last word in the list (if any). All words need to be sequential.
-	void TextDataBase::TextLine::AddWord(UINT32 wordIdx, const TextWord& word)
+	void TextDataBase::TextLine::AddWord(u32 wordIdx, const TextWord& word)
 	{
 		if(mIsEmpty)
 		{
@@ -137,7 +137,7 @@ namespace bs
 		mHeight = std::max(mHeight, word.GetHeight());
 	}
 
-	UINT32 TextDataBase::TextLine::RemoveLastWord()
+	u32 TextDataBase::TextLine::RemoveLastWord()
 	{
 		if(mIsEmpty)
 		{
@@ -145,7 +145,7 @@ namespace bs
 			return 0;
 		}
 
-		UINT32 lastWord = mWordsEnd--;
+		u32 lastWord = mWordsEnd--;
 		if(mWordsStart == lastWord)
 		{
 			mIsEmpty = true;
@@ -157,9 +157,9 @@ namespace bs
 		return lastWord;
 	}
 
-	UINT32 TextDataBase::TextLine::CalcWidthWithChar(const CharDesc& desc)
+	u32 TextDataBase::TextLine::CalcWidthWithChar(const CharDesc& desc)
 	{
-		UINT32 charWidth = 0;
+		u32 charWidth = 0;
 
 		if (!mIsEmpty)
 		{
@@ -182,16 +182,16 @@ namespace bs
 		return mIsEmpty || MemBuffer->WordBuffer[mWordsEnd].IsSpacer();
 	}
 
-	UINT32 TextDataBase::TextLine::FillBuffer(UINT32 page, Vector2* vertices, Vector2* uvs, UINT32* indexes, UINT32 offset, UINT32 size) const
+	u32 TextDataBase::TextLine::FillBuffer(u32 page, Vector2* vertices, Vector2* uvs, u32* indexes, u32 offset, u32 size) const
 	{
-		UINT32 numQuads = 0;
+		u32 numQuads = 0;
 
 		if(mIsEmpty)
 			return numQuads;
 
-		UINT32 penX = 0;
-		UINT32 penNegativeXOffset = 0;
-		for(UINT32 i = mWordsStart; i <= mWordsEnd; i++)
+		u32 penX = 0;
+		u32 penNegativeXOffset = 0;
+		for(u32 i = mWordsStart; i <= mWordsEnd; i++)
 		{
 			const TextWord& word = mTextData->GetWord(i);
 
@@ -202,11 +202,11 @@ namespace bs
 				// for things like determining caret placement and selection areas
 				if(page == 0)
 				{
-					INT32 curX = penX;
-					INT32 curY = 0;
+					i32 curX = penX;
+					i32 curY = 0;
 
-					UINT32 curVert = offset * 4;
-					UINT32 curIndex = offset * 6;
+					u32 curVert = offset * 4;
+					u32 curIndex = offset * 6;
 
 					vertices[curVert + 0] = Vector2((float)curX, (float)curY);
 					vertices[curVert + 1] = Vector2((float)(curX + word.GetWidth()), (float)curY);
@@ -243,13 +243,13 @@ namespace bs
 			}
 			else
 			{
-				UINT32 kerning = 0;
-				for(UINT32 j = word.GetCharsStart(); j <= word.GetCharsEnd(); j++)
+				u32 kerning = 0;
+				for(u32 j = word.GetCharsStart(); j <= word.GetCharsEnd(); j++)
 				{
 					const CharDesc& curChar = mTextData->GetChar(j);
 
-					INT32 curX = penX + curChar.XOffset;
-					INT32 curY = ((INT32) mTextData->GetBaselineOffset() - curChar.YOffset);
+					i32 curX = penX + curChar.XOffset;
+					i32 curY = ((i32) mTextData->GetBaselineOffset() - curChar.YOffset);
 
 					curX += penNegativeXOffset;
 					penX += curChar.XAdvance + kerning;
@@ -271,8 +271,8 @@ namespace bs
 					if(curChar.Page != page)
 						continue;
 
-					UINT32 curVert = offset * 4;
-					UINT32 curIndex = offset * 6;
+					u32 curVert = offset * 4;
+					u32 curIndex = offset * 6;
 
 					vertices[curVert + 0] = Vector2((float)curX, (float)curY);
 					vertices[curVert + 1] = Vector2((float)(curX + curChar.Width), (float)curY);
@@ -309,20 +309,20 @@ namespace bs
 		return numQuads;
 	}
 
-	UINT32 TextDataBase::TextLine::GetNumChars() const
+	u32 TextDataBase::TextLine::GetNumChars() const
 	{
 		if(mIsEmpty)
 			return 0;
 
-		UINT32 numChars = 0;
-		for(UINT32 i = mWordsStart; i <= mWordsEnd; i++)
+		u32 numChars = 0;
+		for(u32 i = mWordsStart; i <= mWordsEnd; i++)
 		{
 			TextWord& word = MemBuffer->WordBuffer[i];
 
 			if(word.IsSpacer())
 				numChars++;
 			else
-				numChars += (UINT32)word.GetNumChars();
+				numChars += (u32)word.GetNumChars();
 		}
 
 		return numChars;
@@ -336,7 +336,7 @@ namespace bs
 		if(mIsEmpty)
 			return;
 
-		for(UINT32 i = mWordsStart; i <= mWordsEnd; i++)
+		for(u32 i = mWordsStart; i <= mWordsEnd; i++)
 		{
 			TextWord& word = MemBuffer->WordBuffer[i];
 
@@ -345,7 +345,7 @@ namespace bs
 		}
 	}
 
-	TextDataBase::TextDataBase(const U32String& text, const HFont& font, UINT32 fontSize, UINT32 width, UINT32 height,
+	TextDataBase::TextDataBase(const U32String& text, const HFont& font, u32 fontSize, u32 width, u32 height,
 		bool wordWrap, bool wordBreak)
 		: mChars(nullptr), mNumChars(0), mWords(nullptr), mNumWords(0), mLines(nullptr), mNumLines(0), mPageInfos(nullptr)
 		, mNumPageInfos(0), mFont(font), mFontData(nullptr)
@@ -355,7 +355,7 @@ namespace bs
 
 		if(font != nullptr)
 		{
-			UINT32 nearestSize = font->GetClosestSize(fontSize);
+			u32 nearestSize = font->GetClosestSize(fontSize);
 			mFontData = font->GetBitmap(nearestSize);
 		}
 
@@ -371,16 +371,16 @@ namespace bs
 		bool widthIsLimited = width > 0;
 		mFont = font;
 
-		UINT32 curLineIdx = MemBuffer->AllocLine(this);
-		UINT32 curHeight = mFontData->LineHeight;
-		UINT32 charIdx = 0;
+		u32 curLineIdx = MemBuffer->AllocLine(this);
+		u32 curHeight = mFontData->LineHeight;
+		u32 charIdx = 0;
 
 		while(true)
 		{
 			if(charIdx >= text.size())
 				break;
 
-			UINT32 charId = text[charIdx];
+			u32 charId = text[charIdx];
 			const CharDesc& charDesc = mFontData->GetCharDesc(charId);
 
 			TextLine* curLine = &MemBuffer->LineBuffer[curLineIdx];
@@ -408,7 +408,7 @@ namespace bs
 
 			if (widthIsLimited && wordWrap)
 			{
-				UINT32 widthWithChar = 0;
+				u32 widthWithChar = 0;
 				if (charIdx == SPACE_CHAR)
 					widthWithChar = curLine->GetWidth() + GetSpaceWidth();
 				else if (charIdx == TAB_CHAR)
@@ -422,7 +422,7 @@ namespace bs
 
 					if (!atWordBoundary) // Need to break word into multiple pieces, or move it to next line
 					{
-						UINT32 lastWordIdx = curLine->RemoveLastWord();
+						u32 lastWordIdx = curLine->RemoveLastWord();
 						TextWord& lastWord = MemBuffer->WordBuffer[lastWordIdx];
 
 						bool wordFits = lastWord.CalcWidthWithChar(charDesc) <= width;
@@ -499,18 +499,18 @@ namespace bs
 		MemBuffer->LineBuffer[curLineIdx].Finalize(true);
 
 		// Now that we have all the data we need, allocate the permanent buffers and copy the data
-		mNumChars = (UINT32)text.size();
+		mNumChars = (u32)text.size();
 		mNumWords = MemBuffer->NextFreeWord;
 		mNumLines = MemBuffer->NextFreeLine;
 		mNumPageInfos = MemBuffer->NextFreePageInfo;
 	}
 
-	void TextDataBase::GeneratePersistentData(const U32String& text, UINT8* buffer, UINT32& size, bool freeTemporary)
+	void TextDataBase::GeneratePersistentData(const U32String& text, u8* buffer, u32& size, bool freeTemporary)
 	{
-		UINT32 charArraySize = mNumChars * sizeof(const CharDesc*);
-		UINT32 wordArraySize = mNumWords * sizeof(TextWord);
-		UINT32 lineArraySize = mNumLines * sizeof(TextLine);
-		UINT32 pageInfoArraySize = mNumPageInfos * sizeof(PageInfo);
+		u32 charArraySize = mNumChars * sizeof(const CharDesc*);
+		u32 wordArraySize = mNumWords * sizeof(TextWord);
+		u32 lineArraySize = mNumLines * sizeof(TextLine);
+		u32 pageInfoArraySize = mNumPageInfos * sizeof(PageInfo);
 
 		if (buffer == nullptr)
 		{
@@ -518,12 +518,12 @@ namespace bs
 			return;
 		}
 
-		UINT8* dataPtr = (UINT8*)buffer;
+		u8* dataPtr = (u8*)buffer;
 		mChars = (const CharDesc**)dataPtr;
 
-		for (UINT32 i = 0; i < mNumChars; i++)
+		for (u32 i = 0; i < mNumChars; i++)
 		{
-			UINT32 charId = text[i];
+			u32 charId = text[i];
 			const CharDesc& charDesc = mFontData->GetCharDesc(charId);
 
 			mChars[i] = &charDesc;
@@ -545,22 +545,22 @@ namespace bs
 			MemBuffer->DeallocAll();
 	}
 
-	const HTexture& TextDataBase::GetTextureForPage(UINT32 page) const
+	const HTexture& TextDataBase::GetTextureForPage(u32 page) const
 	{
 		return mFontData->TexturePages[page];
 	}
 
-	INT32 TextDataBase::GetBaselineOffset() const
+	i32 TextDataBase::GetBaselineOffset() const
 	{
 		return mFontData->BaselineOffset;
 	}
 
-	UINT32 TextDataBase::GetLineHeight() const
+	u32 TextDataBase::GetLineHeight() const
 	{
 		return mFontData->LineHeight;
 	}
 
-	UINT32 TextDataBase::GetSpaceWidth() const
+	u32 TextDataBase::GetSpaceWidth() const
 	{
 		return mFontData->SpaceWidth;
 	}
@@ -595,11 +595,11 @@ namespace bs
 		bs_deleteN(PageBuffer, PageBufferSize);
 	}
 
-	UINT32 TextDataBase::BufferData::AllocWord(bool spacer)
+	u32 TextDataBase::BufferData::AllocWord(bool spacer)
 	{
 		if(NextFreeWord >= WordBufferSize)
 		{
-			UINT32 newBufferSize = WordBufferSize * 2;
+			u32 newBufferSize = WordBufferSize * 2;
 			TextWord* newBuffer = bs_newN<TextWord>(newBufferSize);
 			memcpy(WordBuffer, newBuffer, WordBufferSize);
 
@@ -613,11 +613,11 @@ namespace bs
 		return NextFreeWord++;
 	}
 
-	UINT32 TextDataBase::BufferData::AllocLine(TextDataBase* textData)
+	u32 TextDataBase::BufferData::AllocLine(TextDataBase* textData)
 	{
 		if(NextFreeLine >= LineBufferSize)
 		{
-			UINT32 newBufferSize = LineBufferSize * 2;
+			u32 newBufferSize = LineBufferSize * 2;
 			TextLine* newBuffer = bs_newN<TextLine>(newBufferSize);
 			memcpy(LineBuffer, newBuffer, LineBufferSize);
 
@@ -638,11 +638,11 @@ namespace bs
 		NextFreePageInfo = 0;
 	}
 
-	void TextDataBase::BufferData::AddCharToPage(UINT32 page, const FontBitmap& fontData)
+	void TextDataBase::BufferData::AddCharToPage(u32 page, const FontBitmap& fontData)
 	{
 		if(NextFreePageInfo >= PageBufferSize)
 		{
-			UINT32 newBufferSize = PageBufferSize * 2;
+			u32 newBufferSize = PageBufferSize * 2;
 			PageInfo* newBuffer = bs_newN<PageInfo>(newBufferSize);
 			memcpy((void*)PageBuffer, (void*)newBuffer, PageBufferSize);
 
@@ -661,21 +661,21 @@ namespace bs
 		PageBuffer[page].NumQuads++;
 	}
 
-	UINT32 TextDataBase::GetWidth() const
+	u32 TextDataBase::GetWidth() const
 	{
-		UINT32 width = 0;
+		u32 width = 0;
 
-		for(UINT32 i = 0; i < mNumLines; i++)
+		for(u32 i = 0; i < mNumLines; i++)
 			width = std::max(width, mLines[i].GetWidth());
 
 		return width;
 	}
 
-	UINT32 TextDataBase::GetHeight() const
+	u32 TextDataBase::GetHeight() const
 	{
-		UINT32 height = 0;
+		u32 height = 0;
 
-		for(UINT32 i = 0; i < mNumLines; i++)
+		for(u32 i = 0; i < mNumLines; i++)
 			height += mLines[i].GetHeight();
 
 		return height;

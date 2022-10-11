@@ -69,14 +69,14 @@ namespace bs
 
 	void CHingeJoint::SetFlag(HingeJointFlag flag, bool enabled)
 	{
-		bool isEnabled = ((UINT32)mDesc.Flag & (UINT32)flag) != 0;
+		bool isEnabled = ((u32)mDesc.Flag & (u32)flag) != 0;
 		if (isEnabled == enabled)
 			return;
 
 		if (enabled)
-			mDesc.Flag = (HingeJointFlag)((UINT32)mDesc.Flag | (UINT32)flag);
+			mDesc.Flag = (HingeJointFlag)((u32)mDesc.Flag | (u32)flag);
 		else
-			mDesc.Flag = (HingeJointFlag)((UINT32)mDesc.Flag & ~(UINT32)flag);
+			mDesc.Flag = (HingeJointFlag)((u32)mDesc.Flag & ~(u32)flag);
 
 		if (mInternal != nullptr)
 			GetInternalInternal()->SetFlag(flag, enabled);
@@ -84,7 +84,7 @@ namespace bs
 
 	bool CHingeJoint::HasFlag(HingeJointFlag flag) const
 	{
-		return ((UINT32)mDesc.Flag & (UINT32)flag) != 0;
+		return ((u32)mDesc.Flag & (u32)flag) != 0;
 	}
 
 	SPtr<Joint> CHingeJoint::CreateInternal()

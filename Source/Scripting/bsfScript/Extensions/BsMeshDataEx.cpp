@@ -9,99 +9,99 @@ namespace bs
 	template<int Semantic>
 	struct TVertexDataAccessor
 	{
-		static void Get(const SPtr<RendererMeshData>& meshData, UINT8* buffer, UINT32 size) { }
-		static void Set(const SPtr<RendererMeshData>& meshData, UINT8* buffer, UINT32 size) { }
+		static void Get(const SPtr<RendererMeshData>& meshData, u8* buffer, u32 size) { }
+		static void Set(const SPtr<RendererMeshData>& meshData, u8* buffer, u32 size) { }
 	};
 
 	template<>
 	struct TVertexDataAccessor < (int)VertexLayout::Position >
 	{
-		static void Get(const SPtr<RendererMeshData>& meshData, UINT8* buffer, UINT32 size)
+		static void Get(const SPtr<RendererMeshData>& meshData, u8* buffer, u32 size)
 		{ meshData->GetPositions((Vector3*)buffer, size); }
 
-		static void Set(const SPtr<RendererMeshData>& meshData, UINT8* buffer, UINT32 size)
+		static void Set(const SPtr<RendererMeshData>& meshData, u8* buffer, u32 size)
 		{ meshData->SetPositions((Vector3*)buffer, size); }
 	};
 
 	template<>
 	struct TVertexDataAccessor < (int)VertexLayout::Normal >
 	{
-		static void Get(const SPtr<RendererMeshData>& meshData, UINT8* buffer, UINT32 size)
+		static void Get(const SPtr<RendererMeshData>& meshData, u8* buffer, u32 size)
 		{ meshData->GetNormals((Vector3*)buffer, size); }
 
-		static void Set(const SPtr<RendererMeshData>& meshData, UINT8* buffer, UINT32 size)
+		static void Set(const SPtr<RendererMeshData>& meshData, u8* buffer, u32 size)
 		{ meshData->SetNormals((Vector3*)buffer, size); }
 	};
 
 	template<>
 	struct TVertexDataAccessor < (int)VertexLayout::Tangent >
 	{
-		static void Get(const SPtr<RendererMeshData>& meshData, UINT8* buffer, UINT32 size)
+		static void Get(const SPtr<RendererMeshData>& meshData, u8* buffer, u32 size)
 		{ meshData->GetTangents((Vector4*)buffer, size); }
 
-		static void Set(const SPtr<RendererMeshData>& meshData, UINT8* buffer, UINT32 size)
+		static void Set(const SPtr<RendererMeshData>& meshData, u8* buffer, u32 size)
 		{ meshData->SetTangents((Vector4*)buffer, size); }
 	};
 
 	template<>
 	struct TVertexDataAccessor < (int)VertexLayout::Color >
 	{
-		static void Get(const SPtr<RendererMeshData>& meshData, UINT8* buffer, UINT32 size)
+		static void Get(const SPtr<RendererMeshData>& meshData, u8* buffer, u32 size)
 		{ meshData->GetColors((Color*)buffer, size); }
 
-		static void Set(const SPtr<RendererMeshData>& meshData, UINT8* buffer, UINT32 size)
+		static void Set(const SPtr<RendererMeshData>& meshData, u8* buffer, u32 size)
 		{ meshData->SetColors((Color*)buffer, size); }
 	};
 
 	template<>
 	struct TVertexDataAccessor < (int)VertexLayout::UV0 >
 	{
-		static void Get(const SPtr<RendererMeshData>& meshData, UINT8* buffer, UINT32 size)
+		static void Get(const SPtr<RendererMeshData>& meshData, u8* buffer, u32 size)
 		{ meshData->GetUV0((Vector2*)buffer, size); }
 
-		static void Set(const SPtr<RendererMeshData>& meshData, UINT8* buffer, UINT32 size)
+		static void Set(const SPtr<RendererMeshData>& meshData, u8* buffer, u32 size)
 		{ meshData->SetUV0((Vector2*)buffer, size); }
 	};
 
 	template<>
 	struct TVertexDataAccessor < (int)VertexLayout::UV1 >
 	{
-		static void Get(const SPtr<RendererMeshData>& meshData, UINT8* buffer, UINT32 size)
+		static void Get(const SPtr<RendererMeshData>& meshData, u8* buffer, u32 size)
 		{ meshData->GetUV1((Vector2*)buffer, size); }
 
-		static void Set(const SPtr<RendererMeshData>& meshData, UINT8* buffer, UINT32 size)
+		static void Set(const SPtr<RendererMeshData>& meshData, u8* buffer, u32 size)
 		{ meshData->SetUV1((Vector2*)buffer, size); }
 	};
 
 	template<>
 	struct TVertexDataAccessor < (int)VertexLayout::BoneWeights >
 	{
-		static void Get(const SPtr<RendererMeshData>& meshData, UINT8* buffer, UINT32 size)
+		static void Get(const SPtr<RendererMeshData>& meshData, u8* buffer, u32 size)
 		{ meshData->GetBoneWeights((BoneWeight*)buffer, size); }
 
-		static void Set(const SPtr<RendererMeshData>& meshData, UINT8* buffer, UINT32 size)
+		static void Set(const SPtr<RendererMeshData>& meshData, u8* buffer, u32 size)
 		{ meshData->SetBoneWeights((BoneWeight*)buffer, size); }
 	};
 
 	template<int Semantic, class TNative>
 	Vector<TNative> getVertexDataArray(const SPtr<RendererMeshData>& meshData)
 	{
-		UINT32 numElements = meshData->GetData()->GetNumVertices();
+		u32 numElements = meshData->GetData()->GetNumVertices();
 		Vector<TNative> output(numElements);
 
-		TVertexDataAccessor<Semantic>::Get(meshData, (UINT8*)output.data(), numElements * sizeof(TNative));
+		TVertexDataAccessor<Semantic>::Get(meshData, (u8*)output.data(), numElements * sizeof(TNative));
 		return output;
 	}
 
 	template<int Semantic, class TNative>
 	void setVertexDataArray(const SPtr<RendererMeshData>& meshData, const Vector<TNative>& input)
 	{
-		UINT32 numElements = meshData->GetData()->GetNumVertices();
+		u32 numElements = meshData->GetData()->GetNumVertices();
 
-		TVertexDataAccessor<Semantic>::Set(meshData, (UINT8*)input.data(), numElements * sizeof(TNative));
+		TVertexDataAccessor<Semantic>::Set(meshData, (u8*)input.data(), numElements * sizeof(TNative));
 	}
 
-	SPtr<RendererMeshData> MeshDataEx::Create(UINT32 numVertices, UINT32 numIndices, VertexLayout layout, IndexType indexType)
+	SPtr<RendererMeshData> MeshDataEx::Create(u32 numVertices, u32 numIndices, VertexLayout layout, IndexType indexType)
 	{
 		return RendererMeshData::Create(numVertices, numIndices, layout, indexType);
 	}
@@ -176,21 +176,21 @@ namespace bs
 		setVertexDataArray<(int)VertexLayout::BoneWeights>(thisPtr, value);
 	}
 
-	Vector<UINT32> MeshDataEx::GetIndices(const SPtr<RendererMeshData>& thisPtr)
+	Vector<u32> MeshDataEx::GetIndices(const SPtr<RendererMeshData>& thisPtr)
 	{
-		UINT32 numElements = thisPtr->GetData()->GetNumIndices();
+		u32 numElements = thisPtr->GetData()->GetNumIndices();
 
-		Vector<UINT32> output(numElements);
-		thisPtr->GetIndices(output.data(), numElements * sizeof(UINT32));
+		Vector<u32> output(numElements);
+		thisPtr->GetIndices(output.data(), numElements * sizeof(u32));
 
 		return output;
 	}
 
-	void MeshDataEx::SetIndices(const SPtr<RendererMeshData>& thisPtr, const Vector<UINT32>& value)
+	void MeshDataEx::SetIndices(const SPtr<RendererMeshData>& thisPtr, const Vector<u32>& value)
 	{
-		UINT32 numElements = thisPtr->GetData()->GetNumIndices();
+		u32 numElements = thisPtr->GetData()->GetNumIndices();
 
-		thisPtr->SetIndices((UINT32*)value.data(), numElements * sizeof(UINT32));
+		thisPtr->SetIndices((u32*)value.data(), numElements * sizeof(u32));
 	}
 
 	int MeshDataEx::GetVertexCount(const SPtr<RendererMeshData>& thisPtr)

@@ -20,8 +20,8 @@ namespace bs { namespace ct
 		GLSurfaceDesc() = default;
 
 		SPtr<GLPixelBuffer> Buffer;
-		UINT32 Zoffset = 0;
-		UINT32 NumSamples = 0;
+		u32 Zoffset = 0;
+		u32 NumSamples = 0;
 		bool AllLayers = false;
 	};
 
@@ -45,14 +45,14 @@ namespace bs { namespace ct
 		 * Multisample counts of all surfaces must match.
 		 * 0th attachment must be bound in order for the object to be usable, rest are optional.
 		 */
-		void BindSurface(UINT32 attachment, const GLSurfaceDesc& target);
+		void BindSurface(u32 attachment, const GLSurfaceDesc& target);
 
 		/**
 		 * Unbinds the attachment at the specified attachment index. Call rebuild() to apply changes.
 		 *
 		 * @param[in]	attachment	Attachment point index in the range [0, BS_MAX_MULTIPLE_RENDER_TARGETS).
 		 */
-		void UnbindSurface(UINT32 attachment);
+		void UnbindSurface(u32 attachment);
 
 		/**
 		 * Binds a depth/stencil buffer. Call rebuild() to apply changes.
@@ -73,7 +73,7 @@ namespace bs { namespace ct
 		void Bind();
 
 		/** Checks is the color buffer at the specified index bound. */
-		bool HasColorBuffer(UINT32 idx) const { return mColor[idx].Buffer != nullptr; }
+		bool HasColorBuffer(u32 idx) const { return mColor[idx].Buffer != nullptr; }
 
 		/**	Returns internal OpenGL frame buffer id. */
 		GLuint GetGlfboid() const { return mFB; }

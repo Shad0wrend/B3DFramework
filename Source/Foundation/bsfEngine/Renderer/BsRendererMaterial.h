@@ -92,14 +92,14 @@ namespace bs { namespace ct
 		 * Helper field to be set before construction. Identifiers the variation of the material to initialize this
 		 * object with.
 		 */
-		UINT32 VarIdx;
+		u32 VarIdx;
 	protected:
 		friend class RendererMaterialManager;
 
 		SPtr<GpuParams> mParams;
 		SPtr<GraphicsPipelineState> mGfxPipeline;
 		SPtr<ComputePipelineState> mComputePipeline;
-		UINT32 mStencilRef = 0;
+		u32 mStencilRef = 0;
 
 		ShaderVariation mVariation;
 		SPtr<Shader> mShader;
@@ -147,10 +147,10 @@ namespace bs { namespace ct
 		/** Retrieves an instance of a particular variation of this renderer material. */
 		static T* Get(const ShaderVariation& variation)
 		{
-			if(variation.GetIdx() == (UINT32)-1)
+			if(variation.GetIdx() == (u32)-1)
 				variation.SetIdx(mMetaData.Variations.Find(variation));
 
-			UINT32 varIdx = variation.GetIdx();
+			u32 varIdx = variation.GetIdx();
 			if(mMetaData.Instances[varIdx] == nullptr)
 			{
 				RendererMaterialBase* mat = bs_alloc<T>();
@@ -173,7 +173,7 @@ namespace bs { namespace ct
 			if(mMetaData.OverrideShader == shader)
 				return;
 
-			for(UINT32 i = 0; i < mMetaData.Instances.Size(); i++)
+			for(u32 i = 0; i < mMetaData.Instances.Size(); i++)
 			{
 				if (mMetaData.Instances[i] != nullptr)
 					bs_delete(mMetaData.Instances[i]);
@@ -254,11 +254,11 @@ namespace bs { namespace ct
 					const auto& textureParams = mShader->GetTextureParams();
 					for(auto& param : textureParams)
 					{
-						UINT32 defaultValueIdx = param.second.DefaultValueIdx;
-						if(defaultValueIdx == (UINT32)-1)
+						u32 defaultValueIdx = param.second.DefaultValueIdx;
+						if(defaultValueIdx == (u32)-1)
 							continue;
 
-						for (UINT32 i = 0; i < 6; i++)
+						for (u32 i = 0; i < 6; i++)
 						{
 							GpuProgramType progType = (GpuProgramType)i;
 
@@ -276,11 +276,11 @@ namespace bs { namespace ct
 					const auto& samplerParams = mShader->GetSamplerParams();
 					for(auto& param : samplerParams)
 					{
-						UINT32 defaultValueIdx = param.second.DefaultValueIdx;
-						if(defaultValueIdx == (UINT32)-1)
+						u32 defaultValueIdx = param.second.DefaultValueIdx;
+						if(defaultValueIdx == (u32)-1)
 							continue;
 
-						for (UINT32 i = 0; i < 6; i++)
+						for (u32 i = 0; i < 6; i++)
 						{
 							GpuProgramType progType = (GpuProgramType)i;
 

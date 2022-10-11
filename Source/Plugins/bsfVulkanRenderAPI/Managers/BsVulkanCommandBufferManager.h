@@ -17,7 +17,7 @@ namespace bs { namespace ct
 	{
 	public:
 		VulkanTransferBuffer() = default;
-		VulkanTransferBuffer(VulkanDevice* device, GpuQueueType type, UINT32 queueIdx);
+		VulkanTransferBuffer(VulkanDevice* device, GpuQueueType type, u32 queueIdx);
 		~VulkanTransferBuffer();
 
 		/**
@@ -25,7 +25,7 @@ namespace bs { namespace ct
 		 * the buffer wait on before executing. Sync mask is reset after a flush. See CommandSyncMask on how to generate
 		 * a sync mask.
 		 */
-		void AppendMask(UINT32 syncMask) { mSyncMask |= syncMask; }
+		void AppendMask(u32 syncMask) { mSyncMask |= syncMask; }
 
 		/** Resets the sync mask. */
 		void ClearMask() { mSyncMask = 0; }
@@ -70,12 +70,12 @@ namespace bs { namespace ct
 
 		VulkanDevice* mDevice = nullptr;
 		GpuQueueType mType = GQT_GRAPHICS;
-		UINT32 mQueueIdx = 0;
+		u32 mQueueIdx = 0;
 		VulkanQueue* mQueue = nullptr;
-		UINT32 mQueueMask = 0;
+		u32 mQueueMask = 0;
 
 		VulkanCmdBuffer* mCB = nullptr;
-		UINT32 mSyncMask = 0;
+		u32 mSyncMask = 0;
 
 		Vector<VkImageMemoryBarrier> mBarriersTemp;
 	};
@@ -92,7 +92,7 @@ namespace bs { namespace ct
 		~VulkanCommandBufferManager();
 
 		/** @copydoc CommandBufferManager::createInternal() */
-		SPtr<CommandBuffer> CreateInternal(GpuQueueType type, UINT32 deviceIdx = 0, UINT32 queueIdx = 0,
+		SPtr<CommandBuffer> CreateInternal(GpuQueueType type, u32 deviceIdx = 0, u32 queueIdx = 0,
 			bool secondary = false) override;
 
 		/**
@@ -105,17 +105,17 @@ namespace bs { namespace ct
 		 *							beginning of the array. Must be able to hold at least BS_MAX_UNIQUE_QUEUES entries.
 		 * @param[out]	count		Number of semaphores provided in the @p semaphores array.
 		 */
-		void GetSyncSemaphores(UINT32 deviceIdx, UINT32 syncMask, VulkanSemaphore** semaphores, UINT32& count);
+		void GetSyncSemaphores(u32 deviceIdx, u32 syncMask, VulkanSemaphore** semaphores, u32& count);
 
 		/**
 		 * Returns an command buffer that can be used for executing transfer operations on the specified queue.
 		 * Transfer buffers are automatically flushed (submitted) whenever a new (normal) command buffer is about to
 		 * execute.
 		 */
-		VulkanTransferBuffer* GetTransferBuffer(UINT32 deviceIdx, GpuQueueType type, UINT32 queueIdx);
+		VulkanTransferBuffer* GetTransferBuffer(u32 deviceIdx, GpuQueueType type, u32 queueIdx);
 
 		/** Submits all transfer command buffers, ensuring all queued transfer operations get executed. */
-		void FlushTransferBuffers(UINT32 deviceIdx);
+		void FlushTransferBuffers(u32 deviceIdx);
 
 	private:
 		/** Contains command buffers specific to one device. */
@@ -127,7 +127,7 @@ namespace bs { namespace ct
 		const VulkanRenderAPI& mRapi;
 
 		PerDeviceData* mDeviceData;
-		UINT32 mNumDevices;
+		u32 mNumDevices;
 	};
 
 	/**	Provides easy access to the VulkanCommandBufferManager. */

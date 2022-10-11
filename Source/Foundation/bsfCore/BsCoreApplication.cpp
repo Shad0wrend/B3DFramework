@@ -144,7 +144,7 @@ namespace bs
 
 	void CoreApplication::OnStartUp()
 	{
-		UINT32 numWorkerThreads = BS_THREAD_HARDWARE_CONCURRENCY - 1; // Number of cores while excluding current thread.
+		u32 numWorkerThreads = BS_THREAD_HARDWARE_CONCURRENCY - 1; // Number of cores while excluding current thread.
 
 		Platform::StartUpInternal();
 		MemStack::BeginThread();
@@ -208,11 +208,11 @@ namespace bs
 			// Limit FPS if needed
 			if (mFrameStep > 0)
 			{
-				UINT64 currentTime = gTime().GetTimePrecise();
-				UINT64 nextFrameTime = mLastFrameTime + mFrameStep;
+				u64 currentTime = gTime().GetTimePrecise();
+				u64 nextFrameTime = mLastFrameTime + mFrameStep;
 				while (nextFrameTime > currentTime)
 				{
-					UINT32 waitTime = (UINT32)(nextFrameTime - currentTime);
+					u32 waitTime = (u32)(nextFrameTime - currentTime);
 
 					// If waiting for longer, sleep
 					if (waitTime >= 2000)
@@ -269,11 +269,11 @@ namespace bs
 
 		// Trigger fixed updates if required
 		{
-			UINT64 step;
-			const UINT32 numIterations = gTime().GetFixedUpdateStepInternal(step);
+			u64 step;
+			const u32 numIterations = gTime().GetFixedUpdateStepInternal(step);
 
 			const float stepSeconds = step / 1000000.0f;
-			for (UINT32 i = 0; i < numIterations; i++)
+			for (u32 i = 0; i < numIterations; i++)
 			{
 				FixedUpdate();
 				PROFILE_CALL(gSceneManager().FixedUpdateInternal(), "Scene fixed update");
@@ -381,10 +381,10 @@ namespace bs
 		StopMainLoop();
 	}
 
-	void CoreApplication::SetFpsLimit(UINT32 limit)
+	void CoreApplication::SetFpsLimit(u32 limit)
 	{
 		if(limit > 0)
-			mFrameStep = (UINT64)1000000 / limit;
+			mFrameStep = (u64)1000000 / limit;
 		else
 			mFrameStep = 0;
 	}

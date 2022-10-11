@@ -35,7 +35,7 @@ namespace bs
 	}
 
 	template<class T>
-	LookupTable TColorDistribution<T>::ToLookupTable(UINT32 numSamples, bool ignoreRange) const
+	LookupTable TColorDistribution<T>::ToLookupTable(u32 numSamples, bool ignoreRange) const
 	{
 		numSamples = std::max(1U, numSamples);
 
@@ -76,7 +76,7 @@ namespace bs
 					sampleInterval = (maxT - minT) / (numSamples - 1);
 
 				float t = minT;
-				for(UINT32 i = 0; i < numSamples; i++)
+				for(u32 i = 0; i < numSamples; i++)
 				{
 					addToVector(impl::TGradientHelper<typename T::ColorType>::FromInternalColor(mMinGradient.Evaluate(t)), values);
 
@@ -95,7 +95,7 @@ namespace bs
 	template struct BS_CORE_EXPORT TColorDistribution<ColorGradientHDR>;
 
 	template <class T>
-	LookupTable TDistribution<T>::ToLookupTable(UINT32 numSamples, bool ignoreRange) const
+	LookupTable TDistribution<T>::ToLookupTable(u32 numSamples, bool ignoreRange) const
 	{
 		numSamples = std::max(1U, numSamples);
 
@@ -134,7 +134,7 @@ namespace bs
 					sampleInterval = (maxT - minT) / (numSamples - 1);
 
 				float t = minT;
-				for(UINT32 i = 0; i < numSamples; i++)
+				for(u32 i = 0; i < numSamples; i++)
 				{
 					T value = mMinCurve.Evaluate(t);
 					addToVector(value, values);

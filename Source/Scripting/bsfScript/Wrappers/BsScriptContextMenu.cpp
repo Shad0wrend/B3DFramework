@@ -57,7 +57,7 @@ namespace bs
 		contextMenu->Open(windowPosition, *widget);
 	}
 
-	void ScriptContextMenu::InternalAddItem(ScriptContextMenu* instance, MonoString* path, UINT32 callbackIdx,
+	void ScriptContextMenu::InternalAddItem(ScriptContextMenu* instance, MonoString* path, u32 callbackIdx,
 		ShortcutKey* shortcut)
 	{
 		String nativePath = MonoUtil::MonoToString(path);
@@ -85,7 +85,7 @@ namespace bs
 		contextMenu->SetLocalizedName(nativeLabel, *name->GetInternal());
 	}
 
-	void ScriptContextMenu::OnContextMenuItemTriggered(UINT32 idx)
+	void ScriptContextMenu::OnContextMenuItemTriggered(u32 idx)
 	{
 		MonoObject* instance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 		MonoUtil::InvokeThunk(onEntryTriggered, instance, idx);

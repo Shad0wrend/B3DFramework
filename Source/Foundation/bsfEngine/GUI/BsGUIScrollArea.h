@@ -75,16 +75,16 @@ namespace bs
 		GUILayout& GetLayout() const { return *mContentLayout; }
 
 		/**	Scrolls the area up by specified amount of pixels, if possible. */
-		void ScrollUpPx(UINT32 pixels);
+		void ScrollUpPx(u32 pixels);
 
 		/**	Scrolls the area down by specified amount of pixels, if possible. */
-		void ScrollDownPx(UINT32 pixels);
+		void ScrollDownPx(u32 pixels);
 
 		/**	Scrolls the area left by specified amount of pixels, if possible. */
-		void ScrollLeftPx(UINT32 pixels);
+		void ScrollLeftPx(u32 pixels);
 
 		/**	Scrolls the area right by specified amount of pixels, if possible. */
-		void ScrollRightPx(UINT32 pixels);
+		void ScrollRightPx(u32 pixels);
 
 		/**	Scrolls the area up by specified percentage (ranging [0, 1]), if possible. */
 		void ScrollUpPct(float percent);
@@ -132,7 +132,7 @@ namespace bs
 		 * Number of pixels the scroll bar will occupy when active. This is width for vertical scrollbar, and height for
 		 * horizontal scrollbar.
 		 */
-		static const UINT32 ScrollBarWidth;
+		static const u32 ScrollBarWidth;
 
 		/** @name Internal
 		 *  @{
@@ -184,7 +184,7 @@ namespace bs
 		void UpdateLayoutInternalInternal(const GUILayoutData& data) override;
 
 		/** @copydoc	GUIElementContainer::GetElementAreasInternal */
-		void GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, UINT32 numElements,
+		void GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements,
 			const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const override;
 
 		/**
@@ -192,7 +192,7 @@ namespace bs
 		 *
 		 * @note	Also calculates some scroll area specific values.
 		 */
-		void GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, UINT32 numElements,
+		void GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements,
 			const Vector<LayoutSizeRange>& sizeRanges, Vector2I& visibleSize, Vector2I& contentSize) const;
 
 		ScrollBarType mVertBarType;
@@ -214,8 +214,8 @@ namespace bs
 		Vector<LayoutSizeRange> mChildSizeRanges;
 		LayoutSizeRange mSizeRange;
 
-		static const UINT32 MinHandleSize;
-		static const UINT32 WheelScrollAmount;
+		static const u32 MinHandleSize;
+		static const u32 WheelScrollAmount;
 	};
 
 	/** @} */

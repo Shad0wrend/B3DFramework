@@ -51,7 +51,7 @@ namespace bs
 		 *						Additionally elements of the same type (triangle or line) will be drawn in order they are
 		 *						submitted if they share the same depth.
 		 */
-		void DrawLine(const Vector2I& a, const Vector2I& b, const Color& color = Color::White, UINT8 depth = 128);
+		void DrawLine(const Vector2I& a, const Vector2I& b, const Color& color = Color::White, u8 depth = 128);
 
 		/**
 		 * Draws multiple lines following the path by the provided vertices. First vertex connects to the second vertex,
@@ -64,7 +64,7 @@ namespace bs
 		 *							others. Additionally elements of the same type (triangle or line) will be drawn in order
 		 *							they are submitted if they share the same depth.
 		 */
-		void DrawPolyLine(const Vector<Vector2I>& vertices, const Color& color = Color::White, UINT8 depth = 128);
+		void DrawPolyLine(const Vector<Vector2I>& vertices, const Color& color = Color::White, u8 depth = 128);
 
 		/**
 		 * Draws a quad with a the provided texture displayed.
@@ -80,7 +80,7 @@ namespace bs
 		 *							they are submitted if they share the same depth.
 		 */
 		void DrawTexture(const HSpriteTexture& texture, const Rect2I& area,
-			TextureScaleMode scaleMode = TextureScaleMode::StretchToFit, const Color& color = Color::White, UINT8 depth = 128);
+			TextureScaleMode scaleMode = TextureScaleMode::StretchToFit, const Color& color = Color::White, u8 depth = 128);
 
 		/**
 		 * Draws a triangle strip. First three vertices are used to form the initial triangle, and every next vertex will
@@ -93,7 +93,7 @@ namespace bs
 		 *							others. Additionally elements of the same type (triangle or line) will be drawn in order
 		 *							they are submitted if they share the same depth.
 		 */
-		void DrawTriangleStrip(const Vector<Vector2I>& vertices, const Color& color = Color::White, UINT8 depth = 128);
+		void DrawTriangleStrip(const Vector<Vector2I>& vertices, const Color& color = Color::White, u8 depth = 128);
 
 		/**
 		 * Draws a triangle list. Every three vertices in the list represent a unique triangle.
@@ -105,7 +105,7 @@ namespace bs
 		 *							others. Additionally elements of the same type (triangle or line) will be drawn in order
 		 *							they are submitted if they share the same depth.
 		 */
-		void DrawTriangleList(const Vector<Vector2I>& vertices, const Color& color = Color::White, UINT8 depth = 128);
+		void DrawTriangleList(const Vector<Vector2I>& vertices, const Color& color = Color::White, u8 depth = 128);
 
 		/**
 		 * Draws a piece of text with the wanted font. The text will be aligned to the top-left corner of the provided
@@ -121,8 +121,8 @@ namespace bs
 		 *							others. Additionally elements of the same type (triangle or line) will be drawn in order
 		 *							they are submitted if they share the same depth.
 		 */
-		void DrawText(const String& text, const Vector2I& position, const HFont& font, UINT32 size = 10,
-			const Color& color = Color::White, UINT8 depth = 128);
+		void DrawText(const String& text, const Vector2I& position, const HFont& font, u32 size = 10,
+			const Color& color = Color::White, u8 depth = 128);
 
 		/** Clears the canvas, removing any previously drawn elements. */
 		void Clear();
@@ -136,7 +136,7 @@ namespace bs
 		Vector2I GetOptimalSizeInternal() const override;
 
 		/** @copydoc GUIElement::GetRenderElementDepthRangeInternal */
-		UINT32 GetRenderElementDepthRangeInternal() const override { return mDepthRange; }
+		u32 GetRenderElementDepthRangeInternal() const override { return mDepthRange; }
 
 		/** @} */
 	protected:
@@ -154,19 +154,19 @@ namespace bs
 		{
 			CanvasElementType Type;
 			Color Color;
-			UINT32 RenderElemStart;
-			UINT32 RenderElemEnd;
-			UINT32 DataId;
-			UINT8 Depth;
+			u32 RenderElemStart;
+			u32 RenderElemEnd;
+			u32 DataId;
+			u8 Depth;
 
 			union
 			{
 				struct
 				{
-					UINT32 VertexStart;
-					UINT32 NumVertices;
-					mutable UINT32 ClippedVertexStart;
-					mutable UINT32 ClippedNumVertices;
+					u32 VertexStart;
+					u32 NumVertices;
+					mutable u32 ClippedVertexStart;
+					mutable u32 ClippedNumVertices;
 				};
 
 				struct
@@ -178,7 +178,7 @@ namespace bs
 				struct
 				{
 					TextSprite* TextSprite;
-					UINT32 Size;
+					u32 Size;
 				};
 			};
 		};
@@ -209,14 +209,14 @@ namespace bs
 
 		/** @copydoc GUIElement::_fillBuffer */
 		void FillBuffer(
-			UINT8* vertices,
-			UINT32* indices,
-			UINT32 vertexOffset,
-			UINT32 indexOffset,
+			u8* vertices,
+			u32* indices,
+			u32 vertexOffset,
+			u32 indexOffset,
 			const Vector2I& offset,
-			UINT32 maxNumVerts,
-			UINT32 maxNumIndices,
-			UINT32 renderElementIdx) const ;
+			u32 maxNumVerts,
+			u32 maxNumIndices,
+			u32 renderElementIdx) const ;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal */
 		void UpdateRenderElementsInternal() ;
@@ -237,10 +237,10 @@ namespace bs
 		void BuildAllTriangleElementsIfDirty(const Vector2& offset, const Rect2I& clipRect) const;
 
 		/** Finds the canvas element that contains the render element with the specified index. */
-		const CanvasElement& FindElement(UINT32 renderElementIdx) const;
+		const CanvasElement& FindElement(u32 renderElementIdx) const;
 
 		Vector<CanvasElement> mElements;
-		UINT8 mDepthRange = 1;
+		u8 mDepthRange = 1;
 
 		Vector<ImageElementData> mImageData;
 		Vector<TextElementData> mTextData;

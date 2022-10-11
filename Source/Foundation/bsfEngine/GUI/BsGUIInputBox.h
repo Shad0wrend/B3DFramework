@@ -101,14 +101,14 @@ namespace bs
 
 		/** @copydoc GUIElement::FillBufferInternal() */
 		void FillBuffer(
-			UINT8* vertices,
-			UINT32* indices,
-			UINT32 vertexOffset,
-			UINT32 indexOffset,
+			u8* vertices,
+			u32* indices,
+			u32 vertexOffset,
+			u32 indexOffset,
 			const Vector2I& offset,
-			UINT32 maxNumVerts,
-			UINT32 maxNumIndices,
-			UINT32 renderElementIdx) const ;
+			u32 maxNumVerts,
+			u32 maxNumIndices,
+			u32 renderElementIdx) const ;
 
 		/** @copydoc GUIElement::updateRenderElementsInternal() */
 		void UpdateRenderElementsInternal() ;
@@ -141,7 +141,7 @@ namespace bs
 		Rect2I GetTextInputRectInternal() const override;
 
 		/** @copydoc GUIElement::GetRenderElementDepthRangeInternal */
-		UINT32 GetRenderElementDepthRangeInternal() const override;
+		u32 GetRenderElementDepthRangeInternal() const override;
 
 		/** @copydoc GUIElement::_hasCustomCursor */
 		bool HasCustomCursorInternal(const Vector2I position, CursorType& type) const override;
@@ -153,28 +153,28 @@ namespace bs
 		 * Retrieves a sprite from a render element index, and a local render element index that represents render element
 		 * within the returned sprite.
 		 */
-		Sprite* RenderElemToSprite(UINT32 renderElemIdx, UINT32& localRenderElemIdx) const;
+		Sprite* RenderElemToSprite(u32 renderElemIdx, u32& localRenderElemIdx) const;
 
 		/**
 		 * Returns offset at which is the element with the provided render element index. Offset is relative to parent
 		 * widget.
 		 */
-		Vector2I RenderElemToOffset(UINT32 renderElemIdx) const;
+		Vector2I RenderElemToOffset(u32 renderElemIdx) const;
 
 		/**
 		 * Returns a clip rectangle that can be used for clipping the render element with the provided index. Rectangle is
 		 * in local coordiantes relative to element origin.
 		 */
-		Rect2I RenderElemToClipRect(UINT32 renderElemIdx) const;
+		Rect2I RenderElemToClipRect(u32 renderElemIdx) const;
 
 		/** Inserts a new string into the current text at the specified index. */
-		void InsertString(UINT32 charIdx, const String& string);
+		void InsertString(u32 charIdx, const String& string);
 
 		/**	Inserts a new character into the current text at the specified index. */
-		void InsertChar(UINT32 charIdx, UINT32 charCode);
+		void InsertChar(u32 charIdx, u32 charCode);
 
 		/**	Erases a single character at the specified index. */
-		void EraseChar(UINT32 charIdx);
+		void EraseChar(u32 charIdx);
 
 		/**
 		 * Deletes text that is currently selected.
@@ -198,7 +198,7 @@ namespace bs
 		 * will actually render. Anchor position determines selection behavior as the user moves the selection with the
 		 * keyboard.
 		 */
-		void ShowSelection(UINT32 anchorCaretPos);
+		void ShowSelection(u32 anchorCaretPos);
 
 		/**	Removes any active selection. */
 		void ClearSelection();
@@ -245,13 +245,13 @@ namespace bs
 		bool mIsMultiline;
 		Vector2I mTextOffset;
 		bool mHasFocus = false;
-		UINT64 mFocusGainedFrame = (UINT64)-1;
+		u64 mFocusGainedFrame = (u64)-1;
 		bool mIsMouseOver = false;
 		State mState = State::Normal;
 
 		IMAGE_SPRITE_DESC mImageDesc;
 		String mText;
-		UINT32 mNumChars = 0;
+		u32 mNumChars = 0;
 		std::function<bool(const String&)> mFilter;
 
 		bool mCaretShown = false;

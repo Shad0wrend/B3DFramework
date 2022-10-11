@@ -24,7 +24,7 @@ namespace bs
 		return MonoUtil::GetObjectFromGcHandle(mGCHandle);
 	}
 
-	MonoObject* ScriptResourceBase::GetRRef(const HResource& resource, UINT32 rttiId)
+	MonoObject* ScriptResourceBase::GetRRef(const HResource& resource, u32 rttiId)
 	{
 		::MonoClass* rrefClass = GetRRefClass(rttiId);
 		if(!rrefClass)
@@ -58,7 +58,7 @@ namespace bs
 		ScriptResourceManager::Instance().DestroyScriptResource(this);
 	}
 
-	::MonoClass* ScriptResourceBase::GetManagedResourceClass(UINT32 rttiId)
+	::MonoClass* ScriptResourceBase::GetManagedResourceClass(u32 rttiId)
 	{
 		if(rttiId == Resource::GetRttiStatic()->GetRttiId())
 			return ScriptResource::GetMetaData()->ScriptClass->GetInternalClassInternal();
@@ -75,7 +75,7 @@ namespace bs
 		}
 	}
 
-	::MonoClass* ScriptResourceBase::GetRRefClass(UINT32 rttiId)
+	::MonoClass* ScriptResourceBase::GetRRefClass(u32 rttiId)
 	{
 		::MonoClass* monoClass = GetManagedResourceClass(rttiId);
 		if (!monoClass)

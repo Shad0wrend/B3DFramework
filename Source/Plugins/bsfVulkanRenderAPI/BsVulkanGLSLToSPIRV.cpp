@@ -128,7 +128,7 @@ namespace bs { namespace ct
 	{
 		if (type.isVector())
 		{
-			UINT32 vectorSize = type.getVectorSize();
+			u32 vectorSize = type.getVectorSize();
 
 			switch (type.getBasicType())
 			{
@@ -182,7 +182,7 @@ namespace bs { namespace ct
 
 		if (type.isVector())
 		{
-			UINT32 vectorSize = type.getVectorSize();
+			u32 vectorSize = type.getVectorSize();
 
 			switch (type.getBasicType())
 			{
@@ -271,7 +271,7 @@ namespace bs { namespace ct
 
 	GpuBufferFormat mapSamplerBasicType(const glslang::TSampler& sampler)
 	{
-		UINT32 vectorSize = sampler.vectorSize;
+		u32 vectorSize = sampler.vectorSize;
 		switch (sampler.type)
 		{
 		case glslang::EbtFloat:
@@ -359,13 +359,13 @@ namespace bs { namespace ct
 		 * of the two compared strings must match, and the remaining non-matching bit will be assumed to be the semantic
 		 * index. Returns -1 if no match is made.
 		 */
-		INT32 MatchesName(const String& name) const
+		i32 MatchesName(const String& name) const
 		{
 			if (!StringUtil::StartsWith(name, mName, false))
 				return -1;
 
-			UINT32 length = (UINT32)mName.size();
-			return parseINT32(name.substr(length));
+			u32 length = (u32)mName.size();
+			return parsei32(name.substr(length));
 		}
 
 		/**	Returns the semantic of this attribute. */
@@ -376,7 +376,7 @@ namespace bs { namespace ct
 		VertexElementSemantic mSemantic;
 	};
 
-	bool attribNameToElementSemantic(const String& name, VertexElementSemantic& semantic, UINT16& index)
+	bool attribNameToElementSemantic(const String& name, VertexElementSemantic& semantic, u16& index)
 	{
 		static GLSLAttribute attributes[] =
 		{
@@ -398,11 +398,11 @@ namespace bs { namespace ct
 			GLSLAttribute("BLENDINDICES", VES_BLEND_INDICES)
 		};
 
-		static const UINT32 numAttribs = sizeof(attributes) / sizeof(attributes[0]);
+		static const u32 numAttribs = sizeof(attributes) / sizeof(attributes[0]);
 
-		for (UINT32 i = 0; i < numAttribs; i++)
+		for (u32 i = 0; i < numAttribs; i++)
 		{
-			INT32 attribIndex = attributes[i].MatchesName(name);
+			i32 attribIndex = attributes[i].MatchesName(name);
 			if (attribIndex != -1)
 			{
 				index = attribIndex;
@@ -420,9 +420,9 @@ namespace bs { namespace ct
 		for (int i = 0; i < numAttributes; i++)
 		{
 			const glslang::TType* ttype = program->getAttributeTType(i);
-			UINT32 location = ttype->getQualifier().layoutLocation;
+			u32 location = ttype->getQualifier().layoutLocation;
 
-			if (location == (UINT32)-1)
+			if (location == (u32)-1)
 			{
 				log = "Vertex attribute parsing error: Found a vertex attribute without a location "
 					"qualifier. Each attribute must have an explicitly defined location number.";
@@ -433,7 +433,7 @@ namespace bs { namespace ct
 			const char* attribName = program->getAttributeName(i);
 
 			VertexElementSemantic semantic = VES_POSITION;
-			UINT16 index = 0;
+			u16 index = 0;
 			if (attribNameToElementSemantic(attribName, semantic, index))
 			{
 				VertexElementType type = mapGLSLangToVertexElemType(*ttype);
@@ -457,7 +457,7 @@ namespace bs { namespace ct
 		return true;
 	}
 
-	void parseStruct(const glslang::TTypeList* typeList, UINT32& size)
+	void parseStruct(const glslang::TTypeList* typeList, u32& size)
 	{
 		for (auto iter = typeList->begin(); iter != typeList->end(); ++iter)
 		{
@@ -470,9 +470,9 @@ namespace bs { namespace ct
 			}
 			else
 			{
-				UINT32 arraySize = 1;
+				u32 arraySize = 1;
 				if (ttype->isArray())
-					arraySize = (UINT32)ttype->getCumulativeArraySize();
+					arraySize = (u32)ttype->getCumulativeArraySize();
 
 				GpuParamDataType paramType = mapGLSLangToGpuParamDataType(*ttype);
 				if (paramType == GPDT_UNKNOWN)
@@ -481,7 +481,7 @@ namespace bs { namespace ct
 					continue;
 				}
 
-				UINT32 elemSize = VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(paramType, arraySize, size);
+				u32 elemSize = VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(paramType, arraySize, size);
 				size += elemSize;
 			}
 		}
@@ -492,8 +492,8 @@ namespace bs { namespace ct
 		// Parse individual uniforms
 		struct UniformInfo
 		{
-			UINT32 BufferOffset;
-			UINT32 ArraySize;
+			u32 BufferOffset;
+			u32 ArraySize;
 		};
 
 		UnorderedMap<String, UniformInfo> uniforms;
@@ -659,15 +659,15 @@ namespace bs { namespace ct
 				if(typeList == nullptr)
 					continue;
 
-				UINT32 bufferOffset = 0;
+				u32 bufferOffset = 0;
 				for (auto iter = typeList->begin(); iter != typeList->end(); ++iter)
 				{
 					const glslang::TType* paramTType = iter->type;
 					String paramName = paramTType->getFieldName().c_str();
 
 					GpuParamDataType paramType;
-					UINT32 elementSize = 0;
-					UINT32 arrayStride = 0;
+					u32 elementSize = 0;
+					u32 arrayStride = 0;
 					if (paramTType->getBasicType() == glslang::EbtStruct)
 					{
 						paramType = GPDT_STRUCT;
@@ -689,7 +689,7 @@ namespace bs { namespace ct
 						continue;
 					}
 
-					UINT32 arraySize = paramTType->isArray() ? paramTType->getCumulativeArraySize() : 1;
+					u32 arraySize = paramTType->isArray() ? paramTType->getCumulativeArraySize() : 1;
 					if (paramType != GPDT_STRUCT)
 					{
 						const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::PARAM_SIZES.Lookup[paramType];
@@ -702,7 +702,7 @@ namespace bs { namespace ct
 							arrayStride = elementSize;
 					}
 
-					UINT32 stride;
+					u32 stride;
 					if (paramTType->getBasicType() == glslang::EbtStruct)
 					{
 						// Structs are always aligned and rounded up to vec4
@@ -793,7 +793,7 @@ namespace bs { namespace ct
 			break;
 		}
 
-		std::vector<UINT32> spirv;
+		std::vector<u32> spirv;
 		spv::SpvBuildLogger logger;
 		std::string compileLog;
 
@@ -842,8 +842,8 @@ namespace bs { namespace ct
 				goto cleanup;
 		}
 
-		bytecode->Instructions.Size = (UINT32)spirv.size() * sizeof(UINT32);
-		bytecode->Instructions.Data = (UINT8*)bs_alloc(bytecode->Instructions.Size);
+		bytecode->Instructions.Size = (u32)spirv.size() * sizeof(u32);
+		bytecode->Instructions.Data = (u8*)bs_alloc(bytecode->Instructions.Size);
 
 		memcpy(bytecode->Instructions.Data, spirv.data(), bytecode->Instructions.Size);
 

@@ -20,7 +20,7 @@ namespace bs
 	{
 	public:
 		SavedResourceData() = default;
-		SavedResourceData(const Vector<UUID>& dependencies, bool allowAsync, UINT32 compressionMethod);
+		SavedResourceData(const Vector<UUID>& dependencies, bool allowAsync, u32 compressionMethod);
 
 		/**	Returns a list of all resource dependencies. */
 		const Vector<UUID>& GetDependencies() const { return mDependencies; }
@@ -29,12 +29,12 @@ namespace bs
 		bool AllowAsyncLoading() const { return mAllowAsync; }
 
 		/** Returns the method used for compressing the resource. 0 if none. */
-		UINT32 GetCompressionMethod() const { return mCompressionMethod; }
+		u32 GetCompressionMethod() const { return mCompressionMethod; }
 
 	private:
 		Vector<UUID> mDependencies;
 		bool mAllowAsync = true;
-		UINT32 mCompressionMethod = 0;
+		u32 mCompressionMethod = 0;
 
 	/************************************************************************/
 	/* 								SERIALIZATION                      		*/

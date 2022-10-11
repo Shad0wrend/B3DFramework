@@ -11,8 +11,8 @@ namespace bs
 	const Matrix4 Matrix4::ZERO{BS_ZERO()};
 	const Matrix4 Matrix4::IDENTITY{BS_IDENTITY()};
 
-	static float MINOR(const Matrix4& m, const UINT32 r0, const UINT32 r1, const UINT32 r2,
-								const UINT32 c0, const UINT32 c1, const UINT32 c2)
+	static float MINOR(const Matrix4& m, const u32 r0, const u32 r1, const u32 r2,
+								const u32 c0, const u32 c1, const u32 c2)
 	{
 		return m[r0][c0] * (m[r1][c1] * m[r2][c2] - m[r2][c1] * m[r1][c2]) -
 			m[r0][c1] * (m[r1][c0] * m[r2][c2] - m[r2][c0] * m[r1][c2]) +

@@ -54,30 +54,30 @@ namespace bs
 		 * Be aware that this value will be ignored if GUI element is part of a layout since then the layout controls its
 		 * placement.
 		 */
-		void SetPosition(INT32 x, INT32 y);
+		void SetPosition(i32 x, i32 y);
 
 		/**	Sets element width in pixels.  */
-		void SetWidth(UINT32 width);
+		void SetWidth(u32 width);
 
 		/**
 		 * Sets element width in pixels. Element will be resized according to its contents and parent layout but will
 		 * always stay within the provided range. If maximum width is zero, the element is allowed to expand as much as
 		 * it needs.
 		 */
-		void SetFlexibleWidth(UINT32 minWidth = 0, UINT32 maxWidth = 0);
+		void SetFlexibleWidth(u32 minWidth = 0, u32 maxWidth = 0);
 
 		/**	Sets element height in pixels. */
-		void SetHeight(UINT32 height);
+		void SetHeight(u32 height);
 
 		/** Sets width and height of a GUI element in pixels. */
-		void SetSize(UINT32 width, UINT32 height);
+		void SetSize(u32 width, u32 height);
 
 		/**
 		 * Sets element height in pixels. Element will be resized according to its contents and parent layout but will
 		 * always stay within the provided range. If maximum height is zero, the element is allowed to expand as much as
 		 * it needs.
 		 */
-		void SetFlexibleHeight(UINT32 minHeight = 0, UINT32 maxHeight = 0);
+		void SetFlexibleHeight(u32 minHeight = 0, u32 maxHeight = 0);
 
 		/**	Resets element dimensions to their initial values dictated by the element's style. */
 		virtual void ResetDimensions();
@@ -168,7 +168,7 @@ namespace bs
 		 *								elements array.
 		 * @param[in]	mySizeRange		Size range of this element.
 		 */
-		virtual void GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, UINT32 numElements,
+		virtual void GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements,
 			const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const;
 
 		/** Updates layout data that determines GUI elements final position & depth in the GUI widget. */
@@ -181,10 +181,10 @@ namespace bs
 		void SetParentInternal(GUIElementBase* parent);
 
 		/**	Returns number of child elements. */
-		UINT32 GetNumChildrenInternal() const { return (UINT32)mChildren.size(); }
+		u32 GetNumChildrenInternal() const { return (u32)mChildren.size(); }
 
 		/**	Return the child element at the specified index.*/
-		GUIElementBase* GetChildInternal(UINT32 idx) const { return mChildren[idx]; }
+		GUIElementBase* GetChildInternal(u32 idx) const { return mChildren[idx]; }
 
 		/**	Returns previously calculated optimal size for this element. */
 		virtual Vector2I GetOptimalSizeInternal() const = 0;
@@ -334,7 +334,7 @@ namespace bs
 		GUIElementBase* mParentElement = nullptr;
 
 		Vector<GUIElementBase*> mChildren;
-		UINT8 mFlags = GUIElem_Dirty;
+		u8 mFlags = GUIElem_Dirty;
 
 		GUIDimensions mDimensions;
 		GUILayoutData mLayoutData;

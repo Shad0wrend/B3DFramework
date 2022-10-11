@@ -49,19 +49,19 @@ namespace bs
 		 * matching layers will be projected onto. Note that decal layer mask only supports 32-bits and objects with
 		 * layers in bits >= 32 will always be projected onto.
 		 */
-		void SetLayerMask(UINT32 mask) { mLayerMask = mask; MarkCoreDirtyInternal(); }
+		void SetLayerMask(u32 mask) { mLayerMask = mask; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setLayerMask */
-		UINT32 GetLayerMask() const { return mLayerMask; }
+		u32 GetLayerMask() const { return mLayerMask; }
 
 		/**
 		 * Determines the layer that controls whether a system is considered visible in a specific camera. Layer must match
 		 * camera layer bitfield in order for the camera to render the decal.
 		 */
-		void SetLayer(UINT64 layer);
+		void SetLayer(u64 layer);
 
 		/** @copydoc setLayer() */
-		UINT64 GetLayer() const { return mLayer; }
+		u64 GetLayer() const { return mLayer; }
 
 		/**	Gets world bounds of this object. */
 		Bounds GetBounds() const { return mBounds; }
@@ -83,8 +83,8 @@ namespace bs
 
 		Vector2 mSize = Vector2::ONE;
 		float mMaxDistance = 10.0f;
-		UINT64 mLayer = 1;
-		UINT32 mLayerMask = 0xFFFFFFFF;
+		u64 mLayer = 1;
+		u32 mLayerMask = 0xFFFFFFFF;
 		Matrix4 mTfrmMatrix = BsIdentity;
 		Matrix4 mTfrmMatrixNoScale = BsIdentity;
 
@@ -185,10 +185,10 @@ namespace bs
 		~Decal();
 
 		/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-		void SetRendererId(UINT32 id) { mRendererId = id; }
+		void SetRendererId(u32 id) { mRendererId = id; }
 
 		/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-		UINT32 GetRendererId() const { return mRendererId; }
+		u32 GetRendererId() const { return mRendererId; }
 
 	protected:
 		friend class bs::Decal;
@@ -201,7 +201,7 @@ namespace bs
 		/** @copydoc CoreObject::syncToCore */
 		void SyncToCore(const CoreSyncData& data) override;
 
-		UINT32 mRendererId = 0;
+		u32 mRendererId = 0;
 	};
 	}
 

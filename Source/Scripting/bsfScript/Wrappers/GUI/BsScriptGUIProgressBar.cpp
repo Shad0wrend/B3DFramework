@@ -40,8 +40,8 @@ namespace bs
 		GUIOptions options;
 
 		ScriptArray scriptArray(guiOptions);
-		UINT32 arrayLen = scriptArray.Size();
-		for (UINT32 i = 0; i < arrayLen; i++)
+		u32 arrayLen = scriptArray.Size();
+		for (u32 i = 0; i < arrayLen; i++)
 			options.AddOption(scriptArray.Get<GUIOption>(i));
 
 		GUIProgressBar* progressBar = GUIProgressBar::Create(options, MonoUtil::MonoToString(style));

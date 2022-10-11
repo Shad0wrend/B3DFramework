@@ -86,7 +86,7 @@ namespace bs
 			mPlanes.push_back(plane);
 		}
 
-		for (UINT32 i = 0; i < (UINT32)mPlanes.size(); i++)
+		for (u32 i = 0; i < (u32)mPlanes.size(); i++)
 		{
 			float length = mPlanes[i].Normal.Normalize();
 			mPlanes[i].D /= -length;

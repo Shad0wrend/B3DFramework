@@ -46,7 +46,7 @@ namespace bs { namespace ct
 			{
 #if BS_OPENGL_4_2 || BS_OPENGLES_3_1
 				const auto& props = GetProperties();
-				UINT32 size = props.GetElementCount() * props.GetElementSize();
+				u32 size = props.GetElementCount() * props.GetElementSize();
 				mBuffer = bs_pool_new<GLHardwareBuffer>(GL_SHADER_STORAGE_BUFFER, size, props.GetUsage());
 #else
 				BS_LOG(Warning, RenderBackend, "SSBOs are not supported on the current OpenGL version.");
@@ -55,7 +55,7 @@ namespace bs { namespace ct
 			else
 			{
 				const auto& props = GetProperties();
-				UINT32 size = props.GetElementCount() * props.GetElementSize();
+				u32 size = props.GetElementCount() * props.GetElementSize();
 				mBuffer = bs_pool_new<GLHardwareBuffer>(GL_TEXTURE_BUFFER, size, props.GetUsage());
 			}
 		}

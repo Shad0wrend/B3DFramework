@@ -13,18 +13,18 @@ namespace bs
 	/** A four dimensional vector with integer coordinates. */
 	struct BS_SCRIPT_EXPORT(m:Math,pl:true) Vector4I
 	{
-		INT32 X = 0;
-		INT32 Y = 0;
-		INT32 Z = 0;
-		INT32 W = 0;
+		i32 X = 0;
+		i32 Y = 0;
+		i32 Z = 0;
+		i32 W = 0;
 
 		constexpr Vector4I() = default;
 
-		constexpr Vector4I(INT32 x, INT32 y, INT32 z, INT32 w)
+		constexpr Vector4I(i32 x, i32 y, i32 z, i32 w)
 			:X(x), Y(y), Z(z), W(w)
 		{ }
 
-		INT32 operator[] (size_t i) const
+		i32 operator[] (size_t i) const
 		{
 			assert(i < 4);
 
@@ -38,7 +38,7 @@ namespace bs
 			}
 		}
 
-		INT32& operator[] (size_t i)
+		i32& operator[] (size_t i)
 		{
 			assert(i < 4);
 

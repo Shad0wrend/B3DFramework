@@ -206,7 +206,7 @@ namespace bs
 		return Quaternion::IDENTITY;
 	}
 
-	void CRigidbody::SetPositionSolverCount(UINT32 count)
+	void CRigidbody::SetPositionSolverCount(u32 count)
 	{
 		mPositionSolverCount = count;
 
@@ -214,7 +214,7 @@ namespace bs
 			mInternal->SetPositionSolverCount(count);
 	}
 
-	void CRigidbody::SetVelocitySolverCount(UINT32 count)
+	void CRigidbody::SetVelocitySolverCount(u32 count)
 	{
 		mVelocitySolverCount = count;
 
@@ -307,8 +307,8 @@ namespace bs
 				}
 			}
 
-			UINT32 childCount = currentSO->GetNumChildren();
-			for (UINT32 i = 0; i < childCount; i++)
+			u32 childCount = currentSO->GetNumChildren();
+			for (u32 i = 0; i < childCount; i++)
 			{
 				HSceneObject child = currentSO->GetChild(i);
 
@@ -468,7 +468,7 @@ namespace bs
 		mInternal->SetIsKinematic(mIsKinematic);
 		mInternal->SetFlags(mFlags);
 
-		if(((UINT32)mFlags & (UINT32)RigidbodyFlag::AutoTensors) == 0)
+		if(((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) == 0)
 		{
 			mInternal->SetCenterOfMass(mCMassPosition, mCMassRotation);
 			mInternal->SetInertiaTensor(mInertiaTensor);
@@ -476,7 +476,7 @@ namespace bs
 		}
 		else
 		{
-			if (((UINT32)mFlags & (UINT32)RigidbodyFlag::AutoMass) == 0)
+			if (((u32)mFlags & (u32)RigidbodyFlag::AutoMass) == 0)
 				mInternal->SetMass(mMass);
 
 			mInternal->UpdateMassDistribution();
@@ -493,7 +493,7 @@ namespace bs
 			ClearColliders();
 			UpdateColliders();
 
-			if (((UINT32)mFlags & (UINT32)RigidbodyFlag::AutoTensors) != 0)
+			if (((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) != 0)
 				mInternal->UpdateMassDistribution();
 
 #if BS_DEBUG_MODE

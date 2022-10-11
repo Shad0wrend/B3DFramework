@@ -24,14 +24,14 @@ namespace bs
 		/* 								CLR HOOKS						   		*/
 		/************************************************************************/
 		static void InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions);
-		static void InternalDrawLine(ScriptGUICanvas* nativeInstance, Vector2I* a, Vector2I* b, Color* color, UINT8 depth);
-		static void InternalDrawPolyLine(ScriptGUICanvas* nativeInstance, MonoArray* vertices, Color* color, UINT8 depth);
+		static void InternalDrawLine(ScriptGUICanvas* nativeInstance, Vector2I* a, Vector2I* b, Color* color, u8 depth);
+		static void InternalDrawPolyLine(ScriptGUICanvas* nativeInstance, MonoArray* vertices, Color* color, u8 depth);
 		static void InternalDrawTexture(ScriptGUICanvas* nativeInstance, ScriptSpriteTexture* texture, Rect2I* area,
-			TextureScaleMode scaleMode, Color* color, UINT8 depth);
-		static void InternalDrawTriangleStrip(ScriptGUICanvas* nativeInstance, MonoArray* vertices, Color* color, UINT8 depth);
-		static void InternalDrawTriangleList(ScriptGUICanvas* nativeInstance, MonoArray* vertices, Color* color, UINT8 depth);
+			TextureScaleMode scaleMode, Color* color, u8 depth);
+		static void InternalDrawTriangleStrip(ScriptGUICanvas* nativeInstance, MonoArray* vertices, Color* color, u8 depth);
+		static void InternalDrawTriangleList(ScriptGUICanvas* nativeInstance, MonoArray* vertices, Color* color, u8 depth);
 		static void InternalDrawText(ScriptGUICanvas* nativeInstance, MonoString* text, Vector2I* position,
-			ScriptFont* font, UINT32 size, Color* color, UINT8 depth);
+			ScriptFont* font, u32 size, Color* color, u8 depth);
 		static void InternalClear(ScriptGUICanvas* nativeInstance);
 	};
 

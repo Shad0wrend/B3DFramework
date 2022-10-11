@@ -91,11 +91,11 @@ namespace bs
 				validTypes.push_back(MonoUtil::GetType(objInfo->MTypeInfo->GetMonoClass()));
 		}
 
-		UINT32 numValidTypes = (UINT32)validTypes.size();
+		u32 numValidTypes = (u32)validTypes.size();
 		MonoClass* typeClass = ScriptAssemblyManager::Instance().GetBuiltinClasses().SystemTypeClass;
 
 		ScriptArray scriptArray(typeClass->GetInternalClassInternal(), numValidTypes);
-		for (UINT32 i = 0; i < numValidTypes; i++)
+		for (u32 i = 0; i < numValidTypes; i++)
 			scriptArray.Set(i, validTypes[i]);
 
 		return scriptArray.GetInternal();
@@ -111,7 +111,7 @@ namespace bs
 		struct NamespaceData
 		{
 			WString Ns;
-			INT32 BracketIdx;
+			i32 BracketIdx;
 		};
 
 		Vector<FullTypeName> output;
@@ -126,8 +126,8 @@ namespace bs
 		WString nsToken = L"namespace";
 		WString classToken = L"class";
 
-		UINT32 idx = 0;
-		INT32 bracketIdx = 0;
+		u32 idx = 0;
+		i32 bracketIdx = 0;
 		for (auto iter = code.begin(); iter != code.end(); ++iter)
 		{
 			wchar_t ch = *iter;

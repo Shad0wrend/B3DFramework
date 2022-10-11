@@ -43,7 +43,7 @@ namespace bs
 		static void UnregisterWindowInternal(::Window xWindow);
 
 		/** Generates a X11 Pixmap from the provided pixel data. */
-		static Pixmap createPixmap(const PixelData& data, UINT32 depth);
+		static Pixmap createPixmap(const PixelData& data, u32 depth);
 
 		/** Mutex for accessing buttonEvents / mouseEvent. */
 		static Mutex eventLock;
