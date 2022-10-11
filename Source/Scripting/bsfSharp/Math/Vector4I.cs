@@ -30,13 +30,13 @@ namespace bs
                 switch (index)
                 {
                     case 0:
-                        return x;
+                        return X;
                     case 1:
-                        return y;
+                        return Y;
                     case 2:
-                        return z;
+                        return Z;
                     case 3:
-                        return w;
+                        return W;
                     default:
                         throw new IndexOutOfRangeException("Invalid Vector4I index.");
                 }
@@ -47,16 +47,16 @@ namespace bs
                 switch (index)
                 {
                     case 0:
-                        x = value;
+                        X = value;
                         break;
                     case 1:
-                        y = value;
+                        Y = value;
                         break;
                     case 2:
-                        z = value;
+                        Z = value;
                         break;
                     case 3:
-                        w = value;
+                        W = value;
                         break;
                     default:
                         throw new IndexOutOfRangeException("Invalid Vector4I index.");
@@ -71,7 +71,7 @@ namespace bs
         {
             get
             {
-                return (x * x + y * y + z * z + w * w);
+                return (X * X + Y * Y + Z * Z + W * W);
             }
         }
 
@@ -82,47 +82,47 @@ namespace bs
         /// <returns>A new three dimensional vector.</returns>
         public static explicit operator Vector3I(Vector4I vec)
         {
-            return new Vector3I(vec.x, vec.y, vec.z);
+            return new Vector3I(vec.X, vec.Y, vec.Z);
         }
 
         public static Vector4I operator +(Vector4I a, Vector4I b)
         {
-            return new Vector4I(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);
+            return new Vector4I(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
         }
 
         public static Vector4I operator -(Vector4I a, Vector4I b)
         {
-            return new Vector4I(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
+            return new Vector4I(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
         }
 
         public static Vector4I operator -(Vector4I v)
         {
-            return new Vector4I(-v.x, -v.y, -v.z, -v.w);
+            return new Vector4I(-v.X, -v.Y, -v.Z, -v.W);
         }
 
         public static Vector4I operator *(Vector4I a, Vector4I b)
         {
-            return new Vector4I(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
+            return new Vector4I(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
         }
 
         public static Vector4I operator *(Vector4I v, int d)
         {
-            return new Vector4I(v.x * d, v.y * d, v.z * d, v.w * d);
+            return new Vector4I(v.X * d, v.Y * d, v.Z * d, v.W * d);
         }
 
         public static Vector4I operator *(int d, Vector4I v)
         {
-            return new Vector4I(v.x * d, v.y * d, v.z * d, v.w * d);
+            return new Vector4I(v.X * d, v.Y * d, v.Z * d, v.W * d);
         }
 
         public static Vector4I operator /(Vector4I v, int d)
         {
-            return new Vector4I(v.x / d, v.y / d, v.z / d, v.w / d);
+            return new Vector4I(v.X / d, v.Y / d, v.Z / d, v.W / d);
         }
 
         public static bool operator ==(Vector4I lhs, Vector4I rhs)
         {
-            return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w;
+            return lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z && lhs.W == rhs.W;
         }
 
         public static bool operator !=(Vector4I lhs, Vector4I rhs)
@@ -137,13 +137,13 @@ namespace bs
         /// <returns>Squared magnitude of the vector.</returns>
         public static int SqrMagnitude(Vector4I v)
         {
-            return (v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);
+            return (v.X * v.X + v.Y * v.Y + v.Z * v.Z + v.W * v.W);
         }
 
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            return x.GetHashCode() ^ y.GetHashCode() << 2 ^ z.GetHashCode() >> 2 ^ w.GetHashCode() >> 1;
+            return X.GetHashCode() ^ Y.GetHashCode() << 2 ^ Z.GetHashCode() >> 2 ^ W.GetHashCode() >> 1;
         }
 
         /// <inheritdoc/>
@@ -153,7 +153,7 @@ namespace bs
                 return false;
 
             Vector4I vec = (Vector4I)other;
-            if (x.Equals(vec.x) && y.Equals(vec.y) && z.Equals(vec.z) && w.Equals(vec.w))
+            if (X.Equals(vec.X) && Y.Equals(vec.Y) && Z.Equals(vec.Z) && W.Equals(vec.W))
                 return true;
 
             return false;
@@ -162,7 +162,7 @@ namespace bs
         /// <inheritdoc/>
         public override string ToString()
         {
-            return "(" + x + ", " + y + ", " + z + ", " + w + ")";
+            return "(" + X + ", " + Y + ", " + Z + ", " + W + ")";
         }
     }
 }

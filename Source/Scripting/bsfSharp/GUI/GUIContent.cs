@@ -18,23 +18,23 @@ namespace bs
             switch (state)
             {
             case GUIElementState.Normal:
-                return images.normal;
+                return Images.Normal;
             case GUIElementState.Hover:
-                return images.hover;
+                return Images.Hover;
             case GUIElementState.Active:
-                return images.active;
+                return Images.Active;
             case GUIElementState.Focused:
-                return images.focused;
+                return Images.Focused;
             case GUIElementState.NormalOn:
-                return images.normalOn;
+                return Images.NormalOn;
             case GUIElementState.HoverOn:
-                return images.hoverOn;
+                return Images.HoverOn;
             case GUIElementState.ActiveOn:
-                return images.activeOn;
+                return Images.ActiveOn;
             case GUIElementState.FocusedOn:
-                return images.focusedOn;
+                return Images.FocusedOn;
             default:
-                return images.normal;
+                return Images.Normal;
             }
         }
 
@@ -68,14 +68,14 @@ namespace bs
         /// <param name="imageOn">Image to assign to all on states.</param>
         public GUIContentImages(SpriteTexture imageOff, SpriteTexture imageOn)
         {
-            normal = imageOff;
-            hover = imageOff;
-            active = imageOff;
-            focused = imageOff;
-            normalOn = imageOn;
-            hoverOn = imageOn;
-            activeOn = imageOn;
-            focusedOn = imageOn;
+            Normal = imageOff;
+            Hover = imageOff;
+            Active = imageOff;
+            Focused = imageOff;
+            NormalOn = imageOn;
+            HoverOn = imageOn;
+            ActiveOn = imageOn;
+            FocusedOn = imageOn;
         }
 
         /// <summary>

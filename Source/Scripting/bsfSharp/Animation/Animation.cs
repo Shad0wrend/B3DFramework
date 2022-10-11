@@ -58,7 +58,7 @@ namespace bs
             else
             {
                 AnimationClipState clipState = AnimationClipState.Default();
-                clipState.time = startTime;
+                clipState.Time = startTime;
 
                 SetState(clip, clipState);
             }
@@ -84,7 +84,7 @@ namespace bs
 
             AnimationClipState clipState;
             if (clip != null && GetState(clip, out clipState))
-                return clipState.time;
+                return clipState.Time;
 
             return 0.0f;
         }
@@ -273,14 +273,14 @@ namespace bs
             List<FloatCurvePropertyInfo> newFloatProperties = new List<FloatCurvePropertyInfo>();
             for (int i = 0; i < curves.Generic.Length; i++)
             {
-                bool isMorphCurve = curves.Generic[i].flags.HasFlag(AnimationCurveFlags.MorphWeight) ||
-                                    curves.Generic[i].flags.HasFlag(AnimationCurveFlags.MorphFrame);
+                bool isMorphCurve = curves.Generic[i].Flags.HasFlag(AnimationCurveFlags.MorphWeight) ||
+                                    curves.Generic[i].Flags.HasFlag(AnimationCurveFlags.MorphFrame);
 
                 if (isMorphCurve)
                     continue;
 
                 string suffix;
-                SerializableProperty property = FindProperty(SceneObject, curves.Generic[i].name, out suffix);
+                SerializableProperty property = FindProperty(SceneObject, curves.Generic[i].Name, out suffix);
                 if (property == null)
                     continue;
 

@@ -28,8 +28,7 @@ namespace bs
         /// <param name="surface">Subset of the texture to assign.</param>
         public void SetTexture(string name, RRef<Texture> texture, TextureSurface surface)
         {
-            Internal_SetTexture(mCachedPtr, name, texture, surface.mipLevel, surface.numMipLevels, surface.face,
-                surface.numFaces);
+            Internal_SetTexture(mCachedPtr, name, texture, surface.MipLevel, surface.NumMipLevels, surface.Face, surface.NumFaces);
         }
 
         /// <summary>

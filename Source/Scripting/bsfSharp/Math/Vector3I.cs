@@ -30,11 +30,11 @@ namespace bs
                 switch (index)
                 {
                     case 0:
-                        return x;
+                        return X;
                     case 1:
-                        return y;
+                        return Y;
                     case 2:
-                        return z;
+                        return Z;
                     default:
                         throw new IndexOutOfRangeException("Invalid Vector3I index.");
                 }
@@ -45,13 +45,13 @@ namespace bs
                 switch (index)
                 {
                     case 0:
-                        x = value;
+                        X = value;
                         break;
                     case 1:
-                        y = value;
+                        Y = value;
                         break;
                     case 2:
-                        z = value;
+                        Z = value;
                         break;
                     default:
                         throw new IndexOutOfRangeException("Invalid Vector3I index.");
@@ -66,7 +66,7 @@ namespace bs
         {
             get
             {
-                return (x * x + y * y + z * z);
+                return (X * X + Y * Y + Z * Z);
             }
         }
 
@@ -77,47 +77,47 @@ namespace bs
         /// <returns>A new four dimensional vector.</returns>
         public static explicit operator Vector4I(Vector3I vec)
         {
-            return new Vector4I(vec.x, vec.y, vec.z, 0);
+            return new Vector4I(vec.X, vec.Y, vec.Z, 0);
         }
 
         public static Vector3I operator +(Vector3I a, Vector3I b)
         {
-            return new Vector3I(a.x + b.x, a.y + b.y, a.z + b.z);
+            return new Vector3I(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
         }
 
         public static Vector3I operator -(Vector3I a, Vector3I b)
         {
-            return new Vector3I(a.x - b.x, a.y - b.y, a.z - b.z);
+            return new Vector3I(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
         }
 
         public static Vector3I operator -(Vector3I v)
         {
-            return new Vector3I(-v.x, -v.y, -v.z);
+            return new Vector3I(-v.X, -v.Y, -v.Z);
         }
 
         public static Vector3I operator *(Vector3I a, Vector3I b)
         {
-            return new Vector3I(a.x * b.x, a.y * b.y, a.z * b.z);
+            return new Vector3I(a.X * b.X, a.Y * b.Y, a.Z * b.Z);
         }
 
         public static Vector3I operator *(Vector3I v, int d)
         {
-            return new Vector3I(v.x * d, v.y * d, v.z * d);
+            return new Vector3I(v.X * d, v.Y * d, v.Z * d);
         }
 
         public static Vector3I operator *(int d, Vector3I v)
         {
-            return new Vector3I(v.x * d, v.y * d, v.z * d);
+            return new Vector3I(v.X * d, v.Y * d, v.Z * d);
         }
 
         public static Vector3I operator /(Vector3I v, int d)
         {
-            return new Vector3I(v.x / d, v.y / d, v.z / d);
+            return new Vector3I(v.X / d, v.Y / d, v.Z / d);
         }
 
         public static bool operator ==(Vector3I lhs, Vector3I rhs)
         {
-            return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
+            return lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z;
         }
 
         public static bool operator !=(Vector3I lhs, Vector3I rhs)
@@ -132,7 +132,7 @@ namespace bs
         /// <returns>Squared magnitude of the vector.</returns>
         public static int SqrMagnitude(Vector3I v)
         {
-            return (v.x * v.x + v.y * v.y + v.z * v.z);
+            return (v.X * v.X + v.Y * v.Y + v.Z * v.Z);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace bs
         /// <returns>Vector consisting of maximum components of the first and second vector.</returns>
         public static Vector3I Max(Vector3I a, Vector3I b)
         {
-            return new Vector3I(MathEx.Max(a.x, b.x), MathEx.Max(a.y, b.y), MathEx.Max(a.z, b.z));
+            return new Vector3I(MathEx.Max(a.X, b.X), MathEx.Max(a.Y, b.Y), MathEx.Max(a.Z, b.Z));
         }
 
         /// <summary>
@@ -154,13 +154,13 @@ namespace bs
         /// <returns>Vector consisting of minimum components of the first and second vector.</returns>
         public static Vector3I Min(Vector3I a, Vector3I b)
         {
-            return new Vector3I(MathEx.Min(a.x, b.x), MathEx.Min(a.y, b.y), MathEx.Min(a.z, b.z));
+            return new Vector3I(MathEx.Min(a.X, b.X), MathEx.Min(a.Y, b.Y), MathEx.Min(a.Z, b.Z));
         }
 
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            return x.GetHashCode() ^ y.GetHashCode() << 2 ^ z.GetHashCode() >> 2;
+            return X.GetHashCode() ^ Y.GetHashCode() << 2 ^ Z.GetHashCode() >> 2;
         }
 
         /// <inheritdoc/>
@@ -170,7 +170,7 @@ namespace bs
                 return false;
 
             Vector3I vec = (Vector3I)other;
-            if (x.Equals(vec.x) && y.Equals(vec.y) && z.Equals(vec.z))
+            if (X.Equals(vec.X) && Y.Equals(vec.Y) && Z.Equals(vec.Z))
                 return true;
 
             return false;
@@ -179,7 +179,7 @@ namespace bs
         /// <inheritdoc/>
         public override string ToString()
         {
-            return "(" + x + ", " + y + ", " + z + ")";
+            return "(" + X + ", " + Y + ", " + Z + ")";
         }
     }
 }
