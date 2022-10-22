@@ -147,7 +147,7 @@ namespace bs
 	 * Flags that are used for describing how are tangents calculated for a specific keyframe in an animation curve.
 	 * Modes for "in" and "out" tangents can be combined.
 	 */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Animation),n:TangentMode) TangentModeBits
+	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(TangentMode)) TangentModeBits
 	{
 		/** Both tangents are calculated automatically based on the two surrounding keyframes. */
 		Auto = 0,

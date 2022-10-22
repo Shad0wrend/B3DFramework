@@ -98,7 +98,7 @@ namespace bs
 		Vector<ColorGradientKey> GetKeys() const;
 
 		/** Returns the number of color keys in the gradient. */
-		BS_SCRIPT_EXPORT(pr:getter,n:NumKeys)
+		BS_SCRIPT_EXPORT(pr:getter,ExportName(NumKeys))
 		u32 GetNumKeys() const { return mNumKeys; }
 
 		/** Returns the color key at the specified index. If out of range an empty key is returned. */

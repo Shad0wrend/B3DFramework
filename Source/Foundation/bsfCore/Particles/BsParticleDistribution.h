@@ -90,7 +90,7 @@ namespace bs
 		}
 
 		/** Returns the type of the represented distribution. */
-		BS_SCRIPT_EXPORT(pr:getter,n:DistributionType)
+		BS_SCRIPT_EXPORT(pr:getter,ExportName(DistributionType))
 		PropertyDistributionType GetType() const { return mType; }
 
 		/**
@@ -234,8 +234,8 @@ namespace bs
 	using ColorHDRDistribution = TColorDistribution<ColorGradientHDR>;
 
 #ifdef BS_SBGEN
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),n:ColorDistribution) TColorDistribution<ColorGradient>;
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),n:ColorHDRDistribution) TColorDistribution<ColorGradientHDR>;
+	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportName(ColorDistribution)) TColorDistribution<ColorGradient>;
+	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportName(ColorHDRDistribution)) TColorDistribution<ColorGradientHDR>;
 #endif
 
 	/** Specifies a value as a distribution, which can include a constant value, random range or a curve. */
@@ -290,7 +290,7 @@ namespace bs
 		}
 
 		/** Returns the type of the represented distribution. */
-		BS_SCRIPT_EXPORT(pr:getter,n:DistributionType)
+		BS_SCRIPT_EXPORT(pr:getter,ExportName(DistributionType))
 		PropertyDistributionType GetType() const { return mType; }
 
 		/**
@@ -424,9 +424,9 @@ namespace bs
 	using Vector2Distribution = TDistribution<Vector2>;
 
 #ifdef BS_SBGEN
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),n:FloatDistribution) TDistribution<float>;
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),n:Vector3Distribution) TDistribution<Vector3>;
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),n:Vector2Distribution) TDistribution<Vector2>;
+	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportName(FloatDistribution)) TDistribution<float>;
+	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportName(Vector3Distribution)) TDistribution<Vector3>;
+	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportName(Vector2Distribution)) TDistribution<Vector2>;
 #endif
 
 	/** @} */

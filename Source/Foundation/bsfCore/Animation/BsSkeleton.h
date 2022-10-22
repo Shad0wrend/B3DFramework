@@ -154,7 +154,7 @@ namespace bs
 			const AnimationStateLayer* layers, u32 numLayers);
 
 		/** Returns the total number of bones in the skeleton. */
-		BS_SCRIPT_EXPORT(pr:getter,n:NumBones)
+		BS_SCRIPT_EXPORT(pr:getter,ExportName(NumBones))
 		u32 GetNumBones() const { return mNumBones; }
 
 		/** Returns information about a bone at the provided index. */

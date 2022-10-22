@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** Supported types of low-level shading languages. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Importer),n:ShadingLanguageFlags,api:bsf,api:bed) ShadingLanguageFlag
+	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Importer),ExportName(ShadingLanguageFlags),api:bsf,api:bed) ShadingLanguageFlag
 	{
 		/** High level shading language used by DirectX backend. */
 		HLSL = 1 << 0,

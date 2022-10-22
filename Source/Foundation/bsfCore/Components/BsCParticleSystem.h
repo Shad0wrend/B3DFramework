@@ -17,50 +17,50 @@ namespace bs
 	 *
 	 * @note Wraps ParticleSystem as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles),n:ParticleSystem) CParticleSystem : public Component
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportName(ParticleSystem)) CParticleSystem : public Component
 	{
 	public:
 		CParticleSystem(const HSceneObject& parent);
 		virtual ~CParticleSystem() = default;
 		
 		/** @copydoc ParticleSystem::setSettings */
-		BS_SCRIPT_EXPORT(pr:setter,n:Settings,passByCopy,inline)
+		BS_SCRIPT_EXPORT(pr:setter,ExportName(Settings),passByCopy,inline)
 		void SetSettings(const ParticleSystemSettings& settings);
 
 		/** @copydoc ParticleSystem::getSettings */
-		BS_SCRIPT_EXPORT(pr:getter,n:Settings,passByCopy)
+		BS_SCRIPT_EXPORT(pr:getter,ExportName(Settings),passByCopy)
 		const ParticleSystemSettings& GetSettings() const { return mSettings; }
 
 		/** @copydoc ParticleSystem::setGpuSimulationSettings */
-		BS_SCRIPT_EXPORT(pr:setter,n:GpuSimulationSettings,passByCopy)
+		BS_SCRIPT_EXPORT(pr:setter,ExportName(GpuSimulationSettings),passByCopy)
 		void SetGpuSimulationSettings(const ParticleGpuSimulationSettings& settings);
 
 		/** @copydoc ParticleSystem::getGpuSimulationSettings */
-		BS_SCRIPT_EXPORT(pr:getter,n:GpuSimulationSettings,passByCopy)
+		BS_SCRIPT_EXPORT(pr:getter,ExportName(GpuSimulationSettings),passByCopy)
 		const ParticleGpuSimulationSettings& GetGpuSimulationSettings() const { return mGpuSimulationSettings; }
 
 		/** @copydoc ParticleSystem::setEmitters */
-		BS_SCRIPT_EXPORT(pr:setter,n:Emitters)
+		BS_SCRIPT_EXPORT(pr:setter,ExportName(Emitters))
 		void SetEmitters(const Vector<SPtr<ParticleEmitter>>& emitters);
 
 		/** @copydoc ParticleSystem::getEmitters */
-		BS_SCRIPT_EXPORT(pr:getter,n:Emitters)
+		BS_SCRIPT_EXPORT(pr:getter,ExportName(Emitters))
 		const Vector<SPtr<ParticleEmitter>>& GetEmitters() const { return mEmitters; }
 
 		/** @copydoc ParticleSystem::setEvolvers */
-		BS_SCRIPT_EXPORT(pr:setter,n:Evolvers)
+		BS_SCRIPT_EXPORT(pr:setter,ExportName(Evolvers))
 		void SetEvolvers(const Vector<SPtr<ParticleEvolver>>& evolvers);
 
 		/** @copydoc ParticleSystem::getEvolvers */
-		BS_SCRIPT_EXPORT(pr:getter,n:Evolvers)
+		BS_SCRIPT_EXPORT(pr:getter,ExportName(Evolvers))
 		const Vector<SPtr<ParticleEvolver>>& GetEvolvers() const { return mEvolvers; }
 
 		/** @copydoc ParticleSystem::setLayer() */
-		BS_SCRIPT_EXPORT(pr:setter,n:Layer,layerMask)
+		BS_SCRIPT_EXPORT(pr:setter,ExportName(Layer),layerMask)
 		void SetLayer(u64 layer);
 
 		/** @copydoc ParticleSystem::getLayer() */
-		BS_SCRIPT_EXPORT(pr:getter,n:Layer,layerMask)
+		BS_SCRIPT_EXPORT(pr:getter,ExportName(Layer),layerMask)
 		u64 GetLayer() const { return mLayer; }
 
 		/** @name Internal

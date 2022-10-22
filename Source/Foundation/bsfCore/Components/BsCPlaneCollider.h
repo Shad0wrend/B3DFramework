@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note Wraps PlaneCollider as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics),n:PlaneCollider) CPlaneCollider : public CCollider
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportName(PlaneCollider)) CPlaneCollider : public CCollider
 	{
 	public:
 		CPlaneCollider(const HSceneObject& parent);

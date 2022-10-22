@@ -23,39 +23,39 @@ namespace bs
 			TextureUsage usage, u32 numSamples, bool hasMipmaps, bool gammaCorrection);
 
 		/** @copydoc TextureProperties::getFormat */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),n:PixelFormat,pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),ExportName(PixelFormat),pr:getter)
 		static PixelFormat GetPixelFormat(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::getUsage */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),n:Usage,pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),ExportName(Usage),pr:getter)
 		static TextureUsage GetUsage(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::getTextureType */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),n:Type,pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),ExportName(Type),pr:getter)
 		static TextureType GetType(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::getWidth */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),n:Width,pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),ExportName(Width),pr:getter)
 		static u32 GetWidth(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::getHeight */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),n:Height,pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),ExportName(Height),pr:getter)
 		static u32 GetHeight(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::getDepth */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),n:Depth,pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),ExportName(Depth),pr:getter)
 		static u32 GetDepth(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::isHardwareGammaEnabled */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),n:GammaSpace,pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),ExportName(GammaSpace),pr:getter)
 		static bool GetGammaCorrection(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::getNumSamples */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),n:SampleCount,pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),ExportName(SampleCount),pr:getter)
 		static u32 GetSampleCount(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::getNumMipmaps */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),n:MipMapCount,pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),ExportName(MipMapCount),pr:getter)
 		static u32 GetMipmapCount(const HTexture& thisPtr);
 
 		/**
@@ -69,7 +69,7 @@ namespace bs
 		 *					cubemap array it has to be a multiple of 6).
 		 * @return			A set of pixels for the specified mip level.
 		 */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),n:GetPixels)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),ExportName(GetPixels))
 		static SPtr<PixelData> GetPixels(const HTexture& thisPtr, u32 face = 0, u32 mipLevel = 0);
 
 		/**
@@ -82,7 +82,7 @@ namespace bs
 		 *					specified in the CubeFace enum. Array textures can have an arbitrary number of faces (if it's a
 		 *					cubemap array it has to be a multiple of 6).
 		 */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),n:SetPixels)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),ExportName(SetPixels))
 		static void SetPixels(const HTexture& thisPtr, const SPtr<PixelData>& data, u32 face = 0, u32 mipLevel = 0);
 
 		/**
@@ -96,7 +96,7 @@ namespace bs
 		 *					specified in the CubeFace enum. Array textures can have an arbitrary number of faces (if it's a
 		 *					cubemap array it has to be a multiple of 6).
 		 */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),n:SetPixels)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture),ExportName(SetPixels))
 		static void SetPixelsArray(const HTexture& thisPtr, const Vector<Color>& colors, u32 face = 0, u32 mipLevel = 0);
 	};
 

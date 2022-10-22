@@ -35,7 +35,7 @@ namespace bs
 		 * @param[in] boneIdx	Index of the bone to retrieve information for.
 		 * @return				Information about the bone at the specified index.
 		 */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Skeleton),n:GetBoneInfo)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Skeleton),ExportName(GetBoneInfo))
 		static SkeletonBoneInfoEx GetBoneInfo(const SPtr<Skeleton>& thisPtr, int boneIdx);
 	};
 

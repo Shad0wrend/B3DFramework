@@ -22,7 +22,7 @@ namespace bs
 		static HPhysicsMesh Create(const SPtr<RendererMeshData>& meshData, PhysicsMeshType type = PhysicsMeshType::Convex);
 
 		/** @copydoc PhysicsMesh::getMeshData() */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(PhysicsMesh),n:MeshData,pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(PhysicsMesh),ExportName(MeshData),pr:getter)
 		static SPtr<RendererMeshData> GetMeshData(const HPhysicsMesh& thisPtr);
 	};
 
