@@ -156,7 +156,7 @@ namespace bs
 		virtual ~ParticleEmitterConeShape() = default;
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),inline)
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),UI(Inline))
 		void SetOptions(const PARTICLE_CONE_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc setOptions */
@@ -231,7 +231,7 @@ namespace bs
 		ParticleEmitterSphereShape(const PARTICLE_SPHERE_SHAPE_DESC& desc);
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),inline)
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),UI(Inline))
 		void SetOptions(const PARTICLE_SPHERE_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc setOptions */
@@ -300,7 +300,7 @@ namespace bs
 		ParticleEmitterHemisphereShape(const PARTICLE_HEMISPHERE_SHAPE_DESC& desc);
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),inline)
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),UI(Inline))
 		void SetOptions(const PARTICLE_HEMISPHERE_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc setOptions */
@@ -375,7 +375,7 @@ namespace bs
 		ParticleEmitterBoxShape(const PARTICLE_BOX_SHAPE_DESC& desc);
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),inline)
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),UI(Inline))
 		void SetOptions(const PARTICLE_BOX_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc setOptions */
@@ -439,7 +439,7 @@ namespace bs
 		ParticleEmitterLineShape(const PARTICLE_LINE_SHAPE_DESC& desc);
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),inline)
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),UI(Inline))
 		void SetOptions(const PARTICLE_LINE_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc setOptions */
@@ -518,7 +518,7 @@ namespace bs
 		virtual ~ParticleEmitterCircleShape() = default;
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),inline)
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),UI(Inline))
 		void SetOptions(const PARTICLE_CIRCLE_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc setOptions */
@@ -579,7 +579,7 @@ namespace bs
 		ParticleEmitterRectShape(const PARTICLE_RECT_SHAPE_DESC& desc);
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),inline)
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),UI(Inline))
 		void SetOptions(const PARTICLE_RECT_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc setOptions */
@@ -745,7 +745,7 @@ namespace bs
 		virtual ~ParticleEmitterStaticMeshShape() = default;
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),inline)
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),UI(Inline))
 		void SetOptions(const PARTICLE_STATIC_MESH_SHAPE_DESC& options);
 
 		/** @copydoc setOptions */
@@ -820,7 +820,7 @@ namespace bs
 		virtual ~ParticleEmitterSkinnedMeshShape() = default;
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),inline)
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options),UI(Inline))
 		void SetOptions(const PARTICLE_SKINNED_MESH_SHAPE_DESC& options);
 
 		/** @copydoc setOptions */

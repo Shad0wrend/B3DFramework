@@ -36,11 +36,11 @@ namespace bs
 		SPtr<Viewport> GetViewport() const { return mInternal->GetViewport(); }
 
 		/** @copydoc Camera::setHorzFOV */
-		BS_SCRIPT_EXPORT(ExportName(FieldOfView),Property(Setter),range:[1,360],slider,UIOrder(-1))
+		BS_SCRIPT_EXPORT(ExportName(FieldOfView),Property(Setter),range:[1,360],UI(AsSlider),UIOrder(-1))
 		virtual void SetHorzFov(const Radian& fovy) { mInternal->SetHorzFov(fovy); }
 
 		/** @copydoc Camera::getHorzFOV */
-		BS_SCRIPT_EXPORT(ExportName(FieldOfView),Property(Getter),range:[1,360],slider,UIOrder(-1))
+		BS_SCRIPT_EXPORT(ExportName(FieldOfView),Property(Getter),range:[1,360],UI(AsSlider),UIOrder(-1))
 		virtual const Radian& GetHorzFov() const { return mInternal->GetHorzFov(); }
 
 		/** @copydoc Camera::setNearClipDistance */
@@ -140,11 +140,11 @@ namespace bs
 		virtual float GetOrthoWindowHeight() const { return mInternal->GetOrthoWindowHeight(); }
 
 		/** @copydoc Camera::setOrthoWindowWidth */
-		BS_SCRIPT_EXPORT(ExportName(OrthoWidth),Property(Setter),hide)
+		BS_SCRIPT_EXPORT(ExportName(OrthoWidth),Property(Setter),UI(Hide))
 		virtual void SetOrthoWindowWidth(float w) { mInternal->SetOrthoWindowWidth(w); }
 
 		/** @copydoc Camera::getOrthoWindowWidth */
-		BS_SCRIPT_EXPORT(ExportName(OrthoWidth),Property(Getter),hide)
+		BS_SCRIPT_EXPORT(ExportName(OrthoWidth),Property(Getter),UI(Hide))
 		virtual float GetOrthoWindowWidth() const { return mInternal->GetOrthoWindowWidth(); }
 
 		/** @copydoc Camera::setPriority */
@@ -156,11 +156,11 @@ namespace bs
 		i32 GetPriority() const { return mInternal->GetPriority(); }
 
 		/** @copydoc Camera::setLayers */
-		BS_SCRIPT_EXPORT(ExportName(Layers),Property(Setter),layerMask)
+		BS_SCRIPT_EXPORT(ExportName(Layers),Property(Setter),UI(AsLayerMask))
 		void SetLayers(u64 layers) { mInternal->SetLayers(layers); }
 
 		/** @copydoc Camera::getLayers */
-		BS_SCRIPT_EXPORT(ExportName(Layers),Property(Getter),layerMask)
+		BS_SCRIPT_EXPORT(ExportName(Layers),Property(Getter),UI(AsLayerMask))
 		u64 GetLayers() const { return mInternal->GetLayers(); }
 
 		/** @copydoc Camera::setMSAACount */

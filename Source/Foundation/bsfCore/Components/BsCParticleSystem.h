@@ -24,7 +24,7 @@ namespace bs
 		virtual ~CParticleSystem() = default;
 		
 		/** @copydoc ParticleSystem::setSettings */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Settings),PassByCopy(true),inline)
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Settings),PassByCopy(true),UI(Inline))
 		void SetSettings(const ParticleSystemSettings& settings);
 
 		/** @copydoc ParticleSystem::getSettings */
@@ -56,11 +56,11 @@ namespace bs
 		const Vector<SPtr<ParticleEvolver>>& GetEvolvers() const { return mEvolvers; }
 
 		/** @copydoc ParticleSystem::setLayer() */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Layer),layerMask)
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Layer),UI(AsLayerMask))
 		void SetLayer(u64 layer);
 
 		/** @copydoc ParticleSystem::getLayer() */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Layer),layerMask)
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Layer),UI(AsLayerMask))
 		u64 GetLayer() const { return mLayer; }
 
 		/** @name Internal

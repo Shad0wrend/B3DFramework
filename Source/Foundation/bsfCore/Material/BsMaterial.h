@@ -750,7 +750,7 @@ namespace bs
 		void SetShader(const HShader& shader);
 
 		/** @copydoc TMaterial<Core>::GetVariation() const */
-		BS_SCRIPT_EXPORT(ExportName(Variation),Property(Setter),hide)
+		BS_SCRIPT_EXPORT(ExportName(Variation),Property(Setter),UI(Hide))
 		void SetVariation(const ShaderVariation& variation);
 
 		/** Retrieves an implementation of a material usable only from the core thread. */
