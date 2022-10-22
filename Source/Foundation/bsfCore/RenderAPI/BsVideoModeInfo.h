@@ -14,7 +14,7 @@ namespace bs
 	 * Video mode contains information about how a render window presents its information to an output device like a
 	 * monitor.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(RenderAPI),ExportAsStruct(true),api:bsf) VideoMode
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(RenderAPI),ExportAsStruct(true),API(Framework)) VideoMode
 	{
 	public:
 		VideoMode() = default;

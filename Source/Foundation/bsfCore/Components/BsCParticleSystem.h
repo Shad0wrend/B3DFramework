@@ -72,7 +72,7 @@ namespace bs
 		 * primarily for preview purposes in the editor. Returns true if the preview mode was enabled, false if it was
 		 * disabled or enabling preview failed.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(TogglePreviewMode),v:internal)
+		BS_SCRIPT_EXPORT(ExportName(TogglePreviewMode),Visibility(Internal))
 		bool TogglePreviewModeInternal(bool enabled);
 
 		/** Returns the ParticleSystem implementation wrapped by this component. */

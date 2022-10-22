@@ -513,7 +513,7 @@ namespace bs
 	};
 
 	/** Determines the type of the source image for generating cubemaps. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Utility),api:bsf,api:bed) CubemapSourceType
+	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Utility),API(Framework),API(Editor)) CubemapSourceType
 	{
 		/** Source is a single image that will be replicated on all cubemap faces. */
 		Single,

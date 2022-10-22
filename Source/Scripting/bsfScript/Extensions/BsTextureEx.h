@@ -18,7 +18,7 @@ namespace bs
 	class BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture)) TextureEx
 	{
 	public:
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(Texture),v:private)
+		BS_SCRIPT_EXPORT(ExtensionConstructorForType(Texture),Visibility(Private))
 		static HTexture Create(PixelFormat format, u32 width, u32 height, u32 depth, TextureType texType,
 			TextureUsage usage, u32 numSamples, bool hasMipmaps, bool gammaCorrection);
 

@@ -44,7 +44,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Resources),api:bsf) Resources : public Module<Resources>
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Resources),API(Framework)) Resources : public Module<Resources>
 	{
 		/** Information about a loaded resource. */
 		struct LoadedResourceData
