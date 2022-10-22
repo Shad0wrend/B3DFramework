@@ -23,35 +23,35 @@ namespace bs
 		CHingeJoint(const HSceneObject& parent);
 
 		/** @copydoc HingeJoint::getAngle */
-		BS_SCRIPT_EXPORT(n:Angle,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Angle),pr:getter)
 		Radian GetAngle() const;
 
 		/** @copydoc HingeJoint::getSpeed */
-		BS_SCRIPT_EXPORT(n:Speed,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Speed),pr:getter)
 		float GetSpeed() const;
 
 		/** @copydoc HingeJoint::getLimit */
-		BS_SCRIPT_EXPORT(n:Limit,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Limit),pr:getter)
 		LimitAngularRange GetLimit() const;
 
 		/** @copydoc HingeJoint::setLimit */
-		BS_SCRIPT_EXPORT(n:Limit,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Limit),pr:setter)
 		void SetLimit(const LimitAngularRange& limit);
 
 		/** @copydoc HingeJoint::getDrive */
-		BS_SCRIPT_EXPORT(n:Drive,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Drive),pr:getter)
 		HingeJointDrive GetDrive() const;
 
 		/** @copydoc HingeJoint::setDrive */
-		BS_SCRIPT_EXPORT(n:Drive,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Drive),pr:setter)
 		void SetDrive(const HingeJointDrive& drive);
 
 		/** @copydoc HingeJoint::setFlag */
-		BS_SCRIPT_EXPORT(n:SetFlag)
+		BS_SCRIPT_EXPORT(ExportName(SetFlag))
 		void SetFlag(HingeJointFlag flag, bool enabled);
 
 		/** @copydoc HingeJoint::hasFlag */
-		BS_SCRIPT_EXPORT(n:HasFlag)
+		BS_SCRIPT_EXPORT(ExportName(HasFlag))
 		bool HasFlag(HingeJointFlag flag) const;
 
 		/** @name Internal

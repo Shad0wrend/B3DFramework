@@ -180,7 +180,7 @@ namespace bs
 		const TKeyframe<T>& GetKeyFrame(u32 idx) const { return mKeyframes[idx]; }
 
 		/** Returns a list of all keyframes in the curve. */
-		BS_SCRIPT_EXPORT(n:KeyFrames,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(KeyFrames),pr:getter)
 		const Vector<TKeyframe<T>>& GetKeyFrames() const { return mKeyframes; }
 
 		bool operator== (const TAnimationCurve<T>& rhs) const;
@@ -248,7 +248,7 @@ namespace bs
 #endif
 
 	/** Flags that describe an animation curve. */
-	enum class BS_SCRIPT_EXPORT(n:AnimationCurveFlags) AnimationCurveFlag
+	enum class BS_SCRIPT_EXPORT(ExportName(AnimationCurveFlags)) AnimationCurveFlag
 	{
 		/**
 		 * If enabled, the curve was imported from an external file and not created within the engine. This will affect

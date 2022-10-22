@@ -23,19 +23,19 @@ namespace bs
 		CPlaneCollider(const HSceneObject& parent);
 
 		/** Normal vector that determines the local orientation of the plane. */
-		BS_SCRIPT_EXPORT(n:Normal,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Normal),pr:setter)
 		void SetNormal(const Vector3& normal);
 
 		/** @copydoc setNormal() */
-		BS_SCRIPT_EXPORT(n:Normal,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Normal),pr:getter)
 		Vector3 GetNormal() const { return mNormal; }
 
 		/** Determines the distance of the plane from the local origin, along its normal vector. */
-		BS_SCRIPT_EXPORT(n:Distance,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Distance),pr:setter)
 		void SetDistance(float distance);
 
 		/** @copydoc setDistance() */
-		BS_SCRIPT_EXPORT(n:Distance,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Distance),pr:getter)
 		float GetDistance() const { return mDistance; }
 
 		/** @name Internal

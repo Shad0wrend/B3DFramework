@@ -23,35 +23,35 @@ namespace bs
 		CCapsuleCollider(const HSceneObject& parent, float radius = 1.0f, float halfHeight = 0.5f);
 
 		/** Normal vector that determines how is the capsule oriented. */
-		BS_SCRIPT_EXPORT(n:Normal,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Normal),pr:setter)
 		void SetNormal(const Vector3& normal);
 
 		/** @copydoc setNormal() */
-		BS_SCRIPT_EXPORT(n:Normal,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Normal),pr:getter)
 		Vector3 GetNormal() const { return mNormal; }
 
 		/** Determines the position of the capsule shape, relative to the component's scene object. */
-		BS_SCRIPT_EXPORT(n:Center,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Center),pr:setter)
 		void SetCenter(const Vector3& center);
 
 		/** @copydoc setCenter() */
-		BS_SCRIPT_EXPORT(n:Center,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Center),pr:getter)
 		Vector3 GetCenter() const { return mLocalPosition; }
 
 		/** @copydoc CapsuleCollider::setHalfHeight() */
-		BS_SCRIPT_EXPORT(n:HalfHeight,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(HalfHeight),pr:setter)
 		void SetHalfHeight(float halfHeight);
 
 		/** @copydoc CapsuleCollider::getHalfHeight() */
-		BS_SCRIPT_EXPORT(n:HalfHeight,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(HalfHeight),pr:getter)
 		float GetHalfHeight() const { return mHalfHeight; }
 
 		/** @copydoc CapsuleCollider::setRadius() */
-		BS_SCRIPT_EXPORT(n:Radius,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Radius),pr:setter)
 		void SetRadius(float radius);
 
 		/** @copydoc CapsuleCollider::getRadius() */
-		BS_SCRIPT_EXPORT(n:Radius,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Radius),pr:getter)
 		float GetRadius() const { return mRadius; }
 
 		/** @name Internal

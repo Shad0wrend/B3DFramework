@@ -30,7 +30,7 @@ namespace bs
 		 *							in a skeleton, if any.
 		 * @param[in]	curve		Curve to add to the clip.
 		 */
-		BS_SCRIPT_EXPORT(n:AddPositionCurve)
+		BS_SCRIPT_EXPORT(ExportName(AddPositionCurve))
 		void AddPositionCurve(const String& name, const TAnimationCurve<Vector3>& curve);
 
 		/**
@@ -40,7 +40,7 @@ namespace bs
 		 *							in a skeleton, if any.
 		 * @param[in]	curve		Curve to add to the clip.
 		 */
-		BS_SCRIPT_EXPORT(n:AddRotationCurve)
+		BS_SCRIPT_EXPORT(ExportName(AddRotationCurve))
 		void AddRotationCurve(const String& name, const TAnimationCurve<Quaternion>& curve);
 
 		/**
@@ -50,7 +50,7 @@ namespace bs
 		 *							in a skeleton, if any.
 		 * @param[in]	curve		Curve to add to the clip.
 		 */
-		BS_SCRIPT_EXPORT(n:AddScaleCurve)
+		BS_SCRIPT_EXPORT(ExportName(AddScaleCurve))
 		void AddScaleCurve(const String& name, const TAnimationCurve<Vector3>& curve);
 
 		/**
@@ -60,23 +60,23 @@ namespace bs
 		 *							from animation.
 		 * @param[in]	curve		Curve to add to the clip.
 		 */
-		BS_SCRIPT_EXPORT(n:AddGenericCurve)
+		BS_SCRIPT_EXPORT(ExportName(AddGenericCurve))
 		void AddGenericCurve(const String& name, const TAnimationCurve<float>& curve);
 
 		/** Removes an existing curve from the clip. */
-		BS_SCRIPT_EXPORT(n:RemovePositionCurve)
+		BS_SCRIPT_EXPORT(ExportName(RemovePositionCurve))
 		void RemovePositionCurve(const String& name);
 
 		/** Removes an existing curve from the clip. */
-		BS_SCRIPT_EXPORT(n:RemoveRotationCurve)
+		BS_SCRIPT_EXPORT(ExportName(RemoveRotationCurve))
 		void RemoveRotationCurve(const String& name);
 
 		/** Removes an existing curve from the clip. */
-		BS_SCRIPT_EXPORT(n:RemoveScaleCurve)
+		BS_SCRIPT_EXPORT(ExportName(RemoveScaleCurve))
 		void RemoveScaleCurve(const String& name);
 
 		/** Removes an existing curve from the clip. */
-		BS_SCRIPT_EXPORT(n:RemoveGenericCurve)
+		BS_SCRIPT_EXPORT(ExportName(RemoveGenericCurve))
 		void RemoveGenericCurve(const String& name);
 
 		/** Curves for animating scene object's position. */
@@ -151,22 +151,22 @@ namespace bs
 		virtual ~AnimationClip() = default;
 
 		/** @copydoc setCurves() */
-		BS_SCRIPT_EXPORT(n:Curves,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Curves),pr:getter)
 		SPtr<AnimationCurves> GetCurves() const { return mCurves; }
 
 		/**
 		 * A set of all curves stored in the animation. Returned value will not be updated if the animation clip curves are
 		 * added or removed, as it is a copy of clip's internal values.
 		 */
-		BS_SCRIPT_EXPORT(n:Curves,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Curves),pr:setter)
 		void SetCurves(const AnimationCurves& curves);
 
 		/** @copydoc setEvents() */
-		BS_SCRIPT_EXPORT(n:Events,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Events),pr:getter)
 		const Vector<AnimationEvent>& GetEvents() const { return mEvents; }
 
 		/** A set of all events to be triggered as the animation is playing. */
-		BS_SCRIPT_EXPORT(n:Events,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Events),pr:setter)
 		void SetEvents(const Vector<AnimationEvent>& events) { mEvents = events; }
 
 		/**
@@ -174,11 +174,11 @@ namespace bs
 		 * animation curves manually, instead of through the normal animation process. This property is only available
 		 * if animation clip was imported with root motion import enabled.
 		 */
-		BS_SCRIPT_EXPORT(n:RootMotion,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(RootMotion),pr:getter)
 		SPtr<RootMotion> GetRootMotion() const { return mRootMotion; }
 
 		/** Checks if animation clip has root motion curves separate from the normal animation curves. */
-		BS_SCRIPT_EXPORT(n:HasRootMotion,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(HasRootMotion),pr:getter)
 		bool HasRootMotion() const;
 
 		/**
@@ -216,15 +216,15 @@ namespace bs
 		 * Checks are the curves contained within the clip additive. Additive clips are intended to be added on top of
 		 * other clips.
 		 */
-		BS_SCRIPT_EXPORT(n:IsAddtive,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(IsAddtive),pr:getter)
 		bool IsAdditive() const { return mIsAdditive; }
 
 		/** Returns the length of the animation clip, in seconds. */
-		BS_SCRIPT_EXPORT(n:Length,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Length),pr:getter)
 		float GetLength() const { return mLength; }
 
 		/** @copydoc setSampleRate() */
-		BS_SCRIPT_EXPORT(n:SampleRate,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(SampleRate),pr:getter)
 		u32 GetSampleRate() const { return mSampleRate; }
 
 		/**
@@ -232,7 +232,7 @@ namespace bs
 		 * clip or curves directly since unevenly spaced keyframes are supported. But it can be of value when determining
 		 * the original sample rate of an imported animation or similar.
 		 */
-		BS_SCRIPT_EXPORT(n:SampleRate,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(SampleRate),pr:setter)
 		void SetSampleRate(u32 sampleRate) { mSampleRate = sampleRate; }
 
 		/**

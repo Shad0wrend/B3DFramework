@@ -65,11 +65,11 @@ namespace bs
 		void Reset() { mInternal->Reset(); }
 
 		/** @copydoc LightProbeVolume::getGridVolume() */
-		BS_SCRIPT_EXPORT(n:GridVolume,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(GridVolume),pr:getter)
 		const AABox& GetGridVolume() const { return mVolume; }
 
 		/** @copydoc LightProbeVolume::getCellCount() */
-		BS_SCRIPT_EXPORT(n:CellCount,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(CellCount),pr:getter)
 		const Vector3I& GetCellCount() const { return mCellCount; }
 
 		/** @name Internal

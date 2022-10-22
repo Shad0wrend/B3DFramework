@@ -44,22 +44,22 @@ namespace bs
 			const SPtr<PhysicsScene>& physicsScene);
 
 		/** Name of the scene. */
-		BS_SCRIPT_EXPORT(n:Name,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Name),pr:getter)
 		const String& GetName() const { return mName; }
 
 		/** Root object of the scene. */
-		BS_SCRIPT_EXPORT(n:Root,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Root),pr:getter)
 		const HSceneObject& GetRoot() const { return mRoot; }
 
 		/** Checks is the scene currently active. IF inactive the scene properties aside from the name are undefined. */
-		BS_SCRIPT_EXPORT(n:IsActive,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(IsActive),pr:getter)
 		bool IsActive() const { return mIsActive; }
 
 		/**
 		 * Physical representation of the scene, as assigned by the physics sub-system. Exact implementation depends on the
 		 * physics plugin used.
 		 */
-		BS_SCRIPT_EXPORT(n:Physics,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Physics),pr:getter)
 		const SPtr<PhysicsScene>& GetPhysicsScene() const { return mPhysicsScene; }
 	private:
 		friend class SceneManager;

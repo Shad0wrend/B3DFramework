@@ -23,47 +23,47 @@ namespace bs
 		CDistanceJoint(const HSceneObject& parent);
 
 		/** @copydoc DistanceJoint::getDistance */
-		BS_SCRIPT_EXPORT(n:Distance,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Distance),pr:getter)
 		float GetDistance() const;
 
 		/** @copydoc DistanceJoint::getMinDistance */
-		BS_SCRIPT_EXPORT(n:MinDistance,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(MinDistance),pr:getter)
 		float GetMinDistance() const;
 
 		/** @copydoc DistanceJoint::setMinDistance */
-		BS_SCRIPT_EXPORT(n:MinDistance,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(MinDistance),pr:setter)
 		void SetMinDistance(float value);
 
 		/** @copydoc DistanceJoint::getMaxDistance */
-		BS_SCRIPT_EXPORT(n:MaxDistance,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(MaxDistance),pr:getter)
 		float GetMaxDistance() const;
 
 		/** @copydoc DistanceJoint::setMaxDistance */
-		BS_SCRIPT_EXPORT(n:MaxDistance,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(MaxDistance),pr:setter)
 		void SetMaxDistance(float value);
 
 		/** @copydoc DistanceJoint::getTolerance */
-		BS_SCRIPT_EXPORT(n:Tolerance,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Tolerance),pr:getter)
 		float GetTolerance() const;
 
 		/** @copydoc DistanceJoint::setTolerance */
-		BS_SCRIPT_EXPORT(n:Tolerance,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Tolerance),pr:setter)
 		void SetTolerance(float value);
 
 		/** @copydoc DistanceJoint::getSpring */
-		BS_SCRIPT_EXPORT(n:Spring,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Spring),pr:getter)
 		Spring GetSpring() const;
 
 		/** @copydoc DistanceJoint::setSpring */
-		BS_SCRIPT_EXPORT(n:Spring,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Spring),pr:setter)
 		void SetSpring(const Spring& value);
 
 		/** @copydoc DistanceJoint::setFlag */
-		BS_SCRIPT_EXPORT(n:SetFlag)
+		BS_SCRIPT_EXPORT(ExportName(SetFlag))
 		void SetFlag(DistanceJointFlag flag, bool enabled);
 
 		/** @copydoc DistanceJoint::hasFlag */
-		BS_SCRIPT_EXPORT(n:HasFlag)
+		BS_SCRIPT_EXPORT(ExportName(HasFlag))
 		bool HasFlag(DistanceJointFlag flag) const;
 
 		/** @name Internal

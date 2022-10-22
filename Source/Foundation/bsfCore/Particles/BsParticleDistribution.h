@@ -22,13 +22,13 @@ namespace bs
 	enum BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) PropertyDistributionType
 	{
 		/** The distribution is a costant value. */
-		PDT_Constant			BS_SCRIPT_EXPORT(n:Constant),
+		PDT_Constant			BS_SCRIPT_EXPORT(ExportName(Constant)),
 		/** The distribution is a random value in a specified constant range. */
-		PDT_RandomRange			BS_SCRIPT_EXPORT(n:RandomRange),
+		PDT_RandomRange			BS_SCRIPT_EXPORT(ExportName(RandomRange)),
 		/** The distribution is a time-varying value. */
-		PDT_Curve				BS_SCRIPT_EXPORT(n:Curve),
+		PDT_Curve				BS_SCRIPT_EXPORT(ExportName(Curve)),
 		/** The distribution is a random value in a specified time-varying range. */
-		PDT_RandomCurveRange	BS_SCRIPT_EXPORT(n:RandomCurveRange)
+		PDT_RandomCurveRange	BS_SCRIPT_EXPORT(ExportName(RandomCurveRange))
 	};
 
 	/* @} */

@@ -20,15 +20,15 @@ namespace bs
 	enum BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) MeshUsage
 	{
 		/** Specify for a mesh that is not often updated from the CPU. */
-		MU_STATIC		BS_SCRIPT_EXPORT(n:Static) = 1 << 0,
+		MU_STATIC		BS_SCRIPT_EXPORT(ExportName(Static)) = 1 << 0,
 
 		/** Specify for a mesh that is often updated from the CPU. */
-		MU_DYNAMIC		BS_SCRIPT_EXPORT(n:Dynamic) = 1 << 1,
+		MU_DYNAMIC		BS_SCRIPT_EXPORT(ExportName(Dynamic)) = 1 << 1,
 		/**
 		 * All mesh data will also be cached in CPU memory, making it available for fast read access from the CPU. Can be
 		 * combined with other usage flags.
 		 */
-		MU_CPUCACHED	BS_SCRIPT_EXPORT(n:CPUCached) = 0x1000,
+		MU_CPUCACHED	BS_SCRIPT_EXPORT(ExportName(CPUCached)) = 0x1000,
 	};
 
 	/** Properties of a Mesh. Shared between sim and core thread versions of a Mesh. */

@@ -19,21 +19,21 @@ namespace bs
 	enum BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) TextureUsage
 	{
 		/** A regular texture that is not often or ever updated from the CPU. */
-		TU_STATIC			BS_SCRIPT_EXPORT(n:Default)			= GBU_STATIC,
+		TU_STATIC			BS_SCRIPT_EXPORT(ExportName(Default))			= GBU_STATIC,
 		/** A regular texture that is often updated by the CPU. */
-		TU_DYNAMIC			BS_SCRIPT_EXPORT(n:Dynamic)			= GBU_DYNAMIC,
+		TU_DYNAMIC			BS_SCRIPT_EXPORT(ExportName(Dynamic))			= GBU_DYNAMIC,
 		/** Texture that can be rendered to by the GPU. */
-		TU_RENDERTARGET		BS_SCRIPT_EXPORT(n:Render)			= 0x200,
+		TU_RENDERTARGET		BS_SCRIPT_EXPORT(ExportName(Render))			= 0x200,
 		/** Texture used as a depth/stencil buffer by the GPU. */
-		TU_DEPTHSTENCIL		BS_SCRIPT_EXPORT(n:DepthStencil)	= 0x400,
+		TU_DEPTHSTENCIL		BS_SCRIPT_EXPORT(ExportName(DepthStencil))	= 0x400,
 		/** Texture that allows load/store operations from the GPU program. */
-		TU_LOADSTORE		BS_SCRIPT_EXPORT(n:LoadStore)		= 0x800,
+		TU_LOADSTORE		BS_SCRIPT_EXPORT(ExportName(LoadStore))		= 0x800,
 		/** All mesh data will also be cached in CPU memory, making it available for fast read access from the CPU. */
-		TU_CPUCACHED		BS_SCRIPT_EXPORT(n:CPUCached)		= 0x1000,
+		TU_CPUCACHED		BS_SCRIPT_EXPORT(ExportName(CPUCached))		= 0x1000,
 		/** Allows the CPU to directly read the texture data buffers from the GPU. */
-		TU_CPUREADABLE		BS_SCRIPT_EXPORT(n:CPUReadable)		= 0x2000,
+		TU_CPUREADABLE		BS_SCRIPT_EXPORT(ExportName(CPUReadable))		= 0x2000,
 		/** Allows you to retrieve views of the texture using a format different from one specified on creation. */
-		TU_MUTABLEFORMAT	BS_SCRIPT_EXPORT(n:MutableFormat)	= 0x4000,
+		TU_MUTABLEFORMAT	BS_SCRIPT_EXPORT(ExportName(MutableFormat))	= 0x4000,
 		/** Default (most common) texture usage. */
 		TU_DEFAULT			BS_SCRIPT_EXPORT(ex:true)			= TU_STATIC
 	};
@@ -245,7 +245,7 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		BS_SCRIPT_EXPORT(n:GetGPUPixels)
+		BS_SCRIPT_EXPORT(ExportName(GetGPUPixels))
 		TAsyncOp<SPtr<PixelData>> ReadData(u32 face = 0, u32 mipLevel = 0);
 
 		/**

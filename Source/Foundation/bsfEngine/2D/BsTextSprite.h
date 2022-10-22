@@ -18,17 +18,17 @@ namespace bs
 	/**	Specifies how is text horizontally aligned within its bounds. */
 	enum BS_SCRIPT_EXPORT(DocumentationGroup(GUI)) TextHorzAlign
 	{
-		THA_Left	BS_SCRIPT_EXPORT(n:Left),
-		THA_Center	BS_SCRIPT_EXPORT(n:Center),
-		THA_Right	BS_SCRIPT_EXPORT(n:Right)
+		THA_Left	BS_SCRIPT_EXPORT(ExportName(Left)),
+		THA_Center	BS_SCRIPT_EXPORT(ExportName(Center)),
+		THA_Right	BS_SCRIPT_EXPORT(ExportName(Right))
 	};
 
 	/**	Specifies how is text vertically aligned within its bounds. */
 	enum BS_SCRIPT_EXPORT(DocumentationGroup(GUI)) TextVertAlign
 	{
-		TVA_Top		BS_SCRIPT_EXPORT(n:Top),
-		TVA_Center	BS_SCRIPT_EXPORT(n:Center),
-		TVA_Bottom	BS_SCRIPT_EXPORT(n:Bottom)
+		TVA_Top		BS_SCRIPT_EXPORT(ExportName(Top)),
+		TVA_Center	BS_SCRIPT_EXPORT(ExportName(Center)),
+		TVA_Bottom	BS_SCRIPT_EXPORT(ExportName(Bottom))
 	};
 
 	/**	Text sprite description structure used for initializing or updating a text sprite. */

@@ -24,33 +24,33 @@ namespace bs
 		  * Controls friction when two in-contact objects are not moving lateral to each other (for example how difficult
 		  * it is to get an object moving from a static state while it is in contact with other object(s)).
 		  */
-		BS_SCRIPT_EXPORT(n:StaticFriction,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(StaticFriction),pr:setter)
 		virtual void SetStaticFriction(float value) = 0;
 
 		/** @copydoc setStaticFriction() */
-		BS_SCRIPT_EXPORT(n:StaticFriction,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(StaticFriction),pr:getter)
 		virtual float GetStaticFriction() const = 0;
 
 		/**
 		 * Controls friction when two in-contact objects are moving lateral to each other (for example how quickly does an
 		 * object slow down when sliding along another object).
 		 */
-		BS_SCRIPT_EXPORT(n:DynamicFriction,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(DynamicFriction),pr:setter)
 		virtual void SetDynamicFriction(float value) = 0;
 
 		/** @copydoc setDynamicFriction() */
-		BS_SCRIPT_EXPORT(n:DynamicFriction,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(DynamicFriction),pr:getter)
 		virtual float GetDynamicFriction() const = 0;
 
 		/**
 		 * Controls "bounciness" of an object during a collision. Value of 1 means the collision is elastic, and value of 0
 		 * means the value is inelastic. Must be in [0, 1] range.
 		 */
-		BS_SCRIPT_EXPORT(n:Restitution,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Restitution),pr:setter)
 		virtual void SetRestitutionCoefficient(float value) = 0;
 
 		/** @copydoc setRestitutionCoefficient() */
-		BS_SCRIPT_EXPORT(n:Restitution,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Restitution),pr:getter)
 		virtual float GetRestitutionCoefficient() const = 0;
 
 		/**

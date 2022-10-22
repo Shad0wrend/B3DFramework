@@ -24,59 +24,59 @@ namespace bs
 		virtual ~CCollider() = default;
 
 		/** @copydoc Collider::setIsTrigger */
-		BS_SCRIPT_EXPORT(n:Trigger,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Trigger),pr:setter)
 		void SetIsTrigger(bool value);
 
 		/** @copydoc Collider::getIsTrigger */
-		BS_SCRIPT_EXPORT(n:Trigger,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Trigger),pr:getter)
 		bool GetIsTrigger() const { return mIsTrigger; }
 
 		/** @copydoc Collider::setMass */
-		BS_SCRIPT_EXPORT(n:Mass,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Mass),pr:setter)
 		void SetMass(float mass);
 
 		/** @copydoc Collider::getMass */
-		BS_SCRIPT_EXPORT(n:Mass,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Mass),pr:getter)
 		float GetMass() const { return mMass; }
 
 		/** @copydoc Collider::setMaterial */
-		BS_SCRIPT_EXPORT(n:Material,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Material),pr:setter)
 		void SetMaterial(const HPhysicsMaterial& material);
 
 		/** @copydoc Collider::getMaterial */
-		BS_SCRIPT_EXPORT(n:Material,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Material),pr:getter)
 		HPhysicsMaterial GetMaterial() const { return mMaterial; }
 
 		/** @copydoc Collider::setContactOffset */
-		BS_SCRIPT_EXPORT(n:ContactOffset,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(ContactOffset),pr:setter)
 		void SetContactOffset(float value);
 
 		/** @copydoc Collider::getContactOffset */
-		BS_SCRIPT_EXPORT(n:ContactOffset,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(ContactOffset),pr:getter)
 		float GetContactOffset() const { return mContactOffset; }
 
 		/** @copydoc Collider::setRestOffset */
-		BS_SCRIPT_EXPORT(n:RestOffset,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(RestOffset),pr:setter)
 		void SetRestOffset(float value);
 
 		/** @copydoc Collider::getRestOffset */
-		BS_SCRIPT_EXPORT(n:RestOffset,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(RestOffset),pr:getter)
 		float GetRestOffset() const { return mRestOffset; }
 
 		/** @copydoc Collider::setLayer */
-		BS_SCRIPT_EXPORT(n:Layer,pr:setter,layerMask)
+		BS_SCRIPT_EXPORT(ExportName(Layer),pr:setter,layerMask)
 		void SetLayer(u64 layer);
 
 		/** @copydoc Collider::getLayer */
-		BS_SCRIPT_EXPORT(n:Layer,pr:getter,layerMask)
+		BS_SCRIPT_EXPORT(ExportName(Layer),pr:getter,layerMask)
 		u64 GetLayer() const { return mLayer; }
 
 		/** @copydoc Collider::setCollisionReportMode */
-		BS_SCRIPT_EXPORT(n:CollisionReportMode,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(CollisionReportMode),pr:setter)
 		void SetCollisionReportMode(CollisionReportMode mode);
 
 		/** @copydoc Collider::getCollisionReportMode */
-		BS_SCRIPT_EXPORT(n:CollisionReportMode,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(CollisionReportMode),pr:getter)
 		CollisionReportMode GetCollisionReportMode() const { return mCollisionReportMode; }
 
 		/** @copydoc Collider::getRigidbody */
@@ -90,15 +90,15 @@ namespace bs
 			float maxDist = FLT_MAX) const;
 
 		/** @copydoc Collider::onCollisionBegin */
-		BS_SCRIPT_EXPORT(n:OnCollisionBegin)
+		BS_SCRIPT_EXPORT(ExportName(OnCollisionBegin))
 		Event<void(const CollisionData&)> OnCollisionBegin;
 
 		/** @copydoc Collider::onCollisionStay */
-		BS_SCRIPT_EXPORT(n:OnCollisionStay)
+		BS_SCRIPT_EXPORT(ExportName(OnCollisionStay))
 		Event<void(const CollisionData&)> OnCollisionStay;
 
 		/** @copydoc Collider::onCollisionEnd */
-		BS_SCRIPT_EXPORT(n:OnCollisionEnd)
+		BS_SCRIPT_EXPORT(ExportName(OnCollisionEnd))
 		Event<void(const CollisionData&)> OnCollisionEnd;
 
 		/** @name Internal

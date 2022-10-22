@@ -24,91 +24,91 @@ namespace bs
 		virtual ~CAudioSource() = default;
 		
 		/** @copydoc AudioSource::setClip */
-		BS_SCRIPT_EXPORT(n:Clip,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Clip),pr:setter)
 		void SetClip(const HAudioClip& clip);
 
 		/** @copydoc AudioSource::getClip */
-		BS_SCRIPT_EXPORT(n:Clip,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Clip),pr:getter)
 		HAudioClip GetClip() const { return mAudioClip; }
 
 		/** @copydoc AudioSource::setVolume */
-		BS_SCRIPT_EXPORT(n:Volume,pr:setter,range:[0,1],slider)
+		BS_SCRIPT_EXPORT(ExportName(Volume),pr:setter,range:[0,1],slider)
 		void SetVolume(float volume);
 
 		/** @copydoc AudioSource::getVolume */
-		BS_SCRIPT_EXPORT(n:Volume,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Volume),pr:getter)
 		float GetVolume() const { return mVolume; }
 
 		/** @copydoc AudioSource::setPitch */
-		BS_SCRIPT_EXPORT(n:Pitch,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Pitch),pr:setter)
 		void SetPitch(float pitch);
 
 		/** @copydoc AudioSource::getPitch */
-		BS_SCRIPT_EXPORT(n:Pitch,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Pitch),pr:getter)
 		float GetPitch() const { return mPitch; }
 
 		/** @copydoc AudioSource::setIsLooping */
-		BS_SCRIPT_EXPORT(n:Loop,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Loop),pr:setter)
 		void SetIsLooping(bool loop);
 
 		/** @copydoc AudioSource::getIsLooping */
-		BS_SCRIPT_EXPORT(n:Loop,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Loop),pr:getter)
 		bool GetIsLooping() const { return mLoop; }
 
 		/** @copydoc AudioSource::setPriority */
-		BS_SCRIPT_EXPORT(n:Priority,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Priority),pr:setter)
 		void SetPriority(u32 priority);
 
 		/** @copydoc AudioSource::getPriority */
-		BS_SCRIPT_EXPORT(n:Priority,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Priority),pr:getter)
 		u32 GetPriority() const { return mPriority; }
 
 		/** @copydoc AudioSource::setMinDistance */
-		BS_SCRIPT_EXPORT(n:MinDistance,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(MinDistance),pr:setter)
 		void SetMinDistance(float distance);
 
 		/** @copydoc AudioSource::getMinDistance */
-		BS_SCRIPT_EXPORT(n:MinDistance,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(MinDistance),pr:getter)
 		float GetMinDistance() const { return mMinDistance; }
 
 		/** @copydoc AudioSource::setAttenuation */
-		BS_SCRIPT_EXPORT(n:Attenuation,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Attenuation),pr:setter)
 		void SetAttenuation(float attenuation);
 
 		/** @copydoc AudioSource::getAttenuation */
-		BS_SCRIPT_EXPORT(n:Attenuation,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Attenuation),pr:getter)
 		float GetAttenuation() const { return mAttenuation; }
 
 		/** @copydoc AudioSource::setTime */
-		BS_SCRIPT_EXPORT(n:Time,pr:setter,hide)
+		BS_SCRIPT_EXPORT(ExportName(Time),pr:setter,hide)
 		void SetTime(float time);
 
 		/** @copydoc AudioSource::getTime */
-		BS_SCRIPT_EXPORT(n:Time,pr:getter,hide)
+		BS_SCRIPT_EXPORT(ExportName(Time),pr:getter,hide)
 		float GetTime() const;
 
 		/** Sets whether playback should start as soon as the component is enabled. */
-		BS_SCRIPT_EXPORT(n:PlayOnStart,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(PlayOnStart),pr:setter)
 		void SetPlayOnStart(bool enable) { mPlayOnStart = enable; }
 
 		/** Determines should playback start as soon as the component is enabled. */
-		BS_SCRIPT_EXPORT(n:PlayOnStart,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(PlayOnStart),pr:getter)
 		bool GetPlayOnStart() const { return mPlayOnStart; }
 
 		/** @copydoc AudioSource::play */
-		BS_SCRIPT_EXPORT(n:Play)
+		BS_SCRIPT_EXPORT(ExportName(Play))
 		void Play();
 
 		/** @copydoc AudioSource::pause */
-		BS_SCRIPT_EXPORT(n:Pause)
+		BS_SCRIPT_EXPORT(ExportName(Pause))
 		void Pause();
 
 		/** @copydoc AudioSource::stop */
-		BS_SCRIPT_EXPORT(n:Stop)
+		BS_SCRIPT_EXPORT(ExportName(Stop))
 		void Stop();
 
 		/** @copydoc AudioSource::getState */
-		BS_SCRIPT_EXPORT(n:State,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(State),pr:getter)
 		AudioSourceState GetState() const;
 
 		/** @name Internal

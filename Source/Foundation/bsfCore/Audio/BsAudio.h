@@ -35,35 +35,35 @@ namespace bs
 		void Play(const HAudioClip& clip, const Vector3& position = Vector3::ZERO, float volume = 1.0f);
 
 		/** Determines global audio volume. In range [0, 1]. */
-		BS_SCRIPT_EXPORT(n:Volume,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Volume),pr:setter)
 		virtual void SetVolume(float volume) = 0;
 
 		/** @copydoc setVolume() */
-		BS_SCRIPT_EXPORT(n:Volume,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Volume),pr:getter)
 		virtual float GetVolume() const = 0;
 
 		/** Determines if audio reproduction is paused globally. */
-		BS_SCRIPT_EXPORT(n:Paused,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Paused),pr:setter)
 		virtual void SetPaused(bool paused) = 0;
 
 		/** @copydoc setPaused() */
-		BS_SCRIPT_EXPORT(n:Paused,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Paused),pr:getter)
 		virtual bool IsPaused() const = 0;
 
 		/** Determines the device on which is the audio played back on. */
-		BS_SCRIPT_EXPORT(n:ActiveDevice,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(ActiveDevice),pr:setter)
 		virtual void SetActiveDevice(const AudioDevice& device) = 0;
 
 		/** @copydoc setActiveDevice() */
-		BS_SCRIPT_EXPORT(n:ActiveDevice,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(ActiveDevice),pr:getter)
 		virtual AudioDevice GetActiveDevice() const = 0;
 		
 		/** Returns the default audio device identifier. */
-		BS_SCRIPT_EXPORT(n:DefaultDevice,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(DefaultDevice),pr:getter)
 		virtual AudioDevice GetDefaultDevice() const = 0;
 
 		/** Returns a list of all available audio devices. */
-		BS_SCRIPT_EXPORT(n:AllDevices,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(AllDevices),pr:getter)
 		virtual const Vector<AudioDevice>& GetAllDevices() const = 0;
 
 		/** @name Internal

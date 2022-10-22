@@ -161,7 +161,7 @@ namespace bs
 		void ClearParams() { mParams.clear(); }
 
 		/** Returns a list of names of all registered parameters. */
-		BS_SCRIPT_EXPORT(n:ParamNames,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(ParamNames),pr:getter)
 		Vector<String> GetParamNames() const;
 
 		/**

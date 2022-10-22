@@ -24,27 +24,27 @@ namespace bs
 		virtual ~CReflectionProbe();
 
 		/** @copydoc ReflectionProbe::getType */
-		BS_SCRIPT_EXPORT(n:Type,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Type),pr:getter)
 		ReflectionProbeType GetType() const { return mInternal->GetType(); }
 
 		/** @copydoc ReflectionProbe::setType */
-		BS_SCRIPT_EXPORT(n:Type,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Type),pr:setter)
 		void SetType(ReflectionProbeType type) { mInternal->SetType(type); }
 
 		/** @copydoc ReflectionProbe::getRadius */
-		BS_SCRIPT_EXPORT(n:Radius,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Radius),pr:getter)
 		float GetRadius() const { return mInternal->GetRadius(); }
 
 		/** @copydoc ReflectionProbe::setRadius */
-		BS_SCRIPT_EXPORT(n:Radius,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Radius),pr:setter)
 		void SetRadius(float radius) { mInternal->SetRadius(radius); }
 
 		/** @copydoc ReflectionProbe::getExtents */
-		BS_SCRIPT_EXPORT(n:Extents,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Extents),pr:getter)
 		Vector3 GetExtents() const { return mInternal->GetExtents(); }
 
 		/** @copydoc ReflectionProbe::setExtents */
-		BS_SCRIPT_EXPORT(n:Extents,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Extents),pr:setter)
 		void SetExtents(const Vector3& extents) { mInternal->SetExtents(extents); }
 
 		/** Retrieves transition distance set by setTransitionDistance(). */
@@ -54,18 +54,18 @@ namespace bs
 		void SetTransitionDistance(float distance) { mInternal->SetTransitionDistance(distance); }
 
 		/** @copydoc ReflectionProbe::getCustomTexture */
-		BS_SCRIPT_EXPORT(n:CustomTexture,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(CustomTexture),pr:getter)
 		HTexture GetCustomTexture() const { return mInternal->GetCustomTexture(); }
 
 		/** @copydoc ReflectionProbe::setCustomTexture */
-		BS_SCRIPT_EXPORT(n:CustomTexture,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(CustomTexture),pr:setter)
 		void SetCustomTexture(const HTexture& texture) { mInternal->SetCustomTexture(texture); }
 
 		/** @copydoc ReflectionProbe::getBounds */
 		Sphere GetBounds() const;
 
 		/** @copydoc ReflectionProbe::capture */
-		BS_SCRIPT_EXPORT(n:Capture)
+		BS_SCRIPT_EXPORT(ExportName(Capture))
 		void Capture() { mInternal->Capture(); }
 
 		/** @name Internal

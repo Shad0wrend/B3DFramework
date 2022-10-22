@@ -22,11 +22,11 @@ namespace bs
 		virtual ~CBone() = default;
 		
 		/** Determines the name of the bone the component is referencing. */
-		BS_SCRIPT_EXPORT(n:Name,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Name),pr:setter)
 		void SetBoneName(const String& name);
 
 		/** @copydoc setBoneName */
-		BS_SCRIPT_EXPORT(n:Name,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Name),pr:getter)
 		const String& GetBoneName() const { return mBoneName; }
 
 		/** @name Internal

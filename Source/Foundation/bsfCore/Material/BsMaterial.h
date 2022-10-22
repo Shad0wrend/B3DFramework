@@ -140,7 +140,7 @@ namespace bs
 		virtual ~TMaterial() = default;
 
 		/** Returns the currently active shader. */
-		BS_SCRIPT_EXPORT(n:Shader,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Shader),pr:getter)
 		ShaderType GetShader() const { return mShader; }
 
 		/**
@@ -149,7 +149,7 @@ namespace bs
 		 * technique is considered the default technique and which subset of techniques are searched during a call to
 		 * findTechnique().
 		 */
-		BS_SCRIPT_EXPORT(n:Variation,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Variation),pr:getter)
 		const ShaderVariation& GetVariation() const { return mVariation; }
 
 		/** Returns the total number of techniques supported by this material. */
@@ -254,7 +254,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
-		BS_SCRIPT_EXPORT(n:SetVector2)
+		BS_SCRIPT_EXPORT(ExportName(SetVector2))
 		void SetVec2(const String& name, const Vector2& value, u32 arrayIdx = 0)	{ return GetParamVec2(name).Set(value, arrayIdx); }
 
 		/**
@@ -262,7 +262,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
-		BS_SCRIPT_EXPORT(n:SetVector3)
+		BS_SCRIPT_EXPORT(ExportName(SetVector3))
 		void SetVec3(const String& name, const Vector3& value, u32 arrayIdx = 0)	{ return GetParamVec3(name).Set(value, arrayIdx); }
 
 		/**
@@ -270,7 +270,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
-		BS_SCRIPT_EXPORT(n:SetVector4)
+		BS_SCRIPT_EXPORT(ExportName(SetVector4))
 		void SetVec4(const String& name, const Vector4& value, u32 arrayIdx = 0)	{ return GetParamVec4(name).Set(value, arrayIdx); }
 
 		/**
@@ -278,7 +278,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
-		BS_SCRIPT_EXPORT(n:SetMatrix3)
+		BS_SCRIPT_EXPORT(ExportName(SetMatrix3))
 		void SetMat3(const String& name, const Matrix3& value, u32 arrayIdx = 0)	{ return GetParamMat3(name).Set(value, arrayIdx); }
 
 		/**
@@ -286,7 +286,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
-		BS_SCRIPT_EXPORT(n:SetMatrix4)
+		BS_SCRIPT_EXPORT(ExportName(SetMatrix4))
 		void SetMat4(const String& name, const Matrix4& value, u32 arrayIdx = 0)	{ return GetParamMat4(name).Set(value, arrayIdx); }
 
 		/**
@@ -378,7 +378,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
-		BS_SCRIPT_EXPORT(n:GetVector2)
+		BS_SCRIPT_EXPORT(ExportName(GetVector2))
 		Vector2 GetVec2(const String& name, u32 arrayIdx = 0) const { return GetParamVec2(name).Get(arrayIdx); }
 
 		/**
@@ -386,7 +386,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
-		BS_SCRIPT_EXPORT(n:GetVector3)
+		BS_SCRIPT_EXPORT(ExportName(GetVector3))
 		Vector3 GetVec3(const String& name, u32 arrayIdx = 0) const { return GetParamVec3(name).Get(arrayIdx); }
 
 		/**
@@ -394,7 +394,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
-		BS_SCRIPT_EXPORT(n:GetVector4)
+		BS_SCRIPT_EXPORT(ExportName(GetVector4))
 		Vector4 GetVec4(const String& name, u32 arrayIdx = 0) const { return GetParamVec4(name).Get(arrayIdx); }
 
 		/**
@@ -402,7 +402,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
-		BS_SCRIPT_EXPORT(n:GetMatrix3)
+		BS_SCRIPT_EXPORT(ExportName(GetMatrix3))
 		Matrix3 GetMat3(const String& name, u32 arrayIdx = 0) const { return GetParamMat3(name).Get(arrayIdx); }
 
 		/**
@@ -410,7 +410,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
-		BS_SCRIPT_EXPORT(n:GetMatrix4)
+		BS_SCRIPT_EXPORT(ExportName(GetMatrix4))
 		Matrix4 GetMat4(const String& name, u32 arrayIdx = 0) const { return GetParamMat4(name).Get(arrayIdx); }
 
 		/**
@@ -746,11 +746,11 @@ namespace bs
 		 * Sets a shader that will be used by the material. Material will be initialized using all compatible techniques
 		 * from the shader. Shader must be set before doing any other operations with the material.
 		 */
-		BS_SCRIPT_EXPORT(n:Shader,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Shader),pr:setter)
 		void SetShader(const HShader& shader);
 
 		/** @copydoc TMaterial<Core>::GetVariation() const */
-		BS_SCRIPT_EXPORT(n:Variation,pr:setter,hide)
+		BS_SCRIPT_EXPORT(ExportName(Variation),pr:setter,hide)
 		void SetVariation(const ShaderVariation& variation);
 
 		/** Retrieves an implementation of a material usable only from the core thread. */
@@ -760,7 +760,7 @@ namespace bs
 		void Initialize() override;
 
 		/** Creates a deep copy of the material and returns the new object. */
-		BS_SCRIPT_EXPORT(n:Clone)
+		BS_SCRIPT_EXPORT(ExportName(Clone))
 		HMaterial Clone();
 
 		/**

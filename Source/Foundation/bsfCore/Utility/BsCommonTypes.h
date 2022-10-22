@@ -119,27 +119,27 @@ namespace bs
 	};
 
 	/** Describes operation that will be used for rendering a certain set of vertices. */
-	enum BS_SCRIPT_EXPORT(n:MeshTopology,DocumentationGroup(Rendering)) DrawOperationType
+	enum BS_SCRIPT_EXPORT(ExportName(MeshTopology),DocumentationGroup(Rendering)) DrawOperationType
 	{
 		/** Each vertex represents a point. */
-		DOT_POINT_LIST		BS_SCRIPT_EXPORT(n:PointList)		= 1,
+		DOT_POINT_LIST		BS_SCRIPT_EXPORT(ExportName(PointList))		= 1,
 		/** Each sequential pair of vertices represent a line. */
-		DOT_LINE_LIST		BS_SCRIPT_EXPORT(n:LineList)		= 2,
+		DOT_LINE_LIST		BS_SCRIPT_EXPORT(ExportName(LineList))		= 2,
 		/** Each vertex (except the first) forms a line with the previous vertex. */
-		DOT_LINE_STRIP		BS_SCRIPT_EXPORT(n:LineStrip)		= 3,
+		DOT_LINE_STRIP		BS_SCRIPT_EXPORT(ExportName(LineStrip))		= 3,
 		/** Each sequential 3-tuple of vertices represent a triangle. */
-		DOT_TRIANGLE_LIST	BS_SCRIPT_EXPORT(n:TriangleList)	= 4,
+		DOT_TRIANGLE_LIST	BS_SCRIPT_EXPORT(ExportName(TriangleList))	= 4,
 		/** Each vertex (except the first two) form a triangle with the previous two vertices. */
-		DOT_TRIANGLE_STRIP	BS_SCRIPT_EXPORT(n:TriangleStrip)	= 5,
+		DOT_TRIANGLE_STRIP	BS_SCRIPT_EXPORT(ExportName(TriangleStrip))	= 5,
 		/** Each vertex (except the first two) form a triangle with the first vertex and previous vertex. */
-		DOT_TRIANGLE_FAN	BS_SCRIPT_EXPORT(n:TriangleFan)		= 6
+		DOT_TRIANGLE_FAN	BS_SCRIPT_EXPORT(ExportName(TriangleFan))		= 6
 	};
 
 	/**	Type of mesh indices used, used for determining maximum number of vertices in a mesh. */
 	enum BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) IndexType
 	{
-		IT_16BIT	BS_SCRIPT_EXPORT(n:Index16),	/**< 16-bit indices. */
-		IT_32BIT	BS_SCRIPT_EXPORT(n:Index32)		/**< 32-bit indices. */
+		IT_16BIT	BS_SCRIPT_EXPORT(ExportName(Index16)),	/**< 16-bit indices. */
+		IT_32BIT	BS_SCRIPT_EXPORT(ExportName(Index32))		/**< 32-bit indices. */
 	};
 
 	/** These values represent a hint to the driver when locking a hardware buffer. */
@@ -335,22 +335,22 @@ namespace bs
 	enum BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) TextureType
 	{
 		/** One dimensional texture. Just a row of pixels. */
-		TEX_TYPE_1D			BS_SCRIPT_EXPORT(n:Texture1D)	= 1,
+		TEX_TYPE_1D			BS_SCRIPT_EXPORT(ExportName(Texture1D))	= 1,
 		/** Two dimensional texture. */
-		TEX_TYPE_2D			BS_SCRIPT_EXPORT(n:Texture2D)	= 2,
+		TEX_TYPE_2D			BS_SCRIPT_EXPORT(ExportName(Texture2D))	= 2,
 		/** Three dimensional texture. */
-		TEX_TYPE_3D			BS_SCRIPT_EXPORT(n:Texture3D)	= 3,
+		TEX_TYPE_3D			BS_SCRIPT_EXPORT(ExportName(Texture3D))	= 3,
 		/** Texture consisting out of six 2D textures describing an inside of a cube. Allows special sampling. */
-		TEX_TYPE_CUBE_MAP	BS_SCRIPT_EXPORT(n:TextureCube) = 4
+		TEX_TYPE_CUBE_MAP	BS_SCRIPT_EXPORT(ExportName(TextureCube)) = 4
 	};
 
 	/**	Projection type to use by the camera. */
 	enum BS_SCRIPT_EXPORT() ProjectionType
 	{
 		/** Projection type where object size remains constant and parallel lines remain parallel. */
-		PT_ORTHOGRAPHIC		BS_SCRIPT_EXPORT(n:Orthographic),
+		PT_ORTHOGRAPHIC		BS_SCRIPT_EXPORT(ExportName(Orthographic)),
 		/** Projection type that emulates human vision. Objects farther away appear smaller. */
-		PT_PERSPECTIVE		BS_SCRIPT_EXPORT(n:Perspective)
+		PT_PERSPECTIVE		BS_SCRIPT_EXPORT(ExportName(Perspective))
 	};
 
 	/**	Contains data about a type used for GPU data parameters. */

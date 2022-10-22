@@ -23,19 +23,19 @@ namespace bs
 		CSphereCollider(const HSceneObject& parent, float radius = 1.0f);
 
 		/** @copydoc SphereCollider::setRadius */
-		BS_SCRIPT_EXPORT(n:Radius,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Radius),pr:setter)
 		void SetRadius(float radius);
 
 		/** @copydoc SphereCollider::getRadius */
-		BS_SCRIPT_EXPORT(n:Radius,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Radius),pr:getter)
 		float GetRadius() const { return mRadius; }
 
 		/** Determines position of the sphere shape, relative to the component's scene object. */
-		BS_SCRIPT_EXPORT(n:Center,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Center),pr:setter)
 		void SetCenter(const Vector3& center);
 
 		/** @copydoc setCenter() */
-		BS_SCRIPT_EXPORT(n:Center,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Center),pr:getter)
 		Vector3 GetCenter() const { return mLocalPosition; }
 
 		/** @name Internal

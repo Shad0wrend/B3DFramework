@@ -24,51 +24,51 @@ namespace bs
 		virtual ~CJoint() = default;
 
 		/** @copydoc Joint::getBody */
-		BS_SCRIPT_EXPORT(n:GetBody)
+		BS_SCRIPT_EXPORT(ExportName(GetBody))
 		HRigidbody GetBody(JointBody body) const;
 
 		/** @copydoc Joint::setBody */
-		BS_SCRIPT_EXPORT(n:SetBody)
+		BS_SCRIPT_EXPORT(ExportName(SetBody))
 		void SetBody(JointBody body, const HRigidbody& value);
 
 		/** @copydoc Joint::getPosition */
-		BS_SCRIPT_EXPORT(n:GetPosition)
+		BS_SCRIPT_EXPORT(ExportName(GetPosition))
 		Vector3 GetPosition(JointBody body) const;
 
 		/** @copydoc Joint::getRotation */
-		BS_SCRIPT_EXPORT(n:GetRotation)
+		BS_SCRIPT_EXPORT(ExportName(GetRotation))
 		Quaternion GetRotation(JointBody body) const;
 
 		/** @copydoc Joint::setTransform */
-		BS_SCRIPT_EXPORT(n:SetTransform)
+		BS_SCRIPT_EXPORT(ExportName(SetTransform))
 		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation);
 
 		/** @copydoc Joint::getBreakForce */
-		BS_SCRIPT_EXPORT(n:BreakForce,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(BreakForce),pr:getter)
 		float GetBreakForce() const;
 
 		/** @copydoc Joint::setBreakForce */
-		BS_SCRIPT_EXPORT(n:BreakForce,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(BreakForce),pr:setter)
 		void SetBreakForce(float force);
 
 		/** @copydoc Joint::getBreakTorque */
-		BS_SCRIPT_EXPORT(n:BreakTorque,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(BreakTorque),pr:getter)
 		float GetBreakTorque() const;
 
 		/** @copydoc Joint::setBreakTorque */
-		BS_SCRIPT_EXPORT(n:BreakTorque,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(BreakTorque),pr:setter)
 		void SetBreakTorque(float torque);
 
 		/** @copydoc Joint::getEnableCollision */
-		BS_SCRIPT_EXPORT(n:EnableCollision,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(EnableCollision),pr:getter)
 		bool GetEnableCollision() const;
 
 		/** @copydoc Joint::setEnableCollision */
-		BS_SCRIPT_EXPORT(n:EnableCollision,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(EnableCollision),pr:setter)
 		void SetEnableCollision(bool value);
 
 		/** @copydoc Joint::onJointBreak */
-		BS_SCRIPT_EXPORT(n:OnJointBreak)
+		BS_SCRIPT_EXPORT(ExportName(OnJointBreak))
 		Event<void()> OnJointBreak;
 
 		/** @name Internal

@@ -77,19 +77,19 @@ namespace bs
 		 * Determines the offset into the referenced texture where the sprite starts. The offset is in UV coordinates,
 		 * in range [0, 1].
 		 */
-		BS_SCRIPT_EXPORT(n:Offset,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Offset),pr:setter)
 		void SetOffset(const Vector2& offset) { mUVOffset = offset; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setOffset() */
-		BS_SCRIPT_EXPORT(n:Offset,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Offset),pr:getter)
 		Vector2 GetOffset() const { return mUVOffset; }
 
 		/** Determines the size of the sprite in the referenced texture. Size is in UV coordinates, range [0, 1]. */
-		BS_SCRIPT_EXPORT(n:Scale,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Scale),pr:setter)
 		void SetScale(const Vector2& scale) { mUVScale = scale; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setScale() */
-		BS_SCRIPT_EXPORT(n:Scale,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Scale),pr:getter)
 		Vector2 GetScale() const { return mUVScale; }
 
 		/** Transforms wanted UV coordinates into coordinates you can use for sampling the internal texture. */
@@ -110,19 +110,19 @@ namespace bs
 		 * which can be evaluated over time. In order to view the animation you must also enable playback through
 		 * setAnimationPlayback().
 		 */
-		BS_SCRIPT_EXPORT(n:Animation,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Animation),pr:setter)
 		void SetAnimation(const SpriteSheetGridAnimation& anim) { mAnimation = anim; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setAnimation */
-		BS_SCRIPT_EXPORT(n:Animation,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Animation),pr:getter)
 		const SpriteSheetGridAnimation& GetAnimation() const { return mAnimation; }
 
 		/** Determines if and how should the sprite animation play. */
-		BS_SCRIPT_EXPORT(n:AnimationPlayback,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(AnimationPlayback),pr:setter)
 		void SetAnimationPlayback(SpriteAnimationPlayback playback) { mPlayback = playback; MarkCoreDirtyInternal(); }
 
 		/** @copydoc setAnimationPlayback */
-		BS_SCRIPT_EXPORT(n:AnimationPlayback,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(AnimationPlayback),pr:getter)
 		SpriteAnimationPlayback GetAnimationPlayback() const { return mPlayback; };
 
 	protected:
@@ -173,33 +173,33 @@ namespace bs
 	{
 	public:
 		/**	Determines the internal texture that the sprite texture references. */
-		BS_SCRIPT_EXPORT(n:Texture,pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Texture),pr:setter)
 		void SetTexture(const HTexture& texture);
 
 		/**	@copydoc setTexture() */
-		BS_SCRIPT_EXPORT(n:Texture,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Texture),pr:getter)
 		const HTexture& GetTexture() const { return mAtlasTexture; }
 
 		/**	Returns width of the sprite texture in pixels. */
-		BS_SCRIPT_EXPORT(n:Width,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Width),pr:getter)
 		u32 GetWidth() const;
 
 		/**	Returns height of the sprite texture in pixels. */
-		BS_SCRIPT_EXPORT(n:Height,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Height),pr:getter)
 		u32 GetHeight() const;
 
 		/**	
 		 * Returns width of a single animation frame sprite texture in pixels. If the texture has no animation this
 		 * is the same as getWidth().
 		 */
-		BS_SCRIPT_EXPORT(n:FrameWidth,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(FrameWidth),pr:getter)
 		u32 GetFrameWidth() const;
 
 		/**	
 		 * Returns height of a single animation frame sprite texture in pixels. If the texture has no animation this
 		 * is the same as getHeight().
 		 */
-		BS_SCRIPT_EXPORT(n:FrameHeight,pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(FrameHeight),pr:getter)
 		u32 GetFrameHeight() const;
 
 		/**	Retrieves a core implementation of a sprite texture usable only from the core thread. */
