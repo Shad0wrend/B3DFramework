@@ -23,39 +23,39 @@ namespace bs
 		CDistanceJoint(const HSceneObject& parent);
 
 		/** @copydoc DistanceJoint::getDistance */
-		BS_SCRIPT_EXPORT(ExportName(Distance),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Distance),Property(Getter))
 		float GetDistance() const;
 
 		/** @copydoc DistanceJoint::getMinDistance */
-		BS_SCRIPT_EXPORT(ExportName(MinDistance),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(MinDistance),Property(Getter))
 		float GetMinDistance() const;
 
 		/** @copydoc DistanceJoint::setMinDistance */
-		BS_SCRIPT_EXPORT(ExportName(MinDistance),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(MinDistance),Property(Setter))
 		void SetMinDistance(float value);
 
 		/** @copydoc DistanceJoint::getMaxDistance */
-		BS_SCRIPT_EXPORT(ExportName(MaxDistance),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(MaxDistance),Property(Getter))
 		float GetMaxDistance() const;
 
 		/** @copydoc DistanceJoint::setMaxDistance */
-		BS_SCRIPT_EXPORT(ExportName(MaxDistance),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(MaxDistance),Property(Setter))
 		void SetMaxDistance(float value);
 
 		/** @copydoc DistanceJoint::getTolerance */
-		BS_SCRIPT_EXPORT(ExportName(Tolerance),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Tolerance),Property(Getter))
 		float GetTolerance() const;
 
 		/** @copydoc DistanceJoint::setTolerance */
-		BS_SCRIPT_EXPORT(ExportName(Tolerance),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Tolerance),Property(Setter))
 		void SetTolerance(float value);
 
 		/** @copydoc DistanceJoint::getSpring */
-		BS_SCRIPT_EXPORT(ExportName(Spring),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Spring),Property(Getter))
 		Spring GetSpring() const;
 
 		/** @copydoc DistanceJoint::setSpring */
-		BS_SCRIPT_EXPORT(ExportName(Spring),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Spring),Property(Setter))
 		void SetSpring(const Spring& value);
 
 		/** @copydoc DistanceJoint::setFlag */

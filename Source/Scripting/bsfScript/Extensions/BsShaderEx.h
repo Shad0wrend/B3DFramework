@@ -60,7 +60,7 @@ namespace bs
 	{
 	public:
 		/** Returns information about all parameters available in the shader. */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Shader),pr:getter,ExportName(Parameters))
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Shader),Property(Getter),ExportName(Parameters))
 		static Vector<ShaderParameter> GetParameters(const HShader& thisPtr);
 	};
 

@@ -229,14 +229,14 @@ namespace bs
 		 * Returns the number of bytes that offsets one row from another. This can be exact number of bytes required
 		 * to hold "width" pixel, but doesn't have to be as some buffers require padding.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(RawRowPitch),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(RawRowPitch),Property(Getter))
 		u32 GetRowPitch() const { return mRowPitch; }
 
 		/**
 		 * Returns the number of bytes that offsets one depth slice from another. This can be exact number of bytes
 		 * required to hold "width * height" pixels, but doesn't have to be as some buffers require padding.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(RawSlicePitch),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(RawSlicePitch),Property(Getter))
 		u32 GetSlicePitch() const { return mSlicePitch; }
 
 		/**
@@ -264,7 +264,7 @@ namespace bs
 		u32 GetSliceSkip() const;
 
 		/** Returns the pixel format used by the internal buffer for storing the pixels. */
-		BS_SCRIPT_EXPORT(ExportName(Format),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Format),Property(Getter))
 		PixelFormat GetFormat() const { return mFormat; }
 
 		/**	Returns width of the buffer in pixels. */
@@ -313,13 +313,13 @@ namespace bs
 		u32 GetBack() const { return mExtents.Back; }
 
 		/** Returns extents of the pixel volume this object is capable of holding. */
-		BS_SCRIPT_EXPORT(ExportName(Extents),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Extents),Property(Getter))
 		PixelVolume GetExtents() const { return mExtents; }
 
 		/**
 		 * Return whether this buffer is laid out consecutive in memory (meaning the pitches are equal to the dimensions).
 		 */
-		BS_SCRIPT_EXPORT(ExportName(RawIsConsecutive),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(RawIsConsecutive),Property(Getter))
 		bool IsConsecutive() const
 		{
 			return mSlicePitch * GetDepth() == GetConsecutiveSize();
@@ -329,7 +329,7 @@ namespace bs
 		u32 GetConsecutiveSize() const;
 
 		/**	Return the size (in bytes) of the buffer this image requires. */
-		BS_SCRIPT_EXPORT(ExportName(RawSize),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(RawSize),Property(Getter))
 		u32 GetSize() const;
 
 		/**

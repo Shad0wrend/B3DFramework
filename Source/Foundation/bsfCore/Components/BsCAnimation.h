@@ -36,27 +36,27 @@ namespace bs
 		 * use the play(), blend() and crossFade() methods to queue clips for playback manually, and setState() method for
 		 * modify their states individually.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(DefaultClip),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(DefaultClip),Property(Setter))
 		void SetDefaultClip(const HAnimationClip& clip);
 
 		/** @copydoc setDefaultClip */
-		BS_SCRIPT_EXPORT(ExportName(DefaultClip),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(DefaultClip),Property(Getter))
 		HAnimationClip GetDefaultClip() const { return mDefaultClip; }
 
 		/** @copydoc Animation::setWrapMode */
-		BS_SCRIPT_EXPORT(ExportName(WrapMode),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(WrapMode),Property(Setter))
 		void SetWrapMode(AnimWrapMode wrapMode);
 
 		/** @copydoc setWrapMode */
-		BS_SCRIPT_EXPORT(ExportName(WrapMode),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(WrapMode),Property(Getter))
 		AnimWrapMode GetWrapMode() const { return mWrapMode; }
 
 		/** @copydoc Animation::setSpeed */
-		BS_SCRIPT_EXPORT(ExportName(Speed),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Speed),Property(Setter))
 		void SetSpeed(float speed);
 
 		/** @copydoc setSpeed */
-		BS_SCRIPT_EXPORT(ExportName(Speed),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Speed),Property(Getter))
 		float GetSpeed() const { return mSpeed; }
 
 		/** @copydoc Animation::play */
@@ -92,7 +92,7 @@ namespace bs
 		void StopAll();
 		
 		/** @copydoc Animation::isPlaying */
-		BS_SCRIPT_EXPORT(ExportName(IsPlaying),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(IsPlaying),Property(Getter))
 		bool IsPlaying() const;
 
 		/** @copydoc Animation::getState */
@@ -114,30 +114,30 @@ namespace bs
 		void SetMorphChannelWeight(const String& name, float weight);
 
 		/** Determines bounds that will be used for animation and mesh culling. Only relevant if setUseBounds() is set to true. */
-		BS_SCRIPT_EXPORT(ExportName(Bounds),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Bounds),Property(Setter))
 		void SetBounds(const AABox& bounds);
 
 		/** @copydoc setBounds */
-		BS_SCRIPT_EXPORT(ExportName(Bounds),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Bounds),Property(Getter))
 		const AABox& GetBounds() const { return mBounds; }
 
 		/**
 		 * Determines should animation bounds be used for visibility determination (culling). If false the bounds of the
 		 * mesh attached to the relevant CRenderable component will be used instead.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(UseBounds),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(UseBounds),Property(Setter))
 		void SetUseBounds(bool enable);
 
 		/** @copydoc setUseBounds */
-		BS_SCRIPT_EXPORT(ExportName(UseBounds),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(UseBounds),Property(Getter))
 		bool GetUseBounds() const { return mUseBounds; }
 
 		/** Enables or disables culling of the animation when out of view. Culled animation will not be evaluated. */
-		BS_SCRIPT_EXPORT(ExportName(Cull),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Cull),Property(Setter))
 		void SetEnableCull(bool enable);
 
 		/** Checks whether the animation will be evaluated when it is out of view. */
-		BS_SCRIPT_EXPORT(ExportName(Cull),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Cull),Property(Getter))
 		bool GetEnableCull() const { return mEnableCull; }
 
 		/** @copydoc Animation::getNumClips */

@@ -44,27 +44,27 @@ namespace bs
 		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation);
 
 		/** @copydoc Joint::getBreakForce */
-		BS_SCRIPT_EXPORT(ExportName(BreakForce),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(BreakForce),Property(Getter))
 		float GetBreakForce() const;
 
 		/** @copydoc Joint::setBreakForce */
-		BS_SCRIPT_EXPORT(ExportName(BreakForce),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(BreakForce),Property(Setter))
 		void SetBreakForce(float force);
 
 		/** @copydoc Joint::getBreakTorque */
-		BS_SCRIPT_EXPORT(ExportName(BreakTorque),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(BreakTorque),Property(Getter))
 		float GetBreakTorque() const;
 
 		/** @copydoc Joint::setBreakTorque */
-		BS_SCRIPT_EXPORT(ExportName(BreakTorque),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(BreakTorque),Property(Setter))
 		void SetBreakTorque(float torque);
 
 		/** @copydoc Joint::getEnableCollision */
-		BS_SCRIPT_EXPORT(ExportName(EnableCollision),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(EnableCollision),Property(Getter))
 		bool GetEnableCollision() const;
 
 		/** @copydoc Joint::setEnableCollision */
-		BS_SCRIPT_EXPORT(ExportName(EnableCollision),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(EnableCollision),Property(Setter))
 		void SetEnableCollision(bool value);
 
 		/** @copydoc Joint::onJointBreak */

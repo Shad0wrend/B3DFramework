@@ -180,7 +180,7 @@ namespace bs
 		const TKeyframe<T>& GetKeyFrame(u32 idx) const { return mKeyframes[idx]; }
 
 		/** Returns a list of all keyframes in the curve. */
-		BS_SCRIPT_EXPORT(ExportName(KeyFrames),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(KeyFrames),Property(Getter))
 		const Vector<TKeyframe<T>>& GetKeyFrames() const { return mKeyframes; }
 
 		bool operator== (const TAnimationCurve<T>& rhs) const;

@@ -29,7 +29,7 @@ namespace bs
 		ResourceManifest(const String& name);
 
 		/**	Returns an unique name of the resource manifest. */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Name))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Name))
 		const String& GetName() const { return mName; }
 
 		/**	Registers a new resource in the manifest. */

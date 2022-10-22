@@ -41,11 +41,11 @@ namespace bs
 		MorphShape(const String& name, float weight, const Vector<MorphVertex>& vertices);
 
 		/** Returns the name of the shape. */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Name))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Name))
 		const String& GetName() const { return mName; }
 
 		/** Returns the weight of the shape, determining how are different shapes within a channel blended. */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Weight))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Weight))
 		float GetWeight() const { return mWeight; }
 
 		/** Returns a reference to all of the shape's vertices. Contains only vertices that differ from the base. */
@@ -87,7 +87,7 @@ namespace bs
 	{
 	public:
 		/** Returns the unique name of the channel. */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Name))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Name))
 		const String& GetName() const { return mName; }
 
 		/** Returns the number of available morph shapes. */
@@ -97,7 +97,7 @@ namespace bs
 		SPtr<MorphShape> GetShape(u32 idx) const { return mShapes[idx]; }
 
 		/** Returns all morph shapes within this channel, in order from lowest to highest. */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Shapes))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Shapes))
 		const Vector<SPtr<MorphShape>>& GetShapes() const { return mShapes; }
 
 		/** Creates a new channel from a set of morph shapes. */
@@ -141,7 +141,7 @@ namespace bs
 		SPtr<MorphChannel> GetChannel(u32 idx) const { return mChannels[idx]; }
 
 		/** Returns a list of all morph channels in the morph animation. */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Channels))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Channels))
 		const Vector<SPtr<MorphChannel>>& GetChannels() const { return mChannels; }
 
 		/** Returns the number of vertices per morph shape. */

@@ -90,7 +90,7 @@ namespace bs
 		}
 
 		/** Returns the type of the represented distribution. */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(DistributionType))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(DistributionType))
 		PropertyDistributionType GetType() const { return mType; }
 
 		/**
@@ -290,7 +290,7 @@ namespace bs
 		}
 
 		/** Returns the type of the represented distribution. */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(DistributionType))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(DistributionType))
 		PropertyDistributionType GetType() const { return mType; }
 
 		/**

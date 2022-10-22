@@ -23,19 +23,19 @@ namespace bs
 		CBoxCollider(const HSceneObject& parent, const Vector3& extents = Vector3(0.5f, 0.5f, 0.5f));
 
 		/** @copydoc BoxCollider::setExtents */
-		BS_SCRIPT_EXPORT(ExportName(Extents),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Extents),Property(Setter))
 		void SetExtents(const Vector3& extents);
 
 		/** @copydoc BoxCollider::getExtents */
-		BS_SCRIPT_EXPORT(ExportName(Extents),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Extents),Property(Getter))
 		Vector3 GetExtents() const { return mExtents; }
 
 		/** Determines the position of the box shape, relative to the component's scene object. */
-		BS_SCRIPT_EXPORT(ExportName(Center),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Center),Property(Setter))
 		void SetCenter(const Vector3& center);
 
 		/** @copydoc setCenter() */
-		BS_SCRIPT_EXPORT(ExportName(Center),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Center),Property(Getter))
 		Vector3 GetCenter() const { return mLocalPosition; }
 
 		/** @name Internal

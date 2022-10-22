@@ -20,42 +20,42 @@ namespace bs
 		virtual ~CDecal();
 
 		/** @copydoc Decal::setMaterial */
-		BS_SCRIPT_EXPORT(ExportName(Material),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Material),Property(Setter))
 		void SetMaterial(const HMaterial& material) { mInternal->SetMaterial(material); }
 
 		/** @copydoc setMaterial */
-		BS_SCRIPT_EXPORT(ExportName(Material),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Material),Property(Getter))
 		const HMaterial& GetMaterial() const { return mInternal->GetMaterial(); }
 
 		/** @copydoc Decal::setSize */
-		BS_SCRIPT_EXPORT(ExportName(Size),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Size),Property(Setter))
 		void SetSize(const Vector2& size) { mInternal->SetSize(size); }
 
 		/** @copydoc setSize */
-		BS_SCRIPT_EXPORT(ExportName(Size),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Size),Property(Getter))
 		Vector2 GetSize() const { return mInternal->GetSize(); }
 
 		/** @copydoc Decal::setMaxDistance */
-		BS_SCRIPT_EXPORT(ExportName(MaxDistance),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(MaxDistance),Property(Setter))
 		void SetMaxDistance(float distance) { mInternal->SetMaxDistance(distance); }
 
 		/** @copydoc getSize */
-		BS_SCRIPT_EXPORT(ExportName(MaxDistance),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(MaxDistance),Property(Getter))
 		float GetMaxDistance() const { return mInternal->GetMaxDistance(); }
 
 		/** @copydoc Decal::setLayer */
-		BS_SCRIPT_EXPORT(ExportName(Layer),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Layer),Property(Setter))
 		void SetLayer(u64 layer) { mInternal->SetLayer(layer); }
 
 		/** @copydoc setLayer() */
-		BS_SCRIPT_EXPORT(ExportName(Layer),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Layer),Property(Getter))
 		u64 GetLayer() const { return mInternal->GetLayer(); }
 
-		BS_SCRIPT_EXPORT(ExportName(LayerMask),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(LayerMask),Property(Setter))
 		/** @copydoc Decal::setLayerMask */
 		void SetLayerMask(u32 mask) { mInternal->SetLayerMask(mask); }
 
-		BS_SCRIPT_EXPORT(ExportName(LayerMask),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(LayerMask),Property(Getter))
 		/** @copydoc setLayerMask */
 		u32 GetLayerMask() const { return mInternal->GetLayerMask(); }
 

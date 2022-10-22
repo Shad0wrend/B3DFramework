@@ -22,11 +22,11 @@ namespace bs
 		StringTableManager() = default;
 
 		/** Determines the currently active language. Any newly created strings will use this value. */
-		BS_SCRIPT_EXPORT(ExportName(ActiveLanguage),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(ActiveLanguage),Property(Setter))
 		void SetActiveLanguage(Language language);
 
 		/** @copydoc setActiveLanguage() */
-		BS_SCRIPT_EXPORT(ExportName(ActiveLanguage),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(ActiveLanguage),Property(Getter))
 		Language GetActiveLanguage() const { return mActiveLanguage; }
 
 		/**

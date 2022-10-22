@@ -23,27 +23,27 @@ namespace bs
 		CHingeJoint(const HSceneObject& parent);
 
 		/** @copydoc HingeJoint::getAngle */
-		BS_SCRIPT_EXPORT(ExportName(Angle),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Angle),Property(Getter))
 		Radian GetAngle() const;
 
 		/** @copydoc HingeJoint::getSpeed */
-		BS_SCRIPT_EXPORT(ExportName(Speed),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Speed),Property(Getter))
 		float GetSpeed() const;
 
 		/** @copydoc HingeJoint::getLimit */
-		BS_SCRIPT_EXPORT(ExportName(Limit),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Limit),Property(Getter))
 		LimitAngularRange GetLimit() const;
 
 		/** @copydoc HingeJoint::setLimit */
-		BS_SCRIPT_EXPORT(ExportName(Limit),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Limit),Property(Setter))
 		void SetLimit(const LimitAngularRange& limit);
 
 		/** @copydoc HingeJoint::getDrive */
-		BS_SCRIPT_EXPORT(ExportName(Drive),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Drive),Property(Getter))
 		HingeJointDrive GetDrive() const;
 
 		/** @copydoc HingeJoint::setDrive */
-		BS_SCRIPT_EXPORT(ExportName(Drive),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Drive),Property(Setter))
 		void SetDrive(const HingeJointDrive& drive);
 
 		/** @copydoc HingeJoint::setFlag */

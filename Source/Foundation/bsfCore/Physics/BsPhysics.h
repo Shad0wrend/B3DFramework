@@ -110,7 +110,7 @@ namespace bs
 		virtual void Update() { }
 
 		/** Checks is the physics simulation update currently in progress. */
-		BS_SCRIPT_EXPORT(ExportName(IsUpdateInProgress),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(IsUpdateInProgress),Property(Getter))
 		bool IsUpdateInProgressInternal() const { return mUpdateInProgress; }
 
 		/**
@@ -551,11 +551,11 @@ namespace bs
 		virtual void SetMaxTesselationEdgeLength(float length) = 0;
 
 		/** @copydoc setGravity() */
-		BS_SCRIPT_EXPORT(ExportName(Gravity),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Gravity),Property(Getter))
 		virtual Vector3 GetGravity() const = 0;
 
 		/** Determines the global gravity value for all objects in the scene. */
-		BS_SCRIPT_EXPORT(ExportName(Gravity),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Gravity),Property(Setter))
 		virtual void SetGravity(const Vector3& gravity) = 0;
 
 		/**

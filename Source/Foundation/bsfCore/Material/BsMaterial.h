@@ -140,7 +140,7 @@ namespace bs
 		virtual ~TMaterial() = default;
 
 		/** Returns the currently active shader. */
-		BS_SCRIPT_EXPORT(ExportName(Shader),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Shader),Property(Getter))
 		ShaderType GetShader() const { return mShader; }
 
 		/**
@@ -149,7 +149,7 @@ namespace bs
 		 * technique is considered the default technique and which subset of techniques are searched during a call to
 		 * findTechnique().
 		 */
-		BS_SCRIPT_EXPORT(ExportName(Variation),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Variation),Property(Getter))
 		const ShaderVariation& GetVariation() const { return mVariation; }
 
 		/** Returns the total number of techniques supported by this material. */
@@ -746,11 +746,11 @@ namespace bs
 		 * Sets a shader that will be used by the material. Material will be initialized using all compatible techniques
 		 * from the shader. Shader must be set before doing any other operations with the material.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(Shader),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Shader),Property(Setter))
 		void SetShader(const HShader& shader);
 
 		/** @copydoc TMaterial<Core>::GetVariation() const */
-		BS_SCRIPT_EXPORT(ExportName(Variation),pr:setter,hide)
+		BS_SCRIPT_EXPORT(ExportName(Variation),Property(Setter),hide)
 		void SetVariation(const ShaderVariation& variation);
 
 		/** Retrieves an implementation of a material usable only from the core thread. */

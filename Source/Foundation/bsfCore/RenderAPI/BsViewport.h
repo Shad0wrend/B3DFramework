@@ -36,50 +36,50 @@ namespace bs
 		virtual ~ViewportBase() = default;
 
 		/** Determines the area that the viewport covers. Coordinates are in normalized [0, 1] range. */
-		BS_SCRIPT_EXPORT(ExportName(Area),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Area),Property(Setter))
 		void SetArea(const Rect2& area);
 
 		/** @copydoc setArea() */
-		BS_SCRIPT_EXPORT(ExportName(Area),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Area),Property(Getter))
 		Rect2 GetArea() const { return mNormArea; }
 
 		/**	Returns the area of the render target covered by the viewport, in pixels. */
-		BS_SCRIPT_EXPORT(ExportName(PixelArea),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(PixelArea),Property(Getter))
 		Rect2I GetPixelArea() const;
 
 		/** Determines which portions of the render target should be cleared before rendering to this viewport is performed. */
-		BS_SCRIPT_EXPORT(ExportName(ClearFlags),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(ClearFlags),Property(Setter))
 		void SetClearFlags(ClearFlags flags);
 
 		/** @copydoc setClearFlags() */
-		BS_SCRIPT_EXPORT(ExportName(ClearFlags),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(ClearFlags),Property(Getter))
 		ClearFlags GetClearFlags() const { return mClearFlags; }
 
 		/**	Sets values to clear color, depth and stencil buffers to. */
 		void SetClearValues(const Color& clearColor, float clearDepth = 0.0f, u16 clearStencil = 0);
 
 		/** Determines the color to clear the viewport to before rendering, if color clear is enabled. */
-		BS_SCRIPT_EXPORT(ExportName(ClearColor),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(ClearColor),Property(Setter))
 		void SetClearColorValue(const Color& color);
 
 		/** @copydoc setClearColorValue() */
-		BS_SCRIPT_EXPORT(ExportName(ClearColor),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(ClearColor),Property(Getter))
 		const Color& GetClearColorValue() const { return mClearColorValue; }
 
 		/** Determines the value to clear the depth buffer to before rendering, if depth clear is enabled. */
-		BS_SCRIPT_EXPORT(ExportName(ClearDepth),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(ClearDepth),Property(Setter))
 		void SetClearDepthValue(float depth);
 
 		/** @copydoc setClearDepthValue() */
-		BS_SCRIPT_EXPORT(ExportName(ClearDepth),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(ClearDepth),Property(Getter))
 		float GetClearDepthValue() const { return mClearDepthValue; }
 
 		/** Determines the value to clear the stencil buffer to before rendering, if stencil clear is enabled. */
-		BS_SCRIPT_EXPORT(ExportName(ClearStencil),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(ClearStencil),Property(Setter))
 		void SetClearStencilValue(u16 value);
 
 		/** @copydoc setClearStencilValue() */
-		BS_SCRIPT_EXPORT(ExportName(ClearStencil),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(ClearStencil),Property(Getter))
 		u16 GetClearStencilValue() const { return mClearStencilValue; }
 
 	protected:
@@ -142,11 +142,11 @@ namespace bs
 	{
 	public:
 		/**	Determines the render target the viewport is associated with. */
-		BS_SCRIPT_EXPORT(ExportName(Target),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Target),Property(Setter))
 		void SetTarget(const SPtr<RenderTarget>& target);
 
 		/** @copydoc setTarget() */
-		BS_SCRIPT_EXPORT(ExportName(Target),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Target),Property(Getter))
 		SPtr<RenderTarget> GetTarget() const { return mTarget; }
 
 		/**	Retrieves a core implementation of a viewport usable only from the core thread. */

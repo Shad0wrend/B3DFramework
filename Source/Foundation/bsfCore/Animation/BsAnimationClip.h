@@ -151,22 +151,22 @@ namespace bs
 		virtual ~AnimationClip() = default;
 
 		/** @copydoc setCurves() */
-		BS_SCRIPT_EXPORT(ExportName(Curves),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Curves),Property(Getter))
 		SPtr<AnimationCurves> GetCurves() const { return mCurves; }
 
 		/**
 		 * A set of all curves stored in the animation. Returned value will not be updated if the animation clip curves are
 		 * added or removed, as it is a copy of clip's internal values.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(Curves),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Curves),Property(Setter))
 		void SetCurves(const AnimationCurves& curves);
 
 		/** @copydoc setEvents() */
-		BS_SCRIPT_EXPORT(ExportName(Events),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Events),Property(Getter))
 		const Vector<AnimationEvent>& GetEvents() const { return mEvents; }
 
 		/** A set of all events to be triggered as the animation is playing. */
-		BS_SCRIPT_EXPORT(ExportName(Events),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Events),Property(Setter))
 		void SetEvents(const Vector<AnimationEvent>& events) { mEvents = events; }
 
 		/**
@@ -174,11 +174,11 @@ namespace bs
 		 * animation curves manually, instead of through the normal animation process. This property is only available
 		 * if animation clip was imported with root motion import enabled.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(RootMotion),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(RootMotion),Property(Getter))
 		SPtr<RootMotion> GetRootMotion() const { return mRootMotion; }
 
 		/** Checks if animation clip has root motion curves separate from the normal animation curves. */
-		BS_SCRIPT_EXPORT(ExportName(HasRootMotion),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(HasRootMotion),Property(Getter))
 		bool HasRootMotion() const;
 
 		/**
@@ -216,15 +216,15 @@ namespace bs
 		 * Checks are the curves contained within the clip additive. Additive clips are intended to be added on top of
 		 * other clips.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(IsAddtive),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(IsAddtive),Property(Getter))
 		bool IsAdditive() const { return mIsAdditive; }
 
 		/** Returns the length of the animation clip, in seconds. */
-		BS_SCRIPT_EXPORT(ExportName(Length),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Length),Property(Getter))
 		float GetLength() const { return mLength; }
 
 		/** @copydoc setSampleRate() */
-		BS_SCRIPT_EXPORT(ExportName(SampleRate),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(SampleRate),Property(Getter))
 		u32 GetSampleRate() const { return mSampleRate; }
 
 		/**
@@ -232,7 +232,7 @@ namespace bs
 		 * clip or curves directly since unevenly spaced keyframes are supported. But it can be of value when determining
 		 * the original sample rate of an imported animation or similar.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(SampleRate),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(SampleRate),Property(Setter))
 		void SetSampleRate(u32 sampleRate) { mSampleRate = sampleRate; }
 
 		/**

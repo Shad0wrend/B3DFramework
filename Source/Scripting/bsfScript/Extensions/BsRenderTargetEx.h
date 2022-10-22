@@ -17,27 +17,27 @@ namespace bs
 	{
 	public:
 		/** @copydoc RenderTargetProperties::width */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget),ExportName(Width),pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget),ExportName(Width),Property(Getter))
 		static u32 GetWidth(const SPtr<RenderTarget>& thisPtr);
 
 		/** @copydoc RenderTargetProperties::height */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget),ExportName(Height),pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget),ExportName(Height),Property(Getter))
 		static u32 GetHeight(const SPtr<RenderTarget>& thisPtr);
 
 		/** @copydoc RenderTargetProperties::hwGamma */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget),ExportName(GammaCorrection),pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget),ExportName(GammaCorrection),Property(Getter))
 		static bool GetGammaCorrection(const SPtr<RenderTarget>& thisPtr);
 
 		/** @copydoc RenderTargetProperties::priority */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget),ExportName(Priority),pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget),ExportName(Priority),Property(Getter))
 		static i32 GetPriority(const SPtr<RenderTarget>& thisPtr);
 
 		/** @copydoc RenderTargetProperties::priority */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget),ExportName(Priority),pr:setter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget),ExportName(Priority),Property(Setter))
 		static void SetPriority(const SPtr<RenderTarget>& thisPtr, i32 priority);
 
 		/** @copydoc RenderTargetProperties::multisampleCount */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget),ExportName(SampleCount),pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget),ExportName(SampleCount),Property(Getter))
 		static u32 GetSampleCount(const SPtr<RenderTarget>& thisPtr);
 	};
 
@@ -98,15 +98,15 @@ namespace bs
 			BS_NORREF const HTexture& depthStencilSurface);
 
 		/** Returns the primary color surface that contains rendered color data. */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTexture),ExportName(ColorSurface),pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTexture),ExportName(ColorSurface),Property(Getter))
 		static BS_NORREF HTexture GetColorSurface(const SPtr<RenderTexture>& thisPtr);
 
 		/** Returns all the color surfaces. */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTexture),ExportName(ColorSurfaces),pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTexture),ExportName(ColorSurfaces),Property(Getter))
 		static BS_NORREF Vector<HTexture> GetColorSurfaces(const SPtr<RenderTexture>& thisPtr);
 
 		/** Returns the depth/stencil surface that contains rendered depth and stencil data. */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTexture),ExportName(DepthStencilSurface),pr:getter)
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTexture),ExportName(DepthStencilSurface),Property(Getter))
 		static BS_NORREF HTexture GetDepthStencilSurface(const SPtr<RenderTexture>& thisPtr);
 	};
 

@@ -92,11 +92,11 @@ namespace bs
 		ParticleTextureAnimation(const PARTICLE_TEXTURE_ANIMATION_DESC& desc);
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(pr:setter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
 		void SetOptions(const PARTICLE_TEXTURE_ANIMATION_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
 		const PARTICLE_TEXTURE_ANIMATION_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -156,11 +156,11 @@ namespace bs
 		ParticleOrbit(const PARTICLE_ORBIT_DESC& desc);
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(pr:setter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
 		void SetOptions(const PARTICLE_ORBIT_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
 		const PARTICLE_ORBIT_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -211,11 +211,11 @@ namespace bs
 		ParticleVelocity(const PARTICLE_VELOCITY_DESC& desc);
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(pr:setter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
 		void SetOptions(const PARTICLE_VELOCITY_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
 		const PARTICLE_VELOCITY_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -266,11 +266,11 @@ namespace bs
 		ParticleForce(const PARTICLE_FORCE_DESC&desc);
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(pr:setter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
 		void SetOptions(const PARTICLE_FORCE_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
 		const PARTICLE_FORCE_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -318,11 +318,11 @@ namespace bs
 		ParticleGravity(const PARTICLE_GRAVITY_DESC& desc);
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(pr:setter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
 		void SetOptions(const PARTICLE_GRAVITY_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
 		const PARTICLE_GRAVITY_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -370,11 +370,11 @@ namespace bs
 		ParticleColor(const PARTICLE_COLOR_DESC& desc);
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(pr:setter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
 		void SetOptions(const PARTICLE_COLOR_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
 		const PARTICLE_COLOR_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -436,11 +436,11 @@ namespace bs
 		ParticleSize(const PARTICLE_SIZE_DESC& desc);
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(pr:setter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
 		void SetOptions(const PARTICLE_SIZE_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
 		const PARTICLE_SIZE_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -500,11 +500,11 @@ namespace bs
 		ParticleRotation(const PARTICLE_ROTATION_DESC& desc);
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(pr:setter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
 		void SetOptions(const PARTICLE_ROTATION_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
 		const PARTICLE_ROTATION_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -592,30 +592,30 @@ namespace bs
 		 * Determines a set of planes to use when using the Plane collision mode. Planes are expected to be in world
 		 * space.
 		 */
-		BS_SCRIPT_EXPORT(pr:setter,ExportName(Planes))
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Planes))
 		void SetPlanes(Vector<Plane> planes) { mCollisionPlanes = std::move(planes); }
 
 		/** @copydoc setPlanes */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Planes))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Planes))
 		const Vector<Plane>& GetPlanes() const { return mCollisionPlanes; }
 
 		/**
 		 * Determines a set of objects whose transforms to derive the collision planes from. Objects can move in the world
 		 * and collision planes will be updated automatically. Object's negative Z axis is considered to be plane normal.
 		 */
-		BS_SCRIPT_EXPORT(pr:setter,ExportName(PlaneObjects))
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(PlaneObjects))
 		void SetPlaneObjects(Vector<HSceneObject> objects) { mCollisionPlaneObjects = std::move(objects); }
 
 		/** @copydoc setPlaneObjects */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(PlaneObjects))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(PlaneObjects))
 		const Vector<HSceneObject>& GetPlaneObjects() const { return mCollisionPlaneObjects; }
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(pr:setter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
 		void SetOptions(const PARTICLE_COLLISIONS_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
 		const PARTICLE_COLLISIONS_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */

@@ -412,7 +412,7 @@ namespace bs
 		 * Returns the list of all variation parameters supported by this shader, possible values of each parameter and
 		 * other meta-data.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(VariationParams),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(VariationParams),Property(Getter))
 		const Vector<ShaderVariationParamInfo> GetVariationParams() const { return mDesc.VariationParams; }
 
 		/**

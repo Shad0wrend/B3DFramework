@@ -114,11 +114,11 @@ namespace bs
 		SPtr<MeshData> GetCachedData() const { return mCPUData; }
 
 		/** Gets the skeleton required for animation of this mesh, if any is available. */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(Skeleton))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Skeleton))
 		SPtr<Skeleton> GetSkeleton() const { return mSkeleton; }
 
 		/** Returns an object containing all shapes used for morph animation, if any are available. */
-		BS_SCRIPT_EXPORT(pr:getter,ExportName(MorphShapes))
+		BS_SCRIPT_EXPORT(Property(Getter),ExportName(MorphShapes))
 		SPtr<MorphShapes> GetMorphShapes() const { return mMorphShapes; }
 
 		/** Retrieves a core implementation of a mesh usable only from the core thread. */

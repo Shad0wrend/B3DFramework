@@ -23,11 +23,11 @@ namespace bs
 		CMeshCollider(const HSceneObject& parent);
 
 		/** @copydoc MeshCollider::setMesh */
-		BS_SCRIPT_EXPORT(ExportName(Mesh),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Mesh),Property(Setter))
 		void SetMesh(const HPhysicsMesh& mesh);
 
 		/** @copydoc MeshCollider::getMesh */
-		BS_SCRIPT_EXPORT(ExportName(Mesh),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Mesh),Property(Getter))
 		HPhysicsMesh GetMesh() const { return mMesh; }
 
 		/** @name Internal

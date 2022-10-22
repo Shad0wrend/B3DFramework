@@ -24,47 +24,47 @@ namespace bs
 		virtual ~CCamera() = default;
 
 		/** @copydoc Camera::setFlags */
-		BS_SCRIPT_EXPORT(ExportName(Flags),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Flags),Property(Setter))
 		void SetFlags(CameraFlags flags) { mInternal->SetFlags(flags); }
 
 		/** @copydoc Camera::getFlags */
-		BS_SCRIPT_EXPORT(ExportName(Flags),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Flags),Property(Getter))
 		CameraFlags GetFlags() const { return mInternal->GetFlags(); }
 		
 		/** @copydoc Camera::getViewport */
-		BS_SCRIPT_EXPORT(ExportName(Viewport),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Viewport),Property(Getter))
 		SPtr<Viewport> GetViewport() const { return mInternal->GetViewport(); }
 
 		/** @copydoc Camera::setHorzFOV */
-		BS_SCRIPT_EXPORT(ExportName(FieldOfView),pr:setter,range:[1,360],slider,order:-1)
+		BS_SCRIPT_EXPORT(ExportName(FieldOfView),Property(Setter),range:[1,360],slider,UIOrder(-1))
 		virtual void SetHorzFov(const Radian& fovy) { mInternal->SetHorzFov(fovy); }
 
 		/** @copydoc Camera::getHorzFOV */
-		BS_SCRIPT_EXPORT(ExportName(FieldOfView),pr:getter,range:[1,360],slider,order:-1)
+		BS_SCRIPT_EXPORT(ExportName(FieldOfView),Property(Getter),range:[1,360],slider,UIOrder(-1))
 		virtual const Radian& GetHorzFov() const { return mInternal->GetHorzFov(); }
 
 		/** @copydoc Camera::setNearClipDistance */
-		BS_SCRIPT_EXPORT(ExportName(NearClipPlane),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(NearClipPlane),Property(Setter))
 		virtual void SetNearClipDistance(float nearDist) { mInternal->SetNearClipDistance(nearDist); }
 
 		/** @copydoc Camera::getNearClipDistance */
-		BS_SCRIPT_EXPORT(ExportName(NearClipPlane),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(NearClipPlane),Property(Getter))
 		virtual float GetNearClipDistance() const { return mInternal->GetNearClipDistance(); }
 
 		/** @copydoc Camera::setFarClipDistance */
-		BS_SCRIPT_EXPORT(ExportName(FarClipPlane),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(FarClipPlane),Property(Setter))
 		virtual void SetFarClipDistance(float farDist) { mInternal->SetFarClipDistance(farDist); }
 
 		/** @copydoc Camera::getFarClipDistance */
-		BS_SCRIPT_EXPORT(ExportName(FarClipPlane),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(FarClipPlane),Property(Getter))
 		virtual float GetFarClipDistance() const { return mInternal->GetFarClipDistance(); }
 
 		/** @copydoc Camera::setAspectRatio */
-		BS_SCRIPT_EXPORT(ExportName(AspectRatio),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(AspectRatio),Property(Setter))
 		virtual void SetAspectRatio(float ratio) { mInternal->SetAspectRatio(ratio); }
 
 		/** @copydoc Camera::getAspectRatio */
-		BS_SCRIPT_EXPORT(ExportName(AspectRatio),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(AspectRatio),Property(Getter))
 		virtual float GetAspectRatio() const { return mInternal->GetAspectRatio(); }
 
 		/** @copydoc Camera::setFrustumExtents */
@@ -83,14 +83,14 @@ namespace bs
 		}
 
 		/** @copydoc Camera::getProjectionMatrixRS */
-		BS_SCRIPT_EXPORT(ExportName(ProjMatrix),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(ProjMatrix),Property(Getter))
 		virtual const Matrix4& GetProjectionMatrixRs() const { return mInternal->GetProjectionMatrixRs(); }
 
 		/** @copydoc Camera::getProjectionMatrix */
 		virtual const Matrix4& GetProjectionMatrix() const { return mInternal->GetProjectionMatrix(); }
 
 		/** @copydoc Camera::getViewMatrix */
-		BS_SCRIPT_EXPORT(ExportName(ViewMatrix),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(ViewMatrix),Property(Getter))
 		virtual const Matrix4& GetViewMatrix() const { UpdateView(); return mInternal->GetViewMatrix(); }
 
 		/** @copydoc Camera::setCustomViewMatrix */
@@ -121,62 +121,62 @@ namespace bs
 		const AABox& GetBoundingBox() const { return mInternal->GetBoundingBox(); }
 
 		/** @copydoc Camera::setProjectionType */
-		BS_SCRIPT_EXPORT(ExportName(ProjectionType),pr:setter,order:-2)
+		BS_SCRIPT_EXPORT(ExportName(ProjectionType),Property(Setter),UIOrder(-2))
 		virtual void SetProjectionType(ProjectionType pt) { mInternal->SetProjectionType(pt); }
 
 		/** @copydoc Camera::getProjectionType */
-		BS_SCRIPT_EXPORT(ExportName(ProjectionType),pr:getter,order:-2)
+		BS_SCRIPT_EXPORT(ExportName(ProjectionType),Property(Getter),UIOrder(-2))
 		virtual ProjectionType GetProjectionType() const { return mInternal->GetProjectionType(); }
 
 		/** @copydoc Camera::setOrthoWindow */
 		virtual void SetOrthoWindow(float w, float h) { mInternal->SetOrthoWindow(w, h); }
 
 		/** @copydoc Camera::setOrthoWindowHeight */
-		BS_SCRIPT_EXPORT(ExportName(OrthoHeight),pr:setter,order:-1)
+		BS_SCRIPT_EXPORT(ExportName(OrthoHeight),Property(Setter),UIOrder(-1))
 		virtual void SetOrthoWindowHeight(float h) { mInternal->SetOrthoWindowHeight(h); }
 
 		/** @copydoc Camera::getOrthoWindowHeight */
-		BS_SCRIPT_EXPORT(ExportName(OrthoHeight),pr:getter,order:-1)
+		BS_SCRIPT_EXPORT(ExportName(OrthoHeight),Property(Getter),UIOrder(-1))
 		virtual float GetOrthoWindowHeight() const { return mInternal->GetOrthoWindowHeight(); }
 
 		/** @copydoc Camera::setOrthoWindowWidth */
-		BS_SCRIPT_EXPORT(ExportName(OrthoWidth),pr:setter,hide)
+		BS_SCRIPT_EXPORT(ExportName(OrthoWidth),Property(Setter),hide)
 		virtual void SetOrthoWindowWidth(float w) { mInternal->SetOrthoWindowWidth(w); }
 
 		/** @copydoc Camera::getOrthoWindowWidth */
-		BS_SCRIPT_EXPORT(ExportName(OrthoWidth),pr:getter,hide)
+		BS_SCRIPT_EXPORT(ExportName(OrthoWidth),Property(Getter),hide)
 		virtual float GetOrthoWindowWidth() const { return mInternal->GetOrthoWindowWidth(); }
 
 		/** @copydoc Camera::setPriority */
-		BS_SCRIPT_EXPORT(ExportName(Priority),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Priority),Property(Setter))
 		void SetPriority(i32 priority) { mInternal->SetPriority(priority); }
 
 		/** @copydoc Camera::getPriority */
-		BS_SCRIPT_EXPORT(ExportName(Priority),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Priority),Property(Getter))
 		i32 GetPriority() const { return mInternal->GetPriority(); }
 
 		/** @copydoc Camera::setLayers */
-		BS_SCRIPT_EXPORT(ExportName(Layers),pr:setter,layerMask)
+		BS_SCRIPT_EXPORT(ExportName(Layers),Property(Setter),layerMask)
 		void SetLayers(u64 layers) { mInternal->SetLayers(layers); }
 
 		/** @copydoc Camera::getLayers */
-		BS_SCRIPT_EXPORT(ExportName(Layers),pr:getter,layerMask)
+		BS_SCRIPT_EXPORT(ExportName(Layers),Property(Getter),layerMask)
 		u64 GetLayers() const { return mInternal->GetLayers(); }
 
 		/** @copydoc Camera::setMSAACount */
-		BS_SCRIPT_EXPORT(ExportName(SampleCount),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(SampleCount),Property(Setter))
 		void SetMsaaCount(u32 count) { mInternal->SetMsaaCount(count); }
 
 		/** @copydoc Camera::getMSAACount */
-		BS_SCRIPT_EXPORT(ExportName(SampleCount),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(SampleCount),Property(Getter))
 		u32 GetMsaaCount() const { return mInternal->GetMsaaCount(); }
 
 		/** @copydoc Camera::setRenderSettings() */
-		BS_SCRIPT_EXPORT(ExportName(RenderSettings),pr:setter,applyOnDirty)
+		BS_SCRIPT_EXPORT(ExportName(RenderSettings),Property(Setter),applyOnDirty)
 		void SetRenderSettings(const SPtr<RenderSettings>& settings) { mInternal->SetRenderSettings(settings); }
 
 		/** @copydoc Camera::getRenderSettings() */
-		BS_SCRIPT_EXPORT(ExportName(RenderSettings),pr:getter,applyOnDirty)
+		BS_SCRIPT_EXPORT(ExportName(RenderSettings),Property(Getter),applyOnDirty)
 		const SPtr<RenderSettings>& GetRenderSettings() const { return mInternal->GetRenderSettings(); }
 
 		/** @copydoc Camera::notifyNeedsRedraw() */
@@ -244,11 +244,11 @@ namespace bs
 		Vector3 UnprojectPoint(const Vector3& point) const { return mInternal->UnprojectPoint(point); }
 
 		/** @copydoc Camera::setMain */	
-		BS_SCRIPT_EXPORT(ExportName(Main),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Main),Property(Setter))
 		void SetMain(bool main);
 
 		/** @copydoc Camera::isMain */
-		BS_SCRIPT_EXPORT(ExportName(Main),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Main),Property(Getter))
 		bool IsMain() const { return mInternal->IsMain(); }
 
 		/** @name Internal

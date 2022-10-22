@@ -171,47 +171,47 @@ namespace bs
 		 * performance cost. GPU simulation ignores any provided evolvers and instead uses ParticleGpuSimulationSettings
 		 * to customize the GPU simulation.
 		 */
-		BS_SCRIPT_EXPORT(category:Advanced,order:1)
+		BS_SCRIPT_EXPORT(UICategory(Advanced),UIOrder(1))
 		bool GpuSimulation = false;
 
 
 		/** Determines how is each particle represented on the screen. */
-		BS_SCRIPT_EXPORT(order:2)
+		BS_SCRIPT_EXPORT(UIOrder(2))
 		ParticleRenderMode RenderMode = ParticleRenderMode::Billboard;
 
 		/**
 		 * Determines should the particles only be allowed to orient themselves around the Y axis, or freely. Ignored if
 		 * using the Plane orientation mode.
 		 */
-		BS_SCRIPT_EXPORT(order:2)
+		BS_SCRIPT_EXPORT(UIOrder(2))
 		bool OrientationLockY = false;
 
 		/**
 		 * Determines a normal of the plane to orient particles towards. Only used if particle orientation mode is set to
 		 * ParticleOrientation::Plane.
 		 */
-		BS_SCRIPT_EXPORT(order:2)
+		BS_SCRIPT_EXPORT(UIOrder(2))
 		Vector3 OrientationPlaneNormal = Vector3::UNIT_Z;
 
 		/**
 		 * Determines how (and if) are particles sorted. Sorting controls in what order are particles rendered.
 		 * If GPU simulation is enabled only distance based sorting is supported.
 		 */
-		BS_SCRIPT_EXPORT(order:2)
+		BS_SCRIPT_EXPORT(UIOrder(2))
 		ParticleSortMode SortMode = ParticleSortMode::None;
 
 		/**
 		 * Determines should an automatic seed be used for the internal random number generator. This ensures the particle
 		 * system yields different results each time it is ran.
 		 */
-		BS_SCRIPT_EXPORT(order:2)
+		BS_SCRIPT_EXPORT(UIOrder(2))
 		bool UseAutomaticSeed = true;
 
 		/**
 		 * Determines the seed to use for the internal random number generator. Allows you to guarantee identical behaviour
 		 * between different runs. Only relevant if automatic seed is disabled.
 		 */
-		BS_SCRIPT_EXPORT(order:2)
+		BS_SCRIPT_EXPORT(UIOrder(2))
 		u32 ManualSeed = 0;
 
 		/**
@@ -219,14 +219,14 @@ namespace bs
 		 * be used. Bounds are used primarily for culling purposes. Note that automatic bounds are not supported when GPU
 		 * simulation is enabled.
 		 */
-		BS_SCRIPT_EXPORT(order:2)
+		BS_SCRIPT_EXPORT(UIOrder(2))
 		bool UseAutomaticBounds = true;
 
 		/**
 		 * Custom bounds to use them @p useAutomaticBounds is disabled. The bounds are in the simulation space of the
 		 * particle system.
 		 */
-		BS_SCRIPT_EXPORT(order:2)
+		BS_SCRIPT_EXPORT(UIOrder(2))
 		AABox CustomBounds;
 	};
 
@@ -242,7 +242,7 @@ namespace bs
 		MaterialType Material;
 
 		/** Mesh used for representing individual particles when using the Mesh rendering mode. */
-		BS_SCRIPT_EXPORT(loadOnAssign,order:2)
+		BS_SCRIPT_EXPORT(loadOnAssign,UIOrder(2))
 		MeshType Mesh;
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */

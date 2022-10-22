@@ -81,11 +81,11 @@ namespace bs
 			MeshUsage usage = MU_STATIC);
 
 		/** Returns all sub-meshes contained in the mesh. */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Mesh),pr:getter,ExportName(SubMeshes))
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Mesh),Property(Getter),ExportName(SubMeshes))
 		static Vector<SubMesh> GetSubMeshes(const HMesh& thisPtr);
 		
 		/** Returns the number of sub-meshes contained in this mesh. */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Mesh),pr:getter,ExportName(SubMeshCount))
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Mesh),Property(Getter),ExportName(SubMeshCount))
 		static u32 GetSubMeshCount(const HMesh& thisPtr);
 		
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(Mesh),InteropOnly(true))
@@ -96,9 +96,9 @@ namespace bs
 		 * MeshUsage::CPUCached flag. If writing the caller must ensure the data matches mesh's vertex/index counts, vertex
 		 * layout and index format.
 		 */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Mesh),pr:getter,ExportName(MeshData))
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Mesh),Property(Getter),ExportName(MeshData))
 		static SPtr<RendererMeshData> GetMeshData(const HMesh& thisPtr);
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Mesh),pr:setter,ExportName(MeshData))
+		BS_SCRIPT_EXPORT(ExtensionMethodForType(Mesh),Property(Setter),ExportName(MeshData))
 		static void SetMeshData(const HMesh& thisPtr, const SPtr<RendererMeshData>& value);
 	};
 

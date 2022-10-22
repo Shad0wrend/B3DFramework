@@ -23,19 +23,19 @@ namespace bs
 		CSliderJoint(const HSceneObject& parent);
 
 		/** @copydoc SliderJoint::getPosition */
-		BS_SCRIPT_EXPORT(ExportName(Position),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Position),Property(Getter))
 		float GetPosition() const;
 
 		/** @copydoc SliderJoint::getSpeed */
-		BS_SCRIPT_EXPORT(ExportName(Speed),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Speed),Property(Getter))
 		float GetSpeed() const;
 
 		/** @copydoc SliderJoint::getLimit */
-		BS_SCRIPT_EXPORT(ExportName(Limit),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Limit),Property(Getter))
 		LimitLinearRange GetLimit() const;
 
 		/** @copydoc SliderJoint::setLimit */
-		BS_SCRIPT_EXPORT(ExportName(Limit),pr:setter)
+		BS_SCRIPT_EXPORT(ExportName(Limit),Property(Setter))
 		void SetLimit(const LimitLinearRange& limit);
 
 		/** @copydoc SliderJoint::setFlag */

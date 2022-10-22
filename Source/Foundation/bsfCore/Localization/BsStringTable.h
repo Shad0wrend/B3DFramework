@@ -269,11 +269,11 @@ namespace bs
 		bool Contains(const String& identifier);
 
 		/** Returns a total number of strings in the table. */
-		BS_SCRIPT_EXPORT(ExportName(NumStrings),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(NumStrings),Property(Getter))
 		u32 GetNumStrings() const { return (u32)mIdentifiers.size(); }
 
 		/** Returns all identifiers that the string table contains localized strings for. */
-		BS_SCRIPT_EXPORT(ExportName(Identifiers),pr:getter)
+		BS_SCRIPT_EXPORT(ExportName(Identifiers),Property(Getter))
 		Vector<String> GetIdentifiers() const;
 
 		/**	Adds or modifies string translation for the specified language. */
