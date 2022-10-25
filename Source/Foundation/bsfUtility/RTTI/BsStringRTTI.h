@@ -9,22 +9,30 @@ namespace bs
 {
 	/** @cond RTTI */
 	/** @addtogroup RTTI-Impl-Utility
-	*  @{
-	*/
+	 *  @{
+	 */
 
-	template<> struct RTTIPlainType<String>
+	template <>
+	struct RTTIPlainType<String>
 	{
-		enum { id = 20 }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = 20
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		static BitLength ToMemory(const String& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				uint32_t size = (uint32_t)(data.size() * sizeof(String::value_type));
 				stream.WriteBytes((uint8_t*)data.data(), size);
 
-				return size;
-			});
+				return size; });
 		}
 
 		static BitLength FromMemory(String& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -51,20 +59,28 @@ namespace bs
 			return dataSize;
 		}
 	};
-	
-	template<> struct RTTIPlainType<WString>
+
+	template <>
+	struct RTTIPlainType<WString>
 	{
-		enum { id = TID_WString }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_WString
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		static BitLength ToMemory(const WString& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				uint32_t size = (uint32_t)(data.size() * sizeof(WString::value_type));
 				stream.WriteBytes((uint8_t*)data.data(), size);
 
-				return size;
-			});
+				return size; });
 		}
 
 		static BitLength FromMemory(WString& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -96,4 +112,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

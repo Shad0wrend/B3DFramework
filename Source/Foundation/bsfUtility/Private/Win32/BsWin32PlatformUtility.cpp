@@ -15,26 +15,26 @@ namespace bs
 
 	void PlatformUtility::Terminate(bool force)
 	{
-		if (!force)
+		if(!force)
 			PostQuitMessage(0);
 		else
 			TerminateProcess(GetCurrentProcess(), 0);
 	}
 
 	typedef LONG NTSTATUS, *PNTSTATUS;
-	typedef NTSTATUS (WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
+	typedef NTSTATUS(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
 
 	RTL_OSVERSIONINFOW GetRealOSVersion()
 	{
 		HMODULE handle = GetModuleHandleW(L"ntdll.dll");
-		if (handle)
+		if(handle)
 		{
 			RtlGetVersionPtr rtlGetVersionFunc = (RtlGetVersionPtr)GetProcAddress(handle, "RtlGetVersion");
-			if (rtlGetVersionFunc != nullptr)
+			if(rtlGetVersionFunc != nullptr)
 			{
 				RTL_OSVERSIONINFOW rovi = { 0 };
 				rovi.dwOSVersionInfoSize = sizeof(rovi);
-				if (rtlGetVersionFunc(&rovi) == 0)
+				if(rtlGetVersionFunc(&rovi) == 0)
 					return rovi;
 			}
 		}
@@ -62,15 +62,15 @@ namespace bs
 		//// Get the information associated with each extended ID.
 		__cpuid(CPUInfo, 0x80000000);
 		u32 numExtensionIds = CPUInfo[0];
-		for (u32 i = 0x80000000; i <= numExtensionIds; ++i)
+		for(u32 i = 0x80000000; i <= numExtensionIds; ++i)
 		{
 			__cpuid(CPUInfo, i);
 
-			if (i == 0x80000002)
+			if(i == 0x80000002)
 				memcpy(brandString, CPUInfo, sizeof(CPUInfo));
-			else if (i == 0x80000003)
+			else if(i == 0x80000003)
 				memcpy(brandString + 16, CPUInfo, sizeof(CPUInfo));
-			else if (i == 0x80000004)
+			else if(i == 0x80000004)
 				memcpy(brandString + 32, CPUInfo, sizeof(CPUInfo));
 		}
 
@@ -84,14 +84,13 @@ namespace bs
 		// Get CPU clock speed
 		HKEY hKey;
 
-		long status = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 0, KEY_READ,
-			&hKey);
+		long status = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 0, KEY_READ, &hKey);
 
-		if (status == ERROR_SUCCESS)
+		if(status == ERROR_SUCCESS)
 		{
 			DWORD mhz;
 			DWORD bufferSize = 4;
-			RegQueryValueEx(hKey, "~MHz", NULL, NULL, (LPBYTE) &mhz, &bufferSize);
+			RegQueryValueEx(hKey, "~MHz", NULL, NULL, (LPBYTE)&mhz, &bufferSize);
 
 			output.CpuClockSpeedMhz = (u32)mhz;
 		}
@@ -105,7 +104,7 @@ namespace bs
 
 		output.MemoryAmountMb = (u32)(statex.ullTotalPhys / (1024 * 1024));
 
-		if (BS_ARCH_TYPE == BS_ARCHITECTURE_x86_64)
+		if(BS_ARCH_TYPE == BS_ARCHITECTURE_x86_64)
 			output.OsIs64Bit = true;
 		else
 		{
@@ -196,20 +195,20 @@ namespace bs
 		HDC hBitmapDC = CreateCompatibleDC(hDC);
 		ReleaseDC(nullptr, hDC);
 
-		//Select the bitmaps to DC
+		// Select the bitmaps to DC
 		HBITMAP hOldBitmap = (HBITMAP)SelectObject(hBitmapDC, hBitmap);
 
-		//Scan each pixel of the source bitmap and create the masks
+		// Scan each pixel of the source bitmap and create the masks
 		Color pixel;
-		DWORD *dst = (DWORD*)data;
-		for (u32 y = 0; y < height; ++y)
+		DWORD* dst = (DWORD*)data;
+		for(u32 y = 0; y < height; ++y)
 		{
-			for (u32 x = 0; x < width; ++x)
+			for(u32 x = 0; x < width; ++x)
 			{
 				u32 revY = height - y - 1;
 				pixel = pixels[revY * width + x];
 
-				if (premultiplyAlpha)
+				if(premultiplyAlpha)
 				{
 					pixel.R *= pixel.A;
 					pixel.G *= pixel.A;
@@ -227,4 +226,4 @@ namespace bs
 
 		return hBitmap;
 	}
-}
+} // namespace bs

@@ -21,8 +21,8 @@ namespace bs
 
 		/** Initializes an UUID using framework's UUID representation. */
 		constexpr UUID(u32 data1, u32 data2, u32 data3, u32 data4)
-		: mData{data1, data2, data3, data4}
-		{ }
+			: mData{ data1, data2, data3, data4 }
+		{}
 
 		/** Initializes an UUID using its string representation. */
 		explicit UUID(const String& uuid);
@@ -41,9 +41,9 @@ namespace bs
 		{
 			for(u32 i = 0; i < 4; i++)
 			{
-				if (mData[i] < rhs.mData[i])
+				if(mData[i] < rhs.mData[i])
 					return true;
-				else if (mData[i] > rhs.mData[i])
+				else if(mData[i] > rhs.mData[i])
 					return false;
 
 				// Move to next element if equal
@@ -63,10 +63,11 @@ namespace bs
 		String ToString() const;
 
 		static UUID EMPTY;
+
 	private:
 		friend struct std::hash<UUID>;
 
-		u32 mData[4] = {0, 0, 0, 0};
+		u32 mData[4] = { 0, 0, 0, 0 };
 	};
 
 	/**
@@ -83,7 +84,7 @@ namespace bs
 
 	/** @} */
 
-}
+} // namespace bs
 
 /** @cond STDLIB */
 /** @addtogroup Utility
@@ -92,22 +93,22 @@ namespace bs
 
 namespace std
 {
-/**	Hash value generator for UUID. */
-template<>
-struct hash<bs::UUID>
-{
-	size_t operator()(const bs::UUID& value) const
+	/**	Hash value generator for UUID. */
+	template <>
+	struct hash<bs::UUID>
 	{
-		size_t hash = 0;
-		bs::bs_hash_combine(hash, value.mData[0]);
-		bs::bs_hash_combine(hash, value.mData[1]);
-		bs::bs_hash_combine(hash, value.mData[2]);
-		bs::bs_hash_combine(hash, value.mData[3]);
+		size_t operator()(const bs::UUID& value) const
+		{
+			size_t hash = 0;
+			bs::bs_hash_combine(hash, value.mData[0]);
+			bs::bs_hash_combine(hash, value.mData[1]);
+			bs::bs_hash_combine(hash, value.mData[2]);
+			bs::bs_hash_combine(hash, value.mData[3]);
 
-		return hash;
-	}
-};
-}
+			return hash;
+		}
+	};
+} // namespace std
 
 /** @} */
 /** @endcond */

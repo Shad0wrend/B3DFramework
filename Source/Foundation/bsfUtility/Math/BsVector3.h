@@ -24,12 +24,12 @@ namespace bs
 		Vector3() = default;
 
 		constexpr Vector3(BS_ZERO)
-			:X(0.0f), Y(0.0f), Z(0.0f)
-		{ }
+			: X(0.0f), Y(0.0f), Z(0.0f)
+		{}
 
 		constexpr Vector3(float x, float y, float z)
-			:X(x), Y(y), Z(z)
-		{ }
+			: X(x), Y(y), Z(z)
+		{}
 
 		explicit Vector3(const Vector4& vec);
 
@@ -41,14 +41,14 @@ namespace bs
 			std::swap(Z, other.Z);
 		}
 
-		float operator[] (u32 i) const
+		float operator[](u32 i) const
 		{
 			assert(i < 3);
 
 			return *(&X + i);
 		}
 
-		float& operator[] (u32 i)
+		float& operator[](u32 i)
 		{
 			assert(i < 3);
 
@@ -67,7 +67,7 @@ namespace bs
 			return &X;
 		}
 
-		Vector3& operator= (float rhs)
+		Vector3& operator=(float rhs)
 		{
 			X = rhs;
 			Y = rhs;
@@ -76,37 +76,37 @@ namespace bs
 			return *this;
 		}
 
-		bool operator== (const Vector3& rhs) const
+		bool operator==(const Vector3& rhs) const
 		{
 			return (X == rhs.X && Y == rhs.Y && Z == rhs.Z);
 		}
 
-		bool operator!= (const Vector3& rhs) const
+		bool operator!=(const Vector3& rhs) const
 		{
 			return (X != rhs.X || Y != rhs.Y || Z != rhs.Z);
 		}
 
-		Vector3 operator+ (const Vector3& rhs) const
+		Vector3 operator+(const Vector3& rhs) const
 		{
 			return Vector3(X + rhs.X, Y + rhs.Y, Z + rhs.Z);
 		}
 
-		Vector3 operator- (const Vector3& rhs) const
+		Vector3 operator-(const Vector3& rhs) const
 		{
 			return Vector3(X - rhs.X, Y - rhs.Y, Z - rhs.Z);
 		}
 
-		Vector3 operator* (float rhs) const
+		Vector3 operator*(float rhs) const
 		{
 			return Vector3(X * rhs, Y * rhs, Z * rhs);
 		}
 
-		Vector3 operator* (const Vector3& rhs) const
+		Vector3 operator*(const Vector3& rhs) const
 		{
 			return Vector3(X * rhs.X, Y * rhs.Y, Z * rhs.Z);
 		}
 
-		Vector3 operator/ (float val) const
+		Vector3 operator/(float val) const
 		{
 			assert(val != 0.0);
 
@@ -114,52 +114,52 @@ namespace bs
 			return Vector3(X * fInv, Y * fInv, Z * fInv);
 		}
 
-		Vector3 operator/ (const Vector3& rhs) const
+		Vector3 operator/(const Vector3& rhs) const
 		{
 			return Vector3(X / rhs.X, Y / rhs.Y, Z / rhs.Z);
 		}
 
-		const Vector3& operator+ () const
+		const Vector3& operator+() const
 		{
 			return *this;
 		}
 
-		Vector3 operator- () const
+		Vector3 operator-() const
 		{
 			return Vector3(-X, -Y, -Z);
 		}
 
-		friend Vector3 operator* (float lhs, const Vector3& rhs)
+		friend Vector3 operator*(float lhs, const Vector3& rhs)
 		{
 			return Vector3(lhs * rhs.X, lhs * rhs.Y, lhs * rhs.Z);
 		}
 
-		friend Vector3 operator/ (float lhs, const Vector3& rhs)
+		friend Vector3 operator/(float lhs, const Vector3& rhs)
 		{
 			return Vector3(lhs / rhs.X, lhs / rhs.Y, lhs / rhs.Z);
 		}
 
-		friend Vector3 operator+ (const Vector3& lhs, float rhs)
+		friend Vector3 operator+(const Vector3& lhs, float rhs)
 		{
 			return Vector3(lhs.X + rhs, lhs.Y + rhs, lhs.Z + rhs);
 		}
 
-		friend Vector3 operator+ (float lhs, const Vector3& rhs)
+		friend Vector3 operator+(float lhs, const Vector3& rhs)
 		{
 			return Vector3(lhs + rhs.X, lhs + rhs.Y, lhs + rhs.Z);
 		}
 
-		friend Vector3 operator- (const Vector3& lhs, float rhs)
+		friend Vector3 operator-(const Vector3& lhs, float rhs)
 		{
 			return Vector3(lhs.X - rhs, lhs.Y - rhs, lhs.Z - rhs);
 		}
 
-		friend Vector3 operator- (float lhs, const Vector3& rhs)
+		friend Vector3 operator-(float lhs, const Vector3& rhs)
 		{
 			return Vector3(lhs - rhs.X, lhs - rhs.Y, lhs - rhs.Z);
 		}
 
-		Vector3& operator+= (const Vector3& rhs)
+		Vector3& operator+=(const Vector3& rhs)
 		{
 			X += rhs.X;
 			Y += rhs.Y;
@@ -168,7 +168,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector3& operator+= (float rhs)
+		Vector3& operator+=(float rhs)
 		{
 			X += rhs;
 			Y += rhs;
@@ -177,7 +177,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector3& operator-= (const Vector3& rhs)
+		Vector3& operator-=(const Vector3& rhs)
 		{
 			X -= rhs.X;
 			Y -= rhs.Y;
@@ -186,7 +186,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector3& operator-= (float rhs)
+		Vector3& operator-=(float rhs)
 		{
 			X -= rhs;
 			Y -= rhs;
@@ -195,7 +195,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector3& operator*= (float rhs)
+		Vector3& operator*=(float rhs)
 		{
 			X *= rhs;
 			Y *= rhs;
@@ -204,7 +204,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector3& operator*= (const Vector3& rhs)
+		Vector3& operator*=(const Vector3& rhs)
 		{
 			X *= rhs.X;
 			Y *= rhs.Y;
@@ -213,7 +213,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector3& operator/= (float rhs)
+		Vector3& operator/=(float rhs)
 		{
 			assert(rhs != 0.0f);
 
@@ -226,7 +226,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector3& operator/= (const Vector3& rhs)
+		Vector3& operator/=(const Vector3& rhs)
 		{
 			X /= rhs.X;
 			Y /= rhs.Y;
@@ -265,15 +265,15 @@ namespace bs
 			return X * vec.X + Y * vec.Y + Z * vec.Z;
 		}
 
-		/** 
+		/**
 		 * Normalizes this vector, and returns the previous length. If @p SAFE is true, checks if the magnitude is
 		 * above @p tolerance to avoid division by zero or precision issues. If false, no checks are made.
 		 */
-		template<bool SAFE = true>
+		template <bool SAFE = true>
 		float Normalize(float tolerance = 1e-04f)
 		{
 			float len = Length();
-			if (!SAFE || len > (tolerance * tolerance))
+			if(!SAFE || len > (tolerance * tolerance))
 				*this *= 1.0f / len;
 
 			return len;
@@ -291,17 +291,17 @@ namespace bs
 		/** Sets this vector's components to the minimum of its own and the ones of the passed in vector. */
 		void Min(const Vector3& cmp)
 		{
-			if (cmp.X < X) X = cmp.X;
-			if (cmp.Y < Y) Y = cmp.Y;
-			if (cmp.Z < Z) Z = cmp.Z;
+			if(cmp.X < X) X = cmp.X;
+			if(cmp.Y < Y) Y = cmp.Y;
+			if(cmp.Z < Z) Z = cmp.Z;
 		}
 
 		/** Sets this vector's components to the maximum of its own and the ones of the passed in vector. */
 		void Max(const Vector3& cmp)
 		{
-			if (cmp.X > X) X = cmp.X;
-			if (cmp.Y > Y) Y = cmp.Y;
-			if (cmp.Z > Z) Z = cmp.Z;
+			if(cmp.X > X) X = cmp.X;
+			if(cmp.Y > Y) Y = cmp.Y;
+			if(cmp.Z > Z) Z = cmp.Z;
 		}
 
 		/** Generates a vector perpendicular to this vector. */
@@ -311,7 +311,7 @@ namespace bs
 
 			Vector3 perp = this->Cross(Vector3::UNIT_X);
 
-			if (perp.SquaredLength() < squareZero)
+			if(perp.SquaredLength() < squareZero)
 				perp = this->Cross(Vector3::UNIT_Y);
 
 			perp.Normalize();
@@ -337,7 +337,7 @@ namespace bs
 		/** Calculates two vectors orthonormal to the current vector, and normalizes the current vector if not already. */
 		void OrthogonalComplement(Vector3& a, Vector3& b)
 		{
-			if (std::abs(X) > std::abs(Y))
+			if(std::abs(X) > std::abs(Y))
 				a = Vector3(-Z, 0, X);
 			else
 				a = Vector3(0, Z, -Y);
@@ -353,12 +353,12 @@ namespace bs
 			vec0.Normalize();
 
 			float dot0 = vec0.Dot(vec1);
-			vec1 -= dot0*vec0;
+			vec1 -= dot0 * vec0;
 			vec1.Normalize();
 
 			float dot1 = vec1.Dot(vec2);
 			dot0 = vec0.Dot(vec2);
-			vec2 -= dot0*vec0 + dot1*vec1;
+			vec2 -= dot0 * vec0 + dot1 * vec1;
 			vec2.Normalize();
 		}
 
@@ -372,11 +372,11 @@ namespace bs
 		 * Normalizes the provided vector and returns the result. If @p SAFE is true, checks if the magnitude is
 		 * above @p tolerance to avoid division by zero or precision issues. If false, no checks are made.
 		 */
-		template<bool SAFE = true>
+		template <bool SAFE = true>
 		static Vector3 Normalize(const Vector3& v, float tolerance = 1e-04f)
 		{
 			float sqrdLen = Dot(v, v);
-			if (!SAFE || sqrdLen > tolerance)
+			if(!SAFE || sqrdLen > tolerance)
 				return v * Math::InvSqrt(sqrdLen);
 
 			return v;
@@ -424,12 +424,13 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs
 
 /** @cond SPECIALIZATIONS */
 namespace std
 {
-	template<> class numeric_limits<bs::Vector3>
+	template <>
+	class numeric_limits<bs::Vector3>
 	{
 	public:
 		constexpr static bs::Vector3 infinity() // NOLINT
@@ -440,5 +441,6 @@ namespace std
 				std::numeric_limits<float>::infinity());
 		}
 	};
-}
+} // namespace std
+
 /** @endcond */

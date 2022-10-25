@@ -29,7 +29,7 @@ namespace bs
 		i32 myBottom = Y + (i32)Height;
 
 		if(X < otherRight && myRight > other.X &&
-			Y < otherBottom && myBottom > other.Y)
+		   Y < otherBottom && myBottom > other.Y)
 			return true;
 
 		return false;
@@ -78,7 +78,7 @@ namespace bs
 		u32 initialPieces = (u32)pieces.size();
 
 		// Cut horizontal
-		if (cutRect.X > X && cutRect.X < (X + (i32)Width))
+		if(cutRect.X > X && cutRect.X < (X + (i32)Width))
 		{
 			Rect2I leftPiece;
 			leftPiece.X = X;
@@ -89,7 +89,7 @@ namespace bs
 			pieces.push_back(leftPiece);
 		}
 
-		if ((cutRect.X + (i32)cutRect.Width) > X && (cutRect.X + (i32)cutRect.Width) < (X + (i32)Width))
+		if((cutRect.X + (i32)cutRect.Width) > X && (cutRect.X + (i32)cutRect.Width) < (X + (i32)Width))
 		{
 			Rect2I rightPiece;
 			rightPiece.X = cutRect.X + cutRect.Width;
@@ -104,9 +104,9 @@ namespace bs
 		i32 cutLeft = std::min(std::max(X, cutRect.X), X + (i32)Width);
 		i32 cutRight = std::max(std::min(X + (i32)Width, cutRect.X + (i32)cutRect.Width), X);
 
-		if (cutLeft != cutRight)
+		if(cutLeft != cutRight)
 		{
-			if (cutRect.Y > Y && cutRect.Y < (Y + (i32)Height))
+			if(cutRect.Y > Y && cutRect.Y < (Y + (i32)Height))
 			{
 				Rect2I topPiece;
 				topPiece.Y = Y;
@@ -117,7 +117,7 @@ namespace bs
 				pieces.push_back(topPiece);
 			}
 
-			if ((cutRect.Y + (i32)cutRect.Height) > Y && (cutRect.Y + (i32)cutRect.Height) < (Y + (i32)Height))
+			if((cutRect.Y + (i32)cutRect.Height) > Y && (cutRect.Y + (i32)cutRect.Height) < (Y + (i32)Height))
 			{
 				Rect2I bottomPiece;
 				bottomPiece.Y = cutRect.Y + cutRect.Height;
@@ -130,10 +130,10 @@ namespace bs
 		}
 
 		// No cut
-		if (initialPieces == (u32)pieces.size())
+		if(initialPieces == (u32)pieces.size())
 		{
-			if (cutRect.X <= X && (cutRect.X + (i32)cutRect.Width) >= (X + (i32)Width) &&
-				cutRect.Y <= Y && (cutRect.Y + (i32)cutRect.Height) >= (Y + (i32)Height))
+			if(cutRect.X <= X && (cutRect.X + (i32)cutRect.Width) >= (X + (i32)Width) &&
+			   cutRect.Y <= Y && (cutRect.Y + (i32)cutRect.Height) >= (Y + (i32)Height))
 			{
 				// Cut rectangle completely encompasses this one
 			}
@@ -149,14 +149,14 @@ namespace bs
 
 		tempPieces[0].push_back(*this);
 
-		for (auto& cutRect : cutRects)
+		for(auto& cutRect : cutRects)
 		{
 			u32 currentBufferIdx = bufferIdx;
 
 			bufferIdx = (bufferIdx + 1) % 2;
 			tempPieces[bufferIdx].clear();
 
-			for (auto& rect : tempPieces[currentBufferIdx])
+			for(auto& rect : tempPieces[currentBufferIdx])
 				rect.Cut(cutRect, tempPieces[bufferIdx]);
 		}
 
@@ -199,4 +199,4 @@ namespace bs
 		Width = (u32)Math::CeilToInt(maxX) - X;
 		Height = (u32)Math::CeilToInt(maxY) - Y;
 	}
-}
+} // namespace bs

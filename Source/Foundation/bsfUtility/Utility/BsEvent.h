@@ -44,7 +44,7 @@ namespace bs
 		~EventInternalData()
 		{
 			BaseConnectionData* conn = MConnections;
-			while (conn != nullptr)
+			while(conn != nullptr)
 			{
 				BaseConnectionData* next = conn->Next;
 				bs_free(conn);
@@ -53,7 +53,7 @@ namespace bs
 			}
 
 			conn = MFreeConnections;
-			while (conn != nullptr)
+			while(conn != nullptr)
 			{
 				BaseConnectionData* next = conn->Next;
 				bs_free(conn);
@@ -62,7 +62,7 @@ namespace bs
 			}
 
 			conn = MNewConnections;
-			while (conn != nullptr)
+			while(conn != nullptr)
 			{
 				BaseConnectionData* next = conn->Next;
 				bs_free(conn);
@@ -76,13 +76,13 @@ namespace bs
 		{
 			conn->Prev = MLastConnection;
 
-			if (MLastConnection != nullptr)
+			if(MLastConnection != nullptr)
 				MLastConnection->Next = conn;
 
 			MLastConnection = conn;
 
 			// First connection
-			if (MConnections == nullptr)
+			if(MConnections == nullptr)
 				MConnections = conn;
 		}
 
@@ -98,7 +98,7 @@ namespace bs
 			conn->Deactivate();
 			conn->HandleLinks--;
 
-			if (conn->HandleLinks == 0)
+			if(conn->HandleLinks == 0)
 				Free(conn);
 		}
 
@@ -108,12 +108,12 @@ namespace bs
 			RecursiveLock lock(MMutex);
 
 			BaseConnectionData* conn = MConnections;
-			while (conn != nullptr)
+			while(conn != nullptr)
 			{
 				BaseConnectionData* next = conn->Next;
 				conn->Deactivate();
 
-				if (conn->HandleLinks == 0)
+				if(conn->HandleLinks == 0)
 					Free(conn);
 
 				conn = next;
@@ -133,19 +133,19 @@ namespace bs
 
 			conn->HandleLinks--;
 
-			if (conn->HandleLinks == 0 && !conn->IsActive)
+			if(conn->HandleLinks == 0 && !conn->IsActive)
 				Free(conn);
 		}
 
 		/** Releases connection data and makes it available for re-use when next connection is formed. */
 		void Free(BaseConnectionData* conn)
 		{
-			if (conn->Prev != nullptr)
+			if(conn->Prev != nullptr)
 				conn->Prev->Next = conn->Next;
 			else
 				MConnections = conn->Next;
 
-			if (conn->Next != nullptr)
+			if(conn->Next != nullptr)
 				conn->Next->Prev = conn->Prev;
 			else
 				MLastConnection = conn->Prev;
@@ -153,7 +153,7 @@ namespace bs
 			conn->Prev = nullptr;
 			conn->Next = nullptr;
 
-			if (MFreeConnections != nullptr)
+			if(MFreeConnections != nullptr)
 			{
 				conn->Next = MFreeConnections;
 				MFreeConnections->Prev = conn;
@@ -186,21 +186,21 @@ namespace bs
 		HEvent() = default;
 
 		explicit HEvent(SPtr<EventInternalData> eventData, BaseConnectionData* connection)
-			:mConnection(connection), mEventData(std::move(eventData))
+			: mConnection(connection), mEventData(std::move(eventData))
 		{
 			connection->HandleLinks++;
 		}
 
 		~HEvent()
 		{
-			if (mConnection != nullptr)
+			if(mConnection != nullptr)
 				mEventData->FreeHandle(mConnection);
 		}
 
 		/** Disconnect from the event you are subscribed to. */
 		void Disconnect()
 		{
-			if (mConnection != nullptr)
+			if(mConnection != nullptr)
 			{
 				mEventData->Disconnect(mConnection);
 				mConnection = nullptr;
@@ -218,12 +218,12 @@ namespace bs
 		/** @endcond */
 
 		/**
-		* Allows direct conversion of a handle to bool.
-		*
-		* @note		
-		* Additional struct is needed because we can't directly convert to bool since then we can assign pointer to bool
-		* and that's wrong.
-		*/
+		 * Allows direct conversion of a handle to bool.
+		 *
+		 * @note
+		 * Additional struct is needed because we can't directly convert to bool since then we can assign pointer to bool
+		 * and that's wrong.
+		 */
 		operator int Bool_struct::*() const
 		{
 			return (mConnection != nullptr ? &Bool_struct::Member : 0);
@@ -234,7 +234,7 @@ namespace bs
 			mConnection = rhs.mConnection;
 			mEventData = rhs.mEventData;
 
-			if (mConnection != nullptr)
+			if(mConnection != nullptr)
 				mConnection->HandleLinks++;
 
 			return *this;
@@ -243,7 +243,7 @@ namespace bs
 	private:
 		BaseConnectionData* mConnection = nullptr;
 		SPtr<EventInternalData> mEventData;
-	};	
+	};
 
 	/** @} */
 
@@ -280,8 +280,8 @@ namespace bs
 
 	public:
 		TEvent()
-			:mInternalData(bs_shared_ptr_new<EventInternalData>())
-		{ }
+			: mInternalData(bs_shared_ptr_new<EventInternalData>())
+		{}
 
 		~TEvent()
 		{
@@ -294,19 +294,19 @@ namespace bs
 			RecursiveLock lock(mInternalData->MMutex);
 
 			ConnectionData* connData = nullptr;
-			if (mInternalData->MFreeConnections != nullptr)
+			if(mInternalData->MFreeConnections != nullptr)
 			{
 				connData = static_cast<ConnectionData*>(mInternalData->MFreeConnections);
 				mInternalData->MFreeConnections = connData->Next;
 
-				new (connData)ConnectionData();
-				if (connData->Next != nullptr)
+				new(connData) ConnectionData();
+				if(connData->Next != nullptr)
 					connData->Next->Prev = nullptr;
 
 				connData->IsActive = true;
 			}
 
-			if (connData == nullptr)
+			if(connData == nullptr)
 				connData = bs_new<ConnectionData>();
 
 			// If currently iterating over the connection list, delay modifying it until done
@@ -314,7 +314,7 @@ namespace bs
 			{
 				connData->Prev = mInternalData->MNewConnections;
 
-				if (mInternalData->MNewConnections != nullptr)
+				if(mInternalData->MNewConnections != nullptr)
 					mInternalData->MNewConnections->Next = connData;
 
 				mInternalData->MNewConnections = connData;
@@ -330,7 +330,7 @@ namespace bs
 		}
 
 		/** Trigger the event, notifying all register callback methods. */
-		void operator() (Args... args)
+		void operator()(Args... args)
 		{
 			// Increase ref count to ensure this event data isn't destroyed if one of the callbacks
 			// deletes the event itself.
@@ -340,12 +340,12 @@ namespace bs
 			internalData->MIsCurrentlyTriggering = true;
 
 			ConnectionData* conn = static_cast<ConnectionData*>(internalData->MConnections);
-			while (conn != nullptr)
+			while(conn != nullptr)
 			{
 				// Save next here in case the callback itself disconnects this connection
 				ConnectionData* next = static_cast<ConnectionData*>(conn->Next);
-				
-				if (conn->Func != nullptr)
+
+				if(conn->Func != nullptr)
 					conn->Func(std::forward<Args>(args)...);
 
 				conn = next;
@@ -357,7 +357,7 @@ namespace bs
 			if(internalData->MNewConnections != nullptr)
 			{
 				BaseConnectionData* lastNewConnection = internalData->MNewConnections;
-				while (lastNewConnection != nullptr)
+				while(lastNewConnection != nullptr)
 					lastNewConnection = lastNewConnection->Next;
 
 				BaseConnectionData* currentConnection = lastNewConnection;
@@ -408,15 +408,15 @@ namespace bs
 	/* 							SPECIALIZATIONS                      		*/
 	/* 	SO YOU MAY USE FUNCTION LIKE SYNTAX FOR DECLARING EVENT SIGNATURE   */
 	/************************************************************************/
-	
+
 	/** @copydoc TEvent */
 	template <typename Signature>
 	class Event;
 
 	/** @copydoc TEvent */
 	template <class RetType, class... Args>
-	class Event<RetType(Args...) > : public TEvent <RetType, Args...>
-	{ };
+	class Event<RetType(Args...)> : public TEvent<RetType, Args...>
+	{};
 
 	/** @} */
-}
+} // namespace bs

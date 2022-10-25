@@ -9,14 +9,14 @@ namespace bs
 	 */
 
 	/** Wrapper around an enum that allows simple use of bitwise logic operations. */
-	template<typename Enum, typename Storage = u32>
+	template <typename Enum, typename Storage = u32>
 	class Flags
 	{
 	public:
 		using InternalType = Storage;
 
 		Flags() = default;
-					
+
 		Flags(Enum value)
 		{
 			mBits = static_cast<Storage>(value);
@@ -89,35 +89,35 @@ namespace bs
 			return mBits != rhs.mBits;
 		}
 
-		Flags<Enum, Storage>& operator= (Enum rhs)
+		Flags<Enum, Storage>& operator=(Enum rhs)
 		{
 			mBits = static_cast<Storage>(rhs);
 
 			return *this;
 		}
 
-		Flags<Enum, Storage>& operator= (const Flags<Enum, Storage>& rhs)
+		Flags<Enum, Storage>& operator=(const Flags<Enum, Storage>& rhs)
 		{
 			mBits = rhs.mBits;
 
 			return *this;
 		}
 
-		Flags<Enum, Storage>& operator|= (Enum rhs)
+		Flags<Enum, Storage>& operator|=(Enum rhs)
 		{
 			mBits |= static_cast<Storage>(rhs);
 
 			return *this;
 		}
 
-		Flags<Enum, Storage>& operator|= (const Flags<Enum, Storage>& rhs)
+		Flags<Enum, Storage>& operator|=(const Flags<Enum, Storage>& rhs)
 		{
 			mBits |= rhs.mBits;
 
 			return *this;
 		}
 
-		Flags<Enum, Storage> operator| (Enum rhs) const
+		Flags<Enum, Storage> operator|(Enum rhs) const
 		{
 			Flags<Enum, Storage> out(*this);
 			out |= rhs;
@@ -125,7 +125,7 @@ namespace bs
 			return out;
 		}
 
-		Flags<Enum, Storage> operator| (const Flags<Enum, Storage>& rhs) const
+		Flags<Enum, Storage> operator|(const Flags<Enum, Storage>& rhs) const
 		{
 			Flags<Enum, Storage> out(*this);
 			out |= rhs;
@@ -133,21 +133,21 @@ namespace bs
 			return out;
 		}
 
-		Flags<Enum, Storage>& operator&= (Enum rhs)
+		Flags<Enum, Storage>& operator&=(Enum rhs)
 		{
 			mBits &= static_cast<Storage>(rhs);
 
 			return *this;
 		}
 
-		Flags<Enum, Storage>& operator&= (const Flags<Enum, Storage>& rhs)
+		Flags<Enum, Storage>& operator&=(const Flags<Enum, Storage>& rhs)
 		{
 			mBits &= rhs.mBits;
 
 			return *this;
 		}
 
-		Flags<Enum, Storage> operator& (Enum rhs) const
+		Flags<Enum, Storage> operator&(Enum rhs) const
 		{
 			Flags<Enum, Storage> out = *this;
 			out.mBits &= static_cast<Storage>(rhs);
@@ -155,7 +155,7 @@ namespace bs
 			return out;
 		}
 
-		Flags<Enum, Storage> operator& (const Flags<Enum, Storage>& rhs) const
+		Flags<Enum, Storage> operator&(const Flags<Enum, Storage>& rhs) const
 		{
 			Flags<Enum, Storage> out = *this;
 			out.mBits &= rhs.mBits;
@@ -163,21 +163,21 @@ namespace bs
 			return out;
 		}
 
-		Flags<Enum, Storage>& operator^= (Enum rhs)
+		Flags<Enum, Storage>& operator^=(Enum rhs)
 		{
 			mBits ^= static_cast<Storage>(rhs);
 
 			return *this;
 		}
 
-		Flags<Enum, Storage>& operator^= (const Flags<Enum, Storage>& rhs)
+		Flags<Enum, Storage>& operator^=(const Flags<Enum, Storage>& rhs)
 		{
 			mBits ^= rhs.mBits;
 
 			return *this;
 		}
 
-		Flags<Enum, Storage> operator^ (Enum rhs) const
+		Flags<Enum, Storage> operator^(Enum rhs) const
 		{
 			Flags<Enum, Storage> out = *this;
 			out.mBits ^= static_cast<Storage>(rhs);
@@ -185,7 +185,7 @@ namespace bs
 			return out;
 		}
 
-		Flags<Enum, Storage> operator^ (const Flags<Enum, Storage>& rhs) const
+		Flags<Enum, Storage> operator^(const Flags<Enum, Storage>& rhs) const
 		{
 			Flags<Enum, Storage> out = *this;
 			out.mBits ^= rhs.mBits;
@@ -193,7 +193,7 @@ namespace bs
 			return out;
 		}
 
-		Flags<Enum, Storage> operator~ () const
+		Flags<Enum, Storage> operator~() const
 		{
 			Flags<Enum, Storage> out;
 			out.mBits = (Storage)~mBits;
@@ -221,7 +221,7 @@ namespace bs
 			return static_cast<u32>(mBits);
 		}
 
-		friend Flags<Enum, Storage> operator&(Enum a, Flags<Enum, Storage> &b)
+		friend Flags<Enum, Storage> operator&(Enum a, Flags<Enum, Storage>& b)
 		{
 			Flags<Enum, Storage> out;
 			out.mBits = a & b.mBits;
@@ -229,27 +229,40 @@ namespace bs
 		}
 
 	private:
-		InternalType mBits{0};
+		InternalType mBits{ 0 };
 	};
 
 /** Defines global operators for a Flags<Enum, Storage> implementation. */
 #define BS_FLAGS_OPERATORS(Enum) BS_FLAGS_OPERATORS_EXT(Enum, u32)
 
 /** Defines global operators for a Flags<Enum, Storage> implementation. */
-#define BS_FLAGS_OPERATORS_EXT(Enum, Storage)																   \
-		inline Flags<Enum, Storage> operator|(Enum a, Enum b) { Flags<Enum, Storage> r(a); r |= b; return r; } \
-		inline Flags<Enum, Storage> operator&(Enum a, Enum b) { Flags<Enum, Storage> r(a); r &= b; return r; } \
-		inline Flags<Enum, Storage> operator~(Enum a) { return ~Flags<Enum, Storage>(a); }
+#define BS_FLAGS_OPERATORS_EXT(Enum, Storage)             \
+	inline Flags<Enum, Storage> operator|(Enum a, Enum b) \
+	{                                                     \
+		Flags<Enum, Storage> r(a);                        \
+		r |= b;                                           \
+		return r;                                         \
+	}                                                     \
+	inline Flags<Enum, Storage> operator&(Enum a, Enum b) \
+	{                                                     \
+		Flags<Enum, Storage> r(a);                        \
+		r &= b;                                           \
+		return r;                                         \
+	}                                                     \
+	inline Flags<Enum, Storage> operator~(Enum a)         \
+	{                                                     \
+		return ~Flags<Enum, Storage>(a);                  \
+	}
 
 	/** @} */
-}
+} // namespace bs
 
 /** @cond STDLIB */
 
 namespace std
 {
 	/** Hash value generator for Flags<Enum, Storage>. */
-	template<class Enum, class Storage>
+	template <class Enum, class Storage>
 	struct hash<bs::Flags<Enum, Storage>>
 	{
 		size_t operator()(const bs::Flags<Enum, Storage>& key) const
@@ -257,6 +270,6 @@ namespace std
 			return (Storage)key;
 		}
 	};
-}
+} // namespace std
 
 /** @endcond */

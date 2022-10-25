@@ -35,25 +35,28 @@ namespace bs
 		/** Creates an unnamed stream. */
 		DataStream(u16 accessMode = READ)
 			: mAccess(accessMode)
-		{ }
+		{}
 
 		/** Creates a named stream. */
 		DataStream(const String& name, u16 accessMode = READ)
-			:mName(name), mAccess(accessMode) {}
+			: mName(name), mAccess(accessMode) {}
 
 		virtual ~DataStream() = default;
 
 		const String& GetName() const { return mName; }
+
 		u16 GetAccessMode() const { return mAccess; }
 
 		virtual bool IsReadable() const { return (mAccess & READ) != 0; }
+
 		virtual bool IsWriteable() const { return (mAccess & WRITE) != 0; }
 
 		/** Checks whether the stream reads/writes from a file system. */
 		virtual bool IsFile() const = 0;
 
 		/** Reads data from the buffer and copies it to the specified value. */
-		template<typename T> DataStream& operator>>(T& val);
+		template <typename T>
+		DataStream& operator>>(T& val);
 
 		/**
 		 * Read the requisite number of bytes from the stream, stopping at the end of the file. Advances
@@ -62,7 +65,7 @@ namespace bs
 		 * @param[in]	buf		Pre-allocated buffer to read the data into.
 		 * @param[in]	count	Number of bytes to read.
 		 * @return				Number of bytes actually read.
-		 * 			
+		 *
 		 * @note	Stream must be created with READ access mode.
 		 */
 		virtual size_t Read(void* buf, size_t count) const = 0;
@@ -73,7 +76,7 @@ namespace bs
 		 * @param[in]	buf		Buffer containing bytes to write.
 		 * @param[in]	count	Number of bytes to write.
 		 * @return				Number of bytes actually written.
-		 * 			
+		 *
 		 * @note	Stream must be created with WRITE access mode.
 		 */
 		virtual size_t Write(const void* buf, size_t count) { return 0; }
@@ -104,7 +107,7 @@ namespace bs
 
 		/**
 		 * Writes the provided narrow string to the steam. String is convered to the required encoding before being written.
-		 * 			
+		 *
 		 * @param[in]	string		String containing narrow characters to write, encoded as UTF8.
 		 * @param[in]	encoding	Encoding to convert the string to before writing.
 		 */
@@ -112,7 +115,7 @@ namespace bs
 
 		/**
 		 * Writes the provided wide string to the steam. String is convered to the required encoding before being written.
-		 * 			
+		 *
 		 * @param[in]	string		String containing wide characters to write, encoded as specified by platform for
 		 * 							wide characters.
 		 * @param[in]	encoding	Encoding to convert the string to before writing.
@@ -144,10 +147,10 @@ namespace bs
 		 * defined number of bytes.
 		 */
 		virtual void Skip(size_t count) = 0;
-	
+
 		/** Repositions the read point to a specified byte. */
 		virtual void Seek(size_t pos) = 0;
-		
+
 		/** Returns the current byte offset from beginning. */
 		virtual size_t Tell() const = 0;
 
@@ -175,25 +178,25 @@ namespace bs
 
 		/** Close the stream. This makes further operations invalid. */
 		virtual void Close() = 0;
-		
+
 	protected:
 		static const u32 StreamTempSize;
 
-		String mName;		
+		String mName;
 		size_t mSize = 0;
 		u16 mAccess;
 	};
 
 	/** Data stream for handling data from memory. */
 	class BS_UTILITY_EXPORT MemoryDataStream : public DataStream
-	{		
+	{
 	public:
 		/**
 		 * Initializes an empty memory stream. As data is written the stream will grow its internal memory storage
 		 * automatically.
 		 */
 		MemoryDataStream();
-		
+
 		/**
 		 * Initializes a stream with some initial capacity. If more bytes than capacity is written, the stream will
 		 * grow its internal memory storage.
@@ -215,7 +218,7 @@ namespace bs
 		 * read and stored in an internal buffer.
 		 */
 		MemoryDataStream(const MemoryDataStream& other);
-		
+
 		/**
 		 * Create a stream which pre-buffers the contents of another stream. Data from the other buffer will be entirely
 		 * read and stored in an internal buffer.
@@ -226,18 +229,18 @@ namespace bs
 		MemoryDataStream(MemoryDataStream&& other);
 		~MemoryDataStream();
 
-		MemoryDataStream& operator= (const MemoryDataStream& other);
-		MemoryDataStream& operator= (MemoryDataStream&& other);
+		MemoryDataStream& operator=(const MemoryDataStream& other);
+		MemoryDataStream& operator=(MemoryDataStream&& other);
 
 		/** @copydoc DataStream::isFile */
 		bool IsFile() const override { return false; }
 
 		/** Get a pointer to the start of the memory block this stream holds. */
 		uint8_t* Data() const { return mData; }
-		
+
 		/** Get a pointer to the current position in the memory block this stream holds. */
 		uint8_t* Cursor() const { return mCursor; }
-		
+
 		/** @copydoc DataStream::read */
 		size_t Read(void* buf, size_t count) const override;
 
@@ -246,10 +249,10 @@ namespace bs
 
 		/** @copydoc DataStream::skip */
 		void Skip(size_t count) override;
-	
+
 		/** @copydoc DataStream::seek */
 		void Seek(size_t pos) override;
-		
+
 		/** @copydoc DataStream::tell */
 		size_t Tell() const override;
 
@@ -257,7 +260,7 @@ namespace bs
 		bool Eof() const override;
 
 		/** @copydoc DataStream::clone */
-		SPtr<DataStream> Clone(bool copyData = true) const ;
+		SPtr<DataStream> Clone(bool copyData = true) const;
 
 		/** @copydoc DataStream::close */
 		void Close() override;
@@ -266,12 +269,16 @@ namespace bs
 		 * Disowns the internal memory buffer, ensuring it wont be released when the stream goes out of scope.
 		 * The caller becomes responsible for freeing the internal data buffer.
 		 */
-		uint8_t* DisownMemory() { mOwnsMemory = false; return mData;  }
+		uint8_t* DisownMemory()
+		{
+			mOwnsMemory = false;
+			return mData;
+		}
 
 	protected:
 		/** Reallocates the internal buffer making enough room for @p numBytes. */
 		void Realloc(size_t numBytes);
-		
+
 		uint8_t* mData = nullptr;
 		mutable uint8_t* mCursor = nullptr;
 		uint8_t* mEnd = nullptr;
@@ -305,7 +312,7 @@ namespace bs
 
 		/** @copydoc DataStream::skip */
 		void Skip(size_t count) override;
-	
+
 		/** @copydoc DataStream::seek */
 		void Seek(size_t pos) override;
 
@@ -316,7 +323,7 @@ namespace bs
 		bool Eof() const override;
 
 		/** @copydoc DataStream::clone */
-		SPtr<DataStream> Clone(bool copyData = true) const ;
+		SPtr<DataStream> Clone(bool copyData = true) const;
 
 		/** @copydoc DataStream::close */
 		void Close() override;
@@ -329,9 +336,8 @@ namespace bs
 		SPtr<std::istream> mInStream;
 		SPtr<std::ifstream> mFStreamRO;
 		SPtr<std::fstream> mFStream;
-		bool mFreeOnClose;	
+		bool mFreeOnClose;
 	};
 
 	/** @} */
-}
-
+} // namespace bs

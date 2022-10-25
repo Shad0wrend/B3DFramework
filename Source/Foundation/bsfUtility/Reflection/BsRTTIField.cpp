@@ -16,21 +16,19 @@ namespace bs
 	{
 		return GetRttiStatic();
 	}
-	
+
 	RTTIFieldInfo RTTIFieldInfo::DEFAULT;
 
 	void RTTIField::CheckIsArray(bool array) const
 	{
 		if(array && !Schema.IsArray)
 		{
-			BS_EXCEPT(InternalErrorException,
-				"Invalid field type. Needed an array type but got a single type.");
+			BS_EXCEPT(InternalErrorException, "Invalid field type. Needed an array type but got a single type.");
 		}
 
 		if(!array && Schema.IsArray)
 		{
-			BS_EXCEPT(InternalErrorException,
-				"Invalid field type. Needed a single type but got an array type.");
+			BS_EXCEPT(InternalErrorException, "Invalid field type. Needed a single type but got an array type.");
 		}
 	}
-}
+} // namespace bs

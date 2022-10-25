@@ -115,8 +115,7 @@ namespace bs
 		 * @return						True if iteration finished iterating over all files/folders, or false if it was
 		 *								interrupted by a callback returning false.
 		 */
-		static bool Iterate(const Path& dirPath, std::function<bool(const Path&)> fileCallback,
-			std::function<bool(const Path&)> dirCallback = nullptr, bool recursive = true);
+		static bool Iterate(const Path& dirPath, std::function<bool(const Path&)> fileCallback, std::function<bool(const Path&)> dirCallback = nullptr, bool recursive = true);
 
 		/**
 		 * Returns the last modified time of a file or a folder at the specified path.
@@ -182,4 +181,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

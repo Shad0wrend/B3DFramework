@@ -10,7 +10,7 @@ namespace bs
 	constexpr u32 Time::MAX_ACCUM_FIXED_UPDATES;
 	constexpr u32 Time::NEW_FIXED_UPDATES_PER_FRAME;
 
-	const double Time::MICROSEC_TO_SEC = 1.0/1000000.0;
+	const double Time::MICROSEC_TO_SEC = 1.0 / 1000000.0;
 
 	Time::Time()
 	{
@@ -39,25 +39,25 @@ namespace bs
 
 		mTimeSinceStartMs = (u64)(currentFrameTime / 1000);
 		mTimeSinceStart = mTimeSinceStartMs / 1000.0f;
-		
+
 		mLastFrameTime = currentFrameTime;
 
 		mCurrentFrame.fetch_add(1, std::memory_order_relaxed);
 	}
-	
+
 	u32 Time::GetFixedUpdateStepInternal(u64& step)
 	{
 		const u64 currentTime = GetTimePrecise();
 
 		// Skip fixed update first frame (time delta is zero, and no input received yet)
-		if (mFirstFixedFrame)
+		if(mFirstFixedFrame)
 		{
 			mLastFixedUpdateTime = currentTime;
 			mFirstFixedFrame = false;
 		}
 
 		const u64 nextFrameTime = mLastFixedUpdateTime + mFixedStep;
-		if (nextFrameTime <= currentTime)
+		if(nextFrameTime <= currentTime)
 		{
 			const i64 simulationAmount = (i64)std::max(currentTime - mLastFixedUpdateTime, mFixedStep); // At least one step
 			auto numIterations = (u32)Math::DivideAndRoundUp(simulationAmount, (i64)mFixedStep);
@@ -65,7 +65,7 @@ namespace bs
 			// Prevent physics from completely hogging the CPU. If the framerate is low, the physics will want to run many
 			// iterations per frame, slowing down the game even further. Therefore we limit the number of physics updates
 			// to a certain number (at the cost of simulation stability).
-			
+
 			// However we don't use a fixed number per frame because performance spikes can cause some frames to take a very
 			// long time. These spikes can happen even in an otherwise well-performing application and will can wreak havoc
 			// on the physics simulation.
@@ -77,7 +77,7 @@ namespace bs
 			// will slow down to free up the CPU (at the cost of stability, but this time we have no other option).
 
 			auto stepus = (i64)mFixedStep;
-			if (numIterations > mNumRemainingFixedUpdates)
+			if(numIterations > mNumRemainingFixedUpdates)
 			{
 				stepus = Math::DivideAndRoundUp(simulationAmount, (i64)mNumRemainingFixedUpdates);
 				numIterations = (u32)Math::DivideAndRoundUp(simulationAmount, (i64)stepus);
@@ -120,11 +120,11 @@ namespace bs
 
 	String Time::GetAppStartUpDateString(bool isUTC)
 	{
-		return toString(mAppStartUpDate,isUTC, false, TimeToStringConversionType::Full);
+		return toString(mAppStartUpDate, isUTC, false, TimeToStringConversionType::Full);
 	}
-	
+
 	Time& gTime()
 	{
 		return Time::Instance();
 	}
-}
+} // namespace bs

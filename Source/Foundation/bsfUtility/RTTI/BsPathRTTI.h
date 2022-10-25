@@ -11,17 +11,26 @@ namespace bs
 {
 	/** @cond RTTI */
 	/** @addtogroup RTTI-Impl-Utility
-	*  @{
-	*/
+	 *  @{
+	 */
 
-	template<> struct RTTIPlainType<Path>
+	template <>
+	struct RTTIPlainType<Path>
 	{
-		enum { id = TID_Path }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_Path
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		static BitLength ToMemory(const Path& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				BitLength size = 0;
 				size += rtti_write(data.mDevice, stream);
 				size += rtti_write(data.mNode, stream);
@@ -29,8 +38,7 @@ namespace bs
 				size += rtti_write(data.mIsAbsolute, stream);
 				size += rtti_write(data.mDirectories, stream);
 
-				return size;
-			});
+				return size; });
 		}
 
 		static BitLength FromMemory(Path& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -59,4 +67,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

@@ -18,7 +18,7 @@ namespace bs
 		/** Helper class that wraps either an IReflectable or a SerializedObject object instance. */
 		template <bool REFL>
 		class RTTIObjectWrapper
-		{ };
+		{};
 
 		/**
 		 * Helper class that provides information about a specific RTTIType of an either IReflectable
@@ -27,25 +27,25 @@ namespace bs
 		 */
 		template <bool REFL>
 		class RTTISubObjectWrapper
-		{ };
+		{};
 
 		/** Helper class that iterates over all base RTTI types in a specific RTTI type. */
-		template<bool REFL>
+		template <bool REFL>
 		struct RTTISubObjectWrapperIterator
-		{ };
+		{};
 
 		/**
 		 * Helper class that wraps a single RTTI field, that can be read either from a backing
 		 * IReflectable or SerializedObject object instance.
 		 */
-		template<bool REFL>
+		template <bool REFL>
 		struct RTTIFieldWrapper
-		{ };
+		{};
 
 		/** Helper class that iterates over all fields in a RTTI type. */
-		template<bool REFL>
+		template <bool REFL>
 		struct RTTIFieldWrapperIterator
-		{ };
+		{};
 
 		/** Provides information about a specific RTTIType of an object backed by SerializedObject. */
 		template <>
@@ -127,7 +127,7 @@ namespace bs
 		};
 
 		/** Iterates over base RTTITypes of some type. */
-		template<>
+		template <>
 		struct RTTISubObjectWrapperIterator<false>
 		{
 			RTTISubObjectWrapperIterator(SerializedObject* obj);
@@ -150,7 +150,7 @@ namespace bs
 		};
 
 		/** Iterates over base RTTITypes of some type. */
-		template<>
+		template <>
 		struct RTTISubObjectWrapperIterator<true>
 		{
 			RTTISubObjectWrapperIterator(RTTITypeBase* rttiType, IReflectable* obj);
@@ -174,7 +174,7 @@ namespace bs
 		};
 
 		/** Wraps a single RTTIField and allows you to retrieve field information, values and compare it with other fields. */
-		template<>
+		template <>
 		struct RTTIFieldWrapper<false>
 		{
 		public:
@@ -213,15 +213,16 @@ namespace bs
 
 			/** Clones the contents of this field and returns them as intermediate serialized data. */
 			SPtr<SerializedInstance> Clone(SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc) const;
+
 		private:
 			friend struct RTTIFieldWrapper<true>;
-			
+
 			u32 mId = 0;
 			SPtr<SerializedInstance> mObj;
 		};
 
 		/** Wraps a single RTTIField and allows you to retrieve field information, values and compare it with other fields. */
-		template<>
+		template <>
 		struct RTTIFieldWrapper<true>
 		{
 		public:
@@ -267,9 +268,10 @@ namespace bs
 
 			/** Clones the contents of this field and returns them as intermediate serialized data. */
 			SPtr<SerializedInstance> Clone(SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc) const;
+
 		private:
 			friend struct RTTIFieldWrapper<false>;
-			
+
 			RTTITypeBase* mRTTIType = nullptr;
 			RTTIField* mField = nullptr;
 			bool mIsArrayElem = false;
@@ -278,7 +280,7 @@ namespace bs
 		};
 
 		/** Iterates over all fields in a RTTIType. */
-		template<>
+		template <>
 		struct RTTIFieldWrapperIterator<false>
 		{
 			RTTIFieldWrapperIterator(SerializedObject* obj, u32 subObjectIdx);
@@ -304,7 +306,7 @@ namespace bs
 		};
 
 		/** Iterates over all fields in a RTTIType. */
-		template<>
+		template <>
 		struct RTTIFieldWrapperIterator<true>
 		{
 			RTTIFieldWrapperIterator(RTTITypeBase* rttiType, IReflectable* obj);
@@ -328,10 +330,13 @@ namespace bs
 		};
 
 		RTTIObjectWrapper<false>::RTTIObjectWrapper(SerializedObject* obj)
-			:mObj(obj)
-		{ }
+			: mObj(obj)
+		{}
 
-		u32 RTTIObjectWrapper<false>::GetTypeId() const { return mObj->GetRootTypeId(); }
+		u32 RTTIObjectWrapper<false>::GetTypeId() const
+		{
+			return mObj->GetRootTypeId();
+		}
 
 		RTTISubObjectWrapperIterator<false> RTTIObjectWrapper<false>::GetSubObjectIterator() const
 		{
@@ -339,10 +344,13 @@ namespace bs
 		}
 
 		RTTIObjectWrapper<true>::RTTIObjectWrapper(IReflectable* obj, RTTITypeBase* type)
-			:mObj(obj), mRTTIType(type)
-		{ }
+			: mObj(obj), mRTTIType(type)
+		{}
 
-		u32 RTTIObjectWrapper<true>::GetTypeId() const { return mObj->GetTypeId(); }
+		u32 RTTIObjectWrapper<true>::GetTypeId() const
+		{
+			return mObj->GetTypeId();
+		}
 
 		RTTISubObjectWrapperIterator<true> RTTIObjectWrapper<true>::GetSubObjectIterator() const
 		{
@@ -350,8 +358,8 @@ namespace bs
 		}
 
 		RTTISubObjectWrapper<false>::RTTISubObjectWrapper(SerializedObject* obj, u32 subObjectIdx)
-			:mObj(obj), mSubObjectIdx(subObjectIdx)
-		{ }
+			: mObj(obj), mSubObjectIdx(subObjectIdx)
+		{}
 
 		u32 RTTISubObjectWrapper<false>::GetTypeId() const
 		{
@@ -365,7 +373,7 @@ namespace bs
 
 		RTTISubObjectWrapper<true>::RTTISubObjectWrapper(IReflectable* obj, RTTITypeBase* type)
 			: mObj(obj), mRTTIType(type)
-		{ }
+		{}
 
 		u32 RTTISubObjectWrapper<true>::GetTypeId() const
 		{
@@ -379,15 +387,15 @@ namespace bs
 
 		RTTISubObjectWrapperIterator<false>::RTTISubObjectWrapperIterator(SerializedObject* obj)
 			: mObj(obj)
-		{ }
+		{}
 
 		bool RTTISubObjectWrapperIterator<false>::MoveNext()
 		{
 			u32 numFields = (u32)mObj->SubObjects.size();
 
-			if (mBaseTypeIdx == (u32)-1)
+			if(mBaseTypeIdx == (u32)-1)
 			{
-				if (numFields > 0)
+				if(numFields > 0)
 				{
 					mBaseTypeIdx = 0;
 					return true;
@@ -396,7 +404,7 @@ namespace bs
 				return false;
 			}
 
-			if ((mBaseTypeIdx + 1) < numFields)
+			if((mBaseTypeIdx + 1) < numFields)
 			{
 				mBaseTypeIdx++;
 				return true;
@@ -411,12 +419,12 @@ namespace bs
 		}
 
 		RTTISubObjectWrapperIterator<true>::RTTISubObjectWrapperIterator(RTTITypeBase* rttiType, IReflectable* obj)
-			:mObj(obj), mRTTIType(rttiType)
-		{ }
+			: mObj(obj), mRTTIType(rttiType)
+		{}
 
 		bool RTTISubObjectWrapperIterator<true>::MoveNext()
 		{
-			if (!mCurRTTIType)
+			if(!mCurRTTIType)
 			{
 				mCurRTTIType = mRTTIType;
 				return true;
@@ -434,10 +442,13 @@ namespace bs
 		}
 
 		RTTIFieldWrapper<false>::RTTIFieldWrapper(u32 fieldId, SPtr<SerializedInstance> data)
-			:mId(fieldId), mObj(std::move(data))
-		{ }
+			: mId(fieldId), mObj(std::move(data))
+		{}
 
-		u32 RTTIFieldWrapper<false>::GetId() const { return mId; }
+		u32 RTTIFieldWrapper<false>::GetId() const
+		{
+			return mId;
+		}
 
 		u32 RTTIFieldWrapper<false>::GetArraySize() const
 		{
@@ -456,12 +467,12 @@ namespace bs
 			return RTTIObjectWrapper<false>(static_cast<SerializedObject*>(mObj.get()));
 		}
 
-		SPtr<DataStream> RTTIFieldWrapper<false>::GetDataStream(u32& size,  u32& offset) const
+		SPtr<DataStream> RTTIFieldWrapper<false>::GetDataStream(u32& size, u32& offset) const
 		{
 			auto* field = static_cast<SerializedDataBlock*>(mObj.get());
 			size = field->Size;
 			offset = field->Offset;
-			
+
 			return field->Stream;
 		}
 
@@ -477,7 +488,7 @@ namespace bs
 			auto* otherFieldData = static_cast<SerializedField*>(other.mObj.get());
 
 			bool isModified = curFieldData->Size != otherFieldData->Size;
-			if (!isModified)
+			if(!isModified)
 				isModified = memcmp(curFieldData->Value, otherFieldData->Value, otherFieldData->Size) != 0;
 
 			return isModified;
@@ -486,31 +497,32 @@ namespace bs
 		bool RTTIFieldWrapper<false>::ComparePlain(const RTTIFieldWrapper<true>& other) const
 		{
 			auto* curFieldData = static_cast<SerializedField*>(mObj.get());
-			
+
 			u32 otherTypeSize = other.GetPlainSize();
 
 			auto buffer = bs_stack_alloc<u8>(otherTypeSize);
 			other.GetPlainData(buffer, otherTypeSize);
-			
+
 			bool isModified = curFieldData->Size != otherTypeSize;
-			if (!isModified)
+			if(!isModified)
 				isModified = memcmp(curFieldData->Value, buffer, otherTypeSize) != 0;
 
 			return isModified;
 		}
 
-		SPtr<SerializedInstance> RTTIFieldWrapper<false>::Clone(SerializedObjectEncodeFlags flags,
-			SerializationContext* context, FrameAlloc* alloc) const
+		SPtr<SerializedInstance> RTTIFieldWrapper<false>::Clone(SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc) const
 		{
 			return mObj->Clone();
 		}
 
-		RTTIFieldWrapper<true>::RTTIFieldWrapper(RTTITypeBase* rttiType, RTTIField* field,
-			bool isArrayElem, u32 arrayIdx, IReflectable* data)
+		RTTIFieldWrapper<true>::RTTIFieldWrapper(RTTITypeBase* rttiType, RTTIField* field, bool isArrayElem, u32 arrayIdx, IReflectable* data)
 			: mRTTIType(rttiType), mField(field), mIsArrayElem(isArrayElem), mArrayIdx(arrayIdx), mObj(data)
-		{ }
+		{}
 
-		u32 RTTIFieldWrapper<true>::GetId() const { return mField->Schema.Id; }
+		u32 RTTIFieldWrapper<true>::GetId() const
+		{
+			return mField->Schema.Id;
+		}
 
 		u32 RTTIFieldWrapper<true>::GetArraySize() const
 		{
@@ -525,24 +537,24 @@ namespace bs
 
 		RTTIObjectWrapper<true> RTTIFieldWrapper<true>::GetObject() const
 		{
-			if (mField->Schema.Type == SerializableFT_ReflectablePtr)
+			if(mField->Schema.Type == SerializableFT_ReflectablePtr)
 			{
 				SPtr<IReflectable> obj;
 
 				auto* field = static_cast<RTTIReflectablePtrFieldBase*>(mField);
-				if (mIsArrayElem)
+				if(mIsArrayElem)
 					obj = field->GetArrayValue(mRTTIType, mObj, mArrayIdx);
 				else
 					obj = field->GetValue(mRTTIType, mObj);
 
 				return RTTIObjectWrapper<true>(obj.get(), field->GetType());
 			}
-			else if (mField->Schema.Type == SerializableFT_Reflectable)
+			else if(mField->Schema.Type == SerializableFT_Reflectable)
 			{
 				IReflectable* obj;
 
 				auto* field = static_cast<RTTIReflectableFieldBase*>(mField);
-				if (mIsArrayElem)
+				if(mIsArrayElem)
 					obj = &field->GetArrayValue(mRTTIType, mObj, mArrayIdx);
 				else
 					obj = &field->GetValue(mRTTIType, mObj);
@@ -569,7 +581,7 @@ namespace bs
 			auto* field = static_cast<RTTIPlainFieldBase*>(mField);
 
 			u32 size;
-			if (field->Schema.HasDynamicSize)
+			if(field->Schema.HasDynamicSize)
 			{
 				if(mIsArrayElem)
 					size = field->GetArrayElemDynamicSize(mRTTIType, mObj, mArrayIdx, false).Bytes;
@@ -595,7 +607,7 @@ namespace bs
 			other.GetPlainData(otherBuffer, otherTypeSize);
 
 			bool isModified = curTypeSize != otherTypeSize;
-			if (!isModified)
+			if(!isModified)
 				isModified = memcmp(curBuffer, otherBuffer, otherTypeSize) != 0;
 
 			return isModified;
@@ -611,7 +623,7 @@ namespace bs
 			GetPlainData(buffer, curTypeSize);
 
 			bool isModified = otherFieldData->Size != curTypeSize;
-			if (!isModified)
+			if(!isModified)
 				isModified = memcmp(otherFieldData->Value, buffer, curTypeSize) != 0;
 
 			return isModified;
@@ -622,7 +634,7 @@ namespace bs
 			auto* field = static_cast<RTTIPlainFieldBase*>(mField);
 			Bitstream tempStream(buffer, bufferSize);
 
-			if (mIsArrayElem)
+			if(mIsArrayElem)
 				field->ArrayElemToStream(mRTTIType, mObj, mArrayIdx, tempStream);
 			else
 				field->ToStream(mRTTIType, mObj, tempStream);
@@ -634,14 +646,14 @@ namespace bs
 		}
 
 		RTTIFieldWrapperIterator<false>::RTTIFieldWrapperIterator(SerializedObject* obj, u32 subObjectIdx)
-			:mObj(obj), mSubObjectIdx(subObjectIdx), mRTTIType(IReflectable::GetRttifromTypeIdInternal(obj->SubObjects[subObjectIdx].TypeId))
-		{ }
+			: mObj(obj), mSubObjectIdx(subObjectIdx), mRTTIType(IReflectable::GetRttifromTypeIdInternal(obj->SubObjects[subObjectIdx].TypeId))
+		{}
 
 		bool RTTIFieldWrapperIterator<false>::MoveNext()
 		{
 			u32 numFields = mRTTIType->GetNumFields();
 
-			if (!mIterSet)
+			if(!mIterSet)
 			{
 				mFieldIter = mObj->SubObjects[mSubObjectIdx].Entries.begin();
 				mIterSet = true;
@@ -658,16 +670,16 @@ namespace bs
 		}
 
 		RTTIFieldWrapperIterator<true>::RTTIFieldWrapperIterator(RTTITypeBase* rttiType, IReflectable* obj)
-			:mObj(obj), mRTTIType(rttiType)
-		{ }
+			: mObj(obj), mRTTIType(rttiType)
+		{}
 
 		bool RTTIFieldWrapperIterator<true>::MoveNext()
 		{
 			u32 numFields = mRTTIType->GetNumFields();
 
-			if (mFieldIdx == (u32)-1)
+			if(mFieldIdx == (u32)-1)
 			{
-				if (numFields > 0)
+				if(numFields > 0)
 				{
 					mFieldIdx = 0;
 					return true;
@@ -676,7 +688,7 @@ namespace bs
 				return false;
 			}
 
-			if ((mFieldIdx + 1) < numFields)
+			if((mFieldIdx + 1) < numFields)
 			{
 				mFieldIdx++;
 				return true;
@@ -694,134 +706,132 @@ namespace bs
 
 		typedef UnorderedMap<IReflectable*, SPtr<SerializedObject>> ObjectMap;
 
-		template<bool REFL_ORG, bool REFL_NEW>
-		SPtr<SerializedInstance> GenerateFieldDiff(RTTITypeBase* rtti, u32 fieldType, const RTTIFieldWrapper<REFL_ORG>& orgField,
-			const RTTIFieldWrapper<REFL_NEW> newField, ObjectMap& objectMap, bool replicableOnly)
+		template <bool REFL_ORG, bool REFL_NEW>
+		SPtr<SerializedInstance> GenerateFieldDiff(RTTITypeBase* rtti, u32 fieldType, const RTTIFieldWrapper<REFL_ORG>& orgField, const RTTIFieldWrapper<REFL_NEW> newField, ObjectMap& objectMap, bool replicableOnly)
 		{
 			SerializedObjectEncodeFlags flags = replicableOnly ? SerializedObjectEncodeFlag::ReplicableOnly : SerializedObjectEncodeFlags();
 			SerializationContext* context = nullptr;
 			FrameAlloc* alloc = &gFrameAlloc();
-			
+
 			SPtr<SerializedInstance> modification;
-			switch (fieldType)
+			switch(fieldType)
 			{
 			case SerializableFT_ReflectablePtr:
 			case SerializableFT_Reflectable:
-			{
-				RTTIObjectWrapper<REFL_ORG> orgObjData = orgField.GetObject();
-				RTTIObjectWrapper<REFL_NEW> newObjData = newField.GetObject();
-
-				auto iterFind = objectMap.find(newObjData.GetObjectPtr());
-				if (iterFind != objectMap.end())
-					modification = iterFind->second;
-				else
 				{
-					RTTITypeBase* childRtti = nullptr;
-					if (orgObjData.GetTypeId() == newObjData.GetTypeId())
-						childRtti = IReflectable::GetRttifromTypeIdInternal(newObjData.GetTypeId());
+					RTTIObjectWrapper<REFL_ORG> orgObjData = orgField.GetObject();
+					RTTIObjectWrapper<REFL_NEW> newObjData = newField.GetObject();
 
-					SPtr<SerializedObject> objectDiff;
-					if (childRtti != nullptr)
+					auto iterFind = objectMap.find(newObjData.GetObjectPtr());
+					if(iterFind != objectMap.end())
+						modification = iterFind->second;
+					else
 					{
-						IDiff& handler = childRtti->GetDiffHandler();
-						objectDiff = handler.GenerateDiffInternal(orgObjData.GetObjectPtr(), newObjData.GetObjectPtr(), objectMap, replicableOnly);
+						RTTITypeBase* childRtti = nullptr;
+						if(orgObjData.GetTypeId() == newObjData.GetTypeId())
+							childRtti = IReflectable::GetRttifromTypeIdInternal(newObjData.GetTypeId());
+
+						SPtr<SerializedObject> objectDiff;
+						if(childRtti != nullptr)
+						{
+							IDiff& handler = childRtti->GetDiffHandler();
+							objectDiff = handler.GenerateDiffInternal(orgObjData.GetObjectPtr(), newObjData.GetObjectPtr(), objectMap, replicableOnly);
+						}
+
+						if(objectDiff != nullptr)
+							objectMap[newObjData.GetObjectPtr()] = objectDiff;
+
+						modification = objectDiff;
 					}
-
-					if (objectDiff != nullptr)
-						objectMap[newObjData.GetObjectPtr()] = objectDiff;
-
-					modification = objectDiff;
 				}
-			}
-			break;
+				break;
 			case SerializableFT_Plain:
-			{
-				if (orgField.ComparePlain(newField))
-					modification = newField.Clone(flags, context, alloc);
-			}
-			break;
-			case SerializableFT_DataBlock:
-			{
-				u32 orgFieldDataSize;
-				u32 orgFieldOffset;
-				SPtr<DataStream> orgFieldStream = orgField.GetDataStream(orgFieldDataSize, orgFieldOffset);
-					
-				u32 newFieldDataSize;
-				u32 newFieldOffset;
-				SPtr<DataStream> newFieldStream = newField.GetDataStream(newFieldDataSize, newFieldOffset);
-
-				bool isModified = orgFieldDataSize != newFieldDataSize;
-				if (!isModified)
 				{
-					u8* orgStreamData = nullptr;
-					if (orgFieldStream->IsFile())
-					{
-						orgStreamData = (u8*)bs_stack_alloc(orgFieldDataSize);
-						orgFieldStream->Seek(orgFieldOffset);
-						orgFieldStream->Read(orgStreamData, orgFieldDataSize);
-					}
-					else
-					{
-						SPtr<MemoryDataStream> orgMemStream = std::static_pointer_cast<MemoryDataStream>(orgFieldStream);
-						orgStreamData = orgMemStream->Cursor();
-					}
-
-					u8* newStreamData = nullptr;
-					if (newFieldStream->IsFile())
-					{
-						newStreamData = (u8*)bs_stack_alloc(newFieldDataSize);
-						newFieldStream->Seek(newFieldOffset);
-						newFieldStream->Read(newStreamData, newFieldDataSize);
-					}
-					else
-					{
-						SPtr<MemoryDataStream> newMemStream = std::static_pointer_cast<MemoryDataStream>(newFieldStream);
-						newStreamData = newMemStream->Cursor();
-					}
-
-					isModified = memcmp(orgStreamData, newStreamData, newFieldDataSize) != 0;
-
-					if (newFieldStream->IsFile())
-						bs_stack_free(newStreamData);
-
-					if (orgFieldStream->IsFile())
-						bs_stack_free(orgStreamData);
+					if(orgField.ComparePlain(newField))
+						modification = newField.Clone(flags, context, alloc);
 				}
+				break;
+			case SerializableFT_DataBlock:
+				{
+					u32 orgFieldDataSize;
+					u32 orgFieldOffset;
+					SPtr<DataStream> orgFieldStream = orgField.GetDataStream(orgFieldDataSize, orgFieldOffset);
 
-				if (isModified)
-					modification = newField.Clone(flags, context, alloc);
-			}
-			break;
+					u32 newFieldDataSize;
+					u32 newFieldOffset;
+					SPtr<DataStream> newFieldStream = newField.GetDataStream(newFieldDataSize, newFieldOffset);
+
+					bool isModified = orgFieldDataSize != newFieldDataSize;
+					if(!isModified)
+					{
+						u8* orgStreamData = nullptr;
+						if(orgFieldStream->IsFile())
+						{
+							orgStreamData = (u8*)bs_stack_alloc(orgFieldDataSize);
+							orgFieldStream->Seek(orgFieldOffset);
+							orgFieldStream->Read(orgStreamData, orgFieldDataSize);
+						}
+						else
+						{
+							SPtr<MemoryDataStream> orgMemStream = std::static_pointer_cast<MemoryDataStream>(orgFieldStream);
+							orgStreamData = orgMemStream->Cursor();
+						}
+
+						u8* newStreamData = nullptr;
+						if(newFieldStream->IsFile())
+						{
+							newStreamData = (u8*)bs_stack_alloc(newFieldDataSize);
+							newFieldStream->Seek(newFieldOffset);
+							newFieldStream->Read(newStreamData, newFieldDataSize);
+						}
+						else
+						{
+							SPtr<MemoryDataStream> newMemStream = std::static_pointer_cast<MemoryDataStream>(newFieldStream);
+							newStreamData = newMemStream->Cursor();
+						}
+
+						isModified = memcmp(orgStreamData, newStreamData, newFieldDataSize) != 0;
+
+						if(newFieldStream->IsFile())
+							bs_stack_free(newStreamData);
+
+						if(orgFieldStream->IsFile())
+							bs_stack_free(orgStreamData);
+					}
+
+					if(isModified)
+						modification = newField.Clone(flags, context, alloc);
+				}
+				break;
 			}
 
 			return modification;
 		}
 
-		template<bool REFL_ORG, bool REFL_NEW>
-		SPtr<SerializedObject> GenerateDiff(RTTIObjectWrapper<REFL_ORG> orgObj,
-			RTTIObjectWrapper<REFL_NEW> newObj, ObjectMap& objectMap, bool replicableOnly)
+		template <bool REFL_ORG, bool REFL_NEW>
+		SPtr<SerializedObject> GenerateDiff(RTTIObjectWrapper<REFL_ORG> orgObj, RTTIObjectWrapper<REFL_NEW> newObj, ObjectMap& objectMap, bool replicableOnly)
 		{
 			SerializedObjectEncodeFlags flags = replicableOnly ? SerializedObjectEncodeFlag::ReplicableOnly : SerializedObjectEncodeFlags();
 			SerializationContext* context = nullptr;
 			FrameAlloc* alloc = &gFrameAlloc();
-			
+
 			RTTISubObjectWrapperIterator<REFL_NEW> newObjTypeIter = newObj.GetSubObjectIterator();
 
 			SPtr<SerializedObject> output;
-			while (newObjTypeIter.MoveNext())
+			while(newObjTypeIter.MoveNext())
 			{
 				RTTISubObjectWrapper<REFL_NEW> newSubObject = newObjTypeIter.Value();
 
 				RTTITypeBase* rtti = IReflectable::GetRttifromTypeIdInternal(newSubObject.GetTypeId());
-				if (rtti == nullptr)
+				if(rtti == nullptr)
 					continue;
 
 				RTTISubObjectWrapper<REFL_ORG> orgSubObject;
 				RTTISubObjectWrapperIterator<REFL_ORG> orgObjTypeIter = orgObj.GetSubObjectIterator();
-				while (orgObjTypeIter.MoveNext())
+				while(orgObjTypeIter.MoveNext())
 				{
 					RTTISubObjectWrapper<REFL_ORG> curSubObject = orgObjTypeIter.Value();
-					if (curSubObject.GetTypeId() == newSubObject.GetTypeId())
+					if(curSubObject.GetTypeId() == newSubObject.GetTypeId())
 					{
 						orgSubObject = curSubObject;
 						break;
@@ -831,17 +841,17 @@ namespace bs
 				RTTIFieldWrapperIterator<REFL_NEW> newObjFieldIter = newSubObject.GetFieldIter();
 
 				SerializedSubObject* diffSubObject = nullptr;
-				while (newObjFieldIter.MoveNext())
+				while(newObjFieldIter.MoveNext())
 				{
 					RTTIFieldWrapper<REFL_NEW> newEntry = newObjFieldIter.Value();
 
 					RTTIField* genericField = rtti->FindField(newEntry.GetId());
-					if (genericField == nullptr)
+					if(genericField == nullptr)
 						continue;
 
-					if (replicableOnly)
+					if(replicableOnly)
 					{
-						if (!genericField->Schema.Info.Flags.IsSet(RTTIFieldFlag::Replicate))
+						if(!genericField->Schema.Info.Flags.IsSet(RTTIFieldFlag::Replicate))
 							continue;
 					}
 
@@ -849,11 +859,11 @@ namespace bs
 
 					RTTIFieldWrapper<REFL_ORG> orgEntry;
 					bool hasOrgEntry = false;
-					while (orgObjFieldIter.MoveNext())
+					while(orgObjFieldIter.MoveNext())
 					{
 						RTTIFieldWrapper<REFL_ORG> curEntry = orgObjFieldIter.Value();
 
-						if (curEntry.GetId() == newEntry.GetId())
+						if(curEntry.GetId() == newEntry.GetId())
 						{
 							orgEntry = curEntry;
 							hasOrgEntry = true;
@@ -864,15 +874,15 @@ namespace bs
 
 					SPtr<SerializedInstance> modification;
 					bool hasModification = false;
-					if (genericField->Schema.IsArray)
+					if(genericField->Schema.IsArray)
 					{
 						SPtr<SerializedArray> serializedArray;
 
-						if (hasOrgEntry)
+						if(hasOrgEntry)
 						{
 							// Check for new or different array entries
 							u32 newNumArrayEntries = newEntry.GetArraySize();
-							for (u32 i = 0; i < newNumArrayEntries; i++)
+							for(u32 i = 0; i < newNumArrayEntries; i++)
 							{
 								RTTIFieldWrapper<REFL_NEW> newArrayEntry = newEntry.GetArrayElement(i);
 
@@ -880,11 +890,10 @@ namespace bs
 								bool hasArrayModification;
 
 								u32 orgNumArrayEntries = orgEntry.GetArraySize();
-								if (i < orgNumArrayEntries)
+								if(i < orgNumArrayEntries)
 								{
 									RTTIFieldWrapper<REFL_ORG> orgArrayEntry = orgEntry.GetArrayElement(i);
-									arrayModification = GenerateFieldDiff(rtti, genericField->Schema.Type,
-										orgArrayEntry, newArrayEntry, objectMap, replicableOnly);
+									arrayModification = GenerateFieldDiff(rtti, genericField->Schema.Type, orgArrayEntry, newArrayEntry, objectMap, replicableOnly);
 									hasArrayModification = arrayModification != nullptr;
 								}
 								else
@@ -893,9 +902,9 @@ namespace bs
 									hasArrayModification = true;
 								}
 
-								if (hasArrayModification)
+								if(hasArrayModification)
 								{
-									if (serializedArray == nullptr)
+									if(serializedArray == nullptr)
 									{
 										serializedArray = bs_shared_ptr_new<SerializedArray>();
 										serializedArray->NumElements = newEntry.GetArraySize();
@@ -908,9 +917,9 @@ namespace bs
 								}
 							}
 
-							if (orgEntry.GetArraySize() != newEntry.GetArraySize())
+							if(orgEntry.GetArraySize() != newEntry.GetArraySize())
 							{
-								if (serializedArray == nullptr)
+								if(serializedArray == nullptr)
 								{
 									serializedArray = bs_shared_ptr_new<SerializedArray>();
 									serializedArray->NumElements = newEntry.GetArraySize();
@@ -928,21 +937,20 @@ namespace bs
 					else
 					{
 						bool newEntryNull = false;
-						if (genericField->Schema.Type == SerializableFT_ReflectablePtr)
+						if(genericField->Schema.Type == SerializableFT_ReflectablePtr)
 							newEntryNull = newEntry.GetObject().GetObjectPtr() == nullptr;
 
-						if (hasOrgEntry)
+						if(hasOrgEntry)
 						{
 							bool orgEntryNull = false;
-							if (genericField->Schema.Type == SerializableFT_ReflectablePtr)
+							if(genericField->Schema.Type == SerializableFT_ReflectablePtr)
 								orgEntryNull = orgEntry.GetObject().GetObjectPtr() == nullptr;
 
 							if(!orgEntryNull)
 							{
 								if(!newEntryNull)
 								{
-									modification = GenerateFieldDiff(rtti, genericField->Schema.Type, orgEntry, newEntry,
-										objectMap, replicableOnly);
+									modification = GenerateFieldDiff(rtti, genericField->Schema.Type, orgEntry, newEntry, objectMap, replicableOnly);
 									hasModification = modification != nullptr;
 								}
 								else
@@ -962,21 +970,21 @@ namespace bs
 						}
 						else
 						{
-							if (!newEntryNull)
+							if(!newEntryNull)
 								modification = newEntry.Clone(flags, context, alloc);
 							else
 								modification = nullptr;
-							
+
 							hasModification = true;
 						}
 					}
 
-					if (hasModification)
+					if(hasModification)
 					{
-						if (output == nullptr)
+						if(output == nullptr)
 							output = bs_shared_ptr_new<SerializedObject>();
 
-						if (diffSubObject == nullptr)
+						if(diffSubObject == nullptr)
 						{
 							output->SubObjects.push_back(SerializedSubObject());
 							diffSubObject = &output->SubObjects.back();
@@ -993,17 +1001,15 @@ namespace bs
 
 			return output;
 		}
-	}
-	
-	SPtr<SerializedObject> IDiff::GenerateDiff(const SPtr<IReflectable>& orgObj,
-		const SPtr<IReflectable>& newObj, bool replicableOnly)
+	} // namespace impl
+
+	SPtr<SerializedObject> IDiff::GenerateDiff(const SPtr<IReflectable>& orgObj, const SPtr<IReflectable>& newObj, bool replicableOnly)
 	{
 		ObjectMap objectMap;
 		return GenerateDiffInternal(orgObj.get(), newObj.get(), objectMap, replicableOnly);
 	}
 
-	void IDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff,
-		SerializationContext* context)
+	void IDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff, SerializationContext* context)
 	{
 		FrameAlloc& alloc = gFrameAlloc();
 		alloc.MarkFrame();
@@ -1019,41 +1025,41 @@ namespace bs
 		Stack<IReflectable*> objectStack;
 		Vector<std::pair<RTTITypeBase*, IReflectable*>> rttiInstances;
 
-		for (auto& command : commands)
+		for(auto& command : commands)
 		{
 			bool isArray = (command.Type & Diff_ArrayFlag) != 0;
 			DiffCommandType type = (DiffCommandType)(command.Type & 0xF);
 
-			switch (type)
+			switch(type)
 			{
 			case Diff_ArraySize:
 				command.Field->SetArraySize(rttiInstance, destObject, command.ArraySize);
 				break;
 			case Diff_ObjectStart:
-			{
-				destObject = command.Object.get();
-				objectStack.push(destObject);
-
-				FrameStack<RTTITypeBase*> rttiTypes;
-				RTTITypeBase* curRtti = destObject->GetRtti();
-				while (curRtti != nullptr)
 				{
-					rttiTypes.push(curRtti);
-					curRtti = curRtti->GetBaseClass();
+					destObject = command.Object.get();
+					objectStack.push(destObject);
+
+					FrameStack<RTTITypeBase*> rttiTypes;
+					RTTITypeBase* curRtti = destObject->GetRtti();
+					while(curRtti != nullptr)
+					{
+						rttiTypes.push(curRtti);
+						curRtti = curRtti->GetBaseClass();
+					}
+
+					// Call base class first, followed by derived classes
+					while(!rttiTypes.empty())
+					{
+						RTTITypeBase* curRtti = rttiTypes.top();
+						RTTITypeBase* rttiInstance = curRtti->CloneInternal(alloc);
+
+						rttiInstances.push_back(std::make_pair(rttiInstance, destObject));
+						rttiInstance->OnDeserializationStarted(destObject, context);
+
+						rttiTypes.pop();
+					}
 				}
-
-				// Call base class first, followed by derived classes
-				while(!rttiTypes.empty())
-				{
-					RTTITypeBase* curRtti = rttiTypes.top();
-					RTTITypeBase* rttiInstance = curRtti->CloneInternal(alloc);
-
-					rttiInstances.push_back(std::make_pair(rttiInstance, destObject));
-					rttiInstance->OnDeserializationStarted(destObject, context);
-
-					rttiTypes.pop();
-				}
-			}
 				break;
 			case Diff_SubObjectStart:
 				{
@@ -1072,55 +1078,55 @@ namespace bs
 				}
 				break;
 			case Diff_ObjectEnd:
-			{
-				while (!rttiInstances.empty())
 				{
-					if(rttiInstances.back().second != destObject)
-						break;
+					while(!rttiInstances.empty())
+					{
+						if(rttiInstances.back().second != destObject)
+							break;
 
-					RTTITypeBase* rttiInstance = rttiInstances.back().first;
+						RTTITypeBase* rttiInstance = rttiInstances.back().first;
 
-					rttiInstance->OnDeserializationEnded(destObject, context);
-					alloc.Destruct(rttiInstance);
+						rttiInstance->OnDeserializationEnded(destObject, context);
+						alloc.Destruct(rttiInstance);
 
-					rttiInstances.erase(rttiInstances.end() - 1);
+						rttiInstances.erase(rttiInstances.end() - 1);
+					}
+
+					objectStack.pop();
+
+					if(!objectStack.empty())
+						destObject = objectStack.top();
+					else
+						destObject = nullptr;
 				}
-
-				objectStack.pop();
-
-				if (!objectStack.empty())
-					destObject = objectStack.top();
-				else
-					destObject = nullptr;
-			}
 				break;
 			default:
 				break;
 			}
 
-			if (isArray)
+			if(isArray)
 			{
-				switch (type)
+				switch(type)
 				{
 				case Diff_ReflectablePtr:
-				{
-					auto* field = static_cast<RTTIReflectablePtrFieldBase*>(command.Field);
-					field->SetArrayValue(rttiInstance, destObject, command.ArrayIdx, command.Object);
-				}
+					{
+						auto* field = static_cast<RTTIReflectablePtrFieldBase*>(command.Field);
+						field->SetArrayValue(rttiInstance, destObject, command.ArrayIdx, command.Object);
+					}
 					break;
 				case Diff_Reflectable:
-				{
-					auto* field = static_cast<RTTIReflectableFieldBase*>(command.Field);
-					field->SetArrayValue(rttiInstance, destObject, command.ArrayIdx, *command.Object);
-				}
+					{
+						auto* field = static_cast<RTTIReflectableFieldBase*>(command.Field);
+						field->SetArrayValue(rttiInstance, destObject, command.ArrayIdx, *command.Object);
+					}
 					break;
 				case Diff_Plain:
-				{
-					auto* field = static_cast<RTTIPlainFieldBase*>(command.Field);
+					{
+						auto* field = static_cast<RTTIPlainFieldBase*>(command.Field);
 
-					Bitstream tempStream(command.Value, command.Size);
-					field->ArrayElemFromBuffer(rttiInstance, destObject, command.ArrayIdx, tempStream);
-				}
+						Bitstream tempStream(command.Value, command.Size);
+						field->ArrayElemFromBuffer(rttiInstance, destObject, command.ArrayIdx, tempStream);
+					}
 					break;
 				default:
 					break;
@@ -1128,33 +1134,33 @@ namespace bs
 			}
 			else
 			{
-				switch (type)
+				switch(type)
 				{
 				case Diff_ReflectablePtr:
-				{
-					auto* field = static_cast<RTTIReflectablePtrFieldBase*>(command.Field);
-					field->SetValue(rttiInstance, destObject, command.Object);
-				}
+					{
+						auto* field = static_cast<RTTIReflectablePtrFieldBase*>(command.Field);
+						field->SetValue(rttiInstance, destObject, command.Object);
+					}
 					break;
 				case Diff_Reflectable:
-				{
-					auto* field = static_cast<RTTIReflectableFieldBase*>(command.Field);
-					field->SetValue(rttiInstance, destObject, *command.Object);
-				}
+					{
+						auto* field = static_cast<RTTIReflectableFieldBase*>(command.Field);
+						field->SetValue(rttiInstance, destObject, *command.Object);
+					}
 					break;
 				case Diff_Plain:
-				{
-					auto* field = static_cast<RTTIPlainFieldBase*>(command.Field);
+					{
+						auto* field = static_cast<RTTIPlainFieldBase*>(command.Field);
 
-					Bitstream tempStream(command.Value, command.Size);
-					field->FromBuffer(rttiInstance, destObject, tempStream);
-				}
+						Bitstream tempStream(command.Value, command.Size);
+						field->FromBuffer(rttiInstance, destObject, tempStream);
+					}
 					break;
 				case Diff_DataBlock:
-				{
-					auto* field = static_cast<RTTIManagedDataBlockFieldBase*>(command.Field);
-					field->SetValue(rttiInstance, destObject, command.StreamValue, command.Size);
-				}
+					{
+						auto* field = static_cast<RTTIManagedDataBlockFieldBase*>(command.Field);
+						field->SetValue(rttiInstance, destObject, command.StreamValue, command.Size);
+					}
 					break;
 				default:
 					break;
@@ -1165,20 +1171,18 @@ namespace bs
 		alloc.Clear();
 	}
 
-	void IDiff::ApplyDiff(RTTITypeBase* rtti, const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff,
-		FrameAlloc& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context)
+	void IDiff::ApplyDiff(RTTITypeBase* rtti, const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff, FrameAlloc& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context)
 	{
 		IDiff& diffHandler = rtti->GetDiffHandler();
 		diffHandler.ApplyDiff(object, diff, alloc, objectMap, diffCommands, context);
 	}
 
-	SPtr<SerializedObject> BinaryDiff::GenerateDiffInternal(IReflectable* orgObj,
-		IReflectable* newObj, ObjectMap& objectMap, bool replicableOnly)
+	SPtr<SerializedObject> BinaryDiff::GenerateDiffInternal(IReflectable* orgObj, IReflectable* newObj, ObjectMap& objectMap, bool replicableOnly)
 	{
 		if(orgObj->GetTypeId() == TID_SerializedObject)
 		{
 			impl::RTTIObjectWrapper<false> orgObjWrapper(static_cast<SerializedObject*>(orgObj));
-			
+
 			if(newObj->GetTypeId() == TID_SerializedObject)
 			{
 				impl::RTTIObjectWrapper<false> newObjWrapper(static_cast<SerializedObject*>(newObj));
@@ -1191,7 +1195,7 @@ namespace bs
 		else
 		{
 			impl::RTTIObjectWrapper<true> orgObjWrapper(orgObj, orgObj->GetRtti());
-			
+
 			if(newObj->GetTypeId() == TID_SerializedObject)
 			{
 				impl::RTTIObjectWrapper<false> newObjWrapper(static_cast<SerializedObject*>(newObj));
@@ -1203,23 +1207,22 @@ namespace bs
 		}
 	}
 
-	void BinaryDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff,
-		FrameAlloc& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context)
+	void BinaryDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff, FrameAlloc& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context)
 	{
-		if (object == nullptr || diff == nullptr || object->GetTypeId() != diff->GetRootTypeId())
+		if(object == nullptr || diff == nullptr || object->GetTypeId() != diff->GetRootTypeId())
 			return;
 
 		// Generate a list of commands per sub-object
 		FrameVector<FrameVector<DiffCommand>> commandsPerSubObj;
 
 		Stack<RTTITypeBase*> rttiInstances;
-		for (auto& subObject : diff->SubObjects)
+		for(auto& subObject : diff->SubObjects)
 		{
 			RTTITypeBase* rtti = IReflectable::GetRttifromTypeIdInternal(subObject.TypeId);
-			if (rtti == nullptr)
+			if(rtti == nullptr)
 				continue;
 
-			if (!object->IsDerivedFrom(rtti))
+			if(!object->IsDerivedFrom(rtti))
 				continue;
 
 			RTTITypeBase* rttiInstance = rtti->CloneInternal(alloc);
@@ -1235,15 +1238,15 @@ namespace bs
 
 			commands.push_back(subObjStartCommand);
 
-			for (auto& diffEntry : subObject.Entries)
+			for(auto& diffEntry : subObject.Entries)
 			{
 				RTTIField* genericField = rtti->FindField(diffEntry.first);
-				if (genericField == nullptr)
+				if(genericField == nullptr)
 					continue;
 
 				SPtr<SerializedInstance> diffData = diffEntry.second.Serialized;
 
-				if (genericField->Schema.IsArray)
+				if(genericField->Schema.IsArray)
 				{
 					SPtr<SerializedArray> diffArray = std::static_pointer_cast<SerializedArray>(diffData);
 
@@ -1256,139 +1259,135 @@ namespace bs
 
 					commands.push_back(arraySizeCommand);
 
-					switch (genericField->Schema.Type)
+					switch(genericField->Schema.Type)
 					{
 					case SerializableFT_ReflectablePtr:
-					{
-						auto* field = static_cast<RTTIReflectablePtrFieldBase*>(genericField);
-
-						u32 orgArraySize = genericField->GetArraySize(rttiInstance, object.get());
-						for (auto& arrayElem : diffArray->Entries)
 						{
-							SPtr<SerializedObject> arrayElemData = std::static_pointer_cast<SerializedObject>(arrayElem.second.Serialized);
+							auto* field = static_cast<RTTIReflectablePtrFieldBase*>(genericField);
 
-							DiffCommand command;
-							command.Field = genericField;
-							command.Type = Diff_ReflectablePtr | Diff_ArrayFlag;
-							command.ArrayIdx = arrayElem.first;
-
-							if (arrayElemData == nullptr)
+							u32 orgArraySize = genericField->GetArraySize(rttiInstance, object.get());
+							for(auto& arrayElem : diffArray->Entries)
 							{
-								command.Object = nullptr;
-								commands.push_back(command);
-							}
-							else
-							{
-								bool needsNewObject = arrayElem.first >= orgArraySize;
+								SPtr<SerializedObject> arrayElemData = std::static_pointer_cast<SerializedObject>(arrayElem.second.Serialized);
 
-								if (!needsNewObject)
+								DiffCommand command;
+								command.Field = genericField;
+								command.Type = Diff_ReflectablePtr | Diff_ArrayFlag;
+								command.ArrayIdx = arrayElem.first;
+
+								if(arrayElemData == nullptr)
 								{
-									SPtr<IReflectable> childObj = field->GetArrayValue(rttiInstance, object.get(), arrayElem.first);
-									if (childObj != nullptr)
-									{
-										IDiff::ApplyDiff(childObj->GetRtti(), childObj, arrayElemData, alloc, objectMap,
-											commands, context);
-										command.Object = childObj;
-									}
-									else
-										needsNewObject = true;
+									command.Object = nullptr;
+									commands.push_back(command);
 								}
-
-								if (needsNewObject)
+								else
 								{
-									RTTITypeBase* childRtti = IReflectable::GetRttifromTypeIdInternal(arrayElemData->GetRootTypeId());
-									if (childRtti != nullptr)
-									{
-										auto findObj = objectMap.find(arrayElemData);
-										if (findObj == objectMap.end())
-										{
-											SPtr<IReflectable> newObject = childRtti->NewRttiObject();
-											findObj = objectMap.insert(std::make_pair(arrayElemData, newObject)).first;
-										}
+									bool needsNewObject = arrayElem.first >= orgArraySize;
 
-										IDiff::ApplyDiff(childRtti, findObj->second, arrayElemData, alloc, objectMap,
-											commands, context);
-										command.Object = findObj->second;
-										commands.push_back(command);
-									}
-									else
+									if(!needsNewObject)
 									{
-										command.Object = nullptr;
-										commands.push_back(command);
+										SPtr<IReflectable> childObj = field->GetArrayValue(rttiInstance, object.get(), arrayElem.first);
+										if(childObj != nullptr)
+										{
+											IDiff::ApplyDiff(childObj->GetRtti(), childObj, arrayElemData, alloc, objectMap, commands, context);
+											command.Object = childObj;
+										}
+										else
+											needsNewObject = true;
+									}
+
+									if(needsNewObject)
+									{
+										RTTITypeBase* childRtti = IReflectable::GetRttifromTypeIdInternal(arrayElemData->GetRootTypeId());
+										if(childRtti != nullptr)
+										{
+											auto findObj = objectMap.find(arrayElemData);
+											if(findObj == objectMap.end())
+											{
+												SPtr<IReflectable> newObject = childRtti->NewRttiObject();
+												findObj = objectMap.insert(std::make_pair(arrayElemData, newObject)).first;
+											}
+
+											IDiff::ApplyDiff(childRtti, findObj->second, arrayElemData, alloc, objectMap, commands, context);
+											command.Object = findObj->second;
+											commands.push_back(command);
+										}
+										else
+										{
+											command.Object = nullptr;
+											commands.push_back(command);
+										}
 									}
 								}
 							}
 						}
-					}
 						break;
 					case SerializableFT_Reflectable:
-					{
-						auto* field = static_cast<RTTIReflectableFieldBase*>(genericField);
-
-						u32 orgArraySize = genericField->GetArraySize(rttiInstance, object.get());
-
-						Vector<SPtr<IReflectable>> newArrayElements(numArrayElements);
-						u32 minArrayLength = std::min(orgArraySize, numArrayElements);
-						for (u32 i = 0; i < minArrayLength; i++)
 						{
-							IReflectable& childObj = field->GetArrayValue(rttiInstance, object.get(), i);
-							newArrayElements[i] = BinaryCloner::Clone(&childObj, true);
-						}
+							auto* field = static_cast<RTTIReflectableFieldBase*>(genericField);
 
-						for (auto& arrayElem : diffArray->Entries)
-						{
-							SPtr<SerializedObject> arrayElemData = std::static_pointer_cast<SerializedObject>(arrayElem.second.Serialized);
+							u32 orgArraySize = genericField->GetArraySize(rttiInstance, object.get());
 
-							if (arrayElem.first < orgArraySize)
+							Vector<SPtr<IReflectable>> newArrayElements(numArrayElements);
+							u32 minArrayLength = std::min(orgArraySize, numArrayElements);
+							for(u32 i = 0; i < minArrayLength; i++)
 							{
-								SPtr<IReflectable> childObj = newArrayElements[arrayElem.first];
-								IDiff::ApplyDiff(childObj->GetRtti(), childObj, arrayElemData, alloc, objectMap,
-									commands, context);
+								IReflectable& childObj = field->GetArrayValue(rttiInstance, object.get(), i);
+								newArrayElements[i] = BinaryCloner::Clone(&childObj, true);
 							}
-							else
-							{
-								RTTITypeBase* childRtti = IReflectable::GetRttifromTypeIdInternal(arrayElemData->GetRootTypeId());
-								if (childRtti != nullptr)
-								{
-									SPtr<IReflectable> newObject = childRtti->NewRttiObject();
-									IDiff::ApplyDiff(childRtti, newObject, arrayElemData, alloc, objectMap, commands,
-										context);
 
-									newArrayElements[arrayElem.first] = newObject;
+							for(auto& arrayElem : diffArray->Entries)
+							{
+								SPtr<SerializedObject> arrayElemData = std::static_pointer_cast<SerializedObject>(arrayElem.second.Serialized);
+
+								if(arrayElem.first < orgArraySize)
+								{
+									SPtr<IReflectable> childObj = newArrayElements[arrayElem.first];
+									IDiff::ApplyDiff(childObj->GetRtti(), childObj, arrayElemData, alloc, objectMap, commands, context);
+								}
+								else
+								{
+									RTTITypeBase* childRtti = IReflectable::GetRttifromTypeIdInternal(arrayElemData->GetRootTypeId());
+									if(childRtti != nullptr)
+									{
+										SPtr<IReflectable> newObject = childRtti->NewRttiObject();
+										IDiff::ApplyDiff(childRtti, newObject, arrayElemData, alloc, objectMap, commands, context);
+
+										newArrayElements[arrayElem.first] = newObject;
+									}
 								}
 							}
-						}
 
-						for (u32 i = 0; i < numArrayElements; i++)
-						{
-							DiffCommand command;
-							command.Field = genericField;
-							command.Type = Diff_Reflectable | Diff_ArrayFlag;
-							command.ArrayIdx = i;
-							command.Object = newArrayElements[i];
-
-							commands.push_back(command);
-						}
-					}
-						break;
-					case SerializableFT_Plain:
-					{
-						for (auto& arrayElem : diffArray->Entries)
-						{
-							SPtr<SerializedField> fieldData = std::static_pointer_cast<SerializedField>(arrayElem.second.Serialized);
-							if (fieldData != nullptr)
+							for(u32 i = 0; i < numArrayElements; i++)
 							{
 								DiffCommand command;
 								command.Field = genericField;
-								command.Type = Diff_Plain | Diff_ArrayFlag;
-								command.Value = fieldData->Value;
-								command.Size = fieldData->Size;
-								command.ArrayIdx = arrayElem.first;
+								command.Type = Diff_Reflectable | Diff_ArrayFlag;
+								command.ArrayIdx = i;
+								command.Object = newArrayElements[i];
 
 								commands.push_back(command);
 							}
 						}
-					}
+						break;
+					case SerializableFT_Plain:
+						{
+							for(auto& arrayElem : diffArray->Entries)
+							{
+								SPtr<SerializedField> fieldData = std::static_pointer_cast<SerializedField>(arrayElem.second.Serialized);
+								if(fieldData != nullptr)
+								{
+									DiffCommand command;
+									command.Field = genericField;
+									command.Type = Diff_Plain | Diff_ArrayFlag;
+									command.Value = fieldData->Value;
+									command.Size = fieldData->Size;
+									command.ArrayIdx = arrayElem.first;
+
+									commands.push_back(command);
+								}
+							}
+						}
 						break;
 					default:
 						break;
@@ -1396,102 +1395,99 @@ namespace bs
 				}
 				else
 				{
-					switch (genericField->Schema.Type)
+					switch(genericField->Schema.Type)
 					{
 					case SerializableFT_ReflectablePtr:
-					{
-						auto* field = static_cast<RTTIReflectablePtrFieldBase*>(genericField);
-						SPtr<SerializedObject> fieldObjectData = std::static_pointer_cast<SerializedObject>(diffData);
-
-						DiffCommand command;
-						command.Field = genericField;
-						command.Type = Diff_ReflectablePtr;
-
-						if (fieldObjectData == nullptr)
-							command.Object = nullptr;
-						else
 						{
-							SPtr<IReflectable> childObj = field->GetValue(rttiInstance, object.get());
-							if (childObj == nullptr)
-							{
-								RTTITypeBase* childRtti = IReflectable::GetRttifromTypeIdInternal(fieldObjectData->GetRootTypeId());
-								if (childRtti != nullptr)
-								{
-									auto findObj = objectMap.find(fieldObjectData);
-									if (findObj == objectMap.end())
-									{
-										SPtr<IReflectable> newObject = childRtti->NewRttiObject();
-										findObj = objectMap.insert(std::make_pair(fieldObjectData, newObject)).first;
-									}
+							auto* field = static_cast<RTTIReflectablePtrFieldBase*>(genericField);
+							SPtr<SerializedObject> fieldObjectData = std::static_pointer_cast<SerializedObject>(diffData);
 
-									IDiff::ApplyDiff(childRtti, findObj->second, fieldObjectData, alloc, objectMap,
-										commands, context);
-									command.Object = findObj->second;
+							DiffCommand command;
+							command.Field = genericField;
+							command.Type = Diff_ReflectablePtr;
+
+							if(fieldObjectData == nullptr)
+								command.Object = nullptr;
+							else
+							{
+								SPtr<IReflectable> childObj = field->GetValue(rttiInstance, object.get());
+								if(childObj == nullptr)
+								{
+									RTTITypeBase* childRtti = IReflectable::GetRttifromTypeIdInternal(fieldObjectData->GetRootTypeId());
+									if(childRtti != nullptr)
+									{
+										auto findObj = objectMap.find(fieldObjectData);
+										if(findObj == objectMap.end())
+										{
+											SPtr<IReflectable> newObject = childRtti->NewRttiObject();
+											findObj = objectMap.insert(std::make_pair(fieldObjectData, newObject)).first;
+										}
+
+										IDiff::ApplyDiff(childRtti, findObj->second, fieldObjectData, alloc, objectMap, commands, context);
+										command.Object = findObj->second;
+									}
+									else
+									{
+										command.Object = nullptr;
+									}
 								}
 								else
 								{
-									command.Object = nullptr;
+									IDiff::ApplyDiff(childObj->GetRtti(), childObj, fieldObjectData, alloc, objectMap, commands, context);
+									command.Object = childObj;
 								}
 							}
-							else
-							{
-								IDiff::ApplyDiff(childObj->GetRtti(), childObj, fieldObjectData, alloc, objectMap,
-									commands, context);
-								command.Object = childObj;
-							}
-						}
 
-						commands.push_back(command);
-					}
+							commands.push_back(command);
+						}
 						break;
 					case SerializableFT_Reflectable:
-					{
-						auto* field = static_cast<RTTIReflectableFieldBase*>(genericField);
-						SPtr<SerializedObject> fieldObjectData = std::static_pointer_cast<SerializedObject>(diffData);
-
-						IReflectable& childObj = field->GetValue(rttiInstance, object.get());
-						SPtr<IReflectable> clonedObj = BinaryCloner::Clone(&childObj, true);
-
-						IDiff::ApplyDiff(clonedObj->GetRtti(), clonedObj, fieldObjectData, alloc, objectMap, commands,
-							context);
-
-						DiffCommand command;
-						command.Field = genericField;
-						command.Type = Diff_Reflectable;
-						command.Object = clonedObj;
-
-						commands.push_back(command);
-					}
-						break;
-					case SerializableFT_Plain:
-					{
-						SPtr<SerializedField> diffFieldData = std::static_pointer_cast<SerializedField>(diffData);
-
-						if (diffFieldData->Size > 0)
 						{
+							auto* field = static_cast<RTTIReflectableFieldBase*>(genericField);
+							SPtr<SerializedObject> fieldObjectData = std::static_pointer_cast<SerializedObject>(diffData);
+
+							IReflectable& childObj = field->GetValue(rttiInstance, object.get());
+							SPtr<IReflectable> clonedObj = BinaryCloner::Clone(&childObj, true);
+
+							IDiff::ApplyDiff(clonedObj->GetRtti(), clonedObj, fieldObjectData, alloc, objectMap, commands, context);
+
 							DiffCommand command;
 							command.Field = genericField;
-							command.Type = Diff_Plain;
-							command.Value = diffFieldData->Value;
+							command.Type = Diff_Reflectable;
+							command.Object = clonedObj;
+
+							commands.push_back(command);
+						}
+						break;
+					case SerializableFT_Plain:
+						{
+							SPtr<SerializedField> diffFieldData = std::static_pointer_cast<SerializedField>(diffData);
+
+							if(diffFieldData->Size > 0)
+							{
+								DiffCommand command;
+								command.Field = genericField;
+								command.Type = Diff_Plain;
+								command.Value = diffFieldData->Value;
+								command.Size = diffFieldData->Size;
+
+								commands.push_back(command);
+							}
+						}
+						break;
+					case SerializableFT_DataBlock:
+						{
+							SPtr<SerializedDataBlock> diffFieldData = std::static_pointer_cast<SerializedDataBlock>(diffData);
+
+							DiffCommand command;
+							command.Field = genericField;
+							command.Type = Diff_DataBlock;
+							command.StreamValue = diffFieldData->Stream;
+							command.Value = nullptr;
 							command.Size = diffFieldData->Size;
 
 							commands.push_back(command);
 						}
-					}
-						break;
-					case SerializableFT_DataBlock:
-					{
-						SPtr<SerializedDataBlock> diffFieldData = std::static_pointer_cast<SerializedDataBlock>(diffData);
-
-						DiffCommand command;
-						command.Field = genericField;
-						command.Type = Diff_DataBlock;
-						command.StreamValue = diffFieldData->Stream;
-						command.Value = nullptr;
-						command.Size = diffFieldData->Size;
-
-						commands.push_back(command);
-					}
 						break;
 					}
 				}
@@ -1518,7 +1514,7 @@ namespace bs
 
 		diffCommands.push_back(objEndCommand);
 
-		while (!rttiInstances.empty())
+		while(!rttiInstances.empty())
 		{
 			RTTITypeBase* rttiInstance = rttiInstances.top();
 			rttiInstance->OnSerializationEnded(object.get(), nullptr);
@@ -1527,4 +1523,4 @@ namespace bs
 			rttiInstances.pop();
 		}
 	}
-}
+} // namespace bs

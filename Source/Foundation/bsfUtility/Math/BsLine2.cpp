@@ -12,7 +12,7 @@ namespace bs
 		perpDir = Vector2(perpDir.Y, -perpDir.X);
 
 		float dot = GetDirection().Dot(perpDir);
-		if (std::abs(dot) > 1.0e-4f) // Not parallel
+		if(std::abs(dot) > 1.0e-4f) // Not parallel
 		{
 			float distance = diff.Dot(perpDir) / dot;
 
@@ -21,4 +21,4 @@ namespace bs
 		else // Parallel
 			return std::make_pair(true, 0.0f);
 	}
-}
+} // namespace bs

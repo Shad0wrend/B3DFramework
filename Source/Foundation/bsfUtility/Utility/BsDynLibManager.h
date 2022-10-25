@@ -38,4 +38,4 @@ namespace bs
 	BS_UTILITY_EXPORT DynLibManager& gDynLibManager();
 
 	/** @} */
-}
+} // namespace bs

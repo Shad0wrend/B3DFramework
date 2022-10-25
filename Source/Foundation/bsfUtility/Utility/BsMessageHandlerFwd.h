@@ -14,7 +14,7 @@ namespace bs
 	/**
 	 * Identifier for message used with the global messaging system.
 	 *
-	 * @note	
+	 * @note
 	 * Primary purpose of this class is to avoid expensive string compare, and instead use a unique message identifier for
 	 * compare. Generally you want to create one of these using the message name, and then store it for later use.
 	 * @note
@@ -26,10 +26,11 @@ namespace bs
 		MessageId() = default;
 		MessageId(const String& name);
 
-		bool operator== (const MessageId& rhs) const
+		bool operator==(const MessageId& rhs) const
 		{
 			return (mMsgIdentifier == rhs.mMsgIdentifier);
 		}
+
 	private:
 		friend class MessageHandler;
 
@@ -66,4 +67,4 @@ namespace bs
 	class MessageHandler;
 
 	/** @} */
-}
+} // namespace bs

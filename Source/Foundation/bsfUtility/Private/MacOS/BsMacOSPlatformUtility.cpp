@@ -109,5 +109,4 @@ namespace bs
 
 		return output;
 	}
-}
-
+} // namespace bs

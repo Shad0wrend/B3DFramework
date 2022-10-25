@@ -57,7 +57,7 @@ namespace bs
 	 * Encodes/decodes all the fields of the provided object into/from a binary format. Fields are encoded using their
 	 * unique IDs. Encoded data will remain compatible for decoding even if you modify the encoded class, as long as you
 	 * assign new unique field IDs to added/modified fields.
-	 * 			
+	 *
 	 * Like for any serializable class, fields are defined in RTTIType that each IReflectable class must be able to return.
 	 *
 	 * Any data the object or its children are pointing to will also be serialized (unless the pointer isn't registered in
@@ -70,7 +70,7 @@ namespace bs
 
 		/**
 		 * Encodes all serializable fields provided by @p object into a binary format.
-		 * 
+		 *
 		 * @param[in]	object					Object to encode into binary format.
 		 * @param[in]	stream					Stream into which to output the encoded data. The stream must own its memory
 		 *										buffer so it may grow as required during encoding, or your must guarantee
@@ -81,8 +81,7 @@ namespace bs
 		 *										maintaining state or sharing information between objects during
 		 *										serialization.
 		 */
-		void Encode(IReflectable* object, const SPtr<DataStream>& stream,
-			BinarySerializerFlags flags = BinarySerializerFlag::None, SerializationContext* context = nullptr);
+		void Encode(IReflectable* object, const SPtr<DataStream>& stream, BinarySerializerFlags flags = BinarySerializerFlag::None, SerializationContext* context = nullptr);
 
 		/**
 		 * Decodes an object from binary data.
@@ -96,14 +95,13 @@ namespace bs
 		 *							of the operation. The reported value is in range [0, 1].
 		 * @param[in]	schema		RTTI schema that contains information about types as they were when the data was
 		 *							originally serialized. Schema is only used (and required) if BinarySerializerFlag::NoMeta
-		 *							is set,	otherwise this information is read directly	from the encoded data. 
+		 *							is set,	otherwise this information is read directly	from the encoded data.
 		 *
 		 * @note
 		 * Child elements are guaranteed to be fully deserialized before their parents, except for fields marked with WeakRef flag.
 		 */
-		SPtr<IReflectable> Decode(const SPtr<DataStream>& stream, u32 dataLength,
-			BinarySerializerFlags flags = BinarySerializerFlag::None, SerializationContext* context = nullptr,
-			std::function<void(float)> progress = nullptr, SPtr<RTTISchema> schema = nullptr);
+		SPtr<IReflectable> Decode(const SPtr<DataStream>& stream, u32 dataLength, BinarySerializerFlags flags = BinarySerializerFlag::None, SerializationContext* context = nullptr, std::function<void(float)> progress = nullptr, SPtr<RTTISchema> schema = nullptr);
+
 	private:
 		/** Determines how many bytes need to be read before the progress report callback is triggered. */
 		static constexpr u32 REPORT_AFTER_BYTES = 32768;
@@ -126,8 +124,8 @@ namespace bs
 		struct ObjectToEncode
 		{
 			ObjectToEncode(u32 objectId, SPtr<IReflectable> object)
-				:ObjectId(objectId), Object(std::move(object))
-			{ }
+				: ObjectId(objectId), Object(std::move(object))
+			{}
 
 			u32 ObjectId;
 			SPtr<IReflectable> Object;
@@ -136,8 +134,8 @@ namespace bs
 		struct ObjectToDecode
 		{
 			ObjectToDecode(SPtr<IReflectable> object = nullptr, uint64_t offset = 0, SPtr<RTTISchema> schema = nullptr)
-				:Object(std::move(object)), Offset(offset), Schema(std::move(schema))
-			{ }
+				: Object(std::move(object)), Offset(offset), Schema(std::move(schema))
+			{}
 
 			SPtr<IReflectable> Object;
 			bool IsDecoded = false;
@@ -150,8 +148,7 @@ namespace bs
 		bool EncodeEntry(IReflectable* object, u32 objectId, BufferedBitstreamWriter& stream, BinarySerializerFlags flags);
 
 		/**	Decodes a single IReflectable object. */
-		bool DecodeEntry(BufferedBitstreamReader& stream, size_t dataLength, BinarySerializerFlags flags, const SPtr<IReflectable>& output,
-			SPtr<RTTISchema> schema);
+		bool DecodeEntry(BufferedBitstreamReader& stream, size_t dataLength, BinarySerializerFlags flags, const SPtr<IReflectable>& output, SPtr<RTTISchema> schema);
 
 		/**	Helper method for encoding a complex object and writing its data to a stream. */
 		bool ComplexTypeToStream(IReflectable* object, BufferedBitstreamWriter& stream, BinarySerializerFlags flags);
@@ -170,7 +167,7 @@ namespace bs
 		 * using the correct format. Returns number of bits read.
 		 */
 		static u32 ReadObjectMetaData(BufferedBitstreamReader& stream, BinarySerializerFlags flags, u32& objId, u32& objTypeId, bool& isBaseType);
-		
+
 		/** Encodes data required for representing a serialized field, into 4 bytes. */
 		static u32 EncodeFieldMetaData(const RTTIFieldSchema& fieldSchema, bool terminator);
 
@@ -182,7 +179,7 @@ namespace bs
 
 		/** Skips the builtin type at the current location in the stream. */
 		static void SkipBuiltinType(u32 fieldType, BufferedBitstreamReader& stream, bool compressed);
-		
+
 		/** Returns true if the data in the provided byte represents a field terminator as encoded with encodeFieldTerminator(). */
 		static bool IsFieldTerminator(u8 data);
 
@@ -203,13 +200,13 @@ namespace bs
 		static bool IsObjectMetaData(u32 encodedData);
 
 		/**
-		 * Encodes an object identifier and meta-data into 4 bytes. 
+		 * Encodes an object identifier and meta-data into 4 bytes.
 		 *
 		 * @param[in]	objId	   	Unique ID of the object instance. This can be a maximum of 30 bits, as two bits are reserved.
 		 * @param[in]	isBaseClass	true if this object is base class (that is, just a part of a larger object).
 		 * @return		Encoded object id and other meta-data.
 		 */
-		static u32 EncodeObjectMetaData(u32 objId,  bool isBaseClass);
+		static u32 EncodeObjectMetaData(u32 objId, bool isBaseClass);
 
 		/** Decode meta field that was encoded using encodeObjectMetaData(u32, bool). */
 		static void DecodeObjectMetaData(u32 encodedData, u32& objId, bool& isBaseClass);
@@ -235,4 +232,4 @@ namespace bs
 	//    the buffer internally.
 
 	/** @} */
-}
+} // namespace bs

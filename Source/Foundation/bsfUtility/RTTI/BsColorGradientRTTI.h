@@ -13,19 +13,28 @@ namespace bs
 {
 	/** @cond RTTI */
 	/** @addtogroup RTTI-Impl-Utility
-	*  @{
-	*/
+	 *  @{
+	 */
 
-	template<> struct RTTIPlainType<ColorGradient>
+	template <>
+	struct RTTIPlainType<ColorGradient>
 	{
-		enum { id = TID_ColorGradient }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_ColorGradient
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		static BitLength ToMemory(const ColorGradient& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr uint32_t VERSION = 0;
 
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
 
@@ -38,8 +47,7 @@ namespace bs
 				size += rtti_write(data.mNumKeys, stream);
 				size += rtti_write(data.mDuration, stream);
 
-				return size;
-			});
+				return size; });
 		}
 
 		static BitLength FromMemory(ColorGradient& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -53,7 +61,7 @@ namespace bs
 			switch(version)
 			{
 			case 0:
-				for (uint32_t i = 0; i < ColorGradient::MAX_KEYS; i++)
+				for(uint32_t i = 0; i < ColorGradient::MAX_KEYS; i++)
 				{
 					rtti_read(data.mColors[i], stream);
 					rtti_read(data.mTimes[i], stream);
@@ -82,16 +90,25 @@ namespace bs
 		}
 	};
 
-	template<> struct RTTIPlainType<ColorGradientHDR>
+	template <>
+	struct RTTIPlainType<ColorGradientHDR>
 	{
-		enum { id = TID_ColorGradientHDR }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_ColorGradientHDR
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		static BitLength ToMemory(const ColorGradientHDR& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr uint32_t VERSION = 0;
 
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
 
@@ -104,8 +121,7 @@ namespace bs
 				size += rtti_write(data.mNumKeys, stream);
 				size += rtti_write(data.mDuration, stream);
 
-				return size;
-			});
+				return size; });
 		}
 
 		static BitLength FromMemory(ColorGradientHDR& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -119,7 +135,7 @@ namespace bs
 			switch(version)
 			{
 			case 0:
-				for (uint32_t i = 0; i < ColorGradientHDR::MAX_KEYS; i++)
+				for(uint32_t i = 0; i < ColorGradientHDR::MAX_KEYS; i++)
 				{
 					rtti_read(data.mColors[i], stream);
 					rtti_read(data.mTimes[i], stream);
@@ -150,4 +166,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

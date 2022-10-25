@@ -41,4 +41,4 @@ namespace bs
 
 		return duration_cast<milliseconds>(startTimeNs).count();
 	}
-}
+} // namespace bs

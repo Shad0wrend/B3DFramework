@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	 /** Class representing a 4x4 matrix, in row major format. */
+	/** Class representing a 4x4 matrix, in row major format. */
 	class BS_UTILITY_EXPORT Matrix4
 	{
 	public:
@@ -24,37 +24,37 @@ namespace bs
 		constexpr Matrix4& operator=(const Matrix4&) = default;
 
 		constexpr Matrix4(BS_ZERO)
-			:m{ {0.0f, 0.0f, 0.0f, 0.0f},
-				{0.0f, 0.0f, 0.0f, 0.0f},
-				{0.0f, 0.0f, 0.0f, 0.0f},
-				{0.0f, 0.0f, 0.0f, 0.0f} }
-		{ }
+			: m{ { 0.0f, 0.0f, 0.0f, 0.0f },
+				 { 0.0f, 0.0f, 0.0f, 0.0f },
+				 { 0.0f, 0.0f, 0.0f, 0.0f },
+				 { 0.0f, 0.0f, 0.0f, 0.0f } }
+		{}
 
 		constexpr Matrix4(BS_IDENTITY)
-			:m{ {1.0f, 0.0f, 0.0f, 0.0f},
-				{0.0f, 1.0f, 0.0f, 0.0f},
-				{0.0f, 0.0f, 1.0f, 0.0f},
-				{0.0f, 0.0f, 0.0f, 1.0f} }
-		{ }
+			: m{ { 1.0f, 0.0f, 0.0f, 0.0f },
+				 { 0.0f, 1.0f, 0.0f, 0.0f },
+				 { 0.0f, 0.0f, 1.0f, 0.0f },
+				 { 0.0f, 0.0f, 0.0f, 1.0f } }
+		{}
 
 		constexpr Matrix4(
 			float m00, float m01, float m02, float m03,
 			float m10, float m11, float m12, float m13,
 			float m20, float m21, float m22, float m23,
 			float m30, float m31, float m32, float m33)
-			:m{ {m00, m01, m02, m03},
-				{m10, m11, m12, m13},
-				{m20, m21, m22, m23},
-				{m30, m31, m32, m33} }
-		{ }
+			: m{ { m00, m01, m02, m03 },
+				 { m10, m11, m12, m13 },
+				 { m20, m21, m22, m23 },
+				 { m30, m31, m32, m33 } }
+		{}
 
 		/** Creates a 4x4 transformation matrix with a zero translation part from a rotation/scaling 3x3 matrix. */
 		constexpr explicit Matrix4(const Matrix3& mat3)
-			:m{ {mat3.m[0][0], mat3.m[0][1], mat3.m[0][2], 0.0f},
-				{mat3.m[1][0], mat3.m[1][1], mat3.m[1][2], 0.0f},
-				{mat3.m[2][0], mat3.m[2][1], mat3.m[2][2], 0.0f},
-				{0.0f, 0.0f, 0.0f, 1.0f} }
-		{ }
+			: m{ { mat3.m[0][0], mat3.m[0][1], mat3.m[0][2], 0.0f },
+				 { mat3.m[1][0], mat3.m[1][1], mat3.m[1][2], 0.0f },
+				 { mat3.m[2][0], mat3.m[2][1], mat3.m[2][2], 0.0f },
+				 { 0.0f, 0.0f, 0.0f, 1.0f } }
+		{}
 
 		/** Swaps the contents of this matrix with another. */
 		void Swap(Matrix4& other)
@@ -78,7 +78,7 @@ namespace bs
 		}
 
 		/** Returns a row of the matrix. */
-		Vector4& operator[] (u32 row)
+		Vector4& operator[](u32 row)
 		{
 			assert(row < 4);
 
@@ -86,14 +86,14 @@ namespace bs
 		}
 
 		/** Returns a row of the matrix. */
-		const Vector4& operator[] (u32 row) const
+		const Vector4& operator[](u32 row) const
 		{
 			assert(row < 4);
 
 			return *(Vector4*)m[row];
 		}
 
-		Matrix4 operator* (const Matrix4 &rhs) const
+		Matrix4 operator*(const Matrix4& rhs) const
 		{
 			Matrix4 r;
 
@@ -120,7 +120,7 @@ namespace bs
 			return r;
 		}
 
-		Matrix4 operator+ (const Matrix4 &rhs) const
+		Matrix4 operator+(const Matrix4& rhs) const
 		{
 			Matrix4 r;
 
@@ -147,7 +147,7 @@ namespace bs
 			return r;
 		}
 
-		Matrix4 operator- (const Matrix4 &rhs) const
+		Matrix4 operator-(const Matrix4& rhs) const
 		{
 			Matrix4 r;
 			r.m[0][0] = m[0][0] - rhs.m[0][0];
@@ -173,12 +173,12 @@ namespace bs
 			return r;
 		}
 
-		inline bool operator== (const Matrix4& rhs) const
+		inline bool operator==(const Matrix4& rhs) const
 		{
-			if (m[0][0] != rhs.m[0][0] || m[0][1] != rhs.m[0][1] || m[0][2] != rhs.m[0][2] || m[0][3] != rhs.m[0][3] ||
-				m[1][0] != rhs.m[1][0] || m[1][1] != rhs.m[1][1] || m[1][2] != rhs.m[1][2] || m[1][3] != rhs.m[1][3] ||
-				m[2][0] != rhs.m[2][0] || m[2][1] != rhs.m[2][1] || m[2][2] != rhs.m[2][2] || m[2][3] != rhs.m[2][3] ||
-				m[3][0] != rhs.m[3][0] || m[3][1] != rhs.m[3][1] || m[3][2] != rhs.m[3][2] || m[3][3] != rhs.m[3][3])
+			if(m[0][0] != rhs.m[0][0] || m[0][1] != rhs.m[0][1] || m[0][2] != rhs.m[0][2] || m[0][3] != rhs.m[0][3] ||
+			   m[1][0] != rhs.m[1][0] || m[1][1] != rhs.m[1][1] || m[1][2] != rhs.m[1][2] || m[1][3] != rhs.m[1][3] ||
+			   m[2][0] != rhs.m[2][0] || m[2][1] != rhs.m[2][1] || m[2][2] != rhs.m[2][2] || m[2][3] != rhs.m[2][3] ||
+			   m[3][0] != rhs.m[3][0] || m[3][1] != rhs.m[3][1] || m[3][2] != rhs.m[3][2] || m[3][3] != rhs.m[3][3])
 			{
 				return false;
 			}
@@ -186,17 +186,14 @@ namespace bs
 			return true;
 		}
 
-		inline bool operator!= (const Matrix4& rhs) const
+		inline bool operator!=(const Matrix4& rhs) const
 		{
 			return !operator==(rhs);
 		}
 
 		Matrix4 operator*(float rhs) const
 		{
-			return Matrix4(rhs*m[0][0], rhs*m[0][1], rhs*m[0][2], rhs*m[0][3],
-				rhs*m[1][0], rhs*m[1][1], rhs*m[1][2], rhs*m[1][3],
-				rhs*m[2][0], rhs*m[2][1], rhs*m[2][2], rhs*m[2][3],
-				rhs*m[3][0], rhs*m[3][1], rhs*m[3][2], rhs*m[3][3]);
+			return Matrix4(rhs * m[0][0], rhs * m[0][1], rhs * m[0][2], rhs * m[0][3], rhs * m[1][0], rhs * m[1][1], rhs * m[1][2], rhs * m[1][3], rhs * m[2][0], rhs * m[2][1], rhs * m[2][2], rhs * m[2][3], rhs * m[3][0], rhs * m[3][1], rhs * m[3][2], rhs * m[3][3]);
 		}
 
 		/** Returns the specified column of the matrix, ignoring the last row. */
@@ -218,10 +215,7 @@ namespace bs
 		/** Returns a transpose of the matrix (switched columns and rows). */
 		Matrix4 Transpose() const
 		{
-			return Matrix4(m[0][0], m[1][0], m[2][0], m[3][0],
-				m[0][1], m[1][1], m[2][1], m[3][1],
-				m[0][2], m[1][2], m[2][2], m[3][2],
-				m[0][3], m[1][3], m[2][3], m[3][3]);
+			return Matrix4(m[0][0], m[1][0], m[2][0], m[3][0], m[0][1], m[1][1], m[2][1], m[3][1], m[0][2], m[1][2], m[2][2], m[3][2], m[0][3], m[1][3], m[2][3], m[3][3]);
 		}
 
 		/** Assigns the vector to a column of the matrix. */
@@ -321,7 +315,7 @@ namespace bs
 		 *
 		 * @note	Both matrices must be affine.
 		 */
-		Matrix4 ConcatenateAffine(const Matrix4 &other) const
+		Matrix4 ConcatenateAffine(const Matrix4& other) const
 		{
 			return Matrix4(
 				m[0][0] * other.m[0][0] + m[0][1] * other.m[1][0] + m[0][2] * other.m[2][0],
@@ -431,8 +425,7 @@ namespace bs
 				m[0][0] * v.X + m[0][1] * v.Y + m[0][2] * v.Z + m[0][3] * v.W,
 				m[1][0] * v.X + m[1][1] * v.Y + m[1][2] * v.Z + m[1][3] * v.W,
 				m[2][0] * v.X + m[2][1] * v.Y + m[2][2] * v.Z + m[2][3] * v.W,
-				m[3][0] * v.X + m[3][1] * v.Y + m[3][2] * v.Z + m[3][3] * v.W
-			);
+				m[3][0] * v.X + m[3][1] * v.Y + m[3][2] * v.Z + m[3][3] * v.W);
 		}
 
 		/** Creates a view matrix and applies optional reflection. */
@@ -467,8 +460,7 @@ namespace bs
 		 * @param[in]	positiveZ	If true the matrix will project geometry as if its looking along the positive Z axis.
 		 *							Otherwise it projects along the negative Z axis (default).
 		 */
-		static Matrix4 ProjectionPerspective(const Degree& horzFOV, float aspect, float near, float far,
-			bool positiveZ = false);
+		static Matrix4 ProjectionPerspective(const Degree& horzFOV, float aspect, float near, float far, bool positiveZ = false);
 
 		/** @copydoc makeProjectionOrtho() */
 		static Matrix4 ProjectionOrthographic(float left, float right, float top, float bottom, float near, float far);
@@ -498,4 +490,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

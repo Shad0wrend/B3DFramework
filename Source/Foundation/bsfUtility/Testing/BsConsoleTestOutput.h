@@ -16,11 +16,8 @@ namespace bs
 	{
 	public:
 		/** @copydoc TestOutput::outputFail */
-		void OutputFail(const String& desc,
-		                const String& function,
-		                const String& file,
-		                long line) ;
+		void OutputFail(const String& desc, const String& function, const String& file, long line);
 	};
 
 	/** @} */
-}
+} // namespace bs

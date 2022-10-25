@@ -118,7 +118,7 @@ namespace bs
 
 		/**
 		 * Restores disabled state of all windows that were disabled due to modal windows being on top of them. Companion
-		* method to EnableAllWindowsInternal() that can help restore original state after it is called.
+		 * method to EnableAllWindowsInternal() that can help restore original state after it is called.
 		 */
 		void static RestoreModalWindowsInternal();
 
@@ -135,4 +135,4 @@ namespace bs
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs

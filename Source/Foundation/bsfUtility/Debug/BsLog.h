@@ -40,9 +40,10 @@ namespace bs
 	{
 	public:
 		LogEntry() = default;
+
 		LogEntry(String msg, LogVerbosity verbosity, u32 category)
-			:mMsg(std::move(msg)), mVerbosity(verbosity), mCategory(category), mLocalTime(std::time(nullptr))
-		{ }
+			: mMsg(std::move(msg)), mVerbosity(verbosity), mCategory(category), mLocalTime(std::time(nullptr))
+		{}
 
 		/** Determines how important is the message and when should it be displayed. */
 		LogVerbosity GetVerbosity() const { return mVerbosity; }
@@ -66,7 +67,7 @@ namespace bs
 	/**
 	 * Used for logging messages. Messages can be categorized and filtered by verbosity, the log can be saved to a file
 	 * and send out callbacks when a new message is added.
-	 * 			
+	 *
 	 * @note	Thread safe.
 	 */
 	class BS_UTILITY_EXPORT Log
@@ -98,7 +99,7 @@ namespace bs
 
 		/**
 		 * Returns the latest unread entry from the log queue, and removes the entry from the unread entries list.
-		 * 			
+		 *
 		 * @param[out]	entry	Entry that was retrieved, or undefined if no entries exist.
 		 * @return				True if an unread entry was retrieved, false otherwise.
 		 */
@@ -117,7 +118,7 @@ namespace bs
 		 * checking for changes by external systems.
 		 */
 		u64 GetHash() const { return mHash; }
-		
+
 		/**
 		 * Checks if the category with the specified ID exists.
 		 *
@@ -125,10 +126,10 @@ namespace bs
 		 *  @return			True if exists, otherwise false.
 		 */
 		static bool CategoryExists(u32 id);
-		
+
 		/** Returns the number of registered log categories. */
 		static u32 GetNumCategories() { return (u32)sCategories.size(); };
-		
+
 		/**
 		 *  Get the name of the category based on its ID.
 		 *
@@ -152,9 +153,9 @@ namespace bs
 		 *  @return				False if the ID is already taken, otherwise true.
 		 */
 		static bool RegisterCategoryInternal(u32 id, const char* name);
-		
+
 		/** @} */
-		
+
 	private:
 		friend class Debug;
 
@@ -164,11 +165,11 @@ namespace bs
 		Vector<LogEntry> mEntries;
 		Queue<LogEntry> mUnreadEntries;
 		u64 mHash = 0;
-		
+
 		mutable RecursiveMutex mMutex;
 
 		static UnorderedMap<u32, String> sCategories;
 	};
 
 	/** @} */
-}
+} // namespace bs

@@ -10,7 +10,7 @@
 #include <utility>
 
 #if BS_PLATFORM == BS_PLATFORM_LINUX
-#  include <malloc.h>
+#	include <malloc.h>
 #endif
 
 namespace bs
@@ -79,7 +79,7 @@ namespace bs
 	inline void* platformAlignedAlloc(size_t size, size_t alignment)
 	{
 		void* data = ::malloc(size + (alignment - 1) + sizeof(void*));
-		if (data == nullptr)
+		if(data == nullptr)
 			return nullptr;
 
 		char* alignedData = ((char*)data) + sizeof(void*);
@@ -118,6 +118,7 @@ namespace bs
 
 		// Threadlocal data can't be exported, so some magic to make it accessible from MemoryAllocator
 		static BS_UTILITY_EXPORT void IncAllocCount() { ++Allocs; }
+
 		static BS_UTILITY_EXPORT void IncFreeCount() { ++Frees; }
 
 		static BS_THREADLOCAL uint64_t Allocs;
@@ -129,6 +130,7 @@ namespace bs
 	{
 	protected:
 		static void IncAllocCount() { MemoryCounter::IncAllocCount(); }
+
 		static void IncFreeCount() { MemoryCounter::IncFreeCount(); }
 	};
 
@@ -138,7 +140,7 @@ namespace bs
 	 * @note	For example you might implement a pool allocator for specific types in order
 	 * 			to reduce allocation overhead. By default standard malloc/free are used.
 	 */
-	template<class T>
+	template <class T>
 	class MemoryAllocator : public MemoryAllocatorBase
 	{
 	public:
@@ -211,7 +213,7 @@ namespace bs
 	 * happen often.
 	 */
 	class GenAlloc
-	{ };
+	{};
 
 	/** @} */
 	/** @} */
@@ -221,47 +223,47 @@ namespace bs
 	 */
 
 	/** Allocates the specified number of bytes. */
-	template<class Alloc>
+	template <class Alloc>
 	void* bs_alloc(size_t count)
 	{
 		return MemoryAllocator<Alloc>::Allocate(count);
 	}
 
 	/** Allocates enough bytes to hold the specified type, but doesn't construct it. */
-	template<class T, class Alloc>
+	template <class T, class Alloc>
 	T* bs_alloc()
 	{
 		return (T*)MemoryAllocator<Alloc>::Allocate(sizeof(T));
 	}
 
 	/** Creates and constructs an array of @p count elements. */
-	template<class T, class Alloc>
+	template <class T, class Alloc>
 	T* bs_newN(size_t count)
 	{
 		T* ptr = (T*)MemoryAllocator<Alloc>::Allocate(sizeof(T) * count);
 
 		for(size_t i = 0; i < count; ++i)
-			new (&ptr[i]) T;
+			new(&ptr[i]) T;
 
 		return ptr;
 	}
 
 	/** Create a new object with the specified allocator and the specified parameters. */
-	template<class Type, class Alloc, class... Args>
-	Type* bs_new(Args &&...args)
+	template <class Type, class Alloc, class... Args>
+	Type* bs_new(Args&&... args)
 	{
-		return new (bs_alloc<Type, Alloc>()) Type(std::forward<Args>(args)...);
+		return new(bs_alloc<Type, Alloc>()) Type(std::forward<Args>(args)...);
 	}
 
 	/** Frees all the bytes allocated at the specified location. */
-	template<class Alloc>
+	template <class Alloc>
 	void bs_free(void* ptr)
 	{
 		MemoryAllocator<Alloc>::Free(ptr);
 	}
 
 	/** Destructs and frees the specified object. */
-	template<class T, class Alloc = GenAlloc>
+	template <class T, class Alloc = GenAlloc>
 	void bs_delete(T* ptr)
 	{
 		(ptr)->~T();
@@ -270,14 +272,15 @@ namespace bs
 	}
 
 	/** Callable struct that acts as a proxy for bs_delete */
-	template<class T, class Alloc = GenAlloc>
+	template <class T, class Alloc = GenAlloc>
 	struct Deleter
 	{
 		constexpr Deleter() noexcept = default;
 
 		/** Constructor enabling deleter conversion and therefore polymorphism with smart points (if they use the same allocator). */
 		template <class T2, std::enable_if_t<std::is_convertible<T2*, T*>::value, int> = 0>
-		constexpr Deleter(const Deleter<T2, Alloc>& other) noexcept { }
+		constexpr Deleter(const Deleter<T2, Alloc>& other) noexcept
+		{}
 
 		void operator()(T* ptr) const
 		{
@@ -286,7 +289,7 @@ namespace bs
 	};
 
 	/** Destructs and frees the specified array of objects. */
-	template<class T, class Alloc = GenAlloc>
+	template <class T, class Alloc = GenAlloc>
 	void bs_deleteN(T* ptr, size_t count)
 	{
 		for(size_t i = 0; i < count; ++i)
@@ -306,7 +309,7 @@ namespace bs
 	}
 
 	/** Allocates enough bytes to hold the specified type, but doesn't construct it. */
-	template<class T>
+	template <class T>
 	T* bs_alloc()
 	{
 		return (T*)MemoryAllocator<GenAlloc>::Allocate(sizeof(T));
@@ -321,7 +324,6 @@ namespace bs
 		return MemoryAllocator<GenAlloc>::AllocateAligned(count, align);
 	}
 
-
 	/** Allocates the specified number of bytes aligned to a 16 bytes boundary. */
 	inline void* bs_alloc_aligned16(size_t count)
 	{
@@ -329,29 +331,29 @@ namespace bs
 	}
 
 	/** Allocates enough bytes to hold an array of @p count elements the specified type, but doesn't construct them. */
-	template<class T>
+	template <class T>
 	T* bs_allocN(size_t count)
 	{
 		return (T*)MemoryAllocator<GenAlloc>::Allocate(count * sizeof(T));
 	}
 
 	/** Creates and constructs an array of @p count elements. */
-	template<class T>
+	template <class T>
 	T* bs_newN(size_t count)
 	{
 		T* ptr = (T*)MemoryAllocator<GenAlloc>::Allocate(count * sizeof(T));
 
 		for(size_t i = 0; i < count; ++i)
-			new (&ptr[i]) T;
+			new(&ptr[i]) T;
 
 		return ptr;
 	}
 
 	/** Create a new object with the specified allocator and the specified parameters. */
-	template<class Type, class... Args>
-	Type* bs_new(Args &&...args)
+	template <class Type, class... Args>
+	Type* bs_new(Args&&... args)
 	{
-		return new (bs_alloc<Type, GenAlloc>()) Type(std::forward<Args>(args)...);
+		return new(bs_alloc<Type, GenAlloc>()) Type(std::forward<Args>(args)...);
 	}
 
 	/** Frees all the bytes allocated at the specified location. */
@@ -379,11 +381,11 @@ namespace bs
 /* use these instead.							*/
 /************************************************************************/
 #define BS_PVT_DELETE(T, ptr) \
-	(ptr)->~T(); \
+	(ptr)->~T();              \
 	MemoryAllocator<GenAlloc>::free(ptr);
 
 #define BS_PVT_DELETE_A(T, ptr, Alloc) \
-	(ptr)->~T(); \
+	(ptr)->~T();                       \
 	MemoryAllocator<Alloc>::free(ptr);
 
 	/** @} */
@@ -395,7 +397,7 @@ namespace bs
 	 *  @{
 	 */
 
-	//NOLINTBEGIN(readability-identifier-naming)
+	// NOLINTBEGIN(readability-identifier-naming)
 	/** Allocator for the standard library that internally uses bsf memory allocator. */
 	template <class T, class Alloc = GenAlloc>
 	class StdAlloc
@@ -412,23 +414,39 @@ namespace bs
 		constexpr StdAlloc() = default;
 		constexpr StdAlloc(StdAlloc&&) = default;
 		constexpr StdAlloc(const StdAlloc&) = default;
-		template<class U, class Alloc2> constexpr StdAlloc(const StdAlloc<U, Alloc2>&) { };
-		template<class U, class Alloc2> constexpr bool operator==(const StdAlloc<U, Alloc2>&) const noexcept { return true; }
-		template<class U, class Alloc2> constexpr bool operator!=(const StdAlloc<U, Alloc2>&) const noexcept { return false; }
+		template <class U, class Alloc2>
+		constexpr StdAlloc(const StdAlloc<U, Alloc2>&){};
 
-		template<class U> class rebind { public: using other = StdAlloc<U, Alloc>; };
+		template <class U, class Alloc2>
+		constexpr bool operator==(const StdAlloc<U, Alloc2>&) const noexcept
+		{
+			return true;
+		}
+
+		template <class U, class Alloc2>
+		constexpr bool operator!=(const StdAlloc<U, Alloc2>&) const noexcept
+		{
+			return false;
+		}
+
+		template <class U>
+		class rebind
+		{
+		public:
+			using other = StdAlloc<U, Alloc>;
+		};
 
 		/** Allocate but don't initialize number elements of type T. */
 		static T* allocate(const size_t num)
 		{
-			if (num == 0)
+			if(num == 0)
 				return nullptr;
 
-			if (num > max_size())
+			if(num > max_size())
 				return nullptr; // Error
 
 			void* const pv = bs_alloc<Alloc>(num * sizeof(T));
-			if (!pv)
+			if(!pv)
 				return nullptr; // Error
 
 			return static_cast<T*>(pv);
@@ -441,16 +459,21 @@ namespace bs
 		}
 
 		static constexpr size_t max_size() { return std::numeric_limits<size_type>::max() / sizeof(T); }
+
 		static constexpr void destroy(pointer p) { p->~T(); }
 
-		template<class... Args>
-		static void construct(pointer p, Args&&... args) { new(p) T(std::forward<Args>(args)...); }
+		template <class... Args>
+		static void construct(pointer p, Args&&... args)
+		{
+			new(p) T(std::forward<Args>(args)...);
+		}
 	};
-	//NOLINTEND(readability-identifier-naming)
+
+	// NOLINTEND(readability-identifier-naming)
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs
 
 #include "Allocators/BsStackAlloc.h"
 #include "Allocators/BsFreeAlloc.h"

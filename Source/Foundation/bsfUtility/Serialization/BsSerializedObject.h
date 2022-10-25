@@ -20,7 +20,7 @@ namespace bs
 
 		/**
 		 * Performs a deep clone of this object any any potential child objects.
-		 * 			
+		 *
 		 * @param[in]	cloneData	If true the data contained by the objects will be cloned as well, instead of just
 		 *							meta-data. If false then both the original and the cloned instances will point to the
 		 *							same instances of data. The original will retain data ownership and it will go out of
@@ -76,7 +76,7 @@ namespace bs
 	{
 		/** Pointers to other IReflectable objects will not be followed and they will not be serialized. */
 		Shallow = 1 << 0,
-		
+
 		/** Only fields with the Replicable RTTI flag will be serialized. */
 		ReplicableOnly = 1 << 1
 	};
@@ -95,7 +95,7 @@ namespace bs
 		u32 GetRootTypeId() const;
 
 		/** @copydoc SerializedInstance::clone */
-		SPtr<SerializedInstance> Clone(bool cloneData = true) ;
+		SPtr<SerializedInstance> Clone(bool cloneData = true);
 
 		/**
 		 * Decodes the serialized object back into its original IReflectable object form.
@@ -118,8 +118,7 @@ namespace bs
 		 *							deserialization.
 		 * @return					Serialized version of @p obj.
 		 */
-		static SPtr<SerializedObject> Create(IReflectable& obj,
-			SerializedObjectEncodeFlags flags = SerializedObjectEncodeFlags(), SerializationContext* context = nullptr);
+		static SPtr<SerializedObject> Create(IReflectable& obj, SerializedObjectEncodeFlags flags = SerializedObjectEncodeFlags(), SerializationContext* context = nullptr);
 
 		Vector<SerializedSubObject> SubObjects;
 
@@ -139,12 +138,12 @@ namespace bs
 
 		~SerializedField()
 		{
-			if (OwnsMemory && Value != nullptr)
+			if(OwnsMemory && Value != nullptr)
 				bs_free(Value);
 		}
 
 		/** @copydoc SerializedInstance::clone */
-		SPtr<SerializedInstance> Clone(bool cloneData = true) ;
+		SPtr<SerializedInstance> Clone(bool cloneData = true);
 
 		u8* Value = nullptr;
 		u32 Size = 0;
@@ -165,7 +164,7 @@ namespace bs
 		SerializedDataBlock() = default;
 
 		/** @copydoc SerializedInstance::clone */
-		SPtr<SerializedInstance> Clone(bool cloneData = true) ;
+		SPtr<SerializedInstance> Clone(bool cloneData = true);
 
 		SPtr<DataStream> Stream;
 		u32 Offset = 0;
@@ -203,7 +202,7 @@ namespace bs
 		SerializedArray() = default;
 
 		/** @copydoc SerializedInstance::clone */
-		SPtr<SerializedInstance> Clone(bool cloneData = true) ;
+		SPtr<SerializedInstance> Clone(bool cloneData = true);
 
 		UnorderedMap<u32, SerializedArrayEntry> Entries;
 		u32 NumElements = 0;
@@ -218,4 +217,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

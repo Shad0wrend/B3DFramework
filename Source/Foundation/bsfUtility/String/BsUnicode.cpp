@@ -5,26 +5,26 @@
 namespace bs
 {
 	/** Converts an UTF-8 encoded character (possibly multibyte) into an UTF-32 character. */
-	template<typename T>
+	template <typename T>
 	T UTF8To32(T begin, T end, char32_t& output, char32_t invalidChar = 0)
 	{
 		// Nothing to parse
-		if (begin >= end)
+		if(begin >= end)
 			return begin;
 
 		// Determine the number of bytes used by the character
 		u32 numBytes;
 
 		u8 firstByte = (u8)*begin;
-		if (firstByte < 192)
+		if(firstByte < 192)
 			numBytes = 1;
-		else if (firstByte < 224)
+		else if(firstByte < 224)
 			numBytes = 2;
-		else if (firstByte < 240)
+		else if(firstByte < 240)
 			numBytes = 3;
-		else if (firstByte < 248)
+		else if(firstByte < 248)
 			numBytes = 4;
-		else if (firstByte < 252)
+		else if(firstByte < 252)
 			numBytes = 5;
 		else // < 256
 			numBytes = 6;
@@ -40,12 +40,35 @@ namespace bs
 		output = 0;
 		switch(numBytes)
 		{
-		case 6: output += (u8)(*begin); ++begin; output <<= 6; BS_FALLTHROUGH;
-		case 5: output += (u8)(*begin); ++begin; output <<= 6; BS_FALLTHROUGH;
-		case 4: output += (u8)(*begin); ++begin; output <<= 6; BS_FALLTHROUGH;
-		case 3: output += (u8)(*begin); ++begin; output <<= 6; BS_FALLTHROUGH;
-		case 2: output += (u8)(*begin); ++begin; output <<= 6; BS_FALLTHROUGH;
-		case 1: output += (u8)(*begin); ++begin; BS_FALLTHROUGH;
+		case 6:
+			output += (u8)(*begin);
+			++begin;
+			output <<= 6;
+			BS_FALLTHROUGH;
+		case 5:
+			output += (u8)(*begin);
+			++begin;
+			output <<= 6;
+			BS_FALLTHROUGH;
+		case 4:
+			output += (u8)(*begin);
+			++begin;
+			output <<= 6;
+			BS_FALLTHROUGH;
+		case 3:
+			output += (u8)(*begin);
+			++begin;
+			output <<= 6;
+			BS_FALLTHROUGH;
+		case 2:
+			output += (u8)(*begin);
+			++begin;
+			output <<= 6;
+			BS_FALLTHROUGH;
+		case 1:
+			output += (u8)(*begin);
+			++begin;
+			BS_FALLTHROUGH;
 		default: break;
 		}
 
@@ -53,18 +76,18 @@ namespace bs
 		output -= offsets[numBytes - 1];
 
 		return begin;
-	}	
+	}
 
 	/** Converts an UTF-32 encoded character into an (possibly multibyte) UTF-8 character. */
-	template<typename T>
+	template <typename T>
 	T UTF32To8(char32_t input, T output, u32 maxElems, char invalidChar = 0)
 	{
 		// No place to write the character
-		if (maxElems == 0)
+		if(maxElems == 0)
 			return output;
 
 		// Check if character is valid
-		if ((input > 0x0010FFFF) || ((input >= 0xD800) && (input <= 0xDBFF)))
+		if((input > 0x0010FFFF) || ((input >= 0xD800) && (input <= 0xDBFF)))
 		{
 			*output = invalidChar;
 			++output;
@@ -74,11 +97,11 @@ namespace bs
 
 		// Determine the number of bytes used by the character
 		u32 numBytes;
-		if (input <  0x80)
+		if(input < 0x80)
 			numBytes = 1;
-		else if (input < 0x800)
+		else if(input < 0x800)
 			numBytes = 2;
-		else if (input < 0x10000)
+		else if(input < 0x10000)
 			numBytes = 3;
 		else // <= 0x0010FFFF
 			numBytes = 4;
@@ -96,13 +119,22 @@ namespace bs
 		constexpr u8 headers[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
 
 		char bytes[4];
-		switch (numBytes)
+		switch(numBytes)
 		{
-			case 4: bytes[3] = (char)((input | 0x80) & 0xBF); input >>= 6; BS_FALLTHROUGH;
-			case 3: bytes[2] = (char)((input | 0x80) & 0xBF); input >>= 6; BS_FALLTHROUGH;
-			case 2: bytes[1] = (char)((input | 0x80) & 0xBF); input >>= 6; BS_FALLTHROUGH;
-			case 1: bytes[0] = (char)(input | headers[numBytes]); BS_FALLTHROUGH;
-			default: break;
+		case 4:
+			bytes[3] = (char)((input | 0x80) & 0xBF);
+			input >>= 6;
+			BS_FALLTHROUGH;
+		case 3:
+			bytes[2] = (char)((input | 0x80) & 0xBF);
+			input >>= 6;
+			BS_FALLTHROUGH;
+		case 2:
+			bytes[1] = (char)((input | 0x80) & 0xBF);
+			input >>= 6;
+			BS_FALLTHROUGH;
+		case 1: bytes[0] = (char)(input | headers[numBytes]); BS_FALLTHROUGH;
+		default: break;
 		}
 
 		output = std::copy(bytes, bytes + numBytes, output);
@@ -110,21 +142,21 @@ namespace bs
 	}
 
 	/** Converts an UTF-16 encoded character into an UTF-32 character. */
-	template<typename T>
+	template <typename T>
 	T UTF16To32(T begin, T end, char32_t& output, char32_t invalidChar = 0)
 	{
 		// Nothing to parse
-		if (begin >= end)
+		if(begin >= end)
 			return begin;
 
 		char16_t firstElem = (char16_t)*begin;
 		++begin;
 
 		// Check if it's a surrogate pair
-		if ((firstElem >= 0xD800) && (firstElem <= 0xDBFF))
+		if((firstElem >= 0xD800) && (firstElem <= 0xDBFF))
 		{
 			// Invalid character
-			if (begin >= end)
+			if(begin >= end)
 			{
 				output = invalidChar;
 				return end;
@@ -133,7 +165,7 @@ namespace bs
 			char32_t secondElem = (char32_t)*begin;
 			++begin;
 
-			if ((secondElem >= 0xDC00) && (secondElem <= 0xDFFF))
+			if((secondElem >= 0xDC00) && (secondElem <= 0xDFFF))
 				output = (char32_t)(((firstElem - 0xD800) << 10) + (secondElem - 0xDC00) + 0x0010000);
 			else // Invalid character
 				output = invalidChar;
@@ -145,18 +177,18 @@ namespace bs
 		}
 
 		return begin;
-	}	
+	}
 
 	/** Converts an UTF-32 encoded character into an UTF-16 character. */
-	template<typename T>
+	template <typename T>
 	T UTF32To16(char32_t input, T output, u32 maxElems, char16_t invalidChar = 0)
 	{
 		// No place to write the character
-		if (maxElems == 0)
+		if(maxElems == 0)
 			return output;
 
 		// Invalid character
-		if (input > 0x0010FFFF)
+		if(input > 0x0010FFFF)
 		{
 			*output = invalidChar;
 			++output;
@@ -165,10 +197,10 @@ namespace bs
 		}
 
 		// Can be encoded as a single element
-		if (input <= 0xFFFF)
+		if(input <= 0xFFFF)
 		{
 			// Check if in valid range
-			if ((input >= 0xD800) && (input <= 0xDFFF))
+			if((input >= 0xD800) && (input <= 0xDFFF))
 			{
 				*output = invalidChar;
 				++output;
@@ -182,7 +214,7 @@ namespace bs
 		else // Must be encoded as two elements
 		{
 			// Two elements won't fit
-			if (maxElems < 2)
+			if(maxElems < 2)
 			{
 				*output = invalidChar;
 				++output;
@@ -202,10 +234,10 @@ namespace bs
 		return output;
 	}
 
-	template<typename T>
+	template <typename T>
 	T wideToUTF32(T begin, T end, char32_t& output, char32_t invalidChar = 0)
 	{
-		if (sizeof(wchar_t) == 4) // Assuming UTF-32 (i.e. Unix)
+		if(sizeof(wchar_t) == 4) // Assuming UTF-32 (i.e. Unix)
 		{
 			output = (char32_t)*begin;
 			++begin;
@@ -214,7 +246,6 @@ namespace bs
 		}
 		else // Assuming UTF-16 (i.e. Windows)
 			return UTF16To32(begin, end, output, invalidChar);
-
 	}
 
 	char32_t ANSIToUTF32(char input, const std::locale& locale = std::locale(""))
@@ -231,7 +262,7 @@ namespace bs
 		return output;
 	}
 
-	template<typename T>
+	template <typename T>
 	T UTF32ToWide(char32_t input, T output, u32 maxElems, wchar_t invalidChar = 0)
 	{
 		if(sizeof(wchar_t) == 4) // Assuming UTF-32 (i.e. Unix)
@@ -395,7 +426,7 @@ namespace bs
 	u32 UTF8::Count(const String& input)
 	{
 		u32 length = 0;
-		for (char i : input)
+		for(char i : input)
 		{
 			// Include only characters that don't start with bits 10
 			length += (i & 0xc0) != 0x80;
@@ -408,7 +439,7 @@ namespace bs
 	{
 		u32 curChar = 0;
 		u32 curByte = 0;
-		for (char i : input)
+		for(char i : input)
 		{
 			// Include only characters that don't start with bits 10
 			if((i & 0xc0) != 0x80)
@@ -450,4 +481,4 @@ namespace bs
 	{
 		return PlatformUtility::ConvertCaseUtF8(input, true);
 	}
-}
+} // namespace bs

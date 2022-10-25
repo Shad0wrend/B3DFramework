@@ -11,7 +11,7 @@ namespace bs
 	TetrahedronVolume Triangulation::Tetrahedralize(const Vector<Vector3>& points)
 	{
 		TetrahedronVolume volume;
-		if (points.size() < 4)
+		if(points.size() < 4)
 			return volume;
 
 		tetgenio input;
@@ -35,7 +35,7 @@ namespace bs
 		u32 numTetrahedra = (u32)output.numberoftetrahedra;
 		volume.Tetrahedra.resize(numTetrahedra);
 
-		for (u32 i = 0; i < numTetrahedra; ++i)
+		for(u32 i = 0; i < numTetrahedra; ++i)
 		{
 			memcpy(volume.Tetrahedra[i].Vertices, &output.tetrahedronlist[i * 4], sizeof(i32) * 4);
 			memcpy(volume.Tetrahedra[i].Neighbors, &output.neighborlist[i * 4], sizeof(i32) * 4);
@@ -43,12 +43,12 @@ namespace bs
 
 		// Generate boundary faces
 		u32 numFaces = (u32)output.numberoftrifaces;
-		for (u32 i = 0; i < numFaces; ++i)
+		for(u32 i = 0; i < numFaces; ++i)
 		{
 			i32 tetIdx = -1;
-			if (output.adjtetlist[i * 2] == -1)
+			if(output.adjtetlist[i * 2] == -1)
 				tetIdx = output.adjtetlist[i * 2 + 1];
-			else if (output.adjtetlist[i * 2 + 1] == -1)
+			else if(output.adjtetlist[i * 2 + 1] == -1)
 				tetIdx = output.adjtetlist[i * 2];
 			else // Not a boundary face
 				continue;
@@ -70,15 +70,15 @@ namespace bs
 			{
 				i32 vert = volume.Tetrahedra[i].Vertices[j];
 
-				for (u32 k = 0; k < 4; ++k)
+				for(u32 k = 0; k < 4; ++k)
 				{
 					i32 neighborIdx = neighbors[k];
-					if (neighborIdx == -1)
+					if(neighborIdx == -1)
 						continue;
 
 					Tetrahedron& neighbor = volume.Tetrahedra[neighborIdx];
-					if (vert != neighbor.Vertices[0] && vert != neighbor.Vertices[1] &&
-						vert != neighbor.Vertices[2] && vert != neighbor.Vertices[3])
+					if(vert != neighbor.Vertices[0] && vert != neighbor.Vertices[1] &&
+					   vert != neighbor.Vertices[2] && vert != neighbor.Vertices[3])
 					{
 						volume.Tetrahedra[i].Neighbors[j] = neighborIdx;
 						break;
@@ -89,4 +89,4 @@ namespace bs
 
 		return volume;
 	}
-}
+} // namespace bs

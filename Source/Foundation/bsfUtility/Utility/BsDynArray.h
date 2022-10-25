@@ -23,6 +23,7 @@ namespace bs
 		typedef ptrdiff_t DifferenceType;
 
 		DynArray() = default;
+
 		DynArray(u32 size, const ValueType& value = ValueType())
 		{
 			append(size, value);
@@ -40,27 +41,27 @@ namespace bs
 
 		DynArray(const DynArray<ValueType>& other)
 		{
-			if (!other.Empty())
+			if(!other.Empty())
 				*this = other;
 		}
 
 		DynArray(DynArray<ValueType>&& other)
 		{
-			if (!other.Empty())
+			if(!other.Empty())
 				*this = std::move(other);
 		}
 
 		~DynArray()
 		{
-			for (auto& entry : *this)
+			for(auto& entry : *this)
 				entry.~Type();
 
 			bs_free(mElements);
 		}
 
-		DynArray<ValueType>& operator= (const DynArray<ValueType>& other)
+		DynArray<ValueType>& operator=(const DynArray<ValueType>& other)
 		{
-			if (this == &other)
+			if(this == &other)
 				return *this;
 
 			u32 mySize = Size();
@@ -75,22 +76,21 @@ namespace bs
 				else
 					newEnd = begin();
 
-				for(;newEnd != end(); ++newEnd)
+				for(; newEnd != end(); ++newEnd)
 					(*newEnd).~Type();
-
 			}
 			// Otherwise we need to partially copy (up to our size), and do uninitialized copy for rest. And an optional
 			// grow if our capacity isn't enough (in which case we do uninitialized copy for all).
 			else
 			{
-				if (otherSize > mCapacity)
+				if(otherSize > mCapacity)
 				{
 					Clear();
 					mySize = 0;
 
 					Realloc(otherSize);
 				}
-				else if (mySize > 0)
+				else if(mySize > 0)
 					std::copy(other.begin(), other.begin() + mySize, begin());
 
 				std::uninitialized_copy(other.begin() + mySize, other.end(), begin() + mySize);
@@ -100,13 +100,13 @@ namespace bs
 			return *this;
 		}
 
-		DynArray<ValueType>& operator= (DynArray<ValueType>&& other)
+		DynArray<ValueType>& operator=(DynArray<ValueType>&& other)
 		{
 			if(this == &other)
 				return *this;
 
 			// Just steal the buffer
-			for (auto& entry : *this)
+			for(auto& entry : *this)
 				entry.~Type();
 
 			bs_free(mElements);
@@ -118,7 +118,7 @@ namespace bs
 			return *this;
 		}
 
-		DynArray<ValueType>& operator= (std::initializer_list<ValueType> list)
+		DynArray<ValueType>& operator=(std::initializer_list<ValueType> list)
 		{
 			u32 mySize = Size();
 			const u32 otherSize = (u32)list.size();
@@ -132,22 +132,21 @@ namespace bs
 				else
 					newEnd = begin();
 
-				for(;newEnd != end(); ++newEnd)
+				for(; newEnd != end(); ++newEnd)
 					(*newEnd).~Type();
-
 			}
 			// Otherwise we need to partially copy (up to our size), and do uninitialized copy for rest. And an optional
 			// grow if our capacity isn't enough (in which case we do uninitialized copy for all).
 			else
 			{
-				if (otherSize > mCapacity)
+				if(otherSize > mCapacity)
 				{
 					Clear();
 					mySize = 0;
 
 					Realloc(otherSize);
 				}
-				else if (mySize > 0)
+				else if(mySize > 0)
 					std::copy(list.begin(), list.begin() + mySize, begin());
 
 				std::uninitialized_copy(list.begin() + mySize, list.end(), begin() + mySize);
@@ -157,45 +156,45 @@ namespace bs
 			return *this;
 		}
 
-		bool operator== (const DynArray<ValueType>& other) const
+		bool operator==(const DynArray<ValueType>& other) const
 		{
-			if (this->Size() != other.Size()) return false;
+			if(this->Size() != other.Size()) return false;
 			return std::equal(this->begin(), this->end(), other.begin());
 		}
 
-		bool operator!= (const DynArray<ValueType>& other) const
+		bool operator!=(const DynArray<ValueType>& other) const
 		{
 			return !(*this == other);
 		}
 
-		bool operator< (const DynArray<ValueType>& other) const
+		bool operator<(const DynArray<ValueType>& other) const
 		{
 			return std::lexicographical_compare(begin(), end(), other.begin(), other.end());
 		}
 
-		bool operator> (const DynArray<ValueType>& other) const
+		bool operator>(const DynArray<ValueType>& other) const
 		{
 			return other < *this;
 		}
 
-		bool operator<= (const DynArray<ValueType>& other) const
+		bool operator<=(const DynArray<ValueType>& other) const
 		{
 			return !(other < *this);
 		}
 
-		bool operator>= (const DynArray<ValueType>& other) const
+		bool operator>=(const DynArray<ValueType>& other) const
 		{
 			return !(*this < other);
 		}
 
-		Type& operator[] (u32 index)
+		Type& operator[](u32 index)
 		{
 			assert(index < mSize && "Array index out-of-range.");
 
 			return mElements[index];
 		}
 
-		const Type& operator[] (u32 index) const
+		const Type& operator[](u32 index) const
 		{
 			assert(index < mSize && "Array index out-of-range.");
 
@@ -205,45 +204,59 @@ namespace bs
 		bool Empty() const { return mSize == 0; }
 
 		Iterator Begin() { return mElements; }
+
 		Iterator End() { return mElements + mSize; }
 
 		ConstIterator Begin() const { return mElements; }
+
 		ConstIterator End() const { return mElements + mSize; }
 
 		ConstIterator Cbegin() const { return mElements; }
+
 		ConstIterator Cend() const { return mElements + mSize; }
 
 		ReverseIterator Rbegin() { return ReverseIterator(end()); }
+
 		ReverseIterator Rend() { return ReverseIterator(begin()); }
 
 		ConstReverseIterator Rbegin() const { return ReverseIterator(end()); }
+
 		ConstReverseIterator Rend() const { return ReverseIterator(begin()); }
 
 		ConstReverseIterator Crbegin() const { return ReverseIterator(end()); }
+
 		ConstReverseIterator Crend() const { return ReverseIterator(begin()); }
 
 		Iterator begin() { return Begin(); } // NOLINT
+
 		Iterator end() { return End(); } // NOLINT
 
 		ConstIterator begin() const { return Begin(); } // NOLINT
+
 		ConstIterator end() const { return End(); } // NOLINT
 
 		ConstIterator cbegin() const { return Cbegin(); } // NOLINT
+
 		ConstIterator cend() const { return cend(); } // NOLINT
 
 		ReverseIterator rbegin() { return Rbegin(); } // NOLINT
+
 		ReverseIterator rend() { return Rend(); } // NOLINT
 
 		ConstReverseIterator rbegin() const { return Rbegin(); } // NOLINT
+
 		ConstReverseIterator rend() const { return Rend(); } // NOLINT
 
 		ConstReverseIterator crbegin() const { return Crbegin(); } // NOLINT
+
 		ConstReverseIterator crend() const { return Crend(); } // NOLINT
 
 		u32 Size() const { return mSize; }
+
 		u32 Capacity() const { return mCapacity; }
 
 		Type* Data() { return mElements; }
+
 		const Type* Data() const { return mElements; }
 
 		Type& Front()
@@ -272,18 +285,18 @@ namespace bs
 
 		void Add(const Type& element)
 		{
-			if (Size() == Capacity())
+			if(Size() == Capacity())
 				Realloc(std::max(1U, Capacity() * 2));
 
-			new (&mElements[mSize++]) Type(element);
+			new(&mElements[mSize++]) Type(element);
 		}
 
 		void Add(Type&& element)
 		{
-			if (Size() == Capacity())
+			if(Size() == Capacity())
 				Realloc(std::max(1U, Capacity() * 2));
 
-			new (&mElements[mSize++]) Type(std::move(element));
+			new(&mElements[mSize++]) Type(std::move(element));
 		}
 
 		void Pop()
@@ -300,9 +313,9 @@ namespace bs
 
 		bool Contains(const Type& element)
 		{
-			for (u32 i = 0; i < mSize; i++)
+			for(u32 i = 0; i < mSize; i++)
 			{
-				if (mElements[i] == element)
+				if(mElements[i] == element)
 					return true;
 			}
 
@@ -311,9 +324,9 @@ namespace bs
 
 		void RemoveValue(const Type& element)
 		{
-			for (u32 i = 0; i < mSize; i++)
+			for(u32 i = 0; i < mSize; i++)
 			{
-				if (mElements[i] == element)
+				if(mElements[i] == element)
 				{
 					Remove(i);
 					break;
@@ -323,7 +336,7 @@ namespace bs
 
 		void Clear()
 		{
-			for (u32 i = 0; i < mSize; ++i)
+			for(u32 i = 0; i < mSize; ++i)
 				mElements[i].~Type();
 
 			mSize = 0;
@@ -331,17 +344,17 @@ namespace bs
 
 		void Resize(u32 size, const Type& value = Type())
 		{
-			if (size > Capacity())
+			if(size > Capacity())
 				Realloc(size);
 
-			if (size > mSize)
+			if(size > mSize)
 			{
-				for (u32 i = mSize; i < size; i++)
-					new (&mElements[i]) Type(value);
+				for(u32 i = mSize; i < size; i++)
+					new(&mElements[i]) Type(value);
 			}
 			else
 			{
-				for (u32 i = size; i < mSize; i++)
+				for(u32 i = size; i < mSize; i++)
 					mElements[i].~Type();
 			}
 
@@ -350,7 +363,7 @@ namespace bs
 
 		void Reserve(u32 size)
 		{
-			if (size > Capacity())
+			if(size > Capacity())
 				Realloc(size);
 		}
 
@@ -363,7 +376,7 @@ namespace bs
 		{
 			const u32 count = (u32)std::distance(start, end);
 
-			if ((Size() + count) > Capacity())
+			if((Size() + count) > Capacity())
 				Realloc(Size() + count);
 
 			std::uninitialized_copy(start, end, this->end());
@@ -372,7 +385,7 @@ namespace bs
 
 		void Append(u32 count, const Type& element)
 		{
-			if ((Size() + count) > Capacity())
+			if((Size() + count) > Capacity())
 				Realloc(Size() + count);
 
 			std::uninitialized_fill_n(end(), count, element);
@@ -406,7 +419,7 @@ namespace bs
 			auto iterLast = end() - 1;
 
 			bool swapped = false;
-			if (iter != iterLast)
+			if(iter != iterLast)
 			{
 				std::swap(*iter, *iterLast);
 				swapped = true;
@@ -416,25 +429,25 @@ namespace bs
 			return swapped;
 		}
 
-		template <typename ...Args>
-		void EmplaceBack(Args&& ...args)
+		template <typename... Args>
+		void EmplaceBack(Args&&... args)
 		{
-			if (Size() == Capacity())
+			if(Size() == Capacity())
 				Realloc(std::max(1U, Capacity() * 2));
 
-			new (&mElements[mSize++]) Type(std::forward<Args>(args) ...);
+			new(&mElements[mSize++]) Type(std::forward<Args>(args)...);
 		}
 
-		template <typename ...Args>
+		template <typename... Args>
 		Iterator Emplace(ConstIterator it, Args&&... args)
 		{
 			Iterator iterc = const_cast<Iterator>(it);
 			DifferenceType offset = iterc - begin();
 
-			if (Size() == Capacity())
+			if(Size() == Capacity())
 				Realloc(std::max(1U, Capacity() * 2));
 
-			new (&mElements[mSize++]) Type(std::forward<Args>(args) ...);
+			new(&mElements[mSize++]) Type(std::forward<Args>(args)...);
 			std::rotate(begin() + offset, end() - 1, end());
 
 			return begin() + offset;
@@ -445,10 +458,10 @@ namespace bs
 			Iterator iterc = const_cast<Iterator>(it);
 			DifferenceType offset = iterc - begin();
 
-			if (Size() == Capacity())
+			if(Size() == Capacity())
 				Realloc(std::max(1U, Capacity() * 2));
 
-			new (&mElements[mSize++]) Type(element);
+			new(&mElements[mSize++]) Type(element);
 			std::rotate(begin() + offset, end() - 1, end());
 
 			return begin() + offset;
@@ -459,10 +472,10 @@ namespace bs
 			Iterator iterc = const_cast<Iterator>(it);
 			DifferenceType offset = iterc - begin();
 
-			if (Size() == Capacity())
+			if(Size() == Capacity())
 				Realloc(std::max(1U, Capacity() * 2));
 
-			new (&mElements[mSize++]) Type(std::move(element));
+			new(&mElements[mSize++]) Type(std::move(element));
 			std::rotate(begin() + offset, end() - 1, end());
 
 			return begin() + offset;
@@ -474,15 +487,15 @@ namespace bs
 			DifferenceType offset = iterc - begin();
 			Iterator iter = &mElements[offset];
 
-			if (!n)
+			if(!n)
 				return iter;
 
-			if (Size() + n > Capacity())
+			if(Size() + n > Capacity())
 				Realloc((Size() + n) * 2);
 
 			u32 c = n;
-			while (c--)
-				new (&mElements[mSize++]) Type(element);
+			while(c--)
+				new(&mElements[mSize++]) Type(element);
 
 			std::rotate(begin() + offset, end() - n, end());
 
@@ -490,18 +503,17 @@ namespace bs
 		}
 
 		template <typename InputIt>
-		typename std::enable_if<!std::is_integral<InputIt>::value, void>::type Insert(ConstIterator it,
-			InputIt first, InputIt last)
+		typename std::enable_if<!std::is_integral<InputIt>::value, void>::type Insert(ConstIterator it, InputIt first, InputIt last)
 		{
 			Iterator iterc = const_cast<Iterator>(it);
 			DifferenceType offset = iterc - begin();
 			u32 n = (u32)(last - first);
 
-			if (Size() + n > Capacity())
+			if(Size() + n > Capacity())
 				Realloc((Size() + n) * 2);
 
-			while (first != last)
-				new (&mElements[mSize++]) Type(*first++);
+			while(first != last)
+				new(&mElements[mSize++]) Type(*first++);
 
 			std::rotate(begin() + offset, end() - n, end());
 		}
@@ -513,14 +525,14 @@ namespace bs
 			Iterator iter = &mElements[offset];
 			u32 n = (u32)list.size();
 
-			if (!n)
+			if(!n)
 				return iter;
 
-			if (Size() + n > Capacity())
+			if(Size() + n > Capacity())
 				Realloc((Size() + n) * 2);
 
-			for (auto& entry : list)
-				new (&mElements[mSize++]) Type(entry);
+			for(auto& entry : list)
+				new(&mElements[mSize++]) Type(entry);
 
 			std::rotate(begin() + offset, end() - n, end());
 
@@ -534,13 +546,13 @@ namespace bs
 
 			Iterator iter = const_cast<Iterator>(first);
 
-			if (first == last)
+			if(first == last)
 				return iter;
 
 			Iterator iterLast = const_cast<Iterator>(last);
 			std::move(iterLast, end(), iter);
 
-			for (Iterator it = iter; it < iterLast; ++it)
+			for(Iterator it = iter; it < iterLast; ++it)
 				Pop();
 
 			return iter;
@@ -563,10 +575,10 @@ namespace bs
 		{
 			Type* buffer = bs_allocN<Type>(capacity);
 
-			if (mElements)
+			if(mElements)
 			{
 				std::uninitialized_copy(
-					std::make_move_iterator(begin()), 
+					std::make_move_iterator(begin()),
 					std::make_move_iterator(end()),
 					buffer);
 
@@ -586,4 +598,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

@@ -17,7 +17,8 @@ namespace bs
 	class BS_UTILITY_EXPORT HThread
 	{
 	public:
-		HThread() = default;;
+		HThread() = default;
+		;
 		HThread(ThreadPool* pool, u32 threadId);
 
 		/**	Block the calling thread until the thread this handle points to completes. */
@@ -42,8 +43,8 @@ namespace bs
 	{
 	public:
 		PooledThread(const String& name)
-			:mName(name)
-		{ }
+			: mName(name)
+		{}
 
 		virtual ~PooledThread() = default;
 
@@ -96,7 +97,6 @@ namespace bs
 		void RunFunctionHelper(const std::function<void()>& function) const;
 #endif
 
-
 	protected:
 		std::function<void()> mWorkerMethod;
 		String mName;
@@ -120,7 +120,7 @@ namespace bs
 	 * @tparam	ThreadPolicy Allows you specify a policy with methods that will get called whenever a new thread is created
 	 *		or when a thread is destroyed.
 	 */
-	template<class ThreadPolicy>
+	template <class ThreadPolicy>
 	class TPooledThread : public PooledThread
 	{
 	public:
@@ -234,8 +234,9 @@ namespace bs
 	class ThreadNoPolicy
 	{
 	public:
-		static void OnThreadStarted(const String& name) { }
-		static void OnThreadEnded(const String& name) { }
+		static void OnThreadStarted(const String& name) {}
+
+		static void OnThreadEnded(const String& name) {}
 	};
 
 	/**
@@ -244,14 +245,13 @@ namespace bs
 	 * @tparam	ThreadPolicy Allows you specify a policy with methods that will get called whenever a new thread is created
 	 *		or when a thread is destroyed.
 	 */
-	template<class ThreadPolicy = ThreadNoPolicy>
+	template <class ThreadPolicy = ThreadNoPolicy>
 	class TThreadPool : public ThreadPool
 	{
 	public:
 		TThreadPool(u32 threadCapacity, u32 maxCapacity = 16, u32 idleTimeout = 60)
-			:ThreadPool(threadCapacity, maxCapacity, idleTimeout)
+			: ThreadPool(threadCapacity, maxCapacity, idleTimeout)
 		{
-
 		}
 
 	protected:
@@ -267,4 +267,4 @@ namespace bs
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs

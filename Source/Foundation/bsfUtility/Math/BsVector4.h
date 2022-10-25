@@ -21,16 +21,16 @@ namespace bs
 		Vector4() = default;
 
 		constexpr Vector4(BS_ZERO)
-			:X(0.0f), Y(0.0f), Z(0.0f), W(0.0f)
-		{ }
+			: X(0.0f), Y(0.0f), Z(0.0f), W(0.0f)
+		{}
 
 		constexpr Vector4(float x, float y, float z, float w)
-			:X(x), Y(y), Z(z), W(w)
-		{ }
+			: X(x), Y(y), Z(z), W(w)
+		{}
 
 		constexpr explicit Vector4(const Vector3& vec, float w = 0.0f)
-			:X(vec.X), Y(vec.Y), Z(vec.Z), W(w)
-		{ }
+			: X(vec.X), Y(vec.Y), Z(vec.Z), W(w)
+		{}
 
 		/** Exchange the contents of this vector with another. */
 		void Swap(Vector4& other)
@@ -41,18 +41,18 @@ namespace bs
 			std::swap(W, other.W);
 		}
 
-		float operator[] (u32 i) const
-		{
-			assert (i < 4);
-
-			return *(&X+i);
-		}
-
-		float& operator[] (u32 i)
+		float operator[](u32 i) const
 		{
 			assert(i < 4);
 
-			return *(&X+i);
+			return *(&X + i);
+		}
+
+		float& operator[](u32 i)
+		{
+			assert(i < 4);
+
+			return *(&X + i);
 		}
 
 		/** Pointer accessor for direct copying. */
@@ -67,7 +67,7 @@ namespace bs
 			return &X;
 		}
 
-		Vector4& operator= (float rhs)
+		Vector4& operator=(float rhs)
 		{
 			X = rhs;
 			Y = rhs;
@@ -77,17 +77,17 @@ namespace bs
 			return *this;
 		}
 
-		bool operator== (const Vector4& rhs) const
+		bool operator==(const Vector4& rhs) const
 		{
 			return (X == rhs.X && Y == rhs.Y && Z == rhs.Z && W == rhs.W);
 		}
 
-		bool operator!= (const Vector4& rhs) const
+		bool operator!=(const Vector4& rhs) const
 		{
 			return (X != rhs.X || Y != rhs.Y || Z != rhs.Z || W != rhs.W);
 		}
 
-		Vector4& operator= (const Vector3& rhs)
+		Vector4& operator=(const Vector3& rhs)
 		{
 			X = rhs.X;
 			Y = rhs.Y;
@@ -97,27 +97,27 @@ namespace bs
 			return *this;
 		}
 
-		Vector4 operator+ (const Vector4& rhs) const
+		Vector4 operator+(const Vector4& rhs) const
 		{
 			return Vector4(X + rhs.X, Y + rhs.Y, Z + rhs.Z, W + rhs.W);
 		}
 
-		Vector4 operator- (const Vector4& rhs) const
+		Vector4 operator-(const Vector4& rhs) const
 		{
 			return Vector4(X - rhs.X, Y - rhs.Y, Z - rhs.Z, W - rhs.W);
 		}
 
-		Vector4 operator* (float rhs) const
+		Vector4 operator*(float rhs) const
 		{
 			return Vector4(X * rhs, Y * rhs, Z * rhs, W * rhs);
 		}
 
-		Vector4 operator* (const Vector4& rhs) const
+		Vector4 operator*(const Vector4& rhs) const
 		{
 			return Vector4(rhs.X * X, rhs.Y * Y, rhs.Z * Z, rhs.W * W);
 		}
 
-		Vector4 operator/ (float rhs) const
+		Vector4 operator/(float rhs) const
 		{
 			assert(rhs != 0.0f);
 
@@ -125,52 +125,52 @@ namespace bs
 			return Vector4(X * inv, Y * inv, Z * inv, W * inv);
 		}
 
-		Vector4 operator/ (const Vector4& rhs) const
+		Vector4 operator/(const Vector4& rhs) const
 		{
 			return Vector4(X / rhs.X, Y / rhs.Y, Z / rhs.Z, W / rhs.W);
 		}
 
-		const Vector4& operator+ () const
+		const Vector4& operator+() const
 		{
 			return *this;
 		}
 
-		Vector4 operator- () const
+		Vector4 operator-() const
 		{
 			return Vector4(-X, -Y, -Z, -W);
 		}
 
-		friend Vector4 operator* (float lhs, const Vector4& rhs)
+		friend Vector4 operator*(float lhs, const Vector4& rhs)
 		{
 			return Vector4(lhs * rhs.X, lhs * rhs.Y, lhs * rhs.Z, lhs * rhs.W);
 		}
 
-		friend Vector4 operator/ (float lhs, const Vector4& rhs)
+		friend Vector4 operator/(float lhs, const Vector4& rhs)
 		{
 			return Vector4(lhs / rhs.X, lhs / rhs.Y, lhs / rhs.Z, lhs / rhs.W);
 		}
 
-		friend Vector4 operator+ (const Vector4& lhs, float rhs)
+		friend Vector4 operator+(const Vector4& lhs, float rhs)
 		{
 			return Vector4(lhs.X + rhs, lhs.Y + rhs, lhs.Z + rhs, lhs.W + rhs);
 		}
 
-		friend Vector4 operator+ (float lhs, const Vector4& rhs)
+		friend Vector4 operator+(float lhs, const Vector4& rhs)
 		{
 			return Vector4(lhs + rhs.X, lhs + rhs.Y, lhs + rhs.Z, lhs + rhs.W);
 		}
 
-		friend Vector4 operator- (const Vector4& lhs, float rhs)
+		friend Vector4 operator-(const Vector4& lhs, float rhs)
 		{
 			return Vector4(lhs.X - rhs, lhs.Y - rhs, lhs.Z - rhs, lhs.W - rhs);
 		}
 
-		friend Vector4 operator- (float lhs, Vector4& rhs)
+		friend Vector4 operator-(float lhs, Vector4& rhs)
 		{
 			return Vector4(lhs - rhs.X, lhs - rhs.Y, lhs - rhs.Z, lhs - rhs.W);
 		}
 
-		Vector4& operator+= (const Vector4& rhs)
+		Vector4& operator+=(const Vector4& rhs)
 		{
 			X += rhs.X;
 			Y += rhs.Y;
@@ -180,7 +180,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector4& operator-= (const Vector4& rhs)
+		Vector4& operator-=(const Vector4& rhs)
 		{
 			X -= rhs.X;
 			Y -= rhs.Y;
@@ -190,7 +190,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector4& operator*= (float rhs)
+		Vector4& operator*=(float rhs)
 		{
 			X *= rhs;
 			Y *= rhs;
@@ -200,7 +200,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector4& operator+= (float rhs)
+		Vector4& operator+=(float rhs)
 		{
 			X += rhs;
 			Y += rhs;
@@ -210,7 +210,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector4& operator-= (float rhs)
+		Vector4& operator-=(float rhs)
 		{
 			X -= rhs;
 			Y -= rhs;
@@ -220,7 +220,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector4& operator*= (Vector4& rhs)
+		Vector4& operator*=(Vector4& rhs)
 		{
 			X *= rhs.X;
 			Y *= rhs.Y;
@@ -230,7 +230,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector4& operator/= (float rhs)
+		Vector4& operator/=(float rhs)
 		{
 			assert(rhs != 0.0f);
 
@@ -244,7 +244,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector4& operator/= (const Vector4& rhs)
+		Vector4& operator/=(const Vector4& rhs)
 		{
 			X /= rhs.X;
 			Y /= rhs.Y;
@@ -267,5 +267,4 @@ namespace bs
 	};
 
 	/** @} */
-}
-
+} // namespace bs

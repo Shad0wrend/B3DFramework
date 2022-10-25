@@ -20,7 +20,7 @@ namespace bs
 	{};
 
 	/** Memory allocator providing a generic implementation. Specialize for specific categories as needed. */
-	template<>
+	template <>
 	class MemoryAllocator<ProfilerAlloc> : public MemoryAllocatorBase
 	{
 	public:
@@ -39,4 +39,4 @@ namespace bs
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs

@@ -40,7 +40,7 @@ namespace bs
 	public:
 		FileDecoder(const Path& fileLocation);
 
-		/**	
+		/**
 		 * Deserializes an IReflectable object by reading the binary data at the provided file location.
 		 *
 		 * @param[in]	context		Optional object that will be passed along to all deserialized objects through
@@ -61,4 +61,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

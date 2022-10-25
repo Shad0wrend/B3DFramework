@@ -18,21 +18,23 @@ namespace bs
 		Ray() = default;
 
 		Ray(const Vector3& origin, const Vector3& direction)
-			:mOrigin(origin), mDirection(direction)
-		{ }
+			: mOrigin(origin), mDirection(direction)
+		{}
 
 		void SetOrigin(const Vector3& origin) { mOrigin = origin; }
+
 		const Vector3& GetOrigin() const { return mOrigin; }
 
 		void SetDirection(const Vector3& dir) { mDirection = dir; }
-		const Vector3& GetDirection() const {return mDirection;}
+
+		const Vector3& GetDirection() const { return mDirection; }
 
 		/** Gets the position of a point t units along the ray. */
 		Vector3 GetPoint(float t) const
 		{
 			return Vector3(mOrigin + (mDirection * t));
 		}
-		
+
 		/** Gets the position of a point t units along the ray. */
 		Vector3 operator*(float t) const
 		{
@@ -69,13 +71,12 @@ namespace bs
 		 * @param[in]	negativeSide	(optional) Should intersections with the negative side (opposite of normal facing) count.
 		 * @return						Boolean result if intersection happened and distance to intersection point.
 		 */
-		std::pair<bool, float> Intersects(const Vector3& a, const Vector3& b, const Vector3& c,
-			const Vector3& normal, bool positiveSide = true, bool negativeSide = true) const;
+		std::pair<bool, float> Intersects(const Vector3& a, const Vector3& b, const Vector3& c, const Vector3& normal, bool positiveSide = true, bool negativeSide = true) const;
 
 	protected:
-		Vector3 mOrigin{Vector3::ZERO};
-		Vector3 mDirection{Vector3::UNIT_Z};
+		Vector3 mOrigin{ Vector3::ZERO };
+		Vector3 mDirection{ Vector3::UNIT_Z };
 	};
 
 	/** @} */
-}
+} // namespace bs

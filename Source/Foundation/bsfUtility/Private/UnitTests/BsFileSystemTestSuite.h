@@ -38,4 +38,4 @@ namespace bs
 
 		Path mTestDirectory;
 	};
-}
+} // namespace bs

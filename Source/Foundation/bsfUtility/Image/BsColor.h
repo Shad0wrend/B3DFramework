@@ -31,9 +31,9 @@ namespace bs
 		static const Color LightGray;
 		static const Color BansheeOrange;
 
-		constexpr explicit Color(float red = 1.0f, float green = 1.0f, float blue = 1.0f, float alpha = 1.0f )
-			:R(red), G(green), B(blue), A(alpha)
-		{ }
+		constexpr explicit Color(float red = 1.0f, float green = 1.0f, float blue = 1.0f, float alpha = 1.0f)
+			: R(red), G(green), B(blue), A(alpha)
+		{}
 
 		bool operator==(const Color& rhs) const;
 		bool operator!=(const Color& rhs) const;
@@ -68,24 +68,24 @@ namespace bs
 		/** Clamps color value to the range [0, 1]. */
 		void Saturate()
 		{
-			if (R < 0)
+			if(R < 0)
 				R = 0;
-			else if (R > 1)
+			else if(R > 1)
 				R = 1;
 
-			if (G < 0)
+			if(G < 0)
 				G = 0;
-			else if (G > 1)
+			else if(G > 1)
 				G = 1;
 
-			if (B < 0)
+			if(B < 0)
 				B = 0;
-			else if (B > 1)
+			else if(B > 1)
 				B = 1;
 
-			if (A < 0)
+			if(A < 0)
 				A = 0;
-			else if (A > 1)
+			else if(A > 1)
 				A = 1;
 		}
 
@@ -97,18 +97,18 @@ namespace bs
 			return ret;
 		}
 
-		float operator[] (const u32 i) const
+		float operator[](const u32 i) const
 		{
 			assert(i < 4);
 
-			return *(&R+i);
+			return *(&R + i);
 		}
 
-		float& operator[] (const u32 i)
+		float& operator[](const u32 i)
 		{
 			assert(i < 4);
 
-			return *(&R+i);
+			return *(&R + i);
 		}
 
 		/** Pointer accessor for direct copying. */
@@ -123,32 +123,32 @@ namespace bs
 			return &R;
 		}
 
-		Color operator+ (const Color& rhs) const
+		Color operator+(const Color& rhs) const
 		{
 			return Color(R + rhs.R, G + rhs.G, B + rhs.B, A + rhs.A);
 		}
 
-		Color operator- (const Color& rhs) const
+		Color operator-(const Color& rhs) const
 		{
 			return Color(R - rhs.R, G - rhs.G, B - rhs.B, A - rhs.A);
 		}
 
-		Color operator* (float rhs) const
+		Color operator*(float rhs) const
 		{
 			return Color(rhs * R, rhs * G, rhs * B, rhs * A);
 		}
 
-		Color operator* (const Color& rhs) const
+		Color operator*(const Color& rhs) const
 		{
 			return Color(rhs.R * R, rhs.G * G, rhs.B * B, rhs.A * A);
 		}
 
-		Color operator/ (const Color& rhs) const
+		Color operator/(const Color& rhs) const
 		{
 			return Color(R / rhs.R, G / rhs.G, B / rhs.B, A / rhs.A);
 		}
 
-		Color operator/ (float rhs) const
+		Color operator/(float rhs) const
 		{
 			assert(rhs != 0.0f);
 			float invRhs = 1.0f / rhs;
@@ -156,12 +156,12 @@ namespace bs
 			return Color(R * invRhs, G * invRhs, B * invRhs, A * invRhs);
 		}
 
-		friend Color operator* (float lhs, const Color& rhs)
+		friend Color operator*(float lhs, const Color& rhs)
 		{
 			return Color(lhs * rhs.R, lhs * rhs.G, lhs * rhs.B, lhs * rhs.A);
 		}
 
-		Color& operator+= (const Color& rhs)
+		Color& operator+=(const Color& rhs)
 		{
 			R += rhs.R;
 			G += rhs.G;
@@ -171,7 +171,7 @@ namespace bs
 			return *this;
 		}
 
-		Color& operator-= (const Color& rhs)
+		Color& operator-=(const Color& rhs)
 		{
 			R -= rhs.R;
 			G -= rhs.G;
@@ -181,7 +181,7 @@ namespace bs
 			return *this;
 		}
 
-		Color& operator*= (float rhs)
+		Color& operator*=(float rhs)
 		{
 			R *= rhs;
 			G *= rhs;
@@ -191,7 +191,7 @@ namespace bs
 			return *this;
 		}
 
-		Color& operator/= (float rhs)
+		Color& operator/=(float rhs)
 		{
 			assert(rhs != 0.0f);
 
@@ -260,27 +260,27 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs
 
 /** @cond SPECIALIZATIONS */
 
 namespace std
 {
-/** Hash value generator for Color. */
-template<>
-struct hash<bs::Color>
-{
-	size_t operator()(const bs::Color& color) const
+	/** Hash value generator for Color. */
+	template <>
+	struct hash<bs::Color>
 	{
-		size_t hash = 0;
-		bs::bs_hash_combine(hash, color.R);
-		bs::bs_hash_combine(hash, color.G);
-		bs::bs_hash_combine(hash, color.B);
-		bs::bs_hash_combine(hash, color.A);
+		size_t operator()(const bs::Color& color) const
+		{
+			size_t hash = 0;
+			bs::bs_hash_combine(hash, color.R);
+			bs::bs_hash_combine(hash, color.G);
+			bs::bs_hash_combine(hash, color.B);
+			bs::bs_hash_combine(hash, color.A);
 
-		return hash;
-	}
-};
-}
+			return hash;
+		}
+	};
+} // namespace std
 
 /** @endcond */

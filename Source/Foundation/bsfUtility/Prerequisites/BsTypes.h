@@ -7,14 +7,14 @@
 /**	Commonly used types. */
 namespace bs
 {
-	using std::int8_t;
-	using std::uint8_t;
 	using std::int16_t;
-	using std::uint16_t;
 	using std::int32_t;
-	using std::uint32_t;
 	using std::int64_t;
+	using std::int8_t;
+	using std::uint16_t;
+	using std::uint32_t;
 	using std::uint64_t;
+	using std::uint8_t;
 
 	using i8 = int8_t;
 	using u8 = uint8_t;
@@ -24,4 +24,4 @@ namespace bs
 	using u32 = uint32_t;
 	using i64 = int64_t;
 	using u64 = uint64_t;
-}
+} // namespace bs

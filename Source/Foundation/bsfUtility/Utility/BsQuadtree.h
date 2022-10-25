@@ -14,18 +14,18 @@ namespace bs
 	 *  @{
 	 */
 
-	 /** Identifier that may be used for finding an element in the quadtree. */
+	/** Identifier that may be used for finding an element in the quadtree. */
 	class QuadtreeElementId
 	{
 	public:
 		QuadtreeElementId() = default;
 
 		QuadtreeElementId(void* node, u32 elementIdx)
-			:node(node), elementIdx(elementIdx)
-		{ }
+			: node(node), elementIdx(elementIdx)
+		{}
 
 	private:
-		template<class, class>
+		template <class, class>
 		friend class Quadtree;
 
 		void* node = nullptr;
@@ -56,7 +56,7 @@ namespace bs
 	 *							- "static void setElementId(const Quadtree::ElementId&, void*)"
 	 *								- Gets called when element's ID is first assigned or subsequentily modified
 	 */
-	template<class ElemType, class Options>
+	template <class ElemType, class Options>
 	class Quadtree
 	{
 		/**
@@ -86,6 +86,7 @@ namespace bs
 			ElementBoundGroup* bounds = nullptr;
 			u32 count = 0;
 		};
+
 	public:
 		/** Contains a reference to one of the eight child nodes in an quadtree node. */
 		struct HChildNode
@@ -107,16 +108,16 @@ namespace bs
 			};
 
 			HChildNode()
-				:empty(true)
-			{ }
+				: empty(true)
+			{}
 
 			HChildNode(u32 x, u32 y)
-				:x(x), y(y), empty(false)
-			{ }
+				: x(x), y(y), empty(false)
+			{}
 
 			HChildNode(u32 index)
-				:index(index), empty2(false)
-			{ }
+				: index(index), empty2(false)
+			{}
 		};
 
 		/** Contains a range of child nodes in an quadtree node. */
@@ -143,13 +144,13 @@ namespace bs
 
 			/** Constructs a range overlapping no nodes. */
 			NodeChildRange()
-				:allBits(0)
-			{ }
+				: allBits(0)
+			{}
 
 			/** Constructs a range overlapping a single node. */
 			NodeChildRange(HChildNode child)
-				:posBits(child.index), negBits(~child.index)
-			{ }
+				: posBits(child.index), negBits(~child.index)
+			{}
 
 			/** Checks if the range contains the provided child. */
 			bool contains(HChildNode child)
@@ -165,8 +166,8 @@ namespace bs
 		public:
 			/** Constructs a new leaf node with the specified parent. */
 			Node(Node* parent)
-				:mParent(parent), mTotalNumElements(0), mIsLeaf(true)
-			{ }
+				: mParent(parent), mTotalNumElements(0), mIsLeaf(true)
+			{}
 
 			/** Returns a child node with the specified index. May return null. */
 			Node* getChild(HChildNode child) const
@@ -192,7 +193,7 @@ namespace bs
 
 				*elements = mElements.values;
 				*bounds = mElements.bounds;
-				for (u32 i = 0; i < groupIdx; i++)
+				for(u32 i = 0; i < groupIdx; i++)
 				{
 					*elements = (*elements)->next;
 					*bounds = (*bounds)->next;
@@ -221,7 +222,7 @@ namespace bs
 
 			/** Initializes a new bounds object using the provided node bounds. */
 			NodeBounds(const simd::Rect2& bounds)
-				:mBounds(bounds)
+				: mBounds(bounds)
 			{
 				static constexpr float childExtentScale = 0.5f * (1.0f + 1.0f / Options::LoosePadding);
 
@@ -254,7 +255,7 @@ namespace bs
 				HChildNode output;
 
 				simd::mask_float32x4 mask = simd::cmp_gt(simd::add(queryExtents, diff), childExtent);
-				if (simd::test_bits_any(simd::bit_cast<simd::uint32x4>(mask)) == false)
+				if(simd::test_bits_any(simd::bit_cast<simd::uint32x4>(mask)) == false)
 				{
 					auto ones = simd::make_uint<simd::uint32x4>(1, 1, 1, 1);
 					auto zeroes = simd::make_uint<simd::uint32x4>(0, 0, 0, 0);
@@ -328,11 +329,8 @@ namespace bs
 					simd::Rect2(
 						Vector2(
 							mBounds.center.x + mChildOffset * map[child.x],
-							mBounds.center.y + mChildOffset * map[child.y]
-						),
-						mChildExtent
-					)
-				);
+							mBounds.center.y + mChildOffset * map[child.y]),
+						mChildExtent));
 			}
 
 		private:
@@ -348,8 +346,8 @@ namespace bs
 			HNode() = default;
 
 			HNode(const Node* node, const NodeBounds& bounds)
-				:mNode(node), mBounds(bounds)
-			{ }
+				: mNode(node), mBounds(bounds)
+			{}
 
 			/** Returns the referenced node. */
 			const Node* getNode() const { return mNode; }
@@ -372,14 +370,14 @@ namespace bs
 		public:
 			/** Initializes the iterator, starting with the root quadtree node. */
 			NodeIterator(const Quadtree& tree)
-				:mCurrentNode(HNode(&tree.mRoot, tree.mRootBounds)), mStackAlloc(), mNodeStack(&mStackAlloc)
+				: mCurrentNode(HNode(&tree.mRoot, tree.mRootBounds)), mStackAlloc(), mNodeStack(&mStackAlloc)
 			{
 				mNodeStack.push_back(mCurrentNode);
 			}
 
 			/** Initializes the iterator using a specific node and its bounds. */
 			NodeIterator(const Node* node, const NodeBounds& bounds)
-				:mCurrentNode(HNode(node, bounds)), mStackAlloc(), mNodeStack(&mStackAlloc)
+				: mCurrentNode(HNode(node, bounds)), mStackAlloc(), mNodeStack(&mStackAlloc)
 			{
 				mNodeStack.push_back(mCurrentNode);
 			}
@@ -397,7 +395,7 @@ namespace bs
 			 */
 			bool moveNext()
 			{
-				if (mNodeStack.empty())
+				if(mNodeStack.empty())
 				{
 					mCurrentNode = HNode();
 					return false;
@@ -447,19 +445,19 @@ namespace bs
 			 */
 			bool moveNext()
 			{
-				if (!mCurrentElemGroup)
+				if(!mCurrentElemGroup)
 					return false;
 
 				mCurrentIdx++;
 
-				if ((u32)mCurrentIdx == mElemsInGroup) // Next group
+				if((u32)mCurrentIdx == mElemsInGroup) // Next group
 				{
 					mCurrentElemGroup = mCurrentElemGroup->next;
 					mCurrentBoundGroup = mCurrentBoundGroup->next;
 					mElemsInGroup = Options::MaxElementsPerNode; // Following groups are always full
 					mCurrentIdx = 0;
 
-					if (!mCurrentElemGroup)
+					if(!mCurrentElemGroup)
 						return false;
 				}
 
@@ -494,8 +492,8 @@ namespace bs
 			 * bounds.
 			 */
 			BoxIntersectIterator(const Quadtree& tree, const Rect2& bounds)
-				:mNodeIter(tree), mBounds(simd::Rect2(bounds))
-			{ }
+				: mNodeIter(tree), mBounds(simd::Rect2(bounds))
+			{}
 
 			/**
 			 * Returns the contents of the current element. moveNext() must be called at least once and it must return true
@@ -513,18 +511,18 @@ namespace bs
 			 */
 			bool moveNext()
 			{
-				while (true)
+				while(true)
 				{
 					// First check elements of the current node (if any)
-					while (mElemIter.moveNext())
+					while(mElemIter.moveNext())
 					{
 						const simd::Rect2& bounds = mElemIter.getCurrentBounds();
-						if (bounds.overlaps(mBounds))
+						if(bounds.overlaps(mBounds))
 							return true;
 					}
 
 					// No more elements in this node, move to the next one
-					if (!mNodeIter.moveNext())
+					if(!mNodeIter.moveNext())
 						return false; // No more nodes to check
 
 					const HNode& nodeRef = mNodeIter.getCurrent();
@@ -532,9 +530,9 @@ namespace bs
 
 					// Add all intersecting child nodes to the iterator
 					NodeChildRange childRange = nodeRef.getBounds().findIntersectingChildren(mBounds);
-					for (u32 i = 0; i < 4; i++)
+					for(u32 i = 0; i < 4; i++)
 					{
-						if (childRange.contains(i) && nodeRef.getNode()->HasChild(i))
+						if(childRange.contains(i) && nodeRef.getNode()->HasChild(i))
 							mNodeIter.pushChild(i);
 					}
 				}
@@ -584,17 +582,17 @@ namespace bs
 			// Reduce element counts in this and any parent nodes, check if nodes need collapsing
 			Node* iterNode = node;
 			Node* nodeToCollapse = nullptr;
-			while (iterNode)
+			while(iterNode)
 			{
 				--iterNode->mTotalNumElements;
 
-				if (iterNode->mTotalNumElements < Options::MinElementsPerNode)
+				if(iterNode->mTotalNumElements < Options::MinElementsPerNode)
 					nodeToCollapse = iterNode;
 
 				iterNode = iterNode->mParent;
 			}
 
-			if (nodeToCollapse)
+			if(nodeToCollapse)
 			{
 				// Add all the child node elements to the current node
 				bs_frame_mark();
@@ -602,19 +600,19 @@ namespace bs
 					FrameStack<Node*> todo;
 					todo.push(node);
 
-					while (!todo.empty())
+					while(!todo.empty())
 					{
 						Node* curNode = todo.top();
 						todo.pop();
 
-						for (u32 i = 0; i < 4; i++)
+						for(u32 i = 0; i < 4; i++)
 						{
-							if (curNode->HasChild(i))
+							if(curNode->HasChild(i))
 							{
 								Node* childNode = curNode->GetChild(i);
 
 								ElementIterator elemIter(childNode);
-								while (elemIter.moveNext())
+								while(elemIter.moveNext())
 									pushElement(node, elemIter.getCurrentElem(), elemIter.getCurrentBounds());
 
 								todo.push(childNode);
@@ -627,9 +625,9 @@ namespace bs
 				node->mIsLeaf = true;
 
 				// Recursively delete all child nodes
-				for (u32 i = 0; i < 4; i++)
+				for(u32 i = 0; i < 4; i++)
 				{
-					if (node->mChildren[i])
+					if(node->mChildren[i])
 					{
 						destroyNode(node->mChildren[i]);
 
@@ -647,12 +645,12 @@ namespace bs
 			simd::Rect2 elemBounds = Options::getBounds(elem, mContext);
 
 			++node->mTotalNumElements;
-			if (node->mIsLeaf)
+			if(node->mIsLeaf)
 			{
 				const simd::Rect2& bounds = nodeBounds.getBounds();
 
 				// Check if the node has too many elements and should be broken up
-				if ((node->mElements.count + 1) > Options::MaxElementsPerNode && bounds.extents.x > mMinNodeExtent)
+				if((node->mElements.count + 1) > Options::MaxElementsPerNode && bounds.extents.x > mMinNodeExtent)
 				{
 					// Clear all elements from the current node
 					NodeElements elements = node->mElements;
@@ -665,7 +663,7 @@ namespace bs
 					node->mTotalNumElements = 0;
 
 					// Re-insert all previous elements into this node (likely creating child nodes)
-					while (elemIter.moveNext())
+					while(elemIter.moveNext())
 						AddElementToNode(elemIter.getCurrentElem(), node, nodeBounds);
 
 					// Free the element and bound groups from this node
@@ -685,7 +683,7 @@ namespace bs
 				// Attempt to find a child the element fits into
 				HChildNode child = nodeBounds.findContainingChild(elemBounds);
 
-				if (child.empty)
+				if(child.empty)
 				{
 					// Element doesn't fit into a child, add it to this node
 					pushElement(node, elem, elemBounds);
@@ -693,7 +691,7 @@ namespace bs
 				else
 				{
 					// Create the child node if needed, and add the element to it
-					if (!node->mChildren[child.index])
+					if(!node->mChildren[child.index])
 						node->mChildren[child.index] = mNodeAlloc.template construct<Node>(node);
 
 					AddElementToNode(elem, node->mChildren[child.index], nodeBounds.getChild(child));
@@ -706,9 +704,9 @@ namespace bs
 		{
 			freeElements(node->mElements);
 
-			for (auto& entry : node->mChildren)
+			for(auto& entry : node->mChildren)
 			{
-				if (entry != nullptr)
+				if(entry != nullptr)
 				{
 					destroyNode(entry);
 					mNodeAlloc.destruct(entry);
@@ -722,7 +720,7 @@ namespace bs
 			NodeElements& elements = node->mElements;
 
 			u32 freeIdx = elements.count % Options::MaxElementsPerNode;
-			if (freeIdx == 0) // New group needed
+			if(freeIdx == 0) // New group needed
 			{
 				ElementGroup* elementGroup = (ElementGroup*)mElemAlloc.template construct<ElementGroup>();
 				ElementBoundGroup* boundGroup = (ElementBoundGroup*)mElemBoundsAlloc.template construct<ElementBoundGroup>();
@@ -756,7 +754,7 @@ namespace bs
 			ElementBoundGroup* lastBoundGroup;
 			u32 lastElementIdx = node->mapToGroup(elements.count - 1, &lastElemGroup, &lastBoundGroup);
 
-			if (elements.count > 1)
+			if(elements.count > 1)
 			{
 				std::swap(elemGroup->v[elementIdx], lastElemGroup->v[lastElementIdx]);
 				std::swap(boundGroup->v[elementIdx], lastBoundGroup->v[lastElementIdx]);
@@ -764,7 +762,7 @@ namespace bs
 				Options::setElementId(elemGroup->v[elementIdx], QuadtreeElementId(node, elementIdx), mContext);
 			}
 
-			if (lastElementIdx == 0) // Last element in that group, remove it completely
+			if(lastElementIdx == 0) // Last element in that group, remove it completely
 			{
 				elements.values = lastElemGroup->next;
 				elements.bounds = lastBoundGroup->next;
@@ -781,7 +779,7 @@ namespace bs
 		{
 			// Free the element and bound groups from this node
 			ElementGroup* curElemGroup = elements.values;
-			while (curElemGroup)
+			while(curElemGroup)
 			{
 				ElementGroup* toDelete = curElemGroup;
 				curElemGroup = curElemGroup->next;
@@ -790,7 +788,7 @@ namespace bs
 			}
 
 			ElementBoundGroup* curBoundGroup = elements.bounds;
-			while (curBoundGroup)
+			while(curBoundGroup)
 			{
 				ElementBoundGroup* toDelete = curBoundGroup;
 				curBoundGroup = curBoundGroup->next;
@@ -814,4 +812,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

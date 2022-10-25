@@ -32,7 +32,7 @@ namespace bs
 		{
 		public:
 			MemBlock(u8* blockData)
-				:BlockData(blockData), FreePtr(0), FreeElems(ElemsPerBlock), NextBlock(nullptr)
+				: BlockData(blockData), FreePtr(0), FreeElems(ElemsPerBlock), NextBlock(nullptr)
 			{
 				u32 offset = 0;
 				for(u32 i = 0; i < ElemsPerBlock; i++)
@@ -91,7 +91,7 @@ namespace bs
 			ScopedLock<Lock> lock(mLockPolicy);
 
 			MemBlock* curBlock = mFreeBlock;
-			while (curBlock != nullptr)
+			while(curBlock != nullptr)
 			{
 				MemBlock* nextBlock = curBlock->NextBlock;
 				DeallocBlock(curBlock);
@@ -151,17 +151,17 @@ namespace bs
 		}
 
 		/** Allocates and constructs a single pool element. */
-		template<class T, class... Args>
-		T* Construct(Args &&...args)
+		template <class T, class... Args>
+		T* Construct(Args&&... args)
 		{
 			T* data = (T*)Alloc();
-			new ((void*)data) T(std::forward<Args>(args)...);
+			new((void*)data) T(std::forward<Args>(args)...);
 
 			return data;
 		}
 
 		/** Destructs and deallocates a single pool element. */
-		template<class T>
+		template <class T>
 		void Destruct(T* data)
 		{
 			data->~T();
@@ -175,10 +175,10 @@ namespace bs
 			MemBlock* newBlock = nullptr;
 			MemBlock* curBlock = mFreeBlock;
 
-			while (curBlock != nullptr)
+			while(curBlock != nullptr)
 			{
 				MemBlock* nextBlock = curBlock->NextBlock;
-				if (nextBlock != nullptr && nextBlock->FreeElems > 0)
+				if(nextBlock != nullptr && nextBlock->FreeElems > 0)
 				{
 					// Found an existing block with free space
 					newBlock = nextBlock;
@@ -192,7 +192,7 @@ namespace bs
 				curBlock = nextBlock;
 			}
 
-			if (newBlock == nullptr)
+			if(newBlock == nullptr)
 			{
 				constexpr u32 blockDataSize = ActualElemSize * ElemsPerBlock;
 				size_t paddedBlockDataSize = blockDataSize + (Alignment - 1); // Padding for potential alignment correction
@@ -202,7 +202,7 @@ namespace bs
 				void* blockData = data + sizeof(MemBlock);
 				blockData = std::align(Alignment, blockDataSize, blockData, paddedBlockDataSize);
 
-				newBlock = new (data) MemBlock((u8*)blockData);
+				newBlock = new(data) MemBlock((u8*)blockData);
 				mNumBlocks++;
 
 				newBlock->NextBlock = mFreeBlock;
@@ -245,11 +245,12 @@ namespace bs
 	PoolAlloc<sizeof(T), ElemsPerBlock, Alignment, Lock> StaticPoolAlloc<T, ElemsPerBlock, Alignment, Lock>::m;
 
 	/** Specializable template that allows users to implement globally accessible pool allocators for custom types. */
-	template<class T>
+	template <class T>
 	class GlobalPoolAlloc : std::false_type
 	{
 		template <typename T2>
-		struct AlwaysFalse : std::false_type { };
+		struct AlwaysFalse : std::false_type
+		{};
 
 		static_assert(AlwaysFalse<T>::value, "No global pool allocator exists for the type.");
 	};
@@ -258,35 +259,37 @@ namespace bs
 	 * Implements a global pool for the specified type. The pool will initially have enough room for ElemsPerBlock and
 	 * will grow by that amount when exceeded. Global pools are thread safe by default.
 	 */
-#define IMPLEMENT_GLOBAL_POOL(Type, ElemsPerBlock)									\
-	template<> class GlobalPoolAlloc<Type> : public StaticPoolAlloc<Type, ElemsPerBlock> { };
+#define IMPLEMENT_GLOBAL_POOL(Type, ElemsPerBlock)                            \
+	template <>                                                               \
+	class GlobalPoolAlloc<Type> : public StaticPoolAlloc<Type, ElemsPerBlock> \
+	{};
 
 	/** Allocates a new object of type T using the global pool allocator, without constructing it. */
-	template<class T>
+	template <class T>
 	T* bs_pool_alloc()
 	{
 		return (T*)GlobalPoolAlloc<T>::m.Alloc();
 	}
 
 	/** Allocates and constructs a new object of type T using the global pool allocator. */
-	template<class T, class... Args>
-	T* bs_pool_new(Args &&...args)
+	template <class T, class... Args>
+	T* bs_pool_new(Args&&... args)
 	{
 		T* data = bs_pool_alloc<T>();
-		new ((void*)data) T(std::forward<Args>(args)...);
+		new((void*)data) T(std::forward<Args>(args)...);
 
 		return data;
 	}
 
 	/** Frees the provided object using its global pool allocator, without destructing it. */
-	template<class T>
+	template <class T>
 	void bs_pool_free(T* ptr)
 	{
 		GlobalPoolAlloc<T>::m.Free(ptr);
 	}
 
 	/** Frees and destructs the provided object using its global pool allocator. */
-	template<class T>
+	template <class T>
 	void bs_pool_delete(T* ptr)
 	{
 		ptr->~T();
@@ -294,4 +297,4 @@ namespace bs
 	}
 
 	/** @} */
-}
+} // namespace bs

@@ -26,21 +26,20 @@ namespace bs
 	bool unix_pathExists(const String& path)
 	{
 		struct stat st_buf;
-		if (stat(path.c_str(), &st_buf) == 0)
+		if(stat(path.c_str(), &st_buf) == 0)
 			return true;
+		else if(errno == ENOENT) // No such file or directory
+			return false;
 		else
-			if (errno == ENOENT)    // No such file or directory
-				return false;
-			else
-			{
-				HANDLE_PATH_ERROR(path, errno);
-				return false;
-			}
+		{
+			HANDLE_PATH_ERROR(path, errno);
+			return false;
+		}
 	}
 
-	bool unix_stat(const String& path, struct stat *st_buf)
+	bool unix_stat(const String& path, struct stat* st_buf)
 	{
-		if (stat(path.c_str(), st_buf) != 0)
+		if(stat(path.c_str(), st_buf) != 0)
 		{
 			HANDLE_PATH_ERROR(path, errno);
 			return false;
@@ -51,7 +50,7 @@ namespace bs
 	bool unix_isFile(const String& path)
 	{
 		struct stat st_buf;
-		if (unix_stat(path, &st_buf))
+		if(unix_stat(path, &st_buf))
 			return S_ISREG(st_buf.st_mode);
 
 		return false;
@@ -60,7 +59,7 @@ namespace bs
 	bool unix_isDirectory(const String& path)
 	{
 		struct stat st_buf;
-		if (unix_stat(path, &st_buf))
+		if(unix_stat(path, &st_buf))
 			return S_ISDIR(st_buf.st_mode);
 
 		return false;
@@ -68,10 +67,10 @@ namespace bs
 
 	bool unix_createDirectory(const String& path)
 	{
-		if (unix_pathExists(path) && unix_isDirectory(path))
+		if(unix_pathExists(path) && unix_isDirectory(path))
 			return false;
 
-		if (mkdir(path.c_str(), 0755))
+		if(mkdir(path.c_str(), 0755))
 		{
 			HANDLE_PATH_ERROR(path, errno);
 			return false;
@@ -83,14 +82,14 @@ namespace bs
 	void FileSystem::RemoveFile(const Path& path)
 	{
 		String pathStr = path.toString();
-		if (unix_isDirectory(pathStr))
+		if(unix_isDirectory(pathStr))
 		{
-			if (rmdir(pathStr.c_str()))
+			if(rmdir(pathStr.c_str()))
 				HANDLE_PATH_ERROR(pathStr, errno);
 		}
 		else
 		{
-			if (unlink(pathStr.c_str()))
+			if(unlink(pathStr.c_str()))
 				HANDLE_PATH_ERROR(pathStr, errno);
 		}
 	}
@@ -109,7 +108,7 @@ namespace bs
 	{
 		String oldPathStr = oldPath.toString();
 		String newPathStr = newPath.toString();
-		if (std::rename(oldPathStr.c_str(), newPathStr.c_str()) == -1)
+		if(std::rename(oldPathStr.c_str(), newPathStr.c_str()) == -1)
 		{
 			// Cross-filesystem copy is likely needed (for example, /tmp to Banshee install dir while copying assets)
 			std::ifstream src(oldPathStr.c_str(), std::ios::binary);
@@ -118,18 +117,16 @@ namespace bs
 
 			// Error handling
 			src.close();
-			if (!src)
+			if(!src)
 			{
-				BS_LOG(Error, FileSystem, String(__FUNCTION__) + ": renaming " + oldPathStr + " to " + newPathStr +
-						": " + strerror(errno));
+				BS_LOG(Error, FileSystem, String(__FUNCTION__) + ": renaming " + oldPathStr + " to " + newPathStr + ": " + strerror(errno));
 				return; // Do not remove source if we failed!
 			}
 
 			// Then, remove source file (hopefully succeeds)
-			if (std::remove(oldPathStr.c_str()) == -1)
+			if(std::remove(oldPathStr.c_str()) == -1)
 			{
-				BS_LOG(Error, FileSystem, String(__FUNCTION__) + ": renaming " + oldPathStr + " to " + newPathStr +
-						": " + strerror(errno));
+				BS_LOG(Error, FileSystem, String(__FUNCTION__) + ": renaming " + oldPathStr + " to " + newPathStr + ": " + strerror(errno));
 			}
 		}
 	}
@@ -139,7 +136,7 @@ namespace bs
 		String pathString = path.toString();
 
 		DataStream::AccessMode accessMode = DataStream::READ;
-		if (!readOnly)
+		if(!readOnly)
 			accessMode = (DataStream::AccessMode)((u32)accessMode | (u32)DataStream::WRITE);
 
 		return bs_shared_ptr_new<FileDataStream>(path, accessMode, true);
@@ -154,7 +151,7 @@ namespace bs
 	{
 		struct stat st_buf;
 
-		if (stat(path.toString().c_str(), &st_buf) == 0)
+		if(stat(path.toString().c_str(), &st_buf) == 0)
 		{
 			return (u64)st_buf.st_size;
 		}
@@ -185,12 +182,12 @@ namespace bs
 	void FileSystem::CreateDir(const Path& path)
 	{
 		Path parentPath = path;
-		while (!exists(parentPath) && parentPath.getNumDirectories() > 0)
+		while(!exists(parentPath) && parentPath.getNumDirectories() > 0)
 		{
 			parentPath = parentPath.getParent();
 		}
 
-		for (u32 i = parentPath.getNumDirectories(); i < path.getNumDirectories(); i++)
+		for(u32 i = parentPath.getNumDirectories(); i < path.getNumDirectories(); i++)
 		{
 			parentPath.append(path[i]);
 			unix_createDirectory(parentPath.toString());
@@ -205,23 +202,23 @@ namespace bs
 	{
 		const String pathStr = dirPath.toString();
 
-		if (unix_isFile(pathStr))
+		if(unix_isFile(pathStr))
 			return;
 
-		DIR *dp = opendir(pathStr.c_str());
-		if (dp == NULL)
+		DIR* dp = opendir(pathStr.c_str());
+		if(dp == NULL)
 		{
 			HANDLE_PATH_ERROR(pathStr, errno);
 			return;
 		}
 
-		struct dirent *ep;
-		while ( (ep = readdir(dp)) )
+		struct dirent* ep;
+		while((ep = readdir(dp)))
 		{
 			const String filename(ep->d_name);
-			if (filename != "." && filename != "..")
+			if(filename != "." && filename != "..")
 			{
-				if (unix_isDirectory(pathStr + "/" + filename))
+				if(unix_isDirectory(pathStr + "/" + filename))
 					directories.push_back(dirPath + (filename + "/"));
 				else
 					files.push_back(dirPath + filename);
@@ -241,10 +238,10 @@ namespace bs
 
 	Path FileSystem::GetWorkingDirectoryPath()
 	{
-		char *buffer = bs_newN<char>(PATH_MAX);
+		char* buffer = bs_newN<char>(PATH_MAX);
 
 		String wd;
-		if (getcwd(buffer, PATH_MAX) != nullptr)
+		if(getcwd(buffer, PATH_MAX) != nullptr)
 			wd = buffer;
 		else
 			BS_LOG(Error, FileSystem, String("Error when calling getcwd(): ") + strerror(errno));
@@ -253,16 +250,15 @@ namespace bs
 		return Path(wd);
 	}
 
-	bool FileSystem::Iterate(const Path& dirPath, std::function<bool(const Path&)> fileCallback,
-		std::function<bool(const Path&)> dirCallback, bool recursive)
+	bool FileSystem::Iterate(const Path& dirPath, std::function<bool(const Path&)> fileCallback, std::function<bool(const Path&)> dirCallback, bool recursive)
 	{
 		String pathStr = dirPath.toString();
 
-		if (unix_isFile(pathStr))
+		if(unix_isFile(pathStr))
 			return false;
 
 		DIR* dirHandle = opendir(pathStr.c_str());
-		if (dirHandle == nullptr)
+		if(dirHandle == nullptr)
 		{
 			HANDLE_PATH_ERROR(pathStr, errno);
 			return false;
@@ -272,25 +268,25 @@ namespace bs
 		while((entry = readdir(dirHandle)))
 		{
 			String filename(entry->d_name);
-			if (filename == "." || filename == "..")
+			if(filename == "." || filename == "..")
 				continue;
 
 			Path fullPath = dirPath;
-			if (unix_isDirectory(pathStr + "/" + filename))
+			if(unix_isDirectory(pathStr + "/" + filename))
 			{
 				Path childDir = fullPath.append(filename + "/");
-				if (dirCallback != nullptr)
+				if(dirCallback != nullptr)
 				{
-					if (!dirCallback(childDir))
+					if(!dirCallback(childDir))
 					{
 						closedir(dirHandle);
 						return false;
 					}
 				}
 
-				if (recursive)
+				if(recursive)
 				{
-					if (!iterate(childDir, fileCallback, dirCallback, recursive))
+					if(!iterate(childDir, fileCallback, dirCallback, recursive))
 					{
 						closedir(dirHandle);
 						return false;
@@ -300,9 +296,9 @@ namespace bs
 			else
 			{
 				Path filePath = fullPath.append(filename);
-				if (fileCallback != nullptr)
+				if(fileCallback != nullptr)
 				{
-					if (!fileCallback(filePath))
+					if(!fileCallback(filePath))
 					{
 						closedir(dirHandle);
 						return false;
@@ -322,7 +318,7 @@ namespace bs
 		// Try different things:
 		// 1) If defined, honor the TMPDIR environnement variable
 		char* TMPDIR = getenv("TMPDIR");
-		if (TMPDIR != nullptr)
+		if(TMPDIR != nullptr)
 			tmpdir = TMPDIR;
 		else
 		{
@@ -336,12 +332,12 @@ namespace bs
 		}
 
 		tmpdir.append("/bsf-XXXXXX");
-		
+
 		// null terminated, modifiable tmpdir name template
 		Vector<char> nameTemplate(tmpdir.c_str(), tmpdir.c_str() + tmpdir.size() + 1);
-		char *directoryName = mkdtemp(nameTemplate.data());
+		char* directoryName = mkdtemp(nameTemplate.data());
 
-		if (directoryName == nullptr)
+		if(directoryName == nullptr)
 		{
 			BS_LOG(Error, FileSystem, String(__FUNCTION__) + ": " + strerror(errno));
 			return Path(StringUtil::BLANK);
@@ -349,4 +345,4 @@ namespace bs
 
 		return Path(String(directoryName) + "/");
 	}
-}
+} // namespace bs

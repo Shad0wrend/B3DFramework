@@ -39,11 +39,9 @@ namespace bs
 	void FileSystemTestSuite::StartUp()
 	{
 		mTestDirectory = FileSystem::GetWorkingDirectoryPath() + testDirectoryName;
-		if (FileSystem::Exists(mTestDirectory))
+		if(FileSystem::Exists(mTestDirectory))
 		{
-			BS_EXCEPT(InternalErrorException,
-			          String("Directory '") + testDirectoryName
-			          + "' should not already exist; you should remove it manually.");
+			BS_EXCEPT(InternalErrorException, String("Directory '") + testDirectoryName + "' should not already exist; you should remove it manually.");
 		}
 		else
 		{
@@ -55,10 +53,9 @@ namespace bs
 	void FileSystemTestSuite::ShutDown()
 	{
 		FileSystem::Remove(mTestDirectory, true);
-		if (FileSystem::Exists(mTestDirectory))
+		if(FileSystem::Exists(mTestDirectory))
 		{
-			LOGERR("FileSystemTestSuite failed to delete '" + mTestDirectory.toString()
-				   + "', you should remove it manually.");
+			LOGERR("FileSystemTestSuite failed to delete '" + mTestDirectory.toString() + "', you should remove it manually.");
 		}
 	}
 
@@ -254,7 +251,6 @@ namespace bs
 		BS_TEST_ASSERT(readFile(destination) == "copy-data-destination-3");
 	}
 
-
 #define CONTAINS(v, e) (std::find(v.begin(), v.end(), e) != v.end())
 
 	void FileSystemTestSuite::testGetChildren()
@@ -299,4 +295,4 @@ namespace bs
 		/* No judging. */
 		BS_TEST_ASSERT(!path.toString().empty());
 	}
-}
+} // namespace bs

@@ -12,14 +12,14 @@ namespace bs
 	/** @addtogroup Debug
 	 *  @{
 	 */
-	
+
 	/** Type of the log that will be saved. */
 	enum class SavedLogType
 	{
 		HTML = 0,
 		Textual = 1
 	};
-	
+
 	/**
 	 * Utility class providing various debug functionality.
 	 *
@@ -43,8 +43,7 @@ namespace bs
 		class Log& GetLog() { return mLog; }
 
 		/** Converts raw pixels into a BMP image and saves it as a file */
-		void WriteAsBmp(u8* rawPixels, u32 bytesPerPixel, u32 width, u32 height, const Path& filePath,
-			bool overwrite = true) const;
+		void WriteAsBmp(u8* rawPixels, u32 bytesPerPixel, u32 width, u32 height, const Path& filePath, bool overwrite = true) const;
 
 		/**
 		 * Saves a log about the current state of the application to the specified location.
@@ -53,31 +52,31 @@ namespace bs
 		 * @param   type    Format of the saved log.
 		 */
 		void SaveLog(const Path& path, SavedLogType type = SavedLogType::HTML) const;
-		
+
 		/**
 		 * Saves a log about the current state of the application to the specified location as a HTML file.
 		 *
 		 * @param	path	Absolute path to the log filename.
 		 */
 		void SaveHtmlLog(const Path& path) const;
-		
+
 		/**
 		 * Saves a log about the current state of the application to the specified location as a text file.
 		 *
 		 * @param	path	Absolute path to the log filename.
 		 */
 		void SaveTextLog(const Path& path) const;
-		
+
 		/**
 		 * Triggered when a new entry in the log is added.
-		 * 			
+		 *
 		 * @note	Sim thread only.
 		 */
 		Event<void(const LogEntry&)> OnLogEntryAdded;
 
 		/**
 		 * Triggered whenever one or multiple log entries were added or removed. Triggers only once per frame.
-		 * 			
+		 *
 		 * @note	Sim thread only.
 		 */
 		Event<void()> OnLogModified;
@@ -96,7 +95,7 @@ namespace bs
 
 		/**
 		 * Triggers callbacks that notify external code that a log entry was added.
-		 * 			
+		 *
 		 * @note	Sim thread only.
 		 */
 		void TriggerCallbacksInternal();
@@ -112,18 +111,26 @@ namespace bs
 	BS_UTILITY_EXPORT Debug& gDebug();
 
 #ifndef BS_LOG_VERBOSITY
-	#if BS_DEBUG_MODE
-		#define BS_LOG_VERBOSITY LogVerbosity::Log
-	#else
-		#define BS_LOG_VERBOSITY LogVerbosity::Warning
-	#endif
+#	if BS_DEBUG_MODE
+#		define BS_LOG_VERBOSITY LogVerbosity::Log
+#	else
+#		define BS_LOG_VERBOSITY LogVerbosity::Warning
+#	endif
 #endif
 
 /**
  * Defines a new log category to use with BS_LOG. Each category must have a unique ID. A matching call to
  * BS_LOG_CATEGORY_IMPL must be done in the source file.
  */
-#define BS_LOG_CATEGORY(name, id) struct LogCategory##name { enum { _id = id }; static bool sRegistered; };
+#define BS_LOG_CATEGORY(name, id) \
+	struct LogCategory##name      \
+	{                             \
+		enum                      \
+		{                         \
+			_id = id              \
+		};                        \
+		static bool sRegistered;  \
+	};
 
 /** Registers the name of the category. Should be placed in the implementation file for each corresponding BS_LOG_CATEGORY call. */
 #define BS_LOG_CATEGORY_IMPL(name) bool LogCategory##name::sRegistered = Log::RegisterCategoryInternal(LogCategory##name::_id, #name);
@@ -131,24 +138,23 @@ namespace bs
 /** Get the ID of the log category based on its name. */
 #define BS_LOG_GET_CATEGORY_ID(category) LogCategory##category::_id
 
-#define BS_LOG(verbosity, category, message, ...)													\
-  do																								\
-  {																									\
-	using namespace ::bs;																			\
-	if ((i32)LogVerbosity::verbosity <= (i32)BS_LOG_VERBOSITY)									\
-	{																								\
-	  gDebug().Log(StringUtil::Format(message, ##__VA_ARGS__) + String("\n\t\t in ") +				\
-					   __PRETTY_FUNCTION__ + " [" + __FILE__ + ":" + toString(__LINE__) + "]\n",	\
-				   LogVerbosity::verbosity, LogCategory##category::_id);							\
-	}																								\
-  } while (0)
+#define BS_LOG(verbosity, category, message, ...)                                                                                                                                                                            \
+	do                                                                                                                                                                                                                       \
+	{                                                                                                                                                                                                                        \
+		using namespace ::bs;                                                                                                                                                                                                \
+		if((i32)LogVerbosity::verbosity <= (i32)BS_LOG_VERBOSITY)                                                                                                                                                            \
+		{                                                                                                                                                                                                                    \
+			gDebug().Log(StringUtil::Format(message, ##__VA_ARGS__) + String("\n\t\t in ") + __PRETTY_FUNCTION__ + " [" + __FILE__ + ":" + toString(__LINE__) + "]\n", LogVerbosity::verbosity, LogCategory##category::_id); \
+		}                                                                                                                                                                                                                    \
+	}                                                                                                                                                                                                                        \
+	while(0)
 
-  BS_LOG_CATEGORY(Uncategorized, 0)
-  BS_LOG_CATEGORY(FileSystem, 1)
-  BS_LOG_CATEGORY(RTTI, 2)
-  BS_LOG_CATEGORY(Generic, 3)
-  BS_LOG_CATEGORY(Platform, 4)
-  BS_LOG_CATEGORY(Serialization, 5)
+	BS_LOG_CATEGORY(Uncategorized, 0)
+	BS_LOG_CATEGORY(FileSystem, 1)
+	BS_LOG_CATEGORY(RTTI, 2)
+	BS_LOG_CATEGORY(Generic, 3)
+	BS_LOG_CATEGORY(Platform, 4)
+	BS_LOG_CATEGORY(Serialization, 5)
 
-  /** @} */
-}
+	/** @} */
+} // namespace bs

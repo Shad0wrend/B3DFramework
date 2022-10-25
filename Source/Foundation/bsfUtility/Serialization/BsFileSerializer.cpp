@@ -17,15 +17,15 @@ namespace bs
 	FileEncoder::FileEncoder(const Path& fileLocation)
 	{
 		Path parentDir = fileLocation.GetDirectory();
-		if (!FileSystem::Exists(parentDir))
+		if(!FileSystem::Exists(parentDir))
 			FileSystem::CreateDir(parentDir);
-		
+
 		mOutputStream = FileSystem::CreateAndOpenFile(fileLocation);
 	}
 
 	void FileEncoder::Encode(IReflectable* object, SerializationContext* context)
 	{
-		if (object == nullptr)
+		if(object == nullptr)
 			return;
 
 		size_t startPos = mOutputStream->Tell();
@@ -36,7 +36,7 @@ namespace bs
 
 		size_t endPos = mOutputStream->Tell();
 		auto size = (u32)(endPos - startPos - sizeof(u32));
-		
+
 		mOutputStream->Seek(startPos);
 		mOutputStream->Write((char*)&size, sizeof(size));
 		mOutputStream->Skip(size);
@@ -46,19 +46,18 @@ namespace bs
 	{
 		mInputStream = FileSystem::OpenFile(fileLocation, true);
 
-		if (mInputStream == nullptr)
+		if(mInputStream == nullptr)
 			return;
 
-		if (mInputStream->Size() > std::numeric_limits<u32>::max())
+		if(mInputStream->Size() > std::numeric_limits<u32>::max())
 		{
-			BS_EXCEPT(InternalErrorException,
-				"File size is larger that u32 can hold. Ask a programmer to use a bigger data type.");
+			BS_EXCEPT(InternalErrorException, "File size is larger that u32 can hold. Ask a programmer to use a bigger data type.");
 		}
 	}
 
 	SPtr<IReflectable> FileDecoder::Decode(SerializationContext* context)
 	{
-		if (mInputStream->Eof())
+		if(mInputStream->Eof())
 			return nullptr;
 
 		u32 objectSize = 0;
@@ -72,7 +71,7 @@ namespace bs
 
 	u32 FileDecoder::GetSize() const
 	{
-		if (mInputStream->Eof())
+		if(mInputStream->Eof())
 			return 0;
 
 		u32 objectSize = 0;
@@ -84,11 +83,11 @@ namespace bs
 
 	void FileDecoder::Skip()
 	{
-		if (mInputStream->Eof())
+		if(mInputStream->Eof())
 			return;
 
 		u32 objectSize = 0;
 		mInputStream->Read(&objectSize, sizeof(objectSize));
 		mInputStream->Skip(objectSize);
 	}
-}
+} // namespace bs

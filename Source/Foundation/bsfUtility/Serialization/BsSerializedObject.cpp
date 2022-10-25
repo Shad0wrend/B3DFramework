@@ -24,15 +24,15 @@ namespace bs
 		copy->SubObjects = Vector<SerializedSubObject>(SubObjects.size());
 
 		u32 i = 0;
-		for (auto& subObject : SubObjects)
+		for(auto& subObject : SubObjects)
 		{
 			copy->SubObjects[i].TypeId = subObject.TypeId;
 
-			for (auto& entryPair : subObject.Entries)
+			for(auto& entryPair : subObject.Entries)
 			{
 				SerializedEntry entry = entryPair.second;
 
-				if (entry.Serialized != nullptr)
+				if(entry.Serialized != nullptr)
 					entry.Serialized = entry.Serialized->Clone(cloneData);
 
 				copy->SubObjects[i].Entries[entryPair.first] = entry;
@@ -49,7 +49,7 @@ namespace bs
 		SPtr<SerializedField> copy = bs_shared_ptr_new<SerializedField>();
 		copy->Size = Size;
 
-		if (cloneData)
+		if(cloneData)
 		{
 			copy->Value = (u8*)bs_alloc(Size);
 			memcpy(copy->Value, Value, Size);
@@ -69,12 +69,11 @@ namespace bs
 		SPtr<SerializedDataBlock> copy = bs_shared_ptr_new<SerializedDataBlock>();
 		copy->Size = Size;
 
-		if (cloneData)
+		if(cloneData)
 		{
 			if(Stream->IsFile())
 			{
-				BS_LOG(Warning, Generic,
-					"Cloning a file stream. Streaming is disabled and stream data will be loaded into memory.");
+				BS_LOG(Warning, Generic, "Cloning a file stream. Streaming is disabled and stream data will be loaded into memory.");
 			}
 
 			auto stream = bs_shared_ptr_new<MemoryDataStream>(Size);
@@ -97,7 +96,7 @@ namespace bs
 		SPtr<SerializedArray> copy = bs_shared_ptr_new<SerializedArray>();
 		copy->NumElements = NumElements;
 
-		for (auto& entryPair : Entries)
+		for(auto& entryPair : Entries)
 		{
 			SerializedArrayEntry entry = entryPair.second;
 			entry.Serialized = entry.Serialized->Clone(cloneData);
@@ -195,4 +194,4 @@ namespace bs
 	{
 		return SerializedArrayEntry::GetRttiStatic();
 	}
-}
+} // namespace bs

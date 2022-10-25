@@ -37,4 +37,4 @@ namespace bs
 
 		ThreadMemStack->Dealloc(data);
 	}
-}
+} // namespace bs

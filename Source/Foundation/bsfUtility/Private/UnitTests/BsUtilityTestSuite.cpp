@@ -26,10 +26,25 @@ namespace bs
 
 	struct DebugOctreeOptions
 	{
-		enum { LoosePadding = 16 };
-		enum { MinElementsPerNode = 8 };
-		enum { MaxElementsPerNode = 16 };
-		enum { MaxDepth = 12};
+		enum
+		{
+			LoosePadding = 16
+		};
+
+		enum
+		{
+			MinElementsPerNode = 8
+		};
+
+		enum
+		{
+			MaxElementsPerNode = 16
+		};
+
+		enum
+		{
+			MaxDepth = 12
+		};
 
 		static simd::AABox getBounds(u32 elem, void* context)
 		{
@@ -59,10 +74,25 @@ namespace bs
 
 	struct DebugQuadtreeOptions
 	{
-		enum { LoosePadding = 8 };
-		enum { MinElementsPerNode = 4 };
-		enum { MaxElementsPerNode = 8 };
-		enum { MaxDepth = 6 };
+		enum
+		{
+			LoosePadding = 8
+		};
+
+		enum
+		{
+			MinElementsPerNode = 4
+		};
+
+		enum
+		{
+			MaxElementsPerNode = 8
+		};
+
+		enum
+		{
+			MaxDepth = 6
+		};
 
 		static simd::Rect2 getBounds(u32 elem, void* context)
 		{
@@ -78,6 +108,7 @@ namespace bs
 	};
 
 	typedef Quadtree<u32, DebugQuadtreeOptions> DebugQuadtree;
+
 	void UtilityTestSuite::StartUp()
 	{
 		SPtr<TestSuite> fileSystemTests = create<FileSystemTestSuite>();
@@ -110,10 +141,10 @@ namespace bs
 
 		// Basic iteration
 		u32 i = 0;
-		for (auto iter : bitfield)
+		for(auto iter : bitfield)
 		{
 			BS_TEST_ASSERT(iter == true)
-				i++;
+			i++;
 		}
 
 		u32 curCount = COUNT;
@@ -128,7 +159,7 @@ namespace bs
 
 		// Realloc
 		curCount += EXTRA_COUNT;
-		for (uint32_t j = 0; j < 32; j++)
+		for(uint32_t j = 0; j < 32; j++)
 			bitfield.add(false);
 
 		BS_TEST_ASSERT(bitfield.size() == curCount);
@@ -140,9 +171,9 @@ namespace bs
 
 		// Modify during iteration
 		i = 0;
-		for (auto iter : bitfield)
+		for(auto iter : bitfield)
 		{
-			if (i >= 50 && i <= 70)
+			if(i >= 50 && i <= 70)
 				iter = false;
 
 			i++;
@@ -152,7 +183,7 @@ namespace bs
 		bitfield[5] = false;
 		bitfield[6] = false;
 
-		for (u32 j = 50; j < 70; j++)
+		for(u32 j = 50; j < 70; j++)
 			BS_TEST_ASSERT(bitfield[j] == false);
 
 		BS_TEST_ASSERT(bitfield[5] == false);
@@ -163,7 +194,7 @@ namespace bs
 		bitfield.remove(10);
 		curCount -= 2;
 
-		for (u32 j = 48; j < 68; j++)
+		for(u32 j = 48; j < 68; j++)
 			BS_TEST_ASSERT(bitfield[j] == false);
 
 		BS_TEST_ASSERT(bitfield[5] == false);
@@ -188,8 +219,7 @@ namespace bs
 			u32 count;
 		};
 
-		SizeAndCount types[]
-		{
+		SizeAndCount types[]{
 			{ 0.02f, 0.2f, 2000 }, // Very small objects
 			{ 0.2f, 1.0f, 2000 }, // Small objects
 			{ 1.0f, 5.0f, 5000 }, // Medium sized objects
@@ -198,21 +228,19 @@ namespace bs
 		};
 
 		float placementExtents = 750.0f;
-		for(u32 i = 0; i < sizeof(types)/sizeof(types[0]); i++)
+		for(u32 i = 0; i < sizeof(types) / sizeof(types[0]); i++)
 		{
-			for (u32 j = 0; j < types[i].count; j++)
+			for(u32 j = 0; j < types[i].count; j++)
 			{
 				Vector3 position(
 					((rand() / (float)RAND_MAX) * 2.0f - 1.0f) * placementExtents,
 					((rand() / (float)RAND_MAX) * 2.0f - 1.0f) * placementExtents,
-					((rand() / (float)RAND_MAX) * 2.0f - 1.0f) * placementExtents
-				);
+					((rand() / (float)RAND_MAX) * 2.0f - 1.0f) * placementExtents);
 
 				Vector3 extents(
 					types[i].sizeMin + ((rand() / (float)RAND_MAX)) * (types[i].sizeMax - types[i].sizeMin) * 0.5f,
 					types[i].sizeMin + ((rand() / (float)RAND_MAX)) * (types[i].sizeMax - types[i].sizeMin) * 0.5f,
-					types[i].sizeMin + ((rand() / (float)RAND_MAX)) * (types[i].sizeMax - types[i].sizeMin) * 0.5f
-				);
+					types[i].sizeMin + ((rand() / (float)RAND_MAX)) * (types[i].sizeMax - types[i].sizeMin) * 0.5f);
 
 				DebugOctreeElem elem;
 				elem.box = AABox(position - extents, position + extents);
@@ -228,7 +256,6 @@ namespace bs
 		manualElems[1].box = AABox(Vector3(200.0f, 100.0f, 100.f), Vector3(250.0f, 150.0f, 150.0f));
 		manualElems[2].box = AABox(Vector3(90.0f, 90.0f, 90.f), Vector3(105.0f, 105.0f, 110.0f));
 
-		
 		for(u32 i = 0; i < 3; i++)
 		{
 			u32 elemIdx = (u32)octreeData.elements.size();
@@ -284,7 +311,7 @@ namespace bs
 		BS_TEST_ASSERT(v[3].b == 0);
 
 		// Making the vector dynamic
-		v.add({3, 4});
+		v.add({ 3, 4 });
 		BS_TEST_ASSERT(v.size() == 5);
 		BS_TEST_ASSERT(v[0].a == 10);
 		BS_TEST_ASSERT(v[3].a == 10);
@@ -342,7 +369,7 @@ namespace bs
 		BS_TEST_ASSERT(v5[3].b == 0);
 
 		// Move a dynamic vector into a dynamic vector
-		v.add({33, 44});
+		v.add({ 33, 44 });
 		SmallVector<SomeElem, 4> v6 = std::move(v);
 		BS_TEST_ASSERT(v.size() == 0);
 		BS_TEST_ASSERT(v6.size() == 5);
@@ -370,7 +397,7 @@ namespace bs
 		BS_TEST_ASSERT(v[3].b == 0);
 
 		// Add an element
-		v.add({3, 4});
+		v.add({ 3, 4 });
 		BS_TEST_ASSERT(v.size() == 5);
 		BS_TEST_ASSERT(v[0].a == 10);
 		BS_TEST_ASSERT(v[3].a == 10);
@@ -412,7 +439,7 @@ namespace bs
 		BS_TEST_ASSERT(v[4].b == 4);
 
 		// Insert a list
-		v.insert(v.begin() + 1, {{ 55, 100 }, { 56, 100 }, { 57, 100 }});
+		v.insert(v.begin() + 1, { { 55, 100 }, { 56, 100 }, { 57, 100 } });
 		BS_TEST_ASSERT(v.size() == 8);
 		BS_TEST_ASSERT(v[0].a == 10);
 		BS_TEST_ASSERT(v[1].a == 55);
@@ -466,7 +493,7 @@ namespace bs
 		BS_TEST_ASSERT(v3[3].a == 10);
 		BS_TEST_ASSERT(v3[3].b == 0);
 	}
-	
+
 	void UtilityTestSuite::testComplex()
 	{
 		Complex<float> c(10.0, 4.0);
@@ -547,7 +574,7 @@ namespace bs
 		BS_TEST_ASSERT(c7.imag() == 0.620616496f);
 		c7 = 0;
 	}
-	
+
 	void UtilityTestSuite::testMinHeap()
 	{
 		struct SomeElem
@@ -601,8 +628,7 @@ namespace bs
 			u32 count;
 		};
 
-		SizeAndCount types[]
-		{
+		SizeAndCount types[]{
 			{ 0.02f, 0.2f, 2000 }, // Very small objects
 			{ 0.2f, 1.0f, 2000 }, // Small objects
 			{ 1.0f, 5.0f, 5000 }, // Medium sized objects
@@ -611,19 +637,17 @@ namespace bs
 		};
 
 		float placementExtents = 750.0f;
-		for (u32 i = 0; i < sizeof(types) / sizeof(types[0]); i++)
+		for(u32 i = 0; i < sizeof(types) / sizeof(types[0]); i++)
 		{
-			for (u32 j = 0; j < types[i].count; j++)
+			for(u32 j = 0; j < types[i].count; j++)
 			{
 				Vector2 position(
 					((rand() / (float)RAND_MAX) * 2.0f - 1.0f) * placementExtents,
-					((rand() / (float)RAND_MAX) * 2.0f - 1.0f) * placementExtents
-				);
+					((rand() / (float)RAND_MAX) * 2.0f - 1.0f) * placementExtents);
 
 				Vector2 extents(
 					types[i].sizeMin + ((rand() / (float)RAND_MAX)) * (types[i].sizeMax - types[i].sizeMin) * 0.5f,
-					types[i].sizeMin + ((rand() / (float)RAND_MAX)) * (types[i].sizeMax - types[i].sizeMin) * 0.5f
-				);
+					types[i].sizeMin + ((rand() / (float)RAND_MAX)) * (types[i].sizeMax - types[i].sizeMin) * 0.5f);
 
 				DebugQuadtreeElem elem;
 				elem.box = Rect2(position - extents, extents);
@@ -639,8 +663,7 @@ namespace bs
 		manualElems[1].box = Rect2(Vector2(200.0f, 100.0f), Vector2(250.0f, 150.0f));
 		manualElems[2].box = Rect2(Vector2(90.0f, 90.0f), Vector2(105.0f, 105.0f));
 
-
-		for (u32 i = 0; i < 3; i++)
+		for(u32 i = 0; i < 3; i++)
 		{
 			u32 elemIdx = (u32)quadtreeData.elements.size();
 			quadtreeData.elements.push_back(manualElems[i]);
@@ -651,7 +674,7 @@ namespace bs
 		DebugQuadtree::BoxIntersectIterator interIter(quadtree, queryBounds);
 
 		Vector<u32> overlapElements;
-		while (interIter.moveNext())
+		while(interIter.moveNext())
 		{
 			u32 element = interIter.getElement();
 			overlapElements.push_back(element);
@@ -662,9 +685,9 @@ namespace bs
 
 		// Ensure that all we have found all possible overlaps by manually testing all elements
 		u32 elemIdx = 0;
-		for (auto& entry : quadtreeData.elements)
+		for(auto& entry : quadtreeData.elements)
 		{
-			if (entry.box.overlaps(queryBounds))
+			if(entry.box.overlaps(queryBounds))
 			{
 				auto iterFind = std::find(overlapElements.begin(), overlapElements.end(), elemIdx);
 				assert(iterFind != overlapElements.end());
@@ -674,7 +697,7 @@ namespace bs
 		}
 
 		// Ensure nothing goes wrong during element removal
-		for (auto& entry : quadtreeData.elements)
+		for(auto& entry : quadtreeData.elements)
 			quadtree.removeElement(entry.quadtreeId);
 	}
 
@@ -844,4 +867,4 @@ namespace bs
 		bs.read(ulv);
 		BS_TEST_ASSERT(ulv == v11);
 	}
-}
+} // namespace bs

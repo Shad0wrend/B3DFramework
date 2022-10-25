@@ -23,7 +23,7 @@ namespace bs
 		Complex(const Complex& other)
 			: mReal(other.real()), mImag(other.imag()) {}
 
-		Complex<Type>& operator= (const Type& other)
+		Complex<Type>& operator=(const Type& other)
 		{
 			mReal = other;
 			mImag = Type();
@@ -31,21 +31,21 @@ namespace bs
 			return *this;
 		}
 
-		Complex<Type>& operator+= (const Type& other)
+		Complex<Type>& operator+=(const Type& other)
 		{
 			mReal += other;
 
 			return *this;
 		}
 
-		Complex<Type>& operator-= (const Type& other)
+		Complex<Type>& operator-=(const Type& other)
 		{
 			mReal -= other;
 
 			return *this;
 		}
 
-		Complex<Type>& operator*= (const Type& other)
+		Complex<Type>& operator*=(const Type& other)
 		{
 			mReal *= other;
 			mImag *= other;
@@ -53,7 +53,7 @@ namespace bs
 			return *this;
 		}
 
-		Complex<Type>& operator/= (const Type& other)
+		Complex<Type>& operator/=(const Type& other)
 		{
 			mReal /= other;
 			mImag /= other;
@@ -61,7 +61,7 @@ namespace bs
 			return *this;
 		}
 
-		Complex<Type>& operator= (const Complex<Type>& other)
+		Complex<Type>& operator=(const Complex<Type>& other)
 		{
 			mReal = other.real();
 			mImag = other.imag();
@@ -69,7 +69,7 @@ namespace bs
 			return *this;
 		}
 
-		Complex<Type>& operator+= (const Complex<Type>& other)
+		Complex<Type>& operator+=(const Complex<Type>& other)
 		{
 			mReal += other.real();
 			mImag += other.imag();
@@ -77,7 +77,7 @@ namespace bs
 			return *this;
 		}
 
-		Complex<Type>& operator-= (const Complex<Type>& other)
+		Complex<Type>& operator-=(const Complex<Type>& other)
 		{
 			mReal -= other.real();
 			mImag -= other.imag();
@@ -85,7 +85,7 @@ namespace bs
 			return *this;
 		}
 
-		Complex<Type>& operator*= (const Complex<Type>& other)
+		Complex<Type>& operator*=(const Complex<Type>& other)
 		{
 			const Type r = mReal * other.real() - mImag * other.imag();
 			mImag = mReal * other.imag() + mImag * other.real();
@@ -94,7 +94,7 @@ namespace bs
 			return *this;
 		}
 
-		Complex<Type>& operator/= (const Complex<Type>& other)
+		Complex<Type>& operator/=(const Complex<Type>& other)
 		{
 			const Type r = mReal * other.real() + mImag * other.imag();
 			const Type n = Complex::norm(other);
@@ -104,37 +104,37 @@ namespace bs
 			return *this;
 		}
 
-		Complex<Type> operator+ (const Type& other) const
+		Complex<Type> operator+(const Type& other) const
 		{
 			return Complex(mReal + other, mImag);
 		}
 
-		Complex<Type> operator- (const Type& other) const
+		Complex<Type> operator-(const Type& other) const
 		{
 			return Complex(mReal - other, mImag);
 		}
 
-		Complex<Type> operator* (const Type& other) const
+		Complex<Type> operator*(const Type& other) const
 		{
 			return Complex(mReal * other, mImag);
 		}
 
-		Complex<Type> operator/ (const Type& other) const
+		Complex<Type> operator/(const Type& other) const
 		{
 			return Complex(mReal / other, mImag);
 		}
 
-		Complex<Type> operator+ (const Complex<Type>& other) const
+		Complex<Type> operator+(const Complex<Type>& other) const
 		{
 			return Complex(mReal + other.real(), mImag + other.imag());
 		}
 
-		Complex<Type> operator- (const Complex<Type>& other) const
+		Complex<Type> operator-(const Complex<Type>& other) const
 		{
 			return Complex(mReal - other.real(), mImag - other.imag());
 		}
 
-		Complex<Type> operator* (const Complex<Type>& other) const
+		Complex<Type> operator*(const Complex<Type>& other) const
 		{
 			Complex<Type> res = *this;
 
@@ -143,7 +143,7 @@ namespace bs
 			return res;
 		}
 
-		Complex<Type> operator/ (const Complex<Type>& other) const
+		Complex<Type> operator/(const Complex<Type>& other) const
 		{
 			Complex<Type> res = *this;
 
@@ -152,30 +152,32 @@ namespace bs
 			return res;
 		}
 
-		bool operator== (const Complex<Type>& other) const
+		bool operator==(const Complex<Type>& other) const
 		{
 			return mReal == other.real() && mImag == other.imag();
 		}
 
-		bool operator== (const Type& other) const
+		bool operator==(const Type& other) const
 		{
 			return mReal == other && mImag == Type();
 		}
 
-		bool operator!= (const Complex<Type>& other) const
+		bool operator!=(const Complex<Type>& other) const
 		{
 			return mReal != other.real() || mImag != other.imag();
 		}
 
-		bool operator!= (const Type& other) const
+		bool operator!=(const Type& other) const
 		{
 			return mReal != other || mImag != Type();
 		}
 
 		Type& real() { return mReal; }
+
 		Type& imag() { return mImag; }
 
 		const Type& real() const { return mReal; }
+
 		const Type& imag() const { return mImag; }
 
 		static Type abs(const Complex<Type>& other)
@@ -183,7 +185,7 @@ namespace bs
 			Type x = other.real();
 			Type y = other.imag();
 			const Type s = std::max(std::abs(x), std::abs(y));
-			if (s == Type())
+			if(s == Type())
 				return s;
 
 			x /= s;
@@ -248,7 +250,7 @@ namespace bs
 
 		static Complex<Type> pow(const Complex<Type>& other, const Type& i)
 		{
-			if (other.imag() == Type() && other.real() > Type())
+			if(other.imag() == Type() && other.real() > Type())
 				return Complex(std::pow(other.real(), i), other.imag());
 
 			Complex<Type> t = Complex::log(other);
@@ -262,9 +264,8 @@ namespace bs
 
 		static Complex<Type> pow(const Type& i, const Complex<Type>& other)
 		{
-			return i > Type() ?
-				Complex::polar(std::pow(i, other.real()), other.imag() * std::log(i))
-				: Complex::pow(Complex(i, Type()), other);
+			return i > Type() ? Complex::polar(std::pow(i, other.real()), other.imag() * std::log(i))
+							  : Complex::pow(Complex(i, Type()), other);
 		}
 
 		static Complex<Type> sin(const Complex<Type>& other)
@@ -288,7 +289,7 @@ namespace bs
 			const Type x = other.real();
 			const Type y = other.imag();
 
-			if (x == Type())
+			if(x == Type())
 			{
 				Type t = std::sqrt(std::abs(y) / 2);
 				return Complex(t, y < Type() ? -t : t);
@@ -298,7 +299,7 @@ namespace bs
 				Type t = std::sqrt(2 * (Complex::abs(other) + std::abs(x)));
 				Type u = t / 2;
 				return x > Type() ? Complex(u, y / t)
-					: Complex(std::abs(y) / t, y < Type() ? -u : u);
+								  : Complex(std::abs(y) / t, y < Type() ? -u : u);
 			}
 		}
 
@@ -312,7 +313,7 @@ namespace bs
 			return Complex::sinh(other) / Complex::cosh(other);
 		}
 
-		friend std::ostream& operator<< (std::ostream& os, const Complex<Type> other)
+		friend std::ostream& operator<<(std::ostream& os, const Complex<Type> other)
 		{
 			return os << other.real() << ", " << other.imag();
 		}
@@ -323,4 +324,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

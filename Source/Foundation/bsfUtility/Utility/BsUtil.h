@@ -15,7 +15,7 @@ namespace bs
 		using HashType = typename std::conditional<std::is_enum<T>::value, EnumClassHash, std::hash<T>>::type;
 
 		HashType hasher;
-		seed ^= hasher(v) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+		seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 	}
 
 	/** Generates a hash for the provided type. Type must have a std::hash specialization. */
@@ -35,21 +35,21 @@ namespace bs
 	String BS_UTILITY_EXPORT md5(const String& source);
 
 	/** Sets contents of a struct to zero. */
-	template<class T>
+	template <class T>
 	void bs_zero_out(T& s)
 	{
 		std::memset(&s, 0, sizeof(T));
 	}
 
 	/** Sets contents of a static array to zero. */
-	template<class T, size_t N>
-	void bs_zero_out(T(&arr)[N])
+	template <class T, size_t N>
+	void bs_zero_out(T (&arr)[N])
 	{
 		std::memset(arr, 0, sizeof(T) * N);
 	}
 
 	/** Sets contents of a block of memory to zero. */
-	template<class T>
+	template <class T>
 	void bs_zero_out(T* arr, size_t count)
 	{
 		assert(arr != nullptr);
@@ -57,14 +57,14 @@ namespace bs
 	}
 
 	/** Copies the contents of one array to another. Automatically accounts for array element size. */
-	template<class T, size_t N>
-	void bs_copy(T(&dst)[N], T(&src)[N], size_t count)
+	template <class T, size_t N>
+	void bs_copy(T (&dst)[N], T (&src)[N], size_t count)
 	{
 		std::memcpy(dst, src, sizeof(T) * count);
 	}
 
 	/** Copies the contents of one array to another. Automatically accounts for array element size. */
-	template<class T>
+	template <class T>
 	void bs_copy(T* dst, T* src, size_t count)
 	{
 		std::memcpy(dst, src, sizeof(T) * count);
@@ -101,4 +101,4 @@ namespace bs
 	}
 
 	/** @} */
-}
+} // namespace bs

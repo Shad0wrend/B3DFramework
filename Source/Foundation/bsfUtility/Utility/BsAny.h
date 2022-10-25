@@ -30,8 +30,8 @@ namespace bs
 		{
 		public:
 			Data(const ValueType& value)
-				:Value(value)
-			{ }
+				: Value(value)
+			{}
 
 			DataBase* Clone() const override
 			{
@@ -46,20 +46,20 @@ namespace bs
 
 		template <typename ValueType>
 		Any(const ValueType& value)
-			:mData(bs_new<Data<ValueType>>(value))
-		{ }
+			: mData(bs_new<Data<ValueType>>(value))
+		{}
 
 		Any(std::nullptr_t)
-			:mData(nullptr)
-		{ }
+			: mData(nullptr)
+		{}
 
 		Any(const Any& other)
-			:mData(other.mData != nullptr ? other.mData->Clone() : nullptr)
-		{ }
+			: mData(other.mData != nullptr ? other.mData->Clone() : nullptr)
+		{}
 
 		~Any()
 		{
-			if (mData != nullptr)
+			if(mData != nullptr)
 				bs_delete(mData);
 		}
 
@@ -71,13 +71,13 @@ namespace bs
 		}
 
 		template <typename ValueType>
-		Any& operator= (const ValueType& rhs)
+		Any& operator=(const ValueType& rhs)
 		{
 			Any(rhs).Swap(*this);
 			return *this;
 		}
 
-		Any& operator= (const Any& rhs)
+		Any& operator=(const Any& rhs)
 		{
 			Any(rhs).Swap(*this);
 			return *this;
@@ -107,7 +107,7 @@ namespace bs
 	template <typename ValueType>
 	ValueType* any_cast(Any* operand)
 	{
-		if (operand != nullptr)
+		if(operand != nullptr)
 			return &static_cast<Any::Data<ValueType>*>(operand->mData)->Value;
 		else
 			return nullptr;
@@ -152,7 +152,7 @@ namespace bs
 	 * @note	Throws an exception if cast fails.
 	 */
 	template <typename ValueType>
-	const ValueType& any_cast_ref(const Any & operand)
+	const ValueType& any_cast_ref(const Any& operand)
 	{
 		return *any_cast<ValueType>(const_cast<Any*>(&operand));
 	}
@@ -183,4 +183,4 @@ namespace bs
 	}
 
 	/** @} */
-}
+} // namespace bs

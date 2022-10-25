@@ -30,22 +30,20 @@ namespace bs
 		constexpr Matrix3& operator=(const Matrix3&) = default;
 
 		constexpr Matrix3(BS_ZERO)
-			:m{ { 0.0f, 0.0f, 0.0f},
-				{ 0.0f, 0.0f, 0.0f},
-				{ 0.0f, 0.0f, 0.0f} }
-		{ }
+			: m{ { 0.0f, 0.0f, 0.0f },
+				 { 0.0f, 0.0f, 0.0f },
+				 { 0.0f, 0.0f, 0.0f } }
+		{}
 
 		constexpr Matrix3(BS_IDENTITY)
-			:m{ {1.0f, 0.0f, 0.0f},
-				{0.0f, 1.0f, 0.0f},
-				{0.0f, 0.0f, 1.0f} }
-		{ }
+			: m{ { 1.0f, 0.0f, 0.0f },
+				 { 0.0f, 1.0f, 0.0f },
+				 { 0.0f, 0.0f, 1.0f } }
+		{}
 
-		constexpr Matrix3(float m00, float m01, float m02,
-				float m10, float m11, float m12,
-				float m20, float m21, float m22)
-			:m{{m00, m01, m02}, {m10, m11, m12}, {m20, m21, m22}}
-		{ }
+		constexpr Matrix3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)
+			: m{ { m00, m01, m02 }, { m10, m11, m12 }, { m20, m21, m22 } }
+		{}
 
 		/** Construct a matrix from a quaternion. */
 		explicit Matrix3(const Quaternion& rotation)
@@ -58,10 +56,10 @@ namespace bs
 		{
 			FromQuaternion(rotation);
 
-			for (int row = 0; row < 3; row++)
+			for(int row = 0; row < 3; row++)
 			{
-				for (int col = 0; col < 3; col++)
-					m[row][col] = scale[row]*m[row][col];
+				for(int col = 0; col < 3; col++)
+					m[row][col] = scale[row] * m[row][col];
 			}
 		}
 
@@ -112,7 +110,7 @@ namespace bs
 		}
 
 		/** Returns a row of the matrix. */
-		float* operator[] (u32 row) const
+		float* operator[](u32 row) const
 		{
 			assert(row < 3);
 
@@ -122,22 +120,22 @@ namespace bs
 		Vector3 GetColumn(u32 col) const;
 		void SetColumn(u32 col, const Vector3& vec);
 
-		bool operator== (const Matrix3& rhs) const;
-		bool operator!= (const Matrix3& rhs) const;
+		bool operator==(const Matrix3& rhs) const;
+		bool operator!=(const Matrix3& rhs) const;
 
-		Matrix3 operator+ (const Matrix3& rhs) const;
-		Matrix3 operator- (const Matrix3& rhs) const;
-		Matrix3 operator* (const Matrix3& rhs) const;
-		Matrix3 operator- () const;
-		Matrix3 operator* (float rhs) const;
+		Matrix3 operator+(const Matrix3& rhs) const;
+		Matrix3 operator-(const Matrix3& rhs) const;
+		Matrix3 operator*(const Matrix3& rhs) const;
+		Matrix3 operator-() const;
+		Matrix3 operator*(float rhs) const;
 
-		friend Matrix3 operator* (float lhs, const Matrix3& rhs);
+		friend Matrix3 operator*(float lhs, const Matrix3& rhs);
 
 		/** Transforms the given vector by this matrix and returns the newly transformed vector. */
 		Vector3 Multiply(const Vector3& vec) const;
 
 		/** Returns a transpose of the matrix (switched columns and rows). */
-		Matrix3 Transpose () const;
+		Matrix3 Transpose() const;
 
 		/**
 		 * Calculates an inverse of the matrix if it exists.
@@ -165,7 +163,7 @@ namespace bs
 		/**
 		 * Decompose a Matrix3 to rotation and scale.
 		 *
-		 * @note	
+		 * @note
 		 * Matrix must consist only of rotation and uniform scale transformations, otherwise accurate results are not
 		 * guaranteed. Applying non-uniform scale guarantees rotation portion will not be accurate.
 		 */
@@ -274,17 +272,18 @@ namespace bs
 		friend class Matrix4;
 
 		// Support for eigensolver
-		void Tridiagonal (float diag[3], float subDiag[3]);
-		bool QLAlgorithm (float diag[3], float subDiag[3]);
+		void Tridiagonal(float diag[3], float subDiag[3]);
+		bool QLAlgorithm(float diag[3], float subDiag[3]);
 
 		// Support for singular value decomposition
-		static constexpr const float SVD_EPSILON = 1e-04f;;
+		static constexpr const float SVD_EPSILON = 1e-04f;
+		;
 		static constexpr const unsigned int SVD_MAX_ITERS = 32;
-		static void Bidiagonalize (Matrix3& matA, Matrix3& matL, Matrix3& matR);
-		static void GolubKahanStep (Matrix3& matA, Matrix3& matL, Matrix3& matR);
+		static void Bidiagonalize(Matrix3& matA, Matrix3& matL, Matrix3& matR);
+		static void GolubKahanStep(Matrix3& matA, Matrix3& matL, Matrix3& matR);
 
 		float m[3][3];
 	};
 
 	/** @} */
-}
+} // namespace bs

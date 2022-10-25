@@ -12,10 +12,10 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_UTILITY_EXPORT IReflectableRTTI : public RTTIType <IReflectable, IReflectable, IReflectableRTTI>
+	class BS_UTILITY_EXPORT IReflectableRTTI : public RTTIType<IReflectable, IReflectable, IReflectableRTTI>
 	{
 	public:
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "IReflectable";
 			return name;
@@ -26,7 +26,7 @@ namespace bs
 			return TID_IReflectable;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return nullptr;
 		}
@@ -34,4 +34,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

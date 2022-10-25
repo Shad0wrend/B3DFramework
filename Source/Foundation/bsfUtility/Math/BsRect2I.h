@@ -17,8 +17,8 @@ namespace bs
 		constexpr Rect2I() = default;
 
 		constexpr Rect2I(i32 x, i32 y, u32 width, u32 height)
-			:X(x), Y(y), Width(width), Height(height)
-		{ }
+			: X(x), Y(y), Width(width), Height(height)
+		{}
 
 		i32 X = 0;
 		i32 Y = 0;
@@ -55,19 +55,19 @@ namespace bs
 		/**
 		 * Transforms the bounds by the given matrix. Resulting value is an axis aligned rectangle encompassing the
 		 * transformed points.
-		 * 			
-		 * @note	
+		 *
+		 * @note
 		 * Since the resulting value is an AA rectangle of the original transformed rectangle, the bounds will be larger
 		 * than needed. Oriented rectangle would provide a much tighter fit.
 		 */
 		void Transform(const Matrix4& matrix);
 
-		bool operator== (const Rect2I& rhs) const
+		bool operator==(const Rect2I& rhs) const
 		{
 			return X == rhs.X && Y == rhs.Y && Width == rhs.Width && Height == rhs.Height;
 		}
 
-		bool operator!= (const Rect2I& rhs) const
+		bool operator!=(const Rect2I& rhs) const
 		{
 			return !(*this == rhs);
 		}
@@ -76,4 +76,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

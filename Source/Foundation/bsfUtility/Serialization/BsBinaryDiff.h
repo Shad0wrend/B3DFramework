@@ -36,9 +36,8 @@ namespace bs
 		 *
 		 * Will return null if there is no difference.
 		 */
-		SPtr<SerializedObject> GenerateDiff(const SPtr<IReflectable>& orgObj, const SPtr<IReflectable>& newObj,
-			bool replicableOnly = false);
-		
+		SPtr<SerializedObject> GenerateDiff(const SPtr<IReflectable>& orgObj, const SPtr<IReflectable>& newObj, bool replicableOnly = false);
+
 		/**
 		 * Applies a previously generated per-field differences to the provided object. This will essentially transform the
 		 * original object the differences were generated for into the modified version.
@@ -49,7 +48,7 @@ namespace bs
 		 * @name Internal
 		 * @{
 		 */
-		
+
 		typedef UnorderedMap<IReflectable*, SPtr<SerializedObject>> ObjectMap;
 
 		/**
@@ -57,8 +56,7 @@ namespace bs
 		 *
 		 * @see		generateDiff(const SPtr<IReflectable>&, const SPtr<IReflectable>&, bool)
 		 */
-		virtual SPtr<SerializedObject> GenerateDiffInternal(IReflectable* orgObj, IReflectable* newObj,
-			ObjectMap& objectMap, bool replicableOnly) = 0;
+		virtual SPtr<SerializedObject> GenerateDiffInternal(IReflectable* orgObj, IReflectable* newObj, ObjectMap& objectMap, bool replicableOnly) = 0;
 
 		/** @} */
 
@@ -78,7 +76,7 @@ namespace bs
 			Diff_SubObjectStart = 0x08,
 			Diff_ArrayFlag = 0x10
 		};
-		
+
 		/**
 		 * A command that is used for delaying writing to an object, it contains all necessary information for setting RTTI
 		 * field values on an object.
@@ -106,17 +104,14 @@ namespace bs
 		 *
 		 * @see		applyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff)
 		 */
-		virtual void ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff, FrameAlloc& alloc,
-			DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context) = 0;
+		virtual void ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff, FrameAlloc& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context) = 0;
 
 		/**
 		 * Applies diff according to the diff handler retrieved from the provided RTTI object.
 		 *
 		 * @see		applyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff)
 		 */
-		void ApplyDiff(RTTITypeBase* rtti, const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff,
-			FrameAlloc& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands,
-			SerializationContext* context);
+		void ApplyDiff(RTTITypeBase* rtti, const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff, FrameAlloc& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context);
 	};
 
 	/**
@@ -130,14 +125,12 @@ namespace bs
 	{
 	private:
 		/** @copydoc IDiff::generateDiff(IReflectable*, IReflectable*, ObjectMap&, bool) */
-		SPtr<SerializedObject> GenerateDiffInternal(IReflectable* orgObj, IReflectable* newObj,
-			ObjectMap& objectMap, bool replicableOnly) override;
+		SPtr<SerializedObject> GenerateDiffInternal(IReflectable* orgObj, IReflectable* newObj, ObjectMap& objectMap, bool replicableOnly) override;
 
 		/** @copydoc	IDiff::applyDiff(const SPtr<IReflectable>&, const SPtr<SerializedObject>&, FrameAlloc&, DiffObjectMap&, FrameVector<DiffCommand>&) */
-		void ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff, FrameAlloc& alloc,
-			DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context) override;
+		void ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObject>& diff, FrameAlloc& alloc, DiffObjectMap& objectMap, FrameVector<DiffCommand>& diffCommands, SerializationContext* context) override;
 	};
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs

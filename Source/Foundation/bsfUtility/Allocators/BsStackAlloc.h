@@ -38,7 +38,8 @@ namespace bs
 		class MemBlock
 		{
 		public:
-			MemBlock(u32 size) :MSize(size) { }
+			MemBlock(u32 size)
+				: MSize(size) {}
 
 			~MemBlock() = default;
 
@@ -85,7 +86,7 @@ namespace bs
 			assert(mFreeBlock->MFreePtr == 0 && "Not all blocks were released before shutting down the stack allocator.");
 
 			MemBlock* curBlock = mFreeBlock;
-			while (curBlock != nullptr)
+			while(curBlock != nullptr)
 			{
 				MemBlock* nextBlock = curBlock->MNextBlock;
 				DeallocBlock(curBlock);
@@ -130,19 +131,19 @@ namespace bs
 			u32* storedSize = reinterpret_cast<u32*>(data);
 			mFreeBlock->Dealloc(data, *storedSize);
 
-			if (mFreeBlock->MFreePtr == 0)
+			if(mFreeBlock->MFreePtr == 0)
 			{
 				MemBlock* emptyBlock = mFreeBlock;
 
-				if (emptyBlock->MPrevBlock != nullptr)
+				if(emptyBlock->MPrevBlock != nullptr)
 					mFreeBlock = emptyBlock->MPrevBlock;
 
 				// Merge with next block
-				if (emptyBlock->MNextBlock != nullptr)
+				if(emptyBlock->MNextBlock != nullptr)
 				{
 					u32 totalSize = emptyBlock->MSize + emptyBlock->MNextBlock->MSize;
 
-					if (emptyBlock->MPrevBlock != nullptr)
+					if(emptyBlock->MPrevBlock != nullptr)
 						emptyBlock->MPrevBlock->MNextBlock = nullptr;
 					else
 						mFreeBlock = nullptr;
@@ -171,10 +172,10 @@ namespace bs
 			MemBlock* newBlock = nullptr;
 			MemBlock* curBlock = mFreeBlock;
 
-			while (curBlock != nullptr)
+			while(curBlock != nullptr)
 			{
 				MemBlock* nextBlock = curBlock->MNextBlock;
-				if (nextBlock != nullptr && nextBlock->MSize >= blockSize)
+				if(nextBlock != nullptr && nextBlock->MSize >= blockSize)
 				{
 					newBlock = nextBlock;
 					break;
@@ -183,16 +184,16 @@ namespace bs
 				curBlock = nextBlock;
 			}
 
-			if (newBlock == nullptr)
+			if(newBlock == nullptr)
 			{
 				u8* data = (u8*)reinterpret_cast<u8*>(bs_alloc(blockSize + sizeof(MemBlock)));
-				newBlock = new (data)MemBlock(blockSize);
+				newBlock = new(data) MemBlock(blockSize);
 				data += sizeof(MemBlock);
 
 				newBlock->MData = data;
 				newBlock->MPrevBlock = mFreeBlock;
 
-				if (mFreeBlock != nullptr)
+				if(mFreeBlock != nullptr)
 				{
 					if(mFreeBlock->MNextBlock != nullptr)
 						mFreeBlock->MNextBlock->MPrevBlock = newBlock;
@@ -270,7 +271,7 @@ namespace bs
 	 *
 	 * @see	MemStackInternal::alloc()
 	 */
-	template<class T>
+	template <class T>
 	T* bs_stack_alloc()
 	{
 		return (T*)MemStack::Alloc(sizeof(T));
@@ -283,7 +284,7 @@ namespace bs
 	 *
 	 * @see	MemStackInternal::alloc()
 	 */
-	template<class T>
+	template <class T>
 	T* bs_stack_alloc(u32 amount)
 	{
 		return (T*)MemStack::Alloc(sizeof(T) * amount);
@@ -294,13 +295,13 @@ namespace bs
 	 *
 	 * @see	MemStackInternal::alloc()
 	 */
-	template<class T>
+	template <class T>
 	T* bs_stack_new(u32 count = 0)
 	{
 		T* data = bs_stack_alloc<T>(count);
 
 		for(unsigned int i = 0; i < count; i++)
-			new ((void*)&data[i]) T;
+			new((void*)&data[i]) T;
 
 		return data;
 	}
@@ -310,13 +311,13 @@ namespace bs
 	 *
 	 * @see MemStackInternal::alloc()
 	 */
-	template<class T, class... Args>
-	T* bs_stack_new(Args &&...args, u32 count = 0)
+	template <class T, class... Args>
+	T* bs_stack_new(Args&&... args, u32 count = 0)
 	{
 		T* data = bs_stack_alloc<T>(count);
 
 		for(unsigned int i = 0; i < count; i++)
-			new ((void*)&data[i]) T(std::forward<Args>(args)...);
+			new((void*)&data[i]) T(std::forward<Args>(args)...);
 
 		return data;
 	}
@@ -326,7 +327,7 @@ namespace bs
 	 *
 	 * @see MemStackInternal::dealloc()
 	 */
-	template<class T>
+	template <class T>
 	void bs_stack_delete(T* data)
 	{
 		data->~T();
@@ -339,7 +340,7 @@ namespace bs
 	 *
 	 * @see	MemStackInternal::dealloc()
 	 */
-	template<class T>
+	template <class T>
 	void bs_stack_delete(T* data, u32 count)
 	{
 		for(unsigned int i = 0; i < count; i++)
@@ -363,14 +364,14 @@ namespace bs
 	 * An object used to transparently clean up a stack allocation when it's no longer in scope. Make sure to take great
 	 * care not to free non-managed stack allocations out of order or to free the stack allocation managed by this object!
 	 */
-	template<typename T>
+	template <typename T>
 	struct StackMemory
 	{
 		/*
 		 * Provide implicit conversion to the allocated buffer so that users of this code can "pretend" this object is a
 		 * pointer to the stack buffer that they wanted.
 		 */
-		constexpr operator T*() const & noexcept
+		constexpr operator T*() const& noexcept
 		{
 			return mPtr;
 		}
@@ -381,20 +382,20 @@ namespace bs
 		 * when handling the return value of bs_managed_stack_alloc() preventing an immediate (and erroneous) call to
 		 * bs_stack_free().
 		 */
-		constexpr operator T*() const && noexcept = delete;
+		constexpr operator T*() const&& noexcept = delete;
 
 		explicit constexpr StackMemory(T* p, size_t count = 1)
-		 : mPtr(p), mCount(count)
-		{ }
+			: mPtr(p), mCount(count)
+		{}
 
 		/** Needed until c++17 */
-		StackMemory(StackMemory && other)
-		 : mPtr(std::exchange(other.mPtr, nullptr))
-		 , mCount(std::exchange(other.mCount, 0))
-		{ }
+		StackMemory(StackMemory&& other)
+			: mPtr(std::exchange(other.mPtr, nullptr))
+			, mCount(std::exchange(other.mCount, 0))
+		{}
 
 		StackMemory(StackMemory const&) = delete;
-		StackMemory& operator=(StackMemory &&)     = delete;
+		StackMemory& operator=(StackMemory&&) = delete;
 		StackMemory& operator=(StackMemory const&) = delete;
 
 		/** Frees the stack allocation. */
@@ -427,7 +428,7 @@ namespace bs
 	 * Same as bs_stack_alloc() except the returned object takes care of automatically cleaning up when it goes out of
 	 * scope.
 	 */
-	template<class T>
+	template <class T>
 	StackMemory<T> bs_managed_stack_alloc()
 	{
 		return StackMemory<T>(bs_stack_alloc<T>());
@@ -437,7 +438,7 @@ namespace bs
 	 * Same as bs_stack_alloc() except the returned object takes care of automatically cleaning up when it goes out of
 	 * scope.
 	 */
-	template<class T>
+	template <class T>
 	StackMemory<T> bs_managed_stack_alloc(u32 amount)
 	{
 		return StackMemory<T>(bs_stack_alloc<T>(amount));
@@ -447,7 +448,7 @@ namespace bs
 	 * Same as bs_stack_new() except the returned object takes care of automatically cleaning up when it goes out of
 	 * scope.
 	 */
-	template<class T>
+	template <class T>
 	StackMemory<T> bs_managed_stack_new(size_t count = 1)
 	{
 		return StackMemory<T>(bs_stack_new<T>(count), count);
@@ -457,8 +458,8 @@ namespace bs
 	 * Same as bs_stack_new() except the returned object takes care of automatically cleaning up when it goes out of
 	 * scope.
 	 */
-	template<class T, class... Args>
-	StackMemory<T> bs_managed_stack_new(Args && ... args, size_t count = 1)
+	template <class T, class... Args>
+	StackMemory<T> bs_managed_stack_new(Args&&... args, size_t count = 1)
 	{
 		return StackMemory<T>(bs_stack_new<T>(std::forward<Args>(args)..., count), count);
 	}
@@ -478,15 +479,15 @@ namespace bs
 	 * @see	MemStack
 	 */
 	class StackAlloc
-	{ };
+	{};
 
 	/**
-	* Specialized memory allocator implementations that allows use of a stack allocator in normal new/delete/free/dealloc
-	* operators.
-	*
-	* @see MemStack
-	*/
-	template<>
+	 * Specialized memory allocator implementations that allows use of a stack allocator in normal new/delete/free/dealloc
+	 * operators.
+	 *
+	 * @see MemStack
+	 */
+	template <>
 	class MemoryAllocator<StackAlloc> : public MemoryAllocatorBase
 	{
 	public:
@@ -503,4 +504,4 @@ namespace bs
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs

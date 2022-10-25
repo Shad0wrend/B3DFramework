@@ -21,11 +21,9 @@ namespace bs
 	public:
 		Rect3() = default;
 
-		Rect3(const Vector3& center, const std::array<Vector3, 2>& axes,
-			const std::array<float, 2>& extents)
-		:mCenter(center), mAxisHorz(axes[0]), mAxisVert(axes[1]),
-		mExtentHorz(extents[0]), mExtentVert(extents[1])
-		{ }
+		Rect3(const Vector3& center, const std::array<Vector3, 2>& axes, const std::array<float, 2>& extents)
+			: mCenter(center), mAxisHorz(axes[0]), mAxisVert(axes[1]), mExtentHorz(extents[0]), mExtentVert(extents[1])
+		{}
 
 		/**
 		 * Find the nearest points of the provided ray and the rectangle.
@@ -67,12 +65,12 @@ namespace bs
 		const float& GetExtentVertical() const { return mExtentVert; }
 
 	private:
-		Vector3 mCenter{BsZero};
-		Vector3 mAxisHorz{BsZero};
-		Vector3 mAxisVert{BsZero};
+		Vector3 mCenter{ BsZero };
+		Vector3 mAxisHorz{ BsZero };
+		Vector3 mAxisVert{ BsZero };
 		float mExtentHorz = 0.0f;
 		float mExtentVert = 0.0f;
 	};
 
 	/** @} */
-}
+} // namespace bs

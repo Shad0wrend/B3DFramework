@@ -16,7 +16,8 @@ namespace bs
 	{
 	public:
 		USPtr() = default;
-		USPtr(nullptr_t) { }
+
+		USPtr(nullptr_t) {}
 
 		explicit USPtr(T* ptr)
 			: mPtr(ptr)
@@ -24,7 +25,7 @@ namespace bs
 			Add();
 		}
 
-		USPtr(const USPtr& ptr) 
+		USPtr(const USPtr& ptr)
 			: mPtr(ptr.mPtr), mCounter(ptr.mCounter)
 		{
 			Add();
@@ -42,7 +43,7 @@ namespace bs
 			Release();
 		}
 
-		USPtr& operator= (const USPtr& ptr)
+		USPtr& operator=(const USPtr& ptr)
 		{
 			Release();
 
@@ -77,7 +78,7 @@ namespace bs
 			std::swap(mCounter, rhs.mCounter);
 		}
 
-		T& operator*() const 
+		T& operator*() const
 		{
 			assert(mPtr != nullptr);
 			return *mPtr;
@@ -90,31 +91,34 @@ namespace bs
 		}
 
 		operator bool() const { return mCounter != nullptr && *mCounter > 0; }
+
 		bool unique() const { return mCounter != nullptr && *mCounter == 1; } // NOLINT
+
 		uint32_t use_count() const { return mCounter == nullptr ? 0 : *mCounter; } // NOLINT
+
 		T* get() const { return mPtr; } // NOLINT
 
 	private:
-		template<class U>
+		template <class U>
 		friend class USPtr;
 
 		void Add()
 		{
-			if (mPtr != nullptr)
+			if(mPtr != nullptr)
 			{
-				if (mCounter == nullptr)
+				if(mCounter == nullptr)
 					mCounter = bs_new<uint32_t>(1);
 				else
 					++(*mCounter);
 			}
 		}
 
-		void Release() 
+		void Release()
 		{
-			if (mCounter != nullptr)
+			if(mCounter != nullptr)
 			{
 				--(*mCounter);
-				if (*mCounter == 0)
+				if(*mCounter == 0)
 				{
 					bs_delete(mPtr);
 					bs_delete(mCounter);
@@ -130,76 +134,76 @@ namespace bs
 		uint32_t* mCounter = nullptr;
 	};
 
-	template<class T, class U> 
+	template <class T, class U>
 	bool operator==(const USPtr<T>& lhs, const USPtr<U>& rhs)
 	{
 		return lhs.get() == rhs.get();
 	}
 
-	template<class T, class U> 
+	template <class T, class U>
 	bool operator!=(const USPtr<T>& lhs, const USPtr<U>& rhs)
 	{
 		return lhs.get() != rhs.get();
 	}
 
-	template<class T, class U> 
+	template <class T, class U>
 	bool operator<=(const USPtr<T>& lhs, const USPtr<U>& rhs)
 	{
 		return lhs.get() <= rhs.get();
 	}
 
-	template<class T, class U> 
+	template <class T, class U>
 	bool operator<(const USPtr<T>& lhs, const USPtr<U>& rhs)
 	{
 		return lhs.get() < rhs.get();
 	}
 
-	template<class T, class U> 
+	template <class T, class U>
 	bool operator>=(const USPtr<T>& lhs, const USPtr<U>& rhs)
 	{
 		return lhs.get() >= rhs.get();
 	}
 
-	template<class T, class U> 
+	template <class T, class U>
 	bool operator>(const USPtr<T>& lhs, const USPtr<U>& rhs)
 	{
 		return lhs.get() > rhs.get();
 	}
 
-	template<class T> 
+	template <class T>
 	bool operator==(nullptr_t, const USPtr<T>& rhs)
 	{
 		return nullptr == rhs.get();
 	}
 
-	template<class T> 
+	template <class T>
 	bool operator==(const USPtr<T>& lhs, nullptr_t)
 	{
 		return lhs.get() == nullptr;
 	}
 
-	template<class T> 
+	template <class T>
 	bool operator!=(nullptr_t, const USPtr<T>& rhs)
 	{
 		return nullptr != rhs.get();
 	}
 
-	template<class T> 
+	template <class T>
 	bool operator!=(const USPtr<T>& lhs, nullptr_t)
 	{
 		return lhs.get() != nullptr;
 	}
 
 	/** Cast an unsafe shared pointer from one type to another. */
-	template<class T, class U>
+	template <class T, class U>
 	USPtr<T> static_pointer_cast(const USPtr<U>& ptr)
 	{
 		return USPtr<T>(ptr);
 	}
 
 	/** Create a new unsafe shared pointer using a custom allocator category. */
-	template<typename Type, typename... Args>
-	USPtr<Type> bs_ushared_ptr_new(Args &&... args)
+	template <typename Type, typename... Args>
+	USPtr<Type> bs_ushared_ptr_new(Args&&... args)
 	{
 		// Note: Ideally we merge the pointer and internal USPtr counter allocation in a single allocation
 
@@ -207,11 +211,11 @@ namespace bs
 	}
 
 	/** Create a new unsafe shared pointer from a previously constructed object. */
-	template<typename Type>
+	template <typename Type>
 	USPtr<Type> bs_ushared_ptr(Type* data)
 	{
 		return USPtr<Type>(data);
 	}
 
 	/** @} */
-}
+} // namespace bs

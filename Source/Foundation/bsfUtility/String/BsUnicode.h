@@ -106,4 +106,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

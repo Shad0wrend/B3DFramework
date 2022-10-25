@@ -20,8 +20,8 @@ namespace bs
 	{
 	public:
 		BitReferenceConst(const uint32_t& data, uint32_t bitMask)
-			:mData(data), mBitMask(bitMask)
-		{ }
+			: mData(data), mBitMask(bitMask)
+		{}
 
 		operator bool() const
 		{
@@ -38,8 +38,8 @@ namespace bs
 	{
 	public:
 		BitReference(uint32_t& data, uint32_t bitMask)
-			:mData(data), mBitMask(bitMask)
-		{ }
+			: mData(data), mBitMask(bitMask)
+		{}
 
 		operator bool() const
 		{
@@ -68,18 +68,18 @@ namespace bs
 	};
 
 	/** Helper template used for specifying types for const and non-const iterator variants for Bitfield. */
-	template<bool CONST>
+	template <bool CONST>
 	struct TBitfieldIteratorTypes
-	{ };
+	{};
 
-	template<>
+	template <>
 	struct TBitfieldIteratorTypes<true>
 	{
 		typedef const Bitfield& ArrayType;
 		typedef BitReferenceConst ReferenceType;
 	};
 
-	template<>
+	template <>
 	struct TBitfieldIteratorTypes<false>
 	{
 		typedef Bitfield& ArrayType;
@@ -87,7 +87,7 @@ namespace bs
 	};
 
 	/** Iterator for iterating over individual bits in a Bitfield. */
-	template<bool CONST>
+	template <bool CONST>
 	class TBitfieldIterator
 	{
 	public:
@@ -96,14 +96,14 @@ namespace bs
 
 		TBitfieldIterator(ArrayType owner, uint32_t bitIndex, uint32_t dwordIndex, uint32_t mask)
 			: mOwner(owner), mBitIndex(bitIndex), mDwordIndex(dwordIndex), mMask(mask)
-		{ }
+		{}
 
 		TBitfieldIterator& operator++()
 		{
 			mBitIndex++;
 			mMask <<= 1;
 
-			if (!mMask)
+			if(!mMask)
 			{
 				mDwordIndex++;
 				mMask = 1;
@@ -164,7 +164,7 @@ namespace bs
 		 * Initializes the bitfield with enough storage for @p count bits and sets them to the initial value of @p value.
 		 */
 		Bitfield(bool value = false, uint32_t count = 0)
-			:mNumBits(count)
+			: mNumBits(count)
 		{
 			if(count > 0)
 			{
@@ -180,9 +180,9 @@ namespace bs
 		}
 
 		Bitfield(const Bitfield& other)
-			:mNumBits(other.mNumBits)
+			: mNumBits(other.mNumBits)
 		{
-			if (other.mMaxBits)
+			if(other.mMaxBits)
 			{
 				Realloc(other.mMaxBits);
 
@@ -195,7 +195,7 @@ namespace bs
 			: mData(std::exchange(other.mData, nullptr))
 			, mMaxBits(std::exchange(other.mMaxBits, 0))
 			, mNumBits(std::exchange(other.mNumBits, 0))
-		{ }
+		{}
 
 		Bitfield& operator=(const Bitfield& rhs)
 		{
@@ -204,7 +204,7 @@ namespace bs
 				Clear(true);
 				mNumBits = rhs.mNumBits;
 
-				if (rhs.mMaxBits)
+				if(rhs.mMaxBits)
 				{
 					Realloc(rhs.mMaxBits);
 
@@ -220,7 +220,7 @@ namespace bs
 		{
 			if(this != &rhs)
 			{
-				if (mData)
+				if(mData)
 					bs_free(mData);
 
 				mData = std::exchange(rhs.mData, nullptr);
@@ -356,7 +356,7 @@ namespace bs
 
 			if(free)
 			{
-				if (mData)
+				if(mData)
 				{
 					bs_free(mData);
 					mData = nullptr;
@@ -409,7 +409,7 @@ namespace bs
 
 		/** @copydoc End */
 		Iterator end() { return End(); }
-		
+
 		/** @copydoc Begin */
 		ConstIterator begin() const { return Begin(); }
 
@@ -417,7 +417,7 @@ namespace bs
 		ConstIterator end() const { return End(); }
 
 	private:
-		template<bool CONST>
+		template <bool CONST>
 		friend class TBitfieldIterator;
 
 		/** Reallocates the internal buffer making enough room for @p numBits (rounded to a multiple of DWORD). */
@@ -430,7 +430,7 @@ namespace bs
 				assert(numBits > mMaxBits);
 
 				const uint32_t numDwords = Math::DivideAndRoundUp(numBits, BITS_PER_DWORD);
-				
+
 				// Note: Eventually add support for custom allocators
 				auto buffer = bs_allocN<uint32_t>(numDwords);
 				if(mData)
@@ -450,8 +450,7 @@ namespace bs
 		uint32_t mNumBits;
 	};
 
-
-}
+} // namespace bs
 
 /** @cond SPECIALIZATIONS */
 /** @addtogroup Implementation
@@ -460,7 +459,8 @@ namespace bs
 
 namespace std
 {
-	template <> inline void swap(bs::BitReference& lhs, bs::BitReference& rhs)
+	template <>
+	inline void swap(bs::BitReference& lhs, bs::BitReference& rhs)
 	{
 		const bool temp = lhs;
 		lhs = rhs;
@@ -473,7 +473,7 @@ namespace std
 		lhs = rhs;
 		rhs = temp;
 	}
-};
+}; // namespace std
 
 /** @endgroup */
 /** @endcond */

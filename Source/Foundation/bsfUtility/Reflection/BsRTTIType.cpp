@@ -14,12 +14,12 @@ namespace bs
 
 	RTTIField* RTTITypeBase::FindField(const String& name)
 	{
-		auto foundElement = std::find_if(mFields.begin(), mFields.end(), [&name](RTTIField* x) { return x->Name == name; });
+		auto foundElement = std::find_if(mFields.begin(), mFields.end(), [&name](RTTIField* x)
+										 { return x->Name == name; });
 
 		if(foundElement == mFields.end())
 		{
-			BS_EXCEPT(InternalErrorException,
-				"Cannot find a field with the specified name: " + name);
+			BS_EXCEPT(InternalErrorException, "Cannot find a field with the specified name: " + name);
 		}
 
 		return *foundElement;
@@ -27,7 +27,8 @@ namespace bs
 
 	RTTIField* RTTITypeBase::FindField(int uniqueFieldId)
 	{
-		auto foundElement = std::find_if(mFields.begin(), mFields.end(), [&uniqueFieldId](RTTIField* x) { return x->Schema.Id == uniqueFieldId; });
+		auto foundElement = std::find_if(mFields.begin(), mFields.end(), [&uniqueFieldId](RTTIField* x)
+										 { return x->Schema.Id == uniqueFieldId; });
 
 		if(foundElement == mFields.end())
 			return nullptr;
@@ -41,13 +42,15 @@ namespace bs
 			BS_EXCEPT(InvalidParametersException, "Field argument can't be null.");
 
 		int uniqueId = field->Schema.Id;
-		auto foundElementById = std::find_if(mFields.begin(), mFields.end(), [uniqueId](RTTIField* x) { return x->Schema.Id == uniqueId; });
+		auto foundElementById = std::find_if(mFields.begin(), mFields.end(), [uniqueId](RTTIField* x)
+											 { return x->Schema.Id == uniqueId; });
 
 		if(foundElementById != mFields.end())
 			BS_EXCEPT(InternalErrorException, "Field with the same ID already exists.");
 
 		String& name = field->Name;
-		auto foundElementByName = std::find_if(mFields.begin(), mFields.end(), [&name](RTTIField* x) { return x->Name == name; });
+		auto foundElementByName = std::find_if(mFields.begin(), mFields.end(), [&name](RTTIField* x)
+											   { return x->Name == name; });
 
 		if(foundElementByName != mFields.end())
 			BS_EXCEPT(InternalErrorException, "Field with the same name already exists.");
@@ -59,12 +62,12 @@ namespace bs
 	{
 		mSchema = bs_shared_ptr_new<RTTISchema>();
 		mSchema->TypeId = GetRttiId();
-		
+
 		RTTITypeBase* baseType = GetBaseClass();
-		if (baseType)
+		if(baseType)
 			mSchema->BaseTypeSchema = baseType->GetSchema();
-		
-		for (auto& entry : mFields)
+
+		for(auto& entry : mFields)
 		{
 			entry->InitSchema();
 			mSchema->FieldSchemas.push_back(entry->Schema);
@@ -94,7 +97,7 @@ namespace bs
 			return TID_SerializationContext;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
 			return nullptr;
@@ -115,4 +118,4 @@ namespace bs
 	{
 		return IReflectable::CreateInstanceFromTypeId(rttiId);
 	}
-}
+} // namespace bs

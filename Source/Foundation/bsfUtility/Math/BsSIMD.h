@@ -11,13 +11,13 @@
 #define SIMDPP_ARCH_X86_SSE4_1
 
 #if BS_COMPILER == BS_COMPILER_MSVC
-#pragma warning(disable: 4244)
+#	pragma warning(disable : 4244)
 #endif
 
 #include "ThirdParty/simdpp/simd.h"
 
 #if BS_COMPILER == BS_COMPILER_MSVC
-#pragma warning(default: 4244)
+#	pragma warning(default : 4244)
 #endif
 
 namespace bs
@@ -37,10 +37,12 @@ namespace bs
 		struct AABox
 		{
 			/** Center of the bounds, W component unused. */
-			SIMDPP_ALIGN(16) Vector4 center;
+			SIMDPP_ALIGN(16)
+			Vector4 center;
 
 			/** Extents (half-size) of the bounds, W component unused. */
-			SIMDPP_ALIGN(16) Vector4 extents;
+			SIMDPP_ALIGN(16)
+			Vector4 extents;
 
 			AABox() = default;
 
@@ -85,15 +87,17 @@ namespace bs
 		};
 
 		/**
-		* Version of bs::Rect2 suitable for SIMD use.
-		*/
+		 * Version of bs::Rect2 suitable for SIMD use.
+		 */
 		struct Rect2
 		{
 			/** Center of the bounds. Z and W component unused.*/
-			SIMDPP_ALIGN(16) Vector4 center;
+			SIMDPP_ALIGN(16)
+			Vector4 center;
 
 			/** Extents (half-size) of the bounds. Z and W component unused. */
-			SIMDPP_ALIGN(16) Vector4 extents;
+			SIMDPP_ALIGN(16)
+			Vector4 extents;
 
 			Rect2() = default;
 
@@ -129,5 +133,5 @@ namespace bs
 		};
 
 		/** @} */
-	}
-}
+	} // namespace simd
+} // namespace bs

@@ -10,48 +10,49 @@ namespace bs
 		Stack<std::tuple<Path, Path>> todo;
 		todo.push(std::make_tuple(oldPath, newPath));
 
-		while (!todo.empty())
+		while(!todo.empty())
 		{
 			auto current = todo.top();
 			todo.pop();
 
 			Path sourcePath = std::get<0>(current);
-			if (!FileSystem::Exists(sourcePath))
+			if(!FileSystem::Exists(sourcePath))
 				continue;
 
 			bool srcIsFile = FileSystem::IsFile(sourcePath);
 			Path destinationPath = std::get<1>(current);
 			bool destExists = FileSystem::Exists(destinationPath);
 
-			if (destExists)
+			if(destExists)
 			{
-				if (FileSystem::IsFile(destinationPath))
+				if(FileSystem::IsFile(destinationPath))
 				{
-					if (overwriteExisting)
+					if(overwriteExisting)
 						FileSystem::Remove(destinationPath);
 					else
 					{
 						BS_LOG(Warning, FileSystem, "Copy operation failed because another file already exists at the new "
-							"path: \"{0}\"", destinationPath);
+													"path: \"{0}\"",
+							   destinationPath);
 						return;
 					}
 				}
 			}
 
-			if (srcIsFile)
+			if(srcIsFile)
 			{
 				FileSystem::CopyFile(sourcePath, destinationPath);
 			}
 			else
 			{
-				if (!destExists)
+				if(!destExists)
 					FileSystem::CreateDir(destinationPath);
 
 				Vector<Path> files;
 				Vector<Path> directories;
 				GetChildren(destinationPath, files, directories);
 
-				for (auto& file : files)
+				for(auto& file : files)
 				{
 					Path fileDestPath = destinationPath;
 					fileDestPath.Append(file.GetTail());
@@ -59,7 +60,7 @@ namespace bs
 					todo.push(std::make_tuple(file, fileDestPath));
 				}
 
-				for (auto& dir : directories)
+				for(auto& dir : directories)
 				{
 					Path dirDestPath = destinationPath;
 					dirDestPath.Append(dir.GetTail());
@@ -72,20 +73,20 @@ namespace bs
 
 	void FileSystem::Remove(const Path& path, bool recursively)
 	{
-		if (!FileSystem::Exists(path))
+		if(!FileSystem::Exists(path))
 			return;
 
-		if (recursively)
+		if(recursively)
 		{
 			Vector<Path> files;
 			Vector<Path> directories;
 
 			GetChildren(path, files, directories);
 
-			for (auto& file : files)
+			for(auto& file : files)
 				Remove(file, false);
 
-			for (auto& dir : directories)
+			for(auto& dir : directories)
 				Remove(dir, true);
 		}
 
@@ -94,14 +95,15 @@ namespace bs
 
 	void FileSystem::Move(const Path& oldPath, const Path& newPath, bool overwriteExisting)
 	{
-		if (FileSystem::Exists(newPath))
+		if(FileSystem::Exists(newPath))
 		{
-			if (overwriteExisting)
+			if(overwriteExisting)
 				FileSystem::Remove(newPath);
 			else
 			{
 				BS_LOG(Warning, FileSystem, "Move operation failed because another file already exists at the new "
-					"path: \"{0}\"", newPath);
+											"path: \"{0}\"",
+					   newPath);
 				return;
 			}
 		}
@@ -110,4 +112,4 @@ namespace bs
 	}
 
 	Mutex FileScheduler::mMutex;
-}
+} // namespace bs

@@ -13,8 +13,8 @@ namespace bs
 
 	/**
 	 * Interface implemented by classes that provide run time type information.
-	 * 			
-	 * @note	
+	 *
+	 * @note
 	 * Any class implementing this interface must implement the GetRtti() method, as well as a static GetRttiStatic()
 	 * method, returning the same value as GetRtti(). Object returned by those methods is used for retrieving actual RTTI
 	 * data about the class.
@@ -27,7 +27,7 @@ namespace bs
 		/**
 		 * Returns an interface you can use to access class' Run Time Type Information.
 		 *
-		 * @note	
+		 * @note
 		 * You must derive your own version of RTTITypeBase, in which you may encapsulate all reflection specific operations.
 		 */
 		virtual RTTITypeBase* GetRtti() const = 0;
@@ -85,4 +85,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

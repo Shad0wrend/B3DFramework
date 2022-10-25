@@ -3,7 +3,7 @@
 #pragma once
 
 #ifdef __BORLANDC__
-	#define __STD_ALGORITHM
+#	define __STD_ALGORITHM
 #endif
 
 #include <cassert>
@@ -49,38 +49,35 @@
 
 extern "C" {
 
-#   include <sys/types.h>
-#   include <sys/stat.h>
-
+#include <sys/types.h>
+#include <sys/stat.h>
 }
 
 #if BS_PLATFORM == BS_PLATFORM_WIN32
-#  undef min
-#  undef max
+#	undef min
+#	undef max
 #	if !defined(NOMINMAX) && defined(_MSC_VER)
 #		define NOMINMAX // required to stop windows.h messing up std::min
 #	endif
-#  if defined( __MINGW32__ )
-#    include <unistd.h>
-#  endif
+#	if defined(__MINGW32__)
+#		include <unistd.h>
+#	endif
 #endif
 
 #if BS_PLATFORM == BS_PLATFORM_LINUX
 extern "C" {
 
-#   include <unistd.h>
-#   include <dlfcn.h>
-
+#	include <unistd.h>
+#	include <dlfcn.h>
 }
 #endif
 
 #if BS_PLATFORM == BS_PLATFORM_OSX
 extern "C" {
 
-#   include <unistd.h>
-#   include <sys/param.h>
-#   include <CoreFoundation/CoreFoundation.h>
-
+#	include <unistd.h>
+#	include <sys/param.h>
+#	include <CoreFoundation/CoreFoundation.h>
 }
 #endif
 
@@ -200,8 +197,8 @@ namespace bs
 	using UPtr = std::unique_ptr<T, Delete>;
 
 	/** Create a new shared pointer using a custom allocator category. */
-	template<typename Type, typename AllocCategory = GenAlloc, typename... Args>
-	SPtr<Type> bs_shared_ptr_new(Args &&... args)
+	template <typename Type, typename AllocCategory = GenAlloc, typename... Args>
+	SPtr<Type> bs_shared_ptr_new(Args&&... args)
 	{
 		return std::allocate_shared<Type>(StdAlloc<Type, AllocCategory>(), std::forward<Args>(args)...);
 	}
@@ -210,7 +207,7 @@ namespace bs
 	 * Create a new shared pointer from a previously constructed object.
 	 * Pointer specific data will be allocated using the provided allocator category.
 	 */
-	template<typename Type, typename MainAlloc = GenAlloc, typename PtrDataAlloc = GenAlloc, typename Delete = Deleter<Type, MainAlloc>>
+	template <typename Type, typename MainAlloc = GenAlloc, typename PtrDataAlloc = GenAlloc, typename Delete = Deleter<Type, MainAlloc>>
 	SPtr<Type> bs_shared_ptr(Type* data, Delete del = Delete())
 	{
 		return SPtr<Type>(data, std::move(del), StdAlloc<Type, PtrDataAlloc>());
@@ -220,15 +217,15 @@ namespace bs
 	 * Create a new unique pointer from a previously constructed object.
 	 * Pointer specific data will be allocated using the provided allocator category.
 	 */
-	template<typename Type, typename Alloc = GenAlloc, typename Delete = Deleter<Type, Alloc>>
+	template <typename Type, typename Alloc = GenAlloc, typename Delete = Deleter<Type, Alloc>>
 	UPtr<Type, Alloc, Delete> bs_unique_ptr(Type* data, Delete del = Delete())
 	{
 		return std::unique_ptr<Type, Delete>(data, std::move(del));
 	}
 
 	/** Create a new unique pointer using a custom allocator category. */
-	template<typename Type, typename Alloc = GenAlloc, typename Delete = Deleter<Type, Alloc>, typename... Args>
-	UPtr<Type, Alloc, Delete> bs_unique_ptr_new(Args &&... args)
+	template <typename Type, typename Alloc = GenAlloc, typename Delete = Deleter<Type, Alloc>, typename... Args>
+	UPtr<Type, Alloc, Delete> bs_unique_ptr_new(Args&&... args)
 	{
 		Type* rawPtr = bs_new<Type, Alloc>(std::forward<Args>(args)...);
 
@@ -240,56 +237,60 @@ namespace bs
 	 * This class exists to make storing pointers in containers easier to manage, such as with non-member comparison
 	 * operators.
 	 */
-	template<typename T>
+	template <typename T>
 	struct NativePtr
 	{
-		constexpr NativePtr(T* p) : mPtr(p) {}
+		constexpr NativePtr(T* p)
+			: mPtr(p) {}
+
 		constexpr T& operator*() const { return *mPtr; }
+
 		constexpr T* operator->() const { return mPtr; }
+
 		constexpr T* Get() const { return mPtr; }
 
 	private:
 		T* mPtr = nullptr;
 	};
 
-	template<typename T>
+	template <typename T>
 	using NPtr = NativePtr<T>;
 
-	template<typename L_T, typename R_T>
-	constexpr bool operator< (const NPtr<L_T>& lhs, const NPtr<R_T>& rhs)
+	template <typename L_T, typename R_T>
+	constexpr bool operator<(const NPtr<L_T>& lhs, const NPtr<R_T>& rhs)
 	{
-		 return lhs.get() < rhs.get();
+		return lhs.get() < rhs.get();
 	}
 
-	template<typename L_T, typename R_T>
-	constexpr bool operator> (const NPtr<L_T>& lhs, const NPtr<R_T>& rhs)
+	template <typename L_T, typename R_T>
+	constexpr bool operator>(const NPtr<L_T>& lhs, const NPtr<R_T>& rhs)
 	{
-		 return lhs.get() > rhs.get();
+		return lhs.get() > rhs.get();
 	}
 
-	template<typename L_T, typename R_T>
-	constexpr bool operator<= (const NPtr<L_T>& lhs, const NPtr<R_T>& rhs)
+	template <typename L_T, typename R_T>
+	constexpr bool operator<=(const NPtr<L_T>& lhs, const NPtr<R_T>& rhs)
 	{
-		 return lhs.get() <= rhs.get();
+		return lhs.get() <= rhs.get();
 	}
 
-	template<typename L_T, typename R_T>
-	constexpr bool operator>= (const NPtr<L_T>& lhs, const NPtr<R_T>& rhs)
+	template <typename L_T, typename R_T>
+	constexpr bool operator>=(const NPtr<L_T>& lhs, const NPtr<R_T>& rhs)
 	{
-		 return lhs.get() >= rhs.get();
+		return lhs.get() >= rhs.get();
 	}
 
-	template<typename L_T, typename R_T>
-	constexpr bool operator== (const NPtr<L_T>& lhs, const NPtr<R_T>& rhs)
+	template <typename L_T, typename R_T>
+	constexpr bool operator==(const NPtr<L_T>& lhs, const NPtr<R_T>& rhs)
 	{
-		 return lhs.get() == rhs.get();
+		return lhs.get() == rhs.get();
 	}
 
-	template<typename L_T, typename R_T>
-	constexpr bool operator!= (const NPtr<L_T>& lhs, const NPtr<R_T>& rhs)
+	template <typename L_T, typename R_T>
+	constexpr bool operator!=(const NPtr<L_T>& lhs, const NPtr<R_T>& rhs)
 	{
-		 return lhs.get() != rhs.get();
+		return lhs.get() != rhs.get();
 	}
 
 	/** @} */
-}
+} // namespace bs

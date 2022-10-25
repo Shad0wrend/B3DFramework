@@ -8,8 +8,8 @@
 namespace bs
 {
 	Bounds::Bounds(const AABox& box, const Sphere& sphere)
-		:mBox(box), mSphere(sphere)
-	{ }
+		: mBox(box), mSphere(sphere)
+	{}
 
 	void Bounds::SetBounds(const AABox& box, const Sphere& sphere)
 	{
@@ -40,5 +40,4 @@ namespace bs
 		mBox.TransformAffine(matrix);
 		mSphere.Transform(matrix);
 	}
-}
-
+} // namespace bs

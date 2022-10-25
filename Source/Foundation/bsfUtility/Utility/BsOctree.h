@@ -21,11 +21,11 @@ namespace bs
 		OctreeElementId() = default;
 
 		OctreeElementId(void* node, u32 elementIdx)
-			:node(node), elementIdx(elementIdx)
-		{ }
+			: node(node), elementIdx(elementIdx)
+		{}
 
 	private:
-		template<class, class>
+		template <class, class>
 		friend class Octree;
 
 		void* node = nullptr;
@@ -56,7 +56,7 @@ namespace bs
 	 *							- "static void setElementId(const Octree::ElementId&, void*)"
 	 *								- Gets called when element's ID is first assigned or subsequentily modified
 	 */
-	template<class ElemType, class Options>
+	template <class ElemType, class Options>
 	class Octree
 	{
 		/**
@@ -86,6 +86,7 @@ namespace bs
 			ElementBoundGroup* bounds = nullptr;
 			u32 count = 0;
 		};
+
 	public:
 		/** Contains a reference to one of the eight child nodes in an octree node. */
 		struct HChildNode
@@ -108,16 +109,16 @@ namespace bs
 			};
 
 			HChildNode()
-				:empty(true)
-			{ }
+				: empty(true)
+			{}
 
 			HChildNode(u32 x, u32 y, u32 z)
-				:x(x), y(y), z(z), empty(false)
-			{ }
+				: x(x), y(y), z(z), empty(false)
+			{}
 
 			HChildNode(u32 index)
-				:index(index), empty2(false)
-			{ }
+				: index(index), empty2(false)
+			{}
 		};
 
 		/** Contains a range of child nodes in an octree node. */
@@ -146,13 +147,13 @@ namespace bs
 
 			/** Constructs a range overlapping no nodes. */
 			NodeChildRange()
-				:allBits(0)
-			{ }
+				: allBits(0)
+			{}
 
 			/** Constructs a range overlapping a single node. */
 			NodeChildRange(HChildNode child)
-				:posBits(child.index), negBits(~child.index)
-			{ }
+				: posBits(child.index), negBits(~child.index)
+			{}
 
 			/** Checks if the range contains the provided child. */
 			bool contains(HChildNode child)
@@ -168,8 +169,8 @@ namespace bs
 		public:
 			/** Constructs a new leaf node with the specified parent. */
 			Node(Node* parent)
-				:mParent(parent), mTotalNumElements(0), mIsLeaf(true)
-			{ }
+				: mParent(parent), mTotalNumElements(0), mIsLeaf(true)
+			{}
 
 			/** Returns a child node with the specified index. May return null. */
 			Node* getChild(HChildNode child) const
@@ -195,7 +196,7 @@ namespace bs
 
 				*elements = mElements.values;
 				*bounds = mElements.bounds;
-				for (u32 i = 0; i < groupIdx; i++)
+				for(u32 i = 0; i < groupIdx; i++)
 				{
 					*elements = (*elements)->next;
 					*bounds = (*bounds)->next;
@@ -207,8 +208,8 @@ namespace bs
 			NodeElements mElements;
 
 			Node* mParent;
-			Node* mChildren[8] = {  nullptr, nullptr, nullptr, nullptr,
-									nullptr, nullptr, nullptr, nullptr };
+			Node* mChildren[8] = { nullptr, nullptr, nullptr, nullptr,
+								   nullptr, nullptr, nullptr, nullptr };
 
 			u32 mTotalNumElements : 31;
 			u32 mIsLeaf : 1;
@@ -225,7 +226,7 @@ namespace bs
 
 			/** Initializes a new bounds object using the provided node bounds. */
 			NodeBounds(const simd::AABox& bounds)
-				:mBounds(bounds)
+				: mBounds(bounds)
 			{
 				static constexpr float childExtentScale = 0.5f * (1.0f + 1.0f / Options::LoosePadding);
 
@@ -334,13 +335,10 @@ namespace bs
 				return NodeBounds(
 					simd::AABox(
 						Vector3(
-						mBounds.center.x + mChildOffset * map[child.x],
-						mBounds.center.y + mChildOffset * map[child.y],
-						mBounds.center.z + mChildOffset * map[child.z]
-						),
-						mChildExtent
-					)
-				);
+							mBounds.center.x + mChildOffset * map[child.x],
+							mBounds.center.y + mChildOffset * map[child.y],
+							mBounds.center.z + mChildOffset * map[child.z]),
+						mChildExtent));
 			}
 
 		private:
@@ -356,8 +354,8 @@ namespace bs
 			HNode() = default;
 
 			HNode(const Node* node, const NodeBounds& bounds)
-				:mNode(node), mBounds(bounds)
-			{ }
+				: mNode(node), mBounds(bounds)
+			{}
 
 			/** Returns the referenced node. */
 			const Node* getNode() const { return mNode; }
@@ -380,14 +378,14 @@ namespace bs
 		public:
 			/** Initializes the iterator, starting with the root octree node. */
 			NodeIterator(const Octree& tree)
-				:mCurrentNode(HNode(&tree.mRoot, tree.mRootBounds)), mStackAlloc(), mNodeStack(&mStackAlloc)
+				: mCurrentNode(HNode(&tree.mRoot, tree.mRootBounds)), mStackAlloc(), mNodeStack(&mStackAlloc)
 			{
 				mNodeStack.push_back(mCurrentNode);
 			}
 
 			/** Initializes the iterator using a specific node and its bounds. */
 			NodeIterator(const Node* node, const NodeBounds& bounds)
-				:mCurrentNode(HNode(node, bounds)), mStackAlloc(), mNodeStack(&mStackAlloc)
+				: mCurrentNode(HNode(node, bounds)), mStackAlloc(), mNodeStack(&mStackAlloc)
 			{
 				mNodeStack.push_back(mCurrentNode);
 			}
@@ -502,8 +500,8 @@ namespace bs
 			 * bounds.
 			 */
 			BoxIntersectIterator(const Octree& tree, const AABox& bounds)
-				:mNodeIter(tree), mBounds(simd::AABox(bounds))
-			{ }
+				: mNodeIter(tree), mBounds(simd::AABox(bounds))
+			{}
 
 			/**
 			 * Returns the contents of the current element. moveNext() must be called at least once and it must return true
@@ -524,10 +522,10 @@ namespace bs
 				while(true)
 				{
 					// First check elements of the current node (if any)
-					while (mElemIter.moveNext())
+					while(mElemIter.moveNext())
 					{
 						const simd::AABox& bounds = mElemIter.getCurrentBounds();
-						if (bounds.intersects(mBounds))
+						if(bounds.intersects(mBounds))
 							return true;
 					}
 
@@ -631,11 +629,11 @@ namespace bs
 					}
 				}
 				bs_frame_clear();
-				
+
 				node->mIsLeaf = true;
 
 				// Recursively delete all child nodes
-				for (u32 i = 0; i < 8; i++)
+				for(u32 i = 0; i < 8; i++)
 				{
 					if(node->mChildren[i])
 					{
@@ -655,19 +653,19 @@ namespace bs
 			simd::AABox elemBounds = Options::getBounds(elem, mContext);
 
 			++node->mTotalNumElements;
-			if (node->mIsLeaf)
+			if(node->mIsLeaf)
 			{
 				const simd::AABox& bounds = nodeBounds.getBounds();
 
 				// Check if the node has too many elements and should be broken up
-				if ((node->mElements.count + 1) > Options::MaxElementsPerNode && bounds.extents.x > mMinNodeExtent)
+				if((node->mElements.count + 1) > Options::MaxElementsPerNode && bounds.extents.x > mMinNodeExtent)
 				{
 					// Clear all elements from the current node
 					NodeElements elements = node->mElements;
 
 					ElementIterator elemIter(node);
 					node->mElements = NodeElements();
-					
+
 					// Mark the node as non-leaf, allowing children to be created
 					node->mIsLeaf = false;
 					node->mTotalNumElements = 0;
@@ -693,7 +691,7 @@ namespace bs
 				// Attempt to find a child the element fits into
 				HChildNode child = nodeBounds.findContainingChild(elemBounds);
 
-				if (child.empty)
+				if(child.empty)
 				{
 					// Element doesn't fit into a child, add it to this node
 					pushElement(node, elem, elemBounds);
@@ -701,7 +699,7 @@ namespace bs
 				else
 				{
 					// Create the child node if needed, and add the element to it
-					if (!node->mChildren[child.index])
+					if(!node->mChildren[child.index])
 						node->mChildren[child.index] = mNodeAlloc.template construct<Node>(node);
 
 					AddElementToNode(elem, node->mChildren[child.index], nodeBounds.getChild(child));
@@ -714,9 +712,9 @@ namespace bs
 		{
 			freeElements(node->mElements);
 
-			for (auto& entry : node->mChildren)
+			for(auto& entry : node->mChildren)
 			{
-				if (entry != nullptr)
+				if(entry != nullptr)
 				{
 					destroyNode(entry);
 					mNodeAlloc.destruct(entry);
@@ -780,7 +778,7 @@ namespace bs
 				mElemAlloc.destruct(lastElemGroup);
 				mElemBoundsAlloc.destruct(lastBoundGroup);
 			}
-			
+
 			--elements.count;
 		}
 
@@ -789,7 +787,7 @@ namespace bs
 		{
 			// Free the element and bound groups from this node
 			ElementGroup* curElemGroup = elements.values;
-			while (curElemGroup)
+			while(curElemGroup)
 			{
 				ElementGroup* toDelete = curElemGroup;
 				curElemGroup = curElemGroup->next;
@@ -798,7 +796,7 @@ namespace bs
 			}
 
 			ElementBoundGroup* curBoundGroup = elements.bounds;
-			while (curBoundGroup)
+			while(curBoundGroup)
 			{
 				ElementBoundGroup* toDelete = curBoundGroup;
 				curBoundGroup = curBoundGroup->next;
@@ -811,7 +809,7 @@ namespace bs
 			elements.count = 0;
 		}
 
-		Node mRoot{nullptr};
+		Node mRoot{ nullptr };
 		NodeBounds mRootBounds;
 		float mMinNodeExtent;
 		void* mContext;
@@ -822,4 +820,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

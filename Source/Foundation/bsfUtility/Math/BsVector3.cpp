@@ -7,9 +7,8 @@
 namespace bs
 {
 	Vector3::Vector3(const Vector4& vec)
-		:X(vec.X), Y(vec.Y), Z(vec.Z)
+		: X(vec.X), Y(vec.Y), Z(vec.Z)
 	{
-
 	}
 
 	Radian Vector3::AngleBetween(const Vector3& dest) const
@@ -17,7 +16,7 @@ namespace bs
 		float lenProduct = Length() * dest.Length();
 
 		// Divide by zero check
-		if (lenProduct < 1e-6f)
+		if(lenProduct < 1e-6f)
 			lenProduct = 1e-6f;
 
 		float f = Dot(dest) / lenProduct;
@@ -31,7 +30,7 @@ namespace bs
 		return Math::IsNaN(X) || Math::IsNaN(Y) || Math::IsNaN(Z);
 	}
 
-	const Vector3 Vector3::ZERO{BS_ZERO()};
+	const Vector3 Vector3::ZERO{ BS_ZERO() };
 	const Vector3 Vector3::ONE(1, 1, 1);
 	const Vector3 Vector3::INF =
 		Vector3(std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity());
@@ -39,4 +38,4 @@ namespace bs
 	const Vector3 Vector3::UNIT_X(1, 0, 0);
 	const Vector3 Vector3::UNIT_Y(0, 1, 0);
 	const Vector3 Vector3::UNIT_Z(0, 0, 1);
-}
+} // namespace bs

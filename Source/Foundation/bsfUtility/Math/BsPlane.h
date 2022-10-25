@@ -35,11 +35,11 @@ namespace bs
 		Plane(const Vector3& normal, const Vector3& point);
 		Plane(const Vector3& point0, const Vector3& point1, const Vector3& point2);
 
-		Plane& operator= (const Plane& rhs) = default;
+		Plane& operator=(const Plane& rhs) = default;
 
 		/**
 		 * Returns the side of the plane where the point is located on.
-		 * 			
+		 *
 		 * @note	NO_SIDE signifies the point is on the plane.
 		 */
 		Side GetSide(const Vector3& point, float epsilon = 0.0f) const;
@@ -81,15 +81,16 @@ namespace bs
 		{
 			return (rhs.D == D && rhs.Normal == Normal);
 		}
+
 		bool operator!=(const Plane& rhs) const
 		{
 			return (rhs.D != D || rhs.Normal != Normal);
 		}
 
 	public:
-		Vector3 Normal{BsZero};
+		Vector3 Normal{ BsZero };
 		float D = 0.0f;
 	};
 
 	/** @} */
-}
+} // namespace bs

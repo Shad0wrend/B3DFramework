@@ -18,23 +18,21 @@ namespace bs
 	template <class T>
 	class Module
 	{
-		public:
+	public:
 		/**
 		 * Returns a reference to the module instance. Module has to have been started up first otherwise an exception will
 		 * be thrown.
 		 */
 		static T& Instance()
 		{
-			if (!IsStartedUp())
+			if(!IsStartedUp())
 			{
-				BS_EXCEPT(InternalErrorException,
-					"Trying to access a module but it hasn't been started up yet.");
+				BS_EXCEPT(InternalErrorException, "Trying to access a module but it hasn't been started up yet.");
 			}
 
-			if (IsDestroyed())
+			if(IsDestroyed())
 			{
-				BS_EXCEPT(InternalErrorException,
-					"Trying to access a destroyed module.");
+				BS_EXCEPT(InternalErrorException, "Trying to access a destroyed module.");
 			}
 
 			return *InstanceInternal();
@@ -46,26 +44,24 @@ namespace bs
 		 */
 		static T* InstancePtr()
 		{
-			if (!IsStartedUp())
+			if(!IsStartedUp())
 			{
-				BS_EXCEPT(InternalErrorException,
-					"Trying to access a module but it hasn't been started up yet.");
+				BS_EXCEPT(InternalErrorException, "Trying to access a module but it hasn't been started up yet.");
 			}
 
-			if (IsDestroyed())
+			if(IsDestroyed())
 			{
-				BS_EXCEPT(InternalErrorException,
-					"Trying to access a destroyed module.");
+				BS_EXCEPT(InternalErrorException, "Trying to access a destroyed module.");
 			}
 
 			return InstanceInternal();
 		}
 
 		/** Constructs and starts the module using the specified parameters. */
-		template<class ...Args>
-		static void StartUp(Args &&...args)
+		template <class... Args>
+		static void StartUp(Args&&... args)
 		{
-			if (IsStartedUp())
+			if(IsStartedUp())
 				BS_EXCEPT(InternalErrorException, "Trying to start an already started module.");
 
 			InstanceInternal() = bs_new<T>(std::forward<Args>(args)...);
@@ -78,12 +74,12 @@ namespace bs
 		 * Constructs and starts a specialized type of the module. Provided type must derive from type the Module is
 		 * initialized with.
 		 */
-		template<class SubType, class ...Args>
-		static void StartUp(Args &&...args)
+		template <class SubType, class... Args>
+		static void StartUp(Args&&... args)
 		{
 			static_assert(std::is_base_of<T, SubType>::value, "Provided type is not derived from type the Module is initialized with.");
 
-			if (IsStartedUp())
+			if(IsStartedUp())
 				BS_EXCEPT(InternalErrorException, "Trying to start an already started module.");
 
 			InstanceInternal() = bs_new<SubType>(std::forward<Args>(args)...);
@@ -95,16 +91,14 @@ namespace bs
 		/** Shuts down this module and frees any resources it is using. */
 		static void ShutDown()
 		{
-			if (IsDestroyed())
+			if(IsDestroyed())
 			{
-				BS_EXCEPT(InternalErrorException,
-					"Trying to shut down an already shut down module.");
+				BS_EXCEPT(InternalErrorException, "Trying to shut down an already shut down module.");
 			}
 
-			if (!IsStartedUp())
+			if(!IsStartedUp())
 			{
-				BS_EXCEPT(InternalErrorException,
-					"Trying to shut down a module which was never started.");
+				BS_EXCEPT(InternalErrorException, "Trying to shut down a module which was never started.");
 			}
 
 			((Module*)InstanceInternal())->OnShutDown();
@@ -175,4 +169,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

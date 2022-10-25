@@ -11,8 +11,7 @@ namespace bs
 	{
 		if(IsTypeIdDuplicateInternal(rttiType->GetRttiId()))
 		{
-			BS_EXCEPT(InternalErrorException, "RTTI type \"" + rttiType->GetRttiName() +
-				"\" has a duplicate ID: " + toString(rttiType->GetRttiId()));
+			BS_EXCEPT(InternalErrorException, "RTTI type \"" + rttiType->GetRttiName() + "\" has a duplicate ID: " + toString(rttiType->GetRttiId()));
 		}
 
 		GetAllRttiTypes()[rttiType->GetRttiId()] = rttiType;
@@ -25,7 +24,7 @@ namespace bs
 		SPtr<IReflectable> output;
 		if(type != nullptr)
 			output = type->NewRttiObject();
-		
+
 		return output;
 	}
 
@@ -61,33 +60,31 @@ namespace bs
 			RTTITypeBase* myType = entry.second;
 
 			u32 myNumFields = myType->GetNumFields();
-			for (u32 i = 0; i < myNumFields; i++)
+			for(u32 i = 0; i < myNumFields; i++)
 			{
 				RTTIField* myField = myType->GetField(i);
 
-				if (myField->Schema.Type != SerializableFT_ReflectablePtr)
+				if(myField->Schema.Type != SerializableFT_ReflectablePtr)
 					continue;
 
 				auto* myReflectablePtrField = static_cast<RTTIReflectablePtrFieldBase*>(myField);
-				
+
 				RTTITypeBase* otherType = myReflectablePtrField->GetType();
 				u32 otherNumFields = otherType->GetNumFields();
-				for (u32 j = 0; j < otherNumFields; j++)
+				for(u32 j = 0; j < otherNumFields; j++)
 				{
 					RTTIField* otherField = otherType->GetField(j);
 
-					if (otherField->Schema.Type != SerializableFT_ReflectablePtr)
+					if(otherField->Schema.Type != SerializableFT_ReflectablePtr)
 						continue;
 
 					auto* otherReflectablePtrField = static_cast<RTTIReflectablePtrFieldBase*>(otherField);
 
-					if (myType->GetRttiId() == otherReflectablePtrField->GetType()->GetRttiId() &&
-						(!myReflectablePtrField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef) &&
+					if(myType->GetRttiId() == otherReflectablePtrField->GetType()->GetRttiId() &&
+					   (!myReflectablePtrField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef) &&
 						!otherReflectablePtrField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef)))
 					{
-						BS_EXCEPT(InternalErrorException, "Found circular reference on RTTI type: " + myType->GetRttiName()
-							+ " to type: " + otherType->GetRttiName() + ". Either remove one of the references or mark it"
-							+ " as a weak reference when defining the RTTI field.");
+						BS_EXCEPT(InternalErrorException, "Found circular reference on RTTI type: " + myType->GetRttiName() + " to type: " + otherType->GetRttiName() + ". Either remove one of the references or mark it" + " as a weak reference when defining the RTTI field.");
 					}
 				}
 			}
@@ -108,4 +105,4 @@ namespace bs
 	{
 		return IReflectableRTTI::Instance();
 	}
-}
+} // namespace bs

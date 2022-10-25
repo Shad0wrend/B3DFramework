@@ -5,15 +5,12 @@
 
 namespace bs
 {
-	Task::Task(const PrivatelyConstruct& dummy, const String& name, std::function<void()> taskWorker,
-		TaskPriority priority, SPtr<Task> dependency)
+	Task::Task(const PrivatelyConstruct& dummy, const String& name, std::function<void()> taskWorker, TaskPriority priority, SPtr<Task> dependency)
 		: mName(name), mPriority(priority), mTaskWorker(std::move(taskWorker)), mTaskDependency(std::move(dependency))
 	{
-
 	}
 
-	SPtr<Task> Task::Create(const String& name, std::function<void()> taskWorker, TaskPriority priority,
-		SPtr<Task> dependency)
+	SPtr<Task> Task::Create(const String& name, std::function<void()> taskWorker, TaskPriority priority, SPtr<Task> dependency)
 	{
 		return bs_shared_ptr_new<Task>(PrivatelyConstruct(), name, std::move(taskWorker), priority, std::move(dependency));
 	}
@@ -46,19 +43,14 @@ namespace bs
 		mState = 3;
 	}
 
-	TaskGroup::TaskGroup(const PrivatelyConstruct& dummy, String name, std::function<void(u32)> taskWorker,
-		u32 count, TaskPriority priority, SPtr<Task> dependency)
-		: mName(std::move(name)), mCount(count), mPriority(priority), mTaskWorker(std::move(taskWorker))
-		, mTaskDependency(std::move(dependency))
+	TaskGroup::TaskGroup(const PrivatelyConstruct& dummy, String name, std::function<void(u32)> taskWorker, u32 count, TaskPriority priority, SPtr<Task> dependency)
+		: mName(std::move(name)), mCount(count), mPriority(priority), mTaskWorker(std::move(taskWorker)), mTaskDependency(std::move(dependency))
 	{
-
 	}
 
-	SPtr<TaskGroup> TaskGroup::Create(String name, std::function<void(u32)> taskWorker, u32 count,
-		TaskPriority priority, SPtr<Task> dependency)
+	SPtr<TaskGroup> TaskGroup::Create(String name, std::function<void(u32)> taskWorker, u32 count, TaskPriority priority, SPtr<Task> dependency)
 	{
-		return bs_shared_ptr_new<TaskGroup>(PrivatelyConstruct(), std::move(name), std::move(taskWorker), count, priority,
-			std::move(dependency));
+		return bs_shared_ptr_new<TaskGroup>(PrivatelyConstruct(), std::move(name), std::move(taskWorker), count, priority, std::move(dependency));
 	}
 
 	bool TaskGroup::IsComplete() const
@@ -73,7 +65,7 @@ namespace bs
 	}
 
 	TaskScheduler::TaskScheduler()
-		:mTaskQueue(&TaskScheduler::TaskCompare)
+		: mTaskQueue(&TaskScheduler::TaskCompare)
 	{
 		mMaxActiveTasks = BS_THREAD_HARDWARE_CONCURRENCY;
 
@@ -86,7 +78,7 @@ namespace bs
 		{
 			Lock activeTaskLock(mReadyMutex);
 
-			while (mActiveTasks.size() > 0)
+			while(mActiveTasks.size() > 0)
 			{
 				SPtr<Task> task = mActiveTasks[0];
 				activeTaskLock.unlock();
@@ -186,8 +178,8 @@ namespace bs
 
 			for(auto iter = mTaskQueue.begin(); iter != mTaskQueue.end();)
 			{
-				if ((u32)mActiveTasks.size() >= mMaxActiveTasks)
-					break;	
+				if((u32)mActiveTasks.size() >= mMaxActiveTasks)
+					break;
 
 				SPtr<Task> curTask = *iter;
 
@@ -231,7 +223,7 @@ namespace bs
 			Lock lock(mReadyMutex);
 
 			auto findIter = std::find(mActiveTasks.begin(), mActiveTasks.end(), task);
-			if (findIter != mActiveTasks.end())
+			if(findIter != mActiveTasks.end())
 				mActiveTasks.erase(findIter);
 		}
 
@@ -266,8 +258,8 @@ namespace bs
 
 			if(!task->HasStarted())
 			{
-				auto iterFind = std::find_if(mTaskQueue.begin(), mTaskQueue.end(),
-					[task](const SPtr<Task>& x) { return x.get() == task; });
+				auto iterFind = std::find_if(mTaskQueue.begin(), mTaskQueue.end(), [task](const SPtr<Task>& x)
+											 { return x.get() == task; });
 
 				assert(iterFind != mTaskQueue.end());
 
@@ -301,7 +293,7 @@ namespace bs
 	{
 		Lock lock(mCompleteMutex);
 
-		while (taskGroup->mNumRemainingTasks > 0)
+		while(taskGroup->mNumRemainingTasks > 0)
 		{
 			AddWorker();
 			mTaskCompleteCond.wait(lock);
@@ -318,4 +310,4 @@ namespace bs
 		// Otherwise the task with the higher priority always goes first
 		return lhs->mPriority > rhs->mPriority;
 	}
-}
+} // namespace bs

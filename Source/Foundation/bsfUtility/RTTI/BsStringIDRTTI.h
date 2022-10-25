@@ -13,14 +13,23 @@ namespace bs
 	 *  @{
 	 */
 
-	template<> struct RTTIPlainType <StringID>
+	template <>
+	struct RTTIPlainType<StringID>
 	{
-		enum { id = TID_StringID }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_StringID
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		static BitLength ToMemory(const StringID& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				BitLength size = 0;
 
 				bool isEmpty = data.Empty();
@@ -32,8 +41,7 @@ namespace bs
 					size += stream.WriteBytes((uint8_t*)data.CStr(), length * sizeof(char));
 				}
 
-				return size;
-			});
+				return size; });
 		}
 
 		static BitLength FromMemory(StringID& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -44,7 +52,7 @@ namespace bs
 			bool empty = false;
 			rtti_read(empty, stream);
 
-			if (!empty)
+			if(!empty)
 			{
 				u32 length = (size.Bytes - sizeof(u32) - sizeof(bool)) / sizeof(char);
 
@@ -64,7 +72,7 @@ namespace bs
 			BitLength dataSize = sizeof(bool);
 
 			bool isEmpty = data.Empty();
-			if (!isEmpty)
+			if(!isEmpty)
 			{
 				auto length = (uint32_t)strlen(data.CStr());
 				dataSize += length * sizeof(char);
@@ -77,4 +85,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

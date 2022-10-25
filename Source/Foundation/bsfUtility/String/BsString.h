@@ -13,7 +13,7 @@ namespace bs
 	/** @addtogroup String
 	 *  @{
 	 */
-	
+
 	/** Defines what type of data should be written during the time_t to String conversion. */
 	enum class TimeToStringConversionType
 	{
@@ -21,14 +21,14 @@ namespace bs
 		Time = 1, /**< Only hours, minutes and seconds */
 		Full = 2 /**< Full date and time */
 	};
-	
+
 	/** Basic string that uses framework's memory allocators. */
 	template <typename T>
-	using BasicString = std::basic_string < T, std::char_traits<T>, StdAlloc<T> > ;
+	using BasicString = std::basic_string<T, std::char_traits<T>, StdAlloc<T>>;
 
 	/**	Basic string stream that uses framework's memory allocators. */
 	template <typename T>
-	using BasicStringStream = std::basic_stringstream < T, std::char_traits<T>, StdAlloc<T> > ;
+	using BasicStringStream = std::basic_stringstream<T, std::char_traits<T>, StdAlloc<T>>;
 
 	/** Wide string used primarily for handling Unicode text (UTF-32 on Linux, UTF-16 on Windows, generally). */
 	using WString = BasicString<wchar_t>;
@@ -43,7 +43,7 @@ namespace bs
 	using U32String = BasicString<char32_t>;
 
 	/** Wide string stream used for primarily for constructing wide strings. */
-	using WStringStream =  BasicStringStream<wchar_t>;
+	using WStringStream = BasicStringStream<wchar_t>;
 
 	/** Wide string stream used for primarily for constructing narrow strings. */
 	using StringStream = BasicStringStream<char>;
@@ -56,64 +56,43 @@ namespace bs
 
 	/** Equivalent to String, except it avoids any dynamic allocations until the number of elements exceeds @p Count. */
 	template <int Count>
-	using SmallString = std::basic_string <char, std::char_traits<char>, StdAlloc<char>>; // TODO: Currently equivalent to String, need to implement the allocator
+	using SmallString = std::basic_string<char, std::char_traits<char>, StdAlloc<char>>; // TODO: Currently equivalent to String, need to implement the allocator
 
-
-																						  /** Converts a narrow string to a wide string. */
+	/** Converts a narrow string to a wide string. */
 	BS_UTILITY_EXPORT WString toWString(const String& source);
 
 	/**	Converts a narrow string to a wide string. */
 	BS_UTILITY_EXPORT WString toWString(const char* source);
 
 	/** Converts a float to a string. */
-	BS_UTILITY_EXPORT WString toWString(float val, unsigned short precision = 6,
-		unsigned short width = 0, char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0) );
+	BS_UTILITY_EXPORT WString toWString(float val, unsigned short precision = 6, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/** Converts a double to a string. */
-	BS_UTILITY_EXPORT WString toWString(double val, unsigned short precision = 6,
-		unsigned short width = 0, char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0) );
+	BS_UTILITY_EXPORT WString toWString(double val, unsigned short precision = 6, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/** Converts a Radian to a string. */
-	BS_UTILITY_EXPORT WString toWString(const Radian& val, unsigned short precision = 6,
-		unsigned short width = 0, char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0) );
+	BS_UTILITY_EXPORT WString toWString(const Radian& val, unsigned short precision = 6, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/** Converts a Degree to a string. */
-	BS_UTILITY_EXPORT WString toWString(const Degree& val, unsigned short precision = 6,
-		unsigned short width = 0, char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0) );
+	BS_UTILITY_EXPORT WString toWString(const Degree& val, unsigned short precision = 6, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/**	Converts an int to a string. */
-	BS_UTILITY_EXPORT WString toWString(int val, unsigned short width = 0,
-		char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0) );
+	BS_UTILITY_EXPORT WString toWString(int val, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/**	Converts an unsigned int to a string. */
-	BS_UTILITY_EXPORT WString toWString(unsigned int val,
-		unsigned short width = 0, char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0) );
+	BS_UTILITY_EXPORT WString toWString(unsigned int val, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/**	Converts an 64bit integer to a string. */
-	BS_UTILITY_EXPORT WString toWString(i64 val,
-		unsigned short width = 0, char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0) );
+	BS_UTILITY_EXPORT WString toWString(i64 val, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/**	Converts an 64bit unsigned to a string. */
-	BS_UTILITY_EXPORT WString toWString(u64 val,
-		unsigned short width = 0, char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0) );
+	BS_UTILITY_EXPORT WString toWString(u64 val, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/**	Converts an narrow char unsigned to a string. */
-	BS_UTILITY_EXPORT WString toWString(char val,
-		unsigned short width = 0, char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0));
+	BS_UTILITY_EXPORT WString toWString(char val, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/**	Converts an wide bit char unsigned to a string. */
-	BS_UTILITY_EXPORT WString toWString(wchar_t val,
-		unsigned short width = 0, char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0));
+	BS_UTILITY_EXPORT WString toWString(wchar_t val, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/**
 	 * Converts a boolean to a string.
@@ -125,56 +104,56 @@ namespace bs
 
 	/**
 	 * Converts a 2 dimensional vector to a string.
-	 * 			
+	 *
 	 * @note	Format is "x y".
 	 */
 	BS_UTILITY_EXPORT WString toWString(const Vector2& val);
 
 	/**
 	 * Converts a 2 dimensional integer vector to a string.
-	 * 			
+	 *
 	 * @note	Format is "x y".
 	 */
 	BS_UTILITY_EXPORT WString toWString(const Vector2I& val);
 
 	/**
 	 * Converts a 3 dimensional vector to a string.
-	 * 			
+	 *
 	 * @note	Format is "x y z".
 	 */
 	BS_UTILITY_EXPORT WString toWString(const Vector3& val);
 
 	/**
 	 * Converts a 4 dimensional vector to a string.
-	 * 			
+	 *
 	 * @note	Format is "x y z w".
 	 */
 	BS_UTILITY_EXPORT WString toWString(const Vector4& val);
 
 	/**
 	 * Converts a 3x3 matrix to a string.
-	 * 			
+	 *
 	 * @note	Format is "00 01 02 10 11 12 20 21 22".
 	 */
 	BS_UTILITY_EXPORT WString toWString(const Matrix3& val);
 
 	/**
 	 * Converts a 4x4 matrix to a string.
-	 * 			
+	 *
 	 * @note	Format is "00 01 02 03 10 11 12 13 20 21 22 23 30 31 32 33".
 	 */
 	BS_UTILITY_EXPORT WString toWString(const Matrix4& val);
 
 	/**
 	 * Converts a Quaternion to a string.
-	 * 			
+	 *
 	 * @note	Format is "w x y z".
 	 */
 	BS_UTILITY_EXPORT WString toWString(const Quaternion& val);
 
 	/**
 	 * Converts a color to a string.
-	 * 			
+	 *
 	 * @note	Format is "r g b a".
 	 */
 	BS_UTILITY_EXPORT WString toWString(const Color& val);
@@ -189,44 +168,28 @@ namespace bs
 	BS_UTILITY_EXPORT String toString(const wchar_t* source);
 
 	/**	Converts a float to a string. */
-	BS_UTILITY_EXPORT String toString(float val, unsigned short precision = 6,
-		unsigned short width = 0, char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0) );
+	BS_UTILITY_EXPORT String toString(float val, unsigned short precision = 6, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/**	Converts a double to a string. */
-	BS_UTILITY_EXPORT String toString(double val, unsigned short precision = 6,
-		unsigned short width = 0, char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0) );
+	BS_UTILITY_EXPORT String toString(double val, unsigned short precision = 6, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/**	Converts a Radian to a string. */
-	BS_UTILITY_EXPORT String toString(const Radian& val, unsigned short precision = 6,
-		unsigned short width = 0, char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0) );
+	BS_UTILITY_EXPORT String toString(const Radian& val, unsigned short precision = 6, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/**	Converts a Degree to a string. */
-	BS_UTILITY_EXPORT String toString(const Degree& val, unsigned short precision = 6,
-		unsigned short width = 0, char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0) );
+	BS_UTILITY_EXPORT String toString(const Degree& val, unsigned short precision = 6, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/**	Converts an int to a string. */
-	BS_UTILITY_EXPORT String toString(int val, unsigned short width = 0,
-		char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0) );
+	BS_UTILITY_EXPORT String toString(int val, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/**	Converts an unsigned int to a string. */
-	BS_UTILITY_EXPORT String toString(unsigned int val,
-		unsigned short width = 0, char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0) );
+	BS_UTILITY_EXPORT String toString(unsigned int val, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/**	Converts a 64bit int to a string. */
-	BS_UTILITY_EXPORT String toString(i64 val,
-		unsigned short width = 0, char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0) );
+	BS_UTILITY_EXPORT String toString(i64 val, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/**	Converts an 64bit unsigned int to a string. */
-	BS_UTILITY_EXPORT String toString(u64 val,
-		unsigned short width = 0, char fill = ' ',
-		std::ios::fmtflags flags = std::ios::fmtflags(0) );
+	BS_UTILITY_EXPORT String toString(u64 val, unsigned short width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 	/**
 	 * Converts a boolean to a string.
@@ -238,56 +201,56 @@ namespace bs
 
 	/**
 	 * Converts a 2 dimensional vector to a string.
-	 * 			
+	 *
 	 * @note	Format is "x y".
 	 */
 	BS_UTILITY_EXPORT String toString(const Vector2& val);
 
 	/**
 	 * Converts a 2 dimensional integer vector to a string.
-	 * 			
+	 *
 	 * @note	Format is "x y".
 	 */
 	BS_UTILITY_EXPORT String toString(const Vector2I& val);
 
 	/**
 	 * Converts a 3 dimensional vector to a string.
-	 * 			
+	 *
 	 * @note	Format is "x y z".
 	 */
 	BS_UTILITY_EXPORT String toString(const Vector3& val);
 
 	/**
 	 * Converts a 4 dimensional vector to a string.
-	 * 			
+	 *
 	 * @note	Format is "x y z w".
 	 */
 	BS_UTILITY_EXPORT String toString(const Vector4& val);
 
 	/**
 	 * Converts a 3x3 matrix to a string.
-	 * 			
+	 *
 	 * @note	Format is "00 01 02 10 11 12 20 21 22".
 	 */
 	BS_UTILITY_EXPORT String toString(const Matrix3& val);
 
 	/**
 	 * Converts a 4x4 matrix to a string.
-	 * 			
+	 *
 	 * @note	Format is "00 01 02 03 10 11 12 13 20 21 22 23 30 31 32 33".
 	 */
 	BS_UTILITY_EXPORT String toString(const Matrix4& val);
 
 	/**
 	 * Converts a Quaternion to a string.
-	 * 			
+	 *
 	 * @note	Format is "w x y z".
 	 */
 	BS_UTILITY_EXPORT String toString(const Quaternion& val);
 
 	/**
 	 * Converts a color to a string.
-	 * 			
+	 *
 	 * @note	Format is "r g b a".
 	 */
 	BS_UTILITY_EXPORT String toString(const Color& val);
@@ -300,7 +263,7 @@ namespace bs
 
 	/** Converts a log verbosity to a string. */
 	BS_UTILITY_EXPORT String toString(const LogVerbosity& val);
-	
+
 	/**
 	 *  Converts the std::time_t structure containing time data to the string.
 	 *
@@ -323,8 +286,7 @@ namespace bs
 	 *			- Full: [DayOfWeek], [Month] [NumericalDate], [NumericalYear] [HH]::[MM]::[SS]
 	 *  By default will output the local hour in custom format.
 	 */
-	BS_UTILITY_EXPORT String toString(std::time_t time, bool isUTC = false, bool useISO8601 = false,
-		TimeToStringConversionType type = TimeToStringConversionType::Time);
+	BS_UTILITY_EXPORT String toString(std::time_t time, bool isUTC = false, bool useISO8601 = false, TimeToStringConversionType type = TimeToStringConversionType::Time);
 
 	/**
 	 * Converts a vector of strings into a single string where the substrings are delimited by spaces.
@@ -426,7 +388,7 @@ namespace bs
 	BS_UTILITY_EXPORT bool isNumber(const WString& val);
 
 	/** @} */
-}
+} // namespace bs
 
 #include "String/BsStringFormat.h"
 
@@ -479,12 +441,10 @@ namespace bs
 		 *								If this parameters is > 0, the splitting process will stop after this many splits,
 		 *								left to right.
 		 */
-		static Vector<String> Tokenise(const String& str, const String& delims = "\t\n ",
-			const String& doubleDelims = "\"", unsigned int maxSplits = 0);
+		static Vector<String> Tokenise(const String& str, const String& delims = "\t\n ", const String& doubleDelims = "\"", unsigned int maxSplits = 0);
 
 		/** @copydoc StringUtil::tokenise(const String&, const String&, const String&, unsigned int) */
-		static Vector<WString> Tokenise(const WString& str, const WString& delims = L"\t\n ",
-			const WString& doubleDelims = L"\"", unsigned int maxSplits = 0);
+		static Vector<WString> Tokenise(const WString& str, const WString& delims = L"\t\n ", const WString& doubleDelims = L"\"", unsigned int maxSplits = 0);
 
 		/** Converts all the characters in the string to lower case. Does not handle UTF8 encoded strings. */
 		static void ToLowerCase(String& str);
@@ -563,29 +523,29 @@ namespace bs
 		template <class T>
 		static int Compare(const BasicString<T>& lhs, const BasicString<T>& rhs, bool caseSensitive = true)
 		{
-			if (caseSensitive)
+			if(caseSensitive)
 				return (int)lhs.compare(rhs);
 
 			int size = (int)std::min(lhs.size(), rhs.size());
-			for (int i = 0; i < size; i++)
+			for(int i = 0; i < size; i++)
 			{
-				if (toupper(lhs[i]) < toupper(rhs[i])) return -1;
-				if (toupper(lhs[i]) > toupper(rhs[i])) return 1;
+				if(toupper(lhs[i]) < toupper(rhs[i])) return -1;
+				if(toupper(lhs[i]) > toupper(rhs[i])) return 1;
 			}
 
 			return (lhs.size() < rhs.size() ? -1 : (lhs.size() == rhs.size() ? 0 : 1));
 		}
 
 		/** @copydoc StringFormat::format */
-		template<class T, class... Args>
-		static BasicString<T> Format(const BasicString<T>& source, Args&& ...args)
+		template <class T, class... Args>
+		static BasicString<T> Format(const BasicString<T>& source, Args&&... args)
 		{
 			return StringFormat::Format(source.c_str(), std::forward<Args>(args)...);
 		}
 
 		/** @copydoc StringFormat::format */
-		template<class T, class... Args>
-		static BasicString<T> Format(const T* source, Args&& ...args)
+		template <class T, class... Args>
+		static BasicString<T> Format(const T* source, Args&&... args)
 		{
 			return StringFormat::Format(source, std::forward<Args>(args)...);
 		}
@@ -602,7 +562,7 @@ namespace bs
 		{
 			Vector<BasicString<T>> ret;
 			// Pre-allocate some space for performance
-			ret.reserve(maxSplits ? maxSplits+1 : 10);    // 10 is guessed capacity for most case
+			ret.reserve(maxSplits ? maxSplits + 1 : 10); // 10 is guessed capacity for most case
 
 			unsigned int numSplits = 0;
 
@@ -612,12 +572,12 @@ namespace bs
 			do
 			{
 				pos = str.find_first_of(delims, start);
-				if (pos == start)
+				if(pos == start)
 				{
 					// Do nothing
 					start = pos + 1;
 				}
-				else if (pos == BasicString<T>::npos || (maxSplits && numSplits == maxSplits))
+				else if(pos == BasicString<T>::npos || (maxSplits && numSplits == maxSplits))
 				{
 					// Copy the rest of the string
 					ret.push_back(str.substr(start));
@@ -632,19 +592,18 @@ namespace bs
 				// parse up to next real data
 				start = str.find_first_not_of(delims, start);
 				++numSplits;
-
-			} while (pos != BasicString<T>::npos);
+			}
+			while(pos != BasicString<T>::npos);
 
 			return ret;
 		}
 
 		template <class T>
-		static Vector<BasicString<T>> TokeniseInternal(const BasicString<T>& str, const BasicString<T>& singleDelims,
-			const BasicString<T>& doubleDelims, unsigned int maxSplits)
+		static Vector<BasicString<T>> TokeniseInternal(const BasicString<T>& str, const BasicString<T>& singleDelims, const BasicString<T>& doubleDelims, unsigned int maxSplits)
 		{
 			Vector<BasicString<T>> ret;
 			// Pre-allocate some space for performance
-			ret.reserve(maxSplits ? maxSplits + 1 : 10);    // 10 is guessed capacity for most case
+			ret.reserve(maxSplits ? maxSplits + 1 : 10); // 10 is guessed capacity for most case
 
 			unsigned int numSplits = 0;
 			BasicString<T> delims = singleDelims + doubleDelims;
@@ -655,7 +614,7 @@ namespace bs
 			start = 0;
 			do
 			{
-				if (curDoubleDelim != 0)
+				if(curDoubleDelim != 0)
 				{
 					pos = str.find(curDoubleDelim, start);
 				}
@@ -664,46 +623,46 @@ namespace bs
 					pos = str.find_first_of(delims, start);
 				}
 
-				if (pos == start)
+				if(pos == start)
 				{
 					T curDelim = str.at(pos);
-					if (doubleDelims.find_first_of(curDelim) != BasicString<T>::npos)
+					if(doubleDelims.find_first_of(curDelim) != BasicString<T>::npos)
 					{
 						curDoubleDelim = curDelim;
 					}
 					// Do nothing
 					start = pos + 1;
 				}
-				else if (pos == BasicString<T>::npos || (maxSplits && numSplits == maxSplits))
+				else if(pos == BasicString<T>::npos || (maxSplits && numSplits == maxSplits))
 				{
-					if (curDoubleDelim != 0)
+					if(curDoubleDelim != 0)
 					{
-						//Missing closer. Warn or throw exception?
+						// Missing closer. Warn or throw exception?
 					}
 					// Copy the rest of the string
-					ret.push_back( str.substr(start) );
+					ret.push_back(str.substr(start));
 					break;
 				}
 				else
 				{
-					if (curDoubleDelim != 0)
+					if(curDoubleDelim != 0)
 					{
 						curDoubleDelim = 0;
 					}
 
 					// Copy up to delimiter
-					ret.push_back( str.substr(start, pos - start) );
+					ret.push_back(str.substr(start, pos - start));
 					start = pos + 1;
 				}
-				if (curDoubleDelim == 0)
+				if(curDoubleDelim == 0)
 				{
 					// parse up to next real data
 					start = str.find_first_not_of(singleDelims, start);
 				}
 
 				++numSplits;
-
-			} while (pos != BasicString<T>::npos);
+			}
+			while(pos != BasicString<T>::npos);
 
 			return ret;
 		}
@@ -713,11 +672,11 @@ namespace bs
 		{
 			size_t thisLen = str.length();
 			size_t patternLen = pattern.length();
-			if (thisLen < patternLen || patternLen == 0)
+			if(thisLen < patternLen || patternLen == 0)
 				return false;
 
 			BasicString<T> startOfThis = str.substr(0, patternLen);
-			if (lowerCase)
+			if(lowerCase)
 				StringUtil::ToLowerCase(startOfThis);
 
 			return (startOfThis == pattern);
@@ -728,11 +687,11 @@ namespace bs
 		{
 			size_t thisLen = str.length();
 			size_t patternLen = pattern.length();
-			if (thisLen < patternLen || patternLen == 0)
+			if(thisLen < patternLen || patternLen == 0)
 				return false;
 
 			BasicString<T> endOfThis = str.substr(thisLen - patternLen, patternLen);
-			if (lowerCase)
+			if(lowerCase)
 				StringUtil::ToLowerCase(endOfThis);
 
 			return (endOfThis == pattern);
@@ -743,7 +702,7 @@ namespace bs
 		{
 			BasicString<T> tmpStr = str;
 			BasicString<T> tmpPattern = pattern;
-			if (!caseSensitive)
+			if(!caseSensitive)
 			{
 				StringUtil::ToLowerCase(tmpStr);
 				StringUtil::ToLowerCase(tmpPattern);
@@ -752,14 +711,14 @@ namespace bs
 			typename BasicString<T>::const_iterator strIt = tmpStr.begin();
 			typename BasicString<T>::const_iterator patIt = tmpPattern.begin();
 			typename BasicString<T>::const_iterator lastWildCardIt = tmpPattern.end();
-			while (strIt != tmpStr.end() && patIt != tmpPattern.end())
+			while(strIt != tmpStr.end() && patIt != tmpPattern.end())
 			{
-				if (*patIt == '*')
+				if(*patIt == '*')
 				{
 					lastWildCardIt = patIt;
 					// Skip over looking for next character
 					++patIt;
-					if (patIt == tmpPattern.end())
+					if(patIt == tmpPattern.end())
 					{
 						// Skip right to the end since * matches the entire rest of the string
 						strIt = tmpStr.end();
@@ -773,9 +732,9 @@ namespace bs
 				}
 				else
 				{
-					if (*patIt != *strIt)
+					if(*patIt != *strIt)
 					{
-						if (lastWildCardIt != tmpPattern.end())
+						if(lastWildCardIt != tmpPattern.end())
 						{
 							// The last wildcard can match this incorrect sequence
 							// rewind pattern to wildcard and keep searching
@@ -794,27 +753,25 @@ namespace bs
 						++strIt;
 					}
 				}
-
 			}
 
 			// If we reached the end of both the pattern and the string, we succeeded
-			if (patIt == tmpPattern.end() && strIt == tmpStr.end())
+			if(patIt == tmpPattern.end() && strIt == tmpStr.end())
 				return true;
 			else
 				return false;
 		}
 
 		template <class T>
-		static BasicString<T> ReplaceAllInternal(const BasicString<T>& source,
-			const BasicString<T>& replaceWhat, const BasicString<T>& replaceWithWhat)
+		static BasicString<T> ReplaceAllInternal(const BasicString<T>& source, const BasicString<T>& replaceWhat, const BasicString<T>& replaceWithWhat)
 		{
 			BasicString<T> result = source;
 			typename BasicString<T>::size_type pos = 0;
 			while(1)
 			{
-				pos = result.find(replaceWhat,pos);
-				if (pos == BasicString<T>::npos) break;
-				result.replace(pos,replaceWhat.size(), replaceWithWhat);
+				pos = result.find(replaceWhat, pos);
+				if(pos == BasicString<T>::npos) break;
+				result.replace(pos, replaceWhat.size(), replaceWithWhat);
 				pos += replaceWithWhat.size();
 			}
 			return result;
@@ -830,37 +787,37 @@ namespace bs
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs
 
 /** @cond STDLIB */
 
 namespace std
 {
-/** Hash value generator for String. */
-template<>
-struct hash<bs::String>
-{
-	size_t operator()(const bs::String& string) const
+	/** Hash value generator for String. */
+	template <>
+	struct hash<bs::String>
 	{
-		size_t hash = 0;
-		for(size_t i = 0; i < string.size(); i++)
-			hash = 65599 * hash + string[i];
-		return hash ^ (hash >> 16);
-	}
-};
+		size_t operator()(const bs::String& string) const
+		{
+			size_t hash = 0;
+			for(size_t i = 0; i < string.size(); i++)
+				hash = 65599 * hash + string[i];
+			return hash ^ (hash >> 16);
+		}
+	};
 
-/**	Hash value generator for WString. */
-template<>
-struct hash<bs::WString>
-{
-	size_t operator()(const bs::WString& string) const
+	/**	Hash value generator for WString. */
+	template <>
+	struct hash<bs::WString>
 	{
-		size_t hash = 0;
-		for(size_t i = 0; i < string.size(); i++)
-			hash = 65599 * hash + string[i];
-		return hash ^ (hash >> 16);
-	}
-};
-}
+		size_t operator()(const bs::WString& string) const
+		{
+			size_t hash = 0;
+			for(size_t i = 0; i < string.size(); i++)
+				hash = 65599 * hash + string[i];
+			return hash ^ (hash >> 16);
+		}
+	};
+} // namespace std
 
 /** @endcond */

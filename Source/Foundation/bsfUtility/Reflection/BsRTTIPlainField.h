@@ -18,8 +18,8 @@ namespace bs
 
 	/**
 	 * Base class containing common functionality for a plain class field.
-	 * 			
-	 * @note	
+	 *
+	 * @note
 	 * Plain fields are considered those that may be serialized directly by copying their memory. (All built-in types,
 	 * strings, etc.)
 	 */
@@ -28,7 +28,7 @@ namespace bs
 		virtual ~RTTIPlainFieldBase() = default;
 
 		/** Throws an exception if the current field type and provided template types don't match. */
-		template<class DataType>
+		template <class DataType>
 		void CheckType()
 		{
 			// TODO: Low priority. Because I wanted to get rid of SerializableType I have no way of checking the actual
@@ -41,7 +41,7 @@ namespace bs
 					"SerializableSimpleTypeFieldBase::checkType()");
 			}*/
 		}
-		
+
 		/** Returns the unique identifier for the type owned by the field. */
 		virtual u32 GetTypeId()
 		{
@@ -103,8 +103,8 @@ namespace bs
 
 		typedef DataType& (InterfaceType::*ArrayGetterType)(ObjectType*, u32);
 		typedef void (InterfaceType::*ArraySetterType)(ObjectType*, u32, DataType&);
-		typedef u32(InterfaceType::*ArrayGetSizeType)(ObjectType*);
-		typedef void(InterfaceType::*ArraySetSizeType)(ObjectType*, u32);
+		typedef u32 (InterfaceType::*ArrayGetSizeType)(ObjectType*);
+		typedef void (InterfaceType::*ArraySetSizeType)(ObjectType*, u32);
 
 		/**
 		 * Initializes a plain field containing a single value.
@@ -122,18 +122,17 @@ namespace bs
 			static_assert(sizeof(RTTIPlainType<DataType>::id) > 0, "Type has no RTTI ID."); // Just making sure provided type has a type ID
 
 			BitLength size = RTTIPlainType<DataType>::GetSize(DataType(), info, false);
-			if (RTTIPlainType<DataType>::hasDynamicSize == 0 && size.Bytes > 255)
+			if(RTTIPlainType<DataType>::hasDynamicSize == 0 && size.Bytes > 255)
 			{
 				assert(false);
-				BS_LOG(Error, RTTI, "Trying to create a plain RTTI field with size larger than 255. In order to use larger sizes for plain " \
-					"types please specialize RTTIPlainType, set hasDynamicSize to true.");
+				BS_LOG(Error, RTTI, "Trying to create a plain RTTI field with size larger than 255. In order to use larger sizes for plain "
+									"types please specialize RTTIPlainType, set hasDynamicSize to true.");
 			}
 
 			this->Getter = getter;
 			this->Setter = setter;
 
-			Init(std::move(name), RTTIFieldSchema(uniqueId, false, RTTIPlainType<DataType>::hasDynamicSize, size,
-				SerializableFT_Plain, RTTIPlainType<DataType>::id, nullptr, info));
+			Init(std::move(name), RTTIFieldSchema(uniqueId, false, RTTIPlainType<DataType>::hasDynamicSize, size, SerializableFT_Plain, RTTIPlainType<DataType>::id, nullptr, info));
 		}
 
 		/**
@@ -149,17 +148,16 @@ namespace bs
 		 * @param[in]	setSize 	Setter method that allows you to resize an array. Can be null.
 		 * @param[in]	info		Various optional information about the field.
 		 */
-		void InitArray(String name, u16 uniqueId, ArrayGetterType getter,
-			ArrayGetSizeType getSize, ArraySetterType setter, ArraySetSizeType setSize, const RTTIFieldInfo& info)
+		void InitArray(String name, u16 uniqueId, ArrayGetterType getter, ArrayGetSizeType getSize, ArraySetterType setter, ArraySetSizeType setSize, const RTTIFieldInfo& info)
 		{
 			static_assert((RTTIPlainType<DataType>::id != 0) || true, ""); // Just making sure provided type has a type ID
 
 			BitLength size = RTTIPlainType<DataType>::GetSize(DataType(), info, false);
-			if (RTTIPlainType<DataType>::hasDynamicSize == 0 && size.Bytes > 255)
+			if(RTTIPlainType<DataType>::hasDynamicSize == 0 && size.Bytes > 255)
 			{
 				assert(false);
-				BS_LOG(Error, RTTI, "Trying to create a plain RTTI field with size larger than 255. In order to use larger sizes for plain " \
-					"types please specialize RTTIPlainType, set hasDynamicSize to true.");
+				BS_LOG(Error, RTTI, "Trying to create a plain RTTI field with size larger than 255. In order to use larger sizes for plain "
+									"types please specialize RTTIPlainType, set hasDynamicSize to true.");
 			}
 
 			ArrayGetter = getter;
@@ -167,8 +165,7 @@ namespace bs
 			ArrayGetSize = getSize;
 			ArraySetSize = setSize;
 
-			Init(std::move(name), RTTIFieldSchema(uniqueId, true, RTTIPlainType<DataType>::hasDynamicSize, size,
-				SerializableFT_Plain, RTTIPlainType<DataType>::id, nullptr, info));
+			Init(std::move(name), RTTIFieldSchema(uniqueId, true, RTTIPlainType<DataType>::hasDynamicSize, size, SerializableFT_Plain, RTTIPlainType<DataType>::id, nullptr, info));
 		}
 
 		/** @copydoc RTTIPlainFieldBase::getTypeId */
@@ -268,8 +265,7 @@ namespace bs
 
 			if(!Setter)
 			{
-				BS_EXCEPT(InternalErrorException,
-					"Specified field (" + Name + ") has no setter.");
+				BS_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no setter.");
 			}
 
 			(rttiObject->*Setter)(castObject, value);
@@ -289,8 +285,7 @@ namespace bs
 
 			if(!ArraySetter)
 			{
-				BS_EXCEPT(InternalErrorException,
-					"Specified field (" + Name + ") has no setter.");
+				BS_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no setter.");
 			}
 
 			(rttiObject->*ArraySetter)(castObject, index, value);
@@ -318,4 +313,4 @@ namespace bs
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs

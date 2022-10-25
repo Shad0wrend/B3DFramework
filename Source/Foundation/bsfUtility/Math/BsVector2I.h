@@ -19,13 +19,13 @@ namespace bs
 
 		constexpr Vector2I() = default;
 
-		constexpr Vector2I(i32 _x, i32 _y )
-			:X(_x), Y(_y)
-		{ }
+		constexpr Vector2I(i32 _x, i32 _y)
+			: X(_x), Y(_y)
+		{}
 
 		constexpr explicit Vector2I(int val)
-			:X(val), Y(val)
-		{ }
+			: X(val), Y(val)
+		{}
 
 		/** Exchange the contents of this vector with another. */
 		void Swap(Vector2I& other)
@@ -40,21 +40,21 @@ namespace bs
 			return (u32)std::abs(other.X - X) + (u32)std::abs(other.Y - Y);
 		}
 
-		i32 operator[] (size_t i) const
+		i32 operator[](size_t i) const
 		{
 			assert(i < 2);
 
-			return *(&X+i);
+			return *(&X + i);
 		}
 
-		i32& operator[] (size_t i)
+		i32& operator[](size_t i)
 		{
 			assert(i < 2);
 
-			return *(&X+i);
+			return *(&X + i);
 		}
 
-		Vector2I& operator= (int val)
+		Vector2I& operator=(int val)
 		{
 			X = val;
 			Y = val;
@@ -62,81 +62,81 @@ namespace bs
 			return *this;
 		}
 
-		bool operator== (const Vector2I& rhs) const
+		bool operator==(const Vector2I& rhs) const
 		{
 			return (X == rhs.X && Y == rhs.Y);
 		}
 
-		bool operator!= (const Vector2I& rhs) const
+		bool operator!=(const Vector2I& rhs) const
 		{
 			return (X != rhs.X || Y != rhs.Y);
 		}
 
-		Vector2I operator+ (const Vector2I& rhs) const
+		Vector2I operator+(const Vector2I& rhs) const
 		{
 			return Vector2I(X + rhs.X, Y + rhs.Y);
 		}
 
-		Vector2I operator- (const Vector2I& rhs) const
+		Vector2I operator-(const Vector2I& rhs) const
 		{
 			return Vector2I(X - rhs.X, Y - rhs.Y);
 		}
 
-		Vector2I operator* (int val) const
+		Vector2I operator*(int val) const
 		{
 			return Vector2I(X * val, Y * val);
 		}
 
-		Vector2 operator* (float val) const
+		Vector2 operator*(float val) const
 		{
 			return Vector2(X * val, Y * val);
 		}
 
-		Vector2I operator* (const Vector2I& rhs) const
+		Vector2I operator*(const Vector2I& rhs) const
 		{
 			return Vector2I(X * rhs.X, Y * rhs.Y);
 		}
 
-		Vector2I operator/ (int val) const
+		Vector2I operator/(int val) const
 		{
 			assert(val != 0);
 
 			return Vector2I(X / val, Y / val);
 		}
 
-		Vector2 operator/ (float val) const
+		Vector2 operator/(float val) const
 		{
 			assert(val != 0);
 
 			return Vector2(X / val, Y / val);
 		}
 
-		Vector2I operator/ (const Vector2I& rhs) const
+		Vector2I operator/(const Vector2I& rhs) const
 		{
 			return Vector2I(X / rhs.X, Y / rhs.Y);
 		}
 
-		const Vector2I& operator+ () const
+		const Vector2I& operator+() const
 		{
 			return *this;
 		}
 
-		Vector2I operator- () const
+		Vector2I operator-() const
 		{
 			return Vector2I(-X, -Y);
 		}
 
-		friend Vector2I operator* (int lhs, const Vector2I& rhs)
+		friend Vector2I operator*(int lhs, const Vector2I& rhs)
 		{
 			return Vector2I(lhs * rhs.X, lhs * rhs.Y);
 		}
 
-		friend Vector2I operator/ (int lhs, const Vector2I& rhs)
+		friend Vector2I operator/(int lhs, const Vector2I& rhs)
 		{
 			return Vector2I(lhs / rhs.X, lhs / rhs.Y);
 		}
 
-		Vector2I& operator+= (const Vector2I& rhs)
+		Vector2I& operator+=(const Vector2I& rhs)
 		{
 			X += rhs.X;
 			Y += rhs.Y;
@@ -144,7 +144,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector2I& operator-= (const Vector2I& rhs)
+		Vector2I& operator-=(const Vector2I& rhs)
 		{
 			X -= rhs.X;
 			Y -= rhs.Y;
@@ -152,7 +152,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector2I& operator*= (i32 val)
+		Vector2I& operator*=(i32 val)
 		{
 			X *= val;
 			Y *= val;
@@ -160,7 +160,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector2I& operator*= (const Vector2I& rhs)
+		Vector2I& operator*=(const Vector2I& rhs)
 		{
 			X *= rhs.X;
 			Y *= rhs.Y;
@@ -168,7 +168,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector2I& operator/= (i32 val)
+		Vector2I& operator/=(i32 val)
 		{
 			assert(val != 0);
 
@@ -178,7 +178,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector2I& operator/= (const Vector2I& rhs)
+		Vector2I& operator/=(const Vector2I& rhs)
 		{
 			X /= rhs.X;
 			Y /= rhs.Y;
@@ -202,4 +202,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

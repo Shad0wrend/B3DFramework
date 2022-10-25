@@ -14,7 +14,6 @@ namespace bs
 	class BS_UTILITY_EXPORT BinaryCloner
 	{
 	public:
-
 		/**
 		 * Returns a copy of the provided object with identical data.
 		 *
@@ -75,4 +74,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

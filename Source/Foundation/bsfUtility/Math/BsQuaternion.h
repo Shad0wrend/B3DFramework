@@ -28,15 +28,15 @@ namespace bs
 
 		constexpr Quaternion(BS_ZERO zero)
 			: X(0.0f), Y(0.0f), Z(0.0f), W(0.0f)
-		{ }
+		{}
 
 		constexpr Quaternion(BS_IDENTITY)
 			: X(0.0f), Y(0.0f), Z(0.0f), W(1.0f)
-		{ }
+		{}
 
 		constexpr Quaternion(float w, float x, float y, float z)
-			:X(x), Y(y), Z(z), W(w)
-		{ }
+			: X(x), Y(y), Z(z), W(w)
+		{}
 
 		/** Construct a quaternion from a rotation matrix. */
 		explicit Quaternion(const Matrix3& rot)
@@ -85,18 +85,18 @@ namespace bs
 			std::swap(Z, other.Z);
 		}
 
-		float operator[] (const size_t i) const
+		float operator[](const size_t i) const
 		{
 			assert(i < 4);
 
-			return *(&X+i);
+			return *(&X + i);
 		}
 
-		float& operator[] (const size_t i)
+		float& operator[](const size_t i)
 		{
 			assert(i < 4);
 
-			return *(&X+i);
+			return *(&X + i);
 		}
 
 		/**
@@ -186,34 +186,31 @@ namespace bs
 		/** Gets the positive z-axis of the coordinate system transformed by this quaternion. */
 		Vector3 ZAxis() const;
 
-
-		Quaternion operator+ (const Quaternion& rhs) const
+		Quaternion operator+(const Quaternion& rhs) const
 		{
 			return Quaternion(W + rhs.W, X + rhs.X, Y + rhs.Y, Z + rhs.Z);
 		}
 
-		Quaternion operator- (const Quaternion& rhs) const
+		Quaternion operator-(const Quaternion& rhs) const
 		{
 			return Quaternion(W - rhs.W, X - rhs.X, Y - rhs.Y, Z - rhs.Z);
 		}
 
-		Quaternion operator* (const Quaternion& rhs) const
+		Quaternion operator*(const Quaternion& rhs) const
 		{
-			return Quaternion
-			(
+			return Quaternion(
 				W * rhs.W - X * rhs.X - Y * rhs.Y - Z * rhs.Z,
 				W * rhs.X + X * rhs.W + Y * rhs.Z - Z * rhs.Y,
 				W * rhs.Y + Y * rhs.W + Z * rhs.X - X * rhs.Z,
-				W * rhs.Z + Z * rhs.W + X * rhs.Y - Y * rhs.X
-			);
+				W * rhs.Z + Z * rhs.W + X * rhs.Y - Y * rhs.X);
 		}
 
-		Quaternion operator* (float rhs) const
+		Quaternion operator*(float rhs) const
 		{
 			return Quaternion(rhs * W, rhs * X, rhs * Y, rhs * Z);
 		}
 
-		Quaternion operator/ (float rhs) const
+		Quaternion operator/(float rhs) const
 		{
 			assert(rhs != 0.0);
 
@@ -221,22 +218,22 @@ namespace bs
 			return Quaternion(W * inv, X * inv, Y * inv, Z * inv);
 		}
 
-		Quaternion operator- () const
+		Quaternion operator-() const
 		{
 			return Quaternion(-W, -X, -Y, -Z);
 		}
 
-		bool operator== (const Quaternion& rhs) const
+		bool operator==(const Quaternion& rhs) const
 		{
 			return (rhs.X == X) && (rhs.Y == Y) && (rhs.Z == Z) && (rhs.W == W);
 		}
 
-		bool operator!= (const Quaternion& rhs) const
+		bool operator!=(const Quaternion& rhs) const
 		{
 			return !operator==(rhs);
 		}
 
-		Quaternion& operator+= (const Quaternion& rhs)
+		Quaternion& operator+=(const Quaternion& rhs)
 		{
 			W += rhs.W;
 			X += rhs.X;
@@ -246,7 +243,7 @@ namespace bs
 			return *this;
 		}
 
-		Quaternion& operator-= (const Quaternion& rhs)
+		Quaternion& operator-=(const Quaternion& rhs)
 		{
 			W -= rhs.W;
 			X -= rhs.X;
@@ -256,7 +253,7 @@ namespace bs
 			return *this;
 		}
 
-		Quaternion& operator*= (const Quaternion& rhs)
+		Quaternion& operator*=(const Quaternion& rhs)
 		{
 			float newW = W * rhs.W - X * rhs.X - Y * rhs.Y - Z * rhs.Z;
 			float newX = W * rhs.X + X * rhs.W + Y * rhs.Z - Z * rhs.Y;
@@ -271,22 +268,22 @@ namespace bs
 			return *this;
 		}
 
-		friend Quaternion operator* (float lhs, const Quaternion& rhs)
+		friend Quaternion operator*(float lhs, const Quaternion& rhs)
 		{
 			return Quaternion(lhs * rhs.W, lhs * rhs.X, lhs * rhs.Y, lhs * rhs.Z);
 		}
-		
+
 		/** Calculates the dot product of this quaternion and another. */
 		float Dot(const Quaternion& other) const
 		{
 			return W * other.W + X * other.X + Y * other.Y + Z * other.Z;
 		}
 
-		/** 
+		/**
 		 * Normalizes this quaternion, and returns the previous length. If @p SAFE is true, checks if the magnitude is
 		 * above @p tolerance to avoid division by zero or precision issues. If false, no checks are made.
 		 */
-		template<bool SAFE = true>
+		template <bool SAFE = true>
 		float Normalize(float tolerance = 1e-04f)
 		{
 			float len = Math::Sqrt(Dot(*this, *this));
@@ -338,7 +335,7 @@ namespace bs
 		 * Normalizes the provided quaternion and returns the result. If @p SAFE is true, checks if the magnitude is
 		 * above @p tolerance to avoid division by zero or precision issues. If false, no checks are made.
 		 */
-		template<bool SAFE = true>
+		template <bool SAFE = true>
 		static Quaternion Normalize(const Quaternion& q, float tolerance = 1e-04f)
 		{
 			float sqrdLen = Dot(q, q);
@@ -391,12 +388,13 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs
 
 /** @cond SPECIALIZATIONS */
 namespace std
 {
-	template<> class numeric_limits<bs::Quaternion>
+	template <>
+	class numeric_limits<bs::Quaternion>
 	{
 	public:
 		constexpr static bs::Quaternion infinity() // NOLINT
@@ -408,5 +406,6 @@ namespace std
 				std::numeric_limits<float>::infinity());
 		}
 	};
-}
+} // namespace std
+
 /** @endcond */

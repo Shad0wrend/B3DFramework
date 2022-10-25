@@ -25,7 +25,7 @@ namespace bs
 
 		mEntries.clear();
 
-		while (!mUnreadEntries.empty())
+		while(!mUnreadEntries.empty())
 			mUnreadEntries.pop();
 
 		mHash++;
@@ -38,8 +38,8 @@ namespace bs
 		Vector<LogEntry> newEntries;
 		for(auto& entry : mEntries)
 		{
-			if (((verbosity == LogVerbosity::Any) || entry.GetVerbosity() == verbosity) &&
-				(category == (u32)-1 || entry.GetCategory() == category))
+			if(((verbosity == LogVerbosity::Any) || entry.GetVerbosity() == verbosity) &&
+			   (category == (u32)-1 || entry.GetCategory() == category))
 				continue;
 
 			newEntries.push_back(entry);
@@ -48,13 +48,13 @@ namespace bs
 		mEntries = newEntries;
 
 		Queue<LogEntry> newUnreadEntries;
-		while (!mUnreadEntries.empty())
+		while(!mUnreadEntries.empty())
 		{
 			LogEntry entry = mUnreadEntries.front();
 			mUnreadEntries.pop();
 
-			if (((verbosity == LogVerbosity::Any) || entry.GetVerbosity() == verbosity) &&
-				(category == (u32)-1 || entry.GetCategory() == category))
+			if(((verbosity == LogVerbosity::Any) || entry.GetVerbosity() == verbosity) &&
+			   (category == (u32)-1 || entry.GetCategory() == category))
 				continue;
 
 			newUnreadEntries.push(entry);
@@ -68,7 +68,7 @@ namespace bs
 	{
 		RecursiveLock lock(mMutex);
 
-		if (mUnreadEntries.empty())
+		if(mUnreadEntries.empty())
 			return false;
 
 		entry = mUnreadEntries.front();
@@ -81,7 +81,7 @@ namespace bs
 
 	bool Log::GetLastEntry(LogEntry& entry)
 	{
-		if (mEntries.size() == 0)
+		if(mEntries.size() == 0)
 			return false;
 
 		entry = mEntries.back();
@@ -94,10 +94,10 @@ namespace bs
 
 		return mEntries;
 	}
-	
+
 	bool Log::RegisterCategoryInternal(u32 id, const char* name)
 	{
-		if (!CategoryExists(id))
+		if(!CategoryExists(id))
 		{
 			sCategories.emplace(id, name);
 			return true;
@@ -105,16 +105,16 @@ namespace bs
 
 		return false;
 	}
-	
+
 	bool Log::CategoryExists(u32 id)
 	{
 		return sCategories.find(id) != sCategories.end();
 	}
-	
+
 	bool Log::GetCategoryName(u32 id, String& name)
 	{
 		auto search = sCategories.find(id);
-		if (search != sCategories.end())
+		if(search != sCategories.end())
 		{
 			name = search->second;
 			return true;
@@ -123,18 +123,18 @@ namespace bs
 		name = "Unknown";
 		return false;
 	}
-	
+
 	Vector<LogEntry> Log::GetAllEntries() const
 	{
 		Vector<LogEntry> entries;
 		{
 			RecursiveLock lock(mMutex);
 
-			for (auto& entry : mEntries)
+			for(auto& entry : mEntries)
 				entries.push_back(entry);
 
 			Queue<LogEntry> unreadEntries = mUnreadEntries;
-			while (!unreadEntries.empty())
+			while(!unreadEntries.empty())
 			{
 				entries.push_back(unreadEntries.front());
 				unreadEntries.pop();
@@ -143,4 +143,4 @@ namespace bs
 
 		return entries;
 	}
-}
+} // namespace bs

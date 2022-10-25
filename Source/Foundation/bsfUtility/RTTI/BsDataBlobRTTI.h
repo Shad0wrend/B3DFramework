@@ -13,16 +13,23 @@ namespace bs
 	 *  @{
 	 */
 
-	template<> struct RTTIPlainType<DataBlob>
+	template <>
+	struct RTTIPlainType<DataBlob>
 	{
-		enum { id = TID_DataBlob }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_DataBlob
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		static BitLength ToMemory(const DataBlob& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
-				return stream.WriteBytes(data.Data, data.Size);
-			});
+											   { return stream.WriteBytes(data.Data, data.Size); });
 		}
 
 		static BitLength FromMemory(DataBlob& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -30,7 +37,7 @@ namespace bs
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
 
-			if (data.Data != nullptr)
+			if(data.Data != nullptr)
 				bs_free(data.Data);
 
 			data.Size = size.Bytes - sizeof(uint32_t);
@@ -52,4 +59,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

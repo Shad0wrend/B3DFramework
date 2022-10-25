@@ -31,7 +31,7 @@ namespace bs
 		bool shouldFocus = true;
 
 		HMONITOR hMonitor = desc.Monitor;
-		if (!desc.External)
+		if(!desc.External)
 		{
 			m->Style = WS_CLIPCHILDREN;
 
@@ -39,7 +39,7 @@ namespace bs
 			i32 top = desc.Top;
 
 			// If we didn't specified the adapter index, or if we didn't find it
-			if (hMonitor == nullptr)
+			if(hMonitor == nullptr)
 			{
 				POINT windowAnchorPoint;
 
@@ -61,7 +61,7 @@ namespace bs
 			u32 height = desc.Height;
 
 			// No specified top left -> Center the window in the middle of the monitor
-			if (left == -1 || top == -1)
+			if(left == -1 || top == -1)
 			{
 				int screenw = monitorInfo.rcWork.right - monitorInfo.rcWork.left;
 				int screenh = monitorInfo.rcWork.bottom - monitorInfo.rcWork.top;
@@ -70,38 +70,38 @@ namespace bs
 				int outerw = (int(width) < screenw) ? int(width) : screenw;
 				int outerh = (int(height) < screenh) ? int(height) : screenh;
 
-				if (left == -1)
+				if(left == -1)
 					left = monitorInfo.rcWork.left + (screenw - outerw) / 2;
-				else if (hMonitor != nullptr)
+				else if(hMonitor != nullptr)
 					left += monitorInfo.rcWork.left;
 
-				if (top == -1)
+				if(top == -1)
 					top = monitorInfo.rcWork.top + (screenh - outerh) / 2;
-				else if (hMonitor != nullptr)
+				else if(hMonitor != nullptr)
 					top += monitorInfo.rcWork.top;
 			}
-			else if (hMonitor != nullptr)
+			else if(hMonitor != nullptr)
 			{
 				left += monitorInfo.rcWork.left;
 				top += monitorInfo.rcWork.top;
 			}
 
-			if (!desc.Fullscreen)
+			if(!desc.Fullscreen)
 			{
-				if (desc.Parent)
+				if(desc.Parent)
 				{
-					if (desc.ToolWindow)
+					if(desc.ToolWindow)
 						m->StyleEx = WS_EX_TOOLWINDOW;
 					else
 						m->Style |= WS_CHILD;
 				}
 				else
 				{
-					if (desc.ToolWindow)
+					if(desc.ToolWindow)
 						m->StyleEx = WS_EX_TOOLWINDOW;
 				}
 
-				if (!desc.Parent || desc.ToolWindow)
+				if(!desc.Parent || desc.ToolWindow)
 				{
 					if(desc.ShowTitleBar)
 					{
@@ -119,7 +119,7 @@ namespace bs
 					}
 				}
 
-				if (!desc.OuterDimensions)
+				if(!desc.OuterDimensions)
 				{
 					// Calculate window dimensions required to get the requested client area
 					RECT rect;
@@ -132,20 +132,20 @@ namespace bs
 					int screenw = GetSystemMetrics(SM_CXSCREEN);
 					int screenh = GetSystemMetrics(SM_CYSCREEN);
 
-					if ((int)width > screenw)
+					if((int)width > screenw)
 						width = screenw;
 
-					if ((int)height > screenh)
+					if((int)height > screenh)
 						height = screenh;
 
-					if (left < 0)
+					if(left < 0)
 						left = (screenw - width) / 2;
 
-					if (top < 0)
+					if(top < 0)
 						top = (screenh - height) / 2;
 				}
 
-				if (desc.BackgroundPixels != nullptr)
+				if(desc.BackgroundPixels != nullptr)
 					m->StyleEx |= WS_EX_LAYERED;
 			}
 			else
@@ -156,19 +156,18 @@ namespace bs
 			}
 
 			UINT classStyle = 0;
-			if (desc.EnableDoubleClick)
+			if(desc.EnableDoubleClick)
 				classStyle |= CS_DBLCLKS;
 
 			// Register the window class
 			WNDCLASS wc = { classStyle, desc.WndProc, 0, 0, desc.Module,
-				LoadIcon(nullptr, IDI_APPLICATION), LoadCursor(nullptr, IDC_ARROW),
-				(HBRUSH)GetStockObject(BLACK_BRUSH), 0, "Win32Wnd" };
+							LoadIcon(nullptr, IDI_APPLICATION), LoadCursor(nullptr, IDC_ARROW),
+							(HBRUSH)GetStockObject(BLACK_BRUSH), 0, "Win32Wnd" };
 
 			RegisterClass(&wc);
 
 			// Create main window
-			m->HWnd = CreateWindowEx(m->StyleEx, "Win32Wnd", desc.Title.c_str(), m->Style,
-				left, top, width, height, desc.Parent, nullptr, desc.Module, desc.CreationParams);
+			m->HWnd = CreateWindowEx(m->StyleEx, "Win32Wnd", desc.Title.c_str(), m->Style, left, top, width, height, desc.Parent, nullptr, desc.Module, desc.CreationParams);
 			m->IsExternal = false;
 		}
 		else
@@ -187,7 +186,7 @@ namespace bs
 		m->Height = rect.bottom;
 
 		// Set background, if any
-		if (desc.BackgroundPixels != nullptr)
+		if(desc.BackgroundPixels != nullptr)
 		{
 			HBITMAP backgroundBitmap = Win32PlatformUtility::CreateBitmap(
 				desc.BackgroundPixels, desc.BackgroundWidth, desc.BackgroundHeight, true);
@@ -211,8 +210,7 @@ namespace bs
 
 			POINT zero = { 0 };
 
-			UpdateLayeredWindow(m->HWnd, hdcScreen, &origin, &size,
-				hdcMem, &zero, RGB(0, 0, 0), &blend, desc.AlphaBlending ? ULW_ALPHA : ULW_OPAQUE);
+			UpdateLayeredWindow(m->HWnd, hdcScreen, &origin, &size, hdcMem, &zero, RGB(0, 0, 0), &blend, desc.AlphaBlending ? ULW_ALPHA : ULW_OPAQUE);
 
 			SelectObject(hdcMem, hOldBitmap);
 			DeleteDC(hdcMem);
@@ -228,16 +226,16 @@ namespace bs
 			{
 				Lock lock(sWindowsMutex);
 
-				if (m->IsModal)
+				if(m->IsModal)
 				{
-					if (!sModalWindowStack.empty())
+					if(!sModalWindowStack.empty())
 					{
 						Win32Window* curModalWindow = sModalWindowStack.back();
 						windowsToDisable.push_back(curModalWindow->m->HWnd);
 					}
 					else
 					{
-						for (auto& window : sAllWindows)
+						for(auto& window : sAllWindows)
 							windowsToDisable.push_back(window->m->HWnd);
 					}
 
@@ -247,12 +245,12 @@ namespace bs
 				{
 					// A non-modal window was opened while another modal one is open,
 					// immediately deactivate it and make sure the modal windows stay on top.
-					if (!sModalWindowStack.empty())
+					if(!sModalWindowStack.empty())
 					{
 						shouldFocus = false;
 						windowsToDisable.push_back(m->HWnd);
 
-						for (auto window : sModalWindowStack)
+						for(auto window : sModalWindowStack)
 							windowsToBringToFront.push_back(window->m->HWnd);
 					}
 				}
@@ -263,7 +261,7 @@ namespace bs
 			for(auto& entry : windowsToDisable)
 				EnableWindow(entry, FALSE);
 
-			for (auto& entry : windowsToBringToFront)
+			for(auto& entry : windowsToBringToFront)
 				BringWindowToTop(entry);
 
 			if(shouldFocus)
@@ -275,11 +273,11 @@ namespace bs
 
 	Win32Window::~Win32Window()
 	{
-		if (m->HWnd && !m->IsExternal)
+		if(m->HWnd && !m->IsExternal)
 		{
 			// Handle modal windows
 			bs_frame_mark();
-			
+
 			{
 				FrameVector<HWND> windowsToEnable;
 				{
@@ -288,12 +286,12 @@ namespace bs
 					// Hidden dependency: All windows must be re-enabled before a window is destroyed, otherwise the incorrect
 					// window in the z order will be activated.
 					bool reenableWindows = false;
-					if (!sModalWindowStack.empty())
+					if(!sModalWindowStack.empty())
 					{
 						// Start from back because the most common case is closing the top-most modal window
-						for (auto iter = sModalWindowStack.rbegin(); iter != sModalWindowStack.rend(); ++iter)
+						for(auto iter = sModalWindowStack.rbegin(); iter != sModalWindowStack.rend(); ++iter)
 						{
-							if (*iter == this)
+							if(*iter == this)
 							{
 								auto iterFwd = std::next(iter).base(); // erase doesn't accept reverse iter, so convert
 
@@ -302,7 +300,7 @@ namespace bs
 							}
 						}
 
-						if (!sModalWindowStack.empty()) // Enable next modal window
+						if(!sModalWindowStack.empty()) // Enable next modal window
 						{
 							Win32Window* curModalWindow = sModalWindowStack.back();
 							windowsToEnable.push_back(curModalWindow->m->HWnd);
@@ -311,9 +309,9 @@ namespace bs
 							reenableWindows = true; // No more modal windows, re-enable any remaining window
 					}
 
-					if (reenableWindows)
+					if(reenableWindows)
 					{
-						for (auto& window : sAllWindows)
+						for(auto& window : sAllWindows)
 							windowsToEnable.push_back(window->m->HWnd);
 					}
 				}
@@ -338,7 +336,7 @@ namespace bs
 
 	void Win32Window::Move(i32 left, i32 top)
 	{
-		if (m->HWnd)
+		if(m->HWnd)
 		{
 			m->Top = top;
 			m->Left = left;
@@ -349,7 +347,7 @@ namespace bs
 
 	void Win32Window::Resize(u32 width, u32 height)
 	{
-		if (m->HWnd)
+		if(m->HWnd)
 		{
 			RECT rc = { 0, 0, (LONG)width, (LONG)height };
 			AdjustWindowRect(&rc, GetWindowLong(m->HWnd, GWL_STYLE), false);
@@ -365,9 +363,9 @@ namespace bs
 
 	void Win32Window::SetActive(bool state)
 	{
-		if (m->HWnd)
+		if(m->HWnd)
 		{
-			if (state)
+			if(state)
 				ShowWindow(m->HWnd, SW_RESTORE);
 			else
 				ShowWindow(m->HWnd, SW_SHOWMINNOACTIVE);
@@ -376,7 +374,7 @@ namespace bs
 
 	void Win32Window::SetHidden(bool hidden)
 	{
-		if (hidden)
+		if(hidden)
 			ShowWindow(m->HWnd, SW_HIDE);
 		else
 			ShowWindow(m->HWnd, SW_SHOW);
@@ -386,7 +384,7 @@ namespace bs
 
 	void Win32Window::Minimize()
 	{
-		if (m->HWnd)
+		if(m->HWnd)
 			ShowWindow(m->HWnd, SW_MINIMIZE);
 
 		if(m->IsHidden)
@@ -395,7 +393,7 @@ namespace bs
 
 	void Win32Window::Maximize()
 	{
-		if (m->HWnd)
+		if(m->HWnd)
 			ShowWindow(m->HWnd, SW_MAXIMIZE);
 
 		if(m->IsHidden)
@@ -412,7 +410,7 @@ namespace bs
 
 	void Win32Window::Restore()
 	{
-		if (m->HWnd)
+		if(m->HWnd)
 			ShowWindow(m->HWnd, SW_RESTORE);
 
 		if(m->IsHidden)
@@ -429,7 +427,7 @@ namespace bs
 
 	void Win32Window::WindowMovedOrResizedInternal()
 	{
-		if (!m->HWnd || IsIconic(m->HWnd))
+		if(!m->HWnd || IsIconic(m->HWnd))
 			return;
 
 		RECT rc;
@@ -503,11 +501,11 @@ namespace bs
 
 		{
 			Lock lock(sWindowsMutex);
-			for (auto& window : sAllWindows)
+			for(auto& window : sAllWindows)
 				windowsToEnable.push_back(window->m->HWnd);
 		}
 
-		for (auto& entry : windowsToEnable)
+		for(auto& entry : windowsToEnable)
 			EnableWindow(entry, TRUE);
 	}
 
@@ -519,23 +517,23 @@ namespace bs
 		{
 			Lock lock(sWindowsMutex);
 
-			if (!sModalWindowStack.empty())
+			if(!sModalWindowStack.empty())
 			{
 				Win32Window* curModalWindow = sModalWindowStack.back();
 				bringToFrontHwnd = curModalWindow->m->HWnd;
 
-				for (auto& window : sAllWindows)
+				for(auto& window : sAllWindows)
 				{
-					if (window != curModalWindow)
+					if(window != curModalWindow)
 						windowsToDisable.push_back(window->m->HWnd);
 				}
 			}
 		}
 
-		for (auto& entry : windowsToDisable)
+		for(auto& entry : windowsToDisable)
 			EnableWindow(entry, FALSE);
 
-		if (bringToFrontHwnd != nullptr)
+		if(bringToFrontHwnd != nullptr)
 			BringWindowToTop(bringToFrontHwnd);
 	}
-}
+} // namespace bs

@@ -146,16 +146,16 @@
 //      - Right now I don't have an easier way to apply these warnings globally so I'm keeping it this way.
 
 // Secure versions aren't multiplatform, so we won't be using them
-#if !defined(_CRT_SECURE_NO_WARNINGS)
-	#define _CRT_SECURE_NO_WARNINGS
-#endif
+#	if !defined(_CRT_SECURE_NO_WARNINGS)
+#		define _CRT_SECURE_NO_WARNINGS
+#	endif
 
 // disable: "<type> needs to have dll-interface to be used by clients'
 // Happens on STL member variables which are not public therefore is ok
-#	pragma warning (disable: 4251)
+#	pragma warning(disable : 4251)
 
 // disable: 'X' Function call with parameters that may be unsafe
-#	pragma warning(disable: 4996)
+#	pragma warning(disable : 4996)
 
 // disable: decorated name length exceeded, name was truncated
 // Happens with really long type names. Even fairly standard use
@@ -163,11 +163,11 @@
 // really do much to avoid it. It shouldn't effect execution
 // but might cause problems if you compile library
 // with one compiler and use it in another.
-#	pragma warning(disable: 4503)
+#	pragma warning(disable : 4503)
 
 // disable: C++ exception handler used, but unwind semantics are not enabled
 // We don't care about this as any exception is meant to crash the program.
-#	pragma warning(disable: 4530)
+#	pragma warning(disable : 4530)
 
 #endif
 
@@ -175,33 +175,33 @@
 #if BS_PLATFORM == BS_PLATFORM_WIN32
 // Win32 compilers use _DEBUG for specifying debug builds.
 // for MinGW, we set DEBUG
-#   if defined(_DEBUG) || defined(DEBUG)
-#       define BS_DEBUG_MODE 1
-#   else
-#       define BS_DEBUG_MODE 0
-#   endif
+#	if defined(_DEBUG) || defined(DEBUG)
+#		define BS_DEBUG_MODE 1
+#	else
+#		define BS_DEBUG_MODE 0
+#	endif
 
 #endif
 
 // Linux/Apple Settings
 #if BS_PLATFORM == BS_PLATFORM_LINUX || BS_PLATFORM == BS_PLATFORM_OSX
 // A quick define to overcome different names for the same function
-#   define stricmp strcasecmp
+#	define stricmp strcasecmp
 
-#   ifdef DEBUG
-#       define BS_DEBUG_MODE 1
-#   else
-#       define BS_DEBUG_MODE 0
-#   endif
+#	ifdef DEBUG
+#		define BS_DEBUG_MODE 1
+#	else
+#		define BS_DEBUG_MODE 0
+#	endif
 
 #endif
 
 #if BS_DEBUG_MODE
-#define BS_DEBUG_ONLY(x) x
-#define BS_ASSERT(x) assert(x)
+#	define BS_DEBUG_ONLY(x) x
+#	define BS_ASSERT(x) assert(x)
 #else
-#define BS_DEBUG_ONLY(x)
-#define BS_ASSERT(x)
+#	define BS_DEBUG_ONLY(x)
+#	define BS_ASSERT(x)
 #endif
 
 // Short-hand names for various built-in types

@@ -15,7 +15,7 @@ namespace bs
 	 * A string identifier that provides very fast comparisons to other string identifiers. Significantly faster than
 	 * comparing raw strings.
 	 *
-	 * @note	
+	 * @note
 	 * Essentially a unique ID is generated for each string and then the ID is used for comparisons as if you were using
 	 * an integer or an enum.
 	 * @note
@@ -29,12 +29,14 @@ namespace bs
 		static constexpr const int STRING_SIZE = 256;
 
 		/** Helper class that performs string actions on both null terminated character arrays and standard strings. */
-		template<class T>
+		template <class T>
 		class StringIDUtil
 		{
 		public:
 			static u32 Size(T const& input) { return 0; }
-			static void Copy(T const& input, char* dest) { }
+
+			static void Copy(T const& input, char* dest) {}
+
 			static bool Compare(T const& a, char* b) { return 0; }
 		};
 
@@ -65,20 +67,20 @@ namespace bs
 			Construct(name);
 		}
 
-		template<int N>
+		template <int N>
 		StringID(const char name[N])
 		{
 			Construct((const char*)name);
 		}
 
 		/**	Compare to string ids for equality. Uses fast integer comparison. */
-		bool operator== (const StringID& rhs) const
+		bool operator==(const StringID& rhs) const
 		{
 			return mData == rhs.mData;
 		}
 
 		/**	Compare to string ids for inequality. Uses fast integer comparison. */
-		bool operator!= (const StringID& rhs) const
+		bool operator!=(const StringID& rhs) const
 		{
 			return mData != rhs.mData;
 		}
@@ -95,7 +97,7 @@ namespace bs
 		/**	Returns the null-terminated name of the string id. */
 		const char* CStr() const
 		{
-			if (mData == nullptr)
+			if(mData == nullptr)
 				return "";
 
 			return mData->Chars;
@@ -108,11 +110,11 @@ namespace bs
 
 	private:
 		/**Constructs a StringID object in a way that works for pointers to character arrays and standard strings. */
-		template<class T>
+		template <class T>
 		void Construct(T const& name);
 
 		/**	Calculates a hash value for the provided null-terminated string. */
-		template<class T>
+		template <class T>
 		u32 CalcHash(T const& input);
 
 		/**
@@ -133,7 +135,7 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs
 
 /** @cond STDLIB */
 /** @addtogroup String
@@ -142,16 +144,16 @@ namespace bs
 
 namespace std
 {
-/**	Hash value generator for StringID. */
-template<>
-struct hash<bs::StringID>
-{
-	size_t operator()(const bs::StringID& value) const
+	/**	Hash value generator for StringID. */
+	template <>
+	struct hash<bs::StringID>
 	{
-		return (size_t)value.Id();
-	}
-};
-}
+		size_t operator()(const bs::StringID& value) const
+		{
+			return (size_t)value.Id();
+		}
+	};
+} // namespace std
 
 /** @} */
 /** @endcond */

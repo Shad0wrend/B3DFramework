@@ -14,9 +14,18 @@ namespace bs
 	 *  @{
 	 */
 
-	template<> struct RTTIPlainType<RTTIFieldInfo>
+	template <>
+	struct RTTIPlainType<RTTIFieldInfo>
 	{
-		enum { id = TID_RTTIFieldInfo }; enum { hasDynamicSize = 0 };
+		enum
+		{
+			id = TID_RTTIFieldInfo
+		};
+
+		enum
+		{
+			hasDynamicSize = 0
+		};
 
 		static BitLength ToMemory(const RTTIFieldInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
@@ -53,9 +62,9 @@ namespace bs
 			BS_RTTI_MEMBER_REFLPTR(FieldTypeSchema, 6)
 			BS_RTTI_MEMBER_PLAIN(Info, 7)
 		BS_END_RTTI_MEMBERS
-		
+
 	public:
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "RTTIFieldSchema";
 			return name;
@@ -66,7 +75,7 @@ namespace bs
 			return TID_RTTIFieldSchema;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<RTTIFieldSchema>();
 		}
@@ -80,7 +89,7 @@ namespace bs
 			BS_RTTI_MEMBER_REFLPTR(BaseTypeSchema, 1)
 			BS_RTTI_MEMBER_REFL_ARRAY(FieldSchemas, 2)
 		BS_END_RTTI_MEMBERS
-		
+
 	public:
 		const String& GetRttiName() override
 		{
@@ -93,7 +102,7 @@ namespace bs
 			return TID_RTTISchema;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<RTTISchema>();
 		}
@@ -101,4 +110,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

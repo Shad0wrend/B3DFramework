@@ -9,14 +9,14 @@
 #include "Utility/BsTime.h"
 
 #if BS_IS_BANSHEE3D
-#include "BsEngineConfig.h"
+#	include "BsEngineConfig.h"
 #endif
 
 #if BS_PLATFORM == BS_PLATFORM_WIN32 && BS_COMPILER == BS_COMPILER_MSVC
-#include <windows.h>
-#include <iostream>
+#	include <windows.h>
+#	include <iostream>
 
-#undef GetMessage
+#	undef GetMessage
 
 void logToIDEConsole(const bs::String& message, const char* channel)
 {
@@ -85,8 +85,7 @@ namespace bs
 		}
 	}
 
-	void Debug::WriteAsBmp(u8* rawPixels, u32 bytesPerPixel, u32 width, u32 height, const Path& filePath,
-		bool overwrite) const
+	void Debug::WriteAsBmp(u8* rawPixels, u32 bytesPerPixel, u32 width, u32 height, const Path& filePath, bool overwrite) const
 	{
 		if(FileSystem::IsFile(filePath))
 		{
@@ -112,7 +111,7 @@ namespace bs
 	void Debug::TriggerCallbacksInternal()
 	{
 		LogEntry entry;
-		while (mLog.GetUnreadEntry(entry))
+		while(mLog.GetUnreadEntry(entry))
 		{
 			OnLogEntryAdded(entry);
 		}
@@ -127,7 +126,7 @@ namespace bs
 
 	void Debug::SaveLog(const Path& path, SavedLogType type) const
 	{
-		switch (type)
+		switch(type)
 		{
 		default:
 		case SavedLogType::HTML:
@@ -138,7 +137,7 @@ namespace bs
 			break;
 		}
 	}
-	
+
 	void Debug::SaveHtmlLog(const Path& path) const
 	{
 		static const char* style =
@@ -233,21 +232,21 @@ table td
 <style type="text/css">
 )";
 
-		#if BS_IS_BANSHEE3D
+#if BS_IS_BANSHEE3D
 		static const char* htmlPostStyleHeader =
 			R"(</style>
 <title>Banshee Engine Log</title>
 </head>
 <body>
 )";
-		#else
+#else
 		static const char* htmlPostStyleHeader =
 			R"(</style>
 <title>bs::framework Log</title>
 </head>
 <body>
-)";	
-		#endif
+)";
+#endif
 
 		static const char* htmlEntriesTableHeader =
 			R"(<table border="1" cellpadding="1" cellspacing="1">
@@ -272,16 +271,16 @@ table td
 		stream << htmlPreStyleHeader;
 		stream << style;
 		stream << htmlPostStyleHeader;
-		#if BS_IS_BANSHEE3D
+#if BS_IS_BANSHEE3D
 		stream << "<h1>Banshee Engine Log</h1>\n";
-		#else
+#else
 		stream << "<h1>bs::framework Log</h1>\n";
-		#endif
+#endif
 
 		stream << "<h2>System information</h2>\n";
 
 		// Write header information
-		stream << "<p>bs::framework version: " << BS_VERSION_MAJOR << "." << BS_VERSION_MINOR <<"." << BS_VERSION_PATCH << "</p>\n";
+		stream << "<p>bs::framework version: " << BS_VERSION_MAJOR << "." << BS_VERSION_MINOR << "." << BS_VERSION_PATCH << "</p>\n";
 
 		if(Time::IsStarted())
 			stream << "<p>Started on: " << gTime().GetAppStartUpDateString(false) << "</p>\n";
@@ -309,7 +308,7 @@ table td
 
 		bool alternate = false;
 		Vector<LogEntry> entries = mLog.GetAllEntries();
-		for (auto& entry : entries)
+		for(auto& entry : entries)
 		{
 			String channelName;
 
@@ -318,13 +317,13 @@ table td
 			{
 			case LogVerbosity::Fatal:
 			case LogVerbosity::Error:
-				if (!alternate)
+				if(!alternate)
 					stream << R"(		<tr class="error-row">)" << std::endl;
 				else
 					stream << R"(		<tr class="error-alt-row">)" << std::endl;
 				break;
 			case LogVerbosity::Warning:
-				if (!alternate)
+				if(!alternate)
 					stream << R"(		<tr class="warn-row">)" << std::endl;
 				else
 					stream << R"(		<tr class="warn-alt-row">)" << std::endl;
@@ -334,16 +333,16 @@ table td
 			case LogVerbosity::Log:
 			case LogVerbosity::Verbose:
 			case LogVerbosity::VeryVerbose:
-				if (!alternate)
+				if(!alternate)
 					stream << R"(		<tr class="debug-row">)" << std::endl;
 				else
 					stream << R"(		<tr class="debug-alt-row">)" << std::endl;
 				break;
 			}
-			stream << R"(			<td>)" << toString(verbosity)<< R"(</td>)" << std::endl;
+			stream << R"(			<td>)" << toString(verbosity) << R"(</td>)" << std::endl;
 
 			stream << R"(			<td>)" << toString(entry.GetLocalTime(), false, false, TimeToStringConversionType::Time)
-			       << "</td>" << std::endl;
+				   << "</td>" << std::endl;
 
 			String categoryName;
 			mLog.GetCategoryName(entry.GetCategory(), categoryName);
@@ -362,39 +361,39 @@ table td
 		SPtr<DataStream> fileStream = FileSystem::CreateAndOpenFile(path);
 		fileStream->WriteString(stream.str());
 	}
-	
+
 	/* Internal function to get the given number of spaces, so that the log looks properly indented */
 	String GetSpacesIndentationInternal(size_t numSpaces)
 	{
 		String tmp;
-		for (u8 i = 0; i < numSpaces; i++)
+		for(u8 i = 0; i < numSpaces; i++)
 			tmp.append(" ");
 		return tmp;
 	}
 
 	void Debug::SaveTextLog(const Path& path) const
 	{
-		#if BS_IS_BANSHEE3D
+#if BS_IS_BANSHEE3D
 		static const char* engineHeader = "This is Banshee Engine ";
 		static const char* bsfBasedHeader = "Based on bs::framework ";
-		#else
+#else
 		static const char* bsfOnlyHeader = "This is bs::framework ";
-		#endif
-		
+#endif
+
 		StringStream stream;
-		#if BS_IS_BANSHEE3D
+#if BS_IS_BANSHEE3D
 		stream << engineHeader << BS_B3D_VERSION_MAJOR << "." << BS_B3D_VERSION_MINOR << "." << BS_B3D_VERSION_PATCH << "\n";
-		stream << bsfBasedHeader << BS_VERSION_MAJOR << "." << BS_VERSION_MINOR <<"." << BS_VERSION_PATCH << "\n";
-		#else
-		stream << bsfOnlyHeader << BS_VERSION_MAJOR << "." << BS_VERSION_MINOR <<"." << BS_VERSION_PATCH << "\n";
-		#endif
-		if (Time::IsStarted())
+		stream << bsfBasedHeader << BS_VERSION_MAJOR << "." << BS_VERSION_MINOR << "." << BS_VERSION_PATCH << "\n";
+#else
+		stream << bsfOnlyHeader << BS_VERSION_MAJOR << "." << BS_VERSION_MINOR << "." << BS_VERSION_PATCH << "\n";
+#endif
+		if(Time::IsStarted())
 			stream << "Started on: " << gTime().GetAppStartUpDateString(false) << "\n";
-		
+
 		stream << "\n";
-		stream << "System information:\n" <<
-				  "================================================================================\n";
-		
+		stream << "System information:\n"
+			   << "================================================================================\n";
+
 		SystemInfo systemInfo = PlatformUtility::GetSystemInfo();
 		stream << "OS version: " << systemInfo.OsName << " " << (systemInfo.OsIs64Bit ? "64-bit" : "32-bit") << "\n";
 		stream << "CPU information:\n";
@@ -402,11 +401,11 @@ table td
 		stream << "CPU name: " << systemInfo.CpuModel << "\n";
 		stream << "CPU clock speed: " << systemInfo.CpuClockSpeedMhz << "Mhz\n";
 		stream << "CPU core count: " << systemInfo.CpuNumCores << "\n";
-		
+
 		stream << "\n";
-		stream << "GPU List:\n" <<
-				  "================================================================================\n";
-		
+		stream << "GPU List:\n"
+			   << "================================================================================\n";
+
 		if(systemInfo.GpuInfo.NumGpUs == 1)
 			stream << "GPU: " << systemInfo.GpuInfo.Names[0] << "\n";
 		else
@@ -414,18 +413,18 @@ table td
 			for(u32 i = 0; i < systemInfo.GpuInfo.NumGpUs; i++)
 				stream << "GPU #" << i << ": " << systemInfo.GpuInfo.Names[i] << "\n";
 		}
-		
+
 		stream << "\n";
-		stream << "Log entries:\n" <<
-				  "================================================================================\n";
-		
+		stream << "Log entries:\n"
+			   << "================================================================================\n";
+
 		Vector<LogEntry> entries = mLog.GetAllEntries();
-		for (auto& entry : entries)
+		for(auto& entry : entries)
 		{
 			String builtMsg;
 			builtMsg.append(toString(entry.GetLocalTime(), false, true, TimeToStringConversionType::Full));
 			builtMsg.append(" ");
-			
+
 			switch(entry.GetVerbosity())
 			{
 			case LogVerbosity::Fatal:
@@ -450,29 +449,28 @@ table td
 				builtMsg.append("[VERY_VERBOSE]");
 				break;
 			}
-			
+
 			String categoryName;
 			mLog.GetCategoryName(entry.GetCategory(), categoryName);
 			builtMsg.append(" <" + categoryName + ">");
 
 			builtMsg.append(" | ");
-			
+
 			String tmpSpaces = GetSpacesIndentationInternal(builtMsg.length());
-			
+
 			String parsedMessage = StringUtil::ReplaceAll(entry.GetMessage(), "\n\t\t", "\n" + tmpSpaces);
 			builtMsg.append(parsedMessage);
-			
+
 			stream << builtMsg << "\n";
 		}
-		
+
 		SPtr<DataStream> fileStream = FileSystem::CreateAndOpenFile(path);
 		fileStream->WriteString(stream.str());
-		
 	}
-	
+
 	BS_UTILITY_EXPORT Debug& gDebug()
 	{
 		static Debug debug;
 		return debug;
 	}
-}
+} // namespace bs

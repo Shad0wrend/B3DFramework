@@ -25,23 +25,22 @@ namespace bs
 		GroupAlloc() = default;
 
 		GroupAlloc(GroupAlloc&& other) noexcept
-			: mData(std::exchange(other.mData, nullptr)), mDataPtr(std::exchange(other.mDataPtr, nullptr)),
-				 mNumBytes(std::exchange(other.mNumBytes, 0))
+			: mData(std::exchange(other.mData, nullptr)), mDataPtr(std::exchange(other.mDataPtr, nullptr)), mNumBytes(std::exchange(other.mNumBytes, 0))
 		{
 		}
 
 		~GroupAlloc()
 		{
-			if (mNumBytes > 0)
+			if(mNumBytes > 0)
 				bs_free(mData);
 		}
 
 		GroupAlloc& operator=(GroupAlloc&& other) noexcept
 		{
-			if (this == &other)
+			if(this == &other)
 				return *this;
 
-			if (mNumBytes > 0)
+			if(mNumBytes > 0)
 				bs_free(mData);
 
 			mData = std::exchange(other.mData, nullptr);
@@ -59,7 +58,7 @@ namespace bs
 		{
 			assert(mData == nullptr);
 
-			if (mNumBytes > 0)
+			if(mNumBytes > 0)
 				mData = (u8*)bs_alloc(mNumBytes);
 
 			mDataPtr = mData;
@@ -83,7 +82,7 @@ namespace bs
 		 * to change the size of your allocation, free your memory by using free(), followed by a call to clear(). Then
 		 * reserve(), init() and alloc() again.
 		 */
-		template<class T>
+		template <class T>
 		GroupAlloc& Reserve(u32 count = 1)
 		{
 			assert(mData == nullptr);
@@ -112,7 +111,7 @@ namespace bs
 		 *
 		 * @param[in]	count	Number of elements to allocate.
 		 */
-		template<class T>
+		template <class T>
 		T* Alloc(u32 count = 1)
 		{
 			return (T*)Alloc(sizeof(T) * count);
@@ -128,7 +127,7 @@ namespace bs
 		void Clear()
 		{
 			// Note: A debug check if user actually freed the memory could be helpful
-			if (mData)
+			if(mData)
 				bs_free(mData);
 
 			mNumBytes = 0;
@@ -139,13 +138,13 @@ namespace bs
 		/**
 		 * Allocates enough memory to hold the object(s) of specified type using the static allocator, and constructs them.
 		 */
-		template<class T>
+		template <class T>
 		T* Construct(u32 count = 1)
 		{
 			T* data = (T*)alloc(sizeof(T) * count);
 
 			for(unsigned int i = 0; i < count; i++)
-				new ((void*)&data[i]) T;
+				new((void*)&data[i]) T;
 
 			return data;
 		}
@@ -153,19 +152,19 @@ namespace bs
 		/**
 		 * Allocates enough memory to hold the object(s) of specified type using the static allocator, and constructs them.
 		 */
-		template<class T, class... Args>
-		T* Construct(Args &&...args, u32 count = 1)
+		template <class T, class... Args>
+		T* Construct(Args&&... args, u32 count = 1)
 		{
 			T* data = (T*)alloc(sizeof(T) * count);
 
 			for(unsigned int i = 0; i < count; i++)
-				new ((void*)&data[i]) T(std::forward<Args>(args)...);
+				new((void*)&data[i]) T(std::forward<Args>(args)...);
 
 			return data;
 		}
 
 		/** Destructs and deallocates an object allocated with the static allocator. */
-		template<class T>
+		template <class T>
 		void Destruct(T* data)
 		{
 			data->~T();
@@ -174,7 +173,7 @@ namespace bs
 		}
 
 		/** Destructs and deallocates an array of objects allocated with the static frame allocator. */
-		template<class T>
+		template <class T>
 		void Destruct(T* data, u32 count)
 		{
 			for(unsigned int i = 0; i < count; i++)
@@ -191,4 +190,4 @@ namespace bs
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs

@@ -12,9 +12,9 @@ namespace bs
 
 	Radian Math::Acos(float val)
 	{
-		if (-1.0f < val)
+		if(-1.0f < val)
 		{
-			if (val < 1.0f)
+			if(val < 1.0f)
 				return Radian(std::acos(val));
 			else
 				return Radian(0.0f);
@@ -27,9 +27,9 @@ namespace bs
 
 	Radian Math::Asin(float val)
 	{
-		if (-1.0f < val)
+		if(-1.0f < val)
 		{
-			if (val < 1.0f)
+			if(val < 1.0f)
 				return Radian(std::asin(val));
 			else
 				return Radian(HALF_PI);
@@ -42,10 +42,10 @@ namespace bs
 
 	float Math::Sign(float val)
 	{
-		if (val > 0.0f)
+		if(val > 0.0f)
 			return 1.0f;
 
-		if (val < 0.0f)
+		if(val < 0.0f)
 			return -1.0f;
 
 		return 0.0f;
@@ -53,12 +53,12 @@ namespace bs
 
 	float Math::InvSqrt(float val)
 	{
-		return 1.0f/sqrt(val);
+		return 1.0f / sqrt(val);
 	}
 
 	float Math::FastSin0(float val)
 	{
-		float angleSqr = val*val;
+		float angleSqr = val * val;
 		float result = 7.61e-03f;
 		result *= angleSqr;
 		result -= 1.6605e-01f;
@@ -70,7 +70,7 @@ namespace bs
 
 	float Math::FastSin1(float val)
 	{
-		float angleSqr = val*val;
+		float angleSqr = val * val;
 		float result = -2.39e-08f;
 		result *= angleSqr;
 		result += 2.7526e-06f;
@@ -89,7 +89,7 @@ namespace bs
 
 	float Math::FastCos0(float val)
 	{
-		float angleSqr = val*val;
+		float angleSqr = val * val;
 		float result = 3.705e-02f;
 		result *= angleSqr;
 		result -= 4.967e-01f;
@@ -101,7 +101,7 @@ namespace bs
 
 	float Math::FastCos1(float val)
 	{
-		float angleSqr = val*val;
+		float angleSqr = val * val;
 		float result = -2.605e-07f;
 		result *= angleSqr;
 		result += 2.47609e-05f;
@@ -119,7 +119,7 @@ namespace bs
 
 	float Math::FastTan0(float val)
 	{
-		float angleSqr = val*val;
+		float angleSqr = val * val;
 		float result = 2.033e-01f;
 		result *= angleSqr;
 		result += 3.1755e-01f;
@@ -131,7 +131,7 @@ namespace bs
 
 	float Math::FastTan1(float val)
 	{
-		float angleSqr = val*val;
+		float angleSqr = val * val;
 		float result = 9.5168091e-03f;
 		result *= angleSqr;
 		result += 2.900525e-03f;
@@ -159,7 +159,7 @@ namespace bs
 		result -= 0.2121144f;
 		result *= val;
 		result += 1.5707288f;
-		result = HALF_PI - root*result;
+		result = HALF_PI - root * result;
 		return result;
 	}
 
@@ -181,7 +181,7 @@ namespace bs
 		result -= 0.2145988016f;
 		result *= val;
 		result += 1.5707963050f;
-		result = HALF_PI - root*result;
+		result = HALF_PI - root * result;
 		return result;
 	}
 
@@ -223,7 +223,7 @@ namespace bs
 
 	float Math::FastATan0(float val)
 	{
-		float valueSqr = val*val;
+		float valueSqr = val * val;
 		float result = 0.0208351f;
 		result *= valueSqr;
 		result -= 0.085133f;
@@ -239,7 +239,7 @@ namespace bs
 
 	float Math::FastATan1(float val)
 	{
-		float valueSqr = val*val;
+		float valueSqr = val * val;
 		float result = 0.0028662257f;
 		result *= valueSqr;
 		result -= 0.0161657367f;
@@ -283,8 +283,7 @@ namespace bs
 			fabs(b.W - a.W) <= tolerance;
 	}
 
-	Vector3 Math::CalculateTriTangent(const Vector3& position1, const Vector3& position2,
-		const Vector3& position3, float u1, float v1, float u2, float v2, float u3, float v3)
+	Vector3 Math::CalculateTriTangent(const Vector3& position1, const Vector3& position2, const Vector3& position3, float u1, float v1, float u2, float v2, float u3, float v3)
 	{
 		Vector3 side0 = position1 - position2;
 		Vector3 side1 = position3 - position1;
@@ -312,7 +311,7 @@ namespace bs
 		// This is because the triangle has been mirrored when going from tangent space to object space.
 		// reverse tangents if necessary.
 		Vector3 tangentCross = tangent.Cross(binormal);
-		if (tangentCross.Dot(normal) < 0.0f)
+		if(tangentCross.Dot(normal) < 0.0f)
 		{
 			tangent = -tangent;
 			binormal = -binormal;
@@ -320,4 +319,4 @@ namespace bs
 
 		return tangent;
 	}
-}
+} // namespace bs

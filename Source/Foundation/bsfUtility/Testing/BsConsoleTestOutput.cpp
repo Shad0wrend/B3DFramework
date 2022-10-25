@@ -6,11 +6,8 @@
 
 namespace bs
 {
-	void ConsoleTestOutput::OutputFail(const String& desc,
-	                                   const String& function,
-	                                   const String& file,
-	                                   long line)
+	void ConsoleTestOutput::OutputFail(const String& desc, const String& function, const String& file, long line)
 	{
 		std::cout << file << ":" << line << ": failure: " << desc << std::endl;
 	}
-}
+} // namespace bs

@@ -18,12 +18,12 @@ namespace bs
 		Rect2() = default;
 
 		Rect2(float x, float y, float width, float height)
-			:X(x), Y(y), Width(width), Height(height)
-		{ }
+			: X(x), Y(y), Width(width), Height(height)
+		{}
 
 		Rect2(const Vector2& topLeft, const Vector2& size)
-			:X(topLeft.X), Y(topLeft.Y), Width(size.X), Height(size.Y)
-		{ }
+			: X(topLeft.X), Y(topLeft.Y), Width(size.X), Height(size.Y)
+		{}
 
 		float X = 0.0f;
 		float Y = 0.0f;
@@ -48,7 +48,7 @@ namespace bs
 		/**
 		 * Transforms the bounds by the given matrix. Resulting value is an axis aligned rectangle encompassing the
 		 * transformed points.
-		 * 			
+		 *
 		 * @note	Since the resulting value is an AA rectangle of the original transformed rectangle, the bounds
 		 * 			will be larger than needed. Oriented rectangle would provide a much tighter fit.
 		 */
@@ -60,12 +60,12 @@ namespace bs
 		/** Extents of the rectangle (distance from center to one of the corners) */
 		Vector2 GetHalfSize() const;
 
-		bool operator== (const Rect2& rhs) const
+		bool operator==(const Rect2& rhs) const
 		{
 			return X == rhs.X && Y == rhs.Y && Width == rhs.Width && Height == rhs.Height;
 		}
 
-		bool operator!= (const Rect2& rhs) const
+		bool operator!=(const Rect2& rhs) const
 		{
 			return !(*this == rhs);
 		}
@@ -74,4 +74,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

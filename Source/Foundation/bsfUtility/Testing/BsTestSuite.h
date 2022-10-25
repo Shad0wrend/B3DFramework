@@ -4,8 +4,6 @@
 
 #include "Prerequisites/BsPrerequisitesUtil.h"
 
-
-
 namespace bs
 {
 	/** @addtogroup Testing
@@ -25,7 +23,7 @@ namespace bs
 	class BS_UTILITY_EXPORT TestSuite
 	{
 	public:
-		typedef void(TestSuite::*Func)();
+		typedef void (TestSuite::*Func)();
 
 	private:
 		/** Contains data about a single unit test. */
@@ -94,4 +92,4 @@ namespace bs
 #define BS_ADD_TEST(func) AddTest(static_cast<Func>(&func), #func);
 
 	/** @} */
-}
+} // namespace bs

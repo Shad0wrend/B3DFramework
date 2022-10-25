@@ -5,42 +5,43 @@
 
 namespace bs
 {
-	Radian::Radian (const Degree& d) : mRad(d.ValueRadians())
-	{ }
+	Radian::Radian(const Degree& d)
+		: mRad(d.ValueRadians())
+	{}
 
 	Radian Radian::Wrap()
 	{
 		mRad = fmod(mRad, Math::TWO_PI);
 
-		if (mRad < 0)
+		if(mRad < 0)
 			mRad += Math::TWO_PI;
 
 		return *this;
 	}
 
-	Radian& Radian::operator= (const Degree& d)
+	Radian& Radian::operator=(const Degree& d)
 	{
 		mRad = d.ValueRadians();
 		return *this;
 	}
 
-	Radian Radian::operator+ (const Degree& d) const
+	Radian Radian::operator+(const Degree& d) const
 	{
-		return Radian (mRad + d.ValueRadians());
+		return Radian(mRad + d.ValueRadians());
 	}
 
-	Radian& Radian::operator+= (const Degree& d)
+	Radian& Radian::operator+=(const Degree& d)
 	{
 		mRad += d.ValueRadians();
 		return *this;
 	}
 
-	Radian Radian::operator- (const Degree& d) const
+	Radian Radian::operator-(const Degree& d) const
 	{
-		return Radian (mRad - d.ValueRadians());
+		return Radian(mRad - d.ValueRadians());
 	}
 
-	Radian& Radian::operator-= (const Degree& d)
+	Radian& Radian::operator-=(const Degree& d)
 	{
 		mRad -= d.ValueRadians();
 		return *this;
@@ -50,4 +51,4 @@ namespace bs
 	{
 		return mRad * Math::RAD2DEG;
 	}
-}
+} // namespace bs

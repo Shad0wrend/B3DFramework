@@ -4,13 +4,13 @@
 #include "Debug/BsDebug.h"
 
 #if BS_PLATFORM == BS_PLATFORM_WIN32
-#include "windows.h"
+#	include "windows.h"
 
-#if BS_COMPILER == BS_COMPILER_MSVC
+#	if BS_COMPILER == BS_COMPILER_MSVC
 // disable: nonstandard extension used: 'X' uses SEH and 'Y' has destructor
 // We don't care about this as any exception is meant to crash the program.
-#pragma warning(disable: 4509)
-#endif // BS_COMPILER == BS_COMPILER_MSVC
+#		pragma warning(disable : 4509)
+#	endif // BS_COMPILER == BS_COMPILER_MSVC
 
 #endif // BS_PLATFORM == BS_PLATFORM_WIN32
 
@@ -20,8 +20,8 @@ namespace bs
 	static constexpr int UNUSED_CHECK_PERIOD = 32;
 
 	HThread::HThread(ThreadPool* pool, u32 threadId)
-		:mThreadId(threadId), mPool(pool)
-	{ }
+		: mThreadId(threadId), mPool(pool)
+	{}
 
 	void HThread::BlockUntilComplete()
 	{
@@ -30,9 +30,9 @@ namespace bs
 		{
 			Lock lock(mPool->mMutex);
 
-			for (auto& thread : mPool->mThreads)
+			for(auto& thread : mPool->mThreads)
 			{
-				if (thread->GetId() == mThreadId)
+				if(thread->GetId() == mThreadId)
 				{
 					parentThread = thread;
 					break;
@@ -40,13 +40,13 @@ namespace bs
 			}
 		}
 
-		if (parentThread != nullptr)
+		if(parentThread != nullptr)
 		{
 			Lock lock(parentThread->mMutex);
 
-			if (parentThread->mId == mThreadId) // Check again in case it changed
+			if(parentThread->mId == mThreadId) // Check again in case it changed
 			{
-				while (!parentThread->mIdle)
+				while(!parentThread->mIdle)
 					parentThread->mWorkerEndedCond.wait(lock);
 			}
 		}
@@ -96,13 +96,13 @@ namespace bs
 				{
 					Lock lock(mMutex);
 
-					while (!mThreadReady)
+					while(!mThreadReady)
 						mReadyCond.wait(lock);
 
 					worker = mWorkerMethod;
 				}
 
-				if (worker == nullptr)
+				if(worker == nullptr)
 				{
 					OnThreadEnded(mName);
 					return;
@@ -131,9 +131,12 @@ namespace bs
 #if BS_PLATFORM == BS_PLATFORM_WIN32
 	void PooledThread::RunFunctionHelper(const std::function<void()>& function) const
 	{
-		__try {
+		__try
+		{
 			function();
-		} __except(gCrashHandler().ReportCrash(GetExceptionInformation())) {
+		}
+		__except(gCrashHandler().ReportCrash(GetExceptionInformation()))
+		{
 			PlatformUtility::Terminate(true);
 		}
 	}
@@ -158,7 +161,7 @@ namespace bs
 	{
 		Lock lock(mMutex);
 
-		while (!mIdle)
+		while(!mIdle)
 			mWorkerEndedCond.wait(lock);
 	}
 
@@ -189,9 +192,8 @@ namespace bs
 	}
 
 	ThreadPool::ThreadPool(u32 threadCapacity, u32 maxCapacity, u32 idleTimeout)
-		:mDefaultCapacity(threadCapacity), mMaxCapacity(maxCapacity), mIdleTimeout(idleTimeout)
+		: mDefaultCapacity(threadCapacity), mMaxCapacity(maxCapacity), mIdleTimeout(idleTimeout)
 	{
-
 	}
 
 	ThreadPool::~ThreadPool()
@@ -255,7 +257,7 @@ namespace bs
 
 		for(auto& thread : idleThreads)
 		{
-			if (i < limit)
+			if(i < limit)
 			{
 				mThreads.push_back(thread);
 				i++;
@@ -338,4 +340,4 @@ namespace bs
 
 		return (u32)mThreads.size();
 	}
-}
+} // namespace bs

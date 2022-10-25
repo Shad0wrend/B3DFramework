@@ -43,9 +43,7 @@ namespace bs
 		return box.Intersects(*this);
 	}
 
-	std::pair<bool, float> Ray::Intersects(const Vector3& a,
-		const Vector3& b, const Vector3& c, const Vector3& normal,
-		bool positiveSide, bool negativeSide) const
+	std::pair<bool, float> Ray::Intersects(const Vector3& a, const Vector3& b, const Vector3& c, const Vector3& normal, bool positiveSide, bool negativeSide) const
 	{
 		// Calculate intersection with plane.
 		float t;
@@ -53,14 +51,14 @@ namespace bs
 			float denom = normal.Dot(GetDirection());
 
 			// Check intersect side
-			if (denom > + std::numeric_limits<float>::epsilon())
+			if(denom > +std::numeric_limits<float>::epsilon())
 			{
-				if (!negativeSide)
+				if(!negativeSide)
 					return std::pair<bool, float>(false, 0.0f);
 			}
-			else if (denom < - std::numeric_limits<float>::epsilon())
+			else if(denom < -std::numeric_limits<float>::epsilon())
 			{
-				if (!positiveSide)
+				if(!positiveSide)
 					return std::pair<bool, float>(false, 0.0f);
 			}
 			else
@@ -72,7 +70,7 @@ namespace bs
 
 			t = normal.Dot(a - GetOrigin()) / denom;
 
-			if (t < 0)
+			if(t < 0)
 			{
 				// Intersection is behind origin
 				return std::pair<bool, float>(false, 0.0f);
@@ -86,14 +84,15 @@ namespace bs
 			float n1 = Math::Abs(normal[1]);
 			float n2 = Math::Abs(normal[2]);
 
-			i0 = 1; i1 = 2;
-			if (n1 > n2)
+			i0 = 1;
+			i1 = 2;
+			if(n1 > n2)
 			{
-				if (n1 > n0) i0 = 0;
+				if(n1 > n0) i0 = 0;
 			}
 			else
 			{
-				if (n2 > n0) i1 = 0;
+				if(n2 > n0) i1 = 0;
 			}
 		}
 
@@ -107,26 +106,26 @@ namespace bs
 			float v0 = t * GetDirection()[i1] + GetOrigin()[i1] - a[i1];
 
 			float alpha = u0 * v2 - u2 * v0;
-			float beta  = u1 * v0 - u0 * v1;
-			float area  = u1 * v2 - u2 * v1;
+			float beta = u1 * v0 - u0 * v1;
+			float area = u1 * v2 - u2 * v1;
 
 			// Epsilon to avoid float precision errors.
 			const float EPSILON = 1e-6f;
 
-			float tolerance = - EPSILON * area;
+			float tolerance = -EPSILON * area;
 
-			if (area > 0)
+			if(area > 0)
 			{
-				if (alpha < tolerance || beta < tolerance || alpha+beta > area-tolerance)
+				if(alpha < tolerance || beta < tolerance || alpha + beta > area - tolerance)
 					return std::pair<bool, float>(false, 0.0f);
 			}
 			else
 			{
-				if (alpha > tolerance || beta > tolerance || alpha+beta < area-tolerance)
+				if(alpha > tolerance || beta > tolerance || alpha + beta < area - tolerance)
 					return std::pair<bool, float>(false, 0.0f);
 			}
 		}
 
 		return std::pair<bool, float>(true, t);
 	}
-}
+} // namespace bs

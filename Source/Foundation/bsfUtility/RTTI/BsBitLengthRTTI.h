@@ -13,9 +13,18 @@ namespace bs
 	 *  @{
 	 */
 
-	template<> struct RTTIPlainType<BitLength>
+	template <>
+	struct RTTIPlainType<BitLength>
 	{
-		enum { id = TID_BitLength }; enum { hasDynamicSize = 0 };
+		enum
+		{
+			id = TID_BitLength
+		};
+
+		enum
+		{
+			hasDynamicSize = 0
+		};
 
 		static BitLength ToMemory(const BitLength& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
@@ -43,4 +52,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

@@ -5,8 +5,8 @@
 #include "Prerequisites/BsPrerequisitesUtil.h"
 
 #if BS_PLATFORM == BS_PLATFORM_WIN32
-	struct HINSTANCE__;
-	typedef struct HINSTANCE__* hInstance;
+struct HINSTANCE__;
+typedef struct HINSTANCE__* hInstance;
 #endif
 
 namespace bs
@@ -16,16 +16,16 @@ namespace bs
 	 */
 
 #if BS_PLATFORM == BS_PLATFORM_WIN32
-#    define DYNLIB_HANDLE hInstance
-#    define DYNLIB_LOAD( a ) LoadLibraryEx( a, NULL, LOAD_WITH_ALTERED_SEARCH_PATH )
-#    define DYNLIB_GETSYM( a, b ) GetProcAddress( a, b )
-#    define DYNLIB_UNLOAD( a ) !FreeLibrary( a )
+#	define DYNLIB_HANDLE hInstance
+#	define DYNLIB_LOAD(a) LoadLibraryEx(a, NULL, LOAD_WITH_ALTERED_SEARCH_PATH)
+#	define DYNLIB_GETSYM(a, b) GetProcAddress(a, b)
+#	define DYNLIB_UNLOAD(a) !FreeLibrary(a)
 
 #elif BS_PLATFORM == BS_PLATFORM_LINUX || BS_PLATFORM == BS_PLATFORM_OSX
-#    define DYNLIB_HANDLE void*
-#    define DYNLIB_LOAD( a ) dlopen( a, RTLD_LAZY | RTLD_GLOBAL)
-#    define DYNLIB_GETSYM( a, b ) dlsym( a, b )
-#    define DYNLIB_UNLOAD( a ) dlclose( a )
+#	define DYNLIB_HANDLE void*
+#	define DYNLIB_LOAD(a) dlopen(a, RTLD_LAZY | RTLD_GLOBAL)
+#	define DYNLIB_GETSYM(a, b) dlsym(a, b)
+#	define DYNLIB_UNLOAD(a) dlclose(a)
 
 #endif
 
@@ -41,7 +41,7 @@ namespace bs
 #elif BS_PLATFORM == BS_PLATFORM_WIN32
 		static constexpr const char* EXTENSION = "dll";
 #else
-	#error Unhandled platform
+#	error Unhandled platform
 #endif
 
 		/** Platform-specific name suffix for a dynamic library (e.g. "lib" on Unix) */
@@ -52,7 +52,7 @@ namespace bs
 #elif BS_PLATFORM == BS_PLATFORM_WIN32
 		static constexpr const char* PREFIX = nullptr;
 #else
-	#error Unhandled platform
+#	error Unhandled platform
 #endif
 
 		/** Constructs the dynamic library object and loads the library with the specified name. */
@@ -88,4 +88,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

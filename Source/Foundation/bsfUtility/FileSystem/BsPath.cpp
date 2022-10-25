@@ -24,19 +24,19 @@ namespace bs
 		Assign(other);
 	}
 
-	Path& Path::operator= (const Path& path)
+	Path& Path::operator=(const Path& path)
 	{
 		Assign(path);
 		return *this;
 	}
 
-	Path& Path::operator= (const String& pathStr)
+	Path& Path::operator=(const String& pathStr)
 	{
 		Assign(pathStr);
 		return *this;
 	}
 
-	Path& Path::operator= (const char* pathStr)
+	Path& Path::operator=(const char* pathStr)
 	{
 		Assign(pathStr);
 		return *this;
@@ -72,7 +72,7 @@ namespace bs
 
 	void Path::Assign(const char* pathStr, u32 numChars, PathType type)
 	{
-		switch (type)
+		switch(type)
 		{
 		case PathType::Windows:
 			ParseWindows(pathStr, numChars);
@@ -101,7 +101,7 @@ namespace bs
 
 	String Path::ToString(PathType type) const
 	{
-		switch (type)
+		switch(type)
 		{
 		case PathType::Windows:
 			return BuildWindows();
@@ -153,16 +153,16 @@ namespace bs
 
 	Path& Path::MakeParent()
 	{
-		if (mFilename.empty())
+		if(mFilename.empty())
 		{
-			if (mDirectories.empty())
+			if(mDirectories.empty())
 			{
-				if (!mIsAbsolute)
+				if(!mIsAbsolute)
 					mDirectories.push_back("..");
 			}
 			else
 			{
-				if (mDirectories.back() == "..")
+				if(mDirectories.back() == "..")
 					mDirectories.push_back("..");
 				else
 					mDirectories.pop_back();
@@ -178,14 +178,14 @@ namespace bs
 
 	Path& Path::MakeAbsolute(const Path& base)
 	{
-		if (mIsAbsolute)
+		if(mIsAbsolute)
 			return *this;
 
 		Path absDir = base.GetDirectory();
-		if (base.IsFile())
+		if(base.IsFile())
 			absDir.PushDirectory(base.mFilename);
 
-		for (auto& dir : mDirectories)
+		for(auto& dir : mDirectories)
 			absDir.PushDirectory(dir);
 
 		absDir.SetFilename(mFilename);
@@ -196,16 +196,16 @@ namespace bs
 
 	Path& Path::MakeRelative(const Path& base)
 	{
-		if (!base.Includes(*this))
+		if(!base.Includes(*this))
 			return *this;
 
 		mDirectories.erase(mDirectories.begin(), mDirectories.begin() + base.mDirectories.size());
 
 		// Sometimes a directory name can be interpreted as a file and we're okay with that. Check for that
 		// special case.
-		if (base.IsFile())
+		if(base.IsFile())
 		{
-			if (mDirectories.size() > 0)
+			if(mDirectories.size() > 0)
 				mDirectories.erase(mDirectories.begin());
 			else
 				mFilename = "";
@@ -220,39 +220,39 @@ namespace bs
 
 	bool Path::Includes(const Path& child) const
 	{
-		if (mDevice != child.mDevice)
+		if(mDevice != child.mDevice)
 			return false;
 
-		if (mNode != child.mNode)
+		if(mNode != child.mNode)
 			return false;
 
 		auto iterParent = mDirectories.begin();
 		auto iterChild = child.mDirectories.begin();
 
-		for (; iterParent != mDirectories.end(); ++iterChild, ++iterParent)
+		for(; iterParent != mDirectories.end(); ++iterChild, ++iterParent)
 		{
-			if (iterChild == child.mDirectories.end())
+			if(iterChild == child.mDirectories.end())
 				return false;
 
-			if (!ComparePathElem(*iterChild, *iterParent))
+			if(!ComparePathElem(*iterChild, *iterParent))
 				return false;
 		}
 
-		if (!mFilename.empty())
+		if(!mFilename.empty())
 		{
-			if (iterChild == child.mDirectories.end())
+			if(iterChild == child.mDirectories.end())
 			{
-				if (child.mFilename.empty())
+				if(child.mFilename.empty())
 					return false;
 
-				if (!ComparePathElem(child.mFilename, mFilename))
+				if(!ComparePathElem(child.mFilename, mFilename))
 					return false;
 			}
 			else
 			{
-				if (!ComparePathElem(*iterChild, mFilename))
+				if(!ComparePathElem(*iterChild, mFilename))
 					return false;
-			}			
+			}
 		}
 
 		return true;
@@ -260,28 +260,28 @@ namespace bs
 
 	bool Path::Equals(const Path& other) const
 	{
-		if (mIsAbsolute != other.mIsAbsolute)
+		if(mIsAbsolute != other.mIsAbsolute)
 			return false;
 
-		if (mIsAbsolute)
+		if(mIsAbsolute)
 		{
-			if (!ComparePathElem(mDevice, other.mDevice))
+			if(!ComparePathElem(mDevice, other.mDevice))
 				return false;
 		}
 
-		if (!ComparePathElem(mNode, other.mNode))
+		if(!ComparePathElem(mNode, other.mNode))
 			return false;
 
 		u32 myNumElements = (u32)mDirectories.size();
 		u32 otherNumElements = (u32)other.mDirectories.size();
 
-		if (!mFilename.empty())
+		if(!mFilename.empty())
 			myNumElements++;
 
-		if (!other.mFilename.empty())
+		if(!other.mFilename.empty())
 			otherNumElements++;
 
-		if (myNumElements != otherNumElements)
+		if(myNumElements != otherNumElements)
 			return false;
 
 		if(myNumElements > 0)
@@ -291,33 +291,33 @@ namespace bs
 
 			for(u32 i = 0; i < (myNumElements - 1); i++, ++iterMe, ++iterOther)
 			{
-				if (!ComparePathElem(*iterMe, *iterOther))
+				if(!ComparePathElem(*iterMe, *iterOther))
 					return false;
 			}
 
-			if (!mFilename.empty())
+			if(!mFilename.empty())
 			{
-				if (!other.mFilename.empty())
+				if(!other.mFilename.empty())
 				{
-					if (!ComparePathElem(mFilename, other.mFilename))
+					if(!ComparePathElem(mFilename, other.mFilename))
 						return false;
 				}
 				else
 				{
-					if (!ComparePathElem(mFilename, *iterOther))
+					if(!ComparePathElem(mFilename, *iterOther))
 						return false;
 				}
 			}
 			else
 			{
-				if (!other.mFilename.empty())
+				if(!other.mFilename.empty())
 				{
-					if (!ComparePathElem(*iterMe, other.mFilename))
+					if(!ComparePathElem(*iterMe, other.mFilename))
 						return false;
 				}
 				else
 				{
-					if (!ComparePathElem(*iterMe, *iterOther))
+					if(!ComparePathElem(*iterMe, *iterOther))
 						return false;
 				}
 			}
@@ -328,10 +328,10 @@ namespace bs
 
 	Path& Path::Append(const Path& path)
 	{
-		if (!mFilename.empty())
+		if(!mFilename.empty())
 			PushDirectory(mFilename);
 
-		for (auto& dir : path.mDirectories)
+		for(auto& dir : path.mDirectories)
 			PushDirectory(dir);
 
 		mFilename = path.mFilename;
@@ -355,12 +355,12 @@ namespace bs
 
 	String Path::GetFilename(bool extension) const
 	{
-		if (extension)
+		if(extension)
 			return mFilename;
 		else
 		{
 			String::size_type pos = mFilename.rfind('.');
-			if (pos != String::npos)
+			if(pos != String::npos)
 				return mFilename.substr(0, pos);
 			else
 				return mFilename;
@@ -370,7 +370,7 @@ namespace bs
 	String Path::GetExtension() const
 	{
 		String::size_type pos = mFilename.rfind('.');
-		if (pos != String::npos)
+		if(pos != String::npos)
 			return mFilename.substr(pos);
 		else
 			return String();
@@ -378,10 +378,9 @@ namespace bs
 
 	const String& Path::GetDirectory(u32 idx) const
 	{
-		if (idx >= (u32)mDirectories.size())
+		if(idx >= (u32)mDirectories.size())
 		{
-			BS_EXCEPT(InvalidParametersException, "Index out of range: " + bs::toString(idx) + ". Valid range: [0, " +
-					bs::toString((u32)mDirectories.size() - 1) + "]");
+			BS_EXCEPT(InvalidParametersException, "Index out of range: " + bs::toString(idx) + ". Valid range: [0, " + bs::toString((u32)mDirectories.size() - 1) + "]");
 		}
 
 		return mDirectories[idx];
@@ -389,9 +388,9 @@ namespace bs
 
 	const String& Path::GetTail() const
 	{
-		if (IsFile())
+		if(IsFile())
 			return mFilename;
-		else if (mDirectories.size() > 0)
+		else if(mDirectories.size() > 0)
 			return mDirectories.back();
 		else
 			return StringUtil::BLANK;
@@ -414,23 +413,23 @@ namespace bs
 	String Path::BuildWindows() const
 	{
 		StringStream result;
-		if (!mNode.empty())
+		if(!mNode.empty())
 		{
 			result << "\\\\";
 			result << mNode;
 			result << "\\";
 		}
-		else if (!mDevice.empty())
+		else if(!mDevice.empty())
 		{
 			result << mDevice;
 			result << ":\\";
 		}
-		else if (mIsAbsolute)
+		else if(mIsAbsolute)
 		{
 			result << "\\";
 		}
 
-		for (auto& dir : mDirectories)
+		for(auto& dir : mDirectories)
 		{
 			result << dir;
 			result << "\\";
@@ -445,15 +444,15 @@ namespace bs
 		StringStream result;
 		auto dirIter = mDirectories.begin();
 
-		if (!mDevice.empty())
+		if(!mDevice.empty())
 		{
 			result << "/";
 			result << mDevice;
 			result << ":/";
 		}
-		else if (mIsAbsolute)
+		else if(mIsAbsolute)
 		{
-			if (dirIter != mDirectories.end() && *dirIter == "~")
+			if(dirIter != mDirectories.end() && *dirIter == "~")
 			{
 				result << "~";
 				dirIter++;
@@ -462,7 +461,7 @@ namespace bs
 			result << "/";
 		}
 
-		for (; dirIter != mDirectories.end(); ++dirIter)
+		for(; dirIter != mDirectories.end(); ++dirIter)
 		{
 			result << *dirIter;
 			result << "/";
@@ -472,12 +471,12 @@ namespace bs
 		return result.str();
 	}
 
-	Path Path::operator+ (const Path& rhs) const
+	Path Path::operator+(const Path& rhs) const
 	{
 		return Path::Combine(*this, rhs);
 	}
 
-	Path& Path::operator+= (const Path& rhs)
+	Path& Path::operator+=(const Path& rhs)
 	{
 		return Append(rhs);
 	}
@@ -510,11 +509,11 @@ namespace bs
 
 	void Path::PushDirectory(const String& dir)
 	{
-		if (!dir.empty() && dir != ".")
+		if(!dir.empty() && dir != ".")
 		{
-			if (dir == "..")
+			if(dir == "..")
 			{
-				if (!mDirectories.empty() && mDirectories.back() != "..")
+				if(!mDirectories.empty() && mDirectories.back() != "..")
 					mDirectories.pop_back();
 				else
 					mDirectories.push_back(dir);
@@ -523,4 +522,4 @@ namespace bs
 				mDirectories.push_back(dir);
 		}
 	}
-}
+} // namespace bs

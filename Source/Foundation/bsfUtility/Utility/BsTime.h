@@ -13,7 +13,7 @@ namespace bs
 
 	/**
 	 * Manages all time related functionality.
-	 * 			
+	 *
 	 * @note	Sim thread only unless where specified otherwise.
 	 */
 	class BS_UTILITY_EXPORT Time : public Module<Time>
@@ -64,10 +64,10 @@ namespace bs
 		/**
 		 * Returns the precise time since application start, in microseconds. Unlike other time methods this is not only
 		 * updated every frame, but will return exact time at the moment it is called.
-		 * 		
+		 *
 		 * @return	Time in microseconds.
 		 *
-		 * @note	
+		 * @note
 		 * You will generally only want to use this for performance measurements and similar. Use non-precise methods in
 		 * majority of code as it is useful to keep the time value equal in all methods during a single frame.
 		 */
@@ -128,7 +128,7 @@ namespace bs
 
 		/**
 		 * Calculates the number of fixed update iterations required and their step size. Values depend on the current
-		* time and previous calls to AdvanceFixedUpdateInternal().;
+		 * time and previous calls to AdvanceFixedUpdateInternal().;
 		 *
 		 * @param[out]		step	Duration of the fixed step in microseconds. In most cases this is the same duration as
 		 *							the	fixed time delta, but in the cases where frame is taking a very long time the step
@@ -141,7 +141,7 @@ namespace bs
 
 		/**
 		 * Advances the fixed update timers by @p step microseconds. Should be called once for each iteration as returned
-		* by GetFixedUpdateStepInternal(), per frame.
+		 * by GetFixedUpdateStepInternal(), per frame.
 		 */
 		void AdvanceFixedUpdateInternal(u64 step);
 
@@ -149,6 +149,7 @@ namespace bs
 
 		/** Multiply with time in microseconds to get a time in seconds. */
 		static const double MICROSEC_TO_SEC;
+
 	private:
 		/** Maximum number of fixed updates that can ever be accumulated. */
 		static constexpr u32 MAX_ACCUM_FIXED_UPDATES = 200;
@@ -163,7 +164,7 @@ namespace bs
 
 		u64 mAppStartTime = 0u; /**< Time the application started, in microseconds */
 		u64 mLastFrameTime = 0u; /**< Time since last runOneFrame call, In microseconds */
-		std::atomic<unsigned long> mCurrentFrame{0UL};
+		std::atomic<unsigned long> mCurrentFrame{ 0UL };
 
 		// Fixed update
 		u64 mFixedStep = 16666; // 60 times a second in microseconds
@@ -175,9 +176,9 @@ namespace bs
 
 		Timer* mTimer;
 	};
-	
+
 	/** Easier way to access the Time module. */
 	BS_UTILITY_EXPORT Time& gTime();
 
 	/** @} */
-}
+} // namespace bs

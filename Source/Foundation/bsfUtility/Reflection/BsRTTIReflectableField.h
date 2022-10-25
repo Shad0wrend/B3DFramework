@@ -18,8 +18,8 @@ namespace bs
 
 	/**
 	 * Base class containing common functionality for a reflectable class field.
-	 * 			
-	 * @note	
+	 *
+	 * @note
 	 * Reflectable fields are fields containing complex types deriving from IReflectable. They are serialized recursively
 	 * and you may add/remove fields from them without breaking the serialized data.
 	 */
@@ -27,28 +27,28 @@ namespace bs
 	{
 		/**
 		 * Retrieves the IReflectable value from the provided instance.
-		 * 			
+		 *
 		 * @note	Field type must not be an array.
 		 */
 		virtual IReflectable& GetValue(RTTITypeBase* rtti, void* object) = 0;
 
 		/**
 		 * Retrieves the IReflectable value from an array on the provided instance and index.
-		 * 			
+		 *
 		 * @note	Field type must be an array.
 		 */
 		virtual IReflectable& GetArrayValue(RTTITypeBase* rtti, void* object, u32 index) = 0;
 
 		/**
 		 * Sets the IReflectable value in the provided instance.
-		 * 			
+		 *
 		 * @note	Field type must not be an array.
 		 */
 		virtual void SetValue(RTTITypeBase* rtti, void* object, IReflectable& value) = 0;
 
 		/**
 		 * Sets the IReflectable value in an array on the provided instance and index.
-		 * 			
+		 *
 		 * @note	Field type must be an array.
 		 */
 		virtual void SetArrayValue(RTTITypeBase* rtti, void* object, u32 index, IReflectable& value) = 0;
@@ -69,8 +69,8 @@ namespace bs
 
 		typedef DataType& (InterfaceType::*ArrayGetterType)(ObjectType*, u32);
 		typedef void (InterfaceType::*ArraySetterType)(ObjectType*, u32, DataType&);
-		typedef u32(InterfaceType::*ArrayGetSizeType)(ObjectType*);
-		typedef void(InterfaceType::*ArraySetSizeType)(ObjectType*, u32);
+		typedef u32 (InterfaceType::*ArrayGetSizeType)(ObjectType*);
+		typedef void (InterfaceType::*ArraySetSizeType)(ObjectType*, u32);
 
 		/**
 		 * Initializes a field containing a single data type implementing IReflectable interface.
@@ -88,8 +88,7 @@ namespace bs
 			this->Getter = getter;
 			this->Setter = setter;
 
-			Init(std::move(name), RTTIFieldSchema(uniqueId, false, true, 0, SerializableFT_Reflectable,
-				0, nullptr, info));
+			Init(std::move(name), RTTIFieldSchema(uniqueId, false, true, 0, SerializableFT_Reflectable, 0, nullptr, info));
 		}
 
 		/**
@@ -105,18 +104,17 @@ namespace bs
 		 * @param[in]	setSize 	Setter method that allows you to resize an array.
 		 * @param[in]	info		Various optional information about the field.
 		 */
-		void InitArray(const String& name, u16 uniqueId, ArrayGetterType getter, ArrayGetSizeType getSize,
-			ArraySetterType setter, ArraySetSizeType setSize, const RTTIFieldInfo& info)
+		void InitArray(const String& name, u16 uniqueId, ArrayGetterType getter, ArrayGetSizeType getSize, ArraySetterType setter, ArraySetSizeType setSize, const RTTIFieldInfo& info)
 		{
 			ArrayGetter = getter;
 			ArraySetter = setter;
 			ArrayGetSize = getSize;
 			ArraySetSize = setSize;
 
-			const SPtr<RTTISchema>& fieldTypeSchema = DataType::GetRttiStatic()->GetSchema();;
+			const SPtr<RTTISchema>& fieldTypeSchema = DataType::GetRttiStatic()->GetSchema();
+			;
 			u32 typeId = DataType::GetRttiStatic()->GetRttiId();
-			Init(std::move(name), RTTIFieldSchema(uniqueId, true, true, 0, SerializableFT_Reflectable,
-				0, nullptr, info));
+			Init(std::move(name), RTTIFieldSchema(uniqueId, true, true, 0, SerializableFT_Reflectable, 0, nullptr, info));
 		}
 
 		/** @copydoc RTTIField::initSchema */
@@ -124,7 +122,8 @@ namespace bs
 		{
 			// This need to be initialized after the field itself, otherwise we get recursive static constructor
 			// calls due to one type calling GetRttiStatic() on one another
-			Schema.FieldTypeSchema = DataType::GetRttiStatic()->GetSchema();;
+			Schema.FieldTypeSchema = DataType::GetRttiStatic()->GetSchema();
+			;
 			Schema.FieldTypeId = DataType::GetRttiStatic()->GetRttiId();
 		}
 
@@ -159,8 +158,7 @@ namespace bs
 
 			if(!Setter)
 			{
-				BS_EXCEPT(InternalErrorException,
-					"Specified field (" + Name + ") has no setter.");
+				BS_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no setter.");
 			}
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
@@ -177,8 +175,7 @@ namespace bs
 
 			if(!ArraySetter)
 			{
-				BS_EXCEPT(InternalErrorException,
-					"Specified field (" + Name + ") has no setter.");
+				BS_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no setter.");
 			}
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
@@ -206,8 +203,7 @@ namespace bs
 
 			if(!ArraySetSize)
 			{
-				BS_EXCEPT(InternalErrorException,
-					"Specified field (" + Name + ") has no array size setter.");
+				BS_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no array size setter.");
 			}
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
@@ -217,7 +213,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIReflectableFieldBase::newObject */
-		SPtr<IReflectable> NewObject() 
+		SPtr<IReflectable> NewObject()
 		{
 			return DataType::GetRttiStatic()->NewRttiObject();
 		}
@@ -250,4 +246,4 @@ namespace bs
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs

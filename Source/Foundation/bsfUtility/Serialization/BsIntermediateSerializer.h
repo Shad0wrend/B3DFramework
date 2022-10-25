@@ -21,12 +21,10 @@ namespace bs
 		IntermediateSerializer();
 
 		/** Encodes an IReflectable object into an intermediate representation. */
-		SPtr<SerializedObject> Encode(IReflectable* object, SerializedObjectEncodeFlags flags,
-			SerializationContext* context = nullptr);
+		SPtr<SerializedObject> Encode(IReflectable* object, SerializedObjectEncodeFlags flags, SerializationContext* context = nullptr);
 
 		/** Decodes an intermediate representation of a serialized object into the actual object. */
-		SPtr<IReflectable> Decode(const SerializedObject* serializedObject,
-			SerializationContext* context = nullptr);
+		SPtr<IReflectable> Decode(const SerializedObject* serializedObject, SerializationContext* context = nullptr);
 
 		/**
 		 * @name Internal
@@ -38,18 +36,17 @@ namespace bs
 		 * @p arrayIdx is -1 then the entire array will be encoded, otherwise just a single array field will. If the
 		 * field is not array the value of @p arrayIdx is not relevant.
 		 */
-		static SPtr<SerializedInstance> EncodeFieldInternal(IReflectable* object, RTTITypeBase* rtti, RTTIField* field, u32 arrayIdx,
-			SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc);
+		static SPtr<SerializedInstance> EncodeFieldInternal(IReflectable* object, RTTITypeBase* rtti, RTTIField* field, u32 arrayIdx, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc);
 
 		/** @} */
 	private:
 		friend class BinaryDiff;
-		
+
 		struct ObjectToDecode
 		{
 			ObjectToDecode(const SPtr<IReflectable>& _object, const SerializedObject* serializedObject)
-				:Object(_object), SerializedObject(serializedObject)
-			{ }
+				: Object(_object), SerializedObject(serializedObject)
+			{}
 
 			SPtr<IReflectable> Object;
 			const SerializedObject* SerializedObject;
@@ -61,8 +58,7 @@ namespace bs
 		void DecodeEntry(const SPtr<IReflectable>& object, const SerializedObject* serializableObject);
 
 		/** Encodes a single IReflectable object. */
-		static SPtr<SerializedObject> EncodeEntry(IReflectable* object, SerializedObjectEncodeFlags flags,
-			SerializationContext* context, FrameAlloc* alloc);
+		static SPtr<SerializedObject> EncodeEntry(IReflectable* object, SerializedObjectEncodeFlags flags, SerializationContext* context, FrameAlloc* alloc);
 
 		UnorderedMap<const SerializedObject*, ObjectToDecode> mObjectMap;
 		SerializationContext* mContext = nullptr;
@@ -70,4 +66,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

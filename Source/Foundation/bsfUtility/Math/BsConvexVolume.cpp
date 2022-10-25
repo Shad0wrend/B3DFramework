@@ -10,8 +10,8 @@
 namespace bs
 {
 	ConvexVolume::ConvexVolume(const Vector<Plane>& planes)
-		:mPlanes(planes)
-	{ }
+		: mPlanes(planes)
+	{}
 
 	ConvexVolume::ConvexVolume(const Matrix4& projectionMatrix, bool useNearPlane)
 	{
@@ -86,7 +86,7 @@ namespace bs
 			mPlanes.push_back(plane);
 		}
 
-		for (u32 i = 0; i < (u32)mPlanes.size(); i++)
+		for(u32 i = 0; i < (u32)mPlanes.size(); i++)
 		{
 			float length = mPlanes[i].Normal.Normalize();
 			mPlanes[i].D /= -length;
@@ -99,7 +99,7 @@ namespace bs
 		Vector3 extents = box.GetHalfSize();
 		Vector3 absExtents(Math::Abs(extents.X), Math::Abs(extents.Y), Math::Abs(extents.Z));
 
-		for (auto& plane : mPlanes)
+		for(auto& plane : mPlanes)
 		{
 			float dist = center.Dot(plane.Normal) - plane.D;
 
@@ -107,7 +107,7 @@ namespace bs
 			effectiveRadius += absExtents.Y * abs(plane.Normal.Y);
 			effectiveRadius += absExtents.Z * abs(plane.Normal.Z);
 
-			if (dist < -effectiveRadius)
+			if(dist < -effectiveRadius)
 				return false;
 		}
 
@@ -119,11 +119,11 @@ namespace bs
 		Vector3 center = sphere.GetCenter();
 		float radius = sphere.GetRadius();
 
-		for (auto& plane : mPlanes)
+		for(auto& plane : mPlanes)
 		{
 			float dist = center.Dot(plane.Normal) - plane.D;
 
-			if (dist < -radius)
+			if(dist < -radius)
 				return false;
 		}
 
@@ -134,7 +134,7 @@ namespace bs
 	{
 		for(auto& plane : mPlanes)
 		{
-			if (plane.GetDistance(p) < -expand)
+			if(plane.GetDistance(p) < -expand)
 				return false;
 		}
 
@@ -150,4 +150,4 @@ namespace bs
 
 		return mPlanes[whichPlane];
 	}
-}
+} // namespace bs

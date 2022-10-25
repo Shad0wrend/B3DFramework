@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	 /** Returns the number of logical CPU cores. */
+	/** Returns the number of logical CPU cores. */
 #define BS_THREAD_HARDWARE_CONCURRENCY std::thread::hardware_concurrency()
 
 	/** Returns the ThreadId of the current thread. */
@@ -51,34 +51,35 @@ namespace bs
 	/**
 	 * Policy that allows the calls its used in to pick between no locking and mutex locking through a template parameter.
 	 */
-	template<bool LOCK>
+	template <bool LOCK>
 	class LockingPolicy
-	{ };
+	{};
 
 	/** Scoped lock that provides RAII-style locking and accepts both a normal mutex and a locking policy as input. */
-	template<bool LOCK>
+	template <bool LOCK>
 	class ScopedLock
-	{ };
+	{};
 
 	/** Specialization of LockingPolicy that performs no locking. */
-	template<>
+	template <>
 	class LockingPolicy<false> final
 	{
 	public:
 		LockingPolicy() = default;
 
-		void Lock() { };
-		void Unlock() { }
+		void Lock(){};
+
+		void Unlock() {}
 	};
 
 	/** Specialization of LockingPolicy that uses a mutex for locking. */
-	template<>
+	template <>
 	class LockingPolicy<true> final
 	{
 	public:
 		LockingPolicy()
-			:mLock(mMutex, std::defer_lock)
-		{ }
+			: mLock(mMutex, std::defer_lock)
+		{}
 
 		void Lock()
 		{
@@ -98,28 +99,28 @@ namespace bs
 	};
 
 	/** Scoped lock that performs no locking internally. Can only be used with a LockingPolicy. */
-	template<>
+	template <>
 	class ScopedLock<false>
 	{
 	public:
 		ScopedLock(LockingPolicy<false>& policy)
-		{ }
+		{}
 	};
 
 	/** Scoped lock that automatically locks when created and unlocks when it goes out of scope. */
-	template<>
+	template <>
 	class ScopedLock<true>
 	{
 	public:
 		ScopedLock(LockingPolicy<true>& policy)
-			:mLockGuard(policy.mMutex)
-		{ }
+			: mLockGuard(policy.mMutex)
+		{}
 
 		ScopedLock(Mutex& mutex)
-			:mLockGuard(mutex)
-		{ }
+			: mLockGuard(mutex)
+		{}
 
 	private:
 		std::lock_guard<Mutex> mLockGuard;
 	};
-}
+} // namespace bs

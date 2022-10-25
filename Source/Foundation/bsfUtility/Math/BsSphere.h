@@ -19,8 +19,8 @@ namespace bs
 		Sphere() = default;
 
 		Sphere(const Vector3& center, float radius)
-			:mRadius(radius), mCenter(center)
-		{ }
+			: mRadius(radius), mCenter(center)
+		{}
 
 		/** Returns the radius of the sphere. */
 		float GetRadius() const { return mRadius; }
@@ -57,7 +57,7 @@ namespace bs
 
 		/**
 		 * Ray/sphere intersection, returns boolean result and distance to nearest intersection.
-		 * 			
+		 *
 		 * @param[in]	ray				Ray to intersect with the sphere.
 		 * @param[in]	discardInside	(optional) If true the intersection will be discarded if ray origin
 		 * 								is located within the sphere.
@@ -66,8 +66,8 @@ namespace bs
 
 	private:
 		float mRadius = 1.0f;
-		Vector3 mCenter{Vector3::ZERO};
+		Vector3 mCenter{ Vector3::ZERO };
 	};
 
 	/** @} */
-}
+} // namespace bs

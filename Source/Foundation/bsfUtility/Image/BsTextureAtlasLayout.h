@@ -19,15 +19,16 @@ namespace bs
 		{
 		public:
 			constexpr TexAtlasNode() = default;
+
 			constexpr TexAtlasNode(u32 x, u32 y, u32 width, u32 height)
 				: X(x), Y(y), Width(width), Height(height)
-			{ }
+			{}
 
 			u32 X = 0;
 			u32 Y = 0;
 			u32 Width = 0;
 			u32 Height = 0;
-			u32 Children[2] { std::numeric_limits<u32>::max(), std::numeric_limits<u32>::max() };
+			u32 Children[2]{ std::numeric_limits<u32>::max(), std::numeric_limits<u32>::max() };
 			bool NodeFull = false;
 		};
 
@@ -104,7 +105,7 @@ namespace bs
 	public:
 		/**
 		 * Represents a single element used as in input to TextureAtlasUtility. Usually represents a single texture.
-		 * 			
+		 *
 		 * @note	input is required to be filled in before passing it to TextureAtlasUtility.
 		 * @note	output will be filled after a call to TextureAtlasUtility::createAtlasLayout().
 		 */
@@ -114,7 +115,7 @@ namespace bs
 			{
 				u32 Width, Height;
 			} Input;
-		
+
 			struct
 			{
 				u32 X, Y;
@@ -143,9 +144,8 @@ namespace bs
 		 * @return					One or more descriptors that determine the size of the final atlas textures.
 		 *							Texture elements will reference these pages with their output.page parameter.
 		 */
-		static Vector<Page> CreateAtlasLayout(Vector<Element>& elements, u32 width, u32 height, u32 maxWidth,
-			u32 maxHeight, bool pow2 = false);
+		static Vector<Page> CreateAtlasLayout(Vector<Element>& elements, u32 width, u32 height, u32 maxWidth, u32 maxHeight, bool pow2 = false);
 	};
 
 	/** @} */
-}
+} // namespace bs

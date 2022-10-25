@@ -18,21 +18,23 @@ namespace bs
 		Line2() = default;
 
 		Line2(const Vector2& origin, const Vector2& direction)
-			:mOrigin(origin), mDirection(direction)
-		{ }
+			: mOrigin(origin), mDirection(direction)
+		{}
 
 		void SetOrigin(const Vector2& origin) { mOrigin = origin; }
+
 		const Vector2& GetOrigin(void) const { return mOrigin; }
 
 		void SetDirection(const Vector2& dir) { mDirection = dir; }
-		const Vector2& GetDirection(void) const {return mDirection;}
+
+		const Vector2& GetDirection(void) const { return mDirection; }
 
 		/** Gets the position of a point t units along the line. */
 		Vector2 GetPoint(float t) const
 		{
 			return Vector2(mOrigin + (mDirection * t));
 		}
-		
+
 		/** Gets the position of a point t units along the line. */
 		Vector2 operator*(float t) const
 		{
@@ -48,4 +50,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

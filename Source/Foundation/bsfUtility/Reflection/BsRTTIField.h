@@ -23,14 +23,14 @@ namespace bs
 
 	/**
 	 * Types of fields we can serialize:
-	 * 			
+	 *
 	 * - Plain - Native data types, POD (Plain old data) structures, or in general types we don't want to (or can't) inherit from IReflectable.
 	 *			 Type must be copyable by memcpy.
-	 *			
+	 *
 	 * - DataBlock - Array of bytes of a certain size. When returning a data block you may specify if its managed or unmanaged.
 	 *				 Managed data blocks have their buffers deleted after they go out of scope. This is useful if you need to return some
 	 *				 temporary data. On the other hand if the data in the block belongs to your class, and isn't temporary, keep the data unmanaged.
-	 *				
+	 *
 	 * - Reflectable - Field that is of IReflectable type. Cannot be a pointer to IReflectable and must be actual value type.
 	 *				   Type and its fields are serialized recursively. Supports versioning so you may add/remove fields from the type
 	 *				   without breaking previously serialized data.
@@ -51,12 +51,11 @@ namespace bs
 	struct BS_UTILITY_EXPORT RTTIFieldSchema : IReflectable
 	{
 		RTTIFieldSchema() = default;
-		RTTIFieldSchema(i16 id, bool isArray, bool hasDynamicSize, BitLength size, SerializableFieldType type,
-			u32 fieldTypeId, SPtr<RTTISchema> fieldTypeSchema, const RTTIFieldInfo& info)
-			: Id(id), IsArray(isArray), HasDynamicSize(hasDynamicSize), Size(size), Type(type)
-			, FieldTypeId(fieldTypeId), FieldTypeSchema(std::move(fieldTypeSchema)), Info(info)
-		{ }
-		
+
+		RTTIFieldSchema(i16 id, bool isArray, bool hasDynamicSize, BitLength size, SerializableFieldType type, u32 fieldTypeId, SPtr<RTTISchema> fieldTypeSchema, const RTTIFieldInfo& info)
+			: Id(id), IsArray(isArray), HasDynamicSize(hasDynamicSize), Size(size), Type(type), FieldTypeId(fieldTypeId), FieldTypeSchema(std::move(fieldTypeSchema)), Info(info)
+		{}
+
 		u16 Id = 0;
 		bool IsArray = false;
 		bool HasDynamicSize = false;
@@ -73,19 +72,19 @@ namespace bs
 	/**
 	 * Structure that keeps meta-data concerning a single class field. You can use this data for setting and getting values
 	 * for that field on a specific class instance.
-	 * 			
+	 *
 	 * Class also contains an unique field name, and an unique field ID. Fields may contain single types or an array of types.
 	 * See SerializableFieldType for information about specific field types.
-	 * 			
-	 * @note	
+	 *
+	 * @note
 	 * Most of the methods for retrieving and setting data accept "void *" for both the data and the owning class instance.
 	 * It is up to the caller to ensure that pointer is of proper type.
 	 */
 	struct BS_UTILITY_EXPORT RTTIField
-	{	
+	{
 		String Name;
 		RTTIFieldSchema Schema;
-		
+
 		virtual ~RTTIField() = default;
 
 		/**
@@ -102,7 +101,7 @@ namespace bs
 
 		/** Initializes the field's RTTI schema. Should be called once after construction. */
 		virtual void InitSchema() {}
-		
+
 		/**
 		 * Throws an exception depending if the field is or isn't an array.
 		 *
@@ -121,4 +120,4 @@ namespace bs
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs

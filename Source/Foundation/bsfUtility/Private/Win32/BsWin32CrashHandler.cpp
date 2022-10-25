@@ -17,8 +17,8 @@ static const char* sMiniDumpName = "minidump.dmp";
 
 namespace bs
 {
-	CrashHandler::CrashHandler(const CrashHandlerSettings& settings) :
-		mSettings(settings)
+	CrashHandler::CrashHandler(const CrashHandlerSettings& settings)
+		: mSettings(settings)
 	{
 		m = bs_new<Data>();
 	}
@@ -30,7 +30,7 @@ namespace bs
 
 	/**
 	 * Returns the raw stack trace using the provided context. Raw stack trace contains only function addresses.
-	 * 			
+	 *
 	 * @param[in]	context		Processor context from which to start the stack trace.
 	 * @param[in]	stackTrace	Output parameter that will contain the function addresses. First address is the deepest
 	 * 							called function and following address is its caller and so on.
@@ -64,20 +64,19 @@ namespace bs
 #endif
 
 		u32 numEntries = 0;
-		while (true)
+		while(true)
 		{
-			if (!StackWalk64(machineType, hProcess, hThread, &stackFrame, &context, nullptr,
-				SymFunctionTableAccess64, SymGetModuleBase64, nullptr))
+			if(!StackWalk64(machineType, hProcess, hThread, &stackFrame, &context, nullptr, SymFunctionTableAccess64, SymGetModuleBase64, nullptr))
 			{
 				break;
 			}
 
-			if (numEntries < BS_MAX_STACKTRACE_DEPTH)
+			if(numEntries < BS_MAX_STACKTRACE_DEPTH)
 				stackTrace[numEntries] = stackFrame.AddrPC.Offset;
 
 			numEntries++;
 
-			if (stackFrame.AddrPC.Offset == 0 || stackFrame.AddrFrame.Offset == 0)
+			if(stackFrame.AddrPC.Offset == 0 || stackFrame.AddrFrame.Offset == 0)
 				break;
 		}
 
@@ -87,7 +86,7 @@ namespace bs
 	/**
 	 * Returns a string containing a stack trace using the provided context. If function can be found in the symbol table
 	 * its readable name will be present in the stack trace, otherwise just its address.
-	 * 			
+	 *
 	 * @param[in]	context		Processor context from which to start the stack trace.
 	 * @param[in]	skip		Number of bottom-most call stack entries to skip.
 	 * @return					String containing the call stack with each function on its own line.
@@ -109,31 +108,30 @@ namespace bs
 		HANDLE hProcess = GetCurrentProcess();
 
 		StringStream outputStream;
-		for (u32 i = skip; i < numEntries; i++)
+		for(u32 i = skip; i < numEntries; i++)
 		{
-			if (i > skip)
+			if(i > skip)
 				outputStream << std::endl;
 
 			DWORD64 funcAddress = rawStackTrace[i];
 
 			// Output function name
 			DWORD64 dummy;
-			if (SymGetSymFromAddr64(hProcess, funcAddress, &dummy, symbol))
+			if(SymGetSymFromAddr64(hProcess, funcAddress, &dummy, symbol))
 				outputStream << StringUtil::Format("{0}() - ", symbol->Name);
 
 			// Output file name and line
-			IMAGEHLP_LINE64	lineData;
+			IMAGEHLP_LINE64 lineData;
 			lineData.SizeOfStruct = sizeof(lineData);
 
 			String addressString = toString(funcAddress, 0, ' ', std::ios::hex);
 
 			DWORD column;
-			if (SymGetLineFromAddr64(hProcess, funcAddress, &column, &lineData))
+			if(SymGetLineFromAddr64(hProcess, funcAddress, &column, &lineData))
 			{
 				Path filePath = lineData.FileName;
 
-				outputStream << StringUtil::Format("0x{0} File[{1}:{2} ({3})]", addressString,
-					filePath.GetFilename(), (u32)lineData.LineNumber, (u32)column);
+				outputStream << StringUtil::Format("0x{0} File[{1}:{2} ({3})]", addressString, filePath.GetFilename(), (u32)lineData.LineNumber, (u32)column);
 			}
 			else
 			{
@@ -144,7 +142,7 @@ namespace bs
 			IMAGEHLP_MODULE64 moduleData;
 			moduleData.SizeOfStruct = sizeof(moduleData);
 
-			if (SymGetModuleInfo64(hProcess, funcAddress, &moduleData))
+			if(SymGetModuleInfo64(hProcess, funcAddress, &moduleData))
 			{
 				Path filePath = moduleData.ImageName;
 
@@ -157,10 +155,10 @@ namespace bs
 		return outputStream.str();
 	}
 
-	typedef bool(WINAPI *EnumProcessModulesType)(HANDLE hProcess, HMODULE* lphModule, DWORD cb, LPDWORD lpcbNeeded);
-	typedef DWORD(WINAPI *GetModuleBaseNameType)(HANDLE hProcess, HMODULE hModule, LPSTR lpBaseName, DWORD nSize);
-	typedef DWORD(WINAPI *GetModuleFileNameExType)(HANDLE hProcess, HMODULE hModule, LPSTR lpFilename, DWORD nSize);
-	typedef bool(WINAPI *GetModuleInformationType)(HANDLE hProcess, HMODULE hModule, LPMODULEINFO lpmodinfo, DWORD cb);
+	typedef bool(WINAPI* EnumProcessModulesType)(HANDLE hProcess, HMODULE* lphModule, DWORD cb, LPDWORD lpcbNeeded);
+	typedef DWORD(WINAPI* GetModuleBaseNameType)(HANDLE hProcess, HMODULE hModule, LPSTR lpBaseName, DWORD nSize);
+	typedef DWORD(WINAPI* GetModuleFileNameExType)(HANDLE hProcess, HMODULE hModule, LPSTR lpFilename, DWORD nSize);
+	typedef bool(WINAPI* GetModuleInformationType)(HANDLE hProcess, HMODULE hModule, LPMODULEINFO lpmodinfo, DWORD cb);
 
 	static DynLib* gPSAPILib = nullptr;
 
@@ -172,7 +170,7 @@ namespace bs
 	/**	Dynamically load the PSAPI.dll and the required symbols, if not already loaded. */
 	void win32_initPSAPI()
 	{
-		if (gPSAPILib != nullptr)
+		if(gPSAPILib != nullptr)
 			return;
 
 		gPSAPILib = bs_new<DynLib>("PSAPI.dll");
@@ -185,7 +183,7 @@ namespace bs
 	/**	Unloads the PSAPI.dll if is loaded. */
 	void win32_unloadPSAPI()
 	{
-		if (gPSAPILib == nullptr)
+		if(gPSAPILib == nullptr)
 			return;
 
 		gPSAPILib->Unload();
@@ -201,7 +199,7 @@ namespace bs
 	 */
 	void win32_loadSymbols()
 	{
-		if (gSymbolsLoaded)
+		if(gSymbolsLoaded)
 			return;
 
 		HANDLE hProcess = GetCurrentProcess();
@@ -216,7 +214,7 @@ namespace bs
 		SymSetOptions(options);
 		if(!SymInitialize(hProcess, nullptr, false))
 		{
-			BS_LOG(Error, Generic, "SymInitialize failed. Error code: {0}", + (u32)GetLastError());
+			BS_LOG(Error, Generic, "SymInitialize failed. Error code: {0}", +(u32)GetLastError());
 			return;
 		}
 
@@ -227,7 +225,7 @@ namespace bs
 		gEnumProcessModules(hProcess, modules, bufferSize, &bufferSize);
 
 		u32 numModules = bufferSize / sizeof(HMODULE);
-		for (u32 i = 0; i < numModules; i++)
+		for(u32 i = 0; i < numModules; i++)
 		{
 			MODULEINFO moduleInfo;
 
@@ -245,10 +243,9 @@ namespace bs
 
 			SymSetSearchPath(GetCurrentProcess(), pdbSearchPath);
 
-			DWORD64 moduleAddress = SymLoadModule64(hProcess, modules[i], imageName, moduleName, (DWORD64)moduleInfo.lpBaseOfDll,
-				(DWORD)moduleInfo.SizeOfImage);
+			DWORD64 moduleAddress = SymLoadModule64(hProcess, modules[i], imageName, moduleName, (DWORD64)moduleInfo.lpBaseOfDll, (DWORD)moduleInfo.SizeOfImage);
 
-			if (moduleAddress != 0)
+			if(moduleAddress != 0)
 			{
 				IMAGEHLP_MODULE64 imageInfo;
 				memset(&imageInfo, 0, sizeof(imageInfo));
@@ -256,8 +253,7 @@ namespace bs
 
 				if(!SymGetModuleInfo64(GetCurrentProcess(), moduleAddress, &imageInfo))
 				{
-					BS_LOG(Warning, Platform, "Failed retrieving module info for module: {0}. Error code: {1}",
-						moduleName, (u32)GetLastError());
+					BS_LOG(Warning, Platform, "Failed retrieving module info for module: {0}. Error code: {1}", moduleName, (u32)GetLastError());
 				}
 				else
 				{
@@ -270,8 +266,7 @@ namespace bs
 			}
 			else
 			{
-				BS_LOG(Warning, Platform, "Failed loading module {0}.Error code: {1}. Search path: {2}. Image name: {3}",
-					moduleName, (u32)GetLastError(), pdbSearchPath, imageName);
+				BS_LOG(Warning, Platform, "Failed loading module {0}.Error code: {1}. Search path: {2}. Image name: {3}", moduleName, (u32)GetLastError(), pdbSearchPath, imageName);
 			}
 		}
 
@@ -285,16 +280,16 @@ namespace bs
 		String exceptionAddress = toString((u64)record->ExceptionAddress, 0, ' ', std::ios::hex);
 
 		String format;
-		switch (record->ExceptionCode)
+		switch(record->ExceptionCode)
 		{
 		case EXCEPTION_ACCESS_VIOLATION:
 			{
 				DWORD_PTR violatedAddress = 0;
-				if (record->NumberParameters == 2)
+				if(record->NumberParameters == 2)
 				{
-					if (record->ExceptionInformation[0] == 0)
+					if(record->ExceptionInformation[0] == 0)
 						format = "Unhandled exception at 0x{0}. Access violation reading 0x{1}.";
-					else if (record->ExceptionInformation[0] == 8)
+					else if(record->ExceptionInformation[0] == 8)
 						format = "Unhandled exception at 0x{0}. Access violation DEP 0x{1}.";
 					else
 						format = "Unhandled exception at 0x{0}. Access violation writing 0x{1}.";
@@ -308,100 +303,100 @@ namespace bs
 				return StringUtil::Format(format, exceptionAddress, violatedAddressStr);
 			}
 		case EXCEPTION_IN_PAGE_ERROR:
-		{
-			DWORD_PTR violatedAddress = 0;
-			DWORD_PTR code = 0;
-			if (record->NumberParameters == 3)
 			{
-				if (record->ExceptionInformation[0] == 0)
-					format = "Unhandled exception at 0x{0}. Page fault reading 0x{1} with code 0x{2}.";
-				else if (record->ExceptionInformation[0] == 8)
-					format = "Unhandled exception at 0x{0}. Page fault DEP 0x{1} with code 0x{2}.";
+				DWORD_PTR violatedAddress = 0;
+				DWORD_PTR code = 0;
+				if(record->NumberParameters == 3)
+				{
+					if(record->ExceptionInformation[0] == 0)
+						format = "Unhandled exception at 0x{0}. Page fault reading 0x{1} with code 0x{2}.";
+					else if(record->ExceptionInformation[0] == 8)
+						format = "Unhandled exception at 0x{0}. Page fault DEP 0x{1} with code 0x{2}.";
+					else
+						format = "Unhandled exception at 0x{0}. Page fault writing 0x{1} with code 0x{2}.";
+
+					violatedAddress = record->ExceptionInformation[1];
+					code = record->ExceptionInformation[3];
+				}
 				else
-					format = "Unhandled exception at 0x{0}. Page fault writing 0x{1} with code 0x{2}.";
+					format = "Unhandled exception at 0x{0}. Page fault.";
 
-				violatedAddress = record->ExceptionInformation[1];
-				code = record->ExceptionInformation[3];
+				String violatedAddressStr = toString((u64)violatedAddress, 0, ' ', std::ios::hex);
+				String codeStr = toString((u64)code, 0, ' ', std::ios::hex);
+				return StringUtil::Format(format, exceptionAddress, violatedAddressStr, codeStr);
 			}
-			else
-				format = "Unhandled exception at 0x{0}. Page fault.";
-
-			String violatedAddressStr = toString((u64)violatedAddress, 0, ' ', std::ios::hex);
-			String codeStr = toString((u64)code, 0, ' ', std::ios::hex);
-			return StringUtil::Format(format, exceptionAddress, violatedAddressStr, codeStr);
-		}
 		case STATUS_ARRAY_BOUNDS_EXCEEDED:
-		{
-			format = "Unhandled exception at 0x{0}. Attempting to access an out of range array element.";
-			return StringUtil::Format(format, exceptionAddress);
-		}
+			{
+				format = "Unhandled exception at 0x{0}. Attempting to access an out of range array element.";
+				return StringUtil::Format(format, exceptionAddress);
+			}
 		case EXCEPTION_DATATYPE_MISALIGNMENT:
-		{
-			format = "Unhandled exception at 0x{0}. Attempting to access missaligned data.";
-			return StringUtil::Format(format, exceptionAddress);
-		}
+			{
+				format = "Unhandled exception at 0x{0}. Attempting to access missaligned data.";
+				return StringUtil::Format(format, exceptionAddress);
+			}
 		case EXCEPTION_FLT_DENORMAL_OPERAND:
-		{
-			format = "Unhandled exception at 0x{0}. Floating point operand too small.";
-			return StringUtil::Format(format, exceptionAddress);
-		}
+			{
+				format = "Unhandled exception at 0x{0}. Floating point operand too small.";
+				return StringUtil::Format(format, exceptionAddress);
+			}
 		case EXCEPTION_FLT_DIVIDE_BY_ZERO:
-		{
-			format = "Unhandled exception at 0x{0}. Floating point operation attempted to divide by zero.";
-			return StringUtil::Format(format, exceptionAddress);
-		}
+			{
+				format = "Unhandled exception at 0x{0}. Floating point operation attempted to divide by zero.";
+				return StringUtil::Format(format, exceptionAddress);
+			}
 		case EXCEPTION_FLT_INVALID_OPERATION:
-		{
-			format = "Unhandled exception at 0x{0}. Floating point invalid operation.";
-			return StringUtil::Format(format, exceptionAddress);
-		}
+			{
+				format = "Unhandled exception at 0x{0}. Floating point invalid operation.";
+				return StringUtil::Format(format, exceptionAddress);
+			}
 		case EXCEPTION_FLT_OVERFLOW:
-		{
-			format = "Unhandled exception at 0x{0}. Floating point overflow.";
-			return StringUtil::Format(format, exceptionAddress);
-		}
+			{
+				format = "Unhandled exception at 0x{0}. Floating point overflow.";
+				return StringUtil::Format(format, exceptionAddress);
+			}
 		case EXCEPTION_FLT_UNDERFLOW:
-		{
-			format = "Unhandled exception at 0x{0}. Floating point underflow.";
-			return StringUtil::Format(format, exceptionAddress);
-		}
+			{
+				format = "Unhandled exception at 0x{0}. Floating point underflow.";
+				return StringUtil::Format(format, exceptionAddress);
+			}
 		case EXCEPTION_FLT_STACK_CHECK:
-		{
-			format = "Unhandled exception at 0x{0}. Floating point stack overflow/underflow.";
-			return StringUtil::Format(format, exceptionAddress);
-		}
+			{
+				format = "Unhandled exception at 0x{0}. Floating point stack overflow/underflow.";
+				return StringUtil::Format(format, exceptionAddress);
+			}
 		case EXCEPTION_ILLEGAL_INSTRUCTION:
-		{
-			format = "Unhandled exception at 0x{0}. Attempting to execute an illegal instruction.";
-			return StringUtil::Format(format, exceptionAddress);
-		}
+			{
+				format = "Unhandled exception at 0x{0}. Attempting to execute an illegal instruction.";
+				return StringUtil::Format(format, exceptionAddress);
+			}
 		case EXCEPTION_PRIV_INSTRUCTION:
-		{
-			format = "Unhandled exception at 0x{0}. Attempting to execute a private instruction.";
-			return StringUtil::Format(format, exceptionAddress);
-		}
+			{
+				format = "Unhandled exception at 0x{0}. Attempting to execute a private instruction.";
+				return StringUtil::Format(format, exceptionAddress);
+			}
 		case EXCEPTION_INT_DIVIDE_BY_ZERO:
-		{
-			format = "Unhandled exception at 0x{0}. Integer operation attempted to divide by zero.";
-			return StringUtil::Format(format, exceptionAddress);
-		}
+			{
+				format = "Unhandled exception at 0x{0}. Integer operation attempted to divide by zero.";
+				return StringUtil::Format(format, exceptionAddress);
+			}
 		case EXCEPTION_INT_OVERFLOW:
-		{
-			format = "Unhandled exception at 0x{0}. Integer operation result has overflown.";
-			return StringUtil::Format(format, exceptionAddress);
-		}
+			{
+				format = "Unhandled exception at 0x{0}. Integer operation result has overflown.";
+				return StringUtil::Format(format, exceptionAddress);
+			}
 		case EXCEPTION_STACK_OVERFLOW:
-		{
-			format = "Unhandled exception at 0x{0}. Stack overflow.";
-			return StringUtil::Format(format, exceptionAddress);
-		}
+			{
+				format = "Unhandled exception at 0x{0}. Stack overflow.";
+				return StringUtil::Format(format, exceptionAddress);
+			}
 		default:
-		{
-			format = "Unhandled exception at 0x{0}. Code 0x{1}.";
+			{
+				format = "Unhandled exception at 0x{0}. Code 0x{1}.";
 
-			String exceptionCode = toString((u32)record->ExceptionCode, 0, ' ', std::ios::hex);
-			return StringUtil::Format(format, exceptionAddress, exceptionCode);
-		}
+				String exceptionCode = toString((u32)record->ExceptionCode, 0, ' ', std::ios::hex);
+				return StringUtil::Format(format, exceptionAddress, exceptionCode);
+			}
 		}
 	}
 
@@ -416,10 +411,9 @@ namespace bs
 		MiniDumpParams* params = (MiniDumpParams*)data;
 
 		WString pathString = UTF8::ToWide(params->FilePath.ToString());
-		HANDLE hFile = CreateFileW(pathString.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL,
-			nullptr);
+		HANDLE hFile = CreateFileW(pathString.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 
-		if (hFile != INVALID_HANDLE_VALUE)
+		if(hFile != INVALID_HANDLE_VALUE)
 		{
 			MINIDUMP_EXCEPTION_INFORMATION DumpExceptionInfo;
 
@@ -427,8 +421,7 @@ namespace bs
 			DumpExceptionInfo.ExceptionPointers = params->ExceptionData;
 			DumpExceptionInfo.ClientPointers = false;
 
-			MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, MiniDumpNormal,
-				&DumpExceptionInfo, nullptr, nullptr);
+			MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, MiniDumpNormal, &DumpExceptionInfo, nullptr, nullptr);
 			CloseHandle(hFile);
 		}
 
@@ -454,19 +447,16 @@ namespace bs
 
 	void win32_popupErrorMessageBox(const WString& msg, const Path& folder)
 	{
-		WString simpleErrorMessage = msg
-			+ L"\n\nFor more information check the crash report located at:\n "
-			+ UTF8::ToWide(folder.ToString());
+		WString simpleErrorMessage = msg + L"\n\nFor more information check the crash report located at:\n " + UTF8::ToWide(folder.ToString());
 
 #if BS_IS_BANSHEE3D
 		MessageBoxW(nullptr, simpleErrorMessage.c_str(), L"Banshee fatal error!", MB_OK);
 #else
 		MessageBoxW(nullptr, simpleErrorMessage.c_str(), L"bs::framework fatal error!", MB_OK);
 #endif
-
 	}
-	void CrashHandler::ReportCrash(const String& type, const String& description, const String& function,
-		const String& file, u32 line) const
+
+	void CrashHandler::ReportCrash(const String& type, const String& description, const String& function, const String& file, u32 line) const
 	{
 		if(mSettings.OnBeforeReportCrash)
 		{
@@ -511,8 +501,7 @@ namespace bs
 		win32_initPSAPI();
 		win32_loadSymbols();
 
-		LogErrorAndStackTrace(win32_getExceptionMessage(exceptionData->ExceptionRecord),
-			win32_getStackTrace(*exceptionData->ContextRecord, 0));
+		LogErrorAndStackTrace(win32_getExceptionMessage(exceptionData->ExceptionRecord), win32_getStackTrace(*exceptionData->ContextRecord, 0));
 
 		if(mSettings.OnCrashPrintedToLog)
 		{
@@ -555,4 +544,4 @@ namespace bs
 		win32_loadSymbols();
 		return win32_getStackTrace(context, 2);
 	}
-}
+} // namespace bs

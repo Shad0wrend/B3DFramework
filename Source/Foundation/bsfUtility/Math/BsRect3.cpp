@@ -14,12 +14,12 @@ namespace bs
 
 		bool foundNearest = false;
 		float t = 0.0f;
-		std::array<Vector3, 2> nearestPoints {{ Vector3::ZERO, Vector3::ZERO }};
+		std::array<Vector3, 2> nearestPoints{ { Vector3::ZERO, Vector3::ZERO } };
 		float distance = 0.0f;
 
 		// Check if Ray intersects the rectangle
 		auto intersectResult = Intersects(ray);
-		if (intersectResult.first)
+		if(intersectResult.first)
 		{
 			t = intersectResult.second;
 
@@ -30,16 +30,17 @@ namespace bs
 
 		// Ray is either passing next to the rectangle or parallel to it,
 		// compare ray to 4 edges of the rectangle
-		if (!foundNearest)
+		if(!foundNearest)
 		{
 			Vector3 scaledAxes[2];
 			scaledAxes[0] = mExtentHorz * mAxisHorz;
-			scaledAxes[1] = mExtentVert * mAxisVert;;
+			scaledAxes[1] = mExtentVert * mAxisVert;
+			;
 
 			distance = std::numeric_limits<float>::max();
-			for (u32 i = 0; i < 2; i++)
+			for(u32 i = 0; i < 2; i++)
 			{
-				for (u32 j = 0; j < 2; j++)
+				for(u32 j = 0; j < 2; j++)
 				{
 					float sign = (float)(2 * j - 1);
 					Vector3 segCenter = mCenter + sign * scaledAxes[i];
@@ -49,7 +50,7 @@ namespace bs
 					LineSegment3 segment(segStart, segEnd);
 					auto segResult = segment.GetNearestPoint(ray);
 
-					if (segResult.second < distance)
+					if(segResult.second < distance)
 					{
 						nearestPoints = segResult.first;
 						distance = segResult.second;
@@ -59,7 +60,7 @@ namespace bs
 		}
 
 		// Front of the ray is nearest, use found points
-		if (t >= 0.0f)
+		if(t >= 0.0f)
 		{
 			// Do nothing, we already have the points
 		}
@@ -83,21 +84,21 @@ namespace bs
 		float s0 = -b0, s1 = -b1;
 		float sqrDistance = diff.Dot(diff);
 
-		if (s0 < -mExtentHorz)
+		if(s0 < -mExtentHorz)
 			s0 = -mExtentHorz;
-		else if (s0 > mExtentHorz)
+		else if(s0 > mExtentHorz)
 			s0 = mExtentHorz;
 
-		sqrDistance += s0*(s0 + 2.0f*b0);
+		sqrDistance += s0 * (s0 + 2.0f * b0);
 
-		if (s1 < -mExtentVert)
+		if(s1 < -mExtentVert)
 			s1 = -mExtentVert;
-		else if (s1 > mExtentVert)
+		else if(s1 > mExtentVert)
 			s1 = mExtentVert;
 
-		sqrDistance += s1*(s1 + 2.0f*b1);
+		sqrDistance += s1 * (s1 + 2.0f * b1);
 
-		if (sqrDistance < 0.0f)
+		if(sqrDistance < 0.0f)
 			sqrDistance = 0.0f;
 
 		float dist = std::sqrt(sqrDistance);
@@ -113,7 +114,7 @@ namespace bs
 
 		Vector3 normal = mAxisHorz.Cross(mAxisVert);
 		float NdotD = normal.Dot(dir);
-		if (fabs(NdotD) > 0.0f)
+		if(fabs(NdotD) > 0.0f)
 		{
 			Vector3 diff = org - mCenter;
 			Vector3 basis[3];
@@ -127,12 +128,12 @@ namespace bs
 			float VdD0 = basis[2].Dot(mAxisHorz);
 			float VdD1 = basis[2].Dot(mAxisVert);
 			float VdPmC = basis[2].Dot(diff);
-			float invDet = 1.0f / (UdD0*VdD1 - UdD1*VdD0);
+			float invDet = 1.0f / (UdD0 * VdD1 - UdD1 * VdD0);
 
-			float s0 = (VdD1*UdPmC - UdD1*VdPmC)*invDet;
-			float s1 = (UdD0*VdPmC - VdD0*UdPmC)*invDet;
+			float s0 = (VdD1 * UdPmC - UdD1 * VdPmC) * invDet;
+			float s1 = (UdD0 * VdPmC - VdD0 * UdPmC) * invDet;
 
-			if (fabs(s0) <= mExtentHorz && fabs(s1) <= mExtentVert)
+			if(fabs(s0) <= mExtentHorz && fabs(s1) <= mExtentVert)
 			{
 				float DdD0 = dir.Dot(mAxisHorz);
 				float DdD1 = dir.Dot(mAxisVert);
@@ -146,4 +147,4 @@ namespace bs
 
 		return std::make_pair(false, 0.0f);
 	}
-}
+} // namespace bs

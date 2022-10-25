@@ -10,11 +10,11 @@ namespace bs
 {
 	/** @cond RTTI */
 	/** @addtogroup RTTI-Impl-Utility
-	*  @{
-	*/
+	 *  @{
+	 */
 
 	BS_ALLOW_MEMCPY_SERIALIZATION(Color);
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

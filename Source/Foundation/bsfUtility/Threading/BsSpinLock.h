@@ -13,7 +13,7 @@ namespace bs
 	/**
 	 * Synchronization primitive with low overhead.
 	 *
-	 * @note	
+	 * @note
 	 * However it will actively block the thread waiting for the lock, not allowing any other work to be done, so it is
 	 * best used for short locks.
 	 */
@@ -29,7 +29,7 @@ namespace bs
 		void Lock()
 		{
 			while(mLock.test_and_set(std::memory_order_acquire))
-			{ }
+			{}
 		}
 
 		/**	Release the lock and allow other threads to acquire the lock. */
@@ -50,7 +50,7 @@ namespace bs
 	{
 	public:
 		ScopedSpinLock(SpinLock& spinLock)
-			:mSpinLock(spinLock)
+			: mSpinLock(spinLock)
 		{
 			mSpinLock.Lock();
 		}
@@ -65,4 +65,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

@@ -3,20 +3,20 @@
 #pragma once
 
 #include "Allocators/BsMemoryAllocator.h"
-#include "Prerequisites/BsFwdDeclUtil.h"      // For TIDs
-#include "Prerequisites/BsTypes.h"            // For u32
+#include "Prerequisites/BsFwdDeclUtil.h" // For TIDs
+#include "Prerequisites/BsTypes.h" // For u32
 #include "Utility/BsBitstream.h"
 #include "Utility/BsBitLength.h"
 
 #include <limits>
-#include <type_traits>          // For std::is_pod
-#include <utility>              // For std::pair
+#include <type_traits> // For std::is_pod
+#include <utility> // For std::pair
 #include <vector>
 
 namespace bs
 {
 	struct RTTIFieldInfo;
-	
+
 	/** @addtogroup Utility
 	 *  @{
 	 */
@@ -73,8 +73,8 @@ namespace bs
 		RTTIFieldInfo() = default;
 
 		RTTIFieldInfo(RTTIFieldFlags flags)
-			:Flags(flags)
-		{ }
+			: Flags(flags)
+		{}
 
 		static RTTIFieldInfo DEFAULT;
 	};
@@ -95,15 +95,21 @@ namespace bs
 	 * @see		RTTITypeBase
 	 * @see		RTTIField
 	 */
-	template<class T>
+	template <class T>
 	struct RTTIPlainType
 	{
-		static_assert(std::is_pod<T>::value,
-			"Provided type isn't plain-old-data. You need to specialize RTTIPlainType template in order to serialize this type. "\
-			" (Or call BS_ALLOW_MEMCPY_SERIALIZATION(type) macro if you are sure the type can be properly serialized using just memcpy.)");
+		static_assert(std::is_pod<T>::value, "Provided type isn't plain-old-data. You need to specialize RTTIPlainType template in order to serialize this type. "
+											 " (Or call BS_ALLOW_MEMCPY_SERIALIZATION(type) macro if you are sure the type can be properly serialized using just memcpy.)");
 
-		enum { id = 0 /**< Unique id for the serializable type. */ };
-		enum { hasDynamicSize = 0 /**< 0 (Object has static size less than 255 bytes, for example int) or 1 (Dynamic size with no size restriction, for example string) */ };
+		enum
+		{
+			id = 0 /**< Unique id for the serializable type. */
+		};
+
+		enum
+		{
+			hasDynamicSize = 0 /**< 0 (Object has static size less than 255 bytes, for example int) or 1 (Dynamic size with no size restriction, for example string) */
+		};
 
 		/**
 		 * Serializes the provided object into the provided stream and advances the stream cursor. Returns the number of bytes written. If @p compress is true
@@ -132,15 +138,22 @@ namespace bs
 		}
 	};
 
-	template<>
+	template <>
 	struct RTTIPlainType<bool>
 	{
-		enum { id = TID_Bool };
-		enum { hasDynamicSize = 0 };
+		enum
+		{
+			id = TID_Bool
+		};
+
+		enum
+		{
+			hasDynamicSize = 0
+		};
 
 		static BitLength ToMemory(const bool& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			if (!compress)
+			if(!compress)
 				return stream.WriteBytes(data);
 			else
 			{
@@ -153,7 +166,7 @@ namespace bs
 
 		static BitLength FromMemory(bool& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			if (!compress)
+			if(!compress)
 				return stream.ReadBytes(data);
 			else
 			{
@@ -167,22 +180,29 @@ namespace bs
 
 		static BitLength GetSize(const bool& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			if (!compress)
+			if(!compress)
 				return sizeof(data);
 			else
 				return BitLength(0, 1);
 		}
 	};
 
-	template<>
+	template <>
 	struct RTTIPlainType<uint32_t>
 	{
-		enum { id = TID_UInt32 };
-		enum { hasDynamicSize = 0 };
+		enum
+		{
+			id = TID_UInt32
+		};
+
+		enum
+		{
+			hasDynamicSize = 0
+		};
 
 		static BitLength ToMemory(const uint32_t& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			if (!compress)
+			if(!compress)
 				return stream.WriteBytes(data);
 			else
 				return stream.WriteVarInt(data);
@@ -190,7 +210,7 @@ namespace bs
 
 		static BitLength FromMemory(uint32_t& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			if (!compress)
+			if(!compress)
 				return stream.ReadBytes(data);
 			else
 				return stream.ReadVarInt(data);
@@ -198,7 +218,7 @@ namespace bs
 
 		static BitLength GetSize(const uint32_t& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			if (!compress)
+			if(!compress)
 				return sizeof(data);
 			else
 			{
@@ -208,15 +228,22 @@ namespace bs
 		}
 	};
 
-	template<>
+	template <>
 	struct RTTIPlainType<int32_t>
 	{
-		enum { id = TID_Int32 };
-		enum { hasDynamicSize = 0 };
+		enum
+		{
+			id = TID_Int32
+		};
+
+		enum
+		{
+			hasDynamicSize = 0
+		};
 
 		static BitLength ToMemory(const int32_t& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			if (!compress)
+			if(!compress)
 				return stream.WriteBytes(data);
 			else
 				return stream.WriteVarInt(data);
@@ -224,7 +251,7 @@ namespace bs
 
 		static BitLength FromMemory(int32_t& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			if (!compress)
+			if(!compress)
 				return stream.ReadBytes(data);
 			else
 				return stream.ReadVarInt(data);
@@ -232,7 +259,7 @@ namespace bs
 
 		static BitLength GetSize(const int32_t& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			if (!compress)
+			if(!compress)
 				return sizeof(data);
 			else
 			{
@@ -248,7 +275,7 @@ namespace bs
 	 *
 	 * Returns the size of the element when serialized.
 	 */
-	template<class ElemType>
+	template <class ElemType>
 	BitLength rtti_size(const ElemType& data, bool compress = false)
 	{
 		return RTTIPlainType<ElemType>::GetSize(data, RTTIFieldInfo(), compress);
@@ -258,7 +285,7 @@ namespace bs
 	 * Helper method when serializing known data types that have valid RTTIPlainType specialization. The data will be
 	 * written to the provided stream and its write cursor advanced.
 	 */
-	template<class ElemType>
+	template <class ElemType>
 	BitLength rtti_write(const ElemType& data, Bitstream& stream, bool compress = false)
 	{
 		return RTTIPlainType<ElemType>::ToMemory(data, stream, RTTIFieldInfo(), compress);
@@ -268,7 +295,7 @@ namespace bs
 	 * Helper method when serializing known data types that have valid RTTIPlainType specialization. The data will be
 	 * read from the provided stream and its read cursor advanced.
 	 */
-	template<class ElemType>
+	template <class ElemType>
 	BitLength rtti_read(ElemType& data, Bitstream& stream, bool compress = false)
 	{
 		return RTTIPlainType<ElemType>::FromMemory(data, stream, RTTIFieldInfo(), compress);
@@ -281,7 +308,7 @@ namespace bs
 	 * from @p t as well as the size of the header itself (32-bits). The size of the data is
 	 * determined by the return value from @p t. Returns the size written.
 	 */
-	template<class T, class P>
+	template <class T, class P>
 	BitLength rtti_write_with_size_header(Bitstream& stream, const T& data, bool compress, P p)
 	{
 		if(compress)
@@ -292,7 +319,7 @@ namespace bs
 
 			size += BitLength::FromBits(headerSize);
 			p();
-			
+
 			return size;
 		}
 		else
@@ -301,7 +328,7 @@ namespace bs
 
 			BitLength size = 0;
 			stream.WriteBytes(size.Bytes);
-			
+
 			size = p() + sizeof(uint32_t);
 			assert(size.Bits == 0);
 
@@ -318,7 +345,7 @@ namespace bs
 	 * the size value read from the stream, while the return value represents the number of bits
 	 * read from the header itself (e.g. 4 bytes for uncompressed size).
 	 */
-	template<class T = Bitstream>
+	template <class T = Bitstream>
 	BitLength rtti_read_size_header(T& stream, bool compress, BitLength& size)
 	{
 		if(compress)
@@ -336,7 +363,7 @@ namespace bs
 		{
 			uint32_t sizeBytes = stream.ReadBytes(size.Bytes);
 			size.Bits = 0;
-			
+
 			return sizeBytes;
 		}
 	}
@@ -344,7 +371,7 @@ namespace bs
 	/** Increments the provided size with the required size of the header. */
 	inline void rtti_add_header_size(BitLength& size, bool compress)
 	{
-		if (compress)
+		if(compress)
 		{
 			uint8_t bytes[5];
 			uint32_t numBytes = Bitwise::EncodeVarInt(size.Bytes, bytes);
@@ -359,7 +386,8 @@ namespace bs
 	template <class T>
 	struct has_rttiEnumFields
 	{
-		struct dummy {};
+		struct dummy
+		{};
 
 		template <typename C, typename P>
 		static auto Test(P* p) -> decltype(std::declval<C>().RttiEnumFields(*p), std::true_type());
@@ -378,19 +406,33 @@ namespace bs
 	 *
 	 * @see		RTTIPlainType<T>
 	 */
-#define BS_ALLOW_MEMCPY_SERIALIZATION(type)																				\
-	static_assert (std::is_trivially_copyable<type>()==true,															\
-						#type " is not trivially copyable");															\
-	template<> struct RTTIPlainType<type>																				\
-	{	enum { id=0 }; enum { hasDynamicSize = 0 };																		\
-		static BitLength ToMemory(const type& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)	\
-		{ return stream.WriteBytes(data); }																				\
-		static BitLength FromMemory(type& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)		\
-		{ return stream.ReadBytes(data); }																				\
-		static BitLength GetSize(const type& data, const RTTIFieldInfo& fieldInfo, bool compress)						\
-		{ return sizeof(type); }																						\
+#define BS_ALLOW_MEMCPY_SERIALIZATION(type)                                                                           \
+	static_assert(std::is_trivially_copyable<type>() == true, #type " is not trivially copyable");                    \
+	template <>                                                                                                       \
+	struct RTTIPlainType<type>                                                                                        \
+	{                                                                                                                 \
+		enum                                                                                                          \
+		{                                                                                                             \
+			id = 0                                                                                                    \
+		};                                                                                                            \
+		enum                                                                                                          \
+		{                                                                                                             \
+			hasDynamicSize = 0                                                                                        \
+		};                                                                                                            \
+		static BitLength ToMemory(const type& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress) \
+		{                                                                                                             \
+			return stream.WriteBytes(data);                                                                           \
+		}                                                                                                             \
+		static BitLength FromMemory(type& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)     \
+		{                                                                                                             \
+			return stream.ReadBytes(data);                                                                            \
+		}                                                                                                             \
+		static BitLength GetSize(const type& data, const RTTIFieldInfo& fieldInfo, bool compress)                     \
+		{                                                                                                             \
+			return sizeof(type);                                                                                      \
+		}                                                                                                             \
 	};
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs

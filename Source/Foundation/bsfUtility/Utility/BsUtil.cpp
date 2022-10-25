@@ -16,7 +16,7 @@ namespace bs
 
 		String buf;
 		buf.resize(32);
-		for (int i = 0; i < 16; i++)
+		for(int i = 0; i < 16; i++)
 			snprintf(&(buf[0]) + i * 2, 3, "%02x", digest[i]);
 
 		return buf;
@@ -33,9 +33,9 @@ namespace bs
 
 		String buf;
 		buf.resize(32);
-		for (int i = 0; i < 16; i++)
+		for(int i = 0; i < 16; i++)
 			snprintf(&(buf[0]) + i * 2, 3, "%02x", digest[i]);
 
 		return buf;
 	}
-}
+} // namespace bs

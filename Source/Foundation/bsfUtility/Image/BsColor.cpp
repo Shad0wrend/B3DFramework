@@ -12,7 +12,7 @@ namespace bs
 	const Color Color::Green = Color(0.0f, 1.0f, 0.0f);
 	const Color Color::Blue = Color(0.0f, 0.0f, 1.0f);
 	const Color Color::LightGray = Color(200.0f / 255.0f, 200.0f / 255.0f, 200.0f / 255.0f);
-	const Color Color::BansheeOrange = Color(1.0f, (168.0f/255.0f), 0.0f);
+	const Color Color::BansheeOrange = Color(1.0f, (168.0f / 255.0f), 0.0f);
 
 	Color Color::FromRgba(RGBA val)
 	{
@@ -71,9 +71,9 @@ namespace bs
 		Color output;
 
 		// wrap hue
-		if (hue > 1.0f)
+		if(hue > 1.0f)
 			hue -= (int)hue;
-		else if (hue < 0.0f)
+		else if(hue < 0.0f)
 			hue += (int)hue + 1;
 
 		// clamp saturation / brightness
@@ -82,14 +82,14 @@ namespace bs
 		brightness = std::min(brightness, (float)1.0);
 		brightness = std::max(brightness, (float)0.0);
 
-		if (brightness == 0.0f)
+		if(brightness == 0.0f)
 		{
 			// early exit, this has to be black
 			output.R = output.G = output.B = 0.0f;
 			return output;
 		}
 
-		if (saturation == 0.0f)
+		if(saturation == 0.0f)
 		{
 			// early exit, this has to be grey
 
@@ -97,8 +97,8 @@ namespace bs
 			return output;
 		}
 
-		float hueDomain  = hue * 6.0f;
-		if (hueDomain >= 6.0f)
+		float hueDomain = hue * 6.0f;
+		if(hueDomain >= 6.0f)
 		{
 			// wrap around, and allow mathematical errors
 			hueDomain = 0.0f;
@@ -109,7 +109,7 @@ namespace bs
 		const float f2 = brightness * (1 - saturation * (hueDomain - domain));
 		const float f3 = brightness * (1 - saturation * (1 - (hueDomain - domain)));
 
-		switch (domain)
+		switch(domain)
 		{
 		case 0:
 			// red domain; green ascends
@@ -230,7 +230,6 @@ namespace bs
 		val8 = static_cast<u8>(A * 255);
 		val32 += val8;
 
-
 		return val32;
 	}
 
@@ -258,17 +257,16 @@ namespace bs
 		val8 = static_cast<u8>(R * 255);
 		val32 += val8;
 
-
 		return val32;
 	}
 
 	float linearToSRGB(float x)
 	{
-		if (x <= 0.0f)
+		if(x <= 0.0f)
 			return 0.0f;
-		else if (x >= 1.0f)
+		else if(x >= 1.0f)
 			return 1.0f;
-		else if (x < 0.0031308f)
+		else if(x < 0.0031308f)
 			return x * 12.92f;
 		else
 			return std::pow(x, 1.0f / 2.4f) * 1.055f - 0.055f;
@@ -276,11 +274,11 @@ namespace bs
 
 	float SRGBToLinear(float x)
 	{
-		if (x <= 0.0f)
+		if(x <= 0.0f)
 			return 0.0f;
-		else if (x >= 1.0f)
+		else if(x >= 1.0f)
 			return 1.0f;
-		else if (x < 0.04045f)
+		else if(x < 0.04045f)
 			return x / 12.92f;
 		else
 			return std::pow((x + 0.055f) / 1.055f, 2.4f);
@@ -289,27 +287,24 @@ namespace bs
 	Color Color::GetGamma() const
 	{
 		return Color(
-				bs::linearToSRGB(R),
-				bs::linearToSRGB(G),
-				bs::linearToSRGB(B),
-				A);
+			bs::linearToSRGB(R),
+			bs::linearToSRGB(G),
+			bs::linearToSRGB(B),
+			A);
 	}
 
 	Color Color::GetLinear() const
 	{
 		return Color(
-				bs::SRGBToLinear(R),
-				bs::SRGBToLinear(G),
-				bs::SRGBToLinear(B),
-				A);
+			bs::SRGBToLinear(R),
+			bs::SRGBToLinear(G),
+			bs::SRGBToLinear(B),
+			A);
 	}
 
 	bool Color::operator==(const Color& rhs) const
 	{
-		return (R == rhs.R &&
-			G == rhs.G &&
-			B == rhs.B &&
-			A == rhs.A);
+		return (R == rhs.R && G == rhs.G && B == rhs.B && A == rhs.A);
 	}
 
 	bool Color::operator!=(const Color& rhs) const
@@ -325,7 +320,7 @@ namespace bs
 
 		*brightness = vMax;
 
-		if (Math::ApproxEquals(delta, 0.0f, 1e-6f))
+		if(Math::ApproxEquals(delta, 0.0f, 1e-6f))
 		{
 			// grey
 			*hue = 0;
@@ -340,16 +335,16 @@ namespace bs
 			float deltaG = (((vMax - G) / 6.0f) + (delta / 2.0f)) / delta;
 			float deltaB = (((vMax - B) / 6.0f) + (delta / 2.0f)) / delta;
 
-			if (Math::ApproxEquals(R, vMax))
+			if(Math::ApproxEquals(R, vMax))
 				*hue = deltaB - deltaG;
-			else if (Math::ApproxEquals(G, vMax))
+			else if(Math::ApproxEquals(G, vMax))
 				*hue = 0.3333333f + deltaR - deltaB;
-			else if (Math::ApproxEquals(B, vMax))
+			else if(Math::ApproxEquals(B, vMax))
 				*hue = 0.6666667f + deltaG - deltaR;
 
-			if (*hue < 0.0f)
+			if(*hue < 0.0f)
 				*hue += 1.0f;
-			if (*hue > 1.0f)
+			if(*hue > 1.0f)
 				*hue -= 1.0f;
 		}
 	}
@@ -357,10 +352,6 @@ namespace bs
 	Color Color::Lerp(float t, const Color& a, const Color& b)
 	{
 		t = Math::Clamp01(t);
-		return Color(a.R + (b.R - a.R) * t,
-					 a.G + (b.G - a.G) * t,
-					 a.B + (b.B - a.B) * t,
-					 a.A + (b.A - a.A) * t);
+		return Color(a.R + (b.R - a.R) * t, a.G + (b.G - a.G) * t, a.B + (b.B - a.B) * t, a.A + (b.A - a.A) * t);
 	}
-}
-
+} // namespace bs

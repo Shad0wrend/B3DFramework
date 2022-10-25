@@ -62,4 +62,4 @@ namespace bs
 	{
 		return DynLibManager::Instance();
 	}
-}
+} // namespace bs

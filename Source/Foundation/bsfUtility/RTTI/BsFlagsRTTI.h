@@ -10,12 +10,21 @@ namespace bs
 {
 	/** @cond RTTI */
 	/** @addtogroup RTTI-Impl-Utility
-	*  @{
-	*/
+	 *  @{
+	 */
 
-	template<class Enum, class Storage> struct RTTIPlainType<Flags<Enum, Storage>>
+	template <class Enum, class Storage>
+	struct RTTIPlainType<Flags<Enum, Storage>>
 	{
-		enum { id = TID_Flags }; enum { hasDynamicSize = 0 };
+		enum
+		{
+			id = TID_Flags
+		};
+
+		enum
+		{
+			hasDynamicSize = 0
+		};
 
 		/** @copydoc RTTIPlainType::ToMemory */
 		static BitLength ToMemory(const Flags<Enum, Storage>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -43,4 +52,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

@@ -14,7 +14,7 @@ namespace bs
 
 		float newRadiusA = newCenter.Distance(mCenter) + GetRadius();
 		float newRadiusB = newCenter.Distance(rhs.mCenter) + rhs.GetRadius();
-		
+
 		mCenter = newCenter;
 		mRadius = std::max(newRadiusA, newRadiusB);
 	}
@@ -58,7 +58,7 @@ namespace bs
 		float radius = GetRadius();
 
 		// Check origin inside first
-		if (rayorig.SquaredLength() <= radius*radius && discardInside)
+		if(rayorig.SquaredLength() <= radius * radius && discardInside)
 		{
 			return std::pair<bool, float>(true, 0.0f);
 		}
@@ -66,11 +66,11 @@ namespace bs
 		// t = (-b +/- sqrt(b*b + 4ac)) / 2a
 		float a = raydir.Dot(raydir);
 		float b = 2 * rayorig.Dot(raydir);
-		float c = rayorig.Dot(rayorig) - radius*radius;
+		float c = rayorig.Dot(rayorig) - radius * radius;
 
 		// Determinant
-		float d = (b*b) - (4 * a * c);
-		if (d < 0)
+		float d = (b * b) - (4 * a * c);
+		if(d < 0)
 		{
 			// No intersection
 			return std::pair<bool, float>(false, 0.0f);
@@ -79,10 +79,10 @@ namespace bs
 		{
 			// If d == 0 there is one intersection, if d > 0 there are 2.
 			// We only return the first one.
-			
-			float t = ( -b - Math::Sqrt(d) ) / (2 * a);
-			if (t < 0)
-				t = ( -b + Math::Sqrt(d) ) / (2 * a);
+
+			float t = (-b - Math::Sqrt(d)) / (2 * a);
+			if(t < 0)
+				t = (-b + Math::Sqrt(d)) / (2 * a);
 
 			return std::pair<bool, float>(true, t);
 		}
@@ -97,4 +97,4 @@ namespace bs
 	{
 		return box.Intersects(*this);
 	}
-}
+} // namespace bs

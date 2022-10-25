@@ -31,20 +31,18 @@
 #	define BS_FALLTHROUGH [[clang::fallthrough]];
 #elif defined(__GNUC__) // Check after Clang, as Clang defines this too
 #	define BS_COMPILER BS_COMPILER_GNUC
-#	define BS_COMP_VER (((__GNUC__)*100) + \
-		(__GNUC_MINOR__*10) + \
-		__GNUC_PATCHLEVEL__)
+#	define BS_COMP_VER (((__GNUC__)*100) + (__GNUC_MINOR__ * 10) + __GNUC_PATCHLEVEL__)
 #	define BS_THREADLOCAL __thread
 #	define BS_STDCALL __attribute__((stdcall))
 #	define BS_CDECL __attribute__((cdecl))
 #	define BS_FALLTHROUGH __attribute__((fallthrough));
-#elif defined (__INTEL_COMPILER)
+#elif defined(__INTEL_COMPILER)
 #	define BS_COMPILER BS_COMPILER_INTEL
 #	define BS_COMP_VER __INTEL_COMPILER
 #	define BS_STDCALL __stdcall
 #	define BS_CDECL __cdecl
 #	define BS_FALLTHROUGH
-	// BS_THREADLOCAL define is down below because Intel compiler defines it differently based on platform
+// BS_THREADLOCAL define is down below because Intel compiler defines it differently based on platform
 #elif defined(_MSC_VER) // Check after Clang and Intel, since we could be building with either within VS
 #	define BS_COMPILER BS_COMPILER_MSVC
 #	define BS_COMP_VER _MSC_VER
@@ -59,9 +57,9 @@
 #endif
 
 // Finds the current platform
-#if defined( __WIN32__ ) || defined( _WIN32 )
+#if defined(__WIN32__) || defined(_WIN32)
 #	define BS_PLATFORM BS_PLATFORM_WIN32
-#elif defined( __APPLE_CC__)
+#elif defined(__APPLE_CC__)
 #	define BS_PLATFORM BS_PLATFORM_OSX
 #else
 #	define BS_PLATFORM BS_PLATFORM_LINUX
@@ -91,16 +89,16 @@
 #			define BS_UTILITY_EXPORT
 #		else
 #			if defined(BS_UTILITY_EXPORTS)
-#				define BS_UTILITY_EXPORT __attribute__ ((dllexport))
+#				define BS_UTILITY_EXPORT __attribute__((dllexport))
 #			else
-#				define BS_UTILITY_EXPORT __attribute__ ((dllimport))
+#				define BS_UTILITY_EXPORT __attribute__((dllimport))
 #			endif
 #		endif
 #	endif
-#define BS_UTILITY_HIDDEN
+#	define BS_UTILITY_HIDDEN
 #else // Linux/Mac settings
-#	define BS_UTILITY_EXPORT __attribute__ ((visibility ("default")))
-#	define BS_UTILITY_HIDDEN __attribute__ ((visibility ("hidden")))
+#	define BS_UTILITY_EXPORT __attribute__((visibility("default")))
+#	define BS_UTILITY_HIDDEN __attribute__((visibility("hidden")))
 #endif
 
 // DLL export for plugins
@@ -108,11 +106,11 @@
 #	if BS_COMPILER == BS_COMPILER_MSVC
 #		define BS_PLUGIN_EXPORT __declspec(dllexport)
 #	else
-#		define BS_PLUGIN_EXPORT __attribute__ ((dllexport))
+#		define BS_PLUGIN_EXPORT __attribute__((dllexport))
 #	endif
 #	define BS_UTILITY_HIDDEN
 #else // Linux/Mac settings
-#	define BS_PLUGIN_EXPORT __attribute__ ((visibility ("default")))
+#	define BS_PLUGIN_EXPORT __attribute__((visibility("default")))
 #endif
 
 // Windows Settings
@@ -135,7 +133,7 @@
 #	ifdef DEBUG
 #		define BS_DEBUG_MODE 1
 #	else
-#	define BS_DEBUG_MODE 0
+#		define BS_DEBUG_MODE 0
 #	endif
 
 #	if BS_COMPILER == BS_COMPILER_INTEL

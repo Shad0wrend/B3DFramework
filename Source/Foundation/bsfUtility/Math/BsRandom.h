@@ -18,6 +18,7 @@ namespace bs
 	public:
 		/** Initializes a new generator using the specified seed. */
 		BS_SCRIPT_EXPORT()
+
 		Random(uint32_t seed = 0)
 		{
 			SetSeed(seed);
@@ -25,6 +26,7 @@ namespace bs
 
 		/** Changes the seed of the generator to the specified value. */
 		BS_SCRIPT_EXPORT()
+
 		void SetSeed(uint32_t seed)
 		{
 			mSeed[0] = seed;
@@ -35,6 +37,7 @@ namespace bs
 
 		/** Returns a random value in range [0, std::numeric_limits<uint32_t>::max()]. */
 		BS_SCRIPT_EXPORT()
+
 		uint32_t Get() const
 		{
 			// Using xorshift128 algorithm
@@ -56,6 +59,7 @@ namespace bs
 
 		/** Returns a random value in range [min, max]. */
 		BS_SCRIPT_EXPORT()
+
 		int32_t GetRange(int32_t min, int32_t max) const
 		{
 			assert(max > min);
@@ -69,14 +73,16 @@ namespace bs
 
 		/** Returns a random value in range [0, 1]. */
 		BS_SCRIPT_EXPORT()
+
 		float GetUNorm() const
 		{
 			// Mask first 23 bits and divide by 2^23-1
 			return float(Get() & 0x007FFFFF) / 8388607.0f;
 		}
-		
+
 		/** Returns a random value in range [-1, 1]. */
 		BS_SCRIPT_EXPORT()
+
 		float GetSNorm() const
 		{
 			return GetUNorm() * 2.0f - 1.0f;
@@ -84,6 +90,7 @@ namespace bs
 
 		/** Returns a random unit vector in three dimensions. */
 		BS_SCRIPT_EXPORT()
+
 		Vector3 GetUnitVector() const
 		{
 			// Pick a random number on a unit cube and use the result only if squared size less than 1. This is faster
@@ -98,14 +105,15 @@ namespace bs
 				output.Y = GetSNorm();
 				output.Z = GetSNorm();
 				sqrdSize = output.SquaredLength();
-				
-			} while (sqrdSize > 1.0f || sqrdSize < 0.001f);
+			}
+			while(sqrdSize > 1.0f || sqrdSize < 0.001f);
 
 			return Vector3::Normalize(output);
 		}
 
 		/** Returns a random unit vector in two dimensions. */
 		BS_SCRIPT_EXPORT()
+
 		Vector2 GetUnitVector2D() const
 		{
 			// Pick a random number on a unit square and use the result only if squared size less than 1. This is faster
@@ -119,14 +127,15 @@ namespace bs
 				output.X = GetSNorm();
 				output.Y = GetSNorm();
 				sqrdSize = output.SquaredLength();
-				
-			} while (sqrdSize > 1.0f || sqrdSize < 0.001f);
+			}
+			while(sqrdSize > 1.0f || sqrdSize < 0.001f);
 
 			return Vector2::Normalize(output);
 		}
 
 		/** Returns a random point inside a unit sphere. */
 		BS_SCRIPT_EXPORT()
+
 		Vector3 GetPointInSphere() const
 		{
 			const Vector3 dir = GetUnitVector();
@@ -140,6 +149,7 @@ namespace bs
 		 * between two concentric spheres.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		Vector3 GetPointInSphereShell(float thickness) const
 		{
 			const float minRadius = 1.0f - thickness;
@@ -150,6 +160,7 @@ namespace bs
 
 		/** Returns a random point inside a unit circle. */
 		BS_SCRIPT_EXPORT()
+
 		Vector2 GetPointInCircle() const
 		{
 			const Vector2 dir = GetUnitVector2D();
@@ -163,6 +174,7 @@ namespace bs
 		 * between two concentric circles.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		Vector2 GetPointInCircleShell(float thickness) const
 		{
 			const float minRadius = 1.0f - thickness;
@@ -173,6 +185,7 @@ namespace bs
 
 		/** Returns a random point on a unit arc with the specified length (angle). Angle of 360 represents a circle. */
 		BS_SCRIPT_EXPORT()
+
 		Vector2 GetPointInArc(Degree angle) const
 		{
 			float val = GetUNorm() * angle.ValueRadians();
@@ -186,6 +199,7 @@ namespace bs
 		 * Intermediate vlaues represent the shell, which is the surface between two concentric circles.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		Vector2 GetPointInArcShell(Degree angle, float thickness) const
 		{
 			const float minRadius = 1.0f - thickness;
@@ -198,6 +212,7 @@ namespace bs
 
 		/** Returns a random set of Barycentric coordinates that may be used for generating random points on a triangle. */
 		BS_SCRIPT_EXPORT()
+
 		Vector3 GetBarycentric() const
 		{
 			float u = GetUNorm();
@@ -218,4 +233,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

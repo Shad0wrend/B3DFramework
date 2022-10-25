@@ -137,8 +137,8 @@ namespace bs
 		/** Returns true if the provided bounding box is completely inside the bounding box. */
 		bool Contains(const AABox& other) const;
 
-		bool operator== (const AABox& rhs) const;
-		bool operator!= (const AABox& rhs) const;
+		bool operator==(const AABox& rhs) const;
+		bool operator!=(const AABox& rhs) const;
 
 		static const AABox BOX_EMPTY;
 		static const AABox UNIT_BOX;
@@ -151,9 +151,9 @@ namespace bs
 		static const u32 CUBE_INDICES[36];
 
 	protected:
-		Vector3 mMinimum{Vector3::ZERO};
-		Vector3 mMaximum{Vector3::ONE};
+		Vector3 mMinimum{ Vector3::ZERO };
+		Vector3 mMaximum{ Vector3::ONE };
 	};
 
 	/** @} */
-}
+} // namespace bs

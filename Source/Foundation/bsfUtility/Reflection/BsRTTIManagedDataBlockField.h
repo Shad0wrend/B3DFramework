@@ -17,8 +17,8 @@ namespace bs
 
 	/**
 	 * Base class containing common functionality for a managed data block class field.
-	 * 			
-	 * @note	
+	 *
+	 * @note
 	 * Managed data blocks are just blocks of memory that may, or may not be released automatically when they are no longer
 	 * referenced. They are useful when wanting to return some temporary data only for serialization purposes.
 	 */
@@ -60,8 +60,7 @@ namespace bs
 		/** @copydoc RTTIField::getArraySize */
 		u32 GetArraySize(RTTITypeBase* rtti, void* object) override
 		{
-			BS_EXCEPT(InternalErrorException,
-				"Data block types don't support arrays.");
+			BS_EXCEPT(InternalErrorException, "Data block types don't support arrays.");
 
 			return 0;
 		}
@@ -69,8 +68,7 @@ namespace bs
 		/** @copydoc RTTIField::setArraySize */
 		void SetArraySize(RTTITypeBase* rtti, void* object, u32 size) override
 		{
-			BS_EXCEPT(InternalErrorException,
-				"Data block types don't support arrays.");
+			BS_EXCEPT(InternalErrorException, "Data block types don't support arrays.");
 		}
 
 		/** @copydoc RTTIManagedDataBlockFieldBase::getValue */
@@ -98,4 +96,4 @@ namespace bs
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs

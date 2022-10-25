@@ -14,7 +14,7 @@ namespace bs
 {
 	void win32_handleError(DWORD error, const WString& path)
 	{
-		switch (error)
+		switch(error)
 		{
 		case ERROR_FILE_NOT_FOUND:
 			BS_LOG(Error, FileSystem, "File at path: \"{0}\" not found.", path);
@@ -78,15 +78,15 @@ namespace bs
 	WString win32_getCurrentDirectory()
 	{
 		DWORD len = GetCurrentDirectoryW(0, NULL);
-		if (len > 0)
+		if(len > 0)
 		{
 			wchar_t* buffer = (wchar_t*)bs_alloc(len * sizeof(wchar_t));
 
 			DWORD n = GetCurrentDirectoryW(len, buffer);
-			if (n > 0 && n <= len)
+			if(n > 0 && n <= len)
 			{
 				WString result(buffer);
-				if (result[result.size() - 1] != L'\\')
+				if(result[result.size() - 1] != L'\\')
 					result.append(L"\\");
 
 				bs_free(buffer);
@@ -102,15 +102,15 @@ namespace bs
 	WString win32_getTempDirectory()
 	{
 		DWORD len = GetTempPathW(0, NULL);
-		if (len > 0)
+		if(len > 0)
 		{
 			wchar_t* buffer = (wchar_t*)bs_alloc(len * sizeof(wchar_t));
 
 			DWORD n = GetTempPathW(len, buffer);
-			if (n > 0 && n <= len)
+			if(n > 0 && n <= len)
 			{
 				WString result(buffer);
-				if (result[result.size() - 1] != L'\\')
+				if(result[result.size() - 1] != L'\\')
 					result.append(L"\\");
 
 				bs_free(buffer);
@@ -126,9 +126,9 @@ namespace bs
 	bool win32_pathExists(const WString& path)
 	{
 		DWORD attr = GetFileAttributesW(path.c_str());
-		if (attr == 0xFFFFFFFF)
+		if(attr == 0xFFFFFFFF)
 		{
-			switch (GetLastError())
+			switch(GetLastError())
 			{
 			case ERROR_FILE_NOT_FOUND:
 			case ERROR_PATH_NOT_FOUND:
@@ -145,7 +145,7 @@ namespace bs
 	bool win32_isDirectory(const WString& path)
 	{
 		DWORD attr = GetFileAttributesW(path.c_str());
-		if (attr == 0xFFFFFFFF)
+		if(attr == 0xFFFFFFFF)
 			win32_handleError(GetLastError(), path);
 
 		return (attr & FILE_ATTRIBUTE_DIRECTORY) != FALSE;
@@ -156,8 +156,7 @@ namespace bs
 		WString ucPath = path;
 		StringUtil::ToUpperCase(ucPath);
 
-		return
-			ucPath.compare(0, 4, L"\\\\.\\") == 0 ||
+		return ucPath.compare(0, 4, L"\\\\.\\") == 0 ||
 			ucPath.compare(L"CON") == 0 ||
 			ucPath.compare(L"PRN") == 0 ||
 			ucPath.compare(L"AUX") == 0 ||
@@ -191,12 +190,12 @@ namespace bs
 	{
 		HANDLE hFile = CreateFileW(path.c_str(), GENERIC_WRITE, 0, 0, CREATE_NEW, 0, 0);
 
-		if (hFile != INVALID_HANDLE_VALUE)
+		if(hFile != INVALID_HANDLE_VALUE)
 		{
 			CloseHandle(hFile);
 			return true;
 		}
-		else if (GetLastError() == ERROR_FILE_EXISTS)
+		else if(GetLastError() == ERROR_FILE_EXISTS)
 			return false;
 		else
 			win32_handleError(GetLastError(), path);
@@ -206,10 +205,10 @@ namespace bs
 
 	bool win32_createDirectory(const WString& path)
 	{
-		if (win32_pathExists(path) && win32_isDirectory(path))
+		if(win32_pathExists(path) && win32_isDirectory(path))
 			return false;
 
-		if (CreateDirectoryW(path.c_str(), 0) == FALSE)
+		if(CreateDirectoryW(path.c_str(), 0) == FALSE)
 			win32_handleError(GetLastError(), path);
 
 		return true;
@@ -218,7 +217,7 @@ namespace bs
 	u64 win32_getFileSize(const WString& path)
 	{
 		WIN32_FILE_ATTRIBUTE_DATA attrData;
-		if (GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &attrData) == FALSE)
+		if(GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &attrData) == FALSE)
 			win32_handleError(GetLastError(), path);
 
 		LARGE_INTEGER li;
@@ -230,27 +229,27 @@ namespace bs
 	std::time_t win32_getLastModifiedTime(const WString& path)
 	{
 		WIN32_FILE_ATTRIBUTE_DATA fad;
-		if (GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &fad) == 0)
+		if(GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &fad) == 0)
 			win32_handleError(GetLastError(), path);
 
 		ULARGE_INTEGER ull;
 		ull.LowPart = fad.ftLastWriteTime.dwLowDateTime;
 		ull.HighPart = fad.ftLastWriteTime.dwHighDateTime;
 
-		return (std::time_t) ((ull.QuadPart / 10000000ULL) - 11644473600ULL);
+		return (std::time_t)((ull.QuadPart / 10000000ULL) - 11644473600ULL);
 	}
 
 	void FileSystem::RemoveFile(const Path& path)
 	{
 		WString pathStr = UTF8::ToWide(path.ToString());
-		if (win32_isDirectory(pathStr))
+		if(win32_isDirectory(pathStr))
 		{
-			if (RemoveDirectoryW(pathStr.c_str()) == 0)
+			if(RemoveDirectoryW(pathStr.c_str()) == 0)
 				win32_handleError(GetLastError(), pathStr);
 		}
 		else
 		{
-			if (DeleteFileW(pathStr.c_str()) == 0)
+			if(DeleteFileW(pathStr.c_str()) == 0)
 				win32_handleError(GetLastError(), pathStr);
 		}
 	}
@@ -260,7 +259,7 @@ namespace bs
 		WString fromStr = UTF8::ToWide(from.ToString());
 		WString toStr = UTF8::ToWide(to.ToString());
 
-		if (CopyFileW(fromStr.c_str(), toStr.c_str(), FALSE) == FALSE)
+		if(CopyFileW(fromStr.c_str(), toStr.c_str(), FALSE) == FALSE)
 			win32_handleError(GetLastError(), fromStr);
 	}
 
@@ -269,7 +268,7 @@ namespace bs
 		WString oldPathStr = UTF8::ToWide(oldPath.ToString());
 		WString newPathStr = UTF8::ToWide(newPath.ToString());
 
-		if (MoveFileW(oldPathStr.c_str(), newPathStr.c_str()) == 0)
+		if(MoveFileW(oldPathStr.c_str(), newPathStr.c_str()) == 0)
 			win32_handleError(GetLastError(), oldPathStr);
 	}
 
@@ -278,14 +277,14 @@ namespace bs
 		WString pathWString = UTF8::ToWide(fullPath.ToString());
 		const wchar_t* pathString = pathWString.c_str();
 
-		if (!win32_pathExists(pathString) || !win32_isFile(pathString))
+		if(!win32_pathExists(pathString) || !win32_isFile(pathString))
 		{
 			BS_LOG(Warning, Platform, "Attempting to open a file that doesn't exist: {0}", fullPath);
 			return nullptr;
 		}
 
 		DataStream::AccessMode accessMode = DataStream::READ;
-		if (!readOnly)
+		if(!readOnly)
 			accessMode = (DataStream::AccessMode)(accessMode | (u32)DataStream::WRITE);
 
 		return bs_shared_ptr_new<FileDataStream>(fullPath, accessMode, true);
@@ -323,18 +322,18 @@ namespace bs
 	void FileSystem::CreateDir(const Path& fullPath)
 	{
 		Path parentPath = fullPath;
-		while (!Exists(parentPath) && parentPath.GetNumDirectories() > 0)
+		while(!Exists(parentPath) && parentPath.GetNumDirectories() > 0)
 		{
 			parentPath = parentPath.GetParent();
 		}
 
-		for (u32 i = parentPath.GetNumDirectories(); i < fullPath.GetNumDirectories(); i++)
+		for(u32 i = parentPath.GetNumDirectories(); i < fullPath.GetNumDirectories(); i++)
 		{
 			parentPath.Append(fullPath[i]);
 			win32_createDirectory(UTF8::ToWide(parentPath.ToString()));
 		}
 
-		if (fullPath.IsFile())
+		if(fullPath.IsFile())
 			win32_createDirectory(UTF8::ToWide(fullPath.ToString()));
 	}
 
@@ -342,7 +341,7 @@ namespace bs
 	{
 		WString findPath = UTF8::ToWide(dirPath.ToString());
 
-		if (win32_isFile(findPath))
+		if(win32_isFile(findPath))
 			return;
 
 		if(dirPath.IsFile()) // Assuming the file is a folder, just improperly formatted in Path
@@ -363,10 +362,10 @@ namespace bs
 		{
 			tempName = findData.cFileName;
 
-			if (tempName != L"." && tempName != L"..")
+			if(tempName != L"." && tempName != L"..")
 			{
 				Path fullPath = dirPath;
-				if ((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
+				if((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
 					directories.push_back(fullPath.Append(UTF8::FromWide(tempName) + u8"/"));
 				else
 					files.push_back(fullPath.Append(UTF8::FromWide(tempName)));
@@ -374,32 +373,32 @@ namespace bs
 
 			if(FindNextFileW(fileHandle, &findData) == FALSE)
 			{
-				if (GetLastError() != ERROR_NO_MORE_FILES)
+				if(GetLastError() != ERROR_NO_MORE_FILES)
 					win32_handleError(GetLastError(), findPath);
 
 				break;
 			}
-		} while (true);
+		}
+		while(true);
 
 		FindClose(fileHandle);
 	}
 
-	bool FileSystem::Iterate(const Path& dirPath, std::function<bool(const Path&)> fileCallback,
-		std::function<bool(const Path&)> dirCallback, bool recursive)
+	bool FileSystem::Iterate(const Path& dirPath, std::function<bool(const Path&)> fileCallback, std::function<bool(const Path&)> dirCallback, bool recursive)
 	{
 		WString findPath = UTF8::ToWide(dirPath.ToString());
 
-		if (win32_isFile(findPath))
+		if(win32_isFile(findPath))
 			return false;
 
-		if (dirPath.IsFile()) // Assuming the file is a folder, just improperly formatted in Path
+		if(dirPath.IsFile()) // Assuming the file is a folder, just improperly formatted in Path
 			findPath.append(L"\\*");
 		else
 			findPath.append(L"*");
 
 		WIN32_FIND_DATAW findData;
 		HANDLE fileHandle = FindFirstFileW(findPath.c_str(), &findData);
-		if (fileHandle == INVALID_HANDLE_VALUE)
+		if(fileHandle == INVALID_HANDLE_VALUE)
 		{
 			win32_handleError(GetLastError(), findPath);
 			return false;
@@ -410,24 +409,24 @@ namespace bs
 		{
 			tempName = findData.cFileName;
 
-			if (tempName != L"." && tempName != L"..")
+			if(tempName != L"." && tempName != L"..")
 			{
 				Path fullPath = dirPath;
-				if ((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
+				if((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
 				{
 					Path childDir = fullPath.Append(UTF8::FromWide(tempName) + u8"/");
-					if (dirCallback != nullptr)
+					if(dirCallback != nullptr)
 					{
-						if (!dirCallback(childDir))
+						if(!dirCallback(childDir))
 						{
 							FindClose(fileHandle);
 							return false;
 						}
 					}
 
-					if (recursive)
+					if(recursive)
 					{
-						if (!Iterate(childDir, fileCallback, dirCallback, recursive))
+						if(!Iterate(childDir, fileCallback, dirCallback, recursive))
 						{
 							FindClose(fileHandle);
 							return false;
@@ -437,9 +436,9 @@ namespace bs
 				else
 				{
 					Path filePath = fullPath.Append(UTF8::FromWide(tempName));
-					if (fileCallback != nullptr)
+					if(fileCallback != nullptr)
 					{
-						if (!fileCallback(filePath))
+						if(!fileCallback(filePath))
 						{
 							FindClose(fileHandle);
 							return false;
@@ -450,12 +449,13 @@ namespace bs
 
 			if(FindNextFileW(fileHandle, &findData) == FALSE)
 			{
-				if (GetLastError() != ERROR_NO_MORE_FILES)
+				if(GetLastError() != ERROR_NO_MORE_FILES)
 					win32_handleError(GetLastError(), findPath);
 
 				break;
 			}
-		} while (true);
+		}
+		while(true);
 
 		FindClose(fileHandle);
 		return true;
@@ -477,4 +477,4 @@ namespace bs
 		const String utf8dir = UTF8::FromWide(win32_getTempDirectory());
 		return Path(utf8dir);
 	}
-}
+} // namespace bs

@@ -15,18 +15,18 @@ namespace bs
 	{
 	public:
 		DataStreamSource(const SPtr<DataStream>& stream, std::function<void(float)> reportProgress = nullptr)
-			:mStream(stream), mReportProgress(std::move(reportProgress))
+			: mStream(stream), mReportProgress(std::move(reportProgress))
 		{
 			mTotal = mStream->Size() - mStream->Tell();
 			mRemaining = mTotal;
 
-			if (mStream->IsFile())
+			if(mStream->IsFile())
 				mReadBuffer = (char*)bs_alloc(32768);
 		}
 
 		virtual ~DataStreamSource()
 		{
-			if (mReadBuffer != nullptr)
+			if(mReadBuffer != nullptr)
 				bs_free(mReadBuffer);
 		}
 
@@ -37,7 +37,7 @@ namespace bs
 
 		const char* Peek(size_t* len) override
 		{
-			if (!mStream->IsFile())
+			if(!mStream->IsFile())
 			{
 				SPtr<MemoryDataStream> memStream = std::static_pointer_cast<MemoryDataStream>(mStream);
 
@@ -46,12 +46,12 @@ namespace bs
 			}
 			else
 			{
-				while (mBufferOffset >= mReadBufferContentSize)
+				while(mBufferOffset >= mReadBufferContentSize)
 				{
 					mBufferOffset -= mReadBufferContentSize;
 					mReadBufferContentSize = mStream->Read(mReadBuffer, 32768);
 
-					if (mReadBufferContentSize == 0)
+					if(mReadBufferContentSize == 0)
 						break;
 				}
 
@@ -68,6 +68,7 @@ namespace bs
 			if(mReportProgress)
 				mReportProgress(1.0f - mRemaining / (float)mTotal);
 		}
+
 	private:
 		SPtr<DataStream> mStream;
 		std::function<void(float)> mReportProgress;
@@ -92,9 +93,10 @@ namespace bs
 
 	public:
 		DataStreamSink() = default;
+
 		virtual ~DataStreamSink()
 		{
-			for (auto& entry : mBufferPieces)
+			for(auto& entry : mBufferPieces)
 				bs_free(entry.Buffer);
 		}
 
@@ -128,8 +130,7 @@ namespace bs
 			return piece.Buffer;
 		}
 
-		char* GetAppendBufferVariable(size_t min_size, size_t desired_size_hint, char* scratch, size_t scratch_size,
-			size_t* allocated_size) override
+		char* GetAppendBufferVariable(size_t min_size, size_t desired_size_hint, char* scratch, size_t scratch_size, size_t* allocated_size) override
 		{
 			BufferPiece piece;
 			piece.Buffer = (char*)bs_alloc((u32)desired_size_hint);
@@ -141,12 +142,11 @@ namespace bs
 			return piece.Buffer;
 		}
 
-		void AppendAndTakeOwnership(char* bytes, size_t n, void(*deleter)(void*, const char*, size_t),
-			void *deleter_arg) override
+		void AppendAndTakeOwnership(char* bytes, size_t n, void (*deleter)(void*, const char*, size_t), void* deleter_arg) override
 		{
 			BufferPiece& piece = mBufferPieces.back();
 
-			if (piece.Buffer != bytes)
+			if(piece.Buffer != bytes)
 			{
 				memcpy(piece.Buffer, bytes, n);
 				(*deleter)(deleter_arg, bytes, n);
@@ -158,11 +158,11 @@ namespace bs
 		SPtr<MemoryDataStream> GetOutput()
 		{
 			size_t totalSize = 0;
-			for (auto& entry : mBufferPieces)
+			for(auto& entry : mBufferPieces)
 				totalSize += entry.Size;
 
 			SPtr<MemoryDataStream> ds = bs_shared_ptr_new<MemoryDataStream>(totalSize);
-			for (auto& entry : mBufferPieces)
+			for(auto& entry : mBufferPieces)
 				ds->Write(entry.Buffer, entry.Size);
 
 			ds->Seek(0);
@@ -190,7 +190,7 @@ namespace bs
 		DataStreamSource src(input, std::move(reportProgress));
 		DataStreamSink dst;
 
-		if (!snappy::Uncompress(&src, &dst))
+		if(!snappy::Uncompress(&src, &dst))
 		{
 			BS_LOG(Error, Generic, "Decompression failed, corrupt data.");
 			return nullptr;
@@ -198,4 +198,4 @@ namespace bs
 
 		return dst.GetOutput();
 	}
-}
+} // namespace bs

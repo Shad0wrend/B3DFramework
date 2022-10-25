@@ -9,4 +9,4 @@ namespace bs
 	{
 		BS_EXCEPT(UnitTestException, desc);
 	}
-}
+} // namespace bs

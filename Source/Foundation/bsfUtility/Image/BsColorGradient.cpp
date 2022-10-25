@@ -7,22 +7,22 @@
 
 namespace bs
 {
-	template<class COLOR, class TIME>
+	template <class COLOR, class TIME>
 	constexpr u32 TColorGradient<COLOR, TIME>::MAX_KEYS;
 
-	template<class COLOR, class TIME>
+	template <class COLOR, class TIME>
 	TColorGradient<COLOR, TIME>::TColorGradient(const Color& color)
 	{
 		SetConstant(color);
 	}
 
-	template<class COLOR, class TIME>
+	template <class COLOR, class TIME>
 	TColorGradient<COLOR, TIME>::TColorGradient(const Vector<ColorGradientKey>& keys)
 	{
 		SetKeys(keys);
 	}
 
-	template<class COLOR, class TIME>
+	template <class COLOR, class TIME>
 	COLOR TColorGradient<COLOR, TIME>::Evaluate(float t) const
 	{
 		if(mNumKeys == 0)
@@ -54,7 +54,7 @@ namespace bs
 		return mColors[mNumKeys - 1];
 	}
 
-	template<class COLOR, class TIME>
+	template <class COLOR, class TIME>
 	void TColorGradient<COLOR, TIME>::SetKeys(const Vector<ColorGradientKey>& keys, float duration)
 	{
 #if BS_DEBUG_MODE
@@ -62,7 +62,7 @@ namespace bs
 		if(!keys.empty())
 		{
 			float time = keys[0].Time;
-			for (u32 i = 1; i < (u32)keys.size(); i++)
+			for(u32 i = 1; i < (u32)keys.size(); i++)
 			{
 				assert(keys[i].Time >= time);
 				time = keys[i].Time;
@@ -73,7 +73,8 @@ namespace bs
 		if(keys.size() > MAX_KEYS)
 		{
 			BS_LOG(Warning, Generic, "Number of keys in ColorGradient exceeds the support number ({0}). "
-				"Keys will be ignored.", MAX_KEYS);
+									 "Keys will be ignored.",
+				   MAX_KEYS);
 		}
 
 		mDuration = duration;
@@ -91,7 +92,7 @@ namespace bs
 		}
 	}
 
-	template<class COLOR, class TIME>
+	template <class COLOR, class TIME>
 	Vector<ColorGradientKey> TColorGradient<COLOR, TIME>::GetKeys() const
 	{
 		Vector<ColorGradientKey> output(mNumKeys);
@@ -104,7 +105,7 @@ namespace bs
 		return output;
 	}
 
-	template<class COLOR, class TIME>
+	template <class COLOR, class TIME>
 	ColorGradientKey TColorGradient<COLOR, TIME>::GetKey(u32 idx) const
 	{
 		if(idx >= mNumKeys)
@@ -115,7 +116,7 @@ namespace bs
 			impl::TGradientHelper<COLOR>::FromInternalTime(mTimes[idx]));
 	}
 
-	template<class COLOR, class TIME>
+	template <class COLOR, class TIME>
 	void TColorGradient<COLOR, TIME>::SetConstant(const Color& color)
 	{
 		mColors[0] = impl::TGradientHelper<COLOR>::ToInternalColor(color);
@@ -124,7 +125,7 @@ namespace bs
 		mDuration = 0.0f;
 	}
 
-	template<class COLOR, class TIME>
+	template <class COLOR, class TIME>
 	std::pair<float, float> TColorGradient<COLOR, TIME>::GetTimeRange() const
 	{
 		if(mNumKeys == 0)
@@ -138,19 +139,18 @@ namespace bs
 
 		return std::make_pair(
 			impl::TGradientHelper<COLOR>::FromInternalTime(mTimes[0]),
-			impl::TGradientHelper<COLOR>::FromInternalTime(mTimes[mNumKeys - 1])
-		);
+			impl::TGradientHelper<COLOR>::FromInternalTime(mTimes[mNumKeys - 1]));
 	}
 
-	template<class COLOR, class TIME>
-	bool TColorGradient<COLOR, TIME>::operator== (const TColorGradient<COLOR, TIME>& rhs) const
+	template <class COLOR, class TIME>
+	bool TColorGradient<COLOR, TIME>::operator==(const TColorGradient<COLOR, TIME>& rhs) const
 	{
-		if (mNumKeys != rhs.mNumKeys || mDuration != rhs.mDuration)
+		if(mNumKeys != rhs.mNumKeys || mDuration != rhs.mDuration)
 			return false;
 
-		for (uint32_t i = 0; i < mNumKeys; i++)
+		for(uint32_t i = 0; i < mNumKeys; i++)
 		{
-			if (mColors[i] != rhs.mColors[i] || mTimes[i] != rhs.mTimes[i])
+			if(mColors[i] != rhs.mColors[i] || mTimes[i] != rhs.mTimes[i])
 				return false;
 		}
 
@@ -159,4 +159,4 @@ namespace bs
 
 	template class TColorGradient<RGBA, uint16_t>;
 	template class TColorGradient<Color, float>;
-}
+} // namespace bs

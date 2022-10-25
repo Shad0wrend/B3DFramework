@@ -30,11 +30,11 @@ namespace bs
 	 */
 	class BS_UTILITY_EXPORT Task
 	{
-		struct PrivatelyConstruct {};
+		struct PrivatelyConstruct
+		{};
 
 	public:
-		Task(const PrivatelyConstruct& dummy, const String& name, std::function<void()> taskWorker,
-			TaskPriority priority, SPtr<Task> dependency);
+		Task(const PrivatelyConstruct& dummy, const String& name, std::function<void()> taskWorker, TaskPriority priority, SPtr<Task> dependency);
 
 		/**
 		 * Creates a new task. Task should be provided to TaskScheduler in order for it to start.
@@ -45,8 +45,7 @@ namespace bs
 		 * @param[in]	dependency	(optional) Task dependency if one exists. If provided the task will
 		 * 							not be executed until its dependency is complete.
 		 */
-		static SPtr<Task> Create(const String& name, std::function<void()> taskWorker,
-			TaskPriority priority = TaskPriority::Normal, SPtr<Task> dependency = nullptr);
+		static SPtr<Task> Create(const String& name, std::function<void()> taskWorker, TaskPriority priority = TaskPriority::Normal, SPtr<Task> dependency = nullptr);
 
 		/** Returns true if the task has completed. */
 		bool IsComplete() const;
@@ -75,7 +74,7 @@ namespace bs
 		u32 mTaskId = 0;
 		std::function<void()> mTaskWorker;
 		SPtr<Task> mTaskDependency;
-		std::atomic<u32> mState{0}; /**< 0 - Inactive, 1 - In progress, 2 - Completed, 3 - Canceled */
+		std::atomic<u32> mState{ 0 }; /**< 0 - Inactive, 1 - In progress, 2 - Completed, 3 - Canceled */
 
 		TaskScheduler* mParent = nullptr;
 	};
@@ -87,11 +86,11 @@ namespace bs
 	 */
 	class BS_UTILITY_EXPORT TaskGroup
 	{
-		struct PrivatelyConstruct {};
+		struct PrivatelyConstruct
+		{};
 
 	public:
-		TaskGroup(const PrivatelyConstruct& dummy, String name, std::function<void(u32)> taskWorker, u32 count,
-			TaskPriority priority, SPtr<Task> dependency);
+		TaskGroup(const PrivatelyConstruct& dummy, String name, std::function<void(u32)> taskWorker, u32 count, TaskPriority priority, SPtr<Task> dependency);
 
 		/**
 		 * Creates a new task group. Task group should be provided to TaskScheduler in order for it to start.
@@ -104,8 +103,7 @@ namespace bs
 		 * @param[in]	dependency	(optional) Task dependency if one exists. If provided the task will
 		 * 							not be executed until its dependency is complete.
 		 */
-		static SPtr<TaskGroup> Create(String name, std::function<void(u32)> taskWorker, u32 count,
-			TaskPriority priority = TaskPriority::Normal, SPtr<Task> dependency = nullptr);
+		static SPtr<TaskGroup> Create(String name, std::function<void(u32)> taskWorker, u32 count, TaskPriority priority = TaskPriority::Normal, SPtr<Task> dependency = nullptr);
 
 		/** Returns true if all the tasks in the group have completed. */
 		bool IsComplete() const;
@@ -125,7 +123,7 @@ namespace bs
 		TaskPriority mPriority;
 		std::function<void(u32)> mTaskWorker;
 		SPtr<Task> mTaskDependency;
-		std::atomic<u32> mNumRemainingTasks{mCount};
+		std::atomic<u32> mNumRemainingTasks{ mCount };
 
 		TaskScheduler* mParent = nullptr;
 	};
@@ -164,6 +162,7 @@ namespace bs
 
 		/** Returns the maximum available worker threads (maximum number of tasks that can be executed simultaneously). */
 		u32 GetNumWorkers() const { return mMaxActiveTasks; }
+
 	protected:
 		friend class Task;
 		friend class TaskGroup;
@@ -198,4 +197,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

@@ -40,7 +40,7 @@ namespace bs
 		/**
 		 * Transforms the bounds by the given matrix.
 		 *
-		 * @note	
+		 * @note
 		 * As the resulting box will no longer be axis aligned, an axis align box
 		 * is instead created by encompassing the transformed oriented bounding box.
 		 * Retrieving the value as an actual OBB would provide a tighter fit.
@@ -50,7 +50,7 @@ namespace bs
 		/**
 		 * Transforms the bounds by the given matrix.
 		 *
-		 * @note	
+		 * @note
 		 * As the resulting box will no longer be axis aligned, an axis align box
 		 * is instead created by encompassing the transformed oriented bounding box.
 		 * Retrieving the value as an actual OBB would provide a tighter fit.
@@ -66,4 +66,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

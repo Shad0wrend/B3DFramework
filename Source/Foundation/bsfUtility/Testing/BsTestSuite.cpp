@@ -6,8 +6,8 @@
 namespace bs
 {
 	TestSuite::TestEntry::TestEntry(Func test, const String& name)
-		:Test(test), Name(name)
-	{ }
+		: Test(test), Name(name)
+	{}
 
 	void TestSuite::Run(TestOutput& output)
 	{
@@ -15,14 +15,14 @@ namespace bs
 
 		StartUp();
 
-		for (auto& testEntry : mTests)
+		for(auto& testEntry : mTests)
 		{
 			mActiveTestName = testEntry.Name;
-			
+
 			(this->*(testEntry.Test))();
 		}
 
-		for (auto& suite : mSuites)
+		for(auto& suite : mSuites)
 		{
 			suite->Run(output);
 		}
@@ -42,7 +42,7 @@ namespace bs
 
 	void TestSuite::Assertment(bool success, const String& desc, const String& file, long line)
 	{
-		if (!success)
+		if(!success)
 			mOutput->OutputFail(desc, mActiveTestName, file, line);
 	}
-}
+} // namespace bs

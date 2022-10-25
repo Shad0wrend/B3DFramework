@@ -38,8 +38,8 @@ namespace bs
 		exit(signal);
 	}
 
-	CrashHandler::CrashHandler(const CrashHandlerSettings& settings) :
-		mSettings(settings)
+	CrashHandler::CrashHandler(const CrashHandlerSettings& settings)
+		: mSettings(settings)
 	{
 		if(mSettings.disableCrashSignalHandler)
 			return;
@@ -64,7 +64,7 @@ namespace bs
 	String CrashHandler::getCrashTimestamp()
 	{
 		std::time_t t = time(0);
-		struct tm *now = localtime(&t);
+		struct tm* now = localtime(&t);
 
 		String timeStamp = "{0}{1}{2}_{3}{4}";
 		String strYear = toString(now->tm_year, 4, '0');
@@ -83,18 +83,18 @@ namespace bs
 		int traceSize = backtrace(trace, BS_MAX_STACKTRACE_DEPTH);
 		char** messages = backtrace_symbols(trace, traceSize);
 
-		for (int i = 0; i < traceSize && messages != nullptr; ++i)
+		for(int i = 0; i < traceSize && messages != nullptr; ++i)
 		{
 #if BS_PLATFORM == BS_PLATFORM_OSX
 			stackTrace << std::to_string(i) << ") " << messages[i];
 
 			// Try parsing a human readable name
 			Dl_info info;
-			if (dladdr(trace[i], &info) && info.dli_sname)
+			if(dladdr(trace[i], &info) && info.dli_sname)
 			{
 				stackTrace << ": ";
 
-				if (info.dli_sname[0] == '_')
+				if(info.dli_sname[0] == '_')
 				{
 					int status = -1;
 					char* demangledName = abi::__cxa_demangle(info.dli_sname, nullptr, nullptr, &status);
@@ -110,9 +110,9 @@ namespace bs
 					stackTrace << info.dli_sname;
 
 				// Try to find the line number
-				for (char *p = messages[i]; *p; ++p)
+				for(char* p = messages[i]; *p; ++p)
 				{
-					if (*p == '+')
+					if(*p == '+')
 					{
 						stackTrace << " " << p;
 						break;
@@ -126,13 +126,13 @@ namespace bs
 			char* mangedName = nullptr;
 			char* offsetBegin = nullptr;
 			char* offsetEnd = nullptr;
-			for (char *p = messages[i]; *p; ++p)
+			for(char* p = messages[i]; *p; ++p)
 			{
-				if (*p == '(')
+				if(*p == '(')
 					mangedName = p;
-				else if (*p == '+')
+				else if(*p == '+')
 					offsetBegin = p;
-				else if (*p == ')')
+				else if(*p == ')')
 				{
 					offsetEnd = p;
 					break;
@@ -144,15 +144,15 @@ namespace bs
 
 			stackTrace << toString(i) << ") ";
 
-			if (lineContainsMangledSymbol)
+			if(lineContainsMangledSymbol)
 			{
 				*mangedName++ = '\0';
 				*offsetBegin++ = '\0';
 				*offsetEnd++ = '\0';
 
 				int status;
-				char *real_name = abi::__cxa_demangle(mangedName, 0, 0, &status);
-				char *output_name = status == 0 /* Demangling successful */? real_name : mangedName;
+				char* real_name = abi::__cxa_demangle(mangedName, 0, 0, &status);
+				char* output_name = status == 0 /* Demangling successful */ ? real_name : mangedName;
 				stackTrace << String(messages[i])
 						   << ": " << output_name
 						   << "+" << offsetBegin << offsetEnd;
@@ -163,7 +163,7 @@ namespace bs
 				stackTrace << String(messages[i]);
 #endif
 
-			if (i < traceSize - 1)
+			if(i < traceSize - 1)
 				stackTrace << "\n";
 		}
 
@@ -172,11 +172,7 @@ namespace bs
 		return stackTrace.str();
 	}
 
-	void CrashHandler::reportCrash(const String& type,
-								   const String& description,
-								   const String& function,
-								   const String& file,
-								   u32 line) const
+	void CrashHandler::reportCrash(const String& type, const String& description, const String& function, const String& file, u32 line) const
 	{
 		if(mSettings.onBeforeReportCrash)
 		{
@@ -197,4 +193,4 @@ namespace bs
 		// Allow the debugger a chance to attach
 		std::raise(SIGINT);
 	}
-}
+} // namespace bs

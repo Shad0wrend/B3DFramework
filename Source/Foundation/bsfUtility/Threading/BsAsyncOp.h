@@ -28,7 +28,8 @@ namespace bs
 	 * Flag used for creating async operations signaling that we want to create an empty AsyncOp with no internal
 	 * memory storage.
 	 */
-	struct BS_UTILITY_EXPORT AsyncOpEmpty {};
+	struct BS_UTILITY_EXPORT AsyncOpEmpty
+	{};
 
 	/** @} */
 	/** @} */
@@ -46,24 +47,24 @@ namespace bs
 			AsyncOpData() = default;
 
 			Any MReturnValue;
-			volatile std::atomic<bool> MIsCompleted{false};
+			volatile std::atomic<bool> MIsCompleted{ false };
 		};
 
 	public:
 		AsyncOpBase()
-			:mData(bs_shared_ptr_new<AsyncOpData>())
-		{ }
+			: mData(bs_shared_ptr_new<AsyncOpData>())
+		{}
 
 		AsyncOpBase(AsyncOpEmpty empty)
-		{ }
+		{}
 
 		AsyncOpBase(const SPtr<AsyncOpSyncData>& syncData)
-			:mData(bs_shared_ptr_new<AsyncOpData>()), mSyncData(syncData)
-		{ }
+			: mData(bs_shared_ptr_new<AsyncOpData>()), mSyncData(syncData)
+		{}
 
 		AsyncOpBase(AsyncOpEmpty empty, const SPtr<AsyncOpSyncData>& syncData)
-			:mSyncData(syncData)
-		{ }
+			: mSyncData(syncData)
+		{}
 
 		/** Returns true if the async operation has completed. */
 		bool HasCompleted() const
@@ -80,21 +81,21 @@ namespace bs
 		 */
 		void BlockUntilComplete() const
 		{
-			if (mSyncData == nullptr)
+			if(mSyncData == nullptr)
 			{
 				BS_LOG(Error, Generic, "No sync data is available. Cannot block until AsyncOp is complete.");
 				return;
 			}
 
 			Lock lock(mSyncData->MMutex);
-			while (!HasCompleted())
+			while(!HasCompleted())
 				mSyncData->MCondition.wait(lock);
 		}
 
 		/**
-		* Retrieves the value returned by the async operation as a generic type. Only valid if hasCompleted() returns
-		* true.
-		*/
+		 * Retrieves the value returned by the async operation as a generic type. Only valid if hasCompleted() returns
+		 * true.
+		 */
 		Any GetGenericReturnValue() const
 		{
 #if BS_DEBUG_MODE
@@ -114,10 +115,10 @@ namespace bs
 	 * Object you may use to check on the results of an asynchronous operation. Contains uninitialized data until
 	 * hasCompleted() returns true.
 	 *
-	 * @note	
+	 * @note
 	 * You are allowed (and meant to) to copy this by value.
 	 */
-	template<class ReturnType>
+	template <class ReturnType>
 	class BS_UTILITY_EXPORT TAsyncOp : public AsyncOpBase
 	{
 	public:
@@ -126,16 +127,16 @@ namespace bs
 		TAsyncOp() = default;
 
 		TAsyncOp(AsyncOpEmpty empty)
-			:AsyncOpBase(empty)
-		{ }
+			: AsyncOpBase(empty)
+		{}
 
 		TAsyncOp(const SPtr<AsyncOpSyncData>& syncData)
-			:AsyncOpBase(syncData)
-		{ }
+			: AsyncOpBase(syncData)
+		{}
 
 		TAsyncOp(AsyncOpEmpty empty, const SPtr<AsyncOpSyncData>& syncData)
-			:AsyncOpBase(empty, syncData)
-		{ }
+			: AsyncOpBase(empty, syncData)
+		{}
 
 		/** Retrieves the value returned by the async operation. Only valid if hasCompleted() returns true. */
 		ReturnType GetReturnValue() const
@@ -158,7 +159,7 @@ namespace bs
 		{
 			mData->MIsCompleted.store(true, std::memory_order_release);
 
-			if (mSyncData != nullptr)
+			if(mSyncData != nullptr)
 				mSyncData->MCondition.notify_all();
 		}
 
@@ -171,21 +172,23 @@ namespace bs
 
 		/** @} */
 	protected:
-		template<class ReturnType2> friend bool operator==(const TAsyncOp<ReturnType2>&, std::nullptr_t);
-		template<class ReturnType2> friend bool operator!=(const TAsyncOp<ReturnType2>&, std::nullptr_t);
+		template <class ReturnType2>
+		friend bool operator==(const TAsyncOp<ReturnType2>&, std::nullptr_t);
+		template <class ReturnType2>
+		friend bool operator!=(const TAsyncOp<ReturnType2>&, std::nullptr_t);
 	};
 
 	/**	Checks if an AsyncOp is null. */
-	template<class ReturnType>
+	template <class ReturnType>
 	bool operator==(const TAsyncOp<ReturnType>& lhs, std::nullptr_t rhs)
-	{	
+	{
 		return lhs.mData == nullptr;
 	}
 
 	/**	Checks if an AsyncOp is not null. */
-	template<class ReturnType>
+	template <class ReturnType>
 	bool operator!=(const TAsyncOp<ReturnType>& lhs, std::nullptr_t rhs)
-	{	
+	{
 		return lhs.mData != nullptr;
 	}
 
@@ -193,4 +196,4 @@ namespace bs
 	using AsyncOp = TAsyncOp<Any>;
 
 	/** @} */
-}
+} // namespace bs

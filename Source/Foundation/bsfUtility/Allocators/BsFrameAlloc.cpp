@@ -76,7 +76,7 @@ namespace bs
 		}
 
 		u32 alignOffset = (alignment - (freePtr & (alignment - 1))) & (alignment - 1);
-		if ((amount + alignOffset) > freeMem)
+		if((amount + alignOffset) > freeMem)
 		{
 			// New blocks are allocated on a 16 byte boundary, ensure enough space is allocated taking into account
 			// the requested alignment
@@ -84,7 +84,7 @@ namespace bs
 #if BS_DEBUG_MODE
 			alignOffset = (alignment - (sizeof(u32) & (alignment - 1))) & (alignment - 1);
 #else
-			if (alignment > 16)
+			if(alignment > 16)
 				alignOffset = alignment - 16;
 			else
 				alignOffset = 0;
@@ -147,23 +147,23 @@ namespace bs
 
 			u32 startBlockIdx = mNextBlockIdx - 1;
 			u32 numFreedBlocks = 0;
-			for (i32 i = startBlockIdx; i >= 0; i--)
+			for(i32 i = startBlockIdx; i >= 0; i--)
 			{
 				MemBlock* curBlock = mBlocks[i];
 				u8* blockEnd = curBlock->MData + curBlock->MSize;
-				if (framePtr >= curBlock->MData && framePtr < blockEnd)
+				if(framePtr >= curBlock->MData && framePtr < blockEnd)
 				{
 					u8* dataEnd = curBlock->MData + curBlock->MFreePtr;
 					u32 sizeInBlock = (u32)(dataEnd - framePtr);
 					assert(sizeInBlock <= curBlock->MFreePtr);
 
 					curBlock->MFreePtr -= sizeInBlock;
-					if (curBlock->MFreePtr == 0)
+					if(curBlock->MFreePtr == 0)
 					{
 						numFreedBlocks++;
 
 						// Reset block counter if we're gonna reallocate this one
-						if (numFreedBlocks > 1)
+						if(numFreedBlocks > 1)
 							mNextBlockIdx = (u32)i;
 					}
 
@@ -177,10 +177,10 @@ namespace bs
 				}
 			}
 
-			if (numFreedBlocks > 1)
+			if(numFreedBlocks > 1)
 			{
 				u32 totalBytes = 0;
-				for (u32 i = 0; i < numFreedBlocks; i++)
+				for(u32 i = 0; i < numFreedBlocks; i++)
 				{
 					MemBlock* curBlock = mBlocks[mNextBlockIdx];
 					totalBytes += curBlock->MSize;
@@ -193,7 +193,7 @@ namespace bs
 				AllocBlock(totalBytes);
 
 				// Point to the first non-full block, or if none available then point the the block we just allocated
-				if (oldNextBlockIdx > 0)
+				if(oldNextBlockIdx > 0)
 					mFreeBlock = mBlocks[oldNextBlockIdx - 1];
 			}
 			else
@@ -204,15 +204,15 @@ namespace bs
 		else
 		{
 #if BS_DEBUG_MODE
-			if (mTotalAllocBytes.load() > 0)
+			if(mTotalAllocBytes.load() > 0)
 				BS_EXCEPT(InvalidStateException, "Not all frame allocated bytes were properly released.");
 #endif
 
-			if (mBlocks.size() > 1)
+			if(mBlocks.size() > 1)
 			{
 				// Merge all blocks into one
 				u32 totalBytes = 0;
-				for (auto& block : mBlocks)
+				for(auto& block : mBlocks)
 				{
 					totalBytes += block->MSize;
 					DeallocBlock(block);
@@ -235,10 +235,10 @@ namespace bs
 			blockSize = wantedSize;
 
 		MemBlock* newBlock = nullptr;
-		while (mNextBlockIdx < mBlocks.size())
+		while(mNextBlockIdx < mBlocks.size())
 		{
 			MemBlock* curBlock = mBlocks[mNextBlockIdx];
-			if (blockSize <= curBlock->MSize)
+			if(blockSize <= curBlock->MSize)
 			{
 				newBlock = curBlock;
 				mNextBlockIdx++;
@@ -252,12 +252,12 @@ namespace bs
 			}
 		}
 
-		if (newBlock == nullptr)
+		if(newBlock == nullptr)
 		{
 			u32 alignOffset = 16 - (sizeof(MemBlock) & (16 - 1));
 
 			u8* data = (u8*)reinterpret_cast<u8*>(bs_alloc_aligned16(blockSize + sizeof(MemBlock) + alignOffset));
-			newBlock = new (data) MemBlock(blockSize);
+			newBlock = new(data) MemBlock(blockSize);
 			data += sizeof(MemBlock) + alignOffset;
 			newBlock->MData = data;
 
@@ -284,7 +284,7 @@ namespace bs
 
 	BS_UTILITY_EXPORT FrameAlloc& gFrameAlloc()
 	{
-		if (_GlobalFrameAlloc == nullptr)
+		if(_GlobalFrameAlloc == nullptr)
 		{
 			// Note: This will leak memory but since it should exist throughout the entirety
 			// of runtime it should only leak on shutdown when the OS will free it anyway.
@@ -323,4 +323,4 @@ namespace bs
 	{
 		gFrameAlloc().Clear();
 	}
-}
+} // namespace bs

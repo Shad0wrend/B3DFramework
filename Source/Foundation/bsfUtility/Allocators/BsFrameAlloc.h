@@ -3,7 +3,7 @@
 #pragma once
 
 #include <limits>
-#include <new>                  /* For 'placement new' */
+#include <new> /* For 'placement new' */
 
 #include "Prerequisites/BsPlatformDefines.h"
 #include "Prerequisites/BsTypes.h"
@@ -34,7 +34,8 @@ namespace bs
 		class MemBlock
 		{
 		public:
-			MemBlock(u32 size) :MSize(size) { }
+			MemBlock(u32 size)
+				: MSize(size) {}
 
 			~MemBlock() = default;
 
@@ -78,10 +79,10 @@ namespace bs
 		 *
 		 * @note	Not thread safe.
 		 */
-		template<class T, class... Args>
-		T* Construct(Args &&...args)
+		template <class T, class... Args>
+		T* Construct(Args&&... args)
 		{
-			return new ((T*)Alloc(sizeof(T))) T(std::forward<Args>(args)...);
+			return new((T*)Alloc(sizeof(T))) T(std::forward<Args>(args)...);
 		}
 
 		/**
@@ -89,7 +90,7 @@ namespace bs
 		 *
 		 * @note	Not thread safe.
 		 */
-		template<class T>
+		template <class T>
 		void Destruct(T* data)
 		{
 			data->~T();
@@ -116,10 +117,10 @@ namespace bs
 		 * @note
 		 * Thread safe.
 		 */
-		template<class T>
+		template <class T>
 		void Free(T* obj)
 		{
-			if (obj != nullptr)
+			if(obj != nullptr)
 				obj->~T();
 
 			Free((u8*)obj);
@@ -167,16 +168,16 @@ namespace bs
 	/**
 	 * Version of FrameAlloc that allows blocks size to be provided through the template argument instead of the
 	 * constructor. */
-	template<int BlockSize>
+	template <int BlockSize>
 	class TFrameAlloc : public FrameAlloc
 	{
 	public:
 		TFrameAlloc()
-			:FrameAlloc(BlockSize)
-		{ }
+			: FrameAlloc(BlockSize)
+		{}
 	};
 
-	//NOLINTBEGIN(readability-identifier-naming)
+	// NOLINTBEGIN(readability-identifier-naming)
 	/** Allocator for the standard library that internally uses a frame allocator. */
 	template <class T>
 	class StdFrameAlloc
@@ -193,28 +194,44 @@ namespace bs
 		StdFrameAlloc() noexcept = default;
 
 		StdFrameAlloc(FrameAlloc* alloc) noexcept
-			:mFrameAlloc(alloc)
-		{ }
+			: mFrameAlloc(alloc)
+		{}
 
-		template<class U> StdFrameAlloc(const StdFrameAlloc<U>& alloc) noexcept
-			:mFrameAlloc(alloc.mFrameAlloc)
-		{ }
+		template <class U>
+		StdFrameAlloc(const StdFrameAlloc<U>& alloc) noexcept
+			: mFrameAlloc(alloc.mFrameAlloc)
+		{}
 
-		template<class U> bool operator==(const StdFrameAlloc<U>&) const noexcept { return true; }
-		template<class U> bool operator!=(const StdFrameAlloc<U>&) const noexcept { return false; }
-		template<class U> class rebind { public: typedef StdFrameAlloc<U> other; };
+		template <class U>
+		bool operator==(const StdFrameAlloc<U>&) const noexcept
+		{
+			return true;
+		}
+
+		template <class U>
+		bool operator!=(const StdFrameAlloc<U>&) const noexcept
+		{
+			return false;
+		}
+
+		template <class U>
+		class rebind
+		{
+		public:
+			typedef StdFrameAlloc<U> other;
+		};
 
 		/** Allocate but don't initialize number elements of type T.*/
 		T* allocate(const size_t num) const
 		{
-			if (num == 0)
+			if(num == 0)
 				return nullptr;
 
-			if (num > static_cast<size_t>(-1) / sizeof(T))
+			if(num > static_cast<size_t>(-1) / sizeof(T))
 				return nullptr; // Error
 
 			void* const pv = mFrameAlloc->Alloc((u32)(num * sizeof(T)));
-			if (!pv)
+			if(!pv)
 				return nullptr; // Error
 
 			return static_cast<T*>(pv);
@@ -229,24 +246,31 @@ namespace bs
 		FrameAlloc* mFrameAlloc = nullptr;
 
 		size_t max_size() const { return std::numeric_limits<size_type>::max() / sizeof(T); }
-		void construct(pointer p, const_reference t) { new (p) T(t); }
+
+		void construct(pointer p, const_reference t) { new(p) T(t); }
+
 		void destroy(pointer p) { p->~T(); }
-		template<class U, class... Args>
-		void construct(U* p, Args&&... args) { new(p) U(std::forward<Args>(args)...); }
+
+		template <class U, class... Args>
+		void construct(U* p, Args&&... args)
+		{
+			new(p) U(std::forward<Args>(args)...);
+		}
 	};
-	//NOLINTEND(readability-identifier-naming)
+
+	// NOLINTEND(readability-identifier-naming)
 
 	/** Return that all specializations of this allocator are interchangeable. */
 	template <class T1, class T2>
-	bool operator== (const StdFrameAlloc<T1>&,
-		const StdFrameAlloc<T2>&) throw() {
+	bool operator==(const StdFrameAlloc<T1>&, const StdFrameAlloc<T2>&) throw()
+	{
 		return true;
 	}
 
 	/** Return that all specializations of this allocator are interchangeable. */
 	template <class T1, class T2>
-	bool operator!= (const StdFrameAlloc<T1>&,
-		const StdFrameAlloc<T2>&) throw() {
+	bool operator!=(const StdFrameAlloc<T1>&, const StdFrameAlloc<T2>&) throw()
+	{
 		return false;
 	}
 
@@ -295,7 +319,7 @@ namespace bs
 	 * Allocates enough memory to hold the object of specified type using the global frame allocator, but does not
 	 * construct the object.
 	 */
-	template<class T>
+	template <class T>
 	T* bs_frame_alloc()
 	{
 		return (T*)bs_frame_alloc(sizeof(T));
@@ -305,7 +329,7 @@ namespace bs
 	 * Allocates enough memory to hold N objects of specified type using the global frame allocator, but does not
 	 * construct the object.
 	 */
-	template<class T>
+	template <class T>
 	T* bs_frame_alloc(u32 count)
 	{
 		return (T*)bs_frame_alloc(sizeof(T) * count);
@@ -315,13 +339,13 @@ namespace bs
 	 * Allocates enough memory to hold the object(s) of specified type using the global frame allocator,
 	 * and constructs them.
 	 */
-	template<class T>
+	template <class T>
 	T* bs_frame_new(u32 count = 0)
 	{
 		T* data = bs_frame_alloc<T>(count);
 
 		for(unsigned int i = 0; i < count; i++)
-			new ((void*)&data[i]) T;
+			new((void*)&data[i]) T;
 
 		return data;
 	}
@@ -329,13 +353,13 @@ namespace bs
 	/**
 	 * Allocates enough memory to hold the object(s) of specified type using the global frame allocator, and constructs them.
 	 */
-	template<class T, class... Args>
-	T* bs_frame_new(Args &&...args, u32 count = 0)
+	template <class T, class... Args>
+	T* bs_frame_new(Args&&... args, u32 count = 0)
 	{
 		T* data = bs_frame_alloc<T>(count);
 
 		for(unsigned int i = 0; i < count; i++)
-			new ((void*)&data[i]) T(std::forward<Args>(args)...);
+			new((void*)&data[i]) T(std::forward<Args>(args)...);
 
 		return data;
 	}
@@ -345,7 +369,7 @@ namespace bs
 	 *
 	 * @note	Must be called on the same thread the memory was allocated on.
 	 */
-	template<class T>
+	template <class T>
 	void bs_frame_delete(T* data)
 	{
 		data->~T();
@@ -358,7 +382,7 @@ namespace bs
 	 *
 	 * @note	Must be called on the same thread the memory was allocated on.
 	 */
-	template<class T>
+	template <class T>
 	void bs_frame_delete(T* data, u32 count)
 	{
 		for(unsigned int i = 0; i < count; i++)
@@ -381,11 +405,11 @@ namespace bs
 
 	/** Vector allocated with a frame allocator. */
 	template <typename T, typename A = StdAlloc<T, FrameAlloc>>
-	using FrameVector = std::vector < T, A > ;
+	using FrameVector = std::vector<T, A>;
 
 	/** Stack allocated with a frame allocator. */
 	template <typename T, typename A = StdAlloc<T, FrameAlloc>>
-	using FrameStack = std::stack < T, std::deque<T, A> > ;
+	using FrameStack = std::stack<T, std::deque<T, A>>;
 
 	/** Queue allocated with a frame allocator. */
 	template <typename T, typename A = StdAlloc<T, FrameAlloc>>
@@ -393,19 +417,19 @@ namespace bs
 
 	/** Set allocated with a frame allocator. */
 	template <typename T, typename P = std::less<T>, typename A = StdAlloc<T, FrameAlloc>>
-	using FrameSet = std::set < T, P, A > ;
+	using FrameSet = std::set<T, P, A>;
 
 	/** Map allocated with a frame allocator. */
 	template <typename K, typename V, typename P = std::less<K>, typename A = StdAlloc<std::pair<const K, V>, FrameAlloc>>
-	using FrameMap = std::map < K, V, P, A >;
+	using FrameMap = std::map<K, V, P, A>;
 
 	/** UnorderedSet allocated with a frame allocator. */
 	template <typename T, typename H = std::hash<T>, typename C = std::equal_to<T>, typename A = StdAlloc<T, FrameAlloc>>
-	using FrameUnorderedSet = std::unordered_set < T, H, C, A >;
+	using FrameUnorderedSet = std::unordered_set<T, H, C, A>;
 
 	/** UnorderedMap allocated with a frame allocator. */
 	template <typename K, typename V, typename H = std::hash<K>, typename C = std::equal_to<K>, typename A = StdAlloc<std::pair<const K, V>, FrameAlloc>>
-	using FrameUnorderedMap = std::unordered_map < K, V, H, C, A >;
+	using FrameUnorderedMap = std::unordered_map<K, V, H, C, A>;
 
 	/** @} */
 	/** @addtogroup Internal-Utility
@@ -422,7 +446,7 @@ namespace bs
 	 * Specialized memory allocator implementations that allows use of a global frame allocator in normal
 	 * new/delete/free/dealloc operators.
 	 */
-	template<>
+	template <>
 	class MemoryAllocator<FrameAlloc> : public MemoryAllocatorBase
 	{
 	public:
@@ -481,4 +505,4 @@ namespace bs
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs

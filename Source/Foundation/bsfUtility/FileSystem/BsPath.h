@@ -60,30 +60,30 @@ namespace bs
 		 * Assigns a path by parsing the provided path string. Path will be parsed according to the rules of the platform
 		 * the application is being compiled to.
 		 */
-		Path& operator= (const String& pathStr);
+		Path& operator=(const String& pathStr);
 
 		/**
 		 * Assigns a path by parsing the provided path null terminated string. Path will be parsed according to the rules
 		 * of the platform the application is being compiled to.
 		 */
-		Path& operator= (const char* pathStr);
+		Path& operator=(const char* pathStr);
 
-		Path& operator= (const Path& path);
+		Path& operator=(const Path& path);
 
 		/**
 		 * Compares two paths and returns true if they match. Comparison is case insensitive and paths will be compared
 		 * as-is, without canonization.
 		 */
-		bool operator== (const Path& path) const { return Equals(path); }
+		bool operator==(const Path& path) const { return Equals(path); }
 
 		/**
 		 * Compares two paths and returns true if they don't match. Comparison is case insensitive and paths will be
 		 * compared as-is, without canonization.
 		 */
-		bool operator!= (const Path& path) const { return !Equals(path); }
+		bool operator!=(const Path& path) const { return !Equals(path); }
 
 		/** Gets a directory name with the specified index from the path. */
-		const String& operator[] (u32 idx) const { return GetDirectory(idx); }
+		const String& operator[](u32 idx) const { return GetDirectory(idx); }
 
 		/** Swap internal data with another Path object. */
 		void Swap(Path& path);
@@ -128,7 +128,10 @@ namespace bs
 #if BS_PLATFORM == BS_PLATFORM_WIN32
 		WString ToPlatformString() const;
 #else
-		String toPlatformString() const { return toString(); }
+		String toPlatformString() const
+		{
+			return toString();
+		}
 #endif
 
 		/** Checks is the path a directory (contains no file-name). */
@@ -255,10 +258,10 @@ namespace bs
 		bool IsEmpty() const { return mDirectories.empty() && mFilename.empty() && mDevice.empty() && mNode.empty(); }
 
 		/** Concatenates two paths. */
-		Path operator+ (const Path& rhs) const;
+		Path operator+(const Path& rhs) const;
 
 		/** Concatenates two paths. */
-		Path& operator+= (const Path& rhs);
+		Path& operator+=(const Path& rhs);
 
 		/** Compares two path elements (filenames, directory names, etc.). */
 		static bool ComparePathElem(const String& left, const String& right);
@@ -270,6 +273,7 @@ namespace bs
 		static void StripInvalid(String& path);
 
 		static const Path BLANK;
+
 	private:
 		/**
 		 * Constructs a path by parsing the provided raw string data. Throws exception if provided path is not valid.
@@ -283,7 +287,7 @@ namespace bs
 		void Assign(const char* pathStr, u32 numChars, PathType type = PathType::Default);
 
 		/** Parses a Windows path and stores the parsed data internally. Throws an exception if parsing fails. */
-		template<class T>
+		template <class T>
 		void ParseWindows(const T* pathStr, u32 numChars)
 		{
 			Clear();
@@ -291,30 +295,30 @@ namespace bs
 			u32 idx = 0;
 			BasicStringStream<T> tempStream;
 
-			if (idx < numChars)
+			if(idx < numChars)
 			{
-				if (pathStr[idx] == '\\' || pathStr[idx] == '/')
+				if(pathStr[idx] == '\\' || pathStr[idx] == '/')
 				{
 					mIsAbsolute = true;
 					idx++;
 				}
 			}
 
-			if (idx < numChars)
+			if(idx < numChars)
 			{
 				// Path starts with a node, a drive letter or is relative
-				if (mIsAbsolute && (pathStr[idx] == '\\' || pathStr[idx] == '/')) // Node
+				if(mIsAbsolute && (pathStr[idx] == '\\' || pathStr[idx] == '/')) // Node
 				{
 					idx++;
 
 					tempStream.str(BasicString<T>());
 					tempStream.clear();
-					while (idx < numChars && pathStr[idx] != '\\' && pathStr[idx] != '/')
+					while(idx < numChars && pathStr[idx] != '\\' && pathStr[idx] != '/')
 						tempStream << pathStr[idx++];
 
 					SetNode(tempStream.str());
 
-					if (idx < numChars)
+					if(idx < numChars)
 						idx++;
 				}
 				else // A drive letter or not absolute
@@ -322,9 +326,9 @@ namespace bs
 					T drive = pathStr[idx];
 					idx++;
 
-					if (idx < numChars && pathStr[idx] == ':')
+					if(idx < numChars && pathStr[idx] == ':')
 					{
-						if (mIsAbsolute || !((drive >= 'a' && drive <= 'z') || (drive >= 'A' && drive <= 'Z')))
+						if(mIsAbsolute || !((drive >= 'a' && drive <= 'z') || (drive >= 'A' && drive <= 'Z')))
 							ThrowInvalidPathException(BasicString<T>(pathStr, numChars));
 
 						mIsAbsolute = true;
@@ -332,7 +336,7 @@ namespace bs
 
 						idx++;
 
-						if (idx >= numChars || (pathStr[idx] != '\\' && pathStr[idx] != '/'))
+						if(idx >= numChars || (pathStr[idx] != '\\' && pathStr[idx] != '/'))
 							ThrowInvalidPathException(BasicString<T>(pathStr, numChars));
 
 						idx++;
@@ -341,17 +345,17 @@ namespace bs
 						idx--;
 				}
 
-				while (idx < numChars)
+				while(idx < numChars)
 				{
 					tempStream.str(BasicString<T>());
 					tempStream.clear();
-					while (idx < numChars && pathStr[idx] != '\\' && pathStr[idx] != '/')
+					while(idx < numChars && pathStr[idx] != '\\' && pathStr[idx] != '/')
 					{
 						tempStream << pathStr[idx];
 						idx++;
 					}
 
-					if (idx < numChars)
+					if(idx < numChars)
 						PushDirectory(tempStream.str());
 					else
 						SetFilename(tempStream.str());
@@ -362,7 +366,7 @@ namespace bs
 		}
 
 		/** Parses a Unix path and stores the parsed data internally. Throws an exception if parsing fails. */
-		template<class T>
+		template <class T>
 		void ParseUnix(const T* pathStr, u32 numChars)
 		{
 			Clear();
@@ -370,17 +374,17 @@ namespace bs
 			u32 idx = 0;
 			BasicStringStream<T> tempStream;
 
-			if (idx < numChars)
+			if(idx < numChars)
 			{
-				if (pathStr[idx] == '/')
+				if(pathStr[idx] == '/')
 				{
 					mIsAbsolute = true;
 					idx++;
 				}
-				else if (pathStr[idx] == '~')
+				else if(pathStr[idx] == '~')
 				{
 					idx++;
-					if (idx >= numChars || pathStr[idx] == '/')
+					if(idx >= numChars || pathStr[idx] == '/')
 					{
 						PushDirectory(String("~"));
 						mIsAbsolute = true;
@@ -389,22 +393,22 @@ namespace bs
 						idx--;
 				}
 
-				while (idx < numChars)
+				while(idx < numChars)
 				{
 					tempStream.str(BasicString<T>());
 					tempStream.clear();
-					while (idx < numChars && pathStr[idx] != '/')
+					while(idx < numChars && pathStr[idx] != '/')
 					{
 						tempStream << pathStr[idx];
 						idx++;
 					}
 
-					if (idx < numChars)
+					if(idx < numChars)
 					{
-						if (mDirectories.empty())
+						if(mDirectories.empty())
 						{
 							BasicString<T> deviceStr = tempStream.str();
-							if (!deviceStr.empty() && *(deviceStr.rbegin()) == ':')
+							if(!deviceStr.empty() && *(deviceStr.rbegin()) == ':')
 							{
 								SetDevice(deviceStr.substr(0, deviceStr.length() - 1));
 								mIsAbsolute = true;
@@ -430,6 +434,7 @@ namespace bs
 		}
 
 		void SetNode(const String& node) { mNode = node; }
+
 		void SetDevice(const String& device) { mDevice = device; }
 
 		/** Build a Windows path string from internal path data. */
@@ -443,6 +448,7 @@ namespace bs
 
 		/** Helper method that throws invalid path exception. */
 		void ThrowInvalidPathException(const String& path) const;
+
 	private:
 		friend struct RTTIPlainType<Path>; // For serialization
 		friend struct ::std::hash<bs::Path>;
@@ -455,14 +461,14 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs
 
 /** @cond STDLIB */
 
 namespace std
 {
 	/** Hash value generator for Path. */
-	template<>
+	template <>
 	struct hash<bs::Path>
 	{
 		size_t operator()(const bs::Path& path) const
@@ -472,12 +478,12 @@ namespace std
 			bs::bs_hash_combine(hash, path.mDevice);
 			bs::bs_hash_combine(hash, path.mNode);
 
-			for (auto& dir : path.mDirectories)
+			for(auto& dir : path.mDirectories)
 				bs::bs_hash_combine(hash, dir);
 
 			return hash;
 		}
 	};
-}
+} // namespace std
 
 /** @endcond */

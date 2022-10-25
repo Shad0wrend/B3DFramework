@@ -22,33 +22,42 @@ namespace bs
 	 *  @{
 	 */
 
-	 /**
-	  * Starts definitions for member fields within a RTTI type. Follow this with calls to BS_RTTI_MEMBER* calls, and finish by
-	  * calling BS_END_RTTI_MEMBERS.
-	  */
-#define BS_BEGIN_RTTI_MEMBERS																	\
-	struct META_FirstEntry {};																	\
-	void META_InitPrevEntry(META_FirstEntry typeId) { }											\
-																								\
+	/**
+	 * Starts definitions for member fields within a RTTI type. Follow this with calls to BS_RTTI_MEMBER* calls, and finish by
+	 * calling BS_END_RTTI_MEMBERS.
+	 */
+#define BS_BEGIN_RTTI_MEMBERS                       \
+	struct META_FirstEntry                          \
+	{};                                             \
+	void META_InitPrevEntry(META_FirstEntry typeId) \
+	{}                                              \
+                                                    \
 	typedef META_FirstEntry
 
 	/**
 	 * Same as BS_RTTI_MEMBER_PLAIN, but allows you to specify separate names for the field name and the member variable,
 	 * as well as an optional info structure further describing the field.
 	 */
-#define BS_RTTI_MEMBER_PLAIN_FULL(name, field, id, info)										\
-	META_Entry_##name;																			\
-																								\
-	decltype(OwnerType::field)& get##name(OwnerType* obj) { return obj->field; }				\
-	void set##name(OwnerType* obj, decltype(OwnerType::field)& val) { obj->field = val; }		\
-																								\
-	struct META_NextEntry_##name{};																\
-	void META_InitPrevEntry(META_NextEntry_##name typeId)										\
-	{																							\
-		AddPlainField(#name, id, &MyType::get##name, &MyType::set##name, info);					\
-		META_InitPrevEntry(META_Entry_##name());												\
-	}																							\
-																								\
+#define BS_RTTI_MEMBER_PLAIN_FULL(name, field, id, info)                        \
+	META_Entry_##name;                                                          \
+                                                                                \
+	decltype(OwnerType::field)& get##name(OwnerType* obj)                       \
+	{                                                                           \
+		return obj->field;                                                      \
+	}                                                                           \
+	void set##name(OwnerType* obj, decltype(OwnerType::field)& val)             \
+	{                                                                           \
+		obj->field = val;                                                       \
+	}                                                                           \
+                                                                                \
+	struct META_NextEntry_##name                                                \
+	{};                                                                         \
+	void META_InitPrevEntry(META_NextEntry_##name typeId)                       \
+	{                                                                           \
+		AddPlainField(#name, id, &MyType::get##name, &MyType::set##name, info); \
+		META_InitPrevEntry(META_Entry_##name());                                \
+	}                                                                           \
+                                                                                \
 	typedef META_NextEntry_##name
 
 	/**
@@ -59,7 +68,7 @@ namespace bs
 #define BS_RTTI_MEMBER_PLAIN(name, id) BS_RTTI_MEMBER_PLAIN_FULL(name, name, id, bs::RTTIFieldInfo::DEFAULT)
 
 	/** Same as BS_RTTI_MEMBER_PLAIN, but allows you to specify separate names for the field name and the member variable. */
-#define BS_RTTI_MEMBER_PLAIN_NAMED(name, field, id)	BS_RTTI_MEMBER_PLAIN_FULL(name, field, id, bs::RTTIFieldInfo::DEFAULT)
+#define BS_RTTI_MEMBER_PLAIN_NAMED(name, field, id) BS_RTTI_MEMBER_PLAIN_FULL(name, field, id, bs::RTTIFieldInfo::DEFAULT)
 
 	/** Same as BS_RTTI_MEMBER_PLAIN, but allows you to specify an info structure that further describes the field. */
 #define BS_RTTI_MEMBER_PLAIN_INFO(name, id, info) BS_RTTI_MEMBER_PLAIN_FULL(name, name, id, info)
@@ -68,21 +77,34 @@ namespace bs
 	 * Same as BS_RTTI_MEMBER_PLAIN_ARRAY, but allows you to specify separate names for the field name and the member
 	 * variable, as well as an optional info structure further describing the field.
 	 */
-#define BS_RTTI_MEMBER_PLAIN_ARRAY_FULL(name, field, id, info)									\
-	META_Entry_##name;																			\
-																								\
-	std::common_type<decltype(OwnerType::field)>::type::value_type& get##name(OwnerType* obj, ::bs::u32 idx) { return obj->field[idx]; }				\
-	void set##name(OwnerType* obj, ::bs::u32 idx, std::common_type<decltype(OwnerType::field)>::type::value_type& val) { obj->field[idx] = val; }	\
-	::bs::u32 getSize##name(OwnerType* obj) { return (::bs::u32)obj->field.size(); }																\
-	void setSize##name(OwnerType* obj, ::bs::u32 val) { obj->field.resize(val); }																	\
-																								\
-	struct META_NextEntry_##name{};																\
-	void META_InitPrevEntry(META_NextEntry_##name typeId)										\
-	{																							\
-		AddPlainArrayField(#name, id, &MyType::get##name, &MyType::getSize##name, &MyType::set##name, &MyType::setSize##name, info);					\
-		META_InitPrevEntry(META_Entry_##name());												\
-	}																							\
-																								\
+#define BS_RTTI_MEMBER_PLAIN_ARRAY_FULL(name, field, id, info)                                                                       \
+	META_Entry_##name;                                                                                                               \
+                                                                                                                                     \
+	std::common_type<decltype(OwnerType::field)>::type::value_type& get##name(OwnerType* obj, ::bs::u32 idx)                         \
+	{                                                                                                                                \
+		return obj->field[idx];                                                                                                      \
+	}                                                                                                                                \
+	void set##name(OwnerType* obj, ::bs::u32 idx, std::common_type<decltype(OwnerType::field)>::type::value_type& val)               \
+	{                                                                                                                                \
+		obj->field[idx] = val;                                                                                                       \
+	}                                                                                                                                \
+	::bs::u32 getSize##name(OwnerType* obj)                                                                                          \
+	{                                                                                                                                \
+		return (::bs::u32)obj->field.size();                                                                                         \
+	}                                                                                                                                \
+	void setSize##name(OwnerType* obj, ::bs::u32 val)                                                                                \
+	{                                                                                                                                \
+		obj->field.resize(val);                                                                                                      \
+	}                                                                                                                                \
+                                                                                                                                     \
+	struct META_NextEntry_##name                                                                                                     \
+	{};                                                                                                                              \
+	void META_InitPrevEntry(META_NextEntry_##name typeId)                                                                            \
+	{                                                                                                                                \
+		AddPlainArrayField(#name, id, &MyType::get##name, &MyType::getSize##name, &MyType::set##name, &MyType::setSize##name, info); \
+		META_InitPrevEntry(META_Entry_##name());                                                                                     \
+	}                                                                                                                                \
+                                                                                                                                     \
 	typedef META_NextEntry_##name
 
 /**
@@ -91,33 +113,40 @@ namespace bs
  */
 #define BS_RTTI_MEMBER_PLAIN_ARRAY(name, id) BS_RTTI_MEMBER_PLAIN_ARRAY_FULL(name, name, id, bs::RTTIFieldInfo::DEFAULT)
 
- /**
-  * Same as BS_RTTI_MEMBER_PLAIN_ARRAY, but allows you to specify separate names for the field name and the member variable.
-  */
+	/**
+	 * Same as BS_RTTI_MEMBER_PLAIN_ARRAY, but allows you to specify separate names for the field name and the member variable.
+	 */
 #define BS_RTTI_MEMBER_PLAIN_ARRAY_NAMED(name, field, id) BS_RTTI_MEMBER_PLAIN_ARRAY_FULL(name, field, id, bs::RTTIFieldInfo::DEFAULT)
 
- /**
-  * Same as BS_RTTI_MEMBER_PLAIN_ARRAY, but allows you to specify an info structure that further describes the field.
-  */
+	/**
+	 * Same as BS_RTTI_MEMBER_PLAIN_ARRAY, but allows you to specify an info structure that further describes the field.
+	 */
 #define BS_RTTI_MEMBER_PLAIN_ARRAY_INFO(name, id, info) BS_RTTI_MEMBER_PLAIN_ARRAY_FULL(name, name, id, info)
 
 /**
  * Same as BS_RTTI_MEMBER_REFL, but allows you to specify separate names for the field name and the member variable,
  * as well as an optional info structure further describing the field.
  */
-#define BS_RTTI_MEMBER_REFL_FULL(name, field, id, info)											\
-	META_Entry_##name;																			\
-																								\
-	decltype(OwnerType::field)& get##name(OwnerType* obj) { return obj->field; }				\
-	void set##name(OwnerType* obj, decltype(OwnerType::field)& val) { obj->field = val; }		\
-																								\
-	struct META_NextEntry_##name{};																\
-	void META_InitPrevEntry(META_NextEntry_##name typeId)										\
-	{																							\
-		AddReflectableField(#name, id, &MyType::get##name, &MyType::set##name, info);			\
-		META_InitPrevEntry(META_Entry_##name());												\
-	}																							\
-																								\
+#define BS_RTTI_MEMBER_REFL_FULL(name, field, id, info)                               \
+	META_Entry_##name;                                                                \
+                                                                                      \
+	decltype(OwnerType::field)& get##name(OwnerType* obj)                             \
+	{                                                                                 \
+		return obj->field;                                                            \
+	}                                                                                 \
+	void set##name(OwnerType* obj, decltype(OwnerType::field)& val)                   \
+	{                                                                                 \
+		obj->field = val;                                                             \
+	}                                                                                 \
+                                                                                      \
+	struct META_NextEntry_##name                                                      \
+	{};                                                                               \
+	void META_InitPrevEntry(META_NextEntry_##name typeId)                             \
+	{                                                                                 \
+		AddReflectableField(#name, id, &MyType::get##name, &MyType::set##name, info); \
+		META_InitPrevEntry(META_Entry_##name());                                      \
+	}                                                                                 \
+                                                                                      \
 	typedef META_NextEntry_##name
 
 /**
@@ -136,21 +165,34 @@ namespace bs
  * Same as BS_RTTI_MEMBER_REFL_ARRAY, but allows you to specify separate names for the field name and the member variable,
  * as well as an optional info structure further describing the field.
  */
-#define BS_RTTI_MEMBER_REFL_ARRAY_FULL(name, field, id, info)									\
-	META_Entry_##name;																			\
-																								\
-	std::common_type<decltype(OwnerType::field)>::type::value_type& get##name(OwnerType* obj, ::bs::u32 idx) { return obj->field[idx]; }				\
-	void set##name(OwnerType* obj, ::bs::u32 idx, std::common_type<decltype(OwnerType::field)>::type::value_type& val) { obj->field[idx] = val; }	\
-	::bs::u32 getSize##name(OwnerType* obj) { return (::bs::u32)obj->field.size(); }		\
-	void setSize##name(OwnerType* obj, ::bs::u32 val) { obj->field.resize(val); }			\
-																								\
-	struct META_NextEntry_##name{};																\
-	void META_InitPrevEntry(META_NextEntry_##name typeId)										\
-	{																							\
-		AddReflectableArrayField(#name, id, &MyType::get##name, &MyType::getSize##name, &MyType::set##name, &MyType::setSize##name, info);				\
-		META_InitPrevEntry(META_Entry_##name());												\
-	}																							\
-																								\
+#define BS_RTTI_MEMBER_REFL_ARRAY_FULL(name, field, id, info)                                                                              \
+	META_Entry_##name;                                                                                                                     \
+                                                                                                                                           \
+	std::common_type<decltype(OwnerType::field)>::type::value_type& get##name(OwnerType* obj, ::bs::u32 idx)                               \
+	{                                                                                                                                      \
+		return obj->field[idx];                                                                                                            \
+	}                                                                                                                                      \
+	void set##name(OwnerType* obj, ::bs::u32 idx, std::common_type<decltype(OwnerType::field)>::type::value_type& val)                     \
+	{                                                                                                                                      \
+		obj->field[idx] = val;                                                                                                             \
+	}                                                                                                                                      \
+	::bs::u32 getSize##name(OwnerType* obj)                                                                                                \
+	{                                                                                                                                      \
+		return (::bs::u32)obj->field.size();                                                                                               \
+	}                                                                                                                                      \
+	void setSize##name(OwnerType* obj, ::bs::u32 val)                                                                                      \
+	{                                                                                                                                      \
+		obj->field.resize(val);                                                                                                            \
+	}                                                                                                                                      \
+                                                                                                                                           \
+	struct META_NextEntry_##name                                                                                                           \
+	{};                                                                                                                                    \
+	void META_InitPrevEntry(META_NextEntry_##name typeId)                                                                                  \
+	{                                                                                                                                      \
+		AddReflectableArrayField(#name, id, &MyType::get##name, &MyType::getSize##name, &MyType::set##name, &MyType::setSize##name, info); \
+		META_InitPrevEntry(META_Entry_##name());                                                                                           \
+	}                                                                                                                                      \
+                                                                                                                                           \
 	typedef META_NextEntry_##name
 
 /**
@@ -174,19 +216,26 @@ namespace bs
  * Same as BS_RTTI_MEMBER_REFLPTR, but allows you to specify separate names for the field name and the member variable,
  * as well as an optional info structure further describing the field.
  */
-#define BS_RTTI_MEMBER_REFLPTR_FULL(name, field, id, info)										\
-	META_Entry_##name;																			\
-																								\
-	decltype(OwnerType::field) get##name(OwnerType* obj) { return obj->field; }					\
-	void set##name(OwnerType* obj, decltype(OwnerType::field) val) { obj->field = val; }		\
-																								\
-	struct META_NextEntry_##name{};																\
-	void META_InitPrevEntry(META_NextEntry_##name typeId)										\
-	{																							\
-		AddReflectablePtrField(#name, id, &MyType::get##name, &MyType::set##name, info);		\
-		META_InitPrevEntry(META_Entry_##name());												\
-	}																							\
-																								\
+#define BS_RTTI_MEMBER_REFLPTR_FULL(name, field, id, info)                               \
+	META_Entry_##name;                                                                   \
+                                                                                         \
+	decltype(OwnerType::field) get##name(OwnerType* obj)                                 \
+	{                                                                                    \
+		return obj->field;                                                               \
+	}                                                                                    \
+	void set##name(OwnerType* obj, decltype(OwnerType::field) val)                       \
+	{                                                                                    \
+		obj->field = val;                                                                \
+	}                                                                                    \
+                                                                                         \
+	struct META_NextEntry_##name                                                         \
+	{};                                                                                  \
+	void META_InitPrevEntry(META_NextEntry_##name typeId)                                \
+	{                                                                                    \
+		AddReflectablePtrField(#name, id, &MyType::get##name, &MyType::set##name, info); \
+		META_InitPrevEntry(META_Entry_##name());                                         \
+	}                                                                                    \
+                                                                                         \
 	typedef META_NextEntry_##name
 
 /**
@@ -201,25 +250,38 @@ namespace bs
 /** Same as BS_RTTI_MEMBER_REFLPTR, but allows you to specify an info structure that further describes the field. */
 #define BS_RTTI_MEMBER_REFLPTR_INFO(name, id, info) BS_RTTI_MEMBER_REFLPTR_FULL(name, name, id, info)
 
- /**
-  * Same as BS_RTTI_MEMBER_REFLPTR_ARRAY, but allows you to specify separate names for the field name and the member
-  * variable, as well as an optional info structure further describing the field.
-  */
-#define BS_RTTI_MEMBER_REFLPTR_ARRAY_FULL(name, field, id, info)								\
-	META_Entry_##name;																			\
-																								\
-	std::common_type<decltype(OwnerType::field)>::type::value_type get##name(OwnerType* obj, ::bs::u32 idx) { return obj->field[idx]; }				\
-	void set##name(OwnerType* obj, ::bs::u32 idx, std::common_type<decltype(OwnerType::field)>::type::value_type val) { obj->field[idx] = val; }		\
-	::bs::u32 getSize##name(OwnerType* obj) { return (::bs::u32)obj->field.size(); }		\
-	void setSize##name(OwnerType* obj, ::bs::u32 val) { obj->field.resize(val); }			\
-																								\
-	struct META_NextEntry_##name{};																\
-	void META_InitPrevEntry(META_NextEntry_##name typeId)										\
-	{																							\
-		AddReflectablePtrArrayField(#name, id, &MyType::get##name, &MyType::getSize##name, &MyType::set##name, &MyType::setSize##name, info);			\
-		META_InitPrevEntry(META_Entry_##name());												\
-	}																							\
-																								\
+	/**
+	 * Same as BS_RTTI_MEMBER_REFLPTR_ARRAY, but allows you to specify separate names for the field name and the member
+	 * variable, as well as an optional info structure further describing the field.
+	 */
+#define BS_RTTI_MEMBER_REFLPTR_ARRAY_FULL(name, field, id, info)                                                                              \
+	META_Entry_##name;                                                                                                                        \
+                                                                                                                                              \
+	std::common_type<decltype(OwnerType::field)>::type::value_type get##name(OwnerType* obj, ::bs::u32 idx)                                   \
+	{                                                                                                                                         \
+		return obj->field[idx];                                                                                                               \
+	}                                                                                                                                         \
+	void set##name(OwnerType* obj, ::bs::u32 idx, std::common_type<decltype(OwnerType::field)>::type::value_type val)                         \
+	{                                                                                                                                         \
+		obj->field[idx] = val;                                                                                                                \
+	}                                                                                                                                         \
+	::bs::u32 getSize##name(OwnerType* obj)                                                                                                   \
+	{                                                                                                                                         \
+		return (::bs::u32)obj->field.size();                                                                                                  \
+	}                                                                                                                                         \
+	void setSize##name(OwnerType* obj, ::bs::u32 val)                                                                                         \
+	{                                                                                                                                         \
+		obj->field.resize(val);                                                                                                               \
+	}                                                                                                                                         \
+                                                                                                                                              \
+	struct META_NextEntry_##name                                                                                                              \
+	{};                                                                                                                                       \
+	void META_InitPrevEntry(META_NextEntry_##name typeId)                                                                                     \
+	{                                                                                                                                         \
+		AddReflectablePtrArrayField(#name, id, &MyType::get##name, &MyType::getSize##name, &MyType::set##name, &MyType::setSize##name, info); \
+		META_InitPrevEntry(META_Entry_##name());                                                                                              \
+	}                                                                                                                                         \
+                                                                                                                                              \
 	typedef META_NextEntry_##name
 
 /**
@@ -228,33 +290,33 @@ namespace bs
  */
 #define BS_RTTI_MEMBER_REFLPTR_ARRAY(name, id) BS_RTTI_MEMBER_REFLPTR_ARRAY_FULL(name, name, id, bs::RTTIFieldInfo::DEFAULT)
 
- /**
-  * Same as BS_RTTI_MEMBER_REFLPTR_ARRAY, but allows you to specify separate names for the field name and the member
-  * variable.
-  */
+	/**
+	 * Same as BS_RTTI_MEMBER_REFLPTR_ARRAY, but allows you to specify separate names for the field name and the member
+	 * variable.
+	 */
 #define BS_RTTI_MEMBER_REFLPTR_ARRAY_NAMED(name, field, id) BS_RTTI_MEMBER_REFLPTR_ARRAY_FULL(name, field, id, bs::RTTIFieldInfo::DEFAULT)
 
- /** Same as BS_RTTI_MEMBER_REFLPTR_ARRAY, but allows you to specify an info structure that further describes the field. */
+	/** Same as BS_RTTI_MEMBER_REFLPTR_ARRAY, but allows you to specify an info structure that further describes the field. */
 #define BS_RTTI_MEMBER_REFLPTR_ARRAY_INFO(name, id, info) BS_RTTI_MEMBER_REFLPTR_ARRAY_FULL(name, name, id, info)
 
 /** Ends definitions for member fields with a RTTI type. Must follow BS_BEGIN_RTTI_MEMBERS. */
-#define BS_END_RTTI_MEMBERS																		\
-	META_LastEntry;																				\
-																								\
-	struct META_InitAllMembers																	\
-	{																							\
-		META_InitAllMembers(MyType* owner)														\
-		{																						\
-			static bool sMembersInitialized = false;											\
-			if(!sMembersInitialized)															\
-			{																					\
-				owner->META_InitPrevEntry(META_LastEntry());									\
-				sMembersInitialized = true;														\
-			}																					\
-		}																						\
-	};																							\
-																								\
-	META_InitAllMembers mInitMembers{this};
+#define BS_END_RTTI_MEMBERS                                  \
+	META_LastEntry;                                          \
+                                                             \
+	struct META_InitAllMembers                               \
+	{                                                        \
+		META_InitAllMembers(MyType* owner)                   \
+		{                                                    \
+			static bool sMembersInitialized = false;         \
+			if(!sMembersInitialized)                         \
+			{                                                \
+				owner->META_InitPrevEntry(META_LastEntry()); \
+				sMembersInitialized = true;                  \
+			}                                                \
+		}                                                    \
+	};                                                       \
+                                                             \
+	META_InitAllMembers mInitMembers{ this };
 
 	/** Contains serializable meta-data about a RTTIType. */
 	struct RTTISchema : IReflectable
@@ -282,7 +344,7 @@ namespace bs
 	/**
 	 * Provides an interface for accessing fields of a certain class.
 	 * Data can be easily accessed by getter and setter methods.
-	 * 			
+	 *
 	 * Supported data types:
 	 *	- Plain types - All types defined in BsRTTIField.h, mostly native types and POD (plain old data) structs. Data is parsed byte by byte.
 	 *	                No pointers to plain types are supported. Data is passed around by value.
@@ -387,7 +449,7 @@ namespace bs
 
 		/** Returns a set of serializable meta-data describing the RTTI type. */
 		const SPtr<RTTISchema>& GetSchema() const { return mSchema; }
-		
+
 		/** @name Internal
 		 *  @{
 		 */
@@ -404,7 +466,7 @@ namespace bs
 
 		/** Initializes the type schema. Should be called once after construction. */
 		void InitSchemaInternal();
-		
+
 		/** @} */
 
 	protected:
@@ -423,7 +485,7 @@ namespace bs
 	};
 
 	/** Used for initializing a certain type as soon as the program is loaded. */
-	template<typename Type, typename BaseType>
+	template <typename Type, typename BaseType>
 	struct InitRTTIOnStart
 	{
 	public:
@@ -431,16 +493,16 @@ namespace bs
 		{
 			RTTITypeBase* rttiType = Type::GetRttiStatic();
 			rttiType->InitSchemaInternal();
-			
+
 			IReflectable::RegisterRTTITypeInternal(rttiType);
 			BaseType::GetRttiStatic()->RegisterDerivedClassInternal(rttiType);
 		}
 
-		void MakeSureIAmInstantiated() { }
+		void MakeSureIAmInstantiated() {}
 	};
 
 	/** Specialization for root class of RTTI hierarchy - IReflectable */
-	template<typename Type>
+	template <typename Type>
 	struct InitRTTIOnStart<Type, IReflectable>
 	{
 	public:
@@ -452,21 +514,21 @@ namespace bs
 			IReflectable::RegisterRTTITypeInternal(rttiType);
 		}
 
-		void MakeSureIAmInstantiated() { }
+		void MakeSureIAmInstantiated() {}
 	};
 
 	/**
 	 * Template that returns RTTI type of the specified type, unless the specified type is IReflectable in which case it
 	 * returns a null.
 	 */
-	template<typename Type>
+	template <typename Type>
 	struct GetRttiType
 	{
 		RTTITypeBase* operator()() { return Type::GetRttiStatic(); }
 	};
 
 	/** Specialization for root class of RTTI hierarchy - IReflectable. */
-	template<>
+	template <>
 	struct GetRttiType<IReflectable>
 	{
 		RTTITypeBase* operator()() { return nullptr; }
@@ -482,7 +544,7 @@ namespace bs
 	/**
 	 * Allows you to provide a run-time type information for a specific class, along with support for
 	 * serialization/deserialization.
-	 * 			
+	 *
 	 * Derive from this class and return the that class from IReflectable::getRTTI. This way you can separate serialization
 	 * logic from the actual class you're serializing.
 	 *
@@ -507,6 +569,7 @@ namespace bs
 			// and our type won't get initialized on start (Actual behavior is a bit more random)
 			initOnStart.MakeSureIAmInstantiated();
 		}
+
 		virtual ~RTTIType() = default;
 
 		/** Returns a singleton of this RTTI type. */
@@ -517,7 +580,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTITypeBase::getDerivedClasses */
-		Vector<RTTITypeBase*>& GetDerivedClasses() 
+		Vector<RTTITypeBase*>& GetDerivedClasses()
 		{
 			static Vector<RTTITypeBase*> mRTTIDerivedClasses;
 			return mRTTIDerivedClasses;
@@ -537,15 +600,15 @@ namespace bs
 			Stack<RTTITypeBase*> todo;
 			todo.push(base);
 
-			while (!todo.empty())
+			while(!todo.empty())
 			{
 				RTTITypeBase* currentType = todo.top();
 				todo.pop();
 
-				if (currentType->GetRttiId() == GetRttiId())
+				if(currentType->GetRttiId() == GetRttiId())
 					return true;
 
-				for (const auto& item : currentType->GetDerivedClasses())
+				for(const auto& item : currentType->GetDerivedClasses())
 					todo.push(item);
 			}
 
@@ -569,17 +632,12 @@ namespace bs
 		typedef MyRTTIType MyType;
 
 		/** Registers a field referencing a plain type. */
-		template<class InterfaceType, class ObjectType, class DataType>
-		void AddPlainField(const String& name, u32 uniqueId,
-			DataType& (InterfaceType::*getter)(ObjectType*),
-			void (InterfaceType::*setter)(ObjectType*, DataType&),
-			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
+		template <class InterfaceType, class ObjectType, class DataType>
+		void AddPlainField(const String& name, u32 uniqueId, DataType& (InterfaceType::*getter)(ObjectType*), void (InterfaceType::*setter)(ObjectType*, DataType&), const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
 		{
-			static_assert((std::is_base_of<bs::RTTIType<Type, BaseType, MyRTTIType>, InterfaceType>::value),
-				"Class with the get/set methods must derive from bs::RTTIType.");
+			static_assert((std::is_base_of<bs::RTTIType<Type, BaseType, MyRTTIType>, InterfaceType>::value), "Class with the get/set methods must derive from bs::RTTIType.");
 
-			static_assert(!(std::is_base_of<bs::IReflectable, DataType>::value),
-				"Data type derives from IReflectable but it is being added as a plain field.");
+			static_assert(!(std::is_base_of<bs::IReflectable, DataType>::value), "Data type derives from IReflectable but it is being added as a plain field.");
 
 			auto newField = bs_new<RTTIPlainField<InterfaceType, DataType, ObjectType>>();
 			newField->InitSingle(name, uniqueId, getter, setter, info);
@@ -587,14 +645,10 @@ namespace bs
 		}
 
 		/** Registers a field referencing an IReflectable type passed by value. */
-		template<class InterfaceType, class ObjectType, class DataType>
-		void AddReflectableField(const String& name, u32 uniqueId,
-			DataType& (InterfaceType::*getter)(ObjectType*),
-			void (InterfaceType::*setter)(ObjectType*, DataType&),
-			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
+		template <class InterfaceType, class ObjectType, class DataType>
+		void AddReflectableField(const String& name, u32 uniqueId, DataType& (InterfaceType::*getter)(ObjectType*), void (InterfaceType::*setter)(ObjectType*, DataType&), const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
 		{
-			static_assert((std::is_base_of<bs::IReflectable, DataType>::value),
-				"Invalid data type for complex field. It needs to derive from bs::IReflectable.");
+			static_assert((std::is_base_of<bs::IReflectable, DataType>::value), "Invalid data type for complex field. It needs to derive from bs::IReflectable.");
 
 			auto newField = bs_new<RTTIReflectableField<InterfaceType, DataType, ObjectType>>();
 			newField->InitSingle(name, uniqueId, getter, setter, info);
@@ -602,14 +656,10 @@ namespace bs
 		}
 
 		/** Registers a field referencing an IReflectable type passed by pointer. */
-		template<class InterfaceType, class ObjectType, class DataType>
-		void AddReflectablePtrField(const String& name, u32 uniqueId,
-			SPtr<DataType> (InterfaceType::*getter)(ObjectType*),
-			void (InterfaceType::*setter)(ObjectType*, SPtr<DataType>),
-			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
+		template <class InterfaceType, class ObjectType, class DataType>
+		void AddReflectablePtrField(const String& name, u32 uniqueId, SPtr<DataType> (InterfaceType::*getter)(ObjectType*), void (InterfaceType::*setter)(ObjectType*, SPtr<DataType>), const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
 		{
-			static_assert((std::is_base_of<bs::IReflectable, DataType>::value),
-				"Invalid data type for complex field. It needs to derive from bs::IReflectable.");
+			static_assert((std::is_base_of<bs::IReflectable, DataType>::value), "Invalid data type for complex field. It needs to derive from bs::IReflectable.");
 
 			auto newField = bs_new<RTTIReflectablePtrField<InterfaceType, DataType, ObjectType>>();
 			newField->InitSingle(name, uniqueId, getter, setter, info);
@@ -617,36 +667,23 @@ namespace bs
 		}
 
 		/** Registers a field referencing an array of plain types. */
-		template<class InterfaceType, class ObjectType, class DataType>
-		void AddPlainArrayField(const String& name, u32 uniqueId,
-			DataType& (InterfaceType::*getter)(ObjectType*, u32),
-			u32(InterfaceType::*getSize)(ObjectType*),
-			void (InterfaceType::*setter)(ObjectType*, u32, DataType&),
-			void(InterfaceType::*setSize)(ObjectType*, u32),
-			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
+		template <class InterfaceType, class ObjectType, class DataType>
+		void AddPlainArrayField(const String& name, u32 uniqueId, DataType& (InterfaceType::*getter)(ObjectType*, u32), u32 (InterfaceType::*getSize)(ObjectType*), void (InterfaceType::*setter)(ObjectType*, u32, DataType&), void (InterfaceType::*setSize)(ObjectType*, u32), const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
 		{
-			static_assert((std::is_base_of<bs::RTTIType<Type, BaseType, MyRTTIType>, InterfaceType>::value),
-				"Class with the get/set methods must derive from bs::RTTIType.");
+			static_assert((std::is_base_of<bs::RTTIType<Type, BaseType, MyRTTIType>, InterfaceType>::value), "Class with the get/set methods must derive from bs::RTTIType.");
 
-			static_assert(!(std::is_base_of<bs::IReflectable, DataType>::value),
-				"Data type derives from IReflectable but it is being added as a plain field.");
+			static_assert(!(std::is_base_of<bs::IReflectable, DataType>::value), "Data type derives from IReflectable but it is being added as a plain field.");
 
 			auto newField = bs_new<RTTIPlainField<InterfaceType, DataType, ObjectType>>();
 			newField->InitArray(name, uniqueId, getter, getSize, setter, setSize, info);
 			AddNewField(newField);
-		}	
+		}
 
 		/** Registers a field referencing an array of IReflectable objects. */
-		template<class InterfaceType, class ObjectType, class DataType>
-		void AddReflectableArrayField(const String& name, u32 uniqueId,
-			DataType& (InterfaceType::*getter)(ObjectType*, u32),
-			u32 (InterfaceType::*getSize)(ObjectType*),
-			void (InterfaceType::*setter)(ObjectType*, u32, DataType&),
-			void(InterfaceType::*setSize)(ObjectType*, u32),
-			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
+		template <class InterfaceType, class ObjectType, class DataType>
+		void AddReflectableArrayField(const String& name, u32 uniqueId, DataType& (InterfaceType::*getter)(ObjectType*, u32), u32 (InterfaceType::*getSize)(ObjectType*), void (InterfaceType::*setter)(ObjectType*, u32, DataType&), void (InterfaceType::*setSize)(ObjectType*, u32), const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
 		{
-			static_assert((std::is_base_of<bs::IReflectable, DataType>::value),
-				"Invalid data type for complex field. It needs to derive from bs::IReflectable.");
+			static_assert((std::is_base_of<bs::IReflectable, DataType>::value), "Invalid data type for complex field. It needs to derive from bs::IReflectable.");
 
 			auto newField = bs_new<RTTIReflectableField<InterfaceType, DataType, ObjectType>>();
 			newField->InitArray(name, uniqueId, getter, getSize, setter, setSize, info);
@@ -654,16 +691,10 @@ namespace bs
 		}
 
 		/** Registers a field referencing an array of IReflectable pointers. */
-		template<class InterfaceType, class ObjectType, class DataType>
-		void AddReflectablePtrArrayField(const String& name, u32 uniqueId,
-			SPtr<DataType> (InterfaceType::*getter)(ObjectType*, u32),
-			u32 (InterfaceType::*getSize)(ObjectType*),
-			void (InterfaceType::*setter)(ObjectType*, u32, SPtr<DataType>),
-			void(InterfaceType::*setSize)(ObjectType*, u32),
-			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
+		template <class InterfaceType, class ObjectType, class DataType>
+		void AddReflectablePtrArrayField(const String& name, u32 uniqueId, SPtr<DataType> (InterfaceType::*getter)(ObjectType*, u32), u32 (InterfaceType::*getSize)(ObjectType*), void (InterfaceType::*setter)(ObjectType*, u32, SPtr<DataType>), void (InterfaceType::*setSize)(ObjectType*, u32), const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
 		{
-			static_assert((std::is_base_of<bs::IReflectable, DataType>::value),
-				"Invalid data type for complex field. It needs to derive from bs::IReflectable.");
+			static_assert((std::is_base_of<bs::IReflectable, DataType>::value), "Invalid data type for complex field. It needs to derive from bs::IReflectable.");
 
 			auto newField = bs_new<RTTIReflectablePtrField<InterfaceType, DataType, ObjectType>>();
 			newField->InitArray(name, uniqueId, getter, getSize, setter, setSize, info);
@@ -671,15 +702,13 @@ namespace bs
 		}
 
 		/** Registers a field referencing a blob of memory. */
-		template<class InterfaceType, class ObjectType>
-		void AddDataBlockField(const String& name, u32 uniqueId, SPtr<DataStream> (InterfaceType::*getter)(ObjectType*, u32&),
-			void (InterfaceType::*setter)(ObjectType*, const SPtr<DataStream>&, u32),
-			const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
+		template <class InterfaceType, class ObjectType>
+		void AddDataBlockField(const String& name, u32 uniqueId, SPtr<DataStream> (InterfaceType::*getter)(ObjectType*, u32&), void (InterfaceType::*setter)(ObjectType*, const SPtr<DataStream>&, u32), const RTTIFieldInfo& info = RTTIFieldInfo::DEFAULT)
 		{
 			auto newField = bs_new<RTTIManagedDataBlockField<InterfaceType, u8*, ObjectType>>();
 			newField->InitSingle(name, uniqueId, getter, setter, info);
 			AddNewField(newField);
-		}	
+		}
 	};
 
 	template <typename Type, typename BaseType, typename MyRTTIType>
@@ -695,21 +724,19 @@ namespace bs
 	};
 
 	/** Returns true if the provided object can be safely cast into type T. */
-	template<class T>
+	template <class T>
 	bool rtti_is_of_type(IReflectable* object)
 	{
-		static_assert((std::is_base_of<bs::IReflectable, T>::value),
-			"Invalid data type for type checking. It needs to derive from bs::IReflectable.");
+		static_assert((std::is_base_of<bs::IReflectable, T>::value), "Invalid data type for type checking. It needs to derive from bs::IReflectable.");
 
 		return object->GetTypeId() == T::GetRttiStatic()->GetRttiId();
 	}
 
 	/** Returns true if the provided object can be safely cast into type T. */
-	template<class T>
+	template <class T>
 	bool rtti_is_of_type(SPtr<IReflectable> object)
 	{
-		static_assert((std::is_base_of<bs::IReflectable, T>::value),
-			"Invalid data type for type checking. It needs to derive from bs::IReflectable.");
+		static_assert((std::is_base_of<bs::IReflectable, T>::value), "Invalid data type for type checking. It needs to derive from bs::IReflectable.");
 
 		return object->GetTypeId() == T::GetRttiStatic()->GetRttiId();
 	}
@@ -718,27 +745,25 @@ namespace bs
 	BS_UTILITY_EXPORT SPtr<IReflectable> rtti_create(u32 rttiId);
 
 	/** Checks is the current object a subclass of some type. */
-	template<class T>
+	template <class T>
 	bool rtti_is_subclass(IReflectable* object)
 	{
-		static_assert((std::is_base_of<bs::IReflectable, T>::value),
-			"Invalid data type for type checking. It needs to derive from bs::IReflectable.");
+		static_assert((std::is_base_of<bs::IReflectable, T>::value), "Invalid data type for type checking. It needs to derive from bs::IReflectable.");
 
 		return object && object->IsDerivedFrom(T::GetRttiStatic());
 	}
 
 	/** Checks is the current object a subclass of some type. */
-	template<class T>
+	template <class T>
 	bool rtti_is_subclass(const SPtr<IReflectable>& object)
 	{
-		static_assert((std::is_base_of<bs::IReflectable, T>::value),
-			"Invalid data type for type checking. It needs to derive from bs::IReflectable.");
+		static_assert((std::is_base_of<bs::IReflectable, T>::value), "Invalid data type for type checking. It needs to derive from bs::IReflectable.");
 
 		return object && object->IsDerivedFrom(T::GetRttiStatic());
 	}
 
 	/** Attempts to cast the object to the provided type, or returns null if cast is not valid. */
-	template<class T>
+	template <class T>
 	T* rtti_cast(IReflectable* object)
 	{
 		if(rtti_is_subclass<T>(object))
@@ -748,7 +773,7 @@ namespace bs
 	}
 
 	/** Attempts to cast the object to the provided type, or returns null if cast is not valid. */
-	template<class T>
+	template <class T>
 	SPtr<T> rtti_cast(const SPtr<IReflectable> object)
 	{
 		if(rtti_is_subclass<T>(object))
@@ -756,5 +781,6 @@ namespace bs
 
 		return nullptr;
 	}
+
 	/** @} */
-}
+} // namespace bs

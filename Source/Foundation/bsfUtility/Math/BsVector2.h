@@ -21,12 +21,12 @@ namespace bs
 		Vector2() = default;
 
 		constexpr Vector2(BS_ZERO)
-			:X(0.0f), Y(0.0f)
-		{ }
+			: X(0.0f), Y(0.0f)
+		{}
 
 		constexpr Vector2(float x, float y)
-			:X(x), Y(y)
-		{ }
+			: X(x), Y(y)
+		{}
 
 		/** Exchange the contents of this vector with another. */
 		void Swap(Vector2& other)
@@ -35,18 +35,18 @@ namespace bs
 			std::swap(Y, other.Y);
 		}
 
-		float operator[] (u32 i) const
+		float operator[](u32 i) const
 		{
 			assert(i < 2);
 
-			return *(&X+i);
+			return *(&X + i);
 		}
 
-		float& operator[] (u32 i)
+		float& operator[](u32 i)
 		{
 			assert(i < 2);
 
-			return *(&X+i);
+			return *(&X + i);
 		}
 
 		/** Pointer accessor for direct copying. */
@@ -61,7 +61,7 @@ namespace bs
 			return &X;
 		}
 
-		Vector2& operator= (float rhs)
+		Vector2& operator=(float rhs)
 		{
 			X = rhs;
 			Y = rhs;
@@ -69,37 +69,37 @@ namespace bs
 			return *this;
 		}
 
-		bool operator== (const Vector2& rhs) const
+		bool operator==(const Vector2& rhs) const
 		{
 			return (X == rhs.X && Y == rhs.Y);
 		}
 
-		bool operator!= (const Vector2& rhs) const
+		bool operator!=(const Vector2& rhs) const
 		{
 			return (X != rhs.X || Y != rhs.Y);
 		}
 
-		Vector2 operator+ (const Vector2& rhs) const
+		Vector2 operator+(const Vector2& rhs) const
 		{
 			return Vector2(X + rhs.X, Y + rhs.Y);
 		}
 
-		Vector2 operator- (const Vector2& rhs) const
+		Vector2 operator-(const Vector2& rhs) const
 		{
 			return Vector2(X - rhs.X, Y - rhs.Y);
 		}
 
-		Vector2 operator* (const float rhs) const
+		Vector2 operator*(const float rhs) const
 		{
 			return Vector2(X * rhs, Y * rhs);
 		}
 
-		Vector2 operator* (const Vector2& rhs) const
+		Vector2 operator*(const Vector2& rhs) const
 		{
 			return Vector2(X * rhs.X, Y * rhs.Y);
 		}
 
-		Vector2 operator/ (const float rhs) const
+		Vector2 operator/(const float rhs) const
 		{
 			assert(rhs != 0.0);
 
@@ -108,52 +108,52 @@ namespace bs
 			return Vector2(X * fInv, Y * fInv);
 		}
 
-		Vector2 operator/ (const Vector2& rhs) const
+		Vector2 operator/(const Vector2& rhs) const
 		{
 			return Vector2(X / rhs.X, Y / rhs.Y);
 		}
 
-		const Vector2& operator+ () const
+		const Vector2& operator+() const
 		{
 			return *this;
 		}
 
-		Vector2 operator- () const
+		Vector2 operator-() const
 		{
 			return Vector2(-X, -Y);
 		}
 
-		friend Vector2 operator* (float lhs, const Vector2& rhs)
+		friend Vector2 operator*(float lhs, const Vector2& rhs)
 		{
 			return Vector2(lhs * rhs.X, lhs * rhs.Y);
 		}
 
-		friend Vector2 operator/ (float lhs, const Vector2& rhs)
+		friend Vector2 operator/(float lhs, const Vector2& rhs)
 		{
 			return Vector2(lhs / rhs.X, lhs / rhs.Y);
 		}
 
-		friend Vector2 operator+ (Vector2& lhs, float rhs)
+		friend Vector2 operator+(Vector2& lhs, float rhs)
 		{
 			return Vector2(lhs.X + rhs, lhs.Y + rhs);
 		}
 
-		friend Vector2 operator+ (float lhs, const Vector2& rhs)
+		friend Vector2 operator+(float lhs, const Vector2& rhs)
 		{
 			return Vector2(lhs + rhs.X, lhs + rhs.Y);
 		}
 
-		friend Vector2 operator- (const Vector2& lhs, float rhs)
+		friend Vector2 operator-(const Vector2& lhs, float rhs)
 		{
 			return Vector2(lhs.X - rhs, lhs.Y - rhs);
 		}
 
-		friend Vector2 operator- (const float lhs, const Vector2& rhs)
+		friend Vector2 operator-(const float lhs, const Vector2& rhs)
 		{
 			return Vector2(lhs - rhs.X, lhs - rhs.Y);
 		}
 
-		Vector2& operator+= (const Vector2& rhs)
+		Vector2& operator+=(const Vector2& rhs)
 		{
 			X += rhs.X;
 			Y += rhs.Y;
@@ -161,7 +161,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector2& operator+= (float rhs)
+		Vector2& operator+=(float rhs)
 		{
 			X += rhs;
 			Y += rhs;
@@ -169,7 +169,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector2& operator-= (const Vector2& rhs)
+		Vector2& operator-=(const Vector2& rhs)
 		{
 			X -= rhs.X;
 			Y -= rhs.Y;
@@ -177,7 +177,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector2& operator-= (float rhs)
+		Vector2& operator-=(float rhs)
 		{
 			X -= rhs;
 			Y -= rhs;
@@ -185,7 +185,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector2& operator*= (float rhs)
+		Vector2& operator*=(float rhs)
 		{
 			X *= rhs;
 			Y *= rhs;
@@ -193,7 +193,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector2& operator*= (const Vector2& rhs)
+		Vector2& operator*=(const Vector2& rhs)
 		{
 			X *= rhs.X;
 			Y *= rhs.Y;
@@ -201,7 +201,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector2& operator/= (float rhs)
+		Vector2& operator/=(float rhs)
 		{
 			assert(rhs != 0.0f);
 
@@ -213,7 +213,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector2& operator/= (const Vector2& rhs)
+		Vector2& operator/=(const Vector2& rhs)
 		{
 			X /= rhs.X;
 			Y /= rhs.Y;
@@ -251,15 +251,15 @@ namespace bs
 			return X * vec.X + Y * vec.Y;
 		}
 
-		/** 
+		/**
 		 * Normalizes this vector, and returns the previous length. If @p SAFE is true, checks if the magnitude is
 		 * above @p tolerance to avoid division by zero or precision issues. If false, no checks are made.
 		 */
-		template<bool SAFE = true>
+		template <bool SAFE = true>
 		float Normalize(float tolerance = 1e-04f)
 		{
 			float len = Length();
-			if (!SAFE || len > (tolerance * tolerance))
+			if(!SAFE || len > (tolerance * tolerance))
 				*this *= 1.0f / len;
 
 			return len;
@@ -268,7 +268,7 @@ namespace bs
 		/** Generates a vector perpendicular to this vector. */
 		Vector2 Perpendicular() const
 		{
-			return Vector2 (-Y, X);
+			return Vector2(-Y, X);
 		}
 
 		/**
@@ -313,7 +313,7 @@ namespace bs
 			u.Normalize();
 
 			float dot = u.Dot(v);
-			v -= u*dot;
+			v -= u * dot;
 			v.Normalize();
 		}
 
@@ -321,11 +321,11 @@ namespace bs
 		 * Normalizes the provided vector and returns the result. If @p SAFE is true, checks if the magnitude is
 		 * above @p tolerance to avoid division by zero or precision issues. If false, no checks are made.
 		 */
-		template<bool SAFE = true>
+		template <bool SAFE = true>
 		static Vector2 Normalize(const Vector2& v, float tolerance = 1e-04f)
 		{
 			float sqrdLen = v.X * v.X + v.Y * v.Y;
-			if (!SAFE || sqrdLen > tolerance)
+			if(!SAFE || sqrdLen > tolerance)
 				return v * Math::InvSqrt(sqrdLen);
 
 			return v;
@@ -356,4 +356,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

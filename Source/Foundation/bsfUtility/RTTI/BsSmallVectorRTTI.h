@@ -10,18 +10,27 @@ namespace bs
 {
 	/** @cond RTTI */
 	/** @addtogroup RTTI-Impl-Utility
-	*  @{
-	*/
+	 *  @{
+	 */
 
-	template<class T, u32 N> struct RTTIPlainType<SmallVector<T, N>>
+	template <class T, u32 N>
+	struct RTTIPlainType<SmallVector<T, N>>
 	{
-		enum { id = TID_SmallVector }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_SmallVector
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		/** @copydoc RTTIPlainType::toMemory */
 		static BitLength ToMemory(const SmallVector<T, N>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				BitLength size = 0;
 
 				auto numElements = (uint32_t)data.Size();
@@ -30,8 +39,7 @@ namespace bs
 				for (const auto& item : data)
 					size += rtti_write(item, stream);
 
-				return size;
-			});
+				return size; });
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
@@ -44,7 +52,7 @@ namespace bs
 			rtti_read(numElements, stream);
 
 			data.Clear();
-			for (uint32_t i = 0; i < numElements; i++)
+			for(uint32_t i = 0; i < numElements; i++)
 			{
 				T element;
 				rtti_read(element, stream);
@@ -60,7 +68,7 @@ namespace bs
 		{
 			BitLength dataSize = sizeof(uint32_t);
 
-			for (const auto& item : data)
+			for(const auto& item : data)
 				dataSize += rtti_size(item);
 
 			rtti_add_header_size(dataSize, compress);
@@ -70,4 +78,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

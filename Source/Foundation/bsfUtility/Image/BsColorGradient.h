@@ -16,38 +16,48 @@ namespace bs
 	/** Helper used for implementing specializations of TColorGradient. */
 	namespace impl
 	{
-		template<class COLOR>
+		template <class COLOR>
 		class TGradientHelper
-		{ };
+		{};
 
-		template<>
+		template <>
 		class TGradientHelper<RGBA>
 		{
 		public:
 			using INNER_TIME_TYPE = uint32_t;
 
 			static uint32_t GetInternalTime(float t) { return Bitwise::UnormToUint<16>(t); }
+
 			static float FromInternalTime(uint16_t t) { return Bitwise::UintToUnorm<16>(t); }
+
 			static RGBA ToInternalColor(const Color& color) { return color.GetAsRgba(); }
+
 			static Color FromInternalColor(RGBA color) { return Color::FromRgba(color); }
+
 			static uint32_t InvLerp(uint32_t from, uint32_t to, uint32_t val) { return Bitwise::InvLerpWord(from, to, val) >> 8; }
+
 			static uint32_t ToLerpFactor(float factor) { return Bitwise::UnormToUint<8>(factor); }
 		};
 
-		template<>
+		template <>
 		class TGradientHelper<Color>
 		{
 		public:
 			using INNER_TIME_TYPE = float;
 
 			static float GetInternalTime(float t) { return t; }
+
 			static float FromInternalTime(float t) { return t; }
+
 			static Color ToInternalColor(const Color& color) { return color; }
+
 			static Color FromInternalColor(const Color& color) { return color; }
+
 			static float InvLerp(float from, float to, float val) { return Math::InvLerp(val, from, to); }
+
 			static float ToLerpFactor(float factor) { return factor; }
 		};
-	}
+	} // namespace impl
 
 	/** @} */
 
@@ -56,19 +66,20 @@ namespace bs
 	 */
 
 	/** Single key in a ColorGradient. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Image),ExportAsStruct(true)) ColorGradientKey
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Image), ExportAsStruct(true)) ColorGradientKey
 	{
 		ColorGradientKey() = default;
+
 		ColorGradientKey(const Color& color, float time)
-			:Color(color), Time(time)
-		{ }
+			: Color(color), Time(time)
+		{}
 
 		Color Color;
 		float Time = 0.0f;
 	};
 
 	/** Common templated class for different color gradient implementations. */
-	template<class COLOR, class TIME>
+	template <class COLOR, class TIME>
 	class BS_UTILITY_EXPORT TColorGradient
 	{
 	public:
@@ -98,7 +109,8 @@ namespace bs
 		Vector<ColorGradientKey> GetKeys() const;
 
 		/** Returns the number of color keys in the gradient. */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(NumKeys))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(NumKeys))
+
 		u32 GetNumKeys() const { return mNumKeys; }
 
 		/** Returns the color key at the specified index. If out of range an empty key is returned. */
@@ -118,8 +130,10 @@ namespace bs
 		/** Returns the time of the first and last keyframe in the gradient. */
 		std::pair<float, float> GetTimeRange() const;
 
-		bool operator== (const TColorGradient& rhs) const;
-		bool operator!= (const TColorGradient& rhs) const { return !operator==(rhs); }
+		bool operator==(const TColorGradient& rhs) const;
+
+		bool operator!=(const TColorGradient& rhs) const { return !operator==(rhs); }
+
 	protected:
 		COLOR mColors[MAX_KEYS];
 		TIME mTimes[MAX_KEYS];
@@ -154,4 +168,4 @@ namespace bs
 
 	IMPLEMENT_GLOBAL_POOL(ColorGradient, 32)
 	IMPLEMENT_GLOBAL_POOL(ColorGradientHDR, 32)
-}
+} // namespace bs

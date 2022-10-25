@@ -23,9 +23,10 @@ namespace bs
 		struct FormatParamRange
 		{
 			FormatParamRange() = default;
+
 			FormatParamRange(u32 start, u32 identifierSize, u32 paramIdx)
-				:Start(start), IdentifierSize(identifierSize), ParamIdx(paramIdx)
-			{ }
+				: Start(start), IdentifierSize(identifierSize), ParamIdx(paramIdx)
+			{}
 
 			u32 Start = 0;
 			u32 IdentifierSize = 0;
@@ -33,7 +34,7 @@ namespace bs
 		};
 
 		/** Structure that holds value of a parameter during string formatting. */
-		template<class T>
+		template <class T>
 		struct ParamData
 		{
 			T* Buffer = nullptr;
@@ -45,17 +46,17 @@ namespace bs
 		 * Formats the provided string by replacing the identifiers with the provided parameters. The identifiers are
 		 * represented like "{0}, {1}" in the source string, where the number represents the position of the parameter
 		 * that will be used for replacing the identifier.
-		 *			
-		 * @note	
+		 *
+		 * @note
 		 * You may use "\" to escape identifier brackets.
 		 * @note
 		 * Maximum identifier number is 19 (for a total of 20 unique identifiers. for example {20} won't be recognized as
 		 * an identifier).
-		 * @note	
+		 * @note
 		 * Total number of parameters that can be referenced is 200.
 		 */
-		template<class T, class... Args>
-		static BasicString<T> Format(const T* source, Args&& ...args)
+		template <class T, class... Args>
+		static BasicString<T> Format(const T* source, Args&&... args)
 		{
 			u32 strLength = GetLength(source);
 
@@ -74,37 +75,37 @@ namespace bs
 			i32 lastBracket = -1;
 			bool escaped = false;
 			u32 charWriteIdx = 0;
-			for (u32 i = 0; i < strLength; i++)
+			for(u32 i = 0; i < strLength; i++)
 			{
-				if (source[i] == '\\' && !escaped && paramRangeWriteIdx < MAX_PARAM_REFERENCES)
+				if(source[i] == '\\' && !escaped && paramRangeWriteIdx < MAX_PARAM_REFERENCES)
 				{
 					escaped = true;
 					paramRanges[paramRangeWriteIdx++] = FormatParamRange(charWriteIdx, 1, (u32)-1);
 					continue;
 				}
 
-				if (lastBracket == -1)
+				if(lastBracket == -1)
 				{
 					// If current char is non-escaped opening bracket start parameter definition
-					if (source[i] == '{' && !escaped)
+					if(source[i] == '{' && !escaped)
 						lastBracket = i;
 					else
 						charWriteIdx++;
 				}
 				else
 				{
-					if (isdigit(source[i]) && bracketWriteIdx < MAX_IDENTIFIER_SIZE)
+					if(isdigit(source[i]) && bracketWriteIdx < MAX_IDENTIFIER_SIZE)
 						bracketChars[bracketWriteIdx++] = source[i];
 					else
 					{
 						// If current char is non-escaped closing bracket end parameter definition
 						u32 numParamChars = bracketWriteIdx;
 						bool processedBracket = false;
-						if (source[i] == '}' && numParamChars > 0 && !escaped)
+						if(source[i] == '}' && numParamChars > 0 && !escaped)
 						{
 							bracketChars[bracketWriteIdx] = '\0';
 							u32 paramIdx = StrToInt(bracketChars);
-							if (paramIdx < MAX_PARAMS && paramRangeWriteIdx < MAX_PARAM_REFERENCES) // Check if exceeded maximum parameter limit
+							if(paramIdx < MAX_PARAMS && paramRangeWriteIdx < MAX_PARAM_REFERENCES) // Check if exceeded maximum parameter limit
 							{
 								paramRanges[paramRangeWriteIdx++] = FormatParamRange(charWriteIdx, numParamChars + 2, paramIdx);
 								charWriteIdx += parameters[paramIdx].Size;
@@ -113,10 +114,10 @@ namespace bs
 							}
 						}
 
-						if (!processedBracket)
+						if(!processedBracket)
 						{
 							// Last bracket wasn't really a parameter
-							for (u32 j = lastBracket; j <= i; j++)
+							for(u32 j = lastBracket; j <= i; j++)
 								charWriteIdx++;
 						}
 
@@ -134,16 +135,16 @@ namespace bs
 			T* outputBuffer = (T*)bs_alloc(finalStringSize * sizeof(T));
 			u32 copySourceIdx = 0;
 			u32 copyDestIdx = 0;
-			for (u32 i = 0; i < paramRangeWriteIdx; i++)
+			for(u32 i = 0; i < paramRangeWriteIdx; i++)
 			{
 				const FormatParamRange& rangeInfo = paramRanges[i];
 				u32 copySize = rangeInfo.Start - copyDestIdx;
-				
+
 				memcpy(outputBuffer + copyDestIdx, source + copySourceIdx, copySize * sizeof(T));
 				copySourceIdx += copySize + rangeInfo.IdentifierSize;
 				copyDestIdx += copySize;
 
-				if (rangeInfo.ParamIdx == (u32)-1)
+				if(rangeInfo.ParamIdx == (u32)-1)
 					continue;
 
 				u32 paramSize = parameters[rangeInfo.ParamIdx].Size;
@@ -156,9 +157,9 @@ namespace bs
 			BasicString<T> outputStr(outputBuffer, finalStringSize);
 			bs_free(outputBuffer);
 
-			for (u32 i = 0; i < MAX_PARAMS; i++)
+			for(u32 i = 0; i < MAX_PARAMS; i++)
 			{
-				if (parameters[i].Buffer != nullptr)
+				if(parameters[i].Buffer != nullptr)
 					bs_free(parameters[i].Buffer);
 			}
 
@@ -191,22 +192,27 @@ namespace bs
 		}
 
 		/**	Helper method for converting any data type to a narrow string. */
-		template<class T> static String ToString(const T& param) { return bs::toString(param); }
+		template <class T>
+		static String ToString(const T& param)
+		{
+			return bs::toString(param);
+		}
 
 		/**	Helper method that "converts" a narrow string to a narrow string (simply a pass through). */
 		static String ToString(const String& param) { return param; }
 
 		/**	Helper method that converts a narrow character array to a narrow string. */
-		template<class T> static String ToString(T* param)
+		template <class T>
+		static String ToString(T* param)
 		{
-			static_assert(!std::is_same<T,T>::value, "Invalid pointer type.");
+			static_assert(!std::is_same<T, T>::value, "Invalid pointer type.");
 			return "";
 		}
 
 		/**	Helper method that converts a narrow character array to a narrow string. */
 		static String ToString(const char* param)
 		{
-			if (param == nullptr)
+			if(param == nullptr)
 				return String();
 
 			return String(param);
@@ -215,29 +221,34 @@ namespace bs
 		/**	Helper method that converts a narrow character array to a narrow string. */
 		static String ToString(char* param)
 		{
-			if (param == nullptr)
+			if(param == nullptr)
 				return String();
 
 			return String(param);
 		}
 
 		/**	Helper method for converting any data type to a wide string. */
-		template<class T> static WString ToWString(const T& param) { return bs::toWString(param); }
+		template <class T>
+		static WString ToWString(const T& param)
+		{
+			return bs::toWString(param);
+		}
 
 		/**	Helper method that "converts" a wide string to a wide string (simply a pass through). */
 		static WString ToWString(const WString& param) { return param; }
 
 		/**	Helper method that converts a wide character array to a wide string. */
-		template<class T> static WString ToWString(T* param)
+		template <class T>
+		static WString ToWString(T* param)
 		{
-			static_assert(!std::is_same<T,T>::value, "Invalid pointer type.");
+			static_assert(!std::is_same<T, T>::value, "Invalid pointer type.");
 			return L"";
 		}
 
 		/**	Helper method that converts a wide character array to a wide string. */
 		static WString ToWString(const wchar_t* param)
 		{
-			if (param == nullptr)
+			if(param == nullptr)
 				return WString();
 
 			return WString(param);
@@ -246,7 +257,7 @@ namespace bs
 		/**	Helper method that converts a wide character array to a wide string. */
 		static WString ToWString(wchar_t* param)
 		{
-			if (param == nullptr)
+			if(param == nullptr)
 				return WString();
 
 			return WString(param);
@@ -255,10 +266,10 @@ namespace bs
 		/**
 		 * Converts all the provided parameters into string representations and populates the provided @p parameters array.
 		 */
-		template<class P, class... Args>
-		static void GetParams(ParamData<char>* parameters, u32 idx, P&& param, Args&& ...args)
+		template <class P, class... Args>
+		static void GetParams(ParamData<char>* parameters, u32 idx, P&& param, Args&&... args)
 		{
-			if (idx >= MAX_PARAMS)
+			if(idx >= MAX_PARAMS)
 				return;
 
 			BasicString<char> sourceParam = toString(param);
@@ -266,23 +277,23 @@ namespace bs
 			parameters[idx].Size = (u32)sourceParam.size();
 
 			sourceParam.copy(parameters[idx].Buffer, parameters[idx].Size, 0);
-			
+
 			GetParams(parameters, idx + 1, std::forward<Args>(args)...);
 		}
 
 		/**
 		 * Converts all the provided parameters into string representations and populates the provided @p parameters array.
 		 */
-		template<class P, class... Args>
-		static void GetParams(ParamData<wchar_t>* parameters, u32 idx, P&& param, Args&& ...args)
+		template <class P, class... Args>
+		static void GetParams(ParamData<wchar_t>* parameters, u32 idx, P&& param, Args&&... args)
 		{
-			if (idx >= MAX_PARAMS)
+			if(idx >= MAX_PARAMS)
 				return;
 
 			BasicString<wchar_t> sourceParam = toWString(param);
 			parameters[idx].buffer = (wchar_t*)bs_alloc((u32)sourceParam.size() * sizeof(wchar_t));
 			parameters[idx].size = (u32)sourceParam.size();
-			
+
 			sourceParam.copy(parameters[idx].buffer, parameters[idx].size, 0);
 
 			GetParams(parameters, idx + 1, std::forward<Args>(args)...);
@@ -307,4 +318,4 @@ namespace bs
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs

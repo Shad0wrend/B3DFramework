@@ -20,8 +20,7 @@ namespace bs
 			-std::numeric_limits<float>::infinity(),
 			-std::numeric_limits<float>::infinity()));
 
-	const u32 AABox::CUBE_INDICES[36] =
-	{
+	const u32 AABox::CUBE_INDICES[36] = {
 		// Near
 		NEAR_LEFT_BOTTOM, NEAR_LEFT_TOP, NEAR_RIGHT_TOP,
 		NEAR_LEFT_BOTTOM, NEAR_RIGHT_TOP, NEAR_RIGHT_BOTTOM,
@@ -185,7 +184,6 @@ namespace bs
 					max[i] += e;
 				}
 			}
-
 		}
 
 		SetExtents(min, max);
@@ -194,18 +192,18 @@ namespace bs
 	bool AABox::Intersects(const AABox& b2) const
 	{
 		// Use up to 6 separating planes
-		if (mMaximum.X < b2.mMinimum.X)
+		if(mMaximum.X < b2.mMinimum.X)
 			return false;
-		if (mMaximum.Y < b2.mMinimum.Y)
+		if(mMaximum.Y < b2.mMinimum.Y)
 			return false;
-		if (mMaximum.Z < b2.mMinimum.Z)
+		if(mMaximum.Z < b2.mMinimum.Z)
 			return false;
 
-		if (mMinimum.X > b2.mMaximum.X)
+		if(mMinimum.X > b2.mMaximum.X)
 			return false;
-		if (mMinimum.Y > b2.mMaximum.Y)
+		if(mMinimum.Y > b2.mMaximum.Y)
 			return false;
-		if (mMinimum.Z > b2.mMaximum.Z)
+		if(mMinimum.Z > b2.mMaximum.Z)
 			return false;
 
 		// Otherwise, must be intersecting
@@ -222,9 +220,9 @@ namespace bs
 
 		// Arvo's algorithm
 		float s, d = 0;
-		for (int i = 0; i < 3; ++i)
+		for(int i = 0; i < 3; ++i)
 		{
-			if (center[i] < min[i])
+			if(center[i] < min[i])
 			{
 				s = center[i] - min[i];
 				d += s * s;
@@ -255,23 +253,23 @@ namespace bs
 		const Vector3& raydir = ray.GetDirection();
 
 		// Check origin inside first
-		if ((rayorig.X > min.X && rayorig.Y > min.Y && rayorig.Z > min.Z) && (rayorig.X < max.X && rayorig.Y < max.Y && rayorig.Z < max.Z))
+		if((rayorig.X > min.X && rayorig.Y > min.Y && rayorig.Z > min.Z) && (rayorig.X < max.X && rayorig.Y < max.Y && rayorig.Z < max.Z))
 		{
 			return std::pair<bool, float>(true, 0.0f);
 		}
 
 		// Check each face in turn, only check closest 3
 		// Min x
-		if (rayorig.X <= min.X && raydir.X > 0)
+		if(rayorig.X <= min.X && raydir.X > 0)
 		{
 			t = (min.X - rayorig.X) / raydir.X;
-			if (t >= 0)
+			if(t >= 0)
 			{
 				// Substitute t back into ray and check bounds and dist
 				hitpoint = rayorig + raydir * t;
-				if (hitpoint.Y >= min.Y && hitpoint.Y <= max.Y &&
-					hitpoint.Z >= min.Z && hitpoint.Z <= max.Z &&
-					(!hit || t < lowt))
+				if(hitpoint.Y >= min.Y && hitpoint.Y <= max.Y &&
+				   hitpoint.Z >= min.Z && hitpoint.Z <= max.Z &&
+				   (!hit || t < lowt))
 				{
 					hit = true;
 					lowt = t;
@@ -279,16 +277,16 @@ namespace bs
 			}
 		}
 		// Max x
-		if (rayorig.X >= max.X && raydir.X < 0)
+		if(rayorig.X >= max.X && raydir.X < 0)
 		{
 			t = (max.X - rayorig.X) / raydir.X;
-			if (t >= 0)
+			if(t >= 0)
 			{
 				// Substitute t back into ray and check bounds and dist
 				hitpoint = rayorig + raydir * t;
-				if (hitpoint.Y >= min.Y && hitpoint.Y <= max.Y &&
-					hitpoint.Z >= min.Z && hitpoint.Z <= max.Z &&
-					(!hit || t < lowt))
+				if(hitpoint.Y >= min.Y && hitpoint.Y <= max.Y &&
+				   hitpoint.Z >= min.Z && hitpoint.Z <= max.Z &&
+				   (!hit || t < lowt))
 				{
 					hit = true;
 					lowt = t;
@@ -296,16 +294,16 @@ namespace bs
 			}
 		}
 		// Min y
-		if (rayorig.Y <= min.Y && raydir.Y > 0)
+		if(rayorig.Y <= min.Y && raydir.Y > 0)
 		{
 			t = (min.Y - rayorig.Y) / raydir.Y;
-			if (t >= 0)
+			if(t >= 0)
 			{
 				// Substitute t back into ray and check bounds and dist
 				hitpoint = rayorig + raydir * t;
-				if (hitpoint.X >= min.X && hitpoint.X <= max.X &&
-					hitpoint.Z >= min.Z && hitpoint.Z <= max.Z &&
-					(!hit || t < lowt))
+				if(hitpoint.X >= min.X && hitpoint.X <= max.X &&
+				   hitpoint.Z >= min.Z && hitpoint.Z <= max.Z &&
+				   (!hit || t < lowt))
 				{
 					hit = true;
 					lowt = t;
@@ -313,16 +311,16 @@ namespace bs
 			}
 		}
 		// Max y
-		if (rayorig.Y >= max.Y && raydir.Y < 0)
+		if(rayorig.Y >= max.Y && raydir.Y < 0)
 		{
 			t = (max.Y - rayorig.Y) / raydir.Y;
-			if (t >= 0)
+			if(t >= 0)
 			{
 				// Substitute t back into ray and check bounds and dist
 				hitpoint = rayorig + raydir * t;
-				if (hitpoint.X >= min.X && hitpoint.X <= max.X &&
-					hitpoint.Z >= min.Z && hitpoint.Z <= max.Z &&
-					(!hit || t < lowt))
+				if(hitpoint.X >= min.X && hitpoint.X <= max.X &&
+				   hitpoint.Z >= min.Z && hitpoint.Z <= max.Z &&
+				   (!hit || t < lowt))
 				{
 					hit = true;
 					lowt = t;
@@ -330,16 +328,16 @@ namespace bs
 			}
 		}
 		// Min z
-		if (rayorig.Z <= min.Z && raydir.Z > 0)
+		if(rayorig.Z <= min.Z && raydir.Z > 0)
 		{
 			t = (min.Z - rayorig.Z) / raydir.Z;
-			if (t >= 0)
+			if(t >= 0)
 			{
 				// Substitute t back into ray and check bounds and dist
 				hitpoint = rayorig + raydir * t;
-				if (hitpoint.X >= min.X && hitpoint.X <= max.X &&
-					hitpoint.Y >= min.Y && hitpoint.Y <= max.Y &&
-					(!hit || t < lowt))
+				if(hitpoint.X >= min.X && hitpoint.X <= max.X &&
+				   hitpoint.Y >= min.Y && hitpoint.Y <= max.Y &&
+				   (!hit || t < lowt))
 				{
 					hit = true;
 					lowt = t;
@@ -347,16 +345,16 @@ namespace bs
 			}
 		}
 		// Max z
-		if (rayorig.Z >= max.Z && raydir.Z < 0)
+		if(rayorig.Z >= max.Z && raydir.Z < 0)
 		{
 			t = (max.Z - rayorig.Z) / raydir.Z;
-			if (t >= 0)
+			if(t >= 0)
 			{
 				// Substitute t back into ray and check bounds and dist
 				hitpoint = rayorig + raydir * t;
-				if (hitpoint.X >= min.X && hitpoint.X <= max.X &&
-					hitpoint.Y >= min.Y && hitpoint.Y <= max.Y &&
-					(!hit || t < lowt))
+				if(hitpoint.X >= min.X && hitpoint.X <= max.X &&
+				   hitpoint.Y >= min.Y && hitpoint.Y <= max.Y &&
+				   (!hit || t < lowt))
 				{
 					hit = true;
 					lowt = t;
@@ -365,7 +363,6 @@ namespace bs
 		}
 
 		return std::pair<bool, float>(hit, lowt);
-
 	}
 
 	bool AABox::Intersects(const Ray& ray, float& d1, float& d2) const
@@ -382,17 +379,17 @@ namespace bs
 
 		// Sort the axis, ensure check minimise floating error axis first
 		int imax = 0, imid = 1, imin = 2;
-		if (absDir[0] < absDir[2])
+		if(absDir[0] < absDir[2])
 		{
 			imax = 2;
 			imin = 0;
 		}
-		if (absDir[1] < absDir[imin])
+		if(absDir[1] < absDir[imin])
 		{
 			imid = imin;
 			imin = 1;
 		}
-		else if (absDir[1] > absDir[imax])
+		else if(absDir[1] > absDir[imax])
 		{
 			imid = imax;
 			imax = 1;
@@ -400,36 +397,38 @@ namespace bs
 
 		float start = 0, end = Math::POS_INFINITY;
 
-#define _CALC_AXIS(i)                                       \
-	do {                                                    \
-	float denom = 1 / raydir[i];                         \
-	float newstart = (min[i] - rayorig[i]) * denom;      \
-	float newend = (max[i] - rayorig[i]) * denom;        \
-	if (newstart > newend) std::swap(newstart, newend); \
-	if (newstart > end || newend < start) return false; \
-	if (newstart > start) start = newstart;             \
-	if (newend < end) end = newend;                     \
-	} while(0)
+#define _CALC_AXIS(i)                                      \
+	do                                                     \
+	{                                                      \
+		float denom = 1 / raydir[i];                       \
+		float newstart = (min[i] - rayorig[i]) * denom;    \
+		float newend = (max[i] - rayorig[i]) * denom;      \
+		if(newstart > newend) std::swap(newstart, newend); \
+		if(newstart > end || newend < start) return false; \
+		if(newstart > start) start = newstart;             \
+		if(newend < end) end = newend;                     \
+	}                                                      \
+	while(0)
 
 		// Check each axis in turn
 
 		_CALC_AXIS(imax);
 
-		if (absDir[imid] < std::numeric_limits<float>::epsilon())
+		if(absDir[imid] < std::numeric_limits<float>::epsilon())
 		{
 			// Parallel with middle and minimise axis, check bounds only
-			if (rayorig[imid] < min[imid] || rayorig[imid] > max[imid] ||
-				rayorig[imin] < min[imin] || rayorig[imin] > max[imin])
+			if(rayorig[imid] < min[imid] || rayorig[imid] > max[imid] ||
+			   rayorig[imin] < min[imin] || rayorig[imin] > max[imin])
 				return false;
 		}
 		else
 		{
 			_CALC_AXIS(imid);
 
-			if (absDir[imin] < std::numeric_limits<float>::epsilon())
+			if(absDir[imin] < std::numeric_limits<float>::epsilon())
 			{
 				// Parallel with minimise axis, check bounds only
-				if (rayorig[imin] < min[imin] || rayorig[imin] > max[imin])
+				if(rayorig[imin] < min[imin] || rayorig[imin] > max[imin])
 					return false;
 			}
 			else
@@ -477,36 +476,35 @@ namespace bs
 	bool AABox::Contains(const Vector3& v) const
 	{
 		return mMinimum.X <= v.X && v.X <= mMaximum.X &&
-				mMinimum.Y <= v.Y && v.Y <= mMaximum.Y &&
-				mMinimum.Z <= v.Z && v.Z <= mMaximum.Z;
+			mMinimum.Y <= v.Y && v.Y <= mMaximum.Y &&
+			mMinimum.Z <= v.Z && v.Z <= mMaximum.Z;
 	}
 
 	bool AABox::Contains(const Vector3& v, float extra) const
 	{
 		return (mMinimum.X - extra) <= v.X && v.X <= (mMaximum.X + extra) &&
-			   (mMinimum.Y - extra) <= v.Y && v.Y <= (mMaximum.Y + extra) &&
-			   (mMinimum.Z - extra) <= v.Z && v.Z <= (mMaximum.Z + extra);
+			(mMinimum.Y - extra) <= v.Y && v.Y <= (mMaximum.Y + extra) &&
+			(mMinimum.Z - extra) <= v.Z && v.Z <= (mMaximum.Z + extra);
 	}
 
 	bool AABox::Contains(const AABox& other) const
 	{
 		return this->mMinimum.X <= other.mMinimum.X &&
-				this->mMinimum.Y <= other.mMinimum.Y &&
-				this->mMinimum.Z <= other.mMinimum.Z &&
-				other.mMaximum.X <= this->mMaximum.X &&
-				other.mMaximum.Y <= this->mMaximum.Y &&
-				other.mMaximum.Z <= this->mMaximum.Z;
+			this->mMinimum.Y <= other.mMinimum.Y &&
+			this->mMinimum.Z <= other.mMinimum.Z &&
+			other.mMaximum.X <= this->mMaximum.X &&
+			other.mMaximum.Y <= this->mMaximum.Y &&
+			other.mMaximum.Z <= this->mMaximum.Z;
 	}
 
-	bool AABox::operator== (const AABox& rhs) const
+	bool AABox::operator==(const AABox& rhs) const
 	{
 		return this->mMinimum == rhs.mMinimum &&
-				this->mMaximum == rhs.mMaximum;
+			this->mMaximum == rhs.mMaximum;
 	}
 
-	bool AABox::operator!= (const AABox& rhs) const
+	bool AABox::operator!=(const AABox& rhs) const
 	{
 		return !(*this == rhs);
 	}
-}
-
+} // namespace bs

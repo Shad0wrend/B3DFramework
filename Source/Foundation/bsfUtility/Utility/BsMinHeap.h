@@ -20,8 +20,8 @@ namespace bs
 	};
 
 	/**
-	* Binary tree where each nodes is less than or equal to the data in its node's children.
-	*/
+	 * Binary tree where each nodes is less than or equal to the data in its node's children.
+	 */
 	template <class K, class V>
 	class MinHeap
 	{
@@ -38,22 +38,24 @@ namespace bs
 			resize(elements);
 		}
 
-		MinHeap<K, V>& operator= (const MinHeap<K, V>& other)
+		MinHeap<K, V>& operator=(const MinHeap<K, V>& other)
 		{
 			mSize = other.mSize;
 			mNode = other.mNode;
 			mPtr.resize(other.mPtr.size());
 
-			for (auto& entry : mNode)
+			for(auto& entry : mNode)
 				mPtr[entry.index] = &entry;
 
 			return *this;
 		}
 
-		HeapNode<K, V> operator[] (u32 index) { return mNode[index]; }
-		const HeapNode<K, V> operator[] (u32 index) const { return mNode[index]; }
+		HeapNode<K, V> operator[](u32 index) { return mNode[index]; }
+
+		const HeapNode<K, V> operator[](u32 index) const { return mNode[index]; }
 
 		bool empty() const { return mSize == 0; }
+
 		u32 size() const { return mSize; }
 
 		void minimum(K& key, V& value)
@@ -66,7 +68,7 @@ namespace bs
 
 		HeapNode<K, V>* insert(const K& key, const V& value)
 		{
-			if (mSize == mNode.size())
+			if(mSize == mNode.size())
 				return nullptr;
 
 			int child = mSize++;
@@ -75,11 +77,11 @@ namespace bs
 			node->key = key;
 			node->value = value;
 
-			while (child > 0)
+			while(child > 0)
 			{
 				const int parent = (child - 1) / 2;
 
-				if (mPtr[parent]->value <= value)
+				if(mPtr[parent]->value <= value)
 					break;
 
 				mPtr[child] = mPtr[parent];
@@ -108,17 +110,17 @@ namespace bs
 			int parent = 0;
 			int child = 1;
 
-			while (child <= last)
+			while(child <= last)
 			{
-				if (child < last)
+				if(child < last)
 				{
 					const int child2 = child + 1;
 
-					if (mPtr[child2]->value < mPtr[child]->value)
+					if(mPtr[child2]->value < mPtr[child]->value)
 						child = child2;
 				}
 
-				if (node->value <= mPtr[child]->value)
+				if(node->value <= mPtr[child]->value)
 					break;
 
 				mPtr[parent] = mPtr[child];
@@ -137,7 +139,7 @@ namespace bs
 
 		void update(HeapNode<K, V>* node, const V& value)
 		{
-			if (!node)
+			if(!node)
 				return;
 
 			int parent = 0;
@@ -145,18 +147,18 @@ namespace bs
 			int child2 = 0;
 			int maxChild = 0;
 
-			if (node->value < value)
+			if(node->value < value)
 			{
 				node->value = value;
 				parent = node->index;
 				child = 2 * parent + 1;
 
-				while (child < mSize)
+				while(child < mSize)
 				{
 					child2 = child + 1;
-					if (child2 < mSize)
+					if(child2 < mSize)
 					{
-						if (mPtr[child]->value <= mPtr[child2]->value)
+						if(mPtr[child]->value <= mPtr[child2]->value)
 							maxChild = child;
 						else
 							maxChild = child2;
@@ -164,7 +166,7 @@ namespace bs
 					else
 						maxChild = child;
 
-					if (value <= mPtr[maxChild]->value)
+					if(value <= mPtr[maxChild]->value)
 						break;
 
 					mPtr[parent] = mPtr[maxChild];
@@ -177,16 +179,16 @@ namespace bs
 					child = 2 * parent + 1;
 				}
 			}
-			else if (value < node->value)
+			else if(value < node->value)
 			{
 				node->value = value;
 				child = node->index;
 
-				while (child > 0)
+				while(child > 0)
 				{
 					parent = (child - 1) / 2;
 
-					if (mPtr[parent]->value <= value)
+					if(mPtr[parent]->value <= value)
 						break;
 
 					mPtr[child] = mPtr[parent];
@@ -203,12 +205,12 @@ namespace bs
 		void resize(u32 elements)
 		{
 			mSize = 0;
-			if (elements > 0)
+			if(elements > 0)
 			{
 				mNode.resize(elements);
 				mPtr.resize(elements);
 
-				for (u32 i = 0; i < elements; ++i)
+				for(u32 i = 0; i < elements; ++i)
 				{
 					mPtr[i] = &mNode[i];
 					mPtr[i]->index = i;
@@ -223,13 +225,13 @@ namespace bs
 
 		bool valid() const
 		{
-			for (int i = 0; i < (int)mSize; ++i)
+			for(int i = 0; i < (int)mSize; ++i)
 			{
 				int parent = (i - 1) / 2;
-				if (parent > 0)
+				if(parent > 0)
 				{
-					if (mPtr[i]->value < mPtr[parent]->value ||
-						(int)mPtr[parent]->index != parent)
+					if(mPtr[i]->value < mPtr[parent]->value ||
+					   (int)mPtr[parent]->index != parent)
 						return false;
 				}
 			}
@@ -244,4 +246,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

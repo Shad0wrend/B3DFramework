@@ -23,7 +23,6 @@ namespace bs
 		u32 VResolution;
 		u32 NumOfColorInPalette;
 		u32 ImportantColors;
-
 	};
 
 #pragma pack(pop)
@@ -43,7 +42,7 @@ namespace bs
 
 		BMP_HEADER header;
 		header.BM = 0x4d42;
-		header.SizeOfFile =  sizeof(header) + dataSize;
+		header.SizeOfFile = sizeof(header) + dataSize;
 		header.Reserve = 0000;
 		header.OffsetOfPixelData = 54;
 		header.SizeOfHeader = 40;
@@ -64,11 +63,11 @@ namespace bs
 
 		// Write bytes
 		u32 widthBytes = width * bytesPerPixel;
-		
+
 		// BPP matches so we can just copy directly
 		if(bmpBytesPerPixel == bytesPerPixel)
 		{
-			for(i32 y = height - 1; y >= 0 ; y--)
+			for(i32 y = height - 1; y >= 0; y--)
 			{
 				u8* outputPtr = output + y * rowPitch;
 
@@ -80,7 +79,7 @@ namespace bs
 		}
 		else if(bmpBytesPerPixel < bytesPerPixel) // More bytes in source than supported in BMP, just truncate excess data
 		{
-			for(i32 y = height - 1; y >= 0 ; y--)
+			for(i32 y = height - 1; y >= 0; y--)
 			{
 				u8* outputPtr = output + y * rowPitch;
 
@@ -96,7 +95,7 @@ namespace bs
 		}
 		else // More bytes in BMP than in source (BMP must be 24bit minimum)
 		{
-			for(i32 y = height - 1; y >= 0 ; y--)
+			for(i32 y = height - 1; y >= 0; y--)
 			{
 				u8* outputPtr = output + y * rowPitch;
 
@@ -136,4 +135,4 @@ namespace bs
 
 		return sizeof(BMP_HEADER) + dataSize;
 	}
-}
+} // namespace bs

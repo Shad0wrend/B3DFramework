@@ -21,9 +21,9 @@ namespace bs
 	{
 		static const Path path = FileSystem::GetWorkingDirectoryPath() + sCrashReportFolder +
 			GetCrashTimestamp();
-		
+
 		static bool first = true;
-		if (first)
+		if(first)
 		{
 			FileSystem::CreateDir(path);
 			first = false;
@@ -43,8 +43,7 @@ namespace bs
 		gDebug().Log(errorMessage.str(), LogVerbosity::Fatal);
 	}
 
-	void CrashHandler::LogErrorAndStackTrace(const String& type, const String& description, const String& function,
-		const String& file, u32 line) const
+	void CrashHandler::LogErrorAndStackTrace(const String& type, const String& description, const String& function, const String& file, u32 line) const
 	{
 		StringStream errorMessage;
 		errorMessage << "  - Error: " << type << std::endl;
@@ -58,4 +57,4 @@ namespace bs
 	{
 		gDebug().SaveLog(GetCrashFolder() + sCrashLogName, SavedLogType::HTML);
 	}
-}
+} // namespace bs

@@ -27,4 +27,4 @@ namespace bs
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs

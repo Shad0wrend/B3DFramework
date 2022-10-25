@@ -24,4 +24,4 @@ namespace bs
 		void testVarInt();
 		void testBitStream();
 	};
-}
+} // namespace bs

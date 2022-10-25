@@ -29,7 +29,7 @@ namespace bs
 		float myBottom = Y + Height;
 
 		if(X < otherRight && myRight > other.X &&
-			Y < otherBottom && myBottom > other.Y)
+		   Y < otherBottom && myBottom > other.Y)
 			return true;
 
 		return false;
@@ -119,4 +119,4 @@ namespace bs
 	{
 		return Vector2(Width, Height) * 0.5f;
 	}
-}
+} // namespace bs

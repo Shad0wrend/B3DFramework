@@ -18,7 +18,7 @@ namespace bs
 	 *			it is suggested you use specialized Matrix3 or Matrix4 classes
 	 *			as they provide a wide range of functionality.
 	 */
-	template<int N, int M>
+	template <int N, int M>
 	class MatrixNxM
 	{
 	public:
@@ -26,18 +26,18 @@ namespace bs
 		MatrixNxM(const MatrixNxM&) = default;
 		MatrixNxM& operator=(const MatrixNxM&) = default;
 
-		explicit MatrixNxM(float data[N*M])
+		explicit MatrixNxM(float data[N * M])
 		{
-			memcpy(Data, data, N*M * sizeof(float));
+			memcpy(Data, data, N * M * sizeof(float));
 		}
 
 		/** Returns a transpose of the matrix (switched columns and rows). */
 		MatrixNxM<M, N> Transpose() const
 		{
 			MatrixNxM<M, N> matTranspose;
-			for (u32 row = 0; row < N; row++)
+			for(u32 row = 0; row < N; row++)
 			{
-				for (u32 col = 0; col < M; col++)
+				for(u32 col = 0; col < M; col++)
 					matTranspose[col][row] = Data[row][col];
 			}
 
@@ -45,20 +45,20 @@ namespace bs
 		}
 
 		/** Returns a row of the matrix. */
-        float* operator[] (u32 row) const
+		float* operator[](u32 row) const
 		{
 			assert(row < N);
 
 			return (float*)Data[row];
 		}
 
-		bool operator== (const MatrixNxM& rhs) const
+		bool operator==(const MatrixNxM& rhs) const
 		{
-			for (u32 row = 0; row < N; row++)
+			for(u32 row = 0; row < N; row++)
 			{
-				for (u32 col = 0; col < M; col++)
+				for(u32 col = 0; col < M; col++)
 				{
-					if (Data[row][col] != rhs.Data[row][col])
+					if(Data[row][col] != rhs.Data[row][col])
 						return false;
 				}
 			}
@@ -66,7 +66,7 @@ namespace bs
 			return true;
 		}
 
-		bool operator!= (const MatrixNxM& rhs) const
+		bool operator!=(const MatrixNxM& rhs) const
 		{
 			return !operator==(rhs);
 		}
@@ -83,4 +83,4 @@ namespace bs
 	typedef MatrixNxM<4, 3> Matrix4x3;
 
 	/** @} */
-}
+} // namespace bs

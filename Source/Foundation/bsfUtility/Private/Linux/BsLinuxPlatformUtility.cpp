@@ -25,36 +25,38 @@ namespace bs
 	} ICU_Data_Header;
 
 	extern "C" U_EXPORT const ICU_Data_Header U_ICUDATA_ENTRY_POINT = {
-			32,          /* headerSize */
-			0xda,        /* magic1,  (see struct MappedData in udata.c)  */
-			0x27,        /* magic2     */
-			{            /*UDataInfo   */
-				sizeof(UDataInfo),      /* size        */
-				0,                      /* reserved    */
+		32, /* headerSize */
+		0xda, /* magic1,  (see struct MappedData in udata.c)  */
+		0x27, /* magic2     */
+		{
+			/*UDataInfo   */
+			sizeof(UDataInfo), /* size        */
+			0, /* reserved    */
 
-	#if U_IS_BIG_ENDIAN
-				1,
-	#else
-				0,
-	#endif
+#if U_IS_BIG_ENDIAN
+			1,
+#else
+			0,
+#endif
 
-				U_CHARSET_FAMILY,
-				sizeof(UChar),
-				0,               /* reserved      */
-				{                /* data format identifier */
-					0x54, 0x6f, 0x43, 0x50}, /* "ToCP" */
-					{1, 0, 0, 0},   /* format version major, minor, milli, micro */
-					{0, 0, 0, 0}    /* dataVersion   */
-			},
-			{0, 0, 0, 0, 0, 0, 0, 0},  /* Padding[8]   */
-			0,                  /* count        */
-			0,                  /* Reserved     */
-			{                   /*  TOC structure */
-/*        {    */
-					0, 0, 0, 0  /* name and data entries.  Count says there are none,  */
-					/*  but put one in just in case.                       */
-/*        }  */
-			}
+			U_CHARSET_FAMILY,
+			sizeof(UChar),
+			0, /* reserved      */
+			{ /* data format identifier */
+			  0x54, 0x6f, 0x43, 0x50 }, /* "ToCP" */
+			{ 1, 0, 0, 0 }, /* format version major, minor, milli, micro */
+			{ 0, 0, 0, 0 } /* dataVersion   */
+		},
+		{ 0, 0, 0, 0, 0, 0, 0, 0 }, /* Padding[8]   */
+		0, /* count        */
+		0, /* Reserved     */
+		{
+			/*  TOC structure */
+			/*        {    */
+			0, 0, 0, 0 /* name and data entries.  Count says there are none,  */
+			/*  but put one in just in case.                       */
+			/*        }  */
+		}
 	};
 
 	GPUInfo PlatformUtility::sGPUInfo;
@@ -92,14 +94,14 @@ namespace bs
 				{
 					if(lineStream >> token && token == "name")
 					{
-						if (lineStream >> token && token == ":")
+						if(lineStream >> token && token == ":")
 						{
 							std::stringstream modelName;
-							if (lineStream >> token)
+							if(lineStream >> token)
 							{
 								modelName << token;
 
-								while (lineStream >> token)
+								while(lineStream >> token)
 									modelName << " " << token;
 							}
 
@@ -111,12 +113,12 @@ namespace bs
 				{
 					if(lineStream >> token)
 					{
-						if (token == "cores")
+						if(token == "cores")
 						{
-							if (lineStream >> token && token == ":")
+							if(lineStream >> token && token == ":")
 							{
 								u32 numCores;
-								if (lineStream >> numCores)
+								if(lineStream >> numCores)
 									output.cpuNumCores = numCores;
 							}
 						}
@@ -162,7 +164,7 @@ namespace bs
 		// Note: This won't report the exact distro
 		output.osName = String(osInfo.sysname) + String(osInfo.version);
 
-		if (BS_ARCH_TYPE == BS_ARCHITECTURE_x86_64)
+		if(BS_ARCH_TYPE == BS_ARCHITECTURE_x86_64)
 			output.osIs64Bit = true;
 		else
 			output.osIs64Bit = strstr(osInfo.machine, "64") != nullptr;
@@ -192,7 +194,7 @@ namespace bs
 		else
 			bufferLen = u_strToLower(nullptr, 0, uStr, uStrLen, nullptr, &errorCode);
 
-		auto convertedUStr = bs_stack_alloc<UChar>((u32) bufferLen);
+		auto convertedUStr = bs_stack_alloc<UChar>((u32)bufferLen);
 		int32_t convertedUStrLen = 0;
 
 		errorCode = U_ZERO_ERROR;
@@ -225,9 +227,9 @@ namespace bs
 		uuid_generate(nativeUUID);
 
 		return UUID(
-				*(u32*)&nativeUUID[0],
-				*(u32*)&nativeUUID[4],
-				*(u32*)&nativeUUID[8],
-				*(u32*)&nativeUUID[12]);
+			*(u32*)&nativeUUID[0],
+			*(u32*)&nativeUUID[4],
+			*(u32*)&nativeUUID[8],
+			*(u32*)&nativeUUID[12]);
 	}
-}
+} // namespace bs

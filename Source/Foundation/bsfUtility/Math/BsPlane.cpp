@@ -10,16 +10,16 @@
 namespace bs
 {
 	Plane::Plane(const Vector3& normal, float d)
-		:Normal(normal), D(d)
-	{ }
+		: Normal(normal), D(d)
+	{}
 
 	Plane::Plane(float a, float b, float c, float _d)
-		:Normal(a, b, c), D(_d)
-	{ }
+		: Normal(a, b, c), D(_d)
+	{}
 
 	Plane::Plane(const Vector3& normal, const Vector3& point)
-		:Normal(normal), D(normal.Dot(point))
-	{ }
+		: Normal(normal), D(normal.Dot(point))
+	{}
 
 	Plane::Plane(const Vector3& point0, const Vector3& point1, const Vector3& point2)
 	{
@@ -39,10 +39,10 @@ namespace bs
 	{
 		float dist = GetDistance(point);
 
-		if (dist > epsilon)
+		if(dist > epsilon)
 			return Plane::POSITIVE_SIDE;
 
-		if (dist < -epsilon)
+		if(dist < -epsilon)
 			return Plane::NEGATIVE_SIDE;
 
 		return Plane::NO_SIDE;
@@ -58,10 +58,10 @@ namespace bs
 		Vector3 halfSize = box.GetHalfSize();
 		float maxAbsDist = abs(Normal.X * halfSize.X) + abs(Normal.Y * halfSize.Y) + abs(Normal.Z * halfSize.Z);
 
-		if (dist < -maxAbsDist)
+		if(dist < -maxAbsDist)
 			return Plane::NEGATIVE_SIDE;
 
-		if (dist > +maxAbsDist)
+		if(dist > +maxAbsDist)
 			return Plane::POSITIVE_SIDE;
 
 		return Plane::BOTH_SIDE;
@@ -73,10 +73,10 @@ namespace bs
 		float dist = GetDistance(sphere.GetCenter());
 		float radius = sphere.GetRadius();
 
-		if (dist < -radius)
+		if(dist < -radius)
 			return Plane::NEGATIVE_SIDE;
 
-		if (dist > +radius)
+		if(dist > +radius)
 			return Plane::POSITIVE_SIDE;
 
 		return Plane::BOTH_SIDE;
@@ -96,7 +96,6 @@ namespace bs
 		xform[2][1] = -Normal.Z * Normal.Y;
 		xform[2][2] = 1.0f - Normal.Z * Normal.Z;
 		return xform.Multiply(point);
-
 	}
 
 	float Plane::Normalize()
@@ -104,7 +103,7 @@ namespace bs
 		float fLength = Normal.Length();
 
 		// Will also work for zero-sized vectors, but will change nothing
-		if (fLength > 1e-08f)
+		if(fLength > 1e-08f)
 		{
 			float fInvLength = 1.0f / fLength;
 			Normal *= fInvLength;
@@ -127,7 +126,7 @@ namespace bs
 	std::pair<bool, float> Plane::Intersects(const Ray& ray) const
 	{
 		float denom = Normal.Dot(ray.GetDirection());
-		if (abs(denom) < std::numeric_limits<float>::epsilon())
+		if(abs(denom) < std::numeric_limits<float>::epsilon())
 		{
 			// Parallel
 			return std::pair<bool, float>(false, 0.0f);
@@ -135,8 +134,8 @@ namespace bs
 		else
 		{
 			float nom = Normal.Dot(ray.GetOrigin()) - D;
-			float t = -(nom/denom);
+			float t = -(nom / denom);
 			return std::pair<bool, float>(t >= 0.0f, t);
 		}
 	}
-}
+} // namespace bs

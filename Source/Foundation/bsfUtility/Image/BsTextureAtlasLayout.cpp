@@ -18,7 +18,7 @@ namespace bs
 		// Try adding without expanding, if that fails try to expand
 		if(!AddToNode(0, width, height, x, y, false))
 		{
-			if (!AddToNode(0, width, height, x, y, true))
+			if(!AddToNode(0, width, height, x, y, true))
 				return false;
 		}
 
@@ -51,28 +51,28 @@ namespace bs
 		TexAtlasNode* node = &mNodes[nodeIdx];
 		float aspect = node->Width / (float)node->Height;
 
-		if (node->Children[0] != (u32)-1)
+		if(node->Children[0] != (u32)-1)
 		{
-			if (AddToNode(node->Children[0], width, height, x, y, allowGrowth))
+			if(AddToNode(node->Children[0], width, height, x, y, allowGrowth))
 				return true;
 
 			return AddToNode(node->Children[1], width, height, x, y, allowGrowth);
 		}
 		else
 		{
-			if (node->NodeFull)
+			if(node->NodeFull)
 				return false;
 
-			if (width > node->Width || height > node->Height)
+			if(width > node->Width || height > node->Height)
 				return false;
 
 			if(!allowGrowth)
 			{
-				if (node->X + width > mWidth || node->Y + height > mHeight)
+				if(node->X + width > mWidth || node->Y + height > mHeight)
 					return false;
 			}
 
-			if (width == node->Width && height == node->Height)
+			if(width == node->Width && height == node->Height)
 			{
 				x = node->X;
 				y = node->Y;
@@ -90,7 +90,7 @@ namespace bs
 
 			TexAtlasNode nodeCopy = *node;
 			node = nullptr; // Undefined past this point
-			if (dw > dh)
+			if(dw > dh)
 			{
 				mNodes.emplace_back(nodeCopy.X, nodeCopy.Y, width, nodeCopy.Height);
 				mNodes.emplace_back(nodeCopy.X + width, nodeCopy.Y, nodeCopy.Width - width, nodeCopy.Height);
@@ -105,41 +105,37 @@ namespace bs
 		}
 	}
 
-	Vector<TextureAtlasUtility::Page> TextureAtlasUtility::CreateAtlasLayout(Vector<Element>& elements, u32 width,
-		u32 height, u32 maxWidth, u32 maxHeight, bool pow2)
+	Vector<TextureAtlasUtility::Page> TextureAtlasUtility::CreateAtlasLayout(Vector<Element>& elements, u32 width, u32 height, u32 maxWidth, u32 maxHeight, bool pow2)
 	{
-		for (size_t i = 0; i < elements.size(); i++)
+		for(size_t i = 0; i < elements.size(); i++)
 		{
 			elements[i].Output.Idx = (u32)i; // Preserve original index before sorting
 			elements[i].Output.Page = -1;
 		}
 
-		std::sort(elements.begin(), elements.end(),
-			[](const Element& a, const Element& b)
-		{
-			return a.Input.Width * a.Input.Height > b.Input.Width * b.Input.Height;
-		});
+		std::sort(elements.begin(), elements.end(), [](const Element& a, const Element& b)
+				  { return a.Input.Width * a.Input.Height > b.Input.Width * b.Input.Height; });
 
 		Vector<TextureAtlasLayout> layouts;
 		u32 remainingCount = (u32)elements.size();
-		while (remainingCount > 0)
+		while(remainingCount > 0)
 		{
 			layouts.push_back(TextureAtlasLayout(width, height, maxWidth, maxHeight, pow2));
 			TextureAtlasLayout& curLayout = layouts.back();
 
 			// Find largest unassigned element that fits
 			u32 sizeLimit = std::numeric_limits<u32>::max();
-			while (true)
+			while(true)
 			{
 				u32 largestId = -1;
 
 				// Assumes elements are sorted from largest to smallest
-				for (u32 i = 0; i < (u32)elements.size(); i++)
+				for(u32 i = 0; i < (u32)elements.size(); i++)
 				{
-					if (elements[i].Output.Page == -1)
+					if(elements[i].Output.Page == -1)
 					{
 						u32 size = elements[i].Input.Width * elements[i].Input.Height;
-						if (size < sizeLimit)
+						if(size < sizeLimit)
 						{
 							largestId = i;
 							break;
@@ -147,7 +143,7 @@ namespace bs
 					}
 				}
 
-				if (largestId == (u32)-1)
+				if(largestId == (u32)-1)
 					break; // Nothing fits, start a new page
 
 				Element& element = elements[largestId];
@@ -156,11 +152,11 @@ namespace bs
 				if(element.Input.Width > maxWidth || element.Input.Height > maxHeight)
 				{
 					BS_LOG(Warning, Generic, "Some of the provided elements don't fit in an atlas of provided size. "
-						"Returning empty array of pages.");
+											 "Returning empty array of pages.");
 					return Vector<Page>();
 				}
 
-				if (curLayout.AddElement(element.Input.Width, element.Input.Height, element.Output.X, element.Output.Y))
+				if(curLayout.AddElement(element.Input.Width, element.Input.Height, element.Output.X, element.Output.Y))
 				{
 					element.Output.Page = (u32)layouts.size() - 1;
 					remainingCount--;
@@ -171,9 +167,9 @@ namespace bs
 		}
 
 		Vector<Page> pages;
-		for (auto& layout : layouts)
+		for(auto& layout : layouts)
 			pages.push_back({ layout.GetWidth(), layout.GetHeight() });
 
 		return pages;
 	}
-}
+} // namespace bs

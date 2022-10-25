@@ -19,21 +19,20 @@ namespace bs
 	{
 	public:
 		Exception(const char* type, const String& description, const String& source)
-			:mTypeName(type), mDescription(description), mSource(source)
-		{ }
+			: mTypeName(type), mDescription(description), mSource(source)
+		{}
 
 		Exception(const char* type, const String& description, const String& source, const char* file, long line)
 			: mLine(line), mTypeName(type), mDescription(description), mSource(source), mFile(file)
-		{ }
+		{}
 
 		Exception(const Exception& rhs)
-			: mLine(rhs.mLine), mTypeName(rhs.mTypeName), mDescription(rhs.mDescription),
-			mSource(rhs.mSource), mFile(rhs.mFile)
-		{ }
+			: mLine(rhs.mLine), mTypeName(rhs.mTypeName), mDescription(rhs.mDescription), mSource(rhs.mSource), mFile(rhs.mFile)
+		{}
 
 		~Exception() noexcept = default;
 
-		void operator = (const Exception& rhs)
+		void operator=(const Exception& rhs)
 		{
 			mDescription = rhs.mDescription;
 			mSource = rhs.mSource;
@@ -51,15 +50,15 @@ namespace bs
 		 */
 		virtual const String& GetFullDescription() const
 		{
-			if (mFullDesc.empty())
+			if(mFullDesc.empty())
 			{
 				StringStream desc;
 
 				desc << "bs::framework EXCEPTION(" << mTypeName << "): "
-					<< mDescription
-					<< " in " << mSource;
+					 << mDescription
+					 << " in " << mSource;
 
-				if (mLine > 0)
+				if(mLine > 0)
 				{
 					desc << " at " << mFile << " (line " << mLine << ")";
 				}
@@ -170,16 +169,14 @@ namespace bs
 	 */
 	// BSF doesn't actually use exceptions, so we just emulate the unhandled exception handler by crashing the application.
 #ifndef BS_EXCEPT
-#define BS_EXCEPT(type, desc)																\
-	{																						\
-		static_assert((std::is_base_of<bs::Exception, type>::value),						\
-			"Invalid exception type (" #type ") for BS_EXCEPT macro."						\
-			" It needs to derive from bs::Exception.");										\
-		gCrashHandler().ReportCrash(#type, desc, __PRETTY_FUNCTION__, __FILE__, __LINE__);	\
-		PlatformUtility::Terminate(true);													\
-	}
+#	define BS_EXCEPT(type, desc)                                                                                                  \
+		{                                                                                                                          \
+			static_assert((std::is_base_of<bs::Exception, type>::value), "Invalid exception type (" #type ") for BS_EXCEPT macro." \
+																		 " It needs to derive from bs::Exception.");               \
+			gCrashHandler().ReportCrash(#type, desc, __PRETTY_FUNCTION__, __FILE__, __LINE__);                                     \
+			PlatformUtility::Terminate(true);                                                                                      \
+		}
 #endif
 
 	/** @} */
-}
-
+} // namespace bs
