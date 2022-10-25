@@ -17,132 +17,133 @@ namespace bs
 	enum BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) PixelFormat
 	{
 		/** Unknown pixel format. */
-		PF_UNKNOWN				BS_SCRIPT_EXPORT(Exclude(true)) = 0,
+		PF_UNKNOWN BS_SCRIPT_EXPORT(Exclude(true)) = 0,
 		/** 8-bit 1-channel pixel format, unsigned normalized. */
-		PF_R8					BS_SCRIPT_EXPORT(ExportName(R8)) = 1,
+		PF_R8 BS_SCRIPT_EXPORT(ExportName(R8)) = 1,
 		/** 8-bit 2-channel pixel format, unsigned normalized. */
-		PF_RG8					BS_SCRIPT_EXPORT(ExportName(RG8)) = 2,
+		PF_RG8 BS_SCRIPT_EXPORT(ExportName(RG8)) = 2,
 		/** 8-bit 3-channel pixel format, unsigned normalized. */
-		PF_RGB8					BS_SCRIPT_EXPORT(ExportName(RGB8)) = 3,
+		PF_RGB8 BS_SCRIPT_EXPORT(ExportName(RGB8)) = 3,
 		/** 8-bit 3-channel pixel format, unsigned normalized. */
-		PF_BGR8					BS_SCRIPT_EXPORT(ExportName(BGR8)) = 4,
+		PF_BGR8 BS_SCRIPT_EXPORT(ExportName(BGR8)) = 4,
 		/** 8-bit 4-channel pixel format, unsigned normalized. */
-		PF_BGRA8				BS_SCRIPT_EXPORT(ExportName(BGRA8)) = 7,
+		PF_BGRA8 BS_SCRIPT_EXPORT(ExportName(BGRA8)) = 7,
 		/** 8-bit 4-channel pixel format, unsigned normalized. */
-		PF_RGBA8				BS_SCRIPT_EXPORT(ExportName(RGBA8)) = 8,
+		PF_RGBA8 BS_SCRIPT_EXPORT(ExportName(RGBA8)) = 8,
 		/** DXT1/BC1 format containing opaque RGB or 1-bit alpha RGB. 4 bits per pixel. */
-		PF_BC1					BS_SCRIPT_EXPORT(ExportName(BC1)) = 13,
+		PF_BC1 BS_SCRIPT_EXPORT(ExportName(BC1)) = 13,
 		/** DXT3/BC2 format containing RGB with premultiplied alpha. 4 bits per pixel. */
-		PF_BC1a					BS_SCRIPT_EXPORT(Exclude(true)) = 14,
+		PF_BC1a BS_SCRIPT_EXPORT(Exclude(true)) = 14,
 		/** DXT3/BC2 format containing RGB with explicit alpha. 8 bits per pixel. */
-		PF_BC2					BS_SCRIPT_EXPORT(ExportName(BC2)) = 15,
+		PF_BC2 BS_SCRIPT_EXPORT(ExportName(BC2)) = 15,
 		/** DXT5/BC2 format containing RGB with explicit alpha. 8 bits per pixel. Better alpha gradients than BC2. */
-		PF_BC3					BS_SCRIPT_EXPORT(ExportName(BC3)) = 16,
+		PF_BC3 BS_SCRIPT_EXPORT(ExportName(BC3)) = 16,
 		/** One channel compressed format. 4 bits per pixel. */
-		PF_BC4					BS_SCRIPT_EXPORT(ExportName(BC4)) = 17,
+		PF_BC4 BS_SCRIPT_EXPORT(ExportName(BC4)) = 17,
 		/** Two channel compressed format. 8 bits per pixel. */
-		PF_BC5					BS_SCRIPT_EXPORT(ExportName(BC5)) = 18,
+		PF_BC5 BS_SCRIPT_EXPORT(ExportName(BC5)) = 18,
 		/** Format storing RGB in half (16-bit) floating point format usable for HDR. 8 bits per pixel. */
-		PF_BC6H					BS_SCRIPT_EXPORT(ExportName(BC6H)) = 19,
+		PF_BC6H BS_SCRIPT_EXPORT(ExportName(BC6H)) = 19,
 		/**
 		 * Format storing RGB with optional alpha channel. Similar to BC1/BC2/BC3 formats but with higher quality and
 		 * higher decompress overhead. 8 bits per pixel.
 		 */
-		PF_BC7					BS_SCRIPT_EXPORT(ExportName(BC7)) = 20,
+		PF_BC7 BS_SCRIPT_EXPORT(ExportName(BC7)) = 20,
 		/** 16-bit 1-channel pixel format, signed float. */
-		PF_R16F					BS_SCRIPT_EXPORT(ExportName(R16F)) = 21,
+		PF_R16F BS_SCRIPT_EXPORT(ExportName(R16F)) = 21,
 		/** 16-bit 2-channel pixel format, signed float. */
-		PF_RG16F				BS_SCRIPT_EXPORT(ExportName(RG16F)) = 22,
+		PF_RG16F BS_SCRIPT_EXPORT(ExportName(RG16F)) = 22,
 		/** 16-bit 4-channel pixel format, signed float. */
-		PF_RGBA16F				BS_SCRIPT_EXPORT(ExportName(RGBA16F)) = 24,
+		PF_RGBA16F BS_SCRIPT_EXPORT(ExportName(RGBA16F)) = 24,
 		/** 32-bit 1-channel pixel format, signed float. */
-		PF_R32F					BS_SCRIPT_EXPORT(ExportName(R32F)) = 25,
+		PF_R32F BS_SCRIPT_EXPORT(ExportName(R32F)) = 25,
 		/** 32-bit 2-channel pixel format, signed float. */
-		PF_RG32F				BS_SCRIPT_EXPORT(ExportName(RG32F)) = 26,
+		PF_RG32F BS_SCRIPT_EXPORT(ExportName(RG32F)) = 26,
 		/** 32-bit 3-channel pixel format, signed float. */
-		PF_RGB32F				BS_SCRIPT_EXPORT(ExportName(RGB32F)) = 27,
+		PF_RGB32F BS_SCRIPT_EXPORT(ExportName(RGB32F)) = 27,
 		/** 32-bit 4-channel pixel format, signed float. */
-		PF_RGBA32F				BS_SCRIPT_EXPORT(ExportName(RGBA32F)) = 28,
+		PF_RGBA32F BS_SCRIPT_EXPORT(ExportName(RGBA32F)) = 28,
 		/** Depth stencil format, 32bit depth, 8bit stencil + 24 unused. Depth stored as signed float. */
-		PF_D32_S8X24			BS_SCRIPT_EXPORT(ExportName(D32_S8X24)) = 29,
+		PF_D32_S8X24 BS_SCRIPT_EXPORT(ExportName(D32_S8X24)) = 29,
 		/** Depth stencil fomrat, 24bit depth + 8bit stencil. Depth stored as unsigned normalized. */
-		PF_D24S8				BS_SCRIPT_EXPORT(ExportName(D24S8)) = 30,
+		PF_D24S8 BS_SCRIPT_EXPORT(ExportName(D24S8)) = 30,
 		/** Depth format, 32bits. Signed float. */
-		PF_D32					BS_SCRIPT_EXPORT(ExportName(D32)) = 31,
+		PF_D32 BS_SCRIPT_EXPORT(ExportName(D32)) = 31,
 		/** Depth format, 16bits. Unsigned normalized. */
-		PF_D16					BS_SCRIPT_EXPORT(ExportName(D16)) = 32,
+		PF_D16 BS_SCRIPT_EXPORT(ExportName(D16)) = 32,
 		/** Packed unsigned float format, 11 bits for red, 11 bits for green, 10 bits for blue. */
-		PF_RG11B10F				BS_SCRIPT_EXPORT(Exclude(true)) = 33,
+		PF_RG11B10F BS_SCRIPT_EXPORT(Exclude(true)) = 33,
 		/**
 		 * Packed unsigned normalized format, 10 bits for red, 10 bits for green, 10 bits for blue, and two bits for alpha.
 		 */
-		PF_RGB10A2				BS_SCRIPT_EXPORT(Exclude(true)) = 34,
+		PF_RGB10A2 BS_SCRIPT_EXPORT(Exclude(true)) = 34,
 		/** 8-bit 1-channel pixel format, signed integer. */
-		PF_R8I					BS_SCRIPT_EXPORT(ExportName(R8I)) = 35,
+		PF_R8I BS_SCRIPT_EXPORT(ExportName(R8I)) = 35,
 		/** 8-bit 2-channel pixel format, signed integer. */
-		PF_RG8I					BS_SCRIPT_EXPORT(ExportName(RG8I)) = 36,
+		PF_RG8I BS_SCRIPT_EXPORT(ExportName(RG8I)) = 36,
 		/** 8-bit 4-channel pixel format, signed integer. */
-		PF_RGBA8I				BS_SCRIPT_EXPORT(ExportName(RGBA8I)) = 37,
+		PF_RGBA8I BS_SCRIPT_EXPORT(ExportName(RGBA8I)) = 37,
 		/** 8-bit 1-channel pixel format, unsigned integer. */
-		PF_R8U					BS_SCRIPT_EXPORT(ExportName(R8U)) = 38,
+		PF_R8U BS_SCRIPT_EXPORT(ExportName(R8U)) = 38,
 		/** 8-bit 2-channel pixel format, unsigned integer. */
-		PF_RG8U					BS_SCRIPT_EXPORT(ExportName(RG8U)) = 39,
+		PF_RG8U BS_SCRIPT_EXPORT(ExportName(RG8U)) = 39,
 		/** 8-bit 4-channel pixel format, unsigned integer. */
-		PF_RGBA8U				BS_SCRIPT_EXPORT(ExportName(RGBA8U)) = 40,
+		PF_RGBA8U BS_SCRIPT_EXPORT(ExportName(RGBA8U)) = 40,
 		/** 8-bit 1-channel pixel format, signed normalized. */
-		PF_R8S					BS_SCRIPT_EXPORT(ExportName(R8S)) = 41,
+		PF_R8S BS_SCRIPT_EXPORT(ExportName(R8S)) = 41,
 		/** 8-bit 2-channel pixel format, signed normalized. */
-		PF_RG8S					BS_SCRIPT_EXPORT(ExportName(RG8S)) = 42,
+		PF_RG8S BS_SCRIPT_EXPORT(ExportName(RG8S)) = 42,
 		/** 8-bit 4-channel pixel format, signed normalized. */
-		PF_RGBA8S				BS_SCRIPT_EXPORT(ExportName(RGBA8S)) = 43,
+		PF_RGBA8S BS_SCRIPT_EXPORT(ExportName(RGBA8S)) = 43,
 		/** 16-bit 1-channel pixel format, signed integer. */
-		PF_R16I					BS_SCRIPT_EXPORT(ExportName(R16I)) = 44,
+		PF_R16I BS_SCRIPT_EXPORT(ExportName(R16I)) = 44,
 		/** 16-bit 2-channel pixel format, signed integer. */
-		PF_RG16I				BS_SCRIPT_EXPORT(ExportName(RG16I)) = 45,
+		PF_RG16I BS_SCRIPT_EXPORT(ExportName(RG16I)) = 45,
 		/** 16-bit 4-channel pixel format, signed integer. */
-		PF_RGBA16I				BS_SCRIPT_EXPORT(ExportName(RGBA16I)) = 46,
+		PF_RGBA16I BS_SCRIPT_EXPORT(ExportName(RGBA16I)) = 46,
 		/** 16-bit 1-channel pixel format, unsigned integer. */
-		PF_R16U					BS_SCRIPT_EXPORT(ExportName(R16U)) = 47,
+		PF_R16U BS_SCRIPT_EXPORT(ExportName(R16U)) = 47,
 		/** 16-bit 2-channel pixel format, unsigned integer. */
-		PF_RG16U				BS_SCRIPT_EXPORT(ExportName(RG16U)) = 48,
+		PF_RG16U BS_SCRIPT_EXPORT(ExportName(RG16U)) = 48,
 		/** 16-bit 4-channel pixel format, unsigned integer. */
-		PF_RGBA16U				BS_SCRIPT_EXPORT(ExportName(RGBA16U)) = 49,
+		PF_RGBA16U BS_SCRIPT_EXPORT(ExportName(RGBA16U)) = 49,
 		/** 32-bit 1-channel pixel format, signed integer. */
-		PF_R32I					BS_SCRIPT_EXPORT(ExportName(R32I)) = 50,
+		PF_R32I BS_SCRIPT_EXPORT(ExportName(R32I)) = 50,
 		/** 32-bit 2-channel pixel format, signed integer. */
-		PF_RG32I				BS_SCRIPT_EXPORT(ExportName(RG32I)) = 51,
+		PF_RG32I BS_SCRIPT_EXPORT(ExportName(RG32I)) = 51,
 		/** 32-bit 3-channel pixel format, signed integer. */
-		PF_RGB32I				BS_SCRIPT_EXPORT(ExportName(RGB32I)) = 52,
+		PF_RGB32I BS_SCRIPT_EXPORT(ExportName(RGB32I)) = 52,
 		/** 32-bit 4-channel pixel format, signed integer. */
-		PF_RGBA32I				BS_SCRIPT_EXPORT(ExportName(RGBA32I)) = 53,
+		PF_RGBA32I BS_SCRIPT_EXPORT(ExportName(RGBA32I)) = 53,
 		/** 32-bit 1-channel pixel format, unsigned integer. */
-		PF_R32U					BS_SCRIPT_EXPORT(ExportName(R32U)) = 54,
+		PF_R32U BS_SCRIPT_EXPORT(ExportName(R32U)) = 54,
 		/** 32-bit 2-channel pixel format, unsigned integer. */
-		PF_RG32U				BS_SCRIPT_EXPORT(ExportName(RG32U)) = 55,
+		PF_RG32U BS_SCRIPT_EXPORT(ExportName(RG32U)) = 55,
 		/** 32-bit 3-channel pixel format, unsigned integer. */
-		PF_RGB32U				BS_SCRIPT_EXPORT(ExportName(RGB32U)) = 56,
+		PF_RGB32U BS_SCRIPT_EXPORT(ExportName(RGB32U)) = 56,
 		/** 32-bit 4-channel pixel format, unsigned integer. */
-		PF_RGBA32U				BS_SCRIPT_EXPORT(ExportName(RGBA32U)) = 57,
+		PF_RGBA32U BS_SCRIPT_EXPORT(ExportName(RGBA32U)) = 57,
 		/** 16-bit 1-channel pixel format, signed normalized. */
-		PF_R16S					BS_SCRIPT_EXPORT(ExportName(R16S)) = 58,
+		PF_R16S BS_SCRIPT_EXPORT(ExportName(R16S)) = 58,
 		/** 16-bit 2-channel pixel format, signed normalized. */
-		PF_RG16S				BS_SCRIPT_EXPORT(ExportName(RG16S)) = 59,
+		PF_RG16S BS_SCRIPT_EXPORT(ExportName(RG16S)) = 59,
 		/** 16-bit 4-channel pixel format, signed normalized. */
-		PF_RGBA16S				BS_SCRIPT_EXPORT(ExportName(RGBA16S)) = 60,
+		PF_RGBA16S BS_SCRIPT_EXPORT(ExportName(RGBA16S)) = 60,
 		/** 16-bit 1-channel pixel format, unsigned normalized. */
-		PF_R16					BS_SCRIPT_EXPORT(ExportName(R16)) = 61,
+		PF_R16 BS_SCRIPT_EXPORT(ExportName(R16)) = 61,
 		/** 16-bit 2-channel pixel format, unsigned normalized. */
-		PF_RG16					BS_SCRIPT_EXPORT(ExportName(RG16)) = 62,
+		PF_RG16 BS_SCRIPT_EXPORT(ExportName(RG16)) = 62,
 		/** 16-bit 3-channel pixel format, unsigned normalized. */
-		PF_RGB16				BS_SCRIPT_EXPORT(ExportName(RGB16)) = 63,
+		PF_RGB16 BS_SCRIPT_EXPORT(ExportName(RGB16)) = 63,
 		/** 16-bit 4-channel pixel format, unsigned normalized. */
-		PF_RGBA16				BS_SCRIPT_EXPORT(ExportName(RGBA16)) = 64,
+		PF_RGBA16 BS_SCRIPT_EXPORT(ExportName(RGBA16)) = 64,
 		/** Number of pixel formats currently defined. */
-		PF_COUNT				BS_SCRIPT_EXPORT(Exclude(true))
+		PF_COUNT BS_SCRIPT_EXPORT(Exclude(true))
 	};
 
 	/**	Flags defining some properties of pixel formats. */
-	enum PixelFormatFlags {
+	enum PixelFormatFlags
+	{
 		/** This format has an alpha channel. */
 		PFF_HASALPHA = 0x1,
 		/**
@@ -172,7 +173,7 @@ namespace bs
 		PCT_FLOAT32 = 4, /**< 32 bit float per component */
 		PCT_PACKED_R11G11B10 = 5, /**< 11 bits for first two components, 10 for third component. */
 		PCT_PACKED_R10G10B10A2 = 6, /**< 10 bits for first three components, 2 bits for last component */
-		PCT_COUNT    /**< Number of pixel types */
+		PCT_COUNT /**< Number of pixel types */
 	};
 
 	/** Determines how are texture pixels filtered during sampling. */
@@ -229,14 +230,16 @@ namespace bs
 		 * Returns the number of bytes that offsets one row from another. This can be exact number of bytes required
 		 * to hold "width" pixel, but doesn't have to be as some buffers require padding.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(RawRowPitch),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(RawRowPitch), Property(Getter))
+
 		u32 GetRowPitch() const { return mRowPitch; }
 
 		/**
 		 * Returns the number of bytes that offsets one depth slice from another. This can be exact number of bytes
 		 * required to hold "width * height" pixels, but doesn't have to be as some buffers require padding.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(RawSlicePitch),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(RawSlicePitch), Property(Getter))
+
 		u32 GetSlicePitch() const { return mSlicePitch; }
 
 		/**
@@ -264,7 +267,8 @@ namespace bs
 		u32 GetSliceSkip() const;
 
 		/** Returns the pixel format used by the internal buffer for storing the pixels. */
-		BS_SCRIPT_EXPORT(ExportName(Format),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Format), Property(Getter))
+
 		PixelFormat GetFormat() const { return mFormat; }
 
 		/**	Returns width of the buffer in pixels. */
@@ -313,13 +317,15 @@ namespace bs
 		u32 GetBack() const { return mExtents.Back; }
 
 		/** Returns extents of the pixel volume this object is capable of holding. */
-		BS_SCRIPT_EXPORT(ExportName(Extents),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Extents), Property(Getter))
+
 		PixelVolume GetExtents() const { return mExtents; }
 
 		/**
 		 * Return whether this buffer is laid out consecutive in memory (meaning the pitches are equal to the dimensions).
 		 */
-		BS_SCRIPT_EXPORT(ExportName(RawIsConsecutive),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(RawIsConsecutive), Property(Getter))
+
 		bool IsConsecutive() const
 		{
 			return mSlicePitch * GetDepth() == GetConsecutiveSize();
@@ -329,7 +335,7 @@ namespace bs
 		u32 GetConsecutiveSize() const;
 
 		/**	Return the size (in bytes) of the buffer this image requires. */
-		BS_SCRIPT_EXPORT(ExportName(RawSize),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(RawSize), Property(Getter))
 		u32 GetSize() const;
 
 		/**
@@ -406,7 +412,7 @@ namespace bs
 		 *
 		 * @note	A generic method that is reused in other more specific setColors() calls.
 		 */
-		template<class T>
+		template <class T>
 		void SetColorsInternal(const T& colors, u32 numElements);
 
 		/**	Returns the needed size of the internal buffer, in bytes. */
@@ -428,4 +434,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

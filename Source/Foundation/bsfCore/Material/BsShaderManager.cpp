@@ -21,4 +21,4 @@ namespace bs
 		if(mIncludeHandler)
 			mIncludeHandler->AddSearchPath(path);
 	}
-}
+} // namespace bs

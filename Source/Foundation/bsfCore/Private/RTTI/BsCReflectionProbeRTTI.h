@@ -14,10 +14,11 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT CReflectionProbeRTTI : public RTTIType <CReflectionProbe, Component, CReflectionProbeRTTI>
+	class BS_CORE_EXPORT CReflectionProbeRTTI : public RTTIType<CReflectionProbe, Component, CReflectionProbeRTTI>
 	{
 	private:
 		SPtr<ReflectionProbe> GetInternal(CReflectionProbe* obj) { return obj->mInternal; }
+
 		void SetInternal(CReflectionProbe* obj, SPtr<ReflectionProbe> val) { obj->mInternal = val; }
 
 	public:
@@ -45,4 +46,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

@@ -45,7 +45,7 @@ namespace bs
 			return TID_CRigidbody;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return SceneObject::CreateEmptyComponent<CRigidbody>();
 		}
@@ -53,4 +53,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

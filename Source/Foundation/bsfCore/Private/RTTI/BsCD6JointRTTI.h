@@ -18,24 +18,36 @@ namespace bs
 	class BS_CORE_EXPORT CD6JointRTTI : public RTTIType<CD6Joint, CJoint, CD6JointRTTI>
 	{
 		D6JointMotion& GetMotion(CD6Joint* obj, u32 idx) { return obj->mDesc.Motion[idx]; }
+
 		void SetMotion(CD6Joint* obj, u32 idx, D6JointMotion& value) { obj->mDesc.Motion[idx] = value; }
+
 		u32 GetMotionCount(CD6Joint* obj) { return (u32)D6JointMotion::Count; }
-		void SetMotionCount(CD6Joint* obj, u32 size) { /* Do nothing */ }
+
+		void SetMotionCount(CD6Joint* obj, u32 size)
+		{ /* Do nothing */
+		}
 
 		float& GetDriveStiffness(CD6Joint* obj, u32 idx) { return obj->mDesc.Drive[idx].Stiffness; }
+
 		void SetDriveStiffness(CD6Joint* obj, u32 idx, float& value) { obj->mDesc.Drive[idx].Stiffness = value; }
 
 		float& GetDriveDamping(CD6Joint* obj, u32 idx) { return obj->mDesc.Drive[idx].Damping; }
+
 		void SetDriveDamping(CD6Joint* obj, u32 idx, float& value) { obj->mDesc.Drive[idx].Damping = value; }
 
 		float& GetDriveForceLimit(CD6Joint* obj, u32 idx) { return obj->mDesc.Drive[idx].ForceLimit; }
+
 		void SetDriveForceLimit(CD6Joint* obj, u32 idx, float& value) { obj->mDesc.Drive[idx].ForceLimit = value; }
 
 		bool& GetDriveAcceleration(CD6Joint* obj, u32 idx) { return obj->mDesc.Drive[idx].Acceleration; }
+
 		void SetDriveAcceleration(CD6Joint* obj, u32 idx, bool& value) { obj->mDesc.Drive[idx].Acceleration = value; }
 
 		u32 GetDriveCount(CD6Joint* obj) { return (u32)D6JointDriveType::Count; }
-		void SetDriveCount(CD6Joint* obj, u32 size) { /* Do nothing */ }
+
+		void SetDriveCount(CD6Joint* obj, u32 size)
+		{ /* Do nothing */
+		}
 
 		BS_BEGIN_RTTI_MEMBERS
 			BS_RTTI_MEMBER_PLAIN_NAMED(mLimitLinearExtent, mDesc.LimitLinear.Extent, 5)
@@ -67,16 +79,11 @@ namespace bs
 	public:
 		CD6JointRTTI()
 		{
-			AddPlainArrayField("mMotion", 0, &CD6JointRTTI::GetMotion, &CD6JointRTTI::GetMotionCount,
-				&CD6JointRTTI::SetMotion, &CD6JointRTTI::SetMotionCount);
-			AddPlainArrayField("mDriveStiffnes", 1, &CD6JointRTTI::GetDriveStiffness, &CD6JointRTTI::GetDriveCount,
-				&CD6JointRTTI::SetDriveStiffness, &CD6JointRTTI::SetDriveCount);
-			AddPlainArrayField("mDriveDamping", 2, &CD6JointRTTI::GetDriveDamping, &CD6JointRTTI::GetDriveCount,
-				&CD6JointRTTI::SetDriveDamping, &CD6JointRTTI::SetDriveCount);
-			AddPlainArrayField("mDriveForceLimit", 3, &CD6JointRTTI::GetDriveForceLimit, &CD6JointRTTI::GetDriveCount,
-				&CD6JointRTTI::SetDriveForceLimit, &CD6JointRTTI::SetDriveCount);
-			AddPlainArrayField("mDriveAcceleartion", 4, &CD6JointRTTI::GetDriveAcceleration, &CD6JointRTTI::GetDriveCount,
-				&CD6JointRTTI::SetDriveAcceleration, &CD6JointRTTI::SetDriveCount);
+			AddPlainArrayField("mMotion", 0, &CD6JointRTTI::GetMotion, &CD6JointRTTI::GetMotionCount, &CD6JointRTTI::SetMotion, &CD6JointRTTI::SetMotionCount);
+			AddPlainArrayField("mDriveStiffnes", 1, &CD6JointRTTI::GetDriveStiffness, &CD6JointRTTI::GetDriveCount, &CD6JointRTTI::SetDriveStiffness, &CD6JointRTTI::SetDriveCount);
+			AddPlainArrayField("mDriveDamping", 2, &CD6JointRTTI::GetDriveDamping, &CD6JointRTTI::GetDriveCount, &CD6JointRTTI::SetDriveDamping, &CD6JointRTTI::SetDriveCount);
+			AddPlainArrayField("mDriveForceLimit", 3, &CD6JointRTTI::GetDriveForceLimit, &CD6JointRTTI::GetDriveCount, &CD6JointRTTI::SetDriveForceLimit, &CD6JointRTTI::SetDriveCount);
+			AddPlainArrayField("mDriveAcceleartion", 4, &CD6JointRTTI::GetDriveAcceleration, &CD6JointRTTI::GetDriveCount, &CD6JointRTTI::SetDriveAcceleration, &CD6JointRTTI::SetDriveCount);
 		}
 
 		const String& GetRttiName() override
@@ -98,4 +105,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

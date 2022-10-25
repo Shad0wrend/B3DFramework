@@ -18,10 +18,10 @@ namespace bs
 	 *  @{
 	 */
 
-	 /**
-	  * Contains indices for position/rotation/scale animation curves. Used for quick mapping of bones in a skeleton to
-	  * relevant animation curves.
-	  */
+	/**
+	 * Contains indices for position/rotation/scale animation curves. Used for quick mapping of bones in a skeleton to
+	 * relevant animation curves.
+	 */
 	struct AnimationCurveMapping
 	{
 		u32 Position;
@@ -135,8 +135,7 @@ namespace bs
 		 * @note	It is more efficient to use the other getPose overload as sequential calls can benefit from animation
 		 *			evaluator cache.
 		 */
-		void GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask, const AnimationClip& clip,
-			float time, bool loop = true);
+		void GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask, const AnimationClip& clip, float time, bool loop = true);
 
 		/**
 		 * Outputs a skeleton pose containing required transforms for transforming the skeleton to the values specified by
@@ -150,11 +149,11 @@ namespace bs
 		 * @param[in]	layers		One or multiple layers, containing one or multiple animation states to evaluate.
 		 * @param[in]	numLayers	Number of layers in the @p layers array.
 		 */
-		void GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask,
-			const AnimationStateLayer* layers, u32 numLayers);
+		void GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask, const AnimationStateLayer* layers, u32 numLayers);
 
 		/** Returns the total number of bones in the skeleton. */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(NumBones))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(NumBones))
+
 		u32 GetNumBones() const { return mNumBones; }
 
 		/** Returns information about a bone at the provided index. */
@@ -203,4 +202,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

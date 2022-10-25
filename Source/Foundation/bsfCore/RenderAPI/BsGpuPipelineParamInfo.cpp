@@ -7,7 +7,7 @@
 namespace bs
 {
 	GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DESC& desc)
-		:mNumSets(0), mNumElements(0), mSetInfos(nullptr), mResourceInfos()
+		: mNumSets(0), mNumElements(0), mSetInfos(nullptr), mResourceInfos()
 	{
 		bs_zero_out(mNumElementsPerType);
 
@@ -22,7 +22,7 @@ namespace bs
 		{
 			int typeIdx = (int)type;
 
-			if ((entry.Set + 1) > mNumSets)
+			if((entry.Set + 1) > mNumSets)
 				mNumSets = entry.Set + 1;
 
 			mNumElementsPerType[typeIdx]++;
@@ -30,60 +30,60 @@ namespace bs
 		};
 
 		u32 numParamDescs = sizeof(mParamDescs) / sizeof(mParamDescs[0]);
-		for (u32 i = 0; i < numParamDescs; i++)
+		for(u32 i = 0; i < numParamDescs; i++)
 		{
 			const SPtr<GpuParamDesc>& paramDesc = mParamDescs[i];
-			if (paramDesc == nullptr)
+			if(paramDesc == nullptr)
 				continue;
 
-			for (auto& paramBlock : paramDesc->ParamBlocks)
+			for(auto& paramBlock : paramDesc->ParamBlocks)
 				countElements(paramBlock.second, ParamType::ParamBlock);
 
-			for (auto& texture : paramDesc->Textures)
+			for(auto& texture : paramDesc->Textures)
 				countElements(texture.second, ParamType::Texture);
 
-			for (auto& texture : paramDesc->LoadStoreTextures)
+			for(auto& texture : paramDesc->LoadStoreTextures)
 				countElements(texture.second, ParamType::LoadStoreTexture);
 
-			for (auto& buffer : paramDesc->Buffers)
+			for(auto& buffer : paramDesc->Buffers)
 				countElements(buffer.second, ParamType::Buffer);
 
-			for (auto& sampler : paramDesc->Samplers)
+			for(auto& sampler : paramDesc->Samplers)
 				countElements(sampler.second, ParamType::SamplerState);
 		}
 
 		u32* numSlotsPerSet = (u32*)bs_stack_alloc(mNumSets * sizeof(u32));
 		bs_zero_out(numSlotsPerSet, mNumSets);
 
-		for (u32 i = 0; i < numParamDescs; i++)
+		for(u32 i = 0; i < numParamDescs; i++)
 		{
 			const SPtr<GpuParamDesc>& paramDesc = mParamDescs[i];
-			if (paramDesc == nullptr)
+			if(paramDesc == nullptr)
 				continue;
 
-			for (auto& paramBlock : paramDesc->ParamBlocks)
+			for(auto& paramBlock : paramDesc->ParamBlocks)
 				numSlotsPerSet[paramBlock.second.Set] =
 					std::max(numSlotsPerSet[paramBlock.second.Set], paramBlock.second.Slot + 1);
 
-			for (auto& texture : paramDesc->Textures)
+			for(auto& texture : paramDesc->Textures)
 				numSlotsPerSet[texture.second.Set] =
 					std::max(numSlotsPerSet[texture.second.Set], texture.second.Slot + 1);
 
-			for (auto& texture : paramDesc->LoadStoreTextures)
+			for(auto& texture : paramDesc->LoadStoreTextures)
 				numSlotsPerSet[texture.second.Set] =
 					std::max(numSlotsPerSet[texture.second.Set], texture.second.Slot + 1);
 
-			for (auto& buffer : paramDesc->Buffers)
+			for(auto& buffer : paramDesc->Buffers)
 				numSlotsPerSet[buffer.second.Set] =
 					std::max(numSlotsPerSet[buffer.second.Set], buffer.second.Slot + 1);
 
-			for (auto& sampler : paramDesc->Samplers)
+			for(auto& sampler : paramDesc->Samplers)
 				numSlotsPerSet[sampler.second.Set] =
 					std::max(numSlotsPerSet[sampler.second.Set], sampler.second.Slot + 1);
 		}
 
 		u32 totalNumSlots = 0;
-		for (u32 i = 0; i < mNumSets; i++)
+		for(u32 i = 0; i < mNumSets; i++)
 			totalNumSlots += numSlotsPerSet[i];
 
 		mAlloc.Reserve<SetInfo>(mNumSets)
@@ -91,7 +91,7 @@ namespace bs
 			.Reserve<ParamType>(totalNumSlots)
 			.Reserve<u32>(totalNumSlots);
 
-		for (u32 i = 0; i < (u32)ParamType::Count; i++)
+		for(u32 i = 0; i < (u32)ParamType::Count; i++)
 			mAlloc.Reserve<ResourceInfo>(mNumElementsPerType[i]);
 
 		mAlloc.Init();
@@ -101,7 +101,7 @@ namespace bs
 		if(mSetInfos != nullptr)
 			bs_zero_out(mSetInfos, mNumSets);
 
-		for (u32 i = 0; i < mNumSets; i++)
+		for(u32 i = 0; i < mNumSets; i++)
 			mSetInfos[i].NumSlots = numSlotsPerSet[i];
 
 		bs_stack_free(numSlotsPerSet);
@@ -117,7 +117,7 @@ namespace bs
 			memset(mSetInfos[i].SlotSamplers, -1, sizeof(u32) * mSetInfos[i].NumSlots);
 		}
 
-		for (u32 i = 0; i < (u32)ParamType::Count; i++)
+		for(u32 i = 0; i < (u32)ParamType::Count; i++)
 		{
 			mResourceInfos[i] = mAlloc.Alloc<ResourceInfo>(mNumElementsPerType[i]);
 			mNumElementsPerType[i] = 0;
@@ -139,34 +139,34 @@ namespace bs
 			mNumElementsPerType[typeIdx]++;
 		};
 
-		for (u32 i = 0; i < numParamDescs; i++)
+		for(u32 i = 0; i < numParamDescs; i++)
 		{
 			const SPtr<GpuParamDesc>& paramDesc = mParamDescs[i];
-			if (paramDesc == nullptr)
+			if(paramDesc == nullptr)
 				continue;
 
-			for (auto& paramBlock : paramDesc->ParamBlocks)
+			for(auto& paramBlock : paramDesc->ParamBlocks)
 				populateSetInfo(paramBlock.second, ParamType::ParamBlock);
 
-			for (auto& texture : paramDesc->Textures)
+			for(auto& texture : paramDesc->Textures)
 				populateSetInfo(texture.second, ParamType::Texture);
 
-			for (auto& texture : paramDesc->LoadStoreTextures)
+			for(auto& texture : paramDesc->LoadStoreTextures)
 				populateSetInfo(texture.second, ParamType::LoadStoreTexture);
 
-			for (auto& buffer : paramDesc->Buffers)
+			for(auto& buffer : paramDesc->Buffers)
 				populateSetInfo(buffer.second, ParamType::Buffer);
 
 			// Samplers need to be handled specially because certain slots could be texture/buffer + sampler combinations
 			{
 				int typeIdx = (int)ParamType::SamplerState;
-				for (auto& entry : paramDesc->Samplers)
+				for(auto& entry : paramDesc->Samplers)
 				{
 					const GpuParamObjectDesc& samplerDesc = entry.second;
 					u32 sequentialIdx = mNumElementsPerType[typeIdx];
 
 					SetInfo& setInfo = mSetInfos[samplerDesc.Set];
-					if (setInfo.SlotIndices[samplerDesc.Slot] == (u32)-1) // Slot is sampler only
+					if(setInfo.SlotIndices[samplerDesc.Slot] == (u32)-1) // Slot is sampler only
 					{
 						setInfo.SlotIndices[samplerDesc.Slot] = sequentialIdx;
 						setInfo.SlotTypes[samplerDesc.Slot] = ParamType::SamplerState;
@@ -188,16 +188,15 @@ namespace bs
 	u32 GpuPipelineParamInfoBase::GetSequentialSlot(ParamType type, u32 set, u32 slot) const
 	{
 #if BS_DEBUG_MODE
-		if (set >= mNumSets)
+		if(set >= mNumSets)
 		{
 			BS_LOG(Error, RenderBackend, "Set index out of range: Valid range: [0, {0}). Requested: {1}.", mNumSets, set);
 			return -1;
 		}
 
-		if (slot >= mSetInfos[set].NumSlots)
+		if(slot >= mSetInfos[set].NumSlots)
 		{
-			BS_LOG(Error, RenderBackend, "Slot index out of range: Valid range: [0, {0}). Requested: {1}.",
-				mSetInfos[set].NumSlots, slot);
+			BS_LOG(Error, RenderBackend, "Slot index out of range: Valid range: [0, {0}). Requested: {1}.", mSetInfos[set].NumSlots, slot);
 			return -1;
 		}
 
@@ -207,12 +206,11 @@ namespace bs
 			// Allow sampler states & textures/buffers to share the same slot, as some APIs combine them
 			if(type == ParamType::SamplerState)
 			{
-				if (mSetInfos[set].SlotSamplers[slot] != (u32)-1)
+				if(mSetInfos[set].SlotSamplers[slot] != (u32)-1)
 					return mSetInfos[set].SlotSamplers[slot];
 			}
 
-			BS_LOG(Error, RenderBackend, "Requested parameter is not of the valid type. Requested: {0}. Actual: {1}.",
-				(u32)type, (u32)mSetInfos[set].SlotTypes[slot]);
+			BS_LOG(Error, RenderBackend, "Requested parameter is not of the valid type. Requested: {0}. Actual: {1}.", (u32)type, (u32)mSetInfos[set].SlotTypes[slot]);
 			return -1;
 		}
 
@@ -226,8 +224,7 @@ namespace bs
 #if BS_DEBUG_MODE
 		if(sequentialSlot >= mNumElementsPerType[(int)type])
 		{
-			BS_LOG(Error, RenderBackend, "Sequential slot index out of range: Valid range: [0, {0}). Requested: {1}.",
-				mNumElementsPerType[(int)type], sequentialSlot);
+			BS_LOG(Error, RenderBackend, "Sequential slot index out of range: Valid range: [0, {0}). Requested: {1}.", mNumElementsPerType[(int)type], sequentialSlot);
 
 			set = 0;
 			slot = 0;
@@ -239,25 +236,23 @@ namespace bs
 		slot = mResourceInfos[(int)type][sequentialSlot].Slot;
 	}
 
-	void GpuPipelineParamInfoBase::GetBindings(ParamType type, const String& name, GpuParamBinding (& bindings)[GPT_COUNT])
+	void GpuPipelineParamInfoBase::GetBindings(ParamType type, const String& name, GpuParamBinding (&bindings)[GPT_COUNT])
 	{
 		constexpr u32 numParamDescs = sizeof(mParamDescs) / sizeof(mParamDescs[0]);
 		static_assert(
 			numParamDescs == GPT_COUNT,
-			"Number of param descriptor structures must match the number of GPU program stages."
-		);
+			"Number of param descriptor structures must match the number of GPU program stages.");
 
-		for (u32 i = 0; i < numParamDescs; i++)
+		for(u32 i = 0; i < numParamDescs; i++)
 			GetBinding((GpuProgramType)i, type, name, bindings[i]);
 	}
 
-	void GpuPipelineParamInfoBase::GetBinding(GpuProgramType progType, ParamType type, const String& name,
-		GpuParamBinding &binding)
+	void GpuPipelineParamInfoBase::GetBinding(GpuProgramType progType, ParamType type, const String& name, GpuParamBinding& binding)
 	{
 		auto findBinding = [](auto& paramMap, const String& name, GpuParamBinding& binding)
 		{
 			auto iterFind = paramMap.find(name);
-			if (iterFind != paramMap.end())
+			if(iterFind != paramMap.end())
 			{
 				binding.Set = iterFind->second.Set;
 				binding.Slot = iterFind->second.Slot;
@@ -267,7 +262,7 @@ namespace bs
 		};
 
 		const SPtr<GpuParamDesc>& paramDesc = mParamDescs[(u32)progType];
-		if (paramDesc == nullptr)
+		if(paramDesc == nullptr)
 		{
 			binding.Set = binding.Slot = (u32)-1;
 			return;
@@ -296,13 +291,13 @@ namespace bs
 	}
 
 	GpuPipelineParamInfo::GpuPipelineParamInfo(const GPU_PIPELINE_PARAMS_DESC& desc)
-		:GpuPipelineParamInfoBase(desc)
-	{ }
+		: GpuPipelineParamInfoBase(desc)
+	{}
 
 	SPtr<GpuPipelineParamInfo> GpuPipelineParamInfo::Create(const GPU_PIPELINE_PARAMS_DESC& desc)
 	{
 		SPtr<GpuPipelineParamInfo> paramInfo =
-			bs_core_ptr<GpuPipelineParamInfo>(new (bs_alloc<GpuPipelineParamInfo>()) GpuPipelineParamInfo(desc));
+			bs_core_ptr<GpuPipelineParamInfo>(new(bs_alloc<GpuPipelineParamInfo>()) GpuPipelineParamInfo(desc));
 		paramInfo->SetThisPtrInternal(paramInfo);
 		paramInfo->Initialize();
 
@@ -329,14 +324,13 @@ namespace bs
 
 	namespace ct
 	{
-	GpuPipelineParamInfo::GpuPipelineParamInfo(const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask)
-		:GpuPipelineParamInfoBase(desc)
-	{ }
+		GpuPipelineParamInfo::GpuPipelineParamInfo(const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask)
+			: GpuPipelineParamInfoBase(desc)
+		{}
 
-	SPtr<GpuPipelineParamInfo> GpuPipelineParamInfo::Create(const GPU_PIPELINE_PARAMS_DESC& desc,
-		GpuDeviceFlags deviceMask)
-	{
-		return RenderStateManager::Instance().CreatePipelineParamInfo(desc, deviceMask);
-	}
-	}
-}
+		SPtr<GpuPipelineParamInfo> GpuPipelineParamInfo::Create(const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask)
+		{
+			return RenderStateManager::Instance().CreatePipelineParamInfo(desc, deviceMask);
+		}
+	} // namespace ct
+} // namespace bs

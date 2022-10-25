@@ -26,7 +26,8 @@ namespace bs
 	class BS_CORE_EXPORT DistanceJoint : public Joint
 	{
 	public:
-		DistanceJoint(const DISTANCE_JOINT_DESC& desc) { }
+		DistanceJoint(const DISTANCE_JOINT_DESC& desc) {}
+
 		virtual ~DistanceJoint() = default;
 
 		/** Returns the current distance between the two joint bodies. */
@@ -96,4 +97,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

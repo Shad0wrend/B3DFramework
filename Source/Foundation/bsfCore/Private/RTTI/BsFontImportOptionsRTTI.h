@@ -47,11 +47,10 @@ namespace bs
 	public:
 		FontImportOptionsRTTI()
 		{
-			AddPlainField("mCharIndexRangesOld", 1, &FontImportOptionsRTTI::GetCharIndexRangesOld,
-				&FontImportOptionsRTTI::SetCharIndexRangesOld);
+			AddPlainField("mCharIndexRangesOld", 1, &FontImportOptionsRTTI::GetCharIndexRangesOld, &FontImportOptionsRTTI::SetCharIndexRangesOld);
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "FontImportOptions";
 			return name;
@@ -62,7 +61,7 @@ namespace bs
 			return TID_FontImportOptions;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<FontImportOptions>();
 		}
@@ -70,4 +69,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

@@ -24,43 +24,43 @@ namespace bs
 		output.DomainProgram = input.DomainProgram != nullptr ? input.DomainProgram->GetCore() : nullptr;
 	}
 
-	template<bool Core>
+	template <bool Core>
 	TGraphicsPipelineState<Core>::TGraphicsPipelineState(const StateDescType& data)
-		:mData(data)
-	{ }
+		: mData(data)
+	{}
 
-	template class TGraphicsPipelineState < false > ;
-	template class TGraphicsPipelineState < true >;
+	template class TGraphicsPipelineState<false>;
+	template class TGraphicsPipelineState<true>;
 
 	GraphicsPipelineState::GraphicsPipelineState(const PIPELINE_STATE_DESC& desc)
-		:TGraphicsPipelineState(desc)
+		: TGraphicsPipelineState(desc)
 	{
 		GPU_PIPELINE_PARAMS_DESC paramsDesc;
-		if (desc.VertexProgram != nullptr)
+		if(desc.VertexProgram != nullptr)
 		{
 			desc.VertexProgram->BlockUntilCoreInitialized();
 			paramsDesc.VertexParams = desc.VertexProgram->GetParamDesc();
 		}
 
-		if (desc.FragmentProgram != nullptr)
+		if(desc.FragmentProgram != nullptr)
 		{
 			desc.FragmentProgram->BlockUntilCoreInitialized();
 			paramsDesc.FragmentParams = desc.FragmentProgram->GetParamDesc();
 		}
 
-		if (desc.GeometryProgram != nullptr)
+		if(desc.GeometryProgram != nullptr)
 		{
 			desc.GeometryProgram->BlockUntilCoreInitialized();
 			paramsDesc.GeometryParams = desc.GeometryProgram->GetParamDesc();
 		}
 
-		if (desc.HullProgram != nullptr)
+		if(desc.HullProgram != nullptr)
 		{
 			desc.HullProgram->BlockUntilCoreInitialized();
 			paramsDesc.HullParams = desc.HullProgram->GetParamDesc();
 		}
-		
-		if (desc.DomainProgram != nullptr)
+
+		if(desc.DomainProgram != nullptr)
 		{
 			desc.DomainProgram->BlockUntilCoreInitialized();
 			paramsDesc.DomainParams = desc.DomainProgram->GetParamDesc();
@@ -87,20 +87,20 @@ namespace bs
 		return RenderStateManager::Instance().CreateGraphicsPipelineState(desc);
 	}
 
-	template<bool Core>
+	template <bool Core>
 	TComputePipelineState<Core>::TComputePipelineState()
-	{ }
+	{}
 
-	template<bool Core>
+	template <bool Core>
 	TComputePipelineState<Core>::TComputePipelineState(const GpuProgramType& program)
-		:mProgram(program)
-	{ }
+		: mProgram(program)
+	{}
 
-	template class TComputePipelineState < false >;
-	template class TComputePipelineState < true >;
+	template class TComputePipelineState<false>;
+	template class TComputePipelineState<true>;
 
 	ComputePipelineState::ComputePipelineState(const SPtr<GpuProgram>& program)
-		:TComputePipelineState(program)
+		: TComputePipelineState(program)
 	{
 		GPU_PIPELINE_PARAMS_DESC paramsDesc;
 		program->BlockUntilCoreInitialized();
@@ -126,56 +126,55 @@ namespace bs
 
 	namespace ct
 	{
-	GraphicsPipelineState::GraphicsPipelineState(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask)
-		:TGraphicsPipelineState(desc), mDeviceMask(deviceMask)
-	{ }
+		GraphicsPipelineState::GraphicsPipelineState(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask)
+			: TGraphicsPipelineState(desc), mDeviceMask(deviceMask)
+		{}
 
-	void GraphicsPipelineState::Initialize()
-	{
-		GPU_PIPELINE_PARAMS_DESC paramsDesc;
-		if (mData.VertexProgram != nullptr)
-			paramsDesc.VertexParams = mData.VertexProgram->GetParamDesc();
+		void GraphicsPipelineState::Initialize()
+		{
+			GPU_PIPELINE_PARAMS_DESC paramsDesc;
+			if(mData.VertexProgram != nullptr)
+				paramsDesc.VertexParams = mData.VertexProgram->GetParamDesc();
 
-		if (mData.FragmentProgram != nullptr)
-			paramsDesc.FragmentParams = mData.FragmentProgram->GetParamDesc();
+			if(mData.FragmentProgram != nullptr)
+				paramsDesc.FragmentParams = mData.FragmentProgram->GetParamDesc();
 
-		if (mData.GeometryProgram != nullptr)
-			paramsDesc.GeometryParams = mData.GeometryProgram->GetParamDesc();
+			if(mData.GeometryProgram != nullptr)
+				paramsDesc.GeometryParams = mData.GeometryProgram->GetParamDesc();
 
-		if (mData.HullProgram != nullptr)
-			paramsDesc.HullParams = mData.HullProgram->GetParamDesc();
+			if(mData.HullProgram != nullptr)
+				paramsDesc.HullParams = mData.HullProgram->GetParamDesc();
 
-		if (mData.DomainProgram != nullptr)
-			paramsDesc.DomainParams = mData.DomainProgram->GetParamDesc();
+			if(mData.DomainProgram != nullptr)
+				paramsDesc.DomainParams = mData.DomainProgram->GetParamDesc();
 
-		mParamInfo = GpuPipelineParamInfo::Create(paramsDesc, mDeviceMask);
+			mParamInfo = GpuPipelineParamInfo::Create(paramsDesc, mDeviceMask);
 
-		CoreObject::Initialize();
-	}
+			CoreObject::Initialize();
+		}
 
-	SPtr<GraphicsPipelineState> GraphicsPipelineState::Create(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask)
-	{
-		return RenderStateManager::Instance().CreateGraphicsPipelineState(desc, deviceMask);
-	}
+		SPtr<GraphicsPipelineState> GraphicsPipelineState::Create(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask)
+		{
+			return RenderStateManager::Instance().CreateGraphicsPipelineState(desc, deviceMask);
+		}
 
-	ComputePipelineState::ComputePipelineState(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask)
-		:TComputePipelineState(program), mDeviceMask(deviceMask)
-	{ }
+		ComputePipelineState::ComputePipelineState(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask)
+			: TComputePipelineState(program), mDeviceMask(deviceMask)
+		{}
 
-	void ComputePipelineState::Initialize()
-	{
-		GPU_PIPELINE_PARAMS_DESC paramsDesc;
-		paramsDesc.ComputeParams = mProgram->GetParamDesc();
+		void ComputePipelineState::Initialize()
+		{
+			GPU_PIPELINE_PARAMS_DESC paramsDesc;
+			paramsDesc.ComputeParams = mProgram->GetParamDesc();
 
-		mParamInfo = GpuPipelineParamInfo::Create(paramsDesc, mDeviceMask);
+			mParamInfo = GpuPipelineParamInfo::Create(paramsDesc, mDeviceMask);
 
-		CoreObject::Initialize();
-	}
+			CoreObject::Initialize();
+		}
 
-	SPtr<ComputePipelineState> ComputePipelineState::Create(const SPtr<GpuProgram>& program,
-		GpuDeviceFlags deviceMask)
-	{
-		return RenderStateManager::Instance().CreateComputePipelineState(program, deviceMask);
-	}
-	}
-}
+		SPtr<ComputePipelineState> ComputePipelineState::Create(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask)
+		{
+			return RenderStateManager::Instance().CreateComputePipelineState(program, deviceMask);
+		}
+	} // namespace ct
+} // namespace bs

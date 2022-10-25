@@ -19,14 +19,15 @@ namespace bs
 	{
 		// A safeguard in case translated strings have different number of parameters
 		u32 actualNumParameters = std::min(numParameterValues, NumParameters);
-		
+
 		if(parameters != nullptr)
 		{
 			u32 totalNumChars = 0;
 			u32 prevIdx = 0;
 			for(u32 i = 0; i < actualNumParameters; i++)
 			{
-				totalNumChars += (ParameterOffsets[i].Location - prevIdx) + (u32)parameters[ParameterOffsets[i].ParamIdx].size();;
+				totalNumChars += (ParameterOffsets[i].Location - prevIdx) + (u32)parameters[ParameterOffsets[i].ParamIdx].size();
+				;
 
 				prevIdx = ParameterOffsets[i].Location;
 			}
@@ -88,12 +89,12 @@ namespace bs
 				if(_string[i] == '{' && !escaped)
 					lastBracket = i;
 				else
-					cleanString<<_string[i];
+					cleanString << _string[i];
 			}
 			else
 			{
 				if(isdigit(_string[i]))
-					bracketChars<<_string[i];
+					bracketChars << _string[i];
 				else
 				{
 					// If current char is non-escaped closing bracket end parameter definition
@@ -109,7 +110,7 @@ namespace bs
 					{
 						// Last bracket wasn't really a parameter
 						for(u32 j = lastBracket; j <= i; j++)
-							cleanString<<_string[j];
+							cleanString << _string[j];
 					}
 
 					lastBracket = -1;
@@ -126,8 +127,8 @@ namespace bs
 		NumParameters = (u32)paramOffsets.size();
 
 		// Try to find out of order param offsets and fix them
-		std::sort(begin(paramOffsets), end(paramOffsets),
-			[&] (const ParamOffset& a, const ParamOffset& b) { return a.ParamIdx < b.ParamIdx; } );
+		std::sort(begin(paramOffsets), end(paramOffsets), [&](const ParamOffset& a, const ParamOffset& b)
+				  { return a.ParamIdx < b.ParamIdx; });
 
 		if(paramOffsets.size() > 0)
 		{
@@ -149,8 +150,8 @@ namespace bs
 		}
 
 		// Re-sort based on location since we find that more useful at runtime
-		std::sort(begin(paramOffsets), end(paramOffsets),
-			[&] (const ParamOffset& a, const ParamOffset& b) { return a.Location < b.Location; } );
+		std::sort(begin(paramOffsets), end(paramOffsets), [&](const ParamOffset& a, const ParamOffset& b)
+				  { return a.Location < b.Location; });
 
 		ParameterOffsets = bs_newN<ParamOffset>(NumParameters);
 		for(u32 i = 0; i < NumParameters; i++)
@@ -158,7 +159,7 @@ namespace bs
 	}
 
 	StringTable::StringTable()
-		:Resource(false), mActiveLanguageData(nullptr), mDefaultLanguageData(nullptr), mAllLanguages(nullptr)
+		: Resource(false), mActiveLanguageData(nullptr), mDefaultLanguageData(nullptr), mAllLanguages(nullptr)
 	{
 		mAllLanguages = bs_newN<LanguageData>((u32)Language::Count);
 
@@ -166,7 +167,7 @@ namespace bs
 		mActiveLanguageData = mDefaultLanguageData;
 		mActiveLanguage = DEFAULT_LANGUAGE;
 	}
-	
+
 	StringTable::~StringTable()
 	{
 		bs_deleteN(mAllLanguages, (u32)Language::Count);
@@ -189,7 +190,7 @@ namespace bs
 	Vector<String> StringTable::GetIdentifiers() const
 	{
 		Vector<String> output;
-		for (auto& entry : mIdentifiers)
+		for(auto& entry : mIdentifiers)
 			output.push_back(entry);
 
 		return output;
@@ -221,9 +222,9 @@ namespace bs
 		LanguageData* curLanguage = &(mAllLanguages[(u32)language]);
 
 		auto iterFind = curLanguage->Strings.find(identifier);
-		if (iterFind != curLanguage->Strings.end())
+		if(iterFind != curLanguage->Strings.end())
 			return iterFind->second->String;
-			
+
 		return identifier;
 	}
 
@@ -275,7 +276,7 @@ namespace bs
 	SPtr<StringTable> StringTable::CreatePtrInternal()
 	{
 		SPtr<StringTable> scriptCodePtr = bs_core_ptr<StringTable>(
-			new (bs_alloc<StringTable>()) StringTable());
+			new(bs_alloc<StringTable>()) StringTable());
 		scriptCodePtr->SetThisPtrInternal(scriptCodePtr);
 		scriptCodePtr->Initialize();
 
@@ -291,4 +292,4 @@ namespace bs
 	{
 		return StringTable::GetRttiStatic();
 	}
-}
+} // namespace bs

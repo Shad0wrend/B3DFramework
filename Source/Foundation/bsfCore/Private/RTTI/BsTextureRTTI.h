@@ -37,11 +37,12 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 		i32& GetUsage(Texture* obj) { return obj->mProperties.mDesc.Usage; }
+
 		void SetUsage(Texture* obj, i32& val)
 		{
 			// Render target and depth stencil texture formats are for in-memory use only
 			// and don't make sense when serialized
-			if ((val & (TU_DEPTHSTENCIL | TU_RENDERTARGET)) != 0)
+			if((val & (TU_DEPTHSTENCIL | TU_RENDERTARGET)) != 0)
 			{
 				obj->mProperties.mDesc.Usage &= ~(TU_DEPTHSTENCIL | TU_RENDERTARGET);
 				obj->mProperties.mDesc.Usage |= TU_STATIC;
@@ -83,8 +84,7 @@ namespace bs
 		{
 			AddPlainField("mUsage", 11, &TextureRTTI::GetUsage, &TextureRTTI::SetUsage);
 
-			AddReflectablePtrArrayField("mPixelData", 12, &TextureRTTI::GetPixelData, &TextureRTTI::GetPixelDataArraySize,
-				&TextureRTTI::SetPixelData, &TextureRTTI::SetPixelDataArraySize, RTTIFieldInfo(RTTIFieldFlag::SkipInReferenceSearch));
+			AddReflectablePtrArrayField("mPixelData", 12, &TextureRTTI::GetPixelData, &TextureRTTI::GetPixelDataArraySize, &TextureRTTI::SetPixelData, &TextureRTTI::SetPixelDataArraySize, RTTIFieldInfo(RTTIFieldFlag::SkipInReferenceSearch));
 		}
 
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
@@ -98,11 +98,11 @@ namespace bs
 			PixelFormat validFormat = TextureManager::Instance().GetNativeFormat(
 				texProps.GetTextureType(), texProps.GetFormat(), texProps.GetUsage(), texProps.IsHardwareGammaEnabled());
 
-			if (originalFormat != validFormat)
+			if(originalFormat != validFormat)
 			{
 				texProps.mDesc.Format = validFormat;
 
-				for (size_t i = 0; i < mPixelData.size(); i++)
+				for(size_t i = 0; i < mPixelData.size(); i++)
 				{
 					SPtr<PixelData> origData = mPixelData[i];
 					SPtr<PixelData> newData = PixelData::Create(origData->GetWidth(), origData->GetHeight(), origData->GetDepth(), validFormat);
@@ -136,7 +136,7 @@ namespace bs
 			return TID_Texture;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return TextureManager::Instance().CreateEmptyInternal();
 		}
@@ -147,4 +147,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

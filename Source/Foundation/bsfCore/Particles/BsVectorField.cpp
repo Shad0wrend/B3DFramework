@@ -11,12 +11,12 @@ namespace bs
 {
 	namespace detail
 	{
-		template class TVectorField <false>;
-		template class TVectorField <true>;
-	}
+		template class TVectorField<false>;
+		template class TVectorField<true>;
+	} // namespace detail
 
 	VectorField::VectorField(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& values)
-		:TVectorField(desc)
+		: TVectorField(desc)
 	{
 		if(mDesc.CountX == 0 || mDesc.CountY == 0 || mDesc.CountZ == 0)
 			BS_LOG(Warning, Particles, "Vector field count cannot be zero.");
@@ -29,7 +29,8 @@ namespace bs
 		if(count != (u32)values.size())
 		{
 			BS_LOG(Warning, Particles, "Number of values provided to the vector field does not match the expected number. "
-				"Expected: {0}. Got: {1}.", count, (u32)values.size());
+									   "Expected: {0}. Got: {1}.",
+				   count, (u32)values.size());
 		}
 
 		const u32 valuesToCopy = std::min(count, (u32)values.size());
@@ -65,7 +66,7 @@ namespace bs
 
 	SPtr<ct::CoreObject> VectorField::CreateCore() const
 	{
-		ct::VectorField* vectorField = new (bs_alloc<ct::VectorField>()) ct::VectorField(mDesc, mTexture->GetCore());
+		ct::VectorField* vectorField = new(bs_alloc<ct::VectorField>()) ct::VectorField(mDesc, mTexture->GetCore());
 
 		SPtr<ct::VectorField> vectorFieldPtr = bs_shared_ptr<ct::VectorField>(vectorField);
 		vectorFieldPtr->SetThisPtrInternal(vectorFieldPtr);
@@ -104,7 +105,7 @@ namespace bs
 
 	SPtr<VectorField> VectorField::CreatePtrInternal(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& values)
 	{
-		auto* vectorField = new (bs_alloc<VectorField>()) VectorField(desc, values);
+		auto* vectorField = new(bs_alloc<VectorField>()) VectorField(desc, values);
 
 		SPtr<VectorField> vectorFieldPtr = bs_shared_ptr<VectorField>(vectorField);
 		vectorFieldPtr->SetThisPtrInternal(vectorFieldPtr);
@@ -115,7 +116,7 @@ namespace bs
 
 	SPtr<VectorField> VectorField::CreateEmptyInternal()
 	{
-		auto* vectorField = new (bs_alloc<VectorField>()) VectorField();
+		auto* vectorField = new(bs_alloc<VectorField>()) VectorField();
 
 		SPtr<VectorField> vectorFieldPtr = bs_shared_ptr<VectorField>(vectorField);
 		vectorFieldPtr->SetThisPtrInternal(vectorFieldPtr);
@@ -126,11 +127,11 @@ namespace bs
 	namespace ct
 	{
 		VectorField::VectorField(const VECTOR_FIELD_DESC& desc, const SPtr<Texture>& texture)
-			:TVectorField(desc)
+			: TVectorField(desc)
 		{
 			mTexture = texture;
 		}
-	}
+	} // namespace ct
 
 	bool FGAImporter::IsExtensionSupported(const String& ext) const
 	{
@@ -215,13 +216,13 @@ namespace bs
 		desc.CountX = (u32)size.X;
 		desc.CountY = (u32)size.Y;
 		desc.CountZ = (u32)size.Z;
-		
+
 		if(*readPos == '\0')
 		{
 			BS_LOG(Error, Particles, "Unexpected end of file.");
 			return nullptr;
 		}
-		
+
 		Vector3 minBounds, maxBounds;
 		readPos = parseFloat(readPos, minBounds.X);
 		readPos = parseFloat(readPos, minBounds.Y);
@@ -248,7 +249,7 @@ namespace bs
 			readPos = parseFloat(readPos, values[i].Y);
 			readPos = parseFloat(readPos, values[i].Z);
 
-			if ((i != (count - 1)) && *readPos == '\0')
+			if((i != (count - 1)) && *readPos == '\0')
 			{
 				BS_LOG(Error, Particles, "Unexpected end of file.");
 				return nullptr;
@@ -257,8 +258,7 @@ namespace bs
 
 		if(*readPos != '\0')
 		{
-			BS_LOG(Warning, Particles,
-				"Unexpected excess data. This might indicate corrupt data. Remaining data will be truncated.");
+			BS_LOG(Warning, Particles, "Unexpected excess data. This might indicate corrupt data. Remaining data will be truncated.");
 		}
 
 		const String fileName = filePath.GetFilename(false);
@@ -267,4 +267,4 @@ namespace bs
 
 		return vectorField;
 	}
-}
+} // namespace bs

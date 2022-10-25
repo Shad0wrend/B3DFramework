@@ -61,7 +61,6 @@ namespace bs
 	{
 		RenderTarget::RenderTarget()
 		{
-
 		}
 
 		void RenderTarget::SetPriority(i32 priority)
@@ -80,5 +79,5 @@ namespace bs
 		{
 			BS_EXCEPT(InvalidParametersException, "Attribute not found.");
 		}
-	}
-}
+	} // namespace ct
+} // namespace bs

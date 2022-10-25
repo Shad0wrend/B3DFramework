@@ -146,87 +146,87 @@ namespace bs
 
 	namespace ct
 	{
-	/** @addtogroup RenderAPI-Internal
-	 *  @{
-	 */
-
-	/**
-	 * Core thread version of a bs::GpuProgram.
-	 *
-	 * @note	Core thread only.
-	 */
-	class BS_CORE_EXPORT GpuProgram : public CoreObject
-	{
-	public:
-		virtual ~GpuProgram();
-
-		/** Returns whether this program can be supported on the current renderer and hardware. */
-		virtual bool IsSupported() const;
-
-		/** Returns true if program was successfully compiled. */
-		virtual bool IsCompiled() const { return mIsCompiled; }
-
-		/**	Returns an error message returned by the compiler, if the compilation failed. */
-		virtual String GetCompileErrorMessage() const { return mCompileMessages; }
+		/** @addtogroup RenderAPI-Internal
+		 *  @{
+		 */
 
 		/**
-		 * Sets whether this geometry program requires adjacency information from the input primitives.
+		 * Core thread version of a bs::GpuProgram.
 		 *
-		 * @note	Only relevant for geometry programs.
+		 * @note	Core thread only.
 		 */
-		virtual void SetAdjacencyInfoRequired(bool required) { mNeedsAdjacencyInfo = required; }
+		class BS_CORE_EXPORT GpuProgram : public CoreObject
+		{
+		public:
+			virtual ~GpuProgram();
 
-		/**
-		 * Returns whether this geometry program requires adjacency information from the input primitives.
-		 *
-		 * @note	Only relevant for geometry programs.
-		 */
-		virtual bool IsAdjacencyInfoRequired() const { return mNeedsAdjacencyInfo; }
+			/** Returns whether this program can be supported on the current renderer and hardware. */
+			virtual bool IsSupported() const;
 
-		/**	Type of GPU program (for example fragment, vertex). */
-		GpuProgramType GetType() const { return mType; }
+			/** Returns true if program was successfully compiled. */
+			virtual bool IsCompiled() const { return mIsCompiled; }
 
-		/** @copydoc bs::GpuProgram::getParamDesc */
-		SPtr<GpuParamDesc> GetParamDesc() const { return mParametersDesc; }
+			/**	Returns an error message returned by the compiler, if the compilation failed. */
+			virtual String GetCompileErrorMessage() const { return mCompileMessages; }
 
-		/**	Returns GPU program input declaration. Only relevant for vertex programs. */
-		SPtr<VertexDeclaration> GetInputDeclaration() const { return mInputDeclaration; }
+			/**
+			 * Sets whether this geometry program requires adjacency information from the input primitives.
+			 *
+			 * @note	Only relevant for geometry programs.
+			 */
+			virtual void SetAdjacencyInfoRequired(bool required) { mNeedsAdjacencyInfo = required; }
 
-		/** Returns the compiled bytecode of this program. */
-		SPtr<GpuProgramBytecode> GetBytecode() const { return mBytecode; }
+			/**
+			 * Returns whether this geometry program requires adjacency information from the input primitives.
+			 *
+			 * @note	Only relevant for geometry programs.
+			 */
+			virtual bool IsAdjacencyInfoRequired() const { return mNeedsAdjacencyInfo; }
 
-		/**
-		 * @copydoc bs::GpuProgram::Create(const GPU_PROGRAM_DESC&)
-		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
-		 */
-		static SPtr<GpuProgram> Create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			/**	Type of GPU program (for example fragment, vertex). */
+			GpuProgramType GetType() const { return mType; }
 
-		/**
-		 * Compiles the GPU program to an intermediate bytecode format. The bytecode can be cached and used for
-		 * quicker compilation/creation of GPU programs.
-		 */
-		static SPtr<GpuProgramBytecode> CompileBytecode(const GPU_PROGRAM_DESC& desc);
+			/** @copydoc bs::GpuProgram::getParamDesc */
+			SPtr<GpuParamDesc> GetParamDesc() const { return mParametersDesc; }
 
-	protected:
-		friend class GpuProgramRTTI;
+			/**	Returns GPU program input declaration. Only relevant for vertex programs. */
+			SPtr<VertexDeclaration> GetInputDeclaration() const { return mInputDeclaration; }
 
-		GpuProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask);
+			/** Returns the compiled bytecode of this program. */
+			SPtr<GpuProgramBytecode> GetBytecode() const { return mBytecode; }
 
-		bool mNeedsAdjacencyInfo;
+			/**
+			 * @copydoc bs::GpuProgram::Create(const GPU_PROGRAM_DESC&)
+			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
+			 */
+			static SPtr<GpuProgram> Create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
-		bool mIsCompiled = false;
-		String mCompileMessages;
+			/**
+			 * Compiles the GPU program to an intermediate bytecode format. The bytecode can be cached and used for
+			 * quicker compilation/creation of GPU programs.
+			 */
+			static SPtr<GpuProgramBytecode> CompileBytecode(const GPU_PROGRAM_DESC& desc);
 
-		SPtr<GpuParamDesc> mParametersDesc;
-		SPtr<VertexDeclaration> mInputDeclaration;
+		protected:
+			friend class GpuProgramRTTI;
 
-		GpuProgramType mType;
-		String mEntryPoint;
-		String mSource;
+			GpuProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask);
 
-		SPtr<GpuProgramBytecode> mBytecode;
-	};
+			bool mNeedsAdjacencyInfo;
 
-	/** @} */
-	}
-}
+			bool mIsCompiled = false;
+			String mCompileMessages;
+
+			SPtr<GpuParamDesc> mParametersDesc;
+			SPtr<VertexDeclaration> mInputDeclaration;
+
+			GpuProgramType mType;
+			String mEntryPoint;
+			String mSource;
+
+			SPtr<GpuProgramBytecode> mBytecode;
+		};
+
+		/** @} */
+	} // namespace ct
+} // namespace bs

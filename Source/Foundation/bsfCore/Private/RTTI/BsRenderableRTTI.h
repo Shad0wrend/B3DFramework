@@ -28,7 +28,7 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context)
 		{
 			// Note: Since this is a CoreObject I should call Initialize() right after deserialization,
 			// but since this specific type is used in Components we delay initialization until Component
@@ -36,7 +36,7 @@ namespace bs
 			// purposes (you'll need to call initialize manually).
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "Renderable";
 			return name;
@@ -47,7 +47,7 @@ namespace bs
 			return TID_Renderable;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return Renderable::CreateEmpty();
 		}
@@ -55,4 +55,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

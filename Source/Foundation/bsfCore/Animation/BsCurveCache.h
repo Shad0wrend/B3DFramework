@@ -22,7 +22,7 @@ namespace bs
 
 		/** Left-most key the curve was last evaluated at. -1 if no cached data. */
 		mutable u32 cachedKey = (u32)-1;
-		
+
 		/** Time relative to the animation curve, at which the cached data starts. */
 		mutable float cachedCurveStart = std::numeric_limits<float>::infinity();
 
@@ -83,4 +83,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

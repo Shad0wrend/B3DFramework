@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note Wraps Joint as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportName(Joint)) CJoint : public Component
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(Joint)) CJoint : public Component
 	{
 	public:
 		CJoint(const HSceneObject& parent, JOINT_DESC& desc);
@@ -44,27 +44,27 @@ namespace bs
 		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation);
 
 		/** @copydoc Joint::getBreakForce */
-		BS_SCRIPT_EXPORT(ExportName(BreakForce),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(BreakForce), Property(Getter))
 		float GetBreakForce() const;
 
 		/** @copydoc Joint::setBreakForce */
-		BS_SCRIPT_EXPORT(ExportName(BreakForce),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(BreakForce), Property(Setter))
 		void SetBreakForce(float force);
 
 		/** @copydoc Joint::getBreakTorque */
-		BS_SCRIPT_EXPORT(ExportName(BreakTorque),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(BreakTorque), Property(Getter))
 		float GetBreakTorque() const;
 
 		/** @copydoc Joint::setBreakTorque */
-		BS_SCRIPT_EXPORT(ExportName(BreakTorque),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(BreakTorque), Property(Setter))
 		void SetBreakTorque(float torque);
 
 		/** @copydoc Joint::getEnableCollision */
-		BS_SCRIPT_EXPORT(ExportName(EnableCollision),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(EnableCollision), Property(Getter))
 		bool GetEnableCollision() const;
 
 		/** @copydoc Joint::setEnableCollision */
-		BS_SCRIPT_EXPORT(ExportName(EnableCollision),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(EnableCollision), Property(Setter))
 		void SetEnableCollision(bool value);
 
 		/** @copydoc Joint::onJointBreak */
@@ -87,19 +87,19 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc Component::onInitialized() */
-		void OnInitialized() ;
+		void OnInitialized();
 
 		/** @copydoc Component::onDestroyed() */
-		void OnDestroyed() ;
+		void OnDestroyed();
 
 		/** @copydoc Component::onDisabled() */
-		void OnDisabled() ;
+		void OnDisabled();
 
 		/** @copydoc Component::onEnabled() */
-		void OnEnabled() ;
+		void OnEnabled();
 
 		/** @copydoc Component::onTransformChanged() */
-		void OnTransformChanged(TransformChangedFlags flags) ;
+		void OnTransformChanged(TransformChangedFlags flags);
 
 	protected:
 		friend class CRigidbody;
@@ -144,10 +144,10 @@ namespace bs
 	public:
 		friend class CJointRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 
 		CJoint(JOINT_DESC& desc); // Serialization only
-	 };
+	};
 
-	 /** @} */
-}
+	/** @} */
+} // namespace bs

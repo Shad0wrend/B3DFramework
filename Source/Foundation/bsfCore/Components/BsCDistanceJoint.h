@@ -17,45 +17,45 @@ namespace bs
 	 *
 	 * @note	Wraps DistanceJoint as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportName(DistanceJoint)) CDistanceJoint : public CJoint
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(DistanceJoint)) CDistanceJoint : public CJoint
 	{
 	public:
 		CDistanceJoint(const HSceneObject& parent);
 
 		/** @copydoc DistanceJoint::getDistance */
-		BS_SCRIPT_EXPORT(ExportName(Distance),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Distance), Property(Getter))
 		float GetDistance() const;
 
 		/** @copydoc DistanceJoint::getMinDistance */
-		BS_SCRIPT_EXPORT(ExportName(MinDistance),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(MinDistance), Property(Getter))
 		float GetMinDistance() const;
 
 		/** @copydoc DistanceJoint::setMinDistance */
-		BS_SCRIPT_EXPORT(ExportName(MinDistance),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(MinDistance), Property(Setter))
 		void SetMinDistance(float value);
 
 		/** @copydoc DistanceJoint::getMaxDistance */
-		BS_SCRIPT_EXPORT(ExportName(MaxDistance),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(MaxDistance), Property(Getter))
 		float GetMaxDistance() const;
 
 		/** @copydoc DistanceJoint::setMaxDistance */
-		BS_SCRIPT_EXPORT(ExportName(MaxDistance),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(MaxDistance), Property(Setter))
 		void SetMaxDistance(float value);
 
 		/** @copydoc DistanceJoint::getTolerance */
-		BS_SCRIPT_EXPORT(ExportName(Tolerance),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Tolerance), Property(Getter))
 		float GetTolerance() const;
 
 		/** @copydoc DistanceJoint::setTolerance */
-		BS_SCRIPT_EXPORT(ExportName(Tolerance),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Tolerance), Property(Setter))
 		void SetTolerance(float value);
 
 		/** @copydoc DistanceJoint::getSpring */
-		BS_SCRIPT_EXPORT(ExportName(Spring),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Spring), Property(Getter))
 		Spring GetSpring() const;
 
 		/** @copydoc DistanceJoint::setSpring */
-		BS_SCRIPT_EXPORT(ExportName(Spring),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Spring), Property(Setter))
 		void SetSpring(const Spring& value);
 
 		/** @copydoc DistanceJoint::setFlag */
@@ -82,7 +82,7 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CJoint::createInternal */
-		SPtr<Joint> CreateInternal() ;
+		SPtr<Joint> CreateInternal();
 
 		DISTANCE_JOINT_DESC mDesc;
 
@@ -92,11 +92,11 @@ namespace bs
 	public:
 		friend class CDistanceJointRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 
 	protected:
 		CDistanceJoint(); // Serialization only
 	};
 
-	 /** @} */
-}
+	/** @} */
+} // namespace bs

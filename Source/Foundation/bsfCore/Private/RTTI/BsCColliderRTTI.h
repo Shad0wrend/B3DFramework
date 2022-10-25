@@ -28,7 +28,7 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mCollisionReportMode, 8)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "CCollider";
 			return name;
@@ -39,7 +39,7 @@ namespace bs
 			return TID_CCollider;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
 			return nullptr;
@@ -48,4 +48,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

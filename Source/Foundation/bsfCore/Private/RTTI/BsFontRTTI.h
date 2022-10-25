@@ -29,7 +29,7 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "FontData";
 			return name;
@@ -40,7 +40,7 @@ namespace bs
 			return TID_FontBitmap;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<FontBitmap>();
 		}
@@ -56,7 +56,7 @@ namespace bs
 
 			auto iter = obj->mFontDataPerSize.begin();
 			for(u32 i = 0; i < idx; i++, ++iter)
-			{ }
+			{}
 
 			return *iter->second;
 		}
@@ -111,4 +111,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

@@ -12,17 +12,15 @@ namespace bs
 		SetName("Light");
 	}
 
-	CLight::CLight(const HSceneObject& parent, LightType type, Color color,
-		float intensity, float range, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle)
-		: Component(parent), mType(type), mColor(color), mIntensity(intensity), mRange(range),
-		mCastsShadows(castsShadows), mSpotAngle(spotAngle), mSpotFalloffAngle(spotFalloffAngle)
+	CLight::CLight(const HSceneObject& parent, LightType type, Color color, float intensity, float range, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle)
+		: Component(parent), mType(type), mColor(color), mIntensity(intensity), mRange(range), mCastsShadows(castsShadows), mSpotAngle(spotAngle), mSpotFalloffAngle(spotFalloffAngle)
 	{
 		SetFlag(ComponentFlag::AlwaysRun, true);
 		SetName("Light");
 	}
 
 	CLight::~CLight()
-	{ }
+	{}
 
 	Sphere CLight::GetBounds() const
 	{
@@ -35,7 +33,7 @@ namespace bs
 	{
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->Initialize();
 		else
 		{
@@ -57,7 +55,7 @@ namespace bs
 		gSceneManager().UnbindActorInternal(mInternal);
 		mInternal->Destroy();
 	}
-	
+
 	RTTITypeBase* CLight::GetRttiStatic()
 	{
 		return CLightRTTI::Instance();
@@ -67,4 +65,4 @@ namespace bs
 	{
 		return CLight::GetRttiStatic();
 	}
-}
+} // namespace bs

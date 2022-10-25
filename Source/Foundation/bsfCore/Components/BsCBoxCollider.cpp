@@ -23,28 +23,28 @@ namespace bs
 	{
 		Vector3 clampedExtents = Vector3::Max(extents, Vector3(0.01f, 0.01f, 0.01f));
 
-		if (mExtents == clampedExtents)
+		if(mExtents == clampedExtents)
 			return;
 
 		mExtents = clampedExtents;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 		{
 			GetInternalInternal()->SetExtents(clampedExtents);
 
-			if (mParent != nullptr)
+			if(mParent != nullptr)
 				mParent->UpdateMassDistributionInternal();
 		}
 	}
 
 	void CBoxCollider::SetCenter(const Vector3& center)
 	{
-		if (mLocalPosition == center)
+		if(mLocalPosition == center)
 			return;
 
 		mLocalPosition = center;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			UpdateTransform();
 	}
 
@@ -53,8 +53,7 @@ namespace bs
 		const SPtr<SceneInstance>& scene = SO()->GetScene();
 		const Transform& tfrm = SO()->GetTransform();
 
-		SPtr<Collider> collider = BoxCollider::Create(*scene->GetPhysicsScene(), mExtents, tfrm.GetPosition(),
-			tfrm.GetRotation());
+		SPtr<Collider> collider = BoxCollider::Create(*scene->GetPhysicsScene(), mExtents, tfrm.GetPosition(), tfrm.GetRotation());
 		collider->SetOwnerInternal(PhysicsOwnerType::Component, this);
 
 		return collider;
@@ -69,4 +68,4 @@ namespace bs
 	{
 		return CBoxCollider::GetRttiStatic();
 	}
-}
+} // namespace bs

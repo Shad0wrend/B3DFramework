@@ -25,21 +25,21 @@ namespace bs
 		// we check for it anyway (something could have gone wrong).
 		if(mTexture.IsLoaded())
 		{
-			if (mFilteredRadiance == nullptr || mIrradiance == nullptr)
+			if(mFilteredRadiance == nullptr || mIrradiance == nullptr)
 				FilterTexture();
 		}
 	}
 
 	Skybox::~Skybox()
 	{
-		if (mRendererTask != nullptr)
+		if(mRendererTask != nullptr)
 			mRendererTask->Cancel();
 	}
 
 	void Skybox::FilterTexture()
 	{
 		// If previous rendering task exists, cancel it
-		if (mRendererTask != nullptr)
+		if(mRendererTask != nullptr)
 			mRendererTask->Cancel();
 
 		{
@@ -116,7 +116,7 @@ namespace bs
 
 	SPtr<Skybox> Skybox::CreateEmpty()
 	{
-		Skybox* skybox = new (bs_alloc<Skybox>()) Skybox();
+		Skybox* skybox = new(bs_alloc<Skybox>()) Skybox();
 		SPtr<Skybox> skyboxPtr = bs_core_ptr<Skybox>(skybox);
 		skyboxPtr->SetThisPtrInternal(skyboxPtr);
 
@@ -134,18 +134,18 @@ namespace bs
 	SPtr<ct::CoreObject> Skybox::CreateCore() const
 	{
 		SPtr<ct::Texture> radiance;
-		if (mTexture.IsLoaded(false))
+		if(mTexture.IsLoaded(false))
 			radiance = mTexture->GetCore();
 
 		SPtr<ct::Texture> filteredRadiance;
-		if (mFilteredRadiance)
+		if(mFilteredRadiance)
 			filteredRadiance = mFilteredRadiance->GetCore();
 
 		SPtr<ct::Texture> irradiance;
-		if (mIrradiance)
+		if(mIrradiance)
 			irradiance = mIrradiance->GetCore();
 
-		ct::Skybox* skybox = new (bs_alloc<ct::Skybox>()) ct::Skybox(radiance, filteredRadiance, irradiance);
+		ct::Skybox* skybox = new(bs_alloc<ct::Skybox>()) ct::Skybox(radiance, filteredRadiance, irradiance);
 		SPtr<ct::Skybox> skyboxPtr = bs_shared_ptr<ct::Skybox>(skybox);
 		skyboxPtr->SetThisPtrInternal(skyboxPtr);
 
@@ -187,7 +187,7 @@ namespace bs
 	namespace ct
 	{
 		Skybox::Skybox(const SPtr<Texture>& radiance, const SPtr<Texture>& filteredRadiance, const SPtr<Texture>& irradiance)
-			:mFilteredRadiance(filteredRadiance), mIrradiance(irradiance)
+			: mFilteredRadiance(filteredRadiance), mIrradiance(irradiance)
 		{
 			mTexture = radiance;
 		}
@@ -215,21 +215,21 @@ namespace bs
 			csync_read((SceneActor&)*this, stream);
 			csync_read(*this, stream);
 
-			if (oldIsActive != mActive)
+			if(oldIsActive != mActive)
 			{
-				if (mActive)
+				if(mActive)
 					gRenderer()->NotifySkyboxAdded(this);
 				else
 					gRenderer()->NotifySkyboxRemoved(this);
 			}
 			else
 			{
-				if (dirtyFlags != SkyboxDirtyFlag::Texture)
+				if(dirtyFlags != SkyboxDirtyFlag::Texture)
 				{
 					gRenderer()->NotifySkyboxRemoved(this);
 					gRenderer()->NotifySkyboxAdded(this);
 				}
 			}
 		}
-	}
-}
+	} // namespace ct
+} // namespace bs

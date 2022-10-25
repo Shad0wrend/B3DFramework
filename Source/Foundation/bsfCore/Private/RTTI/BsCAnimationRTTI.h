@@ -37,7 +37,7 @@ namespace bs
 			return TID_CAnimation;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return SceneObject::CreateEmptyComponent<CAnimation>();
 		}
@@ -45,4 +45,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

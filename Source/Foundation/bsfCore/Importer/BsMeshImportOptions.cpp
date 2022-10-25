@@ -39,4 +39,4 @@ namespace bs
 	{
 		return MeshImportOptions::GetRttiStatic();
 	}
-}
+} // namespace bs

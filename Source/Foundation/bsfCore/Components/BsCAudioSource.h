@@ -17,82 +17,91 @@ namespace bs
 	 *
 	 * @note Wraps AudioSource as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Audio),ExportName(AudioSource)) CAudioSource : public Component
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Audio), ExportName(AudioSource)) CAudioSource : public Component
 	{
 	public:
 		CAudioSource(const HSceneObject& parent);
 		virtual ~CAudioSource() = default;
-		
+
 		/** @copydoc AudioSource::setClip */
-		BS_SCRIPT_EXPORT(ExportName(Clip),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Clip), Property(Setter))
 		void SetClip(const HAudioClip& clip);
 
 		/** @copydoc AudioSource::getClip */
-		BS_SCRIPT_EXPORT(ExportName(Clip),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Clip), Property(Getter))
+
 		HAudioClip GetClip() const { return mAudioClip; }
 
 		/** @copydoc AudioSource::setVolume */
-		BS_SCRIPT_EXPORT(ExportName(Volume),Property(Setter),UIValueRange([0,1]),UI(AsSlider))
+		BS_SCRIPT_EXPORT(ExportName(Volume), Property(Setter), UIValueRange([ 0, 1 ]), UI(AsSlider))
 		void SetVolume(float volume);
 
 		/** @copydoc AudioSource::getVolume */
-		BS_SCRIPT_EXPORT(ExportName(Volume),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Volume), Property(Getter))
+
 		float GetVolume() const { return mVolume; }
 
 		/** @copydoc AudioSource::setPitch */
-		BS_SCRIPT_EXPORT(ExportName(Pitch),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Pitch), Property(Setter))
 		void SetPitch(float pitch);
 
 		/** @copydoc AudioSource::getPitch */
-		BS_SCRIPT_EXPORT(ExportName(Pitch),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Pitch), Property(Getter))
+
 		float GetPitch() const { return mPitch; }
 
 		/** @copydoc AudioSource::setIsLooping */
-		BS_SCRIPT_EXPORT(ExportName(Loop),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Loop), Property(Setter))
 		void SetIsLooping(bool loop);
 
 		/** @copydoc AudioSource::getIsLooping */
-		BS_SCRIPT_EXPORT(ExportName(Loop),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Loop), Property(Getter))
+
 		bool GetIsLooping() const { return mLoop; }
 
 		/** @copydoc AudioSource::setPriority */
-		BS_SCRIPT_EXPORT(ExportName(Priority),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Priority), Property(Setter))
 		void SetPriority(u32 priority);
 
 		/** @copydoc AudioSource::getPriority */
-		BS_SCRIPT_EXPORT(ExportName(Priority),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Priority), Property(Getter))
+
 		u32 GetPriority() const { return mPriority; }
 
 		/** @copydoc AudioSource::setMinDistance */
-		BS_SCRIPT_EXPORT(ExportName(MinDistance),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(MinDistance), Property(Setter))
 		void SetMinDistance(float distance);
 
 		/** @copydoc AudioSource::getMinDistance */
-		BS_SCRIPT_EXPORT(ExportName(MinDistance),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(MinDistance), Property(Getter))
+
 		float GetMinDistance() const { return mMinDistance; }
 
 		/** @copydoc AudioSource::setAttenuation */
-		BS_SCRIPT_EXPORT(ExportName(Attenuation),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Attenuation), Property(Setter))
 		void SetAttenuation(float attenuation);
 
 		/** @copydoc AudioSource::getAttenuation */
-		BS_SCRIPT_EXPORT(ExportName(Attenuation),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Attenuation), Property(Getter))
+
 		float GetAttenuation() const { return mAttenuation; }
 
 		/** @copydoc AudioSource::setTime */
-		BS_SCRIPT_EXPORT(ExportName(Time),Property(Setter),UI(Hide))
+		BS_SCRIPT_EXPORT(ExportName(Time), Property(Setter), UI(Hide))
 		void SetTime(float time);
 
 		/** @copydoc AudioSource::getTime */
-		BS_SCRIPT_EXPORT(ExportName(Time),Property(Getter),UI(Hide))
+		BS_SCRIPT_EXPORT(ExportName(Time), Property(Getter), UI(Hide))
 		float GetTime() const;
 
 		/** Sets whether playback should start as soon as the component is enabled. */
-		BS_SCRIPT_EXPORT(ExportName(PlayOnStart),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(PlayOnStart), Property(Setter))
+
 		void SetPlayOnStart(bool enable) { mPlayOnStart = enable; }
 
 		/** Determines should playback start as soon as the component is enabled. */
-		BS_SCRIPT_EXPORT(ExportName(PlayOnStart),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(PlayOnStart), Property(Getter))
+
 		bool GetPlayOnStart() const { return mPlayOnStart; }
 
 		/** @copydoc AudioSource::play */
@@ -108,7 +117,7 @@ namespace bs
 		void Stop();
 
 		/** @copydoc AudioSource::getState */
-		BS_SCRIPT_EXPORT(ExportName(State),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(State), Property(Getter))
 		AudioSourceState GetState() const;
 
 		/** @name Internal
@@ -143,6 +152,7 @@ namespace bs
 
 		/** @copydoc Component::update() */
 		void Update() override;
+
 	protected:
 		using Component::DestroyInternal;
 
@@ -177,11 +187,11 @@ namespace bs
 	public:
 		friend class CAudioSourceRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 
 	protected:
 		CAudioSource(); // Serialization only
-	 };
+	};
 
-	 /** @} */
-}
+	/** @} */
+} // namespace bs

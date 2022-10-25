@@ -96,9 +96,10 @@ namespace bs
 	struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation)) RootMotion
 	{
 		RootMotion() = default;
+
 		RootMotion(const TAnimationCurve<Vector3>& position, const TAnimationCurve<Quaternion>& rotation)
-			:Position(position), Rotation(rotation)
-		{ }
+			: Position(position), Rotation(rotation)
+		{}
 
 		/** Animation curve representing the movement of the root bone. */
 		TAnimationCurve<Vector3> Position;
@@ -108,7 +109,7 @@ namespace bs
 	};
 
 	/** Event that is triggered when animation reaches a certain point. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportAsStruct(true)) AnimationEvent
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportAsStruct(true)) AnimationEvent
 	{
 		AnimationEvent() = default;
 
@@ -119,8 +120,8 @@ namespace bs
 		 * @param[in]	time	Time at which to trigger the event, in seconds.
 		 */
 		AnimationEvent(const String& name, float time)
-			:Name(name), Time(time)
-		{ }
+			: Name(name), Time(time)
+		{}
 
 		/** Name used to identify the event when triggered. */
 		String Name;
@@ -151,22 +152,25 @@ namespace bs
 		virtual ~AnimationClip() = default;
 
 		/** @copydoc setCurves() */
-		BS_SCRIPT_EXPORT(ExportName(Curves),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Curves), Property(Getter))
+
 		SPtr<AnimationCurves> GetCurves() const { return mCurves; }
 
 		/**
 		 * A set of all curves stored in the animation. Returned value will not be updated if the animation clip curves are
 		 * added or removed, as it is a copy of clip's internal values.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(Curves),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Curves), Property(Setter))
 		void SetCurves(const AnimationCurves& curves);
 
 		/** @copydoc setEvents() */
-		BS_SCRIPT_EXPORT(ExportName(Events),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Events), Property(Getter))
+
 		const Vector<AnimationEvent>& GetEvents() const { return mEvents; }
 
 		/** A set of all events to be triggered as the animation is playing. */
-		BS_SCRIPT_EXPORT(ExportName(Events),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Events), Property(Setter))
+
 		void SetEvents(const Vector<AnimationEvent>& events) { mEvents = events; }
 
 		/**
@@ -174,11 +178,12 @@ namespace bs
 		 * animation curves manually, instead of through the normal animation process. This property is only available
 		 * if animation clip was imported with root motion import enabled.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(RootMotion),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(RootMotion), Property(Getter))
+
 		SPtr<RootMotion> GetRootMotion() const { return mRootMotion; }
 
 		/** Checks if animation clip has root motion curves separate from the normal animation curves. */
-		BS_SCRIPT_EXPORT(ExportName(HasRootMotion),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(HasRootMotion), Property(Getter))
 		bool HasRootMotion() const;
 
 		/**
@@ -216,15 +221,18 @@ namespace bs
 		 * Checks are the curves contained within the clip additive. Additive clips are intended to be added on top of
 		 * other clips.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(IsAddtive),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(IsAddtive), Property(Getter))
+
 		bool IsAdditive() const { return mIsAdditive; }
 
 		/** Returns the length of the animation clip, in seconds. */
-		BS_SCRIPT_EXPORT(ExportName(Length),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Length), Property(Getter))
+
 		float GetLength() const { return mLength; }
 
 		/** @copydoc setSampleRate() */
-		BS_SCRIPT_EXPORT(ExportName(SampleRate),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(SampleRate), Property(Getter))
+
 		u32 GetSampleRate() const { return mSampleRate; }
 
 		/**
@@ -232,7 +240,8 @@ namespace bs
 		 * clip or curves directly since unevenly spaced keyframes are supported. But it can be of value when determining
 		 * the original sample rate of an imported animation or similar.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(SampleRate),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(SampleRate), Property(Setter))
+
 		void SetSampleRate(u32 sampleRate) { mSampleRate = sampleRate; }
 
 		/**
@@ -260,8 +269,7 @@ namespace bs
 		 *							animation system directly but is instead provided to the user for manual evaluation.
 		 */
 		BS_SCRIPT_EXPORT(ExtensionConstructorForType(AnimationClip))
-		static HAnimationClip Create(const SPtr<AnimationCurves>& curves, bool isAdditive = false, u32 sampleRate = 1,
-			const SPtr<RootMotion>& rootMotion = nullptr);
+		static HAnimationClip Create(const SPtr<AnimationCurves>& curves, bool isAdditive = false, u32 sampleRate = 1, const SPtr<RootMotion>& rootMotion = nullptr);
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -269,15 +277,13 @@ namespace bs
 		 */
 
 		/** Creates a new AnimationClip without initializing it. Use create() for normal use. */
-		static SPtr<AnimationClip> CreatePtrInternal(const SPtr<AnimationCurves>& curves, bool isAdditive = false,
-			u32 sampleRate = 1, const SPtr<RootMotion>& rootMotion = nullptr);
+		static SPtr<AnimationClip> CreatePtrInternal(const SPtr<AnimationCurves>& curves, bool isAdditive = false, u32 sampleRate = 1, const SPtr<RootMotion>& rootMotion = nullptr);
 
 		/** @} */
 
 	protected:
 		AnimationClip();
-		AnimationClip(const SPtr<AnimationCurves>& curves, bool isAdditive, u32 sampleRate,
-			const SPtr<RootMotion>& rootMotion);
+		AnimationClip(const SPtr<AnimationCurves>& curves, bool isAdditive, u32 sampleRate, const SPtr<RootMotion>& rootMotion);
 
 		/** @copydoc Resource::Initialize() */
 		void Initialize() override;
@@ -331,4 +337,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

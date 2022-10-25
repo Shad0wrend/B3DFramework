@@ -36,14 +36,14 @@ namespace bs
 		bool mAllowAsync = true;
 		u32 mCompressionMethod = 0;
 
-	/************************************************************************/
-	/* 								SERIALIZATION                      		*/
-	/************************************************************************/
+		/************************************************************************/
+		/* 								SERIALIZATION                      		*/
+		/************************************************************************/
 	public:
 		friend class SavedResourceDataRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 	};
 
 	/** @} */
-}
+} // namespace bs

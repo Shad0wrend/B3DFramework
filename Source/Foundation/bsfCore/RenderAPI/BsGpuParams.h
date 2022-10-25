@@ -15,25 +15,176 @@ namespace bs
 	 */
 
 	/**	Helper structure whose specializations convert an engine data type into a GPU program data parameter type.  */
-	template<class T> struct TGpuDataParamInfo { enum { TypeId = GPDT_STRUCT };};
-	template<> struct TGpuDataParamInfo < float > { enum { TypeId = GPDT_FLOAT1 }; };
-	template<> struct TGpuDataParamInfo < Vector2 > { enum { TypeId = GPDT_FLOAT2 }; };
-	template<> struct TGpuDataParamInfo < Vector3 > { enum { TypeId = GPDT_FLOAT3 }; };
-	template<> struct TGpuDataParamInfo < Vector4 > { enum { TypeId = GPDT_FLOAT4 }; };
-	template<> struct TGpuDataParamInfo < int > { enum { TypeId = GPDT_INT1 }; };
-	template<> struct TGpuDataParamInfo < Vector2I > { enum { TypeId = GPDT_INT2 }; };
-	template<> struct TGpuDataParamInfo < Vector3I > { enum { TypeId = GPDT_INT3 }; };
-	template<> struct TGpuDataParamInfo < Vector4I > { enum { TypeId = GPDT_INT4 }; };
-	template<> struct TGpuDataParamInfo < Matrix2 > { enum { TypeId = GPDT_MATRIX_2X2 }; };
-	template<> struct TGpuDataParamInfo < Matrix2x3 > { enum { TypeId = GPDT_MATRIX_2X3 }; };
-	template<> struct TGpuDataParamInfo < Matrix2x4 > { enum { TypeId = GPDT_MATRIX_2X4 }; };
-	template<> struct TGpuDataParamInfo < Matrix3 > { enum { TypeId = GPDT_MATRIX_3X3 }; };
-	template<> struct TGpuDataParamInfo < Matrix3x2 > { enum { TypeId = GPDT_MATRIX_3X2 }; };
-	template<> struct TGpuDataParamInfo < Matrix3x4 > { enum { TypeId = GPDT_MATRIX_3X4 }; };
-	template<> struct TGpuDataParamInfo < Matrix4 > { enum { TypeId = GPDT_MATRIX_4X4 }; };
-	template<> struct TGpuDataParamInfo < Matrix4x2 > { enum { TypeId = GPDT_MATRIX_4X2 }; };
-	template<> struct TGpuDataParamInfo < Matrix4x3 > { enum { TypeId = GPDT_MATRIX_4X3 }; };
-	template<> struct TGpuDataParamInfo < Color > { enum { TypeId = GPDT_COLOR }; };
+	template <class T>
+	struct TGpuDataParamInfo
+	{
+		enum
+		{
+			TypeId = GPDT_STRUCT
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<float>
+	{
+		enum
+		{
+			TypeId = GPDT_FLOAT1
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Vector2>
+	{
+		enum
+		{
+			TypeId = GPDT_FLOAT2
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Vector3>
+	{
+		enum
+		{
+			TypeId = GPDT_FLOAT3
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Vector4>
+	{
+		enum
+		{
+			TypeId = GPDT_FLOAT4
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<int>
+	{
+		enum
+		{
+			TypeId = GPDT_INT1
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Vector2I>
+	{
+		enum
+		{
+			TypeId = GPDT_INT2
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Vector3I>
+	{
+		enum
+		{
+			TypeId = GPDT_INT3
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Vector4I>
+	{
+		enum
+		{
+			TypeId = GPDT_INT4
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Matrix2>
+	{
+		enum
+		{
+			TypeId = GPDT_MATRIX_2X2
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Matrix2x3>
+	{
+		enum
+		{
+			TypeId = GPDT_MATRIX_2X3
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Matrix2x4>
+	{
+		enum
+		{
+			TypeId = GPDT_MATRIX_2X4
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Matrix3>
+	{
+		enum
+		{
+			TypeId = GPDT_MATRIX_3X3
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Matrix3x2>
+	{
+		enum
+		{
+			TypeId = GPDT_MATRIX_3X2
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Matrix3x4>
+	{
+		enum
+		{
+			TypeId = GPDT_MATRIX_3X4
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Matrix4>
+	{
+		enum
+		{
+			TypeId = GPDT_MATRIX_4X4
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Matrix4x2>
+	{
+		enum
+		{
+			TypeId = GPDT_MATRIX_4X2
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Matrix4x3>
+	{
+		enum
+		{
+			TypeId = GPDT_MATRIX_4X3
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Color>
+	{
+		enum
+		{
+			TypeId = GPDT_COLOR
+		};
+	};
 
 	class GpuPipelineParamInfoBase;
 
@@ -81,10 +232,10 @@ namespace bs
 		GpuParamBlockDesc* GetParamBlockDesc(GpuProgramType type, const String& name) const;
 
 		/** Marks the sim thread object as dirty, causing it to sync its contents with its core thread counterpart. */
-		virtual void MarkCoreDirtyInternal() { }
+		virtual void MarkCoreDirtyInternal() {}
 
 		/** @copydoc IResourceListener::markListenerResourcesDirty */
-		virtual void MarkResourcesDirtyInternal() { }
+		virtual void MarkResourcesDirtyInternal() {}
 
 	protected:
 		GpuParamsBase(const SPtr<GpuPipelineParamInfoBase>& paramInfo);
@@ -116,7 +267,8 @@ namespace bs
 		 *
 		 * Parameter handles will be invalidated when their parent GpuParams object changes.
 		 */
-		template<class T> void GetParam(GpuProgramType type, const String& name, TGpuDataParam<T, Core>& output) const;
+		template <class T>
+		void GetParam(GpuProgramType type, const String& name, TGpuDataParam<T, Core>& output) const;
 
 		/** @copydoc getParam */
 		void GetStructParam(GpuProgramType type, const String& name, TGpuParamStruct<Core>& output) const;
@@ -181,8 +333,7 @@ namespace bs
 		virtual void SetParamBlockBuffer(u32 set, u32 slot, const ParamsBufferType& paramBlockBuffer);
 
 		/**	Sets a texture at the specified set/slot combination. */
-		virtual void SetTexture(u32 set, u32 slot, const TextureType& texture,
-								const TextureSurface& surface = TextureSurface::COMPLETE);
+		virtual void SetTexture(u32 set, u32 slot, const TextureType& texture, const TextureSurface& surface = TextureSurface::COMPLETE);
 
 		/**	Sets a load/store texture at the specified set/slot combination. */
 		virtual void SetLoadStoreTexture(u32 set, u32 slot, const TextureType& texture, const TextureSurface& surface);
@@ -194,25 +345,45 @@ namespace bs
 		virtual void SetSamplerState(u32 set, u32 slot, const SamplerType& sampler);
 
 		/**	Assigns a data value to the parameter with the specified name. */
-		template<class T> void SetParam(GpuProgramType type, const String& name, const T& value)
-		{ TGpuDataParam<T, Core> param; GetParam(type, name, param); param.Set(value); }
+		template <class T>
+		void SetParam(GpuProgramType type, const String& name, const T& value)
+		{
+			TGpuDataParam<T, Core> param;
+			GetParam(type, name, param);
+			param.Set(value);
+		}
 
 		/**	Assigns a texture to the parameter with the specified name. */
-		void SetTexture(GpuProgramType type, const String& name, const TextureType& texture,
-						const TextureSurface& surface = TextureSurface::COMPLETE)
-		{ TGpuParamTexture<Core> param; GetTextureParam(type, name, param); param.Set(texture, surface); }
+		void SetTexture(GpuProgramType type, const String& name, const TextureType& texture, const TextureSurface& surface = TextureSurface::COMPLETE)
+		{
+			TGpuParamTexture<Core> param;
+			GetTextureParam(type, name, param);
+			param.Set(texture, surface);
+		}
 
 		/**	Assigns a load/store texture to the parameter with the specified name. */
 		void SetLoadStoreTexture(GpuProgramType type, const String& name, const TextureType& texture, const TextureSurface& surface)
-		{ TGpuParamLoadStoreTexture<Core> param; GetLoadStoreTextureParam(type, name, param); param.Set(texture, surface); }
+		{
+			TGpuParamLoadStoreTexture<Core> param;
+			GetLoadStoreTextureParam(type, name, param);
+			param.Set(texture, surface);
+		}
 
 		/**	Assigns a buffer to the parameter with the specified name. */
 		void SetBuffer(GpuProgramType type, const String& name, const BufferType& buffer)
-		{ TGpuParamBuffer<Core> param; GetBufferParam(type, name, param); param.Set(buffer); }
+		{
+			TGpuParamBuffer<Core> param;
+			GetBufferParam(type, name, param);
+			param.Set(buffer);
+		}
 
 		/**	Assigns a sampler state to the parameter with the specified name. */
 		void SetSamplerState(GpuProgramType type, const String& name, const SamplerType& sampler)
-		{ TGpuParamSampState<Core> param; GetSamplerStateParam(type, name, param); param.Set(sampler); }
+		{
+			TGpuParamSampState<Core> param;
+			GetSamplerStateParam(type, name, param);
+			param.Set(sampler);
+		}
 
 	protected:
 		TGpuParams(const SPtr<GpuPipelineParamInfoBase>& paramInfo);
@@ -250,7 +421,7 @@ namespace bs
 	class BS_CORE_EXPORT GpuParams : public CoreObject, public TGpuParams<false>, public IResourceListener
 	{
 	public:
-		~GpuParams() { }
+		~GpuParams() {}
 
 		/** Retrieves a core implementation of a mesh usable only from the core thread. */
 		SPtr<ct::GpuParams> GetCore() const;
@@ -296,10 +467,10 @@ namespace bs
 		SPtr<GpuParams> GetThisPtrInternal() const override;
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData SyncToCore(FrameAlloc* allocator) ;
+		CoreSyncData SyncToCore(FrameAlloc* allocator);
 
 		/** @copydoc IResourceListener::getListenerResources */
 		void GetListenerResources(Vector<HResource>& resources) override;
@@ -315,54 +486,51 @@ namespace bs
 
 	namespace ct
 	{
-	/** @addtogroup RenderAPI-Internal
-	 *  @{
-	 */
-
-	/**
-	 * Core thread version of bs::GpuParams.
-	 *
-	 * @note	Core thread only.
-	 */
-	class BS_CORE_EXPORT GpuParams : public CoreObject, public TGpuParams<true>
-	{
-	public:
-		virtual ~GpuParams() { }
+		/** @addtogroup RenderAPI-Internal
+		 *  @{
+		 */
 
 		/**
-		 * @copydoc bs::GpuParams::Create(const SPtr<GraphicsPipelineState>&)
-		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the buffer be created on.
+		 * Core thread version of bs::GpuParams.
+		 *
+		 * @note	Core thread only.
 		 */
-		static SPtr<GpuParams> Create(const SPtr<GraphicsPipelineState>& pipelineState,
-										  GpuDeviceFlags deviceMask = GDF_DEFAULT);
+		class BS_CORE_EXPORT GpuParams : public CoreObject, public TGpuParams<true>
+		{
+		public:
+			virtual ~GpuParams() {}
 
-		/**
-		 * @copydoc bs::GpuParams::Create(const SPtr<ComputePipelineState>&)
-		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the buffer be created on.
-		 */
-		static SPtr<GpuParams> Create(const SPtr<ComputePipelineState>& pipelineState,
-										  GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			/**
+			 * @copydoc bs::GpuParams::Create(const SPtr<GraphicsPipelineState>&)
+			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the buffer be created on.
+			 */
+			static SPtr<GpuParams> Create(const SPtr<GraphicsPipelineState>& pipelineState, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
-		/**
-		 * @copydoc bs::GpuParams::Create(const SPtr<GpuPipelineParamInfo>&)
-		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the buffer be created on.
-		 */
-		static SPtr<GpuParams> Create(const SPtr<GpuPipelineParamInfo>& paramInfo,
-										  GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			/**
+			 * @copydoc bs::GpuParams::Create(const SPtr<ComputePipelineState>&)
+			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the buffer be created on.
+			 */
+			static SPtr<GpuParams> Create(const SPtr<ComputePipelineState>& pipelineState, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
-	protected:
-		friend class bs::GpuParams;
-		friend class HardwareBufferManager;
+			/**
+			 * @copydoc bs::GpuParams::Create(const SPtr<GpuPipelineParamInfo>&)
+			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the buffer be created on.
+			 */
+			static SPtr<GpuParams> Create(const SPtr<GpuPipelineParamInfo>& paramInfo, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
-		GpuParams(const SPtr<GpuPipelineParamInfo>& paramInfo, GpuDeviceFlags deviceMask);
+		protected:
+			friend class bs::GpuParams;
+			friend class HardwareBufferManager;
 
-		/** @copydoc CoreObject::getThisPtr */
-		SPtr<GpuParams> GetThisPtrInternal() const override;
+			GpuParams(const SPtr<GpuPipelineParamInfo>& paramInfo, GpuDeviceFlags deviceMask);
 
-		/** @copydoc CoreObject::syncToCore */
-		void SyncToCore(const CoreSyncData& data) ;
-	};
+			/** @copydoc CoreObject::getThisPtr */
+			SPtr<GpuParams> GetThisPtrInternal() const override;
 
-	/** @} */
-	}
-}
+			/** @copydoc CoreObject::syncToCore */
+			void SyncToCore(const CoreSyncData& data);
+		};
+
+		/** @} */
+	} // namespace ct
+} // namespace bs

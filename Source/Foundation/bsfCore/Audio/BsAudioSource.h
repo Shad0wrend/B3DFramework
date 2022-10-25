@@ -121,13 +121,13 @@ namespace bs
 		AudioSource() = default;
 
 		/** @copydoc IResourceListener::getListenerResources */
-		void GetListenerResources(Vector<HResource>& resources) ;
+		void GetListenerResources(Vector<HResource>& resources);
 
 		/** @copydoc IResourceListener::notifyResourceChanged */
 		void NotifyResourceChanged(const HResource& resource) override;
 
 		/** Triggered by the resources system whenever the attached audio clip changed (e.g. was reimported.) */
-		virtual void OnClipChanged() { }
+		virtual void OnClipChanged() {}
 
 		HAudioClip mAudioClip;
 		Vector3 mVelocity = BsZero;
@@ -148,4 +148,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

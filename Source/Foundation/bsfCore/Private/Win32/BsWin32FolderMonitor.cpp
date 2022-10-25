@@ -56,8 +56,7 @@ namespace bs
 	};
 
 	FolderMonitor::FolderWatchInfo::FolderWatchInfo(const Path& folderToMonitor, HANDLE dirHandle, bool monitorSubdirectories, DWORD monitorFlags)
-		:MFolderToMonitor(folderToMonitor), MDirHandle(dirHandle), MState(MonitorState::Inactive), MBufferSize(0),
-		MMonitorSubdirectories(monitorSubdirectories), MMonitorFlags(monitorFlags), MReadError(0)
+		: MFolderToMonitor(folderToMonitor), MDirHandle(dirHandle), MState(MonitorState::Inactive), MBufferSize(0), MMonitorSubdirectories(monitorSubdirectories), MMonitorFlags(monitorFlags), MReadError(0)
 	{
 		memset(&MOverlapped, 0, sizeof(MOverlapped));
 	}
@@ -91,8 +90,7 @@ namespace bs
 				MState = MonitorState::Inactive;
 			}
 
-			BS_EXCEPT(InternalErrorException, "Failed to start folder monitor on folder \"" +
-				MFolderToMonitor.ToString() + "\" because ReadDirectoryChangesW failed.");
+			BS_EXCEPT(InternalErrorException, "Failed to start folder monitor on folder \"" + MFolderToMonitor.ToString() + "\" because ReadDirectoryChangesW failed.");
 		}
 	}
 
@@ -110,7 +108,7 @@ namespace bs
 		}
 
 		if(MDirHandle != INVALID_HANDLE_VALUE)
-		{			
+		{
 			CloseHandle(MDirHandle);
 			MDirHandle = INVALID_HANDLE_VALUE;
 		}
@@ -120,14 +118,14 @@ namespace bs
 	{
 	public:
 		FileNotifyInfo(u8* notifyBuffer, DWORD bufferSize)
-		:mBuffer(notifyBuffer), mBufferSize(bufferSize)
+			: mBuffer(notifyBuffer), mBufferSize(bufferSize)
 		{
 			mCurrentRecord = (PFILE_NOTIFY_INFORMATION)mBuffer;
 		}
 
 		bool GetNext();
-	
-		DWORD	GetAction() const;
+
+		DWORD GetAction() const;
 		WString GetFileName() const;
 		WString GetFileNameWithPath(const Path& rootPath) const;
 
@@ -142,7 +140,7 @@ namespace bs
 		if(mCurrentRecord && mCurrentRecord->NextEntryOffset != 0)
 		{
 			PFILE_NOTIFY_INFORMATION oldRecord = mCurrentRecord;
-			mCurrentRecord = (PFILE_NOTIFY_INFORMATION) ((u8*)mCurrentRecord + mCurrentRecord->NextEntryOffset);
+			mCurrentRecord = (PFILE_NOTIFY_INFORMATION)((u8*)mCurrentRecord + mCurrentRecord->NextEntryOffset);
 
 			if((DWORD)((u8*)mCurrentRecord - mBuffer) > mBufferSize)
 			{
@@ -151,7 +149,7 @@ namespace bs
 
 				mCurrentRecord = oldRecord;
 			}
-					
+
 			return (mCurrentRecord != oldRecord);
 		}
 
@@ -172,22 +170,21 @@ namespace bs
 	{
 		if(mCurrentRecord)
 		{
-			wchar_t fileNameBuffer[32768 + 1] = {0};
+			wchar_t fileNameBuffer[32768 + 1] = { 0 };
 
-			memcpy(fileNameBuffer, mCurrentRecord->FileName,
-					std::min(DWORD(32768 * sizeof(wchar_t)), mCurrentRecord->FileNameLength));
-		
+			memcpy(fileNameBuffer, mCurrentRecord->FileName, std::min(DWORD(32768 * sizeof(wchar_t)), mCurrentRecord->FileNameLength));
+
 			return WString(fileNameBuffer);
 		}
 
 		return WString();
-	}		
+	}
 
 	WString FolderMonitor::FileNotifyInfo::GetFileNameWithPath(const Path& rootPath) const
 	{
 		Path fullPath = rootPath;
 		fullPath.Append(UTF8::FromWide(GetFileName()));
-				
+
 		return UTF8::ToWide(fullPath.ToString());
 	}
 
@@ -266,8 +263,7 @@ namespace bs
 			String utf8Oldfilename = UTF8::FromWide(oldFilename);
 			String utf8Newfilename = UTF8::FromWide(newFileName);
 
-			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) +
-				(utf8Oldfilename.size() + utf8Newfilename.size() + 2) * sizeof(String::value_type)));
+			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) + (utf8Oldfilename.size() + utf8Newfilename.size() + 2) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
 			bytes += sizeof(FileAction);
@@ -346,9 +342,7 @@ namespace bs
 		}
 
 		WString extendedFolderPath = L"\\\\?\\" + UTF8::ToWide(folderPath.ToString(Path::PathType::Windows));
-		HANDLE dirHandle = CreateFileW(extendedFolderPath.c_str(), FILE_LIST_DIRECTORY,
-			FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr, OPEN_EXISTING,
-			FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, nullptr);
+		HANDLE dirHandle = CreateFileW(extendedFolderPath.c_str(), FILE_LIST_DIRECTORY, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, nullptr);
 
 		if(dirHandle == INVALID_HANDLE_VALUE)
 		{
@@ -404,8 +398,8 @@ namespace bs
 
 	void FolderMonitor::StopMonitor(const Path& folderPath)
 	{
-		auto findIter = std::find_if(m->MFoldersToWatch.begin(), m->MFoldersToWatch.end(),
-			[&](const FolderWatchInfo* x) { return x->MFolderToMonitor == folderPath; });
+		auto findIter = std::find_if(m->MFoldersToWatch.begin(), m->MFoldersToWatch.end(), [&](const FolderWatchInfo* x)
+									 { return x->MFolderToMonitor == folderPath; });
 
 		if(findIter != m->MFoldersToWatch.end())
 		{
@@ -464,7 +458,7 @@ namespace bs
 			DWORD numBytes;
 			LPOVERLAPPED overlapped;
 
-			if(!GetQueuedCompletionStatus(m->MCompPortHandle, &numBytes, (PULONG_PTR) &watchInfo, &overlapped, INFINITE))
+			if(!GetQueuedCompletionStatus(m->MCompPortHandle, &numBytes, (PULONG_PTR)&watchInfo, &overlapped, INFINITE))
 			{
 				assert(false);
 				// TODO: Folder handle was lost most likely. Not sure how to deal with that. Shutdown watch on this folder and cleanup?
@@ -482,8 +476,7 @@ namespace bs
 				switch(state)
 				{
 				case MonitorState::Starting:
-					if(!ReadDirectoryChangesW(watchInfo->MDirHandle, watchInfo->MBuffer, FolderWatchInfo::READ_BUFFER_SIZE,
-						watchInfo->MMonitorSubdirectories, watchInfo->MMonitorFlags, &watchInfo->MBufferSize, &watchInfo->MOverlapped, nullptr))
+					if(!ReadDirectoryChangesW(watchInfo->MDirHandle, watchInfo->MBuffer, FolderWatchInfo::READ_BUFFER_SIZE, watchInfo->MMonitorSubdirectories, watchInfo->MMonitorFlags, &watchInfo->MBufferSize, &watchInfo->MOverlapped, nullptr))
 					{
 						assert(false); // TODO - Possibly the buffer was too small?
 						watchInfo->MReadError = GetLastError();
@@ -506,8 +499,7 @@ namespace bs
 						FileNotifyInfo info(watchInfo->MBuffer, FolderWatchInfo::READ_BUFFER_SIZE);
 						HandleNotifications(info, *watchInfo);
 
-						if(!ReadDirectoryChangesW(watchInfo->MDirHandle, watchInfo->MBuffer, FolderWatchInfo::READ_BUFFER_SIZE,
-							watchInfo->MMonitorSubdirectories, watchInfo->MMonitorFlags, &watchInfo->MBufferSize, &watchInfo->MOverlapped, nullptr))
+						if(!ReadDirectoryChangesW(watchInfo->MDirHandle, watchInfo->MBuffer, FolderWatchInfo::READ_BUFFER_SIZE, watchInfo->MMonitorSubdirectories, watchInfo->MMonitorFlags, &watchInfo->MBufferSize, &watchInfo->MOverlapped, nullptr))
 						{
 							assert(false); // TODO: Failed during normal operation, possibly the buffer was too small. Shutdown watch on this folder and cleanup?
 							watchInfo->MReadError = GetLastError();
@@ -568,8 +560,8 @@ namespace bs
 					break;
 				}
 			}
-
-		} while (watchInfo != nullptr);
+		}
+		while(watchInfo != nullptr);
 	}
 
 	void FolderMonitor::HandleNotifications(FileNotifyInfo& notifyInfo, FolderWatchInfo& watchInfo)
@@ -581,29 +573,29 @@ namespace bs
 			WString fullPath = notifyInfo.GetFileNameWithPath(watchInfo.MFolderToMonitor);
 
 			// Ignore notifications about hidden files
-			if ((GetFileAttributesW(fullPath.c_str()) & FILE_ATTRIBUTE_HIDDEN) != 0)
+			if((GetFileAttributesW(fullPath.c_str()) & FILE_ATTRIBUTE_HIDDEN) != 0)
 				continue;
 
 			switch(notifyInfo.GetAction())
 			{
 			case FILE_ACTION_ADDED:
-					mActions.push_back(FileAction::CreateAdded(fullPath));
+				mActions.push_back(FileAction::CreateAdded(fullPath));
 				break;
 			case FILE_ACTION_REMOVED:
-					mActions.push_back(FileAction::CreateRemoved(fullPath));
+				mActions.push_back(FileAction::CreateRemoved(fullPath));
 				break;
 			case FILE_ACTION_MODIFIED:
-					mActions.push_back(FileAction::CreateModified(fullPath));
+				mActions.push_back(FileAction::CreateModified(fullPath));
 				break;
 			case FILE_ACTION_RENAMED_OLD_NAME:
-					watchInfo.MCachedOldFileName = fullPath;
+				watchInfo.MCachedOldFileName = fullPath;
 				break;
 			case FILE_ACTION_RENAMED_NEW_NAME:
-					mActions.push_back(FileAction::CreateRenamed(watchInfo.MCachedOldFileName, fullPath));
+				mActions.push_back(FileAction::CreateRenamed(watchInfo.MCachedOldFileName, fullPath));
 				break;
 			}
-	
-		} while(notifyInfo.GetNext());
+		}
+		while(notifyInfo.GetNext());
 
 		{
 			Lock lock(m->MMainMutex);
@@ -618,7 +610,7 @@ namespace bs
 		{
 			Lock lock(m->MMainMutex);
 
-			while (!m->MFileActions.empty())
+			while(!m->MFileActions.empty())
 			{
 				FileAction* action = m->MFileActions.front();
 				m->MFileActions.pop();
@@ -627,18 +619,18 @@ namespace bs
 			}
 		}
 
-		for (auto iter = m->MActiveFileActions.begin(); iter != m->MActiveFileActions.end();)
+		for(auto iter = m->MActiveFileActions.begin(); iter != m->MActiveFileActions.end();)
 		{
 			FileAction* action = *iter;
-			
+
 			// Reported file actions might still be in progress (i.e. something might still be writing to those files).
 			// Sadly there doesn't seem to be a way to properly determine when those files are done being written, so instead
 			// we check for at least a couple of frames if the file's size hasn't changed before reporting a file action.
 			// This takes care of most of the issues and avoids reporting partially written files in almost all cases.
-			if (FileSystem::Exists(action->NewName))
+			if(FileSystem::Exists(action->NewName))
 			{
 				u64 size = FileSystem::GetFileSize(action->NewName);
-				if (!action->CheckForWriteStarted)
+				if(!action->CheckForWriteStarted)
 				{
 					action->CheckForWriteStarted = true;
 					action->LastSize = size;
@@ -648,7 +640,7 @@ namespace bs
 				}
 				else
 				{
-					if (action->LastSize != size)
+					if(action->LastSize != size)
 					{
 						action->LastSize = size;
 						++iter;
@@ -657,22 +649,22 @@ namespace bs
 				}
 			}
 
-			switch (action->Type)
+			switch(action->Type)
 			{
 			case FileActionType::Added:
-				if (!OnAdded.Empty())
+				if(!OnAdded.Empty())
 					OnAdded(Path(action->NewName));
 				break;
 			case FileActionType::Removed:
-				if (!OnRemoved.Empty())
+				if(!OnRemoved.Empty())
 					OnRemoved(Path(action->NewName));
 				break;
 			case FileActionType::Modified:
-				if (!OnModified.Empty())
+				if(!OnModified.Empty())
 					OnModified(Path(action->NewName));
 				break;
 			case FileActionType::Renamed:
-				if (!OnRenamed.Empty())
+				if(!OnRenamed.Empty())
 					OnRenamed(Path(action->OldName), Path(action->NewName));
 				break;
 			}
@@ -681,4 +673,4 @@ namespace bs
 			FileAction::Destroy(action);
 		}
 	}
-}
+} // namespace bs

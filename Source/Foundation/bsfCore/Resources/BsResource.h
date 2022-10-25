@@ -35,7 +35,7 @@ namespace bs
 		friend class Resources;
 		friend class ResourceHandleBase;
 
-		/**	
+		/**
 		 * Retrieves a list of all resources that this resource depends on.
 		 *
 		 * @note Thread safe.
@@ -82,15 +82,15 @@ namespace bs
 
 		/** Mutex ensuring dependencies list updates and queries are thread safe. */
 		mutable Mutex mDependenciesMutex;
-		
-	/************************************************************************/
-	/* 								SERIALIZATION                      		*/
-	/************************************************************************/
+
+		/************************************************************************/
+		/* 								SERIALIZATION                      		*/
+		/************************************************************************/
 	public:
 		friend class ResourceRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 	};
 
 	/** @} */
-}
+} // namespace bs

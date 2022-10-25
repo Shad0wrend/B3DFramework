@@ -48,11 +48,11 @@ namespace bs
 		void* userData = nullptr;
 	};
 
-	LinuxWindow::LinuxWindow(const WINDOW_DESC &desc)
+	LinuxWindow::LinuxWindow(const WINDOW_DESC& desc)
 	{
 		m = bs_new<Pimpl>();
 
-		if (desc.external)
+		if(desc.external)
 		{
 			m->x = desc.x;
 			m->y = desc.y;
@@ -81,10 +81,10 @@ namespace bs
 				XRRScreenResources* screenRes = XRRGetScreenResources(display, RootWindow(display, i));
 
 				bool foundMonitor = false;
-				for (i32 j = 0; j < screenRes->noutput; j++)
+				for(i32 j = 0; j < screenRes->noutput; j++)
 				{
 					XRROutputInfo* outputInfo = XRRGetOutputInfo(display, screenRes, screenRes->outputs[j]);
-					if (outputInfo == nullptr || outputInfo->crtc == 0 || outputInfo->connection == RR_Disconnected)
+					if(outputInfo == nullptr || outputInfo->crtc == 0 || outputInfo->connection == RR_Disconnected)
 					{
 						XRRFreeOutputInfo(outputInfo);
 
@@ -92,7 +92,7 @@ namespace bs
 					}
 
 					XRRCrtcInfo* crtcInfo = XRRGetCrtcInfo(display, screenRes, outputInfo->crtc);
-					if (crtcInfo == nullptr)
+					if(crtcInfo == nullptr)
 					{
 						XRRFreeCrtcInfo(crtcInfo);
 						XRRFreeOutputInfo(outputInfo);
@@ -131,22 +131,19 @@ namespace bs
 			attributes.border_pixel = XBlackPixel(display, screen);
 			attributes.background_pixmap = 0;
 
-			attributes.colormap = XCreateColormap(display,
-				XRootWindow(display, screen),
-				desc.visualInfo.visual,
-				AllocNone);
+			attributes.colormap = XCreateColormap(display, XRootWindow(display, screen), desc.visualInfo.visual, AllocNone);
 
 			// If no position specified, center on the requested monitor
-			if (desc.x == -1)
+			if(desc.x == -1)
 				m->x = monitorX + (monitorWidth - desc.width) / 2;
-			else if (desc.screen != (u32)-1)
+			else if(desc.screen != (u32)-1)
 				m->x = monitorX + desc.x;
 			else
 				m->x = desc.x;
 
-			if (desc.y == -1)
+			if(desc.y == -1)
 				m->y = monitorY + (monitorHeight - desc.height) / 2;
-			else if (desc.screen != (u32)-1)
+			else if(desc.screen != (u32)-1)
 				m->y = monitorY + desc.y;
 			else
 				m->y = desc.y;
@@ -154,13 +151,7 @@ namespace bs
 			m->width = desc.width;
 			m->height = desc.height;
 
-			m->xWindow = XCreateWindow(display,
-				XRootWindow(display, screen),
-				m->x, m->y,
-				m->width, m->height,
-				0, desc.visualInfo.depth,
-				InputOutput, desc.visualInfo.visual,
-				CWBackPixel | CWBorderPixel | CWColormap | CWBackPixmap, &attributes);
+			m->xWindow = XCreateWindow(display, XRootWindow(display, screen), m->x, m->y, m->width, m->height, 0, desc.visualInfo.depth, InputOutput, desc.visualInfo.visual, CWBackPixel | CWBorderPixel | CWColormap | CWBackPixmap, &attributes);
 
 			XStoreName(display, m->xWindow, desc.title.c_str());
 
@@ -316,8 +307,7 @@ namespace bs
 	{
 		i32 x, y;
 		::Window child;
-		XTranslateCoordinates(LinuxPlatform::getXDisplay(), m->xWindow, DefaultRootWindow(LinuxPlatform::getXDisplay()),
-				0, 0, &x, &y, &child);
+		XTranslateCoordinates(LinuxPlatform::getXDisplay(), m->xWindow, DefaultRootWindow(LinuxPlatform::getXDisplay()), 0, 0, &x, &y, &child);
 
 		return x;
 	}
@@ -326,8 +316,7 @@ namespace bs
 	{
 		i32 x, y;
 		::Window child;
-		XTranslateCoordinates(LinuxPlatform::getXDisplay(), m->xWindow, DefaultRootWindow(LinuxPlatform::getXDisplay()),
-				0, 0, &x, &y, &child);
+		XTranslateCoordinates(LinuxPlatform::getXDisplay(), m->xWindow, DefaultRootWindow(LinuxPlatform::getXDisplay()), 0, 0, &x, &y, &child);
 
 		return y;
 	}
@@ -353,8 +342,7 @@ namespace bs
 		Vector2I screenPos;
 
 		::Window child;
-		XTranslateCoordinates(LinuxPlatform::getXDisplay(), m->xWindow, DefaultRootWindow(LinuxPlatform::getXDisplay()),
-				windowPos.x, windowPos.y, &screenPos.x, &screenPos.y, &child);
+		XTranslateCoordinates(LinuxPlatform::getXDisplay(), m->xWindow, DefaultRootWindow(LinuxPlatform::getXDisplay()), windowPos.x, windowPos.y, &screenPos.x, &screenPos.y, &child);
 
 		return screenPos;
 	}
@@ -364,8 +352,7 @@ namespace bs
 		Vector2I windowPos;
 
 		::Window child;
-		XTranslateCoordinates(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), m->xWindow,
-				screenPos.x, screenPos.y, &windowPos.x, &windowPos.y, &child);
+		XTranslateCoordinates(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), m->xWindow, screenPos.x, screenPos.y, &windowPos.x, &windowPos.y, &child);
 
 		return windowPos;
 	}
@@ -383,8 +370,7 @@ namespace bs
 		::Display* display = LinuxPlatform::getXDisplay();
 
 		// Set icon the old way using IconPixmapHint.
-		Pixmap iconPixmap = LinuxPlatform::createPixmap(resizedData, (u32)XDefaultDepth(display,
-				XDefaultScreen(display)));
+		Pixmap iconPixmap = LinuxPlatform::createPixmap(resizedData, (u32)XDefaultDepth(display, XDefaultScreen(display)));
 
 		XWMHints* hints = XAllocWMHints();
 		hints->flags = IconPixmapHint;
@@ -401,21 +387,20 @@ namespace bs
 		Vector<long> wmIconData(2 + WIDTH * HEIGHT, 0);
 		wmIconData[0] = WIDTH;
 		wmIconData[1] = HEIGHT;
-		for (u32 y = 0; y < HEIGHT; y++)
-			for (u32 x = 0; x < WIDTH; x++)
+		for(u32 y = 0; y < HEIGHT; y++)
+			for(u32 x = 0; x < WIDTH; x++)
 				wmIconData[y * WIDTH + x + 2] = resizedData.getColorAt(x, y).getAsBGRA();
 
 		Atom iconAtom = XInternAtom(display, "_NET_WM_ICON", False);
 		Atom cardinalAtom = XInternAtom(display, "CARDINAL", False);
-		XChangeProperty(display, m->xWindow, iconAtom, cardinalAtom, 32, PropModeReplace,
-				(const unsigned char*) wmIconData.data(), wmIconData.size());
+		XChangeProperty(display, m->xWindow, iconAtom, cardinalAtom, 32, PropModeReplace, (const unsigned char*)wmIconData.data(), wmIconData.size());
 
 		XFlush(display);
 	}
 
 	void LinuxWindow::DestroyInternal()
 	{
-		if (!m->isExternal)
+		if(!m->isExternal)
 		{
 			XUnmapWindow(LinuxPlatform::getXDisplay(), m->xWindow);
 			XSync(LinuxPlatform::getXDisplay(), 0);
@@ -445,7 +430,7 @@ namespace bs
 
 		for(auto& entry : m->dragZones)
 		{
-			if (entry.width == 0 || entry.height == 0)
+			if(entry.width == 0 || entry.height == 0)
 				continue;
 
 			if(entry.contains(Vector2I(event.x, event.y)))
@@ -467,8 +452,7 @@ namespace bs
 				xev.xclient.data.l[3] = Button1;
 				xev.xclient.data.l[4] = 0;
 
-				XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False,
-						SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+				XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 				XSync(LinuxPlatform::getXDisplay(), 0);
 
 				m->dragInProgress = true;
@@ -498,8 +482,7 @@ namespace bs
 			xev.xclient.data.l[3] = Button1;
 			xev.xclient.data.l[4] = 0;
 
-			XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False,
-					SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+			XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 
 			m->dragInProgress = false;
 		}
@@ -529,11 +512,9 @@ namespace bs
 		uint64_t remaining;
 		uint8_t* data = nullptr;
 
-		i32 result = XGetWindowProperty(LinuxPlatform::getXDisplay(), m->xWindow, wmState,
-				0, 1024, False, XA_ATOM, &type, &format,
-				&length, &remaining, &data);
+		i32 result = XGetWindowProperty(LinuxPlatform::getXDisplay(), m->xWindow, wmState, 0, 1024, False, XA_ATOM, &type, &format, &length, &remaining, &data);
 
-		if (result == Success)
+		if(result == Success)
 		{
 			Atom* atoms = (Atom*)data;
 			Atom wmMaxHorz = XInternAtom(LinuxPlatform::getXDisplay(), "_NET_WM_STATE_MAXIMIZED_HORZ", False);
@@ -541,14 +522,14 @@ namespace bs
 
 			bool foundHorz = false;
 			bool foundVert = false;
-			for (u32 i = 0; i < length; i++)
+			for(u32 i = 0; i < length; i++)
 			{
-				if (atoms[i] == wmMaxHorz)
+				if(atoms[i] == wmMaxHorz)
 					foundHorz = true;
-				if (atoms[i] == wmMaxVert)
+				if(atoms[i] == wmMaxVert)
 					foundVert = true;
 
-				if (foundVert && foundHorz)
+				if(foundVert && foundHorz)
 					return true;
 			}
 
@@ -567,13 +548,11 @@ namespace bs
 		uint64_t remaining;
 		uint8_t* data = nullptr;
 
-		i32 result = XGetWindowProperty(LinuxPlatform::getXDisplay(), m->xWindow, wmState,
-				0, 1024, False, AnyPropertyType, &type, &format,
-				&length, &remaining, &data);
+		i32 result = XGetWindowProperty(LinuxPlatform::getXDisplay(), m->xWindow, wmState, 0, 1024, False, AnyPropertyType, &type, &format, &length, &remaining, &data);
 
 		if(result == Success)
 		{
-			long* state = (long*) data;
+			long* state = (long*)data;
 			if(state[0] == WM_IconicState)
 				return true;
 		}
@@ -597,8 +576,7 @@ namespace bs
 		xev.xclient.data.l[1] = wmMaxHorz;
 		xev.xclient.data.l[2] = wmMaxVert;
 
-		XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False,
-				SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+		XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 	}
 
 	void LinuxWindow::minimize(bool enable)
@@ -613,8 +591,7 @@ namespace bs
 		xev.xclient.format = 32;
 		xev.xclient.data.l[0] = enable ? WM_IconicState : WM_NormalState;
 
-		XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False,
-				SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+		XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 	}
 
 	void LinuxWindow::showOnTaskbar(bool enable)
@@ -632,12 +609,10 @@ namespace bs
 		xev.xclient.data.l[0] = enable ? _NET_WM_STATE_REMOVE : _NET_WM_STATE_ADD;
 		xev.xclient.data.l[1] = wmSkipTaskbar;
 
-		XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False,
-				SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+		XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 
 		xev.xclient.data.l[1] = wmSkipPager;
-		XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False,
-				SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+		XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 
 		XSync(LinuxPlatform::getXDisplay(), 0);
 	}
@@ -648,12 +623,11 @@ namespace bs
 		if(fullscreen)
 		{
 			Atom wmBypassCompositor = XInternAtom(LinuxPlatform::getXDisplay(), "_NET_WM_BYPASS_COMPOSITOR", False);
-			if (wmBypassCompositor)
+			if(wmBypassCompositor)
 			{
 				static constexpr u32 enabled = 1;
 
-				XChangeProperty(LinuxPlatform::getXDisplay(), m->xWindow, wmBypassCompositor,
-						XA_CARDINAL, 32, PropModeReplace, (unsigned char*) &enabled, 1);
+				XChangeProperty(LinuxPlatform::getXDisplay(), m->xWindow, wmBypassCompositor, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&enabled, 1);
 			}
 		}
 
@@ -671,21 +645,20 @@ namespace bs
 		xev.xclient.data.l[1] = wmFullscreen;
 		xev.xclient.data.l[2] = 0;
 
-		XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False,
-				SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+		XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 	}
 
 	void LinuxWindow::setShowDecorations(bool show)
 	{
-		static constexpr u32 MWM_HINTS_DECORATIONS		= (1 << 1);
+		static constexpr u32 MWM_HINTS_DECORATIONS = (1 << 1);
 
 		struct MotifHints
 		{
-			u32       flags;
-			u32       functions;
-			u32       decorations;
-			i32        inputMode;
-			u32       status;
+			u32 flags;
+			u32 functions;
+			u32 decorations;
+			i32 inputMode;
+			u32 status;
 		};
 
 		if(show)
@@ -699,12 +672,7 @@ namespace bs
 		motifHints.status = 0;
 
 		Atom wmHintsAtom = XInternAtom(LinuxPlatform::getXDisplay(), "_MOTIF_WM_HINTS", False);
-		XChangeProperty(LinuxPlatform::getXDisplay(), m->xWindow,
-				wmHintsAtom, wmHintsAtom,
-				32,
-				PropModeReplace,
-				(unsigned char *)&motifHints,
-				5);
+		XChangeProperty(LinuxPlatform::getXDisplay(), m->xWindow, wmHintsAtom, wmHintsAtom, 32, PropModeReplace, (unsigned char*)&motifHints, 5);
 	}
 
 	void LinuxWindow::setIsModal(bool modal)
@@ -725,9 +693,7 @@ namespace bs
 			xev.xclient.data.l[2] = 0;
 			xev.xclient.data.l[3] = 1;
 
-			XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False,
-					SubstructureRedirectMask | SubstructureNotifyMask, &xev);
+			XSendEvent(LinuxPlatform::getXDisplay(), DefaultRootWindow(LinuxPlatform::getXDisplay()), False, SubstructureRedirectMask | SubstructureNotifyMask, &xev);
 		}
 	}
-}
-
+} // namespace bs

@@ -18,7 +18,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT PrefabComponentDiffRTTI : public RTTIType < PrefabComponentDiff, IReflectable, PrefabComponentDiffRTTI >
+	class BS_CORE_EXPORT PrefabComponentDiffRTTI : public RTTIType<PrefabComponentDiff, IReflectable, PrefabComponentDiffRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -26,7 +26,7 @@ namespace bs
 			BS_RTTI_MEMBER_REFLPTR(Data, 1)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "PrefabComponentDiff";
 			return name;
@@ -37,13 +37,13 @@ namespace bs
 			return TID_PrefabComponentDiff;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<PrefabComponentDiff>();
 		}
 	};
 
-	class BS_CORE_EXPORT PrefabObjectDiffRTTI : public RTTIType < PrefabObjectDiff, IReflectable, PrefabObjectDiffRTTI >
+	class BS_CORE_EXPORT PrefabObjectDiffRTTI : public RTTIType<PrefabObjectDiff, IReflectable, PrefabObjectDiffRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -65,7 +65,7 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(SoFlags, 12)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "PrefabObjectDiff";
 			return name;
@@ -82,7 +82,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT PrefabDiffRTTI : public RTTIType < PrefabDiff, IReflectable, PrefabDiffRTTI >
+	class BS_CORE_EXPORT PrefabDiffRTTI : public RTTIType<PrefabDiff, IReflectable, PrefabDiffRTTI>
 	{
 		/**	Contains data about a game object handle serialized in a prefab diff.  */
 		struct SerializedHandle
@@ -103,7 +103,7 @@ namespace bs
 			BS_ASSERT(context != nullptr && rtti_is_of_type<CoreSerializationContext>(context));
 			auto coreContext = static_cast<CoreSerializationContext*>(context);
 
-			if (coreContext->GoState)
+			if(coreContext->GoState)
 			{
 				coreContext->GoState->RegisterOnDeserializationEndCallback(
 					std::bind(&PrefabDiffRTTI::DelayedOnDeserializationEnded, prefabDiff));
@@ -123,33 +123,33 @@ namespace bs
 
 			Stack<SPtr<PrefabObjectDiff>> todo;
 
-			if (prefabDiff->mRoot != nullptr)
+			if(prefabDiff->mRoot != nullptr)
 				todo.push(prefabDiff->mRoot);
 
 			UnorderedSet<SPtr<SerializedObject>> handleObjects;
 
-			while (!todo.empty())
+			while(!todo.empty())
 			{
 				SPtr<PrefabObjectDiff> current = todo.top();
 				todo.pop();
 
-				for (auto& component : current->AddedComponents)
+				for(auto& component : current->AddedComponents)
 					FindGameObjectHandles(component, handleObjects);
 
-				for (auto& child : current->AddedChildren)
+				for(auto& child : current->AddedChildren)
 					FindGameObjectHandles(child, handleObjects);
 
-				for (auto& component : current->ComponentDiffs)
+				for(auto& component : current->ComponentDiffs)
 					FindGameObjectHandles(component->Data, handleObjects);
 
-				for (auto& child : current->ChildDiffs)
+				for(auto& child : current->ChildDiffs)
 					todo.push(child);
 			}
 
 			Vector<SerializedHandle> handleData(handleObjects.size());
 
 			u32 idx = 0;
-			for (auto& handleObject : handleObjects)
+			for(auto& handleObject : handleObjects)
 			{
 				SerializedHandle& handle = handleData[idx];
 
@@ -171,9 +171,9 @@ namespace bs
 		{
 			Vector<SerializedHandle>& handleData = any_cast_ref<Vector<SerializedHandle>>(prefabDiff->mRTTIData);
 
-			for (auto& serializedHandle : handleData)
+			for(auto& serializedHandle : handleData)
 			{
-				if (serializedHandle.Handle != nullptr)
+				if(serializedHandle.Handle != nullptr)
 					*serializedHandle.Object = *SerializedObject::Create(*serializedHandle.Handle);
 			}
 
@@ -183,35 +183,35 @@ namespace bs
 		/**	Scans the entire hierarchy and find all serialized GameObjectHandle objects. */
 		static void FindGameObjectHandles(const SPtr<SerializedObject>& serializedObject, UnorderedSet<SPtr<SerializedObject>>& handleObjects)
 		{
-			for (auto& subObject : serializedObject->SubObjects)
+			for(auto& subObject : serializedObject->SubObjects)
 			{
 				RTTITypeBase* rtti = IReflectable::GetRttifromTypeIdInternal(subObject.TypeId);
-				if (rtti == nullptr)
+				if(rtti == nullptr)
 					continue;
 
-				if (rtti->GetRttiId() == TID_GameObjectHandleBase)
+				if(rtti->GetRttiId() == TID_GameObjectHandleBase)
 				{
 					handleObjects.insert(serializedObject);
 					return;
 				}
 
-				for (auto& child : subObject.Entries)
+				for(auto& child : subObject.Entries)
 				{
 					RTTIField* curGenericField = rtti->FindField(child.second.FieldId);
-					if (curGenericField == nullptr)
+					if(curGenericField == nullptr)
 						continue;
 
 					SPtr<SerializedInstance> entryData = child.second.Serialized;
-					if (entryData == nullptr)
+					if(entryData == nullptr)
 						continue;
 
-					if (rtti_is_of_type<SerializedArray>(entryData))
+					if(rtti_is_of_type<SerializedArray>(entryData))
 					{
 						SPtr<SerializedArray> arrayData = std::static_pointer_cast<SerializedArray>(entryData);
-						
-						for (auto& arrayElem : arrayData->Entries)
+
+						for(auto& arrayElem : arrayData->Entries)
 						{
-							if (arrayElem.second.Serialized != nullptr && rtti_is_of_type<SerializedObject>(arrayElem.second.Serialized))
+							if(arrayElem.second.Serialized != nullptr && rtti_is_of_type<SerializedObject>(arrayElem.second.Serialized))
 							{
 								SPtr<SerializedObject> arrayElemData = std::static_pointer_cast<SerializedObject>(arrayElem.second.Serialized);
 								FindGameObjectHandles(arrayElemData, handleObjects);
@@ -246,4 +246,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

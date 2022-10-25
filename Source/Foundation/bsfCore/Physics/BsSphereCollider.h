@@ -35,9 +35,8 @@ namespace bs
 		 * @param[in]	position	Position of the collider.
 		 * @param[in]	rotation	Rotation of the collider.
 		 */
-		static SPtr<SphereCollider> Create(PhysicsScene& scene, float radius = 0.0f,
-			const Vector3& position = Vector3::ZERO, const Quaternion& rotation = Quaternion::IDENTITY);
+		static SPtr<SphereCollider> Create(PhysicsScene& scene, float radius = 0.0f, const Vector3& position = Vector3::ZERO, const Quaternion& rotation = Quaternion::IDENTITY);
 	};
 
 	/** @} */
-}
+} // namespace bs

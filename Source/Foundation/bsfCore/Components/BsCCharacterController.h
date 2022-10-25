@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note	Wraps CharacterController as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportName(CharacterController)) CCharacterController : public Component
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(CharacterController)) CCharacterController : public Component
 	{
 	public:
 		CCharacterController(const HSceneObject& parent);
@@ -27,91 +27,101 @@ namespace bs
 		CharacterCollisionFlags Move(const Vector3& displacement);
 
 		/** @copydoc CharacterController::getFootPosition */
-		BS_SCRIPT_EXPORT(ExportName(FootPosition),Property(Getter),UI(Hide))
+		BS_SCRIPT_EXPORT(ExportName(FootPosition), Property(Getter), UI(Hide))
 		Vector3 GetFootPosition() const;
 
 		/** @copydoc CharacterController::setFootPosition */
-		BS_SCRIPT_EXPORT(ExportName(FootPosition),Property(Setter),UI(Hide))
+		BS_SCRIPT_EXPORT(ExportName(FootPosition), Property(Setter), UI(Hide))
 		void SetFootPosition(const Vector3& position);
 
 		/** @copydoc CharacterController::getRadius */
-		BS_SCRIPT_EXPORT(ExportName(Radius),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Radius), Property(Getter))
+
 		float GetRadius() const { return mDesc.Radius; }
 
 		/** @copydoc CharacterController::setRadius */
-		BS_SCRIPT_EXPORT(ExportName(Radius),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Radius), Property(Setter))
 		void SetRadius(float radius);
 
 		/** @copydoc CharacterController::getHeight */
-		BS_SCRIPT_EXPORT(ExportName(Height),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Height), Property(Getter))
+
 		float GetHeight() const { return mDesc.Height; }
 
 		/** @copydoc CharacterController::setHeight */
-		BS_SCRIPT_EXPORT(ExportName(Height),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Height), Property(Setter))
 		void SetHeight(float height);
 
 		/** @copydoc CharacterController::getUp */
-		BS_SCRIPT_EXPORT(ExportName(Up),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Up), Property(Getter))
+
 		Vector3 GetUp() const { return mDesc.Up; }
 
 		/** @copydoc CharacterController::setUp */
-		BS_SCRIPT_EXPORT(ExportName(Up),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Up), Property(Setter))
 		void SetUp(const Vector3& up);
 
 		/** @copydoc CharacterController::getClimbingMode */
-		BS_SCRIPT_EXPORT(ExportName(ClimbingMode),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(ClimbingMode), Property(Getter))
+
 		CharacterClimbingMode GetClimbingMode() const { return mDesc.ClimbingMode; }
 
 		/** @copydoc CharacterController::setClimbingMode */
-		BS_SCRIPT_EXPORT(ExportName(ClimbingMode),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(ClimbingMode), Property(Setter))
 		void SetClimbingMode(CharacterClimbingMode mode);
 
 		/** @copydoc CharacterController::getNonWalkableMode */
-		BS_SCRIPT_EXPORT(ExportName(NonWalkableMode),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(NonWalkableMode), Property(Getter))
+
 		CharacterNonWalkableMode GetNonWalkableMode() const { return mDesc.NonWalkableMode; }
 
 		/** @copydoc CharacterController::setNonWalkableMode */
-		BS_SCRIPT_EXPORT(ExportName(NonWalkableMode),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(NonWalkableMode), Property(Setter))
 		void SetNonWalkableMode(CharacterNonWalkableMode mode);
 
 		/** @copydoc CharacterController::getMinMoveDistance */
-		BS_SCRIPT_EXPORT(ExportName(MinMoveDistance),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(MinMoveDistance), Property(Getter))
+
 		float GetMinMoveDistance() const { return mDesc.MinMoveDistance; }
 
 		/** @copydoc CharacterController::setMinMoveDistance */
-		BS_SCRIPT_EXPORT(ExportName(MinMoveDistance),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(MinMoveDistance), Property(Setter))
 		void SetMinMoveDistance(float value);
 
 		/** @copydoc CharacterController::getContactOffset */
-		BS_SCRIPT_EXPORT(ExportName(ContactOffset),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(ContactOffset), Property(Getter))
+
 		float GetContactOffset() const { return mDesc.ContactOffset; }
 
 		/** @copydoc CharacterController::setContactOffset */
-		BS_SCRIPT_EXPORT(ExportName(ContactOffset),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(ContactOffset), Property(Setter))
 		void SetContactOffset(float value);
 
 		/** @copydoc CharacterController::getStepOffset */
-		BS_SCRIPT_EXPORT(ExportName(StepOffset),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(StepOffset), Property(Getter))
+
 		float GetStepOffset() const { return mDesc.StepOffset; }
 
 		/** @copydoc CharacterController::setStepOffset */
-		BS_SCRIPT_EXPORT(ExportName(StepOffset),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(StepOffset), Property(Setter))
 		void SetStepOffset(float value);
 
 		/** @copydoc CharacterController::getSlopeLimit */
-		BS_SCRIPT_EXPORT(ExportName(SlopeLimit),Property(Getter),UIValueRange([0,180]),UI(AsSlider))
+		BS_SCRIPT_EXPORT(ExportName(SlopeLimit), Property(Getter), UIValueRange([ 0, 180 ]), UI(AsSlider))
+
 		Radian GetSlopeLimit() const { return mDesc.SlopeLimit; }
 
 		/** @copydoc CharacterController::setSlopeLimit */
-		BS_SCRIPT_EXPORT(ExportName(SlopeLimit),Property(Setter),UIValueRange([0,180]),UI(AsSlider))
+		BS_SCRIPT_EXPORT(ExportName(SlopeLimit), Property(Setter), UIValueRange([ 0, 180 ]), UI(AsSlider))
 		void SetSlopeLimit(Radian value);
 
 		/** @copydoc CharacterController::getLayer */
-		BS_SCRIPT_EXPORT(ExportName(Layer),Property(Getter),UI(AsLayerMask))
+		BS_SCRIPT_EXPORT(ExportName(Layer), Property(Getter), UI(AsLayerMask))
+
 		u64 GetLayer() const { return mLayer; }
 
 		/** @copydoc CharacterController::setLayer */
-		BS_SCRIPT_EXPORT(ExportName(Layer),Property(Setter),UI(AsLayerMask))
+		BS_SCRIPT_EXPORT(ExportName(Layer), Property(Setter), UI(AsLayerMask))
 		void SetLayer(u64 layer);
 
 		/** @copydoc CharacterController::onColliderHit */
@@ -182,7 +192,7 @@ namespace bs
 
 	protected:
 		CCharacterController(); // Serialization only
-	 };
+	};
 
-	 /** @} */
-}
+	/** @} */
+} // namespace bs

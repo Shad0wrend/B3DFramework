@@ -12,49 +12,78 @@ namespace bs
 	 */
 
 	/** Contains information and helper methods for various curve types. */
-	template<class T>
-	struct TCurveProperties {};
+	template <class T>
+	struct TCurveProperties
+	{};
 
-	template<>
+	template <>
 	struct TCurveProperties<float>
 	{
-		enum { NumComponents = 1 };
+		enum
+		{
+			NumComponents = 1
+		};
+
 		static float GetZero() { return 0.0f; }
+
 		static float GetComponent(float val, u32 i) { return val; }
+
 		static void SetComponent(float& val, u32 i, float newVal) { val = newVal; }
 	};
 
-	template<>
+	template <>
 	struct TCurveProperties<i32>
 	{
-		enum { NumComponents = 1 };
+		enum
+		{
+			NumComponents = 1
+		};
+
 		static i32 GetZero() { return 0; }
 	};
 
-	template<>
+	template <>
 	struct TCurveProperties<Vector2>
 	{
-		enum { NumComponents = 2 };
+		enum
+		{
+			NumComponents = 2
+		};
+
 		static Vector2 GetZero() { return Vector2::ZERO; }
+
 		static float GetComponent(const Vector2& val, u32 i) { return val[i]; }
+
 		static void SetComponent(Vector2& val, u32 i, float newVal) { val[i] = newVal; }
 	};
 
-	template<>
+	template <>
 	struct TCurveProperties<Vector3>
 	{
-		enum { NumComponents = 3 };
+		enum
+		{
+			NumComponents = 3
+		};
+
 		static Vector3 GetZero() { return Vector3::ZERO; }
+
 		static float GetComponent(const Vector3& val, u32 i) { return val[i]; }
+
 		static void SetComponent(Vector3& val, u32 i, float newVal) { val[i] = newVal; }
 	};
 
-	template<>
+	template <>
 	struct TCurveProperties<Quaternion>
 	{
-		enum { NumComponents = 4 };
+		enum
+		{
+			NumComponents = 4
+		};
+
 		static Quaternion GetZero() { return Quaternion::ZERO; }
+
 		static float GetComponent(const Quaternion& val, u32 i) { return val[i]; }
+
 		static void SetComponent(Quaternion& val, u32 i, float newVal) { val[i] = newVal; }
 	};
 
@@ -74,8 +103,7 @@ namespace bs
 
 		/** Converts a curve in euler angles (in degrees) into a curve using quaternions. */
 		BS_SCRIPT_EXPORT()
-		static SPtr<TAnimationCurve<Quaternion>> EulerToQuaternionCurve(const SPtr<TAnimationCurve<Vector3>>& eulerCurve,
-			EulerAngleOrder order = EulerAngleOrder::YXZ);
+		static SPtr<TAnimationCurve<Quaternion>> EulerToQuaternionCurve(const SPtr<TAnimationCurve<Vector3>>& eulerCurve, EulerAngleOrder order = EulerAngleOrder::YXZ);
 
 		/** Converts a curve in quaternions into a curve using euler angles (in degrees). */
 		BS_SCRIPT_EXPORT()
@@ -98,14 +126,12 @@ namespace bs
 		static SPtr<TAnimationCurve<Vector2>> CombineCurve2D(const Vector<SPtr<TAnimationCurve<float>>>& curveComponents);
 
 		/** Splits a multi-component curve into multiple individual curves, one for each component. */
-		template<class T>
-		static void SplitCurve(const TAnimationCurve<T>& compoundCurve,
-			TAnimationCurve<float> (&output)[TCurveProperties<T>::NumComponents]);
+		template <class T>
+		static void SplitCurve(const TAnimationCurve<T>& compoundCurve, TAnimationCurve<float> (&output)[TCurveProperties<T>::NumComponents]);
 
 		/** Combines multiple single component curves into a multi-component curve. */
-		template<class T>
-		static void CombineCurve(const TAnimationCurve<float> (&curveComponents)[TCurveProperties<T>::NumComponents],
-			TAnimationCurve<T>& output);
+		template <class T>
+		static void CombineCurve(const TAnimationCurve<float> (&curveComponents)[TCurveProperties<T>::NumComponents], TAnimationCurve<T>& output);
 		/**
 		 * Calculates the total range covered by a set of curves.
 		 *
@@ -115,24 +141,22 @@ namespace bs
 		 * @param[out]	yMin		Minimum curve value present in the curves.
 		 * @param[out]	yMax		Maximum curve value present in the curves.
 		 */
-		static void CalculateRange(const Vector<TAnimationCurve<float>>& curves,
-			float& xMin, float& xMax, float& yMin, float& yMax);
+		static void CalculateRange(const Vector<TAnimationCurve<float>>& curves, float& xMin, float& xMax, float& yMin, float& yMax);
 
 		/** @copydoc calculateRange(const Vector<TAnimationCurve<float>>&, float&, float&, float&, float&) */
 		BS_SCRIPT_EXPORT()
-		static void CalculateRange(const Vector<SPtr<TAnimationCurve<float>>>& curves,
-			float& xMin, float& xMax, float& yMin, float& yMax);
+		static void CalculateRange(const Vector<SPtr<TAnimationCurve<float>>>& curves, float& xMin, float& xMax, float& yMin, float& yMax);
 
 		/** Scales all curve values and tangents by the specified scale factor. */
-		template<class T>
+		template <class T>
 		static TAnimationCurve<T> ScaleCurve(const TAnimationCurve<T>& curve, float factor);
 
 		/** Adds a time offset to all keyframes in the provided curve. */
-		template<class T>
+		template <class T>
 		static TAnimationCurve<T> OffsetCurve(const TAnimationCurve<T>& curve, float offset);
 
 		/** Updates the provided list of keyframes by automatically calculating their tangents. */
-		template<class T>
+		template <class T>
 		static void CalculateTangents(Vector<TKeyframe<T>>& keyframes);
 	};
 
@@ -147,7 +171,7 @@ namespace bs
 	 * Flags that are used for describing how are tangents calculated for a specific keyframe in an animation curve.
 	 * Modes for "in" and "out" tangents can be combined.
 	 */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(TangentMode)) TangentModeBits
+	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(TangentMode)) TangentModeBits
 	{
 		/** Both tangents are calculated automatically based on the two surrounding keyframes. */
 		Auto = 0,
@@ -175,28 +199,30 @@ namespace bs
 	BS_FLAGS_OPERATORS(TangentModeBits)
 
 	/* Structure containing a reference to a keyframe as a curve index, and a keyframe index within that curve. */
-	struct BS_SCRIPT_EXPORT(ExportAsStruct(true),DocumentationGroup(Animation)) KeyframeRef
+	struct BS_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Animation)) KeyframeRef
 	{
 		KeyframeRef() = default;
+
 		KeyframeRef(i32 curveIdx, i32 keyIdx)
-			:CurveIdx(curveIdx), KeyIdx(keyIdx)
-		{ }
+			: CurveIdx(curveIdx), KeyIdx(keyIdx)
+		{}
 
 		i32 CurveIdx = 0;
 		i32 KeyIdx = 0;
 	};
 
 	/** Structure containing a reference to a keyframe tangent, as a keyframe reference and type of the tangent. */
-	struct BS_SCRIPT_EXPORT(ExportAsStruct(true),DocumentationGroup(Animation)) TangentRef
+	struct BS_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Animation)) TangentRef
 	{
 		TangentRef() = default;
+
 		TangentRef(KeyframeRef keyframeRef, TangentType type)
-			:KeyframeRef(keyframeRef), Type(type)
-		{ }
+			: KeyframeRef(keyframeRef), Type(type)
+		{}
 
 		KeyframeRef KeyframeRef;
 		TangentType Type = TangentType::In;
 	};
 
 	/** @} */
-}
+} // namespace bs

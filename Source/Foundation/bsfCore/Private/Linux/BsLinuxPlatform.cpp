@@ -96,13 +96,12 @@ namespace bs
 		Vector2I pos;
 		u32 screenCount = (u32)XScreenCount(data->xDisplay);
 
-		for (u32 i = 0; i < screenCount; ++i)
+		for(u32 i = 0; i < screenCount; ++i)
 		{
 			::Window outRoot, outChild;
 			i32 childX, childY;
 			u32 mask;
-			if(XQueryPointer(data->xDisplay, XRootWindow(data->xDisplay, i), &outRoot, &outChild, &pos.x,
-					&pos.y, &childX, &childY, &mask))
+			if(XQueryPointer(data->xDisplay, XRootWindow(data->xDisplay, i), &outRoot, &outChild, &pos.x, &pos.y, &childX, &childY, &mask))
 				break;
 		}
 
@@ -137,7 +136,7 @@ namespace bs
 			XDefineCursor(data->xDisplay, window, data->emptyCursor);
 		else
 		{
-			if (data->currentCursor != None)
+			if(data->currentCursor != None)
 				XDefineCursor(data->xDisplay, window, data->currentCursor);
 			else
 				XUndefineCursor(data->xDisplay, window);
@@ -259,7 +258,7 @@ namespace bs
 	Platform::Pimpl* Platform::mData = bs_new<Platform::Pimpl>();
 
 	Platform::~Platform()
-	{ }
+	{}
 
 	Vector2I Platform::getCursorPosition()
 	{
@@ -282,8 +281,7 @@ namespace bs
 		window.getCustomAttribute("LINUX_WINDOW", &linuxWindow);
 
 		u32 mask = ButtonPressMask | ButtonReleaseMask | PointerMotionMask | FocusChangeMask;
-		XGrabPointer(mData->xDisplay, linuxWindow->GetXWindowInternal(), False, mask, GrabModeAsync,
-				GrabModeAsync, None, None, CurrentTime);
+		XGrabPointer(mData->xDisplay, linuxWindow->GetXWindowInternal(), False, mask, GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
 		XSync(mData->xDisplay, False);
 	}
 
@@ -305,7 +303,7 @@ namespace bs
 
 		u32 screenCount = (u32)XScreenCount(mData->xDisplay);
 
-		for (u32 i = 0; i < screenCount; ++i)
+		for(u32 i = 0; i < screenCount; ++i)
 		{
 			::Window rootWindow = XRootWindow(mData->xDisplay, i);
 
@@ -468,8 +466,7 @@ namespace bs
 		if(selOwner == mData->mainXWindow)
 			return mData->clipboardData;
 
-		XConvertSelection(mData->xDisplay, clipboardAtom, XA_STRING, clipboardAtom, mData->mainXWindow,
-				CurrentTime);
+		XConvertSelection(mData->xDisplay, clipboardAtom, XA_STRING, clipboardAtom, mData->mainXWindow, CurrentTime);
 		XFlush(mData->xDisplay);
 
 		// Note: This might discard events if there are any in between the one we need. Ideally we let the
@@ -488,15 +485,12 @@ namespace bs
 		unsigned long length;
 		unsigned long bytesRemaining;
 		u8* data;
-		XGetWindowProperty(mData->xDisplay, mData->mainXWindow, clipboardAtom,
-				0, 0, False, AnyPropertyType, &actualType, &actualFormat, &length, &bytesRemaining, &data);
+		XGetWindowProperty(mData->xDisplay, mData->mainXWindow, clipboardAtom, 0, 0, False, AnyPropertyType, &actualType, &actualFormat, &length, &bytesRemaining, &data);
 
 		if(bytesRemaining > 0)
 		{
 			unsigned long unused;
-			i32 result = XGetWindowProperty(mData->xDisplay, mData->mainXWindow, clipboardAtom,
-					0, bytesRemaining, False, AnyPropertyType, &actualType, &actualFormat, &length,
-					&unused, &data);
+			i32 result = XGetWindowProperty(mData->xDisplay, mData->mainXWindow, clipboardAtom, 0, bytesRemaining, False, AnyPropertyType, &actualType, &actualFormat, &length, &unused, &data);
 
 			if(result == Success)
 				return String((const char*)data);
@@ -510,7 +504,7 @@ namespace bs
 	/** Maps X11 mouse button codes to Banshee button codes. */
 	ButtonCode xButtonToButtonCode(int button)
 	{
-		switch (button)
+		switch(button)
 		{
 		case Button1:
 			return BC_MOUSE_LEFT;
@@ -529,139 +523,147 @@ namespace bs
 		switch(code)
 		{
 			// Row #1
-		case BC_ESCAPE:		return "ESC";
-		case BC_F1:			return "FK01";
-		case BC_F2:			return "FK02";
-		case BC_F3:			return "FK03";
-		case BC_F4:			return "FK04";
-		case BC_F5:			return "FK05";
-		case BC_F6:			return "FK06";
-		case BC_F7:			return "FK07";
-		case BC_F8:			return "FK08";
-		case BC_F9:			return "FK09";
-		case BC_F10:		return "FK10";
-		case BC_F11:		return "FK11";
-		case BC_F12:		return "FK12";
-		case BC_F13:		return "FK13";
-		case BC_F14:		return "FK14";
-		case BC_F15:		return "FK15";
+		case BC_ESCAPE: return "ESC";
+		case BC_F1: return "FK01";
+		case BC_F2: return "FK02";
+		case BC_F3: return "FK03";
+		case BC_F4: return "FK04";
+		case BC_F5: return "FK05";
+		case BC_F6: return "FK06";
+		case BC_F7: return "FK07";
+		case BC_F8: return "FK08";
+		case BC_F9: return "FK09";
+		case BC_F10: return "FK10";
+		case BC_F11: return "FK11";
+		case BC_F12: return "FK12";
+		case BC_F13: return "FK13";
+		case BC_F14: return "FK14";
+		case BC_F15:
+			return "FK15";
 
 			// Row #2
-		case BC_GRAVE:		return "TLDE";
-		case BC_1: 			return "AE01";
-		case BC_2:			return "AE02";
-		case BC_3:			return "AE03";
-		case BC_4:			return "AE04";
-		case BC_5:			return "AE05";
-		case BC_6:			return "AE06";
-		case BC_7:			return "AE07";
-		case BC_8:			return "AE08";
-		case BC_9:			return "AE09";
-		case BC_0:			return "AE10";
-		case BC_MINUS:		return "AE11";
-		case BC_EQUALS:		return "AE12";
-		case BC_BACK:		return "BKSP";
+		case BC_GRAVE: return "TLDE";
+		case BC_1: return "AE01";
+		case BC_2: return "AE02";
+		case BC_3: return "AE03";
+		case BC_4: return "AE04";
+		case BC_5: return "AE05";
+		case BC_6: return "AE06";
+		case BC_7: return "AE07";
+		case BC_8: return "AE08";
+		case BC_9: return "AE09";
+		case BC_0: return "AE10";
+		case BC_MINUS: return "AE11";
+		case BC_EQUALS: return "AE12";
+		case BC_BACK:
+			return "BKSP";
 
 			// Row #3
-		case BC_TAB:		return "TAB";
-		case BC_Q:			return "AD01";
-		case BC_W:			return "AD02";
-		case BC_E:			return "AD03";
-		case BC_R:			return "AD04";
-		case BC_T:			return "AD05";
-		case BC_Y:			return "AD06";
-		case BC_U:			return "AD07";
-		case BC_I:			return "AD08";
-		case BC_O:			return "AD09";
-		case BC_P:			return "AD10";
-		case BC_LBRACKET:	return "AD11";
-		case BC_RBRACKET:	return "AD12";
-		case BC_RETURN:		return "RTRN";
+		case BC_TAB: return "TAB";
+		case BC_Q: return "AD01";
+		case BC_W: return "AD02";
+		case BC_E: return "AD03";
+		case BC_R: return "AD04";
+		case BC_T: return "AD05";
+		case BC_Y: return "AD06";
+		case BC_U: return "AD07";
+		case BC_I: return "AD08";
+		case BC_O: return "AD09";
+		case BC_P: return "AD10";
+		case BC_LBRACKET: return "AD11";
+		case BC_RBRACKET: return "AD12";
+		case BC_RETURN:
+			return "RTRN";
 
 			// Row #4
-		case BC_CAPITAL:	return "CAPS";
-		case BC_A:			return "AC01";
-		case BC_S:			return "AC02";
-		case BC_D:			return "AC03";
-		case BC_F:			return "AC04";
-		case BC_G:			return "AC05";
-		case BC_H:			return "AC06";
-		case BC_J:			return "AC07";
-		case BC_K:			return "AC08";
-		case BC_L:			return "AC09";
-		case BC_SEMICOLON:	return "AC10";
-		case BC_APOSTROPHE:	return "AC11";
-		case BC_BACKSLASH:	return "BKSL";
+		case BC_CAPITAL: return "CAPS";
+		case BC_A: return "AC01";
+		case BC_S: return "AC02";
+		case BC_D: return "AC03";
+		case BC_F: return "AC04";
+		case BC_G: return "AC05";
+		case BC_H: return "AC06";
+		case BC_J: return "AC07";
+		case BC_K: return "AC08";
+		case BC_L: return "AC09";
+		case BC_SEMICOLON: return "AC10";
+		case BC_APOSTROPHE: return "AC11";
+		case BC_BACKSLASH:
+			return "BKSL";
 
 			// Row #5
-		case BC_LSHIFT:		return "LFSH";
-		case BC_Z:			return "AB01";
-		case BC_X:			return "AB02";
-		case BC_C:			return "AB03";
-		case BC_V:			return "AB04";
-		case BC_B:			return "AB05";
-		case BC_N:			return "AB06";
-		case BC_M:			return "AB07";
-		case BC_COMMA:		return "AB08";
-		case BC_PERIOD:		return "AB09";
-		case BC_SLASH:		return "AB10";
-		case BC_RSHIFT:		return "RTSH";
+		case BC_LSHIFT: return "LFSH";
+		case BC_Z: return "AB01";
+		case BC_X: return "AB02";
+		case BC_C: return "AB03";
+		case BC_V: return "AB04";
+		case BC_B: return "AB05";
+		case BC_N: return "AB06";
+		case BC_M: return "AB07";
+		case BC_COMMA: return "AB08";
+		case BC_PERIOD: return "AB09";
+		case BC_SLASH: return "AB10";
+		case BC_RSHIFT:
+			return "RTSH";
 
 			// Row #6
-		case BC_LCONTROL:	return "LCTL";
-		case BC_LWIN:		return "LWIN";
-		case BC_LMENU:		return "LALT";
-		case BC_SPACE:		return "SPCE";
-		case BC_RMENU:		return "RALT";
-		case BC_RWIN:		return "RWIN";
-		case BC_RCONTROL:	return "RCTL";
+		case BC_LCONTROL: return "LCTL";
+		case BC_LWIN: return "LWIN";
+		case BC_LMENU: return "LALT";
+		case BC_SPACE: return "SPCE";
+		case BC_RMENU: return "RALT";
+		case BC_RWIN: return "RWIN";
+		case BC_RCONTROL:
+			return "RCTL";
 
 			// Keypad
-		case BC_NUMPAD0:	return "KP0";
-		case BC_NUMPAD1:	return "KP1";
-		case BC_NUMPAD2:	return "KP2";
-		case BC_NUMPAD3:	return "KP3";
-		case BC_NUMPAD4:	return "KP4";
-		case BC_NUMPAD5:	return "KP5";
-		case BC_NUMPAD6:	return "KP6";
-		case BC_NUMPAD7:	return "KP7";
-		case BC_NUMPAD8:	return "KP8";
-		case BC_NUMPAD9:	return "KP9";
+		case BC_NUMPAD0: return "KP0";
+		case BC_NUMPAD1: return "KP1";
+		case BC_NUMPAD2: return "KP2";
+		case BC_NUMPAD3: return "KP3";
+		case BC_NUMPAD4: return "KP4";
+		case BC_NUMPAD5: return "KP5";
+		case BC_NUMPAD6: return "KP6";
+		case BC_NUMPAD7: return "KP7";
+		case BC_NUMPAD8: return "KP8";
+		case BC_NUMPAD9: return "KP9";
 
-		case BC_NUMLOCK:		return "NMLK";
-		case BC_DIVIDE:			return "KPDV";
-		case BC_MULTIPLY:		return "KPMU";
-		case BC_SUBTRACT:		return "KPSU";
-		case BC_ADD:			return "KPAD";
-		case BC_DECIMAL:		return "KPDL";
-		case BC_NUMPADENTER:	return "KPEN";
-		case BC_NUMPADEQUALS:	return "KPEQ";
+		case BC_NUMLOCK: return "NMLK";
+		case BC_DIVIDE: return "KPDV";
+		case BC_MULTIPLY: return "KPMU";
+		case BC_SUBTRACT: return "KPSU";
+		case BC_ADD: return "KPAD";
+		case BC_DECIMAL: return "KPDL";
+		case BC_NUMPADENTER: return "KPEN";
+		case BC_NUMPADEQUALS:
+			return "KPEQ";
 
 			// Special keys
-		case BC_SCROLL:		return "SCLK";
-		case BC_PAUSE:		return "PAUS";
+		case BC_SCROLL: return "SCLK";
+		case BC_PAUSE: return "PAUS";
 
-		case BC_INSERT:		return "INS";
-		case BC_HOME:		return "HOME";
-		case BC_PGUP:		return "PGUP";
-		case BC_DELETE:		return "DELE";
-		case BC_END:		return "END";
-		case BC_PGDOWN:		return "PGDN";
+		case BC_INSERT: return "INS";
+		case BC_HOME: return "HOME";
+		case BC_PGUP: return "PGUP";
+		case BC_DELETE: return "DELE";
+		case BC_END: return "END";
+		case BC_PGDOWN: return "PGDN";
 
-		case BC_UP:			return "UP";
-		case BC_LEFT:		return "LEFT";
-		case BC_DOWN:		return "DOWN";
-		case BC_RIGHT:		return "RGHT";
+		case BC_UP: return "UP";
+		case BC_LEFT: return "LEFT";
+		case BC_DOWN: return "DOWN";
+		case BC_RIGHT: return "RGHT";
 
-		case BC_MUTE:		return "MUTE";
-		case BC_VOLUMEDOWN:	return "VOL-";
-		case BC_VOLUMEUP:	return "VOL+";
-		case BC_POWER:		return "POWR";
+		case BC_MUTE: return "MUTE";
+		case BC_VOLUMEDOWN: return "VOL-";
+		case BC_VOLUMEUP: return "VOL+";
+		case BC_POWER:
+			return "POWR";
 
 			// International keys
-		case BC_OEM_102:	return "LSGT"; // German keyboard: < > |
-		case BC_KANA:		return "AB11"; // Taking a guess here, many layouts map <AB11> to "kana_RO"
-		case BC_YEN:		return "AE13"; // Taking a guess, often mapped to yen
+		case BC_OEM_102: return "LSGT"; // German keyboard: < > |
+		case BC_KANA: return "AB11"; // Taking a guess here, many layouts map <AB11> to "kana_RO"
+		case BC_YEN: return "AE13"; // Taking a guess, often mapped to yen
 
 		default:
 			// Missing Japanese (?): KATA, HIRA, HENK, MUHE, JPCM
@@ -725,7 +727,8 @@ namespace bs
 		char* commandStr = (char*)bs_stack_alloc((u32)pathString.size() + (u32)strlen(commandPattern) + 1);
 		sprintf(commandStr, commandPattern, pathString.c_str());
 
-		if(system(commandStr)){};
+		if(system(commandStr))
+		{};
 		bs_stack_free(commandStr);
 	}
 
@@ -739,7 +742,7 @@ namespace bs
 	 */
 	bool parseInputCommand(KeySym keySym, bool shift, InputCommandType& command)
 	{
-		switch (keySym)
+		switch(keySym)
 		{
 		case XK_Left:
 			command = shift ? InputCommandType::SelectLeft : InputCommandType::CursorMoveLeft;
@@ -777,7 +780,7 @@ namespace bs
 	LinuxWindow* getLinuxWindow(LinuxPlatform::Pimpl* data, ::Window xWindow)
 	{
 		auto iterFind = data->windowMap.find(xWindow);
-		if (iterFind != data->windowMap.end())
+		if(iterFind != data->windowMap.end())
 		{
 			LinuxWindow* window = iterFind->second;
 			return window;
@@ -805,7 +808,7 @@ namespace bs
 	 */
 	void enqueueButtonEvent(ButtonCode bc, bool pressed, Ui64 timestamp)
 	{
-		if (bc == BC_UNASSIGNED)
+		if(bc == BC_UNASSIGNED)
 			return;
 
 		Lock eventLock(LinuxPlatform::eventLock);
@@ -830,14 +833,14 @@ namespace bs
 			XNextEvent(mData->xDisplay, &event);
 
 			XGenericEventCookie* cookie = &event.xcookie;
-			if (cookie->type == GenericEvent && cookie->extension == mData->xInput2Opcode)
+			if(cookie->type == GenericEvent && cookie->extension == mData->xInput2Opcode)
 			{
 				XGetEventData(mData->xDisplay, cookie);
-				XIRawEvent* xInput2Event = (XIRawEvent*) cookie->data;
-				switch (xInput2Event->evtype)
+				XIRawEvent* xInput2Event = (XIRawEvent*)cookie->data;
+				switch(xInput2Event->evtype)
 				{
 				case XI_RawMotion:
-					if (xInput2Event->valuators.mask_len > 0)
+					if(xInput2Event->valuators.mask_len > 0)
 					{
 						// Assume X/Y delta is stored in valuators 0/1 and vertical scroll in valuator 3.
 						// While there is an API that reliably tells us the valuator index for vertical scroll, there's
@@ -845,10 +848,10 @@ namespace bs
 						// info is by axis name, so we can use the axis index directly just as well. GDK seems to assume
 						// 0 for x and 1 for y too, so that's hopefully safe, and 3 appears to be common for the scroll
 						// wheel.
-						float deltas[4] = {0};
+						float deltas[4] = { 0 };
 						int currentValuesIndex = 0;
-						for (unsigned int valuator = 0; valuator < 4; valuator++)
-							if (XIMaskIsSet(xInput2Event->valuators.mask, valuator))
+						for(unsigned int valuator = 0; valuator < 4; valuator++)
+							if(XIMaskIsSet(xInput2Event->valuators.mask, valuator))
 								deltas[valuator] = xInput2Event->raw_values[currentValuesIndex++];
 
 						Lock eventLock(LinuxPlatform::eventLock);
@@ -862,338 +865,334 @@ namespace bs
 				XFreeEventData(mData->xDisplay, cookie);
 			}
 
-
-			switch (event.type)
+			switch(event.type)
 			{
 			case ClientMessage:
-			{
-				if(LinuxDragAndDrop::handleClientMessage(event.xclient))
-					break;
-
-				// User requested the window to close
-				if((Atom)event.xclient.data.l[0] == mData->atomDeleteWindow)
 				{
-					LinuxWindow* window = getLinuxWindow(mData, event.xclient.window);
-					if(window != nullptr)
+					if(LinuxDragAndDrop::handleClientMessage(event.xclient))
+						break;
+
+					// User requested the window to close
+					if((Atom)event.xclient.data.l[0] == mData->atomDeleteWindow)
 					{
-						// If it's a render window we allow the client code to handle the message
-						ct::RenderWindow* renderWindow = (ct::RenderWindow*)window->GetUserDataInternal();
-						if(renderWindow != nullptr)
-							renderWindow->NotifyWindowEventInternal(WindowEventType::CloseRequested);
-						else // If not, we just destroy the window
-							window->DestroyInternal();
+						LinuxWindow* window = getLinuxWindow(mData, event.xclient.window);
+						if(window != nullptr)
+						{
+							// If it's a render window we allow the client code to handle the message
+							ct::RenderWindow* renderWindow = (ct::RenderWindow*)window->GetUserDataInternal();
+							if(renderWindow != nullptr)
+								renderWindow->NotifyWindowEventInternal(WindowEventType::CloseRequested);
+							else // If not, we just destroy the window
+								window->DestroyInternal();
+						}
 					}
 				}
-			}
 				break;
 			case KeyPress:
-			{
-				XKeyPressedEvent* keyEvent = (XKeyPressedEvent*) &event;
-				enqueueButtonEvent(mData->keyCodeMap[keyEvent->keycode], true, (Ui64) keyEvent->time);
-
-				// Process text input
-				KeySym keySym = XkbKeycodeToKeysym(mData->xDisplay, (KeyCode)event.xkey.keycode, 0, 0);
-
-				// Handle input commands
-				InputCommandType command = InputCommandType::Backspace;
-				bool shift = (event.xkey.state & ShiftMask) != 0;
-
-				bool isInputCommand = parseInputCommand(keySym, shift, command);
-
-				// Check if input manager wants this event. If not, we process it.
-				if(XFilterEvent(&event, None) == False && !isInputCommand)
 				{
-					// Send a text input event
-					Status status;
-					char buffer[16];
+					XKeyPressedEvent* keyEvent = (XKeyPressedEvent*)&event;
+					enqueueButtonEvent(mData->keyCodeMap[keyEvent->keycode], true, (Ui64)keyEvent->time);
 
-					i32 length = Xutf8LookupString(mData->IC, &event.xkey, buffer, sizeof(buffer), nullptr,
-							&status);
+					// Process text input
+					KeySym keySym = XkbKeycodeToKeysym(mData->xDisplay, (KeyCode)event.xkey.keycode, 0, 0);
 
-					if (length > 0)
+					// Handle input commands
+					InputCommandType command = InputCommandType::Backspace;
+					bool shift = (event.xkey.state & ShiftMask) != 0;
+
+					bool isInputCommand = parseInputCommand(keySym, shift, command);
+
+					// Check if input manager wants this event. If not, we process it.
+					if(XFilterEvent(&event, None) == False && !isInputCommand)
 					{
-						buffer[length] = '\0';
+						// Send a text input event
+						Status status;
+						char buffer[16];
 
-						U32String utfStr = UTF8::toUTF32(String(buffer));
-						if (utfStr.length() > 0)
-							onCharInput((u32) utfStr[0]);
+						i32 length = Xutf8LookupString(mData->IC, &event.xkey, buffer, sizeof(buffer), nullptr, &status);
+
+						if(length > 0)
+						{
+							buffer[length] = '\0';
+
+							U32String utfStr = UTF8::toUTF32(String(buffer));
+							if(utfStr.length() > 0)
+								onCharInput((u32)utfStr[0]);
+						}
+					}
+
+					// Send an input command event
+					if(isInputCommand)
+					{
+						if(!onInputCommand.empty())
+							onInputCommand(command);
 					}
 				}
-
-				// Send an input command event
-				if(isInputCommand)
-				{
-					if(!onInputCommand.empty())
-						onInputCommand(command);
-				}
-			}
 				break;
 			case KeyRelease:
-			{
-				XKeyReleasedEvent* keyEvent = (XKeyReleasedEvent*) &event;
-				enqueueButtonEvent(mData->keyCodeMap[keyEvent->keycode], false, (Ui64) keyEvent->time);
-			}
+				{
+					XKeyReleasedEvent* keyEvent = (XKeyReleasedEvent*)&event;
+					enqueueButtonEvent(mData->keyCodeMap[keyEvent->keycode], false, (Ui64)keyEvent->time);
+				}
 				break;
 			case ButtonPress:
-			{
-				XButtonPressedEvent* buttonEvent = (XButtonPressedEvent*) &event;
-				u32 button = event.xbutton.button;
-				enqueueButtonEvent(xButtonToButtonCode(button), true, (Ui64) buttonEvent->time);
-
-				OSPointerButtonStates btnStates;
-				btnStates.mouseButtons[0] = (event.xbutton.state & Button1Mask) != 0;
-				btnStates.mouseButtons[1] = (event.xbutton.state & Button2Mask) != 0;
-				btnStates.mouseButtons[2] = (event.xbutton.state & Button3Mask) != 0;
-
-				OSMouseButton mouseButton;
-				bool validPress = false;
-				switch(button)
 				{
-				case Button1:
-					mouseButton = OSMouseButton::Left;
-					btnStates.mouseButtons[0] = true;
-					validPress = true;
-					break;
-				case Button2:
-					mouseButton = OSMouseButton::Middle;
-					btnStates.mouseButtons[1] = true;
-					validPress = true;
-					break;
-				case Button3:
-					mouseButton = OSMouseButton::Right;
-					btnStates.mouseButtons[2] = true;
-					validPress = true;
-					break;
+					XButtonPressedEvent* buttonEvent = (XButtonPressedEvent*)&event;
+					u32 button = event.xbutton.button;
+					enqueueButtonEvent(xButtonToButtonCode(button), true, (Ui64)buttonEvent->time);
 
-				default:
+					OSPointerButtonStates btnStates;
+					btnStates.mouseButtons[0] = (event.xbutton.state & Button1Mask) != 0;
+					btnStates.mouseButtons[1] = (event.xbutton.state & Button2Mask) != 0;
+					btnStates.mouseButtons[2] = (event.xbutton.state & Button3Mask) != 0;
+
+					OSMouseButton mouseButton;
+					bool validPress = false;
+					switch(button)
+					{
+					case Button1:
+						mouseButton = OSMouseButton::Left;
+						btnStates.mouseButtons[0] = true;
+						validPress = true;
+						break;
+					case Button2:
+						mouseButton = OSMouseButton::Middle;
+						btnStates.mouseButtons[1] = true;
+						validPress = true;
+						break;
+					case Button3:
+						mouseButton = OSMouseButton::Right;
+						btnStates.mouseButtons[2] = true;
+						validPress = true;
+						break;
+
+					default:
+						break;
+					}
+
+					if(validPress)
+					{
+						// Send event
+						Vector2I pos;
+						pos.x = event.xbutton.x_root;
+						pos.y = event.xbutton.y_root;
+
+						btnStates.ctrl = (event.xbutton.state & ControlMask) != 0;
+						btnStates.shift = (event.xbutton.state & ShiftMask) != 0;
+
+						onCursorButtonPressed(pos, mouseButton, btnStates);
+
+						// Handle double-click
+						if(button == Button1)
+						{
+							if(event.xbutton.time < (mData->lastButtonPressTime + DOUBLE_CLICK_MS))
+							{
+								onCursorDoubleClick(pos, btnStates);
+								mData->lastButtonPressTime = 0;
+							}
+							else
+								mData->lastButtonPressTime = event.xbutton.time;
+						}
+					}
+
+					// Handle window dragging for windows without a title bar
+					if(button == Button1)
+					{
+						LinuxWindow* window = getLinuxWindow(mData, event.xbutton.window);
+						if(window != nullptr)
+							window->DragStartInternal(event.xbutton);
+					}
+
 					break;
 				}
-
-				if(validPress)
+			case ButtonRelease:
 				{
-					// Send event
+					XButtonReleasedEvent* buttonEvent = (XButtonReleasedEvent*)&event;
+					u32 button = event.xbutton.button;
+					enqueueButtonEvent(xButtonToButtonCode(button), false, (Ui64)buttonEvent->time);
+
 					Vector2I pos;
 					pos.x = event.xbutton.x_root;
 					pos.y = event.xbutton.y_root;
 
+					OSPointerButtonStates btnStates;
 					btnStates.ctrl = (event.xbutton.state & ControlMask) != 0;
 					btnStates.shift = (event.xbutton.state & ShiftMask) != 0;
+					btnStates.mouseButtons[0] = (event.xbutton.state & Button1Mask) != 0;
+					btnStates.mouseButtons[1] = (event.xbutton.state & Button2Mask) != 0;
+					btnStates.mouseButtons[2] = (event.xbutton.state & Button3Mask) != 0;
 
-					onCursorButtonPressed(pos, mouseButton, btnStates);
+					switch(button)
+					{
+					case Button1:
+						btnStates.mouseButtons[0] = false;
+						onCursorButtonReleased(pos, OSMouseButton::Left, btnStates);
+						break;
+					case Button2:
+						btnStates.mouseButtons[1] = false;
+						onCursorButtonReleased(pos, OSMouseButton::Middle, btnStates);
+						break;
+					case Button3:
+						btnStates.mouseButtons[2] = false;
+						onCursorButtonReleased(pos, OSMouseButton::Right, btnStates);
+						break;
+					case Button4: // Vertical mouse wheel
+					case Button5:
+						{
+							i32 delta = button == Button4 ? 1 : -1;
+							onMouseWheelScrolled((float)delta);
+						}
+						break;
+					default:
+						break;
+					}
 
-					// Handle double-click
+					// Handle window dragging for windows without a title bar
 					if(button == Button1)
 					{
-						if (event.xbutton.time < (mData->lastButtonPressTime + DOUBLE_CLICK_MS))
-						{
-							onCursorDoubleClick(pos, btnStates);
-							mData->lastButtonPressTime = 0;
-						}
-						else
-							mData->lastButtonPressTime = event.xbutton.time;
+						LinuxWindow* window = getLinuxWindow(mData, event.xbutton.window);
+						if(window != nullptr)
+							window->DragEndInternal();
 					}
-				}
 
-				// Handle window dragging for windows without a title bar
-				if(button == Button1)
-				{
-					LinuxWindow* window = getLinuxWindow(mData, event.xbutton.window);
-					if(window != nullptr)
-						window->DragStartInternal(event.xbutton);
-				}
-
-				break;
-			}
-			case ButtonRelease:
-			{
-				XButtonReleasedEvent* buttonEvent = (XButtonReleasedEvent*) &event;
-				u32 button = event.xbutton.button;
-				enqueueButtonEvent(xButtonToButtonCode(button), false, (Ui64) buttonEvent->time);
-
-				Vector2I pos;
-				pos.x = event.xbutton.x_root;
-				pos.y = event.xbutton.y_root;
-
-				OSPointerButtonStates btnStates;
-				btnStates.ctrl = (event.xbutton.state & ControlMask) != 0;
-				btnStates.shift = (event.xbutton.state & ShiftMask) != 0;
-				btnStates.mouseButtons[0] = (event.xbutton.state & Button1Mask) != 0;
-				btnStates.mouseButtons[1] = (event.xbutton.state & Button2Mask) != 0;
-				btnStates.mouseButtons[2] = (event.xbutton.state & Button3Mask) != 0;
-
-				switch(button)
-				{
-				case Button1:
-					btnStates.mouseButtons[0] = false;
-					onCursorButtonReleased(pos, OSMouseButton::Left, btnStates);
-					break;
-				case Button2:
-					btnStates.mouseButtons[1] = false;
-					onCursorButtonReleased(pos, OSMouseButton::Middle, btnStates);
-					break;
-				case Button3:
-					btnStates.mouseButtons[2] = false;
-					onCursorButtonReleased(pos, OSMouseButton::Right, btnStates);
-					break;
-				case Button4: // Vertical mouse wheel
-				case Button5:
-				{
-					i32 delta = button == Button4 ? 1 : -1;
-					onMouseWheelScrolled((float)delta);
-				}
-					break;
-				default:
 					break;
 				}
-
-				// Handle window dragging for windows without a title bar
-				if(button == Button1)
-				{
-					LinuxWindow* window = getLinuxWindow(mData, event.xbutton.window);
-					if(window != nullptr)
-						window->DragEndInternal();
-				}
-
-				break;
-			}
 			case MotionNotify:
-			{
-				Vector2I pos;
-				pos.x = event.xmotion.x_root;
-				pos.y = event.xmotion.y_root;
+				{
+					Vector2I pos;
+					pos.x = event.xmotion.x_root;
+					pos.y = event.xmotion.y_root;
 
-				// Handle clipping if enabled
-				if(clipCursor(mData, pos))
-					SetCursorPositionInternal(mData, pos);
+					// Handle clipping if enabled
+					if(clipCursor(mData, pos))
+						SetCursorPositionInternal(mData, pos);
 
-				// Send event
-				OSPointerButtonStates btnStates;
-				btnStates.ctrl = (event.xmotion.state & ControlMask) != 0;
-				btnStates.shift = (event.xmotion.state & ShiftMask) != 0;
-				btnStates.mouseButtons[0] = (event.xmotion.state & Button1Mask) != 0;
-				btnStates.mouseButtons[1] = (event.xmotion.state & Button2Mask) != 0;
-				btnStates.mouseButtons[2] = (event.xmotion.state & Button3Mask) != 0;
+					// Send event
+					OSPointerButtonStates btnStates;
+					btnStates.ctrl = (event.xmotion.state & ControlMask) != 0;
+					btnStates.shift = (event.xmotion.state & ShiftMask) != 0;
+					btnStates.mouseButtons[0] = (event.xmotion.state & Button1Mask) != 0;
+					btnStates.mouseButtons[1] = (event.xmotion.state & Button2Mask) != 0;
+					btnStates.mouseButtons[2] = (event.xmotion.state & Button3Mask) != 0;
 
-				onCursorMoved(pos, btnStates);
-			}
+					onCursorMoved(pos, btnStates);
+				}
 				break;
 			case EnterNotify:
 				// Do nothing
 				break;
 			case LeaveNotify:
-			{
-				if (event.xcrossing.mode == NotifyNormal)
 				{
-					Vector2I pos;
-					pos.x = event.xcrossing.x_root;
-					pos.y = event.xcrossing.y_root;
+					if(event.xcrossing.mode == NotifyNormal)
+					{
+						Vector2I pos;
+						pos.x = event.xcrossing.x_root;
+						pos.y = event.xcrossing.y_root;
 
-					if (clipCursor(mData, pos))
-						SetCursorPositionInternal(mData, pos);
+						if(clipCursor(mData, pos))
+							SetCursorPositionInternal(mData, pos);
+					}
+
+					ct::RenderWindow* renderWindow = getRenderWindow(mData, event.xcrossing.window);
+					if(renderWindow != nullptr)
+						renderWindow->NotifyWindowEventInternal(WindowEventType::MouseLeft);
 				}
-
-				ct::RenderWindow* renderWindow = getRenderWindow(mData, event.xcrossing.window);
-				if(renderWindow != nullptr)
-					renderWindow->NotifyWindowEventInternal(WindowEventType::MouseLeft);
-			}
 				break;
 			case ConfigureNotify:
-			{
-				LinuxWindow* window = getLinuxWindow(mData, event.xconfigure.window);
-				if(window != nullptr)
 				{
-					updateClipBounds(mData, window);
-
-					ct::RenderWindow* renderWindow = (ct::RenderWindow*)window->GetUserDataInternal();
-					if(renderWindow != nullptr)
+					LinuxWindow* window = getLinuxWindow(mData, event.xconfigure.window);
+					if(window != nullptr)
 					{
-						renderWindow->NotifyWindowEventInternal(WindowEventType::Resized);
-						renderWindow->NotifyWindowEventInternal(WindowEventType::Moved);
+						updateClipBounds(mData, window);
+
+						ct::RenderWindow* renderWindow = (ct::RenderWindow*)window->GetUserDataInternal();
+						if(renderWindow != nullptr)
+						{
+							renderWindow->NotifyWindowEventInternal(WindowEventType::Resized);
+							renderWindow->NotifyWindowEventInternal(WindowEventType::Moved);
+						}
 					}
 				}
-			}
 				break;
 			case FocusIn:
-			{
-				// Update input context focus
-				XSetICFocus(mData->IC);
-
-				// Send event to render window
-				ct::RenderWindow* renderWindow = getRenderWindow(mData, event.xfocus.window);
-
-				// Not a render window, so it doesn't care about these events
-				if (renderWindow != nullptr)
 				{
-					if (!renderWindow->GetProperties().hasFocus)
-						renderWindow->NotifyWindowEventInternal(WindowEventType::FocusReceived);
+					// Update input context focus
+					XSetICFocus(mData->IC);
+
+					// Send event to render window
+					ct::RenderWindow* renderWindow = getRenderWindow(mData, event.xfocus.window);
+
+					// Not a render window, so it doesn't care about these events
+					if(renderWindow != nullptr)
+					{
+						if(!renderWindow->GetProperties().hasFocus)
+							renderWindow->NotifyWindowEventInternal(WindowEventType::FocusReceived);
+					}
 				}
-			}
 				break;
 			case FocusOut:
-			{
-				// Update input context focus
-				XUnsetICFocus(mData->IC);
-
-				// Send event to render window
-				ct::RenderWindow* renderWindow = getRenderWindow(mData, event.xfocus.window);
-
-				// Not a render window, so it doesn't care about these events
-				if (renderWindow != nullptr)
 				{
-					if (renderWindow->GetProperties().hasFocus)
-						renderWindow->NotifyWindowEventInternal(WindowEventType::FocusLost);
+					// Update input context focus
+					XUnsetICFocus(mData->IC);
+
+					// Send event to render window
+					ct::RenderWindow* renderWindow = getRenderWindow(mData, event.xfocus.window);
+
+					// Not a render window, so it doesn't care about these events
+					if(renderWindow != nullptr)
+					{
+						if(renderWindow->GetProperties().hasFocus)
+							renderWindow->NotifyWindowEventInternal(WindowEventType::FocusLost);
+					}
 				}
-			}
 				break;
 			case SelectionNotify:
 				LinuxDragAndDrop::handleSelectionNotify(event.xselection);
 				break;
 			case SelectionRequest:
-			{
-				// Send the data saved by the last clipboard copy operation
-				Atom compoundTextAtom = XInternAtom(mData->xDisplay, "COMPOUND_TEXT", 0);
-				Atom utf8StringAtom = XInternAtom(mData->xDisplay, "UTF8_STRING", 0);
-				Atom targetsAtom = XInternAtom(mData->xDisplay, "TARGETS", 0);
-
-				XSelectionRequestEvent& selReq = event.xselectionrequest;
-				XEvent response;
-				if(selReq.target == XA_STRING || selReq.target == compoundTextAtom || selReq.target == utf8StringAtom)
 				{
-					String utf8data = mData->clipboardData;
+					// Send the data saved by the last clipboard copy operation
+					Atom compoundTextAtom = XInternAtom(mData->xDisplay, "COMPOUND_TEXT", 0);
+					Atom utf8StringAtom = XInternAtom(mData->xDisplay, "UTF8_STRING", 0);
+					Atom targetsAtom = XInternAtom(mData->xDisplay, "TARGETS", 0);
 
-					const u8* data = (const u8*)utf8data.c_str();
-					i32 dataLength = (i32)utf8data.length();
+					XSelectionRequestEvent& selReq = event.xselectionrequest;
+					XEvent response;
+					if(selReq.target == XA_STRING || selReq.target == compoundTextAtom || selReq.target == utf8StringAtom)
+					{
+						String utf8data = mData->clipboardData;
 
-					XChangeProperty(mData->xDisplay, selReq.requestor, selReq.property,
-							selReq.target, 8, PropModeReplace, data, dataLength);
+						const u8* data = (const u8*)utf8data.c_str();
+						i32 dataLength = (i32)utf8data.length();
 
-					response.xselection.property = selReq.property;
+						XChangeProperty(mData->xDisplay, selReq.requestor, selReq.property, selReq.target, 8, PropModeReplace, data, dataLength);
+
+						response.xselection.property = selReq.property;
+					}
+					else if(selReq.target == targetsAtom)
+					{
+						Atom data[2];
+						data[0] = utf8StringAtom;
+						data[1] = XA_STRING;
+						XChangeProperty(mData->xDisplay, selReq.requestor, selReq.property, selReq.target, 8, PropModeReplace, (unsigned char*)&data, sizeof(data));
+
+						response.xselection.property = selReq.property;
+					}
+					else
+					{
+						response.xselection.property = None;
+					}
+
+					response.xselection.type = SelectionNotify;
+					response.xselection.display = selReq.display;
+					response.xselection.requestor = selReq.requestor;
+					response.xselection.selection = selReq.selection;
+					response.xselection.target = selReq.target;
+					response.xselection.time = selReq.time;
+
+					XSendEvent(mData->xDisplay, selReq.requestor, 0, 0, &response);
+					XFlush(mData->xDisplay);
 				}
-				else if(selReq.target == targetsAtom)
-				{
-					Atom data[2];
-					data[0] = utf8StringAtom;
-					data[1] = XA_STRING;
-					XChangeProperty (mData->xDisplay, selReq.requestor, selReq.property, selReq.target,
-							8, PropModeReplace, (unsigned char*)&data, sizeof (data));
-
-					response.xselection.property = selReq.property;
-				}
-				else
-				{
-					response.xselection.property = None;
-				}
-
-				response.xselection.type = SelectionNotify;
-				response.xselection.display = selReq.display;
-				response.xselection.requestor = selReq.requestor;
-				response.xselection.selection = selReq.selection;
-				response.xselection.target = selReq.target;
-				response.xselection.time = selReq.time;
-
-				XSendEvent (mData->xDisplay, selReq.requestor, 0, 0, &response);
-				XFlush (mData->xDisplay);
-			}
 				break;
 			case PropertyNotify:
 				// Report minimize, maximize and restore events
@@ -1208,11 +1207,9 @@ namespace bs
 					unsigned long count, bytesRemaining;
 					u8* data = nullptr;
 
-					i32 result = XGetWindowProperty(mData->xDisplay, event.xproperty.window, mData->atomWmState,
-							0, 1024, False, AnyPropertyType, &type, &format,
-							&count, &bytesRemaining, &data);
+					i32 result = XGetWindowProperty(mData->xDisplay, event.xproperty.window, mData->atomWmState, 0, 1024, False, AnyPropertyType, &type, &format, &count, &bytesRemaining, &data);
 
-					if (result == Success)
+					if(result == Success)
 					{
 						ct::RenderWindow* renderWindow = getRenderWindow(mData, event.xproperty.window);
 
@@ -1224,12 +1221,12 @@ namespace bs
 
 						bool foundHorz = false;
 						bool foundVert = false;
-						for (unsigned long i = 0; i < count; i++)
+						for(unsigned long i = 0; i < count; i++)
 						{
-							if (atoms[i] == mData->atomWmStateMaxHorz) foundHorz = true;
-							if (atoms[i] == mData->atomWmStateMaxVert) foundVert = true;
+							if(atoms[i] == mData->atomWmStateMaxHorz) foundHorz = true;
+							if(atoms[i] == mData->atomWmStateMaxVert) foundVert = true;
 
-							if (foundVert && foundHorz)
+							if(foundVert && foundHorz)
 							{
 								if(event.xproperty.state == PropertyNewValue)
 									renderWindow->NotifyWindowEventInternal(WindowEventType::Maximized);
@@ -1265,12 +1262,12 @@ namespace bs
 		// For raw, relative mouse motion events, XInput2 extension is required
 		int firstEvent;
 		int firstError;
-		if (!XQueryExtension(mData->xDisplay, "XInputExtension", &mData->xInput2Opcode, &firstEvent, &firstError))
+		if(!XQueryExtension(mData->xDisplay, "XInputExtension", &mData->xInput2Opcode, &firstEvent, &firstError))
 			BS_EXCEPT(InternalErrorException, "X Server doesn't support the XInput extension");
 
 		int majorVersion = 2;
 		int minorVersion = 0;
-		if (XIQueryVersion(mData->xDisplay, &majorVersion, &minorVersion) != Success)
+		if(XIQueryVersion(mData->xDisplay, &majorVersion, &minorVersion) != Success)
 			BS_EXCEPT(InternalErrorException, "X Server doesn't support at least the XInput 2.0 extension");
 
 		// Let XInput know we are interested in raw mouse movement events
@@ -1279,7 +1276,7 @@ namespace bs
 		mask.deviceid = XIAllDevices;
 		mask.mask_len = maskLen;
 
-		unsigned char maskBuffer[maskLen] = {0};
+		unsigned char maskBuffer[maskLen] = { 0 };
 		mask.mask = maskBuffer;
 		XISetMask(mask.mask, XI_RawMotion);
 
@@ -1325,7 +1322,7 @@ namespace bs
 		XkbDescPtr desc = XkbGetMap(mData->xDisplay, 0, XkbUseCoreKbd);
 		XkbGetNames(mData->xDisplay, XkbKeyNamesMask, desc);
 
-		for (u32 keyCode = desc->min_key_code; keyCode <= desc->max_key_code; keyCode++)
+		for(u32 keyCode = desc->min_key_code; keyCode <= desc->max_key_code; keyCode++)
 		{
 			memcpy(name, desc->names->keys[keyCode].name, XkbKeyNameLength);
 			name[XkbKeyNameLength] = '\0';
@@ -1339,16 +1336,16 @@ namespace bs
 		XkbFreeNames(desc, XkbKeyNamesMask, True);
 		XkbFreeKeyboard(desc, 0, True);
 
-		for (u32 buttonCodeNum = BC_UNASSIGNED; buttonCodeNum <= BC_NumKeys; buttonCodeNum++)
+		for(u32 buttonCodeNum = BC_UNASSIGNED; buttonCodeNum <= BC_NumKeys; buttonCodeNum++)
 		{
-			ButtonCode buttonCode = (ButtonCode) buttonCodeNum;
+			ButtonCode buttonCode = (ButtonCode)buttonCodeNum;
 			const char* keyNameCStr = buttonCodeToKeyName(buttonCode);
 
-			if (keyNameCStr != nullptr)
+			if(keyNameCStr != nullptr)
 			{
 				String keyName = String(keyNameCStr);
 				auto iterFind = mData->keyNameMap.find(keyName);
-				if (iterFind != mData->keyNameMap.end())
+				if(iterFind != mData->keyNameMap.end())
 				{
 					KeyCode keyCode = iterFind->second;
 					mData->keyCodeMap[keyCode] = buttonCode;
@@ -1434,10 +1431,7 @@ namespace bs
 			mData->mainXWindow = xWindow;
 
 			// Input context client window must be set before use
-			XSetICValues(mData->IC,
-					XNClientWindow, xWindow,
-					XNFocusWindow, xWindow,
-					nullptr);
+			XSetICValues(mData->IC, XNClientWindow, xWindow, XNFocusWindow, xWindow, nullptr);
 		}
 
 		mData->windowMap[xWindow] = window;
@@ -1475,11 +1469,9 @@ namespace bs
 		SPtr<PixelData> bgraData = PixelData::Create(data.GetWidth(), data.GetHeight(), 1, PF_BGRA8);
 		bgraData->SetColors(colors);
 
-		XImage* image = XCreateImage(mData->xDisplay, CopyFromParent, depth, ZPixmap, 0,
-				(char*)bgraData->GetData(), data.GetWidth(), data.GetHeight(), 32, 0);
+		XImage* image = XCreateImage(mData->xDisplay, CopyFromParent, depth, ZPixmap, 0, (char*)bgraData->GetData(), data.GetWidth(), data.GetHeight(), 32, 0);
 
-		Pixmap pixmap = XCreatePixmap(mData->xDisplay, XDefaultRootWindow(mData->xDisplay),
-				data.GetWidth(), data.GetHeight(), depth);
+		Pixmap pixmap = XCreatePixmap(mData->xDisplay, XDefaultRootWindow(mData->xDisplay), data.GetWidth(), data.GetHeight(), depth);
 
 		XGCValues gcValues;
 		GC gc = XCreateGC(mData->xDisplay, pixmap, 0, &gcValues);
@@ -1492,4 +1484,4 @@ namespace bs
 
 		return pixmap;
 	}
-}
+} // namespace bs

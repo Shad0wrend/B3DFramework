@@ -49,23 +49,38 @@ namespace bs
 		ReflectionProbeType GetType() const { return mType; }
 
 		/**	Changes the type of the probe. */
-		void SetType(ReflectionProbeType type) { mType = type; MarkCoreDirtyInternal(); UpdateBounds(); }
+		void SetType(ReflectionProbeType type)
+		{
+			mType = type;
+			MarkCoreDirtyInternal();
+			UpdateBounds();
+		}
 
 		/** Returns the radius of a sphere reflection probe. Determines range of influence. */
 		float GetRadius() const;
 
 		/** Sets the radius of a sphere reflection probe. */
-		void SetRadius(float radius) { mRadius = radius; MarkCoreDirtyInternal(); UpdateBounds(); }
+		void SetRadius(float radius)
+		{
+			mRadius = radius;
+			MarkCoreDirtyInternal();
+			UpdateBounds();
+		}
 
 		/** Returns the extents of a box reflection probe. */
 		Vector3 GetExtents() const { return mExtents * mTransform.GetScale(); }
 
 		/** Sets the extents of a box reflection probe. Determines range of influence. */
-		void SetExtents(const Vector3& extents) { mExtents = extents; MarkCoreDirtyInternal(); UpdateBounds(); }
+		void SetExtents(const Vector3& extents)
+		{
+			mExtents = extents;
+			MarkCoreDirtyInternal();
+			UpdateBounds();
+		}
 
 		/**	Returns world space bounds that completely encompass the probe's area of influence. */
 		Sphere GetBounds() const { return mBounds; }
-		
+
 		/**
 		 * Sets a distance that will be used for fading out the box reflection probe with distance. By default it
 		 * is equal to one, and can never be less than one. Only relevant for box probes.
@@ -88,16 +103,18 @@ namespace bs
 	};
 
 	/** Templated base class for both core and sim thread implementations of a reflection probe. */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TReflectionProbe : public ReflectionProbeBase
 	{
 	public:
 		using TextureType = CoreVariantType<Texture, Core>;
 
 		TReflectionProbe() = default;
+
 		TReflectionProbe(ReflectionProbeType type, float radius, const Vector3& extents)
-			:ReflectionProbeBase(type, radius, extents)
-		{ }
+			: ReflectionProbeBase(type, radius, extents)
+		{}
+
 		virtual ~TReflectionProbe() = default;
 
 		/**
@@ -106,7 +123,7 @@ namespace bs
 		SPtr<TextureType> GetFilteredTexture() const { return mFilteredTexture; }
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template<class P>
+		template <class P>
 		void RttiEnumFields(P p);
 
 	protected:
@@ -122,7 +139,7 @@ namespace bs
 	{
 		class RendererTask;
 		class ReflectionProbe;
-	}
+	} // namespace ct
 
 	/**
 	 * Specifies a location at which a pre-computed texture containing scene radiance will be generated. This texture will
@@ -137,7 +154,11 @@ namespace bs
 		 * Allows you assign a custom texture to use as a reflection map. This will disable automatic generation of
 		 * reflections. To re-enable auto-generation call this with a null parameter.
 		 */
-		void SetCustomTexture(const HTexture& texture) { mCustomTexture = texture; Filter(); }
+		void SetCustomTexture(const HTexture& texture)
+		{
+			mCustomTexture = texture;
+			Filter();
+		}
 
 		/** Gets the custom texture assigned through setCustomTexture(). */
 		HTexture GetCustomTexture() const { return mCustomTexture; }
@@ -177,13 +198,13 @@ namespace bs
 		ReflectionProbe(ReflectionProbeType type, float radius, const Vector3& extents);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		/** @copydoc ReflectionProbeBase::_markCoreDirty */
 		void MarkCoreDirtyInternal(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
 
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData SyncToCore(FrameAlloc* allocator) ;
+		CoreSyncData SyncToCore(FrameAlloc* allocator);
 
 		/**
 		 * Captures the scene color at current probe location and generates a filtered map. If a custom texture is set then
@@ -203,7 +224,7 @@ namespace bs
 	public:
 		friend class ReflectionProbeRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 
 	protected:
 		ReflectionProbe() = default; // Serialization only
@@ -211,33 +232,32 @@ namespace bs
 
 	namespace ct
 	{
-	/** Core thread usable version of a bs::ReflectionProbe */
-	class BS_CORE_EXPORT ReflectionProbe : public CoreObject, public TReflectionProbe<true>
-	{
-	public:
-		~ReflectionProbe();
+		/** Core thread usable version of a bs::ReflectionProbe */
+		class BS_CORE_EXPORT ReflectionProbe : public CoreObject, public TReflectionProbe<true>
+		{
+		public:
+			~ReflectionProbe();
 
-		/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-		void SetRendererId(u32 id) { mRendererId = id; }
+			/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
+			void SetRendererId(u32 id) { mRendererId = id; }
 
-		/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-		u32 GetRendererId() const { return mRendererId; }
+			/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
+			u32 GetRendererId() const { return mRendererId; }
 
-	protected:
-		friend class bs::ReflectionProbe;
+		protected:
+			friend class bs::ReflectionProbe;
 
-		ReflectionProbe(ReflectionProbeType type, float radius, const Vector3& extents,
-			const SPtr<Texture>& filteredTexture);
+			ReflectionProbe(ReflectionProbeType type, float radius, const Vector3& extents, const SPtr<Texture>& filteredTexture);
 
-		/** @copydoc CoreObject::initialize */
-		void Initialize() ;
+			/** @copydoc CoreObject::initialize */
+			void Initialize();
 
-		/** @copydoc CoreObject::syncToCore */
-		void SyncToCore(const CoreSyncData& data) ;
+			/** @copydoc CoreObject::syncToCore */
+			void SyncToCore(const CoreSyncData& data);
 
-		u32 mRendererId;
-	};
-	}
+			u32 mRendererId;
+		};
+	} // namespace ct
 
 	/** @} */
-}
+} // namespace bs

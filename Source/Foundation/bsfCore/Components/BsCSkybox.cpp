@@ -29,7 +29,7 @@ namespace bs
 	{
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->Initialize();
 		else
 			mInternal = Skybox::Create();
@@ -51,4 +51,4 @@ namespace bs
 	{
 		return CSkybox::GetRttiStatic();
 	}
-}
+} // namespace bs

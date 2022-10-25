@@ -24,7 +24,7 @@ namespace bs
 		Radial,
 		Spot,
 
-		Count			BS_SCRIPT_EXPORT(Exclude(true)) // Keep at end
+		Count BS_SCRIPT_EXPORT(Exclude(true)) // Keep at end
 	};
 
 	/** @} */
@@ -38,19 +38,27 @@ namespace bs
 	{
 	public:
 		LightBase();
-		LightBase(LightType type, Color color, float intensity, float attRadius, float srcRadius,
-			bool castsShadows, Degree spotAngle, Degree spotFalloffAngle);
+		LightBase(LightType type, Color color, float intensity, float attRadius, float srcRadius, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle);
 
-		virtual ~LightBase() { }
+		virtual ~LightBase() {}
 
 		/**	Determines the type of the light. */
 		LightType GetType() const { return mType; }
 
 		/** @copydoc GetType() */
-		void SetType(LightType type) { mType = type; MarkCoreDirtyInternal(); UpdateBounds(); }
+		void SetType(LightType type)
+		{
+			mType = type;
+			MarkCoreDirtyInternal();
+			UpdateBounds();
+		}
 
 		/**	Determines does this light cast shadows when rendered. */
-		void SetCastsShadow(bool castsShadow) { mCastsShadows = castsShadow; MarkCoreDirtyInternal(); }
+		void SetCastsShadow(bool castsShadow)
+		{
+			mCastsShadows = castsShadow;
+			MarkCoreDirtyInternal();
+		}
 
 		/** @copydoc setCastsShadow */
 		bool GetCastsShadow() const { return mCastsShadows; }
@@ -65,13 +73,21 @@ namespace bs
 		 *
 		 * Default value is 0.5. Should be in rough range [-1, 1].
 		 */
-		void SetShadowBias(float bias) { mShadowBias = bias; MarkCoreDirtyInternal(); }
+		void SetShadowBias(float bias)
+		{
+			mShadowBias = bias;
+			MarkCoreDirtyInternal();
+		}
 
 		/** @copydoc setShadowBias() */
 		float GetShadowBias() const { return mShadowBias; }
 
 		/** Determines the color emitted by the light. */
-		void SetColor(const Color& color) { mColor = color; MarkCoreDirtyInternal(); }
+		void SetColor(const Color& color)
+		{
+			mColor = color;
+			MarkCoreDirtyInternal();
+		}
 
 		/** @copydoc setColor() */
 		Color GetColor() const { return mColor; }
@@ -122,7 +138,12 @@ namespace bs
 		float GetIntensity() const { return mIntensity; }
 
 		/**	Determines the total angle covered by a spot light. */
-		void SetSpotAngle(const Degree& spotAngle) { mSpotAngle = spotAngle; MarkCoreDirtyInternal(); UpdateBounds(); }
+		void SetSpotAngle(const Degree& spotAngle)
+		{
+			mSpotAngle = spotAngle;
+			MarkCoreDirtyInternal();
+			UpdateBounds();
+		}
 
 		/** @copydoc setSpotAngle */
 		Degree GetSpotAngle() const { return mSpotAngle; }
@@ -132,7 +153,11 @@ namespace bs
 		 * starts quadratically falling off as the angle approaches the total spot angle.
 		 */
 		void SetSpotFalloffAngle(const Degree& spotFallofAngle)
-		{ mSpotFalloffAngle = spotFallofAngle; MarkCoreDirtyInternal(); UpdateBounds(); }
+		{
+			mSpotFalloffAngle = spotFallofAngle;
+			MarkCoreDirtyInternal();
+			UpdateBounds();
+		}
 
 		/** @copydoc setSpotFalloffAngle */
 		Degree GetSpotFalloffAngle() const { return mSpotFalloffAngle; }
@@ -150,7 +175,7 @@ namespace bs
 		float GetLuminance() const;
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template<class P>
+		template <class P>
 		void RttiEnumFields(P p);
 
 	protected:
@@ -181,7 +206,10 @@ namespace bs
 	 *  @{
 	 */
 
-	namespace ct { class Light; }
+	namespace ct
+	{
+		class Light;
+	}
 
 	/** Illuminates a portion of the scene covered by the light. */
 	class BS_CORE_EXPORT Light : public IReflectable, public CoreObject, public LightBase
@@ -203,16 +231,13 @@ namespace bs
 		 * @param[in]	spotAngle			Total angle covered by a spot light.
 		 * @param[in]	spotFalloffAngle	Spot light angle at which falloff starts. Must be smaller than total angle.
 		 */
-		static SPtr<Light> Create(LightType type = LightType::Radial, Color color = Color::White,
-			float intensity = 100.0f, float attRadius = 10.0f, bool castsShadows = false,
-			Degree spotAngle = Degree(45), Degree spotFalloffAngle = Degree(40));
+		static SPtr<Light> Create(LightType type = LightType::Radial, Color color = Color::White, float intensity = 100.0f, float attRadius = 10.0f, bool castsShadows = false, Degree spotAngle = Degree(45), Degree spotFalloffAngle = Degree(40));
 
 	protected:
-		Light(LightType type, Color color, float intensity, float attRadius, float srcRadius,
-			bool castsShadows, Degree spotAngle, Degree spotFalloffAngle);
+		Light(LightType type, Color color, float intensity, float attRadius, float srcRadius, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		/** @copydoc LightBase::_markCoreDirty */
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
@@ -237,35 +262,35 @@ namespace bs
 
 	namespace ct
 	{
-	/** Core thread usable version of bs::Light. */
-	class BS_CORE_EXPORT Light : public CoreObject, public LightBase
-	{
-	public:
-		~Light();
+		/** Core thread usable version of bs::Light. */
+		class BS_CORE_EXPORT Light : public CoreObject, public LightBase
+		{
+		public:
+			~Light();
 
-		/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-		void SetRendererId(u32 id) { mRendererId = id; }
+			/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
+			void SetRendererId(u32 id) { mRendererId = id; }
 
-		/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-		u32 GetRendererId() const { return mRendererId; }
+			/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
+			u32 GetRendererId() const { return mRendererId; }
 
-		static const u32 LIGHT_CONE_NUM_SIDES;
-		static const u32 LIGHT_CONE_NUM_SLICES;
-	protected:
-		friend class bs::Light;
+			static const u32 LIGHT_CONE_NUM_SIDES;
+			static const u32 LIGHT_CONE_NUM_SLICES;
 
-		Light(LightType type, Color color, float intensity, float attRadius, float srcRadius, bool castsShadows,
-			  Degree spotAngle, Degree spotFalloffAngle);
+		protected:
+			friend class bs::Light;
 
-		/** @copydoc CoreObject::initialize */
-		void Initialize() override;
+			Light(LightType type, Color color, float intensity, float attRadius, float srcRadius, bool castsShadows, Degree spotAngle, Degree spotFalloffAngle);
 
-		/** @copydoc CoreObject::syncToCore */
-		void SyncToCore(const CoreSyncData& data) override;
+			/** @copydoc CoreObject::initialize */
+			void Initialize() override;
 
-		u32 mRendererId;
-	};
-	}
+			/** @copydoc CoreObject::syncToCore */
+			void SyncToCore(const CoreSyncData& data) override;
+
+			u32 mRendererId;
+		};
+	} // namespace ct
 
 	/** @} */
-}
+} // namespace bs

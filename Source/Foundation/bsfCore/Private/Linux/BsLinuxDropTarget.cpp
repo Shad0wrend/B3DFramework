@@ -47,7 +47,7 @@ namespace bs
 	};
 
 	// Results must be freed using XFree
-	X11Property readX11Property(::Display *display, ::Window window, Atom type)
+	X11Property readX11Property(::Display* display, ::Window window, Atom type)
 	{
 		X11Property output;
 		output.data = nullptr;
@@ -60,11 +60,10 @@ namespace bs
 			if(output.data != nullptr)
 				XFree(output.data);
 
-			XGetWindowProperty(display, window, type, 0, bytesToFetch, False, AnyPropertyType,
-					&output.type, &output.format, (unsigned long*)&output.count, &bytesLeft, &output.data);
+			XGetWindowProperty(display, window, type, 0, bytesToFetch, False, AnyPropertyType, &output.type, &output.format, (unsigned long*)&output.count, &bytesLeft, &output.data);
 			bytesToFetch += bytesLeft;
-
-		} while(bytesLeft != 0);
+		}
+		while(bytesLeft != 0);
 
 		return output;
 	}
@@ -148,24 +147,24 @@ namespace bs
 
 	char* convertURIToLocalPath(char* uri)
 	{
-		if (memcmp(uri, "file:/", 6) == 0)
+		if(memcmp(uri, "file:/", 6) == 0)
 			uri += 6;
-		else if (strstr(uri, ":/") != nullptr)
+		else if(strstr(uri, ":/") != nullptr)
 			return nullptr;
 
 		bool isLocal = uri[0] != '/' || (uri[0] != '\0' && uri[1] == '/');
 
 		// Ignore hostname
-		if (!isLocal && uri[0] == '/' && uri[2] != '/')
+		if(!isLocal && uri[0] == '/' && uri[2] != '/')
 		{
-			char* hostnameEnd = strchr(uri+1, '/');
-			if (hostnameEnd != nullptr)
+			char* hostnameEnd = strchr(uri + 1, '/');
+			if(hostnameEnd != nullptr)
 			{
 				char hostname[257];
-				if (gethostname(hostname, 255) == 0)
+				if(gethostname(hostname, 255) == 0)
 				{
 					hostname[256] = '\0';
-					if (memcmp(uri+1, hostname, hostnameEnd - (uri+1)) == 0)
+					if(memcmp(uri + 1, hostname, hostnameEnd - (uri + 1)) == 0)
 					{
 						uri = hostnameEnd + 1;
 						isLocal = true;
@@ -174,10 +173,10 @@ namespace bs
 			}
 		}
 
-		if (isLocal)
+		if(isLocal)
 		{
 			decodeURI(uri);
-			if (uri[1] == '/')
+			if(uri[1] == '/')
 				uri++;
 			else
 				uri--;
@@ -212,7 +211,7 @@ namespace bs
 	{
 		sXDisplay = xDisplay;
 
-#define INIT_ATOM(name)		s##name = XInternAtom(xDisplay, #name, False);
+#define INIT_ATOM(name) s##name = XInternAtom(xDisplay, #name, False);
 
 		INIT_ATOM(XdndAware)
 		INIT_ATOM(XdndSelection)
@@ -273,7 +272,7 @@ namespace bs
 					break;
 				case DropAreaOpType::Unregister:
 					// Remove any operations queued for this target
-					for(auto iter = sQueuedOperations.begin(); iter !=sQueuedOperations.end();)
+					for(auto iter = sQueuedOperations.begin(); iter != sQueuedOperations.end();)
 					{
 						if(iter->target == entry.target)
 							iter = sQueuedOperations.erase(iter);
@@ -284,24 +283,20 @@ namespace bs
 					// Remove the area
 					{
 						auto iterFind = std::find_if(sDropAreas.begin(), sDropAreas.end(), [&](const DropArea& area)
-						{
-							return area.target == entry.target;
-						});
+													 { return area.target == entry.target; });
 
 						sDropAreas.erase(iterFind);
 					}
 
 					break;
 				case DropAreaOpType::Update:
-				{
-					auto iterFind = std::find_if(sDropAreas.begin(), sDropAreas.end(), [&](const DropArea& area)
 					{
-						return area.target == entry.target;
-					});
+						auto iterFind = std::find_if(sDropAreas.begin(), sDropAreas.end(), [&](const DropArea& area)
+													 { return area.target == entry.target; });
 
-					if (iterFind != sDropAreas.end())
-						iterFind->area = entry.area;
-				}
+						if(iterFind != sDropAreas.end())
+							iterFind->area = entry.area;
+					}
 					break;
 				}
 			}
@@ -344,7 +339,7 @@ namespace bs
 
 			// Scan the list for URI list (file list), which is the only one we support (currently)
 			bool foundSupportedType = false;
-			for (u32 i = 0; i < numProperties; ++i)
+			for(u32 i = 0; i < numProperties; ++i)
 			{
 				char* name = XGetAtomName(sXDisplay, propertyList[i]);
 				if(strcmp(name, "text/uri-list") == 0)
@@ -409,14 +404,12 @@ namespace bs
 							if(dropArea.target->IsActiveInternal())
 							{
 								Lock lock(sMutex);
-								sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::DragOver, dropArea.target,
-									windowPos));
+								sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::DragOver, dropArea.target, windowPos));
 							}
 							else
 							{
 								Lock lock(sMutex);
-								sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::Enter, dropArea.target,
-										windowPos));
+								sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::Enter, dropArea.target, windowPos));
 							}
 
 							dropArea.target->SetActiveInternal(true);
@@ -466,9 +459,9 @@ namespace bs
 
 			if(sDragActive)
 			{
-				for (auto& dropArea : sDropAreas)
+				for(auto& dropArea : sDropAreas)
 				{
-					if (dropArea.target->IsActiveInternal())
+					if(dropArea.target->IsActiveInternal())
 						dropAccepted = true;
 				}
 			}
@@ -611,4 +604,4 @@ namespace bs
 			}
 		}
 	}
-}
+} // namespace bs

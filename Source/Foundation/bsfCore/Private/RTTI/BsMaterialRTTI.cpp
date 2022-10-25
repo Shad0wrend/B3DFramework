@@ -15,7 +15,7 @@ namespace bs
 
 		material->InitializeTechniques();
 
-		if (material->GetNumTechniques() > 0)
+		if(material->GetNumTechniques() > 0)
 			material->SetParams(mMatParams);
 	}
 
@@ -23,4 +23,4 @@ namespace bs
 	{
 		return Material::CreateEmpty();
 	}
-}
+} // namespace bs

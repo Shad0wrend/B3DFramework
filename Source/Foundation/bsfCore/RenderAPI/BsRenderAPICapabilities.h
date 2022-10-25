@@ -33,32 +33,32 @@ namespace bs
 	enum Capabilities : u64
 	{
 		/** Supports compressed textures in the BC formats. */
-		RSC_TEXTURE_COMPRESSION_BC		= BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 0),
+		RSC_TEXTURE_COMPRESSION_BC = BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 0),
 		/** Supports compressed textures in the ETC2 and EAC format. */
-		RSC_TEXTURE_COMPRESSION_ETC2	= BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 1),
+		RSC_TEXTURE_COMPRESSION_ETC2 = BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 1),
 		/** Supports compressed textures in the ASTC format. */
-		RSC_TEXTURE_COMPRESSION_ASTC	= BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 2),
+		RSC_TEXTURE_COMPRESSION_ASTC = BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 2),
 		/** Supports GPU geometry programs. */
-		RSC_GEOMETRY_PROGRAM			= BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 3),
+		RSC_GEOMETRY_PROGRAM = BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 3),
 		/** Supports GPU tessellation programs. */
-		RSC_TESSELLATION_PROGRAM		= BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 4),
+		RSC_TESSELLATION_PROGRAM = BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 4),
 		/** Supports GPU compute programs. */
-		RSC_COMPUTE_PROGRAM				= BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 5),
+		RSC_COMPUTE_PROGRAM = BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 5),
 		/** Supports load-store (unordered access) writes to textures/buffers in GPU programs. */
-		RSC_LOAD_STORE					= BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 6),
+		RSC_LOAD_STORE = BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 6),
 		/** Supports load-store (unordered access) writes to textures with multiple samples. */
-		RSC_LOAD_STORE_MSAA				= BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 7),
+		RSC_LOAD_STORE_MSAA = BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 7),
 		/**
 		 * Supports views that allow a sub-set of a texture to be bound to a GPU program. (i.e. specific mip level or mip
 		 * range, and/or specific array slice or array slice range)
 		 */
-		RSC_TEXTURE_VIEWS				= BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 8),
+		RSC_TEXTURE_VIEWS = BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 8),
 		/** GPU programs are allowed to cache their bytecode for faster compilation. */
-		RSC_BYTECODE_CACHING			= BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 9),
+		RSC_BYTECODE_CACHING = BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 9),
 		/** Supports rendering to multiple layers of a render texture at once. */
-		RSC_RENDER_TARGET_LAYERS		= BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 10),
+		RSC_RENDER_TARGET_LAYERS = BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 10),
 		/** Has native support for command buffers that can be populated from secondary threads. */
-		RSC_MULTI_THREADED_CB			= BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 11),
+		RSC_MULTI_THREADED_CB = BS_CAPS_VALUE(CAPS_CATEGORY_COMMON, 11),
 	};
 
 	/** Conventions used for a specific render backend. */
@@ -66,12 +66,14 @@ namespace bs
 	{
 		enum class Axis : u8
 		{
-			Up, Down
+			Up,
+			Down
 		};
 
 		enum class MatrixOrder : u8
 		{
-			ColumnMajor, RowMajor
+			ColumnMajor,
+			RowMajor
 		};
 
 		/** Determines the direction of the Y axis in UV (texture mapping) space. */
@@ -104,14 +106,13 @@ namespace bs
 			if(!tokens.empty())
 			{
 				Major = parsei32(tokens[0]);
-				if (tokens.size() > 1)
+				if(tokens.size() > 1)
 					Minor = parsei32(tokens[1]);
-				if (tokens.size() > 2)
+				if(tokens.size() > 2)
 					Release = parsei32(tokens[2]);
-				if (tokens.size() > 3)
+				if(tokens.size() > 3)
 					Build = parsei32(tokens[3]);
 			}
-
 		}
 
 		i32 Major = 0;
@@ -133,7 +134,7 @@ namespace bs
 	/** Information about hardware (GPU) and driver capabilities, such as supported features, limits and conventions. */
 	class BS_CORE_EXPORT RenderAPICapabilities final
 	{
-	public:	
+	public:
 		/** The identifier associated with the render API. */
 		StringID RenderApiName;
 
@@ -147,19 +148,19 @@ namespace bs
 		GPUVendor DeviceVendor = GPU_UNKNOWN;
 
 		/** The number of texture units available per stage. */
-		u16 NumTextureUnitsPerStage[GPT_COUNT] { 0 };
+		u16 NumTextureUnitsPerStage[GPT_COUNT]{ 0 };
 
 		/** Total number of texture units available. */
 		u16 NumCombinedTextureUnits = 0;
 
 		/** The number of parameter block buffers available per stage. */
-		u16 NumGpuParamBlockBuffersPerStage[GPT_COUNT] { 0 };
+		u16 NumGpuParamBlockBuffersPerStage[GPT_COUNT]{ 0 };
 
 		/** Total number of parameter block buffers available. */
 		u16 NumCombinedParamBlockBuffers = 0;
 
 		/** The number of load-store texture unitss available per stage. */
-		u16 NumLoadStoreTextureUnitsPerStage[GPT_COUNT] { 0 };
+		u16 NumLoadStoreTextureUnitsPerStage[GPT_COUNT]{ 0 };
 
 		/** Total number of load-store texture units available. */
 		u16 NumCombinedLoadStoreTextureUnits = 0;
@@ -238,14 +239,14 @@ namespace bs
 		static String VendorToString(GPUVendor vendor);
 
 	private:
-		static char const * const GPU_VENDOR_STRINGS[GPU_VENDOR_COUNT];
+		static char const* const GPU_VENDOR_STRINGS[GPU_VENDOR_COUNT];
 
 		/** Stores the capabilities flags. */
-		u32 mCapabilities[CAPS_CATEGORY_COUNT] { 0 };
+		u32 mCapabilities[CAPS_CATEGORY_COUNT]{ 0 };
 
 		/** The list of supported shader profiles. */
 		UnorderedSet<String> mSupportedShaderProfiles;
 	};
 
 	/** @} */
-}
+} // namespace bs

@@ -25,4 +25,4 @@ namespace bs
 	{
 		OnMeshChanged();
 	}
-}
+} // namespace bs

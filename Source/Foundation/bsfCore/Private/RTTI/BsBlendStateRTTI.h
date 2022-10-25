@@ -19,6 +19,7 @@ namespace bs
 	{
 	private:
 		BLEND_STATE_DESC& GetData(BlendState* obj) { return obj->mProperties.mData; }
+
 		void SetData(BlendState* obj, BLEND_STATE_DESC& val) { obj->mProperties.mData = val; }
 
 	public:
@@ -50,16 +51,23 @@ namespace bs
 		}
 	};
 
-	template<> struct RTTIPlainType<BLEND_STATE_DESC>
+	template <>
+	struct RTTIPlainType<BLEND_STATE_DESC>
 	{
-		enum { id = TID_BLEND_STATE_DESC }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_BLEND_STATE_DESC
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		static BitLength ToMemory(const BLEND_STATE_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
-				return stream.WriteBytes(data);
-			});
+											   { return stream.WriteBytes(data); });
 		}
 
 		static BitLength FromMemory(BLEND_STATE_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -82,4 +90,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

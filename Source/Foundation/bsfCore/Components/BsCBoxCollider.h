@@ -17,25 +17,27 @@ namespace bs
 	 *
 	 * @note Wraps BoxCollider as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportName(BoxCollider)) CBoxCollider : public CCollider
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(BoxCollider)) CBoxCollider : public CCollider
 	{
 	public:
 		CBoxCollider(const HSceneObject& parent, const Vector3& extents = Vector3(0.5f, 0.5f, 0.5f));
 
 		/** @copydoc BoxCollider::setExtents */
-		BS_SCRIPT_EXPORT(ExportName(Extents),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Extents), Property(Setter))
 		void SetExtents(const Vector3& extents);
 
 		/** @copydoc BoxCollider::getExtents */
-		BS_SCRIPT_EXPORT(ExportName(Extents),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Extents), Property(Getter))
+
 		Vector3 GetExtents() const { return mExtents; }
 
 		/** Determines the position of the box shape, relative to the component's scene object. */
-		BS_SCRIPT_EXPORT(ExportName(Center),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Center), Property(Setter))
 		void SetCenter(const Vector3& center);
 
 		/** @copydoc setCenter() */
-		BS_SCRIPT_EXPORT(ExportName(Center),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Center), Property(Getter))
+
 		Vector3 GetCenter() const { return mLocalPosition; }
 
 		/** @name Internal
@@ -54,7 +56,7 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CCollider::createInternal */
-		SPtr<Collider> CreateInternal() ;
+		SPtr<Collider> CreateInternal();
 
 	protected:
 		Vector3 mExtents = Vector3(0.5f, 0.5f, 0.5f);
@@ -71,5 +73,5 @@ namespace bs
 		CBoxCollider(); // Serialization only
 	};
 
-	 /** @} */
-}
+	/** @} */
+} // namespace bs

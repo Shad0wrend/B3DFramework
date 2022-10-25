@@ -19,9 +19,11 @@ namespace bs
 	{
 	private:
 		u32& GetSize(Resource* obj) { return obj->mSize; }
+
 		void SetSize(Resource* obj, u32& size) { obj->mSize = size; }
 
 		SPtr<ResourceMetaData> GetMetaData(Resource* obj) { return obj->mMetaData; }
+
 		void SetMetaData(Resource* obj, SPtr<ResourceMetaData> value) { obj->mMetaData = value; }
 
 	public:
@@ -31,7 +33,7 @@ namespace bs
 			AddReflectablePtrField("mMetaData", 1, &ResourceRTTI::GetMetaData, &ResourceRTTI::SetMetaData);
 		}
 
-		void OnDeserializationStarted(IReflectable* obj, SerializationContext* context) 
+		void OnDeserializationStarted(IReflectable* obj, SerializationContext* context)
 		{
 			Resource* resource = static_cast<Resource*>(obj);
 
@@ -41,7 +43,7 @@ namespace bs
 				resource->mKeepSourceData = false;
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "Resource";
 			return name;
@@ -52,7 +54,7 @@ namespace bs
 			return 100;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
 			return nullptr;
@@ -61,4 +63,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

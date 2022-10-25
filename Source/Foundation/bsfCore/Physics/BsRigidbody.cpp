@@ -8,9 +8,8 @@
 namespace bs
 {
 	Rigidbody::Rigidbody(const HSceneObject& linkedSO)
-		:mLinkedSO(linkedSO)
+		: mLinkedSO(linkedSO)
 	{
-
 	}
 
 	void Rigidbody::SetTransformInternal(const Vector3& position, const Quaternion& rotation)
@@ -31,4 +30,4 @@ namespace bs
 
 		return scene->GetPhysicsScene()->CreateRigidbody(linkedSO);
 	}
-}
+} // namespace bs

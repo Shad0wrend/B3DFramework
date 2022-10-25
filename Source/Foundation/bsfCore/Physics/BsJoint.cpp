@@ -57,5 +57,5 @@ namespace bs
 	void Joint::SetEnableCollision(bool value)
 	{
 		mInternal->SetEnableCollision(value);
-	}		
-}
+	}
+} // namespace bs

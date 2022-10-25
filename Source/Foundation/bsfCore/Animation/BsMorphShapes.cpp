@@ -6,8 +6,8 @@
 namespace bs
 {
 	MorphShape::MorphShape(const String& name, float weight, const Vector<MorphVertex>& vertices)
-		:mName(name), mWeight(weight), mVertices(vertices)
-	{ }
+		: mName(name), mWeight(weight), mVertices(vertices)
+	{}
 
 	/** Creates a new morph shape from the provided set of vertices. */
 	SPtr<MorphShape> MorphShape::Create(const String& name, float weight, const Vector<MorphVertex>& vertices)
@@ -26,24 +26,21 @@ namespace bs
 	}
 
 	MorphChannel::MorphChannel(const String& name, const Vector<SPtr<MorphShape>>& shapes)
-		:mName(name), mShapes(shapes)
+		: mName(name), mShapes(shapes)
 	{
-		std::sort(mShapes.begin(), mShapes.end(),
-			[](auto& x, auto& y)
-		{
-			return x->GetWeight() < y->GetWeight();
-		});
+		std::sort(mShapes.begin(), mShapes.end(), [](auto& x, auto& y)
+				  { return x->GetWeight() < y->GetWeight(); });
 	}
 
 	SPtr<MorphChannel> MorphChannel::Create(const String& name, const Vector<SPtr<MorphShape>>& shapes)
 	{
-		MorphChannel* raw = new (bs_alloc<MorphChannel>()) MorphChannel(name, shapes);
+		MorphChannel* raw = new(bs_alloc<MorphChannel>()) MorphChannel(name, shapes);
 		return bs_shared_ptr(raw);
 	}
 
 	SPtr<MorphChannel> MorphChannel::CreateEmpty()
 	{
-		MorphChannel* raw = new (bs_alloc<MorphChannel>()) MorphChannel();
+		MorphChannel* raw = new(bs_alloc<MorphChannel>()) MorphChannel();
 		return bs_shared_ptr(raw);
 	}
 
@@ -58,20 +55,19 @@ namespace bs
 	}
 
 	MorphShapes::MorphShapes(const Vector<SPtr<MorphChannel>>& channels, u32 numVertices)
-		:mChannels(channels), mNumVertices(numVertices)
+		: mChannels(channels), mNumVertices(numVertices)
 	{
-
 	}
 
 	SPtr<MorphShapes> MorphShapes::Create(const Vector<SPtr<MorphChannel>>& channels, u32 numVertices)
 	{
-		MorphShapes* raw = new (bs_alloc<MorphShapes>()) MorphShapes(channels, numVertices);
+		MorphShapes* raw = new(bs_alloc<MorphShapes>()) MorphShapes(channels, numVertices);
 		return bs_shared_ptr(raw);
 	}
 
 	SPtr<MorphShapes> MorphShapes::CreateEmpty()
 	{
-		MorphShapes* raw = new (bs_alloc<MorphShapes>()) MorphShapes();
+		MorphShapes* raw = new(bs_alloc<MorphShapes>()) MorphShapes();
 		return bs_shared_ptr(raw);
 	}
 
@@ -84,4 +80,4 @@ namespace bs
 	{
 		return GetRttiStatic();
 	}
-}
+} // namespace bs

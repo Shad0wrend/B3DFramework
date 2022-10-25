@@ -44,16 +44,12 @@ namespace bs
 			});
 
 		TAnimationCurve<float> curveLinear(
-			{
-				TKeyframe<float>{ 0.0f, 0.0f, 1.0f, 0.0f },
-				TKeyframe<float>{ 1.0f, 1.0f, 0.0f, 1.0f }
-			});
+			{ TKeyframe<float>{ 0.0f, 0.0f, 1.0f, 0.0f },
+			  TKeyframe<float>{ 1.0f, 1.0f, 0.0f, 1.0f } });
 
 		TAnimationCurve<float> curveAcceleration(
-			{
-				TKeyframe<float>{ -9.81f, 0.0f, 0.0f, 0.0f },
-				TKeyframe<float>{ -9.81f, 0.0f, 0.0f, 10.0f }
-			});
+			{ TKeyframe<float>{ -9.81f, 0.0f, 0.0f, 0.0f },
+			  TKeyframe<float>{ -9.81f, 0.0f, 0.0f, 10.0f } });
 
 		{
 			TCurveIntegrationCache<float> cache;
@@ -75,8 +71,7 @@ namespace bs
 			float times[] = { 0.0f, 0.5f, 1.0f };
 			for(auto time : times)
 			{
-				BS_TEST_ASSERT(Math::ApproxEquals(curveConstant.evaluateIntegratedDouble(time, cache),
-					evalPosition(1.0f, 0.0f, time), EPSILON));
+				BS_TEST_ASSERT(Math::ApproxEquals(curveConstant.evaluateIntegratedDouble(time, cache), evalPosition(1.0f, 0.0f, time), EPSILON));
 			}
 		}
 
@@ -86,8 +81,7 @@ namespace bs
 			float times[] = { 0.0f, 0.5f, 1.0f, 2.0f, 3.0f, 5.0f, 10.0f };
 			for(auto time : times)
 			{
-				BS_TEST_ASSERT(Math::ApproxEquals(curveAcceleration.evaluateIntegrated(time, cache),
-					evalVelocity(-9.81f, time), EPSILON));
+				BS_TEST_ASSERT(Math::ApproxEquals(curveAcceleration.evaluateIntegrated(time, cache), evalVelocity(-9.81f, time), EPSILON));
 			}
 
 			std::pair<float, float> range = curveAcceleration.calculateRangeIntegrated(cache);
@@ -101,8 +95,7 @@ namespace bs
 			float times[] = { 0.0f, 0.5f, 1.0f, 2.0f, 3.0f, 5.0f, 10.0f };
 			for(auto time : times)
 			{
-				BS_TEST_ASSERT(Math::ApproxEquals(curveAcceleration.evaluateIntegratedDouble(time, cache),
-					evalPosition(-9.81f, 0.0f, time)));
+				BS_TEST_ASSERT(Math::ApproxEquals(curveAcceleration.evaluateIntegratedDouble(time, cache), evalPosition(-9.81f, 0.0f, time)));
 			}
 
 			std::pair<float, float> range = curveAcceleration.calculateRangeIntegratedDouble(cache);
@@ -115,8 +108,7 @@ namespace bs
 	{
 		static constexpr float EPSILON = 0.0001f;
 
-		TAnimationCurve<Vector3> curve
-		({
+		TAnimationCurve<Vector3> curve({
 			TKeyframe<Vector3>{ Vector3(0.0f, 0.0f, 0.0f), Vector3::ZERO, Vector3::ONE, 0.0f },
 			TKeyframe<Vector3>{ Vector3(5.0f, 3.0f, 10.0f), Vector3::ONE, Vector3::ZERO, 10.0f },
 		});
@@ -143,7 +135,7 @@ namespace bs
 				BS_TEST_ASSERT(Math::ApproxEquals(valueLookup[j], valueCurve[j], EPSILON));
 		}
 	}
-}
+} // namespace bs
 
 using namespace bs;
 

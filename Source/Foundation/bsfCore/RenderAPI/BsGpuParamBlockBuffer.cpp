@@ -8,9 +8,9 @@
 namespace bs
 {
 	GpuParamBlockBuffer::GpuParamBlockBuffer(u32 size, GpuBufferUsage usage)
-		:mUsage(usage), mSize(size), mCachedData(nullptr)
+		: mUsage(usage), mSize(size), mCachedData(nullptr)
 	{
-		if (mSize > 0)
+		if(mSize > 0)
 		{
 			mCachedData = (u8*)bs_alloc(mSize);
 			memset(mCachedData, 0, mSize);
@@ -19,18 +19,20 @@ namespace bs
 
 	GpuParamBlockBuffer::~GpuParamBlockBuffer()
 	{
-		if (mCachedData != nullptr)
+		if(mCachedData != nullptr)
 			bs_free(mCachedData);
 	}
 
 	void GpuParamBlockBuffer::Write(u32 offset, const void* data, u32 size)
 	{
 #if BS_DEBUG_MODE
-		if ((offset + size) > mSize)
+		if((offset + size) > mSize)
 		{
-			BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. " \
-				"Available range: 0 .. " + toString(mSize) + ". " \
-				"Wanted range: " + toString(offset) + " .. " + toString(offset + size) + ".");
+			BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
+												  "Available range: 0 .. " +
+						  toString(mSize) + ". "
+											"Wanted range: " +
+						  toString(offset) + " .. " + toString(offset + size) + ".");
 		}
 #endif
 
@@ -41,11 +43,13 @@ namespace bs
 	void GpuParamBlockBuffer::Read(u32 offset, void* data, u32 size)
 	{
 #if BS_DEBUG_MODE
-		if ((offset + size) > mSize)
+		if((offset + size) > mSize)
 		{
-			BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. " \
-				"Available range: 0 .. " + toString(mSize) + ". " \
-				"Wanted range: " + toString(offset) + " .. " + toString(offset + size) + ".");
+			BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
+												  "Available range: 0 .. " +
+						  toString(mSize) + ". "
+											"Wanted range: " +
+						  toString(offset) + " .. " + toString(offset + size) + ".");
 		}
 #endif
 
@@ -55,11 +59,13 @@ namespace bs
 	void GpuParamBlockBuffer::ZeroOut(u32 offset, u32 size)
 	{
 #if BS_DEBUG_MODE
-		if ((offset + size) > mSize)
+		if((offset + size) > mSize)
 		{
-			BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. " \
-				"Available range: 0 .. " + toString(mSize) + ". " \
-				"Wanted range: " + toString(offset) + " .. " + toString(offset + size) + ".");
+			BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
+												  "Available range: 0 .. " +
+						  toString(mSize) + ". "
+											"Wanted range: " +
+						  toString(offset) + " .. " + toString(offset + size) + ".");
 		}
 #endif
 
@@ -92,101 +98,107 @@ namespace bs
 
 	namespace ct
 	{
-	GpuParamBlockBuffer::GpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
-		:mUsage(usage), mSize(size), mCachedData(nullptr), mGPUBufferDirty(false)
-	{
-		if (mSize > 0)
+		GpuParamBlockBuffer::GpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+			: mUsage(usage), mSize(size), mCachedData(nullptr), mGPUBufferDirty(false)
 		{
-			mCachedData = (u8*)bs_alloc(mSize);
-			memset(mCachedData, 0, mSize);
+			if(mSize > 0)
+			{
+				mCachedData = (u8*)bs_alloc(mSize);
+				memset(mCachedData, 0, mSize);
+			}
 		}
-	}
 
-	GpuParamBlockBuffer::~GpuParamBlockBuffer()
-	{
-		if (mCachedData != nullptr)
-			bs_free(mCachedData);
+		GpuParamBlockBuffer::~GpuParamBlockBuffer()
+		{
+			if(mCachedData != nullptr)
+				bs_free(mCachedData);
 
-		BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_GpuParamBuffer);
-	}
+			BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_GpuParamBuffer);
+		}
 
-	void GpuParamBlockBuffer::Initialize()
-	{
-		BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_GpuParamBuffer);
+		void GpuParamBlockBuffer::Initialize()
+		{
+			BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_GpuParamBuffer);
 
-		CoreObject::Initialize();
-	}
+			CoreObject::Initialize();
+		}
 
-	void GpuParamBlockBuffer::Write(u32 offset, const void* data, u32 size)
-	{
+		void GpuParamBlockBuffer::Write(u32 offset, const void* data, u32 size)
+		{
 #if BS_DEBUG_MODE
-		if ((offset + size) > mSize)
-		{
-			BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. " \
-				"Available range: 0 .. " + toString(mSize) + ". " \
-				"Wanted range: " + toString(offset) + " .. " + toString(offset + size) + ".");
-		}
+			if((offset + size) > mSize)
+			{
+				BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
+													  "Available range: 0 .. " +
+							  toString(mSize) + ". "
+												"Wanted range: " +
+							  toString(offset) + " .. " + toString(offset + size) + ".");
+			}
 #endif
 
-		memcpy(mCachedData + offset, data, size);
-		mGPUBufferDirty = true;
-	}
-
-	void GpuParamBlockBuffer::Read(u32 offset, void* data, u32 size)
-	{
-#if BS_DEBUG_MODE
-		if ((offset + size) > mSize)
-		{
-			BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. " \
-				"Available range: 0 .. " + toString(mSize) + ". " \
-				"Wanted range: " + toString(offset) + " .. " + toString(offset + size) + ".");
+			memcpy(mCachedData + offset, data, size);
+			mGPUBufferDirty = true;
 		}
+
+		void GpuParamBlockBuffer::Read(u32 offset, void* data, u32 size)
+		{
+#if BS_DEBUG_MODE
+			if((offset + size) > mSize)
+			{
+				BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
+													  "Available range: 0 .. " +
+							  toString(mSize) + ". "
+												"Wanted range: " +
+							  toString(offset) + " .. " + toString(offset + size) + ".");
+			}
 #endif
 
-		memcpy(data, mCachedData + offset, size);
-	}
-
-	void GpuParamBlockBuffer::ZeroOut(u32 offset, u32 size)
-	{
-#if BS_DEBUG_MODE
-		if ((offset + size) > mSize)
-		{
-			BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. " \
-				"Available range: 0 .. " + toString(mSize) + ". " \
-				"Wanted range: " + toString(offset) + " .. " + toString(offset + size) + ".");
+			memcpy(data, mCachedData + offset, size);
 		}
+
+		void GpuParamBlockBuffer::ZeroOut(u32 offset, u32 size)
+		{
+#if BS_DEBUG_MODE
+			if((offset + size) > mSize)
+			{
+				BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
+													  "Available range: 0 .. " +
+							  toString(mSize) + ". "
+												"Wanted range: " +
+							  toString(offset) + " .. " + toString(offset + size) + ".");
+			}
 #endif
 
-		memset(mCachedData + offset, 0, size);
-		mGPUBufferDirty = true;
-	}
-
-	void GpuParamBlockBuffer::FlushToGpu(u32 queueIdx)
-	{
-		if (mGPUBufferDirty)
-		{
-			WriteToGpu(mCachedData, queueIdx);
-			mGPUBufferDirty = false;
+			memset(mCachedData + offset, 0, size);
+			mGPUBufferDirty = true;
 		}
-	}
 
-	void GpuParamBlockBuffer::WriteToGpu(const u8* data, u32 queueIdx)
-	{
-		mBuffer->WriteData(0, mSize, data, BWT_DISCARD, queueIdx);
+		void GpuParamBlockBuffer::FlushToGpu(u32 queueIdx)
+		{
+			if(mGPUBufferDirty)
+			{
+				WriteToGpu(mCachedData, queueIdx);
+				mGPUBufferDirty = false;
+			}
+		}
 
-		BS_INC_RENDER_STAT_CAT(ResWrite, RenderStatObject_GpuParamBuffer);
-	}
+		void GpuParamBlockBuffer::WriteToGpu(const u8* data, u32 queueIdx)
+		{
+			mBuffer->WriteData(0, mSize, data, BWT_DISCARD, queueIdx);
 
-	void GpuParamBlockBuffer::SyncToCore(const CoreSyncData& data)
-	{
-		assert(mSize == data.GetBufferSize());
+			BS_INC_RENDER_STAT_CAT(ResWrite, RenderStatObject_GpuParamBuffer);
+		}
 
-		Write(0, data.GetBuffer(), data.GetBufferSize());
-	}
+		void GpuParamBlockBuffer::SyncToCore(const CoreSyncData& data)
+		{
+			assert(mSize == data.GetBufferSize());
 
-	SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
-	{
-		return HardwareBufferManager::Instance().CreateGpuParamBlockBuffer(size, usage, deviceMask);
-	}
-	}
-}
+			Write(0, data.GetBuffer(), data.GetBufferSize());
+		}
+
+		SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+		{
+			return HardwareBufferManager::Instance().CreateGpuParamBlockBuffer(size, usage, deviceMask);
+		}
+	} // namespace ct
+} // namespace bs

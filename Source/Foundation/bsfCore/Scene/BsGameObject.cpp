@@ -23,7 +23,7 @@ namespace bs
 
 		GameObjectManager::Instance().RemapId(oldId, mInstanceData->MInstanceId);
 	}
-	
+
 	RTTITypeBase* GameObject::GetRttiStatic()
 	{
 		return GameObjectRTTI::Instance();
@@ -33,4 +33,4 @@ namespace bs
 	{
 		return GameObject::GetRttiStatic();
 	}
-}
+} // namespace bs

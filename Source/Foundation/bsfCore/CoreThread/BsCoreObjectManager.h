@@ -14,10 +14,10 @@ namespace bs
 
 	// TODO Low priority - Add debug option that would remember a call stack for each resource initialization,
 	// so when we fail to release one we know which one it is.
-	
+
 	/**
 	 * Manager that keeps track of all active CoreObject%s.
-	 * 			
+	 *
 	 * @note	Internal class.
 	 * @note	Thread safe unless specified otherwise.
 	 */
@@ -30,12 +30,12 @@ namespace bs
 		struct CoreStoredSyncObjData
 		{
 			CoreStoredSyncObjData()
-				:InternalId(0)
-			{ }
+				: InternalId(0)
+			{}
 
 			CoreStoredSyncObjData(const SPtr<ct::CoreObject> destObj, u64 internalId, const CoreSyncData& syncData)
-				:DestinationObj(destObj), SyncData(syncData), InternalId(internalId)
-			{ }
+				: DestinationObj(destObj), SyncData(syncData), InternalId(internalId)
+			{}
 
 			SPtr<ct::CoreObject> DestinationObj;
 			CoreSyncData SyncData;
@@ -53,7 +53,7 @@ namespace bs
 			Vector<SPtr<ct::CoreObject>> DestroyedObjects;
 		};
 
-		/** Contains information about a dirty CoreObject that requires syncing to the core thread. */	
+		/** Contains information about a dirty CoreObject that requires syncing to the core thread. */
 		struct DirtyObjectData
 		{
 			CoreObject* Object;
@@ -119,7 +119,7 @@ namespace bs
 
 		/**
 		 * Updates the cached list of dependencies and dependants for the specified object.
-		 * 			
+		 *
 		 * @param[in]	object			Update to update dependencies for.
 		 * @param[in]	dependencies	New set of dependencies, or null to clear all dependencies.
 		 */
@@ -138,5 +138,4 @@ namespace bs
 	};
 
 	/** @} */
-}
-
+} // namespace bs

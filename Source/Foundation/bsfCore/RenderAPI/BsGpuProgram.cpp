@@ -27,10 +27,8 @@ namespace bs
 	}
 
 	GpuProgram::GpuProgram(const GPU_PROGRAM_DESC& desc)
-		: mNeedsAdjacencyInfo(desc.RequiresAdjacency), mLanguage(desc.Language), mType(desc.Type)
-		, mEntryPoint(desc.EntryPoint), mSource(desc.Source)
+		: mNeedsAdjacencyInfo(desc.RequiresAdjacency), mLanguage(desc.Language), mType(desc.Type), mEntryPoint(desc.EntryPoint), mSource(desc.Source)
 	{
-
 	}
 
 	bool GpuProgram::IsCompiled() const
@@ -86,29 +84,28 @@ namespace bs
 
 	namespace ct
 	{
-	GpuProgram::GpuProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)
-		: mNeedsAdjacencyInfo(desc.RequiresAdjacency), mType(desc.Type), mEntryPoint(desc.EntryPoint), mSource(desc.Source)
-		, mBytecode(desc.Bytecode)
-	{
-		mParametersDesc = bs_shared_ptr_new<GpuParamDesc>();
-	}
+		GpuProgram::GpuProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)
+			: mNeedsAdjacencyInfo(desc.RequiresAdjacency), mType(desc.Type), mEntryPoint(desc.EntryPoint), mSource(desc.Source), mBytecode(desc.Bytecode)
+		{
+			mParametersDesc = bs_shared_ptr_new<GpuParamDesc>();
+		}
 
-	GpuProgram::~GpuProgram()
-	{ }
+		GpuProgram::~GpuProgram()
+		{}
 
-	bool GpuProgram::IsSupported() const
-	{
-		return true;
-	}
+		bool GpuProgram::IsSupported() const
+		{
+			return true;
+		}
 
-	SPtr<GpuProgram> GpuProgram::Create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)
-	{
-		return GpuProgramManager::Instance().Create(desc, deviceMask);
-	}
+		SPtr<GpuProgram> GpuProgram::Create(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)
+		{
+			return GpuProgramManager::Instance().Create(desc, deviceMask);
+		}
 
-	SPtr<GpuProgramBytecode> GpuProgram::CompileBytecode(const GPU_PROGRAM_DESC& desc)
-	{
-		return GpuProgramManager::Instance().CompileBytecode(desc);
-	}
-	}
-}
+		SPtr<GpuProgramBytecode> GpuProgram::CompileBytecode(const GPU_PROGRAM_DESC& desc)
+		{
+			return GpuProgramManager::Instance().CompileBytecode(desc);
+		}
+	} // namespace ct
+} // namespace bs

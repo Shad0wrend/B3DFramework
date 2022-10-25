@@ -239,8 +239,7 @@ namespace bs
 		 * @param[in]	position	World position to apply the force at.
 		 * @param[in]	mode		Determines what is the type of @p force.
 		 */
-		virtual void AddForceAtPoint(const Vector3& force, const Vector3& position,
-			PointForceMode mode = PointForceMode::Force) = 0;
+		virtual void AddForceAtPoint(const Vector3& force, const Vector3& position, PointForceMode mode = PointForceMode::Force) = 0;
 
 		/**
 		 * Returns the total (linear + angular) velocity at a specific point.
@@ -266,7 +265,7 @@ namespace bs
 		 * If automatic tensor calculation is turned off then this will do nothing. If automatic mass calculation is turned
 		 * off then this will use the mass set directly on the body using setMass().
 		 */
-		virtual void UpdateMassDistribution() { }
+		virtual void UpdateMassDistribution() {}
 
 		/**
 		 * Creates a new rigidbody.
@@ -309,7 +308,11 @@ namespace bs
 		 * Sets the object that owns this physics object, if any. Used for high level systems so they can easily map their
 		 * high level physics objects from the low level ones returned by various queries and events.
 		 */
-		void SetOwnerInternal(PhysicsOwnerType type, void* owner) { mOwner.Type = type; mOwner.OwnerData = owner; }
+		void SetOwnerInternal(PhysicsOwnerType type, void* owner)
+		{
+			mOwner.Type = type;
+			mOwner.OwnerData = owner;
+		}
 
 		/**
 		 * Gets the object that owns this physics object, if any. Used for high level systems so they can easily map their
@@ -327,4 +330,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

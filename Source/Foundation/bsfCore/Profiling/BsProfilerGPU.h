@@ -219,11 +219,11 @@ namespace bs
 
 	/** Profiling macros that allow profiling functionality to be disabled at compile time. */
 #if BS_PROFILING_ENABLED
-	#define BS_GPU_PROFILE_BEGIN(name) gProfilerGPU().BeginSample(name);
-	#define BS_GPU_PROFILE_END(name) gProfilerGPU().EndSample(name);
+#	define BS_GPU_PROFILE_BEGIN(name) gProfilerGPU().BeginSample(name);
+#	define BS_GPU_PROFILE_END(name) gProfilerGPU().EndSample(name);
 #else
-	#define BS_GPU_PROFILE_BEGIN(name)
-	#define BS_GPU_PROFILE_END(name)
+#	define BS_GPU_PROFILE_BEGIN(name)
+#	define BS_GPU_PROFILE_END(name)
 #endif
 
 	/**
@@ -240,7 +240,7 @@ namespace bs
 		}
 #else
 		ProfileGPUBlock(const ProfilerString& name)
-		{ }
+		{}
 #endif
 
 #if BS_PROFILING_ENABLED
@@ -257,4 +257,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

@@ -7,7 +7,7 @@
 
 namespace
 {
-	void verifyLockAndThread(const bs::GpuResourceData *data)
+	void verifyLockAndThread(const bs::GpuResourceData* data)
 	{
 		using namespace bs;
 #if !BS_FORCE_SINGLETHREADED_RENDERING
@@ -49,7 +49,7 @@ namespace bs
 		return mData;
 	}
 
-	void GpuResourceData::SetData(UPtr<u8[]> &data)
+	void GpuResourceData::SetData(UPtr<u8[]>& data)
 	{
 		verifyLockAndThread(this);
 
@@ -118,4 +118,4 @@ namespace bs
 	{
 		return GpuResourceData::GetRttiStatic();
 	}
-}
+} // namespace bs

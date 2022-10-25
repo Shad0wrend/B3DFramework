@@ -119,4 +119,4 @@ namespace bs
 	{
 		return gPhysics().RayCastInternal(origin, unitDir, *this, hit, maxDist);
 	}
-}
+} // namespace bs

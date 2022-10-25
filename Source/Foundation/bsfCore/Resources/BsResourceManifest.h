@@ -13,23 +13,26 @@ namespace bs
 
 	/**
 	 * Serializable class that contains UUID <-> file path mapping for resources.
-	 * 			
-	 * @note	
+	 *
+	 * @note
 	 * This class allows you to reference resources between sessions. At the end of a session save the resource manifest,
 	 * and then restore it at the start of a new session. This way ensures that resource UUIDs stay consistent and anything
 	 * referencing them can find the resources.
 	 * @note
 	 * Thread safe.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Resources),API(Framework)) ResourceManifest : public IReflectable
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Resources), API(Framework)) ResourceManifest : public IReflectable
 	{
-		struct ConstructPrivately {};
+		struct ConstructPrivately
+		{};
+
 	public:
 		explicit ResourceManifest(const ConstructPrivately& dummy);
 		ResourceManifest(const String& name);
 
 		/**	Returns an unique name of the resource manifest. */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Name))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Name))
+
 		const String& GetName() const { return mName; }
 
 		/**	Registers a new resource in the manifest. */
@@ -105,4 +108,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

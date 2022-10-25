@@ -9,7 +9,7 @@ namespace bs
 {
 	RendererManager::~RendererManager()
 	{
-		if (mActiveRenderer != nullptr)
+		if(mActiveRenderer != nullptr)
 			mActiveRenderer->Destroy();
 	}
 
@@ -22,24 +22,23 @@ namespace bs
 				SPtr<ct::Renderer> newRenderer = (*iter)->Create();
 				if(newRenderer != nullptr)
 				{
-					if (mActiveRenderer != nullptr)
+					if(mActiveRenderer != nullptr)
 						mActiveRenderer->Destroy();
 
 					mActiveRenderer = newRenderer;
-				}				
+				}
 			}
 		}
 
 		if(mActiveRenderer == nullptr)
 		{
-			BS_EXCEPT(InternalErrorException,
-				"Cannot initialize renderer. Renderer with the name '" + name + "' cannot be found.")
+			BS_EXCEPT(InternalErrorException, "Cannot initialize renderer. Renderer with the name '" + name + "' cannot be found.")
 		}
 	}
 
 	void RendererManager::Initialize()
 	{
-		if (mActiveRenderer != nullptr)
+		if(mActiveRenderer != nullptr)
 			mActiveRenderer->Initialize();
 	}
 
@@ -49,4 +48,4 @@ namespace bs
 
 		mAvailableFactories.push_back(factory);
 	}
-}
+} // namespace bs

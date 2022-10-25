@@ -46,12 +46,12 @@ namespace bs
 	u32 TextDataBase::TextWord::CalcCharWidth(const CharDesc* prevDesc, const CharDesc& desc)
 	{
 		u32 charWidth = desc.XAdvance;
-		if (prevDesc != nullptr)
+		if(prevDesc != nullptr)
 		{
 			u32 kerning = 0;
-			for (size_t j = 0; j < prevDesc->KerningPairs.size(); j++)
+			for(size_t j = 0; j < prevDesc->KerningPairs.size(); j++)
 			{
-				if (prevDesc->KerningPairs[j].OtherCharId == desc.CharId)
+				if(prevDesc->KerningPairs[j].OtherCharId == desc.CharId)
 				{
 					kerning = prevDesc->KerningPairs[j].Amount;
 					break;
@@ -161,10 +161,10 @@ namespace bs
 	{
 		u32 charWidth = 0;
 
-		if (!mIsEmpty)
+		if(!mIsEmpty)
 		{
 			TextWord& lastWord = MemBuffer->WordBuffer[mWordsEnd];
-			if (lastWord.IsSpacer())
+			if(lastWord.IsSpacer())
 				charWidth = TextWord::CalcCharWidth(nullptr, desc);
 			else
 				charWidth = lastWord.CalcWidthWithChar(desc) - lastWord.GetWidth();
@@ -249,11 +249,11 @@ namespace bs
 					const CharDesc& curChar = mTextData->GetChar(j);
 
 					i32 curX = penX + curChar.XOffset;
-					i32 curY = ((i32) mTextData->GetBaselineOffset() - curChar.YOffset);
+					i32 curY = ((i32)mTextData->GetBaselineOffset() - curChar.YOffset);
 
 					curX += penNegativeXOffset;
 					penX += curChar.XAdvance + kerning;
-					
+
 					kerning = 0;
 					if((j + 1) <= word.GetCharsEnd())
 					{
@@ -345,10 +345,8 @@ namespace bs
 		}
 	}
 
-	TextDataBase::TextDataBase(const U32String& text, const HFont& font, u32 fontSize, u32 width, u32 height,
-		bool wordWrap, bool wordBreak)
-		: mChars(nullptr), mNumChars(0), mWords(nullptr), mNumWords(0), mLines(nullptr), mNumLines(0), mPageInfos(nullptr)
-		, mNumPageInfos(0), mFont(font), mFontData(nullptr)
+	TextDataBase::TextDataBase(const U32String& text, const HFont& font, u32 fontSize, u32 width, u32 height, bool wordWrap, bool wordBreak)
+		: mChars(nullptr), mNumChars(0), mWords(nullptr), mNumWords(0), mLines(nullptr), mNumLines(0), mPageInfos(nullptr), mNumPageInfos(0), mFont(font), mFontData(nullptr)
 	{
 		// In order to reduce number of memory allocations algorithm first calculates data into temporary buffers and then copies the results
 		InitAlloc();
@@ -364,8 +362,7 @@ namespace bs
 
 		if(mFontData->Size != fontSize)
 		{
-			BS_LOG(Warning, GUI, "Unable to find font with specified size ({0}). Using nearest available size: {1}",
-				fontSize, mFontData->Size);
+			BS_LOG(Warning, GUI, "Unable to find font with specified size ({0}). Using nearest available size: {1}", fontSize, mFontData->Size);
 		}
 
 		bool widthIsLimited = width > 0;
@@ -397,36 +394,36 @@ namespace bs
 				charIdx++;
 
 				// Check for \r\n
-				if (text[charIdx - 1] == '\r' && charIdx < text.size())
+				if(text[charIdx - 1] == '\r' && charIdx < text.size())
 				{
-					if (text[charIdx] == '\n')
+					if(text[charIdx] == '\n')
 						charIdx++;
 				}
 
 				continue;
 			}
 
-			if (widthIsLimited && wordWrap)
+			if(widthIsLimited && wordWrap)
 			{
 				u32 widthWithChar = 0;
-				if (charIdx == SPACE_CHAR)
+				if(charIdx == SPACE_CHAR)
 					widthWithChar = curLine->GetWidth() + GetSpaceWidth();
-				else if (charIdx == TAB_CHAR)
+				else if(charIdx == TAB_CHAR)
 					widthWithChar = curLine->GetWidth() + GetSpaceWidth() * 4;
 				else
 					widthWithChar = curLine->CalcWidthWithChar(charDesc);
 
-				if (widthWithChar > width && !curLine->IsEmpty())
+				if(widthWithChar > width && !curLine->IsEmpty())
 				{
 					bool atWordBoundary = charId == SPACE_CHAR || charId == TAB_CHAR || curLine->IsAtWordBoundary();
 
-					if (!atWordBoundary) // Need to break word into multiple pieces, or move it to next line
+					if(!atWordBoundary) // Need to break word into multiple pieces, or move it to next line
 					{
 						u32 lastWordIdx = curLine->RemoveLastWord();
 						TextWord& lastWord = MemBuffer->WordBuffer[lastWordIdx];
 
 						bool wordFits = lastWord.CalcWidthWithChar(charDesc) <= width;
-						if (wordFits && !curLine->IsEmpty())
+						if(wordFits && !curLine->IsEmpty())
 						{
 							curLine->Finalize(false);
 
@@ -439,7 +436,7 @@ namespace bs
 						}
 						else
 						{
-							if (wordBreak)
+							if(wordBreak)
 							{
 								curLine->AddWord(lastWordIdx, lastWord);
 								curLine->Finalize(false);
@@ -451,7 +448,7 @@ namespace bs
 							}
 							else
 							{
-								if (!curLine->IsEmpty()) // Add new line unless current line is empty (to avoid constantly moving the word to new lines)
+								if(!curLine->IsEmpty()) // Add new line unless current line is empty (to avoid constantly moving the word to new lines)
 								{
 									curLine->Finalize(false);
 
@@ -465,7 +462,7 @@ namespace bs
 							}
 						}
 					}
-					else if (charId != SPACE_CHAR && charId != TAB_CHAR) // If current char is whitespace add it to the existing line even if it doesn't fit
+					else if(charId != SPACE_CHAR && charId != TAB_CHAR) // If current char is whitespace add it to the existing line even if it doesn't fit
 					{
 						curLine->Finalize(false);
 
@@ -482,7 +479,7 @@ namespace bs
 				curLine->AddSpace(GetSpaceWidth());
 				MemBuffer->AddCharToPage(0, *mFontData);
 			}
-			else if (charId == TAB_CHAR)
+			else if(charId == TAB_CHAR)
 			{
 				curLine->AddSpace(GetSpaceWidth() * 4);
 				MemBuffer->AddCharToPage(0, *mFontData);
@@ -512,16 +509,17 @@ namespace bs
 		u32 lineArraySize = mNumLines * sizeof(TextLine);
 		u32 pageInfoArraySize = mNumPageInfos * sizeof(PageInfo);
 
-		if (buffer == nullptr)
+		if(buffer == nullptr)
 		{
-			size = charArraySize + wordArraySize + lineArraySize + pageInfoArraySize;;
+			size = charArraySize + wordArraySize + lineArraySize + pageInfoArraySize;
+			;
 			return;
 		}
 
 		u8* dataPtr = (u8*)buffer;
 		mChars = (const CharDesc**)dataPtr;
 
-		for (u32 i = 0; i < mNumChars; i++)
+		for(u32 i = 0; i < mNumChars; i++)
 		{
 			u32 charId = text[i];
 			const CharDesc& charDesc = mFontData->GetCharDesc(charId);
@@ -541,7 +539,7 @@ namespace bs
 		mPageInfos = (PageInfo*)dataPtr;
 		memcpy((void*)mPageInfos, (void*)&MemBuffer->PageBuffer[0], pageInfoArraySize);
 
-		if (freeTemporary)
+		if(freeTemporary)
 			MemBuffer->DeallocAll();
 	}
 
@@ -567,7 +565,7 @@ namespace bs
 
 	void TextDataBase::InitAlloc()
 	{
-		if (MemBuffer == nullptr)
+		if(MemBuffer == nullptr)
 			MemBuffer = bs_new<BufferData>();
 	}
 
@@ -680,4 +678,4 @@ namespace bs
 
 		return height;
 	}
-}
+} // namespace bs

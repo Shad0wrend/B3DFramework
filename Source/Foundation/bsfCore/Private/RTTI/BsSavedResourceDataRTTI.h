@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT SavedResourceDataRTTI : public RTTIType <SavedResourceData, IReflectable, SavedResourceDataRTTI>
+	class BS_CORE_EXPORT SavedResourceDataRTTI : public RTTIType<SavedResourceData, IReflectable, SavedResourceDataRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -25,7 +25,7 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "ResourceDependencies";
 			return name;
@@ -36,7 +36,7 @@ namespace bs
 			return TID_ResourceDependencies;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<SavedResourceData>();
 		}
@@ -44,4 +44,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

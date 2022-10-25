@@ -32,4 +32,4 @@ namespace bs
 
 		Pimpl* m;
 	};
-}
+} // namespace bs

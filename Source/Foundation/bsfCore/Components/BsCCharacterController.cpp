@@ -30,7 +30,7 @@ namespace bs
 	{
 		CharacterCollisionFlags output;
 
-		if (mInternal == nullptr)
+		if(mInternal == nullptr)
 			return output;
 
 		output = mInternal->Move(displacement);
@@ -41,7 +41,7 @@ namespace bs
 
 	Vector3 CCharacterController::GetFootPosition() const
 	{
-		if (mInternal == nullptr)
+		if(mInternal == nullptr)
 			return Vector3::ZERO;
 
 		return mInternal->GetFootPosition();
@@ -49,7 +49,7 @@ namespace bs
 
 	void CCharacterController::SetFootPosition(const Vector3& position)
 	{
-		if (mInternal == nullptr)
+		if(mInternal == nullptr)
 			return;
 
 		mInternal->SetFootPosition(position);
@@ -60,7 +60,7 @@ namespace bs
 	{
 		mDesc.Radius = radius;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			UpdateDimensions();
 	}
 
@@ -68,7 +68,7 @@ namespace bs
 	{
 		mDesc.Height = height;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			UpdateDimensions();
 	}
 
@@ -76,7 +76,7 @@ namespace bs
 	{
 		mDesc.Up = up;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetUp(up);
 	}
 
@@ -84,7 +84,7 @@ namespace bs
 	{
 		mDesc.ClimbingMode = mode;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetClimbingMode(mode);
 	}
 
@@ -92,7 +92,7 @@ namespace bs
 	{
 		mDesc.NonWalkableMode = mode;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetNonWalkableMode(mode);
 	}
 
@@ -100,7 +100,7 @@ namespace bs
 	{
 		mDesc.MinMoveDistance = value;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetMinMoveDistance(value);
 	}
 
@@ -108,7 +108,7 @@ namespace bs
 	{
 		mDesc.ContactOffset = value;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetContactOffset(value);
 	}
 
@@ -116,7 +116,7 @@ namespace bs
 	{
 		mDesc.StepOffset = value;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetStepOffset(value);
 	}
 
@@ -124,7 +124,7 @@ namespace bs
 	{
 		mDesc.SlopeLimit = value;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetSlopeLimit(value);
 	}
 
@@ -132,13 +132,12 @@ namespace bs
 	{
 		mLayer = layer;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetLayer(layer);
 	}
 
 	void CCharacterController::OnInitialized()
 	{
-
 	}
 
 	void CCharacterController::OnDestroyed()
@@ -168,7 +167,7 @@ namespace bs
 
 	void CCharacterController::OnTransformChanged(TransformChangedFlags flags)
 	{
-		if (!SO()->GetActive() || mInternal == nullptr)
+		if(!SO()->GetActive() || mInternal == nullptr)
 			return;
 
 		mInternal->SetPosition(SO()->GetTransform().GetPosition());
@@ -238,4 +237,4 @@ namespace bs
 	{
 		return CCharacterController::GetRttiStatic();
 	}
-}
+} // namespace bs

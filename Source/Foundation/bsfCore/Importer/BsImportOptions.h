@@ -15,7 +15,7 @@ namespace bs
 	 * Base class for creating import options from. Import options are specific for each importer and control how is data
 	 * imported.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer),API(Framework),API(Editor)) ImportOptions : public IReflectable
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ImportOptions : public IReflectable
 	{
 	public:
 		virtual ~ImportOptions() = default;
@@ -26,8 +26,8 @@ namespace bs
 	public:
 		friend class ImportOptionsRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 	};
 
 	/** @} */
-}
+} // namespace bs

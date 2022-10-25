@@ -28,6 +28,7 @@ namespace bs
 
 		/** Maximum allowed value as reported by the axis movement events. */
 		static constexpr int MAX_AXIS = 32767;
+
 	private:
 		friend class Input;
 
@@ -39,4 +40,4 @@ namespace bs
 
 		Pimpl* m;
 	};
-}
+} // namespace bs

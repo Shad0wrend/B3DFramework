@@ -14,10 +14,11 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT CSkyboxRTTI : public RTTIType <CSkybox, Component, CSkyboxRTTI>
+	class BS_CORE_EXPORT CSkyboxRTTI : public RTTIType<CSkybox, Component, CSkyboxRTTI>
 	{
 	private:
 		SPtr<Skybox> GetInternal(CSkybox* obj) { return obj->mInternal; }
+
 		void SetInternal(CSkybox* obj, SPtr<Skybox> val) { obj->mInternal = val; }
 
 	public:
@@ -45,4 +46,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

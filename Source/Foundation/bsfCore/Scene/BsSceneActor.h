@@ -14,11 +14,11 @@ namespace bs
 	/**	Signals which portion of a scene actor is dirty. */
 	enum class ActorDirtyFlag
 	{
-		Transform	= 1 << 0,
-		Mobility	= 1 << 1,
-		Active		= 1 << 2,
-		Everything	= 1 << 3,
-		Dependency	= DIRTY_DEPENDENCY_MASK
+		Transform = 1 << 0,
+		Mobility = 1 << 1,
+		Active = 1 << 2,
+		Everything = 1 << 3,
+		Dependency = DIRTY_DEPENDENCY_MASK
 	};
 
 	typedef Flags<ActorDirtyFlag> ActorDirtyFlags;
@@ -70,7 +70,7 @@ namespace bs
 		 * @name Internal
 		 * @{
 		 */
-		
+
 		/**
 		 * Updates the internal actor state by transfering the relevant state from the scene object. The system tracks
 		 * the last state and only performs the update if the scene object was modified since the last call. You can force
@@ -82,16 +82,16 @@ namespace bs
 		virtual void UpdateStateInternal(const SceneObject& so, bool force = false);
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template<class P>
+		template <class P>
 		void RttiEnumFields(P p, ActorDirtyFlags flags = ActorDirtyFlag::Everything)
 		{
-			if (flags.IsSetAny(ActorDirtyFlag::Transform | ActorDirtyFlag::Everything))
+			if(flags.IsSetAny(ActorDirtyFlag::Transform | ActorDirtyFlag::Everything))
 				p(mTransform);
 
-			if (flags.IsSetAny(ActorDirtyFlag::Active | ActorDirtyFlag::Everything))
+			if(flags.IsSetAny(ActorDirtyFlag::Active | ActorDirtyFlag::Everything))
 				p(mActive);
 
-			if (flags.IsSetAny(ActorDirtyFlag::Mobility | ActorDirtyFlag::Everything))
+			if(flags.IsSetAny(ActorDirtyFlag::Mobility | ActorDirtyFlag::Everything))
 				p(mMobility);
 		}
 
@@ -101,7 +101,7 @@ namespace bs
 		 * Marks the simulation thread object as dirty and notifies the system its data should be synced with its core
 		 * thread counterpart.
 		 */
-		virtual void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) { }
+		virtual void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) {}
 
 	protected:
 		friend class SceneManager;
@@ -113,4 +113,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

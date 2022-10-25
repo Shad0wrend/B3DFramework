@@ -24,12 +24,12 @@ namespace bs
 	enum SceneObjectFlags
 	{
 		SOF_DontInstantiate = 0x01, /**< Object wont be in the main scene and its components won't receive updates. */
-		SOF_DontSave = 0x02,		/**< Object will be skipped when saving the scene hierarchy or a prefab. */
-		SOF_Persistent = 0x04,		/**< Object will remain in the scene even after scene clear, unless destroyed directly.
-										 This only works with top-level objects. */
-		SOF_Internal = 0x08			/**< Provides a hint to external systems that his object is used by engine internals.
-										 For example, those systems might not want to display those objects together with the
-										 user created ones. */
+		SOF_DontSave = 0x02, /**< Object will be skipped when saving the scene hierarchy or a prefab. */
+		SOF_Persistent = 0x04, /**< Object will remain in the scene even after scene clear, unless destroyed directly.
+									This only works with top-level objects. */
+		SOF_Internal = 0x08 /**< Provides a hint to external systems that his object is used by engine internals.
+								 For example, those systems might not want to display those objects together with the
+								 user created ones. */
 	};
 
 	/**
@@ -53,6 +53,7 @@ namespace bs
 		friend class Prefab;
 		friend class PrefabDiff;
 		friend class PrefabUtility;
+
 	public:
 		~SceneObject();
 
@@ -156,7 +157,7 @@ namespace bs
 		 * Creates a new SceneObject instance, registers it with the game object manager, creates and returns a handle to
 		 * the new object.
 		 *
-		 * @note	
+		 * @note
 		 * When creating objects with DontInstantiate flag it is the callers responsibility to manually destroy the object,
 		 * otherwise it will leak.
 		 */
@@ -165,7 +166,7 @@ namespace bs
 		/**
 		 * Creates a new SceneObject instance from an existing pointer, registers it with the game object manager, creates
 		 * and returns a handle to the object.
-		 *			
+		 *
 		 * @param[in]	soPtr		Pointer to the scene object register and return a handle to.
 		 */
 		static HSceneObject CreateInternal(const SPtr<SceneObject>& soPtr);
@@ -291,7 +292,7 @@ namespace bs
 		/**
 		 * Forces any dirty transform matrices on this object to be updated.
 		 *
-		 * @note	
+		 * @note
 		 * Normally this is done internally when retrieving a transform, but sometimes it is useful to update transforms
 		 * manually.
 		 */
@@ -436,7 +437,7 @@ namespace bs
 
 		/**
 		 * Makes a deep copy of this object.
-		 * 			
+		 *
 		 * @param[in]	instantiate		If false, the cloned hierarchy will just be a memory copy, but will not be present
 		 *								in the scene or otherwise active until instantiate() is called.
 		 * @param[in]	preserveUUIDs	If false, each cloned game object will be assigned a brand new UUID. Otherwise
@@ -472,7 +473,7 @@ namespace bs
 		 * @param[in]	object	New child.
 		 */
 		void AddChild(const HSceneObject& object);
-		
+
 		/**
 		 * Removes the child from the object.
 		 *
@@ -488,15 +489,12 @@ namespace bs
 		/************************************************************************/
 	public:
 		/** Constructs a new component of the specified type and adds it to the internal component list. */
-		template<class T, class... Args>
-		GameObjectHandle<T> AddComponent(Args &&... args)
+		template <class T, class... Args>
+		GameObjectHandle<T> AddComponent(Args&&... args)
 		{
-			static_assert((std::is_base_of<bs::Component, T>::value),
-				"Specified type is not a valid Component.");
+			static_assert((std::is_base_of<bs::Component, T>::value), "Specified type is not a valid Component.");
 
-			SPtr<T> gameObject(new (bs_alloc<T>()) T(mThisHandle,
-				std::forward<Args>(args)...),
-				&bs_delete<T>, StdAlloc<T>());
+			SPtr<T> gameObject(new(bs_alloc<T>()) T(mThisHandle, std::forward<Args>(args)...), &bs_delete<T>, StdAlloc<T>());
 
 			const HComponent newComponent =
 				static_object_cast<Component>(GameObjectManager::Instance().RegisterObject(gameObject));
@@ -514,44 +512,42 @@ namespace bs
 		/**
 		 * Searches for a component with the specific type and returns the first one it finds. Will also return components
 		 * derived from the type.
-		 * 			
+		 *
 		 * @tparam	T	Type of the component.
 		 * @return		Component if found, nullptr otherwise.
 		 *
-		 * @note	
+		 * @note
 		 * Don't call this too often as it is relatively slow. It is more efficient to call it once and store the result
 		 * for further use.
 		 */
 		template <typename T>
 		GameObjectHandle<T> GetComponent()
 		{
-			static_assert((std::is_base_of<bs::Component, T>::value),
-				"Specified type is not a valid Component.");
+			static_assert((std::is_base_of<bs::Component, T>::value), "Specified type is not a valid Component.");
 
 			return static_object_cast<T>(GetComponent(T::GetRttiStatic()));
 		}
 
 		/**
 		 * Returns all components with the specific type. Will also return components derived from the type.
-		 * 			
+		 *
 		 * @tparam	typename T	Type of the component.
 		 * @return				Array of found components.
 		 *
-		 * @note	
+		 * @note
 		 * Don't call this too often as it is relatively slow. It is more efficient to call it once and store the result
 		 * for further use.
 		 */
 		template <typename T>
 		Vector<GameObjectHandle<T>> GetComponents()
 		{
-			static_assert((std::is_base_of<bs::Component, T>::value),
-				"Specified type is not a valid Component.");
+			static_assert((std::is_base_of<bs::Component, T>::value), "Specified type is not a valid Component.");
 
 			Vector<GameObjectHandle<T>> output;
 
-			for (auto entry : mComponents)
+			for(auto entry : mComponents)
 			{
-				if (entry->GetRtti()->IsDerivedFrom(T::GetRttiStatic()))
+				if(entry->GetRtti()->IsDerivedFrom(T::GetRttiStatic()))
 					output.push_back(static_object_cast<T>(entry));
 			}
 
@@ -560,7 +556,7 @@ namespace bs
 
 		/**
 		 * Checks if the current object contains the specified component or components derived from the provided type.
-		 * 			 			
+		 *
 		 * @tparam	typename T	Type of the component.
 		 * @return				True if component exists on the object.
 		 *
@@ -569,12 +565,11 @@ namespace bs
 		template <typename T>
 		bool HasComponent()
 		{
-			static_assert((std::is_base_of<bs::Component, T>::value),
-				"Specified type is not a valid Component.");
+			static_assert((std::is_base_of<bs::Component, T>::value), "Specified type is not a valid Component.");
 
-			for (auto entry : mComponents)
+			for(auto entry : mComponents)
 			{
-				if (entry->GetRtti()->IsDerivedFrom(T::GetRttiStatic()))
+				if(entry->GetRtti()->IsDerivedFrom(T::GetRttiStatic()))
 					return true;
 			}
 
@@ -584,11 +579,11 @@ namespace bs
 		/**
 		 * Searches for a component with the specified type and returns the first one it finds. Will also return components
 		 * derived from the type.
-		 * 			
+		 *
 		 * @param[in]	type	RTTI information for the type.
 		 * @return				Component if found, nullptr otherwise.
 		 *
-		 * @note	
+		 * @note
 		 * Don't call this too often as it is relatively slow. It is more efficient to call it once and store the result
 		 * for further use.
 		 */
@@ -621,10 +616,10 @@ namespace bs
 		{
 			static_assert((std::is_base_of<bs::Component, T>::value), "Specified type is not a valid Component.");
 
-			T* rawPtr = new (bs_alloc<T>()) T();
+			T* rawPtr = new(bs_alloc<T>()) T();
 			SPtr<T> gameObject(rawPtr, &bs_delete<T>, StdAlloc<T>());
 			gameObject->mRTTIData = gameObject;
-			
+
 			return gameObject;
 		}
 
@@ -660,4 +655,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

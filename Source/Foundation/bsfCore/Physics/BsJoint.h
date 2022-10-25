@@ -70,7 +70,11 @@ namespace bs
 		 * Sets the object that owns this physics object, if any. Used for high level systems so they can easily map their
 		 * high level physics objects from the low level ones returned by various queries and events.
 		 */
-		void SetOwnerInternal(PhysicsOwnerType type, void* owner) { mOwner.Type = type; mOwner.OwnerData = owner; }
+		void SetOwnerInternal(PhysicsOwnerType type, void* owner)
+		{
+			mOwner.Type = type;
+			mOwner.OwnerData = owner;
+		}
 
 		/**
 		 * Gets the object that owns this physics object, if any. Used for high level systems so they can easily map their
@@ -105,10 +109,10 @@ namespace bs
 	 * Controls spring parameters for a physics joint limits. If a limit is soft (body bounces back due to restition when
 	 * the limit is reached) the spring will pull the body back towards the limit using the specified parameters.
 	 */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportAsStruct(true)) Spring
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) Spring
 	{
 		/** Constructs a spring with no force. */
-		Spring() { }
+		Spring() {}
 
 		/**
 		 * Constructs a spring.
@@ -117,8 +121,8 @@ namespace bs
 		 * @param	damping		Damping strength. Force propertional to the velocity error.
 		 */
 		Spring(float stiffness, float damping)
-			:Stiffness(stiffness), Damping(damping)
-		{ }
+			: Stiffness(stiffness), Damping(damping)
+		{}
 
 		bool operator==(const Spring& other) const
 		{
@@ -133,15 +137,15 @@ namespace bs
 	};
 
 	/** Contains common values used by all Joint limit types. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportAsStruct(true)) LimitCommon
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) LimitCommon
 	{
 		LimitCommon(float contactDist = -1.0f)
-			:ContactDist(contactDist)
-		{ }
+			: ContactDist(contactDist)
+		{}
 
 		LimitCommon(const Spring& spring, float restitution = 0.0f)
 			: Restitution(restitution), Spring(spring)
-		{ }
+		{}
 
 		/**
 		 * Distance from the limit at which it becomes active. Allows the solver to activate earlier than the limit is
@@ -160,11 +164,11 @@ namespace bs
 	};
 
 	/** Represents a joint limit between two distance values. Lower value must be less than the upper value. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportAsStruct(true)) LimitLinearRange : LimitCommon
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) LimitLinearRange : LimitCommon
 	{
 		/** Constructs an empty limit. */
 		LimitLinearRange()
-		{ }
+		{}
 
 		/**
 		 * Constructs a hard limit. Once the limit is reached the movement of the attached bodies will come to a stop.
@@ -175,8 +179,8 @@ namespace bs
 		 *						than the limit is reached to avoid breaking the limit. Specify -1 for the default.
 		 */
 		LimitLinearRange(float lower, float upper, float contactDist = -1.0f)
-			:LimitCommon(contactDist), Lower(lower), Upper(upper)
-		{ }
+			: LimitCommon(contactDist), Lower(lower), Upper(upper)
+		{}
 
 		/**
 		 * Constructs a soft limit. Once the limit is reached the bodies will bounce back according to the resitution
@@ -190,8 +194,8 @@ namespace bs
 		 *						collision. Must be in [0, 1] range.
 		 */
 		LimitLinearRange(float lower, float upper, const bs::Spring& spring, float restitution = 0.0f)
-			:LimitCommon(spring, restitution), Lower(lower), Upper(upper)
-		{ }
+			: LimitCommon(spring, restitution), Lower(lower), Upper(upper)
+		{}
 
 		bool operator==(const LimitLinearRange& other) const
 		{
@@ -207,11 +211,11 @@ namespace bs
 	};
 
 	/** Represents a joint limit between zero a single distance value. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportAsStruct(true)) LimitLinear : LimitCommon
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) LimitLinear : LimitCommon
 	{
 		/** Constructs an empty limit. */
 		LimitLinear()
-		{ }
+		{}
 
 		/**
 		 * Constructs a hard limit. Once the limit is reached the movement of the attached bodies will come to a stop.
@@ -221,8 +225,8 @@ namespace bs
 		 *						than the limit is reached to avoid breaking the limit. Specify -1 for the default.
 		 */
 		LimitLinear(float extent, float contactDist = -1.0f)
-			:LimitCommon(contactDist), Extent(extent)
-		{ }
+			: LimitCommon(contactDist), Extent(extent)
+		{}
 
 		/**
 		 * Constructs a soft limit. Once the limit is reached the bodies will bounce back according to the resitution
@@ -235,8 +239,8 @@ namespace bs
 		 *						collision. Must be in [0, 1] range.
 		 */
 		LimitLinear(float extent, const bs::Spring& spring, float restitution = 0.0f)
-			:LimitCommon(spring, restitution), Extent(extent)
-		{ }
+			: LimitCommon(spring, restitution), Extent(extent)
+		{}
 
 		bool operator==(const LimitLinear& other) const
 		{
@@ -249,11 +253,11 @@ namespace bs
 	};
 
 	/** Represents a joint limit between two angles. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportAsStruct(true)) LimitAngularRange : LimitCommon
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) LimitAngularRange : LimitCommon
 	{
 		/** Constructs an empty limit. */
 		LimitAngularRange()
-		{ }
+		{}
 
 		/**
 		 * Constructs a hard limit. Once the limit is reached the movement of the attached bodies will come to a stop.
@@ -264,8 +268,8 @@ namespace bs
 		 *						than the limit is reached to avoid breaking the limit. Specify -1 for the default.
 		 */
 		LimitAngularRange(Radian lower, Radian upper, float contactDist = -1.0f)
-			:LimitCommon(contactDist), Lower(lower), Upper(upper)
-		{ }
+			: LimitCommon(contactDist), Lower(lower), Upper(upper)
+		{}
 
 		/**
 		 * Constructs a soft limit. Once the limit is reached the bodies will bounce back according to the resitution
@@ -279,8 +283,8 @@ namespace bs
 		 *						collision. Must be in [0, 1] range.
 		 */
 		LimitAngularRange(Radian lower, Radian upper, const bs::Spring& spring, float restitution = 0.0f)
-			:LimitCommon(spring, restitution), Lower(lower), Upper(upper)
-		{ }
+			: LimitCommon(spring, restitution), Lower(lower), Upper(upper)
+		{}
 
 		bool operator==(const LimitAngularRange& other) const
 		{
@@ -289,20 +293,20 @@ namespace bs
 		}
 
 		/** Lower angle of the limit. Must be less than #upper. */
-		BS_SCRIPT_EXPORT(UIValueRange([0,359]))
+		BS_SCRIPT_EXPORT(UIValueRange([ 0, 359 ]))
 		Radian Lower = Radian(0.0f);
 
 		/** Upper angle of the limit. Must be less than #lower. */
-		BS_SCRIPT_EXPORT(UIValueRange([0,359]))
+		BS_SCRIPT_EXPORT(UIValueRange([ 0, 359 ]))
 		Radian Upper = Radian(0.0f);
 	};
 
 	/** Represents a joint limit that contraints movement to within an elliptical cone. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportAsStruct(true)) LimitConeRange : LimitCommon
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) LimitConeRange : LimitCommon
 	{
 		/** Constructs a limit with a 45 degree cone. */
 		LimitConeRange()
-		{ }
+		{}
 
 		/**
 		 * Constructs a hard limit. Once the limit is reached the movement of the attached bodies will come to a stop.
@@ -314,8 +318,8 @@ namespace bs
 		 *							default.
 		 */
 		LimitConeRange(Radian yLimitAngle, Radian zLimitAngle, float contactDist = -1.0f)
-			:LimitCommon(contactDist), YLimitAngle(yLimitAngle), ZLimitAngle(zLimitAngle)
-		{ }
+			: LimitCommon(contactDist), YLimitAngle(yLimitAngle), ZLimitAngle(zLimitAngle)
+		{}
 
 		/**
 		 * Constructs a soft limit. Once the limit is reached the bodies will bounce back according to the resitution
@@ -329,8 +333,8 @@ namespace bs
 		 *						collision. Must be in [0, 1] range.
 		 */
 		LimitConeRange(Radian yLimitAngle, Radian zLimitAngle, const bs::Spring& spring, float restitution = 0.0f)
-			:LimitCommon(spring, restitution), YLimitAngle(yLimitAngle), ZLimitAngle(zLimitAngle)
-		{ }
+			: LimitCommon(spring, restitution), YLimitAngle(yLimitAngle), ZLimitAngle(zLimitAngle)
+		{}
 
 		bool operator==(const LimitConeRange& other) const
 		{
@@ -339,13 +343,13 @@ namespace bs
 		}
 
 		/** Y angle of the cone. Movement is constrainted between 0 and this angle on the Y axis. */
-		BS_SCRIPT_EXPORT(UIValueRange([0,180]))
+		BS_SCRIPT_EXPORT(UIValueRange([ 0, 180 ]))
 		Radian YLimitAngle = Radian(Math::HALF_PI);
 
 		/** Z angle of the cone. Movement is constrainted between 0 and this angle on the Z axis. */
-		BS_SCRIPT_EXPORT(UIValueRange([0,180]))
+		BS_SCRIPT_EXPORT(UIValueRange([ 0, 180 ]))
 		Radian ZLimitAngle = Radian(Math::HALF_PI);
 	};
 
 	/** @} */
-}
+} // namespace bs

@@ -37,7 +37,7 @@ namespace bs
 			return TID_VectorField;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return VectorField::CreateEmptyInternal();
 		}
@@ -52,4 +52,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

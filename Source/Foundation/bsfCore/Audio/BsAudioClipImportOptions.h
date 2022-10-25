@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/** Contains import options you may use to control how an audio clip is imported. */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer),API(Framework),API(Editor)) AudioClipImportOptions : public ImportOptions
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) AudioClipImportOptions : public ImportOptions
 	{
 	public:
 		AudioClipImportOptions() = default;
@@ -49,8 +49,8 @@ namespace bs
 	public:
 		friend class AudioClipImportOptionsRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 	};
 
 	/** @} */
-}
+} // namespace bs

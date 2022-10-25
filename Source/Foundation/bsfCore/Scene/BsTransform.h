@@ -156,7 +156,7 @@ namespace bs
 		void Pitch(const Radian& angle);
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template<class P>
+		template <class P>
 		void RttiEnumFields(P p)
 		{
 			p(mPosition);
@@ -165,6 +165,7 @@ namespace bs
 		}
 
 		static Transform IDENTITY;
+
 	private:
 		Vector3 mPosition = Vector3::ZERO;
 		Quaternion mRotation = Quaternion::IDENTITY;
@@ -180,4 +181,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

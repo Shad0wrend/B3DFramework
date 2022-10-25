@@ -7,7 +7,7 @@
 namespace bs
 {
 	Component::Component(HSceneObject parent)
-		:mParent(std::move(parent))
+		: mParent(std::move(parent))
 	{
 		SetName("Component");
 	}
@@ -32,7 +32,7 @@ namespace bs
 
 	void Component::DestroyInternal(GameObjectHandleBase& handle, bool immediate)
 	{
-		if (immediate)
+		if(immediate)
 			GameObjectManager::Instance().UnregisterObject(handle);
 		else
 			GameObjectManager::Instance().QueueForDestroy(handle);
@@ -47,4 +47,4 @@ namespace bs
 	{
 		return Component::GetRttiStatic();
 	}
-}
+} // namespace bs

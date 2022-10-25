@@ -28,12 +28,15 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 		float& GetBreakForce(OwnerType* obj) { return obj->mDesc.BreakForce; }
+
 		void SetBreakForce(OwnerType* obj, float& val) { obj->mDesc.BreakForce = val; }
 
 		float& GetBreakTorque(OwnerType* obj) { return obj->mDesc.BreakTorque; }
+
 		void SetBreakTorque(OwnerType* obj, float& val) { obj->mDesc.BreakTorque = val; }
 
 		bool& GetEnableCollision(OwnerType* obj) { return obj->mDesc.EnableCollision; }
+
 		void SetEnableCollision(OwnerType* obj, bool& val) { obj->mDesc.EnableCollision = val; }
 
 	public:
@@ -44,7 +47,7 @@ namespace bs
 			AddPlainField("EnableCollision", 8, &CJointRTTI::GetEnableCollision, &CJointRTTI::SetEnableCollision);
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "CJoint";
 			return name;
@@ -55,7 +58,7 @@ namespace bs
 			return TID_CJoint;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
 			return nullptr;
@@ -64,4 +67,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

@@ -56,7 +56,7 @@ namespace bs
 
 	void AudioSource::GetListenerResources(Vector<HResource>& resources)
 	{
-		if (mAudioClip != nullptr)
+		if(mAudioClip != nullptr)
 			resources.push_back(mAudioClip);
 	}
 
@@ -74,4 +74,4 @@ namespace bs
 	{
 		return AudioSource::GetRttiStatic();
 	}
-}
+} // namespace bs

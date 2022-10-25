@@ -9,7 +9,7 @@
 namespace bs
 {
 	CFixedJoint::CFixedJoint()
-		:CJoint(mDesc)
+		: CJoint(mDesc)
 	{
 		SetName("FixedJoint");
 	}
@@ -36,11 +36,11 @@ namespace bs
 
 		HRigidbody rigidbody = mBodies[(u32)body];
 		const Transform& tfrm = SO()->GetTransform();
-		if (rigidbody == nullptr) // Get world space transform if no relative to any body
+		if(rigidbody == nullptr) // Get world space transform if no relative to any body
 		{
 			Quaternion worldRot = tfrm.GetRotation();
 
-			rotation = worldRot*rotation;
+			rotation = worldRot * rotation;
 			position = worldRot.Rotate(position) + tfrm.GetPosition();
 		}
 		else
@@ -70,4 +70,4 @@ namespace bs
 	{
 		return CFixedJoint::GetRttiStatic();
 	}
-}
+} // namespace bs

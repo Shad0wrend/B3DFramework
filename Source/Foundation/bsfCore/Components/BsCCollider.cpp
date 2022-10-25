@@ -27,12 +27,12 @@ namespace bs
 
 	void CCollider::SetIsTrigger(bool value)
 	{
-		if (mIsTrigger == value)
+		if(mIsTrigger == value)
 			return;
 
 		mIsTrigger = value;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 		{
 			mInternal->SetIsTrigger(value);
 
@@ -43,16 +43,16 @@ namespace bs
 
 	void CCollider::SetMass(float mass)
 	{
-		if (mMass == mass)
+		if(mMass == mass)
 			return;
 
 		mMass = mass;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 		{
 			mInternal->SetMass(mass);
 
-			if (mParent != nullptr)
+			if(mParent != nullptr)
 				mParent->UpdateMassDistributionInternal();
 		}
 	}
@@ -61,7 +61,7 @@ namespace bs
 	{
 		mMaterial = material;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetMaterial(material);
 	}
 
@@ -71,7 +71,7 @@ namespace bs
 
 		mContactOffset = value;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetContactOffset(value);
 	}
 
@@ -81,7 +81,7 @@ namespace bs
 
 		mRestOffset = value;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetRestOffset(value);
 	}
 
@@ -89,7 +89,7 @@ namespace bs
 	{
 		mLayer = layer;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetLayer(layer);
 	}
 
@@ -97,13 +97,12 @@ namespace bs
 	{
 		mCollisionReportMode = mode;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			UpdateCollisionReportMode();
 	}
 
 	void CCollider::OnInitialized()
 	{
-
 	}
 
 	void CCollider::OnDestroyed()
@@ -123,39 +122,39 @@ namespace bs
 
 	void CCollider::OnTransformChanged(TransformChangedFlags flags)
 	{
-		if (!SO()->GetActive())
+		if(!SO()->GetActive())
 			return;
 
-		if ((flags & TCF_Parent) != 0)
+		if((flags & TCF_Parent) != 0)
 			UpdateParentRigidbody();
 
 		// Don't update the transform if it's due to Physics update since then we can guarantee it will remain at the same
 		// relative transform to its parent
-		if (gPhysics().IsUpdateInProgressInternal())
+		if(gPhysics().IsUpdateInProgressInternal())
 			return;
 
-		if ((flags & (TCF_Parent | TCF_Transform)) != 0)
+		if((flags & (TCF_Parent | TCF_Transform)) != 0)
 			UpdateTransform();
 	}
 
 	void CCollider::SetRigidbody(const HRigidbody& rigidbody, bool internal)
 	{
-		if (rigidbody == mParent)
+		if(rigidbody == mParent)
 			return;
 
-		if (mInternal != nullptr && !internal)
+		if(mInternal != nullptr && !internal)
 		{
-			if (mParent != nullptr)
+			if(mParent != nullptr)
 				mParent->RemoveCollider(static_object_cast<CCollider>(mThisHandle));
 
 			Rigidbody* rigidBodyPtr = nullptr;
 
-			if (rigidbody != nullptr)
+			if(rigidbody != nullptr)
 				rigidBodyPtr = rigidbody->GetInternalInternal();
 
 			mInternal->SetRigidbody(rigidBodyPtr);
 
-			if (rigidbody != nullptr)
+			if(rigidbody != nullptr)
 				rigidbody->AddCollider(static_object_cast<CCollider>(mThisHandle));
 		}
 
@@ -166,16 +165,15 @@ namespace bs
 
 	bool CCollider::RayCast(const Ray& ray, PhysicsQueryHit& hit, float maxDist) const
 	{
-		if (mInternal == nullptr)
+		if(mInternal == nullptr)
 			return false;
 
 		return mInternal->RayCast(ray, hit, maxDist);
 	}
 
-	bool CCollider::RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit,
-		float maxDist) const
+	bool CCollider::RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit, float maxDist) const
 	{
-		if (mInternal == nullptr)
+		if(mInternal == nullptr)
 			return false;
 
 		return mInternal->RayCast(origin, unitDir, hit, maxDist);
@@ -183,7 +181,7 @@ namespace bs
 
 	void CCollider::RestoreInternal()
 	{
-		if (mInternal == nullptr)
+		if(mInternal == nullptr)
 		{
 			mInternal = CreateInternal();
 
@@ -207,7 +205,7 @@ namespace bs
 
 	void CCollider::DestroyInternal()
 	{
-		if (mParent != nullptr)
+		if(mParent != nullptr)
 			mParent->RemoveCollider(static_object_cast<CCollider>(mThisHandle));
 
 		mParent = nullptr;
@@ -222,17 +220,17 @@ namespace bs
 
 	void CCollider::UpdateParentRigidbody()
 	{
-		if (mIsTrigger)
+		if(mIsTrigger)
 		{
 			SetRigidbody(HRigidbody());
 			return;
 		}
 
 		HSceneObject currentSO = SO();
-		while (currentSO != nullptr)
+		while(currentSO != nullptr)
 		{
 			HRigidbody parent = currentSO->GetComponent<CRigidbody>();
-			if (parent != nullptr)
+			if(parent != nullptr)
 			{
 				if(currentSO->GetActive() && IsValidParent(parent))
 					SetRigidbody(parent);
@@ -254,7 +252,7 @@ namespace bs
 		const Transform& tfrm = SO()->GetTransform();
 		Vector3 myScale = tfrm.GetScale();
 
-		if (mParent != nullptr)
+		if(mParent != nullptr)
 		{
 			const Transform& parentTfrm = mParent->SO()->GetTransform();
 			Vector3 parentPos = parentTfrm.GetPosition();
@@ -265,13 +263,13 @@ namespace bs
 
 			Vector3 scale = parentTfrm.GetScale();
 			Vector3 invScale = scale;
-			if (invScale.X != 0) invScale.X = 1.0f / invScale.X;
-			if (invScale.Y != 0) invScale.Y = 1.0f / invScale.Y;
-			if (invScale.Z != 0) invScale.Z = 1.0f / invScale.Z;
+			if(invScale.X != 0) invScale.X = 1.0f / invScale.X;
+			if(invScale.Y != 0) invScale.Y = 1.0f / invScale.Y;
+			if(invScale.Z != 0) invScale.Z = 1.0f / invScale.Z;
 
 			Quaternion invRotation = parentRot.Inverse();
 
-			Vector3 relativePos = invRotation.Rotate(myPos - parentPos) *  invScale;
+			Vector3 relativePos = invRotation.Rotate(myPos - parentPos) * invScale;
 			Quaternion relativeRot = invRotation * myRot;
 
 			relativePos = relativePos + relativeRot.Rotate(mLocalPosition * scale);
@@ -292,7 +290,7 @@ namespace bs
 				mInternal->SetTransform(myPos, myRot);
 		}
 
-		if (mInternal)
+		if(mInternal)
 			mInternal->SetScale(myScale);
 	}
 
@@ -300,7 +298,7 @@ namespace bs
 	{
 		CollisionReportMode mode = mCollisionReportMode;
 
-		if (mParent != nullptr)
+		if(mParent != nullptr)
 			mode = mParent->GetCollisionReportMode();
 
 		if(mInternal != nullptr)
@@ -328,7 +326,7 @@ namespace bs
 		hit.ContactPoints = data.ContactPoints;
 		hit.Collider[0] = static_object_cast<CCollider>(mThisHandle);
 
-		if (data.Colliders[1] != nullptr)
+		if(data.Colliders[1] != nullptr)
 		{
 			CCollider* other = (CCollider*)data.Colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
 			hit.Collider[1] = static_object_cast<CCollider>(other->GetHandle());
@@ -343,7 +341,7 @@ namespace bs
 		hit.ContactPoints = data.ContactPoints;
 		hit.Collider[0] = static_object_cast<CCollider>(mThisHandle);
 
-		if (data.Colliders[1] != nullptr)
+		if(data.Colliders[1] != nullptr)
 		{
 			CCollider* other = (CCollider*)data.Colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
 			hit.Collider[1] = static_object_cast<CCollider>(other->GetHandle());
@@ -361,4 +359,4 @@ namespace bs
 	{
 		return CCollider::GetRttiStatic();
 	}
-}
+} // namespace bs

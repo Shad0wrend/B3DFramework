@@ -9,4 +9,4 @@ namespace bs
 	{
 		return scene.CreateDistanceJoint(desc);
 	}
-}
+} // namespace bs

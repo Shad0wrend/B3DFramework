@@ -14,7 +14,7 @@ namespace bs
 	/**
 	 * Structure that describes blend states for a single render target. Used internally by BLEND_STATE_DESC for
 	 * initializing a BlendState.
-	 * 			
+	 *
 	 * @see		BLEND_STATE_DESC
 	 * @see		BlendState
 	 */
@@ -66,7 +66,7 @@ namespace bs
 
 		/**
 		 * Render target write mask allows to choose which pixel components should the pixel shader output.
-		 * 			
+		 *
 		 * Only the first four bits are used. First bit representing red, second green, third blue and fourth alpha value.
 		 * Set bits means pixel shader will output those channels.
 		 */
@@ -85,7 +85,7 @@ namespace bs
 		 *
 		 * Blending is then performed by only using sub-samples covered by the alpha texture for the current pixel and
 		 * combining them with sub-samples previously stored.
-		 *			
+		 *
 		 * Be aware this is a limited technique only useful for certain situations. Unless you are having performance
 		 * problems use regular blending.
 		 */
@@ -151,7 +151,7 @@ namespace bs
 	/**
 	 * Render system pipeline state that allows you to modify how an object is rendered. More exactly this state allows to
 	 * you to control how is a rendered object blended with any previously rendered objects.
-	 * 			
+	 *
 	 * @note	Blend states are immutable. Sim thread only.
 	 */
 	class BS_CORE_EXPORT BlendState : public IReflectable, public CoreObject
@@ -180,7 +180,7 @@ namespace bs
 		BlendState(const BLEND_STATE_DESC& desc);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		BlendProperties mProperties;
 		mutable u32 mId;
@@ -192,57 +192,57 @@ namespace bs
 	public:
 		friend class BlendStateRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;	
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */
 
 	namespace ct
 	{
-	/** @addtogroup RenderAPI-Internal
-	 *  @{
-	 */
+		/** @addtogroup RenderAPI-Internal
+		 *  @{
+		 */
 
-	/**
-	 * Core thread version of bs::BlendState.
-	 *
-	 * @note	Core thread.
-	 */
-	class BS_CORE_EXPORT BlendState : public CoreObject
-	{
-	public:
-		virtual ~BlendState();
+		/**
+		 * Core thread version of bs::BlendState.
+		 *
+		 * @note	Core thread.
+		 */
+		class BS_CORE_EXPORT BlendState : public CoreObject
+		{
+		public:
+			virtual ~BlendState();
 
-		/** Returns information about the blend state. */
-		const BlendProperties& GetProperties() const;
+			/** Returns information about the blend state. */
+			const BlendProperties& GetProperties() const;
 
-		/** Returns a unique state ID. Only the lowest 10 bits are used. */
-		u32 GetId() const { return mId; }
+			/** Returns a unique state ID. Only the lowest 10 bits are used. */
+			u32 GetId() const { return mId; }
 
-		/**	Creates a new blend state using the specified blend state description structure. */
-		static SPtr<BlendState> Create(const BLEND_STATE_DESC& desc);
+			/**	Creates a new blend state using the specified blend state description structure. */
+			static SPtr<BlendState> Create(const BLEND_STATE_DESC& desc);
 
-		/**	Returns the default blend state that you may use when no other is available. */
-		static const SPtr<BlendState>& GetDefault();
+			/**	Returns the default blend state that you may use when no other is available. */
+			static const SPtr<BlendState>& GetDefault();
 
-	protected:
-		friend class RenderStateManager;
+		protected:
+			friend class RenderStateManager;
 
-		BlendState(const BLEND_STATE_DESC& desc, u32 id);
+			BlendState(const BLEND_STATE_DESC& desc, u32 id);
 
-		/** @copydoc CoreObject::initialize */
-		void Initialize() override;
+			/** @copydoc CoreObject::initialize */
+			void Initialize() override;
 
-		/**	Creates any API-specific state objects. */
-		virtual void CreateInternal() { }
+			/**	Creates any API-specific state objects. */
+			virtual void CreateInternal() {}
 
-		BlendProperties mProperties;
-		u32 mId;
-	};
+			BlendProperties mProperties;
+			u32 mId;
+		};
 
-	/** @} */
-	}
-}
+		/** @} */
+	} // namespace ct
+} // namespace bs
 
 /** @cond STDLIB */
 /** @addtogroup RenderAPI
@@ -251,16 +251,16 @@ namespace bs
 
 namespace std
 {
-/**	Hash value generator for BLEND_STATE_DESC. */
-template<>
-struct hash<bs::BLEND_STATE_DESC>
-{
-	size_t operator()(const bs::BLEND_STATE_DESC& value) const
+	/**	Hash value generator for BLEND_STATE_DESC. */
+	template <>
+	struct hash<bs::BLEND_STATE_DESC>
 	{
-		return (size_t)bs::BlendState::GenerateHash(value);
-	}
-};
-}
+		size_t operator()(const bs::BLEND_STATE_DESC& value) const
+		{
+			return (size_t)bs::BlendState::GenerateHash(value);
+		}
+	};
+} // namespace std
 
 /** @} */
 /** @endcond */

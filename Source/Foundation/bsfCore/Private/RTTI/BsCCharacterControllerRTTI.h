@@ -45,7 +45,7 @@ namespace bs
 			return TID_CCharacterController;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return SceneObject::CreateEmptyComponent<CCharacterController>();
 		}
@@ -53,4 +53,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

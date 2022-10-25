@@ -6,7 +6,7 @@
 
 namespace bs
 {
-	bool SAMPLER_STATE_DESC::operator == (const SAMPLER_STATE_DESC& rhs) const
+	bool SAMPLER_STATE_DESC::operator==(const SAMPLER_STATE_DESC& rhs) const
 	{
 		return AddressMode == rhs.AddressMode &&
 			MinFilter == rhs.MinFilter &&
@@ -21,12 +21,12 @@ namespace bs
 	}
 
 	SamplerProperties::SamplerProperties(const SAMPLER_STATE_DESC& desc)
-		:mData(desc), mHash(SamplerState::GenerateHash(desc))
-	{ }
+		: mData(desc), mHash(SamplerState::GenerateHash(desc))
+	{}
 
 	FilterOptions SamplerProperties::GetTextureFiltering(FilterType ft) const
 	{
-		switch (ft)
+		switch(ft)
 		{
 		case FT_MIN:
 			return mData.MinFilter;
@@ -45,9 +45,8 @@ namespace bs
 	}
 
 	SamplerState::SamplerState(const SAMPLER_STATE_DESC& desc)
-		:mProperties(desc)
+		: mProperties(desc)
 	{
-
 	}
 
 	SPtr<ct::SamplerState> SamplerState::GetCore() const
@@ -111,42 +110,41 @@ namespace bs
 	namespace ct
 	{
 
-	SamplerState::SamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask)
-		:mProperties(desc)
-	{
+		SamplerState::SamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask)
+			: mProperties(desc)
+		{
+		}
 
-	}
+		SamplerState::~SamplerState()
+		{
+			RenderStateManager::Instance().NotifySamplerStateDestroyed(mProperties.mData);
+		}
 
-	SamplerState::~SamplerState()
-	{
-		RenderStateManager::Instance().NotifySamplerStateDestroyed(mProperties.mData);
-	}
+		void SamplerState::Initialize()
+		{
+			// Since we cache states it's possible this object was already initialized
+			// (i.e. multiple sim-states can share a single core-state)
+			if(IsInitialized())
+				return;
 
-	void SamplerState::Initialize()
-	{
-		// Since we cache states it's possible this object was already initialized
-		// (i.e. multiple sim-states can share a single core-state)
-		if (IsInitialized())
-			return;
+			CreateInternal();
+			CoreObject::Initialize();
+		}
 
-		CreateInternal();
-		CoreObject::Initialize();
-	}
+		const SamplerProperties& SamplerState::GetProperties() const
+		{
+			return mProperties;
+		}
 
-	const SamplerProperties& SamplerState::GetProperties() const
-	{
-		return mProperties;
-	}
+		SPtr<SamplerState> SamplerState::Create(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask)
+		{
+			return RenderStateManager::Instance().CreateSamplerState(desc, deviceMask);
+		}
 
-	SPtr<SamplerState> SamplerState::Create(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask)
-	{
-		return RenderStateManager::Instance().CreateSamplerState(desc, deviceMask);
-	}
+		const SPtr<SamplerState>& SamplerState::GetDefault()
+		{
+			return RenderStateManager::Instance().GetDefaultSamplerState();
+		}
 
-	const SPtr<SamplerState>& SamplerState::GetDefault()
-	{
-		return RenderStateManager::Instance().GetDefaultSamplerState();
-	}
-
-	}
-}
+	} // namespace ct
+} // namespace bs

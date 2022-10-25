@@ -15,66 +15,78 @@ namespace bs
 
 	/**
 	 * @copydoc	Renderable
-	 * 			
+	 *
 	 * @note	Wraps a Renderable as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering),ExportName(Renderable)) CRenderable : public Component
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportName(Renderable)) CRenderable : public Component
 	{
 	public:
 		/** @copydoc Renderable::setMesh */
-		BS_SCRIPT_EXPORT(ExportName(Mesh),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Mesh), Property(Setter))
 		void SetMesh(HMesh mesh);
 
 		/** @copydoc Renderable::getMesh */
-		BS_SCRIPT_EXPORT(ExportName(Mesh),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Mesh), Property(Getter))
+
 		HMesh GetMesh() const { return mInternal->GetMesh(); }
 
 		/** @copydoc Renderable::setMaterial */
 		BS_SCRIPT_EXPORT(ExportName(SetMaterial))
+
 		void SetMaterial(u32 idx, HMaterial material) { mInternal->SetMaterial(idx, material); }
 
 		/** @copydoc Renderable::setMaterial */
 		BS_SCRIPT_EXPORT(ExportName(SetMaterial))
+
 		void SetMaterial(HMaterial material) { mInternal->SetMaterial(material); }
 
 		/** @copydoc Renderable::getMaterial */
 		BS_SCRIPT_EXPORT(ExportName(GetMaterial))
+
 		HMaterial GetMaterial(u32 idx) const { return mInternal->GetMaterial(idx); }
 
 		/** @copydoc Renderable::setMaterials */
-		BS_SCRIPT_EXPORT(ExportName(Materials),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Materials), Property(Setter))
+
 		void SetMaterials(const Vector<HMaterial>& materials) { mInternal->SetMaterials(materials); }
 
 		/** @copydoc Renderable::getMaterials */
-		BS_SCRIPT_EXPORT(ExportName(Materials),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Materials), Property(Getter))
+
 		const Vector<HMaterial>& GetMaterials() { return mInternal->GetMaterials(); }
 
 		/** @copydoc Renderable::setCullDistanceFactor */
-		BS_SCRIPT_EXPORT(ExportName(CullDistance),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(CullDistance), Property(Setter))
+
 		void SetCullDistanceFactor(float factor) { mInternal->SetCullDistanceFactor(factor); }
 
 		/** @copydoc Renderable::getCullDistanceFactor */
-		BS_SCRIPT_EXPORT(ExportName(CullDistance),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(CullDistance), Property(Getter))
+
 		float GetCullDistanceFactor() const { return mInternal->GetCullDistanceFactor(); }
 
 		/** @copydoc Renderable::setWriteVelocity */
-		BS_SCRIPT_EXPORT(ExportName(WriteVelocity),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(WriteVelocity), Property(Setter))
+
 		void SetWriteVelocity(bool enable) { mInternal->SetWriteVelocity(enable); }
 
 		/** @copydoc Renderable::getWriteVelocity */
-		BS_SCRIPT_EXPORT(ExportName(WriteVelocity),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(WriteVelocity), Property(Getter))
+
 		bool GetWriteVelocity() const { return mInternal->GetWriteVelocity(); }
-		
+
 		/** @copydoc Renderable::setLayer */
-		BS_SCRIPT_EXPORT(ExportName(Layers),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Layers), Property(Setter))
+
 		void SetLayer(u64 layer) { mInternal->SetLayer(layer); }
 
 		/** @copydoc Renderable::getLayer */
-		BS_SCRIPT_EXPORT(ExportName(Layers),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Layers), Property(Getter))
+
 		u64 GetLayer() const { return mInternal->GetLayer(); }
 
 		/**	Gets world bounds of the mesh rendered by this object. */
-		BS_SCRIPT_EXPORT(ExportName(Bounds),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Bounds), Property(Getter))
 		Bounds GetBounds() const;
 
 		/** @copydoc Component::calculateBounds */
@@ -131,4 +143,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

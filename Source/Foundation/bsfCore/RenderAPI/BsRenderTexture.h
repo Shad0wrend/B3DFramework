@@ -19,7 +19,10 @@ namespace bs
 		RENDER_SURFACE_DESC DepthStencilSurface;
 	};
 
-	namespace ct { struct RENDER_TEXTURE_DESC; }
+	namespace ct
+	{
+		struct RENDER_TEXTURE_DESC;
+	}
 
 	/**	Contains various properties that describe a render texture. */
 	class BS_CORE_EXPORT RenderTextureProperties : public RenderTargetProperties
@@ -27,11 +30,11 @@ namespace bs
 	public:
 		RenderTextureProperties(const RENDER_TEXTURE_DESC& desc, bool requiresFlipping);
 		RenderTextureProperties(const ct::RENDER_TEXTURE_DESC& desc, bool requiresFlipping);
-		virtual ~RenderTextureProperties() { }
+
+		virtual ~RenderTextureProperties() {}
 
 	private:
-		void Construct(const TextureProperties* textureProps, u32 numSlices, u32 mipLevel, bool requiresFlipping,
-					   bool hwGamma);
+		void Construct(const TextureProperties* textureProps, u32 numSlices, u32 mipLevel, bool requiresFlipping, bool hwGamma);
 
 		friend class ct::RenderTexture;
 		friend class RenderTexture;
@@ -49,8 +52,7 @@ namespace bs
 		virtual ~RenderTexture() = default;
 
 		/** @copydoc TextureManager::createRenderTexture(const TEXTURE_DESC&, bool, PixelFormat) */
-		static SPtr<RenderTexture> Create(const TEXTURE_DESC& colorDesc,
-			bool createDepth = true, PixelFormat depthStencilFormat = PF_D32);
+		static SPtr<RenderTexture> Create(const TEXTURE_DESC& colorDesc, bool createDepth = true, PixelFormat depthStencilFormat = PF_D32);
 
 		/** @copydoc TextureManager::createRenderTexture(const RENDER_TEXTURE_DESC&) */
 		static SPtr<RenderTexture> Create(const RENDER_TEXTURE_DESC& desc);
@@ -85,7 +87,7 @@ namespace bs
 		RenderTexture(const RENDER_TEXTURE_DESC& desc);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		/** @copydoc CoreObject::syncToCore */
 		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
@@ -109,72 +111,72 @@ namespace bs
 
 	namespace ct
 	{
-	/** @addtogroup RenderAPI-Internal
-	 *  @{
-	 */
-
-	/**
-	 * @see		bs::RENDER_TEXTURE_DESC
-	 *
-	 * @note	References core textures instead of texture handles.
-	 */
-	struct BS_CORE_EXPORT RENDER_TEXTURE_DESC
-	{
-		RENDER_SURFACE_DESC ColorSurfaces[BS_MAX_MULTIPLE_RENDER_TARGETS];
-		RENDER_SURFACE_DESC DepthStencilSurface;
-	};
-
-	/**
-	 * Provides access to internal render texture implementation usable only from the core thread.
-	 *
-	 * @note	Core thread only.
-	 */
-	class BS_CORE_EXPORT RenderTexture : public RenderTarget
-	{
-	public:
-		RenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx);
-		virtual ~RenderTexture() = default;
-
-		/** @copydoc CoreObject::initialize */
-		void Initialize() override;
-
-		/** @copydoc TextureManager::createRenderTexture(const RENDER_TEXTURE_DESC&, u32) */
-		static SPtr<RenderTexture> Create(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx = 0);
+		/** @addtogroup RenderAPI-Internal
+		 *  @{
+		 */
 
 		/**
-		 * Returns a color surface texture you may bind as an input to an GPU program.
+		 * @see		bs::RENDER_TEXTURE_DESC
 		 *
-		 * @note	Be aware that you cannot bind a render texture for reading and writing at the same time.
+		 * @note	References core textures instead of texture handles.
 		 */
-		SPtr<Texture> GetColorTexture(u32 idx) const { return mDesc.ColorSurfaces[idx].Texture; }
+		struct BS_CORE_EXPORT RENDER_TEXTURE_DESC
+		{
+			RENDER_SURFACE_DESC ColorSurfaces[BS_MAX_MULTIPLE_RENDER_TARGETS];
+			RENDER_SURFACE_DESC DepthStencilSurface;
+		};
 
 		/**
-		 * Returns a depth/stencil surface texture you may bind as an input to an GPU program.
+		 * Provides access to internal render texture implementation usable only from the core thread.
 		 *
-		 * @note	Be aware that you cannot bind a render texture for reading and writing at the same time.
+		 * @note	Core thread only.
 		 */
-		SPtr<Texture> GetDepthStencilTexture() const { return mDesc.DepthStencilSurface.Texture; }
+		class BS_CORE_EXPORT RenderTexture : public RenderTarget
+		{
+		public:
+			RenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx);
+			virtual ~RenderTexture() = default;
 
-		/**	Returns properties that describe the render texture. */
-		const RenderTextureProperties& GetProperties() const;
+			/** @copydoc CoreObject::initialize */
+			void Initialize() override;
 
-	protected:
-		/** @copydoc CoreObject::syncToCore */
-		void SyncToCore(const CoreSyncData& data) override;
+			/** @copydoc TextureManager::createRenderTexture(const RENDER_TEXTURE_DESC&, u32) */
+			static SPtr<RenderTexture> Create(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx = 0);
 
-	private:
-		/**	Throws an exception of the color and depth/stencil buffers aren't compatible. */
-		void ThrowIfBuffersDontMatch() const;
+			/**
+			 * Returns a color surface texture you may bind as an input to an GPU program.
+			 *
+			 * @note	Be aware that you cannot bind a render texture for reading and writing at the same time.
+			 */
+			SPtr<Texture> GetColorTexture(u32 idx) const { return mDesc.ColorSurfaces[idx].Texture; }
 
-	protected:
-		friend class bs::RenderTexture;
+			/**
+			 * Returns a depth/stencil surface texture you may bind as an input to an GPU program.
+			 *
+			 * @note	Be aware that you cannot bind a render texture for reading and writing at the same time.
+			 */
+			SPtr<Texture> GetDepthStencilTexture() const { return mDesc.DepthStencilSurface.Texture; }
 
-		SPtr<TextureView> mColorSurfaces[BS_MAX_MULTIPLE_RENDER_TARGETS];
-		SPtr<TextureView> mDepthStencilSurface;
+			/**	Returns properties that describe the render texture. */
+			const RenderTextureProperties& GetProperties() const;
 
-		RENDER_TEXTURE_DESC mDesc;
-	};
+		protected:
+			/** @copydoc CoreObject::syncToCore */
+			void SyncToCore(const CoreSyncData& data) override;
 
-	/** @} */
-	}
-}
+		private:
+			/**	Throws an exception of the color and depth/stencil buffers aren't compatible. */
+			void ThrowIfBuffersDontMatch() const;
+
+		protected:
+			friend class bs::RenderTexture;
+
+			SPtr<TextureView> mColorSurfaces[BS_MAX_MULTIPLE_RENDER_TARGETS];
+			SPtr<TextureView> mDepthStencilSurface;
+
+			RENDER_TEXTURE_DESC mDesc;
+		};
+
+		/** @} */
+	} // namespace ct
+} // namespace bs

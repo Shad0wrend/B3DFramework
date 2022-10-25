@@ -13,9 +13,9 @@ namespace bs
 	/** Types of notifications we would like to receive when we start a FolderMonitor on a certain folder. */
 	enum class FolderChangeBit
 	{
-		FileName 	= 1 << 0, /**< Called when file is created, moved or removed. */
-		DirName 	= 1 << 1, /**< Called when directory is created, moved or removed. */
-		FileWrite 	= 1 << 2, /**< Called when file is written to. */
+		FileName = 1 << 0, /**< Called when file is created, moved or removed. */
+		DirName = 1 << 1, /**< Called when directory is created, moved or removed. */
+		FileWrite = 1 << 2, /**< Called when file is written to. */
 	};
 
 	typedef Flags<FolderChangeBit> FolderChangeBits;
@@ -28,6 +28,7 @@ namespace bs
 	class BS_CORE_EXPORT FolderMonitor
 	{
 		class FileNotifyInfo;
+
 	public:
 		struct Pimpl;
 		struct FolderWatchInfo;
@@ -87,4 +88,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

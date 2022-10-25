@@ -22,7 +22,7 @@ namespace bs
 
 	void CMeshCollider::SetMesh(const HPhysicsMesh& mesh)
 	{
-		if (mMesh == mesh)
+		if(mMesh == mesh)
 			return;
 
 		if(GetIsTrigger() && mesh->GetType() == PhysicsMeshType::Triangle)
@@ -33,15 +33,15 @@ namespace bs
 
 		mMesh = mesh;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 		{
 			GetInternalInternal()->SetMesh(mesh);
 
-			if (mParent != nullptr)
+			if(mParent != nullptr)
 			{
 				// If triangle mesh its possible the parent can no longer use this collider (they're not supported for
 				// non-kinematic rigidbodies)
-				if (mMesh.IsLoaded() && mMesh->GetType() == PhysicsMeshType::Triangle)
+				if(mMesh.IsLoaded() && mMesh->GetType() == PhysicsMeshType::Triangle)
 					UpdateParentRigidbody();
 				else
 					mParent->UpdateMassDistributionInternal();
@@ -54,8 +54,7 @@ namespace bs
 		const SPtr<SceneInstance>& scene = SO()->GetScene();
 		const Transform& tfrm = SO()->GetTransform();
 
-		SPtr<MeshCollider> collider = MeshCollider::Create(*scene->GetPhysicsScene(), tfrm.GetPosition(),
-			tfrm.GetRotation());
+		SPtr<MeshCollider> collider = MeshCollider::Create(*scene->GetPhysicsScene(), tfrm.GetPosition(), tfrm.GetRotation());
 		collider->SetMesh(mMesh);
 		collider->SetOwnerInternal(PhysicsOwnerType::Component, this);
 
@@ -77,4 +76,4 @@ namespace bs
 	{
 		return CMeshCollider::GetRttiStatic();
 	}
-}
+} // namespace bs

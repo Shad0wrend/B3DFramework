@@ -17,7 +17,7 @@ namespace bs
 	{
 		bool isLoaded = (mData != nullptr && mData->MIsCreated && mData->MPtr != nullptr);
 
-		if (checkDependencies && isLoaded)
+		if(checkDependencies && isLoaded)
 			isLoaded = mData->MPtr->AreDependenciesLoaded();
 
 		return isLoaded;
@@ -28,10 +28,10 @@ namespace bs
 		if(mData == nullptr)
 			return;
 
-		if (!mData->MIsCreated)
+		if(!mData->MIsCreated)
 		{
 			Lock lock(mResourceCreatedMutex);
-			while (!mData->MIsCreated)
+			while(!mData->MIsCreated)
 			{
 				mResourceCreatedCondition.wait(lock);
 			}
@@ -42,7 +42,7 @@ namespace bs
 				ResourceListenerManager::Instance().NotifyListeners(mData->MUuid);
 		}
 
-		if (waitForDependencies)
+		if(waitForDependencies)
 		{
 			bs_frame_mark();
 
@@ -50,7 +50,7 @@ namespace bs
 				FrameVector<HResource> dependencies;
 				mData->MPtr->GetResourceDependencies(dependencies);
 
-				for (auto& dependency : dependencies)
+				for(auto& dependency : dependencies)
 					dependency.BlockUntilLoaded(waitForDependencies);
 			}
 
@@ -79,7 +79,7 @@ namespace bs
 
 	void ResourceHandleBase::NotifyLoadComplete()
 	{
-		if (!mData->MIsCreated)
+		if(!mData->MIsCreated)
 		{
 			Lock lock(mResourceCreatedMutex);
 			{
@@ -111,7 +111,7 @@ namespace bs
 	void ResourceHandleBase::ThrowIfNotLoaded() const
 	{
 #if BS_DEBUG_MODE
-		if (!IsLoaded(false))
+		if(!IsLoaded(false))
 		{
 			BS_EXCEPT(InternalErrorException, "Trying to access a resource that hasn't been loaded yet.");
 		}
@@ -137,4 +137,4 @@ namespace bs
 	{
 		return GetRttiStatic();
 	}
-}
+} // namespace bs

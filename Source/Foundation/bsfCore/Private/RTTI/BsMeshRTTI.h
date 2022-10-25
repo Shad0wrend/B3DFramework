@@ -55,7 +55,7 @@ namespace bs
 			mesh->Initialize();
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return Mesh::CreateEmpty();
 		}
@@ -74,4 +74,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

@@ -17,50 +17,55 @@ namespace bs
 	 *
 	 * @note Wraps ParticleSystem as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportName(ParticleSystem)) CParticleSystem : public Component
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(ParticleSystem)) CParticleSystem : public Component
 	{
 	public:
 		CParticleSystem(const HSceneObject& parent);
 		virtual ~CParticleSystem() = default;
-		
+
 		/** @copydoc ParticleSystem::setSettings */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Settings),PassByCopy(true),UI(Inline))
+		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Settings), PassByCopy(true), UI(Inline))
 		void SetSettings(const ParticleSystemSettings& settings);
 
 		/** @copydoc ParticleSystem::getSettings */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Settings),PassByCopy(true))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Settings), PassByCopy(true))
+
 		const ParticleSystemSettings& GetSettings() const { return mSettings; }
 
 		/** @copydoc ParticleSystem::setGpuSimulationSettings */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(GpuSimulationSettings),PassByCopy(true))
+		BS_SCRIPT_EXPORT(Property(Setter), ExportName(GpuSimulationSettings), PassByCopy(true))
 		void SetGpuSimulationSettings(const ParticleGpuSimulationSettings& settings);
 
 		/** @copydoc ParticleSystem::getGpuSimulationSettings */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(GpuSimulationSettings),PassByCopy(true))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(GpuSimulationSettings), PassByCopy(true))
+
 		const ParticleGpuSimulationSettings& GetGpuSimulationSettings() const { return mGpuSimulationSettings; }
 
 		/** @copydoc ParticleSystem::setEmitters */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Emitters))
+		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Emitters))
 		void SetEmitters(const Vector<SPtr<ParticleEmitter>>& emitters);
 
 		/** @copydoc ParticleSystem::getEmitters */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Emitters))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Emitters))
+
 		const Vector<SPtr<ParticleEmitter>>& GetEmitters() const { return mEmitters; }
 
 		/** @copydoc ParticleSystem::setEvolvers */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Evolvers))
+		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Evolvers))
 		void SetEvolvers(const Vector<SPtr<ParticleEvolver>>& evolvers);
 
 		/** @copydoc ParticleSystem::getEvolvers */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Evolvers))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Evolvers))
+
 		const Vector<SPtr<ParticleEvolver>>& GetEvolvers() const { return mEvolvers; }
 
 		/** @copydoc ParticleSystem::setLayer() */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Layer),UI(AsLayerMask))
+		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Layer), UI(AsLayerMask))
 		void SetLayer(u64 layer);
 
 		/** @copydoc ParticleSystem::getLayer() */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Layer),UI(AsLayerMask))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Layer), UI(AsLayerMask))
+
 		u64 GetLayer() const { return mLayer; }
 
 		/** @name Internal
@@ -72,7 +77,7 @@ namespace bs
 		 * primarily for preview purposes in the editor. Returns true if the preview mode was enabled, false if it was
 		 * disabled or enabling preview failed.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(TogglePreviewMode),Visibility(Internal))
+		BS_SCRIPT_EXPORT(ExportName(TogglePreviewMode), Visibility(Internal))
 		bool TogglePreviewModeInternal(bool enabled);
 
 		/** Returns the ParticleSystem implementation wrapped by this component. */
@@ -124,7 +129,7 @@ namespace bs
 
 	protected:
 		CParticleSystem(); // Serialization only
-	 };
+	};
 
-	 /** @} */
-}
+	/** @} */
+} // namespace bs

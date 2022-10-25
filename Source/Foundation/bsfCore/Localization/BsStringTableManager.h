@@ -16,17 +16,18 @@ namespace bs
 	 * Manages string tables used for localizing text. Allows you to add and remove different tables and change the active
 	 * language.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(ExportName(StringTables),DocumentationGroup(Localization)) StringTableManager : public Module<StringTableManager>
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(ExportName(StringTables), DocumentationGroup(Localization)) StringTableManager : public Module<StringTableManager>
 	{
 	public:
 		StringTableManager() = default;
 
 		/** Determines the currently active language. Any newly created strings will use this value. */
-		BS_SCRIPT_EXPORT(ExportName(ActiveLanguage),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(ActiveLanguage), Property(Setter))
 		void SetActiveLanguage(Language language);
 
 		/** @copydoc setActiveLanguage() */
-		BS_SCRIPT_EXPORT(ExportName(ActiveLanguage),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(ActiveLanguage), Property(Getter))
+
 		Language GetActiveLanguage() const { return mActiveLanguage; }
 
 		/**
@@ -64,4 +65,4 @@ namespace bs
 	BS_CORE_EXPORT StringTableManager& gStringTableManager();
 
 	/** @} */
-}
+} // namespace bs

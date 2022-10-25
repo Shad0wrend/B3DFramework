@@ -58,13 +58,14 @@ namespace bs
 		static SPtr<VertexBuffer> Create(const VERTEX_BUFFER_DESC& desc);
 
 		static const int MAX_SEMANTIC_IDX = 8;
+
 	protected:
 		friend class HardwareBufferManager;
 
 		VertexBuffer(const VERTEX_BUFFER_DESC& desc);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		VertexBufferProperties mProperties;
 		GpuBufferUsage mUsage;
@@ -75,74 +76,72 @@ namespace bs
 
 	namespace ct
 	{
-	/** @addtogroup RenderAPI-Internal
-	 *  @{
-	 */
-
-	/** Core thread specific implementation of a bs::VertexBuffer. */
-	class BS_CORE_EXPORT VertexBuffer : public CoreObject, public HardwareBuffer
-	{
-	public:
-		VertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
-		virtual ~VertexBuffer();
-
-		/**	Returns information about the vertex buffer. */
-		const VertexBufferProperties& GetProperties() const { return mProperties; }
-
-		/** @copydoc HardwareBuffer::readData */
-		void ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx = 0, u32 queueIdx = 0) override;
-
-		/** @copydoc HardwareBuffer::writeData */
-		void WriteData(u32 offset, u32 length, const void* source,
-			BufferWriteType writeFlags = BWT_NORMAL, u32 queueIdx = 0) override;
-
-		/** @copydoc HardwareBuffer::copyData */
-		void CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length,
-			bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) ;
-
-		/**
-		 * Returns a view of this buffer that can be used for load-store operations. Buffer must have been created with
-		 * the GBU_LOADSTORE usage flag.
-		 *
-		 * @param[in]	type			Type of buffer to view the contents as. Only supported values are GBT_STANDARD and
-		 *								GBT_STRUCTURED.
-		 * @param[in]	format			Format of the data in the buffer. Size of the underlying buffer must be divisible by
-		 *								the	size of an individual element of this format. Must be BF_UNKNOWN if buffer type
-		 *								is GBT_STRUCTURED.
-		 * @param[in]	elementSize		Size of the individual element in the buffer. Size of the underlying buffer must be
-		 *								divisible by this size. Must be 0 if buffer type is GBT_STANDARD (element size gets
-		 *								deduced from format).
-		 * @return						Buffer usable for load store operations or null if the operation fails. Failure
-		 *								can happen if the buffer hasn't been created with GBU_LOADSTORE usage or if the
-		 *								element size doesn't divide the current buffer size.
+		/** @addtogroup RenderAPI-Internal
+		 *  @{
 		 */
-		SPtr<GpuBuffer> GetLoadStore(GpuBufferType type, GpuBufferFormat format, u32 elementSize = 0);
 
-		/** @copydoc HardwareBufferManager::createVertexBuffer */
-		static SPtr<VertexBuffer> Create(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+		/** Core thread specific implementation of a bs::VertexBuffer. */
+		class BS_CORE_EXPORT VertexBuffer : public CoreObject, public HardwareBuffer
+		{
+		public:
+			VertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			virtual ~VertexBuffer();
 
-	protected:
-		friend class HardwareBufferManager;
+			/**	Returns information about the vertex buffer. */
+			const VertexBufferProperties& GetProperties() const { return mProperties; }
 
-		/** @copydoc HardwareBuffer::map */
-		void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx) override;
+			/** @copydoc HardwareBuffer::readData */
+			void ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx = 0, u32 queueIdx = 0) override;
 
-		/** @copydoc HardwareBuffer::unmap */
-		void Unmap() override;
+			/** @copydoc HardwareBuffer::writeData */
+			void WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL, u32 queueIdx = 0) override;
 
-		/** @copydoc CoreObject::initialize */
-		void Initialize() override;
+			/** @copydoc HardwareBuffer::copyData */
+			void CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr);
 
-		VertexBufferProperties mProperties;
+			/**
+			 * Returns a view of this buffer that can be used for load-store operations. Buffer must have been created with
+			 * the GBU_LOADSTORE usage flag.
+			 *
+			 * @param[in]	type			Type of buffer to view the contents as. Only supported values are GBT_STANDARD and
+			 *								GBT_STRUCTURED.
+			 * @param[in]	format			Format of the data in the buffer. Size of the underlying buffer must be divisible by
+			 *								the	size of an individual element of this format. Must be BF_UNKNOWN if buffer type
+			 *								is GBT_STRUCTURED.
+			 * @param[in]	elementSize		Size of the individual element in the buffer. Size of the underlying buffer must be
+			 *								divisible by this size. Must be 0 if buffer type is GBT_STANDARD (element size gets
+			 *								deduced from format).
+			 * @return						Buffer usable for load store operations or null if the operation fails. Failure
+			 *								can happen if the buffer hasn't been created with GBU_LOADSTORE usage or if the
+			 *								element size doesn't divide the current buffer size.
+			 */
+			SPtr<GpuBuffer> GetLoadStore(GpuBufferType type, GpuBufferFormat format, u32 elementSize = 0);
 
-		HardwareBuffer* mBuffer = nullptr;
-		SPtr<HardwareBuffer> mSharedBuffer;
-		Vector<SPtr<GpuBuffer>> mLoadStoreViews;
+			/** @copydoc HardwareBufferManager::createVertexBuffer */
+			static SPtr<VertexBuffer> Create(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
-		typedef void(*Deleter)(HardwareBuffer*);
-		Deleter mBufferDeleter = nullptr;
-	};
+		protected:
+			friend class HardwareBufferManager;
 
-	/** @} */
-		}
-}
+			/** @copydoc HardwareBuffer::map */
+			void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx) override;
+
+			/** @copydoc HardwareBuffer::unmap */
+			void Unmap() override;
+
+			/** @copydoc CoreObject::initialize */
+			void Initialize() override;
+
+			VertexBufferProperties mProperties;
+
+			HardwareBuffer* mBuffer = nullptr;
+			SPtr<HardwareBuffer> mSharedBuffer;
+			Vector<SPtr<GpuBuffer>> mLoadStoreViews;
+
+			typedef void (*Deleter)(HardwareBuffer*);
+			Deleter mBufferDeleter = nullptr;
+		};
+
+		/** @} */
+	} // namespace ct
+} // namespace bs

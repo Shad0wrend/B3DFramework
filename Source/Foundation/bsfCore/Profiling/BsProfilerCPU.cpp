@@ -6,19 +6,19 @@
 #include <chrono>
 
 #if BS_COMPILER == BS_COMPILER_MSVC
-	#include <intrin.h>
+#	include <intrin.h>
 #endif
 
 #if BS_COMPILER == BS_COMPILER_GNUC || BS_COMPILER == BS_COMPILER_CLANG
-	#include "BsCpuid.h"
+#	include "BsCpuid.h"
 #endif
 
 #if BS_COMPILER == BS_COMPILER_CLANG
-	#if BS_PLATFORM == BS_PLATFORM_WIN32
-		#include "intrin.h"
-	#else
-		#include <x86intrin.h>
-	#endif
+#	if BS_PLATFORM == BS_PLATFORM_WIN32
+#		include "intrin.h"
+#	else
+#		include <x86intrin.h>
+#	endif
 #endif
 
 using namespace std::chrono;
@@ -80,15 +80,17 @@ namespace bs
 		unsigned int b[4];
 		__get_cpuid(a, &b[0], &b[1], &b[2], &b[3]);
 
-#if BS_ARCH_TYPE == BS_ARCHITECTURE_x86_64
+#	if BS_ARCH_TYPE == BS_ARCHITECTURE_x86_64
 		u32 __a, __d;
-		__asm__ __volatile__ ("rdtsc" : "=a" (__a), "=d" (__d));
+		__asm__ __volatile__("rdtsc"
+							 : "=a"(__a), "=d"(__d));
 		return (u64(__a) | u64(__d) << 32);
-#else
+#	else
 		u64 x;
-		__asm__ volatile (".byte 0x0f, 0x31" : "=A" (x));
+		__asm__ volatile(".byte 0x0f, 0x31"
+						 : "=A"(x));
 		return x;
-#endif
+#	endif
 #elif BS_COMPILER == BS_COMPILER_MSVC
 		int a[4];
 		int b = 0;
@@ -96,12 +98,12 @@ namespace bs
 		return __rdtsc();
 #else
 		static_assert(false, "Unsupported compiler");
-#endif		
+#endif
 	}
 
 	ProfilerCPU::ProfileData::ProfileData(FrameAlloc* alloc)
-		:Samples(alloc)
-	{ }
+		: Samples(alloc)
+	{}
 
 	void ProfilerCPU::ProfileData::BeginSample()
 	{
@@ -129,8 +131,8 @@ namespace bs
 	}
 
 	ProfilerCPU::PreciseProfileData::PreciseProfileData(FrameAlloc* alloc)
-		:Samples(alloc)
-	{ }
+		: Samples(alloc)
+	{}
 
 	void ProfilerCPU::PreciseProfileData::BeginSample()
 	{
@@ -158,13 +160,12 @@ namespace bs
 	}
 
 	BS_THREADLOCAL ProfilerCPU::ThreadInfo* ProfilerCPU::ThreadInfo::activeThread = nullptr;
-	
-	ProfilerCPU::ThreadInfo::ThreadInfo()
-		:FrameAlloc(1024 * 512)
-	{
 
+	ProfilerCPU::ThreadInfo::ThreadInfo()
+		: FrameAlloc(1024 * 512)
+	{
 	}
-	
+
 	void ProfilerCPU::ThreadInfo::Begin(const char* _name)
 	{
 		if(IsActive)
@@ -177,11 +178,11 @@ namespace bs
 			RootBlock = GetBlock(_name);
 
 		ActiveBlock = ProfilerCPU::ActiveBlock(ActiveSamplingType::Basic, RootBlock);
-		if (ActiveBlocks == nullptr)
-			ActiveBlocks = FrameAlloc.Construct<Stack<ProfilerCPU::ActiveBlock, StdFrameAlloc<ProfilerCPU::ActiveBlock>>> (StdFrameAlloc<ProfilerCPU::ActiveBlock>(&FrameAlloc));
+		if(ActiveBlocks == nullptr)
+			ActiveBlocks = FrameAlloc.Construct<Stack<ProfilerCPU::ActiveBlock, StdFrameAlloc<ProfilerCPU::ActiveBlock>>>(StdFrameAlloc<ProfilerCPU::ActiveBlock>(&FrameAlloc));
 
 		ActiveBlocks->push(ActiveBlock);
-		
+
 		RootBlock->Basic.BeginSample();
 		IsActive = true;
 	}
@@ -198,12 +199,12 @@ namespace bs
 		if(!IsActive)
 			BS_LOG(Warning, Profiler, "Profiler::endThread called on a thread that isn't being sampled.");
 
-		if (ActiveBlocks->size() > 0)
+		if(ActiveBlocks->size() > 0)
 		{
 			BS_LOG(Warning, Profiler, "Profiler::endThread called but not all sample pairs were closed. "
-				"Sampling data will not be valid.");
+									  "Sampling data will not be valid.");
 
-			while (ActiveBlocks->size() > 0)
+			while(ActiveBlocks->size() > 0)
 			{
 				ProfilerCPU::ActiveBlock& curBlock = ActiveBlocks->top();
 				if(curBlock.Type == ActiveSamplingType::Basic)
@@ -250,8 +251,8 @@ namespace bs
 	}
 
 	ProfilerCPU::ProfiledBlock::ProfiledBlock(FrameAlloc* alloc)
-		:Basic(alloc), Precise(alloc), Children(alloc)
-	{ }
+		: Basic(alloc), Precise(alloc), Children(alloc)
+	{}
 
 	ProfilerCPU::ProfiledBlock::~ProfiledBlock()
 	{
@@ -326,7 +327,7 @@ namespace bs
 
 		ProfiledBlock* parent = thread->ActiveBlock.Block;
 		ProfiledBlock* block = nullptr;
-		
+
 		if(parent != nullptr)
 			block = parent->FindChild(name);
 
@@ -367,7 +368,8 @@ namespace bs
 		if(strcmp(block->Name, name) != 0)
 		{
 			BS_LOG(Warning, Profiler, "Mismatched CPUProfiler::endSample. Was expecting \"{0}\" but got \"{1}\". "
-				"Sampling data will not be valid.", block->Name, name);
+									  "Sampling data will not be valid.",
+				   block->Name, name);
 			return;
 		}
 #endif
@@ -376,7 +378,7 @@ namespace bs
 
 		thread->ActiveBlocks->pop();
 
-		if (!thread->ActiveBlocks->empty())
+		if(!thread->ActiveBlocks->empty())
 			thread->ActiveBlock = thread->ActiveBlocks->top();
 		else
 			thread->ActiveBlock = ActiveBlock();
@@ -386,14 +388,14 @@ namespace bs
 	{
 		// Note: There is a (small) possibility a context switch will happen during this measurement in which case result will be skewed.
 		// Increasing thread priority might help. This is generally only a problem with code that executes a long time (10-15+ ms - depending on OS quant length)
-		
+
 		ThreadInfo* thread = ThreadInfo::activeThread;
 		if(thread == nullptr || !thread->IsActive)
 			BeginThread("Unknown");
 
 		ProfiledBlock* parent = thread->ActiveBlock.Block;
 		ProfiledBlock* block = nullptr;
-		
+
 		if(parent != nullptr)
 			block = parent->FindChild(name);
 
@@ -431,10 +433,11 @@ namespace bs
 			return;
 		}
 
-		if (strcmp(block->Name, name) != 0)
+		if(strcmp(block->Name, name) != 0)
 		{
 			BS_LOG(Warning, Profiler, "Mismatched Profiler::endSamplePrecise. Was expecting \"{0}\" but got \"{1}\". "
-				"Sampling data will not be valid.", block->Name, name);
+									  "Sampling data will not be valid.",
+				   block->Name, name);
 			return;
 		}
 #endif
@@ -443,7 +446,7 @@ namespace bs
 
 		thread->ActiveBlocks->pop();
 
-		if (!thread->ActiveBlocks->empty())
+		if(!thread->ActiveBlocks->empty())
 			thread->ActiveBlock = thread->ActiveBlocks->top();
 		else
 			thread->ActiveBlock = ActiveBlock();
@@ -475,8 +478,8 @@ namespace bs
 		struct TempEntry
 		{
 			TempEntry(ProfiledBlock* _parentBlock, u32 _entryIdx)
-				:ParentBlock(_parentBlock), EntryIdx(_entryIdx)
-			{ }
+				: ParentBlock(_parentBlock), EntryIdx(_entryIdx)
+			{}
 
 			ProfiledBlock* ParentBlock;
 			u32 EntryIdx;
@@ -484,7 +487,7 @@ namespace bs
 		};
 
 		ProfilerVector<CPUProfilerBasicSamplingEntry> basicEntries;
-		ProfilerVector<CPUProfilerPreciseSamplingEntry> preciseEntries;	
+		ProfilerVector<CPUProfilerPreciseSamplingEntry> preciseEntries;
 
 		// Fill up flatHierarchy array in a way so we always process children before parents
 		ProfilerStack<u32> todo;
@@ -512,7 +515,7 @@ namespace bs
 				entryIdx++;
 			}
 		}
-		
+
 		// Calculate sampling data for all entries
 		basicEntries.resize(flatHierarchy.size());
 		preciseEntries.resize(flatHierarchy.size());
@@ -764,28 +767,28 @@ namespace bs
 
 		mBasicTimerOverhead = 1000000.0;
 		mPreciseTimerOverhead = 1000000;
-		for (u32 tries = 0; tries < 20; tries++)
+		for(u32 tries = 0; tries < 20; tries++)
 		{
 			Timer timer;
-			for (u32 i = 0; i < reps; i++)
+			for(u32 i = 0; i < reps; i++)
 			{
 				timer.Start();
 				timer.Stop();
 			}
 
-			double avgTime = double(timer.Time)/double(reps);
-			if (avgTime < mBasicTimerOverhead)
+			double avgTime = double(timer.Time) / double(reps);
+			if(avgTime < mBasicTimerOverhead)
 				mBasicTimerOverhead = avgTime;
 
 			TimerPrecise timerPrecise;
-			for (u32 i = 0; i < reps; i++)
+			for(u32 i = 0; i < reps; i++)
 			{
 				timerPrecise.Start();
 				timerPrecise.Stop();
 			}
 
-			u64 avgCycles = timerPrecise.Cycles/reps;
-			if (avgCycles < mPreciseTimerOverhead)
+			u64 avgCycles = timerPrecise.Cycles / reps;
+			if(avgCycles < mPreciseTimerOverhead)
 				mPreciseTimerOverhead = avgCycles;
 		}
 
@@ -793,7 +796,7 @@ namespace bs
 		mPreciseSamplingOverheadMs = 1000000.0;
 		mBasicSamplingOverheadCycles = 1000000;
 		mPreciseSamplingOverheadCycles = 1000000;
-		for (u32 tries = 0; tries < 3; tries++)
+		for(u32 tries = 0; tries < 3; tries++)
 		{
 			/************************************************************************/
 			/* 				AVERAGE TIME IN MS FOR BASIC SAMPLING                   */
@@ -806,7 +809,7 @@ namespace bs
 
 			// Two different cases that can effect performance, one where
 			// sample already exists and other where new one needs to be created
-			for (u32 i = 0; i < sampleReps; i++)
+			for(u32 i = 0; i < sampleReps; i++)
 			{
 				BeginSample("TestAvg1");
 				EndSample("TestAvg1");
@@ -830,7 +833,7 @@ namespace bs
 				EndSample("TestAvg10");
 			}
 
-			for (u32 i = 0; i < sampleReps * 5; i++)
+			for(u32 i = 0; i < sampleReps * 5; i++)
 			{
 				BeginSample(("TestAvg#" + toString(i)).c_str());
 				EndSample(("TestAvg#" + toString(i)).c_str());
@@ -842,8 +845,8 @@ namespace bs
 
 			Reset();
 
-			double avgTimeBasic = double(timerA.Time)/double(sampleReps * 10 + sampleReps * 5) - mBasicTimerOverhead;
-			if (avgTimeBasic < mBasicSamplingOverheadMs)
+			double avgTimeBasic = double(timerA.Time) / double(sampleReps * 10 + sampleReps * 5) - mBasicTimerOverhead;
+			if(avgTimeBasic < mBasicSamplingOverheadMs)
 				mBasicSamplingOverheadMs = avgTimeBasic;
 
 			/************************************************************************/
@@ -857,7 +860,7 @@ namespace bs
 
 			// Two different cases that can effect performance, one where
 			// sample already exists and other where new one needs to be created
-			for (u32 i = 0; i < sampleReps; i++)
+			for(u32 i = 0; i < sampleReps; i++)
 			{
 				BeginSample("TestAvg1");
 				EndSample("TestAvg1");
@@ -881,7 +884,7 @@ namespace bs
 				EndSample("TestAvg10");
 			}
 
-			for (u32 i = 0; i < sampleReps * 5; i++)
+			for(u32 i = 0; i < sampleReps * 5; i++)
 			{
 				BeginSample(("TestAvg#" + toString(i)).c_str());
 				EndSample(("TestAvg#" + toString(i)).c_str());
@@ -892,8 +895,8 @@ namespace bs
 
 			Reset();
 
-			u64 avgCyclesBasic = timerPreciseA.Cycles/(sampleReps * 10 + sampleReps * 5) - mPreciseTimerOverhead;
-			if (avgCyclesBasic < mBasicSamplingOverheadCycles)
+			u64 avgCyclesBasic = timerPreciseA.Cycles / (sampleReps * 10 + sampleReps * 5) - mPreciseTimerOverhead;
+			if(avgCyclesBasic < mBasicSamplingOverheadCycles)
 				mBasicSamplingOverheadCycles = avgCyclesBasic;
 
 			/************************************************************************/
@@ -906,7 +909,7 @@ namespace bs
 
 			// Two different cases that can effect performance, one where
 			// sample already exists and other where new one needs to be created
-			for (u32 i = 0; i < sampleReps; i++)
+			for(u32 i = 0; i < sampleReps; i++)
 			{
 				BeginSamplePrecise("TestAvg1");
 				EndSamplePrecise("TestAvg1");
@@ -930,7 +933,7 @@ namespace bs
 				EndSamplePrecise("TestAvg10");
 			}
 
-			for (u32 i = 0; i < sampleReps * 5; i++)
+			for(u32 i = 0; i < sampleReps * 5; i++)
 			{
 				BeginSamplePrecise(("TestAvg#" + toString(i)).c_str());
 				EndSamplePrecise(("TestAvg#" + toString(i)).c_str());
@@ -941,8 +944,8 @@ namespace bs
 
 			Reset();
 
-			double avgTimesPrecise = timerB.Time/(sampleReps * 10 + sampleReps * 5);
-			if (avgTimesPrecise < mPreciseSamplingOverheadMs)
+			double avgTimesPrecise = timerB.Time / (sampleReps * 10 + sampleReps * 5);
+			if(avgTimesPrecise < mPreciseSamplingOverheadMs)
 				mPreciseSamplingOverheadMs = avgTimesPrecise;
 
 			/************************************************************************/
@@ -955,7 +958,7 @@ namespace bs
 
 			// Two different cases that can effect performance, one where
 			// sample already exists and other where new one needs to be created
-			for (u32 i = 0; i < sampleReps; i++)
+			for(u32 i = 0; i < sampleReps; i++)
 			{
 				BeginSamplePrecise("TestAvg1");
 				EndSamplePrecise("TestAvg1");
@@ -979,7 +982,7 @@ namespace bs
 				EndSamplePrecise("TestAvg10");
 			}
 
-			for (u32 i = 0; i < sampleReps * 5; i++)
+			for(u32 i = 0; i < sampleReps * 5; i++)
 			{
 				BeginSamplePrecise(("TestAvg#" + toString(i)).c_str());
 				EndSamplePrecise(("TestAvg#" + toString(i)).c_str());
@@ -990,8 +993,8 @@ namespace bs
 
 			Reset();
 
-			u64 avgCyclesPrecise = timerPreciseB.Cycles/(sampleReps * 10 + sampleReps * 5);
-			if (avgCyclesPrecise < mPreciseSamplingOverheadCycles)
+			u64 avgCyclesPrecise = timerPreciseB.Cycles / (sampleReps * 10 + sampleReps * 5);
+			if(avgCyclesPrecise < mPreciseSamplingOverheadCycles)
 				mPreciseSamplingOverheadCycles = avgCyclesPrecise;
 		}
 	}
@@ -1000,4 +1003,4 @@ namespace bs
 	{
 		return ProfilerCPU::Instance();
 	}
-}
+} // namespace bs

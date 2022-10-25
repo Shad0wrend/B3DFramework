@@ -56,11 +56,11 @@ namespace bs
 		 * Updates the internal prefab diff data by recording the difference between the current values in the provided
 		 * prefab instance and its prefab.
 		 *
-		 * @note	
+		 * @note
 		 * If the provided object contains any child prefab instances, this will be done recursively for them as well.
 		 */
 		static void RecordPrefabDiff(const HSceneObject& sceneObject);
 	};
 
 	/** @} */
-}
+} // namespace bs

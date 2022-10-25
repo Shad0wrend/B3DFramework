@@ -37,7 +37,7 @@ namespace bs
 		{
 			if(strcmp((*iter)->Name(), name) == 0)
 			{
-				(*iter)->Create();		
+				(*iter)->Create();
 				mRenderAPIInitialized = true;
 				return ct::RenderAPI::Instance().Initialize(primaryWindowDesc);
 			}
@@ -52,4 +52,4 @@ namespace bs
 
 		mAvailableFactories.push_back(factory);
 	}
-}
+} // namespace bs

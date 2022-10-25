@@ -17,8 +17,8 @@ namespace bs
 	struct GameObjectInstanceData
 	{
 		GameObjectInstanceData()
-			:Object(nullptr), MInstanceId(0)
-		{ }
+			: Object(nullptr), MInstanceId(0)
+		{}
 
 		SPtr<GameObject> Object;
 		u64 MInstanceId;
@@ -32,8 +32,8 @@ namespace bs
 		GameObjectHandleData() = default;
 
 		GameObjectHandleData(SPtr<GameObjectInstanceData> ptr)
-			:MPtr(std::move(ptr))
-		{ }
+			: MPtr(std::move(ptr))
+		{}
 
 		SPtr<GameObjectInstanceData> MPtr;
 	};
@@ -41,18 +41,18 @@ namespace bs
 	/**
 	 * A handle that can point to various types of game objects. It primarily keeps track if the object is still alive,
 	 * so anything still referencing it doesn't accidentally use it.
-	 * 			
-	 * @note	
+	 *
+	 * @note
 	 * This class exists because references between game objects should be quite loose. For example one game object should
 	 * be able to reference another one without the other one knowing. But if that is the case I also need to handle the
-	 * case when the other object we're referencing has been deleted, and that is the main purpose of this class.	
+	 * case when the other object we're referencing has been deleted, and that is the main purpose of this class.
 	 */
 	class BS_CORE_EXPORT GameObjectHandleBase : public IReflectable
 	{
 	public:
 		GameObjectHandleBase()
 			: mData(bs_shared_ptr_new<GameObjectHandleData>(nullptr))
-		{ }
+		{}
 
 		/**
 		 * Returns true if the object the handle is pointing to has been destroyed.
@@ -114,7 +114,7 @@ namespace bs
 		const SPtr<GameObjectHandleData>& GetHandleDataInternal() const { return mData; }
 
 		/** Resolves a handle to a proper GameObject in case it was created uninitialized. */
-		void ResolveInternal(const GameObjectHandleBase& object) {	mData->MPtr = object.mData->MPtr; }
+		void ResolveInternal(const GameObjectHandleBase& object) { mData->MPtr = object.mData->MPtr; }
 
 		/**	Changes the GameObject instance the handle is pointing to. */
 		void SetHandleDataInternal(const SPtr<GameObject>& object);
@@ -125,29 +125,29 @@ namespace bs
 		friend class GameObjectManager;
 		friend class GameObjectDeserializationState;
 
-		template<class _Ty1, class _Ty2>
+		template <class _Ty1, class _Ty2>
 		friend bool operator==(const GameObjectHandle<_Ty1>& _Left, const GameObjectHandle<_Ty2>& _Right);
 
 		GameObjectHandleBase(const SPtr<GameObject>& ptr);
 
 		GameObjectHandleBase(SPtr<GameObjectHandleData> data)
 			: mData(std::move(data))
-		{ }
+		{}
 
 		GameObjectHandleBase(std::nullptr_t ptr)
 			: mData(bs_shared_ptr_new<GameObjectHandleData>(nullptr))
-		{ }
+		{}
 
 		/**	Throws an exception if the referenced GameObject has been destroyed. */
 		void ThrowIfDestroyed() const;
-		
+
 		/**	Invalidates the handle signifying the referenced object was destroyed. */
 		void Destroy()
 		{
 			// It's important not to clear mData->mPtr as some code might rely
 			// on it. (for example for restoring lost handles)
 
-			if (mData->MPtr != nullptr)
+			if(mData->MPtr != nullptr)
 				mData->MPtr->Object = nullptr;
 		}
 
@@ -179,8 +179,8 @@ namespace bs
 	public:
 		/**	Constructs a new empty handle. */
 		GameObjectHandle()
-			:GameObjectHandleBase()
-		{	
+			: GameObjectHandleBase()
+		{
 			mData = bs_shared_ptr_new<GameObjectHandleData>();
 		}
 
@@ -192,7 +192,7 @@ namespace bs
 
 		/**	Invalidates the handle. */
 		GameObjectHandle<T>& operator=(std::nullptr_t ptr)
-		{ 	
+		{
 			mData = bs_shared_ptr_new<GameObjectHandleData>();
 
 			return *this;
@@ -247,7 +247,7 @@ namespace bs
 		 *  @{
 		 */
 
-		template<class _Ty>
+		template <class _Ty>
 		struct Bool_struct
 		{
 			int Member;
@@ -256,7 +256,7 @@ namespace bs
 		/**
 		 * Allows direct conversion of handle to bool.
 		 *
-		 * @note	
+		 * @note
 		 * This is needed because we can't directly convert to bool since then we can assign pointer to bool and that's
 		 * weird.
 		 */
@@ -268,45 +268,45 @@ namespace bs
 		/** @} */
 
 	protected:
-		template<class _Ty1, class _Ty2>
+		template <class _Ty1, class _Ty2>
 		friend GameObjectHandle<_Ty1> static_object_cast(const GameObjectHandle<_Ty2>& other);
 
-		template<class _Ty1>
+		template <class _Ty1>
 		friend GameObjectHandle<_Ty1> static_object_cast(const GameObjectHandleBase& other);
 
 		GameObjectHandle(SPtr<GameObjectHandleData> data)
-			:GameObjectHandleBase(std::move(data))
-		{ }
+			: GameObjectHandleBase(std::move(data))
+		{}
 	};
 
 	/**	Casts one GameObject handle type to another. */
-	template<class _Ty1, class _Ty2>
+	template <class _Ty1, class _Ty2>
 	GameObjectHandle<_Ty1> static_object_cast(const GameObjectHandle<_Ty2>& other)
-	{	
+	{
 		return GameObjectHandle<_Ty1>(other.GetHandleDataInternal());
 	}
 
 	/**	Casts a generic GameObject handle to a specific one . */
-	template<class T>
+	template <class T>
 	GameObjectHandle<T> static_object_cast(const GameObjectHandleBase& other)
-	{	
+	{
 		return GameObjectHandle<T>(other.GetHandleDataInternal());
 	}
 
 	/**	Compares if two handles point to the same GameObject. */
-	template<class _Ty1, class _Ty2>
+	template <class _Ty1, class _Ty2>
 	bool operator==(const GameObjectHandle<_Ty1>& _Left, const GameObjectHandle<_Ty2>& _Right)
-	{	
+	{
 		return (_Left.mData == nullptr && _Right.mData == nullptr) ||
 			(_Left.mData != nullptr && _Right.mData != nullptr && _Left.GetInstanceId() == _Right.GetInstanceId());
 	}
 
 	/**	Compares if two handles point to different GameObject%s. */
-	template<class _Ty1, class _Ty2>
+	template <class _Ty1, class _Ty2>
 	bool operator!=(const GameObjectHandle<_Ty1>& _Left, const GameObjectHandle<_Ty2>& _Right)
-	{	
+	{
 		return (!(_Left == _Right));
 	}
 
 	/** @} */
-}
+} // namespace bs

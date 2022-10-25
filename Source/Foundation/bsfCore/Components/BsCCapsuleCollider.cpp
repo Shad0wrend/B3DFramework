@@ -25,40 +25,40 @@ namespace bs
 
 	void CCapsuleCollider::SetNormal(const Vector3& normal)
 	{
-		if (mNormal == normal)
+		if(mNormal == normal)
 			return;
 
 		mNormal = bs::Vector3::Normalize(normal);
 		mLocalRotation = Quaternion::GetRotationFromTo(Vector3::UNIT_X, mNormal);
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			UpdateTransform();
 	}
 
 	void CCapsuleCollider::SetCenter(const Vector3& center)
 	{
-		if (mLocalPosition == center)
+		if(mLocalPosition == center)
 			return;
 
 		mLocalPosition = center;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			UpdateTransform();
 	}
 
 	void CCapsuleCollider::SetHalfHeight(float halfHeight)
 	{
 		float clampedHalfHeight = std::max(halfHeight, 0.01f);
-		if (mHalfHeight == clampedHalfHeight)
+		if(mHalfHeight == clampedHalfHeight)
 			return;
 
 		mHalfHeight = clampedHalfHeight;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 		{
 			GetInternalInternal()->SetHalfHeight(clampedHalfHeight);
 
-			if (mParent != nullptr)
+			if(mParent != nullptr)
 				mParent->UpdateMassDistributionInternal();
 		}
 	}
@@ -66,16 +66,16 @@ namespace bs
 	void CCapsuleCollider::SetRadius(float radius)
 	{
 		float clampedRadius = std::max(radius, 0.01f);
-		if (mRadius == clampedRadius)
+		if(mRadius == clampedRadius)
 			return;
 
 		mRadius = clampedRadius;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 		{
 			GetInternalInternal()->SetRadius(clampedRadius);
 
-			if (mParent != nullptr)
+			if(mParent != nullptr)
 				mParent->UpdateMassDistributionInternal();
 		}
 	}
@@ -85,8 +85,7 @@ namespace bs
 		const SPtr<SceneInstance>& scene = SO()->GetScene();
 		const Transform& tfrm = SO()->GetTransform();
 
-		SPtr<Collider> collider = CapsuleCollider::Create(*scene->GetPhysicsScene(), mRadius, mHalfHeight,
-			tfrm.GetPosition(), tfrm.GetRotation());
+		SPtr<Collider> collider = CapsuleCollider::Create(*scene->GetPhysicsScene(), mRadius, mHalfHeight, tfrm.GetPosition(), tfrm.GetRotation());
 
 		collider->SetOwnerInternal(PhysicsOwnerType::Component, this);
 		return collider;
@@ -101,4 +100,4 @@ namespace bs
 	{
 		return CCapsuleCollider::GetRttiStatic();
 	}
-}
+} // namespace bs

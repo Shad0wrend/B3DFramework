@@ -18,7 +18,7 @@ namespace bs
 	};
 
 	Gamepad::Gamepad(const String& name, const GamepadInfo& gamepadInfo, Input* owner)
-			: mName(name), mOwner(owner)
+		: mName(name), mOwner(owner)
 	{
 		m = bs_new<Pimpl>();
 		m->info = gamepadInfo;
@@ -70,77 +70,76 @@ namespace bs
 				switch(events[i].type)
 				{
 				case EV_KEY:
-				{
-					auto findIter = m->info.buttonMap.find(events[i].code);
-					if(findIter == m->info.buttonMap.end())
-						continue;
+					{
+						auto findIter = m->info.buttonMap.find(events[i].code);
+						if(findIter == m->info.buttonMap.end())
+							continue;
 
-					if(events[i].value)
-						mOwner->NotifyButtonPressedInternal(m->info.id, findIter->second, (u64)events[i].time.tv_usec);
-					else
-						mOwner->NotifyButtonReleasedInternal(m->info.id, findIter->second, (u64)events[i].time.tv_usec);
-				}
+						if(events[i].value)
+							mOwner->NotifyButtonPressedInternal(m->info.id, findIter->second, (u64)events[i].time.tv_usec);
+						else
+							mOwner->NotifyButtonReleasedInternal(m->info.id, findIter->second, (u64)events[i].time.tv_usec);
+					}
 					break;
 				case EV_ABS:
-				{
-					// Stick or trigger
-					if(events[i].code <= ABS_BRAKE)
 					{
-						const AxisInfo& axisInfo = m->info.axisMap[events[i].code];
-
-						if(axisInfo.axisIdx >= 24)
-							break;
-
-						axisState[axisInfo.axisIdx].moved = true;
-
-						// Scale range if needed
-						if(axisInfo.min == Gamepad::MIN_AXIS && axisInfo.max != Gamepad::MAX_AXIS )
-							axisState[axisInfo.axisIdx].value = events[i].value;
-						else
+						// Stick or trigger
+						if(events[i].code <= ABS_BRAKE)
 						{
-							float range = (float)(axisInfo.max - axisInfo.min);
-							float normalizedValue = (axisInfo.max - events[i].value) / range;
+							const AxisInfo& axisInfo = m->info.axisMap[events[i].code];
 
-							range = (float)(Gamepad::MAX_AXIS - Gamepad::MIN_AXIS);
-							axisState[axisInfo.axisIdx].value = Gamepad::MIN_AXIS + (i32)(normalizedValue * range);
+							if(axisInfo.axisIdx >= 24)
+								break;
+
+							axisState[axisInfo.axisIdx].moved = true;
+
+							// Scale range if needed
+							if(axisInfo.min == Gamepad::MIN_AXIS && axisInfo.max != Gamepad::MAX_AXIS)
+								axisState[axisInfo.axisIdx].value = events[i].value;
+							else
+							{
+								float range = (float)(axisInfo.max - axisInfo.min);
+								float normalizedValue = (axisInfo.max - events[i].value) / range;
+
+								range = (float)(Gamepad::MAX_AXIS - Gamepad::MIN_AXIS);
+								axisState[axisInfo.axisIdx].value = Gamepad::MIN_AXIS + (i32)(normalizedValue * range);
+							}
 						}
+						else if(events[i].code <= ABS_HAT3Y) // POV
+						{
+							// Note: We only support a single POV and report events from all POVs as if they were from the
+							// same source
+							i32 povIdx = events[i].code - ABS_HAT0X;
+
+							ButtonCode povButton = BC_UNASSIGNED;
+							if((povIdx & 0x1) == 0) // Even, x axis
+							{
+								if(events[i].value == -1)
+									povButton = BC_GAMEPAD_DPAD_LEFT;
+								else if(events[i].value == 1)
+									povButton = BC_GAMEPAD_DPAD_RIGHT;
+							}
+							else // Odd, y axis
+							{
+								if(events[i].value == -1)
+									povButton = BC_GAMEPAD_DPAD_UP;
+								else if(events[i].value == 1)
+									povButton = BC_GAMEPAD_DPAD_DOWN;
+							}
+
+							if(m->povState != povButton)
+							{
+								if(m->povState != BC_UNASSIGNED)
+									mOwner->NotifyButtonReleasedInternal(m->info.id, m->povState, (u64)events[i].time.tv_usec);
+
+								if(povButton != BC_UNASSIGNED)
+									mOwner->NotifyButtonPressedInternal(m->info.id, povButton, (u64)events[i].time.tv_usec);
+
+								m->povState = povButton;
+							}
+						}
+						break;
 					}
-					else if(events[i].code <= ABS_HAT3Y) // POV
-					{
-						// Note: We only support a single POV and report events from all POVs as if they were from the
-						// same source
-						i32 povIdx = events[i].code - ABS_HAT0X;
-
-						ButtonCode povButton = BC_UNASSIGNED;
-						if((povIdx & 0x1) == 0) // Even, x axis
-						{
-							if(events[i].value == -1)
-								povButton = BC_GAMEPAD_DPAD_LEFT;
-							else if(events[i].value == 1)
-								povButton = BC_GAMEPAD_DPAD_RIGHT;
-						}
-						else // Odd, y axis
-						{
-							if(events[i].value == -1)
-								povButton = BC_GAMEPAD_DPAD_UP;
-							else if(events[i].value == 1)
-								povButton = BC_GAMEPAD_DPAD_DOWN;
-						}
-
-						if(m->povState != povButton)
-						{
-							if(m->povState != BC_UNASSIGNED)
-								mOwner->NotifyButtonReleasedInternal(m->info.id, m->povState, (u64)events[i].time.tv_usec);
-
-							if(povButton != BC_UNASSIGNED)
-								mOwner->NotifyButtonPressedInternal(m->info.id, povButton, (u64)events[i].time.tv_usec);
-
-
-							m->povState = povButton;
-						}
-					}
-					break;
-				}
 				default: break;
 				}
 			}
@@ -157,5 +156,4 @@ namespace bs
 	{
 		m->HasInputFocus = windowHandle != (u64)-1;
 	}
-}
-
+} // namespace bs

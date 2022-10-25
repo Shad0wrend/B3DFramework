@@ -18,24 +18,25 @@ namespace bs
 	{
 	private:
 		VertexElement& GetVertexElementData(VertexDataDesc* obj, u32 arrayIdx) { return obj->mVertexElements[arrayIdx]; }
+
 		void SetVertexElementData(VertexDataDesc* obj, u32 arrayIdx, VertexElement& value) { obj->mVertexElements[arrayIdx] = value; }
 
 		u32 GetNumVertexElementData(VertexDataDesc* obj) { return (u32)obj->mVertexElements.size(); }
+
 		void SetNumVertexElementData(VertexDataDesc* obj, u32 numElements) { obj->mVertexElements.resize(numElements); }
 
 	public:
 		VertexDataDescRTTI()
 		{
-			AddPlainArrayField("mVertexData", 0, &VertexDataDescRTTI::GetVertexElementData,
-				&VertexDataDescRTTI::GetNumVertexElementData, &VertexDataDescRTTI::SetVertexElementData, &VertexDataDescRTTI::SetNumVertexElementData);
+			AddPlainArrayField("mVertexData", 0, &VertexDataDescRTTI::GetVertexElementData, &VertexDataDescRTTI::GetNumVertexElementData, &VertexDataDescRTTI::SetVertexElementData, &VertexDataDescRTTI::SetNumVertexElementData);
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
-			return bs_shared_ptr<VertexDataDesc>(new (bs_alloc<VertexDataDesc>()) VertexDataDesc());
+			return bs_shared_ptr<VertexDataDesc>(new(bs_alloc<VertexDataDesc>()) VertexDataDesc());
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "VertexDataDesc";
 			return name;
@@ -49,4 +50,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

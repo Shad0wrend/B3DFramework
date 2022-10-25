@@ -56,24 +56,24 @@ namespace bs
 		struct Param
 		{
 			Param()
-				:I(0), Type(Int)
-			{ }
+				: I(0), Type(Int)
+			{}
 
 			Param(const String& name, i32 val)
-				:I(val), Name(name), Type(Int)
-			{ }
+				: I(val), Name(name), Type(Int)
+			{}
 
 			Param(const String& name, u32 val)
-				:Ui(val), Name(name), Type(Int)
-			{ }
+				: Ui(val), Name(name), Type(Int)
+			{}
 
 			Param(const String& name, float val)
-				:F(val), Name(name), Type(Float)
-			{ }
+				: F(val), Name(name), Type(Float)
+			{}
 
 			Param(const String& name, bool val)
-				:I(val ? 1 : 0), Name(name), Type(Bool)
-			{ }
+				: I(val ? 1 : 0), Name(name), Type(Bool)
+			{}
 
 			union
 			{
@@ -88,7 +88,7 @@ namespace bs
 
 		BS_SCRIPT_EXPORT()
 		ShaderVariation() = default;
-		
+
 		/** Creates a new shader variation with the specified parameters. */
 		ShaderVariation(const SmallVector<Param, 4>& params);
 
@@ -150,18 +150,21 @@ namespace bs
 
 		/** Removes a parameter with the specified name. */
 		BS_SCRIPT_EXPORT()
+
 		void RemoveParam(const StringID& paramName) { mParams.erase(paramName); }
 
 		/** Checks if the variation has a parameter with the specified name. */
 		BS_SCRIPT_EXPORT()
+
 		bool HasParam(const StringID& paramName) { return mParams.find(paramName) != mParams.end(); }
 
 		/** Removes all parameters. */
 		BS_SCRIPT_EXPORT()
+
 		void ClearParams() { mParams.clear(); }
 
 		/** Returns a list of names of all registered parameters. */
-		BS_SCRIPT_EXPORT(ExportName(ParamNames),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(ParamNames), Property(Getter))
 		Vector<String> GetParamNames() const;
 
 		/**
@@ -194,13 +197,13 @@ namespace bs
 		/**
 		 * Returns a unique index of this variation, relative to all other variations registered in ShaderVariations object.
 		 */
-		u32 GetIdx() const { return mIdx;  }
+		u32 GetIdx() const { return mIdx; }
 
 		/** Assigns a unique index to the variation that can later be used for quick lookup. */
 		void SetIdx(u32 idx) const { mIdx = idx; }
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template<class P>
+		template <class P>
 		void RttiEnumFields(P p)
 		{
 			p(mParams);
@@ -216,11 +219,11 @@ namespace bs
 		/************************************************************************/
 		/* 								RTTI		                     		*/
 		/************************************************************************/
-		
+
 	public:
 		friend class ShaderVariationRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;	
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** A container for all variations of a single Shader. */
@@ -248,4 +251,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

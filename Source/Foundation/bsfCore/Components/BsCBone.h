@@ -15,18 +15,19 @@ namespace bs
 	 * Component that maps animation for specific bone also be applied to the SceneObject this component is attached to.
 	 * The component will attach to the first found parent Animation component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(Bone)) CBone : public Component
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(Bone)) CBone : public Component
 	{
 	public:
 		CBone(const HSceneObject& parent);
 		virtual ~CBone() = default;
-		
+
 		/** Determines the name of the bone the component is referencing. */
-		BS_SCRIPT_EXPORT(ExportName(Name),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Name), Property(Setter))
 		void SetBoneName(const String& name);
 
 		/** @copydoc setBoneName */
-		BS_SCRIPT_EXPORT(ExportName(Name),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Name), Property(Getter))
+
 		const String& GetBoneName() const { return mBoneName; }
 
 		/** @name Internal
@@ -54,16 +55,17 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc Component::onDestroyed() */
-		void OnDestroyed() ;
+		void OnDestroyed();
 
 		/** @copydoc Component::onDisabled() */
-		void OnDisabled() ;
+		void OnDisabled();
 
 		/** @copydoc Component::onEnabled() */
-		void OnEnabled() ;
+		void OnEnabled();
 
 		/** @copydoc Component::onTransformChanged() */
-		void OnTransformChanged(TransformChangedFlags flags) ;
+		void OnTransformChanged(TransformChangedFlags flags);
+
 	protected:
 		using Component::DestroyInternal;
 
@@ -76,11 +78,11 @@ namespace bs
 	public:
 		friend class CBoneRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 
 	protected:
 		CBone(); // Serialization only
-	 };
+	};
 
-	 /** @} */
-}
+	/** @} */
+} // namespace bs

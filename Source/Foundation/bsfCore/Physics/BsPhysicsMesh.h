@@ -24,7 +24,7 @@ namespace bs
 		virtual ~PhysicsMesh() = default;
 
 		/** Returns the type of the physics mesh. */
-		BS_SCRIPT_EXPORT(ExportName(Type),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Type), Property(Getter))
 		PhysicsMeshType GetType() const;
 
 		/** Returns the mesh's indices and vertices. */
@@ -91,7 +91,7 @@ namespace bs
 		friend class PhysicsMesh;
 
 		PhysicsMeshType mType;
-		
+
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
 		/************************************************************************/
@@ -102,4 +102,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

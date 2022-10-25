@@ -6,87 +6,90 @@
 #include "RenderAPI/BsEventQuery.h"
 #include "Utility/BsModule.h"
 
-namespace bs { namespace ct
+namespace bs
 {
-	/** @addtogroup RenderAPI-Internal
-	 *  @{
-	 */
-
-	/**
-	 * Handles creation and destruction of GPU queries.
-	 * 			
-	 * @note	Core thread only.
-	 */
-	class BS_CORE_EXPORT QueryManager : public Module<QueryManager>
+	namespace ct
 	{
-	public:
-		QueryManager() = default;
-		~QueryManager();
+		/** @addtogroup RenderAPI-Internal
+		 *  @{
+		 */
 
 		/**
-		 * Creates a new event query that allows you to get notified when GPU starts executing the query.
+		 * Handles creation and destruction of GPU queries.
 		 *
-		 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
+		 * @note	Core thread only.
 		 */
-		virtual SPtr<EventQuery> CreateEventQuery(u32 deviceIdx = 0) const = 0;
+		class BS_CORE_EXPORT QueryManager : public Module<QueryManager>
+		{
+		public:
+			QueryManager() = default;
+			~QueryManager();
 
-		/**
-		 * Creates a new timer query that allows you to get notified of how much time has passed between query start and end.
-		 *
-		 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
-		 */
-		virtual SPtr<TimerQuery> CreateTimerQuery(u32 deviceIdx = 0) const = 0;
+			/**
+			 * Creates a new event query that allows you to get notified when GPU starts executing the query.
+			 *
+			 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
+			 */
+			virtual SPtr<EventQuery> CreateEventQuery(u32 deviceIdx = 0) const = 0;
 
-		/**
-		 * Creates a new occlusion query that allows you to know how many fragments were rendered between query start and
-		 * end.
-		 *
-		 * @param[in]	binary		If query is binary it will not give you an exact count of fragments rendered, but will
-		 *							instead just return 0 (no fragments were rendered) or 1 (one or more fragments were
-		 *							rendered). Binary queries can return sooner as they potentially do not need to wait
-		 *							until all of the geometry is rendered.
-		 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
-		 */
-		virtual SPtr<OcclusionQuery> CreateOcclusionQuery(bool binary, u32 deviceIdx = 0) const = 0;
+			/**
+			 * Creates a new timer query that allows you to get notified of how much time has passed between query start and end.
+			 *
+			 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
+			 */
+			virtual SPtr<TimerQuery> CreateTimerQuery(u32 deviceIdx = 0) const = 0;
 
-		/** Triggers completed queries. Should be called every frame. */
-		void UpdateInternal();
+			/**
+			 * Creates a new occlusion query that allows you to know how many fragments were rendered between query start and
+			 * end.
+			 *
+			 * @param[in]	binary		If query is binary it will not give you an exact count of fragments rendered, but will
+			 *							instead just return 0 (no fragments were rendered) or 1 (one or more fragments were
+			 *							rendered). Binary queries can return sooner as they potentially do not need to wait
+			 *							until all of the geometry is rendered.
+			 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
+			 */
+			virtual SPtr<OcclusionQuery> CreateOcclusionQuery(bool binary, u32 deviceIdx = 0) const = 0;
 
-	protected:
-		friend class EventQuery;
-		friend class TimerQuery;
-		friend class OcclusionQuery;
+			/** Triggers completed queries. Should be called every frame. */
+			void UpdateInternal();
 
-		/**
-		 * Deletes an Event query. Always use this method and don't delete them manually. Actual deletion will be delayed
-		 * until next update.
-		 */
-		static void DeleteEventQuery(EventQuery* query);
+		protected:
+			friend class EventQuery;
+			friend class TimerQuery;
+			friend class OcclusionQuery;
 
-		/**
-		 * Deletes a Timer query. Always use this method and don't delete them manually. Actual deletion will be delayed
-		 * until next update.
-		 */
-		static void DeleteTimerQuery(TimerQuery* query);
+			/**
+			 * Deletes an Event query. Always use this method and don't delete them manually. Actual deletion will be delayed
+			 * until next update.
+			 */
+			static void DeleteEventQuery(EventQuery* query);
 
-		/**
-		 * Deletes an Occlusion query. Always use this method and don't delete them manually. Actual deletion will be
-		 * delayed until next update.
-		 */
-		static void DeleteOcclusionQuery(OcclusionQuery* query);
+			/**
+			 * Deletes a Timer query. Always use this method and don't delete them manually. Actual deletion will be delayed
+			 * until next update.
+			 */
+			static void DeleteTimerQuery(TimerQuery* query);
 
-		/** Deletes any queued queries. */
-		void ProcessDeletedQueue();
+			/**
+			 * Deletes an Occlusion query. Always use this method and don't delete them manually. Actual deletion will be
+			 * delayed until next update.
+			 */
+			static void DeleteOcclusionQuery(OcclusionQuery* query);
 
-	protected:
-		mutable Vector<EventQuery*> mEventQueries;
-		mutable Vector<TimerQuery*> mTimerQueries;
-		mutable Vector<OcclusionQuery*> mOcclusionQueries;
+			/** Deletes any queued queries. */
+			void ProcessDeletedQueue();
 
-		mutable Vector<EventQuery*> mDeletedEventQueries;
-		mutable Vector<TimerQuery*> mDeletedTimerQueries;
-		mutable Vector<OcclusionQuery*> mDeletedOcclusionQueries;
-	};
+		protected:
+			mutable Vector<EventQuery*> mEventQueries;
+			mutable Vector<TimerQuery*> mTimerQueries;
+			mutable Vector<OcclusionQuery*> mOcclusionQueries;
 
-	/** @} */
-}}
+			mutable Vector<EventQuery*> mDeletedEventQueries;
+			mutable Vector<TimerQuery*> mDeletedTimerQueries;
+			mutable Vector<OcclusionQuery*> mDeletedOcclusionQueries;
+		};
+
+		/** @} */
+	} // namespace ct
+} // namespace bs

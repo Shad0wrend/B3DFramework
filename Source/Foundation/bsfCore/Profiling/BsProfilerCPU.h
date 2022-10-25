@@ -15,7 +15,7 @@ namespace bs
 
 	/**
 	 * Provides various performance measuring methods.
-	 * 			
+	 *
 	 * @note	Thread safe. Matching begin* \ end* calls must belong to the same thread though.
 	 */
 	class BS_CORE_EXPORT ProfilerCPU : public Module<ProfilerCPU>
@@ -36,6 +36,7 @@ namespace bs
 			void Reset();
 
 			double Time;
+
 		private:
 			double startTime = 0.0f;
 			std::chrono::high_resolution_clock mHRClock;
@@ -60,6 +61,7 @@ namespace bs
 			void Reset();
 
 			u64 Cycles;
+
 		private:
 			u64 startCycles;
 
@@ -69,16 +71,16 @@ namespace bs
 
 		/**
 		 * Contains data about a single profiler sample (counting time in milliseconds).
-		 *	
-		 * @note	
+		 *
+		 * @note
 		 * A sample is created whenever a named profile block is entered. For example if you have a function you are
 		 * profiling, and it gets called 10 times, there will be 10 samples.
 		 */
 		struct ProfileSample
 		{
 			ProfileSample(double _time, u64 _numAllocs, u64 _numFrees)
-				:Time(_time), NumAllocs(_numAllocs), NumFrees(_numFrees)
-			{ }
+				: Time(_time), NumAllocs(_numAllocs), NumFrees(_numFrees)
+			{}
 
 			double Time;
 			u64 NumAllocs;
@@ -88,15 +90,15 @@ namespace bs
 		/**
 		 * Contains data about a single precise profiler sample (counting CPU cycles).
 		 *
-		 * @note	
+		 * @note
 		 * A sample is created whenever a named profile block is entered. For example if you have a function you are
 		 * profiling, and it gets called 10 times, there will be 10 samples.
 		 */
 		struct PreciseProfileSample
 		{
 			PreciseProfileSample(u64 _cycles, u64 _numAllocs, u64 _numFrees)
-				:Cycles(_cycles), NumAllocs(_numAllocs), NumFrees(_numFrees)
-			{ }
+				: Cycles(_cycles), NumAllocs(_numAllocs), NumFrees(_numFrees)
+			{}
 
 			u64 Cycles;
 			u64 NumAllocs;
@@ -170,7 +172,7 @@ namespace bs
 			ProfiledBlock* FindChild(const char* name) const;
 
 			char* Name;
-			
+
 			ProfileData Basic;
 			PreciseProfileData Precise;
 
@@ -188,12 +190,12 @@ namespace bs
 		struct ActiveBlock
 		{
 			ActiveBlock()
-				:Type(ActiveSamplingType::Basic), Block(nullptr)
-			{ }
+				: Type(ActiveSamplingType::Basic), Block(nullptr)
+			{}
 
 			ActiveBlock(ActiveSamplingType _type, ProfiledBlock* _block)
-				:Type(_type), Block(_block)
-			{ }
+				: Type(_type), Block(_block)
+			{}
 
 			ActiveSamplingType Type;
 			ProfiledBlock* Block;
@@ -223,7 +225,7 @@ namespace bs
 
 			/**	Gets the primary profiling block used by the thread. */
 			ProfiledBlock* GetBlock(const char* name);
-			
+
 			/** Deletes the provided block. */
 			void ReleaseBlock(ProfiledBlock* block);
 
@@ -263,8 +265,8 @@ namespace bs
 		 * Ends sample measurement.
 		 *
 		 * @param[in]	name	Unique name for the sample.
-		 * 					
-		 * @note	
+		 *
+		 * @note
 		 * Unique name is primarily needed to more easily identify mismatched begin/end sample pairs. Otherwise the name in
 		 * beginSample() would be enough.
 		 */
@@ -274,8 +276,8 @@ namespace bs
 		 * Begins precise sample measurement. Must be followed by endSamplePrecise().
 		 *
 		 * @param[in]	name	Unique name for the sample you can later use to find the sampling data.
-		 * 					
-		 * @note	
+		 *
+		 * @note
 		 * This method uses very precise CPU counters to determine variety of data not provided by standard beginSample().
 		 * However due to the way these counters work you should not use this method for larger parts of code. It does not
 		 * consider context switches so if the OS decides to switch context between measurements you will get invalid data.
@@ -286,8 +288,8 @@ namespace bs
 		 * Ends precise sample measurement.
 		 *
 		 * @param[in]	name	Unique name for the sample.
-		 * 					
-		 * @note	
+		 *
+		 * @note
 		 * Unique name is primarily needed to more easily identify mismatched begin/end sample pairs. Otherwise the name
 		 * in beginSamplePrecise() would be enough.
 		 */
@@ -298,7 +300,7 @@ namespace bs
 
 		/**
 		 * Generates a report from all previously sampled data.
-		 * 			
+		 *
 		 * @note	Generating a report will stop all in-progress sampling. You should make sure
 		 * 			you call endSample* manually beforehand so this doesn't have to happen.
 		 */
@@ -414,12 +416,12 @@ namespace bs
 	BS_CORE_EXPORT ProfilerCPU& gProfilerCPU();
 
 	/** Shortcut for profiling a single function call. */
-#define PROFILE_CALL(call, name)					\
-	{												\
-		bs::gProfilerCPU().BeginSample(name);		\
-		call;										\
-		bs::gProfilerCPU().EndSample(name);			\
+#define PROFILE_CALL(call, name)              \
+	{                                         \
+		bs::gProfilerCPU().BeginSample(name); \
+		call;                                 \
+		bs::gProfilerCPU().EndSample(name);   \
 	}
 
 	/** @} */
-}
+} // namespace bs

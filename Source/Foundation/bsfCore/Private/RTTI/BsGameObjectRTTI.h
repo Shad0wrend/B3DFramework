@@ -34,6 +34,7 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 		u64& GetInstanceId(GameObject* obj) { return obj->mInstanceData->MInstanceId; }
+
 		void SetInstanceId(GameObject* obj, u64& instanceId)
 		{
 			// We record the ID for later use. Any child RTTI of GameObject must call GameObjectManager::registerObject
@@ -51,13 +52,13 @@ namespace bs
 			AddPlainField("mInstanceID", 0, &GameObjectRTTI::GetInstanceId, &GameObjectRTTI::SetInstanceId);
 		}
 
-		void OnDeserializationStarted(IReflectable* obj, SerializationContext* context) 
+		void OnDeserializationStarted(IReflectable* obj, SerializationContext* context)
 		{
 			GameObject* gameObject = static_cast<GameObject*>(obj);
 
 			// It's possible we're just accessing the game object fields, in which case the process below is not needed
 			// (it's only required for new game objects).
-			if (gameObject->mRTTIData.Empty())
+			if(gameObject->mRTTIData.Empty())
 				return;
 
 			SPtr<GameObject> gameObjectPtr = any_cast<SPtr<GameObject>>(gameObject->mRTTIData);
@@ -70,7 +71,7 @@ namespace bs
 			deserializationData.Ptr = gameObjectPtr;
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "GameObject";
 			return name;
@@ -81,7 +82,7 @@ namespace bs
 			return TID_GameObject;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
 			return nullptr;
@@ -90,4 +91,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

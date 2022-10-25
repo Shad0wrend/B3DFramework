@@ -25,4 +25,4 @@ namespace bs
 
 		mDummyMesh = Mesh::Create(mDummyMeshData);
 	}
-}
+} // namespace bs

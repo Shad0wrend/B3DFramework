@@ -35,7 +35,7 @@ namespace bs
 		void SetArea(const Rect2I& area);
 
 		/** Returns the drop target area, in local window coordinates. */
-		const Rect2I& GetArea() const { return mArea;}
+		const Rect2I& GetArea() const { return mArea; }
 
 		/**	Gets the type of drop that this drop target is looking for. Only valid after a drop has been triggered. */
 		DropTargetType GetDropType() const { return mDropType; }
@@ -111,5 +111,4 @@ namespace bs
 	};
 
 	/** @} */
-}
-
+} // namespace bs

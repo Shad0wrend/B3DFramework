@@ -46,15 +46,22 @@ namespace bs
 		/**	Different types of possible input event callbacks. */
 		enum class EventType
 		{
-			ButtonUp, ButtonDown, PointerMoved, PointerUp, PointerDown, PointerDoubleClick, TextInput, Command
+			ButtonUp,
+			ButtonDown,
+			PointerMoved,
+			PointerUp,
+			PointerDown,
+			PointerDoubleClick,
+			TextInput,
+			Command
 		};
 
 		/**	Stores information about a queued input event that is to be triggered later. */
 		struct QueuedEvent
 		{
 			QueuedEvent(EventType type, u32 idx)
-				:Type(type), Idx(idx)
-			{ }
+				: Type(type), Idx(idx)
+			{}
 
 			EventType Type;
 			u32 Idx;
@@ -168,7 +175,7 @@ namespace bs
 
 		/**
 		 * Called every frame. Detects button state changes and prepares callback events to trigger via a call to
-		* TriggerCallbacksInternal().
+		 * TriggerCallbacksInternal().
 		 */
 		void UpdateInternal();
 
@@ -201,7 +208,7 @@ namespace bs
 
 		/** Performs platform specific raw input system cleanup. */
 		void CleanUpRawInput();
-		
+
 		/**
 		 * Smooths the input mouse axis value. Smoothing makes the changes to the axis more gradual depending on previous
 		 * values.
@@ -223,28 +230,28 @@ namespace bs
 
 		/**
 		 * Called from the message loop to notify user has entered a character.
-		 * 			
+		 *
 		 * @see		onCharInput
 		 */
 		void CharInput(u32 character);
 
 		/**
 		 * Called from the message loop to notify user has moved the cursor.
-		 * 			
+		 *
 		 * @see		onCursorMoved
 		 */
 		void CursorMoved(const Vector2I& cursorPos, const OSPointerButtonStates& btnStates);
 
 		/**
 		 * Called from the message loop to notify user has pressed a mouse button.
-		 * 			
+		 *
 		 * @see		onCursorPressed
 		 */
 		void CursorPressed(const Vector2I& cursorPos, OSMouseButton button, const OSPointerButtonStates& btnStates);
 
 		/**
 		 * Called from the message loop to notify user has released a mouse button.
-		 * 			
+		 *
 		 * @see		onCursorReleased
 		 */
 		void CursorReleased(const Vector2I& cursorPos, OSMouseButton button, const OSPointerButtonStates& btnStates);
@@ -258,14 +265,14 @@ namespace bs
 
 		/**
 		 * Called from the message loop to notify user has entered an input command.
-		 * 			
+		 *
 		 * @see		onInputCommand
 		 */
 		void InputCommandEntered(InputCommandType commandType);
 
 		/**
 		 * Called from the message loop to notify user has scrolled the mouse wheel.
-		 * 			
+		 *
 		 * @see		onMouseWheelScrolled
 		 */
 		void MouseWheelScrolled(float scrollPos);
@@ -344,4 +351,4 @@ namespace bs
 	BS_CORE_EXPORT Input& gInput();
 
 	/** @} */
-}
+} // namespace bs

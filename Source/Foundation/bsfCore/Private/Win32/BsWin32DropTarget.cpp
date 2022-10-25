@@ -8,7 +8,7 @@
 namespace bs
 {
 	DropTarget::DropTarget(const RenderWindow* ownerWindow, const Rect2I& area)
-			:mArea(area), mActive(false), mOwnerWindow(ownerWindow), mDropType(DropTargetType::None)
+		: mArea(area), mActive(false), mOwnerWindow(ownerWindow), mDropType(DropTargetType::None)
 	{
 		Win32Platform::RegisterDropTarget(this);
 	}
@@ -26,8 +26,8 @@ namespace bs
 	}
 
 	Win32DropTarget::Win32DropTarget(HWND hWnd)
-		:mRefCount(1), mHWnd(hWnd), mAcceptDrag(false)
-	{ }
+		: mRefCount(1), mHWnd(hWnd), mAcceptDrag(false)
+	{}
 
 	Win32DropTarget::~Win32DropTarget()
 	{
@@ -100,7 +100,7 @@ namespace bs
 
 			mFileLists.push_back(GetFileListFromData(pDataObj));
 
-			ScreenToClient(mHWnd, (POINT *)&pt);
+			ScreenToClient(mHWnd, (POINT*)&pt);
 			mQueuedDropOps.push_back(DropTargetOp(DropOpType::DragOver, Vector2I((int)pt.x, (int)pt.y)));
 
 			DropTargetOp& op = mQueuedDropOps.back();
@@ -121,7 +121,7 @@ namespace bs
 		{
 			Lock lock(mSync);
 
-			ScreenToClient(mHWnd, (POINT *)&pt);
+			ScreenToClient(mHWnd, (POINT*)&pt);
 			mQueuedDropOps.push_back(DropTargetOp(DropOpType::DragOver, Vector2I((int)pt.x, (int)pt.y)));
 
 			DropTargetOp& op = mQueuedDropOps.back();
@@ -160,7 +160,7 @@ namespace bs
 
 			mFileLists.push_back(GetFileListFromData(pDataObj));
 
-			ScreenToClient(mHWnd, (POINT *)&pt);
+			ScreenToClient(mHWnd, (POINT*)&pt);
 			mQueuedDropOps.push_back(DropTargetOp(DropOpType::Drop, Vector2I((int)pt.x, (int)pt.y)));
 
 			DropTargetOp& op = mQueuedDropOps.back();
@@ -192,7 +192,7 @@ namespace bs
 	{
 		Lock lock(mSync);
 
-		for(auto& op: mQueuedDropOps)
+		for(auto& op : mQueuedDropOps)
 		{
 			for(auto& target : mDropTargets)
 			{
@@ -238,14 +238,14 @@ namespace bs
 
 			if(op.Type == DropOpType::Leave || op.Type == DropOpType::Drop)
 			{
-				while (!mFileLists.empty())
+				while(!mFileLists.empty())
 				{
 					bool done = mFileLists[0] == op.MFileList;
 
 					bs_delete(mFileLists[0]);
 					mFileLists.erase(mFileLists.begin());
 
-					if (done)
+					if(done)
 						break;
 				}
 			}
@@ -295,5 +295,4 @@ namespace bs
 
 		return files;
 	}
-}
-
+} // namespace bs

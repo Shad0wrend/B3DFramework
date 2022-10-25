@@ -16,16 +16,24 @@ namespace bs
 	 *  @{
 	 */
 
-	template<>
+	template <>
 	struct RTTIPlainType<AnimationEvent>
 	{
-		enum { id = TID_AnimationEvent }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_AnimationEvent
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		/** @copydoc RTTIPlainType::toMemory */
 		static BitLength ToMemory(const AnimationEvent& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-				{
+											   {
 					constexpr uint8_t VERSION = 0;
 
 					BitLength size = 0;
@@ -33,8 +41,7 @@ namespace bs
 					size += rtti_write(data.Time, stream);
 					size += rtti_write(data.Name, stream);
 
-					return size;
-				});
+					return size; });
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
@@ -42,7 +49,7 @@ namespace bs
 		{
 			BitLength size;
 			rtti_read_size_header(stream, compress, size);
-			
+
 			uint8_t version;
 			rtti_read(version, stream);
 			assert(version == 0);
@@ -61,12 +68,12 @@ namespace bs
 			dataSize += rtti_size(data.Name);
 
 			rtti_add_header_size(dataSize, compress);
-			
+
 			return dataSize;
 		}
 	};
 
-	class BS_CORE_EXPORT AnimationClipRTTI : public RTTIType <AnimationClip, Resource, AnimationClipRTTI>
+	class BS_CORE_EXPORT AnimationClipRTTI : public RTTIType<AnimationClip, Resource, AnimationClipRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -82,13 +89,13 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN_NAMED(rootMotionRot, mRootMotion->Rotation, 9)
 		BS_END_RTTI_MEMBERS
 	public:
-		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context)
 		{
 			AnimationClip* clip = static_cast<AnimationClip*>(obj);
 			clip->Initialize();
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "AnimationClip";
 			return name;
@@ -99,7 +106,7 @@ namespace bs
 			return TID_AnimationClip;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return AnimationClip::CreateEmpty();
 		}
@@ -107,4 +114,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

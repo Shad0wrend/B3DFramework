@@ -33,4 +33,4 @@ namespace bs
 		// Queue deletion on the core thread
 		gCoreThread().QueueCommand(deleteObj);
 	}
-}
+} // namespace bs

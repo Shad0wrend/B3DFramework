@@ -34,7 +34,7 @@ namespace bs
 			double deltaY = round(LinuxPlatform::mouseMotionEvent.deltaY);
 			double deltaZ = round(LinuxPlatform::mouseMotionEvent.deltaZ);
 
-			if (deltaX != 0 || deltaY != 0 || deltaZ != 0)
+			if(deltaX != 0 || deltaY != 0 || deltaZ != 0)
 				mOwner->NotifyMouseMovedInternal(deltaX, deltaY, deltaZ);
 
 			LinuxPlatform::mouseMotionEvent.deltaX -= deltaX;
@@ -54,5 +54,4 @@ namespace bs
 	{
 		m->HasInputFocus = windowHandle != (u64)-1;
 	}
-}
-
+} // namespace bs

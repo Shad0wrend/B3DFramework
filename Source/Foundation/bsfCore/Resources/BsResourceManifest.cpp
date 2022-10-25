@@ -9,13 +9,11 @@ namespace bs
 {
 	ResourceManifest::ResourceManifest(const ConstructPrivately& dummy)
 	{
-
 	}
 
 	ResourceManifest::ResourceManifest(const String& name)
-		:mName(name)
+		: mName(name)
 	{
-
 	}
 
 	SPtr<ResourceManifest> ResourceManifest::Create(const String& name)
@@ -34,7 +32,7 @@ namespace bs
 
 		if(iterFind != mUUIDToFilePath.end())
 		{
-			if (iterFind->second != filePath)
+			if(iterFind->second != filePath)
 			{
 				mFilePathToUUID.erase(iterFind->second);
 
@@ -45,7 +43,7 @@ namespace bs
 		else
 		{
 			auto iterFind2 = mFilePathToUUID.find(filePath);
-			if (iterFind2 != mFilePathToUUID.end())
+			if(iterFind2 != mFilePathToUUID.end())
 				mUUIDToFilePath.erase(iterFind2->second);
 
 			mUUIDToFilePath[uuid] = filePath;
@@ -121,12 +119,11 @@ namespace bs
 		{
 			SPtr<ResourceManifest> copy = Create(manifest->mName);
 
-			for (auto& elem : manifest->mFilePathToUUID)
+			for(auto& elem : manifest->mFilePathToUUID)
 			{
-				if (!relativePath.Includes(elem.first))
+				if(!relativePath.Includes(elem.first))
 				{
-					BS_EXCEPT(InvalidStateException, "Path in resource manifest cannot be made relative to: \"" +
-						relativePath.ToString() + "\". Path: \"" + elem.first.ToString() + "\"");
+					BS_EXCEPT(InvalidStateException, "Path in resource manifest cannot be made relative to: \"" + relativePath.ToString() + "\". Path: \"" + elem.first.ToString() + "\"");
 				}
 
 				Path elementRelativePath = elem.first.GetRelative(relativePath);
@@ -134,12 +131,11 @@ namespace bs
 				copy->mFilePathToUUID[elementRelativePath] = elem.second;
 			}
 
-			for (auto& elem : manifest->mUUIDToFilePath)
+			for(auto& elem : manifest->mUUIDToFilePath)
 			{
-				if (!relativePath.Includes(elem.second))
+				if(!relativePath.Includes(elem.second))
 				{
-					BS_EXCEPT(InvalidStateException, "Path in resource manifest cannot be made relative to: \"" +
-						relativePath.ToString() + "\". Path: \"" + elem.second.ToString() + "\"");
+					BS_EXCEPT(InvalidStateException, "Path in resource manifest cannot be made relative to: \"" + relativePath.ToString() + "\". Path: \"" + elem.second.ToString() + "\"");
 				}
 
 				Path elementRelativePath = elem.second.GetRelative(relativePath);
@@ -186,4 +182,4 @@ namespace bs
 	{
 		return ResourceManifest::GetRttiStatic();
 	}
-}
+} // namespace bs

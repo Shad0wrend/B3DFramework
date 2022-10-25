@@ -119,27 +119,27 @@ namespace bs
 	};
 
 	/** Describes operation that will be used for rendering a certain set of vertices. */
-	enum BS_SCRIPT_EXPORT(ExportName(MeshTopology),DocumentationGroup(Rendering)) DrawOperationType
+	enum BS_SCRIPT_EXPORT(ExportName(MeshTopology), DocumentationGroup(Rendering)) DrawOperationType
 	{
 		/** Each vertex represents a point. */
-		DOT_POINT_LIST		BS_SCRIPT_EXPORT(ExportName(PointList))		= 1,
+		DOT_POINT_LIST BS_SCRIPT_EXPORT(ExportName(PointList)) = 1,
 		/** Each sequential pair of vertices represent a line. */
-		DOT_LINE_LIST		BS_SCRIPT_EXPORT(ExportName(LineList))		= 2,
+		DOT_LINE_LIST BS_SCRIPT_EXPORT(ExportName(LineList)) = 2,
 		/** Each vertex (except the first) forms a line with the previous vertex. */
-		DOT_LINE_STRIP		BS_SCRIPT_EXPORT(ExportName(LineStrip))		= 3,
+		DOT_LINE_STRIP BS_SCRIPT_EXPORT(ExportName(LineStrip)) = 3,
 		/** Each sequential 3-tuple of vertices represent a triangle. */
-		DOT_TRIANGLE_LIST	BS_SCRIPT_EXPORT(ExportName(TriangleList))	= 4,
+		DOT_TRIANGLE_LIST BS_SCRIPT_EXPORT(ExportName(TriangleList)) = 4,
 		/** Each vertex (except the first two) form a triangle with the previous two vertices. */
-		DOT_TRIANGLE_STRIP	BS_SCRIPT_EXPORT(ExportName(TriangleStrip))	= 5,
+		DOT_TRIANGLE_STRIP BS_SCRIPT_EXPORT(ExportName(TriangleStrip)) = 5,
 		/** Each vertex (except the first two) form a triangle with the first vertex and previous vertex. */
-		DOT_TRIANGLE_FAN	BS_SCRIPT_EXPORT(ExportName(TriangleFan))		= 6
+		DOT_TRIANGLE_FAN BS_SCRIPT_EXPORT(ExportName(TriangleFan)) = 6
 	};
 
 	/**	Type of mesh indices used, used for determining maximum number of vertices in a mesh. */
 	enum BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) IndexType
 	{
-		IT_16BIT	BS_SCRIPT_EXPORT(ExportName(Index16)),	/**< 16-bit indices. */
-		IT_32BIT	BS_SCRIPT_EXPORT(ExportName(Index32))		/**< 32-bit indices. */
+		IT_16BIT BS_SCRIPT_EXPORT(ExportName(Index16)), /**< 16-bit indices. */
+		IT_32BIT BS_SCRIPT_EXPORT(ExportName(Index32)) /**< 32-bit indices. */
 	};
 
 	/** These values represent a hint to the driver when locking a hardware buffer. */
@@ -171,7 +171,7 @@ namespace bs
 		 */
 		GBL_WRITE_ONLY_NO_OVERWRITE,
 		/** Allows you to write to a buffer. */
-		GBL_WRITE_ONLY	
+		GBL_WRITE_ONLY
 	};
 
 	/** Types of programs that may run on GPU. */
@@ -232,15 +232,15 @@ namespace bs
 		BF_32X2F, /**< 2D 32-bit floating-point format. */
 		BF_32X3F, /**< 3D 32-bit floating-point format. */
 		BF_32X4F, /**< 4D 32-bit floating-point format. */
-		BF_8X1,   /**< 1D 8-bit normalized format. */
-		BF_8X2,   /**< 2D 8-bit normalized format. */
-		BF_8X4,   /**< 4D 8-bit normalized format. */
-		BF_16X1,  /**< 1D 16-bit normalized format. */
-		BF_16X2,  /**< 2D 16-bit normalized format. */
-		BF_16X4,  /**< 4D 16-bit normalized format. */
-		BF_8X1S,  /**< 1D 8-bit signed integer format. */
-		BF_8X2S,  /**< 2D 8-bit signed integer format. */
-		BF_8X4S,  /**< 4D 8-bit signed integer format. */
+		BF_8X1, /**< 1D 8-bit normalized format. */
+		BF_8X2, /**< 2D 8-bit normalized format. */
+		BF_8X4, /**< 4D 8-bit normalized format. */
+		BF_16X1, /**< 1D 16-bit normalized format. */
+		BF_16X2, /**< 2D 16-bit normalized format. */
+		BF_16X4, /**< 4D 16-bit normalized format. */
+		BF_8X1S, /**< 1D 8-bit signed integer format. */
+		BF_8X2S, /**< 2D 8-bit signed integer format. */
+		BF_8X4S, /**< 4D 8-bit signed integer format. */
 		BF_16X1S, /**< 1D 16-bit signed integer format. */
 		BF_16X2S, /**< 2D 16-bit signed integer format. */
 		BF_16X4S, /**< 4D 16-bit signed integer format. */
@@ -248,9 +248,9 @@ namespace bs
 		BF_32X2S, /**< 2D 32-bit signed integer format. */
 		BF_32X3S, /**< 3D 32-bit signed integer format. */
 		BF_32X4S, /**< 4D 32-bit signed integer format. */
-		BF_8X1U,  /**< 1D 8-bit unsigned integer format. */
-		BF_8X2U,  /**< 2D 8-bit unsigned integer format. */
-		BF_8X4U,  /**< 4D 8-bit unsigned integer format. */
+		BF_8X1U, /**< 1D 8-bit unsigned integer format. */
+		BF_8X2U, /**< 2D 8-bit unsigned integer format. */
+		BF_8X4U, /**< 4D 8-bit unsigned integer format. */
 		BF_16X1U, /**< 1D 16-bit unsigned integer format. */
 		BF_16X2U, /**< 2D 16-bit unsigned integer format. */
 		BF_16X4U, /**< 4D 16-bit unsigned integer format. */
@@ -335,22 +335,22 @@ namespace bs
 	enum BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) TextureType
 	{
 		/** One dimensional texture. Just a row of pixels. */
-		TEX_TYPE_1D			BS_SCRIPT_EXPORT(ExportName(Texture1D))	= 1,
+		TEX_TYPE_1D BS_SCRIPT_EXPORT(ExportName(Texture1D)) = 1,
 		/** Two dimensional texture. */
-		TEX_TYPE_2D			BS_SCRIPT_EXPORT(ExportName(Texture2D))	= 2,
+		TEX_TYPE_2D BS_SCRIPT_EXPORT(ExportName(Texture2D)) = 2,
 		/** Three dimensional texture. */
-		TEX_TYPE_3D			BS_SCRIPT_EXPORT(ExportName(Texture3D))	= 3,
+		TEX_TYPE_3D BS_SCRIPT_EXPORT(ExportName(Texture3D)) = 3,
 		/** Texture consisting out of six 2D textures describing an inside of a cube. Allows special sampling. */
-		TEX_TYPE_CUBE_MAP	BS_SCRIPT_EXPORT(ExportName(TextureCube)) = 4
+		TEX_TYPE_CUBE_MAP BS_SCRIPT_EXPORT(ExportName(TextureCube)) = 4
 	};
 
 	/**	Projection type to use by the camera. */
 	enum BS_SCRIPT_EXPORT() ProjectionType
 	{
 		/** Projection type where object size remains constant and parallel lines remain parallel. */
-		PT_ORTHOGRAPHIC		BS_SCRIPT_EXPORT(ExportName(Orthographic)),
+		PT_ORTHOGRAPHIC BS_SCRIPT_EXPORT(ExportName(Orthographic)),
 		/** Projection type that emulates human vision. Objects farther away appear smaller. */
-		PT_PERSPECTIVE		BS_SCRIPT_EXPORT(ExportName(Perspective))
+		PT_PERSPECTIVE BS_SCRIPT_EXPORT(ExportName(Perspective))
 	};
 
 	/**	Contains data about a type used for GPU data parameters. */
@@ -374,7 +374,7 @@ namespace bs
 			Lookup[(u32)GPDT_FLOAT2] = { 4, 8, 8, 1, 2 };
 			Lookup[(u32)GPDT_FLOAT3] = { 4, 16, 16, 1, 3 };
 			Lookup[(u32)GPDT_FLOAT4] = { 4, 16, 16, 1, 4 };
-			Lookup[(u32)GPDT_COLOR]  = { 4, 16, 16, 1, 4 };
+			Lookup[(u32)GPDT_COLOR] = { 4, 16, 16, 1, 4 };
 			Lookup[(u32)GPDT_MATRIX_2X2] = { 4, 16, 8, 2, 2 };
 			Lookup[(u32)GPDT_MATRIX_2X3] = { 4, 32, 16, 2, 3 };
 			Lookup[(u32)GPDT_MATRIX_2X4] = { 4, 32, 16, 2, 4 };
@@ -513,7 +513,7 @@ namespace bs
 	};
 
 	/** Determines the type of the source image for generating cubemaps. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Utility),API(Framework),API(Editor)) CubemapSourceType
+	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Utility), API(Framework), API(Editor)) CubemapSourceType
 	{
 		/** Source is a single image that will be replicated on all cubemap faces. */
 		Single,
@@ -534,19 +534,26 @@ namespace bs
 	/** Names of individual components of a vector. */
 	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Utility)) VectorComponent
 	{
-		X, Y, Z, W
+		X,
+		Y,
+		Z,
+		W
 	};
 
 	/** Names of individual components of a color. */
 	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Utility)) ColorComponent
 	{
-		R, G, B, A
+		R,
+		G,
+		B,
+		A
 	};
 
 	/** Identifiers representing a range of values. */
 	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Utility)) RangeComponent
 	{
-		Min, Max
+		Min,
+		Max
 	};
 
 	/**
@@ -594,8 +601,8 @@ namespace bs
 	struct UVWAddressingMode
 	{
 		UVWAddressingMode()
-			:U(TAM_WRAP), V(TAM_WRAP), W(TAM_WRAP)
-		{ }
+			: U(TAM_WRAP), V(TAM_WRAP), W(TAM_WRAP)
+		{}
 
 		bool operator==(const UVWAddressingMode& rhs) const
 		{
@@ -606,11 +613,11 @@ namespace bs
 	};
 
 	/**	References a subset of surfaces within a texture. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Rendering),ExportAsStruct(true)) TextureSurface
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportAsStruct(true)) TextureSurface
 	{
 		TextureSurface(u32 mipLevel = 0, u32 numMipLevels = 1, u32 face = 0, u32 numFaces = 1)
-			:MipLevel(mipLevel), NumMipLevels(numMipLevels), Face(face), NumFaces(numFaces)
-		{ }
+			: MipLevel(mipLevel), NumMipLevels(numMipLevels), Face(face), NumFaces(numFaces)
+		{}
 
 		/** First mip level to reference. */
 		u32 MipLevel;
@@ -646,15 +653,15 @@ namespace bs
 	{
 	public:
 		CoreSyncData()
-			:data(nullptr), size(0)
-		{ }
+			: data(nullptr), size(0)
+		{}
 
 		CoreSyncData(u8* data, u32 size)
-			:data(data), size(size)
-		{ }
+			: data(data), size(size)
+		{}
 
 		/** Gets the internal data and checks the data is of valid size. */
-		template<class T>
+		template <class T>
 		const T& GetData() const
 		{
 			assert(sizeof(T) == size);
@@ -674,4 +681,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

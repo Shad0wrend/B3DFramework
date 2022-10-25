@@ -21,6 +21,7 @@ namespace bs
 	{
 	private:
 		SAMPLER_STATE_DESC& GetData(SamplerState* obj) { return obj->mProperties.mData; }
+
 		void SetData(SamplerState* obj, SAMPLER_STATE_DESC& val) { obj->mProperties.mData = val; }
 
 	public:
@@ -29,13 +30,13 @@ namespace bs
 			AddPlainField("mData", 0, &SamplerStateRTTI::GetData, &SamplerStateRTTI::SetData);
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context)
 		{
 			SamplerState* samplerState = static_cast<SamplerState*>(obj);
 			samplerState->Initialize();
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "SamplerState";
 			return name;
@@ -46,7 +47,7 @@ namespace bs
 			return TID_SamplerState;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return RenderStateManager::Instance().CreateSamplerStatePtrInternal(SAMPLER_STATE_DESC());
 		}
@@ -54,4 +55,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

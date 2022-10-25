@@ -22,4 +22,4 @@ namespace bs
 	{
 		return FontImportOptions::GetRttiStatic();
 	}
-}
+} // namespace bs

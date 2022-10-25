@@ -17,25 +17,25 @@ namespace bs
 	 *
 	 * @note	Wraps SliderJoint as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportName(SliderJoint)) CSliderJoint : public CJoint
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(SliderJoint)) CSliderJoint : public CJoint
 	{
 	public:
 		CSliderJoint(const HSceneObject& parent);
 
 		/** @copydoc SliderJoint::getPosition */
-		BS_SCRIPT_EXPORT(ExportName(Position),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Position), Property(Getter))
 		float GetPosition() const;
 
 		/** @copydoc SliderJoint::getSpeed */
-		BS_SCRIPT_EXPORT(ExportName(Speed),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Speed), Property(Getter))
 		float GetSpeed() const;
 
 		/** @copydoc SliderJoint::getLimit */
-		BS_SCRIPT_EXPORT(ExportName(Limit),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Limit), Property(Getter))
 		LimitLinearRange GetLimit() const;
 
 		/** @copydoc SliderJoint::setLimit */
-		BS_SCRIPT_EXPORT(ExportName(Limit),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Limit), Property(Setter))
 		void SetLimit(const LimitLinearRange& limit);
 
 		/** @copydoc SliderJoint::setFlag */
@@ -62,10 +62,10 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CJoint::createInternal */
-		SPtr<Joint> CreateInternal() ;
+		SPtr<Joint> CreateInternal();
 
 		/** @copydoc CJoint::getLocalTransform */
-		void GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation) ;
+		void GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation);
 
 		SLIDER_JOINT_DESC mDesc;
 
@@ -75,11 +75,11 @@ namespace bs
 	public:
 		friend class CSliderJointRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 
 	protected:
 		CSliderJoint(); // Serialization only
 	};
 
-	 /** @} */
-}
+	/** @} */
+} // namespace bs

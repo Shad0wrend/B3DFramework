@@ -7,7 +7,7 @@ namespace bs
 {
 	void SceneActor::SetTransform(const Transform& transform)
 	{
-		if (mMobility != ObjectMobility::Movable)
+		if(mMobility != ObjectMobility::Movable)
 			return;
 
 		mTransform = transform;
@@ -29,17 +29,17 @@ namespace bs
 	void SceneActor::UpdateStateInternal(const SceneObject& so, bool force)
 	{
 		u32 curHash = so.GetTransformHash();
-		if (curHash != mHash || force)
+		if(curHash != mHash || force)
 		{
 			SetTransform(so.GetTransform());
 
 			mHash = curHash;
 		}
 
-		if (so.GetActive() != mActive || force)
+		if(so.GetActive() != mActive || force)
 			SetActive(so.GetActive());
 
-		if (so.GetMobility() != mMobility || force)
+		if(so.GetMobility() != mMobility || force)
 			SetMobility(so.GetMobility());
 	}
-}
+} // namespace bs

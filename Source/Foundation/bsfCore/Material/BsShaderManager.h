@@ -24,7 +24,7 @@ namespace bs
 		virtual HShaderInclude FindInclude(const String& name) const = 0;
 
 		/** Registers a path in which to look for shader include files, along the default places. */
-		virtual void AddSearchPath(const Path& path) { }
+		virtual void AddSearchPath(const Path& path) {}
 	};
 
 	/**
@@ -39,7 +39,7 @@ namespace bs
 	};
 
 	/**	A global manager that handles various shader specific operations. */
-	class BS_CORE_EXPORT ShaderManager : public Module <ShaderManager>
+	class BS_CORE_EXPORT ShaderManager : public Module<ShaderManager>
 	{
 	public:
 		ShaderManager(const SPtr<IShaderIncludeHandler>& handler) { mIncludeHandler = handler; }
@@ -47,7 +47,7 @@ namespace bs
 		/**
 		 * Attempts to find a shader include based on the include name.
 		 *
-		 * @note	
+		 * @note
 		 * The name is usually a path to the resource relative to the working folder, but can be other things depending on
 		 * active handler.
 		 */
@@ -58,9 +58,10 @@ namespace bs
 
 		/** Registers a path in which to look for shader include files, along the default places. */
 		void AddSearchPath(const Path& path);
+
 	private:
 		SPtr<IShaderIncludeHandler> mIncludeHandler;
 	};
 
 	/** @} */
-}
+} // namespace bs

@@ -17,9 +17,9 @@ namespace bs
 	{
 	public:
 		GpuResourceDataRTTI()
-		{ }
+		{}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "GpuResourceData";
 			return name;
@@ -30,7 +30,7 @@ namespace bs
 			return TID_GpuResourceData;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
 			return nullptr;
@@ -39,4 +39,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

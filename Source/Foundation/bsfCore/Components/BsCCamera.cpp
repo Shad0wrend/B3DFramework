@@ -28,7 +28,7 @@ namespace bs
 
 		Vector<Plane> worldPlanes(frustumPlanes.size());
 		u32 i = 0;
-		for (auto& plane : frustumPlanes)
+		for(auto& plane : frustumPlanes)
 		{
 			worldPlanes[i] = worldMatrix.MultiplyAffine(plane);
 			i++;
@@ -51,7 +51,7 @@ namespace bs
 	{
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->Initialize();
 		else
 			mInternal = Camera::Create();
@@ -81,4 +81,4 @@ namespace bs
 	{
 		return CCamera::GetRttiStatic();
 	}
-}
+} // namespace bs

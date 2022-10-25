@@ -22,15 +22,19 @@ namespace bs
 	{
 	private:
 		SPtr<VertexDataDesc> GetVertexData(MeshData* obj) { return obj->mVertexData; }
+
 		void SetVertexData(MeshData* obj, SPtr<VertexDataDesc> value) { obj->mVertexData = value; }
 
 		IndexType& GetIndexType(MeshData* obj) { return obj->mIndexType; }
+
 		void SetIndexType(MeshData* obj, IndexType& value) { obj->mIndexType = value; }
 
 		u32& GetNumVertices(MeshData* obj) { return obj->mNumVertices; }
+
 		void SetNumVertices(MeshData* obj, u32& value) { obj->mNumVertices = value; }
 
 		u32& GetNumIndices(MeshData* obj) { return obj->mNumIndices; }
+
 		void SetNumIndices(MeshData* obj, u32& value) { obj->mNumIndices = value; }
 
 		SPtr<DataStream> GetData(MeshData* obj, u32& size)
@@ -58,12 +62,12 @@ namespace bs
 			AddDataBlockField("data", 4, &MeshDataRTTI::GetData, &MeshDataRTTI::SetData);
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
-			return bs_shared_ptr<MeshData>(new (bs_alloc<MeshData>()) MeshData());
+			return bs_shared_ptr<MeshData>(new(bs_alloc<MeshData>()) MeshData());
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "MeshData";
 			return name;
@@ -77,4 +81,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

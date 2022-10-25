@@ -22,13 +22,13 @@ namespace bs
 	enum BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) PropertyDistributionType
 	{
 		/** The distribution is a costant value. */
-		PDT_Constant			BS_SCRIPT_EXPORT(ExportName(Constant)),
+		PDT_Constant BS_SCRIPT_EXPORT(ExportName(Constant)),
 		/** The distribution is a random value in a specified constant range. */
-		PDT_RandomRange			BS_SCRIPT_EXPORT(ExportName(RandomRange)),
+		PDT_RandomRange BS_SCRIPT_EXPORT(ExportName(RandomRange)),
 		/** The distribution is a time-varying value. */
-		PDT_Curve				BS_SCRIPT_EXPORT(ExportName(Curve)),
+		PDT_Curve BS_SCRIPT_EXPORT(ExportName(Curve)),
 		/** The distribution is a random value in a specified time-varying range. */
-		PDT_RandomCurveRange	BS_SCRIPT_EXPORT(ExportName(RandomCurveRange))
+		PDT_RandomCurveRange BS_SCRIPT_EXPORT(ExportName(RandomCurveRange))
 	};
 
 	/* @} */
@@ -38,35 +38,39 @@ namespace bs
 	 */
 
 	/** Specifies a color as a distribution, which can include a constant color, random color range or a color gradient. */
-	template<class T>
+	template <class T>
 	struct TColorDistribution
 	{
 		/** Creates a new empty distribution. */
 		BS_SCRIPT_EXPORT()
+
 		TColorDistribution()
 			: mType(PDT_Constant)
 			, mMinGradient({ ColorGradientKey(Color::Black, 0.0f) })
 			, mMaxGradient({ ColorGradientKey(Color::Black, 0.0f) })
-		{ }
+		{}
 
 		/** Creates a new distribution that returns a constant color. */
 		BS_SCRIPT_EXPORT()
+
 		TColorDistribution(const Color& color)
 			: mType(PDT_Constant)
 			, mMinGradient({ ColorGradientKey(color, 0.0f) })
 			, mMaxGradient({ ColorGradientKey(color, 0.0f) })
-		{ }
+		{}
 
 		/** Creates a new distribution that returns a random color in the specified range. */
 		BS_SCRIPT_EXPORT()
+
 		TColorDistribution(const Color& minColor, const Color& maxColor)
 			: mType(PDT_RandomRange)
 			, mMinGradient({ ColorGradientKey(minColor, 0.0f) })
 			, mMaxGradient({ ColorGradientKey(maxColor, 0.0f) })
-		{ }
+		{}
 
 		/** Creates a new distribution that evaluates a color gradient. */
 		BS_SCRIPT_EXPORT()
+
 		TColorDistribution(const T& gradient)
 			: mType(PDT_Curve), mMinGradient(gradient), mMaxGradient(gradient)
 		{
@@ -79,6 +83,7 @@ namespace bs
 
 		/** Creates a new distribution that returns a random color in a range determined by two gradients. */
 		BS_SCRIPT_EXPORT()
+
 		TColorDistribution(const T& minGradient, const T& maxGradient)
 			: mType(PDT_RandomCurveRange), mMinGradient(minGradient), mMaxGradient(maxGradient)
 		{
@@ -90,7 +95,8 @@ namespace bs
 		}
 
 		/** Returns the type of the represented distribution. */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(DistributionType))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(DistributionType))
+
 		PropertyDistributionType GetType() const { return mType; }
 
 		/**
@@ -98,12 +104,14 @@ namespace bs
 		 * the distribution is represented by a gradient.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		Color GetMinConstant() const { return mMinGradient.GetKey(0).Color; }
 
 		/**
 		 * Returns the maximum value of a constant range. Only defined if the distribution represents a non-gradient range.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		Color GetMaxConstant() const { return mMaxGradient.GetKey(0).Color; }
 
 		/**
@@ -111,6 +119,7 @@ namespace bs
 		 * Undefined if the distribution is represented by a constant or a non-gradient range.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		const T& GetMinGradient() const { return mMinGradient; }
 
 		/**
@@ -118,6 +127,7 @@ namespace bs
 		 * represents a gradient range.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		const T& GetMaxGradient() const { return mMaxGradient; }
 
 		/**
@@ -176,13 +186,13 @@ namespace bs
 			case PDT_Constant:
 				return mMinGradient.Evaluate(0.0f);
 			case PDT_RandomRange:
-			{
-				const auto minColor = mMinGradient.Evaluate(0.0f);
-				const auto maxColor = mMaxGradient.Evaluate(0.0f);
+				{
+					const auto minColor = mMinGradient.Evaluate(0.0f);
+					const auto maxColor = mMaxGradient.Evaluate(0.0f);
 
-				const auto lerpFactor = impl::TGradientHelper<typename T::ColorType>::ToLerpFactor(factor.GetUNorm());
-				return Color::Lerp(lerpFactor, minColor, maxColor);
-			}
+					const auto lerpFactor = impl::TGradientHelper<typename T::ColorType>::ToLerpFactor(factor.GetUNorm());
+					return Color::Lerp(lerpFactor, minColor, maxColor);
+				}
 			case PDT_Curve:
 				return mMinGradient.Evaluate(t);
 			case PDT_RandomCurveRange:
@@ -210,7 +220,7 @@ namespace bs
 		 */
 		LookupTable ToLookupTable(u32 numSamples = 128, bool ignoreRange = false) const;
 
-		bool operator== (const TColorDistribution<T>& rhs) const
+		bool operator==(const TColorDistribution<T>& rhs) const
 		{
 			if(mType != rhs.mType)
 				return false;
@@ -221,7 +231,8 @@ namespace bs
 				return mMinGradient == rhs.mMinGradient && mMaxGradient == rhs.mMaxGradient;
 		}
 
-		bool operator!= (const TColorDistribution<T>& rhs) const { return !operator==(rhs); }
+		bool operator!=(const TColorDistribution<T>& rhs) const { return !operator==(rhs); }
+
 	private:
 		friend struct RTTIPlainType<TColorDistribution<T>>;
 
@@ -234,63 +245,69 @@ namespace bs
 	using ColorHDRDistribution = TColorDistribution<ColorGradientHDR>;
 
 #ifdef BS_SBGEN
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportName(ColorDistribution)) TColorDistribution<ColorGradient>;
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportName(ColorHDRDistribution)) TColorDistribution<ColorGradientHDR>;
+	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(ColorDistribution)) TColorDistribution<ColorGradient>;
+	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(ColorHDRDistribution)) TColorDistribution<ColorGradientHDR>;
 #endif
 
 	/** Specifies a value as a distribution, which can include a constant value, random range or a curve. */
-	template<class T>
+	template <class T>
 	struct TDistribution
 	{
 		/** Creates a new empty distribution. */
 		BS_SCRIPT_EXPORT()
+
 		TDistribution()
 			: mType(PDT_Constant)
-			, mMinCurve({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} })
-			, mMaxCurve({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} })
-		{ }
+			, mMinCurve({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f } })
+			, mMaxCurve({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f } })
+		{}
 		/** Creates a new distribution that returns a constant value. */
 		BS_SCRIPT_EXPORT()
+
 		TDistribution(T value)
 			: mType(PDT_Constant)
-			, mMinCurve({ TKeyframe<T>{ value, TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} })
-			, mMaxCurve({ TKeyframe<T>{ value, TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} })
-		{ }
+			, mMinCurve({ TKeyframe<T>{ value, TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f } })
+			, mMaxCurve({ TKeyframe<T>{ value, TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f } })
+		{}
 
 		/** Creates a new distribution that returns a random value in the specified range. */
 		BS_SCRIPT_EXPORT()
+
 		TDistribution(T minValue, T maxValue)
 			: mType(PDT_RandomRange)
-			, mMinCurve({ TKeyframe<T>{ minValue, TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} })
-			, mMaxCurve({ TKeyframe<T>{ maxValue, TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} })
-		{ }
+			, mMinCurve({ TKeyframe<T>{ minValue, TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f } })
+			, mMaxCurve({ TKeyframe<T>{ maxValue, TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f } })
+		{}
 
 		/** Creates a new distribution that evaluates a curve. */
 		BS_SCRIPT_EXPORT()
+
 		TDistribution(const TAnimationCurve<T>& curve)
 			: mType(PDT_Curve), mMinCurve(curve), mMaxCurve(curve)
 		{
 			if(mMinCurve.GetKeyFrames().empty())
-				mMinCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} });
+				mMinCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f } });
 
 			if(mMaxCurve.GetKeyFrames().empty())
-				mMaxCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} });
+				mMaxCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f } });
 		}
 
 		/** Creates a new distribution that returns a random value in a range determined by two curves. */
 		BS_SCRIPT_EXPORT()
+
 		TDistribution(const TAnimationCurve<T>& minCurve, const TAnimationCurve<T>& maxCurve)
 			: mType(PDT_RandomCurveRange), mMinCurve(minCurve), mMaxCurve(maxCurve)
 		{
 			if(mMinCurve.GetKeyFrames().empty())
-				mMinCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} });
+				mMinCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f } });
 
 			if(mMaxCurve.GetKeyFrames().empty())
-				mMaxCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f} });
+				mMaxCurve = TAnimationCurve<T>({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f } });
 		}
 
 		/** Returns the type of the represented distribution. */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(DistributionType))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(DistributionType))
+
 		PropertyDistributionType GetType() const { return mType; }
 
 		/**
@@ -298,12 +315,14 @@ namespace bs
 		 * the distribution is represented by a curve.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		const T& GetMinConstant() const { return mMinCurve.GetKeyFrames()[0].Value; }
 
 		/**
 		 * Returns the maximum value of a constant range. Only defined if the distribution represents a non-curve range.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		const T& GetMaxConstant() const { return mMaxCurve.GetKeyFrames()[0].Value; }
 
 		/**
@@ -311,6 +330,7 @@ namespace bs
 		 * the distribution is represented by a constant or a non-curve range.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		const TAnimationCurve<T>& GetMinCurve() const { return mMinCurve; }
 
 		/**
@@ -318,6 +338,7 @@ namespace bs
 		 * a curve range.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		const TAnimationCurve<T>& GetMaxCurve() const { return mMaxCurve; }
 
 		/**
@@ -332,6 +353,7 @@ namespace bs
 		 *
 		 */
 		BS_SCRIPT_EXPORT()
+
 		T Evaluate(float t, float factor) const
 		{
 			switch(mType)
@@ -364,6 +386,7 @@ namespace bs
 		 *
 		 */
 		BS_SCRIPT_EXPORT()
+
 		T Evaluate(float t, const Random& factor) const
 		{
 			switch(mType)
@@ -399,7 +422,7 @@ namespace bs
 		 */
 		LookupTable ToLookupTable(u32 numSamples = 128, bool ignoreRange = false) const;
 
-		bool operator== (const TDistribution<T>& rhs) const
+		bool operator==(const TDistribution<T>& rhs) const
 		{
 			if(mType != rhs.mType)
 				return false;
@@ -410,7 +433,8 @@ namespace bs
 				return mMinCurve == rhs.mMinCurve && mMaxCurve == rhs.mMaxCurve;
 		}
 
-		bool operator!= (const TDistribution<T>& rhs) const { return !operator==(rhs); }
+		bool operator!=(const TDistribution<T>& rhs) const { return !operator==(rhs); }
+
 	private:
 		friend struct RTTIPlainType<TDistribution<T>>;
 
@@ -424,10 +448,10 @@ namespace bs
 	using Vector2Distribution = TDistribution<Vector2>;
 
 #ifdef BS_SBGEN
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportName(FloatDistribution)) TDistribution<float>;
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportName(Vector3Distribution)) TDistribution<Vector3>;
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportName(Vector2Distribution)) TDistribution<Vector2>;
+	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(FloatDistribution)) TDistribution<float>;
+	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(Vector3Distribution)) TDistribution<Vector3>;
+	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(Vector2Distribution)) TDistribution<Vector2>;
 #endif
 
 	/** @} */
-}
+} // namespace bs

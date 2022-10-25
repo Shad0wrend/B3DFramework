@@ -47,7 +47,7 @@ namespace bs
 
 	void CameraBase::SetNearClipDistance(float nearPlane)
 	{
-		if (nearPlane <= 0)
+		if(nearPlane <= 0)
 		{
 			BS_LOG(Error, Renderer, "Near clip distance must be greater than zero.");
 			return;
@@ -119,7 +119,7 @@ namespace bs
 
 		Vector<Plane> worldPlanes(frustumPlanes.size());
 		u32 i = 0;
-		for (auto& plane : frustumPlanes)
+		for(auto& plane : frustumPlanes)
 		{
 			worldPlanes[i] = worldMatrix.MultiplyAffine(plane);
 			i++;
@@ -130,7 +130,7 @@ namespace bs
 
 	void CameraBase::CalcProjectionParameters(float& left, float& right, float& bottom, float& top) const
 	{
-		if (mCustomProjMatrix)
+		if(mCustomProjMatrix)
 		{
 			// Convert clipspace corners to camera space
 			Matrix4 invProj = mProjMatrix.Inverse();
@@ -147,14 +147,14 @@ namespace bs
 		}
 		else
 		{
-			if (mFrustumExtentsManuallySet)
+			if(mFrustumExtentsManuallySet)
 			{
 				left = mLeft;
 				right = mRight;
 				top = mTop;
 				bottom = mBottom;
 			}
-			else if (mProjType == PT_PERSPECTIVE)
+			else if(mProjType == PT_PERSPECTIVE)
 			{
 				Radian thetaX(mHorzFOV * 0.5f);
 				float tanThetaX = Math::Tan(thetaX);
@@ -193,19 +193,19 @@ namespace bs
 
 	void CameraBase::UpdateFrustum() const
 	{
-		if (IsFrustumOutOfDate())
+		if(IsFrustumOutOfDate())
 		{
 			float left, right, bottom, top;
 
 			CalcProjectionParameters(left, right, bottom, top);
 
-			if (!mCustomProjMatrix)
+			if(!mCustomProjMatrix)
 			{
 				float inv_w = 1 / (right - left);
 				float inv_h = 1 / (top - bottom);
 				float inv_d = 1 / (mFarDist - mNearDist);
 
-				if (mProjType == PT_PERSPECTIVE)
+				if(mProjType == PT_PERSPECTIVE)
 				{
 					float A = 2 * mNearDist * inv_w;
 					float B = 2 * mNearDist * inv_h;
@@ -213,7 +213,7 @@ namespace bs
 					float D = (top + bottom) * inv_h;
 					float q, qn;
 
-					if (mFarDist == 0)
+					if(mFarDist == 0)
 					{
 						// Infinite far plane
 						q = CameraBase::INFINITE_FAR_PLANE_ADJUST - 1;
@@ -234,7 +234,7 @@ namespace bs
 					mProjMatrix[2][3] = qn;
 					mProjMatrix[3][2] = -1;
 				}
-				else if (mProjType == PT_ORTHOGRAPHIC)
+				else if(mProjType == PT_ORTHOGRAPHIC)
 				{
 					float A = 2 * inv_w;
 					float B = 2 * inv_h;
@@ -242,7 +242,7 @@ namespace bs
 					float D = -(top + bottom) * inv_h;
 					float q, qn;
 
-					if (mFarDist == 0)
+					if(mFarDist == 0)
 					{
 						// Can not do infinite far plane here, avoid divided zero only
 						q = -CameraBase::INFINITE_FAR_PLANE_ADJUST / mNearDist;
@@ -251,7 +251,7 @@ namespace bs
 					else
 					{
 						q = -2 * inv_d;
-						qn = -(mFarDist + mNearDist)  * inv_d;
+						qn = -(mFarDist + mNearDist) * inv_d;
 					}
 
 					mProjMatrix = Matrix4::ZERO;
@@ -279,7 +279,7 @@ namespace bs
 			Vector3 min(left, bottom, -farDist);
 			Vector3 max(right, top, 0);
 
-			if (mCustomProjMatrix)
+			if(mCustomProjMatrix)
 			{
 				// Some custom projection matrices can have unusual inverted settings
 				// So make sure the AABB is the right way around to start with
@@ -288,7 +288,7 @@ namespace bs
 				max.Max(tmp);
 			}
 
-			if (mProjType == PT_PERSPECTIVE)
+			if(mProjType == PT_PERSPECTIVE)
 			{
 				// Merge with far plane bounds
 				float radio = farDist / mNearDist;
@@ -310,7 +310,7 @@ namespace bs
 
 	void CameraBase::UpdateView() const
 	{
-		if (!mCustomViewMatrix && mRecalcView)
+		if(!mCustomViewMatrix && mRecalcView)
 		{
 			mViewMatrix.MakeView(mTransform.GetPosition(), mTransform.GetRotation());
 			mViewMatrixInv = mViewMatrix.InverseAffine();
@@ -322,7 +322,7 @@ namespace bs
 	{
 		UpdateFrustum();
 
-		if (mRecalcFrustumPlanes)
+		if(mRecalcFrustumPlanes)
 		{
 			mFrustum = ConvexVolume(mProjMatrix);
 			mRecalcFrustumPlanes = false;
@@ -363,7 +363,7 @@ namespace bs
 	void CameraBase::SetCustomViewMatrix(bool enable, const Matrix4& viewMatrix)
 	{
 		mCustomViewMatrix = enable;
-		if (enable)
+		if(enable)
 		{
 			mViewMatrix = viewMatrix;
 			mViewMatrixInv = mViewMatrix.InverseAffine();
@@ -376,7 +376,7 @@ namespace bs
 	{
 		mCustomProjMatrix = enable;
 
-		if (enable)
+		if(enable)
 			mProjMatrix = projMatrix;
 
 		InvalidateFrustum();
@@ -451,7 +451,7 @@ namespace bs
 	void CameraBase::SetTransform(const Transform& transform)
 	{
 		SceneActor::SetTransform(transform);
-		
+
 		mRecalcView = true;
 	}
 
@@ -491,7 +491,7 @@ namespace bs
 		worldPoint = GetProjectionMatrixRs().Inverse().Multiply(worldPoint);
 
 		Vector3 worldPoint3D;
-		if (Math::Abs(worldPoint.W) > 1e-7f)
+		if(Math::Abs(worldPoint.W) > 1e-7f)
 		{
 			float invW = 1.0f / worldPoint.W;
 
@@ -588,7 +588,7 @@ namespace bs
 		Vector4 projPoint4(point.X, point.Y, point.Z, 1.0f);
 		projPoint4 = GetProjectionMatrixRs().Multiply(projPoint4);
 
-		if (Math::Abs(projPoint4.W) > 1e-7f)
+		if(Math::Abs(projPoint4.W) > 1e-7f)
 		{
 			float invW = 1.0f / projPoint4.W;
 			projPoint4.X *= invW;
@@ -615,11 +615,11 @@ namespace bs
 		farAwayPoint = GetProjectionMatrixRs().Inverse().Multiply(farAwayPoint);
 
 		// Can't proceed if w is too small
-		if (Math::Abs(farAwayPoint.W) > 1e-7f)
+		if(Math::Abs(farAwayPoint.W) > 1e-7f)
 		{
 			// Perspective divide, to get the values that make sense in 3D space
 			float invW = 1.0f / farAwayPoint.W;
-			
+
 			Vector3 farAwayPoint3D;
 			farAwayPoint3D.X = farAwayPoint.X * invW;
 			farAwayPoint3D.Y = farAwayPoint.Y * invW;
@@ -629,9 +629,9 @@ namespace bs
 			float distAlongZ = farAwayPoint3D.Dot(-Vector3::UNIT_Z);
 
 			// Do nothing if point is behind the camera
-			if (distAlongZ >= 0.0f)
+			if(distAlongZ >= 0.0f)
 			{
-				if (mProjType == PT_PERSPECTIVE)
+				if(mProjType == PT_PERSPECTIVE)
 				{
 					// Direction from origin to our point
 					Vector3 dir = farAwayPoint3D; // Camera is at (0, 0, 0) so it's the same vector
@@ -698,7 +698,7 @@ namespace bs
 
 	SPtr<Camera> Camera::Create()
 	{
-		Camera* handler = new (bs_alloc<Camera>()) Camera();
+		Camera* handler = new(bs_alloc<Camera>()) Camera();
 		SPtr<Camera> handlerPtr = bs_core_ptr<Camera>(handler);
 		handlerPtr->SetThisPtrInternal(handlerPtr);
 		handlerPtr->Initialize();
@@ -708,7 +708,7 @@ namespace bs
 
 	SPtr<Camera> Camera::CreateEmpty()
 	{
-		Camera* handler = new (bs_alloc<Camera>()) Camera();
+		Camera* handler = new(bs_alloc<Camera>()) Camera();
 		SPtr<Camera> handlerPtr = bs_core_ptr<Camera>(handler);
 		handlerPtr->SetThisPtrInternal(handlerPtr);
 
@@ -717,7 +717,7 @@ namespace bs
 
 	SPtr<ct::CoreObject> Camera::CreateCore() const
 	{
-		ct::Camera* handler = new (bs_alloc<ct::Camera>()) ct::Camera(mViewport->GetCore());
+		ct::Camera* handler = new(bs_alloc<ct::Camera>()) ct::Camera(mViewport->GetCore());
 		SPtr<ct::Camera> handlerPtr = bs_shared_ptr<ct::Camera>(handler);
 		handlerPtr->SetThisPtrInternal(handlerPtr);
 
@@ -757,12 +757,12 @@ namespace bs
 		u32 dirtyFlag = GetCoreDirtyFlags();
 
 		u32 size = rtti_size(dirtyFlag).Bytes;
-		
+
 		if((dirtyFlag & ~(i32)CameraDirtyFlag::Redraw) != 0)
 		{
 			size += csync_size((SceneActor&)*this);
 
-			if (dirtyFlag != (u32)ActorDirtyFlag::Transform)
+			if(dirtyFlag != (u32)ActorDirtyFlag::Transform)
 				size += csync_size(*this);
 		}
 
@@ -771,11 +771,11 @@ namespace bs
 
 		rtti_write(dirtyFlag, stream);
 
-		if ((dirtyFlag & ~(i32)CameraDirtyFlag::Redraw) != 0)
+		if((dirtyFlag & ~(i32)CameraDirtyFlag::Redraw) != 0)
 		{
-			csync_write((SceneActor&)* this, stream);
+			csync_write((SceneActor&)*this, stream);
 
-			if (dirtyFlag != (u32)ActorDirtyFlag::Transform)
+			if(dirtyFlag != (u32)ActorDirtyFlag::Transform)
 				csync_write(*this, stream);
 		}
 
@@ -804,55 +804,55 @@ namespace bs
 
 	namespace ct
 	{
-	Camera::~Camera()
-	{
-		RendererManager::Instance().GetActive()->NotifyCameraRemoved(this);
-	}
-
-	Camera::Camera(SPtr<RenderTarget> target, float left, float top, float width, float height)
-		: mRendererId(0)
-	{
-		mViewport = Viewport::Create(target, left, top, width, height);
-	}
-
-	Camera::Camera(const SPtr<Viewport>& viewport)
-		: mRendererId(0)
-	{
-		mViewport = viewport;
-	}
-
-	void Camera::Initialize()
-	{
-		RendererManager::Instance().GetActive()->NotifyCameraAdded(this);
-
-		CoreObject::Initialize();
-	}
-
-	Rect2I Camera::GetViewportRect() const
-	{
-		return mViewport->GetPixelArea();
-	}
-
-	void Camera::SyncToCore(const CoreSyncData& data)
-	{
-		Bitstream stream(data.GetBuffer(), data.GetBufferSize());
-
-		u32 dirtyFlag;
-		rtti_read(dirtyFlag, stream);
-
-		if ((dirtyFlag & ~(i32)CameraDirtyFlag::Redraw) != 0)
+		Camera::~Camera()
 		{
-			csync_read((SceneActor&)* this, stream);
-
-			if (dirtyFlag != (u32)ActorDirtyFlag::Transform)
-				csync_read(*this, stream);
-
-			mRecalcFrustum = true;
-			mRecalcFrustumPlanes = true;
-			mRecalcView = true;
+			RendererManager::Instance().GetActive()->NotifyCameraRemoved(this);
 		}
 
-		RendererManager::Instance().GetActive()->NotifyCameraUpdated(this, (u32)dirtyFlag);
-	}
-	}
-}
+		Camera::Camera(SPtr<RenderTarget> target, float left, float top, float width, float height)
+			: mRendererId(0)
+		{
+			mViewport = Viewport::Create(target, left, top, width, height);
+		}
+
+		Camera::Camera(const SPtr<Viewport>& viewport)
+			: mRendererId(0)
+		{
+			mViewport = viewport;
+		}
+
+		void Camera::Initialize()
+		{
+			RendererManager::Instance().GetActive()->NotifyCameraAdded(this);
+
+			CoreObject::Initialize();
+		}
+
+		Rect2I Camera::GetViewportRect() const
+		{
+			return mViewport->GetPixelArea();
+		}
+
+		void Camera::SyncToCore(const CoreSyncData& data)
+		{
+			Bitstream stream(data.GetBuffer(), data.GetBufferSize());
+
+			u32 dirtyFlag;
+			rtti_read(dirtyFlag, stream);
+
+			if((dirtyFlag & ~(i32)CameraDirtyFlag::Redraw) != 0)
+			{
+				csync_read((SceneActor&)*this, stream);
+
+				if(dirtyFlag != (u32)ActorDirtyFlag::Transform)
+					csync_read(*this, stream);
+
+				mRecalcFrustum = true;
+				mRecalcFrustumPlanes = true;
+				mRecalcView = true;
+			}
+
+			RendererManager::Instance().GetActive()->NotifyCameraUpdated(this, (u32)dirtyFlag);
+		}
+	} // namespace ct
+} // namespace bs

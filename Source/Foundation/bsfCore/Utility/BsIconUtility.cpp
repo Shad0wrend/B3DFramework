@@ -11,7 +11,7 @@
 #define PE_64BIT_SIGNATURE 0x20B
 #define PE_NUM_DIRECTORY_ENTRIES 16
 #define PE_SECTION_UNINITIALIZED_DATA 0x00000080
-#define	PE_IMAGE_DIRECTORY_ENTRY_RESOURCE 2
+#define PE_IMAGE_DIRECTORY_ENTRY_RESOURCE 2
 #define PE_IMAGE_RT_ICON 3
 
 namespace bs
@@ -206,7 +206,7 @@ namespace bs
 		// First check magic number to ensure file is even an executable
 		u16 magicNum;
 		stream.read((char*)&magicNum, sizeof(magicNum));
-		if (magicNum != MSDOS_SIGNATURE)
+		if(magicNum != MSDOS_SIGNATURE)
 			BS_EXCEPT(InvalidStateException, "Provided file is not a valid executable.");
 
 		// Read the MSDOS header and skip over it
@@ -221,14 +221,14 @@ namespace bs
 		u32 peSignature;
 		stream.read((char*)&peSignature, sizeof(peSignature));
 
-		if (peSignature != PE_SIGNATURE)
+		if(peSignature != PE_SIGNATURE)
 			BS_EXCEPT(InvalidStateException, "Provided file is not in PE format.");
 
 		// Read COFF header
 		COFFHeader coffHeader;
 		stream.read((char*)&coffHeader, sizeof(COFFHeader));
 
-		if (coffHeader.SizeOptHeader == 0) // .exe files always have an optional header
+		if(coffHeader.SizeOptHeader == 0) // .exe files always have an optional header
 			BS_EXCEPT(InvalidStateException, "Provided file is not a valid executable.");
 
 		u32 numSectionHeaders = coffHeader.NumSections;
@@ -241,14 +241,14 @@ namespace bs
 
 		PEDataDirectory* dataDirectory = nullptr;
 		stream.seekg(optionalHeaderPos);
-		if (optionalHeaderSignature == PE_32BIT_SIGNATURE)
+		if(optionalHeaderSignature == PE_32BIT_SIGNATURE)
 		{
 			PEOptionalHeader32 optionalHeader;
 			stream.read((char*)&optionalHeader, sizeof(optionalHeader));
 
 			dataDirectory = optionalHeader.DataDirectory + PE_IMAGE_DIRECTORY_ENTRY_RESOURCE;
 		}
-		else if (optionalHeaderSignature == PE_64BIT_SIGNATURE)
+		else if(optionalHeaderSignature == PE_64BIT_SIGNATURE)
 		{
 			PEOptionalHeader64 optionalHeader;
 			stream.read((char*)&optionalHeader, sizeof(optionalHeader));
@@ -272,13 +272,13 @@ namespace bs
 			u32 numEntries = current->NumIdEntries; // Not supporting name entries
 			PEImageResourceEntry* entries = (PEImageResourceEntry*)(current + 1);
 
-			for (u32 i = 0; i < numEntries; i++)
+			for(u32 i = 0; i < numEntries; i++)
 			{
 				// Only at root does the type identify resource type
-				if (base == current && entries[i].Type != PE_IMAGE_RT_ICON)
+				if(base == current && entries[i].Type != PE_IMAGE_RT_ICON)
 					continue;
 
-				if (entries[i].IsDirectory)
+				if(entries[i].IsDirectory)
 				{
 					PEImageResourceDirectory* child = (PEImageResourceDirectory*)(((u8*)base) + entries[i].OffsetDirectory);
 					setIconData(base, child, imageData, sectionAddress);
@@ -293,12 +293,12 @@ namespace bs
 			}
 		};
 
-		for (u32 i = 0; i < numSectionHeaders; i++)
+		for(u32 i = 0; i < numSectionHeaders; i++)
 		{
-			if (sectionHeaders[i].Flags & PE_SECTION_UNINITIALIZED_DATA)
+			if(sectionHeaders[i].Flags & PE_SECTION_UNINITIALIZED_DATA)
 				continue;
 
-			if (strcmp(sectionHeaders[i].Name, ".rsrc") == 0)
+			if(strcmp(sectionHeaders[i].Name, ".rsrc") == 0)
 			{
 				u32 imageSize = sectionHeaders[i].PhysicalSize;
 				u8* imageData = (u8*)bs_stack_alloc(imageSize);
@@ -325,8 +325,7 @@ namespace bs
 	{
 		IconHeader* iconHeader = (IconHeader*)iconData;
 
-		if (iconHeader->Size != sizeof(IconHeader) || iconHeader->Compression != 0
-			|| iconHeader->Planes != 1 || iconHeader->BitCount != 32)
+		if(iconHeader->Size != sizeof(IconHeader) || iconHeader->Compression != 0 || iconHeader->Planes != 1 || iconHeader->BitCount != 32)
 		{
 			// Unsupported format
 			return;
@@ -337,8 +336,7 @@ namespace bs
 		u32 height = iconHeader->Height / 2;
 
 		auto iterFind = pixelsPerSize.find(width);
-		if (iterFind == pixelsPerSize.end() || iterFind->second->GetWidth() != width
-			|| iterFind->second->GetHeight() != height)
+		if(iterFind == pixelsPerSize.end() || iterFind->second->GetWidth() != width || iterFind->second->GetHeight() != height)
 		{
 			// No icon of this size provided
 			return;
@@ -349,9 +347,9 @@ namespace bs
 		u32* colorData = (u32*)iconPixels;
 
 		u32 idx = 0;
-		for (i32 y = (i32)height - 1; y >= 0; y--)
+		for(i32 y = (i32)height - 1; y >= 0; y--)
 		{
-			for (u32 x = 0; x < width; x++)
+			for(u32 x = 0; x < width; x++)
 				colorData[idx++] = srcPixels->GetColorAt(x, y).GetAsBgra();
 		}
 
@@ -361,16 +359,16 @@ namespace bs
 
 		u32 numPackedPixels = width / 8; // One per bit in byte
 
-		for (i32 y = (i32)height - 1; y >= 0; y--)
+		for(i32 y = (i32)height - 1; y >= 0; y--)
 		{
 			u8 mask = 0;
-			for (u32 packedX = 0; packedX < numPackedPixels; packedX++)
+			for(u32 packedX = 0; packedX < numPackedPixels; packedX++)
 			{
-				for (u32 pixelIdx = 0; pixelIdx < 8; pixelIdx++)
+				for(u32 pixelIdx = 0; pixelIdx < 8; pixelIdx++)
 				{
 					u32 x = packedX * 8 + pixelIdx;
 					Color color = srcPixels->GetColorAt(x, y);
-					if (color.A < 0.25f)
+					if(color.A < 0.25f)
 						mask |= 1 << (7 - pixelIdx);
 				}
 
@@ -379,4 +377,4 @@ namespace bs
 			}
 		}
 	}
-}
+} // namespace bs

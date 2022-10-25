@@ -110,10 +110,9 @@ namespace bs
 
 		/**	Returns the size of the memory region required to hold pixels of the provided size ana format. */
 		static u32 GetMemorySize(u32 width, u32 height, u32 depth, PixelFormat format);
-		
+
 		/**	Calculates the size of a mip level of a texture with the provided size. */
-		static void GetSizeForMipLevel(u32 width, u32 height, u32 depth, u32 mipLevel,
-			u32& mipWidth, u32& mipHeight, u32& mipDepth);
+		static void GetSizeForMipLevel(u32 width, u32 height, u32 depth, u32 mipLevel, u32& mipWidth, u32& mipHeight, u32& mipDepth);
 
 		/**
 		 * Calculates row and depth pitch for a texture surface of the specified size and format. For most formats row
@@ -122,8 +121,7 @@ namespace bs
 		 * ones) might require extra padding. Input width/height/depth values are in pixels, while output pitch values
 		 * are in bytes.
 		 */
-		static void GetPitch(u32 width, u32 height, u32 depth, PixelFormat format,
-			u32& rowPitch, u32& depthPitch);
+		static void GetPitch(u32 width, u32 height, u32 depth, PixelFormat format, u32& rowPitch, u32& depthPitch);
 
 		/**
 		 * Returns property flags for this pixel format.
@@ -161,7 +159,7 @@ namespace bs
 		 *			- Using anything but a depth format for a depth-stencil-buffer
 		 *			- Using compressed format for anything but normal textures
 		 *			- Using compressed format for 1D textures
-		 *			
+		 *
 		 *			Caller should still check for platform-specific unsupported formats.
 		 */
 		static bool CheckFormat(PixelFormat& format, TextureType texType, int usage);
@@ -176,21 +174,21 @@ namespace bs
 		 * Returns the number of bits per each element in the provided pixel format. This will return all zero for
 		 * compressed and depth/stencil formats.
 		 */
-		static void GetBitDepths(PixelFormat format, int(&rgba)[4]);
+		static void GetBitDepths(PixelFormat format, int (&rgba)[4]);
 
 		/**
 		 * Returns bit masks that determine in what bit range is each channel stored.
 		 *
-		 * @note	
+		 * @note
 		 * For example if your color is stored in an u32 and you want to extract the red channel you should AND the color
 		 * u32 with the bit-mask for the red channel and then right shift it by the red channel bit shift amount.
 		 */
-		static void GetBitMasks(PixelFormat format, u32(&rgba)[4]);
+		static void GetBitMasks(PixelFormat format, u32 (&rgba)[4]);
 
 		/**
 		 * Returns number of bits you need to shift a pixel element in order to move it to the start of the data type.
 		 *
-		 * @note	
+		 * @note
 		 * For example if your color is stored in an u32 and you want to extract the red channel you should AND the color
 		 * u32 with the bit-mask for the red channel and then right shift it by the red channel bit shift amount.
 		 */
@@ -300,4 +298,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

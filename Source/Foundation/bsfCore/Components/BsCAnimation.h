@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note	Wraps Animation as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(Animation)) CAnimation : public Component
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(Animation)) CAnimation : public Component
 	{
 		/** Information about scene objects bound to a specific animation curve. */
 		struct SceneObjectMappingInfo
@@ -30,33 +30,36 @@ namespace bs
 	public:
 		CAnimation(const HSceneObject& parent);
 		virtual ~CAnimation() = default;
-		
+
 		/**
 		 * Determines the default clip to play as soon as the component is enabled. If more control over playing clips is needed
 		 * use the play(), blend() and crossFade() methods to queue clips for playback manually, and setState() method for
 		 * modify their states individually.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(DefaultClip),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(DefaultClip), Property(Setter))
 		void SetDefaultClip(const HAnimationClip& clip);
 
 		/** @copydoc setDefaultClip */
-		BS_SCRIPT_EXPORT(ExportName(DefaultClip),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(DefaultClip), Property(Getter))
+
 		HAnimationClip GetDefaultClip() const { return mDefaultClip; }
 
 		/** @copydoc Animation::setWrapMode */
-		BS_SCRIPT_EXPORT(ExportName(WrapMode),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(WrapMode), Property(Setter))
 		void SetWrapMode(AnimWrapMode wrapMode);
 
 		/** @copydoc setWrapMode */
-		BS_SCRIPT_EXPORT(ExportName(WrapMode),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(WrapMode), Property(Getter))
+
 		AnimWrapMode GetWrapMode() const { return mWrapMode; }
 
 		/** @copydoc Animation::setSpeed */
-		BS_SCRIPT_EXPORT(ExportName(Speed),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Speed), Property(Setter))
 		void SetSpeed(float speed);
 
 		/** @copydoc setSpeed */
-		BS_SCRIPT_EXPORT(ExportName(Speed),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Speed), Property(Getter))
+
 		float GetSpeed() const { return mSpeed; }
 
 		/** @copydoc Animation::play */
@@ -90,9 +93,9 @@ namespace bs
 		/** @copydoc Animation::stopAll */
 		BS_SCRIPT_EXPORT(ExportName(StopAll))
 		void StopAll();
-		
+
 		/** @copydoc Animation::isPlaying */
-		BS_SCRIPT_EXPORT(ExportName(IsPlaying),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(IsPlaying), Property(Getter))
 		bool IsPlaying() const;
 
 		/** @copydoc Animation::getState */
@@ -108,36 +111,39 @@ namespace bs
 		 *
 		 * @param name		Name of the morph channel to modify. This depends on the mesh the animation is currently
 		 *					animating.
-		 * @param weight	Weight that determines how much of the channel to apply to the mesh, in range [0, 1]. 	
+		 * @param weight	Weight that determines how much of the channel to apply to the mesh, in range [0, 1].
 		 */
 		BS_SCRIPT_EXPORT(ExportName(SetMorphChannelWeight))
 		void SetMorphChannelWeight(const String& name, float weight);
 
 		/** Determines bounds that will be used for animation and mesh culling. Only relevant if setUseBounds() is set to true. */
-		BS_SCRIPT_EXPORT(ExportName(Bounds),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Bounds), Property(Setter))
 		void SetBounds(const AABox& bounds);
 
 		/** @copydoc setBounds */
-		BS_SCRIPT_EXPORT(ExportName(Bounds),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Bounds), Property(Getter))
+
 		const AABox& GetBounds() const { return mBounds; }
 
 		/**
 		 * Determines should animation bounds be used for visibility determination (culling). If false the bounds of the
 		 * mesh attached to the relevant CRenderable component will be used instead.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(UseBounds),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(UseBounds), Property(Setter))
 		void SetUseBounds(bool enable);
 
 		/** @copydoc setUseBounds */
-		BS_SCRIPT_EXPORT(ExportName(UseBounds),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(UseBounds), Property(Getter))
+
 		bool GetUseBounds() const { return mUseBounds; }
 
 		/** Enables or disables culling of the animation when out of view. Culled animation will not be evaluated. */
-		BS_SCRIPT_EXPORT(ExportName(Cull),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Cull), Property(Setter))
 		void SetEnableCull(bool enable);
 
 		/** Checks whether the animation will be evaluated when it is out of view. */
-		BS_SCRIPT_EXPORT(ExportName(Cull),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Cull), Property(Getter))
+
 		bool GetEnableCull() const { return mEnableCull; }
 
 		/** @copydoc Animation::getNumClips */
@@ -244,6 +250,7 @@ namespace bs
 
 		/** @copydoc Component::onTransformChanged() */
 		void OnTransformChanged(TransformChangedFlags flags) override;
+
 	protected:
 		using Component::DestroyInternal;
 
@@ -273,7 +280,7 @@ namespace bs
 
 		/** @copydoc Animation::unmapSceneObject */
 		void UnmapSceneObject(const HSceneObject& so);
-		
+
 		/** Searches child scene objects for Bone components and returns any found ones. */
 		Vector<HBone> FindChildBones();
 
@@ -301,7 +308,7 @@ namespace bs
 
 	protected:
 		CAnimation(); // Serialization only
-	 };
+	};
 
-	 /** @} */
-}
+	/** @} */
+} // namespace bs

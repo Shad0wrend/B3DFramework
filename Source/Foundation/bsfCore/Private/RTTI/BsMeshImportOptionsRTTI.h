@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT MeshImportOptionsRTTI : public RTTIType <MeshImportOptions, ImportOptions, MeshImportOptionsRTTI>
+	class BS_CORE_EXPORT MeshImportOptionsRTTI : public RTTIType<MeshImportOptions, ImportOptions, MeshImportOptionsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -51,7 +51,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT ImportedAnimationEventsRTTI : public RTTIType <ImportedAnimationEvents, IReflectable, ImportedAnimationEventsRTTI>
+	class BS_CORE_EXPORT ImportedAnimationEventsRTTI : public RTTIType<ImportedAnimationEvents, IReflectable, ImportedAnimationEventsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -76,7 +76,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT AnimationSplitInfoRTTI : public RTTIType <AnimationSplitInfo, IReflectable, AnimationSplitInfoRTTI>
+	class BS_CORE_EXPORT AnimationSplitInfoRTTI : public RTTIType<AnimationSplitInfo, IReflectable, AnimationSplitInfoRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -84,7 +84,7 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(StartFrame, 1)
 			BS_RTTI_MEMBER_PLAIN(EndFrame, 2)
 			BS_RTTI_MEMBER_PLAIN(IsAdditive, 3)
-			BS_END_RTTI_MEMBERS
+		BS_END_RTTI_MEMBERS
 	public:
 		const String& GetRttiName() override
 		{
@@ -105,4 +105,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

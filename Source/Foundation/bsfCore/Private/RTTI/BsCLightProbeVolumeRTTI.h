@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT CLightProbeVolumeRTTI : public RTTIType <CLightProbeVolume, Component, CLightProbeVolumeRTTI>
+	class BS_CORE_EXPORT CLightProbeVolumeRTTI : public RTTIType<CLightProbeVolume, Component, CLightProbeVolumeRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -41,4 +41,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

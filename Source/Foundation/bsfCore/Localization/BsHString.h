@@ -10,13 +10,13 @@ namespace bs
 
 	/**
 	 * String handle. Provides a wrapper around an Unicode string, primarily for localization purposes.
-	 * 			
+	 *
 	 * Actual value for this string is looked up in a global string table based on the provided identifier string and
 	 * currently active language. If such value doesn't exist then the identifier is used as is.
-	 *			
+	 *
 	 * Use {0}, {1}, etc. in the string value for values that might change dynamically.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(ExportName(LocString),DocumentationGroup(Localization)) HString
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(ExportName(LocString), DocumentationGroup(Localization)) HString
 	{
 	public:
 		/**
@@ -58,7 +58,7 @@ namespace bs
 
 		HString& operator=(const HString& rhs);
 
-		operator const String& () const;
+		operator const String&() const;
 
 		BS_SCRIPT_EXPORT(InteropOnly(true))
 		const String& GetValue() const;
@@ -71,9 +71,10 @@ namespace bs
 		 */
 		BS_SCRIPT_EXPORT()
 		void SetParameter(u32 idx, const String& value);
-		
+
 		/** Returns an empty string. */
 		static const HString& Dummy();
+
 	private:
 		SPtr<LocalizedStringData> mStringData;
 		String* mParameters = nullptr;
@@ -84,4 +85,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

@@ -19,7 +19,8 @@ namespace bs
 	class CommandQueueNoSync
 	{
 	public:
-		struct LockGuard { };
+		struct LockGuard
+		{};
 
 		bool IsValidThread(ThreadId ownerThread) const
 		{
@@ -48,7 +49,7 @@ namespace bs
 
 		LockGuard Lock()
 		{
-			return LockGuard { bs::Lock(mCommandQueueMutex) };
+			return LockGuard{ bs::Lock(mCommandQueueMutex) };
 		}
 
 	private:
@@ -62,33 +63,27 @@ namespace bs
 	struct QueuedCommand
 	{
 #if BS_DEBUG_MODE
-		QueuedCommand(std::function<void(AsyncOp&)> _callback, u32 _debugId, const SPtr<AsyncOpSyncData>& asyncOpSyncData,
-			bool _notifyWhenComplete = false, u32 _callbackId = 0)
-			: DebugId(_debugId), CallbackWithReturnValue(_callback), AsyncOp(asyncOpSyncData), ReturnsValue(true)
-			, CallbackId(_callbackId), NotifyWhenComplete(_notifyWhenComplete)
-		{ }
+		QueuedCommand(std::function<void(AsyncOp&)> _callback, u32 _debugId, const SPtr<AsyncOpSyncData>& asyncOpSyncData, bool _notifyWhenComplete = false, u32 _callbackId = 0)
+			: DebugId(_debugId), CallbackWithReturnValue(_callback), AsyncOp(asyncOpSyncData), ReturnsValue(true), CallbackId(_callbackId), NotifyWhenComplete(_notifyWhenComplete)
+		{}
 
 		QueuedCommand(std::function<void()> _callback, u32 _debugId, bool _notifyWhenComplete = false, u32 _callbackId = 0)
-			:DebugId(_debugId), Callback(_callback), AsyncOp(AsyncOpEmpty()), ReturnsValue(false), CallbackId(_callbackId)
-			, NotifyWhenComplete(_notifyWhenComplete)
-		{ }
+			: DebugId(_debugId), Callback(_callback), AsyncOp(AsyncOpEmpty()), ReturnsValue(false), CallbackId(_callbackId), NotifyWhenComplete(_notifyWhenComplete)
+		{}
 
 		u32 DebugId;
 #else
-		QueuedCommand(std::function<void(AsyncOp&)> _callback, const SPtr<AsyncOpSyncData>& asyncOpSyncData,
-			bool _notifyWhenComplete = false, u32 _callbackId = 0)
-			: CallbackWithReturnValue(_callback), AsyncOp(asyncOpSyncData), ReturnsValue(true), CallbackId(_callbackId)
-			, NotifyWhenComplete(_notifyWhenComplete)
-		{ }
+		QueuedCommand(std::function<void(AsyncOp&)> _callback, const SPtr<AsyncOpSyncData>& asyncOpSyncData, bool _notifyWhenComplete = false, u32 _callbackId = 0)
+			: CallbackWithReturnValue(_callback), AsyncOp(asyncOpSyncData), ReturnsValue(true), CallbackId(_callbackId), NotifyWhenComplete(_notifyWhenComplete)
+		{}
 
 		QueuedCommand(std::function<void()> _callback, bool _notifyWhenComplete = false, u32 _callbackId = 0)
-			: Callback(_callback), AsyncOp(AsyncOpEmpty()), ReturnsValue(false), CallbackId(_callbackId)
-			, NotifyWhenComplete(_notifyWhenComplete)
-		{ }
+			: Callback(_callback), AsyncOp(AsyncOpEmpty()), ReturnsValue(false), CallbackId(_callbackId), NotifyWhenComplete(_notifyWhenComplete)
+		{}
 #endif
 
 		~QueuedCommand()
-		{ }
+		{}
 
 		QueuedCommand(const QueuedCommand& source)
 		{
@@ -112,7 +107,7 @@ namespace bs
 			ReturnsValue = rhs.ReturnsValue;
 			CallbackId = rhs.CallbackId;
 			NotifyWhenComplete = rhs.NotifyWhenComplete;
-			
+
 #if BS_DEBUG_MODE
 			DebugId = rhs.DebugId;
 #endif
@@ -135,13 +130,13 @@ namespace bs
 		/**
 		 * Constructor.
 		 *
-		 * @param[in]	threadId	   	Identifier for the thread the command queue will be getting commands from.					
+		 * @param[in]	threadId	   	Identifier for the thread the command queue will be getting commands from.
 		 */
 		CommandQueueBase(ThreadId threadId);
 
 		/**
 		 * Gets the thread identifier the command queue is used on.
-		 * 			
+		 *
 		 * @note	If the command queue is using a synchonized access policy generally this is not relevant as it may be
 		 *			used on multiple threads.
 		 */
@@ -160,12 +155,12 @@ namespace bs
 		void Playback(Queue<QueuedCommand>* commands);
 
 		/**
-		 * Allows you to set a breakpoint that will trigger when the specified command is executed.		
+		 * Allows you to set a breakpoint that will trigger when the specified command is executed.
 		 *
 		 * @param[in]	queueIdx  	Zero-based index of the queue the command was queued on.
 		 * @param[in]	commandIdx	Zero-based index of the command.
 		 *
-		 * @note	
+		 * @note
 		 * This is helpful when you receive an error on the executing thread and you cannot tell from where was the command
 		 * that caused the error queued from. However you can make a note of the queue and command index and set a
 		 * breakpoint so that it gets triggered next time you run the program. At that point you can know exactly which part
@@ -176,7 +171,7 @@ namespace bs
 		/**
 		 * Queue up a new command to execute. Make sure the provided function has all of its parameters properly bound.
 		 * Last parameter must be unbound and of AsyncOp& type. This is used to signal that the command is completed, and
-		 * also for storing the return value.		
+		 * also for storing the return value.
 		 *
 		 * @param[in]	commandCallback		Command to queue for execution.
 		 * @param[in]	_notifyWhenComplete	(optional) Call the notify method (provided in the call to playback())
@@ -188,7 +183,7 @@ namespace bs
 		 *									completes. After it completes AsyncOp::isResolved() will return true and return
 		 *									data will be valid (if the callback provided any).
 		 *
-		 * @note	
+		 * @note
 		 * Callback method also needs to call AsyncOp::markAsResolved once it is done processing. (If it doesn't it will
 		 * still be called automatically, but the return value will default to nullptr)
 		 */
@@ -245,18 +240,18 @@ namespace bs
 			class HashFunction
 			{
 			public:
-				size_t operator()(const QueueBreakpoint &key) const;
+				size_t operator()(const QueueBreakpoint& key) const;
 			};
 
 			class EqualFunction
 			{
 			public:
-				bool operator()(const QueueBreakpoint &a, const QueueBreakpoint &b) const;
+				bool operator()(const QueueBreakpoint& a, const QueueBreakpoint& b) const;
 			};
 
 			QueueBreakpoint(u32 _queueIdx, u32 _commandIdx)
-				:QueueIdx(_queueIdx), CommandIdx(_commandIdx)
-			{ }
+				: QueueIdx(_queueIdx), CommandIdx(_commandIdx)
+			{}
 
 			u32 QueueIdx;
 			u32 CommandIdx;
@@ -266,7 +261,7 @@ namespace bs
 
 		u32 mMaxDebugIdx;
 		u32 mCommandQueueIdx;
-		
+
 		static u32 MaxCommandQueueIdx;
 		static UnorderedSet<QueueBreakpoint, QueueBreakpoint::HashFunction, QueueBreakpoint::EqualFunction> SetBreakpoints;
 		static Mutex CommandQueueBreakpointMutex;
@@ -278,21 +273,21 @@ namespace bs
 
 	/**
 	 * @copydoc CommandQueueBase
-	 * 			
+	 *
 	 * Use SyncPolicy to choose whether you want command queue be synchonized or not. Synchonized command queues may be
 	 * used across multiple threads and non-synchonized only on one.
 	 */
-	template<class SyncPolicy = CommandQueueNoSync>
+	template <class SyncPolicy = CommandQueueNoSync>
 	class CommandQueue : public CommandQueueBase, public SyncPolicy
 	{
 	public:
 		/** @copydoc CommandQueueBase::CommandQueueBase */
 		CommandQueue(ThreadId threadId)
-			:CommandQueueBase(threadId)
-		{ }
+			: CommandQueueBase(threadId)
+		{}
 
 		~CommandQueue()
-		{ }
+		{}
 
 		/** @copydoc CommandQueueBase::queueReturn */
 		AsyncOp QueueReturn(std::function<void(AsyncOp&)> commandCallback, bool _notifyWhenComplete = false, u32 _callbackId = 0)
@@ -362,4 +357,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

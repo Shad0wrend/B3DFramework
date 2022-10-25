@@ -135,8 +135,8 @@ namespace bs
 
 		/**
 		 * Returns an object containing various rendering statistics.
-		 *			
-		 * @note	
+		 *
+		 * @note
 		 * Do not modify the returned state unless you know what you are doing, it will change the actual internal object.
 		 */
 		RenderStatsData& GetData() { return mData; }
@@ -146,14 +146,14 @@ namespace bs
 	};
 
 #if BS_PROFILING_ENABLED
-	#define BS_INC_RENDER_STAT_CAT(Stat, Category) RenderStats::Instance().Inc##Stat((u32)Category)
-	#define BS_INC_RENDER_STAT(Stat) RenderStats::Instance().Inc##Stat()
-	#define BS_ADD_RENDER_STAT(Stat, Count) RenderStats::Instance().Add##Stat(Count)
+#	define BS_INC_RENDER_STAT_CAT(Stat, Category) RenderStats::Instance().Inc##Stat((u32)Category)
+#	define BS_INC_RENDER_STAT(Stat) RenderStats::Instance().Inc##Stat()
+#	define BS_ADD_RENDER_STAT(Stat, Count) RenderStats::Instance().Add##Stat(Count)
 #else
-	#define BS_INC_RENDER_STAT_CAT(Stat, Category)
-	#define BS_INC_RENDER_STAT(Stat)
-	#define BS_ADD_RENDER_STAT(Stat, Count)
+#	define BS_INC_RENDER_STAT_CAT(Stat, Category)
+#	define BS_INC_RENDER_STAT(Stat)
+#	define BS_ADD_RENDER_STAT(Stat, Count)
 #endif
 
 	/** @} */
-}
+} // namespace bs

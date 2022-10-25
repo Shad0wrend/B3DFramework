@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT SkyboxRTTI : public RTTIType <Skybox, IReflectable, SkyboxRTTI>
+	class BS_CORE_EXPORT SkyboxRTTI : public RTTIType<Skybox, IReflectable, SkyboxRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -24,16 +24,16 @@ namespace bs
 			BS_RTTI_MEMBER_REFLPTR(mIrradiance, 3)
 		BS_END_RTTI_MEMBERS
 	public:
-		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) 
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context)
 		{
 			Skybox* skybox = static_cast<Skybox*>(obj);
 
 			// Make sure that the renderer finishes generating filtered radiance and irradiance before saving
-			if (skybox->mRendererTask)
+			if(skybox->mRendererTask)
 				skybox->mRendererTask->Wait();
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context)
 		{
 			// Note: Since this is a CoreObject I should call Initialize() right after deserialization,
 			// but since this specific type is used in Components we delay initialization until Component
@@ -41,7 +41,7 @@ namespace bs
 			// purposes (you'll need to call initialize manually).
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "Skybox";
 			return name;
@@ -52,7 +52,7 @@ namespace bs
 			return TID_Skybox;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return Skybox::CreateEmpty();
 		}
@@ -60,4 +60,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

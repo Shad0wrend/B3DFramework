@@ -3,30 +3,30 @@
 #include "RenderAPI/BsTextureView.h"
 #include "Image/BsTexture.h"
 
-namespace bs { namespace ct
+namespace bs
 {
-	size_t TextureView::HashFunction::operator()(const TEXTURE_VIEW_DESC &key) const
+	namespace ct
 	{
-		size_t seed = 0;
-		bs_hash_combine(seed, key.MostDetailMip);
-		bs_hash_combine(seed, key.NumMips);
-		bs_hash_combine(seed, key.FirstArraySlice);
-		bs_hash_combine(seed, key.NumArraySlices);
-		bs_hash_combine(seed, key.Usage);
+		size_t TextureView::HashFunction::operator()(const TEXTURE_VIEW_DESC &key) const
+		{
+			size_t seed = 0;
+			bs_hash_combine(seed, key.MostDetailMip);
+			bs_hash_combine(seed, key.NumMips);
+			bs_hash_combine(seed, key.FirstArraySlice);
+			bs_hash_combine(seed, key.NumArraySlices);
+			bs_hash_combine(seed, key.Usage);
 
-		return seed;
-	}
+			return seed;
+		}
 
-	bool TextureView::EqualFunction::operator()
-		(const TEXTURE_VIEW_DESC &a, const TEXTURE_VIEW_DESC &b) const
-	{
-		return a.MostDetailMip == b.MostDetailMip && a.NumMips == b.NumMips
-			&& a.FirstArraySlice == b.FirstArraySlice && a.NumArraySlices == b.NumArraySlices && a.Usage == b.Usage;
-	}
+		bool TextureView::EqualFunction::operator()(const TEXTURE_VIEW_DESC &a, const TEXTURE_VIEW_DESC &b) const
+		{
+			return a.MostDetailMip == b.MostDetailMip && a.NumMips == b.NumMips && a.FirstArraySlice == b.FirstArraySlice && a.NumArraySlices == b.NumArraySlices && a.Usage == b.Usage;
+		}
 
-	TextureView::TextureView(const TEXTURE_VIEW_DESC& desc)
-		:mDesc(desc)
-	{
-
-	}
-}}
+		TextureView::TextureView(const TEXTURE_VIEW_DESC &desc)
+			: mDesc(desc)
+		{
+		}
+	} // namespace ct
+} // namespace bs

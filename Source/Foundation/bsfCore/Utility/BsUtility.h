@@ -8,7 +8,7 @@
 namespace bs
 {
 	class GameObjectDeserializationState;
-	
+
 	/** @addtogroup Utility-Core-Internal
 	 *  @{
 	 */
@@ -56,8 +56,8 @@ namespace bs
 		bool GoDeserializationActive = false;
 
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 	};
 
 	/** @} */
-}
+} // namespace bs

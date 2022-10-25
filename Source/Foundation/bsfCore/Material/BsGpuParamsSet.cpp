@@ -20,15 +20,15 @@ namespace bs
 	struct ValidParamKey
 	{
 		ValidParamKey(const String& name, const MaterialParams::ParamType& type)
-			:Name(name), Type(type)
-		{ }
+			: Name(name), Type(type)
+		{}
 
-		bool operator== (const ValidParamKey& rhs) const
+		bool operator==(const ValidParamKey& rhs) const
 		{
 			return Name == rhs.Name && Type == rhs.Type;
 		}
 
-		bool operator!= (const ValidParamKey& rhs) const
+		bool operator!=(const ValidParamKey& rhs) const
 		{
 			return !(*this == rhs);
 		}
@@ -36,14 +36,14 @@ namespace bs
 		String Name;
 		MaterialParams::ParamType Type;
 	};
-}
+} // namespace bs
 
 /** @cond STDLIB */
 
 namespace std
 {
 	/** Hash value generator for ValidParamKey. */
-	template<>
+	template <>
 	struct hash<bs::ValidParamKey>
 	{
 		size_t operator()(const bs::ValidParamKey& key) const
@@ -55,7 +55,7 @@ namespace std
 			return hash;
 		}
 	};
-}
+} // namespace std
 
 /** @endcond */
 
@@ -77,7 +77,7 @@ namespace bs
 		Vector<SPtr<GpuParamDesc>> allParamDescs;
 
 		// Make sure all gpu programs are fully loaded
-		for (u32 i = 0; i < technique->GetNumPasses(); i++)
+		for(u32 i = 0; i < technique->GetNumPasses(); i++)
 		{
 			SPtr<Pass> curPass = technique->GetPass(i);
 
@@ -85,35 +85,35 @@ namespace bs
 			if(graphicsPipeline)
 			{
 				SPtr<GpuProgram> vertProgram = graphicsPipeline->GetVertexProgram();
-				if (vertProgram)
+				if(vertProgram)
 				{
 					vertProgram->BlockUntilCoreInitialized();
 					allParamDescs.push_back(vertProgram->GetParamDesc());
 				}
 
 				SPtr<GpuProgram> fragProgram = graphicsPipeline->GetFragmentProgram();
-				if (fragProgram)
+				if(fragProgram)
 				{
 					fragProgram->BlockUntilCoreInitialized();
 					allParamDescs.push_back(fragProgram->GetParamDesc());
 				}
 
 				SPtr<GpuProgram> geomProgram = graphicsPipeline->GetGeometryProgram();
-				if (geomProgram)
+				if(geomProgram)
 				{
 					geomProgram->BlockUntilCoreInitialized();
 					allParamDescs.push_back(geomProgram->GetParamDesc());
 				}
 
 				SPtr<GpuProgram> hullProgram = graphicsPipeline->GetHullProgram();
-				if (hullProgram)
+				if(hullProgram)
 				{
 					hullProgram->BlockUntilCoreInitialized();
 					allParamDescs.push_back(hullProgram->GetParamDesc());
 				}
 
 				SPtr<GpuProgram> domainProgram = graphicsPipeline->GetDomainProgram();
-				if (domainProgram)
+				if(domainProgram)
 				{
 					domainProgram->BlockUntilCoreInitialized();
 					allParamDescs.push_back(domainProgram->GetParamDesc());
@@ -124,12 +124,11 @@ namespace bs
 			if(computePipeline)
 			{
 				SPtr<GpuProgram> computeProgram = computePipeline->GetProgram();
-				if (computeProgram)
+				if(computeProgram)
 				{
 					computeProgram->BlockUntilCoreInitialized();
 					allParamDescs.push_back(computeProgram->GetParamDesc());
 				}
-				
 			}
 		}
 
@@ -141,7 +140,7 @@ namespace bs
 		Vector<SPtr<GpuParamDesc>> allParamDescs;
 
 		// Make sure all gpu programs are fully loaded
-		for (u32 i = 0; i < technique->GetNumPasses(); i++)
+		for(u32 i = 0; i < technique->GetNumPasses(); i++)
 		{
 			SPtr<ct::Pass> curPass = technique->GetPass(i);
 
@@ -149,23 +148,23 @@ namespace bs
 			if(graphicsPipeline)
 			{
 				SPtr<ct::GpuProgram> vertProgram = graphicsPipeline->GetVertexProgram();
-				if (vertProgram)
+				if(vertProgram)
 					allParamDescs.push_back(vertProgram->GetParamDesc());
 
 				SPtr<ct::GpuProgram> fragProgram = graphicsPipeline->GetFragmentProgram();
-				if (fragProgram)
+				if(fragProgram)
 					allParamDescs.push_back(fragProgram->GetParamDesc());
 
 				SPtr<ct::GpuProgram> geomProgram = graphicsPipeline->GetGeometryProgram();
-				if (geomProgram)
+				if(geomProgram)
 					allParamDescs.push_back(geomProgram->GetParamDesc());
 
 				SPtr<ct::GpuProgram> hullProgram = graphicsPipeline->GetHullProgram();
-				if (hullProgram)
+				if(hullProgram)
 					allParamDescs.push_back(hullProgram->GetParamDesc());
 
 				SPtr<ct::GpuProgram> domainProgram = graphicsPipeline->GetDomainProgram();
-				if (domainProgram)
+				if(domainProgram)
 					allParamDescs.push_back(domainProgram->GetParamDesc());
 			}
 
@@ -173,9 +172,8 @@ namespace bs
 			if(computePipeline)
 			{
 				SPtr<ct::GpuProgram> computeProgram = computePipeline->GetProgram();
-				if (computeProgram)
+				if(computeProgram)
 					allParamDescs.push_back(computeProgram->GetParamDesc());
-				
 			}
 		}
 
@@ -184,24 +182,23 @@ namespace bs
 
 	bool areParamsEqual(const GpuParamDataDesc& paramA, const GpuParamDataDesc& paramB, bool ignoreBufferOffsets)
 	{
-		bool equal = paramA.ArraySize == paramB.ArraySize && paramA.ElementSize == paramB.ElementSize
-			&& paramA.Type == paramB.Type && paramA.ArrayElementStride == paramB.ArrayElementStride;
+		bool equal = paramA.ArraySize == paramB.ArraySize && paramA.ElementSize == paramB.ElementSize && paramA.Type == paramB.Type && paramA.ArrayElementStride == paramB.ArrayElementStride;
 
-		if (!ignoreBufferOffsets)
+		if(!ignoreBufferOffsets)
 			equal &= paramA.CpuMemOffset == paramB.CpuMemOffset && paramA.GpuMemOffset == paramB.GpuMemOffset;
 
 		return equal;
 	}
 
-	Vector<ShaderBlockDesc> determineValidShareableParamBlocks(const Vector<SPtr<GpuParamDesc>>& paramDescs,
-		const Map<String, SHADER_PARAM_BLOCK_DESC>& shaderDesc)
+	Vector<ShaderBlockDesc> determineValidShareableParamBlocks(const Vector<SPtr<GpuParamDesc>>& paramDescs, const Map<String, SHADER_PARAM_BLOCK_DESC>& shaderDesc)
 	{
 		struct BlockInfo
 		{
-			BlockInfo() { }
+			BlockInfo() {}
+
 			BlockInfo(const GpuParamBlockDesc* blockDesc, const SPtr<GpuParamDesc>& paramDesc, bool isValid = true)
-				:BlockDesc(blockDesc), ParamDesc(paramDesc), IsValid(isValid)
-			{ }
+				: BlockDesc(blockDesc), ParamDesc(paramDesc), IsValid(isValid)
+			{}
 
 			const GpuParamBlockDesc* BlockDesc;
 			SPtr<GpuParamDesc> ParamDesc;
@@ -213,18 +210,18 @@ namespace bs
 		// Make sure param blocks with the same name actually contain the same fields
 		Map<String, BlockInfo> uniqueParamBlocks;
 
-		for (auto iter = paramDescs.begin(); iter != paramDescs.end(); ++iter)
+		for(auto iter = paramDescs.begin(); iter != paramDescs.end(); ++iter)
 		{
 			const GpuParamDesc& curDesc = **iter;
-			for (auto blockIter = curDesc.ParamBlocks.begin(); blockIter != curDesc.ParamBlocks.end(); ++blockIter)
+			for(auto blockIter = curDesc.ParamBlocks.begin(); blockIter != curDesc.ParamBlocks.end(); ++blockIter)
 			{
 				const GpuParamBlockDesc& curBlock = blockIter->second;
 
-				if (!curBlock.IsShareable) // Non-shareable buffers are handled differently, they're allowed same names
+				if(!curBlock.IsShareable) // Non-shareable buffers are handled differently, they're allowed same names
 					continue;
 
 				auto iterFind = uniqueParamBlocks.find(blockIter->first);
-				if (iterFind == uniqueParamBlocks.end())
+				if(iterFind == uniqueParamBlocks.end())
 				{
 					uniqueParamBlocks[blockIter->first] = BlockInfo(&curBlock, *iter);
 					continue;
@@ -233,34 +230,34 @@ namespace bs
 				const GpuParamBlockDesc& otherBlock = *iterFind->second.BlockDesc;
 
 				// The block was already determined as invalid, no need to check further
-				if (!iterFind->second.IsValid)
+				if(!iterFind->second.IsValid)
 					continue;
 
 				String otherBlockName = otherBlock.Name;
 				SPtr<GpuParamDesc> otherDesc = iterFind->second.ParamDesc;
 
-				for (auto myParamIter = curDesc.Params.begin(); myParamIter != curDesc.Params.end(); ++myParamIter)
+				for(auto myParamIter = curDesc.Params.begin(); myParamIter != curDesc.Params.end(); ++myParamIter)
 				{
 					const GpuParamDataDesc& myParam = myParamIter->second;
 
-					if (myParam.ParamBlockSet != curBlock.Set || myParam.ParamBlockSlot != curBlock.Slot)
+					if(myParam.ParamBlockSet != curBlock.Set || myParam.ParamBlockSlot != curBlock.Slot)
 						continue; // Param is in another block, so we will check it when its time for that block
 
 					auto otherParamFind = otherDesc->Params.find(myParamIter->first);
 
 					// Cannot find other param, blocks aren't equal
-					if (otherParamFind == otherDesc->Params.end())
+					if(otherParamFind == otherDesc->Params.end())
 						break;
 
 					const GpuParamDataDesc& otherParam = otherParamFind->second;
 
-					if (!areParamsEqual(myParam, otherParam, false) || curBlock.Name != otherBlockName)
+					if(!areParamsEqual(myParam, otherParam, false) || curBlock.Name != otherBlockName)
 						break;
 				}
 
 				// Note: Ignoring mismatched blocks for now, because glslang parser doesn't report dead uniform entries,
 				// meaning identical blocks can have different sets of uniforms reported depending on which are unused.
-				//if (!isBlockValid)
+				// if (!isBlockValid)
 				//{
 				//	LOGWRN("Found two param blocks with the same name but different contents: " + blockIter->first);
 				//	uniqueParamBlocks[blockIter->first] = BlockInfo(&curBlock, nullptr, false);
@@ -271,9 +268,9 @@ namespace bs
 		}
 
 		Vector<ShaderBlockDesc> output;
-		for (auto& entry : uniqueParamBlocks)
+		for(auto& entry : uniqueParamBlocks)
 		{
-			if (!entry.second.IsValid)
+			if(!entry.second.IsValid)
 				continue;
 
 			const GpuParamBlockDesc& curBlock = *entry.second.BlockDesc;
@@ -287,7 +284,7 @@ namespace bs
 			shaderBlockDesc.Slot = curBlock.Slot;
 
 			auto iterFind = shaderDesc.find(entry.first);
-			if (iterFind != shaderDesc.end())
+			if(iterFind != shaderDesc.end())
 			{
 				shaderBlockDesc.External = iterFind->second.Shared || iterFind->second.RendererSemantic != StringID::NONE;
 				shaderBlockDesc.Usage = iterFind->second.Usage;
@@ -304,29 +301,29 @@ namespace bs
 		Map<String, const GpuParamDataDesc*> foundDataParams;
 		Map<String, bool> validParams;
 
-		for (auto iter = paramDescs.begin(); iter != paramDescs.end(); ++iter)
+		for(auto iter = paramDescs.begin(); iter != paramDescs.end(); ++iter)
 		{
 			const GpuParamDesc& curDesc = **iter;
 
 			// Check regular data params
-			for (auto iter2 = curDesc.Params.begin(); iter2 != curDesc.Params.end(); ++iter2)
+			for(auto iter2 = curDesc.Params.begin(); iter2 != curDesc.Params.end(); ++iter2)
 			{
 				const GpuParamDataDesc& curParam = iter2->second;
 
 				auto dataFindIter = validParams.find(iter2->first);
-				if (dataFindIter == validParams.end())
+				if(dataFindIter == validParams.end())
 				{
 					validParams[iter2->first] = true;
 					foundDataParams[iter2->first] = &curParam;
 				}
 				else
 				{
-					if (validParams[iter2->first])
+					if(validParams[iter2->first])
 					{
 						auto dataFindIter2 = foundDataParams.find(iter2->first);
 
 						const GpuParamDataDesc* otherParam = dataFindIter2->second;
-						if (!areParamsEqual(curParam, *otherParam, true))
+						if(!areParamsEqual(curParam, *otherParam, true))
 						{
 							validParams[iter2->first] = false;
 							foundDataParams.erase(dataFindIter2);
@@ -343,30 +340,30 @@ namespace bs
 	{
 		Vector<const GpuParamObjectDesc*> validParams;
 
-		for (auto iter = paramDescs.begin(); iter != paramDescs.end(); ++iter)
+		for(auto iter = paramDescs.begin(); iter != paramDescs.end(); ++iter)
 		{
 			const GpuParamDesc& curDesc = **iter;
 
 			// Check sampler params
-			for (auto iter2 = curDesc.Samplers.begin(); iter2 != curDesc.Samplers.end(); ++iter2)
+			for(auto iter2 = curDesc.Samplers.begin(); iter2 != curDesc.Samplers.end(); ++iter2)
 			{
 				validParams.push_back(&iter2->second);
 			}
 
 			// Check texture params
-			for (auto iter2 = curDesc.Textures.begin(); iter2 != curDesc.Textures.end(); ++iter2)
+			for(auto iter2 = curDesc.Textures.begin(); iter2 != curDesc.Textures.end(); ++iter2)
 			{
 				validParams.push_back(&iter2->second);
 			}
 
 			// Check load-store texture params
-			for (auto iter2 = curDesc.LoadStoreTextures.begin(); iter2 != curDesc.LoadStoreTextures.end(); ++iter2)
+			for(auto iter2 = curDesc.LoadStoreTextures.begin(); iter2 != curDesc.LoadStoreTextures.end(); ++iter2)
 			{
 				validParams.push_back(&iter2->second);
 			}
 
 			// Check buffer params
-			for (auto iter2 = curDesc.Buffers.begin(); iter2 != curDesc.Buffers.end(); ++iter2)
+			for(auto iter2 = curDesc.Buffers.begin(); iter2 != curDesc.Buffers.end(); ++iter2)
 			{
 				validParams.push_back(&iter2->second);
 			}
@@ -379,20 +376,20 @@ namespace bs
 	{
 		Map<String, String> paramToParamBlock;
 
-		for (auto iter = paramDescs.begin(); iter != paramDescs.end(); ++iter)
+		for(auto iter = paramDescs.begin(); iter != paramDescs.end(); ++iter)
 		{
 			const GpuParamDesc& curDesc = **iter;
-			for (auto iter2 = curDesc.Params.begin(); iter2 != curDesc.Params.end(); ++iter2)
+			for(auto iter2 = curDesc.Params.begin(); iter2 != curDesc.Params.end(); ++iter2)
 			{
 				const GpuParamDataDesc& curParam = iter2->second;
 
 				auto iterFind = paramToParamBlock.find(curParam.Name);
-				if (iterFind != paramToParamBlock.end())
+				if(iterFind != paramToParamBlock.end())
 					continue;
 
-				for (auto iterBlock = curDesc.ParamBlocks.begin(); iterBlock != curDesc.ParamBlocks.end(); ++iterBlock)
+				for(auto iterBlock = curDesc.ParamBlocks.begin(); iterBlock != curDesc.ParamBlocks.end(); ++iterBlock)
 				{
-					if (iterBlock->second.Set == curParam.ParamBlockSet && iterBlock->second.Slot == curParam.ParamBlockSlot)
+					if(iterBlock->second.Set == curParam.ParamBlockSet && iterBlock->second.Slot == curParam.ParamBlockSlot)
 					{
 						paramToParamBlock[curParam.Name] = iterBlock->second.Name;
 						break;
@@ -404,11 +401,7 @@ namespace bs
 		return paramToParamBlock;
 	}
 
-	UnorderedMap<ValidParamKey, String> determineValidParameters(const Vector<SPtr<GpuParamDesc>>& paramDescs,
-		const Map<String, SHADER_DATA_PARAM_DESC>& dataParams,
-		const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams,
-		const Map<String, SHADER_OBJECT_PARAM_DESC>& bufferParams,
-		const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams)
+	UnorderedMap<ValidParamKey, String> determineValidParameters(const Vector<SPtr<GpuParamDesc>>& paramDescs, const Map<String, SHADER_DATA_PARAM_DESC>& dataParams, const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams, const Map<String, SHADER_OBJECT_PARAM_DESC>& bufferParams, const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams)
 	{
 		UnorderedMap<ValidParamKey, String> validParams;
 
@@ -417,26 +410,26 @@ namespace bs
 		Map<String, String> paramToParamBlockMap = determineParameterToBlockMapping(paramDescs);
 
 		// Create data param mappings
-		for (auto iter = dataParams.begin(); iter != dataParams.end(); ++iter)
+		for(auto iter = dataParams.begin(); iter != dataParams.end(); ++iter)
 		{
 			auto findIter = validDataParameters.find(iter->second.GpuVariableName);
 
 			// Not valid so we skip it
-			if (findIter == validDataParameters.end())
+			if(findIter == validDataParameters.end())
 				continue;
 
-			if (findIter->second->Type != iter->second.Type &&
-				!(iter->second.Type == GPDT_COLOR && (findIter->second->Type == GPDT_FLOAT4 || findIter->second->Type == GPDT_FLOAT3)))
+			if(findIter->second->Type != iter->second.Type &&
+			   !(iter->second.Type == GPDT_COLOR && (findIter->second->Type == GPDT_FLOAT4 || findIter->second->Type == GPDT_FLOAT3)))
 			{
 				BS_LOG(Warning, Material, "Ignoring shader parameter \"{0}\". Type doesn't match the one defined in the "
-					"GPU program. Shader defined type: {1} - Gpu program defined type: {2}",
-					iter->first, iter->second.Type, findIter->second->Type);
+										  "GPU program. Shader defined type: {1} - Gpu program defined type: {2}",
+					   iter->first, iter->second.Type, findIter->second->Type);
 				continue;
 			}
 
 			auto findBlockIter = paramToParamBlockMap.find(iter->second.GpuVariableName);
 
-			if (findBlockIter == paramToParamBlockMap.end())
+			if(findBlockIter == paramToParamBlockMap.end())
 				BS_EXCEPT(InternalErrorException, "Parameter doesn't exist in param to param block map but exists in valid param map.");
 
 			ValidParamKey key(iter->second.GpuVariableName, MaterialParams::ParamType::Data);
@@ -446,14 +439,14 @@ namespace bs
 		// Create object param mappings
 		auto determineObjectMappings = [&](const Map<String, SHADER_OBJECT_PARAM_DESC>& params, MaterialParams::ParamType paramType)
 		{
-			for (auto iter = params.begin(); iter != params.end(); ++iter)
+			for(auto iter = params.begin(); iter != params.end(); ++iter)
 			{
 				const Vector<String>& gpuVariableNames = iter->second.GpuVariableNames;
-				for (auto iter2 = gpuVariableNames.begin(); iter2 != gpuVariableNames.end(); ++iter2)
+				for(auto iter2 = gpuVariableNames.begin(); iter2 != gpuVariableNames.end(); ++iter2)
 				{
-					for (auto iter3 = validObjectParameters.begin(); iter3 != validObjectParameters.end(); ++iter3)
+					for(auto iter3 = validObjectParameters.begin(); iter3 != validObjectParameters.end(); ++iter3)
 					{
-						if ((*iter3)->Name == (*iter2))
+						if((*iter3)->Name == (*iter2))
 						{
 							ValidParamKey key(*iter2, paramType);
 							validParams.insert(std::make_pair(key, iter->first));
@@ -472,18 +465,17 @@ namespace bs
 		return validParams;
 	}
 
-	template<bool Core>
+	template <bool Core>
 	const u32 TGpuParamsSet<Core>::NUM_STAGES = 6;
 
-	template<bool Core>
-	TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const ShaderType& shader,
-		const SPtr<MaterialParamsType>& params)
-		:mPassParams(technique->GetNumPasses()), mParamVersion(0)
+	template <bool Core>
+	TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const ShaderType& shader, const SPtr<MaterialParamsType>& params)
+		: mPassParams(technique->GetNumPasses()), mParamVersion(0)
 	{
 		u32 numPasses = technique->GetNumPasses();
 
 		// Create GpuParams for each pass and shader stage
-		for (u32 i = 0; i < numPasses; i++)
+		for(u32 i = 0; i < numPasses; i++)
 		{
 			SPtr<PassType> curPass = technique->GetPass(i);
 
@@ -512,10 +504,10 @@ namespace bs
 		Map<String, ParamBlockPtrType> paramBlockBuffers;
 
 		//// Create param blocks
-		for (auto& paramBlock : paramBlockData)
+		for(auto& paramBlock : paramBlockData)
 		{
 			ParamBlockPtrType newParamBlockBuffer;
-			if (!paramBlock.External)
+			if(!paramBlock.External)
 				newParamBlockBuffer = ParamBlockType::Create(paramBlock.Size, paramBlock.Usage);
 
 			paramBlock.SequentialIdx = (u32)mBlocks.size();
@@ -526,18 +518,18 @@ namespace bs
 
 		//// Assign param block buffers and generate information about data parameters
 		assert(numPasses < 64); // BlockInfo flags uses u64 for tracking usage
-		for (u32 i = 0; i < numPasses; i++)
+		for(u32 i = 0; i < numPasses; i++)
 		{
 			SPtr<GpuParamsType> paramPtr = mPassParams[i];
-			for (u32 j = 0; j < NUM_STAGES; j++)
+			for(u32 j = 0; j < NUM_STAGES; j++)
 			{
 				GpuProgramType progType = (GpuProgramType)j;
 
 				// Assign shareable buffers
-				for (auto& block : paramBlockData)
+				for(auto& block : paramBlockData)
 				{
 					const String& paramBlockName = block.Name;
-					if (paramPtr->HasParamBlock(progType, paramBlockName))
+					if(paramPtr->HasParamBlock(progType, paramBlockName))
 					{
 						ParamBlockPtrType blockBuffer = paramBlockBuffers[paramBlockName];
 
@@ -547,48 +539,45 @@ namespace bs
 
 				// Create non-shareable ones (these are buffers defined by default by the RHI usually)
 				SPtr<GpuParamDesc> desc = paramPtr->GetParamDesc(progType);
-				if (desc == nullptr)
+				if(desc == nullptr)
 					continue;
 
-				for (auto iterBlockDesc = desc->ParamBlocks.begin(); iterBlockDesc != desc->ParamBlocks.end(); ++iterBlockDesc)
+				for(auto iterBlockDesc = desc->ParamBlocks.begin(); iterBlockDesc != desc->ParamBlocks.end(); ++iterBlockDesc)
 				{
 					const GpuParamBlockDesc& blockDesc = iterBlockDesc->second;
 
 					u32 globalBlockIdx = (u32)-1;
-					if (!blockDesc.IsShareable)
+					if(!blockDesc.IsShareable)
 					{
 						ParamBlockPtrType newParamBlockBuffer = ParamBlockType::Create(blockDesc.BlockSize * sizeof(u32));
 
 						globalBlockIdx = (u32)mBlocks.size();
 
 						paramPtr->SetParamBlockBuffer(progType, iterBlockDesc->first, newParamBlockBuffer);
-						mBlocks.emplace_back(iterBlockDesc->first, iterBlockDesc->second.Set,
-							iterBlockDesc->second.Slot, newParamBlockBuffer, false);
+						mBlocks.emplace_back(iterBlockDesc->first, iterBlockDesc->second.Set, iterBlockDesc->second.Slot, newParamBlockBuffer, false);
 					}
 					else
 					{
 						auto iterFind = std::find_if(paramBlockData.begin(), paramBlockData.end(), [&](const auto& x)
-						{
-							return x.Name == iterBlockDesc->first;
-						});
+													 { return x.Name == iterBlockDesc->first; });
 
 						if(iterFind != paramBlockData.end())
 							globalBlockIdx = iterFind->SequentialIdx;
 					}
 
 					// If this parameter block is valid, create data/struct mappings for it
-					if (globalBlockIdx == (u32)-1)
+					if(globalBlockIdx == (u32)-1)
 						continue;
 
 					for(auto& dataParam : desc->Params)
 					{
-						if (dataParam.second.ParamBlockSet != blockDesc.Set || dataParam.second.ParamBlockSlot != blockDesc.Slot)
+						if(dataParam.second.ParamBlockSet != blockDesc.Set || dataParam.second.ParamBlockSlot != blockDesc.Slot)
 							continue;
 
 						ValidParamKey key(dataParam.first, MaterialParams::ParamType::Data);
 
 						auto iterFind = validParams.find(key);
-						if (iterFind == validParams.end())
+						if(iterFind == validParams.end())
 							continue;
 
 						u32 paramIdx = params->GetParamIndex(iterFind->second);
@@ -610,13 +599,10 @@ namespace bs
 		// Add buffers defined in shader but not actually used by GPU programs (so we can check if user is providing a
 		// valid buffer name)
 		auto& allParamBlocks = shader->GetParamBlocks();
-		for (auto& entry : allParamBlocks)
+		for(auto& entry : allParamBlocks)
 		{
-			auto iterFind = std::find_if(mBlocks.begin(), mBlocks.end(),
-				[&](auto& x)
-			{
-				return x.Name == entry.first;
-			});
+			auto iterFind = std::find_if(mBlocks.begin(), mBlocks.end(), [&](auto& x)
+										 { return x.Name == entry.first; });
 
 			if(iterFind == mBlocks.end())
 			{
@@ -637,22 +623,22 @@ namespace bs
 			// First store all objects in temporary arrays since we don't know how many of them are
 			u32 totalNumObjects = 0;
 			u32* stageOffsets = offsets;
-			for (u32 i = 0; i < numPasses; i++)
+			for(u32 i = 0; i < numPasses; i++)
 			{
 				SPtr<GpuParamsType> paramPtr = mPassParams[i];
-				for (u32 j = 0; j < NUM_STAGES; j++)
+				for(u32 j = 0; j < NUM_STAGES; j++)
 				{
 					GpuProgramType progType = (GpuProgramType)j;
 
 					auto processObjectParams = [&](const Map<String, GpuParamObjectDesc>& gpuParams,
-						u32 stageIdx, MaterialParams::ParamType paramType)
+												   u32 stageIdx, MaterialParams::ParamType paramType)
 					{
-						for (auto& param : gpuParams)
+						for(auto& param : gpuParams)
 						{
 							ValidParamKey key(param.first, paramType);
 
 							auto iterFind = validParams.find(key);
-							if (iterFind == validParams.end())
+							if(iterFind == validParams.end())
 								continue;
 
 							u32 paramIdx;
@@ -707,9 +693,9 @@ namespace bs
 			u32 objInfoOffset = 0;
 
 			stageOffsets = offsets;
-			for (u32 i = 0; i < numPasses; i++)
+			for(u32 i = 0; i < numPasses; i++)
 			{
-				for (u32 j = 0; j < NUM_STAGES; j++)
+				for(u32 j = 0; j < NUM_STAGES; j++)
 				{
 					StageParamInfo& stage = stageInfos[i * NUM_STAGES + j];
 
@@ -723,7 +709,7 @@ namespace bs
 						objInfoOffset += numEntries;
 					}
 
-					if (stageOffsets[1] > 0)
+					if(stageOffsets[1] > 0)
 					{
 						u32 numEntries = stageOffsets[1];
 
@@ -733,7 +719,7 @@ namespace bs
 						objInfoOffset += numEntries;
 					}
 
-					if (stageOffsets[2] > 0)
+					if(stageOffsets[2] > 0)
 					{
 						u32 numEntries = stageOffsets[2];
 
@@ -743,7 +729,7 @@ namespace bs
 						objInfoOffset += numEntries;
 					}
 
-					if (stageOffsets[3] > 0)
+					if(stageOffsets[3] > 0)
 					{
 						u32 numEntries = stageOffsets[3];
 
@@ -758,23 +744,23 @@ namespace bs
 			}
 
 			// Determine on which passes & stages are buffers used on
-			for (auto& block : mBlocks)
+			for(auto& block : mBlocks)
 			{
 				block.PassData = (PassBlockBindings*)dataIter;
 				dataIter += sizeof(PassBlockBindings) * numPasses;
 			}
 
-			for (auto& block : mBlocks)
+			for(auto& block : mBlocks)
 			{
-				for (u32 i = 0; i < numPasses; i++)
+				for(u32 i = 0; i < numPasses; i++)
 				{
 					SPtr<GpuParamsType> paramPtr = mPassParams[i];
-					for (u32 j = 0; j < NUM_STAGES; j++)
+					for(u32 j = 0; j < NUM_STAGES; j++)
 					{
 						GpuProgramType progType = (GpuProgramType)j;
 
 						SPtr<GpuParamDesc> curDesc = paramPtr->GetParamDesc(progType);
-						if (curDesc == nullptr)
+						if(curDesc == nullptr)
 						{
 							block.PassData[i].Bindings[j].Set = -1;
 							block.PassData[i].Bindings[j].Slot = -1;
@@ -783,7 +769,7 @@ namespace bs
 						}
 
 						auto iterFind = curDesc->ParamBlocks.find(block.Name);
-						if (iterFind == curDesc->ParamBlocks.end())
+						if(iterFind == curDesc->ParamBlocks.end())
 						{
 							block.PassData[i].Bindings[j].Set = -1;
 							block.PassData[i].Bindings[j].Slot = -1;
@@ -802,89 +788,87 @@ namespace bs
 		bs_frame_clear();
 	}
 
-	template<bool Core>
+	template <bool Core>
 	TGpuParamsSet<Core>::~TGpuParamsSet()
 	{
 		// All allocations share the same memory, so we just clear it all at once
 		bs_free(mData);
 	}
 
-	template<bool Core>
+	template <bool Core>
 	SPtr<typename TGpuParamsSet<Core>::GpuParamsType> TGpuParamsSet<Core>::GetGpuParams(u32 passIdx)
 	{
-		if (passIdx >= mPassParams.size())
+		if(passIdx >= mPassParams.size())
 			return nullptr;
 
 		return mPassParams[passIdx];
 	}
 
-	template<bool Core>
+	template <bool Core>
 	u32 TGpuParamsSet<Core>::GetParamBlockBufferIndex(const String& name) const
 	{
-		for (u32 i = 0; i < (u32)mBlocks.size(); i++)
+		for(u32 i = 0; i < (u32)mBlocks.size(); i++)
 		{
 			const BlockInfo& block = mBlocks[i];
-			if (block.Name == name)
+			if(block.Name == name)
 				return i;
 		}
 
 		return -1;
 	}
 
-	template<bool Core>
-	void TGpuParamsSet<Core>::SetParamBlockBuffer(u32 index, const ParamBlockPtrType& paramBlock,
-												  bool ignoreInUpdate)
+	template <bool Core>
+	void TGpuParamsSet<Core>::SetParamBlockBuffer(u32 index, const ParamBlockPtrType& paramBlock, bool ignoreInUpdate)
 	{
 		BlockInfo& blockInfo = mBlocks[index];
-		if (!blockInfo.Shareable)
+		if(!blockInfo.Shareable)
 		{
 			BS_LOG(Error, RenderBackend, "Cannot set parameter block buffer with the name \"{0}\". "
-				"Buffer is not assignable. ", blockInfo.Name);
+										 "Buffer is not assignable. ",
+				   blockInfo.Name);
 			return;
 		}
 
-		if (!blockInfo.IsUsed)
+		if(!blockInfo.IsUsed)
 			return;
 
 		blockInfo.AllowUpdate = !ignoreInUpdate;
 
-		if (blockInfo.Buffer != paramBlock)
+		if(blockInfo.Buffer != paramBlock)
 		{
 			blockInfo.Buffer = paramBlock;
 
 			u32 numPasses = (u32)mPassParams.size();
-			for (u32 j = 0; j < numPasses; j++)
+			for(u32 j = 0; j < numPasses; j++)
 			{
 				SPtr<GpuParamsType> paramPtr = mPassParams[j];
-				for (u32 i = 0; i < NUM_STAGES; i++)
+				for(u32 i = 0; i < NUM_STAGES; i++)
 				{
 					GpuProgramType progType = (GpuProgramType)i;
 
 					const BlockBinding& binding = blockInfo.PassData[j].Bindings[progType];
 
-					if (binding.Slot != (u32)-1)
+					if(binding.Slot != (u32)-1)
 						paramPtr->SetParamBlockBuffer(binding.Set, binding.Slot, paramBlock);
 				}
 			}
 		}
 	}
 
-	template<bool Core>
-	void TGpuParamsSet<Core>::SetParamBlockBuffer(const String& name, const ParamBlockPtrType& paramBlock,
-		bool ignoreInUpdate)
+	template <bool Core>
+	void TGpuParamsSet<Core>::SetParamBlockBuffer(const String& name, const ParamBlockPtrType& paramBlock, bool ignoreInUpdate)
 	{
 		u32 bufferIdx = GetParamBlockBufferIndex(name);
 		if(bufferIdx == (u32)-1)
 		{
-			BS_LOG(Error, RenderBackend, "Cannot set parameter block buffer with the name \"{0}\". Buffer name not found. ",
-				name);
+			BS_LOG(Error, RenderBackend, "Cannot set parameter block buffer with the name \"{0}\". Buffer name not found. ", name);
 			return;
 		}
 
 		SetParamBlockBuffer(bufferIdx, paramBlock, ignoreInUpdate);
 	}
 
-	template<bool Core>
+	template <bool Core>
 	void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t, bool updateAll)
 	{
 		// Note: Instead of iterating over every single parameter, it might be more efficient for @p params to keep
@@ -895,12 +879,12 @@ namespace bs
 		for(auto& paramInfo : mDataParamInfos)
 		{
 			ParamBlockPtrType paramBlock = mBlocks[paramInfo.BlockIdx].Buffer;
-			if (paramBlock == nullptr || !mBlocks[paramInfo.BlockIdx].AllowUpdate)
+			if(paramBlock == nullptr || !mBlocks[paramInfo.BlockIdx].AllowUpdate)
 				continue;
 
 			const MaterialParams::ParamData* materialParamInfo = params->GetParamData(paramInfo.ParamIdx);
 			u32 arraySize = materialParamInfo->ArraySize == 0 ? 1 : materialParamInfo->ArraySize;
-			
+
 			bool isAnimated = false;
 			for(u32 i = 0; i < arraySize; i++)
 			{
@@ -909,7 +893,7 @@ namespace bs
 					break;
 			}
 
-			if (materialParamInfo->Version <= mParamVersion && !updateAll && !isAnimated)
+			if(materialParamInfo->Version <= mParamVersion && !updateAll && !isAnimated)
 				continue;
 
 			if(materialParamInfo->DataType != GPDT_STRUCT)
@@ -923,14 +907,14 @@ namespace bs
 					paramSize = paramInfo.ArrayStride * typeInfo.BaseTypeSize;
 
 				u8* data = params->GetData(materialParamInfo->Index);
-				if (!isAnimated)
+				if(!isAnimated)
 				{
 					const bool transposeMatrices = ct::gCaps().Conventions.MatrixOrder == Conventions::MatrixOrder::ColumnMajor;
-					if (transposeMatrices)
+					if(transposeMatrices)
 					{
 						auto writeTransposed = [&paramInfo, &paramSize, &arraySize, &paramBlock, data](auto& temp)
 						{
-							for (u32 i = 0; i < arraySize; i++)
+							for(u32 i = 0; i < arraySize; i++)
 							{
 								u32 readOffset = i * paramSize;
 								memcpy(&temp, data + readOffset, paramSize);
@@ -941,77 +925,77 @@ namespace bs
 							}
 						};
 
-						switch (materialParamInfo->DataType)
+						switch(materialParamInfo->DataType)
 						{
 						case GPDT_MATRIX_2X2:
-						{
-							MatrixNxM<2, 2> matrix;
-							writeTransposed(matrix);
-						}
-						break;
-						case GPDT_MATRIX_2X3:
-						{
-							MatrixNxM<2, 3> matrix;
-							writeTransposed(matrix);
-						}
-						break;
-						case GPDT_MATRIX_2X4:
-						{
-							MatrixNxM<2, 4> matrix;
-							writeTransposed(matrix);
-						}
-						break;
-						case GPDT_MATRIX_3X2:
-						{
-							MatrixNxM<3, 2> matrix;
-							writeTransposed(matrix);
-						}
-						break;
-						case GPDT_MATRIX_3X3:
-						{
-							Matrix3 matrix;
-							writeTransposed(matrix);
-						}
-						break;
-						case GPDT_MATRIX_3X4:
-						{
-							MatrixNxM<3, 4> matrix;
-							writeTransposed(matrix);
-						}
-						break;
-						case GPDT_MATRIX_4X2:
-						{
-							MatrixNxM<4, 2> matrix;
-							writeTransposed(matrix);
-						}
-						break;
-						case GPDT_MATRIX_4X3:
-						{
-							MatrixNxM<4, 3> matrix;
-							writeTransposed(matrix);
-						}
-						break;
-						case GPDT_MATRIX_4X4:
-						{
-							Matrix4 matrix;
-							writeTransposed(matrix);
-						}
-						break;
-						default:
-						{
-							for (u32 i = 0; i < arraySize; i++)
 							{
-								u32 arrayOffset = i * paramSize;
-								u32 writeOffset = (paramInfo.Offset + paramInfo.ArrayStride * i) * sizeof(u32);
-								paramBlock->Write(writeOffset, data + arrayOffset, paramSize);
+								MatrixNxM<2, 2> matrix;
+								writeTransposed(matrix);
 							}
 							break;
-						}
+						case GPDT_MATRIX_2X3:
+							{
+								MatrixNxM<2, 3> matrix;
+								writeTransposed(matrix);
+							}
+							break;
+						case GPDT_MATRIX_2X4:
+							{
+								MatrixNxM<2, 4> matrix;
+								writeTransposed(matrix);
+							}
+							break;
+						case GPDT_MATRIX_3X2:
+							{
+								MatrixNxM<3, 2> matrix;
+								writeTransposed(matrix);
+							}
+							break;
+						case GPDT_MATRIX_3X3:
+							{
+								Matrix3 matrix;
+								writeTransposed(matrix);
+							}
+							break;
+						case GPDT_MATRIX_3X4:
+							{
+								MatrixNxM<3, 4> matrix;
+								writeTransposed(matrix);
+							}
+							break;
+						case GPDT_MATRIX_4X2:
+							{
+								MatrixNxM<4, 2> matrix;
+								writeTransposed(matrix);
+							}
+							break;
+						case GPDT_MATRIX_4X3:
+							{
+								MatrixNxM<4, 3> matrix;
+								writeTransposed(matrix);
+							}
+							break;
+						case GPDT_MATRIX_4X4:
+							{
+								Matrix4 matrix;
+								writeTransposed(matrix);
+							}
+							break;
+						default:
+							{
+								for(u32 i = 0; i < arraySize; i++)
+								{
+									u32 arrayOffset = i * paramSize;
+									u32 writeOffset = (paramInfo.Offset + paramInfo.ArrayStride * i) * sizeof(u32);
+									paramBlock->Write(writeOffset, data + arrayOffset, paramSize);
+								}
+								break;
+							}
 						}
 					}
 					else
 					{
-						for (u32 i = 0; i < arraySize; i++)
+						for(u32 i = 0; i < arraySize; i++)
 						{
 							u32 readOffset = i * paramSize;
 							u32 writeOffset = (paramInfo.Offset + paramInfo.ArrayStride * i) * sizeof(u32);
@@ -1021,17 +1005,17 @@ namespace bs
 				}
 				else // Animated
 				{
-					if (materialParamInfo->DataType == GPDT_FLOAT1)
+					if(materialParamInfo->DataType == GPDT_FLOAT1)
 					{
 						assert(paramSize == sizeof(float));
 
-						for (u32 i = 0; i < arraySize; i++)
+						for(u32 i = 0; i < arraySize; i++)
 						{
 							u32 readOffset = i * paramSize;
 							u32 writeOffset = (paramInfo.Offset + paramInfo.ArrayStride * i) * sizeof(u32);
 
 							float value;
-							if (params->IsAnimated(*materialParamInfo, i))
+							if(params->IsAnimated(*materialParamInfo, i))
 							{
 								const TAnimationCurve<float>& curve = params->template GetCurveParam<float>(*materialParamInfo, i);
 
@@ -1043,7 +1027,7 @@ namespace bs
 							paramBlock->Write(writeOffset, &value, paramSize);
 						}
 					}
-					else if (materialParamInfo->DataType == GPDT_FLOAT4)
+					else if(materialParamInfo->DataType == GPDT_FLOAT4)
 					{
 						assert(paramSize == sizeof(Rect2));
 
@@ -1052,13 +1036,13 @@ namespace bs
 
 						u32 writeOffset = paramInfo.Offset * sizeof(u32);
 						Rect2 uv = Rect2(0.0f, 0.0f, 1.0f, 1.0f);
-						if (spriteTexture != nullptr)
+						if(spriteTexture != nullptr)
 							uv = spriteTexture->Evaluate(t);
 
 						paramBlock->Write(writeOffset, &uv, paramSize);
 
 						// Only the first array element receives sprite UVs, the rest are treated as normal
-						for (u32 i = 1; i < arraySize; i++)
+						for(u32 i = 1; i < arraySize; i++)
 						{
 							u32 readOffset = i * paramSize;
 							writeOffset = (paramInfo.Offset + paramInfo.ArrayStride * i) * sizeof(u32);
@@ -1066,9 +1050,9 @@ namespace bs
 							paramBlock->Write(writeOffset, data + readOffset, paramSize);
 						}
 					}
-					else if (materialParamInfo->DataType == GPDT_COLOR)
+					else if(materialParamInfo->DataType == GPDT_COLOR)
 					{
-						for (u32 i = 0; i < arraySize; i++)
+						for(u32 i = 0; i < arraySize; i++)
 						{
 							assert(paramSize == sizeof(Color));
 
@@ -1076,7 +1060,7 @@ namespace bs
 							u32 writeOffset = (paramInfo.Offset + paramInfo.ArrayStride * i) * sizeof(u32);
 
 							Color value;
-							if (params->IsAnimated(*materialParamInfo, i))
+							if(params->IsAnimated(*materialParamInfo, i))
 							{
 								const ColorGradientHDR& gradient = params->GetColorGradientParam(*materialParamInfo, i);
 
@@ -1095,13 +1079,13 @@ namespace bs
 			{
 				u32 paramSize = params->GetStructSize(*materialParamInfo);
 				void* paramData = bs_stack_alloc(paramSize);
-				for (u32 i = 0; i < arraySize; i++)
+				for(u32 i = 0; i < arraySize; i++)
 				{
 					params->GetStructData(*materialParamInfo, paramData, paramSize, i);
 
 					u32 writeOffset = (paramInfo.Offset + paramInfo.ArrayStride * i) * sizeof(u32);
 					paramBlock->Write(writeOffset, paramData, paramSize);
-				}	
+				}
 				bs_stack_free(paramData);
 			}
 		}
@@ -1122,7 +1106,7 @@ namespace bs
 					const ObjectParamInfo& paramInfo = stageInfo.Textures[k];
 
 					const MaterialParams::ParamData* materialParamInfo = params->GetParamData(paramInfo.ParamIdx);
-					if (materialParamInfo->Version <= mParamVersion && !updateAll)
+					if(materialParamInfo->Version <= mParamVersion && !updateAll)
 						continue;
 
 					TextureSurface surface;
@@ -1132,12 +1116,12 @@ namespace bs
 					paramPtr->SetTexture(paramInfo.SetIdx, paramInfo.SlotIdx, texture, surface);
 				}
 
-				for (u32 k = 0; k < stageInfo.NumLoadStoreTextures; k++)
+				for(u32 k = 0; k < stageInfo.NumLoadStoreTextures; k++)
 				{
 					const ObjectParamInfo& paramInfo = stageInfo.LoadStoreTextures[k];
 
 					const MaterialParams::ParamData* materialParamInfo = params->GetParamData(paramInfo.ParamIdx);
-					if (materialParamInfo->Version <= mParamVersion && !updateAll)
+					if(materialParamInfo->Version <= mParamVersion && !updateAll)
 						continue;
 
 					TextureSurface surface;
@@ -1147,12 +1131,12 @@ namespace bs
 					paramPtr->SetLoadStoreTexture(paramInfo.SetIdx, paramInfo.SlotIdx, texture, surface);
 				}
 
-				for (u32 k = 0; k < stageInfo.NumBuffers; k++)
+				for(u32 k = 0; k < stageInfo.NumBuffers; k++)
 				{
 					const ObjectParamInfo& paramInfo = stageInfo.Buffers[k];
 
 					const MaterialParams::ParamData* materialParamInfo = params->GetParamData(paramInfo.ParamIdx);
-					if (materialParamInfo->Version <= mParamVersion && !updateAll)
+					if(materialParamInfo->Version <= mParamVersion && !updateAll)
 						continue;
 
 					BufferType buffer;
@@ -1161,12 +1145,12 @@ namespace bs
 					paramPtr->SetBuffer(paramInfo.SetIdx, paramInfo.SlotIdx, buffer);
 				}
 
-				for (u32 k = 0; k < stageInfo.NumSamplerStates; k++)
+				for(u32 k = 0; k < stageInfo.NumSamplerStates; k++)
 				{
 					const ObjectParamInfo& paramInfo = stageInfo.SamplerStates[k];
 
 					const MaterialParams::ParamData* materialParamInfo = params->GetParamData(paramInfo.ParamIdx);
-					if (materialParamInfo->Version <= mParamVersion && !updateAll)
+					if(materialParamInfo->Version <= mParamVersion && !updateAll)
 						continue;
 
 					SamplerStateType samplerState;
@@ -1182,6 +1166,6 @@ namespace bs
 		mParamVersion = params->GetParamVersion();
 	}
 
-	template class TGpuParamsSet <false>;
-	template class TGpuParamsSet <true>;
-}
+	template class TGpuParamsSet<false>;
+	template class TGpuParamsSet<true>;
+} // namespace bs

@@ -8,19 +8,18 @@
 
 namespace bs
 {
-	template<int DATA_TYPE, bool Core>
+	template <int DATA_TYPE, bool Core>
 	TMaterialDataCommon<DATA_TYPE, Core>::TMaterialDataCommon(const String& name, const MaterialPtrType& material)
-		:mParamIndex(0), mArraySize(0), mMaterial(nullptr)
+		: mParamIndex(0), mArraySize(0), mMaterial(nullptr)
 	{
 		if(material != nullptr)
 		{
 			SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
 
 			u32 paramIndex;
-			auto result = params->GetParamIndex(name, MaterialParams::ParamType::Data, (GpuParamDataType)DATA_TYPE, 0,
-				paramIndex);
+			auto result = params->GetParamIndex(name, MaterialParams::ParamType::Data, (GpuParamDataType)DATA_TYPE, 0, paramIndex);
 
-			if (result == MaterialParams::GetParamResult::Success)
+			if(result == MaterialParams::GetParamResult::Success)
 			{
 				const MaterialParams::ParamData* data = params->GetParamData(paramIndex);
 
@@ -33,16 +32,15 @@ namespace bs
 		}
 	}
 
-	template<class T, bool Core>
+	template <class T, bool Core>
 	void TMaterialDataParam<T, Core>::Set(const T& value, u32 arrayIdx) const
 	{
-		if (this->mMaterial == nullptr)
+		if(this->mMaterial == nullptr)
 			return;
 
 		if(arrayIdx >= this->mArraySize)
 		{
-			BS_LOG(Warning, Material, "Array index out of range. Provided index was {0} but array length is {1}",
-				arrayIdx, this->mArraySize);
+			BS_LOG(Warning, Material, "Array index out of range. Provided index was {0} but array length is {1}", arrayIdx, this->mArraySize);
 			return;
 		}
 
@@ -53,11 +51,11 @@ namespace bs
 		this->mMaterial->MarkCoreDirtyInternal();
 	}
 
-	template<class T, bool Core>
+	template <class T, bool Core>
 	T TMaterialDataParam<T, Core>::Get(u32 arrayIdx) const
 	{
 		T output{};
-		if (this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
+		if(this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
 			return output;
 
 		SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetInternalParamsInternal();
@@ -67,16 +65,15 @@ namespace bs
 		return output;
 	}
 
-	template<class T, bool Core>
+	template <class T, bool Core>
 	void TMaterialCurveParam<T, Core>::Set(TAnimationCurve<T> value, u32 arrayIdx) const
 	{
-		if (this->mMaterial == nullptr)
+		if(this->mMaterial == nullptr)
 			return;
 
 		if(arrayIdx >= this->mArraySize)
 		{
-			BS_LOG(Warning, Material, "Array index out of range. Provided index was {0} but array length is {1}",
-				arrayIdx, this->mArraySize);
+			BS_LOG(Warning, Material, "Array index out of range. Provided index was {0} but array length is {1}", arrayIdx, this->mArraySize);
 			return;
 		}
 
@@ -87,12 +84,12 @@ namespace bs
 		this->mMaterial->MarkCoreDirtyInternal();
 	}
 
-	template<class T, bool Core>
+	template <class T, bool Core>
 	const TAnimationCurve<T>& TMaterialCurveParam<T, Core>::Get(u32 arrayIdx) const
 	{
 		static TAnimationCurve<T> EMPTY_CURVE;
 
-		if (this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
+		if(this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
 			return EMPTY_CURVE;
 
 		SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetInternalParamsInternal();
@@ -101,16 +98,15 @@ namespace bs
 		return params->template GetCurveParam<T>(*data, arrayIdx);
 	}
 
-	template<bool Core>
+	template <bool Core>
 	void TMaterialColorGradientParam<Core>::Set(const ColorGradientHDR& value, u32 arrayIdx) const
 	{
-		if (this->mMaterial == nullptr)
+		if(this->mMaterial == nullptr)
 			return;
 
 		if(arrayIdx >= this->mArraySize)
 		{
-			BS_LOG(Warning, Material, "Array index out of range. Provided index was {0} but array length is {1}",
-				arrayIdx, this->mArraySize);
+			BS_LOG(Warning, Material, "Array index out of range. Provided index was {0} but array length is {1}", arrayIdx, this->mArraySize);
 			return;
 		}
 
@@ -121,12 +117,12 @@ namespace bs
 		this->mMaterial->MarkCoreDirtyInternal();
 	}
 
-	template<bool Core>
+	template <bool Core>
 	const ColorGradientHDR& TMaterialColorGradientParam<Core>::Get(u32 arrayIdx) const
 	{
 		static ColorGradientHDR EMPTY_GRADIENT;
 
-		if (this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
+		if(this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
 			return EMPTY_GRADIENT;
 
 		SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetInternalParamsInternal();
@@ -135,16 +131,15 @@ namespace bs
 		return params->GetColorGradientParam(*data, arrayIdx);
 	}
 
-	template<bool Core>
+	template <bool Core>
 	void TMaterialParamStruct<Core>::Set(const void* value, u32 sizeBytes, u32 arrayIdx) const
 	{
-		if (this->mMaterial == nullptr)
+		if(this->mMaterial == nullptr)
 			return;
 
-		if (arrayIdx >= this->mArraySize)
+		if(arrayIdx >= this->mArraySize)
 		{
-			BS_LOG(Warning, Material, "Array index out of range. Provided index was {0} but array length is {1}",
-				arrayIdx, this->mArraySize);
+			BS_LOG(Warning, Material, "Array index out of range. Provided index was {0} but array length is {1}", arrayIdx, this->mArraySize);
 			return;
 		}
 
@@ -155,10 +150,10 @@ namespace bs
 		this->mMaterial->MarkCoreDirtyInternal();
 	}
 
-	template<bool Core>
+	template <bool Core>
 	void TMaterialParamStruct<Core>::Get(void* value, u32 sizeBytes, u32 arrayIdx) const
 	{
-		if (this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
+		if(this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
 			return;
 
 		SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetInternalParamsInternal();
@@ -167,10 +162,10 @@ namespace bs
 		params->GetStructData(*data, value, sizeBytes, arrayIdx);
 	}
 
-	template<bool Core>
+	template <bool Core>
 	u32 TMaterialParamStruct<Core>::GetElementSize() const
 	{
-		if (this->mMaterial == nullptr)
+		if(this->mMaterial == nullptr)
 			return 0;
 
 		SPtr<typename Base::MaterialParamsType> params = this->mMaterial->GetInternalParamsInternal();
@@ -179,18 +174,18 @@ namespace bs
 		return params->GetStructSize(*data);
 	}
 
-	template<bool Core>
+	template <bool Core>
 	TMaterialParamTexture<Core>::TMaterialParamTexture(const String& name, const MaterialPtrType& material)
-		:mParamIndex(0), mMaterial(nullptr)
+		: mParamIndex(0), mMaterial(nullptr)
 	{
-		if (material != nullptr)
+		if(material != nullptr)
 		{
 			SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
 
 			u32 paramIndex;
 			auto result = params->GetParamIndex(name, MaterialParams::ParamType::Texture, GPDT_UNKNOWN, 0, paramIndex);
 
-			if (result == MaterialParams::GetParamResult::Success)
+			if(result == MaterialParams::GetParamResult::Success)
 			{
 				mMaterial = material;
 				mParamIndex = paramIndex;
@@ -200,10 +195,10 @@ namespace bs
 		}
 	}
 
-	template<bool Core>
+	template <bool Core>
 	void TMaterialParamTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface) const
 	{
-		if (mMaterial == nullptr)
+		if(mMaterial == nullptr)
 			return;
 
 		SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
@@ -211,7 +206,7 @@ namespace bs
 
 		// If there is a default value, assign that instead of null
 		TextureType newValue = texture;
-		if (newValue == nullptr)
+		if(newValue == nullptr)
 			params->GetDefaultTexture(*data, newValue);
 
 		params->SetTexture(*data, newValue, surface);
@@ -220,11 +215,11 @@ namespace bs
 		mMaterial->MarkResourcesDirtyInternal();
 	}
 
-	template<bool Core>
+	template <bool Core>
 	typename TMaterialParamTexture<Core>::TextureType TMaterialParamTexture<Core>::Get() const
 	{
 		TextureType texture;
-		if (mMaterial == nullptr)
+		if(mMaterial == nullptr)
 			return texture;
 
 		TextureSurface surface;
@@ -235,19 +230,19 @@ namespace bs
 		params->GetTexture(*data, texture, surface);
 		return texture;
 	}
-	
-	template<bool Core>
+
+	template <bool Core>
 	TMaterialParamSpriteTexture<Core>::TMaterialParamSpriteTexture(const String& name, const MaterialPtrType& material)
-		:mParamIndex(0), mMaterial(nullptr)
+		: mParamIndex(0), mMaterial(nullptr)
 	{
-		if (material != nullptr)
+		if(material != nullptr)
 		{
 			SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
 
 			u32 paramIndex;
 			auto result = params->GetParamIndex(name, MaterialParams::ParamType::Texture, GPDT_UNKNOWN, 0, paramIndex);
 
-			if (result == MaterialParams::GetParamResult::Success)
+			if(result == MaterialParams::GetParamResult::Success)
 			{
 				mMaterial = material;
 				mParamIndex = paramIndex;
@@ -257,10 +252,10 @@ namespace bs
 		}
 	}
 
-	template<bool Core>
+	template <bool Core>
 	void TMaterialParamSpriteTexture<Core>::Set(const SpriteTextureType& texture) const
 	{
-		if (mMaterial == nullptr)
+		if(mMaterial == nullptr)
 			return;
 
 		SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
@@ -275,17 +270,17 @@ namespace bs
 		}
 		else
 			params->SetSpriteTexture(*data, texture);
-		
+
 		mMaterial->MarkCoreDirtyInternal();
 		mMaterial->MarkDependenciesDirtyInternal();
 		mMaterial->MarkResourcesDirtyInternal();
 	}
 
-	template<bool Core>
+	template <bool Core>
 	typename TMaterialParamSpriteTexture<Core>::SpriteTextureType TMaterialParamSpriteTexture<Core>::Get() const
 	{
 		SpriteTextureType texture;
-		if (mMaterial == nullptr)
+		if(mMaterial == nullptr)
 			return texture;
 
 		SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
@@ -295,19 +290,18 @@ namespace bs
 		return texture;
 	}
 
-	template<bool Core>
-	TMaterialParamLoadStoreTexture<Core>::TMaterialParamLoadStoreTexture(const String& name,
-		const MaterialPtrType& material)
-		:mParamIndex(0), mMaterial(nullptr)
+	template <bool Core>
+	TMaterialParamLoadStoreTexture<Core>::TMaterialParamLoadStoreTexture(const String& name, const MaterialPtrType& material)
+		: mParamIndex(0), mMaterial(nullptr)
 	{
-		if (material != nullptr)
+		if(material != nullptr)
 		{
 			SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
 
 			u32 paramIndex;
 			auto result = params->GetParamIndex(name, MaterialParams::ParamType::Texture, GPDT_UNKNOWN, 0, paramIndex);
 
-			if (result == MaterialParams::GetParamResult::Success)
+			if(result == MaterialParams::GetParamResult::Success)
 			{
 				mMaterial = material;
 				mParamIndex = paramIndex;
@@ -317,10 +311,10 @@ namespace bs
 		}
 	}
 
-	template<bool Core>
+	template <bool Core>
 	void TMaterialParamLoadStoreTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface) const
 	{
-		if (mMaterial == nullptr)
+		if(mMaterial == nullptr)
 			return;
 
 		SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
@@ -332,11 +326,11 @@ namespace bs
 		mMaterial->MarkResourcesDirtyInternal();
 	}
 
-	template<bool Core>
+	template <bool Core>
 	typename TMaterialParamLoadStoreTexture<Core>::TextureType TMaterialParamLoadStoreTexture<Core>::Get() const
 	{
 		TextureType texture;
-		if (mMaterial == nullptr)
+		if(mMaterial == nullptr)
 			return texture;
 
 		TextureSurface surface;
@@ -348,19 +342,19 @@ namespace bs
 
 		return texture;
 	}
-	
-	template<bool Core>
+
+	template <bool Core>
 	TMaterialParamBuffer<Core>::TMaterialParamBuffer(const String& name, const MaterialPtrType& material)
-		:mParamIndex(0), mMaterial(nullptr)
+		: mParamIndex(0), mMaterial(nullptr)
 	{
-		if (material != nullptr)
+		if(material != nullptr)
 		{
 			SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
 
 			u32 paramIndex;
 			auto result = params->GetParamIndex(name, MaterialParams::ParamType::Buffer, GPDT_UNKNOWN, 0, paramIndex);
 
-			if (result == MaterialParams::GetParamResult::Success)
+			if(result == MaterialParams::GetParamResult::Success)
 			{
 				mMaterial = material;
 				mParamIndex = paramIndex;
@@ -370,10 +364,10 @@ namespace bs
 		}
 	}
 
-	template<bool Core>
+	template <bool Core>
 	void TMaterialParamBuffer<Core>::Set(const BufferType& buffer) const
 	{
-		if (mMaterial == nullptr)
+		if(mMaterial == nullptr)
 			return;
 
 		SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
@@ -384,11 +378,11 @@ namespace bs
 		mMaterial->MarkDependenciesDirtyInternal();
 	}
 
-	template<bool Core>
+	template <bool Core>
 	typename TMaterialParamBuffer<Core>::BufferType TMaterialParamBuffer<Core>::Get() const
 	{
 		BufferType buffer;
-		if (mMaterial == nullptr)
+		if(mMaterial == nullptr)
 			return buffer;
 
 		SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
@@ -398,18 +392,18 @@ namespace bs
 		return buffer;
 	}
 
-	template<bool Core>
+	template <bool Core>
 	TMaterialParamSampState<Core>::TMaterialParamSampState(const String& name, const MaterialPtrType& material)
-		:mParamIndex(0), mMaterial(nullptr)
+		: mParamIndex(0), mMaterial(nullptr)
 	{
-		if (material != nullptr)
+		if(material != nullptr)
 		{
 			SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
 
 			u32 paramIndex;
 			auto result = params->GetParamIndex(name, MaterialParams::ParamType::Sampler, GPDT_UNKNOWN, 0, paramIndex);
 
-			if (result == MaterialParams::GetParamResult::Success)
+			if(result == MaterialParams::GetParamResult::Success)
 			{
 				mMaterial = material;
 				mParamIndex = paramIndex;
@@ -419,10 +413,10 @@ namespace bs
 		}
 	}
 
-	template<bool Core>
+	template <bool Core>
 	void TMaterialParamSampState<Core>::Set(const SamplerStateType& sampState) const
 	{
-		if (mMaterial == nullptr)
+		if(mMaterial == nullptr)
 			return;
 
 		SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
@@ -430,7 +424,7 @@ namespace bs
 
 		// If there is a default value, assign that instead of null
 		SamplerStateType newValue = sampState;
-		if (newValue == nullptr)
+		if(newValue == nullptr)
 			params->GetDefaultSamplerState(*data, newValue);
 
 		params->SetSamplerState(*data, newValue);
@@ -438,11 +432,11 @@ namespace bs
 		mMaterial->MarkDependenciesDirtyInternal();
 	}
 
-	template<bool Core>
+	template <bool Core>
 	typename TMaterialParamSampState<Core>::SamplerStateType TMaterialParamSampState<Core>::Get() const
 	{
 		SamplerStateType samplerState;
-		if (mMaterial == nullptr)
+		if(mMaterial == nullptr)
 			return samplerState;
 
 		SPtr<MaterialParamsType> params = mMaterial->GetInternalParamsInternal();
@@ -452,10 +446,10 @@ namespace bs
 		return samplerState;
 	}
 
-#define MATERIAL_DATA_PARAM_INSTATIATE(type)										\
-	template class TMaterialDataCommon<TGpuDataParamInfo<type>::TypeId, false>;		\
-	template class TMaterialDataCommon<TGpuDataParamInfo<type>::TypeId, true>;		\
-	template class TMaterialDataParam<type, false>;									\
+#define MATERIAL_DATA_PARAM_INSTATIATE(type)                                    \
+	template class TMaterialDataCommon<TGpuDataParamInfo<type>::TypeId, false>; \
+	template class TMaterialDataCommon<TGpuDataParamInfo<type>::TypeId, true>;  \
+	template class TMaterialDataParam<type, false>;                             \
 	template class TMaterialDataParam<type, true>;
 
 	MATERIAL_DATA_PARAM_INSTATIATE(float)
@@ -504,4 +498,4 @@ namespace bs
 
 	template class TMaterialParamSampState<false>;
 	template class TMaterialParamSampState<true>;
-}
+} // namespace bs

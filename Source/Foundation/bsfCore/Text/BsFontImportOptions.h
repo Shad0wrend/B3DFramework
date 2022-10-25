@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Determines how is a font rendered into the bitmap texture. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Text),API(Framework),API(Editor)) FontRenderMode
+	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Text), API(Framework), API(Editor)) FontRenderMode
 	{
 		Smooth, /*< Render antialiased fonts without hinting (slightly more blurry). */
 		Raster, /*< Render non-antialiased fonts without hinting (slightly more blurry). */
@@ -22,19 +22,20 @@ namespace bs
 	};
 
 	/** Represents a range of character code. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Text),ExportAsStruct(true),API(Framework),API(Editor)) CharRange
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Text), ExportAsStruct(true), API(Framework), API(Editor)) CharRange
 	{
 		CharRange() = default;
+
 		CharRange(u32 start, u32 end)
 			: Start(start), End(end)
-		{ }
+		{}
 
 		u32 Start = 0;
 		u32 End = 0;
 	};
 
 	/**	Import options that allow you to control how is a font imported. */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Text),API(Framework),API(Editor)) FontImportOptions : public ImportOptions
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Text), API(Framework), API(Editor)) FontImportOptions : public ImportOptions
 	{
 	public:
 		FontImportOptions() = default;
@@ -77,4 +78,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

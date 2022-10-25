@@ -9,4 +9,4 @@ namespace bs
 	{
 		mMaterial = material;
 	}
-}
+} // namespace bs

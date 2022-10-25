@@ -17,33 +17,33 @@ namespace bs
 	 *
 	 * @note	Wraps HingeJoint as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportName(HingeJoint)) CHingeJoint : public CJoint
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(HingeJoint)) CHingeJoint : public CJoint
 	{
 	public:
 		CHingeJoint(const HSceneObject& parent);
 
 		/** @copydoc HingeJoint::getAngle */
-		BS_SCRIPT_EXPORT(ExportName(Angle),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Angle), Property(Getter))
 		Radian GetAngle() const;
 
 		/** @copydoc HingeJoint::getSpeed */
-		BS_SCRIPT_EXPORT(ExportName(Speed),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Speed), Property(Getter))
 		float GetSpeed() const;
 
 		/** @copydoc HingeJoint::getLimit */
-		BS_SCRIPT_EXPORT(ExportName(Limit),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Limit), Property(Getter))
 		LimitAngularRange GetLimit() const;
 
 		/** @copydoc HingeJoint::setLimit */
-		BS_SCRIPT_EXPORT(ExportName(Limit),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Limit), Property(Setter))
 		void SetLimit(const LimitAngularRange& limit);
 
 		/** @copydoc HingeJoint::getDrive */
-		BS_SCRIPT_EXPORT(ExportName(Drive),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Drive), Property(Getter))
 		HingeJointDrive GetDrive() const;
 
 		/** @copydoc HingeJoint::setDrive */
-		BS_SCRIPT_EXPORT(ExportName(Drive),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Drive), Property(Setter))
 		void SetDrive(const HingeJointDrive& drive);
 
 		/** @copydoc HingeJoint::setFlag */
@@ -70,7 +70,7 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CJoint::createInternal */
-		SPtr<Joint> CreateInternal() ;
+		SPtr<Joint> CreateInternal();
 
 		HINGE_JOINT_DESC mDesc;
 
@@ -80,11 +80,11 @@ namespace bs
 	public:
 		friend class CHingeJointRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 
 	protected:
 		CHingeJoint(); // Serialization only
 	};
 
-	 /** @} */
-}
+	/** @} */
+} // namespace bs

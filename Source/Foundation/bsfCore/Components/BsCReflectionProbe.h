@@ -17,34 +17,40 @@ namespace bs
 	 *
 	 * @note	Wraps ReflectionProbe as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering),ExportName(ReflectionProbe)) CReflectionProbe : public Component
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportName(ReflectionProbe)) CReflectionProbe : public Component
 	{
 	public:
 		CReflectionProbe(const HSceneObject& parent);
 		virtual ~CReflectionProbe();
 
 		/** @copydoc ReflectionProbe::getType */
-		BS_SCRIPT_EXPORT(ExportName(Type),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Type), Property(Getter))
+
 		ReflectionProbeType GetType() const { return mInternal->GetType(); }
 
 		/** @copydoc ReflectionProbe::setType */
-		BS_SCRIPT_EXPORT(ExportName(Type),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Type), Property(Setter))
+
 		void SetType(ReflectionProbeType type) { mInternal->SetType(type); }
 
 		/** @copydoc ReflectionProbe::getRadius */
-		BS_SCRIPT_EXPORT(ExportName(Radius),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Radius), Property(Getter))
+
 		float GetRadius() const { return mInternal->GetRadius(); }
 
 		/** @copydoc ReflectionProbe::setRadius */
-		BS_SCRIPT_EXPORT(ExportName(Radius),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Radius), Property(Setter))
+
 		void SetRadius(float radius) { mInternal->SetRadius(radius); }
 
 		/** @copydoc ReflectionProbe::getExtents */
-		BS_SCRIPT_EXPORT(ExportName(Extents),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Extents), Property(Getter))
+
 		Vector3 GetExtents() const { return mInternal->GetExtents(); }
 
 		/** @copydoc ReflectionProbe::setExtents */
-		BS_SCRIPT_EXPORT(ExportName(Extents),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Extents), Property(Setter))
+
 		void SetExtents(const Vector3& extents) { mInternal->SetExtents(extents); }
 
 		/** Retrieves transition distance set by setTransitionDistance(). */
@@ -54,11 +60,13 @@ namespace bs
 		void SetTransitionDistance(float distance) { mInternal->SetTransitionDistance(distance); }
 
 		/** @copydoc ReflectionProbe::getCustomTexture */
-		BS_SCRIPT_EXPORT(ExportName(CustomTexture),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(CustomTexture), Property(Getter))
+
 		HTexture GetCustomTexture() const { return mInternal->GetCustomTexture(); }
 
 		/** @copydoc ReflectionProbe::setCustomTexture */
-		BS_SCRIPT_EXPORT(ExportName(CustomTexture),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(CustomTexture), Property(Setter))
+
 		void SetCustomTexture(const HTexture& texture) { mInternal->SetCustomTexture(texture); }
 
 		/** @copydoc ReflectionProbe::getBounds */
@@ -66,6 +74,7 @@ namespace bs
 
 		/** @copydoc ReflectionProbe::capture */
 		BS_SCRIPT_EXPORT(ExportName(Capture))
+
 		void Capture() { mInternal->Capture(); }
 
 		/** @name Internal
@@ -87,13 +96,13 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc Component::onInitialized */
-		void OnInitialized() ;
+		void OnInitialized();
 
 		/** @copydoc Component::onDestroyed */
-		void OnDestroyed() ;
+		void OnDestroyed();
 
 		/** @copydoc Component::update */
-		void Update() override { }
+		void Update() override {}
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -108,4 +117,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

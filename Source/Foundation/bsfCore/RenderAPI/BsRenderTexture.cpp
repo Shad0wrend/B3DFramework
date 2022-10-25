@@ -14,27 +14,26 @@ namespace bs
 	{
 		u32 firstIdx = (u32)-1;
 		bool requiresHwGamma = false;
-		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			HTexture texture = desc.ColorSurfaces[i].Texture;
 
-			if (!texture.IsLoaded())
+			if(!texture.IsLoaded())
 				continue;
 
-			if (firstIdx == (u32)-1)
+			if(firstIdx == (u32)-1)
 				firstIdx = i;
 
 			requiresHwGamma |= texture->GetProperties().IsHardwareGammaEnabled();
 		}
 
-		if (firstIdx == (u32)-1)
+		if(firstIdx == (u32)-1)
 		{
 			HTexture texture = desc.DepthStencilSurface.Texture;
-			if (texture.IsLoaded())
+			if(texture.IsLoaded())
 			{
 				const TextureProperties& texProps = texture->GetProperties();
-				Construct(&texProps, desc.DepthStencilSurface.NumFaces, desc.DepthStencilSurface.MipLevel,
-						  requiresFlipping, false);
+				Construct(&texProps, desc.DepthStencilSurface.NumFaces, desc.DepthStencilSurface.MipLevel, requiresFlipping, false);
 			}
 		}
 		else
@@ -42,8 +41,7 @@ namespace bs
 			HTexture texture = desc.ColorSurfaces[firstIdx].Texture;
 
 			const TextureProperties& texProps = texture->GetProperties();
-			Construct(&texProps, desc.ColorSurfaces[firstIdx].NumFaces, desc.ColorSurfaces[firstIdx].MipLevel,
-					  requiresFlipping, requiresHwGamma);
+			Construct(&texProps, desc.ColorSurfaces[firstIdx].NumFaces, desc.ColorSurfaces[firstIdx].MipLevel, requiresFlipping, requiresHwGamma);
 		}
 	}
 
@@ -51,14 +49,14 @@ namespace bs
 	{
 		u32 firstIdx = (u32)-1;
 		bool requiresHwGamma = false;
-		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			SPtr<ct::Texture> texture = desc.ColorSurfaces[i].Texture;
 
-			if (texture == nullptr)
+			if(texture == nullptr)
 				continue;
 
-			if (firstIdx == (u32)-1)
+			if(firstIdx == (u32)-1)
 				firstIdx = i;
 
 			requiresHwGamma |= texture->GetProperties().IsHardwareGammaEnabled();
@@ -70,8 +68,7 @@ namespace bs
 			if(texture != nullptr)
 			{
 				const TextureProperties& texProps = texture->GetProperties();
-				Construct(&texProps, desc.DepthStencilSurface.NumFaces, desc.DepthStencilSurface.MipLevel,
-						  requiresFlipping, false);
+				Construct(&texProps, desc.DepthStencilSurface.NumFaces, desc.DepthStencilSurface.MipLevel, requiresFlipping, false);
 			}
 		}
 		else
@@ -79,18 +76,15 @@ namespace bs
 			SPtr<ct::Texture> texture = desc.ColorSurfaces[firstIdx].Texture;
 
 			const TextureProperties& texProps = texture->GetProperties();
-			Construct(&texProps, desc.ColorSurfaces[firstIdx].NumFaces, desc.ColorSurfaces[firstIdx].MipLevel,
-					  requiresFlipping, requiresHwGamma);
+			Construct(&texProps, desc.ColorSurfaces[firstIdx].NumFaces, desc.ColorSurfaces[firstIdx].MipLevel, requiresFlipping, requiresHwGamma);
 		}
 	}
 
-	void RenderTextureProperties::Construct(const TextureProperties* textureProps, u32 numSlices,
-											u32 mipLevel, bool requiresFlipping, bool hwGamma)
+	void RenderTextureProperties::Construct(const TextureProperties* textureProps, u32 numSlices, u32 mipLevel, bool requiresFlipping, bool hwGamma)
 	{
-		if (textureProps != nullptr)
+		if(textureProps != nullptr)
 		{
-			PixelUtil::GetSizeForMipLevel(textureProps->GetWidth(), textureProps->GetHeight(), textureProps->GetDepth(),
-										  mipLevel, Width, Height, numSlices);
+			PixelUtil::GetSizeForMipLevel(textureProps->GetWidth(), textureProps->GetHeight(), textureProps->GetDepth(), mipLevel, Width, Height, numSlices);
 
 			numSlices *= numSlices;
 			MultisampleCount = textureProps->GetNumSamples();
@@ -101,8 +95,7 @@ namespace bs
 		this->HwGamma = hwGamma;
 	}
 
-	SPtr<RenderTexture> RenderTexture::Create(const TEXTURE_DESC& desc,
-		bool createDepth, PixelFormat depthStencilFormat)
+	SPtr<RenderTexture> RenderTexture::Create(const TEXTURE_DESC& desc, bool createDepth, PixelFormat depthStencilFormat)
 	{
 		return TextureManager::Instance().CreateRenderTexture(desc, createDepth, depthStencilFormat);
 	}
@@ -118,15 +111,15 @@ namespace bs
 	}
 
 	RenderTexture::RenderTexture(const RENDER_TEXTURE_DESC& desc)
-		:mDesc(desc)
+		: mDesc(desc)
 	{
-		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
-			if (desc.ColorSurfaces[i].Texture != nullptr)
+			if(desc.ColorSurfaces[i].Texture != nullptr)
 				mBindableColorTex[i] = desc.ColorSurfaces[i].Texture;
 		}
 
-		if (desc.DepthStencilSurface.Texture != nullptr)
+		if(desc.DepthStencilSurface.Texture != nullptr)
 			mBindableDepthStencilTex = desc.DepthStencilSurface.Texture;
 	}
 
@@ -134,10 +127,10 @@ namespace bs
 	{
 		ct::RENDER_TEXTURE_DESC coreDesc;
 
-		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			ct::RENDER_SURFACE_DESC surfaceDesc;
-			if (mDesc.ColorSurfaces[i].Texture.IsLoaded())
+			if(mDesc.ColorSurfaces[i].Texture.IsLoaded())
 				surfaceDesc.Texture = mDesc.ColorSurfaces[i].Texture->GetCore();
 
 			surfaceDesc.Face = mDesc.ColorSurfaces[i].Face;
@@ -147,7 +140,7 @@ namespace bs
 			coreDesc.ColorSurfaces[i] = surfaceDesc;
 		}
 
-		if (mDesc.DepthStencilSurface.Texture.IsLoaded())
+		if(mDesc.DepthStencilSurface.Texture.IsLoaded())
 			coreDesc.DepthStencilSurface.Texture = mDesc.DepthStencilSurface.Texture->GetCore();
 
 		coreDesc.DepthStencilSurface.Face = mDesc.DepthStencilSurface.Face;
@@ -189,150 +182,146 @@ namespace bs
 
 	namespace ct
 	{
-	RenderTexture::RenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
-		:mDesc(desc)
-	{ }
+		RenderTexture::RenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
+			: mDesc(desc)
+		{}
 
-	void RenderTexture::Initialize()
-	{
-		RenderTarget::Initialize();
-
-		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		void RenderTexture::Initialize()
 		{
-			if (mDesc.ColorSurfaces[i].Texture != nullptr)
+			RenderTarget::Initialize();
+
+			for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 			{
-				SPtr<Texture> texture = mDesc.ColorSurfaces[i].Texture;
+				if(mDesc.ColorSurfaces[i].Texture != nullptr)
+				{
+					SPtr<Texture> texture = mDesc.ColorSurfaces[i].Texture;
 
-				if ((texture->GetProperties().GetUsage() & TU_RENDERTARGET) == 0)
-					BS_EXCEPT(InvalidParametersException, "Provided texture is not created with render target usage.");
+					if((texture->GetProperties().GetUsage() & TU_RENDERTARGET) == 0)
+						BS_EXCEPT(InvalidParametersException, "Provided texture is not created with render target usage.");
 
-				mColorSurfaces[i] = texture->RequestView(mDesc.ColorSurfaces[i].MipLevel, 1,
-					mDesc.ColorSurfaces[i].Face, mDesc.ColorSurfaces[i].NumFaces, GVU_RENDERTARGET);
+					mColorSurfaces[i] = texture->RequestView(mDesc.ColorSurfaces[i].MipLevel, 1, mDesc.ColorSurfaces[i].Face, mDesc.ColorSurfaces[i].NumFaces, GVU_RENDERTARGET);
+				}
 			}
+
+			if(mDesc.DepthStencilSurface.Texture != nullptr)
+			{
+				SPtr<Texture> texture = mDesc.DepthStencilSurface.Texture;
+
+				if((texture->GetProperties().GetUsage() & TU_DEPTHSTENCIL) == 0)
+					BS_EXCEPT(InvalidParametersException, "Provided texture is not created with depth stencil usage.");
+
+				mDepthStencilSurface = texture->RequestView(mDesc.DepthStencilSurface.MipLevel, 1, mDesc.DepthStencilSurface.Face, mDesc.DepthStencilSurface.NumFaces, GVU_DEPTHSTENCIL);
+			}
+
+			ThrowIfBuffersDontMatch();
 		}
 
-		if (mDesc.DepthStencilSurface.Texture != nullptr)
+		SPtr<RenderTexture> RenderTexture::Create(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 		{
-			SPtr<Texture> texture = mDesc.DepthStencilSurface.Texture;
-
-			if ((texture->GetProperties().GetUsage() & TU_DEPTHSTENCIL) == 0)
-				BS_EXCEPT(InvalidParametersException, "Provided texture is not created with depth stencil usage.");
-
-			mDepthStencilSurface = texture->RequestView(mDesc.DepthStencilSurface.MipLevel, 1,
-				mDesc.DepthStencilSurface.Face, mDesc.DepthStencilSurface.NumFaces, GVU_DEPTHSTENCIL);
+			return TextureManager::Instance().CreateRenderTexture(desc, deviceIdx);
 		}
 
-		ThrowIfBuffersDontMatch();
-	}
-
-	SPtr<RenderTexture> RenderTexture::Create(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
-	{
-		return TextureManager::Instance().CreateRenderTexture(desc, deviceIdx);
-	}
-
-	void RenderTexture::SyncToCore(const CoreSyncData& data)
-	{
-		RenderTextureProperties& props = const_cast<RenderTextureProperties&>(GetProperties());
-		props = data.GetData<RenderTextureProperties>();
-	}
-
-	const RenderTextureProperties& RenderTexture::GetProperties() const
-	{
-		return static_cast<const RenderTextureProperties&>(GetPropertiesInternal());
-	}
-
-	void RenderTexture::ThrowIfBuffersDontMatch() const
-	{
-		u32 firstSurfaceIdx = (u32)-1;
-		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		void RenderTexture::SyncToCore(const CoreSyncData& data)
 		{
-			if (mColorSurfaces[i] == nullptr)
-				continue;
-
-			if (firstSurfaceIdx == (u32)-1)
-			{
-				firstSurfaceIdx = i;
-				continue;
-			}
-
-			const TextureProperties& curTexProps = mDesc.ColorSurfaces[i].Texture->GetProperties();
-			const TextureProperties& firstTexProps = mDesc.ColorSurfaces[firstSurfaceIdx].Texture->GetProperties();
-
-			u32 curMsCount = curTexProps.GetNumSamples();
-			u32 firstMsCount = firstTexProps.GetNumSamples();
-
-			u32 curNumSlices = mColorSurfaces[i]->GetNumArraySlices();
-			u32 firstNumSlices = mColorSurfaces[firstSurfaceIdx]->GetNumArraySlices();
-
-			if (curMsCount == 0)
-				curMsCount = 1;
-
-			if (firstMsCount == 0)
-				firstMsCount = 1;
-
-			if (curTexProps.GetWidth() != firstTexProps.GetWidth() ||
-				curTexProps.GetHeight() != firstTexProps.GetHeight() ||
-				curTexProps.GetDepth() != firstTexProps.GetDepth() ||
-				curMsCount != firstMsCount ||
-				curNumSlices != firstNumSlices)
-			{
-				String errorInfo = "\nWidth: " + toString(curTexProps.GetWidth()) + "/" + toString(firstTexProps.GetWidth());
-				errorInfo += "\nHeight: " + toString(curTexProps.GetHeight()) + "/" + toString(firstTexProps.GetHeight());
-				errorInfo += "\nDepth: " + toString(curTexProps.GetDepth()) + "/" + toString(firstTexProps.GetDepth());
-				errorInfo += "\nNum. slices: " + toString(curNumSlices) + "/" + toString(firstNumSlices);
-				errorInfo += "\nMultisample Count: " + toString(curMsCount) + "/" + toString(firstMsCount);
-
-				BS_EXCEPT(InvalidParametersException, "Provided color textures don't match!" + errorInfo);
-			}
+			RenderTextureProperties& props = const_cast<RenderTextureProperties&>(GetProperties());
+			props = data.GetData<RenderTextureProperties>();
 		}
 
-		if (firstSurfaceIdx != (u32)-1)
+		const RenderTextureProperties& RenderTexture::GetProperties() const
 		{
-			const TextureProperties& firstTexProps = mDesc.ColorSurfaces[firstSurfaceIdx].Texture->GetProperties();
-			SPtr<TextureView> firstSurfaceView = mColorSurfaces[firstSurfaceIdx];
+			return static_cast<const RenderTextureProperties&>(GetPropertiesInternal());
+		}
 
-			u32 numSlices;
-			if (firstTexProps.GetTextureType() == TEX_TYPE_3D)
-				numSlices = firstTexProps.GetDepth();
-			else
-				numSlices = firstTexProps.GetNumFaces();
-
-			if ((firstSurfaceView->GetFirstArraySlice() + firstSurfaceView->GetNumArraySlices()) > numSlices)
+		void RenderTexture::ThrowIfBuffersDontMatch() const
+		{
+			u32 firstSurfaceIdx = (u32)-1;
+			for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 			{
-				BS_EXCEPT(InvalidParametersException, "Provided number of faces is out of range. Face: " +
-					toString(firstSurfaceView->GetFirstArraySlice() + firstSurfaceView->GetNumArraySlices()) + ". Max num faces: " + toString(numSlices));
+				if(mColorSurfaces[i] == nullptr)
+					continue;
+
+				if(firstSurfaceIdx == (u32)-1)
+				{
+					firstSurfaceIdx = i;
+					continue;
+				}
+
+				const TextureProperties& curTexProps = mDesc.ColorSurfaces[i].Texture->GetProperties();
+				const TextureProperties& firstTexProps = mDesc.ColorSurfaces[firstSurfaceIdx].Texture->GetProperties();
+
+				u32 curMsCount = curTexProps.GetNumSamples();
+				u32 firstMsCount = firstTexProps.GetNumSamples();
+
+				u32 curNumSlices = mColorSurfaces[i]->GetNumArraySlices();
+				u32 firstNumSlices = mColorSurfaces[firstSurfaceIdx]->GetNumArraySlices();
+
+				if(curMsCount == 0)
+					curMsCount = 1;
+
+				if(firstMsCount == 0)
+					firstMsCount = 1;
+
+				if(curTexProps.GetWidth() != firstTexProps.GetWidth() ||
+				   curTexProps.GetHeight() != firstTexProps.GetHeight() ||
+				   curTexProps.GetDepth() != firstTexProps.GetDepth() ||
+				   curMsCount != firstMsCount ||
+				   curNumSlices != firstNumSlices)
+				{
+					String errorInfo = "\nWidth: " + toString(curTexProps.GetWidth()) + "/" + toString(firstTexProps.GetWidth());
+					errorInfo += "\nHeight: " + toString(curTexProps.GetHeight()) + "/" + toString(firstTexProps.GetHeight());
+					errorInfo += "\nDepth: " + toString(curTexProps.GetDepth()) + "/" + toString(firstTexProps.GetDepth());
+					errorInfo += "\nNum. slices: " + toString(curNumSlices) + "/" + toString(firstNumSlices);
+					errorInfo += "\nMultisample Count: " + toString(curMsCount) + "/" + toString(firstMsCount);
+
+					BS_EXCEPT(InvalidParametersException, "Provided color textures don't match!" + errorInfo);
+				}
 			}
 
-			if (firstSurfaceView->GetMostDetailedMip() > firstTexProps.GetNumMipmaps())
+			if(firstSurfaceIdx != (u32)-1)
 			{
-				BS_EXCEPT(InvalidParametersException, "Provided number of mip maps is out of range. Mip level: " +
-					toString(firstSurfaceView->GetMostDetailedMip()) + ". Max num mipmaps: " + toString(firstTexProps.GetNumMipmaps()));
-			}
+				const TextureProperties& firstTexProps = mDesc.ColorSurfaces[firstSurfaceIdx].Texture->GetProperties();
+				SPtr<TextureView> firstSurfaceView = mColorSurfaces[firstSurfaceIdx];
 
-			if (mDepthStencilSurface == nullptr)
-				return;
+				u32 numSlices;
+				if(firstTexProps.GetTextureType() == TEX_TYPE_3D)
+					numSlices = firstTexProps.GetDepth();
+				else
+					numSlices = firstTexProps.GetNumFaces();
 
-			const TextureProperties& depthTexProps = mDesc.DepthStencilSurface.Texture->GetProperties();
-			u32 depthMsCount = depthTexProps.GetNumSamples();
-			u32 colorMsCount = firstTexProps.GetNumSamples();
+				if((firstSurfaceView->GetFirstArraySlice() + firstSurfaceView->GetNumArraySlices()) > numSlices)
+				{
+					BS_EXCEPT(InvalidParametersException, "Provided number of faces is out of range. Face: " + toString(firstSurfaceView->GetFirstArraySlice() + firstSurfaceView->GetNumArraySlices()) + ". Max num faces: " + toString(numSlices));
+				}
 
-			if (depthMsCount == 0)
-				depthMsCount = 1;
+				if(firstSurfaceView->GetMostDetailedMip() > firstTexProps.GetNumMipmaps())
+				{
+					BS_EXCEPT(InvalidParametersException, "Provided number of mip maps is out of range. Mip level: " + toString(firstSurfaceView->GetMostDetailedMip()) + ". Max num mipmaps: " + toString(firstTexProps.GetNumMipmaps()));
+				}
 
-			if (colorMsCount == 0)
-				colorMsCount = 1;
+				if(mDepthStencilSurface == nullptr)
+					return;
 
-			if (depthTexProps.GetWidth() != firstTexProps.GetWidth() ||
-				depthTexProps.GetHeight() != firstTexProps.GetHeight() ||
-				depthMsCount != colorMsCount)
-			{
-				String errorInfo = "\nWidth: " + toString(depthTexProps.GetWidth()) + "/" + toString(firstTexProps.GetWidth());
-				errorInfo += "\nHeight: " + toString(depthTexProps.GetHeight()) + "/" + toString(firstTexProps.GetHeight());
-				errorInfo += "\nMultisample Count: " + toString(depthMsCount) + "/" + toString(colorMsCount);
+				const TextureProperties& depthTexProps = mDesc.DepthStencilSurface.Texture->GetProperties();
+				u32 depthMsCount = depthTexProps.GetNumSamples();
+				u32 colorMsCount = firstTexProps.GetNumSamples();
 
-				BS_EXCEPT(InvalidParametersException, "Provided texture and depth stencil buffer don't match!" + errorInfo);
+				if(depthMsCount == 0)
+					depthMsCount = 1;
+
+				if(colorMsCount == 0)
+					colorMsCount = 1;
+
+				if(depthTexProps.GetWidth() != firstTexProps.GetWidth() ||
+				   depthTexProps.GetHeight() != firstTexProps.GetHeight() ||
+				   depthMsCount != colorMsCount)
+				{
+					String errorInfo = "\nWidth: " + toString(depthTexProps.GetWidth()) + "/" + toString(firstTexProps.GetWidth());
+					errorInfo += "\nHeight: " + toString(depthTexProps.GetHeight()) + "/" + toString(firstTexProps.GetHeight());
+					errorInfo += "\nMultisample Count: " + toString(depthMsCount) + "/" + toString(colorMsCount);
+
+					BS_EXCEPT(InvalidParametersException, "Provided texture and depth stencil buffer don't match!" + errorInfo);
+				}
 			}
 		}
-	}
-	}
-}
+	} // namespace ct
+} // namespace bs

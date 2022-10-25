@@ -17,23 +17,22 @@ namespace bs
 	 */
 
 	/** Iterator that allows you to easily populate or read vertex elements in MeshData. */
-	template<class T>
+	template <class T>
 	class VertexElemIter
 	{
 	public:
 		VertexElemIter()
-			:mData(nullptr), mEnd(nullptr), mByteStride(0), mNumElements(0)
+			: mData(nullptr), mEnd(nullptr), mByteStride(0), mNumElements(0)
 		{
-
 		}
 
 		VertexElemIter(u8* data, u32 byteStride, u32 numElements)
-			:mData(data), mByteStride(byteStride), mNumElements(numElements)
+			: mData(data), mByteStride(byteStride), mNumElements(numElements)
 		{
 			mEnd = mData + byteStride * numElements;
 		}
 
-		/**	
+		/**
 		 * Adds a new value to the iterators current position and advances the iterator. Returns true if there is more room
 		 * in the container.
 		 */
@@ -81,7 +80,7 @@ namespace bs
 	};
 
 	/** Contains per-vertex bone weights and indexes used for skinning, for up to four bones. */
-	struct BS_SCRIPT_EXPORT(ExportAsStruct(true),DocumentationGroup(Utility)) BoneWeight
+	struct BS_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Utility)) BoneWeight
 	{
 		int Index0;
 		int Index1;
@@ -136,7 +135,7 @@ namespace bs
 		/**
 		 * Returns an iterator you can use for easily retrieving or setting Vector2 vertex elements. This is the preferred
 		 * method of assigning or reading vertex data.
-		 * 			
+		 *
 		 * @note	If vertex data of this type/semantic/index/stream doesn't exist and exception will be thrown.
 		 */
 		VertexElemIter<Vector2> GetVec2DataIter(VertexElementSemantic semantic, u32 semanticIdx = 0, u32 streamIdx = 0);
@@ -144,7 +143,7 @@ namespace bs
 		/**
 		 * Returns an iterator you can use for easily retrieving or setting Vector3 vertex elements. This is the preferred
 		 * method of assigning or reading vertex data.
-		 * 			
+		 *
 		 * @note	If vertex data of this type/semantic/index/stream doesn't exist and exception will be thrown.
 		 */
 		VertexElemIter<Vector3> GetVec3DataIter(VertexElementSemantic semantic, u32 semanticIdx = 0, u32 streamIdx = 0);
@@ -152,7 +151,7 @@ namespace bs
 		/**
 		 * Returns an iterator you can use for easily retrieving or setting Vector4 vertex elements. This is the preferred
 		 * method of assigning or reading vertex data.
-		 * 			
+		 *
 		 * @note	If vertex data of this type/semantic/index/stream doesn't exist and exception will be thrown.
 		 */
 		VertexElemIter<Vector4> GetVec4DataIter(VertexElementSemantic semantic, u32 semanticIdx = 0, u32 streamIdx = 0);
@@ -160,7 +159,7 @@ namespace bs
 		/**
 		 * Returns an iterator you can use for easily retrieving or setting DWORD vertex elements. This is the preferred
 		 * method of assigning or reading vertex data.
-		 * 			
+		 *
 		 * @note	If vertex data of this type/semantic/index/stream doesn't exist and exception will be thrown.
 		 */
 		VertexElemIter<u32> GetDwordDataIter(VertexElementSemantic semantic, u32 semanticIdx = 0, u32 streamIdx = 0);
@@ -241,15 +240,13 @@ namespace bs
 		 * @return						Combined mesh data containing all vertices and indexes references by the provided
 		 *								sub-meshes.
 		 */
-		static SPtr<MeshData> Combine(const Vector<SPtr<MeshData>>& elements, const Vector<Vector<SubMesh>>& allSubMeshes,
-			Vector<SubMesh>& subMeshes);
+		static SPtr<MeshData> Combine(const Vector<SPtr<MeshData>>& elements, const Vector<Vector<SubMesh>>& allSubMeshes, Vector<SubMesh>& subMeshes);
 
 		/**
 		 * Constructs a new object that can hold number of vertices described by the provided vertex data description. As
 		 * well as a number of indices of the provided type.
 		 */
-		static SPtr<MeshData> Create(u32 numVertices, u32 numIndexes, const SPtr<VertexDataDesc>& vertexData,
-			IndexType indexType = IT_32BIT)
+		static SPtr<MeshData> Create(u32 numVertices, u32 numIndexes, const SPtr<VertexDataDesc>& vertexData, IndexType indexType = IT_32BIT)
 		{
 			return bs_shared_ptr_new<MeshData>(numVertices, numIndexes, vertexData, indexType);
 		}
@@ -307,4 +304,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

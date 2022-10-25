@@ -24,7 +24,10 @@ namespace bs
 	/** Potential states the light probe can be in. */
 	enum class LightProbeFlags
 	{
-		 Empty, Clean, Dirty, Removed
+		Empty,
+		Clean,
+		Dirty,
+		Removed
 	};
 
 	/** @} */
@@ -33,14 +36,17 @@ namespace bs
 	 *  @{
 	 */
 
-	namespace ct { class LightProbeVolume; }
+	namespace ct
+	{
+		class LightProbeVolume;
+	}
 
 	/** Vector representing spherical harmonic coefficients for a light probe. */
 	struct LightProbeSHCoefficients
 	{
 		LightProbeSHCoefficients()
-			:CoeffsR(), CoeffsG(), CoeffsB()
-		{ }
+			: CoeffsR(), CoeffsG(), CoeffsB()
+		{}
 
 		float CoeffsR[9];
 		float CoeffsG[9];
@@ -55,7 +61,7 @@ namespace bs
 	};
 
 	/** Information about a single probe in the light probe volume. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Rendering),ExportAsStruct(true)) LightProbeInfo
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportAsStruct(true)) LightProbeInfo
 	{
 		u32 Handle;
 		Vector3 Position;
@@ -77,9 +83,10 @@ namespace bs
 		struct ProbeInfo
 		{
 			ProbeInfo() = default;
+
 			ProbeInfo(LightProbeFlags flags, const Vector3& position)
-				:Flags(flags), Position(position)
-			{ }
+				: Flags(flags), Position(position)
+			{}
 
 			LightProbeFlags Flags;
 			Vector3 Position;
@@ -87,6 +94,7 @@ namespace bs
 			/** Coefficients are only valid directly after deserialization, or after updateCoefficients() is called. */
 			LightProbeSHCoefficients Coefficients;
 		};
+
 	public:
 		~LightProbeVolume();
 
@@ -166,8 +174,8 @@ namespace bs
 		 *							corner of the volume is represented by a single probe. Higher values subdivide the
 		 *							volume in an uniform way.
 		 */
-		static SPtr<LightProbeVolume> Create(const AABox& volume = AABox::UNIT_BOX,
-			const Vector3I& cellCount = Vector3I(1, 1, 1));
+		static SPtr<LightProbeVolume> Create(const AABox& volume = AABox::UNIT_BOX, const Vector3I& cellCount = Vector3I(1, 1, 1));
+
 	protected:
 		friend class ct::LightProbeVolume;
 
@@ -183,13 +191,13 @@ namespace bs
 		void UpdateCoefficients();
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		/** @copydoc SceneActor::_markCoreDirty */
 		void MarkCoreDirtyInternal(ActorDirtyFlag dirtFlags = ActorDirtyFlag::Everything) override;
 
 		/** @copydoc CoreObject::syncToCore */
-		CoreSyncData SyncToCore(FrameAlloc* allocator) ;
+		CoreSyncData SyncToCore(FrameAlloc* allocator);
 
 		/**	Creates a light volume with without initializing it. Used for serialization. */
 		static SPtr<LightProbeVolume> CreateEmpty();
@@ -208,7 +216,7 @@ namespace bs
 	public:
 		friend class LightProbeVolumeRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 
 	protected:
 		LightProbeVolume() = default; // Serialization only
@@ -216,89 +224,90 @@ namespace bs
 
 	namespace ct
 	{
-	/** Information about a single light probe in a light probe volume. */
-	struct LightProbeInfo
-	{
-		/** Unique handle representing the probe. Always remains the same. */
-		u32 Handle;
+		/** Information about a single light probe in a light probe volume. */
+		struct LightProbeInfo
+		{
+			/** Unique handle representing the probe. Always remains the same. */
+			u32 Handle;
 
-		/** Flags representing the current state of the probe. */
-		LightProbeFlags Flags;
+			/** Flags representing the current state of the probe. */
+			LightProbeFlags Flags;
 
-		/** Index into the GPU buffer where probe coefficients are stored. -1 if not assigned. Transient. */
-		u32 BufferIdx;
-	};
+			/** Index into the GPU buffer where probe coefficients are stored. -1 if not assigned. Transient. */
+			u32 BufferIdx;
+		};
 
-	/** Core thread usable version of bs::LightProbeVolume. */
-	class BS_CORE_EXPORT LightProbeVolume : public CoreObject, public SceneActor
-	{
-	public:
-		~LightProbeVolume();
+		/** Core thread usable version of bs::LightProbeVolume. */
+		class BS_CORE_EXPORT LightProbeVolume : public CoreObject, public SceneActor
+		{
+		public:
+			~LightProbeVolume();
 
-		/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-		void SetRendererId(u32 id) { mRendererId = id; }
+			/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
+			void SetRendererId(u32 id) { mRendererId = id; }
 
-		/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-		u32 GetRendererId() const { return mRendererId; }
+			/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
+			u32 GetRendererId() const { return mRendererId; }
 
-		/** Returns the number of light probes that are active. */
-		u32 GetNumActiveProbes() const { return (u32)mProbeMap.size(); }
+			/** Returns the number of light probes that are active. */
+			u32 GetNumActiveProbes() const { return (u32)mProbeMap.size(); }
 
-		/** Returns a list of positions for all light probes. Only the first getNumActiveProbes() entries are active. */
-		const Vector<Vector3>& GetLightProbePositions() const { return mProbePositions; }
+			/** Returns a list of positions for all light probes. Only the first getNumActiveProbes() entries are active. */
+			const Vector<Vector3>& GetLightProbePositions() const { return mProbePositions; }
 
-		/**
-		 * Returns non-positional information about all light probes. Only the first getNumActiveProbes() entries are
-		 * active.
-		 */
-		const Vector<LightProbeInfo>& GetLightProbeInfos() const { return mProbeInfos; }
+			/**
+			 * Returns non-positional information about all light probes. Only the first getNumActiveProbes() entries are
+			 * active.
+			 */
+			const Vector<LightProbeInfo>& GetLightProbeInfos() const { return mProbeInfos; }
 
-		/** Populates the vector with SH coefficients for each light probe. Involves reading the GPU buffer. */
-		void GetProbeCoefficients(Vector<LightProbeCoefficientInfo>& output) const;
+			/** Populates the vector with SH coefficients for each light probe. Involves reading the GPU buffer. */
+			void GetProbeCoefficients(Vector<LightProbeCoefficientInfo>& output) const;
 
-		/** Returns the texture containing SH coefficients for all probes in the volume. */
-		SPtr<Texture> GetCoefficientsTexture() const { return mCoefficients; }
-	protected:
-		friend class bs::LightProbeVolume;
+			/** Returns the texture containing SH coefficients for all probes in the volume. */
+			SPtr<Texture> GetCoefficientsTexture() const { return mCoefficients; }
 
-		LightProbeVolume(const UnorderedMap<u32, bs::LightProbeVolume::ProbeInfo>& probes);
+		protected:
+			friend class bs::LightProbeVolume;
 
-		/** @copydoc CoreObject::initialize */
-		void Initialize() ;
+			LightProbeVolume(const UnorderedMap<u32, bs::LightProbeVolume::ProbeInfo>& probes);
 
-		/** @copydoc CoreObject::syncToCore */
-		void SyncToCore(const CoreSyncData& data) ;
+			/** @copydoc CoreObject::initialize */
+			void Initialize();
 
-		/**
-		 * Renders dirty probes and updates their SH coefficients in the local GPU buffer.
-		 *
-		 * @param[in]	maxProbes	Maximum number of probes to render. Set to zero to render all dirty probes. Limiting the
-		 *							number of probes allows the rendering to be distributed over multiple frames.
-		 * @return					True if there are no more dirty probes to process.
-		 */
-		bool RenderProbes(u32 maxProbes);
+			/** @copydoc CoreObject::syncToCore */
+			void SyncToCore(const CoreSyncData& data);
 
-		/**
-		 * Resizes the internal texture that stores light probe SH coefficients, to the specified size (in the number
-		 * of probes).
-		 */
-		void ResizeCoefficientTexture(u32 count);
+			/**
+			 * Renders dirty probes and updates their SH coefficients in the local GPU buffer.
+			 *
+			 * @param[in]	maxProbes	Maximum number of probes to render. Set to zero to render all dirty probes. Limiting the
+			 *							number of probes allows the rendering to be distributed over multiple frames.
+			 * @return					True if there are no more dirty probes to process.
+			 */
+			bool RenderProbes(u32 maxProbes);
 
-		u32 mRendererId = 0;
-		UnorderedMap<u32, u32> mProbeMap; // Map from static indices to compact list of probes
-		u32 mFirstDirtyProbe = 0;
+			/**
+			 * Resizes the internal texture that stores light probe SH coefficients, to the specified size (in the number
+			 * of probes).
+			 */
+			void ResizeCoefficientTexture(u32 count);
 
-		Vector<Vector3> mProbePositions;
-		Vector<LightProbeInfo> mProbeInfos;
+			u32 mRendererId = 0;
+			UnorderedMap<u32, u32> mProbeMap; // Map from static indices to compact list of probes
+			u32 mFirstDirtyProbe = 0;
 
-		// Contains SH coefficients for the probes
-		SPtr<Texture> mCoefficients;
-		u32 mCoeffBufferSize = 0;
+			Vector<Vector3> mProbePositions;
+			Vector<LightProbeInfo> mProbeInfos;
 
-		// Temporary until initialization
-		Vector<LightProbeSHCoefficients> mInitCoefficients;
-	};
-	}
+			// Contains SH coefficients for the probes
+			SPtr<Texture> mCoefficients;
+			u32 mCoeffBufferSize = 0;
+
+			// Temporary until initialization
+			Vector<LightProbeSHCoefficients> mInitCoefficients;
+		};
+	} // namespace ct
 
 	/** @} */
-}
+} // namespace bs

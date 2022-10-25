@@ -17,17 +17,18 @@ namespace bs
 	 *
 	 * @note Wraps MeshCollider as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportName(MeshCollider)) CMeshCollider : public CCollider
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(MeshCollider)) CMeshCollider : public CCollider
 	{
 	public:
 		CMeshCollider(const HSceneObject& parent);
 
 		/** @copydoc MeshCollider::setMesh */
-		BS_SCRIPT_EXPORT(ExportName(Mesh),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Mesh), Property(Setter))
 		void SetMesh(const HPhysicsMesh& mesh);
 
 		/** @copydoc MeshCollider::getMesh */
-		BS_SCRIPT_EXPORT(ExportName(Mesh),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Mesh), Property(Getter))
+
 		HPhysicsMesh GetMesh() const { return mMesh; }
 
 		/** @name Internal
@@ -46,10 +47,10 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CCollider::createInternal */
-		SPtr<Collider> CreateInternal() ;
+		SPtr<Collider> CreateInternal();
 
 		/** @copydoc CCollider::isValidParent */
-		bool IsValidParent(const HRigidbody& parent) const ;
+		bool IsValidParent(const HRigidbody& parent) const;
 
 	protected:
 		HPhysicsMesh mMesh;
@@ -60,11 +61,11 @@ namespace bs
 	public:
 		friend class CMeshColliderRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 
 	protected:
 		CMeshCollider(); // Serialization only
 	};
 
-	 /** @} */
-}
+	/** @} */
+} // namespace bs

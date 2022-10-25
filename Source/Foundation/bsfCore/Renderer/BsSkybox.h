@@ -25,7 +25,6 @@ namespace bs
 		Texture = 1 << 4
 	};
 
-
 	/** Base class for both core and sim thread implementations of a skybox. */
 	class BS_CORE_EXPORT SkyboxBase : public SceneActor
 	{
@@ -37,7 +36,11 @@ namespace bs
 		 * Brightness multiplier that will be applied to skybox values before they're being used. Allows you to make the
 		 * skybox more or less bright. Equal to one by default.
 		 */
-		void SetBrightness(float brightness) { mBrightness = brightness; MarkCoreDirtyInternal(); }
+		void SetBrightness(float brightness)
+		{
+			mBrightness = brightness;
+			MarkCoreDirtyInternal();
+		}
 
 		/** @copydoc setBrightness */
 		float GetBrightness() const { return mBrightness; }
@@ -47,7 +50,7 @@ namespace bs
 	};
 
 	/** Templated base class for both core and sim thread implementations of a skybox. */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TSkybox : public SkyboxBase
 	{
 	public:
@@ -62,8 +65,9 @@ namespace bs
 		TextureType GetTexture() const { return mTexture; }
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template<class P>
+		template <class P>
 		void RttiEnumFields(P p);
+
 	protected:
 		TextureType mTexture;
 	};
@@ -73,7 +77,10 @@ namespace bs
 	 *  @{
 	 */
 
-	namespace ct { class Skybox; }
+	namespace ct
+	{
+		class Skybox;
+	}
 
 	/** Allows you to specify an environment map to use for sampling radiance of the sky. */
 	class BS_CORE_EXPORT Skybox : public IReflectable, public CoreObject, public TSkybox<false>
@@ -100,7 +107,7 @@ namespace bs
 		void FilterTexture();
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		/** @copydoc SkyboxBase::_markCoreDirty */
 		void MarkCoreDirtyInternal(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
@@ -157,7 +164,7 @@ namespace bs
 			SPtr<Texture> mFilteredRadiance;
 			SPtr<Texture> mIrradiance;
 		};
-	}
+	} // namespace ct
 
 	/** @} */
-}
+} // namespace bs

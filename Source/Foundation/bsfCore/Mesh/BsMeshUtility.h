@@ -40,13 +40,12 @@ namespace bs
 		 *							as the vertex array.
 		 * @param[in]	indexSize	Size of a single index in the indices array, in bytes.
 		 *
-		 * @note	
+		 * @note
 		 * Vertices should be split before calling this method if there are any discontinuities. (for example a vertex on a
 		 * corner of a cube should be split into three vertices used by three triangles in order for the normals to be
 		 * valid.)
 		 */
-		static void CalculateNormals(Vector3* vertices, u8* indices, u32 numVertices,
-			u32 numIndices, Vector3* normals, u32 indexSize = 4);
+		static void CalculateNormals(Vector3* vertices, u8* indices, u32 numVertices, u32 numIndices, Vector3* normals, u32 indexSize = 4);
 
 		/**
 		 * Calculates per-vertex tangents and bitangents based on the provided vertices, uv coordinates and indices.
@@ -67,13 +66,12 @@ namespace bs
 		 * @param[in]	vertexStride	Number of bytes to advance the @p vertices, @p normals and @p uv arrays with each
 		 *								vertex. If set to zero them each array is advanced according to its own size.
 		 *
-		 * @note	
+		 * @note
 		 * Vertices should be split before calling this method if there are any discontinuities. (for example a vertex on a
 		 * corner of a cube should be split into three vertices used by three triangles in order for the normals to be
 		 * valid.)
 		 */
-		static void CalculateTangents(Vector3* vertices, Vector3* normals, Vector2* uv, u8* indices, u32 numVertices,
-			u32 numIndices, Vector3* tangents, Vector3* bitangents, u32 indexSize = 4, u32 vertexStride = 0);
+		static void CalculateTangents(Vector3* vertices, Vector3* normals, Vector2* uv, u8* indices, u32 numVertices, u32 numIndices, Vector3* tangents, Vector3* bitangents, u32 indexSize = 4, u32 vertexStride = 0);
 
 		/**
 		 * Calculates per-vertex tangent space (normal, tangent, bitangent) based on the provided vertices, uv coordinates
@@ -92,13 +90,12 @@ namespace bs
 		 *							as the vertex array.
 		 * @param[in]	indexSize	Size of a single index in the indices array, in bytes.
 		 *
-		 * @note	
+		 * @note
 		 * Vertices should be split before calling this method if there are any discontinuities. (for example. a vertex on
 		 * a corner of a cube should be split into three vertices used by three triangles in order for the normals to be
 		 * valid.)
 		 */
-		static void CalculateTangentSpace(Vector3* vertices, Vector2* uv, u8* indices, u32 numVertices,
-			u32 numIndices, Vector3* normals, Vector3* tangents, Vector3* bitangents, u32 indexSize = 4);
+		static void CalculateTangentSpace(Vector3* vertices, Vector2* uv, u8* indices, u32 numVertices, u32 numIndices, Vector3* normals, Vector3* tangents, Vector3* bitangents, u32 indexSize = 4);
 
 		/**
 		 * Clips a set of two-dimensional vertices and uv coordinates against a set of arbitrary planes.
@@ -116,8 +113,7 @@ namespace bs
 		 *									generated and need to be stored. Vertices are always generate in tuples of
 		 *									three, forming a single triangle.
 		 */
-		static void Clip2D(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes,
-			const std::function<void(Vector2*, Vector2*, u32)>& writeCallback);
+		static void Clip2D(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback);
 
 		/**
 		 * Clips a set of three-dimensional vertices and uv coordinates against a set of arbitrary planes.
@@ -134,8 +130,7 @@ namespace bs
 		 *									generated and need to be stored. Vertices are always generate in tuples of
 		 *									three, forming a single triangle.
 		 */
-		static void Clip3D(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes,
-			const std::function<void(Vector3*, Vector2*, u32)>& writeCallback);
+		static void Clip3D(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector3*, Vector2*, u32)>& writeCallback);
 
 		/**
 		 * Encodes normals from 32-bit float format into 4D 8-bit packed format.
@@ -195,4 +190,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

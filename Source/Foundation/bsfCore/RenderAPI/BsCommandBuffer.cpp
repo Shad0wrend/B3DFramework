@@ -3,76 +3,77 @@
 #include "RenderAPI/BsCommandBuffer.h"
 #include "Managers/BsCommandBufferManager.h"
 
-namespace bs { namespace ct
+namespace bs
 {
-	void CommandSyncMask::AddDependency(const SPtr<CommandBuffer>& buffer)
+	namespace ct
 	{
-		if (buffer == nullptr)
-			return;
-
-		mMask |= GetGlobalQueueMask(buffer->GetType(), buffer->GetQueueIdx());
-	}
-
-	u32 CommandSyncMask::GetGlobalQueueMask(GpuQueueType type, u32 queueIdx)
-	{
-		u32 bitShift = 0;
-		switch (type)
+		void CommandSyncMask::AddDependency(const SPtr<CommandBuffer>& buffer)
 		{
-		case GQT_GRAPHICS:
-			break;
-		case GQT_COMPUTE:
-			bitShift = 8;
-			break;
-		case GQT_UPLOAD:
-			bitShift = 16;
-			break;
-		default:
-			break;
+			if(buffer == nullptr)
+				return;
+
+			mMask |= GetGlobalQueueMask(buffer->GetType(), buffer->GetQueueIdx());
 		}
 
-		return (1 << queueIdx) << bitShift;
-	}
-
-	u32 CommandSyncMask::GetGlobalQueueIdx(GpuQueueType type, u32 queueIdx)
-	{
-		switch (type)
+		u32 CommandSyncMask::GetGlobalQueueMask(GpuQueueType type, u32 queueIdx)
 		{
-		case GQT_COMPUTE:
-			return 8 + queueIdx;
-		case GQT_UPLOAD:
-			return 16 + queueIdx;
-		default:
-			return queueIdx;
-		}
-	}
+			u32 bitShift = 0;
+			switch(type)
+			{
+			case GQT_GRAPHICS:
+				break;
+			case GQT_COMPUTE:
+				bitShift = 8;
+				break;
+			case GQT_UPLOAD:
+				bitShift = 16;
+				break;
+			default:
+				break;
+			}
 
-	u32 CommandSyncMask::GetQueueIdxAndType(u32 globalQueueIdx, GpuQueueType& type)
-	{
-		if(globalQueueIdx >= 16)
-		{
-			type = GQT_UPLOAD;
-			return globalQueueIdx - 16;
+			return (1 << queueIdx) << bitShift;
 		}
 
-		if(globalQueueIdx >= 8)
+		u32 CommandSyncMask::GetGlobalQueueIdx(GpuQueueType type, u32 queueIdx)
 		{
-			type = GQT_COMPUTE;
-			return globalQueueIdx - 8;
+			switch(type)
+			{
+			case GQT_COMPUTE:
+				return 8 + queueIdx;
+			case GQT_UPLOAD:
+				return 16 + queueIdx;
+			default:
+				return queueIdx;
+			}
 		}
 
-		type = GQT_GRAPHICS;
-		return globalQueueIdx;
-	}
+		u32 CommandSyncMask::GetQueueIdxAndType(u32 globalQueueIdx, GpuQueueType& type)
+		{
+			if(globalQueueIdx >= 16)
+			{
+				type = GQT_UPLOAD;
+				return globalQueueIdx - 16;
+			}
 
-	CommandBuffer::CommandBuffer(GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary)
-		:mType(type), mDeviceIdx(deviceIdx), mQueueIdx(queueIdx), mIsSecondary(secondary)
-	{
+			if(globalQueueIdx >= 8)
+			{
+				type = GQT_COMPUTE;
+				return globalQueueIdx - 8;
+			}
 
-	}
+			type = GQT_GRAPHICS;
+			return globalQueueIdx;
+		}
 
-	SPtr<CommandBuffer> CommandBuffer::Create(GpuQueueType type, u32 deviceIdx, u32 queueIdx,
-		bool secondary)
-	{
-		return CommandBufferManager::Instance().Create(type, deviceIdx, queueIdx, secondary);
-	}
-}}
+		CommandBuffer::CommandBuffer(GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary)
+			: mType(type), mDeviceIdx(deviceIdx), mQueueIdx(queueIdx), mIsSecondary(secondary)
+		{
+		}
+
+		SPtr<CommandBuffer> CommandBuffer::Create(GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary)
+		{
+			return CommandBufferManager::Instance().Create(type, deviceIdx, queueIdx, secondary);
+		}
+	} // namespace ct
+} // namespace bs

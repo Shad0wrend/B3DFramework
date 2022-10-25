@@ -21,6 +21,7 @@ namespace bs
 	{
 	private:
 		RASTERIZER_STATE_DESC& GetData(RasterizerState* obj) { return obj->mProperties.mData; }
+
 		void SetData(RasterizerState* obj, RASTERIZER_STATE_DESC& val) { obj->mProperties.mData = val; }
 
 	public:
@@ -46,7 +47,7 @@ namespace bs
 			return TID_RasterizerState;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return RenderStateManager::Instance().CreateRasterizerStatePtrInternal(RASTERIZER_STATE_DESC());
 		}
@@ -54,4 +55,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

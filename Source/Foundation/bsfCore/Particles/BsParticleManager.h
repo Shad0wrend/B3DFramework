@@ -17,7 +17,7 @@ namespace bs
 	/** @addtogroup Particles-Internal
 	 *  @{
 	 */
-	
+
 	/**
 	 * Contains data resulting from a single frame of CPU particle simulation of a single particle system, used by all
 	 * rendering modes.
@@ -68,6 +68,7 @@ namespace bs
 		/** Contains particle rotation in radians in .xyz with .w unused. */
 		PixelData Rotation;
 	};
+
 	/**
 	 * Contains information about a single particle about to be inserted into the GPU simulation. Matches the structure
 	 * of the vertex buffer element used for injecting shader data into the simulation.
@@ -122,6 +123,7 @@ namespace bs
 	class BS_CORE_EXPORT ParticleManager final : public Module<ParticleManager>
 	{
 		struct Members;
+
 	public:
 		ParticleManager();
 		~ParticleManager();
@@ -160,7 +162,7 @@ namespace bs
 
 		u32 mReadBufferIdx = 1;
 		u32 mWriteBufferIdx = 0;
-		
+
 		Signal mWorkerDoneSignal;
 		Mutex mMutex;
 
@@ -169,4 +171,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

@@ -6,20 +6,20 @@
 namespace bs
 {
 	SkeletonMask::SkeletonMask(u32 numBones)
-		:mIsDisabled(numBones)
-	{ }
+		: mIsDisabled(numBones)
+	{}
 
 	bool SkeletonMask::IsEnabled(u32 boneIdx) const
 	{
-		if (boneIdx >= (u32)mIsDisabled.size())
+		if(boneIdx >= (u32)mIsDisabled.size())
 			return true;
 
 		return !mIsDisabled[boneIdx];
 	}
 
 	SkeletonMaskBuilder::SkeletonMaskBuilder(const SPtr<Skeleton>& skeleton)
-		:mSkeleton(skeleton), mMask(skeleton->GetNumBones())
-	{ }
+		: mSkeleton(skeleton), mMask(skeleton->GetNumBones())
+	{}
 
 	void SkeletonMaskBuilder::SetBoneState(const String& name, bool enabled)
 	{
@@ -33,4 +33,4 @@ namespace bs
 			}
 		}
 	}
-}
+} // namespace bs

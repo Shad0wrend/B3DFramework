@@ -22,19 +22,19 @@ namespace bs
 	 */
 	struct BS_CORE_EXPORT SAMPLER_STATE_DESC
 	{
-		SAMPLER_STATE_DESC() { };
+		SAMPLER_STATE_DESC(){};
 
 		bool operator==(const SAMPLER_STATE_DESC& rhs) const;
 
 		/** Determines how are texture coordinates outside of [0, 1] range handled. */
 		UVWAddressingMode AddressMode;
-		
+
 		/** Filtering used when texture is displayed as smaller than its original size. */
 		FilterOptions MinFilter = FO_LINEAR;
-		
+
 		/** Filtering used when texture is displayed as larger than its original size. */
 		FilterOptions MagFilter = FO_LINEAR;
-		
+
 		/** Filtering used to blend between the different mip levels. */
 		FilterOptions MipFilter = FO_LINEAR;
 
@@ -121,8 +121,8 @@ namespace bs
 
 	/**
 	 * Class representing the state of a texture sampler.
-	 *	
-	 * @note	
+	 *
+	 * @note
 	 * Sampler units are used for retrieving and filtering data from textures set in a GPU program. Sampler states are
 	 * immutable.
 	 * @note
@@ -152,7 +152,7 @@ namespace bs
 		SamplerState(const SAMPLER_STATE_DESC& desc);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		SamplerProperties mProperties;
 
@@ -172,46 +172,46 @@ namespace bs
 
 	namespace ct
 	{
-	/** @addtogroup RenderAPI-Internal
-	 *  @{
-	 */
+		/** @addtogroup RenderAPI-Internal
+		 *  @{
+		 */
 
-	/**
-	 * Core thread version of bs::SamplerState.
-	 *
-	 * @note	Core thread.
-	 */
-	class BS_CORE_EXPORT SamplerState : public CoreObject
-	{
-	public:
-		virtual ~SamplerState();
+		/**
+		 * Core thread version of bs::SamplerState.
+		 *
+		 * @note	Core thread.
+		 */
+		class BS_CORE_EXPORT SamplerState : public CoreObject
+		{
+		public:
+			virtual ~SamplerState();
 
-		/**	Returns information about the sampler state. */
-		const SamplerProperties& GetProperties() const;
+			/**	Returns information about the sampler state. */
+			const SamplerProperties& GetProperties() const;
 
-		/**	@copydoc RenderStateManager::createSamplerState */
-		static SPtr<SamplerState> Create(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			/**	@copydoc RenderStateManager::createSamplerState */
+			static SPtr<SamplerState> Create(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
-		/**	Returns the default sampler state. */
-		static const SPtr<SamplerState>& GetDefault();
+			/**	Returns the default sampler state. */
+			static const SPtr<SamplerState>& GetDefault();
 
-	protected:
-		friend class RenderStateManager;
+		protected:
+			friend class RenderStateManager;
 
-		SamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask);
+			SamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask);
 
-		/** @copydoc CoreObject::initialize */
-		void Initialize() override;
+			/** @copydoc CoreObject::initialize */
+			void Initialize() override;
 
-		/**	Creates any API-specific state objects. */
-		virtual void CreateInternal() { }
+			/**	Creates any API-specific state objects. */
+			virtual void CreateInternal() {}
 
-		SamplerProperties mProperties;
-	};
-	
-	/** @} */
-	}
-}
+			SamplerProperties mProperties;
+		};
+
+		/** @} */
+	} // namespace ct
+} // namespace bs
 
 /** @cond STDLIB */
 /** @addtogroup RenderAPI
@@ -220,16 +220,16 @@ namespace bs
 
 namespace std
 {
-/**	Hash value generator for SAMPLER_STATE_DESC. */
-template<>
-struct hash<bs::SAMPLER_STATE_DESC>
-{
-	size_t operator()(const bs::SAMPLER_STATE_DESC& value) const
+	/**	Hash value generator for SAMPLER_STATE_DESC. */
+	template <>
+	struct hash<bs::SAMPLER_STATE_DESC>
 	{
-		return (size_t)bs::SamplerState::GenerateHash(value);
-	}
-};
-}
+		size_t operator()(const bs::SAMPLER_STATE_DESC& value) const
+		{
+			return (size_t)bs::SamplerState::GenerateHash(value);
+		}
+	};
+} // namespace std
 
 /** @} */
 /** @endcond */

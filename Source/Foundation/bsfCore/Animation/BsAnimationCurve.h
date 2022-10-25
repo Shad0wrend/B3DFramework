@@ -24,12 +24,12 @@ namespace bs
 		T OutTangent; /**< Output tangent (going from this key to next one) of the key. */
 		float Time; /**< Position of the key along the animation spline. */
 
-		bool operator== (const TKeyframe<T>& rhs) const
+		bool operator==(const TKeyframe<T>& rhs) const
 		{
 			return (Value == rhs.Value && InTangent == rhs.InTangent && OutTangent == rhs.OutTangent && Time == rhs.Time);
 		}
 
-		bool operator!= (const TKeyframe<T>& rhs) const
+		bool operator!=(const TKeyframe<T>& rhs) const
 		{
 			return !operator==(rhs);
 		}
@@ -37,26 +37,26 @@ namespace bs
 
 	/** Keyframe specialization for integers (no tangents). */
 	template <>
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(KeyFrameInt),ExportAsStruct(true)) TKeyframe<i32>
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(KeyFrameInt), ExportAsStruct(true)) TKeyframe<i32>
 	{
 		i32 Value; /**< Value of the key. */
 		float Time; /**< Position of the key along the animation spline. */
 
-		bool operator== (const TKeyframe<i32>& rhs) const
+		bool operator==(const TKeyframe<i32>& rhs) const
 		{
 			return (Value == rhs.Value && Time == rhs.Time);
 		}
 
-		bool operator!= (const TKeyframe<i32>& rhs) const
+		bool operator!=(const TKeyframe<i32>& rhs) const
 		{
 			return !operator==(rhs);
 		}
 	};
 
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(KeyFrame),ExportAsStruct(true)) TKeyframe<float>;
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(KeyFrameVec3),ExportAsStruct(true)) TKeyframe<Vector3>;
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(KeyFrameVec2),ExportAsStruct(true)) TKeyframe<Vector2>;
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(KeyFrameQuat),ExportAsStruct(true)) TKeyframe<Quaternion>;
+	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(KeyFrame), ExportAsStruct(true)) TKeyframe<float>;
+	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(KeyFrameVec3), ExportAsStruct(true)) TKeyframe<Vector3>;
+	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(KeyFrameVec2), ExportAsStruct(true)) TKeyframe<Vector2>;
+	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(KeyFrameQuat), ExportAsStruct(true)) TKeyframe<Quaternion>;
 
 	/**
 	 * Animation spline represented by a set of keyframes, each representing an endpoint of a cubic hermite curve. The
@@ -97,7 +97,7 @@ namespace bs
 		 * Evaluate the animation curve at the specified time. If evaluating multiple values in a sequential order consider
 		 * using the cached version of evaluate() for better performance.
 		 *
-		 * @param[in]	time	%Time to evaluate the curve at.		
+		 * @param[in]	time	%Time to evaluate the curve at.
 		 * @param[in]	loop	If true the curve will loop when it goes past the end or beggining. Otherwise the curve
 		 *						value will be clamped.
 		 * @return				Interpolated value from the curve at provided time.
@@ -135,7 +135,7 @@ namespace bs
 		 * Evaluate the animation curve at the specified time and returns a new keyframe containing the evaluated value
 		 * and tangents.
 		 *
-		 * @param[in]	time	%Time to evaluate the curve at.		
+		 * @param[in]	time	%Time to evaluate the curve at.
 		 * @param[in]	loop	If true the curve will loop when it goes past the end or beginning. Otherwise the curve
 		 *						value will be clamped.
 		 * @return				Keyframe containing the interpolated value and tangents at provided time.
@@ -180,11 +180,14 @@ namespace bs
 		const TKeyframe<T>& GetKeyFrame(u32 idx) const { return mKeyframes[idx]; }
 
 		/** Returns a list of all keyframes in the curve. */
-		BS_SCRIPT_EXPORT(ExportName(KeyFrames),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(KeyFrames), Property(Getter))
+
 		const Vector<TKeyframe<T>>& GetKeyFrames() const { return mKeyframes; }
 
-		bool operator== (const TAnimationCurve<T>& rhs) const;
-		bool operator!= (const TAnimationCurve<T>& rhs) const { return !operator==(rhs); }
+		bool operator==(const TAnimationCurve<T>& rhs) const;
+
+		bool operator!=(const TAnimationCurve<T>& rhs) const { return !operator==(rhs); }
+
 	private:
 		friend struct RTTIPlainType<TAnimationCurve<T>>;
 
@@ -240,11 +243,11 @@ namespace bs
 	};
 
 #ifdef BS_SBGEN
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(AnimationCurve)) TAnimationCurve<float>;
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(Vector3Curve)) TAnimationCurve<Vector3>;
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(Vector2Curve)) TAnimationCurve<Vector2>;
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(QuaternionCurve)) TAnimationCurve<Quaternion>;
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(IntegerCurve)) TAnimationCurve<i32>;
+	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(AnimationCurve)) TAnimationCurve<float>;
+	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(Vector3Curve)) TAnimationCurve<Vector3>;
+	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(Vector2Curve)) TAnimationCurve<Vector2>;
+	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(QuaternionCurve)) TAnimationCurve<Quaternion>;
+	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(IntegerCurve)) TAnimationCurve<i32>;
 #endif
 
 	/** Flags that describe an animation curve. */
@@ -278,8 +281,8 @@ namespace bs
 		 * @param[in]	curve	Curve containing the animation data.
 		 */
 		TNamedAnimationCurve(const String& name, const TAnimationCurve<T> curve)
-			:Name(name), Curve(curve)
-		{ }
+			: Name(name), Curve(curve)
+		{}
 
 		/**
 		 * Constructs a new named animation curve.
@@ -289,8 +292,8 @@ namespace bs
 		 * @param[in]	curve	Curve containing the animation data.
 		 */
 		TNamedAnimationCurve(const String& name, AnimationCurveFlags flags, const TAnimationCurve<T> curve)
-			:Name(name), Curve(curve)
-		{ }
+			: Name(name), Curve(curve)
+		{}
 
 		/** Name of the curve. */
 		String Name;
@@ -303,14 +306,14 @@ namespace bs
 	};
 
 #ifdef BS_SBGEN
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(NamedFloatCurve),ExportAsStruct(true)) TNamedAnimationCurve<float>;
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(NamedVector3Curve),ExportAsStruct(true)) TNamedAnimationCurve<Vector3>;
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(NamedVector2Curve),ExportAsStruct(true)) TNamedAnimationCurve<Vector2>;
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(NamedQuaternionCurve),ExportAsStruct(true)) TNamedAnimationCurve<Quaternion>;
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation),ExportName(NamedIntegerCurve),ExportAsStruct(true)) TNamedAnimationCurve<i32>;
+	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedFloatCurve), ExportAsStruct(true)) TNamedAnimationCurve<float>;
+	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedVector3Curve), ExportAsStruct(true)) TNamedAnimationCurve<Vector3>;
+	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedVector2Curve), ExportAsStruct(true)) TNamedAnimationCurve<Vector2>;
+	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedQuaternionCurve), ExportAsStruct(true)) TNamedAnimationCurve<Quaternion>;
+	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedIntegerCurve), ExportAsStruct(true)) TNamedAnimationCurve<i32>;
 #endif
 
 	/** @} */
 
 	IMPLEMENT_GLOBAL_POOL(TAnimationCurve<float>, 32)
-}
+} // namespace bs

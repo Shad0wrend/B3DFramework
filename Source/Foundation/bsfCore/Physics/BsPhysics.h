@@ -28,13 +28,13 @@ namespace bs
 		 * is spawned or teleported into geometry, its size/rotation is changed so it penetrates geometry, or simply
 		 * because of numerical imprecision.
 		 */
-		CCT_OverlapRecovery = 1<<0,
+		CCT_OverlapRecovery = 1 << 0,
 		/**
 		 * Performs more accurate sweeps when moving the character controller, making it less likely to interpenetrate
 		 * geometry. When overlap recovery is turned on you can consider turning this off as it can compensate for the
 		 * less precise sweeps.
 		 */
-		CCT_PreciseSweeps = 1<<1,
+		CCT_PreciseSweeps = 1 << 1,
 		/**
 		 * Large triangles can cause problems with character controller collision. If this option is enabled the triangles
 		 * larger than a certain size will be automatically tesselated into smaller triangles, in order to help with
@@ -42,12 +42,12 @@ namespace bs
 		 *
 		 * @see Physics::getMaxTesselationEdgeLength
 		 */
-		CCT_Tesselation = 1<<2,
+		CCT_Tesselation = 1 << 2,
 		/**
 		 * Enables continous collision detection. This will prevent fast-moving objects from tunneling through each other.
 		 * You must also enable CCD for individual Rigidbodies. This option can have a significant performance impact.
 		 */
-		CCD_Enable = 1<<3
+		CCD_Enable = 1 << 3
 	};
 
 	/** @copydoc CharacterCollisionFlag */
@@ -107,10 +107,11 @@ namespace bs
 		/**
 		 * Performs any physics operations that arent tied to the fixed update interval. Should be called once per frame.
 		 */
-		virtual void Update() { }
+		virtual void Update() {}
 
 		/** Checks is the physics simulation update currently in progress. */
-		BS_SCRIPT_EXPORT(ExportName(IsUpdateInProgress),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(IsUpdateInProgress), Property(Getter))
+
 		bool IsUpdateInProgressInternal() const { return mUpdateInProgress; }
 
 		/**
@@ -123,12 +124,12 @@ namespace bs
 		 * @param[in]	maxDist		Maximum distance from the ray origin to search for hits.
 		 * @return					True if the ray has hit the collider.
 		 */
-		virtual bool RayCastInternal(const Vector3& origin, const Vector3& unitDir, const Collider& collider, PhysicsQueryHit& hit,
-			float maxDist = FLT_MAX) const = 0;
+		virtual bool RayCastInternal(const Vector3& origin, const Vector3& unitDir, const Collider& collider, PhysicsQueryHit& hit, float maxDist = FLT_MAX) const = 0;
 
 		/** @} */
 
 		static const u64 CollisionMapSize = 64;
+
 	protected:
 		friend class Rigidbody;
 
@@ -188,8 +189,7 @@ namespace bs
 		 * @return					True if something was hit, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(RayCast))
-		virtual bool RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit,
-			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+		virtual bool RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a box and returns the closest found hit, if any.
@@ -204,8 +204,7 @@ namespace bs
 		 * @return					True if something was hit, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(BoxCast))
-		virtual bool BoxCast(const AABox& box, const Quaternion& rotation, const Vector3& unitDir, PhysicsQueryHit& hit,
-			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+		virtual bool BoxCast(const AABox& box, const Quaternion& rotation, const Vector3& unitDir, PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a sphere and returns the closest found hit, if any.
@@ -219,8 +218,7 @@ namespace bs
 		 * @return					True if something was hit, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(SphereCast))
-		virtual bool SphereCast(const Sphere& sphere, const Vector3& unitDir, PhysicsQueryHit& hit,
-			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+		virtual bool SphereCast(const Sphere& sphere, const Vector3& unitDir, PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a capsule and returns the closest found hit, if any.
@@ -235,8 +233,7 @@ namespace bs
 		 * @return					True if something was hit, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(CapsuleCast))
-		virtual bool CapsuleCast(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir,
-			PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+		virtual bool CapsuleCast(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir, PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a convex mesh and returns the closest found hit, if any.
@@ -252,8 +249,7 @@ namespace bs
 		 * @return					True if something was hit, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(ConvexCast))
-		virtual bool ConvexCast(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
-			const Vector3& unitDir, PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+		virtual bool ConvexCast(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation, const Vector3& unitDir, PhysicsQueryHit& hit, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Casts a ray into the scene and returns all found hits.
@@ -278,8 +274,7 @@ namespace bs
 		 * @return					List of all detected hits.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(RayCastAll))
-		virtual Vector<PhysicsQueryHit> RayCastAll(const Vector3& origin, const Vector3& unitDir,
-			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+		virtual Vector<PhysicsQueryHit> RayCastAll(const Vector3& origin, const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a box and returns all found hits.
@@ -293,8 +288,7 @@ namespace bs
 		 * @return					List of all detected hits.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(BoxCastAll))
-		virtual Vector<PhysicsQueryHit> BoxCastAll(const AABox& box, const Quaternion& rotation,
-			const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+		virtual Vector<PhysicsQueryHit> BoxCastAll(const AABox& box, const Quaternion& rotation, const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a sphere and returns all found hits.
@@ -307,8 +301,7 @@ namespace bs
 		 * @return					List of all detected hits.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(SphereCastAll))
-		virtual Vector<PhysicsQueryHit> SphereCastAll(const Sphere& sphere, const Vector3& unitDir,
-			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+		virtual Vector<PhysicsQueryHit> SphereCastAll(const Sphere& sphere, const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a capsule and returns all found hits.
@@ -322,8 +315,7 @@ namespace bs
 		 * @return					List of all detected hits.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(CapsuleCastAll))
-		virtual Vector<PhysicsQueryHit> CapsuleCastAll(const Capsule& capsule, const Quaternion& rotation,
-			const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+		virtual Vector<PhysicsQueryHit> CapsuleCastAll(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a convex mesh and returns all found hits.
@@ -338,8 +330,7 @@ namespace bs
 		 * @return					List of all detected hits.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(ConvexCastAll))
-		virtual Vector<PhysicsQueryHit> ConvexCastAll(const HPhysicsMesh& mesh, const Vector3& position,
-			const Quaternion& rotation, const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+		virtual Vector<PhysicsQueryHit> ConvexCastAll(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation, const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Casts a ray into the scene and checks if it has hit anything. This can be significantly more efficient than other
@@ -366,8 +357,7 @@ namespace bs
 		 * @return					True if something was hit, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(RayCastAny))
-		virtual bool RayCastAny(const Vector3& origin, const Vector3& unitDir,
-			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+		virtual bool RayCastAny(const Vector3& origin, const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a box and checks if it has hit anything. This can be significantly more
@@ -382,8 +372,7 @@ namespace bs
 		 * @return					True if something was hit, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(BoxCastAny))
-		virtual bool BoxCastAny(const AABox& box, const Quaternion& rotation, const Vector3& unitDir,
-			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+		virtual bool BoxCastAny(const AABox& box, const Quaternion& rotation, const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a sphere and checks if it has hit anything. This can be significantly more
@@ -397,8 +386,7 @@ namespace bs
 		 * @return					True if something was hit, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(SphereCastAny))
-		virtual bool SphereCastAny(const Sphere& sphere, const Vector3& unitDir,
-			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+		virtual bool SphereCastAny(const Sphere& sphere, const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a capsule and checks if it has hit anything. This can be significantly more
@@ -413,8 +401,7 @@ namespace bs
 		 * @return					True if something was hit, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(CapsuleCastAny))
-		virtual bool CapsuleCastAny(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir,
-			u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+		virtual bool CapsuleCastAny(const Capsule& capsule, const Quaternion& rotation, const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Performs a sweep into the scene using a convex mesh and checks if it has hit anything. This can be significantly
@@ -430,8 +417,7 @@ namespace bs
 		 * @return					True if something was hit, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(ConvexCastAny))
-		virtual bool ConvexCastAny(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
-			const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
+		virtual bool ConvexCastAny(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation, const Vector3& unitDir, u64 layer = BS_ALL_LAYERS, float max = FLT_MAX) const = 0;
 
 		/**
 		 * Returns a list of all colliders in the scene that overlap the provided box.
@@ -442,8 +428,7 @@ namespace bs
 		 * @return					List of all colliders that overlap the box.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(BoxOverlap))
-		virtual Vector<HCollider> BoxOverlap(const AABox& box, const Quaternion& rotation,
-			u64 layer = BS_ALL_LAYERS) const;
+		virtual Vector<HCollider> BoxOverlap(const AABox& box, const Quaternion& rotation, u64 layer = BS_ALL_LAYERS) const;
 
 		/**
 		 * Returns a list of all colliders in the scene that overlap the provided sphere.
@@ -464,8 +449,7 @@ namespace bs
 		 * @return					List of all colliders that overlap the capsule.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(CapsuleOverlap))
-		virtual Vector<HCollider> CapsuleOverlap(const Capsule& capsule, const Quaternion& rotation,
-			u64 layer = BS_ALL_LAYERS) const;
+		virtual Vector<HCollider> CapsuleOverlap(const Capsule& capsule, const Quaternion& rotation, u64 layer = BS_ALL_LAYERS) const;
 
 		/**
 		 * Returns a list of all colliders in the scene that overlap the provided convex mesh.
@@ -477,8 +461,7 @@ namespace bs
 		 * @return					List of all colliders that overlap the mesh.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(ConvexOverlap))
-		virtual Vector<HCollider> ConvexOverlap(const HPhysicsMesh& mesh, const Vector3& position,
-			const Quaternion& rotation, u64 layer = BS_ALL_LAYERS) const;
+		virtual Vector<HCollider> ConvexOverlap(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation, u64 layer = BS_ALL_LAYERS) const;
 
 		/**
 		 * Checks if the provided box overlaps any other collider in the scene.
@@ -510,8 +493,7 @@ namespace bs
 		 * @return					True if there is overlap with another object, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(CapsuleOverlapAny))
-		virtual bool CapsuleOverlapAny(const Capsule& capsule, const Quaternion& rotation,
-			u64 layer = BS_ALL_LAYERS) const = 0;
+		virtual bool CapsuleOverlapAny(const Capsule& capsule, const Quaternion& rotation, u64 layer = BS_ALL_LAYERS) const = 0;
 
 		/**
 		 * Checks if the provided convex mesh overlaps any other collider in the scene.
@@ -523,8 +505,7 @@ namespace bs
 		 * @return					True if there is overlap with another object, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(ConvexOverlapAny))
-		virtual bool ConvexOverlapAny(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation,
-			u64 layer = BS_ALL_LAYERS) const = 0;
+		virtual bool ConvexOverlapAny(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation, u64 layer = BS_ALL_LAYERS) const = 0;
 
 		/******************************************************************************************************************/
 		/************************************************* OPTIONS ********************************************************/
@@ -534,7 +515,13 @@ namespace bs
 		virtual bool HasFlag(PhysicsFlags flag) const { return mFlags & flag; }
 
 		/** Enables or disabled a specific physics option. */
-		virtual void SetFlag(PhysicsFlags flag, bool enabled) { if (enabled) mFlags |= flag; else mFlags &= ~flag; }
+		virtual void SetFlag(PhysicsFlags flag, bool enabled)
+		{
+			if(enabled)
+				mFlags |= flag;
+			else
+				mFlags &= ~flag;
+		}
 
 		/**
 		 * Returns a maximum edge length before a triangle is tesselated.
@@ -551,11 +538,11 @@ namespace bs
 		virtual void SetMaxTesselationEdgeLength(float length) = 0;
 
 		/** @copydoc setGravity() */
-		BS_SCRIPT_EXPORT(ExportName(Gravity),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Gravity), Property(Getter))
 		virtual Vector3 GetGravity() const = 0;
 
 		/** Determines the global gravity value for all objects in the scene. */
-		BS_SCRIPT_EXPORT(ExportName(Gravity),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Gravity), Property(Setter))
 		virtual void SetGravity(const Vector3& gravity) = 0;
 
 		/**
@@ -592,8 +579,7 @@ namespace bs
 		 * @param[in]	position	Center of the box.
 		 * @param[in]	rotation	Rotation of the box.
 		 */
-		virtual SPtr<BoxCollider> CreateBoxCollider(const Vector3& extents, const Vector3& position,
-			const Quaternion& rotation) = 0;
+		virtual SPtr<BoxCollider> CreateBoxCollider(const Vector3& extents, const Vector3& position, const Quaternion& rotation) = 0;
 
 		/**
 		 * Creates a new sphere collider.
@@ -602,8 +588,7 @@ namespace bs
 		 * @param[in]	position	Position of the collider.
 		 * @param[in]	rotation	Rotation of the collider.
 		 */
-		virtual SPtr<SphereCollider> CreateSphereCollider(float radius,
-			const Vector3& position, const Quaternion& rotation) = 0;
+		virtual SPtr<SphereCollider> CreateSphereCollider(float radius, const Vector3& position, const Quaternion& rotation) = 0;
 
 		/**
 		 * Creates a new plane collider.
@@ -622,8 +607,7 @@ namespace bs
 		 * @param[in]	position	Center of the box.
 		 * @param[in]	rotation	Rotation of the box.
 		 */
-		virtual SPtr<CapsuleCollider> CreateCapsuleCollider(float radius, float halfHeight,
-			const Vector3& position, const Quaternion& rotation) = 0;
+		virtual SPtr<CapsuleCollider> CreateCapsuleCollider(float radius, float halfHeight, const Vector3& position, const Quaternion& rotation) = 0;
 
 		/**
 		 * Creates a new mesh collider.
@@ -683,19 +667,16 @@ namespace bs
 		virtual SPtr<CharacterController> CreateCharacterController(const CHAR_CONTROLLER_DESC& desc) = 0;
 
 		/** @copydoc PhysicsScene::boxOverlap() */
-		virtual Vector<Collider*> BoxOverlapInternal(const AABox& box, const Quaternion& rotation,
-			u64 layer = BS_ALL_LAYERS) const = 0;
+		virtual Vector<Collider*> BoxOverlapInternal(const AABox& box, const Quaternion& rotation, u64 layer = BS_ALL_LAYERS) const = 0;
 
 		/** @copydoc PhysicsScene::sphereOverlap() */
 		virtual Vector<Collider*> SphereOverlapInternal(const Sphere& sphere, u64 layer = BS_ALL_LAYERS) const = 0;
 
 		/** @copydoc PhysicsScene::capsuleOverlap() */
-		virtual Vector<Collider*> CapsuleOverlapInternal(const Capsule& capsule, const Quaternion& rotation,
-			u64 layer = BS_ALL_LAYERS) const = 0;
+		virtual Vector<Collider*> CapsuleOverlapInternal(const Capsule& capsule, const Quaternion& rotation, u64 layer = BS_ALL_LAYERS) const = 0;
 
 		/** @copydoc PhysicsScene::convexOverlap() */
-		virtual Vector<Collider*> ConvexOverlapInternal(const HPhysicsMesh& mesh, const Vector3& position,
-			const Quaternion& rotation, u64 layer = BS_ALL_LAYERS) const = 0;
+		virtual Vector<Collider*> ConvexOverlapInternal(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation, u64 layer = BS_ALL_LAYERS) const = 0;
 
 		/** @} */
 	protected:
@@ -706,4 +687,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

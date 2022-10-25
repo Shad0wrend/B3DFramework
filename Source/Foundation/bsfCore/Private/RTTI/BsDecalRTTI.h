@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT DecalRTTI : public RTTIType <Decal, IReflectable, DecalRTTI>
+	class BS_CORE_EXPORT DecalRTTI : public RTTIType<Decal, IReflectable, DecalRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -28,7 +28,7 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mLayerMask, 7)
 		BS_END_RTTI_MEMBERS
 	public:
-		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context)
 		{
 			// Note: Since this is a CoreObject I should call Initialize() right after deserialization,
 			// but since this specific type is used in Components we delay initialization until Component
@@ -47,7 +47,7 @@ namespace bs
 			return TID_Decal;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return Decal::CreateEmpty();
 		}
@@ -55,4 +55,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

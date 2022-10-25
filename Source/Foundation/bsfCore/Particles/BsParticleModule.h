@@ -41,6 +41,7 @@ namespace bs
 
 		ParticleModule(ParticleModule&&) = delete;
 		ParticleModule& operator=(ParticleModule&&) = delete;
+
 	protected:
 		friend class ParticleSystem;
 
@@ -49,4 +50,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

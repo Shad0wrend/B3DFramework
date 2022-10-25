@@ -20,15 +20,15 @@ namespace bs
 	enum BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) MeshUsage
 	{
 		/** Specify for a mesh that is not often updated from the CPU. */
-		MU_STATIC		BS_SCRIPT_EXPORT(ExportName(Static)) = 1 << 0,
+		MU_STATIC BS_SCRIPT_EXPORT(ExportName(Static)) = 1 << 0,
 
 		/** Specify for a mesh that is often updated from the CPU. */
-		MU_DYNAMIC		BS_SCRIPT_EXPORT(ExportName(Dynamic)) = 1 << 1,
+		MU_DYNAMIC BS_SCRIPT_EXPORT(ExportName(Dynamic)) = 1 << 1,
 		/**
 		 * All mesh data will also be cached in CPU memory, making it available for fast read access from the CPU. Can be
 		 * combined with other usage flags.
 		 */
-		MU_CPUCACHED	BS_SCRIPT_EXPORT(ExportName(CPUCached)) = 0x1000,
+		MU_CPUCACHED BS_SCRIPT_EXPORT(ExportName(CPUCached)) = 0x1000,
 	};
 
 	/** Properties of a Mesh. Shared between sim and core thread versions of a Mesh. */
@@ -126,7 +126,7 @@ namespace bs
 		/* 								SERIALIZATION                      		*/
 		/************************************************************************/
 	private:
-		MeshBase() { } // Serialization only
+		MeshBase() {} // Serialization only
 
 	public:
 		friend class MeshBaseRTTI;
@@ -136,61 +136,62 @@ namespace bs
 
 	namespace ct
 	{
-	/**
-	 * Core version of a class used as a basis for all implemenations of meshes.
-	 *
-	 * @see		bs::MeshBase
-	 *
-	 * @note	Core thread.
-	 */
-	class BS_CORE_EXPORT MeshBase : public CoreObject
-	{
-	public:
-		MeshBase(u32 numVertices, u32 numIndices, const Vector<SubMesh>& subMeshes);
-		virtual ~MeshBase() { }
-
-		/**	Get vertex data used for rendering. */
-		virtual SPtr<VertexData> GetVertexData() const = 0;
-
-		/**	Get index data used for rendering. */
-		virtual SPtr<IndexBuffer> GetIndexBuffer() const = 0;
-
 		/**
-		 * Returns an offset into the vertex buffers that is returned by getVertexData() that signifies where this meshes
-		 * vertices begin.
-		 * 			
-		 * @note	Used when multiple meshes share the same buffers.
+		 * Core version of a class used as a basis for all implemenations of meshes.
+		 *
+		 * @see		bs::MeshBase
+		 *
+		 * @note	Core thread.
 		 */
-		virtual u32 GetVertexOffset() const { return 0; }
+		class BS_CORE_EXPORT MeshBase : public CoreObject
+		{
+		public:
+			MeshBase(u32 numVertices, u32 numIndices, const Vector<SubMesh>& subMeshes);
 
-		/**
-		 * Returns an offset into the index buffer that is returned by getIndexData() that signifies where this meshes
-		 * indices begin.
-		 * 			
-		 * @note	Used when multiple meshes share the same buffers.
-		 */
-		virtual u32 GetIndexOffset() const { return 0; }
+			virtual ~MeshBase() {}
 
-		/** Returns a structure that describes how are the vertices stored in the mesh's vertex buffer. */
-		virtual SPtr<VertexDataDesc> GetVertexDesc() const = 0;
+			/**	Get vertex data used for rendering. */
+			virtual SPtr<VertexData> GetVertexData() const = 0;
 
-		/**
-		 * Called whenever this mesh starts being used on the GPU.
-		 * 			
-		 * @note	Needs to be called after all commands referencing this mesh have been sent to the GPU.
-		 */
-		virtual void NotifyUsedOnGPUInternal() { }
+			/**	Get index data used for rendering. */
+			virtual SPtr<IndexBuffer> GetIndexBuffer() const = 0;
 
-		/**	Returns properties that contain information about the mesh. */
-		const MeshProperties& GetProperties() const { return mProperties; }
+			/**
+			 * Returns an offset into the vertex buffers that is returned by getVertexData() that signifies where this meshes
+			 * vertices begin.
+			 *
+			 * @note	Used when multiple meshes share the same buffers.
+			 */
+			virtual u32 GetVertexOffset() const { return 0; }
 
-	protected:
-		/** @copydoc CoreObject::syncToCore */
-		void SyncToCore(const CoreSyncData& data) override;
+			/**
+			 * Returns an offset into the index buffer that is returned by getIndexData() that signifies where this meshes
+			 * indices begin.
+			 *
+			 * @note	Used when multiple meshes share the same buffers.
+			 */
+			virtual u32 GetIndexOffset() const { return 0; }
 
-		MeshProperties mProperties;
-	};
-	}
+			/** Returns a structure that describes how are the vertices stored in the mesh's vertex buffer. */
+			virtual SPtr<VertexDataDesc> GetVertexDesc() const = 0;
+
+			/**
+			 * Called whenever this mesh starts being used on the GPU.
+			 *
+			 * @note	Needs to be called after all commands referencing this mesh have been sent to the GPU.
+			 */
+			virtual void NotifyUsedOnGPUInternal() {}
+
+			/**	Returns properties that contain information about the mesh. */
+			const MeshProperties& GetProperties() const { return mProperties; }
+
+		protected:
+			/** @copydoc CoreObject::syncToCore */
+			void SyncToCore(const CoreSyncData& data) override;
+
+			MeshProperties mProperties;
+		};
+	} // namespace ct
 
 	/** @} */
-}
+} // namespace bs

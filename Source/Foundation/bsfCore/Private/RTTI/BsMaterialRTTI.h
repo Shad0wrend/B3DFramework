@@ -17,9 +17,11 @@ namespace bs
 	{
 	private:
 		HShader& GetShader(Material* obj) { return obj->mShader; }
+
 		void SetShader(Material* obj, HShader& val) { obj->mShader = val; }
 
 		SPtr<MaterialParams> GetMaterialParams(Material* obj) { return obj->mParams; }
+
 		void SetMaterialParams(Material* obj, SPtr<MaterialParams> value) { mMatParams = value; }
 
 	public:
@@ -42,7 +44,7 @@ namespace bs
 			return TID_Material;
 		}
 
-		SPtr<IReflectable> NewRttiObject() ;
+		SPtr<IReflectable> NewRttiObject();
 
 	private:
 		SPtr<MaterialParams> mMatParams;
@@ -50,4 +52,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

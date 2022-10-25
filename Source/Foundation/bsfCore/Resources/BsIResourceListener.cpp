@@ -19,4 +19,4 @@ namespace bs
 	{
 		ResourceListenerManager::Instance().MarkListenerDirty(this);
 	}
-}
+} // namespace bs

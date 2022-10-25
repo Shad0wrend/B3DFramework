@@ -9,4 +9,4 @@ namespace bs
 	{
 		return scene.CreateD6Joint(desc);
 	}
-}
+} // namespace bs

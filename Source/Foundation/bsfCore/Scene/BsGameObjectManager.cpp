@@ -15,7 +15,7 @@ namespace bs
 		Lock lock(mMutex);
 
 		const auto iterFind = mObjects.find(id);
-		if (iterFind != mObjects.end())
+		if(iterFind != mObjects.end())
 			return iterFind->second;
 
 		return nullptr;
@@ -26,7 +26,7 @@ namespace bs
 		Lock lock(mMutex);
 
 		const auto iterFind = mObjects.find(id);
-		if (iterFind != mObjects.end())
+		if(iterFind != mObjects.end())
 		{
 			object = iterFind->second;
 			return true;
@@ -44,7 +44,7 @@ namespace bs
 
 	void GameObjectManager::RemapId(u64 oldId, u64 newId)
 	{
-		if (oldId == newId)
+		if(oldId == newId)
 			return;
 
 		Lock lock(mMutex);
@@ -59,7 +59,7 @@ namespace bs
 
 	void GameObjectManager::QueueForDestroy(const GameObjectHandleBase& object)
 	{
-		if (object.IsDestroyed())
+		if(object.IsDestroyed())
 			return;
 
 		const u64 instanceId = object->GetInstanceId();
@@ -68,7 +68,7 @@ namespace bs
 
 	void GameObjectManager::DestroyQueuedObjects()
 	{
-		for (auto& objPair : mQueuedForDestroy)
+		for(auto& objPair : mQueuedForDestroy)
 			objPair.second->DestroyInternal(objPair.second, true);
 
 		mQueuedForDestroy.clear();
@@ -100,8 +100,8 @@ namespace bs
 	}
 
 	GameObjectDeserializationState::GameObjectDeserializationState(u32 options)
-		:mOptions(options)
-	{ }
+		: mOptions(options)
+	{}
 
 	GameObjectDeserializationState::~GameObjectDeserializationState()
 	{
@@ -111,52 +111,52 @@ namespace bs
 
 	void GameObjectDeserializationState::Resolve()
 	{
-		for (auto& entry : mUnresolvedHandles)
+		for(auto& entry : mUnresolvedHandles)
 		{
 			u64 instanceId = entry.OriginalInstanceId;
 
 			bool isInternalReference = false;
 
 			const auto findIter = mIdMapping.find(instanceId);
-			if (findIter != mIdMapping.end())
+			if(findIter != mIdMapping.end())
 			{
-				if ((mOptions & GODM_UseNewIds) != 0)
+				if((mOptions & GODM_UseNewIds) != 0)
 					instanceId = findIter->second;
 
 				isInternalReference = true;
 			}
 
-			if (isInternalReference)
+			if(isInternalReference)
 			{
 				const auto findIterObj = mDeserializedObjects.find(instanceId);
 
-				if (findIterObj != mDeserializedObjects.end())
+				if(findIterObj != mDeserializedObjects.end())
 					entry.Handle.ResolveInternal(findIterObj->second);
 				else
 				{
-					if ((mOptions & GODM_KeepMissing) == 0)
+					if((mOptions & GODM_KeepMissing) == 0)
 						entry.Handle.ResolveInternal(nullptr);
 				}
 			}
-			else if (!isInternalReference && (mOptions & GODM_RestoreExternal) != 0)
+			else if(!isInternalReference && (mOptions & GODM_RestoreExternal) != 0)
 			{
 				HGameObject obj;
 				if(GameObjectManager::Instance().TryGetObject(instanceId, obj))
 					entry.Handle.ResolveInternal(obj);
 				else
 				{
-					if ((mOptions & GODM_KeepMissing) == 0)
+					if((mOptions & GODM_KeepMissing) == 0)
 						entry.Handle.ResolveInternal(nullptr);
 				}
 			}
 			else
 			{
-				if ((mOptions & GODM_KeepMissing) == 0)
+				if((mOptions & GODM_KeepMissing) == 0)
 					entry.Handle.ResolveInternal(nullptr);
 			}
 		}
 
-		for (auto iter = mEndCallbacks.rbegin(); iter != mEndCallbacks.rend(); ++iter)
+		for(auto iter = mEndCallbacks.rbegin(); iter != mEndCallbacks.rend(); ++iter)
 		{
 			(*iter)();
 		}
@@ -180,10 +180,10 @@ namespace bs
 
 		// Search object that are currently being deserialized
 		const auto iterFind = mIdMapping.find(originalId);
-		if (iterFind != mIdMapping.end())
+		if(iterFind != mIdMapping.end())
 		{
 			const auto iterFind2 = mDeserializedObjects.find(iterFind->second);
-			if (iterFind2 != mDeserializedObjects.end())
+			if(iterFind2 != mDeserializedObjects.end())
 			{
 				object.mData = iterFind2->second.mData;
 				foundHandleData = true;
@@ -191,10 +191,10 @@ namespace bs
 		}
 
 		// Search previously deserialized handles
-		if (!foundHandleData)
+		if(!foundHandleData)
 		{
 			auto iterFind = mUnresolvedHandleData.find(originalId);
-			if (iterFind != mUnresolvedHandleData.end())
+			if(iterFind != mUnresolvedHandleData.end())
 			{
 				object.mData = iterFind->second;
 				foundHandleData = true;
@@ -202,7 +202,7 @@ namespace bs
 		}
 
 		// If still not found, this is the first such handle so register its handle data
-		if (!foundHandleData)
+		if(!foundHandleData)
 			mUnresolvedHandleData[originalId] = object.mData;
 
 		mUnresolvedHandles.push_back({ originalId, object });
@@ -213,7 +213,7 @@ namespace bs
 		assert(originalId != 0 && "Invalid game object ID.");
 
 		const auto iterFind = mUnresolvedHandleData.find(originalId);
-		if (iterFind != mUnresolvedHandleData.end())
+		if(iterFind != mUnresolvedHandleData.end())
 		{
 			SPtr<GameObject> ptr = object.GetInternalPtr();
 
@@ -230,4 +230,4 @@ namespace bs
 	{
 		mEndCallbacks.push_back(callback);
 	}
-}
+} // namespace bs

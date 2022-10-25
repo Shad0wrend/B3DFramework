@@ -17,66 +17,73 @@ namespace bs
 	 *
 	 * Wraps Collider as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportName(Collider)) CCollider : public Component
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(Collider)) CCollider : public Component
 	{
 	public:
 		CCollider(const HSceneObject& parent);
 		virtual ~CCollider() = default;
 
 		/** @copydoc Collider::setIsTrigger */
-		BS_SCRIPT_EXPORT(ExportName(Trigger),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Trigger), Property(Setter))
 		void SetIsTrigger(bool value);
 
 		/** @copydoc Collider::getIsTrigger */
-		BS_SCRIPT_EXPORT(ExportName(Trigger),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Trigger), Property(Getter))
+
 		bool GetIsTrigger() const { return mIsTrigger; }
 
 		/** @copydoc Collider::setMass */
-		BS_SCRIPT_EXPORT(ExportName(Mass),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Mass), Property(Setter))
 		void SetMass(float mass);
 
 		/** @copydoc Collider::getMass */
-		BS_SCRIPT_EXPORT(ExportName(Mass),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Mass), Property(Getter))
+
 		float GetMass() const { return mMass; }
 
 		/** @copydoc Collider::setMaterial */
-		BS_SCRIPT_EXPORT(ExportName(Material),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Material), Property(Setter))
 		void SetMaterial(const HPhysicsMaterial& material);
 
 		/** @copydoc Collider::getMaterial */
-		BS_SCRIPT_EXPORT(ExportName(Material),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Material), Property(Getter))
+
 		HPhysicsMaterial GetMaterial() const { return mMaterial; }
 
 		/** @copydoc Collider::setContactOffset */
-		BS_SCRIPT_EXPORT(ExportName(ContactOffset),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(ContactOffset), Property(Setter))
 		void SetContactOffset(float value);
 
 		/** @copydoc Collider::getContactOffset */
-		BS_SCRIPT_EXPORT(ExportName(ContactOffset),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(ContactOffset), Property(Getter))
+
 		float GetContactOffset() const { return mContactOffset; }
 
 		/** @copydoc Collider::setRestOffset */
-		BS_SCRIPT_EXPORT(ExportName(RestOffset),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(RestOffset), Property(Setter))
 		void SetRestOffset(float value);
 
 		/** @copydoc Collider::getRestOffset */
-		BS_SCRIPT_EXPORT(ExportName(RestOffset),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(RestOffset), Property(Getter))
+
 		float GetRestOffset() const { return mRestOffset; }
 
 		/** @copydoc Collider::setLayer */
-		BS_SCRIPT_EXPORT(ExportName(Layer),Property(Setter),UI(AsLayerMask))
+		BS_SCRIPT_EXPORT(ExportName(Layer), Property(Setter), UI(AsLayerMask))
 		void SetLayer(u64 layer);
 
 		/** @copydoc Collider::getLayer */
-		BS_SCRIPT_EXPORT(ExportName(Layer),Property(Getter),UI(AsLayerMask))
+		BS_SCRIPT_EXPORT(ExportName(Layer), Property(Getter), UI(AsLayerMask))
+
 		u64 GetLayer() const { return mLayer; }
 
 		/** @copydoc Collider::setCollisionReportMode */
-		BS_SCRIPT_EXPORT(ExportName(CollisionReportMode),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(CollisionReportMode), Property(Setter))
 		void SetCollisionReportMode(CollisionReportMode mode);
 
 		/** @copydoc Collider::getCollisionReportMode */
-		BS_SCRIPT_EXPORT(ExportName(CollisionReportMode),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(CollisionReportMode), Property(Getter))
+
 		CollisionReportMode GetCollisionReportMode() const { return mCollisionReportMode; }
 
 		/** @copydoc Collider::getRigidbody */
@@ -86,8 +93,7 @@ namespace bs
 		bool RayCast(const Ray& ray, PhysicsQueryHit& hit, float maxDist = FLT_MAX) const;
 
 		/** @copydoc Collider::rayCast(const Vector3&, const Vector3&, PhysicsQueryHit&, float) const */
-		bool RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit,
-			float maxDist = FLT_MAX) const;
+		bool RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit, float maxDist = FLT_MAX) const;
 
 		/** @copydoc Collider::onCollisionBegin */
 		BS_SCRIPT_EXPORT(ExportName(OnCollisionBegin))
@@ -203,7 +209,7 @@ namespace bs
 
 	protected:
 		CCollider(); // Serialization only
-	 };
+	};
 
-	 /** @} */
-}
+	/** @} */
+} // namespace bs

@@ -14,4 +14,4 @@ namespace bs
 	{
 		return ResourceMetaData::GetRttiStatic();
 	}
-}
+} // namespace bs

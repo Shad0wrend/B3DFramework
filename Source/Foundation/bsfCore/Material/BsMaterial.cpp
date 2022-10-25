@@ -22,44 +22,53 @@ namespace bs
 {
 	enum MaterialLoadFlags
 	{
-		Load_None	= 0,
-		Load_Shader	= 1,
-		Load_All	= 2
+		Load_None = 0,
+		Load_Shader = 1,
+		Load_All = 2
 	};
-	
-	template<class T>
-	bool isShaderValid(const T& shader) { return false; }
 
-	template<>
-	bool isShaderValid(const HShader& shader) { return shader.IsLoaded(); }
+	template <class T>
+	bool isShaderValid(const T& shader)
+	{
+		return false;
+	}
 
-	template<>
-	bool isShaderValid(const SPtr<ct::Shader>& shader) { return shader != nullptr; }
+	template <>
+	bool isShaderValid(const HShader& shader)
+	{
+		return shader.IsLoaded();
+	}
 
-	template<bool Core>
+	template <>
+	bool isShaderValid(const SPtr<ct::Shader>& shader)
+	{
+		return shader != nullptr;
+	}
+
+	template <bool Core>
 	SPtr<CoreVariantType<Material, Core>> getMaterialPtr(const TMaterial<Core>* material)
 	{
 		return std::static_pointer_cast<CoreVariantType<Material, Core>>(
 			static_cast<const CoreVariantType<Material, Core>*>(material)->GetThisPtr());
 	}
 
-	template<bool Core>
+	template <bool Core>
 	SPtr<typename TMaterial<Core>::GpuParamsSetType> TMaterial<Core>::CreateParamsSet(u32 techniqueIdx)
 	{
-		if (techniqueIdx >= (u32)mTechniques.size())
+		if(techniqueIdx >= (u32)mTechniques.size())
 			return nullptr;
 
 		SPtr<TechniqueType> technique = mTechniques[techniqueIdx];
 		return bs_shared_ptr_new<GpuParamsSetType>(technique, mShader, mParams);
 	}
 
-	template<bool Core>
+	template <bool Core>
 	void TMaterial<Core>::UpdateParamsSet(const SPtr<GpuParamsSetType>& paramsSet, float t, bool updateAll)
 	{
 		paramsSet->Update(mParams, t, updateAll);
 	}
-	
-	template<bool Core>
+
+	template <bool Core>
 	u32 TMaterial<Core>::FindTechnique(const FIND_TECHNIQUE_DESC& desc) const
 	{
 		u32 bestTechniqueIdx = (u32)-1;
@@ -71,7 +80,7 @@ namespace bs
 			bool foundMatch = true;
 			for(u32 j = 0; j < desc.NumTags; j++)
 			{
-				if (!mTechniques[i]->HasTag(desc.Tags[j]))
+				if(!mTechniques[i]->HasTag(desc.Tags[j]))
 				{
 					foundMatch = false;
 					break;
@@ -108,7 +117,7 @@ namespace bs
 
 				SearchResult matchesInternal = NoParam;
 				const auto findInternal = internalVarParams.find(param.first);
-				if (findInternal != internalVarParams.end())
+				if(findInternal != internalVarParams.end())
 					matchesInternal = findInternal->second.I == param.second.I ? Matching : NotMatching;
 
 				switch(matchesSearch)
@@ -156,10 +165,10 @@ namespace bs
 					switch(matchesInternal)
 					{
 					default:
-						case NoParam:
+					case NoParam:
 						numMatchedSearchParams++;
 						break;
-						case NotMatching:
+					case NotMatching:
 						if(desc.Override)
 						{
 							numMatchedSearchParams++;
@@ -168,19 +177,19 @@ namespace bs
 						else
 							foundMatch = false;
 						break;
-						case Matching:
-							numMatchedSearchParams++;
-							numMatchedInternalParams++;
+					case Matching:
+						numMatchedSearchParams++;
+						numMatchedInternalParams++;
 						break;
 					}
-						break;
+					break;
 				}
 
 				if(!foundMatch)
 					break;
 			}
 
-			if (!foundMatch)
+			if(!foundMatch)
 				continue;
 
 			if(desc.Variation)
@@ -193,7 +202,7 @@ namespace bs
 			if(numMatchedInternalParams != (u32)internalVarParams.size())
 				continue;
 
-			if (currentScore < bestTechniqueScore)
+			if(currentScore < bestTechniqueScore)
 			{
 				bestTechniqueIdx = i;
 				bestTechniqueScore = currentScore;
@@ -203,15 +212,15 @@ namespace bs
 		return bestTechniqueIdx;
 	}
 
-	template<bool Core>
+	template <bool Core>
 	u32 TMaterial<Core>::GetDefaultTechnique() const
 	{
 		u32 bestTechniqueIdx = 0;
 		u32 bestTechniqueScore = std::numeric_limits<u32>::max();
 
-		for (u32 i = 0; i < (u32)mTechniques.size(); i++)
+		for(u32 i = 0; i < (u32)mTechniques.size(); i++)
 		{
-			if (mTechniques[i]->HasTags())
+			if(mTechniques[i]->HasTags())
 				continue;
 
 			const ShaderVariation& curVariation = mTechniques[i]->GetVariation();
@@ -232,7 +241,7 @@ namespace bs
 
 				SearchResult matches = NoParam;
 				const auto findInternal = internalVarParams.find(param.first);
-				if (findInternal != internalVarParams.end())
+				if(findInternal != internalVarParams.end())
 					matches = findInternal->second.I == param.second.I ? Matching : NotMatching;
 
 				switch(matches)
@@ -254,13 +263,13 @@ namespace bs
 					break;
 			}
 
-			if (!foundMatch)
+			if(!foundMatch)
 				continue;
 
 			if(numMatchedParams != (u32)internalVarParams.size())
 				continue;
 
-			if (currentScore < bestTechniqueScore)
+			if(currentScore < bestTechniqueScore)
 			{
 				bestTechniqueIdx = i;
 				bestTechniqueScore = currentScore;
@@ -270,34 +279,34 @@ namespace bs
 		return bestTechniqueIdx;
 	}
 
-	template<bool Core>
+	template <bool Core>
 	u32 TMaterial<Core>::GetNumPasses(u32 techniqueIdx) const
 	{
-		if (mShader == nullptr)
+		if(mShader == nullptr)
 			return 0;
 
-		if (techniqueIdx >= (u32)mTechniques.size())
+		if(techniqueIdx >= (u32)mTechniques.size())
 			return 0;
 
 		return mTechniques[techniqueIdx]->GetNumPasses();
 	}
 
-	template<bool Core>
+	template <bool Core>
 	SPtr<typename TMaterial<Core>::PassType> TMaterial<Core>::GetPass(u32 passIdx, u32 techniqueIdx) const
 	{
-		if (mShader == nullptr)
+		if(mShader == nullptr)
 			return nullptr;
 
-		if (techniqueIdx >= (u32)mTechniques.size())
+		if(techniqueIdx >= (u32)mTechniques.size())
 			return nullptr;
 
-		if (passIdx < 0 || passIdx >= mTechniques[techniqueIdx]->GetNumPasses())
+		if(passIdx < 0 || passIdx >= mTechniques[techniqueIdx]->GetNumPasses())
 			return nullptr;
 
 		return mTechniques[techniqueIdx]->GetPass(passIdx);
 	}
 
-	template<bool Core>
+	template <bool Core>
 	TMaterialParamStruct<Core> TMaterial<Core>::GetParamStruct(const String& name) const
 	{
 		ThrowIfNotInitialized();
@@ -305,7 +314,7 @@ namespace bs
 		return TMaterialParamStruct<Core>(name, getMaterialPtr(this));
 	}
 
-	template<bool Core>
+	template <bool Core>
 	TMaterialColorGradientParam<Core> TMaterial<Core>::GetParamColorGradient(const String& name) const
 	{
 		ThrowIfNotInitialized();
@@ -321,7 +330,7 @@ namespace bs
 		return TMaterialCurveParam<float, Core>(name, getMaterialPtr(this));
 	}
 
-	template<bool Core>
+	template <bool Core>
 	TMaterialParamTexture<Core> TMaterial<Core>::GetParamTexture(const String& name) const
 	{
 		ThrowIfNotInitialized();
@@ -329,7 +338,7 @@ namespace bs
 		return TMaterialParamTexture<Core>(name, getMaterialPtr(this));
 	}
 
-	template<bool Core>
+	template <bool Core>
 	TMaterialParamSpriteTexture<Core> TMaterial<Core>::GetParamSpriteTexture(const String& name) const
 	{
 		ThrowIfNotInitialized();
@@ -337,7 +346,7 @@ namespace bs
 		return TMaterialParamSpriteTexture<Core>(name, getMaterialPtr(this));
 	}
 
-	template<bool Core>
+	template <bool Core>
 	TMaterialParamLoadStoreTexture<Core> TMaterial<Core>::GetParamLoadStoreTexture(const String& name) const
 	{
 		ThrowIfNotInitialized();
@@ -345,7 +354,7 @@ namespace bs
 		return TMaterialParamLoadStoreTexture<Core>(name, getMaterialPtr(this));
 	}
 
-	template<bool Core>
+	template <bool Core>
 	TMaterialParamBuffer<Core> TMaterial<Core>::GetParamBuffer(const String& name) const
 	{
 		ThrowIfNotInitialized();
@@ -353,7 +362,7 @@ namespace bs
 		return TMaterialParamBuffer<Core>(name, getMaterialPtr(this));
 	}
 
-	template<bool Core>
+	template <bool Core>
 	TMaterialParamSampState<Core> TMaterial<Core>::GetParamSamplerState(const String& name) const
 	{
 		ThrowIfNotInitialized();
@@ -367,17 +376,17 @@ namespace bs
 		return mParams->IsAnimated(name, arrayIdx);
 	}
 
-	template<bool Core>
+	template <bool Core>
 	void TMaterial<Core>::InitializeTechniques()
 	{
 		mTechniques.clear();
 
-		if (isShaderValid(mShader))
+		if(isShaderValid(mShader))
 		{
 			mParams = bs_shared_ptr_new<MaterialParamsType>(mShader);
 			mTechniques = mShader->GetCompatibleTechniques();
 
-			if (mTechniques.empty())
+			if(mTechniques.empty())
 				return;
 
 			InitDefaultParameters();
@@ -396,7 +405,7 @@ namespace bs
 		GetParam(name, param);
 
 		T* ptr = (T*)buffer;
-		for (u32 i = 0; i < numElements; i++)
+		for(u32 i = 0; i < numElements; i++)
 			param.Set(ptr[i], i);
 	}
 
@@ -404,16 +413,16 @@ namespace bs
 	void TMaterial<Core>::InitDefaultParameters()
 	{
 		const Map<String, SHADER_DATA_PARAM_DESC>& dataParams = mShader->GetDataParams();
-		for (auto& paramData : dataParams)
+		for(auto& paramData : dataParams)
 		{
-			if (paramData.second.DefaultValueIdx == (u32)-1)
+			if(paramData.second.DefaultValueIdx == (u32)-1)
 				continue;
 
 			u8* buffer = (u8*)mShader->GetDefaultValue(paramData.second.DefaultValueIdx);
-			if (buffer == nullptr)
+			if(buffer == nullptr)
 				continue;
 
-			switch (paramData.second.Type)
+			switch(paramData.second.Type)
 			{
 			case GPDT_FLOAT1:
 				SetParamValue<float>(paramData.first, buffer, paramData.second.ArraySize);
@@ -473,27 +482,27 @@ namespace bs
 				SetParamValue<Color>(paramData.first, buffer, paramData.second.ArraySize);
 				break;
 			case GPDT_STRUCT:
-			{
-				TMaterialParamStruct<Core> param = GetParamStruct(paramData.first);
-
-				u32 elementSizeBytes = paramData.second.ElementSize * sizeof(u32);
-				u8* ptr = buffer;
-				for (u32 i = 0; i < paramData.second.ArraySize; i++)
 				{
-					param.Set(ptr, elementSizeBytes, i);
-					ptr += elementSizeBytes;
+					TMaterialParamStruct<Core> param = GetParamStruct(paramData.first);
+
+					u32 elementSizeBytes = paramData.second.ElementSize * sizeof(u32);
+					u8* ptr = buffer;
+					for(u32 i = 0; i < paramData.second.ArraySize; i++)
+					{
+						param.Set(ptr, elementSizeBytes, i);
+						ptr += elementSizeBytes;
+					}
 				}
-			}
-			break;
+				break;
 			default:
 				break;
 			}
 		}
 
 		const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams = mShader->GetTextureParams();
-		for (auto& param : textureParams)
+		for(auto& param : textureParams)
 		{
-			if (param.second.DefaultValueIdx == (u32)-1)
+			if(param.second.DefaultValueIdx == (u32)-1)
 				continue;
 
 			TextureType defaultTex = mShader->GetDefaultTexture(param.second.DefaultValueIdx);
@@ -501,9 +510,9 @@ namespace bs
 		}
 
 		const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams = mShader->GetSamplerParams();
-		for (auto& param : samplerParams)
+		for(auto& param : samplerParams)
 		{
-			if (param.second.DefaultValueIdx == (u32)-1)
+			if(param.second.DefaultValueIdx == (u32)-1)
 				continue;
 
 			SamplerStateType defaultSampler = mShader->GetDefaultSampler(param.second.DefaultValueIdx);
@@ -520,18 +529,18 @@ namespace bs
 		output = TMaterialDataParam<T, Core>(name, getMaterialPtr(this));
 	}
 
-	template<bool Core>
+	template <bool Core>
 	void TMaterial<Core>::ThrowIfNotInitialized() const
 	{
-		if (mShader == nullptr)
+		if(mShader == nullptr)
 			BS_EXCEPT(InternalErrorException, "Material does not have shader set.");
 
-		if (mTechniques.empty())
+		if(mTechniques.empty())
 			BS_EXCEPT(InternalErrorException, "Shader does not contain a supported technique.");
 	}
 
-	template class TMaterial < false > ;
-	template class TMaterial < true > ;
+	template class TMaterial<false>;
+	template class TMaterial<true>;
 
 	template BS_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<float, false>&) const;
 	template BS_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<int, false>&) const;
@@ -572,11 +581,11 @@ namespace bs
 	template BS_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Matrix4x3, true>&) const;
 
 	Material::Material()
-		:mLoadFlags(Load_None)
-	{ }
+		: mLoadFlags(Load_None)
+	{}
 
 	Material::Material(const HShader& shader, const ShaderVariation& variation)
-		:mLoadFlags(Load_None)
+		: mLoadFlags(Load_None)
 	{
 		mShader = shader;
 		mVariation = variation;
@@ -593,7 +602,7 @@ namespace bs
 
 	void Material::SetShader(const HShader& shader)
 	{
-		if (mShader == shader)
+		if(mShader == shader)
 			return;
 
 		RemoveResourceDependency(mShader);
@@ -643,21 +652,21 @@ namespace bs
 		ct::Material* material = nullptr;
 
 		SPtr<ct::Shader> shader;
-		if (mShader.IsLoaded())
+		if(mShader.IsLoaded())
 		{
 			shader = mShader->GetCore();
 
 			Vector<SPtr<ct::Technique>> techniques(mTechniques.size());
-			for (u32 i = 0; i < (u32)mTechniques.size(); i++)
+			for(u32 i = 0; i < (u32)mTechniques.size(); i++)
 				techniques[i] = mTechniques[i]->GetCore();
-			
+
 			SPtr<ct::MaterialParams> materialParams = bs_shared_ptr_new<ct::MaterialParams>(shader, mParams);
 
-			material = new (bs_alloc<ct::Material>()) ct::Material(shader, techniques, materialParams, mVariation);
+			material = new(bs_alloc<ct::Material>()) ct::Material(shader, techniques, materialParams, mVariation);
 		}
-		
-		if (material == nullptr)
-			material = new (bs_alloc<ct::Material>()) ct::Material(shader, mVariation);
+
+		if(material == nullptr)
+			material = new(bs_alloc<ct::Material>()) ct::Material(shader, mVariation);
 
 		SPtr<ct::Material> materialPtr = bs_shared_ptr<ct::Material>(material);
 		materialPtr->SetThisPtrInternal(materialPtr);
@@ -671,7 +680,7 @@ namespace bs
 		const bool syncAllParams = (GetCoreDirtyFlags() & ~dirtyParam) != 0;
 
 		u32 paramsSize = 0;
-		if (mParams != nullptr)
+		if(mParams != nullptr)
 			mParams->GetSyncData(nullptr, paramsSize, syncAllParams);
 
 		u32 numTechniques = (u32)mTechniques.size();
@@ -684,9 +693,9 @@ namespace bs
 		Bitstream stream(buffer, size);
 
 		rtti_write(syncAllParams, stream);
-		
-		SPtr<ct::Shader>* shader = new (stream.Cursor())SPtr<ct::Shader>();
-		if (mShader.IsLoaded(false))
+
+		SPtr<ct::Shader>* shader = new(stream.Cursor()) SPtr<ct::Shader>();
+		if(mShader.IsLoaded(false))
 			*shader = mShader->GetCore();
 		else
 			*shader = nullptr;
@@ -696,14 +705,14 @@ namespace bs
 
 		for(u32 i = 0; i < numTechniques; i++)
 		{
-			SPtr<ct::Technique>* technique = new (stream.Cursor()) SPtr<ct::Technique>();
+			SPtr<ct::Technique>* technique = new(stream.Cursor()) SPtr<ct::Technique>();
 			*technique = mTechniques[i]->GetCore();
 
 			stream.SkipBytes(sizeof(SPtr<ct::Technique>));
 		}
 
 		rtti_write(paramsSize, stream);
-		if (mParams != nullptr)
+		if(mParams != nullptr)
 			mParams->GetSyncData(stream.Cursor(), paramsSize, syncAllParams);
 
 		stream.SkipBytes(paramsSize);
@@ -714,7 +723,7 @@ namespace bs
 
 	void Material::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 	{
-		if (mShader.IsLoaded())
+		if(mShader.IsLoaded())
 			dependencies.push_back(mShader.Get());
 
 		if(mParams != nullptr)
@@ -723,18 +732,18 @@ namespace bs
 
 	void Material::GetListenerResources(Vector<HResource>& resources)
 	{
-		if (mShader != nullptr)
+		if(mShader != nullptr)
 			resources.push_back(mShader);
 
-		if (mParams != nullptr)
+		if(mParams != nullptr)
 			mParams->GetResourceDependencies(resources);
 	}
 
 	void Material::InitializeIfLoaded()
 	{
-		if (AreDependenciesLoaded())
+		if(AreDependenciesLoaded())
 		{
-			if (mLoadFlags != Load_All)
+			if(mLoadFlags != Load_All)
 			{
 				mLoadFlags = Load_All;
 
@@ -744,7 +753,7 @@ namespace bs
 				InitializeTechniques();
 				MarkCoreDirty();
 
-				if (mTechniques.empty()) // Wasn't initialized
+				if(mTechniques.empty()) // Wasn't initialized
 					return;
 
 				if(oldParams)
@@ -753,7 +762,7 @@ namespace bs
 		}
 		else
 		{
-			if (mShader.IsLoaded() && mLoadFlags == Load_None)
+			if(mShader.IsLoaded() && mLoadFlags == Load_None)
 			{
 				mLoadFlags = Load_Shader;
 				MarkListenerResourcesDirty(); // Need to register resources dependent on shader now
@@ -764,7 +773,7 @@ namespace bs
 	void Material::NotifyResourceLoaded(const HResource& resource)
 	{
 		// Ready to initialize as soon as shader loads
-		if (resource->GetRtti()->GetRttiId() == TID_Shader)
+		if(resource->GetRtti()->GetRttiId() == TID_Shader)
 			InitializeIfLoaded();
 		else
 		{
@@ -776,7 +785,7 @@ namespace bs
 	void Material::NotifyResourceChanged(const HResource& resource)
 	{
 		// Need full rebuild if shader changed
-		if (resource->GetRtti()->GetRttiId() == TID_Shader)
+		if(resource->GetRtti()->GetRttiId() == TID_Shader)
 		{
 			mLoadFlags = Load_None;
 			InitializeIfLoaded();
@@ -800,15 +809,14 @@ namespace bs
 		return static_resource_cast<Material>(gResources().CreateResourceHandleInternal(cloneObj));
 	}
 
-	template<class T>
-	void copyParam(const SPtr<MaterialParams>& from, Material* to, const String& name,
-		const MaterialParams::ParamData& paramRef, u32 arraySize)
+	template <class T>
+	void copyParam(const SPtr<MaterialParams>& from, Material* to, const String& name, const MaterialParams::ParamData& paramRef, u32 arraySize)
 	{
 		TMaterialDataParam<T, false> param;
 		to->GetParam(name, param);
 
 		T paramData;
-		for (u32 i = 0; i < arraySize; i++)
+		for(u32 i = 0; i < arraySize; i++)
 		{
 			from->GetDataParam(paramRef, i, paramData);
 			param.Set(paramData, i);
@@ -817,7 +825,7 @@ namespace bs
 
 	void Material::SetParams(const SPtr<MaterialParams>& params)
 	{
-		if (params == nullptr)
+		if(params == nullptr)
 			return;
 
 		std::function<
@@ -850,20 +858,20 @@ namespace bs
 		copyParamLookup[GPDT_COLOR] = &copyParam<Color>;
 
 		auto& dataParams = mShader->GetDataParams();
-		for (auto& param : dataParams)
+		for(auto& param : dataParams)
 		{
 			u32 arraySize = param.second.ArraySize > 1 ? param.second.ArraySize : 1;
 
 			const MaterialParams::ParamData* paramData = nullptr;
 			auto result = params->GetParamData(param.first, MaterialParams::ParamType::Data, param.second.Type, 0, &paramData);
 
-			if (result != MaterialParams::GetParamResult::Success)
+			if(result != MaterialParams::GetParamResult::Success)
 				continue;
 
 			u32 elemsToCopy = std::min(arraySize, paramData->ArraySize);
 
 			auto& copyFunction = copyParamLookup[param.second.Type];
-			if (copyFunction != nullptr)
+			if(copyFunction != nullptr)
 				copyFunction(params, this, param.first, *paramData, elemsToCopy);
 			else
 			{
@@ -872,11 +880,11 @@ namespace bs
 					TMaterialParamStruct<false> curParam = GetParamStruct(param.first);
 
 					u32 structSize = params->GetStructSize(*paramData);
-					if (param.second.ElementSize != structSize)
+					if(param.second.ElementSize != structSize)
 						continue;
 
 					u8* structData = (u8*)bs_stack_alloc(structSize);
-					for (u32 i = 0; i < elemsToCopy; i++)
+					for(u32 i = 0; i < elemsToCopy; i++)
 					{
 						params->GetStructData(*paramData, structData, structSize, i);
 						curParam.Set(structData, structSize, i);
@@ -906,12 +914,12 @@ namespace bs
 		}
 
 		auto& textureParams = mShader->GetTextureParams();
-		for (auto& param : textureParams)
+		for(auto& param : textureParams)
 		{
 			const MaterialParams::ParamData* paramData = nullptr;
 			auto result = params->GetParamData(param.first, MaterialParams::ParamType::Texture, GPDT_UNKNOWN, 0, &paramData);
 
-			if (result != MaterialParams::GetParamResult::Success)
+			if(result != MaterialParams::GetParamResult::Success)
 				continue;
 
 			MateralParamTextureType texType = params->GetTextureType(*paramData);
@@ -919,44 +927,44 @@ namespace bs
 			{
 			default:
 			case MateralParamTextureType::Normal:
-			{
-				TMaterialParamTexture<false> curParam = GetParamTexture(param.first);
+				{
+					TMaterialParamTexture<false> curParam = GetParamTexture(param.first);
 
-				HTexture texture;
-				TextureSurface surface;
-				params->GetTexture(*paramData, texture, surface);
-				curParam.Set(texture);
-			}
+					HTexture texture;
+					TextureSurface surface;
+					params->GetTexture(*paramData, texture, surface);
+					curParam.Set(texture);
+				}
 				break;
 			case MateralParamTextureType::LoadStore:
-			{
-				TMaterialParamLoadStoreTexture<false> curParam = GetParamLoadStoreTexture(param.first);
+				{
+					TMaterialParamLoadStoreTexture<false> curParam = GetParamLoadStoreTexture(param.first);
 
-				HTexture texture;
-				TextureSurface surface;
-				params->GetLoadStoreTexture(*paramData, texture, surface);
-				curParam.Set(texture, surface);
-			}
-			break;
+					HTexture texture;
+					TextureSurface surface;
+					params->GetLoadStoreTexture(*paramData, texture, surface);
+					curParam.Set(texture, surface);
+				}
+				break;
 			case MateralParamTextureType::Sprite:
-			{
-				TMaterialParamSpriteTexture<false> curParam = GetParamSpriteTexture(param.first);
+				{
+					TMaterialParamSpriteTexture<false> curParam = GetParamSpriteTexture(param.first);
 
-				HSpriteTexture texture;
-				params->GetSpriteTexture(*paramData, texture);
-				curParam.Set(texture);
-			}
-			break;
+					HSpriteTexture texture;
+					params->GetSpriteTexture(*paramData, texture);
+					curParam.Set(texture);
+				}
+				break;
 			}
 		}
 
 		auto& bufferParams = mShader->GetBufferParams();
-		for (auto& param : bufferParams)
+		for(auto& param : bufferParams)
 		{
 			const MaterialParams::ParamData* paramData = nullptr;
 			auto result = params->GetParamData(param.first, MaterialParams::ParamType::Buffer, GPDT_UNKNOWN, 0, &paramData);
 
-			if (result != MaterialParams::GetParamResult::Success)
+			if(result != MaterialParams::GetParamResult::Success)
 				continue;
 
 			TMaterialParamBuffer<false> curParam = GetParamBuffer(param.first);
@@ -967,12 +975,12 @@ namespace bs
 		}
 
 		auto& samplerParams = mShader->GetSamplerParams();
-		for (auto& param : samplerParams)
+		for(auto& param : samplerParams)
 		{
 			const MaterialParams::ParamData* paramData = nullptr;
 			auto result = params->GetParamData(param.first, MaterialParams::ParamType::Sampler, GPDT_UNKNOWN, 0, &paramData);
 
-			if (result != MaterialParams::GetParamResult::Success)
+			if(result != MaterialParams::GetParamResult::Success)
 				continue;
 
 			TMaterialParamSampState<false> curParam = GetParamSamplerState(param.first);
@@ -998,7 +1006,7 @@ namespace bs
 
 	HMaterial Material::Create(const HShader& shader, const ShaderVariation& variation)
 	{
-		SPtr<Material> materialPtr = bs_core_ptr<Material>(new (bs_alloc<Material>()) Material(shader, variation));
+		SPtr<Material> materialPtr = bs_core_ptr<Material>(new(bs_alloc<Material>()) Material(shader, variation));
 		materialPtr->SetThisPtrInternal(materialPtr);
 		materialPtr->Initialize();
 
@@ -1007,7 +1015,7 @@ namespace bs
 
 	SPtr<Material> Material::CreateEmpty()
 	{
-		SPtr<Material> newMat = bs_core_ptr<Material>(new (bs_alloc<Material>()) Material());
+		SPtr<Material> newMat = bs_core_ptr<Material>(new(bs_alloc<Material>()) Material());
 		newMat->SetThisPtrInternal(newMat);
 
 		return newMat;
@@ -1025,84 +1033,83 @@ namespace bs
 
 	namespace ct
 	{
-	Material::Material(const SPtr<Shader>& shader, const ShaderVariation& variation)
-	{
-		mVariation = variation;
-		SetShader(shader);
-	}
-	
-	Material::Material(const SPtr<Shader>& shader, const Vector<SPtr<Technique>>& techniques,
-		const SPtr<MaterialParams>& materialParams, const ShaderVariation& variation)
-	{
-		mShader = shader;
-		mParams = materialParams;
-		mTechniques = techniques;
-		mVariation = variation;
-	}
-
-	void Material::SetShader(const SPtr<Shader>& shader)
-	{
-		mShader = shader;
-
-		InitializeTechniques();
-	}
-
-	void Material::SetVariation(const ShaderVariation& variation)
-	{
-		mVariation = variation;
-	}
-	
-	void Material::SyncToCore(const CoreSyncData& data)
-	{
-		Bitstream stream(data.GetBuffer(), data.GetBufferSize());
-
-		bool syncAllParams;
-		rtti_read(syncAllParams, stream);
-
-		u64 initialParamVersion = mParams != nullptr ? mParams->GetParamVersion() : 1;
-		if(syncAllParams)
-			mParams = nullptr;
-
-		SPtr<Shader>* shader = (SPtr<Shader>*)stream.Cursor();
-
-		mShader = *shader;
-		shader->~SPtr<Shader>();
-		stream.SkipBytes(sizeof(SPtr<Shader>));
-
-		u32 numTechniques;
-		rtti_read(numTechniques, stream);
-
-		mTechniques.resize(numTechniques);
-		for(u32 i = 0; i < numTechniques; i++)
+		Material::Material(const SPtr<Shader>& shader, const ShaderVariation& variation)
 		{
-			SPtr<Technique>* technique = (SPtr<Technique>*)stream.Cursor();
-			mTechniques[i] = *technique;
-			technique->~SPtr<Technique>();
-			stream.SkipBytes(sizeof(SPtr<Technique>));
+			mVariation = variation;
+			SetShader(shader);
 		}
 
-		u32 paramsSize = 0;
-		rtti_read(paramsSize, stream);
-		if (mParams == nullptr && mShader != nullptr)
-			mParams = bs_shared_ptr_new<MaterialParams>(mShader, initialParamVersion);
+		Material::Material(const SPtr<Shader>& shader, const Vector<SPtr<Technique>>& techniques, const SPtr<MaterialParams>& materialParams, const ShaderVariation& variation)
+		{
+			mShader = shader;
+			mParams = materialParams;
+			mTechniques = techniques;
+			mVariation = variation;
+		}
 
-		if(mParams != nullptr && paramsSize > 0)
-			mParams->SetSyncData(stream.Cursor(), paramsSize);
+		void Material::SetShader(const SPtr<Shader>& shader)
+		{
+			mShader = shader;
 
-		stream.SkipBytes(paramsSize);
+			InitializeTechniques();
+		}
 
-		mVariation.ClearParams();
-		csync_read(mVariation, stream);
-	}
+		void Material::SetVariation(const ShaderVariation& variation)
+		{
+			mVariation = variation;
+		}
 
-	SPtr<Material> Material::Create(const SPtr<Shader>& shader)
-	{
-		Material* material = new (bs_alloc<Material>()) Material(shader, ShaderVariation::EMPTY);
-		SPtr<Material> materialPtr = bs_shared_ptr<Material>(material);
-		materialPtr->SetThisPtrInternal(materialPtr);
-		materialPtr->Initialize();
+		void Material::SyncToCore(const CoreSyncData& data)
+		{
+			Bitstream stream(data.GetBuffer(), data.GetBufferSize());
 
-		return materialPtr;
-	}
-	}
-}
+			bool syncAllParams;
+			rtti_read(syncAllParams, stream);
+
+			u64 initialParamVersion = mParams != nullptr ? mParams->GetParamVersion() : 1;
+			if(syncAllParams)
+				mParams = nullptr;
+
+			SPtr<Shader>* shader = (SPtr<Shader>*)stream.Cursor();
+
+			mShader = *shader;
+			shader->~SPtr<Shader>();
+			stream.SkipBytes(sizeof(SPtr<Shader>));
+
+			u32 numTechniques;
+			rtti_read(numTechniques, stream);
+
+			mTechniques.resize(numTechniques);
+			for(u32 i = 0; i < numTechniques; i++)
+			{
+				SPtr<Technique>* technique = (SPtr<Technique>*)stream.Cursor();
+				mTechniques[i] = *technique;
+				technique->~SPtr<Technique>();
+				stream.SkipBytes(sizeof(SPtr<Technique>));
+			}
+
+			u32 paramsSize = 0;
+			rtti_read(paramsSize, stream);
+			if(mParams == nullptr && mShader != nullptr)
+				mParams = bs_shared_ptr_new<MaterialParams>(mShader, initialParamVersion);
+
+			if(mParams != nullptr && paramsSize > 0)
+				mParams->SetSyncData(stream.Cursor(), paramsSize);
+
+			stream.SkipBytes(paramsSize);
+
+			mVariation.ClearParams();
+			csync_read(mVariation, stream);
+		}
+
+		SPtr<Material> Material::Create(const SPtr<Shader>& shader)
+		{
+			Material* material = new(bs_alloc<Material>()) Material(shader, ShaderVariation::EMPTY);
+			SPtr<Material> materialPtr = bs_shared_ptr<Material>(material);
+			materialPtr->SetThisPtrInternal(materialPtr);
+			materialPtr->Initialize();
+
+			return materialPtr;
+		}
+	} // namespace ct
+} // namespace bs

@@ -7,29 +7,28 @@
 namespace bs
 {
 	MeshProperties::MeshProperties()
-		:mNumVertices(0), mNumIndices(0)
+		: mNumVertices(0), mNumIndices(0)
 	{
 		mSubMeshes.reserve(10);
 	}
 
 	MeshProperties::MeshProperties(u32 numVertices, u32 numIndices, DrawOperationType drawOp)
-		:mNumVertices(numVertices), mNumIndices(numIndices)
+		: mNumVertices(numVertices), mNumIndices(numIndices)
 	{
 		mSubMeshes.push_back(SubMesh(0, numIndices, drawOp));
 	}
 
 	MeshProperties::MeshProperties(u32 numVertices, u32 numIndices, const Vector<SubMesh>& subMeshes)
-		:mNumVertices(numVertices), mNumIndices(numIndices)
+		: mNumVertices(numVertices), mNumIndices(numIndices)
 	{
 		mSubMeshes = subMeshes;
 	}
 
 	const SubMesh& MeshProperties::GetSubMesh(u32 subMeshIdx) const
 	{
-		if (subMeshIdx >= mSubMeshes.size())
+		if(subMeshIdx >= mSubMeshes.size())
 		{
-			BS_EXCEPT(InvalidParametersException, "Invalid sub-mesh index ("
-				+ toString(subMeshIdx) + "). Number of sub-meshes available: " + toString((int)mSubMeshes.size()));
+			BS_EXCEPT(InvalidParametersException, "Invalid sub-mesh index (" + toString(subMeshIdx) + "). Number of sub-meshes available: " + toString((int)mSubMeshes.size()));
 		}
 
 		return mSubMeshes[subMeshIdx];
@@ -41,15 +40,15 @@ namespace bs
 	}
 
 	MeshBase::MeshBase(u32 numVertices, u32 numIndices, DrawOperationType drawOp)
-		:mProperties(numVertices, numIndices, drawOp)
-	{ }
+		: mProperties(numVertices, numIndices, drawOp)
+	{}
 
 	MeshBase::MeshBase(u32 numVertices, u32 numIndices, const Vector<SubMesh>& subMeshes)
-		:mProperties(numVertices, numIndices, subMeshes)
-	{ }
+		: mProperties(numVertices, numIndices, subMeshes)
+	{}
 
 	MeshBase::~MeshBase()
-	{ }
+	{}
 
 	CoreSyncData MeshBase::SyncToCore(FrameAlloc* allocator)
 	{
@@ -81,13 +80,13 @@ namespace bs
 
 	namespace ct
 	{
-	MeshBase::MeshBase(u32 numVertices, u32 numIndices, const Vector<SubMesh>& subMeshes)
-		:mProperties(numVertices, numIndices, subMeshes)
-	{ }
+		MeshBase::MeshBase(u32 numVertices, u32 numIndices, const Vector<SubMesh>& subMeshes)
+			: mProperties(numVertices, numIndices, subMeshes)
+		{}
 
-	void MeshBase::SyncToCore(const CoreSyncData& data)
-	{
-		mProperties.mBounds = data.GetData<Bounds>();
-	}
-	}
-}
+		void MeshBase::SyncToCore(const CoreSyncData& data)
+		{
+			mProperties.mBounds = data.GetData<Bounds>();
+		}
+	} // namespace ct
+} // namespace bs

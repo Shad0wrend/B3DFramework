@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** Supported types of low-level shading languages. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Importer),ExportName(ShadingLanguageFlags),API(Framework),API(Editor)) ShadingLanguageFlag
+	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Importer), ExportName(ShadingLanguageFlags), API(Framework), API(Editor)) ShadingLanguageFlag
 	{
 		/** High level shading language used by DirectX backend. */
 		HLSL = 1 << 0,
@@ -30,7 +30,7 @@ namespace bs
 	BS_FLAGS_OPERATORS(ShadingLanguageFlag)
 
 	/** Contains import options you may use to control how is a shader imported. */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer),API(Framework),API(Editor)) ShaderImportOptions : public ImportOptions
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ShaderImportOptions : public ImportOptions
 	{
 	public:
 		/**
@@ -40,6 +40,7 @@ namespace bs
 		 * @param[in]	value		Value to assign to the define.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		void SetDefine(const String& define, const String& value)
 		{
 			mDefines[define] = value;
@@ -53,6 +54,7 @@ namespace bs
 		 * @returns					True if the define was found, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		bool GetDefine(const String& define, String& value) const
 		{
 			auto iterFind = mDefines.find(define);
@@ -72,6 +74,7 @@ namespace bs
 		 * @returns					True if the define was found, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		bool HasDefine(const String& define) const
 		{
 			auto iterFind = mDefines.find(define);
@@ -84,6 +87,7 @@ namespace bs
 		 * @param[in]	define		Name of the define to unregister.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		void RemoveDefine(const String& define)
 		{
 			mDefines.erase(define);
@@ -101,6 +105,7 @@ namespace bs
 
 		/** Creates a new import options object that allows you to customize how are meshes imported. */
 		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+
 		static SPtr<ShaderImportOptions> Create() { return bs_shared_ptr_new<ShaderImportOptions>(); }
 
 		/************************************************************************/
@@ -109,11 +114,11 @@ namespace bs
 	public:
 		friend class ShaderImportOptionsRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 
 	private:
 		UnorderedMap<String, String> mDefines;
 	};
 
 	/** @} */
-}
+} // namespace bs

@@ -21,36 +21,36 @@ namespace bs
 		virtual ~PhysicsMaterial() = default;
 
 		/**
-		  * Controls friction when two in-contact objects are not moving lateral to each other (for example how difficult
-		  * it is to get an object moving from a static state while it is in contact with other object(s)).
-		  */
-		BS_SCRIPT_EXPORT(ExportName(StaticFriction),Property(Setter))
+		 * Controls friction when two in-contact objects are not moving lateral to each other (for example how difficult
+		 * it is to get an object moving from a static state while it is in contact with other object(s)).
+		 */
+		BS_SCRIPT_EXPORT(ExportName(StaticFriction), Property(Setter))
 		virtual void SetStaticFriction(float value) = 0;
 
 		/** @copydoc setStaticFriction() */
-		BS_SCRIPT_EXPORT(ExportName(StaticFriction),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(StaticFriction), Property(Getter))
 		virtual float GetStaticFriction() const = 0;
 
 		/**
 		 * Controls friction when two in-contact objects are moving lateral to each other (for example how quickly does an
 		 * object slow down when sliding along another object).
 		 */
-		BS_SCRIPT_EXPORT(ExportName(DynamicFriction),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(DynamicFriction), Property(Setter))
 		virtual void SetDynamicFriction(float value) = 0;
 
 		/** @copydoc setDynamicFriction() */
-		BS_SCRIPT_EXPORT(ExportName(DynamicFriction),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(DynamicFriction), Property(Getter))
 		virtual float GetDynamicFriction() const = 0;
 
 		/**
 		 * Controls "bounciness" of an object during a collision. Value of 1 means the collision is elastic, and value of 0
 		 * means the value is inelastic. Must be in [0, 1] range.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(Restitution),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Restitution), Property(Setter))
 		virtual void SetRestitutionCoefficient(float value) = 0;
 
 		/** @copydoc setRestitutionCoefficient() */
-		BS_SCRIPT_EXPORT(ExportName(Restitution),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Restitution), Property(Getter))
 		virtual float GetRestitutionCoefficient() const = 0;
 
 		/**
@@ -78,8 +78,7 @@ namespace bs
 		 *
 		 * For internal use. Requires manual initialization after creation.
 		 */
-		static SPtr<PhysicsMaterial> CreatePtrInternal(float staticFriction = 0.0f, float dynamicFriction = 0.0f,
-			float restitution = 0.0f);
+		static SPtr<PhysicsMaterial> CreatePtrInternal(float staticFriction = 0.0f, float dynamicFriction = 0.0f, float restitution = 0.0f);
 
 		/** @} */
 
@@ -93,4 +92,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

@@ -44,7 +44,7 @@ namespace bs
 			return TID_Viewport;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return Viewport::CreateEmpty();
 		}
@@ -52,4 +52,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

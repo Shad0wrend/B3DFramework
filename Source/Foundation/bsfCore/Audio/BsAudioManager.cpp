@@ -17,16 +17,16 @@ namespace bs
 			LoadPluginFunc loadPluginFunc = (LoadPluginFunc)mPlugin->GetSymbol("loadPlugin");
 			mFactory = loadPluginFunc();
 
-			if (mFactory != nullptr)
+			if(mFactory != nullptr)
 				mFactory->StartUp();
 		}
 	}
 
 	AudioManager::~AudioManager()
 	{
-		if (mPlugin != nullptr)
+		if(mPlugin != nullptr)
 		{
-			if (mFactory != nullptr)
+			if(mFactory != nullptr)
 			{
 				typedef void (*UnloadPluginFunc)(AudioFactory*);
 
@@ -39,4 +39,4 @@ namespace bs
 			DynLibManager::Instance().Unload(mPlugin);
 		}
 	}
-}
+} // namespace bs

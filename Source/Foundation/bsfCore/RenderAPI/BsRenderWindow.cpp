@@ -34,9 +34,8 @@ namespace bs
 	}
 
 	RenderWindow::RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId)
-		:mDesc(desc), mWindowId(windowId)
+		: mDesc(desc), mWindowId(windowId)
 	{
-
 	}
 
 	void RenderWindow::Resize(u32 width, u32 height)
@@ -259,7 +258,7 @@ namespace bs
 
 		switch(type)
 		{
-			case WindowEventType::Resized:
+		case WindowEventType::Resized:
 			{
 				WindowMovedOrResizedInternal();
 
@@ -274,7 +273,7 @@ namespace bs
 
 				break;
 			}
-			case WindowEventType::Moved:
+		case WindowEventType::Moved:
 			{
 				WindowMovedOrResizedInternal();
 
@@ -289,7 +288,7 @@ namespace bs
 
 				break;
 			}
-			case WindowEventType::FocusReceived:
+		case WindowEventType::FocusReceived:
 			{
 				{
 					ScopedSpinLock lock(coreWindow->mLock);
@@ -302,7 +301,7 @@ namespace bs
 				RenderWindowManager::Instance().NotifyFocusReceived(coreWindow);
 				break;
 			}
-			case WindowEventType::FocusLost:
+		case WindowEventType::FocusLost:
 			{
 				{
 					ScopedSpinLock lock(coreWindow->mLock);
@@ -315,7 +314,7 @@ namespace bs
 				RenderWindowManager::Instance().NotifyFocusLost(coreWindow);
 				break;
 			}
-			case WindowEventType::Minimized:
+		case WindowEventType::Minimized:
 			{
 				{
 					ScopedSpinLock lock(coreWindow->mLock);
@@ -327,7 +326,7 @@ namespace bs
 				ct::RenderWindowManager::Instance().NotifySyncDataDirty(coreWindow);
 				break;
 			}
-			case WindowEventType::Maximized:
+		case WindowEventType::Maximized:
 			{
 				{
 					ScopedSpinLock lock(coreWindow->mLock);
@@ -339,7 +338,7 @@ namespace bs
 				ct::RenderWindowManager::Instance().NotifySyncDataDirty(coreWindow);
 				break;
 			}
-			case WindowEventType::Restored:
+		case WindowEventType::Restored:
 			{
 				{
 					ScopedSpinLock lock(coreWindow->mLock);
@@ -351,12 +350,12 @@ namespace bs
 				ct::RenderWindowManager::Instance().NotifySyncDataDirty(coreWindow);
 				break;
 			}
-			case WindowEventType::MouseLeft:
+		case WindowEventType::MouseLeft:
 			{
 				RenderWindowManager::Instance().NotifyMouseLeft(coreWindow);
 				break;
 			}
-			case WindowEventType::CloseRequested:
+		case WindowEventType::CloseRequested:
 			{
 				RenderWindowManager::Instance().NotifyCloseRequested(coreWindow);
 				break;
@@ -420,154 +419,154 @@ namespace bs
 
 	namespace ct
 	{
-	RenderWindow::RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId)
-		:mDesc(desc), mWindowId(windowId)
-	{
-		RenderWindowManager::Instance().WindowCreated(this);
-	}
-
-	RenderWindow::~RenderWindow()
-	{
-		RenderWindowManager::Instance().WindowDestroyed(this);
-	}
-
-	void RenderWindow::SetHidden(bool hidden)
-	{
-		THROW_IF_NOT_CORE_THREAD;
-
-		RenderWindowProperties& props = const_cast<RenderWindowProperties&>(GetProperties());
-
-		props.IsHidden = hidden;
+		RenderWindow::RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId)
+			: mDesc(desc), mWindowId(windowId)
 		{
-			ScopedSpinLock lock(mLock);
-			GetSyncedProperties().IsHidden = hidden;
+			RenderWindowManager::Instance().WindowCreated(this);
 		}
 
-		bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-	}
-
-	void RenderWindow::SetActive(bool state)
-	{
-		THROW_IF_NOT_CORE_THREAD;
-	}
-
-	void RenderWindow::NotifyWindowEventInternal(WindowEventType type)
-	{
-		THROW_IF_NOT_CORE_THREAD;
-
-		RenderWindowProperties& syncProps = GetSyncedProperties();
-		RenderWindowProperties& props = const_cast<RenderWindowProperties&>(GetProperties());
-
-		switch(type)
+		RenderWindow::~RenderWindow()
 		{
+			RenderWindowManager::Instance().WindowDestroyed(this);
+		}
+
+		void RenderWindow::SetHidden(bool hidden)
+		{
+			THROW_IF_NOT_CORE_THREAD;
+
+			RenderWindowProperties& props = const_cast<RenderWindowProperties&>(GetProperties());
+
+			props.IsHidden = hidden;
+			{
+				ScopedSpinLock lock(mLock);
+				GetSyncedProperties().IsHidden = hidden;
+			}
+
+			bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+		}
+
+		void RenderWindow::SetActive(bool state)
+		{
+			THROW_IF_NOT_CORE_THREAD;
+		}
+
+		void RenderWindow::NotifyWindowEventInternal(WindowEventType type)
+		{
+			THROW_IF_NOT_CORE_THREAD;
+
+			RenderWindowProperties& syncProps = GetSyncedProperties();
+			RenderWindowProperties& props = const_cast<RenderWindowProperties&>(GetProperties());
+
+			switch(type)
+			{
 			case WindowEventType::Resized:
-			{
-				WindowMovedOrResizedInternal();
-
 				{
-					ScopedSpinLock lock(mLock);
-					syncProps.Width = props.Width;
-					syncProps.Height = props.Height;
+					WindowMovedOrResizedInternal();
+
+					{
+						ScopedSpinLock lock(mLock);
+						syncProps.Width = props.Width;
+						syncProps.Height = props.Height;
+					}
+
+					bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+					bs::RenderWindowManager::Instance().NotifyMovedOrResized(this);
+
+					break;
 				}
-
-				bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-				bs::RenderWindowManager::Instance().NotifyMovedOrResized(this);
-
-				break;
-			}
 			case WindowEventType::Moved:
-			{
-				WindowMovedOrResizedInternal();
-
 				{
-					ScopedSpinLock lock(mLock);
-					syncProps.Top = props.Top;
-					syncProps.Left = props.Left;
+					WindowMovedOrResizedInternal();
+
+					{
+						ScopedSpinLock lock(mLock);
+						syncProps.Top = props.Top;
+						syncProps.Left = props.Left;
+					}
+
+					bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+					bs::RenderWindowManager::Instance().NotifyMovedOrResized(this);
+
+					break;
 				}
-
-				bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-				bs::RenderWindowManager::Instance().NotifyMovedOrResized(this);
-
-				break;
-			}
 			case WindowEventType::FocusReceived:
-			{
 				{
-					ScopedSpinLock lock(mLock);
-					syncProps.HasFocus = true;
+					{
+						ScopedSpinLock lock(mLock);
+						syncProps.HasFocus = true;
+					}
+
+					props.HasFocus = true;
+
+					bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+					bs::RenderWindowManager::Instance().NotifyFocusReceived(this);
+					break;
 				}
-
-				props.HasFocus = true;
-
-				bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-				bs::RenderWindowManager::Instance().NotifyFocusReceived(this);
-				break;
-			}
 			case WindowEventType::FocusLost:
-			{
 				{
-					ScopedSpinLock lock(mLock);
-					syncProps.HasFocus = false;
+					{
+						ScopedSpinLock lock(mLock);
+						syncProps.HasFocus = false;
+					}
+
+					props.HasFocus = false;
+
+					bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+					bs::RenderWindowManager::Instance().NotifyFocusLost(this);
+					break;
 				}
-
-				props.HasFocus = false;
-
-				bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-				bs::RenderWindowManager::Instance().NotifyFocusLost(this);
-				break;
-			}
 			case WindowEventType::Minimized:
-			{
 				{
-					ScopedSpinLock lock(mLock);
-					syncProps.IsMaximized = false;
+					{
+						ScopedSpinLock lock(mLock);
+						syncProps.IsMaximized = false;
+					}
+
+					props.IsMaximized = false;
+
+					bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+					break;
 				}
-
-				props.IsMaximized = false;
-
-				bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-				break;
-			}
 			case WindowEventType::Maximized:
-			{
 				{
-					ScopedSpinLock lock(mLock);
-					syncProps.IsMaximized = true;
+					{
+						ScopedSpinLock lock(mLock);
+						syncProps.IsMaximized = true;
+					}
+
+					props.IsMaximized = true;
+
+					bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+					break;
 				}
-
-				props.IsMaximized = true;
-
-				bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-				break;
-			}
 			case WindowEventType::Restored:
-			{
 				{
-					ScopedSpinLock lock(mLock);
-					syncProps.IsMaximized = false;
+					{
+						ScopedSpinLock lock(mLock);
+						syncProps.IsMaximized = false;
+					}
+
+					props.IsMaximized = false;
+
+					bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
+					break;
 				}
-
-				props.IsMaximized = false;
-
-				bs::RenderWindowManager::Instance().NotifySyncDataDirty(this);
-				break;
-			}
 			case WindowEventType::MouseLeft:
-			{
-				bs::RenderWindowManager::Instance().NotifyMouseLeft(this);
-				break;
-			}
+				{
+					bs::RenderWindowManager::Instance().NotifyMouseLeft(this);
+					break;
+				}
 			case WindowEventType::CloseRequested:
-			{
-				bs::RenderWindowManager::Instance().NotifyCloseRequested(this);
-				break;
+				{
+					bs::RenderWindowManager::Instance().NotifyCloseRequested(this);
+					break;
+				}
 			}
 		}
-	}
 
-	const RenderWindowProperties& RenderWindow::GetProperties() const
-	{
-		return static_cast<const RenderWindowProperties&>(GetPropertiesInternal());
-	}
-	}
-}
+		const RenderWindowProperties& RenderWindow::GetProperties() const
+		{
+			return static_cast<const RenderWindowProperties&>(GetPropertiesInternal());
+		}
+	} // namespace ct
+} // namespace bs

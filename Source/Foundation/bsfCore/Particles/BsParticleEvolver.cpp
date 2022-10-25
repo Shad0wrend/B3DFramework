@@ -29,13 +29,13 @@ namespace bs
 	static constexpr u32 PARTICLE_ROTATION = 0x4680eaa4;
 
 	/** Helper method that applies a transform to either a point or a direction. */
-	template<bool dir>
+	template <bool dir>
 	Vector3 applyTransform(const Matrix4& tfrm, const Vector3& input)
 	{
 		return tfrm.MultiplyAffine(input);
 	}
 
-	template<>
+	template <>
 	Vector3 applyTransform<true>(const Matrix4& tfrm, const Vector3& input)
 	{
 		return tfrm.MultiplyDirection(input);
@@ -47,9 +47,8 @@ namespace bs
 	 *
 	 * @tparam	dir		If true the evaluated vector is assumed to be a direction, otherwise a point.
 	 */
-	template<bool dir = false>
-	Vector3 evaluateTransformed(const Vector3Distribution& distribution, const ParticleSystemState& state, float t,
-		const Random& factor, bool inWorldSpace)
+	template <bool dir = false>
+	Vector3 evaluateTransformed(const Vector3Distribution& distribution, const ParticleSystemState& state, float t, const Random& factor, bool inWorldSpace)
 	{
 		const Vector3 output = distribution.Evaluate(t, factor);
 
@@ -63,31 +62,30 @@ namespace bs
 	}
 
 	ParticleTextureAnimation::ParticleTextureAnimation(const PARTICLE_TEXTURE_ANIMATION_DESC& desc)
-		:mDesc(desc)
-	{ }
+		: mDesc(desc)
+	{}
 
-	void ParticleTextureAnimation::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set,
-		u32 startIdx, u32 count, bool spacing, float spacingOffset) const
+	void ParticleTextureAnimation::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const
 	{
 		const u32 endIdx = startIdx + count;
 		ParticleSetData& particles = set.GetParticles();
 
 		SpriteTexture* texture = nullptr;
 		const HMaterial& material = state.System->GetSettings().Material;
-		if (material.IsLoaded(false))
+		if(material.IsLoaded(false))
 		{
 			const HShader& shader = material->GetShader();
 			if(shader->HasTextureParam("gTexture"))
 			{
 				const HSpriteTexture& spriteTex = material->GetSpriteTexture("gTexture");
-				if (spriteTex.IsLoaded(true))
+				if(spriteTex.IsLoaded(true))
 					texture = spriteTex.Get();
 			}
 
 			if(shader->HasTextureParam("gAlbedoTex"))
 			{
 				const HSpriteTexture& spriteTex = material->GetSpriteTexture("gAlbedoTex");
-				if (spriteTex.IsLoaded(true))
+				if(spriteTex.IsLoaded(true))
 					texture = spriteTex.Get();
 			}
 		}
@@ -101,19 +99,19 @@ namespace bs
 
 		if(!hasValidAnimation)
 		{
-			for (u32 i = startIdx; i < endIdx; i++)
+			for(u32 i = startIdx; i < endIdx; i++)
 				particles.Frame[i] = 0.0f;
 
 			return;
 		}
-		
+
 		const SpriteSheetGridAnimation& gridAnim = texture->GetAnimation();
 
-		for (u32 i = startIdx; i < endIdx; i++)
+		for(u32 i = startIdx; i < endIdx; i++)
 		{
 			u32 frameOffset;
 			u32 numFrames;
-			if (mDesc.RandomizeRow)
+			if(mDesc.RandomizeRow)
 			{
 				const u32 rowSeed = particles.Seed[i] + PARTICLE_ROW_VARIATION;
 				const u32 row = Random(rowSeed).GetRange(0, gridAnim.NumRows);
@@ -156,11 +154,10 @@ namespace bs
 	}
 
 	ParticleOrbit::ParticleOrbit(const PARTICLE_ORBIT_DESC& desc)
-		:mDesc(desc)
-	{ }
+		: mDesc(desc)
+	{}
 
-	void ParticleOrbit::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set,
-		u32 startIdx, u32 count, bool spacing, float spacingOffset) const
+	void ParticleOrbit::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const
 	{
 		const u32 endIdx = startIdx + count;
 		ParticleSetData& particles = set.GetParticles();
@@ -168,7 +165,7 @@ namespace bs
 		const Vector3 center = evaluateTransformed(mDesc.Center, state, state.NrmTimeEnd, random, mDesc.WorldSpace);
 		const float subFrameSpacing = (spacing && count > 0) ? 1.0f / count : 1.0f;
 
-		for (u32 i = startIdx; i < endIdx; i++)
+		for(u32 i = startIdx; i < endIdx; i++)
 		{
 			const float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
 
@@ -181,10 +178,8 @@ namespace bs
 			}
 
 			const u32 velocitySeed = particles.Seed[i] + PARTICLE_ORBIT_VELOCITY;
-			Vector3 orbitVelocity = evaluateTransformed<true>(mDesc.Velocity, state, particleT, Random(velocitySeed),
-				mDesc.WorldSpace);
+			Vector3 orbitVelocity = evaluateTransformed<true>(mDesc.Velocity, state, particleT, Random(velocitySeed), mDesc.WorldSpace);
 			orbitVelocity *= Math::TWO_PI;
-
 
 			orbitVelocity *= timeStep;
 
@@ -225,17 +220,16 @@ namespace bs
 	}
 
 	ParticleVelocity::ParticleVelocity(const PARTICLE_VELOCITY_DESC& desc)
-		:mDesc(desc)
-	{ }
+		: mDesc(desc)
+	{}
 
-	void ParticleVelocity::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set,
-		u32 startIdx, u32 count, bool spacing, float spacingOffset) const
+	void ParticleVelocity::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const
 	{
 		const u32 endIdx = startIdx + count;
 		ParticleSetData& particles = set.GetParticles();
 
 		const float subFrameSpacing = (spacing && count > 0) ? 1.0f / count : 1.0f;
-		for (u32 i = startIdx; i < endIdx; i++)
+		for(u32 i = startIdx; i < endIdx; i++)
 		{
 			const float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
 
@@ -248,8 +242,7 @@ namespace bs
 			}
 
 			const u32 velocitySeed = particles.Seed[i] + PARTICLE_LINEAR_VELOCITY;
-			const Vector3 velocity = evaluateTransformed<true>(mDesc.Velocity, state, particleT, Random(velocitySeed),
-				mDesc.WorldSpace) * timeStep;
+			const Vector3 velocity = evaluateTransformed<true>(mDesc.Velocity, state, particleT, Random(velocitySeed), mDesc.WorldSpace) * timeStep;
 
 			particles.Position[i] += velocity;
 		}
@@ -276,17 +269,16 @@ namespace bs
 	}
 
 	ParticleForce::ParticleForce(const PARTICLE_FORCE_DESC& desc)
-		:mDesc(desc)
-	{ }
+		: mDesc(desc)
+	{}
 
-	void ParticleForce::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set,
-		u32 startIdx, u32 count, bool spacing, float spacingOffset) const
+	void ParticleForce::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const
 	{
 		const u32 endIdx = startIdx + count;
 		ParticleSetData& particles = set.GetParticles();
 
 		const float subFrameSpacing = (spacing && count > 0) ? 1.0f / count : 1.0f;
-		for (u32 i = startIdx; i < endIdx; i++)
+		for(u32 i = startIdx; i < endIdx; i++)
 		{
 			const float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
 
@@ -299,8 +291,7 @@ namespace bs
 			}
 
 			const u32 forceSeed = particles.Seed[i] + PARTICLE_FORCE;
-			const Vector3 force = evaluateTransformed<true>(mDesc.Force, state, particleT, Random(forceSeed),
-				mDesc.WorldSpace) * timeStep;
+			const Vector3 force = evaluateTransformed<true>(mDesc.Force, state, particleT, Random(forceSeed), mDesc.WorldSpace) * timeStep;
 
 			particles.Velocity[i] += force * timeStep;
 		}
@@ -327,22 +318,21 @@ namespace bs
 	}
 
 	ParticleGravity::ParticleGravity(const PARTICLE_GRAVITY_DESC& desc)
-		:mDesc(desc)
-	{ }
+		: mDesc(desc)
+	{}
 
-	void ParticleGravity::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set,
-		u32 startIdx, u32 count, bool spacing, float spacingOffset) const
+	void ParticleGravity::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const
 	{
 		Vector3 gravity = state.Scene->GetPhysicsScene()->GetGravity() * mDesc.Scale;
 
-		if (!state.WorldSpace)
+		if(!state.WorldSpace)
 			gravity = state.WorldToLocal.MultiplyDirection(gravity);
 
 		const u32 endIdx = startIdx + count;
 		ParticleSetData& particles = set.GetParticles();
 
 		const float subFrameSpacing = (spacing && count > 0) ? 1.0f / count : 1.0f;
-		for (u32 i = startIdx; i < endIdx; i++)
+		for(u32 i = startIdx; i < endIdx; i++)
 		{
 			float timeStep = state.TimeStep;
 			if(spacing)
@@ -377,16 +367,15 @@ namespace bs
 	}
 
 	ParticleColor::ParticleColor(const PARTICLE_COLOR_DESC& desc)
-		:mDesc(desc)
-	{ }
+		: mDesc(desc)
+	{}
 
-	void ParticleColor::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set,
-		u32 startIdx, u32 count, bool spacing, float spacingOffset) const
+	void ParticleColor::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const
 	{
 		const u32 endIdx = startIdx + count;
 		ParticleSetData& particles = set.GetParticles();
 
-		for (u32 i = startIdx; i < endIdx; i++)
+		for(u32 i = startIdx; i < endIdx; i++)
 		{
 			const u32 colorSeed = particles.Seed[i] + PARTICLE_COLOR;
 			const float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
@@ -416,18 +405,17 @@ namespace bs
 	}
 
 	ParticleSize::ParticleSize(const PARTICLE_SIZE_DESC& desc)
-		:mDesc(desc)
-	{ }
+		: mDesc(desc)
+	{}
 
-	void ParticleSize::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set,
-		u32 startIdx, u32 count, bool spacing, float spacingOffset) const
+	void ParticleSize::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const
 	{
 		const u32 endIdx = startIdx + count;
 		ParticleSetData& particles = set.GetParticles();
 
 		if(!mDesc.Use3DSize)
 		{
-			for (u32 i = startIdx; i < endIdx; i++)
+			for(u32 i = startIdx; i < endIdx; i++)
 			{
 				const u32 sizeSeed = particles.Seed[i] + PARTICLE_SIZE;
 				const float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
@@ -438,7 +426,7 @@ namespace bs
 		}
 		else
 		{
-			for (u32 i = startIdx; i < endIdx; i++)
+			for(u32 i = startIdx; i < endIdx; i++)
 			{
 				const u32 sizeSeed = particles.Seed[i] + PARTICLE_SIZE;
 				const float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
@@ -469,18 +457,17 @@ namespace bs
 	}
 
 	ParticleRotation::ParticleRotation(const PARTICLE_ROTATION_DESC& desc)
-		:mDesc(desc)
-	{ }
+		: mDesc(desc)
+	{}
 
-	void ParticleRotation::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set,
-		u32 startIdx, u32 count, bool spacing, float spacingOffset) const
+	void ParticleRotation::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const
 	{
 		const u32 endIdx = startIdx + count;
 		ParticleSetData& particles = set.GetParticles();
 
 		if(!mDesc.Use3DRotation)
 		{
-			for (u32 i = startIdx; i < endIdx; i++)
+			for(u32 i = startIdx; i < endIdx; i++)
 			{
 				const u32 rotationSeed = particles.Seed[i] + PARTICLE_ROTATION;
 				const float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
@@ -491,7 +478,7 @@ namespace bs
 		}
 		else
 		{
-			for (u32 i = startIdx; i < endIdx; i++)
+			for(u32 i = startIdx; i < endIdx; i++)
 			{
 				const u32 rotationSeed = particles.Seed[i] + PARTICLE_ROTATION;
 				const float particleT = (particles.InitialLifetime[i] - particles.Lifetime[i]) / particles.InitialLifetime[i];
@@ -530,8 +517,7 @@ namespace bs
 	};
 
 	/** Calculates the new position and velocity after a particle was detected to be colliding. */
-	void calcCollisionResponse(Vector3& position, Vector3& velocity, const ParticleHitInfo& hitInfo,
-		const PARTICLE_COLLISIONS_DESC& desc)
+	void calcCollisionResponse(Vector3& position, Vector3& velocity, const ParticleHitInfo& hitInfo, const PARTICLE_COLLISIONS_DESC& desc)
 	{
 		Vector3 diff = position - hitInfo.Position;
 
@@ -551,8 +537,7 @@ namespace bs
 		velocity = reflectedVel;
 	}
 
-	u32 groupRaycast(const PhysicsScene& physicsScene, LineSegment3* segments, ParticleHitInfo* hits, u32 numRays,
-		u64 layer)
+	u32 groupRaycast(const PhysicsScene& physicsScene, LineSegment3* segments, ParticleHitInfo* hits, u32 numRays, u64 layer)
 	{
 		if(numRays == 0)
 			return 0;
@@ -609,7 +594,7 @@ namespace bs
 	}
 
 	ParticleCollisions::ParticleCollisions(const PARTICLE_COLLISIONS_DESC& desc)
-		:mDesc(desc)
+		: mDesc(desc)
 	{
 		mDesc.Restitution = std::max(mDesc.Restitution, 0.0f);
 		mDesc.Dampening = Math::Clamp01(mDesc.Dampening);
@@ -617,8 +602,7 @@ namespace bs
 		mDesc.Radius = std::max(mDesc.Radius, 0.0f);
 	}
 
-	void ParticleCollisions::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set,
-		u32 startIdx, u32 count, bool spacing, float spacingOffset) const
+	void ParticleCollisions::Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const
 	{
 		const u32 endIdx = startIdx + count;
 		ParticleSetData& particles = set.GetParticles();
@@ -630,11 +614,11 @@ namespace bs
 
 			// Extract planes from scene objects
 			Plane* objPlanes = nullptr;
-			
+
 			if(!mCollisionPlaneObjects.empty())
 			{
 				objPlanes = bs_stack_alloc<Plane>((u32)mCollisionPlaneObjects.size());
-				for (auto& entry : mCollisionPlaneObjects)
+				for(auto& entry : mCollisionPlaneObjects)
 				{
 					if(entry.IsDestroyed())
 						continue;
@@ -644,7 +628,7 @@ namespace bs
 
 					if(!state.WorldSpace)
 						plane = state.WorldToLocal.MultiplyAffine(plane);
-						
+
 					objPlanes[numPlanes[0]++] = plane;
 				}
 			}
@@ -653,14 +637,14 @@ namespace bs
 
 			// If particles are in world space, we can just use collision planes as is
 			Plane* localPlanes = nullptr;
-			if (state.WorldSpace)
+			if(state.WorldSpace)
 				planes[1] = (Plane*)mCollisionPlanes.data();
 			else
 			{
 				const Matrix4& worldToLocal = state.WorldToLocal;
 				localPlanes = bs_stack_alloc<Plane>((u32)mCollisionPlanes.size());
 
-				for (u32 i = 0; i < (u32)mCollisionPlanes.size(); i++)
+				for(u32 i = 0; i < (u32)mCollisionPlanes.size(); i++)
 					localPlanes[i] = worldToLocal.MultiplyAffine(mCollisionPlanes[i]);
 
 				planes[1] = localPlanes;
@@ -675,18 +659,18 @@ namespace bs
 
 				for(u32 j = 0; j < bs_size(planes); j++)
 				{
-					for (u32 k = 0; k < numPlanes[j]; k++)
+					for(u32 k = 0; k < numPlanes[j]; k++)
 					{
 						const Plane& plane = planes[j][k];
 
 						const float dist = plane.GetDistance(position);
-						if (dist > mDesc.Radius)
+						if(dist > mDesc.Radius)
 							continue;
 
 						const float distToTravelAlongNormal = plane.Normal.Dot(velocity);
 
 						// Ignore movement parallel to the plane
-						if (Math::ApproxEquals(distToTravelAlongNormal, 0.0f))
+						if(Math::ApproxEquals(distToTravelAlongNormal, 0.0f))
 							continue;
 
 						const float distFromBoundary = mDesc.Radius - dist;
@@ -730,7 +714,7 @@ namespace bs
 
 			if(!state.WorldSpace)
 			{
-				for (u32 i = 0; i < numRays; i++)
+				for(u32 i = 0; i < numRays; i++)
 				{
 					segments[i].Start = state.LocalToWorld.MultiplyAffine(segments[i].Start);
 					segments[i].End = state.LocalToWorld.MultiplyAffine(segments[i].End);
@@ -742,7 +726,7 @@ namespace bs
 
 			if(!state.WorldSpace)
 			{
-				for (u32 i = 0; i < numHits; i++)
+				for(u32 i = 0; i < numHits; i++)
 				{
 					hits[i].Position = state.WorldToLocal.MultiplyAffine(hits[i].Position);
 					hits[i].Normal = state.WorldToLocal.MultiplyDirection(hits[i].Normal);
@@ -753,7 +737,7 @@ namespace bs
 			{
 				ParticleHitInfo& hitInfo = hits[i];
 				const u32 particleIdx = rayStart + hitInfo.Idx;
-				
+
 				Vector3& position = particles.Position[particleIdx];
 				Vector3& velocity = particles.Velocity[particleIdx];
 
@@ -786,4 +770,4 @@ namespace bs
 	{
 		return GetRttiStatic();
 	}
-}
+} // namespace bs

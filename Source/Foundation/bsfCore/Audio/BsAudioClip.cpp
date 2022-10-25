@@ -10,7 +10,7 @@ namespace bs
 	AudioClip::AudioClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc)
 		: Resource(false), mDesc(desc), mNumSamples(numSamples), mStreamSize(streamSize), mStreamData(samples)
 	{
-		if (samples != nullptr)
+		if(samples != nullptr)
 			mStreamOffset = (u32)samples->Tell();
 
 		mKeepSourceData = desc.KeepSourceData;
@@ -56,4 +56,4 @@ namespace bs
 	{
 		return GetRttiStatic();
 	}
-}
+} // namespace bs

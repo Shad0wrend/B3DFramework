@@ -31,7 +31,7 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "GpuProgramBytecode";
 			return name;
@@ -42,7 +42,7 @@ namespace bs
 			return TID_GpuProgramBytecode;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<GpuProgramBytecode>();
 		}
@@ -72,7 +72,7 @@ namespace bs
 			return TID_GpuParamDesc;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<GpuParamDesc>();
 		}
@@ -114,21 +114,31 @@ namespace bs
 			return TID_GpuProgram;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return GpuProgramManager::Instance().CreateEmpty("", GPT_VERTEX_PROGRAM); // Params don't matter, they'll get overwritten
 		}
 	};
 
-	template<> struct RTTIPlainType<GpuParamDataDesc>
+	template <>
+	struct RTTIPlainType<GpuParamDataDesc>
 	{
-		enum { id = TID_GpuParamDataDesc }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_GpuParamDataDesc
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
+
 		static constexpr uint32_t VERSION = 1;
 
 		static BitLength ToMemory(const GpuParamDataDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
 
@@ -143,8 +153,7 @@ namespace bs
 				size += rtti_write(data.GpuMemOffset, stream);
 				size += rtti_write(data.CpuMemOffset, stream);
 
-				return size;
-			});
+				return size; });
 		}
 
 		static BitLength FromMemory(GpuParamDataDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -182,15 +191,25 @@ namespace bs
 		}
 	};
 
-	template<> struct RTTIPlainType<GpuParamObjectDesc>
+	template <>
+	struct RTTIPlainType<GpuParamObjectDesc>
 	{
-		enum { id = TID_GpuParamObjectDesc }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_GpuParamObjectDesc
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
+
 		static constexpr uint32_t VERSION = 2;
 
 		static BitLength ToMemory(const GpuParamObjectDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]
-			{
+											   {
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
 				size += rtti_write(data.Name, stream);
@@ -199,8 +218,7 @@ namespace bs
 				size += rtti_write(data.Set, stream);
 				size += rtti_write(data.ElementType, stream);
 
-				return size;
-			});
+				return size; });
 		}
 
 		static BitLength FromMemory(GpuParamObjectDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -216,7 +234,7 @@ namespace bs
 			rtti_read(data.Slot, stream);
 			rtti_read(data.Set, stream);
 
-			if (version > 1)
+			if(version > 1)
 				rtti_read(data.ElementType, stream);
 
 			return size;
@@ -232,15 +250,25 @@ namespace bs
 		}
 	};
 
-	template<> struct RTTIPlainType<GpuParamBlockDesc>
+	template <>
+	struct RTTIPlainType<GpuParamBlockDesc>
 	{
-		enum { id = TID_GpuParamBlockDesc }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_GpuParamBlockDesc
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
+
 		static constexpr uint32_t VERSION = 1;
 
 		static BitLength ToMemory(const GpuParamBlockDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]
-			{
+											   {
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
 				size += rtti_write(data.Name, stream);
@@ -249,8 +277,7 @@ namespace bs
 				size += rtti_write(data.BlockSize, stream);
 				size += rtti_write(data.IsShareable, stream);
 
-				return size;
-			});
+				return size; });
 		}
 
 		static BitLength FromMemory(GpuParamBlockDesc& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -275,7 +302,7 @@ namespace bs
 		{
 			BitLength dataSize = rtti_size(VERSION) + rtti_size(data.Name) + rtti_size(data.Set) +
 				rtti_size(data.Slot) + rtti_size(data.BlockSize) + rtti_size(data.IsShareable);
-			
+
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;
 		}
@@ -283,4 +310,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

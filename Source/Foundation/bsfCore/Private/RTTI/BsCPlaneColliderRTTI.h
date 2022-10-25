@@ -41,4 +41,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

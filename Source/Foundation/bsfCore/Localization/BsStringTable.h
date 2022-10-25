@@ -52,7 +52,7 @@ namespace bs
 		German,
 		Maldivian,
 		Bhutani,
-		Ewe, 		
+		Ewe,
 		Greek,
 		EnglishUK,
 		EnglishUS,
@@ -221,8 +221,8 @@ namespace bs
 			ParamOffset() = default;
 
 			ParamOffset(u32 _paramIdx, u32 _location)
-				:ParamIdx(_paramIdx), Location(_location)
-			{ }
+				: ParamIdx(_paramIdx), Location(_location)
+			{}
 
 			u32 ParamIdx = 0;
 			u32 Location = 0;
@@ -269,11 +269,12 @@ namespace bs
 		bool Contains(const String& identifier);
 
 		/** Returns a total number of strings in the table. */
-		BS_SCRIPT_EXPORT(ExportName(NumStrings),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(NumStrings), Property(Getter))
+
 		u32 GetNumStrings() const { return (u32)mIdentifiers.size(); }
 
 		/** Returns all identifiers that the string table contains localized strings for. */
-		BS_SCRIPT_EXPORT(ExportName(Identifiers),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Identifiers), Property(Getter))
 		Vector<String> GetIdentifiers() const;
 
 		/**	Adds or modifies string translation for the specified language. */
@@ -316,6 +317,7 @@ namespace bs
 		static HStringTable Create();
 
 		static const Language DEFAULT_LANGUAGE;
+
 	public: // ***** INTERNAL ******
 		/** @name Internal
 		 *  @{
@@ -357,4 +359,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

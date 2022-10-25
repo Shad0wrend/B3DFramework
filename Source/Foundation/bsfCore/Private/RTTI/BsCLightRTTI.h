@@ -14,10 +14,11 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT CLightRTTI : public RTTIType <CLight, Component, CLightRTTI>
+	class BS_CORE_EXPORT CLightRTTI : public RTTIType<CLight, Component, CLightRTTI>
 	{
 	private:
 		SPtr<Light> GetInternal(CLight* obj) { return obj->mInternal; }
+
 		void SetInternal(CLight* obj, SPtr<Light> val) { obj->mInternal = val; }
 
 	public:
@@ -45,4 +46,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

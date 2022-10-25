@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	bool RASTERIZER_STATE_DESC::operator == (const RASTERIZER_STATE_DESC& rhs) const
+	bool RASTERIZER_STATE_DESC::operator==(const RASTERIZER_STATE_DESC& rhs) const
 	{
 		return PolygonMode == rhs.PolygonMode &&
 			CullMode == rhs.CullMode &&
@@ -22,18 +22,16 @@ namespace bs
 	}
 
 	RasterizerProperties::RasterizerProperties(const RASTERIZER_STATE_DESC& desc)
-		:mData(desc), mHash(RasterizerState::GenerateHash(desc))
-	{ }
+		: mData(desc), mHash(RasterizerState::GenerateHash(desc))
+	{}
 
 	RasterizerState::RasterizerState(const RASTERIZER_STATE_DESC& desc)
 		: mProperties(desc), mId(0)
 	{
-
 	}
 
 	RasterizerState::~RasterizerState()
 	{
-
 	}
 
 	SPtr<ct::RasterizerState> RasterizerState::GetCore() const
@@ -96,41 +94,39 @@ namespace bs
 
 	namespace ct
 	{
-	RasterizerState::RasterizerState(const RASTERIZER_STATE_DESC& desc, u32 id)
-		: mProperties(desc), mId(id)
-	{
+		RasterizerState::RasterizerState(const RASTERIZER_STATE_DESC& desc, u32 id)
+			: mProperties(desc), mId(id)
+		{
+		}
 
-	}
+		RasterizerState::~RasterizerState()
+		{
+		}
 
-	RasterizerState::~RasterizerState()
-	{
+		void RasterizerState::Initialize()
+		{
+			// Since we cache states it's possible this object was already initialized
+			// (i.e. multiple sim-states can share a single core-state)
+			if(IsInitialized())
+				return;
 
-	}
+			CreateInternal();
+			CoreObject::Initialize();
+		}
 
-	void RasterizerState::Initialize()
-	{
-		// Since we cache states it's possible this object was already initialized
-		// (i.e. multiple sim-states can share a single core-state)
-		if (IsInitialized())
-			return;
+		const RasterizerProperties& RasterizerState::GetProperties() const
+		{
+			return mProperties;
+		}
 
-		CreateInternal();
-		CoreObject::Initialize();
-	}
+		SPtr<RasterizerState> RasterizerState::Create(const RASTERIZER_STATE_DESC& desc)
+		{
+			return RenderStateManager::Instance().CreateRasterizerState(desc);
+		}
 
-	const RasterizerProperties& RasterizerState::GetProperties() const
-	{
-		return mProperties;
-	}
-
-	SPtr<RasterizerState> RasterizerState::Create(const RASTERIZER_STATE_DESC& desc)
-	{
-		return RenderStateManager::Instance().CreateRasterizerState(desc);
-	}
-
-	const SPtr<RasterizerState>& RasterizerState::GetDefault()
-	{
-		return RenderStateManager::Instance().GetDefaultRasterizerState();
-	}
-	}
-}
+		const SPtr<RasterizerState>& RasterizerState::GetDefault()
+		{
+			return RenderStateManager::Instance().GetDefaultRasterizerState();
+		}
+	} // namespace ct
+} // namespace bs

@@ -20,7 +20,7 @@ namespace bs
 	{
 		/** Creates a new set and allocates enough space for @p capacity particles. */
 		ParticleSetData(u32 capacity)
-			:Capacity(capacity)
+			: Capacity(capacity)
 		{
 			Allocate();
 		}
@@ -30,7 +30,7 @@ namespace bs
 		 * them from the @p other set.
 		 */
 		ParticleSetData(u32 capacity, const ParticleSetData& other)
-			:Capacity(capacity)
+			: Capacity(capacity)
 		{
 			Allocate();
 			Copy(other);
@@ -50,7 +50,7 @@ namespace bs
 				Free();
 				Move(other);
 			}
-			
+
 			return *this;
 		}
 
@@ -80,19 +80,7 @@ namespace bs
 		 */
 		void Allocate()
 		{
-			alloc.
-				Reserve<Vector3>(Capacity).
-				Reserve<Vector3>(Capacity).
-				Reserve<Vector3>(Capacity).
-				Reserve<Vector3>(Capacity).
-				Reserve<Vector3>(Capacity).
-				Reserve<float>(Capacity).
-				Reserve<float>(Capacity).
-				Reserve<RGBA>(Capacity).
-				Reserve<u32>(Capacity).
-				Reserve<float>(Capacity).
-				Reserve<u32>(Capacity).
-				Init();
+			alloc.Reserve<Vector3>(Capacity).Reserve<Vector3>(Capacity).Reserve<Vector3>(Capacity).Reserve<Vector3>(Capacity).Reserve<Vector3>(Capacity).Reserve<float>(Capacity).Reserve<float>(Capacity).Reserve<RGBA>(Capacity).Reserve<u32>(Capacity).Reserve<float>(Capacity).Reserve<u32>(Capacity).Init();
 
 			PrevPosition = alloc.Alloc<Vector3>(Capacity);
 			Position = alloc.Alloc<Vector3>(Capacity);
@@ -177,8 +165,8 @@ namespace bs
 		 * grow to larger capacity if the limit is reached.
 		 */
 		ParticleSet(u32 capacity)
-			:mParticles(capacity)
-		{ }
+			: mParticles(capacity)
+		{}
 
 		/**
 		 * Allocates a number of new particles and returns the index to the particle. Note that the returned index is not
@@ -200,7 +188,7 @@ namespace bs
 			const u32 particleEnd = particleIdx + count;
 			if(particleEnd > mMaxIndex)
 			{
-				for (; mMaxIndex < particleEnd; mMaxIndex++)
+				for(; mMaxIndex < particleEnd; mMaxIndex++)
 					mParticles.Indices[mMaxIndex] = mMaxIndex;
 			}
 
@@ -263,7 +251,7 @@ namespace bs
 			u32 width = Bitwise::NextPow2(count);
 			u32 height = 1;
 
-			while (width > height)
+			while(width > height)
 			{
 				width /= 2;
 				height *= 2;
@@ -280,4 +268,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

@@ -17,12 +17,12 @@ namespace bs
 	 *
 	 * @note	Wraps AudioListener as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Audio),ExportName(AudioListener)) CAudioListener : public Component
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Audio), ExportName(AudioListener)) CAudioListener : public Component
 	{
 	public:
 		CAudioListener(const HSceneObject& parent);
 		virtual ~CAudioListener() = default;
-		
+
 		/** @name Internal
 		 *  @{
 		 */
@@ -55,6 +55,7 @@ namespace bs
 
 		/** @copydoc Component::update() */
 		void Update() override;
+
 	protected:
 		using Component::DestroyInternal;
 
@@ -80,11 +81,11 @@ namespace bs
 	public:
 		friend class CAudioListenerRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 
 	protected:
 		CAudioListener(); // Serialization only
 	};
 
-	 /** @} */
-}
+	/** @} */
+} // namespace bs

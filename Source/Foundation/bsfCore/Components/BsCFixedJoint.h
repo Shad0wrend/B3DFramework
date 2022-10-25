@@ -18,7 +18,7 @@ namespace bs
 	 *
 	 * @note	Wraps FixedJoint as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportName(FixedJoint)) CFixedJoint : public CJoint
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(FixedJoint)) CFixedJoint : public CJoint
 	{
 	public:
 		CFixedJoint(const HSceneObject& parent);
@@ -39,10 +39,10 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CJoint::createInternal */
-		SPtr<Joint> CreateInternal() ;
+		SPtr<Joint> CreateInternal();
 
 		/** @copydoc CJoint::getLocalTransform */
-		void GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation) ;
+		void GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation);
 
 		FIXED_JOINT_DESC mDesc;
 
@@ -52,11 +52,11 @@ namespace bs
 	public:
 		friend class CFixedJointRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 
 	protected:
 		CFixedJoint(); // Serialization only
 	};
 
-	 /** @} */
-}
+	/** @} */
+} // namespace bs

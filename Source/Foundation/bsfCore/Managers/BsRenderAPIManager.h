@@ -31,11 +31,11 @@ namespace bs
 
 		/**	Registers a new render API factory responsible for creating a specific render system type. */
 		void RegisterFactory(SPtr<RenderAPIFactory> factory);
+
 	private:
 		Vector<SPtr<RenderAPIFactory>> mAvailableFactories;
 		bool mRenderAPIInitialized = false;
 	};
 
 	/** @} */
-}
-
+} // namespace bs

@@ -15,7 +15,7 @@ namespace bs
 	/**
 	 * Core objects provides functionality for dealing with objects that need to exist on both simulation and core thread.
 	 * It handles cross-thread initialization, destruction as well as syncing data between the two threads.
-	 * 			
+	 *
 	 * It also provides a standardized way to initialize/destroy objects, and a way to specify dependant CoreObject%s. For
 	 * those purposes it might also be used for objects that only exist on the core thread.
 	 *
@@ -37,8 +37,8 @@ namespace bs
 	public:
 		/**
 		 * Frees all the data held by this object.
-		 * 			
-		 * @note	
+		 *
+		 * @note
 		 * If this object require initialization on core thread destruction is not done immediately, and is
 		 * instead just scheduled on the core thread. Otherwise the object is destroyed immediately.
 		 */
@@ -47,8 +47,8 @@ namespace bs
 		/**
 		 * Initializes all the internal resources of this object. Must be called right after construction. Generally you
 		 * should call this from a factory method to avoid the issue where user forgets to call it.
-		 * 					
-		 * @note	
+		 *
+		 * @note
 		 * If this object require initialization on core thread initialization is not done immediately, and is instead just
 		 * scheduled on the core thread. Otherwise the object is initialized immediately.
 		 */
@@ -62,8 +62,8 @@ namespace bs
 
 		/**
 		 * Blocks the current thread until the resource is fully initialized.
-		 * 			
-		 * @note	
+		 *
+		 * @note
 		 * If you call this without calling initialize first a deadlock will occur. You should not call this from core thread.
 		 */
 		void BlockUntilCoreInitialized() const;
@@ -105,10 +105,10 @@ namespace bs
 		void SetThisPtrInternal(SPtr<CoreObject> ptrThis);
 
 		/** Schedules the object to be destroyed, and then deleted. */
-		template<class T, class MemAlloc>
+		template <class T, class MemAlloc>
 		static void DeleteInternal(CoreObject* obj)
 		{
-			if (!obj->IsDestroyed())
+			if(!obj->IsDestroyed())
 				obj->Destroy();
 
 			bs_delete<T, MemAlloc>((T*)obj);
@@ -128,8 +128,8 @@ namespace bs
 
 		/**
 		 * Queues a command to be executed on the core thread, without a return value.
-		 * 			
-		 * @note	
+		 *
+		 * @note
 		 * Requires a shared pointer to the object this function will be executed on, in order to make sure the object is
 		 * not deleted before the command executes. Can be null if the function is static or global.
 		 */
@@ -137,17 +137,19 @@ namespace bs
 
 		/**
 		 * Queues a command to be executed on the core thread, with a return value in the form of AsyncOp.
-		 * 			
+		 *
 		 * @see		AsyncOp
-		 * 			
-		 * @note	
+		 *
+		 * @note
 		 * Requires a shared pointer to the object this function will be executed on, in order to make sure the object is
 		 * not deleted before the command executes. Can be null if the function is static or global.
 		 */
 		static AsyncOp QueueReturnGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void(AsyncOp&)> func);
 
 		bool RequiresInitOnCoreThread() const { return (mFlags & CGO_INIT_ON_CORE_THREAD) != 0; }
+
 		void SetIsDestroyed(bool destroyed) { mFlags = destroyed ? mFlags | CGO_DESTROYED : mFlags & ~CGO_DESTROYED; }
+
 	private:
 		friend class CoreObjectManager;
 
@@ -174,8 +176,7 @@ namespace bs
 		static void ExecuteGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void()> func);
 
 		/**	Helper wrapper method used for queuing commands with a return value on the core thread. */
-		static void ExecuteReturnGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void(AsyncOp&)> func,
-			AsyncOp& op);
+		static void ExecuteReturnGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void(AsyncOp&)> func, AsyncOp& op);
 
 	protected:
 		/************************************************************************/
@@ -222,7 +223,7 @@ namespace bs
 		/**
 		 * Copy internal dirty data to a memory buffer that will be used for updating core thread version of that data.
 		 *
-		 * @note	
+		 * @note
 		 * This generally happens at the end of every sim thread frame. Synced data becomes available to the core thread
 		 * the start of the next core thread frame.
 		 */
@@ -234,7 +235,7 @@ namespace bs
 		 * marked as dirty (for example updating a camera's viewport should also trigger an update on camera so it has
 		 * a chance to potentially update its data).
 		 */
-		virtual void GetCoreDependencies(Vector<CoreObject*>& dependencies) { }
+		virtual void GetCoreDependencies(Vector<CoreObject*>& dependencies) {}
 
 		/**
 		 * Gets called on an object when one of the dependencies (as returned from getCoreDependencies()) is marked as
@@ -255,58 +256,54 @@ namespace bs
 	/**
 	 * Creates a new core object using the specified allocators and returns a shared pointer to it.
 	 *
-	 * @note	
+	 * @note
 	 * All core thread object shared pointers must be created using this method or its overloads and you should not create
 	 * them manually.
 	 */
-	template<class Type, class MainAlloc, class PtrDataAlloc, class... Args>
-	SPtr<Type> bs_core_ptr_new(Args &&...args)
+	template <class Type, class MainAlloc, class PtrDataAlloc, class... Args>
+	SPtr<Type> bs_core_ptr_new(Args&&... args)
 	{
-		return SPtr<Type>(bs_new<Type, MainAlloc>(std::forward<Args>(args)...),
-			&CoreObject::DeleteInternal<Type, MainAlloc>, StdAlloc<Type, PtrDataAlloc>());
+		return SPtr<Type>(bs_new<Type, MainAlloc>(std::forward<Args>(args)...), &CoreObject::DeleteInternal<Type, MainAlloc>, StdAlloc<Type, PtrDataAlloc>());
 	}
 
 	/**
 	 * Creates a new core object using the specified allocator and returns a shared pointer to it.
 	 *
-	 * @note	
+	 * @note
 	 * All core thread object shared pointers must be created using this method or its overloads and you should not create
 	 * them manually.
 	 */
-	template<class Type, class MainAlloc, class... Args>
-	SPtr<Type> bs_core_ptr_new(Args &&...args)
+	template <class Type, class MainAlloc, class... Args>
+	SPtr<Type> bs_core_ptr_new(Args&&... args)
 	{
-		return SPtr<Type>(bs_new<Type, MainAlloc>(std::forward<Args>(args)...),
-			&CoreObject::DeleteInternal<Type, MainAlloc>, StdAlloc<Type, GenAlloc>());
+		return SPtr<Type>(bs_new<Type, MainAlloc>(std::forward<Args>(args)...), &CoreObject::DeleteInternal<Type, MainAlloc>, StdAlloc<Type, GenAlloc>());
 	}
 
 	/**
 	 * Creates a new core object and returns a shared pointer to it.
 	 *
-	 * @note	
+	 * @note
 	 * All core thread object shared pointers must be created using this method or its overloads and you should not create
 	 * them manually.
 	 */
-	template<class Type, class... Args>
-	SPtr<Type> bs_core_ptr_new(Args &&...args)
+	template <class Type, class... Args>
+	SPtr<Type> bs_core_ptr_new(Args&&... args)
 	{
-		return SPtr<Type>(bs_new<Type, GenAlloc>(std::forward<Args>(args)...),
-			&CoreObject::DeleteInternal<Type, GenAlloc>, StdAlloc<Type, GenAlloc>());
+		return SPtr<Type>(bs_new<Type, GenAlloc>(std::forward<Args>(args)...), &CoreObject::DeleteInternal<Type, GenAlloc>, StdAlloc<Type, GenAlloc>());
 	}
 
 	/**
 	 * Creates a core object shared pointer using a previously constructed object.
 	 *
-	 * @note	
+	 * @note
 	 * All core thread object shared pointers must be created using this method or its overloads and you should not create
 	 * them manually.
 	 */
-	template<class Type, class MainAlloc = GenAlloc, class PtrDataAlloc = GenAlloc>
+	template <class Type, class MainAlloc = GenAlloc, class PtrDataAlloc = GenAlloc>
 	SPtr<Type> bs_core_ptr(Type* data)
 	{
 		return SPtr<Type>(data, &CoreObject::DeleteInternal<Type, MainAlloc>, StdAlloc<Type, PtrDataAlloc>());
 	}
 
 	/** @} */
-}
-
+} // namespace bs

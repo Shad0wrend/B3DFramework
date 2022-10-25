@@ -18,7 +18,7 @@ namespace bs
 	 */
 
 	/** Common functionality for all material data params. */
-	template<int DATA_TYPE, bool Core>
+	template <int DATA_TYPE, bool Core>
 	class BS_CORE_EXPORT TMaterialDataCommon
 	{
 	protected:
@@ -45,8 +45,8 @@ namespace bs
 	 * A handle that allows you to set a Material parameter. Internally keeps a reference to the material parameters so that
 	 * possibly expensive lookup of parameter name can be avoided each time the parameter is accessed, and instead the
 	 * handle can be cached.
-	 * 			
-	 * @note	
+	 *
+	 * @note
 	 * This is pretty much identical to GPU parameter version (for example TGpuDataParam), except that this will get/set
 	 * parameter values on all GPU programs attached to the material, while TGpuDataParam works only for single GPU
 	 * program's parameters. Also, additional parameters that might be optimized out in the GPU program will still exist
@@ -57,7 +57,7 @@ namespace bs
 	 *
 	 * @see		Material
 	 */
-	template<class T, bool Core>
+	template <class T, bool Core>
 	class BS_CORE_EXPORT TMaterialDataParam : public TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>
 	{
 		using Base = TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>;
@@ -73,7 +73,7 @@ namespace bs
 	};
 
 	/** @copydoc TMaterialDataParam */
-	template<class T, bool Core>
+	template <class T, bool Core>
 	class BS_CORE_EXPORT TMaterialCurveParam : public TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>
 	{
 		using Base = TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>;
@@ -87,9 +87,9 @@ namespace bs
 		/** @copydoc TGpuDataParam::get */
 		const TAnimationCurve<T>& Get(u32 arrayIdx = 0) const;
 	};
-	
+
 	/** @copydoc TMaterialDataParam */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TMaterialColorGradientParam : public TMaterialDataCommon<GPDT_COLOR, Core>
 	{
 		using Base = TMaterialDataCommon<GPDT_COLOR, Core>;
@@ -105,7 +105,7 @@ namespace bs
 	};
 
 	/** @copydoc TMaterialDataParam */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TMaterialParamStruct : public TMaterialDataCommon<GPDT_STRUCT, Core>
 	{
 		using Base = TMaterialDataCommon<GPDT_STRUCT, Core>;
@@ -124,7 +124,7 @@ namespace bs
 	};
 
 	/** @copydoc TMaterialDataParam */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TMaterialParamTexture
 	{
 		using MaterialPtrType = SPtr<CoreVariantType<Material, Core>>;
@@ -133,7 +133,8 @@ namespace bs
 
 	public:
 		TMaterialParamTexture(const String& name, const MaterialPtrType& material);
-		TMaterialParamTexture() { }
+
+		TMaterialParamTexture() {}
 
 		/** @copydoc GpuParamTexture::set */
 		void Set(const TextureType& texture, const TextureSurface& surface = TextureSurface::COMPLETE) const;
@@ -153,7 +154,7 @@ namespace bs
 	};
 
 	/** @copydoc TMaterialDataParam */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TMaterialParamSpriteTexture
 	{
 		using MaterialPtrType = SPtr<CoreVariantType<Material, Core>>;
@@ -163,10 +164,11 @@ namespace bs
 
 	public:
 		TMaterialParamSpriteTexture(const String& name, const MaterialPtrType& material);
-		TMaterialParamSpriteTexture() { }
+
+		TMaterialParamSpriteTexture() {}
 
 		/** @copydoc GpuParamTexture::set */
-		void Set(const SpriteTextureType& texture)const;
+		void Set(const SpriteTextureType& texture) const;
 
 		/** @copydoc GpuParamTexture::get */
 		SpriteTextureType Get() const;
@@ -183,7 +185,7 @@ namespace bs
 	};
 
 	/** @copydoc TMaterialDataParam */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TMaterialParamLoadStoreTexture
 	{
 		using MaterialPtrType = SPtr<CoreVariantType<Material, Core>>;
@@ -192,7 +194,8 @@ namespace bs
 
 	public:
 		TMaterialParamLoadStoreTexture(const String& name, const MaterialPtrType& material);
-		TMaterialParamLoadStoreTexture() { }
+
+		TMaterialParamLoadStoreTexture() {}
 
 		/** @copydoc GpuParamLoadStoreTexture::set */
 		void Set(const TextureType& texture, const TextureSurface& surface = TextureSurface()) const;
@@ -210,9 +213,9 @@ namespace bs
 		u32 mParamIndex;
 		MaterialPtrType mMaterial;
 	};
-	
+
 	/** @copydoc TMaterialDataParam */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TMaterialParamBuffer
 	{
 		using MaterialPtrType = SPtr<CoreVariantType<Material, Core>>;
@@ -221,7 +224,8 @@ namespace bs
 
 	public:
 		TMaterialParamBuffer(const String& name, const MaterialPtrType& material);
-		TMaterialParamBuffer() { }
+
+		TMaterialParamBuffer() {}
 
 		/** @copydoc GpuParamBuffer::set */
 		void Set(const BufferType& buffer) const;
@@ -241,7 +245,7 @@ namespace bs
 	};
 
 	/** @copydoc TMaterialDataParam */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TMaterialParamSampState
 	{
 		using MaterialPtrType = SPtr<CoreVariantType<Material, Core>>;
@@ -250,7 +254,8 @@ namespace bs
 
 	public:
 		TMaterialParamSampState(const String& name, const MaterialPtrType& material);
-		TMaterialParamSampState() { }
+
+		TMaterialParamSampState() {}
 
 		/** @copydoc GpuParamSampState::set */
 		void Set(const SamplerStateType& sampState) const;
@@ -320,7 +325,7 @@ namespace bs
 		typedef TMaterialCurveParam<float, true> MaterialParamFloatCurve;
 		typedef TMaterialColorGradientParam<true> MaterialParamColorGradient;
 		typedef TMaterialParamSpriteTexture<true> MaterialParamSpriteTexture;
-	}
+	} // namespace ct
 
 	/** @} */
-}
+} // namespace bs

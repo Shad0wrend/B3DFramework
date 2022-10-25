@@ -52,5 +52,4 @@ namespace bs
 	};
 
 #define BUFFER_SIZE_GAMEPAD 64
-}
-
+} // namespace bs

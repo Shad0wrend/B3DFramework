@@ -9,7 +9,7 @@ namespace bs
 
 	Transform::Transform(const Vector3& position, const Quaternion& rotation, const Vector3& scale)
 		: mPosition(position), mRotation(rotation), mScale(scale)
-	{ }
+	{}
 
 	Matrix4 Transform::GetMatrix() const
 	{
@@ -50,13 +50,13 @@ namespace bs
 	void Transform::SetWorldPosition(const Vector3& position, const Transform& parent)
 	{
 		Vector3 invScale = parent.GetScale();
-		if (invScale.X != 0) invScale.X = 1.0f / invScale.X;
-		if (invScale.Y != 0) invScale.Y = 1.0f / invScale.Y;
-		if (invScale.Z != 0) invScale.Z = 1.0f / invScale.Z;
+		if(invScale.X != 0) invScale.X = 1.0f / invScale.X;
+		if(invScale.Y != 0) invScale.Y = 1.0f / invScale.Y;
+		if(invScale.Z != 0) invScale.Z = 1.0f / invScale.Z;
 
 		Quaternion invRotation = parent.GetRotation().Inverse();
 
-		mPosition = invRotation.Rotate(position - parent.GetPosition()) *  invScale;
+		mPosition = invRotation.Rotate(position - parent.GetPosition()) * invScale;
 	}
 
 	void Transform::SetWorldRotation(const Quaternion& rotation, const Transform& parent)
@@ -84,7 +84,7 @@ namespace bs
 	void Transform::LookAt(const Vector3& location, const Vector3& up)
 	{
 		Vector3 forward = location - GetPosition();
-		
+
 		Quaternion rotation = GetRotation();
 		rotation.LookRotation(forward, up);
 		SetRotation(rotation);
@@ -156,4 +156,4 @@ namespace bs
 	{
 		return Transform::GetRttiStatic();
 	}
-}
+} // namespace bs

@@ -82,8 +82,7 @@ namespace bs
 
 		static FileAction* createRenamed(const String& oldFilename, const String& newfileName)
 		{
-			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) +
-					(oldFilename.size() + newfileName.size() + 2) * sizeof(String::value_type)));
+			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) + (oldFilename.size() + newfileName.size() + 2) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
 			bytes += sizeof(FileAction);
@@ -126,8 +125,7 @@ namespace bs
 		Thread* workerThread;
 	};
 
-	static void watcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, size_t numEvents, void* eventPaths,
-								const FSEventStreamEventFlags* eventFlags, const FSEventStreamEventId* eventIds);
+	static void watcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, size_t numEvents, void* eventPaths, const FSEventStreamEventFlags* eventFlags, const FSEventStreamEventId* eventIds);
 
 	struct FolderMonitor::FolderWatchInfo
 	{
@@ -155,13 +153,13 @@ namespace bs
 		FolderMonitor* owner,
 		bool monitorSubdirectories,
 		FolderChangeBits filter)
-			: folderToMonitor(folderToMonitor)
-			, owner(owner)
-			, monitorSubdirectories(monitorSubdirectories)
-			, filter(filter)
-			, streamRef(nullptr)
-			, hasStarted(false)
-	{ }
+		: folderToMonitor(folderToMonitor)
+		, owner(owner)
+		, monitorSubdirectories(monitorSubdirectories)
+		, filter(filter)
+		, streamRef(nullptr)
+		, hasStarted(false)
+	{}
 
 	FolderMonitor::FolderWatchInfo::~FolderWatchInfo()
 	{
@@ -173,23 +171,23 @@ namespace bs
 		String pathString = folderToMonitor.toString();
 		CFStringRef path = CFStringCreateWithCString(kCFAllocatorDefault, pathString.c_str(), kCFStringEncodingUTF8);
 
-		CFArrayRef pathArray = CFArrayCreate(nullptr, (const void **)&path, 1, nullptr);
+		CFArrayRef pathArray = CFArrayCreate(nullptr, (const void**)&path, 1, nullptr);
 		FSEventStreamContext context = {};
 		context.info = this;
 
 		CFAbsoluteTime latency = 0.1f;
 		streamRef = FSEventStreamCreate(
-				kCFAllocatorDefault,
-				&watcherCallback,
-				&context,
-				pathArray,
-				kFSEventStreamEventIdSinceNow,
-				latency,
-				kFSEventStreamCreateFlagUseCFTypes | kFSEventStreamCreateFlagFileEvents);
+			kCFAllocatorDefault,
+			&watcherCallback,
+			&context,
+			pathArray,
+			kFSEventStreamEventIdSinceNow,
+			latency,
+			kFSEventStreamCreateFlagUseCFTypes | kFSEventStreamCreateFlagFileEvents);
 
 		CFRelease(pathArray);
 
-		if (streamRef)
+		if(streamRef)
 		{
 			FSEventStreamScheduleWithRunLoop(streamRef, CFRunLoopGetCurrent(), FolderMonitorMode);
 			if(FSEventStreamStart(streamRef))
@@ -197,7 +195,7 @@ namespace bs
 		}
 
 		CFRelease(path);
- 	}
+	}
 
 	void FolderMonitor::FolderWatchInfo::stopMonitor()
 	{
@@ -214,8 +212,7 @@ namespace bs
 		FSEventStreamRelease(streamRef);
 	}
 
-	static void watcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, size_t numEvents, void* eventPaths,
-								const FSEventStreamEventFlags* eventFlags, const FSEventStreamEventId* eventIds)
+	static void watcherCallback(ConstFSEventStreamRef streamRef, void* userInfo, size_t numEvents, void* eventPaths, const FSEventStreamEventFlags* eventFlags, const FSEventStreamEventId* eventIds)
 	{
 		auto* watcher = (FolderMonitor::FolderWatchInfo*)userInfo;
 		FolderMonitor::Pimpl* folderData = watcher->owner->GetPrivateDataInternal();
@@ -272,14 +269,14 @@ namespace bs
 			// File/folder was added
 			if(wasCreated)
 			{
-				if (!isFile)
+				if(!isFile)
 				{
-					if (watcher->filter.IsSet(FolderChangeBit::DirName))
+					if(watcher->filter.IsSet(FolderChangeBit::DirName))
 						folderData->fileActions.push_back(FileAction::createAdded(path.toString()));
 				}
 				else
 				{
-					if (watcher->filter.IsSet(FolderChangeBit::FileName))
+					if(watcher->filter.IsSet(FolderChangeBit::FileName))
 					{
 						// We delay all file creation events until the file is done writing
 						watcher->createdFiles.push_back(CreatedFileInfo());
@@ -310,12 +307,8 @@ namespace bs
 			if(wasModified && watcher->filter.IsSet(FolderChangeBit::FileWrite))
 			{
 				// Don't send out modified event if file was created
-				auto iterFind = std::find_if(watcher->createdFiles.begin(), watcher->createdFiles.end(),
-					 [&path](const CreatedFileInfo& info)
-					 {
-						return info.path == path;
-					 }
-				);
+				auto iterFind = std::find_if(watcher->createdFiles.begin(), watcher->createdFiles.end(), [&path](const CreatedFileInfo& info)
+											 { return info.path == path; });
 
 				if(iterFind == watcher->createdFiles.end())
 					folderData->fileActions.push_back(FileAction::createModified(path.toString()));
@@ -399,8 +392,8 @@ namespace bs
 
 	void FolderMonitor::stopMonitor(const Path& folderPath)
 	{
-		auto findIter = std::find_if(m->monitors.begin(), m->monitors.end(),
-				[&](const FolderWatchInfo* x) { return x->folderToMonitor == folderPath; });
+		auto findIter = std::find_if(m->monitors.begin(), m->monitors.end(), [&](const FolderWatchInfo* x)
+									 { return x->folderToMonitor == folderPath; });
 
 		if(findIter != m->monitors.end())
 		{
@@ -424,7 +417,7 @@ namespace bs
 			Lock lock(m->mainMutex);
 
 			// Remove all watches (this will also wake up the thread)
-			for (auto& watchInfo : m->monitors)
+			for(auto& watchInfo : m->monitors)
 				m->monitorsToStop.push_back(watchInfo);
 
 			m->monitors.clear();
@@ -462,7 +455,7 @@ namespace bs
 			{
 				Lock lock(m->mainMutex);
 
-				for (auto& entry : m->monitorsToStop)
+				for(auto& entry : m->monitorsToStop)
 					bs_delete(entry);
 
 				m->monitorsToStop.clear();
@@ -532,22 +525,22 @@ namespace bs
 
 		for(auto& action : m->activeFileActions)
 		{
-			switch (action->type)
+			switch(action->type)
 			{
 			case FileActionType::Added:
-				if (!onAdded.empty())
+				if(!onAdded.empty())
 					onAdded(Path(action->newName));
 				break;
 			case FileActionType::Removed:
-				if (!onRemoved.empty())
+				if(!onRemoved.empty())
 					onRemoved(Path(action->newName));
 				break;
 			case FileActionType::Modified:
-				if (!onModified.empty())
+				if(!onModified.empty())
 					onModified(Path(action->newName));
 				break;
 			case FileActionType::Renamed:
-				if (!onRenamed.empty())
+				if(!onRenamed.empty())
 					onRenamed(Path(action->oldName), Path(action->newName));
 				break;
 			}
@@ -557,5 +550,4 @@ namespace bs
 
 		m->activeFileActions.clear();
 	}
-}
-
+} // namespace bs

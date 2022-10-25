@@ -10,12 +10,21 @@ namespace bs
 {
 	/** @cond RTTI */
 	/** @addtogroup RTTI-Impl-Core
-	*  @{
-	*/
+	 *  @{
+	 */
 
-	template<> struct RTTIPlainType<ColorDistribution>
+	template <>
+	struct RTTIPlainType<ColorDistribution>
 	{
-		enum { id = TID_ColorDistribution }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_ColorDistribution
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		/** @copydoc RTTIPlainType::toMemory */
 		static BitLength ToMemory(const ColorDistribution& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -23,15 +32,14 @@ namespace bs
 			static constexpr uint32_t VERSION = 0; // In case the data structure changes
 
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
 				size += rtti_write(data.mType, stream);
 				size += rtti_write(data.mMinGradient, stream);
 				size += rtti_write(data.mMaxGradient, stream);
 
-				return size;
-			});
+				return size; });
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
@@ -71,9 +79,18 @@ namespace bs
 		}
 	};
 
-	template<class T> struct RTTIPlainType<TDistribution<T>>
+	template <class T>
+	struct RTTIPlainType<TDistribution<T>>
 	{
-		enum { id = TID_TDistribution }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_TDistribution
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		/** @copydoc RTTIPlainType::toMemory */
 		static BitLength ToMemory(const TDistribution<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -81,15 +98,14 @@ namespace bs
 			static constexpr uint32_t VERSION = 0; // In case the data structure changes
 
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
 				size += rtti_write(data.mType, stream);
 				size += rtti_write(data.mMinCurve, stream);
 				size += rtti_write(data.mMaxCurve, stream);
 
-				return size;
-			});
+				return size; });
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
@@ -131,4 +147,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

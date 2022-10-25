@@ -37,7 +37,7 @@ namespace bs
 	 *  - Running - Scene manager is sending out events.
 	 *  - Paused - Scene manager is sending out all events except per-frame update().
 	 *	- Stopped - Scene manager is not sending out events except for onCreated/onDestroyed.
-	 *	
+	 *
 	 * These states can be changed globally though SceneManager and affect all components. Individual components can
 	 * override these states in two ways:
 	 *  - Set the ComponentFlag::AlwaysRun to true and the component will always stay in Running state, regardless of
@@ -59,27 +59,27 @@ namespace bs
 		const HComponent& GetHandle() const { return mThisHandle; }
 
 		/** Called once per frame. Only called if the component is in Running state. */
-		virtual void Update() { }
+		virtual void Update() {}
 
 		/**
 		 * Called at fixed time intervals (e.g. 60 times per frame). Generally any physics-related functionality should
 		 * go in this method in order to ensure stability of calculations. Only called if the component is in Running
 		 * state.
 		 */
-		virtual void FixedUpdate() { }
+		virtual void FixedUpdate() {}
 
 		/**
 		 * Calculates bounds of the visible contents represented by this component (for example a mesh for Renderable).
 		 *
-		 * @param[in]	bounds	Bounds of the contents in world space coordinates.	
+		 * @param[in]	bounds	Bounds of the contents in world space coordinates.
 		 * @return				True if the component has bounds with non-zero volume, otherwise false.
 		 */
 		virtual bool CalculateBounds(Bounds& bounds);
 
 		/**
 		 * Checks if this and the provided component represent the same type.
-		 * 			
-		 * @note	
+		 *
+		 * @note
 		 * RTTI type cannot be checked directly since components can be further specialized internally for scripting
 		 * purposes.
 		 */
@@ -122,7 +122,7 @@ namespace bs
 		/** Called once when the component has been created. Called regardless of the state the component is in. */
 		virtual void OnCreated() {}
 
-		/**	
+		/**
 		 * Called once when the component first leaves the Stopped state. This includes component creation if requirements
 		 * for leaving Stopped state are met, in which case it is called after onCreated.
 		 */
@@ -131,14 +131,14 @@ namespace bs
 		/**	Called once just before the component is destroyed. Called regardless of the state the component is in. */
 		virtual void OnDestroyed() {}
 
-		/**	
+		/**
 		 * Called every time a component is placed into the Stopped state. This includes component destruction if component
 		 * wasn't already in Stopped state during destruction. When called during destruction it is called before
 		 * onDestroyed.
 		 */
 		virtual void OnDisabled() {}
 
-		/**	
+		/**
 		 * Called every time a component leaves the Stopped state. This includes component creation if requirements
 		 * for leaving the Stopped state are met. When called during creation it is called after onInitialized.
 		 */
@@ -146,15 +146,21 @@ namespace bs
 
 		/**
 		 * Called when the component's parent scene object has changed. Not called if the component is in Stopped state.
-		* Also only called if necessary notify flags are set via SetNotifyFlagsInternal().
+		 * Also only called if necessary notify flags are set via SetNotifyFlagsInternal().
 		 */
-		virtual void OnTransformChanged(TransformChangedFlags flags) { }
+		virtual void OnTransformChanged(TransformChangedFlags flags) {}
 
 		/** Checks whether the component wants to received the specified transform changed message. */
 		bool SupportsNotify(TransformChangedFlags flags) const { return (mNotifyFlags & flags) != 0; }
 
 		/** Enables or disabled a flag controlling component's behaviour. */
-		void SetFlag(ComponentFlag flag, bool enabled) { if (enabled) mFlags.Set(flag); else mFlags.Unset(flag); }
+		void SetFlag(ComponentFlag flag, bool enabled)
+		{
+			if(enabled)
+				mFlags.Set(flag);
+			else
+				mFlags.Unset(flag);
+		}
 
 		/** Checks if the component has a certain flag enabled. */
 		bool HasFlag(ComponentFlag flag) const { return mFlags.IsSet(flag); }
@@ -175,8 +181,9 @@ namespace bs
 		 * @note	Unlike Destroy(), does not remove the component from its parent.
 		 */
 		void DestroyInternal(GameObjectHandleBase& handle, bool immediate) override;
+
 	private:
-		Component(const Component& other) { }
+		Component(const Component& other) {}
 
 	protected:
 		HComponent mThisHandle;
@@ -200,4 +207,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

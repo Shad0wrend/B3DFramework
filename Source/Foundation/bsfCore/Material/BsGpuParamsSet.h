@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/** Contains a set of GpuParams used for a single technique within a Material. */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TGpuParamsSet
 	{
 		using GpuParamsType = CoreVariantType<GpuParams, Core>;
@@ -48,9 +48,8 @@ namespace bs
 		struct BlockInfo
 		{
 			BlockInfo(const String& name, u32 set, u32 slot, const ParamBlockPtrType& buffer, bool shareable)
-				: Name(name), Set(set), Slot(slot), Buffer(buffer), Shareable(shareable), AllowUpdate(true), IsUsed(true)
-				, PassData(nullptr)
-			{ }
+				: Name(name), Set(set), Slot(slot), Buffer(buffer), Shareable(shareable), AllowUpdate(true), IsUsed(true), PassData(nullptr)
+			{}
 
 			String Name;
 			u32 Set;
@@ -101,8 +100,7 @@ namespace bs
 
 	public:
 		TGpuParamsSet() = default;
-		TGpuParamsSet(const SPtr<TechniqueType>& technique, const ShaderType& shader,
-			const SPtr<MaterialParamsType>& params);
+		TGpuParamsSet(const SPtr<TechniqueType>& technique, const ShaderType& shader, const SPtr<MaterialParamsType>& params);
 		~TGpuParamsSet();
 
 		/**
@@ -129,7 +127,7 @@ namespace bs
 		 *								if the caller wishes to manually update the buffer contents externally, to prevent
 		 *								overwriting manually written data during update.
 		 *
-		 * @note	
+		 * @note
 		 * Parameter block buffers can be used as quick way of setting multiple parameters on a material at once, or
 		 * potentially sharing parameters between multiple materials. This reduces driver overhead as the parameters
 		 * in the buffers need only be set once and then reused multiple times.
@@ -145,7 +143,7 @@ namespace bs
 		 *								if the caller wishes to manually update the buffer contents externally, to prevent
 		 *								overwriting manually written data during update.
 		 *
-		 * @note	
+		 * @note
 		 * Parameter block buffers can be used as quick way of setting multiple parameters on a material at once, or
 		 * potentially sharing parameters between multiple materials. This reduces driver overhead as the parameters
 		 * in the buffers need only be set once and then reused multiple times.
@@ -168,8 +166,10 @@ namespace bs
 		void Update(const SPtr<MaterialParamsType>& params, float t = 0.0f, bool updateAll = false);
 
 		static const u32 NUM_STAGES;
+
 	private:
-		template<bool Core2> friend class TMaterial;
+		template <bool Core2>
+		friend class TMaterial;
 
 		Vector<SPtr<GpuParamsType>> mPassParams;
 		Vector<BlockInfo> mBlocks;
@@ -185,25 +185,25 @@ namespace bs
 	{
 	public:
 		GpuParamsSet() = default;
-		GpuParamsSet(const SPtr<Technique>& technique, const HShader& shader,
-			const SPtr<MaterialParams>& params)
-			:TGpuParamsSet(technique, shader, params)
-		{ }
+
+		GpuParamsSet(const SPtr<Technique>& technique, const HShader& shader, const SPtr<MaterialParams>& params)
+			: TGpuParamsSet(technique, shader, params)
+		{}
 	};
 
 	namespace ct
 	{
-	/** Core thread version of TGpuParamsSet<Core>. */
-	class BS_CORE_EXPORT GpuParamsSet : public TGpuParamsSet<true>
-	{
-	public:
-		GpuParamsSet() = default;
-		GpuParamsSet(const SPtr<Technique>& technique, const SPtr<Shader>& shader,
-			const SPtr<MaterialParams>& params)
-			:TGpuParamsSet(technique, shader, params)
-		{ }
-	};
-	}
+		/** Core thread version of TGpuParamsSet<Core>. */
+		class BS_CORE_EXPORT GpuParamsSet : public TGpuParamsSet<true>
+		{
+		public:
+			GpuParamsSet() = default;
+
+			GpuParamsSet(const SPtr<Technique>& technique, const SPtr<Shader>& shader, const SPtr<MaterialParams>& params)
+				: TGpuParamsSet(technique, shader, params)
+			{}
+		};
+	} // namespace ct
 
 	/** @} */
-}
+} // namespace bs

@@ -49,7 +49,10 @@ namespace bs
 	/** Types of mouse buttons provided by the OS. */
 	enum class OSMouseButton
 	{
-		Left, Middle, Right, Count
+		Left,
+		Middle,
+		Right,
+		Count
 	};
 
 	/** Describes pointer (mouse, touch) states as reported by the OS. */
@@ -89,7 +92,8 @@ namespace bs
 	public:
 		struct Pimpl;
 
-		Platform() { }
+		Platform() {}
+
 		virtual ~Platform();
 
 		/**
@@ -193,7 +197,7 @@ namespace bs
 		 * Sets custom caption non client areas for the specified window. Using custom client areas will override window
 		 * move/drag operation and trigger when user interacts with the custom area.
 		 *
-		 * @note	
+		 * @note
 		 * Thread safe.
 		 * @note
 		 * All provided areas are relative to the specified window. Mostly useful for frameless windows that don't have
@@ -205,7 +209,7 @@ namespace bs
 		 * Sets custom non client areas for the specified window. Using custom client areas will override window resize
 		 * operation and trigger when user interacts with the custom area.
 		 *
-		 * @note	
+		 * @note
 		 * Thread safe.
 		 * @note
 		 * All provided areas are relative to the specified window. Mostly useful for frameless windows that don't have
@@ -338,9 +342,10 @@ namespace bs
 		 * @note	Core thread only.
 		 */
 		static Event<void()> onMouseCaptureChanged;
+
 	protected:
 		static Pimpl* mData;
 	};
 
 	/** @} */
-}
+} // namespace bs

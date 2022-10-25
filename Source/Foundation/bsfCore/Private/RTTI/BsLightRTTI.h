@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT LightRTTI : public RTTIType <Light, IReflectable, LightRTTI>
+	class BS_CORE_EXPORT LightRTTI : public RTTIType<Light, IReflectable, LightRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -54,7 +54,7 @@ namespace bs
 			return TID_Light;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return Light::CreateEmpty();
 		}
@@ -62,4 +62,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

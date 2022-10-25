@@ -110,8 +110,7 @@ namespace bs
 		 * @param[in]	maxDist	Maximum distance from the ray origin to search for hits.
 		 * @return				True if the ray has hit the collider.
 		 */
-		bool RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit,
-			float maxDist = FLT_MAX) const;
+		bool RayCast(const Vector3& origin, const Vector3& unitDir, PhysicsQueryHit& hit, float maxDist = FLT_MAX) const;
 
 		/**
 		 * Triggered when some object starts interacting with the collider. Only triggered if proper collision report mode
@@ -140,7 +139,11 @@ namespace bs
 		 * Sets the object that owns this physics object, if any. Used for high level systems so they can easily map their
 		 * high level physics objects from the low level ones returned by various queries and events.
 		 */
-		void SetOwnerInternal(PhysicsOwnerType type, void* owner) { mOwner.Type = type; mOwner.OwnerData = owner; }
+		void SetOwnerInternal(PhysicsOwnerType type, void* owner)
+		{
+			mOwner.Type = type;
+			mOwner.OwnerData = owner;
+		}
 
 		/**
 		 * Gets the object that owns this physics object, if any. Used for high level systems so they can easily map their
@@ -157,4 +160,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

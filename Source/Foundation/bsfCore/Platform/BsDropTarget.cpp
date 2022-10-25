@@ -24,8 +24,7 @@ namespace bs
 
 	SPtr<DropTarget> DropTarget::Create(const RenderWindow* window, const Rect2I& area)
 	{
-		DropTarget* target = new (bs_alloc<DropTarget>()) DropTarget(window, area);
+		DropTarget* target = new(bs_alloc<DropTarget>()) DropTarget(window, area);
 		return bs_shared_ptr(target);
 	}
-}
-
+} // namespace bs

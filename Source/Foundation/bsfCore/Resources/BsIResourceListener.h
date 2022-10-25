@@ -31,11 +31,11 @@ namespace bs
 		virtual void MarkListenerResourcesDirty();
 
 		/**	Called when a resource has been fully loaded. */
-		virtual void NotifyResourceLoaded(const HResource& resource) { }
+		virtual void NotifyResourceLoaded(const HResource& resource) {}
 
 		/**	Called when the internal resource the resource handle is pointing to changes. */
-		virtual void NotifyResourceChanged(const HResource& resource) { }
+		virtual void NotifyResourceChanged(const HResource& resource) {}
 	};
 
 	/** @} */
-}
+} // namespace bs

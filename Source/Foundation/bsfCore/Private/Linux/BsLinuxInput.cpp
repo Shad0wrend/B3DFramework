@@ -22,34 +22,34 @@ namespace bs
 	/** Checks is the bit at the specified location in a byte array is set. */
 	bool isBitSet(u8 bits[], u32 bit)
 	{
-		return ((bits[bit/8] >> (bit%8)) & 1) != 0;
+		return ((bits[bit / 8] >> (bit % 8)) & 1) != 0;
 	}
 
 	/** Returns information about an input event device attached to he provided file handle. */
 	bool getEventInfo(int fileHandle, EventInfo& eventInfo)
 	{
-		u8 eventBits[1 + EV_MAX/8];
+		u8 eventBits[1 + EV_MAX / 8];
 		bs_zero_out(eventBits);
 
-		if (ioctl(fileHandle, EVIOCGBIT(0, sizeof(eventBits)), eventBits) == -1)
+		if(ioctl(fileHandle, EVIOCGBIT(0, sizeof(eventBits)), eventBits) == -1)
 			return false;
 
-		for (u32 i = 0; i < EV_MAX; i++)
+		for(u32 i = 0; i < EV_MAX; i++)
 		{
 			if(isBitSet(eventBits, i))
 			{
 				if(i == EV_ABS)
 				{
-					u8 absAxisBits[1 + ABS_MAX/8];
+					u8 absAxisBits[1 + ABS_MAX / 8];
 					bs_zero_out(absAxisBits);
 
-					if (ioctl(fileHandle, EVIOCGBIT(i, sizeof(absAxisBits)), absAxisBits) == -1)
+					if(ioctl(fileHandle, EVIOCGBIT(i, sizeof(absAxisBits)), absAxisBits) == -1)
 					{
 						BS_LOG(Error, Platform, "Could not read device absolute axis features.");
 						continue;
 					}
 
-					for (u32 j = 0; j < ABS_MAX; j++)
+					for(u32 j = 0; j < ABS_MAX; j++)
 					{
 						if(isBitSet(absAxisBits, j))
 						{
@@ -62,16 +62,16 @@ namespace bs
 				}
 				else if(i == EV_REL)
 				{
-					u8 relAxisBits[1 + REL_MAX/8];
+					u8 relAxisBits[1 + REL_MAX / 8];
 					bs_zero_out(relAxisBits);
 
-					if (ioctl(fileHandle, EVIOCGBIT(i, sizeof(relAxisBits)), relAxisBits) == -1)
+					if(ioctl(fileHandle, EVIOCGBIT(i, sizeof(relAxisBits)), relAxisBits) == -1)
 					{
 						BS_LOG(Error, Platform, "Could not read device relative axis features.");
 						continue;
 					}
 
-					for (u32 j = 0; j < REL_MAX; j++)
+					for(u32 j = 0; j < REL_MAX; j++)
 					{
 						if(isBitSet(relAxisBits, j))
 							eventInfo.relAxes.push_back(j);
@@ -79,16 +79,16 @@ namespace bs
 				}
 				else if(i == EV_KEY)
 				{
-					u8 keyBits[1 + KEY_MAX/8];
+					u8 keyBits[1 + KEY_MAX / 8];
 					bs_zero_out(keyBits);
 
-					if (ioctl(fileHandle, EVIOCGBIT(i, sizeof(keyBits)), keyBits) == -1)
+					if(ioctl(fileHandle, EVIOCGBIT(i, sizeof(keyBits)), keyBits) == -1)
 					{
 						BS_LOG(Error, Platform, "Could not read device key features.");
 						continue;
 					}
 
-					for (u32 j = 0; j < KEY_MAX; j++)
+					for(u32 j = 0; j < KEY_MAX; j++)
 					{
 						if(isBitSet(keyBits, j))
 							eventInfo.buttons.push_back(j);
@@ -104,7 +104,7 @@ namespace bs
 	ButtonCode gamepadMapCommonButton(i32 code)
 	{
 		// Note: Assuming XBox controller layout here
-		switch (code)
+		switch(code)
 		{
 		case BTN_TRIGGER_HAPPY1:
 			return BC_GAMEPAD_DPAD_LEFT;
@@ -174,9 +174,7 @@ namespace bs
 		u32 unknownButtonIdx = 0;
 		for(auto& entry : eventInfo.buttons)
 		{
-			if((entry >= BTN_JOYSTICK && entry < BTN_GAMEPAD)
-				|| (entry >= BTN_GAMEPAD && entry < BTN_DIGI)
-				|| (entry >= BTN_WHEEL && entry < KEY_OK))
+			if((entry >= BTN_JOYSTICK && entry < BTN_GAMEPAD) || (entry >= BTN_GAMEPAD && entry < BTN_DIGI) || (entry >= BTN_WHEEL && entry < KEY_OK))
 			{
 				ButtonCode bc = gamepadMapCommonButton(entry);
 				if(bc == BC_UNASSIGNED)
@@ -203,7 +201,7 @@ namespace bs
 
 			// Get device name
 			char name[128];
-			if (ioctl(fileHandle, EVIOCGNAME(sizeof(name)), name) != -1)
+			if(ioctl(fileHandle, EVIOCGNAME(sizeof(name)), name) != -1)
 				info.name = String(name);
 			else
 				BS_LOG(Error, Platform, "Could not read device name.");
@@ -217,7 +215,7 @@ namespace bs
 				axisInfo.max = Gamepad::MAX_AXIS;
 
 				input_absinfo absinfo;
-				if (ioctl(fileHandle, EVIOCGABS(entry), &absinfo) == -1)
+				if(ioctl(fileHandle, EVIOCGABS(entry), &absinfo) == -1)
 				{
 					BS_LOG(Error, Platform, "Could not read absolute axis device features.");
 					continue;
@@ -243,10 +241,10 @@ namespace bs
 		mPlatformData = bs_new<InputPrivateData>();
 
 		// Scan for valid gamepad devices
-		for(int i = 0; i < 64; ++i )
+		for(int i = 0; i < 64; ++i)
 		{
 			String eventPath = "/dev/input/event" + toString(i);
-			int file = open(eventPath.c_str(), O_RDONLY |O_NONBLOCK);
+			int file = open(eventPath.c_str(), O_RDONLY | O_NONBLOCK);
 			if(file == -1)
 			{
 				// Note: We're ignoring failures due to permissions. The assumption is that gamepads won't have special
@@ -268,19 +266,19 @@ namespace bs
 		mMouse = bs_new<Mouse>("Mouse", this);
 
 		u32 numGamepads = getDeviceCount(InputDevice::Gamepad);
-		for (u32 i = 0; i < numGamepads; i++)
+		for(u32 i = 0; i < numGamepads; i++)
 			mGamepads.push_back(bs_new<Gamepad>(mPlatformData->gamepadInfos[i].name, mPlatformData->gamepadInfos[i], this));
 	}
 
 	void Input::cleanUpRawInput()
 	{
-		if (mMouse != nullptr)
+		if(mMouse != nullptr)
 			bs_delete(mMouse);
 
-		if (mKeyboard != nullptr)
+		if(mKeyboard != nullptr)
 			bs_delete(mKeyboard);
 
-		for (auto& gamepad : mGamepads)
+		for(auto& gamepad : mGamepads)
 			bs_delete(gamepad);
 
 		bs_delete(mPlatformData);
@@ -298,5 +296,4 @@ namespace bs
 
 		return 0;
 	}
-}
-
+} // namespace bs

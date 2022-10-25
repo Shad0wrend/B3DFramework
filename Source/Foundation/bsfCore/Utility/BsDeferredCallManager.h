@@ -13,7 +13,7 @@ namespace bs
 
 	/**
 	 * Allows you to queue calls that can get executed later.
-	 * 			
+	 *
 	 * @note	Sim thread only.
 	 */
 	class BS_CORE_EXPORT DeferredCallManager : public Module<DeferredCallManager>
@@ -38,4 +38,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

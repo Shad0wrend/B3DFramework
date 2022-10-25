@@ -8,90 +8,90 @@ namespace bs
 {
 	namespace ct
 	{
-	/** @addtogroup RenderAPI-Internal
-	 *  @{
-	 */
-
-	/** Data describing a texture view. */
-	struct BS_CORE_EXPORT TEXTURE_VIEW_DESC
-	{
-		/**
-		 * First mip level of the parent texture the view binds (0 - base level). This applied to all array slices
-		 * specified below.
+		/** @addtogroup RenderAPI-Internal
+		 *  @{
 		 */
-		u32 MostDetailMip;
 
-		/** Number of mip levels to bind to the view. This applied to all array slices specified below. */
-		u32 NumMips;
-
-		/**
-		 * First array slice the view binds to. This will be array index for 1D and 2D array textures, texture slice index
-		 * for 3D textures, and face index for cube textures(cube index * 6).
-		 */
-		u32 FirstArraySlice;
-
-		/**
-		 * Number of array slices to bind tot he view. This will be number of array elements for 1D and 2D array textures,
-		 * number of slices for 3D textures, and number of cubes for cube textures.
-		 */
-		u32 NumArraySlices;
-
-		/** Type of texture view. */
-		GpuViewUsage Usage;
-	};
-
-	/**
-	 * Texture views allow you to reference only a party of a texture. They may reference one or multiple mip-levels on one
-	 * or multiple texture array slices. Selected mip level will apply to all slices.
-	 *
-	 * They also allow you to re-purpose a texture (for example make a render target a bindable texture).
-	 *
-	 * @note	Core thread.
-	 */
-	class BS_CORE_EXPORT TextureView
-	{
-	public:
-		class HashFunction
+		/** Data describing a texture view. */
+		struct BS_CORE_EXPORT TEXTURE_VIEW_DESC
 		{
-		public:
-			size_t operator()(const TEXTURE_VIEW_DESC &key) const;
+			/**
+			 * First mip level of the parent texture the view binds (0 - base level). This applied to all array slices
+			 * specified below.
+			 */
+			u32 MostDetailMip;
+
+			/** Number of mip levels to bind to the view. This applied to all array slices specified below. */
+			u32 NumMips;
+
+			/**
+			 * First array slice the view binds to. This will be array index for 1D and 2D array textures, texture slice index
+			 * for 3D textures, and face index for cube textures(cube index * 6).
+			 */
+			u32 FirstArraySlice;
+
+			/**
+			 * Number of array slices to bind tot he view. This will be number of array elements for 1D and 2D array textures,
+			 * number of slices for 3D textures, and number of cubes for cube textures.
+			 */
+			u32 NumArraySlices;
+
+			/** Type of texture view. */
+			GpuViewUsage Usage;
 		};
 
-		class EqualFunction
+		/**
+		 * Texture views allow you to reference only a party of a texture. They may reference one or multiple mip-levels on one
+		 * or multiple texture array slices. Selected mip level will apply to all slices.
+		 *
+		 * They also allow you to re-purpose a texture (for example make a render target a bindable texture).
+		 *
+		 * @note	Core thread.
+		 */
+		class BS_CORE_EXPORT TextureView
 		{
 		public:
-			bool operator()(const TEXTURE_VIEW_DESC &a, const TEXTURE_VIEW_DESC &b) const;
+			class HashFunction
+			{
+			public:
+				size_t operator()(const TEXTURE_VIEW_DESC &key) const;
+			};
+
+			class EqualFunction
+			{
+			public:
+				bool operator()(const TEXTURE_VIEW_DESC &a, const TEXTURE_VIEW_DESC &b) const;
+			};
+
+			virtual ~TextureView() = default;
+
+			/**	Returns the most detailed mip level visible by the view. */
+			u32 GetMostDetailedMip() const { return mDesc.MostDetailMip; }
+
+			/**	Returns the number of mip levels in a single slice visible by the view. */
+			u32 GetNumMips() const { return mDesc.NumMips; }
+
+			/**	Returns the first array slice index visible by this view. */
+			u32 GetFirstArraySlice() const { return mDesc.FirstArraySlice; }
+
+			/**	Returns the number of array slices visible by this view. */
+			u32 GetNumArraySlices() const { return mDesc.NumArraySlices; }
+
+			/**	Returns texture view usage. This determines where on the pipeline can be bind the view. */
+			GpuViewUsage GetUsage() const { return mDesc.Usage; }
+
+			/**	Returns the descriptor structure used for initializing the view. */
+			const TEXTURE_VIEW_DESC &GetDesc() const { return mDesc; }
+
+		protected:
+			TextureView(const TEXTURE_VIEW_DESC &_desc);
+
+		protected:
+			friend class Texture;
+
+			TEXTURE_VIEW_DESC mDesc;
 		};
 
-		virtual ~TextureView() = default;
-
-		/**	Returns the most detailed mip level visible by the view. */
-		u32 GetMostDetailedMip() const { return mDesc.MostDetailMip; }
-
-		/**	Returns the number of mip levels in a single slice visible by the view. */
-		u32 GetNumMips() const { return mDesc.NumMips; }
-
-		/**	Returns the first array slice index visible by this view. */
-		u32 GetFirstArraySlice() const { return mDesc.FirstArraySlice; }
-
-		/**	Returns the number of array slices visible by this view. */
-		u32 GetNumArraySlices() const { return mDesc.NumArraySlices; }
-
-		/**	Returns texture view usage. This determines where on the pipeline can be bind the view. */
-		GpuViewUsage GetUsage() const { return mDesc.Usage; }
-
-		/**	Returns the descriptor structure used for initializing the view. */
-		const TEXTURE_VIEW_DESC& GetDesc() const { return mDesc; }
-
-	protected:
-		TextureView(const TEXTURE_VIEW_DESC& _desc);
-
-	protected:
-		friend class Texture;
-
-		TEXTURE_VIEW_DESC mDesc;
-	};
-
-	/** @} */
-	}
-}
+		/** @} */
+	} // namespace ct
+} // namespace bs

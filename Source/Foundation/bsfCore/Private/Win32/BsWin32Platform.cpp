@@ -80,7 +80,7 @@ namespace bs
 			{
 				// Clip cursor to the window
 				RECT clipWindowRect;
-				if (GetWindowRect(data->MClipWindow, &clipWindowRect))
+				if(GetWindowRect(data->MClipWindow, &clipWindowRect))
 					ClipCursor(&clipWindowRect);
 			}
 			else
@@ -119,7 +119,7 @@ namespace bs
 		SPtr<RenderWindow> primaryWindow = gCoreApplication().GetPrimaryWindow();
 		u64 hwnd;
 		primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
-		
+
 		PostMessage((HWND)hwnd, WM_BS_SETCAPTURE, WPARAM((HWND)hwnd), 0);
 	}
 
@@ -149,7 +149,7 @@ namespace bs
 
 	void Platform::HideCursor()
 	{
-		if (mData->MIsCursorHidden)
+		if(mData->MIsCursorHidden)
 			return;
 
 		mData->MIsCursorHidden = true;
@@ -166,7 +166,7 @@ namespace bs
 
 	void Platform::ShowCursor()
 	{
-		if (!mData->MIsCursorHidden)
+		if(!mData->MIsCursorHidden)
 			return;
 
 		mData->MIsCursorHidden = false;
@@ -224,7 +224,7 @@ namespace bs
 	// TODO - Add support for animated custom cursor
 	void Platform::SetCursor(PixelData& pixelData, const Vector2I& hotSpot)
 	{
-		if (mData->MUsingCustomCursor)
+		if(mData->MUsingCustomCursor)
 		{
 			::SetCursor(0);
 			DestroyIcon(mData->MCursor.Cursor);
@@ -239,7 +239,7 @@ namespace bs
 		HBITMAP hBitmap = Win32PlatformUtility::CreateBitmap((Color*)pixels.data(), width, height, false);
 		HBITMAP hMonoBitmap = CreateBitmap(width, height, 1, 1, nullptr);
 
-		ICONINFO iconinfo = {0};
+		ICONINFO iconinfo = { 0 };
 		iconinfo.fIcon = FALSE;
 		iconinfo.xHotspot = (DWORD)hotSpot.X;
 		iconinfo.yHotspot = (DWORD)hotSpot.Y;
@@ -247,7 +247,7 @@ namespace bs
 		iconinfo.hbmColor = hBitmap;
 
 		mData->MCursor.Cursor = CreateIconIndirect(&iconinfo);
-		
+
 		DeleteObject(hBitmap);
 		DeleteObject(hMonoBitmap);
 
@@ -284,7 +284,7 @@ namespace bs
 		SPtr<RenderWindow> primaryWindow = gCoreApplication().GetPrimaryWindow();
 		u64 hwnd;
 		primaryWindow->GetCustomAttribute("WINDOW", &hwnd);
-		
+
 		PostMessage((HWND)hwnd, WM_SETICON, WPARAM(ICON_BIG), (LPARAM)icon);
 	}
 
@@ -308,7 +308,7 @@ namespace bs
 
 		auto iterFind = mData->MNonClientAreas.find(&window);
 
-		if (iterFind != end(mData->MNonClientAreas))
+		if(iterFind != end(mData->MNonClientAreas))
 			mData->MNonClientAreas.erase(iterFind);
 	}
 
@@ -323,7 +323,7 @@ namespace bs
 
 		Win32DropTarget* win32DropTarget = nullptr;
 		auto iterFind = mData->MDropTargets.DropTargetsPerWindow.find(window);
-		if (iterFind == mData->MDropTargets.DropTargetsPerWindow.end())
+		if(iterFind == mData->MDropTargets.DropTargetsPerWindow.end())
 		{
 			u64 hwnd;
 			window->GetCustomAttribute("WINDOW", &hwnd);
@@ -345,7 +345,7 @@ namespace bs
 	void Win32Platform::UnregisterDropTarget(DropTarget* target)
 	{
 		auto iterFind = mData->MDropTargets.DropTargetsPerWindow.find(target->GetOwnerWindowInternal());
-		if (iterFind == mData->MDropTargets.DropTargetsPerWindow.end())
+		if(iterFind == mData->MDropTargets.DropTargetsPerWindow.end())
 		{
 			BS_LOG(Warning, Platform, "Attempting to destroy a drop target but cannot find its parent window.");
 		}
@@ -378,7 +378,7 @@ namespace bs
 
 		GlobalUnlock(hData);
 
-		if (OpenClipboard(NULL))
+		if(OpenClipboard(NULL))
 		{
 			EmptyClipboard();
 			SetClipboardData(CF_UNICODETEXT, hData);
@@ -392,11 +392,11 @@ namespace bs
 
 	String Platform::CopyFromClipboard()
 	{
-		if (OpenClipboard(NULL))
+		if(OpenClipboard(NULL))
 		{
 			HANDLE hData = GetClipboardData(CF_UNICODETEXT);
 
-			if (hData != NULL)
+			if(hData != NULL)
 			{
 				WString::value_type* buffer = (WString::value_type*)GlobalLock(hData);
 				WString wideString(buffer);
@@ -420,14 +420,14 @@ namespace bs
 		static HKL keyboardLayout = GetKeyboardLayout(0);
 		static u8 keyboarState[256];
 
-		if (GetKeyboardState(keyboarState) == FALSE)
+		if(GetKeyboardState(keyboarState) == FALSE)
 			return 0;
 
 		UINT virtualKey = MapVirtualKeyExW(keyCode, 1, keyboardLayout);
 
 		wchar_t output[2];
 		int count = ToUnicodeEx(virtualKey, keyCode, keyboarState, output, 2, 0, keyboardLayout);
-		if (count > 0)
+		if(count > 0)
 			return UTF8::FromWide(WString(output, count));
 
 		return StringUtil::BLANK;
@@ -442,8 +442,8 @@ namespace bs
 
 	void Platform::MessagePumpInternal()
 	{
-		MSG  msg;
-		while (PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE))
+		MSG msg;
+		while(PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
@@ -454,10 +454,10 @@ namespace bs
 	{
 		Lock lock(mData->MSync);
 
-		if (timeBeginPeriod(1) == TIMERR_NOCANDO)
+		if(timeBeginPeriod(1) == TIMERR_NOCANDO)
 		{
 			BS_LOG(Warning, Platform, "Unable to set timer resolution to 1ms. This can cause significant waste "
-				"in performance for waiting threads.");
+									  "in performance for waiting threads.");
 		}
 
 		mData->MRequiresStartUp = true;
@@ -465,7 +465,7 @@ namespace bs
 
 	void Platform::UpdateInternal()
 	{
-		for (auto& dropTarget : mData->MDropTargets.DropTargetsPerWindow)
+		for(auto& dropTarget : mData->MDropTargets.DropTargetsPerWindow)
 		{
 			dropTarget.second->Update();
 		}
@@ -475,7 +475,7 @@ namespace bs
 	{
 		{
 			Lock lock(mData->MSync);
-			if (mData->MRequiresStartUp)
+			if(mData->MRequiresStartUp)
 			{
 				OleInitialize(nullptr);
 
@@ -485,7 +485,7 @@ namespace bs
 
 		{
 			Lock lock(mData->MSync);
-			for (auto& dropTargetToDestroy : mData->MDropTargets.DropTargetsToDestroy)
+			for(auto& dropTargetToDestroy : mData->MDropTargets.DropTargetsToDestroy)
 			{
 				dropTargetToDestroy->UnregisterWithOs();
 				dropTargetToDestroy->Release();
@@ -496,7 +496,7 @@ namespace bs
 
 		{
 			Lock lock(mData->MSync);
-			for (auto& dropTargetToInit : mData->MDropTargets.DropTargetsToInitialize)
+			for(auto& dropTargetToInit : mData->MDropTargets.DropTargetsToInitialize)
 			{
 				dropTargetToInit->RegisterWithOs();
 			}
@@ -508,7 +508,7 @@ namespace bs
 
 		{
 			Lock lock(mData->MSync);
-			if (mData->MRequiresShutDown)
+			if(mData->MRequiresShutDown)
 			{
 				OleUninitialize();
 				mData->MRequiresShutDown = false;
@@ -567,7 +567,7 @@ namespace bs
 		clientPoint.x = GET_X_LPARAM(lParam);
 		clientPoint.y = GET_Y_LPARAM(lParam);
 
-		if (!nonClient)
+		if(!nonClient)
 			ClientToScreen(hWnd, &clientPoint);
 
 		mousePos.X = clientPoint.x;
@@ -589,8 +589,8 @@ namespace bs
 	bool getCommand(unsigned int virtualKeyCode, InputCommandType& command)
 	{
 		bool isShiftPressed = GetAsyncKeyState(VK_SHIFT);
-		
-		switch (virtualKeyCode)
+
+		switch(virtualKeyCode)
 		{
 		case VK_LEFT:
 			command = isShiftPressed ? InputCommandType::SelectLeft : InputCommandType::CursorMoveLeft;
@@ -626,15 +626,15 @@ namespace bs
 
 	LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		if (uMsg == WM_CREATE)
-		{	// Store pointer to Win32Window in user data area
+		if(uMsg == WM_CREATE)
+		{ // Store pointer to Win32Window in user data area
 			SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)(((LPCREATESTRUCT)lParam)->lpCreateParams));
 
 			ct::RenderWindow* newWindow = (ct::RenderWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
-			if (newWindow != nullptr)
+			if(newWindow != nullptr)
 			{
 				const RenderWindowProperties& props = newWindow->GetProperties();
-				if (!props.IsHidden)
+				if(!props.IsHidden)
 					ShowWindow(hWnd, SW_SHOWNORMAL);
 			}
 			else
@@ -644,54 +644,54 @@ namespace bs
 		}
 
 		ct::RenderWindow* win = (ct::RenderWindow*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
-		if (!win)
+		if(!win)
 			return DefWindowProc(hWnd, uMsg, wParam, lParam);
 
-		switch( uMsg )
+		switch(uMsg)
 		{
 		case WM_ACTIVATE:
 			{
-			switch(wParam)
-			{
-			case WA_ACTIVE:
-			case WA_CLICKACTIVE:
+				switch(wParam)
 				{
-					Lock lock(mData->MSync);
+				case WA_ACTIVE:
+				case WA_CLICKACTIVE:
+					{
+						Lock lock(mData->MSync);
 
-					mData->MIsActive = true;
+						mData->MIsActive = true;
+					}
+
+					applyClipping(mData);
+					break;
+				case WA_INACTIVE:
+					{
+						Lock lock(mData->MSync);
+
+						mData->MIsActive = false;
+					}
+
+					ClipCursor(nullptr);
+					break;
 				}
-
-				applyClipping(mData);
-				break;
-			case WA_INACTIVE:
-				{
-					Lock lock(mData->MSync);
-
-					mData->MIsActive = false;
-				}
-
-				ClipCursor(nullptr);
-				break;
-			}
 
 				return 0;
 			}
 		case WM_SETFOCUS:
 			{
-				if (!win->GetProperties().HasFocus)
+				if(!win->GetProperties().HasFocus)
 					win->NotifyWindowEventInternal(WindowEventType::FocusReceived);
 
 				return 0;
 			}
 		case WM_KILLFOCUS:
 			{
-				if (win->GetProperties().HasFocus)
+				if(win->GetProperties().HasFocus)
 					win->NotifyWindowEventInternal(WindowEventType::FocusLost);
 
 				return 0;
 			}
 		case WM_SYSCHAR:
-			if (wParam != VK_SPACE)
+			if(wParam != VK_SPACE)
 				return 0;
 			break;
 		case WM_MOVE:
@@ -703,11 +703,11 @@ namespace bs
 		case WM_SIZE:
 			win->NotifyWindowEventInternal(WindowEventType::Resized);
 
-			if (wParam == SIZE_MAXIMIZED)
+			if(wParam == SIZE_MAXIMIZED)
 				win->NotifyWindowEventInternal(WindowEventType::Maximized);
-			else if (wParam == SIZE_MINIMIZED)
+			else if(wParam == SIZE_MINIMIZED)
 				win->NotifyWindowEventInternal(WindowEventType::Minimized);
-			else if (wParam == SIZE_RESTORED)
+			else if(wParam == SIZE_RESTORED)
 				win->NotifyWindowEventInternal(WindowEventType::Restored);
 
 			return 0;
@@ -716,7 +716,7 @@ namespace bs
 				::SetCursor(nullptr);
 			else
 			{
-				switch (LOWORD(lParam))
+				switch(LOWORD(lParam))
 				{
 				case HTTOPLEFT:
 					::SetCursor(LoadCursor(0, IDC_SIZENWSE));
@@ -748,34 +748,34 @@ namespace bs
 			}
 			return true;
 		case WM_GETMINMAXINFO:
-		{
-			// Prevent the window from going smaller than some minimu size
-			((MINMAXINFO*)lParam)->ptMinTrackSize.x = 100;
-			((MINMAXINFO*)lParam)->ptMinTrackSize.y = 100;
+			{
+				// Prevent the window from going smaller than some minimu size
+				((MINMAXINFO*)lParam)->ptMinTrackSize.x = 100;
+				((MINMAXINFO*)lParam)->ptMinTrackSize.y = 100;
 
-			// Ensure maximizes window has proper size and doesn't cover the entire screen
-			HMONITOR primaryMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+				// Ensure maximizes window has proper size and doesn't cover the entire screen
+				HMONITOR primaryMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
 
-			MONITORINFO monitorInfo;
-			monitorInfo.cbSize = sizeof(MONITORINFO);
-			GetMonitorInfo(primaryMonitor, &monitorInfo);
+				MONITORINFO monitorInfo;
+				monitorInfo.cbSize = sizeof(MONITORINFO);
+				GetMonitorInfo(primaryMonitor, &monitorInfo);
 
-			((MINMAXINFO*)lParam)->ptMaxPosition.x = monitorInfo.rcWork.left - monitorInfo.rcMonitor.left;
-			((MINMAXINFO*)lParam)->ptMaxPosition.y = monitorInfo.rcWork.top - monitorInfo.rcMonitor.top;
-			((MINMAXINFO*)lParam)->ptMaxSize.x = monitorInfo.rcWork.right - monitorInfo.rcWork.left;
-			((MINMAXINFO*)lParam)->ptMaxSize.y = monitorInfo.rcWork.bottom - monitorInfo.rcWork.top;
-		}
+				((MINMAXINFO*)lParam)->ptMaxPosition.x = monitorInfo.rcWork.left - monitorInfo.rcMonitor.left;
+				((MINMAXINFO*)lParam)->ptMaxPosition.y = monitorInfo.rcWork.top - monitorInfo.rcMonitor.top;
+				((MINMAXINFO*)lParam)->ptMaxSize.x = monitorInfo.rcWork.right - monitorInfo.rcWork.left;
+				((MINMAXINFO*)lParam)->ptMaxSize.y = monitorInfo.rcWork.bottom - monitorInfo.rcWork.top;
+			}
 			break;
 		case WM_CLOSE:
 			{
-			win->NotifyWindowEventInternal(WindowEventType::CloseRequested);
+				win->NotifyWindowEventInternal(WindowEventType::CloseRequested);
 
 				return 0;
 			}
 		case WM_NCHITTEST:
 			{
 				auto iterFind = mData->MNonClientAreas.find(win);
-				if (iterFind == mData->MNonClientAreas.end())
+				if(iterFind == mData->MNonClientAreas.end())
 					break;
 
 				POINT mousePos;
@@ -791,7 +791,7 @@ namespace bs
 				Vector<NonClientResizeArea>& resizeAreasPerWindow = iterFind->second.ResizeAreas;
 				for(auto area : resizeAreasPerWindow)
 				{
-					if (area.Area.Contains(mousePosInt))
+					if(area.Area.Contains(mousePosInt))
 						return translateNonClientAreaType(area.Type);
 				}
 
@@ -806,13 +806,13 @@ namespace bs
 			}
 		case WM_NCLBUTTONDBLCLK:
 			// Maximize/Restore on double-click
-			if (wParam == HTCAPTION)
+			if(wParam == HTCAPTION)
 			{
 				WINDOWPLACEMENT windowPlacement;
 				windowPlacement.length = sizeof(WINDOWPLACEMENT);
 				GetWindowPlacement(hWnd, &windowPlacement);
 
-				if (windowPlacement.showCmd == SW_MAXIMIZE)
+				if(windowPlacement.showCmd == SW_MAXIMIZE)
 					ShowWindow(hWnd, SW_RESTORE);
 				else
 					ShowWindow(hWnd, SW_MAXIMIZE);
@@ -939,7 +939,7 @@ namespace bs
 
 				Vector2I intMousePos;
 				OSPointerButtonStates btnStates;
-				
+
 				getMouseData(hWnd, wParam, lParam, uMsg == WM_NCMOUSEMOVE, intMousePos, btnStates);
 
 				if(!onCursorMoved.Empty())
@@ -980,18 +980,18 @@ namespace bs
 
 				// Ignore rarely used special command characters, usually triggered by ctrl+key
 				// combinations. (We want to keep ctrl+key free for shortcuts instead)
-				if (wParam <= 23)
+				if(wParam <= 23)
 					break;
 
 				// Ignore shortcut key combinations
 				if(GetAsyncKeyState(VK_CONTROL) != 0 || GetAsyncKeyState(VK_MENU) != 0)
 					break;
 
-				switch (wParam)
+				switch(wParam)
 				{
 				case VK_ESCAPE:
 					break;
-				default:    // displayable character
+				default: // displayable character
 					{
 						u32 finalChar = (u32)wParam;
 
@@ -1016,6 +1016,6 @@ namespace bs
 			return 0;
 		}
 
-		return DefWindowProc( hWnd, uMsg, wParam, lParam );
+		return DefWindowProc(hWnd, uMsg, wParam, lParam);
 	}
-}
+} // namespace bs

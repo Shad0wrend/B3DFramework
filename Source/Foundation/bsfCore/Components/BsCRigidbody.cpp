@@ -28,7 +28,7 @@ namespace bs
 
 	void CRigidbody::Move(const Vector3& position)
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->Move(position);
 
 		mNotifyFlags = (TransformChangedFlags)0;
@@ -38,7 +38,7 @@ namespace bs
 
 	void CRigidbody::Rotate(const Quaternion& rotation)
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->Rotate(rotation);
 
 		mNotifyFlags = (TransformChangedFlags)0;
@@ -56,12 +56,12 @@ namespace bs
 
 	void CRigidbody::SetIsKinematic(bool kinematic)
 	{
-		if (mIsKinematic == kinematic)
+		if(mIsKinematic == kinematic)
 			return;
 
 		mIsKinematic = kinematic;
-		
-		if (mInternal != nullptr)
+
+		if(mInternal != nullptr)
 		{
 			mInternal->SetIsKinematic(kinematic);
 
@@ -72,7 +72,7 @@ namespace bs
 
 	bool CRigidbody::IsSleeping() const
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			return mInternal->IsSleeping();
 
 		return true;
@@ -80,13 +80,13 @@ namespace bs
 
 	void CRigidbody::Sleep()
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			return mInternal->Sleep();
 	}
 
 	void CRigidbody::WakeUp()
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			return mInternal->WakeUp();
 	}
 
@@ -94,7 +94,7 @@ namespace bs
 	{
 		mSleepThreshold = threshold;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetSleepThreshold(threshold);
 	}
 
@@ -102,19 +102,19 @@ namespace bs
 	{
 		mUseGravity = gravity;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetUseGravity(gravity);
 	}
 
 	void CRigidbody::SetVelocity(const Vector3& velocity)
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetVelocity(velocity);
 	}
 
 	Vector3 CRigidbody::GetVelocity() const
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			return mInternal->GetVelocity();
 
 		return Vector3::ZERO;
@@ -122,13 +122,13 @@ namespace bs
 
 	void CRigidbody::SetAngularVelocity(const Vector3& velocity)
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetAngularVelocity(velocity);
 	}
 
 	Vector3 CRigidbody::GetAngularVelocity() const
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			return mInternal->GetAngularVelocity();
 
 		return Vector3::ZERO;
@@ -138,7 +138,7 @@ namespace bs
 	{
 		mLinearDrag = drag;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetDrag(drag);
 	}
 
@@ -146,7 +146,7 @@ namespace bs
 	{
 		mAngularDrag = drag;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetAngularDrag(drag);
 	}
 
@@ -154,13 +154,13 @@ namespace bs
 	{
 		mInertiaTensor = tensor;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetInertiaTensor(tensor);
 	}
 
 	Vector3 CRigidbody::GetInertiaTensor() const
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			return mInternal->GetInertiaTensor();
 
 		return Vector3::ZERO;
@@ -170,7 +170,7 @@ namespace bs
 	{
 		mMaxAngularVelocity = maxVelocity;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetMaxAngularVelocity(maxVelocity);
 	}
 
@@ -178,7 +178,7 @@ namespace bs
 	{
 		mCMassPosition = position;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetCenterOfMass(position, mCMassRotation);
 	}
 
@@ -186,13 +186,13 @@ namespace bs
 	{
 		mCMassRotation = rotation;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetCenterOfMass(mCMassPosition, rotation);
 	}
 
 	Vector3 CRigidbody::GetCenterOfMassPosition() const
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			return mInternal->GetCenterOfMassPosition();
 
 		return Vector3::ZERO;
@@ -200,7 +200,7 @@ namespace bs
 
 	Quaternion CRigidbody::GetCenterOfMassRotation() const
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			return mInternal->GetCenterOfMassRotation();
 
 		return Quaternion::IDENTITY;
@@ -210,7 +210,7 @@ namespace bs
 	{
 		mPositionSolverCount = count;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetPositionSolverCount(count);
 	}
 
@@ -218,18 +218,18 @@ namespace bs
 	{
 		mVelocitySolverCount = count;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetVelocitySolverCount(count);
 	}
 
 	void CRigidbody::SetCollisionReportMode(CollisionReportMode mode)
 	{
-		if (mCollisionReportMode == mode)
+		if(mCollisionReportMode == mode)
 			return;
 
 		mCollisionReportMode = mode;
 
-		for (auto& entry : mChildren)
+		for(auto& entry : mChildren)
 			entry->UpdateCollisionReportMode();
 	}
 
@@ -237,7 +237,7 @@ namespace bs
 	{
 		mFlags = flags;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 		{
 			mInternal->SetFlags(flags);
 			mInternal->UpdateMassDistribution();
@@ -246,25 +246,25 @@ namespace bs
 
 	void CRigidbody::AddForce(const Vector3& force, ForceMode mode)
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->AddForce(force, mode);
 	}
 
 	void CRigidbody::AddTorque(const Vector3& torque, ForceMode mode)
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->AddTorque(torque, mode);
 	}
 
 	void CRigidbody::AddForceAtPoint(const Vector3& force, const Vector3& position, PointForceMode mode)
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->AddForceAtPoint(force, position, mode);
 	}
 
 	Vector3 CRigidbody::GetVelocityAtPoint(const Vector3& point) const
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			return mInternal->GetVelocityAtPoint(point);
 
 		return Vector3::ZERO;
@@ -272,7 +272,7 @@ namespace bs
 
 	void CRigidbody::UpdateMassDistributionInternal()
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			return mInternal->UpdateMassDistribution();
 	}
 
@@ -289,14 +289,14 @@ namespace bs
 			if(currentSO->HasComponent<CCollider>())
 			{
 				Vector<HCollider> colliders = currentSO->GetComponents<CCollider>();
-				
-				for (auto& entry : colliders)
+
+				for(auto& entry : colliders)
 				{
-					if (!entry->IsValidParent(static_object_cast<CRigidbody>(mThisHandle)))
+					if(!entry->IsValidParent(static_object_cast<CRigidbody>(mThisHandle)))
 						continue;
 
 					Collider* collider = entry->GetInternalInternal();
-					if (collider == nullptr)
+					if(collider == nullptr)
 						continue;
 
 					entry->SetRigidbody(static_object_cast<CRigidbody>(mThisHandle), true);
@@ -308,11 +308,11 @@ namespace bs
 			}
 
 			u32 childCount = currentSO->GetNumChildren();
-			for (u32 i = 0; i < childCount; i++)
+			for(u32 i = 0; i < childCount; i++)
 			{
 				HSceneObject child = currentSO->GetChild(i);
 
-				if (child->HasComponent<CRigidbody>())
+				if(child->HasComponent<CRigidbody>())
 					continue;
 
 				todo.push(child);
@@ -322,18 +322,18 @@ namespace bs
 
 	void CRigidbody::ClearColliders()
 	{
-		for (auto& collider : mChildren)
+		for(auto& collider : mChildren)
 			collider->SetRigidbody(HRigidbody(), true);
 
 		mChildren.clear();
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->RemoveColliders();
 	}
 
 	void CRigidbody::AddCollider(const HCollider& collider)
 	{
-		if (mInternal == nullptr)
+		if(mInternal == nullptr)
 			return;
 
 		mChildren.push_back(collider);
@@ -342,7 +342,7 @@ namespace bs
 
 	void CRigidbody::RemoveCollider(const HCollider& collider)
 	{
-		if (mInternal == nullptr)
+		if(mInternal == nullptr)
 			return;
 
 		auto iterFind = std::find(mChildren.begin(), mChildren.end(), collider);
@@ -363,8 +363,8 @@ namespace bs
 			if(currentSO->HasComponent<CRigidbody>())
 			{
 				BS_LOG(Warning, Physics, "Nested Rigidbodies detected. This will result in inconsistent transformations. "
-					"To parent one Rigidbody to another move its colliders to the new parent, but remove the Rigidbody "
-					"component.");
+										 "To parent one Rigidbody to another move its colliders to the new parent, but remove the Rigidbody "
+										 "component.");
 				return;
 			}
 
@@ -376,13 +376,13 @@ namespace bs
 	{
 		output.ContactPoints = std::move(data.ContactPoints);
 
-		if (data.Colliders[0] != nullptr)
+		if(data.Colliders[0] != nullptr)
 		{
 			CCollider* other = (CCollider*)data.Colliders[0]->GetOwnerInternal(PhysicsOwnerType::Component);
 			output.Collider[0] = static_object_cast<CCollider>(other->GetHandle());
 		}
 
-		if (data.Colliders[1] != nullptr)
+		if(data.Colliders[1] != nullptr)
 		{
 			CCollider* other = (CCollider*)data.Colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
 			output.Collider[1] = static_object_cast<CCollider>(other->GetHandle());
@@ -426,7 +426,6 @@ namespace bs
 
 	void CRigidbody::OnInitialized()
 	{
-
 	}
 
 	void CRigidbody::OnDestroyed()
@@ -476,7 +475,7 @@ namespace bs
 		}
 		else
 		{
-			if (((u32)mFlags & (u32)RigidbodyFlag::AutoMass) == 0)
+			if(((u32)mFlags & (u32)RigidbodyFlag::AutoMass) == 0)
 				mInternal->SetMass(mMass);
 
 			mInternal->UpdateMassDistribution();
@@ -485,7 +484,7 @@ namespace bs
 
 	void CRigidbody::OnTransformChanged(TransformChangedFlags flags)
 	{
-		if (!SO()->GetActive())
+		if(!SO()->GetActive())
 			return;
 
 		if((flags & TCF_Parent) != 0)
@@ -493,21 +492,21 @@ namespace bs
 			ClearColliders();
 			UpdateColliders();
 
-			if (((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) != 0)
+			if(((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) != 0)
 				mInternal->UpdateMassDistribution();
 
 #if BS_DEBUG_MODE
 			CheckForNestedRigibody();
 #endif
 		}
-		
+
 		if(gPhysics().IsUpdateInProgressInternal())
 			return;
 
 		const Transform& tfrm = SO()->GetTransform();
 		mInternal->SetTransform(tfrm.GetPosition(), tfrm.GetRotation());
 
-		if (mParentJoint != nullptr)
+		if(mParentJoint != nullptr)
 			mParentJoint->NotifyRigidbodyMoved(static_object_cast<CRigidbody>(mThisHandle));
 	}
 
@@ -520,4 +519,4 @@ namespace bs
 	{
 		return CRigidbody::GetRttiStatic();
 	}
-}
+} // namespace bs

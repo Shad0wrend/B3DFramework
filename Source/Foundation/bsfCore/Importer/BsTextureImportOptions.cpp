@@ -22,4 +22,4 @@ namespace bs
 	{
 		return TextureImportOptions::GetRttiStatic();
 	}
-}
+} // namespace bs

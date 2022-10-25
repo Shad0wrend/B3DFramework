@@ -18,7 +18,8 @@ namespace bs
 	class BS_CORE_EXPORT FixedJoint : public Joint
 	{
 	public:
-		FixedJoint(const FIXED_JOINT_DESC& desc) { }
+		FixedJoint(const FIXED_JOINT_DESC& desc) {}
+
 		virtual ~FixedJoint() = default;
 
 		/**
@@ -32,7 +33,7 @@ namespace bs
 
 	/** Structure used for initializing a new FixedJoint. */
 	struct FIXED_JOINT_DESC : JOINT_DESC
-	{ };
+	{};
 
 	/** @} */
-}
+} // namespace bs

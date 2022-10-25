@@ -31,7 +31,7 @@ namespace bs
 
 		if(m->HasInputFocus)
 		{
-			while (!LinuxPlatform::buttonEvents.empty())
+			while(!LinuxPlatform::buttonEvents.empty())
 			{
 				LinuxButtonEvent& event = LinuxPlatform::buttonEvents.front();
 				if(event.pressed)
@@ -44,7 +44,7 @@ namespace bs
 		else
 		{
 			// Discard queued data
-			while (!LinuxPlatform::buttonEvents.empty())
+			while(!LinuxPlatform::buttonEvents.empty())
 				LinuxPlatform::buttonEvents.pop();
 		}
 	}
@@ -53,5 +53,4 @@ namespace bs
 	{
 		m->HasInputFocus = windowHandle != (u64)-1;
 	}
-}
-
+} // namespace bs

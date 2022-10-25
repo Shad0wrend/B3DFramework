@@ -16,17 +16,18 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT PrefabRTTI : public RTTIType < Prefab, Resource, PrefabRTTI >
+	class BS_CORE_EXPORT PrefabRTTI : public RTTIType<Prefab, Resource, PrefabRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
 			BS_RTTI_MEMBER_PLAIN(mHash, 1)
-			//BS_RTTI_MEMBER_PLAIN(mNextLinkId, 2)
+			// BS_RTTI_MEMBER_PLAIN(mNextLinkId, 2)
 			BS_RTTI_MEMBER_PLAIN(mUUID, 3)
 			BS_RTTI_MEMBER_PLAIN(mIsScene, 4)
 		BS_END_RTTI_MEMBERS
 
 		SPtr<SceneObject> GetSceneObject(Prefab* obj) { return obj->mRoot.GetInternalPtr(); }
+
 		void SetSceneObject(Prefab* obj, SPtr<SceneObject> value) { obj->mRoot = value->GetHandle(); }
 
 	public:
@@ -35,7 +36,7 @@ namespace bs
 			AddReflectablePtrField("mRoot", 0, &PrefabRTTI::GetSceneObject, &PrefabRTTI::SetSceneObject);
 		}
 
-		void OnDeserializationStarted(IReflectable* ptr, SerializationContext* context) 
+		void OnDeserializationStarted(IReflectable* ptr, SerializationContext* context)
 		{
 			BS_ASSERT(context != nullptr && rtti_is_of_type<CoreSerializationContext>(context));
 			auto coreContext = static_cast<CoreSerializationContext*>(context);
@@ -47,7 +48,7 @@ namespace bs
 			coreContext->GoState = bs_shared_ptr_new<GameObjectDeserializationState>(GODM_BreakExternal | GODM_UseNewIds);
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "Prefab";
 			return name;
@@ -58,7 +59,7 @@ namespace bs
 			return TID_Prefab;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return Prefab::CreateEmpty();
 		}
@@ -66,4 +67,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

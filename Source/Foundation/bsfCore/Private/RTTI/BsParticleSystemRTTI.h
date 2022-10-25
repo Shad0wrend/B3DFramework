@@ -17,8 +17,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT ParticleEmitterConeShapeRTTI :
-		public RTTIType<ParticleEmitterConeShape, IReflectable, ParticleEmitterConeShapeRTTI>
+	class BS_CORE_EXPORT ParticleEmitterConeShapeRTTI : public RTTIType<ParticleEmitterConeShape, IReflectable, ParticleEmitterConeShapeRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -45,14 +44,13 @@ namespace bs
 			return TID_ParticleEmitterConeShape;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleEmitterConeShape>();
 		}
 	};
 
-	class BS_CORE_EXPORT ParticleEmitterSphereShapeRTTI :
-		public RTTIType<ParticleEmitterSphereShape, IReflectable, ParticleEmitterSphereShapeRTTI>
+	class BS_CORE_EXPORT ParticleEmitterSphereShapeRTTI : public RTTIType<ParticleEmitterSphereShape, IReflectable, ParticleEmitterSphereShapeRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -72,14 +70,13 @@ namespace bs
 			return TID_ParticleEmitterSphereShape;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleEmitterSphereShape>();
 		}
 	};
 
-	class BS_CORE_EXPORT ParticleEmitterHemisphereShapeRTTI :
-		public RTTIType<ParticleEmitterHemisphereShape, IReflectable, ParticleEmitterHemisphereShapeRTTI>
+	class BS_CORE_EXPORT ParticleEmitterHemisphereShapeRTTI : public RTTIType<ParticleEmitterHemisphereShape, IReflectable, ParticleEmitterHemisphereShapeRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -99,14 +96,13 @@ namespace bs
 			return TID_ParticleEmitterHemisphereShape;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleEmitterHemisphereShape>();
 		}
 	};
 
-	class BS_CORE_EXPORT ParticleEmitterBoxShapeRTTI :
-		public RTTIType<ParticleEmitterBoxShape, IReflectable, ParticleEmitterBoxShapeRTTI>
+	class BS_CORE_EXPORT ParticleEmitterBoxShapeRTTI : public RTTIType<ParticleEmitterBoxShape, IReflectable, ParticleEmitterBoxShapeRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -126,14 +122,13 @@ namespace bs
 			return TID_ParticleEmitterBoxShape;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleEmitterBoxShape>();
 		}
 	};
 
-	class BS_CORE_EXPORT ParticleEmitterLineShapeRTTI :
-		public RTTIType<ParticleEmitterLineShape, IReflectable, ParticleEmitterLineShapeRTTI>
+	class BS_CORE_EXPORT ParticleEmitterLineShapeRTTI : public RTTIType<ParticleEmitterLineShape, IReflectable, ParticleEmitterLineShapeRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -155,14 +150,13 @@ namespace bs
 			return TID_ParticleEmitterLineShape;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleEmitterLineShape>();
 		}
 	};
 
-	class BS_CORE_EXPORT ParticleEmitterCircleShapeRTTI :
-		public RTTIType<ParticleEmitterCircleShape, IReflectable, ParticleEmitterCircleShapeRTTI>
+	class BS_CORE_EXPORT ParticleEmitterCircleShapeRTTI : public RTTIType<ParticleEmitterCircleShape, IReflectable, ParticleEmitterCircleShapeRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -186,14 +180,13 @@ namespace bs
 			return TID_ParticleEmitterCircleShape;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleEmitterCircleShape>();
 		}
 	};
 
-	class BS_CORE_EXPORT ParticleEmitterRectShapeRTTI :
-		public RTTIType<ParticleEmitterRectShape, IReflectable, ParticleEmitterRectShapeRTTI>
+	class BS_CORE_EXPORT ParticleEmitterRectShapeRTTI : public RTTIType<ParticleEmitterRectShape, IReflectable, ParticleEmitterRectShapeRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -212,14 +205,13 @@ namespace bs
 			return TID_ParticleEmitterRectShape;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleEmitterRectShape>();
 		}
 	};
 
-	class BS_CORE_EXPORT ParticleEmitterStaticMeshShapeRTTI :
-		public RTTIType<ParticleEmitterStaticMeshShape, IReflectable, ParticleEmitterStaticMeshShapeRTTI>
+	class BS_CORE_EXPORT ParticleEmitterStaticMeshShapeRTTI : public RTTIType<ParticleEmitterStaticMeshShape, IReflectable, ParticleEmitterStaticMeshShapeRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -240,14 +232,13 @@ namespace bs
 			return TID_ParticleEmitterStaticMeshShape;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleEmitterStaticMeshShape>();
 		}
 	};
 
-	class BS_CORE_EXPORT ParticleEmitterSkinnedMeshShapeRTTI :
-		public RTTIType<ParticleEmitterSkinnedMeshShape, IReflectable, ParticleEmitterSkinnedMeshShapeRTTI>
+	class BS_CORE_EXPORT ParticleEmitterSkinnedMeshShapeRTTI : public RTTIType<ParticleEmitterSkinnedMeshShape, IReflectable, ParticleEmitterSkinnedMeshShapeRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -267,15 +258,24 @@ namespace bs
 			return TID_ParticleEmitterSkinnedMeshShape;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleEmitterSkinnedMeshShape>();
 		}
 	};
 
-	template<> struct RTTIPlainType<ParticleBurst>
+	template <>
+	struct RTTIPlainType<ParticleBurst>
 	{
-		enum { id = TID_ParticleBurst }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_ParticleBurst
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		/** @copydoc RTTIPlainType::toMemory */
 		static BitLength ToMemory(const ParticleBurst& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -283,7 +283,7 @@ namespace bs
 			static constexpr uint32_t VERSION = 0; // In case the data structure changes
 
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
 				size += rtti_write(data.Time, stream);
@@ -291,8 +291,7 @@ namespace bs
 				size += rtti_write(data.Count, stream);
 				size += rtti_write(data.Interval, stream);
 
-				return size;
-			});
+				return size; });
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
@@ -367,14 +366,13 @@ namespace bs
 			return TID_ParticleEmitter;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleEmitter>();
 		}
 	};
 
-	class BS_CORE_EXPORT ParticleTextureAnimationRTTI :
-		public RTTIType<ParticleTextureAnimation, IReflectable, ParticleTextureAnimationRTTI>
+	class BS_CORE_EXPORT ParticleTextureAnimationRTTI : public RTTIType<ParticleTextureAnimation, IReflectable, ParticleTextureAnimationRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -394,7 +392,7 @@ namespace bs
 			return TID_ParticleTextureAnimation;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleTextureAnimation>();
 		}
@@ -422,7 +420,7 @@ namespace bs
 			return TID_ParticleOrbit;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleOrbit>();
 		}
@@ -474,7 +472,7 @@ namespace bs
 			return TID_ParticleForce;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleForce>();
 		}
@@ -499,7 +497,7 @@ namespace bs
 			return TID_ParticleGravity;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleGravity>();
 		}
@@ -524,7 +522,7 @@ namespace bs
 			return TID_ParticleColor;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleColor>();
 		}
@@ -551,7 +549,7 @@ namespace bs
 			return TID_ParticleSize;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleSize>();
 		}
@@ -578,14 +576,13 @@ namespace bs
 			return TID_ParticleRotation;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleRotation>();
 		}
 	};
 
-	class BS_CORE_EXPORT ParticleCollisionsRTTI :
-		public RTTIType<ParticleCollisions, IReflectable, ParticleCollisionsRTTI>
+	class BS_CORE_EXPORT ParticleCollisionsRTTI : public RTTIType<ParticleCollisions, IReflectable, ParticleCollisionsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -609,7 +606,7 @@ namespace bs
 			return TID_ParticleCollisions;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleCollisions>();
 		}
@@ -643,14 +640,13 @@ namespace bs
 			return TID_ParticleVectorFieldSettings;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleVectorFieldSettings>();
 		}
 	};
 
-	class BS_CORE_EXPORT ParticleDepthCollisionSettingsRTTI :
-	public RTTIType<ParticleDepthCollisionSettings, IReflectable, ParticleDepthCollisionSettingsRTTI>
+	class BS_CORE_EXPORT ParticleDepthCollisionSettingsRTTI : public RTTIType<ParticleDepthCollisionSettings, IReflectable, ParticleDepthCollisionSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -672,14 +668,13 @@ namespace bs
 			return TID_ParticleDepthCollisionSettings;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleDepthCollisionSettings>();
 		}
 	};
 
-	class BS_CORE_EXPORT ParticleGpuSimulationSettingsRTTI :
-	public RTTIType<ParticleGpuSimulationSettings, IReflectable, ParticleGpuSimulationSettingsRTTI>
+	class BS_CORE_EXPORT ParticleGpuSimulationSettingsRTTI : public RTTIType<ParticleGpuSimulationSettings, IReflectable, ParticleGpuSimulationSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -703,14 +698,13 @@ namespace bs
 			return TID_ParticleGpuSimulationSettings;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleGpuSimulationSettings>();
 		}
 	};
 
-	class BS_CORE_EXPORT ParticleSystemSettingsRTTI :
-		public RTTIType<ParticleSystemSettings, IReflectable, ParticleSystemSettingsRTTI>
+	class BS_CORE_EXPORT ParticleSystemSettingsRTTI : public RTTIType<ParticleSystemSettings, IReflectable, ParticleSystemSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -723,7 +717,7 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(IsLooping, 6)
 			BS_RTTI_MEMBER_PLAIN(MaxParticles, 7)
 			BS_RTTI_MEMBER_PLAIN(UseAutomaticSeed, 8)
-			//BS_RTTI_MEMBER_PLAIN(gravityScale, 9)
+			// BS_RTTI_MEMBER_PLAIN(gravityScale, 9)
 			BS_RTTI_MEMBER_PLAIN(ManualSeed, 10)
 			BS_RTTI_MEMBER_REFL(Material, 11)
 			BS_RTTI_MEMBER_PLAIN(UseAutomaticBounds, 12)
@@ -744,7 +738,7 @@ namespace bs
 			return TID_ParticleSystemSettings;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ParticleSystemSettings>();
 		}
@@ -781,7 +775,7 @@ namespace bs
 			return TID_ParticleSystem;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return ParticleSystem::CreateEmpty();
 		}
@@ -789,4 +783,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

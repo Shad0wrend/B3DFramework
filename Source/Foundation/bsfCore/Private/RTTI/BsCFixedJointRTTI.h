@@ -18,7 +18,7 @@ namespace bs
 	{
 	public:
 		CFixedJointRTTI()
-		{ }
+		{}
 
 		const String& GetRttiName() override
 		{
@@ -39,4 +39,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

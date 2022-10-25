@@ -24,7 +24,12 @@ namespace bs
 		virtual ~DecalBase() = default;
 
 		/** Width and height of the decal. */
-		void SetSize(const Vector2& size) { mSize = Vector2::Max(Vector2::ZERO, size); MarkCoreDirtyInternal(); UpdateBounds(); }
+		void SetSize(const Vector2& size)
+		{
+			mSize = Vector2::Max(Vector2::ZERO, size);
+			MarkCoreDirtyInternal();
+			UpdateBounds();
+		}
 
 		/** @copydoc setSize */
 		Vector2 GetSize() const { return mSize; }
@@ -36,7 +41,12 @@ namespace bs
 		}
 
 		/** Determines the maximum distance (from its origin) at which the decal is displayed. */
-		void SetMaxDistance(float distance) { mMaxDistance = Math::Max(0.0f, distance); MarkCoreDirtyInternal(); UpdateBounds(); }
+		void SetMaxDistance(float distance)
+		{
+			mMaxDistance = Math::Max(0.0f, distance);
+			MarkCoreDirtyInternal();
+			UpdateBounds();
+		}
 
 		/** @copydoc getSize */
 		float GetMaxDistance() const { return mMaxDistance; }
@@ -49,7 +59,11 @@ namespace bs
 		 * matching layers will be projected onto. Note that decal layer mask only supports 32-bits and objects with
 		 * layers in bits >= 32 will always be projected onto.
 		 */
-		void SetLayerMask(u32 mask) { mLayerMask = mask; MarkCoreDirtyInternal(); }
+		void SetLayerMask(u32 mask)
+		{
+			mLayerMask = mask;
+			MarkCoreDirtyInternal();
+		}
 
 		/** @copydoc setLayerMask */
 		u32 GetLayerMask() const { return mLayerMask; }
@@ -77,6 +91,7 @@ namespace bs
 
 		/** @copydoc SceneActor::setTransform */
 		void SetTransform(const Transform& transform) override;
+
 	protected:
 		/** Updates the internal bounds for the decal. Call this whenever a property affecting the bounds changes. */
 		void UpdateBounds();
@@ -92,26 +107,32 @@ namespace bs
 	};
 
 	/** Templated base class for both core and sim thread implementations of Decal. */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TDecal : public DecalBase
 	{
 	public:
 		using MaterialType = CoreVariantHandleType<Material, Core>;
 
 		TDecal() = default;
+
 		TDecal(const MaterialType& material, const Vector2& size, float maxDistance)
-			:DecalBase(size, maxDistance), mMaterial(material)
-		{ }
+			: DecalBase(size, maxDistance), mMaterial(material)
+		{}
+
 		virtual ~TDecal() = default;
 
 		/** Determines the material to use when rendering the decal. */
-		void SetMaterial(const MaterialType& material) { mMaterial = material; MarkCoreDirtyInternal(); }
+		void SetMaterial(const MaterialType& material)
+		{
+			mMaterial = material;
+			MarkCoreDirtyInternal();
+		}
 
 		/** @copydoc setMaterial */
 		const MaterialType& GetMaterial() const { return mMaterial; }
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template<class P>
+		template <class P>
 		void RttiEnumFields(P p);
 
 	protected:
@@ -123,7 +144,10 @@ namespace bs
 	 *  @{
 	 */
 
-	namespace ct { class Decal; }
+	namespace ct
+	{
+		class Decal;
+	}
 
 	/**
 	 * Specifies a decal that will be projected onto scene geometry. User can set the material to use when rendering
@@ -150,10 +174,10 @@ namespace bs
 		Decal(const HMaterial& material, const Vector2& size, float maxDistance);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		/** @copydoc CoreObject::getCoreDependencies */
-		void GetCoreDependencies(Vector<CoreObject*>& dependencies) ;
+		void GetCoreDependencies(Vector<CoreObject*>& dependencies);
 
 		/** @copydoc DecalBase::_markCoreDirty */
 		void MarkCoreDirtyInternal(ActorDirtyFlag flags = ActorDirtyFlag::Everything) override;
@@ -178,32 +202,32 @@ namespace bs
 
 	namespace ct
 	{
-	/** Core thread version of a bs::Decal */
-	class BS_CORE_EXPORT Decal : public CoreObject, public TDecal<true>
-	{
-	public:
-		~Decal();
+		/** Core thread version of a bs::Decal */
+		class BS_CORE_EXPORT Decal : public CoreObject, public TDecal<true>
+		{
+		public:
+			~Decal();
 
-		/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-		void SetRendererId(u32 id) { mRendererId = id; }
+			/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
+			void SetRendererId(u32 id) { mRendererId = id; }
 
-		/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-		u32 GetRendererId() const { return mRendererId; }
+			/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
+			u32 GetRendererId() const { return mRendererId; }
 
-	protected:
-		friend class bs::Decal;
+		protected:
+			friend class bs::Decal;
 
-		Decal(const SPtr<Material>& material, const Vector2& size, float maxDistance);
+			Decal(const SPtr<Material>& material, const Vector2& size, float maxDistance);
 
-		/** @copydoc CoreObject::initialize */
-		void Initialize() override;
+			/** @copydoc CoreObject::initialize */
+			void Initialize() override;
 
-		/** @copydoc CoreObject::syncToCore */
-		void SyncToCore(const CoreSyncData& data) override;
+			/** @copydoc CoreObject::syncToCore */
+			void SyncToCore(const CoreSyncData& data) override;
 
-		u32 mRendererId = 0;
-	};
-	}
+			u32 mRendererId = 0;
+		};
+	} // namespace ct
 
 	/** @} */
-}
+} // namespace bs

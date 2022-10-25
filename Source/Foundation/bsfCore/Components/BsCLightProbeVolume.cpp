@@ -13,7 +13,7 @@ namespace bs
 	}
 
 	CLightProbeVolume::CLightProbeVolume(const HSceneObject& parent, const AABox& volume, const Vector3I& cellCount)
-		:Component(parent), mVolume(volume), mCellCount(cellCount)
+		: Component(parent), mVolume(volume), mCellCount(cellCount)
 	{
 		SetFlag(ComponentFlag::AlwaysRun, true);
 		SetName("LightProbeVolume");
@@ -27,7 +27,7 @@ namespace bs
 
 	void CLightProbeVolume::RenderProbe(u32 handle)
 	{
-		if (mInternal != nullptr && SO()->GetActive())
+		if(mInternal != nullptr && SO()->GetActive())
 		{
 			mInternal->UpdateStateInternal(*SO());
 			mInternal->RenderProbe(handle);
@@ -36,7 +36,7 @@ namespace bs
 
 	void CLightProbeVolume::RenderProbes()
 	{
-		if (mInternal != nullptr && SO()->GetActive())
+		if(mInternal != nullptr && SO()->GetActive())
 		{
 			mInternal->UpdateStateInternal(*SO());
 			mInternal->RenderProbes();
@@ -45,7 +45,7 @@ namespace bs
 
 	Vector<LightProbeInfo> CLightProbeVolume::GetProbes() const
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			return mInternal->GetProbes();
 
 		return Vector<LightProbeInfo>();
@@ -55,7 +55,7 @@ namespace bs
 	{
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->Initialize();
 		else
 			mInternal = LightProbeVolume::Create(mVolume, mCellCount);
@@ -67,7 +67,7 @@ namespace bs
 	{
 		gSceneManager().UnbindActorInternal(mInternal);
 	}
-	
+
 	RTTITypeBase* CLightProbeVolume::GetRttiStatic()
 	{
 		return CLightProbeVolumeRTTI::Instance();
@@ -77,4 +77,4 @@ namespace bs
 	{
 		return CLightProbeVolume::GetRttiStatic();
 	}
-}
+} // namespace bs

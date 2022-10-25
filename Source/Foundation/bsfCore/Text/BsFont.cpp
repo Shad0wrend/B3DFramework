@@ -28,8 +28,8 @@ namespace bs
 	}
 
 	Font::Font()
-		:Resource(false)
-	{ }
+		: Resource(false)
+	{}
 
 	void Font::Initialize(const Vector<SPtr<FontBitmap>>& fontData)
 	{
@@ -37,9 +37,9 @@ namespace bs
 		{
 			mFontDataPerSize[(*iter)->Size] = *iter;
 
-			for (auto& texture : (*iter)->TexturePages)
+			for(auto& texture : (*iter)->TexturePages)
 			{
-				if (texture != nullptr)
+				if(texture != nullptr)
 					AddResourceDependency(texture);
 			}
 		}
@@ -91,11 +91,11 @@ namespace bs
 
 	void Font::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 	{
-		for (auto& fontDataEntry : mFontDataPerSize)
+		for(auto& fontDataEntry : mFontDataPerSize)
 		{
-			for (auto& texture : fontDataEntry.second->TexturePages)
+			for(auto& texture : fontDataEntry.second->TexturePages)
 			{
-				if (texture.IsLoaded())
+				if(texture.IsLoaded())
 					dependencies.push_back(texture.Get());
 			}
 		}
@@ -110,7 +110,7 @@ namespace bs
 
 	SPtr<Font> Font::CreatePtrInternal(const Vector<SPtr<FontBitmap>>& fontData)
 	{
-		SPtr<Font> newFont = bs_core_ptr<Font>(new (bs_alloc<Font>()) Font());
+		SPtr<Font> newFont = bs_core_ptr<Font>(new(bs_alloc<Font>()) Font());
 		newFont->SetThisPtrInternal(newFont);
 		newFont->Initialize(fontData);
 
@@ -119,7 +119,7 @@ namespace bs
 
 	SPtr<Font> Font::CreateEmptyInternal()
 	{
-		SPtr<Font> newFont = bs_core_ptr<Font>(new (bs_alloc<Font>()) Font());
+		SPtr<Font> newFont = bs_core_ptr<Font>(new(bs_alloc<Font>()) Font());
 		newFont->SetThisPtrInternal(newFont);
 
 		return newFont;
@@ -134,4 +134,4 @@ namespace bs
 	{
 		return Font::GetRttiStatic();
 	}
-}
+} // namespace bs

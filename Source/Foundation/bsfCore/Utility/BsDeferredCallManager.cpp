@@ -29,4 +29,4 @@ namespace bs
 	{
 		DeferredCallManager::Instance().QueueDeferredCall(callback);
 	}
-}
+} // namespace bs

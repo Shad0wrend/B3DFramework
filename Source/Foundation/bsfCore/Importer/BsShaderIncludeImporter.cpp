@@ -37,4 +37,4 @@ namespace bs
 
 		return gpuInclude;
 	}
-}
+} // namespace bs

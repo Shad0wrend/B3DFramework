@@ -29,20 +29,20 @@ namespace bs
 		dipdw.diph.dwHow = DIPH_DEVICE;
 		dipdw.dwData = DI_BUFFER_SIZE_MOUSE;
 
-		if (FAILED(m->DirectInput->CreateDevice(GUID_SysMouse, &m->Mouse, nullptr)))
+		if(FAILED(m->DirectInput->CreateDevice(GUID_SysMouse, &m->Mouse, nullptr)))
 			BS_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to create device.");
 
-		if (FAILED(m->Mouse->SetDataFormat(&c_dfDIMouse2)))
+		if(FAILED(m->Mouse->SetDataFormat(&c_dfDIMouse2)))
 			BS_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to set format.");
 
-		if (FAILED(m->Mouse->SetCooperativeLevel(hWnd, m->CoopSettings)))
+		if(FAILED(m->Mouse->SetCooperativeLevel(hWnd, m->CoopSettings)))
 			BS_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to set coop level.");
 
-		if (FAILED(m->Mouse->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph)))
+		if(FAILED(m->Mouse->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph)))
 			BS_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to set property.");
 
 		HRESULT hr = m->Mouse->Acquire();
-		if (FAILED(hr) && hr != DIERR_OTHERAPPHASPRIO)
+		if(FAILED(hr) && hr != DIERR_OTHERAPPHASPRIO)
 			BS_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to acquire device.");
 
 		m->HWnd = hWnd;
@@ -62,7 +62,7 @@ namespace bs
 	/** Notifies the input handler that a mouse press or release occurred. Triggers an event in the input handler. */
 	void doMouseClick(Input* owner, ButtonCode mouseButton, const DIDEVICEOBJECTDATA& data)
 	{
-		if (data.dwData & 0x80)
+		if(data.dwData & 0x80)
 			owner->NotifyButtonPressedInternal(0, mouseButton, data.dwTimeStamp);
 		else
 			owner->NotifyButtonReleasedInternal(0, mouseButton, data.dwTimeStamp);
@@ -90,22 +90,22 @@ namespace bs
 
 	void Mouse::Capture()
 	{
-		if (m->Mouse == nullptr)
+		if(m->Mouse == nullptr)
 			return;
 
 		DIDEVICEOBJECTDATA diBuff[DI_BUFFER_SIZE_MOUSE];
 		DWORD numEntries = DI_BUFFER_SIZE_MOUSE;
 
 		HRESULT hr = m->Mouse->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), diBuff, &numEntries, 0);
-		if (hr != DI_OK)
+		if(hr != DI_OK)
 		{
 			hr = m->Mouse->Acquire();
-			while (hr == DIERR_INPUTLOST)
+			while(hr == DIERR_INPUTLOST)
 				hr = m->Mouse->Acquire();
 
 			hr = m->Mouse->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), diBuff, &numEntries, 0);
 
-			if (FAILED(hr))
+			if(FAILED(hr))
 				return;
 		}
 
@@ -113,9 +113,9 @@ namespace bs
 		relX = relY = relZ = 0;
 
 		bool axesMoved = false;
-		for (u32 i = 0; i < numEntries; ++i)
+		for(u32 i = 0; i < numEntries; ++i)
 		{
-			switch (diBuff[i].dwOfs)
+			switch(diBuff[i].dwOfs)
 			{
 			case DIMOFS_BUTTON0:
 				doMouseClick(mOwner, BC_MOUSE_LEFT, diBuff[i]);
@@ -157,9 +157,8 @@ namespace bs
 			}
 		}
 
-		if (axesMoved)
+		if(axesMoved)
 			mOwner->NotifyMouseMovedInternal(relX, relY, relZ);
-
 	}
 
 	void Mouse::ChangeCaptureContext(u64 windowHandle)
@@ -170,10 +169,10 @@ namespace bs
 		{
 			releaseDirectInput(m);
 
-			if (windowHandle != (u64)-1)
+			if(windowHandle != (u64)-1)
 				initializeDirectInput(m, newhWnd);
 			else
 				m->HWnd = (HWND)-1;
 		}
 	}
-}
+} // namespace bs

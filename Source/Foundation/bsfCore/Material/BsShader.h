@@ -22,12 +22,12 @@ namespace bs
 	}
 
 	/** Templated version of SubShader that can be used for both core and sim threads. */
-	template<bool Core>
+	template <bool Core>
 	struct TSubShader
 	{
 		using TechniqueType = CoreVariantType<Technique, Core>;
 		using ShaderType = SPtr<CoreVariantType<Shader, Core>>;
-		
+
 		String Name;
 		ShaderType Shader;
 	};
@@ -36,9 +36,10 @@ namespace bs
 	struct SHADER_PARAM_COMMON
 	{
 		SHADER_PARAM_COMMON() = default;
+
 		SHADER_PARAM_COMMON(String name, String gpuVariableName, StringID rendererSemantic = StringID::NONE)
 			: Name(std::move(name)), GpuVariableName(gpuVariableName), RendererSemantic(rendererSemantic)
-		{ }
+		{}
 
 		/** The name of the parameter. Name must be unique between all data and object parameters in a shader. */
 		String Name;
@@ -76,11 +77,13 @@ namespace bs
 	struct SHADER_DATA_PARAM_DESC : SHADER_PARAM_COMMON
 	{
 		SHADER_DATA_PARAM_DESC() = default;
-		SHADER_DATA_PARAM_DESC(String name, String gpuVariableName, GpuParamDataType type,
-			StringID rendererSemantic = StringID::NONE, u32 arraySize = 1, u32 elementSize = 0)
-			:SHADER_PARAM_COMMON(std::move(name), std::move(gpuVariableName), rendererSemantic)
-			, Type(type), ArraySize(arraySize), ElementSize(elementSize)
-		{ }
+
+		SHADER_DATA_PARAM_DESC(String name, String gpuVariableName, GpuParamDataType type, StringID rendererSemantic = StringID::NONE, u32 arraySize = 1, u32 elementSize = 0)
+			: SHADER_PARAM_COMMON(std::move(name), std::move(gpuVariableName), rendererSemantic)
+			, Type(type)
+			, ArraySize(arraySize)
+			, ElementSize(elementSize)
+		{}
 
 		/** The type of the parameter, must be the same as the type in GpuProgram. */
 		GpuParamDataType Type = GPDT_FLOAT1;
@@ -103,9 +106,9 @@ namespace bs
 	struct SHADER_OBJECT_PARAM_DESC : SHADER_PARAM_COMMON
 	{
 		SHADER_OBJECT_PARAM_DESC() = default;
-		SHADER_OBJECT_PARAM_DESC(String name, String gpuVariableName, GpuParamObjectType type,
-			StringID rendererSemantic = StringID::NONE)
-			:SHADER_PARAM_COMMON(std::move(name), gpuVariableName, rendererSemantic), Type(type)
+
+		SHADER_OBJECT_PARAM_DESC(String name, String gpuVariableName, GpuParamObjectType type, StringID rendererSemantic = StringID::NONE)
+			: SHADER_PARAM_COMMON(std::move(name), gpuVariableName, rendererSemantic), Type(type)
 		{
 			GpuVariableNames.emplace_back(gpuVariableName);
 		}
@@ -160,7 +163,7 @@ namespace bs
 	};
 
 	/** Represents a single potential value of a shader variation parameter and optionally its name. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Renderer),ExportAsStruct(true)) ShaderVariationParamValue
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Renderer), ExportAsStruct(true)) ShaderVariationParamValue
 	{
 		/** Optional human-readable name describing what this particular value represents. */
 		String Name;
@@ -170,7 +173,7 @@ namespace bs
 	};
 
 	/** Represents a single shader variation parameter and a set of all possible values. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Renderer),ExportAsStruct(true)) ShaderVariationParamInfo
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Renderer), ExportAsStruct(true)) ShaderVariationParamInfo
 	{
 		/** Optional human-readable name describing the variation parameter. */
 		String Name;
@@ -209,18 +212,30 @@ namespace bs
 	 *  @{
 	 */
 
-	template<bool Core> struct TSubShaderType {};
-	template<> struct TSubShaderType < false > { typedef SubShader Type; };
-	template<> struct TSubShaderType < true > { typedef TSubShader<true> Type; };
+	template <bool Core>
+	struct TSubShaderType
+	{};
+
+	template <>
+	struct TSubShaderType<false>
+	{
+		typedef SubShader Type;
+	};
+
+	template <>
+	struct TSubShaderType<true>
+	{
+		typedef TSubShader<true> Type;
+	};
 
 	/** Structure used for initializing a shader. */
-	template<bool Core>
+	template <bool Core>
 	struct BS_CORE_EXPORT TSHADER_DESC
 	{
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 		using SamplerStateType = SPtr<CoreVariantType<SamplerState, Core>>;
 		using TechniqueType = CoreVariantType<Technique, Core>;
-		using SubShaderType = typename TSubShaderType<Core>::Type ;
+		using SubShaderType = typename TSubShaderType<Core>::Type;
 
 		TSHADER_DESC();
 
@@ -246,7 +261,7 @@ namespace bs
 		 *
 		 * @param[in]	paramDesc			Structure describing the parameter to add.
 		 *
-		 * @note	
+		 * @note
 		 * If multiple parameters are given with the same name but different types behavior is undefined. You are allowed
 		 * to call this method multiple times in order to map multiple GPU variable names to a single parameter, but the
 		 * default value (if any) will only be recognized on the first call. Mapping multiple GPU variables to a single
@@ -258,7 +273,7 @@ namespace bs
 		/**
 		 * @see	SHADER_DESC::addParameter(SHADER_OBJECT_PARAM_DESC)
 		 *
-		 * @note	
+		 * @note
 		 * Specialized version of addParameter that accepts a default sampler value that will be used for initializing the
 		 * object parameter upon Material creation. Default sampler value is only valid if the object type is one of the
 		 * sampler types.
@@ -268,7 +283,7 @@ namespace bs
 		/**
 		 * @see	SHADER_DESC::addParameter(SHADER_OBJECT_PARAM_DESC)
 		 *
-		 * @note	
+		 * @note
 		 * Specialized version of addParameter that accepts a default texture value that will be used for initializing the
 		 * object parameter upon Material creation. Default texture value is only valid if the object type is one of the
 		 * texture types.
@@ -302,8 +317,7 @@ namespace bs
 		 *									will be deemed incompatible and won't be used. Value of 0 signifies the parameter
 		 *									block is not used by the renderer.
 		 */
-		void SetParamBlockAttribs(const String& name, bool shared, GpuBufferUsage usage,
-			StringID rendererSemantic = StringID::NONE);
+		void SetParamBlockAttribs(const String& name, bool shared, GpuBufferUsage usage, StringID rendererSemantic = StringID::NONE);
 
 		/**
 		 * Sorting type to use when performing sort in the render queue. Default value is sort front to back which causes
@@ -317,7 +331,7 @@ namespace bs
 		 * initial values. Shaders with higher priority will be rendered before shaders with lower priority, and
 		 * additionally render queue will only sort elements within the same priority group.
 		 *
-		 * @note	
+		 * @note
 		 * This is useful when you want all your opaque objects to be rendered before you start drawing your transparent
 		 * ones. Or to render your overlays after everything else. Values provided in QueuePriority are just for general
 		 * guidance and feel free to increase them or decrease them for finer tuning. (for example QueuePriority::Opaque +
@@ -371,7 +385,7 @@ namespace bs
 	};
 
 	/**	Templated version of Shader used for implementing both sim and core thread variants. */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TShader
 	{
 	public:
@@ -383,7 +397,7 @@ namespace bs
 		TShader(u32 id);
 		TShader(const String& name, const TSHADER_DESC<Core>& desc, u32 id);
 		virtual ~TShader();
-	
+
 		/** Returns the total number of techniques in this shader. */
 		u32 GetNumTechniques() const { return (u32)mDesc.Techniques.size(); }
 
@@ -412,7 +426,8 @@ namespace bs
 		 * Returns the list of all variation parameters supported by this shader, possible values of each parameter and
 		 * other meta-data.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(VariationParams),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(VariationParams), Property(Getter))
+
 		const Vector<ShaderVariationParamInfo> GetVariationParams() const { return mDesc.VariationParams; }
 
 		/**
@@ -532,17 +547,17 @@ namespace bs
 
 	namespace ct
 	{
-	/** @addtogroup Material-Internal
-	 *  @{
-	 */
+		/** @addtogroup Material-Internal
+		 *  @{
+		 */
 
-	typedef TSHADER_DESC<true> SHADER_DESC;
+		typedef TSHADER_DESC<true> SHADER_DESC;
 
-	/** Core thread version of bs::SubShader. */
-	typedef TSubShader<true> SubShader;
+		/** Core thread version of bs::SubShader. */
+		typedef TSubShader<true> SubShader;
 
-	/** @} */
-	}
+		/** @} */
+	} // namespace ct
 
 	/** @addtogroup Material
 	 *  @{
@@ -574,7 +589,7 @@ namespace bs
 		/**
 		 * Sets a list include file paths that are referenced by this shader.
 		 *
-		 * @note	
+		 * @note
 		 * This is not used directly by the shader as includes are expected to be processed during GPU program and state
 		 * creation, but it may be referenced by higher layers for various purposes.
 		 */
@@ -623,10 +638,10 @@ namespace bs
 		Shader(const String& name, const SHADER_DESC& desc, u32 id);
 
 		/** @copydoc CoreObject::getCoreDependencies */
-		void GetCoreDependencies(Vector<CoreObject*>& dependencies) ;
+		void GetCoreDependencies(Vector<CoreObject*>& dependencies);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		/** Converts a sim thread version of the shader descriptor to a core thread version. */
 		ct::SHADER_DESC ConvertDesc(const SHADER_DESC& desc) const;
@@ -667,25 +682,25 @@ namespace bs
 
 	namespace ct
 	{
-	/** @addtogroup Material-Internal
-	 *  @{
-	 */
+		/** @addtogroup Material-Internal
+		 *  @{
+		 */
 
-	/** Core thread version of Shader. */
-	class BS_CORE_EXPORT Shader : public CoreObject, public TShader<true>
-	{
-	public:
-		/** @copydoc bs::Shader::create */
-		static SPtr<Shader> Create(const String& name, const SHADER_DESC& desc);
+		/** Core thread version of Shader. */
+		class BS_CORE_EXPORT Shader : public CoreObject, public TShader<true>
+		{
+		public:
+			/** @copydoc bs::Shader::create */
+			static SPtr<Shader> Create(const String& name, const SHADER_DESC& desc);
 
-	protected:
-		friend class bs::Shader;
+		protected:
+			friend class bs::Shader;
 
-		Shader(const String& name, const SHADER_DESC& desc, u32 id);
+			Shader(const String& name, const SHADER_DESC& desc, u32 id);
 
-		static std::atomic<u32> mNextShaderId;
-	};
+			static std::atomic<u32> mNextShaderId;
+		};
 
-	/** @} */
-	}
-}
+		/** @} */
+	} // namespace ct
+} // namespace bs

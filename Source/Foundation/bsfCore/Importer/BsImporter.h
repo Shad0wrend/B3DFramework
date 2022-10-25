@@ -17,29 +17,30 @@ namespace bs
 	 * Contains a resource that was imported from a file that contains multiple resources (for example an animation from an
 	 * FBX file).
 	 */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Importer),ExportAsStruct(true),API(Framework)) SubResource
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Importer), ExportAsStruct(true), API(Framework)) SubResource
 	{
 		String Name; /**< Unique name of the sub-resource. */
 		BS_NORREF HResource Value; /**< Contents of the sub-resource. */
 	};
 
 	/** Contains a group of resources imported from a single source file. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Importer),API(Framework)) MultiResource
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework)) MultiResource
 	{
 		BS_SCRIPT_EXPORT()
 		MultiResource() = default;
 
 		BS_SCRIPT_EXPORT()
+
 		MultiResource(const Vector<SubResource>& entries)
-			:Entries(entries)
-		{ }
+			: Entries(entries)
+		{}
 
 		BS_SCRIPT_EXPORT()
 		Vector<SubResource> Entries;
 	};
 
 	/** Module responsible for importing various asset types and converting them to types usable by the engine. */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer),API(Framework)) Importer : public Module<Importer>
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework)) Importer : public Module<Importer>
 	{
 	public:
 		Importer();
@@ -61,13 +62,11 @@ namespace bs
 		 * @note	Thread safe.
 		 */
 		BS_SCRIPT_EXPORT()
-		BS_NORREF HResource Import(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr,
-			const UUID& UUID = UUID::EMPTY);
+		BS_NORREF HResource Import(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr, const UUID& UUID = UUID::EMPTY);
 
 		/** @copydoc import */
 		template <class T>
-		ResourceHandle<T> Import(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr,
-			const UUID& UUID = UUID::EMPTY)
+		ResourceHandle<T> Import(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr, const UUID& UUID = UUID::EMPTY)
 		{
 			return static_resource_cast<T>(Import(inputFilePath, importOptions, UUID));
 		}
@@ -77,8 +76,7 @@ namespace bs
 		 * placed in the returned AsyncOp object when the import ends.
 		 */
 		BS_SCRIPT_EXPORT()
-		TAsyncOp<HResource> ImportAsync(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr,
-			const UUID& UUID = UUID::EMPTY);
+		TAsyncOp<HResource> ImportAsync(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr, const UUID& UUID = UUID::EMPTY);
 
 		/**
 		 * Imports a resource at the specified location, and returns the loaded data. This method returns all imported
@@ -102,8 +100,7 @@ namespace bs
 		 * contain a list of the imported resources, after the import ends.
 		 */
 		BS_SCRIPT_EXPORT()
-		TAsyncOp<SPtr<MultiResource>> ImportAllAsync(const Path& inputFilePath,
-			SPtr<const ImportOptions> importOptions = nullptr);
+		TAsyncOp<SPtr<MultiResource>> ImportAllAsync(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr);
 
 		/**
 		 * Automatically detects the importer needed for the provided file and returns valid type of import options for
@@ -113,8 +110,8 @@ namespace bs
 		 *
 		 * @return						The new import options. Null is returned if the file path is not valid, or if a
 		 *								valid importer cannot be found for the specified file.
-		 * 			
-		 * @note	
+		 *
+		 * @note
 		 * You will need to type cast the importer options to a valid type, taking into consideration exact importer you
 		 * expect to be used for this file type. If you don't use a proper import options type, an exception will be thrown
 		 * during import.
@@ -122,7 +119,7 @@ namespace bs
 		SPtr<ImportOptions> CreateImportOptions(const Path& inputFilePath);
 
 		/** @copydoc createImportOptions */
-		template<class T>
+		template <class T>
 		SPtr<T> CreateImportOptions(const Path& inputFilePath)
 		{
 			return std::static_pointer_cast<T>(CreateImportOptions(inputFilePath));
@@ -160,12 +157,10 @@ namespace bs
 		void RegisterAssetImporterInternal(SpecificImporter* importer);
 
 		/** Alternative to import() which doesn't create a resource handle, but instead returns a raw resource pointer. */
-		SPtr<Resource> ImportInternal(const Path& inputFilePath,
-			SPtr<const ImportOptions> importOptions = nullptr);
+		SPtr<Resource> ImportInternal(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr);
 
 		/** Alternative to importAll() which doesn't create resource handles, but instead returns raw resource pointers. */
-		Vector<SubResourceRaw> ImportAllInternal(const Path& inputFilePath,
-			SPtr<const ImportOptions> importOptions = nullptr);
+		Vector<SubResourceRaw> ImportAllInternal(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr);
 
 		/** @} */
 	private:
@@ -179,9 +174,8 @@ namespace bs
 		 * Queues resource for import on a secondary thread. The system will execute the import as soon as possible
 		 * and write the resulting resource to the provided @p op object.
 		 */
-		template<class ReturnType>
-		void QueueForImport(SpecificImporter* importer, const Path& inputFilePath,
-			const SPtr<const ImportOptions>& importOptions, const UUID& uuid, TAsyncOp<ReturnType>& op);
+		template <class ReturnType>
+		void QueueForImport(SpecificImporter* importer, const Path& inputFilePath, const SPtr<const ImportOptions>& importOptions, const UUID& uuid, TAsyncOp<ReturnType>& op);
 
 		/**
 		 * Prepares for import of a file at the specified path. Returns the type of importer the file can be imported with,
@@ -212,8 +206,8 @@ namespace bs
 			QueuedTask() = default;
 
 			QueuedTask(SPtr<Task> task, u64 id)
-				:Task(std::move(task)), Id(id)
-			{ }
+				: Task(std::move(task)), Id(id)
+			{}
 
 			SPtr<Task> Task;
 			u64 Id;
@@ -226,4 +220,4 @@ namespace bs
 	BS_CORE_EXPORT Importer& gImporter();
 
 	/** @} */
-}
+} // namespace bs

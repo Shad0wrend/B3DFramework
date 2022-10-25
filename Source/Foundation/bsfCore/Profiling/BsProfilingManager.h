@@ -41,7 +41,7 @@ namespace bs
 
 		/**
 		 * Called every frame from the core thread.
-		 * 			
+		 *
 		 * @note	Core thread only.
 		 */
 		void UpdateCoreInternal();
@@ -54,7 +54,7 @@ namespace bs
 		 *						Increasing indexes return reports for older and older frames. Out of range  indexes will be
 		 *						clamped.
 		 *
-		 * @note	
+		 * @note
 		 * Profiler reports get updated every frame. Oldest reports that no longer fit in the saved reports buffer are
 		 * discarded.
 		 */
@@ -75,4 +75,4 @@ namespace bs
 	BS_CORE_EXPORT ProfilingManager& gProfiler();
 
 	/** @} */
-}
+} // namespace bs

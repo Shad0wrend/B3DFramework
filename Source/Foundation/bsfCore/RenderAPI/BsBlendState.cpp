@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	bool RENDER_TARGET_BLEND_STATE_DESC::operator == (const RENDER_TARGET_BLEND_STATE_DESC& rhs) const
+	bool RENDER_TARGET_BLEND_STATE_DESC::operator==(const RENDER_TARGET_BLEND_STATE_DESC& rhs) const
 	{
 		return BlendEnable == rhs.BlendEnable &&
 			SrcBlend == rhs.SrcBlend &&
@@ -20,14 +20,14 @@ namespace bs
 			RenderTargetWriteMask == rhs.RenderTargetWriteMask;
 	}
 
-	bool BLEND_STATE_DESC::operator == (const BLEND_STATE_DESC& rhs) const
+	bool BLEND_STATE_DESC::operator==(const BLEND_STATE_DESC& rhs) const
 	{
 		bool equals = AlphaToCoverageEnable == rhs.AlphaToCoverageEnable &&
 			IndependantBlendEnable == rhs.IndependantBlendEnable;
 
-		if (equals)
+		if(equals)
 		{
-			for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+			for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 			{
 				equals &= RenderTargetDesc[i] == rhs.RenderTargetDesc[i];
 			}
@@ -37,8 +37,8 @@ namespace bs
 	}
 
 	BlendProperties::BlendProperties(const BLEND_STATE_DESC& desc)
-		:mData(desc), mHash(BlendState::GenerateHash(desc))
-	{ }
+		: mData(desc), mHash(BlendState::GenerateHash(desc))
+	{}
 
 	bool BlendProperties::GetBlendEnabled(u32 renderTargetIdx) const
 	{
@@ -97,12 +97,11 @@ namespace bs
 	}
 
 	BlendState::BlendState(const BLEND_STATE_DESC& desc)
-		:mProperties(desc), mId(0)
-	{ }
+		: mProperties(desc), mId(0)
+	{}
 
 	BlendState::~BlendState()
 	{
-
 	}
 
 	SPtr<ct::BlendState> BlendState::GetCore() const
@@ -139,7 +138,7 @@ namespace bs
 		bs_hash_combine(hash, desc.AlphaToCoverageEnable);
 		bs_hash_combine(hash, desc.IndependantBlendEnable);
 
-		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			bs_hash_combine(hash, desc.RenderTargetDesc[i].BlendEnable);
 			bs_hash_combine(hash, (u32)desc.RenderTargetDesc[i].SrcBlend);
@@ -170,41 +169,39 @@ namespace bs
 
 	namespace ct
 	{
-	BlendState::BlendState(const BLEND_STATE_DESC& desc, u32 id)
-		:mProperties(desc), mId(id)
-	{
+		BlendState::BlendState(const BLEND_STATE_DESC& desc, u32 id)
+			: mProperties(desc), mId(id)
+		{
+		}
 
-	}
+		BlendState::~BlendState()
+		{
+		}
 
-	BlendState::~BlendState()
-	{
+		void BlendState::Initialize()
+		{
+			// Since we cache states it's possible this object was already initialized
+			// (i.e. multiple sim-states can share a single core-state)
+			if(IsInitialized())
+				return;
 
-	}
+			CreateInternal();
+			CoreObject::Initialize();
+		}
 
-	void BlendState::Initialize()
-	{
-		// Since we cache states it's possible this object was already initialized
-		// (i.e. multiple sim-states can share a single core-state)
-		if (IsInitialized())
-			return;
+		const BlendProperties& BlendState::GetProperties() const
+		{
+			return mProperties;
+		}
 
-		CreateInternal();
-		CoreObject::Initialize();
-	}
+		SPtr<BlendState> BlendState::Create(const BLEND_STATE_DESC& desc)
+		{
+			return RenderStateManager::Instance().CreateBlendState(desc);
+		}
 
-	const BlendProperties& BlendState::GetProperties() const
-	{
-		return mProperties;
-	}
-
-	SPtr<BlendState> BlendState::Create(const BLEND_STATE_DESC& desc)
-	{
-		return RenderStateManager::Instance().CreateBlendState(desc);
-	}
-
-	const SPtr<BlendState>& BlendState::GetDefault()
-	{
-		return RenderStateManager::Instance().GetDefaultBlendState();
-	}
-	}
-}
+		const SPtr<BlendState>& BlendState::GetDefault()
+		{
+			return RenderStateManager::Instance().GetDefaultBlendState();
+		}
+	} // namespace ct
+} // namespace bs

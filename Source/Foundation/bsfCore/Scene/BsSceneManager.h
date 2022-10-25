@@ -19,9 +19,10 @@ namespace bs
 	struct BoundActorData
 	{
 		BoundActorData() = default;
+
 		BoundActorData(const SPtr<SceneActor>& actor, const HSceneObject& so)
-			:Actor(actor), So(so)
-		{ }
+			: Actor(actor), So(so)
+		{}
 
 		SPtr<SceneActor> Actor;
 		HSceneObject So;
@@ -38,29 +39,35 @@ namespace bs
 	/** Contains information about an instantiated scene. */
 	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Scene)) SceneInstance
 	{
-		struct ConstructPrivately {};
+		struct ConstructPrivately
+		{};
+
 	public:
-		SceneInstance(ConstructPrivately dummy, const String& name, const HSceneObject& root,
-			const SPtr<PhysicsScene>& physicsScene);
+		SceneInstance(ConstructPrivately dummy, const String& name, const HSceneObject& root, const SPtr<PhysicsScene>& physicsScene);
 
 		/** Name of the scene. */
-		BS_SCRIPT_EXPORT(ExportName(Name),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Name), Property(Getter))
+
 		const String& GetName() const { return mName; }
 
 		/** Root object of the scene. */
-		BS_SCRIPT_EXPORT(ExportName(Root),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Root), Property(Getter))
+
 		const HSceneObject& GetRoot() const { return mRoot; }
 
 		/** Checks is the scene currently active. IF inactive the scene properties aside from the name are undefined. */
-		BS_SCRIPT_EXPORT(ExportName(IsActive),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(IsActive), Property(Getter))
+
 		bool IsActive() const { return mIsActive; }
 
 		/**
 		 * Physical representation of the scene, as assigned by the physics sub-system. Exact implementation depends on the
 		 * physics plugin used.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(Physics),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Physics), Property(Getter))
+
 		const SPtr<PhysicsScene>& GetPhysicsScene() const { return mPhysicsScene; }
+
 	private:
 		friend class SceneManager;
 
@@ -119,7 +126,7 @@ namespace bs
 		 * @param[in]	activeOnly	If true only active components are returned, otherwise all components are returned.
 		 * @return					A list of all matching components in the scene.
 		 */
-		template<class T>
+		template <class T>
 		Vector<GameObjectHandle<T>> FindComponents(bool activeOnly = true);
 
 		/** Returns all cameras in the scene. */
@@ -192,15 +199,18 @@ namespace bs
 		/** Types of events that represent component state changes relevant to the scene manager. */
 		enum class ComponentStateEventType
 		{
-			Created, Activated, Deactivated, Destroyed
+			Created,
+			Activated,
+			Deactivated,
+			Destroyed
 		};
 
 		/** Describes a single component state change. */
 		struct ComponentStateChange
 		{
 			ComponentStateChange(HComponent obj, ComponentStateEventType type)
-				:Obj(std::move(obj)), Type(type)
-			{ }
+				: Obj(std::move(obj)), Type(type)
+			{}
 
 			HComponent Obj;
 			ComponentStateEventType Type;
@@ -210,11 +220,11 @@ namespace bs
 
 		/**
 		 * Register a new node in the scene manager, on the top-most level of the hierarchy.
-		 * 			
+		 *
 		 * @param[in]	node	Node you wish to add. It's your responsibility not to add duplicate or null nodes. This
 		 *						method won't check.
 		 *
-		 * @note	
+		 * @note
 		 * After you add a node in the scene manager, it takes ownership of its memory and is responsible for releasing it.
 		 * Do NOT add nodes that have already been added (if you just want to change their parent). Normally this
 		 * method will only be called by SceneObject.
@@ -259,8 +269,7 @@ namespace bs
 		Vector<HComponent> mInactiveComponents;
 		Vector<HComponent> mUninitializedComponents;
 
-		std::array<Vector<HComponent>*, 3> mComponentsPerState =
-			{ { &mActiveComponents, &mInactiveComponents, &mUninitializedComponents } };
+		std::array<Vector<HComponent>*, 3> mComponentsPerState = { { &mActiveComponents, &mInactiveComponents, &mUninitializedComponents } };
 
 		SPtr<RenderTarget> mMainRT;
 		HEvent mMainRTResizedConn;
@@ -273,7 +282,7 @@ namespace bs
 	/**	Provides easy access to the SceneManager. */
 	BS_CORE_EXPORT SceneManager& gSceneManager();
 
-	template<class T>
+	template <class T>
 	Vector<GameObjectHandle<T>> SceneManager::FindComponents(bool activeOnly)
 	{
 		u32 rttiId = T::GetRttiStatic()->GetRttiId();
@@ -281,7 +290,7 @@ namespace bs
 		Vector<GameObjectHandle<T>> output;
 		for(auto& entry : mActiveComponents)
 		{
-			if (IsComponentOfType(entry, rttiId))
+			if(IsComponentOfType(entry, rttiId))
 				output.push_back(static_object_cast<T>(entry));
 		}
 
@@ -289,13 +298,13 @@ namespace bs
 		{
 			for(auto& entry : mInactiveComponents)
 			{
-				if (IsComponentOfType(entry, rttiId))
+				if(IsComponentOfType(entry, rttiId))
 					output.push_back(static_object_cast<T>(entry));
 			}
-				
+
 			for(auto& entry : mUninitializedComponents)
 			{
-				if (IsComponentOfType(entry, rttiId))
+				if(IsComponentOfType(entry, rttiId))
 					output.push_back(static_object_cast<T>(entry));
 			}
 		}
@@ -304,4 +313,4 @@ namespace bs
 	}
 
 	/** @} */
-}
+} // namespace bs

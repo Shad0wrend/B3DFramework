@@ -9,7 +9,7 @@ namespace bs
 {
 #if BS_DEBUG_MODE
 	CommandQueueBase::CommandQueueBase(ThreadId threadId)
-		:mMyThreadId(threadId), mMaxDebugIdx(0)
+		: mMyThreadId(threadId), mMaxDebugIdx(0)
 	{
 		mAsyncOpSyncData = bs_shared_ptr_new<AsyncOpSyncData>();
 		mCommands = bs_new<bs::Queue<QueuedCommand>>();
@@ -22,7 +22,7 @@ namespace bs
 	}
 #else
 	CommandQueueBase::CommandQueueBase(ThreadId threadId)
-		:mMyThreadId(threadId)
+		: mMyThreadId(threadId)
 	{
 		mAsyncOpSyncData = bs_shared_ptr_new<AsyncOpSyncData>();
 		mCommands = bs_new<bs::Queue<QueuedCommand>>();
@@ -115,9 +115,8 @@ namespace bs
 
 				if(!command.AsyncOp.HasCompleted())
 				{
-					BS_LOG(Warning, CoreThread,
-						"Async operation return value wasn't resolved properly. Resolving automatically to nullptr. " \
-						"Make sure to complete the operation before returning from the command callback method.");
+					BS_LOG(Warning, CoreThread, "Async operation return value wasn't resolved properly. Resolving automatically to nullptr. "
+												"Make sure to complete the operation before returning from the command callback method.");
 					command.AsyncOp.CompleteOperationInternal(nullptr);
 				}
 			}
@@ -172,8 +171,7 @@ namespace bs
 
 	u32 CommandQueueBase::MaxCommandQueueIdx = 0;
 
-	UnorderedSet<CommandQueueBase::QueueBreakpoint, CommandQueueBase::QueueBreakpoint::HashFunction,
-		CommandQueueBase::QueueBreakpoint::EqualFunction> CommandQueueBase::SetBreakpoints;
+	UnorderedSet<CommandQueueBase::QueueBreakpoint, CommandQueueBase::QueueBreakpoint::HashFunction, CommandQueueBase::QueueBreakpoint::EqualFunction> CommandQueueBase::SetBreakpoints;
 
 	inline size_t CommandQueueBase::QueueBreakpoint::HashFunction::operator()(const QueueBreakpoint& v) const
 	{
@@ -183,7 +181,7 @@ namespace bs
 		return seed;
 	}
 
-	inline bool CommandQueueBase::QueueBreakpoint::EqualFunction::operator()(const QueueBreakpoint &a, const QueueBreakpoint &b) const
+	inline bool CommandQueueBase::QueueBreakpoint::EqualFunction::operator()(const QueueBreakpoint& a, const QueueBreakpoint& b) const
 	{
 		return a.QueueIdx == b.QueueIdx && a.CommandIdx == b.CommandIdx;
 	}
@@ -212,4 +210,4 @@ namespace bs
 		// Do nothing, no breakpoints in release
 	}
 #endif
-}
+} // namespace bs

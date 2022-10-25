@@ -26,7 +26,7 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "SpriteTexture";
 			return name;
@@ -37,29 +37,38 @@ namespace bs
 			return TID_SpriteTexture;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return SpriteTexture::CreateEmpty();
 		}
 
 	private:
-		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context)
 		{
 			SpriteTexture* texture = static_cast<SpriteTexture*>(obj);
 			texture->Initialize();
 		}
 	};
 
-	template<> struct RTTIPlainType<SpriteSheetGridAnimation>
-	{	
-		enum { id = TID_SpriteSheetGridAnimation }; enum { hasDynamicSize = 1 };
+	template <>
+	struct RTTIPlainType<SpriteSheetGridAnimation>
+	{
+		enum
+		{
+			id = TID_SpriteSheetGridAnimation
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		static BitLength ToMemory(const SpriteSheetGridAnimation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr uint32_t VERSION = 0;
 
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				BitLength size = 0;
 				size += rtti_write(VERSION, stream);
 				size += rtti_write(data.NumRows, stream);
@@ -67,8 +76,7 @@ namespace bs
 				size += rtti_write(data.Count, stream);
 				size += rtti_write(data.Fps, stream);
 
-				return size;
-			});
+				return size; });
 		}
 
 		static BitLength FromMemory(SpriteSheetGridAnimation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -82,12 +90,12 @@ namespace bs
 			switch(version)
 			{
 			case 0:
-			{
-				rtti_read(data.NumRows, stream);
-				rtti_read(data.NumColumns, stream);
-				rtti_read(data.Count, stream);
-				rtti_read(data.Fps, stream);
-			}
+				{
+					rtti_read(data.NumRows, stream);
+					rtti_read(data.NumColumns, stream);
+					rtti_read(data.Count, stream);
+					rtti_read(data.Fps, stream);
+				}
 				break;
 			default:
 				BS_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
@@ -104,9 +112,9 @@ namespace bs
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;
-		}	
+		}
 	};
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

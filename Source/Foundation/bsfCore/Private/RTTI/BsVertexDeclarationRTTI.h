@@ -17,7 +17,7 @@ namespace bs
 	 */
 
 	BS_ALLOW_MEMCPY_SERIALIZATION(VertexElement);
-	
+
 	class VertexDeclarationRTTI : public RTTIType<VertexDeclaration, IReflectable, VertexDeclarationRTTI>
 	{
 	private:
@@ -54,23 +54,22 @@ namespace bs
 		{
 			Vector<VertexElement>& elemList = obj->mProperties.mElementList;
 
-			for (size_t i = elemList.size(); i < size; i++)
+			for(size_t i = elemList.size(); i < size; i++)
 				elemList.push_back(VertexElement());
 		}
 
 	public:
 		VertexDeclarationRTTI()
 		{
-			AddPlainArrayField("mElementList", 0, &VertexDeclarationRTTI::GetElement, &VertexDeclarationRTTI::GetElementArraySize,
-				&VertexDeclarationRTTI::SetElement, &VertexDeclarationRTTI::SetElementArraySize);
+			AddPlainArrayField("mElementList", 0, &VertexDeclarationRTTI::GetElement, &VertexDeclarationRTTI::GetElementArraySize, &VertexDeclarationRTTI::SetElement, &VertexDeclarationRTTI::SetElementArraySize);
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return HardwareBufferManager::Instance().CreateVertexDeclaration(VertexDataDesc::Create());
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "VertexDeclaration";
 			return name;
@@ -84,4 +83,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

@@ -26,8 +26,8 @@
  */
 
 /** @defgroup Components-Core Components
-  *	Built-in components (elements that may be attached to scene objects).
-  */
+ *	Built-in components (elements that may be attached to scene objects).
+ */
 
 /** @defgroup CoreThread Core thread
  *	Core objects and interaction with the core (rendering) thread.
@@ -53,29 +53,29 @@
  *	%Physics system: colliders, triggers, rigidbodies, joints, scene queries, etc.
  */
 
- /** @defgroup Profiling Profiling
-  *	Measuring CPU and GPU execution times and memory usage.
-  */
+/** @defgroup Profiling Profiling
+ *	Measuring CPU and GPU execution times and memory usage.
+ */
 
 /** @defgroup RenderAPI RenderAPI
-  *	Interface for interacting with the render API (DirectX, OpenGL, etc.).
-  */
+ *	Interface for interacting with the render API (DirectX, OpenGL, etc.).
+ */
 
 /** @defgroup Renderer Renderer
-  *	Abstract interface and helper functionality for rendering scene objects.
-  */
+ *	Abstract interface and helper functionality for rendering scene objects.
+ */
 
 /** @defgroup Resources Resources
-  *	Core resource types and resource management functionality (loading, saving, etc.).
-  */
+ *	Core resource types and resource management functionality (loading, saving, etc.).
+ */
 
 /** @defgroup Particles Particles
-  *	Emission, updates and rendering of particles in the particle system.
-  */
+ *	Emission, updates and rendering of particles in the particle system.
+ */
 
 /** @defgroup Network Network
-  * Sending and receiving data over the network.
-  */
+ * Sending and receiving data over the network.
+ */
 
 /** @cond RTTI */
 /** @defgroup RTTI-Impl-Core RTTI types
@@ -151,21 +151,21 @@
  *	Interface for interacting with the platform (OS).
  */
 
- /** @defgroup Profiling-Internal Profiling
-  *	Measuring CPU and GPU execution times and memory usage.
-  */
+/** @defgroup Profiling-Internal Profiling
+ *	Measuring CPU and GPU execution times and memory usage.
+ */
 
 /** @defgroup RenderAPI-Internal RenderAPI
-  *	Interface for interacting with the render API (DirectX, OpenGL, etc.).
-  */
+ *	Interface for interacting with the render API (DirectX, OpenGL, etc.).
+ */
 
 /** @defgroup Renderer-Internal Renderer
-  *	Abstract interface and helper functionality for rendering scene objects.
-  */
+ *	Abstract interface and helper functionality for rendering scene objects.
+ */
 
 /** @defgroup Resources-Internal Resources
-  *	Core resource types and resource management functionality (loading, saving, etc.).
-  */
+ *	Core resource types and resource management functionality (loading, saving, etc.).
+ */
 
 /** @defgroup Scene-Internal Scene
  *  Managing scene objects and their hierarchy.
@@ -203,31 +203,31 @@
 
 // DLL export
 #if BS_PLATFORM == BS_PLATFORM_WIN32 // Windows
-#  if BS_COMPILER == BS_COMPILER_MSVC
-#    if defined(BS_STATIC_LIB)
-#      define BS_CORE_EXPORT
-#    else
-#      if defined(BS_CORE_EXPORTS)
-#        define BS_CORE_EXPORT __declspec(dllexport)
-#      else
-#        define BS_CORE_EXPORT __declspec(dllimport)
-#      endif
-#	 endif
-#  else
-#    if defined(BS_STATIC_LIB)
-#      define BS_CORE_EXPORT
-#    else
-#      if defined(BS_CORE_EXPORTS)
-#        define BS_CORE_EXPORT __attribute__ ((dllexport))
-#      else
-#        define BS_CORE_EXPORT __attribute__ ((dllimport))
-#      endif
-#	 endif
-#  endif
-#  define BS_CORE_HIDDEN
+#	if BS_COMPILER == BS_COMPILER_MSVC
+#		if defined(BS_STATIC_LIB)
+#			define BS_CORE_EXPORT
+#		else
+#			if defined(BS_CORE_EXPORTS)
+#				define BS_CORE_EXPORT __declspec(dllexport)
+#			else
+#				define BS_CORE_EXPORT __declspec(dllimport)
+#			endif
+#		endif
+#	else
+#		if defined(BS_STATIC_LIB)
+#			define BS_CORE_EXPORT
+#		else
+#			if defined(BS_CORE_EXPORTS)
+#				define BS_CORE_EXPORT __attribute__((dllexport))
+#			else
+#				define BS_CORE_EXPORT __attribute__((dllimport))
+#			endif
+#		endif
+#	endif
+#	define BS_CORE_HIDDEN
 #else // Linux/Mac settings
-#  define BS_CORE_EXPORT __attribute__ ((visibility ("default")))
-#  define BS_CORE_HIDDEN __attribute__ ((visibility ("hidden")))
+#	define BS_CORE_EXPORT __attribute__((visibility("default")))
+#	define BS_CORE_HIDDEN __attribute__((visibility("hidden")))
 #endif
 
 #include "Localization/BsHString.h"
@@ -236,19 +236,33 @@
 namespace bs
 {
 	// Core objects
-	template<class T>
+	template <class T>
 	struct CoreThreadType
-	{ };
+	{};
 
-#define CORE_OBJECT_FORWARD_DECLARE(TYPE)				\
-	class TYPE;											\
-	namespace ct { class TYPE; }						\
-	template<> struct CoreThreadType<TYPE> { typedef ct::TYPE Type; };
+#define CORE_OBJECT_FORWARD_DECLARE(TYPE) \
+	class TYPE;                           \
+	namespace ct                          \
+	{                                     \
+		class TYPE;                       \
+	}                                     \
+	template <>                           \
+	struct CoreThreadType<TYPE>           \
+	{                                     \
+		typedef ct::TYPE Type;            \
+	};
 
-#define CORE_OBJECT_FORWARD_DECLARE_STRUCT(TYPE)		\
-	struct TYPE;										\
-	namespace ct { struct TYPE; }						\
-	template<> struct CoreThreadType<TYPE> { typedef ct::TYPE Type; };
+#define CORE_OBJECT_FORWARD_DECLARE_STRUCT(TYPE) \
+	struct TYPE;                                 \
+	namespace ct                                 \
+	{                                            \
+		struct TYPE;                             \
+	}                                            \
+	template <>                                  \
+	struct CoreThreadType<TYPE>                  \
+	{                                            \
+		typedef ct::TYPE Type;                   \
+	};
 
 	CORE_OBJECT_FORWARD_DECLARE(IndexBuffer)
 	CORE_OBJECT_FORWARD_DECLARE(VertexBuffer)
@@ -310,13 +324,17 @@ namespace bs
 	class LightProbeVolume;
 
 	// Components
-	template<class T>
+	template <class T>
 	struct ComponentType
-	{ };
+	{};
 
-#define COMPONENT_FORWARD_DECLARE(TYPE)								\
-	class C##TYPE;													\
-	template<> struct ComponentType<TYPE> { typedef C##TYPE Type; };
+#define COMPONENT_FORWARD_DECLARE(TYPE) \
+	class C##TYPE;                      \
+	template <>                         \
+	struct ComponentType<TYPE>          \
+	{                                   \
+		typedef C##TYPE Type;           \
+	};
 
 	COMPONENT_FORWARD_DECLARE(Collider)
 	COMPONENT_FORWARD_DECLARE(Rigidbody)
@@ -402,7 +420,8 @@ namespace bs
 	class AudioClipImportOptions;
 	class AnimationClip;
 	class GpuPipelineParamInfo;
-	template <class T> class TAnimationCurve;
+	template <class T>
+	class TAnimationCurve;
 	struct AnimationCurves;
 	class Skeleton;
 	class MorphShapes;
@@ -455,7 +474,7 @@ namespace bs
 	struct D6_JOINT_DESC;
 	struct AUDIO_CLIP_DESC;
 
-	template<class T>
+	template <class T>
 	class TCoreThreadQueue;
 	class CommandQueueNoSync;
 	class CommandQueueSync;
@@ -479,8 +498,8 @@ namespace bs
 		class RenderWindowManager;
 		class RenderStateManager;
 		class HardwareBufferManager;
-	}
-}
+	} // namespace ct
+} // namespace bs
 
 /************************************************************************/
 /* 									RTTI                      			*/
@@ -678,7 +697,7 @@ namespace bs
 		TID_Light = 30011,
 		TID_CLight = 30012,
 	};
-}
+} // namespace bs
 
 /************************************************************************/
 /* 							Resource references                   		*/
@@ -709,7 +728,7 @@ namespace bs
 	typedef ResourceHandle<VectorField> HVectorField;
 
 	/** @} */
-}
+} // namespace bs
 
 #include "Scene/BsGameObjectHandle.h"
 
@@ -752,15 +771,15 @@ namespace bs
 	typedef GameObjectHandle<CDecal> HDecal;
 
 	/** @} */
-}
+} // namespace bs
 
 namespace bs
 {
 	/**
 	 * Defers function execution until the next frame. If this function is called within another deferred call, then it will
 	 * be executed the same frame, but only after all existing deferred calls are done.
-	 * 			
-	 * @note	
+	 *
+	 * @note
 	 * This method can be used for breaking dependencies among other things. If a class A depends on class B having
 	 * something done, but class B also depends in some way on class A, you can break up the initialization into two
 	 * separate steps, queuing the second step using this method.
@@ -797,40 +816,56 @@ namespace bs
 		}
 	};
 
-	#define BS_ALL_LAYERS 0xFFFFFFFFFFFFFFFF
+#define BS_ALL_LAYERS 0xFFFFFFFFFFFFFFFF
 
 	/** Used for marking a CoreObject dependency as dirty. */
 	static constexpr i32 DIRTY_DEPENDENCY_MASK = 1 << 31;
 
-	template<class T, bool Core>
-	struct CoreVariant { };
+	template <class T, bool Core>
+	struct CoreVariant
+	{};
 
-	template<class T>
-	struct CoreVariant<T, false> { typedef T Type; };
+	template <class T>
+	struct CoreVariant<T, false>
+	{
+		typedef T Type;
+	};
 
-	template<class T> struct CoreVariant<T, true> { typedef typename CoreThreadType<T>::Type Type; };
+	template <class T>
+	struct CoreVariant<T, true>
+	{
+		typedef typename CoreThreadType<T>::Type Type;
+	};
 
 	/**
 	 * Allows a simple way to define a member that can be both CoreObject variants depending on the Core template
 	 * parameter.
 	 */
-	template<class T, bool Core>
+	template <class T, bool Core>
 	using CoreVariantType = typename CoreVariant<T, Core>::Type;
 
-	template<class T, bool Core>
-	struct CoreVariantHandle { };
+	template <class T, bool Core>
+	struct CoreVariantHandle
+	{};
 
-	template<class T>
-	struct CoreVariantHandle<T, false> { typedef ResourceHandle<T> Type; };
+	template <class T>
+	struct CoreVariantHandle<T, false>
+	{
+		typedef ResourceHandle<T> Type;
+	};
 
-	template<class T> struct CoreVariantHandle<T, true> { typedef SPtr<typename CoreThreadType<T>::Type> Type; };
+	template <class T>
+	struct CoreVariantHandle<T, true>
+	{
+		typedef SPtr<typename CoreThreadType<T>::Type> Type;
+	};
 
 	/**
 	 * Allows a simple way to define a member that can be both CoreObject variants depending on the Core template
 	 * parameter. Sim thread type is wrapped in as a resource handle while the core thread variant is wrapped in a shared
 	 * pointer.
 	 */
-	template<class T, bool Core>
+	template <class T, bool Core>
 	using CoreVariantHandleType = typename CoreVariantHandle<T, Core>::Type;
 
 	/** Flags that are provided to the serialization system to control serialization/deserialization. */
@@ -847,7 +882,7 @@ namespace bs
 	};
 
 	/** Helper type that can contain either a component or scene actor version of an object. */
-	template<class T>
+	template <class T>
 	struct ComponentOrActor
 	{
 		using ComponentType = typename ComponentType<T>::Type;
@@ -856,12 +891,12 @@ namespace bs
 		ComponentOrActor() = default;
 
 		ComponentOrActor(const GameObjectHandle<ComponentType>& component)
-			:mComponent(component)
-		{ }
+			: mComponent(component)
+		{}
 
 		ComponentOrActor(const SPtr<T>& actor)
-			:mActor(actor)
-		{ }
+			: mActor(actor)
+		{}
 
 		/** Returns true if both the component and the actor fields are not assigned. */
 		bool Empty() const
@@ -909,6 +944,6 @@ namespace bs
 	BS_LOG_CATEGORY(Script, 37)
 	BS_LOG_CATEGORY(Importer, 38)
 	BS_LOG_CATEGORY(Network, 39)
-}
+} // namespace bs
 
 #include "Utility/BsCommonTypes.h"

@@ -17,17 +17,17 @@ namespace bs
 	 *
 	 * @note	Wraps SphericalJoint as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportName(SphericalJoint)) CSphericalJoint : public CJoint
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(SphericalJoint)) CSphericalJoint : public CJoint
 	{
 	public:
 		CSphericalJoint(const HSceneObject& parent);
 
 		/** @copydoc SphericalJoint::getLimit */
-		BS_SCRIPT_EXPORT(ExportName(Limit),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Limit), Property(Getter))
 		LimitConeRange GetLimit() const;
 
 		/** @copydoc SphericalJoint::setLimit */
-		BS_SCRIPT_EXPORT(ExportName(Limit),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Limit), Property(Setter))
 		void SetLimit(const LimitConeRange& limit);
 
 		/** @copydoc SphericalJoint::setFlag */
@@ -54,7 +54,7 @@ namespace bs
 		friend class SceneObject;
 
 		/** @copydoc CJoint::createInternal */
-		SPtr<Joint> CreateInternal() ;
+		SPtr<Joint> CreateInternal();
 
 		SPHERICAL_JOINT_DESC mDesc;
 
@@ -64,11 +64,11 @@ namespace bs
 	public:
 		friend class CSphericalJointRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 
 	protected:
 		CSphericalJoint(); // Serialization only
 	};
 
-	 /** @} */
-}
+	/** @} */
+} // namespace bs

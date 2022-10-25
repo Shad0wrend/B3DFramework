@@ -28,7 +28,7 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "TextureImportOptions";
 			return name;
@@ -39,7 +39,7 @@ namespace bs
 			return TID_TextureImportOptions;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<TextureImportOptions>();
 		}
@@ -47,4 +47,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

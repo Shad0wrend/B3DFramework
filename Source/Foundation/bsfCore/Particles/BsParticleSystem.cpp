@@ -49,8 +49,8 @@ namespace bs
 		p(Mesh);
 	}
 
-	template<bool Core>
-	template<class P>
+	template <bool Core>
+	template <class P>
 	void TParticleVectorFieldSettings<Core>::RttiEnumFields(P p)
 	{
 		p(Intensity);
@@ -75,7 +75,7 @@ namespace bs
 		return GetRttiStatic();
 	}
 
-	template<class P>
+	template <class P>
 	void ParticleDepthCollisionSettings::RttiEnumFields(P p)
 	{
 		p(Enabled);
@@ -94,8 +94,8 @@ namespace bs
 		return GetRttiStatic();
 	}
 
-	template<bool Core>
-	template<class P>
+	template <bool Core>
+	template <class P>
 	void TParticleGpuSimulationSettings<Core>::RttiEnumFields(P p)
 	{
 		p(ColorOverLifetime);
@@ -138,7 +138,7 @@ namespace bs
 		if(mParticleSet)
 			bs_delete(mParticleSet);
 	}
-		
+
 	void ParticleSystem::SetSettings(const ParticleSystemSettings& settings)
 	{
 		if(settings.UseAutomaticSeed != mSettings.UseAutomaticSeed)
@@ -177,7 +177,7 @@ namespace bs
 	{
 		const bool isPow2 = layer && !((layer - 1) & layer);
 
-		if (!isPow2)
+		if(!isPow2)
 		{
 			BS_LOG(Warning, Particles, "Invalid layer provided. Only one layer bit may be set. Ignoring.");
 			return;
@@ -185,7 +185,7 @@ namespace bs
 
 		mLayer = layer;
 		MarkCoreDirtyInternal();
-	}	
+	}
 
 	void ParticleSystem::SetEmitters(const Vector<SPtr<ParticleEmitter>>& emitters)
 	{
@@ -197,17 +197,15 @@ namespace bs
 	{
 		mEvolvers = evolvers;
 
-		std::sort(mEvolvers.begin(), mEvolvers.end(),
-			[](const SPtr<ParticleEvolver>& a, const SPtr<ParticleEvolver>& b)
-		{
+		std::sort(mEvolvers.begin(), mEvolvers.end(), [](const SPtr<ParticleEvolver>& a, const SPtr<ParticleEvolver>& b)
+				  {
 			i32 priorityA = a ? a->GetProperties().Priority : 0;
 			i32 priorityB = b ? b->GetProperties().Priority : 0;
 
 			if (priorityA == priorityB)
 				return a > b; // Use address, at this point it doesn't matter, but sorting requires us to differentiate
 			else
-				return priorityA > priorityB;
-		});
+				return priorityA > priorityB; });
 
 		MarkCoreDirtyInternal();
 	}
@@ -295,15 +293,14 @@ namespace bs
 		mTime = newTime;
 	}
 
-	void ParticleSystem::PreSimulate(const ParticleSystemState& state, u32 startIdx, u32 count, bool spacing,
-		float spacingOffset)
+	void ParticleSystem::PreSimulate(const ParticleSystemState& state, u32 startIdx, u32 count, bool spacing, float spacingOffset)
 	{
 		const ParticleSetData& particles = mParticleSet->GetParticles();
 		const float subFrameSpacing = (spacing && count > 0) ? 1.0f / count : 1.0f;
 		const u32 endIdx = startIdx + count;
 
 		// Decrement lifetime
-		for (u32 i = startIdx; i < endIdx; i++)
+		for(u32 i = startIdx; i < endIdx; i++)
 		{
 			float timeStep = state.TimeStep;
 			if(spacing)
@@ -319,10 +316,10 @@ namespace bs
 
 		// Kill expired particles
 		u32 numParticles = count;
-		for (u32 i = 0; i < numParticles;)
+		for(u32 i = 0; i < numParticles;)
 		{
 			const u32 particleIdx = startIdx + i;
-			if (particles.Lifetime[particleIdx] <= 0.0f)
+			if(particles.Lifetime[particleIdx] <= 0.0f)
 			{
 				mParticleSet->FreeParticle(particleIdx);
 				numParticles--;
@@ -332,7 +329,7 @@ namespace bs
 		}
 
 		// Remember old positions
-		for (u32 i = startIdx; i < endIdx; i++)
+		for(u32 i = startIdx; i < endIdx; i++)
 			particles.PrevPosition[i] = particles.Position[i];
 
 		// Evolve pre-simulation
@@ -342,21 +339,20 @@ namespace bs
 				continue;
 
 			const ParticleEvolverProperties& props = evolver->GetProperties();
-			if (props.Priority < 0)
+			if(props.Priority < 0)
 				break;
 
 			evolver->Evolve(mRandom, state, *mParticleSet, startIdx, count, spacing, spacingOffset);
 		}
 	}
 
-	void ParticleSystem::Simulate(const ParticleSystemState& state, u32 startIdx, u32 count, bool spacing,
-		float spacingOffset)
+	void ParticleSystem::Simulate(const ParticleSystemState& state, u32 startIdx, u32 count, bool spacing, float spacingOffset)
 	{
 		const ParticleSetData& particles = mParticleSet->GetParticles();
 		const float subFrameSpacing = (spacing && count > 0) ? 1.0f / count : 1.0f;
 		const u32 endIdx = startIdx + count;
 
-		for (u32 i = startIdx; i < endIdx; i++)
+		for(u32 i = startIdx; i < endIdx; i++)
 		{
 			float timeStep = state.TimeStep;
 			if(spacing)
@@ -370,8 +366,7 @@ namespace bs
 		}
 	}
 
-	void ParticleSystem::PostSimulate(const ParticleSystemState& state, u32 startIdx, u32 count, bool spacing,
-		float spacingOffset)
+	void ParticleSystem::PostSimulate(const ParticleSystemState& state, u32 startIdx, u32 count, bool spacing, float spacingOffset)
 	{
 		// Evolve post-simulation
 		for(auto& evolver : mEvolvers)
@@ -429,7 +424,7 @@ namespace bs
 
 	SPtr<ct::CoreObject> ParticleSystem::CreateCore() const
 	{
-		ct::ParticleSystem* rawPtr = new (bs_alloc<ct::ParticleSystem>()) ct::ParticleSystem(mId);
+		ct::ParticleSystem* rawPtr = new(bs_alloc<ct::ParticleSystem>()) ct::ParticleSystem(mId);
 		SPtr<ct::ParticleSystem> ptr = bs_shared_ptr<ct::ParticleSystem>(rawPtr);
 		ptr->SetThisPtrInternal(ptr);
 
@@ -462,10 +457,10 @@ namespace bs
 
 	void ParticleSystem::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 	{
-		if (mSettings.Mesh.IsLoaded())
+		if(mSettings.Mesh.IsLoaded())
 			dependencies.push_back(mSettings.Mesh.Get());
 
-		if (mSettings.Material.IsLoaded())
+		if(mSettings.Material.IsLoaded())
 			dependencies.push_back(mSettings.Material.Get());
 	}
 
@@ -479,7 +474,7 @@ namespace bs
 
 	SPtr<ParticleSystem> ParticleSystem::CreateEmpty()
 	{
-		ParticleSystem* rawPtr = new (bs_alloc<ParticleSystem>()) ParticleSystem();
+		ParticleSystem* rawPtr = new(bs_alloc<ParticleSystem>()) ParticleSystem();
 		SPtr<ParticleSystem> ptr = bs_core_ptr<ParticleSystem>(rawPtr);
 		ptr->SetThisPtrInternal(ptr);
 
@@ -513,7 +508,7 @@ namespace bs
 		{
 			const bool isPow2 = layer && !((layer - 1) & layer);
 
-			if (!isPow2)
+			if(!isPow2)
 			{
 				BS_LOG(Warning, Particles, "Invalid layer provided. Only one layer bit may be set. Ignoring.");
 				return;
@@ -535,16 +530,14 @@ namespace bs
 			csync_read(mSettings, stream);
 			csync_read(mGpuSimulationSettings, stream);
 			rtti_read(mLayer, stream);
-			
-			constexpr u32 updateEverythingFlag = (u32)ActorDirtyFlag::Everything
-				| (u32)ActorDirtyFlag::Active
-				| (u32)ActorDirtyFlag::Dependency;
 
-			if ((dirtyFlags & updateEverythingFlag) != 0)
+			constexpr u32 updateEverythingFlag = (u32)ActorDirtyFlag::Everything | (u32)ActorDirtyFlag::Active | (u32)ActorDirtyFlag::Dependency;
+
+			if((dirtyFlags & updateEverythingFlag) != 0)
 			{
-				if (oldIsActive != mActive)
+				if(oldIsActive != mActive)
 				{
-					if (mActive)
+					if(mActive)
 						gRenderer()->NotifyParticleSystemAdded(this);
 					else
 						gRenderer()->NotifyParticleSystemRemoved(this);
@@ -555,8 +548,8 @@ namespace bs
 						gRenderer()->NotifyParticleSystemUpdated(this, false);
 				}
 			}
-			else if ((dirtyFlags & ((u32)ActorDirtyFlag::Mobility | (u32)ActorDirtyFlag::Transform)) != 0)
+			else if((dirtyFlags & ((u32)ActorDirtyFlag::Mobility | (u32)ActorDirtyFlag::Transform)) != 0)
 				gRenderer()->NotifyParticleSystemUpdated(this, true);
 		}
-	}
-}
+	} // namespace ct
+} // namespace bs

@@ -37,7 +37,12 @@ namespace bs
 		/** Types of GPU parameters. */
 		enum class ParamType
 		{
-			ParamBlock, Texture, LoadStoreTexture, Buffer, SamplerState, Count
+			ParamBlock,
+			Texture,
+			LoadStoreTexture,
+			Buffer,
+			SamplerState,
+			Count
 		};
 
 		/** Constructs the object using the provided GPU parameter descriptors. */
@@ -69,13 +74,13 @@ namespace bs
 		 * Finds set/slot indices of a parameter with the specified name for the specified GPU program stage. Set/slot
 		 * indices are set to -1 if a stage doesn't have a block with the specified name.
 		 */
-		void GetBinding(GpuProgramType progType, ParamType type, const String& name, GpuParamBinding &binding);
+		void GetBinding(GpuProgramType progType, ParamType type, const String& name, GpuParamBinding& binding);
 
 		/**
 		 * Finds set/slot indices of a parameter with the specified name for every GPU program stage. Set/slot indices are
 		 * set to -1 if a stage doesn't have a block with the specified name.
 		 */
-		void GetBindings(ParamType type, const String& name, GpuParamBinding(&bindings)[GPT_COUNT]);
+		void GetBindings(ParamType type, const String& name, GpuParamBinding (&bindings)[GPT_COUNT]);
 
 		/** Returns descriptions of individual parameters for the specified GPU program type. */
 		const SPtr<GpuParamDesc>& GetParamDesc(GpuProgramType type) const { return mParamDescs[(int)type]; }
@@ -96,7 +101,7 @@ namespace bs
 			u32 Set;
 			u32 Slot;
 		};
-		
+
 		std::array<SPtr<GpuParamDesc>, 6> mParamDescs;
 
 		u32 mNumSets;
@@ -132,30 +137,29 @@ namespace bs
 		GpuPipelineParamInfo(const GPU_PIPELINE_PARAMS_DESC& desc);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 	};
 
 	namespace ct
 	{
-	/** Core thread version of a bs::GpuPipelineParamInfo. */
-	class BS_CORE_EXPORT GpuPipelineParamInfo : public CoreObject, public GpuPipelineParamInfoBase
-	{
-	public:
-		virtual ~GpuPipelineParamInfo() = default;
+		/** Core thread version of a bs::GpuPipelineParamInfo. */
+		class BS_CORE_EXPORT GpuPipelineParamInfo : public CoreObject, public GpuPipelineParamInfoBase
+		{
+		public:
+			virtual ~GpuPipelineParamInfo() = default;
 
-		/**
-		 * @copydoc bs::GpuPipelineParamInfo::create
-		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the buffer be created on.
-		 */
-		static SPtr<GpuPipelineParamInfo> Create(const GPU_PIPELINE_PARAMS_DESC& desc,
-													 GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			/**
+			 * @copydoc bs::GpuPipelineParamInfo::create
+			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the buffer be created on.
+			 */
+			static SPtr<GpuPipelineParamInfo> Create(const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
-	protected:
-		friend class RenderStateManager;
+		protected:
+			friend class RenderStateManager;
 
-		GpuPipelineParamInfo(const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask);
-	};
-	}
+			GpuPipelineParamInfo(const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask);
+		};
+	} // namespace ct
 
 	/** @} */
-}
+} // namespace bs

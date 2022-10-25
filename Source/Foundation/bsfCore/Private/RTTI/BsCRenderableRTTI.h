@@ -18,6 +18,7 @@ namespace bs
 	{
 	private:
 		SPtr<Renderable> GetInternal(CRenderable* obj) { return obj->mInternal; }
+
 		void SetInternal(CRenderable* obj, SPtr<Renderable> val) { obj->mInternal = val; }
 
 	public:
@@ -45,4 +46,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

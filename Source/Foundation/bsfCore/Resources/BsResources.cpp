@@ -36,7 +36,7 @@ namespace bs
 
 	HResource Resources::Load(const Path& filePath, ResourceLoadFlags loadFlags)
 	{
-		if (!FileSystem::IsFile(filePath))
+		if(!FileSystem::IsFile(filePath))
 		{
 			BS_LOG(Warning, Resources, "Cannot load resource. Specified file: {0} doesn't exist.", filePath);
 			return HResource();
@@ -45,7 +45,7 @@ namespace bs
 		UUID uuid;
 		bool foundUUID = GetUuidFromFilePath(filePath, uuid);
 
-		if (!foundUUID)
+		if(!foundUUID)
 			uuid = UUIDGenerator::GenerateRandom();
 
 		return LoadInternal(uuid, filePath, true, loadFlags).Resource;
@@ -53,7 +53,7 @@ namespace bs
 
 	HResource Resources::Load(const WeakResourceHandle<Resource>& handle, ResourceLoadFlags loadFlags)
 	{
-		if (handle.mData == nullptr)
+		if(handle.mData == nullptr)
 			return HResource();
 
 		UUID uuid = handle.GetUuid();
@@ -62,7 +62,7 @@ namespace bs
 
 	HResource Resources::LoadAsync(const Path& filePath, ResourceLoadFlags loadFlags)
 	{
-		if (!FileSystem::IsFile(filePath))
+		if(!FileSystem::IsFile(filePath))
 		{
 			BS_LOG(Warning, Resources, "Cannot load resource. Specified file: '{0}' doesn't exist.", filePath);
 			return HResource();
@@ -71,7 +71,7 @@ namespace bs
 		UUID uuid;
 		bool foundUUID = GetUuidFromFilePath(filePath, uuid);
 
-		if (!foundUUID)
+		if(!foundUUID)
 			uuid = UUIDGenerator::GenerateRandom();
 
 		return LoadInternal(uuid, filePath, false, loadFlags).Resource;
@@ -85,8 +85,7 @@ namespace bs
 		return LoadInternal(uuid, filePath, !async, loadFlags).Resource;
 	}
 
-	Resources::LoadInfo Resources::LoadInternal(const UUID& uuid, const Path& filePath, bool synchronous,
-		ResourceLoadFlags loadFlags)
+	Resources::LoadInfo Resources::LoadInternal(const UUID& uuid, const Path& filePath, bool synchronous, ResourceLoadFlags loadFlags)
 	{
 		LoadInfo output;
 
@@ -103,7 +102,7 @@ namespace bs
 			Lock loadedLock(mLoadedResourceMutex);
 
 			auto iterFind2 = mInProgressResources.find(uuid);
-			if (iterFind2 != mInProgressResources.end())
+			if(iterFind2 != mInProgressResources.end())
 			{
 				LoadedResourceData& resData = iterFind2->second->ResData;
 				output.Resource = resData.Resource.Lock();
@@ -111,7 +110,7 @@ namespace bs
 				output.Size = resData.Size;
 
 				// Increase ref. count
-				if (loadFlags.IsSet(ResourceLoadFlag::KeepInternalRef))
+				if(loadFlags.IsSet(ResourceLoadFlag::KeepInternalRef))
 				{
 					resData.NumInternalRefs++;
 					output.Resource.AddInternalRef();
@@ -123,7 +122,7 @@ namespace bs
 
 			// Check if the resource is already loaded
 			auto iterFind = mLoadedResources.find(uuid);
-			if (iterFind != mLoadedResources.end())
+			if(iterFind != mLoadedResources.end())
 			{
 				LoadedResourceData& resData = iterFind->second;
 				output.Resource = resData.Resource.Lock();
@@ -131,7 +130,7 @@ namespace bs
 				output.Size = resData.Size;
 
 				// Increase ref. count
-				if (loadFlags.IsSet(ResourceLoadFlag::KeepInternalRef))
+				if(loadFlags.IsSet(ResourceLoadFlag::KeepInternalRef))
 				{
 					resData.NumInternalRefs++;
 					output.Resource.AddInternalRef();
@@ -147,7 +146,7 @@ namespace bs
 				output.Size = 0;
 
 				auto iterFind = mHandles.find(uuid);
-				if (iterFind != mHandles.end())
+				if(iterFind != mHandles.end())
 					output.Resource = iterFind->second.Lock();
 				else
 				{
@@ -158,15 +157,15 @@ namespace bs
 
 			// If we have nowhere to load from, warn and complete load if a file path was provided, otherwise pass through
 			// as we might just want to complete a previously queued load
-			if (filePath.IsEmpty())
+			if(filePath.IsEmpty())
 			{
-				if (!alreadyLoading)
+				if(!alreadyLoading)
 				{
 					BS_LOG(Verbose, Resources, "Cannot load resource. Resource with UUID '{0}' doesn't exist.", uuid);
 					loadFailed = true;
 				}
 			}
-			else if (!FileSystem::IsFile(filePath))
+			else if(!FileSystem::IsFile(filePath))
 			{
 				BS_LOG(Verbose, Resources, "Cannot load resource. Specified file: '{0}' doesn't exist.", filePath);
 				loadFailed = true;
@@ -177,7 +176,7 @@ namespace bs
 			{
 				// Load dependency data if a file path is provided
 				SPtr<SavedResourceData> savedResourceData;
-				if (!filePath.IsEmpty())
+				if(!filePath.IsEmpty())
 				{
 					// Note: Ideally this data gets cached eventually (e.g. as part of the manifest). When loading objects
 					// with a lot of dependencies (e.g. scenes) this will get called for every dependency, synchronously,
@@ -195,7 +194,7 @@ namespace bs
 					ResourceLoadData* loadData = bs_new<ResourceLoadData>(output.Resource.GetWeak(), 0, output.Size);
 					mInProgressResources[uuid] = loadData;
 
-					if (loadFlags.IsSet(ResourceLoadFlag::KeepInternalRef))
+					if(loadFlags.IsSet(ResourceLoadFlag::KeepInternalRef))
 					{
 						loadData->ResData.NumInternalRefs++;
 						output.Resource.AddInternalRef();
@@ -208,11 +207,11 @@ namespace bs
 					loadData->NotifyImmediately = synchronous && BS_THREAD_CURRENT_ID == gCoreApplication().GetSimThreadId();
 
 					// Register dependencies and count them so we know when the resource is fully loaded
-					if (loadDependencies && savedResourceData != nullptr)
+					if(loadDependencies && savedResourceData != nullptr)
 					{
-						for (auto& dependency : savedResourceData->GetDependencies())
+						for(auto& dependency : savedResourceData->GetDependencies())
 						{
-							if (dependency != uuid)
+							if(dependency != uuid)
 							{
 								mDependantLoads[dependency].push_back(loadData);
 								loadData->RemainingDependencies++;
@@ -225,12 +224,12 @@ namespace bs
 				else if(loadDependencies && savedResourceData != nullptr)
 				{
 					const Vector<UUID>& dependencies = savedResourceData->GetDependencies();
-					if (!dependencies.empty())
+					if(!dependencies.empty())
 					{
 						ResourceLoadData* loadData = nullptr;
 
 						// If load not in progress, register the resource for load
-						if (!loadInProgress)
+						if(!loadInProgress)
 						{
 							loadData = bs_new<ResourceLoadData>(output.Resource.GetWeak(), 0, output.Size);
 							loadData->RemainingDependencies = 0;
@@ -243,9 +242,9 @@ namespace bs
 							loadData = mInProgressResources[uuid];
 
 						// Find dependencies that aren't already loaded or queued for loading
-						for (auto& dependency : dependencies)
+						for(auto& dependency : dependencies)
 						{
-							if (dependency != uuid)
+							if(dependency != uuid)
 							{
 								bool registerDependency = false;
 
@@ -255,20 +254,17 @@ namespace bs
 									registerDependency = true;
 
 									auto iterFind2 = mDependantLoads.find(dependency);
-									if (iterFind2 != mDependantLoads.end())
+									if(iterFind2 != mDependantLoads.end())
 									{
 										Vector<ResourceLoadData*>& dependantData = iterFind2->second;
-										auto iterFind3 = std::find_if(dependantData.begin(), dependantData.end(),
-											[&](ResourceLoadData* x)
-										{
-											return x->ResData.Resource.GetUuid() == output.Resource.GetUuid();
-										});
+										auto iterFind3 = std::find_if(dependantData.begin(), dependantData.end(), [&](ResourceLoadData* x)
+																	  { return x->ResData.Resource.GetUuid() == output.Resource.GetUuid(); });
 
 										registerDependency = iterFind3 == dependantData.end();
 									}
 								}
 
-								if (registerDependency)
+								if(registerDependency)
 								{
 									mDependantLoads[dependency].push_back(loadData);
 									loadData->RemainingDependencies++;
@@ -310,12 +306,12 @@ namespace bs
 		if(numDependencies > 0)
 		{
 			ResourceLoadFlags depLoadFlags = ResourceLoadFlag::LoadDependencies;
-			if (loadFlags.IsSet(ResourceLoadFlag::KeepSourceData))
+			if(loadFlags.IsSet(ResourceLoadFlag::KeepSourceData))
 				depLoadFlags |= ResourceLoadFlag::KeepSourceData;
 
 			Vector<HResource> dependencies(numDependencies);
 			u32 dependencySize = 0;
-			for (u32 i = 0; i < numDependencies; i++)
+			for(u32 i = 0; i < numDependencies; i++)
 			{
 				const UUID& depUUID = dependenciesToLoad[i];
 
@@ -360,9 +356,9 @@ namespace bs
 			Lock inProgressLock(mInProgressResourcesMutex);
 
 			const auto iterFind = mInProgressResources.find(uuid);
-			if (iterFind != mInProgressResources.end())
+			if(iterFind != mInProgressResources.end())
 			{
-				if (iterFind->second->LoadStarted)
+				if(iterFind->second->LoadStarted)
 				{
 					waitOnLoadInProgress = true;
 					loadTask = iterFind->second->Task;
@@ -373,7 +369,7 @@ namespace bs
 		}
 
 		// Previously being loaded as async but now we want it synced, so we wait
-		if (loadInProgress && synchronous && waitOnLoadInProgress)
+		if(loadInProgress && synchronous && waitOnLoadInProgress)
 		{
 			if(loadTask)
 				loadTask->Wait();
@@ -382,10 +378,10 @@ namespace bs
 		}
 
 		// Actually start the file read operation if not already loaded or in progress
-		if (initiateLoad)
+		if(initiateLoad)
 		{
 			// Synchronous or the resource doesn't support async, read the file immediately
-			if (synchronous)
+			if(synchronous)
 			{
 				LoadCallback(filePath, output.Resource, loadFlags.IsSet(ResourceLoadFlag::KeepSourceData));
 			}
@@ -395,15 +391,14 @@ namespace bs
 				String taskName = "Resource load: " + fileName;
 
 				bool keepSourceData = loadFlags.IsSet(ResourceLoadFlag::KeepSourceData);
-				SPtr<Task> task = Task::Create(taskName,
-					std::bind(&Resources::LoadCallback, this, filePath, output.Resource, keepSourceData));
+				SPtr<Task> task = Task::Create(taskName, std::bind(&Resources::LoadCallback, this, filePath, output.Resource, keepSourceData));
 
 				// Register the task
 				{
 					Lock inProgressLock(mInProgressResourcesMutex);
 
 					const auto iterFind = mInProgressResources.find(uuid);
-					if (iterFind != mInProgressResources.end())
+					if(iterFind != mInProgressResources.end())
 						iterFind->second->Task = task;
 
 					TaskScheduler::Instance().AddTask(task);
@@ -423,19 +418,17 @@ namespace bs
 		return output;
 	}
 
-	SPtr<Resource> Resources::LoadFromDiskAndDeserialize(const Path& filePath, bool loadWithSaveData,
-		std::atomic<float>& progress)
+	SPtr<Resource> Resources::LoadFromDiskAndDeserialize(const Path& filePath, bool loadWithSaveData, std::atomic<float>& progress)
 	{
 		Lock fileLock = FileScheduler::GetLock(filePath);
 
 		SPtr<DataStream> stream = FileSystem::OpenFile(filePath, true);
-		if (stream == nullptr)
+		if(stream == nullptr)
 			return nullptr;
 
-		if (stream->Size() > std::numeric_limits<u32>::max())
+		if(stream->Size() > std::numeric_limits<u32>::max())
 		{
-			BS_EXCEPT(InternalErrorException,
-				"File size is larger that u32 can hold. Ask a programmer to use a bigger data type.");
+			BS_EXCEPT(InternalErrorException, "File size is larger that u32 can hold. Ask a programmer to use a bigger data type.");
 		}
 
 		CoreSerializationContext serzContext;
@@ -444,7 +437,7 @@ namespace bs
 		// Read meta-data
 		SPtr<SavedResourceData> metaData;
 		{
-			if (!stream->Eof())
+			if(!stream->Eof())
 			{
 				u32 objectSize = 0;
 				stream->Read(&objectSize, sizeof(objectSize));
@@ -462,37 +455,29 @@ namespace bs
 				u32 objectSize = 0;
 				stream->Read(&objectSize, sizeof(objectSize));
 
-				if (metaData->GetCompressionMethod() != 0)
+				if(metaData->GetCompressionMethod() != 0)
 				{
 					stream = Compression::Decompress(stream, [&progress](float val)
-					{
-						progress.exchange(val * 0.9f, std::memory_order_relaxed);
-					});
+													 { progress.exchange(val * 0.9f, std::memory_order_relaxed); });
 
 					BinarySerializer bs;
-					loadedData = bs.Decode(stream, objectSize, BinarySerializerFlag::None, &serzContext,
-						[&progress](float val)
-					{
-						progress.exchange(0.9f + val * 0.1f, std::memory_order_relaxed);
-					});
+					loadedData = bs.Decode(stream, objectSize, BinarySerializerFlag::None, &serzContext, [&progress](float val)
+										   { progress.exchange(0.9f + val * 0.1f, std::memory_order_relaxed); });
 				}
 				else
 				{
 					BinarySerializer bs;
-					loadedData = bs.Decode(stream, objectSize, BinarySerializerFlag::None, &serzContext,
-						[&progress](float val)
-					{
-						progress.exchange(val, std::memory_order_relaxed);
-					});
+					loadedData = bs.Decode(stream, objectSize, BinarySerializerFlag::None, &serzContext, [&progress](float val)
+										   { progress.exchange(val, std::memory_order_relaxed); });
 				}
 			}
 		}
 
-		if (loadedData == nullptr)
+		if(loadedData == nullptr)
 			BS_LOG(Error, Resources, "Unable to load resource at path \"{0}\"", filePath);
 		else
 		{
-			if (!loadedData->IsDerivedFrom(Resource::GetRttiStatic()))
+			if(!loadedData->IsDerivedFrom(Resource::GetRttiStatic()))
 				BS_EXCEPT(InternalErrorException, "Loaded class doesn't derive from Resource.");
 		}
 
@@ -510,7 +495,7 @@ namespace bs
 			{
 				Lock inProgressLock(mInProgressResourcesMutex);
 				auto iterFind2 = mInProgressResources.find(uuid);
-				if (iterFind2 != mInProgressResources.end())
+				if(iterFind2 != mInProgressResources.end())
 					loadInProgress = true;
 			}
 
@@ -518,21 +503,21 @@ namespace bs
 			// However that would mean the last reference could get lost on whatever thread did the loading, which
 			// isn't something that's supported. If this ends up being a problem either make handle counting atomic
 			// or add a separate queue for objects destroyed from the load threads.
-			if (loadInProgress)
+			if(loadInProgress)
 				resource.BlockUntilLoaded();
 
 			bool lostLastRef = false;
 			{
 				Lock loadedLock(mLoadedResourceMutex);
 				auto iterFind = mLoadedResources.find(uuid);
-				if (iterFind != mLoadedResources.end())
+				if(iterFind != mLoadedResources.end())
 				{
 					LoadedResourceData& resData = iterFind->second;
 
 					assert(resData.NumInternalRefs > 0);
 					resData.NumInternalRefs--;
 					resource.RemoveInternalRef();
-					
+
 					std::uint32_t refCount = resource.GetHandleData()->MRefCount.load(std::memory_order_relaxed);
 					lostLastRef = refCount == 0;
 				}
@@ -556,7 +541,7 @@ namespace bs
 				std::uint32_t refCount = resData.Resource.mData->MRefCount.load(std::memory_order_relaxed);
 				assert(refCount > 0); // No references but kept in mLoadedResources list?
 
-				if (refCount == resData.NumInternalRefs) // Only internal references exist, free it
+				if(refCount == resData.NumInternalRefs) // Only internal references exist, free it
 					resourcesToUnload.push_back(resData.Resource.Lock());
 			}
 		}
@@ -574,36 +559,36 @@ namespace bs
 	{
 		// Unload and invalidate all resources
 		UnorderedMap<UUID, LoadedResourceData> loadedResourcesCopy;
-		
+
 		{
 			Lock lock(mLoadedResourceMutex);
 			loadedResourcesCopy = mLoadedResources;
 		}
 
-		for (auto& loadedResourcePair : loadedResourcesCopy)
+		for(auto& loadedResourcePair : loadedResourcesCopy)
 			Destroy(loadedResourcePair.second.Resource);
 	}
 
 	void Resources::Destroy(ResourceHandleBase& resource)
 	{
-		if (resource.mData == nullptr)
+		if(resource.mData == nullptr)
 			return;
 
 		RecursiveLock lock(mDestroyMutex);
 
 		// If load in progress, first wait until it completes
 		const UUID& uuid = resource.GetUuid();
-		if (!resource.IsLoaded(false))
+		if(!resource.IsLoaded(false))
 		{
 			bool loadInProgress = false;
 			{
 				Lock lock(mInProgressResourcesMutex);
 				auto iterFind2 = mInProgressResources.find(uuid);
-				if (iterFind2 != mInProgressResources.end())
+				if(iterFind2 != mInProgressResources.end())
 					loadInProgress = true;
 			}
 
-			if (loadInProgress) // If it's still loading wait until that finishes
+			if(loadInProgress) // If it's still loading wait until that finishes
 				resource.BlockUntilLoaded();
 			else
 				return; // Already unloaded
@@ -619,10 +604,10 @@ namespace bs
 		{
 			Lock lock(mLoadedResourceMutex);
 			auto iterFind = mLoadedResources.find(uuid);
-			if (iterFind != mLoadedResources.end())
+			if(iterFind != mLoadedResources.end())
 			{
 				LoadedResourceData& resData = iterFind->second;
-				while (resData.NumInternalRefs > 0)
+				while(resData.NumInternalRefs > 0)
 				{
 					resData.NumInternalRefs--;
 					resData.Resource.RemoveInternalRef();
@@ -641,20 +626,20 @@ namespace bs
 
 	void Resources::Save(const HResource& resource, const Path& filePath, bool overwrite, bool compress)
 	{
-		if (resource == nullptr)
+		if(resource == nullptr)
 			return;
 
-		if (!resource.IsLoaded(false))
+		if(!resource.IsLoaded(false))
 		{
 			bool loadInProgress = false;
 			{
 				Lock lock(mInProgressResourcesMutex);
 				auto iterFind2 = mInProgressResources.find(resource.GetUuid());
-				if (iterFind2 != mInProgressResources.end())
+				if(iterFind2 != mInProgressResources.end())
 					loadInProgress = true;
 			}
 
-			if (loadInProgress) // If it's still loading wait until that finishes
+			if(loadInProgress) // If it's still loading wait until that finishes
 				resource.BlockUntilLoaded();
 			else
 				return; // Nothing to save
@@ -677,33 +662,33 @@ namespace bs
 
 	void Resources::Save(const HResource& resource, bool compress)
 	{
-		if (resource == nullptr)
+		if(resource == nullptr)
 			return;
 
 		Path path;
-		if (GetFilePathFromUuid(resource.GetUuid(), path))
+		if(GetFilePathFromUuid(resource.GetUuid(), path))
 			Save(resource, path, true, compress);
 	}
 
 	void Resources::SaveInternal(const SPtr<Resource>& resource, const Path& filePath, bool compress)
 	{
-		if (!resource->mKeepSourceData)
+		if(!resource->mKeepSourceData)
 		{
 			BS_LOG(Warning, Resources, "Saving a resource that was created/loaded without KeepSourceData flag."
-				"Some data might not be available for saving. File path: {0}", filePath);
+									   "Some data might not be available for saving. File path: {0}",
+				   filePath);
 		}
 
 		Vector<ResourceDependency> dependencyList = Utility::FindResourceDependencies(*resource);
 		Vector<UUID> dependencyUUIDs(dependencyList.size());
-		for (u32 i = 0; i < (u32)dependencyList.size(); i++)
+		for(u32 i = 0; i < (u32)dependencyList.size(); i++)
 			dependencyUUIDs[i] = dependencyList[i].Resource.GetUuid();
 
 		u32 compressionMethod = (compress && resource->IsCompressible()) ? 1 : 0;
-		SPtr<SavedResourceData> resourceData = bs_shared_ptr_new<SavedResourceData>(dependencyUUIDs,
-			resource->AllowAsyncLoading(), compressionMethod);
+		SPtr<SavedResourceData> resourceData = bs_shared_ptr_new<SavedResourceData>(dependencyUUIDs, resource->AllowAsyncLoading(), compressionMethod);
 
 		Path parentDir = filePath.GetDirectory();
-		if (!FileSystem::Exists(parentDir))
+		if(!FileSystem::Exists(parentDir))
 			FileSystem::CreateDir(parentDir);
 
 		Path savePath;
@@ -723,23 +708,21 @@ namespace bs
 			{
 				if(safetyCounter > 10)
 				{
-					BS_LOG(Error, Resources,
-						"Internal error. Unable to save resource due to not being able to find a unique filename.");
+					BS_LOG(Error, Resources, "Internal error. Unable to save resource due to not being able to find a unique filename.");
 					return;
 				}
 
 				savePath.SetFilename(UUIDGenerator::GenerateRandom().ToString());
 				safetyCounter++;
 			}
-
 		}
 		else
 			savePath = filePath;
-		
+
 		Lock fileLock = FileScheduler::GetLock(filePath);
 
 		SPtr<DataStream> stream = FileSystem::CreateAndOpenFile(savePath);
-	
+
 		// Write meta-data
 		{
 			size_t sizePos = stream->Tell();
@@ -747,7 +730,7 @@ namespace bs
 
 			BinarySerializer bs;
 			bs.Encode(resourceData.get(), stream);
-			
+
 			size_t curPos = stream->Tell();
 			stream->Seek(sizePos);
 
@@ -763,14 +746,14 @@ namespace bs
 
 			BinarySerializer bs;
 			uint32_t size = 0;
-			if (compressionMethod != 0)
+			if(compressionMethod != 0)
 			{
 				SPtr<MemoryDataStream> tempStream = bs_shared_ptr_new<MemoryDataStream>();
 				bs.Encode(resource.get(), tempStream);
 
 				size = (uint32_t)tempStream->Size();
 				tempStream->Seek(0);
-				
+
 				// Note: We should refactor Compression::compress() so it can write straight to the file stream
 				SPtr<DataStream> srcStream = std::static_pointer_cast<DataStream>(tempStream);
 				SPtr<MemoryDataStream> compressedStream = Compression::Compress(srcStream);
@@ -782,7 +765,7 @@ namespace bs
 				bs.Encode(resource.get(), stream);
 				size = (uint32_t)(stream->Tell() - sizePos - sizeof(u32));
 			}
-			
+
 			size_t curPos = stream->Tell();
 			stream->Seek(sizePos);
 			stream->Write(&size, sizeof(size));
@@ -792,7 +775,7 @@ namespace bs
 		stream->Close();
 		stream = nullptr;
 
-		if (fileExists)
+		if(fileExists)
 		{
 			FileSystem::Remove(filePath);
 			FileSystem::Move(savePath, filePath);
@@ -809,7 +792,7 @@ namespace bs
 		{
 			Lock lock(mLoadedResourceMutex);
 			auto iterFind = mLoadedResources.find(uuid);
-			if (iterFind == mLoadedResources.end())
+			if(iterFind == mLoadedResources.end())
 			{
 				LoadedResourceData& resData = mLoadedResources[uuid];
 				resData.Resource = handle.GetWeak();
@@ -825,7 +808,7 @@ namespace bs
 	Vector<UUID> Resources::GetDependencies(const Path& filePath)
 	{
 		SPtr<SavedResourceData> savedResourceData;
-		if (!filePath.IsEmpty())
+		if(!filePath.IsEmpty())
 		{
 			FileDecoder fs(filePath);
 			savedResourceData = std::static_pointer_cast<SavedResourceData>(fs.Decode());
@@ -845,11 +828,11 @@ namespace bs
 
 	void Resources::UnregisterResourceManifest(const SPtr<ResourceManifest>& manifest)
 	{
-		if (manifest->GetName() == "Default")
+		if(manifest->GetName() == "Default")
 			return;
 
 		auto findIter = std::find(mResourceManifests.begin(), mResourceManifests.end(), manifest);
-		if (findIter != mResourceManifests.end())
+		if(findIter != mResourceManifests.end())
 			mResourceManifests.erase(findIter);
 	}
 
@@ -866,11 +849,11 @@ namespace bs
 
 	bool Resources::IsLoaded(const UUID& uuid, bool checkInProgress)
 	{
-		if (checkInProgress)
+		if(checkInProgress)
 		{
 			Lock inProgressLock(mInProgressResourcesMutex);
 			auto iterFind2 = mInProgressResources.find(uuid);
-			if (iterFind2 != mInProgressResources.end())
+			if(iterFind2 != mInProgressResources.end())
 			{
 				return true;
 			}
@@ -879,7 +862,7 @@ namespace bs
 		{
 			Lock loadedLock(mLoadedResourceMutex);
 			auto iterFind = mLoadedResources.find(uuid);
-			if (iterFind != mLoadedResources.end())
+			if(iterFind != mLoadedResources.end())
 			{
 				return true;
 			}
@@ -899,12 +882,12 @@ namespace bs
 
 		// Fully loaded
 		auto iterFind = mLoadedResources.find(uuid);
-		if (iterFind != mLoadedResources.end())
+		if(iterFind != mLoadedResources.end())
 			return 1.0f;
 
 		// Not loaded nor being loaded
 		auto iterFind2 = mInProgressResources.find(uuid);
-		if (iterFind2 == mInProgressResources.end())
+		if(iterFind2 == mInProgressResources.end())
 			return 0.0f;
 
 		ResourceLoadData* loadData = iterFind2->second;
@@ -919,7 +902,7 @@ namespace bs
 		for(auto& entry : loadData->Dependencies)
 		{
 			auto iterFind3 = mInProgressResources.find(entry.GetUuid());
-			if (iterFind3 == mInProgressResources.end())
+			if(iterFind3 == mInProgressResources.end())
 				continue;
 
 			ResourceLoadData* dependencyLoadData = iterFind3->second;
@@ -963,7 +946,7 @@ namespace bs
 	{
 		Lock lock(mLoadedResourceMutex);
 		auto iterFind3 = mHandles.find(uuid);
-		if (iterFind3 != mHandles.end()) // Not loaded, but handle does exist
+		if(iterFind3 != mHandles.end()) // Not loaded, but handle does exist
 		{
 			return iterFind3->second.Lock();
 		}
@@ -991,12 +974,12 @@ namespace bs
 	bool Resources::GetUuidFromFilePath(const Path& path, UUID& uuid) const
 	{
 		Path manifestPath = path;
-		if (!manifestPath.IsAbsolute())
+		if(!manifestPath.IsAbsolute())
 			manifestPath.MakeAbsolute(FileSystem::GetWorkingDirectoryPath());
 
 		for(auto iter = mResourceManifests.rbegin(); iter != mResourceManifests.rend(); ++iter)
 		{
-			if ((*iter)->FilePathToUuid(manifestPath, uuid))
+			if((*iter)->FilePathToUuid(manifestPath, uuid))
 				return true;
 		}
 
@@ -1014,27 +997,27 @@ namespace bs
 			Lock inProgresslock(mInProgressResourcesMutex);
 
 			auto iterFind = mInProgressResources.find(uuid);
-			if (iterFind != mInProgressResources.end())
+			if(iterFind != mInProgressResources.end())
 			{
 				myLoadData = iterFind->second;
 				finishLoad = myLoadData->RemainingDependencies == 0;
 
-				if (finishLoad)
+				if(finishLoad)
 					mInProgressResources.erase(iterFind);
 			}
 
 			auto iterFind2 = mDependantLoads.find(uuid);
 
-			if (iterFind2 != mDependantLoads.end())
+			if(iterFind2 != mDependantLoads.end())
 				dependantLoads = iterFind2->second;
 
-			if (finishLoad)
+			if(finishLoad)
 			{
 				mDependantLoads.erase(uuid);
 
 				// If loadedData is null then we're probably completing load on an already loaded resource, triggered
 				// by its dependencies.
-				if (myLoadData != nullptr && myLoadData->LoadedData != nullptr)
+				if(myLoadData != nullptr && myLoadData->LoadedData != nullptr)
 				{
 					Lock loadedLock(mLoadedResourceMutex);
 
@@ -1044,12 +1027,12 @@ namespace bs
 
 				resource.NotifyLoadComplete();
 
-				for (auto& dependantLoad : dependantLoads)
+				for(auto& dependantLoad : dependantLoads)
 					dependantLoad->RemainingDependencies--;
 			}
 		}
 
-		for (auto& dependantLoad : dependantLoads)
+		for(auto& dependantLoad : dependantLoads)
 		{
 			if(notifyProgress && myLoadData)
 				dependantLoad->DependencyLoadedAmount += myLoadData->ResData.Size;
@@ -1058,12 +1041,12 @@ namespace bs
 			LoadComplete(dependant, false);
 		}
 
-		if (finishLoad && myLoadData != nullptr)
+		if(finishLoad && myLoadData != nullptr)
 		{
 			OnResourceLoaded(resource);
 
 			// This should only ever be true on the main thread
-			if (myLoadData->NotifyImmediately)
+			if(myLoadData->NotifyImmediately)
 				ResourceListenerManager::Instance().NotifyListeners(uuid);
 
 			bs_delete(myLoadData);
@@ -1095,4 +1078,4 @@ namespace bs
 	{
 		return Resources::Instance();
 	}
-}
+} // namespace bs

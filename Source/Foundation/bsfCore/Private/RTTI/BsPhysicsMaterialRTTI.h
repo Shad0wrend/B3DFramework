@@ -46,7 +46,7 @@ namespace bs
 			AddPlainField("restitutionCoefficient", 2, &PhysicsMaterialRTTI::GetRestitutionCoefficient, &PhysicsMaterialRTTI::SetRestitutionCoefficient);
 		}
 
-		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) 
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context)
 		{
 			PhysicsMaterial* material = static_cast<PhysicsMaterial*>(obj);
 
@@ -55,7 +55,7 @@ namespace bs
 			mRestitutionCoefficient = material->GetRestitutionCoefficient();
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "PhysicsMaterial";
 			return name;
@@ -66,7 +66,7 @@ namespace bs
 			return TID_PhysicsMaterial;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return PhysicsMaterial::CreatePtrInternal();
 		}
@@ -79,4 +79,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

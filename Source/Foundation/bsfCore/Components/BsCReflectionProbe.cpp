@@ -35,7 +35,7 @@ namespace bs
 	{
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->Initialize();
 		else
 			mInternal = ReflectionProbe::CreateBox(Vector3::ONE);
@@ -46,7 +46,7 @@ namespace bs
 		SPtr<Texture> filteredTexture = mInternal->GetFilteredTexture();
 		if(filteredTexture == nullptr)
 		{
-			if (mInternal->GetCustomTexture())
+			if(mInternal->GetCustomTexture())
 				mInternal->Filter();
 			else
 				mInternal->Capture();
@@ -67,4 +67,4 @@ namespace bs
 	{
 		return CReflectionProbe::GetRttiStatic();
 	}
-}
+} // namespace bs

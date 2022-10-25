@@ -37,8 +37,7 @@ namespace bs
 		 *									instance will retrieve a new value for this vertex element, a value of 2 means
 		 *									each second instance will, etc.).
 		 */
-		void AddVertElem(VertexElementType type, VertexElementSemantic semantic, u32 semanticIdx = 0,
-			u32 streamIdx = 0, u32 instanceStepRate = 0);
+		void AddVertElem(VertexElementType type, VertexElementSemantic semantic, u32 semanticIdx = 0, u32 streamIdx = 0, u32 instanceStepRate = 0);
 
 		/**	Query if we have vertex data for the specified semantic. */
 		bool HasElement(VertexElementSemantic semantic, u32 semanticIdx = 0, u32 streamIdx = 0) const;
@@ -97,8 +96,8 @@ namespace bs
 	public:
 		friend class VertexDataDescRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 	};
 
 	/** @} */
-}
+} // namespace bs

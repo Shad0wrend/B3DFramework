@@ -7,55 +7,55 @@ namespace bs
 {
 	namespace ct
 	{
-	Signal CoreObject::mCoreGpuObjectLoadedCondition;
-	Mutex CoreObject::mCoreGpuObjectLoadedMutex;
+		Signal CoreObject::mCoreGpuObjectLoadedCondition;
+		Mutex CoreObject::mCoreGpuObjectLoadedMutex;
 
-	CoreObject::CoreObject()
-		:mFlags(0)
-	{ }
+		CoreObject::CoreObject()
+			: mFlags(0)
+		{}
 
-	CoreObject::~CoreObject()
-	{
-		THROW_IF_NOT_CORE_THREAD;
-	}
-
-	void CoreObject::Initialize()
-	{
+		CoreObject::~CoreObject()
 		{
-			Lock lock(mCoreGpuObjectLoadedMutex);
-			SetIsInitialized(true);
+			THROW_IF_NOT_CORE_THREAD;
 		}
 
-		SetScheduledToBeInitialized(false);
-
-		mCoreGpuObjectLoadedCondition.notify_all();
-	}
-
-	void CoreObject::Synchronize()
-	{
-		if (!IsInitialized())
+		void CoreObject::Initialize()
 		{
+			{
+				Lock lock(mCoreGpuObjectLoadedMutex);
+				SetIsInitialized(true);
+			}
+
+			SetScheduledToBeInitialized(false);
+
+			mCoreGpuObjectLoadedCondition.notify_all();
+		}
+
+		void CoreObject::Synchronize()
+		{
+			if(!IsInitialized())
+			{
 #if BS_DEBUG_MODE
-			if (BS_THREAD_CURRENT_ID == CoreThread::Instance().GetCoreThreadId())
-				BS_EXCEPT(InternalErrorException, "You cannot call this method on the core thread. It will cause a deadlock!");
+				if(BS_THREAD_CURRENT_ID == CoreThread::Instance().GetCoreThreadId())
+					BS_EXCEPT(InternalErrorException, "You cannot call this method on the core thread. It will cause a deadlock!");
 #endif
 
-			gCoreThread().SubmitAll(true);
+				gCoreThread().SubmitAll(true);
 
-			Lock lock(mCoreGpuObjectLoadedMutex);
-			while (!IsInitialized())
-			{
-				if (!IsScheduledToBeInitialized())
-					BS_EXCEPT(InternalErrorException, "Attempting to wait until initialization finishes but object is not scheduled to be initialized.");
+				Lock lock(mCoreGpuObjectLoadedMutex);
+				while(!IsInitialized())
+				{
+					if(!IsScheduledToBeInitialized())
+						BS_EXCEPT(InternalErrorException, "Attempting to wait until initialization finishes but object is not scheduled to be initialized.");
 
-				mCoreGpuObjectLoadedCondition.wait(lock);
+					mCoreGpuObjectLoadedCondition.wait(lock);
+				}
 			}
 		}
-	}
 
-	void CoreObject::SetThisPtrInternal(SPtr<CoreObject> ptrThis)
-	{
-		mThis = ptrThis;
-	}
-	}
-}
+		void CoreObject::SetThisPtrInternal(SPtr<CoreObject> ptrThis)
+		{
+			mThis = ptrThis;
+		}
+	} // namespace ct
+} // namespace bs

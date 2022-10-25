@@ -10,15 +10,15 @@ namespace bs
 	struct Mouse::Pimpl
 	{
 		explicit Pimpl(Input* owner)
-			:hid(HIDType::Mouse, owner)
-		{ }
+			: hid(HIDType::Mouse, owner)
+		{}
 
 		HIDManager hid;
 		bool hasInputFocus = true;
 	};
 
 	Mouse::Mouse(const String& name, Input* owner)
-			: mName(name), mOwner(owner)
+		: mName(name), mOwner(owner)
 	{
 		m = bs_new<Pimpl>(owner);
 	}
@@ -37,5 +37,4 @@ namespace bs
 	{
 		m->HasInputFocus = windowHandle != (u64)-1;
 	}
-}
-
+} // namespace bs

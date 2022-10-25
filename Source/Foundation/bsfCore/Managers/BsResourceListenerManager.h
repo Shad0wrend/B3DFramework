@@ -23,14 +23,14 @@ namespace bs
 		ResourceListenerManager();
 		~ResourceListenerManager();
 
-		/**	
+		/**
 		 * Register a new listener to notify for events.
 		 *
 		 * @note	Thread safe
 		 */
 		void RegisterListener(IResourceListener* listener);
 
-		/**	
+		/**
 		 * Unregister a listener so it will no longer receive notifications.
 		 *
 		 * @note	Thread safe
@@ -78,7 +78,7 @@ namespace bs
 
 		HEvent mResourceLoadedConn;
 		HEvent mResourceModifiedConn;
-		
+
 		Set<IResourceListener*> mDirtyListeners;
 		Map<u64, Vector<IResourceListener*>> mResourceToListenerMap;
 		Map<IResourceListener*, Vector<u64>> mListenerToResourceMap;
@@ -97,4 +97,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

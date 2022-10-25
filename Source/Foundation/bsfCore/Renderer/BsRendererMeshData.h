@@ -39,13 +39,13 @@ namespace bs
 	};
 
 	/** Contains mesh vertex and index data used for initializing, updating and reading mesh data from Mesh. */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering),ExportName(MeshData)) RendererMeshData
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportName(MeshData)) RendererMeshData
 	{
 	public:
 		/**
 		 * Reads the vertex positions into the provided output buffer. Data will be copied and potentially uncompressed to
 		 * fit the output format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to output the position data to.
 		 * @param[in]	size	Size of the pre-allocated buffer. Must be big enough to fit all contents (numVertices *
 		 *						sizeof(Vector3)).
@@ -55,7 +55,7 @@ namespace bs
 		/**
 		 * Writes the vertex positions from the provided output buffer. Data will be copied and potentially compressed to
 		 * fit the internal mesh data format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to read the position data from.
 		 * @param[in]	size	Size of the input buffer. Must be (numVertices * sizeof(Vector3)).
 		 */
@@ -64,7 +64,7 @@ namespace bs
 		/**
 		 * Reads the vertex normals into the provided output buffer. Data will be copied and potentially uncompressed to
 		 * fit the output format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to output the normal data to.
 		 * @param[in]	size	Size of the pre-allocated buffer. Must be big enough to fit all contents (numVertices *
 		 *						sizeof(Vector3)).
@@ -74,7 +74,7 @@ namespace bs
 		/**
 		 * Writes the vertex normals from the provided output buffer. Data will be copied and potentially compressed to
 		 * fit the internal mesh data format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to read the normal data from.
 		 * @param[in]	size	Size of the input buffer. Must be (numVertices * sizeof(Vector3)).
 		 */
@@ -83,7 +83,7 @@ namespace bs
 		/**
 		 * Reads the vertex tangents into the provided output buffer. Data will be copied and potentially uncompressed to
 		 * fit the output format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to output the tangent data to.
 		 * @param[in]	size	Size of the pre-allocated buffer. Must be big enough to fit all contents (numVertices *
 		 *						sizeof(Vector4)).
@@ -93,7 +93,7 @@ namespace bs
 		/**
 		 * Writes the vertex tangents from the provided output buffer. Data will be copied and potentially compressed to
 		 * fit the internal mesh data format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to read the tangent data from.
 		 * @param[in]	size	Size of the input buffer. Must be (numVertices * sizeof(Vector4)).
 		 */
@@ -102,7 +102,7 @@ namespace bs
 		/**
 		 * Reads the vertex colors into the provided output buffer. Data will be copied and potentially uncompressed to
 		 * fit the output format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to output the color data to.
 		 * @param[in]	size	Size of the pre-allocated buffer. Must be big enough to fit all contents (numVertices *
 		 *						sizeof(Color)).
@@ -112,7 +112,7 @@ namespace bs
 		/**
 		 * Writes the vertex colors from the provided output buffer. Data will be copied and potentially compressed to
 		 * fit the internal mesh data format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to read the color data from.
 		 * @param[in]	size	Size of the input buffer. Must be (numVertices * sizeof(Color)).
 		 */
@@ -121,7 +121,7 @@ namespace bs
 		/**
 		 * Writes the vertex colors from the provided output buffer. Data will be copied and potentially compressed to
 		 * fit the internal mesh data format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to read the color data from. Colors should be in RGBA format.
 		 * @param[in]	size	Size of the input buffer. Must be (numVertices * sizeof(u32)).
 		 */
@@ -130,7 +130,7 @@ namespace bs
 		/**
 		 * Reads the first UV channel coordinates into the provided output buffer. Data will be copied and potentially
 		 * uncompressed to fit the output format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to output the coordinate data to.
 		 * @param[in]	size	Size of the pre-allocated buffer. Must be big enough to fit all contents (numVertices *
 		 *						sizeof(Vector2)).
@@ -140,7 +140,7 @@ namespace bs
 		/**
 		 * Writes the first UV channel coordinates from the provided output buffer. Data will be copied and potentially
 		 * compressed to fit the internal mesh data format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to read the coordinate data from.
 		 * @param[in]	size	Size of the input buffer. Must be (numVertices * sizeof(Vector2)).
 		 */
@@ -149,7 +149,7 @@ namespace bs
 		/**
 		 * Reads the second UV channel coordinates into the provided output buffer. Data will be copied and potentially
 		 * uncompressed to fit the output format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to output the coordinate data to.
 		 * @param[in]	size	Size of the pre-allocated buffer. Must be big enough to fit all contents (numVertices *
 		 *						sizeof(Vector2)).
@@ -159,7 +159,7 @@ namespace bs
 		/**
 		 * Writes the second UV channel coordinates from the provided output buffer. Data will be copied and potentially
 		 * compressed to fit the internal mesh data format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to read the coordinate data from.
 		 * @param[in]	size	Size of the input buffer. Must be (numVertices * sizeof(Vector2)).
 		 */
@@ -168,7 +168,7 @@ namespace bs
 		/**
 		 * Reads the bone weights and indices into the provided output buffer. Data will be copied and potentially
 		 * uncompressed to fit the output format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to output the bone weight data to.
 		 * @param[in]	size	Size of the pre-allocated buffer. Must be big enough to fit all contents (numVertices *
 		 *						sizeof(BoneWeight)).
@@ -178,7 +178,7 @@ namespace bs
 		/**
 		 * Writes the bone weights and indices from the provided output buffer. Data will be copied and potentially
 		 * compressed to fit the internal mesh data format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to read the bone weight data from.
 		 * @param[in]	size	Size of the input buffer. Must be (numVertices * sizeof(BoneWeight)).
 		 */
@@ -187,7 +187,7 @@ namespace bs
 		/**
 		 * Reads the indices into the provided output buffer. Data will be copied and potentially uncompressed to fit the
 		 * output format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to output the index data to.
 		 * @param[in]	size	Size of the pre-allocated buffer. Must be big enough to fit all contents (numVertices *
 		 *						sizeof(i32)).
@@ -197,7 +197,7 @@ namespace bs
 		/**
 		 * Writes the indices from the provided output buffer. Data will be copied and potentially compressed to fit the
 		 * internal mesh data format as needed.
-		 *			
+		 *
 		 * @param[in]	buffer	Pre-allocated buffer to read the index data from.
 		 * @param[in]	size	Size of the input buffer. Must be (numVertices * sizeof(i32)).
 		 */
@@ -229,4 +229,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

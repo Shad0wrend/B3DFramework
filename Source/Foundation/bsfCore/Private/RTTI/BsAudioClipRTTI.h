@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT AudioClipRTTI : public RTTIType <AudioClip, Resource, AudioClipRTTI>
+	class BS_CORE_EXPORT AudioClipRTTI : public RTTIType<AudioClip, Resource, AudioClipRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -34,10 +34,10 @@ namespace bs
 		SPtr<DataStream> GetData(AudioClip* obj, u32& size)
 		{
 			SPtr<DataStream> stream = obj->GetSourceStream(size);
-			if (stream != nullptr && stream->IsFile())
+			if(stream != nullptr && stream->IsFile())
 			{
 				BS_LOG(Warning, RTTI, "Saving an AudioClip which uses streaming data. Streaming data might not be "
-					"available if saving to the same file.");
+									  "available if saving to the same file.");
 			}
 
 			return stream;
@@ -56,13 +56,13 @@ namespace bs
 			AddDataBlockField("mData", 6, &AudioClipRTTI::GetData, &AudioClipRTTI::SetData);
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context)
 		{
 			AudioClip* clip = static_cast<AudioClip*>(obj);
 			clip->Initialize();
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "AudioClip";
 			return name;
@@ -73,7 +73,7 @@ namespace bs
 			return TID_AudioClip;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return AudioClip::CreateEmpty();
 		}
@@ -81,4 +81,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

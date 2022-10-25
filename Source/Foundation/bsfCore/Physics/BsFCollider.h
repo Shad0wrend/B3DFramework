@@ -105,11 +105,12 @@ namespace bs
 
 		/** Enables continous collision detect for this collider. Only valid if the collider is a part of a rigidbody. */
 		virtual void SetCCDInternal(bool enabled) = 0;
+
 	protected:
 		float mMass = 1.0f;
-		
+
 		HPhysicsMaterial mMaterial;
 	};
 
 	/** @} */
-}
+} // namespace bs

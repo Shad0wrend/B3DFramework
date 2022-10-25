@@ -15,8 +15,8 @@ namespace bs
 	/**
 	 * Mesh heap allows you to quickly allocate and deallocate a large amounts of temporary meshes without the large
 	 * overhead of normal Mesh creation. Only requirement is that meshes share the same vertex description and index type.
-	 * 			
-	 * @note	
+	 *
+	 * @note
 	 * This class should be considered as a replacement for a normal Mesh if you are constantly updating the mesh (for
 	 * example every frame) and you are not able to discard entire mesh contents on each update. Not using discard flag on
 	 * normal meshes may introduce GPU-CPU sync points which may severely limit performance. Primary purpose of this class
@@ -32,7 +32,7 @@ namespace bs
 		 * Allocates a new mesh in the heap, expanding the heap if needed. Mesh will be initialized with the provided
 		 * @p meshData. You may use the returned transient mesh for drawing.
 		 *
-		 * @note	
+		 * @note
 		 * Offsets provided by MeshData are ignored. MeshHeap will determine where the data will be written internally.
 		 */
 		SPtr<TransientMesh> Alloc(const SPtr<MeshData>& meshData, DrawOperationType drawOp = DOT_TRIANGLE_LIST);
@@ -54,16 +54,14 @@ namespace bs
 		 * @param[in]	vertexDesc	Description of the stored vertices.
 		 * @param[in]	indexType	Type of the stored indices.
 		 */
-		static SPtr<MeshHeap> Create(u32 numVertices, u32 numIndices,
-			const SPtr<VertexDataDesc>& vertexDesc, IndexType indexType = IT_32BIT);
+		static SPtr<MeshHeap> Create(u32 numVertices, u32 numIndices, const SPtr<VertexDataDesc>& vertexDesc, IndexType indexType = IT_32BIT);
 
 	private:
 		/** @copydoc create */
-		MeshHeap(u32 numVertices, u32 numIndices,
-			const SPtr<VertexDataDesc>& vertexDesc, IndexType indexType = IT_32BIT);
+		MeshHeap(u32 numVertices, u32 numIndices, const SPtr<VertexDataDesc>& vertexDesc, IndexType indexType = IT_32BIT);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 	private:
 		u32 mNumVertices;
@@ -80,159 +78,158 @@ namespace bs
 
 	namespace ct
 	{
-	/** @addtogroup Resources-Internal
-	 *  @{
-	 */
-
-	/**
-	 * Core thread version of bs::MeshHeap.
-	 *
-	 * @note	Core thread only.
-	 */
-	class BS_CORE_EXPORT MeshHeap : public CoreObject
-	{
-		/**	Signifies how is a data chunk used. */
-		enum class UseFlags
-		{
-			Used, /**< Data chunk is used by both CPU and GPU. */
-			CPUFree, /**< Data chunk was released by CPU but not GPU. */
-			GPUFree, /**< Data chunk was released by GPU but not CPU. */
-			Free /**< Data chunk was released by both CPU and GPU. */
-		};
-
-		/**	Represents a continuous chunk of memory. */
-		struct ChunkData
-		{
-			u32 Start, Size;
-		};
-
-		/**	Represents an allocated piece of data representing a mesh. */
-		struct AllocatedData
-		{
-			u32 VertChunkIdx;
-			u32 IdxChunkIdx;
-
-			UseFlags UseFlags;
-			u32 EventQueryIdx;
-			SPtr<TransientMesh> Mesh;
-		};
-
-		/**	Data about a GPU query. */
-		struct QueryData
-		{
-			SPtr<EventQuery> Query;
-			u32 QueryId;
-		};
-
-	public:
-		~MeshHeap();
-
-	private:
-		friend class bs::MeshHeap;
-		friend class bs::TransientMesh;
-		friend class TransientMesh;
-
-		MeshHeap(u32 numVertices, u32 numIndices,
-			const SPtr<VertexDataDesc>& vertexDesc, IndexType indexType, GpuDeviceFlags deviceMask);
-
-		/** @copydoc CoreObject::Initialize() */
-		void Initialize() ;
+		/** @addtogroup Resources-Internal
+		 *  @{
+		 */
 
 		/**
-		 * Allocates a new mesh in the heap, expanding the heap if needed.
+		 * Core thread version of bs::MeshHeap.
 		 *
-		 * @param[in]	mesh		Mesh for which we are allocating the data.
-		 * @param[in]	meshData	Data to initialize the new mesh with.
+		 * @note	Core thread only.
 		 */
-		void Alloc(SPtr<TransientMesh> mesh, const SPtr<MeshData>& meshData);
+		class BS_CORE_EXPORT MeshHeap : public CoreObject
+		{
+			/**	Signifies how is a data chunk used. */
+			enum class UseFlags
+			{
+				Used, /**< Data chunk is used by both CPU and GPU. */
+				CPUFree, /**< Data chunk was released by CPU but not GPU. */
+				GPUFree, /**< Data chunk was released by GPU but not CPU. */
+				Free /**< Data chunk was released by both CPU and GPU. */
+			};
 
-		/** Deallocates the provided mesh. Freed memory will be re-used as soon as the GPU is done with the mesh. */
-		void Dealloc(SPtr<TransientMesh> mesh);
+			/**	Represents a continuous chunk of memory. */
+			struct ChunkData
+			{
+				u32 Start, Size;
+			};
 
-		/** Resizes the vertex buffers so they max contain the provided number of vertices. */
-		void GrowVertexBuffer(u32 numVertices);
+			/**	Represents an allocated piece of data representing a mesh. */
+			struct AllocatedData
+			{
+				u32 VertChunkIdx;
+				u32 IdxChunkIdx;
 
-		/** Resizes the index buffer so they max contain the provided number of indices. */
-		void GrowIndexBuffer(u32 numIndices);
+				UseFlags UseFlags;
+				u32 EventQueryIdx;
+				SPtr<TransientMesh> Mesh;
+			};
 
-		/**
-		 * Creates a new event query or returns an existing one from the pool if available. Returned value is an index
-		 * into event query array.
-		 */
-		u32 CreateEventQuery();
+			/**	Data about a GPU query. */
+			struct QueryData
+			{
+				SPtr<EventQuery> Query;
+				u32 QueryId;
+			};
 
-		/** Frees the event query with the specified index and returns it to the pool so it may be reused later. */
-		void FreeEventQuery(u32 idx);
+		public:
+			~MeshHeap();
 
-		/**	Gets internal vertex data for all the meshes. */
-		SPtr<VertexData> GetVertexData() const;
+		private:
+			friend class bs::MeshHeap;
+			friend class bs::TransientMesh;
+			friend class TransientMesh;
 
-		/**	Gets internal index data for all the meshes. */
-		SPtr<IndexBuffer> GetIndexBuffer() const;
+			MeshHeap(u32 numVertices, u32 numIndices, const SPtr<VertexDataDesc>& vertexDesc, IndexType indexType, GpuDeviceFlags deviceMask);
 
-		/** Returns a structure that describes how are the vertices stored in the mesh's vertex buffer. */
-		SPtr<VertexDataDesc> GetVertexDesc() const;
+			/** @copydoc CoreObject::Initialize() */
+			void Initialize();
 
-		/**
-		 * Returns the offset in vertices from the start of the buffer to the first vertex of the mesh with the provided ID.
-		 */
-		u32 GetVertexOffset(u32 meshId) const;
+			/**
+			 * Allocates a new mesh in the heap, expanding the heap if needed.
+			 *
+			 * @param[in]	mesh		Mesh for which we are allocating the data.
+			 * @param[in]	meshData	Data to initialize the new mesh with.
+			 */
+			void Alloc(SPtr<TransientMesh> mesh, const SPtr<MeshData>& meshData);
 
-		/**
-		 * Returns the offset in indices from the start of the buffer to the first index of the mesh with the provided ID.
-		 */
-		u32 GetIndexOffset(u32 meshId) const;
+			/** Deallocates the provided mesh. Freed memory will be re-used as soon as the GPU is done with the mesh. */
+			void Dealloc(SPtr<TransientMesh> mesh);
 
-		/** Called by the render system when a mesh gets queued to the GPU. */
-		void NotifyUsedOnGpu(u32 meshId);
+			/** Resizes the vertex buffers so they max contain the provided number of vertices. */
+			void GrowVertexBuffer(u32 numVertices);
 
-		/**
-		 * Called by an GPU event query when GPU processes the query. Normally signals the heap that the GPU is done with
-		 * the mesh.
-		 */
-		static void QueryTriggered(SPtr<MeshHeap> thisPtr, u32 meshId, u32 queryId);
+			/** Resizes the index buffer so they max contain the provided number of indices. */
+			void GrowIndexBuffer(u32 numIndices);
 
-		/**
-		 * Attempts to reorganize the vertex and index buffer chunks in order to in order to make free memory contigous.
-		 *
-		 * @note	
-		 * This will not actually copy any data from index/vertex buffers, and will only modify the chunk descriptors.
-		 */
-		void MergeWithNearbyChunks(u32 chunkVertIdx, u32 chunkIdxIdx);
+			/**
+			 * Creates a new event query or returns an existing one from the pool if available. Returned value is an index
+			 * into event query array.
+			 */
+			u32 CreateEventQuery();
 
-	private:
-		u32 mNumVertices;
-		u32 mNumIndices;
+			/** Frees the event query with the specified index and returns it to the pool so it may be reused later. */
+			void FreeEventQuery(u32 idx);
 
-		Vector<u8*> mCPUVertexData;
-		u8* mCPUIndexData;
+			/**	Gets internal vertex data for all the meshes. */
+			SPtr<VertexData> GetVertexData() const;
 
-		SPtr<VertexData> mVertexData;
-		SPtr<IndexBuffer> mIndexBuffer;
+			/**	Gets internal index data for all the meshes. */
+			SPtr<IndexBuffer> GetIndexBuffer() const;
 
-		Map<u32, AllocatedData> mMeshAllocData;
+			/** Returns a structure that describes how are the vertices stored in the mesh's vertex buffer. */
+			SPtr<VertexDataDesc> GetVertexDesc() const;
 
-		SPtr<VertexDataDesc> mVertexDesc;
-		IndexType mIndexType;
-		GpuDeviceFlags mDeviceMask;
+			/**
+			 * Returns the offset in vertices from the start of the buffer to the first vertex of the mesh with the provided ID.
+			 */
+			u32 GetVertexOffset(u32 meshId) const;
 
-		Vector<ChunkData> mVertChunks;
-		Vector<ChunkData> mIdxChunks;
+			/**
+			 * Returns the offset in indices from the start of the buffer to the first index of the mesh with the provided ID.
+			 */
+			u32 GetIndexOffset(u32 meshId) const;
 
-		Stack<u32> mEmptyVertChunks;
-		Stack<u32> mEmptyIdxChunks;
+			/** Called by the render system when a mesh gets queued to the GPU. */
+			void NotifyUsedOnGpu(u32 meshId);
 
-		List<u32> mFreeVertChunks;
-		List<u32> mFreeIdxChunks;
+			/**
+			 * Called by an GPU event query when GPU processes the query. Normally signals the heap that the GPU is done with
+			 * the mesh.
+			 */
+			static void QueryTriggered(SPtr<MeshHeap> thisPtr, u32 meshId, u32 queryId);
 
-		Vector<QueryData> mEventQueries;
-		Stack<u32> mFreeEventQueries;
+			/**
+			 * Attempts to reorganize the vertex and index buffer chunks in order to in order to make free memory contigous.
+			 *
+			 * @note
+			 * This will not actually copy any data from index/vertex buffers, and will only modify the chunk descriptors.
+			 */
+			void MergeWithNearbyChunks(u32 chunkVertIdx, u32 chunkIdxIdx);
 
-		u32 mNextQueryId;
+		private:
+			u32 mNumVertices;
+			u32 mNumIndices;
 
-		static const float GrowPercent;
-	};
+			Vector<u8*> mCPUVertexData;
+			u8* mCPUIndexData;
 
-	/** @} */
-	}
-}
+			SPtr<VertexData> mVertexData;
+			SPtr<IndexBuffer> mIndexBuffer;
+
+			Map<u32, AllocatedData> mMeshAllocData;
+
+			SPtr<VertexDataDesc> mVertexDesc;
+			IndexType mIndexType;
+			GpuDeviceFlags mDeviceMask;
+
+			Vector<ChunkData> mVertChunks;
+			Vector<ChunkData> mIdxChunks;
+
+			Stack<u32> mEmptyVertChunks;
+			Stack<u32> mEmptyIdxChunks;
+
+			List<u32> mFreeVertChunks;
+			List<u32> mFreeIdxChunks;
+
+			Vector<QueryData> mEventQueries;
+			Stack<u32> mFreeEventQueries;
+
+			u32 mNextQueryId;
+
+			static const float GrowPercent;
+		};
+
+		/** @} */
+	} // namespace ct
+} // namespace bs

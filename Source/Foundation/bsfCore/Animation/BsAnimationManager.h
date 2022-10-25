@@ -15,7 +15,7 @@ namespace bs
 	/** @addtogroup Animation-Internal
 	 *  @{
 	 */
-	
+
 	/** Contains skeleton poses for all animations evaluated on a single frame. */
 	struct EvaluatedAnimationData
 	{
@@ -119,7 +119,7 @@ namespace bs
 
 		u64 mNextId = 1;
 		UnorderedMap<u64, Animation*> mAnimations;
-		
+
 		float mUpdateRate = 1.0f / 60.0f;
 		float mAnimationTime = 0.0f;
 		float mLastAnimationUpdateTime = 0.0f;
@@ -136,7 +136,7 @@ namespace bs
 
 		u32 mPoseReadBufferIdx = 2;
 		u32 mPoseWriteBufferIdx = 0;
-		
+
 		Signal mWorkerDoneSignal;
 		Mutex mMutex;
 
@@ -148,4 +148,4 @@ namespace bs
 	BS_CORE_EXPORT AnimationManager& gAnimation();
 
 	/** @} */
-}
+} // namespace bs

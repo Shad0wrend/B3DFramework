@@ -42,24 +42,24 @@ namespace bs
 	}
 
 	LocalSkeletonPose::LocalSkeletonPose(LocalSkeletonPose&& other)
-		: Positions{std::exchange(other.Positions, nullptr)}
-		, Rotations{std::exchange(other.Rotations, nullptr)}
-		, Scales{std::exchange(other.Scales, nullptr)}
-		, HasOverride{std::exchange(other.HasOverride, nullptr)}
+		: Positions{ std::exchange(other.Positions, nullptr) }
+		, Rotations{ std::exchange(other.Rotations, nullptr) }
+		, Scales{ std::exchange(other.Scales, nullptr) }
+		, HasOverride{ std::exchange(other.HasOverride, nullptr) }
 		, NumBones(std::exchange(other.NumBones, 0))
-	{ }
+	{}
 
 	LocalSkeletonPose::~LocalSkeletonPose()
 	{
-		if (Positions != nullptr)
+		if(Positions != nullptr)
 			bs_free(Positions);
 	}
 
 	LocalSkeletonPose& LocalSkeletonPose::operator=(LocalSkeletonPose&& other)
 	{
-		if (this != &other)
+		if(this != &other)
 		{
-			if (Positions != nullptr)
+			if(Positions != nullptr)
 				bs_free(Positions);
 
 			Positions = std::exchange(other.Positions, nullptr);
@@ -73,8 +73,7 @@ namespace bs
 	}
 
 	Skeleton::Skeleton(BONE_DESC* bones, u32 numBones)
-		: mNumBones(numBones), mBoneTransforms(bs_newN<Transform>(numBones)), mInvBindPoses(bs_newN<Matrix4>(numBones))
-		, mBoneInfo(bs_newN<SkeletonBoneInfo>(numBones))
+		: mNumBones(numBones), mBoneTransforms(bs_newN<Transform>(numBones)), mInvBindPoses(bs_newN<Matrix4>(numBones)), mBoneInfo(bs_newN<SkeletonBoneInfo>(numBones))
 	{
 		for(u32 i = 0; i < numBones; i++)
 		{
@@ -93,19 +92,18 @@ namespace bs
 		if(mInvBindPoses != nullptr)
 			bs_deleteN(mInvBindPoses, mNumBones);
 
-		if (mBoneInfo != nullptr)
+		if(mBoneInfo != nullptr)
 			bs_deleteN(mBoneInfo, mNumBones);
 	}
 
 	SPtr<Skeleton> Skeleton::Create(BONE_DESC* bones, u32 numBones)
 	{
-		Skeleton* rawPtr = new (bs_alloc<Skeleton>()) Skeleton(bones, numBones);
+		Skeleton* rawPtr = new(bs_alloc<Skeleton>()) Skeleton(bones, numBones);
 
 		return bs_shared_ptr<Skeleton>(rawPtr);
 	}
 
-	void Skeleton::GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask,
-		const AnimationClip& clip, float time, bool loop)
+	void Skeleton::GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask, const AnimationClip& clip, float time, bool loop)
 	{
 		bs_frame_mark();
 		{
@@ -142,8 +140,7 @@ namespace bs
 		bs_frame_clear();
 	}
 
-	void Skeleton::GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask,
-		const AnimationStateLayer* layers, u32 numLayers)
+	void Skeleton::GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask, const AnimationStateLayer* layers, u32 numLayers)
 	{
 		// Note: If more performance is required this method could be optimized with vector instructions
 
@@ -167,10 +164,10 @@ namespace bs
 			const AnimationStateLayer& layer = layers[i];
 
 			float invLayerWeight;
-			if (layer.Additive)
+			if(layer.Additive)
 			{
 				float weightSum = 0.0f;
-				for (u32 j = 0; j < layer.NumStates; j++)
+				for(u32 j = 0; j < layer.NumStates; j++)
 					weightSum += layer.States[j].Weight;
 
 				invLayerWeight = 1.0f / weightSum;
@@ -178,26 +175,26 @@ namespace bs
 			else
 				invLayerWeight = 1.0f;
 
-			for (u32 j = 0; j < layer.NumStates; j++)
+			for(u32 j = 0; j < layer.NumStates; j++)
 			{
 				const AnimationState& state = layer.States[j];
-				if (state.Disabled)
+				if(state.Disabled)
 					continue;
 
 				float normWeight = state.Weight * invLayerWeight;
 
 				// Early exit for clips that don't contribute (which there could be plenty especially for sequential blends)
-				if (Math::ApproxEquals(normWeight, 0.0f))
+				if(Math::ApproxEquals(normWeight, 0.0f))
 					continue;
 
-				for (u32 k = 0; k < mNumBones; k++)
+				for(u32 k = 0; k < mNumBones; k++)
 				{
-					if (!mask.IsEnabled(k))
+					if(!mask.IsEnabled(k))
 						continue;
 
 					const AnimationCurveMapping& mapping = state.BoneToCurveMapping[k];
 					u32 curveIdx = mapping.Position;
-					if (curveIdx != (u32)-1)
+					if(curveIdx != (u32)-1)
 					{
 						const TAnimationCurve<Vector3>& curve = state.Curves->Position[curveIdx].Curve;
 						localPose.Positions[k] += curve.Evaluate(state.Time, state.PositionCaches[curveIdx], false) * normWeight;
@@ -207,7 +204,7 @@ namespace bs
 					}
 
 					curveIdx = mapping.Scale;
-					if (curveIdx != (u32)-1)
+					if(curveIdx != (u32)-1)
 					{
 						const TAnimationCurve<Vector3>& curve = state.Curves->Scale[curveIdx].Curve;
 						localPose.Scales[k] *= curve.Evaluate(state.Time, state.ScaleCaches[curveIdx], false) * normWeight;
@@ -216,13 +213,13 @@ namespace bs
 						hasAnimCurve[k] = true;
 					}
 
-					if (layer.Additive)
+					if(layer.Additive)
 					{
 						curveIdx = mapping.Rotation;
-						if (curveIdx != (u32)-1)
+						if(curveIdx != (u32)-1)
 						{
 							bool isAssigned = localPose.Rotations[k].W != 0.0f;
-							if (!isAssigned)
+							if(!isAssigned)
 								localPose.Rotations[k] = Quaternion::IDENTITY;
 
 							const TAnimationCurve<Quaternion>& curve = state.Curves->Rotation[curveIdx].Curve;
@@ -238,12 +235,12 @@ namespace bs
 					else
 					{
 						curveIdx = mapping.Rotation;
-						if (curveIdx != (u32)-1)
+						if(curveIdx != (u32)-1)
 						{
 							const TAnimationCurve<Quaternion>& curve = state.Curves->Rotation[curveIdx].Curve;
 							Quaternion value = curve.Evaluate(state.Time, state.RotationCaches[curveIdx], false) * normWeight;
 
-							if (value.Dot(localPose.Rotations[k]) < 0.0f)
+							if(value.Dot(localPose.Rotations[k]) < 0.0f)
 								value = -value;
 
 							localPose.Rotations[k] += value;
@@ -274,12 +271,12 @@ namespace bs
 		for(u32 i = 0; i < mNumBones; i++)
 		{
 			bool isAssigned = localPose.Rotations[i].W != 0.0f;
-			if (!isAssigned)
+			if(!isAssigned)
 				localPose.Rotations[i] = Quaternion::IDENTITY;
 			else
 				localPose.Rotations[i].Normalize();
 
-			if (localPose.HasOverride[i])
+			if(localPose.HasOverride[i])
 			{
 				isGlobal[i] = true;
 				continue;
@@ -294,26 +291,26 @@ namespace bs
 		std::function<void(u32)> calcGlobal = [&](u32 boneIdx)
 		{
 			u32 parentBoneIdx = mBoneInfo[boneIdx].Parent;
-			if (parentBoneIdx == (u32)-1)
+			if(parentBoneIdx == (u32)-1)
 			{
 				isGlobal[boneIdx] = true;
 				return;
 			}
 
-			if (!isGlobal[parentBoneIdx])
+			if(!isGlobal[parentBoneIdx])
 				calcGlobal(parentBoneIdx);
 
 			pose[boneIdx] = pose[parentBoneIdx] * pose[boneIdx];
 			isGlobal[boneIdx] = true;
 		};
 
-		for (u32 i = 0; i < mNumBones; i++)
+		for(u32 i = 0; i < mNumBones; i++)
 		{
-			if (!isGlobal[i])
+			if(!isGlobal[i])
 				calcGlobal(i);
 		}
 
-		for (u32 i = 0; i < mNumBones; i++)
+		for(u32 i = 0; i < mNumBones; i++)
 			pose[i] = pose[i] * mInvBindPoses[i];
 
 		bs_stack_free(isGlobal);
@@ -340,9 +337,9 @@ namespace bs
 
 	u32 Skeleton::GetRootBoneIndex() const
 	{
-		for (u32 i = 0; i < mNumBones; i++)
+		for(u32 i = 0; i < mNumBones; i++)
 		{
-			if (mBoneInfo[i].Parent == (u32)-1)
+			if(mBoneInfo[i].Parent == (u32)-1)
 				return i;
 		}
 
@@ -351,7 +348,7 @@ namespace bs
 
 	SPtr<Skeleton> Skeleton::CreateEmpty()
 	{
-		Skeleton* rawPtr = new (bs_alloc<Skeleton>()) Skeleton();
+		Skeleton* rawPtr = new(bs_alloc<Skeleton>()) Skeleton();
 
 		SPtr<Skeleton> newSkeleton = bs_shared_ptr<Skeleton>(rawPtr);
 		return newSkeleton;
@@ -366,4 +363,4 @@ namespace bs
 	{
 		return GetRttiStatic();
 	}
-}
+} // namespace bs

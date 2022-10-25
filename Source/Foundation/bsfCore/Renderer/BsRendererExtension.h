@@ -5,7 +5,9 @@
 #include "BsCorePrerequisites.h"
 
 namespace bs
-{namespace ct {
+{
+	namespace ct
+	{
 		struct RendererViewContext;
 	}
 
@@ -95,10 +97,10 @@ namespace bs
 		 *
 		 * @note	Sim thread.
 		 */
-		template<class T>
+		template <class T>
 		static SPtr<T> Create(const Any& data)
 		{
-			T* ext = new (bs_alloc<T>()) T();
+			T* ext = new(bs_alloc<T>()) T();
 			InitializerInternal(ext, data);
 
 			return SPtr<T>(ext, &RendererExtension::DeleterInternal);
@@ -138,10 +140,11 @@ namespace bs
 
 	protected:
 		RendererExtension(RenderLocation location, u32 priority)
-			:mLocation(location), mPriority(priority)
-		{ }
+			: mLocation(location), mPriority(priority)
+		{}
 
 		virtual ~RendererExtension() = default;
+
 	private:
 		/** Initializer that triggers when a renderer extension is first constructed. */
 		static void InitializerInternal(RendererExtension* obj, const Any& data);
@@ -154,4 +157,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

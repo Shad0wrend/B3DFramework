@@ -15,9 +15,18 @@ namespace bs
 	 *  @{
 	 */
 
-	template<class T> struct RTTIPlainType<TKeyframe<T>>
+	template <class T>
+	struct RTTIPlainType<TKeyframe<T>>
 	{
-		enum { id = TID_KeyFrame }; enum { hasDynamicSize = 0 };
+		enum
+		{
+			id = TID_KeyFrame
+		};
+
+		enum
+		{
+			hasDynamicSize = 0
+		};
 
 		/** @copydoc RTTIPlainType::toMemory */
 		static BitLength ToMemory(const TKeyframe<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -37,7 +46,7 @@ namespace bs
 			rtti_read(data.InTangent, stream);
 			rtti_read(data.OutTangent, stream);
 			rtti_read(data.Time, stream);
-			
+
 			return sizeof(TKeyframe<T>);
 		}
 
@@ -48,15 +57,24 @@ namespace bs
 		}
 	};
 
-	template<class T> struct RTTIPlainType<TAnimationCurve<T>>
+	template <class T>
+	struct RTTIPlainType<TAnimationCurve<T>>
 	{
-		enum { id = TID_AnimationCurve }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_AnimationCurve
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		/** @copydoc RTTIPlainType::toMemory */
 		static BitLength ToMemory(const TAnimationCurve<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				constexpr uint32_t VERSION = 0; // In case the data structure changes
 
 				BitLength size = 0;
@@ -66,8 +84,7 @@ namespace bs
 				size += rtti_write(data.mLength, stream);
 				size += rtti_write(data.mKeyframes, stream);
 
-				return size;
-			});
+				return size; });
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
@@ -101,22 +118,30 @@ namespace bs
 		}
 	};
 
-	template<class T> struct RTTIPlainType<TNamedAnimationCurve<T>>
+	template <class T>
+	struct RTTIPlainType<TNamedAnimationCurve<T>>
 	{
-		enum { id = TID_NamedAnimationCurve }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_NamedAnimationCurve
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		/** @copydoc RTTIPlainType::toMemory */
 		static BitLength ToMemory(const TNamedAnimationCurve<T>& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				BitLength size = 0;
 				size += rtti_write(data.Name, stream);
 				size += rtti_write(data.Flags, stream);
 				size += rtti_write(data.Curve, stream);
 
-				return size;
-			});
+				return size; });
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
@@ -144,7 +169,7 @@ namespace bs
 			return dataSize;
 		}
 	};
-	
+
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

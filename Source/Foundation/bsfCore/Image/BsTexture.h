@@ -19,23 +19,23 @@ namespace bs
 	enum BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) TextureUsage
 	{
 		/** A regular texture that is not often or ever updated from the CPU. */
-		TU_STATIC			BS_SCRIPT_EXPORT(ExportName(Default))			= GBU_STATIC,
+		TU_STATIC BS_SCRIPT_EXPORT(ExportName(Default)) = GBU_STATIC,
 		/** A regular texture that is often updated by the CPU. */
-		TU_DYNAMIC			BS_SCRIPT_EXPORT(ExportName(Dynamic))			= GBU_DYNAMIC,
+		TU_DYNAMIC BS_SCRIPT_EXPORT(ExportName(Dynamic)) = GBU_DYNAMIC,
 		/** Texture that can be rendered to by the GPU. */
-		TU_RENDERTARGET		BS_SCRIPT_EXPORT(ExportName(Render))			= 0x200,
+		TU_RENDERTARGET BS_SCRIPT_EXPORT(ExportName(Render)) = 0x200,
 		/** Texture used as a depth/stencil buffer by the GPU. */
-		TU_DEPTHSTENCIL		BS_SCRIPT_EXPORT(ExportName(DepthStencil))	= 0x400,
+		TU_DEPTHSTENCIL BS_SCRIPT_EXPORT(ExportName(DepthStencil)) = 0x400,
 		/** Texture that allows load/store operations from the GPU program. */
-		TU_LOADSTORE		BS_SCRIPT_EXPORT(ExportName(LoadStore))		= 0x800,
+		TU_LOADSTORE BS_SCRIPT_EXPORT(ExportName(LoadStore)) = 0x800,
 		/** All mesh data will also be cached in CPU memory, making it available for fast read access from the CPU. */
-		TU_CPUCACHED		BS_SCRIPT_EXPORT(ExportName(CPUCached))		= 0x1000,
+		TU_CPUCACHED BS_SCRIPT_EXPORT(ExportName(CPUCached)) = 0x1000,
 		/** Allows the CPU to directly read the texture data buffers from the GPU. */
-		TU_CPUREADABLE		BS_SCRIPT_EXPORT(ExportName(CPUReadable))		= 0x2000,
+		TU_CPUREADABLE BS_SCRIPT_EXPORT(ExportName(CPUReadable)) = 0x2000,
 		/** Allows you to retrieve views of the texture using a format different from one specified on creation. */
-		TU_MUTABLEFORMAT	BS_SCRIPT_EXPORT(ExportName(MutableFormat))	= 0x4000,
+		TU_MUTABLEFORMAT BS_SCRIPT_EXPORT(ExportName(MutableFormat)) = 0x4000,
 		/** Default (most common) texture usage. */
-		TU_DEFAULT			BS_SCRIPT_EXPORT(Exclude(true))			= TU_STATIC
+		TU_DEFAULT BS_SCRIPT_EXPORT(Exclude(true)) = TU_STATIC
 	};
 
 	/**	Texture mipmap options. */
@@ -171,7 +171,7 @@ namespace bs
 		 * Allocates a buffer that exactly matches the format of the texture described by these properties, for the provided
 		 * face and mip level. This is a helper function, primarily meant for creating buffers when reading from, or writing
 		 * to a texture.
-		 * 			
+		 *
 		 * @note	Thread safe.
 		 */
 		SPtr<PixelData> AllocBuffer(u32 face, u32 mipLevel) const;
@@ -218,8 +218,7 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		AsyncOp WriteData(const SPtr<PixelData>& data, u32 face = 0, u32 mipLevel = 0,
-			bool discardEntireBuffer = false);
+		AsyncOp WriteData(const SPtr<PixelData>& data, u32 face = 0, u32 mipLevel = 0, bool discardEntireBuffer = false);
 
 		/**
 		 * Reads internal texture data to the provided previously allocated buffer. Provided data buffer will be locked
@@ -250,13 +249,13 @@ namespace bs
 
 		/**
 		 * Reads data from the cached system memory texture buffer into the provided buffer.
-		 * 		
+		 *
 		 * @param[out]	data		Pre-allocated buffer of proper size and format where data will be read to. You can use
 		 *							TextureProperties::allocBuffer() to allocate a buffer of a correct format and size.
 		 * @param[in]	face		Texture face to read from.
 		 * @param[in]	mipLevel	Mipmap level to read from.
 		 *
-		 * @note	
+		 * @note
 		 * The data read is the cached texture data. Any data written to the texture from the GPU or core thread will not
 		 * be reflected in this data. Use readData() if you require those changes.
 		 * @note
@@ -299,8 +298,7 @@ namespace bs
 		static SPtr<Texture> CreatePtrInternal(const TEXTURE_DESC& desc);
 
 		/** Same as create() excepts it creates a pointer to the texture instead of a texture handle. */
-		static SPtr<Texture> CreatePtrInternal(const SPtr<PixelData>& pixelData, int usage = TU_DEFAULT,
-			bool hwGammaCorrection = false);
+		static SPtr<Texture> CreatePtrInternal(const SPtr<PixelData>& pixelData, int usage = TU_DEFAULT, bool hwGammaCorrection = false);
 
 		/** @} */
 
@@ -314,7 +312,7 @@ namespace bs
 		void Initialize() override;
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		/** Calculates the size of the texture, in bytes. */
 		u32 CalculateSize() const;
@@ -349,179 +347,170 @@ namespace bs
 
 	namespace ct
 	{
-	/** @addtogroup Resources-Internal
-	 *  @{
-	 */
-
-	/**
-	 * Core thread version of a bs::Texture.
-	 *
-	 * @note	Core thread.
-	 */
-	class BS_CORE_EXPORT Texture : public CoreObject
-	{
-	public:
-		Texture(const TEXTURE_DESC& desc, const SPtr<PixelData>& initData, GpuDeviceFlags deviceMask);
-		virtual ~Texture() {}
-
-
-		/** @copydoc CoreObject::initialize */
-		void Initialize() override;
+		/** @addtogroup Resources-Internal
+		 *  @{
+		 */
 
 		/**
-		 * Locks the buffer for reading or writing.
+		 * Core thread version of a bs::Texture.
 		 *
-		 * @param[in]	options 	Options for controlling what you may do with the locked data.
-		 * @param[in]	mipLevel	(optional) Mipmap level to lock.
-		 * @param[in]	face		(optional) Texture face to lock.
-		 * @param[in]	deviceIdx	Index of the device whose memory to map. If the buffer doesn't exist on this device,
-		 *							the method returns null.
-		 * @param[in]	queueIdx	Device queue to perform the read/write operations on. See @ref queuesDoc.
-		 * 			
-		 * @note	
-		 * If you are just reading or writing one block of data use readData()/writeData() methods as they can be much faster
-		 * in certain situations.
+		 * @note	Core thread.
 		 */
-		PixelData Lock(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0,
-					   u32 queueIdx = 0);
+		class BS_CORE_EXPORT Texture : public CoreObject
+		{
+		public:
+			Texture(const TEXTURE_DESC& desc, const SPtr<PixelData>& initData, GpuDeviceFlags deviceMask);
 
-		/**
-		 * Unlocks a previously locked buffer. After the buffer is unlocked, any data returned by lock becomes invalid.
-		 *
-		 * @see	lock()
-		 */
-		void Unlock();
+			virtual ~Texture() {}
 
-		/**
-		 * Copies the contents a subresource in this texture to another texture. Texture format and size of the subresource
-		 * must match.
-		 *
-		 * You are allowed to copy from a multisampled to non-multisampled surface, which will resolve the multisampled
-		 * surface before copying.
-		 *
-		 * @param[in]	target				Texture that contains the destination subresource.
-		 * @param[in]	desc				Structure used for customizing the copy operation.
-		 * @param[in]	commandBuffer		Command buffer to queue the copy operation on. If null, main command buffer is
-		 *									used.
-		 */
-		void Copy(const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc = TEXTURE_COPY_DESC::DEFAULT,
-			const SPtr<CommandBuffer>& commandBuffer = nullptr);
+			/** @copydoc CoreObject::initialize */
+			void Initialize() override;
 
-		/**
-		 * Sets all the pixels of the specified face and mip level to the provided value.
-		 *
-		 * @param[in]	value			Color to clear the pixels to.
-		 * @param[in]	mipLevel		Mip level to clear.
-		 * @param[in]	face			Face (array index or cubemap face) to clear.
-		 * @param[in]	queueIdx		Device queue to perform the write operation on. See @ref queuesDoc.
-		 */
-		void Clear(const Color& value, u32 mipLevel = 0, u32 face = 0, u32 queueIdx = 0);
+			/**
+			 * Locks the buffer for reading or writing.
+			 *
+			 * @param[in]	options 	Options for controlling what you may do with the locked data.
+			 * @param[in]	mipLevel	(optional) Mipmap level to lock.
+			 * @param[in]	face		(optional) Texture face to lock.
+			 * @param[in]	deviceIdx	Index of the device whose memory to map. If the buffer doesn't exist on this device,
+			 *							the method returns null.
+			 * @param[in]	queueIdx	Device queue to perform the read/write operations on. See @ref queuesDoc.
+			 *
+			 * @note
+			 * If you are just reading or writing one block of data use readData()/writeData() methods as they can be much faster
+			 * in certain situations.
+			 */
+			PixelData Lock(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0, u32 queueIdx = 0);
 
-		/**
-		 * Reads data from the texture buffer into the provided buffer.
-		 * 		
-		 * @param[out]	dest		Previously allocated buffer to read data into.
-		 * @param[in]	mipLevel	(optional) Mipmap level to read from.
-		 * @param[in]	face		(optional) Texture face to read from.
-		 * @param[in]	deviceIdx	Index of the device whose memory to read. If the buffer doesn't exist on this device,
-		 *							no data will be read.
-		 * @param[in]	queueIdx	Device queue to perform the read operation on. See @ref queuesDoc.
-		 */
-		void ReadData(PixelData& dest, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0,
-							  u32 queueIdx = 0);
+			/**
+			 * Unlocks a previously locked buffer. After the buffer is unlocked, any data returned by lock becomes invalid.
+			 *
+			 * @see	lock()
+			 */
+			void Unlock();
 
-		/**
-		 * Writes data from the provided buffer into the texture buffer.
-		 * 		
-		 * @param[in]	src					Buffer to retrieve the data from.
-		 * @param[in]	mipLevel			(optional) Mipmap level to write into.
-		 * @param[in]	face				(optional) Texture face to write into.
-		 * @param[in]	discardWholeBuffer	(optional) If true any existing texture data will be discard. This can improve
-		 *									performance of the write operation.
-		 * @param[in]	queueIdx			Device queue to perform the write operation on. See @ref queuesDoc.
-		 */
-		void WriteData(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false,
-							   u32 queueIdx = 0);
+			/**
+			 * Copies the contents a subresource in this texture to another texture. Texture format and size of the subresource
+			 * must match.
+			 *
+			 * You are allowed to copy from a multisampled to non-multisampled surface, which will resolve the multisampled
+			 * surface before copying.
+			 *
+			 * @param[in]	target				Texture that contains the destination subresource.
+			 * @param[in]	desc				Structure used for customizing the copy operation.
+			 * @param[in]	commandBuffer		Command buffer to queue the copy operation on. If null, main command buffer is
+			 *									used.
+			 */
+			void Copy(const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc = TEXTURE_COPY_DESC::DEFAULT, const SPtr<CommandBuffer>& commandBuffer = nullptr);
 
-		/**	Returns properties that contain information about the texture. */
-		const TextureProperties& GetProperties() const { return mProperties; }
+			/**
+			 * Sets all the pixels of the specified face and mip level to the provided value.
+			 *
+			 * @param[in]	value			Color to clear the pixels to.
+			 * @param[in]	mipLevel		Mip level to clear.
+			 * @param[in]	face			Face (array index or cubemap face) to clear.
+			 * @param[in]	queueIdx		Device queue to perform the write operation on. See @ref queuesDoc.
+			 */
+			void Clear(const Color& value, u32 mipLevel = 0, u32 face = 0, u32 queueIdx = 0);
 
-		/************************************************************************/
-		/* 								STATICS		                     		*/
-		/************************************************************************/
+			/**
+			 * Reads data from the texture buffer into the provided buffer.
+			 *
+			 * @param[out]	dest		Previously allocated buffer to read data into.
+			 * @param[in]	mipLevel	(optional) Mipmap level to read from.
+			 * @param[in]	face		(optional) Texture face to read from.
+			 * @param[in]	deviceIdx	Index of the device whose memory to read. If the buffer doesn't exist on this device,
+			 *							no data will be read.
+			 * @param[in]	queueIdx	Device queue to perform the read operation on. See @ref queuesDoc.
+			 */
+			void ReadData(PixelData& dest, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0, u32 queueIdx = 0);
 
-		/**
-		 * @copydoc bs::Texture::Create(const TEXTURE_DESC&)
-		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
-		 */
-		static SPtr<Texture> Create(const TEXTURE_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			/**
+			 * Writes data from the provided buffer into the texture buffer.
+			 *
+			 * @param[in]	src					Buffer to retrieve the data from.
+			 * @param[in]	mipLevel			(optional) Mipmap level to write into.
+			 * @param[in]	face				(optional) Texture face to write into.
+			 * @param[in]	discardWholeBuffer	(optional) If true any existing texture data will be discard. This can improve
+			 *									performance of the write operation.
+			 * @param[in]	queueIdx			Device queue to perform the write operation on. See @ref queuesDoc.
+			 */
+			void WriteData(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, u32 queueIdx = 0);
 
-		/**
-		 * @copydoc bs::Texture::Create(const SPtr<PixelData>&, int, bool)
-		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
-		 */
-		static SPtr<Texture> Create(const SPtr<PixelData>& pixelData, int usage = TU_DEFAULT,
-			bool hwGammaCorrection = false, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			/**	Returns properties that contain information about the texture. */
+			const TextureProperties& GetProperties() const { return mProperties; }
 
-		/************************************************************************/
-		/* 								TEXTURE VIEW                      		*/
-		/************************************************************************/
+			/************************************************************************/
+			/* 								STATICS		                     		*/
+			/************************************************************************/
 
-		/**
-		 * Requests a texture view for the specified mip and array ranges. Returns an existing view of one for the specified
-		 * ranges already exists, otherwise creates a new one. You must release all views by calling releaseView() when done.
-		 *
-		 * @note	Core thread only.
-		 */
-		SPtr<TextureView> RequestView(u32 mostDetailMip, u32 numMips, u32 firstArraySlice, u32 numArraySlices,
-									  GpuViewUsage usage);
+			/**
+			 * @copydoc bs::Texture::Create(const TEXTURE_DESC&)
+			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
+			 */
+			static SPtr<Texture> Create(const TEXTURE_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
-		/** Returns a plain white texture. */
-		static SPtr<Texture> WHITE;
+			/**
+			 * @copydoc bs::Texture::Create(const SPtr<PixelData>&, int, bool)
+			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
+			 */
+			static SPtr<Texture> Create(const SPtr<PixelData>& pixelData, int usage = TU_DEFAULT, bool hwGammaCorrection = false, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
-		/** Returns a plain black texture. */
-		static SPtr<Texture> BLACK;
+			/************************************************************************/
+			/* 								TEXTURE VIEW                      		*/
+			/************************************************************************/
 
-		/** Returns a plain normal map texture with normal pointing up (in Y direction). */
-		static SPtr<Texture> NORMAL;
-	protected:
-		/** @copydoc lock */
-		virtual PixelData LockImpl(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0,
-			u32 queueIdx = 0) = 0;
+			/**
+			 * Requests a texture view for the specified mip and array ranges. Returns an existing view of one for the specified
+			 * ranges already exists, otherwise creates a new one. You must release all views by calling releaseView() when done.
+			 *
+			 * @note	Core thread only.
+			 */
+			SPtr<TextureView> RequestView(u32 mostDetailMip, u32 numMips, u32 firstArraySlice, u32 numArraySlices, GpuViewUsage usage);
 
-		/** @copydoc unlock */
-		virtual void UnlockImpl() = 0;
+			/** Returns a plain white texture. */
+			static SPtr<Texture> WHITE;
 
-		/** @copydoc copy */
-		virtual void CopyImpl(const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc,
-			const SPtr<CommandBuffer>& commandBuffer) = 0;
+			/** Returns a plain black texture. */
+			static SPtr<Texture> BLACK;
 
-		/** @copydoc readData */
-		virtual void ReadDataImpl(PixelData& dest, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0,
-			u32 queueIdx = 0) = 0;
+			/** Returns a plain normal map texture with normal pointing up (in Y direction). */
+			static SPtr<Texture> NORMAL;
 
-		/** @copydoc writeData */
-		virtual void WriteDataImpl(const PixelData& src, u32 mipLevel = 0, u32 face = 0,
-			bool discardWholeBuffer = false, u32 queueIdx = 0) = 0;
+		protected:
+			/** @copydoc lock */
+			virtual PixelData LockImpl(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0, u32 queueIdx = 0) = 0;
 
-		/** @copydoc clear */
-		virtual void ClearImpl(const Color& value, u32 mipLevel = 0, u32 face = 0, u32 queueIdx = 0);
+			/** @copydoc unlock */
+			virtual void UnlockImpl() = 0;
 
-		/************************************************************************/
-		/* 								TEXTURE VIEW                      		*/
-		/************************************************************************/
+			/** @copydoc copy */
+			virtual void CopyImpl(const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc, const SPtr<CommandBuffer>& commandBuffer) = 0;
 
-		/**	Creates a view of a specific subresource in a texture. */
-		virtual SPtr<TextureView> CreateView(const TEXTURE_VIEW_DESC& desc);
+			/** @copydoc readData */
+			virtual void ReadDataImpl(PixelData& dest, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0, u32 queueIdx = 0) = 0;
 
-		/** Releases all internal texture view references. */
-		void ClearBufferViews();
+			/** @copydoc writeData */
+			virtual void WriteDataImpl(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, u32 queueIdx = 0) = 0;
 
-		UnorderedMap<TEXTURE_VIEW_DESC, SPtr<TextureView>, TextureView::HashFunction, TextureView::EqualFunction> mTextureViews;
-		TextureProperties mProperties;
-		SPtr<PixelData> mInitData;
-	};
+			/** @copydoc clear */
+			virtual void ClearImpl(const Color& value, u32 mipLevel = 0, u32 face = 0, u32 queueIdx = 0);
 
-	/** @} */
-	}
-}
+			/************************************************************************/
+			/* 								TEXTURE VIEW                      		*/
+			/************************************************************************/
+
+			/**	Creates a view of a specific subresource in a texture. */
+			virtual SPtr<TextureView> CreateView(const TEXTURE_VIEW_DESC& desc);
+
+			/** Releases all internal texture view references. */
+			void ClearBufferViews();
+
+			UnorderedMap<TEXTURE_VIEW_DESC, SPtr<TextureView>, TextureView::HashFunction, TextureView::EqualFunction> mTextureViews;
+			TextureProperties mProperties;
+			SPtr<PixelData> mInitData;
+		};
+
+		/** @} */
+	} // namespace ct
+} // namespace bs

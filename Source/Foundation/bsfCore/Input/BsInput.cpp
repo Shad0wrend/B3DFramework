@@ -21,7 +21,7 @@ namespace bs
 
 	Input::DeviceData::DeviceData()
 	{
-		for (u32 i = 0; i < BC_Count; i++)
+		for(u32 i = 0; i < BC_Count; i++)
 			KeyStates[i] = ButtonState::Off;
 	}
 
@@ -38,12 +38,12 @@ namespace bs
 		mCursorDoubleClickConn = Platform::onCursorDoubleClick.Connect(std::bind(&Input::CursorDoubleClick, this, _1, _2));
 		mInputCommandConn = Platform::onInputCommand.Connect(std::bind(&Input::InputCommandEntered, this, _1));
 
-		mMouseWheelScrolledConn  = Platform::onMouseWheelScrolled.Connect(std::bind(&Input::MouseWheelScrolled, this, _1));
+		mMouseWheelScrolledConn = Platform::onMouseWheelScrolled.Connect(std::bind(&Input::MouseWheelScrolled, this, _1));
 
 		RenderWindowManager::Instance().OnFocusGained.Connect(std::bind(&Input::InputWindowChanged, this, _1));
 		RenderWindowManager::Instance().OnFocusLost.Connect(std::bind(&Input::InputFocusLost, this));
 
-		for (int i = 0; i < 3; i++)
+		for(int i = 0; i < 3; i++)
 			mPointerButtonStates[i] = ButtonState::Off;
 
 		// Mouse smoothing
@@ -80,26 +80,26 @@ namespace bs
 		// Toggle states only remain active for a single frame before they are transitioned
 		// into permanent state
 
-		for (auto& deviceData : mDevices)
+		for(auto& deviceData : mDevices)
 		{
-			for (u32 i = 0; i < BC_Count; i++)
+			for(u32 i = 0; i < BC_Count; i++)
 			{
-				if (deviceData.KeyStates[i] == ButtonState::ToggledOff || deviceData.KeyStates[i] == ButtonState::ToggledOnOff)
+				if(deviceData.KeyStates[i] == ButtonState::ToggledOff || deviceData.KeyStates[i] == ButtonState::ToggledOnOff)
 					deviceData.KeyStates[i] = ButtonState::Off;
-				else if (deviceData.KeyStates[i] == ButtonState::ToggledOn)
+				else if(deviceData.KeyStates[i] == ButtonState::ToggledOn)
 					deviceData.KeyStates[i] = ButtonState::On;
 			}
 
 			u32 numAxes = (u32)deviceData.Axes.size();
-			for (u32 i = 0; i < numAxes; i++)
+			for(u32 i = 0; i < numAxes; i++)
 				deviceData.Axes[i] = 0.0f;
 		}
 
-		for (u32 i = 0; i < 3; i++)
+		for(u32 i = 0; i < 3; i++)
 		{
-			if (mPointerButtonStates[i] == ButtonState::ToggledOff || mPointerButtonStates[i] == ButtonState::ToggledOnOff)
+			if(mPointerButtonStates[i] == ButtonState::ToggledOff || mPointerButtonStates[i] == ButtonState::ToggledOnOff)
 				mPointerButtonStates[i] = ButtonState::Off;
-			else if (mPointerButtonStates[i] == ButtonState::ToggledOn)
+			else if(mPointerButtonStates[i] == ButtonState::ToggledOn)
 				mPointerButtonStates[i] = ButtonState::On;
 		}
 
@@ -107,20 +107,20 @@ namespace bs
 		mPointerDoubleClicked = false;
 
 		// Capture raw input
-		if (mMouse != nullptr)
+		if(mMouse != nullptr)
 			mMouse->Capture();
 
-		if (mKeyboard != nullptr)
+		if(mKeyboard != nullptr)
 			mKeyboard->Capture();
 
-		for (auto& gamepad : mGamepads)
+		for(auto& gamepad : mGamepads)
 			gamepad->Capture();
 
 		float rawXValue = 0.0f;
 		float rawYValue = 0.0f;
 
 		// Smooth mouse axes if needed
-		if (mMouseSmoothingEnabled)
+		if(mMouseSmoothingEnabled)
 		{
 			rawXValue = SmoothMouse((float)mMouseSampleAccumulator[0], 0);
 			rawYValue = SmoothMouse((float)mMouseSampleAccumulator[1], 1);
@@ -183,7 +183,7 @@ namespace bs
 			event.Type = PointerEventType::CursorMoved;
 			event.ScreenPos = pointerPos;
 
-			if (mLastPositionSet)
+			if(mLastPositionSet)
 				mPointerDelta = event.ScreenPos - mLastPointerPosition;
 
 			event.Delta = mPointerDelta;
@@ -194,52 +194,52 @@ namespace bs
 			mLastPositionSet = true;
 		}
 
-		for (auto& event : mQueuedEvents[1])
+		for(auto& event : mQueuedEvents[1])
 		{
-			switch (event.Type)
+			switch(event.Type)
 			{
 			case EventType::ButtonDown:
-			{
-				const ButtonEvent& eventData = mButtonDownEvents[1][event.Idx];
+				{
+					const ButtonEvent& eventData = mButtonDownEvents[1][event.Idx];
 
-				mDevices[eventData.DeviceIdx].KeyStates[eventData.ButtonCode & 0x0000FFFF] = ButtonState::ToggledOn;
-				OnButtonDown(mButtonDownEvents[1][event.Idx]);
-			}
+					mDevices[eventData.DeviceIdx].KeyStates[eventData.ButtonCode & 0x0000FFFF] = ButtonState::ToggledOn;
+					OnButtonDown(mButtonDownEvents[1][event.Idx]);
+				}
 				break;
 			case EventType::ButtonUp:
-			{
-				const ButtonEvent& eventData = mButtonUpEvents[1][event.Idx];
+				{
+					const ButtonEvent& eventData = mButtonUpEvents[1][event.Idx];
 
-				while (eventData.DeviceIdx >= (u32)mDevices.size())
-					mDevices.push_back(DeviceData());
+					while(eventData.DeviceIdx >= (u32)mDevices.size())
+						mDevices.push_back(DeviceData());
 
-				if (mDevices[eventData.DeviceIdx].KeyStates[eventData.ButtonCode & 0x0000FFFF] == ButtonState::ToggledOn)
-					mDevices[eventData.DeviceIdx].KeyStates[eventData.ButtonCode & 0x0000FFFF] = ButtonState::ToggledOnOff;
-				else
-					mDevices[eventData.DeviceIdx].KeyStates[eventData.ButtonCode & 0x0000FFFF] = ButtonState::ToggledOff;
+					if(mDevices[eventData.DeviceIdx].KeyStates[eventData.ButtonCode & 0x0000FFFF] == ButtonState::ToggledOn)
+						mDevices[eventData.DeviceIdx].KeyStates[eventData.ButtonCode & 0x0000FFFF] = ButtonState::ToggledOnOff;
+					else
+						mDevices[eventData.DeviceIdx].KeyStates[eventData.ButtonCode & 0x0000FFFF] = ButtonState::ToggledOff;
 
-				OnButtonUp(mButtonUpEvents[1][event.Idx]);
-			}
+					OnButtonUp(mButtonUpEvents[1][event.Idx]);
+				}
 				break;
 			case EventType::PointerDown:
-			{
-				const PointerEvent& eventData = mPointerPressedEvents[1][event.Idx];
-				mPointerButtonStates[(u32)eventData.Button] = ButtonState::ToggledOn;
+				{
+					const PointerEvent& eventData = mPointerPressedEvents[1][event.Idx];
+					mPointerButtonStates[(u32)eventData.Button] = ButtonState::ToggledOn;
 
-				OnPointerPressed(eventData);
-			}
+					OnPointerPressed(eventData);
+				}
 				break;
 			case EventType::PointerUp:
-			{
-				const PointerEvent& eventData = mPointerReleasedEvents[1][event.Idx];
+				{
+					const PointerEvent& eventData = mPointerReleasedEvents[1][event.Idx];
 
-				if (mPointerButtonStates[(u32)eventData.Button] == ButtonState::ToggledOn)
-					mPointerButtonStates[(u32)eventData.Button] = ButtonState::ToggledOnOff;
-				else
-					mPointerButtonStates[(u32)eventData.Button] = ButtonState::ToggledOff;
+					if(mPointerButtonStates[(u32)eventData.Button] == ButtonState::ToggledOn)
+						mPointerButtonStates[(u32)eventData.Button] = ButtonState::ToggledOnOff;
+					else
+						mPointerButtonStates[(u32)eventData.Button] = ButtonState::ToggledOff;
 
-				OnPointerReleased(eventData);
-			}
+					OnPointerReleased(eventData);
+				}
 				break;
 			case EventType::PointerDoubleClick:
 				mPointerDoubleClicked = true;
@@ -277,7 +277,7 @@ namespace bs
 		if(mMouse != nullptr)
 			mMouse->ChangeCaptureContext(hWnd);
 
-		for (auto& gamepad : mGamepads)
+		for(auto& gamepad : mGamepads)
 			gamepad->ChangeCaptureContext(hWnd);
 	}
 
@@ -289,7 +289,7 @@ namespace bs
 		if(mMouse != nullptr)
 			mMouse->ChangeCaptureContext((u64)-1);
 
-		for (auto& gamepad : mGamepads)
+		for(auto& gamepad : mGamepads)
 			gamepad->ChangeCaptureContext((u64)-1);
 	}
 
@@ -303,12 +303,12 @@ namespace bs
 
 		// Update sample times used for determining sampling rate. But only if something was
 		// actually sampled, and only if this isn't the first non-zero sample.
-		if (mLastMouseUpdateFrame != gTime().GetFrameIdx())
+		if(mLastMouseUpdateFrame != gTime().GetFrameIdx())
 		{
-			if (relX != 0 && !Math::ApproxEquals(mMouseSmoothedAxis[0], 0.0f))
+			if(relX != 0 && !Math::ApproxEquals(mMouseSmoothedAxis[0], 0.0f))
 				mTotalMouseSamplingTime[0] += gTime().GetFrameDelta();
 
-			if (relY != 0 && !Math::ApproxEquals(mMouseSmoothedAxis[1], 0.0f))
+			if(relY != 0 && !Math::ApproxEquals(mMouseSmoothedAxis[1], 0.0f))
 				mTotalMouseSamplingTime[1] += gTime().GetFrameDelta();
 
 			mLastMouseUpdateFrame = gTime().GetFrameIdx();
@@ -340,7 +340,7 @@ namespace bs
 	{
 		Lock lock(mMutex);
 
-		while (deviceIdx >= (u32)mDevices.size())
+		while(deviceIdx >= (u32)mDevices.size())
 			mDevices.push_back(DeviceData());
 
 		ButtonEvent btnEvent;
@@ -368,11 +368,11 @@ namespace bs
 	void Input::AxisMoved(u32 deviceIdx, float value, u32 axis)
 	{
 		// Note: This method must only ever be called from the main thread, as we don't lock access to axis data
-		while (deviceIdx >= (u32)mDevices.size())
+		while(deviceIdx >= (u32)mDevices.size())
 			mDevices.push_back(DeviceData());
 
 		Vector<float>& axes = mDevices[deviceIdx].Axes;
-		while (axis >= (u32)axes.size())
+		while(axis >= (u32)axes.size())
 			axes.push_back(0.0f);
 
 		mDevices[deviceIdx].Axes[axis] = value;
@@ -397,7 +397,7 @@ namespace bs
 		event.ButtonStates[0] = btnStates.MouseButtons[0];
 		event.ButtonStates[1] = btnStates.MouseButtons[1];
 		event.ButtonStates[2] = btnStates.MouseButtons[2];
-		
+
 		switch(button)
 		{
 		case OSMouseButton::Left:
@@ -412,7 +412,7 @@ namespace bs
 		default:
 			break;
 		}
-		
+
 		event.ScreenPos = cursorPos;
 		event.Type = PointerEventType::ButtonPressed;
 
@@ -431,7 +431,7 @@ namespace bs
 		event.ButtonStates[0] = btnStates.MouseButtons[0];
 		event.ButtonStates[1] = btnStates.MouseButtons[1];
 		event.ButtonStates[2] = btnStates.MouseButtons[2];
-		
+
 		switch(button)
 		{
 		case OSMouseButton::Left:
@@ -446,7 +446,7 @@ namespace bs
 		default:
 			break;
 		}
-		
+
 		event.ScreenPos = cursorPos;
 		event.Type = PointerEventType::ButtonReleased;
 
@@ -501,11 +501,11 @@ namespace bs
 
 	float Input::GetAxisValue(u32 type, u32 deviceIdx) const
 	{
-		if (deviceIdx >= (u32)mDevices.size())
+		if(deviceIdx >= (u32)mDevices.size())
 			return 0.0f;
 
 		const Vector<float>& axes = mDevices[deviceIdx].Axes;
-		if (type >= (u32)axes.size())
+		if(type >= (u32)axes.size())
 			return 0.0f;
 
 		return axes[type];
@@ -513,7 +513,7 @@ namespace bs
 
 	bool Input::IsButtonHeld(ButtonCode button, u32 deviceIdx) const
 	{
-		if (deviceIdx >= (u32)mDevices.size())
+		if(deviceIdx >= (u32)mDevices.size())
 			return false;
 
 		return mDevices[deviceIdx].KeyStates[button & 0x0000FFFF] == ButtonState::On ||
@@ -523,7 +523,7 @@ namespace bs
 
 	bool Input::IsButtonUp(ButtonCode button, u32 deviceIdx) const
 	{
-		if (deviceIdx >= (u32)mDevices.size())
+		if(deviceIdx >= (u32)mDevices.size())
 			return false;
 
 		return mDevices[deviceIdx].KeyStates[button & 0x0000FFFF] == ButtonState::ToggledOff ||
@@ -532,7 +532,7 @@ namespace bs
 
 	bool Input::IsButtonDown(ButtonCode button, u32 deviceIdx) const
 	{
-		if (deviceIdx >= (u32)mDevices.size())
+		if(deviceIdx >= (u32)mDevices.size())
 			return false;
 
 		return mDevices[deviceIdx].KeyStates[button & 0x0000FFFF] == ButtonState::ToggledOn ||
@@ -573,19 +573,19 @@ namespace bs
 		switch(type)
 		{
 		case InputDevice::Keyboard:
-			if (mKeyboard != nullptr && idx == 0)
+			if(mKeyboard != nullptr && idx == 0)
 				return mKeyboard->GetName();
 
 			return StringUtil::BLANK;
 		case InputDevice::Mouse:
-			if (mMouse != nullptr && idx == 0)
+			if(mMouse != nullptr && idx == 0)
 				return mMouse->GetName();
 
 			return StringUtil::BLANK;
 		case InputDevice::Gamepad:
-			if (idx < (u32)mGamepads.size())
+			if(idx < (u32)mGamepads.size())
 				return mGamepads[idx]->GetName();
-			
+
 			return StringUtil::BLANK;
 		default:
 			return StringUtil::BLANK;
@@ -602,14 +602,14 @@ namespace bs
 		u32 sampleCount = 1;
 
 		float deltaTime = gTime().GetFrameDelta();
-		if (deltaTime < 0.25f)
+		if(deltaTime < 0.25f)
 		{
 			float secondsPerSample = mTotalMouseSamplingTime[idx] / mTotalMouseNumSamples[idx];
 
-			if (value == 0.0f)
+			if(value == 0.0f)
 			{
 				mMouseZeroTime[idx] += deltaTime;
-				if (mMouseZeroTime[idx] < secondsPerSample)
+				if(mMouseZeroTime[idx] < secondsPerSample)
 					value = mMouseSmoothedAxis[idx] * deltaTime / secondsPerSample;
 				else
 					mMouseSmoothedAxis[idx] = 0;
@@ -617,9 +617,9 @@ namespace bs
 			else
 			{
 				mMouseZeroTime[idx] = 0;
-				if (mMouseSmoothedAxis[idx] != 0)
+				if(mMouseSmoothedAxis[idx] != 0)
 				{
-					if (deltaTime < secondsPerSample * (sampleCount + 1))
+					if(deltaTime < secondsPerSample * (sampleCount + 1))
 						value = value * deltaTime / (secondsPerSample * sampleCount);
 					else
 						sampleCount = Math::RoundToInt(deltaTime / secondsPerSample);
@@ -641,4 +641,4 @@ namespace bs
 	{
 		return Input::Instance();
 	}
-}
+} // namespace bs

@@ -54,7 +54,7 @@ namespace bs
 
 		/**
 		 * Scissor rectangle allows you to cull all pixels outside of the scissor rectangle.
-		 *			
+		 *
 		 * @see		ct::RenderAPI::setScissorRect
 		 */
 		bool ScissorEnable = false;
@@ -62,7 +62,7 @@ namespace bs
 		/**
 		 * Determines how are samples in multi-sample render targets handled. If disabled all samples in the render target
 		 * will be written the same value, and if enabled each sample will be generated separately.
-		 *			
+		 *
 		 * @note	In order to get an antialiased image you need to both enable this option and use a MSAA render target.
 		 */
 		bool MultisampleEnable = true;
@@ -151,9 +151,9 @@ namespace bs
 		friend class RenderStateManager;
 
 		RasterizerState(const RASTERIZER_STATE_DESC& desc);
-		
+
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		RasterizerProperties mProperties;
 		mutable u32 mId;
@@ -165,57 +165,57 @@ namespace bs
 	public:
 		friend class RasterizerStateRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;	
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */
 
 	namespace ct
 	{
-	/** @addtogroup RenderAPI-Internal
-	 *  @{
-	 */
+		/** @addtogroup RenderAPI-Internal
+		 *  @{
+		 */
 
-	/**
-	 * Core thread version of bs::RasterizerState.
-	 *
-	 * @note	Core thread.
-	 */
-	class BS_CORE_EXPORT RasterizerState : public CoreObject
-	{
-	public:
-		virtual ~RasterizerState();
+		/**
+		 * Core thread version of bs::RasterizerState.
+		 *
+		 * @note	Core thread.
+		 */
+		class BS_CORE_EXPORT RasterizerState : public CoreObject
+		{
+		public:
+			virtual ~RasterizerState();
 
-		/** Returns information about the rasterizer state. */
-		const RasterizerProperties& GetProperties() const;
+			/** Returns information about the rasterizer state. */
+			const RasterizerProperties& GetProperties() const;
 
-		/**	Returns a unique state ID. Only the lowest 10 bits are used. */
-		u32 GetId() const { return mId; }
+			/**	Returns a unique state ID. Only the lowest 10 bits are used. */
+			u32 GetId() const { return mId; }
 
-		/** Creates a new rasterizer state using the specified rasterizer state descriptor structure. */
-		static SPtr<RasterizerState> Create(const RASTERIZER_STATE_DESC& desc);
+			/** Creates a new rasterizer state using the specified rasterizer state descriptor structure. */
+			static SPtr<RasterizerState> Create(const RASTERIZER_STATE_DESC& desc);
 
-		/** Returns the default rasterizer state. */
-		static const SPtr<RasterizerState>& GetDefault();
+			/** Returns the default rasterizer state. */
+			static const SPtr<RasterizerState>& GetDefault();
 
-	protected:
-		friend class RenderStateManager;
+		protected:
+			friend class RenderStateManager;
 
-		RasterizerState(const RASTERIZER_STATE_DESC& desc, u32 id);
+			RasterizerState(const RASTERIZER_STATE_DESC& desc, u32 id);
 
-		/** @copydoc CoreObject::initialize */
-		void Initialize() override;
+			/** @copydoc CoreObject::initialize */
+			void Initialize() override;
 
-		/**	Creates any API-specific state objects. */
-		virtual void CreateInternal() { }
+			/**	Creates any API-specific state objects. */
+			virtual void CreateInternal() {}
 
-		RasterizerProperties mProperties;
-		u32 mId;
-	};
+			RasterizerProperties mProperties;
+			u32 mId;
+		};
 
-	/** @} */
-	}
-}
+		/** @} */
+	} // namespace ct
+} // namespace bs
 
 /** @cond STDLIB */
 /** @addtogroup RenderAPI
@@ -224,16 +224,16 @@ namespace bs
 
 namespace std
 {
-/**	Hash value generator for RASTERIZER_STATE_DESC. */
-template<>
-struct hash<bs::RASTERIZER_STATE_DESC>
-{
-	size_t operator()(const bs::RASTERIZER_STATE_DESC& value) const
+	/**	Hash value generator for RASTERIZER_STATE_DESC. */
+	template <>
+	struct hash<bs::RASTERIZER_STATE_DESC>
 	{
-		return (size_t)bs::RasterizerState::GenerateHash(value);
-	}
-};
-}
+		size_t operator()(const bs::RASTERIZER_STATE_DESC& value) const
+		{
+			return (size_t)bs::RasterizerState::GenerateHash(value);
+		}
+	};
+} // namespace std
 
 /** @} */
 /** @endcond */

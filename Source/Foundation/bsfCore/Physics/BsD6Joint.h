@@ -64,7 +64,7 @@ namespace bs
 	 * Specifies parameters for a drive that will attempt to move the joint bodies to the specified drive position and
 	 * velocity.
 	 */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportAsStruct(true)) D6JointDrive
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) D6JointDrive
 	{
 		bool operator==(const D6JointDrive& other) const
 		{
@@ -97,8 +97,9 @@ namespace bs
 	class BS_CORE_EXPORT D6Joint : public Joint
 	{
 	public:
-		D6Joint(const D6_JOINT_DESC& desc) { }
-		virtual ~D6Joint() { }
+		D6Joint(const D6_JOINT_DESC& desc) {}
+
+		virtual ~D6Joint() {}
 
 		/**
 		 * Returns motion constraint for the specified axis.
@@ -140,7 +141,7 @@ namespace bs
 
 		/** Determines the linear limit used for constraining translation degrees of freedom. */
 		virtual void SetLimitLinear(const LimitLinear& limit) = 0;
-		
+
 		/** @copydoc setLimitTwist() */
 		virtual LimitAngularRange GetLimitTwist() const = 0;
 
@@ -152,7 +153,7 @@ namespace bs
 
 		/** Determines the cone limit used for constraining the swing (rotation around Y and Z) degree of freedom. */
 		virtual void SetLimitSwing(const LimitConeRange& limit) = 0;
-	
+
 		/** @copydoc setDrive() */
 		virtual D6JointDrive GetDrive(D6JointDriveType type) const = 0;
 
@@ -192,7 +193,7 @@ namespace bs
 	/** Structure used for initializing a new D6Joint. */
 	struct D6_JOINT_DESC : JOINT_DESC
 	{
-		D6_JOINT_DESC() { }
+		D6_JOINT_DESC() {}
 
 		D6JointMotion Motion[(u32)D6JointAxis::Count] = { D6JointMotion::Locked };
 		D6JointDrive Drive[(u32)D6JointDriveType::Count];
@@ -206,4 +207,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

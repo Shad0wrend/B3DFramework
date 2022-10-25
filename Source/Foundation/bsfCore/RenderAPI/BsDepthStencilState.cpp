@@ -9,7 +9,7 @@
 
 namespace bs
 {
-	bool DEPTH_STENCIL_STATE_DESC::operator == (const DEPTH_STENCIL_STATE_DESC& rhs) const
+	bool DEPTH_STENCIL_STATE_DESC::operator==(const DEPTH_STENCIL_STATE_DESC& rhs) const
 	{
 		return DepthReadEnable == rhs.DepthReadEnable &&
 			DepthWriteEnable == rhs.DepthWriteEnable &&
@@ -28,15 +28,13 @@ namespace bs
 	}
 
 	DepthStencilProperties::DepthStencilProperties(const DEPTH_STENCIL_STATE_DESC& desc)
-		:mData(desc), mHash(DepthStencilState::GenerateHash(desc))
+		: mData(desc), mHash(DepthStencilState::GenerateHash(desc))
 	{
-
 	}
 
 	DepthStencilState::DepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc)
-		:mProperties(desc), mId(0)
+		: mProperties(desc), mId(0)
 	{
-
 	}
 
 	SPtr<ct::DepthStencilState> DepthStencilState::GetCore() const
@@ -104,41 +102,39 @@ namespace bs
 
 	namespace ct
 	{
-	DepthStencilState::DepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc, u32 id)
-		: mProperties(desc), mId(id)
-	{
+		DepthStencilState::DepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc, u32 id)
+			: mProperties(desc), mId(id)
+		{
+		}
 
-	}
+		DepthStencilState::~DepthStencilState()
+		{
+		}
 
-	DepthStencilState::~DepthStencilState()
-	{
+		void DepthStencilState::Initialize()
+		{
+			// Since we cache states it's possible this object was already initialized
+			// (i.e. multiple sim-states can share a single core-state)
+			if(IsInitialized())
+				return;
 
-	}
+			CreateInternal();
+			CoreObject::Initialize();
+		}
 
-	void DepthStencilState::Initialize()
-	{
-		// Since we cache states it's possible this object was already initialized
-		// (i.e. multiple sim-states can share a single core-state)
-		if (IsInitialized())
-			return;
+		const DepthStencilProperties& DepthStencilState::GetProperties() const
+		{
+			return mProperties;
+		}
 
-		CreateInternal();
-		CoreObject::Initialize();
-	}
+		SPtr<DepthStencilState> DepthStencilState::Create(const DEPTH_STENCIL_STATE_DESC& desc)
+		{
+			return RenderStateManager::Instance().CreateDepthStencilState(desc);
+		}
 
-	const DepthStencilProperties& DepthStencilState::GetProperties() const
-	{
-		return mProperties;
-	}
-
-	SPtr<DepthStencilState> DepthStencilState::Create(const DEPTH_STENCIL_STATE_DESC& desc)
-	{
-		return RenderStateManager::Instance().CreateDepthStencilState(desc);
-	}
-
-	const SPtr<DepthStencilState>& DepthStencilState::GetDefault()
-	{
-		return RenderStateManager::Instance().GetDefaultDepthStencilState();
-	}
-	}
-}
+		const SPtr<DepthStencilState>& DepthStencilState::GetDefault()
+		{
+			return RenderStateManager::Instance().GetDefaultDepthStencilState();
+		}
+	} // namespace ct
+} // namespace bs

@@ -25,12 +25,12 @@ namespace bs
 
 	void CPlaneCollider::SetNormal(const Vector3& normal)
 	{
-		if (mNormal == normal)
+		if(mNormal == normal)
 			return;
 
 		mNormal = normal;
 		mNormal.Normalize();
-		
+
 		mLocalRotation = Quaternion::GetRotationFromTo(Vector3::UNIT_X, normal);
 		mLocalPosition = mNormal * mDistance;
 
@@ -40,13 +40,13 @@ namespace bs
 
 	void CPlaneCollider::SetDistance(float distance)
 	{
-		if (mDistance == distance)
+		if(mDistance == distance)
 			return;
 
 		mDistance = distance;
 		mLocalPosition = mNormal * distance;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			UpdateTransform();
 	}
 
@@ -76,4 +76,4 @@ namespace bs
 	{
 		return CPlaneCollider::GetRttiStatic();
 	}
-}
+} // namespace bs

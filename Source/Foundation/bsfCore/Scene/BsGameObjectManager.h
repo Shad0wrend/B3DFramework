@@ -44,7 +44,7 @@ namespace bs
 
 		/**
 		 * Registers a new GameObject and returns the handle to the object.
-		 * 			
+		 *
 		 * @param[in]	object			Constructed GameObject to wrap in the handle and initialize.
 		 * @return						Handle to the GameObject.
 		 *
@@ -76,7 +76,7 @@ namespace bs
 		 */
 		bool TryGetObject(u64 id, GameObjectHandleBase& object) const;
 
-		/**	
+		/**
 		 * Checks if the GameObject with the specified instance ID exists.
 		 *
 		 * @note	Thread safe.
@@ -108,7 +108,7 @@ namespace bs
 		Event<void(const HGameObject&)> OnDestroyed;
 
 	private:
-		std::atomic<u64> mNextAvailableID = { 1 } ; // 0 is not a valid ID
+		std::atomic<u64> mNextAvailableID = { 1 }; // 0 is not a valid ID
 		Map<u64, GameObjectHandleBase> mObjects;
 		Map<u64, GameObjectHandleBase> mQueuedForDestroy;
 
@@ -161,4 +161,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

@@ -28,8 +28,8 @@ namespace bs
 #if BS_DEBUG_MODE
 		if(!mThis.expired())
 		{
-			BS_EXCEPT(InternalErrorException, "Shared pointer to this object still has active references but " \
-				"the object is being deleted? You shouldn't delete CoreObjects manually.");
+			BS_EXCEPT(InternalErrorException, "Shared pointer to this object still has active references but "
+											  "the object is being deleted? You shouldn't delete CoreObjects manually.");
 		}
 #endif
 	}
@@ -57,9 +57,9 @@ namespace bs
 		CoreObjectManager::Instance().RegisterObject(this);
 		mCoreSpecific = CreateCore();
 
-		if (mCoreSpecific != nullptr)
+		if(mCoreSpecific != nullptr)
 		{
-			if (RequiresInitOnCoreThread())
+			if(RequiresInitOnCoreThread())
 			{
 				mCoreSpecific->SetScheduledToBeInitialized(true);
 
@@ -87,7 +87,7 @@ namespace bs
 
 	void CoreObject::BlockUntilCoreInitialized() const
 	{
-		if (mCoreSpecific != nullptr)
+		if(mCoreSpecific != nullptr)
 			mCoreSpecific->Synchronize();
 	}
 
@@ -102,7 +102,7 @@ namespace bs
 
 		mCoreDirtyFlags |= flags;
 
-		if (!wasDirty && IsCoreDirty())
+		if(!wasDirty && IsCoreDirty())
 			CoreObjectManager::Instance().NotifyCoreDirty(this);
 	}
 
@@ -140,7 +140,7 @@ namespace bs
 
 	void CoreObject::QueueDestroyGpuCommand(const SPtr<ct::CoreObject>& obj)
 	{
-		std::function<void()> func = [&](){}; // Do nothing function. We just need the shared pointer to stay alive until it reaches the core thread
+		std::function<void()> func = [&]() {}; // Do nothing function. We just need the shared pointer to stay alive until it reaches the core thread
 
 		gCoreThread().QueueCommand(std::bind(&CoreObject::ExecuteGpuCommand, obj, func));
 	}
@@ -152,11 +152,10 @@ namespace bs
 		func();
 	}
 
-	void CoreObject::ExecuteReturnGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void(AsyncOp&)> func,
-		AsyncOp& op)
+	void CoreObject::ExecuteReturnGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void(AsyncOp&)> func, AsyncOp& op)
 	{
 		volatile SPtr<ct::CoreObject> objParam = obj; // Makes sure obj isn't optimized out?
 
 		func(op);
 	}
-}
+} // namespace bs

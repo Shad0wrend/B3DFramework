@@ -17,7 +17,7 @@ namespace bs
 		SPtr<Resource> MPtr;
 		UUID MUuid;
 		bool MIsCreated = false;
-		std::atomic<std::uint32_t> MRefCount{0};
+		std::atomic<std::uint32_t> MRefCount{ 0 };
 	};
 
 	/**
@@ -121,15 +121,15 @@ namespace bs
 	 */
 	template <bool WeakHandle>
 	class BS_CORE_EXPORT TResourceHandleBase : public ResourceHandleBase
-	{ };
+	{};
 
 	/**	Specialization of TResourceHandleBase for weak handles. Weak handles do no reference counting. */
-	template<>
+	template <>
 	class BS_CORE_EXPORT TResourceHandleBase<true> : public ResourceHandleBase
 	{
 	protected:
-		void AddRef() { };
-		void ReleaseRef() { };
+		void AddRef(){};
+		void ReleaseRef(){};
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -141,23 +141,23 @@ namespace bs
 	};
 
 	/**	Specialization of TResourceHandleBase for normal (non-weak) handles. */
-	template<>
+	template <>
 	class BS_CORE_EXPORT TResourceHandleBase<false> : public ResourceHandleBase
 	{
 	protected:
 		void AddRef()
 		{
-			if (mData)
+			if(mData)
 				mData->MRefCount.fetch_add(1, std::memory_order_relaxed);
 		};
 
 		void ReleaseRef()
 		{
-			if (mData)
+			if(mData)
 			{
 				std::uint32_t refCount = mData->MRefCount.fetch_sub(1, std::memory_order_release);
 
-				if (refCount == 1)
+				if(refCount == 1)
 				{
 					std::atomic_thread_fence(std::memory_order_acquire);
 					Destroy();
@@ -182,7 +182,7 @@ namespace bs
 	public:
 		TResourceHandle() = default;
 
-		TResourceHandle(std::nullptr_t) { }
+		TResourceHandle(std::nullptr_t) {}
 
 		/**	Copy constructor. */
 		TResourceHandle(const TResourceHandle& other)
@@ -250,7 +250,7 @@ namespace bs
 			return *this;
 		}
 
-		template<class _Ty>
+		template <class _Ty>
 		struct Bool_struct
 		{
 			int Member;
@@ -302,11 +302,11 @@ namespace bs
 
 	protected:
 		friend Resources;
-		template<class _T, bool _Weak>
+		template <class _T, bool _Weak>
 		friend class TResourceHandle;
-		template<class _Ty1, class _Ty2, bool _Weak2, bool _Weak1>
+		template <class _Ty1, class _Ty2, bool _Weak2, bool _Weak1>
 		friend TResourceHandle<_Ty1, _Weak1> static_resource_cast(const TResourceHandle<_Ty2, _Weak2>& other);
-		template<class _Ty1, class _Ty2, bool _Weak2>
+		template <class _Ty1, class _Ty2, bool _Weak2>
 		friend TResourceHandle<_Ty1, false> static_resource_cast(const TResourceHandle<_Ty2, _Weak2>& other);
 
 		/**
@@ -315,7 +315,7 @@ namespace bs
 		 * @note	Handle will take ownership of the provided resource pointer, so make sure you don't delete it elsewhere.
 		 */
 		explicit TResourceHandle(T* ptr, const UUID& uuid)
-			:TResourceHandleBase<WeakHandle>()
+			: TResourceHandleBase<WeakHandle>()
 		{
 			this->mData = bs_shared_ptr_new<ResourceHandleData>();
 			this->AddRef();
@@ -367,7 +367,7 @@ namespace bs
 	};
 
 	/**	Checks if two handles point to the same resource. */
-	template<class _Ty1, bool _Weak1, class _Ty2, bool _Weak2>
+	template <class _Ty1, bool _Weak1, class _Ty2, bool _Weak2>
 	bool operator==(const TResourceHandle<_Ty1, _Weak1>& _Left, const TResourceHandle<_Ty2, _Weak2>& _Right)
 	{
 		if(_Left.GetHandleData() != nullptr && _Right.GetHandleData() != nullptr)
@@ -377,13 +377,13 @@ namespace bs
 	}
 
 	/**	Checks if a handle is null. */
-	template<class _Ty1, bool _Weak1, class _Ty2, bool _Weak2>
-	bool operator==(const TResourceHandle<_Ty1, _Weak1>& _Left, std::nullptr_t  _Right)
+	template <class _Ty1, bool _Weak1, class _Ty2, bool _Weak2>
+	bool operator==(const TResourceHandle<_Ty1, _Weak1>& _Left, std::nullptr_t _Right)
 	{
 		return _Left.GetHandleData() == nullptr || _Left.GetHandleData()->mUUID.empty();
 	}
 
-	template<class _Ty1, bool _Weak1, class _Ty2, bool _Weak2>
+	template <class _Ty1, bool _Weak1, class _Ty2, bool _Weak2>
 	bool operator!=(const TResourceHandle<_Ty1, _Weak1>& _Left, const TResourceHandle<_Ty2, _Weak2>& _Right)
 	{
 		return (!(_Left == _Right));
@@ -395,7 +395,7 @@ namespace bs
 	 *  @{
 	 */
 
-	 /** @copydoc ResourceHandleBase */
+	/** @copydoc ResourceHandleBase */
 	template <typename T>
 	using ResourceHandle = TResourceHandle<T, false>;
 
@@ -408,7 +408,7 @@ namespace bs
 	using WeakResourceHandle = TResourceHandle<T, true>;
 
 	/**	Casts one resource handle to another. */
-	template<class _Ty1, class _Ty2, bool _Weak2, bool _Weak1>
+	template <class _Ty1, class _Ty2, bool _Weak2, bool _Weak1>
 	TResourceHandle<_Ty1, _Weak1> static_resource_cast(const TResourceHandle<_Ty2, _Weak2>& other)
 	{
 		TResourceHandle<_Ty1, _Weak1> handle;
@@ -418,7 +418,7 @@ namespace bs
 	}
 
 	/**	Casts one resource handle to another. */
-	template<class _Ty1, class _Ty2, bool _Weak2>
+	template <class _Ty1, class _Ty2, bool _Weak2>
 	TResourceHandle<_Ty1, false> static_resource_cast(const TResourceHandle<_Ty2, _Weak2>& other)
 	{
 		TResourceHandle<_Ty1, false> handle;
@@ -428,4 +428,4 @@ namespace bs
 	}
 
 	/** @} */
-}
+} // namespace bs

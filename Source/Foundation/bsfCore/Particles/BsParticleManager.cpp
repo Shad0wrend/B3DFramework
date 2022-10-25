@@ -12,20 +12,20 @@
 namespace bs
 {
 	/** Helper method used for writing particle data into the @p pixels buffer. */
-	template<class T, class PR>
+	template <class T, class PR>
 	void iterateOverPixels(PixelData& pixels, u32 count, u32 stride, PR predicate)
 	{
 		auto dest = (u8*)pixels.GetData();
 
 		u32 x = 0;
-		for (u32 i = 0; i < count; i++)
+		for(u32 i = 0; i < count; i++)
 		{
 			predicate((T*)dest, i);
 
 			dest += stride;
 			x++;
 
-			if (x >= pixels.GetWidth())
+			if(x >= pixels.GetWidth())
 			{
 				x = 0;
 				dest += pixels.GetRowSkip();
@@ -34,7 +34,7 @@ namespace bs
 	}
 
 	/** Helper method used for writing particle data into the @p pixels buffer. */
-	template<class T, class PR>
+	template <class T, class PR>
 	void iterateOverPixels(PixelData& pixels, u32 count, PR predicate)
 	{
 		iterateOverPixels<T>(pixels, count, sizeof(T), predicate);
@@ -58,19 +58,19 @@ namespace bs
 		{
 			Lock lock(mMutex);
 
-			for (auto& sizeEntry : mBillboardBufferList)
+			for(auto& sizeEntry : mBillboardBufferList)
 			{
-				for (auto& entry : sizeEntry.second.Buffers)
+				for(auto& entry : sizeEntry.second.Buffers)
 					mBillboardAlloc.Destruct(static_cast<ParticleBillboardRenderData*>(entry));
 			}
 
-			for (auto& sizeEntry : mMeshBufferList)
+			for(auto& sizeEntry : mMeshBufferList)
 			{
-				for (auto& entry : sizeEntry.second.Buffers)
+				for(auto& entry : sizeEntry.second.Buffers)
 					mMeshAlloc.Destruct(static_cast<ParticleMeshRenderData*>(entry));
 			}
 
-			for (auto& entry : mGPUBufferList)
+			for(auto& entry : mGPUBufferList)
 				mGPUAlloc.Destruct(entry);
 		}
 
@@ -88,14 +88,14 @@ namespace bs
 				Lock lock(mMutex);
 
 				BuffersPerSize& buffers = mBillboardBufferList[size];
-				if (buffers.NextFreeIdx < (u32)buffers.Buffers.size())
+				if(buffers.NextFreeIdx < (u32)buffers.Buffers.size())
 				{
 					output = static_cast<ParticleBillboardRenderData*>(buffers.Buffers[buffers.NextFreeIdx]);
 					buffers.NextFreeIdx++;
 				}
 			}
 
-			if (!output)
+			if(!output)
 			{
 				output = CreateNewBillboardBuffersCpu(size);
 
@@ -111,29 +111,22 @@ namespace bs
 			const ParticleSetData& particles = particleSet.GetParticles();
 
 			// TODO: Use non-temporal writes?
-			iterateOverPixels<Vector4>(output->PositionAndRotation, count,
-				[&particles](Vector4* dst, u32 idx)
-			{
-				dst->X = particles.Position[idx].X;
-				dst->Y = particles.Position[idx].Y;
-				dst->Z = particles.Position[idx].Z;
-				dst->W = particles.Rotation[idx].X * Math::DEG2RAD;
+			iterateOverPixels<Vector4>(output->PositionAndRotation, count, [&particles](Vector4* dst, u32 idx)
+									   {
+										   dst->X = particles.Position[idx].X;
+										   dst->Y = particles.Position[idx].Y;
+										   dst->Z = particles.Position[idx].Z;
+										   dst->W = particles.Rotation[idx].X * Math::DEG2RAD;
+									   });
 
-			});
+			iterateOverPixels<RGBA>(output->Color, count, [&particles](RGBA* dst, u32 idx)
+									{ *dst = particles.Color[idx]; });
 
-			iterateOverPixels<RGBA>(output->Color, count,
-				[&particles](RGBA* dst, u32 idx)
-			{
-				*dst = particles.Color[idx];
-			});
-
-			iterateOverPixels<u16>(output->SizeAndFrameIdx, count, sizeof(u16) * 4,
-				[&particles](u16* dst, u32 idx)
-			{
+			iterateOverPixels<u16>(output->SizeAndFrameIdx, count, sizeof(u16) * 4, [&particles](u16* dst, u32 idx)
+								   {
 				dst[0] = Bitwise::FloatToHalf(particles.Size[idx].X);
 				dst[1] = Bitwise::FloatToHalf(particles.Size[idx].Y);
-				dst[2] = Bitwise::FloatToHalf(particles.Frame[idx]);
-			});
+				dst[2] = Bitwise::FloatToHalf(particles.Frame[idx]); });
 
 			output->Indices.clear();
 			output->Indices.resize(count);
@@ -155,14 +148,14 @@ namespace bs
 				Lock lock(mMutex);
 
 				BuffersPerSize& buffers = mMeshBufferList[size];
-				if (buffers.NextFreeIdx < (u32)buffers.Buffers.size())
+				if(buffers.NextFreeIdx < (u32)buffers.Buffers.size())
 				{
 					output = static_cast<ParticleMeshRenderData*>(buffers.Buffers[buffers.NextFreeIdx]);
 					buffers.NextFreeIdx++;
 				}
 			}
 
-			if (!output)
+			if(!output)
 			{
 				output = CreateNewMeshBuffersCpu(size);
 
@@ -178,36 +171,27 @@ namespace bs
 			const ParticleSetData& particles = particleSet.GetParticles();
 
 			// TODO: Use non-temporal writes?
-			iterateOverPixels<Vector4>(output->Position, count,
-				[&particles](Vector4* dst, u32 idx)
-			{
-				dst->X = particles.Position[idx].X;
-				dst->Y = particles.Position[idx].Y;
-				dst->Z = particles.Position[idx].Z;
+			iterateOverPixels<Vector4>(output->Position, count, [&particles](Vector4* dst, u32 idx)
+									   {
+										   dst->X = particles.Position[idx].X;
+										   dst->Y = particles.Position[idx].Y;
+										   dst->Z = particles.Position[idx].Z;
+									   });
 
-			});
+			iterateOverPixels<RGBA>(output->Color, count, [&particles](RGBA* dst, u32 idx)
+									{ *dst = particles.Color[idx]; });
 
-			iterateOverPixels<RGBA>(output->Color, count,
-				[&particles](RGBA* dst, u32 idx)
-			{
-				*dst = particles.Color[idx];
-			});
-
-			iterateOverPixels<u16>(output->Rotation, count, sizeof(u16) * 4,
-				[&particles](u16* dst, u32 idx)
-			{
+			iterateOverPixels<u16>(output->Rotation, count, sizeof(u16) * 4, [&particles](u16* dst, u32 idx)
+								   {
 				dst[0] = Bitwise::FloatToHalf(particles.Rotation[idx].X * Math::DEG2RAD);
 				dst[1] = Bitwise::FloatToHalf(particles.Rotation[idx].Y * Math::DEG2RAD);
-				dst[2] = Bitwise::FloatToHalf(particles.Rotation[idx].Z * Math::DEG2RAD);
-			});
+				dst[2] = Bitwise::FloatToHalf(particles.Rotation[idx].Z * Math::DEG2RAD); });
 
-			iterateOverPixels<u16>(output->Size, count, sizeof(u16) * 4,
-				[&particles](u16* dst, u32 idx)
-			{
+			iterateOverPixels<u16>(output->Size, count, sizeof(u16) * 4, [&particles](u16* dst, u32 idx)
+								   {
 				dst[0] = Bitwise::FloatToHalf(particles.Size[idx].X);
 				dst[1] = Bitwise::FloatToHalf(particles.Size[idx].Y);
-				dst[2] = Bitwise::FloatToHalf(particles.Size[idx].Z);
-			});
+				dst[2] = Bitwise::FloatToHalf(particles.Size[idx].Z); });
 
 			output->Indices.clear();
 			output->Indices.resize(count);
@@ -226,14 +210,14 @@ namespace bs
 			{
 				Lock lock(mMutex);
 
-				if (mNextFreeGPUBuffer < (u32)mGPUBufferList.size())
+				if(mNextFreeGPUBuffer < (u32)mGPUBufferList.size())
 				{
 					output = mGPUBufferList[mNextFreeGPUBuffer];
 					mNextFreeGPUBuffer++;
 				}
 			}
 
-			if (!output)
+			if(!output)
 			{
 				output = CreateNewBuffersGpu();
 
@@ -251,12 +235,12 @@ namespace bs
 			output->Particles.resize(count);
 
 			// TODO: Use non-temporal writes?
-			for (u32 i = 0; i < count; i++)
+			for(u32 i = 0; i < count; i++)
 			{
 				GpuParticle particle;
 				particle.Position = particles.Position[i];
 				particle.Lifetime = particles.Lifetime[i];
-				particle.InitialLifetime =  particles.InitialLifetime[i];
+				particle.InitialLifetime = particles.InitialLifetime[i];
 				particle.Velocity = particles.Velocity[i];
 				particle.Size = Vector2(particles.Size[i].X, particles.Size[i].Z);
 				particle.Rotation = particles.Rotation[i].Z;
@@ -342,8 +326,8 @@ namespace bs
 	};
 
 	ParticleManager::ParticleManager()
-		:m(bs_new<Members>())
-	{ }
+		: m(bs_new<Members>())
+	{}
 
 	ParticleManager::~ParticleManager()
 	{
@@ -356,7 +340,7 @@ namespace bs
 		// potentially no benefit?
 
 		// Advance the buffers (last write buffer becomes read buffer)
-		if (mSwapBuffers)
+		if(mSwapBuffers)
 		{
 			mReadBufferIdx = (mReadBufferIdx + 1) % CoreThread::NUM_SYNC_BUFFERS;
 			mWriteBufferIdx = (mWriteBufferIdx + 1) % CoreThread::NUM_SYNC_BUFFERS;
@@ -386,7 +370,7 @@ namespace bs
 		ParticleSimulationDataPool& simDataPool = m->SimDataPool[mWriteBufferIdx];
 		simDataPool.Clear();
 
-		for (auto& system : mSystems)
+		for(auto& system : mSystems)
 		{
 			const auto evaluateWorker = [this, timeDelta, system, &animData, &simDataPool, &simulationData]()
 			{
@@ -418,11 +402,11 @@ namespace bs
 							simulationDataCPU->Bounds = settings.CustomBounds;
 
 						// If using a camera-independant sorting mode, sort the particles right away
-						switch (settings.SortMode)
+						switch(settings.SortMode)
 						{
 						default:
 						case ParticleSortMode::None: // No sort, just point the indices back to themselves
-							for (u32 i = 0; i < numParticles; i++)
+							for(u32 i = 0; i < numParticles; i++)
 								simulationDataCPU->Indices[i] = i;
 							break;
 						case ParticleSortMode::OldToYoung:
@@ -458,7 +442,7 @@ namespace bs
 		{
 			Lock lock(mMutex);
 
-			while (mNumActiveWorkers > 0)
+			while(mNumActiveWorkers > 0)
 				mWorkerDoneSignal.wait(lock);
 		}
 		TaskScheduler::Instance().RemoveWorker();
@@ -468,16 +452,15 @@ namespace bs
 		return &mSimulationData[mWriteBufferIdx];
 	}
 
-	void ParticleManager::SortParticles(const ParticleSet& set, ParticleSortMode sortMode, const Vector3& viewPoint,
-		u32* indices)
+	void ParticleManager::SortParticles(const ParticleSet& set, ParticleSortMode sortMode, const Vector3& viewPoint, u32* indices)
 	{
 		assert(sortMode != ParticleSortMode::None);
 
 		struct ParticleSortData
 		{
 			ParticleSortData(float key, u32 idx)
-				:Key(key), Idx(idx)
-			{ }
+				: Key(key), Idx(idx)
+			{}
 
 			float Key;
 			u32 Idx;
@@ -517,13 +500,10 @@ namespace bs
 				break;
 			}
 
-			std::sort(sortData.begin(), sortData.end(),
-				[](const ParticleSortData& lhs, const ParticleSortData& rhs)
-			{
-				return rhs.Key < lhs.Key;
-			});
+			std::sort(sortData.begin(), sortData.end(), [](const ParticleSortData& lhs, const ParticleSortData& rhs)
+					  { return rhs.Key < lhs.Key; });
 
-			for (u32 i = 0; i < count; i++)
+			for(u32 i = 0; i < count; i++)
 				indices[i] = sortData[i].Idx;
 		}
 		bs_frame_clear();
@@ -540,4 +520,4 @@ namespace bs
 	{
 		mSystems.erase(system);
 	}
-}
+} // namespace bs

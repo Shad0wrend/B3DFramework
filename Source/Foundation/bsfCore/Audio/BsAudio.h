@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/** Identifier for a device that can be used for playing audio. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Audio),ExportAsStruct(true)) AudioDevice
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Audio), ExportAsStruct(true)) AudioDevice
 	{
 		String Name;
 	};
@@ -35,35 +35,35 @@ namespace bs
 		void Play(const HAudioClip& clip, const Vector3& position = Vector3::ZERO, float volume = 1.0f);
 
 		/** Determines global audio volume. In range [0, 1]. */
-		BS_SCRIPT_EXPORT(ExportName(Volume),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Volume), Property(Setter))
 		virtual void SetVolume(float volume) = 0;
 
 		/** @copydoc setVolume() */
-		BS_SCRIPT_EXPORT(ExportName(Volume),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Volume), Property(Getter))
 		virtual float GetVolume() const = 0;
 
 		/** Determines if audio reproduction is paused globally. */
-		BS_SCRIPT_EXPORT(ExportName(Paused),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Paused), Property(Setter))
 		virtual void SetPaused(bool paused) = 0;
 
 		/** @copydoc setPaused() */
-		BS_SCRIPT_EXPORT(ExportName(Paused),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Paused), Property(Getter))
 		virtual bool IsPaused() const = 0;
 
 		/** Determines the device on which is the audio played back on. */
-		BS_SCRIPT_EXPORT(ExportName(ActiveDevice),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(ActiveDevice), Property(Setter))
 		virtual void SetActiveDevice(const AudioDevice& device) = 0;
 
 		/** @copydoc setActiveDevice() */
-		BS_SCRIPT_EXPORT(ExportName(ActiveDevice),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(ActiveDevice), Property(Getter))
 		virtual AudioDevice GetActiveDevice() const = 0;
-		
+
 		/** Returns the default audio device identifier. */
-		BS_SCRIPT_EXPORT(ExportName(DefaultDevice),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(DefaultDevice), Property(Getter))
 		virtual AudioDevice GetDefaultDevice() const = 0;
 
 		/** Returns a list of all available audio devices. */
-		BS_SCRIPT_EXPORT(ExportName(AllDevices),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(AllDevices), Property(Getter))
 		virtual const Vector<AudioDevice>& GetAllDevices() const = 0;
 
 		/** @name Internal
@@ -88,8 +88,7 @@ namespace bs
 		 * @param[in]	desc		Descriptor describing the type of the audio stream (format, sample rate, etc.).
 		 * @return					Newly created AudioClip. Must be manually initialized.
 		 */
-		virtual SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples,
-			const AUDIO_CLIP_DESC& desc) = 0;
+		virtual SPtr<AudioClip> CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc) = 0;
 
 		/** Creates a new AudioListener. */
 		virtual SPtr<AudioListener> CreateListener() = 0;
@@ -109,4 +108,4 @@ namespace bs
 	BS_CORE_EXPORT Audio& gAudio();
 
 	/** @} */
-}
+} // namespace bs

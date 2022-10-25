@@ -17,26 +17,30 @@ namespace bs
 	 *
 	 * @note	Wraps Skybox as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering),ExportName(Skybox)) CSkybox : public Component
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportName(Skybox)) CSkybox : public Component
 	{
 	public:
 		CSkybox(const HSceneObject& parent);
 		virtual ~CSkybox();
 
 		/** @copydoc Skybox::getTexture */
-		BS_SCRIPT_EXPORT(ExportName(Texture),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Texture), Property(Getter))
+
 		HTexture GetTexture() const { return mInternal->GetTexture(); }
 
 		/** @copydoc Skybox::setTexture */
-		BS_SCRIPT_EXPORT(ExportName(Texture),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Texture), Property(Setter))
+
 		void SetTexture(const HTexture& texture) { mInternal->SetTexture(texture); }
 
 		/** @copydoc Skybox::setBrightness */
-		BS_SCRIPT_EXPORT(ExportName(Brightness),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Brightness), Property(Setter))
+
 		void SetBrightness(float brightness) { mInternal->SetBrightness(brightness); }
 
 		/** @copydoc Skybox::getBrightness */
-		BS_SCRIPT_EXPORT(ExportName(Brightness),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Brightness), Property(Getter))
+
 		float GetBrightness() const { return mInternal->GetBrightness(); }
 
 		/** @name Internal
@@ -64,7 +68,7 @@ namespace bs
 		void OnDestroyed() override;
 
 		/** @copydoc Component::update */
-		void Update() override { }
+		void Update() override {}
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -79,4 +83,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

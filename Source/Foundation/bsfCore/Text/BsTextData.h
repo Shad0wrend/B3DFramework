@@ -154,6 +154,7 @@ namespace bs
 			 * because a word couldn't fit on the previous line.
 			 */
 			bool HasNewlineChar() const { return mHasNewline; }
+
 		private:
 			friend class TextDataBase;
 
@@ -217,8 +218,7 @@ namespace bs
 		 *
 		 * After this object is constructed you may call various getter methods to get needed information.
 		 */
-		BS_CORE_EXPORT TextDataBase(const U32String& text, const HFont& font, u32 fontSize,
-			u32 width = 0, u32 height = 0, bool wordWrap = false, bool wordBreak = true);
+		BS_CORE_EXPORT TextDataBase(const U32String& text, const HFont& font, u32 fontSize, u32 width = 0, u32 height = 0, bool wordWrap = false, bool wordBreak = true);
 		BS_CORE_EXPORT virtual ~TextDataBase() = default;
 
 		/**	Returns the number of lines that were generated. */
@@ -258,8 +258,8 @@ namespace bs
 		 *
 		 * @note	Must be called after text data has been constructed and is in the temporary buffers.
 		 */
-		BS_CORE_EXPORT void GeneratePersistentData(const U32String& text, u8* buffer, u32& size,
-			bool freeTemporary = true);
+		BS_CORE_EXPORT void GeneratePersistentData(const U32String& text, u8* buffer, u32& size, bool freeTemporary = true);
+
 	private:
 		friend class TextLine;
 
@@ -346,14 +346,13 @@ namespace bs
 	 */
 
 	/** @copydoc TextDataBase */
-	template<class Alloc = GenAlloc>
+	template <class Alloc = GenAlloc>
 	class TextData : public TextDataBase
 	{
 	public:
 		/** @copydoc TextDataBase::TextDataBase */
-		TextData(const U32String& text, const HFont& font, u32 fontSize,
-			u32 width = 0, u32 height = 0, bool wordWrap = false, bool wordBreak = true)
-			:TextDataBase(text, font, fontSize, width, height, wordWrap, wordBreak), mData(nullptr)
+		TextData(const U32String& text, const HFont& font, u32 fontSize, u32 width = 0, u32 height = 0, bool wordWrap = false, bool wordBreak = true)
+			: TextDataBase(text, font, fontSize, width, height, wordWrap, wordBreak), mData(nullptr)
 		{
 			u32 totalBufferSize = 0;
 			GeneratePersistentData(text, nullptr, totalBufferSize);
@@ -364,7 +363,7 @@ namespace bs
 
 		~TextData()
 		{
-			if (mData != nullptr)
+			if(mData != nullptr)
 				bs_free<Alloc>(mData);
 		}
 
@@ -373,4 +372,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

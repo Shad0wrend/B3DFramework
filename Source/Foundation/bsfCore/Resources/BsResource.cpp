@@ -7,7 +7,7 @@
 namespace bs
 {
 	Resource::Resource(bool initializeOnRenderThread)
-		:CoreObject(initializeOnRenderThread), mSize(0), mKeepSourceData(true)
+		: CoreObject(initializeOnRenderThread), mSize(0), mKeepSourceData(true)
 	{
 		mMetaData = bs_shared_ptr_new<ResourceMetaData>();
 	}
@@ -40,9 +40,9 @@ namespace bs
 
 		bool areLoaded = true;
 		{
-			for (auto& dependency : mDependencies)
+			for(auto& dependency : mDependencies)
 			{
-				if (dependency != nullptr && !dependency.IsLoaded())
+				if(dependency != nullptr && !dependency.IsLoaded())
 				{
 					areLoaded = false;
 					break;
@@ -66,8 +66,7 @@ namespace bs
 	void Resource::RemoveResourceDependency(const HResource& resource)
 	{
 		Lock lock(mDependenciesMutex);
-		mDependencies.erase(std::remove(mDependencies.begin(), mDependencies.end(), resource.GetWeak()),
-			mDependencies.end());
+		mDependencies.erase(std::remove(mDependencies.begin(), mDependencies.end(), resource.GetWeak()), mDependencies.end());
 	}
 
 	RTTITypeBase* Resource::GetRttiStatic()
@@ -79,4 +78,4 @@ namespace bs
 	{
 		return Resource::GetRttiStatic();
 	}
-}
+} // namespace bs

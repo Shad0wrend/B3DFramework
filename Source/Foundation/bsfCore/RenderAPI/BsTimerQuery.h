@@ -4,73 +4,77 @@
 
 #include "BsCorePrerequisites.h"
 
-namespace bs { namespace ct
+namespace bs
 {
-	/** @addtogroup RenderAPI-Internal
-	 *  @{
-	 */
-
-	/**
-	 * Represents a GPU query that measures execution time of GPU operations. The query will measure any GPU operations
-	 * that take place between its begin() and end() calls.
-	 * 			
-	 * @note	Core thread only.
-	 */
-	class BS_CORE_EXPORT TimerQuery
+	namespace ct
 	{
-	public:
-		virtual ~TimerQuery() = default;
+		/** @addtogroup RenderAPI-Internal
+		 *  @{
+		 */
 
 		/**
-		 * Starts the counter.
+		 * Represents a GPU query that measures execution time of GPU operations. The query will measure any GPU operations
+		 * that take place between its begin() and end() calls.
 		 *
-		 * @param[in]	cb		Optional command buffer to queue the operation on. If not provided operation
-		 *						is executed on the main command buffer. Otherwise it is executed when
-		 *						RenderAPI::executeCommands() is called. Buffer must support graphics or compute operations.
-		 *									
-		 * @note	Place any commands you want to measure after this call. Call "end" when done.
+		 * @note	Core thread only.
 		 */
-		virtual void Begin(const SPtr<CommandBuffer>& cb = nullptr) = 0;
+		class BS_CORE_EXPORT TimerQuery
+		{
+		public:
+			virtual ~TimerQuery() = default;
 
-		/**	
-		 * Stops the counter.
-		 *
-		 * @param[in]	cb		Command buffer that was provided to the last begin() operation (if any).
-		 */
-		virtual void End(const SPtr<CommandBuffer>& cb = nullptr) = 0;
+			/**
+			 * Starts the counter.
+			 *
+			 * @param[in]	cb		Optional command buffer to queue the operation on. If not provided operation
+			 *						is executed on the main command buffer. Otherwise it is executed when
+			 *						RenderAPI::executeCommands() is called. Buffer must support graphics or compute operations.
+			 *
+			 * @note	Place any commands you want to measure after this call. Call "end" when done.
+			 */
+			virtual void Begin(const SPtr<CommandBuffer>& cb = nullptr) = 0;
 
-		/**	Check if GPU has processed the query. */
-		virtual bool IsReady() const = 0;
+			/**
+			 * Stops the counter.
+			 *
+			 * @param[in]	cb		Command buffer that was provided to the last begin() operation (if any).
+			 */
+			virtual void End(const SPtr<CommandBuffer>& cb = nullptr) = 0;
 
-		/**
-		 * Returns the time it took for the query to execute.
-		 *
-		 * @return	The time milliseconds.
-		 * 			
-		 * @note	Only valid after isReady() returns true.
-		 */
-		virtual float GetTimeMs() = 0;
+			/**	Check if GPU has processed the query. */
+			virtual bool IsReady() const = 0;
 
-		/** Triggered when GPU processes the query. As a parameter it provides query duration in milliseconds. */
-		Event<void(float)> OnTriggered;
+			/**
+			 * Returns the time it took for the query to execute.
+			 *
+			 * @return	The time milliseconds.
+			 *
+			 * @note	Only valid after isReady() returns true.
+			 */
+			virtual float GetTimeMs() = 0;
 
-		/**	
-		 * Creates a new query, but does not schedule it on GPU.
-		 *
-		 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
-		 */
-		static SPtr<TimerQuery> Create(u32 deviceIdx = 0);
+			/** Triggered when GPU processes the query. As a parameter it provides query duration in milliseconds. */
+			Event<void(float)> OnTriggered;
 
-	protected:
-		friend class QueryManager;
+			/**
+			 * Creates a new query, but does not schedule it on GPU.
+			 *
+			 * @param[in]	deviceIdx	Index of the GPU device to create the query on.
+			 */
+			static SPtr<TimerQuery> Create(u32 deviceIdx = 0);
 
-		/**	Returns true if the has still not been completed by the GPU. */
-		bool IsActive() const { return mActive; }
-		void SetActive(bool active) { mActive = active; }
+		protected:
+			friend class QueryManager;
 
-	protected:
-		bool mActive;
-	};
+			/**	Returns true if the has still not been completed by the GPU. */
+			bool IsActive() const { return mActive; }
 
-	/** @} */
-}}
+			void SetActive(bool active) { mActive = active; }
+
+		protected:
+			bool mActive;
+		};
+
+		/** @} */
+	} // namespace ct
+} // namespace bs

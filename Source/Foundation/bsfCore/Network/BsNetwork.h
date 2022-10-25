@@ -21,7 +21,6 @@ namespace bs
 		NWM_User
 	};
 
-
 	/** @} */
 
 	/** @addtogroup Network
@@ -33,7 +32,8 @@ namespace bs
 	/** Supported versions of internet protocol (IP) and they're representative address formats. */
 	enum IPType
 	{
-		IPV4, IPV6
+		IPV4,
+		IPV6
 	};
 
 	/** Represents an IPv4 or IPv6 network address. */
@@ -95,7 +95,9 @@ namespace bs
 	struct NetworkId
 	{
 		NetworkId() = default;
-		NetworkId(i32 id) : id(id) { }
+
+		NetworkId(i32 id)
+			: id(id) {}
 
 		i32 id = -1;
 	};
@@ -190,7 +192,7 @@ namespace bs
 
 	/** Controls reliability, ordering and priority of sent packets. */
 	struct PacketChannel
-	{		
+	{
 		PacketPriority priority;
 		PacketReliability reliability;
 		PacketOrdering ordering;
@@ -319,12 +321,11 @@ namespace bs
 		 * @param[in]	destination	Network address to send the message to. You must be currently connected to the
 		 *							peer at the specified address.
 		 * @param[in]	channel		Channel determining reliability, ordering and priority of the sent data.
-		 *							
+		 *
 		 * @note		Whenever possible prefer to use the variant of this method that accepts NetworkId for the
 		 *				@p destination parameter, as it is faster.
 		 */
-		void send(const PacketData& data, const NetworkAddress& destination,
-			const PacketChannel& channel = PacketChannel::DEFAULT);
+		void send(const PacketData& data, const NetworkAddress& destination, const PacketChannel& channel = PacketChannel::DEFAULT);
 
 		/**
 		 * Attempts to send some data to the specified remote peer.
@@ -335,8 +336,7 @@ namespace bs
 		 * @param[in]	destination	Network id of the peer to send the message to.
 		 * @param[in]	channel		Channel determining reliability, ordering and priority of the sent data.
 		 */
-		void send(const PacketData& data, const NetworkId& destination,
-			const PacketChannel& channel = PacketChannel::DEFAULT);
+		void send(const PacketData& data, const NetworkId& destination, const PacketChannel& channel = PacketChannel::DEFAULT);
 
 		/**
 		 * Broadcasts some data to all currently connected peers.
@@ -392,7 +392,7 @@ namespace bs
 		// TODO - Special case for spawning prefabs, to avoid syncing all their state
 		// (Probably not part of this class, but keeping the comment here so I don't forget)
 
-		/** 
+		/**
 		 * Spawns the network object across all relevant clients. Only usable on the server. If the object is already
 		 * spawned, no change is made.
 		 */
@@ -406,7 +406,7 @@ namespace bs
 
 		/** Gets the current state of all replicable fields on an object. */
 		NetworkObjectState getNetworkState() const;
-		
+
 	public:
 		NetworkObject() = default;
 		~NetworkObject();
@@ -431,6 +431,7 @@ namespace bs
 			u8* buffer = nullptr;
 			u32 size = 0;
 		};
+
 	public:
 		NetworkEncoder();
 		~NetworkEncoder();
@@ -464,7 +465,7 @@ namespace bs
 		SPtr<MemoryDataStream> mInputStream;
 	};
 
-	/** 
+	/**
 	 * High-level networking class that utilizes the low-level networking systems to easily host a server, connect to
 	 * a server, and handle high level concepts such as object data replication and remote procedure calls.
 	 */
@@ -474,6 +475,7 @@ namespace bs
 		// TODO- Doc
 
 		bool isHost() const { return mState == NetworkState::Hosting; }
+
 		bool isClient() const { return mState == NetworkState::Connected || mState == NetworkState::Connecting; }
 
 		// TODO - Handle cases when network is already in host or client state when one of these is called again
@@ -508,8 +510,8 @@ namespace bs
 		struct ObjectAction
 		{
 			ObjectAction(const UUID& uuid, ObjectActionType type)
-				:uuid(uuid), type(type)
-			{ }
+				: uuid(uuid), type(type)
+			{}
 
 			ObjectActionType type;
 			UUID uuid;
@@ -535,4 +537,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

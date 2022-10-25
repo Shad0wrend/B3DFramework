@@ -14,7 +14,7 @@ namespace bs
 	 * Video mode contains information about how a render window presents its information to an output device like a
 	 * monitor.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(RenderAPI),ExportAsStruct(true),API(Framework)) VideoMode
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(RenderAPI), ExportAsStruct(true), API(Framework)) VideoMode
 	{
 	public:
 		VideoMode() = default;
@@ -29,11 +29,12 @@ namespace bs
 		 *							represents the primary device while order of others is undefined.
 		 */
 		VideoMode(u32 width, u32 height, float refreshRate = 60.0f, u32 outputIdx = 0)
-			:Width(width), Height(height), RefreshRate(refreshRate), OutputIdx(outputIdx)
-		{ }
+			: Width(width), Height(height), RefreshRate(refreshRate), OutputIdx(outputIdx)
+		{}
+
 		virtual ~VideoMode() = default;
 
-		bool operator== (const VideoMode& other) const;
+		bool operator==(const VideoMode& other) const;
 
 		/**	Width of the front/back buffer in pixels. */
 		u32 Width = 1280;
@@ -106,4 +107,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

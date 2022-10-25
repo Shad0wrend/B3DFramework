@@ -111,7 +111,7 @@ namespace bs
 		 * @param[in] right		The position where the right clip plane intersect the near clip plane, in view space.
 		 * @param[in] top		The position where the top clip plane intersect the near clip plane, in view space.
 		 * @param[in] bottom	The position where the bottom clip plane intersect the near clip plane, in view space.
-		*/
+		 */
 		virtual void SetFrustumExtents(float left, float right, float top, float bottom);
 
 		/**
@@ -127,7 +127,7 @@ namespace bs
 		 * Returns the standard projection matrix that determines how are 3D points projected to two dimensions. The layout
 		 * of this matrix depends on currently used render system.
 		 *
-		 * @note	
+		 * @note
 		 * You should use this matrix when sending the matrix to the render system to make sure everything works
 		 * consistently when other render systems are used.
 		 */
@@ -160,7 +160,7 @@ namespace bs
 
 		/** Returns true if a custom view matrix is used. */
 		virtual bool IsCustomViewMatrixEnabled() const { return mCustomViewMatrix; }
-		
+
 		/**
 		 * Sets whether the camera should use the custom projection matrix. When this is enabled camera will no longer
 		 * calculate its projection matrix based on field of view, aspect and other parameters and caller will be resonsible
@@ -195,7 +195,7 @@ namespace bs
 		 * @param[in]	w	Width of the window in world units.
 		 * @param[in]	h	Height of the window in world units.
 		 *
-		 * @note	
+		 * @note
 		 * Calling this method will recalculate the aspect ratio, use setOrthoWindowHeight() or setOrthoWindowWidth() alone
 		 * if you wish to preserve the aspect ratio but just fit one or other dimension to a particular size.
 		 */
@@ -223,13 +223,21 @@ namespace bs
 		 * Determines a priority that determines in which orders the cameras are rendered. This only applies to cameras rendering
 		 * to the same render target. Higher value means the camera will be rendered sooner.
 		 */
-		void SetPriority(i32 priority) { mPriority = priority; MarkCoreDirtyInternal(); }
+		void SetPriority(i32 priority)
+		{
+			mPriority = priority;
+			MarkCoreDirtyInternal();
+		}
 
 		/** @copydoc setPriority() */
 		i32 GetPriority() const { return mPriority; }
 
 		/**	Determines layer bitfield that is used when determining which object should the camera render. */
-		void SetLayers(u64 layers) { mLayers = layers; MarkCoreDirtyInternal(); }
+		void SetLayers(u64 layers)
+		{
+			mLayers = layers;
+			MarkCoreDirtyInternal();
+		}
 
 		/** @copydoc setLayers() */
 		u64 GetLayers() const { return mLayers; }
@@ -238,7 +246,11 @@ namespace bs
 		 * Determines number of samples to use when rendering to this camera. Values larger than 1 will enable MSAA
 		 * rendering.
 		 */
-		void SetMsaaCount(u32 count) { mMSAA = count; MarkCoreDirtyInternal(); }
+		void SetMsaaCount(u32 count)
+		{
+			mMSAA = count;
+			MarkCoreDirtyInternal();
+		}
 
 		/** @copydoc setMSAACount() */
 		u32 GetMsaaCount() const { return mMSAA; }
@@ -248,7 +260,7 @@ namespace bs
 		 * that isn't on-demand.
 		 */
 		void NotifyNeedsRedraw() { MarkCoreDirtyInternal((ActorDirtyFlag)CameraDirtyFlag::Redraw); }
-		
+
 		/**
 		 * Converts a point in world space to screen coordinates.
 		 *
@@ -257,7 +269,7 @@ namespace bs
 		 */
 		Vector2I WorldToScreenPoint(const Vector3& worldPoint) const;
 
-		/**	
+		/**
 		 * Converts a point in world space to normalized device coordinates.
 		 *
 		 * @param[in]	worldPoint		3D point in world space.
@@ -284,13 +296,13 @@ namespace bs
 		Vector3 ScreenToWorldPoint(const Vector2I& screenPoint, float depth = 0.5f) const;
 
 		/**
-		* Converts a point in screen space (pixels corresponding to render target attached to the camera) to a point in
-		* world space.
-		*
-		* @param[in]	screenPoint	Point to transform.
-		* @param[in]	deviceDepth	Depth to place the world point at, in normalized device coordinates.
-		* @return					3D point in world space.
-		*/
+		 * Converts a point in screen space (pixels corresponding to render target attached to the camera) to a point in
+		 * world space.
+		 *
+		 * @param[in]	screenPoint	Point to transform.
+		 * @param[in]	deviceDepth	Depth to place the world point at, in normalized device coordinates.
+		 * @return					3D point in world space.
+		 */
 		Vector3 ScreenToWorldPointDeviceDepth(const Vector2I& screenPoint, float deviceDepth = 0.5f) const;
 
 		/**
@@ -376,7 +388,7 @@ namespace bs
 		 */
 		Ray ScreenPointToRay(const Vector2I& screenPoint) const;
 
-		/**	
+		/**
 		 * Projects a point in view space to normalized device coordinates. Similar to viewToNdcPoint() but preserves
 		 * the depth component.
 		 *
@@ -459,7 +471,7 @@ namespace bs
 	};
 
 	/** Templated common base class for both sim and core thread implementations of Camera. */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TCamera : public CameraBase
 	{
 		using ViewportType = CoreVariantType<Viewport, Core>;
@@ -469,7 +481,7 @@ namespace bs
 		TCamera();
 		virtual ~TCamera() = default;
 
-		/**	Returns the viewport used by the camera. */	
+		/**	Returns the viewport used by the camera. */
 		SPtr<ViewportType> GetViewport() const { return mViewport; }
 
 		/**
@@ -477,13 +489,16 @@ namespace bs
 		 * effects will be enabled, and what properties will those effects use.
 		 */
 		void SetRenderSettings(const SPtr<RenderSettingsType>& settings)
-			{ mRenderSettings = settings; MarkCoreDirtyInternal((ActorDirtyFlag)CameraDirtyFlag::RenderSettings); }
+		{
+			mRenderSettings = settings;
+			MarkCoreDirtyInternal((ActorDirtyFlag)CameraDirtyFlag::RenderSettings);
+		}
 
 		/** @copydoc setRenderSettings() */
 		const SPtr<RenderSettingsType>& GetRenderSettings() const { return mRenderSettings; }
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template<class P>
+		template <class P>
 		void RttiEnumFields(P p);
 
 	protected:
@@ -510,7 +525,7 @@ namespace bs
 		/**
 		 * Determines whether this is the main application camera. Main camera controls the final render surface that is
 		 * displayed to the user.
-		 */	
+		 */
 		void SetMain(bool main);
 
 		/** @copydoc setMain() */
@@ -539,7 +554,7 @@ namespace bs
 		Rect2I GetViewportRect() const override;
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		/** @copydoc CameraBase::_markCoreDirty */
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
@@ -548,7 +563,7 @@ namespace bs
 		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		/** @copydoc CoreObject::getCoreDependencies */
-		void GetCoreDependencies(Vector<CoreObject*>& dependencies) ;
+		void GetCoreDependencies(Vector<CoreObject*>& dependencies);
 
 		/**	Creates a new camera without initializing it. */
 		static SPtr<Camera> CreateEmpty();
@@ -564,41 +579,40 @@ namespace bs
 
 	namespace ct
 	{
-	/** @copydoc bs::Camera */
-	class BS_CORE_EXPORT Camera : public CoreObject, public TCamera<true>
-	{
-	public:
-		~Camera();
+		/** @copydoc bs::Camera */
+		class BS_CORE_EXPORT Camera : public CoreObject, public TCamera<true>
+		{
+		public:
+			~Camera();
 
-		/** @copydoc bs::Camera::setMain() */
-		bool IsMain() const { return mMain; }
+			/** @copydoc bs::Camera::setMain() */
+			bool IsMain() const { return mMain; }
 
-		/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
-		void SetRendererId(u32 id) { mRendererId = id; }
+			/**	Sets an ID that can be used for uniquely identifying this object by the renderer. */
+			void SetRendererId(u32 id) { mRendererId = id; }
 
-		/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
-		u32 GetRendererId() const { return mRendererId; }
-		
-	protected:
-		friend class bs::Camera;
+			/**	Retrieves an ID that can be used for uniquely identifying this object by the renderer. */
+			u32 GetRendererId() const { return mRendererId; }
 
-		Camera(SPtr<RenderTarget> target = nullptr,
-			float left = 0.0f, float top = 0.0f, float width = 1.0f, float height = 1.0f);
+		protected:
+			friend class bs::Camera;
 
-		Camera(const SPtr<Viewport>& viewport);
+			Camera(SPtr<RenderTarget> target = nullptr, float left = 0.0f, float top = 0.0f, float width = 1.0f, float height = 1.0f);
 
-		/** @copydoc CoreObject::initialize */
-		void Initialize() override;
+			Camera(const SPtr<Viewport>& viewport);
 
-		/** @copydoc CameraBase */
-		Rect2I GetViewportRect() const override;
+			/** @copydoc CoreObject::initialize */
+			void Initialize() override;
 
-		/** @copydoc CoreObject::syncToCore */
-		void SyncToCore(const CoreSyncData& data) override;
+			/** @copydoc CameraBase */
+			Rect2I GetViewportRect() const override;
 
-		u32 mRendererId;
-	};
-	}
+			/** @copydoc CoreObject::syncToCore */
+			void SyncToCore(const CoreSyncData& data) override;
+
+			u32 mRendererId;
+		};
+	} // namespace ct
 
 	/** @} */
-}
+} // namespace bs

@@ -28,11 +28,9 @@ namespace bs
 		UnorderedMap<i32, Path> handleToPath;
 	};
 
-	FolderMonitor::FolderWatchInfo::FolderWatchInfo(const Path& folderToMonitor, int inHandle, bool monitorSubdirectories,
-													FolderChangeBits filter)
-		: folderToMonitor(folderToMonitor), dirHandle(inHandle), monitorSubdirectories(monitorSubdirectories)
-		, filter(filter)
-	{ }
+	FolderMonitor::FolderWatchInfo::FolderWatchInfo(const Path& folderToMonitor, int inHandle, bool monitorSubdirectories, FolderChangeBits filter)
+		: folderToMonitor(folderToMonitor), dirHandle(inHandle), monitorSubdirectories(monitorSubdirectories), filter(filter)
+	{}
 
 	FolderMonitor::FolderWatchInfo::~FolderWatchInfo()
 	{
@@ -46,10 +44,9 @@ namespace bs
 		if(monitorSubdirectories)
 		{
 			FileSystem::Iterate(folderToMonitor, nullptr, [this](const Path& path)
-			{
+								{
 				addPath(path);
-				return true;
-			});
+				return true; });
 		}
 	}
 
@@ -170,8 +167,7 @@ namespace bs
 
 		static FileAction* createRenamed(const String& oldFilename, const String& newfileName)
 		{
-			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) +
-				(oldFilename.size() + newfileName.size() + 2) * sizeof(String::value_type)));
+			u8* bytes = (u8*)bs_alloc((u32)(sizeof(FileAction) + (oldFilename.size() + newfileName.size() + 2) * sizeof(String::value_type)));
 
 			FileAction* action = (FileAction*)bytes;
 			bytes += sizeof(FileAction);
@@ -302,8 +298,8 @@ namespace bs
 
 	void FolderMonitor::stopMonitor(const Path& folderPath)
 	{
-		auto findIter = std::find_if(m->monitors.begin(), m->monitors.end(),
-			[&](const FolderWatchInfo* x) { return x->folderToMonitor == folderPath; });
+		auto findIter = std::find_if(m->monitors.begin(), m->monitors.end(), [&](const FolderWatchInfo* x)
+									 { return x->folderToMonitor == folderPath; });
 
 		if(findIter != m->monitors.end())
 		{
@@ -334,7 +330,7 @@ namespace bs
 
 			// Remove all watches (this will also wake up the thread). Note that at least one watch must be present otherwise
 			// the thread won't wake up (we ensure that elsewhere).
-			for (auto& watchInfo : m->monitors)
+			for(auto& watchInfo : m->monitors)
 			{
 				watchInfo->stopMonitor();
 				bs_delete(watchInfo);
@@ -354,7 +350,7 @@ namespace bs
 		// Close the inotify handle
 		{
 			Lock lock(m->mainMutex);
-			if (m->inHandle != 0)
+			if(m->inHandle != 0)
 			{
 				close(m->inHandle);
 				m->inHandle = 0;
@@ -381,7 +377,7 @@ namespace bs
 			i32 length = (i32)read(watchHandle, buffer, sizeof(buffer));
 
 			// Handle was closed, shutdown thread
-			if (length < 0)
+			if(length < 0)
 				return;
 
 			// Note: Must be after read, so shutdown can be started when we remove the watches (as then read() will return)
@@ -401,10 +397,10 @@ namespace bs
 
 						Path path;
 						FolderWatchInfo* monitor = nullptr;
-						for (auto& entry : m->monitors)
+						for(auto& entry : m->monitors)
 						{
 							path = entry->GetPath(event->wd);
-							if (!path.isEmpty())
+							if(!path.isEmpty())
 							{
 								path.append(event->name);
 								monitor = entry;
@@ -434,14 +430,14 @@ namespace bs
 						// File/folder was added
 						if(((event->mask & (IN_CREATE | IN_MOVED_TO)) != 0))
 						{
-							if (isDirectory)
+							if(isDirectory)
 							{
-								if (monitor->filter.IsSet(FolderChangeBit::DirName))
+								if(monitor->filter.IsSet(FolderChangeBit::DirName))
 									m->fileActions.push_back(FileAction::createAdded(path.toString()));
 							}
 							else
 							{
-								if (monitor->filter.IsSet(FolderChangeBit::FileName))
+								if(monitor->filter.IsSet(FolderChangeBit::FileName))
 									m->fileActions.push_back(FileAction::createAdded(path.toString()));
 							}
 						}
@@ -475,7 +471,7 @@ namespace bs
 					}
 				}
 
-				next:
+			next:
 				readPos += sizeof(inotify_event) + event->len;
 			}
 		}
@@ -496,22 +492,22 @@ namespace bs
 
 		for(auto& action : m->activeFileActions)
 		{
-			switch (action->type)
+			switch(action->type)
 			{
 			case FileActionType::Added:
-				if (!onAdded.empty())
+				if(!onAdded.empty())
 					onAdded(Path(action->newName));
 				break;
 			case FileActionType::Removed:
-				if (!onRemoved.empty())
+				if(!onRemoved.empty())
 					onRemoved(Path(action->newName));
 				break;
 			case FileActionType::Modified:
-				if (!onModified.empty())
+				if(!onModified.empty())
 					onModified(Path(action->newName));
 				break;
 			case FileActionType::Renamed:
-				if (!onRenamed.empty())
+				if(!onRenamed.empty())
 					onRenamed(Path(action->oldName), Path(action->newName));
 				break;
 			}
@@ -521,4 +517,4 @@ namespace bs
 
 		m->activeFileActions.clear();
 	}
-}
+} // namespace bs

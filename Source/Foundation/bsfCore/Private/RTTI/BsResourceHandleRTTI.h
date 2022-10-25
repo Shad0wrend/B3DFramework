@@ -20,6 +20,7 @@ namespace bs
 	{
 	private:
 		UUID& GetUuid(TResourceHandleBase<false>* obj) { return obj->mData != nullptr ? obj->mData->MUuid : UUID::EMPTY; }
+
 		void SetUuid(TResourceHandleBase<false>* obj, UUID& uuid) { obj->mData->MUuid = uuid; }
 
 	public:
@@ -28,7 +29,7 @@ namespace bs
 			AddPlainField("mUUID", 0, &ResourceHandleRTTI::GetUuid, &ResourceHandleRTTI::SetUuid);
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context)
 		{
 			TResourceHandleBase<false>* resourceHandle = static_cast<TResourceHandleBase<false>*>(obj);
 
@@ -42,7 +43,7 @@ namespace bs
 			}
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "ResourceHandleBase";
 			return name;
@@ -53,10 +54,9 @@ namespace bs
 			return TID_ResourceHandle;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
-			SPtr<TResourceHandleBase<false>> obj = bs_shared_ptr<TResourceHandleBase<false>>
-				(new (bs_alloc<TResourceHandleBase<false>>()) TResourceHandleBase<false>());
+			SPtr<TResourceHandleBase<false>> obj = bs_shared_ptr<TResourceHandleBase<false>>(new(bs_alloc<TResourceHandleBase<false>>()) TResourceHandleBase<false>());
 			obj->mData = bs_shared_ptr_new<ResourceHandleData>();
 			obj->mData->MRefCount.fetch_add(1, std::memory_order_relaxed);
 
@@ -68,6 +68,7 @@ namespace bs
 	{
 	private:
 		UUID& GetUuid(TResourceHandleBase<true>* obj) { return obj->mData != nullptr ? obj->mData->MUuid : UUID::EMPTY; }
+
 		void SetUuid(TResourceHandleBase<true>* obj, UUID& uuid) { obj->mData->MUuid = uuid; }
 
 	public:
@@ -80,7 +81,7 @@ namespace bs
 		{
 			TResourceHandleBase<true>* resourceHandle = static_cast<TResourceHandleBase<true>*>(obj);
 
-			if (resourceHandle->mData && !resourceHandle->mData->MUuid.Empty())
+			if(resourceHandle->mData && !resourceHandle->mData->MUuid.Empty())
 			{
 				HResource loadedResource = gResources().GetResourceHandleInternal(resourceHandle->mData->MUuid);
 				resourceHandle->mData = loadedResource.mData;
@@ -98,10 +99,9 @@ namespace bs
 			return TID_WeakResourceHandle;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
-			SPtr<TResourceHandleBase<true>> obj = bs_shared_ptr<TResourceHandleBase<true>>
-				(new (bs_alloc<TResourceHandleBase<true>>()) TResourceHandleBase<true>());
+			SPtr<TResourceHandleBase<true>> obj = bs_shared_ptr<TResourceHandleBase<true>>(new(bs_alloc<TResourceHandleBase<true>>()) TResourceHandleBase<true>());
 			obj->mData = bs_shared_ptr_new<ResourceHandleData>();
 
 			return obj;
@@ -110,4 +110,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

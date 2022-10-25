@@ -22,7 +22,7 @@ namespace bs
 		/** Font size for which the data is contained. */
 		BS_SCRIPT_EXPORT()
 		u32 Size;
-		
+
 		/** Y offset to the baseline on which the characters are placed, in pixels. */
 		BS_SCRIPT_EXPORT()
 		i32 BaselineOffset;
@@ -73,7 +73,7 @@ namespace bs
 		BS_SCRIPT_EXPORT()
 		SPtr<FontBitmap> GetBitmap(u32 size) const;
 
-		/**	
+		/**
 		 * Finds the available font bitmap size closest to the provided size.
 		 *
 		 * @param[in]	size	Size of the bitmap in points.
@@ -113,7 +113,7 @@ namespace bs
 		Font();
 
 		/** @copydoc CoreObject::getCoreDependencies */
-		void GetCoreDependencies(Vector<CoreObject*>& dependencies) ;
+		void GetCoreDependencies(Vector<CoreObject*>& dependencies);
 
 	private:
 		Map<u32, SPtr<FontBitmap>> mFontDataPerSize;
@@ -128,4 +128,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

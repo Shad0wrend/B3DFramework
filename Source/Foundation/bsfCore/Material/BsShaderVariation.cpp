@@ -29,14 +29,14 @@ namespace bs
 
 	ShaderVariation::ShaderVariation(const SmallVector<Param, 4>& params)
 	{
-		for (auto& entry : params)
+		for(auto& entry : params)
 			mParams[entry.Name] = entry;
 	}
 
 	i32 ShaderVariation::GetInt(const StringID& name)
 	{
 		auto iterFind = mParams.find(name);
-		if (iterFind == mParams.end())
+		if(iterFind == mParams.end())
 			return 0;
 		else
 			return iterFind->second.I;
@@ -45,7 +45,7 @@ namespace bs
 	u32 ShaderVariation::GetUInt(const StringID& name)
 	{
 		auto iterFind = mParams.find(name);
-		if (iterFind == mParams.end())
+		if(iterFind == mParams.end())
 			return 0;
 		else
 			return iterFind->second.Ui;
@@ -54,7 +54,7 @@ namespace bs
 	float ShaderVariation::GetFloat(const StringID& name)
 	{
 		auto iterFind = mParams.find(name);
-		if (iterFind == mParams.end())
+		if(iterFind == mParams.end())
 			return 0.0f;
 		else
 			return iterFind->second.F;
@@ -63,7 +63,7 @@ namespace bs
 	bool ShaderVariation::GetBool(const StringID& name)
 	{
 		auto iterFind = mParams.find(name);
-		if (iterFind == mParams.end())
+		if(iterFind == mParams.end())
 			return false;
 		else
 			return iterFind->second.I > 0 ? true : false;
@@ -103,9 +103,9 @@ namespace bs
 	ShaderDefines ShaderVariation::GetDefines() const
 	{
 		ShaderDefines defines;
-		for (auto& entry : mParams)
+		for(auto& entry : mParams)
 		{
-			switch (entry.second.Type)
+			switch(entry.second.Type)
 			{
 			case Int:
 			case Bool:
@@ -137,13 +137,13 @@ namespace bs
 
 		if(exact)
 		{
-			for (auto& entry : mParams)
+			for(auto& entry : mParams)
 			{
 				const auto iterFind = other.mParams.find(entry.first);
-				if (iterFind == other.mParams.end())
+				if(iterFind == other.mParams.end())
 					return false;
 
-				if (entry.second.I != iterFind->second.I)
+				if(entry.second.I != iterFind->second.I)
 					return false;
 			}
 		}
@@ -162,7 +162,7 @@ namespace bs
 
 		mVariations.Add(variation);
 	}
-	
+
 	u32 ShaderVariations::Find(const ShaderVariation& variation) const
 	{
 		u32 idx = 0;
@@ -176,7 +176,7 @@ namespace bs
 
 		return (u32)-1;
 	}
-	
+
 	RTTITypeBase* ShaderVariation::GetRttiStatic()
 	{
 		return ShaderVariationRTTI::Instance();
@@ -192,4 +192,4 @@ namespace bs
 	// trigger an undefined reference linker error. And why doesn't the library instantiate it itself? Don't know, either
 	// a Clang issue or maybe even some part of the standard.
 	template SmallVector<ShaderVariation::Param, 4>::~SmallVector();
-}
+} // namespace bs

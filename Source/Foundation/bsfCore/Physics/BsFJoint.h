@@ -28,7 +28,8 @@ namespace bs
 	class BS_CORE_EXPORT FJoint
 	{
 	public:
-		FJoint(const JOINT_DESC& desc) { }
+		FJoint(const JOINT_DESC& desc) {}
+
 		virtual ~FJoint() = default;
 
 		/** @copydoc setBody() */
@@ -72,4 +73,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

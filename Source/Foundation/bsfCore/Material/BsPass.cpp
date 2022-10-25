@@ -13,32 +13,31 @@
 
 namespace bs
 {
-	template<bool Core>
+	template <bool Core>
 	TPass<Core>::TPass()
 	{
 		mData.StencilRefValue = 0;
 	}
 
-	template<bool Core>
+	template <bool Core>
 	TPass<Core>::TPass(const PASS_DESC& data)
-		:mData(data)
+		: mData(data)
 	{
-
 	}
 
-	template<bool Core>
+	template <bool Core>
 	bool TPass<Core>::HasBlending() const
 	{
 		bool transparent = false;
 
-		for (u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+		for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		{
 			// Transparent if destination color is taken into account
-			if (mData.BlendStateDesc.RenderTargetDesc[i].DstBlend != BF_ZERO ||
-				mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_DEST_COLOR ||
-				mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_INV_DEST_COLOR ||
-				mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_DEST_ALPHA ||
-				mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_INV_DEST_ALPHA)
+			if(mData.BlendStateDesc.RenderTargetDesc[i].DstBlend != BF_ZERO ||
+			   mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_DEST_COLOR ||
+			   mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_INV_DEST_COLOR ||
+			   mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_DEST_ALPHA ||
+			   mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_INV_DEST_ALPHA)
 			{
 				transparent = true;
 			}
@@ -47,7 +46,7 @@ namespace bs
 		return transparent;
 	}
 
-	template<bool Core>
+	template <bool Core>
 	const GPU_PROGRAM_DESC& TPass<Core>::GetProgramDesc(bs::GpuProgramType type) const
 	{
 		switch(type)
@@ -68,10 +67,10 @@ namespace bs
 		}
 	}
 
-	template<bool Core>
+	template <bool Core>
 	void TPass<Core>::CreatePipelineState()
 	{
-		if (IsCompute())
+		if(IsCompute())
 		{
 			SPtr<GpuProgramType> program = GpuProgramType::Create(mData.ComputeProgramDesc);
 			mComputePipelineState = ComputePipelineStateType::Create(program);
@@ -111,12 +110,12 @@ namespace bs
 		p(mComputePipelineState);
 	}
 
-	template class TPass < false > ;
-	template class TPass < true >;
+	template class TPass<false>;
+	template class TPass<true>;
 
 	Pass::Pass(const PASS_DESC& desc)
-		:TPass(desc)
-	{ }
+		: TPass(desc)
+	{}
 
 	SPtr<ct::Pass> Pass::GetCore() const
 	{
@@ -125,7 +124,7 @@ namespace bs
 
 	SPtr<ct::CoreObject> Pass::CreateCore() const
 	{
-		ct::Pass* pass = new (bs_alloc<ct::Pass>()) ct::Pass(mData);
+		ct::Pass* pass = new(bs_alloc<ct::Pass>()) ct::Pass(mData);
 
 		SPtr<ct::Pass> passPtr = bs_shared_ptr(pass);
 		passPtr->SetThisPtrInternal(passPtr);
@@ -160,7 +159,7 @@ namespace bs
 
 	SPtr<Pass> Pass::Create(const PASS_DESC& desc)
 	{
-		Pass* newPass = new (bs_alloc<Pass>()) Pass(desc);
+		Pass* newPass = new(bs_alloc<Pass>()) Pass(desc);
 		SPtr<Pass> newPassPtr = bs_core_ptr<Pass>(newPass);
 		newPassPtr->SetThisPtrInternal(newPassPtr);
 		newPassPtr->Initialize();
@@ -170,7 +169,7 @@ namespace bs
 
 	SPtr<Pass> Pass::CreateEmpty()
 	{
-		Pass* newPass = new (bs_alloc<Pass>()) Pass();
+		Pass* newPass = new(bs_alloc<Pass>()) Pass();
 		SPtr<Pass> newPassPtr = bs_core_ptr<Pass>(newPass);
 		newPassPtr->SetThisPtrInternal(newPassPtr);
 
@@ -189,32 +188,32 @@ namespace bs
 
 	namespace ct
 	{
-	Pass::Pass(const PASS_DESC& desc)
-		:TPass(desc)
-	{ }
+		Pass::Pass(const PASS_DESC& desc)
+			: TPass(desc)
+		{}
 
-	void Pass::Compile()
-	{
-		if(mComputePipelineState || mGraphicsPipelineState)
-			return; // Already compiled
+		void Pass::Compile()
+		{
+			if(mComputePipelineState || mGraphicsPipelineState)
+				return; // Already compiled
 
-		CreatePipelineState();
-	}
+			CreatePipelineState();
+		}
 
-	void Pass::SyncToCore(const CoreSyncData& data)
-	{
-		Bitstream stream(data.GetBuffer(), data.GetBufferSize());
-		csync_read(*this, stream);
-	}
+		void Pass::SyncToCore(const CoreSyncData& data)
+		{
+			Bitstream stream(data.GetBuffer(), data.GetBufferSize());
+			csync_read(*this, stream);
+		}
 
-	SPtr<Pass> Pass::Create(const PASS_DESC& desc)
-	{
-		Pass* newPass = new (bs_alloc<Pass>()) Pass(desc);
-		SPtr<Pass> newPassPtr = bs_shared_ptr<Pass>(newPass);
-		newPassPtr->SetThisPtrInternal(newPassPtr);
-		newPassPtr->Initialize();
+		SPtr<Pass> Pass::Create(const PASS_DESC& desc)
+		{
+			Pass* newPass = new(bs_alloc<Pass>()) Pass(desc);
+			SPtr<Pass> newPassPtr = bs_shared_ptr<Pass>(newPass);
+			newPassPtr->SetThisPtrInternal(newPassPtr);
+			newPassPtr->Initialize();
 
-		return newPassPtr;
-	}
-	}
-}
+			return newPassPtr;
+		}
+	} // namespace ct
+} // namespace bs

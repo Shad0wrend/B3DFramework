@@ -9,10 +9,11 @@ namespace bs
 	Vector<SubResourceRaw> SpecificImporter::ImportAll(const Path& filePath, SPtr<const ImportOptions> importOptions)
 	{
 		SPtr<Resource> resource = Import(filePath, importOptions);
-		if (resource == nullptr)
+		if(resource == nullptr)
 			return Vector<SubResourceRaw>();
 
-		return { { u8"primary", resource } };;
+		return { { u8"primary", resource } };
+		;
 	}
 
 	SPtr<ImportOptions> SpecificImporter::CreateImportOptions() const
@@ -27,4 +28,4 @@ namespace bs
 
 		return mDefaultImportOptions;
 	}
-}
+} // namespace bs

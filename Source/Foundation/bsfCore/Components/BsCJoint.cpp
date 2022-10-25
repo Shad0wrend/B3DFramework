@@ -11,7 +11,7 @@ using namespace std::placeholders;
 namespace bs
 {
 	CJoint::CJoint(JOINT_DESC& desc)
-		:mDesc(desc)
+		: mDesc(desc)
 	{
 		mPositions[0] = Vector3::ZERO;
 		mPositions[1] = Vector3::ZERO;
@@ -41,26 +41,26 @@ namespace bs
 
 	void CJoint::SetBody(JointBody body, const HRigidbody& value)
 	{
-		if (mBodies[(int)body] == value)
+		if(mBodies[(int)body] == value)
 			return;
 
-		if (mBodies[(int)body] != nullptr)
+		if(mBodies[(int)body] != nullptr)
 			mBodies[(int)body]->SetJointInternal(HJoint());
 
 		mBodies[(int)body] = value;
 
-		if (value != nullptr)
+		if(value != nullptr)
 			mBodies[(int)body]->SetJointInternal(static_object_cast<CJoint>(mThisHandle));
 
 		// If joint already exists, destroy it if we removed all bodies, otherwise update its transform
 		if(mInternal != nullptr)
 		{
-			if (!IsBodyValid(mBodies[0]) && !IsBodyValid(mBodies[1]))
+			if(!IsBodyValid(mBodies[0]) && !IsBodyValid(mBodies[1]))
 				DestroyInternal();
 			else
 			{
 				Rigidbody* rigidbody = nullptr;
-				if (value != nullptr)
+				if(value != nullptr)
 					rigidbody = value->GetInternalInternal();
 
 				mInternal->SetBody(body, rigidbody);
@@ -70,7 +70,7 @@ namespace bs
 		else // If joint doesn't exist, check if we can create it
 		{
 			// Must be an active component and at least one of the bodies must be non-null
-			if (SO()->GetActive() && (IsBodyValid(mBodies[0]) || IsBodyValid(mBodies[1])))
+			if(SO()->GetActive() && (IsBodyValid(mBodies[0]) || IsBodyValid(mBodies[1])))
 			{
 				RestoreInternal();
 			}
@@ -89,13 +89,13 @@ namespace bs
 
 	void CJoint::SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation)
 	{
-		if (mPositions[(int)body] == position && mRotations[(int)body] == rotation)
+		if(mPositions[(int)body] == position && mRotations[(int)body] == rotation)
 			return;
 
 		mPositions[(int)body] = position;
 		mRotations[(int)body] = rotation;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			UpdateTransform(body);
 	}
 
@@ -106,12 +106,12 @@ namespace bs
 
 	void CJoint::SetBreakForce(float force)
 	{
-		if (mDesc.BreakForce == force)
+		if(mDesc.BreakForce == force)
 			return;
 
 		mDesc.BreakForce = force;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetBreakForce(force);
 	}
 
@@ -122,12 +122,12 @@ namespace bs
 
 	void CJoint::SetBreakTorque(float torque)
 	{
-		if (mDesc.BreakTorque == torque)
+		if(mDesc.BreakTorque == torque)
 			return;
 
 		mDesc.BreakTorque = torque;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetBreakTorque(torque);
 	}
 
@@ -138,26 +138,25 @@ namespace bs
 
 	void CJoint::SetEnableCollision(bool value)
 	{
-		if (mDesc.EnableCollision == value)
+		if(mDesc.EnableCollision == value)
 			return;
 
 		mDesc.EnableCollision = value;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->SetEnableCollision(value);
 	}
 
 	void CJoint::OnInitialized()
 	{
-
 	}
 
 	void CJoint::OnDestroyed()
 	{
-		if (mBodies[0] != nullptr)
+		if(mBodies[0] != nullptr)
 			mBodies[0]->SetJointInternal(HJoint());
 
-		if (mBodies[1] != nullptr)
+		if(mBodies[1] != nullptr)
 			mBodies[1]->SetJointInternal(HJoint());
 
 		if(mInternal != nullptr)
@@ -166,7 +165,7 @@ namespace bs
 
 	void CJoint::OnDisabled()
 	{
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			DestroyInternal();
 	}
 
@@ -178,7 +177,7 @@ namespace bs
 
 	void CJoint::OnTransformChanged(TransformChangedFlags flags)
 	{
-		if (mInternal == nullptr)
+		if(mInternal == nullptr)
 			return;
 
 		// We're ignoring this during physics update because it would cause problems if the joint itself was moved by physics
@@ -187,7 +186,7 @@ namespace bs
 		// user to ensure rigidbodies are always parented to the joint in such a case (It's an unlikely situation that
 		// I can't think of an use for - joint transform will almost always be set as an initialization step and not a
 		// physics response).
-		if (gPhysics().IsUpdateInProgressInternal())
+		if(gPhysics().IsUpdateInProgressInternal())
 			return;
 
 		UpdateTransform(JointBody::Target);
@@ -196,12 +195,12 @@ namespace bs
 
 	void CJoint::RestoreInternal()
 	{
-		if (mBodies[0] != nullptr)
+		if(mBodies[0] != nullptr)
 			mDesc.Bodies[0].Body = mBodies[0]->GetInternalInternal();
 		else
 			mDesc.Bodies[0].Body = nullptr;
 
-		if (mBodies[1] != nullptr)
+		if(mBodies[1] != nullptr)
 			mDesc.Bodies[1].Body = mBodies[1]->GetInternalInternal();
 		else
 			mDesc.Bodies[1].Body = nullptr;
@@ -226,16 +225,16 @@ namespace bs
 
 	void CJoint::NotifyRigidbodyMoved(const HRigidbody& body)
 	{
-		if (mInternal == nullptr)
+		if(mInternal == nullptr)
 			return;
 
 		// If physics update is in progress do nothing, as its the joint itself that's probably moving the body
-		if (gPhysics().IsUpdateInProgressInternal())
+		if(gPhysics().IsUpdateInProgressInternal())
 			return;
 
-		if (mBodies[0] == body)
+		if(mBodies[0] == body)
 			UpdateTransform(JointBody::Target);
-		else if (mBodies[1] == body)
+		else if(mBodies[1] == body)
 			UpdateTransform(JointBody::Anchor);
 		else
 			assert(false); // Not allowed to happen
@@ -243,10 +242,10 @@ namespace bs
 
 	bool CJoint::IsBodyValid(const HRigidbody& body)
 	{
-		if (body == nullptr)
+		if(body == nullptr)
 			return false;
 
-		if (body->GetInternalInternal() == nullptr)
+		if(body->GetInternalInternal() == nullptr)
 			return false;
 
 		return true;
@@ -267,12 +266,12 @@ namespace bs
 		rotation = mRotations[(u32)body];
 
 		HRigidbody rigidbody = mBodies[(u32)body];
-		if (rigidbody == nullptr) // Get world space transform if no relative to any body
+		if(rigidbody == nullptr) // Get world space transform if no relative to any body
 		{
 			const Transform& tfrm = SO()->GetTransform();
 			Quaternion worldRot = tfrm.GetRotation();
 
-			rotation = worldRot*rotation;
+			rotation = worldRot * rotation;
 			position = worldRot.Rotate(position) + tfrm.GetPosition();
 		}
 		else
@@ -280,7 +279,7 @@ namespace bs
 			position = rotation.Rotate(position);
 		}
 	}
-	
+
 	void CJoint::TriggerOnJointBroken()
 	{
 		OnJointBreak();
@@ -295,4 +294,4 @@ namespace bs
 	{
 		return CJoint::GetRttiStatic();
 	}
-}
+} // namespace bs

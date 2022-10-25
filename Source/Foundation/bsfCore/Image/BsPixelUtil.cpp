@@ -15,7 +15,8 @@ namespace bs
 	 *
 	 * @tparam elementSize	Size of a single pixel in bytes.
 	 */
-	template<u32 elementSize> struct NearestResampler
+	template <u32 elementSize>
+	struct NearestResampler
 	{
 		static void Scale(const PixelData& source, const PixelData& dest)
 		{
@@ -28,20 +29,20 @@ namespace bs
 			u64 stepZ = ((u64)source.GetDepth() << 48) / dest.GetDepth();
 
 			u64 curZ = (stepZ >> 1) - 1; // Offset half a pixel to start at pixel center
-			for (u32 z = dest.GetFront(); z < dest.GetBack(); z++, curZ += stepZ)
+			for(u32 z = dest.GetFront(); z < dest.GetBack(); z++, curZ += stepZ)
 			{
 				u32 offsetZ = (u32)(curZ >> 48) * source.GetSlicePitch();
 
 				u64 curY = (stepY >> 1) - 1; // Offset half a pixel to start at pixel center
-				for (u32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
+				for(u32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
 				{
 					u32 offsetY = (u32)(curY >> 48) * source.GetRowPitch();
 
 					u64 curX = (stepX >> 1) - 1; // Offset half a pixel to start at pixel center
-					for (u32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
+					for(u32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
 					{
 						u32 offsetX = (u32)(curX >> 48);
-						u32 offsetBytes = elementSize*offsetX + offsetY + offsetZ;
+						u32 offsetBytes = elementSize * offsetX + offsetY + offsetZ;
 
 						u8* curSourcePtr = sourceData + offsetBytes;
 
@@ -80,28 +81,28 @@ namespace bs
 			u32 temp = 0;
 
 			u64 curZ = (stepZ >> 1) - 1; // Offset half a pixel to start at pixel center
-			for (u32 z = dest.GetFront(); z < dest.GetBack(); z++, curZ += stepZ)
+			for(u32 z = dest.GetFront(); z < dest.GetBack(); z++, curZ += stepZ)
 			{
 				temp = u32(curZ >> 32);
-				temp = (temp > 0x8000)? temp - 0x8000 : 0;
+				temp = (temp > 0x8000) ? temp - 0x8000 : 0;
 				u32 sampleCoordZ1 = temp >> 16;
 				u32 sampleCoordZ2 = std::min(sampleCoordZ1 + 1, (u32)source.GetDepth() - 1);
 				float sampleWeightZ = (temp & 0xFFFF) / 65536.0f;
 
 				u64 curY = (stepY >> 1) - 1; // Offset half a pixel to start at pixel center
-				for (u32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
+				for(u32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
 				{
 					temp = (u32)(curY >> 32);
-					temp = (temp > 0x8000)? temp - 0x8000 : 0;
+					temp = (temp > 0x8000) ? temp - 0x8000 : 0;
 					u32 sampleCoordY1 = temp >> 16;
 					u32 sampleCoordY2 = std::min(sampleCoordY1 + 1, (u32)source.GetHeight() - 1);
 					float sampleWeightY = (temp & 0xFFFF) / 65536.0f;
 
 					u64 curX = (stepX >> 1) - 1; // Offset half a pixel to start at pixel center
-					for (u32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
+					for(u32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
 					{
 						temp = (u32)(curX >> 32);
-						temp = (temp > 0x8000)? temp - 0x8000 : 0;
+						temp = (temp > 0x8000) ? temp - 0x8000 : 0;
 						u32 sampleCoordX1 = temp >> 16;
 						u32 sampleCoordX2 = std::min(sampleCoordX1 + 1, (u32)source.GetWidth() - 1);
 						float sampleWeightX = (temp & 0xFFFF) / 65536.0f;
@@ -109,7 +110,7 @@ namespace bs
 						Color x1y1z1, x2y1z1, x1y2z1, x2y2z1;
 						Color x1y1z2, x2y1z2, x1y2z2, x2y2z2;
 
-#define GETSOURCEDATA(x, y, z) sourceData + sourceElemSize*(x)+(y)*source.GetRowPitch() + (z)*source.GetSlicePitch()
+#define GETSOURCEDATA(x, y, z) sourceData + sourceElemSize*(x) + (y)*source.GetRowPitch() + (z)*source.GetSlicePitch()
 
 						PixelUtil::UnpackColor(&x1y1z1, source.GetFormat(), GETSOURCEDATA(sampleCoordX1, sampleCoordY1, sampleCoordZ1));
 						PixelUtil::UnpackColor(&x2y1z1, source.GetFormat(), GETSOURCEDATA(sampleCoordX2, sampleCoordY1, sampleCoordZ1));
@@ -122,14 +123,14 @@ namespace bs
 #undef GETSOURCEDATA
 
 						Color accum =
-							x1y1z1 * ((1.0f - sampleWeightX)*(1.0f - sampleWeightY)*(1.0f - sampleWeightZ)) +
-							x2y1z1 * (        sampleWeightX *(1.0f - sampleWeightY)*(1.0f - sampleWeightZ)) +
-							x1y2z1 * ((1.0f - sampleWeightX)*        sampleWeightY *(1.0f - sampleWeightZ)) +
-							x2y2z1 * (        sampleWeightX *        sampleWeightY *(1.0f - sampleWeightZ)) +
-							x1y1z2 * ((1.0f - sampleWeightX)*(1.0f - sampleWeightY)*        sampleWeightZ ) +
-							x2y1z2 * (        sampleWeightX *(1.0f - sampleWeightY)*        sampleWeightZ ) +
-							x1y2z2 * ((1.0f - sampleWeightX)*        sampleWeightY *        sampleWeightZ ) +
-							x2y2z2 * (        sampleWeightX *        sampleWeightY *        sampleWeightZ );
+							x1y1z1 * ((1.0f - sampleWeightX) * (1.0f - sampleWeightY) * (1.0f - sampleWeightZ)) +
+							x2y1z1 * (sampleWeightX * (1.0f - sampleWeightY) * (1.0f - sampleWeightZ)) +
+							x1y2z1 * ((1.0f - sampleWeightX) * sampleWeightY * (1.0f - sampleWeightZ)) +
+							x2y2z1 * (sampleWeightX * sampleWeightY * (1.0f - sampleWeightZ)) +
+							x1y1z2 * ((1.0f - sampleWeightX) * (1.0f - sampleWeightY) * sampleWeightZ) +
+							x2y1z2 * (sampleWeightX * (1.0f - sampleWeightY) * sampleWeightZ) +
+							x1y2z2 * ((1.0f - sampleWeightX) * sampleWeightY * sampleWeightZ) +
+							x2y2z2 * (sampleWeightX * sampleWeightY * sampleWeightZ);
 
 						PixelUtil::PackColor(accum, dest.GetFormat(), destPtr);
 
@@ -143,7 +144,6 @@ namespace bs
 			}
 		}
 	};
-
 
 	/**
 	 * Performs pixel data resampling using the box filter (linear). Only handles float RGB or RGBA pixel data (32 bits per
@@ -177,28 +177,28 @@ namespace bs
 			u32 temp = 0;
 
 			u64 curZ = (stepZ >> 1) - 1; // Offset half a pixel to start at pixel center
-			for (u32 z = dest.GetFront(); z < dest.GetBack(); z++, curZ += stepZ)
+			for(u32 z = dest.GetFront(); z < dest.GetBack(); z++, curZ += stepZ)
 			{
 				temp = (u32)(curZ >> 32);
-				temp = (temp > 0x8000)? temp - 0x8000 : 0;
+				temp = (temp > 0x8000) ? temp - 0x8000 : 0;
 				u32 sampleCoordZ1 = temp >> 16;
 				u32 sampleCoordZ2 = std::min(sampleCoordZ1 + 1, (u32)source.GetDepth() - 1);
 				float sampleWeightZ = (temp & 0xFFFF) / 65536.0f;
 
 				u64 curY = (stepY >> 1) - 1; // Offset half a pixel to start at pixel center
-				for (u32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
+				for(u32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
 				{
 					temp = (u32)(curY >> 32);
-					temp = (temp > 0x8000)? temp - 0x8000 : 0;
+					temp = (temp > 0x8000) ? temp - 0x8000 : 0;
 					u32 sampleCoordY1 = temp >> 16;
 					u32 sampleCoordY2 = std::min(sampleCoordY1 + 1, (u32)source.GetHeight() - 1);
 					float sampleWeightY = (temp & 0xFFFF) / 65536.0f;
 
 					u64 curX = (stepX >> 1) - 1; // Offset half a pixel to start at pixel center
-					for (u32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
+					for(u32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
 					{
 						temp = (u32)(curX >> 32);
-						temp = (temp > 0x8000)? temp - 0x8000 : 0;
+						temp = (temp > 0x8000) ? temp - 0x8000 : 0;
 						u32 sampleCoordX1 = temp >> 16;
 						u32 sampleCoordX2 = std::min(sampleCoordX1 + 1, (u32)source.GetWidth() - 1);
 						float sampleWeightX = (temp & 0xFFFF) / 65536.0f;
@@ -206,46 +206,52 @@ namespace bs
 						// process R,G,B,A simultaneously for cache coherence?
 						float accum[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
+#define ACCUM3(x, y, z, factor)                                                           \
+	{                                                                                     \
+		float f = factor;                                                                 \
+		u32 offset = (x + y * sourceRowPitch + z * sourceSlicePitch) * numSourceChannels; \
+		accum[0] += sourceData[offset + 0] * f;                                           \
+		accum[1] += sourceData[offset + 1] * f;                                           \
+		accum[2] += sourceData[offset + 2] * f;                                           \
+	}
 
-#define ACCUM3(x,y,z,factor) \
-						{ float f = factor; \
-						u32 offset = (x + y*sourceRowPitch + z*sourceSlicePitch)*numSourceChannels; \
-						accum[0] += sourceData[offset + 0] * f; accum[1] += sourceData[offset + 1] * f; \
-						accum[2] += sourceData[offset + 2] * f; }
+#define ACCUM4(x, y, z, factor)                                                           \
+	{                                                                                     \
+		float f = factor;                                                                 \
+		u32 offset = (x + y * sourceRowPitch + z * sourceSlicePitch) * numSourceChannels; \
+		accum[0] += sourceData[offset + 0] * f;                                           \
+		accum[1] += sourceData[offset + 1] * f;                                           \
+		accum[2] += sourceData[offset + 2] * f;                                           \
+		accum[3] += sourceData[offset + 3] * f;                                           \
+	}
 
-#define ACCUM4(x,y,z,factor) \
-						{ float f = factor; \
-						u32 offset = (x + y*sourceRowPitch + z*sourceSlicePitch)*numSourceChannels; \
-						accum[0] += sourceData[offset + 0] * f; accum[1] += sourceData[offset + 1] * f; \
-						accum[2] += sourceData[offset + 2] * f; accum[3] += sourceData[offset + 3] * f; }
-
-						if (numSourceChannels == 3 || numDestChannels == 3)
+						if(numSourceChannels == 3 || numDestChannels == 3)
 						{
 							// RGB
 							ACCUM3(sampleCoordX1, sampleCoordY1, sampleCoordZ1, (1.0f - sampleWeightX) * (1.0f - sampleWeightY) * (1.0f - sampleWeightZ));
-							ACCUM3(sampleCoordX2, sampleCoordY1, sampleCoordZ1, sampleWeightX		   * (1.0f - sampleWeightY) * (1.0f - sampleWeightZ));
-							ACCUM3(sampleCoordX1, sampleCoordY2, sampleCoordZ1, (1.0f - sampleWeightX) * sampleWeightY			* (1.0f - sampleWeightZ));
-							ACCUM3(sampleCoordX2, sampleCoordY2, sampleCoordZ1, sampleWeightX		   * sampleWeightY		    * (1.0f - sampleWeightZ));
+							ACCUM3(sampleCoordX2, sampleCoordY1, sampleCoordZ1, sampleWeightX * (1.0f - sampleWeightY) * (1.0f - sampleWeightZ));
+							ACCUM3(sampleCoordX1, sampleCoordY2, sampleCoordZ1, (1.0f - sampleWeightX) * sampleWeightY * (1.0f - sampleWeightZ));
+							ACCUM3(sampleCoordX2, sampleCoordY2, sampleCoordZ1, sampleWeightX * sampleWeightY * (1.0f - sampleWeightZ));
 							ACCUM3(sampleCoordX1, sampleCoordY1, sampleCoordZ2, (1.0f - sampleWeightX) * (1.0f - sampleWeightY) * sampleWeightZ);
-							ACCUM3(sampleCoordX2, sampleCoordY1, sampleCoordZ2, sampleWeightX		   * (1.0f - sampleWeightY) * sampleWeightZ);
-							ACCUM3(sampleCoordX1, sampleCoordY2, sampleCoordZ2, (1.0f - sampleWeightX) * sampleWeightY			* sampleWeightZ);
-							ACCUM3(sampleCoordX2, sampleCoordY2, sampleCoordZ2, sampleWeightX		   * sampleWeightY			* sampleWeightZ);
+							ACCUM3(sampleCoordX2, sampleCoordY1, sampleCoordZ2, sampleWeightX * (1.0f - sampleWeightY) * sampleWeightZ);
+							ACCUM3(sampleCoordX1, sampleCoordY2, sampleCoordZ2, (1.0f - sampleWeightX) * sampleWeightY * sampleWeightZ);
+							ACCUM3(sampleCoordX2, sampleCoordY2, sampleCoordZ2, sampleWeightX * sampleWeightY * sampleWeightZ);
 							accum[3] = 1.0f;
 						}
 						else
 						{
 							// RGBA
 							ACCUM4(sampleCoordX1, sampleCoordY1, sampleCoordZ1, (1.0f - sampleWeightX) * (1.0f - sampleWeightY) * (1.0f - sampleWeightZ));
-							ACCUM4(sampleCoordX2, sampleCoordY1, sampleCoordZ1, sampleWeightX		   * (1.0f - sampleWeightY) * (1.0f - sampleWeightZ));
-							ACCUM4(sampleCoordX1, sampleCoordY2, sampleCoordZ1, (1.0f - sampleWeightX) * sampleWeightY			* (1.0f - sampleWeightZ));
-							ACCUM4(sampleCoordX2, sampleCoordY2, sampleCoordZ1, sampleWeightX		   * sampleWeightY			* (1.0f - sampleWeightZ));
+							ACCUM4(sampleCoordX2, sampleCoordY1, sampleCoordZ1, sampleWeightX * (1.0f - sampleWeightY) * (1.0f - sampleWeightZ));
+							ACCUM4(sampleCoordX1, sampleCoordY2, sampleCoordZ1, (1.0f - sampleWeightX) * sampleWeightY * (1.0f - sampleWeightZ));
+							ACCUM4(sampleCoordX2, sampleCoordY2, sampleCoordZ1, sampleWeightX * sampleWeightY * (1.0f - sampleWeightZ));
 							ACCUM4(sampleCoordX1, sampleCoordY1, sampleCoordZ2, (1.0f - sampleWeightX) * (1.0f - sampleWeightY) * sampleWeightZ);
-							ACCUM4(sampleCoordX2, sampleCoordY1, sampleCoordZ2, sampleWeightX		   * (1.0f - sampleWeightY) * sampleWeightZ);
-							ACCUM4(sampleCoordX1, sampleCoordY2, sampleCoordZ2, (1.0f - sampleWeightX) * sampleWeightY			* sampleWeightZ);
-							ACCUM4(sampleCoordX2, sampleCoordY2, sampleCoordZ2, sampleWeightX		   * sampleWeightY			* sampleWeightZ);
+							ACCUM4(sampleCoordX2, sampleCoordY1, sampleCoordZ2, sampleWeightX * (1.0f - sampleWeightY) * sampleWeightZ);
+							ACCUM4(sampleCoordX1, sampleCoordY2, sampleCoordZ2, (1.0f - sampleWeightX) * sampleWeightY * sampleWeightZ);
+							ACCUM4(sampleCoordX2, sampleCoordY2, sampleCoordZ2, sampleWeightX * sampleWeightY * sampleWeightZ);
 						}
 
-						memcpy(destPtr, accum, sizeof(float)*numDestChannels);
+						memcpy(destPtr, accum, sizeof(float) * numDestChannels);
 
 #undef ACCUM3
 #undef ACCUM4
@@ -261,8 +267,6 @@ namespace bs
 		}
 	};
 
-
-
 	// byte linear resampler, does not do any format conversions.
 	// only handles pixel formats that use 1 byte per color channel.
 	// 2D only; punts 3D pixelboxes to default LinearResampler (slow).
@@ -275,12 +279,13 @@ namespace bs
 	 *
 	 * @tparam	channels	Number of channels in the pixel format.
 	 */
-	template<u32 channels> struct LinearResampler_Byte
+	template <u32 channels>
+	struct LinearResampler_Byte
 	{
 		static void Scale(const PixelData& source, const PixelData& dest)
 		{
 			// Only optimized for 2D
-			if (source.GetDepth() > 1 || dest.GetDepth() > 1)
+			if(source.GetDepth() > 1 || dest.GetDepth() > 1)
 			{
 				LinearResampler::Scale(source, dest);
 				return;
@@ -300,10 +305,10 @@ namespace bs
 			u32 temp;
 
 			u64 curY = (stepY >> 1) - 1; // Offset half a pixel to start at pixel center
-			for (u32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
+			for(u32 y = dest.GetTop(); y < dest.GetBottom(); y++, curY += stepY)
 			{
 				temp = (u32)(curY >> 36);
-				temp = (temp > 0x800)? temp - 0x800: 0;
+				temp = (temp > 0x800) ? temp - 0x800 : 0;
 				u32 sampleWeightY = temp & 0xFFF;
 				u32 sampleCoordY1 = temp >> 12;
 				u32 sampleCoordY2 = std::min(sampleCoordY1 + 1, (u32)source.GetBottom() - source.GetTop() - 1);
@@ -312,22 +317,22 @@ namespace bs
 				u32 sampleY2Offset = sampleCoordY2 * source.GetRowPitch();
 
 				u64 curX = (stepX >> 1) - 1; // Offset half a pixel to start at pixel center
-				for (u32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
+				for(u32 x = dest.GetLeft(); x < dest.GetRight(); x++, curX += stepX)
 				{
 					temp = (u32)(curX >> 36);
-					temp = (temp > 0x800)? temp - 0x800 : 0;
+					temp = (temp > 0x800) ? temp - 0x800 : 0;
 					u32 sampleWeightX = temp & 0xFFF;
 					u32 sampleCoordX1 = temp >> 12;
 					u32 sampleCoordX2 = std::min(sampleCoordX1 + 1, (u32)source.GetRight() - source.GetLeft() - 1);
 
-					u32 sxfsyf = sampleWeightX*sampleWeightY;
-					for (u32 k = 0; k < channels; k++)
+					u32 sxfsyf = sampleWeightX * sampleWeightY;
+					for(u32 k = 0; k < channels; k++)
 					{
 						u32 accum =
-							sourceData[sampleCoordX1 * channels + sampleY1Offset + k]*(0x1000000-(sampleWeightX<<12)-(sampleWeightY<<12)+sxfsyf) +
-							sourceData[sampleCoordX2 * channels + sampleY1Offset + k]*((sampleWeightX<<12)-sxfsyf) +
-							sourceData[sampleCoordX1 * channels + sampleY2Offset + k]*((sampleWeightY<<12)-sxfsyf) +
-							sourceData[sampleCoordX2 * channels + sampleY2Offset + k]*sxfsyf;
+							sourceData[sampleCoordX1 * channels + sampleY1Offset + k] * (0x1000000 - (sampleWeightX << 12) - (sampleWeightY << 12) + sxfsyf) +
+							sourceData[sampleCoordX2 * channels + sampleY1Offset + k] * ((sampleWeightX << 12) - sxfsyf) +
+							sourceData[sampleCoordX1 * channels + sampleY2Offset + k] * ((sampleWeightY << 12) - sxfsyf) +
+							sourceData[sampleCoordX2 * channels + sampleY2Offset + k] * sxfsyf;
 
 						// Round up to byte size
 						*destPtr = (u8)((accum + 0x800000) >> 24);
@@ -356,834 +361,1400 @@ namespace bs
 
 	/**	A list of all available pixel formats. */
 	PixelFormatDescription _pixelFormats[PF_COUNT] = {
-		{"PF_UNKNOWN",
-		/* Bytes per element */
-		0,
-		/* Flags */
-		0,
-		/* Component type and count */
-		PCT_BYTE, 0,
-		/* rbits, gbits, bbits, abits */
-		0, 0, 0, 0,
-		/* Masks and shifts */
-		0, 0, 0, 0,
-		0, 0, 0, 0,
+		{
+			"PF_UNKNOWN",
+			/* Bytes per element */
+			0,
+			/* Flags */
+			0,
+			/* Component type and count */
+			PCT_BYTE,
+			0,
+			/* rbits, gbits, bbits, abits */
+			0,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{"PF_R8",
-		/* Bytes per element */
-		1,
-		/* Flags */
-		PFF_INTEGER | PFF_NORMALIZED,
-		/* Component type and count */
-		PCT_BYTE, 1,
-		/* rbits, gbits, bbits, abits */
-		8, 0, 0, 0,
-		/* Masks and shifts */
-		0x000000FF, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_R8",
+			/* Bytes per element */
+			1,
+			/* Flags */
+			PFF_INTEGER | PFF_NORMALIZED,
+			/* Component type and count */
+			PCT_BYTE,
+			1,
+			/* rbits, gbits, bbits, abits */
+			8,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0x000000FF,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{"PF_RG8",
-		/* Bytes per element */
-		2,
-		/* Flags */
-		PFF_INTEGER | PFF_NORMALIZED,
-		/* Component type and count */
-		PCT_BYTE, 2,
-		/* rbits, gbits, bbits, abits */
-		8, 8, 0, 0,
-		/* Masks and shifts */
-		0x000000FF, 0x0000FF00, 0, 0,
-		0, 8, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RG8",
+			/* Bytes per element */
+			2,
+			/* Flags */
+			PFF_INTEGER | PFF_NORMALIZED,
+			/* Component type and count */
+			PCT_BYTE,
+			2,
+			/* rbits, gbits, bbits, abits */
+			8,
+			8,
+			0,
+			0,
+			/* Masks and shifts */
+			0x000000FF,
+			0x0000FF00,
+			0,
+			0,
+			0,
+			8,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{"PF_RGB8",
-		/* Bytes per element */
-		4,  // 4th byte is unused
-		/* Flags */
-		PFF_INTEGER | PFF_NORMALIZED,
-		/* Component type and count */
-		PCT_BYTE, 3,
-		/* rbits, gbits, bbits, abits */
-		8, 8, 8, 0,
-		/* Masks and shifts */
-		0x000000FF, 0x0000FF00, 0x00FF0000, 0,
-		0, 8, 16, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RGB8",
+			/* Bytes per element */
+			4, // 4th byte is unused
+			/* Flags */
+			PFF_INTEGER | PFF_NORMALIZED,
+			/* Component type and count */
+			PCT_BYTE,
+			3,
+			/* rbits, gbits, bbits, abits */
+			8,
+			8,
+			8,
+			0,
+			/* Masks and shifts */
+			0x000000FF,
+			0x0000FF00,
+			0x00FF0000,
+			0,
+			0,
+			8,
+			16,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{"PF_BGR8",
-		/* Bytes per element */
-		4,  // 4th byte is unused
-		/* Flags */
-		PFF_INTEGER | PFF_NORMALIZED,
-		/* Component type and count */
-		PCT_BYTE, 3,
-		/* rbits, gbits, bbits, abits */
-		8, 8, 8, 0,
-		/* Masks and shifts */
-		0x00FF0000, 0x0000FF00, 0x000000FF, 0,
-		16, 8, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_BGR8",
+			/* Bytes per element */
+			4, // 4th byte is unused
+			/* Flags */
+			PFF_INTEGER | PFF_NORMALIZED,
+			/* Component type and count */
+			PCT_BYTE,
+			3,
+			/* rbits, gbits, bbits, abits */
+			8,
+			8,
+			8,
+			0,
+			/* Masks and shifts */
+			0x00FF0000,
+			0x0000FF00,
+			0x000000FF,
+			0,
+			16,
+			8,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
+		//-----------------------------------------------------------------------
 		{}, // Deleted format
-	//-----------------------------------------------------------------------
+		//-----------------------------------------------------------------------
 		{}, // Deleted format
-	//-----------------------------------------------------------------------
-		{"PF_BGRA8",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_HASALPHA | PFF_INTEGER | PFF_NORMALIZED,
-		/* Component type and count */
-		PCT_BYTE, 4,
-		/* rbits, gbits, bbits, abits */
-		8, 8, 8, 8,
-		/* Masks and shifts */
-		0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000,
-		16, 8, 0, 24,
+		//-----------------------------------------------------------------------
+		{
+			"PF_BGRA8",
+			/* Bytes per element */
+			4,
+			/* Flags */
+			PFF_HASALPHA | PFF_INTEGER | PFF_NORMALIZED,
+			/* Component type and count */
+			PCT_BYTE,
+			4,
+			/* rbits, gbits, bbits, abits */
+			8,
+			8,
+			8,
+			8,
+			/* Masks and shifts */
+			0x00FF0000,
+			0x0000FF00,
+			0x000000FF,
+			0xFF000000,
+			16,
+			8,
+			0,
+			24,
 		},
-	//-----------------------------------------------------------------------
-		{"PF_RGBA8",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_HASALPHA | PFF_INTEGER | PFF_NORMALIZED,
-		/* Component type and count */
-		PCT_BYTE, 4,
-		/* rbits, gbits, bbits, abits */
-		8, 8, 8, 8,
-		/* Masks and shifts */
-		0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000,
-		0, 8, 16, 24,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RGBA8",
+			/* Bytes per element */
+			4,
+			/* Flags */
+			PFF_HASALPHA | PFF_INTEGER | PFF_NORMALIZED,
+			/* Component type and count */
+			PCT_BYTE,
+			4,
+			/* rbits, gbits, bbits, abits */
+			8,
+			8,
+			8,
+			8,
+			/* Masks and shifts */
+			0x000000FF,
+			0x0000FF00,
+			0x00FF0000,
+			0xFF000000,
+			0,
+			8,
+			16,
+			24,
 		},
-	//-----------------------------------------------------------------------
+		//-----------------------------------------------------------------------
 		{}, // Deleted format
-	//-----------------------------------------------------------------------
+		//-----------------------------------------------------------------------
 		{}, // Deleted format
-	//-----------------------------------------------------------------------
+		//-----------------------------------------------------------------------
 		{}, // Deleted format
-	//-----------------------------------------------------------------------
+		//-----------------------------------------------------------------------
 		{}, // Deleted format
-	//-----------------------------------------------------------------------
-		{ "PF_BC1",
-		/* Bytes per element */
-		0,
-		/* Flags */
-		PFF_COMPRESSED | PFF_HASALPHA,
-		/* Component type and count */
-		PCT_BYTE, 3, // No alpha
-		/* rbits, gbits, bbits, abits */
-		0, 0, 0, 0,
-		/* Masks and shifts */
-		0, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_BC1",
+			/* Bytes per element */
+			0,
+			/* Flags */
+			PFF_COMPRESSED | PFF_HASALPHA,
+			/* Component type and count */
+			PCT_BYTE,
+			3, // No alpha
+			/* rbits, gbits, bbits, abits */
+			0,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_BC1a",
-		/* Bytes per element */
-		0,
-		/* Flags */
-		PFF_COMPRESSED,
-		/* Component type and count */
-		PCT_BYTE, 3,
-		/* rbits, gbits, bbits, abits */
-		0, 0, 0, 0,
-		/* Masks and shifts */
-		0, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_BC1a",
+			/* Bytes per element */
+			0,
+			/* Flags */
+			PFF_COMPRESSED,
+			/* Component type and count */
+			PCT_BYTE,
+			3,
+			/* rbits, gbits, bbits, abits */
+			0,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_BC2",
-		/* Bytes per element */
-		0,
-		/* Flags */
-		PFF_COMPRESSED | PFF_HASALPHA,
-		/* Component type and count */
-		PCT_BYTE, 4,
-		/* rbits, gbits, bbits, abits */
-		0, 0, 0, 0,
-		/* Masks and shifts */
-		0, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_BC2",
+			/* Bytes per element */
+			0,
+			/* Flags */
+			PFF_COMPRESSED | PFF_HASALPHA,
+			/* Component type and count */
+			PCT_BYTE,
+			4,
+			/* rbits, gbits, bbits, abits */
+			0,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_BC3",
-		/* Bytes per element */
-		0,
-		/* Flags */
-		PFF_COMPRESSED | PFF_HASALPHA,
-		/* Component type and count */
-		PCT_BYTE, 4,
-		/* rbits, gbits, bbits, abits */
-		0, 0, 0, 0,
-		/* Masks and shifts */
-		0, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_BC3",
+			/* Bytes per element */
+			0,
+			/* Flags */
+			PFF_COMPRESSED | PFF_HASALPHA,
+			/* Component type and count */
+			PCT_BYTE,
+			4,
+			/* rbits, gbits, bbits, abits */
+			0,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_BC4",
-		/* Bytes per element */
-		0,
-		/* Flags */
-		PFF_COMPRESSED,
-		/* Component type and count */
-		PCT_BYTE, 1,
-		/* rbits, gbits, bbits, abits */
-		0, 0, 0, 0,
-		/* Masks and shifts */
-		0, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_BC4",
+			/* Bytes per element */
+			0,
+			/* Flags */
+			PFF_COMPRESSED,
+			/* Component type and count */
+			PCT_BYTE,
+			1,
+			/* rbits, gbits, bbits, abits */
+			0,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_BC5",
-		/* Bytes per element */
-		0,
-		/* Flags */
-		PFF_COMPRESSED,
-		/* Component type and count */
-		PCT_BYTE, 2,
-		/* rbits, gbits, bbits, abits */
-		0, 0, 0, 0,
-		/* Masks and shifts */
-		0, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_BC5",
+			/* Bytes per element */
+			0,
+			/* Flags */
+			PFF_COMPRESSED,
+			/* Component type and count */
+			PCT_BYTE,
+			2,
+			/* rbits, gbits, bbits, abits */
+			0,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_BC6H",
-		/* Bytes per element */
-		0,
-		/* Flags */
-		PFF_COMPRESSED,
-		/* Component type and count */
-		PCT_FLOAT16, 3,
-		/* rbits, gbits, bbits, abits */
-		0, 0, 0, 0,
-		/* Masks and shifts */
-		0, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_BC6H",
+			/* Bytes per element */
+			0,
+			/* Flags */
+			PFF_COMPRESSED,
+			/* Component type and count */
+			PCT_FLOAT16,
+			3,
+			/* rbits, gbits, bbits, abits */
+			0,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_BC7",
-		/* Bytes per element */
-		0,
-		/* Flags */
-		PFF_COMPRESSED | PFF_HASALPHA,
-		/* Component type and count */
-		PCT_BYTE, 4,
-		/* rbits, gbits, bbits, abits */
-		0, 0, 0, 0,
-		/* Masks and shifts */
-		0, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_BC7",
+			/* Bytes per element */
+			0,
+			/* Flags */
+			PFF_COMPRESSED | PFF_HASALPHA,
+			/* Component type and count */
+			PCT_BYTE,
+			4,
+			/* rbits, gbits, bbits, abits */
+			0,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{"PF_R16F",
-		/* Bytes per element */
-		2,
-		/* Flags */
-		PFF_FLOAT,
-		/* Component type and count */
-		PCT_FLOAT16, 1,
-		/* rbits, gbits, bbits, abits */
-		16, 0, 0, 0,
-		/* Masks and shifts */
-		0x0000FFFF, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_R16F",
+			/* Bytes per element */
+			2,
+			/* Flags */
+			PFF_FLOAT,
+			/* Component type and count */
+			PCT_FLOAT16,
+			1,
+			/* rbits, gbits, bbits, abits */
+			16,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0x0000FFFF,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{"PF_RG16F",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_FLOAT,
-		/* Component type and count */
-		PCT_FLOAT16, 2,
-		/* rbits, gbits, bbits, abits */
-		16, 16, 0, 0,
-		/* Masks and shifts */
-		0x0000FFFF, 0xFFFF0000, 0, 0,
-		0, 16, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RG16F",
+			/* Bytes per element */
+			4,
+			/* Flags */
+			PFF_FLOAT,
+			/* Component type and count */
+			PCT_FLOAT16,
+			2,
+			/* rbits, gbits, bbits, abits */
+			16,
+			16,
+			0,
+			0,
+			/* Masks and shifts */
+			0x0000FFFF,
+			0xFFFF0000,
+			0,
+			0,
+			0,
+			16,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ }, //  Deleted format
-	//-----------------------------------------------------------------------
-		{ "PF_RGBA16F",
-		/* Bytes per element */
-		8,
-		/* Flags */
-		PFF_FLOAT | PFF_HASALPHA,
-		/* Component type and count */
-		PCT_FLOAT16, 4,
-		/* rbits, gbits, bbits, abits */
-		16, 16, 16, 16,
-		/* Masks and shifts */
-		0x0000FFFF, 0xFFFF0000, 0x0000FFFF, 0xFFFF0000,
-		0, 16, 0, 16,
+		//-----------------------------------------------------------------------
+		{}, //  Deleted format
+		//-----------------------------------------------------------------------
+		{
+			"PF_RGBA16F",
+			/* Bytes per element */
+			8,
+			/* Flags */
+			PFF_FLOAT | PFF_HASALPHA,
+			/* Component type and count */
+			PCT_FLOAT16,
+			4,
+			/* rbits, gbits, bbits, abits */
+			16,
+			16,
+			16,
+			16,
+			/* Masks and shifts */
+			0x0000FFFF,
+			0xFFFF0000,
+			0x0000FFFF,
+			0xFFFF0000,
+			0,
+			16,
+			0,
+			16,
 		},
-	//-----------------------------------------------------------------------
-		{"PF_R32F",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_FLOAT,
-		/* Component type and count */
-		PCT_FLOAT32, 1,
-		/* rbits, gbits, bbits, abits */
-		32, 0, 0, 0,
-		/* Masks and shifts */
-		0xFFFFFFFF, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_R32F",
+			/* Bytes per element */
+			4,
+			/* Flags */
+			PFF_FLOAT,
+			/* Component type and count */
+			PCT_FLOAT32,
+			1,
+			/* rbits, gbits, bbits, abits */
+			32,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0xFFFFFFFF,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{"PF_RG32F",
-		/* Bytes per element */
-		8,
-		/* Flags */
-		PFF_FLOAT,
-		/* Component type and count */
-		PCT_FLOAT32, 2,
-		/* rbits, gbits, bbits, abits */
-		32, 32, 0, 0,
-		/* Masks and shifts */
-		0xFFFFFFFF, 0xFFFFFFFF, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RG32F",
+			/* Bytes per element */
+			8,
+			/* Flags */
+			PFF_FLOAT,
+			/* Component type and count */
+			PCT_FLOAT32,
+			2,
+			/* rbits, gbits, bbits, abits */
+			32,
+			32,
+			0,
+			0,
+			/* Masks and shifts */
+			0xFFFFFFFF,
+			0xFFFFFFFF,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RGB32F",
-		/* Bytes per element */
-		12,
-		/* Flags */
-		PFF_FLOAT,
-		/* Component type and count */
-		PCT_FLOAT32, 3,
-		/* rbits, gbits, bbits, abits */
-		32, 32, 32, 0,
-		/* Masks and shifts */
-		0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RGB32F",
+			/* Bytes per element */
+			12,
+			/* Flags */
+			PFF_FLOAT,
+			/* Component type and count */
+			PCT_FLOAT32,
+			3,
+			/* rbits, gbits, bbits, abits */
+			32,
+			32,
+			32,
+			0,
+			/* Masks and shifts */
+			0xFFFFFFFF,
+			0xFFFFFFFF,
+			0xFFFFFFFF,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RGBA32F",
-		/* Bytes per element */
-		16,
-		/* Flags */
-		PFF_FLOAT | PFF_HASALPHA,
-		/* Component type and count */
-		PCT_FLOAT32, 4,
-		/* rbits, gbits, bbits, abits */
-		32, 32, 32, 32,
-		/* Masks and shifts */
-		0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RGBA32F",
+			/* Bytes per element */
+			16,
+			/* Flags */
+			PFF_FLOAT | PFF_HASALPHA,
+			/* Component type and count */
+			PCT_FLOAT32,
+			4,
+			/* rbits, gbits, bbits, abits */
+			32,
+			32,
+			32,
+			32,
+			/* Masks and shifts */
+			0xFFFFFFFF,
+			0xFFFFFFFF,
+			0xFFFFFFFF,
+			0xFFFFFFFF,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{"PF_D32_S8X24",
-		/* Bytes per element */
-		8,
-		/* Flags */
-		PFF_DEPTH | PFF_NORMALIZED,
-		/* Component type and count */
-		PCT_FLOAT32, 2,
-		/* rbits, gbits, bbits, abits */
-		32, 8, 0, 0,
-		/* Masks and shifts */
-		0xFFFFFFFF, 0x000000FF, 0x00000000, 0x00000000,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_D32_S8X24",
+			/* Bytes per element */
+			8,
+			/* Flags */
+			PFF_DEPTH | PFF_NORMALIZED,
+			/* Component type and count */
+			PCT_FLOAT32,
+			2,
+			/* rbits, gbits, bbits, abits */
+			32,
+			8,
+			0,
+			0,
+			/* Masks and shifts */
+			0xFFFFFFFF,
+			0x000000FF,
+			0x00000000,
+			0x00000000,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{"PF_D24_S8",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_DEPTH | PFF_INTEGER | PFF_NORMALIZED,
-		/* Component type and count */
-		PCT_INT, 2,
-		/* rbits, gbits, bbits, abits */
-		24, 8, 0, 0,
-		/* Masks and shifts */
-		0x00FFFFFF, 0x0FF0000, 0x00000000, 0x00000000,
-		0, 24, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_D24_S8",
+			/* Bytes per element */
+			4,
+			/* Flags */
+			PFF_DEPTH | PFF_INTEGER | PFF_NORMALIZED,
+			/* Component type and count */
+			PCT_INT,
+			2,
+			/* rbits, gbits, bbits, abits */
+			24,
+			8,
+			0,
+			0,
+			/* Masks and shifts */
+			0x00FFFFFF,
+			0x0FF0000,
+			0x00000000,
+			0x00000000,
+			0,
+			24,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{"PF_D32",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_DEPTH | PFF_FLOAT,
-		/* Component type and count */
-		PCT_FLOAT32, 1,
-		/* rbits, gbits, bbits, abits */
-		32, 0, 0, 0,
-		/* Masks and shifts */
-		0xFFFFFFFF, 0x00000000, 0x00000000, 0x00000000,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_D32",
+			/* Bytes per element */
+			4,
+			/* Flags */
+			PFF_DEPTH | PFF_FLOAT,
+			/* Component type and count */
+			PCT_FLOAT32,
+			1,
+			/* rbits, gbits, bbits, abits */
+			32,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0xFFFFFFFF,
+			0x00000000,
+			0x00000000,
+			0x00000000,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{"PF_D16",
-		/* Bytes per element */
-		2,
-		/* Flags */
-		PFF_DEPTH | PFF_INTEGER | PFF_NORMALIZED,
-		/* Component type and count */
-		PCT_SHORT, 1,
-		/* rbits, gbits, bbits, abits */
-		16, 0, 0, 0,
-		/* Masks and shifts */
-		0x0000FFFF, 0x00000000, 0x00000000, 0x00000000,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_D16",
+			/* Bytes per element */
+			2,
+			/* Flags */
+			PFF_DEPTH | PFF_INTEGER | PFF_NORMALIZED,
+			/* Component type and count */
+			PCT_SHORT,
+			1,
+			/* rbits, gbits, bbits, abits */
+			16,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0x0000FFFF,
+			0x00000000,
+			0x00000000,
+			0x00000000,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RG11B10F",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_FLOAT,
-		/* Component type and count */
-		PCT_PACKED_R11G11B10, 1,
-		/* rbits, gbits, bbits, abits */
-		11, 11, 10, 0,
-		/* Masks and shifts */
-		0x000007FF, 0x003FF800, 0xFFC00000, 0,
-		0, 11, 22, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RG11B10F",
+			/* Bytes per element */
+			4,
+			/* Flags */
+			PFF_FLOAT,
+			/* Component type and count */
+			PCT_PACKED_R11G11B10,
+			1,
+			/* rbits, gbits, bbits, abits */
+			11,
+			11,
+			10,
+			0,
+			/* Masks and shifts */
+			0x000007FF,
+			0x003FF800,
+			0xFFC00000,
+			0,
+			0,
+			11,
+			22,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RGB10A2",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_INTEGER | PFF_NORMALIZED | PFF_HASALPHA,
-		/* Component type and count */
-		PCT_PACKED_R10G10B10A2, 1,
-		/* rbits, gbits, bbits, abits */
-		10, 10, 10, 2,
-		/* Masks and shifts */
-		0x000003FF, 0x000FFC00, 0x3FF00000, 0xC0000000,
-		0, 10, 20, 30,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RGB10A2",
+			/* Bytes per element */
+			4,
+			/* Flags */
+			PFF_INTEGER | PFF_NORMALIZED | PFF_HASALPHA,
+			/* Component type and count */
+			PCT_PACKED_R10G10B10A2,
+			1,
+			/* rbits, gbits, bbits, abits */
+			10,
+			10,
+			10,
+			2,
+			/* Masks and shifts */
+			0x000003FF,
+			0x000FFC00,
+			0x3FF00000,
+			0xC0000000,
+			0,
+			10,
+			20,
+			30,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_R8I",
-		/* Bytes per element */
-		1,
-		/* Flags */
-		PFF_INTEGER | PFF_SIGNED,
-		/* Component type and count */
-		PCT_BYTE, 1,
-		/* rbits, gbits, bbits, abits */
-		8, 0, 0, 0,
-		/* Masks and shifts */
-		0x000000FF, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_R8I",
+			/* Bytes per element */
+			1,
+			/* Flags */
+			PFF_INTEGER | PFF_SIGNED,
+			/* Component type and count */
+			PCT_BYTE,
+			1,
+			/* rbits, gbits, bbits, abits */
+			8,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0x000000FF,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RG8I",
-		/* Bytes per element */
-		2,
-		/* Flags */
-		PFF_INTEGER | PFF_SIGNED,
-		/* Component type and count */
-		PCT_BYTE, 2,
-		/* rbits, gbits, bbits, abits */
-		8, 8, 0, 0,
-		/* Masks and shifts */
-		0x000000FF, 0x0000FF00, 0, 0,
-		0, 8, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RG8I",
+			/* Bytes per element */
+			2,
+			/* Flags */
+			PFF_INTEGER | PFF_SIGNED,
+			/* Component type and count */
+			PCT_BYTE,
+			2,
+			/* rbits, gbits, bbits, abits */
+			8,
+			8,
+			0,
+			0,
+			/* Masks and shifts */
+			0x000000FF,
+			0x0000FF00,
+			0,
+			0,
+			0,
+			8,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RGBA8I",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_INTEGER | PFF_SIGNED | PFF_HASALPHA,
-		/* Component type and count */
-		PCT_BYTE, 4,
-		/* rbits, gbits, bbits, abits */
-		8, 8, 8, 8,
-		/* Masks and shifts */
-		0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000,
-		0, 8, 16, 24,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RGBA8I",
+			/* Bytes per element */
+			4,
+			/* Flags */
+			PFF_INTEGER | PFF_SIGNED | PFF_HASALPHA,
+			/* Component type and count */
+			PCT_BYTE,
+			4,
+			/* rbits, gbits, bbits, abits */
+			8,
+			8,
+			8,
+			8,
+			/* Masks and shifts */
+			0x000000FF,
+			0x0000FF00,
+			0x00FF0000,
+			0xFF000000,
+			0,
+			8,
+			16,
+			24,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_R8U",
-		/* Bytes per element */
-		1,
-		/* Flags */
-		PFF_INTEGER,
-		/* Component type and count */
-		PCT_BYTE, 1,
-		/* rbits, gbits, bbits, abits */
-		8, 0, 0, 0,
-		/* Masks and shifts */
-		0x000000FF, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_R8U",
+			/* Bytes per element */
+			1,
+			/* Flags */
+			PFF_INTEGER,
+			/* Component type and count */
+			PCT_BYTE,
+			1,
+			/* rbits, gbits, bbits, abits */
+			8,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0x000000FF,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RG8U",
-		/* Bytes per element */
-		2,
-		/* Flags */
-		PFF_INTEGER,
-		/* Component type and count */
-		PCT_BYTE, 2,
-		/* rbits, gbits, bbits, abits */
-		8, 8, 0, 0,
-		/* Masks and shifts */
-		0x000000FF, 0x0000FF00, 0, 0,
-		0, 8, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RG8U",
+			/* Bytes per element */
+			2,
+			/* Flags */
+			PFF_INTEGER,
+			/* Component type and count */
+			PCT_BYTE,
+			2,
+			/* rbits, gbits, bbits, abits */
+			8,
+			8,
+			0,
+			0,
+			/* Masks and shifts */
+			0x000000FF,
+			0x0000FF00,
+			0,
+			0,
+			0,
+			8,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RGBA8U",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_INTEGER | PFF_HASALPHA,
-		/* Component type and count */
-		PCT_BYTE, 4,
-		/* rbits, gbits, bbits, abits */
-		8, 8, 8, 8,
-		/* Masks and shifts */
-		0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000,
-		0, 8, 16, 24,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RGBA8U",
+			/* Bytes per element */
+			4,
+			/* Flags */
+			PFF_INTEGER | PFF_HASALPHA,
+			/* Component type and count */
+			PCT_BYTE,
+			4,
+			/* rbits, gbits, bbits, abits */
+			8,
+			8,
+			8,
+			8,
+			/* Masks and shifts */
+			0x000000FF,
+			0x0000FF00,
+			0x00FF0000,
+			0xFF000000,
+			0,
+			8,
+			16,
+			24,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_R8S",
-		/* Bytes per element */
-		1,
-		/* Flags */
-		PFF_INTEGER | PFF_NORMALIZED | PFF_SIGNED,
-		/* Component type and count */
-		PCT_BYTE, 1,
-		/* rbits, gbits, bbits, abits */
-		8, 0, 0, 0,
-		/* Masks and shifts */
-		0x000000FF, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_R8S",
+			/* Bytes per element */
+			1,
+			/* Flags */
+			PFF_INTEGER | PFF_NORMALIZED | PFF_SIGNED,
+			/* Component type and count */
+			PCT_BYTE,
+			1,
+			/* rbits, gbits, bbits, abits */
+			8,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0x000000FF,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RG8S",
-		/* Bytes per element */
-		2,
-		/* Flags */
-		PFF_INTEGER | PFF_NORMALIZED | PFF_SIGNED,
-		/* Component type and count */
-		PCT_BYTE, 2,
-		/* rbits, gbits, bbits, abits */
-		8, 8, 0, 0,
-		/* Masks and shifts */
-		0x000000FF, 0x0000FF00, 0, 0,
-		0, 8, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RG8S",
+			/* Bytes per element */
+			2,
+			/* Flags */
+			PFF_INTEGER | PFF_NORMALIZED | PFF_SIGNED,
+			/* Component type and count */
+			PCT_BYTE,
+			2,
+			/* rbits, gbits, bbits, abits */
+			8,
+			8,
+			0,
+			0,
+			/* Masks and shifts */
+			0x000000FF,
+			0x0000FF00,
+			0,
+			0,
+			0,
+			8,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RGBA8S",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_INTEGER | PFF_NORMALIZED | PFF_SIGNED | PFF_HASALPHA,
-		/* Component type and count */
-		PCT_BYTE, 4,
-		/* rbits, gbits, bbits, abits */
-		8, 8, 8, 8,
-		/* Masks and shifts */
-		0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000,
-		0, 8, 16, 24,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RGBA8S",
+			/* Bytes per element */
+			4,
+			/* Flags */
+			PFF_INTEGER | PFF_NORMALIZED | PFF_SIGNED | PFF_HASALPHA,
+			/* Component type and count */
+			PCT_BYTE,
+			4,
+			/* rbits, gbits, bbits, abits */
+			8,
+			8,
+			8,
+			8,
+			/* Masks and shifts */
+			0x000000FF,
+			0x0000FF00,
+			0x00FF0000,
+			0xFF000000,
+			0,
+			8,
+			16,
+			24,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_R16I",
-		/* Bytes per element */
-		2,
-		/* Flags */
-		PFF_INTEGER | PFF_SIGNED,
-		/* Component type and count */
-		PCT_SHORT, 1,
-		/* rbits, gbits, bbits, abits */
-		16, 0, 0, 0,
-		/* Masks and shifts */
-		0x0000FFFF, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_R16I",
+			/* Bytes per element */
+			2,
+			/* Flags */
+			PFF_INTEGER | PFF_SIGNED,
+			/* Component type and count */
+			PCT_SHORT,
+			1,
+			/* rbits, gbits, bbits, abits */
+			16,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0x0000FFFF,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RG16I",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_INTEGER | PFF_SIGNED,
-		/* Component type and count */
-		PCT_SHORT, 2,
-		/* rbits, gbits, bbits, abits */
-		16, 16, 0, 0,
-		/* Masks and shifts */
-		0x0000FFFF, 0xFFFF0000, 0, 0,
-		0, 16, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RG16I",
+			/* Bytes per element */
+			4,
+			/* Flags */
+			PFF_INTEGER | PFF_SIGNED,
+			/* Component type and count */
+			PCT_SHORT,
+			2,
+			/* rbits, gbits, bbits, abits */
+			16,
+			16,
+			0,
+			0,
+			/* Masks and shifts */
+			0x0000FFFF,
+			0xFFFF0000,
+			0,
+			0,
+			0,
+			16,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RGBA16I",
-		/* Bytes per element */
-		8,
-		/* Flags */
-		PFF_INTEGER | PFF_SIGNED | PFF_HASALPHA,
-		/* Component type and count */
-		PCT_SHORT, 4,
-		/* rbits, gbits, bbits, abits */
-		16, 16, 16, 16,
-		/* Masks and shifts */
-		0x0000FFFF, 0xFFFF0000, 0x0000FFFF, 0xFFFF0000,
-		0, 16, 0, 16,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RGBA16I",
+			/* Bytes per element */
+			8,
+			/* Flags */
+			PFF_INTEGER | PFF_SIGNED | PFF_HASALPHA,
+			/* Component type and count */
+			PCT_SHORT,
+			4,
+			/* rbits, gbits, bbits, abits */
+			16,
+			16,
+			16,
+			16,
+			/* Masks and shifts */
+			0x0000FFFF,
+			0xFFFF0000,
+			0x0000FFFF,
+			0xFFFF0000,
+			0,
+			16,
+			0,
+			16,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_R16U",
-		/* Bytes per element */
-		2,
-		/* Flags */
-		PFF_INTEGER,
-		/* Component type and count */
-		PCT_SHORT, 1,
-		/* rbits, gbits, bbits, abits */
-		16, 0, 0, 0,
-		/* Masks and shifts */
-		0x0000FFFF, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_R16U",
+			/* Bytes per element */
+			2,
+			/* Flags */
+			PFF_INTEGER,
+			/* Component type and count */
+			PCT_SHORT,
+			1,
+			/* rbits, gbits, bbits, abits */
+			16,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0x0000FFFF,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RG16U",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_INTEGER,
-		/* Component type and count */
-		PCT_SHORT, 2,
-		/* rbits, gbits, bbits, abits */
-		16, 16, 0, 0,
-		/* Masks and shifts */
-		0x0000FFFF, 0xFFFF0000, 0, 0,
-		0, 16, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RG16U",
+			/* Bytes per element */
+			4,
+			/* Flags */
+			PFF_INTEGER,
+			/* Component type and count */
+			PCT_SHORT,
+			2,
+			/* rbits, gbits, bbits, abits */
+			16,
+			16,
+			0,
+			0,
+			/* Masks and shifts */
+			0x0000FFFF,
+			0xFFFF0000,
+			0,
+			0,
+			0,
+			16,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RGBA16U",
-		/* Bytes per element */
-		8,
-		/* Flags */
-		PFF_INTEGER | PFF_HASALPHA,
-		/* Component type and count */
-		PCT_SHORT, 4,
-		/* rbits, gbits, bbits, abits */
-		16, 16, 16, 16,
-		/* Masks and shifts */
-		0x0000FFFF, 0xFFFF0000, 0x0000FFFF, 0xFFFF0000,
-		0, 16, 0, 16,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RGBA16U",
+			/* Bytes per element */
+			8,
+			/* Flags */
+			PFF_INTEGER | PFF_HASALPHA,
+			/* Component type and count */
+			PCT_SHORT,
+			4,
+			/* rbits, gbits, bbits, abits */
+			16,
+			16,
+			16,
+			16,
+			/* Masks and shifts */
+			0x0000FFFF,
+			0xFFFF0000,
+			0x0000FFFF,
+			0xFFFF0000,
+			0,
+			16,
+			0,
+			16,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_R32I",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_INTEGER,
-		/* Component type and count */
-		PCT_INT, 1,
-		/* rbits, gbits, bbits, abits */
-		32, 0, 0, 0,
-		/* Masks and shifts */
-		0xFFFFFFFF, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_R32I",
+			/* Bytes per element */
+			4,
+			/* Flags */
+			PFF_INTEGER,
+			/* Component type and count */
+			PCT_INT,
+			1,
+			/* rbits, gbits, bbits, abits */
+			32,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0xFFFFFFFF,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RG32I",
-		/* Bytes per element */
-		8,
-		/* Flags */
-		PFF_INTEGER | PFF_SIGNED,
-		/* Component type and count */
-		PCT_INT, 2,
-		/* rbits, gbits, bbits, abits */
-		32, 32, 0, 0,
-		/* Masks and shifts */
-		0xFFFFFFFF, 0xFFFFFFFF, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RG32I",
+			/* Bytes per element */
+			8,
+			/* Flags */
+			PFF_INTEGER | PFF_SIGNED,
+			/* Component type and count */
+			PCT_INT,
+			2,
+			/* rbits, gbits, bbits, abits */
+			32,
+			32,
+			0,
+			0,
+			/* Masks and shifts */
+			0xFFFFFFFF,
+			0xFFFFFFFF,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RGB32I",
-		/* Bytes per element */
-		12,
-		/* Flags */
-		PFF_INTEGER | PFF_SIGNED,
-		/* Component type and count */
-		PCT_INT, 3,
-		/* rbits, gbits, bbits, abits */
-		32, 32, 32, 0,
-		/* Masks and shifts */
-		0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RGB32I",
+			/* Bytes per element */
+			12,
+			/* Flags */
+			PFF_INTEGER | PFF_SIGNED,
+			/* Component type and count */
+			PCT_INT,
+			3,
+			/* rbits, gbits, bbits, abits */
+			32,
+			32,
+			32,
+			0,
+			/* Masks and shifts */
+			0xFFFFFFFF,
+			0xFFFFFFFF,
+			0xFFFFFFFF,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
+		//-----------------------------------------------------------------------
 		{ "PF_RGBA32I",
-		/* Bytes per element */
-		16,
-		/* Flags */
-		PFF_INTEGER | PFF_SIGNED | PFF_HASALPHA,
-		/* Component type and count */
-		PCT_INT, 4,
-		/* rbits, gbits, bbits, abits */
-		32, 32, 32, 32,
-		/* Masks and shifts */
-		0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
-		0, 0, 0, 0
+		  /* Bytes per element */
+		  16,
+		  /* Flags */
+		  PFF_INTEGER | PFF_SIGNED | PFF_HASALPHA,
+		  /* Component type and count */
+		  PCT_INT, 4,
+		  /* rbits, gbits, bbits, abits */
+		  32, 32, 32, 32,
+		  /* Masks and shifts */
+		  0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
+		  0, 0, 0, 0 },
+		//-----------------------------------------------------------------------
+		{
+			"PF_R32U",
+			/* Bytes per element */
+			4,
+			/* Flags */
+			PFF_INTEGER,
+			/* Component type and count */
+			PCT_INT,
+			1,
+			/* rbits, gbits, bbits, abits */
+			32,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0xFFFFFFFF,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_R32U",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_INTEGER,
-		/* Component type and count */
-		PCT_INT, 1,
-		/* rbits, gbits, bbits, abits */
-		32, 0, 0, 0,
-		/* Masks and shifts */
-		0xFFFFFFFF, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RG32U",
+			/* Bytes per element */
+			8,
+			/* Flags */
+			PFF_INTEGER,
+			/* Component type and count */
+			PCT_INT,
+			2,
+			/* rbits, gbits, bbits, abits */
+			32,
+			32,
+			0,
+			0,
+			/* Masks and shifts */
+			0xFFFFFFFF,
+			0xFFFFFFFF,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RG32U",
-		/* Bytes per element */
-		8,
-		/* Flags */
-		PFF_INTEGER,
-		/* Component type and count */
-		PCT_INT, 2,
-		/* rbits, gbits, bbits, abits */
-		32, 32, 0, 0,
-		/* Masks and shifts */
-		0xFFFFFFFF, 0xFFFFFFFF, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RGB32U",
+			/* Bytes per element */
+			12,
+			/* Flags */
+			PFF_INTEGER,
+			/* Component type and count */
+			PCT_INT,
+			3,
+			/* rbits, gbits, bbits, abits */
+			32,
+			32,
+			32,
+			0,
+			/* Masks and shifts */
+			0xFFFFFFFF,
+			0xFFFFFFFF,
+			0xFFFFFFFF,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RGB32U",
-		/* Bytes per element */
-		12,
-		/* Flags */
-		PFF_INTEGER,
-		/* Component type and count */
-		PCT_INT, 3,
-		/* rbits, gbits, bbits, abits */
-		32, 32, 32, 0,
-		/* Masks and shifts */
-		0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0,
-		0, 0, 0, 0,
-		},
-	//-----------------------------------------------------------------------
+		//-----------------------------------------------------------------------
 		{ "PF_RGBA32U",
-		/* Bytes per element */
-		16,
-		/* Flags */
-		PFF_INTEGER | PFF_HASALPHA,
-		/* Component type and count */
-		PCT_INT, 4,
-		/* rbits, gbits, bbits, abits */
-		32, 32, 32, 32,
-		/* Masks and shifts */
-		0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
-		0, 0, 0, 0
+		  /* Bytes per element */
+		  16,
+		  /* Flags */
+		  PFF_INTEGER | PFF_HASALPHA,
+		  /* Component type and count */
+		  PCT_INT, 4,
+		  /* rbits, gbits, bbits, abits */
+		  32, 32, 32, 32,
+		  /* Masks and shifts */
+		  0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF,
+		  0, 0, 0, 0 },
+		//-----------------------------------------------------------------------
+		{
+			"PF_R16S",
+			/* Bytes per element */
+			2,
+			/* Flags */
+			PFF_INTEGER | PFF_NORMALIZED | PFF_SIGNED,
+			/* Component type and count */
+			PCT_SHORT,
+			1,
+			/* rbits, gbits, bbits, abits */
+			16,
+			0,
+			0,
+			0,
+			/* Masks and shifts */
+			0x0000FFFF,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_R16S",
-		/* Bytes per element */
-		2,
-		/* Flags */
-		PFF_INTEGER | PFF_NORMALIZED | PFF_SIGNED,
-		/* Component type and count */
-		PCT_SHORT, 1,
-		/* rbits, gbits, bbits, abits */
-		16, 0, 0, 0,
-		/* Masks and shifts */
-		0x0000FFFF, 0, 0, 0,
-		0, 0, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RG16S",
+			/* Bytes per element */
+			4,
+			/* Flags */
+			PFF_INTEGER | PFF_NORMALIZED | PFF_SIGNED,
+			/* Component type and count */
+			PCT_SHORT,
+			2,
+			/* rbits, gbits, bbits, abits */
+			16,
+			16,
+			0,
+			0,
+			/* Masks and shifts */
+			0x0000FFFF,
+			0xFFFF0000,
+			0,
+			0,
+			0,
+			16,
+			0,
+			0,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RG16S",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_INTEGER | PFF_NORMALIZED | PFF_SIGNED,
-		/* Component type and count */
-		PCT_SHORT, 2,
-		/* rbits, gbits, bbits, abits */
-		16, 16, 0, 0,
-		/* Masks and shifts */
-		0x0000FFFF, 0xFFFF0000, 0, 0,
-		0, 16, 0, 0,
+		//-----------------------------------------------------------------------
+		{
+			"PF_RGBA16S",
+			/* Bytes per element */
+			8,
+			/* Flags */
+			PFF_INTEGER | PFF_NORMALIZED | PFF_SIGNED | PFF_HASALPHA,
+			/* Component type and count */
+			PCT_SHORT,
+			4,
+			/* rbits, gbits, bbits, abits */
+			16,
+			16,
+			16,
+			16,
+			/* Masks and shifts */
+			0x0000FFFF,
+			0xFFFF0000,
+			0x0000FFFF,
+			0xFFFF0000,
+			0,
+			16,
+			0,
+			16,
 		},
-	//-----------------------------------------------------------------------
-		{ "PF_RGBA16S",
-		/* Bytes per element */
-		8,
-		/* Flags */
-		PFF_INTEGER | PFF_NORMALIZED | PFF_SIGNED | PFF_HASALPHA,
-		/* Component type and count */
-		PCT_SHORT, 4,
-		/* rbits, gbits, bbits, abits */
-		16, 16, 16, 16,
-		/* Masks and shifts */
-		0x0000FFFF, 0xFFFF0000, 0x0000FFFF, 0xFFFF0000,
-		0, 16, 0, 16,
-		},
-	//-----------------------------------------------------------------------
+		//-----------------------------------------------------------------------
 		{ "PF_R16",
-		/* Bytes per element */
-		2,
-		/* Flags */
-		PFF_INTEGER | PFF_NORMALIZED,
-		/* Component type and count */
-		PCT_SHORT, 1,
-		/* rbits, gbits, bbits, abits */
-		16, 0, 0, 0,
-		/* Masks and shifts */
-		0x0000FFFF, 0, 0, 0,
-		0, 0, 0, 0
-		},
-	//-----------------------------------------------------------------------
+		  /* Bytes per element */
+		  2,
+		  /* Flags */
+		  PFF_INTEGER | PFF_NORMALIZED,
+		  /* Component type and count */
+		  PCT_SHORT, 1,
+		  /* rbits, gbits, bbits, abits */
+		  16, 0, 0, 0,
+		  /* Masks and shifts */
+		  0x0000FFFF, 0, 0, 0,
+		  0, 0, 0, 0 },
+		//-----------------------------------------------------------------------
 		{ "PF_RG16",
-		/* Bytes per element */
-		4,
-		/* Flags */
-		PFF_INTEGER | PFF_NORMALIZED,
-		/* Component type and count */
-		PCT_SHORT, 2,
-		/* rbits, gbits, bbits, abits */
-		16, 16, 0, 0,
-		/* Masks and shifts */
-		0x0000FFFF, 0xFFFF0000, 0, 0,
-		0, 16, 0, 0
-		},
-	//-----------------------------------------------------------------------
+		  /* Bytes per element */
+		  4,
+		  /* Flags */
+		  PFF_INTEGER | PFF_NORMALIZED,
+		  /* Component type and count */
+		  PCT_SHORT, 2,
+		  /* rbits, gbits, bbits, abits */
+		  16, 16, 0, 0,
+		  /* Masks and shifts */
+		  0x0000FFFF, 0xFFFF0000, 0, 0,
+		  0, 16, 0, 0 },
+		//-----------------------------------------------------------------------
 		{ "PF_RGB16",
-		/* Bytes per element */
-		6,
-		/* Flags */
-		PFF_INTEGER | PFF_NORMALIZED,
-		/* Component type and count */
-		PCT_SHORT, 3,
-		/* rbits, gbits, bbits, abits */
-		16, 16, 16, 0,
-		/* Masks and shifts */
-		0x0000FFFF, 0xFFFF0000, 0x0000FFFF, 0,
-		0, 16, 0, 0
-		},
-	//-----------------------------------------------------------------------
+		  /* Bytes per element */
+		  6,
+		  /* Flags */
+		  PFF_INTEGER | PFF_NORMALIZED,
+		  /* Component type and count */
+		  PCT_SHORT, 3,
+		  /* rbits, gbits, bbits, abits */
+		  16, 16, 16, 0,
+		  /* Masks and shifts */
+		  0x0000FFFF, 0xFFFF0000, 0x0000FFFF, 0,
+		  0, 16, 0, 0 },
+		//-----------------------------------------------------------------------
 		{ "PF_RGBA16",
-		/* Bytes per element */
-		8,
-		/* Flags */
-		PFF_INTEGER | PFF_NORMALIZED | PFF_HASALPHA,
-		/* Component type and count */
-		PCT_SHORT, 4,
-		/* rbits, gbits, bbits, abits */
-		16, 16, 16, 16,
-		/* Masks and shifts */
-		0x0000FFFF, 0xFFFF0000, 0x0000FFFF, 0xFFFF0000,
-		0, 16, 0, 16
-		},
+		  /* Bytes per element */
+		  8,
+		  /* Flags */
+		  PFF_INTEGER | PFF_NORMALIZED | PFF_HASALPHA,
+		  /* Component type and count */
+		  PCT_SHORT, 4,
+		  /* rbits, gbits, bbits, abits */
+		  16, 16, 16, 16,
+		  /* Masks and shifts */
+		  0x0000FFFF, 0xFFFF0000, 0x0000FFFF, 0xFFFF0000,
+		  0, 16, 0, 16 },
 	};
 
-	static inline const PixelFormatDescription &getDescriptionFor(const PixelFormat fmt)
+	static inline const PixelFormatDescription& getDescriptionFor(const PixelFormat fmt)
 	{
 		const int ord = (int)fmt;
 		assert(ord >= 0 && ord < PF_COUNT);
@@ -1195,11 +1766,11 @@ namespace bs
 	struct NVTTCompressOutputHandler : public nvtt::OutputHandler
 	{
 		NVTTCompressOutputHandler(u8* buffer, u32 sizeBytes)
-			:Buffer(buffer), BufferWritePos(buffer), BufferEnd(buffer + sizeBytes)
-		{ }
+			: Buffer(buffer), BufferWritePos(buffer), BufferEnd(buffer + sizeBytes)
+		{}
 
 		void beginImage(int size, int width, int height, int depth, int face, int miplevel) override
-		{ }
+		{}
 
 		bool writeData(const void* data, int size) override
 		{
@@ -1211,7 +1782,7 @@ namespace bs
 		}
 
 		void endImage() override
-		{ }
+		{}
 
 		u8* Buffer;
 		u8* BufferWritePos;
@@ -1222,8 +1793,8 @@ namespace bs
 	struct NVTTMipmapOutputHandler : public nvtt::OutputHandler
 	{
 		NVTTMipmapOutputHandler(const Vector<SPtr<PixelData>>& buffers)
-			:Buffers(buffers), BufferWritePos(nullptr), BufferEnd(nullptr)
-		{ }
+			: Buffers(buffers), BufferWritePos(nullptr), BufferEnd(nullptr)
+		{}
 
 		void beginImage(int size, int width, int height, int depth, int face, int miplevel) override
 		{
@@ -1246,7 +1817,7 @@ namespace bs
 		}
 
 		void endImage() override
-		{ }
+		{}
 
 		Vector<SPtr<PixelData>> Buffers;
 		SPtr<PixelData> ActiveBuffer;
@@ -1257,7 +1828,7 @@ namespace bs
 
 	nvtt::Format toNVTTFormat(PixelFormat format)
 	{
-		switch (format)
+		switch(format)
 		{
 		case PF_BC1:
 			return nvtt::Format_BC1;
@@ -1282,7 +1853,7 @@ namespace bs
 
 	nvtt::Quality toNVTTQuality(CompressionQuality quality)
 	{
-		switch (quality)
+		switch(quality)
 		{
 		case CompressionQuality::Fastest:
 			return nvtt::Quality_Fastest;
@@ -1300,7 +1871,7 @@ namespace bs
 
 	nvtt::AlphaMode toNVTTAlphaMode(AlphaMode alphaMode)
 	{
-		switch (alphaMode)
+		switch(alphaMode)
 		{
 		case AlphaMode::None:
 			return nvtt::AlphaMode_None;
@@ -1316,7 +1887,7 @@ namespace bs
 
 	nvtt::WrapMode toNVTTWrapMode(MipMapWrapMode wrapMode)
 	{
-		switch (wrapMode)
+		switch(wrapMode)
 		{
 		case MipMapWrapMode::Clamp:
 			return nvtt::WrapMode_Clamp;
@@ -1337,7 +1908,7 @@ namespace bs
 
 	u32 PixelUtil::GetBlockSize(PixelFormat format)
 	{
-		switch (format)
+		switch(format)
 		{
 		case PF_BC1:
 		case PF_BC1a:
@@ -1352,12 +1923,11 @@ namespace bs
 		default:
 			return GetNumElemBytes(format);
 		}
-
 	}
 
 	Vector2I PixelUtil::GetBlockDimensions(PixelFormat format)
 	{
-		switch (format)
+		switch(format)
 		{
 		case PF_BC1:
 		case PF_BC1a:
@@ -1379,34 +1949,33 @@ namespace bs
 		{
 			switch(format)
 			{
-				// BC formats work by dividing the image into 4x4 blocks
-				case PF_BC1:
-				case PF_BC1a:
-				case PF_BC4:
-				case PF_BC2:
-				case PF_BC3:
-				case PF_BC5:
-				case PF_BC6H:
-				case PF_BC7:
-					width = Math::DivideAndRoundUp(width, 4U);
-					height = Math::DivideAndRoundUp(height, 4U);
-					break;
-				default:
-					break;
+			// BC formats work by dividing the image into 4x4 blocks
+			case PF_BC1:
+			case PF_BC1a:
+			case PF_BC4:
+			case PF_BC2:
+			case PF_BC3:
+			case PF_BC5:
+			case PF_BC6H:
+			case PF_BC7:
+				width = Math::DivideAndRoundUp(width, 4U);
+				height = Math::DivideAndRoundUp(height, 4U);
+				break;
+			default:
+				break;
 			}
 		}
 
-		return width*height*depth*GetBlockSize(format);
+		return width * height * depth * GetBlockSize(format);
 	}
 
-	void PixelUtil::GetPitch(u32 width, u32 height, u32 depth, PixelFormat format,
-						 u32& rowPitch, u32& depthPitch)
+	void PixelUtil::GetPitch(u32 width, u32 height, u32 depth, PixelFormat format, u32& rowPitch, u32& depthPitch)
 	{
 		u32 blockSize = GetBlockSize(format);
 
-		if (IsCompressed(format))
+		if(IsCompressed(format))
 		{
-			switch (format)
+			switch(format)
 			{
 				// BC formats work by dividing the image into 4x4 blocks
 			case PF_BC1:
@@ -1429,18 +1998,17 @@ namespace bs
 		depthPitch = width * height * blockSize;
 	}
 
-	void PixelUtil::GetSizeForMipLevel(u32 width, u32 height, u32 depth, u32 mipLevel,
-		u32& mipWidth, u32& mipHeight, u32& mipDepth)
+	void PixelUtil::GetSizeForMipLevel(u32 width, u32 height, u32 depth, u32 mipLevel, u32& mipWidth, u32& mipHeight, u32& mipDepth)
 	{
 		mipWidth = width;
 		mipHeight = height;
 		mipDepth = depth;
 
-		for (u32 i = 0; i < mipLevel; i++)
+		for(u32 i = 0; i < mipLevel; i++)
 		{
-			if (mipWidth != 1) mipWidth /= 2;
-			if (mipHeight != 1) mipHeight /= 2;
-			if (mipDepth != 1) mipDepth /= 2;
+			if(mipWidth != 1) mipWidth /= 2;
+			if(mipHeight != 1) mipHeight /= 2;
+			if(mipDepth != 1) mipDepth /= 2;
 		}
 	}
 
@@ -1484,9 +2052,9 @@ namespace bs
 		// First check just the usage since it's the most limiting factor
 
 		//// Depth-stencil only supports depth formats
-		if ((usage & TU_DEPTHSTENCIL) != 0)
+		if((usage & TU_DEPTHSTENCIL) != 0)
 		{
-			if (IsDepth(format))
+			if(IsDepth(format))
 				return true;
 
 			format = PF_D32_S8X24;
@@ -1494,9 +2062,9 @@ namespace bs
 		}
 
 		//// Render targets support everything but compressed & depth-stencil formats
-		if ((usage & TU_RENDERTARGET) != 0)
+		if((usage & TU_RENDERTARGET) != 0)
 		{
-			if (!IsDepth(format) && !IsCompressed(format))
+			if(!IsDepth(format) && !IsCompressed(format))
 				return true;
 
 			format = PF_RGBA8;
@@ -1504,9 +2072,9 @@ namespace bs
 		}
 
 		//// Load-store textures support everything but compressed & depth-stencil formats
-		if ((usage & TU_LOADSTORE) != 0)
+		if((usage & TU_LOADSTORE) != 0)
 		{
-			if (!IsDepth(format) && !IsCompressed(format))
+			if(!IsDepth(format) && !IsCompressed(format))
 				return true;
 
 			format = PF_RGBA8;
@@ -1514,35 +2082,35 @@ namespace bs
 		}
 
 		//// Sampled texture support depends on texture type
-		switch (texType)
+		switch(texType)
 		{
 		case TEX_TYPE_1D:
-		{
-			// 1D textures support anything but depth & compressed formats
-			if (!IsDepth(format) && !IsCompressed(format))
-				return true;
+			{
+				// 1D textures support anything but depth & compressed formats
+				if(!IsDepth(format) && !IsCompressed(format))
+					return true;
 
-			format = PF_RGBA8;
-			return false;
-		}
+				format = PF_RGBA8;
+				return false;
+			}
 		case TEX_TYPE_3D:
-		{
-			// 3D textures support anything but depth & compressed formats
-			if (!IsDepth(format))
-				return true;
+			{
+				// 3D textures support anything but depth & compressed formats
+				if(!IsDepth(format))
+					return true;
 
-			format = PF_RGBA8;
-			return false;
-		}
+				format = PF_RGBA8;
+				return false;
+			}
 		default: // 2D & cube
-		{
-			// 2D/cube textures support anything but depth formats
-			if (!IsDepth(format))
-				return true;
+			{
+				// 2D/cube textures support anything but depth formats
+				if(!IsDepth(format))
+					return true;
 
-			format = PF_RGBA8;
-			return false;
-		}
+				format = PF_RGBA8;
+				return false;
+			}
 		}
 	}
 
@@ -1552,17 +2120,17 @@ namespace bs
 		{
 			switch(format)
 			{
-				case PF_BC1:
-				case PF_BC2:
-				case PF_BC1a:
-				case PF_BC3:
-				case PF_BC4:
-				case PF_BC5:
-				case PF_BC6H:
-				case PF_BC7:
-					return ((width & 3) == 0 && (height & 3) == 0 && depth == 1);
-				default:
-					return true;
+			case PF_BC1:
+			case PF_BC2:
+			case PF_BC1a:
+			case PF_BC3:
+			case PF_BC4:
+			case PF_BC5:
+			case PF_BC6H:
+			case PF_BC7:
+				return ((width & 3) == 0 && (height & 3) == 0 && depth == 1);
+			default:
+				return true;
 			}
 		}
 		else
@@ -1571,7 +2139,7 @@ namespace bs
 		}
 	}
 
-	void PixelUtil::GetBitDepths(PixelFormat format, int(&rgba)[4])
+	void PixelUtil::GetBitDepths(PixelFormat format, int (&rgba)[4])
 	{
 		const PixelFormatDescription& des = getDescriptionFor(format);
 		rgba[0] = des.Rbits;
@@ -1580,7 +2148,7 @@ namespace bs
 		rgba[3] = des.Abits;
 	}
 
-	void PixelUtil::GetBitMasks(PixelFormat format, u32(&rgba)[4])
+	void PixelUtil::GetBitMasks(PixelFormat format, u32 (&rgba)[4])
 	{
 		const PixelFormatDescription& des = getDescriptionFor(format);
 		rgba[0] = des.Rmask;
@@ -1589,7 +2157,7 @@ namespace bs
 		rgba[3] = des.Amask;
 	}
 
-	void PixelUtil::GetBitShifts(PixelFormat format, u8(&rgba)[4])
+	void PixelUtil::GetBitShifts(PixelFormat format, u8 (&rgba)[4])
 	{
 		const PixelFormatDescription& des = getDescriptionFor(format);
 		rgba[0] = des.Rshift;
@@ -1605,7 +2173,7 @@ namespace bs
 
 	bool PixelUtil::IsAccessible(PixelFormat srcformat)
 	{
-		if (srcformat == PF_UNKNOWN)
+		if(srcformat == PF_UNKNOWN)
 			return false;
 
 		u32 flags = GetFlags(srcformat);
@@ -1627,13 +2195,13 @@ namespace bs
 	u32 PixelUtil::GetMaxMipmaps(u32 width, u32 height, u32 depth, PixelFormat format)
 	{
 		u32 count = 0;
-		if ((width > 0) && (height > 0))
+		if((width > 0) && (height > 0))
 		{
-			while (!(width == 1 && height == 1 && depth == 1))
+			while(!(width == 1 && height == 1 && depth == 1))
 			{
-				if (width > 1)		width = width / 2;
-				if (height > 1)	height = height / 2;
-				if (depth > 1)		depth = depth / 2;
+				if(width > 1) width = width / 2;
+				if(height > 1) height = height / 2;
+				if(depth > 1) depth = depth / 2;
 
 				count++;
 			}
@@ -1649,9 +2217,9 @@ namespace bs
 
 	void PixelUtil::PackColor(u8 r, u8 g, u8 b, u8 a, PixelFormat format, void* dest)
 	{
-		const PixelFormatDescription &des = getDescriptionFor(format);
+		const PixelFormatDescription& des = getDescriptionFor(format);
 
-		if (des.Flags & PFF_INTEGER)
+		if(des.Flags & PFF_INTEGER)
 		{
 			// Shortcut for integer formats packing
 			u32 value = ((Bitwise::FixedToFixed(r, 8, des.Rbits) << des.Rshift) & des.Rmask) |
@@ -1672,7 +2240,7 @@ namespace bs
 	void PixelUtil::PackColor(float r, float g, float b, float a, const PixelFormat format, void* dest)
 	{
 		// Special cases
-		if (format == PF_RG11B10F)
+		if(format == PF_RG11B10F)
 		{
 			u32 value;
 			value = Bitwise::FloatToFloat11(r);
@@ -1683,7 +2251,7 @@ namespace bs
 			return;
 		}
 
-		if (format == PF_RGB10A2)
+		if(format == PF_RGB10A2)
 		{
 			BS_LOG(Error, PixelUtility, "packColor() not implemented for format \"{0}\".", GetFormatName(PF_RGB10A2));
 			return;
@@ -1703,7 +2271,7 @@ namespace bs
 		u32 curBit = 0;
 		u32 prevDword = 0;
 		u32 dwordValue = 0;
-		for (u32 i = 0; i < des.ComponentCount; i++)
+		for(u32 i = 0; i < des.ComponentCount; i++)
 		{
 			u32 curDword = curBit / 32;
 
@@ -1717,11 +2285,11 @@ namespace bs
 				prevDword = curDword;
 			}
 
-			if (des.Flags & PFF_INTEGER)
+			if(des.Flags & PFF_INTEGER)
 			{
-				if (des.Flags & PFF_NORMALIZED)
+				if(des.Flags & PFF_NORMALIZED)
 				{
-					if (des.Flags & PFF_SIGNED)
+					if(des.Flags & PFF_SIGNED)
 						dwordValue |= (Bitwise::SnormToUint(inputs[i], bits[i]) << shifts[i]) & masks[i];
 					else
 						dwordValue |= (Bitwise::UnormToUint(inputs[i], bits[i]) << shifts[i]) & masks[i];
@@ -1733,11 +2301,11 @@ namespace bs
 					dwordValue |= (((u32)inputs[i]) << shifts[i]) & masks[i];
 				}
 			}
-			else if (des.Flags & PFF_FLOAT)
+			else if(des.Flags & PFF_FLOAT)
 			{
 				// Note: Not handling unsigned floats
 
-				if (des.ComponentType == PCT_FLOAT16)
+				if(des.ComponentType == PCT_FLOAT16)
 					dwordValue |= (Bitwise::FloatToHalf(inputs[i]) << shifts[i]) & masks[i];
 				else
 					dwordValue |= *(u32*)&inputs[i];
@@ -1764,9 +2332,9 @@ namespace bs
 
 	void PixelUtil::UnpackColor(u8* r, u8* g, u8* b, u8* a, PixelFormat format, const void* src)
 	{
-		const PixelFormatDescription &des = getDescriptionFor(format);
+		const PixelFormatDescription& des = getDescriptionFor(format);
 
-		if (des.Flags & PFF_INTEGER)
+		if(des.Flags & PFF_INTEGER)
 		{
 			// Shortcut for integer formats unpacking
 			const u32 value = Bitwise::IntRead(src, des.ElemBytes);
@@ -1775,7 +2343,7 @@ namespace bs
 			*g = (u8)Bitwise::FixedToFixed((value & des.Gmask) >> des.Gshift, des.Gbits, 8);
 			*b = (u8)Bitwise::FixedToFixed((value & des.Bmask) >> des.Bshift, des.Bbits, 8);
 
-			if (des.Flags & PFF_HASALPHA)
+			if(des.Flags & PFF_HASALPHA)
 			{
 				*a = (u8)Bitwise::FixedToFixed((value & des.Amask) >> des.Ashift, des.Abits, 8);
 			}
@@ -1812,7 +2380,7 @@ namespace bs
 
 		if(format == PF_RGB10A2)
 		{
-			BS_LOG(Error, PixelUtility,"unpackColor() not implemented for format \"{0}\".", GetFormatName(PF_RGB10A2));
+			BS_LOG(Error, PixelUtility, "unpackColor() not implemented for format \"{0}\".", GetFormatName(PF_RGB10A2));
 			return;
 		}
 
@@ -1837,7 +2405,7 @@ namespace bs
 			{
 				if(des.Flags & PFF_NORMALIZED)
 				{
-					if (des.Flags & PFF_SIGNED)
+					if(des.Flags & PFF_SIGNED)
 						*outputs[i] = Bitwise::UintToSnorm((value & masks[i]) >> shifts[i], bits[i]);
 					else
 						*outputs[i] = Bitwise::UintToUnorm((value & masks[i]) >> shifts[i], bits[i]);
@@ -1853,7 +2421,7 @@ namespace bs
 			{
 				// Note: Not handling unsigned floats
 
-				if (des.ComponentType == PCT_FLOAT16)
+				if(des.ComponentType == PCT_FLOAT16)
 					*outputs[i] = Bitwise::HalfToFloat((u16)((value & masks[i]) >> shifts[i]));
 				else
 					*outputs[i] = *(float*)&value;
@@ -1868,39 +2436,39 @@ namespace bs
 		}
 
 		// Fill empty components
-		for (u32 i = des.ComponentCount; i < 3; i++)
+		for(u32 i = des.ComponentCount; i < 3; i++)
 			*outputs[i] = 0.0f;
 
-		if (des.ComponentCount < 4)
+		if(des.ComponentCount < 4)
 			*outputs[3] = 1.0f;
 	}
 
 	void PixelUtil::PackDepth(float depth, const PixelFormat format, void* dest)
 	{
-		if (!IsDepth(format))
+		if(!IsDepth(format))
 		{
 			BS_LOG(Error, PixelUtility, "Cannot convert depth to {0}: it is not a depth format", GetFormatName(format));
 			return;
 		}
 
 		BS_LOG(Error, PixelUtility, "Method is not implemented");
-		//TODO implement depth packing
+		// TODO implement depth packing
 	}
 
 	float PixelUtil::UnpackDepth(PixelFormat format, void* src)
 	{
-		if (!IsDepth(format))
+		if(!IsDepth(format))
 		{
 			BS_LOG(Error, PixelUtility, "Cannot unpack from {0}: it is not a depth format", GetFormatName(format));
 			return 0;
 		}
 
-		u32* color = (u32 *)src;
+		u32* color = (u32*)src;
 		u32 masked = 0;
-		switch (format)
+		switch(format)
 		{
 		case PF_D24S8:
-			return  static_cast<float>(*color & 0x00FFFFFF) / (float)16777216;
+			return static_cast<float>(*color & 0x00FFFFFF) / (float)16777216;
 			break;
 		case PF_D16:
 			return static_cast<float>(*color & 0xFFFF) / (float)65536;
@@ -1911,7 +2479,7 @@ namespace bs
 			break;
 		case PF_D32_S8X24:
 			masked = *color & 0xFFFFFFFF;
-			return *( (float*) &masked );
+			return *((float*)&masked);
 			break;
 		default:
 			BS_LOG(Error, PixelUtility, "Cannot unpack from {0}", GetFormatName(format));
@@ -1920,7 +2488,7 @@ namespace bs
 		}
 	}
 
-	void PixelUtil::BulkPixelConversion(const PixelData &src, PixelData &dst)
+	void PixelUtil::BulkPixelConversion(const PixelData& src, PixelData& dst)
 	{
 		if(src.GetWidth() != dst.GetWidth() || src.GetHeight() != dst.GetHeight() || src.GetDepth() != dst.GetDepth())
 		{
@@ -1929,10 +2497,10 @@ namespace bs
 		}
 
 		// The easy case
-		if (src.GetFormat() == dst.GetFormat())
+		if(src.GetFormat() == dst.GetFormat())
 		{
 			// Everything consecutive?
-			if (src.IsConsecutive() && dst.IsConsecutive())
+			if(src.IsConsecutive() && dst.IsConsecutive())
 			{
 				memcpy(dst.GetData(), src.GetData(), src.GetConsecutiveSize());
 				return;
@@ -1949,21 +2517,17 @@ namespace bs
 
 				if(src.GetLeft() % blockDim.X != 0 || src.GetTop() % blockDim.Y != 0)
 				{
-					BS_LOG(Error, PixelUtility,
-						"Source offset must be a multiple of block size for compressed formats.");
+					BS_LOG(Error, PixelUtility, "Source offset must be a multiple of block size for compressed formats.");
 				}
 
 				if(dst.GetLeft() % blockDim.X != 0 || dst.GetTop() % blockDim.Y != 0)
 				{
-					BS_LOG(Error, PixelUtility,
-						"Destination offset must be a multiple of block size for compressed formats.");
+					BS_LOG(Error, PixelUtility, "Destination offset must be a multiple of block size for compressed formats.");
 				}
 			}
 
-			u8* srcPtr = static_cast<u8*>(src.GetData())
-				+ src.GetLeft() * pixelSize + src.GetTop() * src.GetRowPitch() + src.GetFront() * src.GetSlicePitch();
-			u8* dstPtr = static_cast<u8*>(dst.GetData())
-				+ dst.GetLeft() * pixelSize + dst.GetTop() * dst.GetRowPitch() + dst.GetFront() * dst.GetSlicePitch();
+			u8* srcPtr = static_cast<u8*>(src.GetData()) + src.GetLeft() * pixelSize + src.GetTop() * src.GetRowPitch() + src.GetFront() * src.GetSlicePitch();
+			u8* dstPtr = static_cast<u8*>(dst.GetData()) + dst.GetLeft() * pixelSize + dst.GetTop() * dst.GetRowPitch() + dst.GetFront() * dst.GetSlicePitch();
 
 			// Get pitches+skips in bytes
 			const u32 srcRowPitchBytes = src.GetRowPitch();
@@ -1973,10 +2537,10 @@ namespace bs
 			const u32 dstSliceSkipBytes = dst.GetSliceSkip();
 
 			// Otherwise, copy per row
-			const u32 rowSize = src.GetWidth()*pixelSize;
-			for (u32 z = src.GetFront(); z < src.GetBack(); z++)
+			const u32 rowSize = src.GetWidth() * pixelSize;
+			for(u32 z = src.GetFront(); z < src.GetBack(); z++)
 			{
-				for (u32 y = src.GetTop(); y < src.GetBottom(); y += blockDim.Y)
+				for(u32 y = src.GetTop(); y < src.GetBottom(); y += blockDim.Y)
 				{
 					memcpy(dstPtr, srcPtr, rowSize);
 
@@ -1992,9 +2556,9 @@ namespace bs
 		}
 
 		// Check for compressed formats, we don't support decompression
-		if (IsCompressed(src.GetFormat()))
+		if(IsCompressed(src.GetFormat()))
 		{
-			if (src.GetFormat() != dst.GetFormat())
+			if(src.GetFormat() != dst.GetFormat())
 			{
 				BS_LOG(Error, PixelUtility, "Cannot convert from a compressed format to another format.");
 				return;
@@ -2002,9 +2566,9 @@ namespace bs
 		}
 
 		// Check for compression
-		if (IsCompressed(dst.GetFormat()))
+		if(IsCompressed(dst.GetFormat()))
 		{
-			if (src.GetFormat() != dst.GetFormat())
+			if(src.GetFormat() != dst.GetFormat())
 			{
 				CompressionOptions co;
 				co.Format = dst.GetFormat();
@@ -2016,10 +2580,8 @@ namespace bs
 
 		u32 srcPixelSize = GetNumElemBytes(src.GetFormat());
 		u32 dstPixelSize = GetNumElemBytes(dst.GetFormat());
-		u8 *srcptr = static_cast<u8*>(src.GetData())
-			+ src.GetLeft() * srcPixelSize + src.GetTop() * src.GetRowPitch() + src.GetFront() * src.GetSlicePitch();
-		u8 *dstptr = static_cast<u8*>(dst.GetData())
-			+ dst.GetLeft() * dstPixelSize + dst.GetTop() * dst.GetRowPitch() + dst.GetFront() * dst.GetSlicePitch();
+		u8* srcptr = static_cast<u8*>(src.GetData()) + src.GetLeft() * srcPixelSize + src.GetTop() * src.GetRowPitch() + src.GetFront() * src.GetSlicePitch();
+		u8* dstptr = static_cast<u8*>(dst.GetData()) + dst.GetLeft() * dstPixelSize + dst.GetTop() * dst.GetRowPitch() + dst.GetFront() * dst.GetSlicePitch();
 
 		// Get pitches+skips in bytes
 		u32 srcRowSkipBytes = src.GetRowSkip();
@@ -2029,11 +2591,11 @@ namespace bs
 
 		// The brute force fallback
 		float r, g, b, a;
-		for (u32 z = src.GetFront(); z < src.GetBack(); z++)
+		for(u32 z = src.GetFront(); z < src.GetBack(); z++)
 		{
-			for (u32 y = src.GetTop(); y < src.GetBottom(); y++)
+			for(u32 y = src.GetTop(); y < src.GetBottom(); y++)
 			{
-				for (u32 x = src.GetLeft(); x < src.GetRight(); x++)
+				for(u32 x = src.GetLeft(); x < src.GetRight(); x++)
 				{
 					UnpackColor(&r, &g, &b, &a, src.GetFormat(), srcptr);
 					PackColor(r, g, b, a, dst.GetFormat(), dstptr);
@@ -2053,7 +2615,7 @@ namespace bs
 
 	void PixelUtil::FlipComponentOrder(PixelData& data)
 	{
-		if (IsCompressed(data.GetFormat()))
+		if(IsCompressed(data.GetFormat()))
 		{
 			BS_LOG(Error, PixelUtility, "flipComponentOrder() not supported on compressed images.");
 			return;
@@ -2066,23 +2628,23 @@ namespace bs
 			return;
 		}
 
-		if (pfd.ComponentCount <= 1) // Nothing to flip
+		if(pfd.ComponentCount <= 1) // Nothing to flip
 			return;
 
 		bool bitCountMismatch = false;
-		if (pfd.Rbits != pfd.Gbits)
+		if(pfd.Rbits != pfd.Gbits)
 			bitCountMismatch = true;
 
 		if(pfd.ComponentCount > 2 && pfd.Rbits != pfd.Bbits)
 			bitCountMismatch = true;
 
-		if (pfd.ComponentCount > 3 && pfd.Rbits != pfd.Abits)
+		if(pfd.ComponentCount > 3 && pfd.Rbits != pfd.Abits)
 			bitCountMismatch = true;
 
 		if(bitCountMismatch)
 		{
 			BS_LOG(Error, PixelUtility, "flipComponentOrder() not supported for formats that don't have the same number "
-				"of bytes for all components.");
+										"of bytes for all components.");
 			return;
 		}
 
@@ -2092,24 +2654,20 @@ namespace bs
 			u8 Shift;
 		};
 
-		std::array<CompData, 4> compData =
-		{{
-			{ pfd.Rmask, pfd.Rshift },
-			{ pfd.Gmask, pfd.Gshift },
-			{ pfd.Bmask, pfd.Bshift },
-			{ pfd.Amask, pfd.Ashift }
-		}};
+		std::array<CompData, 4> compData = { { { pfd.Rmask, pfd.Rshift },
+											   { pfd.Gmask, pfd.Gshift },
+											   { pfd.Bmask, pfd.Bshift },
+											   { pfd.Amask, pfd.Ashift } } };
 
 		// Ensure unused components are at the end, after sort
-		if (pfd.ComponentCount < 4)
+		if(pfd.ComponentCount < 4)
 			compData[3].Shift = 0xFF;
 
-		if (pfd.ComponentCount < 3)
+		if(pfd.ComponentCount < 3)
 			compData[2].Shift = 0xFF;
 
-		std::sort(compData.begin(), compData.end(),
-			[&](const CompData& lhs, const CompData& rhs) { return lhs.Shift < rhs.Shift; }
-		);
+		std::sort(compData.begin(), compData.end(), [&](const CompData& lhs, const CompData& rhs)
+				  { return lhs.Shift < rhs.Shift; });
 
 		u8* dataPtr = data.GetData();
 
@@ -2117,11 +2675,11 @@ namespace bs
 		u32 rowSkipBytes = data.GetRowSkip();
 		u32 sliceSkipBytes = data.GetSliceSkip();
 
-		for (u32 z = 0; z < data.GetDepth(); z++)
+		for(u32 z = 0; z < data.GetDepth(); z++)
 		{
-			for (u32 y = 0; y < data.GetHeight(); y++)
+			for(u32 y = 0; y < data.GetHeight(); y++)
 			{
-				for (u32 x = 0; x < data.GetWidth(); x++)
+				for(u32 x = 0; x < data.GetWidth(); x++)
 				{
 					if(pfd.ComponentCount == 2)
 					{
@@ -2176,7 +2734,7 @@ namespace bs
 		assert(PixelUtil::IsAccessible(scaled.GetFormat()));
 
 		PixelData temp;
-		switch (filter)
+		switch(filter)
 		{
 		default:
 		case FILTER_NEAREST:
@@ -2193,7 +2751,7 @@ namespace bs
 			}
 
 			// No conversion
-			switch (PixelUtil::GetNumElemBytes(src.GetFormat()))
+			switch(PixelUtil::GetNumElemBytes(src.GetFormat()))
 			{
 			case 1: NearestResampler<1>::Scale(src, temp); break;
 			case 2: NearestResampler<2>::Scale(src, temp); break;
@@ -2219,11 +2777,13 @@ namespace bs
 			break;
 
 		case FILTER_LINEAR:
-			switch (src.GetFormat())
+			switch(src.GetFormat())
 			{
 			case PF_RG8:
-			case PF_RGB8: case PF_BGR8:
-			case PF_RGBA8: case PF_BGRA8:
+			case PF_RGB8:
+			case PF_BGR8:
+			case PF_RGBA8:
+			case PF_BGRA8:
 				if(src.GetFormat() == scaled.GetFormat())
 				{
 					// No intermediate buffer needed
@@ -2237,7 +2797,7 @@ namespace bs
 				}
 
 				// No conversion
-				switch (PixelUtil::GetNumElemBytes(src.GetFormat()))
+				switch(PixelUtil::GetNumElemBytes(src.GetFormat()))
 				{
 				case 1: LinearResampler_Byte<1>::Scale(src, temp); break;
 				case 2: LinearResampler_Byte<2>::Scale(src, temp); break;
@@ -2258,7 +2818,7 @@ namespace bs
 				break;
 			case PF_RGB32F:
 			case PF_RGBA32F:
-				if (scaled.GetFormat() == PF_RGB32F || scaled.GetFormat() == PF_RGBA32F)
+				if(scaled.GetFormat() == PF_RGB32F || scaled.GetFormat() == PF_RGBA32F)
 				{
 					// float32 to float32, avoid unpack/repack overhead
 					LinearResampler_Float32::Scale(src, scaled);
@@ -2278,7 +2838,7 @@ namespace bs
 		if(src.GetFormat() != dst.GetFormat())
 		{
 			BS_LOG(Error, PixelUtility, "Source format is different from destination format for copy(). This operation "
-				"cannot be used for a format conversion. Aborting copy.");
+										"cannot be used for a format conversion. Aborting copy.");
 			return;
 		}
 
@@ -2289,7 +2849,7 @@ namespace bs
 		if(right > src.GetWidth() || bottom > src.GetHeight() || back > src.GetDepth())
 		{
 			BS_LOG(Error, PixelUtility, "Provided offset or destination size is too large and is referencing pixels that "
-				"are out of bounds on the source texture. Aborting copy().");
+										"are out of bounds on the source texture. Aborting copy().");
 			return;
 		}
 
@@ -2325,14 +2885,14 @@ namespace bs
 
 		u32 elemSize = GetNumElemBytes(pixelData.GetFormat());
 
-		if (mode.IsSet(MirrorModeBits::Z))
+		if(mode.IsSet(MirrorModeBits::Z))
 		{
 			u32 sliceSize = width * height * elemSize;
 			u8* sliceTemp = bs_stack_alloc<u8>(sliceSize);
 
 			u8* dataPtr = pixelData.GetData();
 			u32 halfDepth = depth / 2;
-			for (u32 z = 0; z < halfDepth; z++)
+			for(u32 z = 0; z < halfDepth; z++)
 			{
 				u32 srcZ = z * sliceSize;
 				u32 dstZ = (depth - z - 1) * sliceSize;
@@ -2353,10 +2913,10 @@ namespace bs
 			u8* rowTemp = bs_stack_alloc<u8>(rowSize);
 
 			u8* slicePtr = pixelData.GetData();
-			for (u32 z = 0; z < depth; z++)
+			for(u32 z = 0; z < depth; z++)
 			{
 				u32 halfHeight = height / 2;
-				for (u32 y = 0; y < halfHeight; y++)
+				for(u32 y = 0; y < halfHeight; y++)
 				{
 					u32 srcY = y * rowSize;
 					u32 dstY = (height - y - 1) * rowSize;
@@ -2374,18 +2934,18 @@ namespace bs
 			bs_stack_free(rowTemp);
 		}
 
-		if (mode.IsSet(MirrorModeBits::X))
+		if(mode.IsSet(MirrorModeBits::X))
 		{
 			u8* elemTemp = bs_stack_alloc<u8>(elemSize);
 
 			u8* slicePtr = pixelData.GetData();
-			for (u32 z = 0; z < depth; z++)
+			for(u32 z = 0; z < depth; z++)
 			{
 				u8* rowPtr = slicePtr;
-				for (u32 y = 0; y < height; y++)
+				for(u32 y = 0; y < height; y++)
 				{
 					u32 halfWidth = width / 2;
-					for (u32 x = 0; x < halfWidth; x++)
+					for(u32 x = 0; x < halfWidth; x++)
 					{
 						u32 srcX = x * elemSize;
 						u32 dstX = (width - x - 1) * elemSize;
@@ -2414,15 +2974,15 @@ namespace bs
 		u32 pixelSize = PixelUtil::GetNumElemBytes(pixelData.GetFormat());
 		u8* data = pixelData.GetData();
 
-		for (u32 z = 0; z < depth; z++)
+		for(u32 z = 0; z < depth; z++)
 		{
 			u32 zDataIdx = z * pixelData.GetSlicePitch();
 
-			for (u32 y = 0; y < height; y++)
+			for(u32 y = 0; y < height; y++)
 			{
 				u32 yDataIdx = y * pixelData.GetRowPitch();
 
-				for (u32 x = 0; x < width; x++)
+				for(u32 x = 0; x < width; x++)
 				{
 					u32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
 					u8* dest = data + dataIdx;
@@ -2446,15 +3006,15 @@ namespace bs
 		u32 pixelSize = PixelUtil::GetNumElemBytes(pixelData.GetFormat());
 		u8* data = pixelData.GetData();
 
-		for (u32 z = 0; z < depth; z++)
+		for(u32 z = 0; z < depth; z++)
 		{
 			u32 zDataIdx = z * pixelData.GetSlicePitch();
 
-			for (u32 y = 0; y < height; y++)
+			for(u32 y = 0; y < height; y++)
 			{
 				u32 yDataIdx = y * pixelData.GetRowPitch();
 
-				for (u32 x = 0; x < width; x++)
+				for(u32 x = 0; x < width; x++)
 				{
 					u32 dataIdx = x * pixelSize + yDataIdx + zDataIdx;
 					u8* dest = data + dataIdx;
@@ -2471,19 +3031,19 @@ namespace bs
 
 	void PixelUtil::Compress(const PixelData& src, PixelData& dst, const CompressionOptions& options)
 	{
-		if (!IsCompressed(options.Format))
+		if(!IsCompressed(options.Format))
 		{
 			BS_LOG(Error, PixelUtility, "Compression failed. Destination format is not a valid compressed format.");
 			return;
 		}
 
-		if (src.GetDepth() != 1)
+		if(src.GetDepth() != 1)
 		{
 			BS_LOG(Error, PixelUtility, "Compression failed. 3D texture compression not supported.");
 			return;
 		}
 
-		if (IsCompressed(src.GetFormat()))
+		if(IsCompressed(src.GetFormat()))
 		{
 			BS_LOG(Error, PixelUtility, "Compression failed. Source data cannot be compressed.");
 			return;
@@ -2501,12 +3061,12 @@ namespace bs
 		io.setAlphaMode(toNVTTAlphaMode(options.AlphaMode));
 		io.setNormalMap(options.IsNormalMap);
 
-		if (interimFormat == PF_RGBA32F)
+		if(interimFormat == PF_RGBA32F)
 			io.setFormat(nvtt::InputFormat_RGBA_32F);
 		else
 			io.setFormat(nvtt::InputFormat_BGRA_8UB);
 
-		if (options.IsSrgb)
+		if(options.IsSrgb)
 			io.setGamma(2.2f, 2.2f);
 		else
 			io.setGamma(1.0f, 1.0f);
@@ -2524,7 +3084,7 @@ namespace bs
 		oo.setOutputHandler(&outputHandler);
 
 		nvtt::Compressor compressor;
-		if (!compressor.process(io, co, oo))
+		if(!compressor.process(io, co, oo))
 		{
 			BS_LOG(Error, PixelUtility, "Compression failed. Internal error.");
 			return;
@@ -2535,19 +3095,19 @@ namespace bs
 	{
 		Vector<SPtr<PixelData>> outputMipBuffers;
 
-		if (src.GetDepth() != 1)
+		if(src.GetDepth() != 1)
 		{
 			BS_LOG(Error, PixelUtility, "Mipmap generation failed. 3D texture formats not supported.");
 			return outputMipBuffers;
 		}
 
-		if (IsCompressed(src.GetFormat()))
+		if(IsCompressed(src.GetFormat()))
 		{
 			BS_LOG(Error, PixelUtility, "Mipmap generation failed. Source data cannot be compressed.");
 			return outputMipBuffers;
 		}
 
-		if (!Bitwise::IsPow2(src.GetWidth()) || !Bitwise::IsPow2(src.GetHeight()))
+		if(!Bitwise::IsPow2(src.GetWidth()) || !Bitwise::IsPow2(src.GetHeight()))
 		{
 			BS_LOG(Error, PixelUtility, "Mipmap generation failed. Texture width & height must be powers of 2.");
 			return outputMipBuffers;
@@ -2559,7 +3119,7 @@ namespace bs
 		interimData.AllocateInternalBuffer();
 		BulkPixelConversion(src, interimData);
 
-		if (interimFormat != PF_RGBA32F)
+		if(interimFormat != PF_RGBA32F)
 			FlipComponentOrder(interimData);
 
 		nvtt::InputOptions io;
@@ -2569,12 +3129,12 @@ namespace bs
 		io.setNormalizeMipmaps(options.NormalizeMipmaps);
 		io.setWrapMode(toNVTTWrapMode(options.WrapMode));
 
-		if (interimFormat == PF_RGBA32F)
+		if(interimFormat == PF_RGBA32F)
 			io.setFormat(nvtt::InputFormat_RGBA_32F);
 		else
 			io.setFormat(nvtt::InputFormat_BGRA_8UB);
 
-		if (options.IsSrgb)
+		if(options.IsSrgb)
 			io.setGamma(2.2f, 2.2f);
 		else
 			io.setGamma(1.0f, 1.0f);
@@ -2584,7 +3144,7 @@ namespace bs
 		nvtt::CompressionOptions co;
 		co.setFormat(nvtt::Format_RGBA);
 
-		if (interimFormat == PF_RGBA32F)
+		if(interimFormat == PF_RGBA32F)
 		{
 			co.setPixelType(nvtt::PixelType_Float);
 			co.setPixelFormat(32, 32, 32, 32);
@@ -2604,15 +3164,15 @@ namespace bs
 		// too much at the moment.
 		u32 curWidth = src.GetWidth();
 		u32 curHeight = src.GetHeight();
-		for (u32 i = 0; i < numMips; i++)
+		for(u32 i = 0; i < numMips; i++)
 		{
 			rgbaMipBuffers.push_back(bs_shared_ptr_new<PixelData>(curWidth, curHeight, 1, interimFormat));
 			rgbaMipBuffers.back()->AllocateInternalBuffer();
 
-			if (curWidth > 1)
+			if(curWidth > 1)
 				curWidth = curWidth / 2;
 
-			if (curHeight > 1)
+			if(curHeight > 1)
 				curHeight = curHeight / 2;
 		}
 
@@ -2626,7 +3186,7 @@ namespace bs
 		oo.setOutputHandler(&outputHandler);
 
 		nvtt::Compressor compressor;
-		if (!compressor.process(io, co, oo))
+		if(!compressor.process(io, co, oo))
 		{
 			BS_LOG(Error, PixelUtility, "Mipmap generation failed. Internal error.");
 			return outputMipBuffers;
@@ -2634,7 +3194,7 @@ namespace bs
 
 		interimData.FreeInternalBuffer();
 
-		for (u32 i = 0; i < (u32)rgbaMipBuffers.size(); i++)
+		for(u32 i = 0; i < (u32)rgbaMipBuffers.size(); i++)
 		{
 			SPtr<PixelData> argbBuffer = rgbaMipBuffers[i];
 			SPtr<PixelData> outputBuffer = bs_shared_ptr_new<PixelData>(argbBuffer->GetWidth(), argbBuffer->GetHeight(), 1, src.GetFormat());
@@ -2648,4 +3208,4 @@ namespace bs
 
 		return outputMipBuffers;
 	}
-}
+} // namespace bs

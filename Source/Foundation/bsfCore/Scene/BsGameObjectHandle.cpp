@@ -16,8 +16,7 @@ namespace bs
 
 	bool GameObjectHandleBase::IsDestroyed(bool checkQueued) const
 	{
-		return mData->MPtr == nullptr || mData->MPtr->Object == nullptr
-			|| (checkQueued && mData->MPtr->Object->GetIsDestroyedInternal());
+		return mData->MPtr == nullptr || mData->MPtr->Object == nullptr || (checkQueued && mData->MPtr->Object->GetIsDestroyedInternal());
 	}
 
 	void GameObjectHandleBase::SetHandleDataInternal(const SPtr<GameObject>& object)
@@ -42,4 +41,4 @@ namespace bs
 	{
 		return GameObjectHandleBase::GetRttiStatic();
 	}
-}
+} // namespace bs

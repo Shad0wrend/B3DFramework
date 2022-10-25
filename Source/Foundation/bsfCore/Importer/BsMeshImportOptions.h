@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/** Controls what type of collision mesh should be imported during mesh import. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Importer),API(Framework),API(Editor)) CollisionMeshType
+	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) CollisionMeshType
 	{
 		None, /**< No collision mesh will be imported. */
 		Normal, /**< Normal triangle mesh will be imported. */
@@ -21,15 +21,16 @@ namespace bs
 	};
 
 	/** Information about how to split an AnimationClip into multiple separate clips. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer),API(Framework),API(Editor)) AnimationSplitInfo : IReflectable
+	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) AnimationSplitInfo : IReflectable
 	{
 		BS_SCRIPT_EXPORT()
 		AnimationSplitInfo() = default;
 
 		BS_SCRIPT_EXPORT()
+
 		AnimationSplitInfo(const String& name, u32 startFrame, u32 endFrame, bool isAdditive = false)
 			: Name(name), StartFrame(startFrame), EndFrame(endFrame), IsAdditive(isAdditive)
-		{ }
+		{}
 
 		BS_SCRIPT_EXPORT()
 		String Name;
@@ -53,7 +54,7 @@ namespace bs
 	};
 
 	/** A set of animation events that will be added to an animation clip during animation import. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer),API(Framework),API(Editor)) ImportedAnimationEvents : IReflectable
+	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ImportedAnimationEvents : IReflectable
 	{
 		BS_SCRIPT_EXPORT()
 		ImportedAnimationEvents() = default;
@@ -76,7 +77,7 @@ namespace bs
 	/**
 	 * Contains import options you may use to control how is a mesh imported from some external format into engine format.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer),API(Framework),API(Editor)) MeshImportOptions : public ImportOptions
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) MeshImportOptions : public ImportOptions
 	{
 	public:
 		MeshImportOptions() = default;
@@ -105,14 +106,14 @@ namespace bs
 		BS_SCRIPT_EXPORT()
 		bool ImportAnimation = false;
 
-		/**	
+		/**
 		 * Enables or disables keyframe reduction. Keyframe reduction will reduce the number of key-frames in an animation
 		 * clip by removing identical keyframes, and therefore reducing the size of the clip.
 		 */
 		BS_SCRIPT_EXPORT()
 		bool ReduceKeyFrames = true;
 
-		/**	
+		/**
 		 * Enables or disables import of root motion curves. When enabled, any animation curves in imported animations
 		 * affecting the root bone will be available through a set of separate curves in AnimationClip, and they won't be
 		 * evaluated through normal animation process. Instead it is expected that the user evaluates the curves manually
@@ -125,7 +126,7 @@ namespace bs
 		BS_SCRIPT_EXPORT()
 		float ImportScale = 1.0f;
 
-		/**	
+		/**
 		 * Determines what type (if any) of collision mesh should be imported. If enabled the collision mesh will be
 		 * available as a sub-resource returned by the importer (along with the normal mesh).
 		 */
@@ -158,4 +159,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

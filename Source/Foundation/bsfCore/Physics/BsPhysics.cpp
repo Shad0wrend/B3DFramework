@@ -52,17 +52,17 @@ namespace bs
 
 	Vector<HCollider> rawToComponent(const Vector<Collider*>& raw)
 	{
-		if (raw.empty())
+		if(raw.empty())
 			return Vector<HCollider>(0);
 
 		Vector<HCollider> output;
-		for (auto& entry : raw)
+		for(auto& entry : raw)
 		{
-			if (entry == nullptr)
+			if(entry == nullptr)
 				continue;
 
 			CCollider* component = (CCollider*)entry->GetOwnerInternal(PhysicsOwnerType::Component);
-			if (component == nullptr)
+			if(component == nullptr)
 				continue;
 
 			output.push_back(static_object_cast<CCollider>(component->GetHandle()));
@@ -86,8 +86,7 @@ namespace bs
 		return rawToComponent(CapsuleOverlapInternal(capsule, rotation, layer));
 	}
 
-	Vector<HCollider> PhysicsScene::ConvexOverlap(const HPhysicsMesh& mesh, const Vector3& position,
-		const Quaternion& rotation, u64 layer) const
+	Vector<HCollider> PhysicsScene::ConvexOverlap(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation, u64 layer) const
 	{
 		return rawToComponent(ConvexOverlapInternal(mesh, position, rotation, layer));
 	}
@@ -96,4 +95,4 @@ namespace bs
 	{
 		return Physics::Instance();
 	}
-}
+} // namespace bs

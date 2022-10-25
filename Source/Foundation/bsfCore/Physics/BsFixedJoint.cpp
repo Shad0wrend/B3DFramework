@@ -9,4 +9,4 @@ namespace bs
 	{
 		return scene.CreateFixedJoint(desc);
 	}
-}
+} // namespace bs

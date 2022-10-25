@@ -19,32 +19,38 @@ namespace bs
 	{
 	private:
 		Language& GetActiveLanguage(StringTable* obj) { return obj->mActiveLanguage; }
+
 		void SetActiveLanguage(StringTable* obj, Language& val) { obj->mActiveLanguage = val; }
 
 		LanguageData& GetLanguageData(StringTable* obj, u32 idx) { return obj->mAllLanguages[idx]; }
+
 		void SetLanguageData(StringTable* obj, u32 idx, LanguageData& val) { obj->mAllLanguages[idx] = val; }
+
 		u32 GetNumLanguages(StringTable* obj) { return (u32)Language::Count; }
-		void SetNumLanguages(StringTable* obj, u32 val) { /* Do nothing */ }
+
+		void SetNumLanguages(StringTable* obj, u32 val)
+		{ /* Do nothing */
+		}
 
 		UnorderedSet<String>& GetIdentifiers(StringTable* obj) { return obj->mIdentifiers; }
+
 		void SetIdentifiers(StringTable* obj, UnorderedSet<String>& val) { obj->mIdentifiers = val; }
 
 	public:
 		StringTableRTTI()
 		{
 			AddPlainField("mActiveLanguage", 0, &StringTableRTTI::GetActiveLanguage, &StringTableRTTI::SetActiveLanguage);
-			AddPlainArrayField("mLanguageData", 1, &StringTableRTTI::GetLanguageData, &StringTableRTTI::GetNumLanguages,
-				&StringTableRTTI::SetLanguageData, &StringTableRTTI::SetNumLanguages);
+			AddPlainArrayField("mLanguageData", 1, &StringTableRTTI::GetLanguageData, &StringTableRTTI::GetNumLanguages, &StringTableRTTI::SetLanguageData, &StringTableRTTI::SetNumLanguages);
 			AddPlainField("mIdentifiers", 2, &StringTableRTTI::GetIdentifiers, &StringTableRTTI::SetIdentifiers);
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context)
 		{
 			StringTable* stringTable = static_cast<StringTable*>(obj);
 			stringTable->SetActiveLanguage(stringTable->mActiveLanguage);
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "StringTable";
 			return name;
@@ -55,7 +61,7 @@ namespace bs
 			return TID_StringTable;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return StringTable::CreatePtrInternal();
 		}
@@ -63,19 +69,27 @@ namespace bs
 
 	/**
 	 * RTTIPlainType for LanguageData.
-	 * 			
+	 *
 	 * @see		RTTIPlainType
 	 */
-	template<>
+	template <>
 	struct RTTIPlainType<LanguageData>
-	{	
-		enum { id = TID_LanguageData }; enum { hasDynamicSize = 1 };
+	{
+		enum
+		{
+			id = TID_LanguageData
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		/** @copydoc RTTIPlainType::toMemory */
 		static BitLength ToMemory(const LanguageData& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				BitLength size = 0;
 
 				auto numElements = (uint32_t)data.Strings.size();
@@ -87,8 +101,7 @@ namespace bs
 					size += rtti_write(*entry.second, stream);
 				}
 
-				return size;
-			});
+				return size; });
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
@@ -101,7 +114,7 @@ namespace bs
 			rtti_read(numElements, stream);
 
 			data.Strings.clear();
-			for (uint32_t i = 0; i < numElements; i++)
+			for(uint32_t i = 0; i < numElements; i++)
 			{
 				String identifier;
 				rtti_read(identifier, stream);
@@ -120,7 +133,7 @@ namespace bs
 		{
 			BitLength dataSize = sizeof(uint32_t);
 
-			for (auto& entry : data.Strings)
+			for(auto& entry : data.Strings)
 			{
 				dataSize += rtti_size(entry.first);
 				dataSize += rtti_size(*entry.second);
@@ -128,24 +141,32 @@ namespace bs
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;
-		}	
+		}
 	};
 
 	/**
 	 * RTTIPlainType for LocalizedStringData.
-	 * 			
+	 *
 	 * @see		RTTIPlainType
 	 */
-	template<>
+	template <>
 	struct RTTIPlainType<LocalizedStringData>
-	{	
-		enum { id = TID_LocalizedStringData }; enum { hasDynamicSize = 1 };
+	{
+		enum
+		{
+			id = TID_LocalizedStringData
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
 
 		/** @copydoc RTTIPlainType::toMemory */
 		static BitLength ToMemory(const LocalizedStringData& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				BitLength size = 0;
 
 				size += rtti_write(data.String, stream);
@@ -154,14 +175,13 @@ namespace bs
 				for (uint32_t i = 0; i < data.NumParameters; i++)
 					size += rtti_write(data.ParameterOffsets[i], stream);
 
-				return size;
-			});
+				return size; });
 		}
 
 		/** @copydoc RTTIPlainType::fromMemory */
 		static BitLength FromMemory(LocalizedStringData& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			if (data.ParameterOffsets != nullptr)
+			if(data.ParameterOffsets != nullptr)
 				bs_deleteN(data.ParameterOffsets, data.NumParameters);
 
 			BitLength size;
@@ -171,7 +191,7 @@ namespace bs
 			rtti_read(data.NumParameters, stream);
 
 			data.ParameterOffsets = bs_newN<LocalizedStringData::ParamOffset>(data.NumParameters);
-			for (uint32_t i = 0; i < data.NumParameters; i++)
+			for(uint32_t i = 0; i < data.NumParameters; i++)
 				rtti_read(data.ParameterOffsets[i], stream);
 
 			return size;
@@ -185,16 +205,16 @@ namespace bs
 			dataSize += rtti_size(data.String);
 			dataSize += rtti_size(data.NumParameters);
 
-			for (uint32_t i = 0; i < data.NumParameters; i++)
+			for(uint32_t i = 0; i < data.NumParameters; i++)
 				dataSize = rtti_size(data.ParameterOffsets[i]);
 
 			rtti_add_header_size(dataSize, compress);
 			return dataSize;
-		}	
+		}
 	};
 
 	BS_ALLOW_MEMCPY_SERIALIZATION(LocalizedStringData::ParamOffset);
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

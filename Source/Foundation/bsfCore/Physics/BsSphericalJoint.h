@@ -28,7 +28,8 @@ namespace bs
 	class BS_CORE_EXPORT SphericalJoint : public Joint
 	{
 	public:
-		SphericalJoint(const SPHERICAL_JOINT_DESC& desc) { }
+		SphericalJoint(const SPHERICAL_JOINT_DESC& desc) {}
+
 		virtual ~SphericalJoint() = default;
 
 		/** @copydoc setLimit() */
@@ -63,4 +64,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

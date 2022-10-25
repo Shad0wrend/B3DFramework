@@ -14,7 +14,7 @@ namespace bs
 	/**
 	 * Allows you to change and retrieve the active renderer. Active renderer will be used for rendering all objects in
 	 * the following frame.
-	 * 			
+	 *
 	 * @note	No renderer is active by default. You must make a renderer active before doing any rendering.
 	 */
 	class BS_CORE_EXPORT RendererManager : public Module<RendererManager>
@@ -40,6 +40,7 @@ namespace bs
 		 * previously registered here.
 		 */
 		void RegisterFactoryInternal(SPtr<RendererFactory> factory);
+
 	private:
 		Vector<SPtr<RendererFactory>> mAvailableFactories;
 
@@ -47,5 +48,4 @@ namespace bs
 	};
 
 	/** @} */
-}
-
+} // namespace bs

@@ -40,7 +40,7 @@ namespace bs
 
 	/**
 	 * Manager for the core thread. Takes care of starting, running, queuing commands and shutting down the core thread.
-	 * 				
+	 *
 	 * How threading works:
 	 *  - Commands from various threads can be queued for execution on the core thread by calling QueueCommand() or
 	 *    queueReturnCommand().
@@ -88,12 +88,12 @@ namespace bs
 
 		/**
 		 * Queues a new command that will be added to the command queue. Command returns a value.
-		 * 		
+		 *
 		 * @param[in]	commandCallback		Command to queue.
 		 * @param[in]	flags				Flags that further control command submission.
 		 * @return							Structure that can be used to check if the command completed execution,
 		 *									and to retrieve the return value once it has.
-		 * 	
+		 *
 		 * @see		CommandQueue::queueReturn()
 		 * @note	Thread safe
 		 */
@@ -101,7 +101,7 @@ namespace bs
 
 		/**
 		 * Queues a new command that will be added to the global command queue.
-		 * 	
+		 *
 		 * @param[in]	commandCallback		Command to queue.
 		 * @param[in]	flags				Flags that further control command submission.
 		 *
@@ -112,7 +112,7 @@ namespace bs
 
 		/**
 		 * Called once every frame.
-		 * 			
+		 *
 		 * @note	Must be called before sim thread schedules any core thread operations for the frame.
 		 */
 		void Update();
@@ -120,7 +120,7 @@ namespace bs
 		/**
 		 * Returns a frame allocator that should be used for allocating temporary data being passed to the core thread. As the
 		 * name implies the data only lasts one frame, so you need to be careful not to use it for longer than that.
-		 * 			
+		 *
 		 * @note	Sim thread only.
 		 */
 		FrameAlloc* GetFrameAlloc() const;
@@ -154,6 +154,7 @@ namespace bs
 		 *  - ...
 		 */
 		static const int NUM_SYNC_BUFFERS = 2;
+
 	private:
 		/**
 		 * Double buffered frame allocators. Means sim thread cannot be more than 1 frame ahead of core thread (If that changes
@@ -225,7 +226,7 @@ namespace bs
 
 	/**
 	 * Returns the core thread manager used for dealing with the core thread from external threads.
-	 * 			
+	 *
 	 * @see		CoreThread
 	 */
 	BS_CORE_EXPORT CoreThread& gCoreThread();
@@ -237,11 +238,11 @@ namespace bs
 	BS_CORE_EXPORT void throwIfCoreThread();
 
 #if BS_DEBUG_MODE
-#define THROW_IF_NOT_CORE_THREAD throwIfNotCoreThread();
-#define THROW_IF_CORE_THREAD throwIfCoreThread();
+#	define THROW_IF_NOT_CORE_THREAD throwIfNotCoreThread();
+#	define THROW_IF_CORE_THREAD throwIfCoreThread();
 #else
-#define THROW_IF_NOT_CORE_THREAD
-#define THROW_IF_CORE_THREAD
+#	define THROW_IF_NOT_CORE_THREAD
+#	define THROW_IF_CORE_THREAD
 #endif
 
 	/** @} */
@@ -251,5 +252,4 @@ namespace bs
 	 */
 
 	/** @} */
-}
-
+} // namespace bs

@@ -21,7 +21,7 @@ namespace bs
 
 	float CDistanceJoint::GetDistance() const
 	{
-		if (mInternal == nullptr)
+		if(mInternal == nullptr)
 			return 0.0f;
 
 		return GetInternalInternal()->GetDistance();
@@ -34,12 +34,12 @@ namespace bs
 
 	void CDistanceJoint::SetMinDistance(float value)
 	{
-		if (mDesc.MinDistance == value)
+		if(mDesc.MinDistance == value)
 			return;
 
 		mDesc.MinDistance = value;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			GetInternalInternal()->SetMinDistance(value);
 	}
 
@@ -50,12 +50,12 @@ namespace bs
 
 	void CDistanceJoint::SetMaxDistance(float value)
 	{
-		if (mDesc.MaxDistance == value)
+		if(mDesc.MaxDistance == value)
 			return;
 
 		mDesc.MaxDistance = value;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			GetInternalInternal()->SetMaxDistance(value);
 	}
 
@@ -66,12 +66,12 @@ namespace bs
 
 	void CDistanceJoint::SetTolerance(float value)
 	{
-		if (mDesc.Tolerance == value)
+		if(mDesc.Tolerance == value)
 			return;
 
 		mDesc.Tolerance = value;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			GetInternalInternal()->SetTolerance(value);
 	}
 
@@ -82,7 +82,7 @@ namespace bs
 
 	void CDistanceJoint::SetSpring(const Spring& value)
 	{
-		if (mDesc.Spring == value)
+		if(mDesc.Spring == value)
 			return;
 
 		mDesc.Spring = value;
@@ -94,15 +94,15 @@ namespace bs
 	void CDistanceJoint::SetFlag(DistanceJointFlag flag, bool enabled)
 	{
 		bool isEnabled = ((u32)mDesc.Flag & (u32)flag) != 0;
-		if (isEnabled == enabled)
+		if(isEnabled == enabled)
 			return;
 
-		if (enabled)
+		if(enabled)
 			mDesc.Flag = (DistanceJointFlag)((u32)mDesc.Flag | (u32)flag);
 		else
 			mDesc.Flag = (DistanceJointFlag)((u32)mDesc.Flag & ~(u32)flag);
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			GetInternalInternal()->SetFlag(flag, enabled);
 	}
 
@@ -129,4 +129,4 @@ namespace bs
 	{
 		return CDistanceJoint::GetRttiStatic();
 	}
-}
+} // namespace bs

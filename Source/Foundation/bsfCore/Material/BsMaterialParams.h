@@ -11,7 +11,7 @@
 
 namespace bs
 {
-	template<class T>
+	template <class T>
 	class TAnimationCurve;
 	class ColorGradientHDR;
 
@@ -41,7 +41,10 @@ namespace bs
 		/** Type of material parameter. */
 		enum class ParamType
 		{
-			Data, Texture, Sampler, Buffer
+			Data,
+			Texture,
+			Sampler,
+			Buffer
 		};
 
 		/** Result codes for getParam method. */
@@ -81,8 +84,7 @@ namespace bs
 			const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams,
 			const Map<String, SHADER_OBJECT_PARAM_DESC>& bufferParams,
 			const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams,
-			u64 initialParamVersion
-		);
+			u64 initialParamVersion);
 
 		/** Constructor for serialization use only. */
 		MaterialParamsBase() = default;
@@ -105,7 +107,7 @@ namespace bs
 
 			const ParamData* param = nullptr;
 			auto result = getParamData(name, ParamType::Data, dataType, arrayIdx, &param);
-			if (result != GetParamResult::Success)
+			if(result != GetParamResult::Success)
 				return;
 
 			const DataParamInfo& paramInfo = mDataParams[param->index + arrayIdx];
@@ -133,7 +135,7 @@ namespace bs
 
 			const ParamData* param = nullptr;
 			auto result = getParamData(name, ParamType::Data, dataType, arrayIdx, &param);
-			if (result != GetParamResult::Success)
+			if(result != GetParamResult::Success)
 				return;
 
 			const DataParamInfo& paramInfo = mDataParams[param->index + arrayIdx];
@@ -163,7 +165,7 @@ namespace bs
 
 			const ParamData* param = nullptr;
 			auto result = getParamData(name, ParamType::Data, dataType, arrayIdx, &param);
-			if (result != GetParamResult::Success)
+			if(result != GetParamResult::Success)
 				return EMPTY_CURVE;
 
 			return getCurveParam<T>(*param, arrayIdx);
@@ -186,7 +188,7 @@ namespace bs
 
 			const ParamData* param = nullptr;
 			auto result = getParamData(name, ParamType::Data, dataType, arrayIdx, &param);
-			if (result != GetParamResult::Success)
+			if(result != GetParamResult::Success)
 				return;
 
 			setCurveParam(*param, arrayIdx, std::move(input));
@@ -235,8 +237,7 @@ namespace bs
 		 * @param[out]	output		Index of the requested parameter, only valid if success is returned.
 		 * @return					Success or error state of the request.
 		 */
-		GetParamResult GetParamIndex(const String& name, ParamType type, GpuParamDataType dataType, u32 arrayIdx,
-			u32& output) const;
+		GetParamResult GetParamIndex(const String& name, ParamType type, GpuParamDataType dataType, u32 arrayIdx, u32& output) const;
 
 		/**
 		 * Returns data about a parameter and reports an error if there is a type or size mismatch, or if the parameter
@@ -253,8 +254,7 @@ namespace bs
 		 *							some other error was reported.
 		 * @return					Success or error state of the request.
 		 */
-		GetParamResult GetParamData(const String& name, ParamType type, GpuParamDataType dataType, u32 arrayIdx,
-			const ParamData** output) const;
+		GetParamResult GetParamData(const String& name, ParamType type, GpuParamDataType dataType, u32 arrayIdx, const ParamData** output) const;
 
 		/**
 		 * Returns information about a parameter at the specified global index, as retrieved by getParamIndex().
@@ -303,13 +303,13 @@ namespace bs
 			GpuParamDataType dataType = (GpuParamDataType)TGpuDataParamInfo<T>::TypeId;
 
 			DataParamInfo& paramInfo = mDataParams[param.Index + arrayIdx];
-			if (paramInfo.FloatCurve)
+			if(paramInfo.FloatCurve)
 			{
 				bs_pool_free(paramInfo.FloatCurve);
 				paramInfo.FloatCurve = nullptr;
 			}
 
-			if (paramInfo.ColorGradient)
+			if(paramInfo.ColorGradient)
 			{
 				bs_pool_free(paramInfo.ColorGradient);
 				paramInfo.ColorGradient = nullptr;
@@ -338,7 +338,7 @@ namespace bs
 			if(dataType == GPDT_FLOAT1)
 			{
 				const DataParamInfo& paramInfo = mDataParams[param.Index + arrayIdx];
-				if (paramInfo.FloatCurve)
+				if(paramInfo.FloatCurve)
 					return *paramInfo.FloatCurve;
 			}
 
@@ -429,7 +429,7 @@ namespace bs
 
 		friend class MaterialParamStructDataRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 	};
 
 	/** Data for a single texture parameter. */
@@ -453,7 +453,7 @@ namespace bs
 
 		friend class MaterialParamTextureDataRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const ;
+		RTTITypeBase* GetRtti() const;
 	};
 
 	/** Data for a single buffer parameter. */
@@ -485,8 +485,12 @@ namespace bs
 	};
 
 	/** Helper typedefs that reference types used by either core or sim thread implementation of TMaterialParams<Core>. */
-	template<bool Core> struct TMaterialParamsTypes { };
-	template<> struct TMaterialParamsTypes < false >
+	template <bool Core>
+	struct TMaterialParamsTypes
+	{};
+
+	template <>
+	struct TMaterialParamsTypes<false>
 	{
 		typedef MaterialParamStructData StructParamDataType;
 		typedef MaterialParamTextureData TextureParamDataType;
@@ -494,7 +498,8 @@ namespace bs
 		typedef MaterialParamSamplerStateData SamplerStateParamDataType;
 	};
 
-	template<> struct TMaterialParamsTypes < true >
+	template <>
+	struct TMaterialParamsTypes<true>
 	{
 		typedef MaterialParamStructDataCore StructParamDataType;
 		typedef MaterialParamTextureDataCore TextureParamDataType;
@@ -503,7 +508,7 @@ namespace bs
 	};
 
 	/** Common code that may be specialized for both MaterialParams and ct::MaterialParams. */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TMaterialParams : public MaterialParamsBase
 	{
 	public:
@@ -574,8 +579,7 @@ namespace bs
 		 * @param[in]	value		New value of the parameter.
 		 * @param[in]	surface		Surface describing which part of the texture is being accessed.
 		 */
-		void SetTexture(const String& name, const TextureType& value,
-						const TextureSurface& surface = TextureSurface::COMPLETE);
+		void SetTexture(const String& name, const TextureType& value, const TextureSurface& surface = TextureSurface::COMPLETE);
 
 		/**
 		 * Returns the value of a shader texture parameter with the specified name as a sprite texture. If the parameter
@@ -690,8 +694,7 @@ namespace bs
 		 * parameter reference directly, avoiding the name lookup. Caller must guarantee the parameter reference is valid
 		 * and belongs to this object.
 		 */
-		void SetTexture(const ParamData& param, const TextureType& value,
-						const TextureSurface& surface = TextureSurface::COMPLETE);
+		void SetTexture(const ParamData& param, const TextureType& value, const TextureSurface& surface = TextureSurface::COMPLETE);
 
 		/**
 		 * Equivalent to getSpriteTexture(const String&, HSpriteTexture&) except it uses the internal parameter reference
@@ -841,7 +844,7 @@ namespace bs
 		/* 								RTTI		                     		*/
 		/************************************************************************/
 	public:
-		MaterialParams() { } // Only for serialization
+		MaterialParams() {} // Only for serialization
 
 		friend class MaterialParamsRTTI;
 		static RTTITypeBase* GetRttiStatic();
@@ -850,25 +853,26 @@ namespace bs
 
 	namespace ct
 	{
-	/** Core thread version of MaterialParams. */
-	class BS_CORE_EXPORT MaterialParams : public TMaterialParams<true>
-	{
-	public:
-		/** Initializes the core thread version of MaterialParams from its sim thread counterpart. */
-		MaterialParams(const SPtr<Shader>& shader, const SPtr<bs::MaterialParams>& params);
-		
-		/** @copydoc TMaterialParams::TMaterialParams(const ShaderType&, u64) */
-		MaterialParams(const SPtr<Shader>& shader, u64 initialParamVersion = 1);
+		/** Core thread version of MaterialParams. */
+		class BS_CORE_EXPORT MaterialParams : public TMaterialParams<true>
+		{
+		public:
+			/** Initializes the core thread version of MaterialParams from its sim thread counterpart. */
+			MaterialParams(const SPtr<Shader>& shader, const SPtr<bs::MaterialParams>& params);
 
-		/**
-		 * Updates the stored parameters from the provided buffer, allowing changes to be transfered between the sim and
-		 * core thread material param objects. Buffer must be retrieved from bs::MaterialParams::getSyncData.
-		 *
-		 * @param[in]		buffer		Buffer containing the dirty data.
-		 * @param[in, out]	size		Size of the provided buffer.
-		 */
-		void SetSyncData(u8* buffer, u32 size);
-	};
-	}
+			/** @copydoc TMaterialParams::TMaterialParams(const ShaderType&, u64) */
+			MaterialParams(const SPtr<Shader>& shader, u64 initialParamVersion = 1);
+
+			/**
+			 * Updates the stored parameters from the provided buffer, allowing changes to be transfered between the sim and
+			 * core thread material param objects. Buffer must be retrieved from bs::MaterialParams::getSyncData.
+			 *
+			 * @param[in]		buffer		Buffer containing the dirty data.
+			 * @param[in, out]	size		Size of the provided buffer.
+			 */
+			void SetSyncData(u8* buffer, u32 size);
+		};
+	} // namespace ct
+
 	/** @} */
-}
+} // namespace bs

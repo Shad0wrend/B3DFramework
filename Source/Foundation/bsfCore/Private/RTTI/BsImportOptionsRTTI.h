@@ -17,9 +17,9 @@ namespace bs
 	{
 	public:
 		ImportOptionsRTTI()
-		{ }
+		{}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "ImportOptions";
 			return name;
@@ -30,7 +30,7 @@ namespace bs
 			return TID_ImportOptions;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ImportOptions>();
 		}
@@ -38,4 +38,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

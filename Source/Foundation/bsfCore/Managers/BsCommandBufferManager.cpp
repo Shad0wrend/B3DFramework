@@ -2,13 +2,15 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Managers/BsCommandBufferManager.h"
 
-namespace bs { namespace ct
+namespace bs
 {
-	SPtr<CommandBuffer> CommandBufferManager::Create(GpuQueueType type, u32 deviceIdx, u32 queueIdx,
-		bool secondary)
+	namespace ct
 	{
-		assert(deviceIdx < BS_MAX_DEVICES);
+		SPtr<CommandBuffer> CommandBufferManager::Create(GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary)
+		{
+			assert(deviceIdx < BS_MAX_DEVICES);
 
-		return CreateInternal(type, deviceIdx, queueIdx, secondary);
-	}
-}}
+			return CreateInternal(type, deviceIdx, queueIdx, secondary);
+		}
+	} // namespace ct
+} // namespace bs

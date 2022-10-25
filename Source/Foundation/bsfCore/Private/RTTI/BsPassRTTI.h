@@ -66,7 +66,7 @@ namespace bs
 			return TID_SerializedGpuProgramData;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<SerializedGpuProgramData>();
 		}
@@ -152,6 +152,7 @@ namespace bs
 		{
 			obj->mData.ComputeProgramDesc = val;
 		}
+
 	public:
 		PassRTTI()
 		{
@@ -176,7 +177,7 @@ namespace bs
 
 			auto initBytecode = [](const SPtr<GpuProgram>& prog, GPU_PROGRAM_DESC& desc)
 			{
-				if (prog)
+				if(prog)
 				{
 					prog->BlockUntilCoreInitialized();
 					desc.Bytecode = prog->GetCore()->GetBytecode();
@@ -192,7 +193,7 @@ namespace bs
 				initBytecode(graphicsPipeline->GetHullProgram(), mHullProgramDesc);
 				initBytecode(graphicsPipeline->GetDomainProgram(), mDomainProgramDesc);
 			}
-			
+
 			const SPtr<ComputePipelineState>& computePipeline = pass->GetComputePipelineState();
 			if(computePipeline)
 				initBytecode(computePipeline->GetProgram(), mComputeProgramDesc);
@@ -215,7 +216,7 @@ namespace bs
 			return TID_Pass;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return Pass::CreateEmpty();
 		}
@@ -231,4 +232,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

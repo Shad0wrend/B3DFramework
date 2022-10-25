@@ -80,7 +80,7 @@ namespace bs
 			DestroyInternal();
 			mPreviewMode = false;
 		}
-		
+
 		if(SceneManager::Instance().IsRunning())
 		{
 			RestoreInternal();
@@ -90,7 +90,7 @@ namespace bs
 
 	void CParticleSystem::RestoreInternal()
 	{
-		if (mInternal == nullptr)
+		if(mInternal == nullptr)
 		{
 			mInternal = ParticleSystem::Create();
 			gSceneManager().BindActorInternal(mInternal, SceneObject());
@@ -124,7 +124,7 @@ namespace bs
 		if(enabled)
 		{
 			// Cannot enable preview while running
-			if (isRunning)
+			if(isRunning)
 				return false;
 
 			if(!mPreviewMode)
@@ -138,7 +138,7 @@ namespace bs
 		}
 		else
 		{
-			if (!isRunning)
+			if(!isRunning)
 				DestroyInternal();
 
 			mPreviewMode = false;
@@ -155,4 +155,4 @@ namespace bs
 	{
 		return CParticleSystem::GetRttiStatic();
 	}
-}
+} // namespace bs

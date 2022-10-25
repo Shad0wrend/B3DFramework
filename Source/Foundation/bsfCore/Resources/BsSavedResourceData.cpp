@@ -6,8 +6,8 @@
 namespace bs
 {
 	SavedResourceData::SavedResourceData(const Vector<UUID>& dependencies, bool allowAsync, u32 compressionMethod)
-		:mDependencies(dependencies), mAllowAsync(allowAsync), mCompressionMethod(compressionMethod)
-	{ }
+		: mDependencies(dependencies), mAllowAsync(allowAsync), mCompressionMethod(compressionMethod)
+	{}
 
 	RTTITypeBase* SavedResourceData::GetRttiStatic()
 	{
@@ -18,4 +18,4 @@ namespace bs
 	{
 		return SavedResourceData::GetRttiStatic();
 	}
-}
+} // namespace bs

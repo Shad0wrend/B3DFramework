@@ -17,4 +17,4 @@ namespace bs
 	{
 		return ImportOptions::GetRttiStatic();
 	}
-}
+} // namespace bs

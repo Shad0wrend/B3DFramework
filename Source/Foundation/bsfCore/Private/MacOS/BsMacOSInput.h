@@ -107,5 +107,4 @@ namespace bs
 		Vector<GamepadInfo> gamepadInfos;
 		HIDManager* gamepadHIDManager;
 	};
-}
-
+} // namespace bs

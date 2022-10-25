@@ -172,7 +172,7 @@ namespace bs
 		DepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		DepthStencilProperties mProperties;
 		mutable u32 mId;
@@ -184,57 +184,57 @@ namespace bs
 	public:
 		friend class DepthStencilStateRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;	
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */
 
 	namespace ct
 	{
-	/** @addtogroup RenderAPI-Internal
-	 *  @{
-	 */
+		/** @addtogroup RenderAPI-Internal
+		 *  @{
+		 */
 
-	/**
-	 * Core thread version of bs::DepthStencilState.
-	 *
-	 * @note	Core thread.
-	 */
-	class BS_CORE_EXPORT DepthStencilState : public CoreObject
-	{
-	public:
-		virtual ~DepthStencilState();
+		/**
+		 * Core thread version of bs::DepthStencilState.
+		 *
+		 * @note	Core thread.
+		 */
+		class BS_CORE_EXPORT DepthStencilState : public CoreObject
+		{
+		public:
+			virtual ~DepthStencilState();
 
-		/**	Returns information about the depth stencil state. */
-		const DepthStencilProperties& GetProperties() const;
+			/**	Returns information about the depth stencil state. */
+			const DepthStencilProperties& GetProperties() const;
 
-		/**	Returns a unique state ID. Only the lowest 10 bits are used. */
-		u32 GetId() const { return mId; }
+			/**	Returns a unique state ID. Only the lowest 10 bits are used. */
+			u32 GetId() const { return mId; }
 
-		/**	Creates a new depth stencil state using the specified depth stencil state description structure. */
-		static SPtr<DepthStencilState> Create(const DEPTH_STENCIL_STATE_DESC& desc);
+			/**	Creates a new depth stencil state using the specified depth stencil state description structure. */
+			static SPtr<DepthStencilState> Create(const DEPTH_STENCIL_STATE_DESC& desc);
 
-		/**	Returns the default depth stencil state that you may use when no other is available. */
-		static const SPtr<DepthStencilState>& GetDefault();
+			/**	Returns the default depth stencil state that you may use when no other is available. */
+			static const SPtr<DepthStencilState>& GetDefault();
 
-	protected:
-		friend class RenderStateManager;
+		protected:
+			friend class RenderStateManager;
 
-		DepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc, u32 id);
+			DepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc, u32 id);
 
-		/** @copydoc CoreObject::initialize */
-		void Initialize() override;
+			/** @copydoc CoreObject::initialize */
+			void Initialize() override;
 
-		/**	Creates any API-specific state objects. */
-		virtual void CreateInternal() { }
+			/**	Creates any API-specific state objects. */
+			virtual void CreateInternal() {}
 
-		DepthStencilProperties mProperties;
-		u32 mId;
-	};
+			DepthStencilProperties mProperties;
+			u32 mId;
+		};
 
-	/** @} */
-	}
-}
+		/** @} */
+	} // namespace ct
+} // namespace bs
 
 /** @cond STDLIB */
 /** @addtogroup RenderAPI
@@ -243,16 +243,16 @@ namespace bs
 
 namespace std
 {
-/**	Hash value generator for DEPTH_STENCIL_STATE_DESC. */
-template<>
-struct hash<bs::DEPTH_STENCIL_STATE_DESC>
-{
-	size_t operator()(const bs::DEPTH_STENCIL_STATE_DESC& value) const
+	/**	Hash value generator for DEPTH_STENCIL_STATE_DESC. */
+	template <>
+	struct hash<bs::DEPTH_STENCIL_STATE_DESC>
 	{
-		return (size_t)bs::DepthStencilState::GenerateHash(value);
-	}
-};
-}
+		size_t operator()(const bs::DEPTH_STENCIL_STATE_DESC& value) const
+		{
+			return (size_t)bs::DepthStencilState::GenerateHash(value);
+		}
+	};
+} // namespace std
 
 /** @} */
 /** @endcond */

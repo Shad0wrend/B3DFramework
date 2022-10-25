@@ -23,7 +23,10 @@ namespace bs
 	class ParticleEvolver;
 	class ParticleSet;
 
-	namespace ct { class ParticleSystem; }
+	namespace ct
+	{
+		class ParticleSystem;
+	}
 
 	/** @addtogroup Implementation
 	 *  @{
@@ -123,8 +126,9 @@ namespace bs
 		/************************************************************************/
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template<class P>
+		template <class P>
 		void RttiEnumFields(P p);
+
 	public:
 		friend class ParticleDepthCollisonSettingsRTTI;
 		static RTTITypeBase* GetRttiStatic();
@@ -171,9 +175,8 @@ namespace bs
 		 * performance cost. GPU simulation ignores any provided evolvers and instead uses ParticleGpuSimulationSettings
 		 * to customize the GPU simulation.
 		 */
-		BS_SCRIPT_EXPORT(UICategory(Advanced),UIOrder(1))
+		BS_SCRIPT_EXPORT(UICategory(Advanced), UIOrder(1))
 		bool GpuSimulation = false;
-
 
 		/** Determines how is each particle represented on the screen. */
 		BS_SCRIPT_EXPORT(UIOrder(2))
@@ -231,7 +234,7 @@ namespace bs
 	};
 
 	/** Templated common base for both sim and core thread variants of ParticleSystemSettings. */
-	template<bool Core>
+	template <bool Core>
 	struct TParticleSystemSettings : ParticleSystemSettingsBase
 	{
 		using MaterialType = CoreVariantHandleType<Material, Core>;
@@ -242,11 +245,11 @@ namespace bs
 		MaterialType Material;
 
 		/** Mesh used for representing individual particles when using the Mesh rendering mode. */
-		BS_SCRIPT_EXPORT(LoadOnAssign(true),UIOrder(2))
+		BS_SCRIPT_EXPORT(LoadOnAssign(true), UIOrder(2))
 		MeshType Mesh;
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template<class P>
+		template <class P>
 		void RttiEnumFields(P processor);
 	};
 
@@ -310,7 +313,7 @@ namespace bs
 	};
 
 	/** Templated common base for both sim and core thread variants of ParticleVectorFieldSettings. */
-	template<bool Core>
+	template <bool Core>
 	struct TParticleVectorFieldSettings : ParticleVectorFieldSettingsBase
 	{
 		/** Vector field resource used for influencing the particles. */
@@ -318,7 +321,7 @@ namespace bs
 		CoreVariantHandleType<VectorField, Core> VectorField;
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template<class P>
+		template <class P>
 		void RttiEnumFields(P processor);
 	};
 
@@ -329,7 +332,8 @@ namespace bs
 
 	/** Settings used for controlling a vector field in a GPU simulated particle system. */
 	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles))
-	ParticleVectorFieldSettings : TParticleVectorFieldSettings<false>, IReflectable
+		ParticleVectorFieldSettings : TParticleVectorFieldSettings<false>,
+									  IReflectable
 	{
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -345,15 +349,19 @@ namespace bs
 	{
 		/** Core thread counterpart of bs::ParticleVectorFieldSettings. */
 		struct ParticleVectorFieldSettings : TParticleVectorFieldSettings<true>
-		{ };
-	}
+		{};
+	} // namespace ct
 
 	/** @} */
 	/** @addtogroup Implementation
 	 *  @{
 	 */
 
-	template<> struct CoreThreadType<ParticleVectorFieldSettings> { typedef ct::ParticleVectorFieldSettings Type; };
+	template <>
+	struct CoreThreadType<ParticleVectorFieldSettings>
+	{
+		typedef ct::ParticleVectorFieldSettings Type;
+	};
 
 	/** Common base for both sim and core threat variants of ParticleGpuSimulationSettings. */
 	struct ParticleGpuSimulationSettingsBase
@@ -380,14 +388,14 @@ namespace bs
 	};
 
 	/** Templated common base for both sim and core threat variants of ParticleGpuSimulationSettings. */
-	template<bool Core>
+	template <bool Core>
 	struct TParticleGpuSimulationSettings : ParticleGpuSimulationSettingsBase
 	{
 		BS_SCRIPT_EXPORT()
 		CoreVariantType<ParticleVectorFieldSettings, Core> VectorField;
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template<class P>
+		template <class P>
 		void RttiEnumFields(P processor);
 	};
 
@@ -398,7 +406,8 @@ namespace bs
 
 	/** Generic settings used for controlling a ParticleSystem. */
 	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles))
-	ParticleSystemSettings : TParticleSystemSettings<false>, IReflectable
+		ParticleSystemSettings : TParticleSystemSettings<false>,
+								 IReflectable
 	{
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -411,7 +420,8 @@ namespace bs
 
 	/** Settings used for controlling particle system GPU simulation. */
 	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles))
-	ParticleGpuSimulationSettings : TParticleGpuSimulationSettings<false>, IReflectable
+		ParticleGpuSimulationSettings : TParticleGpuSimulationSettings<false>,
+										IReflectable
 	{
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -434,11 +444,13 @@ namespace bs
 		class VectorField;
 
 		/** Core thread counterpart of bs::ParticleSystemSettings. */
-		struct ParticleSystemSettings : TParticleSystemSettings<true> { };
+		struct ParticleSystemSettings : TParticleSystemSettings<true>
+		{};
 
 		/** Core thread counterpart of bs::ParticleVectorFieldSettings. */
-		struct ParticleGpuSimulationSettings : TParticleGpuSimulationSettings<true> { };
-	}
+		struct ParticleGpuSimulationSettings : TParticleGpuSimulationSettings<true>
+		{};
+	} // namespace ct
 
 	/** @} */
 
@@ -554,7 +566,10 @@ namespace bs
 		/** States the particle system can be in. */
 		enum class State
 		{
-			Uninitialized, Stopped, Paused, Playing
+			Uninitialized,
+			Stopped,
+			Paused,
+			Playing
 		};
 
 		ParticleSystem();
@@ -606,7 +621,7 @@ namespace bs
 		void PostSimulate(const ParticleSystemState& state, u32 startIdx, u32 count, bool spacing, float spacingOffset);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		/** @copydoc SceneActor::_markCoreDirty */
 		void MarkCoreDirtyInternal(ActorDirtyFlag flag = ActorDirtyFlag::Everything) override;
@@ -615,7 +630,7 @@ namespace bs
 		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		/** @copydoc CoreObject::getCoreDependencies */
-		void GetCoreDependencies(Vector<CoreObject*>& dependencies) ;
+		void GetCoreDependencies(Vector<CoreObject*>& dependencies);
 
 		/**	Creates a new ParticleSystem instance without initializing it. */
 		static SPtr<ParticleSystem> CreateEmpty();
@@ -689,12 +704,13 @@ namespace bs
 
 			/** @copydoc CoreObject::initialize */
 			void Initialize() override;
+
 		private:
 			friend class bs::ParticleSystem;
 
 			ParticleSystem(u32 id)
-				:mId(id)
-			{ }
+				: mId(id)
+			{}
 
 			/** @copydoc CoreObject::syncToCore */
 			void SyncToCore(const CoreSyncData& data) override;
@@ -706,7 +722,7 @@ namespace bs
 			ParticleGpuSimulationSettings mGpuSimulationSettings;
 			u64 mLayer = 1;
 		};
-	}
+	} // namespace ct
 
 	/** @} */
-}
+} // namespace bs

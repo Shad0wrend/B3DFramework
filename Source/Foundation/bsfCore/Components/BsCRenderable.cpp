@@ -18,7 +18,7 @@ namespace bs
 	}
 
 	CRenderable::CRenderable(const HSceneObject& parent)
-		:Component(parent)
+		: Component(parent)
 	{
 		SetName("Renderable");
 		SetFlag(ComponentFlag::AlwaysRun, true);
@@ -28,7 +28,7 @@ namespace bs
 	{
 		mInternal->SetMesh(mesh);
 
-		if (mAnimation != nullptr)
+		if(mAnimation != nullptr)
 			mAnimation->UpdateBoundsInternal(false);
 	}
 
@@ -36,7 +36,7 @@ namespace bs
 	{
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->Initialize();
 		else
 			mInternal = Renderable::Create();
@@ -44,7 +44,7 @@ namespace bs
 		gSceneManager().BindActorInternal(mInternal, SceneObject());
 
 		mAnimation = SO()->GetComponent<CAnimation>();
-		if (mAnimation != nullptr)
+		if(mAnimation != nullptr)
 		{
 			RegisterAnimationInternal(mAnimation);
 			mAnimation->RegisterRenderableInternal(static_object_cast<CRenderable>(mThisHandle));
@@ -68,7 +68,7 @@ namespace bs
 	{
 		mAnimation = animation;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 		{
 			mInternal->SetAnimation(animation->GetInternalInternal());
 
@@ -94,12 +94,11 @@ namespace bs
 
 	void CRenderable::Update()
 	{
-
 	}
 
 	void CRenderable::OnDestroyed()
 	{
-		if (mAnimation != nullptr)
+		if(mAnimation != nullptr)
 			mAnimation->UnregisterRenderableInternal();
 
 		gSceneManager().UnbindActorInternal(mInternal);
@@ -115,4 +114,4 @@ namespace bs
 	{
 		return CRenderable::GetRttiStatic();
 	}
-}
+} // namespace bs

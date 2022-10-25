@@ -9,4 +9,4 @@ namespace bs
 	{
 		return scene.CreateSliderJoint(desc);
 	}
-}
+} // namespace bs

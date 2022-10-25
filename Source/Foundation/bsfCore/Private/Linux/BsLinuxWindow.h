@@ -171,4 +171,4 @@ namespace bs
 
 	/** @} */
 	/** @} */
-}
+} // namespace bs

@@ -17,4 +17,4 @@ namespace bs
 	{
 		return ShaderImportOptions::GetRttiStatic();
 	}
-}
+} // namespace bs

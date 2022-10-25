@@ -32,17 +32,16 @@ namespace bs
 		struct DragAndDropOp
 		{
 			DragAndDropOp(DragAndDropOpType type, DropTarget* target)
-					:type(type), target(target)
-			{ }
+				: type(type), target(target)
+			{}
 
 			DragAndDropOp(DragAndDropOpType type, DropTarget* target, const Vector2I& pos)
-				:type(type), target(target), position(pos)
-			{ }
+				: type(type), target(target), position(pos)
+			{}
 
-			DragAndDropOp(DragAndDropOpType type, DropTarget* target, const Vector2I& pos,
-				const Vector<Path>& fileList)
-				:type(type), target(target), position(pos), fileList(fileList)
-			{ }
+			DragAndDropOp(DragAndDropOpType type, DropTarget* target, const Vector2I& pos, const Vector<Path>& fileList)
+				: type(type), target(target), position(pos), fileList(fileList)
+			{}
 
 			DragAndDropOpType type;
 			DropTarget* target;
@@ -54,8 +53,8 @@ namespace bs
 		struct DropArea
 		{
 			DropArea(DropTarget* target, const Rect2I& area)
-				:target(target), area(area)
-			{ }
+				: target(target), area(area)
+			{}
 
 			DropTarget* target;
 			Rect2I area;
@@ -73,8 +72,8 @@ namespace bs
 		struct DropAreaOp
 		{
 			DropAreaOp(DropTarget* target, DropAreaOpType type, const Rect2I& area = Rect2I::EMPTY)
-				:target(target), area(area), type(type)
-			{ }
+				: target(target), area(area), type(type)
+			{}
 
 			DropTarget* target;
 			Rect2I area;
@@ -183,5 +182,4 @@ namespace bs
 		// Other
 		static Atom sPRIMARY;
 	};
-}
-
+} // namespace bs

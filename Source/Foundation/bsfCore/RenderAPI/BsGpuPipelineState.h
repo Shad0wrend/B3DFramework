@@ -29,45 +29,45 @@ namespace bs
 
 	namespace ct
 	{
-	/** @addtogroup RenderAPI-Internal
-	 *  @{
-	 */
+		/** @addtogroup RenderAPI-Internal
+		 *  @{
+		 */
 
-	/** Descriptor structure used for initializing a GPU pipeline state. */
-	struct PIPELINE_STATE_DESC
-	{
-		SPtr<BlendState> BlendState;
-		SPtr<RasterizerState> RasterizerState;
-		SPtr<DepthStencilState> DepthStencilState;
+		/** Descriptor structure used for initializing a GPU pipeline state. */
+		struct PIPELINE_STATE_DESC
+		{
+			SPtr<BlendState> BlendState;
+			SPtr<RasterizerState> RasterizerState;
+			SPtr<DepthStencilState> DepthStencilState;
 
-		SPtr<GpuProgram> VertexProgram;
-		SPtr<GpuProgram> FragmentProgram;
-		SPtr<GpuProgram> GeometryProgram;
-		SPtr<GpuProgram> HullProgram;
-		SPtr<GpuProgram> DomainProgram;
-	};
+			SPtr<GpuProgram> VertexProgram;
+			SPtr<GpuProgram> FragmentProgram;
+			SPtr<GpuProgram> GeometryProgram;
+			SPtr<GpuProgram> HullProgram;
+			SPtr<GpuProgram> DomainProgram;
+		};
 
-	/** @} */
-	}
+		/** @} */
+	} // namespace ct
 
 	/** @addtogroup Implementation
 	 *  @{
 	 */
 
 	/** Contains all data used by a GPU pipeline state, templated so it may contain both core and sim thread data. */
-	template<bool Core>
+	template <bool Core>
 	struct TGpuPipelineStateTypes
-	{ };
+	{};
 
-	template<>
-	struct TGpuPipelineStateTypes < false >
+	template <>
+	struct TGpuPipelineStateTypes<false>
 	{
 		typedef GpuPipelineParamInfo GpuPipelineParamInfoType;
 		typedef PIPELINE_STATE_DESC StateDescType;
 	};
 
-	template<>
-	struct TGpuPipelineStateTypes < true >
+	template <>
+	struct TGpuPipelineStateTypes<true>
 	{
 		typedef ct::GpuPipelineParamInfo GpuPipelineParamInfoType;
 		typedef ct::PIPELINE_STATE_DESC StateDescType;
@@ -77,7 +77,7 @@ namespace bs
 	 * Templated version of GraphicsPipelineState so it can be used for both core and non-core versions of the pipeline
 	 * state.
 	 */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TGraphicsPipelineState
 	{
 	public:
@@ -91,19 +91,29 @@ namespace bs
 		virtual ~TGraphicsPipelineState() = default;
 
 		bool HasVertexProgram() const { return mData.VertexProgram != nullptr; }
+
 		bool HasFragmentProgram() const { return mData.FragmentProgram != nullptr; }
+
 		bool HasGeometryProgram() const { return mData.GeometryProgram != nullptr; }
+
 		bool HasHullProgram() const { return mData.HullProgram != nullptr; }
+
 		bool HasDomainProgram() const { return mData.DomainProgram != nullptr; }
 
 		BlendStateType GetBlendState() const { return mData.BlendState; }
+
 		RasterizerStateType GetRasterizerState() const { return mData.RasterizerState; }
+
 		DepthStencilStateType GetDepthStencilState() const { return mData.DepthStencilState; }
 
 		const GpuProgramType& GetVertexProgram() const { return mData.VertexProgram; }
+
 		const GpuProgramType& GetFragmentProgram() const { return mData.FragmentProgram; }
+
 		const GpuProgramType& GetGeometryProgram() const { return mData.GeometryProgram; }
+
 		const GpuProgramType& GetHullProgram() const { return mData.HullProgram; }
+
 		const GpuProgramType& GetDomainProgram() const { return mData.DomainProgram; }
 
 		/** Returns an object containing meta-data for parameters of all GPU programs used in this pipeline state. */
@@ -121,7 +131,7 @@ namespace bs
 	 * Templated version of ComputePipelineState so it can be used for both core and non-core versions of the pipeline
 	 * state.
 	 */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TComputePipelineState
 	{
 	public:
@@ -168,6 +178,7 @@ namespace bs
 
 		/** @copydoc RenderStateManager::createGraphicsPipelineState */
 		static SPtr<GraphicsPipelineState> Create(const PIPELINE_STATE_DESC& desc);
+
 	protected:
 		friend class RenderStateManager;
 
@@ -196,6 +207,7 @@ namespace bs
 
 		/** @copydoc RenderStateManager::createComputePipelineState */
 		static SPtr<ComputePipelineState> Create(const SPtr<GpuProgram>& program);
+
 	protected:
 		friend class RenderStateManager;
 
@@ -209,46 +221,44 @@ namespace bs
 
 	namespace ct
 	{
-	/** @addtogroup RenderAPI-Internal
-	 *  @{
-	 */
+		/** @addtogroup RenderAPI-Internal
+		 *  @{
+		 */
 
-	/** Core thread version of a bs::GraphicsPipelineState. */
-	class BS_CORE_EXPORT GraphicsPipelineState : public CoreObject, public TGraphicsPipelineState<true>
-	{
-	public:
-		GraphicsPipelineState(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask);
-		virtual ~GraphicsPipelineState() = default;
+		/** Core thread version of a bs::GraphicsPipelineState. */
+		class BS_CORE_EXPORT GraphicsPipelineState : public CoreObject, public TGraphicsPipelineState<true>
+		{
+		public:
+			GraphicsPipelineState(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask);
+			virtual ~GraphicsPipelineState() = default;
 
-		/** @copydoc CoreObject::Initialize() */
-		void Initialize() override;
+			/** @copydoc CoreObject::Initialize() */
+			void Initialize() override;
 
-		/** @copydoc RenderStateManager::createGraphicsPipelineState */
-		static SPtr<GraphicsPipelineState> Create(const PIPELINE_STATE_DESC& desc,
-			GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			/** @copydoc RenderStateManager::createGraphicsPipelineState */
+			static SPtr<GraphicsPipelineState> Create(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
-	protected:
-		GpuDeviceFlags mDeviceMask;
-	};
+		protected:
+			GpuDeviceFlags mDeviceMask;
+		};
 
-	/** Core thread version of a bs::ComputePipelineState. */
-	class BS_CORE_EXPORT ComputePipelineState : public CoreObject, public TComputePipelineState<true>
-	{
-	public:
-		ComputePipelineState(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask);
-		virtual ~ComputePipelineState() = default;
+		/** Core thread version of a bs::ComputePipelineState. */
+		class BS_CORE_EXPORT ComputePipelineState : public CoreObject, public TComputePipelineState<true>
+		{
+		public:
+			ComputePipelineState(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask);
+			virtual ~ComputePipelineState() = default;
 
-		/** @copydoc CoreObject::Initialize() */
-		void Initialize() override;
+			/** @copydoc CoreObject::Initialize() */
+			void Initialize() override;
 
-		/** @copydoc RenderStateManager::createComputePipelineState */
-		static SPtr<ComputePipelineState> Create(const SPtr<GpuProgram>& program,
-			GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			/** @copydoc RenderStateManager::createComputePipelineState */
+			static SPtr<ComputePipelineState> Create(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
-	protected:
-		GpuDeviceFlags mDeviceMask;
-	};
+		protected:
+			GpuDeviceFlags mDeviceMask;
+		};
 
-	/** @} */
-	}
-}
+		/** @} */
+	} // namespace ct
+} // namespace bs

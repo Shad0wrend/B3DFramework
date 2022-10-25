@@ -10,14 +10,13 @@
 namespace bs
 {
 	Prefab::Prefab()
-		:Resource(false)
+		: Resource(false)
 	{
-		
 	}
 
 	Prefab::~Prefab()
 	{
-		if (mRoot != nullptr)
+		if(mRoot != nullptr)
 			mRoot->Destroy(true);
 	}
 
@@ -39,7 +38,7 @@ namespace bs
 
 	SPtr<Prefab> Prefab::CreateEmpty()
 	{
-		SPtr<Prefab> newPrefab = bs_core_ptr<Prefab>(new (bs_alloc<Prefab>()) Prefab());
+		SPtr<Prefab> newPrefab = bs_core_ptr<Prefab>(new(bs_alloc<Prefab>()) Prefab());
 		newPrefab->SetThisPtrInternal(newPrefab);
 
 		return newPrefab;
@@ -54,17 +53,17 @@ namespace bs
 		Stack<HSceneObject> todo;
 		todo.push(sceneObject);
 
-		while (!todo.empty())
+		while(!todo.empty())
 		{
 			HSceneObject current = todo.top();
 			todo.pop();
 
 			u32 childCount = current->GetNumChildren();
-			for (u32 i = 0; i < childCount; i++)
+			for(u32 i = 0; i < childCount; i++)
 			{
 				HSceneObject child = current->GetChild(i);
 
-				if (!child->mPrefabLinkUUID.Empty())
+				if(!child->mPrefabLinkUUID.Empty())
 					PrefabUtility::RecordPrefabDiff(child);
 				else
 					todo.push(child);
@@ -72,7 +71,7 @@ namespace bs
 		}
 
 		// Clone the hierarchy for internal storage
-		if (mRoot != nullptr)
+		if(mRoot != nullptr)
 			mRoot->Destroy(true);
 
 		mRoot = sceneObject->Clone(false, true);
@@ -82,17 +81,17 @@ namespace bs
 		// Remove objects with "dont save" flag
 		todo.push(mRoot);
 
-		while (!todo.empty())
+		while(!todo.empty())
 		{
 			HSceneObject current = todo.top();
 			todo.pop();
 
-			if (current->HasFlag(SOF_DontSave))
+			if(current->HasFlag(SOF_DontSave))
 				current->Destroy();
 			else
 			{
 				u32 numChildren = current->GetNumChildren();
-				for (u32 i = 0; i < numChildren; i++)
+				for(u32 i = 0; i < numChildren; i++)
 					todo.push(current->GetChild(i));
 			}
 		}
@@ -112,17 +111,17 @@ namespace bs
 		Stack<HSceneObject> todo;
 		todo.push(mRoot);
 
-		while (!todo.empty())
+		while(!todo.empty())
 		{
 			HSceneObject current = todo.top();
 			todo.pop();
 
 			u32 childCount = current->GetNumChildren();
-			for (u32 i = 0; i < childCount; i++)
+			for(u32 i = 0; i < childCount; i++)
 			{
 				HSceneObject child = current->GetChild(i);
 
-				if (!child->mPrefabLinkUUID.Empty())
+				if(!child->mPrefabLinkUUID.Empty())
 					PrefabUtility::UpdateFromPrefab(child);
 				else
 					todo.push(child);
@@ -132,11 +131,11 @@ namespace bs
 
 	HSceneObject Prefab::InstantiateInternal(bool preserveUUIDs) const
 	{
-		if (mRoot == nullptr)
+		if(mRoot == nullptr)
 			return HSceneObject();
 
 #if BS_IS_BANSHEE3D
-		if (gCoreApplication().IsEditor())
+		if(gCoreApplication().IsEditor())
 		{
 			// Update any child prefab instances in case their prefabs changed
 			UpdateChildInstancesInternal();
@@ -145,13 +144,13 @@ namespace bs
 
 		HSceneObject clone = CloneInternal(preserveUUIDs);
 		clone->InstantiateInternal();
-		
+
 		return clone;
 	}
 
 	HSceneObject Prefab::CloneInternal(bool preserveUUIDs) const
 	{
-		if (mRoot == nullptr)
+		if(mRoot == nullptr)
 			return HSceneObject();
 
 		mRoot->mPrefabHash = mHash;
@@ -169,4 +168,4 @@ namespace bs
 	{
 		return Prefab::GetRttiStatic();
 	}
-}
+} // namespace bs

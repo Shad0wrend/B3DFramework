@@ -34,28 +34,29 @@ namespace bs
 		}
 
 		u32 GetNumDefines(ShaderImportOptions* obj) { return (u32)obj->mDefines.size(); }
-		void SetNumDefines(ShaderImportOptions* obj, u32 val) { /* Do nothing */ }
+
+		void SetNumDefines(ShaderImportOptions* obj, u32 val)
+		{ /* Do nothing */
+		}
 
 	public:
 		ShaderImportOptionsRTTI()
 		{
-			AddPlainArrayField("mDefines", 0, &ShaderImportOptionsRTTI::GetDefinePair,
-				&ShaderImportOptionsRTTI::GetNumDefines, &ShaderImportOptionsRTTI::SetDefinePair,
-				&ShaderImportOptionsRTTI::SetNumDefines);
+			AddPlainArrayField("mDefines", 0, &ShaderImportOptionsRTTI::GetDefinePair, &ShaderImportOptionsRTTI::GetNumDefines, &ShaderImportOptionsRTTI::SetDefinePair, &ShaderImportOptionsRTTI::SetNumDefines);
 		}
 
 		/** @copydoc ShaderImportOptionsRTTI::onSerializationStarted */
-		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) 
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context)
 		{
 			ShaderImportOptions* importOptions = static_cast<ShaderImportOptions*>(obj);
 
 			UnorderedMap<String, String>& defines = importOptions->mDefines;
-			for (auto& entry : defines)
+			for(auto& entry : defines)
 				mDefinePairs.push_back(entry);
 		}
 
 		/** @copydoc RTTIType::getRTTIName */
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "ShaderImportOptions";
 			return name;
@@ -68,7 +69,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIType::NewRttiObject */
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<ShaderImportOptions>();
 		}
@@ -79,4 +80,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

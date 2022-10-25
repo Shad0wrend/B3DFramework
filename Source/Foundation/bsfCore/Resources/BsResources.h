@@ -44,15 +44,16 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Resources),API(Framework)) Resources : public Module<Resources>
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Resources), API(Framework)) Resources : public Module<Resources>
 	{
 		/** Information about a loaded resource. */
 		struct LoadedResourceData
 		{
 			LoadedResourceData() = default;
+
 			LoadedResourceData(const WeakResourceHandle<Resource>& resource, u32 size)
-				:Resource(resource), Size(size)
-			{ }
+				: Resource(resource), Size(size)
+			{}
 
 			WeakResourceHandle<Resource> Resource;
 			u32 NumInternalRefs = 0;
@@ -63,8 +64,8 @@ namespace bs
 		struct ResourceLoadData
 		{
 			ResourceLoadData(const WeakResourceHandle<Resource>& resource, u32 numDependencies, u32 size)
-				:ResData(resource, size), RemainingDependencies(numDependencies)
-			{ }
+				: ResData(resource, size), RemainingDependencies(numDependencies)
+			{}
 
 			LoadedResourceData ResData;
 			SPtr<Resource> LoadedData;
@@ -83,7 +84,13 @@ namespace bs
 		/** Information about an issued resource load. */
 		struct LoadInfo
 		{
-			enum State { Loading, Failed, AlreadyInProgress, AlreadyLoaded };
+			enum State
+			{
+				Loading,
+				Failed,
+				AlreadyInProgress,
+				AlreadyLoaded
+			};
 
 			HResource Resource;
 			u32 Size;
@@ -97,11 +104,11 @@ namespace bs
 		/**
 		 * Loads the resource from a given path. Returns an empty handle if resource can't be loaded. Resource is loaded
 		 * synchronously.
-		 *			
+		 *
 		 * @param[in]	filePath	File path to the resource to load. This can be absolute or relative to the working
 		 *							folder.
 		 * @param[in]	loadFlags	Flags used to control the load process.
-		 *			
+		 *
 		 * @see		release(ResourceHandleBase&), unloadAllUnused()
 		 */
 		BS_SCRIPT_EXPORT()
@@ -116,7 +123,7 @@ namespace bs
 
 		/**
 		 * Loads the resource for the provided weak resource handle, or returns a loaded resource if already loaded.
-		 * 			
+		 *
 		 * @see		load(const Path&, ResourceLoadFlags)
 		 */
 		HResource Load(const WeakResourceHandle<Resource>& handle, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
@@ -135,7 +142,7 @@ namespace bs
 		 *
 		 * @param[in]	filePath	Full pathname of the file.
 		 * @param[in]	loadFlags	Flags used to control the load process.
-		 *			
+		 *
 		 * @see		load(const Path&, ResourceLoadFlags)
 		 */
 		BS_SCRIPT_EXPORT()
@@ -153,9 +160,9 @@ namespace bs
 		 *
 		 * @param[in]	uuid		UUID of the resource to load.
 		 * @param[in]	async		If true resource will be loaded asynchronously. Handle to non-loaded resource will be
-		 *							returned immediately while loading will continue in the background.		
+		 *							returned immediately while loading will continue in the background.
 		 * @param[in]	loadFlags	Flags used to control the load process.
-		 *													
+		 *
 		 * @see		load(const Path&, bool)
 		 */
 		BS_SCRIPT_EXPORT()
@@ -168,10 +175,11 @@ namespace bs
 		 * Alternatively you can also skip manually calling release() and call unloadAllUnused() which will unload all
 		 * resources that do not have any external references, but you lose the fine grained control of what will be
 		 * unloaded.
-		 *			
+		 *
 		 * @param[in]	resource	Handle of the resource to release.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		void Release(const HResource& resource) { Release((ResourceHandleBase&)resource); }
 
 		/** @copydoc release(const HResource&) */
@@ -179,7 +187,7 @@ namespace bs
 
 		/**
 		 * Finds all resources that aren't being referenced outside of the resources system and unloads them.
-		 * 			
+		 *
 		 * @see		release(const HResource&)
 		 */
 		BS_SCRIPT_EXPORT()
@@ -197,7 +205,7 @@ namespace bs
 		 * @param[in]	overwrite	If true, any existing resource at the specified location will be overwritten.
 		 * @param[in]	compress	Should the resource be compressed before saving. Some resources have data that is
 		 *							already	compressed and this option will be ignored for such resources.
-		 * 			
+		 *
 		 * @note
 		 * If the resource is used on the GPU and you are in some way modifying it from the core thread, make sure all
 		 * core thread commands are submitted and executed before you call this method. Otherwise an obsolete version of
@@ -252,7 +260,7 @@ namespace bs
 		 *
 		 * @param[in]	uuid			UUID of the resource to check.
 		 * @param[in]	checkInProgress	Should this method also check resources that are in progress of being
-		 *								asynchronously loaded.					
+		 *								asynchronously loaded.
 		 * @return						True if loaded or loading in progress, false otherwise.
 		 */
 		BS_SCRIPT_EXPORT()
@@ -274,7 +282,7 @@ namespace bs
 		 *Allows you to set a resource manifest containing UUID <-> file path mapping that is used when resolving
 		 * resource references.
 		 *
-		 * @note	
+		 * @note
 		 * If you want objects that reference resources (using ResourceHandles) to be able to find that resource even after
 		 * application restart, then you must save the resource manifest before closing the application and restore it
 		 * upon startup. Otherwise resources will be assigned brand new UUIDs and references will be broken.
@@ -289,8 +297,8 @@ namespace bs
 		/**
 		 * Allows you to retrieve resource manifest containing UUID <-> file path mapping that is used when resolving
 		 * resource references.
-		 * 			
-		 * @note	
+		 *
+		 * @note
 		 * Resources module internally holds a "Default" manifest that it automatically updated whenever a resource is saved.
 		 *
 		 * @see		registerResourceManifest
@@ -309,7 +317,7 @@ namespace bs
 		/**
 		 * Called when the resource has been successfully loaded.
 		 *
-		 * @note	
+		 * @note
 		 * It is undefined from which thread this will get called from. Most definitely not the sim thread if resource was
 		 * being loaded asynchronously.
 		 */
@@ -402,4 +410,4 @@ namespace bs
 	BS_CORE_EXPORT Resources& gResources();
 
 	/** @} */
-}
+} // namespace bs

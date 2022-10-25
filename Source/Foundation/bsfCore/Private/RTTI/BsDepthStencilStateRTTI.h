@@ -21,6 +21,7 @@ namespace bs
 	{
 	private:
 		DEPTH_STENCIL_STATE_DESC& GetData(DepthStencilState* obj) { return obj->mProperties.mData; }
+
 		void SetData(DepthStencilState* obj, DEPTH_STENCIL_STATE_DESC& val) { obj->mProperties.mData = val; }
 
 	public:
@@ -46,7 +47,7 @@ namespace bs
 			return TID_DepthStencilState;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return RenderStateManager::Instance().CreateDepthStencilStatePtrInternal(DEPTH_STENCIL_STATE_DESC());
 		}
@@ -54,4 +55,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

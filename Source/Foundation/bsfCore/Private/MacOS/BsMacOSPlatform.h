@@ -7,7 +7,7 @@
 
 // Don't include macOS frameworks when generating script bindings, as it can't find them
 #ifndef BS_SBGEN
-#include <Cocoa/Cocoa.h>
+#	include <Cocoa/Cocoa.h>
 #endif
 
 namespace bs
@@ -107,10 +107,10 @@ namespace bs
 	void flipY(NSScreen* screen, NSRect& rect);
 
 	/** Converts a point in screen space with bottom left origin, to top left origin. */
-	void flipY(NSScreen* screen, NSPoint &point);
+	void flipY(NSScreen* screen, NSPoint& point);
 
 	/** Converts a point in window space with bottom left origin, to top left origin. */
-	void flipYWindow(NSWindow* window, NSPoint &point);
+	void flipYWindow(NSWindow* window, NSPoint& point);
 
 	/** @} */
-}
+} // namespace bs

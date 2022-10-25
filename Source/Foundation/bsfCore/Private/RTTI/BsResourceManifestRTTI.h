@@ -22,6 +22,7 @@ namespace bs
 	{
 	private:
 		String& GetName(ResourceManifest* obj) { return obj->mName; }
+
 		void SetName(ResourceManifest* obj, String& val) { obj->mName = val; }
 
 		UnorderedMap<UUID, Path>& GetUuidMap(ResourceManifest* obj) { return obj->mUUIDToFilePath; }
@@ -37,6 +38,7 @@ namespace bs
 				obj->mFilePathToUUID[entry.second] = entry.first;
 			}
 		}
+
 	public:
 		ResourceManifestRTTI()
 		{
@@ -44,7 +46,7 @@ namespace bs
 			AddPlainField("mUUIDToFilePath", 1, &ResourceManifestRTTI::GetUuidMap, &ResourceManifestRTTI::SetUuidMap);
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "ResourceManifest";
 			return name;
@@ -55,7 +57,7 @@ namespace bs
 			return TID_ResourceManifest;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return ResourceManifest::CreateEmpty();
 		}
@@ -63,4 +65,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

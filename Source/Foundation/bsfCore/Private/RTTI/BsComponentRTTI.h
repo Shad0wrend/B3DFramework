@@ -24,7 +24,7 @@ namespace bs
 
 			// It's possible we're just accessing the game object fields, in which case the process below is not needed
 			// (it's only required for new components).
-			if (comp->mRTTIData.Empty())
+			if(comp->mRTTIData.Empty())
 				return;
 
 			BS_ASSERT(context != nullptr && rtti_is_of_type<CoreSerializationContext>(context));
@@ -34,7 +34,7 @@ namespace bs
 
 			// This shouldn't be null during normal deserialization but could be during some other operations, like applying
 			// a binary diff.
-			if (deserializationData.Ptr != nullptr)
+			if(deserializationData.Ptr != nullptr)
 			{
 				// Register the newly created SO with the GameObjectManager and provide it with the original ID so that
 				// deserialized handles pointing to this object can be resolved.
@@ -46,7 +46,7 @@ namespace bs
 
 			if(comp->mUUID.Empty() || coreContext->GoState->GetUseNewUuiDs())
 				comp->mUUID = UUIDGenerator::GenerateRandom();
-			
+
 			comp->mRTTIData = nullptr;
 		}
 
@@ -70,4 +70,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

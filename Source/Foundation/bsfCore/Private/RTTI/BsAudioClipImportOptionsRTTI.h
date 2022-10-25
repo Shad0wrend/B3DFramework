@@ -25,7 +25,7 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 	public:
 		/** @copydoc RTTIType::getRTTIName */
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "AudioClipImportOptions";
 			return name;
@@ -38,7 +38,7 @@ namespace bs
 		}
 
 		/** @copydoc RTTIType::NewRttiObject */
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<AudioClipImportOptions>();
 		}
@@ -46,4 +46,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

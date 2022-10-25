@@ -11,13 +11,13 @@ namespace bs
 	 */
 
 	/**	Data about a sub-mesh range and the type of primitives contained in the range. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(ExportAsStruct(true),DocumentationGroup(Rendering)) SubMesh
+	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Rendering)) SubMesh
 	{
 		SubMesh() = default;
 
-		SubMesh(u32 indexOffset, u32 indexCount, DrawOperationType drawOp):
-			IndexOffset(indexOffset), IndexCount(indexCount), DrawOp(drawOp)
-		{ }
+		SubMesh(u32 indexOffset, u32 indexCount, DrawOperationType drawOp)
+			: IndexOffset(indexOffset), IndexCount(indexCount), DrawOp(drawOp)
+		{}
 
 		u32 IndexOffset = 0;
 		u32 IndexCount = 0;
@@ -25,4 +25,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

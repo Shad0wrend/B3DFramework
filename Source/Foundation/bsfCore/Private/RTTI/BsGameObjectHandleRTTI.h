@@ -23,7 +23,7 @@ namespace bs
 		{
 			static u64 invalidId = 0;
 
-			if (obj->mData->MPtr != nullptr)
+			if(obj->mData->MPtr != nullptr)
 				return obj->mData->MPtr->MInstanceId;
 
 			return invalidId;
@@ -37,7 +37,7 @@ namespace bs
 			AddPlainField("mInstanceID", 0, &GameObjectHandleRTTI::GetInstanceId, &GameObjectHandleRTTI::SetInstanceId);
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context)
 		{
 			if(context == nullptr || !rtti_is_of_type<CoreSerializationContext>(context))
 				return;
@@ -50,7 +50,7 @@ namespace bs
 			}
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "GameObjectHandleBase";
 			return name;
@@ -61,9 +61,9 @@ namespace bs
 			return TID_GameObjectHandleBase;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
-			SPtr<GameObjectHandleBase> obj = bs_shared_ptr<GameObjectHandleBase>(new (bs_alloc<GameObjectHandleBase>()) GameObjectHandleBase());
+			SPtr<GameObjectHandleBase> obj = bs_shared_ptr<GameObjectHandleBase>(new(bs_alloc<GameObjectHandleBase>()) GameObjectHandleBase());
 
 			return obj;
 		}
@@ -74,4 +74,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

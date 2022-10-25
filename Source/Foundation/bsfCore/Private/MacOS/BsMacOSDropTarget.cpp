@@ -75,7 +75,7 @@ namespace bs
 					break;
 				case DropAreaOpType::Unregister:
 					// Remove any operations queued for this target
-					for(auto iter = sQueuedOperations.begin(); iter !=sQueuedOperations.end();)
+					for(auto iter = sQueuedOperations.begin(); iter != sQueuedOperations.end();)
 					{
 						if(iter->target == entry.target)
 							iter = sQueuedOperations.erase(iter);
@@ -86,9 +86,7 @@ namespace bs
 					// Remove the area
 					{
 						auto iterFind = std::find_if(sDropAreas.begin(), sDropAreas.end(), [&](const DropArea& area)
-						{
-							return area.target == entry.target;
-						});
+													 { return area.target == entry.target; });
 
 						sDropAreas.erase(iterFind);
 					}
@@ -97,15 +95,13 @@ namespace bs
 
 					break;
 				case DropAreaOpType::Update:
-				{
-					auto iterFind = std::find_if(sDropAreas.begin(), sDropAreas.end(), [&](const DropArea& area)
 					{
-						return area.target == entry.target;
-					});
+						auto iterFind = std::find_if(sDropAreas.begin(), sDropAreas.end(), [&](const DropArea& area)
+													 { return area.target == entry.target; });
 
-					if (iterFind != sDropAreas.end())
-						iterFind->area = entry.area;
-				}
+						if(iterFind != sDropAreas.end())
+							iterFind->area = entry.area;
+					}
 					break;
 				}
 			}
@@ -125,20 +121,20 @@ namespace bs
 		{
 			switch(op.type)
 			{
-				case DragAndDropOpType::Enter:
-					op.target->onEnter(op.position.x, op.position.y);
-					break;
-				case DragAndDropOpType::DragOver:
-					op.target->onDragOver(op.position.x, op.position.y);
-					break;
-				case DragAndDropOpType::Drop:
-					op.target->SetFileListInternal(op.fileList);
-					op.target->onDrop(op.position.x, op.position.y);
-					break;
-				case DragAndDropOpType::Leave:
-					op.target->ClearInternal();
-					op.target->onLeave();
-					break;
+			case DragAndDropOpType::Enter:
+				op.target->onEnter(op.position.x, op.position.y);
+				break;
+			case DragAndDropOpType::DragOver:
+				op.target->onDragOver(op.position.x, op.position.y);
+				break;
+			case DragAndDropOpType::Drop:
+				op.target->SetFileListInternal(op.fileList);
+				op.target->onDrop(op.position.x, op.position.y);
+				break;
+			case DragAndDropOpType::Leave:
+				op.target->ClearInternal();
+				op.target->onLeave();
+				break;
 			}
 		}
 	}
@@ -160,8 +156,7 @@ namespace bs
 				if(!entry.target->IsActiveInternal())
 				{
 					Lock lock(sMutex);
-					sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::Enter, entry.target,
-						position));
+					sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::Enter, entry.target, position));
 
 					entry.target->SetActiveInternal(true);
 				}
@@ -185,13 +180,14 @@ namespace bs
 			if(areaWindowId != windowId)
 				continue;
 
-			if (entry.area.contains(position))
+			if(entry.area.contains(position))
 			{
-				if (entry.target->IsActiveInternal())
+				if(entry.target->IsActiveInternal())
 				{
 					Lock lock(sMutex);
 					sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::DragOver, entry.target, position));
-				} else
+				}
+				else
 				{
 					Lock lock(sMutex);
 					sQueuedOperations.push_back(DragAndDropOp(DragAndDropOpType::Enter, entry.target, position));
@@ -203,7 +199,7 @@ namespace bs
 			else
 			{
 				// Cursor left previously active target's area
-				if (entry.target->IsActiveInternal())
+				if(entry.target->IsActiveInternal())
 				{
 					{
 						Lock lock(sMutex);
@@ -265,5 +261,4 @@ namespace bs
 
 		return eventAccepted;
 	}
-}
-
+} // namespace bs

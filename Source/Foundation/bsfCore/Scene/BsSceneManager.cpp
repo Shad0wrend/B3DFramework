@@ -26,23 +26,22 @@ namespace bs
 
 	struct ScopeToggle
 	{
-		ScopeToggle(bool& val) :val(val) { val = true; }
-		~ScopeToggle() { val = false;}
+		ScopeToggle(bool& val)
+			: val(val) { val = true; }
+
+		~ScopeToggle() { val = false; }
 
 	private:
 		bool& val;
 	};
 
-	SceneInstance::SceneInstance(ConstructPrivately dummy, const String& name, const HSceneObject& root,
-		const SPtr<PhysicsScene>& physicsScene)
-		:mName(name), mRoot(root), mPhysicsScene(physicsScene)
-	{ }
+	SceneInstance::SceneInstance(ConstructPrivately dummy, const String& name, const HSceneObject& root, const SPtr<PhysicsScene>& physicsScene)
+		: mName(name), mRoot(root), mPhysicsScene(physicsScene)
+	{}
 
 	SceneManager::SceneManager()
 		: mMainScene(
-			bs_shared_ptr_new<SceneInstance>(SceneInstance::ConstructPrivately(), "Main",
-				SceneObject::CreateInternal("SceneRoot"),
-				gPhysics().CreatePhysicsScene()))
+			  bs_shared_ptr_new<SceneInstance>(SceneInstance::ConstructPrivately(), "Main", SceneObject::CreateInternal("SceneRoot"), gPhysics().CreatePhysicsScene()))
 	{
 		mMainScene->mRoot->SetScene(mMainScene);
 	}
@@ -51,7 +50,7 @@ namespace bs
 	{
 		mMainScene->mPhysicsScene = nullptr;
 
-		if (mMainScene->mRoot != nullptr && !mMainScene->mRoot.IsDestroyed())
+		if(mMainScene->mRoot != nullptr && !mMainScene->mRoot.IsDestroyed())
 			mMainScene->mRoot->Destroy(true);
 	}
 
@@ -60,11 +59,11 @@ namespace bs
 		u32 numChildren = mMainScene->mRoot->GetNumChildren();
 
 		u32 curIdx = 0;
-		for (u32 i = 0; i < numChildren; i++)
+		for(u32 i = 0; i < numChildren; i++)
 		{
 			HSceneObject child = mMainScene->mRoot->GetChild(curIdx);
 
-			if (forceAll || !child->HasFlag(SOF_Persistent))
+			if(forceAll || !child->HasFlag(SOF_Persistent))
 				child->Destroy();
 			else
 				curIdx++;
@@ -90,7 +89,7 @@ namespace bs
 
 	void SceneManager::SetRootNodeInternal(const HSceneObject& root)
 	{
-		if (root == nullptr)
+		if(root == nullptr)
 			return;
 
 		HSceneObject oldRoot = mMainScene->mRoot;
@@ -101,15 +100,15 @@ namespace bs
 		bs_frame_mark();
 		{
 			FrameVector<HSceneObject> toRemove;
-			for (u32 i = 0; i < numChildren; i++)
+			for(u32 i = 0; i < numChildren; i++)
 			{
 				HSceneObject child = oldRoot->GetChild(i);
 
-				if (child->HasFlag(SOF_Persistent))
+				if(child->HasFlag(SOF_Persistent))
 					toRemove.push_back(child);
 			}
 
-			for (auto& entry : toRemove)
+			for(auto& entry : toRemove)
 				entry->SetParent(root, false);
 		}
 		bs_frame_clear();
@@ -135,10 +134,10 @@ namespace bs
 	HSceneObject SceneManager::GetActorSOInternal(const SPtr<SceneActor>& actor) const
 	{
 		auto iterFind = mBoundActors.find(actor.get());
-		if (iterFind != mBoundActors.end())
+		if(iterFind != mBoundActors.end())
 			return iterFind->second.So;
 
-		return HSceneObject();		
+		return HSceneObject();
 	}
 
 	void SceneManager::RegisterCameraInternal(const SPtr<Camera>& camera)
@@ -150,51 +149,45 @@ namespace bs
 	{
 		mCameras.erase(camera.get());
 
-		auto iterFind = std::find_if(mMainCameras.begin(), mMainCameras.end(),
-			[&](const SPtr<Camera>& x)
-		{
-			return x == camera;
-		});
+		auto iterFind = std::find_if(mMainCameras.begin(), mMainCameras.end(), [&](const SPtr<Camera>& x)
+									 { return x == camera; });
 
-		if (iterFind != mMainCameras.end())
+		if(iterFind != mMainCameras.end())
 			mMainCameras.erase(iterFind);
 	}
 
 	void SceneManager::NotifyMainCameraStateChangedInternal(const SPtr<Camera>& camera)
 	{
-		auto iterFind = std::find_if(mMainCameras.begin(), mMainCameras.end(),
-			[&](const SPtr<Camera>& entry)
-		{
-			return entry == camera;
-		});
+		auto iterFind = std::find_if(mMainCameras.begin(), mMainCameras.end(), [&](const SPtr<Camera>& entry)
+									 { return entry == camera; });
 
 		SPtr<Viewport> viewport = camera->GetViewport();
-		if (camera->IsMain())
+		if(camera->IsMain())
 		{
-			if (iterFind == mMainCameras.end())
+			if(iterFind == mMainCameras.end())
 				mMainCameras.push_back(mCameras[camera.get()]);
 
 			viewport->SetTarget(mMainRT);
 		}
 		else
 		{
-			if (iterFind != mMainCameras.end())
+			if(iterFind != mMainCameras.end())
 				mMainCameras.erase(iterFind);
 
-			if (viewport->GetTarget() == mMainRT)
+			if(viewport->GetTarget() == mMainRT)
 				viewport->SetTarget(nullptr);
 		}
 	}
 
 	void SceneManager::UpdateCoreObjectTransformsInternal()
 	{
-		for (auto& entry : mBoundActors)
+		for(auto& entry : mBoundActors)
 			entry.second.Actor->UpdateStateInternal(*entry.second.So);
 	}
 
 	SPtr<Camera> SceneManager::GetMainCamera() const
 	{
-		if (mMainCameras.size() > 0)
+		if(mMainCameras.size() > 0)
 			return mMainCameras[0];
 
 		return nullptr;
@@ -202,24 +195,24 @@ namespace bs
 
 	void SceneManager::SetMainRenderTarget(const SPtr<RenderTarget>& rt)
 	{
-		if (mMainRT == rt)
+		if(mMainRT == rt)
 			return;
 
 		mMainRTResizedConn.Disconnect();
 
-		if (rt != nullptr)
+		if(rt != nullptr)
 			mMainRTResizedConn = rt->OnResized.Connect(std::bind(&SceneManager::OnMainRenderTargetResized, this));
 
 		mMainRT = rt;
 
 		float aspect = 1.0f;
-		if (rt != nullptr)
+		if(rt != nullptr)
 		{
 			auto& rtProps = rt->GetProperties();
 			aspect = rtProps.Width / (float)rtProps.Height;
 		}
 
-		for (auto& entry : mMainCameras)
+		for(auto& entry : mMainCameras)
 		{
 			entry->GetViewport()->SetTarget(rt);
 			entry->SetAspectRatio(aspect);
@@ -231,11 +224,11 @@ namespace bs
 		if(mDisableStateChange)
 		{
 			BS_LOG(Warning, Scene, "Component state cannot be changed from the calling locating. "
-				"Are you calling it from Component callbacks?");
+								   "Are you calling it from Component callbacks?");
 			return;
 		}
 
-		if (mComponentState == state)
+		if(mComponentState == state)
 			return;
 
 		ComponentState oldState = mComponentState;
@@ -256,7 +249,7 @@ namespace bs
 				// Disable, and then re-enable components that have an AlwaysRun flag
 				for(auto& entry : mActiveComponents)
 				{
-					if (entry->SceneObject()->GetActive())
+					if(entry->SceneObject()->GetActive())
 					{
 						entry->OnDisabled();
 						entry->OnEnabled();
@@ -270,7 +263,7 @@ namespace bs
 				// inactive components that have active scene object parents)
 				for(auto& entry : mInactiveComponents)
 				{
-					if (entry->SceneObject()->GetActive())
+					if(entry->SceneObject()->GetActive())
 					{
 						entry->OnEnabled();
 
@@ -287,7 +280,7 @@ namespace bs
 				{
 					entry->OnInitialized();
 
-					if (entry->SceneObject()->GetActive())
+					if(entry->SceneObject()->GetActive())
 					{
 						entry->OnEnabled();
 						mStateChanges.emplace_back(entry, ComponentStateEventType::Activated);
@@ -305,9 +298,9 @@ namespace bs
 		if(state == ComponentState::Paused || state == ComponentState::Stopped)
 		{
 			// Trigger onDisable events if stopping
-			if (state == ComponentState::Stopped)
+			if(state == ComponentState::Stopped)
 			{
-				for (const auto& component : mActiveComponents)
+				for(const auto& component : mActiveComponents)
 				{
 					const bool alwaysRun = component->HasFlag(ComponentFlag::AlwaysRun);
 
@@ -319,13 +312,13 @@ namespace bs
 			}
 
 			// Move from active to inactive list
-			for (i32 i = 0; i < (i32)mActiveComponents.size(); i++)
+			for(i32 i = 0; i < (i32)mActiveComponents.size(); i++)
 			{
 				// Note: Purposely not a reference since the list changes in the add/remove methods below
 				const HComponent component = mActiveComponents[i];
 
 				const bool alwaysRun = component->HasFlag(ComponentFlag::AlwaysRun);
-				if (alwaysRun)
+				if(alwaysRun)
 					continue;
 
 				RemoveFromStateList(component);
@@ -344,15 +337,15 @@ namespace bs
 		// be in order
 		mStateChanges.emplace_back(component, ComponentStateEventType::Created);
 		ScopeToggle toggle(mDisableStateChange);
-		
+
 		component->OnCreated();
-		
+
 		const bool alwaysRun = component->HasFlag(ComponentFlag::AlwaysRun);
 		if(alwaysRun || mComponentState != ComponentState::Stopped)
 		{
 			component->OnInitialized();
 
-			if (parentActive)
+			if(parentActive)
 				component->OnEnabled();
 		}
 	}
@@ -369,7 +362,7 @@ namespace bs
 		const bool alwaysRun = component->HasFlag(ComponentFlag::AlwaysRun);
 		if(alwaysRun || mComponentState != ComponentState::Stopped)
 		{
-			if (triggerEvent)
+			if(triggerEvent)
 				component->OnEnabled();
 		}
 	}
@@ -386,7 +379,7 @@ namespace bs
 		const bool alwaysRun = component->HasFlag(ComponentFlag::AlwaysRun);
 		if(alwaysRun || mComponentState != ComponentState::Stopped)
 		{
-			if (triggerEvent)
+			if(triggerEvent)
 				component->OnDisabled();
 		}
 	}
@@ -406,12 +399,11 @@ namespace bs
 		ScopeToggle toggle(mDisableStateChange);
 
 		const bool alwaysRun = component->HasFlag(ComponentFlag::AlwaysRun);
-		const bool isEnabled = component->SceneObject()->GetActive() && (alwaysRun ||
-			mComponentState != ComponentState::Stopped);
+		const bool isEnabled = component->SceneObject()->GetActive() && (alwaysRun || mComponentState != ComponentState::Stopped);
 
-		if (isEnabled)
+		if(isEnabled)
 			component->OnDisabled();
-		
+
 		component->OnDestroyed();
 
 		if(immediate)
@@ -457,7 +449,7 @@ namespace bs
 
 		assert(list[idx] == component);
 
-		if (idx != lastIdx)
+		if(idx != lastIdx)
 		{
 			std::swap(list[idx], list[lastIdx]);
 			list[idx]->SetSceneManagerId(EncodeComponentId(idx, listType));
@@ -487,14 +479,14 @@ namespace bs
 			switch(entry.Type)
 			{
 			case ComponentStateEventType::Created:
-				if (alwaysRun || !isStopped)
+				if(alwaysRun || !isStopped)
 					listType = isActive ? ActiveList : InactiveList;
 				else
 					listType = UninitializedList;
 				break;
 			case ComponentStateEventType::Activated:
 			case ComponentStateEventType::Deactivated:
-				if (alwaysRun || !isStopped)
+				if(alwaysRun || !isStopped)
 					listType = isActive ? ActiveList : InactiveList;
 				else
 					listType = (existingListType == UninitializedList) ? UninitializedList : InactiveList;
@@ -516,7 +508,6 @@ namespace bs
 
 		mStateChanges.clear();
 	}
-
 
 	u32 SceneManager::EncodeComponentId(u32 idx, u32 type)
 	{
@@ -544,7 +535,7 @@ namespace bs
 		// iterate in an undefined order, but it wouldn't be hard to change it.
 
 		ScopeToggle toggle(mDisableStateChange);
-		for (auto& entry : mActiveComponents)
+		for(auto& entry : mActiveComponents)
 			entry->Update();
 
 		GameObjectManager::Instance().DestroyQueuedObjects();
@@ -555,7 +546,7 @@ namespace bs
 		ProcessStateChanges();
 
 		ScopeToggle toggle(mDisableStateChange);
-		for (auto& entry : mActiveComponents)
+		for(auto& entry : mActiveComponents)
 			entry->FixedUpdate();
 	}
 
@@ -570,7 +561,7 @@ namespace bs
 		auto& rtProps = mMainRT->GetProperties();
 		float aspect = rtProps.Width / (float)rtProps.Height;
 
-		for (auto& entry : mMainCameras)
+		for(auto& entry : mMainCameras)
 			entry->SetAspectRatio(aspect);
 	}
 
@@ -578,4 +569,4 @@ namespace bs
 	{
 		return SceneManager::Instance();
 	}
-}
+} // namespace bs

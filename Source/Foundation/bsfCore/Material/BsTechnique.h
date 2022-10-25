@@ -40,15 +40,14 @@ namespace bs
 	};
 
 	/** Templated class that is used for implementing both sim and core versions of Technique. */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TTechnique : public TechniqueBase
 	{
 	public:
 		using PassType = CoreVariantType<Pass, Core>;
-		
+
 		TTechnique();
-		TTechnique(const String& language, const Vector<StringID>& tags, const ShaderVariation& variation,
-			const Vector<SPtr<PassType>>& passes);
+		TTechnique(const String& language, const Vector<StringID>& tags, const ShaderVariation& variation, const Vector<SPtr<PassType>>& passes);
 		virtual ~TTechnique() = default;
 
 		/**	Returns a pass with the specified index. */
@@ -75,7 +74,7 @@ namespace bs
 	 * that help the engine to determine which technique should be used under which circumstances (if more than one
 	 * technique is available).
 	 *
-	 * @note	
+	 * @note
 	 * Normally you want to have a separate technique for every render system and renderer your application supports.
 	 * For example, if you are supporting DirectX11 and OpenGL you will want to have two techniques, one using HLSL based
 	 * GPU programs, other using GLSL. Those techniques should try to mirror each other's end results.
@@ -83,8 +82,7 @@ namespace bs
 	class BS_CORE_EXPORT Technique : public IReflectable, public CoreObject, public TTechnique<false>
 	{
 	public:
-		Technique(const String& language, const Vector<StringID>& tags, const ShaderVariation& variation,
-			const Vector<SPtr<Pass>>& passes);
+		Technique(const String& language, const Vector<StringID>& tags, const ShaderVariation& variation, const Vector<SPtr<Pass>>& passes);
 
 		/** Retrieves an implementation of a technique usable only from the core thread. */
 		SPtr<ct::Technique> GetCore() const;
@@ -111,15 +109,14 @@ namespace bs
 		 * @param[in]	passes		A set of passes that define the technique.
 		 * @return					Newly creted technique.
 		 */
-		static SPtr<Technique> Create(const String& language, const Vector<StringID>& tags,
-			const ShaderVariation& variation, const Vector<SPtr<Pass>>& passes);
+		static SPtr<Technique> Create(const String& language, const Vector<StringID>& tags, const ShaderVariation& variation, const Vector<SPtr<Pass>>& passes);
 
 	protected:
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		/** @copydoc CoreObject::getCoreDependencies */
-		void GetCoreDependencies(Vector<CoreObject*>& dependencies) ;
+		void GetCoreDependencies(Vector<CoreObject*>& dependencies);
 
 		/**	Creates a new technique but doesn't initialize it. */
 		static SPtr<Technique> CreateEmpty();
@@ -128,41 +125,39 @@ namespace bs
 		/************************************************************************/
 		/* 								RTTI		                     		*/
 		/************************************************************************/
-		
+
 		/** Serialization only constructor. */
 		Technique();
 
 	public:
 		friend class TechniqueRTTI;
 		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;	
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/** @} */
 
 	namespace ct
 	{
-	/** @addtogroup Material-Internal
-	 *  @{
-	 */
-
-	/** Core thread version of bs::Technique. */
-	class BS_CORE_EXPORT Technique : public CoreObject, public TTechnique<true>
-	{
-	public:
-		Technique(const String& language, const Vector<StringID>& tags,
-			const ShaderVariation& variation, const Vector<SPtr<Pass>>& passes);
-
-		/** @copydoc bs::Technique::Create(const String&, const Vector<SPtr<Pass>>&) */
-		static SPtr<Technique> Create(const String& language, const Vector<SPtr<Pass>>& passes);
-
-		/**
-		 * @copydoc bs::Technique::Create(const String&, const Vector<StringID>&, const ShaderVariation&, const Vector<SPtr<Pass>>&)
+		/** @addtogroup Material-Internal
+		 *  @{
 		 */
-		static SPtr<Technique> Create(const String& language, const Vector<StringID>& tags,
-			const ShaderVariation& variation, const Vector<SPtr<Pass>>& passes);
-	};
 
-	/** @} */
-	}
-}
+		/** Core thread version of bs::Technique. */
+		class BS_CORE_EXPORT Technique : public CoreObject, public TTechnique<true>
+		{
+		public:
+			Technique(const String& language, const Vector<StringID>& tags, const ShaderVariation& variation, const Vector<SPtr<Pass>>& passes);
+
+			/** @copydoc bs::Technique::Create(const String&, const Vector<SPtr<Pass>>&) */
+			static SPtr<Technique> Create(const String& language, const Vector<SPtr<Pass>>& passes);
+
+			/**
+			 * @copydoc bs::Technique::Create(const String&, const Vector<StringID>&, const ShaderVariation&, const Vector<SPtr<Pass>>&)
+			 */
+			static SPtr<Technique> Create(const String& language, const Vector<StringID>& tags, const ShaderVariation& variation, const Vector<SPtr<Pass>>& passes);
+		};
+
+		/** @} */
+	} // namespace ct
+} // namespace bs

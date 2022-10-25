@@ -34,7 +34,7 @@ namespace bs
 		output.push_back(val.A);
 	}
 
-	template<class T>
+	template <class T>
 	LookupTable TColorDistribution<T>::ToLookupTable(u32 numSamples, bool ignoreRange) const
 	{
 		numSamples = std::max(1U, numSamples);
@@ -45,17 +45,17 @@ namespace bs
 
 		const bool useRange = (mType == PDT_RandomRange || mType == PDT_RandomCurveRange) && !ignoreRange;
 
-		switch (mType)
+		switch(mType)
 		{
 		default:
 		case PDT_Constant:
 		case PDT_RandomRange:
-		{
-			addToVector(GetMinConstant(), values);
+			{
+				addToVector(GetMinConstant(), values);
 
-			if(useRange)
-				addToVector(GetMaxConstant(), values);
-		}
+				if(useRange)
+					addToVector(GetMaxConstant(), values);
+			}
 			break;
 		case PDT_Curve:
 		case PDT_RandomCurveRange:
@@ -82,7 +82,7 @@ namespace bs
 
 					if(useRange)
 						addToVector(impl::TGradientHelper<typename T::ColorType>::FromInternalColor(mMaxGradient.Evaluate(t)), values);
-					
+
 					t += sampleInterval;
 				}
 			}
@@ -105,7 +105,7 @@ namespace bs
 
 		const bool useRange = (mType == PDT_RandomRange || mType == PDT_RandomCurveRange) && !ignoreRange;
 
-		switch (mType)
+		switch(mType)
 		{
 		default:
 		case PDT_Constant:
@@ -144,7 +144,7 @@ namespace bs
 						value = mMaxCurve.Evaluate(t);
 						addToVector(value, values);
 					}
-					
+
 					t += sampleInterval;
 				}
 			}
@@ -156,4 +156,4 @@ namespace bs
 	template struct BS_CORE_EXPORT TDistribution<float>;
 	template struct BS_CORE_EXPORT TDistribution<Vector3>;
 	template struct BS_CORE_EXPORT TDistribution<Vector2>;
-}
+} // namespace bs

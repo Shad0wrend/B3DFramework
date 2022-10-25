@@ -21,7 +21,7 @@ namespace bs
 
 	Radian CHingeJoint::GetAngle() const
 	{
-		if (mInternal == nullptr)
+		if(mInternal == nullptr)
 			return Radian(0.0f);
 
 		return GetInternalInternal()->GetAngle();
@@ -29,7 +29,7 @@ namespace bs
 
 	float CHingeJoint::GetSpeed() const
 	{
-		if (mInternal == nullptr)
+		if(mInternal == nullptr)
 			return 0.0f;
 
 		return GetInternalInternal()->GetSpeed();
@@ -42,12 +42,12 @@ namespace bs
 
 	void CHingeJoint::SetLimit(const LimitAngularRange& limit)
 	{
-		if (limit == mDesc.Limit)
+		if(limit == mDesc.Limit)
 			return;
 
 		mDesc.Limit = limit;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			GetInternalInternal()->SetLimit(limit);
 	}
 
@@ -58,27 +58,27 @@ namespace bs
 
 	void CHingeJoint::SetDrive(const HingeJointDrive& drive)
 	{
-		if (drive == mDesc.Drive)
+		if(drive == mDesc.Drive)
 			return;
 
 		mDesc.Drive = drive;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			GetInternalInternal()->SetDrive(drive);
 	}
 
 	void CHingeJoint::SetFlag(HingeJointFlag flag, bool enabled)
 	{
 		bool isEnabled = ((u32)mDesc.Flag & (u32)flag) != 0;
-		if (isEnabled == enabled)
+		if(isEnabled == enabled)
 			return;
 
-		if (enabled)
+		if(enabled)
 			mDesc.Flag = (HingeJointFlag)((u32)mDesc.Flag | (u32)flag);
 		else
 			mDesc.Flag = (HingeJointFlag)((u32)mDesc.Flag & ~(u32)flag);
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			GetInternalInternal()->SetFlag(flag, enabled);
 	}
 
@@ -105,4 +105,4 @@ namespace bs
 	{
 		return CHingeJoint::GetRttiStatic();
 	}
-}
+} // namespace bs

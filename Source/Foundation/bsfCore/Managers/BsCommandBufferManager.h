@@ -5,33 +5,34 @@
 #include "BsCorePrerequisites.h"
 #include "Utility/BsModule.h"
 
-namespace bs { namespace ct
+namespace bs
 {
-	/** @addtogroup RenderAPI-Internal
-	 *  @{
-	 */
-
-	/**
-	 * Handles creation of command buffers. See CommandBuffer.
-	 *
-	 * @note Core thread only.
-	 */
-	class BS_CORE_EXPORT CommandBufferManager : public Module<CommandBufferManager>
+	namespace ct
 	{
-	public:
-		virtual ~CommandBufferManager() = default;
+		/** @addtogroup RenderAPI-Internal
+		 *  @{
+		 */
 
-		/** @copydoc CommandBuffer::create */
-		SPtr<CommandBuffer> Create(GpuQueueType type, u32 deviceIdx = 0, u32 queueIdx = 0,
-			bool secondary = false);
+		/**
+		 * Handles creation of command buffers. See CommandBuffer.
+		 *
+		 * @note Core thread only.
+		 */
+		class BS_CORE_EXPORT CommandBufferManager : public Module<CommandBufferManager>
+		{
+		public:
+			virtual ~CommandBufferManager() = default;
 
-	protected:
-		friend CommandBuffer;
+			/** @copydoc CommandBuffer::create */
+			SPtr<CommandBuffer> Create(GpuQueueType type, u32 deviceIdx = 0, u32 queueIdx = 0, bool secondary = false);
 
-		/** Creates a command buffer with the specified ID. See create(). */
-		virtual SPtr<CommandBuffer> CreateInternal(GpuQueueType type, u32 deviceIdx = 0,
-			u32 queueIdx = 0, bool secondary = false) = 0;
-	};
+		protected:
+			friend CommandBuffer;
 
-	/** @} */
-}}
+			/** Creates a command buffer with the specified ID. See create(). */
+			virtual SPtr<CommandBuffer> CreateInternal(GpuQueueType type, u32 deviceIdx = 0, u32 queueIdx = 0, bool secondary = false) = 0;
+		};
+
+		/** @} */
+	} // namespace ct
+} // namespace bs

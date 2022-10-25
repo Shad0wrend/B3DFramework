@@ -9,4 +9,4 @@ namespace bs
 	{
 		return scene.CreateHingeJoint(desc);
 	}
-}
+} // namespace bs

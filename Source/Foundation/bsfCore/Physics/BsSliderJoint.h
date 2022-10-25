@@ -26,7 +26,8 @@ namespace bs
 	class BS_CORE_EXPORT SliderJoint : public Joint
 	{
 	public:
-		SliderJoint(const SLIDER_JOINT_DESC& desc) { }
+		SliderJoint(const SLIDER_JOINT_DESC& desc) {}
+
 		virtual ~SliderJoint() = default;
 
 		/** Returns the current position of the slider. */
@@ -69,4 +70,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

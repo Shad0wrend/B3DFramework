@@ -31,7 +31,7 @@ namespace bs
 		 *							anything he hasn't requested (for example don't try to read from the buffer unless you
 		 *							requested it here).
 		 * @param[in]	deviceIdx	Index of the device whose memory to map. If the buffer doesn't exist on this device,
-		 *							the method returns null.							
+		 *							the method returns null.
 		 * @param[in]	queueIdx	Device queue to perform any read/write operations on. See @ref queuesDoc.
 		 */
 		virtual void* Lock(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx = 0, u32 queueIdx = 0)
@@ -76,7 +76,7 @@ namespace bs
 		 * @param[in]	dest		Destination buffer large enough to store the read data. Data is written from the start
 		 *							of the buffer (@p offset is only applied to the source).
 		 * @param[in]	deviceIdx	Index of the device whose memory to read. If the buffer doesn't exist on this device,
-		 *							no data will be read.		
+		 *							no data will be read.
 		 * @param[in]	queueIdx	Device queue to perform the read operation on. See @ref queuesDoc.
 		 */
 		virtual void ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx = 0, u32 queueIdx = 0) = 0;
@@ -91,8 +91,7 @@ namespace bs
 		 * @param[in]	writeFlags	Optional write flags that may affect performance.
 		 * @param[in]	queueIdx	Device queue to perform the write operation on. See @ref queuesDoc.
 		 */
-		virtual void WriteData(u32 offset, u32 length, const void* source,
-				BufferWriteType writeFlags = BWT_NORMAL, u32 queueIdx = 0) = 0;
+		virtual void WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL, u32 queueIdx = 0) = 0;
 
 		/**
 		 * Copies data from a specific portion of the source buffer into a specific portion of this buffer.
@@ -106,8 +105,7 @@ namespace bs
 		 * @param[in]	commandBuffer		Command buffer to queue the copy operation on. If null, main command buffer is
 		 *									used.
 		 */
-		virtual void CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length,
-			bool discardWholeBuffer = false, const SPtr<ct::CommandBuffer>& commandBuffer = nullptr) = 0;
+		virtual void CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer = false, const SPtr<ct::CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
 		 * Copy data from the provided buffer into this buffer. If buffers are not the same size, smaller size will be used.
@@ -121,7 +119,7 @@ namespace bs
 			u32 sz = std::min(GetSize(), srcBuffer.GetSize());
 			CopyData(srcBuffer, 0, 0, sz, true, commandBuffer);
 		}
-			
+
 		/** Returns the size of this buffer in bytes. */
 		u32 GetSize() const { return mSize; }
 
@@ -143,14 +141,13 @@ namespace bs
 		 */
 		HardwareBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 			: mSize(size), mUsage(usage), mDeviceMask(deviceMask)
-		{  }
+		{}
 
 		/** @copydoc lock */
-		virtual void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx,
-			u32 queueIdx) { return nullptr; }
+		virtual void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx) { return nullptr; }
 
 		/** @copydoc unlock */
-		virtual void Unmap() { }
+		virtual void Unmap() {}
 
 	protected:
 		u32 mSize;
@@ -161,4 +158,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

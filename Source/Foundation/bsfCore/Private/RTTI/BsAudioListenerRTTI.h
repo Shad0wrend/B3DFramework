@@ -25,7 +25,7 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "AudioListener";
 			return name;
@@ -36,7 +36,7 @@ namespace bs
 			return TID_AudioListener;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return AudioListener::Create();
 		}
@@ -44,4 +44,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

@@ -7,9 +7,8 @@
 namespace bs
 {
 	ShaderInclude::ShaderInclude(const String& includeString)
-		:Resource(false), mString(includeString)
+		: Resource(false), mString(includeString)
 	{
-
 	}
 
 	HShaderInclude ShaderInclude::Create(const String& includeString)
@@ -20,7 +19,7 @@ namespace bs
 	SPtr<ShaderInclude> ShaderInclude::CreatePtrInternal(const String& includeString)
 	{
 		SPtr<ShaderInclude> shaderIncludePtr = bs_core_ptr<ShaderInclude>(
-			new (bs_alloc<ShaderInclude>()) ShaderInclude(includeString));
+			new(bs_alloc<ShaderInclude>()) ShaderInclude(includeString));
 		shaderIncludePtr->SetThisPtrInternal(shaderIncludePtr);
 		shaderIncludePtr->Initialize();
 
@@ -36,4 +35,4 @@ namespace bs
 	{
 		return ShaderInclude::GetRttiStatic();
 	}
-}
+} // namespace bs

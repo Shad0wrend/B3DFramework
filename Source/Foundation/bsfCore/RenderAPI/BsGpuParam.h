@@ -24,34 +24,38 @@ namespace bs
 	 * types which do not. Matrix needs to be transposed for certain render systems depending on how they store them
 	 * in memory.
 	 */
-	template<class Type>
+	template <class Type>
 	struct TransposePolicy
 	{
 		static Type Transpose(const Type& value) { return value; }
+
 		static bool TransposeEnabled(bool enabled) { return false; }
 	};
 
 	/** Transpose policy for 3x3 matrix. */
-	template<>
+	template <>
 	struct TransposePolicy<Matrix3>
 	{
 		static Matrix3 Transpose(const Matrix3& value) { return value.Transpose(); }
+
 		static bool TransposeEnabled(bool enabled) { return enabled; }
 	};
 
 	/**	Transpose policy for 4x4 matrix. */
-	template<>
+	template <>
 	struct TransposePolicy<Matrix4>
 	{
 		static Matrix4 Transpose(const Matrix4& value) { return value.Transpose(); }
+
 		static bool TransposeEnabled(bool enabled) { return enabled; }
 	};
 
 	/**	Transpose policy for NxM matrix. */
-	template<int N, int M>
+	template <int N, int M>
 	struct TransposePolicy<MatrixNxM<N, M>>
 	{
 		static MatrixNxM<M, N> Transpose(const MatrixNxM<N, M>& value) { return value.Transpose(); }
+
 		static bool TransposeEnabled(bool enabled) { return enabled; }
 	};
 
@@ -62,8 +66,8 @@ namespace bs
 	 * Object of this type must be returned by a Material. Setting/Getting parameter values will internally access a GPU
 	 * parameter buffer attached to the Material this parameter was created from. Anything rendered with that material will
 	 * then use those set values.
-	 * 			
-	 * @note	
+	 *
+	 * @note
 	 * Normally you can set a GpuProgram parameter by calling various set/get methods on a Material. This class primarily
 	 * used an as optimization in performance critical bits of code where it is important to locate and set parameters
 	 * quickly without any lookups (Mentioned set/get methods expect a parameter name). You just retrieve the handle once
@@ -71,7 +75,7 @@ namespace bs
 	 *
 	 * @see		Material
 	 */
-	template<class T, bool Core>
+	template <class T, bool Core>
 	class BS_CORE_EXPORT TGpuDataParam
 	{
 	private:
@@ -85,7 +89,7 @@ namespace bs
 		/**
 		 * Sets a parameter value at the specified array index. If parameter does not contain an array leave the index at 0.
 		 *
-		 * @note	
+		 * @note
 		 * Like with all GPU parameters, the actual GPU buffer will not be updated until rendering with material this
 		 * parameter was created from starts on the core thread.
 		 */
@@ -114,7 +118,7 @@ namespace bs
 	};
 
 	/** @copydoc TGpuDataParam */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TGpuParamStruct
 	{
 	public:
@@ -148,7 +152,7 @@ namespace bs
 	};
 
 	/** @copydoc TGpuDataParam */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TGpuParamTexture
 	{
 	private:
@@ -183,7 +187,7 @@ namespace bs
 	};
 
 	/** @copydoc TGpuDataParam */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TGpuParamLoadStoreTexture
 	{
 	private:
@@ -218,7 +222,7 @@ namespace bs
 	};
 
 	/** @copydoc TGpuDataParam */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TGpuParamBuffer
 	{
 	private:
@@ -253,7 +257,7 @@ namespace bs
 	};
 
 	/** @copydoc TGpuDataParam */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TGpuParamSampState
 	{
 	private:
@@ -330,7 +334,7 @@ namespace bs
 		typedef TGpuParamBuffer<true> GpuParamBuffer;
 		typedef TGpuParamSampState<true> GpuParamSampState;
 		typedef TGpuParamLoadStoreTexture<true> GpuParamLoadStoreTexture;
-	}
+	} // namespace ct
 
 	/** @} */
-}
+} // namespace bs

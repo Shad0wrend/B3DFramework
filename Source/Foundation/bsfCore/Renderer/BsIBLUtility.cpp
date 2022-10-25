@@ -3,43 +3,46 @@
 #include "Renderer/BsIBLUtility.h"
 #include "Math/BsVector2I.h"
 
-namespace bs { namespace ct
+namespace bs
 {
-	const u32 IBLUtility::REFLECTION_CUBEMAP_SIZE = 256;
-	const u32 IBLUtility::IRRADIANCE_CUBEMAP_SIZE = 32;
-
-	/** Returns the size of the texture required to store the provided number of SH coefficients. */
-	Vector2I IBLUtility::GetShCoeffTextureSize(u32 numCoeffSets, u32 shOrder)
+	namespace ct
 	{
-		u32 coeffsPerSet = shOrder * shOrder;
-		
-		// Assuming the texture maximum size is 4096
-		u32 maxSetsPerRow = 4096 / coeffsPerSet;
-		
-		Vector2I output;
-		output.X = (numCoeffSets > maxSetsPerRow ? maxSetsPerRow : numCoeffSets) * coeffsPerSet;
-		output.Y = 1 + numCoeffSets / (maxSetsPerRow + 1);
+		const u32 IBLUtility::REFLECTION_CUBEMAP_SIZE = 256;
+		const u32 IBLUtility::IRRADIANCE_CUBEMAP_SIZE = 32;
 
-		return output;
-	}
-	
-	/** Determines the position of a set of coefficients in the coefficient texture, depending on the coefficient index. */
-	Vector2I IBLUtility::GetShCoeffXyFromIdx(u32 idx, u32 shOrder)
-	{
-		u32 coeffsPerSet = shOrder * shOrder;
-		
-		// Assuming the texture maximum size is 4096
-		u32 maxSetsPerRow = 4096 / coeffsPerSet;
+		/** Returns the size of the texture required to store the provided number of SH coefficients. */
+		Vector2I IBLUtility::GetShCoeffTextureSize(u32 numCoeffSets, u32 shOrder)
+		{
+			u32 coeffsPerSet = shOrder * shOrder;
 
-		Vector2I output;
-		output.X = (idx % maxSetsPerRow) * coeffsPerSet;
-		output.Y = idx / maxSetsPerRow;
-		
-		return output;
-	}
+			// Assuming the texture maximum size is 4096
+			u32 maxSetsPerRow = 4096 / coeffsPerSet;
 
-	const IBLUtility& gIBLUtility()
-	{
-		return IBLUtility::Instance();
-	}
-}}
+			Vector2I output;
+			output.X = (numCoeffSets > maxSetsPerRow ? maxSetsPerRow : numCoeffSets) * coeffsPerSet;
+			output.Y = 1 + numCoeffSets / (maxSetsPerRow + 1);
+
+			return output;
+		}
+
+		/** Determines the position of a set of coefficients in the coefficient texture, depending on the coefficient index. */
+		Vector2I IBLUtility::GetShCoeffXyFromIdx(u32 idx, u32 shOrder)
+		{
+			u32 coeffsPerSet = shOrder * shOrder;
+
+			// Assuming the texture maximum size is 4096
+			u32 maxSetsPerRow = 4096 / coeffsPerSet;
+
+			Vector2I output;
+			output.X = (idx % maxSetsPerRow) * coeffsPerSet;
+			output.Y = idx / maxSetsPerRow;
+
+			return output;
+		}
+
+		const IBLUtility& gIBLUtility()
+		{
+			return IBLUtility::Instance();
+		}
+	} // namespace ct
+} // namespace bs

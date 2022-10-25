@@ -42,7 +42,7 @@ namespace bs
 		 *
 		 * @note If any internal data is allocated, it is freed.
 		 */
-		void SetData(UPtr<u8[]> &data);
+		void SetData(UPtr<u8[]>& data);
 
 		/**
 		 * Allocates an internal buffer of a certain size. If there is another buffer already allocated, it will be freed
@@ -104,4 +104,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

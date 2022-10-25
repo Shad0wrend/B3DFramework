@@ -7,7 +7,7 @@
 #include <Math/BsRect2I.h>
 
 #ifdef BS_COCOA_INTERNALS
-#import <Cocoa/Cocoa.h>
+#	import <Cocoa/Cocoa.h>
 #endif
 
 #ifdef BS_COCOA_INTERNALS
@@ -59,7 +59,7 @@ namespace bs
 			BSView* view = nil;
 			BSWindowListener* responder = nil;
 			BSWindowDelegate* delegate = nil;
-            CALayer* layer = nil;
+			CALayer* layer = nil;
 			u32 numDropTargets = 0;
 			bool isModal = false;
 			NSUInteger style = 0;
@@ -174,5 +174,4 @@ namespace bs
 
 	/** @} */
 	/** @} */
-}
-
+} // namespace bs

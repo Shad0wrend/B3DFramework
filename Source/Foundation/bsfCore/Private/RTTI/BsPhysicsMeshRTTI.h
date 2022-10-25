@@ -23,13 +23,13 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context)
 		{
 			PhysicsMesh* mesh = static_cast<PhysicsMesh*>(obj);
 			mesh->Initialize();
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "PhysicsMesh";
 			return name;
@@ -40,7 +40,7 @@ namespace bs
 			return TID_PhysicsMesh;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			SPtr<PhysicsMesh> mesh = gPhysics().CreateMesh(nullptr, PhysicsMeshType::Convex);
 			mesh->SetThisPtrInternal(mesh);
@@ -56,7 +56,7 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mType, 0)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "FPhysicsMesh";
 			return name;
@@ -67,7 +67,7 @@ namespace bs
 			return TID_FPhysicsMesh;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
 			return nullptr;
@@ -76,4 +76,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

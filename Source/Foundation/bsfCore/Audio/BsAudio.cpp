@@ -21,7 +21,7 @@ namespace bs
 
 	void Audio::StopManualSources()
 	{
-		for (auto& source : mManualSources)
+		for(auto& source : mManualSources)
 			source->Stop();
 
 		mManualSources.clear();
@@ -32,7 +32,7 @@ namespace bs
 		const u32 numSources = (u32)mManualSources.size();
 		for(u32 i = 0; i < numSources; i++)
 		{
-			if (mManualSources[i]->GetState() != AudioSourceState::Stopped)
+			if(mManualSources[i]->GetState() != AudioSourceState::Stopped)
 				mTempSources.push_back(mManualSources[i]);
 		}
 
@@ -44,4 +44,4 @@ namespace bs
 	{
 		return Audio::Instance();
 	}
-}
+} // namespace bs

@@ -24,7 +24,7 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 	public:
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "Transform";
 			return name;
@@ -35,7 +35,7 @@ namespace bs
 			return TID_Transform;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return bs_shared_ptr_new<Transform>();
 		}
@@ -43,4 +43,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

@@ -35,7 +35,7 @@ namespace bs
 		/**
 		 * Instantiates a prefab by creating an instance of the prefab's scene object hierarchy. The returned hierarchy
 		 * will be parented to world root by default.
-		 *			
+		 *
 		 * @return	Instantiated clone of the prefab's scene object hierarchy.
 		 */
 		HSceneObject Instantiate() const { return InstantiateInternal(); }
@@ -88,7 +88,7 @@ namespace bs
 		/**
 		 * Instantiates a prefab by creating an instance of the prefab's scene object hierarchy. The returned hierarchy
 		 * will be parented to world root by default.
-		 *			
+		 *
 		 * @param[in]	preserveUUIDs	If false, each cloned game object will be assigned a brand new UUID. Otherwise
 		 *								the UUID of the original game objects will be preserved. Note that two instantiated
 		 *								scene objects should never have the same UUID, so if preserving UUID's make sure
@@ -124,4 +124,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

@@ -20,7 +20,7 @@ namespace bs
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
-			//BS_RTTI_MEMBER_PLAIN(mRenderer, 1)
+			// BS_RTTI_MEMBER_PLAIN(mRenderer, 1)
 			BS_RTTI_MEMBER_REFLPTR_ARRAY(mPasses, 2)
 			BS_RTTI_MEMBER_PLAIN_ARRAY(mTags, 3)
 			BS_RTTI_MEMBER_PLAIN(mLanguage, 4)
@@ -53,4 +53,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

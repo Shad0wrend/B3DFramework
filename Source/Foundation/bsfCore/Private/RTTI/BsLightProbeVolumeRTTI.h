@@ -28,15 +28,25 @@ namespace bs
 		Vector<LightProbeSHCoefficients> Coefficients;
 	};
 
-	template<> struct RTTIPlainType<SavedLightProbeInfo>
+	template <>
+	struct RTTIPlainType<SavedLightProbeInfo>
 	{
-		enum { id = TID_SavedLightProbeInfo }; enum { hasDynamicSize = 1 };
+		enum
+		{
+			id = TID_SavedLightProbeInfo
+		};
+
+		enum
+		{
+			hasDynamicSize = 1
+		};
+
 		static constexpr u32 VERSION = 0;
 
 		static BitLength ToMemory(const SavedLightProbeInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return rtti_write_with_size_header(stream, data, compress, [&data, &stream]()
-			{
+											   {
 				BitLength size = 0;
 
 				uint32_t version;
@@ -44,8 +54,7 @@ namespace bs
 				size += rtti_write(data.Positions, stream);
 				size += rtti_write(data.Coefficients, stream);
 
-				return size;
-			});
+				return size; });
 		}
 
 		static BitLength FromMemory(SavedLightProbeInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
@@ -79,7 +88,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT LightProbeVolumeRTTI : public RTTIType <LightProbeVolume, IReflectable, LightProbeVolumeRTTI>
+	class BS_CORE_EXPORT LightProbeVolumeRTTI : public RTTIType<LightProbeVolume, IReflectable, LightProbeVolumeRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -127,11 +136,11 @@ namespace bs
 				obj->mProbes[handle] = probeInfo;
 			}
 		}
+
 	public:
 		LightProbeVolumeRTTI()
 		{
-			AddPlainField("mProbeInfo", 5, &LightProbeVolumeRTTI::GetProbeInfo, &LightProbeVolumeRTTI::SetProbeInfo,
-				RTTIFieldInfo(RTTIFieldFlag::SkipInReferenceSearch));
+			AddPlainField("mProbeInfo", 5, &LightProbeVolumeRTTI::GetProbeInfo, &LightProbeVolumeRTTI::SetProbeInfo, RTTIFieldInfo(RTTIFieldFlag::SkipInReferenceSearch));
 		}
 
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
@@ -153,7 +162,7 @@ namespace bs
 			return TID_LightProbeVolume;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return LightProbeVolume::CreateEmpty();
 		}
@@ -164,4 +173,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

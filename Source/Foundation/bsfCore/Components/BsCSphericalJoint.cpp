@@ -26,27 +26,27 @@ namespace bs
 
 	void CSphericalJoint::SetLimit(const LimitConeRange& limit)
 	{
-		if (limit == mDesc.Limit)
+		if(limit == mDesc.Limit)
 			return;
 
 		mDesc.Limit = limit;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			GetInternalInternal()->SetLimit(limit);
 	}
-	
+
 	void CSphericalJoint::SetFlag(SphericalJointFlag flag, bool enabled)
 	{
 		bool isEnabled = ((u32)mDesc.Flag & (u32)flag) != 0;
-		if (isEnabled == enabled)
+		if(isEnabled == enabled)
 			return;
 
-		if (enabled)
+		if(enabled)
 			mDesc.Flag = (SphericalJointFlag)((u32)mDesc.Flag | (u32)flag);
 		else
 			mDesc.Flag = (SphericalJointFlag)((u32)mDesc.Flag & ~(u32)flag);
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			GetInternalInternal()->SetFlag(flag, enabled);
 	}
 
@@ -73,4 +73,4 @@ namespace bs
 	{
 		return CSphericalJoint::GetRttiStatic();
 	}
-}
+} // namespace bs

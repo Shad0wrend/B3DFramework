@@ -25,7 +25,12 @@ namespace bs
 		 * Triangle meshes are not supported as triggers, nor are they supported for colliders that are parts of a
 		 * non-kinematic rigidbody.
 		 */
-		void SetMesh(const HPhysicsMesh& mesh) { mMesh = mesh; OnMeshChanged(); MarkListenerResourcesDirty(); }
+		void SetMesh(const HPhysicsMesh& mesh)
+		{
+			mMesh = mesh;
+			OnMeshChanged();
+			MarkListenerResourcesDirty();
+		}
 
 		/** @copydoc setMesh() */
 		HPhysicsMesh GetMesh() const { return mMesh; }
@@ -37,26 +42,25 @@ namespace bs
 		 * @param[in]	position	Position of the collider.
 		 * @param[in]	rotation	Rotation of the collider.
 		 */
-		static SPtr<MeshCollider> Create(PhysicsScene& scene, const Vector3& position = Vector3::ZERO,
-			const Quaternion& rotation = Quaternion::IDENTITY);
+		static SPtr<MeshCollider> Create(PhysicsScene& scene, const Vector3& position = Vector3::ZERO, const Quaternion& rotation = Quaternion::IDENTITY);
 
 	protected:
 		/** @copydoc IResourceListener::getListenerResources */
-		void GetListenerResources(Vector<HResource>& resources) ;
+		void GetListenerResources(Vector<HResource>& resources);
 
 		/** @copydoc IResourceListener::notifyResourceLoaded */
-		void NotifyResourceLoaded(const HResource& resource) ;
+		void NotifyResourceLoaded(const HResource& resource);
 
 		/** @copydoc IResourceListener::notifyResourceChanged */
-		void NotifyResourceChanged(const HResource& resource) ;
+		void NotifyResourceChanged(const HResource& resource);
 
 		/**
 		 * Triggered by the resources system whenever the attached collision mesh changed (e.g. was reimported) or loaded.
 		 */
-		virtual void OnMeshChanged() { }
+		virtual void OnMeshChanged() {}
 
 		HPhysicsMesh mMesh;
 	};
 
 	/** @} */
-}
+} // namespace bs

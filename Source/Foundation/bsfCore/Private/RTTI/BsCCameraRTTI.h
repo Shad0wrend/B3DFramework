@@ -18,6 +18,7 @@ namespace bs
 	{
 	private:
 		SPtr<Camera> GetInternal(CCamera* obj) { return obj->mInternal; }
+
 		void SetInternal(CCamera* obj, SPtr<Camera> val) { obj->mInternal = val; }
 
 	public:
@@ -45,4 +46,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

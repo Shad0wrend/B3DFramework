@@ -10,14 +10,17 @@
 
 namespace bs
 {
-	namespace ct { class VectorField; }
+	namespace ct
+	{
+		class VectorField;
+	}
 
 	/** @addtogroup Particles
 	 *  @{
 	 */
 
 	/** Descriptor structure used for initialization of a VectorField. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportAsStruct(true),ExportName(VectorFieldOptions)) VECTOR_FIELD_DESC
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(VectorFieldOptions)) VECTOR_FIELD_DESC
 	{
 		/** Number of entries in the vector field along the X axis. */
 		u32 CountX = 1;
@@ -41,16 +44,18 @@ namespace bs
 	namespace detail
 	{
 		/** Common functionality for both the sim and core thread variants of VectorField. */
-		template<bool Core>
+		template <bool Core>
 		class BS_CORE_EXPORT TVectorField
 		{
 		public:
 			using TextureType = SPtr<CoreVariantType<Texture, Core>>;
 
 			TVectorField() = default;
+
 			TVectorField(const VECTOR_FIELD_DESC& desc)
-				:mDesc(desc)
-			{ }
+				: mDesc(desc)
+			{}
+
 			virtual ~TVectorField() = default;
 
 			/** Returns the internal texture representing the vector field. */
@@ -63,7 +68,7 @@ namespace bs
 			VECTOR_FIELD_DESC mDesc;
 			TextureType mTexture;
 		};
-	}
+	} // namespace detail
 
 	/** @} */
 
@@ -111,7 +116,7 @@ namespace bs
 		VectorField(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& values);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
@@ -140,7 +145,7 @@ namespace bs
 		};
 
 		/** @} */
-	}
+	} // namespace ct
 
 	/** @addtogroup Particles-Internal
 	 *  @{
@@ -157,8 +162,8 @@ namespace bs
 		bool IsMagicNumberSupported(const u8* magicNumPtr, u32 numBytes) const override;
 
 		/** @copydoc SpecificImporter::import */
-		SPtr<Resource> Import(const Path& filePath, SPtr<const ImportOptions> importOptions) ;
+		SPtr<Resource> Import(const Path& filePath, SPtr<const ImportOptions> importOptions);
 	};
 
 	/** @} */
-}
+} // namespace bs

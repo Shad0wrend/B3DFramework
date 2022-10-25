@@ -42,16 +42,16 @@ namespace bs
 		VET_COLOR_ARGB = 10, /**< Color encoded in 32-bits (8-bits per channel) in ARGB order) */
 		VET_COLOR_ABGR = 11, /**< Color encoded in 32-bits (8-bits per channel) in ABGR order) */
 		VET_UINT4 = 12, /**< 4D 32-bit unsigned integer value */
-		VET_INT4 = 13,  /**< 4D 32-bit signed integer value */
+		VET_INT4 = 13, /**< 4D 32-bit signed integer value */
 		VET_USHORT1 = 14, /**< 1D 16-bit unsigned integer value */
 		VET_USHORT2 = 15, /**< 2D 16-bit unsigned integer value */
 		VET_USHORT4 = 17, /**< 4D 16-bit unsigned integer value */
-		VET_INT1 = 18,  /**< 1D 32-bit signed integer value */
-		VET_INT2 = 19,  /**< 2D 32-bit signed integer value */
-		VET_INT3 = 20,  /**< 3D 32-bit signed integer value */
-		VET_UINT1 = 21,  /**< 1D 32-bit signed integer value */
-		VET_UINT2 = 22,  /**< 2D 32-bit signed integer value */
-		VET_UINT3 = 23,  /**< 3D 32-bit signed integer value */
+		VET_INT1 = 18, /**< 1D 32-bit signed integer value */
+		VET_INT2 = 19, /**< 2D 32-bit signed integer value */
+		VET_INT3 = 20, /**< 3D 32-bit signed integer value */
+		VET_UINT1 = 21, /**< 1D 32-bit signed integer value */
+		VET_UINT2 = 22, /**< 2D 32-bit signed integer value */
+		VET_UINT3 = 23, /**< 3D 32-bit signed integer value */
 		VET_UBYTE4_NORM = 24, /**< 4D 8-bit unsigned integer interpreted as a normalized value in [0, 1] range. */
 		VET_COUNT, // Keep at end before VET_UNKNOWN
 		VET_UNKNOWN = 0xffff
@@ -62,11 +62,10 @@ namespace bs
 	{
 	public:
 		VertexElement() = default;
-		VertexElement(u16 source, u32 offset, VertexElementType theType,
-			VertexElementSemantic semantic, u16 index = 0, u32 instanceStepRate = 0);
+		VertexElement(u16 source, u32 offset, VertexElementType theType, VertexElementSemantic semantic, u16 index = 0, u32 instanceStepRate = 0);
 
-		bool operator== (const VertexElement& rhs) const;
-		bool operator!= (const VertexElement& rhs) const;
+		bool operator==(const VertexElement& rhs) const;
+		bool operator!=(const VertexElement& rhs) const;
 
 		/**	Returns index of the vertex buffer from which this element is stored. */
 		u16 GetStreamIdx() const { return mSource; }
@@ -112,6 +111,7 @@ namespace bs
 
 		/** Calculates a hash value for the provided vertex element. */
 		static size_t GetHash(const VertexElement& element);
+
 	protected:
 		u16 mSource;
 		u32 mOffset;
@@ -127,12 +127,12 @@ namespace bs
 	public:
 		VertexDeclarationProperties(const Vector<VertexElement>& elements);
 
-		bool operator== (const VertexDeclarationProperties& rhs) const;
-		bool operator!= (const VertexDeclarationProperties& rhs) const;
+		bool operator==(const VertexDeclarationProperties& rhs) const;
+		bool operator!=(const VertexDeclarationProperties& rhs) const;
 
 		/**	Get the number of elements in the declaration. */
 		u32 GetElementCount() const { return (u32)mElementList.size(); }
-		
+
 		/**	Returns a list of vertex elements in the declaration. */
 		const Vector<VertexElement>& GetElements() const { return mElementList; }
 
@@ -165,7 +165,7 @@ namespace bs
 	class BS_CORE_EXPORT VertexDeclaration : public IReflectable, public CoreObject
 	{
 	public:
-		virtual ~VertexDeclaration() { }
+		virtual ~VertexDeclaration() {}
 
 		/** Returns properties describing the vertex declaration. */
 		const VertexDeclarationProperties& GetProperties() const { return mProperties; }
@@ -182,7 +182,7 @@ namespace bs
 		VertexDeclaration(const Vector<VertexElement>& elements);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 	protected:
 		VertexDeclarationProperties mProperties;
@@ -203,55 +203,55 @@ namespace bs
 
 	namespace ct
 	{
-	/** @addtogroup RenderAPI-Internal
-	 *  @{
-	 */
-
-	/**
-	 * Core thread portion of a bs::VertexDeclaration.
-	 *
-	 * @note	Core thread.
-	 */
-	class BS_CORE_EXPORT VertexDeclaration : public CoreObject
-	{
-	public:
-		virtual ~VertexDeclaration() = default;
-
-		/** @copydoc CoreObject::initialize */
-		void Initialize() override;
-
-		/**	Returns properties describing the vertex declaration. */
-		const VertexDeclarationProperties& GetProperties() const { return mProperties; }
-
-		/**	Returns an ID unique to this declaration. */
-		u32 GetId() const { return mId; }
+		/** @addtogroup RenderAPI-Internal
+		 *  @{
+		 */
 
 		/**
-		 * Checks can a vertex buffer declared with this declaration be bound to a shader defined with the provided
-		 * declaration.
+		 * Core thread portion of a bs::VertexDeclaration.
+		 *
+		 * @note	Core thread.
 		 */
-		bool IsCompatible(const SPtr<VertexDeclaration>& shaderDecl);
+		class BS_CORE_EXPORT VertexDeclaration : public CoreObject
+		{
+		public:
+			virtual ~VertexDeclaration() = default;
 
-		/**
-		 * Returns a list of vertex elements that the provided shader's vertex declaration expects but aren't present in
-		 * this vertex declaration.
-		 */
-		Vector<VertexElement> GetMissingElements(const SPtr<VertexDeclaration>& shaderDecl);
+			/** @copydoc CoreObject::initialize */
+			void Initialize() override;
 
-		/** @copydoc HardwareBufferManager::createVertexDeclaration */
-		static SPtr<VertexDeclaration> Create(const SPtr<VertexDataDesc>& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			/**	Returns properties describing the vertex declaration. */
+			const VertexDeclarationProperties& GetProperties() const { return mProperties; }
 
-	protected:
-		friend class HardwareBufferManager;
+			/**	Returns an ID unique to this declaration. */
+			u32 GetId() const { return mId; }
 
-		VertexDeclaration(const Vector<VertexElement>& elements, GpuDeviceFlags deviceMask);
+			/**
+			 * Checks can a vertex buffer declared with this declaration be bound to a shader defined with the provided
+			 * declaration.
+			 */
+			bool IsCompatible(const SPtr<VertexDeclaration>& shaderDecl);
 
-		VertexDeclarationProperties mProperties;
-		u32 mId;
+			/**
+			 * Returns a list of vertex elements that the provided shader's vertex declaration expects but aren't present in
+			 * this vertex declaration.
+			 */
+			Vector<VertexElement> GetMissingElements(const SPtr<VertexDeclaration>& shaderDecl);
 
-		static u32 NextFreeId;
-	};
+			/** @copydoc HardwareBufferManager::createVertexDeclaration */
+			static SPtr<VertexDeclaration> Create(const SPtr<VertexDataDesc>& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
-	/** @} */
-	}
-}
+		protected:
+			friend class HardwareBufferManager;
+
+			VertexDeclaration(const Vector<VertexElement>& elements, GpuDeviceFlags deviceMask);
+
+			VertexDeclarationProperties mProperties;
+			u32 mId;
+
+			static u32 NextFreeId;
+		};
+
+		/** @} */
+	} // namespace ct
+} // namespace bs

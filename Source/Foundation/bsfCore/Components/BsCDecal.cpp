@@ -28,7 +28,7 @@ namespace bs
 	{
 		// If mInternal already exists this means this object was deserialized,
 		// so all we need to do is initialize it.
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			mInternal->Initialize();
 		else
 			mInternal = Decal::Create(HMaterial());
@@ -50,4 +50,4 @@ namespace bs
 	{
 		return CDecal::GetRttiStatic();
 	}
-}
+} // namespace bs

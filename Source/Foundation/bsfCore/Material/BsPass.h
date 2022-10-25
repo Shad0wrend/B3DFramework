@@ -41,7 +41,7 @@ namespace bs
 	 */
 
 	/** Contains common functionality used by both sim and core thread versions of Pass. */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TPass
 	{
 	public:
@@ -85,7 +85,7 @@ namespace bs
 		 */
 
 		/** Enumerates all the fields in the type and executes the specified processor action for each field. */
-		template<class P>
+		template <class P>
 		void RttiEnumFields(P p);
 
 		/** @} */
@@ -160,37 +160,37 @@ namespace bs
 
 	namespace ct
 	{
-	/** @addtogroup Material-Internal
-	 *  @{
-	 */
+		/** @addtogroup Material-Internal
+		 *  @{
+		 */
 
-	/**
-	 * Core thread counterpart of bs::Pass.
-	 *
-	 * @note	Core thread.
-	 */
-	class BS_CORE_EXPORT Pass : public CoreObject, public TPass<true>
-	{
-	public:
-		virtual ~Pass() = default;
+		/**
+		 * Core thread counterpart of bs::Pass.
+		 *
+		 * @note	Core thread.
+		 */
+		class BS_CORE_EXPORT Pass : public CoreObject, public TPass<true>
+		{
+		public:
+			virtual ~Pass() = default;
 
-		/**	Creates a new empty pass. */
-		static SPtr<Pass> Create(const PASS_DESC& desc);
+			/**	Creates a new empty pass. */
+			static SPtr<Pass> Create(const PASS_DESC& desc);
 
-		/** @copydoc bs::Pass::compile */
-		void Compile();
+			/** @copydoc bs::Pass::compile */
+			void Compile();
 
-	protected:
-		friend class bs::Pass;
-		friend class Technique;
+		protected:
+			friend class bs::Pass;
+			friend class Technique;
 
-		Pass() = default;
-		Pass(const PASS_DESC& desc);
+			Pass() = default;
+			Pass(const PASS_DESC& desc);
 
-		/** @copydoc CoreObject::syncToCore */
-		void SyncToCore(const CoreSyncData& data) override;
-	};
+			/** @copydoc CoreObject::syncToCore */
+			void SyncToCore(const CoreSyncData& data) override;
+		};
 
-	/** @} */
-	}
-}
+		/** @} */
+	} // namespace ct
+} // namespace bs

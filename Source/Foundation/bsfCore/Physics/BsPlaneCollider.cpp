@@ -9,4 +9,4 @@ namespace bs
 	{
 		return scene.CreatePlaneCollider(position, rotation);
 	}
-}
+} // namespace bs

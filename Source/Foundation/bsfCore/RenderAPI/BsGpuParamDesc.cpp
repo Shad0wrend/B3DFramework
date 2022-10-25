@@ -18,4 +18,4 @@ namespace bs
 	{
 		return GpuParamDesc::GetRttiStatic();
 	}
-}
+} // namespace bs

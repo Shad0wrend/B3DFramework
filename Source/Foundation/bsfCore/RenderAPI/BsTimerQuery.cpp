@@ -3,10 +3,13 @@
 #include "RenderAPI/BsTimerQuery.h"
 #include "Managers/BsQueryManager.h"
 
-namespace bs { namespace ct
+namespace bs
 {
-	SPtr<TimerQuery> TimerQuery::Create(u32 deviceIdx)
+	namespace ct
 	{
-		return QueryManager::Instance().CreateTimerQuery(deviceIdx);
-	}
-}}
+		SPtr<TimerQuery> TimerQuery::Create(u32 deviceIdx)
+		{
+			return QueryManager::Instance().CreateTimerQuery(deviceIdx);
+		}
+	} // namespace ct
+} // namespace bs

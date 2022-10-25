@@ -18,7 +18,7 @@ namespace bs
 	 * parameters from those buffers.
 	 *
 	 * Writing or reading from this buffer will translate directly to API calls that update the GPU.
-	 * 			
+	 *
 	 * @note	Sim thread only.
 	 */
 	class BS_CORE_EXPORT GpuParamBlockBuffer : public CoreObject
@@ -36,7 +36,7 @@ namespace bs
 
 		/**
 		 * Read some data from the specified offset in the buffer.
-		 *			
+		 *
 		 * @note	All values are in bytes. This reads from the cached CPU buffer and not from the GPU.
 		 */
 		void Read(u32 offset, void* data, u32 size);
@@ -76,84 +76,83 @@ namespace bs
 
 	namespace ct
 	{
-	/** @addtogroup RenderAPI-Internal
-	 *  @{
-	 */
-
-	/**
-	 * Core thread version of a bs::GpuParamBlockBuffer.
-	 *
-	 * @note	Core thread only.
-	 */
-	class BS_CORE_EXPORT GpuParamBlockBuffer : public CoreObject
-	{
-	public:
-		GpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);
-		virtual ~GpuParamBlockBuffer();
+		/** @addtogroup RenderAPI-Internal
+		 *  @{
+		 */
 
 		/**
-		 * Writes all of the specified data to the buffer. Data size must be the same size as the buffer.
+		 * Core thread version of a bs::GpuParamBlockBuffer.
 		 *
-		 * @param[in]	data		Data to write. Must match the size of the buffer.
-		 * @param[in]	queueIdx	Device queue to perform the write operation on. See @ref queuesDoc.
+		 * @note	Core thread only.
 		 */
-		void WriteToGpu(const u8* data, u32 queueIdx = 0);
+		class BS_CORE_EXPORT GpuParamBlockBuffer : public CoreObject
+		{
+		public:
+			GpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);
+			virtual ~GpuParamBlockBuffer();
 
-		/**
-		 * Flushes any cached data into the actual GPU buffer.
-		 *
-		 * @param[in]	queueIdx	Device queue to perform the write operation on. See @ref queuesDoc.
-		 */
-		void FlushToGpu(u32 queueIdx = 0);
+			/**
+			 * Writes all of the specified data to the buffer. Data size must be the same size as the buffer.
+			 *
+			 * @param[in]	data		Data to write. Must match the size of the buffer.
+			 * @param[in]	queueIdx	Device queue to perform the write operation on. See @ref queuesDoc.
+			 */
+			void WriteToGpu(const u8* data, u32 queueIdx = 0);
 
-		/**
-		 * Write some data to the specified offset in the buffer.
-		 *
-		 * @note	All values are in bytes. Actual hardware buffer update is delayed until rendering or until
-		 *			flushToGPU() is called.
-		 */
-		void Write(u32 offset, const void* data, u32 size);
+			/**
+			 * Flushes any cached data into the actual GPU buffer.
+			 *
+			 * @param[in]	queueIdx	Device queue to perform the write operation on. See @ref queuesDoc.
+			 */
+			void FlushToGpu(u32 queueIdx = 0);
 
-		/**
-		 * Read some data from the specified offset in the buffer.
-		 *			
-		 * @note	All values are in bytes. This reads from the cached CPU buffer and not directly from the GPU.
-		 */
-		void Read(u32 offset, void* data, u32 size);
+			/**
+			 * Write some data to the specified offset in the buffer.
+			 *
+			 * @note	All values are in bytes. Actual hardware buffer update is delayed until rendering or until
+			 *			flushToGPU() is called.
+			 */
+			void Write(u32 offset, const void* data, u32 size);
 
-		/**
-		 * Clear specified section of the buffer to zero.
-		 *
-		 * @note	All values are in bytes. Actual hardware buffer update is delayed until rendering or until
-		 *			flushToGPU() is called.
-		 */
-		void ZeroOut(u32 offset, u32 size);
+			/**
+			 * Read some data from the specified offset in the buffer.
+			 *
+			 * @note	All values are in bytes. This reads from the cached CPU buffer and not directly from the GPU.
+			 */
+			void Read(u32 offset, void* data, u32 size);
 
-		/**	Returns the size of the buffer in bytes. */
-		u32 GetSize() const { return mSize; }
+			/**
+			 * Clear specified section of the buffer to zero.
+			 *
+			 * @note	All values are in bytes. Actual hardware buffer update is delayed until rendering or until
+			 *			flushToGPU() is called.
+			 */
+			void ZeroOut(u32 offset, u32 size);
 
-		/** @copydoc HardwareBufferManager::createGpuParamBlockBuffer */
-		static SPtr<GpuParamBlockBuffer> Create(u32 size, GpuBufferUsage usage = GBU_DYNAMIC,
-			GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			/**	Returns the size of the buffer in bytes. */
+			u32 GetSize() const { return mSize; }
 
-	protected:
-		friend class HardwareBufferManager;
+			/** @copydoc HardwareBufferManager::createGpuParamBlockBuffer */
+			static SPtr<GpuParamBlockBuffer> Create(u32 size, GpuBufferUsage usage = GBU_DYNAMIC, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
-		/** @copydoc CoreObject::syncToCore */
-		void SyncToCore(const CoreSyncData& data)  override;
+		protected:
+			friend class HardwareBufferManager;
 
-		/** @copydoc CoreObject::initialize */
-		void Initialize() override;
+			/** @copydoc CoreObject::syncToCore */
+			void SyncToCore(const CoreSyncData& data) override;
 
-		HardwareBuffer* mBuffer;
+			/** @copydoc CoreObject::initialize */
+			void Initialize() override;
 
-		GpuBufferUsage mUsage;
-		u32 mSize;
+			HardwareBuffer* mBuffer;
 
-		u8* mCachedData;
-		bool mGPUBufferDirty;
-	};
+			GpuBufferUsage mUsage;
+			u32 mSize;
 
-	/** @} */
-	}
-}
+			u8* mCachedData;
+			bool mGPUBufferDirty;
+		};
+
+		/** @} */
+	} // namespace ct
+} // namespace bs

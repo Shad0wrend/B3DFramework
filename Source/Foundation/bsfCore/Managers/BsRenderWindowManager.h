@@ -64,6 +64,7 @@ namespace bs
 
 		/**	Event that is triggered when mouse leaves a window. */
 		Event<void(RenderWindow&)> OnMouseLeftWindow;
+
 	protected:
 		friend class RenderWindow;
 
@@ -88,42 +89,42 @@ namespace bs
 
 	namespace ct
 	{
-	/**
-	 * Handles creation and internal updates relating to render windows.
-	 *
-	 * @note	Core thread only.
-	 */
-	class BS_CORE_EXPORT RenderWindowManager : public Module<RenderWindowManager>
-	{
-	public:
-		RenderWindowManager();
+		/**
+		 * Handles creation and internal updates relating to render windows.
+		 *
+		 * @note	Core thread only.
+		 */
+		class BS_CORE_EXPORT RenderWindowManager : public Module<RenderWindowManager>
+		{
+		public:
+			RenderWindowManager();
 
-		/** Called once per frame. Dispatches events. */
-		void UpdateInternal();
+			/** Called once per frame. Dispatches events. */
+			void UpdateInternal();
 
-		/**	Called by the core thread when window properties change. */
-		void NotifySyncDataDirty(RenderWindow* window);
+			/**	Called by the core thread when window properties change. */
+			void NotifySyncDataDirty(RenderWindow* window);
 
-		/**	Returns a list of all open render windows. */
-		Vector<RenderWindow*> GetRenderWindows() const;
+			/**	Returns a list of all open render windows. */
+			Vector<RenderWindow*> GetRenderWindows() const;
 
-	protected:
-		friend class RenderWindow;
-		friend class bs::RenderWindow;
-		friend class bs::RenderWindowManager;
+		protected:
+			friend class RenderWindow;
+			friend class bs::RenderWindow;
+			friend class bs::RenderWindowManager;
 
-		/**	Called whenever a window is created. */
-		void WindowCreated(RenderWindow* window);
+			/**	Called whenever a window is created. */
+			void WindowCreated(RenderWindow* window);
 
-		/**	Called by the core thread when window is destroyed. */
-		void WindowDestroyed(RenderWindow* window);
+			/**	Called by the core thread when window is destroyed. */
+			void WindowDestroyed(RenderWindow* window);
 
-		mutable Mutex mWindowMutex;
-		Vector<RenderWindow*> mCreatedWindows;
-		UnorderedSet<RenderWindow*> mDirtyProperties;
-		std::atomic_uint mNextWindowId;
-	};
-	}
+			mutable Mutex mWindowMutex;
+			Vector<RenderWindow*> mCreatedWindows;
+			UnorderedSet<RenderWindow*> mDirtyProperties;
+			std::atomic_uint mNextWindowId;
+		};
+	} // namespace ct
 
 	/** @} */
-}
+} // namespace bs

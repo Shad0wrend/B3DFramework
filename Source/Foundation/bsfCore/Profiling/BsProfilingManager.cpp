@@ -71,4 +71,4 @@ namespace bs
 	{
 		return ProfilingManager::Instance();
 	}
-}
+} // namespace bs

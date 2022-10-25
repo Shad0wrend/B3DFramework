@@ -8,7 +8,7 @@
 namespace bs
 {
 	PhysicsMesh::PhysicsMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type)
-		:mInitMeshData(meshData), mType(type)
+		: mInitMeshData(meshData), mType(type)
 	{
 		// Derived class is responsible for initializing mInternal
 	}
@@ -57,14 +57,12 @@ namespace bs
 	}
 
 	FPhysicsMesh::FPhysicsMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type)
-		:mType(type)
+		: mType(type)
 	{
-		
 	}
 
 	FPhysicsMesh::~FPhysicsMesh()
 	{
-		
 	}
 
 	RTTITypeBase* FPhysicsMesh::GetRttiStatic()
@@ -76,4 +74,4 @@ namespace bs
 	{
 		return GetRttiStatic();
 	}
-}
+} // namespace bs

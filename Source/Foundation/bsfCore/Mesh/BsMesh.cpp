@@ -17,22 +17,17 @@ namespace bs
 	MESH_DESC MESH_DESC::DEFAULT = MESH_DESC();
 
 	Mesh::Mesh(const MESH_DESC& desc)
-		:MeshBase(desc.NumVertices, desc.NumIndices, desc.SubMeshes), mVertexDesc(desc.VertexDesc), mUsage(desc.Usage),
-		mIndexType(desc.IndexType), mSkeleton(desc.Skeleton), mMorphShapes(desc.MorphShapes)
+		: MeshBase(desc.NumVertices, desc.NumIndices, desc.SubMeshes), mVertexDesc(desc.VertexDesc), mUsage(desc.Usage), mIndexType(desc.IndexType), mSkeleton(desc.Skeleton), mMorphShapes(desc.MorphShapes)
 	{
-
 	}
 
 	Mesh::Mesh(const SPtr<MeshData>& initialMeshData, const MESH_DESC& desc)
-		:MeshBase(initialMeshData->GetNumVertices(), initialMeshData->GetNumIndices(), desc.SubMeshes),
-		mCPUData(initialMeshData), mVertexDesc(initialMeshData->GetVertexDesc()),
-		mUsage(desc.Usage), mIndexType(initialMeshData->GetIndexType()), mSkeleton(desc.Skeleton),
-		mMorphShapes(desc.MorphShapes)
-	{ }
+		: MeshBase(initialMeshData->GetNumVertices(), initialMeshData->GetNumIndices(), desc.SubMeshes), mCPUData(initialMeshData), mVertexDesc(initialMeshData->GetVertexDesc()), mUsage(desc.Usage), mIndexType(initialMeshData->GetIndexType()), mSkeleton(desc.Skeleton), mMorphShapes(desc.MorphShapes)
+	{}
 
 	Mesh::Mesh()
-		:MeshBase(0, 0, DOT_TRIANGLE_LIST)
-	{ }
+		: MeshBase(0, 0, DOT_TRIANGLE_LIST)
+	{}
 
 	AsyncOp Mesh::WriteData(const SPtr<MeshData>& data, bool discardEntireBuffer)
 	{
@@ -47,11 +42,9 @@ namespace bs
 			mesh->WriteData(*_meshData, _discardEntireBuffer, false);
 			_meshData->UnlockInternal();
 			asyncOp.CompleteOperationInternal();
-
 		};
 
-		return gCoreThread().QueueReturnCommand(std::bind(func, GetCore(),
-			 data, discardEntireBuffer, std::placeholders::_1));
+		return gCoreThread().QueueReturnCommand(std::bind(func, GetCore(), data, discardEntireBuffer, std::placeholders::_1));
 	}
 
 	AsyncOp Mesh::ReadData(const SPtr<MeshData>& data)
@@ -67,29 +60,26 @@ namespace bs
 			mesh->ReadData(*_meshData);
 			_meshData->UnlockInternal();
 			asyncOp.CompleteOperationInternal();
-
 		};
 
-		return gCoreThread().QueueReturnCommand(std::bind(func, GetCore(),
-			data, std::placeholders::_1));
+		return gCoreThread().QueueReturnCommand(std::bind(func, GetCore(), data, std::placeholders::_1));
 	}
 
 	SPtr<MeshData> Mesh::AllocBuffer() const
 	{
-		SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(mProperties.mNumVertices, mProperties.mNumIndices,
-			mVertexDesc, mIndexType);
+		SPtr<MeshData> meshData = bs_shared_ptr_new<MeshData>(mProperties.mNumVertices, mProperties.mNumIndices, mVertexDesc, mIndexType);
 
 		return meshData;
 	}
 
 	void Mesh::Initialize()
 	{
-		if (mCPUData != nullptr)
+		if(mCPUData != nullptr)
 			UpdateBounds(*mCPUData);
 
 		MeshBase::Initialize();
 
-		if ((mUsage & MU_CPUCACHED) != 0 && mCPUData == nullptr)
+		if((mUsage & MU_CPUCACHED) != 0 && mCPUData == nullptr)
 			CreateCpuBuffer();
 	}
 
@@ -116,12 +106,12 @@ namespace bs
 		desc.Skeleton = mSkeleton;
 		desc.MorphShapes = mMorphShapes;
 
-		ct::Mesh* obj = new (bs_alloc<ct::Mesh>()) ct::Mesh(mCPUData, desc, GDF_DEFAULT);
+		ct::Mesh* obj = new(bs_alloc<ct::Mesh>()) ct::Mesh(mCPUData, desc, GDF_DEFAULT);
 
 		SPtr<ct::CoreObject> meshCore = bs_shared_ptr<ct::Mesh>(obj);
 		meshCore->SetThisPtrInternal(meshCore);
 
-		if ((mUsage & MU_CPUCACHED) == 0)
+		if((mUsage & MU_CPUCACHED) == 0)
 			mCPUData = nullptr;
 
 		return meshCore;
@@ -129,25 +119,25 @@ namespace bs
 
 	void Mesh::UpdateCpuBuffer(u32 subresourceIdx, const MeshData& pixelData)
 	{
-		if ((mUsage & MU_CPUCACHED) == 0)
+		if((mUsage & MU_CPUCACHED) == 0)
 			return;
 
-		if (subresourceIdx > 0)
+		if(subresourceIdx > 0)
 		{
 			BS_LOG(Error, Mesh, "Invalid subresource index: {0}. Supported range: 0 .. 1.", subresourceIdx);
 			return;
 		}
 
-		if (pixelData.GetNumIndices() != mProperties.GetNumIndices() ||
-			pixelData.GetNumVertices() != mProperties.GetNumVertices() ||
-			pixelData.GetIndexType() != mIndexType ||
-			pixelData.GetVertexDesc()->GetVertexStride() != mVertexDesc->GetVertexStride())
+		if(pixelData.GetNumIndices() != mProperties.GetNumIndices() ||
+		   pixelData.GetNumVertices() != mProperties.GetNumVertices() ||
+		   pixelData.GetIndexType() != mIndexType ||
+		   pixelData.GetVertexDesc()->GetVertexStride() != mVertexDesc->GetVertexStride())
 		{
 			BS_LOG(Error, Mesh, "Provided buffer is not of valid dimensions or format in order to update this mesh.");
 			return;
 		}
 
-		if (mCPUData->GetSize() != pixelData.GetSize())
+		if(mCPUData->GetSize() != pixelData.GetSize())
 			BS_EXCEPT(InternalErrorException, "Buffer sizes don't match.");
 
 		u8* dest = mCPUData->GetData();
@@ -184,8 +174,7 @@ namespace bs
 	/* 								STATICS		                     		*/
 	/************************************************************************/
 
-	HMesh Mesh::Create(u32 numVertices, u32 numIndices, const SPtr<VertexDataDesc>& vertexDesc,
-		int usage, DrawOperationType drawOp, IndexType indexType)
+	HMesh Mesh::Create(u32 numVertices, u32 numIndices, const SPtr<VertexDataDesc>& vertexDesc, int usage, DrawOperationType drawOp, IndexType indexType)
 	{
 		MESH_DESC desc;
 		desc.NumVertices = numVertices;
@@ -219,7 +208,7 @@ namespace bs
 
 	SPtr<Mesh> Mesh::CreatePtrInternal(const MESH_DESC& desc)
 	{
-		SPtr<Mesh> mesh = bs_core_ptr<Mesh>(new (bs_alloc<Mesh>()) Mesh(desc));
+		SPtr<Mesh> mesh = bs_core_ptr<Mesh>(new(bs_alloc<Mesh>()) Mesh(desc));
 		mesh->SetThisPtrInternal(mesh);
 		mesh->Initialize();
 
@@ -228,7 +217,7 @@ namespace bs
 
 	SPtr<Mesh> Mesh::CreatePtrInternal(const SPtr<MeshData>& initialMeshData, const MESH_DESC& desc)
 	{
-		SPtr<Mesh> mesh = bs_core_ptr<Mesh>(new (bs_alloc<Mesh>()) Mesh(initialMeshData, desc));
+		SPtr<Mesh> mesh = bs_core_ptr<Mesh>(new(bs_alloc<Mesh>()) Mesh(initialMeshData, desc));
 		mesh->SetThisPtrInternal(mesh);
 		mesh->Initialize();
 
@@ -241,7 +230,7 @@ namespace bs
 		desc.Usage = usage;
 		desc.SubMeshes.push_back(SubMesh(0, initialMeshData->GetNumIndices(), drawOp));
 
-		SPtr<Mesh> mesh = bs_core_ptr<Mesh>(new (bs_alloc<Mesh>()) Mesh(initialMeshData, desc));
+		SPtr<Mesh> mesh = bs_core_ptr<Mesh>(new(bs_alloc<Mesh>()) Mesh(initialMeshData, desc));
 		mesh->SetThisPtrInternal(mesh);
 		mesh->Initialize();
 
@@ -250,7 +239,7 @@ namespace bs
 
 	SPtr<Mesh> Mesh::CreateEmpty()
 	{
-		SPtr<Mesh> mesh = bs_core_ptr<Mesh>(new (bs_alloc<Mesh>()) Mesh());
+		SPtr<Mesh> mesh = bs_core_ptr<Mesh>(new(bs_alloc<Mesh>()) Mesh());
 		mesh->SetThisPtrInternal(mesh);
 
 		return mesh;
@@ -258,328 +247,322 @@ namespace bs
 
 	namespace ct
 	{
-	Mesh::Mesh(const SPtr<MeshData>& initialMeshData, const MESH_DESC& desc, GpuDeviceFlags deviceMask)
-		: MeshBase(desc.NumVertices, desc.NumIndices, desc.SubMeshes), mVertexData(nullptr), mIndexBuffer(nullptr)
-		, mVertexDesc(desc.VertexDesc), mUsage(desc.Usage), mIndexType(desc.IndexType), mDeviceMask(deviceMask)
-		, mTempInitialMeshData(initialMeshData), mSkeleton(desc.Skeleton), mMorphShapes(desc.MorphShapes)
+		Mesh::Mesh(const SPtr<MeshData>& initialMeshData, const MESH_DESC& desc, GpuDeviceFlags deviceMask)
+			: MeshBase(desc.NumVertices, desc.NumIndices, desc.SubMeshes), mVertexData(nullptr), mIndexBuffer(nullptr), mVertexDesc(desc.VertexDesc), mUsage(desc.Usage), mIndexType(desc.IndexType), mDeviceMask(deviceMask), mTempInitialMeshData(initialMeshData), mSkeleton(desc.Skeleton), mMorphShapes(desc.MorphShapes)
 
-	{ }
+		{}
 
-	Mesh::~Mesh()
-	{
-		THROW_IF_NOT_CORE_THREAD;
-
-		mVertexData = nullptr;
-		mIndexBuffer = nullptr;
-		mVertexDesc = nullptr;
-		mTempInitialMeshData = nullptr;
-	}
-
-	void Mesh::Initialize()
-	{
-		THROW_IF_NOT_CORE_THREAD;
-
-		bool isDynamic = (mUsage & MU_DYNAMIC) != 0;
-		int usage = isDynamic ? GBU_DYNAMIC : GBU_STATIC;
-
-		INDEX_BUFFER_DESC ibDesc;
-		ibDesc.IndexType = mIndexType;
-		ibDesc.NumIndices = mProperties.mNumIndices;
-		ibDesc.Usage = (GpuBufferUsage)usage;
-
-		mIndexBuffer = IndexBuffer::Create(ibDesc, mDeviceMask);
-
-		mVertexData = bs_shared_ptr_new<VertexData>();
-		mVertexData->VertexCount = mProperties.mNumVertices;
-		mVertexData->VertexDeclaration = VertexDeclaration::Create(mVertexDesc, mDeviceMask);
-
-		for (u32 i = 0; i <= mVertexDesc->GetMaxStreamIdx(); i++)
+		Mesh::~Mesh()
 		{
-			if (!mVertexDesc->HasStream(i))
-				continue;
+			THROW_IF_NOT_CORE_THREAD;
 
-			VERTEX_BUFFER_DESC vbDesc;
-			vbDesc.VertexSize = mVertexData->VertexDeclaration->GetProperties().GetVertexSize(i);
-			vbDesc.NumVerts = mVertexData->VertexCount;
-			vbDesc.Usage = (GpuBufferUsage)usage;
-
-			SPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(vbDesc, mDeviceMask);
-			mVertexData->SetBuffer(i, vertexBuffer);
-		}
-
-		// TODO Low priority - DX11 (and maybe OpenGL)? allow an optimization that allows you to set
-		// buffer data upon buffer construction, instead of setting it in a second step like I do here
-		if (mTempInitialMeshData != nullptr)
-		{
-			WriteData(*mTempInitialMeshData, isDynamic);
+			mVertexData = nullptr;
+			mIndexBuffer = nullptr;
+			mVertexDesc = nullptr;
 			mTempInitialMeshData = nullptr;
 		}
 
-		MeshBase::Initialize();
-	}
-
-	SPtr<VertexData> Mesh::GetVertexData() const
-	{
-		THROW_IF_NOT_CORE_THREAD;
-
-		return mVertexData;
-	}
-
-	SPtr<IndexBuffer> Mesh::GetIndexBuffer() const
-	{
-		THROW_IF_NOT_CORE_THREAD;
-
-		return mIndexBuffer;
-	}
-
-	SPtr<VertexDataDesc> Mesh::GetVertexDesc() const
-	{
-		THROW_IF_NOT_CORE_THREAD;
-
-		return mVertexDesc;
-	}
-
-	void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool performUpdateBounds, u32 queueIdx)
-	{
-		THROW_IF_NOT_CORE_THREAD;
-
-		if (discardEntireBuffer)
+		void Mesh::Initialize()
 		{
-			if ((mUsage & MU_STATIC) != 0)
+			THROW_IF_NOT_CORE_THREAD;
+
+			bool isDynamic = (mUsage & MU_DYNAMIC) != 0;
+			int usage = isDynamic ? GBU_DYNAMIC : GBU_STATIC;
+
+			INDEX_BUFFER_DESC ibDesc;
+			ibDesc.IndexType = mIndexType;
+			ibDesc.NumIndices = mProperties.mNumIndices;
+			ibDesc.Usage = (GpuBufferUsage)usage;
+
+			mIndexBuffer = IndexBuffer::Create(ibDesc, mDeviceMask);
+
+			mVertexData = bs_shared_ptr_new<VertexData>();
+			mVertexData->VertexCount = mProperties.mNumVertices;
+			mVertexData->VertexDeclaration = VertexDeclaration::Create(mVertexDesc, mDeviceMask);
+
+			for(u32 i = 0; i <= mVertexDesc->GetMaxStreamIdx(); i++)
 			{
-				BS_LOG(Warning, Mesh, "Buffer discard is enabled but buffer was not created as dynamic. Disabling discard.");
-				discardEntireBuffer = false;
-			}
-		}
-		else
-		{
-			if ((mUsage & MU_DYNAMIC) != 0)
-			{
-				BS_LOG(Warning, Mesh, "Buffer discard is not enabled but buffer was created as dynamic. Enabling discard.");
-				discardEntireBuffer = true;
-			}
-		}
+				if(!mVertexDesc->HasStream(i))
+					continue;
 
-		// Indices
-		const IndexBufferProperties& ibProps = mIndexBuffer->GetProperties();
+				VERTEX_BUFFER_DESC vbDesc;
+				vbDesc.VertexSize = mVertexData->VertexDeclaration->GetProperties().GetVertexSize(i);
+				vbDesc.NumVerts = mVertexData->VertexCount;
+				vbDesc.Usage = (GpuBufferUsage)usage;
 
-		u32 indicesSize = meshData.GetIndexBufferSize();
-		u8* srcIdxData = meshData.GetIndexData();
-
-		if (meshData.GetIndexElementSize() != ibProps.GetIndexSize())
-		{
-			BS_LOG(Error, Mesh, "Provided index size doesn't match meshes index size. Needed: {0}. Got: {1}",
-				ibProps.GetIndexSize(), meshData.GetIndexElementSize());
-
-			return;
-		}
-
-		if (indicesSize > mIndexBuffer->GetSize())
-		{
-			indicesSize = mIndexBuffer->GetSize();
-			BS_LOG(Error, Mesh, "Index buffer values are being written out of valid range.");
-		}
-
-		mIndexBuffer->WriteData(0, indicesSize, srcIdxData, discardEntireBuffer ? BWT_DISCARD : BWT_NORMAL, queueIdx);
-
-		// Vertices
-		for (u32 i = 0; i <= mVertexDesc->GetMaxStreamIdx(); i++)
-		{
-			if (!mVertexDesc->HasStream(i))
-				continue;
-
-			if (!meshData.GetVertexDesc()->HasStream(i))
-				continue;
-
-			// Ensure both have the same sized vertices
-			u32 myVertSize = mVertexDesc->GetVertexStride(i);
-			u32 otherVertSize = meshData.GetVertexDesc()->GetVertexStride(i);
-			if (myVertSize != otherVertSize)
-			{
-				BS_LOG(Error, Mesh, "Provided vertex size for stream {0} doesn't match meshes vertex size. "
-					"Needed: {1}. Got: {2}", i, myVertSize, otherVertSize);
-
-				continue;
+				SPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(vbDesc, mDeviceMask);
+				mVertexData->SetBuffer(i, vertexBuffer);
 			}
 
-			SPtr<VertexBuffer> vertexBuffer = mVertexData->GetBuffer(i);
-
-			u32 bufferSize = meshData.GetStreamSize(i);
-			u8* srcVertBufferData = meshData.GetStreamData(i);
-
-			if (bufferSize > vertexBuffer->GetSize())
+			// TODO Low priority - DX11 (and maybe OpenGL)? allow an optimization that allows you to set
+			// buffer data upon buffer construction, instead of setting it in a second step like I do here
+			if(mTempInitialMeshData != nullptr)
 			{
-				bufferSize = vertexBuffer->GetSize();
-				BS_LOG(Error, Mesh, "Vertex buffer values for stream \"{0}\" are being written out of valid range.", i);
+				WriteData(*mTempInitialMeshData, isDynamic);
+				mTempInitialMeshData = nullptr;
 			}
 
-			vertexBuffer->WriteData(0, bufferSize, srcVertBufferData, discardEntireBuffer ? BWT_DISCARD : BWT_NORMAL,
-				queueIdx);
+			MeshBase::Initialize();
 		}
 
-		if (performUpdateBounds)
-			UpdateBounds(meshData);
-	}
-
-	void Mesh::ReadData(MeshData& meshData, u32 deviceIdx, u32 queueIdx)
-	{
-		THROW_IF_NOT_CORE_THREAD;
-
-		IndexType indexType = IT_32BIT;
-		if (mIndexBuffer)
-			indexType = mIndexBuffer->GetProperties().GetType();
-
-		if (mIndexBuffer)
+		SPtr<VertexData> Mesh::GetVertexData() const
 		{
+			THROW_IF_NOT_CORE_THREAD;
+
+			return mVertexData;
+		}
+
+		SPtr<IndexBuffer> Mesh::GetIndexBuffer() const
+		{
+			THROW_IF_NOT_CORE_THREAD;
+
+			return mIndexBuffer;
+		}
+
+		SPtr<VertexDataDesc> Mesh::GetVertexDesc() const
+		{
+			THROW_IF_NOT_CORE_THREAD;
+
+			return mVertexDesc;
+		}
+
+		void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool performUpdateBounds, u32 queueIdx)
+		{
+			THROW_IF_NOT_CORE_THREAD;
+
+			if(discardEntireBuffer)
+			{
+				if((mUsage & MU_STATIC) != 0)
+				{
+					BS_LOG(Warning, Mesh, "Buffer discard is enabled but buffer was not created as dynamic. Disabling discard.");
+					discardEntireBuffer = false;
+				}
+			}
+			else
+			{
+				if((mUsage & MU_DYNAMIC) != 0)
+				{
+					BS_LOG(Warning, Mesh, "Buffer discard is not enabled but buffer was created as dynamic. Enabling discard.");
+					discardEntireBuffer = true;
+				}
+			}
+
+			// Indices
 			const IndexBufferProperties& ibProps = mIndexBuffer->GetProperties();
 
-			if (meshData.GetIndexElementSize() != ibProps.GetIndexSize())
+			u32 indicesSize = meshData.GetIndexBufferSize();
+			u8* srcIdxData = meshData.GetIndexData();
+
+			if(meshData.GetIndexElementSize() != ibProps.GetIndexSize())
 			{
-				BS_LOG(Error, Mesh, "Provided index size doesn't match meshes index size. Needed: {0}. Got: {1}",
-					ibProps.GetIndexSize(), meshData.GetIndexElementSize());
+				BS_LOG(Error, Mesh, "Provided index size doesn't match meshes index size. Needed: {0}. Got: {1}", ibProps.GetIndexSize(), meshData.GetIndexElementSize());
+
 				return;
 			}
 
-			u8* idxData = static_cast<u8*>(mIndexBuffer->Lock(GBL_READ_ONLY, deviceIdx, queueIdx));
-			u32 idxElemSize = ibProps.GetIndexSize();
-
-			u8* indices = nullptr;
-
-			if (indexType == IT_16BIT)
-				indices = (u8*)meshData.GetIndices16();
-			else
-				indices = (u8*)meshData.GetIndices32();
-
-			u32 numIndicesToCopy = std::min(mProperties.mNumIndices, meshData.GetNumIndices());
-
-			u32 indicesSize = numIndicesToCopy * idxElemSize;
-			if (indicesSize > meshData.GetIndexBufferSize())
+			if(indicesSize > mIndexBuffer->GetSize())
 			{
-				BS_LOG(Error, Mesh, "Provided buffer doesn't have enough space to store mesh indices.");
-				return;
+				indicesSize = mIndexBuffer->GetSize();
+				BS_LOG(Error, Mesh, "Index buffer values are being written out of valid range.");
 			}
 
-			memcpy(indices, idxData, numIndicesToCopy * idxElemSize);
+			mIndexBuffer->WriteData(0, indicesSize, srcIdxData, discardEntireBuffer ? BWT_DISCARD : BWT_NORMAL, queueIdx);
 
-			mIndexBuffer->Unlock();
-		}
-
-		if (mVertexData)
-		{
-			auto vertexBuffers = mVertexData->GetBuffers();
-
-			u32 streamIdx = 0;
-			for (auto iter = vertexBuffers.begin(); iter != vertexBuffers.end(); ++iter)
+			// Vertices
+			for(u32 i = 0; i <= mVertexDesc->GetMaxStreamIdx(); i++)
 			{
-				if (!meshData.GetVertexDesc()->HasStream(streamIdx))
+				if(!mVertexDesc->HasStream(i))
 					continue;
 
-				SPtr<VertexBuffer> vertexBuffer = iter->second;
-				const VertexBufferProperties& vbProps = vertexBuffer->GetProperties();
+				if(!meshData.GetVertexDesc()->HasStream(i))
+					continue;
 
 				// Ensure both have the same sized vertices
-				u32 myVertSize = mVertexDesc->GetVertexStride(streamIdx);
-				u32 otherVertSize = meshData.GetVertexDesc()->GetVertexStride(streamIdx);
-				if (myVertSize != otherVertSize)
+				u32 myVertSize = mVertexDesc->GetVertexStride(i);
+				u32 otherVertSize = meshData.GetVertexDesc()->GetVertexStride(i);
+				if(myVertSize != otherVertSize)
 				{
 					BS_LOG(Error, Mesh, "Provided vertex size for stream {0} doesn't match meshes vertex size. "
-						"Needed: {1}. Got: {2}", streamIdx, myVertSize, otherVertSize);
+										"Needed: {1}. Got: {2}",
+						   i, myVertSize, otherVertSize);
 
 					continue;
 				}
 
-				u32 numVerticesToCopy = meshData.GetNumVertices();
-				u32 bufferSize = vbProps.GetVertexSize() * numVerticesToCopy;
+				SPtr<VertexBuffer> vertexBuffer = mVertexData->GetBuffer(i);
 
-				if (bufferSize > vertexBuffer->GetSize())
+				u32 bufferSize = meshData.GetStreamSize(i);
+				u8* srcVertBufferData = meshData.GetStreamData(i);
+
+				if(bufferSize > vertexBuffer->GetSize())
 				{
-					BS_LOG(Error, Mesh, "Vertex buffer values for stream \"{0}\" are being read out of valid range.",
-						streamIdx);
-					continue;
+					bufferSize = vertexBuffer->GetSize();
+					BS_LOG(Error, Mesh, "Vertex buffer values for stream \"{0}\" are being written out of valid range.", i);
 				}
 
-				u8* vertDataPtr = static_cast<u8*>(vertexBuffer->Lock(GBL_READ_ONLY, deviceIdx, queueIdx));
+				vertexBuffer->WriteData(0, bufferSize, srcVertBufferData, discardEntireBuffer ? BWT_DISCARD : BWT_NORMAL, queueIdx);
+			}
 
-				u8* dest = meshData.GetStreamData(streamIdx);
-				memcpy(dest, vertDataPtr, bufferSize);
+			if(performUpdateBounds)
+				UpdateBounds(meshData);
+		}
 
-				vertexBuffer->Unlock();
+		void Mesh::ReadData(MeshData& meshData, u32 deviceIdx, u32 queueIdx)
+		{
+			THROW_IF_NOT_CORE_THREAD;
 
-				streamIdx++;
+			IndexType indexType = IT_32BIT;
+			if(mIndexBuffer)
+				indexType = mIndexBuffer->GetProperties().GetType();
+
+			if(mIndexBuffer)
+			{
+				const IndexBufferProperties& ibProps = mIndexBuffer->GetProperties();
+
+				if(meshData.GetIndexElementSize() != ibProps.GetIndexSize())
+				{
+					BS_LOG(Error, Mesh, "Provided index size doesn't match meshes index size. Needed: {0}. Got: {1}", ibProps.GetIndexSize(), meshData.GetIndexElementSize());
+					return;
+				}
+
+				u8* idxData = static_cast<u8*>(mIndexBuffer->Lock(GBL_READ_ONLY, deviceIdx, queueIdx));
+				u32 idxElemSize = ibProps.GetIndexSize();
+
+				u8* indices = nullptr;
+
+				if(indexType == IT_16BIT)
+					indices = (u8*)meshData.GetIndices16();
+				else
+					indices = (u8*)meshData.GetIndices32();
+
+				u32 numIndicesToCopy = std::min(mProperties.mNumIndices, meshData.GetNumIndices());
+
+				u32 indicesSize = numIndicesToCopy * idxElemSize;
+				if(indicesSize > meshData.GetIndexBufferSize())
+				{
+					BS_LOG(Error, Mesh, "Provided buffer doesn't have enough space to store mesh indices.");
+					return;
+				}
+
+				memcpy(indices, idxData, numIndicesToCopy * idxElemSize);
+
+				mIndexBuffer->Unlock();
+			}
+
+			if(mVertexData)
+			{
+				auto vertexBuffers = mVertexData->GetBuffers();
+
+				u32 streamIdx = 0;
+				for(auto iter = vertexBuffers.begin(); iter != vertexBuffers.end(); ++iter)
+				{
+					if(!meshData.GetVertexDesc()->HasStream(streamIdx))
+						continue;
+
+					SPtr<VertexBuffer> vertexBuffer = iter->second;
+					const VertexBufferProperties& vbProps = vertexBuffer->GetProperties();
+
+					// Ensure both have the same sized vertices
+					u32 myVertSize = mVertexDesc->GetVertexStride(streamIdx);
+					u32 otherVertSize = meshData.GetVertexDesc()->GetVertexStride(streamIdx);
+					if(myVertSize != otherVertSize)
+					{
+						BS_LOG(Error, Mesh, "Provided vertex size for stream {0} doesn't match meshes vertex size. "
+											"Needed: {1}. Got: {2}",
+							   streamIdx, myVertSize, otherVertSize);
+
+						continue;
+					}
+
+					u32 numVerticesToCopy = meshData.GetNumVertices();
+					u32 bufferSize = vbProps.GetVertexSize() * numVerticesToCopy;
+
+					if(bufferSize > vertexBuffer->GetSize())
+					{
+						BS_LOG(Error, Mesh, "Vertex buffer values for stream \"{0}\" are being read out of valid range.", streamIdx);
+						continue;
+					}
+
+					u8* vertDataPtr = static_cast<u8*>(vertexBuffer->Lock(GBL_READ_ONLY, deviceIdx, queueIdx));
+
+					u8* dest = meshData.GetStreamData(streamIdx);
+					memcpy(dest, vertDataPtr, bufferSize);
+
+					vertexBuffer->Unlock();
+
+					streamIdx++;
+				}
 			}
 		}
-	}
 
-	void Mesh::UpdateBounds(const MeshData& meshData)
-	{
-		mProperties.mBounds = meshData.CalculateBounds();
+		void Mesh::UpdateBounds(const MeshData& meshData)
+		{
+			mProperties.mBounds = meshData.CalculateBounds();
 
-		// TODO - Sync this to sim-thread possibly?
-	}
+			// TODO - Sync this to sim-thread possibly?
+		}
 
-	SPtr<Mesh> Mesh::Create(u32 numVertices, u32 numIndices, const SPtr<VertexDataDesc>& vertexDesc,
-		int usage, DrawOperationType drawOp, IndexType indexType, GpuDeviceFlags deviceMask)
-	{
-		MESH_DESC desc;
-		desc.NumVertices = numVertices;
-		desc.NumIndices = numIndices;
-		desc.VertexDesc = vertexDesc;
-		desc.SubMeshes.push_back(SubMesh(0, numIndices, drawOp));
-		desc.Usage = usage;
-		desc.IndexType = indexType;
+		SPtr<Mesh> Mesh::Create(u32 numVertices, u32 numIndices, const SPtr<VertexDataDesc>& vertexDesc, int usage, DrawOperationType drawOp, IndexType indexType, GpuDeviceFlags deviceMask)
+		{
+			MESH_DESC desc;
+			desc.NumVertices = numVertices;
+			desc.NumIndices = numIndices;
+			desc.VertexDesc = vertexDesc;
+			desc.SubMeshes.push_back(SubMesh(0, numIndices, drawOp));
+			desc.Usage = usage;
+			desc.IndexType = indexType;
 
-		SPtr<Mesh> mesh = bs_shared_ptr<Mesh>(new (bs_alloc<Mesh>()) Mesh(nullptr, desc, deviceMask));
-		mesh->SetThisPtrInternal(mesh);
-		mesh->Initialize();
+			SPtr<Mesh> mesh = bs_shared_ptr<Mesh>(new(bs_alloc<Mesh>()) Mesh(nullptr, desc, deviceMask));
+			mesh->SetThisPtrInternal(mesh);
+			mesh->Initialize();
 
-		return mesh;
-	}
+			return mesh;
+		}
 
-	SPtr<Mesh> Mesh::Create(const MESH_DESC& desc, GpuDeviceFlags deviceMask)
-	{
-		SPtr<Mesh> mesh = bs_shared_ptr<Mesh>(new (bs_alloc<Mesh>()) Mesh(nullptr, desc, deviceMask));
+		SPtr<Mesh> Mesh::Create(const MESH_DESC& desc, GpuDeviceFlags deviceMask)
+		{
+			SPtr<Mesh> mesh = bs_shared_ptr<Mesh>(new(bs_alloc<Mesh>()) Mesh(nullptr, desc, deviceMask));
 
-		mesh->SetThisPtrInternal(mesh);
-		mesh->Initialize();
+			mesh->SetThisPtrInternal(mesh);
+			mesh->Initialize();
 
-		return mesh;
-	}
+			return mesh;
+		}
 
-	SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, const MESH_DESC& desc, GpuDeviceFlags deviceMask)
-	{
-		MESH_DESC descCopy = desc;
-		descCopy.NumVertices = initialMeshData->GetNumVertices();
-		descCopy.NumIndices = initialMeshData->GetNumIndices();
-		descCopy.VertexDesc = initialMeshData->GetVertexDesc();
-		descCopy.IndexType = initialMeshData->GetIndexType();
+		SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, const MESH_DESC& desc, GpuDeviceFlags deviceMask)
+		{
+			MESH_DESC descCopy = desc;
+			descCopy.NumVertices = initialMeshData->GetNumVertices();
+			descCopy.NumIndices = initialMeshData->GetNumIndices();
+			descCopy.VertexDesc = initialMeshData->GetVertexDesc();
+			descCopy.IndexType = initialMeshData->GetIndexType();
 
-		SPtr<Mesh> mesh =
-			bs_shared_ptr<Mesh>(new (bs_alloc<Mesh>()) Mesh(initialMeshData, descCopy, deviceMask));
+			SPtr<Mesh> mesh =
+				bs_shared_ptr<Mesh>(new(bs_alloc<Mesh>()) Mesh(initialMeshData, descCopy, deviceMask));
 
-		mesh->SetThisPtrInternal(mesh);
-		mesh->Initialize();
+			mesh->SetThisPtrInternal(mesh);
+			mesh->Initialize();
 
-		return mesh;
-	}
+			return mesh;
+		}
 
-	SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, int usage, DrawOperationType drawOp,
-		GpuDeviceFlags deviceMask)
-	{
-		MESH_DESC desc;
-		desc.NumVertices = initialMeshData->GetNumVertices();
-		desc.NumIndices = initialMeshData->GetNumIndices();
-		desc.VertexDesc = initialMeshData->GetVertexDesc();
-		desc.IndexType = initialMeshData->GetIndexType();
-		desc.SubMeshes.push_back(SubMesh(0, initialMeshData->GetNumIndices(), drawOp));
-		desc.Usage = usage;
+		SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, int usage, DrawOperationType drawOp, GpuDeviceFlags deviceMask)
+		{
+			MESH_DESC desc;
+			desc.NumVertices = initialMeshData->GetNumVertices();
+			desc.NumIndices = initialMeshData->GetNumIndices();
+			desc.VertexDesc = initialMeshData->GetVertexDesc();
+			desc.IndexType = initialMeshData->GetIndexType();
+			desc.SubMeshes.push_back(SubMesh(0, initialMeshData->GetNumIndices(), drawOp));
+			desc.Usage = usage;
 
-		SPtr<Mesh> mesh =
-			bs_shared_ptr<Mesh>(new (bs_alloc<Mesh>()) Mesh(initialMeshData, desc, deviceMask));
+			SPtr<Mesh> mesh =
+				bs_shared_ptr<Mesh>(new(bs_alloc<Mesh>()) Mesh(initialMeshData, desc, deviceMask));
 
-		mesh->SetThisPtrInternal(mesh);
-		mesh->Initialize();
+			mesh->SetThisPtrInternal(mesh);
+			mesh->Initialize();
 
-		return mesh;
-	}
-	}
-}
+			return mesh;
+		}
+	} // namespace ct
+} // namespace bs

@@ -14,7 +14,7 @@ namespace bs
 	SPtr<AudioListener> AudioListener::Create()
 	{
 		return gAudio().CreateListener();
-	}	
+	}
 
 	RTTITypeBase* AudioListener::GetRttiStatic()
 	{
@@ -25,4 +25,4 @@ namespace bs
 	{
 		return AudioListener::GetRttiStatic();
 	}
-}
+} // namespace bs

@@ -46,9 +46,8 @@ namespace bs
 		 * @param[in]	position	Center of the box.
 		 * @param[in]	rotation	Rotation of the box.
 		 */
-		static SPtr<CapsuleCollider> Create(PhysicsScene& scene, float radius = 0.0f, float halfHeight = 0.0f,
-			const Vector3& position = Vector3::ZERO, const Quaternion& rotation = Quaternion::IDENTITY);
+		static SPtr<CapsuleCollider> Create(PhysicsScene& scene, float radius = 0.0f, float halfHeight = 0.0f, const Vector3& position = Vector3::ZERO, const Quaternion& rotation = Quaternion::IDENTITY);
 	};
 
 	/** @} */
-}
+} // namespace bs

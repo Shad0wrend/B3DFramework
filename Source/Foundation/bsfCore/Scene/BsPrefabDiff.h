@@ -37,7 +37,7 @@ namespace bs
 	};
 
 	/** Flags that mark which portion of a scene-object is modified. */
-	enum class BS_SCRIPT_EXPORT(API(Editor),DocumentationGroup(Utility-Editor)) SceneObjectDiffFlags
+	enum class BS_SCRIPT_EXPORT(API(Editor), DocumentationGroup(Utility - Editor)) SceneObjectDiffFlags
 	{
 		Name = 0x01,
 		Position = 0x02,
@@ -53,7 +53,7 @@ namespace bs
 	 */
 	struct BS_CORE_EXPORT PrefabObjectDiff : public IReflectable
 	{
-		PrefabObjectDiff() { }
+		PrefabObjectDiff() {}
 
 		u32 Id = 0;
 
@@ -123,7 +123,7 @@ namespace bs
 		/**
 		 * Recursively applies a per-object set of prefab differences to a specific object.
 		 *
-		 * @see		apply			
+		 * @see		apply
 		 */
 		static void ApplyDiff(const SPtr<PrefabObjectDiff>& diff, const HSceneObject& object, SerializationContext* context);
 
@@ -131,7 +131,7 @@ namespace bs
 		 * Renames all game objects in the provided instance so that IDs of the objects will match the IDs of their
 		 * counterparts in the prefab.
 		 *
-		 * @note	
+		 * @note
 		 * This is a temporary action and should be undone by calling restoreInstanceIds() and providing  it with the
 		 * output of this method.
 		 * @note
@@ -155,6 +155,7 @@ namespace bs
 		/************************************************************************/
 
 		Any mRTTIData;
+
 	public:
 		friend class PrefabDiffRTTI;
 		static RTTITypeBase* GetRttiStatic();
@@ -162,4 +163,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

@@ -56,8 +56,9 @@ namespace bs
 	class BS_CORE_EXPORT CharacterController
 	{
 	public:
-		CharacterController(const CHAR_CONTROLLER_DESC& desc) { }
-		virtual ~CharacterController() { }
+		CharacterController(const CHAR_CONTROLLER_DESC& desc) {}
+
+		virtual ~CharacterController() {}
 
 		/**
 		 * Moves the controller in the specified direction by the specified amount, while interacting with surrounding
@@ -167,7 +168,11 @@ namespace bs
 		 * Sets the object that owns this physics object, if any. Used for high level systems so they can easily map their
 		 * high level physics objects from the low level ones returned by various queries and events.
 		 */
-		void SetOwnerInternal(PhysicsOwnerType type, void* owner) { mOwner.Type = type; mOwner.OwnerData = owner; }
+		void SetOwnerInternal(PhysicsOwnerType type, void* owner)
+		{
+			mOwner.Type = type;
+			mOwner.OwnerData = owner;
+		}
 
 		/**
 		 * Gets the object that owns this physics object, if any. Used for high level systems so they can easily map their
@@ -216,7 +221,7 @@ namespace bs
 
 		/** Radius of the controller capsule. */
 		float Radius = 1.0f;
-		
+
 		/** Up direction of controller capsule. Determines capsule orientation. */
 		Vector3 Up = Vector3::UNIT_Y;
 
@@ -236,7 +241,7 @@ namespace bs
 	};
 
 	/** Contains data about a collision of a character controller and another object. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportAsStruct(true)) ControllerCollision
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) ControllerCollision
 	{
 		Vector3 Position; /**< Contact position. */
 		Vector3 Normal; /**< Contact normal. */
@@ -245,7 +250,7 @@ namespace bs
 	};
 
 	/** Contains data about a collision of a character controller and a collider. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportAsStruct(true)) ControllerColliderCollision : ControllerCollision
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) ControllerColliderCollision : ControllerCollision
 	{
 		/**
 		 * Component of the controller that was touched. Can be null if the controller has no component parent, in which
@@ -259,7 +264,7 @@ namespace bs
 	};
 
 	/** Contains data about a collision between two character controllers. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportAsStruct(true)) ControllerControllerCollision : ControllerCollision
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) ControllerControllerCollision : ControllerCollision
 	{
 		/**
 		 * Component of the controller that was touched. Can be null if the controller has no component parent, in which
@@ -272,4 +277,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

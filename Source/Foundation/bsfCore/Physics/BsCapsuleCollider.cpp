@@ -5,9 +5,8 @@
 
 namespace bs
 {
-	SPtr<CapsuleCollider> CapsuleCollider::Create(PhysicsScene& scene, float radius, float halfHeight,
-		const Vector3& position, const Quaternion& rotation)
+	SPtr<CapsuleCollider> CapsuleCollider::Create(PhysicsScene& scene, float radius, float halfHeight, const Vector3& position, const Quaternion& rotation)
 	{
 		return scene.CreateCapsuleCollider(radius, halfHeight, position, rotation);
 	}
-}
+} // namespace bs

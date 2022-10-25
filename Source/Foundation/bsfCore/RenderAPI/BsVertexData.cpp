@@ -7,42 +7,45 @@
 #include "Error/BsException.h"
 #include "RenderAPI/BsRenderAPI.h"
 
-namespace bs { namespace ct
+namespace bs
 {
-	void VertexData::SetBuffer(u32 index, SPtr<VertexBuffer> buffer)
+	namespace ct
 	{
-		mVertexBuffers[index] = buffer;
-
-		RecalculateMaxIndex();
-	}
-
-	SPtr<VertexBuffer> VertexData::GetBuffer(u32 index) const
-	{
-		auto iterFind = mVertexBuffers.find(index);
-		if(iterFind != mVertexBuffers.end())
+		void VertexData::SetBuffer(u32 index, SPtr<VertexBuffer> buffer)
 		{
-			return iterFind->second;
+			mVertexBuffers[index] = buffer;
+
+			RecalculateMaxIndex();
 		}
 
-		return nullptr;
-	}
-
-	bool VertexData::IsBufferBound(u32 index) const
-	{
-		auto iterFind = mVertexBuffers.find(index);
-		if(iterFind != mVertexBuffers.end())
+		SPtr<VertexBuffer> VertexData::GetBuffer(u32 index) const
 		{
-			if(iterFind->second != nullptr)
-				return true;
+			auto iterFind = mVertexBuffers.find(index);
+			if(iterFind != mVertexBuffers.end())
+			{
+				return iterFind->second;
+			}
+
+			return nullptr;
 		}
 
-		return false;
-	}
+		bool VertexData::IsBufferBound(u32 index) const
+		{
+			auto iterFind = mVertexBuffers.find(index);
+			if(iterFind != mVertexBuffers.end())
+			{
+				if(iterFind->second != nullptr)
+					return true;
+			}
 
-	void VertexData::RecalculateMaxIndex()
-	{
-		mMaxBufferIdx = 0;
-		for (auto& bufferData : mVertexBuffers)
-			mMaxBufferIdx = std::max(bufferData.first, mMaxBufferIdx);
-	}
-}}
+			return false;
+		}
+
+		void VertexData::RecalculateMaxIndex()
+		{
+			mMaxBufferIdx = 0;
+			for(auto& bufferData : mVertexBuffers)
+				mMaxBufferIdx = std::max(bufferData.first, mMaxBufferIdx);
+		}
+	} // namespace ct
+} // namespace bs

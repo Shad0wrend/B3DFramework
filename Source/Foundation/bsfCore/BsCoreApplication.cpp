@@ -69,8 +69,7 @@ namespace bs
 	BS_LOG_CATEGORY_IMPL(Importer)
 
 	CoreApplication::CoreApplication(START_UP_DESC desc)
-		: mPrimaryWindow(nullptr), mStartUpDesc(desc), mRendererPlugin(nullptr), mIsFrameRenderingFinished(true)
-		, mSimThreadId(BS_THREAD_CURRENT_ID), mRunMainLoop(false)
+		: mPrimaryWindow(nullptr), mStartUpDesc(desc), mRendererPlugin(nullptr), mIsFrameRenderingFinished(true), mSimThreadId(BS_THREAD_CURRENT_ID), mRunMainLoop(false)
 	{
 		// Ensure all errors are reported properly
 		CrashHandler::StartUp(desc.CrashHandling);
@@ -88,7 +87,7 @@ namespace bs
 		ProfilerGPU::ShutDown();
 
 		SceneManager::ShutDown();
-		
+
 		Input::ShutDown();
 
 		ct::ParamBlockManager::ShutDown();
@@ -191,7 +190,7 @@ namespace bs
 		AnimationManager::StartUp();
 		ParticleManager::StartUp();
 
-		for (auto& importerName : mStartUpDesc.Importers)
+		for(auto& importerName : mStartUpDesc.Importers)
 			LoadPlugin(importerName);
 
 		// Built-in importers
@@ -206,16 +205,16 @@ namespace bs
 		while(IsMainLoopRunning())
 		{
 			// Limit FPS if needed
-			if (mFrameStep > 0)
+			if(mFrameStep > 0)
 			{
 				u64 currentTime = gTime().GetTimePrecise();
 				u64 nextFrameTime = mLastFrameTime + mFrameStep;
-				while (nextFrameTime > currentTime)
+				while(nextFrameTime > currentTime)
 				{
 					u32 waitTime = (u32)(nextFrameTime - currentTime);
 
 					// If waiting for longer, sleep
-					if (waitTime >= 2000)
+					if(waitTime >= 2000)
 					{
 						Platform::Sleep(waitTime / 1000);
 						currentTime = gTime().GetTimePrecise();
@@ -273,7 +272,7 @@ namespace bs
 			const u32 numIterations = gTime().GetFixedUpdateStepInternal(step);
 
 			const float stepSeconds = step / 1000000.0f;
-			for (u32 i = 0; i < numIterations; i++)
+			for(u32 i = 0; i < numIterations; i++)
 			{
 				FixedUpdate();
 				PROFILE_CALL(gSceneManager().FixedUpdateInternal(), "Scene fixed update");
@@ -288,7 +287,7 @@ namespace bs
 		gPhysics().Update();
 
 		// Update plugins
-		for (auto& pluginUpdateFunc : mPluginUpdateFunctions)
+		for(auto& pluginUpdateFunc : mPluginUpdateFunctions)
 			pluginUpdateFunc.second();
 
 		PostUpdate();
@@ -347,7 +346,7 @@ namespace bs
 	{
 		Lock lock(mFrameRenderingFinishedMutex);
 
-		while (!mIsFrameRenderingFinished)
+		while(!mIsFrameRenderingFinished)
 		{
 			TaskScheduler::Instance().AddWorker();
 			mFrameRenderingFinishedCondition.wait(lock);
@@ -367,7 +366,7 @@ namespace bs
 
 	void CoreApplication::FixedUpdate()
 	{
-	   // Do nothing
+		// Do nothing
 	}
 
 	void CoreApplication::StopMainLoop()
@@ -428,13 +427,13 @@ namespace bs
 		void* retVal = nullptr;
 		if(loadedLibrary != nullptr)
 		{
-			if (passThrough == nullptr)
+			if(passThrough == nullptr)
 			{
 				typedef void* (*LoadPluginFunc)();
 
 				LoadPluginFunc loadPluginFunc = (LoadPluginFunc)loadedLibrary->GetSymbol("loadPlugin");
 
-				if (loadPluginFunc != nullptr)
+				if(loadPluginFunc != nullptr)
 					retVal = loadPluginFunc();
 			}
 			else
@@ -443,13 +442,13 @@ namespace bs
 
 				LoadPluginFunc loadPluginFunc = (LoadPluginFunc)loadedLibrary->GetSymbol("loadPlugin");
 
-				if (loadPluginFunc != nullptr)
+				if(loadPluginFunc != nullptr)
 					retVal = loadPluginFunc(passThrough);
 			}
 
 			UpdatePluginFunc loadPluginFunc = (UpdatePluginFunc)loadedLibrary->GetSymbol("updatePlugin");
 
-			if (loadPluginFunc != nullptr)
+			if(loadPluginFunc != nullptr)
 				mPluginUpdateFunctions[loadedLibrary] = loadPluginFunc;
 		}
 
@@ -478,4 +477,4 @@ namespace bs
 	{
 		return CoreApplication::Instance();
 	}
-}
+} // namespace bs

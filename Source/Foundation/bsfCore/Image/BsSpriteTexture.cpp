@@ -42,7 +42,7 @@ namespace bs
 
 		// Note: Duration could be pre-calculated
 		float duration = 0.0f;
-		if (mAnimation.Fps > 0)
+		if(mAnimation.Fps > 0)
 			duration = mAnimation.Count / (float)mAnimation.Fps;
 
 		switch(mPlayback)
@@ -61,7 +61,7 @@ namespace bs
 
 		const float pct = t / duration;
 		u32 frame = 0;
-		
+
 		if(mAnimation.Count > 0)
 			frame = Math::Clamp(Math::FloorToPosInt(pct * mAnimation.Count), 0U, mAnimation.Count - 1);
 
@@ -81,8 +81,8 @@ namespace bs
 	}
 
 	SpriteTexture::SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture)
-		:TSpriteTexture(uvOffset, uvScale, texture)
-	{ }
+		: TSpriteTexture(uvOffset, uvScale, texture)
+	{}
 
 	const HSpriteTexture& SpriteTexture::Dummy()
 	{
@@ -141,8 +141,7 @@ namespace bs
 		if(mAtlasTexture.IsLoaded())
 			texturePtr = mAtlasTexture->GetCore();
 
-		ct::SpriteTexture* spriteTexture = new (bs_alloc<ct::SpriteTexture>()) ct::SpriteTexture(mUVOffset, mUVScale,
-			std::move(texturePtr), mAnimation, mPlayback);
+		ct::SpriteTexture* spriteTexture = new(bs_alloc<ct::SpriteTexture>()) ct::SpriteTexture(mUVOffset, mUVScale, std::move(texturePtr), mAnimation, mPlayback);
 
 		SPtr<ct::SpriteTexture> spriteTexPtr = bs_shared_ptr<ct::SpriteTexture>(spriteTexture);
 		spriteTexPtr->SetThisPtrInternal(spriteTexPtr);
@@ -163,7 +162,7 @@ namespace bs
 
 	void SpriteTexture::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 	{
-		if (mAtlasTexture.IsLoaded())
+		if(mAtlasTexture.IsLoaded())
 			dependencies.push_back(mAtlasTexture.Get());
 	}
 
@@ -188,8 +187,7 @@ namespace bs
 
 	SPtr<SpriteTexture> SpriteTexture::CreatePtrInternal(const HTexture& texture)
 	{
-		SPtr<SpriteTexture> texturePtr = bs_core_ptr<SpriteTexture>
-			(new (bs_alloc<SpriteTexture>()) SpriteTexture(Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f), texture));
+		SPtr<SpriteTexture> texturePtr = bs_core_ptr<SpriteTexture>(new(bs_alloc<SpriteTexture>()) SpriteTexture(Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f), texture));
 
 		texturePtr->SetThisPtrInternal(texturePtr);
 		texturePtr->Initialize();
@@ -199,8 +197,7 @@ namespace bs
 
 	SPtr<SpriteTexture> SpriteTexture::CreatePtrInternal(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture)
 	{
-		SPtr<SpriteTexture> texturePtr = bs_core_ptr<SpriteTexture>
-			(new (bs_alloc<SpriteTexture>()) SpriteTexture(uvOffset, uvScale, texture));
+		SPtr<SpriteTexture> texturePtr = bs_core_ptr<SpriteTexture>(new(bs_alloc<SpriteTexture>()) SpriteTexture(uvOffset, uvScale, texture));
 
 		texturePtr->SetThisPtrInternal(texturePtr);
 		texturePtr->Initialize();
@@ -210,8 +207,7 @@ namespace bs
 
 	SPtr<SpriteTexture> SpriteTexture::CreateEmpty()
 	{
-		SPtr<SpriteTexture> texturePtr = bs_core_ptr<SpriteTexture>
-			(new (bs_alloc<SpriteTexture>()) SpriteTexture(Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f), HTexture()));
+		SPtr<SpriteTexture> texturePtr = bs_core_ptr<SpriteTexture>(new(bs_alloc<SpriteTexture>()) SpriteTexture(Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f), HTexture()));
 
 		texturePtr->SetThisPtrInternal(texturePtr);
 
@@ -230,9 +226,8 @@ namespace bs
 
 	namespace ct
 	{
-		SpriteTexture::SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, SPtr<Texture> texture,
-			const SpriteSheetGridAnimation& anim, SpriteAnimationPlayback playback)
-			:TSpriteTexture(uvOffset, uvScale, texture)
+		SpriteTexture::SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, SPtr<Texture> texture, const SpriteSheetGridAnimation& anim, SpriteAnimationPlayback playback)
+			: TSpriteTexture(uvOffset, uvScale, texture)
 		{
 			mAnimation = anim;
 			mPlayback = playback;
@@ -243,5 +238,5 @@ namespace bs
 			Bitstream stream(data.GetBuffer(), data.GetBufferSize());
 			csync_read(*this, stream);
 		}
-	}
-}
+	} // namespace ct
+} // namespace bs

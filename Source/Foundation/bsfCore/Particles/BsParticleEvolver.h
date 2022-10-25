@@ -20,7 +20,7 @@ namespace bs
 	{
 		ParticleEvolverProperties(bool analytical, i32 priority)
 			: Analytical(analytical), Priority(priority)
-		{ }
+		{}
 
 		/**
 		 * True if the evolver can be evaluated analytically. This means the exact particle state can be retrieved based on
@@ -46,6 +46,7 @@ namespace bs
 
 		/** Returns a set of properties that describe this evolver type. */
 		virtual const ParticleEvolverProperties& GetProperties() const = 0;
+
 	protected:
 		friend class ParticleSystem;
 
@@ -64,12 +65,11 @@ namespace bs
 		 *								calculating spacing. Should be in range [0, 1). 0 = beginning of the current
 		 *								time step, 1 = start of next particle.
 		 */
-		virtual void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx,
-			u32 count, bool spacing, float spacingOffset) const = 0;
+		virtual void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const = 0;
 	};
 
 	/** Structure used for initializing a ParticleTextureAnimation object. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportAsStruct(true),ExportName(ParticleTextureAnimationOptions)) PARTICLE_TEXTURE_ANIMATION_DESC
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleTextureAnimationOptions)) PARTICLE_TEXTURE_ANIMATION_DESC
 	{
 		/**
 		 * Randomly pick a row to use for animation when the particle is first spawned. This implies that only a single row
@@ -92,11 +92,13 @@ namespace bs
 		ParticleTextureAnimation(const PARTICLE_TEXTURE_ANIMATION_DESC& desc);
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options))
+
 		void SetOptions(const PARTICLE_TEXTURE_ANIMATION_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+
 		const PARTICLE_TEXTURE_ANIMATION_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -113,10 +115,10 @@ namespace bs
 		/** Creates a new particle texture animation evolver. */
 		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleTextureAnimation> Create();
+
 	private:
 		/** @copydoc ParticleEvolver::evolve */
-		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx,
-			u32 count, bool spacing, float spacingOffset) const override;
+		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const override;
 
 		PARTICLE_TEXTURE_ANIMATION_DESC mDesc;
 
@@ -130,7 +132,7 @@ namespace bs
 	};
 
 	/** Structure used for initializing a ParticleOrbit object. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportAsStruct(true),ExportName(ParticleOrbitOptions)) PARTICLE_ORBIT_DESC
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleOrbitOptions)) PARTICLE_ORBIT_DESC
 	{
 		/** Position of the center around which to orbit. Evaluated over particle system lifetime. */
 		Vector3Distribution Center = Vector3(0.0f, 0.0f, 0.0f);
@@ -156,11 +158,13 @@ namespace bs
 		ParticleOrbit(const PARTICLE_ORBIT_DESC& desc);
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options))
+
 		void SetOptions(const PARTICLE_ORBIT_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+
 		const PARTICLE_ORBIT_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -177,10 +181,10 @@ namespace bs
 		/** Creates a new particle orbit evolver. */
 		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleOrbit> Create();
+
 	private:
 		/** @copydoc ParticleEvolver::evolve */
-		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx,
-			u32 count, bool spacing, float spacingOffset) const override;
+		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const override;
 
 		PARTICLE_ORBIT_DESC mDesc;
 
@@ -194,7 +198,7 @@ namespace bs
 	};
 
 	/** Structure used for initializing a ParticleVelocity object. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportAsStruct(true),ExportName(ParticleVelocityOptions)) PARTICLE_VELOCITY_DESC
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleVelocityOptions)) PARTICLE_VELOCITY_DESC
 	{
 		/** Determines the velocity of the particles evaluated over particle lifetime. */
 		Vector3Distribution Velocity = Vector3(0.0f, 1.0f, 0.0f);
@@ -211,11 +215,13 @@ namespace bs
 		ParticleVelocity(const PARTICLE_VELOCITY_DESC& desc);
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options))
+
 		void SetOptions(const PARTICLE_VELOCITY_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+
 		const PARTICLE_VELOCITY_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -232,10 +238,10 @@ namespace bs
 		/** Creates a new particle velocity evolver. */
 		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleVelocity> Create();
+
 	private:
 		/** @copydoc ParticleEvolver::evolve */
-		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx,
-			u32 count, bool spacing, float spacingOffset) const override;
+		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const override;
 
 		PARTICLE_VELOCITY_DESC mDesc;
 
@@ -249,7 +255,7 @@ namespace bs
 	};
 
 	/** Structure used for initializing a ParticleForce object. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportAsStruct(true),ExportName(ParticleForceOptions)) PARTICLE_FORCE_DESC
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleForceOptions)) PARTICLE_FORCE_DESC
 	{
 		/** Determines the force of the particles evaluated over particle lifetime. */
 		Vector3Distribution Force = Vector3(0.0f, 0.0f, 0.0f);
@@ -263,14 +269,16 @@ namespace bs
 	{
 	public:
 		ParticleForce() = default;
-		ParticleForce(const PARTICLE_FORCE_DESC&desc);
+		ParticleForce(const PARTICLE_FORCE_DESC& desc);
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options))
+
 		void SetOptions(const PARTICLE_FORCE_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+
 		const PARTICLE_FORCE_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -287,10 +295,10 @@ namespace bs
 		/** Creates a new particle force evolver. */
 		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleForce> Create();
+
 	private:
 		/** @copydoc ParticleEvolver::evolve */
-		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx,
-			u32 count, bool spacing, float spacingOffset) const override;
+		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const override;
 
 		PARTICLE_FORCE_DESC mDesc;
 
@@ -304,7 +312,7 @@ namespace bs
 	};
 
 	/** Structure used for initializing a ParticleGravity object. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportAsStruct(true),ExportName(ParticleGravityOptions)) PARTICLE_GRAVITY_DESC
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleGravityOptions)) PARTICLE_GRAVITY_DESC
 	{
 		/** Scale which to apply to the gravity value retrieved from the physics sub-system. */
 		float Scale = 1.0f;
@@ -318,11 +326,13 @@ namespace bs
 		ParticleGravity(const PARTICLE_GRAVITY_DESC& desc);
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options))
+
 		void SetOptions(const PARTICLE_GRAVITY_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+
 		const PARTICLE_GRAVITY_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -339,10 +349,10 @@ namespace bs
 		/** Creates a new particle gravity evolver. */
 		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleGravity> Create();
+
 	private:
 		/** @copydoc ParticleEvolver::evolve */
-		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx,
-			u32 count, bool spacing, float spacingOffset) const override;
+		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const override;
 
 		PARTICLE_GRAVITY_DESC mDesc;
 
@@ -356,7 +366,7 @@ namespace bs
 	};
 
 	/** Structure used for initializing a ParticleColor object. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportAsStruct(true),ExportName(ParticleColorOptions)) PARTICLE_COLOR_DESC
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleColorOptions)) PARTICLE_COLOR_DESC
 	{
 		/** Determines the color of the particles evaluated over particle lifetime. */
 		ColorDistribution Color = Color::White;
@@ -370,11 +380,13 @@ namespace bs
 		ParticleColor(const PARTICLE_COLOR_DESC& desc);
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options))
+
 		void SetOptions(const PARTICLE_COLOR_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+
 		const PARTICLE_COLOR_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -391,10 +403,10 @@ namespace bs
 		/** Creates a new particle color evolver. */
 		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleColor> Create();
+
 	private:
 		/** @copydoc ParticleEvolver::evolve */
-		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx,
-			u32 count, bool spacing, float spacingOffset) const override;
+		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const override;
 
 		PARTICLE_COLOR_DESC mDesc;
 
@@ -408,7 +420,7 @@ namespace bs
 	};
 
 	/** Structure used for initializing a ParticleSize object. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportAsStruct(true),ExportName(ParticleSizeOptions)) PARTICLE_SIZE_DESC
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleSizeOptions)) PARTICLE_SIZE_DESC
 	{
 		/**
 		 * Determines the uniform size of the particles evaluated over particle lifetime. Only used if 3D size is disabled.
@@ -436,11 +448,13 @@ namespace bs
 		ParticleSize(const PARTICLE_SIZE_DESC& desc);
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options))
+
 		void SetOptions(const PARTICLE_SIZE_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+
 		const PARTICLE_SIZE_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -457,10 +471,10 @@ namespace bs
 		/** Creates a new particle size evolver. */
 		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleSize> Create();
+
 	private:
 		/** @copydoc ParticleEvolver::evolve */
-		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx,
-			u32 count, bool spacing, float spacingOffset) const override;
+		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const override;
 
 		PARTICLE_SIZE_DESC mDesc;
 
@@ -474,7 +488,7 @@ namespace bs
 	};
 
 	/** Structure used for initializing a ParticleRotation object. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportAsStruct(true),ExportName(ParticleRotationOptions)) PARTICLE_ROTATION_DESC
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleRotationOptions)) PARTICLE_ROTATION_DESC
 	{
 		/**
 		 * Determines the rotation of the particles in degrees, applied around the particle's local Z axis. Only used if
@@ -500,11 +514,13 @@ namespace bs
 		ParticleRotation(const PARTICLE_ROTATION_DESC& desc);
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options))
+
 		void SetOptions(const PARTICLE_ROTATION_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+
 		const PARTICLE_ROTATION_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -521,10 +537,10 @@ namespace bs
 		/** Creates a new particle rotation evolver. */
 		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleRotation> Create();
+
 	private:
 		/** @copydoc ParticleEvolver::evolve */
-		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx,
-			u32 count, bool spacing, float spacingOffset) const override;
+		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const override;
 
 		PARTICLE_ROTATION_DESC mDesc;
 
@@ -548,7 +564,7 @@ namespace bs
 	};
 
 	/** Structure used for initializing a ParticleCollisions object. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles),ExportAsStruct(true),ExportName(ParticleCollisionsOptions)) PARTICLE_COLLISIONS_DESC
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleCollisionsOptions)) PARTICLE_COLLISIONS_DESC
 	{
 		/** Collision mode determining with which geometry the particles will interact with. */
 		ParticleCollisionMode Mode = ParticleCollisionMode::Plane;
@@ -592,30 +608,36 @@ namespace bs
 		 * Determines a set of planes to use when using the Plane collision mode. Planes are expected to be in world
 		 * space.
 		 */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Planes))
+		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Planes))
+
 		void SetPlanes(Vector<Plane> planes) { mCollisionPlanes = std::move(planes); }
 
 		/** @copydoc setPlanes */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Planes))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Planes))
+
 		const Vector<Plane>& GetPlanes() const { return mCollisionPlanes; }
 
 		/**
 		 * Determines a set of objects whose transforms to derive the collision planes from. Objects can move in the world
 		 * and collision planes will be updated automatically. Object's negative Z axis is considered to be plane normal.
 		 */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(PlaneObjects))
+		BS_SCRIPT_EXPORT(Property(Setter), ExportName(PlaneObjects))
+
 		void SetPlaneObjects(Vector<HSceneObject> objects) { mCollisionPlaneObjects = std::move(objects); }
 
 		/** @copydoc setPlaneObjects */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(PlaneObjects))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(PlaneObjects))
+
 		const Vector<HSceneObject>& GetPlaneObjects() const { return mCollisionPlaneObjects; }
 
 		/** Options describing the evolver. */
-		BS_SCRIPT_EXPORT(Property(Setter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options))
+
 		void SetOptions(const PARTICLE_COLLISIONS_DESC& options) { mDesc = options; }
 
 		/** @copydoc setOptions */
-		BS_SCRIPT_EXPORT(Property(Getter),ExportName(Options))
+		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+
 		const PARTICLE_COLLISIONS_DESC& GetOptions() const { return mDesc; }
 
 		/** @copydoc ParticleEvolver::getProperties */
@@ -632,10 +654,10 @@ namespace bs
 		/** Creates a new particle collision evolver. */
 		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleCollisions> Create();
+
 	private:
 		/** @copydoc ParticleEvolver::evolve */
-		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx,
-			u32 count, bool spacing, float spacingOffset) const override;
+		void Evolve(Random& random, const ParticleSystemState& state, ParticleSet& set, u32 startIdx, u32 count, bool spacing, float spacingOffset) const override;
 
 		PARTICLE_COLLISIONS_DESC mDesc;
 
@@ -652,4 +674,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

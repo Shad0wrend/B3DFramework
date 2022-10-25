@@ -14,11 +14,11 @@ namespace bs
 	{
 		InputPrivateData* data = (InputPrivateData*)(pvRef);
 
-		if (GET_DIDEVICE_TYPE(lpddi->dwDevType) == DI8DEVTYPE_JOYSTICK ||
-			GET_DIDEVICE_TYPE(lpddi->dwDevType) == DI8DEVTYPE_GAMEPAD ||
-			GET_DIDEVICE_TYPE(lpddi->dwDevType) == DI8DEVTYPE_1STPERSON ||
-			GET_DIDEVICE_TYPE(lpddi->dwDevType) == DI8DEVTYPE_DRIVING ||
-			GET_DIDEVICE_TYPE(lpddi->dwDevType) == DI8DEVTYPE_FLIGHT)
+		if(GET_DIDEVICE_TYPE(lpddi->dwDevType) == DI8DEVTYPE_JOYSTICK ||
+		   GET_DIDEVICE_TYPE(lpddi->dwDevType) == DI8DEVTYPE_GAMEPAD ||
+		   GET_DIDEVICE_TYPE(lpddi->dwDevType) == DI8DEVTYPE_1STPERSON ||
+		   GET_DIDEVICE_TYPE(lpddi->dwDevType) == DI8DEVTYPE_DRIVING ||
+		   GET_DIDEVICE_TYPE(lpddi->dwDevType) == DI8DEVTYPE_FLIGHT)
 		{
 			GamepadInfo gamepadInfo;
 			gamepadInfo.Name = lpddi->tszInstanceName;
@@ -33,10 +33,10 @@ namespace bs
 
 		return DIENUM_CONTINUE;
 	}
-	
+
 	void CheckXInputDevices(Vector<GamepadInfo>& infos)
 	{
-		if (infos.size() == 0)
+		if(infos.size() == 0)
 			return;
 
 		HRESULT hr = CoInitialize(nullptr);
@@ -53,66 +53,66 @@ namespace bs
 		// Create WMI
 		IWbemLocator* IWbemLocator = nullptr;
 		hr = CoCreateInstance(__uuidof(WbemLocator), nullptr, CLSCTX_INPROC_SERVER, __uuidof(IWbemLocator), (LPVOID*)&IWbemLocator);
-		if (FAILED(hr) || IWbemLocator == nullptr)
+		if(FAILED(hr) || IWbemLocator == nullptr)
 			goto cleanup;
 
-		if (classNameSpace == nullptr)
+		if(classNameSpace == nullptr)
 			goto cleanup;
 
-		if (className == nullptr)
+		if(className == nullptr)
 			goto cleanup;
 
-		if (deviceID == nullptr)
+		if(deviceID == nullptr)
 			goto cleanup;
 
 		// Connect to WMI
 		hr = IWbemLocator->ConnectServer(classNameSpace, nullptr, nullptr, 0L, 0L, nullptr, nullptr, &IWbemServices);
-		if (FAILED(hr) || IWbemServices == nullptr)
+		if(FAILED(hr) || IWbemServices == nullptr)
 			goto cleanup;
 
 		// Switch security level to IMPERSONATE
 		CoSetProxyBlanket(IWbemServices, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, nullptr, RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE, nullptr, EOAC_NONE);
 
 		hr = IWbemServices->CreateInstanceEnum(className, 0, nullptr, &enumDevices);
-		if (FAILED(hr) || enumDevices == nullptr)
+		if(FAILED(hr) || enumDevices == nullptr)
 			goto cleanup;
 
 		// Loop over all devices
-		for (;; )
+		for(;;)
 		{
 			DWORD numDevices = 0;
 			hr = enumDevices->Next(5000, 20, devices, &numDevices);
-			if (FAILED(hr))
+			if(FAILED(hr))
 				goto cleanup;
 
-			if (numDevices == 0)
+			if(numDevices == 0)
 				break;
 
-			for (DWORD i = 0; i < numDevices; i++)
+			for(DWORD i = 0; i < numDevices; i++)
 			{
 				// For each device, get its device ID
 				VARIANT var;
 				hr = devices[i]->Get(deviceID, 0L, &var, nullptr, nullptr);
-				if (SUCCEEDED(hr) && var.vt == VT_BSTR && var.bstrVal != nullptr)
+				if(SUCCEEDED(hr) && var.vt == VT_BSTR && var.bstrVal != nullptr)
 				{
 					// Check if the device ID contains "IG_".  If it does, then it's an XInput device
-					if (wcsstr(var.bstrVal, L"IG_"))
+					if(wcsstr(var.bstrVal, L"IG_"))
 					{
 						// If it does, then get the VID/PID from var.bstrVal
 						DWORD dwPid = 0, dwVid = 0;
 						WCHAR* strVid = wcsstr(var.bstrVal, L"VID_");
-						if (strVid && swscanf_s(strVid, L"VID_%4X", &dwVid) != 1)
+						if(strVid && swscanf_s(strVid, L"VID_%4X", &dwVid) != 1)
 							dwVid = 0;
 
 						WCHAR* strPid = wcsstr(var.bstrVal, L"PID_");
-						if (strPid && swscanf_s(strPid, L"PID_%4X", &dwPid) != 1)
+						if(strPid && swscanf_s(strPid, L"PID_%4X", &dwPid) != 1)
 							dwPid = 0;
 
 						// Compare the VID/PID to the DInput device
 						DWORD dwVidPid = MAKELONG(dwVid, dwPid);
-						for (auto entry : infos)
+						for(auto entry : infos)
 						{
-							if (dwVidPid == entry.GuidProduct.Data1)
+							if(dwVidPid == entry.GuidProduct.Data1)
 							{
 								entry.IsXInput = true;
 								entry.XInputDev = (int)entry.Id; // Note: These might not match and I might need to get the XInput id differently
@@ -127,16 +127,16 @@ namespace bs
 		}
 
 	cleanup:
-		if (classNameSpace)
+		if(classNameSpace)
 			SysFreeString(classNameSpace);
 
-		if (deviceID)
+		if(deviceID)
 			SysFreeString(deviceID);
 
-		if (className)
+		if(className)
 			SysFreeString(className);
 
-		for (DWORD i = 0; i < 20; i++)
+		for(DWORD i = 0; i < 20; i++)
 		{
 			if(devices[i])
 				devices[i]->Release();
@@ -146,64 +146,64 @@ namespace bs
 		IWbemLocator->Release();
 		IWbemServices->Release();
 
-		if (cleanupCOM)
+		if(cleanupCOM)
 			CoUninitialize();
 	}
 
 	void Input::InitRawInput()
 	{
 		mPlatformData = bs_new<InputPrivateData>();
-		
+
 		bool isHeadless = ct::gCaps().DeviceName == "Null";
 		if(isHeadless)
 			return;
 
-		if (IsWindow((HWND)mWindowHandle) == 0)
+		if(IsWindow((HWND)mWindowHandle) == 0)
 			BS_EXCEPT(InvalidStateException, "RawInputManager failed to initialized. Invalid HWND provided.")
 
 		HINSTANCE hInst = GetModuleHandle(0);
 
 		HRESULT hr = DirectInput8Create(hInst, DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&mPlatformData->DirectInput, nullptr);
-		if (FAILED(hr))
+		if(FAILED(hr))
 			BS_EXCEPT(InternalErrorException, "Unable to initialize DirectInput.");
 
 		mPlatformData->KbSettings = DISCL_FOREGROUND | DISCL_NONEXCLUSIVE;
 		mPlatformData->MouseSettings = DISCL_FOREGROUND | DISCL_NONEXCLUSIVE;
-		
+
 		// Enumerate all attached devices
 		// Note: Only enumerating gamepads, assuming there is 1 keyboard and 1 mouse
 		mPlatformData->DirectInput->EnumDevices(NULL, DIEnumDevCallbackInternal, mPlatformData, DIEDFL_ATTACHEDONLY);
 
-		for (u32 i = 0; i < 4; ++i)
+		for(u32 i = 0; i < 4; ++i)
 		{
 			XINPUT_STATE state;
-			if (XInputGetState(i, &state) != ERROR_DEVICE_NOT_CONNECTED)
+			if(XInputGetState(i, &state) != ERROR_DEVICE_NOT_CONNECTED)
 			{
 				CheckXInputDevices(mPlatformData->GamepadInfos);
 				break;
 			}
 		}
 
-		if (GetDeviceCount(InputDevice::Keyboard) > 0)
+		if(GetDeviceCount(InputDevice::Keyboard) > 0)
 			mKeyboard = bs_new<Keyboard>("Keyboard", this);
 
-		if (GetDeviceCount(InputDevice::Mouse) > 0)
+		if(GetDeviceCount(InputDevice::Mouse) > 0)
 			mMouse = bs_new<Mouse>("Mouse", this);
 
 		u32 numGamepads = GetDeviceCount(InputDevice::Gamepad);
-		for (u32 i = 0; i < numGamepads; i++)
+		for(u32 i = 0; i < numGamepads; i++)
 			mGamepads.push_back(bs_new<Gamepad>(mPlatformData->GamepadInfos[i].Name, mPlatformData->GamepadInfos[i], this));
 	}
 
 	void Input::CleanUpRawInput()
 	{
-		if (mMouse != nullptr)
+		if(mMouse != nullptr)
 			bs_delete(mMouse);
 
-		if (mKeyboard != nullptr)
+		if(mKeyboard != nullptr)
 			bs_delete(mKeyboard);
 
-		for (auto& gamepad : mGamepads)
+		for(auto& gamepad : mGamepads)
 			bs_delete(gamepad);
 
 		if(mPlatformData->DirectInput != nullptr)
@@ -223,4 +223,4 @@ namespace bs
 		case InputDevice::Count: return 0;
 		}
 	}
-}
+} // namespace bs

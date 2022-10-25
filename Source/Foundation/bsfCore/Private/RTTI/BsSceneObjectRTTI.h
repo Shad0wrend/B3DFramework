@@ -23,15 +23,19 @@ namespace bs
 	{
 	private:
 		Transform& GetTransform(SceneObject* obj) { return obj->mWorldTfrm; }
+
 		void SetTransform(SceneObject* obj, Transform& value) { obj->mWorldTfrm = value; }
 
 		Transform& GetLocalTransform(SceneObject* obj) { return obj->mLocalTfrm; }
+
 		void SetLocalTransform(SceneObject* obj, Transform& value) { obj->mLocalTfrm = value; }
 
 		bool& GetActive(SceneObject* obj) { return obj->mActiveSelf; }
+
 		void SetActive(SceneObject* obj, bool& value) { obj->mActiveSelf = value; }
 
 		SPtr<SceneObject> GetChild(SceneObject* obj, u32 idx) { return obj->mChildren[idx].GetInternalPtr(); }
+
 		void SetChild(SceneObject* obj, u32 idx, SPtr<SceneObject> param)
 		{
 			// It's important that child indices remain the same after deserialization, as some systems (like SO
@@ -43,10 +47,14 @@ namespace bs
 		}
 
 		u32 GetNumChildren(SceneObject* obj) { return (u32)obj->mChildren.size(); }
-		void SetNumChildren(SceneObject* obj, u32 size) { /* DO NOTHING */ }
+
+		void SetNumChildren(SceneObject* obj, u32 size)
+		{ /* DO NOTHING */
+		}
 
 		// NOTE - These can only be set sequentially, specific array index is ignored
 		SPtr<Component> GetComponent(SceneObject* obj, u32 idx) { return obj->mComponents[idx].GetInternalPtr(); }
+
 		void SetComponent(SceneObject* obj, u32 idx, SPtr<Component> param)
 		{
 			// It's important that child indices remain the same after deserialization, as some systems (like SO
@@ -56,30 +64,38 @@ namespace bs
 
 			mComponents[idx] = param;
 		}
+
 		u32 GetNumComponents(SceneObject* obj) { return (u32)obj->mComponents.size(); }
-		void SetNumComponents(SceneObject* obj, u32 size) { /* DO NOTHING */ }
+
+		void SetNumComponents(SceneObject* obj, u32 size)
+		{ /* DO NOTHING */
+		}
 
 		UUID& GetPrefabLink(SceneObject* obj) { return obj->mPrefabLinkUUID; }
+
 		void SetPrefabLink(SceneObject* obj, UUID& value) { obj->mPrefabLinkUUID = value; }
 
 		SPtr<PrefabDiff> GetPrefabDiff(SceneObject* obj) { return obj->mPrefabDiff; }
+
 		void SetPrefabDiff(SceneObject* obj, SPtr<PrefabDiff> value) { obj->mPrefabDiff = value; }
 
 		u32& GetFlags(SceneObject* obj) { return obj->mFlags; }
+
 		void SetFlags(SceneObject* obj, u32& value) { obj->mFlags = value; }
 
 		u32& GetPrefabHash(SceneObject* obj) { return obj->mPrefabHash; }
+
 		void SetPrefabHash(SceneObject* obj, u32& value) { obj->mPrefabHash = value; }
 
 		ObjectMobility& GetMobility(SceneObject* obj) { return obj->mMobility; }
+
 		void SetMobility(SceneObject* obj, ObjectMobility& value) { obj->mMobility = value; }
+
 	public:
 		SceneObjectRTTI()
 		{
-			AddReflectablePtrArrayField("mChildren", 0, &SceneObjectRTTI::GetChild,
-				&SceneObjectRTTI::GetNumChildren, &SceneObjectRTTI::SetChild, &SceneObjectRTTI::SetNumChildren);
-			AddReflectablePtrArrayField("mComponents", 1, &SceneObjectRTTI::GetComponent,
-				&SceneObjectRTTI::GetNumComponents, &SceneObjectRTTI::SetComponent, &SceneObjectRTTI::SetNumComponents);
+			AddReflectablePtrArrayField("mChildren", 0, &SceneObjectRTTI::GetChild, &SceneObjectRTTI::GetNumChildren, &SceneObjectRTTI::SetChild, &SceneObjectRTTI::SetNumChildren);
+			AddReflectablePtrArrayField("mComponents", 1, &SceneObjectRTTI::GetComponent, &SceneObjectRTTI::GetNumComponents, &SceneObjectRTTI::SetComponent, &SceneObjectRTTI::SetNumComponents);
 			AddPlainField("mPrefabLink", 2, &SceneObjectRTTI::GetPrefabLink, &SceneObjectRTTI::SetPrefabLink);
 			AddPlainField("mFlags", 3, &SceneObjectRTTI::GetFlags, &SceneObjectRTTI::SetFlags);
 			AddReflectablePtrField("mPrefabDiff", 4, &SceneObjectRTTI::GetPrefabDiff, &SceneObjectRTTI::SetPrefabDiff);
@@ -99,7 +115,7 @@ namespace bs
 
 			// It's possible we're just accessing the game object fields, in which case the process below is not needed
 			// (it's only required for new scene objects).
-			if (so->mRTTIData.Empty())
+			if(so->mRTTIData.Empty())
 				return;
 
 			if(context == nullptr || !rtti_is_of_type<CoreSerializationContext>(context))
@@ -108,7 +124,7 @@ namespace bs
 			auto coreContext = static_cast<CoreSerializationContext*>(context);
 			if(!coreContext->GoDeserializationActive)
 			{
-				if (!coreContext->GoState)
+				if(!coreContext->GoState)
 					coreContext->GoState = bs_shared_ptr_new<GameObjectDeserializationState>();
 
 				mIsDeserializationParent = true;
@@ -122,7 +138,7 @@ namespace bs
 
 			// It's possible we're just accessing the game object fields, in which case the process below is not needed
 			// (it's only required for new scene objects).
-			if (so->mRTTIData.Empty())
+			if(so->mRTTIData.Empty())
 				return;
 
 			BS_ASSERT(context != nullptr && rtti_is_of_type<CoreSerializationContext>(context));
@@ -139,10 +155,10 @@ namespace bs
 
 			// We stored all components and children in a temporary structure because they rely on the SceneObject being
 			// initialized with the GameObjectManager. Now that it is, we add them.
-			for (auto& component : mComponents)
+			for(auto& component : mComponents)
 				so->AddComponentInternal(component);
 
-			for (auto& child : mChildren)
+			for(auto& child : mChildren)
 			{
 				if(child != nullptr)
 					child->SetParentInternal(so->mThisHandle, false);
@@ -153,18 +169,18 @@ namespace bs
 
 			// If this is the deserialization parent, end deserialization (which resolves all game object handles, if we
 			// provided valid IDs), and instantiate (i.e. activate) the deserialized hierarchy.
-			if (mIsDeserializationParent)
+			if(mIsDeserializationParent)
 			{
 				coreContext->GoState->Resolve();
 				coreContext->GoDeserializationActive = false;
 
 				bool parentActive = true;
-				if (so->GetParent() != nullptr)
+				if(so->GetParent() != nullptr)
 					parentActive = so->GetParent()->GetActive();
 
 				so->SetActiveHierarchy(parentActive, false);
 
-				if ((so->mFlags & SOF_DontInstantiate) == 0)
+				if((so->mFlags & SOF_DontInstantiate) == 0)
 					so->InstantiateInternal();
 			}
 
@@ -184,8 +200,7 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			SPtr<SceneObject> sceneObject = SPtr<SceneObject>(new (bs_alloc<SceneObject>()) SceneObject("", SOF_DontInstantiate),
-				&bs_delete<SceneObject>, StdAlloc<SceneObject>());
+			SPtr<SceneObject> sceneObject = SPtr<SceneObject>(new(bs_alloc<SceneObject>()) SceneObject("", SOF_DontInstantiate), &bs_delete<SceneObject>, StdAlloc<SceneObject>());
 			sceneObject->mRTTIData = sceneObject;
 
 			return sceneObject;
@@ -199,4 +214,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

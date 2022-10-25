@@ -17,19 +17,18 @@ namespace bs
 		CFDictionaryRef output = nullptr;
 		CFNumberRef pageNumRef = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &page);
 		CFNumberRef usageNumRef = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &usage);
-		const void* keys[2] = { (void*) CFSTR(kIOHIDDeviceUsagePageKey), (void*) CFSTR(kIOHIDDeviceUsageKey) };
-		const void* values[2] = { (void*) pageNumRef, (void*) usageNumRef };
+		const void* keys[2] = { (void*)CFSTR(kIOHIDDeviceUsagePageKey), (void*)CFSTR(kIOHIDDeviceUsageKey) };
+		const void* values[2] = { (void*)pageNumRef, (void*)usageNumRef };
 
-		if (pageNumRef && usageNumRef)
+		if(pageNumRef && usageNumRef)
 		{
-			output = CFDictionaryCreate(kCFAllocatorDefault, keys, values, 2, &kCFTypeDictionaryKeyCallBacks,
-					&kCFTypeDictionaryValueCallBacks);
+			output = CFDictionaryCreate(kCFAllocatorDefault, keys, values, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 		}
 
-		if (pageNumRef)
+		if(pageNumRef)
 			CFRelease(pageNumRef);
 
-		if (usageNumRef)
+		if(usageNumRef)
 			CFRelease(usageNumRef);
 
 		return output;
@@ -67,7 +66,7 @@ namespace bs
 	static void HIDAddElement(const void* value, void* passthrough)
 	{
 		auto device = (HIDDevice*)passthrough;
-		auto elemRef = (IOHIDElementRef) value;
+		auto elemRef = (IOHIDElementRef)value;
 
 		if(!elemRef)
 			return;
@@ -77,7 +76,7 @@ namespace bs
 			return;
 
 		IOHIDElementType type = IOHIDElementGetType(elemRef);
-		switch (type)
+		switch(type)
 		{
 		case kIOHIDElementTypeInput_Button:
 		case kIOHIDElementTypeInput_Axis:
@@ -85,11 +84,11 @@ namespace bs
 		case kIOHIDElementTypeInput_ScanCodes:
 			break;
 		case kIOHIDElementTypeCollection:
-		{
-			CFArrayRef array = IOHIDElementGetChildren(elemRef);
-			if(array)
-				HIDAddElements(array, device);
-		}
+			{
+				CFArrayRef array = IOHIDElementGetChildren(elemRef);
+				if(array)
+					HIDAddElements(array, device);
+			}
 			return;
 		default:
 			return;
@@ -98,7 +97,14 @@ namespace bs
 		u32 usagePage = IOHIDElementGetUsagePage(elemRef);
 		u32 usage = IOHIDElementGetUsage(elemRef);
 
-		enum ElemState { IsUnknown, IsButton, IsAxis, IsHat };
+		enum ElemState
+		{
+			IsUnknown,
+			IsButton,
+			IsAxis,
+			IsHat
+		};
+
 		ElemState state = IsUnknown;
 
 		switch(usagePage)
@@ -178,11 +184,8 @@ namespace bs
 			element.min = element.detectedMin = (i32)IOHIDElementGetLogicalMin(elemRef);
 			element.max = element.detectedMax = (i32)IOHIDElementGetLogicalMax(elemRef);
 
-			auto iterFind = std::find_if(elements->begin(), elements->end(),
-					[&element](const HIDElement& v)
-					{
-						return v.cookie == element.cookie;
-					});
+			auto iterFind = std::find_if(elements->begin(), elements->end(), [&element](const HIDElement& v)
+										 { return v.cookie == element.cookie; });
 
 			if(iterFind == elements->end())
 				elements->push_back(element);
@@ -222,7 +225,7 @@ namespace bs
 		if(propertyRef)
 		{
 			char buffer[256];
-			if(CFStringGetCString((CFStringRef)propertyRef, buffer,	sizeof(buffer), kCFStringEncodingUTF8))
+			if(CFStringGetCString((CFStringRef)propertyRef, buffer, sizeof(buffer), kCFStringEncodingUTF8))
 				newDevice.name = String(buffer);
 		}
 
@@ -300,11 +303,8 @@ namespace bs
 	{
 		auto data = (HIDData*)context;
 
-		auto iterFind = std::find_if(data->devices.begin(), data->devices.end(),
-				[&device](const HIDDevice& v)
-				{
-					return v.ref == device;
-				});
+		auto iterFind = std::find_if(data->devices.begin(), data->devices.end(), [&device](const HIDDevice& v)
+									 { return v.ref == device; });
 
 		if(iterFind != data->devices.end())
 		{
@@ -334,13 +334,13 @@ namespace bs
 	}
 
 	/** Reads the current value of a particular HID element (e.g. button, axis). */
-	static i32 HIDGetElementValue(const HIDDevice &device, const HIDElement &element)
+	static i32 HIDGetElementValue(const HIDDevice& device, const HIDElement& element)
 	{
 		IOHIDValueRef valueRef;
 		if(IOHIDDeviceGetValue(device.ref, element.ref, &valueRef) != kIOReturnSuccess)
 			return 0;
 
-		auto value = (i32) IOHIDValueGetIntegerValue(valueRef);
+		auto value = (i32)IOHIDValueGetIntegerValue(valueRef);
 
 		if(value < element.detectedMin)
 			element.detectedMin = value;
@@ -355,7 +355,7 @@ namespace bs
 	 * Reads the current value of a particular HID element (e.g. button, axis) and converts the value so it fits
 	 * the provided [min, max] range.
 	 */
-	static i32 HIDGetElementValueScaled(const HIDDevice &device, const HIDElement &element, i32 min, i32 max)
+	static i32 HIDGetElementValueScaled(const HIDDevice& device, const HIDElement& element, i32 min, i32 max)
 	{
 		i32 value = HIDGetElementValue(device, element);
 
@@ -375,9 +375,9 @@ namespace bs
 		auto data = (HIDData*)context;
 
 		IOHIDElementRef elementRef = IOHIDValueGetElement(valueRef);
-		auto usage = (u32) IOHIDElementGetUsage(elementRef);
+		auto usage = (u32)IOHIDElementGetUsage(elementRef);
 		auto axisValue = (i32)IOHIDValueGetIntegerValue(valueRef);
-		switch (usage)
+		switch(usage)
 		{
 		case kHIDUsage_GD_X:
 			data->mouseAxisValues[0] += axisValue;
@@ -562,7 +562,7 @@ namespace bs
 		u32 numEntries = 0;
 		const void* entries[3];
 
-		switch (type)
+		switch(type)
 		{
 		case HIDType::Keyboard:
 			entries[0] = createHIDDeviceMatchDictionary(kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard);
@@ -594,12 +594,13 @@ namespace bs
 		IOHIDManagerScheduleWithRunLoop(mHIDManager, CFRunLoopGetCurrent(), runLoopMode);
 
 		while(CFRunLoopRunInMode(runLoopMode, 0, TRUE) == kCFRunLoopRunHandledSource)
-		{ /* Do nothing */ }
+		{ /* Do nothing */
+		}
 
-		for (u32 i = 0; i < numEntries; i++)
+		for(u32 i = 0; i < numEntries; i++)
 		{
-			if (entries[i])
-				CFRelease((CFTypeRef) entries[i]);
+			if(entries[i])
+				CFRelease((CFTypeRef)entries[i]);
 		}
 
 		CFRelease(entryArray);
@@ -628,7 +629,8 @@ namespace bs
 		// First trigger any callbacks
 		CFStringRef runLoopMode = getRunLoopMode(mData.type);
 		while(CFRunLoopRunInMode(runLoopMode, 0, TRUE) == kCFRunLoopRunHandledSource)
-		{ /* Do nothing */ }
+		{ /* Do nothing */
+		}
 
 		for(auto& entry : mData.devices)
 		{
@@ -648,15 +650,15 @@ namespace bs
 				AxisState axisValues[HID_NUM_GAMEPAD_AXES];
 				bs_zero_out(axisValues);
 
-				for (auto& axis : entry.axes)
+				for(auto& axis : entry.axes)
 				{
-					auto axisType = (InputAxis) -1;
+					auto axisType = (InputAxis)-1;
 
-					if (mData.type == HIDType::Gamepad)
+					if(mData.type == HIDType::Gamepad)
 					{
 						i32 axisValue = HIDGetElementValueScaled(entry, axis, Gamepad::MIN_AXIS, Gamepad::MAX_AXIS);
-						i32 lastInputAxis = (i32) InputAxis::RightTrigger + 1;
-						switch (axis.usage)
+						i32 lastInputAxis = (i32)InputAxis::RightTrigger + 1;
+						switch(axis.usage)
 						{
 						case kHIDUsage_GD_X:
 							axisType = InputAxis::LeftStickX;
@@ -677,25 +679,25 @@ namespace bs
 							axisType = InputAxis::RightTrigger;
 							break;
 						case kHIDUsage_GD_Slider:
-							axisType = (InputAxis) (lastInputAxis + 1);
+							axisType = (InputAxis)(lastInputAxis + 1);
 							break;
 						case kHIDUsage_GD_Dial:
-							axisType = (InputAxis) (lastInputAxis + 2);
+							axisType = (InputAxis)(lastInputAxis + 2);
 							break;
 						case kHIDUsage_GD_Wheel:
-							axisType = (InputAxis) (lastInputAxis + 3);
+							axisType = (InputAxis)(lastInputAxis + 3);
 							break;
 						case kHIDUsage_Sim_Rudder:
-							axisType = (InputAxis) (lastInputAxis + 4);
+							axisType = (InputAxis)(lastInputAxis + 4);
 							break;
 						case kHIDUsage_Sim_Throttle:
-							axisType = (InputAxis) (lastInputAxis + 5);
+							axisType = (InputAxis)(lastInputAxis + 5);
 							break;
 						case kHIDUsage_Sim_Accelerator:
-							axisType = (InputAxis) (lastInputAxis + 6);
+							axisType = (InputAxis)(lastInputAxis + 6);
 							break;
 						case kHIDUsage_Sim_Brake:
-							axisType = (InputAxis) (lastInputAxis + 7);
+							axisType = (InputAxis)(lastInputAxis + 7);
 							break;
 						default:
 							break;
@@ -738,7 +740,7 @@ namespace bs
 					continue;
 
 				IOHIDElementRef elemRef = IOHIDValueGetElement(valueRef);
-				auto value = (i32) IOHIDValueGetIntegerValue(valueRef); // For buttons this is 1 when pressed, 0 when released
+				auto value = (i32)IOHIDValueGetIntegerValue(valueRef); // For buttons this is 1 when pressed, 0 when released
 				u64 timestamp = IOHIDValueGetTimeStamp(valueRef);
 
 				u32 usage = IOHIDElementGetUsage(elemRef);
@@ -747,9 +749,9 @@ namespace bs
 				ButtonCode button = BC_UNASSIGNED;
 				if(usagePage == kHIDPage_GenericDesktop)
 				{
-					if (usage == kHIDUsage_GD_Hatswitch)
+					if(usage == kHIDUsage_GD_Hatswitch)
 					{
-						switch (value)
+						switch(value)
 						{
 						case 0:
 							button = BC_GAMEPAD_DPAD_UP;
@@ -784,8 +786,8 @@ namespace bs
 				{
 					if(mData.type == HIDType::Mouse)
 					{
-						if (usage > 0 && usage <= BC_NumMouse)
-							button = (ButtonCode) ((u32) BC_MOUSE_LEFT + usage - 1);
+						if(usage > 0 && usage <= BC_NumMouse)
+							button = (ButtonCode)((u32)BC_MOUSE_LEFT + usage - 1);
 					}
 					else if(mData.type == HIDType::Gamepad)
 					{
@@ -809,11 +811,11 @@ namespace bs
 						case 14: button = BC_GAMEPAD_DPAD_LEFT; break;
 						case 15: button = BC_GAMEPAD_DPAD_RIGHT; break;
 						default:
-						{
-							i32 buttonIdx = usage - 16;
-							if(buttonIdx < 19)
-								button = (ButtonCode)((i32)(BC_GAMEPAD_BTN2 + buttonIdx));
-						}
+							{
+								i32 buttonIdx = usage - 16;
+								if(buttonIdx < 19)
+									button = (ButtonCode)((i32)(BC_GAMEPAD_BTN2 + buttonIdx));
+							}
 							break;
 						}
 					}
@@ -839,9 +841,9 @@ namespace bs
 		}
 
 		// Report mouse axes
-		if (mData.type == HIDType::Mouse)
+		if(mData.type == HIDType::Mouse)
 		{
-			if (mData.mouseAxisValues[0] != 0 || mData.mouseAxisValues[1] != 0 || mData.mouseAxisValues[2] != 0)
+			if(mData.mouseAxisValues[0] != 0 || mData.mouseAxisValues[1] != 0 || mData.mouseAxisValues[2] != 0)
 				mData.owner->NotifyMouseMovedInternal(mData.mouseAxisValues[0], mData.mouseAxisValues[1], mData.mouseAxisValues[2]);
 		}
 	}
@@ -864,13 +866,13 @@ namespace bs
 
 	void Input::cleanUpRawInput()
 	{
-		if (mMouse != nullptr)
+		if(mMouse != nullptr)
 			bs_delete(mMouse);
 
-		if (mKeyboard != nullptr)
+		if(mKeyboard != nullptr)
 			bs_delete(mKeyboard);
 
-		for (auto& gamepad : mGamepads)
+		for(auto& gamepad : mGamepads)
 			bs_delete(gamepad);
 
 		bs_delete(mPlatformData->gamepadHIDManager);
@@ -890,5 +892,4 @@ namespace bs
 
 		return 0;
 	}
-}
-
+} // namespace bs

@@ -22,7 +22,7 @@ namespace bs
 
 	float CSliderJoint::GetPosition() const
 	{
-		if (mInternal == nullptr)
+		if(mInternal == nullptr)
 			return 0.0f;
 
 		return GetInternalInternal()->GetPosition();
@@ -30,7 +30,7 @@ namespace bs
 
 	float CSliderJoint::GetSpeed() const
 	{
-		if (mInternal == nullptr)
+		if(mInternal == nullptr)
 			return 0.0f;
 
 		return GetInternalInternal()->GetSpeed();
@@ -43,27 +43,27 @@ namespace bs
 
 	void CSliderJoint::SetLimit(const LimitLinearRange& limit)
 	{
-		if (mDesc.Limit == limit)
+		if(mDesc.Limit == limit)
 			return;
 
 		mDesc.Limit = limit;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			GetInternalInternal()->SetLimit(limit);
 	}
 
 	void CSliderJoint::SetFlag(SliderJointFlag flag, bool enabled)
 	{
 		bool isEnabled = ((u32)mDesc.Flag & (u32)flag) != 0;
-		if (isEnabled == enabled)
+		if(isEnabled == enabled)
 			return;
 
-		if (enabled)
+		if(enabled)
 			mDesc.Flag = (SliderJointFlag)((u32)mDesc.Flag | (u32)flag);
 		else
 			mDesc.Flag = (SliderJointFlag)((u32)mDesc.Flag & ~(u32)flag);
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 			GetInternalInternal()->SetFlag(flag, enabled);
 	}
 
@@ -88,11 +88,11 @@ namespace bs
 
 		HRigidbody rigidbody = mBodies[(u32)body];
 		const Transform& tfrm = SO()->GetTransform();
-		if (rigidbody == nullptr) // Get world space transform if no relative to any body
+		if(rigidbody == nullptr) // Get world space transform if no relative to any body
 		{
 			Quaternion worldRot = tfrm.GetRotation();
 
-			rotation = worldRot*rotation;
+			rotation = worldRot * rotation;
 			position = worldRot.Rotate(position) + tfrm.GetPosition();
 		}
 		else
@@ -103,7 +103,7 @@ namespace bs
 			// (Needed because we need to rotate the joint SO in order to orient the slider direction, so we need an
 			// additional transform that allows us to orient the object)
 			position = rotation.Rotate(position);
-			rotation = (rigidbodyTfrm.GetRotation()*rotation).Inverse()*tfrm.GetRotation();
+			rotation = (rigidbodyTfrm.GetRotation() * rotation).Inverse() * tfrm.GetRotation();
 		}
 	}
 
@@ -116,4 +116,4 @@ namespace bs
 	{
 		return CSliderJoint::GetRttiStatic();
 	}
-}
+} // namespace bs

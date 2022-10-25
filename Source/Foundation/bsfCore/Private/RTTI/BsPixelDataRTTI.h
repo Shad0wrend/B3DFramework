@@ -32,6 +32,7 @@ namespace bs
 		BS_END_RTTI_MEMBERS
 
 		u32& GetVersion(PixelData* obj) { return VERSION; }
+
 		void SetVersion(PixelData* obj, u32& val) { mVersion = val; }
 
 		SPtr<DataStream> GetData(PixelData* obj, u32& size)
@@ -46,7 +47,7 @@ namespace bs
 			obj->AllocateInternalBuffer(size);
 			value->Read(obj->GetData(), size);
 		}
-		
+
 	public:
 		PixelDataRTTI()
 		{
@@ -54,7 +55,7 @@ namespace bs
 			AddPlainField("version", 10, &PixelDataRTTI::GetVersion, &PixelDataRTTI::SetVersion);
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context)
 		{
 			PixelData* pixelData = static_cast<PixelData*>(obj);
 
@@ -67,7 +68,7 @@ namespace bs
 			}
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "PixelData";
 			return name;
@@ -78,7 +79,7 @@ namespace bs
 			return TID_PixelData;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			SPtr<PixelData> newPixelData = bs_shared_ptr_new<PixelData>();
 
@@ -93,4 +94,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

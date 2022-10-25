@@ -31,7 +31,7 @@ namespace bs
 			BS_RTTI_MEMBER_PLAIN(mAttenuation, 10)
 		BS_END_RTTI_MEMBERS
 	public:
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "AudioSource";
 			return name;
@@ -42,7 +42,7 @@ namespace bs
 			return TID_AudioSource;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return AudioSource::Create();
 		}
@@ -50,4 +50,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

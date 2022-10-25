@@ -22,7 +22,7 @@ namespace bs
 	};
 
 	/** Properties of a drive that drives the joint's angular velocity towards a paricular value. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics),ExportAsStruct(true)) HingeJointDrive
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) HingeJointDrive
 	{
 		/** Target speed of the joint. */
 		float Speed = 0.0f;
@@ -53,7 +53,8 @@ namespace bs
 	class BS_CORE_EXPORT HingeJoint : public Joint
 	{
 	public:
-		HingeJoint(const HINGE_JOINT_DESC& desc) { }
+		HingeJoint(const HINGE_JOINT_DESC& desc) {}
+
 		virtual ~HingeJoint() = default;
 
 		/** Returns the current angle between the two attached bodes. */
@@ -108,4 +109,4 @@ namespace bs
 	};
 
 	/** @} */
-}
+} // namespace bs

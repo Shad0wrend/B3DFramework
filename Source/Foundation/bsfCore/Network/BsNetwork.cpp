@@ -146,7 +146,7 @@ namespace bs
 		return (memcmp(ip, other.ip, sizeof(ip)) == 0 && ip6FlowInfo == other.ip6FlowInfo && ip6ScopeId == other.ip6ScopeId);
 	}
 
-	NetworkAddress& NetworkAddress::operator= (const NetworkAddress& rhs)
+	NetworkAddress& NetworkAddress::operator=(const NetworkAddress& rhs)
 	{
 		ipType = rhs.ipType;
 		port = rhs.port;
@@ -164,7 +164,7 @@ namespace bs
 
 	bool NetworkAddress::operator!=(const NetworkAddress& rhs) const
 	{
-		return !(*this==rhs);
+		return !(*this == rhs);
 	}
 
 	/** Contains information associated with a single connected peer. */
@@ -227,7 +227,7 @@ namespace bs
 			event->_backendData = packet;
 			event->sender = getOrRegisterNetworkId(packet->systemAddress, packet->guid);
 
-			switch (packet->data[0])
+			switch(packet->data[0])
 			{
 			case ID_CONNECTION_REQUEST_ACCEPTED:
 				event->type = NetworkEventType::ConnectingDone;
@@ -271,7 +271,7 @@ namespace bs
 	};
 
 	NetworkPeer::NetworkPeer(const NETWORK_PEER_DESC& desc)
-		:m(bs_new<Pimpl>())
+		: m(bs_new<Pimpl>())
 	{
 		m->peer = RakPeerInterface::GetInstance();
 		m->networkIdMapping.resize(desc.maxNumConnections);
@@ -365,7 +365,7 @@ namespace bs
 	bool NetworkPeer::connect(const char* host, u16 port)
 	{
 		ConnectionAttemptResult result = m->peer->Connect(host, port, nullptr, 0);
-		
+
 		if(result != CONNECTION_ATTEMPT_STARTED)
 		{
 			switch(result)
@@ -436,8 +436,7 @@ namespace bs
 
 		mapChannelToRakNet(channel, reliability, priority);
 
-		m->peer->Send((const char*)data.bytes, (i32)data.length, priority, reliability, 0,
-			networkToSystemAddress(address), false);
+		m->peer->Send((const char*)data.bytes, (i32)data.length, priority, reliability, 0, networkToSystemAddress(address), false);
 	}
 
 	void NetworkPeer::send(const PacketData& data, const NetworkId& id, const PacketChannel& channel)
@@ -454,8 +453,7 @@ namespace bs
 
 		mapChannelToRakNet(channel, reliability, priority);
 
-		m->peer->Send((const char*)data.bytes, (i32)data.length, priority, reliability, 0,
-			*guid, false);
+		m->peer->Send((const char*)data.bytes, (i32)data.length, priority, reliability, 0, *guid, false);
 	}
 
 	void NetworkPeer::broadcast(const PacketData& data, const PacketChannel& channel)
@@ -465,8 +463,7 @@ namespace bs
 
 		mapChannelToRakNet(channel, reliability, priority);
 
-		m->peer->Send((const char*)data.bytes, (i32)data.length, priority, reliability, 0,
-			UNASSIGNED_RAKNET_GUID, true);
+		m->peer->Send((const char*)data.bytes, (i32)data.length, priority, reliability, 0, UNASSIGNED_RAKNET_GUID, true);
 	}
 
 	NetworkObject::~NetworkObject()
@@ -480,8 +477,7 @@ namespace bs
 		NetworkObject* thisObj = const_cast<NetworkObject*>(this);
 
 		NetworkObjectState state;
-		state.state = SerializedObject::Create(*thisObj,
-			SerializedObjectEncodeFlag::Shallow | SerializedObjectEncodeFlag::ReplicableOnly);
+		state.state = SerializedObject::Create(*thisObj, SerializedObjectEncodeFlag::Shallow | SerializedObjectEncodeFlag::ReplicableOnly);
 
 		return state;
 	}
@@ -515,10 +511,10 @@ namespace bs
 	{
 		assert(mBufferPieces.empty());
 
-		for (auto& entry : mBufferPiecePool)
+		for(auto& entry : mBufferPiecePool)
 			bs_free(entry.buffer);
 
-		if (mResultBuffer)
+		if(mResultBuffer)
 			bs_free(mResultBuffer);
 
 		bs_free(mWriteBuffer);
@@ -527,7 +523,7 @@ namespace bs
 	void NetworkEncoder::encode(u8 type, const UUID& uuid, IReflectable* object, SerializationContext* context)
 	{
 		BinarySerializer bs;
-		
+
 		auto flushToBuffer = [this](u8* bufferStart, u32 bytesWritten, u32& newBufferSize)
 		{
 			if(mBufferPieces.empty())
@@ -556,7 +552,7 @@ namespace bs
 		auto writeToBuffer = [this, &flushToBuffer](auto data)
 		{
 			u32 size = rttiGetElemSize(data);
-			if ((mWriteBufferOffset + size) > WRITE_BUFFER_SIZE)
+			if((mWriteBufferOffset + size) > WRITE_BUFFER_SIZE)
 			{
 				u32 newBufferSize;
 				flushToBuffer(mWriteBuffer, mWriteBufferOffset, newBufferSize);
@@ -643,7 +639,7 @@ namespace bs
 	NetworkEncoder::BufferPiece NetworkEncoder::allocBufferPiece()
 	{
 		BufferPiece piece;
-		if (!mBufferPiecePool.empty())
+		if(!mBufferPiecePool.empty())
 		{
 			piece = mBufferPiecePool.back();
 			mBufferPiecePool.pop_back();
@@ -657,14 +653,14 @@ namespace bs
 	}
 
 	NetworkDecoder::NetworkDecoder(const SPtr<MemoryDataStream>& data)
-		:mInputStream(data)
+		: mInputStream(data)
 	{
 		mInputStream->skip(1); // Skip the network message type byte
 	}
 
 	SPtr<IReflectable> NetworkDecoder::decode(u8& type, UUID& uuid, SerializationContext* context)
 	{
-		if (mInputStream->eof())
+		if(mInputStream->eof())
 			return nullptr;
 
 		char* data = (char*)mInputStream->GetCurrentPtr();
@@ -777,26 +773,26 @@ namespace bs
 		if(mPeer)
 		{
 			NetworkEvent* event = mPeer->receive();
-			
+
 			while(event)
 			{
 				switch(event->type)
 				{
-				case NetworkEventType::ConnectingDone: 
+				case NetworkEventType::ConnectingDone:
 					if(mState == NetworkState::Connecting)
 						mState = NetworkState::Connected;
-					
+
 					break;
-				case NetworkEventType::ConnectingFailed: 
+				case NetworkEventType::ConnectingFailed:
 					if(mState == NetworkState::Connecting)
 						mState = NetworkState::Disconnected;
 
 					break;
 				case NetworkEventType::AlreadyConnected: break;
-				case NetworkEventType::IncomingNew: 
+				case NetworkEventType::IncomingNew:
 					// TODO - Need to send state for all current objects to the newly connected peer
 					break;
-				case NetworkEventType::IncomingNoFree: 
+				case NetworkEventType::IncomingNoFree:
 					BS_LOG(Warning, Network, "Refused incoming connection due to maximum connection count being reached.");
 					break;
 				case NetworkEventType::Disconnected: break;
@@ -808,7 +804,7 @@ namespace bs
 					}
 
 					break;
-				default: 
+				default:
 					break;
 				}
 
@@ -820,16 +816,16 @@ namespace bs
 		if(isHost())
 		{
 			// TODO - Support setting different tick times for different objects (or object types)
-			if (mTimeAccumulator >= 0.0f)
+			if(mTimeAccumulator >= 0.0f)
 			{
-				for (auto& entry : mActions)
+				for(auto& entry : mActions)
 				{
 					auto iterFind = mNetworkObjects.find(entry.uuid);
 					assert(iterFind != mNetworkObjects.end());
 
 					ObjectInfo& objInfo = iterFind->second;
 
-					switch (entry.type)
+					switch(entry.type)
 					{
 					case Spawning:
 						mEncoder.encode((u32)NetworkActionType::Spawn, entry.uuid, objInfo.state.state.get());
@@ -857,7 +853,7 @@ namespace bs
 					mEncoder.clear();
 				}
 
-				for (auto& entry : mNetworkObjects)
+				for(auto& entry : mNetworkObjects)
 				{
 					// TODO - This needs to be rewritten as a specialized method that avoids doing a SerializedObject
 					// conversion. The method should check previous SerializedObject state with actual state in IReflectable.
@@ -866,12 +862,11 @@ namespace bs
 					// TODO - Add a manual overridable method to a NetworkObject that allows the user to determine if
 					// a network object needs sync or not
 
-					SPtr<SerializedObject> newState = SerializedObject::Create(*entry.second.obj,
-						SerializedObjectEncodeFlag::Shallow | SerializedObjectEncodeFlag::ReplicableOnly);
+					SPtr<SerializedObject> newState = SerializedObject::Create(*entry.second.obj, SerializedObjectEncodeFlag::Shallow | SerializedObjectEncodeFlag::ReplicableOnly);
 
 					IDiff& diffHandler = entry.second.obj->GetRtti()->GetDiffHandler();
 					SPtr<SerializedObject> diff = diffHandler.generateDiff(entry.second.state.state, newState);
-					if (diff == nullptr)
+					if(diff == nullptr)
 						continue;
 
 					entry.second.state.state = newState;
@@ -899,6 +894,5 @@ namespace bs
 
 			mTimeAccumulator += dt;
 		}
-
 	}
-}
+} // namespace bs

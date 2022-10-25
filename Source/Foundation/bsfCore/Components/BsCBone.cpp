@@ -27,18 +27,18 @@ namespace bs
 
 	void CBone::SetBoneName(const String& name)
 	{
-		if (mBoneName == name)
+		if(mBoneName == name)
 			return;
 
 		mBoneName = name;
 
-		if (mParent != nullptr)
+		if(mParent != nullptr)
 			mParent->NotifyBoneChangedInternal(static_object_cast<CBone>(GetHandle()));
 	}
 
 	void CBone::OnDestroyed()
 	{
-		if (mParent != nullptr)
+		if(mParent != nullptr)
 			mParent->RemoveBoneInternal(static_object_cast<CBone>(GetHandle()));
 
 		mParent = nullptr;
@@ -46,12 +46,12 @@ namespace bs
 
 	void CBone::OnDisabled()
 	{
-		if (mParent != nullptr)
+		if(mParent != nullptr)
 			mParent->RemoveBoneInternal(static_object_cast<CBone>(GetHandle()));
 
 		mParent = nullptr;
 	}
-	
+
 	void CBone::OnEnabled()
 	{
 		UpdateParentAnimation();
@@ -59,22 +59,22 @@ namespace bs
 
 	void CBone::OnTransformChanged(TransformChangedFlags flags)
 	{
-		if (!SO()->GetActive())
+		if(!SO()->GetActive())
 			return;
 
-		if ((flags & TCF_Parent) != 0)
+		if((flags & TCF_Parent) != 0)
 			UpdateParentAnimation();
 	}
 
 	void CBone::UpdateParentAnimation()
 	{
 		HSceneObject currentSO = SO();
-		while (currentSO != nullptr)
+		while(currentSO != nullptr)
 		{
 			HAnimation parent = currentSO->GetComponent<CAnimation>();
-			if (parent != nullptr)
+			if(parent != nullptr)
 			{
-				if (currentSO->GetActive())
+				if(currentSO->GetActive())
 					SetParentInternal(parent);
 				else
 					SetParentInternal(HAnimation());
@@ -90,21 +90,21 @@ namespace bs
 
 	void CBone::SetParentInternal(const HAnimation& animation, bool isInternal)
 	{
-		if (animation == mParent)
+		if(animation == mParent)
 			return;
 
-		if (!isInternal)
+		if(!isInternal)
 		{
-			if (mParent != nullptr)
+			if(mParent != nullptr)
 				mParent->RemoveBoneInternal(static_object_cast<CBone>(GetHandle()));
 
-			if (animation != nullptr)
+			if(animation != nullptr)
 				animation->AddBoneInternal(static_object_cast<CBone>(GetHandle()));
 		}
 
 		mParent = animation;
 	}
-	
+
 	RTTITypeBase* CBone::GetRttiStatic()
 	{
 		return CBoneRTTI::Instance();
@@ -114,4 +114,4 @@ namespace bs
 	{
 		return CBone::GetRttiStatic();
 	}
-}
+} // namespace bs

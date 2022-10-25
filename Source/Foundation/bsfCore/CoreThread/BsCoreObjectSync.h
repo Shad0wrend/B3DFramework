@@ -18,28 +18,57 @@ namespace bs
 	namespace detail
 	{
 		// Checks is the provided type a shared pointer
-		template<typename T> struct is_shared_ptr : std::false_type {};
-		template<typename T> struct is_shared_ptr<SPtr<T>> : std::true_type {};
+		template <typename T>
+		struct is_shared_ptr : std::false_type
+		{};
+
+		template <typename T>
+		struct is_shared_ptr<SPtr<T>> : std::true_type
+		{};
 
 		// Checks is the provided type a resource handle
-		template<typename T> struct is_resource_handle : std::false_type {};
-		template<typename T> struct is_resource_handle<ResourceHandle<T>> : std::true_type {};
+		template <typename T>
+		struct is_resource_handle : std::false_type
+		{};
+
+		template <typename T>
+		struct is_resource_handle<ResourceHandle<T>> : std::true_type
+		{};
 
 		// Returns the underlying type if the provided type is a resource handle, or itself otherwise
-		template<typename T> struct decay_handle { using value = T; };
-		template<typename T> struct decay_handle<ResourceHandle<T>> { using value = T; };
+		template <typename T>
+		struct decay_handle
+		{
+			using value = T;
+		};
+
+		template <typename T>
+		struct decay_handle<ResourceHandle<T>>
+		{
+			using value = T;
+		};
 
 		// Returns the underlying type if the provided type is a shared pointer, or itself otherwise
-		template<typename T> struct decay_sptr { using value = T; };
-		template<typename T> struct decay_sptr<SPtr<T>> { using value = typename SPtr<T>::element_type; };
+		template <typename T>
+		struct decay_sptr
+		{
+			using value = T;
+		};
+
+		template <typename T>
+		struct decay_sptr<SPtr<T>>
+		{
+			using value = typename SPtr<T>::element_type;
+		};
 
 		// Checks if a specific template specialization exists
 		template <class T, std::size_t = sizeof(T)>
-		std::true_type is_complete_impl(T *);
+		std::true_type is_complete_impl(T*);
 		std::false_type is_complete_impl(...);
-		template <class T> using is_complete = decltype(is_complete_impl(std::declval<T*>()));
+		template <class T>
+		using is_complete = decltype(is_complete_impl(std::declval<T*>()));
 
-		template<typename T>
+		template <typename T>
 		using decay_all_t = typename decay_sptr<typename decay_handle<std::decay_t<T>>::value>::value;
 
 		// Converts a ResourceHandle to an underlying SPtr, or if the type is not a ResourceHandle it just passes it
@@ -47,16 +76,14 @@ namespace bs
 
 		/** Pass non-resource-handle types as is. */
 		template <class T>
-		T&& remove_handle(T&& value, std::enable_if_t<
-			!is_resource_handle<std::decay_t<T>>::value>* = 0)
+		T&& remove_handle(T&& value, std::enable_if_t<!is_resource_handle<std::decay_t<T>>::value>* = 0)
 		{
 			return std::forward<T>(value);
 		}
 
 		/** Convert a resource handle to the underlying resource SPtr. */
 		template <class T>
-		decltype(((std::decay_t<T>*)nullptr)->GetInternalPtr()) remove_handle(T&& handle, std::enable_if_t<
-			is_resource_handle<std::decay_t<T>>::value>* = 0)
+		decltype(((std::decay_t<T>*)nullptr)->GetInternalPtr()) remove_handle(T&& handle, std::enable_if_t<is_resource_handle<std::decay_t<T>>::value>* = 0)
 		{
 			if(handle.IsLoaded(false))
 				return handle.GetInternalPtr();
@@ -69,27 +96,21 @@ namespace bs
 
 		/** Pass non-shared-pointers as is, they aren't core objects. */
 		template <class T>
-		T&& get_core_object(T&& value, std::enable_if_t<
-			!is_shared_ptr<std::decay_t<T>>::value>* = 0)
+		T&& get_core_object(T&& value, std::enable_if_t<!is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			return std::forward<T>(value);
 		}
 
 		/** Pass shared-pointers to non-classes as is, they aren't core objects. */
 		template <class T>
-		T&& get_core_object(T&& value, std::enable_if_t<
-			is_shared_ptr<std::decay_t<T>>::value &&
-			!std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value>* = 0)
+		T&& get_core_object(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value && !std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value>* = 0)
 		{
 			return std::forward<T>(value);
 		}
 
 		/** Pass shared-pointers to classes that don't derive from CoreObject as is, they aren't core objects. */
 		template <class T>
-		T&& get_core_object(T&& value, std::enable_if_t<
-			is_shared_ptr<std::decay_t<T>>::value &&
-			(std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value &&
-				!std::is_base_of<CoreObject, std::decay_t<typename std::decay_t<T>::element_type>>::value)>* = 0)
+		T&& get_core_object(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value && (std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value && !std::is_base_of<CoreObject, std::decay_t<typename std::decay_t<T>::element_type>>::value)>* = 0)
 		{
 			return std::forward<T>(value);
 		}
@@ -97,17 +118,14 @@ namespace bs
 		/** Convert shared-pointers with classes that derive from CoreObject to their core thread variants. */
 		template <class T>
 		decltype(((std::decay_t<typename std::decay_t<T>::element_type>*)nullptr)->GetCore())
-		get_core_object(T&& value, std::enable_if_t<
-			is_shared_ptr<std::decay_t<T>>::value &&
-			(std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value &&
-				std::is_base_of<CoreObject, std::decay_t<typename std::decay_t<T>::element_type>>::value)>* = 0)
+		get_core_object(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value && (std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value && std::is_base_of<CoreObject, std::decay_t<typename std::decay_t<T>::element_type>>::value)>* = 0)
 		{
 			if(value)
 				return value->GetCore();
 
 			return nullptr;
 		}
-	}
+	} // namespace detail
 
 	/** @} */
 
@@ -130,38 +148,36 @@ namespace bs
 		using MyType = RttiCoreSyncWriter;
 
 		RttiCoreSyncWriter(Bitstream& stream)
-			:mStream(stream)
+			: mStream(stream)
 		{}
 
 		/** If the type offers a rttiEnumFields method, recurse into it. */
-		template<class T>
+		template <class T>
 		void operator()(T&& value, std::enable_if_t<has_rttiEnumFields<T>::value>* = 0)
 		{
 			value.RttiEnumFields(*this);
 		}
 
 		/** If the type doesn't offer a rttiEnumFields method, perform the write using plain serialization. */
-		template<class T>
+		template <class T>
 		void operator()(T&& value, std::enable_if_t<!has_rttiEnumFields<T>::value>* = 0)
 		{
 			WriteInternal(detail::get_core_object(detail::remove_handle(std::forward<T>(value))));
 		}
 
 	private:
-		template<class T>
-		void WriteInternal(T&& value, std::enable_if_t<
-			!detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
+		template <class T>
+		void WriteInternal(T&& value, std::enable_if_t<!detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			rtti_write(value, mStream);
 		}
 
-		template<class T>
-		void WriteInternal(T&& value, std::enable_if_t<
-			detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
+		template <class T>
+		void WriteInternal(T&& value, std::enable_if_t<detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			using SPtrType = std::decay_t<T>;
 
-			SPtrType* sptrPtr = new (mStream.Cursor()) SPtrType;
+			SPtrType* sptrPtr = new(mStream.Cursor()) SPtrType;
 			*sptrPtr = (value);
 
 			mStream.SkipBytes(sizeof(SPtrType));
@@ -182,34 +198,32 @@ namespace bs
 	struct RttiCoreSyncReader
 	{
 		RttiCoreSyncReader(Bitstream& stream)
-			:mStream(stream)
+			: mStream(stream)
 		{}
 
 		/** If the type offers a rttiEnumFields method, recurse into it. */
-		template<class T>
+		template <class T>
 		void operator()(T&& value, std::enable_if_t<has_rttiEnumFields<T>::value>* = 0)
 		{
 			value.RttiEnumFields(*this);
 		}
 
 		/** If the type doesn't offer a rttiEnumFields method, perform the read using plain serialization. */
-		template<class T>
+		template <class T>
 		void operator()(T&& value, std::enable_if_t<!has_rttiEnumFields<T>::value>* = 0)
 		{
 			ReadInternal(std::forward<T>(value));
 		}
 
 	private:
-		template<class T>
-		void ReadInternal(T&& value, std::enable_if_t<
-			!detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
+		template <class T>
+		void ReadInternal(T&& value, std::enable_if_t<!detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			rtti_read(value, mStream);
 		}
 
-		template<class T>
-		void ReadInternal(T&& value, std::enable_if_t<
-			detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
+		template <class T>
+		void ReadInternal(T&& value, std::enable_if_t<detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			using SPtrType = std::decay_t<T>;
 
@@ -237,34 +251,32 @@ namespace bs
 	struct RttiCoreSyncSize
 	{
 		RttiCoreSyncSize(uint32_t& size)
-			:mSize(size)
-		{ }
+			: mSize(size)
+		{}
 
 		/** If the type offers a rttiEnumFields method, recurse into it. */
-		template<class T>
+		template <class T>
 		void operator()(T&& value, std::enable_if_t<has_rttiEnumFields<T>::value>* = 0)
 		{
 			value.RttiEnumFields(*this);
 		}
 
 		/** If the type doesn't offer a rttiEnumFields method, perform the read using plain serialization. */
-		template<class T>
+		template <class T>
 		void operator()(T&& value, std::enable_if_t<!has_rttiEnumFields<T>::value>* = 0)
 		{
 			GetSizeInternal(detail::get_core_object(detail::remove_handle(std::forward<T>(value))));
 		}
 
 	private:
-		template<class T>
-		void GetSizeInternal(T&& value, std::enable_if_t<
-			!detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
+		template <class T>
+		void GetSizeInternal(T&& value, std::enable_if_t<!detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			mSize += rtti_size(value).Bytes;
 		}
 
-		template<class T>
-		void GetSizeInternal(T&& value, std::enable_if_t<
-			detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
+		template <class T>
+		void GetSizeInternal(T&& value, std::enable_if_t<detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			using SPtrType = std::decay_t<T>;
 			mSize += sizeof(SPtrType);
@@ -277,7 +289,7 @@ namespace bs
 	 * Calculates the size of the provided object, using rules for core object syncing. Object must have rttiEnumFields()
 	 * method implementation.
 	 */
-	template<class T>
+	template <class T>
 	uint32_t csync_size(T& v)
 	{
 		uint32_t size = 0;
@@ -289,7 +301,7 @@ namespace bs
 	 * Writes the provided object into the provided memory location, using rules for core object syncing. Advances the
 	 * stream cursor by the number of bytes written. Object must have rttiEnumFields() method implementation.
 	 */
-	template<class T>
+	template <class T>
 	void csync_write(T& v, Bitstream& stream)
 	{
 		v.RttiEnumFields(RttiCoreSyncWriter(stream));
@@ -298,14 +310,13 @@ namespace bs
 	/**
 	 * Decodes information from the provided memory buffer and writes it into the provided object, using rules for core
 	 * object syncing. Advances the stream cursor by number of bytes read. Object must have rttiEnumFields() method
-	 * implementation.  
+	 * implementation.
 	 */
-	template<class T>
+	template <class T>
 	void csync_read(T& v, Bitstream& stream)
 	{
 		v.RttiEnumFields(RttiCoreSyncReader(stream));
 	}
 
 	/** @} */
-}
-
+} // namespace bs

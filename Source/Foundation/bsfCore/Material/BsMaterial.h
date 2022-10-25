@@ -17,7 +17,7 @@
 
 namespace bs
 {
-	template<class T>
+	template <class T>
 	class TAnimationCurve;
 	class ColorGradient;
 
@@ -29,11 +29,11 @@ namespace bs
 	enum class MaterialDirtyFlags
 	{
 		/** Material parameter changed. */
-		Param				= 1 << 0,
+		Param = 1 << 0,
 		/** Dependant resource has been loaded and/or changed. (e.g. a texture assigned to a parameter. */
-		ParamResource		= 1 << 1,
+		ParamResource = 1 << 1,
 		/** Material shader has changed. */
-		Shader				= 2 << 2
+		Shader = 2 << 2
 	};
 
 	/** Structure used when searching for a specific technique in a Material. */
@@ -80,13 +80,13 @@ namespace bs
 		struct StructData
 		{
 			StructData()
-				:Data(nullptr), Size(0)
-			{ }
+				: Data(nullptr), Size(0)
+			{}
 
 			StructData(u32 _size)
-				:Size(_size)
+				: Size(_size)
 			{
-				Data = std::shared_ptr<void>(bs_alloc(_size), (void(*)(void*))&bs_free);
+				Data = std::shared_ptr<void>(bs_alloc(_size), (void (*)(void*)) & bs_free);
 			}
 
 			/**
@@ -109,19 +109,19 @@ namespace bs
 		 */
 
 		/** Marks the contents of the sim thread object as dirty, causing it to sync with its core thread counterpart. */
-		virtual void MarkCoreDirtyInternal(MaterialDirtyFlags flags = MaterialDirtyFlags::Param) { }
+		virtual void MarkCoreDirtyInternal(MaterialDirtyFlags flags = MaterialDirtyFlags::Param) {}
 
 		/** @copydoc CoreObject::markDependenciesDirty */
-		virtual void MarkDependenciesDirtyInternal() { }
+		virtual void MarkDependenciesDirtyInternal() {}
 
 		/** @copydoc IResourceListener::markListenerResourcesDirty */
-		virtual void MarkResourcesDirtyInternal() { }
+		virtual void MarkResourcesDirtyInternal() {}
 
 		/** @} */
 	};
 
 	/** @copydoc MaterialBase */
-	template<bool Core>
+	template <bool Core>
 	class BS_CORE_EXPORT TMaterial : public MaterialBase
 	{
 	public:
@@ -140,7 +140,8 @@ namespace bs
 		virtual ~TMaterial() = default;
 
 		/** Returns the currently active shader. */
-		BS_SCRIPT_EXPORT(ExportName(Shader),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Shader), Property(Getter))
+
 		ShaderType GetShader() const { return mShader; }
 
 		/**
@@ -149,7 +150,8 @@ namespace bs
 		 * technique is considered the default technique and which subset of techniques are searched during a call to
 		 * findTechnique().
 		 */
-		BS_SCRIPT_EXPORT(ExportName(Variation),Property(Getter))
+		BS_SCRIPT_EXPORT(ExportName(Variation), Property(Getter))
+
 		const ShaderVariation& GetVariation() const { return mVariation; }
 
 		/** Returns the total number of techniques supported by this material. */
@@ -219,7 +221,8 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT()
-		void SetFloat(const String& name, float value, u32 arrayIdx = 0)	{ return GetParamFloat(name).Set(value, arrayIdx); }
+
+		void SetFloat(const String& name, float value, u32 arrayIdx = 0) { return GetParamFloat(name).Set(value, arrayIdx); }
 
 		/*
 		 * Assigns a curve to the the float shader parameter with the specified name. The system will automatically
@@ -228,8 +231,11 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		void SetFloatCurve(const String& name, TAnimationCurve<float> value, u32 arrayIdx = 0)
-		{ return GetParamFloatCurve(name).Set(std::move(value), arrayIdx); }
+		{
+			return GetParamFloatCurve(name).Set(std::move(value), arrayIdx);
+		}
 
 		/**
 		 * Assigns a color to the shader parameter with the specified name.
@@ -237,6 +243,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		void SetColor(const String& name, const Color& value, u32 arrayIdx = 0) { return GetParamColor(name).Set(value, arrayIdx); }
 
 		/**
@@ -246,8 +253,11 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		void SetColorGradient(const String& name, const ColorGradientHDR& value, u32 arrayIdx = 0)
-		{ return GetParamColorGradient(name).Set(value, arrayIdx); }
+		{
+			return GetParamColorGradient(name).Set(value, arrayIdx);
+		}
 
 		/**
 		 * Assigns a 2D vector to the shader parameter with the specified name.
@@ -255,7 +265,8 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(SetVector2))
-		void SetVec2(const String& name, const Vector2& value, u32 arrayIdx = 0)	{ return GetParamVec2(name).Set(value, arrayIdx); }
+
+		void SetVec2(const String& name, const Vector2& value, u32 arrayIdx = 0) { return GetParamVec2(name).Set(value, arrayIdx); }
 
 		/**
 		 * Assigns a 3D vector to the shader parameter with the specified name.
@@ -263,7 +274,8 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(SetVector3))
-		void SetVec3(const String& name, const Vector3& value, u32 arrayIdx = 0)	{ return GetParamVec3(name).Set(value, arrayIdx); }
+
+		void SetVec3(const String& name, const Vector3& value, u32 arrayIdx = 0) { return GetParamVec3(name).Set(value, arrayIdx); }
 
 		/**
 		 * Assigns a 4D vector to the shader parameter with the specified name.
@@ -271,7 +283,8 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(SetVector4))
-		void SetVec4(const String& name, const Vector4& value, u32 arrayIdx = 0)	{ return GetParamVec4(name).Set(value, arrayIdx); }
+
+		void SetVec4(const String& name, const Vector4& value, u32 arrayIdx = 0) { return GetParamVec4(name).Set(value, arrayIdx); }
 
 		/**
 		 * Assigns a 3x3 matrix to the shader parameter with the specified name.
@@ -279,7 +292,8 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(SetMatrix3))
-		void SetMat3(const String& name, const Matrix3& value, u32 arrayIdx = 0)	{ return GetParamMat3(name).Set(value, arrayIdx); }
+
+		void SetMat3(const String& name, const Matrix3& value, u32 arrayIdx = 0) { return GetParamMat3(name).Set(value, arrayIdx); }
 
 		/**
 		 * Assigns a 4x4 matrix to the shader parameter with the specified name.
@@ -287,11 +301,12 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(SetMatrix4))
-		void SetMat4(const String& name, const Matrix4& value, u32 arrayIdx = 0)	{ return GetParamMat4(name).Set(value, arrayIdx); }
+
+		void SetMat4(const String& name, const Matrix4& value, u32 arrayIdx = 0) { return GetParamMat4(name).Set(value, arrayIdx); }
 
 		/**
 		 * Assigns a structure to the shader parameter with the specified name.
-		 *  		
+		 *
 		 * Structure is provided as a raw buffer and caller must ensure structure in buffer matches what the shader expects.
 		 *
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
@@ -339,6 +354,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		float GetFloat(const String& name, u32 arrayIdx = 0) const { return GetParamFloat(name).Get(arrayIdx); }
 
 		/**
@@ -349,8 +365,11 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		const TAnimationCurve<float>& GetFloatCurve(const String& name, u32 arrayIdx = 0) const
-		{ return GetParamFloatCurve(name).Get(arrayIdx); }
+		{
+			return GetParamFloatCurve(name).Get(arrayIdx);
+		}
 
 		/**
 		 * Returns a color assigned with the parameter with the specified name. If a color gradient is assigned to this
@@ -360,6 +379,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		Color GetColor(const String& name, u32 arrayIdx = 0) const { return GetParamColor(name).Get(arrayIdx); }
 
 		/**
@@ -370,8 +390,11 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT()
+
 		const ColorGradientHDR& GetColorGradient(const String& name, u32 arrayIdx = 0) const
-		{ return GetParamColorGradient(name).Get(arrayIdx); }
+		{
+			return GetParamColorGradient(name).Get(arrayIdx);
+		}
 
 		/**
 		 * Returns a 2D vector assigned with the parameter with the specified name.
@@ -379,6 +402,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(GetVector2))
+
 		Vector2 GetVec2(const String& name, u32 arrayIdx = 0) const { return GetParamVec2(name).Get(arrayIdx); }
 
 		/**
@@ -387,6 +411,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(GetVector3))
+
 		Vector3 GetVec3(const String& name, u32 arrayIdx = 0) const { return GetParamVec3(name).Get(arrayIdx); }
 
 		/**
@@ -395,6 +420,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(GetVector4))
+
 		Vector4 GetVec4(const String& name, u32 arrayIdx = 0) const { return GetParamVec4(name).Get(arrayIdx); }
 
 		/**
@@ -403,6 +429,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(GetMatrix3))
+
 		Matrix3 GetMat3(const String& name, u32 arrayIdx = 0) const { return GetParamMat3(name).Get(arrayIdx); }
 
 		/**
@@ -411,6 +438,7 @@ namespace bs
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
 		BS_SCRIPT_EXPORT(ExportName(GetMatrix4))
+
 		Matrix4 GetMat4(const String& name, u32 arrayIdx = 0) const { return GetParamMat4(name).Get(arrayIdx); }
 
 		/**
@@ -431,7 +459,7 @@ namespace bs
 		SpriteTextureType GetSpriteTexture(const String& name) const { return GetParamSpriteTexture(name).Get(); }
 
 		/** Returns a sampler state assigned with the parameter with the specified name. */
-		SamplerStateType GetSamplerState(const String& name) const	{ return GetParamSamplerState(name).Get(); }
+		SamplerStateType GetSamplerState(const String& name) const { return GetParamSamplerState(name).Get(); }
 
 		/**
 		 * Returns a buffer representing a structure assigned to the parameter with the specified name.
@@ -453,10 +481,10 @@ namespace bs
 		 * may be used for more efficiently getting/setting GPU parameter values than calling
 		 * Material::get* / Material::set* methods.
 		 *
-		 * @note	
+		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
 		 * use it throughout material lifetime to assign and retrieve parameter values.
-		 * @note			
+		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
 		TMaterialDataParam<float, Core> GetParamFloat(const String& name) const
@@ -472,10 +500,10 @@ namespace bs
 		 * handle may be used for more efficiently getting/setting GPU parameter values than calling
 		 * Material::get* / Material::set* methods.
 		 *
-		 * @note	
+		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
 		 * use it throughout material lifetime to assign and retrieve parameter values.
-		 * @note			
+		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
 		TMaterialCurveParam<float, Core> GetParamFloatCurve(const String& name) const;
@@ -485,7 +513,7 @@ namespace bs
 		 * used for more efficiently getting/setting GPU parameter values than calling Material::get* / Material::set*
 		 * methods.
 		 *
-		 * @note	
+		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material,
 		 * and then use it throughout material lifetime to assign and retrieve parameter values.
 		 * @note
@@ -504,7 +532,7 @@ namespace bs
 		 * may be used for more efficiently getting/setting GPU parameter values than calling
 		 * Material::get* / Material::set* methods.
 		 *
-		 * @note	
+		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material,
 		 * and then use it throughout material lifetime to assign and retrieve parameter values.
 		 * @note
@@ -517,10 +545,10 @@ namespace bs
 		 * used for more efficiently getting/setting GPU parameter values than calling Material::get* / Material::set*
 		 * methods.
 		 *
-		 * @note	
+		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
 		 * use it throughout material lifetime to assign and retrieve parameter values.
-		 * @note	
+		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
 		TMaterialDataParam<Vector2, Core> GetParamVec2(const String& name) const
@@ -536,10 +564,10 @@ namespace bs
 		 * used for more efficiently getting/setting GPU parameter values than calling Material::get* / Material::set*
 		 * methods.
 		 *
-		 * @note	
+		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
 		 * use it throughout material lifetime to assign and retrieve parameter values.
-		 * @note	
+		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
 		TMaterialDataParam<Vector3, Core> GetParamVec3(const String& name) const
@@ -555,10 +583,10 @@ namespace bs
 		 * used for more efficiently getting/setting GPU parameter values than calling Material::get* / Material::set*
 		 * methods.
 		 *
-		 * @note	
+		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
 		 * use it throughout material lifetime to assign and retrieve parameter values.
-		 * @note	
+		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
 		TMaterialDataParam<Vector4, Core> GetParamVec4(const String& name) const
@@ -574,10 +602,10 @@ namespace bs
 		 * used for more efficiently getting/setting GPU parameter values than calling Material::get* / Material::set*
 		 * methods.
 		 *
-		 * @note	
+		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
 		 * use it throughout material lifetime to assign and retrieve parameter values.
-		 * @note	
+		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
 		TMaterialDataParam<Matrix3, Core> GetParamMat3(const String& name) const
@@ -593,10 +621,10 @@ namespace bs
 		 * used for more efficiently getting/setting GPU parameter values than calling Material::get* / Material::set*
 		 * methods.
 		 *
-		 * @note	
+		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
 		 * use it throughout material lifetime to assign and retrieve parameter values.
-		 * @note	
+		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
 		TMaterialDataParam<Matrix4, Core> GetParamMat4(const String& name) const
@@ -611,10 +639,10 @@ namespace bs
 		 * Returns a handle that allows you to assign a structure GPU parameter. This handle may be used for more
 		 * efficiently getting/setting GPU parameter values than calling Material::get* / Material::set* methods.
 		 *
-		 * @note	
+		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
 		 * use it throughout material lifetime to assign and retrieve parameter values.
-		 * @note			
+		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
 		TMaterialParamStruct<Core> GetParamStruct(const String& name) const;
@@ -623,10 +651,10 @@ namespace bs
 		 * Returns a handle that allows you to assign a texture GPU parameter. This handle may be used for more
 		 * efficiently getting/setting GPU parameter values than calling Material::get* / Material::set* methods.
 		 *
-		 * @note	
+		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
 		 * use it throughout material lifetime to assign and retrieve parameter values.
-		 * @note			
+		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
 		TMaterialParamTexture<Core> GetParamTexture(const String& name) const;
@@ -635,10 +663,10 @@ namespace bs
 		 * Returns a handle that allows you to assign a sprite texture GPU parameter. This handle may be used for more
 		 * efficiently getting/setting GPU parameter values than calling Material::get* / Material::set* methods.
 		 *
-		 * @note	
+		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
 		 * use it throughout material lifetime to assign and retrieve parameter values.
-		 * @note			
+		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
 		TMaterialParamSpriteTexture<Core> GetParamSpriteTexture(const String& name) const;
@@ -647,10 +675,10 @@ namespace bs
 		 * Returns a handle that allows you to assign a load-store texture GPU parameter. This handle may be used for more
 		 * efficiently getting/setting GPU parameter values than calling Material::get* / Material::set* methods.
 		 *
-		 * @note	
+		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
 		 * use it throughout material lifetime to assign and retrieve parameter values.
-		 * @note			
+		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
 		TMaterialParamLoadStoreTexture<Core> GetParamLoadStoreTexture(const String& name) const;
@@ -659,10 +687,10 @@ namespace bs
 		 * Returns a handle that allows you to assign a buffer GPU parameter. This handle may be used for more
 		 * efficiently getting/setting GPU parameter values than calling Material::get* / Material::set* methods.
 		 *
-		 * @note	
+		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
 		 * use it throughout material lifetime to assign and retrieve parameter values.
-		 * @note			
+		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
 		TMaterialParamBuffer<Core> GetParamBuffer(const String& name) const;
@@ -671,10 +699,10 @@ namespace bs
 		 * Returns a handle that allows you to assign a sampler state GPU parameter. This handle may be used for more
 		 * efficiently getting/setting GPU parameter values than calling Material::get* / Material::set* methods.
 		 *
-		 * @note	
+		 * @note
 		 * Expected behavior is that you would retrieve this handle when initially constructing the material, and then
 		 * use it throughout material lifetime to assign and retrieve parameter values.
-		 * @note			
+		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
 		TMaterialParamSampState<Core> GetParamSamplerState(const String& name) const;
@@ -682,8 +710,8 @@ namespace bs
 		/**
 		 * Allows you to retrieve a handle to a parameter that you can then use for quickly setting and retrieving parameter
 		 * data. This allows you to set/get parameter data without all the cost of extra lookups otherwise required.
-		 * 			
-		 * @note	
+		 *
+		 * @note
 		 * All of these handles will be invalidated if material shader ever changes. It is up to the caller to keep track
 		 * of that.
 		 */
@@ -737,7 +765,7 @@ namespace bs
 	 */
 
 	/** @copydoc MaterialBase */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Material: public Resource, public TMaterial<false>, public IResourceListener
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Material : public Resource, public TMaterial<false>, public IResourceListener
 	{
 	public:
 		~Material() = default;
@@ -746,11 +774,11 @@ namespace bs
 		 * Sets a shader that will be used by the material. Material will be initialized using all compatible techniques
 		 * from the shader. Shader must be set before doing any other operations with the material.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(Shader),Property(Setter))
+		BS_SCRIPT_EXPORT(ExportName(Shader), Property(Setter))
 		void SetShader(const HShader& shader);
 
 		/** @copydoc TMaterial<Core>::GetVariation() const */
-		BS_SCRIPT_EXPORT(ExportName(Variation),Property(Setter),UI(Hide))
+		BS_SCRIPT_EXPORT(ExportName(Variation), Property(Setter), UI(Hide))
 		void SetVariation(const ShaderVariation& variation);
 
 		/** Retrieves an implementation of a material usable only from the core thread. */
@@ -765,7 +793,7 @@ namespace bs
 
 		/**
 		 * Creates a new empty material.
-		 * 			
+		 *
 		 * @note	Make sure you call Material::setShader before using it.
 		 */
 		BS_SCRIPT_EXPORT(ExtensionConstructorForType(Material))
@@ -803,16 +831,16 @@ namespace bs
 		Material(const HShader& shader, const ShaderVariation& variation);
 
 		/** @copydoc CoreObject::createCore */
-		SPtr<ct::CoreObject> CreateCore() const ;
+		SPtr<ct::CoreObject> CreateCore() const;
 
 		/** @copydoc CoreObject::syncToCore */
 		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
 		/** @copydoc CoreObject::getCoreDependencies */
-		void GetCoreDependencies(Vector<CoreObject*>& dependencies) ;
+		void GetCoreDependencies(Vector<CoreObject*>& dependencies);
 
 		/** @copydoc IResourceListener::getListenerResources */
-		void GetListenerResources(Vector<HResource>& resources) ;
+		void GetListenerResources(Vector<HResource>& resources);
 
 		/** @copydoc IResourceListener::notifyResourceLoaded */
 		void NotifyResourceLoaded(const HResource& resource) override;
@@ -833,11 +861,11 @@ namespace bs
 		static SPtr<Material> CreateEmpty();
 
 		u32 mLoadFlags;
-		
+
 		/************************************************************************/
 		/* 								RTTI		                     		*/
 		/************************************************************************/
-		
+
 	public:
 		friend class MaterialRTTI;
 		static RTTITypeBase* GetRttiStatic();
@@ -848,41 +876,41 @@ namespace bs
 
 	namespace ct
 	{
-	/** @addtogroup Material-Internal
-	 *  @{
-	 */
-
-	/** @copydoc MaterialBase */
-	class BS_CORE_EXPORT Material : public CoreObject, public TMaterial<true>
-	{
-	public:
-		~Material() = default;
-
-		/** @copydoc bs::Material::setShader */
-		void SetShader(const SPtr<Shader>& shader);
-
-		/**
-		 * Set of parameters that determine which subset of techniques in the assigned shader should be used. Only the
-		 * techniques that have the provided parameters with the provided values will match. This will control which
-		 * technique is considered the default technique and which subset of techniques are searched during a call to
-		 * findTechnique().
+		/** @addtogroup Material-Internal
+		 *  @{
 		 */
-		void SetVariation(const ShaderVariation& variation);
 
-		/** Creates a new material with the specified shader. */
-		static SPtr<Material> Create(const SPtr<Shader>& shader);
-	private:
-		friend class bs::Material;
+		/** @copydoc MaterialBase */
+		class BS_CORE_EXPORT Material : public CoreObject, public TMaterial<true>
+		{
+		public:
+			~Material() = default;
 
-		Material() = default;
-		Material(const SPtr<Shader>& shader, const ShaderVariation& variation);
-		Material(const SPtr<Shader>& shader, const Vector<SPtr<Technique>>& techniques,
-			const SPtr<MaterialParams>& materialParams, const ShaderVariation& variation);
+			/** @copydoc bs::Material::setShader */
+			void SetShader(const SPtr<Shader>& shader);
 
-		/** @copydoc CoreObject::syncToCore */
-		void SyncToCore(const CoreSyncData& data) override;
-	};
+			/**
+			 * Set of parameters that determine which subset of techniques in the assigned shader should be used. Only the
+			 * techniques that have the provided parameters with the provided values will match. This will control which
+			 * technique is considered the default technique and which subset of techniques are searched during a call to
+			 * findTechnique().
+			 */
+			void SetVariation(const ShaderVariation& variation);
 
-	/** @} */	
-	}
-}
+			/** Creates a new material with the specified shader. */
+			static SPtr<Material> Create(const SPtr<Shader>& shader);
+
+		private:
+			friend class bs::Material;
+
+			Material() = default;
+			Material(const SPtr<Shader>& shader, const ShaderVariation& variation);
+			Material(const SPtr<Shader>& shader, const Vector<SPtr<Technique>>& techniques, const SPtr<MaterialParams>& materialParams, const ShaderVariation& variation);
+
+			/** @copydoc CoreObject::syncToCore */
+			void SyncToCore(const CoreSyncData& data) override;
+		};
+
+		/** @} */
+	} // namespace ct
+} // namespace bs

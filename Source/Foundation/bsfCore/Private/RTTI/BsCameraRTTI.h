@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT CameraRTTI : public RTTIType <Camera, IReflectable, CameraRTTI>
+	class BS_CORE_EXPORT CameraRTTI : public RTTIType<Camera, IReflectable, CameraRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -46,7 +46,7 @@ namespace bs
 			BS_RTTI_MEMBER_REFLPTR(mRenderSettings, 23)
 			BS_RTTI_MEMBER_PLAIN(mMain, 24)
 		BS_END_RTTI_MEMBERS
-		
+
 		CameraFlags& GetCameraFlags(Camera* obj)
 		{
 			mFlags = obj->GetFlags();
@@ -58,6 +58,7 @@ namespace bs
 		}
 
 		void SetCameraFlags(Camera* obj, CameraFlags& val) { obj->mCameraFlags = val; }
+
 	public:
 		CameraRTTI()
 		{
@@ -83,7 +84,7 @@ namespace bs
 			return TID_Camera;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return Camera::CreateEmpty();
 		}
@@ -94,4 +95,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

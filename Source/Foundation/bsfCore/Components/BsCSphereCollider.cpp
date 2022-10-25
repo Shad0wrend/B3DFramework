@@ -22,28 +22,28 @@ namespace bs
 	void CSphereCollider::SetRadius(float radius)
 	{
 		float clampedRadius = std::max(radius, 0.01f);
-		if (mRadius == clampedRadius)
+		if(mRadius == clampedRadius)
 			return;
 
 		mRadius = clampedRadius;
 
-		if (mInternal != nullptr)
+		if(mInternal != nullptr)
 		{
 			GetInternalInternal()->SetRadius(clampedRadius);
 
-			if (mParent != nullptr)
+			if(mParent != nullptr)
 				mParent->UpdateMassDistributionInternal();
 		}
 	}
 
 	void CSphereCollider::SetCenter(const Vector3& center)
 	{
-		if (mLocalPosition == center)
+		if(mLocalPosition == center)
 			return;
 
 		mLocalPosition = center;
-		
-		if (mInternal != nullptr)
+
+		if(mInternal != nullptr)
 			UpdateTransform();
 	}
 
@@ -52,8 +52,7 @@ namespace bs
 		const SPtr<SceneInstance>& scene = SO()->GetScene();
 		const Transform& tfrm = SO()->GetTransform();
 
-		SPtr<Collider> collider = SphereCollider::Create(*scene->GetPhysicsScene(), mRadius, tfrm.GetPosition(),
-			tfrm.GetRotation());
+		SPtr<Collider> collider = SphereCollider::Create(*scene->GetPhysicsScene(), mRadius, tfrm.GetPosition(), tfrm.GetRotation());
 
 		collider->SetOwnerInternal(PhysicsOwnerType::Component, this);
 		return collider;
@@ -68,4 +67,4 @@ namespace bs
 	{
 		return CSphereCollider::GetRttiStatic();
 	}
-}
+} // namespace bs

@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT ReflectionProbeRTTI : public RTTIType <ReflectionProbe, IReflectable, ReflectionProbeRTTI>
+	class BS_CORE_EXPORT ReflectionProbeRTTI : public RTTIType<ReflectionProbe, IReflectable, ReflectionProbeRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -29,16 +29,16 @@ namespace bs
 			BS_RTTI_MEMBER_REFLPTR(mFilteredTexture, 8)
 		BS_END_RTTI_MEMBERS
 	public:
-		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) 
+		void OnSerializationStarted(IReflectable* obj, SerializationContext* context)
 		{
 			ReflectionProbe* probe = static_cast<ReflectionProbe*>(obj);
 
 			// Force the renderer task to complete, so the filtered texture is up to date
-			if (probe->mRendererTask != nullptr)
+			if(probe->mRendererTask != nullptr)
 				probe->mRendererTask->Wait();
 		}
 
-		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) 
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context)
 		{
 			// Note: Since this is a CoreObject I should call Initialize() right after deserialization,
 			// but since this specific type is used in Components we delay initialization until Component
@@ -46,7 +46,7 @@ namespace bs
 			// purposes (you'll need to call initialize manually).
 		}
 
-		const String& GetRttiName() 
+		const String& GetRttiName()
 		{
 			static String name = "ReflectionProbe";
 			return name;
@@ -57,7 +57,7 @@ namespace bs
 			return TID_ReflectionProbe;
 		}
 
-		SPtr<IReflectable> NewRttiObject() 
+		SPtr<IReflectable> NewRttiObject()
 		{
 			return ReflectionProbe::CreateEmpty();
 		}
@@ -65,4 +65,4 @@ namespace bs
 
 	/** @} */
 	/** @endcond */
-}
+} // namespace bs

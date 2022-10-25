@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/**	Structure containing parameters for starting the application. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Application),ExportAsStruct(true),API(Framework)) START_UP_DESC
+	struct BS_SCRIPT_EXPORT(DocumentationGroup(Application), ExportAsStruct(true), API(Framework)) START_UP_DESC
 	{
 		String RenderApi; /**< Name of the render system plugin to use. */
 		String Renderer; /**< Name of the renderer plugin to use. */
@@ -154,7 +154,7 @@ namespace bs
 		void EndCoreProfiling();
 
 	protected:
-		typedef void(*UpdatePluginFunc)();
+		typedef void (*UpdatePluginFunc)();
 
 		SPtr<RenderWindow> mPrimaryWindow;
 		START_UP_DESC mStartUpDesc;
@@ -173,11 +173,10 @@ namespace bs
 		ThreadId mSimThreadId;
 
 		volatile bool mRunMainLoop;
-
 	};
 
 	/**	Provides easy access to CoreApplication. */
 	BS_CORE_EXPORT CoreApplication& gCoreApplication();
 
 	/** @} */
-}
+} // namespace bs
