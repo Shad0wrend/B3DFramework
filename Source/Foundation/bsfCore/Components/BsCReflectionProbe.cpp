@@ -6,65 +6,65 @@
 
 namespace bs
 {
-	CReflectionProbe::CReflectionProbe()
-	{
-		SetFlag(ComponentFlag::AlwaysRun, true);
-		SetName("ReflectionProbe");
-	}
+CReflectionProbe::CReflectionProbe()
+{
+	SetFlag(ComponentFlag::AlwaysRun, true);
+	SetName("ReflectionProbe");
+}
 
-	CReflectionProbe::CReflectionProbe(const HSceneObject& parent)
-		: Component(parent)
-	{
-		SetFlag(ComponentFlag::AlwaysRun, true);
-		SetName("ReflectionProbe");
-	}
+CReflectionProbe::CReflectionProbe(const HSceneObject& parent)
+	: Component(parent)
+{
+	SetFlag(ComponentFlag::AlwaysRun, true);
+	SetName("ReflectionProbe");
+}
 
-	CReflectionProbe::~CReflectionProbe()
-	{
-		mInternal->Destroy();
-	}
+CReflectionProbe::~CReflectionProbe()
+{
+	mInternal->Destroy();
+}
 
-	Sphere CReflectionProbe::GetBounds() const
-	{
-		mInternal->UpdateStateInternal(*SO());
+Sphere CReflectionProbe::GetBounds() const
+{
+	mInternal->UpdateStateInternal(*SO());
 
-		return mInternal->GetBounds();
-	}
+	return mInternal->GetBounds();
+}
 
-	void CReflectionProbe::OnInitialized()
+void CReflectionProbe::OnInitialized()
+{
+	// If mInternal already exists this means this object was deserialized,
+	// so all we need to do is initialize it.
+	if(mInternal != nullptr)
+		mInternal->Initialize();
+	else
+		mInternal = ReflectionProbe::CreateBox(Vector3::ONE);
+
+	gSceneManager().BindActorInternal(mInternal, SceneObject());
+
+	// If filtered texture doesn't exist, ensure it is generated
+	SPtr<Texture> filteredTexture = mInternal->GetFilteredTexture();
+	if(filteredTexture == nullptr)
 	{
-		// If mInternal already exists this means this object was deserialized,
-		// so all we need to do is initialize it.
-		if(mInternal != nullptr)
-			mInternal->Initialize();
+		if(mInternal->GetCustomTexture())
+			mInternal->Filter();
 		else
-			mInternal = ReflectionProbe::CreateBox(Vector3::ONE);
-
-		gSceneManager().BindActorInternal(mInternal, SceneObject());
-
-		// If filtered texture doesn't exist, ensure it is generated
-		SPtr<Texture> filteredTexture = mInternal->GetFilteredTexture();
-		if(filteredTexture == nullptr)
-		{
-			if(mInternal->GetCustomTexture())
-				mInternal->Filter();
-			else
-				mInternal->Capture();
-		}
+			mInternal->Capture();
 	}
+}
 
-	void CReflectionProbe::OnDestroyed()
-	{
-		gSceneManager().UnbindActorInternal(mInternal);
-	}
+void CReflectionProbe::OnDestroyed()
+{
+	gSceneManager().UnbindActorInternal(mInternal);
+}
 
-	RTTITypeBase* CReflectionProbe::GetRttiStatic()
-	{
-		return CReflectionProbeRTTI::Instance();
-	}
+RTTITypeBase* CReflectionProbe::GetRttiStatic()
+{
+	return CReflectionProbeRTTI::Instance();
+}
 
-	RTTITypeBase* CReflectionProbe::GetRtti() const
-	{
-		return CReflectionProbe::GetRttiStatic();
-	}
+RTTITypeBase* CReflectionProbe::GetRtti() const
+{
+	return CReflectionProbe::GetRttiStatic();
+}
 } // namespace bs

@@ -8,72 +8,72 @@
 
 namespace bs
 {
-	CPlaneCollider::CPlaneCollider()
-	{
-		SetName("PlaneCollider");
+CPlaneCollider::CPlaneCollider()
+{
+	SetName("PlaneCollider");
 
-		mLocalRotation = Quaternion::GetRotationFromTo(Vector3::UNIT_X, mNormal);
-	}
+	mLocalRotation = Quaternion::GetRotationFromTo(Vector3::UNIT_X, mNormal);
+}
 
-	CPlaneCollider::CPlaneCollider(const HSceneObject& parent)
-		: CCollider(parent)
-	{
-		SetName("PlaneCollider");
+CPlaneCollider::CPlaneCollider(const HSceneObject& parent)
+	: CCollider(parent)
+{
+	SetName("PlaneCollider");
 
-		mLocalRotation = Quaternion::GetRotationFromTo(Vector3::UNIT_X, mNormal);
-	}
+	mLocalRotation = Quaternion::GetRotationFromTo(Vector3::UNIT_X, mNormal);
+}
 
-	void CPlaneCollider::SetNormal(const Vector3& normal)
-	{
-		if(mNormal == normal)
-			return;
+void CPlaneCollider::SetNormal(const Vector3& normal)
+{
+	if(mNormal == normal)
+		return;
 
-		mNormal = normal;
-		mNormal.Normalize();
+	mNormal = normal;
+	mNormal.Normalize();
 
-		mLocalRotation = Quaternion::GetRotationFromTo(Vector3::UNIT_X, normal);
-		mLocalPosition = mNormal * mDistance;
+	mLocalRotation = Quaternion::GetRotationFromTo(Vector3::UNIT_X, normal);
+	mLocalPosition = mNormal * mDistance;
 
-		if(mInternal != nullptr)
-			UpdateTransform();
-	}
+	if(mInternal != nullptr)
+		UpdateTransform();
+}
 
-	void CPlaneCollider::SetDistance(float distance)
-	{
-		if(mDistance == distance)
-			return;
+void CPlaneCollider::SetDistance(float distance)
+{
+	if(mDistance == distance)
+		return;
 
-		mDistance = distance;
-		mLocalPosition = mNormal * distance;
+	mDistance = distance;
+	mLocalPosition = mNormal * distance;
 
-		if(mInternal != nullptr)
-			UpdateTransform();
-	}
+	if(mInternal != nullptr)
+		UpdateTransform();
+}
 
-	SPtr<Collider> CPlaneCollider::CreateInternal()
-	{
-		const SPtr<SceneInstance>& scene = SO()->GetScene();
-		const Transform& tfrm = SO()->GetTransform();
+SPtr<Collider> CPlaneCollider::CreateInternal()
+{
+	const SPtr<SceneInstance>& scene = SO()->GetScene();
+	const Transform& tfrm = SO()->GetTransform();
 
-		SPtr<Collider> collider = PlaneCollider::Create(*scene->GetPhysicsScene(), tfrm.GetPosition(), tfrm.GetRotation());
+	SPtr<Collider> collider = PlaneCollider::Create(*scene->GetPhysicsScene(), tfrm.GetPosition(), tfrm.GetRotation());
 
-		collider->SetOwnerInternal(PhysicsOwnerType::Component, this);
-		return collider;
-	}
+	collider->SetOwnerInternal(PhysicsOwnerType::Component, this);
+	return collider;
+}
 
-	bool CPlaneCollider::IsValidParent(const HRigidbody& parent) const
-	{
-		// Planes cannot be added to non-kinematic rigidbodies
-		return parent->GetIsKinematic();
-	}
+bool CPlaneCollider::IsValidParent(const HRigidbody& parent) const
+{
+	// Planes cannot be added to non-kinematic rigidbodies
+	return parent->GetIsKinematic();
+}
 
-	RTTITypeBase* CPlaneCollider::GetRttiStatic()
-	{
-		return CPlaneColliderRTTI::Instance();
-	}
+RTTITypeBase* CPlaneCollider::GetRttiStatic()
+{
+	return CPlaneColliderRTTI::Instance();
+}
 
-	RTTITypeBase* CPlaneCollider::GetRtti() const
-	{
-		return CPlaneCollider::GetRttiStatic();
-	}
+RTTITypeBase* CPlaneCollider::GetRtti() const
+{
+	return CPlaneCollider::GetRttiStatic();
+}
 } // namespace bs

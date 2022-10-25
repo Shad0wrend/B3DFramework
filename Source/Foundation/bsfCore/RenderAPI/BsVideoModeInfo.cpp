@@ -4,24 +4,24 @@
 
 namespace bs
 {
-	bool VideoMode::operator==(const VideoMode& other) const
-	{
-		return Width == other.Width && Height == other.Height &&
-			OutputIdx == other.OutputIdx && RefreshRate == other.RefreshRate;
-	}
+bool VideoMode::operator==(const VideoMode& other) const
+{
+	return Width == other.Width && Height == other.Height &&
+		OutputIdx == other.OutputIdx && RefreshRate == other.RefreshRate;
+}
 
-	VideoOutputInfo::~VideoOutputInfo()
-	{
-		for(auto& videoMode : mVideoModes)
-			bs_delete(videoMode);
+VideoOutputInfo::~VideoOutputInfo()
+{
+	for(auto& videoMode : mVideoModes)
+		bs_delete(videoMode);
 
-		if(mDesktopVideoMode != nullptr)
-			bs_delete(mDesktopVideoMode);
-	}
+	if(mDesktopVideoMode != nullptr)
+		bs_delete(mDesktopVideoMode);
+}
 
-	VideoModeInfo::~VideoModeInfo()
-	{
-		for(auto& output : mOutputs)
-			bs_delete(output);
-	}
+VideoModeInfo::~VideoModeInfo()
+{
+	for(auto& output : mOutputs)
+		bs_delete(output);
+}
 } // namespace bs

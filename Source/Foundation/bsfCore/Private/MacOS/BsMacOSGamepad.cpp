@@ -6,34 +6,34 @@
 
 namespace bs
 {
-	/** Contains private data for the MacOS Gamepad implementation. */
-	struct Gamepad::Pimpl
-	{
-		HIDManager* hid;
-		IOHIDDeviceRef ref;
-		bool hasInputFocus = true;
-	};
+/** Contains private data for the MacOS Gamepad implementation. */
+struct Gamepad::Pimpl
+{
+	HIDManager* hid;
+	IOHIDDeviceRef ref;
+	bool hasInputFocus = true;
+};
 
-	Gamepad::Gamepad(const String& name, const GamepadInfo& gamepadInfo, Input* owner)
-		: mName(name), mOwner(owner)
-	{
-		m = bs_new<Pimpl>();
-		m->hid = gamepadInfo.hid;
-		m->ref = gamepadInfo.deviceRef;
-	}
+Gamepad::Gamepad(const String& name, const GamepadInfo& gamepadInfo, Input* owner)
+	: mName(name), mOwner(owner)
+{
+	m = bs_new<Pimpl>();
+	m->hid = gamepadInfo.hid;
+	m->ref = gamepadInfo.deviceRef;
+}
 
-	Gamepad::~Gamepad()
-	{
-		bs_delete(m);
-	}
+Gamepad::~Gamepad()
+{
+	bs_delete(m);
+}
 
-	void Gamepad::capture()
-	{
-		m->hid->capture(m->ref, !m->HasInputFocus);
-	}
+void Gamepad::capture()
+{
+	m->hid->capture(m->ref, !m->HasInputFocus);
+}
 
-	void Gamepad::changeCaptureContext(u64 windowHandle)
-	{
-		m->HasInputFocus = windowHandle != (u64)-1;
-	}
+void Gamepad::changeCaptureContext(u64 windowHandle)
+{
+	m->HasInputFocus = windowHandle != (u64)-1;
+}
 } // namespace bs

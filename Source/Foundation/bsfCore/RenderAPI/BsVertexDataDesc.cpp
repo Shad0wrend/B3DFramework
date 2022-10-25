@@ -6,195 +6,195 @@
 
 namespace bs
 {
-	void VertexDataDesc::AddVertElem(VertexElementType type, VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx, u32 instanceStepRate)
+void VertexDataDesc::AddVertElem(VertexElementType type, VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx, u32 instanceStepRate)
+{
+	ClearIfItExists(type, semantic, semanticIdx, streamIdx);
+
+	VertexElement newElement(streamIdx, 0, type, semantic, semanticIdx, instanceStepRate);
+
+	// Insert it so it is sorted by stream
+	u32 insertToIndex = (u32)mVertexElements.size();
+	u32 idx = 0;
+	for(auto& elem : mVertexElements)
 	{
-		ClearIfItExists(type, semantic, semanticIdx, streamIdx);
-
-		VertexElement newElement(streamIdx, 0, type, semantic, semanticIdx, instanceStepRate);
-
-		// Insert it so it is sorted by stream
-		u32 insertToIndex = (u32)mVertexElements.size();
-		u32 idx = 0;
-		for(auto& elem : mVertexElements)
+		if(elem.GetStreamIdx() > streamIdx)
 		{
-			if(elem.GetStreamIdx() > streamIdx)
-			{
-				insertToIndex = idx;
-				break;
-			}
-
-			idx++;
+			insertToIndex = idx;
+			break;
 		}
 
-		mVertexElements.insert(mVertexElements.begin() + insertToIndex, newElement);
+		idx++;
 	}
 
-	Vector<VertexElement> VertexDataDesc::CreateElements() const
+	mVertexElements.insert(mVertexElements.begin() + insertToIndex, newElement);
+}
+
+Vector<VertexElement> VertexDataDesc::CreateElements() const
+{
+	u32 maxStreamIdx = GetMaxStreamIdx();
+
+	u32 numStreams = maxStreamIdx + 1;
+	u32* streamOffsets = bs_newN<u32>(numStreams);
+	for(u32 i = 0; i < numStreams; i++)
+		streamOffsets[i] = 0;
+
+	Vector<VertexElement> declarationElements;
+	for(auto& vertElem : mVertexElements)
 	{
-		u32 maxStreamIdx = GetMaxStreamIdx();
+		u32 streamIdx = vertElem.GetStreamIdx();
 
-		u32 numStreams = maxStreamIdx + 1;
-		u32* streamOffsets = bs_newN<u32>(numStreams);
-		for(u32 i = 0; i < numStreams; i++)
-			streamOffsets[i] = 0;
+		declarationElements.push_back(VertexElement(streamIdx, streamOffsets[streamIdx], vertElem.GetType(), vertElem.GetSemantic(), vertElem.GetSemanticIdx(), vertElem.GetInstanceStepRate()));
 
-		Vector<VertexElement> declarationElements;
-		for(auto& vertElem : mVertexElements)
-		{
-			u32 streamIdx = vertElem.GetStreamIdx();
-
-			declarationElements.push_back(VertexElement(streamIdx, streamOffsets[streamIdx], vertElem.GetType(), vertElem.GetSemantic(), vertElem.GetSemanticIdx(), vertElem.GetInstanceStepRate()));
-
-			streamOffsets[streamIdx] += vertElem.GetSize();
-		}
-
-		bs_deleteN(streamOffsets, numStreams);
-
-		return declarationElements;
+		streamOffsets[streamIdx] += vertElem.GetSize();
 	}
 
-	u32 VertexDataDesc::GetMaxStreamIdx() const
-	{
-		u32 maxStreamIdx = 0;
-		u32 numElems = (u32)mVertexElements.size();
-		for(u32 i = 0; i < numElems; i++)
-		{
-			for(auto& vertElem : mVertexElements)
-			{
-				maxStreamIdx = std::max((u32)maxStreamIdx, (u32)vertElem.GetStreamIdx());
-			}
-		}
+	bs_deleteN(streamOffsets, numStreams);
 
-		return maxStreamIdx;
-	}
+	return declarationElements;
+}
 
-	bool VertexDataDesc::HasStream(u32 streamIdx) const
+u32 VertexDataDesc::GetMaxStreamIdx() const
+{
+	u32 maxStreamIdx = 0;
+	u32 numElems = (u32)mVertexElements.size();
+	for(u32 i = 0; i < numElems; i++)
 	{
 		for(auto& vertElem : mVertexElements)
 		{
-			if(vertElem.GetStreamIdx() == streamIdx)
-				return true;
+			maxStreamIdx = std::max((u32)maxStreamIdx, (u32)vertElem.GetStreamIdx());
 		}
-
-		return false;
 	}
 
-	bool VertexDataDesc::HasElement(VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx) const
-	{
-		auto findIter = std::find_if(mVertexElements.begin(), mVertexElements.end(), [semantic, semanticIdx, streamIdx](const VertexElement& x)
-									 { return x.GetSemantic() == semantic && x.GetSemanticIdx() == semanticIdx && x.GetStreamIdx() == streamIdx; });
+	return maxStreamIdx;
+}
 
-		if(findIter != mVertexElements.end())
-		{
+bool VertexDataDesc::HasStream(u32 streamIdx) const
+{
+	for(auto& vertElem : mVertexElements)
+	{
+		if(vertElem.GetStreamIdx() == streamIdx)
 			return true;
-		}
-
-		return false;
 	}
 
-	u32 VertexDataDesc::GetElementSize(VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx) const
-	{
-		for(auto& element : mVertexElements)
-		{
-			if(element.GetSemantic() == semantic && element.GetSemanticIdx() == semanticIdx && element.GetStreamIdx() == streamIdx)
-				return element.GetSize();
-		}
+	return false;
+}
 
-		return -1;
+bool VertexDataDesc::HasElement(VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx) const
+{
+	auto findIter = std::find_if(mVertexElements.begin(), mVertexElements.end(), [semantic, semanticIdx, streamIdx](const VertexElement& x)
+								 { return x.GetSemantic() == semantic && x.GetSemanticIdx() == semanticIdx && x.GetStreamIdx() == streamIdx; });
+
+	if(findIter != mVertexElements.end())
+	{
+		return true;
 	}
 
-	u32 VertexDataDesc::GetElementOffsetFromStream(VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx) const
+	return false;
+}
+
+u32 VertexDataDesc::GetElementSize(VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx) const
+{
+	for(auto& element : mVertexElements)
 	{
-		u32 vertexOffset = 0;
-		for(auto& element : mVertexElements)
-		{
-			if(element.GetStreamIdx() != streamIdx)
-				continue;
-
-			if(element.GetSemantic() == semantic && element.GetSemanticIdx() == semanticIdx)
-				break;
-
-			vertexOffset += element.GetSize();
-		}
-
-		return vertexOffset;
+		if(element.GetSemantic() == semantic && element.GetSemanticIdx() == semanticIdx && element.GetStreamIdx() == streamIdx)
+			return element.GetSize();
 	}
 
-	u32 VertexDataDesc::GetVertexStride(u32 streamIdx) const
-	{
-		u32 vertexStride = 0;
-		for(auto& element : mVertexElements)
-		{
-			if(element.GetStreamIdx() == streamIdx)
-				vertexStride += element.GetSize();
-		}
+	return -1;
+}
 
-		return vertexStride;
+u32 VertexDataDesc::GetElementOffsetFromStream(VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx) const
+{
+	u32 vertexOffset = 0;
+	for(auto& element : mVertexElements)
+	{
+		if(element.GetStreamIdx() != streamIdx)
+			continue;
+
+		if(element.GetSemantic() == semantic && element.GetSemanticIdx() == semanticIdx)
+			break;
+
+		vertexOffset += element.GetSize();
 	}
 
-	u32 VertexDataDesc::GetVertexStride() const
+	return vertexOffset;
+}
+
+u32 VertexDataDesc::GetVertexStride(u32 streamIdx) const
+{
+	u32 vertexStride = 0;
+	for(auto& element : mVertexElements)
 	{
-		u32 vertexStride = 0;
-		for(auto& element : mVertexElements)
-		{
+		if(element.GetStreamIdx() == streamIdx)
 			vertexStride += element.GetSize();
-		}
-
-		return vertexStride;
 	}
 
-	u32 VertexDataDesc::GetStreamOffset(u32 streamIdx) const
+	return vertexStride;
+}
+
+u32 VertexDataDesc::GetVertexStride() const
+{
+	u32 vertexStride = 0;
+	for(auto& element : mVertexElements)
 	{
-		u32 streamOffset = 0;
-		for(auto& element : mVertexElements)
-		{
-			if(element.GetStreamIdx() == streamIdx)
-				break;
-
-			streamOffset += element.GetSize();
-		}
-
-		return streamOffset;
+		vertexStride += element.GetSize();
 	}
 
-	const VertexElement* VertexDataDesc::GetElement(VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx) const
+	return vertexStride;
+}
+
+u32 VertexDataDesc::GetStreamOffset(u32 streamIdx) const
+{
+	u32 streamOffset = 0;
+	for(auto& element : mVertexElements)
 	{
-		auto findIter = std::find_if(mVertexElements.begin(), mVertexElements.end(), [semantic, semanticIdx, streamIdx](const VertexElement& x)
-									 { return x.GetSemantic() == semantic && x.GetSemanticIdx() == semanticIdx && x.GetStreamIdx() == streamIdx; });
+		if(element.GetStreamIdx() == streamIdx)
+			break;
 
-		if(findIter != mVertexElements.end())
-			return &(*findIter);
-
-		return nullptr;
+		streamOffset += element.GetSize();
 	}
 
-	void VertexDataDesc::ClearIfItExists(VertexElementType type, VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx)
+	return streamOffset;
+}
+
+const VertexElement* VertexDataDesc::GetElement(VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx) const
+{
+	auto findIter = std::find_if(mVertexElements.begin(), mVertexElements.end(), [semantic, semanticIdx, streamIdx](const VertexElement& x)
+								 { return x.GetSemantic() == semantic && x.GetSemanticIdx() == semanticIdx && x.GetStreamIdx() == streamIdx; });
+
+	if(findIter != mVertexElements.end())
+		return &(*findIter);
+
+	return nullptr;
+}
+
+void VertexDataDesc::ClearIfItExists(VertexElementType type, VertexElementSemantic semantic, u32 semanticIdx, u32 streamIdx)
+{
+	auto findIter = std::find_if(mVertexElements.begin(), mVertexElements.end(), [semantic, semanticIdx, streamIdx](const VertexElement& x)
+								 { return x.GetSemantic() == semantic && x.GetSemanticIdx() == semanticIdx && x.GetStreamIdx() == streamIdx; });
+
+	if(findIter != mVertexElements.end())
 	{
-		auto findIter = std::find_if(mVertexElements.begin(), mVertexElements.end(), [semantic, semanticIdx, streamIdx](const VertexElement& x)
-									 { return x.GetSemantic() == semantic && x.GetSemanticIdx() == semanticIdx && x.GetStreamIdx() == streamIdx; });
-
-		if(findIter != mVertexElements.end())
-		{
-			mVertexElements.erase(findIter);
-		}
+		mVertexElements.erase(findIter);
 	}
+}
 
-	SPtr<VertexDataDesc> VertexDataDesc::Create()
-	{
-		return bs_shared_ptr_new<VertexDataDesc>();
-	}
+SPtr<VertexDataDesc> VertexDataDesc::Create()
+{
+	return bs_shared_ptr_new<VertexDataDesc>();
+}
 
-	/************************************************************************/
-	/* 								SERIALIZATION                      		*/
-	/************************************************************************/
+/************************************************************************/
+/* 								SERIALIZATION                      		*/
+/************************************************************************/
 
-	RTTITypeBase* VertexDataDesc::GetRttiStatic()
-	{
-		return VertexDataDescRTTI::Instance();
-	}
+RTTITypeBase* VertexDataDesc::GetRttiStatic()
+{
+	return VertexDataDescRTTI::Instance();
+}
 
-	RTTITypeBase* VertexDataDesc::GetRtti() const
-	{
-		return VertexDataDesc::GetRttiStatic();
-	}
+RTTITypeBase* VertexDataDesc::GetRtti() const
+{
+	return VertexDataDesc::GetRttiStatic();
+}
 } // namespace bs

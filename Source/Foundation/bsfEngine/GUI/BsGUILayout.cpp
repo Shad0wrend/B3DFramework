@@ -9,81 +9,81 @@
 
 namespace bs
 {
-	GUILayout::GUILayout(const GUIDimensions& dimensions)
-		: GUIElementBase(dimensions)
-	{}
+GUILayout::GUILayout(const GUIDimensions& dimensions)
+	: GUIElementBase(dimensions)
+{}
 
-	GUILayout::GUILayout()
-	{}
+GUILayout::GUILayout()
+{}
 
-	GUILayout::~GUILayout()
+GUILayout::~GUILayout()
+{
+	if(mParentElement != nullptr)
+		mParentElement->UnregisterChildElementInternal(this);
+}
+
+void GUILayout::AddElement(GUIElementBase* element)
+{
+	if(!element->IsDestroyedInternal())
+		RegisterChildElementInternal(element);
+}
+
+void GUILayout::RemoveElement(GUIElementBase* element)
+{
+	UnregisterChildElementInternal(element);
+}
+
+void GUILayout::InsertElement(u32 idx, GUIElementBase* element)
+{
+	if(idx > (u32)mChildren.size())
+		BS_EXCEPT(InvalidParametersException, "Index out of range: " + toString(idx) + ". Valid range: 0 .. " + toString((u32)mChildren.size()));
+
+	if(element->IsDestroyedInternal())
+		return;
+
+	GUIElementBase* parentElement = element->GetParentInternal();
+	if(parentElement != nullptr)
 	{
-		if(mParentElement != nullptr)
-			mParentElement->UnregisterChildElementInternal(this);
+		parentElement->UnregisterChildElementInternal(element);
 	}
 
-	void GUILayout::AddElement(GUIElementBase* element)
-	{
-		if(!element->IsDestroyedInternal())
-			RegisterChildElementInternal(element);
-	}
+	element->SetParentInternal(this);
+	mChildren.insert(mChildren.begin() + idx, element);
 
-	void GUILayout::RemoveElement(GUIElementBase* element)
-	{
-		UnregisterChildElementInternal(element);
-	}
+	element->SetActiveInternal(IsActiveInternal());
+	element->SetVisibleInternal(IsVisibleInternal());
+	element->SetDisabledInternal(IsDisabledInternal());
 
-	void GUILayout::InsertElement(u32 idx, GUIElementBase* element)
-	{
-		if(idx > (u32)mChildren.size())
-			BS_EXCEPT(InvalidParametersException, "Index out of range: " + toString(idx) + ". Valid range: 0 .. " + toString((u32)mChildren.size()));
+	MarkLayoutAsDirtyInternal();
+}
 
-		if(element->IsDestroyedInternal())
-			return;
+void GUILayout::Clear()
+{
+	DestroyChildElements();
+}
 
-		GUIElementBase* parentElement = element->GetParentInternal();
-		if(parentElement != nullptr)
-		{
-			parentElement->UnregisterChildElementInternal(element);
-		}
+void GUILayout::RemoveElementAt(u32 idx)
+{
+	if(idx >= (u32)mChildren.size())
+		BS_EXCEPT(InvalidParametersException, "Index out of range: " + toString(idx) + ". Valid range: 0 .. " + toString((u32)mChildren.size()));
 
-		element->SetParentInternal(this);
-		mChildren.insert(mChildren.begin() + idx, element);
+	GUIElementBase* child = mChildren[idx];
+	mChildren.erase(mChildren.begin() + idx);
 
-		element->SetActiveInternal(IsActiveInternal());
-		element->SetVisibleInternal(IsVisibleInternal());
-		element->SetDisabledInternal(IsDisabledInternal());
+	child->SetParentInternal(nullptr);
 
-		MarkLayoutAsDirtyInternal();
-	}
+	MarkLayoutAsDirtyInternal();
+}
 
-	void GUILayout::Clear()
-	{
-		DestroyChildElements();
-	}
+const RectOffset& GUILayout::GetPaddingInternal() const
+{
+	static RectOffset padding;
 
-	void GUILayout::RemoveElementAt(u32 idx)
-	{
-		if(idx >= (u32)mChildren.size())
-			BS_EXCEPT(InvalidParametersException, "Index out of range: " + toString(idx) + ". Valid range: 0 .. " + toString((u32)mChildren.size()));
+	return padding;
+}
 
-		GUIElementBase* child = mChildren[idx];
-		mChildren.erase(mChildren.begin() + idx);
-
-		child->SetParentInternal(nullptr);
-
-		MarkLayoutAsDirtyInternal();
-	}
-
-	const RectOffset& GUILayout::GetPaddingInternal() const
-	{
-		static RectOffset padding;
-
-		return padding;
-	}
-
-	void GUILayout::Destroy(GUILayout* layout)
-	{
-		bs_delete(layout);
-	}
+void GUILayout::Destroy(GUILayout* layout)
+{
+	bs_delete(layout);
+}
 } // namespace bs

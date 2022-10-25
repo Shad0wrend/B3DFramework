@@ -6,132 +6,132 @@
 
 namespace bs
 {
-	const CharDesc& FontBitmap::GetCharDesc(u32 charId) const
+const CharDesc& FontBitmap::GetCharDesc(u32 charId) const
+{
+	auto iterFind = Characters.find(charId);
+	if(iterFind != Characters.end())
 	{
-		auto iterFind = Characters.find(charId);
-		if(iterFind != Characters.end())
+		return Characters.at(charId);
+	}
+
+	return MissingGlyph;
+}
+
+RTTITypeBase* FontBitmap::GetRttiStatic()
+{
+	return FontBitmapRTTI::Instance();
+}
+
+RTTITypeBase* FontBitmap::GetRtti() const
+{
+	return FontBitmap::GetRttiStatic();
+}
+
+Font::Font()
+	: Resource(false)
+{}
+
+void Font::Initialize(const Vector<SPtr<FontBitmap>>& fontData)
+{
+	for(auto iter = fontData.begin(); iter != fontData.end(); ++iter)
+	{
+		mFontDataPerSize[(*iter)->Size] = *iter;
+
+		for(auto& texture : (*iter)->TexturePages)
 		{
-			return Characters.at(charId);
+			if(texture != nullptr)
+				AddResourceDependency(texture);
 		}
-
-		return MissingGlyph;
 	}
 
-	RTTITypeBase* FontBitmap::GetRttiStatic()
-	{
-		return FontBitmapRTTI::Instance();
-	}
+	Resource::Initialize();
+}
 
-	RTTITypeBase* FontBitmap::GetRtti() const
-	{
-		return FontBitmap::GetRttiStatic();
-	}
+SPtr<FontBitmap> Font::GetBitmap(u32 size) const
+{
+	auto iterFind = mFontDataPerSize.find(size);
 
-	Font::Font()
-		: Resource(false)
-	{}
+	if(iterFind == mFontDataPerSize.end())
+		return nullptr;
 
-	void Font::Initialize(const Vector<SPtr<FontBitmap>>& fontData)
+	return iterFind->second;
+}
+
+i32 Font::GetClosestSize(u32 size) const
+{
+	u32 minDiff = std::numeric_limits<u32>::max();
+	u32 bestSize = size;
+
+	for(auto iter = mFontDataPerSize.begin(); iter != mFontDataPerSize.end(); ++iter)
 	{
-		for(auto iter = fontData.begin(); iter != fontData.end(); ++iter)
+		if(iter->first == size)
+			return size;
+		else if(iter->first > size)
 		{
-			mFontDataPerSize[(*iter)->Size] = *iter;
-
-			for(auto& texture : (*iter)->TexturePages)
+			u32 diff = iter->first - size;
+			if(diff < minDiff)
 			{
-				if(texture != nullptr)
-					AddResourceDependency(texture);
+				minDiff = diff;
+				bestSize = iter->first;
 			}
 		}
-
-		Resource::Initialize();
-	}
-
-	SPtr<FontBitmap> Font::GetBitmap(u32 size) const
-	{
-		auto iterFind = mFontDataPerSize.find(size);
-
-		if(iterFind == mFontDataPerSize.end())
-			return nullptr;
-
-		return iterFind->second;
-	}
-
-	i32 Font::GetClosestSize(u32 size) const
-	{
-		u32 minDiff = std::numeric_limits<u32>::max();
-		u32 bestSize = size;
-
-		for(auto iter = mFontDataPerSize.begin(); iter != mFontDataPerSize.end(); ++iter)
+		else
 		{
-			if(iter->first == size)
-				return size;
-			else if(iter->first > size)
+			u32 diff = size - iter->first;
+			if(diff < minDiff)
 			{
-				u32 diff = iter->first - size;
-				if(diff < minDiff)
-				{
-					minDiff = diff;
-					bestSize = iter->first;
-				}
-			}
-			else
-			{
-				u32 diff = size - iter->first;
-				if(diff < minDiff)
-				{
-					minDiff = diff;
-					bestSize = iter->first;
-				}
-			}
-		}
-
-		return bestSize;
-	}
-
-	void Font::GetCoreDependencies(Vector<CoreObject*>& dependencies)
-	{
-		for(auto& fontDataEntry : mFontDataPerSize)
-		{
-			for(auto& texture : fontDataEntry.second->TexturePages)
-			{
-				if(texture.IsLoaded())
-					dependencies.push_back(texture.Get());
+				minDiff = diff;
+				bestSize = iter->first;
 			}
 		}
 	}
 
-	HFont Font::Create(const Vector<SPtr<FontBitmap>>& fontData)
+	return bestSize;
+}
+
+void Font::GetCoreDependencies(Vector<CoreObject*>& dependencies)
+{
+	for(auto& fontDataEntry : mFontDataPerSize)
 	{
-		SPtr<Font> newFont = CreatePtrInternal(fontData);
-
-		return static_resource_cast<Font>(gResources().CreateResourceHandleInternal(newFont));
+		for(auto& texture : fontDataEntry.second->TexturePages)
+		{
+			if(texture.IsLoaded())
+				dependencies.push_back(texture.Get());
+		}
 	}
+}
 
-	SPtr<Font> Font::CreatePtrInternal(const Vector<SPtr<FontBitmap>>& fontData)
-	{
-		SPtr<Font> newFont = bs_core_ptr<Font>(new(bs_alloc<Font>()) Font());
-		newFont->SetThisPtrInternal(newFont);
-		newFont->Initialize(fontData);
+HFont Font::Create(const Vector<SPtr<FontBitmap>>& fontData)
+{
+	SPtr<Font> newFont = CreatePtrInternal(fontData);
 
-		return newFont;
-	}
+	return static_resource_cast<Font>(gResources().CreateResourceHandleInternal(newFont));
+}
 
-	SPtr<Font> Font::CreateEmptyInternal()
-	{
-		SPtr<Font> newFont = bs_core_ptr<Font>(new(bs_alloc<Font>()) Font());
-		newFont->SetThisPtrInternal(newFont);
+SPtr<Font> Font::CreatePtrInternal(const Vector<SPtr<FontBitmap>>& fontData)
+{
+	SPtr<Font> newFont = bs_core_ptr<Font>(new(bs_alloc<Font>()) Font());
+	newFont->SetThisPtrInternal(newFont);
+	newFont->Initialize(fontData);
 
-		return newFont;
-	}
+	return newFont;
+}
 
-	RTTITypeBase* Font::GetRttiStatic()
-	{
-		return FontRTTI::Instance();
-	}
+SPtr<Font> Font::CreateEmptyInternal()
+{
+	SPtr<Font> newFont = bs_core_ptr<Font>(new(bs_alloc<Font>()) Font());
+	newFont->SetThisPtrInternal(newFont);
 
-	RTTITypeBase* Font::GetRtti() const
-	{
-		return Font::GetRttiStatic();
-	}
+	return newFont;
+}
+
+RTTITypeBase* Font::GetRttiStatic()
+{
+	return FontRTTI::Instance();
+}
+
+RTTITypeBase* Font::GetRtti() const
+{
+	return Font::GetRttiStatic();
+}
 } // namespace bs

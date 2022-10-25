@@ -7,29 +7,29 @@
 
 namespace bs
 {
-	HPhysicsMaterial PhysicsMaterial::Create(float staticFriction, float dynamicFriction, float restitution)
-	{
-		SPtr<PhysicsMaterial> newMaterial = CreatePtrInternal(staticFriction, dynamicFriction, restitution);
+HPhysicsMaterial PhysicsMaterial::Create(float staticFriction, float dynamicFriction, float restitution)
+{
+	SPtr<PhysicsMaterial> newMaterial = CreatePtrInternal(staticFriction, dynamicFriction, restitution);
 
-		return static_resource_cast<PhysicsMaterial>(gResources().CreateResourceHandleInternal(newMaterial));
-	}
+	return static_resource_cast<PhysicsMaterial>(gResources().CreateResourceHandleInternal(newMaterial));
+}
 
-	SPtr<PhysicsMaterial> PhysicsMaterial::CreatePtrInternal(float staticFriction, float dynamicFriction, float restitution)
-	{
-		SPtr<PhysicsMaterial> newMaterial = gPhysics().CreateMaterial(staticFriction, dynamicFriction, restitution);
-		newMaterial->SetThisPtrInternal(newMaterial);
-		newMaterial->Initialize();
+SPtr<PhysicsMaterial> PhysicsMaterial::CreatePtrInternal(float staticFriction, float dynamicFriction, float restitution)
+{
+	SPtr<PhysicsMaterial> newMaterial = gPhysics().CreateMaterial(staticFriction, dynamicFriction, restitution);
+	newMaterial->SetThisPtrInternal(newMaterial);
+	newMaterial->Initialize();
 
-		return newMaterial;
-	}
+	return newMaterial;
+}
 
-	RTTITypeBase* PhysicsMaterial::GetRttiStatic()
-	{
-		return PhysicsMaterialRTTI::Instance();
-	}
+RTTITypeBase* PhysicsMaterial::GetRttiStatic()
+{
+	return PhysicsMaterialRTTI::Instance();
+}
 
-	RTTITypeBase* PhysicsMaterial::GetRtti() const
-	{
-		return GetRttiStatic();
-	}
+RTTITypeBase* PhysicsMaterial::GetRtti() const
+{
+	return GetRttiStatic();
+}
 } // namespace bs

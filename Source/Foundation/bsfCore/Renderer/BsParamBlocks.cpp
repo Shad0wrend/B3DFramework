@@ -5,36 +5,36 @@
 
 namespace bs
 {
-	namespace ct
-	{
-		ParamBlock::~ParamBlock()
-		{
-			ParamBlockManager::UnregisterBlock(this);
-		}
+namespace ct
+{
+ParamBlock::~ParamBlock()
+{
+	ParamBlockManager::UnregisterBlock(this);
+}
 
-		Vector<ParamBlock*> ParamBlockManager::sToInitialize;
+Vector<ParamBlock*> ParamBlockManager::sToInitialize;
 
-		ParamBlockManager::ParamBlockManager()
-		{
-			for(auto& entry : sToInitialize)
-				entry->Initialize();
+ParamBlockManager::ParamBlockManager()
+{
+	for(auto& entry : sToInitialize)
+		entry->Initialize();
 
-			sToInitialize.clear();
-		}
+	sToInitialize.clear();
+}
 
-		void ParamBlockManager::RegisterBlock(ParamBlock* paramBlock)
-		{
-			if(IsStarted())
-				paramBlock->Initialize();
-			else
-				sToInitialize.push_back(paramBlock);
-		}
+void ParamBlockManager::RegisterBlock(ParamBlock* paramBlock)
+{
+	if(IsStarted())
+		paramBlock->Initialize();
+	else
+		sToInitialize.push_back(paramBlock);
+}
 
-		void ParamBlockManager::UnregisterBlock(ParamBlock* paramBlock)
-		{
-			auto iterFind = std::find(sToInitialize.begin(), sToInitialize.end(), paramBlock);
-			if(iterFind != sToInitialize.end())
-				sToInitialize.erase(iterFind);
-		}
-	} // namespace ct
+void ParamBlockManager::UnregisterBlock(ParamBlock* paramBlock)
+{
+	auto iterFind = std::find(sToInitialize.begin(), sToInitialize.end(), paramBlock);
+	if(iterFind != sToInitialize.end())
+		sToInitialize.erase(iterFind);
+}
+} // namespace ct
 } // namespace bs

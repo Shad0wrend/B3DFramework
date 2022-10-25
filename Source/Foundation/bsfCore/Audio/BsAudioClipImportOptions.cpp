@@ -5,21 +5,21 @@
 
 namespace bs
 {
-	SPtr<AudioClipImportOptions> AudioClipImportOptions::Create()
-	{
-		return bs_shared_ptr_new<AudioClipImportOptions>();
-	}
+SPtr<AudioClipImportOptions> AudioClipImportOptions::Create()
+{
+	return bs_shared_ptr_new<AudioClipImportOptions>();
+}
 
-	/************************************************************************/
-	/* 								SERIALIZATION                      		*/
-	/************************************************************************/
-	RTTITypeBase* AudioClipImportOptions::GetRttiStatic()
-	{
-		return AudioClipImportOptionsRTTI::Instance();
-	}
+/************************************************************************/
+/* 								SERIALIZATION                      		*/
+/************************************************************************/
+RTTITypeBase* AudioClipImportOptions::GetRttiStatic()
+{
+	return AudioClipImportOptionsRTTI::Instance();
+}
 
-	RTTITypeBase* AudioClipImportOptions::GetRtti() const
-	{
-		return GetRttiStatic();
-	}
+RTTITypeBase* AudioClipImportOptions::GetRtti() const
+{
+	return GetRttiStatic();
+}
 } // namespace bs

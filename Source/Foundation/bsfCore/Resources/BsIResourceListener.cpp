@@ -5,18 +5,18 @@
 
 namespace bs
 {
-	IResourceListener::IResourceListener()
-	{
-		ResourceListenerManager::Instance().RegisterListener(this);
-	}
+IResourceListener::IResourceListener()
+{
+	ResourceListenerManager::Instance().RegisterListener(this);
+}
 
-	IResourceListener::~IResourceListener()
-	{
-		ResourceListenerManager::Instance().UnregisterListener(this);
-	}
+IResourceListener::~IResourceListener()
+{
+	ResourceListenerManager::Instance().UnregisterListener(this);
+}
 
-	void IResourceListener::MarkListenerResourcesDirty()
-	{
-		ResourceListenerManager::Instance().MarkListenerDirty(this);
-	}
+void IResourceListener::MarkListenerResourcesDirty()
+{
+	ResourceListenerManager::Instance().MarkListenerDirty(this);
+}
 } // namespace bs

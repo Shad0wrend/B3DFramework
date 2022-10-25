@@ -6,31 +6,31 @@
 
 namespace bs
 {
-	void GameObject::Initialize(const SPtr<GameObject>& object, u64 instanceId)
-	{
-		mInstanceData = bs_shared_ptr_new<GameObjectInstanceData>();
-		mInstanceData->Object = object;
-		mInstanceData->MInstanceId = instanceId;
-	}
+void GameObject::Initialize(const SPtr<GameObject>& object, u64 instanceId)
+{
+	mInstanceData = bs_shared_ptr_new<GameObjectInstanceData>();
+	mInstanceData->Object = object;
+	mInstanceData->MInstanceId = instanceId;
+}
 
-	void GameObject::SetInstanceDataInternal(GameObjectInstanceDataPtr& other)
-	{
-		SPtr<GameObject> myPtr = mInstanceData->Object;
-		u64 oldId = mInstanceData->MInstanceId;
+void GameObject::SetInstanceDataInternal(GameObjectInstanceDataPtr& other)
+{
+	SPtr<GameObject> myPtr = mInstanceData->Object;
+	u64 oldId = mInstanceData->MInstanceId;
 
-		mInstanceData = other;
-		mInstanceData->Object = myPtr;
+	mInstanceData = other;
+	mInstanceData->Object = myPtr;
 
-		GameObjectManager::Instance().RemapId(oldId, mInstanceData->MInstanceId);
-	}
+	GameObjectManager::Instance().RemapId(oldId, mInstanceData->MInstanceId);
+}
 
-	RTTITypeBase* GameObject::GetRttiStatic()
-	{
-		return GameObjectRTTI::Instance();
-	}
+RTTITypeBase* GameObject::GetRttiStatic()
+{
+	return GameObjectRTTI::Instance();
+}
 
-	RTTITypeBase* GameObject::GetRtti() const
-	{
-		return GameObject::GetRttiStatic();
-	}
+RTTITypeBase* GameObject::GetRtti() const
+{
+	return GameObject::GetRttiStatic();
+}
 } // namespace bs

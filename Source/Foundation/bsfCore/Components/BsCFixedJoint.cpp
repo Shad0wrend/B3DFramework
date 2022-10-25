@@ -8,66 +8,66 @@
 
 namespace bs
 {
-	CFixedJoint::CFixedJoint()
-		: CJoint(mDesc)
+CFixedJoint::CFixedJoint()
+	: CJoint(mDesc)
+{
+	SetName("FixedJoint");
+}
+
+CFixedJoint::CFixedJoint(const HSceneObject& parent)
+	: CJoint(parent, mDesc)
+{
+	SetName("FixedJoint");
+}
+
+SPtr<Joint> CFixedJoint::CreateInternal()
+{
+	const SPtr<SceneInstance>& scene = SO()->GetScene();
+	SPtr<Joint> joint = FixedJoint::Create(*scene->GetPhysicsScene(), mDesc);
+
+	joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
+	return joint;
+}
+
+void CFixedJoint::GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation)
+{
+	position = mPositions[(u32)body];
+	rotation = mRotations[(u32)body];
+
+	HRigidbody rigidbody = mBodies[(u32)body];
+	const Transform& tfrm = SO()->GetTransform();
+	if(rigidbody == nullptr) // Get world space transform if no relative to any body
 	{
-		SetName("FixedJoint");
-	}
+		Quaternion worldRot = tfrm.GetRotation();
 
-	CFixedJoint::CFixedJoint(const HSceneObject& parent)
-		: CJoint(parent, mDesc)
+		rotation = worldRot * rotation;
+		position = worldRot.Rotate(position) + tfrm.GetPosition();
+	}
+	else
 	{
-		SetName("FixedJoint");
+		const Transform& rigidbodyTfrm = rigidbody->SO()->GetTransform();
+
+		// Find world space transform
+		Quaternion worldRot = rigidbodyTfrm.GetRotation();
+
+		rotation = worldRot * rotation;
+		position = worldRot.Rotate(position) + rigidbodyTfrm.GetPosition();
+
+		// Get transform of the joint local to the object
+		Quaternion invRotation = rotation.Inverse();
+
+		position = invRotation.Rotate(tfrm.GetPosition() - position);
+		rotation = invRotation * tfrm.GetRotation();
 	}
+}
 
-	SPtr<Joint> CFixedJoint::CreateInternal()
-	{
-		const SPtr<SceneInstance>& scene = SO()->GetScene();
-		SPtr<Joint> joint = FixedJoint::Create(*scene->GetPhysicsScene(), mDesc);
+RTTITypeBase* CFixedJoint::GetRttiStatic()
+{
+	return CFixedJointRTTI::Instance();
+}
 
-		joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
-		return joint;
-	}
-
-	void CFixedJoint::GetLocalTransform(JointBody body, Vector3& position, Quaternion& rotation)
-	{
-		position = mPositions[(u32)body];
-		rotation = mRotations[(u32)body];
-
-		HRigidbody rigidbody = mBodies[(u32)body];
-		const Transform& tfrm = SO()->GetTransform();
-		if(rigidbody == nullptr) // Get world space transform if no relative to any body
-		{
-			Quaternion worldRot = tfrm.GetRotation();
-
-			rotation = worldRot * rotation;
-			position = worldRot.Rotate(position) + tfrm.GetPosition();
-		}
-		else
-		{
-			const Transform& rigidbodyTfrm = rigidbody->SO()->GetTransform();
-
-			// Find world space transform
-			Quaternion worldRot = rigidbodyTfrm.GetRotation();
-
-			rotation = worldRot * rotation;
-			position = worldRot.Rotate(position) + rigidbodyTfrm.GetPosition();
-
-			// Get transform of the joint local to the object
-			Quaternion invRotation = rotation.Inverse();
-
-			position = invRotation.Rotate(tfrm.GetPosition() - position);
-			rotation = invRotation * tfrm.GetRotation();
-		}
-	}
-
-	RTTITypeBase* CFixedJoint::GetRttiStatic()
-	{
-		return CFixedJointRTTI::Instance();
-	}
-
-	RTTITypeBase* CFixedJoint::GetRtti() const
-	{
-		return CFixedJoint::GetRttiStatic();
-	}
+RTTITypeBase* CFixedJoint::GetRtti() const
+{
+	return CFixedJoint::GetRttiStatic();
+}
 } // namespace bs

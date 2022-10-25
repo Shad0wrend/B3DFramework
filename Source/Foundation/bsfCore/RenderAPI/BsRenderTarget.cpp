@@ -9,75 +9,75 @@
 
 namespace bs
 {
-	RenderTarget::RenderTarget()
+RenderTarget::RenderTarget()
+{
+	// We never sync from sim to core, so mark it clean to avoid overwriting core thread changes
+	MarkCoreClean();
+}
+
+void RenderTarget::SetPriority(i32 priority)
+{
+	std::function<void(SPtr<ct::RenderTarget>, i32)> windowedFunc =
+		[](SPtr<ct::RenderTarget> renderTarget, i32 priority)
 	{
-		// We never sync from sim to core, so mark it clean to avoid overwriting core thread changes
-		MarkCoreClean();
-	}
+		renderTarget->SetPriority(priority);
+	};
 
-	void RenderTarget::SetPriority(i32 priority)
-	{
-		std::function<void(SPtr<ct::RenderTarget>, i32)> windowedFunc =
-			[](SPtr<ct::RenderTarget> renderTarget, i32 priority)
-		{
-			renderTarget->SetPriority(priority);
-		};
+	gCoreThread().QueueCommand(std::bind(windowedFunc, GetCore(), priority));
+}
 
-		gCoreThread().QueueCommand(std::bind(windowedFunc, GetCore(), priority));
-	}
+SPtr<ct::RenderTarget> RenderTarget::GetCore() const
+{
+	return std::static_pointer_cast<ct::RenderTarget>(mCoreSpecific);
+}
 
-	SPtr<ct::RenderTarget> RenderTarget::GetCore() const
-	{
-		return std::static_pointer_cast<ct::RenderTarget>(mCoreSpecific);
-	}
+const RenderTargetProperties& RenderTarget::GetProperties() const
+{
+	THROW_IF_CORE_THREAD;
 
-	const RenderTargetProperties& RenderTarget::GetProperties() const
-	{
-		THROW_IF_CORE_THREAD;
+	return GetPropertiesInternal();
+}
 
-		return GetPropertiesInternal();
-	}
+void RenderTarget::GetCustomAttribute(const String& name, void* pData) const
+{
+	BS_EXCEPT(InvalidParametersException, "Attribute not found.");
+}
 
-	void RenderTarget::GetCustomAttribute(const String& name, void* pData) const
-	{
-		BS_EXCEPT(InvalidParametersException, "Attribute not found.");
-	}
+/************************************************************************/
+/* 								SERIALIZATION                      		*/
+/************************************************************************/
 
-	/************************************************************************/
-	/* 								SERIALIZATION                      		*/
-	/************************************************************************/
+RTTITypeBase* RenderTarget::GetRttiStatic()
+{
+	return RenderTargetRTTI::Instance();
+}
 
-	RTTITypeBase* RenderTarget::GetRttiStatic()
-	{
-		return RenderTargetRTTI::Instance();
-	}
+RTTITypeBase* RenderTarget::GetRtti() const
+{
+	return RenderTarget::GetRttiStatic();
+}
 
-	RTTITypeBase* RenderTarget::GetRtti() const
-	{
-		return RenderTarget::GetRttiStatic();
-	}
+namespace ct
+{
+RenderTarget::RenderTarget()
+{
+}
 
-	namespace ct
-	{
-		RenderTarget::RenderTarget()
-		{
-		}
+void RenderTarget::SetPriority(i32 priority)
+{
+	RenderTargetProperties& props = const_cast<RenderTargetProperties&>(GetProperties());
 
-		void RenderTarget::SetPriority(i32 priority)
-		{
-			RenderTargetProperties& props = const_cast<RenderTargetProperties&>(GetProperties());
+	props.Priority = priority;
+}
 
-			props.Priority = priority;
-		}
+const RenderTargetProperties& RenderTarget::GetProperties() const
+{
+	return GetPropertiesInternal();
+}
 
-		const RenderTargetProperties& RenderTarget::GetProperties() const
-		{
-			return GetPropertiesInternal();
-		}
-
-		void RenderTarget::GetCustomAttribute(const String& name, void* pData) const
-		{
-			BS_EXCEPT(InvalidParametersException, "Attribute not found.");
-		}
-	} // namespace ct
+void RenderTarget::GetCustomAttribute(const String& name, void* pData) const
+{
+	BS_EXCEPT(InvalidParametersException, "Attribute not found.");
+}
+} // namespace ct
 } // namespace bs

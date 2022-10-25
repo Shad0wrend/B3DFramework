@@ -5,14 +5,14 @@
 
 namespace bs
 {
-	RTTITypeBase* GameSettings::GetRttiStatic()
-	{
-		return GameSettingsRTTI::Instance();
-	}
+RTTITypeBase* GameSettings::GetRttiStatic()
+{
+	return GameSettingsRTTI::Instance();
+}
 
-	RTTITypeBase* GameSettings::GetRtti() const
-	{
-		return GameSettings::GetRttiStatic();
-	}
+RTTITypeBase* GameSettings::GetRtti() const
+{
+	return GameSettings::GetRttiStatic();
+}
 
 } // namespace bs

@@ -9,294 +9,294 @@
 
 namespace bs
 {
-	void GUIInputTool::UpdateText(const GUIElement* element, const TEXT_SPRITE_DESC& textDesc)
+void GUIInputTool::UpdateText(const GUIElement* element, const TEXT_SPRITE_DESC& textDesc)
+{
+	mElement = element;
+	mTextDesc = textDesc;
+	mNumChars = UTF8::Count(mTextDesc.Text);
+
+	mLineDescs.clear();
+
+	bs_frame_mark();
 	{
-		mElement = element;
-		mTextDesc = textDesc;
-		mNumChars = UTF8::Count(mTextDesc.Text);
+		const U32String utf32text = UTF8::ToUtF32(mTextDesc.Text);
+		TextData<FrameAlloc> textData(utf32text, mTextDesc.Font, mTextDesc.FontSize, mTextDesc.Width, mTextDesc.Height, mTextDesc.WordWrap, mTextDesc.WordBreak);
 
-		mLineDescs.clear();
+		u32 numLines = textData.GetNumLines();
+		u32 numPages = textData.GetNumPages();
 
-		bs_frame_mark();
+		mNumQuads = 0;
+		for(u32 i = 0; i < numPages; i++)
+			mNumQuads += textData.GetNumQuadsForPage(i);
+
+		if(mQuads != nullptr)
+			bs_delete(mQuads);
+
+		mQuads = bs_newN<Vector2>(mNumQuads * 4);
+
+		TextSprite::GenTextQuads(textData, mTextDesc.Width, mTextDesc.Height, mTextDesc.HorzAlign, mTextDesc.VertAlign, mTextDesc.Anchor, mQuads, nullptr, nullptr, mNumQuads);
+
+		// Store cached line data
+		u32 curCharIdx = 0;
+		u32 curLineIdx = 0;
+
+		Vector2I* alignmentOffsets = bs_frame_new<Vector2I>(numLines);
+		TextSprite::GetAlignmentOffsets(textData, mTextDesc.Width, mTextDesc.Height, mTextDesc.HorzAlign, mTextDesc.VertAlign, alignmentOffsets);
+
+		for(u32 i = 0; i < numLines; i++)
 		{
-			const U32String utf32text = UTF8::ToUtF32(mTextDesc.Text);
-			TextData<FrameAlloc> textData(utf32text, mTextDesc.Font, mTextDesc.FontSize, mTextDesc.Width, mTextDesc.Height, mTextDesc.WordWrap, mTextDesc.WordBreak);
+			const TextDataBase::TextLine& line = textData.GetLine(i);
 
-			u32 numLines = textData.GetNumLines();
-			u32 numPages = textData.GetNumPages();
+			// Line has a newline char only if it wasn't created by word wrap and it isn't the last line
+			bool hasNewline = line.HasNewlineChar() && (curLineIdx != (numLines - 1));
 
-			mNumQuads = 0;
-			for(u32 i = 0; i < numPages; i++)
-				mNumQuads += textData.GetNumQuadsForPage(i);
+			u32 startChar = curCharIdx;
+			u32 endChar = curCharIdx + line.GetNumChars() + (hasNewline ? 1 : 0);
+			u32 lineHeight = line.GetYOffset();
+			i32 lineYStart = alignmentOffsets[curLineIdx].Y;
 
-			if(mQuads != nullptr)
-				bs_delete(mQuads);
+			GUIInputLineDesc lineDesc(startChar, endChar, lineHeight, lineYStart, hasNewline);
+			mLineDescs.push_back(lineDesc);
 
-			mQuads = bs_newN<Vector2>(mNumQuads * 4);
-
-			TextSprite::GenTextQuads(textData, mTextDesc.Width, mTextDesc.Height, mTextDesc.HorzAlign, mTextDesc.VertAlign, mTextDesc.Anchor, mQuads, nullptr, nullptr, mNumQuads);
-
-			// Store cached line data
-			u32 curCharIdx = 0;
-			u32 curLineIdx = 0;
-
-			Vector2I* alignmentOffsets = bs_frame_new<Vector2I>(numLines);
-			TextSprite::GetAlignmentOffsets(textData, mTextDesc.Width, mTextDesc.Height, mTextDesc.HorzAlign, mTextDesc.VertAlign, alignmentOffsets);
-
-			for(u32 i = 0; i < numLines; i++)
-			{
-				const TextDataBase::TextLine& line = textData.GetLine(i);
-
-				// Line has a newline char only if it wasn't created by word wrap and it isn't the last line
-				bool hasNewline = line.HasNewlineChar() && (curLineIdx != (numLines - 1));
-
-				u32 startChar = curCharIdx;
-				u32 endChar = curCharIdx + line.GetNumChars() + (hasNewline ? 1 : 0);
-				u32 lineHeight = line.GetYOffset();
-				i32 lineYStart = alignmentOffsets[curLineIdx].Y;
-
-				GUIInputLineDesc lineDesc(startChar, endChar, lineHeight, lineYStart, hasNewline);
-				mLineDescs.push_back(lineDesc);
-
-				curCharIdx = lineDesc.GetEndChar();
-				curLineIdx++;
-			}
-
-			bs_frame_delete(alignmentOffsets);
+			curCharIdx = lineDesc.GetEndChar();
+			curLineIdx++;
 		}
-		bs_frame_clear();
+
+		bs_frame_delete(alignmentOffsets);
 	}
+	bs_frame_clear();
+}
 
-	Vector2I GUIInputTool::GetTextOffset() const
+Vector2I GUIInputTool::GetTextOffset() const
+{
+	Vector2I offset(mElement->GetLayoutDataInternal().Area.X, mElement->GetLayoutDataInternal().Area.Y);
+
+	return offset + mElement->GetTextInputOffsetInternal() + Vector2I(mElement->GetTextInputRectInternal().X, mElement->GetTextInputRectInternal().Y);
+}
+
+Rect2I GUIInputTool::GetCharRect(u32 charIdx) const
+{
+	Rect2I charRect = GetLocalCharRect(charIdx);
+	Vector2I textOffset = GetTextOffset();
+
+	charRect.X += textOffset.X;
+	charRect.Y += textOffset.Y;
+
+	return charRect;
+}
+
+Rect2I GUIInputTool::GetLocalCharRect(u32 charIdx) const
+{
+	u32 lineIdx = GetLineForChar(charIdx);
+
+	// If char is newline we don't have any geometry to return
+	const GUIInputLineDesc& lineDesc = GetLineDesc(lineIdx);
+	if(lineDesc.IsNewline(charIdx))
+		return Rect2I();
+
+	u32 numNewlineChars = 0;
+	for(u32 i = 0; i < lineIdx; i++)
+		numNewlineChars += (GetLineDesc(i).HasNewlineChar() ? 1 : 0);
+
+	i32 quadIdx = (i32)(charIdx - numNewlineChars);
+	if(quadIdx >= 0 && quadIdx < (i32)mNumQuads)
 	{
-		Vector2I offset(mElement->GetLayoutDataInternal().Area.X, mElement->GetLayoutDataInternal().Area.Y);
+		u32 vertIdx = quadIdx * 4;
 
-		return offset + mElement->GetTextInputOffsetInternal() + Vector2I(mElement->GetTextInputRectInternal().X, mElement->GetTextInputRectInternal().Y);
-	}
-
-	Rect2I GUIInputTool::GetCharRect(u32 charIdx) const
-	{
-		Rect2I charRect = GetLocalCharRect(charIdx);
-		Vector2I textOffset = GetTextOffset();
-
-		charRect.X += textOffset.X;
-		charRect.Y += textOffset.Y;
+		Rect2I charRect;
+		charRect.X = Math::RoundToInt(mQuads[vertIdx + 0].X);
+		charRect.Y = Math::RoundToInt(mQuads[vertIdx + 0].Y);
+		charRect.Width = Math::RoundToInt(mQuads[vertIdx + 3].X - charRect.X);
+		charRect.Height = Math::RoundToInt(mQuads[vertIdx + 3].Y - charRect.Y);
 
 		return charRect;
 	}
 
-	Rect2I GUIInputTool::GetLocalCharRect(u32 charIdx) const
+	BS_LOG(Error, GUI, "Invalid character index: {0}", charIdx);
+	return Rect2I();
+}
+
+i32 GUIInputTool::GetCharIdxAtPos(const Vector2I& pos) const
+{
+	Vector2 vecPos((float)pos.X, (float)pos.Y);
+
+	u32 lineStartChar = 0;
+	u32 lineEndChar = 0;
+	u32 numNewlineChars = 0;
+	u32 lineIdx = 0;
+	for(auto& line : mLineDescs)
 	{
-		u32 lineIdx = GetLineForChar(charIdx);
-
-		// If char is newline we don't have any geometry to return
-		const GUIInputLineDesc& lineDesc = GetLineDesc(lineIdx);
-		if(lineDesc.IsNewline(charIdx))
-			return Rect2I();
-
-		u32 numNewlineChars = 0;
-		for(u32 i = 0; i < lineIdx; i++)
-			numNewlineChars += (GetLineDesc(i).HasNewlineChar() ? 1 : 0);
-
-		i32 quadIdx = (i32)(charIdx - numNewlineChars);
-		if(quadIdx >= 0 && quadIdx < (i32)mNumQuads)
+		i32 lineStart = line.GetLineYStart() + GetTextOffset().Y;
+		if(pos.Y >= lineStart && pos.Y < (lineStart + (i32)line.GetLineHeight()))
 		{
-			u32 vertIdx = quadIdx * 4;
-
-			Rect2I charRect;
-			charRect.X = Math::RoundToInt(mQuads[vertIdx + 0].X);
-			charRect.Y = Math::RoundToInt(mQuads[vertIdx + 0].Y);
-			charRect.Width = Math::RoundToInt(mQuads[vertIdx + 3].X - charRect.X);
-			charRect.Height = Math::RoundToInt(mQuads[vertIdx + 3].Y - charRect.Y);
-
-			return charRect;
+			lineStartChar = line.GetStartChar();
+			lineEndChar = line.GetEndChar(false);
+			break;
 		}
 
-		BS_LOG(Error, GUI, "Invalid character index: {0}", charIdx);
-		return Rect2I();
+		// Newline chars count in the startChar/endChar variables, but don't actually exist in the buffers
+		// so we need to filter them out
+		numNewlineChars += (line.HasNewlineChar() ? 1 : 0);
+
+		lineIdx++;
 	}
 
-	i32 GUIInputTool::GetCharIdxAtPos(const Vector2I& pos) const
+	u32 lineStartQuad = lineStartChar - numNewlineChars;
+	u32 lineEndQuad = lineEndChar - numNewlineChars;
+
+	float nearestDist = std::numeric_limits<float>::max();
+	u32 nearestChar = 0;
+	bool foundChar = false;
+
+	Vector2I textOffset = GetTextOffset();
+	for(u32 i = lineStartQuad; i < lineEndQuad; i++)
 	{
-		Vector2 vecPos((float)pos.X, (float)pos.Y);
+		u32 curVert = i * 4;
 
-		u32 lineStartChar = 0;
-		u32 lineEndChar = 0;
-		u32 numNewlineChars = 0;
-		u32 lineIdx = 0;
-		for(auto& line : mLineDescs)
+		float centerX = mQuads[curVert + 0].X + mQuads[curVert + 1].X;
+		centerX *= 0.5f;
+		centerX += textOffset.X;
+
+		float dist = Math::Abs(centerX - vecPos.X);
+		if(dist < nearestDist)
 		{
-			i32 lineStart = line.GetLineYStart() + GetTextOffset().Y;
-			if(pos.Y >= lineStart && pos.Y < (lineStart + (i32)line.GetLineHeight()))
-			{
-				lineStartChar = line.GetStartChar();
-				lineEndChar = line.GetEndChar(false);
-				break;
-			}
-
-			// Newline chars count in the startChar/endChar variables, but don't actually exist in the buffers
-			// so we need to filter them out
-			numNewlineChars += (line.HasNewlineChar() ? 1 : 0);
-
-			lineIdx++;
+			nearestChar = i + numNewlineChars;
+			nearestDist = dist;
+			foundChar = true;
 		}
-
-		u32 lineStartQuad = lineStartChar - numNewlineChars;
-		u32 lineEndQuad = lineEndChar - numNewlineChars;
-
-		float nearestDist = std::numeric_limits<float>::max();
-		u32 nearestChar = 0;
-		bool foundChar = false;
-
-		Vector2I textOffset = GetTextOffset();
-		for(u32 i = lineStartQuad; i < lineEndQuad; i++)
-		{
-			u32 curVert = i * 4;
-
-			float centerX = mQuads[curVert + 0].X + mQuads[curVert + 1].X;
-			centerX *= 0.5f;
-			centerX += textOffset.X;
-
-			float dist = Math::Abs(centerX - vecPos.X);
-			if(dist < nearestDist)
-			{
-				nearestChar = i + numNewlineChars;
-				nearestDist = dist;
-				foundChar = true;
-			}
-		}
-
-		if(!foundChar)
-			return -1;
-
-		return nearestChar;
 	}
 
-	u32 GUIInputTool::GetLineForChar(u32 charIdx, bool newlineCountsOnNextLine) const
+	if(!foundChar)
+		return -1;
+
+	return nearestChar;
+}
+
+u32 GUIInputTool::GetLineForChar(u32 charIdx, bool newlineCountsOnNextLine) const
+{
+	u32 idx = 0;
+	for(auto& line : mLineDescs)
 	{
-		u32 idx = 0;
-		for(auto& line : mLineDescs)
+		if((charIdx >= line.GetStartChar() && charIdx < line.GetEndChar()) ||
+		   (charIdx == line.GetStartChar() && line.GetStartChar() == line.GetEndChar()))
 		{
-			if((charIdx >= line.GetStartChar() && charIdx < line.GetEndChar()) ||
-			   (charIdx == line.GetStartChar() && line.GetStartChar() == line.GetEndChar()))
-			{
-				if(line.IsNewline(charIdx) && newlineCountsOnNextLine)
-					return idx + 1; // Incrementing is safe because next line must exist, since we just found a newline char
+			if(line.IsNewline(charIdx) && newlineCountsOnNextLine)
+				return idx + 1; // Incrementing is safe because next line must exist, since we just found a newline char
 
-				return idx;
-			}
-
-			idx++;
+			return idx;
 		}
 
-		BS_LOG(Error, GUI, "Invalid character index: {0}", charIdx);
+		idx++;
+	}
+
+	BS_LOG(Error, GUI, "Invalid character index: {0}", charIdx);
+	return 0;
+}
+
+u32 GUIInputTool::GetCharIdxAtInputIdx(u32 inputIdx) const
+{
+	if(mNumChars == 0)
 		return 0;
-	}
 
-	u32 GUIInputTool::GetCharIdxAtInputIdx(u32 inputIdx) const
+	u32 numLines = GetNumLines();
+	u32 curPos = 0;
+	u32 curCharIdx = 0;
+	for(u32 i = 0; i < numLines; i++)
 	{
-		if(mNumChars == 0)
-			return 0;
+		const GUIInputLineDesc& lineDesc = GetLineDesc(i);
 
-		u32 numLines = GetNumLines();
-		u32 curPos = 0;
-		u32 curCharIdx = 0;
-		for(u32 i = 0; i < numLines; i++)
+		if(curPos == inputIdx)
+			return lineDesc.GetStartChar();
+
+		curPos++; // Move past line start position
+
+		u32 numChars = lineDesc.GetEndChar() - lineDesc.GetStartChar();
+		u32 numCaretPositions = lineDesc.GetEndChar(false) - lineDesc.GetStartChar();
+		if(inputIdx >= (curPos + numCaretPositions))
 		{
-			const GUIInputLineDesc& lineDesc = GetLineDesc(i);
-
-			if(curPos == inputIdx)
-				return lineDesc.GetStartChar();
-
-			curPos++; // Move past line start position
-
-			u32 numChars = lineDesc.GetEndChar() - lineDesc.GetStartChar();
-			u32 numCaretPositions = lineDesc.GetEndChar(false) - lineDesc.GetStartChar();
-			if(inputIdx >= (curPos + numCaretPositions))
-			{
-				curCharIdx += numChars;
-				curPos += numCaretPositions;
-				continue;
-			}
-
-			u32 diff = inputIdx - curPos;
-			curCharIdx += diff + 1; // Character after the caret
-
-			return curCharIdx;
+			curCharIdx += numChars;
+			curPos += numCaretPositions;
+			continue;
 		}
 
-		return 0;
+		u32 diff = inputIdx - curPos;
+		curCharIdx += diff + 1; // Character after the caret
+
+		return curCharIdx;
 	}
 
-	bool GUIInputTool::IsNewline(u32 inputIdx) const
+	return 0;
+}
+
+bool GUIInputTool::IsNewline(u32 inputIdx) const
+{
+	if(mNumChars == 0)
+		return true;
+
+	u32 numLines = GetNumLines();
+	u32 curPos = 0;
+	for(u32 i = 0; i < numLines; i++)
 	{
-		if(mNumChars == 0)
+		const GUIInputLineDesc& lineDesc = GetLineDesc(i);
+
+		if(curPos == inputIdx)
 			return true;
 
-		u32 numLines = GetNumLines();
-		u32 curPos = 0;
-		for(u32 i = 0; i < numLines; i++)
-		{
-			const GUIInputLineDesc& lineDesc = GetLineDesc(i);
-
-			if(curPos == inputIdx)
-				return true;
-
-			u32 numChars = lineDesc.GetEndChar(false) - lineDesc.GetStartChar();
-			curPos += numChars;
-		}
-
-		return false;
+		u32 numChars = lineDesc.GetEndChar(false) - lineDesc.GetStartChar();
+		curPos += numChars;
 	}
 
-	bool GUIInputTool::IsNewlineChar(u32 charIdx) const
+	return false;
+}
+
+bool GUIInputTool::IsNewlineChar(u32 charIdx) const
+{
+	u32 byteIdx = UTF8::CharToByteIndex(mTextDesc.Text, charIdx);
+
+	return mTextDesc.Text[byteIdx] == '\n';
+}
+
+bool GUIInputTool::IsDescValid() const
+{
+	// We we have some text but line descs are empty we may assume
+	// something went wrong when creating the line descs, therefore it is
+	// not valid and no text is displayed.
+	if(mNumChars > 0)
+		return !mLineDescs.empty();
+
+	return true;
+}
+
+GUIInputLineDesc::GUIInputLineDesc(u32 startChar, u32 endChar, u32 lineHeight, i32 lineYStart, bool includesNewline)
+	: mStartChar(startChar), mEndChar(endChar), mLineHeight(lineHeight), mLineYStart(lineYStart), mIncludesNewline(includesNewline)
+{
+}
+
+u32 GUIInputLineDesc::GetEndChar(bool includeNewline) const
+{
+	if(mIncludesNewline)
 	{
-		u32 byteIdx = UTF8::CharToByteIndex(mTextDesc.Text, charIdx);
-
-		return mTextDesc.Text[byteIdx] == '\n';
-	}
-
-	bool GUIInputTool::IsDescValid() const
-	{
-		// We we have some text but line descs are empty we may assume
-		// something went wrong when creating the line descs, therefore it is
-		// not valid and no text is displayed.
-		if(mNumChars > 0)
-			return !mLineDescs.empty();
-
-		return true;
-	}
-
-	GUIInputLineDesc::GUIInputLineDesc(u32 startChar, u32 endChar, u32 lineHeight, i32 lineYStart, bool includesNewline)
-		: mStartChar(startChar), mEndChar(endChar), mLineHeight(lineHeight), mLineYStart(lineYStart), mIncludesNewline(includesNewline)
-	{
-	}
-
-	u32 GUIInputLineDesc::GetEndChar(bool includeNewline) const
-	{
-		if(mIncludesNewline)
-		{
-			if(includeNewline)
-				return mEndChar;
-			else
-			{
-				if(mEndChar > 0)
-					return mEndChar - 1;
-				else
-					return mStartChar;
-			}
-		}
-		else
+		if(includeNewline)
 			return mEndChar;
-	}
-
-	bool GUIInputLineDesc::IsNewline(u32 charIdx) const
-	{
-		if(mIncludesNewline)
-		{
-			return (mEndChar - 1) == charIdx;
-		}
 		else
-			return false;
+		{
+			if(mEndChar > 0)
+				return mEndChar - 1;
+			else
+				return mStartChar;
+		}
 	}
+	else
+		return mEndChar;
+}
+
+bool GUIInputLineDesc::IsNewline(u32 charIdx) const
+{
+	if(mIncludesNewline)
+	{
+		return (mEndChar - 1) == charIdx;
+	}
+	else
+		return false;
+}
 } // namespace bs

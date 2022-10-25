@@ -5,38 +5,38 @@
 
 namespace bs
 {
-	RTTITypeBase* AnimationSplitInfo::GetRttiStatic()
-	{
-		return AnimationSplitInfoRTTI::Instance();
-	}
+RTTITypeBase* AnimationSplitInfo::GetRttiStatic()
+{
+	return AnimationSplitInfoRTTI::Instance();
+}
 
-	RTTITypeBase* AnimationSplitInfo::GetRtti() const
-	{
-		return AnimationSplitInfo::GetRttiStatic();
-	}
+RTTITypeBase* AnimationSplitInfo::GetRtti() const
+{
+	return AnimationSplitInfo::GetRttiStatic();
+}
 
-	RTTITypeBase* ImportedAnimationEvents::GetRttiStatic()
-	{
-		return ImportedAnimationEventsRTTI::Instance();
-	}
+RTTITypeBase* ImportedAnimationEvents::GetRttiStatic()
+{
+	return ImportedAnimationEventsRTTI::Instance();
+}
 
-	RTTITypeBase* ImportedAnimationEvents::GetRtti() const
-	{
-		return ImportedAnimationEvents::GetRttiStatic();
-	}
+RTTITypeBase* ImportedAnimationEvents::GetRtti() const
+{
+	return ImportedAnimationEvents::GetRttiStatic();
+}
 
-	SPtr<MeshImportOptions> MeshImportOptions::Create()
-	{
-		return bs_shared_ptr_new<MeshImportOptions>();
-	}
+SPtr<MeshImportOptions> MeshImportOptions::Create()
+{
+	return bs_shared_ptr_new<MeshImportOptions>();
+}
 
-	RTTITypeBase* MeshImportOptions::GetRttiStatic()
-	{
-		return MeshImportOptionsRTTI::Instance();
-	}
+RTTITypeBase* MeshImportOptions::GetRttiStatic()
+{
+	return MeshImportOptionsRTTI::Instance();
+}
 
-	RTTITypeBase* MeshImportOptions::GetRtti() const
-	{
-		return MeshImportOptions::GetRttiStatic();
-	}
+RTTITypeBase* MeshImportOptions::GetRtti() const
+{
+	return MeshImportOptions::GetRttiStatic();
+}
 } // namespace bs

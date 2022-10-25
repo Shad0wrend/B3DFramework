@@ -4,58 +4,58 @@
 
 namespace bs
 {
-	Rigidbody* Joint::GetBody(JointBody body) const
-	{
-		return mInternal->GetBody(body);
-	}
+Rigidbody* Joint::GetBody(JointBody body) const
+{
+	return mInternal->GetBody(body);
+}
 
-	void Joint::SetBody(JointBody body, Rigidbody* value)
-	{
-		mInternal->SetBody(body, value);
-	}
+void Joint::SetBody(JointBody body, Rigidbody* value)
+{
+	mInternal->SetBody(body, value);
+}
 
-	Vector3 Joint::GetPosition(JointBody body) const
-	{
-		return mInternal->GetPosition(body);
-	}
+Vector3 Joint::GetPosition(JointBody body) const
+{
+	return mInternal->GetPosition(body);
+}
 
-	Quaternion Joint::GetRotation(JointBody body) const
-	{
-		return mInternal->GetRotation(body);
-	}
+Quaternion Joint::GetRotation(JointBody body) const
+{
+	return mInternal->GetRotation(body);
+}
 
-	void Joint::SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation)
-	{
-		mInternal->SetTransform(body, position, rotation);
-	}
+void Joint::SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation)
+{
+	mInternal->SetTransform(body, position, rotation);
+}
 
-	float Joint::GetBreakForce() const
-	{
-		return mInternal->GetBreakForce();
-	}
+float Joint::GetBreakForce() const
+{
+	return mInternal->GetBreakForce();
+}
 
-	void Joint::SetBreakForce(float force)
-	{
-		mInternal->SetBreakForce(force);
-	}
+void Joint::SetBreakForce(float force)
+{
+	mInternal->SetBreakForce(force);
+}
 
-	float Joint::GetBreakTorque() const
-	{
-		return mInternal->GetBreakTorque();
-	}
+float Joint::GetBreakTorque() const
+{
+	return mInternal->GetBreakTorque();
+}
 
-	void Joint::SetBreakTorque(float torque)
-	{
-		mInternal->SetBreakTorque(torque);
-	}
+void Joint::SetBreakTorque(float torque)
+{
+	mInternal->SetBreakTorque(torque);
+}
 
-	bool Joint::GetEnableCollision() const
-	{
-		return mInternal->GetEnableCollision();
-	}
+bool Joint::GetEnableCollision() const
+{
+	return mInternal->GetEnableCollision();
+}
 
-	void Joint::SetEnableCollision(bool value)
-	{
-		mInternal->SetEnableCollision(value);
-	}
+void Joint::SetEnableCollision(bool value)
+{
+	mInternal->SetEnableCollision(value);
+}
 } // namespace bs

@@ -7,151 +7,151 @@
 
 namespace bs
 {
-	SPtr<Texture> TextureManager::CreateTexture(const TEXTURE_DESC& desc)
+SPtr<Texture> TextureManager::CreateTexture(const TEXTURE_DESC& desc)
+{
+	Texture* tex = new(bs_alloc<Texture>()) Texture(desc);
+	SPtr<Texture> ret = bs_core_ptr<Texture>(tex);
+
+	ret->SetThisPtrInternal(ret);
+	ret->Initialize();
+
+	return ret;
+}
+
+SPtr<Texture> TextureManager::CreateTexture(const TEXTURE_DESC& desc, const SPtr<PixelData>& pixelData)
+{
+	Texture* tex = new(bs_alloc<Texture>()) Texture(desc, pixelData);
+	SPtr<Texture> ret = bs_core_ptr<Texture>(tex);
+
+	ret->SetThisPtrInternal(ret);
+	ret->Initialize();
+
+	return ret;
+}
+
+SPtr<Texture> TextureManager::CreateEmptyInternal()
+{
+	Texture* tex = new(bs_alloc<Texture>()) Texture();
+	SPtr<Texture> texture = bs_core_ptr<Texture>(tex);
+	texture->SetThisPtrInternal(texture);
+
+	return texture;
+}
+
+SPtr<RenderTexture> TextureManager::CreateRenderTexture(const TEXTURE_DESC& colorDesc, bool createDepth, PixelFormat depthStencilFormat)
+{
+	TEXTURE_DESC textureDesc = colorDesc;
+	textureDesc.Usage = TU_RENDERTARGET;
+	textureDesc.NumMips = 0;
+
+	HTexture texture = Texture::Create(textureDesc);
+
+	HTexture depthStencil;
+	if(createDepth)
 	{
-		Texture* tex = new(bs_alloc<Texture>()) Texture(desc);
-		SPtr<Texture> ret = bs_core_ptr<Texture>(tex);
+		textureDesc.Format = depthStencilFormat;
+		textureDesc.HwGamma = false;
+		textureDesc.Usage = TU_DEPTHSTENCIL;
 
-		ret->SetThisPtrInternal(ret);
-		ret->Initialize();
-
-		return ret;
+		depthStencil = Texture::Create(textureDesc);
 	}
 
-	SPtr<Texture> TextureManager::CreateTexture(const TEXTURE_DESC& desc, const SPtr<PixelData>& pixelData)
-	{
-		Texture* tex = new(bs_alloc<Texture>()) Texture(desc, pixelData);
-		SPtr<Texture> ret = bs_core_ptr<Texture>(tex);
+	RENDER_TEXTURE_DESC desc;
+	desc.ColorSurfaces[0].Texture = texture;
+	desc.ColorSurfaces[0].Face = 0;
+	desc.ColorSurfaces[0].NumFaces = 1;
+	desc.ColorSurfaces[0].MipLevel = 0;
 
-		ret->SetThisPtrInternal(ret);
-		ret->Initialize();
+	desc.DepthStencilSurface.Texture = depthStencil;
+	desc.DepthStencilSurface.Face = 0;
+	desc.DepthStencilSurface.NumFaces = 1;
+	desc.DepthStencilSurface.MipLevel = 0;
 
-		return ret;
-	}
+	SPtr<RenderTexture> newRT = CreateRenderTexture(desc);
 
-	SPtr<Texture> TextureManager::CreateEmptyInternal()
-	{
-		Texture* tex = new(bs_alloc<Texture>()) Texture();
-		SPtr<Texture> texture = bs_core_ptr<Texture>(tex);
-		texture->SetThisPtrInternal(texture);
+	return newRT;
+}
 
-		return texture;
-	}
+SPtr<RenderTexture> TextureManager::CreateRenderTexture(const RENDER_TEXTURE_DESC& desc)
+{
+	SPtr<RenderTexture> newRT = CreateRenderTextureImpl(desc);
+	newRT->SetThisPtrInternal(newRT);
+	newRT->Initialize();
 
-	SPtr<RenderTexture> TextureManager::CreateRenderTexture(const TEXTURE_DESC& colorDesc, bool createDepth, PixelFormat depthStencilFormat)
-	{
-		TEXTURE_DESC textureDesc = colorDesc;
-		textureDesc.Usage = TU_RENDERTARGET;
-		textureDesc.NumMips = 0;
+	return newRT;
+}
 
-		HTexture texture = Texture::Create(textureDesc);
+namespace ct
+{
+void TextureManager::OnStartUp()
+{
+	TEXTURE_DESC desc;
+	desc.Type = TEX_TYPE_2D;
+	desc.Width = 2;
+	desc.Height = 2;
+	desc.Format = PF_RGBA8;
+	desc.Usage = TU_STATIC;
 
-		HTexture depthStencil;
-		if(createDepth)
-		{
-			textureDesc.Format = depthStencilFormat;
-			textureDesc.HwGamma = false;
-			textureDesc.Usage = TU_DEPTHSTENCIL;
+	// White built-in texture
+	SPtr<Texture> whiteTexture = CreateTexture(desc);
 
-			depthStencil = Texture::Create(textureDesc);
-		}
+	SPtr<PixelData> whitePixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
+	whitePixelData->SetColorAt(Color::White, 0, 0);
+	whitePixelData->SetColorAt(Color::White, 0, 1);
+	whitePixelData->SetColorAt(Color::White, 1, 0);
+	whitePixelData->SetColorAt(Color::White, 1, 1);
 
-		RENDER_TEXTURE_DESC desc;
-		desc.ColorSurfaces[0].Texture = texture;
-		desc.ColorSurfaces[0].Face = 0;
-		desc.ColorSurfaces[0].NumFaces = 1;
-		desc.ColorSurfaces[0].MipLevel = 0;
+	whiteTexture->WriteData(*whitePixelData);
+	Texture::WHITE = whiteTexture;
 
-		desc.DepthStencilSurface.Texture = depthStencil;
-		desc.DepthStencilSurface.Face = 0;
-		desc.DepthStencilSurface.NumFaces = 1;
-		desc.DepthStencilSurface.MipLevel = 0;
+	// Black built-in texture
+	SPtr<Texture> blackTexture = CreateTexture(desc);
 
-		SPtr<RenderTexture> newRT = CreateRenderTexture(desc);
+	SPtr<PixelData> blackPixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
+	blackPixelData->SetColorAt(Color::ZERO, 0, 0);
+	blackPixelData->SetColorAt(Color::ZERO, 0, 1);
+	blackPixelData->SetColorAt(Color::ZERO, 1, 0);
+	blackPixelData->SetColorAt(Color::ZERO, 1, 1);
 
-		return newRT;
-	}
+	blackTexture->WriteData(*blackPixelData);
+	Texture::BLACK = blackTexture;
 
-	SPtr<RenderTexture> TextureManager::CreateRenderTexture(const RENDER_TEXTURE_DESC& desc)
-	{
-		SPtr<RenderTexture> newRT = CreateRenderTextureImpl(desc);
-		newRT->SetThisPtrInternal(newRT);
-		newRT->Initialize();
+	// Normal (Y = Up) built-in texture
+	SPtr<Texture> normalTexture = CreateTexture(desc);
+	SPtr<PixelData> normalPixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
 
-		return newRT;
-	}
+	Color encodedNormal(0.5f, 0.5f, 1.0f);
+	normalPixelData->SetColorAt(encodedNormal, 0, 0);
+	normalPixelData->SetColorAt(encodedNormal, 0, 1);
+	normalPixelData->SetColorAt(encodedNormal, 1, 0);
+	normalPixelData->SetColorAt(encodedNormal, 1, 1);
 
-	namespace ct
-	{
-		void TextureManager::OnStartUp()
-		{
-			TEXTURE_DESC desc;
-			desc.Type = TEX_TYPE_2D;
-			desc.Width = 2;
-			desc.Height = 2;
-			desc.Format = PF_RGBA8;
-			desc.Usage = TU_STATIC;
+	normalTexture->WriteData(*normalPixelData);
+	Texture::NORMAL = normalTexture;
+}
 
-			// White built-in texture
-			SPtr<Texture> whiteTexture = CreateTexture(desc);
+void TextureManager::OnShutDown()
+{
+	// Need to make sure these are freed while still on the core thread
+	Texture::WHITE = nullptr;
+	Texture::BLACK = nullptr;
+	Texture::NORMAL = nullptr;
+}
 
-			SPtr<PixelData> whitePixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
-			whitePixelData->SetColorAt(Color::White, 0, 0);
-			whitePixelData->SetColorAt(Color::White, 0, 1);
-			whitePixelData->SetColorAt(Color::White, 1, 0);
-			whitePixelData->SetColorAt(Color::White, 1, 1);
+SPtr<Texture> TextureManager::CreateTexture(const TEXTURE_DESC& desc, GpuDeviceFlags deviceMask)
+{
+	SPtr<Texture> newTex = CreateTextureInternal(desc, nullptr, deviceMask);
+	newTex->Initialize();
 
-			whiteTexture->WriteData(*whitePixelData);
-			Texture::WHITE = whiteTexture;
+	return newTex;
+}
 
-			// Black built-in texture
-			SPtr<Texture> blackTexture = CreateTexture(desc);
+SPtr<RenderTexture> TextureManager::CreateRenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
+{
+	SPtr<RenderTexture> newRT = CreateRenderTextureInternal(desc, deviceIdx);
+	newRT->Initialize();
 
-			SPtr<PixelData> blackPixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
-			blackPixelData->SetColorAt(Color::ZERO, 0, 0);
-			blackPixelData->SetColorAt(Color::ZERO, 0, 1);
-			blackPixelData->SetColorAt(Color::ZERO, 1, 0);
-			blackPixelData->SetColorAt(Color::ZERO, 1, 1);
-
-			blackTexture->WriteData(*blackPixelData);
-			Texture::BLACK = blackTexture;
-
-			// Normal (Y = Up) built-in texture
-			SPtr<Texture> normalTexture = CreateTexture(desc);
-			SPtr<PixelData> normalPixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
-
-			Color encodedNormal(0.5f, 0.5f, 1.0f);
-			normalPixelData->SetColorAt(encodedNormal, 0, 0);
-			normalPixelData->SetColorAt(encodedNormal, 0, 1);
-			normalPixelData->SetColorAt(encodedNormal, 1, 0);
-			normalPixelData->SetColorAt(encodedNormal, 1, 1);
-
-			normalTexture->WriteData(*normalPixelData);
-			Texture::NORMAL = normalTexture;
-		}
-
-		void TextureManager::OnShutDown()
-		{
-			// Need to make sure these are freed while still on the core thread
-			Texture::WHITE = nullptr;
-			Texture::BLACK = nullptr;
-			Texture::NORMAL = nullptr;
-		}
-
-		SPtr<Texture> TextureManager::CreateTexture(const TEXTURE_DESC& desc, GpuDeviceFlags deviceMask)
-		{
-			SPtr<Texture> newTex = CreateTextureInternal(desc, nullptr, deviceMask);
-			newTex->Initialize();
-
-			return newTex;
-		}
-
-		SPtr<RenderTexture> TextureManager::CreateRenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
-		{
-			SPtr<RenderTexture> newRT = CreateRenderTextureInternal(desc, deviceIdx);
-			newRT->Initialize();
-
-			return newRT;
-		}
-	} // namespace ct
+	return newRT;
+}
+} // namespace ct
 } // namespace bs

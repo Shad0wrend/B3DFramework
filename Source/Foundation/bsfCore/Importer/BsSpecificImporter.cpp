@@ -6,26 +6,26 @@
 
 namespace bs
 {
-	Vector<SubResourceRaw> SpecificImporter::ImportAll(const Path& filePath, SPtr<const ImportOptions> importOptions)
-	{
-		SPtr<Resource> resource = Import(filePath, importOptions);
-		if(resource == nullptr)
-			return Vector<SubResourceRaw>();
+Vector<SubResourceRaw> SpecificImporter::ImportAll(const Path& filePath, SPtr<const ImportOptions> importOptions)
+{
+	SPtr<Resource> resource = Import(filePath, importOptions);
+	if(resource == nullptr)
+		return Vector<SubResourceRaw>();
 
-		return { { u8"primary", resource } };
-		;
-	}
+	return { { u8"primary", resource } };
+	;
+}
 
-	SPtr<ImportOptions> SpecificImporter::CreateImportOptions() const
-	{
-		return bs_shared_ptr_new<ImportOptions>();
-	}
+SPtr<ImportOptions> SpecificImporter::CreateImportOptions() const
+{
+	return bs_shared_ptr_new<ImportOptions>();
+}
 
-	SPtr<const ImportOptions> SpecificImporter::GetDefaultImportOptions() const
-	{
-		if(mDefaultImportOptions == nullptr)
-			mDefaultImportOptions = CreateImportOptions();
+SPtr<const ImportOptions> SpecificImporter::GetDefaultImportOptions() const
+{
+	if(mDefaultImportOptions == nullptr)
+		mDefaultImportOptions = CreateImportOptions();
 
-		return mDefaultImportOptions;
-	}
+	return mDefaultImportOptions;
+}
 } // namespace bs

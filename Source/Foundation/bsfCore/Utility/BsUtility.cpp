@@ -6,73 +6,62 @@
 
 namespace bs
 {
-	/**
-	 * Checks if the specified type (or any of its derived classes) have any IReflectable pointer or value types as
-	 * their fields.
-	 */
-	bool hasReflectableChildren(RTTITypeBase* type)
+/**
+ * Checks if the specified type (or any of its derived classes) have any IReflectable pointer or value types as
+ * their fields.
+ */
+bool hasReflectableChildren(RTTITypeBase* type)
+{
+	u32 numFields = type->GetNumFields();
+	for(u32 i = 0; i < numFields; i++)
 	{
-		u32 numFields = type->GetNumFields();
+		RTTIField* field = type->GetField(i);
+		if(field->Schema.Type == SerializableFT_Reflectable || field->Schema.Type == SerializableFT_ReflectablePtr)
+			return true;
+	}
+
+	const Vector<RTTITypeBase*>& derivedClasses = type->GetDerivedClasses();
+	for(auto& derivedClass : derivedClasses)
+	{
+		numFields = derivedClass->GetNumFields();
 		for(u32 i = 0; i < numFields; i++)
 		{
-			RTTIField* field = type->GetField(i);
+			RTTIField* field = derivedClass->GetField(i);
 			if(field->Schema.Type == SerializableFT_Reflectable || field->Schema.Type == SerializableFT_ReflectablePtr)
 				return true;
 		}
-
-		const Vector<RTTITypeBase*>& derivedClasses = type->GetDerivedClasses();
-		for(auto& derivedClass : derivedClasses)
-		{
-			numFields = derivedClass->GetNumFields();
-			for(u32 i = 0; i < numFields; i++)
-			{
-				RTTIField* field = derivedClass->GetField(i);
-				if(field->Schema.Type == SerializableFT_Reflectable || field->Schema.Type == SerializableFT_ReflectablePtr)
-					return true;
-			}
-		}
-
-		return false;
 	}
 
-	void findResourceDependenciesInternal(IReflectable& obj, FrameAlloc& alloc, bool recursive, Map<UUID, ResourceDependency>& dependencies)
+	return false;
+}
+
+void findResourceDependenciesInternal(IReflectable& obj, FrameAlloc& alloc, bool recursive, Map<UUID, ResourceDependency>& dependencies)
+{
+	RTTITypeBase* rtti = obj.GetRtti();
+	do
 	{
-		RTTITypeBase* rtti = obj.GetRtti();
-		do
+		RTTITypeBase* rttiInstance = rtti->CloneInternal(alloc);
+		rttiInstance->OnSerializationStarted(&obj, nullptr);
+
+		const u32 numFields = rtti->GetNumFields();
+		for(u32 i = 0; i < numFields; i++)
 		{
-			RTTITypeBase* rttiInstance = rtti->CloneInternal(alloc);
-			rttiInstance->OnSerializationStarted(&obj, nullptr);
+			RTTIField* field = rtti->GetField(i);
+			if(field->Schema.Info.Flags.IsSet(RTTIFieldFlag::SkipInReferenceSearch))
+				continue;
 
-			const u32 numFields = rtti->GetNumFields();
-			for(u32 i = 0; i < numFields; i++)
+			if(field->Schema.Type == SerializableFT_Reflectable)
 			{
-				RTTIField* field = rtti->GetField(i);
-				if(field->Schema.Info.Flags.IsSet(RTTIFieldFlag::SkipInReferenceSearch))
-					continue;
+				auto reflectableField = static_cast<RTTIReflectableFieldBase*>(field);
 
-				if(field->Schema.Type == SerializableFT_Reflectable)
+				if(reflectableField->GetType()->GetRttiId() == TID_ResourceHandle)
 				{
-					auto reflectableField = static_cast<RTTIReflectableFieldBase*>(field);
-
-					if(reflectableField->GetType()->GetRttiId() == TID_ResourceHandle)
+					if(reflectableField->Schema.IsArray)
 					{
-						if(reflectableField->Schema.IsArray)
+						const u32 numElements = reflectableField->GetArraySize(rttiInstance, &obj);
+						for(u32 j = 0; j < numElements; j++)
 						{
-							const u32 numElements = reflectableField->GetArraySize(rttiInstance, &obj);
-							for(u32 j = 0; j < numElements; j++)
-							{
-								HResource resource = (HResource&)reflectableField->GetArrayValue(rttiInstance, &obj, j);
-								if(!resource.GetUuid().Empty())
-								{
-									ResourceDependency& dependency = dependencies[resource.GetUuid()];
-									dependency.Resource = resource;
-									dependency.NumReferences++;
-								}
-							}
-						}
-						else
-						{
-							HResource resource = (HResource&)reflectableField->GetValue(rttiInstance, &obj);
+							HResource resource = (HResource&)reflectableField->GetArrayValue(rttiInstance, &obj, j);
 							if(!resource.GetUuid().Empty())
 							{
 								ResourceDependency& dependency = dependencies[resource.GetUuid()];
@@ -81,157 +70,168 @@ namespace bs
 							}
 						}
 					}
-					else if(recursive)
+					else
 					{
-						// Optimization, no need to retrieve its value and go deeper if it has no
-						// reflectable children that may hold the reference.
-						if(hasReflectableChildren(reflectableField->GetType()))
+						HResource resource = (HResource&)reflectableField->GetValue(rttiInstance, &obj);
+						if(!resource.GetUuid().Empty())
 						{
-							if(reflectableField->Schema.IsArray)
-							{
-								const u32 numElements = reflectableField->GetArraySize(rttiInstance, &obj);
-								for(u32 j = 0; j < numElements; j++)
-								{
-									IReflectable& childObj = reflectableField->GetArrayValue(rttiInstance, &obj, j);
-									findResourceDependenciesInternal(childObj, alloc, true, dependencies);
-								}
-							}
-							else
-							{
-								IReflectable& childObj = reflectableField->GetValue(rttiInstance, &obj);
-								findResourceDependenciesInternal(childObj, alloc, true, dependencies);
-							}
+							ResourceDependency& dependency = dependencies[resource.GetUuid()];
+							dependency.Resource = resource;
+							dependency.NumReferences++;
 						}
 					}
 				}
-				else if(field->Schema.Type == SerializableFT_ReflectablePtr && recursive)
+				else if(recursive)
 				{
-					auto reflectablePtrField = static_cast<RTTIReflectablePtrFieldBase*>(field);
-
 					// Optimization, no need to retrieve its value and go deeper if it has no
 					// reflectable children that may hold the reference.
-					if(hasReflectableChildren(reflectablePtrField->GetType()))
+					if(hasReflectableChildren(reflectableField->GetType()))
 					{
-						if(reflectablePtrField->Schema.IsArray)
+						if(reflectableField->Schema.IsArray)
 						{
-							const u32 numElements = reflectablePtrField->GetArraySize(rttiInstance, &obj);
+							const u32 numElements = reflectableField->GetArraySize(rttiInstance, &obj);
 							for(u32 j = 0; j < numElements; j++)
 							{
-								const SPtr<IReflectable>& childObj =
-									reflectablePtrField->GetArrayValue(rttiInstance, &obj, j);
-
-								if(childObj != nullptr)
-									findResourceDependenciesInternal(*childObj, alloc, true, dependencies);
+								IReflectable& childObj = reflectableField->GetArrayValue(rttiInstance, &obj, j);
+								findResourceDependenciesInternal(childObj, alloc, true, dependencies);
 							}
 						}
 						else
 						{
-							const SPtr<IReflectable>& childObj = reflectablePtrField->GetValue(rttiInstance, &obj);
+							IReflectable& childObj = reflectableField->GetValue(rttiInstance, &obj);
+							findResourceDependenciesInternal(childObj, alloc, true, dependencies);
+						}
+					}
+				}
+			}
+			else if(field->Schema.Type == SerializableFT_ReflectablePtr && recursive)
+			{
+				auto reflectablePtrField = static_cast<RTTIReflectablePtrFieldBase*>(field);
+
+				// Optimization, no need to retrieve its value and go deeper if it has no
+				// reflectable children that may hold the reference.
+				if(hasReflectableChildren(reflectablePtrField->GetType()))
+				{
+					if(reflectablePtrField->Schema.IsArray)
+					{
+						const u32 numElements = reflectablePtrField->GetArraySize(rttiInstance, &obj);
+						for(u32 j = 0; j < numElements; j++)
+						{
+							const SPtr<IReflectable>& childObj =
+								reflectablePtrField->GetArrayValue(rttiInstance, &obj, j);
 
 							if(childObj != nullptr)
 								findResourceDependenciesInternal(*childObj, alloc, true, dependencies);
 						}
 					}
+					else
+					{
+						const SPtr<IReflectable>& childObj = reflectablePtrField->GetValue(rttiInstance, &obj);
+
+						if(childObj != nullptr)
+							findResourceDependenciesInternal(*childObj, alloc, true, dependencies);
+					}
 				}
 			}
-
-			rttiInstance->OnSerializationEnded(&obj, nullptr);
-			alloc.Destruct(rttiInstance);
-
-			rtti = rtti->GetBaseClass();
 		}
-		while(rtti != nullptr);
+
+		rttiInstance->OnSerializationEnded(&obj, nullptr);
+		alloc.Destruct(rttiInstance);
+
+		rtti = rtti->GetBaseClass();
+	}
+	while(rtti != nullptr);
+}
+
+Vector<ResourceDependency> Utility::FindResourceDependencies(IReflectable& obj, bool recursive)
+{
+	gFrameAlloc().MarkFrame();
+
+	Map<UUID, ResourceDependency> dependencies;
+	findResourceDependenciesInternal(obj, gFrameAlloc(), recursive, dependencies);
+
+	gFrameAlloc().Clear();
+
+	Vector<ResourceDependency> dependencyList(dependencies.size());
+	u32 i = 0;
+	for(auto& entry : dependencies)
+	{
+		dependencyList[i] = entry.second;
+		i++;
 	}
 
-	Vector<ResourceDependency> Utility::FindResourceDependencies(IReflectable& obj, bool recursive)
+	return dependencyList;
+}
+
+u32 Utility::GetSceneObjectDepth(const HSceneObject& so)
+{
+	HSceneObject parent = so->GetParent();
+
+	u32 depth = 0;
+	while(parent != nullptr)
 	{
-		gFrameAlloc().MarkFrame();
-
-		Map<UUID, ResourceDependency> dependencies;
-		findResourceDependenciesInternal(obj, gFrameAlloc(), recursive, dependencies);
-
-		gFrameAlloc().Clear();
-
-		Vector<ResourceDependency> dependencyList(dependencies.size());
-		u32 i = 0;
-		for(auto& entry : dependencies)
-		{
-			dependencyList[i] = entry.second;
-			i++;
-		}
-
-		return dependencyList;
+		depth++;
+		parent = parent->GetParent();
 	}
 
-	u32 Utility::GetSceneObjectDepth(const HSceneObject& so)
-	{
-		HSceneObject parent = so->GetParent();
+	return depth;
+}
 
-		u32 depth = 0;
-		while(parent != nullptr)
+Vector<HComponent> Utility::FindComponents(const HSceneObject& object, u32 typeId)
+{
+	Vector<HComponent> output;
+
+	Stack<HSceneObject> todo;
+	todo.push(object);
+
+	while(!todo.empty())
+	{
+		HSceneObject curSO = todo.top();
+		todo.pop();
+
+		const Vector<HComponent>& components = curSO->GetComponents();
+		for(auto& entry : components)
 		{
-			depth++;
-			parent = parent->GetParent();
+			if(entry->GetRtti()->GetRttiId() == typeId)
+				output.push_back(entry);
 		}
 
-		return depth;
+		u32 numChildren = curSO->GetNumChildren();
+		for(u32 i = 0; i < numChildren; i++)
+			todo.push(curSO->GetChild(i));
 	}
 
-	Vector<HComponent> Utility::FindComponents(const HSceneObject& object, u32 typeId)
+	return output;
+}
+
+class CoreSerializationContextRTTI : public RTTIType<CoreSerializationContext, SerializationContext, CoreSerializationContextRTTI>
+{
+	const String& GetRttiName() override
 	{
-		Vector<HComponent> output;
-
-		Stack<HSceneObject> todo;
-		todo.push(object);
-
-		while(!todo.empty())
-		{
-			HSceneObject curSO = todo.top();
-			todo.pop();
-
-			const Vector<HComponent>& components = curSO->GetComponents();
-			for(auto& entry : components)
-			{
-				if(entry->GetRtti()->GetRttiId() == typeId)
-					output.push_back(entry);
-			}
-
-			u32 numChildren = curSO->GetNumChildren();
-			for(u32 i = 0; i < numChildren; i++)
-				todo.push(curSO->GetChild(i));
-		}
-
-		return output;
+		static String name = "CoreSerializationContext";
+		return name;
 	}
 
-	class CoreSerializationContextRTTI : public RTTIType<CoreSerializationContext, SerializationContext, CoreSerializationContextRTTI>
+	u32 GetRttiId() override
 	{
-		const String& GetRttiName() override
-		{
-			static String name = "CoreSerializationContext";
-			return name;
-		}
-
-		u32 GetRttiId() override
-		{
-			return TID_CoreSerializationContext;
-		}
-
-		SPtr<IReflectable> NewRttiObject() override
-		{
-			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
-			return nullptr;
-		}
-	};
-
-	RTTITypeBase* CoreSerializationContext::GetRttiStatic()
-	{
-		return CoreSerializationContextRTTI::Instance();
+		return TID_CoreSerializationContext;
 	}
 
-	RTTITypeBase* CoreSerializationContext::GetRtti() const
+	SPtr<IReflectable> NewRttiObject() override
 	{
-		return GetRttiStatic();
+		BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
+		return nullptr;
 	}
+};
+
+RTTITypeBase* CoreSerializationContext::GetRttiStatic()
+{
+	return CoreSerializationContextRTTI::Instance();
+}
+
+RTTITypeBase* CoreSerializationContext::GetRtti() const
+{
+	return GetRttiStatic();
+}
 
 } // namespace bs

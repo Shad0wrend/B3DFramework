@@ -5,21 +5,21 @@
 
 namespace bs
 {
-	SPtr<TextureImportOptions> TextureImportOptions::Create()
-	{
-		return bs_shared_ptr_new<TextureImportOptions>();
-	}
+SPtr<TextureImportOptions> TextureImportOptions::Create()
+{
+	return bs_shared_ptr_new<TextureImportOptions>();
+}
 
-	/************************************************************************/
-	/* 								SERIALIZATION                      		*/
-	/************************************************************************/
-	RTTITypeBase* TextureImportOptions::GetRttiStatic()
-	{
-		return TextureImportOptionsRTTI::Instance();
-	}
+/************************************************************************/
+/* 								SERIALIZATION                      		*/
+/************************************************************************/
+RTTITypeBase* TextureImportOptions::GetRttiStatic()
+{
+	return TextureImportOptionsRTTI::Instance();
+}
 
-	RTTITypeBase* TextureImportOptions::GetRtti() const
-	{
-		return TextureImportOptions::GetRttiStatic();
-	}
+RTTITypeBase* TextureImportOptions::GetRtti() const
+{
+	return TextureImportOptions::GetRttiStatic();
+}
 } // namespace bs

@@ -7,71 +7,71 @@
 
 namespace bs
 {
-	void AudioSource::SetClip(const HAudioClip& clip)
-	{
-		mAudioClip = clip;
+void AudioSource::SetClip(const HAudioClip& clip)
+{
+	mAudioClip = clip;
 
-		MarkListenerResourcesDirty();
-	}
+	MarkListenerResourcesDirty();
+}
 
-	void AudioSource::SetVelocity(const Vector3& velocity)
-	{
-		mVelocity = velocity;
-	}
+void AudioSource::SetVelocity(const Vector3& velocity)
+{
+	mVelocity = velocity;
+}
 
-	void AudioSource::SetVolume(float volume)
-	{
-		mVolume = Math::Clamp01(volume);
-	}
+void AudioSource::SetVolume(float volume)
+{
+	mVolume = Math::Clamp01(volume);
+}
 
-	void AudioSource::SetPitch(float pitch)
-	{
-		mPitch = pitch;
-	}
+void AudioSource::SetPitch(float pitch)
+{
+	mPitch = pitch;
+}
 
-	void AudioSource::SetIsLooping(bool loop)
-	{
-		mLoop = loop;
-	}
+void AudioSource::SetIsLooping(bool loop)
+{
+	mLoop = loop;
+}
 
-	void AudioSource::SetPriority(i32 priority)
-	{
-		mPriority = priority;
-	}
+void AudioSource::SetPriority(i32 priority)
+{
+	mPriority = priority;
+}
 
-	void AudioSource::SetMinDistance(float distance)
-	{
-		mMinDistance = distance;
-	}
+void AudioSource::SetMinDistance(float distance)
+{
+	mMinDistance = distance;
+}
 
-	void AudioSource::SetAttenuation(float attenuation)
-	{
-		mAttenuation = attenuation;
-	}
+void AudioSource::SetAttenuation(float attenuation)
+{
+	mAttenuation = attenuation;
+}
 
-	SPtr<AudioSource> AudioSource::Create()
-	{
-		return gAudio().CreateSource();
-	}
+SPtr<AudioSource> AudioSource::Create()
+{
+	return gAudio().CreateSource();
+}
 
-	void AudioSource::GetListenerResources(Vector<HResource>& resources)
-	{
-		if(mAudioClip != nullptr)
-			resources.push_back(mAudioClip);
-	}
+void AudioSource::GetListenerResources(Vector<HResource>& resources)
+{
+	if(mAudioClip != nullptr)
+		resources.push_back(mAudioClip);
+}
 
-	void AudioSource::NotifyResourceChanged(const HResource& resource)
-	{
-		OnClipChanged();
-	}
+void AudioSource::NotifyResourceChanged(const HResource& resource)
+{
+	OnClipChanged();
+}
 
-	RTTITypeBase* AudioSource::GetRttiStatic()
-	{
-		return AudioSourceRTTI::Instance();
-	}
+RTTITypeBase* AudioSource::GetRttiStatic()
+{
+	return AudioSourceRTTI::Instance();
+}
 
-	RTTITypeBase* AudioSource::GetRtti() const
-	{
-		return AudioSource::GetRttiStatic();
-	}
+RTTITypeBase* AudioSource::GetRtti() const
+{
+	return AudioSource::GetRttiStatic();
+}
 } // namespace bs

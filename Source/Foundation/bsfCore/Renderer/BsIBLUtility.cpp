@@ -5,44 +5,44 @@
 
 namespace bs
 {
-	namespace ct
-	{
-		const u32 IBLUtility::REFLECTION_CUBEMAP_SIZE = 256;
-		const u32 IBLUtility::IRRADIANCE_CUBEMAP_SIZE = 32;
+namespace ct
+{
+const u32 IBLUtility::REFLECTION_CUBEMAP_SIZE = 256;
+const u32 IBLUtility::IRRADIANCE_CUBEMAP_SIZE = 32;
 
-		/** Returns the size of the texture required to store the provided number of SH coefficients. */
-		Vector2I IBLUtility::GetShCoeffTextureSize(u32 numCoeffSets, u32 shOrder)
-		{
-			u32 coeffsPerSet = shOrder * shOrder;
+/** Returns the size of the texture required to store the provided number of SH coefficients. */
+Vector2I IBLUtility::GetShCoeffTextureSize(u32 numCoeffSets, u32 shOrder)
+{
+	u32 coeffsPerSet = shOrder * shOrder;
 
-			// Assuming the texture maximum size is 4096
-			u32 maxSetsPerRow = 4096 / coeffsPerSet;
+	// Assuming the texture maximum size is 4096
+	u32 maxSetsPerRow = 4096 / coeffsPerSet;
 
-			Vector2I output;
-			output.X = (numCoeffSets > maxSetsPerRow ? maxSetsPerRow : numCoeffSets) * coeffsPerSet;
-			output.Y = 1 + numCoeffSets / (maxSetsPerRow + 1);
+	Vector2I output;
+	output.X = (numCoeffSets > maxSetsPerRow ? maxSetsPerRow : numCoeffSets) * coeffsPerSet;
+	output.Y = 1 + numCoeffSets / (maxSetsPerRow + 1);
 
-			return output;
-		}
+	return output;
+}
 
-		/** Determines the position of a set of coefficients in the coefficient texture, depending on the coefficient index. */
-		Vector2I IBLUtility::GetShCoeffXyFromIdx(u32 idx, u32 shOrder)
-		{
-			u32 coeffsPerSet = shOrder * shOrder;
+/** Determines the position of a set of coefficients in the coefficient texture, depending on the coefficient index. */
+Vector2I IBLUtility::GetShCoeffXyFromIdx(u32 idx, u32 shOrder)
+{
+	u32 coeffsPerSet = shOrder * shOrder;
 
-			// Assuming the texture maximum size is 4096
-			u32 maxSetsPerRow = 4096 / coeffsPerSet;
+	// Assuming the texture maximum size is 4096
+	u32 maxSetsPerRow = 4096 / coeffsPerSet;
 
-			Vector2I output;
-			output.X = (idx % maxSetsPerRow) * coeffsPerSet;
-			output.Y = idx / maxSetsPerRow;
+	Vector2I output;
+	output.X = (idx % maxSetsPerRow) * coeffsPerSet;
+	output.Y = idx / maxSetsPerRow;
 
-			return output;
-		}
+	return output;
+}
 
-		const IBLUtility& gIBLUtility()
-		{
-			return IBLUtility::Instance();
-		}
-	} // namespace ct
+const IBLUtility& gIBLUtility()
+{
+	return IBLUtility::Instance();
+}
+} // namespace ct
 } // namespace bs

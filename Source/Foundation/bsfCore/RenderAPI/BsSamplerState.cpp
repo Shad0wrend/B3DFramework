@@ -6,145 +6,145 @@
 
 namespace bs
 {
-	bool SAMPLER_STATE_DESC::operator==(const SAMPLER_STATE_DESC& rhs) const
+bool SAMPLER_STATE_DESC::operator==(const SAMPLER_STATE_DESC& rhs) const
+{
+	return AddressMode == rhs.AddressMode &&
+		MinFilter == rhs.MinFilter &&
+		MagFilter == rhs.MagFilter &&
+		MipFilter == rhs.MipFilter &&
+		MaxAniso == rhs.MaxAniso &&
+		MipmapBias == rhs.MipmapBias &&
+		MipMin == rhs.MipMin &&
+		MipMax == rhs.MipMax &&
+		BorderColor == rhs.BorderColor &&
+		ComparisonFunc == rhs.ComparisonFunc;
+}
+
+SamplerProperties::SamplerProperties(const SAMPLER_STATE_DESC& desc)
+	: mData(desc), mHash(SamplerState::GenerateHash(desc))
+{}
+
+FilterOptions SamplerProperties::GetTextureFiltering(FilterType ft) const
+{
+	switch(ft)
 	{
-		return AddressMode == rhs.AddressMode &&
-			MinFilter == rhs.MinFilter &&
-			MagFilter == rhs.MagFilter &&
-			MipFilter == rhs.MipFilter &&
-			MaxAniso == rhs.MaxAniso &&
-			MipmapBias == rhs.MipmapBias &&
-			MipMin == rhs.MipMin &&
-			MipMax == rhs.MipMax &&
-			BorderColor == rhs.BorderColor &&
-			ComparisonFunc == rhs.ComparisonFunc;
-	}
-
-	SamplerProperties::SamplerProperties(const SAMPLER_STATE_DESC& desc)
-		: mData(desc), mHash(SamplerState::GenerateHash(desc))
-	{}
-
-	FilterOptions SamplerProperties::GetTextureFiltering(FilterType ft) const
-	{
-		switch(ft)
-		{
-		case FT_MIN:
-			return mData.MinFilter;
-		case FT_MAG:
-			return mData.MagFilter;
-		case FT_MIP:
-			return mData.MipFilter;
-		}
-
+	case FT_MIN:
 		return mData.MinFilter;
+	case FT_MAG:
+		return mData.MagFilter;
+	case FT_MIP:
+		return mData.MipFilter;
 	}
 
-	const Color& SamplerProperties::GetBorderColor() const
-	{
-		return mData.BorderColor;
-	}
+	return mData.MinFilter;
+}
 
-	SamplerState::SamplerState(const SAMPLER_STATE_DESC& desc)
-		: mProperties(desc)
-	{
-	}
+const Color& SamplerProperties::GetBorderColor() const
+{
+	return mData.BorderColor;
+}
 
-	SPtr<ct::SamplerState> SamplerState::GetCore() const
-	{
-		return std::static_pointer_cast<ct::SamplerState>(mCoreSpecific);
-	}
+SamplerState::SamplerState(const SAMPLER_STATE_DESC& desc)
+	: mProperties(desc)
+{
+}
 
-	SPtr<ct::CoreObject> SamplerState::CreateCore() const
-	{
-		return ct::RenderStateManager::Instance().CreateSamplerStateInternal(mProperties.mData);
-	}
+SPtr<ct::SamplerState> SamplerState::GetCore() const
+{
+	return std::static_pointer_cast<ct::SamplerState>(mCoreSpecific);
+}
 
-	SPtr<SamplerState> SamplerState::Create(const SAMPLER_STATE_DESC& desc)
-	{
-		return RenderStateManager::Instance().CreateSamplerState(desc);
-	}
+SPtr<ct::CoreObject> SamplerState::CreateCore() const
+{
+	return ct::RenderStateManager::Instance().CreateSamplerStateInternal(mProperties.mData);
+}
 
-	const SPtr<SamplerState>& SamplerState::GetDefault()
-	{
-		return RenderStateManager::Instance().GetDefaultSamplerState();
-	}
+SPtr<SamplerState> SamplerState::Create(const SAMPLER_STATE_DESC& desc)
+{
+	return RenderStateManager::Instance().CreateSamplerState(desc);
+}
 
-	u64 SamplerState::GenerateHash(const SAMPLER_STATE_DESC& desc)
-	{
-		size_t hash = 0;
-		bs_hash_combine(hash, (u32)desc.AddressMode.U);
-		bs_hash_combine(hash, (u32)desc.AddressMode.V);
-		bs_hash_combine(hash, (u32)desc.AddressMode.W);
-		bs_hash_combine(hash, (u32)desc.MinFilter);
-		bs_hash_combine(hash, (u32)desc.MagFilter);
-		bs_hash_combine(hash, (u32)desc.MipFilter);
-		bs_hash_combine(hash, desc.MaxAniso);
-		bs_hash_combine(hash, desc.MipmapBias);
-		bs_hash_combine(hash, desc.MipMin);
-		bs_hash_combine(hash, desc.MipMax);
-		bs_hash_combine(hash, desc.BorderColor);
-		bs_hash_combine(hash, (u32)desc.ComparisonFunc);
+const SPtr<SamplerState>& SamplerState::GetDefault()
+{
+	return RenderStateManager::Instance().GetDefaultSamplerState();
+}
 
-		return (u64)hash;
-	}
+u64 SamplerState::GenerateHash(const SAMPLER_STATE_DESC& desc)
+{
+	size_t hash = 0;
+	bs_hash_combine(hash, (u32)desc.AddressMode.U);
+	bs_hash_combine(hash, (u32)desc.AddressMode.V);
+	bs_hash_combine(hash, (u32)desc.AddressMode.W);
+	bs_hash_combine(hash, (u32)desc.MinFilter);
+	bs_hash_combine(hash, (u32)desc.MagFilter);
+	bs_hash_combine(hash, (u32)desc.MipFilter);
+	bs_hash_combine(hash, desc.MaxAniso);
+	bs_hash_combine(hash, desc.MipmapBias);
+	bs_hash_combine(hash, desc.MipMin);
+	bs_hash_combine(hash, desc.MipMax);
+	bs_hash_combine(hash, desc.BorderColor);
+	bs_hash_combine(hash, (u32)desc.ComparisonFunc);
 
-	const SamplerProperties& SamplerState::GetProperties() const
-	{
-		return mProperties;
-	}
+	return (u64)hash;
+}
 
-	/************************************************************************/
-	/* 								RTTI		                     		*/
-	/************************************************************************/
+const SamplerProperties& SamplerState::GetProperties() const
+{
+	return mProperties;
+}
 
-	RTTITypeBase* SamplerState::GetRttiStatic()
-	{
-		return SamplerStateRTTI::Instance();
-	}
+/************************************************************************/
+/* 								RTTI		                     		*/
+/************************************************************************/
 
-	RTTITypeBase* SamplerState::GetRtti() const
-	{
-		return SamplerState::GetRttiStatic();
-	}
+RTTITypeBase* SamplerState::GetRttiStatic()
+{
+	return SamplerStateRTTI::Instance();
+}
 
-	namespace ct
-	{
+RTTITypeBase* SamplerState::GetRtti() const
+{
+	return SamplerState::GetRttiStatic();
+}
 
-		SamplerState::SamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask)
-			: mProperties(desc)
-		{
-		}
+namespace ct
+{
 
-		SamplerState::~SamplerState()
-		{
-			RenderStateManager::Instance().NotifySamplerStateDestroyed(mProperties.mData);
-		}
+SamplerState::SamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask)
+	: mProperties(desc)
+{
+}
 
-		void SamplerState::Initialize()
-		{
-			// Since we cache states it's possible this object was already initialized
-			// (i.e. multiple sim-states can share a single core-state)
-			if(IsInitialized())
-				return;
+SamplerState::~SamplerState()
+{
+	RenderStateManager::Instance().NotifySamplerStateDestroyed(mProperties.mData);
+}
 
-			CreateInternal();
-			CoreObject::Initialize();
-		}
+void SamplerState::Initialize()
+{
+	// Since we cache states it's possible this object was already initialized
+	// (i.e. multiple sim-states can share a single core-state)
+	if(IsInitialized())
+		return;
 
-		const SamplerProperties& SamplerState::GetProperties() const
-		{
-			return mProperties;
-		}
+	CreateInternal();
+	CoreObject::Initialize();
+}
 
-		SPtr<SamplerState> SamplerState::Create(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask)
-		{
-			return RenderStateManager::Instance().CreateSamplerState(desc, deviceMask);
-		}
+const SamplerProperties& SamplerState::GetProperties() const
+{
+	return mProperties;
+}
 
-		const SPtr<SamplerState>& SamplerState::GetDefault()
-		{
-			return RenderStateManager::Instance().GetDefaultSamplerState();
-		}
+SPtr<SamplerState> SamplerState::Create(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask)
+{
+	return RenderStateManager::Instance().CreateSamplerState(desc, deviceMask);
+}
 
-	} // namespace ct
+const SPtr<SamplerState>& SamplerState::GetDefault()
+{
+	return RenderStateManager::Instance().GetDefaultSamplerState();
+}
+
+} // namespace ct
 } // namespace bs

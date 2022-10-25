@@ -7,106 +7,106 @@
 
 namespace bs
 {
-	GPUInfo PlatformUtility::sGPUInfo;
+GPUInfo PlatformUtility::sGPUInfo;
 
-	void PlatformUtility::terminate(bool force)
+void PlatformUtility::terminate(bool force)
+{
+	// TODOPORT - Support clean exit by sending the main window a quit message
+	exit(0);
+}
+
+SystemInfo PlatformUtility::getSystemInfo()
+{
+	char buffer[256];
+
+	SystemInfo sysInfo;
+
+	size_t bufferlen = sizeof(buffer);
+	if(sysctlbyname("machdep.cpu.vendor", buffer, &bufferlen, nullptr, 0) == 0)
+		sysInfo.cpuManufacturer = buffer;
+
+	bufferlen = sizeof(buffer);
+	if(sysctlbyname("machdep.cpu.brand_string", buffer, &bufferlen, nullptr, 0) == 0)
+		sysInfo.cpuModel = buffer;
+
+	bufferlen = sizeof(buffer);
+	if(sysctlbyname("kern.osrelease", buffer, &bufferlen, nullptr, 0) == 0)
+		sysInfo.osName = "macOS " + String(buffer);
+
+	bufferlen = sizeof(buffer);
+	if(sysctlbyname("kern.version", buffer, &bufferlen, nullptr, 0) == 0)
+		sysInfo.osIs64Bit = strstr(buffer, "X86_64") != nullptr;
+	else
+		sysInfo.osIs64Bit = false;
+
+	bufferlen = sizeof(buffer);
+	if(sysctlbyname("hw.cpufrequency", buffer, &bufferlen, nullptr, 0) == 0)
 	{
-		// TODOPORT - Support clean exit by sending the main window a quit message
-		exit(0);
+		u32 speedHz = *(u32*)buffer;
+		sysInfo.cpuClockSpeedMhz = speedHz / (1000 * 1000);
 	}
+	else
+		sysInfo.cpuClockSpeedMhz = 0;
 
-	SystemInfo PlatformUtility::getSystemInfo()
+	bufferlen = sizeof(buffer);
+	if(sysctlbyname("hw.physicalcpu", buffer, &bufferlen, nullptr, 0) == 0)
+		sysInfo.cpuNumCores = *(u32*)buffer;
+	else
+		sysInfo.cpuNumCores = 0;
+
+	bufferlen = sizeof(buffer);
+	if(sysctlbyname("hw.memsize", buffer, &bufferlen, nullptr, 0) == 0)
 	{
-		char buffer[256];
-
-		SystemInfo sysInfo;
-
-		size_t bufferlen = sizeof(buffer);
-		if(sysctlbyname("machdep.cpu.vendor", buffer, &bufferlen, nullptr, 0) == 0)
-			sysInfo.cpuManufacturer = buffer;
-
-		bufferlen = sizeof(buffer);
-		if(sysctlbyname("machdep.cpu.brand_string", buffer, &bufferlen, nullptr, 0) == 0)
-			sysInfo.cpuModel = buffer;
-
-		bufferlen = sizeof(buffer);
-		if(sysctlbyname("kern.osrelease", buffer, &bufferlen, nullptr, 0) == 0)
-			sysInfo.osName = "macOS " + String(buffer);
-
-		bufferlen = sizeof(buffer);
-		if(sysctlbyname("kern.version", buffer, &bufferlen, nullptr, 0) == 0)
-			sysInfo.osIs64Bit = strstr(buffer, "X86_64") != nullptr;
-		else
-			sysInfo.osIs64Bit = false;
-
-		bufferlen = sizeof(buffer);
-		if(sysctlbyname("hw.cpufrequency", buffer, &bufferlen, nullptr, 0) == 0)
-		{
-			u32 speedHz = *(u32*)buffer;
-			sysInfo.cpuClockSpeedMhz = speedHz / (1000 * 1000);
-		}
-		else
-			sysInfo.cpuClockSpeedMhz = 0;
-
-		bufferlen = sizeof(buffer);
-		if(sysctlbyname("hw.physicalcpu", buffer, &bufferlen, nullptr, 0) == 0)
-			sysInfo.cpuNumCores = *(u32*)buffer;
-		else
-			sysInfo.cpuNumCores = 0;
-
-		bufferlen = sizeof(buffer);
-		if(sysctlbyname("hw.memsize", buffer, &bufferlen, nullptr, 0) == 0)
-		{
-			u64 memAmountBytes = *(u64*)buffer;
-			sysInfo.memoryAmountMb = (u32)(memAmountBytes / (1024 * 1024));
-		}
-		else
-			sysInfo.memoryAmountMb = 0;
-
-		sysInfo.gpuInfo = sGPUInfo;
-		return sysInfo;
+		u64 memAmountBytes = *(u64*)buffer;
+		sysInfo.memoryAmountMb = (u32)(memAmountBytes / (1024 * 1024));
 	}
+	else
+		sysInfo.memoryAmountMb = 0;
 
-	UUID PlatformUtility::generateUUID()
+	sysInfo.gpuInfo = sGPUInfo;
+	return sysInfo;
+}
+
+UUID PlatformUtility::generateUUID()
+{
+	uuid_t nativeUUID;
+	uuid_generate(nativeUUID);
+
+	return UUID(
+		*(u32*)&nativeUUID[0],
+		*(u32*)&nativeUUID[4],
+		*(u32*)&nativeUUID[8],
+		*(u32*)&nativeUUID[12]);
+}
+
+String PlatformUtility::convertCaseUTF8(const bs::String& input, bool toUpper)
+{
+	CFMutableStringRef mutableString = CFStringCreateMutable(nullptr, 0);
+	CFStringAppendCString(mutableString, input.c_str(), kCFStringEncodingUTF8);
+
+	if(toUpper)
+		CFStringUppercase(mutableString, nullptr);
+	else
+		CFStringLowercase(mutableString, nullptr);
+
+	const char* chars = CFStringGetCStringPtr(mutableString, kCFStringEncodingUTF8);
+	if(chars)
 	{
-		uuid_t nativeUUID;
-		uuid_generate(nativeUUID);
-
-		return UUID(
-			*(u32*)&nativeUUID[0],
-			*(u32*)&nativeUUID[4],
-			*(u32*)&nativeUUID[8],
-			*(u32*)&nativeUUID[12]);
-	}
-
-	String PlatformUtility::convertCaseUTF8(const bs::String& input, bool toUpper)
-	{
-		CFMutableStringRef mutableString = CFStringCreateMutable(nullptr, 0);
-		CFStringAppendCString(mutableString, input.c_str(), kCFStringEncodingUTF8);
-
-		if(toUpper)
-			CFStringUppercase(mutableString, nullptr);
-		else
-			CFStringLowercase(mutableString, nullptr);
-
-		const char* chars = CFStringGetCStringPtr(mutableString, kCFStringEncodingUTF8);
-		if(chars)
-		{
-			String output(chars);
-			CFRelease(mutableString);
-
-			return output;
-		}
-
-		CFIndex stringLength = CFStringGetLength(mutableString) + 1;
-		auto buffer = bs_stack_alloc<char>((u32)stringLength);
-
-		CFStringGetCString(mutableString, buffer, stringLength, kCFStringEncodingUTF8);
+		String output(chars);
 		CFRelease(mutableString);
-
-		String output(buffer);
-		bs_stack_free(buffer);
 
 		return output;
 	}
+
+	CFIndex stringLength = CFStringGetLength(mutableString) + 1;
+	auto buffer = bs_stack_alloc<char>((u32)stringLength);
+
+	CFStringGetCString(mutableString, buffer, stringLength, kCFStringEncodingUTF8);
+	CFRelease(mutableString);
+
+	String output(buffer);
+	bs_stack_free(buffer);
+
+	return output;
+}
 } // namespace bs

@@ -6,37 +6,37 @@
 
 namespace bs
 {
-	AudioManager::AudioManager(const String& pluginName)
+AudioManager::AudioManager(const String& pluginName)
+{
+	mPlugin = DynLibManager::Instance().Load(pluginName);
+
+	if(mPlugin != nullptr)
 	{
-		mPlugin = DynLibManager::Instance().Load(pluginName);
+		typedef AudioFactory* (*LoadPluginFunc)();
 
-		if(mPlugin != nullptr)
-		{
-			typedef AudioFactory* (*LoadPluginFunc)();
+		LoadPluginFunc loadPluginFunc = (LoadPluginFunc)mPlugin->GetSymbol("loadPlugin");
+		mFactory = loadPluginFunc();
 
-			LoadPluginFunc loadPluginFunc = (LoadPluginFunc)mPlugin->GetSymbol("loadPlugin");
-			mFactory = loadPluginFunc();
-
-			if(mFactory != nullptr)
-				mFactory->StartUp();
-		}
+		if(mFactory != nullptr)
+			mFactory->StartUp();
 	}
+}
 
-	AudioManager::~AudioManager()
+AudioManager::~AudioManager()
+{
+	if(mPlugin != nullptr)
 	{
-		if(mPlugin != nullptr)
+		if(mFactory != nullptr)
 		{
-			if(mFactory != nullptr)
-			{
-				typedef void (*UnloadPluginFunc)(AudioFactory*);
+			typedef void (*UnloadPluginFunc)(AudioFactory*);
 
-				UnloadPluginFunc unloadPluginFunc = (UnloadPluginFunc)mPlugin->GetSymbol("unloadPlugin");
+			UnloadPluginFunc unloadPluginFunc = (UnloadPluginFunc)mPlugin->GetSymbol("unloadPlugin");
 
-				mFactory->ShutDown();
-				unloadPluginFunc(mFactory);
-			}
-
-			DynLibManager::Instance().Unload(mPlugin);
+			mFactory->ShutDown();
+			unloadPluginFunc(mFactory);
 		}
+
+		DynLibManager::Instance().Unload(mPlugin);
 	}
+}
 } // namespace bs

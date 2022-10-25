@@ -7,102 +7,102 @@
 
 namespace bs
 {
-	CHingeJoint::CHingeJoint()
-		: CJoint(mDesc)
-	{
-		SetName("HingeJoint");
-	}
+CHingeJoint::CHingeJoint()
+	: CJoint(mDesc)
+{
+	SetName("HingeJoint");
+}
 
-	CHingeJoint::CHingeJoint(const HSceneObject& parent)
-		: CJoint(parent, mDesc)
-	{
-		SetName("HingeJoint");
-	}
+CHingeJoint::CHingeJoint(const HSceneObject& parent)
+	: CJoint(parent, mDesc)
+{
+	SetName("HingeJoint");
+}
 
-	Radian CHingeJoint::GetAngle() const
-	{
-		if(mInternal == nullptr)
-			return Radian(0.0f);
+Radian CHingeJoint::GetAngle() const
+{
+	if(mInternal == nullptr)
+		return Radian(0.0f);
 
-		return GetInternalInternal()->GetAngle();
-	}
+	return GetInternalInternal()->GetAngle();
+}
 
-	float CHingeJoint::GetSpeed() const
-	{
-		if(mInternal == nullptr)
-			return 0.0f;
+float CHingeJoint::GetSpeed() const
+{
+	if(mInternal == nullptr)
+		return 0.0f;
 
-		return GetInternalInternal()->GetSpeed();
-	}
+	return GetInternalInternal()->GetSpeed();
+}
 
-	LimitAngularRange CHingeJoint::GetLimit() const
-	{
-		return mDesc.Limit;
-	}
+LimitAngularRange CHingeJoint::GetLimit() const
+{
+	return mDesc.Limit;
+}
 
-	void CHingeJoint::SetLimit(const LimitAngularRange& limit)
-	{
-		if(limit == mDesc.Limit)
-			return;
+void CHingeJoint::SetLimit(const LimitAngularRange& limit)
+{
+	if(limit == mDesc.Limit)
+		return;
 
-		mDesc.Limit = limit;
+	mDesc.Limit = limit;
 
-		if(mInternal != nullptr)
-			GetInternalInternal()->SetLimit(limit);
-	}
+	if(mInternal != nullptr)
+		GetInternalInternal()->SetLimit(limit);
+}
 
-	HingeJointDrive CHingeJoint::GetDrive() const
-	{
-		return mDesc.Drive;
-	}
+HingeJointDrive CHingeJoint::GetDrive() const
+{
+	return mDesc.Drive;
+}
 
-	void CHingeJoint::SetDrive(const HingeJointDrive& drive)
-	{
-		if(drive == mDesc.Drive)
-			return;
+void CHingeJoint::SetDrive(const HingeJointDrive& drive)
+{
+	if(drive == mDesc.Drive)
+		return;
 
-		mDesc.Drive = drive;
+	mDesc.Drive = drive;
 
-		if(mInternal != nullptr)
-			GetInternalInternal()->SetDrive(drive);
-	}
+	if(mInternal != nullptr)
+		GetInternalInternal()->SetDrive(drive);
+}
 
-	void CHingeJoint::SetFlag(HingeJointFlag flag, bool enabled)
-	{
-		bool isEnabled = ((u32)mDesc.Flag & (u32)flag) != 0;
-		if(isEnabled == enabled)
-			return;
+void CHingeJoint::SetFlag(HingeJointFlag flag, bool enabled)
+{
+	bool isEnabled = ((u32)mDesc.Flag & (u32)flag) != 0;
+	if(isEnabled == enabled)
+		return;
 
-		if(enabled)
-			mDesc.Flag = (HingeJointFlag)((u32)mDesc.Flag | (u32)flag);
-		else
-			mDesc.Flag = (HingeJointFlag)((u32)mDesc.Flag & ~(u32)flag);
+	if(enabled)
+		mDesc.Flag = (HingeJointFlag)((u32)mDesc.Flag | (u32)flag);
+	else
+		mDesc.Flag = (HingeJointFlag)((u32)mDesc.Flag & ~(u32)flag);
 
-		if(mInternal != nullptr)
-			GetInternalInternal()->SetFlag(flag, enabled);
-	}
+	if(mInternal != nullptr)
+		GetInternalInternal()->SetFlag(flag, enabled);
+}
 
-	bool CHingeJoint::HasFlag(HingeJointFlag flag) const
-	{
-		return ((u32)mDesc.Flag & (u32)flag) != 0;
-	}
+bool CHingeJoint::HasFlag(HingeJointFlag flag) const
+{
+	return ((u32)mDesc.Flag & (u32)flag) != 0;
+}
 
-	SPtr<Joint> CHingeJoint::CreateInternal()
-	{
-		const SPtr<SceneInstance>& scene = SO()->GetScene();
-		SPtr<Joint> joint = HingeJoint::Create(*scene->GetPhysicsScene(), mDesc);
+SPtr<Joint> CHingeJoint::CreateInternal()
+{
+	const SPtr<SceneInstance>& scene = SO()->GetScene();
+	SPtr<Joint> joint = HingeJoint::Create(*scene->GetPhysicsScene(), mDesc);
 
-		joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
-		return joint;
-	}
+	joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
+	return joint;
+}
 
-	RTTITypeBase* CHingeJoint::GetRttiStatic()
-	{
-		return CHingeJointRTTI::Instance();
-	}
+RTTITypeBase* CHingeJoint::GetRttiStatic()
+{
+	return CHingeJointRTTI::Instance();
+}
 
-	RTTITypeBase* CHingeJoint::GetRtti() const
-	{
-		return CHingeJoint::GetRttiStatic();
-	}
+RTTITypeBase* CHingeJoint::GetRtti() const
+{
+	return CHingeJoint::GetRttiStatic();
+}
 } // namespace bs

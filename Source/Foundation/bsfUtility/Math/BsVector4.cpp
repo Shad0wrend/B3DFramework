@@ -5,10 +5,10 @@
 
 namespace bs
 {
-	const Vector4 Vector4::ZERO{ BS_ZERO() };
+const Vector4 Vector4::ZERO{ BS_ZERO() };
 
-	bool Vector4::IsNaN() const
-	{
-		return Math::IsNaN(X) || Math::IsNaN(Y) || Math::IsNaN(Z) || Math::IsNaN(W);
-	}
+bool Vector4::IsNaN() const
+{
+	return Math::IsNaN(X) || Math::IsNaN(Y) || Math::IsNaN(Z) || Math::IsNaN(W);
+}
 } // namespace bs

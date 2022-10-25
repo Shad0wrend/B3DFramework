@@ -5,33 +5,33 @@
 
 namespace bs
 {
-	GUIDropDownBoxManager::~GUIDropDownBoxManager()
+GUIDropDownBoxManager::~GUIDropDownBoxManager()
+{
+	CloseDropDownBox();
+}
+
+GameObjectHandle<GUIDropDownMenu> GUIDropDownBoxManager::OpenDropDownBox(const DROP_DOWN_BOX_DESC& desc, GUIDropDownType type, std::function<void()> onClosedCallback)
+{
+	CloseDropDownBox();
+
+	mDropDownSO = SceneObject::Create("DropDownBox", SOF_Internal | SOF_Persistent | SOF_DontSave);
+	mDropDownBox = mDropDownSO->AddComponent<GUIDropDownMenu>(desc, type);
+	mOnClosedCallback = onClosedCallback;
+
+	return mDropDownBox;
+}
+
+void GUIDropDownBoxManager::CloseDropDownBox()
+{
+	if(mDropDownSO != nullptr)
 	{
-		CloseDropDownBox();
+		mDropDownSO->Destroy();
+		mDropDownSO = nullptr;
+
+		if(mOnClosedCallback != nullptr)
+			mOnClosedCallback();
+
+		mOnClosedCallback = nullptr;
 	}
-
-	GameObjectHandle<GUIDropDownMenu> GUIDropDownBoxManager::OpenDropDownBox(const DROP_DOWN_BOX_DESC& desc, GUIDropDownType type, std::function<void()> onClosedCallback)
-	{
-		CloseDropDownBox();
-
-		mDropDownSO = SceneObject::Create("DropDownBox", SOF_Internal | SOF_Persistent | SOF_DontSave);
-		mDropDownBox = mDropDownSO->AddComponent<GUIDropDownMenu>(desc, type);
-		mOnClosedCallback = onClosedCallback;
-
-		return mDropDownBox;
-	}
-
-	void GUIDropDownBoxManager::CloseDropDownBox()
-	{
-		if(mDropDownSO != nullptr)
-		{
-			mDropDownSO->Destroy();
-			mDropDownSO = nullptr;
-
-			if(mOnClosedCallback != nullptr)
-				mOnClosedCallback();
-
-			mOnClosedCallback = nullptr;
-		}
-	}
+}
 } // namespace bs

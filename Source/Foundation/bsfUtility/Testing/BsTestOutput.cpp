@@ -5,8 +5,8 @@
 
 namespace bs
 {
-	void ExceptionTestOutput::OutputFail(const String& desc, const String& function, const String& file, long line)
-	{
-		BS_EXCEPT(UnitTestException, desc);
-	}
+void ExceptionTestOutput::OutputFail(const String& desc, const String& function, const String& file, long line)
+{
+	BS_EXCEPT(UnitTestException, desc);
+}
 } // namespace bs

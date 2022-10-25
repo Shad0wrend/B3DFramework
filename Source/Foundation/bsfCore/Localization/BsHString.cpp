@@ -6,141 +6,141 @@
 
 namespace bs
 {
-	HString::HString()
+HString::HString()
+{
+	mStringData = StringTableManager::Instance().GetTable(0)->GetStringData(u8"");
+
+	if(mStringData->NumParameters > 0)
+		mParameters = bs_newN<String>(mStringData->NumParameters);
+}
+
+HString::HString(u32 stringTableId)
+{
+	mStringData = StringTableManager::Instance().GetTable(stringTableId)->GetStringData(u8"");
+
+	if(mStringData->NumParameters > 0)
+		mParameters = bs_newN<String>(mStringData->NumParameters);
+}
+
+HString::HString(const String& identifierString, u32 stringTableId)
+{
+	mStringData = StringTableManager::Instance().GetTable(stringTableId)->GetStringData(identifierString);
+
+	if(mStringData->NumParameters > 0)
+		mParameters = bs_newN<String>(mStringData->NumParameters);
+}
+
+HString::HString(const String& identifierString, const String& defaultString, u32 stringTableId)
+{
+	HStringTable table = StringTableManager::Instance().GetTable(stringTableId);
+	table->SetString(identifierString, StringTable::DEFAULT_LANGUAGE, defaultString);
+
+	mStringData = table->GetStringData(identifierString);
+
+	if(mStringData->NumParameters > 0)
+		mParameters = bs_newN<String>(mStringData->NumParameters);
+}
+
+HString::HString(const HString& copy)
+{
+	mStringData = copy.mStringData;
+	mIsDirty = copy.mIsDirty;
+	mCachedString = copy.mCachedString;
+
+	if(copy.mStringData->NumParameters > 0)
 	{
-		mStringData = StringTableManager::Instance().GetTable(0)->GetStringData(u8"");
-
-		if(mStringData->NumParameters > 0)
-			mParameters = bs_newN<String>(mStringData->NumParameters);
-	}
-
-	HString::HString(u32 stringTableId)
-	{
-		mStringData = StringTableManager::Instance().GetTable(stringTableId)->GetStringData(u8"");
-
-		if(mStringData->NumParameters > 0)
-			mParameters = bs_newN<String>(mStringData->NumParameters);
-	}
-
-	HString::HString(const String& identifierString, u32 stringTableId)
-	{
-		mStringData = StringTableManager::Instance().GetTable(stringTableId)->GetStringData(identifierString);
-
-		if(mStringData->NumParameters > 0)
-			mParameters = bs_newN<String>(mStringData->NumParameters);
-	}
-
-	HString::HString(const String& identifierString, const String& defaultString, u32 stringTableId)
-	{
-		HStringTable table = StringTableManager::Instance().GetTable(stringTableId);
-		table->SetString(identifierString, StringTable::DEFAULT_LANGUAGE, defaultString);
-
-		mStringData = table->GetStringData(identifierString);
-
-		if(mStringData->NumParameters > 0)
-			mParameters = bs_newN<String>(mStringData->NumParameters);
-	}
-
-	HString::HString(const HString& copy)
-	{
-		mStringData = copy.mStringData;
-		mIsDirty = copy.mIsDirty;
-		mCachedString = copy.mCachedString;
-
-		if(copy.mStringData->NumParameters > 0)
+		mParameters = bs_newN<String>(mStringData->NumParameters);
+		if(copy.mParameters != nullptr)
 		{
-			mParameters = bs_newN<String>(mStringData->NumParameters);
-			if(copy.mParameters != nullptr)
-			{
-				for(u32 i = 0; i < mStringData->NumParameters; i++)
-					mParameters[i] = copy.mParameters[i];
-			}
+			for(u32 i = 0; i < mStringData->NumParameters; i++)
+				mParameters[i] = copy.mParameters[i];
+		}
 
+		mStringPtr = &mCachedString;
+	}
+	else
+	{
+		mParameters = nullptr;
+		mStringPtr = &mStringData->String;
+	}
+}
+
+HString::~HString()
+{
+	if(mParameters != nullptr)
+		bs_deleteN(mParameters, mStringData->NumParameters);
+}
+
+HString::operator const String&() const
+{
+	return GetValue();
+}
+
+HString& HString::operator=(const HString& rhs)
+{
+	if(mParameters != nullptr)
+	{
+		bs_deleteN(mParameters, mStringData->NumParameters);
+		mParameters = nullptr;
+	}
+
+	mStringData = rhs.mStringData;
+	mIsDirty = rhs.mIsDirty;
+	mCachedString = rhs.mCachedString;
+
+	if(rhs.mStringData->NumParameters > 0)
+	{
+		mParameters = bs_newN<String>(mStringData->NumParameters);
+		if(rhs.mParameters != nullptr)
+		{
+			for(u32 i = 0; i < mStringData->NumParameters; i++)
+				mParameters[i] = rhs.mParameters[i];
+		}
+
+		mStringPtr = &mCachedString;
+	}
+	else
+	{
+		mParameters = nullptr;
+		mStringPtr = &mStringData->String;
+	}
+
+	return *this;
+}
+
+const String& HString::GetValue() const
+{
+	if(mIsDirty)
+	{
+		if(mParameters != nullptr)
+		{
+			mStringData->ConcatenateString(mCachedString, mParameters, mStringData->NumParameters);
 			mStringPtr = &mCachedString;
 		}
 		else
 		{
-			mParameters = nullptr;
-			mStringPtr = &mStringData->String;
-		}
-	}
-
-	HString::~HString()
-	{
-		if(mParameters != nullptr)
-			bs_deleteN(mParameters, mStringData->NumParameters);
-	}
-
-	HString::operator const String&() const
-	{
-		return GetValue();
-	}
-
-	HString& HString::operator=(const HString& rhs)
-	{
-		if(mParameters != nullptr)
-		{
-			bs_deleteN(mParameters, mStringData->NumParameters);
-			mParameters = nullptr;
-		}
-
-		mStringData = rhs.mStringData;
-		mIsDirty = rhs.mIsDirty;
-		mCachedString = rhs.mCachedString;
-
-		if(rhs.mStringData->NumParameters > 0)
-		{
-			mParameters = bs_newN<String>(mStringData->NumParameters);
-			if(rhs.mParameters != nullptr)
-			{
-				for(u32 i = 0; i < mStringData->NumParameters; i++)
-					mParameters[i] = rhs.mParameters[i];
-			}
-
-			mStringPtr = &mCachedString;
-		}
-		else
-		{
-			mParameters = nullptr;
 			mStringPtr = &mStringData->String;
 		}
 
-		return *this;
+		mIsDirty = false;
 	}
 
-	const String& HString::GetValue() const
-	{
-		if(mIsDirty)
-		{
-			if(mParameters != nullptr)
-			{
-				mStringData->ConcatenateString(mCachedString, mParameters, mStringData->NumParameters);
-				mStringPtr = &mCachedString;
-			}
-			else
-			{
-				mStringPtr = &mStringData->String;
-			}
+	return *mStringPtr;
+}
 
-			mIsDirty = false;
-		}
+void HString::SetParameter(u32 idx, const String& value)
+{
+	if(idx >= mStringData->NumParameters)
+		return;
 
-		return *mStringPtr;
-	}
+	mParameters[idx] = value;
+	mIsDirty = true;
+}
 
-	void HString::SetParameter(u32 idx, const String& value)
-	{
-		if(idx >= mStringData->NumParameters)
-			return;
+const HString& HString::Dummy()
+{
+	static HString dummyVal;
 
-		mParameters[idx] = value;
-		mIsDirty = true;
-	}
-
-	const HString& HString::Dummy()
-	{
-		static HString dummyVal;
-
-		return dummyVal;
-	}
+	return dummyVal;
+}
 } // namespace bs

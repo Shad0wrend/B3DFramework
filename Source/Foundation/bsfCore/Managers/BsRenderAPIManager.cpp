@@ -8,48 +8,48 @@
 
 namespace bs
 {
-	RenderAPIManager::~RenderAPIManager()
+RenderAPIManager::~RenderAPIManager()
+{
+	if(mRenderAPIInitialized)
 	{
-		if(mRenderAPIInitialized)
-		{
-			ct::RenderAPI::Instance().Destroy();
-			ct::RenderAPI::ShutDown();
-		}
+		ct::RenderAPI::Instance().Destroy();
+		ct::RenderAPI::ShutDown();
 	}
+}
 
-	SPtr<RenderWindow> RenderAPIManager::Initialize(const String& pluginFilename, RENDER_WINDOW_DESC& primaryWindowDesc)
-	{
-		if(mRenderAPIInitialized)
-			return nullptr;
-
-		DynLib* loadedLibrary = gDynLibManager().Load(pluginFilename);
-		const char* name = "";
-
-		if(loadedLibrary != nullptr)
-		{
-			typedef const char* (*GetPluginNameFunc)();
-
-			GetPluginNameFunc getPluginNameFunc = (GetPluginNameFunc)loadedLibrary->GetSymbol("getPluginName");
-			name = getPluginNameFunc();
-		}
-
-		for(auto iter = mAvailableFactories.begin(); iter != mAvailableFactories.end(); ++iter)
-		{
-			if(strcmp((*iter)->Name(), name) == 0)
-			{
-				(*iter)->Create();
-				mRenderAPIInitialized = true;
-				return ct::RenderAPI::Instance().Initialize(primaryWindowDesc);
-			}
-		}
-
+SPtr<RenderWindow> RenderAPIManager::Initialize(const String& pluginFilename, RENDER_WINDOW_DESC& primaryWindowDesc)
+{
+	if(mRenderAPIInitialized)
 		return nullptr;
-	}
 
-	void RenderAPIManager::RegisterFactory(SPtr<RenderAPIFactory> factory)
+	DynLib* loadedLibrary = gDynLibManager().Load(pluginFilename);
+	const char* name = "";
+
+	if(loadedLibrary != nullptr)
 	{
-		assert(factory != nullptr);
+		typedef const char* (*GetPluginNameFunc)();
 
-		mAvailableFactories.push_back(factory);
+		GetPluginNameFunc getPluginNameFunc = (GetPluginNameFunc)loadedLibrary->GetSymbol("getPluginName");
+		name = getPluginNameFunc();
 	}
+
+	for(auto iter = mAvailableFactories.begin(); iter != mAvailableFactories.end(); ++iter)
+	{
+		if(strcmp((*iter)->Name(), name) == 0)
+		{
+			(*iter)->Create();
+			mRenderAPIInitialized = true;
+			return ct::RenderAPI::Instance().Initialize(primaryWindowDesc);
+		}
+	}
+
+	return nullptr;
+}
+
+void RenderAPIManager::RegisterFactory(SPtr<RenderAPIFactory> factory)
+{
+	assert(factory != nullptr);
+
+	mAvailableFactories.push_back(factory);
+}
 } // namespace bs

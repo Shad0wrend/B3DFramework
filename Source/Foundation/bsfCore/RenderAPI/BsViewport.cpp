@@ -10,221 +10,221 @@
 
 namespace bs
 {
-	const Color ViewportBase::DEFAULT_CLEAR_COLOR = Color(0.0f, 0.3685f, 0.7969f);
+const Color ViewportBase::DEFAULT_CLEAR_COLOR = Color(0.0f, 0.3685f, 0.7969f);
 
-	ViewportBase::ViewportBase(float x, float y, float width, float height)
-		: mNormArea(x, y, width, height), mClearFlags(ClearFlagBits::Color | ClearFlagBits::Depth), mClearColorValue(DEFAULT_CLEAR_COLOR), mClearDepthValue(1.0f), mClearStencilValue(0)
-	{
-	}
+ViewportBase::ViewportBase(float x, float y, float width, float height)
+	: mNormArea(x, y, width, height), mClearFlags(ClearFlagBits::Color | ClearFlagBits::Depth), mClearColorValue(DEFAULT_CLEAR_COLOR), mClearDepthValue(1.0f), mClearStencilValue(0)
+{
+}
 
-	void ViewportBase::SetArea(const Rect2& area)
-	{
-		mNormArea = area;
+void ViewportBase::SetArea(const Rect2& area)
+{
+	mNormArea = area;
 
-		MarkCoreDirtyInternal();
-	}
+	MarkCoreDirtyInternal();
+}
 
-	Rect2I ViewportBase::GetPixelArea() const
-	{
-		float width = (float)GetTargetWidth();
-		float height = (float)GetTargetHeight();
+Rect2I ViewportBase::GetPixelArea() const
+{
+	float width = (float)GetTargetWidth();
+	float height = (float)GetTargetHeight();
 
-		Rect2I area;
-		area.X = (int)(mNormArea.X * width);
-		area.Y = (int)(mNormArea.Y * height);
-		area.Width = (int)(mNormArea.Width * width);
-		area.Height = (int)(mNormArea.Height * height);
+	Rect2I area;
+	area.X = (int)(mNormArea.X * width);
+	area.Y = (int)(mNormArea.Y * height);
+	area.Width = (int)(mNormArea.Width * width);
+	area.Height = (int)(mNormArea.Height * height);
 
-		return area;
-	}
+	return area;
+}
 
-	void ViewportBase::SetClearFlags(ClearFlags flags)
-	{
-		mClearFlags = flags;
+void ViewportBase::SetClearFlags(ClearFlags flags)
+{
+	mClearFlags = flags;
 
-		MarkCoreDirtyInternal();
-	}
+	MarkCoreDirtyInternal();
+}
 
-	void ViewportBase::SetClearValues(const Color& clearColor, float clearDepth, u16 clearStencil)
-	{
-		mClearColorValue = clearColor;
-		mClearDepthValue = clearDepth;
-		mClearStencilValue = clearStencil;
+void ViewportBase::SetClearValues(const Color& clearColor, float clearDepth, u16 clearStencil)
+{
+	mClearColorValue = clearColor;
+	mClearDepthValue = clearDepth;
+	mClearStencilValue = clearStencil;
 
-		MarkCoreDirtyInternal();
-	}
+	MarkCoreDirtyInternal();
+}
 
-	void ViewportBase::SetClearColorValue(const Color& color)
-	{
-		mClearColorValue = color;
+void ViewportBase::SetClearColorValue(const Color& color)
+{
+	mClearColorValue = color;
 
-		MarkCoreDirtyInternal();
-	}
+	MarkCoreDirtyInternal();
+}
 
-	void ViewportBase::SetClearDepthValue(float depth)
-	{
-		mClearDepthValue = depth;
+void ViewportBase::SetClearDepthValue(float depth)
+{
+	mClearDepthValue = depth;
 
-		MarkCoreDirtyInternal();
-	}
+	MarkCoreDirtyInternal();
+}
 
-	void ViewportBase::SetClearStencilValue(u16 value)
-	{
-		mClearStencilValue = value;
+void ViewportBase::SetClearStencilValue(u16 value)
+{
+	mClearStencilValue = value;
 
-		MarkCoreDirtyInternal();
-	}
+	MarkCoreDirtyInternal();
+}
 
-	template <bool Core>
-	template <class P>
-	void TViewport<Core>::RttiEnumFields(P p)
-	{
-		p(mNormArea);
-		p(mClearFlags);
-		p(mClearColorValue);
-		p(mClearDepthValue);
-		p(mClearStencilValue);
-		p(mTarget);
-	}
+template <bool Core>
+template <class P>
+void TViewport<Core>::RttiEnumFields(P p)
+{
+	p(mNormArea);
+	p(mClearFlags);
+	p(mClearColorValue);
+	p(mClearDepthValue);
+	p(mClearStencilValue);
+	p(mTarget);
+}
 
-	Viewport::Viewport(const SPtr<RenderTarget>& target, float x, float y, float width, float height)
-		: TViewport(target, x, y, width, height)
-	{
-	}
+Viewport::Viewport(const SPtr<RenderTarget>& target, float x, float y, float width, float height)
+	: TViewport(target, x, y, width, height)
+{
+}
 
-	void Viewport::SetTarget(const SPtr<RenderTarget>& target)
-	{
-		mTarget = target;
+void Viewport::SetTarget(const SPtr<RenderTarget>& target)
+{
+	mTarget = target;
 
-		MarkDependenciesDirty();
-		MarkCoreDirtyInternal();
-	}
+	MarkDependenciesDirty();
+	MarkCoreDirtyInternal();
+}
 
-	SPtr<ct::Viewport> Viewport::GetCore() const
-	{
-		return std::static_pointer_cast<ct::Viewport>(mCoreSpecific);
-	}
+SPtr<ct::Viewport> Viewport::GetCore() const
+{
+	return std::static_pointer_cast<ct::Viewport>(mCoreSpecific);
+}
 
-	void Viewport::MarkCoreDirtyInternal()
-	{
-		MarkCoreDirty();
-	}
+void Viewport::MarkCoreDirtyInternal()
+{
+	MarkCoreDirty();
+}
 
-	u32 Viewport::GetTargetWidth() const
-	{
-		if(mTarget != nullptr)
-			return mTarget->GetProperties().Width;
+u32 Viewport::GetTargetWidth() const
+{
+	if(mTarget != nullptr)
+		return mTarget->GetProperties().Width;
 
-		return 0;
-	}
+	return 0;
+}
 
-	u32 Viewport::GetTargetHeight() const
-	{
-		if(mTarget != nullptr)
-			return mTarget->GetProperties().Height;
+u32 Viewport::GetTargetHeight() const
+{
+	if(mTarget != nullptr)
+		return mTarget->GetProperties().Height;
 
-		return 0;
-	}
+	return 0;
+}
 
-	SPtr<ct::CoreObject> Viewport::CreateCore() const
-	{
-		SPtr<ct::RenderTarget> targetCore;
-		if(mTarget != nullptr)
-			targetCore = mTarget->GetCore();
+SPtr<ct::CoreObject> Viewport::CreateCore() const
+{
+	SPtr<ct::RenderTarget> targetCore;
+	if(mTarget != nullptr)
+		targetCore = mTarget->GetCore();
 
-		ct::Viewport* viewport = new(bs_alloc<ct::Viewport>())
-			ct::Viewport(targetCore, mNormArea.X, mNormArea.Y, mNormArea.Width, mNormArea.Height);
+	ct::Viewport* viewport = new(bs_alloc<ct::Viewport>())
+		ct::Viewport(targetCore, mNormArea.X, mNormArea.Y, mNormArea.Width, mNormArea.Height);
 
-		SPtr<ct::Viewport> viewportPtr = bs_shared_ptr<ct::Viewport>(viewport);
-		viewportPtr->SetThisPtrInternal(viewportPtr);
+	SPtr<ct::Viewport> viewportPtr = bs_shared_ptr<ct::Viewport>(viewport);
+	viewportPtr->SetThisPtrInternal(viewportPtr);
 
-		return viewportPtr;
-	}
+	return viewportPtr;
+}
 
-	CoreSyncData Viewport::SyncToCore(FrameAlloc* allocator)
-	{
-		u32 size = csync_size(*this);
+CoreSyncData Viewport::SyncToCore(FrameAlloc* allocator)
+{
+	u32 size = csync_size(*this);
 
-		u8* buffer = allocator->Alloc(size);
-		Bitstream stream(buffer, size);
+	u8* buffer = allocator->Alloc(size);
+	Bitstream stream(buffer, size);
 
-		csync_write(*this, stream);
+	csync_write(*this, stream);
 
-		return CoreSyncData(buffer, size);
-	}
+	return CoreSyncData(buffer, size);
+}
 
-	void Viewport::GetCoreDependencies(Vector<CoreObject*>& dependencies)
-	{
-		if(mTarget != nullptr)
-			dependencies.push_back(mTarget.get());
-	}
+void Viewport::GetCoreDependencies(Vector<CoreObject*>& dependencies)
+{
+	if(mTarget != nullptr)
+		dependencies.push_back(mTarget.get());
+}
 
-	SPtr<Viewport> Viewport::Create(const SPtr<RenderTarget>& target, float x, float y, float width, float height)
-	{
-		Viewport* viewport = new(bs_alloc<Viewport>()) Viewport(target, x, y, width, height);
-		SPtr<Viewport> viewportPtr = bs_core_ptr<Viewport>(viewport);
-		viewportPtr->SetThisPtrInternal(viewportPtr);
-		viewportPtr->Initialize();
+SPtr<Viewport> Viewport::Create(const SPtr<RenderTarget>& target, float x, float y, float width, float height)
+{
+	Viewport* viewport = new(bs_alloc<Viewport>()) Viewport(target, x, y, width, height);
+	SPtr<Viewport> viewportPtr = bs_core_ptr<Viewport>(viewport);
+	viewportPtr->SetThisPtrInternal(viewportPtr);
+	viewportPtr->Initialize();
 
-		return viewportPtr;
-	}
+	return viewportPtr;
+}
 
-	SPtr<Viewport> Viewport::CreateEmpty()
-	{
-		Viewport* viewport = new(bs_alloc<Viewport>()) Viewport();
-		SPtr<Viewport> viewportPtr = bs_core_ptr<Viewport>(viewport);
-		viewportPtr->SetThisPtrInternal(viewportPtr);
+SPtr<Viewport> Viewport::CreateEmpty()
+{
+	Viewport* viewport = new(bs_alloc<Viewport>()) Viewport();
+	SPtr<Viewport> viewportPtr = bs_core_ptr<Viewport>(viewport);
+	viewportPtr->SetThisPtrInternal(viewportPtr);
 
-		return viewportPtr;
-	}
+	return viewportPtr;
+}
 
-	RTTITypeBase* Viewport::GetRttiStatic()
-	{
-		return ViewportRTTI::Instance();
-	}
+RTTITypeBase* Viewport::GetRttiStatic()
+{
+	return ViewportRTTI::Instance();
+}
 
-	RTTITypeBase* Viewport::GetRtti() const
-	{
-		return Viewport::GetRttiStatic();
-	}
+RTTITypeBase* Viewport::GetRtti() const
+{
+	return Viewport::GetRttiStatic();
+}
 
-	namespace ct
-	{
-		Viewport::Viewport(const SPtr<RenderTarget>& target, float x, float y, float width, float height)
-			: TViewport(target, x, y, width, height)
-		{}
+namespace ct
+{
+Viewport::Viewport(const SPtr<RenderTarget>& target, float x, float y, float width, float height)
+	: TViewport(target, x, y, width, height)
+{}
 
-		SPtr<Viewport> Viewport::Create(const SPtr<RenderTarget>& target, float x, float y, float width, float height)
-		{
-			Viewport* viewport = new(bs_alloc<Viewport>()) Viewport(target, x, y, width, height);
+SPtr<Viewport> Viewport::Create(const SPtr<RenderTarget>& target, float x, float y, float width, float height)
+{
+	Viewport* viewport = new(bs_alloc<Viewport>()) Viewport(target, x, y, width, height);
 
-			SPtr<Viewport> viewportPtr = bs_shared_ptr<Viewport>(viewport);
-			viewportPtr->SetThisPtrInternal(viewportPtr);
-			viewportPtr->Initialize();
+	SPtr<Viewport> viewportPtr = bs_shared_ptr<Viewport>(viewport);
+	viewportPtr->SetThisPtrInternal(viewportPtr);
+	viewportPtr->Initialize();
 
-			return viewportPtr;
-		}
+	return viewportPtr;
+}
 
-		u32 Viewport::GetTargetWidth() const
-		{
-			if(mTarget != nullptr)
-				return mTarget->GetProperties().Width;
+u32 Viewport::GetTargetWidth() const
+{
+	if(mTarget != nullptr)
+		return mTarget->GetProperties().Width;
 
-			return 0;
-		}
+	return 0;
+}
 
-		u32 Viewport::GetTargetHeight() const
-		{
-			if(mTarget != nullptr)
-				return mTarget->GetProperties().Height;
+u32 Viewport::GetTargetHeight() const
+{
+	if(mTarget != nullptr)
+		return mTarget->GetProperties().Height;
 
-			return 0;
-		}
+	return 0;
+}
 
-		void Viewport::SyncToCore(const CoreSyncData& data)
-		{
-			Bitstream stream(data.GetBuffer(), data.GetBufferSize());
-			csync_read(*this, stream);
-		}
-	} // namespace ct
+void Viewport::SyncToCore(const CoreSyncData& data)
+{
+	Bitstream stream(data.GetBuffer(), data.GetBufferSize());
+	csync_read(*this, stream);
+}
+} // namespace ct
 } // namespace bs

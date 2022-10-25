@@ -13,207 +13,207 @@
 
 namespace bs
 {
-	template <bool Core>
-	TPass<Core>::TPass()
-	{
-		mData.StencilRefValue = 0;
-	}
+template <bool Core>
+TPass<Core>::TPass()
+{
+	mData.StencilRefValue = 0;
+}
 
-	template <bool Core>
-	TPass<Core>::TPass(const PASS_DESC& data)
-		: mData(data)
-	{
-	}
+template <bool Core>
+TPass<Core>::TPass(const PASS_DESC& data)
+	: mData(data)
+{
+}
 
-	template <bool Core>
-	bool TPass<Core>::HasBlending() const
-	{
-		bool transparent = false;
+template <bool Core>
+bool TPass<Core>::HasBlending() const
+{
+	bool transparent = false;
 
-		for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+	for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
+	{
+		// Transparent if destination color is taken into account
+		if(mData.BlendStateDesc.RenderTargetDesc[i].DstBlend != BF_ZERO ||
+		   mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_DEST_COLOR ||
+		   mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_INV_DEST_COLOR ||
+		   mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_DEST_ALPHA ||
+		   mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_INV_DEST_ALPHA)
 		{
-			// Transparent if destination color is taken into account
-			if(mData.BlendStateDesc.RenderTargetDesc[i].DstBlend != BF_ZERO ||
-			   mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_DEST_COLOR ||
-			   mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_INV_DEST_COLOR ||
-			   mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_DEST_ALPHA ||
-			   mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_INV_DEST_ALPHA)
-			{
-				transparent = true;
-			}
-		}
-
-		return transparent;
-	}
-
-	template <bool Core>
-	const GPU_PROGRAM_DESC& TPass<Core>::GetProgramDesc(bs::GpuProgramType type) const
-	{
-		switch(type)
-		{
-		default:
-		case GPT_VERTEX_PROGRAM:
-			return mData.VertexProgramDesc;
-		case GPT_FRAGMENT_PROGRAM:
-			return mData.FragmentProgramDesc;
-		case GPT_GEOMETRY_PROGRAM:
-			return mData.GeometryProgramDesc;
-		case GPT_HULL_PROGRAM:
-			return mData.HullProgramDesc;
-		case GPT_DOMAIN_PROGRAM:
-			return mData.DomainProgramDesc;
-		case GPT_COMPUTE_PROGRAM:
-			return mData.ComputeProgramDesc;
+			transparent = true;
 		}
 	}
 
-	template <bool Core>
-	void TPass<Core>::CreatePipelineState()
+	return transparent;
+}
+
+template <bool Core>
+const GPU_PROGRAM_DESC& TPass<Core>::GetProgramDesc(bs::GpuProgramType type) const
+{
+	switch(type)
 	{
-		if(IsCompute())
-		{
-			SPtr<GpuProgramType> program = GpuProgramType::Create(mData.ComputeProgramDesc);
-			mComputePipelineState = ComputePipelineStateType::Create(program);
-		}
-		else
-		{
-			PipelineStateDescType desc;
-
-			if(!mData.VertexProgramDesc.Source.empty())
-				desc.VertexProgram = GpuProgramType::Create(mData.VertexProgramDesc);
-
-			if(!mData.FragmentProgramDesc.Source.empty())
-				desc.FragmentProgram = GpuProgramType::Create(mData.FragmentProgramDesc);
-
-			if(!mData.GeometryProgramDesc.Source.empty())
-				desc.GeometryProgram = GpuProgramType::Create(mData.GeometryProgramDesc);
-
-			if(!mData.HullProgramDesc.Source.empty())
-				desc.HullProgram = GpuProgramType::Create(mData.HullProgramDesc);
-
-			if(!mData.DomainProgramDesc.Source.empty())
-				desc.DomainProgram = GpuProgramType::Create(mData.DomainProgramDesc);
-
-			desc.BlendState = BlendStateType::Create(mData.BlendStateDesc);
-			desc.RasterizerState = RasterizerStateType::Create(mData.RasterizerStateDesc);
-			desc.DepthStencilState = DepthStencilStateType::Create(mData.DepthStencilStateDesc);
-
-			mGraphicsPipelineState = GraphicsPipelineStateType::Create(desc);
-		}
+	default:
+	case GPT_VERTEX_PROGRAM:
+		return mData.VertexProgramDesc;
+	case GPT_FRAGMENT_PROGRAM:
+		return mData.FragmentProgramDesc;
+	case GPT_GEOMETRY_PROGRAM:
+		return mData.GeometryProgramDesc;
+	case GPT_HULL_PROGRAM:
+		return mData.HullProgramDesc;
+	case GPT_DOMAIN_PROGRAM:
+		return mData.DomainProgramDesc;
+	case GPT_COMPUTE_PROGRAM:
+		return mData.ComputeProgramDesc;
 	}
+}
 
-	template <bool Core>
-	template <class P>
-	void TPass<Core>::RttiEnumFields(P p)
+template <bool Core>
+void TPass<Core>::CreatePipelineState()
+{
+	if(IsCompute())
 	{
-		p(mGraphicsPipelineState);
-		p(mComputePipelineState);
+		SPtr<GpuProgramType> program = GpuProgramType::Create(mData.ComputeProgramDesc);
+		mComputePipelineState = ComputePipelineStateType::Create(program);
 	}
-
-	template class TPass<false>;
-	template class TPass<true>;
-
-	Pass::Pass(const PASS_DESC& desc)
-		: TPass(desc)
-	{}
-
-	SPtr<ct::Pass> Pass::GetCore() const
+	else
 	{
-		return std::static_pointer_cast<ct::Pass>(mCoreSpecific);
+		PipelineStateDescType desc;
+
+		if(!mData.VertexProgramDesc.Source.empty())
+			desc.VertexProgram = GpuProgramType::Create(mData.VertexProgramDesc);
+
+		if(!mData.FragmentProgramDesc.Source.empty())
+			desc.FragmentProgram = GpuProgramType::Create(mData.FragmentProgramDesc);
+
+		if(!mData.GeometryProgramDesc.Source.empty())
+			desc.GeometryProgram = GpuProgramType::Create(mData.GeometryProgramDesc);
+
+		if(!mData.HullProgramDesc.Source.empty())
+			desc.HullProgram = GpuProgramType::Create(mData.HullProgramDesc);
+
+		if(!mData.DomainProgramDesc.Source.empty())
+			desc.DomainProgram = GpuProgramType::Create(mData.DomainProgramDesc);
+
+		desc.BlendState = BlendStateType::Create(mData.BlendStateDesc);
+		desc.RasterizerState = RasterizerStateType::Create(mData.RasterizerStateDesc);
+		desc.DepthStencilState = DepthStencilStateType::Create(mData.DepthStencilStateDesc);
+
+		mGraphicsPipelineState = GraphicsPipelineStateType::Create(desc);
 	}
+}
 
-	SPtr<ct::CoreObject> Pass::CreateCore() const
-	{
-		ct::Pass* pass = new(bs_alloc<ct::Pass>()) ct::Pass(mData);
+template <bool Core>
+template <class P>
+void TPass<Core>::RttiEnumFields(P p)
+{
+	p(mGraphicsPipelineState);
+	p(mComputePipelineState);
+}
 
-		SPtr<ct::Pass> passPtr = bs_shared_ptr(pass);
-		passPtr->SetThisPtrInternal(passPtr);
+template class TPass<false>;
+template class TPass<true>;
 
-		return passPtr;
-	}
+Pass::Pass(const PASS_DESC& desc)
+	: TPass(desc)
+{}
 
-	void Pass::Compile()
-	{
-		if(mComputePipelineState || mGraphicsPipelineState)
-			return; // Already compiled
+SPtr<ct::Pass> Pass::GetCore() const
+{
+	return std::static_pointer_cast<ct::Pass>(mCoreSpecific);
+}
 
-		// Note: It's possible (and quite likely) the pass has already been compiled on the core thread, so this will
-		// unnecessarily recompile it. However syncing them in a clean way is not trivial hard and this method is currently
-		// not being used much (at all) to warrant a complex solution. Something to keep in mind for later though.
-		CreatePipelineState();
+SPtr<ct::CoreObject> Pass::CreateCore() const
+{
+	ct::Pass* pass = new(bs_alloc<ct::Pass>()) ct::Pass(mData);
 
-		MarkCoreDirty();
-		CoreObject::SyncToCore();
-	}
+	SPtr<ct::Pass> passPtr = bs_shared_ptr(pass);
+	passPtr->SetThisPtrInternal(passPtr);
 
-	CoreSyncData Pass::SyncToCore(FrameAlloc* allocator)
-	{
-		u32 size = csync_size(*this);
-		u8* data = allocator->Alloc(size);
+	return passPtr;
+}
 
-		Bitstream stream(data, size);
-		csync_write(*this, stream);
+void Pass::Compile()
+{
+	if(mComputePipelineState || mGraphicsPipelineState)
+		return; // Already compiled
 
-		return CoreSyncData(data, size);
-	}
+	// Note: It's possible (and quite likely) the pass has already been compiled on the core thread, so this will
+	// unnecessarily recompile it. However syncing them in a clean way is not trivial hard and this method is currently
+	// not being used much (at all) to warrant a complex solution. Something to keep in mind for later though.
+	CreatePipelineState();
 
-	SPtr<Pass> Pass::Create(const PASS_DESC& desc)
-	{
-		Pass* newPass = new(bs_alloc<Pass>()) Pass(desc);
-		SPtr<Pass> newPassPtr = bs_core_ptr<Pass>(newPass);
-		newPassPtr->SetThisPtrInternal(newPassPtr);
-		newPassPtr->Initialize();
+	MarkCoreDirty();
+	CoreObject::SyncToCore();
+}
 
-		return newPassPtr;
-	}
+CoreSyncData Pass::SyncToCore(FrameAlloc* allocator)
+{
+	u32 size = csync_size(*this);
+	u8* data = allocator->Alloc(size);
 
-	SPtr<Pass> Pass::CreateEmpty()
-	{
-		Pass* newPass = new(bs_alloc<Pass>()) Pass();
-		SPtr<Pass> newPassPtr = bs_core_ptr<Pass>(newPass);
-		newPassPtr->SetThisPtrInternal(newPassPtr);
+	Bitstream stream(data, size);
+	csync_write(*this, stream);
 
-		return newPassPtr;
-	}
+	return CoreSyncData(data, size);
+}
 
-	RTTITypeBase* Pass::GetRttiStatic()
-	{
-		return PassRTTI::Instance();
-	}
+SPtr<Pass> Pass::Create(const PASS_DESC& desc)
+{
+	Pass* newPass = new(bs_alloc<Pass>()) Pass(desc);
+	SPtr<Pass> newPassPtr = bs_core_ptr<Pass>(newPass);
+	newPassPtr->SetThisPtrInternal(newPassPtr);
+	newPassPtr->Initialize();
 
-	RTTITypeBase* Pass::GetRtti() const
-	{
-		return Pass::GetRttiStatic();
-	}
+	return newPassPtr;
+}
 
-	namespace ct
-	{
-		Pass::Pass(const PASS_DESC& desc)
-			: TPass(desc)
-		{}
+SPtr<Pass> Pass::CreateEmpty()
+{
+	Pass* newPass = new(bs_alloc<Pass>()) Pass();
+	SPtr<Pass> newPassPtr = bs_core_ptr<Pass>(newPass);
+	newPassPtr->SetThisPtrInternal(newPassPtr);
 
-		void Pass::Compile()
-		{
-			if(mComputePipelineState || mGraphicsPipelineState)
-				return; // Already compiled
+	return newPassPtr;
+}
 
-			CreatePipelineState();
-		}
+RTTITypeBase* Pass::GetRttiStatic()
+{
+	return PassRTTI::Instance();
+}
 
-		void Pass::SyncToCore(const CoreSyncData& data)
-		{
-			Bitstream stream(data.GetBuffer(), data.GetBufferSize());
-			csync_read(*this, stream);
-		}
+RTTITypeBase* Pass::GetRtti() const
+{
+	return Pass::GetRttiStatic();
+}
 
-		SPtr<Pass> Pass::Create(const PASS_DESC& desc)
-		{
-			Pass* newPass = new(bs_alloc<Pass>()) Pass(desc);
-			SPtr<Pass> newPassPtr = bs_shared_ptr<Pass>(newPass);
-			newPassPtr->SetThisPtrInternal(newPassPtr);
-			newPassPtr->Initialize();
+namespace ct
+{
+Pass::Pass(const PASS_DESC& desc)
+	: TPass(desc)
+{}
 
-			return newPassPtr;
-		}
-	} // namespace ct
+void Pass::Compile()
+{
+	if(mComputePipelineState || mGraphicsPipelineState)
+		return; // Already compiled
+
+	CreatePipelineState();
+}
+
+void Pass::SyncToCore(const CoreSyncData& data)
+{
+	Bitstream stream(data.GetBuffer(), data.GetBufferSize());
+	csync_read(*this, stream);
+}
+
+SPtr<Pass> Pass::Create(const PASS_DESC& desc)
+{
+	Pass* newPass = new(bs_alloc<Pass>()) Pass(desc);
+	SPtr<Pass> newPassPtr = bs_shared_ptr<Pass>(newPass);
+	newPassPtr->SetThisPtrInternal(newPassPtr);
+	newPassPtr->Initialize();
+
+	return newPassPtr;
+}
+} // namespace ct
 } // namespace bs

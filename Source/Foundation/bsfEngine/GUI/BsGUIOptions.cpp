@@ -4,56 +4,56 @@
 
 namespace bs
 {
-	GUIOption GUIOption::Position(i32 x, i32 y)
-	{
-		GUIOption option;
+GUIOption GUIOption::Position(i32 x, i32 y)
+{
+	GUIOption option;
 
-		option.min = (u32)x;
-		option.max = (u32)y;
-		option.type = Type::Position;
+	option.min = (u32)x;
+	option.max = (u32)y;
+	option.type = Type::Position;
 
-		return option;
-	}
+	return option;
+}
 
-	GUIOption GUIOption::FixedWidth(u32 value)
-	{
-		GUIOption option;
+GUIOption GUIOption::FixedWidth(u32 value)
+{
+	GUIOption option;
 
-		option.min = option.max = value;
-		option.type = Type::FixedWidth;
+	option.min = option.max = value;
+	option.type = Type::FixedWidth;
 
-		return option;
-	}
+	return option;
+}
 
-	GUIOption GUIOption::FlexibleWidth(u32 min, u32 max)
-	{
-		GUIOption option;
+GUIOption GUIOption::FlexibleWidth(u32 min, u32 max)
+{
+	GUIOption option;
 
-		option.min = min;
-		option.max = max;
-		option.type = Type::FlexibleWidth;
+	option.min = min;
+	option.max = max;
+	option.type = Type::FlexibleWidth;
 
-		return option;
-	}
+	return option;
+}
 
-	GUIOption GUIOption::FixedHeight(u32 value)
-	{
-		GUIOption option;
+GUIOption GUIOption::FixedHeight(u32 value)
+{
+	GUIOption option;
 
-		option.min = option.max = value;
-		option.type = Type::FixedHeight;
+	option.min = option.max = value;
+	option.type = Type::FixedHeight;
 
-		return option;
-	}
+	return option;
+}
 
-	GUIOption GUIOption::FlexibleHeight(u32 min, u32 max)
-	{
-		GUIOption option;
+GUIOption GUIOption::FlexibleHeight(u32 min, u32 max)
+{
+	GUIOption option;
 
-		option.min = min;
-		option.max = max;
-		option.type = Type::FlexibleHeight;
+	option.min = min;
+	option.max = max;
+	option.type = Type::FlexibleHeight;
 
-		return option;
-	}
+	return option;
+}
 } // namespace bs

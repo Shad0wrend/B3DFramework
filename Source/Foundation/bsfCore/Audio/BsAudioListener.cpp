@@ -6,23 +6,23 @@
 
 namespace bs
 {
-	void AudioListener::SetVelocity(const Vector3& velocity)
-	{
-		mVelocity = velocity;
-	}
+void AudioListener::SetVelocity(const Vector3& velocity)
+{
+	mVelocity = velocity;
+}
 
-	SPtr<AudioListener> AudioListener::Create()
-	{
-		return gAudio().CreateListener();
-	}
+SPtr<AudioListener> AudioListener::Create()
+{
+	return gAudio().CreateListener();
+}
 
-	RTTITypeBase* AudioListener::GetRttiStatic()
-	{
-		return AudioListenerRTTI::Instance();
-	}
+RTTITypeBase* AudioListener::GetRttiStatic()
+{
+	return AudioListenerRTTI::Instance();
+}
 
-	RTTITypeBase* AudioListener::GetRtti() const
-	{
-		return AudioListener::GetRttiStatic();
-	}
+RTTITypeBase* AudioListener::GetRtti() const
+{
+	return AudioListener::GetRttiStatic();
+}
 } // namespace bs

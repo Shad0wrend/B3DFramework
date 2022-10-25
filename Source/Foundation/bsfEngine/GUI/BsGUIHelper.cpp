@@ -9,70 +9,70 @@
 
 namespace bs
 {
-	Vector2I GUIHelper::CalcOptimalContentsSize(const Vector2I& contentSize, const GUIElementStyle& style, const GUIDimensions& dimensions)
-	{
-		u32 contentWidth = style.Margins.Left + style.Margins.Right + style.ContentOffset.Left + style.ContentOffset.Right;
-		u32 contentHeight = style.Margins.Top + style.Margins.Bottom + style.ContentOffset.Top + style.ContentOffset.Bottom;
+Vector2I GUIHelper::CalcOptimalContentsSize(const Vector2I& contentSize, const GUIElementStyle& style, const GUIDimensions& dimensions)
+{
+	u32 contentWidth = style.Margins.Left + style.Margins.Right + style.ContentOffset.Left + style.ContentOffset.Right;
+	u32 contentHeight = style.Margins.Top + style.Margins.Bottom + style.ContentOffset.Top + style.ContentOffset.Bottom;
 
-		return Vector2I(std::max((u32)contentSize.X, contentWidth), std::max((u32)contentSize.Y, contentHeight));
+	return Vector2I(std::max((u32)contentSize.X, contentWidth), std::max((u32)contentSize.Y, contentHeight));
+}
+
+Vector2I GUIHelper::CalcOptimalContentsSize(const GUIContent& content, const GUIElementStyle& style, const GUIDimensions& dimensions, GUIElementState state)
+{
+	Vector2I contentBounds = CalcOptimalContentsSize((const String&)content.Text, style, dimensions);
+
+	const HSpriteTexture& image = content.GetImage(state);
+	if(SpriteTexture::CheckIsLoaded(image))
+	{
+		contentBounds.X += image->GetWidth() + GUIContent::IMAGE_TEXT_SPACING;
+		contentBounds.Y = std::max(image->GetHeight(), (u32)contentBounds.Y);
 	}
 
-	Vector2I GUIHelper::CalcOptimalContentsSize(const GUIContent& content, const GUIElementStyle& style, const GUIDimensions& dimensions, GUIElementState state)
+	return contentBounds;
+}
+
+Vector2I GUIHelper::CalcOptimalContentsSize(const String& text, const GUIElementStyle& style, const GUIDimensions& dimensions)
+{
+	u32 wordWrapWidth = 0;
+
+	if(style.WordWrap)
+		wordWrapWidth = dimensions.MaxWidth;
+
+	u32 contentWidth = style.Margins.Left + style.Margins.Right + style.ContentOffset.Left + style.ContentOffset.Right;
+	u32 contentHeight = style.Margins.Top + style.Margins.Bottom + style.ContentOffset.Top + style.ContentOffset.Bottom;
+
+	if(style.Font != nullptr && !text.empty())
 	{
-		Vector2I contentBounds = CalcOptimalContentsSize((const String&)content.Text, style, dimensions);
+		bs_frame_mark();
 
-		const HSpriteTexture& image = content.GetImage(state);
-		if(SpriteTexture::CheckIsLoaded(image))
-		{
-			contentBounds.X += image->GetWidth() + GUIContent::IMAGE_TEXT_SPACING;
-			contentBounds.Y = std::max(image->GetHeight(), (u32)contentBounds.Y);
-		}
+		const U32String utf32text = UTF8::ToUtF32(text);
+		TextData<FrameAlloc> textData(utf32text, style.Font, style.FontSize, wordWrapWidth, 0, style.WordWrap);
 
-		return contentBounds;
+		contentWidth += textData.GetWidth();
+		contentHeight += textData.GetNumLines() * textData.GetLineHeight();
+
+		bs_frame_clear();
 	}
 
-	Vector2I GUIHelper::CalcOptimalContentsSize(const String& text, const GUIElementStyle& style, const GUIDimensions& dimensions)
+	return Vector2I(contentWidth, contentHeight);
+}
+
+Vector2I GUIHelper::CalcTextSize(const String& text, const HFont& font, u32 fontSize)
+{
+	Vector2I size;
+	if(font != nullptr)
 	{
-		u32 wordWrapWidth = 0;
+		bs_frame_mark();
 
-		if(style.WordWrap)
-			wordWrapWidth = dimensions.MaxWidth;
+		const U32String utf32text = UTF8::ToUtF32(text);
+		TextData<FrameAlloc> textData(utf32text, font, fontSize, 0, 0, false);
 
-		u32 contentWidth = style.Margins.Left + style.Margins.Right + style.ContentOffset.Left + style.ContentOffset.Right;
-		u32 contentHeight = style.Margins.Top + style.Margins.Bottom + style.ContentOffset.Top + style.ContentOffset.Bottom;
+		size.X = textData.GetWidth();
+		size.Y = textData.GetNumLines() * textData.GetLineHeight();
 
-		if(style.Font != nullptr && !text.empty())
-		{
-			bs_frame_mark();
-
-			const U32String utf32text = UTF8::ToUtF32(text);
-			TextData<FrameAlloc> textData(utf32text, style.Font, style.FontSize, wordWrapWidth, 0, style.WordWrap);
-
-			contentWidth += textData.GetWidth();
-			contentHeight += textData.GetNumLines() * textData.GetLineHeight();
-
-			bs_frame_clear();
-		}
-
-		return Vector2I(contentWidth, contentHeight);
+		bs_frame_clear();
 	}
 
-	Vector2I GUIHelper::CalcTextSize(const String& text, const HFont& font, u32 fontSize)
-	{
-		Vector2I size;
-		if(font != nullptr)
-		{
-			bs_frame_mark();
-
-			const U32String utf32text = UTF8::ToUtF32(text);
-			TextData<FrameAlloc> textData(utf32text, font, fontSize, 0, 0, false);
-
-			size.X = textData.GetWidth();
-			size.Y = textData.GetNumLines() * textData.GetLineHeight();
-
-			bs_frame_clear();
-		}
-
-		return size;
-	}
+	return size;
+}
 } // namespace bs

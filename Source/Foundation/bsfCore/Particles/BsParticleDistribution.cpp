@@ -4,156 +4,156 @@
 
 namespace bs
 {
-	template <class T>
-	void addToVector(const T& val, Vector<float>& output)
+template <class T>
+void addToVector(const T& val, Vector<float>& output)
+{
+	output.push_back(val);
+}
+
+template <>
+void addToVector(const Vector3& val, Vector<float>& output)
+{
+	output.push_back(val.X);
+	output.push_back(val.Y);
+	output.push_back(val.Z);
+}
+
+template <>
+void addToVector(const Vector2& val, Vector<float>& output)
+{
+	output.push_back(val.X);
+	output.push_back(val.Y);
+}
+
+template <>
+void addToVector(const Color& val, Vector<float>& output)
+{
+	output.push_back(val.R);
+	output.push_back(val.G);
+	output.push_back(val.B);
+	output.push_back(val.A);
+}
+
+template <class T>
+LookupTable TColorDistribution<T>::ToLookupTable(u32 numSamples, bool ignoreRange) const
+{
+	numSamples = std::max(1U, numSamples);
+
+	Vector<float> values;
+	float minT = 0.0f;
+	float maxT = 1.0f;
+
+	const bool useRange = (mType == PDT_RandomRange || mType == PDT_RandomCurveRange) && !ignoreRange;
+
+	switch(mType)
 	{
-		output.push_back(val);
-	}
-
-	template <>
-	void addToVector(const Vector3& val, Vector<float>& output)
-	{
-		output.push_back(val.X);
-		output.push_back(val.Y);
-		output.push_back(val.Z);
-	}
-
-	template <>
-	void addToVector(const Vector2& val, Vector<float>& output)
-	{
-		output.push_back(val.X);
-		output.push_back(val.Y);
-	}
-
-	template <>
-	void addToVector(const Color& val, Vector<float>& output)
-	{
-		output.push_back(val.R);
-		output.push_back(val.G);
-		output.push_back(val.B);
-		output.push_back(val.A);
-	}
-
-	template <class T>
-	LookupTable TColorDistribution<T>::ToLookupTable(u32 numSamples, bool ignoreRange) const
-	{
-		numSamples = std::max(1U, numSamples);
-
-		Vector<float> values;
-		float minT = 0.0f;
-		float maxT = 1.0f;
-
-		const bool useRange = (mType == PDT_RandomRange || mType == PDT_RandomCurveRange) && !ignoreRange;
-
-		switch(mType)
+	default:
+	case PDT_Constant:
+	case PDT_RandomRange:
 		{
-		default:
-		case PDT_Constant:
-		case PDT_RandomRange:
-			{
-				addToVector(GetMinConstant(), values);
-
-				if(useRange)
-					addToVector(GetMaxConstant(), values);
-			}
-			break;
-		case PDT_Curve:
-		case PDT_RandomCurveRange:
-			{
-				const std::pair<float, float> minCurveRange = mMinGradient.GetTimeRange();
-				minT = minCurveRange.first;
-				maxT = minCurveRange.second;
-
-				if(useRange)
-				{
-					const std::pair<float, float> maxCurveRange = mMaxGradient.GetTimeRange();
-					minT = std::min(minT, maxCurveRange.first);
-					maxT = std::max(maxT, maxCurveRange.second);
-				}
-
-				float sampleInterval = 0.0f;
-				if(numSamples > 1)
-					sampleInterval = (maxT - minT) / (numSamples - 1);
-
-				float t = minT;
-				for(u32 i = 0; i < numSamples; i++)
-				{
-					addToVector(impl::TGradientHelper<typename T::ColorType>::FromInternalColor(mMinGradient.Evaluate(t)), values);
-
-					if(useRange)
-						addToVector(impl::TGradientHelper<typename T::ColorType>::FromInternalColor(mMaxGradient.Evaluate(t)), values);
-
-					t += sampleInterval;
-				}
-			}
-		}
-
-		return LookupTable(std::move(values), minT, maxT, sizeof(Color) / sizeof(float));
-	}
-
-	template struct BS_CORE_EXPORT TColorDistribution<ColorGradient>;
-	template struct BS_CORE_EXPORT TColorDistribution<ColorGradientHDR>;
-
-	template <class T>
-	LookupTable TDistribution<T>::ToLookupTable(u32 numSamples, bool ignoreRange) const
-	{
-		numSamples = std::max(1U, numSamples);
-
-		Vector<float> values;
-		float minT = 0.0f;
-		float maxT = 1.0f;
-
-		const bool useRange = (mType == PDT_RandomRange || mType == PDT_RandomCurveRange) && !ignoreRange;
-
-		switch(mType)
-		{
-		default:
-		case PDT_Constant:
-		case PDT_RandomRange:
 			addToVector(GetMinConstant(), values);
 
 			if(useRange)
 				addToVector(GetMaxConstant(), values);
-			break;
-		case PDT_Curve:
-		case PDT_RandomCurveRange:
+		}
+		break;
+	case PDT_Curve:
+	case PDT_RandomCurveRange:
+		{
+			const std::pair<float, float> minCurveRange = mMinGradient.GetTimeRange();
+			minT = minCurveRange.first;
+			maxT = minCurveRange.second;
+
+			if(useRange)
 			{
-				const std::pair<float, float> minCurveRange = mMinCurve.GetTimeRange();
-				minT = minCurveRange.first;
-				maxT = minCurveRange.second;
+				const std::pair<float, float> maxCurveRange = mMaxGradient.GetTimeRange();
+				minT = std::min(minT, maxCurveRange.first);
+				maxT = std::max(maxT, maxCurveRange.second);
+			}
+
+			float sampleInterval = 0.0f;
+			if(numSamples > 1)
+				sampleInterval = (maxT - minT) / (numSamples - 1);
+
+			float t = minT;
+			for(u32 i = 0; i < numSamples; i++)
+			{
+				addToVector(impl::TGradientHelper<typename T::ColorType>::FromInternalColor(mMinGradient.Evaluate(t)), values);
+
+				if(useRange)
+					addToVector(impl::TGradientHelper<typename T::ColorType>::FromInternalColor(mMaxGradient.Evaluate(t)), values);
+
+				t += sampleInterval;
+			}
+		}
+	}
+
+	return LookupTable(std::move(values), minT, maxT, sizeof(Color) / sizeof(float));
+}
+
+template struct BS_CORE_EXPORT TColorDistribution<ColorGradient>;
+template struct BS_CORE_EXPORT TColorDistribution<ColorGradientHDR>;
+
+template <class T>
+LookupTable TDistribution<T>::ToLookupTable(u32 numSamples, bool ignoreRange) const
+{
+	numSamples = std::max(1U, numSamples);
+
+	Vector<float> values;
+	float minT = 0.0f;
+	float maxT = 1.0f;
+
+	const bool useRange = (mType == PDT_RandomRange || mType == PDT_RandomCurveRange) && !ignoreRange;
+
+	switch(mType)
+	{
+	default:
+	case PDT_Constant:
+	case PDT_RandomRange:
+		addToVector(GetMinConstant(), values);
+
+		if(useRange)
+			addToVector(GetMaxConstant(), values);
+		break;
+	case PDT_Curve:
+	case PDT_RandomCurveRange:
+		{
+			const std::pair<float, float> minCurveRange = mMinCurve.GetTimeRange();
+			minT = minCurveRange.first;
+			maxT = minCurveRange.second;
+
+			if(useRange)
+			{
+				const std::pair<float, float> maxCurveRange = mMaxCurve.GetTimeRange();
+				minT = std::min(minT, maxCurveRange.first);
+				maxT = std::max(maxT, maxCurveRange.second);
+			}
+
+			float sampleInterval = 0.0f;
+			if(numSamples > 1)
+				sampleInterval = (maxT - minT) / (numSamples - 1);
+
+			float t = minT;
+			for(u32 i = 0; i < numSamples; i++)
+			{
+				T value = mMinCurve.Evaluate(t);
+				addToVector(value, values);
 
 				if(useRange)
 				{
-					const std::pair<float, float> maxCurveRange = mMaxCurve.GetTimeRange();
-					minT = std::min(minT, maxCurveRange.first);
-					maxT = std::max(maxT, maxCurveRange.second);
-				}
-
-				float sampleInterval = 0.0f;
-				if(numSamples > 1)
-					sampleInterval = (maxT - minT) / (numSamples - 1);
-
-				float t = minT;
-				for(u32 i = 0; i < numSamples; i++)
-				{
-					T value = mMinCurve.Evaluate(t);
+					value = mMaxCurve.Evaluate(t);
 					addToVector(value, values);
-
-					if(useRange)
-					{
-						value = mMaxCurve.Evaluate(t);
-						addToVector(value, values);
-					}
-
-					t += sampleInterval;
 				}
+
+				t += sampleInterval;
 			}
 		}
-
-		return LookupTable(std::move(values), minT, maxT, sizeof(T) / sizeof(float));
 	}
 
-	template struct BS_CORE_EXPORT TDistribution<float>;
-	template struct BS_CORE_EXPORT TDistribution<Vector3>;
-	template struct BS_CORE_EXPORT TDistribution<Vector2>;
+	return LookupTable(std::move(values), minT, maxT, sizeof(T) / sizeof(float));
+}
+
+template struct BS_CORE_EXPORT TDistribution<float>;
+template struct BS_CORE_EXPORT TDistribution<Vector3>;
+template struct BS_CORE_EXPORT TDistribution<Vector2>;
 } // namespace bs

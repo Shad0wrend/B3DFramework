@@ -5,57 +5,57 @@
 
 namespace bs
 {
-	namespace ct
+namespace ct
+{
+Signal CoreObject::mCoreGpuObjectLoadedCondition;
+Mutex CoreObject::mCoreGpuObjectLoadedMutex;
+
+CoreObject::CoreObject()
+	: mFlags(0)
+{}
+
+CoreObject::~CoreObject()
+{
+	THROW_IF_NOT_CORE_THREAD;
+}
+
+void CoreObject::Initialize()
+{
 	{
-		Signal CoreObject::mCoreGpuObjectLoadedCondition;
-		Mutex CoreObject::mCoreGpuObjectLoadedMutex;
+		Lock lock(mCoreGpuObjectLoadedMutex);
+		SetIsInitialized(true);
+	}
 
-		CoreObject::CoreObject()
-			: mFlags(0)
-		{}
+	SetScheduledToBeInitialized(false);
 
-		CoreObject::~CoreObject()
-		{
-			THROW_IF_NOT_CORE_THREAD;
-		}
+	mCoreGpuObjectLoadedCondition.notify_all();
+}
 
-		void CoreObject::Initialize()
-		{
-			{
-				Lock lock(mCoreGpuObjectLoadedMutex);
-				SetIsInitialized(true);
-			}
-
-			SetScheduledToBeInitialized(false);
-
-			mCoreGpuObjectLoadedCondition.notify_all();
-		}
-
-		void CoreObject::Synchronize()
-		{
-			if(!IsInitialized())
-			{
+void CoreObject::Synchronize()
+{
+	if(!IsInitialized())
+	{
 #if BS_DEBUG_MODE
-				if(BS_THREAD_CURRENT_ID == CoreThread::Instance().GetCoreThreadId())
-					BS_EXCEPT(InternalErrorException, "You cannot call this method on the core thread. It will cause a deadlock!");
+		if(BS_THREAD_CURRENT_ID == CoreThread::Instance().GetCoreThreadId())
+			BS_EXCEPT(InternalErrorException, "You cannot call this method on the core thread. It will cause a deadlock!");
 #endif
 
-				gCoreThread().SubmitAll(true);
+		gCoreThread().SubmitAll(true);
 
-				Lock lock(mCoreGpuObjectLoadedMutex);
-				while(!IsInitialized())
-				{
-					if(!IsScheduledToBeInitialized())
-						BS_EXCEPT(InternalErrorException, "Attempting to wait until initialization finishes but object is not scheduled to be initialized.");
-
-					mCoreGpuObjectLoadedCondition.wait(lock);
-				}
-			}
-		}
-
-		void CoreObject::SetThisPtrInternal(SPtr<CoreObject> ptrThis)
+		Lock lock(mCoreGpuObjectLoadedMutex);
+		while(!IsInitialized())
 		{
-			mThis = ptrThis;
+			if(!IsScheduledToBeInitialized())
+				BS_EXCEPT(InternalErrorException, "Attempting to wait until initialization finishes but object is not scheduled to be initialized.");
+
+			mCoreGpuObjectLoadedCondition.wait(lock);
 		}
-	} // namespace ct
+	}
+}
+
+void CoreObject::SetThisPtrInternal(SPtr<CoreObject> ptrThis)
+{
+	mThis = ptrThis;
+}
+} // namespace ct
 } // namespace bs

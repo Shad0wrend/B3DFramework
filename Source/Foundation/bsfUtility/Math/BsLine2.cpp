@@ -5,20 +5,20 @@
 
 namespace bs
 {
-	std::pair<bool, float> Line2::Intersects(const Line2& rhs) const
+std::pair<bool, float> Line2::Intersects(const Line2& rhs) const
+{
+	Vector2 diff = rhs.GetOrigin() - GetOrigin();
+	Vector2 perpDir = rhs.GetDirection();
+	perpDir = Vector2(perpDir.Y, -perpDir.X);
+
+	float dot = GetDirection().Dot(perpDir);
+	if(std::abs(dot) > 1.0e-4f) // Not parallel
 	{
-		Vector2 diff = rhs.GetOrigin() - GetOrigin();
-		Vector2 perpDir = rhs.GetDirection();
-		perpDir = Vector2(perpDir.Y, -perpDir.X);
+		float distance = diff.Dot(perpDir) / dot;
 
-		float dot = GetDirection().Dot(perpDir);
-		if(std::abs(dot) > 1.0e-4f) // Not parallel
-		{
-			float distance = diff.Dot(perpDir) / dot;
-
-			return std::make_pair(true, distance);
-		}
-		else // Parallel
-			return std::make_pair(true, 0.0f);
+		return std::make_pair(true, distance);
 	}
+	else // Parallel
+		return std::make_pair(true, 0.0f);
+}
 } // namespace bs

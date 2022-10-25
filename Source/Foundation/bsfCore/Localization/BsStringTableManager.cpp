@@ -4,44 +4,44 @@
 
 namespace bs
 {
-	void StringTableManager::SetActiveLanguage(Language language)
+void StringTableManager::SetActiveLanguage(Language language)
+{
+	if(language != mActiveLanguage)
 	{
-		if(language != mActiveLanguage)
-		{
-			mActiveLanguage = language;
+		mActiveLanguage = language;
 
-			for(auto& tablePair : mTables)
-				tablePair.second->SetActiveLanguage(language);
-		}
+		for(auto& tablePair : mTables)
+			tablePair.second->SetActiveLanguage(language);
 	}
+}
 
-	HStringTable StringTableManager::GetTable(u32 id)
-	{
-		auto iterFind = mTables.find(id);
-		if(iterFind != mTables.end())
-			return iterFind->second;
+HStringTable StringTableManager::GetTable(u32 id)
+{
+	auto iterFind = mTables.find(id);
+	if(iterFind != mTables.end())
+		return iterFind->second;
 
-		HStringTable newTable = StringTable::Create();
-		SetTable(id, newTable);
+	HStringTable newTable = StringTable::Create();
+	SetTable(id, newTable);
 
-		return newTable;
-	}
+	return newTable;
+}
 
-	void StringTableManager::RemoveTable(u32 id)
-	{
-		mTables.erase(id);
-	}
+void StringTableManager::RemoveTable(u32 id)
+{
+	mTables.erase(id);
+}
 
-	void StringTableManager::SetTable(u32 id, const HStringTable& table)
-	{
-		mTables[id] = table;
+void StringTableManager::SetTable(u32 id, const HStringTable& table)
+{
+	mTables[id] = table;
 
-		if(table != nullptr)
-			table->SetActiveLanguage(mActiveLanguage);
-	}
+	if(table != nullptr)
+		table->SetActiveLanguage(mActiveLanguage);
+}
 
-	StringTableManager& gStringTableManager()
-	{
-		return StringTableManager::Instance();
-	}
+StringTableManager& gStringTableManager()
+{
+	return StringTableManager::Instance();
+}
 } // namespace bs

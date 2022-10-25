@@ -4,5 +4,5 @@
 
 namespace bs
 {
-	const Vector2I Vector2I::ZERO(0, 0);
+const Vector2I Vector2I::ZERO(0, 0);
 }

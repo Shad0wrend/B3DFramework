@@ -13,223 +13,223 @@
 
 namespace bs
 {
-	/** Define a stub 'entry-point' required by ICU. **/
-	typedef struct
-	{
-		uint16_t headerSize;
-		uint8_t magic1, magic2;
-		UDataInfo info;
-		char padding[8];
-		uint32_t count, reserved;
-		int fakeNameAndData[4];
-	} ICU_Data_Header;
+/** Define a stub 'entry-point' required by ICU. **/
+typedef struct
+{
+	uint16_t headerSize;
+	uint8_t magic1, magic2;
+	UDataInfo info;
+	char padding[8];
+	uint32_t count, reserved;
+	int fakeNameAndData[4];
+} ICU_Data_Header;
 
-	extern "C" U_EXPORT const ICU_Data_Header U_ICUDATA_ENTRY_POINT = {
-		32, /* headerSize */
-		0xda, /* magic1,  (see struct MappedData in udata.c)  */
-		0x27, /* magic2     */
-		{
-			/*UDataInfo   */
-			sizeof(UDataInfo), /* size        */
-			0, /* reserved    */
+extern "C" U_EXPORT const ICU_Data_Header U_ICUDATA_ENTRY_POINT = {
+	32, /* headerSize */
+	0xda, /* magic1,  (see struct MappedData in udata.c)  */
+	0x27, /* magic2     */
+	{
+		/*UDataInfo   */
+		sizeof(UDataInfo), /* size        */
+		0, /* reserved    */
 
 #if U_IS_BIG_ENDIAN
-			1,
+		1,
 #else
-			0,
+		0,
 #endif
 
-			U_CHARSET_FAMILY,
-			sizeof(UChar),
-			0, /* reserved      */
-			{ /* data format identifier */
-			  0x54, 0x6f, 0x43, 0x50 }, /* "ToCP" */
-			{ 1, 0, 0, 0 }, /* format version major, minor, milli, micro */
-			{ 0, 0, 0, 0 } /* dataVersion   */
-		},
-		{ 0, 0, 0, 0, 0, 0, 0, 0 }, /* Padding[8]   */
-		0, /* count        */
-		0, /* Reserved     */
-		{
-			/*  TOC structure */
-			/*        {    */
-			0, 0, 0, 0 /* name and data entries.  Count says there are none,  */
-			/*  but put one in just in case.                       */
-			/*        }  */
-		}
-	};
-
-	GPUInfo PlatformUtility::sGPUInfo;
-
-	void PlatformUtility::terminate(bool force)
+		U_CHARSET_FAMILY,
+		sizeof(UChar),
+		0, /* reserved      */
+		{ /* data format identifier */
+		  0x54, 0x6f, 0x43, 0x50 }, /* "ToCP" */
+		{ 1, 0, 0, 0 }, /* format version major, minor, milli, micro */
+		{ 0, 0, 0, 0 } /* dataVersion   */
+	},
+	{ 0, 0, 0, 0, 0, 0, 0, 0 }, /* Padding[8]   */
+	0, /* count        */
+	0, /* Reserved     */
 	{
-		// TODOPORT - Support clean exit by sending the main window a quit message
-		exit(0);
+		/*  TOC structure */
+		/*        {    */
+		0, 0, 0, 0 /* name and data entries.  Count says there are none,  */
+		/*  but put one in just in case.                       */
+		/*        }  */
 	}
+};
 
-	SystemInfo PlatformUtility::getSystemInfo()
+GPUInfo PlatformUtility::sGPUInfo;
+
+void PlatformUtility::terminate(bool force)
+{
+	// TODOPORT - Support clean exit by sending the main window a quit message
+	exit(0);
+}
+
+SystemInfo PlatformUtility::getSystemInfo()
+{
+	SystemInfo output;
+
+	// Get CPU vendor, model and number of cores
 	{
-		SystemInfo output;
-
-		// Get CPU vendor, model and number of cores
+		std::ifstream file("/proc/cpuinfo");
+		std::string line;
+		while(std::getline(file, line))
 		{
-			std::ifstream file("/proc/cpuinfo");
-			std::string line;
-			while(std::getline(file, line))
-			{
-				std::stringstream lineStream(line);
-				std::string token;
-				lineStream >> token;
+			std::stringstream lineStream(line);
+			std::string token;
+			lineStream >> token;
 
-				if(token == "vendor_id")
+			if(token == "vendor_id")
+			{
+				if(lineStream >> token && token == ":")
+				{
+					std::string vendorId;
+					if(lineStream >> vendorId)
+						output.cpuManufacturer = vendorId.c_str();
+				}
+			}
+			else if(token == "model")
+			{
+				if(lineStream >> token && token == "name")
 				{
 					if(lineStream >> token && token == ":")
 					{
-						std::string vendorId;
-						if(lineStream >> vendorId)
-							output.cpuManufacturer = vendorId.c_str();
+						std::stringstream modelName;
+						if(lineStream >> token)
+						{
+							modelName << token;
+
+							while(lineStream >> token)
+								modelName << " " << token;
+						}
+
+						output.cpuModel = modelName.str().c_str();
 					}
 				}
-				else if(token == "model")
+			}
+			else if(token == "cpu")
+			{
+				if(lineStream >> token)
 				{
-					if(lineStream >> token && token == "name")
+					if(token == "cores")
 					{
 						if(lineStream >> token && token == ":")
 						{
-							std::stringstream modelName;
-							if(lineStream >> token)
-							{
-								modelName << token;
-
-								while(lineStream >> token)
-									modelName << " " << token;
-							}
-
-							output.cpuModel = modelName.str().c_str();
-						}
-					}
-				}
-				else if(token == "cpu")
-				{
-					if(lineStream >> token)
-					{
-						if(token == "cores")
-						{
-							if(lineStream >> token && token == ":")
-							{
-								u32 numCores;
-								if(lineStream >> numCores)
-									output.cpuNumCores = numCores;
-							}
+							u32 numCores;
+							if(lineStream >> numCores)
+								output.cpuNumCores = numCores;
 						}
 					}
 				}
 			}
 		}
+	}
 
-		// Get CPU frequency
-		{
-			std::ifstream file("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq");
-			u32 frequency;
-			if(file >> frequency)
-				output.cpuClockSpeedMhz = frequency / 1000;
-		}
+	// Get CPU frequency
+	{
+		std::ifstream file("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq");
+		u32 frequency;
+		if(file >> frequency)
+			output.cpuClockSpeedMhz = frequency / 1000;
+	}
 
-		// Get amount of system memory
+	// Get amount of system memory
+	{
+		std::ifstream file("/proc/meminfo");
+		std::string token;
+		while(file >> token)
 		{
-			std::ifstream file("/proc/meminfo");
-			std::string token;
-			while(file >> token)
+			if(token == "MemTotal:")
 			{
-				if(token == "MemTotal:")
-				{
-					u32 memTotal;
-					if(file >> memTotal)
-						output.memoryAmountMb = memTotal / 1024;
-					else
-						output.memoryAmountMb = 0;
+				u32 memTotal;
+				if(file >> memTotal)
+					output.memoryAmountMb = memTotal / 1024;
+				else
+					output.memoryAmountMb = 0;
 
-					break;
-				}
-
-				// Ignore the rest of the line
-				file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				break;
 			}
+
+			// Ignore the rest of the line
+			file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		}
-
-		// Get OS version
-		utsname osInfo;
-		uname(&osInfo);
-
-		// Note: This won't report the exact distro
-		output.osName = String(osInfo.sysname) + String(osInfo.version);
-
-		if(BS_ARCH_TYPE == BS_ARCHITECTURE_x86_64)
-			output.osIs64Bit = true;
-		else
-			output.osIs64Bit = strstr(osInfo.machine, "64") != nullptr;
-
-		// Get GPU info
-		output.gpuInfo = sGPUInfo;
-
-		return output;
 	}
 
-	String PlatformUtility::convertCaseUTF8(const String& input, bool toUpper)
-	{
-		UErrorCode errorCode = U_ZERO_ERROR;
+	// Get OS version
+	utsname osInfo;
+	uname(&osInfo);
 
-		auto inputLen = (int32_t)input.size();
-		int32_t bufferLen = 0;
-		u_strFromUTF8(nullptr, 0, &bufferLen, input.data(), inputLen, &errorCode);
+	// Note: This won't report the exact distro
+	output.osName = String(osInfo.sysname) + String(osInfo.version);
 
-		auto uStr = bs_stack_alloc<UChar>((u32)bufferLen);
-		int32_t uStrLen = 0;
-		errorCode = U_ZERO_ERROR;
-		u_strFromUTF8(uStr, bufferLen * sizeof(UChar), &uStrLen, input.data(), inputLen, &errorCode);
+	if(BS_ARCH_TYPE == BS_ARCHITECTURE_x86_64)
+		output.osIs64Bit = true;
+	else
+		output.osIs64Bit = strstr(osInfo.machine, "64") != nullptr;
 
-		errorCode = U_ZERO_ERROR;
-		if(toUpper)
-			bufferLen = u_strToUpper(nullptr, 0, uStr, uStrLen, nullptr, &errorCode);
-		else
-			bufferLen = u_strToLower(nullptr, 0, uStr, uStrLen, nullptr, &errorCode);
+	// Get GPU info
+	output.gpuInfo = sGPUInfo;
 
-		auto convertedUStr = bs_stack_alloc<UChar>((u32)bufferLen);
-		int32_t convertedUStrLen = 0;
+	return output;
+}
 
-		errorCode = U_ZERO_ERROR;
-		if(toUpper)
-			convertedUStrLen = u_strToUpper(convertedUStr, bufferLen * sizeof(UChar), uStr, uStrLen, nullptr, &errorCode);
-		else
-			convertedUStrLen = u_strToLower(convertedUStr, bufferLen * sizeof(UChar), uStr, uStrLen, nullptr, &errorCode);
+String PlatformUtility::convertCaseUTF8(const String& input, bool toUpper)
+{
+	UErrorCode errorCode = U_ZERO_ERROR;
 
-		errorCode = U_ZERO_ERROR;
-		u_strToUTF8(nullptr, 0, &bufferLen, convertedUStr, convertedUStrLen, &errorCode);
+	auto inputLen = (int32_t)input.size();
+	int32_t bufferLen = 0;
+	u_strFromUTF8(nullptr, 0, &bufferLen, input.data(), inputLen, &errorCode);
 
-		int32_t outputStrLen = 0;
-		auto outputStr = bs_stack_alloc<char>(bufferLen);
+	auto uStr = bs_stack_alloc<UChar>((u32)bufferLen);
+	int32_t uStrLen = 0;
+	errorCode = U_ZERO_ERROR;
+	u_strFromUTF8(uStr, bufferLen * sizeof(UChar), &uStrLen, input.data(), inputLen, &errorCode);
 
-		errorCode = U_ZERO_ERROR;
-		u_strToUTF8(outputStr, bufferLen, &outputStrLen, convertedUStr, convertedUStrLen, &errorCode);
+	errorCode = U_ZERO_ERROR;
+	if(toUpper)
+		bufferLen = u_strToUpper(nullptr, 0, uStr, uStrLen, nullptr, &errorCode);
+	else
+		bufferLen = u_strToLower(nullptr, 0, uStr, uStrLen, nullptr, &errorCode);
 
-		String output(outputStr, outputStrLen);
+	auto convertedUStr = bs_stack_alloc<UChar>((u32)bufferLen);
+	int32_t convertedUStrLen = 0;
 
-		bs_stack_free(outputStr);
-		bs_stack_free(convertedUStr);
-		bs_stack_free(uStr);
+	errorCode = U_ZERO_ERROR;
+	if(toUpper)
+		convertedUStrLen = u_strToUpper(convertedUStr, bufferLen * sizeof(UChar), uStr, uStrLen, nullptr, &errorCode);
+	else
+		convertedUStrLen = u_strToLower(convertedUStr, bufferLen * sizeof(UChar), uStr, uStrLen, nullptr, &errorCode);
 
-		return output;
-	}
+	errorCode = U_ZERO_ERROR;
+	u_strToUTF8(nullptr, 0, &bufferLen, convertedUStr, convertedUStrLen, &errorCode);
 
-	UUID PlatformUtility::generateUUID()
-	{
-		uuid_t nativeUUID;
-		uuid_generate(nativeUUID);
+	int32_t outputStrLen = 0;
+	auto outputStr = bs_stack_alloc<char>(bufferLen);
 
-		return UUID(
-			*(u32*)&nativeUUID[0],
-			*(u32*)&nativeUUID[4],
-			*(u32*)&nativeUUID[8],
-			*(u32*)&nativeUUID[12]);
-	}
+	errorCode = U_ZERO_ERROR;
+	u_strToUTF8(outputStr, bufferLen, &outputStrLen, convertedUStr, convertedUStrLen, &errorCode);
+
+	String output(outputStr, outputStrLen);
+
+	bs_stack_free(outputStr);
+	bs_stack_free(convertedUStr);
+	bs_stack_free(uStr);
+
+	return output;
+}
+
+UUID PlatformUtility::generateUUID()
+{
+	uuid_t nativeUUID;
+	uuid_generate(nativeUUID);
+
+	return UUID(
+		*(u32*)&nativeUUID[0],
+		*(u32*)&nativeUUID[4],
+		*(u32*)&nativeUUID[8],
+		*(u32*)&nativeUUID[12]);
+}
 } // namespace bs

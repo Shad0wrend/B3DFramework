@@ -5,36 +5,36 @@
 
 namespace bs
 {
-	BS_THREADLOCAL MemStackInternal<1024 * 1024>* MemStack::ThreadMemStack = nullptr;
+BS_THREADLOCAL MemStackInternal<1024 * 1024>* MemStack::ThreadMemStack = nullptr;
 
-	void MemStack::BeginThread()
+void MemStack::BeginThread()
+{
+	if(ThreadMemStack != nullptr)
+		EndThread();
+
+	ThreadMemStack = bs_new<MemStackInternal<1024 * 1024>>();
+}
+
+void MemStack::EndThread()
+{
+	if(ThreadMemStack != nullptr)
 	{
-		if(ThreadMemStack != nullptr)
-			EndThread();
-
-		ThreadMemStack = bs_new<MemStackInternal<1024 * 1024>>();
+		bs_delete(ThreadMemStack);
+		ThreadMemStack = nullptr;
 	}
+}
 
-	void MemStack::EndThread()
-	{
-		if(ThreadMemStack != nullptr)
-		{
-			bs_delete(ThreadMemStack);
-			ThreadMemStack = nullptr;
-		}
-	}
+u8* MemStack::Alloc(u32 numBytes)
+{
+	assert(ThreadMemStack != nullptr && "Stack allocation failed. Did you call beginThread?");
 
-	u8* MemStack::Alloc(u32 numBytes)
-	{
-		assert(ThreadMemStack != nullptr && "Stack allocation failed. Did you call beginThread?");
+	return ThreadMemStack->Alloc(numBytes);
+}
 
-		return ThreadMemStack->Alloc(numBytes);
-	}
+void MemStack::DeallocLast(u8* data)
+{
+	assert(ThreadMemStack != nullptr && "Stack deallocation failed. Did you call beginThread?");
 
-	void MemStack::DeallocLast(u8* data)
-	{
-		assert(ThreadMemStack != nullptr && "Stack deallocation failed. Did you call beginThread?");
-
-		ThreadMemStack->Dealloc(data);
-	}
+	ThreadMemStack->Dealloc(data);
+}
 } // namespace bs

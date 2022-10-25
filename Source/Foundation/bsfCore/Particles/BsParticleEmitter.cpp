@@ -14,991 +14,991 @@
 
 namespace bs
 {
-	MeshWeightedTriangles::MeshWeightedTriangles(const MeshData& meshData)
+MeshWeightedTriangles::MeshWeightedTriangles(const MeshData& meshData)
+{
+	Calculate(meshData);
+}
+
+void MeshWeightedTriangles::Calculate(const MeshData& meshData)
+{
+	const u32 numIndices = meshData.GetNumIndices();
+	assert(numIndices % 3 == 0);
+
+	const u32 numTriangles = numIndices / 3;
+	mWeights.resize(numTriangles);
+
+	u8* vertices = meshData.GetElementData(VES_POSITION);
+
+	const SPtr<VertexDataDesc>& vertexDesc = meshData.GetVertexDesc();
+	const u32 stride = vertexDesc->GetVertexStride();
+
+	float totalArea = 0.0f;
+	if(meshData.GetIndexType() == IT_32BIT)
 	{
-		Calculate(meshData);
-	}
-
-	void MeshWeightedTriangles::Calculate(const MeshData& meshData)
-	{
-		const u32 numIndices = meshData.GetNumIndices();
-		assert(numIndices % 3 == 0);
-
-		const u32 numTriangles = numIndices / 3;
-		mWeights.resize(numTriangles);
-
-		u8* vertices = meshData.GetElementData(VES_POSITION);
-
-		const SPtr<VertexDataDesc>& vertexDesc = meshData.GetVertexDesc();
-		const u32 stride = vertexDesc->GetVertexStride();
-
-		float totalArea = 0.0f;
-		if(meshData.GetIndexType() == IT_32BIT)
-		{
-			u32* indices = meshData.GetIndices32();
-
-			for(u32 i = 0; i < numTriangles; i++)
-			{
-				TriangleWeight& weight = mWeights[i];
-
-				weight.Indices[0] = indices[i * 3 + 0];
-				weight.Indices[1] = indices[i * 3 + 1];
-				weight.Indices[2] = indices[i * 3 + 2];
-			}
-		}
-		else
-		{
-			u16* indices = meshData.GetIndices16();
-
-			for(u32 i = 0; i < numTriangles; i++)
-			{
-				TriangleWeight& weight = mWeights[i];
-
-				weight.Indices[0] = indices[i * 3 + 0];
-				weight.Indices[1] = indices[i * 3 + 1];
-				weight.Indices[2] = indices[i * 3 + 2];
-			}
-		}
+		u32* indices = meshData.GetIndices32();
 
 		for(u32 i = 0; i < numTriangles; i++)
 		{
 			TriangleWeight& weight = mWeights[i];
-			const Vector3& a = *(Vector3*)(vertices + weight.Indices[0] * stride);
-			const Vector3& b = *(Vector3*)(vertices + weight.Indices[1] * stride);
-			const Vector3& c = *(Vector3*)(vertices + weight.Indices[2] * stride);
 
-			// Note: Using squared length here would be faster, but the weights can be small and squaring them just
-			// makes them smaller, causing precision issues
-			weight.CumulativeWeight = Vector3::Cross(b - a, c - a).Length();
-			totalArea += weight.CumulativeWeight;
+			weight.Indices[0] = indices[i * 3 + 0];
+			weight.Indices[1] = indices[i * 3 + 1];
+			weight.Indices[2] = indices[i * 3 + 2];
 		}
+	}
+	else
+	{
+		u16* indices = meshData.GetIndices16();
 
-		const float invTotalArea = 1.0f / totalArea;
 		for(u32 i = 0; i < numTriangles; i++)
-			mWeights[i].CumulativeWeight *= invTotalArea;
-
-		for(u32 i = 1; i < numTriangles; i++)
-			mWeights[i].CumulativeWeight += mWeights[i - 1].CumulativeWeight;
-
-		mWeights[numTriangles - 1].CumulativeWeight = 1.0f;
-	}
-
-	void MeshWeightedTriangles::GetTriangle(const Random& random, std::array<u32, 3>& indices) const
-	{
-		struct Comp
 		{
-			bool operator()(float a, const TriangleWeight& b) const
-			{
-				return a < b.CumulativeWeight;
-			}
+			TriangleWeight& weight = mWeights[i];
 
-			bool operator()(const TriangleWeight& a, float b) const
-			{
-				return a.CumulativeWeight < b;
-			}
-		};
-
-		const float val = random.GetUNorm();
-
-		const auto findIter = std::lower_bound(mWeights.begin(), mWeights.end(), val, Comp());
-		if(findIter != mWeights.end())
-			memcpy(indices.data(), findIter->Indices, sizeof(indices));
-		else
-			bs_zero_out(indices);
+			weight.Indices[0] = indices[i * 3 + 0];
+			weight.Indices[1] = indices[i * 3 + 1];
+			weight.Indices[2] = indices[i * 3 + 2];
+		}
 	}
 
-	template <class Pr>
-	u32 spawnMultiple(ParticleSet& particles, u32 count, Pr predicate)
+	for(u32 i = 0; i < numTriangles; i++)
 	{
-		const u32 index = particles.AllocParticles(count);
-		ParticleSetData& particleData = particles.GetParticles();
+		TriangleWeight& weight = mWeights[i];
+		const Vector3& a = *(Vector3*)(vertices + weight.Indices[0] * stride);
+		const Vector3& b = *(Vector3*)(vertices + weight.Indices[1] * stride);
+		const Vector3& c = *(Vector3*)(vertices + weight.Indices[2] * stride);
 
-		const u32 end = index + count;
-		for(u32 i = index; i < end; i++)
-			predicate(i - index, particleData.Position[i], particleData.Velocity[i]);
-
-		return index;
+		// Note: Using squared length here would be faster, but the weights can be small and squaring them just
+		// makes them smaller, causing precision issues
+		weight.CumulativeWeight = Vector3::Cross(b - a, c - a).Length();
+		totalArea += weight.CumulativeWeight;
 	}
 
-	template <class T>
-	u32 spawnMultipleRandom(T* spawner, const Random& random, ParticleSet& particles, u32 count)
+	const float invTotalArea = 1.0f / totalArea;
+	for(u32 i = 0; i < numTriangles; i++)
+		mWeights[i].CumulativeWeight *= invTotalArea;
+
+	for(u32 i = 1; i < numTriangles; i++)
+		mWeights[i].CumulativeWeight += mWeights[i - 1].CumulativeWeight;
+
+	mWeights[numTriangles - 1].CumulativeWeight = 1.0f;
+}
+
+void MeshWeightedTriangles::GetTriangle(const Random& random, std::array<u32, 3>& indices) const
+{
+	struct Comp
 	{
-		const u32 index = particles.AllocParticles(count);
-		ParticleSetData& particleData = particles.GetParticles();
-
-		const u32 end = index + count;
-		for(u32 i = index; i < end; i++)
-			spawner->SpawnInternal(random, particleData.Position[i], particleData.Velocity[i]);
-
-		return index;
-	}
-
-	template <class T>
-	u32 spawnMultipleSpread(T* spawner, float length, float interval, ParticleSet& particles, u32 count)
-	{
-		const u32 index = particles.AllocParticles(count);
-		ParticleSetData& particleData = particles.GetParticles();
-
-		const float dt = length / (float)count;
-
-		float accum = 0.0f;
-		for(u32 i = 0; i < count; i++)
+		bool operator()(float a, const TriangleWeight& b) const
 		{
-			float t = accum;
-			if(interval > 0)
-				t = Math::RoundToMultiple(accum, interval);
-
-			const u32 particleIdx = index + i;
-			spawner->SpawnInternal(t, particleData.Position[particleIdx], particleData.Velocity[particleIdx]);
-
-			accum += dt;
+			return a < b.CumulativeWeight;
 		}
 
-		return index;
+		bool operator()(const TriangleWeight& a, float b) const
+		{
+			return a.CumulativeWeight < b;
+		}
+	};
+
+	const float val = random.GetUNorm();
+
+	const auto findIter = std::lower_bound(mWeights.begin(), mWeights.end(), val, Comp());
+	if(findIter != mWeights.end())
+		memcpy(indices.data(), findIter->Indices, sizeof(indices));
+	else
+		bs_zero_out(indices);
+}
+
+template <class Pr>
+u32 spawnMultiple(ParticleSet& particles, u32 count, Pr predicate)
+{
+	const u32 index = particles.AllocParticles(count);
+	ParticleSetData& particleData = particles.GetParticles();
+
+	const u32 end = index + count;
+	for(u32 i = index; i < end; i++)
+		predicate(i - index, particleData.Position[i], particleData.Velocity[i]);
+
+	return index;
+}
+
+template <class T>
+u32 spawnMultipleRandom(T* spawner, const Random& random, ParticleSet& particles, u32 count)
+{
+	const u32 index = particles.AllocParticles(count);
+	ParticleSetData& particleData = particles.GetParticles();
+
+	const u32 end = index + count;
+	for(u32 i = index; i < end; i++)
+		spawner->SpawnInternal(random, particleData.Position[i], particleData.Velocity[i]);
+
+	return index;
+}
+
+template <class T>
+u32 spawnMultipleSpread(T* spawner, float length, float interval, ParticleSet& particles, u32 count)
+{
+	const u32 index = particles.AllocParticles(count);
+	ParticleSetData& particleData = particles.GetParticles();
+
+	const float dt = length / (float)count;
+
+	float accum = 0.0f;
+	for(u32 i = 0; i < count; i++)
+	{
+		float t = accum;
+		if(interval > 0)
+			t = Math::RoundToMultiple(accum, interval);
+
+		const u32 particleIdx = index + i;
+		spawner->SpawnInternal(t, particleData.Position[particleIdx], particleData.Velocity[particleIdx]);
+
+		accum += dt;
 	}
 
-	template <class T>
-	u32 spawnMultipleLoop(T* spawner, float length, float speed, float interval, ParticleSet& particles, u32 count, const ParticleSystemState& state)
+	return index;
+}
+
+template <class T>
+u32 spawnMultipleLoop(T* spawner, float length, float speed, float interval, ParticleSet& particles, u32 count, const ParticleSystemState& state)
+{
+	const u32 index = particles.AllocParticles(count);
+	ParticleSetData& particleData = particles.GetParticles();
+
+	const float dt = state.TimeStep / (float)count;
+
+	for(u32 i = 0; i < count; i++)
 	{
-		const u32 index = particles.AllocParticles(count);
-		ParticleSetData& particleData = particles.GetParticles();
+		float t = (state.TimeStart + dt * i) * speed;
+		t = fmod(t, length);
 
-		const float dt = state.TimeStep / (float)count;
+		if(interval > 0.0f)
+			t = Math::RoundToMultiple(t, interval);
 
-		for(u32 i = 0; i < count; i++)
-		{
-			float t = (state.TimeStart + dt * i) * speed;
+		const u32 particleIdx = index + i;
+		spawner->SpawnInternal(t, particleData.Position[particleIdx], particleData.Velocity[particleIdx]);
+	}
+
+	return index;
+}
+
+template <class T>
+u32 spawnMultiplePingPong(T* spawner, float length, float speed, float interval, ParticleSet& particles, u32 count, const ParticleSystemState& state)
+{
+	const u32 index = particles.AllocParticles(count);
+	ParticleSetData& particleData = particles.GetParticles();
+
+	const float dt = state.TimeStep / (float)count;
+
+	for(u32 i = 0; i < count; i++)
+	{
+		float t = (state.TimeStart + dt * i) * speed;
+
+		const auto loop = (u32)(t / length);
+		if(loop % 2 == 1)
+			t = length - fmod(t, length);
+		else
 			t = fmod(t, length);
 
-			if(interval > 0.0f)
-				t = Math::RoundToMultiple(t, interval);
+		if(interval > 0.0f)
+			t = Math::RoundToMultiple(t, interval);
 
-			const u32 particleIdx = index + i;
-			spawner->SpawnInternal(t, particleData.Position[particleIdx], particleData.Velocity[particleIdx]);
-		}
-
-		return index;
+		const u32 particleIdx = index + i;
+		spawner->SpawnInternal(t, particleData.Position[particleIdx], particleData.Velocity[particleIdx]);
 	}
 
-	template <class T>
-	u32 spawnMultiplePingPong(T* spawner, float length, float speed, float interval, ParticleSet& particles, u32 count, const ParticleSystemState& state)
+	return index;
+}
+
+template <class T>
+u32 spawnMultipleMode(T* spawner, ParticleEmissionModeType type, float length, float speed, float interval, const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state)
+{
+	if(count > 0)
 	{
-		const u32 index = particles.AllocParticles(count);
-		ParticleSetData& particleData = particles.GetParticles();
-
-		const float dt = state.TimeStep / (float)count;
-
-		for(u32 i = 0; i < count; i++)
+		switch(type)
 		{
-			float t = (state.TimeStart + dt * i) * speed;
-
-			const auto loop = (u32)(t / length);
-			if(loop % 2 == 1)
-				t = length - fmod(t, length);
-			else
-				t = fmod(t, length);
-
-			if(interval > 0.0f)
-				t = Math::RoundToMultiple(t, interval);
-
-			const u32 particleIdx = index + i;
-			spawner->SpawnInternal(t, particleData.Position[particleIdx], particleData.Velocity[particleIdx]);
-		}
-
-		return index;
-	}
-
-	template <class T>
-	u32 spawnMultipleMode(T* spawner, ParticleEmissionModeType type, float length, float speed, float interval, const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state)
-	{
-		if(count > 0)
-		{
-			switch(type)
-			{
-			case ParticleEmissionModeType::Random:
-				return spawnMultipleRandom(spawner, random, particles, count);
-			case ParticleEmissionModeType::Loop:
-				return spawnMultipleLoop(spawner, length, speed, interval, particles, count, state);
-			case ParticleEmissionModeType::PingPong:
-				return spawnMultiplePingPong(spawner, length, speed, interval, particles, count, state);
-			case ParticleEmissionModeType::Spread:
-				return spawnMultipleSpread(spawner, length, interval, particles, count);
-			default:
-				break;
-			}
-		}
-
-		return particles.GetParticleCount();
-	}
-
-	ParticleEmitterConeShape::ParticleEmitterConeShape(const PARTICLE_CONE_SHAPE_DESC& desc)
-		: mInfo(desc)
-	{}
-
-	u32 ParticleEmitterConeShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
-	{
-		return spawnMultipleMode(this, mInfo.Mode.Type, mInfo.Arc.ValueRadians(), mInfo.Mode.Speed * Math::DEG2RAD, mInfo.Mode.Interval * Math::DEG2RAD, random, particles, count, state);
-	}
-
-	void ParticleEmitterConeShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
-	{
-		Vector2 pos2D;
-		if(Math::ApproxEquals(mInfo.Arc.ValueRadians(), 360.0f))
-			pos2D = random.GetPointInCircleShell(mInfo.Thickness);
-		else
-			pos2D = random.GetPointInArcShell(mInfo.Arc, mInfo.Thickness);
-
-		GetPointInCone(pos2D, random.GetUNorm() * mInfo.Length, position, normal);
-	}
-
-	void ParticleEmitterConeShape::SpawnInternal(float t, Vector3& position, Vector3& normal) const
-	{
-		const Vector2 pos2D(Math::Cos(t), Math::Sin(t));
-
-		GetPointInCone(pos2D, 0.0f, position, normal);
-	}
-
-	void ParticleEmitterConeShape::GetPointInCone(const Vector2& pos2D, float distance, Vector3& position, Vector3& normal) const
-	{
-		const float angleSin = Math::Sin(mInfo.Angle);
-		normal = Vector3(pos2D.X * angleSin, pos2D.Y * angleSin, Math::Cos(mInfo.Angle));
-		normal.Normalize();
-
-		position = Vector3(pos2D.X * mInfo.Radius, pos2D.Y * mInfo.Radius, 0.0f);
-
-		if(mInfo.Type == ParticleEmitterConeType::Volume)
-			position += normal * distance;
-	}
-
-	SPtr<ParticleEmitterConeShape> ParticleEmitterConeShape::Create(const PARTICLE_CONE_SHAPE_DESC& desc)
-	{
-		return bs_shared_ptr_new<ParticleEmitterConeShape>(desc);
-	}
-
-	SPtr<ParticleEmitterConeShape> ParticleEmitterConeShape::Create()
-	{
-		return bs_shared_ptr_new<ParticleEmitterConeShape>();
-	}
-
-	void ParticleEmitterConeShape::CalcBounds(AABox& shape, AABox& velocity) const
-	{
-		const float sinAngle = Math::Sin(mInfo.Angle);
-		const float cosAngle = Math::Cos(mInfo.Angle);
-
-		if(mInfo.Type == ParticleEmitterConeType::Base)
-		{
-			shape.SetMin(Vector3(-mInfo.Radius, -mInfo.Radius, 0.0f));
-			shape.SetMax(Vector3(mInfo.Radius, mInfo.Radius, 0.0f));
-		}
-		else
-		{
-			const float topRadius = mInfo.Radius + mInfo.Length * sinAngle;
-			const float length = mInfo.Length * cosAngle;
-
-			shape.SetMin(Vector3(-topRadius, -topRadius, 0.0f));
-			shape.SetMax(Vector3(topRadius, topRadius, length));
-		}
-
-		velocity.SetMin(Vector3(-sinAngle, -sinAngle, 0.0f));
-		velocity.SetMax(Vector3(sinAngle, sinAngle, 1.0f));
-	}
-
-	RTTITypeBase* ParticleEmitterConeShape::GetRttiStatic()
-	{
-		return ParticleEmitterConeShapeRTTI::Instance();
-	}
-
-	RTTITypeBase* ParticleEmitterConeShape::GetRtti() const
-	{
-		return GetRttiStatic();
-	}
-
-	ParticleEmitterSphereShape::ParticleEmitterSphereShape(const PARTICLE_SPHERE_SHAPE_DESC& desc)
-		: mInfo(desc)
-	{}
-
-	u32 ParticleEmitterSphereShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
-	{
-		return spawnMultipleRandom(this, random, particles, count);
-	}
-
-	void ParticleEmitterSphereShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
-	{
-		position = random.GetPointInSphereShell(mInfo.Thickness);
-		normal = Vector3::Normalize(position);
-
-		position *= mInfo.Radius;
-	}
-
-	void ParticleEmitterSphereShape::CalcBounds(AABox& shape, AABox& velocity) const
-	{
-		shape.SetMin(Vector3::ONE * -mInfo.Radius);
-		shape.SetMax(Vector3::ONE * mInfo.Radius);
-
-		velocity.SetMin(-Vector3::ONE);
-		velocity.SetMax(Vector3::ONE);
-	}
-
-	SPtr<ParticleEmitterSphereShape> ParticleEmitterSphereShape::Create(const PARTICLE_SPHERE_SHAPE_DESC& desc)
-	{
-		return bs_shared_ptr_new<ParticleEmitterSphereShape>(desc);
-	}
-
-	SPtr<ParticleEmitterSphereShape> ParticleEmitterSphereShape::Create()
-	{
-		return bs_shared_ptr_new<ParticleEmitterSphereShape>();
-	}
-
-	RTTITypeBase* ParticleEmitterSphereShape::GetRttiStatic()
-	{
-		return ParticleEmitterSphereShapeRTTI::Instance();
-	}
-
-	RTTITypeBase* ParticleEmitterSphereShape::GetRtti() const
-	{
-		return GetRttiStatic();
-	}
-
-	ParticleEmitterHemisphereShape::ParticleEmitterHemisphereShape(const PARTICLE_HEMISPHERE_SHAPE_DESC& desc)
-		: mInfo(desc)
-	{}
-
-	u32 ParticleEmitterHemisphereShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
-	{
-		return spawnMultipleRandom(this, random, particles, count);
-	}
-
-	void ParticleEmitterHemisphereShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
-	{
-		position = random.GetPointInSphereShell(mInfo.Thickness);
-		if(position.Z > 0.0f)
-			position.Z *= -1.0f;
-
-		normal = Vector3::Normalize(position);
-		position *= mInfo.Radius;
-	}
-
-	void ParticleEmitterHemisphereShape::CalcBounds(AABox& shape, AABox& velocity) const
-	{
-		shape.SetMin(Vector3(-mInfo.Radius, -mInfo.Radius, 0.0f));
-		shape.SetMax(Vector3::ONE * mInfo.Radius);
-
-		velocity.SetMin(Vector3(-1.0f, -1.0f, 0.0f));
-		velocity.SetMax(Vector3::ONE);
-	}
-
-	SPtr<ParticleEmitterHemisphereShape> ParticleEmitterHemisphereShape::Create(const PARTICLE_HEMISPHERE_SHAPE_DESC& desc)
-	{
-		return bs_shared_ptr_new<ParticleEmitterHemisphereShape>(desc);
-	}
-
-	SPtr<ParticleEmitterHemisphereShape> ParticleEmitterHemisphereShape::Create()
-	{
-		return bs_shared_ptr_new<ParticleEmitterHemisphereShape>();
-	}
-
-	RTTITypeBase* ParticleEmitterHemisphereShape::GetRttiStatic()
-	{
-		return ParticleEmitterHemisphereShapeRTTI::Instance();
-	}
-
-	RTTITypeBase* ParticleEmitterHemisphereShape::GetRtti() const
-	{
-		return GetRttiStatic();
-	}
-
-	ParticleEmitterBoxShape::ParticleEmitterBoxShape(const PARTICLE_BOX_SHAPE_DESC& desc)
-		: mInfo(desc)
-	{
-		switch(mInfo.Type)
-		{
-		case ParticleEmitterBoxType::Surface:
-			{
-				float totalSurfaceArea = 0.0f;
-				for(u32 i = 0; i < 3; i++)
-				{
-					mSurfaceArea[i] = Math::Sqr(desc.Extents[i]);
-					totalSurfaceArea += mSurfaceArea[i];
-				}
-
-				if(totalSurfaceArea > 0.0f)
-				{
-					const float invTotalSurfaceArea = 1.0f / totalSurfaceArea;
-					for(u32 i = 0; i < 3; i++)
-						mSurfaceArea[i] *= invTotalSurfaceArea;
-
-					mSurfaceArea[1] += mSurfaceArea[0];
-					mSurfaceArea[2] = 1.0f;
-				}
-			}
-			break;
-		case ParticleEmitterBoxType::Edge:
-			{
-				float totalEdgeLength = 0.0f;
-				for(u32 i = 0; i < 3; i++)
-				{
-					mEdgeLengths[i] = desc.Extents[i];
-					totalEdgeLength += mEdgeLengths[i];
-				}
-
-				if(totalEdgeLength > 0.0f)
-				{
-					const float invTotalEdgeLength = 1.0f / totalEdgeLength;
-					for(u32 i = 0; i < 3; i++)
-						mEdgeLengths[i] *= invTotalEdgeLength;
-
-					mEdgeLengths[1] += mEdgeLengths[0];
-					mEdgeLengths[2] = 1.0f;
-				}
-			}
-			break;
+		case ParticleEmissionModeType::Random:
+			return spawnMultipleRandom(spawner, random, particles, count);
+		case ParticleEmissionModeType::Loop:
+			return spawnMultipleLoop(spawner, length, speed, interval, particles, count, state);
+		case ParticleEmissionModeType::PingPong:
+			return spawnMultiplePingPong(spawner, length, speed, interval, particles, count, state);
+		case ParticleEmissionModeType::Spread:
+			return spawnMultipleSpread(spawner, length, interval, particles, count);
 		default:
-		case ParticleEmitterBoxType::Volume: break;
-		}
-	}
-
-	u32 ParticleEmitterBoxShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
-	{
-		return spawnMultipleRandom(this, random, particles, count);
-	}
-
-	void ParticleEmitterBoxShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
-	{
-		switch(mInfo.Type)
-		{
-		default:
-		case ParticleEmitterBoxType::Volume:
-			position.X = mInfo.Extents.X * random.GetSNorm();
-			position.Y = mInfo.Extents.Y * random.GetSNorm();
-			position.Z = mInfo.Extents.Z * random.GetSNorm();
-			normal = Vector3::UNIT_Z;
-			break;
-		case ParticleEmitterBoxType::Surface:
-			{
-				const float u = random.GetSNorm();
-				const float v = random.GetSNorm();
-
-				// Determine an axis (based on their size, larger being more likely)
-				const float axisRnd = random.GetUNorm();
-				u32 axis = 0;
-				for(; axis < 3; axis++)
-				{
-					if(axisRnd <= mSurfaceArea[axis])
-						break;
-				}
-
-				switch(axis)
-				{
-				case 0:
-					position.X = mInfo.Extents.X * u;
-					position.Y = mInfo.Extents.Y * v;
-					position.Z = random.GetUNorm() > 0.5f ? mInfo.Extents.Z : -mInfo.Extents.Z;
-					break;
-				case 1:
-					position.X = mInfo.Extents.X * u;
-					position.Y = random.GetUNorm() > 0.5f ? mInfo.Extents.Y : -mInfo.Extents.Y;
-					position.Z = mInfo.Extents.Z * v;
-					break;
-				case 2:
-					position.X = random.GetUNorm() > 0.5f ? mInfo.Extents.X : -mInfo.Extents.X;
-					position.Y = mInfo.Extents.Y * v;
-					position.Z = mInfo.Extents.Z * u;
-					break;
-				default:
-					break;
-				}
-
-				normal = Vector3::UNIT_Z;
-			}
-			break;
-		case ParticleEmitterBoxType::Edge:
-			{
-				const float u = random.GetSNorm();
-
-				// Determine an axis (based on their length, longer being more likely)
-				const float axisRnd = random.GetUNorm();
-				u32 axis = 0;
-				for(; axis < 3; axis++)
-				{
-					if(axisRnd <= mEdgeLengths[axis])
-						break;
-				}
-
-				switch(axis)
-				{
-				case 0:
-					position.X = mInfo.Extents.X * u;
-					position.Y = random.GetUNorm() > 0.5f ? mInfo.Extents.Y : -mInfo.Extents.Y;
-					position.Z = random.GetUNorm() > 0.5f ? mInfo.Extents.Z : -mInfo.Extents.Z;
-					break;
-				case 1:
-					position.X = random.GetUNorm() > 0.5f ? mInfo.Extents.X : -mInfo.Extents.X;
-					position.Y = mInfo.Extents.Y * u;
-					position.Z = random.GetUNorm() > 0.5f ? mInfo.Extents.Z : -mInfo.Extents.Z;
-					break;
-				case 2:
-					position.X = random.GetUNorm() > 0.5f ? mInfo.Extents.X : -mInfo.Extents.X;
-					position.Y = random.GetUNorm() > 0.5f ? mInfo.Extents.Y : -mInfo.Extents.Y;
-					position.Z = mInfo.Extents.Z * u;
-					break;
-				default:
-					break;
-				}
-
-				normal = Vector3::UNIT_Z;
-			}
 			break;
 		}
 	}
 
-	void ParticleEmitterBoxShape::CalcBounds(AABox& shape, AABox& velocity) const
-	{
-		shape.SetMin(-mInfo.Extents);
-		shape.SetMax(mInfo.Extents);
+	return particles.GetParticleCount();
+}
 
-		velocity.SetMin(Vector3::ZERO);
-		velocity.SetMax(Vector3::UNIT_Z);
-	}
+ParticleEmitterConeShape::ParticleEmitterConeShape(const PARTICLE_CONE_SHAPE_DESC& desc)
+	: mInfo(desc)
+{}
 
-	SPtr<ParticleEmitterBoxShape> ParticleEmitterBoxShape::Create(const PARTICLE_BOX_SHAPE_DESC& desc)
-	{
-		return bs_shared_ptr_new<ParticleEmitterBoxShape>(desc);
-	}
+u32 ParticleEmitterConeShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
+{
+	return spawnMultipleMode(this, mInfo.Mode.Type, mInfo.Arc.ValueRadians(), mInfo.Mode.Speed * Math::DEG2RAD, mInfo.Mode.Interval * Math::DEG2RAD, random, particles, count, state);
+}
 
-	SPtr<ParticleEmitterBoxShape> ParticleEmitterBoxShape::Create()
-	{
-		return bs_shared_ptr_new<ParticleEmitterBoxShape>();
-	}
+void ParticleEmitterConeShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
+{
+	Vector2 pos2D;
+	if(Math::ApproxEquals(mInfo.Arc.ValueRadians(), 360.0f))
+		pos2D = random.GetPointInCircleShell(mInfo.Thickness);
+	else
+		pos2D = random.GetPointInArcShell(mInfo.Arc, mInfo.Thickness);
 
-	RTTITypeBase* ParticleEmitterBoxShape::GetRttiStatic()
-	{
-		return ParticleEmitterBoxShapeRTTI::Instance();
-	}
+	GetPointInCone(pos2D, random.GetUNorm() * mInfo.Length, position, normal);
+}
 
-	RTTITypeBase* ParticleEmitterBoxShape::GetRtti() const
-	{
-		return GetRttiStatic();
-	}
+void ParticleEmitterConeShape::SpawnInternal(float t, Vector3& position, Vector3& normal) const
+{
+	const Vector2 pos2D(Math::Cos(t), Math::Sin(t));
 
-	ParticleEmitterLineShape::ParticleEmitterLineShape(const PARTICLE_LINE_SHAPE_DESC& desc)
-		: mInfo(desc)
-	{}
+	GetPointInCone(pos2D, 0.0f, position, normal);
+}
 
-	u32 ParticleEmitterLineShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
-	{
-		return spawnMultipleMode(this, mInfo.Mode.Type, mInfo.Length, mInfo.Mode.Speed, mInfo.Mode.Interval, random, particles, count, state);
-	}
+void ParticleEmitterConeShape::GetPointInCone(const Vector2& pos2D, float distance, Vector3& position, Vector3& normal) const
+{
+	const float angleSin = Math::Sin(mInfo.Angle);
+	normal = Vector3(pos2D.X * angleSin, pos2D.Y * angleSin, Math::Cos(mInfo.Angle));
+	normal.Normalize();
 
-	void ParticleEmitterLineShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
-	{
-		position = Vector3(random.GetSNorm() * mInfo.Length * 0.5f, 0.0f, 0.0f);
-		normal = Vector3::UNIT_Z;
-	}
+	position = Vector3(pos2D.X * mInfo.Radius, pos2D.Y * mInfo.Radius, 0.0f);
 
-	void ParticleEmitterLineShape::SpawnInternal(float t, Vector3& position, Vector3& normal) const
-	{
-		position = Vector3(t * mInfo.Length - mInfo.Length * 0.5f, 0.0f, 0.0f);
-		normal = Vector3::UNIT_Z;
-	}
+	if(mInfo.Type == ParticleEmitterConeType::Volume)
+		position += normal * distance;
+}
 
-	void ParticleEmitterLineShape::CalcBounds(AABox& shape, AABox& velocity) const
-	{
-		shape.SetMin(Vector3(-mInfo.Length * 0.5f, 0.0f, 0.0f));
-		shape.SetMax(Vector3(mInfo.Length * 0.5f, 0.0f, 0.0f));
+SPtr<ParticleEmitterConeShape> ParticleEmitterConeShape::Create(const PARTICLE_CONE_SHAPE_DESC& desc)
+{
+	return bs_shared_ptr_new<ParticleEmitterConeShape>(desc);
+}
 
-		velocity.SetMin(Vector3::ZERO);
-		velocity.SetMax(Vector3::UNIT_Z);
-	}
+SPtr<ParticleEmitterConeShape> ParticleEmitterConeShape::Create()
+{
+	return bs_shared_ptr_new<ParticleEmitterConeShape>();
+}
 
-	SPtr<ParticleEmitterLineShape> ParticleEmitterLineShape::Create(const PARTICLE_LINE_SHAPE_DESC& desc)
-	{
-		return bs_shared_ptr_new<ParticleEmitterLineShape>(desc);
-	}
+void ParticleEmitterConeShape::CalcBounds(AABox& shape, AABox& velocity) const
+{
+	const float sinAngle = Math::Sin(mInfo.Angle);
+	const float cosAngle = Math::Cos(mInfo.Angle);
 
-	SPtr<ParticleEmitterLineShape> ParticleEmitterLineShape::Create()
-	{
-		return bs_shared_ptr_new<ParticleEmitterLineShape>();
-	}
-
-	RTTITypeBase* ParticleEmitterLineShape::GetRttiStatic()
-	{
-		return ParticleEmitterLineShapeRTTI::Instance();
-	}
-
-	RTTITypeBase* ParticleEmitterLineShape::GetRtti() const
-	{
-		return GetRttiStatic();
-	}
-
-	ParticleEmitterCircleShape::ParticleEmitterCircleShape(const PARTICLE_CIRCLE_SHAPE_DESC& desc)
-		: mInfo(desc)
-	{}
-
-	u32 ParticleEmitterCircleShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
-	{
-		return spawnMultipleMode(this, mInfo.Mode.Type, mInfo.Arc.ValueRadians(), mInfo.Mode.Speed * Math::DEG2RAD, mInfo.Mode.Interval * Math::DEG2RAD, random, particles, count, state);
-	}
-
-	void ParticleEmitterCircleShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
-	{
-		Vector2 pos2D;
-		if(Math::ApproxEquals(mInfo.Arc.ValueDegrees(), 360.0f))
-			pos2D = random.GetPointInCircleShell(mInfo.Thickness);
-		else
-			pos2D = random.GetPointInArcShell(mInfo.Arc, mInfo.Thickness);
-
-		position = Vector3(pos2D.X * mInfo.Radius, pos2D.Y * mInfo.Radius, 0.0f);
-		normal = Vector3::UNIT_Z;
-	}
-
-	void ParticleEmitterCircleShape::SpawnInternal(float t, Vector3& position, Vector3& normal) const
-	{
-		const Vector2 pos2D(Math::Cos(t), Math::Sin(t));
-
-		position = Vector3(pos2D.X * mInfo.Radius, pos2D.Y * mInfo.Radius, 0.0f);
-		normal = Vector3::UNIT_Z;
-	}
-
-	void ParticleEmitterCircleShape::CalcBounds(AABox& shape, AABox& velocity) const
+	if(mInfo.Type == ParticleEmitterConeType::Base)
 	{
 		shape.SetMin(Vector3(-mInfo.Radius, -mInfo.Radius, 0.0f));
 		shape.SetMax(Vector3(mInfo.Radius, mInfo.Radius, 0.0f));
+	}
+	else
+	{
+		const float topRadius = mInfo.Radius + mInfo.Length * sinAngle;
+		const float length = mInfo.Length * cosAngle;
 
-		velocity.SetMin(Vector3::ZERO);
-		velocity.SetMax(Vector3::UNIT_Z);
+		shape.SetMin(Vector3(-topRadius, -topRadius, 0.0f));
+		shape.SetMax(Vector3(topRadius, topRadius, length));
 	}
 
-	SPtr<ParticleEmitterCircleShape> ParticleEmitterCircleShape::Create(const PARTICLE_CIRCLE_SHAPE_DESC& desc)
+	velocity.SetMin(Vector3(-sinAngle, -sinAngle, 0.0f));
+	velocity.SetMax(Vector3(sinAngle, sinAngle, 1.0f));
+}
+
+RTTITypeBase* ParticleEmitterConeShape::GetRttiStatic()
+{
+	return ParticleEmitterConeShapeRTTI::Instance();
+}
+
+RTTITypeBase* ParticleEmitterConeShape::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+ParticleEmitterSphereShape::ParticleEmitterSphereShape(const PARTICLE_SPHERE_SHAPE_DESC& desc)
+	: mInfo(desc)
+{}
+
+u32 ParticleEmitterSphereShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
+{
+	return spawnMultipleRandom(this, random, particles, count);
+}
+
+void ParticleEmitterSphereShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
+{
+	position = random.GetPointInSphereShell(mInfo.Thickness);
+	normal = Vector3::Normalize(position);
+
+	position *= mInfo.Radius;
+}
+
+void ParticleEmitterSphereShape::CalcBounds(AABox& shape, AABox& velocity) const
+{
+	shape.SetMin(Vector3::ONE * -mInfo.Radius);
+	shape.SetMax(Vector3::ONE * mInfo.Radius);
+
+	velocity.SetMin(-Vector3::ONE);
+	velocity.SetMax(Vector3::ONE);
+}
+
+SPtr<ParticleEmitterSphereShape> ParticleEmitterSphereShape::Create(const PARTICLE_SPHERE_SHAPE_DESC& desc)
+{
+	return bs_shared_ptr_new<ParticleEmitterSphereShape>(desc);
+}
+
+SPtr<ParticleEmitterSphereShape> ParticleEmitterSphereShape::Create()
+{
+	return bs_shared_ptr_new<ParticleEmitterSphereShape>();
+}
+
+RTTITypeBase* ParticleEmitterSphereShape::GetRttiStatic()
+{
+	return ParticleEmitterSphereShapeRTTI::Instance();
+}
+
+RTTITypeBase* ParticleEmitterSphereShape::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+ParticleEmitterHemisphereShape::ParticleEmitterHemisphereShape(const PARTICLE_HEMISPHERE_SHAPE_DESC& desc)
+	: mInfo(desc)
+{}
+
+u32 ParticleEmitterHemisphereShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
+{
+	return spawnMultipleRandom(this, random, particles, count);
+}
+
+void ParticleEmitterHemisphereShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
+{
+	position = random.GetPointInSphereShell(mInfo.Thickness);
+	if(position.Z > 0.0f)
+		position.Z *= -1.0f;
+
+	normal = Vector3::Normalize(position);
+	position *= mInfo.Radius;
+}
+
+void ParticleEmitterHemisphereShape::CalcBounds(AABox& shape, AABox& velocity) const
+{
+	shape.SetMin(Vector3(-mInfo.Radius, -mInfo.Radius, 0.0f));
+	shape.SetMax(Vector3::ONE * mInfo.Radius);
+
+	velocity.SetMin(Vector3(-1.0f, -1.0f, 0.0f));
+	velocity.SetMax(Vector3::ONE);
+}
+
+SPtr<ParticleEmitterHemisphereShape> ParticleEmitterHemisphereShape::Create(const PARTICLE_HEMISPHERE_SHAPE_DESC& desc)
+{
+	return bs_shared_ptr_new<ParticleEmitterHemisphereShape>(desc);
+}
+
+SPtr<ParticleEmitterHemisphereShape> ParticleEmitterHemisphereShape::Create()
+{
+	return bs_shared_ptr_new<ParticleEmitterHemisphereShape>();
+}
+
+RTTITypeBase* ParticleEmitterHemisphereShape::GetRttiStatic()
+{
+	return ParticleEmitterHemisphereShapeRTTI::Instance();
+}
+
+RTTITypeBase* ParticleEmitterHemisphereShape::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+ParticleEmitterBoxShape::ParticleEmitterBoxShape(const PARTICLE_BOX_SHAPE_DESC& desc)
+	: mInfo(desc)
+{
+	switch(mInfo.Type)
 	{
-		return bs_shared_ptr_new<ParticleEmitterCircleShape>(desc);
-	}
-
-	SPtr<ParticleEmitterCircleShape> ParticleEmitterCircleShape::Create()
-	{
-		return bs_shared_ptr_new<ParticleEmitterCircleShape>();
-	}
-
-	RTTITypeBase* ParticleEmitterCircleShape::GetRttiStatic()
-	{
-		return ParticleEmitterCircleShapeRTTI::Instance();
-	}
-
-	RTTITypeBase* ParticleEmitterCircleShape::GetRtti() const
-	{
-		return GetRttiStatic();
-	}
-
-	ParticleEmitterRectShape::ParticleEmitterRectShape(const PARTICLE_RECT_SHAPE_DESC& desc)
-		: mInfo(desc)
-	{}
-
-	u32 ParticleEmitterRectShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
-	{
-		return spawnMultipleRandom(this, random, particles, count);
-	}
-
-	void ParticleEmitterRectShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
-	{
-		position.X = random.GetSNorm() * mInfo.Extents.X;
-		position.Y = random.GetSNorm() * mInfo.Extents.Y;
-		position.Z = 0.0f;
-
-		normal = Vector3::UNIT_Z;
-	}
-
-	void ParticleEmitterRectShape::CalcBounds(AABox& shape, AABox& velocity) const
-	{
-		shape.SetMin(Vector3(-mInfo.Extents.X, -mInfo.Extents.Y, 0.0f));
-		shape.SetMax(Vector3(mInfo.Extents.X, mInfo.Extents.Y, 0.0f));
-
-		velocity.SetMin(Vector3::ZERO);
-		velocity.SetMax(Vector3::UNIT_Z);
-	}
-
-	SPtr<ParticleEmitterRectShape> ParticleEmitterRectShape::Create(const PARTICLE_RECT_SHAPE_DESC& desc)
-	{
-		return bs_shared_ptr_new<ParticleEmitterRectShape>(desc);
-	}
-
-	SPtr<ParticleEmitterRectShape> ParticleEmitterRectShape::Create()
-	{
-		return bs_shared_ptr_new<ParticleEmitterRectShape>();
-	}
-
-	RTTITypeBase* ParticleEmitterRectShape::GetRttiStatic()
-	{
-		return ParticleEmitterRectShapeRTTI::Instance();
-	}
-
-	RTTITypeBase* ParticleEmitterRectShape::GetRtti() const
-	{
-		return GetRttiStatic();
-	}
-
-	bool MeshEmissionHelper::Initialize(const HMesh& mesh, bool perVertex, bool skinning)
-	{
-		// Validate
-		if(mesh)
+	case ParticleEmitterBoxType::Surface:
 		{
-			mMeshData = mesh->GetCachedData();
-
-			if(!mMeshData)
+			float totalSurfaceArea = 0.0f;
+			for(u32 i = 0; i < 3; i++)
 			{
-				BS_LOG(Verbose, Particles, "Particle emitter mesh not created with CPU caching, performing an expensive GPU read.");
+				mSurfaceArea[i] = Math::Sqr(desc.Extents[i]);
+				totalSurfaceArea += mSurfaceArea[i];
+			}
 
-				mMeshData = mesh->AllocBuffer();
-				mesh->ReadData(mMeshData);
+			if(totalSurfaceArea > 0.0f)
+			{
+				const float invTotalSurfaceArea = 1.0f / totalSurfaceArea;
+				for(u32 i = 0; i < 3; i++)
+					mSurfaceArea[i] *= invTotalSurfaceArea;
 
-				gCoreThread().Submit(true);
+				mSurfaceArea[1] += mSurfaceArea[0];
+				mSurfaceArea[2] = 1.0f;
 			}
 		}
+		break;
+	case ParticleEmitterBoxType::Edge:
+		{
+			float totalEdgeLength = 0.0f;
+			for(u32 i = 0; i < 3; i++)
+			{
+				mEdgeLengths[i] = desc.Extents[i];
+				totalEdgeLength += mEdgeLengths[i];
+			}
+
+			if(totalEdgeLength > 0.0f)
+			{
+				const float invTotalEdgeLength = 1.0f / totalEdgeLength;
+				for(u32 i = 0; i < 3; i++)
+					mEdgeLengths[i] *= invTotalEdgeLength;
+
+				mEdgeLengths[1] += mEdgeLengths[0];
+				mEdgeLengths[2] = 1.0f;
+			}
+		}
+		break;
+	default:
+	case ParticleEmitterBoxType::Volume: break;
+	}
+}
+
+u32 ParticleEmitterBoxShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
+{
+	return spawnMultipleRandom(this, random, particles, count);
+}
+
+void ParticleEmitterBoxShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
+{
+	switch(mInfo.Type)
+	{
+	default:
+	case ParticleEmitterBoxType::Volume:
+		position.X = mInfo.Extents.X * random.GetSNorm();
+		position.Y = mInfo.Extents.Y * random.GetSNorm();
+		position.Z = mInfo.Extents.Z * random.GetSNorm();
+		normal = Vector3::UNIT_Z;
+		break;
+	case ParticleEmitterBoxType::Surface:
+		{
+			const float u = random.GetSNorm();
+			const float v = random.GetSNorm();
+
+			// Determine an axis (based on their size, larger being more likely)
+			const float axisRnd = random.GetUNorm();
+			u32 axis = 0;
+			for(; axis < 3; axis++)
+			{
+				if(axisRnd <= mSurfaceArea[axis])
+					break;
+			}
+
+			switch(axis)
+			{
+			case 0:
+				position.X = mInfo.Extents.X * u;
+				position.Y = mInfo.Extents.Y * v;
+				position.Z = random.GetUNorm() > 0.5f ? mInfo.Extents.Z : -mInfo.Extents.Z;
+				break;
+			case 1:
+				position.X = mInfo.Extents.X * u;
+				position.Y = random.GetUNorm() > 0.5f ? mInfo.Extents.Y : -mInfo.Extents.Y;
+				position.Z = mInfo.Extents.Z * v;
+				break;
+			case 2:
+				position.X = random.GetUNorm() > 0.5f ? mInfo.Extents.X : -mInfo.Extents.X;
+				position.Y = mInfo.Extents.Y * v;
+				position.Z = mInfo.Extents.Z * u;
+				break;
+			default:
+				break;
+			}
+
+			normal = Vector3::UNIT_Z;
+		}
+		break;
+	case ParticleEmitterBoxType::Edge:
+		{
+			const float u = random.GetSNorm();
+
+			// Determine an axis (based on their length, longer being more likely)
+			const float axisRnd = random.GetUNorm();
+			u32 axis = 0;
+			for(; axis < 3; axis++)
+			{
+				if(axisRnd <= mEdgeLengths[axis])
+					break;
+			}
+
+			switch(axis)
+			{
+			case 0:
+				position.X = mInfo.Extents.X * u;
+				position.Y = random.GetUNorm() > 0.5f ? mInfo.Extents.Y : -mInfo.Extents.Y;
+				position.Z = random.GetUNorm() > 0.5f ? mInfo.Extents.Z : -mInfo.Extents.Z;
+				break;
+			case 1:
+				position.X = random.GetUNorm() > 0.5f ? mInfo.Extents.X : -mInfo.Extents.X;
+				position.Y = mInfo.Extents.Y * u;
+				position.Z = random.GetUNorm() > 0.5f ? mInfo.Extents.Z : -mInfo.Extents.Z;
+				break;
+			case 2:
+				position.X = random.GetUNorm() > 0.5f ? mInfo.Extents.X : -mInfo.Extents.X;
+				position.Y = random.GetUNorm() > 0.5f ? mInfo.Extents.Y : -mInfo.Extents.Y;
+				position.Z = mInfo.Extents.Z * u;
+				break;
+			default:
+				break;
+			}
+
+			normal = Vector3::UNIT_Z;
+		}
+		break;
+	}
+}
+
+void ParticleEmitterBoxShape::CalcBounds(AABox& shape, AABox& velocity) const
+{
+	shape.SetMin(-mInfo.Extents);
+	shape.SetMax(mInfo.Extents);
+
+	velocity.SetMin(Vector3::ZERO);
+	velocity.SetMax(Vector3::UNIT_Z);
+}
+
+SPtr<ParticleEmitterBoxShape> ParticleEmitterBoxShape::Create(const PARTICLE_BOX_SHAPE_DESC& desc)
+{
+	return bs_shared_ptr_new<ParticleEmitterBoxShape>(desc);
+}
+
+SPtr<ParticleEmitterBoxShape> ParticleEmitterBoxShape::Create()
+{
+	return bs_shared_ptr_new<ParticleEmitterBoxShape>();
+}
+
+RTTITypeBase* ParticleEmitterBoxShape::GetRttiStatic()
+{
+	return ParticleEmitterBoxShapeRTTI::Instance();
+}
+
+RTTITypeBase* ParticleEmitterBoxShape::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+ParticleEmitterLineShape::ParticleEmitterLineShape(const PARTICLE_LINE_SHAPE_DESC& desc)
+	: mInfo(desc)
+{}
+
+u32 ParticleEmitterLineShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
+{
+	return spawnMultipleMode(this, mInfo.Mode.Type, mInfo.Length, mInfo.Mode.Speed, mInfo.Mode.Interval, random, particles, count, state);
+}
+
+void ParticleEmitterLineShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
+{
+	position = Vector3(random.GetSNorm() * mInfo.Length * 0.5f, 0.0f, 0.0f);
+	normal = Vector3::UNIT_Z;
+}
+
+void ParticleEmitterLineShape::SpawnInternal(float t, Vector3& position, Vector3& normal) const
+{
+	position = Vector3(t * mInfo.Length - mInfo.Length * 0.5f, 0.0f, 0.0f);
+	normal = Vector3::UNIT_Z;
+}
+
+void ParticleEmitterLineShape::CalcBounds(AABox& shape, AABox& velocity) const
+{
+	shape.SetMin(Vector3(-mInfo.Length * 0.5f, 0.0f, 0.0f));
+	shape.SetMax(Vector3(mInfo.Length * 0.5f, 0.0f, 0.0f));
+
+	velocity.SetMin(Vector3::ZERO);
+	velocity.SetMax(Vector3::UNIT_Z);
+}
+
+SPtr<ParticleEmitterLineShape> ParticleEmitterLineShape::Create(const PARTICLE_LINE_SHAPE_DESC& desc)
+{
+	return bs_shared_ptr_new<ParticleEmitterLineShape>(desc);
+}
+
+SPtr<ParticleEmitterLineShape> ParticleEmitterLineShape::Create()
+{
+	return bs_shared_ptr_new<ParticleEmitterLineShape>();
+}
+
+RTTITypeBase* ParticleEmitterLineShape::GetRttiStatic()
+{
+	return ParticleEmitterLineShapeRTTI::Instance();
+}
+
+RTTITypeBase* ParticleEmitterLineShape::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+ParticleEmitterCircleShape::ParticleEmitterCircleShape(const PARTICLE_CIRCLE_SHAPE_DESC& desc)
+	: mInfo(desc)
+{}
+
+u32 ParticleEmitterCircleShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
+{
+	return spawnMultipleMode(this, mInfo.Mode.Type, mInfo.Arc.ValueRadians(), mInfo.Mode.Speed * Math::DEG2RAD, mInfo.Mode.Interval * Math::DEG2RAD, random, particles, count, state);
+}
+
+void ParticleEmitterCircleShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
+{
+	Vector2 pos2D;
+	if(Math::ApproxEquals(mInfo.Arc.ValueDegrees(), 360.0f))
+		pos2D = random.GetPointInCircleShell(mInfo.Thickness);
+	else
+		pos2D = random.GetPointInArcShell(mInfo.Arc, mInfo.Thickness);
+
+	position = Vector3(pos2D.X * mInfo.Radius, pos2D.Y * mInfo.Radius, 0.0f);
+	normal = Vector3::UNIT_Z;
+}
+
+void ParticleEmitterCircleShape::SpawnInternal(float t, Vector3& position, Vector3& normal) const
+{
+	const Vector2 pos2D(Math::Cos(t), Math::Sin(t));
+
+	position = Vector3(pos2D.X * mInfo.Radius, pos2D.Y * mInfo.Radius, 0.0f);
+	normal = Vector3::UNIT_Z;
+}
+
+void ParticleEmitterCircleShape::CalcBounds(AABox& shape, AABox& velocity) const
+{
+	shape.SetMin(Vector3(-mInfo.Radius, -mInfo.Radius, 0.0f));
+	shape.SetMax(Vector3(mInfo.Radius, mInfo.Radius, 0.0f));
+
+	velocity.SetMin(Vector3::ZERO);
+	velocity.SetMax(Vector3::UNIT_Z);
+}
+
+SPtr<ParticleEmitterCircleShape> ParticleEmitterCircleShape::Create(const PARTICLE_CIRCLE_SHAPE_DESC& desc)
+{
+	return bs_shared_ptr_new<ParticleEmitterCircleShape>(desc);
+}
+
+SPtr<ParticleEmitterCircleShape> ParticleEmitterCircleShape::Create()
+{
+	return bs_shared_ptr_new<ParticleEmitterCircleShape>();
+}
+
+RTTITypeBase* ParticleEmitterCircleShape::GetRttiStatic()
+{
+	return ParticleEmitterCircleShapeRTTI::Instance();
+}
+
+RTTITypeBase* ParticleEmitterCircleShape::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+ParticleEmitterRectShape::ParticleEmitterRectShape(const PARTICLE_RECT_SHAPE_DESC& desc)
+	: mInfo(desc)
+{}
+
+u32 ParticleEmitterRectShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
+{
+	return spawnMultipleRandom(this, random, particles, count);
+}
+
+void ParticleEmitterRectShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
+{
+	position.X = random.GetSNorm() * mInfo.Extents.X;
+	position.Y = random.GetSNorm() * mInfo.Extents.Y;
+	position.Z = 0.0f;
+
+	normal = Vector3::UNIT_Z;
+}
+
+void ParticleEmitterRectShape::CalcBounds(AABox& shape, AABox& velocity) const
+{
+	shape.SetMin(Vector3(-mInfo.Extents.X, -mInfo.Extents.Y, 0.0f));
+	shape.SetMax(Vector3(mInfo.Extents.X, mInfo.Extents.Y, 0.0f));
+
+	velocity.SetMin(Vector3::ZERO);
+	velocity.SetMax(Vector3::UNIT_Z);
+}
+
+SPtr<ParticleEmitterRectShape> ParticleEmitterRectShape::Create(const PARTICLE_RECT_SHAPE_DESC& desc)
+{
+	return bs_shared_ptr_new<ParticleEmitterRectShape>(desc);
+}
+
+SPtr<ParticleEmitterRectShape> ParticleEmitterRectShape::Create()
+{
+	return bs_shared_ptr_new<ParticleEmitterRectShape>();
+}
+
+RTTITypeBase* ParticleEmitterRectShape::GetRttiStatic()
+{
+	return ParticleEmitterRectShapeRTTI::Instance();
+}
+
+RTTITypeBase* ParticleEmitterRectShape::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+bool MeshEmissionHelper::Initialize(const HMesh& mesh, bool perVertex, bool skinning)
+{
+	// Validate
+	if(mesh)
+	{
+		mMeshData = mesh->GetCachedData();
 
 		if(!mMeshData)
 		{
-			// No warning as user could want to add mesh data later
-			return false;
+			BS_LOG(Verbose, Particles, "Particle emitter mesh not created with CPU caching, performing an expensive GPU read.");
+
+			mMeshData = mesh->AllocBuffer();
+			mesh->ReadData(mMeshData);
+
+			gCoreThread().Submit(true);
 		}
-
-		const SPtr<VertexDataDesc>& vertexDesc = mMeshData->GetVertexDesc();
-		const VertexElement* positionElement = vertexDesc->GetElement(VES_POSITION);
-		if(positionElement == nullptr)
-		{
-			BS_LOG(Error, Particles, "Mesh particle emitter requires position vertex data to be present in the provided mesh data.");
-			return false;
-		}
-
-		if(positionElement->GetType() != VET_FLOAT3)
-		{
-			BS_LOG(Error, Particles, "Mesh particle emitter requires position vertex data to use 3D vectors for individual elements.");
-			return false;
-		}
-
-		if(!perVertex && (mMeshData->GetNumIndices() % 3 != 0))
-		{
-			BS_LOG(Error, Particles, "Unless using the per-vertex emission mode, mesh particle emitter requires the number "
-									 "of indices to be divisible by three, using a triangle list layout.");
-			return false;
-		}
-
-		if(skinning)
-		{
-			const VertexElement* blendIdxElement = vertexDesc->GetElement(VES_BLEND_INDICES);
-			const VertexElement* blendWeightElement = vertexDesc->GetElement(VES_BLEND_WEIGHTS);
-
-			if(blendIdxElement == nullptr || blendWeightElement == nullptr)
-			{
-				BS_LOG(Error, Particles, "Skinned mesh particle emitter requires blend indices and blend weight data to be present in the "
-										 "provided mesh data.");
-				return false;
-			}
-
-			if(blendIdxElement->GetType() != VET_UBYTE4)
-			{
-				BS_LOG(Error, Particles, "Skinned mesh particle emitter requires blend indices to be a 4-byte encoded format.");
-				return false;
-			}
-
-			if(blendWeightElement->GetType() != VET_FLOAT4)
-			{
-				BS_LOG(Error, Particles, "Skinned mesh particle emitter requires blend weights to be a 4D vector format.");
-				return false;
-			}
-		}
-
-		// Initialize
-		mVertices = mMeshData->GetElementData(VES_POSITION);
-		mNumVertices = mMeshData->GetNumVertices();
-		mVertexStride = vertexDesc->GetVertexStride();
-
-		const VertexElement* normalElement = vertexDesc->GetElement(VES_NORMAL);
-
-		mNormals = nullptr;
-		if(normalElement)
-		{
-			if(normalElement->GetType() == VET_UBYTE4_NORM)
-			{
-				mNormals = mMeshData->GetElementData(VES_NORMAL);
-				m32BitNormals = true;
-			}
-			else if(normalElement->GetType() == VET_FLOAT3)
-			{
-				mNormals = mMeshData->GetElementData(VES_NORMAL);
-				m32BitNormals = false;
-			}
-		}
-
-		if(skinning)
-		{
-			mBoneIndices = mMeshData->GetElementData(VES_BLEND_INDICES);
-			mBoneWeights = mMeshData->GetElementData(VES_BLEND_WEIGHTS);
-		}
-
-		if(!perVertex)
-			mWeightedTriangles.Calculate(*mMeshData);
-
-		return true;
 	}
 
-	void MeshEmissionHelper::GetSequentialVertex(class Vector3& position, class Vector3& normal, u32& idx) const
+	if(!mMeshData)
 	{
-		idx = mNextSequentialIdx;
-		position = *(Vector3*)(mVertices + mVertexStride * idx);
+		// No warning as user could want to add mesh data later
+		return false;
+	}
+
+	const SPtr<VertexDataDesc>& vertexDesc = mMeshData->GetVertexDesc();
+	const VertexElement* positionElement = vertexDesc->GetElement(VES_POSITION);
+	if(positionElement == nullptr)
+	{
+		BS_LOG(Error, Particles, "Mesh particle emitter requires position vertex data to be present in the provided mesh data.");
+		return false;
+	}
+
+	if(positionElement->GetType() != VET_FLOAT3)
+	{
+		BS_LOG(Error, Particles, "Mesh particle emitter requires position vertex data to use 3D vectors for individual elements.");
+		return false;
+	}
+
+	if(!perVertex && (mMeshData->GetNumIndices() % 3 != 0))
+	{
+		BS_LOG(Error, Particles, "Unless using the per-vertex emission mode, mesh particle emitter requires the number "
+								 "of indices to be divisible by three, using a triangle list layout.");
+		return false;
+	}
+
+	if(skinning)
+	{
+		const VertexElement* blendIdxElement = vertexDesc->GetElement(VES_BLEND_INDICES);
+		const VertexElement* blendWeightElement = vertexDesc->GetElement(VES_BLEND_WEIGHTS);
+
+		if(blendIdxElement == nullptr || blendWeightElement == nullptr)
+		{
+			BS_LOG(Error, Particles, "Skinned mesh particle emitter requires blend indices and blend weight data to be present in the "
+									 "provided mesh data.");
+			return false;
+		}
+
+		if(blendIdxElement->GetType() != VET_UBYTE4)
+		{
+			BS_LOG(Error, Particles, "Skinned mesh particle emitter requires blend indices to be a 4-byte encoded format.");
+			return false;
+		}
+
+		if(blendWeightElement->GetType() != VET_FLOAT4)
+		{
+			BS_LOG(Error, Particles, "Skinned mesh particle emitter requires blend weights to be a 4D vector format.");
+			return false;
+		}
+	}
+
+	// Initialize
+	mVertices = mMeshData->GetElementData(VES_POSITION);
+	mNumVertices = mMeshData->GetNumVertices();
+	mVertexStride = vertexDesc->GetVertexStride();
+
+	const VertexElement* normalElement = vertexDesc->GetElement(VES_NORMAL);
+
+	mNormals = nullptr;
+	if(normalElement)
+	{
+		if(normalElement->GetType() == VET_UBYTE4_NORM)
+		{
+			mNormals = mMeshData->GetElementData(VES_NORMAL);
+			m32BitNormals = true;
+		}
+		else if(normalElement->GetType() == VET_FLOAT3)
+		{
+			mNormals = mMeshData->GetElementData(VES_NORMAL);
+			m32BitNormals = false;
+		}
+	}
+
+	if(skinning)
+	{
+		mBoneIndices = mMeshData->GetElementData(VES_BLEND_INDICES);
+		mBoneWeights = mMeshData->GetElementData(VES_BLEND_WEIGHTS);
+	}
+
+	if(!perVertex)
+		mWeightedTriangles.Calculate(*mMeshData);
+
+	return true;
+}
+
+void MeshEmissionHelper::GetSequentialVertex(class Vector3& position, class Vector3& normal, u32& idx) const
+{
+	idx = mNextSequentialIdx;
+	position = *(Vector3*)(mVertices + mVertexStride * idx);
+
+	if(mNormals)
+	{
+		if(m32BitNormals)
+			normal = MeshUtility::UnpackNormal(mNormals + mVertexStride * idx);
+		else
+			normal = *(Vector3*)(mNormals + mVertexStride * idx);
+	}
+	else
+		normal = Vector3::UNIT_Z;
+
+	mNextSequentialIdx = (mNextSequentialIdx + 1) % mNumVertices;
+}
+
+void MeshEmissionHelper::GetRandomVertex(const Random& random, Vector3& position, Vector3& normal, u32& idx) const
+{
+	idx = random.Get() % mNumVertices;
+	position = *(Vector3*)(mVertices + mVertexStride * idx);
+
+	if(mNormals)
+	{
+		if(m32BitNormals)
+			normal = MeshUtility::UnpackNormal(mNormals + mVertexStride * idx);
+		else
+			normal = *(Vector3*)(mNormals + mVertexStride * idx);
+	}
+	else
+		normal = Vector3::UNIT_Z;
+}
+
+void MeshEmissionHelper::GetRandomEdge(const Random& random, std::array<Vector3, 2>& position, std::array<Vector3, 2>& normal, std::array<u32, 2>& idx) const
+{
+	std::array<u32, 3> triIndices;
+	mWeightedTriangles.GetTriangle(random, triIndices);
+
+	// Pick edge
+	// Note: Longer edges should be given higher chance, but we're assuming they are all equal length for performance
+	const int32_t edge = random.GetRange(0, 2);
+	switch(edge)
+	{
+	default:
+	case 0:
+		idx[0] = triIndices[0];
+		idx[1] = triIndices[1];
+		break;
+	case 1:
+		idx[0] = triIndices[1];
+		idx[1] = triIndices[2];
+		break;
+	case 2:
+		idx[0] = triIndices[2];
+		idx[1] = triIndices[0];
+		break;
+	}
+
+	position[0] = *(Vector3*)(mVertices + mVertexStride * idx[0]);
+	position[1] = *(Vector3*)(mVertices + mVertexStride * idx[1]);
+
+	if(mNormals)
+	{
+		if(m32BitNormals)
+		{
+			normal[0] = MeshUtility::UnpackNormal(mNormals + mVertexStride * idx[0]);
+			normal[1] = MeshUtility::UnpackNormal(mNormals + mVertexStride * idx[1]);
+		}
+		else
+		{
+			normal[0] = *(Vector3*)(mNormals + mVertexStride * idx[0]);
+			normal[1] = *(Vector3*)(mNormals + mVertexStride * idx[1]);
+		}
+	}
+	else
+	{
+		normal[0] = Vector3::UNIT_Z;
+		normal[1] = Vector3::UNIT_Z;
+	}
+}
+
+void MeshEmissionHelper::GetRandomTriangle(const Random& random, std::array<Vector3, 3>& position, std::array<Vector3, 3>& normal, std::array<u32, 3>& idx) const
+{
+	mWeightedTriangles.GetTriangle(random, idx);
+
+	for(uint32_t i = 0; i < 3; i++)
+	{
+		position[i] = *(Vector3*)(mVertices + mVertexStride * idx[i]);
 
 		if(mNormals)
 		{
 			if(m32BitNormals)
-				normal = MeshUtility::UnpackNormal(mNormals + mVertexStride * idx);
+				normal[i] = MeshUtility::UnpackNormal(mNormals + mVertexStride * idx[i]);
 			else
-				normal = *(Vector3*)(mNormals + mVertexStride * idx);
+				normal[i] = *(Vector3*)(mNormals + mVertexStride * idx[i]);
 		}
 		else
-			normal = Vector3::UNIT_Z;
-
-		mNextSequentialIdx = (mNextSequentialIdx + 1) % mNumVertices;
+			normal[i] = Vector3::UNIT_Z;
 	}
+}
 
-	void MeshEmissionHelper::GetRandomVertex(const Random& random, Vector3& position, Vector3& normal, u32& idx) const
+Matrix4 MeshEmissionHelper::GetBlendMatrix(const Matrix4* bones, u32 vertexIdx) const
+{
+	if(bones)
 	{
-		idx = random.Get() % mNumVertices;
-		position = *(Vector3*)(mVertices + mVertexStride * idx);
+		const u32 boneIndices = *(u32*)(mBoneIndices + vertexIdx * mVertexStride);
+		const Vector4& boneWeights = *(Vector4*)(mBoneWeights + vertexIdx * mVertexStride);
 
-		if(mNormals)
+		return bones[boneIndices & 0xFF] * boneWeights[0] +
+			bones[(boneIndices >> 8) & 0xFF] * boneWeights[1] +
+			bones[(boneIndices >> 16) & 0xFF] * boneWeights[2] +
+			bones[(boneIndices >> 24) & 0xFF] * boneWeights[3];
+	}
+	else
+		return Matrix4::IDENTITY;
+}
+
+ParticleEmitterStaticMeshShape::ParticleEmitterStaticMeshShape(const PARTICLE_STATIC_MESH_SHAPE_DESC& desc)
+	: mInfo(desc)
+{
+	mIsValid = mMeshEmissionHelper.Initialize(desc.Mesh, desc.Type == ParticleEmitterMeshType::Vertex, false);
+}
+
+ParticleEmitterStaticMeshShape::ParticleEmitterStaticMeshShape()
+{
+	mIsValid = false;
+}
+
+void ParticleEmitterStaticMeshShape::SetOptions(const PARTICLE_STATIC_MESH_SHAPE_DESC& options)
+{
+	mInfo = options;
+	mIsValid = mMeshEmissionHelper.Initialize(options.Mesh, options.Type == ParticleEmitterMeshType::Vertex, false);
+}
+
+u32 ParticleEmitterStaticMeshShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
+{
+	if(count == 0)
+		return particles.GetParticleCount();
+
+	switch(mInfo.Type)
+	{
+	case ParticleEmitterMeshType::Vertex:
+		if(mInfo.Sequential)
 		{
-			if(m32BitNormals)
-				normal = MeshUtility::UnpackNormal(mNormals + mVertexStride * idx);
-			else
-				normal = *(Vector3*)(mNormals + mVertexStride * idx);
-		}
-		else
-			normal = Vector3::UNIT_Z;
-	}
-
-	void MeshEmissionHelper::GetRandomEdge(const Random& random, std::array<Vector3, 2>& position, std::array<Vector3, 2>& normal, std::array<u32, 2>& idx) const
-	{
-		std::array<u32, 3> triIndices;
-		mWeightedTriangles.GetTriangle(random, triIndices);
-
-		// Pick edge
-		// Note: Longer edges should be given higher chance, but we're assuming they are all equal length for performance
-		const int32_t edge = random.GetRange(0, 2);
-		switch(edge)
-		{
-		default:
-		case 0:
-			idx[0] = triIndices[0];
-			idx[1] = triIndices[1];
-			break;
-		case 1:
-			idx[0] = triIndices[1];
-			idx[1] = triIndices[2];
-			break;
-		case 2:
-			idx[0] = triIndices[2];
-			idx[1] = triIndices[0];
-			break;
-		}
-
-		position[0] = *(Vector3*)(mVertices + mVertexStride * idx[0]);
-		position[1] = *(Vector3*)(mVertices + mVertexStride * idx[1]);
-
-		if(mNormals)
-		{
-			if(m32BitNormals)
-			{
-				normal[0] = MeshUtility::UnpackNormal(mNormals + mVertexStride * idx[0]);
-				normal[1] = MeshUtility::UnpackNormal(mNormals + mVertexStride * idx[1]);
-			}
-			else
-			{
-				normal[0] = *(Vector3*)(mNormals + mVertexStride * idx[0]);
-				normal[1] = *(Vector3*)(mNormals + mVertexStride * idx[1]);
-			}
-		}
-		else
-		{
-			normal[0] = Vector3::UNIT_Z;
-			normal[1] = Vector3::UNIT_Z;
-		}
-	}
-
-	void MeshEmissionHelper::GetRandomTriangle(const Random& random, std::array<Vector3, 3>& position, std::array<Vector3, 3>& normal, std::array<u32, 3>& idx) const
-	{
-		mWeightedTriangles.GetTriangle(random, idx);
-
-		for(uint32_t i = 0; i < 3; i++)
-		{
-			position[i] = *(Vector3*)(mVertices + mVertexStride * idx[i]);
-
-			if(mNormals)
-			{
-				if(m32BitNormals)
-					normal[i] = MeshUtility::UnpackNormal(mNormals + mVertexStride * idx[i]);
-				else
-					normal[i] = *(Vector3*)(mNormals + mVertexStride * idx[i]);
-			}
-			else
-				normal[i] = Vector3::UNIT_Z;
-		}
-	}
-
-	Matrix4 MeshEmissionHelper::GetBlendMatrix(const Matrix4* bones, u32 vertexIdx) const
-	{
-		if(bones)
-		{
-			const u32 boneIndices = *(u32*)(mBoneIndices + vertexIdx * mVertexStride);
-			const Vector4& boneWeights = *(Vector4*)(mBoneWeights + vertexIdx * mVertexStride);
-
-			return bones[boneIndices & 0xFF] * boneWeights[0] +
-				bones[(boneIndices >> 8) & 0xFF] * boneWeights[1] +
-				bones[(boneIndices >> 16) & 0xFF] * boneWeights[2] +
-				bones[(boneIndices >> 24) & 0xFF] * boneWeights[3];
-		}
-		else
-			return Matrix4::IDENTITY;
-	}
-
-	ParticleEmitterStaticMeshShape::ParticleEmitterStaticMeshShape(const PARTICLE_STATIC_MESH_SHAPE_DESC& desc)
-		: mInfo(desc)
-	{
-		mIsValid = mMeshEmissionHelper.Initialize(desc.Mesh, desc.Type == ParticleEmitterMeshType::Vertex, false);
-	}
-
-	ParticleEmitterStaticMeshShape::ParticleEmitterStaticMeshShape()
-	{
-		mIsValid = false;
-	}
-
-	void ParticleEmitterStaticMeshShape::SetOptions(const PARTICLE_STATIC_MESH_SHAPE_DESC& options)
-	{
-		mInfo = options;
-		mIsValid = mMeshEmissionHelper.Initialize(options.Mesh, options.Type == ParticleEmitterMeshType::Vertex, false);
-	}
-
-	u32 ParticleEmitterStaticMeshShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
-	{
-		if(count == 0)
-			return particles.GetParticleCount();
-
-		switch(mInfo.Type)
-		{
-		case ParticleEmitterMeshType::Vertex:
-			if(mInfo.Sequential)
-			{
-				return spawnMultiple(particles, count, [this](u32 idx, Vector3& position, Vector3& normal)
-									 {
+			return spawnMultiple(particles, count, [this](u32 idx, Vector3& position, Vector3& normal)
+								 {
 					u32 vertexIdx;
 					mMeshEmissionHelper.GetSequentialVertex(position, normal, vertexIdx); });
-			}
-			else
-			{
-				return spawnMultiple(particles, count, [this, &random](u32 idx, Vector3& position, Vector3& normal)
-									 {
-					u32 vertexIdx;
-					mMeshEmissionHelper.GetRandomVertex(random, position, normal, vertexIdx); });
-			}
-		case ParticleEmitterMeshType::Edge:
+		}
+		else
+		{
 			return spawnMultiple(particles, count, [this, &random](u32 idx, Vector3& position, Vector3& normal)
 								 {
+					u32 vertexIdx;
+					mMeshEmissionHelper.GetRandomVertex(random, position, normal, vertexIdx); });
+		}
+	case ParticleEmitterMeshType::Edge:
+		return spawnMultiple(particles, count, [this, &random](u32 idx, Vector3& position, Vector3& normal)
+							 {
 				std::array<Vector3, 2> edgePositions, edgeNormals;
 				std::array<u32, 2> edgeIndices;
 
@@ -1007,10 +1007,10 @@ namespace bs
 				const float rnd = random.GetUNorm();
 				position = Math::Lerp(rnd, edgePositions[0], edgePositions[1]);
 				normal = Math::Lerp(rnd, edgeNormals[0], edgeNormals[1]); });
-		default:
-		case ParticleEmitterMeshType::Triangle:
-			return spawnMultiple(particles, count, [this, &random](u32 idx, Vector3& position, Vector3& normal)
-								 {
+	default:
+	case ParticleEmitterMeshType::Triangle:
+		return spawnMultiple(particles, count, [this, &random](u32 idx, Vector3& position, Vector3& normal)
+							 {
 				std::array<Vector3, 3> triPositions, triNormals;
 				std::array<u32, 3> triIndices;
 
@@ -1025,119 +1025,119 @@ namespace bs
 					position += triPositions[i] * barycenter[i];
 					normal += triNormals[i] * barycenter[i];
 				} });
-		}
 	}
+}
 
-	void ParticleEmitterStaticMeshShape::CalcBounds(AABox& shape, AABox& velocity) const
+void ParticleEmitterStaticMeshShape::CalcBounds(AABox& shape, AABox& velocity) const
+{
+	if(mInfo.Mesh.IsLoaded(false))
+		shape = mInfo.Mesh->GetProperties().GetBounds().GetBox();
+	else
+		shape = AABox::BOX_EMPTY;
+
+	velocity.SetMin(-Vector3::ONE);
+	velocity.SetMax(Vector3::ONE);
+}
+
+SPtr<ParticleEmitterStaticMeshShape> ParticleEmitterStaticMeshShape::Create(const PARTICLE_STATIC_MESH_SHAPE_DESC& desc)
+{
+	return bs_shared_ptr_new<ParticleEmitterStaticMeshShape>(desc);
+}
+
+SPtr<ParticleEmitterStaticMeshShape> ParticleEmitterStaticMeshShape::Create()
+{
+	return bs_shared_ptr_new<ParticleEmitterStaticMeshShape>();
+}
+
+RTTITypeBase* ParticleEmitterStaticMeshShape::GetRttiStatic()
+{
+	return ParticleEmitterStaticMeshShapeRTTI::Instance();
+}
+
+RTTITypeBase* ParticleEmitterStaticMeshShape::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+ParticleEmitterSkinnedMeshShape::ParticleEmitterSkinnedMeshShape()
+{
+	mIsValid = false;
+}
+
+ParticleEmitterSkinnedMeshShape::ParticleEmitterSkinnedMeshShape(const PARTICLE_SKINNED_MESH_SHAPE_DESC& desc)
+	: mInfo(desc)
+{
+	HMesh mesh;
+	if(!desc.Renderable.Empty())
+		mesh = desc.Renderable.GetActor()->GetMesh();
+
+	mIsValid = mMeshEmissionHelper.Initialize(mesh, desc.Type == ParticleEmitterMeshType::Vertex, false);
+}
+
+void ParticleEmitterSkinnedMeshShape::SetOptions(const PARTICLE_SKINNED_MESH_SHAPE_DESC& options)
+{
+	mInfo = options;
+
+	HMesh mesh;
+	if(!options.Renderable.Empty())
+		mesh = options.Renderable.GetActor()->GetMesh();
+
+	mIsValid = mMeshEmissionHelper.Initialize(mesh, options.Type == ParticleEmitterMeshType::Vertex, false);
+}
+
+u32 ParticleEmitterSkinnedMeshShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
+{
+	if(count == 0)
+		return particles.GetParticleCount();
+
+	const Matrix4* bones = nullptr;
+
+	if(!mInfo.Renderable.Empty())
 	{
-		if(mInfo.Mesh.IsLoaded(false))
-			shape = mInfo.Mesh->GetProperties().GetBounds().GetBox();
-		else
-			shape = AABox::BOX_EMPTY;
-
-		velocity.SetMin(-Vector3::ONE);
-		velocity.SetMax(Vector3::ONE);
-	}
-
-	SPtr<ParticleEmitterStaticMeshShape> ParticleEmitterStaticMeshShape::Create(const PARTICLE_STATIC_MESH_SHAPE_DESC& desc)
-	{
-		return bs_shared_ptr_new<ParticleEmitterStaticMeshShape>(desc);
-	}
-
-	SPtr<ParticleEmitterStaticMeshShape> ParticleEmitterStaticMeshShape::Create()
-	{
-		return bs_shared_ptr_new<ParticleEmitterStaticMeshShape>();
-	}
-
-	RTTITypeBase* ParticleEmitterStaticMeshShape::GetRttiStatic()
-	{
-		return ParticleEmitterStaticMeshShapeRTTI::Instance();
-	}
-
-	RTTITypeBase* ParticleEmitterStaticMeshShape::GetRtti() const
-	{
-		return GetRttiStatic();
-	}
-
-	ParticleEmitterSkinnedMeshShape::ParticleEmitterSkinnedMeshShape()
-	{
-		mIsValid = false;
-	}
-
-	ParticleEmitterSkinnedMeshShape::ParticleEmitterSkinnedMeshShape(const PARTICLE_SKINNED_MESH_SHAPE_DESC& desc)
-		: mInfo(desc)
-	{
-		HMesh mesh;
-		if(!desc.Renderable.Empty())
-			mesh = desc.Renderable.GetActor()->GetMesh();
-
-		mIsValid = mMeshEmissionHelper.Initialize(mesh, desc.Type == ParticleEmitterMeshType::Vertex, false);
-	}
-
-	void ParticleEmitterSkinnedMeshShape::SetOptions(const PARTICLE_SKINNED_MESH_SHAPE_DESC& options)
-	{
-		mInfo = options;
-
-		HMesh mesh;
-		if(!options.Renderable.Empty())
-			mesh = options.Renderable.GetActor()->GetMesh();
-
-		mIsValid = mMeshEmissionHelper.Initialize(mesh, options.Type == ParticleEmitterMeshType::Vertex, false);
-	}
-
-	u32 ParticleEmitterSkinnedMeshShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
-	{
-		if(count == 0)
-			return particles.GetParticleCount();
-
-		const Matrix4* bones = nullptr;
-
-		if(!mInfo.Renderable.Empty())
+		const SPtr<Renderable>& renderable = mInfo.Renderable.GetActor();
+		const SPtr<Animation>& animation = renderable->GetAnimation();
+		;
+		if(animation)
 		{
-			const SPtr<Renderable>& renderable = mInfo.Renderable.GetActor();
-			const SPtr<Animation>& animation = renderable->GetAnimation();
-			;
-			if(animation)
-			{
-				const u64 animId = animation->GetIdInternal();
+			const u64 animId = animation->GetIdInternal();
 
-				if(state.AnimData)
-				{
-					const auto iterFind = state.AnimData->Infos.find(animId);
-					if(iterFind != state.AnimData->Infos.end())
-						bones = &state.AnimData->Transforms[iterFind->second.PoseInfo.StartIdx];
-				}
+			if(state.AnimData)
+			{
+				const auto iterFind = state.AnimData->Infos.find(animId);
+				if(iterFind != state.AnimData->Infos.end())
+					bones = &state.AnimData->Transforms[iterFind->second.PoseInfo.StartIdx];
 			}
 		}
+	}
 
-		switch(mInfo.Type)
+	switch(mInfo.Type)
+	{
+	case ParticleEmitterMeshType::Vertex:
+		if(mInfo.Sequential)
 		{
-		case ParticleEmitterMeshType::Vertex:
-			if(mInfo.Sequential)
-			{
-				return spawnMultiple(particles, count, [this, bones](u32 idx, Vector3& position, Vector3& normal)
-									 {
+			return spawnMultiple(particles, count, [this, bones](u32 idx, Vector3& position, Vector3& normal)
+								 {
 					u32 vertexIdx;
 					mMeshEmissionHelper.GetSequentialVertex(position, normal, vertexIdx);
 
 					Matrix4 blendMatrix = mMeshEmissionHelper.GetBlendMatrix(bones, vertexIdx);
 					position = blendMatrix.MultiplyAffine(position);
 					normal = blendMatrix.MultiplyDirection(normal); });
-			}
-			else
-			{
-				return spawnMultiple(particles, count, [this, &random, bones](u32 idx, Vector3& position, Vector3& normal)
-									 {
+		}
+		else
+		{
+			return spawnMultiple(particles, count, [this, &random, bones](u32 idx, Vector3& position, Vector3& normal)
+								 {
 					u32 vertexIdx;
 					mMeshEmissionHelper.GetRandomVertex(random, position, normal, vertexIdx);
 
 					Matrix4 blendMatrix = mMeshEmissionHelper.GetBlendMatrix(bones, vertexIdx);
 					position = blendMatrix.MultiplyAffine(position);
 					normal = blendMatrix.MultiplyDirection(normal); });
-			}
-		case ParticleEmitterMeshType::Edge:
-			return spawnMultiple(particles, count, [this, &random, bones](u32 idx, Vector3& position, Vector3& normal)
-								 {
+		}
+	case ParticleEmitterMeshType::Edge:
+		return spawnMultiple(particles, count, [this, &random, bones](u32 idx, Vector3& position, Vector3& normal)
+							 {
 				std::array<Vector3, 2> edgePositions, edgeNormals;
 				std::array<u32, 2> edgeIndices;
 
@@ -1153,10 +1153,10 @@ namespace bs
 				const float rnd = random.GetUNorm();
 				position = Math::Lerp(rnd, edgePositions[0], edgePositions[1]);
 				normal = Math::Lerp(rnd, edgeNormals[0], edgeNormals[1]); });
-		default:
-		case ParticleEmitterMeshType::Triangle:
-			return spawnMultiple(particles, count, [this, &random, bones](u32 idx, Vector3& position, Vector3& normal)
-								 {
+	default:
+	case ParticleEmitterMeshType::Triangle:
+		return spawnMultiple(particles, count, [this, &random, bones](u32 idx, Vector3& position, Vector3& normal)
+							 {
 				std::array<Vector3, 3> triPositions, triNormals;
 				std::array<u32, 3> triIndices;
 
@@ -1178,268 +1178,268 @@ namespace bs
 					position += triPositions[i] * barycenter[i];
 					normal += triNormals[i] * barycenter[i];
 				} });
-		};
-	}
+	};
+}
 
-	void ParticleEmitterSkinnedMeshShape::CalcBounds(AABox& shape, AABox& velocity) const
+void ParticleEmitterSkinnedMeshShape::CalcBounds(AABox& shape, AABox& velocity) const
+{
+	if(!mInfo.Renderable.Empty())
 	{
-		if(!mInfo.Renderable.Empty())
+		const SPtr<Renderable>& renderable = mInfo.Renderable.GetActor();
+		const SPtr<Animation>& anim = renderable->GetAnimation();
+		if(anim)
 		{
-			const SPtr<Renderable>& renderable = mInfo.Renderable.GetActor();
-			const SPtr<Animation>& anim = renderable->GetAnimation();
-			if(anim)
-			{
-				// No culling, make the box infinite
-				if(!anim->GetCulling())
-					shape = AABox::INF_BOX;
-				else
-					shape = anim->GetBounds();
-			}
+			// No culling, make the box infinite
+			if(!anim->GetCulling())
+				shape = AABox::INF_BOX;
 			else
-			{
-				const HMesh& mesh = renderable->GetMesh();
-				if(mesh.IsLoaded(false))
-					shape = mesh->GetProperties().GetBounds().GetBox();
-				else
-					shape = AABox::BOX_EMPTY;
-			}
+				shape = anim->GetBounds();
 		}
 		else
-			shape = AABox::BOX_EMPTY;
-
-		velocity.SetMin(-Vector3::ONE);
-		velocity.SetMax(Vector3::ONE);
+		{
+			const HMesh& mesh = renderable->GetMesh();
+			if(mesh.IsLoaded(false))
+				shape = mesh->GetProperties().GetBounds().GetBox();
+			else
+				shape = AABox::BOX_EMPTY;
+		}
 	}
+	else
+		shape = AABox::BOX_EMPTY;
 
-	SPtr<ParticleEmitterSkinnedMeshShape> ParticleEmitterSkinnedMeshShape::Create(const PARTICLE_SKINNED_MESH_SHAPE_DESC& desc)
+	velocity.SetMin(-Vector3::ONE);
+	velocity.SetMax(Vector3::ONE);
+}
+
+SPtr<ParticleEmitterSkinnedMeshShape> ParticleEmitterSkinnedMeshShape::Create(const PARTICLE_SKINNED_MESH_SHAPE_DESC& desc)
+{
+	return bs_shared_ptr_new<ParticleEmitterSkinnedMeshShape>(desc);
+}
+
+SPtr<ParticleEmitterSkinnedMeshShape> ParticleEmitterSkinnedMeshShape::Create()
+{
+	return bs_shared_ptr_new<ParticleEmitterSkinnedMeshShape>();
+}
+
+RTTITypeBase* ParticleEmitterSkinnedMeshShape::GetRttiStatic()
+{
+	return ParticleEmitterSkinnedMeshShapeRTTI::Instance();
+}
+
+RTTITypeBase* ParticleEmitterSkinnedMeshShape::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+void ParticleEmitter::SetEmissionBursts(Vector<ParticleBurst> bursts)
+{
+	mBursts = std::move(bursts);
+	mBurstAccumulator.resize(mBursts.size());
+
+	for(auto& entry : mBurstAccumulator)
+		entry = 0.0f;
+}
+
+void ParticleEmitter::Spawn(Random& random, const ParticleSystemState& state, ParticleSet& set) const
+{
+	if(!mShape || !mShape->IsValid())
+		return;
+
+	const float emitterT = state.NrmTimeEnd;
+
+	// Continous emission rate
+	const float rate = mEmissionRate.Evaluate(emitterT, random);
+
+	mEmitAccumulator += rate * state.TimeStep;
+	auto numContinous = (u32)mEmitAccumulator;
+	mEmitAccumulator -= (float)numContinous;
+
+	// Bursts
+	u32 numBurst = 0;
+	const auto emitBursts = [this, &emitterT, &random](float start, float end)
 	{
-		return bs_shared_ptr_new<ParticleEmitterSkinnedMeshShape>(desc);
-	}
+		constexpr float MIN_BURST_INTERVAL = 0.01f;
 
-	SPtr<ParticleEmitterSkinnedMeshShape> ParticleEmitterSkinnedMeshShape::Create()
+		u32 numBurst = 0;
+		for(u32 i = 0; i < (u32)mBursts.size(); i++)
+		{
+			const ParticleBurst& burst = mBursts[i];
+
+			const float relT0 = std::max(0.0f, start - burst.Time);
+			const float relT1 = end - burst.Time;
+			if(relT1 <= 0.0f)
+				continue;
+
+			// Handle initial burst cycle
+			if(relT0 == 0.0f)
+				numBurst += (u32)burst.Count.Evaluate(emitterT, random);
+
+			// Handle remaining cycles
+			const float dt = relT1 - relT0;
+			const float interval = std::max(burst.Interval, MIN_BURST_INTERVAL);
+
+			const float emitDuration = dt + mBurstAccumulator[i];
+			const u32 emitCycles = Math::FloorToPosInt(emitDuration / interval);
+			mBurstAccumulator[i] = emitDuration - emitCycles * interval;
+
+			for(u32 j = 0; j < emitCycles; j++)
+				numBurst += (u32)burst.Count.Evaluate(emitterT, random);
+		}
+
+		return numBurst;
+	};
+
+	// Handle loop
+	if(state.TimeEnd < state.TimeStart)
 	{
-		return bs_shared_ptr_new<ParticleEmitterSkinnedMeshShape>();
-	}
+		numBurst += emitBursts(state.TimeStart, state.Length);
 
-	RTTITypeBase* ParticleEmitterSkinnedMeshShape::GetRttiStatic()
-	{
-		return ParticleEmitterSkinnedMeshShapeRTTI::Instance();
-	}
-
-	RTTITypeBase* ParticleEmitterSkinnedMeshShape::GetRtti() const
-	{
-		return GetRttiStatic();
-	}
-
-	void ParticleEmitter::SetEmissionBursts(Vector<ParticleBurst> bursts)
-	{
-		mBursts = std::move(bursts);
-		mBurstAccumulator.resize(mBursts.size());
-
+		// Reset accumulator
 		for(auto& entry : mBurstAccumulator)
 			entry = 0.0f;
+
+		numBurst += emitBursts(0.0f, state.TimeEnd);
+	}
+	else
+		numBurst += emitBursts(state.TimeStart, state.TimeEnd);
+
+	const u32 startIdx = set.GetParticleCount();
+	numContinous = Spawn(numContinous, random, state, set, true);
+
+	state.System->PreSimulate(state, startIdx, numContinous, true, mEmitAccumulator);
+	state.System->Simulate(state, startIdx, numContinous, true, mEmitAccumulator);
+
+	Spawn(numBurst, random, state, set, false);
+}
+
+u32 ParticleEmitter::Spawn(u32 count, Random& random, const ParticleSystemState& state, ParticleSet& set, bool spacing) const
+{
+	const float subFrameSpacing = count > 0 ? 1.0f / count : 1.0f;
+
+	const u32 numPartices = set.GetParticleCount() + count;
+	if(!state.GpuSimulated)
+	{
+		if(numPartices > state.MaxParticles)
+			count = state.MaxParticles - set.GetParticleCount();
 	}
 
-	void ParticleEmitter::Spawn(Random& random, const ParticleSystemState& state, ParticleSet& set) const
+	const u32 firstIdx = mShape->SpawnInternal(random, set, count, state);
+	const u32 endIdx = firstIdx + count;
+
+	ParticleSetData& particles = set.GetParticles();
+	float* emitterT = bs_stack_alloc<float>(sizeof(float) * count);
+
+	if(spacing)
 	{
-		if(!mShape || !mShape->IsValid())
-			return;
-
-		const float emitterT = state.NrmTimeEnd;
-
-		// Continous emission rate
-		const float rate = mEmissionRate.Evaluate(emitterT, random);
-
-		mEmitAccumulator += rate * state.TimeStep;
-		auto numContinous = (u32)mEmitAccumulator;
-		mEmitAccumulator -= (float)numContinous;
-
-		// Bursts
-		u32 numBurst = 0;
-		const auto emitBursts = [this, &emitterT, &random](float start, float end)
+		for(u32 i = 0; i < count; i++)
 		{
-			constexpr float MIN_BURST_INTERVAL = 0.01f;
-
-			u32 numBurst = 0;
-			for(u32 i = 0; i < (u32)mBursts.size(); i++)
-			{
-				const ParticleBurst& burst = mBursts[i];
-
-				const float relT0 = std::max(0.0f, start - burst.Time);
-				const float relT1 = end - burst.Time;
-				if(relT1 <= 0.0f)
-					continue;
-
-				// Handle initial burst cycle
-				if(relT0 == 0.0f)
-					numBurst += (u32)burst.Count.Evaluate(emitterT, random);
-
-				// Handle remaining cycles
-				const float dt = relT1 - relT0;
-				const float interval = std::max(burst.Interval, MIN_BURST_INTERVAL);
-
-				const float emitDuration = dt + mBurstAccumulator[i];
-				const u32 emitCycles = Math::FloorToPosInt(emitDuration / interval);
-				mBurstAccumulator[i] = emitDuration - emitCycles * interval;
-
-				for(u32 j = 0; j < emitCycles; j++)
-					numBurst += (u32)burst.Count.Evaluate(emitterT, random);
-			}
-
-			return numBurst;
-		};
-
-		// Handle loop
-		if(state.TimeEnd < state.TimeStart)
-		{
-			numBurst += emitBursts(state.TimeStart, state.Length);
-
-			// Reset accumulator
-			for(auto& entry : mBurstAccumulator)
-				entry = 0.0f;
-
-			numBurst += emitBursts(0.0f, state.TimeEnd);
+			const float subFrameOffset = (i + mEmitAccumulator) * subFrameSpacing;
+			emitterT[i] = state.NrmTimeStart + state.TimeStep * subFrameOffset;
 		}
-		else
-			numBurst += emitBursts(state.TimeStart, state.TimeEnd);
-
-		const u32 startIdx = set.GetParticleCount();
-		numContinous = Spawn(numContinous, random, state, set, true);
-
-		state.System->PreSimulate(state, startIdx, numContinous, true, mEmitAccumulator);
-		state.System->Simulate(state, startIdx, numContinous, true, mEmitAccumulator);
-
-		Spawn(numBurst, random, state, set, false);
+	}
+	else
+	{
+		for(u32 i = 0; i < count; i++)
+			emitterT[i] = state.NrmTimeEnd;
 	}
 
-	u32 ParticleEmitter::Spawn(u32 count, Random& random, const ParticleSystemState& state, ParticleSet& set, bool spacing) const
+	for(u32 i = firstIdx; i < endIdx; i++)
 	{
-		const float subFrameSpacing = count > 0 ? 1.0f / count : 1.0f;
+		const float lifetime = mInitialLifetime.Evaluate(emitterT[i - firstIdx], random);
 
-		const u32 numPartices = set.GetParticleCount() + count;
-		if(!state.GpuSimulated)
-		{
-			if(numPartices > state.MaxParticles)
-				count = state.MaxParticles - set.GetParticleCount();
-		}
+		particles.InitialLifetime[i] = lifetime;
+		particles.Lifetime[i] = lifetime;
+	}
 
-		const u32 firstIdx = mShape->SpawnInternal(random, set, count, state);
-		const u32 endIdx = firstIdx + count;
+	for(u32 i = firstIdx; i < endIdx; i++)
+		particles.Velocity[i] *= mInitialSpeed.Evaluate(emitterT[i - firstIdx], random);
 
-		ParticleSetData& particles = set.GetParticles();
-		float* emitterT = bs_stack_alloc<float>(sizeof(float) * count);
-
-		if(spacing)
-		{
-			for(u32 i = 0; i < count; i++)
-			{
-				const float subFrameOffset = (i + mEmitAccumulator) * subFrameSpacing;
-				emitterT[i] = state.NrmTimeStart + state.TimeStep * subFrameOffset;
-			}
-		}
-		else
-		{
-			for(u32 i = 0; i < count; i++)
-				emitterT[i] = state.NrmTimeEnd;
-		}
-
+	if(!mUse3DSize)
+	{
 		for(u32 i = firstIdx; i < endIdx; i++)
 		{
-			const float lifetime = mInitialLifetime.Evaluate(emitterT[i - firstIdx], random);
+			const float size = mInitialSize.Evaluate(emitterT[i - firstIdx], random);
 
-			particles.InitialLifetime[i] = lifetime;
-			particles.Lifetime[i] = lifetime;
+			// Encode UV flip in size XY as sign
+			const float flipU = random.GetUNorm() < mFlipU ? -1.0f : 1.0f;
+			const float flipV = random.GetUNorm() < mFlipV ? -1.0f : 1.0f;
+
+			particles.Size[i] = Vector3(size * flipU, size * flipV, size);
 		}
-
-		for(u32 i = firstIdx; i < endIdx; i++)
-			particles.Velocity[i] *= mInitialSpeed.Evaluate(emitterT[i - firstIdx], random);
-
-		if(!mUse3DSize)
-		{
-			for(u32 i = firstIdx; i < endIdx; i++)
-			{
-				const float size = mInitialSize.Evaluate(emitterT[i - firstIdx], random);
-
-				// Encode UV flip in size XY as sign
-				const float flipU = random.GetUNorm() < mFlipU ? -1.0f : 1.0f;
-				const float flipV = random.GetUNorm() < mFlipV ? -1.0f : 1.0f;
-
-				particles.Size[i] = Vector3(size * flipU, size * flipV, size);
-			}
-		}
-		else
-		{
-			for(u32 i = firstIdx; i < endIdx; i++)
-			{
-				Vector3 size = mInitialSize3D.Evaluate(emitterT[i - firstIdx], random);
-
-				// Encode UV flip in size XY as sign
-				size.X *= random.GetUNorm() < mFlipU ? -1.0f : 1.0f;
-				size.Y *= random.GetUNorm() < mFlipV ? -1.0f : 1.0f;
-
-				particles.Size[i] = size;
-			}
-		}
-
-		if(mRandomOffset > 0.0f)
-		{
-			for(u32 i = firstIdx; i < endIdx; i++)
-				particles.Position[i] += Vector3(random.GetSNorm(), random.GetSNorm(), random.GetSNorm()) * mRandomOffset;
-		}
-
-		if(!mUse3DRotation)
-		{
-			for(u32 i = firstIdx; i < endIdx; i++)
-			{
-				const float rotation = mInitialRotation.Evaluate(emitterT[i - firstIdx], random);
-				particles.Rotation[i] = Vector3(rotation, 0.0f, 0.0f);
-			}
-		}
-		else
-		{
-			for(u32 i = firstIdx; i < endIdx; i++)
-			{
-				const Vector3 rotation = mInitialRotation3D.Evaluate(emitterT[i - firstIdx], random);
-				particles.Rotation[i] = rotation;
-			}
-		}
-
-		for(u32 i = firstIdx; i < endIdx; i++)
-			particles.Color[i] = mInitialColor.Evaluate(emitterT[i - firstIdx], random);
-
-		for(u32 i = firstIdx; i < endIdx; i++)
-			particles.Seed[i] = random.Get();
-
-		for(u32 i = firstIdx; i < endIdx; i++)
-			particles.Frame[i] = 0.0f;
-
-		// If in world-space we apply the transform here, otherwise we apply it in the rendering code
-		if(state.WorldSpace)
-		{
-			for(u32 i = firstIdx; i < endIdx; i++)
-				particles.Position[i] = state.LocalToWorld.MultiplyAffine(particles.Position[i]);
-
-			for(u32 i = firstIdx; i < endIdx; i++)
-				particles.Velocity[i] = state.LocalToWorld.MultiplyDirection(particles.Velocity[i]);
-		}
-
-		bs_stack_free(emitterT);
-
-		return count;
 	}
-
-	SPtr<ParticleEmitter> ParticleEmitter::Create()
+	else
 	{
-		return bs_shared_ptr_new<ParticleEmitter>();
+		for(u32 i = firstIdx; i < endIdx; i++)
+		{
+			Vector3 size = mInitialSize3D.Evaluate(emitterT[i - firstIdx], random);
+
+			// Encode UV flip in size XY as sign
+			size.X *= random.GetUNorm() < mFlipU ? -1.0f : 1.0f;
+			size.Y *= random.GetUNorm() < mFlipV ? -1.0f : 1.0f;
+
+			particles.Size[i] = size;
+		}
 	}
 
-	RTTITypeBase* ParticleEmitter::GetRttiStatic()
+	if(mRandomOffset > 0.0f)
 	{
-		return ParticleEmitterRTTI::Instance();
+		for(u32 i = firstIdx; i < endIdx; i++)
+			particles.Position[i] += Vector3(random.GetSNorm(), random.GetSNorm(), random.GetSNorm()) * mRandomOffset;
 	}
 
-	RTTITypeBase* ParticleEmitter::GetRtti() const
+	if(!mUse3DRotation)
 	{
-		return GetRttiStatic();
+		for(u32 i = firstIdx; i < endIdx; i++)
+		{
+			const float rotation = mInitialRotation.Evaluate(emitterT[i - firstIdx], random);
+			particles.Rotation[i] = Vector3(rotation, 0.0f, 0.0f);
+		}
 	}
+	else
+	{
+		for(u32 i = firstIdx; i < endIdx; i++)
+		{
+			const Vector3 rotation = mInitialRotation3D.Evaluate(emitterT[i - firstIdx], random);
+			particles.Rotation[i] = rotation;
+		}
+	}
+
+	for(u32 i = firstIdx; i < endIdx; i++)
+		particles.Color[i] = mInitialColor.Evaluate(emitterT[i - firstIdx], random);
+
+	for(u32 i = firstIdx; i < endIdx; i++)
+		particles.Seed[i] = random.Get();
+
+	for(u32 i = firstIdx; i < endIdx; i++)
+		particles.Frame[i] = 0.0f;
+
+	// If in world-space we apply the transform here, otherwise we apply it in the rendering code
+	if(state.WorldSpace)
+	{
+		for(u32 i = firstIdx; i < endIdx; i++)
+			particles.Position[i] = state.LocalToWorld.MultiplyAffine(particles.Position[i]);
+
+		for(u32 i = firstIdx; i < endIdx; i++)
+			particles.Velocity[i] = state.LocalToWorld.MultiplyDirection(particles.Velocity[i]);
+	}
+
+	bs_stack_free(emitterT);
+
+	return count;
+}
+
+SPtr<ParticleEmitter> ParticleEmitter::Create()
+{
+	return bs_shared_ptr_new<ParticleEmitter>();
+}
+
+RTTITypeBase* ParticleEmitter::GetRttiStatic()
+{
+	return ParticleEmitterRTTI::Instance();
+}
+
+RTTITypeBase* ParticleEmitter::GetRtti() const
+{
+	return GetRttiStatic();
+}
 } // namespace bs

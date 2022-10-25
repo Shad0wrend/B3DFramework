@@ -6,38 +6,38 @@
 
 namespace bs
 {
-	PhysicsManager::PhysicsManager(const String& pluginName, bool cooking)
-		: mPlugin(nullptr), mFactory(nullptr)
+PhysicsManager::PhysicsManager(const String& pluginName, bool cooking)
+	: mPlugin(nullptr), mFactory(nullptr)
+{
+	mPlugin = DynLibManager::Instance().Load(pluginName);
+
+	if(mPlugin != nullptr)
 	{
-		mPlugin = DynLibManager::Instance().Load(pluginName);
+		typedef PhysicsFactory* (*LoadPluginFunc)();
 
-		if(mPlugin != nullptr)
-		{
-			typedef PhysicsFactory* (*LoadPluginFunc)();
+		LoadPluginFunc loadPluginFunc = (LoadPluginFunc)mPlugin->GetSymbol("loadPlugin");
+		mFactory = loadPluginFunc();
 
-			LoadPluginFunc loadPluginFunc = (LoadPluginFunc)mPlugin->GetSymbol("loadPlugin");
-			mFactory = loadPluginFunc();
-
-			if(mFactory != nullptr)
-				mFactory->StartUp(cooking);
-		}
+		if(mFactory != nullptr)
+			mFactory->StartUp(cooking);
 	}
+}
 
-	PhysicsManager::~PhysicsManager()
+PhysicsManager::~PhysicsManager()
+{
+	if(mPlugin != nullptr)
 	{
-		if(mPlugin != nullptr)
+		if(mFactory != nullptr)
 		{
-			if(mFactory != nullptr)
-			{
-				typedef void (*UnloadPluginFunc)(PhysicsFactory*);
+			typedef void (*UnloadPluginFunc)(PhysicsFactory*);
 
-				UnloadPluginFunc unloadPluginFunc = (UnloadPluginFunc)mPlugin->GetSymbol("unloadPlugin");
+			UnloadPluginFunc unloadPluginFunc = (UnloadPluginFunc)mPlugin->GetSymbol("unloadPlugin");
 
-				mFactory->ShutDown();
-				unloadPluginFunc(mFactory);
-			}
-
-			DynLibManager::Instance().Unload(mPlugin);
+			mFactory->ShutDown();
+			unloadPluginFunc(mFactory);
 		}
+
+		DynLibManager::Instance().Unload(mPlugin);
 	}
+}
 } // namespace bs

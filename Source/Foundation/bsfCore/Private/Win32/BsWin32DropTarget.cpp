@@ -7,222 +7,212 @@
 
 namespace bs
 {
-	DropTarget::DropTarget(const RenderWindow* ownerWindow, const Rect2I& area)
-		: mArea(area), mActive(false), mOwnerWindow(ownerWindow), mDropType(DropTargetType::None)
+DropTarget::DropTarget(const RenderWindow* ownerWindow, const Rect2I& area)
+	: mArea(area), mActive(false), mOwnerWindow(ownerWindow), mDropType(DropTargetType::None)
+{
+	Win32Platform::RegisterDropTarget(this);
+}
+
+DropTarget::~DropTarget()
+{
+	Win32Platform::UnregisterDropTarget(this);
+
+	ClearInternal();
+}
+
+void DropTarget::SetArea(const Rect2I& area)
+{
+	mArea = area;
+}
+
+Win32DropTarget::Win32DropTarget(HWND hWnd)
+	: mRefCount(1), mHWnd(hWnd), mAcceptDrag(false)
+{}
+
+Win32DropTarget::~Win32DropTarget()
+{
+	Lock lock(mSync);
+
+	for(auto& fileList : mFileLists)
+		bs_delete(fileList);
+
+	mFileLists.clear();
+	mQueuedDropOps.clear();
+}
+
+void Win32DropTarget::RegisterWithOs()
+{
+	CoLockObjectExternal(this, TRUE, FALSE);
+	RegisterDragDrop(mHWnd, this);
+}
+
+void Win32DropTarget::UnregisterWithOs()
+{
+	RevokeDragDrop(mHWnd);
+	CoLockObjectExternal(this, FALSE, FALSE);
+}
+
+HRESULT __stdcall Win32DropTarget::QueryInterface(REFIID iid, void** ppvObject)
+{
+	if(iid == IID_IDropTarget || iid == IID_IUnknown)
 	{
-		Win32Platform::RegisterDropTarget(this);
+		AddRef();
+		*ppvObject = this;
+		return S_OK;
 	}
-
-	DropTarget::~DropTarget()
+	else
 	{
-		Win32Platform::UnregisterDropTarget(this);
-
-		ClearInternal();
+		*ppvObject = nullptr;
+		return E_NOINTERFACE;
 	}
+}
 
-	void DropTarget::SetArea(const Rect2I& area)
+ULONG __stdcall Win32DropTarget::AddRef()
+{
+	return InterlockedIncrement(&mRefCount);
+}
+
+ULONG __stdcall Win32DropTarget::Release()
+{
+	LONG count = InterlockedDecrement(&mRefCount);
+
+	if(count == 0)
 	{
-		mArea = area;
+		bs_delete(this);
+		return 0;
 	}
+	else
+	{
+		return count;
+	}
+}
 
-	Win32DropTarget::Win32DropTarget(HWND hWnd)
-		: mRefCount(1), mHWnd(hWnd), mAcceptDrag(false)
-	{}
+HRESULT __stdcall Win32DropTarget::DragEnter(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+{
+	*pdwEffect = DROPEFFECT_LINK;
 
-	Win32DropTarget::~Win32DropTarget()
+	mAcceptDrag = IsDataValid(pDataObj);
+	if(!mAcceptDrag)
+		return S_OK;
+
 	{
 		Lock lock(mSync);
 
-		for(auto& fileList : mFileLists)
-			bs_delete(fileList);
+		mFileLists.push_back(GetFileListFromData(pDataObj));
 
-		mFileLists.clear();
-		mQueuedDropOps.clear();
+		ScreenToClient(mHWnd, (POINT*)&pt);
+		mQueuedDropOps.push_back(DropTargetOp(DropOpType::DragOver, Vector2I((int)pt.x, (int)pt.y)));
+
+		DropTargetOp& op = mQueuedDropOps.back();
+		op.DataType = DropOpDataType::FileList;
+		op.MFileList = mFileLists.back();
 	}
 
-	void Win32DropTarget::RegisterWithOs()
-	{
-		CoLockObjectExternal(this, TRUE, FALSE);
-		RegisterDragDrop(mHWnd, this);
-	}
+	return S_OK;
+}
 
-	void Win32DropTarget::UnregisterWithOs()
-	{
-		RevokeDragDrop(mHWnd);
-		CoLockObjectExternal(this, FALSE, FALSE);
-	}
+HRESULT __stdcall Win32DropTarget::DragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+{
+	*pdwEffect = DROPEFFECT_LINK;
 
-	HRESULT __stdcall Win32DropTarget::QueryInterface(REFIID iid, void** ppvObject)
-	{
-		if(iid == IID_IDropTarget || iid == IID_IUnknown)
-		{
-			AddRef();
-			*ppvObject = this;
-			return S_OK;
-		}
-		else
-		{
-			*ppvObject = nullptr;
-			return E_NOINTERFACE;
-		}
-	}
-
-	ULONG __stdcall Win32DropTarget::AddRef()
-	{
-		return InterlockedIncrement(&mRefCount);
-	}
-
-	ULONG __stdcall Win32DropTarget::Release()
-	{
-		LONG count = InterlockedDecrement(&mRefCount);
-
-		if(count == 0)
-		{
-			bs_delete(this);
-			return 0;
-		}
-		else
-		{
-			return count;
-		}
-	}
-
-	HRESULT __stdcall Win32DropTarget::DragEnter(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
-	{
-		*pdwEffect = DROPEFFECT_LINK;
-
-		mAcceptDrag = IsDataValid(pDataObj);
-		if(!mAcceptDrag)
-			return S_OK;
-
-		{
-			Lock lock(mSync);
-
-			mFileLists.push_back(GetFileListFromData(pDataObj));
-
-			ScreenToClient(mHWnd, (POINT*)&pt);
-			mQueuedDropOps.push_back(DropTargetOp(DropOpType::DragOver, Vector2I((int)pt.x, (int)pt.y)));
-
-			DropTargetOp& op = mQueuedDropOps.back();
-			op.DataType = DropOpDataType::FileList;
-			op.MFileList = mFileLists.back();
-		}
-
+	if(!mAcceptDrag)
 		return S_OK;
-	}
 
-	HRESULT __stdcall Win32DropTarget::DragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
-	{
-		*pdwEffect = DROPEFFECT_LINK;
-
-		if(!mAcceptDrag)
-			return S_OK;
-
-		{
-			Lock lock(mSync);
-
-			ScreenToClient(mHWnd, (POINT*)&pt);
-			mQueuedDropOps.push_back(DropTargetOp(DropOpType::DragOver, Vector2I((int)pt.x, (int)pt.y)));
-
-			DropTargetOp& op = mQueuedDropOps.back();
-			op.DataType = DropOpDataType::FileList;
-			op.MFileList = mFileLists.back();
-		}
-
-		return S_OK;
-	}
-
-	HRESULT __stdcall Win32DropTarget::DragLeave()
-	{
-		{
-			Lock lock(mSync);
-
-			mQueuedDropOps.push_back(DropTargetOp(DropOpType::Leave, Vector2I()));
-
-			DropTargetOp& op = mQueuedDropOps.back();
-			op.DataType = DropOpDataType::FileList;
-			op.MFileList = mFileLists.back();
-		}
-
-		return S_OK;
-	}
-
-	HRESULT __stdcall Win32DropTarget::Drop(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
-	{
-		*pdwEffect = DROPEFFECT_LINK;
-		mAcceptDrag = false;
-
-		if(!IsDataValid(pDataObj))
-			return S_OK;
-
-		{
-			Lock lock(mSync);
-
-			mFileLists.push_back(GetFileListFromData(pDataObj));
-
-			ScreenToClient(mHWnd, (POINT*)&pt);
-			mQueuedDropOps.push_back(DropTargetOp(DropOpType::Drop, Vector2I((int)pt.x, (int)pt.y)));
-
-			DropTargetOp& op = mQueuedDropOps.back();
-			op.DataType = DropOpDataType::FileList;
-			op.MFileList = mFileLists.back();
-		}
-
-		return S_OK;
-	}
-
-	void Win32DropTarget::RegisterDropTarget(DropTarget* dropTarget)
-	{
-		mDropTargets.push_back(dropTarget);
-	}
-
-	void Win32DropTarget::UnregisterDropTarget(DropTarget* dropTarget)
-	{
-		auto findIter = std::find(begin(mDropTargets), end(mDropTargets), dropTarget);
-		if(findIter != mDropTargets.end())
-			mDropTargets.erase(findIter);
-	}
-
-	unsigned int Win32DropTarget::GetNumDropTargets() const
-	{
-		return (unsigned int)mDropTargets.size();
-	}
-
-	void Win32DropTarget::Update()
 	{
 		Lock lock(mSync);
 
-		for(auto& op : mQueuedDropOps)
+		ScreenToClient(mHWnd, (POINT*)&pt);
+		mQueuedDropOps.push_back(DropTargetOp(DropOpType::DragOver, Vector2I((int)pt.x, (int)pt.y)));
+
+		DropTargetOp& op = mQueuedDropOps.back();
+		op.DataType = DropOpDataType::FileList;
+		op.MFileList = mFileLists.back();
+	}
+
+	return S_OK;
+}
+
+HRESULT __stdcall Win32DropTarget::DragLeave()
+{
+	{
+		Lock lock(mSync);
+
+		mQueuedDropOps.push_back(DropTargetOp(DropOpType::Leave, Vector2I()));
+
+		DropTargetOp& op = mQueuedDropOps.back();
+		op.DataType = DropOpDataType::FileList;
+		op.MFileList = mFileLists.back();
+	}
+
+	return S_OK;
+}
+
+HRESULT __stdcall Win32DropTarget::Drop(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+{
+	*pdwEffect = DROPEFFECT_LINK;
+	mAcceptDrag = false;
+
+	if(!IsDataValid(pDataObj))
+		return S_OK;
+
+	{
+		Lock lock(mSync);
+
+		mFileLists.push_back(GetFileListFromData(pDataObj));
+
+		ScreenToClient(mHWnd, (POINT*)&pt);
+		mQueuedDropOps.push_back(DropTargetOp(DropOpType::Drop, Vector2I((int)pt.x, (int)pt.y)));
+
+		DropTargetOp& op = mQueuedDropOps.back();
+		op.DataType = DropOpDataType::FileList;
+		op.MFileList = mFileLists.back();
+	}
+
+	return S_OK;
+}
+
+void Win32DropTarget::RegisterDropTarget(DropTarget* dropTarget)
+{
+	mDropTargets.push_back(dropTarget);
+}
+
+void Win32DropTarget::UnregisterDropTarget(DropTarget* dropTarget)
+{
+	auto findIter = std::find(begin(mDropTargets), end(mDropTargets), dropTarget);
+	if(findIter != mDropTargets.end())
+		mDropTargets.erase(findIter);
+}
+
+unsigned int Win32DropTarget::GetNumDropTargets() const
+{
+	return (unsigned int)mDropTargets.size();
+}
+
+void Win32DropTarget::Update()
+{
+	Lock lock(mSync);
+
+	for(auto& op : mQueuedDropOps)
+	{
+		for(auto& target : mDropTargets)
 		{
-			for(auto& target : mDropTargets)
+			if(op.Type != DropOpType::Leave)
 			{
-				if(op.Type != DropOpType::Leave)
+				if(target->IsInsideInternal(op.Position))
 				{
-					if(target->IsInsideInternal(op.Position))
+					if(!target->IsActiveInternal())
 					{
-						if(!target->IsActiveInternal())
-						{
-							target->SetFileListInternal(*op.MFileList);
-							target->SetActiveInternal(true);
-							target->OnEnter(op.Position.X, op.Position.Y);
-						}
-
-						if(op.Type == DropOpType::DragOver)
-							target->OnDragOver(op.Position.X, op.Position.Y);
-						else if(op.Type == DropOpType::Drop)
-						{
-							target->SetFileListInternal(*op.MFileList);
-							target->OnDrop(op.Position.X, op.Position.Y);
-						}
+						target->SetFileListInternal(*op.MFileList);
+						target->SetActiveInternal(true);
+						target->OnEnter(op.Position.X, op.Position.Y);
 					}
-					else
+
+					if(op.Type == DropOpType::DragOver)
+						target->OnDragOver(op.Position.X, op.Position.Y);
+					else if(op.Type == DropOpType::Drop)
 					{
-						if(target->IsActiveInternal())
-						{
-							target->OnLeave();
-							target->ClearInternal();
-							target->SetActiveInternal(false);
-						}
+						target->SetFileListInternal(*op.MFileList);
+						target->OnDrop(op.Position.X, op.Position.Y);
 					}
 				}
 				else
@@ -235,64 +225,74 @@ namespace bs
 					}
 				}
 			}
-
-			if(op.Type == DropOpType::Leave || op.Type == DropOpType::Drop)
+			else
 			{
-				while(!mFileLists.empty())
+				if(target->IsActiveInternal())
 				{
-					bool done = mFileLists[0] == op.MFileList;
-
-					bs_delete(mFileLists[0]);
-					mFileLists.erase(mFileLists.begin());
-
-					if(done)
-						break;
+					target->OnLeave();
+					target->ClearInternal();
+					target->SetActiveInternal(false);
 				}
 			}
 		}
 
-		mQueuedDropOps.clear();
-	}
-
-	bool Win32DropTarget::IsDataValid(IDataObject* data)
-	{
-		// TODO - Currently only supports file drag and drop, so only CF_HDROP is used
-		FORMATETC fmtetc = { CF_HDROP, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
-
-		return data->QueryGetData(&fmtetc) == S_OK ? true : false;
-	}
-
-	/**	Gets a file list from data. Caller must ensure that the data actually contains a file list. */
-	Vector<Path>* Win32DropTarget::GetFileListFromData(IDataObject* data)
-	{
-		FORMATETC fmtetc = { CF_HDROP, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
-		STGMEDIUM stgmed;
-
-		Vector<Path>* files = bs_new<Vector<Path>>();
-		if(data->GetData(&fmtetc, &stgmed) == S_OK)
+		if(op.Type == DropOpType::Leave || op.Type == DropOpType::Drop)
 		{
-			PVOID data = GlobalLock(stgmed.hGlobal);
-
-			HDROP hDrop = (HDROP)data;
-			UINT numFiles = DragQueryFileW(hDrop, 0xFFFFFFFF, nullptr, 0);
-
-			files->resize(numFiles);
-			for(UINT i = 0; i < numFiles; i++)
+			while(!mFileLists.empty())
 			{
-				UINT numChars = DragQueryFileW(hDrop, i, nullptr, 0) + 1;
-				wchar_t* buffer = (wchar_t*)bs_alloc((u32)numChars * sizeof(wchar_t));
+				bool done = mFileLists[0] == op.MFileList;
 
-				DragQueryFileW(hDrop, i, buffer, numChars);
+				bs_delete(mFileLists[0]);
+				mFileLists.erase(mFileLists.begin());
 
-				(*files)[i] = UTF8::FromWide(WString(buffer));
-
-				bs_free(buffer);
+				if(done)
+					break;
 			}
+		}
+	}
 
-			GlobalUnlock(stgmed.hGlobal);
-			ReleaseStgMedium(&stgmed);
+	mQueuedDropOps.clear();
+}
+
+bool Win32DropTarget::IsDataValid(IDataObject* data)
+{
+	// TODO - Currently only supports file drag and drop, so only CF_HDROP is used
+	FORMATETC fmtetc = { CF_HDROP, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+
+	return data->QueryGetData(&fmtetc) == S_OK ? true : false;
+}
+
+/**	Gets a file list from data. Caller must ensure that the data actually contains a file list. */
+Vector<Path>* Win32DropTarget::GetFileListFromData(IDataObject* data)
+{
+	FORMATETC fmtetc = { CF_HDROP, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+	STGMEDIUM stgmed;
+
+	Vector<Path>* files = bs_new<Vector<Path>>();
+	if(data->GetData(&fmtetc, &stgmed) == S_OK)
+	{
+		PVOID data = GlobalLock(stgmed.hGlobal);
+
+		HDROP hDrop = (HDROP)data;
+		UINT numFiles = DragQueryFileW(hDrop, 0xFFFFFFFF, nullptr, 0);
+
+		files->resize(numFiles);
+		for(UINT i = 0; i < numFiles; i++)
+		{
+			UINT numChars = DragQueryFileW(hDrop, i, nullptr, 0) + 1;
+			wchar_t* buffer = (wchar_t*)bs_alloc((u32)numChars * sizeof(wchar_t));
+
+			DragQueryFileW(hDrop, i, buffer, numChars);
+
+			(*files)[i] = UTF8::FromWide(WString(buffer));
+
+			bs_free(buffer);
 		}
 
-		return files;
+		GlobalUnlock(stgmed.hGlobal);
+		ReleaseStgMedium(&stgmed);
 	}
+
+	return files;
+}
 } // namespace bs

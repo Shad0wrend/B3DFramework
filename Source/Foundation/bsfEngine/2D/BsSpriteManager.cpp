@@ -5,41 +5,41 @@
 
 namespace bs
 {
-	SpriteManager::SpriteManager()
-	{
+SpriteManager::SpriteManager()
+{
 #ifndef BS_IS_ASSET_TOOL
-		SpriteMaterial* imageOpaqueMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Opaque, false);
-		SpriteMaterial* imageAlphaMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Alpha, false);
-		SpriteMaterial* imagePremultipliedMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Premultiplied, false);
-		SpriteMaterial* imageOpaqueAnimMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Opaque, true);
-		SpriteMaterial* imageAlphaAnimMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Alpha, true);
-		SpriteMaterial* imagePremultipliedAnimMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Premultiplied, true);
-		SpriteMaterial* textMat = RegisterMaterial<SpriteTextMaterial>();
-		SpriteMaterial* lineMat = RegisterMaterial<SpriteLineMaterial>();
+	SpriteMaterial* imageOpaqueMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Opaque, false);
+	SpriteMaterial* imageAlphaMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Alpha, false);
+	SpriteMaterial* imagePremultipliedMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Premultiplied, false);
+	SpriteMaterial* imageOpaqueAnimMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Opaque, true);
+	SpriteMaterial* imageAlphaAnimMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Alpha, true);
+	SpriteMaterial* imagePremultipliedAnimMat = RegisterMaterial<SpriteImageMaterial>(SpriteMaterialTransparency::Premultiplied, true);
+	SpriteMaterial* textMat = RegisterMaterial<SpriteTextMaterial>();
+	SpriteMaterial* lineMat = RegisterMaterial<SpriteLineMaterial>();
 
-		builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageOpaque] = imageOpaqueMat->GetId();
-		builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentAlpha] = imageAlphaMat->GetId();
-		builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentPremultiplied] = imagePremultipliedMat->GetId();
-		builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageOpaqueAnimated] = imageOpaqueAnimMat->GetId();
-		builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentAlphaAnimated] = imageAlphaAnimMat->GetId();
-		builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentPremultipliedAnimated] = imagePremultipliedAnimMat->GetId();
-		builtinMaterialIds[(u32)BuiltinSpriteMaterialType::Text] = textMat->GetId();
-		builtinMaterialIds[(u32)BuiltinSpriteMaterialType::Line] = lineMat->GetId();
+	builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageOpaque] = imageOpaqueMat->GetId();
+	builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentAlpha] = imageAlphaMat->GetId();
+	builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentPremultiplied] = imagePremultipliedMat->GetId();
+	builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageOpaqueAnimated] = imageOpaqueAnimMat->GetId();
+	builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentAlphaAnimated] = imageAlphaAnimMat->GetId();
+	builtinMaterialIds[(u32)BuiltinSpriteMaterialType::ImageTransparentPremultipliedAnimated] = imagePremultipliedAnimMat->GetId();
+	builtinMaterialIds[(u32)BuiltinSpriteMaterialType::Text] = textMat->GetId();
+	builtinMaterialIds[(u32)BuiltinSpriteMaterialType::Line] = lineMat->GetId();
 #endif
-	}
+}
 
-	SpriteManager::~SpriteManager()
-	{
-		for(auto& entry : mMaterials)
-			bs_delete(entry.second);
-	}
+SpriteManager::~SpriteManager()
+{
+	for(auto& entry : mMaterials)
+		bs_delete(entry.second);
+}
 
-	SpriteMaterial* SpriteManager::GetMaterial(u32 id) const
-	{
-		auto iterFind = mMaterials.find(id);
-		if(iterFind != mMaterials.end())
-			return iterFind->second;
+SpriteMaterial* SpriteManager::GetMaterial(u32 id) const
+{
+	auto iterFind = mMaterials.find(id);
+	if(iterFind != mMaterials.end())
+		return iterFind->second;
 
-		return nullptr;
-	}
+	return nullptr;
+}
 } // namespace bs

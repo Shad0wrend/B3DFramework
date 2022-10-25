@@ -5,111 +5,111 @@
 
 namespace bs
 {
-	void FileSystem::Copy(const Path& oldPath, const Path& newPath, bool overwriteExisting)
+void FileSystem::Copy(const Path& oldPath, const Path& newPath, bool overwriteExisting)
+{
+	Stack<std::tuple<Path, Path>> todo;
+	todo.push(std::make_tuple(oldPath, newPath));
+
+	while(!todo.empty())
 	{
-		Stack<std::tuple<Path, Path>> todo;
-		todo.push(std::make_tuple(oldPath, newPath));
+		auto current = todo.top();
+		todo.pop();
 
-		while(!todo.empty())
+		Path sourcePath = std::get<0>(current);
+		if(!FileSystem::Exists(sourcePath))
+			continue;
+
+		bool srcIsFile = FileSystem::IsFile(sourcePath);
+		Path destinationPath = std::get<1>(current);
+		bool destExists = FileSystem::Exists(destinationPath);
+
+		if(destExists)
 		{
-			auto current = todo.top();
-			todo.pop();
-
-			Path sourcePath = std::get<0>(current);
-			if(!FileSystem::Exists(sourcePath))
-				continue;
-
-			bool srcIsFile = FileSystem::IsFile(sourcePath);
-			Path destinationPath = std::get<1>(current);
-			bool destExists = FileSystem::Exists(destinationPath);
-
-			if(destExists)
+			if(FileSystem::IsFile(destinationPath))
 			{
-				if(FileSystem::IsFile(destinationPath))
+				if(overwriteExisting)
+					FileSystem::Remove(destinationPath);
+				else
 				{
-					if(overwriteExisting)
-						FileSystem::Remove(destinationPath);
-					else
-					{
-						BS_LOG(Warning, FileSystem, "Copy operation failed because another file already exists at the new "
-													"path: \"{0}\"",
-							   destinationPath);
-						return;
-					}
-				}
-			}
-
-			if(srcIsFile)
-			{
-				FileSystem::CopyFile(sourcePath, destinationPath);
-			}
-			else
-			{
-				if(!destExists)
-					FileSystem::CreateDir(destinationPath);
-
-				Vector<Path> files;
-				Vector<Path> directories;
-				GetChildren(destinationPath, files, directories);
-
-				for(auto& file : files)
-				{
-					Path fileDestPath = destinationPath;
-					fileDestPath.Append(file.GetTail());
-
-					todo.push(std::make_tuple(file, fileDestPath));
-				}
-
-				for(auto& dir : directories)
-				{
-					Path dirDestPath = destinationPath;
-					dirDestPath.Append(dir.GetTail());
-
-					todo.push(std::make_tuple(dir, dirDestPath));
+					BS_LOG(Warning, FileSystem, "Copy operation failed because another file already exists at the new "
+												"path: \"{0}\"",
+						   destinationPath);
+					return;
 				}
 			}
 		}
-	}
 
-	void FileSystem::Remove(const Path& path, bool recursively)
-	{
-		if(!FileSystem::Exists(path))
-			return;
-
-		if(recursively)
+		if(srcIsFile)
 		{
+			FileSystem::CopyFile(sourcePath, destinationPath);
+		}
+		else
+		{
+			if(!destExists)
+				FileSystem::CreateDir(destinationPath);
+
 			Vector<Path> files;
 			Vector<Path> directories;
-
-			GetChildren(path, files, directories);
+			GetChildren(destinationPath, files, directories);
 
 			for(auto& file : files)
-				Remove(file, false);
+			{
+				Path fileDestPath = destinationPath;
+				fileDestPath.Append(file.GetTail());
+
+				todo.push(std::make_tuple(file, fileDestPath));
+			}
 
 			for(auto& dir : directories)
-				Remove(dir, true);
-		}
-
-		FileSystem::RemoveFile(path);
-	}
-
-	void FileSystem::Move(const Path& oldPath, const Path& newPath, bool overwriteExisting)
-	{
-		if(FileSystem::Exists(newPath))
-		{
-			if(overwriteExisting)
-				FileSystem::Remove(newPath);
-			else
 			{
-				BS_LOG(Warning, FileSystem, "Move operation failed because another file already exists at the new "
-											"path: \"{0}\"",
-					   newPath);
-				return;
+				Path dirDestPath = destinationPath;
+				dirDestPath.Append(dir.GetTail());
+
+				todo.push(std::make_tuple(dir, dirDestPath));
 			}
 		}
+	}
+}
 
-		FileSystem::MoveFile(oldPath, newPath);
+void FileSystem::Remove(const Path& path, bool recursively)
+{
+	if(!FileSystem::Exists(path))
+		return;
+
+	if(recursively)
+	{
+		Vector<Path> files;
+		Vector<Path> directories;
+
+		GetChildren(path, files, directories);
+
+		for(auto& file : files)
+			Remove(file, false);
+
+		for(auto& dir : directories)
+			Remove(dir, true);
 	}
 
-	Mutex FileScheduler::mMutex;
+	FileSystem::RemoveFile(path);
+}
+
+void FileSystem::Move(const Path& oldPath, const Path& newPath, bool overwriteExisting)
+{
+	if(FileSystem::Exists(newPath))
+	{
+		if(overwriteExisting)
+			FileSystem::Remove(newPath);
+		else
+		{
+			BS_LOG(Warning, FileSystem, "Move operation failed because another file already exists at the new "
+										"path: \"{0}\"",
+				   newPath);
+			return;
+		}
+	}
+
+	FileSystem::MoveFile(oldPath, newPath);
+}
+
+Mutex FileScheduler::mMutex;
 } // namespace bs

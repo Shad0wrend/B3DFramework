@@ -5,16 +5,16 @@
 
 namespace bs
 {
-	/************************************************************************/
-	/* 								SERIALIZATION                      		*/
-	/************************************************************************/
-	RTTITypeBase* ShaderImportOptions::GetRttiStatic()
-	{
-		return ShaderImportOptionsRTTI::Instance();
-	}
+/************************************************************************/
+/* 								SERIALIZATION                      		*/
+/************************************************************************/
+RTTITypeBase* ShaderImportOptions::GetRttiStatic()
+{
+	return ShaderImportOptionsRTTI::Instance();
+}
 
-	RTTITypeBase* ShaderImportOptions::GetRtti() const
-	{
-		return ShaderImportOptions::GetRttiStatic();
-	}
+RTTITypeBase* ShaderImportOptions::GetRtti() const
+{
+	return ShaderImportOptions::GetRttiStatic();
+}
 } // namespace bs

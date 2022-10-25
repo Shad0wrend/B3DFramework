@@ -4,8 +4,8 @@
 
 namespace bs
 {
-	void GUITextInputEvent::SetData(u32 inputChar)
-	{
-		mInputChar = inputChar;
-	}
+void GUITextInputEvent::SetData(u32 inputChar)
+{
+	mInputChar = inputChar;
+}
 } // namespace bs

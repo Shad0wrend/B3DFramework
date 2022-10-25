@@ -7,70 +7,70 @@
 
 namespace bs
 {
-	CSphericalJoint::CSphericalJoint()
-		: CJoint(mDesc)
-	{
-		SetName("SphericalJoint");
-	}
+CSphericalJoint::CSphericalJoint()
+	: CJoint(mDesc)
+{
+	SetName("SphericalJoint");
+}
 
-	CSphericalJoint::CSphericalJoint(const HSceneObject& parent)
-		: CJoint(parent, mDesc)
-	{
-		SetName("SphericalJoint");
-	}
+CSphericalJoint::CSphericalJoint(const HSceneObject& parent)
+	: CJoint(parent, mDesc)
+{
+	SetName("SphericalJoint");
+}
 
-	LimitConeRange CSphericalJoint::GetLimit() const
-	{
-		return mDesc.Limit;
-	}
+LimitConeRange CSphericalJoint::GetLimit() const
+{
+	return mDesc.Limit;
+}
 
-	void CSphericalJoint::SetLimit(const LimitConeRange& limit)
-	{
-		if(limit == mDesc.Limit)
-			return;
+void CSphericalJoint::SetLimit(const LimitConeRange& limit)
+{
+	if(limit == mDesc.Limit)
+		return;
 
-		mDesc.Limit = limit;
+	mDesc.Limit = limit;
 
-		if(mInternal != nullptr)
-			GetInternalInternal()->SetLimit(limit);
-	}
+	if(mInternal != nullptr)
+		GetInternalInternal()->SetLimit(limit);
+}
 
-	void CSphericalJoint::SetFlag(SphericalJointFlag flag, bool enabled)
-	{
-		bool isEnabled = ((u32)mDesc.Flag & (u32)flag) != 0;
-		if(isEnabled == enabled)
-			return;
+void CSphericalJoint::SetFlag(SphericalJointFlag flag, bool enabled)
+{
+	bool isEnabled = ((u32)mDesc.Flag & (u32)flag) != 0;
+	if(isEnabled == enabled)
+		return;
 
-		if(enabled)
-			mDesc.Flag = (SphericalJointFlag)((u32)mDesc.Flag | (u32)flag);
-		else
-			mDesc.Flag = (SphericalJointFlag)((u32)mDesc.Flag & ~(u32)flag);
+	if(enabled)
+		mDesc.Flag = (SphericalJointFlag)((u32)mDesc.Flag | (u32)flag);
+	else
+		mDesc.Flag = (SphericalJointFlag)((u32)mDesc.Flag & ~(u32)flag);
 
-		if(mInternal != nullptr)
-			GetInternalInternal()->SetFlag(flag, enabled);
-	}
+	if(mInternal != nullptr)
+		GetInternalInternal()->SetFlag(flag, enabled);
+}
 
-	bool CSphericalJoint::HasFlag(SphericalJointFlag flag) const
-	{
-		return ((u32)mDesc.Flag & (u32)flag) != 0;
-	}
+bool CSphericalJoint::HasFlag(SphericalJointFlag flag) const
+{
+	return ((u32)mDesc.Flag & (u32)flag) != 0;
+}
 
-	SPtr<Joint> CSphericalJoint::CreateInternal()
-	{
-		const SPtr<SceneInstance>& scene = SO()->GetScene();
-		SPtr<Joint> joint = SphericalJoint::Create(*scene->GetPhysicsScene(), mDesc);
+SPtr<Joint> CSphericalJoint::CreateInternal()
+{
+	const SPtr<SceneInstance>& scene = SO()->GetScene();
+	SPtr<Joint> joint = SphericalJoint::Create(*scene->GetPhysicsScene(), mDesc);
 
-		joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
-		return joint;
-	}
+	joint->SetOwnerInternal(PhysicsOwnerType::Component, this);
+	return joint;
+}
 
-	RTTITypeBase* CSphericalJoint::GetRttiStatic()
-	{
-		return CSphericalJointRTTI::Instance();
-	}
+RTTITypeBase* CSphericalJoint::GetRttiStatic()
+{
+	return CSphericalJointRTTI::Instance();
+}
 
-	RTTITypeBase* CSphericalJoint::GetRtti() const
-	{
-		return CSphericalJoint::GetRttiStatic();
-	}
+RTTITypeBase* CSphericalJoint::GetRtti() const
+{
+	return CSphericalJoint::GetRttiStatic();
+}
 } // namespace bs

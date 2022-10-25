@@ -4,29 +4,29 @@
 
 namespace bs
 {
-	void DeferredCallManager::QueueDeferredCall(std::function<void()> func)
-	{
-		mCallbacks.push_back(func);
-	}
+void DeferredCallManager::QueueDeferredCall(std::function<void()> func)
+{
+	mCallbacks.push_back(func);
+}
 
-	void DeferredCallManager::UpdateInternal()
+void DeferredCallManager::UpdateInternal()
+{
+	while(!mCallbacks.empty())
 	{
-		while(!mCallbacks.empty())
+		// Copy because callbacks can be queued within callbacks
+		Vector<std::function<void()>> callbackCopy = mCallbacks;
+		mCallbacks.clear();
+
+		for(auto& call : callbackCopy)
 		{
-			// Copy because callbacks can be queued within callbacks
-			Vector<std::function<void()>> callbackCopy = mCallbacks;
-			mCallbacks.clear();
-
-			for(auto& call : callbackCopy)
-			{
-				call();
-			}
+			call();
 		}
 	}
+}
 
-	// Declared in BsPrerequisites.h
-	void deferredCall(std::function<void()> callback)
-	{
-		DeferredCallManager::Instance().QueueDeferredCall(callback);
-	}
+// Declared in BsPrerequisites.h
+void deferredCall(std::function<void()> callback)
+{
+	DeferredCallManager::Instance().QueueDeferredCall(callback);
+}
 } // namespace bs

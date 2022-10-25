@@ -10,149 +10,149 @@ using namespace std::placeholders;
 
 namespace bs
 {
-	CParticleSystem::CParticleSystem()
-	{
-		SetName("ParticleSystem");
-		SetFlag(ComponentFlag::AlwaysRun, true);
-	}
+CParticleSystem::CParticleSystem()
+{
+	SetName("ParticleSystem");
+	SetFlag(ComponentFlag::AlwaysRun, true);
+}
 
-	CParticleSystem::CParticleSystem(const HSceneObject& parent)
-		: Component(parent)
-	{
-		SetName("ParticleSystem");
-		SetFlag(ComponentFlag::AlwaysRun, true);
-	}
+CParticleSystem::CParticleSystem(const HSceneObject& parent)
+	: Component(parent)
+{
+	SetName("ParticleSystem");
+	SetFlag(ComponentFlag::AlwaysRun, true);
+}
 
-	void CParticleSystem::SetSettings(const ParticleSystemSettings& settings)
-	{
-		mSettings = settings;
+void CParticleSystem::SetSettings(const ParticleSystemSettings& settings)
+{
+	mSettings = settings;
 
-		if(mInternal)
-			mInternal->SetSettings(settings);
-	}
+	if(mInternal)
+		mInternal->SetSettings(settings);
+}
 
-	void CParticleSystem::SetGpuSimulationSettings(const ParticleGpuSimulationSettings& settings)
-	{
-		mGpuSimulationSettings = settings;
+void CParticleSystem::SetGpuSimulationSettings(const ParticleGpuSimulationSettings& settings)
+{
+	mGpuSimulationSettings = settings;
 
-		if(mInternal)
-			mInternal->SetGpuSimulationSettings(settings);
-	}
+	if(mInternal)
+		mInternal->SetGpuSimulationSettings(settings);
+}
 
-	void CParticleSystem::SetEvolvers(const Vector<SPtr<ParticleEvolver>>& evolvers)
-	{
-		mEvolvers = evolvers;
+void CParticleSystem::SetEvolvers(const Vector<SPtr<ParticleEvolver>>& evolvers)
+{
+	mEvolvers = evolvers;
 
-		if(mInternal)
-			mInternal->SetEvolvers(evolvers);
-	}
+	if(mInternal)
+		mInternal->SetEvolvers(evolvers);
+}
 
-	void CParticleSystem::SetEmitters(const Vector<SPtr<ParticleEmitter>>& emitters)
-	{
-		mEmitters = emitters;
+void CParticleSystem::SetEmitters(const Vector<SPtr<ParticleEmitter>>& emitters)
+{
+	mEmitters = emitters;
 
-		if(mInternal)
-			mInternal->SetEmitters(emitters);
-	}
+	if(mInternal)
+		mInternal->SetEmitters(emitters);
+}
 
-	void CParticleSystem::SetLayer(u64 layer)
-	{
-		mLayer = layer;
+void CParticleSystem::SetLayer(u64 layer)
+{
+	mLayer = layer;
 
-		if(mInternal)
-			mInternal->SetLayer(layer);
-	}
+	if(mInternal)
+		mInternal->SetLayer(layer);
+}
 
-	void CParticleSystem::OnDestroyed()
+void CParticleSystem::OnDestroyed()
+{
+	DestroyInternal();
+}
+
+void CParticleSystem::OnDisabled()
+{
+	DestroyInternal();
+}
+
+void CParticleSystem::OnEnabled()
+{
+	if(mPreviewMode)
 	{
 		DestroyInternal();
+		mPreviewMode = false;
 	}
 
-	void CParticleSystem::OnDisabled()
+	if(SceneManager::Instance().IsRunning())
 	{
-		DestroyInternal();
+		RestoreInternal();
+		mInternal->Play();
+	}
+}
+
+void CParticleSystem::RestoreInternal()
+{
+	if(mInternal == nullptr)
+	{
+		mInternal = ParticleSystem::Create();
+		gSceneManager().BindActorInternal(mInternal, SceneObject());
 	}
 
-	void CParticleSystem::OnEnabled()
-	{
-		if(mPreviewMode)
-		{
-			DestroyInternal();
-			mPreviewMode = false;
-		}
+	mInternal->SetSettings(mSettings);
+	mInternal->SetGpuSimulationSettings(mGpuSimulationSettings);
+	mInternal->SetEmitters(mEmitters);
+	mInternal->SetEvolvers(mEvolvers);
+	mInternal->SetLayer(mLayer);
+}
 
-		if(SceneManager::Instance().IsRunning())
+void CParticleSystem::DestroyInternal()
+{
+	if(mInternal)
+	{
+		mEmitters = mInternal->GetEmitters();
+		mEvolvers = mInternal->GetEvolvers();
+
+		gSceneManager().UnbindActorInternal(mInternal);
+	}
+
+	// This should release the last reference and destroy the internal object
+	mInternal = nullptr;
+}
+
+bool CParticleSystem::TogglePreviewModeInternal(bool enabled)
+{
+	bool isRunning = SceneManager::Instance().IsRunning();
+
+	if(enabled)
+	{
+		// Cannot enable preview while running
+		if(isRunning)
+			return false;
+
+		if(!mPreviewMode)
 		{
 			RestoreInternal();
 			mInternal->Play();
-		}
-	}
-
-	void CParticleSystem::RestoreInternal()
-	{
-		if(mInternal == nullptr)
-		{
-			mInternal = ParticleSystem::Create();
-			gSceneManager().BindActorInternal(mInternal, SceneObject());
+			mPreviewMode = true;
 		}
 
-		mInternal->SetSettings(mSettings);
-		mInternal->SetGpuSimulationSettings(mGpuSimulationSettings);
-		mInternal->SetEmitters(mEmitters);
-		mInternal->SetEvolvers(mEvolvers);
-		mInternal->SetLayer(mLayer);
+		return true;
 	}
-
-	void CParticleSystem::DestroyInternal()
+	else
 	{
-		if(mInternal)
-		{
-			mEmitters = mInternal->GetEmitters();
-			mEvolvers = mInternal->GetEvolvers();
+		if(!isRunning)
+			DestroyInternal();
 
-			gSceneManager().UnbindActorInternal(mInternal);
-		}
-
-		// This should release the last reference and destroy the internal object
-		mInternal = nullptr;
+		mPreviewMode = false;
+		return false;
 	}
+}
 
-	bool CParticleSystem::TogglePreviewModeInternal(bool enabled)
-	{
-		bool isRunning = SceneManager::Instance().IsRunning();
+RTTITypeBase* CParticleSystem::GetRttiStatic()
+{
+	return CParticleSystemRTTI::Instance();
+}
 
-		if(enabled)
-		{
-			// Cannot enable preview while running
-			if(isRunning)
-				return false;
-
-			if(!mPreviewMode)
-			{
-				RestoreInternal();
-				mInternal->Play();
-				mPreviewMode = true;
-			}
-
-			return true;
-		}
-		else
-		{
-			if(!isRunning)
-				DestroyInternal();
-
-			mPreviewMode = false;
-			return false;
-		}
-	}
-
-	RTTITypeBase* CParticleSystem::GetRttiStatic()
-	{
-		return CParticleSystemRTTI::Instance();
-	}
-
-	RTTITypeBase* CParticleSystem::GetRtti() const
-	{
-		return CParticleSystem::GetRttiStatic();
-	}
+RTTITypeBase* CParticleSystem::GetRtti() const
+{
+	return CParticleSystem::GetRttiStatic();
+}
 } // namespace bs

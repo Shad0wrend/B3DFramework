@@ -9,43 +9,43 @@
 
 namespace bs
 {
-	namespace ct
+namespace ct
+{
+void VertexData::SetBuffer(u32 index, SPtr<VertexBuffer> buffer)
+{
+	mVertexBuffers[index] = buffer;
+
+	RecalculateMaxIndex();
+}
+
+SPtr<VertexBuffer> VertexData::GetBuffer(u32 index) const
+{
+	auto iterFind = mVertexBuffers.find(index);
+	if(iterFind != mVertexBuffers.end())
 	{
-		void VertexData::SetBuffer(u32 index, SPtr<VertexBuffer> buffer)
-		{
-			mVertexBuffers[index] = buffer;
+		return iterFind->second;
+	}
 
-			RecalculateMaxIndex();
-		}
+	return nullptr;
+}
 
-		SPtr<VertexBuffer> VertexData::GetBuffer(u32 index) const
-		{
-			auto iterFind = mVertexBuffers.find(index);
-			if(iterFind != mVertexBuffers.end())
-			{
-				return iterFind->second;
-			}
+bool VertexData::IsBufferBound(u32 index) const
+{
+	auto iterFind = mVertexBuffers.find(index);
+	if(iterFind != mVertexBuffers.end())
+	{
+		if(iterFind->second != nullptr)
+			return true;
+	}
 
-			return nullptr;
-		}
+	return false;
+}
 
-		bool VertexData::IsBufferBound(u32 index) const
-		{
-			auto iterFind = mVertexBuffers.find(index);
-			if(iterFind != mVertexBuffers.end())
-			{
-				if(iterFind->second != nullptr)
-					return true;
-			}
-
-			return false;
-		}
-
-		void VertexData::RecalculateMaxIndex()
-		{
-			mMaxBufferIdx = 0;
-			for(auto& bufferData : mVertexBuffers)
-				mMaxBufferIdx = std::max(bufferData.first, mMaxBufferIdx);
-		}
-	} // namespace ct
+void VertexData::RecalculateMaxIndex()
+{
+	mMaxBufferIdx = 0;
+	for(auto& bufferData : mVertexBuffers)
+		mMaxBufferIdx = std::max(bufferData.first, mMaxBufferIdx);
+}
+} // namespace ct
 } // namespace bs

@@ -5,15 +5,15 @@
 
 namespace bs
 {
-	namespace ct
-	{
-		OcclusionQuery::OcclusionQuery(bool binary)
-			: mActive(false), mBinary(binary)
-		{}
+namespace ct
+{
+OcclusionQuery::OcclusionQuery(bool binary)
+	: mActive(false), mBinary(binary)
+{}
 
-		SPtr<OcclusionQuery> OcclusionQuery::Create(bool binary, u32 deviceIdx)
-		{
-			return QueryManager::Instance().CreateOcclusionQuery(binary, deviceIdx);
-		}
-	} // namespace ct
+SPtr<OcclusionQuery> OcclusionQuery::Create(bool binary, u32 deviceIdx)
+{
+	return QueryManager::Instance().CreateOcclusionQuery(binary, deviceIdx);
+}
+} // namespace ct
 } // namespace bs

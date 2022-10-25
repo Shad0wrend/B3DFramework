@@ -7,48 +7,48 @@
 
 namespace bs
 {
-	CSkybox::CSkybox()
-	{
-		SetFlag(ComponentFlag::AlwaysRun, true);
-		SetName("Skybox");
-	}
+CSkybox::CSkybox()
+{
+	SetFlag(ComponentFlag::AlwaysRun, true);
+	SetName("Skybox");
+}
 
-	CSkybox::CSkybox(const HSceneObject& parent)
-		: Component(parent)
-	{
-		SetFlag(ComponentFlag::AlwaysRun, true);
-		SetName("Skybox");
-	}
+CSkybox::CSkybox(const HSceneObject& parent)
+	: Component(parent)
+{
+	SetFlag(ComponentFlag::AlwaysRun, true);
+	SetName("Skybox");
+}
 
-	CSkybox::~CSkybox()
-	{
-		mInternal->Destroy();
-	}
+CSkybox::~CSkybox()
+{
+	mInternal->Destroy();
+}
 
-	void CSkybox::OnInitialized()
-	{
-		// If mInternal already exists this means this object was deserialized,
-		// so all we need to do is initialize it.
-		if(mInternal != nullptr)
-			mInternal->Initialize();
-		else
-			mInternal = Skybox::Create();
+void CSkybox::OnInitialized()
+{
+	// If mInternal already exists this means this object was deserialized,
+	// so all we need to do is initialize it.
+	if(mInternal != nullptr)
+		mInternal->Initialize();
+	else
+		mInternal = Skybox::Create();
 
-		gSceneManager().BindActorInternal(mInternal, SceneObject());
-	}
+	gSceneManager().BindActorInternal(mInternal, SceneObject());
+}
 
-	void CSkybox::OnDestroyed()
-	{
-		gSceneManager().UnbindActorInternal(mInternal);
-	}
+void CSkybox::OnDestroyed()
+{
+	gSceneManager().UnbindActorInternal(mInternal);
+}
 
-	RTTITypeBase* CSkybox::GetRttiStatic()
-	{
-		return CSkyboxRTTI::Instance();
-	}
+RTTITypeBase* CSkybox::GetRttiStatic()
+{
+	return CSkyboxRTTI::Instance();
+}
 
-	RTTITypeBase* CSkybox::GetRtti() const
-	{
-		return CSkybox::GetRttiStatic();
-	}
+RTTITypeBase* CSkybox::GetRtti() const
+{
+	return CSkybox::GetRttiStatic();
+}
 } // namespace bs

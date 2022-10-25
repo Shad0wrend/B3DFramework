@@ -9,36 +9,36 @@ using namespace std::chrono;
 
 namespace bs
 {
-	Timer::Timer()
-	{
-		Reset();
-	}
+Timer::Timer()
+{
+	Reset();
+}
 
-	void Timer::Reset()
-	{
-		mStartTime = mHRClock.now();
-	}
+void Timer::Reset()
+{
+	mStartTime = mHRClock.now();
+}
 
-	u64 Timer::GetMilliseconds() const
-	{
-		auto newTime = mHRClock.now();
-		duration<double> dur = newTime - mStartTime;
+u64 Timer::GetMilliseconds() const
+{
+	auto newTime = mHRClock.now();
+	duration<double> dur = newTime - mStartTime;
 
-		return duration_cast<milliseconds>(dur).count();
-	}
+	return duration_cast<milliseconds>(dur).count();
+}
 
-	u64 Timer::GetMicroseconds() const
-	{
-		auto newTime = mHRClock.now();
-		duration<double> dur = newTime - mStartTime;
+u64 Timer::GetMicroseconds() const
+{
+	auto newTime = mHRClock.now();
+	duration<double> dur = newTime - mStartTime;
 
-		return duration_cast<microseconds>(dur).count();
-	}
+	return duration_cast<microseconds>(dur).count();
+}
 
-	u64 Timer::GetStartMs() const
-	{
-		nanoseconds startTimeNs = mStartTime.time_since_epoch();
+u64 Timer::GetStartMs() const
+{
+	nanoseconds startTimeNs = mStartTime.time_since_epoch();
 
-		return duration_cast<milliseconds>(startTimeNs).count();
-	}
+	return duration_cast<milliseconds>(startTimeNs).count();
+}
 } // namespace bs

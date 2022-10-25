@@ -8,77 +8,77 @@
 
 namespace bs
 {
-	CCamera::CCamera()
+CCamera::CCamera()
+{
+	SetFlag(ComponentFlag::AlwaysRun, true);
+	SetName("Camera");
+}
+
+CCamera::CCamera(const HSceneObject& parent)
+	: Component(parent)
+{
+	SetFlag(ComponentFlag::AlwaysRun, true);
+	SetName("Camera");
+}
+
+ConvexVolume CCamera::GetWorldFrustum() const
+{
+	const Vector<Plane>& frustumPlanes = GetFrustum().GetPlanes();
+	Matrix4 worldMatrix = SO()->GetWorldMatrix();
+
+	Vector<Plane> worldPlanes(frustumPlanes.size());
+	u32 i = 0;
+	for(auto& plane : frustumPlanes)
 	{
-		SetFlag(ComponentFlag::AlwaysRun, true);
-		SetName("Camera");
+		worldPlanes[i] = worldMatrix.MultiplyAffine(plane);
+		i++;
 	}
 
-	CCamera::CCamera(const HSceneObject& parent)
-		: Component(parent)
-	{
-		SetFlag(ComponentFlag::AlwaysRun, true);
-		SetName("Camera");
-	}
+	return ConvexVolume(worldPlanes);
+}
 
-	ConvexVolume CCamera::GetWorldFrustum() const
-	{
-		const Vector<Plane>& frustumPlanes = GetFrustum().GetPlanes();
-		Matrix4 worldMatrix = SO()->GetWorldMatrix();
+void CCamera::UpdateView() const
+{
+	mInternal->UpdateStateInternal(*SO());
+}
 
-		Vector<Plane> worldPlanes(frustumPlanes.size());
-		u32 i = 0;
-		for(auto& plane : frustumPlanes)
-		{
-			worldPlanes[i] = worldMatrix.MultiplyAffine(plane);
-			i++;
-		}
+void CCamera::SetMain(bool main)
+{
+	mInternal->SetMain(main);
+}
 
-		return ConvexVolume(worldPlanes);
-	}
+void CCamera::InstantiateInternal()
+{
+	// If mInternal already exists this means this object was deserialized,
+	// so all we need to do is initialize it.
+	if(mInternal != nullptr)
+		mInternal->Initialize();
+	else
+		mInternal = Camera::Create();
+}
 
-	void CCamera::UpdateView() const
-	{
-		mInternal->UpdateStateInternal(*SO());
-	}
+void CCamera::OnInitialized()
+{
+	gSceneManager().BindActorInternal(mInternal, SO());
 
-	void CCamera::SetMain(bool main)
-	{
-		mInternal->SetMain(main);
-	}
+	// Make sure primary RT gets applied if camera gets deserialized with main camera state
+	gSceneManager().NotifyMainCameraStateChangedInternal(mInternal);
+}
 
-	void CCamera::InstantiateInternal()
-	{
-		// If mInternal already exists this means this object was deserialized,
-		// so all we need to do is initialize it.
-		if(mInternal != nullptr)
-			mInternal->Initialize();
-		else
-			mInternal = Camera::Create();
-	}
+void CCamera::OnDestroyed()
+{
+	gSceneManager().UnbindActorInternal(mInternal);
 
-	void CCamera::OnInitialized()
-	{
-		gSceneManager().BindActorInternal(mInternal, SO());
+	mInternal->Destroy();
+}
 
-		// Make sure primary RT gets applied if camera gets deserialized with main camera state
-		gSceneManager().NotifyMainCameraStateChangedInternal(mInternal);
-	}
+RTTITypeBase* CCamera::GetRttiStatic()
+{
+	return CCameraRTTI::Instance();
+}
 
-	void CCamera::OnDestroyed()
-	{
-		gSceneManager().UnbindActorInternal(mInternal);
-
-		mInternal->Destroy();
-	}
-
-	RTTITypeBase* CCamera::GetRttiStatic()
-	{
-		return CCameraRTTI::Instance();
-	}
-
-	RTTITypeBase* CCamera::GetRtti() const
-	{
-		return CCamera::GetRttiStatic();
-	}
+RTTITypeBase* CCamera::GetRtti() const
+{
+	return CCamera::GetRttiStatic();
+}
 } // namespace bs

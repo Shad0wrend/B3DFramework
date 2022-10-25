@@ -6,192 +6,192 @@
 
 namespace bs
 {
-	SPtr<SerializedObject> SerializedObject::Create(IReflectable& obj, SerializedObjectEncodeFlags flags, SerializationContext* context)
-	{
-		IntermediateSerializer is;
-		return is.Encode(&obj, flags, context);
-	}
+SPtr<SerializedObject> SerializedObject::Create(IReflectable& obj, SerializedObjectEncodeFlags flags, SerializationContext* context)
+{
+	IntermediateSerializer is;
+	return is.Encode(&obj, flags, context);
+}
 
-	SPtr<IReflectable> SerializedObject::Decode(SerializationContext* context) const
-	{
-		IntermediateSerializer is;
-		return is.Decode(this, context);
-	}
+SPtr<IReflectable> SerializedObject::Decode(SerializationContext* context) const
+{
+	IntermediateSerializer is;
+	return is.Decode(this, context);
+}
 
-	SPtr<SerializedInstance> SerializedObject::Clone(bool cloneData)
-	{
-		SPtr<SerializedObject> copy = bs_shared_ptr_new<SerializedObject>();
-		copy->SubObjects = Vector<SerializedSubObject>(SubObjects.size());
+SPtr<SerializedInstance> SerializedObject::Clone(bool cloneData)
+{
+	SPtr<SerializedObject> copy = bs_shared_ptr_new<SerializedObject>();
+	copy->SubObjects = Vector<SerializedSubObject>(SubObjects.size());
 
-		u32 i = 0;
-		for(auto& subObject : SubObjects)
+	u32 i = 0;
+	for(auto& subObject : SubObjects)
+	{
+		copy->SubObjects[i].TypeId = subObject.TypeId;
+
+		for(auto& entryPair : subObject.Entries)
 		{
-			copy->SubObjects[i].TypeId = subObject.TypeId;
+			SerializedEntry entry = entryPair.second;
 
-			for(auto& entryPair : subObject.Entries)
-			{
-				SerializedEntry entry = entryPair.second;
+			if(entry.Serialized != nullptr)
+				entry.Serialized = entry.Serialized->Clone(cloneData);
 
-				if(entry.Serialized != nullptr)
-					entry.Serialized = entry.Serialized->Clone(cloneData);
-
-				copy->SubObjects[i].Entries[entryPair.first] = entry;
-			}
-
-			i++;
+			copy->SubObjects[i].Entries[entryPair.first] = entry;
 		}
 
-		return copy;
+		i++;
 	}
 
-	SPtr<SerializedInstance> SerializedField::Clone(bool cloneData)
+	return copy;
+}
+
+SPtr<SerializedInstance> SerializedField::Clone(bool cloneData)
+{
+	SPtr<SerializedField> copy = bs_shared_ptr_new<SerializedField>();
+	copy->Size = Size;
+
+	if(cloneData)
 	{
-		SPtr<SerializedField> copy = bs_shared_ptr_new<SerializedField>();
-		copy->Size = Size;
-
-		if(cloneData)
-		{
-			copy->Value = (u8*)bs_alloc(Size);
-			memcpy(copy->Value, Value, Size);
-			copy->OwnsMemory = true;
-		}
-		else
-		{
-			copy->Value = Value;
-			copy->OwnsMemory = false;
-		}
-
-		return copy;
+		copy->Value = (u8*)bs_alloc(Size);
+		memcpy(copy->Value, Value, Size);
+		copy->OwnsMemory = true;
+	}
+	else
+	{
+		copy->Value = Value;
+		copy->OwnsMemory = false;
 	}
 
-	SPtr<SerializedInstance> SerializedDataBlock::Clone(bool cloneData)
+	return copy;
+}
+
+SPtr<SerializedInstance> SerializedDataBlock::Clone(bool cloneData)
+{
+	SPtr<SerializedDataBlock> copy = bs_shared_ptr_new<SerializedDataBlock>();
+	copy->Size = Size;
+
+	if(cloneData)
 	{
-		SPtr<SerializedDataBlock> copy = bs_shared_ptr_new<SerializedDataBlock>();
-		copy->Size = Size;
-
-		if(cloneData)
+		if(Stream->IsFile())
 		{
-			if(Stream->IsFile())
-			{
-				BS_LOG(Warning, Generic, "Cloning a file stream. Streaming is disabled and stream data will be loaded into memory.");
-			}
-
-			auto stream = bs_shared_ptr_new<MemoryDataStream>(Size);
-			stream->Read(stream->Data(), Size);
-
-			copy->Stream = stream;
-			copy->Offset = 0;
-		}
-		else
-		{
-			copy->Stream = Stream;
-			copy->Offset = Offset;
+			BS_LOG(Warning, Generic, "Cloning a file stream. Streaming is disabled and stream data will be loaded into memory.");
 		}
 
-		return copy;
-	}
+		auto stream = bs_shared_ptr_new<MemoryDataStream>(Size);
+		stream->Read(stream->Data(), Size);
 
-	SPtr<SerializedInstance> SerializedArray::Clone(bool cloneData)
+		copy->Stream = stream;
+		copy->Offset = 0;
+	}
+	else
 	{
-		SPtr<SerializedArray> copy = bs_shared_ptr_new<SerializedArray>();
-		copy->NumElements = NumElements;
-
-		for(auto& entryPair : Entries)
-		{
-			SerializedArrayEntry entry = entryPair.second;
-			entry.Serialized = entry.Serialized->Clone(cloneData);
-
-			copy->Entries[entryPair.first] = entry;
-		}
-
-		return copy;
+		copy->Stream = Stream;
+		copy->Offset = Offset;
 	}
 
-	RTTITypeBase* SerializedInstance::GetRttiStatic()
+	return copy;
+}
+
+SPtr<SerializedInstance> SerializedArray::Clone(bool cloneData)
+{
+	SPtr<SerializedArray> copy = bs_shared_ptr_new<SerializedArray>();
+	copy->NumElements = NumElements;
+
+	for(auto& entryPair : Entries)
 	{
-		return SerializedInstanceRTTI::Instance();
+		SerializedArrayEntry entry = entryPair.second;
+		entry.Serialized = entry.Serialized->Clone(cloneData);
+
+		copy->Entries[entryPair.first] = entry;
 	}
 
-	RTTITypeBase* SerializedInstance::GetRtti() const
-	{
-		return SerializedInstance::GetRttiStatic();
-	}
+	return copy;
+}
 
-	RTTITypeBase* SerializedDataBlock::GetRttiStatic()
-	{
-		return SerializedDataBlockRTTI::Instance();
-	}
+RTTITypeBase* SerializedInstance::GetRttiStatic()
+{
+	return SerializedInstanceRTTI::Instance();
+}
 
-	RTTITypeBase* SerializedDataBlock::GetRtti() const
-	{
-		return SerializedDataBlock::GetRttiStatic();
-	}
+RTTITypeBase* SerializedInstance::GetRtti() const
+{
+	return SerializedInstance::GetRttiStatic();
+}
 
-	RTTITypeBase* SerializedField::GetRttiStatic()
-	{
-		return SerializedFieldRTTI::Instance();
-	}
+RTTITypeBase* SerializedDataBlock::GetRttiStatic()
+{
+	return SerializedDataBlockRTTI::Instance();
+}
 
-	RTTITypeBase* SerializedField::GetRtti() const
-	{
-		return SerializedField::GetRttiStatic();
-	}
+RTTITypeBase* SerializedDataBlock::GetRtti() const
+{
+	return SerializedDataBlock::GetRttiStatic();
+}
 
-	u32 SerializedObject::GetRootTypeId() const
-	{
-		if(SubObjects.size() > 0)
-			return SubObjects[0].TypeId;
+RTTITypeBase* SerializedField::GetRttiStatic()
+{
+	return SerializedFieldRTTI::Instance();
+}
 
-		return 0;
-	}
+RTTITypeBase* SerializedField::GetRtti() const
+{
+	return SerializedField::GetRttiStatic();
+}
 
-	RTTITypeBase* SerializedObject::GetRttiStatic()
-	{
-		return SerializedObjectRTTI::Instance();
-	}
+u32 SerializedObject::GetRootTypeId() const
+{
+	if(SubObjects.size() > 0)
+		return SubObjects[0].TypeId;
 
-	RTTITypeBase* SerializedObject::GetRtti() const
-	{
-		return SerializedObject::GetRttiStatic();
-	}
+	return 0;
+}
 
-	RTTITypeBase* SerializedArray::GetRttiStatic()
-	{
-		return SerializedArrayRTTI::Instance();
-	}
+RTTITypeBase* SerializedObject::GetRttiStatic()
+{
+	return SerializedObjectRTTI::Instance();
+}
 
-	RTTITypeBase* SerializedArray::GetRtti() const
-	{
-		return SerializedArray::GetRttiStatic();
-	}
+RTTITypeBase* SerializedObject::GetRtti() const
+{
+	return SerializedObject::GetRttiStatic();
+}
 
-	RTTITypeBase* SerializedSubObject::GetRttiStatic()
-	{
-		return SerializedSubObjectRTTI::Instance();
-	}
+RTTITypeBase* SerializedArray::GetRttiStatic()
+{
+	return SerializedArrayRTTI::Instance();
+}
 
-	RTTITypeBase* SerializedSubObject::GetRtti() const
-	{
-		return SerializedSubObject::GetRttiStatic();
-	}
+RTTITypeBase* SerializedArray::GetRtti() const
+{
+	return SerializedArray::GetRttiStatic();
+}
 
-	RTTITypeBase* SerializedEntry::GetRttiStatic()
-	{
-		return SerializedEntryRTTI::Instance();
-	}
+RTTITypeBase* SerializedSubObject::GetRttiStatic()
+{
+	return SerializedSubObjectRTTI::Instance();
+}
 
-	RTTITypeBase* SerializedEntry::GetRtti() const
-	{
-		return SerializedEntry::GetRttiStatic();
-	}
+RTTITypeBase* SerializedSubObject::GetRtti() const
+{
+	return SerializedSubObject::GetRttiStatic();
+}
 
-	RTTITypeBase* SerializedArrayEntry::GetRttiStatic()
-	{
-		return SerializedArrayEntryRTTI::Instance();
-	}
+RTTITypeBase* SerializedEntry::GetRttiStatic()
+{
+	return SerializedEntryRTTI::Instance();
+}
 
-	RTTITypeBase* SerializedArrayEntry::GetRtti() const
-	{
-		return SerializedArrayEntry::GetRttiStatic();
-	}
+RTTITypeBase* SerializedEntry::GetRtti() const
+{
+	return SerializedEntry::GetRttiStatic();
+}
+
+RTTITypeBase* SerializedArrayEntry::GetRttiStatic()
+{
+	return SerializedArrayEntryRTTI::Instance();
+}
+
+RTTITypeBase* SerializedArrayEntry::GetRtti() const
+{
+	return SerializedArrayEntry::GetRttiStatic();
+}
 } // namespace bs

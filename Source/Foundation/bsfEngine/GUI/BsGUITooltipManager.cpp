@@ -6,25 +6,25 @@
 
 namespace bs
 {
-	GUITooltipManager::~GUITooltipManager()
-	{
-		Hide();
-	}
+GUITooltipManager::~GUITooltipManager()
+{
+	Hide();
+}
 
-	void GUITooltipManager::Show(const GUIWidget& widget, const Vector2I& position, const String& text)
-	{
-		Hide();
+void GUITooltipManager::Show(const GUIWidget& widget, const Vector2I& position, const String& text)
+{
+	Hide();
 
-		mTooltipSO = SceneObject::Create("Tooltip", SOF_Internal | SOF_Persistent | SOF_DontSave);
-		GameObjectHandle<GUITooltip> tooltip = mTooltipSO->AddComponent<GUITooltip>(widget, position, text);
-	}
+	mTooltipSO = SceneObject::Create("Tooltip", SOF_Internal | SOF_Persistent | SOF_DontSave);
+	GameObjectHandle<GUITooltip> tooltip = mTooltipSO->AddComponent<GUITooltip>(widget, position, text);
+}
 
-	void GUITooltipManager::Hide()
+void GUITooltipManager::Hide()
+{
+	if(mTooltipSO != nullptr)
 	{
-		if(mTooltipSO != nullptr)
-		{
-			mTooltipSO->Destroy();
-			mTooltipSO = nullptr;
-		}
+		mTooltipSO->Destroy();
+		mTooltipSO = nullptr;
 	}
+}
 } // namespace bs

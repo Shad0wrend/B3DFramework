@@ -8,63 +8,63 @@
 
 namespace bs
 {
-	CSphereCollider::CSphereCollider()
+CSphereCollider::CSphereCollider()
+{
+	SetName("SphereCollider");
+}
+
+CSphereCollider::CSphereCollider(const HSceneObject& parent, float radius)
+	: CCollider(parent), mRadius(radius)
+{
+	SetName("SphereCollider");
+}
+
+void CSphereCollider::SetRadius(float radius)
+{
+	float clampedRadius = std::max(radius, 0.01f);
+	if(mRadius == clampedRadius)
+		return;
+
+	mRadius = clampedRadius;
+
+	if(mInternal != nullptr)
 	{
-		SetName("SphereCollider");
+		GetInternalInternal()->SetRadius(clampedRadius);
+
+		if(mParent != nullptr)
+			mParent->UpdateMassDistributionInternal();
 	}
+}
 
-	CSphereCollider::CSphereCollider(const HSceneObject& parent, float radius)
-		: CCollider(parent), mRadius(radius)
-	{
-		SetName("SphereCollider");
-	}
+void CSphereCollider::SetCenter(const Vector3& center)
+{
+	if(mLocalPosition == center)
+		return;
 
-	void CSphereCollider::SetRadius(float radius)
-	{
-		float clampedRadius = std::max(radius, 0.01f);
-		if(mRadius == clampedRadius)
-			return;
+	mLocalPosition = center;
 
-		mRadius = clampedRadius;
+	if(mInternal != nullptr)
+		UpdateTransform();
+}
 
-		if(mInternal != nullptr)
-		{
-			GetInternalInternal()->SetRadius(clampedRadius);
+SPtr<Collider> CSphereCollider::CreateInternal()
+{
+	const SPtr<SceneInstance>& scene = SO()->GetScene();
+	const Transform& tfrm = SO()->GetTransform();
 
-			if(mParent != nullptr)
-				mParent->UpdateMassDistributionInternal();
-		}
-	}
+	SPtr<Collider> collider = SphereCollider::Create(*scene->GetPhysicsScene(), mRadius, tfrm.GetPosition(), tfrm.GetRotation());
 
-	void CSphereCollider::SetCenter(const Vector3& center)
-	{
-		if(mLocalPosition == center)
-			return;
+	collider->SetOwnerInternal(PhysicsOwnerType::Component, this);
+	return collider;
+}
 
-		mLocalPosition = center;
+RTTITypeBase* CSphereCollider::GetRttiStatic()
+{
+	return CSphereColliderRTTI::Instance();
+}
 
-		if(mInternal != nullptr)
-			UpdateTransform();
-	}
-
-	SPtr<Collider> CSphereCollider::CreateInternal()
-	{
-		const SPtr<SceneInstance>& scene = SO()->GetScene();
-		const Transform& tfrm = SO()->GetTransform();
-
-		SPtr<Collider> collider = SphereCollider::Create(*scene->GetPhysicsScene(), mRadius, tfrm.GetPosition(), tfrm.GetRotation());
-
-		collider->SetOwnerInternal(PhysicsOwnerType::Component, this);
-		return collider;
-	}
-
-	RTTITypeBase* CSphereCollider::GetRttiStatic()
-	{
-		return CSphereColliderRTTI::Instance();
-	}
-
-	RTTITypeBase* CSphereCollider::GetRtti() const
-	{
-		return CSphereCollider::GetRttiStatic();
-	}
+RTTITypeBase* CSphereCollider::GetRtti() const
+{
+	return CSphereCollider::GetRttiStatic();
+}
 } // namespace bs

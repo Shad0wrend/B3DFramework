@@ -9,109 +9,109 @@ using namespace std::placeholders;
 
 namespace bs
 {
-	CBone::CBone()
-	{
-		SetName("Bone");
+CBone::CBone()
+{
+	SetName("Bone");
 
-		mNotifyFlags = TCF_Parent;
-		SetFlag(ComponentFlag::AlwaysRun, true);
-	}
+	mNotifyFlags = TCF_Parent;
+	SetFlag(ComponentFlag::AlwaysRun, true);
+}
 
-	CBone::CBone(const HSceneObject& parent)
-		: Component(parent)
-	{
-		SetName("Bone");
+CBone::CBone(const HSceneObject& parent)
+	: Component(parent)
+{
+	SetName("Bone");
 
-		mNotifyFlags = TCF_Parent;
-	}
+	mNotifyFlags = TCF_Parent;
+}
 
-	void CBone::SetBoneName(const String& name)
-	{
-		if(mBoneName == name)
-			return;
+void CBone::SetBoneName(const String& name)
+{
+	if(mBoneName == name)
+		return;
 
-		mBoneName = name;
+	mBoneName = name;
 
-		if(mParent != nullptr)
-			mParent->NotifyBoneChangedInternal(static_object_cast<CBone>(GetHandle()));
-	}
+	if(mParent != nullptr)
+		mParent->NotifyBoneChangedInternal(static_object_cast<CBone>(GetHandle()));
+}
 
-	void CBone::OnDestroyed()
-	{
-		if(mParent != nullptr)
-			mParent->RemoveBoneInternal(static_object_cast<CBone>(GetHandle()));
+void CBone::OnDestroyed()
+{
+	if(mParent != nullptr)
+		mParent->RemoveBoneInternal(static_object_cast<CBone>(GetHandle()));
 
-		mParent = nullptr;
-	}
+	mParent = nullptr;
+}
 
-	void CBone::OnDisabled()
-	{
-		if(mParent != nullptr)
-			mParent->RemoveBoneInternal(static_object_cast<CBone>(GetHandle()));
+void CBone::OnDisabled()
+{
+	if(mParent != nullptr)
+		mParent->RemoveBoneInternal(static_object_cast<CBone>(GetHandle()));
 
-		mParent = nullptr;
-	}
+	mParent = nullptr;
+}
 
-	void CBone::OnEnabled()
-	{
+void CBone::OnEnabled()
+{
+	UpdateParentAnimation();
+}
+
+void CBone::OnTransformChanged(TransformChangedFlags flags)
+{
+	if(!SO()->GetActive())
+		return;
+
+	if((flags & TCF_Parent) != 0)
 		UpdateParentAnimation();
-	}
+}
 
-	void CBone::OnTransformChanged(TransformChangedFlags flags)
+void CBone::UpdateParentAnimation()
+{
+	HSceneObject currentSO = SO();
+	while(currentSO != nullptr)
 	{
-		if(!SO()->GetActive())
-			return;
-
-		if((flags & TCF_Parent) != 0)
-			UpdateParentAnimation();
-	}
-
-	void CBone::UpdateParentAnimation()
-	{
-		HSceneObject currentSO = SO();
-		while(currentSO != nullptr)
+		HAnimation parent = currentSO->GetComponent<CAnimation>();
+		if(parent != nullptr)
 		{
-			HAnimation parent = currentSO->GetComponent<CAnimation>();
-			if(parent != nullptr)
-			{
-				if(currentSO->GetActive())
-					SetParentInternal(parent);
-				else
-					SetParentInternal(HAnimation());
+			if(currentSO->GetActive())
+				SetParentInternal(parent);
+			else
+				SetParentInternal(HAnimation());
 
-				return;
-			}
-
-			currentSO = currentSO->GetParent();
+			return;
 		}
 
-		SetParentInternal(HAnimation());
+		currentSO = currentSO->GetParent();
 	}
 
-	void CBone::SetParentInternal(const HAnimation& animation, bool isInternal)
+	SetParentInternal(HAnimation());
+}
+
+void CBone::SetParentInternal(const HAnimation& animation, bool isInternal)
+{
+	if(animation == mParent)
+		return;
+
+	if(!isInternal)
 	{
-		if(animation == mParent)
-			return;
+		if(mParent != nullptr)
+			mParent->RemoveBoneInternal(static_object_cast<CBone>(GetHandle()));
 
-		if(!isInternal)
-		{
-			if(mParent != nullptr)
-				mParent->RemoveBoneInternal(static_object_cast<CBone>(GetHandle()));
-
-			if(animation != nullptr)
-				animation->AddBoneInternal(static_object_cast<CBone>(GetHandle()));
-		}
-
-		mParent = animation;
+		if(animation != nullptr)
+			animation->AddBoneInternal(static_object_cast<CBone>(GetHandle()));
 	}
 
-	RTTITypeBase* CBone::GetRttiStatic()
-	{
-		return CBoneRTTI::Instance();
-	}
+	mParent = animation;
+}
 
-	RTTITypeBase* CBone::GetRtti() const
-	{
-		return CBone::GetRttiStatic();
-	}
+RTTITypeBase* CBone::GetRttiStatic()
+{
+	return CBoneRTTI::Instance();
+}
+
+RTTITypeBase* CBone::GetRtti() const
+{
+	return CBone::GetRttiStatic();
+}
 } // namespace bs

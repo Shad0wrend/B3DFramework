@@ -6,48 +6,48 @@
 
 namespace bs
 {
-	CDecal::CDecal()
-	{
-		SetFlag(ComponentFlag::AlwaysRun, true);
-		SetName("Decal");
-	}
+CDecal::CDecal()
+{
+	SetFlag(ComponentFlag::AlwaysRun, true);
+	SetName("Decal");
+}
 
-	CDecal::CDecal(const HSceneObject& parent)
-		: Component(parent)
-	{
-		SetFlag(ComponentFlag::AlwaysRun, true);
-		SetName("Decal");
-	}
+CDecal::CDecal(const HSceneObject& parent)
+	: Component(parent)
+{
+	SetFlag(ComponentFlag::AlwaysRun, true);
+	SetName("Decal");
+}
 
-	CDecal::~CDecal()
-	{
-		mInternal->Destroy();
-	}
+CDecal::~CDecal()
+{
+	mInternal->Destroy();
+}
 
-	void CDecal::OnInitialized()
-	{
-		// If mInternal already exists this means this object was deserialized,
-		// so all we need to do is initialize it.
-		if(mInternal != nullptr)
-			mInternal->Initialize();
-		else
-			mInternal = Decal::Create(HMaterial());
+void CDecal::OnInitialized()
+{
+	// If mInternal already exists this means this object was deserialized,
+	// so all we need to do is initialize it.
+	if(mInternal != nullptr)
+		mInternal->Initialize();
+	else
+		mInternal = Decal::Create(HMaterial());
 
-		gSceneManager().BindActorInternal(mInternal, SceneObject());
-	}
+	gSceneManager().BindActorInternal(mInternal, SceneObject());
+}
 
-	void CDecal::OnDestroyed()
-	{
-		gSceneManager().UnbindActorInternal(mInternal);
-	}
+void CDecal::OnDestroyed()
+{
+	gSceneManager().UnbindActorInternal(mInternal);
+}
 
-	RTTITypeBase* CDecal::GetRttiStatic()
-	{
-		return CDecalRTTI::Instance();
-	}
+RTTITypeBase* CDecal::GetRttiStatic()
+{
+	return CDecalRTTI::Instance();
+}
 
-	RTTITypeBase* CDecal::GetRtti() const
-	{
-		return CDecal::GetRttiStatic();
-	}
+RTTITypeBase* CDecal::GetRtti() const
+{
+	return CDecal::GetRttiStatic();
+}
 } // namespace bs

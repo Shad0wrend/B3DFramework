@@ -8,117 +8,117 @@
 
 namespace bs
 {
-	namespace ct
+namespace ct
+{
+QueryManager::~QueryManager()
+{
+	// Trigger all remaining queries, whether they completed or not
+
+	for(auto& query : mEventQueries)
 	{
-		QueryManager::~QueryManager()
+		if(query->IsActive())
+			query->OnTriggered();
+	}
+
+	for(auto& query : mTimerQueries)
+	{
+		if(query->IsActive())
+			query->OnTriggered(query->GetTimeMs());
+	}
+
+	for(auto& query : mOcclusionQueries)
+	{
+		if(query->IsActive())
+			query->OnComplete(query->GetNumSamples());
+	}
+
+	ProcessDeletedQueue();
+}
+
+void QueryManager::UpdateInternal()
+{
+	for(auto& query : mEventQueries)
+	{
+		if(query->IsActive() && query->IsReady())
 		{
-			// Trigger all remaining queries, whether they completed or not
-
-			for(auto& query : mEventQueries)
-			{
-				if(query->IsActive())
-					query->OnTriggered();
-			}
-
-			for(auto& query : mTimerQueries)
-			{
-				if(query->IsActive())
-					query->OnTriggered(query->GetTimeMs());
-			}
-
-			for(auto& query : mOcclusionQueries)
-			{
-				if(query->IsActive())
-					query->OnComplete(query->GetNumSamples());
-			}
-
-			ProcessDeletedQueue();
+			query->OnTriggered();
+			query->SetActive(false);
 		}
+	}
 
-		void QueryManager::UpdateInternal()
+	for(auto& query : mTimerQueries)
+	{
+		if(query->IsActive() && query->IsReady())
 		{
-			for(auto& query : mEventQueries)
-			{
-				if(query->IsActive() && query->IsReady())
-				{
-					query->OnTriggered();
-					query->SetActive(false);
-				}
-			}
-
-			for(auto& query : mTimerQueries)
-			{
-				if(query->IsActive() && query->IsReady())
-				{
-					query->OnTriggered(query->GetTimeMs());
-					query->SetActive(false);
-				}
-			}
-
-			for(auto& query : mOcclusionQueries)
-			{
-				if(query->IsActive() && query->IsReady())
-				{
-					query->OnComplete(query->GetNumSamples());
-					query->SetActive(false);
-				}
-			}
-
-			ProcessDeletedQueue();
+			query->OnTriggered(query->GetTimeMs());
+			query->SetActive(false);
 		}
+	}
 
-		void QueryManager::DeleteEventQuery(EventQuery* query)
+	for(auto& query : mOcclusionQueries)
+	{
+		if(query->IsActive() && query->IsReady())
 		{
-			Instance().mDeletedEventQueries.push_back(query);
+			query->OnComplete(query->GetNumSamples());
+			query->SetActive(false);
 		}
+	}
 
-		void QueryManager::DeleteTimerQuery(TimerQuery* query)
-		{
-			Instance().mDeletedTimerQueries.push_back(query);
-		}
+	ProcessDeletedQueue();
+}
 
-		void QueryManager::DeleteOcclusionQuery(OcclusionQuery* query)
-		{
-			Instance().mDeletedOcclusionQueries.push_back(query);
-		}
+void QueryManager::DeleteEventQuery(EventQuery* query)
+{
+	Instance().mDeletedEventQueries.push_back(query);
+}
 
-		void QueryManager::ProcessDeletedQueue()
-		{
-			for(auto& query : mDeletedEventQueries)
-			{
-				auto iterFind = std::find(mEventQueries.begin(), mEventQueries.end(), query);
+void QueryManager::DeleteTimerQuery(TimerQuery* query)
+{
+	Instance().mDeletedTimerQueries.push_back(query);
+}
 
-				if(iterFind != mEventQueries.end())
-					mEventQueries.erase(iterFind);
+void QueryManager::DeleteOcclusionQuery(OcclusionQuery* query)
+{
+	Instance().mDeletedOcclusionQueries.push_back(query);
+}
 
-				bs_delete(query);
-			}
+void QueryManager::ProcessDeletedQueue()
+{
+	for(auto& query : mDeletedEventQueries)
+	{
+		auto iterFind = std::find(mEventQueries.begin(), mEventQueries.end(), query);
 
-			mDeletedEventQueries.clear();
+		if(iterFind != mEventQueries.end())
+			mEventQueries.erase(iterFind);
 
-			for(auto& query : mDeletedTimerQueries)
-			{
-				auto iterFind = std::find(mTimerQueries.begin(), mTimerQueries.end(), query);
+		bs_delete(query);
+	}
 
-				if(iterFind != mTimerQueries.end())
-					mTimerQueries.erase(iterFind);
+	mDeletedEventQueries.clear();
 
-				bs_delete(query);
-			}
+	for(auto& query : mDeletedTimerQueries)
+	{
+		auto iterFind = std::find(mTimerQueries.begin(), mTimerQueries.end(), query);
 
-			mDeletedTimerQueries.clear();
+		if(iterFind != mTimerQueries.end())
+			mTimerQueries.erase(iterFind);
 
-			for(auto& query : mDeletedOcclusionQueries)
-			{
-				auto iterFind = std::find(mOcclusionQueries.begin(), mOcclusionQueries.end(), query);
+		bs_delete(query);
+	}
 
-				if(iterFind != mOcclusionQueries.end())
-					mOcclusionQueries.erase(iterFind);
+	mDeletedTimerQueries.clear();
 
-				bs_delete(query);
-			}
+	for(auto& query : mDeletedOcclusionQueries)
+	{
+		auto iterFind = std::find(mOcclusionQueries.begin(), mOcclusionQueries.end(), query);
 
-			mDeletedOcclusionQueries.clear();
-		}
-	} // namespace ct
+		if(iterFind != mOcclusionQueries.end())
+			mOcclusionQueries.erase(iterFind);
+
+		bs_delete(query);
+	}
+
+	mDeletedOcclusionQueries.clear();
+}
+} // namespace ct
 } // namespace bs

@@ -5,17 +5,17 @@
 
 namespace bs
 {
-	constexpr u32 RTTIPlainType<GpuParamBlockDesc>::VERSION;
-	constexpr u32 RTTIPlainType<GpuParamObjectDesc>::VERSION;
-	constexpr u32 RTTIPlainType<GpuParamDataDesc>::VERSION;
+constexpr u32 RTTIPlainType<GpuParamBlockDesc>::VERSION;
+constexpr u32 RTTIPlainType<GpuParamObjectDesc>::VERSION;
+constexpr u32 RTTIPlainType<GpuParamDataDesc>::VERSION;
 
-	RTTITypeBase* GpuParamDesc::GetRttiStatic()
-	{
-		return GpuParamDescRTTI::Instance();
-	}
+RTTITypeBase* GpuParamDesc::GetRttiStatic()
+{
+	return GpuParamDescRTTI::Instance();
+}
 
-	RTTITypeBase* GpuParamDesc::GetRtti() const
-	{
-		return GpuParamDesc::GetRttiStatic();
-	}
+RTTITypeBase* GpuParamDesc::GetRtti() const
+{
+	return GpuParamDesc::GetRttiStatic();
+}
 } // namespace bs

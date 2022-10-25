@@ -6,132 +6,132 @@
 
 namespace bs
 {
-	GUIDimensions GUIDimensions::Create()
+GUIDimensions GUIDimensions::Create()
+{
+	return GUIDimensions();
+}
+
+GUIDimensions GUIDimensions::Create(const GUIOptions& options)
+{
+	GUIDimensions dimensions;
+
+	for(auto& option : options.mOptions)
 	{
-		return GUIDimensions();
-	}
-
-	GUIDimensions GUIDimensions::Create(const GUIOptions& options)
-	{
-		GUIDimensions dimensions;
-
-		for(auto& option : options.mOptions)
+		switch(option.type)
 		{
-			switch(option.type)
-			{
-			case GUIOption::Type::Position:
-				dimensions.X = (i32)option.min;
-				dimensions.Y = (i32)option.max;
-				break;
-			case GUIOption::Type::FixedWidth:
-				dimensions.Flags |= GUIDF_FixedWidth | GUIDF_OverWidth;
-				dimensions.MinWidth = dimensions.MaxWidth = option.min;
-				break;
-			case GUIOption::Type::FixedHeight:
-				dimensions.Flags |= GUIDF_FixedHeight | GUIDF_OverHeight;
-				dimensions.MinHeight = dimensions.MaxHeight = option.min;
-				break;
-			case GUIOption::Type::FlexibleWidth:
-				dimensions.Flags |= GUIDF_OverWidth;
-				dimensions.Flags &= ~GUIDF_FixedWidth;
-				dimensions.MinWidth = option.min;
-				dimensions.MaxWidth = option.max;
-				break;
-			case GUIOption::Type::FlexibleHeight:
-				dimensions.Flags |= GUIDF_OverHeight;
-				dimensions.Flags &= ~GUIDF_FixedHeight;
-				dimensions.MinHeight = option.min;
-				dimensions.MaxHeight = option.max;
-				break;
-			}
-		}
-
-		return dimensions;
-	}
-
-	void GUIDimensions::UpdateWithStyle(const GUIElementStyle* style)
-	{
-		if(!OverridenWidth())
-		{
-			if(style->FixedWidth)
-			{
-				Flags |= GUIDF_FixedWidth;
-				MinWidth = MaxWidth = style->Width;
-			}
-			else
-			{
-				Flags &= ~GUIDF_FixedWidth;
-				MinWidth = style->MinWidth;
-				MaxWidth = style->MaxWidth;
-			}
-		}
-
-		if(!OverridenHeight())
-		{
-			if(style->FixedHeight)
-			{
-				Flags |= GUIDF_FixedHeight;
-				MinHeight = MaxHeight = style->Height;
-			}
-			else
-			{
-				Flags &= ~GUIDF_FixedHeight;
-				MinHeight = style->MinHeight;
-				MaxHeight = style->MaxHeight;
-			}
+		case GUIOption::Type::Position:
+			dimensions.X = (i32)option.min;
+			dimensions.Y = (i32)option.max;
+			break;
+		case GUIOption::Type::FixedWidth:
+			dimensions.Flags |= GUIDF_FixedWidth | GUIDF_OverWidth;
+			dimensions.MinWidth = dimensions.MaxWidth = option.min;
+			break;
+		case GUIOption::Type::FixedHeight:
+			dimensions.Flags |= GUIDF_FixedHeight | GUIDF_OverHeight;
+			dimensions.MinHeight = dimensions.MaxHeight = option.min;
+			break;
+		case GUIOption::Type::FlexibleWidth:
+			dimensions.Flags |= GUIDF_OverWidth;
+			dimensions.Flags &= ~GUIDF_FixedWidth;
+			dimensions.MinWidth = option.min;
+			dimensions.MaxWidth = option.max;
+			break;
+		case GUIOption::Type::FlexibleHeight:
+			dimensions.Flags |= GUIDF_OverHeight;
+			dimensions.Flags &= ~GUIDF_FixedHeight;
+			dimensions.MinHeight = option.min;
+			dimensions.MaxHeight = option.max;
+			break;
 		}
 	}
 
-	LayoutSizeRange GUIDimensions::CalculateSizeRange(const Vector2I& optimal) const
-	{
-		LayoutSizeRange sizeRange;
+	return dimensions;
+}
 
-		if(FixedHeight())
+void GUIDimensions::UpdateWithStyle(const GUIElementStyle* style)
+{
+	if(!OverridenWidth())
+	{
+		if(style->FixedWidth)
 		{
-			sizeRange.Optimal.Y = std::max(0, (i32)MinHeight);
-			sizeRange.Min.Y = sizeRange.Optimal.Y;
-			sizeRange.Max.Y = sizeRange.Optimal.Y;
+			Flags |= GUIDF_FixedWidth;
+			MinWidth = MaxWidth = style->Width;
 		}
 		else
 		{
-			sizeRange.Optimal.Y = optimal.Y;
-
-			if(MinHeight > 0)
-			{
-				sizeRange.Optimal.Y = std::max(std::max(0, (i32)MinHeight), sizeRange.Optimal.Y);
-				sizeRange.Min.Y = std::max(0, (i32)MinHeight);
-			}
-
-			if(MaxHeight > 0)
-			{
-				sizeRange.Optimal.Y = std::min(std::max(0, (i32)MaxHeight), sizeRange.Optimal.Y);
-				sizeRange.Max.Y = std::max(0, (i32)MaxHeight);
-			}
+			Flags &= ~GUIDF_FixedWidth;
+			MinWidth = style->MinWidth;
+			MaxWidth = style->MaxWidth;
 		}
+	}
 
-		if(FixedWidth())
+	if(!OverridenHeight())
+	{
+		if(style->FixedHeight)
 		{
-			sizeRange.Optimal.X = std::max(0, (i32)MinWidth);
-			sizeRange.Min.X = sizeRange.Optimal.X;
-			sizeRange.Max.X = sizeRange.Optimal.X;
+			Flags |= GUIDF_FixedHeight;
+			MinHeight = MaxHeight = style->Height;
 		}
 		else
 		{
-			sizeRange.Optimal.X = optimal.X;
+			Flags &= ~GUIDF_FixedHeight;
+			MinHeight = style->MinHeight;
+			MaxHeight = style->MaxHeight;
+		}
+	}
+}
 
-			if(MinWidth > 0)
-			{
-				sizeRange.Optimal.X = std::max(std::max(0, (i32)MinWidth), sizeRange.Optimal.X);
-				sizeRange.Min.X = std::max(0, (i32)MinWidth);
-			}
+LayoutSizeRange GUIDimensions::CalculateSizeRange(const Vector2I& optimal) const
+{
+	LayoutSizeRange sizeRange;
 
-			if(MaxWidth > 0)
-			{
-				sizeRange.Optimal.X = std::min(std::max(0, (i32)MaxWidth), sizeRange.Optimal.X);
-				sizeRange.Max.X = std::max(0, (i32)MaxWidth);
-			}
+	if(FixedHeight())
+	{
+		sizeRange.Optimal.Y = std::max(0, (i32)MinHeight);
+		sizeRange.Min.Y = sizeRange.Optimal.Y;
+		sizeRange.Max.Y = sizeRange.Optimal.Y;
+	}
+	else
+	{
+		sizeRange.Optimal.Y = optimal.Y;
+
+		if(MinHeight > 0)
+		{
+			sizeRange.Optimal.Y = std::max(std::max(0, (i32)MinHeight), sizeRange.Optimal.Y);
+			sizeRange.Min.Y = std::max(0, (i32)MinHeight);
 		}
 
-		return sizeRange;
+		if(MaxHeight > 0)
+		{
+			sizeRange.Optimal.Y = std::min(std::max(0, (i32)MaxHeight), sizeRange.Optimal.Y);
+			sizeRange.Max.Y = std::max(0, (i32)MaxHeight);
+		}
 	}
+
+	if(FixedWidth())
+	{
+		sizeRange.Optimal.X = std::max(0, (i32)MinWidth);
+		sizeRange.Min.X = sizeRange.Optimal.X;
+		sizeRange.Max.X = sizeRange.Optimal.X;
+	}
+	else
+	{
+		sizeRange.Optimal.X = optimal.X;
+
+		if(MinWidth > 0)
+		{
+			sizeRange.Optimal.X = std::max(std::max(0, (i32)MinWidth), sizeRange.Optimal.X);
+			sizeRange.Min.X = std::max(0, (i32)MinWidth);
+		}
+
+		if(MaxWidth > 0)
+		{
+			sizeRange.Optimal.X = std::min(std::max(0, (i32)MaxWidth), sizeRange.Optimal.X);
+			sizeRange.Max.X = std::max(0, (i32)MaxWidth);
+		}
+	}
+
+	return sizeRange;
+}
 } // namespace bs

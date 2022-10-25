@@ -6,50 +6,50 @@
 
 namespace bs
 {
-	GUIElementContainer::GUIElementContainer(const GUIDimensions& dimensions, const char* style, GUIElementOptions options)
-		: GUIElement(style, dimensions, options)
-	{
-		mOptionFlags.Set(GUIElementOption::ClickThrough);
-	}
+GUIElementContainer::GUIElementContainer(const GUIDimensions& dimensions, const char* style, GUIElementOptions options)
+	: GUIElement(style, dimensions, options)
+{
+	mOptionFlags.Set(GUIElementOption::ClickThrough);
+}
 
-	GUIElementContainer::GUIElementContainer(const GUIDimensions& dimensions, const String& style, GUIElementOptions options)
-		: GUIElement(style, dimensions, options)
-	{
-		mOptionFlags.Set(GUIElementOption::ClickThrough);
-	}
+GUIElementContainer::GUIElementContainer(const GUIDimensions& dimensions, const String& style, GUIElementOptions options)
+	: GUIElement(style, dimensions, options)
+{
+	mOptionFlags.Set(GUIElementOption::ClickThrough);
+}
 
-	void GUIElementContainer::FillBuffer(
-		u8* vertices,
-		u32* indices,
-		u32 vertexOffset,
-		u32 indexOffset,
-		const Vector2I& offset,
-		u32 maxNumVerts,
-		u32 maxNumIndices,
-		u32 renderElementIdx) const
-	{}
+void GUIElementContainer::FillBuffer(
+	u8* vertices,
+	u32* indices,
+	u32 vertexOffset,
+	u32 indexOffset,
+	const Vector2I& offset,
+	u32 maxNumVerts,
+	u32 maxNumIndices,
+	u32 renderElementIdx) const
+{}
 
-	Vector2I GUIElementContainer::GetOptimalSizeInternal() const
-	{
-		return Vector2I();
-	}
+Vector2I GUIElementContainer::GetOptimalSizeInternal() const
+{
+	return Vector2I();
+}
 
-	void GUIElementContainer::SetFocus(bool enabled, bool clear)
-	{
-		if(mFocusElement)
-			mFocusElement->SetFocus(enabled, clear);
-		else
-			GUIElement::SetFocus(enabled, clear);
-	}
+void GUIElementContainer::SetFocus(bool enabled, bool clear)
+{
+	if(mFocusElement)
+		mFocusElement->SetFocus(enabled, clear);
+	else
+		GUIElement::SetFocus(enabled, clear);
+}
 
-	bool GUIElementContainer::CommandEventInternal(const GUICommandEvent& ev)
-	{
-		// Make sure to pass through focus events to elements below
-		if(ev.GetType() == GUICommandEventType::FocusGained)
-			return false;
-		else if(ev.GetType() == GUICommandEventType::FocusLost)
-			return false;
+bool GUIElementContainer::CommandEventInternal(const GUICommandEvent& ev)
+{
+	// Make sure to pass through focus events to elements below
+	if(ev.GetType() == GUICommandEventType::FocusGained)
+		return false;
+	else if(ev.GetType() == GUICommandEventType::FocusLost)
+		return false;
 
-		return GUIElement::CommandEventInternal(ev);
-	}
+	return GUIElement::CommandEventInternal(ev);
+}
 } // namespace bs

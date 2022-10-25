@@ -5,32 +5,32 @@
 
 namespace bs
 {
-	SkeletonMask::SkeletonMask(u32 numBones)
-		: mIsDisabled(numBones)
-	{}
+SkeletonMask::SkeletonMask(u32 numBones)
+	: mIsDisabled(numBones)
+{}
 
-	bool SkeletonMask::IsEnabled(u32 boneIdx) const
+bool SkeletonMask::IsEnabled(u32 boneIdx) const
+{
+	if(boneIdx >= (u32)mIsDisabled.size())
+		return true;
+
+	return !mIsDisabled[boneIdx];
+}
+
+SkeletonMaskBuilder::SkeletonMaskBuilder(const SPtr<Skeleton>& skeleton)
+	: mSkeleton(skeleton), mMask(skeleton->GetNumBones())
+{}
+
+void SkeletonMaskBuilder::SetBoneState(const String& name, bool enabled)
+{
+	u32 numBones = mSkeleton->GetNumBones();
+	for(u32 i = 0; i < numBones; i++)
 	{
-		if(boneIdx >= (u32)mIsDisabled.size())
-			return true;
-
-		return !mIsDisabled[boneIdx];
-	}
-
-	SkeletonMaskBuilder::SkeletonMaskBuilder(const SPtr<Skeleton>& skeleton)
-		: mSkeleton(skeleton), mMask(skeleton->GetNumBones())
-	{}
-
-	void SkeletonMaskBuilder::SetBoneState(const String& name, bool enabled)
-	{
-		u32 numBones = mSkeleton->GetNumBones();
-		for(u32 i = 0; i < numBones; i++)
+		if(mSkeleton->GetBoneInfo(i).Name == name)
 		{
-			if(mSkeleton->GetBoneInfo(i).Name == name)
-			{
-				mMask.mIsDisabled[i] = !enabled;
-				break;
-			}
+			mMask.mIsDisabled[i] = !enabled;
+			break;
 		}
 	}
+}
 } // namespace bs

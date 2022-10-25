@@ -8,922 +8,922 @@
 
 namespace bs
 {
-	struct VertexFaces
+struct VertexFaces
+{
+	u32* Faces;
+	u32 NumFaces = 0;
+};
+
+struct VertexConnectivity
+{
+	VertexConnectivity(u8* indices, u32 numVertices, u32 numFaces, u32 indexSize)
+		: VertexFaces(nullptr), mMaxFacesPerVertex(0), mNumVertices(numVertices), mFaces(nullptr)
 	{
-		u32* Faces;
-		u32 NumFaces = 0;
-	};
+		VertexFaces = bs_newN<bs::VertexFaces>(numVertices);
 
-	struct VertexConnectivity
-	{
-		VertexConnectivity(u8* indices, u32 numVertices, u32 numFaces, u32 indexSize)
-			: VertexFaces(nullptr), mMaxFacesPerVertex(0), mNumVertices(numVertices), mFaces(nullptr)
+		ResizeFaceArray(10);
+
+		for(u32 i = 0; i < numFaces; i++)
 		{
-			VertexFaces = bs_newN<bs::VertexFaces>(numVertices);
-
-			ResizeFaceArray(10);
-
-			for(u32 i = 0; i < numFaces; i++)
-			{
-				for(u32 j = 0; j < 3; j++)
-				{
-					u32 idx = i * 3 + j;
-					u32 vertexIdx = 0;
-					memcpy(&vertexIdx, indices + idx * indexSize, indexSize);
-
-					assert(vertexIdx < mNumVertices);
-					bs::VertexFaces& faces = VertexFaces[vertexIdx];
-					if(faces.NumFaces >= mMaxFacesPerVertex)
-						ResizeFaceArray(mMaxFacesPerVertex * 2);
-
-					faces.Faces[faces.NumFaces] = i;
-					faces.NumFaces++;
-				}
-			}
-		}
-
-		~VertexConnectivity()
-		{
-			if(VertexFaces != nullptr)
-				bs_deleteN(VertexFaces, mNumVertices);
-
-			if(mFaces != nullptr)
-				bs_free(mFaces);
-		}
-
-		VertexFaces* VertexFaces;
-
-	private:
-		void ResizeFaceArray(u32 numFaces)
-		{
-			u32* newFaces = (u32*)bs_alloc(numFaces * mNumVertices * sizeof(u32));
-
-			if(mFaces != nullptr)
-			{
-				for(u32 i = 0; i < mNumVertices; i++)
-					memcpy(newFaces + (i * numFaces), mFaces + (i * mMaxFacesPerVertex), mMaxFacesPerVertex * sizeof(u32));
-
-				bs_free(mFaces);
-			}
-
-			for(u32 i = 0; i < mNumVertices; i++)
-				VertexFaces[i].Faces = newFaces + (i * numFaces);
-
-			mFaces = newFaces;
-			mMaxFacesPerVertex = numFaces;
-		}
-
-		u32 mMaxFacesPerVertex;
-		u32 mNumVertices;
-		u32* mFaces;
-	};
-
-	/** Provides base methods required for clipping of arbitrary triangles. */
-	class TriangleClipperBase // Implementation from: http://www.geometrictools.com/Documentation/ClipMesh.pdf
-	{
-	protected:
-		/** Single vertex in the clipped mesh. */
-		struct ClipVert
-		{
-			ClipVert() {}
-
-			Vector3 Point = Vector3::ZERO;
-			Vector2 Uv = Vector2::ZERO;
-			float Distance = 0.0f;
-			u32 Occurs = 0;
-			bool Visible = true;
-		};
-
-		/** Single edge in the clipped mesh. */
-		struct ClipEdge
-		{
-			ClipEdge() {}
-
-			u32 Verts[2];
-			Vector<u32> Faces;
-			bool Visible = true;
-		};
-
-		/** Single polygon in the clipped mesh. */
-		struct ClipFace
-		{
-			ClipFace() {}
-
-			Vector<u32> Edges;
-			bool Visible = true;
-			Vector3 Normal = Vector3::ZERO;
-		};
-
-		/** Contains vertices, edges and faces of the clipped mesh. */
-		struct ClipMesh
-		{
-			ClipMesh() {}
-
-			Vector<ClipVert> Verts;
-			Vector<ClipEdge> Edges;
-			Vector<ClipFace> Faces;
-		};
-
-	protected:
-		/**
-		 * Register all edges and faces, using the mesh vertices as a basis. Assumes vertices are not indexed and that
-		 * every three vertices form a face
-		 */
-		void AddEdgesAndFaces();
-
-		/** Clips the current mesh with the provided plane. */
-		i32 ClipByPlane(const Plane& plane);
-
-		/** Clips vertices of the current mesh by the provided plane. */
-		i32 ProcessVertices(const Plane& plane);
-
-		/** Clips edges of the current mesh. processVertices() must be called beforehand. */
-		void ProcessEdges();
-
-		/** Clips the faces (polygons) of the current mesh. processEdges() must be called beforehand. */
-		void ProcessFaces();
-
-		/**
-		 * Returns a set of non-culled vertex indices for every visible face in the mesh. This should be called after
-		 * clipping operation is complete to retrieve valid vertices.
-		 */
-		void GetOrderedFaces(FrameVector<FrameVector<u32>>& sortedFaces);
-
-		/** Returns a set of ordered and non-culled vertices for the provided face of the mesh */
-		void GetOrderedVertices(const ClipFace& face, u32* vertices);
-
-		/** Calculates the normal for vertices related to the provided vertex indices. */
-		Vector3 GetNormal(u32* sortedVertices, u32 numVertices);
-
-		/**
-		 * Checks is the polygon shape of the provided face open or closed. If open, returns true and outputs endpoints of
-		 * the polyline.
-		 */
-		bool GetOpenPolyline(ClipFace& face, u32& start, u32& end);
-
-		ClipMesh mesh;
-	};
-
-	void TriangleClipperBase::AddEdgesAndFaces()
-	{
-		u32 numTris = (u32)mesh.Verts.size() / 3;
-
-		u32 numEdges = numTris * 3;
-		mesh.Edges.resize(numEdges);
-		mesh.Faces.resize(numTris);
-
-		for(u32 i = 0; i < numTris; i++)
-		{
-			u32 idx0 = i * 3 + 0;
-			u32 idx1 = i * 3 + 1;
-			u32 idx2 = i * 3 + 2;
-
-			ClipEdge& clipEdge0 = mesh.Edges[idx0];
-			clipEdge0.Verts[0] = idx0;
-			clipEdge0.Verts[1] = idx1;
-
-			ClipEdge& clipEdge1 = mesh.Edges[idx1];
-			clipEdge1.Verts[0] = idx1;
-			clipEdge1.Verts[1] = idx2;
-
-			ClipEdge& clipEdge2 = mesh.Edges[idx2];
-			clipEdge2.Verts[0] = idx2;
-			clipEdge2.Verts[1] = idx0;
-
-			ClipFace& clipFace = mesh.Faces[i];
-
-			clipFace.Edges.push_back(idx0);
-			clipFace.Edges.push_back(idx1);
-			clipFace.Edges.push_back(idx2);
-
-			clipEdge0.Faces.push_back(i);
-			clipEdge1.Faces.push_back(i);
-			clipEdge2.Faces.push_back(i);
-
-			u32 verts[] = { idx0, idx1, idx2, idx0 };
 			for(u32 j = 0; j < 3; j++)
-				clipFace.Normal += Vector3::Cross(mesh.Verts[verts[j]].Point, mesh.Verts[verts[j + 1]].Point);
-
-			clipFace.Normal.Normalize();
-		}
-	}
-
-	i32 TriangleClipperBase::ClipByPlane(const Plane& plane)
-	{
-		int state = ProcessVertices(plane);
-
-		if(state == 1)
-			return +1; // Nothing is clipped
-		else if(state == -1)
-			return -1; // Everything is clipped
-
-		ProcessEdges();
-		ProcessFaces();
-
-		return 0;
-	}
-
-	i32 TriangleClipperBase::ProcessVertices(const Plane& plane)
-	{
-		static const float EPSILON = 0.00001f;
-
-		// Compute signed distances from vertices to plane
-		int positive = 0, negative = 0;
-		for(u32 i = 0; i < (u32)mesh.Verts.size(); i++)
-		{
-			ClipVert& vertex = mesh.Verts[i];
-
-			if(vertex.Visible)
 			{
-				vertex.Distance = Vector3::Dot(plane.Normal, vertex.Point) - plane.D;
-				if(vertex.Distance >= EPSILON)
-				{
-					positive++;
-				}
-				else if(vertex.Distance <= -EPSILON)
-				{
-					negative++;
-					vertex.Visible = false;
-				}
-				else
-				{
-					// Point on the plane within floating point tolerance
-					vertex.Distance = 0;
-				}
-			}
-		}
-		if(negative == 0)
-		{
-			// All vertices on nonnegative side, no clipping
-			return +1;
-		}
-		if(positive == 0)
-		{
-			// All vertices on nonpositive side, everything clipped
-			return -1;
-		}
+				u32 idx = i * 3 + j;
+				u32 vertexIdx = 0;
+				memcpy(&vertexIdx, indices + idx * indexSize, indexSize);
 
-		return 0;
-	}
+				assert(vertexIdx < mNumVertices);
+				bs::VertexFaces& faces = VertexFaces[vertexIdx];
+				if(faces.NumFaces >= mMaxFacesPerVertex)
+					ResizeFaceArray(mMaxFacesPerVertex * 2);
 
-	void TriangleClipperBase::ProcessEdges()
-	{
-		for(u32 i = 0; i < (u32)mesh.Edges.size(); i++)
-		{
-			ClipEdge& edge = mesh.Edges[i];
-
-			if(edge.Visible)
-			{
-				const ClipVert& v0 = mesh.Verts[edge.Verts[0]];
-				const ClipVert& v1 = mesh.Verts[edge.Verts[1]];
-
-				float d0 = v0.Distance;
-				float d1 = v1.Distance;
-
-				if(d0 <= 0 && d1 <= 0)
-				{
-					// Edge is culled, remove edge from faces sharing it
-					for(u32 j = 0; j < (u32)edge.Faces.size(); j++)
-					{
-						ClipFace& face = mesh.Faces[edge.Faces[j]];
-
-						auto iterFind = std::find(face.Edges.begin(), face.Edges.end(), i);
-						if(iterFind != face.Edges.end())
-						{
-							face.Edges.erase(iterFind);
-
-							if(face.Edges.empty())
-								face.Visible = false;
-						}
-					}
-
-					edge.Visible = false;
-					continue;
-				}
-
-				if(d0 >= 0 && d1 >= 0)
-				{
-					// Edge is on nonnegative side, faces retain the edge
-					continue;
-				}
-
-				// The edge is split by the plane. Compute the point of intersection.
-				// If the old edge is <V0,V1> and I is the intersection point, the new
-				// edge is <V0,I> when d0 > 0 or <I,V1> when d1 > 0.
-				float t = d0 / (d0 - d1);
-				Vector3 intersectPt = (1 - t) * v0.Point + t * v1.Point;
-				Vector2 intersectUv = (1 - t) * v0.Uv + t * v1.Uv;
-
-				u32 newVertIdx = (u32)mesh.Verts.size();
-				mesh.Verts.push_back(ClipVert());
-
-				ClipVert& newVert = mesh.Verts.back();
-				newVert.Point = intersectPt;
-				newVert.Uv = intersectUv;
-
-				if(d0 > 0)
-					mesh.Edges[i].Verts[1] = newVertIdx;
-				else
-					mesh.Edges[i].Verts[0] = newVertIdx;
+				faces.Faces[faces.NumFaces] = i;
+				faces.NumFaces++;
 			}
 		}
 	}
 
-	void TriangleClipperBase::ProcessFaces()
+	~VertexConnectivity()
 	{
-		for(u32 i = 0; i < (u32)mesh.Faces.size(); i++)
+		if(VertexFaces != nullptr)
+			bs_deleteN(VertexFaces, mNumVertices);
+
+		if(mFaces != nullptr)
+			bs_free(mFaces);
+	}
+
+	VertexFaces* VertexFaces;
+
+private:
+	void ResizeFaceArray(u32 numFaces)
+	{
+		u32* newFaces = (u32*)bs_alloc(numFaces * mNumVertices * sizeof(u32));
+
+		if(mFaces != nullptr)
 		{
-			ClipFace& face = mesh.Faces[i];
+			for(u32 i = 0; i < mNumVertices; i++)
+				memcpy(newFaces + (i * numFaces), mFaces + (i * mMaxFacesPerVertex), mMaxFacesPerVertex * sizeof(u32));
 
-			if(face.Visible)
+			bs_free(mFaces);
+		}
+
+		for(u32 i = 0; i < mNumVertices; i++)
+			VertexFaces[i].Faces = newFaces + (i * numFaces);
+
+		mFaces = newFaces;
+		mMaxFacesPerVertex = numFaces;
+	}
+
+	u32 mMaxFacesPerVertex;
+	u32 mNumVertices;
+	u32* mFaces;
+};
+
+/** Provides base methods required for clipping of arbitrary triangles. */
+class TriangleClipperBase // Implementation from: http://www.geometrictools.com/Documentation/ClipMesh.pdf
+{
+protected:
+	/** Single vertex in the clipped mesh. */
+	struct ClipVert
+	{
+		ClipVert() {}
+
+		Vector3 Point = Vector3::ZERO;
+		Vector2 Uv = Vector2::ZERO;
+		float Distance = 0.0f;
+		u32 Occurs = 0;
+		bool Visible = true;
+	};
+
+	/** Single edge in the clipped mesh. */
+	struct ClipEdge
+	{
+		ClipEdge() {}
+
+		u32 Verts[2];
+		Vector<u32> Faces;
+		bool Visible = true;
+	};
+
+	/** Single polygon in the clipped mesh. */
+	struct ClipFace
+	{
+		ClipFace() {}
+
+		Vector<u32> Edges;
+		bool Visible = true;
+		Vector3 Normal = Vector3::ZERO;
+	};
+
+	/** Contains vertices, edges and faces of the clipped mesh. */
+	struct ClipMesh
+	{
+		ClipMesh() {}
+
+		Vector<ClipVert> Verts;
+		Vector<ClipEdge> Edges;
+		Vector<ClipFace> Faces;
+	};
+
+protected:
+	/**
+	 * Register all edges and faces, using the mesh vertices as a basis. Assumes vertices are not indexed and that
+	 * every three vertices form a face
+	 */
+	void AddEdgesAndFaces();
+
+	/** Clips the current mesh with the provided plane. */
+	i32 ClipByPlane(const Plane& plane);
+
+	/** Clips vertices of the current mesh by the provided plane. */
+	i32 ProcessVertices(const Plane& plane);
+
+	/** Clips edges of the current mesh. processVertices() must be called beforehand. */
+	void ProcessEdges();
+
+	/** Clips the faces (polygons) of the current mesh. processEdges() must be called beforehand. */
+	void ProcessFaces();
+
+	/**
+	 * Returns a set of non-culled vertex indices for every visible face in the mesh. This should be called after
+	 * clipping operation is complete to retrieve valid vertices.
+	 */
+	void GetOrderedFaces(FrameVector<FrameVector<u32>>& sortedFaces);
+
+	/** Returns a set of ordered and non-culled vertices for the provided face of the mesh */
+	void GetOrderedVertices(const ClipFace& face, u32* vertices);
+
+	/** Calculates the normal for vertices related to the provided vertex indices. */
+	Vector3 GetNormal(u32* sortedVertices, u32 numVertices);
+
+	/**
+	 * Checks is the polygon shape of the provided face open or closed. If open, returns true and outputs endpoints of
+	 * the polyline.
+	 */
+	bool GetOpenPolyline(ClipFace& face, u32& start, u32& end);
+
+	ClipMesh mesh;
+};
+
+void TriangleClipperBase::AddEdgesAndFaces()
+{
+	u32 numTris = (u32)mesh.Verts.size() / 3;
+
+	u32 numEdges = numTris * 3;
+	mesh.Edges.resize(numEdges);
+	mesh.Faces.resize(numTris);
+
+	for(u32 i = 0; i < numTris; i++)
+	{
+		u32 idx0 = i * 3 + 0;
+		u32 idx1 = i * 3 + 1;
+		u32 idx2 = i * 3 + 2;
+
+		ClipEdge& clipEdge0 = mesh.Edges[idx0];
+		clipEdge0.Verts[0] = idx0;
+		clipEdge0.Verts[1] = idx1;
+
+		ClipEdge& clipEdge1 = mesh.Edges[idx1];
+		clipEdge1.Verts[0] = idx1;
+		clipEdge1.Verts[1] = idx2;
+
+		ClipEdge& clipEdge2 = mesh.Edges[idx2];
+		clipEdge2.Verts[0] = idx2;
+		clipEdge2.Verts[1] = idx0;
+
+		ClipFace& clipFace = mesh.Faces[i];
+
+		clipFace.Edges.push_back(idx0);
+		clipFace.Edges.push_back(idx1);
+		clipFace.Edges.push_back(idx2);
+
+		clipEdge0.Faces.push_back(i);
+		clipEdge1.Faces.push_back(i);
+		clipEdge2.Faces.push_back(i);
+
+		u32 verts[] = { idx0, idx1, idx2, idx0 };
+		for(u32 j = 0; j < 3; j++)
+			clipFace.Normal += Vector3::Cross(mesh.Verts[verts[j]].Point, mesh.Verts[verts[j + 1]].Point);
+
+		clipFace.Normal.Normalize();
+	}
+}
+
+i32 TriangleClipperBase::ClipByPlane(const Plane& plane)
+{
+	int state = ProcessVertices(plane);
+
+	if(state == 1)
+		return +1; // Nothing is clipped
+	else if(state == -1)
+		return -1; // Everything is clipped
+
+	ProcessEdges();
+	ProcessFaces();
+
+	return 0;
+}
+
+i32 TriangleClipperBase::ProcessVertices(const Plane& plane)
+{
+	static const float EPSILON = 0.00001f;
+
+	// Compute signed distances from vertices to plane
+	int positive = 0, negative = 0;
+	for(u32 i = 0; i < (u32)mesh.Verts.size(); i++)
+	{
+		ClipVert& vertex = mesh.Verts[i];
+
+		if(vertex.Visible)
+		{
+			vertex.Distance = Vector3::Dot(plane.Normal, vertex.Point) - plane.D;
+			if(vertex.Distance >= EPSILON)
 			{
-				// The edge is culled. If the edge is exactly on the clip
-				// plane, it is possible that a visible triangle shares it.
-				// The edge will be re-added during the face loop.
-
-				for(u32 j = 0; j < (u32)face.Edges.size(); j++)
-				{
-					ClipEdge& edge = mesh.Edges[face.Edges[j]];
-					ClipVert& v0 = mesh.Verts[edge.Verts[0]];
-					ClipVert& v1 = mesh.Verts[edge.Verts[1]];
-
-					v0.Occurs = 0;
-					v1.Occurs = 0;
-				}
+				positive++;
 			}
-
-			u32 start, end;
-			if(GetOpenPolyline(mesh.Faces[i], start, end))
+			else if(vertex.Distance <= -EPSILON)
 			{
-				// Polyline is open, close it
-				u32 closeEdgeIdx = (u32)mesh.Edges.size();
-				mesh.Edges.push_back(ClipEdge());
-				ClipEdge& closeEdge = mesh.Edges.back();
-
-				closeEdge.Verts[0] = start;
-				closeEdge.Verts[1] = end;
-
-				closeEdge.Faces.push_back(i);
-				face.Edges.push_back(closeEdgeIdx);
+				negative++;
+				vertex.Visible = false;
+			}
+			else
+			{
+				// Point on the plane within floating point tolerance
+				vertex.Distance = 0;
 			}
 		}
 	}
-
-	bool TriangleClipperBase::GetOpenPolyline(ClipFace& face, u32& start, u32& end)
+	if(negative == 0)
 	{
-		// Count the number of occurrences of each vertex in the polyline. The
-		// resulting "occurs" values must be 1 or 2.
-		for(u32 i = 0; i < (u32)face.Edges.size(); i++)
+		// All vertices on nonnegative side, no clipping
+		return +1;
+	}
+	if(positive == 0)
+	{
+		// All vertices on nonpositive side, everything clipped
+		return -1;
+	}
+
+	return 0;
+}
+
+void TriangleClipperBase::ProcessEdges()
+{
+	for(u32 i = 0; i < (u32)mesh.Edges.size(); i++)
+	{
+		ClipEdge& edge = mesh.Edges[i];
+
+		if(edge.Visible)
 		{
-			ClipEdge& edge = mesh.Edges[face.Edges[i]];
-
-			if(edge.Visible)
-			{
-				ClipVert& v0 = mesh.Verts[edge.Verts[0]];
-				ClipVert& v1 = mesh.Verts[edge.Verts[1]];
-
-				v0.Occurs++;
-				v1.Occurs++;
-			}
-		}
-
-		// Determine if the polyline is open
-		bool gotStart = false;
-		bool gotEnd = false;
-		for(u32 i = 0; i < (u32)face.Edges.size(); i++)
-		{
-			const ClipEdge& edge = mesh.Edges[face.Edges[i]];
-
 			const ClipVert& v0 = mesh.Verts[edge.Verts[0]];
 			const ClipVert& v1 = mesh.Verts[edge.Verts[1]];
 
-			if(v0.Occurs == 1)
+			float d0 = v0.Distance;
+			float d1 = v1.Distance;
+
+			if(d0 <= 0 && d1 <= 0)
 			{
-				if(!gotStart)
+				// Edge is culled, remove edge from faces sharing it
+				for(u32 j = 0; j < (u32)edge.Faces.size(); j++)
 				{
-					start = edge.Verts[0];
-					gotStart = true;
+					ClipFace& face = mesh.Faces[edge.Faces[j]];
+
+					auto iterFind = std::find(face.Edges.begin(), face.Edges.end(), i);
+					if(iterFind != face.Edges.end())
+					{
+						face.Edges.erase(iterFind);
+
+						if(face.Edges.empty())
+							face.Visible = false;
+					}
 				}
-				else if(!gotEnd)
-				{
-					end = edge.Verts[0];
-					gotEnd = true;
-				}
+
+				edge.Visible = false;
+				continue;
 			}
 
-			if(v1.Occurs == 1)
+			if(d0 >= 0 && d1 >= 0)
 			{
-				if(!gotStart)
-				{
-					start = edge.Verts[1];
-					gotStart = true;
-				}
-				else if(!gotEnd)
-				{
-					end = edge.Verts[1];
-					gotEnd = true;
-				}
+				// Edge is on nonnegative side, faces retain the edge
+				continue;
 			}
-		}
 
-		return gotStart;
-	}
+			// The edge is split by the plane. Compute the point of intersection.
+			// If the old edge is <V0,V1> and I is the intersection point, the new
+			// edge is <V0,I> when d0 > 0 or <I,V1> when d1 > 0.
+			float t = d0 / (d0 - d1);
+			Vector3 intersectPt = (1 - t) * v0.Point + t * v1.Point;
+			Vector2 intersectUv = (1 - t) * v0.Uv + t * v1.Uv;
 
-	void TriangleClipperBase::GetOrderedFaces(FrameVector<FrameVector<u32>>& sortedFaces)
-	{
-		for(u32 i = 0; i < (u32)mesh.Faces.size(); i++)
-		{
-			const ClipFace& face = mesh.Faces[i];
+			u32 newVertIdx = (u32)mesh.Verts.size();
+			mesh.Verts.push_back(ClipVert());
 
-			if(face.Visible)
-			{
-				// Get the ordered vertices of the face. The first and last
-				// element of the array are the same since the polyline is
-				// closed.
-				u32 numSortedVerts = (u32)face.Edges.size() + 1;
-				u32* sortedVerts = (u32*)bs_stack_alloc(sizeof(u32) * numSortedVerts);
+			ClipVert& newVert = mesh.Verts.back();
+			newVert.Point = intersectPt;
+			newVert.Uv = intersectUv;
 
-				GetOrderedVertices(face, sortedVerts);
-
-				FrameVector<u32> faceVerts;
-
-				// The convention is that the vertices should be counterclockwise
-				// ordered when viewed from the negative side of the plane of the
-				// face. If you need the opposite convention, switch the
-				// inequality in the if-else statement.
-				Vector3 normal = GetNormal(sortedVerts, numSortedVerts);
-				if(Vector3::Dot(mesh.Faces[i].Normal, normal) < 0)
-				{
-					// Clockwise, need to swap
-					for(i32 j = (i32)numSortedVerts - 2; j >= 0; j--)
-						faceVerts.push_back(sortedVerts[j]);
-				}
-				else
-				{
-					// Counterclockwise
-					for(int j = 0; j <= (i32)numSortedVerts - 2; j++)
-						faceVerts.push_back(sortedVerts[j]);
-				}
-
-				sortedFaces.push_back(faceVerts);
-				bs_stack_free(sortedVerts);
-			}
-		}
-	}
-
-	void TriangleClipperBase::GetOrderedVertices(const ClipFace& face, u32* sortedVerts)
-	{
-		u32 numEdges = (u32)face.Edges.size();
-		u32* sortedEdges = (u32*)bs_stack_alloc(sizeof(u32) * numEdges);
-		for(u32 i = 0; i < numEdges; i++)
-			sortedEdges[i] = face.Edges[i];
-
-		// Bubble sort to arrange edges in contiguous order
-		for(u32 i0 = 0, i1 = 1, choice = 1; i1 < numEdges - 1; i0 = i1, i1++)
-		{
-			const ClipEdge& edge0 = mesh.Edges[sortedEdges[i0]];
-
-			u32 current = edge0.Verts[choice];
-			for(u32 j = i1; j < numEdges; j++)
-			{
-				const ClipEdge& edge1 = mesh.Edges[sortedEdges[j]];
-
-				if(edge1.Verts[0] == current || edge1.Verts[1] == current)
-				{
-					std::swap(sortedEdges[i1], sortedEdges[j]);
-					choice = 1;
-					break;
-				}
-			}
-		}
-
-		// Add the first two vertices
-		sortedVerts[0] = mesh.Edges[sortedEdges[0]].Verts[0];
-		sortedVerts[1] = mesh.Edges[sortedEdges[0]].Verts[1];
-
-		// Add the remaining vertices
-		for(u32 i = 1; i < numEdges; i++)
-		{
-			const ClipEdge& edge = mesh.Edges[sortedEdges[i]];
-
-			if(edge.Verts[0] == sortedVerts[i])
-				sortedVerts[i + 1] = edge.Verts[1];
+			if(d0 > 0)
+				mesh.Edges[i].Verts[1] = newVertIdx;
 			else
-				sortedVerts[i + 1] = edge.Verts[0];
+				mesh.Edges[i].Verts[0] = newVertIdx;
 		}
-
-		bs_stack_free(sortedEdges);
 	}
+}
 
-	Vector3 TriangleClipperBase::GetNormal(u32* sortedVertices, u32 numVertices)
+void TriangleClipperBase::ProcessFaces()
+{
+	for(u32 i = 0; i < (u32)mesh.Faces.size(); i++)
 	{
-		Vector3 normal(BsZero);
-		for(u32 i = 0; i <= numVertices - 2; i++)
-			normal += Vector3::Cross(mesh.Verts[sortedVertices[i]].Point, mesh.Verts[sortedVertices[i + 1]].Point);
+		ClipFace& face = mesh.Faces[i];
 
-		normal.Normalize();
-		return normal;
-	}
-
-	/** Clips two-dimensional triangles against a set of provided planes. */
-	class TriangleClipper2D : public TriangleClipperBase
-	{
-	public:
-		/** @copydoc MeshUtility::clip2D */
-		void Clip(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback);
-
-	private:
-		/** Converts clipped vertices back into triangles and outputs them via the provided callback. */
-		void ConvertToMesh(const std::function<void(Vector2*, Vector2*, u32)>& writeCallback);
-
-		static const int BUFFER_SIZE = 64 * 3; // Must be a multiple of three
-		Vector2 vertexBuffer[BUFFER_SIZE];
-		Vector2 uvBuffer[BUFFER_SIZE];
-	};
-
-	void TriangleClipper2D::Clip(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback)
-	{
-		// Add vertices
-		u32 numVertices = numTris * 3;
-		mesh.Verts.resize(numVertices);
-
-		if(uvs != nullptr)
+		if(face.Visible)
 		{
-			for(u32 i = 0; i < numVertices; i++)
-			{
-				ClipVert& clipVert = mesh.Verts[i];
-				Vector2 vector2D = *(Vector2*)(vertices + vertexStride * i);
+			// The edge is culled. If the edge is exactly on the clip
+			// plane, it is possible that a visible triangle shares it.
+			// The edge will be re-added during the face loop.
 
-				clipVert.Point = Vector3(vector2D.X, vector2D.Y, 0.0f);
-				clipVert.Uv = *(Vector2*)(uvs + vertexStride * i);
+			for(u32 j = 0; j < (u32)face.Edges.size(); j++)
+			{
+				ClipEdge& edge = mesh.Edges[face.Edges[j]];
+				ClipVert& v0 = mesh.Verts[edge.Verts[0]];
+				ClipVert& v1 = mesh.Verts[edge.Verts[1]];
+
+				v0.Occurs = 0;
+				v1.Occurs = 0;
 			}
 		}
+
+		u32 start, end;
+		if(GetOpenPolyline(mesh.Faces[i], start, end))
+		{
+			// Polyline is open, close it
+			u32 closeEdgeIdx = (u32)mesh.Edges.size();
+			mesh.Edges.push_back(ClipEdge());
+			ClipEdge& closeEdge = mesh.Edges.back();
+
+			closeEdge.Verts[0] = start;
+			closeEdge.Verts[1] = end;
+
+			closeEdge.Faces.push_back(i);
+			face.Edges.push_back(closeEdgeIdx);
+		}
+	}
+}
+
+bool TriangleClipperBase::GetOpenPolyline(ClipFace& face, u32& start, u32& end)
+{
+	// Count the number of occurrences of each vertex in the polyline. The
+	// resulting "occurs" values must be 1 or 2.
+	for(u32 i = 0; i < (u32)face.Edges.size(); i++)
+	{
+		ClipEdge& edge = mesh.Edges[face.Edges[i]];
+
+		if(edge.Visible)
+		{
+			ClipVert& v0 = mesh.Verts[edge.Verts[0]];
+			ClipVert& v1 = mesh.Verts[edge.Verts[1]];
+
+			v0.Occurs++;
+			v1.Occurs++;
+		}
+	}
+
+	// Determine if the polyline is open
+	bool gotStart = false;
+	bool gotEnd = false;
+	for(u32 i = 0; i < (u32)face.Edges.size(); i++)
+	{
+		const ClipEdge& edge = mesh.Edges[face.Edges[i]];
+
+		const ClipVert& v0 = mesh.Verts[edge.Verts[0]];
+		const ClipVert& v1 = mesh.Verts[edge.Verts[1]];
+
+		if(v0.Occurs == 1)
+		{
+			if(!gotStart)
+			{
+				start = edge.Verts[0];
+				gotStart = true;
+			}
+			else if(!gotEnd)
+			{
+				end = edge.Verts[0];
+				gotEnd = true;
+			}
+		}
+
+		if(v1.Occurs == 1)
+		{
+			if(!gotStart)
+			{
+				start = edge.Verts[1];
+				gotStart = true;
+			}
+			else if(!gotEnd)
+			{
+				end = edge.Verts[1];
+				gotEnd = true;
+			}
+		}
+	}
+
+	return gotStart;
+}
+
+void TriangleClipperBase::GetOrderedFaces(FrameVector<FrameVector<u32>>& sortedFaces)
+{
+	for(u32 i = 0; i < (u32)mesh.Faces.size(); i++)
+	{
+		const ClipFace& face = mesh.Faces[i];
+
+		if(face.Visible)
+		{
+			// Get the ordered vertices of the face. The first and last
+			// element of the array are the same since the polyline is
+			// closed.
+			u32 numSortedVerts = (u32)face.Edges.size() + 1;
+			u32* sortedVerts = (u32*)bs_stack_alloc(sizeof(u32) * numSortedVerts);
+
+			GetOrderedVertices(face, sortedVerts);
+
+			FrameVector<u32> faceVerts;
+
+			// The convention is that the vertices should be counterclockwise
+			// ordered when viewed from the negative side of the plane of the
+			// face. If you need the opposite convention, switch the
+			// inequality in the if-else statement.
+			Vector3 normal = GetNormal(sortedVerts, numSortedVerts);
+			if(Vector3::Dot(mesh.Faces[i].Normal, normal) < 0)
+			{
+				// Clockwise, need to swap
+				for(i32 j = (i32)numSortedVerts - 2; j >= 0; j--)
+					faceVerts.push_back(sortedVerts[j]);
+			}
+			else
+			{
+				// Counterclockwise
+				for(int j = 0; j <= (i32)numSortedVerts - 2; j++)
+					faceVerts.push_back(sortedVerts[j]);
+			}
+
+			sortedFaces.push_back(faceVerts);
+			bs_stack_free(sortedVerts);
+		}
+	}
+}
+
+void TriangleClipperBase::GetOrderedVertices(const ClipFace& face, u32* sortedVerts)
+{
+	u32 numEdges = (u32)face.Edges.size();
+	u32* sortedEdges = (u32*)bs_stack_alloc(sizeof(u32) * numEdges);
+	for(u32 i = 0; i < numEdges; i++)
+		sortedEdges[i] = face.Edges[i];
+
+	// Bubble sort to arrange edges in contiguous order
+	for(u32 i0 = 0, i1 = 1, choice = 1; i1 < numEdges - 1; i0 = i1, i1++)
+	{
+		const ClipEdge& edge0 = mesh.Edges[sortedEdges[i0]];
+
+		u32 current = edge0.Verts[choice];
+		for(u32 j = i1; j < numEdges; j++)
+		{
+			const ClipEdge& edge1 = mesh.Edges[sortedEdges[j]];
+
+			if(edge1.Verts[0] == current || edge1.Verts[1] == current)
+			{
+				std::swap(sortedEdges[i1], sortedEdges[j]);
+				choice = 1;
+				break;
+			}
+		}
+	}
+
+	// Add the first two vertices
+	sortedVerts[0] = mesh.Edges[sortedEdges[0]].Verts[0];
+	sortedVerts[1] = mesh.Edges[sortedEdges[0]].Verts[1];
+
+	// Add the remaining vertices
+	for(u32 i = 1; i < numEdges; i++)
+	{
+		const ClipEdge& edge = mesh.Edges[sortedEdges[i]];
+
+		if(edge.Verts[0] == sortedVerts[i])
+			sortedVerts[i + 1] = edge.Verts[1];
 		else
-		{
-			for(u32 i = 0; i < numVertices; i++)
-			{
-				ClipVert& clipVert = mesh.Verts[i];
-				Vector2 vector2D = *(Vector2*)(vertices + vertexStride * i);
-
-				clipVert.Point = Vector3(vector2D.X, vector2D.Y, 0.0f);
-			}
-		}
-
-		AddEdgesAndFaces();
-
-		for(int i = 0; i < 4; i++)
-		{
-			if(ClipByPlane(clipPlanes[i]) == -1)
-				return;
-		}
-
-		ConvertToMesh(writeCallback);
+			sortedVerts[i + 1] = edge.Verts[0];
 	}
 
-	void TriangleClipper2D::ConvertToMesh(const std::function<void(Vector2*, Vector2*, u32)>& writeCallback)
+	bs_stack_free(sortedEdges);
+}
+
+Vector3 TriangleClipperBase::GetNormal(u32* sortedVertices, u32 numVertices)
+{
+	Vector3 normal(BsZero);
+	for(u32 i = 0; i <= numVertices - 2; i++)
+		normal += Vector3::Cross(mesh.Verts[sortedVertices[i]].Point, mesh.Verts[sortedVertices[i + 1]].Point);
+
+	normal.Normalize();
+	return normal;
+}
+
+/** Clips two-dimensional triangles against a set of provided planes. */
+class TriangleClipper2D : public TriangleClipperBase
+{
+public:
+	/** @copydoc MeshUtility::clip2D */
+	void Clip(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback);
+
+private:
+	/** Converts clipped vertices back into triangles and outputs them via the provided callback. */
+	void ConvertToMesh(const std::function<void(Vector2*, Vector2*, u32)>& writeCallback);
+
+	static const int BUFFER_SIZE = 64 * 3; // Must be a multiple of three
+	Vector2 vertexBuffer[BUFFER_SIZE];
+	Vector2 uvBuffer[BUFFER_SIZE];
+};
+
+void TriangleClipper2D::Clip(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback)
+{
+	// Add vertices
+	u32 numVertices = numTris * 3;
+	mesh.Verts.resize(numVertices);
+
+	if(uvs != nullptr)
 	{
-		bs_frame_mark();
-		{
-			FrameVector<FrameVector<u32>> allFaces;
-			GetOrderedFaces(allFaces);
-
-			// Note: Consider using Delaunay triangulation to avoid skinny triangles
-			u32 numWritten = 0;
-			assert(BUFFER_SIZE % 3 == 0);
-			for(auto& face : allFaces)
-			{
-				for(u32 i = 0; i < (u32)face.size() - 2; i++)
-				{
-					const Vector3& v0 = mesh.Verts[face[0]].Point;
-					const Vector3& v1 = mesh.Verts[face[i + 1]].Point;
-					const Vector3& v2 = mesh.Verts[face[i + 2]].Point;
-
-					vertexBuffer[numWritten] = Vector2(v0.X, v0.Y);
-					uvBuffer[numWritten] = mesh.Verts[face[0]].Uv;
-					numWritten++;
-
-					vertexBuffer[numWritten] = Vector2(v1.X, v1.Y);
-					uvBuffer[numWritten] = mesh.Verts[face[i + 1]].Uv;
-					numWritten++;
-
-					vertexBuffer[numWritten] = Vector2(v2.X, v2.Y);
-					uvBuffer[numWritten] = mesh.Verts[face[i + 2]].Uv;
-					numWritten++;
-
-					// Only need to check this here since we guarantee the buffer is in multiples of three
-					if(numWritten >= BUFFER_SIZE)
-					{
-						writeCallback(vertexBuffer, uvBuffer, numWritten);
-						numWritten = 0;
-					}
-				}
-			}
-
-			if(numWritten > 0)
-				writeCallback(vertexBuffer, uvBuffer, numWritten);
-		}
-		bs_frame_clear();
-	}
-
-	/** Clips three-dimensional triangles against a set of provided planes. */
-	class TriangleClipper3D : public TriangleClipperBase
-	{
-	public:
-		/** @copydoc MeshUtility::clip3D */
-		void Clip(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector3*, Vector2*, u32)>& writeCallback);
-
-	private:
-		/** Converts clipped vertices back into triangles and outputs them via the provided callback. */
-		void ConvertToMesh(const std::function<void(Vector3*, Vector2*, u32)>& writeCallback);
-
-		static const int BUFFER_SIZE = 64 * 3; // Must be a multiple of three
-		Vector3 vertexBuffer[BUFFER_SIZE];
-		Vector2 uvBuffer[BUFFER_SIZE];
-	};
-
-	void TriangleClipper3D::Clip(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector3*, Vector2*, u32)>& writeCallback)
-	{
-		// Add vertices
-		u32 numVertices = numTris * 3;
-		mesh.Verts.resize(numVertices);
-
-		if(uvs != nullptr)
-		{
-			for(u32 i = 0; i < numVertices; i++)
-			{
-				ClipVert& clipVert = mesh.Verts[i];
-
-				clipVert.Point = *(Vector3*)(vertices + vertexStride * i);
-				clipVert.Uv = *(Vector2*)(uvs + vertexStride * i);
-			}
-		}
-		else
-		{
-			for(u32 i = 0; i < numVertices; i++)
-			{
-				ClipVert& clipVert = mesh.Verts[i];
-				Vector2 vector2D = *(Vector2*)(vertices + vertexStride * i);
-
-				clipVert.Point = Vector3(vector2D.X, vector2D.Y, 0.0f);
-			}
-		}
-
-		AddEdgesAndFaces();
-
-		for(int i = 0; i < 4; i++)
-		{
-			if(ClipByPlane(clipPlanes[i]) == -1)
-				return;
-		}
-
-		ConvertToMesh(writeCallback);
-	}
-
-	void TriangleClipper3D::ConvertToMesh(const std::function<void(Vector3*, Vector2*, u32)>& writeCallback)
-	{
-		bs_frame_mark();
-		{
-			FrameVector<FrameVector<u32>> allFaces;
-			GetOrderedFaces(allFaces);
-
-			// Note: Consider using Delaunay triangulation to avoid skinny triangles
-			u32 numWritten = 0;
-			assert(BUFFER_SIZE % 3 == 0);
-			for(auto& face : allFaces)
-			{
-				for(u32 i = 0; i < (u32)face.size() - 2; i++)
-				{
-					vertexBuffer[numWritten] = mesh.Verts[face[0]].Point;
-					uvBuffer[numWritten] = mesh.Verts[face[0]].Uv;
-					numWritten++;
-
-					vertexBuffer[numWritten] = mesh.Verts[face[i + 1]].Point;
-					uvBuffer[numWritten] = mesh.Verts[face[i + 1]].Uv;
-					numWritten++;
-
-					vertexBuffer[numWritten] = mesh.Verts[face[i + 2]].Point;
-					uvBuffer[numWritten] = mesh.Verts[face[i + 2]].Uv;
-					numWritten++;
-
-					// Only need to check this here since we guarantee the buffer is in multiples of three
-					if(numWritten >= BUFFER_SIZE)
-					{
-						writeCallback(vertexBuffer, uvBuffer, numWritten);
-						numWritten = 0;
-					}
-				}
-			}
-
-			if(numWritten > 0)
-				writeCallback(vertexBuffer, uvBuffer, numWritten);
-		}
-		bs_frame_clear();
-	}
-
-	void MeshUtility::CalculateNormals(Vector3* vertices, u8* indices, u32 numVertices, u32 numIndices, Vector3* normals, u32 indexSize)
-	{
-		u32 numFaces = numIndices / 3;
-
-		Vector3* faceNormals = bs_newN<Vector3>(numFaces);
-		for(u32 i = 0; i < numFaces; i++)
-		{
-			u32 triangle[3];
-			memcpy(&triangle[0], indices + (i * 3 + 0) * indexSize, indexSize);
-			memcpy(&triangle[1], indices + (i * 3 + 1) * indexSize, indexSize);
-			memcpy(&triangle[2], indices + (i * 3 + 2) * indexSize, indexSize);
-
-			Vector3 edgeA = vertices[triangle[1]] - vertices[triangle[0]];
-			Vector3 edgeB = vertices[triangle[2]] - vertices[triangle[0]];
-			faceNormals[i] = Vector3::Normalize(Vector3::Cross(edgeA, edgeB));
-
-			// Note: Potentially don't normalize here in order to weigh the normals
-			// by triangle size
-		}
-
-		VertexConnectivity connectivity(indices, numVertices, numFaces, indexSize);
 		for(u32 i = 0; i < numVertices; i++)
 		{
-			VertexFaces& faces = connectivity.VertexFaces[i];
+			ClipVert& clipVert = mesh.Verts[i];
+			Vector2 vector2D = *(Vector2*)(vertices + vertexStride * i);
 
-			normals[i] = Vector3::ZERO;
-			for(u32 j = 0; j < faces.NumFaces; j++)
-			{
-				u32 faceIdx = faces.Faces[j];
-				normals[i] += faceNormals[faceIdx];
-			}
-
-			normals[i].Normalize();
+			clipVert.Point = Vector3(vector2D.X, vector2D.Y, 0.0f);
+			clipVert.Uv = *(Vector2*)(uvs + vertexStride * i);
 		}
-
-		bs_deleteN(faceNormals, numFaces);
 	}
-
-	void MeshUtility::CalculateTangents(Vector3* vertices, Vector3* normals, Vector2* uv, u8* indices, u32 numVertices, u32 numIndices, Vector3* tangents, Vector3* bitangents, u32 indexSize, u32 vertexStride)
+	else
 	{
-		u32 numFaces = numIndices / 3;
-		u32 vec2Stride = vertexStride == 0 ? sizeof(Vector2) : vertexStride;
-		u32 vec3Stride = vertexStride == 0 ? sizeof(Vector3) : vertexStride;
-
-		u8* positionBytes = (u8*)vertices;
-		u8* normalBytes = (u8*)normals;
-		u8* uvBytes = (u8*)uv;
-
-		Vector3* faceTangents = bs_newN<Vector3>(numFaces);
-		Vector3* faceBitangents = bs_newN<Vector3>(numFaces);
-		for(u32 i = 0; i < numFaces; i++)
-		{
-			u32 triangle[3];
-			memcpy(&triangle[0], indices + (i * 3 + 0) * indexSize, indexSize);
-			memcpy(&triangle[1], indices + (i * 3 + 1) * indexSize, indexSize);
-			memcpy(&triangle[2], indices + (i * 3 + 2) * indexSize, indexSize);
-
-			Vector3 p0 = *(Vector3*)&positionBytes[triangle[0] * vec3Stride];
-			Vector3 p1 = *(Vector3*)&positionBytes[triangle[1] * vec3Stride];
-			Vector3 p2 = *(Vector3*)&positionBytes[triangle[2] * vec3Stride];
-
-			Vector2 uv0 = *(Vector2*)&uvBytes[triangle[0] * vec2Stride];
-			Vector2 uv1 = *(Vector2*)&uvBytes[triangle[1] * vec2Stride];
-			Vector2 uv2 = *(Vector2*)&uvBytes[triangle[2] * vec2Stride];
-
-			Vector3 q0 = p1 - p0;
-			Vector3 q1 = p2 - p0;
-
-			Vector2 st1 = uv1 - uv0;
-			Vector2 st2 = uv2 - uv0;
-
-			float denom = st1.X * st2.Y - st2.X * st1.Y;
-			if(fabs(denom) >= 0e-8f)
-			{
-				float r = 1.0f / denom;
-
-				faceTangents[i] = (st2.Y * q0 - st1.Y * q1) * r;
-				faceBitangents[i] = (st1.X * q1 - st2.X * q0) * r;
-
-				faceTangents[i].Normalize();
-				faceBitangents[i].Normalize();
-			}
-
-			// Note: Potentially don't normalize here in order to weight the normals by triangle size
-		}
-
-		VertexConnectivity connectivity(indices, numVertices, numFaces, indexSize);
 		for(u32 i = 0; i < numVertices; i++)
 		{
-			VertexFaces& faces = connectivity.VertexFaces[i];
+			ClipVert& clipVert = mesh.Verts[i];
+			Vector2 vector2D = *(Vector2*)(vertices + vertexStride * i);
 
-			tangents[i] = Vector3::ZERO;
-			bitangents[i] = Vector3::ZERO;
+			clipVert.Point = Vector3(vector2D.X, vector2D.Y, 0.0f);
+		}
+	}
 
-			for(u32 j = 0; j < faces.NumFaces; j++)
+	AddEdgesAndFaces();
+
+	for(int i = 0; i < 4; i++)
+	{
+		if(ClipByPlane(clipPlanes[i]) == -1)
+			return;
+	}
+
+	ConvertToMesh(writeCallback);
+}
+
+void TriangleClipper2D::ConvertToMesh(const std::function<void(Vector2*, Vector2*, u32)>& writeCallback)
+{
+	bs_frame_mark();
+	{
+		FrameVector<FrameVector<u32>> allFaces;
+		GetOrderedFaces(allFaces);
+
+		// Note: Consider using Delaunay triangulation to avoid skinny triangles
+		u32 numWritten = 0;
+		assert(BUFFER_SIZE % 3 == 0);
+		for(auto& face : allFaces)
+		{
+			for(u32 i = 0; i < (u32)face.size() - 2; i++)
 			{
-				u32 faceIdx = faces.Faces[j];
-				tangents[i] += faceTangents[faceIdx];
-				bitangents[i] += faceBitangents[faceIdx];
+				const Vector3& v0 = mesh.Verts[face[0]].Point;
+				const Vector3& v1 = mesh.Verts[face[i + 1]].Point;
+				const Vector3& v2 = mesh.Verts[face[i + 2]].Point;
+
+				vertexBuffer[numWritten] = Vector2(v0.X, v0.Y);
+				uvBuffer[numWritten] = mesh.Verts[face[0]].Uv;
+				numWritten++;
+
+				vertexBuffer[numWritten] = Vector2(v1.X, v1.Y);
+				uvBuffer[numWritten] = mesh.Verts[face[i + 1]].Uv;
+				numWritten++;
+
+				vertexBuffer[numWritten] = Vector2(v2.X, v2.Y);
+				uvBuffer[numWritten] = mesh.Verts[face[i + 2]].Uv;
+				numWritten++;
+
+				// Only need to check this here since we guarantee the buffer is in multiples of three
+				if(numWritten >= BUFFER_SIZE)
+				{
+					writeCallback(vertexBuffer, uvBuffer, numWritten);
+					numWritten = 0;
+				}
 			}
-
-			tangents[i].Normalize();
-			bitangents[i].Normalize();
-
-			Vector3 normal = *(Vector3*)&normalBytes[i * vec3Stride];
-
-			// Orthonormalize
-			float dot0 = normal.Dot(tangents[i]);
-			tangents[i] -= dot0 * normal;
-			tangents[i].Normalize();
-
-			float dot1 = tangents[i].Dot(bitangents[i]);
-			dot0 = normal.Dot(bitangents[i]);
-			bitangents[i] -= dot0 * normal + dot1 * tangents[i];
-			bitangents[i].Normalize();
 		}
 
-		bs_deleteN(faceTangents, numFaces);
-		bs_deleteN(faceBitangents, numFaces);
-
-		// TODO - Consider weighing tangents by triangle size and/or edge angles
+		if(numWritten > 0)
+			writeCallback(vertexBuffer, uvBuffer, numWritten);
 	}
+	bs_frame_clear();
+}
 
-	void MeshUtility::CalculateTangentSpace(Vector3* vertices, Vector2* uv, u8* indices, u32 numVertices, u32 numIndices, Vector3* normals, Vector3* tangents, Vector3* bitangents, u32 indexSize)
-	{
-		CalculateNormals(vertices, indices, numVertices, numIndices, normals, indexSize);
-		CalculateTangents(vertices, normals, uv, indices, numVertices, numIndices, tangents, bitangents, indexSize);
-	}
+/** Clips three-dimensional triangles against a set of provided planes. */
+class TriangleClipper3D : public TriangleClipperBase
+{
+public:
+	/** @copydoc MeshUtility::clip3D */
+	void Clip(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector3*, Vector2*, u32)>& writeCallback);
 
-	void MeshUtility::Clip2D(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback)
-	{
-		TriangleClipper2D clipper;
-		clipper.Clip(vertices, uvs, numTris, vertexStride, clipPlanes, writeCallback);
-	}
+private:
+	/** Converts clipped vertices back into triangles and outputs them via the provided callback. */
+	void ConvertToMesh(const std::function<void(Vector3*, Vector2*, u32)>& writeCallback);
 
-	void MeshUtility::Clip3D(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector3*, Vector2*, u32)>& writeCallback)
-	{
-		TriangleClipper3D clipper;
-		clipper.Clip(vertices, uvs, numTris, vertexStride, clipPlanes, writeCallback);
-	}
+	static const int BUFFER_SIZE = 64 * 3; // Must be a multiple of three
+	Vector3 vertexBuffer[BUFFER_SIZE];
+	Vector2 uvBuffer[BUFFER_SIZE];
+};
 
-	void MeshUtility::PackNormals(Vector3* source, u8* destination, u32 count, u32 inStride, u32 outStride)
+void TriangleClipper3D::Clip(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector3*, Vector2*, u32)>& writeCallback)
+{
+	// Add vertices
+	u32 numVertices = numTris * 3;
+	mesh.Verts.resize(numVertices);
+
+	if(uvs != nullptr)
 	{
-		u8* srcPtr = (u8*)source;
-		u8* dstPtr = destination;
-		for(u32 i = 0; i < count; i++)
+		for(u32 i = 0; i < numVertices; i++)
 		{
-			Vector3 src = *(Vector3*)srcPtr;
+			ClipVert& clipVert = mesh.Verts[i];
 
-			PackedNormal& packed = *(PackedNormal*)dstPtr;
-			packed.X = Math::Clamp((int)(src.X * 127.5f + 127.5f), 0, 255);
-			packed.Y = Math::Clamp((int)(src.Y * 127.5f + 127.5f), 0, 255);
-			packed.Z = Math::Clamp((int)(src.Z * 127.5f + 127.5f), 0, 255);
-			packed.W = 128;
-
-			srcPtr += inStride;
-			dstPtr += outStride;
+			clipVert.Point = *(Vector3*)(vertices + vertexStride * i);
+			clipVert.Uv = *(Vector2*)(uvs + vertexStride * i);
 		}
 	}
-
-	void MeshUtility::PackNormals(Vector4* source, u8* destination, u32 count, u32 inStride, u32 outStride)
+	else
 	{
-		u8* srcPtr = (u8*)source;
-		u8* dstPtr = destination;
-		for(u32 i = 0; i < count; i++)
+		for(u32 i = 0; i < numVertices; i++)
 		{
-			Vector4 src = *(Vector4*)srcPtr;
-			PackedNormal& packed = *(PackedNormal*)dstPtr;
+			ClipVert& clipVert = mesh.Verts[i];
+			Vector2 vector2D = *(Vector2*)(vertices + vertexStride * i);
 
-			packed.X = Math::Clamp((int)(src.X * 127.5f + 127.5f), 0, 255);
-			packed.Y = Math::Clamp((int)(src.Y * 127.5f + 127.5f), 0, 255);
-			packed.Z = Math::Clamp((int)(src.Z * 127.5f + 127.5f), 0, 255);
-			packed.W = Math::Clamp((int)(src.W * 127.5f + 127.5f), 0, 255);
-
-			srcPtr += inStride;
-			dstPtr += outStride;
+			clipVert.Point = Vector3(vector2D.X, vector2D.Y, 0.0f);
 		}
 	}
 
-	void MeshUtility::UnpackNormals(u8* source, Vector3* destination, u32 count, u32 stride)
+	AddEdgesAndFaces();
+
+	for(int i = 0; i < 4; i++)
 	{
-		u8* ptr = source;
-		for(u32 i = 0; i < count; i++)
-		{
-			destination[i] = UnpackNormal(ptr);
-
-			ptr += stride;
-		}
+		if(ClipByPlane(clipPlanes[i]) == -1)
+			return;
 	}
 
-	void MeshUtility::UnpackNormals(u8* source, Vector4* destination, u32 count, u32 stride)
+	ConvertToMesh(writeCallback);
+}
+
+void TriangleClipper3D::ConvertToMesh(const std::function<void(Vector3*, Vector2*, u32)>& writeCallback)
+{
+	bs_frame_mark();
 	{
-		u8* ptr = source;
-		for(u32 i = 0; i < count; i++)
+		FrameVector<FrameVector<u32>> allFaces;
+		GetOrderedFaces(allFaces);
+
+		// Note: Consider using Delaunay triangulation to avoid skinny triangles
+		u32 numWritten = 0;
+		assert(BUFFER_SIZE % 3 == 0);
+		for(auto& face : allFaces)
 		{
-			PackedNormal& packed = *(PackedNormal*)ptr;
+			for(u32 i = 0; i < (u32)face.size() - 2; i++)
+			{
+				vertexBuffer[numWritten] = mesh.Verts[face[0]].Point;
+				uvBuffer[numWritten] = mesh.Verts[face[0]].Uv;
+				numWritten++;
 
-			const float inv = (1.0f / 255.0f) * 2.0f;
-			destination[i].X = (packed.X * inv - 1.0f);
-			destination[i].Y = (packed.Y * inv - 1.0f);
-			destination[i].Z = (packed.Z * inv - 1.0f);
-			destination[i].W = (packed.W * inv - 1.0f);
+				vertexBuffer[numWritten] = mesh.Verts[face[i + 1]].Point;
+				uvBuffer[numWritten] = mesh.Verts[face[i + 1]].Uv;
+				numWritten++;
 
-			ptr += stride;
+				vertexBuffer[numWritten] = mesh.Verts[face[i + 2]].Point;
+				uvBuffer[numWritten] = mesh.Verts[face[i + 2]].Uv;
+				numWritten++;
+
+				// Only need to check this here since we guarantee the buffer is in multiples of three
+				if(numWritten >= BUFFER_SIZE)
+				{
+					writeCallback(vertexBuffer, uvBuffer, numWritten);
+					numWritten = 0;
+				}
+			}
 		}
+
+		if(numWritten > 0)
+			writeCallback(vertexBuffer, uvBuffer, numWritten);
 	}
+	bs_frame_clear();
+}
+
+void MeshUtility::CalculateNormals(Vector3* vertices, u8* indices, u32 numVertices, u32 numIndices, Vector3* normals, u32 indexSize)
+{
+	u32 numFaces = numIndices / 3;
+
+	Vector3* faceNormals = bs_newN<Vector3>(numFaces);
+	for(u32 i = 0; i < numFaces; i++)
+	{
+		u32 triangle[3];
+		memcpy(&triangle[0], indices + (i * 3 + 0) * indexSize, indexSize);
+		memcpy(&triangle[1], indices + (i * 3 + 1) * indexSize, indexSize);
+		memcpy(&triangle[2], indices + (i * 3 + 2) * indexSize, indexSize);
+
+		Vector3 edgeA = vertices[triangle[1]] - vertices[triangle[0]];
+		Vector3 edgeB = vertices[triangle[2]] - vertices[triangle[0]];
+		faceNormals[i] = Vector3::Normalize(Vector3::Cross(edgeA, edgeB));
+
+		// Note: Potentially don't normalize here in order to weigh the normals
+		// by triangle size
+	}
+
+	VertexConnectivity connectivity(indices, numVertices, numFaces, indexSize);
+	for(u32 i = 0; i < numVertices; i++)
+	{
+		VertexFaces& faces = connectivity.VertexFaces[i];
+
+		normals[i] = Vector3::ZERO;
+		for(u32 j = 0; j < faces.NumFaces; j++)
+		{
+			u32 faceIdx = faces.Faces[j];
+			normals[i] += faceNormals[faceIdx];
+		}
+
+		normals[i].Normalize();
+	}
+
+	bs_deleteN(faceNormals, numFaces);
+}
+
+void MeshUtility::CalculateTangents(Vector3* vertices, Vector3* normals, Vector2* uv, u8* indices, u32 numVertices, u32 numIndices, Vector3* tangents, Vector3* bitangents, u32 indexSize, u32 vertexStride)
+{
+	u32 numFaces = numIndices / 3;
+	u32 vec2Stride = vertexStride == 0 ? sizeof(Vector2) : vertexStride;
+	u32 vec3Stride = vertexStride == 0 ? sizeof(Vector3) : vertexStride;
+
+	u8* positionBytes = (u8*)vertices;
+	u8* normalBytes = (u8*)normals;
+	u8* uvBytes = (u8*)uv;
+
+	Vector3* faceTangents = bs_newN<Vector3>(numFaces);
+	Vector3* faceBitangents = bs_newN<Vector3>(numFaces);
+	for(u32 i = 0; i < numFaces; i++)
+	{
+		u32 triangle[3];
+		memcpy(&triangle[0], indices + (i * 3 + 0) * indexSize, indexSize);
+		memcpy(&triangle[1], indices + (i * 3 + 1) * indexSize, indexSize);
+		memcpy(&triangle[2], indices + (i * 3 + 2) * indexSize, indexSize);
+
+		Vector3 p0 = *(Vector3*)&positionBytes[triangle[0] * vec3Stride];
+		Vector3 p1 = *(Vector3*)&positionBytes[triangle[1] * vec3Stride];
+		Vector3 p2 = *(Vector3*)&positionBytes[triangle[2] * vec3Stride];
+
+		Vector2 uv0 = *(Vector2*)&uvBytes[triangle[0] * vec2Stride];
+		Vector2 uv1 = *(Vector2*)&uvBytes[triangle[1] * vec2Stride];
+		Vector2 uv2 = *(Vector2*)&uvBytes[triangle[2] * vec2Stride];
+
+		Vector3 q0 = p1 - p0;
+		Vector3 q1 = p2 - p0;
+
+		Vector2 st1 = uv1 - uv0;
+		Vector2 st2 = uv2 - uv0;
+
+		float denom = st1.X * st2.Y - st2.X * st1.Y;
+		if(fabs(denom) >= 0e-8f)
+		{
+			float r = 1.0f / denom;
+
+			faceTangents[i] = (st2.Y * q0 - st1.Y * q1) * r;
+			faceBitangents[i] = (st1.X * q1 - st2.X * q0) * r;
+
+			faceTangents[i].Normalize();
+			faceBitangents[i].Normalize();
+		}
+
+		// Note: Potentially don't normalize here in order to weight the normals by triangle size
+	}
+
+	VertexConnectivity connectivity(indices, numVertices, numFaces, indexSize);
+	for(u32 i = 0; i < numVertices; i++)
+	{
+		VertexFaces& faces = connectivity.VertexFaces[i];
+
+		tangents[i] = Vector3::ZERO;
+		bitangents[i] = Vector3::ZERO;
+
+		for(u32 j = 0; j < faces.NumFaces; j++)
+		{
+			u32 faceIdx = faces.Faces[j];
+			tangents[i] += faceTangents[faceIdx];
+			bitangents[i] += faceBitangents[faceIdx];
+		}
+
+		tangents[i].Normalize();
+		bitangents[i].Normalize();
+
+		Vector3 normal = *(Vector3*)&normalBytes[i * vec3Stride];
+
+		// Orthonormalize
+		float dot0 = normal.Dot(tangents[i]);
+		tangents[i] -= dot0 * normal;
+		tangents[i].Normalize();
+
+		float dot1 = tangents[i].Dot(bitangents[i]);
+		dot0 = normal.Dot(bitangents[i]);
+		bitangents[i] -= dot0 * normal + dot1 * tangents[i];
+		bitangents[i].Normalize();
+	}
+
+	bs_deleteN(faceTangents, numFaces);
+	bs_deleteN(faceBitangents, numFaces);
+
+	// TODO - Consider weighing tangents by triangle size and/or edge angles
+}
+
+void MeshUtility::CalculateTangentSpace(Vector3* vertices, Vector2* uv, u8* indices, u32 numVertices, u32 numIndices, Vector3* normals, Vector3* tangents, Vector3* bitangents, u32 indexSize)
+{
+	CalculateNormals(vertices, indices, numVertices, numIndices, normals, indexSize);
+	CalculateTangents(vertices, normals, uv, indices, numVertices, numIndices, tangents, bitangents, indexSize);
+}
+
+void MeshUtility::Clip2D(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector2*, Vector2*, u32)>& writeCallback)
+{
+	TriangleClipper2D clipper;
+	clipper.Clip(vertices, uvs, numTris, vertexStride, clipPlanes, writeCallback);
+}
+
+void MeshUtility::Clip3D(u8* vertices, u8* uvs, u32 numTris, u32 vertexStride, const Vector<Plane>& clipPlanes, const std::function<void(Vector3*, Vector2*, u32)>& writeCallback)
+{
+	TriangleClipper3D clipper;
+	clipper.Clip(vertices, uvs, numTris, vertexStride, clipPlanes, writeCallback);
+}
+
+void MeshUtility::PackNormals(Vector3* source, u8* destination, u32 count, u32 inStride, u32 outStride)
+{
+	u8* srcPtr = (u8*)source;
+	u8* dstPtr = destination;
+	for(u32 i = 0; i < count; i++)
+	{
+		Vector3 src = *(Vector3*)srcPtr;
+
+		PackedNormal& packed = *(PackedNormal*)dstPtr;
+		packed.X = Math::Clamp((int)(src.X * 127.5f + 127.5f), 0, 255);
+		packed.Y = Math::Clamp((int)(src.Y * 127.5f + 127.5f), 0, 255);
+		packed.Z = Math::Clamp((int)(src.Z * 127.5f + 127.5f), 0, 255);
+		packed.W = 128;
+
+		srcPtr += inStride;
+		dstPtr += outStride;
+	}
+}
+
+void MeshUtility::PackNormals(Vector4* source, u8* destination, u32 count, u32 inStride, u32 outStride)
+{
+	u8* srcPtr = (u8*)source;
+	u8* dstPtr = destination;
+	for(u32 i = 0; i < count; i++)
+	{
+		Vector4 src = *(Vector4*)srcPtr;
+		PackedNormal& packed = *(PackedNormal*)dstPtr;
+
+		packed.X = Math::Clamp((int)(src.X * 127.5f + 127.5f), 0, 255);
+		packed.Y = Math::Clamp((int)(src.Y * 127.5f + 127.5f), 0, 255);
+		packed.Z = Math::Clamp((int)(src.Z * 127.5f + 127.5f), 0, 255);
+		packed.W = Math::Clamp((int)(src.W * 127.5f + 127.5f), 0, 255);
+
+		srcPtr += inStride;
+		dstPtr += outStride;
+	}
+}
+
+void MeshUtility::UnpackNormals(u8* source, Vector3* destination, u32 count, u32 stride)
+{
+	u8* ptr = source;
+	for(u32 i = 0; i < count; i++)
+	{
+		destination[i] = UnpackNormal(ptr);
+
+		ptr += stride;
+	}
+}
+
+void MeshUtility::UnpackNormals(u8* source, Vector4* destination, u32 count, u32 stride)
+{
+	u8* ptr = source;
+	for(u32 i = 0; i < count; i++)
+	{
+		PackedNormal& packed = *(PackedNormal*)ptr;
+
+		const float inv = (1.0f / 255.0f) * 2.0f;
+		destination[i].X = (packed.X * inv - 1.0f);
+		destination[i].Y = (packed.Y * inv - 1.0f);
+		destination[i].Z = (packed.Z * inv - 1.0f);
+		destination[i].W = (packed.W * inv - 1.0f);
+
+		ptr += stride;
+	}
+}
 } // namespace bs

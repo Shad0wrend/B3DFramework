@@ -6,52 +6,52 @@
 
 namespace bs
 {
-	/** Contains private data for the Linux Mouse implementation. */
-	struct Mouse::Pimpl
-	{
-		bool hasInputFocus;
-	};
+/** Contains private data for the Linux Mouse implementation. */
+struct Mouse::Pimpl
+{
+	bool hasInputFocus;
+};
 
-	Mouse::Mouse(const String& name, Input* owner)
-		: mName(name), mOwner(owner)
+Mouse::Mouse(const String& name, Input* owner)
+	: mName(name), mOwner(owner)
+{
+	m = bs_new<Pimpl>();
+	m->HasInputFocus = true;
+}
+
+Mouse::~Mouse()
+{
+	bs_delete(m);
+}
+
+void Mouse::capture()
+{
+	Lock lock(LinuxPlatform::eventLock);
+
+	if(m->HasInputFocus)
 	{
-		m = bs_new<Pimpl>();
-		m->HasInputFocus = true;
+		double deltaX = round(LinuxPlatform::mouseMotionEvent.deltaX);
+		double deltaY = round(LinuxPlatform::mouseMotionEvent.deltaY);
+		double deltaZ = round(LinuxPlatform::mouseMotionEvent.deltaZ);
+
+		if(deltaX != 0 || deltaY != 0 || deltaZ != 0)
+			mOwner->NotifyMouseMovedInternal(deltaX, deltaY, deltaZ);
+
+		LinuxPlatform::mouseMotionEvent.deltaX -= deltaX;
+		LinuxPlatform::mouseMotionEvent.deltaY -= deltaY;
+		LinuxPlatform::mouseMotionEvent.deltaZ -= deltaZ;
 	}
-
-	Mouse::~Mouse()
+	else
 	{
-		bs_delete(m);
+		// Discard accumulated data
+		LinuxPlatform::mouseMotionEvent.deltaX = 0;
+		LinuxPlatform::mouseMotionEvent.deltaY = 0;
+		LinuxPlatform::mouseMotionEvent.deltaZ = 0;
 	}
+}
 
-	void Mouse::capture()
-	{
-		Lock lock(LinuxPlatform::eventLock);
-
-		if(m->HasInputFocus)
-		{
-			double deltaX = round(LinuxPlatform::mouseMotionEvent.deltaX);
-			double deltaY = round(LinuxPlatform::mouseMotionEvent.deltaY);
-			double deltaZ = round(LinuxPlatform::mouseMotionEvent.deltaZ);
-
-			if(deltaX != 0 || deltaY != 0 || deltaZ != 0)
-				mOwner->NotifyMouseMovedInternal(deltaX, deltaY, deltaZ);
-
-			LinuxPlatform::mouseMotionEvent.deltaX -= deltaX;
-			LinuxPlatform::mouseMotionEvent.deltaY -= deltaY;
-			LinuxPlatform::mouseMotionEvent.deltaZ -= deltaZ;
-		}
-		else
-		{
-			// Discard accumulated data
-			LinuxPlatform::mouseMotionEvent.deltaX = 0;
-			LinuxPlatform::mouseMotionEvent.deltaY = 0;
-			LinuxPlatform::mouseMotionEvent.deltaZ = 0;
-		}
-	}
-
-	void Mouse::changeCaptureContext(u64 windowHandle)
-	{
-		m->HasInputFocus = windowHandle != (u64)-1;
-	}
+void Mouse::changeCaptureContext(u64 windowHandle)
+{
+	m->HasInputFocus = windowHandle != (u64)-1;
+}
 } // namespace bs

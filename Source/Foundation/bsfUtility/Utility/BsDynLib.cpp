@@ -17,75 +17,75 @@
 
 namespace bs
 {
-	DynLib::DynLib(String name)
-		: mName(std::move(name))
+DynLib::DynLib(String name)
+	: mName(std::move(name))
+{
+	Load();
+}
+
+DynLib::~DynLib()
+{
+	Unload();
+}
+
+void DynLib::Load()
+{
+	if(mHandle)
+		return;
+
+	mHandle = (DYNLIB_HANDLE)DYNLIB_LOAD(mName.c_str());
+
+	if(!mHandle)
 	{
-		Load();
+		BS_EXCEPT(InternalErrorException, "Could not load dynamic library " + mName + ".  System Error: " + DynlibError());
+	}
+}
+
+void DynLib::Unload()
+{
+	if(!mHandle)
+		return;
+
+	if(DYNLIB_UNLOAD(mHandle))
+	{
+		BS_EXCEPT(InternalErrorException, "Could not unload dynamic library " + mName + ".  System Error: " + DynlibError());
 	}
 
-	DynLib::~DynLib()
-	{
-		Unload();
-	}
+	mHandle = nullptr;
+}
 
-	void DynLib::Load()
-	{
-		if(mHandle)
-			return;
+void* DynLib::GetSymbol(const String& strName) const
+{
+	if(!mHandle)
+		return nullptr;
 
-		mHandle = (DYNLIB_HANDLE)DYNLIB_LOAD(mName.c_str());
+	return (void*)DYNLIB_GETSYM(mHandle, strName.c_str());
+}
 
-		if(!mHandle)
-		{
-			BS_EXCEPT(InternalErrorException, "Could not load dynamic library " + mName + ".  System Error: " + DynlibError());
-		}
-	}
-
-	void DynLib::Unload()
-	{
-		if(!mHandle)
-			return;
-
-		if(DYNLIB_UNLOAD(mHandle))
-		{
-			BS_EXCEPT(InternalErrorException, "Could not unload dynamic library " + mName + ".  System Error: " + DynlibError());
-		}
-
-		mHandle = nullptr;
-	}
-
-	void* DynLib::GetSymbol(const String& strName) const
-	{
-		if(!mHandle)
-			return nullptr;
-
-		return (void*)DYNLIB_GETSYM(mHandle, strName.c_str());
-	}
-
-	String DynLib::DynlibError()
-	{
+String DynLib::DynlibError()
+{
 #if BS_PLATFORM == BS_PLATFORM_WIN32
-		LPVOID lpMsgBuf;
-		FormatMessage(
-			FORMAT_MESSAGE_ALLOCATE_BUFFER |
-				FORMAT_MESSAGE_FROM_SYSTEM |
-				FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL,
-			GetLastError(),
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-			(LPTSTR)&lpMsgBuf,
-			0,
-			NULL);
+	LPVOID lpMsgBuf;
+	FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+			FORMAT_MESSAGE_FROM_SYSTEM |
+			FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL,
+		GetLastError(),
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPTSTR)&lpMsgBuf,
+		0,
+		NULL);
 
-		String ret((char*)lpMsgBuf);
+	String ret((char*)lpMsgBuf);
 
-		// Free the buffer.
-		LocalFree(lpMsgBuf);
-		return ret;
+	// Free the buffer.
+	LocalFree(lpMsgBuf);
+	return ret;
 #elif BS_PLATFORM == BS_PLATFORM_LINUX || BS_PLATFORM == BS_PLATFORM_OSX
-		return String(dlerror());
+	return String(dlerror());
 #else
-		return String();
+	return String();
 #endif
-	}
+}
 } // namespace bs

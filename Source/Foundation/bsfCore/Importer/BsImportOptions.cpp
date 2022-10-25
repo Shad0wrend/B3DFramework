@@ -5,16 +5,16 @@
 
 namespace bs
 {
-	/************************************************************************/
-	/* 								SERIALIZATION                      		*/
-	/************************************************************************/
-	RTTITypeBase* ImportOptions::GetRttiStatic()
-	{
-		return ImportOptionsRTTI::Instance();
-	}
+/************************************************************************/
+/* 								SERIALIZATION                      		*/
+/************************************************************************/
+RTTITypeBase* ImportOptions::GetRttiStatic()
+{
+	return ImportOptionsRTTI::Instance();
+}
 
-	RTTITypeBase* ImportOptions::GetRtti() const
-	{
-		return ImportOptions::GetRttiStatic();
-	}
+RTTITypeBase* ImportOptions::GetRtti() const
+{
+	return ImportOptions::GetRttiStatic();
+}
 } // namespace bs

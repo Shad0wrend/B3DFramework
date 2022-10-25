@@ -5,24 +5,24 @@
 
 namespace bs
 {
-	SPtr<MeshCollider> MeshCollider::Create(PhysicsScene& scene, const Vector3& position, const Quaternion& rotation)
-	{
-		return scene.CreateMeshCollider(position, rotation);
-	}
+SPtr<MeshCollider> MeshCollider::Create(PhysicsScene& scene, const Vector3& position, const Quaternion& rotation)
+{
+	return scene.CreateMeshCollider(position, rotation);
+}
 
-	void MeshCollider::GetListenerResources(Vector<HResource>& resources)
-	{
-		if(mMesh != nullptr)
-			resources.push_back(mMesh);
-	}
+void MeshCollider::GetListenerResources(Vector<HResource>& resources)
+{
+	if(mMesh != nullptr)
+		resources.push_back(mMesh);
+}
 
-	void MeshCollider::NotifyResourceLoaded(const HResource& resource)
-	{
-		OnMeshChanged();
-	}
+void MeshCollider::NotifyResourceLoaded(const HResource& resource)
+{
+	OnMeshChanged();
+}
 
-	void MeshCollider::NotifyResourceChanged(const HResource& resource)
-	{
-		OnMeshChanged();
-	}
+void MeshCollider::NotifyResourceChanged(const HResource& resource)
+{
+	OnMeshChanged();
+}
 } // namespace bs

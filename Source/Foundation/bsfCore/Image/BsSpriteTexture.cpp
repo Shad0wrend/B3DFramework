@@ -9,234 +9,234 @@
 
 namespace bs
 {
-	Rect2 SpriteTextureBase::Evaluate(float t) const
+Rect2 SpriteTextureBase::Evaluate(float t) const
+{
+	if(mPlayback == SpriteAnimationPlayback::None)
+		return Rect2(mUVOffset.X, mUVOffset.Y, mUVScale.X, mUVScale.Y);
+
+	u32 row;
+	u32 column;
+	GetAnimationFrame(t, row, column);
+
+	Rect2 output;
+
+	// Note: These could be pre-calculated
+	output.Width = mUVScale.X / mAnimation.NumColumns;
+	output.Height = mUVScale.Y / mAnimation.NumRows;
+
+	output.X = mUVOffset.X + column * output.Width;
+	output.Y = mUVOffset.Y + row * output.Height;
+
+	return output;
+}
+
+void SpriteTextureBase::GetAnimationFrame(float t, u32& row, u32& column) const
+{
+	if(mPlayback == SpriteAnimationPlayback::None)
 	{
-		if(mPlayback == SpriteAnimationPlayback::None)
-			return Rect2(mUVOffset.X, mUVOffset.Y, mUVScale.X, mUVScale.Y);
+		row = 0;
+		column = 0;
 
-		u32 row;
-		u32 column;
-		GetAnimationFrame(t, row, column);
-
-		Rect2 output;
-
-		// Note: These could be pre-calculated
-		output.Width = mUVScale.X / mAnimation.NumColumns;
-		output.Height = mUVScale.Y / mAnimation.NumRows;
-
-		output.X = mUVOffset.X + column * output.Width;
-		output.Y = mUVOffset.Y + row * output.Height;
-
-		return output;
+		return;
 	}
 
-	void SpriteTextureBase::GetAnimationFrame(float t, u32& row, u32& column) const
+	// Note: Duration could be pre-calculated
+	float duration = 0.0f;
+	if(mAnimation.Fps > 0)
+		duration = mAnimation.Count / (float)mAnimation.Fps;
+
+	switch(mPlayback)
 	{
-		if(mPlayback == SpriteAnimationPlayback::None)
-		{
-			row = 0;
-			column = 0;
-
-			return;
-		}
-
-		// Note: Duration could be pre-calculated
-		float duration = 0.0f;
-		if(mAnimation.Fps > 0)
-			duration = mAnimation.Count / (float)mAnimation.Fps;
-
-		switch(mPlayback)
-		{
-		default:
-		case SpriteAnimationPlayback::Normal:
-			t = Math::Clamp(t, 0.0f, duration);
-			break;
-		case SpriteAnimationPlayback::Loop:
-			t = Math::Repeat(t, duration);
-			break;
-		case SpriteAnimationPlayback::PingPong:
-			t = Math::PingPong(t, duration);
-			break;
-		}
-
-		const float pct = t / duration;
-		u32 frame = 0;
-
-		if(mAnimation.Count > 0)
-			frame = Math::Clamp(Math::FloorToPosInt(pct * mAnimation.Count), 0U, mAnimation.Count - 1);
-
-		row = frame / mAnimation.NumColumns;
-		column = frame % mAnimation.NumColumns;
+	default:
+	case SpriteAnimationPlayback::Normal:
+		t = Math::Clamp(t, 0.0f, duration);
+		break;
+	case SpriteAnimationPlayback::Loop:
+		t = Math::Repeat(t, duration);
+		break;
+	case SpriteAnimationPlayback::PingPong:
+		t = Math::PingPong(t, duration);
+		break;
 	}
 
-	template <bool Core>
-	template <class P>
-	void TSpriteTexture<Core>::RttiEnumFields(P p)
-	{
-		p(mUVOffset);
-		p(mUVScale);
-		p(mAnimation);
-		p(mPlayback);
-		p(mAtlasTexture);
-	}
+	const float pct = t / duration;
+	u32 frame = 0;
 
-	SpriteTexture::SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture)
-		: TSpriteTexture(uvOffset, uvScale, texture)
-	{}
+	if(mAnimation.Count > 0)
+		frame = Math::Clamp(Math::FloorToPosInt(pct * mAnimation.Count), 0U, mAnimation.Count - 1);
 
-	const HSpriteTexture& SpriteTexture::Dummy()
-	{
-		return BuiltinResources::Instance().GetDummySpriteTexture();
-	}
+	row = frame / mAnimation.NumColumns;
+	column = frame % mAnimation.NumColumns;
+}
 
-	bool SpriteTexture::CheckIsLoaded(const HSpriteTexture& tex)
-	{
-		return tex != nullptr && tex.IsLoaded(false) && tex->GetTexture() != nullptr && tex->GetTexture().IsLoaded(false);
-	}
+template <bool Core>
+template <class P>
+void TSpriteTexture<Core>::RttiEnumFields(P p)
+{
+	p(mUVOffset);
+	p(mUVScale);
+	p(mAnimation);
+	p(mPlayback);
+	p(mAtlasTexture);
+}
 
-	void SpriteTexture::SetTexture(const HTexture& texture)
-	{
-		RemoveResourceDependency(mAtlasTexture);
-		mAtlasTexture = texture;
-		AddResourceDependency(mAtlasTexture);
+SpriteTexture::SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture)
+	: TSpriteTexture(uvOffset, uvScale, texture)
+{}
 
-		MarkDependenciesDirty();
-	}
+const HSpriteTexture& SpriteTexture::Dummy()
+{
+	return BuiltinResources::Instance().GetDummySpriteTexture();
+}
 
-	u32 SpriteTexture::GetWidth() const
-	{
-		return Math::RoundToInt(mAtlasTexture->GetProperties().GetWidth() * mUVScale.X);
-	}
+bool SpriteTexture::CheckIsLoaded(const HSpriteTexture& tex)
+{
+	return tex != nullptr && tex.IsLoaded(false) && tex->GetTexture() != nullptr && tex->GetTexture().IsLoaded(false);
+}
 
-	u32 SpriteTexture::GetHeight() const
-	{
-		return Math::RoundToInt(mAtlasTexture->GetProperties().GetHeight() * mUVScale.Y);
-	}
+void SpriteTexture::SetTexture(const HTexture& texture)
+{
+	RemoveResourceDependency(mAtlasTexture);
+	mAtlasTexture = texture;
+	AddResourceDependency(mAtlasTexture);
 
-	u32 SpriteTexture::GetFrameWidth() const
-	{
-		return GetWidth() / std::max(1U, mAnimation.NumColumns);
-	}
+	MarkDependenciesDirty();
+}
 
-	u32 SpriteTexture::GetFrameHeight() const
-	{
-		return GetHeight() / std::max(1U, mAnimation.NumRows);
-	}
+u32 SpriteTexture::GetWidth() const
+{
+	return Math::RoundToInt(mAtlasTexture->GetProperties().GetWidth() * mUVScale.X);
+}
 
-	void SpriteTexture::MarkCoreDirtyInternal()
-	{
-		MarkCoreDirty();
-	}
+u32 SpriteTexture::GetHeight() const
+{
+	return Math::RoundToInt(mAtlasTexture->GetProperties().GetHeight() * mUVScale.Y);
+}
 
-	void SpriteTexture::Initialize()
-	{
-		AddResourceDependency(mAtlasTexture);
+u32 SpriteTexture::GetFrameWidth() const
+{
+	return GetWidth() / std::max(1U, mAnimation.NumColumns);
+}
 
-		Resource::Initialize();
-	}
+u32 SpriteTexture::GetFrameHeight() const
+{
+	return GetHeight() / std::max(1U, mAnimation.NumRows);
+}
 
-	SPtr<ct::CoreObject> SpriteTexture::CreateCore() const
-	{
-		SPtr<ct::Texture> texturePtr;
-		if(mAtlasTexture.IsLoaded())
-			texturePtr = mAtlasTexture->GetCore();
+void SpriteTexture::MarkCoreDirtyInternal()
+{
+	MarkCoreDirty();
+}
 
-		ct::SpriteTexture* spriteTexture = new(bs_alloc<ct::SpriteTexture>()) ct::SpriteTexture(mUVOffset, mUVScale, std::move(texturePtr), mAnimation, mPlayback);
+void SpriteTexture::Initialize()
+{
+	AddResourceDependency(mAtlasTexture);
 
-		SPtr<ct::SpriteTexture> spriteTexPtr = bs_shared_ptr<ct::SpriteTexture>(spriteTexture);
-		spriteTexPtr->SetThisPtrInternal(spriteTexPtr);
+	Resource::Initialize();
+}
 
-		return spriteTexPtr;
-	}
+SPtr<ct::CoreObject> SpriteTexture::CreateCore() const
+{
+	SPtr<ct::Texture> texturePtr;
+	if(mAtlasTexture.IsLoaded())
+		texturePtr = mAtlasTexture->GetCore();
 
-	CoreSyncData SpriteTexture::SyncToCore(FrameAlloc* allocator)
-	{
-		u32 size = csync_size(*this);
+	ct::SpriteTexture* spriteTexture = new(bs_alloc<ct::SpriteTexture>()) ct::SpriteTexture(mUVOffset, mUVScale, std::move(texturePtr), mAnimation, mPlayback);
 
-		u8* buffer = allocator->Alloc(size);
-		Bitstream stream(buffer, size);
-		csync_write(*this, stream);
+	SPtr<ct::SpriteTexture> spriteTexPtr = bs_shared_ptr<ct::SpriteTexture>(spriteTexture);
+	spriteTexPtr->SetThisPtrInternal(spriteTexPtr);
 
-		return CoreSyncData(buffer, size);
-	}
+	return spriteTexPtr;
+}
 
-	void SpriteTexture::GetCoreDependencies(Vector<CoreObject*>& dependencies)
-	{
-		if(mAtlasTexture.IsLoaded())
-			dependencies.push_back(mAtlasTexture.Get());
-	}
+CoreSyncData SpriteTexture::SyncToCore(FrameAlloc* allocator)
+{
+	u32 size = csync_size(*this);
 
-	SPtr<ct::SpriteTexture> SpriteTexture::GetCore() const
-	{
-		return std::static_pointer_cast<ct::SpriteTexture>(mCoreSpecific);
-	}
+	u8* buffer = allocator->Alloc(size);
+	Bitstream stream(buffer, size);
+	csync_write(*this, stream);
 
-	HSpriteTexture SpriteTexture::Create(const HTexture& texture)
-	{
-		SPtr<SpriteTexture> texturePtr = CreatePtrInternal(texture);
+	return CoreSyncData(buffer, size);
+}
 
-		return static_resource_cast<SpriteTexture>(gResources().CreateResourceHandleInternal(texturePtr));
-	}
+void SpriteTexture::GetCoreDependencies(Vector<CoreObject*>& dependencies)
+{
+	if(mAtlasTexture.IsLoaded())
+		dependencies.push_back(mAtlasTexture.Get());
+}
 
-	HSpriteTexture SpriteTexture::Create(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture)
-	{
-		SPtr<SpriteTexture> texturePtr = CreatePtrInternal(uvOffset, uvScale, texture);
+SPtr<ct::SpriteTexture> SpriteTexture::GetCore() const
+{
+	return std::static_pointer_cast<ct::SpriteTexture>(mCoreSpecific);
+}
 
-		return static_resource_cast<SpriteTexture>(gResources().CreateResourceHandleInternal(texturePtr));
-	}
+HSpriteTexture SpriteTexture::Create(const HTexture& texture)
+{
+	SPtr<SpriteTexture> texturePtr = CreatePtrInternal(texture);
 
-	SPtr<SpriteTexture> SpriteTexture::CreatePtrInternal(const HTexture& texture)
-	{
-		SPtr<SpriteTexture> texturePtr = bs_core_ptr<SpriteTexture>(new(bs_alloc<SpriteTexture>()) SpriteTexture(Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f), texture));
+	return static_resource_cast<SpriteTexture>(gResources().CreateResourceHandleInternal(texturePtr));
+}
 
-		texturePtr->SetThisPtrInternal(texturePtr);
-		texturePtr->Initialize();
+HSpriteTexture SpriteTexture::Create(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture)
+{
+	SPtr<SpriteTexture> texturePtr = CreatePtrInternal(uvOffset, uvScale, texture);
 
-		return texturePtr;
-	}
+	return static_resource_cast<SpriteTexture>(gResources().CreateResourceHandleInternal(texturePtr));
+}
 
-	SPtr<SpriteTexture> SpriteTexture::CreatePtrInternal(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture)
-	{
-		SPtr<SpriteTexture> texturePtr = bs_core_ptr<SpriteTexture>(new(bs_alloc<SpriteTexture>()) SpriteTexture(uvOffset, uvScale, texture));
+SPtr<SpriteTexture> SpriteTexture::CreatePtrInternal(const HTexture& texture)
+{
+	SPtr<SpriteTexture> texturePtr = bs_core_ptr<SpriteTexture>(new(bs_alloc<SpriteTexture>()) SpriteTexture(Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f), texture));
 
-		texturePtr->SetThisPtrInternal(texturePtr);
-		texturePtr->Initialize();
+	texturePtr->SetThisPtrInternal(texturePtr);
+	texturePtr->Initialize();
 
-		return texturePtr;
-	}
+	return texturePtr;
+}
 
-	SPtr<SpriteTexture> SpriteTexture::CreateEmpty()
-	{
-		SPtr<SpriteTexture> texturePtr = bs_core_ptr<SpriteTexture>(new(bs_alloc<SpriteTexture>()) SpriteTexture(Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f), HTexture()));
+SPtr<SpriteTexture> SpriteTexture::CreatePtrInternal(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture)
+{
+	SPtr<SpriteTexture> texturePtr = bs_core_ptr<SpriteTexture>(new(bs_alloc<SpriteTexture>()) SpriteTexture(uvOffset, uvScale, texture));
 
-		texturePtr->SetThisPtrInternal(texturePtr);
+	texturePtr->SetThisPtrInternal(texturePtr);
+	texturePtr->Initialize();
 
-		return texturePtr;
-	}
+	return texturePtr;
+}
 
-	RTTITypeBase* SpriteTexture::GetRttiStatic()
-	{
-		return SpriteTextureRTTI::Instance();
-	}
+SPtr<SpriteTexture> SpriteTexture::CreateEmpty()
+{
+	SPtr<SpriteTexture> texturePtr = bs_core_ptr<SpriteTexture>(new(bs_alloc<SpriteTexture>()) SpriteTexture(Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f), HTexture()));
 
-	RTTITypeBase* SpriteTexture::GetRtti() const
-	{
-		return SpriteTexture::GetRttiStatic();
-	}
+	texturePtr->SetThisPtrInternal(texturePtr);
 
-	namespace ct
-	{
-		SpriteTexture::SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, SPtr<Texture> texture, const SpriteSheetGridAnimation& anim, SpriteAnimationPlayback playback)
-			: TSpriteTexture(uvOffset, uvScale, texture)
-		{
-			mAnimation = anim;
-			mPlayback = playback;
-		}
+	return texturePtr;
+}
 
-		void SpriteTexture::SyncToCore(const CoreSyncData& data)
-		{
-			Bitstream stream(data.GetBuffer(), data.GetBufferSize());
-			csync_read(*this, stream);
-		}
-	} // namespace ct
+RTTITypeBase* SpriteTexture::GetRttiStatic()
+{
+	return SpriteTextureRTTI::Instance();
+}
+
+RTTITypeBase* SpriteTexture::GetRtti() const
+{
+	return SpriteTexture::GetRttiStatic();
+}
+
+namespace ct
+{
+SpriteTexture::SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, SPtr<Texture> texture, const SpriteSheetGridAnimation& anim, SpriteAnimationPlayback playback)
+	: TSpriteTexture(uvOffset, uvScale, texture)
+{
+	mAnimation = anim;
+	mPlayback = playback;
+}
+
+void SpriteTexture::SyncToCore(const CoreSyncData& data)
+{
+	Bitstream stream(data.GetBuffer(), data.GetBufferSize());
+	csync_read(*this, stream);
+}
+} // namespace ct
 } // namespace bs

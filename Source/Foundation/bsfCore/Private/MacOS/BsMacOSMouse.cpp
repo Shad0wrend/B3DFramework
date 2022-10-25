@@ -6,35 +6,35 @@
 
 namespace bs
 {
-	/** Contains private data for the MacOS Mouse implementation. */
-	struct Mouse::Pimpl
-	{
-		explicit Pimpl(Input* owner)
-			: hid(HIDType::Mouse, owner)
-		{}
+/** Contains private data for the MacOS Mouse implementation. */
+struct Mouse::Pimpl
+{
+	explicit Pimpl(Input* owner)
+		: hid(HIDType::Mouse, owner)
+	{}
 
-		HIDManager hid;
-		bool hasInputFocus = true;
-	};
+	HIDManager hid;
+	bool hasInputFocus = true;
+};
 
-	Mouse::Mouse(const String& name, Input* owner)
-		: mName(name), mOwner(owner)
-	{
-		m = bs_new<Pimpl>(owner);
-	}
+Mouse::Mouse(const String& name, Input* owner)
+	: mName(name), mOwner(owner)
+{
+	m = bs_new<Pimpl>(owner);
+}
 
-	Mouse::~Mouse()
-	{
-		bs_delete(m);
-	}
+Mouse::~Mouse()
+{
+	bs_delete(m);
+}
 
-	void Mouse::capture()
-	{
-		m->hid.capture(nullptr, !m->HasInputFocus);
-	}
+void Mouse::capture()
+{
+	m->hid.capture(nullptr, !m->HasInputFocus);
+}
 
-	void Mouse::changeCaptureContext(u64 windowHandle)
-	{
-		m->HasInputFocus = windowHandle != (u64)-1;
-	}
+void Mouse::changeCaptureContext(u64 windowHandle)
+{
+	m->HasInputFocus = windowHandle != (u64)-1;
+}
 } // namespace bs

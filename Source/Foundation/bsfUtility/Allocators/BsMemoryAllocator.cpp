@@ -4,6 +4,6 @@
 
 namespace bs
 {
-	u64 BS_THREADLOCAL MemoryCounter::Allocs = 0;
-	u64 BS_THREADLOCAL MemoryCounter::Frees = 0;
+u64 BS_THREADLOCAL MemoryCounter::Allocs = 0;
+u64 BS_THREADLOCAL MemoryCounter::Frees = 0;
 } // namespace bs

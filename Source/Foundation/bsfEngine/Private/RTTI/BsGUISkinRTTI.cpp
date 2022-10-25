@@ -4,17 +4,17 @@
 
 namespace bs
 {
-	GUISkinEntry::GUISkinEntry(const String& name, const GUIElementStyle& style)
-		: Name(name), Style(style)
-	{}
+GUISkinEntry::GUISkinEntry(const String& name, const GUIElementStyle& style)
+	: Name(name), Style(style)
+{}
 
-	RTTITypeBase* GUISkinEntry::GetRttiStatic()
-	{
-		return GUISkinEntryRTTI::Instance();
-	}
+RTTITypeBase* GUISkinEntry::GetRttiStatic()
+{
+	return GUISkinEntryRTTI::Instance();
+}
 
-	RTTITypeBase* GUISkinEntry::GetRtti() const
-	{
-		return GUISkinEntry::GetRttiStatic();
-	}
+RTTITypeBase* GUISkinEntry::GetRtti() const
+{
+	return GUISkinEntry::GetRttiStatic();
+}
 } // namespace bs

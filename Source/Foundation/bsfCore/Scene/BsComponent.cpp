@@ -6,45 +6,45 @@
 
 namespace bs
 {
-	Component::Component(HSceneObject parent)
-		: mParent(std::move(parent))
-	{
-		SetName("Component");
-	}
+Component::Component(HSceneObject parent)
+	: mParent(std::move(parent))
+{
+	SetName("Component");
+}
 
-	bool Component::TypeEquals(const Component& other)
-	{
-		return GetRtti()->GetRttiId() == other.GetRtti()->GetRttiId();
-	}
+bool Component::TypeEquals(const Component& other)
+{
+	return GetRtti()->GetRttiId() == other.GetRtti()->GetRttiId();
+}
 
-	bool Component::CalculateBounds(Bounds& bounds)
-	{
-		Vector3 position = SO()->GetTransform().GetPosition();
+bool Component::CalculateBounds(Bounds& bounds)
+{
+	Vector3 position = SO()->GetTransform().GetPosition();
 
-		bounds = Bounds(AABox(position, position), Sphere(position, 0.0f));
-		return false;
-	}
+	bounds = Bounds(AABox(position, position), Sphere(position, 0.0f));
+	return false;
+}
 
-	void Component::Destroy(bool immediate)
-	{
-		SO()->DestroyComponent(this, immediate);
-	}
+void Component::Destroy(bool immediate)
+{
+	SO()->DestroyComponent(this, immediate);
+}
 
-	void Component::DestroyInternal(GameObjectHandleBase& handle, bool immediate)
-	{
-		if(immediate)
-			GameObjectManager::Instance().UnregisterObject(handle);
-		else
-			GameObjectManager::Instance().QueueForDestroy(handle);
-	}
+void Component::DestroyInternal(GameObjectHandleBase& handle, bool immediate)
+{
+	if(immediate)
+		GameObjectManager::Instance().UnregisterObject(handle);
+	else
+		GameObjectManager::Instance().QueueForDestroy(handle);
+}
 
-	RTTITypeBase* Component::GetRttiStatic()
-	{
-		return ComponentRTTI::Instance();
-	}
+RTTITypeBase* Component::GetRttiStatic()
+{
+	return ComponentRTTI::Instance();
+}
 
-	RTTITypeBase* Component::GetRtti() const
-	{
-		return Component::GetRttiStatic();
-	}
+RTTITypeBase* Component::GetRtti() const
+{
+	return Component::GetRttiStatic();
+}
 } // namespace bs

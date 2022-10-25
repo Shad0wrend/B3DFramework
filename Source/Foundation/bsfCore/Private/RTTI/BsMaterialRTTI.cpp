@@ -5,22 +5,22 @@
 
 namespace bs
 {
-	void MaterialRTTI::OnDeserializationEnded(IReflectable* obj, SerializationContext* context)
-	{
-		Material* material = static_cast<Material*>(obj);
-		material->Initialize();
+void MaterialRTTI::OnDeserializationEnded(IReflectable* obj, SerializationContext* context)
+{
+	Material* material = static_cast<Material*>(obj);
+	material->Initialize();
 
-		if(!mMatParams)
-			return;
+	if(!mMatParams)
+		return;
 
-		material->InitializeTechniques();
+	material->InitializeTechniques();
 
-		if(material->GetNumTechniques() > 0)
-			material->SetParams(mMatParams);
-	}
+	if(material->GetNumTechniques() > 0)
+		material->SetParams(mMatParams);
+}
 
-	SPtr<IReflectable> MaterialRTTI::NewRttiObject()
-	{
-		return Material::CreateEmpty();
-	}
+SPtr<IReflectable> MaterialRTTI::NewRttiObject()
+{
+	return Material::CreateEmpty();
+}
 } // namespace bs

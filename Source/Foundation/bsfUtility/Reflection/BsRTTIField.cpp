@@ -7,28 +7,28 @@
 
 namespace bs
 {
-	RTTITypeBase* RTTIFieldSchema::GetRttiStatic()
+RTTITypeBase* RTTIFieldSchema::GetRttiStatic()
+{
+	return RTTIFieldSchemaRTTI::Instance();
+}
+
+RTTITypeBase* RTTIFieldSchema::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+RTTIFieldInfo RTTIFieldInfo::DEFAULT;
+
+void RTTIField::CheckIsArray(bool array) const
+{
+	if(array && !Schema.IsArray)
 	{
-		return RTTIFieldSchemaRTTI::Instance();
+		BS_EXCEPT(InternalErrorException, "Invalid field type. Needed an array type but got a single type.");
 	}
 
-	RTTITypeBase* RTTIFieldSchema::GetRtti() const
+	if(!array && Schema.IsArray)
 	{
-		return GetRttiStatic();
+		BS_EXCEPT(InternalErrorException, "Invalid field type. Needed a single type but got an array type.");
 	}
-
-	RTTIFieldInfo RTTIFieldInfo::DEFAULT;
-
-	void RTTIField::CheckIsArray(bool array) const
-	{
-		if(array && !Schema.IsArray)
-		{
-			BS_EXCEPT(InternalErrorException, "Invalid field type. Needed an array type but got a single type.");
-		}
-
-		if(!array && Schema.IsArray)
-		{
-			BS_EXCEPT(InternalErrorException, "Invalid field type. Needed a single type but got an array type.");
-		}
-	}
+}
 } // namespace bs

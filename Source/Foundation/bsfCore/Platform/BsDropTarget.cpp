@@ -4,27 +4,27 @@
 
 namespace bs
 {
-	void DropTarget::ClearInternal()
-	{
-		mFileList.clear();
-	}
+void DropTarget::ClearInternal()
+{
+	mFileList.clear();
+}
 
-	bool DropTarget::IsInsideInternal(const Vector2I& pos) const
-	{
-		return mArea.Contains(pos);
-	}
+bool DropTarget::IsInsideInternal(const Vector2I& pos) const
+{
+	return mArea.Contains(pos);
+}
 
-	void DropTarget::SetFileListInternal(const Vector<Path>& fileList)
-	{
-		ClearInternal();
+void DropTarget::SetFileListInternal(const Vector<Path>& fileList)
+{
+	ClearInternal();
 
-		mDropType = DropTargetType::FileList;
-		mFileList = fileList;
-	}
+	mDropType = DropTargetType::FileList;
+	mFileList = fileList;
+}
 
-	SPtr<DropTarget> DropTarget::Create(const RenderWindow* window, const Rect2I& area)
-	{
-		DropTarget* target = new(bs_alloc<DropTarget>()) DropTarget(window, area);
-		return bs_shared_ptr(target);
-	}
+SPtr<DropTarget> DropTarget::Create(const RenderWindow* window, const Rect2I& area)
+{
+	DropTarget* target = new(bs_alloc<DropTarget>()) DropTarget(window, area);
+	return bs_shared_ptr(target);
+}
 } // namespace bs

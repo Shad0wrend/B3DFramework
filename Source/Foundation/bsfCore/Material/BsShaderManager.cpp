@@ -6,19 +6,19 @@
 
 namespace bs
 {
-	HShaderInclude DefaultShaderIncludeHandler::FindInclude(const String& name) const
-	{
-		return Importer::Instance().Import<ShaderInclude>(name);
-	}
+HShaderInclude DefaultShaderIncludeHandler::FindInclude(const String& name) const
+{
+	return Importer::Instance().Import<ShaderInclude>(name);
+}
 
-	HShaderInclude ShaderManager::FindInclude(const String& name) const
-	{
-		return mIncludeHandler->FindInclude(name);
-	}
+HShaderInclude ShaderManager::FindInclude(const String& name) const
+{
+	return mIncludeHandler->FindInclude(name);
+}
 
-	void ShaderManager::AddSearchPath(const Path& path)
-	{
-		if(mIncludeHandler)
-			mIncludeHandler->AddSearchPath(path);
-	}
+void ShaderManager::AddSearchPath(const Path& path)
+{
+	if(mIncludeHandler)
+		mIncludeHandler->AddSearchPath(path);
+}
 } // namespace bs

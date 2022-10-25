@@ -5,50 +5,50 @@
 
 namespace bs
 {
-	Degree::Degree(const Radian& r)
-		: mDeg(r.ValueDegrees())
-	{}
+Degree::Degree(const Radian& r)
+	: mDeg(r.ValueDegrees())
+{}
 
-	Degree Degree::Wrap()
-	{
-		mDeg = fmod(mDeg, 360.0f);
+Degree Degree::Wrap()
+{
+	mDeg = fmod(mDeg, 360.0f);
 
-		if(mDeg < 0)
-			mDeg += 360.0f;
+	if(mDeg < 0)
+		mDeg += 360.0f;
 
-		return *this;
-	}
+	return *this;
+}
 
-	Degree& Degree::operator=(const Radian& r)
-	{
-		mDeg = r.ValueDegrees();
-		return *this;
-	}
+Degree& Degree::operator=(const Radian& r)
+{
+	mDeg = r.ValueDegrees();
+	return *this;
+}
 
-	Degree Degree::operator+(const Radian& r) const
-	{
-		return Degree(mDeg + r.ValueDegrees());
-	}
+Degree Degree::operator+(const Radian& r) const
+{
+	return Degree(mDeg + r.ValueDegrees());
+}
 
-	Degree& Degree::operator+=(const Radian& r)
-	{
-		mDeg += r.ValueDegrees();
-		return *this;
-	}
+Degree& Degree::operator+=(const Radian& r)
+{
+	mDeg += r.ValueDegrees();
+	return *this;
+}
 
-	Degree Degree::operator-(const Radian& r) const
-	{
-		return Degree(mDeg - r.ValueDegrees());
-	}
+Degree Degree::operator-(const Radian& r) const
+{
+	return Degree(mDeg - r.ValueDegrees());
+}
 
-	Degree& Degree::operator-=(const Radian& r)
-	{
-		mDeg -= r.ValueDegrees();
-		return *this;
-	}
+Degree& Degree::operator-=(const Radian& r)
+{
+	mDeg -= r.ValueDegrees();
+	return *this;
+}
 
-	float Degree::ValueRadians() const
-	{
-		return mDeg * Math::DEG2RAD;
-	}
+float Degree::ValueRadians() const
+{
+	return mDeg * Math::DEG2RAD;
+}
 } // namespace bs

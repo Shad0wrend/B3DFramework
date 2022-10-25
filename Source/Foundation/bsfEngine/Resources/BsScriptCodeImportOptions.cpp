@@ -5,21 +5,21 @@
 
 namespace bs
 {
-	SPtr<ScriptCodeImportOptions> ScriptCodeImportOptions::Create()
-	{
-		return bs_shared_ptr_new<ScriptCodeImportOptions>();
-	}
+SPtr<ScriptCodeImportOptions> ScriptCodeImportOptions::Create()
+{
+	return bs_shared_ptr_new<ScriptCodeImportOptions>();
+}
 
-	/************************************************************************/
-	/* 								SERIALIZATION                      		*/
-	/************************************************************************/
-	RTTITypeBase* ScriptCodeImportOptions::GetRttiStatic()
-	{
-		return ScriptCodeImportOptionsRTTI::Instance();
-	}
+/************************************************************************/
+/* 								SERIALIZATION                      		*/
+/************************************************************************/
+RTTITypeBase* ScriptCodeImportOptions::GetRttiStatic()
+{
+	return ScriptCodeImportOptionsRTTI::Instance();
+}
 
-	RTTITypeBase* ScriptCodeImportOptions::GetRtti() const
-	{
-		return ScriptCodeImportOptions::GetRttiStatic();
-	}
+RTTITypeBase* ScriptCodeImportOptions::GetRtti() const
+{
+	return ScriptCodeImportOptions::GetRttiStatic();
+}
 } // namespace bs

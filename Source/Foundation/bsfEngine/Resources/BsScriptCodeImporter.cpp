@@ -8,46 +8,46 @@
 
 namespace bs
 {
-	bool ScriptCodeImporter::IsExtensionSupported(const String& ext) const
-	{
-		String lowerCaseExt = ext;
-		StringUtil::ToLowerCase(lowerCaseExt);
+bool ScriptCodeImporter::IsExtensionSupported(const String& ext) const
+{
+	String lowerCaseExt = ext;
+	StringUtil::ToLowerCase(lowerCaseExt);
 
-		return lowerCaseExt == u8"cs";
+	return lowerCaseExt == u8"cs";
+}
+
+bool ScriptCodeImporter::IsMagicNumberSupported(const u8* magicNumPtr, u32 numBytes) const
+{
+	return true; // Plain-text so we don't even check for magic number
+}
+
+SPtr<Resource> ScriptCodeImporter::Import(const Path& filePath, SPtr<const ImportOptions> importOptions)
+{
+	WString textData;
+	{
+		Lock fileLock = FileScheduler::GetLock(filePath);
+
+		SPtr<DataStream> stream = FileSystem::OpenFile(filePath);
+		textData = stream->GetAsWString();
 	}
 
-	bool ScriptCodeImporter::IsMagicNumberSupported(const u8* magicNumPtr, u32 numBytes) const
+	bool editorScript = false;
+	if(importOptions != nullptr)
 	{
-		return true; // Plain-text so we don't even check for magic number
+		SPtr<const ScriptCodeImportOptions> scriptIO = std::static_pointer_cast<const ScriptCodeImportOptions>(importOptions);
+		editorScript = scriptIO->EditorScript;
 	}
 
-	SPtr<Resource> ScriptCodeImporter::Import(const Path& filePath, SPtr<const ImportOptions> importOptions)
-	{
-		WString textData;
-		{
-			Lock fileLock = FileScheduler::GetLock(filePath);
+	SPtr<ScriptCode> scriptCode = ScriptCode::CreatePtrInternal(textData, editorScript);
 
-			SPtr<DataStream> stream = FileSystem::OpenFile(filePath);
-			textData = stream->GetAsWString();
-		}
+	const String fileName = filePath.GetFilename(false);
+	scriptCode->SetName(fileName);
 
-		bool editorScript = false;
-		if(importOptions != nullptr)
-		{
-			SPtr<const ScriptCodeImportOptions> scriptIO = std::static_pointer_cast<const ScriptCodeImportOptions>(importOptions);
-			editorScript = scriptIO->EditorScript;
-		}
+	return scriptCode;
+}
 
-		SPtr<ScriptCode> scriptCode = ScriptCode::CreatePtrInternal(textData, editorScript);
-
-		const String fileName = filePath.GetFilename(false);
-		scriptCode->SetName(fileName);
-
-		return scriptCode;
-	}
-
-	SPtr<ImportOptions> ScriptCodeImporter::CreateImportOptions() const
-	{
-		return bs_shared_ptr_new<ScriptCodeImportOptions>();
-	}
+SPtr<ImportOptions> ScriptCodeImporter::CreateImportOptions() const
+{
+	return bs_shared_ptr_new<ScriptCodeImportOptions>();
+}
 } // namespace bs

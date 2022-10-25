@@ -5,11 +5,11 @@
 
 namespace bs
 {
-	namespace ct
-	{
-		SPtr<TimerQuery> TimerQuery::Create(u32 deviceIdx)
-		{
-			return QueryManager::Instance().CreateTimerQuery(deviceIdx);
-		}
-	} // namespace ct
+namespace ct
+{
+SPtr<TimerQuery> TimerQuery::Create(u32 deviceIdx)
+{
+	return QueryManager::Instance().CreateTimerQuery(deviceIdx);
+}
+} // namespace ct
 } // namespace bs

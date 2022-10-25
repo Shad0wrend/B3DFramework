@@ -7,30 +7,30 @@
 
 namespace bs
 {
-	void RendererExtension::InitializerInternal(RendererExtension* obj, const Any& data)
+void RendererExtension::InitializerInternal(RendererExtension* obj, const Any& data)
+{
+	auto coreInitializer = [=]()
 	{
-		auto coreInitializer = [=]()
-		{
-			RendererManager::Instance().GetActive()->AddPlugin(obj);
-			obj->Initialize(data);
-		};
+		RendererManager::Instance().GetActive()->AddPlugin(obj);
+		obj->Initialize(data);
+	};
 
-		gCoreThread().QueueCommand(coreInitializer);
-	}
+	gCoreThread().QueueCommand(coreInitializer);
+}
 
-	void RendererExtension::DeleterInternal(RendererExtension* obj)
+void RendererExtension::DeleterInternal(RendererExtension* obj)
+{
+	auto deleteObj = [=]()
 	{
-		auto deleteObj = [=]()
-		{
-			RendererManager::Instance().GetActive()->RemovePlugin(obj);
+		RendererManager::Instance().GetActive()->RemovePlugin(obj);
 
-			obj->Destroy();
-			obj->~RendererExtension();
+		obj->Destroy();
+		obj->~RendererExtension();
 
-			bs_free(obj);
-		};
+		bs_free(obj);
+	};
 
-		// Queue deletion on the core thread
-		gCoreThread().QueueCommand(deleteObj);
-	}
+	// Queue deletion on the core thread
+	gCoreThread().QueueCommand(deleteObj);
+}
 } // namespace bs

@@ -5,8 +5,8 @@
 
 namespace bs
 {
-	SPtr<DistanceJoint> DistanceJoint::Create(PhysicsScene& scene, const DISTANCE_JOINT_DESC& desc)
-	{
-		return scene.CreateDistanceJoint(desc);
-	}
+SPtr<DistanceJoint> DistanceJoint::Create(PhysicsScene& scene, const DISTANCE_JOINT_DESC& desc)
+{
+	return scene.CreateDistanceJoint(desc);
+}
 } // namespace bs

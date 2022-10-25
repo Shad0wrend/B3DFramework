@@ -5,41 +5,41 @@
 
 namespace bs
 {
-	void SceneActor::SetTransform(const Transform& transform)
-	{
-		if(mMobility != ObjectMobility::Movable)
-			return;
+void SceneActor::SetTransform(const Transform& transform)
+{
+	if(mMobility != ObjectMobility::Movable)
+		return;
 
-		mTransform = transform;
-		MarkCoreDirtyInternal(ActorDirtyFlag::Transform);
+	mTransform = transform;
+	MarkCoreDirtyInternal(ActorDirtyFlag::Transform);
+}
+
+void SceneActor::SetMobility(ObjectMobility mobility)
+{
+	mMobility = mobility;
+	MarkCoreDirtyInternal(ActorDirtyFlag::Mobility);
+}
+
+void SceneActor::SetActive(bool active)
+{
+	mActive = active;
+	MarkCoreDirtyInternal(ActorDirtyFlag::Active);
+}
+
+void SceneActor::UpdateStateInternal(const SceneObject& so, bool force)
+{
+	u32 curHash = so.GetTransformHash();
+	if(curHash != mHash || force)
+	{
+		SetTransform(so.GetTransform());
+
+		mHash = curHash;
 	}
 
-	void SceneActor::SetMobility(ObjectMobility mobility)
-	{
-		mMobility = mobility;
-		MarkCoreDirtyInternal(ActorDirtyFlag::Mobility);
-	}
+	if(so.GetActive() != mActive || force)
+		SetActive(so.GetActive());
 
-	void SceneActor::SetActive(bool active)
-	{
-		mActive = active;
-		MarkCoreDirtyInternal(ActorDirtyFlag::Active);
-	}
-
-	void SceneActor::UpdateStateInternal(const SceneObject& so, bool force)
-	{
-		u32 curHash = so.GetTransformHash();
-		if(curHash != mHash || force)
-		{
-			SetTransform(so.GetTransform());
-
-			mHash = curHash;
-		}
-
-		if(so.GetActive() != mActive || force)
-			SetActive(so.GetActive());
-
-		if(so.GetMobility() != mMobility || force)
-			SetMobility(so.GetMobility());
-	}
+	if(so.GetMobility() != mMobility || force)
+		SetMobility(so.GetMobility());
+}
 } // namespace bs

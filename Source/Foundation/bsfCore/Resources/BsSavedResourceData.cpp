@@ -5,17 +5,17 @@
 
 namespace bs
 {
-	SavedResourceData::SavedResourceData(const Vector<UUID>& dependencies, bool allowAsync, u32 compressionMethod)
-		: mDependencies(dependencies), mAllowAsync(allowAsync), mCompressionMethod(compressionMethod)
-	{}
+SavedResourceData::SavedResourceData(const Vector<UUID>& dependencies, bool allowAsync, u32 compressionMethod)
+	: mDependencies(dependencies), mAllowAsync(allowAsync), mCompressionMethod(compressionMethod)
+{}
 
-	RTTITypeBase* SavedResourceData::GetRttiStatic()
-	{
-		return SavedResourceDataRTTI::Instance();
-	}
+RTTITypeBase* SavedResourceData::GetRttiStatic()
+{
+	return SavedResourceDataRTTI::Instance();
+}
 
-	RTTITypeBase* SavedResourceData::GetRtti() const
-	{
-		return SavedResourceData::GetRttiStatic();
-	}
+RTTITypeBase* SavedResourceData::GetRtti() const
+{
+	return SavedResourceData::GetRttiStatic();
+}
 } // namespace bs

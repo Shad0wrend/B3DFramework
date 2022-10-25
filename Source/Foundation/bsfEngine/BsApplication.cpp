@@ -27,154 +27,154 @@
 
 namespace bs
 {
-	Application::Application(const START_UP_DESC& desc)
-		: CoreApplication(desc)
-	{}
+Application::Application(const START_UP_DESC& desc)
+	: CoreApplication(desc)
+{}
 
-	Application::~Application()
-	{
-		// Cleanup any new objects queued for destruction by unloaded scripts
-		CoreObjectManager::Instance().SyncToCore();
-		gCoreThread().Update();
-		gCoreThread().SubmitAll(true);
+Application::~Application()
+{
+	// Cleanup any new objects queued for destruction by unloaded scripts
+	CoreObjectManager::Instance().SyncToCore();
+	gCoreThread().Update();
+	gCoreThread().SubmitAll(true);
 
-		Cursor::ShutDown();
+	Cursor::ShutDown();
 
-		GUIManager::ShutDown();
-		SpriteManager::ShutDown();
-		BuiltinResources::ShutDown();
-		RendererMaterialManager::ShutDown();
-		VirtualInput::ShutDown();
-	}
+	GUIManager::ShutDown();
+	SpriteManager::ShutDown();
+	BuiltinResources::ShutDown();
+	RendererMaterialManager::ShutDown();
+	VirtualInput::ShutDown();
+}
 
-	void Application::OnStartUp()
-	{
-		CoreApplication::OnStartUp();
+void Application::OnStartUp()
+{
+	CoreApplication::OnStartUp();
 
-		PlainTextImporter* importer = bs_new<PlainTextImporter>();
-		Importer::Instance().RegisterAssetImporterInternal(importer);
+	PlainTextImporter* importer = bs_new<PlainTextImporter>();
+	Importer::Instance().RegisterAssetImporterInternal(importer);
 
-		VirtualInput::StartUp();
-		BuiltinResources::StartUp();
-		RendererMaterialManager::StartUp();
-		RendererManager::Instance().Initialize();
-		SpriteManager::StartUp();
-		GUIManager::StartUp();
-		ShortcutManager::StartUp();
+	VirtualInput::StartUp();
+	BuiltinResources::StartUp();
+	RendererMaterialManager::StartUp();
+	RendererManager::Instance().Initialize();
+	SpriteManager::StartUp();
+	GUIManager::StartUp();
+	ShortcutManager::StartUp();
 
-		Cursor::StartUp();
-		Cursor::Instance().SetCursor(CursorType::Arrow);
-		Platform::SetIcon(BuiltinResources::Instance().GetFrameworkIcon());
+	Cursor::StartUp();
+	Cursor::Instance().SetCursor(CursorType::Arrow);
+	Platform::SetIcon(BuiltinResources::Instance().GetFrameworkIcon());
 
-		SceneManager::Instance().SetMainRenderTarget(GetPrimaryWindow());
-		DebugDraw::StartUp();
+	SceneManager::Instance().SetMainRenderTarget(GetPrimaryWindow());
+	DebugDraw::StartUp();
 
-		StartUpScriptManager();
-	}
+	StartUpScriptManager();
+}
 
-	void Application::OnShutDown()
-	{
-		// Need to clear all objects before I unload any plugins, as they
-		// could have allocated parts or all of those objects.
-		SceneManager::Instance().ClearScene(true);
+void Application::OnShutDown()
+{
+	// Need to clear all objects before I unload any plugins, as they
+	// could have allocated parts or all of those objects.
+	SceneManager::Instance().ClearScene(true);
 
-		// Resources too (Prefabs especially, since they hold the same data as a scene)
-		Resources::Instance().UnloadAll();
+	// Resources too (Prefabs especially, since they hold the same data as a scene)
+	Resources::Instance().UnloadAll();
 
-		// Shut down before script manager as scripts could have registered shortcut callbacks
-		ShortcutManager::ShutDown();
+	// Shut down before script manager as scripts could have registered shortcut callbacks
+	ShortcutManager::ShutDown();
 
-		ScriptManager::ShutDown();
-		DebugDraw::ShutDown();
+	ScriptManager::ShutDown();
+	DebugDraw::ShutDown();
 
-		CoreApplication::OnShutDown();
-	}
+	CoreApplication::OnShutDown();
+}
 
-	void Application::PreUpdate()
-	{
-		CoreApplication::PreUpdate();
+void Application::PreUpdate()
+{
+	CoreApplication::PreUpdate();
 
-		VirtualInput::Instance().UpdateInternal();
+	VirtualInput::Instance().UpdateInternal();
 
-		if(mProfilerOverlay)
-			mProfilerOverlay->Update();
-	}
+	if(mProfilerOverlay)
+		mProfilerOverlay->Update();
+}
 
-	void Application::PostUpdate()
-	{
-		CoreApplication::PostUpdate();
-		UpdateScriptManager();
+void Application::PostUpdate()
+{
+	CoreApplication::PostUpdate();
+	UpdateScriptManager();
 
-		PROFILE_CALL(GUIManager::Instance().Update(), "GUI");
-		DebugDraw::Instance().UpdateInternal();
-	}
+	PROFILE_CALL(GUIManager::Instance().Update(), "GUI");
+	DebugDraw::Instance().UpdateInternal();
+}
 
-	void Application::ShowProfilerOverlay(ProfilerOverlayType type, const SPtr<Camera>& camera)
-	{
-		const SPtr<Camera>& overlayCamera = camera ? camera : gSceneManager().GetMainCamera();
-		if(!overlayCamera)
-			return;
+void Application::ShowProfilerOverlay(ProfilerOverlayType type, const SPtr<Camera>& camera)
+{
+	const SPtr<Camera>& overlayCamera = camera ? camera : gSceneManager().GetMainCamera();
+	if(!overlayCamera)
+		return;
 
-		if(!mProfilerOverlay)
-			mProfilerOverlay = bs_shared_ptr_new<ProfilerOverlay>(overlayCamera);
-		else
-			mProfilerOverlay->SetTarget(overlayCamera);
+	if(!mProfilerOverlay)
+		mProfilerOverlay = bs_shared_ptr_new<ProfilerOverlay>(overlayCamera);
+	else
+		mProfilerOverlay->SetTarget(overlayCamera);
 
-		mProfilerOverlay->Show(type);
-	}
+	mProfilerOverlay->Show(type);
+}
 
-	void Application::HideProfilerOverlay()
-	{
-		if(mProfilerOverlay)
-			mProfilerOverlay->Hide();
+void Application::HideProfilerOverlay()
+{
+	if(mProfilerOverlay)
+		mProfilerOverlay->Hide();
 
-		mProfilerOverlay = nullptr;
-	}
+	mProfilerOverlay = nullptr;
+}
 
-	void Application::StartUpRenderer()
-	{
-		// Do nothing, we activate the renderer at a later stage
-	}
+void Application::StartUpRenderer()
+{
+	// Do nothing, we activate the renderer at a later stage
+}
 
-	void Application::StartUpScriptManager()
-	{
-		ScriptManager::StartUp();
-	}
+void Application::StartUpScriptManager()
+{
+	ScriptManager::StartUp();
+}
 
-	void Application::UpdateScriptManager()
-	{
-		ScriptManager::Instance().Update();
-	}
+void Application::UpdateScriptManager()
+{
+	ScriptManager::Instance().Update();
+}
 
-	START_UP_DESC Application::BuildStartUpDesc(VideoMode videoMode, const String& title, bool fullscreen)
-	{
-		START_UP_DESC desc;
+START_UP_DESC Application::BuildStartUpDesc(VideoMode videoMode, const String& title, bool fullscreen)
+{
+	START_UP_DESC desc;
 
-		// Set up default plugins
-		desc.RenderApi = BS_RENDER_API_MODULE;
-		desc.Renderer = BS_RENDERER_MODULE;
-		desc.Audio = BS_AUDIO_MODULE;
-		desc.Physics = BS_PHYSICS_MODULE;
+	// Set up default plugins
+	desc.RenderApi = BS_RENDER_API_MODULE;
+	desc.Renderer = BS_RENDERER_MODULE;
+	desc.Audio = BS_AUDIO_MODULE;
+	desc.Physics = BS_PHYSICS_MODULE;
 
-		desc.Importers.push_back("bsfFreeImgImporter");
-		desc.Importers.push_back("bsfFBXImporter");
-		desc.Importers.push_back("bsfFontImporter");
-		desc.Importers.push_back("bsfSL");
+	desc.Importers.push_back("bsfFreeImgImporter");
+	desc.Importers.push_back("bsfFBXImporter");
+	desc.Importers.push_back("bsfFontImporter");
+	desc.Importers.push_back("bsfSL");
 
-		desc.PrimaryWindowDesc.VideoMode = videoMode;
-		desc.PrimaryWindowDesc.Fullscreen = fullscreen;
-		desc.PrimaryWindowDesc.Title = title;
+	desc.PrimaryWindowDesc.VideoMode = videoMode;
+	desc.PrimaryWindowDesc.Fullscreen = fullscreen;
+	desc.PrimaryWindowDesc.Title = title;
 
-		return desc;
-	}
+	return desc;
+}
 
-	SPtr<IShaderIncludeHandler> Application::GetShaderIncludeHandler() const
-	{
-		return bs_shared_ptr_new<EngineShaderIncludeHandler>();
-	}
+SPtr<IShaderIncludeHandler> Application::GetShaderIncludeHandler() const
+{
+	return bs_shared_ptr_new<EngineShaderIncludeHandler>();
+}
 
-	Application& gApplication()
-	{
-		return static_cast<Application&>(Application::Instance());
-	}
+Application& gApplication()
+{
+	return static_cast<Application&>(Application::Instance());
+}
 } // namespace bs

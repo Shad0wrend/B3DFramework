@@ -7,50 +7,50 @@
 namespace bs
 {
 
-	/** Contains private data for the Linux Keyboard implementation. */
-	struct Keyboard::Pimpl
-	{
-		bool hasInputFocus;
-	};
+/** Contains private data for the Linux Keyboard implementation. */
+struct Keyboard::Pimpl
+{
+	bool hasInputFocus;
+};
 
-	Keyboard::Keyboard(const String& name, Input* owner)
-		: mName(name), mOwner(owner)
-	{
-		m = bs_new<Pimpl>();
-		m->HasInputFocus = true;
-	}
+Keyboard::Keyboard(const String& name, Input* owner)
+	: mName(name), mOwner(owner)
+{
+	m = bs_new<Pimpl>();
+	m->HasInputFocus = true;
+}
 
-	Keyboard::~Keyboard()
-	{
-		bs_delete(m);
-	}
+Keyboard::~Keyboard()
+{
+	bs_delete(m);
+}
 
-	void Keyboard::capture()
-	{
-		Lock lock(LinuxPlatform::eventLock);
+void Keyboard::capture()
+{
+	Lock lock(LinuxPlatform::eventLock);
 
-		if(m->HasInputFocus)
+	if(m->HasInputFocus)
+	{
+		while(!LinuxPlatform::buttonEvents.empty())
 		{
-			while(!LinuxPlatform::buttonEvents.empty())
-			{
-				LinuxButtonEvent& event = LinuxPlatform::buttonEvents.front();
-				if(event.pressed)
-					mOwner->NotifyButtonPressedInternal(0, event.button, event.timestamp);
-				else
-					mOwner->NotifyButtonReleasedInternal(0, event.button, event.timestamp);
-				LinuxPlatform::buttonEvents.pop();
-			}
-		}
-		else
-		{
-			// Discard queued data
-			while(!LinuxPlatform::buttonEvents.empty())
-				LinuxPlatform::buttonEvents.pop();
+			LinuxButtonEvent& event = LinuxPlatform::buttonEvents.front();
+			if(event.pressed)
+				mOwner->NotifyButtonPressedInternal(0, event.button, event.timestamp);
+			else
+				mOwner->NotifyButtonReleasedInternal(0, event.button, event.timestamp);
+			LinuxPlatform::buttonEvents.pop();
 		}
 	}
-
-	void Keyboard::changeCaptureContext(u64 windowHandle)
+	else
 	{
-		m->HasInputFocus = windowHandle != (u64)-1;
+		// Discard queued data
+		while(!LinuxPlatform::buttonEvents.empty())
+			LinuxPlatform::buttonEvents.pop();
 	}
+}
+
+void Keyboard::changeCaptureContext(u64 windowHandle)
+{
+	m->HasInputFocus = windowHandle != (u64)-1;
+}
 } // namespace bs

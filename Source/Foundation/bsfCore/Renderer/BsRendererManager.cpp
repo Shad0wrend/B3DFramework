@@ -7,45 +7,45 @@
 
 namespace bs
 {
-	RendererManager::~RendererManager()
-	{
-		if(mActiveRenderer != nullptr)
-			mActiveRenderer->Destroy();
-	}
+RendererManager::~RendererManager()
+{
+	if(mActiveRenderer != nullptr)
+		mActiveRenderer->Destroy();
+}
 
-	void RendererManager::SetActive(const String& name)
+void RendererManager::SetActive(const String& name)
+{
+	for(auto iter = mAvailableFactories.begin(); iter != mAvailableFactories.end(); ++iter)
 	{
-		for(auto iter = mAvailableFactories.begin(); iter != mAvailableFactories.end(); ++iter)
+		if((*iter)->Name() == name)
 		{
-			if((*iter)->Name() == name)
+			SPtr<ct::Renderer> newRenderer = (*iter)->Create();
+			if(newRenderer != nullptr)
 			{
-				SPtr<ct::Renderer> newRenderer = (*iter)->Create();
-				if(newRenderer != nullptr)
-				{
-					if(mActiveRenderer != nullptr)
-						mActiveRenderer->Destroy();
+				if(mActiveRenderer != nullptr)
+					mActiveRenderer->Destroy();
 
-					mActiveRenderer = newRenderer;
-				}
+				mActiveRenderer = newRenderer;
 			}
 		}
-
-		if(mActiveRenderer == nullptr)
-		{
-			BS_EXCEPT(InternalErrorException, "Cannot initialize renderer. Renderer with the name '" + name + "' cannot be found.")
-		}
 	}
 
-	void RendererManager::Initialize()
+	if(mActiveRenderer == nullptr)
 	{
-		if(mActiveRenderer != nullptr)
-			mActiveRenderer->Initialize();
+		BS_EXCEPT(InternalErrorException, "Cannot initialize renderer. Renderer with the name '" + name + "' cannot be found.")
 	}
+}
 
-	void RendererManager::RegisterFactoryInternal(SPtr<RendererFactory> factory)
-	{
-		assert(factory != nullptr);
+void RendererManager::Initialize()
+{
+	if(mActiveRenderer != nullptr)
+		mActiveRenderer->Initialize();
+}
 
-		mAvailableFactories.push_back(factory);
-	}
+void RendererManager::RegisterFactoryInternal(SPtr<RendererFactory> factory)
+{
+	assert(factory != nullptr);
+
+	mAvailableFactories.push_back(factory);
+}
 } // namespace bs

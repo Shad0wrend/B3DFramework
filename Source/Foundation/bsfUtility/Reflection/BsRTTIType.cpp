@@ -6,116 +6,116 @@
 
 namespace bs
 {
-	RTTITypeBase::~RTTITypeBase()
+RTTITypeBase::~RTTITypeBase()
+{
+	for(const auto& item : mFields)
+		bs_delete(item);
+}
+
+RTTIField* RTTITypeBase::FindField(const String& name)
+{
+	auto foundElement = std::find_if(mFields.begin(), mFields.end(), [&name](RTTIField* x)
+									 { return x->Name == name; });
+
+	if(foundElement == mFields.end())
 	{
-		for(const auto& item : mFields)
-			bs_delete(item);
+		BS_EXCEPT(InternalErrorException, "Cannot find a field with the specified name: " + name);
 	}
 
-	RTTIField* RTTITypeBase::FindField(const String& name)
+	return *foundElement;
+}
+
+RTTIField* RTTITypeBase::FindField(int uniqueFieldId)
+{
+	auto foundElement = std::find_if(mFields.begin(), mFields.end(), [&uniqueFieldId](RTTIField* x)
+									 { return x->Schema.Id == uniqueFieldId; });
+
+	if(foundElement == mFields.end())
+		return nullptr;
+
+	return *foundElement;
+}
+
+void RTTITypeBase::AddNewField(RTTIField* field)
+{
+	if(field == nullptr)
+		BS_EXCEPT(InvalidParametersException, "Field argument can't be null.");
+
+	int uniqueId = field->Schema.Id;
+	auto foundElementById = std::find_if(mFields.begin(), mFields.end(), [uniqueId](RTTIField* x)
+										 { return x->Schema.Id == uniqueId; });
+
+	if(foundElementById != mFields.end())
+		BS_EXCEPT(InternalErrorException, "Field with the same ID already exists.");
+
+	String& name = field->Name;
+	auto foundElementByName = std::find_if(mFields.begin(), mFields.end(), [&name](RTTIField* x)
+										   { return x->Name == name; });
+
+	if(foundElementByName != mFields.end())
+		BS_EXCEPT(InternalErrorException, "Field with the same name already exists.");
+
+	mFields.push_back(field);
+}
+
+void RTTITypeBase::InitSchemaInternal()
+{
+	mSchema = bs_shared_ptr_new<RTTISchema>();
+	mSchema->TypeId = GetRttiId();
+
+	RTTITypeBase* baseType = GetBaseClass();
+	if(baseType)
+		mSchema->BaseTypeSchema = baseType->GetSchema();
+
+	for(auto& entry : mFields)
 	{
-		auto foundElement = std::find_if(mFields.begin(), mFields.end(), [&name](RTTIField* x)
-										 { return x->Name == name; });
+		entry->InitSchema();
+		mSchema->FieldSchemas.push_back(entry->Schema);
+	}
+}
 
-		if(foundElement == mFields.end())
-		{
-			BS_EXCEPT(InternalErrorException, "Cannot find a field with the specified name: " + name);
-		}
+RTTITypeBase* RTTISchema::GetRttiStatic()
+{
+	return RTTISchemaRTTI::Instance();
+}
 
-		return *foundElement;
+RTTITypeBase* RTTISchema::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+class SerializationContextRTTI : public RTTIType<SerializationContext, IReflectable, SerializationContextRTTI>
+{
+	const String& GetRttiName() override
+	{
+		static String name = "SerializationContext";
+		return name;
 	}
 
-	RTTIField* RTTITypeBase::FindField(int uniqueFieldId)
+	u32 GetRttiId() override
 	{
-		auto foundElement = std::find_if(mFields.begin(), mFields.end(), [&uniqueFieldId](RTTIField* x)
-										 { return x->Schema.Id == uniqueFieldId; });
-
-		if(foundElement == mFields.end())
-			return nullptr;
-
-		return *foundElement;
+		return TID_SerializationContext;
 	}
 
-	void RTTITypeBase::AddNewField(RTTIField* field)
+	SPtr<IReflectable> NewRttiObject()
 	{
-		if(field == nullptr)
-			BS_EXCEPT(InvalidParametersException, "Field argument can't be null.");
-
-		int uniqueId = field->Schema.Id;
-		auto foundElementById = std::find_if(mFields.begin(), mFields.end(), [uniqueId](RTTIField* x)
-											 { return x->Schema.Id == uniqueId; });
-
-		if(foundElementById != mFields.end())
-			BS_EXCEPT(InternalErrorException, "Field with the same ID already exists.");
-
-		String& name = field->Name;
-		auto foundElementByName = std::find_if(mFields.begin(), mFields.end(), [&name](RTTIField* x)
-											   { return x->Name == name; });
-
-		if(foundElementByName != mFields.end())
-			BS_EXCEPT(InternalErrorException, "Field with the same name already exists.");
-
-		mFields.push_back(field);
+		BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
+		return nullptr;
 	}
+};
 
-	void RTTITypeBase::InitSchemaInternal()
-	{
-		mSchema = bs_shared_ptr_new<RTTISchema>();
-		mSchema->TypeId = GetRttiId();
+RTTITypeBase* SerializationContext::GetRttiStatic()
+{
+	return SerializationContextRTTI::Instance();
+}
 
-		RTTITypeBase* baseType = GetBaseClass();
-		if(baseType)
-			mSchema->BaseTypeSchema = baseType->GetSchema();
+RTTITypeBase* SerializationContext::GetRtti() const
+{
+	return GetRttiStatic();
+}
 
-		for(auto& entry : mFields)
-		{
-			entry->InitSchema();
-			mSchema->FieldSchemas.push_back(entry->Schema);
-		}
-	}
-
-	RTTITypeBase* RTTISchema::GetRttiStatic()
-	{
-		return RTTISchemaRTTI::Instance();
-	}
-
-	RTTITypeBase* RTTISchema::GetRtti() const
-	{
-		return GetRttiStatic();
-	}
-
-	class SerializationContextRTTI : public RTTIType<SerializationContext, IReflectable, SerializationContextRTTI>
-	{
-		const String& GetRttiName() override
-		{
-			static String name = "SerializationContext";
-			return name;
-		}
-
-		u32 GetRttiId() override
-		{
-			return TID_SerializationContext;
-		}
-
-		SPtr<IReflectable> NewRttiObject()
-		{
-			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
-			return nullptr;
-		}
-	};
-
-	RTTITypeBase* SerializationContext::GetRttiStatic()
-	{
-		return SerializationContextRTTI::Instance();
-	}
-
-	RTTITypeBase* SerializationContext::GetRtti() const
-	{
-		return GetRttiStatic();
-	}
-
-	SPtr<IReflectable> rtti_create(u32 rttiId)
-	{
-		return IReflectable::CreateInstanceFromTypeId(rttiId);
-	}
+SPtr<IReflectable> rtti_create(u32 rttiId)
+{
+	return IReflectable::CreateInstanceFromTypeId(rttiId);
+}
 } // namespace bs

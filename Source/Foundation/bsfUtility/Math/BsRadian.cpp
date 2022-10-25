@@ -5,50 +5,50 @@
 
 namespace bs
 {
-	Radian::Radian(const Degree& d)
-		: mRad(d.ValueRadians())
-	{}
+Radian::Radian(const Degree& d)
+	: mRad(d.ValueRadians())
+{}
 
-	Radian Radian::Wrap()
-	{
-		mRad = fmod(mRad, Math::TWO_PI);
+Radian Radian::Wrap()
+{
+	mRad = fmod(mRad, Math::TWO_PI);
 
-		if(mRad < 0)
-			mRad += Math::TWO_PI;
+	if(mRad < 0)
+		mRad += Math::TWO_PI;
 
-		return *this;
-	}
+	return *this;
+}
 
-	Radian& Radian::operator=(const Degree& d)
-	{
-		mRad = d.ValueRadians();
-		return *this;
-	}
+Radian& Radian::operator=(const Degree& d)
+{
+	mRad = d.ValueRadians();
+	return *this;
+}
 
-	Radian Radian::operator+(const Degree& d) const
-	{
-		return Radian(mRad + d.ValueRadians());
-	}
+Radian Radian::operator+(const Degree& d) const
+{
+	return Radian(mRad + d.ValueRadians());
+}
 
-	Radian& Radian::operator+=(const Degree& d)
-	{
-		mRad += d.ValueRadians();
-		return *this;
-	}
+Radian& Radian::operator+=(const Degree& d)
+{
+	mRad += d.ValueRadians();
+	return *this;
+}
 
-	Radian Radian::operator-(const Degree& d) const
-	{
-		return Radian(mRad - d.ValueRadians());
-	}
+Radian Radian::operator-(const Degree& d) const
+{
+	return Radian(mRad - d.ValueRadians());
+}
 
-	Radian& Radian::operator-=(const Degree& d)
-	{
-		mRad -= d.ValueRadians();
-		return *this;
-	}
+Radian& Radian::operator-=(const Degree& d)
+{
+	mRad -= d.ValueRadians();
+	return *this;
+}
 
-	float Radian::ValueDegrees() const
-	{
-		return mRad * Math::RAD2DEG;
-	}
+float Radian::ValueDegrees() const
+{
+	return mRad * Math::RAD2DEG;
+}
 } // namespace bs

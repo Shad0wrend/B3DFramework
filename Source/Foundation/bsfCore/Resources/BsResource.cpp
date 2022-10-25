@@ -6,76 +6,76 @@
 
 namespace bs
 {
-	Resource::Resource(bool initializeOnRenderThread)
-		: CoreObject(initializeOnRenderThread), mSize(0), mKeepSourceData(true)
+Resource::Resource(bool initializeOnRenderThread)
+	: CoreObject(initializeOnRenderThread), mSize(0), mKeepSourceData(true)
+{
+	mMetaData = bs_shared_ptr_new<ResourceMetaData>();
+}
+
+const String& Resource::GetName() const
+{
+	return mMetaData->DisplayName;
+}
+
+void Resource::SetName(const String& name)
+{
+	mMetaData->DisplayName = name;
+}
+
+void Resource::GetResourceDependencies(FrameVector<HResource>& dependencies) const
+{
+	Lock lock(mDependenciesMutex);
+
+	for(auto& dependency : mDependencies)
 	{
-		mMetaData = bs_shared_ptr_new<ResourceMetaData>();
+		if(dependency != nullptr)
+			dependencies.push_back(static_resource_cast<Resource>(dependency));
 	}
+}
 
-	const String& Resource::GetName() const
+bool Resource::AreDependenciesLoaded() const
+{
+	Lock lock(mDependenciesMutex);
+	bs_frame_mark();
+
+	bool areLoaded = true;
 	{
-		return mMetaData->DisplayName;
-	}
-
-	void Resource::SetName(const String& name)
-	{
-		mMetaData->DisplayName = name;
-	}
-
-	void Resource::GetResourceDependencies(FrameVector<HResource>& dependencies) const
-	{
-		Lock lock(mDependenciesMutex);
-
 		for(auto& dependency : mDependencies)
 		{
-			if(dependency != nullptr)
-				dependencies.push_back(static_resource_cast<Resource>(dependency));
-		}
-	}
-
-	bool Resource::AreDependenciesLoaded() const
-	{
-		Lock lock(mDependenciesMutex);
-		bs_frame_mark();
-
-		bool areLoaded = true;
-		{
-			for(auto& dependency : mDependencies)
+			if(dependency != nullptr && !dependency.IsLoaded())
 			{
-				if(dependency != nullptr && !dependency.IsLoaded())
-				{
-					areLoaded = false;
-					break;
-				}
+				areLoaded = false;
+				break;
 			}
 		}
-
-		bs_frame_clear();
-		return areLoaded;
 	}
 
-	void Resource::AddResourceDependency(const HResource& resource)
-	{
-		if(resource == nullptr)
-			return;
+	bs_frame_clear();
+	return areLoaded;
+}
 
-		Lock lock(mDependenciesMutex);
-		mDependencies.push_back(resource.GetWeak());
-	}
+void Resource::AddResourceDependency(const HResource& resource)
+{
+	if(resource == nullptr)
+		return;
 
-	void Resource::RemoveResourceDependency(const HResource& resource)
-	{
-		Lock lock(mDependenciesMutex);
-		mDependencies.erase(std::remove(mDependencies.begin(), mDependencies.end(), resource.GetWeak()), mDependencies.end());
-	}
+	Lock lock(mDependenciesMutex);
+	mDependencies.push_back(resource.GetWeak());
+}
 
-	RTTITypeBase* Resource::GetRttiStatic()
-	{
-		return ResourceRTTI::Instance();
-	}
+void Resource::RemoveResourceDependency(const HResource& resource)
+{
+	Lock lock(mDependenciesMutex);
+	mDependencies.erase(std::remove(mDependencies.begin(), mDependencies.end(), resource.GetWeak()), mDependencies.end());
+}
 
-	RTTITypeBase* Resource::GetRtti() const
-	{
-		return Resource::GetRttiStatic();
-	}
+RTTITypeBase* Resource::GetRttiStatic()
+{
+	return ResourceRTTI::Instance();
+}
+
+RTTITypeBase* Resource::GetRtti() const
+{
+	return Resource::GetRttiStatic();
+}
 } // namespace bs

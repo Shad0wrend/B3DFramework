@@ -5,44 +5,44 @@
 
 namespace bs
 {
-	TestSuite::TestEntry::TestEntry(Func test, const String& name)
-		: Test(test), Name(name)
-	{}
+TestSuite::TestEntry::TestEntry(Func test, const String& name)
+	: Test(test), Name(name)
+{}
 
-	void TestSuite::Run(TestOutput& output)
+void TestSuite::Run(TestOutput& output)
+{
+	mOutput = &output;
+
+	StartUp();
+
+	for(auto& testEntry : mTests)
 	{
-		mOutput = &output;
+		mActiveTestName = testEntry.Name;
 
-		StartUp();
-
-		for(auto& testEntry : mTests)
-		{
-			mActiveTestName = testEntry.Name;
-
-			(this->*(testEntry.Test))();
-		}
-
-		for(auto& suite : mSuites)
-		{
-			suite->Run(output);
-		}
-
-		ShutDown();
+		(this->*(testEntry.Test))();
 	}
 
-	void TestSuite::Add(const SPtr<TestSuite>& suite)
+	for(auto& suite : mSuites)
 	{
-		mSuites.push_back(suite);
+		suite->Run(output);
 	}
 
-	void TestSuite::AddTest(Func test, const String& name)
-	{
-		mTests.push_back(TestEntry(test, name));
-	}
+	ShutDown();
+}
 
-	void TestSuite::Assertment(bool success, const String& desc, const String& file, long line)
-	{
-		if(!success)
-			mOutput->OutputFail(desc, mActiveTestName, file, line);
-	}
+void TestSuite::Add(const SPtr<TestSuite>& suite)
+{
+	mSuites.push_back(suite);
+}
+
+void TestSuite::AddTest(Func test, const String& name)
+{
+	mTests.push_back(TestEntry(test, name));
+}
+
+void TestSuite::Assertment(bool success, const String& desc, const String& file, long line)
+{
+	if(!success)
+		mOutput->OutputFail(desc, mActiveTestName, file, line);
+}
 } // namespace bs

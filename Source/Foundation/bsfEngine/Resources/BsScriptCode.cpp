@@ -6,33 +6,33 @@
 
 namespace bs
 {
-	ScriptCode::ScriptCode(const WString& data, bool editorScript)
-		: Resource(false), mString(data), mEditorScript(editorScript)
-	{
-	}
+ScriptCode::ScriptCode(const WString& data, bool editorScript)
+	: Resource(false), mString(data), mEditorScript(editorScript)
+{
+}
 
-	HScriptCode ScriptCode::Create(const WString& data, bool editorScript)
-	{
-		return static_resource_cast<ScriptCode>(gResources().CreateResourceHandleInternal(CreatePtrInternal(data, editorScript)));
-	}
+HScriptCode ScriptCode::Create(const WString& data, bool editorScript)
+{
+	return static_resource_cast<ScriptCode>(gResources().CreateResourceHandleInternal(CreatePtrInternal(data, editorScript)));
+}
 
-	SPtr<ScriptCode> ScriptCode::CreatePtrInternal(const WString& data, bool editorScript)
-	{
-		SPtr<ScriptCode> scriptCodePtr = bs_core_ptr<ScriptCode>(
-			new(bs_alloc<ScriptCode>()) ScriptCode(data, editorScript));
-		scriptCodePtr->SetThisPtrInternal(scriptCodePtr);
-		scriptCodePtr->Initialize();
+SPtr<ScriptCode> ScriptCode::CreatePtrInternal(const WString& data, bool editorScript)
+{
+	SPtr<ScriptCode> scriptCodePtr = bs_core_ptr<ScriptCode>(
+		new(bs_alloc<ScriptCode>()) ScriptCode(data, editorScript));
+	scriptCodePtr->SetThisPtrInternal(scriptCodePtr);
+	scriptCodePtr->Initialize();
 
-		return scriptCodePtr;
-	}
+	return scriptCodePtr;
+}
 
-	RTTITypeBase* ScriptCode::GetRttiStatic()
-	{
-		return ScriptCodeRTTI::Instance();
-	}
+RTTITypeBase* ScriptCode::GetRttiStatic()
+{
+	return ScriptCodeRTTI::Instance();
+}
 
-	RTTITypeBase* ScriptCode::GetRtti() const
-	{
-		return ScriptCode::GetRttiStatic();
-	}
+RTTITypeBase* ScriptCode::GetRtti() const
+{
+	return ScriptCode::GetRttiStatic();
+}
 } // namespace bs
