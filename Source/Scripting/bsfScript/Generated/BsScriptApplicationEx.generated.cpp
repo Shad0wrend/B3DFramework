@@ -8,58 +8,56 @@
 #include "BsScriptVideoMode.generated.h"
 #include "BsScriptSTART_UP_DESC.generated.h"
 
-namespace bs
-{
+using namespace bs;
 #if !BS_IS_BANSHEE3D
-	ScriptApplicationEx::ScriptApplicationEx(MonoObject* managedInstance, const SPtr<ApplicationEx>& value)
-		: ScriptObject(managedInstance), mInternal(value)
-	{
-	}
+ScriptApplicationEx::ScriptApplicationEx(MonoObject* managedInstance, const SPtr<ApplicationEx>& value)
+	: ScriptObject(managedInstance), mInternal(value)
+{
+}
 
-	void ScriptApplicationEx::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_StartUp", (void*)&ScriptApplicationEx::InternalStartUp);
-		metaData.ScriptClass->AddInternalCall("Internal_StartUp0", (void*)&ScriptApplicationEx::InternalStartUp0);
-		metaData.ScriptClass->AddInternalCall("Internal_RunMainLoop", (void*)&ScriptApplicationEx::InternalRunMainLoop);
-		metaData.ScriptClass->AddInternalCall("Internal_ShutDown", (void*)&ScriptApplicationEx::InternalShutDown);
-	}
+void ScriptApplicationEx::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_StartUp", (void*)&ScriptApplicationEx::InternalStartUp);
+	metaData.ScriptClass->AddInternalCall("Internal_StartUp0", (void*)&ScriptApplicationEx::InternalStartUp0);
+	metaData.ScriptClass->AddInternalCall("Internal_RunMainLoop", (void*)&ScriptApplicationEx::InternalRunMainLoop);
+	metaData.ScriptClass->AddInternalCall("Internal_ShutDown", (void*)&ScriptApplicationEx::InternalShutDown);
+}
 
-	MonoObject* ScriptApplicationEx::Create(const SPtr<ApplicationEx>& value)
-	{
-		if(value == nullptr) return nullptr;
+MonoObject* ScriptApplicationEx::Create(const SPtr<ApplicationEx>& value)
+{
+	if(value == nullptr) return nullptr;
 
-		bool dummy = false;
-		void* ctorParams[1] = { &dummy };
+	bool dummy = false;
+	void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new(bs_alloc<ScriptApplicationEx>()) ScriptApplicationEx(managedInstance, value);
-		return managedInstance;
-	}
+	MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
+	new(bs_alloc<ScriptApplicationEx>()) ScriptApplicationEx(managedInstance, value);
+	return managedInstance;
+}
 
-	void ScriptApplicationEx::InternalStartUp(__START_UP_DESCInterop* desc)
-	{
-		START_UP_DESC tmpdesc;
-		tmpdesc = ScriptSTART_UP_DESC::FromInterop(*desc);
-		ApplicationEx::StartUp(tmpdesc);
-	}
+void ScriptApplicationEx::InternalStartUp(__START_UP_DESCInterop* desc)
+{
+	START_UP_DESC tmpdesc;
+	tmpdesc = ScriptSTART_UP_DESC::FromInterop(*desc);
+	ApplicationEx::StartUp(tmpdesc);
+}
 
-	void ScriptApplicationEx::InternalStartUp0(__VideoModeInterop* videoMode, MonoString* title, bool fullscreen)
-	{
-		VideoMode tmpvideoMode;
-		tmpvideoMode = ScriptVideoMode::FromInterop(*videoMode);
-		String tmptitle;
-		tmptitle = MonoUtil::MonoToString(title);
-		ApplicationEx::StartUp(tmpvideoMode, tmptitle, fullscreen);
-	}
+void ScriptApplicationEx::InternalStartUp0(__VideoModeInterop* videoMode, MonoString* title, bool fullscreen)
+{
+	VideoMode tmpvideoMode;
+	tmpvideoMode = ScriptVideoMode::FromInterop(*videoMode);
+	String tmptitle;
+	tmptitle = MonoUtil::MonoToString(title);
+	ApplicationEx::StartUp(tmpvideoMode, tmptitle, fullscreen);
+}
 
-	void ScriptApplicationEx::InternalRunMainLoop()
-	{
-		ApplicationEx::RunMainLoop();
-	}
+void ScriptApplicationEx::InternalRunMainLoop()
+{
+	ApplicationEx::RunMainLoop();
+}
 
-	void ScriptApplicationEx::InternalShutDown()
-	{
-		ApplicationEx::ShutDown();
-	}
+void ScriptApplicationEx::InternalShutDown()
+{
+	ApplicationEx::ShutDown();
+}
 #endif
-} // namespace bs

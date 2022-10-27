@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptColor::ScriptColor(MonoObject* instance)
+	: ScriptObject(instance)
+{}
+
+void ScriptColor::InitRuntimeData()
+{}
+
+MonoObject* ScriptColor::Box(const Color& value)
 {
-	ScriptColor::ScriptColor(MonoObject* instance)
-		: ScriptObject(instance)
-	{}
+	// We're casting away const but it's fine since structs are passed by value anyway
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptColor::InitRuntimeData()
-	{}
-
-	MonoObject* ScriptColor::Box(const Color& value)
-	{
-		// We're casting away const but it's fine since structs are passed by value anyway
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	Color ScriptColor::Unbox(MonoObject* obj)
-	{
-		return *(Color*)MonoUtil::Unbox(obj);
-	}
-} // namespace bs
+Color ScriptColor::Unbox(MonoObject* obj)
+{
+	return *(Color*)MonoUtil::Unbox(obj);
+}

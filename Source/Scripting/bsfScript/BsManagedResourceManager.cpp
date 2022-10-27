@@ -3,32 +3,30 @@
 #include "BsManagedResourceManager.h"
 #include "Resources/BsResources.h"
 
-namespace bs
+using namespace bs;
+ManagedResourceManager::~ManagedResourceManager()
 {
-	ManagedResourceManager::~ManagedResourceManager()
+	Clear();
+}
+
+void ManagedResourceManager::Clear()
+{
+	UnorderedMap<UUID, WeakResourceHandle<ManagedResource>> resourceCopy = mResources;
+	for(auto& resourcePair : resourceCopy)
 	{
-		Clear();
+		WeakResourceHandle<ManagedResource> resource = resourcePair.second;
+		gResources().Release((WeakResourceHandle<Resource>&)resource);
 	}
 
-	void ManagedResourceManager::Clear()
-	{
-		UnorderedMap<UUID, WeakResourceHandle<ManagedResource>> resourceCopy = mResources;
-		for(auto& resourcePair : resourceCopy)
-		{
-			WeakResourceHandle<ManagedResource> resource = resourcePair.second;
-			gResources().Release((WeakResourceHandle<Resource>&)resource);
-		}
+	mResources.clear();
+}
 
-		mResources.clear();
-	}
+void ManagedResourceManager::RegisterManagedResource(const WeakResourceHandle<ManagedResource>& resource)
+{
+	mResources.insert(std::make_pair(resource.GetUuid(), resource));
+}
 
-	void ManagedResourceManager::RegisterManagedResource(const WeakResourceHandle<ManagedResource>& resource)
-	{
-		mResources.insert(std::make_pair(resource.GetUuid(), resource));
-	}
-
-	void ManagedResourceManager::UnregisterManagedResource(const WeakResourceHandle<ManagedResource>& resource)
-	{
-		mResources.erase(resource.GetUuid());
-	}
-} // namespace bs
+void ManagedResourceManager::UnregisterManagedResource(const WeakResourceHandle<ManagedResource>& resource)
+{
+	mResources.erase(resource.GetUuid());
+}

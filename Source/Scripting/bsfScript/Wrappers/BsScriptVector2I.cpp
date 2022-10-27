@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptVector2I::ScriptVector2I(MonoObject* instance)
+	: ScriptObject(instance)
+{}
+
+void ScriptVector2I::InitRuntimeData()
+{}
+
+MonoObject* ScriptVector2I::Box(const Vector2I& value)
 {
-	ScriptVector2I::ScriptVector2I(MonoObject* instance)
-		: ScriptObject(instance)
-	{}
+	// We're casting away const but it's fine since structs are passed by value anyway
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptVector2I::InitRuntimeData()
-	{}
-
-	MonoObject* ScriptVector2I::Box(const Vector2I& value)
-	{
-		// We're casting away const but it's fine since structs are passed by value anyway
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	Vector2I ScriptVector2I::Unbox(MonoObject* obj)
-	{
-		return *(Vector2I*)MonoUtil::Unbox(obj);
-	}
-} // namespace bs
+Vector2I ScriptVector2I::Unbox(MonoObject* obj)
+{
+	return *(Vector2I*)MonoUtil::Unbox(obj);
+}

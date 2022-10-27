@@ -3,15 +3,13 @@
 #include "Extensions/BsPhysicsMeshEx.h"
 #include "Renderer/BsRendererMeshData.h"
 
-namespace bs
+using namespace bs;
+HPhysicsMesh PhysicsMeshEx::Create(const SPtr<RendererMeshData>& meshData, PhysicsMeshType type)
 {
-	HPhysicsMesh PhysicsMeshEx::Create(const SPtr<RendererMeshData>& meshData, PhysicsMeshType type)
-	{
-		return PhysicsMesh::Create(meshData->GetData(), type);
-	}
+	return PhysicsMesh::Create(meshData->GetData(), type);
+}
 
-	SPtr<RendererMeshData> PhysicsMeshEx::GetMeshData(const HPhysicsMesh& thisPtr)
-	{
-		return RendererMeshData::Create(thisPtr->GetMeshData());
-	}
-} // namespace bs
+SPtr<RendererMeshData> PhysicsMeshEx::GetMeshData(const HPhysicsMesh& thisPtr)
+{
+	return RendererMeshData::Create(thisPtr->GetMeshData());
+}

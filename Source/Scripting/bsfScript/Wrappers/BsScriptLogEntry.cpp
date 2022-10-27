@@ -5,12 +5,10 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
-{
-	ScriptLogEntry::ScriptLogEntry(MonoObject* instance)
-		: ScriptObject(instance)
-	{}
+using namespace bs;
+ScriptLogEntry::ScriptLogEntry(MonoObject* instance)
+	: ScriptObject(instance)
+{}
 
-	void ScriptLogEntry::InitRuntimeData()
-	{}
-} // namespace bs
+void ScriptLogEntry::InitRuntimeData()
+{}

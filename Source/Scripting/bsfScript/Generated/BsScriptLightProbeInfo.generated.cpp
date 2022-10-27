@@ -7,41 +7,39 @@
 #include "Math/BsVector3.h"
 #include "Wrappers/BsScriptVector.h"
 
-namespace bs
+using namespace bs;
+ScriptLightProbeInfo::ScriptLightProbeInfo(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptLightProbeInfo::InitRuntimeData()
+{}
+
+MonoObject* ScriptLightProbeInfo::Box(const __LightProbeInfoInterop& value)
 {
-	ScriptLightProbeInfo::ScriptLightProbeInfo(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptLightProbeInfo::InitRuntimeData()
-	{}
+__LightProbeInfoInterop ScriptLightProbeInfo::Unbox(MonoObject* value)
+{
+	return *(__LightProbeInfoInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptLightProbeInfo::Box(const __LightProbeInfoInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+LightProbeInfo ScriptLightProbeInfo::FromInterop(const __LightProbeInfoInterop& value)
+{
+	LightProbeInfo output;
+	output.Handle = value.Handle;
+	output.Position = value.Position;
 
-	__LightProbeInfoInterop ScriptLightProbeInfo::Unbox(MonoObject* value)
-	{
-		return *(__LightProbeInfoInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	LightProbeInfo ScriptLightProbeInfo::FromInterop(const __LightProbeInfoInterop& value)
-	{
-		LightProbeInfo output;
-		output.Handle = value.Handle;
-		output.Position = value.Position;
+__LightProbeInfoInterop ScriptLightProbeInfo::ToInterop(const LightProbeInfo& value)
+{
+	__LightProbeInfoInterop output;
+	output.Handle = value.Handle;
+	output.Position = value.Position;
 
-		return output;
-	}
+	return output;
+}
 
-	__LightProbeInfoInterop ScriptLightProbeInfo::ToInterop(const LightProbeInfo& value)
-	{
-		__LightProbeInfoInterop output;
-		output.Handle = value.Handle;
-		output.Position = value.Position;
-
-		return output;
-	}
-
-} // namespace bs

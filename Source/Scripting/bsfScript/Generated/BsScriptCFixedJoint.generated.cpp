@@ -6,15 +6,13 @@
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Components/BsCFixedJoint.h"
 
-namespace bs
+using namespace bs;
+ScriptCFixedJoint::ScriptCFixedJoint(MonoObject* managedInstance, const GameObjectHandle<CFixedJoint>& value)
+	: TScriptComponent(managedInstance, value)
 {
-	ScriptCFixedJoint::ScriptCFixedJoint(MonoObject* managedInstance, const GameObjectHandle<CFixedJoint>& value)
-		: TScriptComponent(managedInstance, value)
-	{
-	}
+}
 
-	void ScriptCFixedJoint::InitRuntimeData()
-	{
-	}
+void ScriptCFixedJoint::InitRuntimeData()
+{
+}
 
-} // namespace bs

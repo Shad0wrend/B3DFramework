@@ -7,47 +7,45 @@
 #include "../../../Foundation/bsfCore/Components/BsCPlaneCollider.h"
 #include "Wrappers/BsScriptVector.h"
 
-namespace bs
+using namespace bs;
+ScriptCPlaneCollider::ScriptCPlaneCollider(MonoObject* managedInstance, const GameObjectHandle<CPlaneCollider>& value)
+	: TScriptComponent(managedInstance, value)
 {
-	ScriptCPlaneCollider::ScriptCPlaneCollider(MonoObject* managedInstance, const GameObjectHandle<CPlaneCollider>& value)
-		: TScriptComponent(managedInstance, value)
-	{
-	}
+}
 
-	void ScriptCPlaneCollider::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_SetNormal", (void*)&ScriptCPlaneCollider::InternalSetNormal);
-		metaData.ScriptClass->AddInternalCall("Internal_GetNormal", (void*)&ScriptCPlaneCollider::InternalGetNormal);
-		metaData.ScriptClass->AddInternalCall("Internal_SetDistance", (void*)&ScriptCPlaneCollider::InternalSetDistance);
-		metaData.ScriptClass->AddInternalCall("Internal_GetDistance", (void*)&ScriptCPlaneCollider::InternalGetDistance);
-	}
+void ScriptCPlaneCollider::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_SetNormal", (void*)&ScriptCPlaneCollider::InternalSetNormal);
+	metaData.ScriptClass->AddInternalCall("Internal_GetNormal", (void*)&ScriptCPlaneCollider::InternalGetNormal);
+	metaData.ScriptClass->AddInternalCall("Internal_SetDistance", (void*)&ScriptCPlaneCollider::InternalSetDistance);
+	metaData.ScriptClass->AddInternalCall("Internal_GetDistance", (void*)&ScriptCPlaneCollider::InternalGetDistance);
+}
 
-	void ScriptCPlaneCollider::InternalSetNormal(ScriptCPlaneCollider* thisPtr, Vector3* normal)
-	{
-		thisPtr->GetHandle()->SetNormal(*normal);
-	}
+void ScriptCPlaneCollider::InternalSetNormal(ScriptCPlaneCollider* thisPtr, Vector3* normal)
+{
+	thisPtr->GetHandle()->SetNormal(*normal);
+}
 
-	void ScriptCPlaneCollider::InternalGetNormal(ScriptCPlaneCollider* thisPtr, Vector3* __output)
-	{
-		Vector3 tmp__output;
-		tmp__output = thisPtr->GetHandle()->GetNormal();
+void ScriptCPlaneCollider::InternalGetNormal(ScriptCPlaneCollider* thisPtr, Vector3* __output)
+{
+	Vector3 tmp__output;
+	tmp__output = thisPtr->GetHandle()->GetNormal();
 
-		*__output = tmp__output;
-	}
+	*__output = tmp__output;
+}
 
-	void ScriptCPlaneCollider::InternalSetDistance(ScriptCPlaneCollider* thisPtr, float distance)
-	{
-		thisPtr->GetHandle()->SetDistance(distance);
-	}
+void ScriptCPlaneCollider::InternalSetDistance(ScriptCPlaneCollider* thisPtr, float distance)
+{
+	thisPtr->GetHandle()->SetDistance(distance);
+}
 
-	float ScriptCPlaneCollider::InternalGetDistance(ScriptCPlaneCollider* thisPtr)
-	{
-		float tmp__output;
-		tmp__output = thisPtr->GetHandle()->GetDistance();
+float ScriptCPlaneCollider::InternalGetDistance(ScriptCPlaneCollider* thisPtr)
+{
+	float tmp__output;
+	tmp__output = thisPtr->GetHandle()->GetDistance();
 
-		float __output;
-		__output = tmp__output;
+	float __output;
+	__output = tmp__output;
 
-		return __output;
-	}
-} // namespace bs
+	return __output;
+}

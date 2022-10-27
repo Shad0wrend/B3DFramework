@@ -9,53 +9,51 @@
 #include "../../../Foundation/bsfCore/Animation/BsAnimationClip.h"
 #include "BsScriptAnimationClip.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptBlendClipInfo::ScriptBlendClipInfo(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptBlendClipInfo::InitRuntimeData()
+{}
+
+MonoObject* ScriptBlendClipInfo::Box(const __BlendClipInfoInterop& value)
 {
-	ScriptBlendClipInfo::ScriptBlendClipInfo(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptBlendClipInfo::InitRuntimeData()
-	{}
+__BlendClipInfoInterop ScriptBlendClipInfo::Unbox(MonoObject* value)
+{
+	return *(__BlendClipInfoInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptBlendClipInfo::Box(const __BlendClipInfoInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+BlendClipInfo ScriptBlendClipInfo::FromInterop(const __BlendClipInfoInterop& value)
+{
+	BlendClipInfo output;
+	ResourceHandle<AnimationClip> tmpClip;
+	ScriptRRefBase* scriptClip;
+	scriptClip = ScriptRRefBase::ToNative(value.Clip);
+	if(scriptClip != nullptr)
+		tmpClip = static_resource_cast<AnimationClip>(scriptClip->GetHandle());
+	output.Clip = tmpClip;
+	output.Position = value.Position;
 
-	__BlendClipInfoInterop ScriptBlendClipInfo::Unbox(MonoObject* value)
-	{
-		return *(__BlendClipInfoInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	BlendClipInfo ScriptBlendClipInfo::FromInterop(const __BlendClipInfoInterop& value)
-	{
-		BlendClipInfo output;
-		ResourceHandle<AnimationClip> tmpClip;
-		ScriptRRefBase* scriptClip;
-		scriptClip = ScriptRRefBase::ToNative(value.Clip);
-		if(scriptClip != nullptr)
-			tmpClip = static_resource_cast<AnimationClip>(scriptClip->GetHandle());
-		output.Clip = tmpClip;
-		output.Position = value.Position;
+__BlendClipInfoInterop ScriptBlendClipInfo::ToInterop(const BlendClipInfo& value)
+{
+	__BlendClipInfoInterop output;
+	MonoObject* tmpClip;
+	ScriptRRefBase* scriptClip;
+	scriptClip = ScriptResourceManager::Instance().GetScriptRRef(value.Clip);
+	if(scriptClip != nullptr)
+		tmpClip = scriptClip->GetManagedInstance();
+	else
+		tmpClip = nullptr;
+	output.Clip = tmpClip;
+	output.Position = value.Position;
 
-		return output;
-	}
+	return output;
+}
 
-	__BlendClipInfoInterop ScriptBlendClipInfo::ToInterop(const BlendClipInfo& value)
-	{
-		__BlendClipInfoInterop output;
-		MonoObject* tmpClip;
-		ScriptRRefBase* scriptClip;
-		scriptClip = ScriptResourceManager::Instance().GetScriptRRef(value.Clip);
-		if(scriptClip != nullptr)
-			tmpClip = scriptClip->GetManagedInstance();
-		else
-			tmpClip = nullptr;
-		output.Clip = tmpClip;
-		output.Position = value.Position;
-
-		return output;
-	}
-
-} // namespace bs

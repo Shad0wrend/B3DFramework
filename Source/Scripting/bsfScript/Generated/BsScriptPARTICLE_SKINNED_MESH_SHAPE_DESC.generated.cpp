@@ -8,56 +8,54 @@
 #include "../../../Foundation/bsfCore/Components/BsCRenderable.h"
 #include "BsScriptCRenderable.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::InitRuntimeData()
+{}
+
+MonoObject* ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::Box(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value)
 {
-	ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::InitRuntimeData()
-	{}
+__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::Unbox(MonoObject* value)
+{
+	return *(__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::Box(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+PARTICLE_SKINNED_MESH_SHAPE_DESC ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::FromInterop(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value)
+{
+	PARTICLE_SKINNED_MESH_SHAPE_DESC output;
+	output.Type = value.Type;
+	output.Sequential = value.Sequential;
+	GameObjectHandle<CRenderable> tmpRenderable;
+	ScriptCRenderable* scriptRenderable;
+	scriptRenderable = ScriptCRenderable::ToNative(value.Renderable);
+	if(scriptRenderable != nullptr)
+		tmpRenderable = scriptRenderable->GetHandle();
+	output.Renderable = tmpRenderable;
 
-	__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::Unbox(MonoObject* value)
-	{
-		return *(__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	PARTICLE_SKINNED_MESH_SHAPE_DESC ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::FromInterop(const __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop& value)
-	{
-		PARTICLE_SKINNED_MESH_SHAPE_DESC output;
-		output.Type = value.Type;
-		output.Sequential = value.Sequential;
-		GameObjectHandle<CRenderable> tmpRenderable;
-		ScriptCRenderable* scriptRenderable;
-		scriptRenderable = ScriptCRenderable::ToNative(value.Renderable);
-		if(scriptRenderable != nullptr)
-			tmpRenderable = scriptRenderable->GetHandle();
-		output.Renderable = tmpRenderable;
+__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::ToInterop(const PARTICLE_SKINNED_MESH_SHAPE_DESC& value)
+{
+	__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop output;
+	output.Type = value.Type;
+	output.Sequential = value.Sequential;
+	MonoObject* tmpRenderable;
+	ScriptComponentBase* scriptRenderable = nullptr;
+	if(value.Renderable.GetComponent())
+		scriptRenderable = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Renderable.GetComponent()));
+	if(scriptRenderable != nullptr)
+		tmpRenderable = scriptRenderable->GetManagedInstance();
+	else
+		tmpRenderable = nullptr;
+	output.Renderable = tmpRenderable;
 
-		return output;
-	}
+	return output;
+}
 
-	__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC::ToInterop(const PARTICLE_SKINNED_MESH_SHAPE_DESC& value)
-	{
-		__PARTICLE_SKINNED_MESH_SHAPE_DESCInterop output;
-		output.Type = value.Type;
-		output.Sequential = value.Sequential;
-		MonoObject* tmpRenderable;
-		ScriptComponentBase* scriptRenderable = nullptr;
-		if(value.Renderable.GetComponent())
-			scriptRenderable = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Renderable.GetComponent()));
-		if(scriptRenderable != nullptr)
-			tmpRenderable = scriptRenderable->GetManagedInstance();
-		else
-			tmpRenderable = nullptr;
-		output.Renderable = tmpRenderable;
-
-		return output;
-	}
-
-} // namespace bs

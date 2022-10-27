@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptPARTICLE_COLLISIONS_DESC::ScriptPARTICLE_COLLISIONS_DESC(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptPARTICLE_COLLISIONS_DESC::InitRuntimeData()
+{}
+
+MonoObject* ScriptPARTICLE_COLLISIONS_DESC::Box(const PARTICLE_COLLISIONS_DESC& value)
 {
-	ScriptPARTICLE_COLLISIONS_DESC::ScriptPARTICLE_COLLISIONS_DESC(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptPARTICLE_COLLISIONS_DESC::InitRuntimeData()
-	{}
+PARTICLE_COLLISIONS_DESC ScriptPARTICLE_COLLISIONS_DESC::Unbox(MonoObject* value)
+{
+	return *(PARTICLE_COLLISIONS_DESC*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptPARTICLE_COLLISIONS_DESC::Box(const PARTICLE_COLLISIONS_DESC& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	PARTICLE_COLLISIONS_DESC ScriptPARTICLE_COLLISIONS_DESC::Unbox(MonoObject* value)
-	{
-		return *(PARTICLE_COLLISIONS_DESC*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

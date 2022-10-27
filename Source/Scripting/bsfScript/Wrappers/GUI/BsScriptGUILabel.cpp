@@ -16,46 +16,44 @@
 #include "Generated/BsScriptGUIContent.generated.h"
 #include "Generated/BsScriptGUIElementStyle.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptGUILabel::ScriptGUILabel(MonoObject* instance, GUILabel* label)
+	: TScriptGUIElement(instance, label)
 {
-	ScriptGUILabel::ScriptGUILabel(MonoObject* instance, GUILabel* label)
-		: TScriptGUIElement(instance, label)
-	{
-	}
+}
 
-	void ScriptGUILabel::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUILabel::InternalCreateInstance);
-		metaData.ScriptClass->AddInternalCall("Internal_SetContent", (void*)&ScriptGUILabel::InternalSetContent);
-		metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUILabel::InternalSetTint);
-	}
+void ScriptGUILabel::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUILabel::InternalCreateInstance);
+	metaData.ScriptClass->AddInternalCall("Internal_SetContent", (void*)&ScriptGUILabel::InternalSetContent);
+	metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUILabel::InternalSetTint);
+}
 
-	void ScriptGUILabel::InternalCreateInstance(MonoObject* instance, __GUIContentInterop* content, MonoString* style, MonoArray* guiOptions)
-	{
-		GUIOptions options;
+void ScriptGUILabel::InternalCreateInstance(MonoObject* instance, __GUIContentInterop* content, MonoString* style, MonoArray* guiOptions)
+{
+	GUIOptions options;
 
-		ScriptArray scriptArray(guiOptions);
-		u32 arrayLen = scriptArray.Size();
-		for(u32 i = 0; i < arrayLen; i++)
-			options.AddOption(scriptArray.Get<GUIOption>(i));
+	ScriptArray scriptArray(guiOptions);
+	u32 arrayLen = scriptArray.Size();
+	for(u32 i = 0; i < arrayLen; i++)
+		options.AddOption(scriptArray.Get<GUIOption>(i));
 
-		GUIContent nativeContent = ScriptGUIContent::FromInterop(*content);
-		GUILabel* guiLabel = GUILabel::Create(nativeContent, options, MonoUtil::MonoToString(style));
+	GUIContent nativeContent = ScriptGUIContent::FromInterop(*content);
+	GUILabel* guiLabel = GUILabel::Create(nativeContent, options, MonoUtil::MonoToString(style));
 
-		new(bs_alloc<ScriptGUILabel>()) ScriptGUILabel(instance, guiLabel);
-	}
+	new(bs_alloc<ScriptGUILabel>()) ScriptGUILabel(instance, guiLabel);
+}
 
-	void ScriptGUILabel::InternalSetContent(ScriptGUILabel* nativeInstance, __GUIContentInterop* content)
-	{
-		GUIContent nativeContent = ScriptGUIContent::FromInterop(*content);
+void ScriptGUILabel::InternalSetContent(ScriptGUILabel* nativeInstance, __GUIContentInterop* content)
+{
+	GUIContent nativeContent = ScriptGUIContent::FromInterop(*content);
 
-		GUILabel* label = (GUILabel*)nativeInstance->GetGuiElement();
-		label->SetContent(nativeContent);
-	}
+	GUILabel* label = (GUILabel*)nativeInstance->GetGuiElement();
+	label->SetContent(nativeContent);
+}
 
-	void ScriptGUILabel::InternalSetTint(ScriptGUILabel* nativeInstance, Color* color)
-	{
-		GUILabel* label = (GUILabel*)nativeInstance->GetGuiElement();
-		label->SetTint(*color);
-	}
-} // namespace bs
+void ScriptGUILabel::InternalSetTint(ScriptGUILabel* nativeInstance, Color* color)
+{
+	GUILabel* label = (GUILabel*)nativeInstance->GetGuiElement();
+	label->SetTint(*color);
+}

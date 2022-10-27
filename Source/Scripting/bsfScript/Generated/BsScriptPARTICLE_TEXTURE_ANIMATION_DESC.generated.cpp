@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptPARTICLE_TEXTURE_ANIMATION_DESC::ScriptPARTICLE_TEXTURE_ANIMATION_DESC(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptPARTICLE_TEXTURE_ANIMATION_DESC::InitRuntimeData()
+{}
+
+MonoObject* ScriptPARTICLE_TEXTURE_ANIMATION_DESC::Box(const PARTICLE_TEXTURE_ANIMATION_DESC& value)
 {
-	ScriptPARTICLE_TEXTURE_ANIMATION_DESC::ScriptPARTICLE_TEXTURE_ANIMATION_DESC(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptPARTICLE_TEXTURE_ANIMATION_DESC::InitRuntimeData()
-	{}
+PARTICLE_TEXTURE_ANIMATION_DESC ScriptPARTICLE_TEXTURE_ANIMATION_DESC::Unbox(MonoObject* value)
+{
+	return *(PARTICLE_TEXTURE_ANIMATION_DESC*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptPARTICLE_TEXTURE_ANIMATION_DESC::Box(const PARTICLE_TEXTURE_ANIMATION_DESC& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	PARTICLE_TEXTURE_ANIMATION_DESC ScriptPARTICLE_TEXTURE_ANIMATION_DESC::Unbox(MonoObject* value)
-	{
-		return *(PARTICLE_TEXTURE_ANIMATION_DESC*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

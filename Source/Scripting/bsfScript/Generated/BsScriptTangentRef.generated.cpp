@@ -7,41 +7,39 @@
 #include "../../../Foundation/bsfCore/Animation/BsAnimationUtility.h"
 #include "BsScriptKeyframeRef.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptTangentRef::ScriptTangentRef(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptTangentRef::InitRuntimeData()
+{}
+
+MonoObject* ScriptTangentRef::Box(const __TangentRefInterop& value)
 {
-	ScriptTangentRef::ScriptTangentRef(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptTangentRef::InitRuntimeData()
-	{}
+__TangentRefInterop ScriptTangentRef::Unbox(MonoObject* value)
+{
+	return *(__TangentRefInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptTangentRef::Box(const __TangentRefInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+TangentRef ScriptTangentRef::FromInterop(const __TangentRefInterop& value)
+{
+	TangentRef output;
+	output.KeyframeRef = value.KeyframeRef;
+	output.Type = value.Type;
 
-	__TangentRefInterop ScriptTangentRef::Unbox(MonoObject* value)
-	{
-		return *(__TangentRefInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	TangentRef ScriptTangentRef::FromInterop(const __TangentRefInterop& value)
-	{
-		TangentRef output;
-		output.KeyframeRef = value.KeyframeRef;
-		output.Type = value.Type;
+__TangentRefInterop ScriptTangentRef::ToInterop(const TangentRef& value)
+{
+	__TangentRefInterop output;
+	output.KeyframeRef = value.KeyframeRef;
+	output.Type = value.Type;
 
-		return output;
-	}
+	return output;
+}
 
-	__TangentRefInterop ScriptTangentRef::ToInterop(const TangentRef& value)
-	{
-		__TangentRefInterop output;
-		output.KeyframeRef = value.KeyframeRef;
-		output.Type = value.Type;
-
-		return output;
-	}
-
-} // namespace bs

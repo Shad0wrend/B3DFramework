@@ -3,15 +3,13 @@
 #include "BsManagedResourceMetaData.h"
 #include "RTTI/BsManagedResourceMetaDataRTTI.h"
 
-namespace bs
+using namespace bs;
+RTTITypeBase* ManagedResourceMetaData::GetRttiStatic()
 {
-	RTTITypeBase* ManagedResourceMetaData::GetRttiStatic()
-	{
-		return ManagedResourceMetaDataRTTI::Instance();
-	}
+	return ManagedResourceMetaDataRTTI::Instance();
+}
 
-	RTTITypeBase* ManagedResourceMetaData::GetRtti() const
-	{
-		return ManagedResourceMetaData::GetRttiStatic();
-	}
-} // namespace bs
+RTTITypeBase* ManagedResourceMetaData::GetRtti() const
+{
+	return ManagedResourceMetaData::GetRttiStatic();
+}

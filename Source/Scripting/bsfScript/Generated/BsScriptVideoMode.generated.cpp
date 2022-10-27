@@ -5,49 +5,47 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
-{
+using namespace bs;
 #if !BS_IS_BANSHEE3D
-	ScriptVideoMode::ScriptVideoMode(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+ScriptVideoMode::ScriptVideoMode(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
 
-	void ScriptVideoMode::InitRuntimeData()
-	{}
+void ScriptVideoMode::InitRuntimeData()
+{}
 
-	MonoObject* ScriptVideoMode::Box(const __VideoModeInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+MonoObject* ScriptVideoMode::Box(const __VideoModeInterop& value)
+{
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	__VideoModeInterop ScriptVideoMode::Unbox(MonoObject* value)
-	{
-		return *(__VideoModeInterop*)MonoUtil::Unbox(value);
-	}
+__VideoModeInterop ScriptVideoMode::Unbox(MonoObject* value)
+{
+	return *(__VideoModeInterop*)MonoUtil::Unbox(value);
+}
 
-	VideoMode ScriptVideoMode::FromInterop(const __VideoModeInterop& value)
-	{
-		VideoMode output;
-		output.Width = value.Width;
-		output.Height = value.Height;
-		output.RefreshRate = value.RefreshRate;
-		output.OutputIdx = value.OutputIdx;
-		output.IsCustom = value.IsCustom;
+VideoMode ScriptVideoMode::FromInterop(const __VideoModeInterop& value)
+{
+	VideoMode output;
+	output.Width = value.Width;
+	output.Height = value.Height;
+	output.RefreshRate = value.RefreshRate;
+	output.OutputIdx = value.OutputIdx;
+	output.IsCustom = value.IsCustom;
 
-		return output;
-	}
+	return output;
+}
 
-	__VideoModeInterop ScriptVideoMode::ToInterop(const VideoMode& value)
-	{
-		__VideoModeInterop output;
-		output.Width = value.Width;
-		output.Height = value.Height;
-		output.RefreshRate = value.RefreshRate;
-		output.OutputIdx = value.OutputIdx;
-		output.IsCustom = value.IsCustom;
+__VideoModeInterop ScriptVideoMode::ToInterop(const VideoMode& value)
+{
+	__VideoModeInterop output;
+	output.Width = value.Width;
+	output.Height = value.Height;
+	output.RefreshRate = value.RefreshRate;
+	output.OutputIdx = value.OutputIdx;
+	output.IsCustom = value.IsCustom;
 
-		return output;
-	}
+	return output;
+}
 
 #endif
-} // namespace bs

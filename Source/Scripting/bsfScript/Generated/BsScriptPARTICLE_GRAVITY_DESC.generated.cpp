@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptPARTICLE_GRAVITY_DESC::ScriptPARTICLE_GRAVITY_DESC(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptPARTICLE_GRAVITY_DESC::InitRuntimeData()
+{}
+
+MonoObject* ScriptPARTICLE_GRAVITY_DESC::Box(const PARTICLE_GRAVITY_DESC& value)
 {
-	ScriptPARTICLE_GRAVITY_DESC::ScriptPARTICLE_GRAVITY_DESC(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptPARTICLE_GRAVITY_DESC::InitRuntimeData()
-	{}
+PARTICLE_GRAVITY_DESC ScriptPARTICLE_GRAVITY_DESC::Unbox(MonoObject* value)
+{
+	return *(PARTICLE_GRAVITY_DESC*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptPARTICLE_GRAVITY_DESC::Box(const PARTICLE_GRAVITY_DESC& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	PARTICLE_GRAVITY_DESC ScriptPARTICLE_GRAVITY_DESC::Unbox(MonoObject* value)
-	{
-		return *(PARTICLE_GRAVITY_DESC*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

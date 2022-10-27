@@ -5,43 +5,41 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptAudioDevice::ScriptAudioDevice(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptAudioDevice::InitRuntimeData()
+{}
+
+MonoObject* ScriptAudioDevice::Box(const __AudioDeviceInterop& value)
 {
-	ScriptAudioDevice::ScriptAudioDevice(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptAudioDevice::InitRuntimeData()
-	{}
+__AudioDeviceInterop ScriptAudioDevice::Unbox(MonoObject* value)
+{
+	return *(__AudioDeviceInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptAudioDevice::Box(const __AudioDeviceInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+AudioDevice ScriptAudioDevice::FromInterop(const __AudioDeviceInterop& value)
+{
+	AudioDevice output;
+	String tmpName;
+	tmpName = MonoUtil::MonoToString(value.Name);
+	output.Name = tmpName;
 
-	__AudioDeviceInterop ScriptAudioDevice::Unbox(MonoObject* value)
-	{
-		return *(__AudioDeviceInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	AudioDevice ScriptAudioDevice::FromInterop(const __AudioDeviceInterop& value)
-	{
-		AudioDevice output;
-		String tmpName;
-		tmpName = MonoUtil::MonoToString(value.Name);
-		output.Name = tmpName;
+__AudioDeviceInterop ScriptAudioDevice::ToInterop(const AudioDevice& value)
+{
+	__AudioDeviceInterop output;
+	MonoString* tmpName;
+	tmpName = MonoUtil::StringToMono(value.Name);
+	output.Name = tmpName;
 
-		return output;
-	}
+	return output;
+}
 
-	__AudioDeviceInterop ScriptAudioDevice::ToInterop(const AudioDevice& value)
-	{
-		__AudioDeviceInterop output;
-		MonoString* tmpName;
-		tmpName = MonoUtil::StringToMono(value.Name);
-		output.Name = tmpName;
-
-		return output;
-	}
-
-} // namespace bs

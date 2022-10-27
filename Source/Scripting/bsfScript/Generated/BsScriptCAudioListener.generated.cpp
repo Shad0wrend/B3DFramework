@@ -6,15 +6,13 @@
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Components/BsCAudioListener.h"
 
-namespace bs
+using namespace bs;
+ScriptCAudioListener::ScriptCAudioListener(MonoObject* managedInstance, const GameObjectHandle<CAudioListener>& value)
+	: TScriptComponent(managedInstance, value)
 {
-	ScriptCAudioListener::ScriptCAudioListener(MonoObject* managedInstance, const GameObjectHandle<CAudioListener>& value)
-		: TScriptComponent(managedInstance, value)
-	{
-	}
+}
 
-	void ScriptCAudioListener::InitRuntimeData()
-	{
-	}
+void ScriptCAudioListener::InitRuntimeData()
+{
+}
 
-} // namespace bs

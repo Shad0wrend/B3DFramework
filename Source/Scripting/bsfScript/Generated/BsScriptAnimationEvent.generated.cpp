@@ -5,45 +5,43 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptAnimationEvent::ScriptAnimationEvent(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptAnimationEvent::InitRuntimeData()
+{}
+
+MonoObject* ScriptAnimationEvent::Box(const __AnimationEventInterop& value)
 {
-	ScriptAnimationEvent::ScriptAnimationEvent(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptAnimationEvent::InitRuntimeData()
-	{}
+__AnimationEventInterop ScriptAnimationEvent::Unbox(MonoObject* value)
+{
+	return *(__AnimationEventInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptAnimationEvent::Box(const __AnimationEventInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+AnimationEvent ScriptAnimationEvent::FromInterop(const __AnimationEventInterop& value)
+{
+	AnimationEvent output;
+	String tmpName;
+	tmpName = MonoUtil::MonoToString(value.Name);
+	output.Name = tmpName;
+	output.Time = value.Time;
 
-	__AnimationEventInterop ScriptAnimationEvent::Unbox(MonoObject* value)
-	{
-		return *(__AnimationEventInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	AnimationEvent ScriptAnimationEvent::FromInterop(const __AnimationEventInterop& value)
-	{
-		AnimationEvent output;
-		String tmpName;
-		tmpName = MonoUtil::MonoToString(value.Name);
-		output.Name = tmpName;
-		output.Time = value.Time;
+__AnimationEventInterop ScriptAnimationEvent::ToInterop(const AnimationEvent& value)
+{
+	__AnimationEventInterop output;
+	MonoString* tmpName;
+	tmpName = MonoUtil::StringToMono(value.Name);
+	output.Name = tmpName;
+	output.Time = value.Time;
 
-		return output;
-	}
+	return output;
+}
 
-	__AnimationEventInterop ScriptAnimationEvent::ToInterop(const AnimationEvent& value)
-	{
-		__AnimationEventInterop output;
-		MonoString* tmpName;
-		tmpName = MonoUtil::StringToMono(value.Name);
-		output.Name = tmpName;
-		output.Time = value.Time;
-
-		return output;
-	}
-
-} // namespace bs

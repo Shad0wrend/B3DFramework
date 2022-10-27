@@ -10,62 +10,60 @@
 #include "Math/BsVector3.h"
 #include "Wrappers/BsScriptVector.h"
 
-namespace bs
+using namespace bs;
+ScriptControllerColliderCollision::ScriptControllerColliderCollision(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptControllerColliderCollision::InitRuntimeData()
+{}
+
+MonoObject* ScriptControllerColliderCollision::Box(const __ControllerColliderCollisionInterop& value)
 {
-	ScriptControllerColliderCollision::ScriptControllerColliderCollision(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptControllerColliderCollision::InitRuntimeData()
-	{}
+__ControllerColliderCollisionInterop ScriptControllerColliderCollision::Unbox(MonoObject* value)
+{
+	return *(__ControllerColliderCollisionInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptControllerColliderCollision::Box(const __ControllerColliderCollisionInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+ControllerColliderCollision ScriptControllerColliderCollision::FromInterop(const __ControllerColliderCollisionInterop& value)
+{
+	ControllerColliderCollision output;
+	GameObjectHandle<CCollider> tmpCollider;
+	ScriptCColliderBase* scriptCollider;
+	scriptCollider = (ScriptCColliderBase*)ScriptCCollider::ToNative(value.Collider);
+	if(scriptCollider != nullptr)
+		tmpCollider = static_object_cast<CCollider>(scriptCollider->GetComponent());
+	output.Collider = tmpCollider;
+	output.TriangleIndex = value.TriangleIndex;
+	output.Position = value.Position;
+	output.Normal = value.Normal;
+	output.MotionDir = value.MotionDir;
+	output.MotionAmount = value.MotionAmount;
 
-	__ControllerColliderCollisionInterop ScriptControllerColliderCollision::Unbox(MonoObject* value)
-	{
-		return *(__ControllerColliderCollisionInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	ControllerColliderCollision ScriptControllerColliderCollision::FromInterop(const __ControllerColliderCollisionInterop& value)
-	{
-		ControllerColliderCollision output;
-		GameObjectHandle<CCollider> tmpCollider;
-		ScriptCColliderBase* scriptCollider;
-		scriptCollider = (ScriptCColliderBase*)ScriptCCollider::ToNative(value.Collider);
-		if(scriptCollider != nullptr)
-			tmpCollider = static_object_cast<CCollider>(scriptCollider->GetComponent());
-		output.Collider = tmpCollider;
-		output.TriangleIndex = value.TriangleIndex;
-		output.Position = value.Position;
-		output.Normal = value.Normal;
-		output.MotionDir = value.MotionDir;
-		output.MotionAmount = value.MotionAmount;
+__ControllerColliderCollisionInterop ScriptControllerColliderCollision::ToInterop(const ControllerColliderCollision& value)
+{
+	__ControllerColliderCollisionInterop output;
+	MonoObject* tmpCollider;
+	ScriptComponentBase* scriptCollider = nullptr;
+	if(value.Collider)
+		scriptCollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Collider));
+	if(scriptCollider != nullptr)
+		tmpCollider = scriptCollider->GetManagedInstance();
+	else
+		tmpCollider = nullptr;
+	output.Collider = tmpCollider;
+	output.TriangleIndex = value.TriangleIndex;
+	output.Position = value.Position;
+	output.Normal = value.Normal;
+	output.MotionDir = value.MotionDir;
+	output.MotionAmount = value.MotionAmount;
 
-		return output;
-	}
+	return output;
+}
 
-	__ControllerColliderCollisionInterop ScriptControllerColliderCollision::ToInterop(const ControllerColliderCollision& value)
-	{
-		__ControllerColliderCollisionInterop output;
-		MonoObject* tmpCollider;
-		ScriptComponentBase* scriptCollider = nullptr;
-		if(value.Collider)
-			scriptCollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Collider));
-		if(scriptCollider != nullptr)
-			tmpCollider = scriptCollider->GetManagedInstance();
-		else
-			tmpCollider = nullptr;
-		output.Collider = tmpCollider;
-		output.TriangleIndex = value.TriangleIndex;
-		output.Position = value.Position;
-		output.Normal = value.Normal;
-		output.MotionDir = value.MotionDir;
-		output.MotionAmount = value.MotionAmount;
-
-		return output;
-	}
-
-} // namespace bs

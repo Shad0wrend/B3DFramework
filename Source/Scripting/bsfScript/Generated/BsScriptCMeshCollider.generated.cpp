@@ -9,42 +9,40 @@
 #include "Wrappers/BsScriptRRefBase.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsMesh.h"
 
-namespace bs
+using namespace bs;
+ScriptCMeshCollider::ScriptCMeshCollider(MonoObject* managedInstance, const GameObjectHandle<CMeshCollider>& value)
+	: TScriptComponent(managedInstance, value)
 {
-	ScriptCMeshCollider::ScriptCMeshCollider(MonoObject* managedInstance, const GameObjectHandle<CMeshCollider>& value)
-		: TScriptComponent(managedInstance, value)
-	{
-	}
+}
 
-	void ScriptCMeshCollider::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_SetMesh", (void*)&ScriptCMeshCollider::InternalSetMesh);
-		metaData.ScriptClass->AddInternalCall("Internal_GetMesh", (void*)&ScriptCMeshCollider::InternalGetMesh);
-	}
+void ScriptCMeshCollider::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_SetMesh", (void*)&ScriptCMeshCollider::InternalSetMesh);
+	metaData.ScriptClass->AddInternalCall("Internal_GetMesh", (void*)&ScriptCMeshCollider::InternalGetMesh);
+}
 
-	void ScriptCMeshCollider::InternalSetMesh(ScriptCMeshCollider* thisPtr, MonoObject* mesh)
-	{
-		ResourceHandle<PhysicsMesh> tmpmesh;
-		ScriptRRefBase* scriptmesh;
-		scriptmesh = ScriptRRefBase::ToNative(mesh);
-		if(scriptmesh != nullptr)
-			tmpmesh = static_resource_cast<PhysicsMesh>(scriptmesh->GetHandle());
-		thisPtr->GetHandle()->SetMesh(tmpmesh);
-	}
+void ScriptCMeshCollider::InternalSetMesh(ScriptCMeshCollider* thisPtr, MonoObject* mesh)
+{
+	ResourceHandle<PhysicsMesh> tmpmesh;
+	ScriptRRefBase* scriptmesh;
+	scriptmesh = ScriptRRefBase::ToNative(mesh);
+	if(scriptmesh != nullptr)
+		tmpmesh = static_resource_cast<PhysicsMesh>(scriptmesh->GetHandle());
+	thisPtr->GetHandle()->SetMesh(tmpmesh);
+}
 
-	MonoObject* ScriptCMeshCollider::InternalGetMesh(ScriptCMeshCollider* thisPtr)
-	{
-		ResourceHandle<PhysicsMesh> tmp__output;
-		tmp__output = thisPtr->GetHandle()->GetMesh();
+MonoObject* ScriptCMeshCollider::InternalGetMesh(ScriptCMeshCollider* thisPtr)
+{
+	ResourceHandle<PhysicsMesh> tmp__output;
+	tmp__output = thisPtr->GetHandle()->GetMesh();
 
-		MonoObject* __output;
-		ScriptRRefBase* script__output;
-		script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
-		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
-		else
-			__output = nullptr;
+	MonoObject* __output;
+	ScriptRRefBase* script__output;
+	script__output = ScriptResourceManager::Instance().GetScriptRRef(tmp__output);
+	if(script__output != nullptr)
+		__output = script__output->GetManagedInstance();
+	else
+		__output = nullptr;
 
-		return __output;
-	}
-} // namespace bs
+	return __output;
+}

@@ -7,45 +7,43 @@
 #include "Math/BsVector3.h"
 #include "Wrappers/BsScriptVector.h"
 
-namespace bs
+using namespace bs;
+ScriptControllerCollision::ScriptControllerCollision(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptControllerCollision::InitRuntimeData()
+{}
+
+MonoObject* ScriptControllerCollision::Box(const __ControllerCollisionInterop& value)
 {
-	ScriptControllerCollision::ScriptControllerCollision(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptControllerCollision::InitRuntimeData()
-	{}
+__ControllerCollisionInterop ScriptControllerCollision::Unbox(MonoObject* value)
+{
+	return *(__ControllerCollisionInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptControllerCollision::Box(const __ControllerCollisionInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+ControllerCollision ScriptControllerCollision::FromInterop(const __ControllerCollisionInterop& value)
+{
+	ControllerCollision output;
+	output.Position = value.Position;
+	output.Normal = value.Normal;
+	output.MotionDir = value.MotionDir;
+	output.MotionAmount = value.MotionAmount;
 
-	__ControllerCollisionInterop ScriptControllerCollision::Unbox(MonoObject* value)
-	{
-		return *(__ControllerCollisionInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	ControllerCollision ScriptControllerCollision::FromInterop(const __ControllerCollisionInterop& value)
-	{
-		ControllerCollision output;
-		output.Position = value.Position;
-		output.Normal = value.Normal;
-		output.MotionDir = value.MotionDir;
-		output.MotionAmount = value.MotionAmount;
+__ControllerCollisionInterop ScriptControllerCollision::ToInterop(const ControllerCollision& value)
+{
+	__ControllerCollisionInterop output;
+	output.Position = value.Position;
+	output.Normal = value.Normal;
+	output.MotionDir = value.MotionDir;
+	output.MotionAmount = value.MotionAmount;
 
-		return output;
-	}
+	return output;
+}
 
-	__ControllerCollisionInterop ScriptControllerCollision::ToInterop(const ControllerCollision& value)
-	{
-		__ControllerCollisionInterop output;
-		output.Position = value.Position;
-		output.Normal = value.Normal;
-		output.MotionDir = value.MotionDir;
-		output.MotionAmount = value.MotionAmount;
-
-		return output;
-	}
-
-} // namespace bs

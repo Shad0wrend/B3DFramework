@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptAnimationClipState::ScriptAnimationClipState(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptAnimationClipState::InitRuntimeData()
+{}
+
+MonoObject* ScriptAnimationClipState::Box(const AnimationClipState& value)
 {
-	ScriptAnimationClipState::ScriptAnimationClipState(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptAnimationClipState::InitRuntimeData()
-	{}
+AnimationClipState ScriptAnimationClipState::Unbox(MonoObject* value)
+{
+	return *(AnimationClipState*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptAnimationClipState::Box(const AnimationClipState& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	AnimationClipState ScriptAnimationClipState::Unbox(MonoObject* value)
-	{
-		return *(AnimationClipState*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

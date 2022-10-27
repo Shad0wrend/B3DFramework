@@ -9,50 +9,48 @@
 #include "../Extensions/BsAnimationEx.h"
 #include "BsScriptTAnimationCurve.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptRootMotion::ScriptRootMotion(MonoObject* managedInstance, const SPtr<RootMotion>& value)
+	: ScriptObject(managedInstance), mInternal(value)
 {
-	ScriptRootMotion::ScriptRootMotion(MonoObject* managedInstance, const SPtr<RootMotion>& value)
-		: ScriptObject(managedInstance), mInternal(value)
-	{
-	}
+}
 
-	void ScriptRootMotion::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetPositionCurves", (void*)&ScriptRootMotion::InternalGetPositionCurves);
-		metaData.ScriptClass->AddInternalCall("Internal_GetRotationCurves", (void*)&ScriptRootMotion::InternalGetRotationCurves);
-	}
+void ScriptRootMotion::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_GetPositionCurves", (void*)&ScriptRootMotion::InternalGetPositionCurves);
+	metaData.ScriptClass->AddInternalCall("Internal_GetRotationCurves", (void*)&ScriptRootMotion::InternalGetRotationCurves);
+}
 
-	MonoObject* ScriptRootMotion::Create(const SPtr<RootMotion>& value)
-	{
-		if(value == nullptr) return nullptr;
+MonoObject* ScriptRootMotion::Create(const SPtr<RootMotion>& value)
+{
+	if(value == nullptr) return nullptr;
 
-		bool dummy = false;
-		void* ctorParams[1] = { &dummy };
+	bool dummy = false;
+	void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new(bs_alloc<ScriptRootMotion>()) ScriptRootMotion(managedInstance, value);
-		return managedInstance;
-	}
+	MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
+	new(bs_alloc<ScriptRootMotion>()) ScriptRootMotion(managedInstance, value);
+	return managedInstance;
+}
 
-	MonoObject* ScriptRootMotion::InternalGetPositionCurves(ScriptRootMotion* thisPtr)
-	{
-		SPtr<TAnimationCurve<Vector3>> tmp__output = bs_shared_ptr_new<TAnimationCurve<Vector3>>();
-		*tmp__output = RootMotionEx::GetPositionCurves(thisPtr->GetInternal());
+MonoObject* ScriptRootMotion::InternalGetPositionCurves(ScriptRootMotion* thisPtr)
+{
+	SPtr<TAnimationCurve<Vector3>> tmp__output = bs_shared_ptr_new<TAnimationCurve<Vector3>>();
+	*tmp__output = RootMotionEx::GetPositionCurves(thisPtr->GetInternal());
 
-		MonoObject* __output;
-		__output = ScriptTAnimationCurveVector3::Create(tmp__output);
+	MonoObject* __output;
+	__output = ScriptTAnimationCurveVector3::Create(tmp__output);
 
-		return __output;
-	}
+	return __output;
+}
 
-	MonoObject* ScriptRootMotion::InternalGetRotationCurves(ScriptRootMotion* thisPtr)
-	{
-		SPtr<TAnimationCurve<Quaternion>> tmp__output = bs_shared_ptr_new<TAnimationCurve<Quaternion>>();
-		*tmp__output = RootMotionEx::GetRotationCurves(thisPtr->GetInternal());
+MonoObject* ScriptRootMotion::InternalGetRotationCurves(ScriptRootMotion* thisPtr)
+{
+	SPtr<TAnimationCurve<Quaternion>> tmp__output = bs_shared_ptr_new<TAnimationCurve<Quaternion>>();
+	*tmp__output = RootMotionEx::GetRotationCurves(thisPtr->GetInternal());
 
-		MonoObject* __output;
-		__output = ScriptTAnimationCurveQuaternion::Create(tmp__output);
+	MonoObject* __output;
+	__output = ScriptTAnimationCurveQuaternion::Create(tmp__output);
 
-		return __output;
-	}
-} // namespace bs
+	return __output;
+}

@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptKeyframeRef::ScriptKeyframeRef(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptKeyframeRef::InitRuntimeData()
+{}
+
+MonoObject* ScriptKeyframeRef::Box(const KeyframeRef& value)
 {
-	ScriptKeyframeRef::ScriptKeyframeRef(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptKeyframeRef::InitRuntimeData()
-	{}
+KeyframeRef ScriptKeyframeRef::Unbox(MonoObject* value)
+{
+	return *(KeyframeRef*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptKeyframeRef::Box(const KeyframeRef& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	KeyframeRef ScriptKeyframeRef::Unbox(MonoObject* value)
-	{
-		return *(KeyframeRef*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

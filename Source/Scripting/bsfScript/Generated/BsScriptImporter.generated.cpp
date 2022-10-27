@@ -24,135 +24,133 @@
 #include "BsScriptTextureImportOptions.generated.h"
 #include "BsScriptMultiResource.generated.h"
 
-namespace bs
-{
+using namespace bs;
 #if !BS_IS_BANSHEE3D
-	ScriptImporter::ScriptImporter(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{
-	}
+ScriptImporter::ScriptImporter(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{
+}
 
-	void ScriptImporter::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_Import", (void*)&ScriptImporter::InternalImport);
-		metaData.ScriptClass->AddInternalCall("Internal_ImportAsync", (void*)&ScriptImporter::InternalImportAsync);
-		metaData.ScriptClass->AddInternalCall("Internal_ImportAll", (void*)&ScriptImporter::InternalImportAll);
-		metaData.ScriptClass->AddInternalCall("Internal_ImportAllAsync", (void*)&ScriptImporter::InternalImportAllAsync);
-		metaData.ScriptClass->AddInternalCall("Internal_SupportsFileType", (void*)&ScriptImporter::InternalSupportsFileType);
-	}
+void ScriptImporter::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_Import", (void*)&ScriptImporter::InternalImport);
+	metaData.ScriptClass->AddInternalCall("Internal_ImportAsync", (void*)&ScriptImporter::InternalImportAsync);
+	metaData.ScriptClass->AddInternalCall("Internal_ImportAll", (void*)&ScriptImporter::InternalImportAll);
+	metaData.ScriptClass->AddInternalCall("Internal_ImportAllAsync", (void*)&ScriptImporter::InternalImportAllAsync);
+	metaData.ScriptClass->AddInternalCall("Internal_SupportsFileType", (void*)&ScriptImporter::InternalSupportsFileType);
+}
 
-	MonoObject* ScriptImporter::InternalImport(MonoString* inputFilePath, MonoObject* importOptions, UUID* UUID)
-	{
-		ResourceHandle<Resource> tmp__output;
-		Path tmpinputFilePath;
-		tmpinputFilePath = MonoUtil::MonoToString(inputFilePath);
-		SPtr<ImportOptions> tmpimportOptions;
-		ScriptImportOptionsBase* scriptimportOptions;
-		scriptimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::ToNative(importOptions);
-		if(scriptimportOptions != nullptr)
-			tmpimportOptions = scriptimportOptions->GetInternal();
-		tmp__output = Importer::Instance().Import(tmpinputFilePath, tmpimportOptions, *UUID);
+MonoObject* ScriptImporter::InternalImport(MonoString* inputFilePath, MonoObject* importOptions, UUID* UUID)
+{
+	ResourceHandle<Resource> tmp__output;
+	Path tmpinputFilePath;
+	tmpinputFilePath = MonoUtil::MonoToString(inputFilePath);
+	SPtr<ImportOptions> tmpimportOptions;
+	ScriptImportOptionsBase* scriptimportOptions;
+	scriptimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::ToNative(importOptions);
+	if(scriptimportOptions != nullptr)
+		tmpimportOptions = scriptimportOptions->GetInternal();
+	tmp__output = Importer::Instance().Import(tmpinputFilePath, tmpimportOptions, *UUID);
 
-		MonoObject* __output;
-		ScriptResourceBase* script__output;
-		script__output = ScriptResourceManager::Instance().GetScriptResource(tmp__output, true);
-		if(script__output != nullptr)
-			__output = script__output->GetManagedInstance();
+	MonoObject* __output;
+	ScriptResourceBase* script__output;
+	script__output = ScriptResourceManager::Instance().GetScriptResource(tmp__output, true);
+	if(script__output != nullptr)
+		__output = script__output->GetManagedInstance();
+	else
+		__output = nullptr;
+
+	return __output;
+}
+
+MonoObject* ScriptImporter::InternalImportAsync(MonoString* inputFilePath, MonoObject* importOptions, UUID* UUID)
+{
+	TAsyncOp<ResourceHandle<Resource>> tmp__output;
+	Path tmpinputFilePath;
+	tmpinputFilePath = MonoUtil::MonoToString(inputFilePath);
+	SPtr<ImportOptions> tmpimportOptions;
+	ScriptImportOptionsBase* scriptimportOptions;
+	scriptimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::ToNative(importOptions);
+	if(scriptimportOptions != nullptr)
+		tmpimportOptions = scriptimportOptions->GetInternal();
+	tmp__output = Importer::Instance().ImportAsync(tmpinputFilePath, tmpimportOptions, *UUID);
+
+	MonoObject* __output;
+	auto convertCallback = [](const Any& returnVal)
+	{
+		ResourceHandle<Resource> nativeObj = any_cast<ResourceHandle<Resource>>(returnVal);
+		MonoObject* monoObj;
+		ScriptRRefBase* scriptObj;
+		scriptObj = ScriptResourceManager::Instance().GetScriptRRef(nativeObj);
+		if(scriptObj != nullptr)
+			monoObj = scriptObj->GetManagedInstance();
 		else
-			__output = nullptr;
+			monoObj = nullptr;
+		return monoObj;
+	};
 
-		return __output;
-	}
+	;
+	__output = ScriptAsyncOpBase::Create(tmp__output, convertCallback, ScriptRRefBase::GetMetaData()->ScriptClass);
 
-	MonoObject* ScriptImporter::InternalImportAsync(MonoString* inputFilePath, MonoObject* importOptions, UUID* UUID)
+	return __output;
+}
+
+MonoObject* ScriptImporter::InternalImportAll(MonoString* inputFilePath, MonoObject* importOptions)
+{
+	SPtr<MultiResource> tmp__output;
+	Path tmpinputFilePath;
+	tmpinputFilePath = MonoUtil::MonoToString(inputFilePath);
+	SPtr<ImportOptions> tmpimportOptions;
+	ScriptImportOptionsBase* scriptimportOptions;
+	scriptimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::ToNative(importOptions);
+	if(scriptimportOptions != nullptr)
+		tmpimportOptions = scriptimportOptions->GetInternal();
+	tmp__output = Importer::Instance().ImportAll(tmpinputFilePath, tmpimportOptions);
+
+	MonoObject* __output;
+	__output = ScriptMultiResource::Create(tmp__output);
+
+	return __output;
+}
+
+MonoObject* ScriptImporter::InternalImportAllAsync(MonoString* inputFilePath, MonoObject* importOptions)
+{
+	TAsyncOp<SPtr<MultiResource>> tmp__output;
+	Path tmpinputFilePath;
+	tmpinputFilePath = MonoUtil::MonoToString(inputFilePath);
+	SPtr<ImportOptions> tmpimportOptions;
+	ScriptImportOptionsBase* scriptimportOptions;
+	scriptimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::ToNative(importOptions);
+	if(scriptimportOptions != nullptr)
+		tmpimportOptions = scriptimportOptions->GetInternal();
+	tmp__output = Importer::Instance().ImportAllAsync(tmpinputFilePath, tmpimportOptions);
+
+	MonoObject* __output;
+	auto convertCallback = [](const Any& returnVal)
 	{
-		TAsyncOp<ResourceHandle<Resource>> tmp__output;
-		Path tmpinputFilePath;
-		tmpinputFilePath = MonoUtil::MonoToString(inputFilePath);
-		SPtr<ImportOptions> tmpimportOptions;
-		ScriptImportOptionsBase* scriptimportOptions;
-		scriptimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::ToNative(importOptions);
-		if(scriptimportOptions != nullptr)
-			tmpimportOptions = scriptimportOptions->GetInternal();
-		tmp__output = Importer::Instance().ImportAsync(tmpinputFilePath, tmpimportOptions, *UUID);
+		SPtr<MultiResource> nativeObj = any_cast<SPtr<MultiResource>>(returnVal);
+		MonoObject* monoObj;
+		monoObj = ScriptMultiResource::Create(nativeObj);
+		return monoObj;
+	};
 
-		MonoObject* __output;
-		auto convertCallback = [](const Any& returnVal)
-		{
-			ResourceHandle<Resource> nativeObj = any_cast<ResourceHandle<Resource>>(returnVal);
-			MonoObject* monoObj;
-			ScriptRRefBase* scriptObj;
-			scriptObj = ScriptResourceManager::Instance().GetScriptRRef(nativeObj);
-			if(scriptObj != nullptr)
-				monoObj = scriptObj->GetManagedInstance();
-			else
-				monoObj = nullptr;
-			return monoObj;
-		};
+	;
+	__output = ScriptAsyncOpBase::Create(tmp__output, convertCallback, ScriptMultiResource::GetMetaData()->ScriptClass);
 
-		;
-		__output = ScriptAsyncOpBase::Create(tmp__output, convertCallback, ScriptRRefBase::GetMetaData()->ScriptClass);
+	return __output;
+}
 
-		return __output;
-	}
+bool ScriptImporter::InternalSupportsFileType(MonoString* extension)
+{
+	bool tmp__output;
+	String tmpextension;
+	tmpextension = MonoUtil::MonoToString(extension);
+	tmp__output = Importer::Instance().SupportsFileType(tmpextension);
 
-	MonoObject* ScriptImporter::InternalImportAll(MonoString* inputFilePath, MonoObject* importOptions)
-	{
-		SPtr<MultiResource> tmp__output;
-		Path tmpinputFilePath;
-		tmpinputFilePath = MonoUtil::MonoToString(inputFilePath);
-		SPtr<ImportOptions> tmpimportOptions;
-		ScriptImportOptionsBase* scriptimportOptions;
-		scriptimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::ToNative(importOptions);
-		if(scriptimportOptions != nullptr)
-			tmpimportOptions = scriptimportOptions->GetInternal();
-		tmp__output = Importer::Instance().ImportAll(tmpinputFilePath, tmpimportOptions);
+	bool __output;
+	__output = tmp__output;
 
-		MonoObject* __output;
-		__output = ScriptMultiResource::Create(tmp__output);
-
-		return __output;
-	}
-
-	MonoObject* ScriptImporter::InternalImportAllAsync(MonoString* inputFilePath, MonoObject* importOptions)
-	{
-		TAsyncOp<SPtr<MultiResource>> tmp__output;
-		Path tmpinputFilePath;
-		tmpinputFilePath = MonoUtil::MonoToString(inputFilePath);
-		SPtr<ImportOptions> tmpimportOptions;
-		ScriptImportOptionsBase* scriptimportOptions;
-		scriptimportOptions = (ScriptImportOptionsBase*)ScriptImportOptions::ToNative(importOptions);
-		if(scriptimportOptions != nullptr)
-			tmpimportOptions = scriptimportOptions->GetInternal();
-		tmp__output = Importer::Instance().ImportAllAsync(tmpinputFilePath, tmpimportOptions);
-
-		MonoObject* __output;
-		auto convertCallback = [](const Any& returnVal)
-		{
-			SPtr<MultiResource> nativeObj = any_cast<SPtr<MultiResource>>(returnVal);
-			MonoObject* monoObj;
-			monoObj = ScriptMultiResource::Create(nativeObj);
-			return monoObj;
-		};
-
-		;
-		__output = ScriptAsyncOpBase::Create(tmp__output, convertCallback, ScriptMultiResource::GetMetaData()->ScriptClass);
-
-		return __output;
-	}
-
-	bool ScriptImporter::InternalSupportsFileType(MonoString* extension)
-	{
-		bool tmp__output;
-		String tmpextension;
-		tmpextension = MonoUtil::MonoToString(extension);
-		tmp__output = Importer::Instance().SupportsFileType(tmpextension);
-
-		bool __output;
-		__output = tmp__output;
-
-		return __output;
-	}
+	return __output;
+}
 
 #endif
-} // namespace bs

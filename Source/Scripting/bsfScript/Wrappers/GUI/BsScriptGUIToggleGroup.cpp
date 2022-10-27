@@ -9,22 +9,20 @@
 #include "BsMonoUtil.h"
 #include "GUI/BsGUIToggle.h"
 
-namespace bs
+using namespace bs;
+ScriptGUIToggleGroup::ScriptGUIToggleGroup(MonoObject* instance, const SPtr<GUIToggleGroup>& toggleGroup)
+	: ScriptObject(instance), mToggleGroup(toggleGroup)
 {
-	ScriptGUIToggleGroup::ScriptGUIToggleGroup(MonoObject* instance, const SPtr<GUIToggleGroup>& toggleGroup)
-		: ScriptObject(instance), mToggleGroup(toggleGroup)
-	{
-	}
+}
 
-	void ScriptGUIToggleGroup::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIToggleGroup::InternalCreateInstance);
-	}
+void ScriptGUIToggleGroup::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIToggleGroup::InternalCreateInstance);
+}
 
-	void ScriptGUIToggleGroup::InternalCreateInstance(MonoObject* instance, bool allowAllOff)
-	{
-		SPtr<GUIToggleGroup> toggleGroup = GUIToggle::CreateToggleGroup(allowAllOff);
+void ScriptGUIToggleGroup::InternalCreateInstance(MonoObject* instance, bool allowAllOff)
+{
+	SPtr<GUIToggleGroup> toggleGroup = GUIToggle::CreateToggleGroup(allowAllOff);
 
-		new(bs_alloc<ScriptGUIToggleGroup>()) ScriptGUIToggleGroup(instance, toggleGroup);
-	}
-} // namespace bs
+	new(bs_alloc<ScriptGUIToggleGroup>()) ScriptGUIToggleGroup(instance, toggleGroup);
+}

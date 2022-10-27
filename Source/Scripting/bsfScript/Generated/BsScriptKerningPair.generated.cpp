@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptKerningPair::ScriptKerningPair(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptKerningPair::InitRuntimeData()
+{}
+
+MonoObject* ScriptKerningPair::Box(const KerningPair& value)
 {
-	ScriptKerningPair::ScriptKerningPair(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptKerningPair::InitRuntimeData()
-	{}
+KerningPair ScriptKerningPair::Unbox(MonoObject* value)
+{
+	return *(KerningPair*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptKerningPair::Box(const KerningPair& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	KerningPair ScriptKerningPair::Unbox(MonoObject* value)
-	{
-		return *(KerningPair*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

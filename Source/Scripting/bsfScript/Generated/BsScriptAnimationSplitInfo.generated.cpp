@@ -5,118 +5,116 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
-{
+using namespace bs;
 #if !BS_IS_BANSHEE3D
-	ScriptAnimationSplitInfo::ScriptAnimationSplitInfo(MonoObject* managedInstance, const SPtr<AnimationSplitInfo>& value)
-		: TScriptReflectable(managedInstance, value)
-	{
-	}
+ScriptAnimationSplitInfo::ScriptAnimationSplitInfo(MonoObject* managedInstance, const SPtr<AnimationSplitInfo>& value)
+	: TScriptReflectable(managedInstance, value)
+{
+}
 
-	void ScriptAnimationSplitInfo::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_AnimationSplitInfo", (void*)&ScriptAnimationSplitInfo::InternalAnimationSplitInfo);
-		metaData.ScriptClass->AddInternalCall("Internal_AnimationSplitInfo0", (void*)&ScriptAnimationSplitInfo::InternalAnimationSplitInfo0);
-		metaData.ScriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptAnimationSplitInfo::InternalGetName);
-		metaData.ScriptClass->AddInternalCall("Internal_SetName", (void*)&ScriptAnimationSplitInfo::InternalSetName);
-		metaData.ScriptClass->AddInternalCall("Internal_GetStartFrame", (void*)&ScriptAnimationSplitInfo::InternalGetStartFrame);
-		metaData.ScriptClass->AddInternalCall("Internal_SetStartFrame", (void*)&ScriptAnimationSplitInfo::InternalSetStartFrame);
-		metaData.ScriptClass->AddInternalCall("Internal_GetEndFrame", (void*)&ScriptAnimationSplitInfo::InternalGetEndFrame);
-		metaData.ScriptClass->AddInternalCall("Internal_SetEndFrame", (void*)&ScriptAnimationSplitInfo::InternalSetEndFrame);
-		metaData.ScriptClass->AddInternalCall("Internal_GetIsAdditive", (void*)&ScriptAnimationSplitInfo::InternalGetIsAdditive);
-		metaData.ScriptClass->AddInternalCall("Internal_SetIsAdditive", (void*)&ScriptAnimationSplitInfo::InternalSetIsAdditive);
-	}
+void ScriptAnimationSplitInfo::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_AnimationSplitInfo", (void*)&ScriptAnimationSplitInfo::InternalAnimationSplitInfo);
+	metaData.ScriptClass->AddInternalCall("Internal_AnimationSplitInfo0", (void*)&ScriptAnimationSplitInfo::InternalAnimationSplitInfo0);
+	metaData.ScriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptAnimationSplitInfo::InternalGetName);
+	metaData.ScriptClass->AddInternalCall("Internal_SetName", (void*)&ScriptAnimationSplitInfo::InternalSetName);
+	metaData.ScriptClass->AddInternalCall("Internal_GetStartFrame", (void*)&ScriptAnimationSplitInfo::InternalGetStartFrame);
+	metaData.ScriptClass->AddInternalCall("Internal_SetStartFrame", (void*)&ScriptAnimationSplitInfo::InternalSetStartFrame);
+	metaData.ScriptClass->AddInternalCall("Internal_GetEndFrame", (void*)&ScriptAnimationSplitInfo::InternalGetEndFrame);
+	metaData.ScriptClass->AddInternalCall("Internal_SetEndFrame", (void*)&ScriptAnimationSplitInfo::InternalSetEndFrame);
+	metaData.ScriptClass->AddInternalCall("Internal_GetIsAdditive", (void*)&ScriptAnimationSplitInfo::InternalGetIsAdditive);
+	metaData.ScriptClass->AddInternalCall("Internal_SetIsAdditive", (void*)&ScriptAnimationSplitInfo::InternalSetIsAdditive);
+}
 
-	MonoObject* ScriptAnimationSplitInfo::Create(const SPtr<AnimationSplitInfo>& value)
-	{
-		if(value == nullptr) return nullptr;
+MonoObject* ScriptAnimationSplitInfo::Create(const SPtr<AnimationSplitInfo>& value)
+{
+	if(value == nullptr) return nullptr;
 
-		bool dummy = false;
-		void* ctorParams[1] = { &dummy };
+	bool dummy = false;
+	void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new(bs_alloc<ScriptAnimationSplitInfo>()) ScriptAnimationSplitInfo(managedInstance, value);
-		return managedInstance;
-	}
+	MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
+	new(bs_alloc<ScriptAnimationSplitInfo>()) ScriptAnimationSplitInfo(managedInstance, value);
+	return managedInstance;
+}
 
-	void ScriptAnimationSplitInfo::InternalAnimationSplitInfo(MonoObject* managedInstance)
-	{
-		SPtr<AnimationSplitInfo> instance = bs_shared_ptr_new<AnimationSplitInfo>();
-		new(bs_alloc<ScriptAnimationSplitInfo>()) ScriptAnimationSplitInfo(managedInstance, instance);
-	}
+void ScriptAnimationSplitInfo::InternalAnimationSplitInfo(MonoObject* managedInstance)
+{
+	SPtr<AnimationSplitInfo> instance = bs_shared_ptr_new<AnimationSplitInfo>();
+	new(bs_alloc<ScriptAnimationSplitInfo>()) ScriptAnimationSplitInfo(managedInstance, instance);
+}
 
-	void ScriptAnimationSplitInfo::InternalAnimationSplitInfo0(MonoObject* managedInstance, MonoString* name, uint32_t startFrame, uint32_t endFrame, bool isAdditive)
-	{
-		String tmpname;
-		tmpname = MonoUtil::MonoToString(name);
-		SPtr<AnimationSplitInfo> instance = bs_shared_ptr_new<AnimationSplitInfo>(tmpname, startFrame, endFrame, isAdditive);
-		new(bs_alloc<ScriptAnimationSplitInfo>()) ScriptAnimationSplitInfo(managedInstance, instance);
-	}
+void ScriptAnimationSplitInfo::InternalAnimationSplitInfo0(MonoObject* managedInstance, MonoString* name, uint32_t startFrame, uint32_t endFrame, bool isAdditive)
+{
+	String tmpname;
+	tmpname = MonoUtil::MonoToString(name);
+	SPtr<AnimationSplitInfo> instance = bs_shared_ptr_new<AnimationSplitInfo>(tmpname, startFrame, endFrame, isAdditive);
+	new(bs_alloc<ScriptAnimationSplitInfo>()) ScriptAnimationSplitInfo(managedInstance, instance);
+}
 
-	MonoString* ScriptAnimationSplitInfo::InternalGetName(ScriptAnimationSplitInfo* thisPtr)
-	{
-		String tmp__output;
-		tmp__output = thisPtr->GetInternal()->Name;
+MonoString* ScriptAnimationSplitInfo::InternalGetName(ScriptAnimationSplitInfo* thisPtr)
+{
+	String tmp__output;
+	tmp__output = thisPtr->GetInternal()->Name;
 
-		MonoString* __output;
-		__output = MonoUtil::StringToMono(tmp__output);
+	MonoString* __output;
+	__output = MonoUtil::StringToMono(tmp__output);
 
-		return __output;
-	}
+	return __output;
+}
 
-	void ScriptAnimationSplitInfo::InternalSetName(ScriptAnimationSplitInfo* thisPtr, MonoString* value)
-	{
-		String tmpvalue;
-		tmpvalue = MonoUtil::MonoToString(value);
-		thisPtr->GetInternal()->Name = tmpvalue;
-	}
+void ScriptAnimationSplitInfo::InternalSetName(ScriptAnimationSplitInfo* thisPtr, MonoString* value)
+{
+	String tmpvalue;
+	tmpvalue = MonoUtil::MonoToString(value);
+	thisPtr->GetInternal()->Name = tmpvalue;
+}
 
-	uint32_t ScriptAnimationSplitInfo::InternalGetStartFrame(ScriptAnimationSplitInfo* thisPtr)
-	{
-		uint32_t tmp__output;
-		tmp__output = thisPtr->GetInternal()->StartFrame;
+uint32_t ScriptAnimationSplitInfo::InternalGetStartFrame(ScriptAnimationSplitInfo* thisPtr)
+{
+	uint32_t tmp__output;
+	tmp__output = thisPtr->GetInternal()->StartFrame;
 
-		uint32_t __output;
-		__output = tmp__output;
+	uint32_t __output;
+	__output = tmp__output;
 
-		return __output;
-	}
+	return __output;
+}
 
-	void ScriptAnimationSplitInfo::InternalSetStartFrame(ScriptAnimationSplitInfo* thisPtr, uint32_t value)
-	{
-		thisPtr->GetInternal()->StartFrame = value;
-	}
+void ScriptAnimationSplitInfo::InternalSetStartFrame(ScriptAnimationSplitInfo* thisPtr, uint32_t value)
+{
+	thisPtr->GetInternal()->StartFrame = value;
+}
 
-	uint32_t ScriptAnimationSplitInfo::InternalGetEndFrame(ScriptAnimationSplitInfo* thisPtr)
-	{
-		uint32_t tmp__output;
-		tmp__output = thisPtr->GetInternal()->EndFrame;
+uint32_t ScriptAnimationSplitInfo::InternalGetEndFrame(ScriptAnimationSplitInfo* thisPtr)
+{
+	uint32_t tmp__output;
+	tmp__output = thisPtr->GetInternal()->EndFrame;
 
-		uint32_t __output;
-		__output = tmp__output;
+	uint32_t __output;
+	__output = tmp__output;
 
-		return __output;
-	}
+	return __output;
+}
 
-	void ScriptAnimationSplitInfo::InternalSetEndFrame(ScriptAnimationSplitInfo* thisPtr, uint32_t value)
-	{
-		thisPtr->GetInternal()->EndFrame = value;
-	}
+void ScriptAnimationSplitInfo::InternalSetEndFrame(ScriptAnimationSplitInfo* thisPtr, uint32_t value)
+{
+	thisPtr->GetInternal()->EndFrame = value;
+}
 
-	bool ScriptAnimationSplitInfo::InternalGetIsAdditive(ScriptAnimationSplitInfo* thisPtr)
-	{
-		bool tmp__output;
-		tmp__output = thisPtr->GetInternal()->IsAdditive;
+bool ScriptAnimationSplitInfo::InternalGetIsAdditive(ScriptAnimationSplitInfo* thisPtr)
+{
+	bool tmp__output;
+	tmp__output = thisPtr->GetInternal()->IsAdditive;
 
-		bool __output;
-		__output = tmp__output;
+	bool __output;
+	__output = tmp__output;
 
-		return __output;
-	}
+	return __output;
+}
 
-	void ScriptAnimationSplitInfo::InternalSetIsAdditive(ScriptAnimationSplitInfo* thisPtr, bool value)
-	{
-		thisPtr->GetInternal()->IsAdditive = value;
-	}
+void ScriptAnimationSplitInfo::InternalSetIsAdditive(ScriptAnimationSplitInfo* thisPtr, bool value)
+{
+	thisPtr->GetInternal()->IsAdditive = value;
+}
 #endif
-} // namespace bs

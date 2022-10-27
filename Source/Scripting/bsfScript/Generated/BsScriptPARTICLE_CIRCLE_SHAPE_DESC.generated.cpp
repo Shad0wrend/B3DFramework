@@ -7,45 +7,43 @@
 #include "../../../Foundation/bsfCore/Particles/BsParticleEmitter.h"
 #include "BsScriptParticleEmissionMode.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptPARTICLE_CIRCLE_SHAPE_DESC::ScriptPARTICLE_CIRCLE_SHAPE_DESC(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptPARTICLE_CIRCLE_SHAPE_DESC::InitRuntimeData()
+{}
+
+MonoObject* ScriptPARTICLE_CIRCLE_SHAPE_DESC::Box(const __PARTICLE_CIRCLE_SHAPE_DESCInterop& value)
 {
-	ScriptPARTICLE_CIRCLE_SHAPE_DESC::ScriptPARTICLE_CIRCLE_SHAPE_DESC(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptPARTICLE_CIRCLE_SHAPE_DESC::InitRuntimeData()
-	{}
+__PARTICLE_CIRCLE_SHAPE_DESCInterop ScriptPARTICLE_CIRCLE_SHAPE_DESC::Unbox(MonoObject* value)
+{
+	return *(__PARTICLE_CIRCLE_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptPARTICLE_CIRCLE_SHAPE_DESC::Box(const __PARTICLE_CIRCLE_SHAPE_DESCInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+PARTICLE_CIRCLE_SHAPE_DESC ScriptPARTICLE_CIRCLE_SHAPE_DESC::FromInterop(const __PARTICLE_CIRCLE_SHAPE_DESCInterop& value)
+{
+	PARTICLE_CIRCLE_SHAPE_DESC output;
+	output.Radius = value.Radius;
+	output.Thickness = value.Thickness;
+	output.Arc = value.Arc;
+	output.Mode = value.Mode;
 
-	__PARTICLE_CIRCLE_SHAPE_DESCInterop ScriptPARTICLE_CIRCLE_SHAPE_DESC::Unbox(MonoObject* value)
-	{
-		return *(__PARTICLE_CIRCLE_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	PARTICLE_CIRCLE_SHAPE_DESC ScriptPARTICLE_CIRCLE_SHAPE_DESC::FromInterop(const __PARTICLE_CIRCLE_SHAPE_DESCInterop& value)
-	{
-		PARTICLE_CIRCLE_SHAPE_DESC output;
-		output.Radius = value.Radius;
-		output.Thickness = value.Thickness;
-		output.Arc = value.Arc;
-		output.Mode = value.Mode;
+__PARTICLE_CIRCLE_SHAPE_DESCInterop ScriptPARTICLE_CIRCLE_SHAPE_DESC::ToInterop(const PARTICLE_CIRCLE_SHAPE_DESC& value)
+{
+	__PARTICLE_CIRCLE_SHAPE_DESCInterop output;
+	output.Radius = value.Radius;
+	output.Thickness = value.Thickness;
+	output.Arc = value.Arc;
+	output.Mode = value.Mode;
 
-		return output;
-	}
+	return output;
+}
 
-	__PARTICLE_CIRCLE_SHAPE_DESCInterop ScriptPARTICLE_CIRCLE_SHAPE_DESC::ToInterop(const PARTICLE_CIRCLE_SHAPE_DESC& value)
-	{
-		__PARTICLE_CIRCLE_SHAPE_DESCInterop output;
-		output.Radius = value.Radius;
-		output.Thickness = value.Thickness;
-		output.Arc = value.Arc;
-		output.Mode = value.Mode;
-
-		return output;
-	}
-
-} // namespace bs

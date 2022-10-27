@@ -7,41 +7,39 @@
 #include "Image/BsColor.h"
 #include "Wrappers/BsScriptColor.h"
 
-namespace bs
+using namespace bs;
+ScriptColorGradientKey::ScriptColorGradientKey(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptColorGradientKey::InitRuntimeData()
+{}
+
+MonoObject* ScriptColorGradientKey::Box(const __ColorGradientKeyInterop& value)
 {
-	ScriptColorGradientKey::ScriptColorGradientKey(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptColorGradientKey::InitRuntimeData()
-	{}
+__ColorGradientKeyInterop ScriptColorGradientKey::Unbox(MonoObject* value)
+{
+	return *(__ColorGradientKeyInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptColorGradientKey::Box(const __ColorGradientKeyInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+ColorGradientKey ScriptColorGradientKey::FromInterop(const __ColorGradientKeyInterop& value)
+{
+	ColorGradientKey output;
+	output.Color = value.Color;
+	output.Time = value.Time;
 
-	__ColorGradientKeyInterop ScriptColorGradientKey::Unbox(MonoObject* value)
-	{
-		return *(__ColorGradientKeyInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	ColorGradientKey ScriptColorGradientKey::FromInterop(const __ColorGradientKeyInterop& value)
-	{
-		ColorGradientKey output;
-		output.Color = value.Color;
-		output.Time = value.Time;
+__ColorGradientKeyInterop ScriptColorGradientKey::ToInterop(const ColorGradientKey& value)
+{
+	__ColorGradientKeyInterop output;
+	output.Color = value.Color;
+	output.Time = value.Time;
 
-		return output;
-	}
+	return output;
+}
 
-	__ColorGradientKeyInterop ScriptColorGradientKey::ToInterop(const ColorGradientKey& value)
-	{
-		__ColorGradientKeyInterop output;
-		output.Color = value.Color;
-		output.Time = value.Time;
-
-		return output;
-	}
-
-} // namespace bs

@@ -10,41 +10,39 @@
 #include "Serialization/BsManagedSerializableObjectInfo.h"
 #include "Wrappers/BsScriptSerializableProperty.h"
 
-namespace bs
+using namespace bs;
+ScriptSerializableDictionary::ScriptSerializableDictionary(MonoObject* instance, const SPtr<ManagedSerializableTypeInfoDictionary>& typeInfo)
+	: ScriptObject(instance), mTypeInfo(typeInfo)
 {
-	ScriptSerializableDictionary::ScriptSerializableDictionary(MonoObject* instance, const SPtr<ManagedSerializableTypeInfoDictionary>& typeInfo)
-		: ScriptObject(instance), mTypeInfo(typeInfo)
-	{
-	}
+}
 
-	void ScriptSerializableDictionary::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_CreateKeyProperty", (void*)&ScriptSerializableDictionary::InternalCreateKeyProperty);
-		metaData.ScriptClass->AddInternalCall("Internal_CreateValueProperty", (void*)&ScriptSerializableDictionary::InternalCreateValueProperty);
-	}
+void ScriptSerializableDictionary::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_CreateKeyProperty", (void*)&ScriptSerializableDictionary::InternalCreateKeyProperty);
+	metaData.ScriptClass->AddInternalCall("Internal_CreateValueProperty", (void*)&ScriptSerializableDictionary::InternalCreateValueProperty);
+}
 
-	MonoObject* ScriptSerializableDictionary::Create(const ScriptSerializableProperty* native, MonoObject* managed)
-	{
-		SPtr<ManagedSerializableTypeInfoDictionary> dictTypeInfo =
-			std::static_pointer_cast<ManagedSerializableTypeInfoDictionary>(native->GetTypeInfo());
+MonoObject* ScriptSerializableDictionary::Create(const ScriptSerializableProperty* native, MonoObject* managed)
+{
+	SPtr<ManagedSerializableTypeInfoDictionary> dictTypeInfo =
+		std::static_pointer_cast<ManagedSerializableTypeInfoDictionary>(native->GetTypeInfo());
 
-		MonoReflectionType* internalKeyType = MonoUtil::GetType(dictTypeInfo->MKeyType->GetMonoClass());
-		MonoReflectionType* internalValueType = MonoUtil::GetType(dictTypeInfo->MValueType->GetMonoClass());
+	MonoReflectionType* internalKeyType = MonoUtil::GetType(dictTypeInfo->MKeyType->GetMonoClass());
+	MonoReflectionType* internalValueType = MonoUtil::GetType(dictTypeInfo->MValueType->GetMonoClass());
 
-		void* params[3] = { internalKeyType, internalValueType, managed };
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance(params, 3);
+	void* params[3] = { internalKeyType, internalValueType, managed };
+	MonoObject* managedInstance = metaData.ScriptClass->CreateInstance(params, 3);
 
-		new(bs_alloc<ScriptSerializableDictionary>()) ScriptSerializableDictionary(managedInstance, dictTypeInfo);
-		return managedInstance;
-	}
+	new(bs_alloc<ScriptSerializableDictionary>()) ScriptSerializableDictionary(managedInstance, dictTypeInfo);
+	return managedInstance;
+}
 
-	MonoObject* ScriptSerializableDictionary::InternalCreateKeyProperty(ScriptSerializableDictionary* nativeInstance)
-	{
-		return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->MKeyType);
-	}
+MonoObject* ScriptSerializableDictionary::InternalCreateKeyProperty(ScriptSerializableDictionary* nativeInstance)
+{
+	return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->MKeyType);
+}
 
-	MonoObject* ScriptSerializableDictionary::InternalCreateValueProperty(ScriptSerializableDictionary* nativeInstance)
-	{
-		return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->MValueType);
-	}
-} // namespace bs
+MonoObject* ScriptSerializableDictionary::InternalCreateValueProperty(ScriptSerializableDictionary* nativeInstance)
+{
+	return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->MValueType);
+}

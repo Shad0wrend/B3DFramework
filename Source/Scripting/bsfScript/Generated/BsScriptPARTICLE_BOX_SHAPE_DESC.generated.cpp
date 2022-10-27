@@ -7,41 +7,39 @@
 #include "Math/BsVector3.h"
 #include "Wrappers/BsScriptVector.h"
 
-namespace bs
+using namespace bs;
+ScriptPARTICLE_BOX_SHAPE_DESC::ScriptPARTICLE_BOX_SHAPE_DESC(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptPARTICLE_BOX_SHAPE_DESC::InitRuntimeData()
+{}
+
+MonoObject* ScriptPARTICLE_BOX_SHAPE_DESC::Box(const __PARTICLE_BOX_SHAPE_DESCInterop& value)
 {
-	ScriptPARTICLE_BOX_SHAPE_DESC::ScriptPARTICLE_BOX_SHAPE_DESC(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptPARTICLE_BOX_SHAPE_DESC::InitRuntimeData()
-	{}
+__PARTICLE_BOX_SHAPE_DESCInterop ScriptPARTICLE_BOX_SHAPE_DESC::Unbox(MonoObject* value)
+{
+	return *(__PARTICLE_BOX_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptPARTICLE_BOX_SHAPE_DESC::Box(const __PARTICLE_BOX_SHAPE_DESCInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+PARTICLE_BOX_SHAPE_DESC ScriptPARTICLE_BOX_SHAPE_DESC::FromInterop(const __PARTICLE_BOX_SHAPE_DESCInterop& value)
+{
+	PARTICLE_BOX_SHAPE_DESC output;
+	output.Type = value.Type;
+	output.Extents = value.Extents;
 
-	__PARTICLE_BOX_SHAPE_DESCInterop ScriptPARTICLE_BOX_SHAPE_DESC::Unbox(MonoObject* value)
-	{
-		return *(__PARTICLE_BOX_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	PARTICLE_BOX_SHAPE_DESC ScriptPARTICLE_BOX_SHAPE_DESC::FromInterop(const __PARTICLE_BOX_SHAPE_DESCInterop& value)
-	{
-		PARTICLE_BOX_SHAPE_DESC output;
-		output.Type = value.Type;
-		output.Extents = value.Extents;
+__PARTICLE_BOX_SHAPE_DESCInterop ScriptPARTICLE_BOX_SHAPE_DESC::ToInterop(const PARTICLE_BOX_SHAPE_DESC& value)
+{
+	__PARTICLE_BOX_SHAPE_DESCInterop output;
+	output.Type = value.Type;
+	output.Extents = value.Extents;
 
-		return output;
-	}
+	return output;
+}
 
-	__PARTICLE_BOX_SHAPE_DESCInterop ScriptPARTICLE_BOX_SHAPE_DESC::ToInterop(const PARTICLE_BOX_SHAPE_DESC& value)
-	{
-		__PARTICLE_BOX_SHAPE_DESCInterop output;
-		output.Type = value.Type;
-		output.Extents = value.Extents;
-
-		return output;
-	}
-
-} // namespace bs

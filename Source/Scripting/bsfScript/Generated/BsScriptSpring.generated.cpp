@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptSpring::ScriptSpring(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptSpring::InitRuntimeData()
+{}
+
+MonoObject* ScriptSpring::Box(const Spring& value)
 {
-	ScriptSpring::ScriptSpring(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptSpring::InitRuntimeData()
-	{}
+Spring ScriptSpring::Unbox(MonoObject* value)
+{
+	return *(Spring*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptSpring::Box(const Spring& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	Spring ScriptSpring::Unbox(MonoObject* value)
-	{
-		return *(Spring*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

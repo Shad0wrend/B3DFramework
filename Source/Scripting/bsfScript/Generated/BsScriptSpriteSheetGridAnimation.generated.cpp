@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptSpriteSheetGridAnimation::ScriptSpriteSheetGridAnimation(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptSpriteSheetGridAnimation::InitRuntimeData()
+{}
+
+MonoObject* ScriptSpriteSheetGridAnimation::Box(const SpriteSheetGridAnimation& value)
 {
-	ScriptSpriteSheetGridAnimation::ScriptSpriteSheetGridAnimation(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptSpriteSheetGridAnimation::InitRuntimeData()
-	{}
+SpriteSheetGridAnimation ScriptSpriteSheetGridAnimation::Unbox(MonoObject* value)
+{
+	return *(SpriteSheetGridAnimation*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptSpriteSheetGridAnimation::Box(const SpriteSheetGridAnimation& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	SpriteSheetGridAnimation ScriptSpriteSheetGridAnimation::Unbox(MonoObject* value)
-	{
-		return *(SpriteSheetGridAnimation*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

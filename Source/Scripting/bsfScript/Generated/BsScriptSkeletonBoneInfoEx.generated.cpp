@@ -5,47 +5,45 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptSkeletonBoneInfoEx::ScriptSkeletonBoneInfoEx(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptSkeletonBoneInfoEx::InitRuntimeData()
+{}
+
+MonoObject* ScriptSkeletonBoneInfoEx::Box(const __SkeletonBoneInfoExInterop& value)
 {
-	ScriptSkeletonBoneInfoEx::ScriptSkeletonBoneInfoEx(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptSkeletonBoneInfoEx::InitRuntimeData()
-	{}
+__SkeletonBoneInfoExInterop ScriptSkeletonBoneInfoEx::Unbox(MonoObject* value)
+{
+	return *(__SkeletonBoneInfoExInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptSkeletonBoneInfoEx::Box(const __SkeletonBoneInfoExInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+SkeletonBoneInfoEx ScriptSkeletonBoneInfoEx::FromInterop(const __SkeletonBoneInfoExInterop& value)
+{
+	SkeletonBoneInfoEx output;
+	String tmpName;
+	tmpName = MonoUtil::MonoToString(value.Name);
+	output.Name = tmpName;
+	output.Parent = value.Parent;
+	output.InvBindPose = value.InvBindPose;
 
-	__SkeletonBoneInfoExInterop ScriptSkeletonBoneInfoEx::Unbox(MonoObject* value)
-	{
-		return *(__SkeletonBoneInfoExInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	SkeletonBoneInfoEx ScriptSkeletonBoneInfoEx::FromInterop(const __SkeletonBoneInfoExInterop& value)
-	{
-		SkeletonBoneInfoEx output;
-		String tmpName;
-		tmpName = MonoUtil::MonoToString(value.Name);
-		output.Name = tmpName;
-		output.Parent = value.Parent;
-		output.InvBindPose = value.InvBindPose;
+__SkeletonBoneInfoExInterop ScriptSkeletonBoneInfoEx::ToInterop(const SkeletonBoneInfoEx& value)
+{
+	__SkeletonBoneInfoExInterop output;
+	MonoString* tmpName;
+	tmpName = MonoUtil::StringToMono(value.Name);
+	output.Name = tmpName;
+	output.Parent = value.Parent;
+	output.InvBindPose = value.InvBindPose;
 
-		return output;
-	}
+	return output;
+}
 
-	__SkeletonBoneInfoExInterop ScriptSkeletonBoneInfoEx::ToInterop(const SkeletonBoneInfoEx& value)
-	{
-		__SkeletonBoneInfoExInterop output;
-		MonoString* tmpName;
-		tmpName = MonoUtil::StringToMono(value.Name);
-		output.Name = tmpName;
-		output.Parent = value.Parent;
-		output.InvBindPose = value.InvBindPose;
-
-		return output;
-	}
-
-} // namespace bs

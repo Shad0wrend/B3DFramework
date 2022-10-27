@@ -3,19 +3,17 @@
 #include "Wrappers/BsScriptShaderInclude.h"
 #include "BsMonoManager.h"
 
-namespace bs
+using namespace bs;
+ScriptShaderInclude::ScriptShaderInclude(MonoObject* instance, const HShaderInclude& shaderInclude)
+	: TScriptResource(instance, shaderInclude)
 {
-	ScriptShaderInclude::ScriptShaderInclude(MonoObject* instance, const HShaderInclude& shaderInclude)
-		: TScriptResource(instance, shaderInclude)
-	{
-	}
+}
 
-	void ScriptShaderInclude::InitRuntimeData()
-	{
-	}
+void ScriptShaderInclude::InitRuntimeData()
+{
+}
 
-	MonoObject* ScriptShaderInclude::CreateInstance()
-	{
-		return metaData.ScriptClass->CreateInstance();
-	}
-} // namespace bs
+MonoObject* ScriptShaderInclude::CreateInstance()
+{
+	return metaData.ScriptClass->CreateInstance();
+}

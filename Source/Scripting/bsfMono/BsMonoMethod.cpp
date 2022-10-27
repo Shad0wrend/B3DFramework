@@ -8,167 +8,166 @@
 #include <mono/jit/jit.h>
 #include <mono/metadata/attrdefs.h>
 
-namespace bs
+namespace bs {
+MonoMethod::MonoMethod(::MonoMethod* method)
+	: mMethod(method), mCachedReturnType(nullptr), mCachedParameters(nullptr), mCachedNumParameters(0), mIsStatic(false), mHasCachedSignature(false)
 {
-	MonoMethod::MonoMethod(::MonoMethod* method)
-		: mMethod(method), mCachedReturnType(nullptr), mCachedParameters(nullptr), mCachedNumParameters(0), mIsStatic(false), mHasCachedSignature(false)
-	{
-	}
+}
 
-	MonoMethod::~MonoMethod()
-	{
-		if(mCachedParameters != nullptr)
-			bs_free(mCachedParameters);
-	}
+MonoMethod::~MonoMethod()
+{
+	if(mCachedParameters != nullptr)
+		bs_free(mCachedParameters);
+}
 
-	MonoObject* MonoMethod::Invoke(MonoObject* instance, void** params)
-	{
-		MonoObject* exception = nullptr;
-		MonoObject* retVal = mono_runtime_invoke(mMethod, instance, params, &exception);
+MonoObject* MonoMethod::Invoke(MonoObject* instance, void** params)
+{
+	MonoObject* exception = nullptr;
+	MonoObject* retVal = mono_runtime_invoke(mMethod, instance, params, &exception);
 
-		MonoUtil::ThrowIfException(exception);
-		return retVal;
-	}
+	MonoUtil::ThrowIfException(exception);
+	return retVal;
+}
 
-	MonoObject* MonoMethod::InvokeVirtual(MonoObject* instance, void** params)
-	{
-		::MonoMethod* virtualMethod = mono_object_get_virtual_method(instance, mMethod);
+MonoObject* MonoMethod::InvokeVirtual(MonoObject* instance, void** params)
+{
+	::MonoMethod* virtualMethod = mono_object_get_virtual_method(instance, mMethod);
 
-		MonoObject* exception = nullptr;
-		MonoObject* retVal = mono_runtime_invoke(virtualMethod, instance, params, &exception);
+	MonoObject* exception = nullptr;
+	MonoObject* retVal = mono_runtime_invoke(virtualMethod, instance, params, &exception);
 
-		MonoUtil::ThrowIfException(exception);
-		return retVal;
-	}
+	MonoUtil::ThrowIfException(exception);
+	return retVal;
+}
 
-	void* MonoMethod::GetThunk() const
-	{
-		return mono_method_get_unmanaged_thunk(mMethod);
-	}
+void* MonoMethod::GetThunk() const
+{
+	return mono_method_get_unmanaged_thunk(mMethod);
+}
 
-	String MonoMethod::GetName() const
-	{
-		return String(mono_method_get_name(mMethod));
-	}
+String MonoMethod::GetName() const
+{
+	return String(mono_method_get_name(mMethod));
+}
 
-	MonoClass* MonoMethod::GetReturnType() const
-	{
-		if(!mHasCachedSignature)
-			CacheSignature();
+MonoClass* MonoMethod::GetReturnType() const
+{
+	if(!mHasCachedSignature)
+		CacheSignature();
 
-		return mCachedReturnType;
-	}
+	return mCachedReturnType;
+}
 
-	u32 MonoMethod::GetNumParameters() const
-	{
-		if(!mHasCachedSignature)
-			CacheSignature();
+u32 MonoMethod::GetNumParameters() const
+{
+	if(!mHasCachedSignature)
+		CacheSignature();
 
-		return mCachedNumParameters;
-	}
+	return mCachedNumParameters;
+}
 
-	MonoClass* MonoMethod::GetParameterType(u32 paramIdx) const
-	{
-		if(!mHasCachedSignature)
-			CacheSignature();
+MonoClass* MonoMethod::GetParameterType(u32 paramIdx) const
+{
+	if(!mHasCachedSignature)
+		CacheSignature();
 
-		if(paramIdx >= mCachedNumParameters)
-			BS_EXCEPT(InvalidParametersException, "Parameter index out of range. Valid range is [0, " + toString(mCachedNumParameters - 1) + "]");
+	if(paramIdx >= mCachedNumParameters)
+		BS_EXCEPT(InvalidParametersException, "Parameter index out of range. Valid range is [0, " + toString(mCachedNumParameters - 1) + "]");
 
-		return mCachedParameters[paramIdx];
-	}
+	return mCachedParameters[paramIdx];
+}
 
-	bool MonoMethod::IsStatic() const
-	{
-		if(!mHasCachedSignature)
-			CacheSignature();
+bool MonoMethod::IsStatic() const
+{
+	if(!mHasCachedSignature)
+		CacheSignature();
 
-		return mIsStatic;
-	}
+	return mIsStatic;
+}
 
-	bool MonoMethod::HasAttribute(MonoClass* monoClass) const
-	{
-		// TODO - Consider caching custom attributes or just initializing them all at load
+bool MonoMethod::HasAttribute(MonoClass* monoClass) const
+{
+	// TODO - Consider caching custom attributes or just initializing them all at load
 
-		MonoCustomAttrInfo* attrInfo = mono_custom_attrs_from_method(mMethod);
-		if(attrInfo == nullptr)
-			return false;
+	MonoCustomAttrInfo* attrInfo = mono_custom_attrs_from_method(mMethod);
+	if(attrInfo == nullptr)
+		return false;
 
-		bool hasAttr = mono_custom_attrs_has_attr(attrInfo, monoClass->GetInternalClassInternal()) != 0;
+	bool hasAttr = mono_custom_attrs_has_attr(attrInfo, monoClass->GetInternalClassInternal()) != 0;
 
-		mono_custom_attrs_free(attrInfo);
+	mono_custom_attrs_free(attrInfo);
 
-		return hasAttr;
-	}
+	return hasAttr;
+}
 
-	MonoObject* MonoMethod::GetAttribute(MonoClass* monoClass) const
-	{
-		// TODO - Consider caching custom attributes or just initializing them all at load
+MonoObject* MonoMethod::GetAttribute(MonoClass* monoClass) const
+{
+	// TODO - Consider caching custom attributes or just initializing them all at load
 
-		MonoCustomAttrInfo* attrInfo = mono_custom_attrs_from_method(mMethod);
-		if(attrInfo == nullptr)
-			return nullptr;
+	MonoCustomAttrInfo* attrInfo = mono_custom_attrs_from_method(mMethod);
+	if(attrInfo == nullptr)
+		return nullptr;
 
-		MonoObject* foundAttr = nullptr;
-		if(mono_custom_attrs_has_attr(attrInfo, monoClass->GetInternalClassInternal()))
-			foundAttr = mono_custom_attrs_get_attr(attrInfo, monoClass->GetInternalClassInternal());
+	MonoObject* foundAttr = nullptr;
+	if(mono_custom_attrs_has_attr(attrInfo, monoClass->GetInternalClassInternal()))
+		foundAttr = mono_custom_attrs_get_attr(attrInfo, monoClass->GetInternalClassInternal());
 
-		mono_custom_attrs_free(attrInfo);
-		return foundAttr;
-	}
+	mono_custom_attrs_free(attrInfo);
+	return foundAttr;
+}
 
-	MonoMemberVisibility MonoMethod::GetVisibility()
-	{
-		uint32_t flags = mono_method_get_flags(mMethod, nullptr) & MONO_METHOD_ATTR_ACCESS_MASK;
+MonoMemberVisibility MonoMethod::GetVisibility()
+{
+	uint32_t flags = mono_method_get_flags(mMethod, nullptr) & MONO_METHOD_ATTR_ACCESS_MASK;
 
-		if(flags == MONO_METHOD_ATTR_PRIVATE)
-			return MonoMemberVisibility::Private;
-		else if(flags == MONO_METHOD_ATTR_FAM_AND_ASSEM)
-			return MonoMemberVisibility::ProtectedInternal;
-		else if(flags == MONO_METHOD_ATTR_ASSEM)
-			return MonoMemberVisibility::Internal;
-		else if(flags == MONO_METHOD_ATTR_FAMILY)
-			return MonoMemberVisibility::Protected;
-		else if(flags == MONO_METHOD_ATTR_PUBLIC)
-			return MonoMemberVisibility::Public;
-
-		assert(false);
+	if(flags == MONO_METHOD_ATTR_PRIVATE)
 		return MonoMemberVisibility::Private;
-	}
+	else if(flags == MONO_METHOD_ATTR_FAM_AND_ASSEM)
+		return MonoMemberVisibility::ProtectedInternal;
+	else if(flags == MONO_METHOD_ATTR_ASSEM)
+		return MonoMemberVisibility::Internal;
+	else if(flags == MONO_METHOD_ATTR_FAMILY)
+		return MonoMemberVisibility::Protected;
+	else if(flags == MONO_METHOD_ATTR_PUBLIC)
+		return MonoMemberVisibility::Public;
 
-	void MonoMethod::CacheSignature() const
+	assert(false);
+	return MonoMemberVisibility::Private;
+}
+
+void MonoMethod::CacheSignature() const
+{
+	MonoMethodSignature* methodSignature = mono_method_signature(mMethod);
+
+	MonoType* returnType = mono_signature_get_return_type(methodSignature);
+	if(returnType != nullptr)
 	{
-		MonoMethodSignature* methodSignature = mono_method_signature(mMethod);
-
-		MonoType* returnType = mono_signature_get_return_type(methodSignature);
-		if(returnType != nullptr)
-		{
-			::MonoClass* returnClass = mono_class_from_mono_type(returnType);
-			if(returnClass != nullptr)
-				mCachedReturnType = MonoManager::Instance().FindClass(returnClass);
-		}
-
-		mCachedNumParameters = (u32)mono_signature_get_param_count(methodSignature);
-		if(mCachedParameters != nullptr)
-		{
-			bs_free(mCachedParameters);
-			mCachedParameters = nullptr;
-		}
-
-		if(mCachedNumParameters > 0)
-		{
-			mCachedParameters = (MonoClass**)bs_alloc(mCachedNumParameters * sizeof(MonoClass*));
-
-			void* iter = nullptr;
-			for(u32 i = 0; i < mCachedNumParameters; i++)
-			{
-				MonoType* curParamType = mono_signature_get_params(methodSignature, &iter);
-				::MonoClass* rawClass = mono_class_from_mono_type(curParamType);
-				mCachedParameters[i] = MonoManager::Instance().FindClass(rawClass);
-			}
-		}
-
-		mIsStatic = !mono_signature_is_instance(methodSignature);
-		mHasCachedSignature = true;
+		::MonoClass* returnClass = mono_class_from_mono_type(returnType);
+		if(returnClass != nullptr)
+			mCachedReturnType = MonoManager::Instance().FindClass(returnClass);
 	}
+
+	mCachedNumParameters = (u32)mono_signature_get_param_count(methodSignature);
+	if(mCachedParameters != nullptr)
+	{
+		bs_free(mCachedParameters);
+		mCachedParameters = nullptr;
+	}
+
+	if(mCachedNumParameters > 0)
+	{
+		mCachedParameters = (MonoClass**)bs_alloc(mCachedNumParameters * sizeof(MonoClass*));
+
+		void* iter = nullptr;
+		for(u32 i = 0; i < mCachedNumParameters; i++)
+		{
+			MonoType* curParamType = mono_signature_get_params(methodSignature, &iter);
+			::MonoClass* rawClass = mono_class_from_mono_type(curParamType);
+			mCachedParameters[i] = MonoManager::Instance().FindClass(rawClass);
+		}
+	}
+
+	mIsStatic = !mono_signature_is_instance(methodSignature);
+	mHasCachedSignature = true;
+}
 } // namespace bs

@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptParticleEmissionMode::ScriptParticleEmissionMode(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptParticleEmissionMode::InitRuntimeData()
+{}
+
+MonoObject* ScriptParticleEmissionMode::Box(const ParticleEmissionMode& value)
 {
-	ScriptParticleEmissionMode::ScriptParticleEmissionMode(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptParticleEmissionMode::InitRuntimeData()
-	{}
+ParticleEmissionMode ScriptParticleEmissionMode::Unbox(MonoObject* value)
+{
+	return *(ParticleEmissionMode*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptParticleEmissionMode::Box(const ParticleEmissionMode& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	ParticleEmissionMode ScriptParticleEmissionMode::Unbox(MonoObject* value)
-	{
-		return *(ParticleEmissionMode*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

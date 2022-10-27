@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptVector4I::ScriptVector4I(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptVector4I::InitRuntimeData()
+{}
+
+MonoObject* ScriptVector4I::Box(const Vector4I& value)
 {
-	ScriptVector4I::ScriptVector4I(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptVector4I::InitRuntimeData()
-	{}
+Vector4I ScriptVector4I::Unbox(MonoObject* value)
+{
+	return *(Vector4I*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptVector4I::Box(const Vector4I& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	Vector4I ScriptVector4I::Unbox(MonoObject* value)
-	{
-		return *(Vector4I*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

@@ -8,43 +8,41 @@
 #include "Utility/BsTime.h"
 #include "BsPlayInEditor.h"
 
-namespace bs
+using namespace bs;
+ScriptTime::ScriptTime(MonoObject* instance)
+	: ScriptObject(instance)
+{}
+
+void ScriptTime::InitRuntimeData()
 {
-	ScriptTime::ScriptTime(MonoObject* instance)
-		: ScriptObject(instance)
-	{}
+	metaData.ScriptClass->AddInternalCall("Internal_GetRealElapsed", (void*)&ScriptTime::InternalGetRealElapsed);
+	metaData.ScriptClass->AddInternalCall("Internal_GetElapsed", (void*)&ScriptTime::InternalGetElapsed);
+	metaData.ScriptClass->AddInternalCall("Internal_GetFrameDelta", (void*)&ScriptTime::InternalGetFrameDelta);
+	metaData.ScriptClass->AddInternalCall("Internal_GetFrameNumber", (void*)&ScriptTime::InternalGetFrameNumber);
+	metaData.ScriptClass->AddInternalCall("Internal_GetPrecise", (void*)&ScriptTime::InternalGetPrecise);
+}
 
-	void ScriptTime::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetRealElapsed", (void*)&ScriptTime::InternalGetRealElapsed);
-		metaData.ScriptClass->AddInternalCall("Internal_GetElapsed", (void*)&ScriptTime::InternalGetElapsed);
-		metaData.ScriptClass->AddInternalCall("Internal_GetFrameDelta", (void*)&ScriptTime::InternalGetFrameDelta);
-		metaData.ScriptClass->AddInternalCall("Internal_GetFrameNumber", (void*)&ScriptTime::InternalGetFrameNumber);
-		metaData.ScriptClass->AddInternalCall("Internal_GetPrecise", (void*)&ScriptTime::InternalGetPrecise);
-	}
+float ScriptTime::InternalGetRealElapsed()
+{
+	return gTime().GetTime();
+}
 
-	float ScriptTime::InternalGetRealElapsed()
-	{
-		return gTime().GetTime();
-	}
+float ScriptTime::InternalGetElapsed()
+{
+	return PlayInEditor::Instance().GetPausableTime();
+}
 
-	float ScriptTime::InternalGetElapsed()
-	{
-		return PlayInEditor::Instance().GetPausableTime();
-	}
+float ScriptTime::InternalGetFrameDelta()
+{
+	return gTime().GetFrameDelta();
+}
 
-	float ScriptTime::InternalGetFrameDelta()
-	{
-		return gTime().GetFrameDelta();
-	}
+u64 ScriptTime::InternalGetFrameNumber()
+{
+	return gTime().GetFrameIdx();
+}
 
-	u64 ScriptTime::InternalGetFrameNumber()
-	{
-		return gTime().GetFrameIdx();
-	}
-
-	u64 ScriptTime::InternalGetPrecise()
-	{
-		return gTime().GetTimePrecise();
-	}
-} // namespace bs
+u64 ScriptTime::InternalGetPrecise()
+{
+	return gTime().GetTimePrecise();
+}

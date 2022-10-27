@@ -11,47 +11,45 @@
 #include "Wrappers/BsScriptVector.h"
 #include "BsScriptVECTOR_FIELD_DESC.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptVectorField::ScriptVectorField(MonoObject* managedInstance, const ResourceHandle<VectorField>& value)
+	: TScriptResource(managedInstance, value)
 {
-	ScriptVectorField::ScriptVectorField(MonoObject* managedInstance, const ResourceHandle<VectorField>& value)
-		: TScriptResource(managedInstance, value)
-	{
-	}
+}
 
-	void ScriptVectorField::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptVectorField::InternalGetRef);
-		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptVectorField::InternalCreate);
-	}
+void ScriptVectorField::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_GetRef", (void*)&ScriptVectorField::InternalGetRef);
+	metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptVectorField::InternalCreate);
+}
 
-	MonoObject* ScriptVectorField::CreateInstance()
-	{
-		bool dummy = false;
-		void* ctorParams[1] = { &dummy };
+MonoObject* ScriptVectorField::CreateInstance()
+{
+	bool dummy = false;
+	void* ctorParams[1] = { &dummy };
 
-		return metaData.ScriptClass->CreateInstance("bool", ctorParams);
-	}
+	return metaData.ScriptClass->CreateInstance("bool", ctorParams);
+}
 
-	MonoObject* ScriptVectorField::InternalGetRef(ScriptVectorField* thisPtr)
-	{
-		return thisPtr->GetRRef();
-	}
+MonoObject* ScriptVectorField::InternalGetRef(ScriptVectorField* thisPtr)
+{
+	return thisPtr->GetRRef();
+}
 
-	void ScriptVectorField::InternalCreate(MonoObject* managedInstance, __VECTOR_FIELD_DESCInterop* desc, MonoArray* values)
+void ScriptVectorField::InternalCreate(MonoObject* managedInstance, __VECTOR_FIELD_DESCInterop* desc, MonoArray* values)
+{
+	VECTOR_FIELD_DESC tmpdesc;
+	tmpdesc = ScriptVECTOR_FIELD_DESC::FromInterop(*desc);
+	Vector<Vector3> vecvalues;
+	if(values != nullptr)
 	{
-		VECTOR_FIELD_DESC tmpdesc;
-		tmpdesc = ScriptVECTOR_FIELD_DESC::FromInterop(*desc);
-		Vector<Vector3> vecvalues;
-		if(values != nullptr)
+		ScriptArray arrayvalues(values);
+		vecvalues.resize(arrayvalues.Size());
+		for(int i = 0; i < (int)arrayvalues.Size(); i++)
 		{
-			ScriptArray arrayvalues(values);
-			vecvalues.resize(arrayvalues.Size());
-			for(int i = 0; i < (int)arrayvalues.Size(); i++)
-			{
-				vecvalues[i] = arrayvalues.Get<Vector3>(i);
-			}
+			vecvalues[i] = arrayvalues.Get<Vector3>(i);
 		}
-		ResourceHandle<VectorField> instance = VectorField::Create(tmpdesc, vecvalues);
-		ScriptResourceManager::Instance().CreateBuiltinScriptResource(instance, managedInstance);
 	}
-} // namespace bs
+	ResourceHandle<VectorField> instance = VectorField::Create(tmpdesc, vecvalues);
+	ScriptResourceManager::Instance().CreateBuiltinScriptResource(instance, managedInstance);
+}

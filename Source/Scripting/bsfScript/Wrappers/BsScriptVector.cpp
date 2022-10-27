@@ -5,59 +5,57 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptVector2::ScriptVector2(MonoObject* instance)
+	: ScriptObject(instance)
+{}
+
+void ScriptVector2::InitRuntimeData()
+{}
+
+MonoObject* ScriptVector2::Box(const Vector2& value)
 {
-	ScriptVector2::ScriptVector2(MonoObject* instance)
-		: ScriptObject(instance)
-	{}
+	// We're casting away const but it's fine since structs are passed by value anyway
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptVector2::InitRuntimeData()
-	{}
+Vector2 ScriptVector2::Unbox(MonoObject* obj)
+{
+	return *(Vector2*)MonoUtil::Unbox(obj);
+}
 
-	MonoObject* ScriptVector2::Box(const Vector2& value)
-	{
-		// We're casting away const but it's fine since structs are passed by value anyway
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+ScriptVector3::ScriptVector3(MonoObject* instance)
+	: ScriptObject(instance)
+{}
 
-	Vector2 ScriptVector2::Unbox(MonoObject* obj)
-	{
-		return *(Vector2*)MonoUtil::Unbox(obj);
-	}
+void ScriptVector3::InitRuntimeData()
+{}
 
-	ScriptVector3::ScriptVector3(MonoObject* instance)
-		: ScriptObject(instance)
-	{}
+MonoObject* ScriptVector3::Box(const Vector3& value)
+{
+	// We're casting away const but it's fine since structs are passed by value anyway
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptVector3::InitRuntimeData()
-	{}
+Vector3 ScriptVector3::Unbox(MonoObject* obj)
+{
+	return *(Vector3*)MonoUtil::Unbox(obj);
+}
 
-	MonoObject* ScriptVector3::Box(const Vector3& value)
-	{
-		// We're casting away const but it's fine since structs are passed by value anyway
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+ScriptVector4::ScriptVector4(MonoObject* instance)
+	: ScriptObject(instance)
+{}
 
-	Vector3 ScriptVector3::Unbox(MonoObject* obj)
-	{
-		return *(Vector3*)MonoUtil::Unbox(obj);
-	}
+void ScriptVector4::InitRuntimeData()
+{}
 
-	ScriptVector4::ScriptVector4(MonoObject* instance)
-		: ScriptObject(instance)
-	{}
+MonoObject* ScriptVector4::Box(const Vector4& value)
+{
+	// We're casting away const but it's fine since structs are passed by value anyway
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptVector4::InitRuntimeData()
-	{}
-
-	MonoObject* ScriptVector4::Box(const Vector4& value)
-	{
-		// We're casting away const but it's fine since structs are passed by value anyway
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	Vector4 ScriptVector4::Unbox(MonoObject* obj)
-	{
-		return *(Vector4*)MonoUtil::Unbox(obj);
-	}
-} // namespace bs
+Vector4 ScriptVector4::Unbox(MonoObject* obj)
+{
+	return *(Vector4*)MonoUtil::Unbox(obj);
+}

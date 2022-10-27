@@ -5,45 +5,43 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptVECTOR_FIELD_DESC::ScriptVECTOR_FIELD_DESC(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptVECTOR_FIELD_DESC::InitRuntimeData()
+{}
+
+MonoObject* ScriptVECTOR_FIELD_DESC::Box(const __VECTOR_FIELD_DESCInterop& value)
 {
-	ScriptVECTOR_FIELD_DESC::ScriptVECTOR_FIELD_DESC(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptVECTOR_FIELD_DESC::InitRuntimeData()
-	{}
+__VECTOR_FIELD_DESCInterop ScriptVECTOR_FIELD_DESC::Unbox(MonoObject* value)
+{
+	return *(__VECTOR_FIELD_DESCInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptVECTOR_FIELD_DESC::Box(const __VECTOR_FIELD_DESCInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+VECTOR_FIELD_DESC ScriptVECTOR_FIELD_DESC::FromInterop(const __VECTOR_FIELD_DESCInterop& value)
+{
+	VECTOR_FIELD_DESC output;
+	output.CountX = value.CountX;
+	output.CountY = value.CountY;
+	output.CountZ = value.CountZ;
+	output.Bounds = value.Bounds;
 
-	__VECTOR_FIELD_DESCInterop ScriptVECTOR_FIELD_DESC::Unbox(MonoObject* value)
-	{
-		return *(__VECTOR_FIELD_DESCInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	VECTOR_FIELD_DESC ScriptVECTOR_FIELD_DESC::FromInterop(const __VECTOR_FIELD_DESCInterop& value)
-	{
-		VECTOR_FIELD_DESC output;
-		output.CountX = value.CountX;
-		output.CountY = value.CountY;
-		output.CountZ = value.CountZ;
-		output.Bounds = value.Bounds;
+__VECTOR_FIELD_DESCInterop ScriptVECTOR_FIELD_DESC::ToInterop(const VECTOR_FIELD_DESC& value)
+{
+	__VECTOR_FIELD_DESCInterop output;
+	output.CountX = value.CountX;
+	output.CountY = value.CountY;
+	output.CountZ = value.CountZ;
+	output.Bounds = value.Bounds;
 
-		return output;
-	}
+	return output;
+}
 
-	__VECTOR_FIELD_DESCInterop ScriptVECTOR_FIELD_DESC::ToInterop(const VECTOR_FIELD_DESC& value)
-	{
-		__VECTOR_FIELD_DESCInterop output;
-		output.CountX = value.CountX;
-		output.CountY = value.CountY;
-		output.CountZ = value.CountZ;
-		output.Bounds = value.Bounds;
-
-		return output;
-	}
-
-} // namespace bs

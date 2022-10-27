@@ -10,113 +10,111 @@
 #include "Wrappers/BsScriptResource.h"
 #include "BsApplication.h"
 
-namespace bs
-{
+using namespace bs;
 #if BS_IS_BANSHEE3D
-	ScriptResources::ScriptResources(MonoObject* instance)
-		: ScriptObject(instance)
-	{}
+ScriptResources::ScriptResources(MonoObject* instance)
+	: ScriptObject(instance)
+{}
 
-	void ScriptResources::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_Load", (void*)&ScriptResources::InternalLoad);
-		metaData.ScriptClass->AddInternalCall("Internal_LoadFromUUID", (void*)&ScriptResources::InternalLoadFromUuid);
-		metaData.ScriptClass->AddInternalCall("Internal_LoadAsync", (void*)&ScriptResources::InternalLoadAsync);
-		metaData.ScriptClass->AddInternalCall("Internal_LoadAsyncFromUUID", (void*)&ScriptResources::InternalLoadAsyncFromUuid);
-		metaData.ScriptClass->AddInternalCall("Internal_UnloadUnused", (void*)&ScriptResources::InternalUnloadUnused);
-		metaData.ScriptClass->AddInternalCall("Internal_Release", (void*)&ScriptResources::InternalRelease);
-		metaData.ScriptClass->AddInternalCall("Internal_ReleaseRef", (void*)&ScriptResources::InternalReleaseRef);
-		metaData.ScriptClass->AddInternalCall("Internal_GetLoadProgress", (void*)&ScriptResources::InternalGetLoadProgress);
-	}
+void ScriptResources::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_Load", (void*)&ScriptResources::InternalLoad);
+	metaData.ScriptClass->AddInternalCall("Internal_LoadFromUUID", (void*)&ScriptResources::InternalLoadFromUuid);
+	metaData.ScriptClass->AddInternalCall("Internal_LoadAsync", (void*)&ScriptResources::InternalLoadAsync);
+	metaData.ScriptClass->AddInternalCall("Internal_LoadAsyncFromUUID", (void*)&ScriptResources::InternalLoadAsyncFromUuid);
+	metaData.ScriptClass->AddInternalCall("Internal_UnloadUnused", (void*)&ScriptResources::InternalUnloadUnused);
+	metaData.ScriptClass->AddInternalCall("Internal_Release", (void*)&ScriptResources::InternalRelease);
+	metaData.ScriptClass->AddInternalCall("Internal_ReleaseRef", (void*)&ScriptResources::InternalReleaseRef);
+	metaData.ScriptClass->AddInternalCall("Internal_GetLoadProgress", (void*)&ScriptResources::InternalGetLoadProgress);
+}
 
-	MonoObject* ScriptResources::InternalLoad(MonoString* path, ResourceLoadFlag flags)
-	{
-		Path nativePath = MonoUtil::MonoToString(path);
+MonoObject* ScriptResources::InternalLoad(MonoString* path, ResourceLoadFlag flags)
+{
+	Path nativePath = MonoUtil::MonoToString(path);
 
-		ResourceLoadFlags loadFlags = flags;
+	ResourceLoadFlags loadFlags = flags;
 
-		if(gApplication().IsEditor())
-			loadFlags |= ResourceLoadFlag::KeepSourceData;
+	if(gApplication().IsEditor())
+		loadFlags |= ResourceLoadFlag::KeepSourceData;
 
-		HResource resource = GameResourceManager::Instance().Load(nativePath, loadFlags, false);
-		if(!resource.IsLoaded(false))
-			return nullptr;
-
-		ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().GetScriptResource(resource, true);
-		return scriptResource->GetManagedInstance();
-	}
-
-	MonoObject* ScriptResources::InternalLoadFromUuid(UUID* uuid, ResourceLoadFlag flags)
-	{
-		ResourceLoadFlags loadFlags = flags;
-
-		if(gApplication().IsEditor())
-			loadFlags |= ResourceLoadFlag::KeepSourceData;
-
-		HResource resource = gResources().LoadFromUuid(*uuid, false, loadFlags);
-		if(!resource.IsLoaded(false))
-			return nullptr;
-
-		ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().GetScriptResource(resource, true);
-		return scriptResource->GetManagedInstance();
-	}
-
-	MonoObject* ScriptResources::InternalLoadAsync(MonoString* path, ResourceLoadFlag flags)
-	{
-		Path nativePath = MonoUtil::MonoToString(path);
-
-		ResourceLoadFlags loadFlags = flags;
-
-		if(gApplication().IsEditor())
-			loadFlags |= ResourceLoadFlag::KeepSourceData;
-
-		HResource resource = GameResourceManager::Instance().Load(nativePath, loadFlags, true);
-		if(resource == nullptr)
-			return nullptr;
-
-		ScriptRRefBase* scriptResource = ScriptResourceManager::Instance().GetScriptRRef(resource);
-		if(scriptResource != nullptr)
-			return scriptResource->GetManagedInstance();
-
+	HResource resource = GameResourceManager::Instance().Load(nativePath, loadFlags, false);
+	if(!resource.IsLoaded(false))
 		return nullptr;
-	}
 
-	MonoObject* ScriptResources::InternalLoadAsyncFromUuid(UUID* uuid, ResourceLoadFlag flags)
-	{
-		ResourceLoadFlags loadFlags = flags;
+	ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().GetScriptResource(resource, true);
+	return scriptResource->GetManagedInstance();
+}
 
-		if(gApplication().IsEditor())
-			loadFlags |= ResourceLoadFlag::KeepSourceData;
+MonoObject* ScriptResources::InternalLoadFromUuid(UUID* uuid, ResourceLoadFlag flags)
+{
+	ResourceLoadFlags loadFlags = flags;
 
-		HResource resource = gResources().LoadFromUuid(*uuid, true, loadFlags);
-		if(resource == nullptr)
-			return nullptr;
+	if(gApplication().IsEditor())
+		loadFlags |= ResourceLoadFlag::KeepSourceData;
 
-		ScriptRRefBase* scriptResource = ScriptResourceManager::Instance().GetScriptRRef(resource);
-		if(scriptResource != nullptr)
-			return scriptResource->GetManagedInstance();
-
+	HResource resource = gResources().LoadFromUuid(*uuid, false, loadFlags);
+	if(!resource.IsLoaded(false))
 		return nullptr;
-	}
 
-	float ScriptResources::InternalGetLoadProgress(ScriptRRefBase* resource, bool loadDependencies)
-	{
-		return gResources().GetLoadProgress(resource->GetHandle(), loadDependencies);
-	}
+	ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().GetScriptResource(resource, true);
+	return scriptResource->GetManagedInstance();
+}
 
-	void ScriptResources::InternalRelease(ScriptResourceBase* resource)
-	{
-		resource->GetGenericHandle().Release();
-	}
+MonoObject* ScriptResources::InternalLoadAsync(MonoString* path, ResourceLoadFlag flags)
+{
+	Path nativePath = MonoUtil::MonoToString(path);
 
-	void ScriptResources::InternalReleaseRef(ScriptRRefBase* resourceRef)
-	{
-		resourceRef->GetHandle().Release();
-	}
+	ResourceLoadFlags loadFlags = flags;
 
-	void ScriptResources::InternalUnloadUnused()
-	{
-		gResources().UnloadAllUnused();
-	}
+	if(gApplication().IsEditor())
+		loadFlags |= ResourceLoadFlag::KeepSourceData;
+
+	HResource resource = GameResourceManager::Instance().Load(nativePath, loadFlags, true);
+	if(resource == nullptr)
+		return nullptr;
+
+	ScriptRRefBase* scriptResource = ScriptResourceManager::Instance().GetScriptRRef(resource);
+	if(scriptResource != nullptr)
+		return scriptResource->GetManagedInstance();
+
+	return nullptr;
+}
+
+MonoObject* ScriptResources::InternalLoadAsyncFromUuid(UUID* uuid, ResourceLoadFlag flags)
+{
+	ResourceLoadFlags loadFlags = flags;
+
+	if(gApplication().IsEditor())
+		loadFlags |= ResourceLoadFlag::KeepSourceData;
+
+	HResource resource = gResources().LoadFromUuid(*uuid, true, loadFlags);
+	if(resource == nullptr)
+		return nullptr;
+
+	ScriptRRefBase* scriptResource = ScriptResourceManager::Instance().GetScriptRRef(resource);
+	if(scriptResource != nullptr)
+		return scriptResource->GetManagedInstance();
+
+	return nullptr;
+}
+
+float ScriptResources::InternalGetLoadProgress(ScriptRRefBase* resource, bool loadDependencies)
+{
+	return gResources().GetLoadProgress(resource->GetHandle(), loadDependencies);
+}
+
+void ScriptResources::InternalRelease(ScriptResourceBase* resource)
+{
+	resource->GetGenericHandle().Release();
+}
+
+void ScriptResources::InternalReleaseRef(ScriptRRefBase* resourceRef)
+{
+	resourceRef->GetHandle().Release();
+}
+
+void ScriptResources::InternalUnloadUnused()
+{
+	gResources().UnloadAllUnused();
+}
 #endif
-} // namespace bs

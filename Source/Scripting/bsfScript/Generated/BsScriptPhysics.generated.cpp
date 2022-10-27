@@ -6,44 +6,42 @@
 #include "BsMonoUtil.h"
 #include "../../../Foundation/bsfCore/Physics/BsPhysics.h"
 
-namespace bs
+using namespace bs;
+ScriptPhysics::ScriptPhysics(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
 {
-	ScriptPhysics::ScriptPhysics(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{
-	}
+}
 
-	void ScriptPhysics::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_ToggleCollision", (void*)&ScriptPhysics::InternalToggleCollision);
-		metaData.ScriptClass->AddInternalCall("Internal_IsCollisionEnabled", (void*)&ScriptPhysics::InternalIsCollisionEnabled);
-		metaData.ScriptClass->AddInternalCall("Internal_IsUpdateInProgressInternal", (void*)&ScriptPhysics::InternalIsUpdateInProgressInternal);
-	}
+void ScriptPhysics::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_ToggleCollision", (void*)&ScriptPhysics::InternalToggleCollision);
+	metaData.ScriptClass->AddInternalCall("Internal_IsCollisionEnabled", (void*)&ScriptPhysics::InternalIsCollisionEnabled);
+	metaData.ScriptClass->AddInternalCall("Internal_IsUpdateInProgressInternal", (void*)&ScriptPhysics::InternalIsUpdateInProgressInternal);
+}
 
-	void ScriptPhysics::InternalToggleCollision(uint64_t groupA, uint64_t groupB, bool enabled)
-	{
-		Physics::Instance().ToggleCollision(groupA, groupB, enabled);
-	}
+void ScriptPhysics::InternalToggleCollision(uint64_t groupA, uint64_t groupB, bool enabled)
+{
+	Physics::Instance().ToggleCollision(groupA, groupB, enabled);
+}
 
-	bool ScriptPhysics::InternalIsCollisionEnabled(uint64_t groupA, uint64_t groupB)
-	{
-		bool tmp__output;
-		tmp__output = Physics::Instance().IsCollisionEnabled(groupA, groupB);
+bool ScriptPhysics::InternalIsCollisionEnabled(uint64_t groupA, uint64_t groupB)
+{
+	bool tmp__output;
+	tmp__output = Physics::Instance().IsCollisionEnabled(groupA, groupB);
 
-		bool __output;
-		__output = tmp__output;
+	bool __output;
+	__output = tmp__output;
 
-		return __output;
-	}
+	return __output;
+}
 
-	bool ScriptPhysics::InternalIsUpdateInProgressInternal()
-	{
-		bool tmp__output;
-		tmp__output = Physics::Instance().IsUpdateInProgressInternal();
+bool ScriptPhysics::InternalIsUpdateInProgressInternal()
+{
+	bool tmp__output;
+	tmp__output = Physics::Instance().IsUpdateInProgressInternal();
 
-		bool __output;
-		__output = tmp__output;
+	bool __output;
+	__output = tmp__output;
 
-		return __output;
-	}
-} // namespace bs
+	return __output;
+}

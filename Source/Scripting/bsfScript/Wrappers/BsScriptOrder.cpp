@@ -2,16 +2,14 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Wrappers/BsScriptOrder.h"
 
-namespace bs
+using namespace bs;
+MonoField* ScriptOrder::indexField = nullptr;
+
+ScriptOrder::ScriptOrder(MonoObject* instance)
+	: ScriptObject(instance)
+{}
+
+void ScriptOrder::InitRuntimeData()
 {
-	MonoField* ScriptOrder::indexField = nullptr;
-
-	ScriptOrder::ScriptOrder(MonoObject* instance)
-		: ScriptObject(instance)
-	{}
-
-	void ScriptOrder::InitRuntimeData()
-	{
-		indexField = metaData.ScriptClass->GetField("index");
-	}
-} // namespace bs
+	indexField = metaData.ScriptClass->GetField("index");
+}

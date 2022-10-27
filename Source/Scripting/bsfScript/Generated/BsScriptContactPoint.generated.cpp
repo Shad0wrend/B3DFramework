@@ -7,45 +7,43 @@
 #include "Math/BsVector3.h"
 #include "Wrappers/BsScriptVector.h"
 
-namespace bs
+using namespace bs;
+ScriptContactPoint::ScriptContactPoint(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptContactPoint::InitRuntimeData()
+{}
+
+MonoObject* ScriptContactPoint::Box(const __ContactPointInterop& value)
 {
-	ScriptContactPoint::ScriptContactPoint(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptContactPoint::InitRuntimeData()
-	{}
+__ContactPointInterop ScriptContactPoint::Unbox(MonoObject* value)
+{
+	return *(__ContactPointInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptContactPoint::Box(const __ContactPointInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+ContactPoint ScriptContactPoint::FromInterop(const __ContactPointInterop& value)
+{
+	ContactPoint output;
+	output.Position = value.Position;
+	output.Normal = value.Normal;
+	output.Impulse = value.Impulse;
+	output.Separation = value.Separation;
 
-	__ContactPointInterop ScriptContactPoint::Unbox(MonoObject* value)
-	{
-		return *(__ContactPointInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	ContactPoint ScriptContactPoint::FromInterop(const __ContactPointInterop& value)
-	{
-		ContactPoint output;
-		output.Position = value.Position;
-		output.Normal = value.Normal;
-		output.Impulse = value.Impulse;
-		output.Separation = value.Separation;
+__ContactPointInterop ScriptContactPoint::ToInterop(const ContactPoint& value)
+{
+	__ContactPointInterop output;
+	output.Position = value.Position;
+	output.Normal = value.Normal;
+	output.Impulse = value.Impulse;
+	output.Separation = value.Separation;
 
-		return output;
-	}
+	return output;
+}
 
-	__ContactPointInterop ScriptContactPoint::ToInterop(const ContactPoint& value)
-	{
-		__ContactPointInterop output;
-		output.Position = value.Position;
-		output.Normal = value.Normal;
-		output.Impulse = value.Impulse;
-		output.Separation = value.Separation;
-
-		return output;
-	}
-
-} // namespace bs

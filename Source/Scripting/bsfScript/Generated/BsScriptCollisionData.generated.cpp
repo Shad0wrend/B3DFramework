@@ -10,90 +10,88 @@
 #include "../../../Foundation/bsfCore/Physics/BsPhysicsCommon.h"
 #include "BsScriptContactPoint.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptCollisionData::ScriptCollisionData(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptCollisionData::InitRuntimeData()
+{}
+
+MonoObject* ScriptCollisionData::Box(const __CollisionDataInterop& value)
 {
-	ScriptCollisionData::ScriptCollisionData(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptCollisionData::InitRuntimeData()
-	{}
+__CollisionDataInterop ScriptCollisionData::Unbox(MonoObject* value)
+{
+	return *(__CollisionDataInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptCollisionData::Box(const __CollisionDataInterop& value)
+CollisionData ScriptCollisionData::FromInterop(const __CollisionDataInterop& value)
+{
+	CollisionData output;
+	GameObjectHandle<CCollider> vecCollider[2];
+	if(value.Collider != nullptr)
 	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	__CollisionDataInterop ScriptCollisionData::Unbox(MonoObject* value)
-	{
-		return *(__CollisionDataInterop*)MonoUtil::Unbox(value);
-	}
-
-	CollisionData ScriptCollisionData::FromInterop(const __CollisionDataInterop& value)
-	{
-		CollisionData output;
-		GameObjectHandle<CCollider> vecCollider[2];
-		if(value.Collider != nullptr)
+		ScriptArray arrayCollider(value.Collider);
+		for(int i = 0; i < (int)arrayCollider.Size(); i++)
 		{
-			ScriptArray arrayCollider(value.Collider);
-			for(int i = 0; i < (int)arrayCollider.Size(); i++)
-			{
-				ScriptCColliderBase* scriptCollider;
-				scriptCollider = (ScriptCColliderBase*)ScriptCCollider::ToNative(arrayCollider.Get<MonoObject*>(i));
-				if(scriptCollider != nullptr)
-				{
-					GameObjectHandle<CCollider> arrayElemPtrCollider = static_object_cast<CCollider>(scriptCollider->GetComponent());
-					vecCollider[i] = arrayElemPtrCollider;
-				}
-			}
-		}
-		auto tmpCollider = vecCollider;
-		for(int i = 0; i < 2; ++i)
-			output.Collider[i] = tmpCollider[i];
-		Vector<ContactPoint> vecContactPoints;
-		if(value.ContactPoints != nullptr)
-		{
-			ScriptArray arrayContactPoints(value.ContactPoints);
-			vecContactPoints.resize(arrayContactPoints.Size());
-			for(int i = 0; i < (int)arrayContactPoints.Size(); i++)
-			{
-				vecContactPoints[i] = ScriptContactPoint::FromInterop(arrayContactPoints.Get<__ContactPointInterop>(i));
-			}
-		}
-		output.ContactPoints = vecContactPoints;
-
-		return output;
-	}
-
-	__CollisionDataInterop ScriptCollisionData::ToInterop(const CollisionData& value)
-	{
-		__CollisionDataInterop output;
-		int arraySizeCollider = 2;
-		MonoArray* vecCollider;
-		ScriptArray arrayCollider = ScriptArray::Create<ScriptCCollider>(arraySizeCollider);
-		for(int i = 0; i < arraySizeCollider; i++)
-		{
-			ScriptComponentBase* scriptCollider = nullptr;
-			if(value.Collider[i])
-				scriptCollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Collider[i]));
+			ScriptCColliderBase* scriptCollider;
+			scriptCollider = (ScriptCColliderBase*)ScriptCCollider::ToNative(arrayCollider.Get<MonoObject*>(i));
 			if(scriptCollider != nullptr)
-				arrayCollider.Set(i, scriptCollider->GetManagedInstance());
-			else
-				arrayCollider.Set(i, nullptr);
+			{
+				GameObjectHandle<CCollider> arrayElemPtrCollider = static_object_cast<CCollider>(scriptCollider->GetComponent());
+				vecCollider[i] = arrayElemPtrCollider;
+			}
 		}
-		vecCollider = arrayCollider.GetInternal();
-		output.Collider = vecCollider;
-		int arraySizeContactPoints = (int)value.ContactPoints.size();
-		MonoArray* vecContactPoints;
-		ScriptArray arrayContactPoints = ScriptArray::Create<ScriptContactPoint>(arraySizeContactPoints);
-		for(int i = 0; i < arraySizeContactPoints; i++)
-		{
-			arrayContactPoints.Set(i, ScriptContactPoint::ToInterop(value.ContactPoints[i]));
-		}
-		vecContactPoints = arrayContactPoints.GetInternal();
-		output.ContactPoints = vecContactPoints;
-
-		return output;
 	}
+	auto tmpCollider = vecCollider;
+	for(int i = 0; i < 2; ++i)
+		output.Collider[i] = tmpCollider[i];
+	Vector<ContactPoint> vecContactPoints;
+	if(value.ContactPoints != nullptr)
+	{
+		ScriptArray arrayContactPoints(value.ContactPoints);
+		vecContactPoints.resize(arrayContactPoints.Size());
+		for(int i = 0; i < (int)arrayContactPoints.Size(); i++)
+		{
+			vecContactPoints[i] = ScriptContactPoint::FromInterop(arrayContactPoints.Get<__ContactPointInterop>(i));
+		}
+	}
+	output.ContactPoints = vecContactPoints;
 
-} // namespace bs
+	return output;
+}
+
+__CollisionDataInterop ScriptCollisionData::ToInterop(const CollisionData& value)
+{
+	__CollisionDataInterop output;
+	int arraySizeCollider = 2;
+	MonoArray* vecCollider;
+	ScriptArray arrayCollider = ScriptArray::Create<ScriptCCollider>(arraySizeCollider);
+	for(int i = 0; i < arraySizeCollider; i++)
+	{
+		ScriptComponentBase* scriptCollider = nullptr;
+		if(value.Collider[i])
+			scriptCollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Collider[i]));
+		if(scriptCollider != nullptr)
+			arrayCollider.Set(i, scriptCollider->GetManagedInstance());
+		else
+			arrayCollider.Set(i, nullptr);
+	}
+	vecCollider = arrayCollider.GetInternal();
+	output.Collider = vecCollider;
+	int arraySizeContactPoints = (int)value.ContactPoints.size();
+	MonoArray* vecContactPoints;
+	ScriptArray arrayContactPoints = ScriptArray::Create<ScriptContactPoint>(arraySizeContactPoints);
+	for(int i = 0; i < arraySizeContactPoints; i++)
+	{
+		arrayContactPoints.Set(i, ScriptContactPoint::ToInterop(value.ContactPoints[i]));
+	}
+	vecContactPoints = arrayContactPoints.GetInternal();
+	output.ContactPoints = vecContactPoints;
+
+	return output;
+}
+

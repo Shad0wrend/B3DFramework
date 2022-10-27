@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptTextureSurface::ScriptTextureSurface(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptTextureSurface::InitRuntimeData()
+{}
+
+MonoObject* ScriptTextureSurface::Box(const TextureSurface& value)
 {
-	ScriptTextureSurface::ScriptTextureSurface(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptTextureSurface::InitRuntimeData()
-	{}
+TextureSurface ScriptTextureSurface::Unbox(MonoObject* value)
+{
+	return *(TextureSurface*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptTextureSurface::Box(const TextureSurface& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	TextureSurface ScriptTextureSurface::Unbox(MonoObject* value)
-	{
-		return *(TextureSurface*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

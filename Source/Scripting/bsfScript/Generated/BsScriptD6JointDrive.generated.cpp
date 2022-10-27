@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptD6JointDrive::ScriptD6JointDrive(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptD6JointDrive::InitRuntimeData()
+{}
+
+MonoObject* ScriptD6JointDrive::Box(const D6JointDrive& value)
 {
-	ScriptD6JointDrive::ScriptD6JointDrive(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptD6JointDrive::InitRuntimeData()
-	{}
+D6JointDrive ScriptD6JointDrive::Unbox(MonoObject* value)
+{
+	return *(D6JointDrive*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptD6JointDrive::Box(const D6JointDrive& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	D6JointDrive ScriptD6JointDrive::Unbox(MonoObject* value)
-	{
-		return *(D6JointDrive*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

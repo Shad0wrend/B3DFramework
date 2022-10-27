@@ -7,47 +7,45 @@
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 #include "BsScriptSpring.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptLimitLinearRange::ScriptLimitLinearRange(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptLimitLinearRange::InitRuntimeData()
+{}
+
+MonoObject* ScriptLimitLinearRange::Box(const __LimitLinearRangeInterop& value)
 {
-	ScriptLimitLinearRange::ScriptLimitLinearRange(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptLimitLinearRange::InitRuntimeData()
-	{}
+__LimitLinearRangeInterop ScriptLimitLinearRange::Unbox(MonoObject* value)
+{
+	return *(__LimitLinearRangeInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptLimitLinearRange::Box(const __LimitLinearRangeInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+LimitLinearRange ScriptLimitLinearRange::FromInterop(const __LimitLinearRangeInterop& value)
+{
+	LimitLinearRange output;
+	output.Lower = value.Lower;
+	output.Upper = value.Upper;
+	output.ContactDist = value.ContactDist;
+	output.Restitution = value.Restitution;
+	output.Spring = value.Spring;
 
-	__LimitLinearRangeInterop ScriptLimitLinearRange::Unbox(MonoObject* value)
-	{
-		return *(__LimitLinearRangeInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	LimitLinearRange ScriptLimitLinearRange::FromInterop(const __LimitLinearRangeInterop& value)
-	{
-		LimitLinearRange output;
-		output.Lower = value.Lower;
-		output.Upper = value.Upper;
-		output.ContactDist = value.ContactDist;
-		output.Restitution = value.Restitution;
-		output.Spring = value.Spring;
+__LimitLinearRangeInterop ScriptLimitLinearRange::ToInterop(const LimitLinearRange& value)
+{
+	__LimitLinearRangeInterop output;
+	output.Lower = value.Lower;
+	output.Upper = value.Upper;
+	output.ContactDist = value.ContactDist;
+	output.Restitution = value.Restitution;
+	output.Spring = value.Spring;
 
-		return output;
-	}
+	return output;
+}
 
-	__LimitLinearRangeInterop ScriptLimitLinearRange::ToInterop(const LimitLinearRange& value)
-	{
-		__LimitLinearRangeInterop output;
-		output.Lower = value.Lower;
-		output.Upper = value.Upper;
-		output.ContactDist = value.ContactDist;
-		output.Restitution = value.Restitution;
-		output.Spring = value.Spring;
-
-		return output;
-	}
-
-} // namespace bs

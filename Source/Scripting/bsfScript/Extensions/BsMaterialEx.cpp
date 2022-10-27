@@ -3,25 +3,23 @@
 #include "Extensions/BsMaterialEx.h"
 #include "CoreThread/BsCoreThread.h"
 
-namespace bs
+using namespace bs;
+void MaterialEx::SetTexture(const HMaterial& thisPtr, const String& name, const ResourceHandle<Texture>& value, u32 mipLevel, u32 numMipLevels, u32 arraySlice, u32 numArraySlices)
 {
-	void MaterialEx::SetTexture(const HMaterial& thisPtr, const String& name, const ResourceHandle<Texture>& value, u32 mipLevel, u32 numMipLevels, u32 arraySlice, u32 numArraySlices)
-	{
-		thisPtr->SetTexture(name, value, TextureSurface(mipLevel, numMipLevels, arraySlice, numArraySlices));
-	}
+	thisPtr->SetTexture(name, value, TextureSurface(mipLevel, numMipLevels, arraySlice, numArraySlices));
+}
 
-	HTexture MaterialEx::GetTexture(const HMaterial& thisPtr, const String& name)
-	{
-		return thisPtr->GetTexture(name);
-	}
+HTexture MaterialEx::GetTexture(const HMaterial& thisPtr, const String& name)
+{
+	return thisPtr->GetTexture(name);
+}
 
-	void MaterialEx::SetSpriteTexture(const HMaterial& thisPtr, const String& name, const HSpriteTexture& value)
-	{
-		thisPtr->SetSpriteTexture(name, value);
-	}
+void MaterialEx::SetSpriteTexture(const HMaterial& thisPtr, const String& name, const HSpriteTexture& value)
+{
+	thisPtr->SetSpriteTexture(name, value);
+}
 
-	HSpriteTexture MaterialEx::GetSpriteTexture(const HMaterial& thisPtr, const String& name)
-	{
-		return thisPtr->GetSpriteTexture(name);
-	}
-} // namespace bs
+HSpriteTexture MaterialEx::GetSpriteTexture(const HMaterial& thisPtr, const String& name)
+{
+	return thisPtr->GetSpriteTexture(name);
+}

@@ -9,67 +9,65 @@
 #include "../../../Foundation/bsfEngine/GUI/BsGUIContent.h"
 #include "BsScriptGUIContentImages.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptGUIContent::ScriptGUIContent(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptGUIContent::InitRuntimeData()
+{}
+
+MonoObject* ScriptGUIContent::Box(const __GUIContentInterop& value)
 {
-	ScriptGUIContent::ScriptGUIContent(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptGUIContent::InitRuntimeData()
-	{}
+__GUIContentInterop ScriptGUIContent::Unbox(MonoObject* value)
+{
+	return *(__GUIContentInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptGUIContent::Box(const __GUIContentInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+GUIContent ScriptGUIContent::FromInterop(const __GUIContentInterop& value)
+{
+	GUIContent output;
+	SPtr<HString> tmpText;
+	ScriptHString* scriptText;
+	scriptText = ScriptHString::ToNative(value.Text);
+	if(scriptText != nullptr)
+		tmpText = scriptText->GetInternal();
+	if(tmpText != nullptr)
+		output.Text = *tmpText;
+	GUIContentImages tmpImages;
+	tmpImages = ScriptGUIContentImages::FromInterop(value.Images);
+	output.Images = tmpImages;
+	SPtr<HString> tmpTooltip;
+	ScriptHString* scriptTooltip;
+	scriptTooltip = ScriptHString::ToNative(value.Tooltip);
+	if(scriptTooltip != nullptr)
+		tmpTooltip = scriptTooltip->GetInternal();
+	if(tmpTooltip != nullptr)
+		output.Tooltip = *tmpTooltip;
 
-	__GUIContentInterop ScriptGUIContent::Unbox(MonoObject* value)
-	{
-		return *(__GUIContentInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	GUIContent ScriptGUIContent::FromInterop(const __GUIContentInterop& value)
-	{
-		GUIContent output;
-		SPtr<HString> tmpText;
-		ScriptHString* scriptText;
-		scriptText = ScriptHString::ToNative(value.Text);
-		if(scriptText != nullptr)
-			tmpText = scriptText->GetInternal();
-		if(tmpText != nullptr)
-			output.Text = *tmpText;
-		GUIContentImages tmpImages;
-		tmpImages = ScriptGUIContentImages::FromInterop(value.Images);
-		output.Images = tmpImages;
-		SPtr<HString> tmpTooltip;
-		ScriptHString* scriptTooltip;
-		scriptTooltip = ScriptHString::ToNative(value.Tooltip);
-		if(scriptTooltip != nullptr)
-			tmpTooltip = scriptTooltip->GetInternal();
-		if(tmpTooltip != nullptr)
-			output.Tooltip = *tmpTooltip;
+__GUIContentInterop ScriptGUIContent::ToInterop(const GUIContent& value)
+{
+	__GUIContentInterop output;
+	MonoObject* tmpText;
+	SPtr<HString> tmpTextcopy;
+	tmpTextcopy = bs_shared_ptr_new<HString>(value.Text);
+	tmpText = ScriptHString::Create(tmpTextcopy);
+	output.Text = tmpText;
+	__GUIContentImagesInterop tmpImages;
+	tmpImages = ScriptGUIContentImages::ToInterop(value.Images);
+	output.Images = tmpImages;
+	MonoObject* tmpTooltip;
+	SPtr<HString> tmpTooltipcopy;
+	tmpTooltipcopy = bs_shared_ptr_new<HString>(value.Tooltip);
+	tmpTooltip = ScriptHString::Create(tmpTooltipcopy);
+	output.Tooltip = tmpTooltip;
 
-		return output;
-	}
+	return output;
+}
 
-	__GUIContentInterop ScriptGUIContent::ToInterop(const GUIContent& value)
-	{
-		__GUIContentInterop output;
-		MonoObject* tmpText;
-		SPtr<HString> tmpTextcopy;
-		tmpTextcopy = bs_shared_ptr_new<HString>(value.Text);
-		tmpText = ScriptHString::Create(tmpTextcopy);
-		output.Text = tmpText;
-		__GUIContentImagesInterop tmpImages;
-		tmpImages = ScriptGUIContentImages::ToInterop(value.Images);
-		output.Images = tmpImages;
-		MonoObject* tmpTooltip;
-		SPtr<HString> tmpTooltipcopy;
-		tmpTooltipcopy = bs_shared_ptr_new<HString>(value.Tooltip);
-		tmpTooltip = ScriptHString::Create(tmpTooltipcopy);
-		output.Tooltip = tmpTooltip;
-
-		return output;
-	}
-
-} // namespace bs

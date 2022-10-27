@@ -7,141 +7,139 @@
 #include "Debug/BsDebug.h"
 #include "Generated/BsScriptPixelData.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptPixelUtility::ScriptPixelUtility(MonoObject* instance)
+	: ScriptObject(instance)
+{}
+
+void ScriptPixelUtility::InitRuntimeData()
 {
-	ScriptPixelUtility::ScriptPixelUtility(MonoObject* instance)
-		: ScriptObject(instance)
-	{}
+	metaData.ScriptClass->AddInternalCall("Internal_GetMemorySize", (void*)&ScriptPixelUtility::InternalGetMemorySize);
+	metaData.ScriptClass->AddInternalCall("Internal_HasAlpha", (void*)&ScriptPixelUtility::InternalHasAlpha);
+	metaData.ScriptClass->AddInternalCall("Internal_IsFloatingPoint", (void*)&ScriptPixelUtility::InternalIsFloatingPoint);
+	metaData.ScriptClass->AddInternalCall("Internal_IsCompressed", (void*)&ScriptPixelUtility::InternalIsCompressed);
+	metaData.ScriptClass->AddInternalCall("Internal_IsDepth", (void*)&ScriptPixelUtility::InternalIsDepth);
+	metaData.ScriptClass->AddInternalCall("Internal_GetMaxMipmaps", (void*)&ScriptPixelUtility::InternalGetMaxMipmaps);
+	metaData.ScriptClass->AddInternalCall("Internal_ConvertFormat", (void*)&ScriptPixelUtility::InternalConvertFormat);
+	metaData.ScriptClass->AddInternalCall("Internal_Compress", (void*)&ScriptPixelUtility::InternalCompress);
+	metaData.ScriptClass->AddInternalCall("Internal_GenerateMipmaps", (void*)&ScriptPixelUtility::InternalGenerateMipmaps);
+	metaData.ScriptClass->AddInternalCall("Internal_Scale", (void*)&ScriptPixelUtility::InternalScale);
+	metaData.ScriptClass->AddInternalCall("Internal_LinearToSRGB", (void*)&ScriptPixelUtility::InternalLinearToSrgb);
+	metaData.ScriptClass->AddInternalCall("Internal_SRGBToLinear", (void*)&ScriptPixelUtility::InternalSrgbToLinear);
+}
 
-	void ScriptPixelUtility::InitRuntimeData()
+void ScriptPixelUtility::InternalGetMemorySize(u32 width, u32 height, u32 depth, PixelFormat format, u32* value)
+{
+	*value = PixelUtil::GetMemorySize(width, height, depth, format);
+}
+
+void ScriptPixelUtility::InternalHasAlpha(PixelFormat format, bool* value)
+{
+	*value = PixelUtil::HasAlpha(format);
+}
+
+void ScriptPixelUtility::InternalIsFloatingPoint(PixelFormat format, bool* value)
+{
+	*value = PixelUtil::IsFloatingPoint(format);
+}
+
+void ScriptPixelUtility::InternalIsCompressed(PixelFormat format, bool* value)
+{
+	*value = PixelUtil::IsCompressed(format);
+}
+
+void ScriptPixelUtility::InternalIsDepth(PixelFormat format, bool* value)
+{
+	*value = PixelUtil::IsDepth(format);
+}
+
+void ScriptPixelUtility::InternalGetMaxMipmaps(u32 width, u32 height, u32 depth, PixelFormat format, u32* value)
+{
+	*value = PixelUtil::GetMaxMipmaps(width, height, depth, format);
+}
+
+MonoObject* ScriptPixelUtility::InternalConvertFormat(MonoObject* source, PixelFormat newFormat)
+{
+	ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
+	if(sourceScriptPixelData == nullptr)
+		return nullptr;
+
+	SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
+	SPtr<PixelData> outputData = bs_shared_ptr_new<PixelData>(sourcePixelData->GetWidth(), sourcePixelData->GetHeight(), sourcePixelData->GetDepth(), newFormat);
+	outputData->AllocateInternalBuffer();
+
+	PixelUtil::BulkPixelConversion(*sourcePixelData, *outputData);
+
+	return ScriptPixelData::Create(outputData);
+}
+
+MonoObject* ScriptPixelUtility::InternalCompress(MonoObject* source, CompressionOptions* options)
+{
+	ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
+	if(sourceScriptPixelData == nullptr)
+		return nullptr;
+
+	SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
+	SPtr<PixelData> outputData = bs_shared_ptr_new<PixelData>(sourcePixelData->GetWidth(), sourcePixelData->GetHeight(), sourcePixelData->GetDepth(), options->Format);
+	outputData->AllocateInternalBuffer();
+
+	PixelUtil::Compress(*sourcePixelData, *outputData, *options);
+
+	return ScriptPixelData::Create(outputData);
+}
+
+MonoArray* ScriptPixelUtility::InternalGenerateMipmaps(MonoObject* source, MipMapGenOptions* options)
+{
+	ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
+	if(sourceScriptPixelData == nullptr)
+		return nullptr;
+
+	SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
+	Vector<SPtr<PixelData>> mipmaps = PixelUtil::GenMipmaps(*sourcePixelData, *options);
+
+	u32 numElements = (u32)mipmaps.size();
+	ScriptArray scriptArray(ScriptPixelData::GetMetaData()->ScriptClass->GetInternalClassInternal(), numElements);
+
+	for(u32 i = 0; i < numElements; i++)
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetMemorySize", (void*)&ScriptPixelUtility::InternalGetMemorySize);
-		metaData.ScriptClass->AddInternalCall("Internal_HasAlpha", (void*)&ScriptPixelUtility::InternalHasAlpha);
-		metaData.ScriptClass->AddInternalCall("Internal_IsFloatingPoint", (void*)&ScriptPixelUtility::InternalIsFloatingPoint);
-		metaData.ScriptClass->AddInternalCall("Internal_IsCompressed", (void*)&ScriptPixelUtility::InternalIsCompressed);
-		metaData.ScriptClass->AddInternalCall("Internal_IsDepth", (void*)&ScriptPixelUtility::InternalIsDepth);
-		metaData.ScriptClass->AddInternalCall("Internal_GetMaxMipmaps", (void*)&ScriptPixelUtility::InternalGetMaxMipmaps);
-		metaData.ScriptClass->AddInternalCall("Internal_ConvertFormat", (void*)&ScriptPixelUtility::InternalConvertFormat);
-		metaData.ScriptClass->AddInternalCall("Internal_Compress", (void*)&ScriptPixelUtility::InternalCompress);
-		metaData.ScriptClass->AddInternalCall("Internal_GenerateMipmaps", (void*)&ScriptPixelUtility::InternalGenerateMipmaps);
-		metaData.ScriptClass->AddInternalCall("Internal_Scale", (void*)&ScriptPixelUtility::InternalScale);
-		metaData.ScriptClass->AddInternalCall("Internal_LinearToSRGB", (void*)&ScriptPixelUtility::InternalLinearToSrgb);
-		metaData.ScriptClass->AddInternalCall("Internal_SRGBToLinear", (void*)&ScriptPixelUtility::InternalSrgbToLinear);
+		MonoObject* managedPixelData = ScriptPixelData::Create(mipmaps[i]);
+		scriptArray.Set(i, managedPixelData);
 	}
 
-	void ScriptPixelUtility::InternalGetMemorySize(u32 width, u32 height, u32 depth, PixelFormat format, u32* value)
-	{
-		*value = PixelUtil::GetMemorySize(width, height, depth, format);
-	}
+	return scriptArray.GetInternal();
+}
 
-	void ScriptPixelUtility::InternalHasAlpha(PixelFormat format, bool* value)
-	{
-		*value = PixelUtil::HasAlpha(format);
-	}
+MonoObject* ScriptPixelUtility::InternalScale(MonoObject* source, PixelVolume* newSize, PixelUtil::Filter filter)
+{
+	ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
+	if(sourceScriptPixelData == nullptr)
+		return nullptr;
 
-	void ScriptPixelUtility::InternalIsFloatingPoint(PixelFormat format, bool* value)
-	{
-		*value = PixelUtil::IsFloatingPoint(format);
-	}
+	SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
+	SPtr<PixelData> outputData = bs_shared_ptr_new<PixelData>(newSize->GetWidth(), newSize->GetHeight(), newSize->GetDepth(), sourcePixelData->GetFormat());
+	outputData->AllocateInternalBuffer();
 
-	void ScriptPixelUtility::InternalIsCompressed(PixelFormat format, bool* value)
-	{
-		*value = PixelUtil::IsCompressed(format);
-	}
+	PixelUtil::Scale(*sourcePixelData, *outputData, filter);
 
-	void ScriptPixelUtility::InternalIsDepth(PixelFormat format, bool* value)
-	{
-		*value = PixelUtil::IsDepth(format);
-	}
+	return ScriptPixelData::Create(outputData);
+}
 
-	void ScriptPixelUtility::InternalGetMaxMipmaps(u32 width, u32 height, u32 depth, PixelFormat format, u32* value)
-	{
-		*value = PixelUtil::GetMaxMipmaps(width, height, depth, format);
-	}
+void ScriptPixelUtility::InternalLinearToSrgb(MonoObject* source)
+{
+	ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
+	if(sourceScriptPixelData == nullptr)
+		return;
 
-	MonoObject* ScriptPixelUtility::InternalConvertFormat(MonoObject* source, PixelFormat newFormat)
-	{
-		ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
-		if(sourceScriptPixelData == nullptr)
-			return nullptr;
+	SPtr<PixelData> pixelData = sourceScriptPixelData->GetInternal();
+	PixelUtil::LinearToSrgb(*pixelData);
+}
 
-		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
-		SPtr<PixelData> outputData = bs_shared_ptr_new<PixelData>(sourcePixelData->GetWidth(), sourcePixelData->GetHeight(), sourcePixelData->GetDepth(), newFormat);
-		outputData->AllocateInternalBuffer();
+void ScriptPixelUtility::InternalSrgbToLinear(MonoObject* source)
+{
+	ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
+	if(sourceScriptPixelData == nullptr)
+		return;
 
-		PixelUtil::BulkPixelConversion(*sourcePixelData, *outputData);
-
-		return ScriptPixelData::Create(outputData);
-	}
-
-	MonoObject* ScriptPixelUtility::InternalCompress(MonoObject* source, CompressionOptions* options)
-	{
-		ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
-		if(sourceScriptPixelData == nullptr)
-			return nullptr;
-
-		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
-		SPtr<PixelData> outputData = bs_shared_ptr_new<PixelData>(sourcePixelData->GetWidth(), sourcePixelData->GetHeight(), sourcePixelData->GetDepth(), options->Format);
-		outputData->AllocateInternalBuffer();
-
-		PixelUtil::Compress(*sourcePixelData, *outputData, *options);
-
-		return ScriptPixelData::Create(outputData);
-	}
-
-	MonoArray* ScriptPixelUtility::InternalGenerateMipmaps(MonoObject* source, MipMapGenOptions* options)
-	{
-		ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
-		if(sourceScriptPixelData == nullptr)
-			return nullptr;
-
-		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
-		Vector<SPtr<PixelData>> mipmaps = PixelUtil::GenMipmaps(*sourcePixelData, *options);
-
-		u32 numElements = (u32)mipmaps.size();
-		ScriptArray scriptArray(ScriptPixelData::GetMetaData()->ScriptClass->GetInternalClassInternal(), numElements);
-
-		for(u32 i = 0; i < numElements; i++)
-		{
-			MonoObject* managedPixelData = ScriptPixelData::Create(mipmaps[i]);
-			scriptArray.Set(i, managedPixelData);
-		}
-
-		return scriptArray.GetInternal();
-	}
-
-	MonoObject* ScriptPixelUtility::InternalScale(MonoObject* source, PixelVolume* newSize, PixelUtil::Filter filter)
-	{
-		ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
-		if(sourceScriptPixelData == nullptr)
-			return nullptr;
-
-		SPtr<PixelData> sourcePixelData = sourceScriptPixelData->GetInternal();
-		SPtr<PixelData> outputData = bs_shared_ptr_new<PixelData>(newSize->GetWidth(), newSize->GetHeight(), newSize->GetDepth(), sourcePixelData->GetFormat());
-		outputData->AllocateInternalBuffer();
-
-		PixelUtil::Scale(*sourcePixelData, *outputData, filter);
-
-		return ScriptPixelData::Create(outputData);
-	}
-
-	void ScriptPixelUtility::InternalLinearToSrgb(MonoObject* source)
-	{
-		ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
-		if(sourceScriptPixelData == nullptr)
-			return;
-
-		SPtr<PixelData> pixelData = sourceScriptPixelData->GetInternal();
-		PixelUtil::LinearToSrgb(*pixelData);
-	}
-
-	void ScriptPixelUtility::InternalSrgbToLinear(MonoObject* source)
-	{
-		ScriptPixelData* sourceScriptPixelData = ScriptPixelData::ToNative(source);
-		if(sourceScriptPixelData == nullptr)
-			return;
-
-		SPtr<PixelData> pixelData = sourceScriptPixelData->GetInternal();
-		PixelUtil::SRGBToLinear(*pixelData);
-	}
-} // namespace bs
+	SPtr<PixelData> pixelData = sourceScriptPixelData->GetInternal();
+	PixelUtil::SRGBToLinear(*pixelData);
+}

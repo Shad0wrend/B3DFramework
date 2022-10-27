@@ -7,86 +7,84 @@
 #include "../../../Foundation/bsfCore/Importer/BsImporter.h"
 #include "BsScriptSubResource.generated.h"
 
-namespace bs
-{
+using namespace bs;
 #if !BS_IS_BANSHEE3D
-	ScriptMultiResource::ScriptMultiResource(MonoObject* managedInstance, const SPtr<MultiResource>& value)
-		: ScriptObject(managedInstance), mInternal(value)
+ScriptMultiResource::ScriptMultiResource(MonoObject* managedInstance, const SPtr<MultiResource>& value)
+	: ScriptObject(managedInstance), mInternal(value)
+{
+}
+
+void ScriptMultiResource::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_MultiResource", (void*)&ScriptMultiResource::InternalMultiResource);
+	metaData.ScriptClass->AddInternalCall("Internal_MultiResource0", (void*)&ScriptMultiResource::InternalMultiResource0);
+	metaData.ScriptClass->AddInternalCall("Internal_GetEntries", (void*)&ScriptMultiResource::InternalGetEntries);
+	metaData.ScriptClass->AddInternalCall("Internal_SetEntries", (void*)&ScriptMultiResource::InternalSetEntries);
+}
+
+MonoObject* ScriptMultiResource::Create(const SPtr<MultiResource>& value)
+{
+	if(value == nullptr) return nullptr;
+
+	bool dummy = false;
+	void* ctorParams[1] = { &dummy };
+
+	MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
+	new(bs_alloc<ScriptMultiResource>()) ScriptMultiResource(managedInstance, value);
+	return managedInstance;
+}
+
+void ScriptMultiResource::InternalMultiResource(MonoObject* managedInstance)
+{
+	SPtr<MultiResource> instance = bs_shared_ptr_new<MultiResource>();
+	new(bs_alloc<ScriptMultiResource>()) ScriptMultiResource(managedInstance, instance);
+}
+
+void ScriptMultiResource::InternalMultiResource0(MonoObject* managedInstance, MonoArray* entries)
+{
+	Vector<SubResource> vecentries;
+	if(entries != nullptr)
 	{
-	}
-
-	void ScriptMultiResource::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_MultiResource", (void*)&ScriptMultiResource::InternalMultiResource);
-		metaData.ScriptClass->AddInternalCall("Internal_MultiResource0", (void*)&ScriptMultiResource::InternalMultiResource0);
-		metaData.ScriptClass->AddInternalCall("Internal_GetEntries", (void*)&ScriptMultiResource::InternalGetEntries);
-		metaData.ScriptClass->AddInternalCall("Internal_SetEntries", (void*)&ScriptMultiResource::InternalSetEntries);
-	}
-
-	MonoObject* ScriptMultiResource::Create(const SPtr<MultiResource>& value)
-	{
-		if(value == nullptr) return nullptr;
-
-		bool dummy = false;
-		void* ctorParams[1] = { &dummy };
-
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new(bs_alloc<ScriptMultiResource>()) ScriptMultiResource(managedInstance, value);
-		return managedInstance;
-	}
-
-	void ScriptMultiResource::InternalMultiResource(MonoObject* managedInstance)
-	{
-		SPtr<MultiResource> instance = bs_shared_ptr_new<MultiResource>();
-		new(bs_alloc<ScriptMultiResource>()) ScriptMultiResource(managedInstance, instance);
-	}
-
-	void ScriptMultiResource::InternalMultiResource0(MonoObject* managedInstance, MonoArray* entries)
-	{
-		Vector<SubResource> vecentries;
-		if(entries != nullptr)
+		ScriptArray arrayentries(entries);
+		vecentries.resize(arrayentries.Size());
+		for(int i = 0; i < (int)arrayentries.Size(); i++)
 		{
-			ScriptArray arrayentries(entries);
-			vecentries.resize(arrayentries.Size());
-			for(int i = 0; i < (int)arrayentries.Size(); i++)
-			{
-				vecentries[i] = ScriptSubResource::FromInterop(arrayentries.Get<__SubResourceInterop>(i));
-			}
+			vecentries[i] = ScriptSubResource::FromInterop(arrayentries.Get<__SubResourceInterop>(i));
 		}
-		SPtr<MultiResource> instance = bs_shared_ptr_new<MultiResource>(vecentries);
-		new(bs_alloc<ScriptMultiResource>()) ScriptMultiResource(managedInstance, instance);
 	}
+	SPtr<MultiResource> instance = bs_shared_ptr_new<MultiResource>(vecentries);
+	new(bs_alloc<ScriptMultiResource>()) ScriptMultiResource(managedInstance, instance);
+}
 
-	MonoArray* ScriptMultiResource::InternalGetEntries(ScriptMultiResource* thisPtr)
+MonoArray* ScriptMultiResource::InternalGetEntries(ScriptMultiResource* thisPtr)
+{
+	Vector<SubResource> vec__output;
+	vec__output = thisPtr->GetInternal()->Entries;
+
+	MonoArray* __output;
+	int arraySize__output = (int)vec__output.size();
+	ScriptArray array__output = ScriptArray::Create<ScriptSubResource>(arraySize__output);
+	for(int i = 0; i < arraySize__output; i++)
 	{
-		Vector<SubResource> vec__output;
-		vec__output = thisPtr->GetInternal()->Entries;
-
-		MonoArray* __output;
-		int arraySize__output = (int)vec__output.size();
-		ScriptArray array__output = ScriptArray::Create<ScriptSubResource>(arraySize__output);
-		for(int i = 0; i < arraySize__output; i++)
-		{
-			array__output.Set(i, ScriptSubResource::ToInterop(vec__output[i]));
-		}
-		__output = array__output.GetInternal();
-
-		return __output;
+		array__output.Set(i, ScriptSubResource::ToInterop(vec__output[i]));
 	}
+	__output = array__output.GetInternal();
 
-	void ScriptMultiResource::InternalSetEntries(ScriptMultiResource* thisPtr, MonoArray* value)
+	return __output;
+}
+
+void ScriptMultiResource::InternalSetEntries(ScriptMultiResource* thisPtr, MonoArray* value)
+{
+	Vector<SubResource> vecvalue;
+	if(value != nullptr)
 	{
-		Vector<SubResource> vecvalue;
-		if(value != nullptr)
+		ScriptArray arrayvalue(value);
+		vecvalue.resize(arrayvalue.Size());
+		for(int i = 0; i < (int)arrayvalue.Size(); i++)
 		{
-			ScriptArray arrayvalue(value);
-			vecvalue.resize(arrayvalue.Size());
-			for(int i = 0; i < (int)arrayvalue.Size(); i++)
-			{
-				vecvalue[i] = ScriptSubResource::FromInterop(arrayvalue.Get<__SubResourceInterop>(i));
-			}
+			vecvalue[i] = ScriptSubResource::FromInterop(arrayvalue.Get<__SubResourceInterop>(i));
 		}
-		thisPtr->GetInternal()->Entries = vecvalue;
 	}
+	thisPtr->GetInternal()->Entries = vecvalue;
+}
 #endif
-} // namespace bs

@@ -5,33 +5,31 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptVirtualButton::ScriptVirtualButton(MonoObject* instance)
+	: ScriptObject(instance)
+{}
+
+void ScriptVirtualButton::InitRuntimeData()
 {
-	ScriptVirtualButton::ScriptVirtualButton(MonoObject* instance)
-		: ScriptObject(instance)
-	{}
+	metaData.ScriptClass->AddInternalCall("Internal_InitVirtualButton", (void*)&ScriptVirtualButton::InternalInitVirtualButton);
+}
 
-	void ScriptVirtualButton::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_InitVirtualButton", (void*)&ScriptVirtualButton::InternalInitVirtualButton);
-	}
+u32 ScriptVirtualButton::InternalInitVirtualButton(MonoString* name)
+{
+	String nameStr = MonoUtil::MonoToString(name);
 
-	u32 ScriptVirtualButton::InternalInitVirtualButton(MonoString* name)
-	{
-		String nameStr = MonoUtil::MonoToString(name);
+	VirtualButton vb(nameStr);
+	return vb.ButtonIdentifier;
+}
 
-		VirtualButton vb(nameStr);
-		return vb.ButtonIdentifier;
-	}
+MonoObject* ScriptVirtualButton::Box(const VirtualButton& value)
+{
+	// We're casting away const but it's fine since structs are passed by value anyway
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	MonoObject* ScriptVirtualButton::Box(const VirtualButton& value)
-	{
-		// We're casting away const but it's fine since structs are passed by value anyway
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	VirtualButton ScriptVirtualButton::Unbox(MonoObject* obj)
-	{
-		return *(VirtualButton*)MonoUtil::Unbox(obj);
-	}
-} // namespace bs
+VirtualButton ScriptVirtualButton::Unbox(MonoObject* obj)
+{
+	return *(VirtualButton*)MonoUtil::Unbox(obj);
+}

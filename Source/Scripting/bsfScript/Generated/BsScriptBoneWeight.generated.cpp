@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptBoneWeight::ScriptBoneWeight(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptBoneWeight::InitRuntimeData()
+{}
+
+MonoObject* ScriptBoneWeight::Box(const BoneWeight& value)
 {
-	ScriptBoneWeight::ScriptBoneWeight(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptBoneWeight::InitRuntimeData()
-	{}
+BoneWeight ScriptBoneWeight::Unbox(MonoObject* value)
+{
+	return *(BoneWeight*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptBoneWeight::Box(const BoneWeight& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	BoneWeight ScriptBoneWeight::Unbox(MonoObject* value)
-	{
-		return *(BoneWeight*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

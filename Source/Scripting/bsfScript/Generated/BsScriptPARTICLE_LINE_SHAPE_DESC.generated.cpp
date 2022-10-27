@@ -7,41 +7,39 @@
 #include "../../../Foundation/bsfCore/Particles/BsParticleEmitter.h"
 #include "BsScriptParticleEmissionMode.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptPARTICLE_LINE_SHAPE_DESC::ScriptPARTICLE_LINE_SHAPE_DESC(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptPARTICLE_LINE_SHAPE_DESC::InitRuntimeData()
+{}
+
+MonoObject* ScriptPARTICLE_LINE_SHAPE_DESC::Box(const __PARTICLE_LINE_SHAPE_DESCInterop& value)
 {
-	ScriptPARTICLE_LINE_SHAPE_DESC::ScriptPARTICLE_LINE_SHAPE_DESC(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptPARTICLE_LINE_SHAPE_DESC::InitRuntimeData()
-	{}
+__PARTICLE_LINE_SHAPE_DESCInterop ScriptPARTICLE_LINE_SHAPE_DESC::Unbox(MonoObject* value)
+{
+	return *(__PARTICLE_LINE_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptPARTICLE_LINE_SHAPE_DESC::Box(const __PARTICLE_LINE_SHAPE_DESCInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+PARTICLE_LINE_SHAPE_DESC ScriptPARTICLE_LINE_SHAPE_DESC::FromInterop(const __PARTICLE_LINE_SHAPE_DESCInterop& value)
+{
+	PARTICLE_LINE_SHAPE_DESC output;
+	output.Length = value.Length;
+	output.Mode = value.Mode;
 
-	__PARTICLE_LINE_SHAPE_DESCInterop ScriptPARTICLE_LINE_SHAPE_DESC::Unbox(MonoObject* value)
-	{
-		return *(__PARTICLE_LINE_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	PARTICLE_LINE_SHAPE_DESC ScriptPARTICLE_LINE_SHAPE_DESC::FromInterop(const __PARTICLE_LINE_SHAPE_DESCInterop& value)
-	{
-		PARTICLE_LINE_SHAPE_DESC output;
-		output.Length = value.Length;
-		output.Mode = value.Mode;
+__PARTICLE_LINE_SHAPE_DESCInterop ScriptPARTICLE_LINE_SHAPE_DESC::ToInterop(const PARTICLE_LINE_SHAPE_DESC& value)
+{
+	__PARTICLE_LINE_SHAPE_DESCInterop output;
+	output.Length = value.Length;
+	output.Mode = value.Mode;
 
-		return output;
-	}
+	return output;
+}
 
-	__PARTICLE_LINE_SHAPE_DESCInterop ScriptPARTICLE_LINE_SHAPE_DESC::ToInterop(const PARTICLE_LINE_SHAPE_DESC& value)
-	{
-		__PARTICLE_LINE_SHAPE_DESCInterop output;
-		output.Length = value.Length;
-		output.Mode = value.Mode;
-
-		return output;
-	}
-
-} // namespace bs

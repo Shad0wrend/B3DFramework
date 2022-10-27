@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptSubMesh::ScriptSubMesh(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptSubMesh::InitRuntimeData()
+{}
+
+MonoObject* ScriptSubMesh::Box(const SubMesh& value)
 {
-	ScriptSubMesh::ScriptSubMesh(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptSubMesh::InitRuntimeData()
-	{}
+SubMesh ScriptSubMesh::Unbox(MonoObject* value)
+{
+	return *(SubMesh*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptSubMesh::Box(const SubMesh& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	SubMesh ScriptSubMesh::Unbox(MonoObject* value)
-	{
-		return *(SubMesh*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptRectOffset::ScriptRectOffset(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptRectOffset::InitRuntimeData()
+{}
+
+MonoObject* ScriptRectOffset::Box(const RectOffset& value)
 {
-	ScriptRectOffset::ScriptRectOffset(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptRectOffset::InitRuntimeData()
-	{}
+RectOffset ScriptRectOffset::Unbox(MonoObject* value)
+{
+	return *(RectOffset*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptRectOffset::Box(const RectOffset& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	RectOffset ScriptRectOffset::Unbox(MonoObject* value)
-	{
-		return *(RectOffset*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

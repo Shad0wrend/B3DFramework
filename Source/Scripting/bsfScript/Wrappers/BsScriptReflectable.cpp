@@ -4,9 +4,7 @@
 #include "BsMonoUtil.h"
 #include "Reflection/BsRTTIType.h"
 
-namespace bs
-{
-	ScriptReflectableBase::ScriptReflectableBase(MonoObject* instance)
-		: ScriptObjectBase(instance)
-	{}
-} // namespace bs
+using namespace bs;
+ScriptReflectableBase::ScriptReflectableBase(MonoObject* instance)
+	: ScriptObjectBase(instance)
+{}

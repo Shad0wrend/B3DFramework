@@ -10,33 +10,31 @@
 #include "Wrappers/BsScriptSerializableProperty.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptSerializableList::ScriptSerializableList(MonoObject* instance, const SPtr<ManagedSerializableTypeInfoList>& typeInfo)
+	: ScriptObject(instance), mTypeInfo(typeInfo)
 {
-	ScriptSerializableList::ScriptSerializableList(MonoObject* instance, const SPtr<ManagedSerializableTypeInfoList>& typeInfo)
-		: ScriptObject(instance), mTypeInfo(typeInfo)
-	{
-	}
+}
 
-	void ScriptSerializableList::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_CreateProperty", (void*)&ScriptSerializableList::InternalCreateProperty);
-	}
+void ScriptSerializableList::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_CreateProperty", (void*)&ScriptSerializableList::InternalCreateProperty);
+}
 
-	MonoObject* ScriptSerializableList::Create(const ScriptSerializableProperty* native, MonoObject* managed)
-	{
-		SPtr<ManagedSerializableTypeInfoList> listTypeInfo =
-			std::static_pointer_cast<ManagedSerializableTypeInfoList>(native->GetTypeInfo());
-		MonoReflectionType* internalElementType = MonoUtil::GetType(listTypeInfo->MElementType->GetMonoClass());
+MonoObject* ScriptSerializableList::Create(const ScriptSerializableProperty* native, MonoObject* managed)
+{
+	SPtr<ManagedSerializableTypeInfoList> listTypeInfo =
+		std::static_pointer_cast<ManagedSerializableTypeInfoList>(native->GetTypeInfo());
+	MonoReflectionType* internalElementType = MonoUtil::GetType(listTypeInfo->MElementType->GetMonoClass());
 
-		void* params[2] = { internalElementType, managed };
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance(params, 2);
+	void* params[2] = { internalElementType, managed };
+	MonoObject* managedInstance = metaData.ScriptClass->CreateInstance(params, 2);
 
-		new(bs_alloc<ScriptSerializableList>()) ScriptSerializableList(managedInstance, listTypeInfo);
-		return managedInstance;
-	}
+	new(bs_alloc<ScriptSerializableList>()) ScriptSerializableList(managedInstance, listTypeInfo);
+	return managedInstance;
+}
 
-	MonoObject* ScriptSerializableList::InternalCreateProperty(ScriptSerializableList* nativeInstance)
-	{
-		return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->MElementType);
-	}
-} // namespace bs
+MonoObject* ScriptSerializableList::InternalCreateProperty(ScriptSerializableList* nativeInstance)
+{
+	return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->MElementType);
+}

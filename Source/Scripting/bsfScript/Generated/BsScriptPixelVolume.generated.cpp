@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptPixelVolume::ScriptPixelVolume(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptPixelVolume::InitRuntimeData()
+{}
+
+MonoObject* ScriptPixelVolume::Box(const PixelVolume& value)
 {
-	ScriptPixelVolume::ScriptPixelVolume(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptPixelVolume::InitRuntimeData()
-	{}
+PixelVolume ScriptPixelVolume::Unbox(MonoObject* value)
+{
+	return *(PixelVolume*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptPixelVolume::Box(const PixelVolume& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	PixelVolume ScriptPixelVolume::Unbox(MonoObject* value)
-	{
-		return *(PixelVolume*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

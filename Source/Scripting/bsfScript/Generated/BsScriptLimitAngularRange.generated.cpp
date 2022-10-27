@@ -7,47 +7,45 @@
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 #include "BsScriptSpring.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptLimitAngularRange::ScriptLimitAngularRange(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptLimitAngularRange::InitRuntimeData()
+{}
+
+MonoObject* ScriptLimitAngularRange::Box(const __LimitAngularRangeInterop& value)
 {
-	ScriptLimitAngularRange::ScriptLimitAngularRange(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptLimitAngularRange::InitRuntimeData()
-	{}
+__LimitAngularRangeInterop ScriptLimitAngularRange::Unbox(MonoObject* value)
+{
+	return *(__LimitAngularRangeInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptLimitAngularRange::Box(const __LimitAngularRangeInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+LimitAngularRange ScriptLimitAngularRange::FromInterop(const __LimitAngularRangeInterop& value)
+{
+	LimitAngularRange output;
+	output.Lower = value.Lower;
+	output.Upper = value.Upper;
+	output.ContactDist = value.ContactDist;
+	output.Restitution = value.Restitution;
+	output.Spring = value.Spring;
 
-	__LimitAngularRangeInterop ScriptLimitAngularRange::Unbox(MonoObject* value)
-	{
-		return *(__LimitAngularRangeInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	LimitAngularRange ScriptLimitAngularRange::FromInterop(const __LimitAngularRangeInterop& value)
-	{
-		LimitAngularRange output;
-		output.Lower = value.Lower;
-		output.Upper = value.Upper;
-		output.ContactDist = value.ContactDist;
-		output.Restitution = value.Restitution;
-		output.Spring = value.Spring;
+__LimitAngularRangeInterop ScriptLimitAngularRange::ToInterop(const LimitAngularRange& value)
+{
+	__LimitAngularRangeInterop output;
+	output.Lower = value.Lower;
+	output.Upper = value.Upper;
+	output.ContactDist = value.ContactDist;
+	output.Restitution = value.Restitution;
+	output.Spring = value.Spring;
 
-		return output;
-	}
+	return output;
+}
 
-	__LimitAngularRangeInterop ScriptLimitAngularRange::ToInterop(const LimitAngularRange& value)
-	{
-		__LimitAngularRangeInterop output;
-		output.Lower = value.Lower;
-		output.Upper = value.Upper;
-		output.ContactDist = value.ContactDist;
-		output.Restitution = value.Restitution;
-		output.Spring = value.Spring;
-
-		return output;
-	}
-
-} // namespace bs

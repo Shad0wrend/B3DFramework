@@ -10,35 +10,33 @@
 #include "Serialization/BsManagedSerializableObjectInfo.h"
 #include "Wrappers/BsScriptSerializableProperty.h"
 
-namespace bs
+using namespace bs;
+ScriptSerializableArray::ScriptSerializableArray(MonoObject* instance, const SPtr<ManagedSerializableTypeInfoArray>& typeInfo)
+	: ScriptObject(instance), mTypeInfo(typeInfo)
 {
-	ScriptSerializableArray::ScriptSerializableArray(MonoObject* instance, const SPtr<ManagedSerializableTypeInfoArray>& typeInfo)
-		: ScriptObject(instance), mTypeInfo(typeInfo)
-	{
-	}
+}
 
-	void ScriptSerializableArray::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_CreateProperty", (void*)&ScriptSerializableArray::InternalCreateProperty);
-	}
+void ScriptSerializableArray::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_CreateProperty", (void*)&ScriptSerializableArray::InternalCreateProperty);
+}
 
-	MonoObject* ScriptSerializableArray::Create(const ScriptSerializableProperty* native, MonoObject* managed)
-	{
-		SPtr<ManagedSerializableTypeInfoArray> arrayTypeInfo =
-			std::static_pointer_cast<ManagedSerializableTypeInfoArray>(native->GetTypeInfo());
+MonoObject* ScriptSerializableArray::Create(const ScriptSerializableProperty* native, MonoObject* managed)
+{
+	SPtr<ManagedSerializableTypeInfoArray> arrayTypeInfo =
+		std::static_pointer_cast<ManagedSerializableTypeInfoArray>(native->GetTypeInfo());
 
-		MonoReflectionType* internalElementType = MonoUtil::GetType(arrayTypeInfo->MElementType->GetMonoClass());
+	MonoReflectionType* internalElementType = MonoUtil::GetType(arrayTypeInfo->MElementType->GetMonoClass());
 
-		void* params[2] = { internalElementType, managed };
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance(params, 2);
+	void* params[2] = { internalElementType, managed };
+	MonoObject* managedInstance = metaData.ScriptClass->CreateInstance(params, 2);
 
-		new(bs_alloc<ScriptSerializableArray>()) ScriptSerializableArray(managedInstance, arrayTypeInfo);
+	new(bs_alloc<ScriptSerializableArray>()) ScriptSerializableArray(managedInstance, arrayTypeInfo);
 
-		return managedInstance;
-	}
+	return managedInstance;
+}
 
-	MonoObject* ScriptSerializableArray::InternalCreateProperty(ScriptSerializableArray* nativeInstance)
-	{
-		return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->MElementType);
-	}
-} // namespace bs
+MonoObject* ScriptSerializableArray::InternalCreateProperty(ScriptSerializableArray* nativeInstance)
+{
+	return ScriptSerializableProperty::Create(nativeInstance->mTypeInfo->MElementType);
+}

@@ -8,119 +8,117 @@
 #include "BsManagedResource.h"
 #include "Reflection/BsRTTIType.h"
 
-namespace bs
+using namespace bs;
+ScriptResourceBase::ScriptResourceBase(MonoObject* instance)
+	: PersistentScriptObjectBase(instance)
+{}
+
+ScriptResourceBase::~ScriptResourceBase()
 {
-	ScriptResourceBase::ScriptResourceBase(MonoObject* instance)
-		: PersistentScriptObjectBase(instance)
-	{}
+	BS_ASSERT(mGCHandle == 0 && "Object being destroyed without its managed instance being freed first.");
+}
 
-	ScriptResourceBase::~ScriptResourceBase()
+MonoObject* ScriptResourceBase::GetManagedInstance() const
+{
+	return MonoUtil::GetObjectFromGcHandle(mGCHandle);
+}
+
+MonoObject* ScriptResourceBase::GetRRef(const HResource& resource, u32 rttiId)
+{
+	::MonoClass* rrefClass = GetRRefClass(rttiId);
+	if(!rrefClass)
+		return nullptr;
+
+	ScriptRRefBase* rref = ScriptResourceManager::Instance().GetScriptRRef(resource, rrefClass);
+	if(!rref)
+		return nullptr;
+
+	return rref->GetManagedInstance();
+}
+
+void ScriptResourceBase::SetManagedInstance(::MonoObject* instance)
+{
+	BS_ASSERT(mGCHandle == 0 && "Attempting to set a new managed instance without freeing the old one.");
+
+	mGCHandle = MonoUtil::NewGcHandle(instance, false);
+}
+
+void ScriptResourceBase::FreeManagedInstance()
+{
+	if(mGCHandle != 0)
 	{
-		BS_ASSERT(mGCHandle == 0 && "Object being destroyed without its managed instance being freed first.");
+		MonoUtil::FreeGcHandle(mGCHandle);
+		mGCHandle = 0;
 	}
+}
 
-	MonoObject* ScriptResourceBase::GetManagedInstance() const
-	{
-		return MonoUtil::GetObjectFromGcHandle(mGCHandle);
-	}
+void ScriptResourceBase::Destroy()
+{
+	ScriptResourceManager::Instance().DestroyScriptResource(this);
+}
 
-	MonoObject* ScriptResourceBase::GetRRef(const HResource& resource, u32 rttiId)
+::MonoClass* ScriptResourceBase::GetManagedResourceClass(u32 rttiId)
+{
+	if(rttiId == Resource::GetRttiStatic()->GetRttiId())
+		return ScriptResource::GetMetaData()->ScriptClass->GetInternalClassInternal();
+	else if(rttiId == ManagedResource::GetRttiStatic()->GetRttiId())
+		return ScriptResource::GetMetaData()->ScriptClass->GetInternalClassInternal();
+	else
 	{
-		::MonoClass* rrefClass = GetRRefClass(rttiId);
-		if(!rrefClass)
+		BuiltinResourceInfo* info = ScriptAssemblyManager::Instance().GetBuiltinResourceInfo(rttiId);
+
+		if(info == nullptr)
 			return nullptr;
 
-		ScriptRRefBase* rref = ScriptResourceManager::Instance().GetScriptRRef(resource, rrefClass);
-		if(!rref)
-			return nullptr;
-
-		return rref->GetManagedInstance();
+		return info->MonoClass->GetInternalClassInternal();
 	}
+}
 
-	void ScriptResourceBase::SetManagedInstance(::MonoObject* instance)
-	{
-		BS_ASSERT(mGCHandle == 0 && "Attempting to set a new managed instance without freeing the old one.");
+::MonoClass* ScriptResourceBase::GetRRefClass(u32 rttiId)
+{
+	::MonoClass* monoClass = GetManagedResourceClass(rttiId);
+	if(!monoClass)
+		return nullptr;
 
-		mGCHandle = MonoUtil::NewGcHandle(instance, false);
-	}
+	return ScriptRRefBase::BindGenericParam(monoClass);
+}
 
-	void ScriptResourceBase::FreeManagedInstance()
-	{
-		if(mGCHandle != 0)
-		{
-			MonoUtil::FreeGcHandle(mGCHandle);
-			mGCHandle = 0;
-		}
-	}
+void ScriptResource::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptResource::InternalGetName);
+	metaData.ScriptClass->AddInternalCall("Internal_GetUUID", (void*)&ScriptResource::InternalGetUuid);
+	metaData.ScriptClass->AddInternalCall("Internal_Release", (void*)&ScriptResource::InternalRelease);
+}
 
-	void ScriptResourceBase::Destroy()
-	{
-		ScriptResourceManager::Instance().DestroyScriptResource(this);
-	}
+MonoString* ScriptResource::InternalGetName(ScriptResourceBase* nativeInstance)
+{
+	return MonoUtil::StringToMono(nativeInstance->GetGenericHandle()->GetName());
+}
 
-	::MonoClass* ScriptResourceBase::GetManagedResourceClass(u32 rttiId)
-	{
-		if(rttiId == Resource::GetRttiStatic()->GetRttiId())
-			return ScriptResource::GetMetaData()->ScriptClass->GetInternalClassInternal();
-		else if(rttiId == ManagedResource::GetRttiStatic()->GetRttiId())
-			return ScriptResource::GetMetaData()->ScriptClass->GetInternalClassInternal();
-		else
-		{
-			BuiltinResourceInfo* info = ScriptAssemblyManager::Instance().GetBuiltinResourceInfo(rttiId);
+void ScriptResource::InternalGetUuid(ScriptResourceBase* nativeInstance, UUID* uuid)
+{
+	*uuid = nativeInstance->GetGenericHandle().GetUuid();
+}
 
-			if(info == nullptr)
-				return nullptr;
+void ScriptResource::InternalRelease(ScriptResourceBase* nativeInstance)
+{
+	nativeInstance->GetGenericHandle().Release();
+}
 
-			return info->MonoClass->GetInternalClassInternal();
-		}
-	}
+ScriptUUID::ScriptUUID(MonoObject* instance)
+	: ScriptObject(instance)
+{}
 
-	::MonoClass* ScriptResourceBase::GetRRefClass(u32 rttiId)
-	{
-		::MonoClass* monoClass = GetManagedResourceClass(rttiId);
-		if(!monoClass)
-			return nullptr;
+void ScriptUUID::InitRuntimeData()
+{}
 
-		return ScriptRRefBase::BindGenericParam(monoClass);
-	}
+MonoObject* ScriptUUID::Box(const UUID& value)
+{
+	// We're casting away const but it's fine since structs are passed by value anyway
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptResource::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_GetName", (void*)&ScriptResource::InternalGetName);
-		metaData.ScriptClass->AddInternalCall("Internal_GetUUID", (void*)&ScriptResource::InternalGetUuid);
-		metaData.ScriptClass->AddInternalCall("Internal_Release", (void*)&ScriptResource::InternalRelease);
-	}
-
-	MonoString* ScriptResource::InternalGetName(ScriptResourceBase* nativeInstance)
-	{
-		return MonoUtil::StringToMono(nativeInstance->GetGenericHandle()->GetName());
-	}
-
-	void ScriptResource::InternalGetUuid(ScriptResourceBase* nativeInstance, UUID* uuid)
-	{
-		*uuid = nativeInstance->GetGenericHandle().GetUuid();
-	}
-
-	void ScriptResource::InternalRelease(ScriptResourceBase* nativeInstance)
-	{
-		nativeInstance->GetGenericHandle().Release();
-	}
-
-	ScriptUUID::ScriptUUID(MonoObject* instance)
-		: ScriptObject(instance)
-	{}
-
-	void ScriptUUID::InitRuntimeData()
-	{}
-
-	MonoObject* ScriptUUID::Box(const UUID& value)
-	{
-		// We're casting away const but it's fine since structs are passed by value anyway
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	UUID ScriptUUID::Unbox(MonoObject* obj)
-	{
-		return *(UUID*)MonoUtil::Unbox(obj);
-	}
-} // namespace bs
+UUID ScriptUUID::Unbox(MonoObject* obj)
+{
+	return *(UUID*)MonoUtil::Unbox(obj);
+}

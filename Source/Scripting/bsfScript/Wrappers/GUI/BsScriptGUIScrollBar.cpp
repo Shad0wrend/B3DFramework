@@ -12,185 +12,183 @@
 
 using namespace std::placeholders;
 
-namespace bs
+using namespace bs;
+ScriptGUIScrollBar::ScriptGUIScrollBar(MonoObject* instance)
+	: TScriptGUIElement(instance, nullptr)
 {
-	ScriptGUIScrollBar::ScriptGUIScrollBar(MonoObject* instance)
-		: TScriptGUIElement(instance, nullptr)
-	{
-	}
+}
 
-	void ScriptGUIScrollBar::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIScrollBar::InternalSetTint);
-		metaData.ScriptClass->AddInternalCall("Internal_GetPosition", (void*)&ScriptGUIScrollBar::InternalGetPosition);
-		metaData.ScriptClass->AddInternalCall("Internal_SetPosition", (void*)&ScriptGUIScrollBar::InternalSetPosition);
-		metaData.ScriptClass->AddInternalCall("Internal_GetHandleSize", (void*)&ScriptGUIScrollBar::InternalGetHandleSize);
-		metaData.ScriptClass->AddInternalCall("Internal_SetHandleSize", (void*)&ScriptGUIScrollBar::InternalSetHandleSize);
-	}
+void ScriptGUIScrollBar::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIScrollBar::InternalSetTint);
+	metaData.ScriptClass->AddInternalCall("Internal_GetPosition", (void*)&ScriptGUIScrollBar::InternalGetPosition);
+	metaData.ScriptClass->AddInternalCall("Internal_SetPosition", (void*)&ScriptGUIScrollBar::InternalSetPosition);
+	metaData.ScriptClass->AddInternalCall("Internal_GetHandleSize", (void*)&ScriptGUIScrollBar::InternalGetHandleSize);
+	metaData.ScriptClass->AddInternalCall("Internal_SetHandleSize", (void*)&ScriptGUIScrollBar::InternalSetHandleSize);
+}
 
-	float ScriptGUIScrollBar::InternalGetPosition(ScriptGUIElementBaseTBase* nativeInstance)
-	{
-		GUIScrollBar* scrollBar = (GUIScrollBar*)nativeInstance->GetGuiElement();
-		return scrollBar->GetScrollPos();
-	}
+float ScriptGUIScrollBar::InternalGetPosition(ScriptGUIElementBaseTBase* nativeInstance)
+{
+	GUIScrollBar* scrollBar = (GUIScrollBar*)nativeInstance->GetGuiElement();
+	return scrollBar->GetScrollPos();
+}
 
-	void ScriptGUIScrollBar::InternalSetPosition(ScriptGUIElementBaseTBase* nativeInstance, float percent)
-	{
-		GUIScrollBar* scrollBar = (GUIScrollBar*)nativeInstance->GetGuiElement();
-		scrollBar->SetScrollPosInternal(percent);
-	}
+void ScriptGUIScrollBar::InternalSetPosition(ScriptGUIElementBaseTBase* nativeInstance, float percent)
+{
+	GUIScrollBar* scrollBar = (GUIScrollBar*)nativeInstance->GetGuiElement();
+	scrollBar->SetScrollPosInternal(percent);
+}
 
-	float ScriptGUIScrollBar::InternalGetHandleSize(ScriptGUIElementBaseTBase* nativeInstance)
-	{
-		GUIScrollBar* scrollBar = (GUIScrollBar*)nativeInstance->GetGuiElement();
-		return scrollBar->GetHandleSize();
-	}
+float ScriptGUIScrollBar::InternalGetHandleSize(ScriptGUIElementBaseTBase* nativeInstance)
+{
+	GUIScrollBar* scrollBar = (GUIScrollBar*)nativeInstance->GetGuiElement();
+	return scrollBar->GetHandleSize();
+}
 
-	void ScriptGUIScrollBar::InternalSetHandleSize(ScriptGUIElementBaseTBase* nativeInstance, float percent)
-	{
-		GUIScrollBar* scrollBar = (GUIScrollBar*)nativeInstance->GetGuiElement();
-		scrollBar->SetHandleSize(percent);
-	}
+void ScriptGUIScrollBar::InternalSetHandleSize(ScriptGUIElementBaseTBase* nativeInstance, float percent)
+{
+	GUIScrollBar* scrollBar = (GUIScrollBar*)nativeInstance->GetGuiElement();
+	scrollBar->SetHandleSize(percent);
+}
 
-	void ScriptGUIScrollBar::InternalSetTint(ScriptGUIElementBaseTBase* nativeInstance, Color* color)
-	{
-		GUIScrollBar* scrollBar = (GUIScrollBar*)nativeInstance->GetGuiElement();
-		scrollBar->SetTint(*color);
-	}
+void ScriptGUIScrollBar::InternalSetTint(ScriptGUIElementBaseTBase* nativeInstance, Color* color)
+{
+	GUIScrollBar* scrollBar = (GUIScrollBar*)nativeInstance->GetGuiElement();
+	scrollBar->SetTint(*color);
+}
 
-	ScriptGUIScrollBarH::OnScrolledThunkDef ScriptGUIScrollBarH::onScrolledThunk;
+ScriptGUIScrollBarH::OnScrolledThunkDef ScriptGUIScrollBarH::onScrolledThunk;
 
-	ScriptGUIScrollBarH::ScriptGUIScrollBarH(MonoObject* instance, GUIScrollBarHorz* scrollBar)
-		: TScriptGUIElement(instance, scrollBar)
-	{
-	}
+ScriptGUIScrollBarH::ScriptGUIScrollBarH(MonoObject* instance, GUIScrollBarHorz* scrollBar)
+	: TScriptGUIElement(instance, scrollBar)
+{
+}
 
-	void ScriptGUIScrollBarH::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIScrollBarH::InternalCreateInstance);
+void ScriptGUIScrollBarH::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIScrollBarH::InternalCreateInstance);
 
-		onScrolledThunk = (OnScrolledThunkDef)metaData.ScriptClass->GetMethod("Internal_DoOnScroll", 1)->GetThunk();
-	}
+	onScrolledThunk = (OnScrolledThunkDef)metaData.ScriptClass->GetMethod("Internal_DoOnScroll", 1)->GetThunk();
+}
 
-	void ScriptGUIScrollBarH::InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions)
-	{
-		GUIOptions options;
+void ScriptGUIScrollBarH::InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions)
+{
+	GUIOptions options;
 
-		ScriptArray scriptArray(guiOptions);
-		u32 arrayLen = scriptArray.Size();
-		for(u32 i = 0; i < arrayLen; i++)
-			options.AddOption(scriptArray.Get<GUIOption>(i));
+	ScriptArray scriptArray(guiOptions);
+	u32 arrayLen = scriptArray.Size();
+	for(u32 i = 0; i < arrayLen; i++)
+		options.AddOption(scriptArray.Get<GUIOption>(i));
 
-		GUIScrollBarHorz* guiScrollBar = GUIScrollBarHorz::Create(options, MonoUtil::MonoToString(style));
-		ScriptGUIScrollBarH* scriptScrollBar = new(bs_alloc<ScriptGUIScrollBarH>()) ScriptGUIScrollBarH(instance, guiScrollBar);
+	GUIScrollBarHorz* guiScrollBar = GUIScrollBarHorz::Create(options, MonoUtil::MonoToString(style));
+	ScriptGUIScrollBarH* scriptScrollBar = new(bs_alloc<ScriptGUIScrollBarH>()) ScriptGUIScrollBarH(instance, guiScrollBar);
 
-		guiScrollBar->OnScrollOrResize.Connect(std::bind(&ScriptGUIScrollBarH::OnScroll, scriptScrollBar, _1, _2));
-	}
+	guiScrollBar->OnScrollOrResize.Connect(std::bind(&ScriptGUIScrollBarH::OnScroll, scriptScrollBar, _1, _2));
+}
 
-	void ScriptGUIScrollBarH::OnScroll(float position, float size)
-	{
-		MonoUtil::InvokeThunk(onScrolledThunk, GetManagedInstance(), position);
-	}
+void ScriptGUIScrollBarH::OnScroll(float position, float size)
+{
+	MonoUtil::InvokeThunk(onScrolledThunk, GetManagedInstance(), position);
+}
 
-	ScriptGUIScrollBarV::OnScrolledThunkDef ScriptGUIScrollBarV::onScrolledThunk;
+ScriptGUIScrollBarV::OnScrolledThunkDef ScriptGUIScrollBarV::onScrolledThunk;
 
-	ScriptGUIScrollBarV::ScriptGUIScrollBarV(MonoObject* instance, GUIScrollBarVert* scrollBar)
-		: TScriptGUIElement(instance, scrollBar)
-	{
-	}
+ScriptGUIScrollBarV::ScriptGUIScrollBarV(MonoObject* instance, GUIScrollBarVert* scrollBar)
+	: TScriptGUIElement(instance, scrollBar)
+{
+}
 
-	void ScriptGUIScrollBarV::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIScrollBarV::InternalCreateInstance);
+void ScriptGUIScrollBarV::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIScrollBarV::InternalCreateInstance);
 
-		onScrolledThunk = (OnScrolledThunkDef)metaData.ScriptClass->GetMethod("Internal_DoOnScroll", 1)->GetThunk();
-	}
+	onScrolledThunk = (OnScrolledThunkDef)metaData.ScriptClass->GetMethod("Internal_DoOnScroll", 1)->GetThunk();
+}
 
-	void ScriptGUIScrollBarV::InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions)
-	{
-		GUIOptions options;
+void ScriptGUIScrollBarV::InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions)
+{
+	GUIOptions options;
 
-		ScriptArray scriptArray(guiOptions);
-		u32 arrayLen = scriptArray.Size();
-		for(u32 i = 0; i < arrayLen; i++)
-			options.AddOption(scriptArray.Get<GUIOption>(i));
+	ScriptArray scriptArray(guiOptions);
+	u32 arrayLen = scriptArray.Size();
+	for(u32 i = 0; i < arrayLen; i++)
+		options.AddOption(scriptArray.Get<GUIOption>(i));
 
-		GUIScrollBarVert* guiScrollBar = GUIScrollBarVert::Create(options, MonoUtil::MonoToString(style));
-		ScriptGUIScrollBarV* scriptScrollBar = new(bs_alloc<ScriptGUIScrollBarV>()) ScriptGUIScrollBarV(instance, guiScrollBar);
+	GUIScrollBarVert* guiScrollBar = GUIScrollBarVert::Create(options, MonoUtil::MonoToString(style));
+	ScriptGUIScrollBarV* scriptScrollBar = new(bs_alloc<ScriptGUIScrollBarV>()) ScriptGUIScrollBarV(instance, guiScrollBar);
 
-		guiScrollBar->OnScrollOrResize.Connect(std::bind(&ScriptGUIScrollBarV::OnScroll, scriptScrollBar, _1, _2));
-	}
+	guiScrollBar->OnScrollOrResize.Connect(std::bind(&ScriptGUIScrollBarV::OnScroll, scriptScrollBar, _1, _2));
+}
 
-	void ScriptGUIScrollBarV::OnScroll(float position, float size)
-	{
-		MonoUtil::InvokeThunk(onScrolledThunk, GetManagedInstance(), position);
-	}
+void ScriptGUIScrollBarV::OnScroll(float position, float size)
+{
+	MonoUtil::InvokeThunk(onScrolledThunk, GetManagedInstance(), position);
+}
 
-	ScriptGUIResizeableScrollBarH::OnScrollOrResizeThunkDef ScriptGUIResizeableScrollBarH::onScrollOrResizeThunk;
+ScriptGUIResizeableScrollBarH::OnScrollOrResizeThunkDef ScriptGUIResizeableScrollBarH::onScrollOrResizeThunk;
 
-	ScriptGUIResizeableScrollBarH::ScriptGUIResizeableScrollBarH(MonoObject* instance, GUIScrollBarHorz* scrollBar)
-		: TScriptGUIElement(instance, scrollBar)
-	{
-	}
+ScriptGUIResizeableScrollBarH::ScriptGUIResizeableScrollBarH(MonoObject* instance, GUIScrollBarHorz* scrollBar)
+	: TScriptGUIElement(instance, scrollBar)
+{
+}
 
-	void ScriptGUIResizeableScrollBarH::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIResizeableScrollBarH::InternalCreateInstance);
+void ScriptGUIResizeableScrollBarH::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIResizeableScrollBarH::InternalCreateInstance);
 
-		onScrollOrResizeThunk = (OnScrollOrResizeThunkDef)metaData.ScriptClass->GetMethod("Internal_DoOnScrollOrResize", 2)->GetThunk();
-	}
+	onScrollOrResizeThunk = (OnScrollOrResizeThunkDef)metaData.ScriptClass->GetMethod("Internal_DoOnScrollOrResize", 2)->GetThunk();
+}
 
-	void ScriptGUIResizeableScrollBarH::InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions)
-	{
-		GUIOptions options;
+void ScriptGUIResizeableScrollBarH::InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions)
+{
+	GUIOptions options;
 
-		ScriptArray scriptArray(guiOptions);
-		u32 arrayLen = scriptArray.Size();
-		for(u32 i = 0; i < arrayLen; i++)
-			options.AddOption(scriptArray.Get<GUIOption>(i));
+	ScriptArray scriptArray(guiOptions);
+	u32 arrayLen = scriptArray.Size();
+	for(u32 i = 0; i < arrayLen; i++)
+		options.AddOption(scriptArray.Get<GUIOption>(i));
 
-		GUIScrollBarHorz* guiScrollBar = GUIScrollBarHorz::Create(true, options, MonoUtil::MonoToString(style));
-		ScriptGUIResizeableScrollBarH* scriptScrollBar = new(bs_alloc<ScriptGUIResizeableScrollBarH>()) ScriptGUIResizeableScrollBarH(instance, guiScrollBar);
+	GUIScrollBarHorz* guiScrollBar = GUIScrollBarHorz::Create(true, options, MonoUtil::MonoToString(style));
+	ScriptGUIResizeableScrollBarH* scriptScrollBar = new(bs_alloc<ScriptGUIResizeableScrollBarH>()) ScriptGUIResizeableScrollBarH(instance, guiScrollBar);
 
-		guiScrollBar->OnScrollOrResize.Connect(std::bind(&ScriptGUIResizeableScrollBarH::OnScroll, scriptScrollBar, _1, _2));
-	}
+	guiScrollBar->OnScrollOrResize.Connect(std::bind(&ScriptGUIResizeableScrollBarH::OnScroll, scriptScrollBar, _1, _2));
+}
 
-	void ScriptGUIResizeableScrollBarH::OnScroll(float position, float size)
-	{
-		MonoUtil::InvokeThunk(onScrollOrResizeThunk, GetManagedInstance(), position, size);
-	}
+void ScriptGUIResizeableScrollBarH::OnScroll(float position, float size)
+{
+	MonoUtil::InvokeThunk(onScrollOrResizeThunk, GetManagedInstance(), position, size);
+}
 
-	ScriptGUIResizeableScrollBarV::OnScrollOrResizeThunkDef ScriptGUIResizeableScrollBarV::onScrollOrResizeThunk;
+ScriptGUIResizeableScrollBarV::OnScrollOrResizeThunkDef ScriptGUIResizeableScrollBarV::onScrollOrResizeThunk;
 
-	ScriptGUIResizeableScrollBarV::ScriptGUIResizeableScrollBarV(MonoObject* instance, GUIScrollBarVert* scrollBar)
-		: TScriptGUIElement(instance, scrollBar)
-	{
-	}
+ScriptGUIResizeableScrollBarV::ScriptGUIResizeableScrollBarV(MonoObject* instance, GUIScrollBarVert* scrollBar)
+	: TScriptGUIElement(instance, scrollBar)
+{
+}
 
-	void ScriptGUIResizeableScrollBarV::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIResizeableScrollBarV::InternalCreateInstance);
+void ScriptGUIResizeableScrollBarV::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIResizeableScrollBarV::InternalCreateInstance);
 
-		onScrollOrResizeThunk = (OnScrollOrResizeThunkDef)metaData.ScriptClass->GetMethod("Internal_DoOnScrollOrResize", 2)->GetThunk();
-	}
+	onScrollOrResizeThunk = (OnScrollOrResizeThunkDef)metaData.ScriptClass->GetMethod("Internal_DoOnScrollOrResize", 2)->GetThunk();
+}
 
-	void ScriptGUIResizeableScrollBarV::InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions)
-	{
-		GUIOptions options;
+void ScriptGUIResizeableScrollBarV::InternalCreateInstance(MonoObject* instance, MonoString* style, MonoArray* guiOptions)
+{
+	GUIOptions options;
 
-		ScriptArray scriptArray(guiOptions);
-		u32 arrayLen = scriptArray.Size();
-		for(u32 i = 0; i < arrayLen; i++)
-			options.AddOption(scriptArray.Get<GUIOption>(i));
+	ScriptArray scriptArray(guiOptions);
+	u32 arrayLen = scriptArray.Size();
+	for(u32 i = 0; i < arrayLen; i++)
+		options.AddOption(scriptArray.Get<GUIOption>(i));
 
-		GUIScrollBarVert* guiScrollBar = GUIScrollBarVert::Create(true, options, MonoUtil::MonoToString(style));
-		ScriptGUIResizeableScrollBarV* scriptScrollBar = new(bs_alloc<ScriptGUIResizeableScrollBarV>()) ScriptGUIResizeableScrollBarV(instance, guiScrollBar);
+	GUIScrollBarVert* guiScrollBar = GUIScrollBarVert::Create(true, options, MonoUtil::MonoToString(style));
+	ScriptGUIResizeableScrollBarV* scriptScrollBar = new(bs_alloc<ScriptGUIResizeableScrollBarV>()) ScriptGUIResizeableScrollBarV(instance, guiScrollBar);
 
-		guiScrollBar->OnScrollOrResize.Connect(std::bind(&ScriptGUIResizeableScrollBarV::OnScroll, scriptScrollBar, _1, _2));
-	}
+	guiScrollBar->OnScrollOrResize.Connect(std::bind(&ScriptGUIResizeableScrollBarV::OnScroll, scriptScrollBar, _1, _2));
+}
 
-	void ScriptGUIResizeableScrollBarV::OnScroll(float position, float size)
-	{
-		MonoUtil::InvokeThunk(onScrollOrResizeThunk, GetManagedInstance(), position, size);
-	}
-} // namespace bs
+void ScriptGUIResizeableScrollBarV::OnScroll(float position, float size)
+{
+	MonoUtil::InvokeThunk(onScrollOrResizeThunk, GetManagedInstance(), position, size);
+}

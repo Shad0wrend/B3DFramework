@@ -12,64 +12,62 @@
 #include "../../../Foundation/bsfCore/Components/BsCCollider.h"
 #include "BsScriptCCollider.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptPhysicsQueryHit::ScriptPhysicsQueryHit(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptPhysicsQueryHit::InitRuntimeData()
+{}
+
+MonoObject* ScriptPhysicsQueryHit::Box(const __PhysicsQueryHitInterop& value)
 {
-	ScriptPhysicsQueryHit::ScriptPhysicsQueryHit(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptPhysicsQueryHit::InitRuntimeData()
-	{}
+__PhysicsQueryHitInterop ScriptPhysicsQueryHit::Unbox(MonoObject* value)
+{
+	return *(__PhysicsQueryHitInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptPhysicsQueryHit::Box(const __PhysicsQueryHitInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+PhysicsQueryHit ScriptPhysicsQueryHit::FromInterop(const __PhysicsQueryHitInterop& value)
+{
+	PhysicsQueryHit output;
+	output.Point = value.Point;
+	output.Normal = value.Normal;
+	output.Uv = value.Uv;
+	output.Distance = value.Distance;
+	output.TriangleIdx = value.TriangleIdx;
+	output.UnmappedTriangleIdx = value.UnmappedTriangleIdx;
+	GameObjectHandle<CCollider> tmpCollider;
+	ScriptCColliderBase* scriptCollider;
+	scriptCollider = (ScriptCColliderBase*)ScriptCCollider::ToNative(value.Collider);
+	if(scriptCollider != nullptr)
+		tmpCollider = static_object_cast<CCollider>(scriptCollider->GetComponent());
+	output.Collider = tmpCollider;
 
-	__PhysicsQueryHitInterop ScriptPhysicsQueryHit::Unbox(MonoObject* value)
-	{
-		return *(__PhysicsQueryHitInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	PhysicsQueryHit ScriptPhysicsQueryHit::FromInterop(const __PhysicsQueryHitInterop& value)
-	{
-		PhysicsQueryHit output;
-		output.Point = value.Point;
-		output.Normal = value.Normal;
-		output.Uv = value.Uv;
-		output.Distance = value.Distance;
-		output.TriangleIdx = value.TriangleIdx;
-		output.UnmappedTriangleIdx = value.UnmappedTriangleIdx;
-		GameObjectHandle<CCollider> tmpCollider;
-		ScriptCColliderBase* scriptCollider;
-		scriptCollider = (ScriptCColliderBase*)ScriptCCollider::ToNative(value.Collider);
-		if(scriptCollider != nullptr)
-			tmpCollider = static_object_cast<CCollider>(scriptCollider->GetComponent());
-		output.Collider = tmpCollider;
+__PhysicsQueryHitInterop ScriptPhysicsQueryHit::ToInterop(const PhysicsQueryHit& value)
+{
+	__PhysicsQueryHitInterop output;
+	output.Point = value.Point;
+	output.Normal = value.Normal;
+	output.Uv = value.Uv;
+	output.Distance = value.Distance;
+	output.TriangleIdx = value.TriangleIdx;
+	output.UnmappedTriangleIdx = value.UnmappedTriangleIdx;
+	MonoObject* tmpCollider;
+	ScriptComponentBase* scriptCollider = nullptr;
+	if(value.Collider)
+		scriptCollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Collider));
+	if(scriptCollider != nullptr)
+		tmpCollider = scriptCollider->GetManagedInstance();
+	else
+		tmpCollider = nullptr;
+	output.Collider = tmpCollider;
 
-		return output;
-	}
+	return output;
+}
 
-	__PhysicsQueryHitInterop ScriptPhysicsQueryHit::ToInterop(const PhysicsQueryHit& value)
-	{
-		__PhysicsQueryHitInterop output;
-		output.Point = value.Point;
-		output.Normal = value.Normal;
-		output.Uv = value.Uv;
-		output.Distance = value.Distance;
-		output.TriangleIdx = value.TriangleIdx;
-		output.UnmappedTriangleIdx = value.UnmappedTriangleIdx;
-		MonoObject* tmpCollider;
-		ScriptComponentBase* scriptCollider = nullptr;
-		if(value.Collider)
-			scriptCollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Collider));
-		if(scriptCollider != nullptr)
-			tmpCollider = scriptCollider->GetManagedInstance();
-		else
-			tmpCollider = nullptr;
-		output.Collider = tmpCollider;
-
-		return output;
-	}
-
-} // namespace bs

@@ -15,77 +15,75 @@
 
 using namespace std::placeholders;
 
-namespace bs
+using namespace bs;
+ScriptContextMenu::OnEntryTriggeredThunkDef ScriptContextMenu::onEntryTriggered;
+
+ScriptContextMenu::ScriptContextMenu(MonoObject* instance)
+	: ScriptObject(instance)
 {
-	ScriptContextMenu::OnEntryTriggeredThunkDef ScriptContextMenu::onEntryTriggered;
+	mGCHandle = MonoUtil::NewWeakGcHandle(instance);
+	mContextMenu = bs_shared_ptr_new<GUIContextMenu>();
+}
 
-	ScriptContextMenu::ScriptContextMenu(MonoObject* instance)
-		: ScriptObject(instance)
-	{
-		mGCHandle = MonoUtil::NewWeakGcHandle(instance);
-		mContextMenu = bs_shared_ptr_new<GUIContextMenu>();
-	}
+void ScriptContextMenu::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptContextMenu::InternalCreateInstance);
+	metaData.ScriptClass->AddInternalCall("Internal_Open", (void*)&ScriptContextMenu::InternalOpen);
+	metaData.ScriptClass->AddInternalCall("Internal_AddItem", (void*)&ScriptContextMenu::InternalAddItem);
+	metaData.ScriptClass->AddInternalCall("Internal_AddSeparator", (void*)&ScriptContextMenu::InternalAddSeparator);
+	metaData.ScriptClass->AddInternalCall("Internal_SetLocalizedName", (void*)&ScriptContextMenu::InternalSetLocalizedName);
 
-	void ScriptContextMenu::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptContextMenu::InternalCreateInstance);
-		metaData.ScriptClass->AddInternalCall("Internal_Open", (void*)&ScriptContextMenu::InternalOpen);
-		metaData.ScriptClass->AddInternalCall("Internal_AddItem", (void*)&ScriptContextMenu::InternalAddItem);
-		metaData.ScriptClass->AddInternalCall("Internal_AddSeparator", (void*)&ScriptContextMenu::InternalAddSeparator);
-		metaData.ScriptClass->AddInternalCall("Internal_SetLocalizedName", (void*)&ScriptContextMenu::InternalSetLocalizedName);
+	onEntryTriggered = (OnEntryTriggeredThunkDef)metaData.ScriptClass->GetMethod("InternalDoOnEntryTriggered", 1)->GetThunk();
+}
 
-		onEntryTriggered = (OnEntryTriggeredThunkDef)metaData.ScriptClass->GetMethod("InternalDoOnEntryTriggered", 1)->GetThunk();
-	}
+void ScriptContextMenu::InternalCreateInstance(MonoObject* instance)
+{
+	new(bs_alloc<ScriptContextMenu>()) ScriptContextMenu(instance);
+}
 
-	void ScriptContextMenu::InternalCreateInstance(MonoObject* instance)
-	{
-		new(bs_alloc<ScriptContextMenu>()) ScriptContextMenu(instance);
-	}
+void ScriptContextMenu::InternalOpen(ScriptContextMenu* instance, Vector2I* position, ScriptGUILayout* layoutPtr)
+{
+	GUIElementBase* layout = layoutPtr->GetGuiElement();
 
-	void ScriptContextMenu::InternalOpen(ScriptContextMenu* instance, Vector2I* position, ScriptGUILayout* layoutPtr)
-	{
-		GUIElementBase* layout = layoutPtr->GetGuiElement();
+	GUIWidget* widget = layout->GetParentWidgetInternal();
+	if(widget == nullptr)
+		return;
 
-		GUIWidget* widget = layout->GetParentWidgetInternal();
-		if(widget == nullptr)
-			return;
+	Rect2I bounds = layout->GetGlobalBounds();
+	Vector2I windowPosition = *position + Vector2I(bounds.X, bounds.Y);
 
-		Rect2I bounds = layout->GetGlobalBounds();
-		Vector2I windowPosition = *position + Vector2I(bounds.X, bounds.Y);
+	SPtr<GUIContextMenu> contextMenu = instance->GetInternal();
+	contextMenu->Open(windowPosition, *widget);
+}
 
-		SPtr<GUIContextMenu> contextMenu = instance->GetInternal();
-		contextMenu->Open(windowPosition, *widget);
-	}
+void ScriptContextMenu::InternalAddItem(ScriptContextMenu* instance, MonoString* path, u32 callbackIdx, ShortcutKey* shortcut)
+{
+	String nativePath = MonoUtil::MonoToString(path);
 
-	void ScriptContextMenu::InternalAddItem(ScriptContextMenu* instance, MonoString* path, u32 callbackIdx, ShortcutKey* shortcut)
-	{
-		String nativePath = MonoUtil::MonoToString(path);
+	SPtr<GUIContextMenu> contextMenu = instance->GetInternal();
+	contextMenu->AddMenuItem(nativePath, std::bind(&ScriptContextMenu::OnContextMenuItemTriggered, instance, callbackIdx), 0, *shortcut);
+}
 
-		SPtr<GUIContextMenu> contextMenu = instance->GetInternal();
-		contextMenu->AddMenuItem(nativePath, std::bind(&ScriptContextMenu::OnContextMenuItemTriggered, instance, callbackIdx), 0, *shortcut);
-	}
+void ScriptContextMenu::InternalAddSeparator(ScriptContextMenu* instance, MonoString* path)
+{
+	String nativePath = MonoUtil::MonoToString(path);
 
-	void ScriptContextMenu::InternalAddSeparator(ScriptContextMenu* instance, MonoString* path)
-	{
-		String nativePath = MonoUtil::MonoToString(path);
+	SPtr<GUIContextMenu> contextMenu = instance->GetInternal();
+	contextMenu->AddSeparator(nativePath, 0);
+}
 
-		SPtr<GUIContextMenu> contextMenu = instance->GetInternal();
-		contextMenu->AddSeparator(nativePath, 0);
-	}
+void ScriptContextMenu::InternalSetLocalizedName(ScriptContextMenu* instance, MonoString* label, ScriptHString* name)
+{
+	if(label == nullptr || name == nullptr)
+		return;
 
-	void ScriptContextMenu::InternalSetLocalizedName(ScriptContextMenu* instance, MonoString* label, ScriptHString* name)
-	{
-		if(label == nullptr || name == nullptr)
-			return;
+	String nativeLabel = MonoUtil::MonoToString(label);
+	SPtr<GUIContextMenu> contextMenu = instance->GetInternal();
+	contextMenu->SetLocalizedName(nativeLabel, *name->GetInternal());
+}
 
-		String nativeLabel = MonoUtil::MonoToString(label);
-		SPtr<GUIContextMenu> contextMenu = instance->GetInternal();
-		contextMenu->SetLocalizedName(nativeLabel, *name->GetInternal());
-	}
-
-	void ScriptContextMenu::OnContextMenuItemTriggered(u32 idx)
-	{
-		MonoObject* instance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
-		MonoUtil::InvokeThunk(onEntryTriggered, instance, idx);
-	}
-} // namespace bs
+void ScriptContextMenu::OnContextMenuItemTriggered(u32 idx)
+{
+	MonoObject* instance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
+	MonoUtil::InvokeThunk(onEntryTriggered, instance, idx);
+}

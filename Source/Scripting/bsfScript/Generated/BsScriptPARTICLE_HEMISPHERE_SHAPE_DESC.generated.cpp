@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptPARTICLE_HEMISPHERE_SHAPE_DESC::ScriptPARTICLE_HEMISPHERE_SHAPE_DESC(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptPARTICLE_HEMISPHERE_SHAPE_DESC::InitRuntimeData()
+{}
+
+MonoObject* ScriptPARTICLE_HEMISPHERE_SHAPE_DESC::Box(const PARTICLE_HEMISPHERE_SHAPE_DESC& value)
 {
-	ScriptPARTICLE_HEMISPHERE_SHAPE_DESC::ScriptPARTICLE_HEMISPHERE_SHAPE_DESC(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptPARTICLE_HEMISPHERE_SHAPE_DESC::InitRuntimeData()
-	{}
+PARTICLE_HEMISPHERE_SHAPE_DESC ScriptPARTICLE_HEMISPHERE_SHAPE_DESC::Unbox(MonoObject* value)
+{
+	return *(PARTICLE_HEMISPHERE_SHAPE_DESC*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptPARTICLE_HEMISPHERE_SHAPE_DESC::Box(const PARTICLE_HEMISPHERE_SHAPE_DESC& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	PARTICLE_HEMISPHERE_SHAPE_DESC ScriptPARTICLE_HEMISPHERE_SHAPE_DESC::Unbox(MonoObject* value)
-	{
-		return *(PARTICLE_HEMISPHERE_SHAPE_DESC*)MonoUtil::Unbox(value);
-	}
-
-} // namespace bs

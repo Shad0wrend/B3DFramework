@@ -5,23 +5,21 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptQuaternion::ScriptQuaternion(MonoObject* instance)
+	: ScriptObject(instance)
+{}
+
+void ScriptQuaternion::InitRuntimeData()
+{}
+
+MonoObject* ScriptQuaternion::Box(const Quaternion& value)
 {
-	ScriptQuaternion::ScriptQuaternion(MonoObject* instance)
-		: ScriptObject(instance)
-	{}
+	// We're casting away const but it's fine since structs are passed by value anyway
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptQuaternion::InitRuntimeData()
-	{}
-
-	MonoObject* ScriptQuaternion::Box(const Quaternion& value)
-	{
-		// We're casting away const but it's fine since structs are passed by value anyway
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
-
-	Quaternion ScriptQuaternion::Unbox(MonoObject* obj)
-	{
-		return *(Quaternion*)MonoUtil::Unbox(obj);
-	}
-} // namespace bs
+Quaternion ScriptQuaternion::Unbox(MonoObject* obj)
+{
+	return *(Quaternion*)MonoUtil::Unbox(obj);
+}

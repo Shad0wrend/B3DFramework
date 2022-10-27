@@ -4,25 +4,23 @@
 
 using namespace std::placeholders;
 
-namespace bs
+using namespace bs;
+void ApplicationEx::StartUp(const START_UP_DESC& desc)
 {
-	void ApplicationEx::StartUp(const START_UP_DESC& desc)
-	{
-		Application::StartUp(desc);
-	}
+	Application::StartUp(desc);
+}
 
-	void ApplicationEx::StartUp(VideoMode videoMode, const String& title, bool fullscreen)
-	{
-		Application::StartUp(videoMode, title, fullscreen);
-	}
+void ApplicationEx::StartUp(VideoMode videoMode, const String& title, bool fullscreen)
+{
+	Application::StartUp(videoMode, title, fullscreen);
+}
 
-	void ApplicationEx::RunMainLoop()
-	{
-		Application::Instance().RunMainLoop();
-	}
+void ApplicationEx::RunMainLoop()
+{
+	Application::Instance().RunMainLoop();
+}
 
-	void ApplicationEx::ShutDown()
-	{
-		Application::ShutDown();
-	}
-} // namespace bs
+void ApplicationEx::ShutDown()
+{
+	Application::ShutDown();
+}

@@ -24,170 +24,168 @@
 #include "Generated/BsBuiltinComponentLookup.generated.h"
 #include "Generated/BsBuiltinReflectableTypesLookup.generated.h"
 
-namespace bs
+using namespace bs;
+void EngineScriptLibrary::Initialize()
 {
-	void EngineScriptLibrary::Initialize()
-	{
-		Path engineAssemblyPath = GetEngineAssemblyPath();
-		const String ASSEMBLY_ENTRY_POINT = "Program::Start";
+	Path engineAssemblyPath = GetEngineAssemblyPath();
+	const String ASSEMBLY_ENTRY_POINT = "Program::Start";
 
 #if BS_IS_BANSHEE3D
-		MonoManager::StartUp();
-		MonoAssembly& engineAssembly = MonoManager::Instance().LoadAssembly(engineAssemblyPath.ToString(), ENGINE_ASSEMBLY);
+	MonoManager::StartUp();
+	MonoAssembly& engineAssembly = MonoManager::Instance().LoadAssembly(engineAssemblyPath.ToString(), ENGINE_ASSEMBLY);
 #endif
 
-		PlayInEditor::StartUp();
-		ScriptDebug::StartUp();
-		GameResourceManager::StartUp();
-		ScriptObjectManager::StartUp();
-		ManagedResourceManager::StartUp();
-		ScriptAssemblyManager::StartUp();
-		ScriptResourceManager::StartUp();
-		ScriptGameObjectManager::StartUp();
-		ScriptScene::StartUp();
-		ScriptInput::StartUp();
-		ScriptVirtualInput::StartUp();
-		ScriptGUI::StartUp();
+	PlayInEditor::StartUp();
+	ScriptDebug::StartUp();
+	GameResourceManager::StartUp();
+	ScriptObjectManager::StartUp();
+	ManagedResourceManager::StartUp();
+	ScriptAssemblyManager::StartUp();
+	ScriptResourceManager::StartUp();
+	ScriptGameObjectManager::StartUp();
+	ScriptScene::StartUp();
+	ScriptInput::StartUp();
+	ScriptVirtualInput::StartUp();
+	ScriptGUI::StartUp();
 
-		mEngineTypeMappings.Resources = BuiltinResourceTypes::GetEntries();
-		mEngineTypeMappings.Components = BuiltinComponent::GetEntries();
-		mEngineTypeMappings.ReflectableObjects = BuiltinReflectableTypes::GetEntries();
+	mEngineTypeMappings.Resources = BuiltinResourceTypes::GetEntries();
+	mEngineTypeMappings.Components = BuiltinComponent::GetEntries();
+	mEngineTypeMappings.ReflectableObjects = BuiltinReflectableTypes::GetEntries();
 
-		ScriptAssemblyManager::Instance().LoadAssemblyInfo(ENGINE_ASSEMBLY, mEngineTypeMappings);
+	ScriptAssemblyManager::Instance().LoadAssemblyInfo(ENGINE_ASSEMBLY, mEngineTypeMappings);
 
 #if BS_IS_BANSHEE3D
-		engineAssembly.Invoke(ASSEMBLY_ENTRY_POINT);
+	engineAssembly.Invoke(ASSEMBLY_ENTRY_POINT);
 #endif
-	}
+}
 
-	void EngineScriptLibrary::Update()
-	{
-		ScriptScene::Update();
-		PlayInEditor::Instance().Update();
-		ScriptObjectManager::Instance().Update();
-		ScriptGUI::Update();
-	}
+void EngineScriptLibrary::Update()
+{
+	ScriptScene::Update();
+	PlayInEditor::Instance().Update();
+	ScriptObjectManager::Instance().Update();
+	ScriptGUI::Update();
+}
 
-	void EngineScriptLibrary::Reload()
-	{
+void EngineScriptLibrary::Reload()
+{
 #if BS_IS_BANSHEE3D
-		Path engineAssemblyPath = GetEngineAssemblyPath();
+	Path engineAssemblyPath = GetEngineAssemblyPath();
 
-		// Do a full refresh if we have already loaded script assemblies
-		if(mScriptAssembliesLoaded)
+	// Do a full refresh if we have already loaded script assemblies
+	if(mScriptAssembliesLoaded)
+	{
+		Vector<AssemblyRefreshInfo> assemblies;
+		assemblies.push_back(AssemblyRefreshInfo(ENGINE_ASSEMBLY, &engineAssemblyPath, &mEngineTypeMappings));
+
+		Path gameAssemblyPath = GetGameAssemblyPath();
+		if(FileSystem::Exists(gameAssemblyPath))
+			assemblies.push_back(AssemblyRefreshInfo(SCRIPT_GAME_ASSEMBLY, &gameAssemblyPath, &BuiltinTypeMappings::EMPTY));
+
+		ScriptObjectManager::Instance().RefreshAssemblies(assemblies);
+	}
+	else // Otherwise just additively load them
+	{
+		Path gameAssemblyPath = GetGameAssemblyPath();
+		if(FileSystem::Exists(gameAssemblyPath))
 		{
-			Vector<AssemblyRefreshInfo> assemblies;
-			assemblies.push_back(AssemblyRefreshInfo(ENGINE_ASSEMBLY, &engineAssemblyPath, &mEngineTypeMappings));
-
-			Path gameAssemblyPath = GetGameAssemblyPath();
-			if(FileSystem::Exists(gameAssemblyPath))
-				assemblies.push_back(AssemblyRefreshInfo(SCRIPT_GAME_ASSEMBLY, &gameAssemblyPath, &BuiltinTypeMappings::EMPTY));
-
-			ScriptObjectManager::Instance().RefreshAssemblies(assemblies);
+			MonoManager::Instance().LoadAssembly(gameAssemblyPath.ToString(), SCRIPT_GAME_ASSEMBLY);
+			ScriptAssemblyManager::Instance().LoadAssemblyInfo(SCRIPT_GAME_ASSEMBLY, BuiltinTypeMappings());
 		}
-		else // Otherwise just additively load them
-		{
-			Path gameAssemblyPath = GetGameAssemblyPath();
-			if(FileSystem::Exists(gameAssemblyPath))
-			{
-				MonoManager::Instance().LoadAssembly(gameAssemblyPath.ToString(), SCRIPT_GAME_ASSEMBLY);
-				ScriptAssemblyManager::Instance().LoadAssemblyInfo(SCRIPT_GAME_ASSEMBLY, BuiltinTypeMappings());
-			}
 
-			mScriptAssembliesLoaded = true;
-		}
+		mScriptAssembliesLoaded = true;
+	}
 #endif
-	}
+}
 
-	void EngineScriptLibrary::Destroy()
-	{
-		UnloadAssemblies();
-		ShutdownModules();
-	}
+void EngineScriptLibrary::Destroy()
+{
+	UnloadAssemblies();
+	ShutdownModules();
+}
 
-	void EngineScriptLibrary::UnloadAssemblies()
-	{
-		ManagedResourceManager::Instance().Clear();
-		MonoManager::Instance().UnloadScriptDomain();
-		ScriptObjectManager::Instance().ProcessFinalizedObjects();
-	}
+void EngineScriptLibrary::UnloadAssemblies()
+{
+	ManagedResourceManager::Instance().Clear();
+	MonoManager::Instance().UnloadScriptDomain();
+	ScriptObjectManager::Instance().ProcessFinalizedObjects();
+}
 
-	void EngineScriptLibrary::ShutdownModules()
-	{
-		ScriptGUI::ShutDown();
-		ScriptVirtualInput::ShutDown();
-		ScriptInput::ShutDown();
-		ScriptScene::ShutDown();
-		ManagedResourceManager::ShutDown();
+void EngineScriptLibrary::ShutdownModules()
+{
+	ScriptGUI::ShutDown();
+	ScriptVirtualInput::ShutDown();
+	ScriptInput::ShutDown();
+	ScriptScene::ShutDown();
+	ManagedResourceManager::ShutDown();
 
 #if BS_IS_BANSHEE3D
-		MonoManager::ShutDown();
+	MonoManager::ShutDown();
 #else
-		MonoManager::Instance().unloadAll();
+	MonoManager::Instance().unloadAll();
 #endif
 
-		ScriptGameObjectManager::ShutDown();
-		ScriptResourceManager::ShutDown();
-		ScriptAssemblyManager::ShutDown();
-		ScriptObjectManager::ShutDown();
-		GameResourceManager::ShutDown();
-		ScriptDebug::ShutDown();
-		PlayInEditor::ShutDown();
+	ScriptGameObjectManager::ShutDown();
+	ScriptResourceManager::ShutDown();
+	ScriptAssemblyManager::ShutDown();
+	ScriptObjectManager::ShutDown();
+	GameResourceManager::ShutDown();
+	ScriptDebug::ShutDown();
+	PlayInEditor::ShutDown();
 
-		// Make sure all GUI elements are actually destroyed
-		GUIManager::Instance().ProcessDestroyQueue();
-	}
+	// Make sure all GUI elements are actually destroyed
+	GUIManager::Instance().ProcessDestroyQueue();
+}
 
-	Path EngineScriptLibrary::GetEngineAssemblyPath() const
-	{
-		Path assemblyPath = GetBuiltinAssemblyFolder();
-		assemblyPath.Append(String(ENGINE_ASSEMBLY) + ".dll");
+Path EngineScriptLibrary::GetEngineAssemblyPath() const
+{
+	Path assemblyPath = GetBuiltinAssemblyFolder();
+	assemblyPath.Append(String(ENGINE_ASSEMBLY) + ".dll");
 
-		return assemblyPath;
-	}
+	return assemblyPath;
+}
 
 #if BS_IS_BANSHEE3D
-	Path EngineScriptLibrary::GetGameAssemblyPath() const
-	{
-		Path assemblyPath = GetScriptAssemblyFolder();
-		assemblyPath.Append(String(SCRIPT_GAME_ASSEMBLY) + ".dll");
+Path EngineScriptLibrary::GetGameAssemblyPath() const
+{
+	Path assemblyPath = GetScriptAssemblyFolder();
+	assemblyPath.Append(String(SCRIPT_GAME_ASSEMBLY) + ".dll");
 
-		return assemblyPath;
-	}
+	return assemblyPath;
+}
 #endif
 
-	Path EngineScriptLibrary::GetBuiltinAssemblyFolder() const
-	{
-		Path releaseAssemblyFolder = GetReleaseAssemblyPath();
-		Path debugAssemblyFolder = GetDebugAssemblyPath();
+Path EngineScriptLibrary::GetBuiltinAssemblyFolder() const
+{
+	Path releaseAssemblyFolder = GetReleaseAssemblyPath();
+	Path debugAssemblyFolder = GetDebugAssemblyPath();
 
 #if BS_DEBUG_MODE == 0
-		if(FileSystem::Exists(releaseAssemblyFolder))
-			return releaseAssemblyFolder;
-
-		return debugAssemblyFolder;
-#else
-		if(FileSystem::Exists(debugAssemblyFolder))
-			return debugAssemblyFolder;
-
+	if(FileSystem::Exists(releaseAssemblyFolder))
 		return releaseAssemblyFolder;
+
+	return debugAssemblyFolder;
+#else
+	if(FileSystem::Exists(debugAssemblyFolder))
+		return debugAssemblyFolder;
+
+	return releaseAssemblyFolder;
 #endif
-	}
+}
 
-	Path EngineScriptLibrary::GetScriptAssemblyFolder() const
-	{
-		return GetBuiltinAssemblyFolder();
-	}
+Path EngineScriptLibrary::GetScriptAssemblyFolder() const
+{
+	return GetBuiltinAssemblyFolder();
+}
 
-	const Path& EngineScriptLibrary::GetReleaseAssemblyPath()
-	{
-		static Path path = Paths::FindPath(Paths::RELEASE_ASSEMBLY_PATH);
-		return path;
-	}
+const Path& EngineScriptLibrary::GetReleaseAssemblyPath()
+{
+	static Path path = Paths::FindPath(Paths::RELEASE_ASSEMBLY_PATH);
+	return path;
+}
 
-	const Path& EngineScriptLibrary::GetDebugAssemblyPath()
-	{
-		static Path path = Paths::FindPath(Paths::DEBUG_ASSEMBLY_PATH);
-		return path;
-	}
-} // namespace bs
+const Path& EngineScriptLibrary::GetDebugAssemblyPath()
+{
+	static Path path = Paths::FindPath(Paths::DEBUG_ASSEMBLY_PATH);
+	return path;
+}

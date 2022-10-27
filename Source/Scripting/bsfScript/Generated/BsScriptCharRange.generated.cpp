@@ -5,25 +5,23 @@
 #include "BsMonoClass.h"
 #include "BsMonoUtil.h"
 
-namespace bs
-{
+using namespace bs;
 #if !BS_IS_BANSHEE3D
-	ScriptCharRange::ScriptCharRange(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+ScriptCharRange::ScriptCharRange(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
 
-	void ScriptCharRange::InitRuntimeData()
-	{}
+void ScriptCharRange::InitRuntimeData()
+{}
 
-	MonoObject* ScriptCharRange::Box(const CharRange& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+MonoObject* ScriptCharRange::Box(const CharRange& value)
+{
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	CharRange ScriptCharRange::Unbox(MonoObject* value)
-	{
-		return *(CharRange*)MonoUtil::Unbox(value);
-	}
+CharRange ScriptCharRange::Unbox(MonoObject* value)
+{
+	return *(CharRange*)MonoUtil::Unbox(value);
+}
 
 #endif
-} // namespace bs

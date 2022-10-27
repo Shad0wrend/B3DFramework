@@ -7,47 +7,45 @@
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 #include "BsScriptSpring.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptLimitConeRange::ScriptLimitConeRange(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptLimitConeRange::InitRuntimeData()
+{}
+
+MonoObject* ScriptLimitConeRange::Box(const __LimitConeRangeInterop& value)
 {
-	ScriptLimitConeRange::ScriptLimitConeRange(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptLimitConeRange::InitRuntimeData()
-	{}
+__LimitConeRangeInterop ScriptLimitConeRange::Unbox(MonoObject* value)
+{
+	return *(__LimitConeRangeInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptLimitConeRange::Box(const __LimitConeRangeInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+LimitConeRange ScriptLimitConeRange::FromInterop(const __LimitConeRangeInterop& value)
+{
+	LimitConeRange output;
+	output.YLimitAngle = value.YLimitAngle;
+	output.ZLimitAngle = value.ZLimitAngle;
+	output.ContactDist = value.ContactDist;
+	output.Restitution = value.Restitution;
+	output.Spring = value.Spring;
 
-	__LimitConeRangeInterop ScriptLimitConeRange::Unbox(MonoObject* value)
-	{
-		return *(__LimitConeRangeInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	LimitConeRange ScriptLimitConeRange::FromInterop(const __LimitConeRangeInterop& value)
-	{
-		LimitConeRange output;
-		output.YLimitAngle = value.YLimitAngle;
-		output.ZLimitAngle = value.ZLimitAngle;
-		output.ContactDist = value.ContactDist;
-		output.Restitution = value.Restitution;
-		output.Spring = value.Spring;
+__LimitConeRangeInterop ScriptLimitConeRange::ToInterop(const LimitConeRange& value)
+{
+	__LimitConeRangeInterop output;
+	output.YLimitAngle = value.YLimitAngle;
+	output.ZLimitAngle = value.ZLimitAngle;
+	output.ContactDist = value.ContactDist;
+	output.Restitution = value.Restitution;
+	output.Spring = value.Spring;
 
-		return output;
-	}
+	return output;
+}
 
-	__LimitConeRangeInterop ScriptLimitConeRange::ToInterop(const LimitConeRange& value)
-	{
-		__LimitConeRangeInterop output;
-		output.YLimitAngle = value.YLimitAngle;
-		output.ZLimitAngle = value.ZLimitAngle;
-		output.ContactDist = value.ContactDist;
-		output.Restitution = value.Restitution;
-		output.Spring = value.Spring;
-
-		return output;
-	}
-
-} // namespace bs

@@ -7,39 +7,37 @@
 #include "Math/BsVector2.h"
 #include "Wrappers/BsScriptVector.h"
 
-namespace bs
+using namespace bs;
+ScriptPARTICLE_RECT_SHAPE_DESC::ScriptPARTICLE_RECT_SHAPE_DESC(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptPARTICLE_RECT_SHAPE_DESC::InitRuntimeData()
+{}
+
+MonoObject* ScriptPARTICLE_RECT_SHAPE_DESC::Box(const __PARTICLE_RECT_SHAPE_DESCInterop& value)
 {
-	ScriptPARTICLE_RECT_SHAPE_DESC::ScriptPARTICLE_RECT_SHAPE_DESC(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptPARTICLE_RECT_SHAPE_DESC::InitRuntimeData()
-	{}
+__PARTICLE_RECT_SHAPE_DESCInterop ScriptPARTICLE_RECT_SHAPE_DESC::Unbox(MonoObject* value)
+{
+	return *(__PARTICLE_RECT_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptPARTICLE_RECT_SHAPE_DESC::Box(const __PARTICLE_RECT_SHAPE_DESCInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+PARTICLE_RECT_SHAPE_DESC ScriptPARTICLE_RECT_SHAPE_DESC::FromInterop(const __PARTICLE_RECT_SHAPE_DESCInterop& value)
+{
+	PARTICLE_RECT_SHAPE_DESC output;
+	output.Extents = value.Extents;
 
-	__PARTICLE_RECT_SHAPE_DESCInterop ScriptPARTICLE_RECT_SHAPE_DESC::Unbox(MonoObject* value)
-	{
-		return *(__PARTICLE_RECT_SHAPE_DESCInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	PARTICLE_RECT_SHAPE_DESC ScriptPARTICLE_RECT_SHAPE_DESC::FromInterop(const __PARTICLE_RECT_SHAPE_DESCInterop& value)
-	{
-		PARTICLE_RECT_SHAPE_DESC output;
-		output.Extents = value.Extents;
+__PARTICLE_RECT_SHAPE_DESCInterop ScriptPARTICLE_RECT_SHAPE_DESC::ToInterop(const PARTICLE_RECT_SHAPE_DESC& value)
+{
+	__PARTICLE_RECT_SHAPE_DESCInterop output;
+	output.Extents = value.Extents;
 
-		return output;
-	}
+	return output;
+}
 
-	__PARTICLE_RECT_SHAPE_DESCInterop ScriptPARTICLE_RECT_SHAPE_DESC::ToInterop(const PARTICLE_RECT_SHAPE_DESC& value)
-	{
-		__PARTICLE_RECT_SHAPE_DESCInterop output;
-		output.Extents = value.Extents;
-
-		return output;
-	}
-
-} // namespace bs

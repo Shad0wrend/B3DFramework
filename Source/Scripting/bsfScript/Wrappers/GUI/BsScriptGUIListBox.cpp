@@ -18,132 +18,130 @@
 
 using namespace std::placeholders;
 
-namespace bs
+using namespace bs;
+ScriptGUIListBox::OnSelectionChangedThunkDef ScriptGUIListBox::onSelectionChangedThunk;
+
+ScriptGUIListBox::ScriptGUIListBox(MonoObject* instance, GUIListBox* listBox)
+	: TScriptGUIElement(instance, listBox)
 {
-	ScriptGUIListBox::OnSelectionChangedThunkDef ScriptGUIListBox::onSelectionChangedThunk;
+}
 
-	ScriptGUIListBox::ScriptGUIListBox(MonoObject* instance, GUIListBox* listBox)
-		: TScriptGUIElement(instance, listBox)
+void ScriptGUIListBox::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIListBox::InternalCreateInstance);
+	metaData.ScriptClass->AddInternalCall("Internal_SetElements", (void*)&ScriptGUIListBox::InternalSetElements);
+	metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIListBox::InternalSetTint);
+	metaData.ScriptClass->AddInternalCall("Internal_SelectElement", (void*)&ScriptGUIListBox::InternalSelectElement);
+	metaData.ScriptClass->AddInternalCall("Internal_DeselectElement", (void*)&ScriptGUIListBox::InternalDeselectElement);
+	metaData.ScriptClass->AddInternalCall("Internal_GetElementStates", (void*)&ScriptGUIListBox::InternalGetElementStates);
+	metaData.ScriptClass->AddInternalCall("Internal_SetElementStates", (void*)&ScriptGUIListBox::InternalSetElementStates);
+
+	onSelectionChangedThunk = (OnSelectionChangedThunkDef)metaData.ScriptClass->GetMethod("DoOnSelectionChanged", 1)->GetThunk();
+}
+
+void ScriptGUIListBox::InternalCreateInstance(MonoObject* instance, MonoArray* elements, bool multiselect, MonoString* style, MonoArray* guiOptions)
+{
+	GUIOptions options;
+
+	ScriptArray scriptArray(guiOptions);
+	u32 arrayLen = scriptArray.Size();
+	for(u32 i = 0; i < arrayLen; i++)
+		options.AddOption(scriptArray.Get<GUIOption>(i));
+
+	ScriptArray elemsArray(elements);
+	u32 elementsArrayLen = elemsArray.Size();
+	Vector<HString> nativeElements;
+	for(u32 i = 0; i < elementsArrayLen; i++)
 	{
-	}
+		MonoObject* stringManaged = elemsArray.Get<MonoObject*>(i);
 
-	void ScriptGUIListBox::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIListBox::InternalCreateInstance);
-		metaData.ScriptClass->AddInternalCall("Internal_SetElements", (void*)&ScriptGUIListBox::InternalSetElements);
-		metaData.ScriptClass->AddInternalCall("Internal_SetTint", (void*)&ScriptGUIListBox::InternalSetTint);
-		metaData.ScriptClass->AddInternalCall("Internal_SelectElement", (void*)&ScriptGUIListBox::InternalSelectElement);
-		metaData.ScriptClass->AddInternalCall("Internal_DeselectElement", (void*)&ScriptGUIListBox::InternalDeselectElement);
-		metaData.ScriptClass->AddInternalCall("Internal_GetElementStates", (void*)&ScriptGUIListBox::InternalGetElementStates);
-		metaData.ScriptClass->AddInternalCall("Internal_SetElementStates", (void*)&ScriptGUIListBox::InternalSetElementStates);
-
-		onSelectionChangedThunk = (OnSelectionChangedThunkDef)metaData.ScriptClass->GetMethod("DoOnSelectionChanged", 1)->GetThunk();
-	}
-
-	void ScriptGUIListBox::InternalCreateInstance(MonoObject* instance, MonoArray* elements, bool multiselect, MonoString* style, MonoArray* guiOptions)
-	{
-		GUIOptions options;
-
-		ScriptArray scriptArray(guiOptions);
-		u32 arrayLen = scriptArray.Size();
-		for(u32 i = 0; i < arrayLen; i++)
-			options.AddOption(scriptArray.Get<GUIOption>(i));
-
-		ScriptArray elemsArray(elements);
-		u32 elementsArrayLen = elemsArray.Size();
-		Vector<HString> nativeElements;
-		for(u32 i = 0; i < elementsArrayLen; i++)
+		if(stringManaged == nullptr)
+			nativeElements.push_back(HString::Dummy());
+		else
 		{
-			MonoObject* stringManaged = elemsArray.Get<MonoObject*>(i);
-
-			if(stringManaged == nullptr)
-				nativeElements.push_back(HString::Dummy());
-			else
-			{
-				ScriptHString* textScript = ScriptHString::ToNative(stringManaged);
-				nativeElements.push_back(*textScript->GetInternal());
-			}
+			ScriptHString* textScript = ScriptHString::ToNative(stringManaged);
+			nativeElements.push_back(*textScript->GetInternal());
 		}
-
-		GUIListBox* guiListBox = GUIListBox::Create(nativeElements, multiselect, options, MonoUtil::MonoToString(style));
-
-		auto nativeInstance = new(bs_alloc<ScriptGUIListBox>()) ScriptGUIListBox(instance, guiListBox);
-
-		guiListBox->OnSelectionToggled.Connect(std::bind(&::bs::ScriptGUIListBox::OnSelectionChanged, nativeInstance, _1, _2));
 	}
 
-	void ScriptGUIListBox::InternalSetElements(ScriptGUIListBox* nativeInstance, MonoArray* elements)
+	GUIListBox* guiListBox = GUIListBox::Create(nativeElements, multiselect, options, MonoUtil::MonoToString(style));
+
+	auto nativeInstance = new(bs_alloc<ScriptGUIListBox>()) ScriptGUIListBox(instance, guiListBox);
+
+	guiListBox->OnSelectionToggled.Connect(std::bind(&::bs::ScriptGUIListBox::OnSelectionChanged, nativeInstance, _1, _2));
+}
+
+void ScriptGUIListBox::InternalSetElements(ScriptGUIListBox* nativeInstance, MonoArray* elements)
+{
+	ScriptArray elemsArray(elements);
+	u32 elementsArrayLen = elemsArray.Size();
+	Vector<HString> nativeElements;
+	for(u32 i = 0; i < elementsArrayLen; i++)
 	{
-		ScriptArray elemsArray(elements);
-		u32 elementsArrayLen = elemsArray.Size();
-		Vector<HString> nativeElements;
-		for(u32 i = 0; i < elementsArrayLen; i++)
+		MonoObject* stringManaged = elemsArray.Get<MonoObject*>(i);
+
+		if(stringManaged == nullptr)
+			nativeElements.push_back(HString::Dummy());
+		else
 		{
-			MonoObject* stringManaged = elemsArray.Get<MonoObject*>(i);
-
-			if(stringManaged == nullptr)
-				nativeElements.push_back(HString::Dummy());
-			else
-			{
-				ScriptHString* textScript = ScriptHString::ToNative(stringManaged);
-				nativeElements.push_back(*textScript->GetInternal());
-			}
+			ScriptHString* textScript = ScriptHString::ToNative(stringManaged);
+			nativeElements.push_back(*textScript->GetInternal());
 		}
-
-		GUIListBox* listBox = (GUIListBox*)nativeInstance->GetGuiElement();
-		listBox->SetElements(nativeElements);
 	}
 
-	void ScriptGUIListBox::InternalSetTint(ScriptGUIListBox* nativeInstance, Color* color)
-	{
-		GUIListBox* listBox = (GUIListBox*)nativeInstance->GetGuiElement();
-		listBox->SetTint(*color);
-	}
+	GUIListBox* listBox = (GUIListBox*)nativeInstance->GetGuiElement();
+	listBox->SetElements(nativeElements);
+}
 
-	void ScriptGUIListBox::InternalSelectElement(ScriptGUIListBox* nativeInstance, int idx)
-	{
-		GUIListBox* listBox = (GUIListBox*)nativeInstance->GetGuiElement();
-		listBox->SelectElement(idx);
-	}
+void ScriptGUIListBox::InternalSetTint(ScriptGUIListBox* nativeInstance, Color* color)
+{
+	GUIListBox* listBox = (GUIListBox*)nativeInstance->GetGuiElement();
+	listBox->SetTint(*color);
+}
 
-	void ScriptGUIListBox::InternalDeselectElement(ScriptGUIListBox* nativeInstance, int idx)
-	{
-		GUIListBox* listBox = (GUIListBox*)nativeInstance->GetGuiElement();
-		listBox->DeselectElement(idx);
-	}
+void ScriptGUIListBox::InternalSelectElement(ScriptGUIListBox* nativeInstance, int idx)
+{
+	GUIListBox* listBox = (GUIListBox*)nativeInstance->GetGuiElement();
+	listBox->SelectElement(idx);
+}
 
-	MonoArray* ScriptGUIListBox::InternalGetElementStates(ScriptGUIListBox* nativeInstance)
-	{
-		GUIListBox* listBox = (GUIListBox*)nativeInstance->GetGuiElement();
-		const Vector<bool>& states = listBox->GetElementStates();
+void ScriptGUIListBox::InternalDeselectElement(ScriptGUIListBox* nativeInstance, int idx)
+{
+	GUIListBox* listBox = (GUIListBox*)nativeInstance->GetGuiElement();
+	listBox->DeselectElement(idx);
+}
 
-		u32 numElements = (u32)states.size();
-		ScriptArray outStates = ScriptArray::Create<bool>(numElements);
+MonoArray* ScriptGUIListBox::InternalGetElementStates(ScriptGUIListBox* nativeInstance)
+{
+	GUIListBox* listBox = (GUIListBox*)nativeInstance->GetGuiElement();
+	const Vector<bool>& states = listBox->GetElementStates();
 
-		for(u32 i = 0; i < numElements; i++)
-			outStates.Set(i, (bool)states[i]);
+	u32 numElements = (u32)states.size();
+	ScriptArray outStates = ScriptArray::Create<bool>(numElements);
 
-		return outStates.GetInternal();
-	}
+	for(u32 i = 0; i < numElements; i++)
+		outStates.Set(i, (bool)states[i]);
 
-	void ScriptGUIListBox::InternalSetElementStates(ScriptGUIListBox* nativeInstance, MonoArray* monoStates)
-	{
-		if(monoStates == nullptr)
-			return;
+	return outStates.GetInternal();
+}
 
-		ScriptArray inStates(monoStates);
-		u32 numElements = inStates.Size();
+void ScriptGUIListBox::InternalSetElementStates(ScriptGUIListBox* nativeInstance, MonoArray* monoStates)
+{
+	if(monoStates == nullptr)
+		return;
 
-		Vector<bool> states(numElements);
-		for(u32 i = 0; i < numElements; i++)
-			states[i] = inStates.Get<bool>(i);
+	ScriptArray inStates(monoStates);
+	u32 numElements = inStates.Size();
 
-		GUIListBox* listBox = (GUIListBox*)nativeInstance->GetGuiElement();
-		listBox->SetElementStates(states);
-	}
+	Vector<bool> states(numElements);
+	for(u32 i = 0; i < numElements; i++)
+		states[i] = inStates.Get<bool>(i);
 
-	void ScriptGUIListBox::OnSelectionChanged(u32 index, bool enabled)
-	{
-		MonoUtil::InvokeThunk(onSelectionChangedThunk, GetManagedInstance(), index);
-	}
-} // namespace bs
+	GUIListBox* listBox = (GUIListBox*)nativeInstance->GetGuiElement();
+	listBox->SetElementStates(states);
+}
+
+void ScriptGUIListBox::OnSelectionChanged(u32 index, bool enabled)
+{
+	MonoUtil::InvokeThunk(onSelectionChangedThunk, GetManagedInstance(), index);
+}

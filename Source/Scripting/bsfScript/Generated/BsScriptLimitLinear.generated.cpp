@@ -7,45 +7,43 @@
 #include "../../../Foundation/bsfCore/Physics/BsJoint.h"
 #include "BsScriptSpring.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptLimitLinear::ScriptLimitLinear(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptLimitLinear::InitRuntimeData()
+{}
+
+MonoObject* ScriptLimitLinear::Box(const __LimitLinearInterop& value)
 {
-	ScriptLimitLinear::ScriptLimitLinear(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptLimitLinear::InitRuntimeData()
-	{}
+__LimitLinearInterop ScriptLimitLinear::Unbox(MonoObject* value)
+{
+	return *(__LimitLinearInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptLimitLinear::Box(const __LimitLinearInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+LimitLinear ScriptLimitLinear::FromInterop(const __LimitLinearInterop& value)
+{
+	LimitLinear output;
+	output.Extent = value.Extent;
+	output.ContactDist = value.ContactDist;
+	output.Restitution = value.Restitution;
+	output.Spring = value.Spring;
 
-	__LimitLinearInterop ScriptLimitLinear::Unbox(MonoObject* value)
-	{
-		return *(__LimitLinearInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	LimitLinear ScriptLimitLinear::FromInterop(const __LimitLinearInterop& value)
-	{
-		LimitLinear output;
-		output.Extent = value.Extent;
-		output.ContactDist = value.ContactDist;
-		output.Restitution = value.Restitution;
-		output.Spring = value.Spring;
+__LimitLinearInterop ScriptLimitLinear::ToInterop(const LimitLinear& value)
+{
+	__LimitLinearInterop output;
+	output.Extent = value.Extent;
+	output.ContactDist = value.ContactDist;
+	output.Restitution = value.Restitution;
+	output.Spring = value.Spring;
 
-		return output;
-	}
+	return output;
+}
 
-	__LimitLinearInterop ScriptLimitLinear::ToInterop(const LimitLinear& value)
-	{
-		__LimitLinearInterop output;
-		output.Extent = value.Extent;
-		output.ContactDist = value.ContactDist;
-		output.Restitution = value.Restitution;
-		output.Spring = value.Spring;
-
-		return output;
-	}
-
-} // namespace bs

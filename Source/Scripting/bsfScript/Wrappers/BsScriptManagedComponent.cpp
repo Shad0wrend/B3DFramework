@@ -16,119 +16,117 @@
 #include "Scene/BsSceneObject.h"
 #include "BsMonoUtil.h"
 
-namespace bs
+using namespace bs;
+ScriptManagedComponent::ScriptManagedComponent(MonoObject* instance, const HManagedComponent& component)
+	: ScriptObject(instance), mComponent(component), mTypeMissing(false)
 {
-	ScriptManagedComponent::ScriptManagedComponent(MonoObject* instance, const HManagedComponent& component)
-		: ScriptObject(instance), mComponent(component), mTypeMissing(false)
+	assert(instance != nullptr);
+
+	MonoUtil::GetClassName(instance, mNamespace, mType);
+	mGCHandle = MonoUtil::NewGcHandle(instance, false);
+
+	component->Initialize(this);
+}
+
+void ScriptManagedComponent::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_Invoke", (void*)&ScriptManagedComponent::InternalInvoke);
+}
+
+void ScriptManagedComponent::InternalInvoke(ScriptManagedComponent* nativeInstance, MonoString* name)
+{
+	HManagedComponent comp = nativeInstance->mComponent;
+	if(CheckIfDestroyed(nativeInstance->mComponent))
+		return;
+
+	MonoObject* compObj = comp->GetManagedInstance();
+	MonoClass* compClass = comp->GetClass();
+
+	bool found = false;
+	String methodName = MonoUtil::MonoToString(name);
+	while(compClass != nullptr)
 	{
-		assert(instance != nullptr);
-
-		MonoUtil::GetClassName(instance, mNamespace, mType);
-		mGCHandle = MonoUtil::NewGcHandle(instance, false);
-
-		component->Initialize(this);
-	}
-
-	void ScriptManagedComponent::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_Invoke", (void*)&ScriptManagedComponent::InternalInvoke);
-	}
-
-	void ScriptManagedComponent::InternalInvoke(ScriptManagedComponent* nativeInstance, MonoString* name)
-	{
-		HManagedComponent comp = nativeInstance->mComponent;
-		if(CheckIfDestroyed(nativeInstance->mComponent))
-			return;
-
-		MonoObject* compObj = comp->GetManagedInstance();
-		MonoClass* compClass = comp->GetClass();
-
-		bool found = false;
-		String methodName = MonoUtil::MonoToString(name);
-		while(compClass != nullptr)
+		MonoMethod* method = compClass->GetMethod(methodName);
+		if(method != nullptr)
 		{
-			MonoMethod* method = compClass->GetMethod(methodName);
-			if(method != nullptr)
-			{
-				method->Invoke(compObj, nullptr);
-				found = true;
-				break;
-			}
-
-			// Search for methods on base class if there is one
-			MonoClass* baseClass = compClass->GetBaseClass();
-			if(baseClass != metaData.ScriptClass)
-				compClass = baseClass;
-			else
-				break;
+			method->Invoke(compObj, nullptr);
+			found = true;
+			break;
 		}
 
-		if(!found)
-		{
-			BS_LOG(Warning, Script, "Method invoke failed. Cannot find method \"{0}\" on component of type \"{1}\".", methodName, compClass->GetTypeName());
-		}
-	}
-
-	MonoObject* ScriptManagedComponent::CreateManagedInstanceInternal(bool construct)
-	{
-		SPtr<ManagedSerializableObjectInfo> currentObjInfo = nullptr;
-
-		// See if this type even still exists
-		MonoObject* instance;
-		if(!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mType, currentObjInfo))
-		{
-			mTypeMissing = true;
-			instance = ScriptAssemblyManager::Instance().GetBuiltinClasses().MissingComponentClass->CreateInstance(true);
-		}
+		// Search for methods on base class if there is one
+		MonoClass* baseClass = compClass->GetBaseClass();
+		if(baseClass != metaData.ScriptClass)
+			compClass = baseClass;
 		else
-		{
-			mTypeMissing = false;
-			instance = currentObjInfo->MMonoClass->CreateInstance(construct);
-		}
-
-		mGCHandle = MonoUtil::NewGcHandle(instance, false);
-		return instance;
+			break;
 	}
 
-	void ScriptManagedComponent::ClearManagedInstanceInternal()
+	if(!found)
 	{
-		FreeManagedInstance();
+		BS_LOG(Warning, Script, "Method invoke failed. Cannot find method \"{0}\" on component of type \"{1}\".", methodName, compClass->GetTypeName());
 	}
+}
 
-	ScriptObjectBackup ScriptManagedComponent::BeginRefresh()
+MonoObject* ScriptManagedComponent::CreateManagedInstanceInternal(bool construct)
+{
+	SPtr<ManagedSerializableObjectInfo> currentObjInfo = nullptr;
+
+	// See if this type even still exists
+	MonoObject* instance;
+	if(!ScriptAssemblyManager::Instance().GetSerializableObjectInfo(mNamespace, mType, currentObjInfo))
 	{
-		HManagedComponent managedComponent = static_object_cast<ManagedComponent>(mComponent);
-		ScriptObjectBackup backupData;
-
-		// It's possible that managed component is destroyed but a reference to it
-		// is still kept. Don't backup such components.
-		if(!managedComponent.IsDestroyed(true))
-			backupData.Data = managedComponent->Backup(true);
-
-		return backupData;
+		mTypeMissing = true;
+		instance = ScriptAssemblyManager::Instance().GetBuiltinClasses().MissingComponentClass->CreateInstance(true);
 	}
-
-	void ScriptManagedComponent::EndRefresh(const ScriptObjectBackup& backupData)
+	else
 	{
-		HManagedComponent managedComponent = static_object_cast<ManagedComponent>(mComponent);
-
-		RawBackupData componentBackup = any_cast<RawBackupData>(backupData.Data);
-		managedComponent->Restore(componentBackup, mTypeMissing);
+		mTypeMissing = false;
+		instance = currentObjInfo->MMonoClass->CreateInstance(construct);
 	}
 
-	void ScriptManagedComponent::OnManagedInstanceDeletedInternal(bool assemblyRefresh)
-	{
-		mGCHandle = 0;
+	mGCHandle = MonoUtil::NewGcHandle(instance, false);
+	return instance;
+}
 
-		// It's possible that managed component is destroyed but a reference to it
-		// is still kept during assembly refresh. Such components shouldn't be restored
-		// so we delete them.
-		if(!assemblyRefresh || mComponent.IsDestroyed(true))
-			ScriptGameObjectManager::Instance().DestroyScriptComponent(this);
-	}
+void ScriptManagedComponent::ClearManagedInstanceInternal()
+{
+	FreeManagedInstance();
+}
 
-	void ScriptManagedComponent::NotifyDestroyedInternal()
-	{
-		FreeManagedInstance();
-	}
-} // namespace bs
+ScriptObjectBackup ScriptManagedComponent::BeginRefresh()
+{
+	HManagedComponent managedComponent = static_object_cast<ManagedComponent>(mComponent);
+	ScriptObjectBackup backupData;
+
+	// It's possible that managed component is destroyed but a reference to it
+	// is still kept. Don't backup such components.
+	if(!managedComponent.IsDestroyed(true))
+		backupData.Data = managedComponent->Backup(true);
+
+	return backupData;
+}
+
+void ScriptManagedComponent::EndRefresh(const ScriptObjectBackup& backupData)
+{
+	HManagedComponent managedComponent = static_object_cast<ManagedComponent>(mComponent);
+
+	RawBackupData componentBackup = any_cast<RawBackupData>(backupData.Data);
+	managedComponent->Restore(componentBackup, mTypeMissing);
+}
+
+void ScriptManagedComponent::OnManagedInstanceDeletedInternal(bool assemblyRefresh)
+{
+	mGCHandle = 0;
+
+	// It's possible that managed component is destroyed but a reference to it
+	// is still kept during assembly refresh. Such components shouldn't be restored
+	// so we delete them.
+	if(!assemblyRefresh || mComponent.IsDestroyed(true))
+		ScriptGameObjectManager::Instance().DestroyScriptComponent(this);
+}
+
+void ScriptManagedComponent::NotifyDestroyedInternal()
+{
+	FreeManagedInstance();
+}

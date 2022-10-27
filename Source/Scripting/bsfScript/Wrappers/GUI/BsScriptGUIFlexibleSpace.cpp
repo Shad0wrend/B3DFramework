@@ -11,35 +11,33 @@
 #include "GUI/BsGUISpace.h"
 #include "Wrappers/GUI/BsScriptGUILayout.h"
 
-namespace bs
+using namespace bs;
+ScriptGUIFlexibleSpace::ScriptGUIFlexibleSpace(MonoObject* instance, GUIFlexibleSpace* flexibleSpace)
+	: TScriptGUIElementBase(instance, flexibleSpace), mFlexibleSpace(flexibleSpace), mIsDestroyed(false)
 {
-	ScriptGUIFlexibleSpace::ScriptGUIFlexibleSpace(MonoObject* instance, GUIFlexibleSpace* flexibleSpace)
-		: TScriptGUIElementBase(instance, flexibleSpace), mFlexibleSpace(flexibleSpace), mIsDestroyed(false)
+}
+
+void ScriptGUIFlexibleSpace::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIFlexibleSpace::InternalCreateInstance);
+}
+
+void ScriptGUIFlexibleSpace::Destroy()
+{
+	if(!mIsDestroyed)
 	{
+		if(mParent != nullptr)
+			mParent->RemoveChild(this);
+
+		GUIFlexibleSpace::Destroy(mFlexibleSpace);
+
+		mIsDestroyed = true;
 	}
+}
 
-	void ScriptGUIFlexibleSpace::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_CreateInstance", (void*)&ScriptGUIFlexibleSpace::InternalCreateInstance);
-	}
+void ScriptGUIFlexibleSpace::InternalCreateInstance(MonoObject* instance)
+{
+	GUIFlexibleSpace* space = GUIFlexibleSpace::Create();
 
-	void ScriptGUIFlexibleSpace::Destroy()
-	{
-		if(!mIsDestroyed)
-		{
-			if(mParent != nullptr)
-				mParent->RemoveChild(this);
-
-			GUIFlexibleSpace::Destroy(mFlexibleSpace);
-
-			mIsDestroyed = true;
-		}
-	}
-
-	void ScriptGUIFlexibleSpace::InternalCreateInstance(MonoObject* instance)
-	{
-		GUIFlexibleSpace* space = GUIFlexibleSpace::Create();
-
-		new(bs_alloc<ScriptGUIFlexibleSpace>()) ScriptGUIFlexibleSpace(instance, space);
-	}
-} // namespace bs
+	new(bs_alloc<ScriptGUIFlexibleSpace>()) ScriptGUIFlexibleSpace(instance, space);
+}

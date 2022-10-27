@@ -6,50 +6,48 @@
 #include "Error/BsCrashHandler.h"
 #include "BsMonoField.h"
 
-namespace bs
+using namespace bs;
+ScriptObjectBase::ScriptObjectBase(MonoObject* instance)
 {
-	ScriptObjectBase::ScriptObjectBase(MonoObject* instance)
-	{
-		ScriptObjectManager::Instance().RegisterScriptObject(this);
-	}
+	ScriptObjectManager::Instance().RegisterScriptObject(this);
+}
 
-	ScriptObjectBase::~ScriptObjectBase()
-	{
-		ScriptObjectManager::Instance().UnregisterScriptObject(this);
-	}
+ScriptObjectBase::~ScriptObjectBase()
+{
+	ScriptObjectManager::Instance().UnregisterScriptObject(this);
+}
 
-	ScriptObjectBackup ScriptObjectBase::BeginRefresh()
-	{
-		return ScriptObjectBackup();
-	}
+ScriptObjectBackup ScriptObjectBase::BeginRefresh()
+{
+	return ScriptObjectBackup();
+}
 
-	void ScriptObjectBase::EndRefresh(const ScriptObjectBackup& data)
-	{
-	}
+void ScriptObjectBase::EndRefresh(const ScriptObjectBackup& data)
+{
+}
 
-	void ScriptObjectBase::OnManagedInstanceDeletedInternal(bool assemblyRefresh)
-	{
-		bs_delete(this);
-	}
+void ScriptObjectBase::OnManagedInstanceDeletedInternal(bool assemblyRefresh)
+{
+	bs_delete(this);
+}
 
-	PersistentScriptObjectBase::PersistentScriptObjectBase(MonoObject* instance)
-		: ScriptObjectBase(instance)
-	{
-	}
+PersistentScriptObjectBase::PersistentScriptObjectBase(MonoObject* instance)
+	: ScriptObjectBase(instance)
+{
+}
 
-	ScriptObjectImpl::ScriptObjectImpl(MonoObject* instance)
-		: ScriptObject(instance)
-	{}
+ScriptObjectImpl::ScriptObjectImpl(MonoObject* instance)
+	: ScriptObject(instance)
+{}
 
-	void ScriptObjectImpl::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_ManagedInstanceDeleted", (void*)&ScriptObjectImpl::InternalManagedInstanceDeleted);
-	}
+void ScriptObjectImpl::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_ManagedInstanceDeleted", (void*)&ScriptObjectImpl::InternalManagedInstanceDeleted);
+}
 
-	void ScriptObjectImpl::InternalManagedInstanceDeleted(ScriptObjectBase* instance)
-	{
-		// This method gets called on the finalizer thread, but so that we don't need to deal
-		// with multi-threading issues we just delay it and execute it on the sim thread.
-		ScriptObjectManager::Instance().NotifyObjectFinalized(instance);
-	}
-} // namespace bs
+void ScriptObjectImpl::InternalManagedInstanceDeleted(ScriptObjectBase* instance)
+{
+	// This method gets called on the finalizer thread, but so that we don't need to deal
+	// with multi-threading issues we just delay it and execute it on the sim thread.
+	ScriptObjectManager::Instance().NotifyObjectFinalized(instance);
+}

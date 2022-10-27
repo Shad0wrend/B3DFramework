@@ -4,16 +4,14 @@
 
 using namespace std::placeholders;
 
-namespace bs
+using namespace bs;
+SkeletonBoneInfoEx SkeletonEx::GetBoneInfo(const SPtr<Skeleton>& thisPtr, int boneIdx)
 {
-	SkeletonBoneInfoEx SkeletonEx::GetBoneInfo(const SPtr<Skeleton>& thisPtr, int boneIdx)
-	{
-		const SkeletonBoneInfo& boneInfo = thisPtr->GetBoneInfo(boneIdx);
-		SkeletonBoneInfoEx boneInfoEx;
-		boneInfoEx.Name = boneInfo.Name;
-		boneInfoEx.Parent = boneInfo.Parent;
-		boneInfoEx.InvBindPose = thisPtr->GetInvBindPose(boneIdx);
+	const SkeletonBoneInfo& boneInfo = thisPtr->GetBoneInfo(boneIdx);
+	SkeletonBoneInfoEx boneInfoEx;
+	boneInfoEx.Name = boneInfo.Name;
+	boneInfoEx.Parent = boneInfo.Parent;
+	boneInfoEx.InvBindPose = thisPtr->GetInvBindPose(boneIdx);
 
-		return boneInfoEx;
-	}
-} // namespace bs
+	return boneInfoEx;
+}

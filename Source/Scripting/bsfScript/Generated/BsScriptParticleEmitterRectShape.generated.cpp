@@ -7,62 +7,60 @@
 #include "BsScriptPARTICLE_RECT_SHAPE_DESC.generated.h"
 #include "BsScriptParticleEmitterRectShape.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptParticleEmitterRectShape::ScriptParticleEmitterRectShape(MonoObject* managedInstance, const SPtr<ParticleEmitterRectShape>& value)
+	: TScriptReflectable(managedInstance, value)
 {
-	ScriptParticleEmitterRectShape::ScriptParticleEmitterRectShape(MonoObject* managedInstance, const SPtr<ParticleEmitterRectShape>& value)
-		: TScriptReflectable(managedInstance, value)
-	{
-		mInternal = value;
-	}
+	mInternal = value;
+}
 
-	void ScriptParticleEmitterRectShape::InitRuntimeData()
-	{
-		metaData.ScriptClass->AddInternalCall("Internal_SetOptions", (void*)&ScriptParticleEmitterRectShape::InternalSetOptions);
-		metaData.ScriptClass->AddInternalCall("Internal_GetOptions", (void*)&ScriptParticleEmitterRectShape::InternalGetOptions);
-		metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptParticleEmitterRectShape::InternalCreate);
-		metaData.ScriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptParticleEmitterRectShape::InternalCreate0);
-	}
+void ScriptParticleEmitterRectShape::InitRuntimeData()
+{
+	metaData.ScriptClass->AddInternalCall("Internal_SetOptions", (void*)&ScriptParticleEmitterRectShape::InternalSetOptions);
+	metaData.ScriptClass->AddInternalCall("Internal_GetOptions", (void*)&ScriptParticleEmitterRectShape::InternalGetOptions);
+	metaData.ScriptClass->AddInternalCall("Internal_Create", (void*)&ScriptParticleEmitterRectShape::InternalCreate);
+	metaData.ScriptClass->AddInternalCall("Internal_Create0", (void*)&ScriptParticleEmitterRectShape::InternalCreate0);
+}
 
-	MonoObject* ScriptParticleEmitterRectShape::Create(const SPtr<ParticleEmitterRectShape>& value)
-	{
-		if(value == nullptr) return nullptr;
+MonoObject* ScriptParticleEmitterRectShape::Create(const SPtr<ParticleEmitterRectShape>& value)
+{
+	if(value == nullptr) return nullptr;
 
-		bool dummy = false;
-		void* ctorParams[1] = { &dummy };
+	bool dummy = false;
+	void* ctorParams[1] = { &dummy };
 
-		MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
-		new(bs_alloc<ScriptParticleEmitterRectShape>()) ScriptParticleEmitterRectShape(managedInstance, value);
-		return managedInstance;
-	}
+	MonoObject* managedInstance = metaData.ScriptClass->CreateInstance("bool", ctorParams);
+	new(bs_alloc<ScriptParticleEmitterRectShape>()) ScriptParticleEmitterRectShape(managedInstance, value);
+	return managedInstance;
+}
 
-	void ScriptParticleEmitterRectShape::InternalSetOptions(ScriptParticleEmitterRectShape* thisPtr, __PARTICLE_RECT_SHAPE_DESCInterop* options)
-	{
-		PARTICLE_RECT_SHAPE_DESC tmpoptions;
-		tmpoptions = ScriptPARTICLE_RECT_SHAPE_DESC::FromInterop(*options);
-		thisPtr->GetInternal()->SetOptions(tmpoptions);
-	}
+void ScriptParticleEmitterRectShape::InternalSetOptions(ScriptParticleEmitterRectShape* thisPtr, __PARTICLE_RECT_SHAPE_DESCInterop* options)
+{
+	PARTICLE_RECT_SHAPE_DESC tmpoptions;
+	tmpoptions = ScriptPARTICLE_RECT_SHAPE_DESC::FromInterop(*options);
+	thisPtr->GetInternal()->SetOptions(tmpoptions);
+}
 
-	void ScriptParticleEmitterRectShape::InternalGetOptions(ScriptParticleEmitterRectShape* thisPtr, __PARTICLE_RECT_SHAPE_DESCInterop* __output)
-	{
-		PARTICLE_RECT_SHAPE_DESC tmp__output;
-		tmp__output = thisPtr->GetInternal()->GetOptions();
+void ScriptParticleEmitterRectShape::InternalGetOptions(ScriptParticleEmitterRectShape* thisPtr, __PARTICLE_RECT_SHAPE_DESCInterop* __output)
+{
+	PARTICLE_RECT_SHAPE_DESC tmp__output;
+	tmp__output = thisPtr->GetInternal()->GetOptions();
 
-		__PARTICLE_RECT_SHAPE_DESCInterop interop__output;
-		interop__output = ScriptPARTICLE_RECT_SHAPE_DESC::ToInterop(tmp__output);
-		MonoUtil::ValueCopy(__output, &interop__output, ScriptPARTICLE_RECT_SHAPE_DESC::GetMetaData()->ScriptClass->GetInternalClassInternal());
-	}
+	__PARTICLE_RECT_SHAPE_DESCInterop interop__output;
+	interop__output = ScriptPARTICLE_RECT_SHAPE_DESC::ToInterop(tmp__output);
+	MonoUtil::ValueCopy(__output, &interop__output, ScriptPARTICLE_RECT_SHAPE_DESC::GetMetaData()->ScriptClass->GetInternalClassInternal());
+}
 
-	void ScriptParticleEmitterRectShape::InternalCreate(MonoObject* managedInstance, __PARTICLE_RECT_SHAPE_DESCInterop* desc)
-	{
-		PARTICLE_RECT_SHAPE_DESC tmpdesc;
-		tmpdesc = ScriptPARTICLE_RECT_SHAPE_DESC::FromInterop(*desc);
-		SPtr<ParticleEmitterRectShape> instance = ParticleEmitterRectShape::Create(tmpdesc);
-		new(bs_alloc<ScriptParticleEmitterRectShape>()) ScriptParticleEmitterRectShape(managedInstance, instance);
-	}
+void ScriptParticleEmitterRectShape::InternalCreate(MonoObject* managedInstance, __PARTICLE_RECT_SHAPE_DESCInterop* desc)
+{
+	PARTICLE_RECT_SHAPE_DESC tmpdesc;
+	tmpdesc = ScriptPARTICLE_RECT_SHAPE_DESC::FromInterop(*desc);
+	SPtr<ParticleEmitterRectShape> instance = ParticleEmitterRectShape::Create(tmpdesc);
+	new(bs_alloc<ScriptParticleEmitterRectShape>()) ScriptParticleEmitterRectShape(managedInstance, instance);
+}
 
-	void ScriptParticleEmitterRectShape::InternalCreate0(MonoObject* managedInstance)
-	{
-		SPtr<ParticleEmitterRectShape> instance = ParticleEmitterRectShape::Create();
-		new(bs_alloc<ScriptParticleEmitterRectShape>()) ScriptParticleEmitterRectShape(managedInstance, instance);
-	}
-} // namespace bs
+void ScriptParticleEmitterRectShape::InternalCreate0(MonoObject* managedInstance)
+{
+	SPtr<ParticleEmitterRectShape> instance = ParticleEmitterRectShape::Create();
+	new(bs_alloc<ScriptParticleEmitterRectShape>()) ScriptParticleEmitterRectShape(managedInstance, instance);
+}

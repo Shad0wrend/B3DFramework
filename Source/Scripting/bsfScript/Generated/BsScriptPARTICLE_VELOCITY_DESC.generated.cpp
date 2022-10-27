@@ -7,51 +7,49 @@
 #include "../../../Foundation/bsfCore/Particles/BsParticleDistribution.h"
 #include "BsScriptTDistribution.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptPARTICLE_VELOCITY_DESC::ScriptPARTICLE_VELOCITY_DESC(MonoObject* managedInstance)
+	: ScriptObject(managedInstance)
+{}
+
+void ScriptPARTICLE_VELOCITY_DESC::InitRuntimeData()
+{}
+
+MonoObject* ScriptPARTICLE_VELOCITY_DESC::Box(const __PARTICLE_VELOCITY_DESCInterop& value)
 {
-	ScriptPARTICLE_VELOCITY_DESC::ScriptPARTICLE_VELOCITY_DESC(MonoObject* managedInstance)
-		: ScriptObject(managedInstance)
-	{}
+	return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
+}
 
-	void ScriptPARTICLE_VELOCITY_DESC::InitRuntimeData()
-	{}
+__PARTICLE_VELOCITY_DESCInterop ScriptPARTICLE_VELOCITY_DESC::Unbox(MonoObject* value)
+{
+	return *(__PARTICLE_VELOCITY_DESCInterop*)MonoUtil::Unbox(value);
+}
 
-	MonoObject* ScriptPARTICLE_VELOCITY_DESC::Box(const __PARTICLE_VELOCITY_DESCInterop& value)
-	{
-		return MonoUtil::Box(metaData.ScriptClass->GetInternalClassInternal(), (void*)&value);
-	}
+PARTICLE_VELOCITY_DESC ScriptPARTICLE_VELOCITY_DESC::FromInterop(const __PARTICLE_VELOCITY_DESCInterop& value)
+{
+	PARTICLE_VELOCITY_DESC output;
+	SPtr<TDistribution<Vector3>> tmpVelocity;
+	ScriptTDistributionVector3* scriptVelocity;
+	scriptVelocity = ScriptTDistributionVector3::ToNative(value.Velocity);
+	if(scriptVelocity != nullptr)
+		tmpVelocity = scriptVelocity->GetInternal();
+	if(tmpVelocity != nullptr)
+		output.Velocity = *tmpVelocity;
+	output.WorldSpace = value.WorldSpace;
 
-	__PARTICLE_VELOCITY_DESCInterop ScriptPARTICLE_VELOCITY_DESC::Unbox(MonoObject* value)
-	{
-		return *(__PARTICLE_VELOCITY_DESCInterop*)MonoUtil::Unbox(value);
-	}
+	return output;
+}
 
-	PARTICLE_VELOCITY_DESC ScriptPARTICLE_VELOCITY_DESC::FromInterop(const __PARTICLE_VELOCITY_DESCInterop& value)
-	{
-		PARTICLE_VELOCITY_DESC output;
-		SPtr<TDistribution<Vector3>> tmpVelocity;
-		ScriptTDistributionVector3* scriptVelocity;
-		scriptVelocity = ScriptTDistributionVector3::ToNative(value.Velocity);
-		if(scriptVelocity != nullptr)
-			tmpVelocity = scriptVelocity->GetInternal();
-		if(tmpVelocity != nullptr)
-			output.Velocity = *tmpVelocity;
-		output.WorldSpace = value.WorldSpace;
+__PARTICLE_VELOCITY_DESCInterop ScriptPARTICLE_VELOCITY_DESC::ToInterop(const PARTICLE_VELOCITY_DESC& value)
+{
+	__PARTICLE_VELOCITY_DESCInterop output;
+	MonoObject* tmpVelocity;
+	SPtr<TDistribution<Vector3>> tmpVelocitycopy;
+	tmpVelocitycopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.Velocity);
+	tmpVelocity = ScriptTDistributionVector3::Create(tmpVelocitycopy);
+	output.Velocity = tmpVelocity;
+	output.WorldSpace = value.WorldSpace;
 
-		return output;
-	}
+	return output;
+}
 
-	__PARTICLE_VELOCITY_DESCInterop ScriptPARTICLE_VELOCITY_DESC::ToInterop(const PARTICLE_VELOCITY_DESC& value)
-	{
-		__PARTICLE_VELOCITY_DESCInterop output;
-		MonoObject* tmpVelocity;
-		SPtr<TDistribution<Vector3>> tmpVelocitycopy;
-		tmpVelocitycopy = bs_shared_ptr_new<TDistribution<Vector3>>(value.Velocity);
-		tmpVelocity = ScriptTDistributionVector3::Create(tmpVelocitycopy);
-		output.Velocity = tmpVelocity;
-		output.WorldSpace = value.WorldSpace;
-
-		return output;
-	}
-
-} // namespace bs

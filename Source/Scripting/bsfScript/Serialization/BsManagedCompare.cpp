@@ -3,13 +3,11 @@
 #include "Serialization/BsManagedCompare.h"
 #include "Serialization/BsManagedSerializableObject.h"
 
-namespace bs
+using namespace bs;
+bool ManagedCompare::Run(IReflectable& a, IReflectable& b)
 {
-	bool ManagedCompare::Run(IReflectable& a, IReflectable& b)
-	{
-		auto managedA = static_cast<ManagedSerializableObject&>(a);
-		auto managedB = static_cast<ManagedSerializableObject&>(b);
+	auto managedA = static_cast<ManagedSerializableObject&>(a);
+	auto managedB = static_cast<ManagedSerializableObject&>(b);
 
-		return managedA.Equals(managedB);
-	}
-} // namespace bs
+	return managedA.Equals(managedB);
+}

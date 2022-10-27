@@ -15,45 +15,43 @@
 
 #include "Generated/BsScriptFont.generated.h"
 
-namespace bs
+using namespace bs;
+ScriptGUILayoutUtility::ScriptGUILayoutUtility()
+	: ScriptObject(nullptr)
+{}
+
+void ScriptGUILayoutUtility::InitRuntimeData()
 {
-	ScriptGUILayoutUtility::ScriptGUILayoutUtility()
-		: ScriptObject(nullptr)
-	{}
+	metaData.ScriptClass->AddInternalCall("Internal_CalculateOptimalSize", (void*)&ScriptGUILayoutUtility::InternalCalculateOptimalSize);
+	metaData.ScriptClass->AddInternalCall("Internal_CalculateBounds", (void*)&ScriptGUILayoutUtility::InternalCalculateBounds);
+	metaData.ScriptClass->AddInternalCall("Internal_CalculateTextBounds", (void*)&ScriptGUILayoutUtility::InternalCalculateTextBounds);
+}
 
-	void ScriptGUILayoutUtility::InitRuntimeData()
+void ScriptGUILayoutUtility::InternalCalculateOptimalSize(ScriptGUIElementBaseTBase* guiElement, Vector2I* output)
+{
+	*output = GUILayoutUtility::CalcOptimalSize(guiElement->GetGuiElement());
+	;
+}
+
+void ScriptGUILayoutUtility::InternalCalculateBounds(ScriptGUIElementBaseTBase* guiElement, ScriptGUILayout* relativeTo, Rect2I* output)
+{
+	if(guiElement->IsDestroyed())
 	{
-		metaData.ScriptClass->AddInternalCall("Internal_CalculateOptimalSize", (void*)&ScriptGUILayoutUtility::InternalCalculateOptimalSize);
-		metaData.ScriptClass->AddInternalCall("Internal_CalculateBounds", (void*)&ScriptGUILayoutUtility::InternalCalculateBounds);
-		metaData.ScriptClass->AddInternalCall("Internal_CalculateTextBounds", (void*)&ScriptGUILayoutUtility::InternalCalculateTextBounds);
+		*output = Rect2I();
+		return;
 	}
 
-	void ScriptGUILayoutUtility::InternalCalculateOptimalSize(ScriptGUIElementBaseTBase* guiElement, Vector2I* output)
-	{
-		*output = GUILayoutUtility::CalcOptimalSize(guiElement->GetGuiElement());
-		;
-	}
+	GUIPanel* relativeToPanel = nullptr;
+	if(relativeTo != nullptr && !relativeTo->IsDestroyed())
+		relativeToPanel = static_cast<GUIPanel*>(relativeTo->GetGuiElement());
 
-	void ScriptGUILayoutUtility::InternalCalculateBounds(ScriptGUIElementBaseTBase* guiElement, ScriptGUILayout* relativeTo, Rect2I* output)
-	{
-		if(guiElement->IsDestroyed())
-		{
-			*output = Rect2I();
-			return;
-		}
+	*output = guiElement->GetGuiElement()->GetBounds(relativeToPanel);
+}
 
-		GUIPanel* relativeToPanel = nullptr;
-		if(relativeTo != nullptr && !relativeTo->IsDestroyed())
-			relativeToPanel = static_cast<GUIPanel*>(relativeTo->GetGuiElement());
+void ScriptGUILayoutUtility::InternalCalculateTextBounds(MonoString* text, ScriptFont* fontPtr, int fontSize, Vector2I* output)
+{
+	String nativeText = MonoUtil::MonoToString(text);
+	HFont nativeFont = fontPtr->GetHandle();
 
-		*output = guiElement->GetGuiElement()->GetBounds(relativeToPanel);
-	}
-
-	void ScriptGUILayoutUtility::InternalCalculateTextBounds(MonoString* text, ScriptFont* fontPtr, int fontSize, Vector2I* output)
-	{
-		String nativeText = MonoUtil::MonoToString(text);
-		HFont nativeFont = fontPtr->GetHandle();
-
-		*output = GUIHelper::CalcTextSize(nativeText, nativeFont, fontSize);
-	}
-} // namespace bs
+	*output = GUIHelper::CalcTextSize(nativeText, nativeFont, fontSize);
+}
