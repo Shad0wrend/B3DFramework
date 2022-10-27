@@ -300,7 +300,9 @@ void VirtualInput::ButtonUp(const ButtonEvent& event)
 	}
 }
 
+namespace bs {
 VirtualInput& gVirtualInput()
 {
 	return VirtualInput::Instance();
 }
+} // namespace bs
