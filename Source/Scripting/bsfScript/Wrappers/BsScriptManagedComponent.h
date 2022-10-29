@@ -33,22 +33,12 @@ namespace bs
 
 		ScriptManagedComponent(MonoObject* instance, const HManagedComponent& component);
 
-		/** @copydoc ScriptObjectBase::beginRefresh */
-		ScriptObjectBackup BeginRefresh();
+		ScriptObjectBackup BeginRefresh() override;
+		void EndRefresh(const ScriptObjectBackup& backupData) override;
 
-		/** @copydoc ScriptObjectBase::endRefresh */
-		void EndRefresh(const ScriptObjectBackup& backupData);
-
-		/** @copydoc ScriptObject::_createManagedInstance */
 		MonoObject* CreateManagedInstanceInternal(bool construct) override;
-
-		/** @copydoc ScriptObjectBase::_clearManagedInstance */
 		void ClearManagedInstanceInternal() override;
-
-		/** @copydoc ScriptObjectBase::_onManagedInstanceDeleted */
 		void OnManagedInstanceDeletedInternal(bool assemblyRefresh) override;
-
-		/** @copydoc ScriptComponentBase::_notifyDestroyed */
 		void NotifyDestroyedInternal() override;
 
 		HManagedComponent mComponent;

@@ -117,35 +117,17 @@ namespace bs
 
 		ManagedComponent(const HSceneObject& parent, MonoReflectionType* runtimeType);
 
-		/** @copydoc Component::_instantiate */
 		void InstantiateInternal() override;
-
-		/** @copydoc Component::onCreated */
-		void OnCreated();
-
-		/** @copydoc Component::onInitialized */
-		void OnInitialized();
-
-		/** @copydoc Component::onDestroyed */
-		void OnDestroyed();
-
-		/** @copydoc Component::onEnabled  */
-		void OnEnabled();
-
-		/** @copydoc Component::onDisabled  */
-		void OnDisabled();
-
-		/** @copydoc Component::onTransformChanged  */
+		void OnCreated() override;
+		void OnInitialized() override;
+		void OnDestroyed() override;
+		void OnEnabled() override;
+		void OnDisabled() override;
 		void OnTransformChanged(TransformChangedFlags flags) override;
 
 	public:
-		/** @copydoc Component::update */
 		void Update() override;
-
-		/** @copydoc Component::typeEquals */
 		bool TypeEquals(const Component& other) override;
-
-		/** @copydoc Component::calculateBounds */
 		bool CalculateBounds(Bounds& bounds) override;
 
 		/************************************************************************/

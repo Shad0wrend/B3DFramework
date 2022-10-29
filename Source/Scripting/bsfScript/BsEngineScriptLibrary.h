@@ -18,16 +18,9 @@ namespace bs
 	public:
 		EngineScriptLibrary() = default;
 
-		/** @copydoc ScriptLibrary::initialize */
 		void Initialize() override;
-
-		/** @copydoc ScriptLibrary::update */
 		void Update() override;
-
-		/** @copydoc ScriptLibrary::reload */
 		void Reload() override;
-
-		/** @copydoc ScriptLibrary::destroy */
 		void Destroy() override;
 
 		/**	Returns the absolute path to the builtin managed engine assembly file. */

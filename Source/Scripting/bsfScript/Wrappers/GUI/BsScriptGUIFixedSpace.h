@@ -20,8 +20,7 @@ namespace bs
 	private:
 		ScriptGUIFixedSpace(MonoObject* instance, GUIFixedSpace* fixedSpace);
 
-		/** @copydoc ScriptGUIElementBaseTBase::destroy */
-		void Destroy();
+		void Destroy() override;
 
 		GUIFixedSpace* mFixedSpace;
 		bool mIsDestroyed;

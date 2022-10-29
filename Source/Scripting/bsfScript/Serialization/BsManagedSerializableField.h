@@ -167,16 +167,9 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataBool() = default;
 
-		/** @copydoc ManagedSerializableFieldData::getValue */
 		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
 		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
-
-		/** @copydoc ManagedSerializableFieldData::equals */
 		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
 		bool Value = false;
@@ -201,16 +194,9 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataChar() = default;
 
-		/** @copydoc ManagedSerializableFieldData::getValue */
 		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
 		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
-
-		/** @copydoc ManagedSerializableFieldData::equals */
 		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
 		wchar_t Value = 0;
@@ -235,16 +221,9 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataI8() = default;
 
-		/** @copydoc ManagedSerializableFieldData::getValue */
 		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
 		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
-
-		/** @copydoc ManagedSerializableFieldData::equals */
 		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
 		i8 Value = 0;
@@ -269,16 +248,9 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataU8() = default;
 
-		/** @copydoc ManagedSerializableFieldData::getValue */
 		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
 		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
-
-		/** @copydoc ManagedSerializableFieldData::equals */
 		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
 		u8 Value = 0;
@@ -303,16 +275,9 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataI16() = default;
 
-		/** @copydoc ManagedSerializableFieldData::getValue */
 		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
 		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
-
-		/** @copydoc ManagedSerializableFieldData::equals */
 		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
 		i16 Value = 0;
@@ -337,16 +302,9 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataU16() = default;
 
-		/** @copydoc ManagedSerializableFieldData::getValue */
-		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
-		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::equals */
-		bool Equals(const SPtr<ManagedSerializableFieldData>& other);
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
+		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
 		size_t GetHash() override;
 
 		u16 Value = 0;
@@ -371,16 +329,9 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataI32() = default;
 
-		/** @copydoc ManagedSerializableFieldData::getValue */
-		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
-		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::equals */
-		bool Equals(const SPtr<ManagedSerializableFieldData>& other);
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
+		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
 		size_t GetHash() override;
 
 		i32 Value = 0;
@@ -405,16 +356,9 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataU32() = default;
 
-		/** @copydoc ManagedSerializableFieldData::getValue */
-		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
-		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::equals */
-		bool Equals(const SPtr<ManagedSerializableFieldData>& other);
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
+		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
 		size_t GetHash() override;
 
 		u32 Value = 0;
@@ -439,16 +383,9 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataI64() = default;
 
-		/** @copydoc ManagedSerializableFieldData::getValue */
-		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
-		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::equals */
-		bool Equals(const SPtr<ManagedSerializableFieldData>& other);
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
+		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
 		size_t GetHash() override;
 
 		i64 Value = 0;
@@ -473,16 +410,9 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataU64() = default;
 
-		/** @copydoc ManagedSerializableFieldData::getValue */
-		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
-		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::equals */
+		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
 		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
 		size_t GetHash() override;
 
 		u64 Value = 0;
@@ -507,16 +437,9 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataFloat() = default;
 
-		/** @copydoc ManagedSerializableFieldData::getValue */
-		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
-		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::equals */
-		bool Equals(const SPtr<ManagedSerializableFieldData>& other);
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
+		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
 		size_t GetHash() override;
 
 		float Value = 0.0f;
@@ -541,16 +464,9 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataDouble() = default;
 
-		/** @copydoc ManagedSerializableFieldData::getValue */
-		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
-		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::equals */
-		bool Equals(const SPtr<ManagedSerializableFieldData>& other);
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
+		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
 		size_t GetHash() override;
 
 		double Value = 0.0;
@@ -575,16 +491,9 @@ namespace bs
 	public:
 		ManagedSerializableFieldDataString() = default;
 
-		/** @copydoc ManagedSerializableFieldData::getValue */
-		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
-		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::equals */
-		bool Equals(const SPtr<ManagedSerializableFieldData>& other);
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
+		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
 		size_t GetHash() override;
 
 		WString Value;
@@ -608,16 +517,9 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataResourceRef : public ManagedSerializableFieldData
 	{
 	public:
-		/** @copydoc ManagedSerializableFieldData::getValue */
-		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
-		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::equals */
-		bool Equals(const SPtr<ManagedSerializableFieldData>& other);
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
+		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
 		size_t GetHash() override;
 
 		HResource Value;
@@ -640,16 +542,9 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataGameObjectRef : public ManagedSerializableFieldData
 	{
 	public:
-		/** @copydoc ManagedSerializableFieldData::getValue */
-		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
+		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
 		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
-
-		/** @copydoc ManagedSerializableFieldData::equals */
-		bool Equals(const SPtr<ManagedSerializableFieldData>& other);
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
+		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
 		size_t GetHash() override;
 
 		HGameObject Value;
@@ -672,16 +567,9 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataReflectableRef : public ManagedSerializableFieldData
 	{
 	public:
-		/** @copydoc ManagedSerializableFieldData::getValue */
-		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
-		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::equals */
-		bool Equals(const SPtr<ManagedSerializableFieldData>& other);
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
+		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
 		size_t GetHash() override;
 
 		SPtr<IReflectable> Value;
@@ -704,22 +592,11 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataObject : public ManagedSerializableFieldData
 	{
 	public:
-		/** @copydoc ManagedSerializableFieldData::getValue */
-		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
-		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::equals */
-		bool Equals(const SPtr<ManagedSerializableFieldData>& other);
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
+		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
 		size_t GetHash() override;
-
-		/** @copydoc ManagedSerializableFieldData::serialize */
 		void Serialize() override;
-
-		/** @copydoc ManagedSerializableFieldData::deserialize */
 		void Deserialize() override;
 
 		SPtr<ManagedSerializableObject> Value;
@@ -742,22 +619,11 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataArray : public ManagedSerializableFieldData
 	{
 	public:
-		/** @copydoc ManagedSerializableFieldData::getValue */
-		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
-		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::equals */
-		bool Equals(const SPtr<ManagedSerializableFieldData>& other);
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
+		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
 		size_t GetHash() override;
-
-		/** @copydoc ManagedSerializableFieldData::serialize */
 		void Serialize() override;
-
-		/** @copydoc ManagedSerializableFieldData::deserialize */
 		void Deserialize() override;
 
 		SPtr<ManagedSerializableArray> Value;
@@ -780,22 +646,11 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataList : public ManagedSerializableFieldData
 	{
 	public:
-		/** @copydoc ManagedSerializableFieldData::getValue */
-		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
-		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::equals */
-		bool Equals(const SPtr<ManagedSerializableFieldData>& other);
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
+		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
 		size_t GetHash() override;
-
-		/** @copydoc ManagedSerializableFieldData::serialize */
 		void Serialize() override;
-
-		/** @copydoc ManagedSerializableFieldData::deserialize */
 		void Deserialize() override;
 
 		SPtr<ManagedSerializableList> Value;
@@ -818,22 +673,11 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataDictionary : public ManagedSerializableFieldData
 	{
 	public:
-		/** @copydoc ManagedSerializableFieldData::getValue */
-		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::getValueBoxed */
-		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo);
-
-		/** @copydoc ManagedSerializableFieldData::equals */
-		bool Equals(const SPtr<ManagedSerializableFieldData>& other);
-
-		/** @copydoc ManagedSerializableFieldData::getHash */
+		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		MonoObject* GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
+		bool Equals(const SPtr<ManagedSerializableFieldData>& other) override;
 		size_t GetHash() override;
-
-		/** @copydoc ManagedSerializableFieldData::serialize */
 		void Serialize() override;
-
-		/** @copydoc ManagedSerializableFieldData::deserialize */
 		void Deserialize() override;
 
 		SPtr<ManagedSerializableDictionary> Value;

@@ -22,7 +22,6 @@ namespace bs
 		/**	Returns the wrapped reflectable object. */
 		SPtr<IReflectable> GetReflectable() const { return mInternal; }
 
-		/** @copydoc ScriptObjectBase::isReflectable */
 		bool IsReflectable() const override { return true; }
 
 	protected:

@@ -16,27 +16,27 @@ namespace bs
 	class BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget)) RenderTargetEx
 	{
 	public:
-		/** @copydoc RenderTargetProperties::width */
+		/** @copydoc RenderTargetProperties::Width */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(Width), Property(Getter))
 		static u32 GetWidth(const SPtr<RenderTarget>& thisPtr);
 
-		/** @copydoc RenderTargetProperties::height */
+		/** @copydoc RenderTargetProperties::Height */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(Height), Property(Getter))
 		static u32 GetHeight(const SPtr<RenderTarget>& thisPtr);
 
-		/** @copydoc RenderTargetProperties::hwGamma */
+		/** @copydoc RenderTargetProperties::HwGamma */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(GammaCorrection), Property(Getter))
 		static bool GetGammaCorrection(const SPtr<RenderTarget>& thisPtr);
 
-		/** @copydoc RenderTargetProperties::priority */
+		/** @copydoc RenderTargetProperties::Priority */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(Priority), Property(Getter))
 		static i32 GetPriority(const SPtr<RenderTarget>& thisPtr);
 
-		/** @copydoc RenderTargetProperties::priority */
+		/** @copydoc RenderTargetProperties::Priority */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(Priority), Property(Setter))
 		static void SetPriority(const SPtr<RenderTarget>& thisPtr, i32 priority);
 
-		/** @copydoc RenderTargetProperties::multisampleCount */
+		/** @copydoc RenderTargetProperties::MultisampleCount */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(SampleCount), Property(Getter))
 		static u32 GetSampleCount(const SPtr<RenderTarget>& thisPtr);
 	};

@@ -17,7 +17,7 @@ namespace bs
 	class BS_SCRIPT_EXPORT(ExtensionMethodForType(ColorGradient)) ColorGradientEx
 	{
 	public:
-		/** @copydoc ColorGradient::evaluate */
+		/** @copydoc ColorGradient::Evaluate */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(ColorGradient))
 		static Color Evaluate(const SPtr<ColorGradient>& thisPtr, float t);
 	};
@@ -26,7 +26,7 @@ namespace bs
 	class BS_SCRIPT_EXPORT(ExtensionMethodForType(ColorGradientHDR)) ColorGradientHDREx
 	{
 	public:
-		/** @copydoc ColorGradientHDR::evaluate */
+		/** @copydoc ColorGradientHDR::Evaluate */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(ColorGradientHDR))
 		static Color Evaluate(const SPtr<ColorGradientHDR>& thisPtr, float t);
 	};

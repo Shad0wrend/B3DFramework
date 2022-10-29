@@ -17,8 +17,7 @@ namespace bs
 	public:
 		virtual ~ManagedCompare() = default;
 
-		/** @copydoc ICompare::run */
-		bool Run(IReflectable& a, IReflectable& b);
+		bool Run(IReflectable& a, IReflectable& b) override;
 	};
 
 	/** @} */

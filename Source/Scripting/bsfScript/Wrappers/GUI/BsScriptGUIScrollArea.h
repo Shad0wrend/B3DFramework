@@ -29,8 +29,7 @@ namespace bs
 
 		ScriptGUIScrollArea(MonoObject* instance, GUIScrollArea* scrollArea);
 
-		/** @copydoc TScriptGUIElement::destroy */
-		void Destroy();
+		void Destroy() override;
 
 		/**
 		 * Called when the child script GUI layout gets destroyed. Notifies this object that it shouldn't use it anymore.

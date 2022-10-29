@@ -21,39 +21,39 @@ namespace bs
 		BS_SCRIPT_EXPORT(ExtensionConstructorForType(Texture), Visibility(Private))
 		static HTexture Create(PixelFormat format, u32 width, u32 height, u32 depth, TextureType texType, TextureUsage usage, u32 numSamples, bool hasMipmaps, bool gammaCorrection);
 
-		/** @copydoc TextureProperties::getFormat */
+		/** @copydoc TextureProperties::GetFormat */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(PixelFormat), Property(Getter))
 		static PixelFormat GetPixelFormat(const HTexture& thisPtr);
 
-		/** @copydoc TextureProperties::getUsage */
+		/** @copydoc TextureProperties::GetUsage */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Usage), Property(Getter))
 		static TextureUsage GetUsage(const HTexture& thisPtr);
 
-		/** @copydoc TextureProperties::getTextureType */
+		/** @copydoc TextureProperties::GetTextureType */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Type), Property(Getter))
 		static TextureType GetType(const HTexture& thisPtr);
 
-		/** @copydoc TextureProperties::getWidth */
+		/** @copydoc TextureProperties::GetWidth */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Width), Property(Getter))
 		static u32 GetWidth(const HTexture& thisPtr);
 
-		/** @copydoc TextureProperties::getHeight */
+		/** @copydoc TextureProperties::GetHeight */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Height), Property(Getter))
 		static u32 GetHeight(const HTexture& thisPtr);
 
-		/** @copydoc TextureProperties::getDepth */
+		/** @copydoc TextureProperties::GetDepth */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Depth), Property(Getter))
 		static u32 GetDepth(const HTexture& thisPtr);
 
-		/** @copydoc TextureProperties::isHardwareGammaEnabled */
+		/** @copydoc TextureProperties::IsHardwareGammaEnabled */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(GammaSpace), Property(Getter))
 		static bool GetGammaCorrection(const HTexture& thisPtr);
 
-		/** @copydoc TextureProperties::getNumSamples */
+		/** @copydoc TextureProperties::GetNumSamples */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(SampleCount), Property(Getter))
 		static u32 GetSampleCount(const HTexture& thisPtr);
 
-		/** @copydoc TextureProperties::getNumMipmaps */
+		/** @copydoc TextureProperties::GetNumMipmaps */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(MipMapCount), Property(Getter))
 		static u32 GetMipmapCount(const HTexture& thisPtr);
 

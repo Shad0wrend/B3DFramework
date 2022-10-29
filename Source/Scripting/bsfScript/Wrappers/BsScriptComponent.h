@@ -61,7 +61,6 @@ namespace bs
 
 		virtual ~TScriptComponent() {}
 
-		/** @copydoc ScriptObject::_createManagedInstance */
 		MonoObject* CreateManagedInstanceInternal(bool construct) override
 		{
 			MonoObject* managedInstance = ScriptClass::metaData.ScriptClass->CreateInstance(construct);
@@ -70,22 +69,16 @@ namespace bs
 			return managedInstance;
 		}
 
-		/** @copydoc ScriptObjectBase::_clearManagedInstance */
 		void ClearManagedInstanceInternal() override
 		{
 			this->FreeManagedInstance();
 		}
 
-		/**
-		 * Triggered by the script game object manager when the native component handle this object point to has been
-		 * destroyed.
-		 */
 		void NotifyDestroyedInternal() override
 		{
 			this->FreeManagedInstance();
 		}
 
-		/**	Called when the managed instance gets finalized by the CLR. */
 		void OnManagedInstanceDeletedInternal(bool assemblyRefresh) override
 		{
 			this->FreeManagedInstance();

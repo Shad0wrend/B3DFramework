@@ -17,11 +17,11 @@ namespace bs
 	class BS_SCRIPT_EXPORT(ExtensionMethodForType(ColorDistribution)) ColorDistributionEx
 	{
 	public:
-		/** @copydoc ColorDistribution::evaluate(float, float) */
+		/** @copydoc ColorDistribution::Evaluate(float, float) */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(ColorDistribution))
 		static Color Evaluate(const SPtr<ColorDistribution>& thisPtr, float t, float factor);
 
-		/** @copydoc ColorDistribution::evaluate(float, const Random&) */
+		/** @copydoc ColorDistribution::Evaluate(float, const Random&) */
 		BS_SCRIPT_EXPORT(ExtensionMethodForType(ColorDistribution))
 		static Color Evaluate(const SPtr<ColorDistribution>& thisPtr, float t, Random& factor);
 	};

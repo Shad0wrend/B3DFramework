@@ -39,7 +39,6 @@ namespace bs
 	private:
 		ScriptInputConfiguration(MonoObject* instance, const SPtr<InputConfiguration>& inputConfig);
 
-		/** @copydoc ScriptObjectBase::_onManagedInstanceDeleted */
 		void OnManagedInstanceDeletedInternal(bool assemblyRefresh) override;
 
 		SPtr<InputConfiguration> mInputConfig;

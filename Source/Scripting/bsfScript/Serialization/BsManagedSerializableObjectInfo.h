@@ -114,13 +114,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoPrimitive : public ManagedSerializableTypeInfo
 	{
 	public:
-		/** @copydoc ManagedSerializableTypeInfo::matches */
 		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
-
-		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
 		bool IsTypeLoaded() const override;
-
-		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
 		::MonoClass* GetMonoClass() const override;
 
 		ScriptPrimitiveType MType;
@@ -138,13 +133,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoEnum : public ManagedSerializableTypeInfo
 	{
 	public:
-		/** @copydoc ManagedSerializableTypeInfo::matches */
 		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
-
-		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
 		bool IsTypeLoaded() const override;
-
-		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
 		::MonoClass* GetMonoClass() const override;
 
 		ScriptPrimitiveType MUnderlyingType;
@@ -164,13 +154,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoRef : public ManagedSerializableTypeInfo
 	{
 	public:
-		/** @copydoc ManagedSerializableTypeInfo::matches */
 		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
-
-		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
 		bool IsTypeLoaded() const override;
-
-		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
 		::MonoClass* GetMonoClass() const override;
 
 		ScriptReferenceType MType;
@@ -191,13 +176,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoRRef : public ManagedSerializableTypeInfo
 	{
 	public:
-		/** @copydoc ManagedSerializableTypeInfo::matches */
 		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
-
-		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
 		bool IsTypeLoaded() const override;
-
-		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
 		::MonoClass* GetMonoClass() const override;
 
 		SPtr<ManagedSerializableTypeInfo> MResourceType;
@@ -215,13 +195,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoObject : public ManagedSerializableTypeInfo
 	{
 	public:
-		/** @copydoc ManagedSerializableTypeInfo::matches */
 		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
-
-		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
 		bool IsTypeLoaded() const override;
-
-		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
 		::MonoClass* GetMonoClass() const override;
 
 		String MTypeNamespace;
@@ -244,13 +219,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoArray : public ManagedSerializableTypeInfo
 	{
 	public:
-		/** @copydoc ManagedSerializableTypeInfo::matches */
 		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
-
-		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
 		bool IsTypeLoaded() const override;
-
-		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
 		::MonoClass* GetMonoClass() const override;
 
 		SPtr<ManagedSerializableTypeInfo> MElementType;
@@ -269,13 +239,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoList : public ManagedSerializableTypeInfo
 	{
 	public:
-		/** @copydoc ManagedSerializableTypeInfo::matches */
 		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
-
-		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
 		bool IsTypeLoaded() const override;
-
-		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
 		::MonoClass* GetMonoClass() const override;
 
 		SPtr<ManagedSerializableTypeInfo> MElementType;
@@ -293,13 +258,8 @@ namespace bs
 	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoDictionary : public ManagedSerializableTypeInfo
 	{
 	public:
-		/** @copydoc ManagedSerializableTypeInfo::matches */
 		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
-
-		/** @copydoc ManagedSerializableTypeInfo::isTypeLoaded */
 		bool IsTypeLoaded() const override;
-
-		/** @copydoc ManagedSerializableTypeInfo::getMonoClass */
 		::MonoClass* GetMonoClass() const override;
 
 		SPtr<ManagedSerializableTypeInfo> MKeyType;
@@ -369,13 +329,8 @@ namespace bs
 	public:
 		ManagedSerializableFieldInfo() = default;
 
-		/** @copydoc ManagedSerializableMemberInfo::getAttribute */
 		MonoObject* GetAttribute(MonoClass* monoClass) override;
-
-		/** @copydoc ManagedSerializableMemberInfo::getValue */
 		MonoObject* GetValue(MonoObject* instance) const override;
-
-		/** @copydoc ManagedSerializableMemberInfo::setValue */
 		void SetValue(MonoObject* instance, void* value) const override;
 
 		MonoField* MMonoField = nullptr;
@@ -395,13 +350,8 @@ namespace bs
 	public:
 		ManagedSerializablePropertyInfo() = default;
 
-		/** @copydoc ManagedSerializableMemberInfo::getAttribute */
 		MonoObject* GetAttribute(MonoClass* monoClass) override;
-
-		/** @copydoc ManagedSerializableMemberInfo::getValue */
 		MonoObject* GetValue(MonoObject* instance) const override;
-
-		/** @copydoc ManagedSerializableMemberInfo::setValue */
 		void SetValue(MonoObject* instance, void* value) const override;
 
 		MonoProperty* MMonoProperty = nullptr;

@@ -46,10 +46,7 @@ namespace bs
 		 */
 		void Initialize(GUIElementBase* element);
 
-		/** @copydoc ScriptObjectBase::_onManagedInstanceDeleted */
 		void OnManagedInstanceDeletedInternal(bool assemblyRefresh) override;
-
-		/** @copydoc ScriptObjectBase::_clearManagedInstance */
 		void ClearManagedInstanceInternal() override;
 
 		/**	Triggered when the focus changes for the underlying GUIElementBase. */
@@ -87,7 +84,6 @@ namespace bs
 
 		virtual ~ScriptGUIElementTBase() {}
 
-		/** @copydoc ScriptGUIElementBaseTBase::destroy */
 		void Destroy() override;
 	};
 

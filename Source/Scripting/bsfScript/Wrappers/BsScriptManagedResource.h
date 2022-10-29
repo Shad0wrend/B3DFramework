@@ -20,10 +20,7 @@ namespace bs
 
 		ScriptManagedResource(MonoObject* instance, const HManagedResource& resource);
 
-		/** @copydoc ScriptResourceBase::getGenericHandle */
 		HResource GetGenericHandle() const override { return mResource; }
-
-		/** @copydoc ScriptResourceBase::setResource */
 		void SetResource(const HResource& resource) override;
 
 		/**	Returns a handle to the internal wrapped resource. */
@@ -33,19 +30,10 @@ namespace bs
 		friend class ScriptResourceManager;
 		friend class ManagedResource;
 
-		/** @copydoc ScriptObjectBase::beginRefresh */
 		ScriptObjectBackup BeginRefresh() override;
-
-		/** @copydoc ScriptObjectBase::endRefresh */
 		void EndRefresh(const ScriptObjectBackup& backupData) override;
-
-		/** @copydoc ScriptObject::_createManagedInstance */
 		MonoObject* CreateManagedInstanceInternal(bool construct) override;
-
-		/** @copydoc ScriptObjectBase::_clearManagedInstance */
 		void ClearManagedInstanceInternal() override;
-
-		/** @copydoc ScriptObjectBase::_onManagedInstanceDeleted */
 		void OnManagedInstanceDeletedInternal(bool assemblyRefresh) override;
 
 		/** Called by the owned managed resource when it is destroyed. */

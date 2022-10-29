@@ -40,11 +40,11 @@ namespace bs
 		void RemoveChild(ScriptGUIElementBaseTBase* element);
 
 		/**
-		 * @copydoc	ScriptGUIElementBaseTBase::destroy
+		 * @copydoc	ScriptGUIElementBaseTBase::Destroy
 		 *
 		 * Destroys the layout and all of its managed children.
 		 */
-		void Destroy();
+		void Destroy() override;
 
 	protected:
 		friend class ScriptGUIPanel;

@@ -29,7 +29,6 @@ namespace bs
 		/**	Destroys the internal GUI widget handler object. */
 		void Destroy(bool destroyPanel = true);
 
-		/** @copydoc ScriptObjectBase::_onManagedInstanceDeleted */
 		void OnManagedInstanceDeletedInternal(bool assemblyRefresh) override;
 
 		SPtr<GUIWidget> mGUIWidget;

@@ -51,16 +51,13 @@ namespace bs
 		ScriptRRefBase(MonoObject* instance, ResourceHandle<Resource> handle);
 		~ScriptRRefBase();
 
-		/** @copydoc ScriptObjectBase::_clearManagedInstance */
 		void ClearManagedInstanceInternal() override;
-
-		/** @copydoc ScriptObjectBase::_onManagedInstanceDeleted */
 		void OnManagedInstanceDeletedInternal(bool assemblyRefresh) override;
 
 		/** Clears the internal cached ScriptResource reference. Should be called if the resource got destroyed. */
 		void ClearResource() { mScriptResource = nullptr; }
 
-		/** @copydoc create() */
+		/** @copydoc Create() */
 		static ScriptRRefBase* CreateInternal(const ResourceHandle<Resource>& handle, ::MonoClass* rawType = nullptr);
 
 		ResourceHandle<Resource> mResource;

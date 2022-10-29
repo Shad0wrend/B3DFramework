@@ -19,10 +19,7 @@ namespace bs
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SceneObject")
 
-		/** @copydoc ScriptGameObjectBase::getNativeHandle */
 		HGameObject GetNativeHandle() const override { return static_object_cast<GameObject>(mSceneObject); }
-
-		/** @copydoc ScriptGameObjectBase::setNativeHandle */
 		void SetNativeHandle(const HGameObject& gameObject) override;
 
 		/**	Returns the native internal scene object. */
@@ -36,13 +33,8 @@ namespace bs
 
 		ScriptSceneObject(MonoObject* instance, const HSceneObject& sceneObject);
 
-		/** @copydoc ScriptObjectBase::_onManagedInstanceDeleted */
 		void OnManagedInstanceDeletedInternal(bool assemblyRefresh) override;
-
-		/** @copydoc ScriptObject::_createManagedInstance */
 		MonoObject* CreateManagedInstanceInternal(bool construct) override;
-
-		/** @copydoc ScriptObjectBase::_clearManagedInstance */
 		void ClearManagedInstanceInternal() override;
 
 		/**	Triggered by the script game object manager when the handle this object is referencing is destroyed. */

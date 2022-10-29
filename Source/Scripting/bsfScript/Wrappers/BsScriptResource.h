@@ -109,7 +109,6 @@ namespace bs
 
 		virtual ~TScriptResource() {}
 
-		/** @copydoc ScriptObject::_createManagedInstance */
 		MonoObject* CreateManagedInstanceInternal(bool construct) override
 		{
 			MonoObject* managedInstance = ScriptClass::metaData.ScriptClass->CreateInstance(construct);
@@ -118,7 +117,6 @@ namespace bs
 			return managedInstance;
 		}
 
-		/** @copydoc ScriptObjectBase::_clearManagedInstance */
 		void ClearManagedInstanceInternal() override
 		{
 			this->FreeManagedInstance();
@@ -132,7 +130,6 @@ namespace bs
 			this->FreeManagedInstance();
 		}
 
-		/**	Called when the managed instance gets finalized by the CLR. */
 		void OnManagedInstanceDeletedInternal(bool assemblyRefresh) override
 		{
 			this->FreeManagedInstance();

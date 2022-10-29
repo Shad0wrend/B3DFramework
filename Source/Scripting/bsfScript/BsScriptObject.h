@@ -81,7 +81,6 @@ namespace bs
 		PersistentScriptObjectBase(MonoObject* instance);
 		virtual ~PersistentScriptObjectBase() = default;
 
-		/** @copydoc ScriptObjectBase::isPersistent  */
 		bool IsPersistent() const override { return true; }
 	};
 

@@ -61,8 +61,7 @@ namespace bs
 		 */
 		void SetHandle(MonoObject* object, const HManagedResource& myHandle);
 
-		/** @copydoc Resource::destroy */
-		void Destroy();
+		void Destroy() override;
 
 		WeakResourceHandle<ManagedResource> mMyHandle;
 		ScriptManagedResource* mOwner = nullptr;
