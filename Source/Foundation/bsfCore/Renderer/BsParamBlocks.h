@@ -36,7 +36,7 @@ namespace bs
 #if BS_DEBUG_MODE
 				if(arrayIdx >= mParamDesc.ArraySize)
 				{
-					BS_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " + toString(mParamDesc.ArraySize) + ". Requested size: " + toString(arrayIdx));
+					BS_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " + ToString(mParamDesc.ArraySize) + ". Requested size: " + ToString(arrayIdx));
 				}
 #endif
 

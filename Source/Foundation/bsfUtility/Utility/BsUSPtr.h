@@ -196,7 +196,7 @@ namespace bs
 
 	/** Cast an unsafe shared pointer from one type to another. */
 	template <class T, class U>
-	USPtr<T> static_pointer_cast(const USPtr<U>& ptr)
+	USPtr<T> StaticPointerCast(const USPtr<U>& ptr)
 	{
 		return USPtr<T>(ptr);
 	}

@@ -91,10 +91,10 @@ namespace bs
 
 	private:
 		template <typename ValueType>
-		friend ValueType* any_cast(Any*);
+		friend ValueType* AnyCast(Any*);
 
 		template <typename ValueType>
-		friend ValueType* any_cast_unsafe(Any*);
+		friend ValueType* AnyCastUnsafe(Any*);
 
 		DataBase* mData = nullptr;
 	};
@@ -105,7 +105,7 @@ namespace bs
 	 * @note		Will return null if cast fails.
 	 */
 	template <typename ValueType>
-	ValueType* any_cast(Any* operand)
+	ValueType* AnyCast(Any* operand)
 	{
 		if(operand != nullptr)
 			return &static_cast<Any::Data<ValueType>*>(operand->mData)->Value;
@@ -119,9 +119,9 @@ namespace bs
 	 * @note	Will return null if cast fails.
 	 */
 	template <typename ValueType>
-	const ValueType* any_cast(const Any* operand)
+	const ValueType* AnyCast(const Any* operand)
 	{
-		return any_cast<ValueType>(const_cast<Any*>(operand));
+		return AnyCast<ValueType>(const_cast<Any*>(operand));
 	}
 
 	/**
@@ -130,9 +130,9 @@ namespace bs
 	 * @note	Throws an exception if cast fails.
 	 */
 	template <typename ValueType>
-	ValueType any_cast(const Any& operand)
+	ValueType AnyCast(const Any& operand)
 	{
-		return *any_cast<ValueType>(const_cast<Any*>(&operand));
+		return *AnyCast<ValueType>(const_cast<Any*>(&operand));
 	}
 
 	/**
@@ -141,9 +141,9 @@ namespace bs
 	 * @note	Throws an exception if cast fails.
 	 */
 	template <typename ValueType>
-	ValueType any_cast(Any& operand)
+	ValueType AnyCast(Any& operand)
 	{
-		return *any_cast<ValueType>(&operand);
+		return *AnyCast<ValueType>(&operand);
 	}
 
 	/**
@@ -152,9 +152,9 @@ namespace bs
 	 * @note	Throws an exception if cast fails.
 	 */
 	template <typename ValueType>
-	const ValueType& any_cast_ref(const Any& operand)
+	const ValueType& AnyCastRef(const Any& operand)
 	{
-		return *any_cast<ValueType>(const_cast<Any*>(&operand));
+		return *AnyCast<ValueType>(const_cast<Any*>(&operand));
 	}
 
 	/**
@@ -163,23 +163,23 @@ namespace bs
 	 * @note	Throws an exception if cast fails.
 	 */
 	template <typename ValueType>
-	ValueType& any_cast_ref(Any& operand)
+	ValueType& AnyCastRef(Any& operand)
 	{
-		return *any_cast<ValueType>(&operand);
+		return *AnyCast<ValueType>(&operand);
 	}
 
 	/** Casts a type without performing any kind of checks. */
 	template <typename ValueType>
-	ValueType* any_cast_unsafe(Any* operand)
+	ValueType* AnyCastUnsafe(Any* operand)
 	{
 		return &static_cast<Any::Data<ValueType>*>(operand->mData)->value;
 	}
 
 	/** Casts a type without performing any kind of checks. */
 	template <typename ValueType>
-	const ValueType* any_cast_unsafe(const Any* operand)
+	const ValueType* AnyCastUnsafe(const Any* operand)
 	{
-		return any_cast_unsafe<ValueType>(const_cast<Any*>(operand));
+		return AnyCastUnsafe<ValueType>(const_cast<Any*>(operand));
 	}
 
 	/** @} */

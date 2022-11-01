@@ -299,7 +299,7 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 							error = FT_Get_Kerning(face, charIdx, kerningCharIdx, FT_KERNING_DEFAULT, &resultKerning);
 
 							if(error)
-								BS_EXCEPT(InternalErrorException, "Failed to get kerning information for character: " + toString(charIdx));
+								BS_EXCEPT(InternalErrorException, "Failed to get kerning information for character: " + ToString(charIdx));
 
 							i32 kerningX = (i32)(resultKerning.x >> 6); // Y kerning is ignored because it is so rare
 							if(kerningX == 0) // We don't store 0 kerning, this is assumed default
@@ -341,7 +341,7 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 				newTex->WriteData(pixelData);
 			}
 
-			newTex->SetName(u8"FontPage" + toString((u32)fontData->TexturePages.size()));
+			newTex->SetName(u8"FontPage" + ToString((u32)fontData->TexturePages.size()));
 
 			fontData->TexturePages.push_back(newTex);
 			pageIdx++;

@@ -13,7 +13,7 @@
 namespace bs {
 namespace ct {
 
-SPtr<ct::Texture> generate4x4RandomizationTexture()
+SPtr<ct::Texture> Generate4x4RandomizationTexture()
 {
 	u32 mapping[16] = { 13, 5, 1, 9, 14, 3, 7, 11, 15, 2, 6, 12, 4, 8, 0, 10 };
 	Vector2 bases[16];
@@ -41,7 +41,7 @@ SPtr<ct::Texture> generate4x4RandomizationTexture()
 }
 
 // Reverse bits functions used for Hammersley sequence
-float reverseBits(u32 bits)
+float ReverseBits(u32 bits)
 {
 	bits = (bits << 16u) | (bits >> 16u);
 	bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
@@ -52,13 +52,13 @@ float reverseBits(u32 bits)
 	return (float)(double(bits) / (double)0x100000000LL);
 }
 
-void hammersleySequence(u32 i, u32 count, float& e0, float& e1)
+void HammersleySequence(u32 i, u32 count, float& e0, float& e1)
 {
 	e0 = i / (float)count;
-	e1 = reverseBits(i);
+	e1 = ReverseBits(i);
 }
 
-Vector3 sphericalToCartesian(float cosTheta, float sinTheta, float phi)
+Vector3 SphericalToCartesian(float cosTheta, float sinTheta, float phi)
 {
 	Vector3 output;
 	output.X = sinTheta * cos(phi);
@@ -70,7 +70,7 @@ Vector3 sphericalToCartesian(float cosTheta, float sinTheta, float phi)
 
 // Generates an angle in spherical coordinates, importance sampled for the specified roughness based on some uniformly
 // distributed random variables in range [0, 1].
-void importanceSampleGGX(float e0, float e1, float roughness4, float& cosTheta, float& phi)
+void ImportanceSampleGgx(float e0, float e1, float roughness4, float& cosTheta, float& phi)
 {
 	// See GGXImportanceSample.nb for derivation (essentially, take base GGX, normalize it, generate PDF, split PDF into
 	// marginal probability for theta and conditional probability for phi. Plug those into the CDF, invert it.)
@@ -78,7 +78,7 @@ void importanceSampleGGX(float e0, float e1, float roughness4, float& cosTheta, 
 	phi = 2.0f * Math::kPi * e1;
 }
 
-float calcMicrofacetShadowingSmithGGX(float roughness4, float NoV, float NoL)
+float CalcMicrofacetShadowingSmithGgx(float roughness4, float NoV, float NoL)
 {
 	// Note: See lighting shader for derivation. Includes microfacet BRDF divisor.
 	float g1V = NoV + sqrt(NoV * (NoV - NoV * roughness4) + roughness4);
@@ -86,7 +86,7 @@ float calcMicrofacetShadowingSmithGGX(float roughness4, float NoV, float NoL)
 	return 1.0f / (g1V * g1L);
 }
 
-SPtr<ct::Texture> generatePreintegratedEnvBRDF()
+SPtr<ct::Texture> GeneratePreintegratedEnvBrdf()
 {
 	TEXTURE_DESC desc;
 	desc.Type = TEX_TYPE_2D;
@@ -124,13 +124,13 @@ SPtr<ct::Texture> generatePreintegratedEnvBRDF()
 			for(u32 i = 0; i < NumSamples; i++)
 			{
 				float e0, e1;
-				hammersleySequence(i, NumSamples, e0, e1);
+				HammersleySequence(i, NumSamples, e0, e1);
 
 				float cosTheta, phi;
-				importanceSampleGGX(e0, e1, m2, cosTheta, phi);
+				ImportanceSampleGgx(e0, e1, m2, cosTheta, phi);
 
 				float sinTheta = sqrt(1.0f - cosTheta * cosTheta);
-				Vector3 H = sphericalToCartesian(cosTheta, sinTheta, phi);
+				Vector3 H = SphericalToCartesian(cosTheta, sinTheta, phi);
 				Vector3 L = 2.0f * Vector3::Dot(V, H) * H - V;
 
 				float VoH = std::max(Vector3::Dot(V, H), 0.0f);
@@ -146,7 +146,7 @@ SPtr<ct::Texture> generatePreintegratedEnvBRDF()
 				float fresnelOffset = fc;
 
 				// We calculate the G part
-				float G = calcMicrofacetShadowingSmithGGX(m2, NoV, NoL);
+				float G = CalcMicrofacetShadowingSmithGgx(m2, NoV, NoL);
 
 				// When we factor out G and F, then divide D by PDF, this is what's left
 				// Note: This is based on PDF: D * NoH / (4 * VoH). (4 * VoH) factor comes from the Jacobian of the
@@ -176,7 +176,7 @@ SPtr<ct::Texture> generatePreintegratedEnvBRDF()
 	return texture;
 }
 
-SPtr<ct::Texture> generateDefaultIndirect()
+SPtr<ct::Texture> GenerateDefaultIndirect()
 {
 	TEXTURE_DESC dummySkyDesc;
 	dummySkyDesc.Type = TEX_TYPE_CUBE_MAP;
@@ -238,7 +238,7 @@ SPtr<ct::Texture> generateDefaultIndirect()
 	return irradiance;
 }
 
-SPtr<ct::Texture> generateLensFlareGradientTint()
+SPtr<ct::Texture> GenerateLensFlareGradientTint()
 {
 	Vector<ColorGradientKey> keys = {
 		ColorGradientKey(Color(1.0f, 1.0f, 1.0f), 0.0f),
@@ -263,7 +263,7 @@ SPtr<ct::Texture> generateLensFlareGradientTint()
 	return ct::Texture::Create(pixels);
 }
 
-SPtr<ct::Texture> generateChromaticAberrationFringe()
+SPtr<ct::Texture> GenerateChromaticAberrationFringe()
 {
 	SPtr<PixelData> pixels = PixelData::Create(3, 1, 1, PF_RGBA8);
 	pixels->SetColorAt(Color(1.0f, 0.0f, 0.0f, 1.0f), 0, 0);
@@ -282,12 +282,12 @@ SPtr<ct::Texture> RendererTextures::chromaticAberrationFringe;
 
 void RendererTextures::StartUp(const LoadedRendererTextures& textures)
 {
-	preintegratedEnvGF = generatePreintegratedEnvBRDF();
-	ssaoRandomization4x4 = generate4x4RandomizationTexture();
-	defaultIndirect = generateDefaultIndirect();
-	lensFlareGradient = generateLensFlareGradientTint();
+	preintegratedEnvGF = GeneratePreintegratedEnvBrdf();
+	ssaoRandomization4x4 = Generate4x4RandomizationTexture();
+	defaultIndirect = GenerateDefaultIndirect();
+	lensFlareGradient = GenerateLensFlareGradientTint();
 	bokehFlare = textures.BokehFlare;
-	chromaticAberrationFringe = generateChromaticAberrationFringe();
+	chromaticAberrationFringe = GenerateChromaticAberrationFringe();
 }
 
 void RendererTextures::ShutDown()

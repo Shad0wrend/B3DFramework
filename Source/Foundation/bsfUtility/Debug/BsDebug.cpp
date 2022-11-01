@@ -18,7 +18,7 @@
 
 #	undef GetMessage
 
-void logToIDEConsole(const bs::String& message, const char* channel)
+void LogToIdeConsole(const bs::String& message, const char* channel)
 {
 	static bs::Mutex mutex;
 
@@ -33,7 +33,7 @@ void logToIDEConsole(const bs::String& message, const char* channel)
 	std::cout << "[" << channel << "] " << message << std::endl;
 }
 #else
-void logToIDEConsole(const bs::String& message, const char* channel)
+void LogToIdeConsole(const bs::String& message, const char* channel)
 {
 	std::cout << "[" << channel << "] " << message << std::endl;
 }
@@ -63,23 +63,23 @@ void Debug::Log(const String& message, LogVerbosity verbosity, u32 category)
 		switch(verbosity)
 		{
 		case LogVerbosity::Fatal:
-			logToIDEConsole(message, "FATAL");
+			LogToIdeConsole(message, "FATAL");
 			break;
 		case LogVerbosity::Error:
-			logToIDEConsole(message, "ERROR");
+			LogToIdeConsole(message, "ERROR");
 			break;
 		case LogVerbosity::Warning:
-			logToIDEConsole(message, "WARNING");
+			LogToIdeConsole(message, "WARNING");
 			break;
 		default:
 		case LogVerbosity::Info:
-			logToIDEConsole(message, "INFO");
+			LogToIdeConsole(message, "INFO");
 			break;
 		case LogVerbosity::Verbose:
-			logToIDEConsole(message, "VERBOSE");
+			LogToIdeConsole(message, "VERBOSE");
 			break;
 		case LogVerbosity::VeryVerbose:
-			logToIDEConsole(message, "VERY_VERBOSE");
+			LogToIdeConsole(message, "VERY_VERBOSE");
 			break;
 		}
 	}
@@ -339,9 +339,9 @@ table td
 				stream << R"(		<tr class="debug-alt-row">)" << std::endl;
 			break;
 		}
-		stream << R"(			<td>)" << toString(verbosity) << R"(</td>)" << std::endl;
+		stream << R"(			<td>)" << ToString(verbosity) << R"(</td>)" << std::endl;
 
-		stream << R"(			<td>)" << toString(entry.GetLocalTime(), false, false, TimeToStringConversionType::Time)
+		stream << R"(			<td>)" << ToString(entry.GetLocalTime(), false, false, TimeToStringConversionType::Time)
 			   << "</td>" << std::endl;
 
 		String categoryName;
@@ -422,7 +422,7 @@ void Debug::SaveTextLog(const Path& path) const
 	for(auto& entry : entries)
 	{
 		String builtMsg;
-		builtMsg.append(toString(entry.GetLocalTime(), false, true, TimeToStringConversionType::Full));
+		builtMsg.append(ToString(entry.GetLocalTime(), false, true, TimeToStringConversionType::Full));
 		builtMsg.append(" ");
 
 		switch(entry.GetVerbosity())

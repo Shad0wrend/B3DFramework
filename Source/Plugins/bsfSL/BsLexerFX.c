@@ -952,7 +952,7 @@ static yyconst flex_int32_t yy_rule_can_match_eol[196] =
 #define YY_RESTORE_YY_MORE_OFFSET
 #include "BsParserFX.h"
 
-#define YY_USER_ACTION yylloc->first_column = yycolumn + 1; yylloc->first_line = yylineno + 1; yycolumn += (int)yyleng; yylloc->filename = getCurrentFilename(yyextra);
+#define YY_USER_ACTION yylloc->first_column = yycolumn + 1; yylloc->first_line = yylineno + 1; yycolumn += (int)yyleng; yylloc->filename = GetCurrentFilename(yyextra);
 #define YY_USER_INIT yylineno = 0; yycolumn = 0;
 #define YY_NO_UNISTD_H 1
 /* Start conditions */
@@ -1325,7 +1325,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-{ yylval->StrValue = mmalloc_strdup(yyextra->MemContext, yytext); return TOKEN_STRING; }
+{ yylval->StrValue = MmallocStrdup(yyextra->MemContext, yytext); return TOKEN_STRING; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
@@ -1760,7 +1760,7 @@ case 110:
 YY_RULE_SETUP
 {
 	int size = 0;
-	char* includeBuffer = includePush(yyextra, yytext, yylineno, yycolumn, &size);
+	char* includeBuffer = IncludePush(yyextra, yytext, yylineno, yycolumn, &size);
 	if(!includeBuffer)
 		yyterminate();
 
@@ -1801,7 +1801,7 @@ case YY_STATE_EOF(CONDITIONAL_IGNORE):
 		yyterminate();
 
 	yypop_buffer_state(yyscanner);
-	includePop(yyextra);
+	IncludePop(yyextra);
 }
 	YY_BREAK
 case 112:
@@ -1814,7 +1814,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-{ addDefine(yyextra, yytext); BEGIN(DEFINE_COND_EXPR); }
+{ AddDefine(yyextra, yytext); BEGIN(DEFINE_COND_EXPR); }
 	YY_BREAK
 case 115:
 /* rule 115 can match eol */
@@ -1827,7 +1827,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-{ addDefineExpr(yyextra, yytext); BEGIN(INITIAL); }
+{ AddDefineExpr(yyextra, yytext); BEGIN(INITIAL); }
 	YY_BREAK
 case 118:
 /* rule 118 can match eol */
@@ -1845,7 +1845,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
-{ removeDefine(yyextra, yytext); BEGIN(INITIAL); }
+{ RemoveDefine(yyextra, yytext); BEGIN(INITIAL); }
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
@@ -1857,41 +1857,41 @@ YY_RULE_SETUP
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
-{ pushConditional(yyextra, yytext); }
+{ PushConditional(yyextra, yytext); }
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
-{ setConditionalOp(yyextra, CO_Equals); }
+{ SetConditionalOp(yyextra, CO_Equals); }
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
-{ setConditionalOp(yyextra, CO_NotEquals); }
+{ SetConditionalOp(yyextra, CO_NotEquals); }
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
-{ setConditionalOp(yyextra, CO_Greater); }
+{ SetConditionalOp(yyextra, CO_Greater); }
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
-{ setConditionalOp(yyextra, CO_Lesser); }
+{ SetConditionalOp(yyextra, CO_Lesser); }
 	YY_BREAK
 case 129:
 YY_RULE_SETUP
-{ setConditionalOp(yyextra, CO_GreaterEqual); }
+{ SetConditionalOp(yyextra, CO_GreaterEqual); }
 	YY_BREAK
 case 130:
 YY_RULE_SETUP
-{ setConditionalOp(yyextra, CO_LesserEqual); }
+{ SetConditionalOp(yyextra, CO_LesserEqual); }
 	YY_BREAK
 case 131:
 YY_RULE_SETUP
-{ setConditionalVal(yyextra, yytext); }
+{ SetConditionalVal(yyextra, yytext); }
 	YY_BREAK
 case 132:
 /* rule 132 can match eol */
 YY_RULE_SETUP
 { 
-	int isEnabled = evalConditional(yyextra);
+	int isEnabled = EvalConditional(yyextra);
 	if(!isEnabled)
 		BEGIN(CONDITIONAL_IGNORE);
 	else
@@ -1918,7 +1918,7 @@ YY_RULE_SETUP
 case 137:
 YY_RULE_SETUP
 { 
-	int isEnabled = pushConditionalDef(yyextra, hasDefine(yyextra, yytext));
+	int isEnabled = PushConditionalDef(yyextra, HasDefine(yyextra, yytext));
 	if(!isEnabled)
 		BEGIN(CONDITIONAL_IGNORE);
 	else
@@ -1941,7 +1941,7 @@ YY_RULE_SETUP
 case 141:
 YY_RULE_SETUP
 { 
-	int isEnabled = pushConditionalDef(yyextra, !hasDefine(yyextra, yytext));
+	int isEnabled = PushConditionalDef(yyextra, !HasDefine(yyextra, yytext));
 	if(!isEnabled)
 		BEGIN(CONDITIONAL_IGNORE);
 	else
@@ -1955,7 +1955,7 @@ YY_RULE_SETUP
 case 143:
 YY_RULE_SETUP
 { 
-	if(!switchConditional(yyextra))
+	if(!SwitchConditional(yyextra))
 		BEGIN(CONDITIONAL_IGNORE); 
 }
 	YY_BREAK
@@ -1965,7 +1965,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 145:
 YY_RULE_SETUP
-{ popConditional(yyextra); }
+{ PopConditional(yyextra); }
 	YY_BREAK
 case 146:
 /* rule 146 can match eol */
@@ -1974,20 +1974,20 @@ YY_RULE_SETUP
 	YY_BREAK
 case 147:
 YY_RULE_SETUP
-{ pushConditional(yyextra, 0); }
+{ PushConditional(yyextra, 0); }
 	YY_BREAK
 case 148:
 YY_RULE_SETUP
-{ pushConditional(yyextra, 0); }
+{ PushConditional(yyextra, 0); }
 	YY_BREAK
 case 149:
 YY_RULE_SETUP
-{ pushConditional(yyextra, 0); }
+{ PushConditional(yyextra, 0); }
 	YY_BREAK
 case 150:
 YY_RULE_SETUP
 { 
-	if(switchConditional(yyextra))
+	if(SwitchConditional(yyextra))
 		BEGIN(INITIAL);
 }
 	YY_BREAK
@@ -1998,7 +1998,7 @@ YY_RULE_SETUP
 case 152:
 YY_RULE_SETUP
 { 
-	if(popConditional(yyextra))
+	if(PopConditional(yyextra))
 		BEGIN(INITIAL);
 }
 	YY_BREAK
@@ -2008,41 +2008,41 @@ YY_RULE_SETUP
 	YY_BREAK
 case 154:
 YY_RULE_SETUP
-{ setConditional(yyextra, yytext); }
+{ SetConditional(yyextra, yytext); }
 	YY_BREAK
 case 155:
 YY_RULE_SETUP
-{ setConditionalOp(yyextra, CO_Equals); }
+{ SetConditionalOp(yyextra, CO_Equals); }
 	YY_BREAK
 case 156:
 YY_RULE_SETUP
-{ setConditionalOp(yyextra, CO_NotEquals); }
+{ SetConditionalOp(yyextra, CO_NotEquals); }
 	YY_BREAK
 case 157:
 YY_RULE_SETUP
-{ setConditionalOp(yyextra, CO_Greater); }
+{ SetConditionalOp(yyextra, CO_Greater); }
 	YY_BREAK
 case 158:
 YY_RULE_SETUP
-{ setConditionalOp(yyextra, CO_Lesser); }
+{ SetConditionalOp(yyextra, CO_Lesser); }
 	YY_BREAK
 case 159:
 YY_RULE_SETUP
-{ setConditionalOp(yyextra, CO_GreaterEqual); }
+{ SetConditionalOp(yyextra, CO_GreaterEqual); }
 	YY_BREAK
 case 160:
 YY_RULE_SETUP
-{ setConditionalOp(yyextra, CO_LesserEqual); }
+{ SetConditionalOp(yyextra, CO_LesserEqual); }
 	YY_BREAK
 case 161:
 YY_RULE_SETUP
-{ setConditionalVal(yyextra, yytext); }
+{ SetConditionalVal(yyextra, yytext); }
 	YY_BREAK
 case 162:
 /* rule 162 can match eol */
 YY_RULE_SETUP
 { 
-	int isEnabled = evalConditional(yyextra);
+	int isEnabled = EvalConditional(yyextra);
 	if(!isEnabled)
 		BEGIN(CONDITIONAL_IGNORE);
 	else
@@ -2067,7 +2067,7 @@ YY_RULE_SETUP
 /* And finally output a sequential code block index to the parser (it shouldn't be aware of anything else in the block). */
 case 166:
 YY_RULE_SETUP
-{ BEGIN(CODEBLOCK); beginCodeBlock(yyextra, RCT_CodeBlock); yyextra->NumOpenBrackets = 1; return yytext[0]; }
+{ BEGIN(CODEBLOCK); BeginCodeBlock(yyextra, RCT_CodeBlock); yyextra->NumOpenBrackets = 1; return yytext[0]; }
 	YY_BREAK
 case 167:
 /* rule 167 can match eol */
@@ -2080,7 +2080,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 169:
 YY_RULE_SETUP
-{ yyextra->NumOpenBrackets++; appendCodeBlock(yyextra, RCT_CodeBlock, yytext, 1); }
+{ yyextra->NumOpenBrackets++; AppendCodeBlock(yyextra, RCT_CodeBlock, yytext, 1); }
 	YY_BREAK
 case 170:
 YY_RULE_SETUP
@@ -2093,13 +2093,13 @@ YY_RULE_SETUP
 		unput('0');
 	}
 	else
-		appendCodeBlock(yyextra, RCT_CodeBlock, yytext, 1);
+		AppendCodeBlock(yyextra, RCT_CodeBlock, yytext, 1);
 }
 	YY_BREAK
 case 171:
 /* rule 171 can match eol */
 YY_RULE_SETUP
-{ appendCodeBlock(yyextra, RCT_CodeBlock, yytext, 1); }
+{ AppendCodeBlock(yyextra, RCT_CodeBlock, yytext, 1); }
 	YY_BREAK
 /* Logic for manually inserting "Index = codeBlockIndex;". We insert arbitrary numbers which allows us to sequentially */
 /* output all the tokens we need. We use only single-character values so we don't override anything in the text buffer */
@@ -2114,7 +2114,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 174:
 YY_RULE_SETUP
-{ yylval->IntValue = getCodeBlockIndex(yyextra, RCT_CodeBlock); unput('3'); return TOKEN_INTEGER; }
+{ yylval->IntValue = GetCodeBlockIndex(yyextra, RCT_CodeBlock); unput('3'); return TOKEN_INTEGER; }
 	YY_BREAK
 case 175:
 YY_RULE_SETUP
@@ -2139,7 +2139,7 @@ YY_RULE_SETUP
 /* And finally output a sequential subshader index to the parser (it shouldn't be aware of anything else in the block). */
 case 179:
 YY_RULE_SETUP
-{ BEGIN(SUBSHADER_BODY); beginCodeBlock(yyextra, RCT_SubShaderBlock); yyextra->NumOpenBrackets = 1; return yytext[0]; }
+{ BEGIN(SUBSHADER_BODY); BeginCodeBlock(yyextra, RCT_SubShaderBlock); yyextra->NumOpenBrackets = 1; return yytext[0]; }
 	YY_BREAK
 case 180:
 /* rule 180 can match eol */
@@ -2148,7 +2148,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 181:
 YY_RULE_SETUP
-{ yylval->StrValue = mmalloc_strdup(yyextra->MemContext, yytext); return TOKEN_IDENTIFIER; }
+{ yylval->StrValue = MmallocStrdup(yyextra->MemContext, yytext); return TOKEN_IDENTIFIER; }
 	YY_BREAK
 case 182:
 YY_RULE_SETUP
@@ -2156,7 +2156,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 183:
 YY_RULE_SETUP
-{ yyextra->NumOpenBrackets++; appendCodeBlock(yyextra, RCT_SubShaderBlock, yytext, 1); }
+{ yyextra->NumOpenBrackets++; AppendCodeBlock(yyextra, RCT_SubShaderBlock, yytext, 1); }
 	YY_BREAK
 case 184:
 YY_RULE_SETUP
@@ -2169,13 +2169,13 @@ YY_RULE_SETUP
 		unput('0');
 	}
 	else
-		appendCodeBlock(yyextra, RCT_SubShaderBlock, yytext, 1);
+		AppendCodeBlock(yyextra, RCT_SubShaderBlock, yytext, 1);
 }
 	YY_BREAK
 case 185:
 /* rule 185 can match eol */
 YY_RULE_SETUP
-{ appendCodeBlock(yyextra, RCT_SubShaderBlock, yytext, 1); }
+{ AppendCodeBlock(yyextra, RCT_SubShaderBlock, yytext, 1); }
 	YY_BREAK
 /* Logic for manually inserting "Index = subshaderIndex;". We insert arbitrary numbers which allows us to sequentially */
 /* output all the tokens we need. We use only single-character values so we don't override anything in the text buffer */
@@ -2190,7 +2190,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 188:
 YY_RULE_SETUP
-{ yylval->IntValue = getCodeBlockIndex(yyextra, RCT_SubShaderBlock); unput('3'); return TOKEN_INTEGER; }
+{ yylval->IntValue = GetCodeBlockIndex(yyextra, RCT_SubShaderBlock); unput('3'); return TOKEN_INTEGER; }
 	YY_BREAK
 case 189:
 YY_RULE_SETUP
@@ -2212,7 +2212,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 193:
 YY_RULE_SETUP
-{ yylval->StrValue = mmalloc_strdup(yyextra->MemContext, yytext); return TOKEN_IDENTIFIER; }
+{ yylval->StrValue = MmallocStrdup(yyextra->MemContext, yytext); return TOKEN_IDENTIFIER; }
 	YY_BREAK
 case 194:
 YY_RULE_SETUP

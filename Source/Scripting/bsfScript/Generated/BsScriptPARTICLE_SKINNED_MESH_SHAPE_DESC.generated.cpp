@@ -49,7 +49,7 @@ __PARTICLE_SKINNED_MESH_SHAPE_DESCInterop ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC
 	MonoObject* tmpRenderable;
 	ScriptComponentBase* scriptRenderable = nullptr;
 	if(value.Renderable.GetComponent())
-		scriptRenderable = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Renderable.GetComponent()));
+		scriptRenderable = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(B3DStaticGameObjectCast<Component>(value.Renderable.GetComponent()));
 	if(scriptRenderable != nullptr)
 		tmpRenderable = scriptRenderable->GetManagedInstance();
 	else

@@ -41,7 +41,7 @@ namespace bs
 			// with this ID, so we know how to map deserialized GO handles to live objects, otherwise the handle
 			// references will get broken.
 			GameObject* go = static_cast<GameObject*>(obj);
-			GODeserializationData& deserializationData = any_cast_ref<GODeserializationData>(go->mRTTIData);
+			GODeserializationData& deserializationData = AnyCastRef<GODeserializationData>(go->mRTTIData);
 
 			deserializationData.OriginalId = instanceId;
 		}
@@ -61,11 +61,11 @@ namespace bs
 			if(gameObject->mRTTIData.Empty())
 				return;
 
-			SPtr<GameObject> gameObjectPtr = any_cast<SPtr<GameObject>>(gameObject->mRTTIData);
+			SPtr<GameObject> gameObjectPtr = AnyCast<SPtr<GameObject>>(gameObject->mRTTIData);
 
 			// Every GameObject must store GODeserializationData in its RTTI data field during deserialization
 			gameObject->mRTTIData = GODeserializationData();
-			GODeserializationData& deserializationData = any_cast_ref<GODeserializationData>(gameObject->mRTTIData);
+			GODeserializationData& deserializationData = AnyCastRef<GODeserializationData>(gameObject->mRTTIData);
 
 			// Store shared pointer since the system only provides us with raw ones
 			deserializationData.Ptr = gameObjectPtr;

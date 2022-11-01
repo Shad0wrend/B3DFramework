@@ -6,7 +6,7 @@
 
 using namespace bs;
 
-FMOD_RESULT F_CALLBACK pcmReadCallback(FMOD_SOUND* sound, void* data, unsigned int dataLen)
+FMOD_RESULT F_CALLBACK PCMReadCallback(FMOD_SOUND* sound, void* data, unsigned int dataLen)
 {
 	FMODOggDecompressorData* decompressor = nullptr;
 	((FMOD::Sound*)sound)->getUserData((void**)&decompressor);
@@ -37,7 +37,7 @@ FMOD_RESULT F_CALLBACK pcmReadCallback(FMOD_SOUND* sound, void* data, unsigned i
 	return FMOD_OK;
 }
 
-FMOD_RESULT F_CALLBACK pcmSetPosCallback(FMOD_SOUND* sound, int subsound, unsigned int position, FMOD_TIMEUNIT posType)
+FMOD_RESULT F_CALLBACK PCMSetPosCallback(FMOD_SOUND* sound, int subsound, unsigned int position, FMOD_TIMEUNIT posType)
 {
 	FMODOggDecompressorData* decompressor = nullptr;
 	((FMOD::Sound*)sound)->getUserData((void**)&decompressor);
@@ -245,8 +245,8 @@ FMOD::Sound* FMODAudioClip::CreateStreamingSound() const
 			flags |= FMOD_OPENUSER;
 
 			exInfo.decodebuffersize = mDesc.Frequency;
-			exInfo.pcmreadcallback = pcmReadCallback;
-			exInfo.pcmsetposcallback = pcmSetPosCallback;
+			exInfo.pcmreadcallback = PCMReadCallback;
+			exInfo.pcmsetposcallback = PCMSetPosCallback;
 
 			AudioDataInfo info;
 			info.BitDepth = mDesc.BitDepth;

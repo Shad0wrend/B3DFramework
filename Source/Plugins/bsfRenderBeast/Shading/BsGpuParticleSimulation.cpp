@@ -599,7 +599,7 @@ bool GpuParticleSystem::FreeInactiveTiles(GpuParticleResources& resources)
 		if(freeIdx != lastIdx)
 		{
 			std::swap(mTiles[freeIdx], mTiles[lastIdx]);
-			std::swap(mActiveTiles[freeIdx], mActiveTiles[lastIdx]);
+			std::Swap(mActiveTiles[freeIdx], mActiveTiles[lastIdx]);
 		}
 
 		resources.FreeTile(mTiles[lastIdx].Id);
@@ -1031,7 +1031,7 @@ GpuParticleResources& GpuParticleSimulation::GetResources() const
 	return m->Resources;
 }
 
-SPtr<GpuParamBlockBuffer> createGpuParticleVertexInputBuffer()
+SPtr<GpuParamBlockBuffer> CreateGpuParticleVertexInputBuffer()
 {
 	SPtr<GpuParamBlockBuffer> inputBuffer = gGpuParticleTileVertexParamsDef.CreateBuffer();
 
@@ -1054,7 +1054,7 @@ SPtr<GpuParamBlockBuffer> createGpuParticleVertexInputBuffer()
 
 GpuParticleClearMat::GpuParticleClearMat()
 {
-	const SPtr<GpuParamBlockBuffer> inputBuffer = createGpuParticleVertexInputBuffer();
+	const SPtr<GpuParamBlockBuffer> inputBuffer = CreateGpuParticleVertexInputBuffer();
 
 	mParams->SetParamBlockBuffer(GPT_VERTEX_PROGRAM, "Input", inputBuffer);
 	mParams->GetBufferParam(GPT_VERTEX_PROGRAM, "gTileUVs", mTileUVParam);
@@ -1074,19 +1074,19 @@ void GpuParticleClearMat::Bind(const SPtr<GpuBuffer>& tileUVs)
 
 GpuParticleInjectMat::GpuParticleInjectMat()
 {
-	const SPtr<GpuParamBlockBuffer> inputBuffer = createGpuParticleVertexInputBuffer();
+	const SPtr<GpuParamBlockBuffer> inputBuffer = CreateGpuParticleVertexInputBuffer();
 	mParams->SetParamBlockBuffer(GPT_VERTEX_PROGRAM, "Input", inputBuffer);
 }
 
 GpuParticleCurveInjectMat::GpuParticleCurveInjectMat()
 {
-	const SPtr<GpuParamBlockBuffer> inputBuffer = createGpuParticleVertexInputBuffer();
+	const SPtr<GpuParamBlockBuffer> inputBuffer = CreateGpuParticleVertexInputBuffer();
 	mParams->SetParamBlockBuffer(GPT_VERTEX_PROGRAM, "Input", inputBuffer);
 }
 
 GpuParticleSimulateMat::GpuParticleSimulateMat()
 {
-	const SPtr<GpuParamBlockBuffer> inputBuffer = createGpuParticleVertexInputBuffer();
+	const SPtr<GpuParamBlockBuffer> inputBuffer = CreateGpuParticleVertexInputBuffer();
 	mParams->SetParamBlockBuffer(GPT_VERTEX_PROGRAM, "Input", inputBuffer);
 
 	mParams->GetParamInfo()->GetBinding(

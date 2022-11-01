@@ -50,7 +50,7 @@ void CJoint::SetBody(JointBody body, const HRigidbody& value)
 	mBodies[(int)body] = value;
 
 	if(value != nullptr)
-		mBodies[(int)body]->SetJointInternal(static_object_cast<CJoint>(mThisHandle));
+		mBodies[(int)body]->SetJointInternal(B3DStaticGameObjectCast<CJoint>(mThisHandle));
 
 	// If joint already exists, destroy it if we removed all bodies, otherwise update its transform
 	if(mInternal != nullptr)

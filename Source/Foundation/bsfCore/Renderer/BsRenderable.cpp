@@ -18,19 +18,19 @@
 using namespace bs;
 
 template <class T>
-bool isMeshValid(const T& mesh)
+bool IsMeshValid(const T& mesh)
 {
 	return false;
 }
 
 template <>
-bool isMeshValid(const HMesh& mesh)
+bool IsMeshValid(const HMesh& mesh)
 {
 	return mesh.IsLoaded();
 }
 
 template <>
-bool isMeshValid(const SPtr<ct::Mesh>& mesh)
+bool IsMeshValid(const SPtr<ct::Mesh>& mesh)
 {
 	return mesh != nullptr;
 }
@@ -60,7 +60,7 @@ void TRenderable<Core>::SetMesh(const MeshType& mesh)
 	mMesh = mesh;
 
 	int numSubMeshes = 0;
-	if(isMeshValid(mesh))
+	if(IsMeshValid(mesh))
 		numSubMeshes = mesh->GetProperties().GetNumSubMeshes();
 
 	mMaterials.resize(numSubMeshes);
@@ -328,7 +328,7 @@ CoreSyncData Renderable::SyncToCore(FrameAlloc* allocator)
 {
 	const u32 dirtyFlags = GetCoreDirtyFlags();
 	u32 size = B3DRTTISize(dirtyFlags).Bytes;
-	SceneActor::RttiEnumFields(RttiCoreSyncSize(size), (ActorDirtyFlags)dirtyFlags);
+	SceneActor::RttiEnumFields(RttiB3DCoreSyncSize(size), (ActorDirtyFlags)dirtyFlags);
 
 	// The most common case if only the transform changed, so we sync only transform related options
 	u32 numMaterials = 0;
@@ -524,7 +524,7 @@ Bounds Renderable::GetBounds() const
 	}
 }
 
-SPtr<GpuBuffer> createBoneMatrixBuffer(u32 numBones)
+SPtr<GpuBuffer> CreateBoneMatrixBuffer(u32 numBones)
 {
 	GPU_BUFFER_DESC desc;
 	desc.ElementCount = numBones * 3;
@@ -557,10 +557,10 @@ void Renderable::CreateAnimationBuffers()
 
 		if(numBones > 0)
 		{
-			mBoneMatrixBuffer = createBoneMatrixBuffer(numBones);
+			mBoneMatrixBuffer = CreateBoneMatrixBuffer(numBones);
 
 			if(mWriteVelocity)
-				mBonePrevMatrixBuffer = createBoneMatrixBuffer(numBones);
+				mBonePrevMatrixBuffer = CreateBoneMatrixBuffer(numBones);
 			else
 				mBonePrevMatrixBuffer = nullptr;
 		}

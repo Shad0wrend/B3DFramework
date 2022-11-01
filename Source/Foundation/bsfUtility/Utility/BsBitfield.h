@@ -404,6 +404,7 @@ namespace bs
 			return ConstIterator(*this, bitIndex, dwordIndex, mask);
 		}
 
+		// NOLINTBEGIN
 		/** @copydoc Begin */
 		Iterator begin() { return Begin(); }
 
@@ -415,6 +416,7 @@ namespace bs
 
 		/** @copydoc End */
 		ConstIterator end() const { return End(); }
+		// NOLINTEND
 
 	private:
 		template <bool CONST>
@@ -467,7 +469,7 @@ namespace std
 		rhs = temp;
 	}
 
-	inline void swap(bs::BitReference&& lhs, bs::BitReference&& rhs)
+	inline void Swap(bs::BitReference&& lhs, bs::BitReference&& rhs)
 	{
 		const bool temp = lhs;
 		lhs = rhs;

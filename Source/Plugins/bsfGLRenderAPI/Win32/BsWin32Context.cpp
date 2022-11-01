@@ -24,13 +24,13 @@ Win32Context::~Win32Context()
 void Win32Context::SetCurrent(const RenderWindow& window)
 {
 	if(wglMakeCurrent(mHDC, mGlrc) != TRUE)
-		BS_EXCEPT(RenderingAPIException, "wglMakeCurrent failed: " + translateWGLError());
+		BS_EXCEPT(RenderingAPIException, "wglMakeCurrent failed: " + TranslateWglError());
 }
 
 void Win32Context::EndCurrent()
 {
 	if(wglMakeCurrent(mHDC, 0) != TRUE)
-		BS_EXCEPT(RenderingAPIException, "wglMakeCurrent failed: " + translateWGLError());
+		BS_EXCEPT(RenderingAPIException, "wglMakeCurrent failed: " + TranslateWglError());
 }
 
 void Win32Context::ReleaseContext()
@@ -38,7 +38,7 @@ void Win32Context::ReleaseContext()
 	if(mGlrc != 0)
 	{
 		if(wglDeleteContext(mGlrc) != TRUE)
-			BS_EXCEPT(RenderingAPIException, "wglDeleteContext failed: " + translateWGLError());
+			BS_EXCEPT(RenderingAPIException, "wglDeleteContext failed: " + TranslateWglError());
 
 		mGlrc = 0;
 		mHDC = 0;

@@ -501,10 +501,10 @@ public:
 			}
 
 			static const ShaderVariation* VAR_LOOKUP[4];
-			VAR_LOOKUP[0] = &getVertexInputVariation<false, false, false>(false);
-			VAR_LOOKUP[1] = &getVertexInputVariation<true, false, false>(false);
-			VAR_LOOKUP[2] = &getVertexInputVariation<false, true, false>(false);
-			VAR_LOOKUP[3] = &getVertexInputVariation<true, true, false>(false);
+			VAR_LOOKUP[0] = &GetVertexInputVariation<false, false, false>(false);
+			VAR_LOOKUP[1] = &GetVertexInputVariation<true, false, false>(false);
+			VAR_LOOKUP[2] = &GetVertexInputVariation<false, true, false>(false);
+			VAR_LOOKUP[3] = &GetVertexInputVariation<true, true, false>(false);
 
 			for(u32 i = 0; i < (u32)RenderableAnimType::Count; i++)
 			{
@@ -918,7 +918,7 @@ void ShadowRendering::RenderShadowMaps(RendererScene& scene, const RendererViewG
  * @return						Individual vertices of the frustum corners, in world space. Ordered using the
  *								AABox::CornerEnum.
  */
-std::array<Vector3, 8> getFrustum(const Matrix4& invVP, ConvexVolume& worldFrustum)
+std::array<Vector3, 8> GetFrustum(const Matrix4& invVP, ConvexVolume& worldFrustum)
 {
 	std::array<Vector3, 8> output;
 
@@ -954,7 +954,7 @@ std::array<Vector3, 8> getFrustum(const Matrix4& invVP, ConvexVolume& worldFrust
  * Converts a point in mixed space (clip_x, clip_y, view_z, view_w) to UV coordinates on a shadow map (x, y),
  * and normalized linear depth from the shadow caster's perspective (z).
  */
-Matrix4 createMixedToShadowUVMatrix(const Matrix4& viewP, const Matrix4& viewInvVP, const Rect2& shadowMapArea, float depthScale, float depthOffset, const Matrix4& shadowViewProj)
+Matrix4 CreateMixedToShadowUvMatrix(const Matrix4& viewP, const Matrix4& viewInvVP, const Rect2& shadowMapArea, float depthScale, float depthOffset, const Matrix4& shadowViewProj)
 {
 	// Projects a point from (clip_x, clip_y, view_z, view_w) into clip space
 	Matrix4 mixedToShadow = Matrix4::kIdentity;
@@ -1113,7 +1113,7 @@ void ShadowRendering::RenderShadowOcclusion(const RendererView& view, const Rend
 				shadowMapFace = shadowInfo->CascadeIdx;
 			}
 
-			Matrix4 mixedToShadowUV = createMixedToShadowUVMatrix(viewP, viewInvVP, shadowInfo->NormArea, depthScale, depthOffset, shadowInfo->ShadowVpTransform);
+			Matrix4 mixedToShadowUV = CreateMixedToShadowUvMatrix(viewP, viewInvVP, shadowInfo->NormArea, depthScale, depthOffset, shadowInfo->ShadowVpTransform);
 
 			auto shadowMapProps = shadowMap->GetProperties();
 
@@ -1142,7 +1142,7 @@ void ShadowRendering::RenderShadowOcclusion(const RendererView& view, const Rend
 			if(!isCSM)
 			{
 				ConvexVolume shadowFrustum;
-				frustumVertices = getFrustum(shadowInfo->ShadowVpTransform.Inverse(), shadowFrustum);
+				frustumVertices = GetFrustum(shadowInfo->ShadowVpTransform.Inverse(), shadowFrustum);
 
 				// Check if viewer is inside the frustum. Frustum is slightly expanded so that if the near plane is
 				// intersecting the shadow frustum, it is counted as inside. This needs to be conservative as the code

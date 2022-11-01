@@ -34,7 +34,7 @@ BlendClipInfo ScriptBlendClipInfo::FromInterop(const __BlendClipInfoInterop& val
 	ScriptRRefBase* scriptClip;
 	scriptClip = ScriptRRefBase::ToNative(value.Clip);
 	if(scriptClip != nullptr)
-		tmpClip = static_resource_cast<AnimationClip>(scriptClip->GetHandle());
+		tmpClip = B3DStaticResourceCast<AnimationClip>(scriptClip->GetHandle());
 	output.Clip = tmpClip;
 	output.Position = value.Position;
 

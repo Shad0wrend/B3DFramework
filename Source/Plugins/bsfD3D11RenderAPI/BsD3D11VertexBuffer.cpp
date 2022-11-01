@@ -7,7 +7,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-static void deleteBuffer(HardwareBuffer* buffer)
+static void DeleteHardwareBuffer(HardwareBuffer* buffer)
 {
 	B3DPoolDelete(static_cast<D3D11HardwareBuffer*>(buffer));
 }
@@ -21,7 +21,7 @@ D3D11VertexBuffer::D3D11VertexBuffer(D3D11Device& device, const VERTEX_BUFFER_DE
 void D3D11VertexBuffer::Initialize()
 {
 	mBuffer = B3DPoolNew<D3D11HardwareBuffer>(D3D11HardwareBuffer::BT_VERTEX, mUsage, 1, mSize, mDevice, false, mStreamOut);
-	mBufferDeleter = &deleteBuffer;
+	mBufferDeleter = &DeleteHardwareBuffer;
 
 	VertexBuffer::Initialize();
 }

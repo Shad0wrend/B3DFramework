@@ -38,7 +38,7 @@ struct GpuSortProperties
 };
 
 /** Set up common defines required by all radix sort shaders. */
-void initCommonDefines(ShaderDefines& defines)
+void InitCommonDefines(ShaderDefines& defines)
 {
 	defines.Set("RADIX_NUM_BITS", kRadixNumBits);
 	defines.Set("NUM_THREADS", kNumThreads);
@@ -46,13 +46,13 @@ void initCommonDefines(ShaderDefines& defines)
 	defines.Set("MAX_NUM_GROUPS", kMaxNumGroups);
 }
 
-void runSortTest();
+void RunSortTest();
 
 /**
  * Creates a new GPU parameter block buffer according to gRadixSortParamDef definition and writes GpuSort properties
  * into the buffer.
  */
-SPtr<GpuParamBlockBuffer> createGpuSortParams(const GpuSortProperties& props)
+SPtr<GpuParamBlockBuffer> CreateGpuSortParams(const GpuSortProperties& props)
 {
 	SPtr<GpuParamBlockBuffer> buffer = gRadixSortParamsDef.CreateBuffer();
 
@@ -69,7 +69,7 @@ SPtr<GpuParamBlockBuffer> createGpuSortParams(const GpuSortProperties& props)
  * Checks can the provided buffer be used for GPU sort operation. Returns a pointer to the error message if check failed
  * or nullptr if check passed.
  */
-const char* checkSortBuffer(GpuBuffer& buffer)
+const char* CheckSortBuffer(GpuBuffer& buffer)
 {
 	static constexpr const char* kInvalidGpuWriteMsg =
 		"All buffers provided to GpuSort must be created with GBU_LOADSTORE flags enabled.";
@@ -92,7 +92,7 @@ const char* checkSortBuffer(GpuBuffer& buffer)
 }
 
 /** Creates a helper buffers used for storing intermediate information during GpuSort::sort. */
-SPtr<GpuBuffer> createHelperBuffer()
+SPtr<GpuBuffer> CreateHelperBuffer()
 {
 	GPU_BUFFER_DESC desc;
 	desc.ElementCount = kMaxNumGroups * kNumDigits;
@@ -110,7 +110,7 @@ RadixSortClearMat::RadixSortClearMat()
 
 void RadixSortClearMat::InitDefinesInternal(ShaderDefines& defines)
 {
-	initCommonDefines(defines);
+	InitCommonDefines(defines);
 }
 
 void RadixSortClearMat::Execute(const SPtr<GpuBuffer>& outputOffsets)
@@ -131,7 +131,7 @@ RadixSortCountMat::RadixSortCountMat()
 
 void RadixSortCountMat::InitDefinesInternal(ShaderDefines& defines)
 {
-	initCommonDefines(defines);
+	InitCommonDefines(defines);
 }
 
 void RadixSortCountMat::Execute(u32 numGroups, const SPtr<GpuParamBlockBuffer>& params, const SPtr<GpuBuffer>& inputKeys, const SPtr<GpuBuffer>& outputOffsets)
@@ -155,7 +155,7 @@ RadixSortPrefixScanMat::RadixSortPrefixScanMat()
 
 void RadixSortPrefixScanMat::InitDefinesInternal(ShaderDefines& defines)
 {
-	initCommonDefines(defines);
+	InitCommonDefines(defines);
 }
 
 void RadixSortPrefixScanMat::Execute(const SPtr<GpuParamBlockBuffer>& params, const SPtr<GpuBuffer>& inputCounts, const SPtr<GpuBuffer>& outputOffsets)
@@ -182,7 +182,7 @@ RadixSortReorderMat::RadixSortReorderMat()
 
 void RadixSortReorderMat::InitDefinesInternal(ShaderDefines& defines)
 {
-	initCommonDefines(defines);
+	InitCommonDefines(defines);
 }
 
 void RadixSortReorderMat::Execute(u32 numGroups, const SPtr<GpuParamBlockBuffer>& params, const SPtr<GpuBuffer>& inputPrefix, const GpuSortBuffers& buffers, u32 inputBufferIdx)
@@ -205,8 +205,8 @@ void RadixSortReorderMat::Execute(u32 numGroups, const SPtr<GpuParamBlockBuffer>
 
 GpuSort::GpuSort()
 {
-	mHelperBuffers[0] = createHelperBuffer();
-	mHelperBuffers[1] = createHelperBuffer();
+	mHelperBuffers[0] = CreateHelperBuffer();
+	mHelperBuffers[1] = CreateHelperBuffer();
 }
 
 u32 GpuSort::Sort(const GpuSortBuffers& buffers, u32 numKeys, u32 keyMask)
@@ -219,12 +219,12 @@ u32 GpuSort::Sort(const GpuSortBuffers& buffers, u32 numKeys, u32 keyMask)
 	const char* errorMsg = nullptr;
 	for(u32 i = 0; i < 2; i++)
 	{
-		errorMsg = checkSortBuffer(*buffers.Keys[i]);
+		errorMsg = CheckSortBuffer(*buffers.Keys[i]);
 		if(errorMsg) break;
 
 		if(buffers.Values[i])
 		{
-			errorMsg = checkSortBuffer(*buffers.Values[i]);
+			errorMsg = CheckSortBuffer(*buffers.Values[i]);
 			if(errorMsg) break;
 		}
 	}
@@ -250,7 +250,7 @@ u32 GpuSort::Sort(const GpuSortBuffers& buffers, u32 numKeys, u32 keyMask)
 	}
 
 	const GpuSortProperties gpuSortProps(numKeys);
-	SPtr<GpuParamBlockBuffer> params = createGpuSortParams(gpuSortProps);
+	SPtr<GpuParamBlockBuffer> params = CreateGpuSortParams(gpuSortProps);
 
 	u32 bitOffset = 0;
 	u32 inputBufferIdx = 0;
@@ -299,7 +299,7 @@ GpuSortBuffers GpuSort::CreateSortBuffers(u32 numElements, bool values)
 // Note: This test isn't currently hooked up anywhere. It might be a good idea to set it up as a unit test, but it would
 // require exposing parts of GpuSort to the public, which I don't feel like it's worth doing just for a test. So instead
 // just make sure to run the test below if you modify any of the GpuSort code.
-void runSortTest()
+void RunSortTest()
 {
 	// Generate test keys
 	static constexpr u32 kNumInputKeys = 10000;
@@ -316,7 +316,7 @@ void runSortTest()
 
 	// Prepare buffers
 	const GpuSortProperties gpuSortProps(count);
-	SPtr<GpuParamBlockBuffer> params = createGpuSortParams(gpuSortProps);
+	SPtr<GpuParamBlockBuffer> params = CreateGpuSortParams(gpuSortProps);
 
 	gRadixSortParamsDef.gBitOffset.Set(params, bitOffset);
 
@@ -324,8 +324,8 @@ void runSortTest()
 	sortBuffers.Keys[0]->WriteData(0, sortBuffers.Keys[0]->GetSize(), inputKeys.data(), BWT_DISCARD);
 
 	SPtr<GpuBuffer> helperBuffers[2];
-	helperBuffers[0] = createHelperBuffer();
-	helperBuffers[1] = createHelperBuffer();
+	helperBuffers[0] = CreateHelperBuffer();
+	helperBuffers[1] = CreateHelperBuffer();
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////// Count keys per group //////////////////////////////////////////////////

@@ -1754,7 +1754,7 @@ PixelFormatDescription _pixelFormats[PF_COUNT] = {
 	  0, 16, 0, 16 },
 };
 
-static inline const PixelFormatDescription& getDescriptionFor(const PixelFormat fmt)
+static inline const PixelFormatDescription& GetDescriptionFor(const PixelFormat fmt)
 {
 	const int ord = (int)fmt;
 	assert(ord >= 0 && ord < PF_COUNT);
@@ -1826,7 +1826,7 @@ struct NVTTMipmapOutputHandler : public nvtt::OutputHandler
 	u8* BufferEnd;
 };
 
-nvtt::Format toNVTTFormat(PixelFormat format)
+nvtt::Format ToNvttFormat(PixelFormat format)
 {
 	switch(format)
 	{
@@ -1851,7 +1851,7 @@ nvtt::Format toNVTTFormat(PixelFormat format)
 	}
 }
 
-nvtt::Quality toNVTTQuality(CompressionQuality quality)
+nvtt::Quality ToNvttQuality(CompressionQuality quality)
 {
 	switch(quality)
 	{
@@ -1869,7 +1869,7 @@ nvtt::Quality toNVTTQuality(CompressionQuality quality)
 	return nvtt::Quality_Normal;
 }
 
-nvtt::AlphaMode toNVTTAlphaMode(AlphaMode alphaMode)
+nvtt::AlphaMode ToNvttAlphaMode(AlphaMode alphaMode)
 {
 	switch(alphaMode)
 	{
@@ -1885,7 +1885,7 @@ nvtt::AlphaMode toNVTTAlphaMode(AlphaMode alphaMode)
 	return nvtt::AlphaMode_None;
 }
 
-nvtt::WrapMode toNVTTWrapMode(MipMapWrapMode wrapMode)
+nvtt::WrapMode ToNvttWrapMode(MipMapWrapMode wrapMode)
 {
 	switch(wrapMode)
 	{
@@ -1903,7 +1903,7 @@ nvtt::WrapMode toNVTTWrapMode(MipMapWrapMode wrapMode)
 
 u32 PixelUtil::GetNumElemBytes(PixelFormat format)
 {
-	return getDescriptionFor(format).ElemBytes;
+	return GetDescriptionFor(format).ElemBytes;
 }
 
 u32 PixelUtil::GetBlockSize(PixelFormat format)
@@ -2014,12 +2014,12 @@ void PixelUtil::GetSizeForMipLevel(u32 width, u32 height, u32 depth, u32 mipLeve
 
 u32 PixelUtil::GetNumElemBits(PixelFormat format)
 {
-	return getDescriptionFor(format).ElemBytes * 8;
+	return GetDescriptionFor(format).ElemBytes * 8;
 }
 
 u32 PixelUtil::GetFlags(PixelFormat format)
 {
-	return getDescriptionFor(format).Flags;
+	return GetDescriptionFor(format).Flags;
 }
 
 bool PixelUtil::HasAlpha(PixelFormat format)
@@ -2141,7 +2141,7 @@ bool PixelUtil::IsValidExtent(u32 width, u32 height, u32 depth, PixelFormat form
 
 void PixelUtil::GetBitDepths(PixelFormat format, int (&rgba)[4])
 {
-	const PixelFormatDescription& des = getDescriptionFor(format);
+	const PixelFormatDescription& des = GetDescriptionFor(format);
 	rgba[0] = des.Rbits;
 	rgba[1] = des.Gbits;
 	rgba[2] = des.Bbits;
@@ -2150,7 +2150,7 @@ void PixelUtil::GetBitDepths(PixelFormat format, int (&rgba)[4])
 
 void PixelUtil::GetBitMasks(PixelFormat format, u32 (&rgba)[4])
 {
-	const PixelFormatDescription& des = getDescriptionFor(format);
+	const PixelFormatDescription& des = GetDescriptionFor(format);
 	rgba[0] = des.Rmask;
 	rgba[1] = des.Gmask;
 	rgba[2] = des.Bmask;
@@ -2159,7 +2159,7 @@ void PixelUtil::GetBitMasks(PixelFormat format, u32 (&rgba)[4])
 
 void PixelUtil::GetBitShifts(PixelFormat format, u8 (&rgba)[4])
 {
-	const PixelFormatDescription& des = getDescriptionFor(format);
+	const PixelFormatDescription& des = GetDescriptionFor(format);
 	rgba[0] = des.Rshift;
 	rgba[1] = des.Gshift;
 	rgba[2] = des.Bshift;
@@ -2168,7 +2168,7 @@ void PixelUtil::GetBitShifts(PixelFormat format, u8 (&rgba)[4])
 
 String PixelUtil::GetFormatName(PixelFormat srcformat)
 {
-	return getDescriptionFor(srcformat).Name;
+	return GetDescriptionFor(srcformat).Name;
 }
 
 bool PixelUtil::IsAccessible(PixelFormat srcformat)
@@ -2182,13 +2182,13 @@ bool PixelUtil::IsAccessible(PixelFormat srcformat)
 
 PixelComponentType PixelUtil::GetElementType(PixelFormat format)
 {
-	const PixelFormatDescription& des = getDescriptionFor(format);
+	const PixelFormatDescription& des = GetDescriptionFor(format);
 	return des.ComponentType;
 }
 
 u32 PixelUtil::GetNumElements(PixelFormat format)
 {
-	const PixelFormatDescription& des = getDescriptionFor(format);
+	const PixelFormatDescription& des = GetDescriptionFor(format);
 	return des.ComponentCount;
 }
 
@@ -2217,7 +2217,7 @@ void PixelUtil::PackColor(const Color& color, PixelFormat format, void* dest)
 
 void PixelUtil::PackColor(u8 r, u8 g, u8 b, u8 a, PixelFormat format, void* dest)
 {
-	const PixelFormatDescription& des = getDescriptionFor(format);
+	const PixelFormatDescription& des = GetDescriptionFor(format);
 
 	if(des.Flags & PFF_INTEGER)
 	{
@@ -2258,7 +2258,7 @@ void PixelUtil::PackColor(float r, float g, float b, float a, const PixelFormat 
 	}
 
 	// All other formats handled in a generic way
-	const PixelFormatDescription& des = getDescriptionFor(format);
+	const PixelFormatDescription& des = GetDescriptionFor(format);
 	assert(des.ComponentCount <= 4);
 
 	float inputs[] = { r, g, b, a };
@@ -2332,7 +2332,7 @@ void PixelUtil::UnpackColor(Color* color, PixelFormat format, const void* src)
 
 void PixelUtil::UnpackColor(u8* r, u8* g, u8* b, u8* a, PixelFormat format, const void* src)
 {
-	const PixelFormatDescription& des = getDescriptionFor(format);
+	const PixelFormatDescription& des = GetDescriptionFor(format);
 
 	if(des.Flags & PFF_INTEGER)
 	{
@@ -2385,7 +2385,7 @@ void PixelUtil::UnpackColor(float* r, float* g, float* b, float* a, PixelFormat 
 	}
 
 	// All other formats handled in a generic way
-	const PixelFormatDescription& des = getDescriptionFor(format);
+	const PixelFormatDescription& des = GetDescriptionFor(format);
 	assert(des.ComponentCount <= 4);
 
 	float* outputs[] = { r, g, b, a };
@@ -2621,7 +2621,7 @@ void PixelUtil::FlipComponentOrder(PixelData& data)
 		return;
 	}
 
-	const PixelFormatDescription& pfd = getDescriptionFor(data.GetFormat());
+	const PixelFormatDescription& pfd = GetDescriptionFor(data.GetFormat());
 	if(pfd.ElemBytes > 4)
 	{
 		BS_LOG(Error, PixelUtility, "flipComponentOrder() only supported on 4 byte or smaller pixel formats.");
@@ -3058,7 +3058,7 @@ void PixelUtil::Compress(const PixelData& src, PixelData& dst, const Compression
 	nvtt::InputOptions io;
 	io.setTextureLayout(nvtt::TextureType_2D, src.GetWidth(), src.GetHeight());
 	io.setMipmapGeneration(false);
-	io.setAlphaMode(toNVTTAlphaMode(options.AlphaMode));
+	io.setAlphaMode(ToNvttAlphaMode(options.AlphaMode));
 	io.setNormalMap(options.IsNormalMap);
 
 	if(interimFormat == PF_RGBA32F)
@@ -3074,8 +3074,8 @@ void PixelUtil::Compress(const PixelData& src, PixelData& dst, const Compression
 	io.setMipmapData(interimData.GetData(), src.GetWidth(), src.GetHeight());
 
 	nvtt::CompressionOptions co;
-	co.setFormat(toNVTTFormat(options.Format));
-	co.setQuality(toNVTTQuality(options.Quality));
+	co.setFormat(ToNvttFormat(options.Format));
+	co.setQuality(ToNvttQuality(options.Quality));
 
 	NVTTCompressOutputHandler outputHandler(dst.GetData(), dst.GetConsecutiveSize());
 
@@ -3127,7 +3127,7 @@ Vector<SPtr<PixelData>> PixelUtil::GenMipmaps(const PixelData& src, const MipMap
 	io.setMipmapGeneration(true);
 	io.setNormalMap(options.IsNormalMap);
 	io.setNormalizeMipmaps(options.NormalizeMipmaps);
-	io.setWrapMode(toNVTTWrapMode(options.WrapMode));
+	io.setWrapMode(ToNvttWrapMode(options.WrapMode));
 
 	if(interimFormat == PF_RGBA32F)
 		io.setFormat(nvtt::InputFormat_RGBA_32F);

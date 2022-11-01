@@ -64,7 +64,7 @@ Event<void()> Platform::onMouseCaptureChanged;
 Platform::Pimpl* Platform::mData = B3DNew<Platform::Pimpl>();
 
 /** Checks if any of the windows of the current application are active. */
-bool isAppActive(Platform::Pimpl* data)
+bool IsAppActive(Platform::Pimpl* data)
 {
 	Lock lock(data->MSync);
 
@@ -72,7 +72,7 @@ bool isAppActive(Platform::Pimpl* data)
 }
 
 /** Enables or disables cursor clipping depending on the stored data. */
-void applyClipping(Platform::Pimpl* data)
+void ApplyClipping(Platform::Pimpl* data)
 {
 	if(data->MCursorClipping)
 	{
@@ -194,8 +194,8 @@ void Platform::ClipCursorToWindow(const RenderWindow& window)
 	mData->MCursorClipping = true;
 	mData->MClipWindow = (HWND)hwnd;
 
-	if(isAppActive(mData))
-		applyClipping(mData);
+	if(IsAppActive(mData))
+		ApplyClipping(mData);
 }
 
 void Platform::ClipCursorToRect(const Rect2I& screenRect)
@@ -208,8 +208,8 @@ void Platform::ClipCursorToRect(const Rect2I& screenRect)
 	mData->MClipRect.right = screenRect.X + screenRect.Width;
 	mData->MClipRect.bottom = screenRect.Y + screenRect.Height;
 
-	if(isAppActive(mData))
-		applyClipping(mData);
+	if(IsAppActive(mData))
+		ApplyClipping(mData);
 }
 
 void Platform::ClipCursorDisable()
@@ -217,8 +217,8 @@ void Platform::ClipCursorDisable()
 	mData->MCursorClipping = false;
 	mData->MClipWindow = 0;
 
-	if(isAppActive(mData))
-		applyClipping(mData);
+	if(IsAppActive(mData))
+		ApplyClipping(mData);
 }
 
 // TODO - Add support for animated custom cursor
@@ -525,7 +525,7 @@ void Platform::ShutDownInternal()
 }
 
 /**	Translate engine non client area to win32 non client area. */
-LRESULT translateNonClientAreaType(NonClientAreaBorderType type)
+LRESULT TranslateNonClientAreaType(NonClientAreaBorderType type)
 {
 	LRESULT dir = HTCLIENT;
 	switch(type)
@@ -560,7 +560,7 @@ LRESULT translateNonClientAreaType(NonClientAreaBorderType type)
 }
 
 /**	Method triggered whenever a mouse event happens. */
-void getMouseData(HWND hWnd, WPARAM wParam, LPARAM lParam, bool nonClient, Vector2I& mousePos, OSPointerButtonStates& btnStates)
+void GetMouseData(HWND hWnd, WPARAM wParam, LPARAM lParam, bool nonClient, Vector2I& mousePos, OSPointerButtonStates& btnStates)
 {
 	POINT clientPoint;
 
@@ -586,7 +586,7 @@ void getMouseData(HWND hWnd, WPARAM wParam, LPARAM lParam, bool nonClient, Vecto
  * @param[in]	virtualKeyCode	Virtual key code to try to translate to a command.
  * @param[out]	command			Input command. Only valid if function returns true.
  */
-bool getCommand(unsigned int virtualKeyCode, InputCommandType& command)
+bool GetCommand(unsigned int virtualKeyCode, InputCommandType& command)
 {
 	bool isShiftPressed = GetAsyncKeyState(VK_SHIFT);
 
@@ -661,7 +661,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 					mData->MIsActive = true;
 				}
 
-				applyClipping(mData);
+				ApplyClipping(mData);
 				break;
 			case WA_INACTIVE:
 				{
@@ -792,7 +792,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 			for(auto area : resizeAreasPerWindow)
 			{
 				if(area.Area.Contains(mousePosInt))
-					return translateNonClientAreaType(area.Type);
+					return TranslateNonClientAreaType(area.Type);
 			}
 
 			Vector<Rect2I>& moveAreasPerWindow = iterFind->second.MoveAreas;
@@ -837,7 +837,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 			Vector2I intMousePos;
 			OSPointerButtonStates btnStates;
 
-			getMouseData(hWnd, wParam, lParam, false, intMousePos, btnStates);
+			GetMouseData(hWnd, wParam, lParam, false, intMousePos, btnStates);
 
 			if(!onCursorButtonReleased.Empty())
 				onCursorButtonReleased(intMousePos, OSMouseButton::Left, btnStates);
@@ -851,7 +851,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 			Vector2I intMousePos;
 			OSPointerButtonStates btnStates;
 
-			getMouseData(hWnd, wParam, lParam, false, intMousePos, btnStates);
+			GetMouseData(hWnd, wParam, lParam, false, intMousePos, btnStates);
 
 			if(!onCursorButtonReleased.Empty())
 				onCursorButtonReleased(intMousePos, OSMouseButton::Middle, btnStates);
@@ -865,7 +865,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 			Vector2I intMousePos;
 			OSPointerButtonStates btnStates;
 
-			getMouseData(hWnd, wParam, lParam, false, intMousePos, btnStates);
+			GetMouseData(hWnd, wParam, lParam, false, intMousePos, btnStates);
 
 			if(!onCursorButtonReleased.Empty())
 				onCursorButtonReleased(intMousePos, OSMouseButton::Right, btnStates);
@@ -879,7 +879,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 			Vector2I intMousePos;
 			OSPointerButtonStates btnStates;
 
-			getMouseData(hWnd, wParam, lParam, false, intMousePos, btnStates);
+			GetMouseData(hWnd, wParam, lParam, false, intMousePos, btnStates);
 
 			if(!onCursorButtonPressed.Empty())
 				onCursorButtonPressed(intMousePos, OSMouseButton::Left, btnStates);
@@ -892,7 +892,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 			Vector2I intMousePos;
 			OSPointerButtonStates btnStates;
 
-			getMouseData(hWnd, wParam, lParam, false, intMousePos, btnStates);
+			GetMouseData(hWnd, wParam, lParam, false, intMousePos, btnStates);
 
 			if(!onCursorButtonPressed.Empty())
 				onCursorButtonPressed(intMousePos, OSMouseButton::Middle, btnStates);
@@ -905,7 +905,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 			Vector2I intMousePos;
 			OSPointerButtonStates btnStates;
 
-			getMouseData(hWnd, wParam, lParam, false, intMousePos, btnStates);
+			GetMouseData(hWnd, wParam, lParam, false, intMousePos, btnStates);
 
 			if(!onCursorButtonPressed.Empty())
 				onCursorButtonPressed(intMousePos, OSMouseButton::Right, btnStates);
@@ -916,7 +916,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 			Vector2I intMousePos;
 			OSPointerButtonStates btnStates;
 
-			getMouseData(hWnd, wParam, lParam, false, intMousePos, btnStates);
+			GetMouseData(hWnd, wParam, lParam, false, intMousePos, btnStates);
 
 			if(!onCursorDoubleClick.Empty())
 				onCursorDoubleClick(intMousePos, btnStates);
@@ -940,7 +940,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 			Vector2I intMousePos;
 			OSPointerButtonStates btnStates;
 
-			getMouseData(hWnd, wParam, lParam, uMsg == WM_NCMOUSEMOVE, intMousePos, btnStates);
+			GetMouseData(hWnd, wParam, lParam, uMsg == WM_NCMOUSEMOVE, intMousePos, btnStates);
 
 			if(!onCursorMoved.Empty())
 				onCursorMoved(intMousePos, btnStates);
@@ -961,7 +961,7 @@ LRESULT CALLBACK Win32Platform::Win32WndProcInternal(HWND hWnd, UINT uMsg, WPARA
 	case WM_KEYDOWN:
 		{
 			InputCommandType command = InputCommandType::Backspace;
-			if(getCommand((unsigned int)wParam, command))
+			if(GetCommand((unsigned int)wParam, command))
 			{
 				if(!onInputCommand.Empty())
 					onInputCommand(command);

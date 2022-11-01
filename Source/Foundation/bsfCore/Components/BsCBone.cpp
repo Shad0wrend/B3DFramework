@@ -33,13 +33,13 @@ void CBone::SetBoneName(const String& name)
 	mBoneName = name;
 
 	if(mParent != nullptr)
-		mParent->NotifyBoneChangedInternal(static_object_cast<CBone>(GetHandle()));
+		mParent->NotifyBoneChangedInternal(B3DStaticGameObjectCast<CBone>(GetHandle()));
 }
 
 void CBone::OnDestroyed()
 {
 	if(mParent != nullptr)
-		mParent->RemoveBoneInternal(static_object_cast<CBone>(GetHandle()));
+		mParent->RemoveBoneInternal(B3DStaticGameObjectCast<CBone>(GetHandle()));
 
 	mParent = nullptr;
 }
@@ -47,7 +47,7 @@ void CBone::OnDestroyed()
 void CBone::OnDisabled()
 {
 	if(mParent != nullptr)
-		mParent->RemoveBoneInternal(static_object_cast<CBone>(GetHandle()));
+		mParent->RemoveBoneInternal(B3DStaticGameObjectCast<CBone>(GetHandle()));
 
 	mParent = nullptr;
 }
@@ -96,10 +96,10 @@ void CBone::SetParentInternal(const HAnimation& animation, bool isInternal)
 	if(!isInternal)
 	{
 		if(mParent != nullptr)
-			mParent->RemoveBoneInternal(static_object_cast<CBone>(GetHandle()));
+			mParent->RemoveBoneInternal(B3DStaticGameObjectCast<CBone>(GetHandle()));
 
 		if(animation != nullptr)
-			animation->AddBoneInternal(static_object_cast<CBone>(GetHandle()));
+			animation->AddBoneInternal(B3DStaticGameObjectCast<CBone>(GetHandle()));
 	}
 
 	mParent = animation;

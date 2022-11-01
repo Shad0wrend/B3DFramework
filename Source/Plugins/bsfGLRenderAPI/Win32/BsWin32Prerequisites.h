@@ -18,7 +18,7 @@ namespace bs
 		class Win32RenderWindow;
 
 		/**	Retrieves last Windows API error and returns a description of it. */
-		String translateWGLError();
+		String TranslateWglError();
 
 		/** @} */
 	} // namespace ct

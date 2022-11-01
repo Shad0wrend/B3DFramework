@@ -5,13 +5,13 @@
 using namespace bs;
 
 template <class T>
-void addToVector(const T& val, Vector<float>& output)
+void AddToVector(const T& val, Vector<float>& output)
 {
 	output.push_back(val);
 }
 
 template <>
-void addToVector(const Vector3& val, Vector<float>& output)
+void AddToVector(const Vector3& val, Vector<float>& output)
 {
 	output.push_back(val.X);
 	output.push_back(val.Y);
@@ -19,14 +19,14 @@ void addToVector(const Vector3& val, Vector<float>& output)
 }
 
 template <>
-void addToVector(const Vector2& val, Vector<float>& output)
+void AddToVector(const Vector2& val, Vector<float>& output)
 {
 	output.push_back(val.X);
 	output.push_back(val.Y);
 }
 
 template <>
-void addToVector(const Color& val, Vector<float>& output)
+void AddToVector(const Color& val, Vector<float>& output)
 {
 	output.push_back(val.R);
 	output.push_back(val.G);
@@ -51,10 +51,10 @@ LookupTable TColorDistribution<T>::ToLookupTable(u32 numSamples, bool ignoreRang
 	case PDT_Constant:
 	case PDT_RandomRange:
 		{
-			addToVector(GetMinConstant(), values);
+			AddToVector(GetMinConstant(), values);
 
 			if(useRange)
-				addToVector(GetMaxConstant(), values);
+				AddToVector(GetMaxConstant(), values);
 		}
 		break;
 	case PDT_Curve:
@@ -78,10 +78,10 @@ LookupTable TColorDistribution<T>::ToLookupTable(u32 numSamples, bool ignoreRang
 			float t = minT;
 			for(u32 i = 0; i < numSamples; i++)
 			{
-				addToVector(impl::TGradientHelper<typename T::ColorType>::FromInternalColor(mMinGradient.Evaluate(t)), values);
+				AddToVector(impl::TGradientHelper<typename T::ColorType>::FromInternalColor(mMinGradient.Evaluate(t)), values);
 
 				if(useRange)
-					addToVector(impl::TGradientHelper<typename T::ColorType>::FromInternalColor(mMaxGradient.Evaluate(t)), values);
+					AddToVector(impl::TGradientHelper<typename T::ColorType>::FromInternalColor(mMaxGradient.Evaluate(t)), values);
 
 				t += sampleInterval;
 			}
@@ -110,10 +110,10 @@ LookupTable TDistribution<T>::ToLookupTable(u32 numSamples, bool ignoreRange) co
 	default:
 	case PDT_Constant:
 	case PDT_RandomRange:
-		addToVector(GetMinConstant(), values);
+		AddToVector(GetMinConstant(), values);
 
 		if(useRange)
-			addToVector(GetMaxConstant(), values);
+			AddToVector(GetMaxConstant(), values);
 		break;
 	case PDT_Curve:
 	case PDT_RandomCurveRange:
@@ -137,12 +137,12 @@ LookupTable TDistribution<T>::ToLookupTable(u32 numSamples, bool ignoreRange) co
 			for(u32 i = 0; i < numSamples; i++)
 			{
 				T value = mMinCurve.Evaluate(t);
-				addToVector(value, values);
+				AddToVector(value, values);
 
 				if(useRange)
 				{
 					value = mMaxCurve.Evaluate(t);
-					addToVector(value, values);
+					AddToVector(value, values);
 				}
 
 				t += sampleInterval;

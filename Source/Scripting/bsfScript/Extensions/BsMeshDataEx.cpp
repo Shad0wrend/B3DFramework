@@ -112,7 +112,7 @@ struct TVertexDataAccessor<(int)VertexLayout::BoneWeights>
 };
 
 template <int Semantic, class TNative>
-Vector<TNative> getVertexDataArray(const SPtr<RendererMeshData>& meshData)
+Vector<TNative> GetVertexDataArray(const SPtr<RendererMeshData>& meshData)
 {
 	u32 numElements = meshData->GetData()->GetNumVertices();
 	Vector<TNative> output(numElements);
@@ -122,7 +122,7 @@ Vector<TNative> getVertexDataArray(const SPtr<RendererMeshData>& meshData)
 }
 
 template <int Semantic, class TNative>
-void setVertexDataArray(const SPtr<RendererMeshData>& meshData, const Vector<TNative>& input)
+void SetVertexDataArray(const SPtr<RendererMeshData>& meshData, const Vector<TNative>& input)
 {
 	u32 numElements = meshData->GetData()->GetNumVertices();
 
@@ -136,72 +136,72 @@ SPtr<RendererMeshData> MeshDataEx::Create(u32 numVertices, u32 numIndices, Verte
 
 Vector<Vector3> MeshDataEx::GetPositions(const SPtr<RendererMeshData>& thisPtr)
 {
-	return getVertexDataArray<(int)VertexLayout::Position, Vector3>(thisPtr);
+	return GetVertexDataArray<(int)VertexLayout::Position, Vector3>(thisPtr);
 }
 
 void MeshDataEx::SetPositions(const SPtr<RendererMeshData>& thisPtr, const Vector<Vector3>& value)
 {
-	setVertexDataArray<(int)VertexLayout::Position>(thisPtr, value);
+	SetVertexDataArray<(int)VertexLayout::Position>(thisPtr, value);
 }
 
 Vector<Vector3> MeshDataEx::GetNormals(const SPtr<RendererMeshData>& thisPtr)
 {
-	return getVertexDataArray<(int)VertexLayout::Normal, Vector3>(thisPtr);
+	return GetVertexDataArray<(int)VertexLayout::Normal, Vector3>(thisPtr);
 }
 
 void MeshDataEx::SetNormals(const SPtr<RendererMeshData>& thisPtr, const Vector<Vector3>& value)
 {
-	setVertexDataArray<(int)VertexLayout::Normal>(thisPtr, value);
+	SetVertexDataArray<(int)VertexLayout::Normal>(thisPtr, value);
 }
 
 Vector<Vector4> MeshDataEx::GetTangents(const SPtr<RendererMeshData>& thisPtr)
 {
-	return getVertexDataArray<(int)VertexLayout::Tangent, Vector4>(thisPtr);
+	return GetVertexDataArray<(int)VertexLayout::Tangent, Vector4>(thisPtr);
 }
 
 void MeshDataEx::SetTangents(const SPtr<RendererMeshData>& thisPtr, const Vector<Vector4>& value)
 {
-	setVertexDataArray<(int)VertexLayout::Tangent>(thisPtr, value);
+	SetVertexDataArray<(int)VertexLayout::Tangent>(thisPtr, value);
 }
 
 Vector<Color> MeshDataEx::GetColors(const SPtr<RendererMeshData>& thisPtr)
 {
-	return getVertexDataArray<(int)VertexLayout::Color, Color>(thisPtr);
+	return GetVertexDataArray<(int)VertexLayout::Color, Color>(thisPtr);
 }
 
 void MeshDataEx::SetColors(const SPtr<RendererMeshData>& thisPtr, const Vector<Color>& value)
 {
-	setVertexDataArray<(int)VertexLayout::Color>(thisPtr, value);
+	SetVertexDataArray<(int)VertexLayout::Color>(thisPtr, value);
 }
 
 Vector<Vector2> MeshDataEx::GetUV0(const SPtr<RendererMeshData>& thisPtr)
 {
-	return getVertexDataArray<(int)VertexLayout::UV0, Vector2>(thisPtr);
+	return GetVertexDataArray<(int)VertexLayout::UV0, Vector2>(thisPtr);
 }
 
 void MeshDataEx::SetUV0(const SPtr<RendererMeshData>& thisPtr, const Vector<Vector2>& value)
 {
-	setVertexDataArray<(int)VertexLayout::UV0>(thisPtr, value);
+	SetVertexDataArray<(int)VertexLayout::UV0>(thisPtr, value);
 }
 
 Vector<Vector2> MeshDataEx::GetUV1(const SPtr<RendererMeshData>& thisPtr)
 {
-	return getVertexDataArray<(int)VertexLayout::UV1, Vector2>(thisPtr);
+	return GetVertexDataArray<(int)VertexLayout::UV1, Vector2>(thisPtr);
 }
 
 void MeshDataEx::SetUV1(const SPtr<RendererMeshData>& thisPtr, const Vector<Vector2>& value)
 {
-	setVertexDataArray<(int)VertexLayout::UV1>(thisPtr, value);
+	SetVertexDataArray<(int)VertexLayout::UV1>(thisPtr, value);
 }
 
 Vector<BoneWeight> MeshDataEx::GetBoneWeights(const SPtr<RendererMeshData>& thisPtr)
 {
-	return getVertexDataArray<(int)VertexLayout::BoneWeights, BoneWeight>(thisPtr);
+	return GetVertexDataArray<(int)VertexLayout::BoneWeights, BoneWeight>(thisPtr);
 }
 
 void MeshDataEx::SetBoneWeights(const SPtr<RendererMeshData>& thisPtr, const Vector<BoneWeight>& value)
 {
-	setVertexDataArray<(int)VertexLayout::BoneWeights>(thisPtr, value);
+	SetVertexDataArray<(int)VertexLayout::BoneWeights>(thisPtr, value);
 }
 
 Vector<u32> MeshDataEx::GetIndices(const SPtr<RendererMeshData>& thisPtr)

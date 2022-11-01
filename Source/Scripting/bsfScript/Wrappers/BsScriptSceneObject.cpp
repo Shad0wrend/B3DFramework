@@ -446,5 +446,5 @@ void ScriptSceneObject::NotifyDestroyedInternal()
 
 void ScriptSceneObject::SetNativeHandle(const HGameObject& gameObject)
 {
-	mSceneObject = static_object_cast<SceneObject>(gameObject);
+	mSceneObject = B3DStaticGameObjectCast<SceneObject>(gameObject);
 }

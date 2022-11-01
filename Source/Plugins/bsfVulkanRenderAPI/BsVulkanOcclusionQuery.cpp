@@ -44,7 +44,7 @@ void VulkanOcclusionQuery::Begin(const SPtr<CommandBuffer>& cb)
 	if(cb != nullptr)
 		vulkanCB = static_cast<VulkanCommandBuffer*>(cb.get());
 	else
-		vulkanCB = static_cast<VulkanCommandBuffer*>(gVulkanRenderAPI().GetMainCommandBufferInternal());
+		vulkanCB = static_cast<VulkanCommandBuffer*>(GetVulkanRenderAPI().GetMainCommandBufferInternal());
 
 	VulkanCmdBuffer* internalCB = vulkanCB->GetInternal();
 	mQueries.push_back(queryPool.BeginOcclusionQuery(internalCB, !mBinary));
@@ -72,7 +72,7 @@ void VulkanOcclusionQuery::End(const SPtr<CommandBuffer>& cb)
 	if(cb != nullptr)
 		vulkanCB = static_cast<VulkanCommandBuffer*>(cb.get());
 	else
-		vulkanCB = static_cast<VulkanCommandBuffer*>(gVulkanRenderAPI().GetMainCommandBufferInternal());
+		vulkanCB = static_cast<VulkanCommandBuffer*>(GetVulkanRenderAPI().GetMainCommandBufferInternal());
 
 	VulkanQueryPool& queryPool = mDevice.GetQueryPool();
 	VulkanCmdBuffer* internalCB = vulkanCB->GetInternal();

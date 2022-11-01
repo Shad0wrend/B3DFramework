@@ -96,7 +96,7 @@ void ScriptCReflectionProbe::InternalSetCustomTexture(ScriptCReflectionProbe* th
 	ScriptRRefBase* scripttexture;
 	scripttexture = ScriptRRefBase::ToNative(texture);
 	if(scripttexture != nullptr)
-		tmptexture = static_resource_cast<Texture>(scripttexture->GetHandle());
+		tmptexture = B3DStaticResourceCast<Texture>(scripttexture->GetHandle());
 	thisPtr->GetHandle()->SetCustomTexture(tmptexture);
 }
 

@@ -1,7 +1,7 @@
 %{
 #include "BsParserFX.h"
 
-#define YY_USER_ACTION yylloc->first_column = yycolumn + 1; yylloc->first_line = yylineno + 1; yycolumn += (int)yyleng; yylloc->filename = getCurrentFilename(yyextra);
+#define YY_USER_ACTION yylloc->first_column = yycolumn + 1; yylloc->first_line = yylineno + 1; yycolumn += (int)yyleng; yylloc->filename = GetCurrentFilename(yyextra);
 #define YY_USER_INIT yylineno = 0; yycolumn = 0;
 %}
 
@@ -44,7 +44,7 @@ DEFINE_EXPR		[^\r\n]*
 {INTEGER}       { yylval->IntValue = atoi(yytext); return TOKEN_INTEGER; }
 {INTEGER_16}    { yylval->IntValue = (int)strtol(yytext, 0, 0); return TOKEN_INTEGER; }
 {FLOAT}			{ yylval->FloatValue = (float)atof(yytext); return TOKEN_FLOAT; }
-{STRING}		{ yylval->StrValue = mmalloc_strdup(yyextra->MemContext, yytext); return TOKEN_STRING; }
+{STRING}		{ yylval->StrValue = MmallocStrdup(yyextra->MemContext, yytext); return TOKEN_STRING; }
 true			{ yylval->IntValue = 1; return TOKEN_BOOLEAN; }
 false			{ yylval->IntValue = 0; return TOKEN_BOOLEAN; }
 
@@ -181,7 +181,7 @@ show			{ return TOKEN_SHOW; }
 <INCLUDE>{WS}			{ /* Skip blank */ }
 <INCLUDE>{STRING}		{
 	int size = 0;
-	char* includeBuffer = includePush(yyextra, yytext, yylineno, yycolumn, &size);
+	char* includeBuffer = IncludePush(yyextra, yytext, yylineno, yycolumn, &size);
 	if(!includeBuffer)
 		yyterminate();
 
@@ -203,34 +203,34 @@ show			{ return TOKEN_SHOW; }
 		yyterminate();
 
 	yypop_buffer_state(yyscanner);
-	includePop(yyextra);
+	IncludePop(yyextra);
 }
 
 #define							{ BEGIN(DEFINE_COND); }
 <DEFINE_COND>{SPACE}			{ /* Skip blank */ }
-<DEFINE_COND>{IDENTIFIER}		{ addDefine(yyextra, yytext); BEGIN(DEFINE_COND_EXPR); }
+<DEFINE_COND>{IDENTIFIER}		{ AddDefine(yyextra, yytext); BEGIN(DEFINE_COND_EXPR); }
 <DEFINE_COND>{ENDLINE}			{ BEGIN(INITIAL); }
 <DEFINE_COND>.					{ return yytext[0]; }
 
-<DEFINE_COND_EXPR>{DEFINE_EXPR}		{ addDefineExpr(yyextra, yytext); BEGIN(INITIAL); }
+<DEFINE_COND_EXPR>{DEFINE_EXPR}		{ AddDefineExpr(yyextra, yytext); BEGIN(INITIAL); }
 <DEFINE_COND_EXPR>{ENDLINE}			{ BEGIN(INITIAL); }
 
 #undef							{ BEGIN(UNDEF_COND); }
 <UNDEF_COND>{WS}				{ /* Skip blank */ }
-<UNDEF_COND>{IDENTIFIER}		{ removeDefine(yyextra, yytext); BEGIN(INITIAL); }
+<UNDEF_COND>{IDENTIFIER}		{ RemoveDefine(yyextra, yytext); BEGIN(INITIAL); }
 <UNDEF_COND>.					{ return yytext[0]; }
 
 #if								{ BEGIN(CONDITIONAL_IF); }
-<CONDITIONAL_IF>{IDENTIFIER}	{ pushConditional(yyextra, yytext); }
-<CONDITIONAL_IF>==				{ setConditionalOp(yyextra, CO_Equals); }
-<CONDITIONAL_IF>!=				{ setConditionalOp(yyextra, CO_NotEquals); }
-<CONDITIONAL_IF>>				{ setConditionalOp(yyextra, CO_Greater); }
-<CONDITIONAL_IF><				{ setConditionalOp(yyextra, CO_Lesser); }
-<CONDITIONAL_IF>>=				{ setConditionalOp(yyextra, CO_GreaterEqual); }
-<CONDITIONAL_IF><=				{ setConditionalOp(yyextra, CO_LesserEqual); }
-<CONDITIONAL_IF>{INTEGER}		{ setConditionalVal(yyextra, yytext); }
+<CONDITIONAL_IF>{IDENTIFIER}	{ PushConditional(yyextra, yytext); }
+<CONDITIONAL_IF>==				{ SetConditionalOp(yyextra, CO_Equals); }
+<CONDITIONAL_IF>!=				{ SetConditionalOp(yyextra, CO_NotEquals); }
+<CONDITIONAL_IF>>				{ SetConditionalOp(yyextra, CO_Greater); }
+<CONDITIONAL_IF><				{ SetConditionalOp(yyextra, CO_Lesser); }
+<CONDITIONAL_IF>>=				{ SetConditionalOp(yyextra, CO_GreaterEqual); }
+<CONDITIONAL_IF><=				{ SetConditionalOp(yyextra, CO_LesserEqual); }
+<CONDITIONAL_IF>{INTEGER}		{ SetConditionalVal(yyextra, yytext); }
 <CONDITIONAL_IF>{ENDLINE}		{ 
-	int isEnabled = evalConditional(yyextra);
+	int isEnabled = EvalConditional(yyextra);
 	if(!isEnabled)
 		BEGIN(CONDITIONAL_IGNORE);
 	else
@@ -242,7 +242,7 @@ show			{ return TOKEN_SHOW; }
 #ifdef							{ BEGIN(CONDITIONAL_IFDEF); }
 <CONDITIONAL_IFDEF>{WS}			{ /* Skip blank */ }
 <CONDITIONAL_IFDEF>{IDENTIFIER}	{ 
-	int isEnabled = pushConditionalDef(yyextra, hasDefine(yyextra, yytext));
+	int isEnabled = PushConditionalDef(yyextra, HasDefine(yyextra, yytext));
 	if(!isEnabled)
 		BEGIN(CONDITIONAL_IGNORE);
 	else
@@ -253,7 +253,7 @@ show			{ return TOKEN_SHOW; }
 #ifndef								{ BEGIN(CONDITIONAL_IFNDEF); }
 <CONDITIONAL_IFNDEF>{WS}			{ /* Skip blank */ }
 <CONDITIONAL_IFNDEF>{IDENTIFIER}	{ 
-	int isEnabled = pushConditionalDef(yyextra, !hasDefine(yyextra, yytext));
+	int isEnabled = PushConditionalDef(yyextra, !HasDefine(yyextra, yytext));
 	if(!isEnabled)
 		BEGIN(CONDITIONAL_IGNORE);
 	else
@@ -262,38 +262,38 @@ show			{ return TOKEN_SHOW; }
 <CONDITIONAL_IFNDEF>.				{ return yytext[0]; }
 
 #else							{ 
-	if(!switchConditional(yyextra))
+	if(!SwitchConditional(yyextra))
 		BEGIN(CONDITIONAL_IGNORE); 
 }
 #elif							{ BEGIN(CONDITIONAL_IGNORE); }
 
-#endif							{ popConditional(yyextra); }
+#endif							{ PopConditional(yyextra); }
 
 <CONDITIONAL_IGNORE>{WS}		{ /* Skip */ }
-<CONDITIONAL_IGNORE>#if			{ pushConditional(yyextra, 0); }
-<CONDITIONAL_IGNORE>#ifdef		{ pushConditional(yyextra, 0); }
-<CONDITIONAL_IGNORE>#ifndef		{ pushConditional(yyextra, 0); }
+<CONDITIONAL_IGNORE>#if			{ PushConditional(yyextra, 0); }
+<CONDITIONAL_IGNORE>#ifdef		{ PushConditional(yyextra, 0); }
+<CONDITIONAL_IGNORE>#ifndef		{ PushConditional(yyextra, 0); }
 <CONDITIONAL_IGNORE>#else		{ 
-	if(switchConditional(yyextra))
+	if(SwitchConditional(yyextra))
 		BEGIN(INITIAL);
 }
 <CONDITIONAL_IGNORE>#elif		{ BEGIN(CONDITIONAL_ELIF); }
 <CONDITIONAL_IGNORE>#endif		{ 
-	if(popConditional(yyextra))
+	if(PopConditional(yyextra))
 		BEGIN(INITIAL);
 }
 <CONDITIONAL_IGNORE>.			{ /* Skip */ }
 
-<CONDITIONAL_ELIF>{IDENTIFIER}	{ setConditional(yyextra, yytext); }
-<CONDITIONAL_ELIF>==			{ setConditionalOp(yyextra, CO_Equals); }
-<CONDITIONAL_ELIF>!=			{ setConditionalOp(yyextra, CO_NotEquals); }
-<CONDITIONAL_ELIF>>				{ setConditionalOp(yyextra, CO_Greater); }
-<CONDITIONAL_ELIF><				{ setConditionalOp(yyextra, CO_Lesser); }
-<CONDITIONAL_ELIF>>=			{ setConditionalOp(yyextra, CO_GreaterEqual); }
-<CONDITIONAL_ELIF><=			{ setConditionalOp(yyextra, CO_LesserEqual); }
-<CONDITIONAL_ELIF>{INTEGER}		{ setConditionalVal(yyextra, yytext); }
+<CONDITIONAL_ELIF>{IDENTIFIER}	{ SetConditional(yyextra, yytext); }
+<CONDITIONAL_ELIF>==			{ SetConditionalOp(yyextra, CO_Equals); }
+<CONDITIONAL_ELIF>!=			{ SetConditionalOp(yyextra, CO_NotEquals); }
+<CONDITIONAL_ELIF>>				{ SetConditionalOp(yyextra, CO_Greater); }
+<CONDITIONAL_ELIF><				{ SetConditionalOp(yyextra, CO_Lesser); }
+<CONDITIONAL_ELIF>>=			{ SetConditionalOp(yyextra, CO_GreaterEqual); }
+<CONDITIONAL_ELIF><=			{ SetConditionalOp(yyextra, CO_LesserEqual); }
+<CONDITIONAL_ELIF>{INTEGER}		{ SetConditionalVal(yyextra, yytext); }
 <CONDITIONAL_ELIF>{ENDLINE}		{ 
-	int isEnabled = evalConditional(yyextra);
+	int isEnabled = EvalConditional(yyextra);
 	if(!isEnabled)
 		BEGIN(CONDITIONAL_IGNORE);
 	else
@@ -308,11 +308,11 @@ code			{ BEGIN(CODEBLOCK_HEADER); return TOKEN_CODE; }
 	/* Track when the code block begins, insert all code block characters into our own buffer, record a sequential index */
 	/* of all code blocks in the text, and track bracket open/closed state so we know when we're done with the code block. */
 	/* And finally output a sequential code block index to the parser (it shouldn't be aware of anything else in the block). */
-<CODEBLOCK_HEADER>\{	{ BEGIN(CODEBLOCK); beginCodeBlock(yyextra, RCT_CodeBlock); yyextra->NumOpenBrackets = 1; return yytext[0]; }
+<CODEBLOCK_HEADER>\{	{ BEGIN(CODEBLOCK); BeginCodeBlock(yyextra, RCT_CodeBlock); yyextra->NumOpenBrackets = 1; return yytext[0]; }
 <CODEBLOCK_HEADER>{WS}	{ /* Skip blank */ }
 <CODEBLOCK_HEADER>.		{ return yytext[0]; }
 
-<CODEBLOCK>\{			{ yyextra->NumOpenBrackets++; appendCodeBlock(yyextra, RCT_CodeBlock, yytext, 1); }
+<CODEBLOCK>\{			{ yyextra->NumOpenBrackets++; AppendCodeBlock(yyextra, RCT_CodeBlock, yytext, 1); }
 <CODEBLOCK>\}			{ 
 	yyextra->NumOpenBrackets--; 
 
@@ -322,16 +322,16 @@ code			{ BEGIN(CODEBLOCK_HEADER); return TOKEN_CODE; }
 		unput('0');
 	}
 	else
-		appendCodeBlock(yyextra, RCT_CodeBlock, yytext, 1);
+		AppendCodeBlock(yyextra, RCT_CodeBlock, yytext, 1);
 }
-<CODEBLOCK>.|{SINGLEWS}		{ appendCodeBlock(yyextra, RCT_CodeBlock, yytext, 1); }
+<CODEBLOCK>.|{SINGLEWS}		{ AppendCodeBlock(yyextra, RCT_CodeBlock, yytext, 1); }
 
 	/* Logic for manually inserting "Index = codeBlockIndex;". We insert arbitrary numbers which allows us to sequentially */
 	/* output all the tokens we need. We use only single-character values so we don't override anything in the text buffer */
 	/* (since the starting value was also a single character "{"). */
 <CODEBLOCK_END>0	{ unput('1'); return TOKEN_INDEX; }
 <CODEBLOCK_END>1	{ unput('2'); return '='; }
-<CODEBLOCK_END>2	{ yylval->IntValue = getCodeBlockIndex(yyextra, RCT_CodeBlock); unput('3'); return TOKEN_INTEGER; }
+<CODEBLOCK_END>2	{ yylval->IntValue = GetCodeBlockIndex(yyextra, RCT_CodeBlock); unput('3'); return TOKEN_INTEGER; }
 <CODEBLOCK_END>3	{ unput('4'); return ';'; }
 <CODEBLOCK_END>4	{ BEGIN(INITIAL); return '}'; }
 <CODEBLOCK_END>.|{WS}	{ /* Never reached */ }
@@ -342,12 +342,12 @@ subshader				{ BEGIN(SUBSHADER_HEADER); return TOKEN_SUBSHADER; }
 	/* Track when the subshader begins, insert all subshader characters into our own buffer, record a sequential index */
 	/* of all subshaders in the text, and track bracket open/closed state so we know when we're done with the subshader. */
 	/* And finally output a sequential subshader index to the parser (it shouldn't be aware of anything else in the block). */
-<SUBSHADER_HEADER>\{				{ BEGIN(SUBSHADER_BODY); beginCodeBlock(yyextra, RCT_SubShaderBlock); yyextra->NumOpenBrackets = 1; return yytext[0]; }
+<SUBSHADER_HEADER>\{				{ BEGIN(SUBSHADER_BODY); BeginCodeBlock(yyextra, RCT_SubShaderBlock); yyextra->NumOpenBrackets = 1; return yytext[0]; }
 <SUBSHADER_HEADER>{WS}				{ /* Skip blank */ }
-<SUBSHADER_HEADER>{IDENTIFIER}		{ yylval->StrValue = mmalloc_strdup(yyextra->MemContext, yytext); return TOKEN_IDENTIFIER; }
+<SUBSHADER_HEADER>{IDENTIFIER}		{ yylval->StrValue = MmallocStrdup(yyextra->MemContext, yytext); return TOKEN_IDENTIFIER; }
 <SUBSHADER_HEADER>.					{ return yytext[0]; }
 
-<SUBSHADER_BODY>\{			{ yyextra->NumOpenBrackets++; appendCodeBlock(yyextra, RCT_SubShaderBlock, yytext, 1); }
+<SUBSHADER_BODY>\{			{ yyextra->NumOpenBrackets++; AppendCodeBlock(yyextra, RCT_SubShaderBlock, yytext, 1); }
 <SUBSHADER_BODY>\}			{ 
 	yyextra->NumOpenBrackets--; 
 
@@ -357,23 +357,23 @@ subshader				{ BEGIN(SUBSHADER_HEADER); return TOKEN_SUBSHADER; }
 		unput('0');
 	}
 	else
-		appendCodeBlock(yyextra, RCT_SubShaderBlock, yytext, 1);
+		AppendCodeBlock(yyextra, RCT_SubShaderBlock, yytext, 1);
 }
-<SUBSHADER_BODY>.|{SINGLEWS}	{ appendCodeBlock(yyextra, RCT_SubShaderBlock, yytext, 1); }
+<SUBSHADER_BODY>.|{SINGLEWS}	{ AppendCodeBlock(yyextra, RCT_SubShaderBlock, yytext, 1); }
 
 	/* Logic for manually inserting "Index = subshaderIndex;". We insert arbitrary numbers which allows us to sequentially */
 	/* output all the tokens we need. We use only single-character values so we don't override anything in the text buffer */
 	/* (since the starting value was also a single character "{"). */
 <SUBSHADER_END>0	{ unput('1'); return TOKEN_INDEX; }
 <SUBSHADER_END>1	{ unput('2'); return '='; }
-<SUBSHADER_END>2	{ yylval->IntValue = getCodeBlockIndex(yyextra, RCT_SubShaderBlock); unput('3'); return TOKEN_INTEGER; }
+<SUBSHADER_END>2	{ yylval->IntValue = GetCodeBlockIndex(yyextra, RCT_SubShaderBlock); unput('3'); return TOKEN_INTEGER; }
 <SUBSHADER_END>3	{ unput('4'); return ';'; }
 <SUBSHADER_END>4	{ BEGIN(INITIAL); return '}'; }
 <SUBSHADER_END>.|{WS}	{ /* Never reached */ }
 
 	/* Catch all rules */
 {COMMENT}			{ }
-{IDENTIFIER}		{ yylval->StrValue = mmalloc_strdup(yyextra->MemContext, yytext); return TOKEN_IDENTIFIER; }
+{IDENTIFIER}		{ yylval->StrValue = MmallocStrdup(yyextra->MemContext, yytext); return TOKEN_IDENTIFIER; }
 .					{ return yytext[0]; }
 
 %%

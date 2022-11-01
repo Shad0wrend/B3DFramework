@@ -59,7 +59,7 @@ PFN_vkQueuePresentKHR vkQueuePresentKHR = nullptr;
 using namespace bs;
 using namespace bs::ct;
 
-VkBool32 debugMsgCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t srcObject, size_t location, int32_t msgCode, const char* pLayerPrefix, const char* pMsg, void* pUserData)
+static VkBool32 DebugMessageCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t srcObject, size_t location, int32_t msgCode, const char* pLayerPrefix, const char* pMsg, void* pUserData)
 {
 	StringStream message;
 
@@ -189,7 +189,7 @@ void VulkanRenderAPI::Initialize()
 	debugInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT;
 	debugInfo.pNext = nullptr;
 	debugInfo.flags = 0;
-	debugInfo.pfnCallback = (PFN_vkDebugReportCallbackEXT)debugMsgCallback;
+	debugInfo.pfnCallback = (PFN_vkDebugReportCallbackEXT)DebugMessageCallback;
 	debugInfo.flags = debugFlags;
 
 	result = vkCreateDebugReportCallbackEXT(mInstance, &debugInfo, nullptr, &mDebugCallback);

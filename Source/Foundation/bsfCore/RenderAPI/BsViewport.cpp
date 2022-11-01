@@ -143,12 +143,12 @@ SPtr<ct::CoreObject> Viewport::CreateCore() const
 
 CoreSyncData Viewport::SyncToCore(FrameAlloc* allocator)
 {
-	u32 size = csync_size(*this);
+	u32 size = CoreSyncGetSize(*this);
 
 	u8* buffer = allocator->Alloc(size);
 	Bitstream stream(buffer, size);
 
-	csync_write(*this, stream);
+	B3DCoreSyncWrite(*this, stream);
 
 	return CoreSyncData(buffer, size);
 }
@@ -224,6 +224,6 @@ u32 Viewport::GetTargetHeight() const
 void Viewport::SyncToCore(const CoreSyncData& data)
 {
 	Bitstream stream(data.GetBuffer(), data.GetBufferSize());
-	csync_read(*this, stream);
+	B3DCoreSyncRead(*this, stream);
 }
 }}

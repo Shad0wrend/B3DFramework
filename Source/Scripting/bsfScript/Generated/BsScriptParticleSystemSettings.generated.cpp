@@ -86,7 +86,7 @@ void ScriptParticleSystemSettings::InternalSetMaterial(ScriptParticleSystemSetti
 	ScriptRRefBase* scriptvalue;
 	scriptvalue = ScriptRRefBase::ToNative(value);
 	if(scriptvalue != nullptr)
-		tmpvalue = static_resource_cast<Material>(scriptvalue->GetHandle());
+		tmpvalue = B3DStaticResourceCast<Material>(scriptvalue->GetHandle());
 	thisPtr->GetInternal()->Material = tmpvalue;
 }
 
@@ -112,7 +112,7 @@ void ScriptParticleSystemSettings::InternalSetMesh(ScriptParticleSystemSettings*
 	ScriptRRefBase* scriptvalue;
 	scriptvalue = ScriptRRefBase::ToNative(value);
 	if(scriptvalue != nullptr)
-		tmpvalue = static_resource_cast<Mesh>(scriptvalue->GetHandle());
+		tmpvalue = B3DStaticResourceCast<Mesh>(scriptvalue->GetHandle());
 	thisPtr->GetInternal()->Mesh = tmpvalue;
 }
 

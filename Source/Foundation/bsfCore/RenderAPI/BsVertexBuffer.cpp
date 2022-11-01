@@ -7,7 +7,7 @@
 
 using namespace bs;
 
-void checkValidDesc(const VERTEX_BUFFER_DESC& desc)
+void CheckValidDesc(const VERTEX_BUFFER_DESC& desc)
 {
 	if(desc.VertexSize == 0)
 		BS_EXCEPT(InvalidParametersException, "Vertex buffer vertex size is not allowed to be zero.");
@@ -24,7 +24,7 @@ VertexBuffer::VertexBuffer(const VERTEX_BUFFER_DESC& desc)
 	: mProperties(desc.NumVerts, desc.VertexSize), mUsage(desc.Usage), mStreamOut(desc.StreamOut)
 {
 #if BS_DEBUG_MODE
-	checkValidDesc(desc);
+	CheckValidDesc(desc);
 #endif
 }
 
@@ -55,7 +55,7 @@ VertexBuffer::VertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags device
 	: HardwareBuffer(desc.VertexSize * desc.NumVerts, desc.Usage, deviceMask), mProperties(desc.NumVerts, desc.VertexSize)
 {
 #if BS_DEBUG_MODE
-	checkValidDesc(desc);
+	CheckValidDesc(desc);
 #endif
 }
 

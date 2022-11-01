@@ -51,7 +51,7 @@ __ControllerControllerCollisionInterop ScriptControllerControllerCollision::ToIn
 	MonoObject* tmpController;
 	ScriptComponentBase* scriptController = nullptr;
 	if(value.Controller)
-		scriptController = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Controller));
+		scriptController = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(B3DStaticGameObjectCast<Component>(value.Controller));
 	if(scriptController != nullptr)
 		tmpController = scriptController->GetManagedInstance();
 	else

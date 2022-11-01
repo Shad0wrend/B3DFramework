@@ -165,7 +165,7 @@ void Cursor::RestoreCursorIcon(CursorType type)
 		break;
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Invalid cursor type: " + toString((u32)type));
+	BS_EXCEPT(InvalidParametersException, "Invalid cursor type: " + ToString((u32)type));
 }
 
 void Cursor::UpdateCursorImage()

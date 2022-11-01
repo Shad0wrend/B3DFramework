@@ -36,7 +36,7 @@ CrashHandler::~CrashHandler()
  * 							called function and following address is its caller and so on.
  * @return					Number of functions in the call stack.
  */
-u32 win32_getRawStackTrace(CONTEXT context, u64 stackTrace[BS_MAX_STACKTRACE_DEPTH])
+u32 Win32GetRawStackTrace(CONTEXT context, u64 stackTrace[BS_MAX_STACKTRACE_DEPTH])
 {
 	HANDLE hProcess = GetCurrentProcess();
 	HANDLE hThread = GetCurrentThread();
@@ -91,10 +91,10 @@ u32 win32_getRawStackTrace(CONTEXT context, u64 stackTrace[BS_MAX_STACKTRACE_DEP
  * @param[in]	skip		Number of bottom-most call stack entries to skip.
  * @return					String containing the call stack with each function on its own line.
  */
-String win32_getStackTrace(CONTEXT context, u32 skip = 0)
+String Win32GetStackTrace(CONTEXT context, u32 skip = 0)
 {
 	u64 rawStackTrace[BS_MAX_STACKTRACE_DEPTH];
-	u32 numEntries = win32_getRawStackTrace(context, rawStackTrace);
+	u32 numEntries = Win32GetRawStackTrace(context, rawStackTrace);
 
 	numEntries = std::min((u32)BS_MAX_STACKTRACE_DEPTH, numEntries);
 
@@ -124,7 +124,7 @@ String win32_getStackTrace(CONTEXT context, u32 skip = 0)
 		IMAGEHLP_LINE64 lineData;
 		lineData.SizeOfStruct = sizeof(lineData);
 
-		String addressString = toString(funcAddress, 0, ' ', std::ios::hex);
+		String addressString = ToString(funcAddress, 0, ' ', std::ios::hex);
 
 		DWORD column;
 		if(SymGetLineFromAddr64(hProcess, funcAddress, &column, &lineData))
@@ -168,7 +168,7 @@ static GetModuleFileNameExType gGetModuleFileNameEx;
 static GetModuleInformationType gGetModuleInformation;
 
 /**	Dynamically load the PSAPI.dll and the required symbols, if not already loaded. */
-void win32_initPSAPI()
+void Win32InitPsapi()
 {
 	if(gPSAPILib != nullptr)
 		return;
@@ -181,7 +181,7 @@ void win32_initPSAPI()
 }
 
 /**	Unloads the PSAPI.dll if is loaded. */
-void win32_unloadPSAPI()
+void Win32UnloadPsapi()
 {
 	if(gPSAPILib == nullptr)
 		return;
@@ -197,7 +197,7 @@ static bool gSymbolsLoaded = false;
  * Loads symbols for all modules in the current process. Loaded symbols allow the stack walker to retrieve human
  * readable method, file, module names and other information.
  */
-void win32_loadSymbols()
+void Win32LoadSymbols()
 {
 	if(gSymbolsLoaded)
 		return;
@@ -275,9 +275,9 @@ void win32_loadSymbols()
 }
 
 /**	Converts an exception record into a human readable error message. */
-String win32_getExceptionMessage(EXCEPTION_RECORD* record)
+String Win32GetExceptionMessage(EXCEPTION_RECORD* record)
 {
-	String exceptionAddress = toString((u64)record->ExceptionAddress, 0, ' ', std::ios::hex);
+	String exceptionAddress = ToString((u64)record->ExceptionAddress, 0, ' ', std::ios::hex);
 
 	String format;
 	switch(record->ExceptionCode)
@@ -299,7 +299,7 @@ String win32_getExceptionMessage(EXCEPTION_RECORD* record)
 			else
 				format = "Unhandled exception at 0x{0}. Access violation.";
 
-			String violatedAddressStr = toString((u64)violatedAddress, 0, ' ', std::ios::hex);
+			String violatedAddressStr = ToString((u64)violatedAddress, 0, ' ', std::ios::hex);
 			return StringUtil::Format(format, exceptionAddress, violatedAddressStr);
 		}
 	case EXCEPTION_IN_PAGE_ERROR:
@@ -321,8 +321,8 @@ String win32_getExceptionMessage(EXCEPTION_RECORD* record)
 			else
 				format = "Unhandled exception at 0x{0}. Page fault.";
 
-			String violatedAddressStr = toString((u64)violatedAddress, 0, ' ', std::ios::hex);
-			String codeStr = toString((u64)code, 0, ' ', std::ios::hex);
+			String violatedAddressStr = ToString((u64)violatedAddress, 0, ' ', std::ios::hex);
+			String codeStr = ToString((u64)code, 0, ' ', std::ios::hex);
 			return StringUtil::Format(format, exceptionAddress, violatedAddressStr, codeStr);
 		}
 	case STATUS_ARRAY_BOUNDS_EXCEEDED:
@@ -394,7 +394,7 @@ String win32_getExceptionMessage(EXCEPTION_RECORD* record)
 		{
 			format = "Unhandled exception at 0x{0}. Code 0x{1}.";
 
-			String exceptionCode = toString((u32)record->ExceptionCode, 0, ' ', std::ios::hex);
+			String exceptionCode = ToString((u32)record->ExceptionCode, 0, ' ', std::ios::hex);
 			return StringUtil::Format(format, exceptionAddress, exceptionCode);
 		}
 	}
@@ -406,7 +406,7 @@ struct MiniDumpParams
 	EXCEPTION_POINTERS* ExceptionData;
 };
 
-DWORD CALLBACK win32_writeMiniDumpWorker(void* data)
+DWORD CALLBACK Win32WriteMiniDumpWorker(void* data)
 {
 	MiniDumpParams* params = (MiniDumpParams*)data;
 
@@ -428,13 +428,13 @@ DWORD CALLBACK win32_writeMiniDumpWorker(void* data)
 	return 0;
 }
 
-void win32_writeMiniDump(const Path& filePath, EXCEPTION_POINTERS* exceptionData)
+void Win32WriteMiniDump(const Path& filePath, EXCEPTION_POINTERS* exceptionData)
 {
 	MiniDumpParams param = { filePath, exceptionData };
 
 	// Write minidump on a second thread in order to preserve the current thread's call stack
 	DWORD threadId = 0;
-	HANDLE hThread = CreateThread(nullptr, 0, &win32_writeMiniDumpWorker, &param, 0, &threadId);
+	HANDLE hThread = CreateThread(nullptr, 0, &Win32WriteMiniDumpWorker, &param, 0, &threadId);
 
 	WaitForSingleObject(hThread, INFINITE);
 	CloseHandle(hThread);
@@ -445,7 +445,7 @@ struct CrashHandler::Data
 	Mutex Mutex;
 };
 
-void win32_popupErrorMessageBox(const WString& msg, const Path& folder)
+void Win32PopupErrorMessageBox(const WString& msg, const Path& folder)
 {
 	WString simpleErrorMessage = msg + L"\n\nFor more information check the crash report located at:\n " + UTF8::ToWide(folder.ToString());
 
@@ -477,8 +477,8 @@ void CrashHandler::ReportCrash(const String& type, const String& description, co
 
 	SaveCrashLog();
 
-	win32_writeMiniDump(GetCrashFolder() + String(sMiniDumpName), nullptr);
-	win32_popupErrorMessageBox(toWString(kSFatalErrorMsg), GetCrashFolder());
+	Win32WriteMiniDump(GetCrashFolder() + String(sMiniDumpName), nullptr);
+	Win32PopupErrorMessageBox(ToWString(kSFatalErrorMsg), GetCrashFolder());
 
 	DebugBreak();
 
@@ -498,10 +498,10 @@ int CrashHandler::ReportCrash(void* exceptionDataPtr) const
 	// Win32 debug methods are not thread safe
 	Lock lock(m->Mutex);
 
-	win32_initPSAPI();
-	win32_loadSymbols();
+	Win32InitPsapi();
+	Win32LoadSymbols();
 
-	LogErrorAndStackTrace(win32_getExceptionMessage(exceptionData->ExceptionRecord), win32_getStackTrace(*exceptionData->ContextRecord, 0));
+	LogErrorAndStackTrace(Win32GetExceptionMessage(exceptionData->ExceptionRecord), Win32GetStackTrace(*exceptionData->ContextRecord, 0));
 
 	if(mSettings.OnCrashPrintedToLog)
 	{
@@ -511,8 +511,8 @@ int CrashHandler::ReportCrash(void* exceptionDataPtr) const
 
 	SaveCrashLog();
 
-	win32_writeMiniDump(GetCrashFolder() + String(sMiniDumpName), exceptionData);
-	win32_popupErrorMessageBox(toWString(kSFatalErrorMsg), GetCrashFolder());
+	Win32WriteMiniDump(GetCrashFolder() + String(sMiniDumpName), exceptionData);
+	Win32PopupErrorMessageBox(ToWString(kSFatalErrorMsg), GetCrashFolder());
 
 	DebugBreak();
 
@@ -527,11 +527,11 @@ String CrashHandler::GetCrashTimestamp()
 	GetLocalTime(&systemTime);
 
 	String timeStamp = "{0}{1}{2}_{3}{4}";
-	String strYear = toString(systemTime.wYear, 4, '0');
-	String strMonth = toString(systemTime.wMonth, 2, '0');
-	String strDay = toString(systemTime.wDay, 2, '0');
-	String strHour = toString(systemTime.wHour, 2, '0');
-	String strMinute = toString(systemTime.wMinute, 2, '0');
+	String strYear = ToString(systemTime.wYear, 4, '0');
+	String strMonth = ToString(systemTime.wMonth, 2, '0');
+	String strDay = ToString(systemTime.wDay, 2, '0');
+	String strHour = ToString(systemTime.wHour, 2, '0');
+	String strMinute = ToString(systemTime.wMinute, 2, '0');
 	return StringUtil::Format(timeStamp, strYear, strMonth, strDay, strHour, strMinute);
 }
 
@@ -540,7 +540,7 @@ String CrashHandler::GetStackTrace()
 	CONTEXT context;
 	RtlCaptureContext(&context);
 
-	win32_initPSAPI();
-	win32_loadSymbols();
-	return win32_getStackTrace(context, 2);
+	Win32InitPsapi();
+	Win32LoadSymbols();
+	return Win32GetStackTrace(context, 2);
 }

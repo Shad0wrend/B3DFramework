@@ -19,10 +19,10 @@ namespace bs
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ManagedComponent")
 
 		/**	Returns a generic handle to the internal wrapped component. */
-		HGameObject GetNativeHandle() const { return static_object_cast<GameObject>(mComponent); }
+		HGameObject GetNativeHandle() const { return B3DStaticGameObjectCast<GameObject>(mComponent); }
 
 		/**	Sets the internal component this object wraps. */
-		void SetNativeHandle(const HGameObject& gameObject) { mComponent = static_object_cast<ManagedComponent>(gameObject); }
+		void SetNativeHandle(const HGameObject& gameObject) { mComponent = B3DStaticGameObjectCast<ManagedComponent>(gameObject); }
 
 		/**	Returns a handle to the internal wrapped component. */
 		const HManagedComponent& GetHandle() const { return mComponent; }

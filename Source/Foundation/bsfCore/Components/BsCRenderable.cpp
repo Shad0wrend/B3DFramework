@@ -47,7 +47,7 @@ void CRenderable::OnInitialized()
 	if(mAnimation != nullptr)
 	{
 		RegisterAnimationInternal(mAnimation);
-		mAnimation->RegisterRenderableInternal(static_object_cast<CRenderable>(mThisHandle));
+		mAnimation->RegisterRenderableInternal(B3DStaticGameObjectCast<CRenderable>(mThisHandle));
 	}
 }
 

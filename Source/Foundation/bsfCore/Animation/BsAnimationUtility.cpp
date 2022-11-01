@@ -6,7 +6,7 @@
 
 using namespace bs;
 
-void setStepTangent(const TKeyframe<Vector3>& lhsIn, const TKeyframe<Vector3>& rhsIn, TKeyframe<Quaternion>& lhsOut, TKeyframe<Quaternion>& rhsOut)
+void SetStepTangent(const TKeyframe<Vector3>& lhsIn, const TKeyframe<Vector3>& rhsIn, TKeyframe<Quaternion>& lhsOut, TKeyframe<Quaternion>& rhsOut)
 {
 	for(u32 i = 0; i < 3; i++)
 	{
@@ -19,7 +19,7 @@ void setStepTangent(const TKeyframe<Vector3>& lhsIn, const TKeyframe<Vector3>& r
 	}
 }
 
-void setStepTangent(const TKeyframe<Quaternion>& lhsIn, const TKeyframe<Quaternion>& rhsIn, TKeyframe<Vector3>& lhsOut, TKeyframe<Vector3>& rhsOut)
+void SetStepTangent(const TKeyframe<Quaternion>& lhsIn, const TKeyframe<Quaternion>& rhsIn, TKeyframe<Vector3>& lhsOut, TKeyframe<Vector3>& rhsOut)
 {
 	for(u32 i = 0; i < 4; i++)
 	{
@@ -177,7 +177,7 @@ SPtr<TAnimationCurve<Quaternion>> AnimationUtility::EulerToQuaternionCurve(
 
 		const TKeyframe<Vector3>& currentEulerKey = eulerCurve->EvaluateKey(currentKey.Time, false);
 		const TKeyframe<Vector3>& nextEulerKey = eulerCurve->EvaluateKey(nextKey.Time, false);
-		setStepTangent(currentEulerKey, nextEulerKey, currentKey, nextKey);
+		SetStepTangent(currentEulerKey, nextEulerKey, currentKey, nextKey);
 	}
 
 	return B3DMakeShared<TAnimationCurve<Quaternion>>(quatKeyframes);
@@ -248,7 +248,7 @@ SPtr<TAnimationCurve<Vector3>> AnimationUtility::QuaternionToEulerCurve(const SP
 		currentKey.OutTangent = (startFitValue - currentKey.Value) * invFitTime;
 		nextKey.InTangent = (nextKey.Value - endFitValue) * invFitTime;
 
-		setStepTangent(currentQuatKey, nextQuatKey, currentKey, nextKey);
+		SetStepTangent(currentQuatKey, nextQuatKey, currentKey, nextKey);
 	}
 
 	return B3DMakeShared<TAnimationCurve<Vector3>>(eulerKeyframes);
@@ -295,7 +295,7 @@ void SplitCurve(
 }
 
 template <class T>
-void combineCurve(
+void CombineCurve(
 	const TAnimationCurve<float>* (&curveComponents)[TCurveProperties<T>::NumComponents],
 	Vector<TKeyframe<T>>& output)
 {
@@ -362,7 +362,7 @@ SPtr<TAnimationCurve<Vector3>> AnimationUtility::CombineCurve3D(const Vector<SPt
 	{
 		const TAnimationCurve<float>* curves[] = { curveComponents[0].get(), curveComponents[1].get(), curveComponents[2].get() };
 
-		combineCurve(curves, keyFrames);
+		::CombineCurve(curves, keyFrames);
 	}
 
 	return B3DMakeShared<TAnimationCurve<Vector3>>(keyFrames);
@@ -389,7 +389,7 @@ SPtr<TAnimationCurve<Vector2>> AnimationUtility::CombineCurve2D(const Vector<SPt
 	{
 		const TAnimationCurve<float>* curves[] = { curveComponents[0].get(), curveComponents[1].get() };
 
-		combineCurve(curves, keyFrames);
+		::CombineCurve(curves, keyFrames);
 	}
 
 	return B3DMakeShared<TAnimationCurve<Vector2>>(keyFrames);
@@ -419,7 +419,7 @@ void AnimationUtility::CombineCurve(
 		curves[i] = &curveComponents[i];
 
 	Vector<TKeyframe<T>> keyFrames;
-	combineCurve(curves, keyFrames);
+	::CombineCurve(curves, keyFrames);
 
 	output = TAnimationCurve<T>(keyFrames);
 }

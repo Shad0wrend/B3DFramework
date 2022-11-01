@@ -821,7 +821,7 @@ void FBXImporter::ConvertAnimations(const Vector<FBXAnimationClip>& clips, const
 				u32 attemptIdx = 0;
 				while(names.find(name) != names.end())
 				{
-					name = clip.Name + "_" + toString(attemptIdx);
+					name = clip.Name + "_" + ToString(attemptIdx);
 					attemptIdx++;
 				}
 
@@ -836,7 +836,7 @@ void FBXImporter::ConvertAnimations(const Vector<FBXAnimationClip>& clips, const
 			u32 attemptIdx = 0;
 			while(names.find(name) != names.end())
 			{
-				name = clip.Name + "_" + toString(attemptIdx);
+				name = clip.Name + "_" + ToString(attemptIdx);
 				attemptIdx++;
 			}
 
@@ -1172,7 +1172,7 @@ private:
 };
 
 template <class TFBX, class TNative, class TIndexer>
-void readLayerData(FbxLayerElementTemplate<TFBX>& layer, Vector<TNative>& output, const Vector<int>& indices)
+void ReadLayerData(FbxLayerElementTemplate<TFBX>& layer, Vector<TNative>& output, const Vector<int>& indices)
 {
 	TIndexer indexer(layer);
 	if(indexer.IsEmpty())
@@ -1229,14 +1229,14 @@ void readLayerData(FbxLayerElementTemplate<TFBX>& layer, Vector<TNative>& output
 }
 
 template <class TFBX, class TNative>
-void readLayerData(FbxLayerElementTemplate<TFBX>& layer, Vector<TNative>& output, const Vector<int>& indices)
+void ReadLayerData(FbxLayerElementTemplate<TFBX>& layer, Vector<TNative>& output, const Vector<int>& indices)
 {
 	FbxLayerElement::EReferenceMode refMode = layer.GetReferenceMode();
 
 	if(refMode == FbxLayerElement::eDirect)
-		readLayerData<TFBX, TNative, FBXDirectIndexer<TFBX, TNative>>(layer, output, indices);
+		ReadLayerData<TFBX, TNative, FBXDirectIndexer<TFBX, TNative>>(layer, output, indices);
 	else if(refMode == FbxLayerElement::eIndexToDirect)
-		readLayerData<TFBX, TNative, FBXIndexIndexer<TFBX, TNative>>(layer, output, indices);
+		ReadLayerData<TFBX, TNative, FBXIndexIndexer<TFBX, TNative>>(layer, output, indices);
 	else
 		BS_LOG(Warning, FBXImporter, "FBX Import: Unsupported layer reference mode.");
 }
@@ -1347,14 +1347,14 @@ void FBXImporter::ParseMesh(FbxMesh* mesh, FBXImportNode* parentNode, const FBXI
 	}
 
 	for(size_t i = 0; i < fbxUVLayers.size(); i++)
-		readLayerData(*fbxUVLayers[i], importMesh->UV[i], importMesh->Indices);
+		ReadLayerData(*fbxUVLayers[i], importMesh->UV[i], importMesh->Indices);
 
 	FbxLayer* mainLayer = mesh->GetLayer(0);
 	if(mainLayer != nullptr)
 	{
 		// Import colors
 		if(mainLayer->GetVertexColors() != nullptr)
-			readLayerData(*mainLayer->GetVertexColors(), importMesh->Colors, importMesh->Indices);
+			ReadLayerData(*mainLayer->GetVertexColors(), importMesh->Colors, importMesh->Indices);
 
 		// Import normals
 		if(options.ImportNormals)
@@ -1373,7 +1373,7 @@ void FBXImporter::ParseMesh(FbxMesh* mesh, FBXImportNode* parentNode, const FBXI
 						converter.ComputePolygonSmoothingFromEdgeSmoothing(mesh, 0);
 					}
 
-					readLayerData(*smoothing, importMesh->SmoothingGroups, importMesh->Indices);
+					ReadLayerData(*smoothing, importMesh->SmoothingGroups, importMesh->Indices);
 
 					if(!importMesh->SmoothingGroups.empty())
 					{
@@ -1382,7 +1382,7 @@ void FBXImporter::ParseMesh(FbxMesh* mesh, FBXImportNode* parentNode, const FBXI
 				}
 			}
 			else
-				readLayerData(*mainLayer->GetNormals(), importMesh->Normals, importMesh->Indices);
+				ReadLayerData(*mainLayer->GetNormals(), importMesh->Normals, importMesh->Indices);
 		}
 
 		// Import tangents
@@ -1398,8 +1398,8 @@ void FBXImporter::ParseMesh(FbxMesh* mesh, FBXImportNode* parentNode, const FBXI
 
 			if(hasTangents)
 			{
-				readLayerData(*mainLayer->GetTangents(), importMesh->Tangents, importMesh->Indices);
-				readLayerData(*mainLayer->GetBinormals(), importMesh->Bitangents, importMesh->Indices);
+				ReadLayerData(*mainLayer->GetTangents(), importMesh->Tangents, importMesh->Indices);
+				ReadLayerData(*mainLayer->GetBinormals(), importMesh->Bitangents, importMesh->Indices);
 			}
 		}
 
@@ -1408,7 +1408,7 @@ void FBXImporter::ParseMesh(FbxMesh* mesh, FBXImportNode* parentNode, const FBXI
 		{
 			Vector<FbxSurfaceMaterial*> fbxMaterials;
 
-			readLayerData(*mainLayer->GetMaterials(), fbxMaterials, importMesh->Indices);
+			ReadLayerData(*mainLayer->GetMaterials(), fbxMaterials, importMesh->Indices);
 
 			UnorderedMap<FbxSurfaceMaterial*, int> materialLookup;
 			int nextMaterialIdx = 0;
@@ -1506,7 +1506,7 @@ void FBXImporter::ImportBlendShapeFrame(FbxShape* shape, const FBXImportMesh& me
 			}
 		}
 		else
-			readLayerData(*mainLayer->GetNormals(), outFrame.Normals, mesh.Indices);
+			ReadLayerData(*mainLayer->GetNormals(), outFrame.Normals, mesh.Indices);
 	}
 
 	if(options.ImportTangents)
@@ -1515,8 +1515,8 @@ void FBXImporter::ImportBlendShapeFrame(FbxShape* shape, const FBXImportMesh& me
 
 		if(hasTangents)
 		{
-			readLayerData(*mainLayer->GetTangents(), outFrame.Tangents, mesh.Indices);
-			readLayerData(*mainLayer->GetBinormals(), outFrame.Bitangents, mesh.Indices);
+			ReadLayerData(*mainLayer->GetTangents(), outFrame.Tangents, mesh.Indices);
+			ReadLayerData(*mainLayer->GetBinormals(), outFrame.Bitangents, mesh.Indices);
 		}
 	}
 }
@@ -2009,7 +2009,7 @@ TAnimationCurve<Vector3> FBXImporter::ReduceKeyframes(TAnimationCurve<Vector3>& 
 }
 
 template <class T>
-void setKeyframeValues(TKeyframe<T>& keyFrame, int idx, float value, float inTangent, float outTangent)
+void SetKeyframeValues(TKeyframe<T>& keyFrame, int idx, float value, float inTangent, float outTangent)
 {
 	keyFrame.Value = value;
 	keyFrame.InTangent = inTangent;
@@ -2017,7 +2017,7 @@ void setKeyframeValues(TKeyframe<T>& keyFrame, int idx, float value, float inTan
 }
 
 template <>
-void setKeyframeValues<Vector3>(TKeyframe<Vector3>& keyFrame, int idx, float value, float inTangent, float outTangent)
+void SetKeyframeValues<Vector3>(TKeyframe<Vector3>& keyFrame, int idx, float value, float inTangent, float outTangent)
 {
 	keyFrame.Value[idx] = value;
 	keyFrame.InTangent[idx] = inTangent;
@@ -2093,7 +2093,7 @@ TAnimationCurve<T> FBXImporter::ImportCurve(FbxAnimCurve* (&fbxCurve)[C], float 
 
 			for(int j = 0; j < C; j++)
 			{
-				setKeyframeValues(keyFrame, j, fbxCurve[j]->Evaluate(fbxSampleTime), fbxCurve[j]->EvaluateLeftDerivative(fbxSampleTime), fbxCurve[j]->EvaluateRightDerivative(fbxSampleTime));
+				SetKeyframeValues(keyFrame, j, fbxCurve[j]->Evaluate(fbxSampleTime), fbxCurve[j]->EvaluateLeftDerivative(fbxSampleTime), fbxCurve[j]->EvaluateRightDerivative(fbxSampleTime));
 			}
 		}
 
@@ -2128,7 +2128,7 @@ TAnimationCurve<T> FBXImporter::ImportCurve(FbxAnimCurve* (&fbxCurve)[C], float 
 
 			for(int j = 0; j < C; j++)
 			{
-				setKeyframeValues(keyFrame, j, fbxCurve[j]->KeyGetValue(i), fbxCurve[j]->KeyGetLeftDerivative(i), fbxCurve[j]->KeyGetRightDerivative(i));
+				SetKeyframeValues(keyFrame, j, fbxCurve[j]->KeyGetValue(i), fbxCurve[j]->KeyGetLeftDerivative(i), fbxCurve[j]->KeyGetRightDerivative(i));
 			}
 		}
 
@@ -2145,7 +2145,7 @@ TAnimationCurve<T> FBXImporter::ImportCurve(FbxAnimCurve* (&fbxCurve)[C], float 
 
 			for(int j = 0; j < C; j++)
 			{
-				setKeyframeValues(keyFrame, j, fbxCurve[j]->Evaluate(fbxSampleTime), fbxCurve[j]->EvaluateLeftDerivative(fbxSampleTime), fbxCurve[j]->EvaluateRightDerivative(fbxSampleTime));
+				SetKeyframeValues(keyFrame, j, fbxCurve[j]->Evaluate(fbxSampleTime), fbxCurve[j]->EvaluateLeftDerivative(fbxSampleTime), fbxCurve[j]->EvaluateRightDerivative(fbxSampleTime));
 			}
 		}
 
@@ -2189,11 +2189,11 @@ TAnimationCurve<T> FBXImporter::ImportCurve(FbxAnimCurve* (&fbxCurve)[C], float 
 		{
 			if(fbxCurve[j] != nullptr)
 			{
-				setKeyframeValues(keyFrame, j, fbxCurve[j]->Evaluate(fbxSampleTime, &lastKeyframe[j]), fbxCurve[j]->EvaluateLeftDerivative(fbxSampleTime, &lastLeftTangent[j]), fbxCurve[j]->EvaluateRightDerivative(fbxSampleTime, &lastRightTangent[j]));
+				SetKeyframeValues(keyFrame, j, fbxCurve[j]->Evaluate(fbxSampleTime, &lastKeyframe[j]), fbxCurve[j]->EvaluateLeftDerivative(fbxSampleTime, &lastLeftTangent[j]), fbxCurve[j]->EvaluateRightDerivative(fbxSampleTime, &lastRightTangent[j]));
 			}
 			else
 			{
-				setKeyframeValues(keyFrame, j, defaultValues[j], 0.0f, 0.0f);
+				SetKeyframeValues(keyFrame, j, defaultValues[j], 0.0f, 0.0f);
 			}
 		}
 	}

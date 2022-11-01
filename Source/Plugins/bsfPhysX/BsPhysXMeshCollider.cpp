@@ -15,7 +15,7 @@ PhysXMeshCollider::PhysXMeshCollider(PxPhysics* physx, PxScene* scene, const Vec
 	PxSphereGeometry geometry(0.01f); // Dummy
 
 	PxShape* shape = physx->createShape(geometry, *GetPhysX().GetDefaultMaterial(), true);
-	shape->setLocalPose(toPxTransform(position, rotation));
+	shape->setLocalPose(ToPxTransform(position, rotation));
 	shape->userData = this;
 
 	mInternal = B3DNew<FPhysXCollider>(scene, shape);
@@ -50,7 +50,7 @@ void PhysXMeshCollider::ApplyGeometry()
 	if(mMesh->GetType() == PhysicsMeshType::Convex)
 	{
 		PxConvexMeshGeometry geometry;
-		geometry.scale = PxMeshScale(toPxVector(GetScale()), PxIdentity);
+		geometry.scale = PxMeshScale(ToPxVector(GetScale()), PxIdentity);
 		geometry.convexMesh = physxMesh->GetConvexInternal();
 
 		SetGeometry(geometry);
@@ -58,7 +58,7 @@ void PhysXMeshCollider::ApplyGeometry()
 	else // Triangle
 	{
 		PxTriangleMeshGeometry geometry;
-		geometry.scale = PxMeshScale(toPxVector(GetScale()), PxIdentity);
+		geometry.scale = PxMeshScale(ToPxVector(GetScale()), PxIdentity);
 		geometry.triangleMesh = physxMesh->GetTriangleInternal();
 
 		SetGeometry(geometry);

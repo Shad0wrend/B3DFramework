@@ -145,11 +145,11 @@ void D3D11RenderWindow::Initialize()
 
 	auto opt = mDesc.PlatformSpecific.find("parentWindowHandle");
 	if(opt != mDesc.PlatformSpecific.end())
-		windowDesc.Parent = (HWND)parseu64(opt->second);
+		windowDesc.Parent = (HWND)Parseu64(opt->second);
 
 	opt = mDesc.PlatformSpecific.find("externalWindowHandle");
 	if(opt != mDesc.PlatformSpecific.end())
-		windowDesc.External = (HWND)parseu64(opt->second);
+		windowDesc.External = (HWND)Parseu64(opt->second);
 
 	mIsChild = windowDesc.Parent != nullptr;
 	props.IsFullScreen = mDesc.Fullscreen && !mIsChild;
@@ -700,7 +700,7 @@ void D3D11RenderWindow::CreateSwapChain()
 	SAFE_RELEASE(pDXGIDevice);
 
 	if(FAILED(hr))
-		BS_EXCEPT(RenderingAPIException, "Unable to create swap chain. Error code: " + toString(hr));
+		BS_EXCEPT(RenderingAPIException, "Unable to create swap chain. Error code: " + ToString(hr));
 
 	BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_SwapChain);
 }

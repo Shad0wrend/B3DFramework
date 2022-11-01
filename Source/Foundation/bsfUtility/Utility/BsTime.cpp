@@ -109,18 +109,18 @@ u64 Time::GetTimePrecise() const
 String Time::GetCurrentDateTimeString(bool isUTC)
 {
 	std::time_t t = std::time(nullptr);
-	return toString(t, isUTC, false, TimeToStringConversionType::Full);
+	return ToString(t, isUTC, false, TimeToStringConversionType::Full);
 }
 
 String Time::GetCurrentTimeString(bool isUTC)
 {
 	std::time_t t = std::time(nullptr);
-	return toString(t, isUTC, false, TimeToStringConversionType::Time);
+	return ToString(t, isUTC, false, TimeToStringConversionType::Time);
 }
 
 String Time::GetAppStartUpDateString(bool isUTC)
 {
-	return toString(mAppStartUpDate, isUTC, false, TimeToStringConversionType::Full);
+	return ToString(mAppStartUpDate, isUTC, false, TimeToStringConversionType::Full);
 }
 
 namespace bs

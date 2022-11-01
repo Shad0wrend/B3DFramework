@@ -7,17 +7,17 @@ using namespace bs;
 
 void ShaderDefines::Set(const String& name, float value)
 {
-	mDefines[name] = toString(value);
+	mDefines[name] = ToString(value);
 }
 
 void ShaderDefines::Set(const String& name, i32 value)
 {
-	mDefines[name] = toString(value);
+	mDefines[name] = ToString(value);
 }
 
 void ShaderDefines::Set(const String& name, u32 value)
 {
-	mDefines[name] = toString(value);
+	mDefines[name] = ToString(value);
 }
 
 void ShaderDefines::Set(const String& name, const String& value)

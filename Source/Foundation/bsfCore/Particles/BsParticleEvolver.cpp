@@ -30,13 +30,13 @@ static constexpr u32 kParticleRotation = 0x4680eaa4;
 
 /** Helper method that applies a transform to either a point or a direction. */
 template <bool dir>
-Vector3 applyTransform(const Matrix4& tfrm, const Vector3& input)
+Vector3 ApplyTransform(const Matrix4& tfrm, const Vector3& input)
 {
 	return tfrm.MultiplyAffine(input);
 }
 
 template <>
-Vector3 applyTransform<true>(const Matrix4& tfrm, const Vector3& input)
+Vector3 ApplyTransform<true>(const Matrix4& tfrm, const Vector3& input)
 {
 	return tfrm.MultiplyDirection(input);
 }
@@ -48,7 +48,7 @@ Vector3 applyTransform<true>(const Matrix4& tfrm, const Vector3& input)
  * @tparam	dir		If true the evaluated vector is assumed to be a direction, otherwise a point.
  */
 template <bool dir = false>
-Vector3 evaluateTransformed(const Vector3Distribution& distribution, const ParticleSystemState& state, float t, const Random& factor, bool inWorldSpace)
+Vector3 EvaluateTransformed(const Vector3Distribution& distribution, const ParticleSystemState& state, float t, const Random& factor, bool inWorldSpace)
 {
 	const Vector3 output = distribution.Evaluate(t, factor);
 
@@ -56,9 +56,9 @@ Vector3 evaluateTransformed(const Vector3Distribution& distribution, const Parti
 		return output;
 
 	if(state.WorldSpace)
-		return applyTransform<dir>(state.LocalToWorld, output);
+		return ApplyTransform<dir>(state.LocalToWorld, output);
 	else
-		return applyTransform<dir>(state.WorldToLocal, output);
+		return ApplyTransform<dir>(state.WorldToLocal, output);
 }
 
 ParticleTextureAnimation::ParticleTextureAnimation(const PARTICLE_TEXTURE_ANIMATION_DESC& desc)
@@ -162,7 +162,7 @@ void ParticleOrbit::Evolve(Random& random, const ParticleSystemState& state, Par
 	const u32 endIdx = startIdx + count;
 	ParticleSetData& particles = set.GetParticles();
 
-	const Vector3 center = evaluateTransformed(mDesc.Center, state, state.NrmTimeEnd, random, mDesc.WorldSpace);
+	const Vector3 center = EvaluateTransformed(mDesc.Center, state, state.NrmTimeEnd, random, mDesc.WorldSpace);
 	const float subFrameSpacing = (spacing && count > 0) ? 1.0f / count : 1.0f;
 
 	for(u32 i = startIdx; i < endIdx; i++)
@@ -178,7 +178,7 @@ void ParticleOrbit::Evolve(Random& random, const ParticleSystemState& state, Par
 		}
 
 		const u32 velocitySeed = particles.Seed[i] + kParticleOrbitVelocity;
-		Vector3 orbitVelocity = evaluateTransformed<true>(mDesc.Velocity, state, particleT, Random(velocitySeed), mDesc.WorldSpace);
+		Vector3 orbitVelocity = EvaluateTransformed<true>(mDesc.Velocity, state, particleT, Random(velocitySeed), mDesc.WorldSpace);
 		orbitVelocity *= Math::kTwoPi;
 
 		orbitVelocity *= timeStep;
@@ -242,7 +242,7 @@ void ParticleVelocity::Evolve(Random& random, const ParticleSystemState& state, 
 		}
 
 		const u32 velocitySeed = particles.Seed[i] + kParticleLinearVelocity;
-		const Vector3 velocity = evaluateTransformed<true>(mDesc.Velocity, state, particleT, Random(velocitySeed), mDesc.WorldSpace) * timeStep;
+		const Vector3 velocity = EvaluateTransformed<true>(mDesc.Velocity, state, particleT, Random(velocitySeed), mDesc.WorldSpace) * timeStep;
 
 		particles.Position[i] += velocity;
 	}
@@ -291,7 +291,7 @@ void ParticleForce::Evolve(Random& random, const ParticleSystemState& state, Par
 		}
 
 		const u32 forceSeed = particles.Seed[i] + kParticleForce;
-		const Vector3 force = evaluateTransformed<true>(mDesc.Force, state, particleT, Random(forceSeed), mDesc.WorldSpace) * timeStep;
+		const Vector3 force = EvaluateTransformed<true>(mDesc.Force, state, particleT, Random(forceSeed), mDesc.WorldSpace) * timeStep;
 
 		particles.Velocity[i] += force * timeStep;
 	}
@@ -517,7 +517,7 @@ struct ParticleHitInfo
 };
 
 /** Calculates the new position and velocity after a particle was detected to be colliding. */
-void calcCollisionResponse(Vector3& position, Vector3& velocity, const ParticleHitInfo& hitInfo, const PARTICLE_COLLISIONS_DESC& desc)
+void CalcCollisionResponse(Vector3& position, Vector3& velocity, const ParticleHitInfo& hitInfo, const PARTICLE_COLLISIONS_DESC& desc)
 {
 	Vector3 diff = position - hitInfo.Position;
 
@@ -537,7 +537,7 @@ void calcCollisionResponse(Vector3& position, Vector3& velocity, const ParticleH
 	velocity = reflectedVel;
 }
 
-u32 groupRaycast(const PhysicsScene& physicsScene, LineSegment3* segments, ParticleHitInfo* hits, u32 numRays, u64 layer)
+u32 GroupRaycast(const PhysicsScene& physicsScene, LineSegment3* segments, ParticleHitInfo* hits, u32 numRays, u64 layer)
 {
 	if(numRays == 0)
 		return 0;
@@ -681,7 +681,7 @@ void ParticleCollisions::Evolve(Random& random, const ParticleSystemState& state
 					hitInfo.Position = position + velocity * rayT;
 					hitInfo.Idx = i;
 
-					calcCollisionResponse(position, velocity, hitInfo, mDesc);
+					CalcCollisionResponse(position, velocity, hitInfo, mDesc);
 					particles.Lifetime[i] -= mDesc.LifetimeLoss * particles.InitialLifetime[i];
 
 					break;
@@ -722,7 +722,7 @@ void ParticleCollisions::Evolve(Random& random, const ParticleSystemState& state
 		}
 
 		const PhysicsScene& physicsScene = *state.Scene->GetPhysicsScene();
-		const u32 numHits = groupRaycast(physicsScene, segments, hits, numRays, mDesc.Layer);
+		const u32 numHits = GroupRaycast(physicsScene, segments, hits, numRays, mDesc.Layer);
 
 		if(!state.WorldSpace)
 		{
@@ -741,7 +741,7 @@ void ParticleCollisions::Evolve(Random& random, const ParticleSystemState& state
 			Vector3& position = particles.Position[particleIdx];
 			Vector3& velocity = particles.Velocity[particleIdx];
 
-			calcCollisionResponse(position, velocity, hitInfo, mDesc);
+			CalcCollisionResponse(position, velocity, hitInfo, mDesc);
 
 			particles.Lifetime[particleIdx] -= mDesc.LifetimeLoss * particles.InitialLifetime[particleIdx];
 		}

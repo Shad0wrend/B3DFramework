@@ -50,7 +50,7 @@ bool PhysicsScene::RayCastAny(const Ray& ray, u64 layer, float max) const
 	return RayCastAny(ray.GetOrigin(), ray.GetDirection(), layer, max);
 }
 
-Vector<HCollider> rawToComponent(const Vector<Collider*>& raw)
+Vector<HCollider> RawToComponent(const Vector<Collider*>& raw)
 {
 	if(raw.empty())
 		return Vector<HCollider>(0);
@@ -65,7 +65,7 @@ Vector<HCollider> rawToComponent(const Vector<Collider*>& raw)
 		if(component == nullptr)
 			continue;
 
-		output.push_back(static_object_cast<CCollider>(component->GetHandle()));
+		output.push_back(B3DStaticGameObjectCast<CCollider>(component->GetHandle()));
 	}
 
 	return output;
@@ -73,22 +73,22 @@ Vector<HCollider> rawToComponent(const Vector<Collider*>& raw)
 
 Vector<HCollider> PhysicsScene::BoxOverlap(const AABox& box, const Quaternion& rotation, u64 layer) const
 {
-	return rawToComponent(BoxOverlapInternal(box, rotation, layer));
+	return RawToComponent(BoxOverlapInternal(box, rotation, layer));
 }
 
 Vector<HCollider> PhysicsScene::SphereOverlap(const Sphere& sphere, u64 layer) const
 {
-	return rawToComponent(SphereOverlapInternal(sphere, layer));
+	return RawToComponent(SphereOverlapInternal(sphere, layer));
 }
 
 Vector<HCollider> PhysicsScene::CapsuleOverlap(const Capsule& capsule, const Quaternion& rotation, u64 layer) const
 {
-	return rawToComponent(CapsuleOverlapInternal(capsule, rotation, layer));
+	return RawToComponent(CapsuleOverlapInternal(capsule, rotation, layer));
 }
 
 Vector<HCollider> PhysicsScene::ConvexOverlap(const HPhysicsMesh& mesh, const Vector3& position, const Quaternion& rotation, u64 layer) const
 {
-	return rawToComponent(ConvexOverlapInternal(mesh, position, rotation, layer));
+	return RawToComponent(ConvexOverlapInternal(mesh, position, rotation, layer));
 }
 
 namespace bs

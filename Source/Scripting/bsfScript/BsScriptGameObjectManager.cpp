@@ -88,7 +88,7 @@ ScriptComponentBase* ScriptGameObjectManager::CreateBuiltinScriptComponent(const
 		return nullptr;
 
 	ScriptComponentBase* nativeInstance = info->CreateCallback(component);
-	nativeInstance->SetNativeHandle(static_object_cast<GameObject>(component));
+	nativeInstance->SetNativeHandle(B3DStaticGameObjectCast<GameObject>(component));
 
 	u64 instanceId = component->GetInstanceId();
 	mScriptComponents[instanceId] = nativeInstance;
@@ -182,7 +182,7 @@ void ScriptGameObjectManager::SendComponentResetEvents()
 
 		if(component->GetRtti()->GetRttiId() == TID_ManagedComponent)
 		{
-			HManagedComponent managedComponent = static_object_cast<ManagedComponent>(component);
+			HManagedComponent managedComponent = B3DStaticGameObjectCast<ManagedComponent>(component);
 			if(!managedComponent.IsDestroyed())
 				managedComponent->TriggerOnReset();
 		}

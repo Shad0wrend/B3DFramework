@@ -85,7 +85,7 @@ MonoArray* ScriptScriptCode::InternalGetTypes(ScriptScriptCode* thisPtr)
 	for(auto& type : types)
 	{
 		SPtr<ManagedSerializableObjectInfo> objInfo;
-		if(ScriptAssemblyManager::Instance().GetSerializableObjectInfo(toString(type.first), toString(type.second), objInfo))
+		if(ScriptAssemblyManager::Instance().GetSerializableObjectInfo(ToString(type.first), ToString(type.second), objInfo))
 			validTypes.push_back(MonoUtil::GetType(objInfo->MTypeInfo->GetMonoClass()));
 	}
 

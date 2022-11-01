@@ -10,7 +10,7 @@ using namespace physx;
 
 using namespace bs;
 
-PxPrismaticJointFlag::Enum toPxFlag(SliderJointFlag flag)
+PxPrismaticJointFlag::Enum ToPxFlag(SliderJointFlag flag)
 {
 	switch(flag)
 	{
@@ -31,8 +31,8 @@ PhysXSliderJoint::PhysXSliderJoint(PxPhysics* physx, const SLIDER_JOINT_DESC& de
 	if(desc.Bodies[1].Body != nullptr)
 		actor1 = static_cast<PhysXRigidbody*>(desc.Bodies[1].Body)->GetInternalInternal();
 
-	PxTransform tfrm0 = toPxTransform(desc.Bodies[0].Position, desc.Bodies[0].Rotation);
-	PxTransform tfrm1 = toPxTransform(desc.Bodies[1].Position, desc.Bodies[1].Rotation);
+	PxTransform tfrm0 = ToPxTransform(desc.Bodies[0].Position, desc.Bodies[0].Rotation);
+	PxTransform tfrm1 = ToPxTransform(desc.Bodies[1].Position, desc.Bodies[1].Rotation);
 
 	PxPrismaticJoint* joint = PxPrismaticJointCreate(*physx, actor0, tfrm0, actor1, tfrm1);
 	joint->userData = this;
@@ -92,12 +92,12 @@ void PhysXSliderJoint::SetLimit(const LimitLinearRange& limit)
 
 void PhysXSliderJoint::SetFlag(SliderJointFlag flag, bool enabled)
 {
-	GetInternal()->setPrismaticJointFlag(toPxFlag(flag), enabled);
+	GetInternal()->setPrismaticJointFlag(ToPxFlag(flag), enabled);
 }
 
 bool PhysXSliderJoint::HasFlag(SliderJointFlag flag) const
 {
-	return GetInternal()->getPrismaticJointFlags() & toPxFlag(flag);
+	return GetInternal()->getPrismaticJointFlags() & ToPxFlag(flag);
 }
 
 PxPrismaticJoint* PhysXSliderJoint::GetInternal() const

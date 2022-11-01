@@ -10,31 +10,31 @@ using namespace bs;
 const u32 DataStream::kStreamTempSize = 128;
 
 /** Checks does the provided buffer has an UTF32 byte order mark in little endian order. */
-bool isUTF32LE(const u8* buffer)
+bool IsUtF32Le(const u8* buffer)
 {
 	return buffer[0] == 0xFF && buffer[1] == 0xFE && buffer[2] == 0x00 && buffer[3] == 0x00;
 }
 
 /** Checks does the provided buffer has an UTF32 byte order mark in big endian order. */
-bool isUTF32BE(const u8* buffer)
+bool IsUtF32Be(const u8* buffer)
 {
 	return buffer[0] == 0x00 && buffer[1] == 0x00 && buffer[2] == 0xFE && buffer[3] == 0xFF;
 }
 
 /** Checks does the provided buffer has an UTF16 byte order mark in little endian order. */
-bool isUTF16LE(const u8* buffer)
+bool IsUtF16Le(const u8* buffer)
 {
 	return buffer[0] == 0xFF && buffer[1] == 0xFE;
 }
 
 /**	Checks does the provided buffer has an UTF16 byte order mark in big endian order. */
-bool isUTF16BE(const u8* buffer)
+bool IsUtF16Be(const u8* buffer)
 {
 	return buffer[0] == 0xFE && buffer[1] == 0xFF;
 }
 
 /**	Checks does the provided buffer has an UTF8 byte order mark. */
-bool isUTF8(const u8* buffer)
+bool IsUtF8(const u8* buffer)
 {
 	return (buffer[0] == 0xEF && buffer[1] == 0xBB && buffer[2] == 0xBF);
 }
@@ -103,9 +103,9 @@ String DataStream::GetAsString()
 	size_t dataOffset = 0;
 	if(numHeaderBytes >= 4)
 	{
-		if(isUTF32LE(headerBytes))
+		if(IsUtF32Le(headerBytes))
 			dataOffset = 4;
-		else if(isUTF32BE(headerBytes))
+		else if(IsUtF32Be(headerBytes))
 		{
 			BS_LOG(Warning, Generic, "UTF-32 big endian decoding not supported");
 			return u8"";
@@ -114,15 +114,15 @@ String DataStream::GetAsString()
 
 	if(dataOffset == 0 && numHeaderBytes >= 3)
 	{
-		if(isUTF8(headerBytes))
+		if(IsUtF8(headerBytes))
 			dataOffset = 3;
 	}
 
 	if(dataOffset == 0 && numHeaderBytes >= 2)
 	{
-		if(isUTF16LE(headerBytes))
+		if(IsUtF16Le(headerBytes))
 			dataOffset = 2;
-		else if(isUTF16BE(headerBytes))
+		else if(IsUtF16Be(headerBytes))
 		{
 			BS_LOG(Warning, Generic, "UTF-16 big endian decoding not supported");
 			return u8"";

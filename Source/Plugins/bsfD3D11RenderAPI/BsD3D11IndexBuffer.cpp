@@ -7,7 +7,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-static void deleteBuffer(HardwareBuffer* buffer)
+static void DeleteHardwareBuffer(HardwareBuffer* buffer)
 {
 	B3DPoolDelete(static_cast<D3D11HardwareBuffer*>(buffer));
 }
@@ -21,7 +21,7 @@ D3D11IndexBuffer::D3D11IndexBuffer(D3D11Device& device, const INDEX_BUFFER_DESC&
 void D3D11IndexBuffer::Initialize()
 {
 	mBuffer = B3DPoolNew<D3D11HardwareBuffer>(D3D11HardwareBuffer::BT_INDEX, mUsage, 1, mSize, mDevice);
-	mBufferDeleter = &deleteBuffer;
+	mBufferDeleter = &DeleteHardwareBuffer;
 
 	IndexBuffer::Initialize();
 }

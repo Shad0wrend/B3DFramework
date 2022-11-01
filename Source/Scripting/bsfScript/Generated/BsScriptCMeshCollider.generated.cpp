@@ -27,7 +27,7 @@ void ScriptCMeshCollider::InternalSetMesh(ScriptCMeshCollider* thisPtr, MonoObje
 	ScriptRRefBase* scriptmesh;
 	scriptmesh = ScriptRRefBase::ToNative(mesh);
 	if(scriptmesh != nullptr)
-		tmpmesh = static_resource_cast<PhysicsMesh>(scriptmesh->GetHandle());
+		tmpmesh = B3DStaticResourceCast<PhysicsMesh>(scriptmesh->GetHandle());
 	thisPtr->GetHandle()->SetMesh(tmpmesh);
 }
 

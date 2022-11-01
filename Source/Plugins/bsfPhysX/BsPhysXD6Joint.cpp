@@ -10,7 +10,7 @@ using namespace physx;
 
 using namespace bs;
 
-PxD6Axis::Enum toPxAxis(D6JointAxis axis)
+PxD6Axis::Enum ToPxAxis(D6JointAxis axis)
 {
 	switch(axis)
 	{
@@ -30,7 +30,7 @@ PxD6Axis::Enum toPxAxis(D6JointAxis axis)
 	}
 }
 
-PxD6Motion::Enum toPxMotion(D6JointMotion motion)
+PxD6Motion::Enum ToPxMotion(D6JointMotion motion)
 {
 	switch(motion)
 	{
@@ -44,7 +44,7 @@ PxD6Motion::Enum toPxMotion(D6JointMotion motion)
 	}
 }
 
-PxD6Drive::Enum toPxDrive(D6JointDriveType drive)
+PxD6Drive::Enum ToPxDrive(D6JointDriveType drive)
 {
 	switch(drive)
 	{
@@ -64,7 +64,7 @@ PxD6Drive::Enum toPxDrive(D6JointDriveType drive)
 	}
 }
 
-D6JointMotion fromPxMotion(PxD6Motion::Enum motion)
+D6JointMotion FromPxMotion(PxD6Motion::Enum motion)
 {
 	switch(motion)
 	{
@@ -78,7 +78,7 @@ D6JointMotion fromPxMotion(PxD6Motion::Enum motion)
 	}
 }
 
-D6JointDriveType fromPxDrive(PxD6Drive::Enum drive)
+D6JointDriveType FromPxDrive(PxD6Drive::Enum drive)
 {
 	switch(drive)
 	{
@@ -109,8 +109,8 @@ PhysXD6Joint::PhysXD6Joint(PxPhysics* physx, const D6_JOINT_DESC& desc)
 	if(desc.Bodies[1].Body != nullptr)
 		actor1 = static_cast<PhysXRigidbody*>(desc.Bodies[1].Body)->GetInternalInternal();
 
-	PxTransform tfrm0 = toPxTransform(desc.Bodies[0].Position, desc.Bodies[0].Rotation);
-	PxTransform tfrm1 = toPxTransform(desc.Bodies[1].Position, desc.Bodies[1].Rotation);
+	PxTransform tfrm0 = ToPxTransform(desc.Bodies[0].Position, desc.Bodies[0].Rotation);
+	PxTransform tfrm1 = ToPxTransform(desc.Bodies[1].Position, desc.Bodies[1].Rotation);
 
 	PxD6Joint* joint = PxD6JointCreate(*physx, actor0, tfrm0, actor1, tfrm1);
 	joint->userData = this;
@@ -139,12 +139,12 @@ PhysXD6Joint::~PhysXD6Joint()
 
 D6JointMotion PhysXD6Joint::GetMotion(D6JointAxis axis) const
 {
-	return fromPxMotion(GetInternal()->getMotion(toPxAxis(axis)));
+	return FromPxMotion(GetInternal()->getMotion(ToPxAxis(axis)));
 }
 
 void PhysXD6Joint::SetMotion(D6JointAxis axis, D6JointMotion motion)
 {
-	GetInternal()->setMotion(toPxAxis(axis), toPxMotion(motion));
+	GetInternal()->setMotion(ToPxAxis(axis), ToPxMotion(motion));
 }
 
 Radian PhysXD6Joint::GetTwist() const
@@ -238,7 +238,7 @@ void PhysXD6Joint::SetLimitSwing(const LimitConeRange& limit)
 
 D6JointDrive PhysXD6Joint::GetDrive(D6JointDriveType type) const
 {
-	PxD6JointDrive pxDrive = GetInternal()->getDrive(toPxDrive(type));
+	PxD6JointDrive pxDrive = GetInternal()->getDrive(ToPxDrive(type));
 
 	D6JointDrive drive;
 	drive.Acceleration = pxDrive.flags & PxD6JointDriveFlag::eACCELERATION;
@@ -260,22 +260,22 @@ void PhysXD6Joint::SetDrive(D6JointDriveType type, const D6JointDrive& drive)
 	pxDrive.damping = drive.Damping;
 	pxDrive.forceLimit = drive.ForceLimit;
 
-	GetInternal()->setDrive(toPxDrive(type), pxDrive);
+	GetInternal()->setDrive(ToPxDrive(type), pxDrive);
 }
 
 Vector3 PhysXD6Joint::GetDrivePosition() const
 {
-	return fromPxVector(GetInternal()->getDrivePosition().p);
+	return FromPxVector(GetInternal()->getDrivePosition().p);
 }
 
 Quaternion PhysXD6Joint::GetDriveRotation() const
 {
-	return fromPxQuaternion(GetInternal()->getDrivePosition().q);
+	return FromPxQuaternion(GetInternal()->getDrivePosition().q);
 }
 
 void PhysXD6Joint::SetDriveTransform(const Vector3& position, const Quaternion& rotation)
 {
-	GetInternal()->setDrivePosition(toPxTransform(position, rotation));
+	GetInternal()->setDrivePosition(ToPxTransform(position, rotation));
 }
 
 Vector3 PhysXD6Joint::GetDriveLinearVelocity() const
@@ -284,7 +284,7 @@ Vector3 PhysXD6Joint::GetDriveLinearVelocity() const
 	PxVec3 angular;
 
 	GetInternal()->getDriveVelocity(linear, angular);
-	return fromPxVector(linear);
+	return FromPxVector(linear);
 }
 
 Vector3 PhysXD6Joint::GetDriveAngularVelocity() const
@@ -293,12 +293,12 @@ Vector3 PhysXD6Joint::GetDriveAngularVelocity() const
 	PxVec3 angular;
 
 	GetInternal()->getDriveVelocity(linear, angular);
-	return fromPxVector(angular);
+	return FromPxVector(angular);
 }
 
 void PhysXD6Joint::SetDriveVelocity(const Vector3& linear, const Vector3& angular)
 {
-	GetInternal()->setDriveVelocity(toPxVector(linear), toPxVector(angular));
+	GetInternal()->setDriveVelocity(ToPxVector(linear), ToPxVector(angular));
 }
 
 PxD6Joint* PhysXD6Joint::GetInternal() const

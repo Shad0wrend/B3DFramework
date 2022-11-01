@@ -21,7 +21,7 @@ namespace bs
 		virtual ~ScriptComponentBase() = default;
 
 		/** Returns the component wrapped by this object. */
-		HComponent GetComponent() const { return static_object_cast<Component>(GetNativeHandle()); }
+		HComponent GetComponent() const { return B3DStaticGameObjectCast<Component>(GetNativeHandle()); }
 
 	protected:
 		friend class ScriptGameObjectManager;
@@ -42,10 +42,10 @@ namespace bs
 	{
 	public:
 		/**	Returns a generic handle to the internal wrapped component. */
-		HGameObject GetNativeHandle() const { return static_object_cast<GameObject>(mComponent); }
+		HGameObject GetNativeHandle() const { return B3DStaticGameObjectCast<GameObject>(mComponent); }
 
 		/**	Sets the internal component this object wraps. */
-		void SetNativeHandle(const HGameObject& gameObject) { mComponent = static_object_cast<CompType>(gameObject); }
+		void SetNativeHandle(const HGameObject& gameObject) { mComponent = B3DStaticGameObjectCast<CompType>(gameObject); }
 
 		/**	Returns a handle to the internal wrapped component. */
 		const GameObjectHandle<CompType>& GetHandle() const { return mComponent; }

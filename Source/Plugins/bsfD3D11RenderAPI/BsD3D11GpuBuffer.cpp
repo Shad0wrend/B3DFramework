@@ -12,7 +12,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-static void deleteBuffer(HardwareBuffer* buffer)
+static void DeleteHardwareBuffer(HardwareBuffer* buffer)
 {
 	B3DPoolDelete(static_cast<D3D11HardwareBuffer*>(buffer));
 }
@@ -35,7 +35,7 @@ D3D11GpuBuffer::~D3D11GpuBuffer()
 void D3D11GpuBuffer::Initialize()
 {
 	const GpuBufferProperties& props = GetProperties();
-	mBufferDeleter = &deleteBuffer;
+	mBufferDeleter = &DeleteHardwareBuffer;
 
 	// Create a new buffer if not wrapping an external one
 	if(!mBuffer)
@@ -55,7 +55,7 @@ void D3D11GpuBuffer::Initialize()
 			bufferType = D3D11HardwareBuffer::BT_INDIRECTARGUMENT;
 			break;
 		default:
-			BS_EXCEPT(InvalidParametersException, "Unsupported buffer type " + toString(props.GetType()));
+			BS_EXCEPT(InvalidParametersException, "Unsupported buffer type " + ToString(props.GetType()));
 		}
 
 		mBuffer = B3DPoolNew<D3D11HardwareBuffer>(bufferType, props.GetUsage(), props.GetElementCount(), props.GetElementSize(), rapi->GetPrimaryDevice(), false, false);

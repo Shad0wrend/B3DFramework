@@ -280,7 +280,7 @@ void MeshHeap::Alloc(SPtr<TransientMesh> mesh, const SPtr<MeshData>& meshData)
 		u32 otherVertSize = meshData->GetVertexDesc()->GetVertexStride(i);
 		if(otherVertSize != vertSize)
 		{
-			BS_EXCEPT(InvalidParametersException, "Provided vertex size for stream " + toString(i) + " doesn't match meshes vertex size. Needed: " + toString(vertSize) + ". Got: " + toString(otherVertSize));
+			BS_EXCEPT(InvalidParametersException, "Provided vertex size for stream " + ToString(i) + " doesn't match meshes vertex size. Needed: " + ToString(vertSize) + ". Got: " + ToString(otherVertSize));
 		}
 
 		SPtr<VertexBuffer> vertexBuffer = mVertexData->GetBuffer(i);
@@ -298,7 +298,7 @@ void MeshHeap::Alloc(SPtr<TransientMesh> mesh, const SPtr<MeshData>& meshData)
 	// Ensure index sizes match
 	if(meshData->GetIndexElementSize() != idxSize)
 	{
-		BS_EXCEPT(InvalidParametersException, "Provided index size doesn't match meshes index size. Needed: " + toString(idxSize) + ". Got: " + toString(meshData->GetIndexElementSize()));
+		BS_EXCEPT(InvalidParametersException, "Provided index size doesn't match meshes index size. Needed: " + ToString(idxSize) + ". Got: " + ToString(meshData->GetIndexElementSize()));
 	}
 
 	u8* idxDest = mCPUIndexData + idxChunkStart * idxSize;

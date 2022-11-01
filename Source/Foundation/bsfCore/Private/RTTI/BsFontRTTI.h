@@ -52,7 +52,7 @@ namespace bs
 		FontBitmap& GetBitmap(Font* obj, u32 idx)
 		{
 			if(idx >= obj->mFontDataPerSize.size())
-				BS_EXCEPT(InternalErrorException, "Index out of range: " + toString(idx) + ". Valid range: 0 .. " + toString((int)obj->mFontDataPerSize.size()));
+				BS_EXCEPT(InternalErrorException, "Index out of range: " + ToString(idx) + ". Valid range: 0 .. " + ToString((int)obj->mFontDataPerSize.size()));
 
 			auto iter = obj->mFontDataPerSize.begin();
 			for(u32 i = 0; i < idx; i++, ++iter)

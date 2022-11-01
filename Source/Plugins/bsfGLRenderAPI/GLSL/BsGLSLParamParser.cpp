@@ -13,7 +13,7 @@ i32 GLSLAttribute::MatchesName(const String& name)
 		if(name.substr(0, mName.length()) == mName)
 		{
 			String indexStr = name.substr(mName.length(), name.length());
-			return parseu32(indexStr, 0);
+			return Parseu32(indexStr, 0);
 		}
 	}
 
@@ -330,7 +330,7 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 			if(arrayStart != String::npos)
 			{
 				String strArrIdx = structName.substr(arrayStart + 1, arrayEnd - (arrayStart + 1));
-				arrayIdx = parseu32(strArrIdx, 0);
+				arrayIdx = Parseu32(strArrIdx, 0);
 				isInArray = true;
 
 				structName = structName.substr(0, arrayStart);
@@ -348,7 +348,7 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 				// If in struct, we don't care about individual element array indices
 				if(!inStruct)
 				{
-					arrayIdx = parseu32(strArrIdx, 0);
+					arrayIdx = Parseu32(strArrIdx, 0);
 					isInArray = true;
 				}
 

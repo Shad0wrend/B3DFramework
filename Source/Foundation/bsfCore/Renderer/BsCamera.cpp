@@ -760,10 +760,10 @@ CoreSyncData Camera::SyncToCore(FrameAlloc* allocator)
 
 	if((dirtyFlag & ~(i32)CameraDirtyFlag::Redraw) != 0)
 	{
-		size += csync_size((SceneActor&)*this);
+		size += CoreSyncGetSize((SceneActor&)*this);
 
 		if(dirtyFlag != (u32)ActorDirtyFlag::Transform)
-			size += csync_size(*this);
+			size += CoreSyncGetSize(*this);
 	}
 
 	u8* buffer = allocator->Alloc(size);
@@ -773,10 +773,10 @@ CoreSyncData Camera::SyncToCore(FrameAlloc* allocator)
 
 	if((dirtyFlag & ~(i32)CameraDirtyFlag::Redraw) != 0)
 	{
-		csync_write((SceneActor&)*this, stream);
+		B3DCoreSyncWrite((SceneActor&)*this, stream);
 
 		if(dirtyFlag != (u32)ActorDirtyFlag::Transform)
-			csync_write(*this, stream);
+			B3DCoreSyncWrite(*this, stream);
 	}
 
 	return CoreSyncData(buffer, size);
@@ -842,10 +842,10 @@ void Camera::SyncToCore(const CoreSyncData& data)
 
 	if((dirtyFlag & ~(i32)CameraDirtyFlag::Redraw) != 0)
 	{
-		csync_read((SceneActor&)*this, stream);
+		B3DCoreSyncRead((SceneActor&)*this, stream);
 
 		if(dirtyFlag != (u32)ActorDirtyFlag::Transform)
-			csync_read(*this, stream);
+			B3DCoreSyncRead(*this, stream);
 
 		mRecalcFrustum = true;
 		mRecalcFrustumPlanes = true;

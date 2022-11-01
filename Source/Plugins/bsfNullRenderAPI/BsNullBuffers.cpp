@@ -45,7 +45,7 @@ SPtr<ct::GpuBuffer> NullHardwareBufferManager::CreateGpuBufferInternal(const GPU
 	return bufferPtr;
 }
 
-static void deleteBuffer(HardwareBuffer* buffer)
+static void DeleteHardwareBuffer(HardwareBuffer* buffer)
 {
 	B3DPoolDelete(static_cast<NullHardwareBuffer*>(buffer));
 }
@@ -61,7 +61,7 @@ NullGpuBuffer::NullGpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> u
 void NullGpuBuffer::Initialize()
 {
 	const GpuBufferProperties& props = GetProperties();
-	mBufferDeleter = &deleteBuffer;
+	mBufferDeleter = &DeleteHardwareBuffer;
 
 	// Create a new buffer if not wrapping an external one
 	if(!mBuffer)
@@ -105,7 +105,7 @@ NullIndexBuffer::NullIndexBuffer(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags d
 void NullIndexBuffer::Initialize()
 {
 	mBuffer = B3DPoolNew<NullHardwareBuffer>(mUsage, 1, mSize);
-	mBufferDeleter = &deleteBuffer;
+	mBufferDeleter = &DeleteHardwareBuffer;
 
 	IndexBuffer::Initialize();
 }
@@ -117,7 +117,7 @@ NullVertexBuffer::NullVertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlag
 void NullVertexBuffer::Initialize()
 {
 	mBuffer = B3DPoolNew<NullHardwareBuffer>(mUsage, 1, mSize);
-	mBufferDeleter = &deleteBuffer;
+	mBufferDeleter = &DeleteHardwareBuffer;
 
 	VertexBuffer::Initialize();
 }

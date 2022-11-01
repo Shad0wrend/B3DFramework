@@ -43,7 +43,7 @@ void D3D11HLSLParamParser::Parse(ID3DBlob* microcode, GpuProgramType type, GpuPa
 			hr = shaderReflection->GetInputParameterDesc(i, &inputParamDesc);
 
 			if(FAILED(hr))
-				BS_EXCEPT(RenderingAPIException, "Cannot get input param desc with index: " + toString(i));
+				BS_EXCEPT(RenderingAPIException, "Cannot get input param desc with index: " + ToString(i));
 
 			// We don't care about system value semantics
 			if(StringUtil::StartsWith(String(inputParamDesc.SemanticName), "sv_"))
@@ -59,7 +59,7 @@ void D3D11HLSLParamParser::Parse(ID3DBlob* microcode, GpuProgramType type, GpuPa
 		hr = shaderReflection->GetResourceBindingDesc(i, &bindingDesc);
 
 		if(FAILED(hr))
-			BS_EXCEPT(RenderingAPIException, "Cannot get resource binding desc with index: " + toString(i));
+			BS_EXCEPT(RenderingAPIException, "Cannot get resource binding desc with index: " + ToString(i));
 
 		ParseResource(bindingDesc, type, desc);
 	}

@@ -22,7 +22,7 @@ namespace bs
 	private:
 		SPtr<ManagedSerializableObject> GetObjectData(ManagedResource* obj)
 		{
-			return any_cast<SPtr<ManagedSerializableObject>>(mSerializableObject);
+			return AnyCast<SPtr<ManagedSerializableObject>>(mSerializableObject);
 		}
 
 		void SetObjectData(ManagedResource* obj, SPtr<ManagedSerializableObject> val)
@@ -47,7 +47,7 @@ namespace bs
 			ManagedResource* mr = static_cast<ManagedResource*>(obj);
 
 			SPtr<Resource> mrPtr = std::static_pointer_cast<Resource>(mr->GetThisPtr());
-			HManagedResource handle = static_resource_cast<ManagedResource>(GetResources().CreateResourceHandleInternal(mrPtr));
+			HManagedResource handle = B3DStaticResourceCast<ManagedResource>(GetResources().CreateResourceHandleInternal(mrPtr));
 			mr->SetHandle(mSerializableObject->Deserialize(), handle);
 		}
 

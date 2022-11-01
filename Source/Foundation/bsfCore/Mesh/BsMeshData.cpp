@@ -198,7 +198,7 @@ void MeshData::SetVertexData(VertexElementSemantic semantic, void* data, u32 siz
 
 	if(totalSize != size)
 	{
-		BS_EXCEPT(InvalidParametersException, "Buffer sizes don't match. Expected: " + toString(totalSize) + ". Got: " + toString(size));
+		BS_EXCEPT(InvalidParametersException, "Buffer sizes don't match. Expected: " + ToString(totalSize) + ". Got: " + ToString(size));
 	}
 
 	u32 indexBufferOffset = GetIndexBufferSize();
@@ -233,7 +233,7 @@ void MeshData::GetVertexData(VertexElementSemantic semantic, void* data, u32 siz
 
 	if(totalSize != size)
 	{
-		BS_EXCEPT(InvalidParametersException, "Buffer sizes don't match. Expected: " + toString(totalSize) + ". Got: " + toString(size));
+		BS_EXCEPT(InvalidParametersException, "Buffer sizes don't match. Expected: " + ToString(totalSize) + ". Got: " + ToString(size));
 	}
 
 	u32 indexBufferOffset = GetIndexBufferSize();
@@ -291,7 +291,7 @@ void MeshData::GetDataForIterator(VertexElementSemantic semantic, u32 semanticId
 {
 	if(!mVertexData->HasElement(semantic, semanticIdx, streamIdx))
 	{
-		BS_EXCEPT(InvalidParametersException, "MeshData doesn't contain an element of specified type: Semantic: " + toString(semantic) + ", Semantic index: " + toString(semanticIdx) + ", Stream index: " + toString(streamIdx));
+		BS_EXCEPT(InvalidParametersException, "MeshData doesn't contain an element of specified type: Semantic: " + ToString(semantic) + ", Semantic index: " + ToString(semanticIdx) + ", Stream index: " + ToString(streamIdx));
 	}
 
 	u32 indexBufferOffset = GetIndexBufferSize();

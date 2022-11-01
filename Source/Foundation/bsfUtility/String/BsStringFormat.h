@@ -195,7 +195,7 @@ namespace bs
 		template <class T>
 		static String ToString(const T& param)
 		{
-			return bs::toString(param);
+			return bs::ToString(param);
 		}
 
 		/**	Helper method that "converts" a narrow string to a narrow string (simply a pass through). */
@@ -272,7 +272,7 @@ namespace bs
 			if(idx >= kMaxParams)
 				return;
 
-			BasicString<char> sourceParam = toString(param);
+			BasicString<char> sourceParam = ToString(param);
 			parameters[idx].Buffer = (char*)B3DAllocate((u32)sourceParam.size() * sizeof(char));
 			parameters[idx].Size = (u32)sourceParam.size();
 

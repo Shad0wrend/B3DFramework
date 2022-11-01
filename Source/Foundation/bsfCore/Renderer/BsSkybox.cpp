@@ -156,15 +156,15 @@ CoreSyncData Skybox::SyncToCore(FrameAlloc* allocator)
 {
 	u32 size = 0;
 	size += B3DRTTISize(GetCoreDirtyFlags()).Bytes;
-	size += csync_size((SceneActor&)*this);
-	size += csync_size(*this);
+	size += CoreSyncGetSize((SceneActor&)*this);
+	size += CoreSyncGetSize(*this);
 
 	u8* buffer = allocator->Alloc(size);
 
 	Bitstream stream(buffer, size);
 	B3DRTTIWrite(GetCoreDirtyFlags(), stream);
-	csync_write((SceneActor&)*this, stream);
-	csync_write(*this, stream);
+	B3DCoreSyncWrite((SceneActor&)*this, stream);
+	B3DCoreSyncWrite(*this, stream);
 
 	return CoreSyncData(buffer, size);
 }
@@ -212,8 +212,8 @@ void Skybox::SyncToCore(const CoreSyncData& data)
 	bool oldIsActive = mActive;
 
 	B3DRTTIRead(dirtyFlags, stream);
-	csync_read((SceneActor&)*this, stream);
-	csync_read(*this, stream);
+	B3DCoreSyncRead((SceneActor&)*this, stream);
+	B3DCoreSyncRead(*this, stream);
 
 	if(oldIsActive != mActive)
 	{

@@ -35,7 +35,7 @@ struct Gamepad::Pimpl
  * Initializes DirectInput gamepad device for a window with the specified handle. Only input from that window will be
  * reported.
  */
-void initializeDirectInput(Gamepad::Pimpl* m, HWND hWnd)
+void InitializeDirectInput(Gamepad::Pimpl* m, HWND hWnd)
 {
 	DIPROPDWORD dipdw;
 	dipdw.diph.dwSize = sizeof(DIPROPDWORD);
@@ -64,7 +64,7 @@ void initializeDirectInput(Gamepad::Pimpl* m, HWND hWnd)
 }
 
 /** Releases DirectInput resources for the provided device */
-void releaseDirectInput(Gamepad::Pimpl* m)
+void ReleaseDirectInput(Gamepad::Pimpl* m)
 {
 	if(m->Gamepad)
 	{
@@ -75,7 +75,7 @@ void releaseDirectInput(Gamepad::Pimpl* m)
 }
 
 /** Handles a DirectInput POV event. */
-void handlePOV(Input* owner, Gamepad::Pimpl* m, int pov, DIDEVICEOBJECTDATA& di)
+void HandlePov(Input* owner, Gamepad::Pimpl* m, int pov, DIDEVICEOBJECTDATA& di)
 {
 	if(LOWORD(di.dwData) == 0xFFFF)
 	{
@@ -153,7 +153,7 @@ void handlePOV(Input* owner, Gamepad::Pimpl* m, int pov, DIDEVICEOBJECTDATA& di)
 }
 
 /** Converts a DirectInput or XInput button code to BSF ButtonCode. */
-ButtonCode gamepadButtonToButtonCode(i32 code)
+ButtonCode GamepadButtonToButtonCode(i32 code)
 {
 	switch(code)
 	{
@@ -210,12 +210,12 @@ Gamepad::Gamepad(const String& name, const GamepadInfo& gamepadInfo, Input* owne
 	B3DZeroOut(m->ButtonState);
 
 	if(!m->Info.IsXInput)
-		initializeDirectInput(m, m->HWnd);
+		InitializeDirectInput(m, m->HWnd);
 }
 
 Gamepad::~Gamepad()
 {
-	releaseDirectInput(m);
+	ReleaseDirectInput(m);
 
 	B3DDelete(m);
 }
@@ -311,9 +311,9 @@ void Gamepad::Capture()
 			if(buttonState != m->ButtonState[i])
 			{
 				if(buttonState)
-					mOwner->NotifyButtonPressedInternal(m->Info.Id, gamepadButtonToButtonCode(i), GetTickCount64());
+					mOwner->NotifyButtonPressedInternal(m->Info.Id, GamepadButtonToButtonCode(i), GetTickCount64());
 				else
-					mOwner->NotifyButtonReleasedInternal(m->Info.Id, gamepadButtonToButtonCode(i), GetTickCount64());
+					mOwner->NotifyButtonReleasedInternal(m->Info.Id, GamepadButtonToButtonCode(i), GetTickCount64());
 
 				m->ButtonState[i] = buttonState;
 			}
@@ -364,16 +364,16 @@ void Gamepad::Capture()
 			switch(diBuff[i].dwOfs)
 			{
 			case DIJOFS_POV(0):
-				handlePOV(mOwner, m, 0, diBuff[i]);
+				HandlePov(mOwner, m, 0, diBuff[i]);
 				break;
 			case DIJOFS_POV(1):
-				handlePOV(mOwner, m, 1, diBuff[i]);
+				HandlePov(mOwner, m, 1, diBuff[i]);
 				break;
 			case DIJOFS_POV(2):
-				handlePOV(mOwner, m, 2, diBuff[i]);
+				HandlePov(mOwner, m, 2, diBuff[i]);
 				break;
 			case DIJOFS_POV(3):
-				handlePOV(mOwner, m, 3, diBuff[i]);
+				HandlePov(mOwner, m, 3, diBuff[i]);
 				break;
 			default:
 				// Button event
@@ -382,9 +382,9 @@ void Gamepad::Capture()
 					int button = diBuff[i].dwOfs - DIJOFS_BUTTON(0);
 
 					if((diBuff[i].dwData & 0x80) != 0)
-						mOwner->NotifyButtonPressedInternal(m->Info.Id, gamepadButtonToButtonCode(button), diBuff[i].dwTimeStamp);
+						mOwner->NotifyButtonPressedInternal(m->Info.Id, GamepadButtonToButtonCode(button), diBuff[i].dwTimeStamp);
 					else
-						mOwner->NotifyButtonReleasedInternal(m->Info.Id, gamepadButtonToButtonCode(button), diBuff[i].dwTimeStamp);
+						mOwner->NotifyButtonReleasedInternal(m->Info.Id, GamepadButtonToButtonCode(button), diBuff[i].dwTimeStamp);
 				}
 				else if((short)(diBuff[i].uAppData >> 16) == 0x1313) // Axis event
 				{
@@ -417,10 +417,10 @@ void Gamepad::ChangeCaptureContext(u64 windowHandle)
 
 	if(m->HWnd != newhWnd)
 	{
-		releaseDirectInput(m);
+		ReleaseDirectInput(m);
 
 		if(!m->Info.IsXInput && windowHandle != (u64)-1)
-			initializeDirectInput(m, newhWnd);
+			InitializeDirectInput(m, newhWnd);
 		else
 			m->HWnd = newhWnd;
 	}

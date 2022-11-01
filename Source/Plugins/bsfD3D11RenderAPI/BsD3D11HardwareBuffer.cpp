@@ -130,7 +130,7 @@ D3D11HardwareBuffer::~D3D11HardwareBuffer()
 void* D3D11HardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx)
 {
 	if(length > mSize)
-		BS_EXCEPT(RenderingAPIException, "Provided length " + toString(length) + " larger than the buffer " + toString(mSize) + ".");
+		BS_EXCEPT(RenderingAPIException, "Provided length " + ToString(length) + " larger than the buffer " + ToString(mSize) + ".");
 
 	// Use direct (and faster) Map/Unmap if dynamic write, or a staging read/write
 	if((mDesc.Usage == D3D11_USAGE_DYNAMIC && options != GBL_READ_ONLY) || mDesc.Usage == D3D11_USAGE_STAGING)

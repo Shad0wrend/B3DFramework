@@ -63,7 +63,7 @@ void ScriptManagedResource::EndRefresh(const ScriptObjectBackup& backupData)
 {
 	MonoObject* instance = MonoUtil::GetObjectFromGcHandle(mGCHandle);
 
-	ResourceBackupData resourceBackup = any_cast<ResourceBackupData>(backupData.Data);
+	ResourceBackupData resourceBackup = AnyCast<ResourceBackupData>(backupData.Data);
 	mResource->Restore(resourceBackup);
 
 	// If we could not find resource type after refresh, treat it as if it was destroyed
@@ -95,5 +95,5 @@ void ScriptManagedResource::NotifyDestroyedInternal()
 
 void ScriptManagedResource::SetResource(const HResource& resource)
 {
-	mResource = static_resource_cast<ManagedResource>(resource);
+	mResource = B3DStaticResourceCast<ManagedResource>(resource);
 }

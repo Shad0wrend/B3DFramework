@@ -790,7 +790,7 @@ namespace bs
 	 *
 	 * @param[in]	callback	The callback.
 	 */
-	void BS_CORE_EXPORT deferredCall(std::function<void()> callback);
+	void BS_CORE_EXPORT DeferredCall(std::function<void()> callback);
 
 	// Special types for use by profilers
 	typedef std::basic_string<char, std::char_traits<char>, StdAlloc<char, ProfilerAlloc>> ProfilerString;

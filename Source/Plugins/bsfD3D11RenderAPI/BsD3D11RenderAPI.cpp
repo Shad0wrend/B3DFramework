@@ -91,7 +91,7 @@ void D3D11RenderAPI::Initialize()
 	}
 
 	if(FAILED(hr))
-		BS_EXCEPT(RenderingAPIException, "Failed to create Direct3D11 object. D3D11CreateDeviceN returned this error code: " + toString(hr));
+		BS_EXCEPT(RenderingAPIException, "Failed to create Direct3D11 object. D3D11CreateDeviceN returned this error code: " + ToString(hr));
 
 	mDevice = B3DNew<D3D11Device>(device);
 
@@ -625,7 +625,7 @@ void D3D11RenderAPI::SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u3
 		u32 maxBoundVertexBuffers = mCurrentCapabilities[0].MaxBoundVertexBuffers;
 		if(index < 0 || (index + numBuffers) >= maxBoundVertexBuffers)
 		{
-			BS_EXCEPT(InvalidParametersException, "Invalid vertex index: " + toString(index) + ". Valid range is 0 .. " + toString(maxBoundVertexBuffers - 1));
+			BS_EXCEPT(InvalidParametersException, "Invalid vertex index: " + ToString(index) + ". Valid range is 0 .. " + ToString(maxBoundVertexBuffers - 1));
 		}
 
 		ID3D11Buffer* dx11buffers[BS_MAX_BOUND_VERTEX_BUFFERS];
@@ -673,7 +673,7 @@ void D3D11RenderAPI::SetIndexBuffer(const SPtr<IndexBuffer>& buffer, const SPtr<
 		else if(indexBuffer->GetProperties().GetType() == IT_32BIT)
 			indexFormat = DXGI_FORMAT_R32_UINT;
 		else
-			BS_EXCEPT(InternalErrorException, "Unsupported index format: " + toString(indexBuffer->GetProperties().GetType()));
+			BS_EXCEPT(InternalErrorException, "Unsupported index format: " + ToString(indexBuffer->GetProperties().GetType()));
 
 		mDevice->GetImmediateContext()->IASetIndexBuffer(indexBuffer->GetD3DIndexBuffer(), indexFormat, 0);
 	};

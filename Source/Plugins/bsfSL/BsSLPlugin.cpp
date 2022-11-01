@@ -8,14 +8,14 @@ using namespace bs;
 
 
 /**	Returns a name of the plugin. */
-extern "C" BS_PLUGIN_EXPORT const char* getPluginName()
+extern "C" BS_PLUGIN_EXPORT const char* GetPluginName()
 {
 	static constexpr const char* kSystemName = "bsfSL";
 	return kSystemName;
 }
 
 /**	Entry point to the plugin. Called by the engine when the plugin is loaded. */
-extern "C" BS_PLUGIN_EXPORT void* loadPlugin()
+extern "C" BS_PLUGIN_EXPORT void* LoadPlugin()
 {
 	SLImporter* importer = B3DNew<SLImporter>();
 	Importer::Instance().RegisterAssetImporterInternal(importer);

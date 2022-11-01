@@ -480,7 +480,7 @@ SPtr<SerializedInstance> IntermediateSerializer::EncodeFieldInternal(IReflectabl
 				break;
 			}
 		default:
-			BS_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(u32(field->Schema.Type)) + ", Is array: " + toString(field->Schema.IsArray));
+			BS_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(field->Schema.Type)) + ", Is array: " + ToString(field->Schema.IsArray));
 		}
 	}
 	else
@@ -552,7 +552,7 @@ SPtr<SerializedInstance> IntermediateSerializer::EncodeFieldInternal(IReflectabl
 				break;
 			}
 		default:
-			BS_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(u32(field->Schema.Type)) + ", Is array: " + toString(field->Schema.IsArray));
+			BS_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(field->Schema.Type)) + ", Is array: " + ToString(field->Schema.IsArray));
 		}
 	}
 

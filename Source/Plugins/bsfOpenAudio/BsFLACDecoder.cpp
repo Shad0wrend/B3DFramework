@@ -5,7 +5,7 @@
 
 using namespace bs;
 
-FLAC__StreamDecoderReadStatus streamRead(const FLAC__StreamDecoder*, FLAC__byte buffer[], size_t* bytes, void* clientData)
+FLAC__StreamDecoderReadStatus StreamRead(const FLAC__StreamDecoder*, FLAC__byte buffer[], size_t* bytes, void* clientData)
 {
 	FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
@@ -22,7 +22,7 @@ FLAC__StreamDecoderReadStatus streamRead(const FLAC__StreamDecoder*, FLAC__byte 
 	return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
 }
 
-FLAC__StreamDecoderSeekStatus streamSeek(const FLAC__StreamDecoder*, FLAC__uint64 absoluteByteOffset, void* clientData)
+FLAC__StreamDecoderSeekStatus StreamSeek(const FLAC__StreamDecoder*, FLAC__uint64 absoluteByteOffset, void* clientData)
 {
 	FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
@@ -34,7 +34,7 @@ FLAC__StreamDecoderSeekStatus streamSeek(const FLAC__StreamDecoder*, FLAC__uint6
 		return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
 }
 
-FLAC__StreamDecoderTellStatus streamTell(const FLAC__StreamDecoder*, FLAC__uint64* absoluteByteOffset, void* clientData)
+FLAC__StreamDecoderTellStatus StreamTell(const FLAC__StreamDecoder*, FLAC__uint64* absoluteByteOffset, void* clientData)
 {
 	FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
@@ -50,7 +50,7 @@ FLAC__StreamDecoderTellStatus streamTell(const FLAC__StreamDecoder*, FLAC__uint6
 	}
 }
 
-FLAC__StreamDecoderLengthStatus streamLength(const FLAC__StreamDecoder*, FLAC__uint64* streamLength, void* clientData)
+FLAC__StreamDecoderLengthStatus StreamLength(const FLAC__StreamDecoder*, FLAC__uint64* streamLength, void* clientData)
 {
 	FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
@@ -58,14 +58,14 @@ FLAC__StreamDecoderLengthStatus streamLength(const FLAC__StreamDecoder*, FLAC__u
 	return FLAC__STREAM_DECODER_LENGTH_STATUS_OK;
 }
 
-FLAC__bool streamEof(const FLAC__StreamDecoder*, void* clientData)
+FLAC__bool StreamEof(const FLAC__StreamDecoder*, void* clientData)
 {
 	FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
 	return data->Stream->Eof();
 }
 
-FLAC__StreamDecoderWriteStatus streamWrite(const FLAC__StreamDecoder*, const FLAC__Frame* frame, const FLAC__int32* const buffer[], void* clientData)
+FLAC__StreamDecoderWriteStatus StreamWrite(const FLAC__StreamDecoder*, const FLAC__Frame* frame, const FLAC__int32* const buffer[], void* clientData)
 {
 	FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
@@ -109,7 +109,7 @@ FLAC__StreamDecoderWriteStatus streamWrite(const FLAC__StreamDecoder*, const FLA
 	return FLAC__STREAM_DECODER_WRITE_STATUS_CONTINUE;
 }
 
-void streamMetadata(const FLAC__StreamDecoder*, const FLAC__StreamMetadata* meta, void* clientData)
+void StreamMetadata(const FLAC__StreamDecoder*, const FLAC__StreamMetadata* meta, void* clientData)
 {
 	FLACDecoderData* data = (FLACDecoderData*)(clientData);
 
@@ -122,7 +122,7 @@ void streamMetadata(const FLAC__StreamDecoder*, const FLAC__StreamMetadata* meta
 	}
 }
 
-void streamError(const FLAC__StreamDecoder*, FLAC__StreamDecoderErrorStatus, void* clientData)
+void StreamError(const FLAC__StreamDecoder*, FLAC__StreamDecoderErrorStatus, void* clientData)
 {
 	FLACDecoderData* data = (FLACDecoderData*)(clientData);
 	data->Error = true;
@@ -144,7 +144,7 @@ bool FLACDecoder::IsValid(const SPtr<DataStream>& stream, u32 offset)
 	FLACDecoderData data;
 	data.Stream = stream;
 	mData.StreamOffset = offset;
-	FLAC__stream_decoder_init_stream(decoder, &streamRead, &streamSeek, &streamTell, &streamLength, &streamEof, &streamWrite, nullptr, &streamError, &data);
+	FLAC__stream_decoder_init_stream(decoder, &StreamRead, &StreamSeek, &StreamTell, &StreamLength, &StreamEof, &StreamWrite, nullptr, &StreamError, &data);
 
 	bool valid = FLAC__stream_decoder_process_until_end_of_metadata(decoder) != 0;
 
@@ -170,7 +170,7 @@ bool FLACDecoder::Open(const SPtr<DataStream>& stream, AudioDataInfo& info, u32 
 
 	mData.Stream = stream;
 	mData.StreamOffset = offset;
-	FLAC__stream_decoder_init_stream(mDecoder, &streamRead, &streamSeek, &streamTell, &streamLength, &streamEof, &streamWrite, &streamMetadata, &streamError, &mData);
+	FLAC__stream_decoder_init_stream(mDecoder, &StreamRead, &StreamSeek, &StreamTell, &StreamLength, &StreamEof, &StreamWrite, &StreamMetadata, &StreamError, &mData);
 
 	if(!FLAC__stream_decoder_process_until_end_of_metadata(mDecoder))
 	{

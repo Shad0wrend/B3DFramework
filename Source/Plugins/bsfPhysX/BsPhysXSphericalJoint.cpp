@@ -9,7 +9,7 @@ using namespace physx;
 
 using namespace bs;
 
-PxSphericalJointFlag::Enum toPxFlag(SphericalJointFlag flag)
+PxSphericalJointFlag::Enum ToPxFlag(SphericalJointFlag flag)
 {
 	switch(flag)
 	{
@@ -30,8 +30,8 @@ PhysXSphericalJoint::PhysXSphericalJoint(PxPhysics* physx, const SPHERICAL_JOINT
 	if(desc.Bodies[1].Body != nullptr)
 		actor1 = static_cast<PhysXRigidbody*>(desc.Bodies[1].Body)->GetInternalInternal();
 
-	PxTransform tfrm0 = toPxTransform(desc.Bodies[0].Position, desc.Bodies[0].Rotation);
-	PxTransform tfrm1 = toPxTransform(desc.Bodies[1].Position, desc.Bodies[1].Rotation);
+	PxTransform tfrm0 = ToPxTransform(desc.Bodies[0].Position, desc.Bodies[0].Rotation);
+	PxTransform tfrm1 = ToPxTransform(desc.Bodies[1].Position, desc.Bodies[1].Rotation);
 
 	PxSphericalJoint* joint = PxSphericalJointCreate(*physx, actor0, tfrm0, actor1, tfrm1);
 	joint->userData = this;
@@ -81,12 +81,12 @@ void PhysXSphericalJoint::SetLimit(const LimitConeRange& limit)
 
 void PhysXSphericalJoint::SetFlag(SphericalJointFlag flag, bool enabled)
 {
-	GetInternal()->setSphericalJointFlag(toPxFlag(flag), enabled);
+	GetInternal()->setSphericalJointFlag(ToPxFlag(flag), enabled);
 }
 
 bool PhysXSphericalJoint::HasFlag(SphericalJointFlag flag) const
 {
-	return GetInternal()->getSphericalJointFlags() & toPxFlag(flag);
+	return GetInternal()->getSphericalJointFlags() & ToPxFlag(flag);
 }
 
 PxSphericalJoint* PhysXSphericalJoint::GetInternal() const

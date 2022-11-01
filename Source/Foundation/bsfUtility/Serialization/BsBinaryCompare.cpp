@@ -20,7 +20,7 @@ struct ScopeGuard
 };
 
 template <class T>
-ScopeGuard<T> make_scope_guard(T callback)
+ScopeGuard<T> MakeScopeGuard(T callback)
 {
 	return ScopeGuard<T>{ callback };
 }
@@ -54,7 +54,7 @@ bool BinaryCompare::Compare(IReflectable& a, IReflectable& b)
 	};
 
 	FrameStack<RTTIPair> rttiInstances;
-	auto cleanup = ::impl::make_scope_guard([&]()
+	auto cleanup = ::impl::MakeScopeGuard([&]()
 										  {
 			while (!rttiInstances.empty())
 			{
@@ -183,7 +183,7 @@ bool BinaryCompare::Compare(IReflectable& a, IReflectable& b)
 						break;
 					}
 				default:
-					BS_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(u32(curGenericField->Schema.Type)) + ", Is array: " + toString(curGenericField->Schema.IsArray));
+					BS_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(curGenericField->Schema.Type)) + ", Is array: " + ToString(curGenericField->Schema.IsArray));
 				}
 			}
 			else
@@ -295,7 +295,7 @@ bool BinaryCompare::Compare(IReflectable& a, IReflectable& b)
 						break;
 					}
 				default:
-					BS_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + toString(u32(curGenericField->Schema.Type)) + ", Is array: " + toString(curGenericField->Schema.IsArray));
+					BS_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(curGenericField->Schema.Type)) + ", Is array: " + ToString(curGenericField->Schema.IsArray));
 				}
 			}
 		}

@@ -45,7 +45,7 @@ HSceneObject SceneObject::CreateInternal(const String& name, u32 flags)
 	SPtr<SceneObject> sceneObjectPtr = SPtr<SceneObject>(new(B3DAllocate<SceneObject>()) SceneObject(name, flags), &B3DDelete<SceneObject>, StdAlloc<SceneObject>());
 	sceneObjectPtr->mUUID = UUIDGenerator::GenerateRandom();
 
-	HSceneObject sceneObject = static_object_cast<SceneObject>(
+	HSceneObject sceneObject = B3DStaticGameObjectCast<SceneObject>(
 		GameObjectManager::Instance().RegisterObject(sceneObjectPtr));
 	sceneObject->mThisHandle = sceneObject;
 
@@ -54,7 +54,7 @@ HSceneObject SceneObject::CreateInternal(const String& name, u32 flags)
 
 HSceneObject SceneObject::CreateInternal(const SPtr<SceneObject>& soPtr)
 {
-	HSceneObject sceneObject = static_object_cast<SceneObject>(
+	HSceneObject sceneObject = B3DStaticGameObjectCast<SceneObject>(
 		GameObjectManager::Instance().RegisterObject(soPtr));
 	sceneObject->mThisHandle = sceneObject;
 
@@ -850,7 +850,7 @@ HComponent SceneObject::AddComponent(u32 typeId)
 	// Clean up the self-reference assigned by the RTTI system
 	componentPtr->mRTTIData = nullptr;
 
-	HComponent newComponent = static_object_cast<Component>(GameObjectManager::Instance().RegisterObject(componentPtr));
+	HComponent newComponent = B3DStaticGameObjectCast<Component>(GameObjectManager::Instance().RegisterObject(componentPtr));
 	newComponent->mParent = mThisHandle;
 
 	AddAndInitializeComponent(newComponent);
@@ -859,7 +859,7 @@ HComponent SceneObject::AddComponent(u32 typeId)
 
 void SceneObject::AddComponentInternal(const SPtr<Component>& component)
 {
-	HComponent newComponent = static_object_cast<Component>(
+	HComponent newComponent = B3DStaticGameObjectCast<Component>(
 		GameObjectManager::Instance().GetObject(component->GetInstanceId()));
 	newComponent->mParent = mThisHandle;
 	newComponent->mThisHandle = newComponent;
@@ -886,7 +886,7 @@ void SceneObject::AddAndInitializeComponent(const HComponent& component)
 
 void SceneObject::AddAndInitializeComponent(const SPtr<Component>& component)
 {
-	HComponent newComponent = static_object_cast<Component>(
+	HComponent newComponent = B3DStaticGameObjectCast<Component>(
 		GameObjectManager::Instance().GetObject(component->GetInstanceId()));
 	newComponent->mParent = mThisHandle;
 

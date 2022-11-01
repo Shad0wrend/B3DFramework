@@ -26,22 +26,22 @@ namespace bs
 	 */
 
 #if BS_PLATFORM == BS_PLATFORM_WIN32
-	inline void* platformAlignedAlloc16(size_t size)
+	inline void* PlatformAlignedAlloc16(size_t size)
 	{
 		return _aligned_malloc(size, 16);
 	}
 
-	inline void platformAlignedFree16(void* ptr)
+	inline void PlatformAlignedFree16(void* ptr)
 	{
 		_aligned_free(ptr);
 	}
 
-	inline void* platformAlignedAlloc(size_t size, size_t alignment)
+	inline void* PlatformAlignedAlloc(size_t size, size_t alignment)
 	{
 		return _aligned_malloc(size, alignment);
 	}
 
-	inline void platformAlignedFree(void* ptr)
+	inline void PlatformAlignedFree(void* ptr)
 	{
 		_aligned_free(ptr);
 	}
@@ -164,7 +164,7 @@ namespace bs
 			IncAllocCount();
 #endif
 
-			return platformAlignedAlloc(bytes, alignment);
+			return PlatformAlignedAlloc(bytes, alignment);
 		}
 
 		/** Allocates @p bytes and aligns them to a 16 byte boundary. */
@@ -174,7 +174,7 @@ namespace bs
 			IncAllocCount();
 #endif
 
-			return platformAlignedAlloc16(bytes);
+			return PlatformAlignedAlloc16(bytes);
 		}
 
 		/** Frees the memory at the specified location. */
@@ -194,7 +194,7 @@ namespace bs
 			IncFreeCount();
 #endif
 
-			platformAlignedFree(ptr);
+			PlatformAlignedFree(ptr);
 		}
 
 		/** Frees memory allocated with allocateAligned16() */
@@ -204,7 +204,7 @@ namespace bs
 			IncFreeCount();
 #endif
 
-			platformAlignedFree16(ptr);
+			PlatformAlignedFree16(ptr);
 		}
 	};
 

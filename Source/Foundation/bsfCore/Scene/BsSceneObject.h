@@ -496,10 +496,10 @@ namespace bs
 			SPtr<T> gameObject(new(B3DAllocate<T>()) T(mThisHandle, std::forward<Args>(args)...), &B3DDelete<T>, StdAlloc<T>());
 
 			const HComponent newComponent =
-				static_object_cast<Component>(GameObjectManager::Instance().RegisterObject(gameObject));
+				B3DStaticGameObjectCast<Component>(GameObjectManager::Instance().RegisterObject(gameObject));
 
 			AddAndInitializeComponent(newComponent);
-			return static_object_cast<T>(newComponent);
+			return B3DStaticGameObjectCast<T>(newComponent);
 		}
 
 		/**
@@ -524,7 +524,7 @@ namespace bs
 		{
 			static_assert((std::is_base_of<bs::Component, T>::value), "Specified type is not a valid Component.");
 
-			return static_object_cast<T>(GetComponent(T::GetRttiStatic()));
+			return B3DStaticGameObjectCast<T>(GetComponent(T::GetRttiStatic()));
 		}
 
 		/**
@@ -547,7 +547,7 @@ namespace bs
 			for(auto entry : mComponents)
 			{
 				if(entry->GetRtti()->IsDerivedFrom(T::GetRttiStatic()))
-					output.push_back(static_object_cast<T>(entry));
+					output.push_back(B3DStaticGameObjectCast<T>(entry));
 			}
 
 			return output;

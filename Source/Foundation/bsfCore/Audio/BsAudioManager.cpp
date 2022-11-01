@@ -14,7 +14,7 @@ AudioManager::AudioManager(const String& pluginName)
 	{
 		typedef AudioFactory* (*LoadPluginFunc)();
 
-		LoadPluginFunc loadPluginFunc = (LoadPluginFunc)mPlugin->GetSymbol("loadPlugin");
+		LoadPluginFunc loadPluginFunc = (LoadPluginFunc)mPlugin->GetSymbol("LoadPlugin");
 		mFactory = loadPluginFunc();
 
 		if(mFactory != nullptr)
@@ -30,7 +30,7 @@ AudioManager::~AudioManager()
 		{
 			typedef void (*UnloadPluginFunc)(AudioFactory*);
 
-			UnloadPluginFunc unloadPluginFunc = (UnloadPluginFunc)mPlugin->GetSymbol("unloadPlugin");
+			UnloadPluginFunc unloadPluginFunc = (UnloadPluginFunc)mPlugin->GetSymbol("UnloadPlugin");
 
 			mFactory->ShutDown();
 			unloadPluginFunc(mFactory);

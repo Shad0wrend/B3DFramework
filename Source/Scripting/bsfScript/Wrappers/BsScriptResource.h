@@ -87,7 +87,7 @@ namespace bs
 		HResource GetGenericHandle() const { return mResource; }
 
 		/**	Sets the internal resource this object wraps. */
-		void SetResource(const HResource& resource) { mResource = static_resource_cast<ResType>(resource); }
+		void SetResource(const HResource& resource) { mResource = B3DStaticResourceCast<ResType>(resource); }
 
 		/**	Returns a handle to the internal wrapped resource. */
 		const ResourceHandle<ResType>& GetHandle() const { return mResource; }

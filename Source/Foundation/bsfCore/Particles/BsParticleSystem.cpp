@@ -439,17 +439,17 @@ void ParticleSystem::MarkCoreDirtyInternal(ActorDirtyFlag flag)
 CoreSyncData ParticleSystem::SyncToCore(FrameAlloc* allocator)
 {
 	u32 size = B3DRTTISize(GetCoreDirtyFlags()).Bytes;
-	size += csync_size((SceneActor&)*this);
-	size += csync_size(mSettings);
-	size += csync_size(mGpuSimulationSettings);
+	size += CoreSyncGetSize((SceneActor&)*this);
+	size += CoreSyncGetSize(mSettings);
+	size += CoreSyncGetSize(mGpuSimulationSettings);
 	size += B3DRTTISize(mLayer).Bytes;
 
 	u8* data = allocator->Alloc(size);
 	Bitstream stream(data, size);
 	B3DRTTIWrite(GetCoreDirtyFlags(), stream);
-	csync_write((SceneActor&)*this, stream);
-	csync_write(mSettings, stream);
-	csync_write(mGpuSimulationSettings, stream);
+	B3DCoreSyncWrite((SceneActor&)*this, stream);
+	B3DCoreSyncWrite(mSettings, stream);
+	B3DCoreSyncWrite(mGpuSimulationSettings, stream);
 	B3DRTTIWrite(mLayer, stream);
 
 	return CoreSyncData(data, size);
@@ -526,9 +526,9 @@ void ParticleSystem::SyncToCore(const CoreSyncData& data)
 	const bool oldIsActive = mActive;
 
 	B3DRTTIRead(dirtyFlags, stream);
-	csync_read((SceneActor&)*this, stream);
-	csync_read(mSettings, stream);
-	csync_read(mGpuSimulationSettings, stream);
+	B3DCoreSyncRead((SceneActor&)*this, stream);
+	B3DCoreSyncRead(mSettings, stream);
+	B3DCoreSyncRead(mGpuSimulationSettings, stream);
 	B3DRTTIRead(mLayer, stream);
 
 	constexpr u32 updateEverythingFlag = (u32)ActorDirtyFlag::Everything | (u32)ActorDirtyFlag::Active | (u32)ActorDirtyFlag::Dependency;

@@ -835,8 +835,8 @@ void ProfilerCPU::EstimateTimerOverhead()
 
 		for(u32 i = 0; i < sampleReps * 5; i++)
 		{
-			BeginSample(("TestAvg#" + toString(i)).c_str());
-			EndSample(("TestAvg#" + toString(i)).c_str());
+			BeginSample(("TestAvg#" + ToString(i)).c_str());
+			EndSample(("TestAvg#" + ToString(i)).c_str());
 		}
 
 		EndThread();
@@ -886,8 +886,8 @@ void ProfilerCPU::EstimateTimerOverhead()
 
 		for(u32 i = 0; i < sampleReps * 5; i++)
 		{
-			BeginSample(("TestAvg#" + toString(i)).c_str());
-			EndSample(("TestAvg#" + toString(i)).c_str());
+			BeginSample(("TestAvg#" + ToString(i)).c_str());
+			EndSample(("TestAvg#" + ToString(i)).c_str());
 		}
 
 		EndThread();
@@ -935,8 +935,8 @@ void ProfilerCPU::EstimateTimerOverhead()
 
 		for(u32 i = 0; i < sampleReps * 5; i++)
 		{
-			BeginSamplePrecise(("TestAvg#" + toString(i)).c_str());
-			EndSamplePrecise(("TestAvg#" + toString(i)).c_str());
+			BeginSamplePrecise(("TestAvg#" + ToString(i)).c_str());
+			EndSamplePrecise(("TestAvg#" + ToString(i)).c_str());
 		}
 
 		EndThread();
@@ -984,8 +984,8 @@ void ProfilerCPU::EstimateTimerOverhead()
 
 		for(u32 i = 0; i < sampleReps * 5; i++)
 		{
-			BeginSamplePrecise(("TestAvg#" + toString(i)).c_str());
-			EndSamplePrecise(("TestAvg#" + toString(i)).c_str());
+			BeginSamplePrecise(("TestAvg#" + ToString(i)).c_str());
+			EndSamplePrecise(("TestAvg#" + ToString(i)).c_str());
 		}
 
 		EndThread();

@@ -27,7 +27,7 @@ HPhysicsMesh PhysicsMesh::Create(const SPtr<MeshData>& meshData, PhysicsMeshType
 {
 	SPtr<PhysicsMesh> newMesh = CreatePtrInternal(meshData, type);
 
-	return static_resource_cast<PhysicsMesh>(GetResources().CreateResourceHandleInternal(newMesh));
+	return B3DStaticResourceCast<PhysicsMesh>(GetResources().CreateResourceHandleInternal(newMesh));
 }
 
 SPtr<PhysicsMesh> PhysicsMesh::CreatePtrInternal(const SPtr<MeshData>& meshData, PhysicsMeshType type)

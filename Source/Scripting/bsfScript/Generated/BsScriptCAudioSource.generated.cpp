@@ -47,7 +47,7 @@ void ScriptCAudioSource::InternalSetClip(ScriptCAudioSource* thisPtr, MonoObject
 	ScriptRRefBase* scriptclip;
 	scriptclip = ScriptRRefBase::ToNative(clip);
 	if(scriptclip != nullptr)
-		tmpclip = static_resource_cast<AudioClip>(scriptclip->GetHandle());
+		tmpclip = B3DStaticResourceCast<AudioClip>(scriptclip->GetHandle());
 	thisPtr->GetHandle()->SetClip(tmpclip);
 }
 

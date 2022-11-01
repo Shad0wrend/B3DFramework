@@ -30,9 +30,9 @@ void GpuParamBlockBuffer::Write(u32 offset, const void* data, u32 size)
 	{
 		BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
 											  "Available range: 0 .. " +
-					  toString(mSize) + ". "
+					  ToString(mSize) + ". "
 										"Wanted range: " +
-					  toString(offset) + " .. " + toString(offset + size) + ".");
+					  ToString(offset) + " .. " + ToString(offset + size) + ".");
 	}
 #endif
 
@@ -47,9 +47,9 @@ void GpuParamBlockBuffer::Read(u32 offset, void* data, u32 size)
 	{
 		BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
 											  "Available range: 0 .. " +
-					  toString(mSize) + ". "
+					  ToString(mSize) + ". "
 										"Wanted range: " +
-					  toString(offset) + " .. " + toString(offset + size) + ".");
+					  ToString(offset) + " .. " + ToString(offset + size) + ".");
 	}
 #endif
 
@@ -63,9 +63,9 @@ void GpuParamBlockBuffer::ZeroOut(u32 offset, u32 size)
 	{
 		BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
 											  "Available range: 0 .. " +
-					  toString(mSize) + ". "
+					  ToString(mSize) + ". "
 										"Wanted range: " +
-					  toString(offset) + " .. " + toString(offset + size) + ".");
+					  ToString(offset) + " .. " + ToString(offset + size) + ".");
 	}
 #endif
 
@@ -130,9 +130,9 @@ void GpuParamBlockBuffer::Write(u32 offset, const void* data, u32 size)
 	{
 		BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
 											  "Available range: 0 .. " +
-					  toString(mSize) + ". "
+					  ToString(mSize) + ". "
 										"Wanted range: " +
-					  toString(offset) + " .. " + toString(offset + size) + ".");
+					  ToString(offset) + " .. " + ToString(offset + size) + ".");
 	}
 #endif
 
@@ -147,9 +147,9 @@ void GpuParamBlockBuffer::Read(u32 offset, void* data, u32 size)
 	{
 		BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
 											  "Available range: 0 .. " +
-					  toString(mSize) + ". "
+					  ToString(mSize) + ". "
 										"Wanted range: " +
-					  toString(offset) + " .. " + toString(offset + size) + ".");
+					  ToString(offset) + " .. " + ToString(offset + size) + ".");
 	}
 #endif
 
@@ -163,9 +163,9 @@ void GpuParamBlockBuffer::ZeroOut(u32 offset, u32 size)
 	{
 		BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
 											  "Available range: 0 .. " +
-					  toString(mSize) + ". "
+					  ToString(mSize) + ". "
 										"Wanted range: " +
-					  toString(offset) + " .. " + toString(offset + size) + ".");
+					  ToString(offset) + " .. " + ToString(offset + size) + ".");
 	}
 #endif
 

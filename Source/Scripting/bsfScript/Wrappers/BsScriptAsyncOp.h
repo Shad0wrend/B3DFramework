@@ -15,13 +15,13 @@ namespace bs
 	namespace detail
 	{
 		template <class T>
-		MonoObject* async_op_create(const TAsyncOp<T>& op, const std::function<MonoObject*(const Any&)>& convertCallback);
+		MonoObject* AsyncOpCreate(const TAsyncOp<T>& op, const std::function<MonoObject*(const Any&)>& convertCallback);
 
 		template <>
-		MonoObject* async_op_create(const TAsyncOp<Any>& op, const std::function<MonoObject*(const Any&)>& convertCallback);
+		MonoObject* AsyncOpCreate(const TAsyncOp<Any>& op, const std::function<MonoObject*(const Any&)>& convertCallback);
 
 		template <class T>
-		MonoObject* async_op_create(const TAsyncOp<T>& op, const std::function<MonoObject*(const Any&)>& convertCallback, MonoClass* returnTypeClass);
+		MonoObject* AsyncOpCreate(const TAsyncOp<T>& op, const std::function<MonoObject*(const Any&)>& convertCallback, MonoClass* returnTypeClass);
 	} // namespace detail
 
 	/** @} */
@@ -40,7 +40,7 @@ namespace bs
 		template <class T>
 		static MonoObject* Create(const TAsyncOp<T>& op, const std::function<MonoObject*(const Any&)>& convertCallback)
 		{
-			return detail::async_op_create(op, convertCallback);
+			return detail::AsyncOpCreate(op, convertCallback);
 		}
 
 		/**
@@ -50,7 +50,7 @@ namespace bs
 		template <class T>
 		static MonoObject* Create(const TAsyncOp<T>& op, const std::function<MonoObject*(const Any&)>& convertCallback, MonoClass* returnTypeClass)
 		{
-			return detail::async_op_create(op, convertCallback, returnTypeClass);
+			return detail::AsyncOpCreate(op, convertCallback, returnTypeClass);
 		}
 
 		/** Creates a AsyncOp type with the provided class bound as its template parameter. */
@@ -94,19 +94,19 @@ namespace bs
 	namespace detail
 	{
 		template <class T>
-		inline MonoObject* async_op_create(const TAsyncOp<T>& op, const std::function<MonoObject*(const Any&)>& convertCallback)
+		inline MonoObject* AsyncOpCreate(const TAsyncOp<T>& op, const std::function<MonoObject*(const Any&)>& convertCallback)
 		{
-			return ScriptAsyncOpBase::_create(op, convertCallback, TAsyncOp<T>::ReturnValueType::GetRttiStatic()->GetRttiId());
+			return ScriptAsyncOpBase::CreateInternal(op, convertCallback, TAsyncOp<T>::ReturnValueType::GetRttiStatic()->GetRttiId());
 		}
 
 		template <>
-		inline MonoObject* async_op_create(const TAsyncOp<Any>& op, const std::function<MonoObject*(const Any&)>& convertCallback)
+		inline MonoObject* AsyncOpCreate(const TAsyncOp<Any>& op, const std::function<MonoObject*(const Any&)>& convertCallback)
 		{
 			return ScriptAsyncOpBase::CreateInternal(op, convertCallback);
 		}
 
 		template <class T>
-		inline MonoObject* async_op_create(const TAsyncOp<T>& op, const std::function<MonoObject*(const Any&)>& convertCallback, MonoClass* returnTypeClass)
+		inline MonoObject* AsyncOpCreate(const TAsyncOp<T>& op, const std::function<MonoObject*(const Any&)>& convertCallback, MonoClass* returnTypeClass)
 		{
 			return ScriptAsyncOpBase::CreateInternal(op, convertCallback, returnTypeClass);
 		}

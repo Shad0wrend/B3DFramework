@@ -260,7 +260,7 @@ RGBA Color::GetAsRgba() const
 	return val32;
 }
 
-float linearToSRGB(float x)
+float LinearToSrgb(float x)
 {
 	if(x <= 0.0f)
 		return 0.0f;
@@ -287,9 +287,9 @@ float SRGBToLinear(float x)
 Color Color::GetGamma() const
 {
 	return Color(
-		linearToSRGB(R),
-		linearToSRGB(G),
-		linearToSRGB(B),
+		LinearToSrgb(R),
+		LinearToSrgb(G),
+		LinearToSrgb(B),
 		A);
 }
 

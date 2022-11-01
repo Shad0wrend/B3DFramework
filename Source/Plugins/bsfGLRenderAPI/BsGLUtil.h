@@ -16,7 +16,7 @@ namespace bs
 		 */
 
 		/**	Helper method that returns a platform specific GL support object. */
-		GLSupport* getGLSupport()
+		GLSupport* GetGlSupport()
 		{
 			return B3DNew<Win32GLSupport>();
 		}

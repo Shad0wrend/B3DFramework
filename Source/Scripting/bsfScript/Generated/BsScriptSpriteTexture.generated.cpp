@@ -58,7 +58,7 @@ void ScriptSpriteTexture::InternalSetTexture(ScriptSpriteTexture* thisPtr, MonoO
 	ScriptRRefBase* scripttexture;
 	scripttexture = ScriptRRefBase::ToNative(texture);
 	if(scripttexture != nullptr)
-		tmptexture = static_resource_cast<Texture>(scripttexture->GetHandle());
+		tmptexture = B3DStaticResourceCast<Texture>(scripttexture->GetHandle());
 	thisPtr->GetHandle()->SetTexture(tmptexture);
 }
 
@@ -183,7 +183,7 @@ void ScriptSpriteTexture::InternalCreate(MonoObject* managedInstance, MonoObject
 	ScriptRRefBase* scripttexture;
 	scripttexture = ScriptRRefBase::ToNative(texture);
 	if(scripttexture != nullptr)
-		tmptexture = static_resource_cast<Texture>(scripttexture->GetHandle());
+		tmptexture = B3DStaticResourceCast<Texture>(scripttexture->GetHandle());
 	ResourceHandle<SpriteTexture> instance = SpriteTexture::Create(tmptexture);
 	ScriptResourceManager::Instance().CreateBuiltinScriptResource(instance, managedInstance);
 }
@@ -194,7 +194,7 @@ void ScriptSpriteTexture::InternalCreate0(MonoObject* managedInstance, Vector2* 
 	ScriptRRefBase* scripttexture;
 	scripttexture = ScriptRRefBase::ToNative(texture);
 	if(scripttexture != nullptr)
-		tmptexture = static_resource_cast<Texture>(scripttexture->GetHandle());
+		tmptexture = B3DStaticResourceCast<Texture>(scripttexture->GetHandle());
 	ResourceHandle<SpriteTexture> instance = SpriteTexture::Create(*uvOffset, *uvScale, tmptexture);
 	ScriptResourceManager::Instance().CreateBuiltinScriptResource(instance, managedInstance);
 }

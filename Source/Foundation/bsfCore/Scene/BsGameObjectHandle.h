@@ -269,10 +269,10 @@ namespace bs
 
 	protected:
 		template <class _Ty1, class _Ty2>
-		friend GameObjectHandle<_Ty1> static_object_cast(const GameObjectHandle<_Ty2>& other);
+		friend GameObjectHandle<_Ty1> B3DStaticGameObjectCast(const GameObjectHandle<_Ty2>& other);
 
 		template <class _Ty1>
-		friend GameObjectHandle<_Ty1> static_object_cast(const GameObjectHandleBase& other);
+		friend GameObjectHandle<_Ty1> B3DStaticGameObjectCast(const GameObjectHandleBase& other);
 
 		GameObjectHandle(SPtr<GameObjectHandleData> data)
 			: GameObjectHandleBase(std::move(data))
@@ -281,14 +281,14 @@ namespace bs
 
 	/**	Casts one GameObject handle type to another. */
 	template <class _Ty1, class _Ty2>
-	GameObjectHandle<_Ty1> static_object_cast(const GameObjectHandle<_Ty2>& other)
+	GameObjectHandle<_Ty1> B3DStaticGameObjectCast(const GameObjectHandle<_Ty2>& other)
 	{
 		return GameObjectHandle<_Ty1>(other.GetHandleDataInternal());
 	}
 
 	/**	Casts a generic GameObject handle to a specific one . */
 	template <class T>
-	GameObjectHandle<T> static_object_cast(const GameObjectHandleBase& other)
+	GameObjectHandle<T> B3DStaticGameObjectCast(const GameObjectHandleBase& other)
 	{
 		return GameObjectHandle<T>(other.GetHandleDataInternal());
 	}

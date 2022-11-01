@@ -19,7 +19,7 @@ namespace bs
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SceneObject")
 
-		HGameObject GetNativeHandle() const override { return static_object_cast<GameObject>(mSceneObject); }
+		HGameObject GetNativeHandle() const override { return B3DStaticGameObjectCast<GameObject>(mSceneObject); }
 		void SetNativeHandle(const HGameObject& gameObject) override;
 
 		/**	Returns the native internal scene object. */

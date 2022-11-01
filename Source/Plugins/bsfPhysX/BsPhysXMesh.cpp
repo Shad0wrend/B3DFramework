@@ -22,7 +22,7 @@ using namespace bs;
  * data buffer, and its size in @p size. The data buffer will be allocated used the generic allocator and is up to the
  * caller to free it.
  */
-bool cookConvex(PxCooking* cooking, const SPtr<MeshData>& meshData, u8** data, u32& size)
+bool CookConvex(PxCooking* cooking, const SPtr<MeshData>& meshData, u8** data, u32& size)
 {
 	SPtr<VertexDataDesc> vertexDesc = meshData->GetVertexDesc();
 
@@ -98,7 +98,7 @@ bool cookConvex(PxCooking* cooking, const SPtr<MeshData>& meshData, u8** data, u
  * and its size in @p size. The data buffer will be allocated used the generic allocator and is up to the caller to
  * free it.
  */
-bool cookMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type, u8** data, u32& size)
+bool CookMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type, u8** data, u32& size)
 {
 	if(meshData == nullptr)
 		return false;
@@ -119,7 +119,7 @@ bool cookMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type, u8** data, u
 
 	if(type == PhysicsMeshType::Convex)
 	{
-		if(!cookConvex(cooking, meshData, data, size))
+		if(!CookConvex(cooking, meshData, data, size))
 		{
 			BS_LOG(Warning, Physics, "Failed cooking a convex mesh. Perpahs it is too complex? Maximum number of "
 									 "convex vertices is 256.");
@@ -191,7 +191,7 @@ FPhysXMesh::FPhysXMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type)
 {
 	// Perform cooking if needed
 	if(meshData != nullptr)
-		cookMesh(meshData, mType, &mCookedData, mCookedDataSize);
+		CookMesh(meshData, mType, &mCookedData, mCookedDataSize);
 
 	Initialize();
 }
@@ -275,7 +275,7 @@ SPtr<MeshData> FPhysXMesh::GetMeshData() const
 		const u8* convexIndices = mConvexMesh->getIndexBuffer();
 
 		for(u32 i = 0; i < numVertices; i++)
-			posIter.AddValue(fromPxVector(convexVertices[i]));
+			posIter.AddValue(FromPxVector(convexVertices[i]));
 
 		u32 numPolygons = mConvexMesh->getNbPolygons();
 		for(u32 i = 0; i < numPolygons; i++)
@@ -297,7 +297,7 @@ SPtr<MeshData> FPhysXMesh::GetMeshData() const
 	{
 		const PxVec3* vertices = mTriangleMesh->getVertices();
 		for(u32 i = 0; i < numVertices; i++)
-			posIter.AddValue(fromPxVector(vertices[i]));
+			posIter.AddValue(FromPxVector(vertices[i]));
 
 		if(mTriangleMesh->getTriangleMeshFlags() & PxTriangleMeshFlag::e16_BIT_INDICES)
 		{

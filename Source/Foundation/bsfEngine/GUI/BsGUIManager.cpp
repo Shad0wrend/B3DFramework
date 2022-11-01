@@ -73,8 +73,8 @@ GUIManager::GUIManager()
 	GUITooltipManager::StartUp();
 
 	// Need to defer this call because I want to make sure all managers are initialized first
-	deferredCall(std::bind(&GUIManager::UpdateCaretTexture, this));
-	deferredCall(std::bind(&GUIManager::UpdateTextSelectionTexture, this));
+	DeferredCall(std::bind(&GUIManager::UpdateCaretTexture, this));
+	DeferredCall(std::bind(&GUIManager::UpdateTextSelectionTexture, this));
 
 	mRenderer = RendererExtension::Create<ct::GUIRenderer>(nullptr);
 }

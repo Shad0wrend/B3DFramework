@@ -148,11 +148,11 @@ void Pass::Compile()
 
 CoreSyncData Pass::SyncToCore(FrameAlloc* allocator)
 {
-	u32 size = csync_size(*this);
+	u32 size = CoreSyncGetSize(*this);
 	u8* data = allocator->Alloc(size);
 
 	Bitstream stream(data, size);
-	csync_write(*this, stream);
+	B3DCoreSyncWrite(*this, stream);
 
 	return CoreSyncData(data, size);
 }
@@ -203,7 +203,7 @@ void Pass::Compile()
 void Pass::SyncToCore(const CoreSyncData& data)
 {
 	Bitstream stream(data.GetBuffer(), data.GetBufferSize());
-	csync_read(*this, stream);
+	B3DCoreSyncRead(*this, stream);
 }
 
 SPtr<Pass> Pass::Create(const PASS_DESC& desc)

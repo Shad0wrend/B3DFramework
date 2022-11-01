@@ -5,7 +5,7 @@
 
 namespace bs
 {
-String md5(const WString& source)
+String Md5(const WString& source)
 {
 	MD5 md5;
 	md5.update((u8*)source.data(), (u32)source.length() * sizeof(WString::value_type));
@@ -22,7 +22,7 @@ String md5(const WString& source)
 	return buf;
 }
 
-String md5(const String& source)
+String Md5(const String& source)
 {
 	MD5 md5;
 	md5.update((u8*)source.data(), (u32)source.length() * sizeof(String::value_type));

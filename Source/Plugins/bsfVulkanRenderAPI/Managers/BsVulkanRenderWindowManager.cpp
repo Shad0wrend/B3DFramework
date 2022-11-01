@@ -18,7 +18,7 @@ SPtr<RenderWindow> VulkanRenderWindowManager::CreateImpl(RENDER_WINDOW_DESC& des
 	{
 		u64 hWnd;
 		parentWindow->GetCustomAttribute("WINDOW", &hWnd);
-		desc.PlatformSpecific["parentWindowHandle"] = toString(hWnd);
+		desc.PlatformSpecific["parentWindowHandle"] = ToString(hWnd);
 	}
 
 	// Create the window

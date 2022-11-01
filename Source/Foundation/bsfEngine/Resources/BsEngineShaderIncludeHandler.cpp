@@ -18,7 +18,7 @@ HShaderInclude EngineShaderIncludeHandler::FindInclude(const String& name) const
 	if(name.size() >= 8)
 	{
 		if(name.substr(0, 8) == "$ENGINE$" || name.substr(0, 8) == "$EDITOR$")
-			return static_resource_cast<ShaderInclude>(Resources::Instance().Load(path));
+			return B3DStaticResourceCast<ShaderInclude>(Resources::Instance().Load(path));
 	}
 
 	for(auto& folder : mSearchPaths)

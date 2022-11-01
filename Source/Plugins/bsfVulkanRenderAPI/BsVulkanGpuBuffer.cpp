@@ -10,7 +10,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-static void deleteBuffer(HardwareBuffer* buffer)
+static void DeleteHardwareBuffer(HardwareBuffer* buffer)
 {
 	B3DPoolDelete(static_cast<VulkanHardwareBuffer*>(buffer));
 }
@@ -45,7 +45,7 @@ void VulkanGpuBuffer::Initialize()
 	BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_GpuBuffer);
 
 	const GpuBufferProperties& props = GetProperties();
-	mBufferDeleter = &deleteBuffer;
+	mBufferDeleter = &DeleteHardwareBuffer;
 
 	// Create a new buffer if external buffer is not provided
 	if(!mBuffer)

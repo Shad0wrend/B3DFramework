@@ -72,7 +72,7 @@ MonoClass* MonoMethod::GetParameterType(u32 paramIdx) const
 		CacheSignature();
 
 	if(paramIdx >= mCachedNumParameters)
-		BS_EXCEPT(InvalidParametersException, "Parameter index out of range. Valid range is [0, " + toString(mCachedNumParameters - 1) + "]");
+		BS_EXCEPT(InvalidParametersException, "Parameter index out of range. Valid range is [0, " + ToString(mCachedNumParameters - 1) + "]");
 
 	return mCachedParameters[paramIdx];
 }

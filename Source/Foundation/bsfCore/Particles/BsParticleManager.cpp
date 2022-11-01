@@ -13,7 +13,7 @@ using namespace bs;
 
 /** Helper method used for writing particle data into the @p pixels buffer. */
 template <class T, class PR>
-void iterateOverPixels(PixelData& pixels, u32 count, u32 stride, PR predicate)
+void IterateOverPixels(PixelData& pixels, u32 count, u32 stride, PR predicate)
 {
 	auto dest = (u8*)pixels.GetData();
 
@@ -35,9 +35,9 @@ void iterateOverPixels(PixelData& pixels, u32 count, u32 stride, PR predicate)
 
 /** Helper method used for writing particle data into the @p pixels buffer. */
 template <class T, class PR>
-void iterateOverPixels(PixelData& pixels, u32 count, PR predicate)
+void IterateOverPixels(PixelData& pixels, u32 count, PR predicate)
 {
-	iterateOverPixels<T>(pixels, count, sizeof(T), predicate);
+	IterateOverPixels<T>(pixels, count, sizeof(T), predicate);
 }
 
 /**
@@ -111,17 +111,17 @@ public:
 		const ParticleSetData& particles = particleSet.GetParticles();
 
 		// TODO: Use non-temporal writes?
-		iterateOverPixels<Vector4>(output->PositionAndRotation, count, [&particles](Vector4* dst, u32 idx)
+		IterateOverPixels<Vector4>(output->PositionAndRotation, count, [&particles](Vector4* dst, u32 idx)
 								   {
 										   dst->X = particles.Position[idx].X;
 										   dst->Y = particles.Position[idx].Y;
 										   dst->Z = particles.Position[idx].Z;
 										   dst->W = particles.Rotation[idx].X * Math::kDeG2Rad; });
 
-		iterateOverPixels<RGBA>(output->Color, count, [&particles](RGBA* dst, u32 idx)
+		IterateOverPixels<RGBA>(output->Color, count, [&particles](RGBA* dst, u32 idx)
 								{ *dst = particles.Color[idx]; });
 
-		iterateOverPixels<u16>(output->SizeAndFrameIdx, count, sizeof(u16) * 4, [&particles](u16* dst, u32 idx)
+		IterateOverPixels<u16>(output->SizeAndFrameIdx, count, sizeof(u16) * 4, [&particles](u16* dst, u32 idx)
 							   {
 				dst[0] = Bitwise::FloatToHalf(particles.Size[idx].X);
 				dst[1] = Bitwise::FloatToHalf(particles.Size[idx].Y);
@@ -170,22 +170,22 @@ public:
 		const ParticleSetData& particles = particleSet.GetParticles();
 
 		// TODO: Use non-temporal writes?
-		iterateOverPixels<Vector4>(output->Position, count, [&particles](Vector4* dst, u32 idx)
+		IterateOverPixels<Vector4>(output->Position, count, [&particles](Vector4* dst, u32 idx)
 								   {
 										   dst->X = particles.Position[idx].X;
 										   dst->Y = particles.Position[idx].Y;
 										   dst->Z = particles.Position[idx].Z; });
 
-		iterateOverPixels<RGBA>(output->Color, count, [&particles](RGBA* dst, u32 idx)
+		IterateOverPixels<RGBA>(output->Color, count, [&particles](RGBA* dst, u32 idx)
 								{ *dst = particles.Color[idx]; });
 
-		iterateOverPixels<u16>(output->Rotation, count, sizeof(u16) * 4, [&particles](u16* dst, u32 idx)
+		IterateOverPixels<u16>(output->Rotation, count, sizeof(u16) * 4, [&particles](u16* dst, u32 idx)
 							   {
 				dst[0] = Bitwise::FloatToHalf(particles.Rotation[idx].X * Math::kDeG2Rad);
 				dst[1] = Bitwise::FloatToHalf(particles.Rotation[idx].Y * Math::kDeG2Rad);
 				dst[2] = Bitwise::FloatToHalf(particles.Rotation[idx].Z * Math::kDeG2Rad); });
 
-		iterateOverPixels<u16>(output->Size, count, sizeof(u16) * 4, [&particles](u16* dst, u32 idx)
+		IterateOverPixels<u16>(output->Size, count, sizeof(u16) * 4, [&particles](u16* dst, u32 idx)
 							   {
 				dst[0] = Bitwise::FloatToHalf(particles.Size[idx].X);
 				dst[1] = Bitwise::FloatToHalf(particles.Size[idx].Y);

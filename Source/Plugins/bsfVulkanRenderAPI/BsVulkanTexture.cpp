@@ -13,7 +13,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-VULKAN_IMAGE_DESC createDesc(VkImage image, VmaAllocation allocation, VkImageLayout layout, VkFormat actualFormat, const TextureProperties& props)
+static VULKAN_IMAGE_DESC CreateImageDesc(VkImage image, VmaAllocation allocation, VkImageLayout layout, VkFormat actualFormat, const TextureProperties& props)
 {
 	VULKAN_IMAGE_DESC desc;
 	desc.Image = image;
@@ -29,7 +29,7 @@ VULKAN_IMAGE_DESC createDesc(VkImage image, VmaAllocation allocation, VkImageLay
 }
 
 VulkanImage::VulkanImage(VulkanResourceManager* owner, VkImage image, VmaAllocation allocation, VkImageLayout layout, VkFormat actualFormat, const TextureProperties& props, bool ownsImage)
-	: VulkanImage(owner, createDesc(image, allocation, layout, actualFormat, props), ownsImage)
+	: VulkanImage(owner, CreateImageDesc(image, allocation, layout, actualFormat, props), ownsImage)
 {}
 
 VulkanImage::VulkanImage(VulkanResourceManager* owner, const VULKAN_IMAGE_DESC& desc, bool ownsImage)

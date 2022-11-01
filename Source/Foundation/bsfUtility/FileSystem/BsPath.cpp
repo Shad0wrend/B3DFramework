@@ -380,7 +380,7 @@ const String& Path::GetDirectory(u32 idx) const
 {
 	if(idx >= (u32)mDirectories.size())
 	{
-		BS_EXCEPT(InvalidParametersException, "Index out of range: " + bs::toString(idx) + ". Valid range: [0, " + bs::toString((u32)mDirectories.size() - 1) + "]");
+		BS_EXCEPT(InvalidParametersException, "Index out of range: " + bs::ToString(idx) + ". Valid range: [0, " + bs::ToString((u32)mDirectories.size() - 1) + "]");
 	}
 
 	return mDirectories[idx];

@@ -9,7 +9,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-static void deleteBuffer(HardwareBuffer* buffer)
+static void DeleteBuffer(HardwareBuffer* buffer)
 {
 	B3DPoolDelete(static_cast<GLHardwareBuffer*>(buffer));
 }
@@ -23,7 +23,7 @@ GLIndexBuffer::GLIndexBuffer(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags devic
 void GLIndexBuffer::Initialize()
 {
 	mBuffer = B3DPoolNew<GLHardwareBuffer>(GL_ELEMENT_ARRAY_BUFFER, mSize, mUsage);
-	mBufferDeleter = &deleteBuffer;
+	mBufferDeleter = &DeleteBuffer;
 
 	IndexBuffer::Initialize();
 }

@@ -23,12 +23,12 @@ public:
 	}
 };
 
-extern "C" BS_PLUGIN_EXPORT PhysXFactory* loadPlugin()
+extern "C" BS_PLUGIN_EXPORT PhysXFactory* LoadPlugin()
 {
 	return B3DNew<PhysXFactory>();
 }
 
-extern "C" BS_PLUGIN_EXPORT void unloadPlugin(PhysXFactory* instance)
+extern "C" BS_PLUGIN_EXPORT void UnloadPlugin(PhysXFactory* instance)
 {
 	B3DDelete(instance);
 }

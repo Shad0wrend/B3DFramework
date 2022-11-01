@@ -275,7 +275,7 @@ void D3D11Texture::WriteDataImpl(const PixelData& src, u32 mipLevel, u32 face, b
 	}
 	else
 	{
-		BS_EXCEPT(RenderingAPIException, "Trying to write into a buffer with unsupported usage: " + toString(mProperties.GetUsage()));
+		BS_EXCEPT(RenderingAPIException, "Trying to write into a buffer with unsupported usage: " + ToString(mProperties.GetUsage()));
 	}
 }
 
@@ -376,7 +376,7 @@ void D3D11Texture::Create1DTex()
 	{
 		BS_EXCEPT(RenderingAPIException, "Driver returned different number of mip maps than requested. "
 										 "Requested: " +
-					  toString(numMips) + ". Got: " + toString(desc.MipLevels - 1) + ".");
+					  ToString(numMips) + ". Got: " + ToString(desc.MipLevels - 1) + ".");
 	}
 
 	mDXGIFormat = desc.Format;
@@ -521,7 +521,7 @@ void D3D11Texture::Create2DTex()
 	{
 		BS_EXCEPT(RenderingAPIException, "Driver returned different number of mip maps than requested. "
 										 "Requested: " +
-					  toString(numMips) + ". Got: " + toString(desc.MipLevels - 1) + ".");
+					  ToString(numMips) + ". Got: " + ToString(desc.MipLevels - 1) + ".");
 	}
 
 	mDXGIFormat = desc.Format;
@@ -638,7 +638,7 @@ void D3D11Texture::Create3DTex()
 	{
 		BS_EXCEPT(RenderingAPIException, "Driver returned different number of mip maps than requested. "
 										 "Requested: " +
-					  toString(mProperties.GetNumMipmaps()) + ". Got: " + toString(desc.MipLevels - 1) + ".");
+					  ToString(mProperties.GetNumMipmaps()) + ". Got: " + ToString(desc.MipLevels - 1) + ".");
 	}
 
 	mDXGIFormat = desc.Format;

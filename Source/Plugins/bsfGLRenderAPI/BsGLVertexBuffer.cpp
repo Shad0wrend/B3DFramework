@@ -9,7 +9,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-static void deleteBuffer(HardwareBuffer* buffer)
+static void DeleteBuffer(HardwareBuffer* buffer)
 {
 	B3DPoolDelete(static_cast<GLHardwareBuffer*>(buffer));
 }
@@ -29,7 +29,7 @@ GLVertexBuffer::~GLVertexBuffer()
 void GLVertexBuffer::Initialize()
 {
 	mBuffer = B3DPoolNew<GLHardwareBuffer>(GL_ARRAY_BUFFER, mSize, mUsage);
-	mBufferDeleter = &deleteBuffer;
+	mBufferDeleter = &DeleteBuffer;
 
 	VertexBuffer::Initialize();
 }

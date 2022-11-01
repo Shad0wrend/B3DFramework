@@ -34,25 +34,25 @@ Blend2DInfo ScriptBlend2DInfo::FromInterop(const __Blend2DInfoInterop& value)
 	ScriptRRefBase* scriptTopLeftClip;
 	scriptTopLeftClip = ScriptRRefBase::ToNative(value.TopLeftClip);
 	if(scriptTopLeftClip != nullptr)
-		tmpTopLeftClip = static_resource_cast<AnimationClip>(scriptTopLeftClip->GetHandle());
+		tmpTopLeftClip = B3DStaticResourceCast<AnimationClip>(scriptTopLeftClip->GetHandle());
 	output.TopLeftClip = tmpTopLeftClip;
 	ResourceHandle<AnimationClip> tmpTopRightClip;
 	ScriptRRefBase* scriptTopRightClip;
 	scriptTopRightClip = ScriptRRefBase::ToNative(value.TopRightClip);
 	if(scriptTopRightClip != nullptr)
-		tmpTopRightClip = static_resource_cast<AnimationClip>(scriptTopRightClip->GetHandle());
+		tmpTopRightClip = B3DStaticResourceCast<AnimationClip>(scriptTopRightClip->GetHandle());
 	output.TopRightClip = tmpTopRightClip;
 	ResourceHandle<AnimationClip> tmpBotLeftClip;
 	ScriptRRefBase* scriptBotLeftClip;
 	scriptBotLeftClip = ScriptRRefBase::ToNative(value.BotLeftClip);
 	if(scriptBotLeftClip != nullptr)
-		tmpBotLeftClip = static_resource_cast<AnimationClip>(scriptBotLeftClip->GetHandle());
+		tmpBotLeftClip = B3DStaticResourceCast<AnimationClip>(scriptBotLeftClip->GetHandle());
 	output.BotLeftClip = tmpBotLeftClip;
 	ResourceHandle<AnimationClip> tmpBotRightClip;
 	ScriptRRefBase* scriptBotRightClip;
 	scriptBotRightClip = ScriptRRefBase::ToNative(value.BotRightClip);
 	if(scriptBotRightClip != nullptr)
-		tmpBotRightClip = static_resource_cast<AnimationClip>(scriptBotRightClip->GetHandle());
+		tmpBotRightClip = B3DStaticResourceCast<AnimationClip>(scriptBotRightClip->GetHandle());
 	output.BotRightClip = tmpBotRightClip;
 
 	return output;

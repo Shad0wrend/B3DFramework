@@ -116,7 +116,7 @@ SystemInfo PlatformUtility::GetSystemInfo()
 	}
 
 	// Get OS version
-	output.OsName = "Windows " + toString((u32)GetRealOSVersion().dwMajorVersion);
+	output.OsName = "Windows " + ToString((u32)GetRealOSVersion().dwMajorVersion);
 
 	// Get GPU info
 	output.GpuInfo = sGPUInfo;

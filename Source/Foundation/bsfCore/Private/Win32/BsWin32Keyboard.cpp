@@ -22,7 +22,7 @@ struct Keyboard::Pimpl
  * Initializes DirectInput keyboard device for a window with the specified handle. Only input from that window will be
  * reported.
  */
-void initializeDirectInput(Keyboard::Pimpl* m, HWND hWnd)
+void InitializeDirectInput(Keyboard::Pimpl* m, HWND hWnd)
 {
 	DIPROPDWORD dipdw;
 	dipdw.diph.dwSize = sizeof(DIPROPDWORD);
@@ -51,7 +51,7 @@ void initializeDirectInput(Keyboard::Pimpl* m, HWND hWnd)
 }
 
 /** Releases DirectInput resources for the provided device */
-void releaseDirectInput(Keyboard::Pimpl* m)
+void ReleaseDirectInput(Keyboard::Pimpl* m)
 {
 	if(m->Keyboard)
 	{
@@ -72,12 +72,12 @@ Keyboard::Keyboard(const String& name, Input* owner)
 	m->Keyboard = nullptr;
 	B3DZeroOut(m->KeyBuffer);
 
-	initializeDirectInput(m, (HWND)owner->GetWindowHandleInternal());
+	InitializeDirectInput(m, (HWND)owner->GetWindowHandleInternal());
 }
 
 Keyboard::~Keyboard()
 {
-	releaseDirectInput(m);
+	ReleaseDirectInput(m);
 
 	B3DDelete(m);
 }
@@ -162,10 +162,10 @@ void Keyboard::ChangeCaptureContext(u64 windowHandle)
 
 	if(m->HWnd != newhWnd)
 	{
-		releaseDirectInput(m);
+		ReleaseDirectInput(m);
 
 		if(windowHandle != (u64)-1)
-			initializeDirectInput(m, newhWnd);
+			InitializeDirectInput(m, newhWnd);
 		else
 			m->HWnd = (HWND)-1;
 	}

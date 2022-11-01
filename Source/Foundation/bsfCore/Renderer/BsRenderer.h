@@ -34,7 +34,7 @@ namespace bs
 
 		/** Returns a specific vertex input shader variation. */
 		template <bool SKINNED, bool MORPH, bool WRITE_VELOCITY>
-		static const ShaderVariation& getVertexInputVariation(bool supportsVelocityWrites)
+		static const ShaderVariation& GetVertexInputVariation(bool supportsVelocityWrites)
 		{
 			if(!supportsVelocityWrites)
 			{

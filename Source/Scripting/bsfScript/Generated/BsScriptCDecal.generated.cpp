@@ -36,7 +36,7 @@ void ScriptCDecal::InternalSetMaterial(ScriptCDecal* thisPtr, MonoObject* materi
 	ScriptRRefBase* scriptmaterial;
 	scriptmaterial = ScriptRRefBase::ToNative(material);
 	if(scriptmaterial != nullptr)
-		tmpmaterial = static_resource_cast<Material>(scriptmaterial->GetHandle());
+		tmpmaterial = B3DStaticResourceCast<Material>(scriptmaterial->GetHandle());
 	thisPtr->GetHandle()->SetMaterial(tmpmaterial);
 }
 

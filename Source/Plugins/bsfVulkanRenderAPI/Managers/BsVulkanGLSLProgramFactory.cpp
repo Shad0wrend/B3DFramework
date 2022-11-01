@@ -15,7 +15,7 @@ using namespace bs;
 using namespace bs::ct;
 
 template <class T, class CB>
-void iterateSorted(const Map<String, T>& entries, CB callback)
+void IterateSorted(const Map<String, T>& entries, CB callback)
 {
 	auto count = (u32)entries.size();
 	auto sortedEntries = B3DManagedStackAllocate<const T*>(count);

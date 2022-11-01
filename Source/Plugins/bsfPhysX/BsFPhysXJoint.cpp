@@ -9,7 +9,7 @@ using namespace physx;
 
 using namespace bs;
 
-PxJointActorIndex::Enum toJointActor(JointBody body)
+PxJointActorIndex::Enum ToJointActor(JointBody body)
 {
 	if(body == JointBody::Target)
 		return PxJointActorIndex::eACTOR0;
@@ -65,23 +65,23 @@ void FPhysXJoint::SetBody(JointBody body, Rigidbody* value)
 
 Vector3 FPhysXJoint::GetPosition(JointBody body) const
 {
-	PxVec3 position = mJoint->getLocalPose(toJointActor(body)).p;
+	PxVec3 position = mJoint->getLocalPose(ToJointActor(body)).p;
 
-	return fromPxVector(position);
+	return FromPxVector(position);
 }
 
 Quaternion FPhysXJoint::GetRotation(JointBody body) const
 {
-	PxQuat rotation = mJoint->getLocalPose(toJointActor(body)).q;
+	PxQuat rotation = mJoint->getLocalPose(ToJointActor(body)).q;
 
-	return fromPxQuaternion(rotation);
+	return FromPxQuaternion(rotation);
 }
 
 void FPhysXJoint::SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation)
 {
-	PxTransform transform = toPxTransform(position, rotation);
+	PxTransform transform = ToPxTransform(position, rotation);
 
-	mJoint->setLocalPose(toJointActor(body), transform);
+	mJoint->setLocalPose(ToJointActor(body), transform);
 }
 
 float FPhysXJoint::GetBreakForce() const

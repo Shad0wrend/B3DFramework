@@ -305,9 +305,9 @@ namespace bs
 		template <class _T, bool _Weak>
 		friend class TResourceHandle;
 		template <class _Ty1, class _Ty2, bool _Weak2, bool _Weak1>
-		friend TResourceHandle<_Ty1, _Weak1> static_resource_cast(const TResourceHandle<_Ty2, _Weak2>& other);
+		friend TResourceHandle<_Ty1, _Weak1> B3DStaticResourceCast(const TResourceHandle<_Ty2, _Weak2>& other);
 		template <class _Ty1, class _Ty2, bool _Weak2>
-		friend TResourceHandle<_Ty1, false> static_resource_cast(const TResourceHandle<_Ty2, _Weak2>& other);
+		friend TResourceHandle<_Ty1, false> B3DStaticResourceCast(const TResourceHandle<_Ty2, _Weak2>& other);
 
 		/**
 		 * Constructs a new valid handle for the provided resource with the provided UUID.
@@ -409,7 +409,7 @@ namespace bs
 
 	/**	Casts one resource handle to another. */
 	template <class _Ty1, class _Ty2, bool _Weak2, bool _Weak1>
-	TResourceHandle<_Ty1, _Weak1> static_resource_cast(const TResourceHandle<_Ty2, _Weak2>& other)
+	TResourceHandle<_Ty1, _Weak1> B3DStaticResourceCast(const TResourceHandle<_Ty2, _Weak2>& other)
 	{
 		TResourceHandle<_Ty1, _Weak1> handle;
 		handle.SetHandleData(other.GetHandleData());
@@ -419,7 +419,7 @@ namespace bs
 
 	/**	Casts one resource handle to another. */
 	template <class _Ty1, class _Ty2, bool _Weak2>
-	TResourceHandle<_Ty1, false> static_resource_cast(const TResourceHandle<_Ty2, _Weak2>& other)
+	TResourceHandle<_Ty1, false> B3DStaticResourceCast(const TResourceHandle<_Ty2, _Weak2>& other)
 	{
 		TResourceHandle<_Ty1, false> handle;
 		handle.SetHandleData(other.GetHandleData());

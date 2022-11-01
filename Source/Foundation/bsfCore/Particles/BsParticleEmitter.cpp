@@ -108,7 +108,7 @@ void MeshWeightedTriangles::GetTriangle(const Random& random, std::array<u32, 3>
 }
 
 template <class Pr>
-u32 spawnMultiple(ParticleSet& particles, u32 count, Pr predicate)
+u32 SpawnMultiple(ParticleSet& particles, u32 count, Pr predicate)
 {
 	const u32 index = particles.AllocParticles(count);
 	ParticleSetData& particleData = particles.GetParticles();
@@ -121,7 +121,7 @@ u32 spawnMultiple(ParticleSet& particles, u32 count, Pr predicate)
 }
 
 template <class T>
-u32 spawnMultipleRandom(T* spawner, const Random& random, ParticleSet& particles, u32 count)
+u32 SpawnMultipleRandom(T* spawner, const Random& random, ParticleSet& particles, u32 count)
 {
 	const u32 index = particles.AllocParticles(count);
 	ParticleSetData& particleData = particles.GetParticles();
@@ -134,7 +134,7 @@ u32 spawnMultipleRandom(T* spawner, const Random& random, ParticleSet& particles
 }
 
 template <class T>
-u32 spawnMultipleSpread(T* spawner, float length, float interval, ParticleSet& particles, u32 count)
+u32 SpawnMultipleSpread(T* spawner, float length, float interval, ParticleSet& particles, u32 count)
 {
 	const u32 index = particles.AllocParticles(count);
 	ParticleSetData& particleData = particles.GetParticles();
@@ -158,7 +158,7 @@ u32 spawnMultipleSpread(T* spawner, float length, float interval, ParticleSet& p
 }
 
 template <class T>
-u32 spawnMultipleLoop(T* spawner, float length, float speed, float interval, ParticleSet& particles, u32 count, const ParticleSystemState& state)
+u32 SpawnMultipleLoop(T* spawner, float length, float speed, float interval, ParticleSet& particles, u32 count, const ParticleSystemState& state)
 {
 	const u32 index = particles.AllocParticles(count);
 	ParticleSetData& particleData = particles.GetParticles();
@@ -181,7 +181,7 @@ u32 spawnMultipleLoop(T* spawner, float length, float speed, float interval, Par
 }
 
 template <class T>
-u32 spawnMultiplePingPong(T* spawner, float length, float speed, float interval, ParticleSet& particles, u32 count, const ParticleSystemState& state)
+u32 SpawnMultiplePingPong(T* spawner, float length, float speed, float interval, ParticleSet& particles, u32 count, const ParticleSystemState& state)
 {
 	const u32 index = particles.AllocParticles(count);
 	ParticleSetData& particleData = particles.GetParticles();
@@ -209,20 +209,20 @@ u32 spawnMultiplePingPong(T* spawner, float length, float speed, float interval,
 }
 
 template <class T>
-u32 spawnMultipleMode(T* spawner, ParticleEmissionModeType type, float length, float speed, float interval, const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state)
+u32 SpawnMultipleMode(T* spawner, ParticleEmissionModeType type, float length, float speed, float interval, const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state)
 {
 	if(count > 0)
 	{
 		switch(type)
 		{
 		case ParticleEmissionModeType::Random:
-			return spawnMultipleRandom(spawner, random, particles, count);
+			return SpawnMultipleRandom(spawner, random, particles, count);
 		case ParticleEmissionModeType::Loop:
-			return spawnMultipleLoop(spawner, length, speed, interval, particles, count, state);
+			return SpawnMultipleLoop(spawner, length, speed, interval, particles, count, state);
 		case ParticleEmissionModeType::PingPong:
-			return spawnMultiplePingPong(spawner, length, speed, interval, particles, count, state);
+			return SpawnMultiplePingPong(spawner, length, speed, interval, particles, count, state);
 		case ParticleEmissionModeType::Spread:
-			return spawnMultipleSpread(spawner, length, interval, particles, count);
+			return SpawnMultipleSpread(spawner, length, interval, particles, count);
 		default:
 			break;
 		}
@@ -237,7 +237,7 @@ ParticleEmitterConeShape::ParticleEmitterConeShape(const PARTICLE_CONE_SHAPE_DES
 
 u32 ParticleEmitterConeShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
 {
-	return spawnMultipleMode(this, mInfo.Mode.Type, mInfo.Arc.ValueRadians(), mInfo.Mode.Speed * Math::kDeG2Rad, mInfo.Mode.Interval * Math::kDeG2Rad, random, particles, count, state);
+	return SpawnMultipleMode(this, mInfo.Mode.Type, mInfo.Arc.ValueRadians(), mInfo.Mode.Speed * Math::kDeG2Rad, mInfo.Mode.Interval * Math::kDeG2Rad, random, particles, count, state);
 }
 
 void ParticleEmitterConeShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
@@ -319,7 +319,7 @@ ParticleEmitterSphereShape::ParticleEmitterSphereShape(const PARTICLE_SPHERE_SHA
 
 u32 ParticleEmitterSphereShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
 {
-	return spawnMultipleRandom(this, random, particles, count);
+	return SpawnMultipleRandom(this, random, particles, count);
 }
 
 void ParticleEmitterSphereShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
@@ -365,7 +365,7 @@ ParticleEmitterHemisphereShape::ParticleEmitterHemisphereShape(const PARTICLE_HE
 
 u32 ParticleEmitterHemisphereShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
 {
-	return spawnMultipleRandom(this, random, particles, count);
+	return SpawnMultipleRandom(this, random, particles, count);
 }
 
 void ParticleEmitterHemisphereShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
@@ -459,7 +459,7 @@ ParticleEmitterBoxShape::ParticleEmitterBoxShape(const PARTICLE_BOX_SHAPE_DESC& 
 
 u32 ParticleEmitterBoxShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
 {
-	return spawnMultipleRandom(this, random, particles, count);
+	return SpawnMultipleRandom(this, random, particles, count);
 }
 
 void ParticleEmitterBoxShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
@@ -586,7 +586,7 @@ ParticleEmitterLineShape::ParticleEmitterLineShape(const PARTICLE_LINE_SHAPE_DES
 
 u32 ParticleEmitterLineShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
 {
-	return spawnMultipleMode(this, mInfo.Mode.Type, mInfo.Length, mInfo.Mode.Speed, mInfo.Mode.Interval, random, particles, count, state);
+	return SpawnMultipleMode(this, mInfo.Mode.Type, mInfo.Length, mInfo.Mode.Speed, mInfo.Mode.Interval, random, particles, count, state);
 }
 
 void ParticleEmitterLineShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
@@ -636,7 +636,7 @@ ParticleEmitterCircleShape::ParticleEmitterCircleShape(const PARTICLE_CIRCLE_SHA
 
 u32 ParticleEmitterCircleShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
 {
-	return spawnMultipleMode(this, mInfo.Mode.Type, mInfo.Arc.ValueRadians(), mInfo.Mode.Speed * Math::kDeG2Rad, mInfo.Mode.Interval * Math::kDeG2Rad, random, particles, count, state);
+	return SpawnMultipleMode(this, mInfo.Mode.Type, mInfo.Arc.ValueRadians(), mInfo.Mode.Speed * Math::kDeG2Rad, mInfo.Mode.Interval * Math::kDeG2Rad, random, particles, count, state);
 }
 
 void ParticleEmitterCircleShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
@@ -694,7 +694,7 @@ ParticleEmitterRectShape::ParticleEmitterRectShape(const PARTICLE_RECT_SHAPE_DES
 
 u32 ParticleEmitterRectShape::SpawnInternal(const Random& random, ParticleSet& particles, u32 count, const ParticleSystemState& state) const
 {
-	return spawnMultipleRandom(this, random, particles, count);
+	return SpawnMultipleRandom(this, random, particles, count);
 }
 
 void ParticleEmitterRectShape::SpawnInternal(const Random& random, Vector3& position, Vector3& normal) const
@@ -984,20 +984,20 @@ u32 ParticleEmitterStaticMeshShape::SpawnInternal(const Random& random, Particle
 	case ParticleEmitterMeshType::Vertex:
 		if(mInfo.Sequential)
 		{
-			return spawnMultiple(particles, count, [this](u32 idx, Vector3& position, Vector3& normal)
+			return SpawnMultiple(particles, count, [this](u32 idx, Vector3& position, Vector3& normal)
 								 {
 					u32 vertexIdx;
 					mMeshEmissionHelper.GetSequentialVertex(position, normal, vertexIdx); });
 		}
 		else
 		{
-			return spawnMultiple(particles, count, [this, &random](u32 idx, Vector3& position, Vector3& normal)
+			return SpawnMultiple(particles, count, [this, &random](u32 idx, Vector3& position, Vector3& normal)
 								 {
 					u32 vertexIdx;
 					mMeshEmissionHelper.GetRandomVertex(random, position, normal, vertexIdx); });
 		}
 	case ParticleEmitterMeshType::Edge:
-		return spawnMultiple(particles, count, [this, &random](u32 idx, Vector3& position, Vector3& normal)
+		return SpawnMultiple(particles, count, [this, &random](u32 idx, Vector3& position, Vector3& normal)
 							 {
 				std::array<Vector3, 2> edgePositions, edgeNormals;
 				std::array<u32, 2> edgeIndices;
@@ -1009,7 +1009,7 @@ u32 ParticleEmitterStaticMeshShape::SpawnInternal(const Random& random, Particle
 				normal = Math::Lerp(rnd, edgeNormals[0], edgeNormals[1]); });
 	default:
 	case ParticleEmitterMeshType::Triangle:
-		return spawnMultiple(particles, count, [this, &random](u32 idx, Vector3& position, Vector3& normal)
+		return SpawnMultiple(particles, count, [this, &random](u32 idx, Vector3& position, Vector3& normal)
 							 {
 				std::array<Vector3, 3> triPositions, triNormals;
 				std::array<u32, 3> triIndices;
@@ -1115,7 +1115,7 @@ u32 ParticleEmitterSkinnedMeshShape::SpawnInternal(const Random& random, Particl
 	case ParticleEmitterMeshType::Vertex:
 		if(mInfo.Sequential)
 		{
-			return spawnMultiple(particles, count, [this, bones](u32 idx, Vector3& position, Vector3& normal)
+			return SpawnMultiple(particles, count, [this, bones](u32 idx, Vector3& position, Vector3& normal)
 								 {
 					u32 vertexIdx;
 					mMeshEmissionHelper.GetSequentialVertex(position, normal, vertexIdx);
@@ -1126,7 +1126,7 @@ u32 ParticleEmitterSkinnedMeshShape::SpawnInternal(const Random& random, Particl
 		}
 		else
 		{
-			return spawnMultiple(particles, count, [this, &random, bones](u32 idx, Vector3& position, Vector3& normal)
+			return SpawnMultiple(particles, count, [this, &random, bones](u32 idx, Vector3& position, Vector3& normal)
 								 {
 					u32 vertexIdx;
 					mMeshEmissionHelper.GetRandomVertex(random, position, normal, vertexIdx);
@@ -1136,7 +1136,7 @@ u32 ParticleEmitterSkinnedMeshShape::SpawnInternal(const Random& random, Particl
 					normal = blendMatrix.MultiplyDirection(normal); });
 		}
 	case ParticleEmitterMeshType::Edge:
-		return spawnMultiple(particles, count, [this, &random, bones](u32 idx, Vector3& position, Vector3& normal)
+		return SpawnMultiple(particles, count, [this, &random, bones](u32 idx, Vector3& position, Vector3& normal)
 							 {
 				std::array<Vector3, 2> edgePositions, edgeNormals;
 				std::array<u32, 2> edgeIndices;
@@ -1155,7 +1155,7 @@ u32 ParticleEmitterSkinnedMeshShape::SpawnInternal(const Random& random, Particl
 				normal = Math::Lerp(rnd, edgeNormals[0], edgeNormals[1]); });
 	default:
 	case ParticleEmitterMeshType::Triangle:
-		return spawnMultiple(particles, count, [this, &random, bones](u32 idx, Vector3& position, Vector3& normal)
+		return SpawnMultiple(particles, count, [this, &random, bones](u32 idx, Vector3& position, Vector3& normal)
 							 {
 				std::array<Vector3, 3> triPositions, triNormals;
 				std::array<u32, 3> triIndices;

@@ -8,46 +8,46 @@
 
 namespace bs { namespace Detail {
 template <>
-String ScriptArray_get<String>(MonoArray* array, u32 idx)
+String ScriptArrayGet<String>(MonoArray* array, u32 idx)
 {
 	return MonoUtil::MonoToString(mono_array_get(array, MonoString*, idx));
 }
 
 template <>
-WString ScriptArray_get<WString>(MonoArray* array, u32 idx)
+WString ScriptArrayGet<WString>(MonoArray* array, u32 idx)
 {
 	return MonoUtil::MonoToWString(mono_array_get(array, MonoString*, idx));
 }
 
 template <>
-Path ScriptArray_get<Path>(MonoArray* array, u32 idx)
+Path ScriptArrayGet<Path>(MonoArray* array, u32 idx)
 {
 	return MonoUtil::MonoToString(mono_array_get(array, MonoString*, idx));
 }
 
 template <>
-void ScriptArray_set<String>(MonoArray* array, u32 idx, const String& value)
+void ScriptArraySet<String>(MonoArray* array, u32 idx, const String& value)
 {
 	MonoString* monoString = MonoUtil::StringToMono(value);
 	mono_array_setref(array, idx, monoString);
 }
 
 template <>
-void ScriptArray_set<WString>(MonoArray* array, u32 idx, const WString& value)
+void ScriptArraySet<WString>(MonoArray* array, u32 idx, const WString& value)
 {
 	MonoString* monoString = MonoUtil::WstringToMono(value);
 	mono_array_setref(array, idx, monoString);
 }
 
 template <>
-void ScriptArray_set<Path>(MonoArray* array, u32 idx, const Path& value)
+void ScriptArraySet<Path>(MonoArray* array, u32 idx, const Path& value)
 {
 	MonoString* monoString = MonoUtil::StringToMono(value.ToString());
 	mono_array_setref(array, idx, monoString);
 }
 
 template <>
-void ScriptArray_set<std::nullptr_t>(MonoArray* array, u32 idx, const std::nullptr_t& value)
+void ScriptArraySet<std::nullptr_t>(MonoArray* array, u32 idx, const std::nullptr_t& value)
 {
 	void** item = (void**)ScriptArray::GetArrayAddrInternal(array, sizeof(void*), idx);
 	*item = nullptr;

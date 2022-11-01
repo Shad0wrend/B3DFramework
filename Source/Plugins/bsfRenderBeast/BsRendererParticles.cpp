@@ -23,11 +23,11 @@ const ShaderVariation& GetParticleShaderVariationInternal(ParticleOrientation or
 	{
 	default:
 	case ParticleOrientation::ViewPlane:
-		return getParticleShaderVariation<ParticleOrientation::ViewPlane, LOCK_Y, GPU, IS_3D, FWD>();
+		return GetParticleShaderVariation<ParticleOrientation::ViewPlane, LOCK_Y, GPU, IS_3D, FWD>();
 	case ParticleOrientation::ViewPosition:
-		return getParticleShaderVariation<ParticleOrientation::ViewPosition, LOCK_Y, GPU, IS_3D, FWD>();
+		return GetParticleShaderVariation<ParticleOrientation::ViewPosition, LOCK_Y, GPU, IS_3D, FWD>();
 	case ParticleOrientation::Plane:
-		return getParticleShaderVariation<ParticleOrientation::Plane, LOCK_Y, GPU, IS_3D, FWD>();
+		return GetParticleShaderVariation<ParticleOrientation::Plane, LOCK_Y, GPU, IS_3D, FWD>();
 	}
 }
 
@@ -58,7 +58,7 @@ const ShaderVariation& GetParticleShaderVariationInternal(ParticleOrientation or
 	return GetParticleShaderVariationInternal<false, FWD>(orient, lockY, gpu);
 }
 
-const ShaderVariation& getParticleShaderVariation(ParticleOrientation orient, bool lockY, bool gpu, bool is3D, ParticleForwardLightingType forwardLighting)
+const ShaderVariation& GetParticleShaderVariation(ParticleOrientation orient, bool lockY, bool gpu, bool is3D, ParticleForwardLightingType forwardLighting)
 {
 	switch(forwardLighting)
 	{
@@ -75,7 +75,7 @@ const ShaderVariation& getParticleShaderVariation(ParticleOrientation orient, bo
 ParticlesParamDef gParticlesParamDef;
 GpuParticlesParamDef gGpuParticlesParamDef;
 
-void writeIndices(GpuBuffer* buffer, const Vector<u32>& input, u32 texSize)
+void WriteIndices(GpuBuffer* buffer, const Vector<u32>& input, u32 texSize)
 {
 	const auto numParticles = (u32)input.size();
 	if(numParticles == 0)
@@ -249,7 +249,7 @@ const ParticleBillboardTextures* ParticleTexturePool::Alloc(const ParticleBillbo
 	output->Color->WriteData(simulationData.Color, 0, 0, true);
 	output->SizeAndFrameIdx->WriteData(simulationData.SizeAndFrameIdx, 0, 0, true);
 
-	writeIndices(output->Indices.get(), simulationData.Indices, size);
+	WriteIndices(output->Indices.get(), simulationData.Indices, size);
 	return output;
 }
 
@@ -279,7 +279,7 @@ const ParticleMeshTextures* ParticleTexturePool::Alloc(const ParticleMeshRenderD
 	output->Size->WriteData(simulationData.Size, 0, 0, true);
 	output->Rotation->WriteData(simulationData.Rotation, 0, 0, true);
 
-	writeIndices(output->Indices.get(), simulationData.Indices, size);
+	WriteIndices(output->Indices.get(), simulationData.Indices, size);
 	return output;
 }
 

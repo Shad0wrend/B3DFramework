@@ -15,7 +15,7 @@ PhysicsManager::PhysicsManager(const String& pluginName, bool cooking)
 	{
 		typedef PhysicsFactory* (*LoadPluginFunc)();
 
-		LoadPluginFunc loadPluginFunc = (LoadPluginFunc)mPlugin->GetSymbol("loadPlugin");
+		LoadPluginFunc loadPluginFunc = (LoadPluginFunc)mPlugin->GetSymbol("LoadPlugin");
 		mFactory = loadPluginFunc();
 
 		if(mFactory != nullptr)
@@ -31,7 +31,7 @@ PhysicsManager::~PhysicsManager()
 		{
 			typedef void (*UnloadPluginFunc)(PhysicsFactory*);
 
-			UnloadPluginFunc unloadPluginFunc = (UnloadPluginFunc)mPlugin->GetSymbol("unloadPlugin");
+			UnloadPluginFunc unloadPluginFunc = (UnloadPluginFunc)mPlugin->GetSymbol("UnloadPlugin");
 
 			mFactory->ShutDown();
 			unloadPluginFunc(mFactory);

@@ -324,7 +324,7 @@ CoreSyncData LightProbeVolume::SyncToCore(FrameAlloc* allocator)
 		u32 numDirtyProbes = (u32)dirtyProbes.size();
 		u32 numRemovedProbes = (u32)removedProbes.size();
 
-		size += csync_size((SceneActor&)*this);
+		size += CoreSyncGetSize((SceneActor&)*this);
 		size += B3DRTTISize(numDirtyProbes).Bytes;
 		size += B3DRTTISize(numRemovedProbes).Bytes;
 		size += (sizeof(u32) + sizeof(Vector3) + sizeof(LightProbeFlags)) * numDirtyProbes;
@@ -333,7 +333,7 @@ CoreSyncData LightProbeVolume::SyncToCore(FrameAlloc* allocator)
 		buffer = allocator->Alloc(size);
 		Bitstream stream(buffer, size);
 
-		csync_write((SceneActor&)*this, stream);
+		B3DCoreSyncWrite((SceneActor&)*this, stream);
 		B3DRTTIWrite(numDirtyProbes, stream);
 		B3DRTTIWrite(numRemovedProbes, stream);
 
@@ -491,7 +491,7 @@ void LightProbeVolume::SyncToCore(const CoreSyncData& data)
 
 	bool oldIsActive = mActive;
 
-	csync_read((SceneActor&)*this, stream);
+	B3DCoreSyncRead((SceneActor&)*this, stream);
 
 	u32 numDirtyProbes, numRemovedProbes;
 	B3DRTTIRead(numDirtyProbes, stream);

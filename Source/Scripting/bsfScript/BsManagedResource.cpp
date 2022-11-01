@@ -101,7 +101,7 @@ HManagedResource ManagedResource::Create(MonoObject* managedResource)
 	newRes->SetThisPtrInternal(newRes);
 	newRes->Initialize();
 
-	HManagedResource handle = static_resource_cast<ManagedResource>(GetResources().CreateResourceHandleInternal(newRes));
+	HManagedResource handle = B3DStaticResourceCast<ManagedResource>(GetResources().CreateResourceHandleInternal(newRes));
 	newRes->SetHandle(managedResource, handle);
 
 	return handle;

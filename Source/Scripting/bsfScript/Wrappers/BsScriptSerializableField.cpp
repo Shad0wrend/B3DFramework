@@ -31,7 +31,7 @@ void ScriptSerializableField::InitRuntimeData()
 
 MonoObject* ScriptSerializableField::Create(MonoObject* parentObject, const SPtr<ManagedSerializableMemberInfo>& fieldInfo)
 {
-	MonoString* monoStrName = MonoUtil::WstringToMono(toWString(fieldInfo->MName));
+	MonoString* monoStrName = MonoUtil::WstringToMono(ToWString(fieldInfo->MName));
 	MonoReflectionType* internalType = MonoUtil::GetType(fieldInfo->MTypeInfo->GetMonoClass());
 	u32 fieldFlags = (u32)fieldInfo->MFlags;
 

@@ -11,10 +11,10 @@ extern "C" {
 
 using namespace bs;
 
-char* includePush(ParseState* state, const char* filename, int line, int column, int* size)
+char* IncludePush(ParseState* state, const char* filename, int line, int column, int* size)
 {
 	int filenameQuotesLen = (int)strlen(filename);
-	char* filenameNoQuote = (char*)mmalloc(state->MemContext, filenameQuotesLen - 1);
+	char* filenameNoQuote = (char*)Mmalloc(state->MemContext, filenameQuotesLen - 1);
 	memcpy(filenameNoQuote, filename + 1, filenameQuotesLen - 2);
 	filenameNoQuote[filenameQuotesLen - 2] = '\0';
 
@@ -29,14 +29,14 @@ char* includePush(ParseState* state, const char* filename, int line, int column,
 		String includeSource = include->GetString();
 
 		*size = (int)includeSource.size() + 2;
-		char* output = (char*)mmalloc(state->MemContext, *size);
+		char* output = (char*)Mmalloc(state->MemContext, *size);
 
 		memcpy(output, includeSource.data(), *size - 2);
 		output[*size - 2] = 0;
 		output[*size - 1] = 0;
 
 		int linkSize = sizeof(IncludeLink) + sizeof(IncludeData) + filenameLen + 1;
-		char* linkData = (char*)mmalloc(state->MemContext, linkSize);
+		char* linkData = (char*)Mmalloc(state->MemContext, linkSize);
 
 		IncludeLink* newLink = (IncludeLink*)linkData;
 		linkData += sizeof(IncludeLink);
@@ -55,7 +55,7 @@ char* includePush(ParseState* state, const char* filename, int line, int column,
 
 		state->IncludeStack = newLink;
 
-		mmfree(filenameNoQuote);
+		Mmfree(filenameNoQuote);
 		return output;
 	}
 
@@ -63,7 +63,7 @@ char* includePush(ParseState* state, const char* filename, int line, int column,
 	int labelLen = (int)strlen(errorLabel);
 
 	int messageLen = filenameLen + labelLen + 1;
-	char* message = (char*)mmalloc(state->MemContext, messageLen);
+	char* message = (char*)Mmalloc(state->MemContext, messageLen);
 
 	memcpy(message, errorLabel, labelLen);
 	memcpy(message + labelLen, filenameNoQuote, filenameLen);
@@ -73,13 +73,13 @@ char* includePush(ParseState* state, const char* filename, int line, int column,
 	state->ErrorLine = line;
 	state->ErrorColumn = column;
 	state->ErrorMessage = message;
-	state->ErrorFile = getCurrentFilename(state);
+	state->ErrorFile = GetCurrentFilename(state);
 
-	mmfree(filenameNoQuote);
+	Mmfree(filenameNoQuote);
 	return nullptr;
 }
 
-void includePop(ParseState* state)
+void IncludePop(ParseState* state)
 {
 	IncludeLink* current = state->IncludeStack;
 
@@ -90,6 +90,6 @@ void includePop(ParseState* state)
 	current->Next = state->Includes;
 	state->Includes = current;
 
-	mmfree(current->Data->Buffer);
+	Mmfree(current->Data->Buffer);
 	current->Data->Buffer = nullptr;
 }

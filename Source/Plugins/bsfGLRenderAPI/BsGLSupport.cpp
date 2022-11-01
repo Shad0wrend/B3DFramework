@@ -6,7 +6,7 @@
 #if BS_PLATFORM != BS_PLATFORM_OSX
 #	include "GL/glew.h"
 
-GLenum glewContextInit(bs::ct::GLSupport* glSupport);
+GLenum GlewContextInit(bs::ct::GLSupport* glSupport);
 #endif
 
 using namespace bs;
@@ -15,7 +15,7 @@ using namespace bs::ct;
 void GLSupport::InitializeExtensions()
 {
 #if BS_PLATFORM != BS_PLATFORM_OSX
-	glewContextInit(this);
+	GlewContextInit(this);
 	BS_CHECK_GL_ERROR();
 #endif
 

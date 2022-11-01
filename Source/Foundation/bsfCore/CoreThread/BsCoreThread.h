@@ -231,14 +231,14 @@ namespace bs
 	BS_CORE_EXPORT CoreThread& GetCoreThread();
 
 	/**	Throws an exception if current thread isn't the core thread. */
-	BS_CORE_EXPORT void throwIfNotCoreThread();
+	BS_CORE_EXPORT void ThrowIfNotCoreThread();
 
 	/** Throws an exception if current thread is the core thread. */
-	BS_CORE_EXPORT void throwIfCoreThread();
+	BS_CORE_EXPORT void ThrowIfCoreThread();
 
 #if BS_DEBUG_MODE
-#	define THROW_IF_NOT_CORE_THREAD throwIfNotCoreThread();
-#	define THROW_IF_CORE_THREAD throwIfCoreThread();
+#	define THROW_IF_NOT_CORE_THREAD ThrowIfNotCoreThread();
+#	define THROW_IF_CORE_THREAD ThrowIfCoreThread();
 #else
 #	define THROW_IF_NOT_CORE_THREAD
 #	define THROW_IF_CORE_THREAD

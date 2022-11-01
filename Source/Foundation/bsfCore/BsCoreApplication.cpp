@@ -431,7 +431,7 @@ void* CoreApplication::LoadPlugin(const String& pluginName, DynamicLibrary** lib
 		{
 			typedef void* (*LoadPluginFunc)();
 
-			LoadPluginFunc loadPluginFunc = (LoadPluginFunc)loadedLibrary->GetSymbol("loadPlugin");
+			LoadPluginFunc loadPluginFunc = (LoadPluginFunc)loadedLibrary->GetSymbol("LoadPlugin");
 
 			if(loadPluginFunc != nullptr)
 				retVal = loadPluginFunc();
@@ -440,13 +440,13 @@ void* CoreApplication::LoadPlugin(const String& pluginName, DynamicLibrary** lib
 		{
 			typedef void* (*LoadPluginFunc)(void*);
 
-			LoadPluginFunc loadPluginFunc = (LoadPluginFunc)loadedLibrary->GetSymbol("loadPlugin");
+			LoadPluginFunc loadPluginFunc = (LoadPluginFunc)loadedLibrary->GetSymbol("LoadPlugin");
 
 			if(loadPluginFunc != nullptr)
 				retVal = loadPluginFunc(passThrough);
 		}
 
-		UpdatePluginFunc loadPluginFunc = (UpdatePluginFunc)loadedLibrary->GetSymbol("updatePlugin");
+		UpdatePluginFunc loadPluginFunc = (UpdatePluginFunc)loadedLibrary->GetSymbol("UpdatePlugin");
 
 		if(loadPluginFunc != nullptr)
 			mPluginUpdateFunctions[loadedLibrary] = loadPluginFunc;
@@ -459,7 +459,7 @@ void CoreApplication::UnloadPlugin(DynamicLibrary* library)
 {
 	typedef void (*UnloadPluginFunc)();
 
-	UnloadPluginFunc unloadPluginFunc = (UnloadPluginFunc)library->GetSymbol("unloadPlugin");
+	UnloadPluginFunc unloadPluginFunc = (UnloadPluginFunc)library->GetSymbol("UnloadPlugin");
 
 	if(unloadPluginFunc != nullptr)
 		unloadPluginFunc();

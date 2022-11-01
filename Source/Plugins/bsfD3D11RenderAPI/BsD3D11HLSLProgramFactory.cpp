@@ -187,7 +187,7 @@ SPtr<GpuProgramBytecode> D3D11HLSLProgramFactory::CompileBytecode(const GPU_PROG
 		compileMessage =
 			String(message) + "\n" +
 			"\n" +
-			"Line " + toString(lineIdx) + ": " + sourceLine;
+			"Line " + ToString(lineIdx) + ": " + sourceLine;
 
 		SAFE_RELEASE(messages);
 	}

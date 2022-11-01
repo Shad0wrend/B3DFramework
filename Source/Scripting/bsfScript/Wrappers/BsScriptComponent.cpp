@@ -64,7 +64,7 @@ void ScriptComponent::InitRuntimeData()
 MonoObject* ScriptComponent::InternalAddComponent(MonoObject* parentSceneObject, MonoReflectionType* type)
 {
 	ScriptSceneObject* scriptSO = ScriptSceneObject::ToNative(parentSceneObject);
-	HSceneObject so = static_object_cast<SceneObject>(scriptSO->GetNativeHandle());
+	HSceneObject so = B3DStaticGameObjectCast<SceneObject>(scriptSO->GetNativeHandle());
 
 	if(CheckIfDestroyed(so))
 		return nullptr;
@@ -97,7 +97,7 @@ MonoObject* ScriptComponent::InternalAddComponent(MonoObject* parentSceneObject,
 MonoObject* ScriptComponent::InternalGetComponent(MonoObject* parentSceneObject, MonoReflectionType* type)
 {
 	ScriptSceneObject* scriptSO = ScriptSceneObject::ToNative(parentSceneObject);
-	HSceneObject so = static_object_cast<SceneObject>(scriptSO->GetNativeHandle());
+	HSceneObject so = B3DStaticGameObjectCast<SceneObject>(scriptSO->GetNativeHandle());
 
 	if(CheckIfDestroyed(so))
 		return nullptr;
@@ -112,7 +112,7 @@ MonoObject* ScriptComponent::InternalGetComponent(MonoObject* parentSceneObject,
 	{
 		if(component->GetTypeId() == TID_ManagedComponent)
 		{
-			GameObjectHandle<ManagedComponent> managedComponent = static_object_cast<ManagedComponent>(component);
+			GameObjectHandle<ManagedComponent> managedComponent = B3DStaticGameObjectCast<ManagedComponent>(component);
 
 			MonoReflectionType* componentReflType = managedComponent->GetRuntimeType();
 			::MonoClass* componentClass = MonoUtil::GetClass(componentReflType);
@@ -141,7 +141,7 @@ MonoObject* ScriptComponent::InternalGetComponent(MonoObject* parentSceneObject,
 MonoArray* ScriptComponent::InternalGetComponentsPerType(MonoObject* parentSceneObject, MonoReflectionType* type)
 {
 	ScriptSceneObject* scriptSO = ScriptSceneObject::ToNative(parentSceneObject);
-	HSceneObject so = static_object_cast<SceneObject>(scriptSO->GetNativeHandle());
+	HSceneObject so = B3DStaticGameObjectCast<SceneObject>(scriptSO->GetNativeHandle());
 
 	ScriptAssemblyManager& sam = ScriptAssemblyManager::Instance();
 	BuiltinComponentInfo* info = sam.GetBuiltinComponentInfo(type);
@@ -156,7 +156,7 @@ MonoArray* ScriptComponent::InternalGetComponentsPerType(MonoObject* parentScene
 		{
 			if(component->GetTypeId() == TID_ManagedComponent)
 			{
-				GameObjectHandle<ManagedComponent> managedComponent = static_object_cast<ManagedComponent>(component);
+				GameObjectHandle<ManagedComponent> managedComponent = B3DStaticGameObjectCast<ManagedComponent>(component);
 
 				MonoReflectionType* componentReflType = managedComponent->GetRuntimeType();
 				::MonoClass* componentClass = MonoUtil::GetClass(componentReflType);
@@ -188,7 +188,7 @@ MonoArray* ScriptComponent::InternalGetComponentsPerType(MonoObject* parentScene
 MonoArray* ScriptComponent::InternalGetComponents(MonoObject* parentSceneObject)
 {
 	ScriptSceneObject* scriptSO = ScriptSceneObject::ToNative(parentSceneObject);
-	HSceneObject so = static_object_cast<SceneObject>(scriptSO->GetNativeHandle());
+	HSceneObject so = B3DStaticGameObjectCast<SceneObject>(scriptSO->GetNativeHandle());
 
 	Vector<MonoObject*> managedComponents;
 
@@ -199,7 +199,7 @@ MonoArray* ScriptComponent::InternalGetComponents(MonoObject* parentSceneObject)
 		{
 			if(component->GetTypeId() == TID_ManagedComponent)
 			{
-				GameObjectHandle<ManagedComponent> managedComponent = static_object_cast<ManagedComponent>(component);
+				GameObjectHandle<ManagedComponent> managedComponent = B3DStaticGameObjectCast<ManagedComponent>(component);
 
 				managedComponents.push_back(managedComponent->GetManagedInstance());
 			}
@@ -222,7 +222,7 @@ MonoArray* ScriptComponent::InternalGetComponents(MonoObject* parentSceneObject)
 void ScriptComponent::InternalRemoveComponent(MonoObject* parentSceneObject, MonoReflectionType* type)
 {
 	ScriptSceneObject* scriptSO = ScriptSceneObject::ToNative(parentSceneObject);
-	HSceneObject so = static_object_cast<SceneObject>(scriptSO->GetNativeHandle());
+	HSceneObject so = B3DStaticGameObjectCast<SceneObject>(scriptSO->GetNativeHandle());
 
 	if(CheckIfDestroyed(so))
 		return;
@@ -237,7 +237,7 @@ void ScriptComponent::InternalRemoveComponent(MonoObject* parentSceneObject, Mon
 	{
 		if(component->GetTypeId() == TID_ManagedComponent)
 		{
-			GameObjectHandle<ManagedComponent> managedComponent = static_object_cast<ManagedComponent>(component);
+			GameObjectHandle<ManagedComponent> managedComponent = B3DStaticGameObjectCast<ManagedComponent>(component);
 
 			MonoReflectionType* componentReflType = managedComponent->GetRuntimeType();
 			::MonoClass* componentClass = MonoUtil::GetClass(componentReflType);

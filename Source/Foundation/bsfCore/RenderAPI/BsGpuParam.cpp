@@ -34,7 +34,7 @@ void TGpuDataParam<T, Core>::Set(const T& value, u32 arrayIdx) const
 #if BS_DEBUG_MODE
 	if(arrayIdx >= mParamDesc->ArraySize)
 	{
-		BS_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " + toString(mParamDesc->ArraySize) + ". Requested size: " + toString(arrayIdx));
+		BS_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " + ToString(mParamDesc->ArraySize) + ". Requested size: " + ToString(arrayIdx));
 	}
 #endif
 
@@ -73,7 +73,7 @@ T TGpuDataParam<T, Core>::Get(u32 arrayIdx) const
 #if BS_DEBUG_MODE
 	if(arrayIdx >= mParamDesc->ArraySize)
 	{
-		BS_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " + toString(mParamDesc->ArraySize) + ". Requested size: " + toString(arrayIdx));
+		BS_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " + ToString(mParamDesc->ArraySize) + ". Requested size: " + ToString(arrayIdx));
 	}
 #endif
 
@@ -118,7 +118,7 @@ void TGpuParamStruct<Core>::Set(const void* value, u32 sizeBytes, u32 arrayIdx) 
 
 	if(arrayIdx >= mParamDesc->ArraySize)
 	{
-		BS_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " + toString(mParamDesc->ArraySize) + ". Requested size: " + toString(arrayIdx));
+		BS_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " + ToString(mParamDesc->ArraySize) + ". Requested size: " + ToString(arrayIdx));
 	}
 #endif
 
@@ -158,7 +158,7 @@ void TGpuParamStruct<Core>::Get(void* value, u32 sizeBytes, u32 arrayIdx) const
 
 	if(arrayIdx >= mParamDesc->ArraySize)
 	{
-		BS_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " + toString(mParamDesc->ArraySize) + ". Requested size: " + toString(arrayIdx));
+		BS_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " + ToString(mParamDesc->ArraySize) + ". Requested size: " + ToString(arrayIdx));
 	}
 #endif
 	sizeBytes = std::min(elementSizeBytes, sizeBytes);

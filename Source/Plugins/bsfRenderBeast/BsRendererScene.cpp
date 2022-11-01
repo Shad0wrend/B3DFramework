@@ -24,17 +24,17 @@ namespace bs { namespace ct {
 PerFrameParamDef gPerFrameParamDef;
 
 static const ShaderVariation* DECAL_VAR_LOOKUP[2][3] = {
-	{ &getDecalShaderVariation<false, MSAAMode::None>(),
-	  &getDecalShaderVariation<false, MSAAMode::Single>(),
-	  &getDecalShaderVariation<false, MSAAMode::Full>() },
-	{ &getDecalShaderVariation<true, MSAAMode::None>(),
-	  &getDecalShaderVariation<true, MSAAMode::Single>(),
-	  &getDecalShaderVariation<true, MSAAMode::Full>() }
+	{ &GetDecalShaderVariation<false, MSAAMode::None>(),
+	  &GetDecalShaderVariation<false, MSAAMode::Single>(),
+	  &GetDecalShaderVariation<false, MSAAMode::Full>() },
+	{ &GetDecalShaderVariation<true, MSAAMode::None>(),
+	  &GetDecalShaderVariation<true, MSAAMode::Single>(),
+	  &GetDecalShaderVariation<true, MSAAMode::Full>() }
 };
 
 /** Returns a specific forward rendering shader variation. */
 template <bool SKINNED, bool MORPH, bool CLUSTERED, bool WRITE_VELOCITY>
-static const ShaderVariation& getForwardRenderingVariation(bool supportsVelocityWrites)
+static const ShaderVariation& GetForwardRenderingVariation(bool supportsVelocityWrites)
 {
 	if(!supportsVelocityWrites)
 	{
@@ -63,44 +63,44 @@ static const ShaderVariation& getForwardRenderingVariation(bool supportsVelocity
 
 /** Returns a specific forward rendering shader variation. */
 template <bool CLUSTERED, bool WRITE_VELOCITY>
-static const ShaderVariation* getClusteredForwardRenderingVariation(RenderableAnimType animType, bool shaderCanWriteVelocity)
+static const ShaderVariation* GetClusteredForwardRenderingVariation(RenderableAnimType animType, bool shaderCanWriteVelocity)
 {
 	const ShaderVariation* VAR_LOOKUP[4];
-	VAR_LOOKUP[0] = &getForwardRenderingVariation<false, false, CLUSTERED, WRITE_VELOCITY>(shaderCanWriteVelocity);
-	VAR_LOOKUP[1] = &getForwardRenderingVariation<true, false, CLUSTERED, WRITE_VELOCITY>(shaderCanWriteVelocity);
-	VAR_LOOKUP[2] = &getForwardRenderingVariation<false, true, CLUSTERED, WRITE_VELOCITY>(shaderCanWriteVelocity);
-	VAR_LOOKUP[3] = &getForwardRenderingVariation<true, true, CLUSTERED, WRITE_VELOCITY>(shaderCanWriteVelocity);
+	VAR_LOOKUP[0] = &GetForwardRenderingVariation<false, false, CLUSTERED, WRITE_VELOCITY>(shaderCanWriteVelocity);
+	VAR_LOOKUP[1] = &GetForwardRenderingVariation<true, false, CLUSTERED, WRITE_VELOCITY>(shaderCanWriteVelocity);
+	VAR_LOOKUP[2] = &GetForwardRenderingVariation<false, true, CLUSTERED, WRITE_VELOCITY>(shaderCanWriteVelocity);
+	VAR_LOOKUP[3] = &GetForwardRenderingVariation<true, true, CLUSTERED, WRITE_VELOCITY>(shaderCanWriteVelocity);
 
 	return VAR_LOOKUP[(int)animType];
 }
 
 /** Returns a specific base pass shader variation. */
 template <bool WRITE_VELOCITY>
-static const ShaderVariation* getBasePassVariation(bool useForwardRendering, bool supportsClusteredForward, bool shaderCanWriteVelocity, RenderableAnimType animType)
+static const ShaderVariation* GetBasePassVariation(bool useForwardRendering, bool supportsClusteredForward, bool shaderCanWriteVelocity, RenderableAnimType animType)
 {
 	if(useForwardRendering)
 	{
 		if(supportsClusteredForward)
-			return getClusteredForwardRenderingVariation<true, WRITE_VELOCITY>(animType, shaderCanWriteVelocity);
+			return GetClusteredForwardRenderingVariation<true, WRITE_VELOCITY>(animType, shaderCanWriteVelocity);
 		else
-			return getClusteredForwardRenderingVariation<false, WRITE_VELOCITY>(animType, shaderCanWriteVelocity);
+			return GetClusteredForwardRenderingVariation<false, WRITE_VELOCITY>(animType, shaderCanWriteVelocity);
 	}
 	else
 	{
 		const ShaderVariation* VAR_LOOKUP[4];
-		VAR_LOOKUP[0] = &getVertexInputVariation<false, false, WRITE_VELOCITY>(shaderCanWriteVelocity);
-		VAR_LOOKUP[1] = &getVertexInputVariation<true, false, WRITE_VELOCITY>(shaderCanWriteVelocity);
-		VAR_LOOKUP[2] = &getVertexInputVariation<false, true, WRITE_VELOCITY>(shaderCanWriteVelocity);
-		VAR_LOOKUP[3] = &getVertexInputVariation<true, true, WRITE_VELOCITY>(shaderCanWriteVelocity);
+		VAR_LOOKUP[0] = &GetVertexInputVariation<false, false, WRITE_VELOCITY>(shaderCanWriteVelocity);
+		VAR_LOOKUP[1] = &GetVertexInputVariation<true, false, WRITE_VELOCITY>(shaderCanWriteVelocity);
+		VAR_LOOKUP[2] = &GetVertexInputVariation<false, true, WRITE_VELOCITY>(shaderCanWriteVelocity);
+		VAR_LOOKUP[3] = &GetVertexInputVariation<true, true, WRITE_VELOCITY>(shaderCanWriteVelocity);
 
 		return VAR_LOOKUP[(int)animType];
 	}
 }
 
 /** Initializes a specific base pass technique on the provided material and returns the technique index. */
-static u32 initAndRetrieveBasePassTechnique(Material& material, bool useForwardRendering, bool supportsClusteredForward, bool shaderCanWriteVelocity, bool writeVelocity, RenderableAnimType animType)
+static u32 InitAndRetrieveBasePassTechnique(Material& material, bool useForwardRendering, bool supportsClusteredForward, bool shaderCanWriteVelocity, bool writeVelocity, RenderableAnimType animType)
 {
-	const ShaderVariation* variation = writeVelocity ? getBasePassVariation<true>(useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, animType) : getBasePassVariation<false>(useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, animType);
+	const ShaderVariation* variation = writeVelocity ? GetBasePassVariation<true>(useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, animType) : GetBasePassVariation<false>(useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, animType);
 
 	FIND_TECHNIQUE_DESC findDesc;
 	findDesc.Variation = variation;
@@ -119,7 +119,7 @@ static u32 initAndRetrieveBasePassTechnique(Material& material, bool useForwardR
 	return techniqueIdx;
 }
 
-static void validateBasePassMaterial(Material& material, RenderableAnimType animType, u32 techniqueIdx, VertexDeclaration& vertexDecl)
+static void ValidateBasePassMaterial(Material& material, RenderableAnimType animType, u32 techniqueIdx, VertexDeclaration& vertexDecl)
 {
 	// Validate mesh <-> shader vertex bindings
 	u32 numPasses = material.GetNumPasses(techniqueIdx);
@@ -151,7 +151,7 @@ static void validateBasePassMaterial(Material& material, RenderableAnimType anim
 						  << std::endl;
 
 				for(auto& entry : missingElements)
-					wrnStream << "\t" << toString(entry.GetSemantic()) << entry.GetSemanticIdx() << std::endl;
+					wrnStream << "\t" << ToString(entry.GetSemantic()) << entry.GetSemanticIdx() << std::endl;
 
 				BS_LOG(Warning, Renderer, wrnStream.str());
 				break;
@@ -422,10 +422,10 @@ void RendererScene::RegisterRenderable(Renderable* renderable)
 
 			RenderableAnimType animType = renderable->GetAnimType();
 
-			renElement.DefaultTechniqueIdx = initAndRetrieveBasePassTechnique(*renElement.Material, useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, false, animType);
+			renElement.DefaultTechniqueIdx = InitAndRetrieveBasePassTechnique(*renElement.Material, useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, false, animType);
 
 #if BS_DEBUG_MODE
-			validateBasePassMaterial(*renElement.Material, animType, renElement.DefaultTechniqueIdx, *vertexDecl);
+			ValidateBasePassMaterial(*renElement.Material, animType, renElement.DefaultTechniqueIdx, *vertexDecl);
 #endif
 
 			// Generate or assigned renderer specific data for the material
@@ -434,10 +434,10 @@ void RendererScene::RegisterRenderable(Renderable* renderable)
 
 			if(writeVelocity)
 			{
-				renElement.WriteVelocityTechniqueIdx = initAndRetrieveBasePassTechnique(*renElement.Material, useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, true, animType);
+				renElement.WriteVelocityTechniqueIdx = InitAndRetrieveBasePassTechnique(*renElement.Material, useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, true, animType);
 
 #if BS_DEBUG_MODE
-				validateBasePassMaterial(*renElement.Material, animType, renElement.WriteVelocityTechniqueIdx, *vertexDecl);
+				ValidateBasePassMaterial(*renElement.Material, animType, renElement.WriteVelocityTechniqueIdx, *vertexDecl);
 #endif
 
 				// Note: Using the same params as the non-velocity technique. There are assumed to be no differences
@@ -781,7 +781,7 @@ void RendererScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tf
 	else
 		forwardLightingType = ParticleForwardLightingType::None;
 
-	const ShaderVariation* variation = &getParticleShaderVariation(orientation, lockY, gpu, is3d, forwardLightingType);
+	const ShaderVariation* variation = &GetParticleShaderVariation(orientation, lockY, gpu, is3d, forwardLightingType);
 
 	FIND_TECHNIQUE_DESC findDesc;
 	findDesc.Variation = variation;

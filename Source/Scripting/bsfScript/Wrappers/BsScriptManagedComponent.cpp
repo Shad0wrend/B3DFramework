@@ -96,7 +96,7 @@ void ScriptManagedComponent::ClearManagedInstanceInternal()
 
 ScriptObjectBackup ScriptManagedComponent::BeginRefresh()
 {
-	HManagedComponent managedComponent = static_object_cast<ManagedComponent>(mComponent);
+	HManagedComponent managedComponent = B3DStaticGameObjectCast<ManagedComponent>(mComponent);
 	ScriptObjectBackup backupData;
 
 	// It's possible that managed component is destroyed but a reference to it
@@ -109,9 +109,9 @@ ScriptObjectBackup ScriptManagedComponent::BeginRefresh()
 
 void ScriptManagedComponent::EndRefresh(const ScriptObjectBackup& backupData)
 {
-	HManagedComponent managedComponent = static_object_cast<ManagedComponent>(mComponent);
+	HManagedComponent managedComponent = B3DStaticGameObjectCast<ManagedComponent>(mComponent);
 
-	RawBackupData componentBackup = any_cast<RawBackupData>(backupData.Data);
+	RawBackupData componentBackup = AnyCast<RawBackupData>(backupData.Data);
 	managedComponent->Restore(componentBackup, mTypeMissing);
 }
 

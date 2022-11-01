@@ -36,7 +36,7 @@ PARTICLE_STATIC_MESH_SHAPE_DESC ScriptPARTICLE_STATIC_MESH_SHAPE_DESC::FromInter
 	ScriptRRefBase* scriptMesh;
 	scriptMesh = ScriptRRefBase::ToNative(value.Mesh);
 	if(scriptMesh != nullptr)
-		tmpMesh = static_resource_cast<Mesh>(scriptMesh->GetHandle());
+		tmpMesh = B3DStaticResourceCast<Mesh>(scriptMesh->GetHandle());
 	output.Mesh = tmpMesh;
 
 	return output;

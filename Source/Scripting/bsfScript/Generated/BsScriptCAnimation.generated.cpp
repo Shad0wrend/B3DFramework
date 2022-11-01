@@ -100,7 +100,7 @@ void ScriptCAnimation::InternalSetDefaultClip(ScriptCAnimation* thisPtr, MonoObj
 	ScriptRRefBase* scriptclip;
 	scriptclip = ScriptRRefBase::ToNative(clip);
 	if(scriptclip != nullptr)
-		tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
+		tmpclip = B3DStaticResourceCast<AnimationClip>(scriptclip->GetHandle());
 	thisPtr->GetHandle()->SetDefaultClip(tmpclip);
 }
 
@@ -158,7 +158,7 @@ void ScriptCAnimation::InternalPlay(ScriptCAnimation* thisPtr, MonoObject* clip)
 	ScriptRRefBase* scriptclip;
 	scriptclip = ScriptRRefBase::ToNative(clip);
 	if(scriptclip != nullptr)
-		tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
+		tmpclip = B3DStaticResourceCast<AnimationClip>(scriptclip->GetHandle());
 	thisPtr->GetHandle()->Play(tmpclip);
 }
 
@@ -168,7 +168,7 @@ void ScriptCAnimation::InternalBlendAdditive(ScriptCAnimation* thisPtr, MonoObje
 	ScriptRRefBase* scriptclip;
 	scriptclip = ScriptRRefBase::ToNative(clip);
 	if(scriptclip != nullptr)
-		tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
+		tmpclip = B3DStaticResourceCast<AnimationClip>(scriptclip->GetHandle());
 	thisPtr->GetHandle()->BlendAdditive(tmpclip, weight, fadeLength, layer);
 }
 
@@ -192,7 +192,7 @@ void ScriptCAnimation::InternalCrossFade(ScriptCAnimation* thisPtr, MonoObject* 
 	ScriptRRefBase* scriptclip;
 	scriptclip = ScriptRRefBase::ToNative(clip);
 	if(scriptclip != nullptr)
-		tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
+		tmpclip = B3DStaticResourceCast<AnimationClip>(scriptclip->GetHandle());
 	thisPtr->GetHandle()->CrossFade(tmpclip, fadeLength);
 }
 
@@ -202,7 +202,7 @@ void ScriptCAnimation::InternalSample(ScriptCAnimation* thisPtr, MonoObject* cli
 	ScriptRRefBase* scriptclip;
 	scriptclip = ScriptRRefBase::ToNative(clip);
 	if(scriptclip != nullptr)
-		tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
+		tmpclip = B3DStaticResourceCast<AnimationClip>(scriptclip->GetHandle());
 	thisPtr->GetHandle()->Sample(tmpclip, time);
 }
 
@@ -234,7 +234,7 @@ bool ScriptCAnimation::InternalGetState(ScriptCAnimation* thisPtr, MonoObject* c
 	ScriptRRefBase* scriptclip;
 	scriptclip = ScriptRRefBase::ToNative(clip);
 	if(scriptclip != nullptr)
-		tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
+		tmpclip = B3DStaticResourceCast<AnimationClip>(scriptclip->GetHandle());
 	tmp__output = thisPtr->GetHandle()->GetState(tmpclip, *state);
 
 	bool __output;
@@ -249,7 +249,7 @@ void ScriptCAnimation::InternalSetState(ScriptCAnimation* thisPtr, MonoObject* c
 	ScriptRRefBase* scriptclip;
 	scriptclip = ScriptRRefBase::ToNative(clip);
 	if(scriptclip != nullptr)
-		tmpclip = static_resource_cast<AnimationClip>(scriptclip->GetHandle());
+		tmpclip = B3DStaticResourceCast<AnimationClip>(scriptclip->GetHandle());
 	thisPtr->GetHandle()->SetState(tmpclip, *state);
 }
 

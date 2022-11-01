@@ -10,56 +10,56 @@ using namespace physx;
 
 using namespace bs;
 
-PxExtendedVec3 toPxExtVector(const Vector3& input)
+PxExtendedVec3 ToPxExtVector(const Vector3& input)
 {
 	return PxExtendedVec3(input.X, input.Y, input.Z);
 }
 
-Vector3 fromPxExtVector(const PxExtendedVec3& input)
+Vector3 FromPxExtVector(const PxExtendedVec3& input)
 {
 	return Vector3((float)input.x, (float)input.y, (float)input.z);
 }
 
-PxCapsuleClimbingMode::Enum toPxEnum(CharacterClimbingMode value)
+PxCapsuleClimbingMode::Enum ToPxEnum(CharacterClimbingMode value)
 {
 	return value == CharacterClimbingMode::Normal
 		? PxCapsuleClimbingMode::eEASY
 		: PxCapsuleClimbingMode::eCONSTRAINED;
 }
 
-PxControllerNonWalkableMode::Enum toPxEnum(CharacterNonWalkableMode value)
+PxControllerNonWalkableMode::Enum ToPxEnum(CharacterNonWalkableMode value)
 {
 	return value == CharacterNonWalkableMode::Prevent
 		? PxControllerNonWalkableMode::ePREVENT_CLIMBING
 		: PxControllerNonWalkableMode::ePREVENT_CLIMBING_AND_FORCE_SLIDING;
 }
 
-CharacterClimbingMode fromPxEnum(PxCapsuleClimbingMode::Enum value)
+CharacterClimbingMode FromPxEnum(PxCapsuleClimbingMode::Enum value)
 {
 	return value == PxCapsuleClimbingMode::eEASY
 		? CharacterClimbingMode::Normal
 		: CharacterClimbingMode::Constrained;
 }
 
-CharacterNonWalkableMode fromPxEnum(PxControllerNonWalkableMode::Enum value)
+CharacterNonWalkableMode FromPxEnum(PxControllerNonWalkableMode::Enum value)
 {
 	return value == PxControllerNonWalkableMode::ePREVENT_CLIMBING
 		? CharacterNonWalkableMode::Prevent
 		: CharacterNonWalkableMode::PreventAndSlide;
 }
 
-PxCapsuleControllerDesc toPxDesc(const CHAR_CONTROLLER_DESC& desc)
+PxCapsuleControllerDesc ToPxDesc(const CHAR_CONTROLLER_DESC& desc)
 {
 	PxCapsuleControllerDesc output;
-	output.climbingMode = toPxEnum(desc.ClimbingMode);
-	output.nonWalkableMode = toPxEnum(desc.NonWalkableMode);
+	output.climbingMode = ToPxEnum(desc.ClimbingMode);
+	output.nonWalkableMode = ToPxEnum(desc.NonWalkableMode);
 	output.contactOffset = desc.ContactOffset;
 	output.stepOffset = desc.StepOffset;
 	output.slopeLimit = desc.SlopeLimit.ValueRadians();
 	output.height = desc.Height;
 	output.radius = desc.Radius;
-	output.upDirection = toPxVector(desc.Up);
-	output.position = toPxExtVector(desc.Position);
+	output.upDirection = ToPxVector(desc.Up);
+	output.position = ToPxExtVector(desc.Position);
 
 	return output;
 }
@@ -67,7 +67,7 @@ PxCapsuleControllerDesc toPxDesc(const CHAR_CONTROLLER_DESC& desc)
 PhysXCharacterController::PhysXCharacterController(PxControllerManager* manager, const CHAR_CONTROLLER_DESC& desc)
 	: CharacterController(desc)
 {
-	PxCapsuleControllerDesc pxDesc = toPxDesc(desc);
+	PxCapsuleControllerDesc pxDesc = ToPxDesc(desc);
 	pxDesc.reportCallback = this;
 	pxDesc.material = GetPhysX().GetDefaultMaterial();
 	pxDesc.height = pxDesc.height <= 0 ? 0.01f : pxDesc.height;
@@ -93,7 +93,7 @@ CharacterCollisionFlags PhysXCharacterController::Move(const Vector3& displaceme
 	float delta = curTime - mLastMoveCall;
 	mLastMoveCall = curTime;
 
-	PxControllerCollisionFlags collisionFlag = mController->move(toPxVector(displacement), mMinMoveDistance, delta, filters);
+	PxControllerCollisionFlags collisionFlag = mController->move(ToPxVector(displacement), mMinMoveDistance, delta, filters);
 
 	CharacterCollisionFlags output;
 	if(collisionFlag.isSet(PxControllerCollisionFlag::eCOLLISION_DOWN))
@@ -110,22 +110,22 @@ CharacterCollisionFlags PhysXCharacterController::Move(const Vector3& displaceme
 
 Vector3 PhysXCharacterController::GetPosition() const
 {
-	return fromPxExtVector(mController->getPosition());
+	return FromPxExtVector(mController->getPosition());
 }
 
 void PhysXCharacterController::SetPosition(const Vector3& position)
 {
-	mController->setPosition(toPxExtVector(position));
+	mController->setPosition(ToPxExtVector(position));
 }
 
 Vector3 PhysXCharacterController::GetFootPosition() const
 {
-	return fromPxExtVector(mController->getFootPosition());
+	return FromPxExtVector(mController->getFootPosition());
 }
 
 void PhysXCharacterController::SetFootPosition(const Vector3& position)
 {
-	mController->setFootPosition(toPxExtVector(position));
+	mController->setFootPosition(ToPxExtVector(position));
 }
 
 float PhysXCharacterController::GetRadius() const
@@ -150,32 +150,32 @@ void PhysXCharacterController::SetHeight(float height)
 
 Vector3 PhysXCharacterController::GetUp() const
 {
-	return fromPxVector(mController->getUpDirection());
+	return FromPxVector(mController->getUpDirection());
 }
 
 void PhysXCharacterController::SetUp(const Vector3& up)
 {
-	mController->setUpDirection(toPxVector(up));
+	mController->setUpDirection(ToPxVector(up));
 }
 
 CharacterClimbingMode PhysXCharacterController::GetClimbingMode() const
 {
-	return fromPxEnum(mController->getClimbingMode());
+	return FromPxEnum(mController->getClimbingMode());
 }
 
 void PhysXCharacterController::SetClimbingMode(CharacterClimbingMode mode)
 {
-	mController->setClimbingMode(toPxEnum(mode));
+	mController->setClimbingMode(ToPxEnum(mode));
 }
 
 CharacterNonWalkableMode PhysXCharacterController::GetNonWalkableMode() const
 {
-	return fromPxEnum(mController->getNonWalkableMode());
+	return FromPxEnum(mController->getNonWalkableMode());
 }
 
 void PhysXCharacterController::SetNonWalkableMode(CharacterNonWalkableMode mode)
 {
-	mController->setNonWalkableMode(toPxEnum(mode));
+	mController->setNonWalkableMode(ToPxEnum(mode));
 }
 
 float PhysXCharacterController::GetMinMoveDistance() const
@@ -224,9 +224,9 @@ void PhysXCharacterController::onShapeHit(const PxControllerShapeHit& hit)
 		return;
 
 	ControllerColliderCollision collision;
-	collision.Position = fromPxExtVector(hit.worldPos);
-	collision.Normal = fromPxVector(hit.worldNormal);
-	collision.MotionDir = fromPxVector(hit.dir);
+	collision.Position = FromPxExtVector(hit.worldPos);
+	collision.Normal = FromPxVector(hit.worldNormal);
+	collision.MotionDir = FromPxVector(hit.dir);
 	collision.MotionAmount = hit.length;
 	collision.TriangleIndex = hit.triangleIndex;
 	collision.ColliderRaw = (Collider*)hit.shape->userData;
@@ -240,9 +240,9 @@ void PhysXCharacterController::onControllerHit(const PxControllersHit& hit)
 		return;
 
 	ControllerControllerCollision collision;
-	collision.Position = fromPxExtVector(hit.worldPos);
-	collision.Normal = fromPxVector(hit.worldNormal);
-	collision.MotionDir = fromPxVector(hit.dir);
+	collision.Position = FromPxExtVector(hit.worldPos);
+	collision.Normal = FromPxVector(hit.worldNormal);
+	collision.MotionDir = FromPxVector(hit.dir);
 	collision.MotionAmount = hit.length;
 	collision.ControllerRaw = (CharacterController*)hit.controller->getUserData();
 

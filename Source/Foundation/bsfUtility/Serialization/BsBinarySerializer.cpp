@@ -586,7 +586,7 @@ bool BinarySerializer::DecodeEntry(BufferedBitstreamReader& stream, size_t dataE
 		{
 			if(!fieldSchema.HasDynamicSize && curGenericField->Schema.Size != fieldSchema.Size)
 			{
-				BS_EXCEPT(InternalErrorException, "Data type mismatch. Type size stored in file and actual type size don't match. (" + toString(curGenericField->Schema.Size.Bytes) + " vs. " + toString(fieldSchema.Size.Bytes) + ")");
+				BS_EXCEPT(InternalErrorException, "Data type mismatch. Type size stored in file and actual type size don't match. (" + ToString(curGenericField->Schema.Size.Bytes) + " vs. " + ToString(fieldSchema.Size.Bytes) + ")");
 			}
 
 			if(curGenericField->Schema.IsArray != fieldSchema.IsArray)
@@ -596,7 +596,7 @@ bool BinarySerializer::DecodeEntry(BufferedBitstreamReader& stream, size_t dataE
 
 			if(curGenericField->Schema.Type != fieldSchema.Type)
 			{
-				BS_EXCEPT(InternalErrorException, "Data type mismatch. Field types don't match. " + toString(u32(curGenericField->Schema.Type)) + " vs. " + toString(u32(fieldSchema.Type)));
+				BS_EXCEPT(InternalErrorException, "Data type mismatch. Field types don't match. " + ToString(u32(curGenericField->Schema.Type)) + " vs. " + ToString(u32(fieldSchema.Type)));
 			}
 		}
 
@@ -752,7 +752,7 @@ bool BinarySerializer::DecodeEntry(BufferedBitstreamReader& stream, size_t dataE
 					break;
 				}
 			default:
-				BS_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + toString(u32(fieldSchema.Type)) + ", Is array: " + toString(fieldSchema.IsArray));
+				BS_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + ToString(u32(fieldSchema.Type)) + ", Is array: " + ToString(fieldSchema.IsArray));
 			}
 		}
 		else
@@ -935,7 +935,7 @@ bool BinarySerializer::DecodeEntry(BufferedBitstreamReader& stream, size_t dataE
 					break;
 				}
 			default:
-				BS_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + toString(u32(fieldSchema.Type)) + ", Is array: " + toString(fieldSchema.IsArray));
+				BS_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + ToString(u32(fieldSchema.Type)) + ", Is array: " + ToString(fieldSchema.IsArray));
 			}
 
 			stream.ClearBuffered(false);
@@ -1106,7 +1106,7 @@ BinarySerializer::ObjectMetaData BinarySerializer::EncodeObjectMetaData(u32 objI
 
 	if(objId > 1073741823)
 	{
-		BS_EXCEPT(InvalidParametersException, "Object ID is larger than we can store (max 30 bits): " + toString(objId));
+		BS_EXCEPT(InvalidParametersException, "Object ID is larger than we can store (max 30 bits): " + ToString(objId));
 	}
 
 	ObjectMetaData metaData;
@@ -1136,7 +1136,7 @@ u32 BinarySerializer::EncodeObjectMetaData(u32 objId, bool isBaseClass)
 
 	if(objId > 1073741823)
 	{
-		BS_EXCEPT(InvalidParametersException, "Object ID is larger than we can store (max 30 bits): " + toString(objId));
+		BS_EXCEPT(InvalidParametersException, "Object ID is larger than we can store (max 30 bits): " + ToString(objId));
 	}
 
 	return (objId << 2) | (isBaseClass ? 0x02 : 0) | 0x01;

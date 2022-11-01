@@ -339,7 +339,7 @@ void CAnimation::RestoreInternal(bool previewMode)
 		UpdateSceneObjectMapping();
 
 	if(mAnimatedRenderable != nullptr)
-		mAnimatedRenderable->RegisterAnimationInternal(static_object_cast<CAnimation>(mThisHandle));
+		mAnimatedRenderable->RegisterAnimationInternal(B3DStaticGameObjectCast<CAnimation>(mThisHandle));
 }
 
 void CAnimation::DestroyInternal()
@@ -604,7 +604,7 @@ Vector<HBone> CAnimation::FindChildBones()
 		HBone bone = currentSO->GetComponent<CBone>();
 		if(bone != nullptr)
 		{
-			bone->SetParentInternal(static_object_cast<CAnimation>(GetHandle()), true);
+			bone->SetParentInternal(B3DStaticGameObjectCast<CAnimation>(GetHandle()), true);
 			bones.push_back(bone);
 		}
 

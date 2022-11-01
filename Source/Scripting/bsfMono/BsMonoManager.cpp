@@ -31,58 +31,61 @@ static const MonoVersionData kMonoVersionData[1] = {
 	{ kMonoLibDir + "mono/4.5", "v4.0.30319" }
 };
 
-void monoLogCallback(const char* logDomain, const char* logLevel, const char* message, mono_bool fatal, void* userData)
+namespace bs
 {
-	static const char* monoErrorLevels[] = {
-		nullptr,
-		"error",
-		"critical",
-		"warning",
-		"message",
-		"info",
-		"debug"
-	};
-
-	u32 errorLevel = 0;
-	if(logLevel != nullptr)
+	void MonoLogCallback(const char* logDomain, const char* logLevel, const char* message, mono_bool fatal, void* userData)
 	{
-		for(u32 i = 1; i < 7; i++)
+		static const char* monoErrorLevels[] = {
+			nullptr,
+			"error",
+			"critical",
+			"warning",
+			"message",
+			"info",
+			"debug"
+		};
+
+		u32 errorLevel = 0;
+		if(logLevel != nullptr)
 		{
-			if(strcmp(monoErrorLevels[i], logLevel) == 0)
+			for(u32 i = 1; i < 7; i++)
 			{
-				errorLevel = i;
-				break;
+				if(strcmp(monoErrorLevels[i], logLevel) == 0)
+				{
+					errorLevel = i;
+					break;
+				}
 			}
+		}
+
+		if(errorLevel == 0)
+		{
+			BS_LOG(Error, Script, "Mono: {0} in domain {1}", message, logDomain);
+		}
+		else if(errorLevel <= 2)
+		{
+			BS_LOG(Error, Script, "Mono: {0} in domain {1} [{2}]", message, logDomain, logLevel);
+		}
+		else if(errorLevel <= 3)
+		{
+			BS_LOG(Warning, Script, "Mono: {0} in domain {1} [{2}]", message, logDomain, logLevel);
+		}
+		else
+		{
+			BS_LOG(Info, Particles, "Mono: {0} in domain {1} [{2}]", message, logDomain, logLevel);
 		}
 	}
 
-	if(errorLevel == 0)
+	void MonoPrintCallback(const char* string, mono_bool isStdout)
 	{
-		BS_LOG(Error, Script, "Mono: {0} in domain {1}", message, logDomain);
+		BS_LOG(Warning, Script, "Mono error: {0}", string);
 	}
-	else if(errorLevel <= 2)
-	{
-		BS_LOG(Error, Script, "Mono: {0} in domain {1} [{2}]", message, logDomain, logLevel);
-	}
-	else if(errorLevel <= 3)
-	{
-		BS_LOG(Warning, Script, "Mono: {0} in domain {1} [{2}]", message, logDomain, logLevel);
-	}
-	else
-	{
-		BS_LOG(Info, Particles, "Mono: {0} in domain {1} [{2}]", message, logDomain, logLevel);
-	}
-}
 
-void monoPrintCallback(const char* string, mono_bool isStdout)
-{
-	BS_LOG(Warning, Script, "Mono error: {0}", string);
-}
-
-void monoPrintErrorCallback(const char* string, mono_bool isStdout)
-{
-	BS_LOG(Error, Script, "Mono error: {0}", string);
-}
+	void MonoPrintErrorCallback(const char* string, mono_bool isStdout)
+	{
+		BS_LOG(Error, Script, "Mono error: {0}", string);
+	}
+} // namespace bs
 
 MonoManager::MonoManager()
 	: mScriptDomain(nullptr), mRootDomain(nullptr), mCorlibAssembly(nullptr)
@@ -119,9 +122,9 @@ MonoManager::MonoManager()
 	mono_trace_set_level_string("warning");
 #endif
 
-	mono_trace_set_log_handler(monoLogCallback, this);
-	mono_trace_set_print_handler(monoPrintCallback);
-	mono_trace_set_printerr_handler(monoPrintErrorCallback);
+	mono_trace_set_log_handler(MonoLogCallback, this);
+	mono_trace_set_print_handler(MonoPrintCallback);
+	mono_trace_set_printerr_handler(MonoPrintErrorCallback);
 
 	mono_config_parse(nullptr);
 

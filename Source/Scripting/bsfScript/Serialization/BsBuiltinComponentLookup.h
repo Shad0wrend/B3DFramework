@@ -28,8 +28,8 @@ public:                                                                         
 	static ScriptComponentBase* Create##ScriptType(const HComponent& component)                            \
 	{                                                                                                      \
 		MonoObject* managedInstance = ScriptType::GetMetaData()->ScriptClass->CreateInstance();            \
-		ScriptType* scriptComponent = new(B3DAllocate<ScriptType>())                                          \
-			ScriptType(managedInstance, static_object_cast<ComponentType>(component));                     \
+		ScriptType* scriptComponent = new(B3DAllocate<ScriptType>())                                       \
+			ScriptType(managedInstance, B3DStaticGameObjectCast<ComponentType>(component));                \
                                                                                                            \
 		return scriptComponent;                                                                            \
 	}                                                                                                      \

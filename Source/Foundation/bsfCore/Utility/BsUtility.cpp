@@ -10,7 +10,7 @@ using namespace bs;
  * Checks if the specified type (or any of its derived classes) have any IReflectable pointer or value types as
  * their fields.
  */
-bool hasReflectableChildren(RTTITypeBase* type)
+bool HasReflectableChildren(RTTITypeBase* type)
 {
 	u32 numFields = type->GetNumFields();
 	for(u32 i = 0; i < numFields; i++)
@@ -35,7 +35,7 @@ bool hasReflectableChildren(RTTITypeBase* type)
 	return false;
 }
 
-void findResourceDependenciesInternal(IReflectable& obj, FrameAlloc& alloc, bool recursive, Map<UUID, ResourceDependency>& dependencies)
+void FindResourceDependenciesInternal(IReflectable& obj, FrameAlloc& alloc, bool recursive, Map<UUID, ResourceDependency>& dependencies)
 {
 	RTTITypeBase* rtti = obj.GetRtti();
 	do
@@ -85,7 +85,7 @@ void findResourceDependenciesInternal(IReflectable& obj, FrameAlloc& alloc, bool
 				{
 					// Optimization, no need to retrieve its value and go deeper if it has no
 					// reflectable children that may hold the reference.
-					if(hasReflectableChildren(reflectableField->GetType()))
+					if(HasReflectableChildren(reflectableField->GetType()))
 					{
 						if(reflectableField->Schema.IsArray)
 						{
@@ -93,13 +93,13 @@ void findResourceDependenciesInternal(IReflectable& obj, FrameAlloc& alloc, bool
 							for(u32 j = 0; j < numElements; j++)
 							{
 								IReflectable& childObj = reflectableField->GetArrayValue(rttiInstance, &obj, j);
-								findResourceDependenciesInternal(childObj, alloc, true, dependencies);
+								FindResourceDependenciesInternal(childObj, alloc, true, dependencies);
 							}
 						}
 						else
 						{
 							IReflectable& childObj = reflectableField->GetValue(rttiInstance, &obj);
-							findResourceDependenciesInternal(childObj, alloc, true, dependencies);
+							FindResourceDependenciesInternal(childObj, alloc, true, dependencies);
 						}
 					}
 				}
@@ -110,7 +110,7 @@ void findResourceDependenciesInternal(IReflectable& obj, FrameAlloc& alloc, bool
 
 				// Optimization, no need to retrieve its value and go deeper if it has no
 				// reflectable children that may hold the reference.
-				if(hasReflectableChildren(reflectablePtrField->GetType()))
+				if(HasReflectableChildren(reflectablePtrField->GetType()))
 				{
 					if(reflectablePtrField->Schema.IsArray)
 					{
@@ -121,7 +121,7 @@ void findResourceDependenciesInternal(IReflectable& obj, FrameAlloc& alloc, bool
 								reflectablePtrField->GetArrayValue(rttiInstance, &obj, j);
 
 							if(childObj != nullptr)
-								findResourceDependenciesInternal(*childObj, alloc, true, dependencies);
+								FindResourceDependenciesInternal(*childObj, alloc, true, dependencies);
 						}
 					}
 					else
@@ -129,7 +129,7 @@ void findResourceDependenciesInternal(IReflectable& obj, FrameAlloc& alloc, bool
 						const SPtr<IReflectable>& childObj = reflectablePtrField->GetValue(rttiInstance, &obj);
 
 						if(childObj != nullptr)
-							findResourceDependenciesInternal(*childObj, alloc, true, dependencies);
+							FindResourceDependenciesInternal(*childObj, alloc, true, dependencies);
 					}
 				}
 			}
@@ -148,7 +148,7 @@ Vector<ResourceDependency> Utility::FindResourceDependencies(IReflectable& obj, 
 	GetFrameAllocator().MarkFrame();
 
 	Map<UUID, ResourceDependency> dependencies;
-	findResourceDependenciesInternal(obj, GetFrameAllocator(), recursive, dependencies);
+	FindResourceDependenciesInternal(obj, GetFrameAllocator(), recursive, dependencies);
 
 	GetFrameAllocator().Clear();
 

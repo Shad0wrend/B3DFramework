@@ -149,7 +149,7 @@ bool ScriptPhysicsScene::InternalConvexCast(ScriptPhysicsScene* thisPtr, MonoObj
 	ScriptRRefBase* scriptmesh;
 	scriptmesh = ScriptRRefBase::ToNative(mesh);
 	if(scriptmesh != nullptr)
-		tmpmesh = static_resource_cast<PhysicsMesh>(scriptmesh->GetHandle());
+		tmpmesh = B3DStaticResourceCast<PhysicsMesh>(scriptmesh->GetHandle());
 	PhysicsQueryHit tmphit;
 	tmp__output = thisPtr->GetInternal()->ConvexCast(tmpmesh, *position, *rotation, *unitDir, tmphit, layer, max);
 
@@ -254,7 +254,7 @@ MonoArray* ScriptPhysicsScene::InternalConvexCastAll(ScriptPhysicsScene* thisPtr
 	ScriptRRefBase* scriptmesh;
 	scriptmesh = ScriptRRefBase::ToNative(mesh);
 	if(scriptmesh != nullptr)
-		tmpmesh = static_resource_cast<PhysicsMesh>(scriptmesh->GetHandle());
+		tmpmesh = B3DStaticResourceCast<PhysicsMesh>(scriptmesh->GetHandle());
 	vec__output = thisPtr->GetInternal()->ConvexCastAll(tmpmesh, *position, *rotation, *unitDir, layer, max);
 
 	MonoArray* __output;
@@ -331,7 +331,7 @@ bool ScriptPhysicsScene::InternalConvexCastAny(ScriptPhysicsScene* thisPtr, Mono
 	ScriptRRefBase* scriptmesh;
 	scriptmesh = ScriptRRefBase::ToNative(mesh);
 	if(scriptmesh != nullptr)
-		tmpmesh = static_resource_cast<PhysicsMesh>(scriptmesh->GetHandle());
+		tmpmesh = B3DStaticResourceCast<PhysicsMesh>(scriptmesh->GetHandle());
 	tmp__output = thisPtr->GetInternal()->ConvexCastAny(tmpmesh, *position, *rotation, *unitDir, layer, max);
 
 	bool __output;
@@ -352,7 +352,7 @@ MonoArray* ScriptPhysicsScene::InternalBoxOverlap(ScriptPhysicsScene* thisPtr, A
 	{
 		ScriptComponentBase* script__output = nullptr;
 		if(vec__output[i])
-			script__output = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(vec__output[i]));
+			script__output = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(B3DStaticGameObjectCast<Component>(vec__output[i]));
 		if(script__output != nullptr)
 			array__output.Set(i, script__output->GetManagedInstance());
 		else
@@ -375,7 +375,7 @@ MonoArray* ScriptPhysicsScene::InternalSphereOverlap(ScriptPhysicsScene* thisPtr
 	{
 		ScriptComponentBase* script__output = nullptr;
 		if(vec__output[i])
-			script__output = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(vec__output[i]));
+			script__output = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(B3DStaticGameObjectCast<Component>(vec__output[i]));
 		if(script__output != nullptr)
 			array__output.Set(i, script__output->GetManagedInstance());
 		else
@@ -398,7 +398,7 @@ MonoArray* ScriptPhysicsScene::InternalCapsuleOverlap(ScriptPhysicsScene* thisPt
 	{
 		ScriptComponentBase* script__output = nullptr;
 		if(vec__output[i])
-			script__output = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(vec__output[i]));
+			script__output = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(B3DStaticGameObjectCast<Component>(vec__output[i]));
 		if(script__output != nullptr)
 			array__output.Set(i, script__output->GetManagedInstance());
 		else
@@ -416,7 +416,7 @@ MonoArray* ScriptPhysicsScene::InternalConvexOverlap(ScriptPhysicsScene* thisPtr
 	ScriptRRefBase* scriptmesh;
 	scriptmesh = ScriptRRefBase::ToNative(mesh);
 	if(scriptmesh != nullptr)
-		tmpmesh = static_resource_cast<PhysicsMesh>(scriptmesh->GetHandle());
+		tmpmesh = B3DStaticResourceCast<PhysicsMesh>(scriptmesh->GetHandle());
 	vec__output = thisPtr->GetInternal()->ConvexOverlap(tmpmesh, *position, *rotation, layer);
 
 	MonoArray* __output;
@@ -426,7 +426,7 @@ MonoArray* ScriptPhysicsScene::InternalConvexOverlap(ScriptPhysicsScene* thisPtr
 	{
 		ScriptComponentBase* script__output = nullptr;
 		if(vec__output[i])
-			script__output = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(vec__output[i]));
+			script__output = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(B3DStaticGameObjectCast<Component>(vec__output[i]));
 		if(script__output != nullptr)
 			array__output.Set(i, script__output->GetManagedInstance());
 		else
@@ -477,7 +477,7 @@ bool ScriptPhysicsScene::InternalConvexOverlapAny(ScriptPhysicsScene* thisPtr, M
 	ScriptRRefBase* scriptmesh;
 	scriptmesh = ScriptRRefBase::ToNative(mesh);
 	if(scriptmesh != nullptr)
-		tmpmesh = static_resource_cast<PhysicsMesh>(scriptmesh->GetHandle());
+		tmpmesh = B3DStaticResourceCast<PhysicsMesh>(scriptmesh->GetHandle());
 	tmp__output = thisPtr->GetInternal()->ConvexOverlapAny(tmpmesh, *position, *rotation, layer);
 
 	bool __output;

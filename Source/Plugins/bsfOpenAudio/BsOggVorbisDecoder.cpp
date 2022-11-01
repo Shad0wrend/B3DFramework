@@ -6,13 +6,13 @@
 
 using namespace bs;
 
-size_t oggRead(void* ptr, size_t size, size_t nmemb, void* data)
+size_t OggRead(void* ptr, size_t size, size_t nmemb, void* data)
 {
 	OggDecoderData* decoderData = static_cast<OggDecoderData*>(data);
 	return static_cast<std::size_t>(decoderData->Stream->Read(ptr, size * nmemb));
 }
 
-int oggSeek(void* data, ogg_int64_t offset, int whence)
+int OggSeek(void* data, ogg_int64_t offset, int whence)
 {
 	OggDecoderData* decoderData = static_cast<OggDecoderData*>(data);
 	switch(whence)
@@ -32,13 +32,13 @@ int oggSeek(void* data, ogg_int64_t offset, int whence)
 	return (int)(decoderData->Stream->Tell() - decoderData->Offset);
 }
 
-long oggTell(void* data)
+long OggTell(void* data)
 {
 	OggDecoderData* decoderData = static_cast<OggDecoderData*>(data);
 	return (long)(decoderData->Stream->Tell() - decoderData->Offset);
 }
 
-static ov_callbacks callbacks = { &oggRead, &oggSeek, nullptr, &oggTell };
+static ov_callbacks callbacks = { &OggRead, &OggSeek, nullptr, &OggTell };
 
 OggVorbisDecoder::OggVorbisDecoder()
 {

@@ -292,14 +292,14 @@ void CRigidbody::UpdateColliders()
 
 			for(auto& entry : colliders)
 			{
-				if(!entry->IsValidParent(static_object_cast<CRigidbody>(mThisHandle)))
+				if(!entry->IsValidParent(B3DStaticGameObjectCast<CRigidbody>(mThisHandle)))
 					continue;
 
 				Collider* collider = entry->GetInternalInternal();
 				if(collider == nullptr)
 					continue;
 
-				entry->SetRigidbody(static_object_cast<CRigidbody>(mThisHandle), true);
+				entry->SetRigidbody(B3DStaticGameObjectCast<CRigidbody>(mThisHandle), true);
 				mChildren.push_back(entry);
 
 				collider->SetRigidbody(mInternal.get());
@@ -379,13 +379,13 @@ void CRigidbody::ProcessCollisionData(const CollisionDataRaw& data, CollisionDat
 	if(data.Colliders[0] != nullptr)
 	{
 		CCollider* other = (CCollider*)data.Colliders[0]->GetOwnerInternal(PhysicsOwnerType::Component);
-		output.Collider[0] = static_object_cast<CCollider>(other->GetHandle());
+		output.Collider[0] = B3DStaticGameObjectCast<CCollider>(other->GetHandle());
 	}
 
 	if(data.Colliders[1] != nullptr)
 	{
 		CCollider* other = (CCollider*)data.Colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
-		output.Collider[1] = static_object_cast<CCollider>(other->GetHandle());
+		output.Collider[1] = B3DStaticGameObjectCast<CCollider>(other->GetHandle());
 	}
 }
 
@@ -507,7 +507,7 @@ void CRigidbody::OnTransformChanged(TransformChangedFlags flags)
 	mInternal->SetTransform(tfrm.GetPosition(), tfrm.GetRotation());
 
 	if(mParentJoint != nullptr)
-		mParentJoint->NotifyRigidbodyMoved(static_object_cast<CRigidbody>(mThisHandle));
+		mParentJoint->NotifyRigidbodyMoved(B3DStaticGameObjectCast<CRigidbody>(mThisHandle));
 }
 
 RTTITypeBase* CRigidbody::GetRttiStatic()

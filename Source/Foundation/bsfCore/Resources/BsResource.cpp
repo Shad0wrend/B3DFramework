@@ -29,7 +29,7 @@ void Resource::GetResourceDependencies(FrameVector<HResource>& dependencies) con
 	for(auto& dependency : mDependencies)
 	{
 		if(dependency != nullptr)
-			dependencies.push_back(static_resource_cast<Resource>(dependency));
+			dependencies.push_back(B3DStaticResourceCast<Resource>(dependency));
 	}
 }
 

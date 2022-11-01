@@ -20,7 +20,7 @@
 
 using namespace bs;
 template <class T>
-bool compareFieldData(const T* a, const SPtr<ManagedSerializableFieldData>& b)
+bool CompareFieldData(const T* a, const SPtr<ManagedSerializableFieldData>& b)
 {
 	if(B3DRTTIIsOfType<T>(b))
 	{
@@ -31,7 +31,7 @@ bool compareFieldData(const T* a, const SPtr<ManagedSerializableFieldData>& b)
 	return false;
 }
 
-bool compareFieldData(const SPtr<ManagedSerializableFieldData>& oldData, const SPtr<ManagedSerializableFieldData>& newData)
+bool CompareFieldData(const SPtr<ManagedSerializableFieldData>& oldData, const SPtr<ManagedSerializableFieldData>& newData)
 {
 	if(!oldData)
 		return !newData;
@@ -44,7 +44,7 @@ bool compareFieldData(const SPtr<ManagedSerializableFieldData>& oldData, const S
 	return oldData->Equals(newData);
 }
 
-bool isPrimitiveOrEnumType(const SPtr<ManagedSerializableTypeInfo>& typeInfo, ScriptPrimitiveType underlyingType)
+bool IsPrimitiveOrEnumType(const SPtr<ManagedSerializableTypeInfo>& typeInfo, ScriptPrimitiveType underlyingType)
 {
 	if(const auto primitiveTypeInfo = B3DRTTICast<ManagedSerializableTypeInfoPrimitive>(typeInfo.get()))
 		return primitiveTypeInfo->MType == underlyingType;
@@ -250,7 +250,7 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::Create(const SP
 				if(value != nullptr)
 				{
 					ScriptComponentBase* scriptComponent = ScriptComponent::ToNative(value);
-					fieldData->Value = static_object_cast<GameObject>(scriptComponent->GetComponent());
+					fieldData->Value = B3DStaticGameObjectCast<GameObject>(scriptComponent->GetComponent());
 				}
 
 				return fieldData;
@@ -372,7 +372,7 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableFieldData::Create(const SP
 
 void* ManagedSerializableFieldDataBool::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Bool))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Bool))
 		return &Value;
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -381,7 +381,7 @@ void* ManagedSerializableFieldDataBool::GetValue(const SPtr<ManagedSerializableT
 
 void* ManagedSerializableFieldDataChar::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Char))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Char))
 		return &Value;
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -390,7 +390,7 @@ void* ManagedSerializableFieldDataChar::GetValue(const SPtr<ManagedSerializableT
 
 void* ManagedSerializableFieldDataI8::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I8))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I8))
 		return &Value;
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -399,7 +399,7 @@ void* ManagedSerializableFieldDataI8::GetValue(const SPtr<ManagedSerializableTyp
 
 void* ManagedSerializableFieldDataU8::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U8))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U8))
 		return &Value;
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -408,7 +408,7 @@ void* ManagedSerializableFieldDataU8::GetValue(const SPtr<ManagedSerializableTyp
 
 void* ManagedSerializableFieldDataI16::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I16))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I16))
 		return &Value;
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -417,7 +417,7 @@ void* ManagedSerializableFieldDataI16::GetValue(const SPtr<ManagedSerializableTy
 
 void* ManagedSerializableFieldDataU16::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U16))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U16))
 		return &Value;
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -426,7 +426,7 @@ void* ManagedSerializableFieldDataU16::GetValue(const SPtr<ManagedSerializableTy
 
 void* ManagedSerializableFieldDataI32::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I32))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I32))
 		return &Value;
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -435,7 +435,7 @@ void* ManagedSerializableFieldDataI32::GetValue(const SPtr<ManagedSerializableTy
 
 void* ManagedSerializableFieldDataU32::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U32))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U32))
 		return &Value;
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -444,7 +444,7 @@ void* ManagedSerializableFieldDataU32::GetValue(const SPtr<ManagedSerializableTy
 
 void* ManagedSerializableFieldDataI64::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I64))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I64))
 		return &Value;
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -453,7 +453,7 @@ void* ManagedSerializableFieldDataI64::GetValue(const SPtr<ManagedSerializableTy
 
 void* ManagedSerializableFieldDataU64::GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U64))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U64))
 		return &Value;
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -564,7 +564,7 @@ void* ManagedSerializableFieldDataGameObjectRef::GetValue(const SPtr<ManagedSeri
 			if(Value)
 			{
 				ScriptSceneObject* scriptSceneObject =
-					ScriptGameObjectManager::Instance().GetOrCreateScriptSceneObject(static_object_cast<SceneObject>(Value));
+					ScriptGameObjectManager::Instance().GetOrCreateScriptSceneObject(B3DStaticGameObjectCast<SceneObject>(Value));
 				return scriptSceneObject->GetManagedInstance();
 			}
 			else
@@ -575,7 +575,7 @@ void* ManagedSerializableFieldDataGameObjectRef::GetValue(const SPtr<ManagedSeri
 			if(Value)
 			{
 				ScriptManagedComponent* scriptComponent =
-					ScriptGameObjectManager::Instance().GetManagedScriptComponent(static_object_cast<ManagedComponent>(Value));
+					ScriptGameObjectManager::Instance().GetManagedScriptComponent(B3DStaticGameObjectCast<ManagedComponent>(Value));
 				assert(scriptComponent != nullptr);
 
 				return scriptComponent->GetManagedInstance();
@@ -588,7 +588,7 @@ void* ManagedSerializableFieldDataGameObjectRef::GetValue(const SPtr<ManagedSeri
 			if(Value)
 			{
 				ScriptComponentBase* scriptComponent =
-					ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(Value));
+					ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(B3DStaticGameObjectCast<Component>(Value));
 				assert(scriptComponent != nullptr);
 
 				return scriptComponent->GetManagedInstance();
@@ -700,7 +700,7 @@ void* ManagedSerializableFieldDataDictionary::GetValue(const SPtr<ManagedSeriali
 
 MonoObject* ManagedSerializableFieldDataBool::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Bool))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Bool))
 		return MonoUtil::Box(MonoUtil::GetBoolClass(), &Value);
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -709,7 +709,7 @@ MonoObject* ManagedSerializableFieldDataBool::GetValueBoxed(const SPtr<ManagedSe
 
 MonoObject* ManagedSerializableFieldDataChar::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Char))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Char))
 		return MonoUtil::Box(MonoUtil::GetCharClass(), &Value);
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -718,7 +718,7 @@ MonoObject* ManagedSerializableFieldDataChar::GetValueBoxed(const SPtr<ManagedSe
 
 MonoObject* ManagedSerializableFieldDataI8::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I8))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I8))
 		return MonoUtil::Box(MonoUtil::GetSByteClass(), &Value);
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -727,7 +727,7 @@ MonoObject* ManagedSerializableFieldDataI8::GetValueBoxed(const SPtr<ManagedSeri
 
 MonoObject* ManagedSerializableFieldDataU8::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U8))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U8))
 		return MonoUtil::Box(MonoUtil::GetByteClass(), &Value);
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -736,7 +736,7 @@ MonoObject* ManagedSerializableFieldDataU8::GetValueBoxed(const SPtr<ManagedSeri
 
 MonoObject* ManagedSerializableFieldDataI16::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I16))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I16))
 		return MonoUtil::Box(MonoUtil::GetInT16Class(), &Value);
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -745,7 +745,7 @@ MonoObject* ManagedSerializableFieldDataI16::GetValueBoxed(const SPtr<ManagedSer
 
 MonoObject* ManagedSerializableFieldDataU16::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U16))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U16))
 		return MonoUtil::Box(MonoUtil::GetUinT16Class(), &Value);
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -754,7 +754,7 @@ MonoObject* ManagedSerializableFieldDataU16::GetValueBoxed(const SPtr<ManagedSer
 
 MonoObject* ManagedSerializableFieldDataI32::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I32))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I32))
 		return MonoUtil::Box(MonoUtil::GetInT32Class(), &Value);
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -763,7 +763,7 @@ MonoObject* ManagedSerializableFieldDataI32::GetValueBoxed(const SPtr<ManagedSer
 
 MonoObject* ManagedSerializableFieldDataU32::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U32))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U32))
 		return MonoUtil::Box(MonoUtil::GetUinT32Class(), &Value);
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -772,7 +772,7 @@ MonoObject* ManagedSerializableFieldDataU32::GetValueBoxed(const SPtr<ManagedSer
 
 MonoObject* ManagedSerializableFieldDataI64::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I64))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I64))
 		return MonoUtil::Box(MonoUtil::GetInT64Class(), &Value);
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -781,7 +781,7 @@ MonoObject* ManagedSerializableFieldDataI64::GetValueBoxed(const SPtr<ManagedSer
 
 MonoObject* ManagedSerializableFieldDataU64::GetValueBoxed(const SPtr<ManagedSerializableTypeInfo>& typeInfo)
 {
-	if(isPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U64))
+	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U64))
 		return MonoUtil::Box(MonoUtil::GetUinT64Class(), &Value);
 
 	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
@@ -867,62 +867,62 @@ MonoObject* ManagedSerializableFieldDataDictionary::GetValueBoxed(const SPtr<Man
 
 bool ManagedSerializableFieldDataBool::Equals(const SPtr<ManagedSerializableFieldData>& other)
 {
-	return compareFieldData(this, other);
+	return CompareFieldData(this, other);
 }
 
 bool ManagedSerializableFieldDataChar::Equals(const SPtr<ManagedSerializableFieldData>& other)
 {
-	return compareFieldData(this, other);
+	return CompareFieldData(this, other);
 }
 
 bool ManagedSerializableFieldDataI8::Equals(const SPtr<ManagedSerializableFieldData>& other)
 {
-	return compareFieldData(this, other);
+	return CompareFieldData(this, other);
 }
 
 bool ManagedSerializableFieldDataU8::Equals(const SPtr<ManagedSerializableFieldData>& other)
 {
-	return compareFieldData(this, other);
+	return CompareFieldData(this, other);
 }
 
 bool ManagedSerializableFieldDataI16::Equals(const SPtr<ManagedSerializableFieldData>& other)
 {
-	return compareFieldData(this, other);
+	return CompareFieldData(this, other);
 }
 
 bool ManagedSerializableFieldDataU16::Equals(const SPtr<ManagedSerializableFieldData>& other)
 {
-	return compareFieldData(this, other);
+	return CompareFieldData(this, other);
 }
 
 bool ManagedSerializableFieldDataI32::Equals(const SPtr<ManagedSerializableFieldData>& other)
 {
-	return compareFieldData(this, other);
+	return CompareFieldData(this, other);
 }
 
 bool ManagedSerializableFieldDataU32::Equals(const SPtr<ManagedSerializableFieldData>& other)
 {
-	return compareFieldData(this, other);
+	return CompareFieldData(this, other);
 }
 
 bool ManagedSerializableFieldDataI64::Equals(const SPtr<ManagedSerializableFieldData>& other)
 {
-	return compareFieldData(this, other);
+	return CompareFieldData(this, other);
 }
 
 bool ManagedSerializableFieldDataU64::Equals(const SPtr<ManagedSerializableFieldData>& other)
 {
-	return compareFieldData(this, other);
+	return CompareFieldData(this, other);
 }
 
 bool ManagedSerializableFieldDataFloat::Equals(const SPtr<ManagedSerializableFieldData>& other)
 {
-	return compareFieldData(this, other);
+	return CompareFieldData(this, other);
 }
 
 bool ManagedSerializableFieldDataDouble::Equals(const SPtr<ManagedSerializableFieldData>& other)
 {
-	return compareFieldData(this, other);
+	return CompareFieldData(this, other);
 }
 
 bool ManagedSerializableFieldDataString::Equals(const SPtr<ManagedSerializableFieldData>& other)
@@ -938,17 +938,17 @@ bool ManagedSerializableFieldDataString::Equals(const SPtr<ManagedSerializableFi
 
 bool ManagedSerializableFieldDataResourceRef::Equals(const SPtr<ManagedSerializableFieldData>& other)
 {
-	return compareFieldData(this, other);
+	return CompareFieldData(this, other);
 }
 
 bool ManagedSerializableFieldDataGameObjectRef::Equals(const SPtr<ManagedSerializableFieldData>& other)
 {
-	return compareFieldData(this, other);
+	return CompareFieldData(this, other);
 }
 
 bool ManagedSerializableFieldDataReflectableRef::Equals(const SPtr<ManagedSerializableFieldData>& other)
 {
-	return compareFieldData(this, other);
+	return CompareFieldData(this, other);
 }
 
 bool ManagedSerializableFieldDataObject::Equals(const SPtr<ManagedSerializableFieldData>& other)
@@ -988,7 +988,7 @@ bool ManagedSerializableFieldDataArray::Equals(const SPtr<ManagedSerializableFie
 			SPtr<ManagedSerializableFieldData> oldData = Value->GetFieldData(i);
 			SPtr<ManagedSerializableFieldData> newData = otherObj->Value->GetFieldData(i);
 
-			if(compareFieldData(oldData, newData))
+			if(CompareFieldData(oldData, newData))
 				return false;
 		}
 
@@ -1019,7 +1019,7 @@ bool ManagedSerializableFieldDataList::Equals(const SPtr<ManagedSerializableFiel
 			SPtr<ManagedSerializableFieldData> oldData = Value->GetFieldData(i);
 			SPtr<ManagedSerializableFieldData> newData = otherObj->Value->GetFieldData(i);
 
-			if(compareFieldData(oldData, newData))
+			if(CompareFieldData(oldData, newData))
 				return false;
 		}
 
@@ -1045,7 +1045,7 @@ bool ManagedSerializableFieldDataDictionary::Equals(const SPtr<ManagedSerializab
 			SPtr<ManagedSerializableFieldData> key = newEnumerator.GetKey();
 			if(Value->Contains(key))
 			{
-				if(!compareFieldData(Value->GetFieldData(key), newEnumerator.GetValue()))
+				if(!CompareFieldData(Value->GetFieldData(key), newEnumerator.GetValue()))
 					return false;
 			}
 			else

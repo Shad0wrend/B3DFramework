@@ -76,7 +76,7 @@ void MessageHandler::Unsubscribe(u32 handleId)
 
 namespace bs
 {
-void sendMessage(MessageId message)
+void SendMessage(MessageId message)
 {
 	MessageHandler::Instance().Send(message);
 }

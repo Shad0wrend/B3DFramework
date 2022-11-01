@@ -94,14 +94,14 @@ public:
 
 		row.LabelSpace->SetSize(depth * 20);
 		row.Name.SetParameter(0, name);
-		row.PctOfParent.SetParameter(0, toString(pctOfParent * 100.0f, 2, 0, ' ', std::ios::fixed));
-		row.NumCalls.SetParameter(0, toString(numCalls));
-		row.NumAllocs.SetParameter(0, toString(numAllocs));
-		row.NumFrees.SetParameter(0, toString(numFrees));
-		row.AvgTime.SetParameter(0, toString(avgTime, 2, 0, ' ', std::ios::fixed));
-		row.TotalTime.SetParameter(0, toString(totalTime, 2, 0, ' ', std::ios::fixed));
-		row.AvgTimeSelf.SetParameter(0, toString(avgSelfTime, 2, 0, ' ', std::ios::fixed));
-		row.TotalTimeSelf.SetParameter(0, toString(totalSelfTime, 2, 0, ' ', std::ios::fixed));
+		row.PctOfParent.SetParameter(0, ToString(pctOfParent * 100.0f, 2, 0, ' ', std::ios::fixed));
+		row.NumCalls.SetParameter(0, ToString(numCalls));
+		row.NumAllocs.SetParameter(0, ToString(numAllocs));
+		row.NumFrees.SetParameter(0, ToString(numFrees));
+		row.AvgTime.SetParameter(0, ToString(avgTime, 2, 0, ' ', std::ios::fixed));
+		row.TotalTime.SetParameter(0, ToString(totalTime, 2, 0, ' ', std::ios::fixed));
+		row.AvgTimeSelf.SetParameter(0, ToString(avgSelfTime, 2, 0, ' ', std::ios::fixed));
+		row.TotalTimeSelf.SetParameter(0, ToString(totalSelfTime, 2, 0, ' ', std::ios::fixed));
 
 		row.GuiName->SetContent(row.Name);
 		row.GuiPctOfParent->SetContent(row.PctOfParent);
@@ -194,14 +194,14 @@ public:
 
 		row.LabelSpace->SetSize(depth * 20);
 		row.Name.SetParameter(0, name);
-		row.PctOfParent.SetParameter(0, toString(pctOfParent * 100.0f, 2, 0, ' ', std::ios::fixed));
-		row.NumCalls.SetParameter(0, toString(numCalls));
-		row.NumAllocs.SetParameter(0, toString(numAllocs));
-		row.NumFrees.SetParameter(0, toString(numFrees));
-		row.AvgCycles.SetParameter(0, toString(avgCycles));
-		row.TotalCycles.SetParameter(0, toString(totalCycles));
-		row.AvgCyclesSelf.SetParameter(0, toString(avgSelfCycles));
-		row.TotalCyclesSelf.SetParameter(0, toString(totalSelfCycles));
+		row.PctOfParent.SetParameter(0, ToString(pctOfParent * 100.0f, 2, 0, ' ', std::ios::fixed));
+		row.NumCalls.SetParameter(0, ToString(numCalls));
+		row.NumAllocs.SetParameter(0, ToString(numAllocs));
+		row.NumFrees.SetParameter(0, ToString(numFrees));
+		row.AvgCycles.SetParameter(0, ToString(avgCycles));
+		row.TotalCycles.SetParameter(0, ToString(totalCycles));
+		row.AvgCyclesSelf.SetParameter(0, ToString(avgSelfCycles));
+		row.TotalCyclesSelf.SetParameter(0, ToString(totalSelfCycles));
 
 		row.GuiName->SetContent(row.Name);
 		row.GuiPctOfParent->SetContent(row.PctOfParent);
@@ -280,7 +280,7 @@ public:
 
 		row.LabelSpace->SetSize(depth * 20);
 		row.Name.SetParameter(0, name);
-		row.Time.SetParameter(0, toString(timeMs));
+		row.Time.SetParameter(0, ToString(timeMs));
 
 		row.GuiName->SetContent(row.Name);
 		row.GuiTime->SetContent(row.Time);
@@ -706,24 +706,24 @@ void ProfilerOverlay::UpdateCpuSampleContents(const ProfilerReport& simReport, c
 
 void ProfilerOverlay::UpdateGpuSampleContents(const GPUProfileSample& frameSample)
 {
-	mGPUFrameNumStr.SetParameter(0, toString((u64)GetTime().GetFrameIdx()));
-	mGPUTimeStr.SetParameter(0, toString(frameSample.TimeMs));
-	mGPUDrawCallsStr.SetParameter(0, toString(frameSample.NumDrawCalls));
-	mGPURenTargetChangesStr.SetParameter(0, toString(frameSample.NumRenderTargetChanges));
-	mGPUPresentsStr.SetParameter(0, toString(frameSample.NumPresents));
-	mGPUClearsStr.SetParameter(0, toString(frameSample.NumClears));
-	mGPUVerticesStr.SetParameter(0, toString(frameSample.NumVertices));
-	mGPUPrimitivesStr.SetParameter(0, toString(frameSample.NumPrimitives));
-	mGPUSamplesStr.SetParameter(0, toString(frameSample.NumDrawnSamples));
-	mGPUPipelineStateChangesStr.SetParameter(0, toString(frameSample.NumPipelineStateChanges));
+	mGPUFrameNumStr.SetParameter(0, ToString((u64)GetTime().GetFrameIdx()));
+	mGPUTimeStr.SetParameter(0, ToString(frameSample.TimeMs));
+	mGPUDrawCallsStr.SetParameter(0, ToString(frameSample.NumDrawCalls));
+	mGPURenTargetChangesStr.SetParameter(0, ToString(frameSample.NumRenderTargetChanges));
+	mGPUPresentsStr.SetParameter(0, ToString(frameSample.NumPresents));
+	mGPUClearsStr.SetParameter(0, ToString(frameSample.NumClears));
+	mGPUVerticesStr.SetParameter(0, ToString(frameSample.NumVertices));
+	mGPUPrimitivesStr.SetParameter(0, ToString(frameSample.NumPrimitives));
+	mGPUSamplesStr.SetParameter(0, ToString(frameSample.NumDrawnSamples));
+	mGPUPipelineStateChangesStr.SetParameter(0, ToString(frameSample.NumPipelineStateChanges));
 
-	mGPUObjectsCreatedStr.SetParameter(0, toString(frameSample.NumObjectsCreated));
-	mGPUObjectsDestroyedStr.SetParameter(0, toString(frameSample.NumObjectsDestroyed));
-	mGPUResourceWritesStr.SetParameter(0, toString(frameSample.NumResourceWrites));
-	mGPUResourceReadsStr.SetParameter(0, toString(frameSample.NumResourceReads));
-	mGPUParamBindsStr.SetParameter(0, toString(frameSample.NumGpuParamBinds));
-	mGPUVertexBufferBindsStr.SetParameter(0, toString(frameSample.NumVertexBufferBinds));
-	mGPUIndexBufferBindsStr.SetParameter(0, toString(frameSample.NumIndexBufferBinds));
+	mGPUObjectsCreatedStr.SetParameter(0, ToString(frameSample.NumObjectsCreated));
+	mGPUObjectsDestroyedStr.SetParameter(0, ToString(frameSample.NumObjectsDestroyed));
+	mGPUResourceWritesStr.SetParameter(0, ToString(frameSample.NumResourceWrites));
+	mGPUResourceReadsStr.SetParameter(0, ToString(frameSample.NumResourceReads));
+	mGPUParamBindsStr.SetParameter(0, ToString(frameSample.NumGpuParamBinds));
+	mGPUVertexBufferBindsStr.SetParameter(0, ToString(frameSample.NumVertexBufferBinds));
+	mGPUIndexBufferBindsStr.SetParameter(0, ToString(frameSample.NumIndexBufferBinds));
 
 	mGPUFrameNumLbl->SetContent(mGPUFrameNumStr);
 	mGPUTimeLbl->SetContent(mGPUTimeStr);

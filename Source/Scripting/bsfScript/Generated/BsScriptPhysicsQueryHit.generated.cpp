@@ -43,7 +43,7 @@ PhysicsQueryHit ScriptPhysicsQueryHit::FromInterop(const __PhysicsQueryHitIntero
 	ScriptCColliderBase* scriptCollider;
 	scriptCollider = (ScriptCColliderBase*)ScriptCCollider::ToNative(value.Collider);
 	if(scriptCollider != nullptr)
-		tmpCollider = static_object_cast<CCollider>(scriptCollider->GetComponent());
+		tmpCollider = B3DStaticGameObjectCast<CCollider>(scriptCollider->GetComponent());
 	output.Collider = tmpCollider;
 
 	return output;
@@ -61,7 +61,7 @@ __PhysicsQueryHitInterop ScriptPhysicsQueryHit::ToInterop(const PhysicsQueryHit&
 	MonoObject* tmpCollider;
 	ScriptComponentBase* scriptCollider = nullptr;
 	if(value.Collider)
-		scriptCollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Collider));
+		scriptCollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(B3DStaticGameObjectCast<Component>(value.Collider));
 	if(scriptCollider != nullptr)
 		tmpCollider = scriptCollider->GetManagedInstance();
 	else

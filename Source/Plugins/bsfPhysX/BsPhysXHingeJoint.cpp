@@ -9,7 +9,7 @@ using namespace physx;
 
 using namespace bs;
 
-PxRevoluteJointFlag::Enum toPxFlag(HingeJointFlag flag)
+PxRevoluteJointFlag::Enum ToPxFlag(HingeJointFlag flag)
 {
 	switch(flag)
 	{
@@ -32,8 +32,8 @@ PhysXHingeJoint::PhysXHingeJoint(PxPhysics* physx, const HINGE_JOINT_DESC& desc)
 	if(desc.Bodies[1].Body != nullptr)
 		actor1 = static_cast<PhysXRigidbody*>(desc.Bodies[1].Body)->GetInternalInternal();
 
-	PxTransform tfrm0 = toPxTransform(desc.Bodies[0].Position, desc.Bodies[0].Rotation);
-	PxTransform tfrm1 = toPxTransform(desc.Bodies[1].Position, desc.Bodies[1].Rotation);
+	PxTransform tfrm0 = ToPxTransform(desc.Bodies[0].Position, desc.Bodies[0].Rotation);
+	PxTransform tfrm1 = ToPxTransform(desc.Bodies[1].Position, desc.Bodies[1].Rotation);
 
 	PxRevoluteJoint* joint = PxRevoluteJointCreate(*physx, actor0, tfrm0, actor1, tfrm1);
 	joint->userData = this;
@@ -117,12 +117,12 @@ void PhysXHingeJoint::SetDrive(const HingeJointDrive& drive)
 
 void PhysXHingeJoint::SetFlag(HingeJointFlag flag, bool enabled)
 {
-	GetInternal()->setRevoluteJointFlag(toPxFlag(flag), enabled);
+	GetInternal()->setRevoluteJointFlag(ToPxFlag(flag), enabled);
 }
 
 bool PhysXHingeJoint::HasFlag(HingeJointFlag flag) const
 {
-	return GetInternal()->getRevoluteJointFlags() & toPxFlag(flag);
+	return GetInternal()->getRevoluteJointFlags() & ToPxFlag(flag);
 }
 
 PxRevoluteJoint* PhysXHingeJoint::GetInternal() const

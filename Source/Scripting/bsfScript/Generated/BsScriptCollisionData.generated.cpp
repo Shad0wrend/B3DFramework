@@ -41,7 +41,7 @@ CollisionData ScriptCollisionData::FromInterop(const __CollisionDataInterop& val
 			scriptCollider = (ScriptCColliderBase*)ScriptCCollider::ToNative(arrayCollider.Get<MonoObject*>(i));
 			if(scriptCollider != nullptr)
 			{
-				GameObjectHandle<CCollider> arrayElemPtrCollider = static_object_cast<CCollider>(scriptCollider->GetComponent());
+				GameObjectHandle<CCollider> arrayElemPtrCollider = B3DStaticGameObjectCast<CCollider>(scriptCollider->GetComponent());
 				vecCollider[i] = arrayElemPtrCollider;
 			}
 		}
@@ -74,7 +74,7 @@ __CollisionDataInterop ScriptCollisionData::ToInterop(const CollisionData& value
 	{
 		ScriptComponentBase* scriptCollider = nullptr;
 		if(value.Collider[i])
-			scriptCollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(static_object_cast<Component>(value.Collider[i]));
+			scriptCollider = ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(B3DStaticGameObjectCast<Component>(value.Collider[i]));
 		if(scriptCollider != nullptr)
 			arrayCollider.Set(i, scriptCollider->GetManagedInstance());
 		else

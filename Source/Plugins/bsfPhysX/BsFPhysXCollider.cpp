@@ -69,17 +69,17 @@ void FPhysXCollider::SetShapeInternal(PxShape* shape)
 
 Vector3 FPhysXCollider::GetPosition() const
 {
-	return fromPxVector(mShape->getLocalPose().p);
+	return FromPxVector(mShape->getLocalPose().p);
 }
 
 Quaternion FPhysXCollider::GetRotation() const
 {
-	return fromPxQuaternion(mShape->getLocalPose().q);
+	return FromPxQuaternion(mShape->getLocalPose().q);
 }
 
 void FPhysXCollider::SetTransform(const Vector3& pos, const Quaternion& rotation)
 {
-	mShape->setLocalPose(toPxTransform(pos, rotation));
+	mShape->setLocalPose(ToPxTransform(pos, rotation));
 }
 
 void FPhysXCollider::SetIsTrigger(bool value)

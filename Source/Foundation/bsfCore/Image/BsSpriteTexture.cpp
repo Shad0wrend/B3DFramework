@@ -151,11 +151,11 @@ SPtr<ct::CoreObject> SpriteTexture::CreateCore() const
 
 CoreSyncData SpriteTexture::SyncToCore(FrameAlloc* allocator)
 {
-	u32 size = csync_size(*this);
+	u32 size = CoreSyncGetSize(*this);
 
 	u8* buffer = allocator->Alloc(size);
 	Bitstream stream(buffer, size);
-	csync_write(*this, stream);
+	B3DCoreSyncWrite(*this, stream);
 
 	return CoreSyncData(buffer, size);
 }
@@ -175,14 +175,14 @@ HSpriteTexture SpriteTexture::Create(const HTexture& texture)
 {
 	SPtr<SpriteTexture> texturePtr = CreatePtrInternal(texture);
 
-	return static_resource_cast<SpriteTexture>(GetResources().CreateResourceHandleInternal(texturePtr));
+	return B3DStaticResourceCast<SpriteTexture>(GetResources().CreateResourceHandleInternal(texturePtr));
 }
 
 HSpriteTexture SpriteTexture::Create(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture)
 {
 	SPtr<SpriteTexture> texturePtr = CreatePtrInternal(uvOffset, uvScale, texture);
 
-	return static_resource_cast<SpriteTexture>(GetResources().CreateResourceHandleInternal(texturePtr));
+	return B3DStaticResourceCast<SpriteTexture>(GetResources().CreateResourceHandleInternal(texturePtr));
 }
 
 SPtr<SpriteTexture> SpriteTexture::CreatePtrInternal(const HTexture& texture)
@@ -236,6 +236,6 @@ SpriteTexture::SpriteTexture(const Vector2& uvOffset, const Vector2& uvScale, SP
 void SpriteTexture::SyncToCore(const CoreSyncData& data)
 {
 	Bitstream stream(data.GetBuffer(), data.GetBufferSize());
-	csync_read(*this, stream);
+	B3DCoreSyncRead(*this, stream);
 }
 }}

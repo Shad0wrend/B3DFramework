@@ -431,7 +431,7 @@ SPtr<PixelData> FreeImgImporter::ImportRawImage(const Path& filePath)
  * @param[in]	faceSize	Size of a single face, in pixels. Both width & height must match.
  * @param[in]	vertical	True if the faces are laid out vertically, false if horizontally.
  */
-void readCubemapList(const SPtr<PixelData>& source, std::array<SPtr<PixelData>, 6>& output, u32 faceSize, bool vertical)
+void ReadCubemapList(const SPtr<PixelData>& source, std::array<SPtr<PixelData>, 6>& output, u32 faceSize, bool vertical)
 {
 	Vector2I faceStart;
 	for(u32 i = 0; i < 6; i++)
@@ -467,7 +467,7 @@ void readCubemapList(const SPtr<PixelData>& source, std::array<SPtr<PixelData>, 
  * @param[in]	faceSize	Size of a single face, in pixels. Both width & height must match.
  * @param[in]	vertical	True if the faces are laid out vertically, false if horizontally.
  */
-void readCubemapCross(const SPtr<PixelData>& source, std::array<SPtr<PixelData>, 6>& output, u32 faceSize, bool vertical)
+void ReadCubemapCross(const SPtr<PixelData>& source, std::array<SPtr<PixelData>, 6>& output, u32 faceSize, bool vertical)
 {
 	const static u32 kVertFaceIndices[] = { 5, 3, 1, 7, 4, 10 };
 	const static u32 kHorzFaceIndices[] = { 6, 4, 1, 9, 5, 7 };
@@ -492,7 +492,7 @@ void readCubemapCross(const SPtr<PixelData>& source, std::array<SPtr<PixelData>,
 }
 
 /** Method that maps a direction to a point on a plane in range [0, 1] using spherical mapping. */
-Vector2 mapCubemapDirToSpherical(const Vector3& dir)
+Vector2 MapCubemapDirToSpherical(const Vector3& dir)
 {
 	// Using the OpenGL spherical mapping formula
 	Vector3 nrmDir = Vector3::Normalize(dir);
@@ -510,7 +510,7 @@ Vector2 mapCubemapDirToSpherical(const Vector3& dir)
  * Method that maps a direction to a point on a plane in range [0, 1] using cylindrical mapping. This mapping is also
  * know as longitude-latitude mapping, Blinn/Newell mapping or equirectangular cylindrical mapping.
  */
-Vector2 mapCubemapDirToCylindrical(const Vector3& dir)
+Vector2 MapCubemapDirToCylindrical(const Vector3& dir)
 {
 	Vector3 nrmDir = Vector3::Normalize(dir);
 
@@ -521,7 +521,7 @@ Vector2 mapCubemapDirToCylindrical(const Vector3& dir)
 }
 
 /** Resizes the provided cubemap faces and outputs a new set of resized faces. */
-void downsampleCubemap(const std::array<SPtr<PixelData>, 6>& input, std::array<SPtr<PixelData>, 6>& output, u32 size)
+void DownsampleCubemap(const std::array<SPtr<PixelData>, 6>& input, std::array<SPtr<PixelData>, 6>& output, u32 size)
 {
 	for(u32 i = 0; i < 6; i++)
 	{
@@ -538,7 +538,7 @@ void downsampleCubemap(const std::array<SPtr<PixelData>, 6>& input, std::array<S
  * @param[in]	faceSize	Width/height of each individual face, in pixels.
  * @param[in]	remap		Function to use for remapping the cubemap direction to UV.
  */
-void readCubemapUVRemap(const SPtr<PixelData>& source, std::array<SPtr<PixelData>, 6>& output, u32 faceSize, const std::function<Vector2(Vector3)>& remap)
+void ReadCubemapUvRemap(const SPtr<PixelData>& source, std::array<SPtr<PixelData>, 6>& output, u32 faceSize, const std::function<Vector2(Vector3)>& remap)
 {
 	struct RemapInfo
 	{
@@ -671,9 +671,9 @@ bool FreeImgImporter::GenerateCubemap(const SPtr<PixelData>& source, CubemapSour
 	case CubemapSourceType::Faces:
 		{
 			if(cross)
-				readCubemapCross(source, output, faceSize.X, vertical);
+				ReadCubemapCross(source, output, faceSize.X, vertical);
 			else
-				readCubemapList(source, output, faceSize.X, vertical);
+				ReadCubemapList(source, output, faceSize.X, vertical);
 		}
 		break;
 	case CubemapSourceType::Cylindrical:
@@ -681,10 +681,10 @@ bool FreeImgImporter::GenerateCubemap(const SPtr<PixelData>& source, CubemapSour
 			u32 superSampledFaceSize = faceSize.X * cubemapSupersampling;
 
 			std::array<SPtr<PixelData>, 6> superSampledOutput;
-			readCubemapUVRemap(source, superSampledOutput, superSampledFaceSize, &mapCubemapDirToCylindrical);
+			ReadCubemapUvRemap(source, superSampledOutput, superSampledFaceSize, &MapCubemapDirToCylindrical);
 
 			if(faceSize.X != (i32)superSampledFaceSize)
-				downsampleCubemap(superSampledOutput, output, faceSize.X);
+				DownsampleCubemap(superSampledOutput, output, faceSize.X);
 			else
 				output = superSampledOutput;
 		}
@@ -694,10 +694,10 @@ bool FreeImgImporter::GenerateCubemap(const SPtr<PixelData>& source, CubemapSour
 			u32 superSampledFaceSize = faceSize.X * cubemapSupersampling;
 
 			std::array<SPtr<PixelData>, 6> superSampledOutput;
-			readCubemapUVRemap(source, superSampledOutput, superSampledFaceSize, &mapCubemapDirToSpherical);
+			ReadCubemapUvRemap(source, superSampledOutput, superSampledFaceSize, &MapCubemapDirToSpherical);
 
 			if(faceSize.X != (i32)superSampledFaceSize)
-				downsampleCubemap(superSampledOutput, output, faceSize.X);
+				DownsampleCubemap(superSampledOutput, output, faceSize.X);
 			else
 				output = superSampledOutput;
 		}

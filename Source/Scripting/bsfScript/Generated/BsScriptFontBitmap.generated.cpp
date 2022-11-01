@@ -170,7 +170,7 @@ void ScriptFontBitmap::InternalSetTexturePages(ScriptFontBitmap* thisPtr, MonoAr
 			scriptvalue = ScriptRRefBase::ToNative(arrayvalue.Get<MonoObject*>(i));
 			if(scriptvalue != nullptr)
 			{
-				ResourceHandle<Texture> arrayElemPtrvalue = static_resource_cast<Texture>(scriptvalue->GetHandle());
+				ResourceHandle<Texture> arrayElemPtrvalue = B3DStaticResourceCast<Texture>(scriptvalue->GetHandle());
 				vecvalue[i] = arrayElemPtrvalue;
 			}
 		}

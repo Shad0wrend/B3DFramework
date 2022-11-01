@@ -708,7 +708,7 @@ Vector2 RendererView::GetNdczToDeviceZ()
 	return ndcZToDeviceZ;
 }
 
-Matrix4 invertProjectionMatrix(const Matrix4& mat)
+Matrix4 InvertProjectionMatrix(const Matrix4& mat)
 {
 	// Try to solve the most common case using high percision calculations, in order to reduce depth error
 	if(mat[0][1] == 0.0f && mat[0][3] == 0.0f &&
@@ -739,7 +739,7 @@ Matrix4 invertProjectionMatrix(const Matrix4& mat)
 void RendererView::UpdatePerViewBuffer()
 {
 	Matrix4 viewProj = mProperties.ProjTransform * mProperties.ViewTransform;
-	Matrix4 invProj = invertProjectionMatrix(mProperties.ProjTransform);
+	Matrix4 invProj = InvertProjectionMatrix(mProperties.ProjTransform);
 	Matrix4 invView = mProperties.ViewTransform.InverseAffine();
 	Matrix4 invViewProj = invView * invProj;
 

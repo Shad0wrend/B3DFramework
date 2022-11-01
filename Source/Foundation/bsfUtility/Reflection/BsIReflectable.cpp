@@ -11,7 +11,7 @@ void IReflectable::RegisterRTTITypeInternal(RTTITypeBase* rttiType)
 {
 	if(IsTypeIdDuplicateInternal(rttiType->GetRttiId()))
 	{
-		BS_EXCEPT(InternalErrorException, "RTTI type \"" + rttiType->GetRttiName() + "\" has a duplicate ID: " + toString(rttiType->GetRttiId()));
+		BS_EXCEPT(InternalErrorException, "RTTI type \"" + rttiType->GetRttiName() + "\" has a duplicate ID: " + ToString(rttiType->GetRttiId()));
 	}
 
 	GetAllRttiTypes()[rttiType->GetRttiId()] = rttiType;

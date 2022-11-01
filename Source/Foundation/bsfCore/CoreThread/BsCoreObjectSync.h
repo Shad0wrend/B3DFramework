@@ -63,8 +63,8 @@ namespace bs
 
 		// Checks if a specific template specialization exists
 		template <class T, std::size_t = sizeof(T)>
-		std::true_type is_complete_impl(T*);
-		std::false_type is_complete_impl(...);
+		std::true_type IsCompleteImpl(T*);
+		std::false_type IsCompleteImpl(...);
 		template <class T>
 		using is_complete = decltype(is_complete_impl(std::declval<T*>()));
 
@@ -76,14 +76,14 @@ namespace bs
 
 		/** Pass non-resource-handle types as is. */
 		template <class T>
-		T&& remove_handle(T&& value, std::enable_if_t<!is_resource_handle<std::decay_t<T>>::value>* = 0)
+		T&& RemoveHandle(T&& value, std::enable_if_t<!is_resource_handle<std::decay_t<T>>::value>* = 0)
 		{
 			return std::forward<T>(value);
 		}
 
 		/** Convert a resource handle to the underlying resource SPtr. */
 		template <class T>
-		decltype(((std::decay_t<T>*)nullptr)->GetInternalPtr()) remove_handle(T&& handle, std::enable_if_t<is_resource_handle<std::decay_t<T>>::value>* = 0)
+		decltype(((std::decay_t<T>*)nullptr)->GetInternalPtr()) RemoveHandle(T&& handle, std::enable_if_t<is_resource_handle<std::decay_t<T>>::value>* = 0)
 		{
 			if(handle.IsLoaded(false))
 				return handle.GetInternalPtr();
@@ -96,21 +96,21 @@ namespace bs
 
 		/** Pass non-shared-pointers as is, they aren't core objects. */
 		template <class T>
-		T&& get_core_object(T&& value, std::enable_if_t<!is_shared_ptr<std::decay_t<T>>::value>* = 0)
+		T&& GetCoreObject(T&& value, std::enable_if_t<!is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			return std::forward<T>(value);
 		}
 
 		/** Pass shared-pointers to non-classes as is, they aren't core objects. */
 		template <class T>
-		T&& get_core_object(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value && !std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value>* = 0)
+		T&& GetCoreObject(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value && !std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value>* = 0)
 		{
 			return std::forward<T>(value);
 		}
 
 		/** Pass shared-pointers to classes that don't derive from CoreObject as is, they aren't core objects. */
 		template <class T>
-		T&& get_core_object(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value && (std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value && !std::is_base_of<CoreObject, std::decay_t<typename std::decay_t<T>::element_type>>::value)>* = 0)
+		T&& GetCoreObject(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value && (std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value && !std::is_base_of<CoreObject, std::decay_t<typename std::decay_t<T>::element_type>>::value)>* = 0)
 		{
 			return std::forward<T>(value);
 		}
@@ -118,7 +118,7 @@ namespace bs
 		/** Convert shared-pointers with classes that derive from CoreObject to their core thread variants. */
 		template <class T>
 		decltype(((std::decay_t<typename std::decay_t<T>::element_type>*)nullptr)->GetCore())
-		get_core_object(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value && (std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value && std::is_base_of<CoreObject, std::decay_t<typename std::decay_t<T>::element_type>>::value)>* = 0)
+		GetCoreObject(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value && (std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value && std::is_base_of<CoreObject, std::decay_t<typename std::decay_t<T>::element_type>>::value)>* = 0)
 		{
 			if(value)
 				return value->GetCore();
@@ -162,7 +162,7 @@ namespace bs
 		template <class T>
 		void operator()(T&& value, std::enable_if_t<!has_rttiEnumFields<T>::kValue>* = 0)
 		{
-			WriteInternal(detail::get_core_object(detail::remove_handle(std::forward<T>(value))));
+			WriteInternal(detail::GetCoreObject(detail::RemoveHandle(std::forward<T>(value))));
 		}
 
 	private:
@@ -248,9 +248,9 @@ namespace bs
 	 * Types that provide a rttiEnumFields() method will have that method executed with this object provided as the
 	 * parameter, allowing the type to recurse over its fields.
 	 */
-	struct RttiCoreSyncSize
+	struct RttiB3DCoreSyncSize
 	{
-		RttiCoreSyncSize(uint32_t& size)
+		RttiB3DCoreSyncSize(uint32_t& size)
 			: mSize(size)
 		{}
 
@@ -265,7 +265,7 @@ namespace bs
 		template <class T>
 		void operator()(T&& value, std::enable_if_t<!has_rttiEnumFields<T>::kValue>* = 0)
 		{
-			GetSizeInternal(detail::get_core_object(detail::remove_handle(std::forward<T>(value))));
+			GetSizeInternal(detail::GetCoreObject(detail::RemoveHandle(std::forward<T>(value))));
 		}
 
 	private:
@@ -290,10 +290,10 @@ namespace bs
 	 * method implementation.
 	 */
 	template <class T>
-	uint32_t csync_size(T& v)
+	uint32_t CoreSyncGetSize(T& v)
 	{
 		uint32_t size = 0;
-		v.RttiEnumFields(RttiCoreSyncSize(size));
+		v.RttiEnumFields(RttiB3DCoreSyncSize(size));
 		return size;
 	}
 
@@ -302,7 +302,7 @@ namespace bs
 	 * stream cursor by the number of bytes written. Object must have rttiEnumFields() method implementation.
 	 */
 	template <class T>
-	void csync_write(T& v, Bitstream& stream)
+	void B3DCoreSyncWrite(T& v, Bitstream& stream)
 	{
 		v.RttiEnumFields(RttiCoreSyncWriter(stream));
 	}
@@ -313,7 +313,7 @@ namespace bs
 	 * implementation.
 	 */
 	template <class T>
-	void csync_read(T& v, Bitstream& stream)
+	void B3DCoreSyncRead(T& v, Bitstream& stream)
 	{
 		v.RttiEnumFields(RttiCoreSyncReader(stream));
 	}

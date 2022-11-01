@@ -40,7 +40,7 @@ void ScriptCRenderable::InternalSetMesh(ScriptCRenderable* thisPtr, MonoObject* 
 	ScriptRRefBase* scriptmesh;
 	scriptmesh = ScriptRRefBase::ToNative(mesh);
 	if(scriptmesh != nullptr)
-		tmpmesh = static_resource_cast<Mesh>(scriptmesh->GetHandle());
+		tmpmesh = B3DStaticResourceCast<Mesh>(scriptmesh->GetHandle());
 	thisPtr->GetHandle()->SetMesh(tmpmesh);
 }
 
@@ -66,7 +66,7 @@ void ScriptCRenderable::InternalSetMaterial(ScriptCRenderable* thisPtr, uint32_t
 	ScriptRRefBase* scriptmaterial;
 	scriptmaterial = ScriptRRefBase::ToNative(material);
 	if(scriptmaterial != nullptr)
-		tmpmaterial = static_resource_cast<Material>(scriptmaterial->GetHandle());
+		tmpmaterial = B3DStaticResourceCast<Material>(scriptmaterial->GetHandle());
 	thisPtr->GetHandle()->SetMaterial(idx, tmpmaterial);
 }
 
@@ -76,7 +76,7 @@ void ScriptCRenderable::InternalSetMaterial0(ScriptCRenderable* thisPtr, MonoObj
 	ScriptRRefBase* scriptmaterial;
 	scriptmaterial = ScriptRRefBase::ToNative(material);
 	if(scriptmaterial != nullptr)
-		tmpmaterial = static_resource_cast<Material>(scriptmaterial->GetHandle());
+		tmpmaterial = B3DStaticResourceCast<Material>(scriptmaterial->GetHandle());
 	thisPtr->GetHandle()->SetMaterial(tmpmaterial);
 }
 
@@ -109,7 +109,7 @@ void ScriptCRenderable::InternalSetMaterials(ScriptCRenderable* thisPtr, MonoArr
 			scriptmaterials = ScriptRRefBase::ToNative(arraymaterials.Get<MonoObject*>(i));
 			if(scriptmaterials != nullptr)
 			{
-				ResourceHandle<Material> arrayElemPtrmaterials = static_resource_cast<Material>(scriptmaterials->GetHandle());
+				ResourceHandle<Material> arrayElemPtrmaterials = B3DStaticResourceCast<Material>(scriptmaterials->GetHandle());
 				vecmaterials[i] = arrayElemPtrmaterials;
 			}
 		}

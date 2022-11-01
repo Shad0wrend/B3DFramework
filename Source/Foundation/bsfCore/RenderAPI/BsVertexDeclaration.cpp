@@ -280,7 +280,7 @@ RTTITypeBase* VertexDeclaration::GetRtti() const
 
 namespace bs
 {
-	String toString(const VertexElementSemantic& val)
+	String ToString(const VertexElementSemantic& val)
 	{
 		switch(val)
 		{

@@ -179,7 +179,7 @@ Vector<SPtr<GpuParamDesc>> getAllParamDescs(const SPtr<ct::Technique>& technique
 	return allParamDescs;
 }
 
-bool areParamsEqual(const GpuParamDataDesc& paramA, const GpuParamDataDesc& paramB, bool ignoreBufferOffsets)
+bool AreParamsEqual(const GpuParamDataDesc& paramA, const GpuParamDataDesc& paramB, bool ignoreBufferOffsets)
 {
 	bool equal = paramA.ArraySize == paramB.ArraySize && paramA.ElementSize == paramB.ElementSize && paramA.Type == paramB.Type && paramA.ArrayElementStride == paramB.ArrayElementStride;
 
@@ -189,7 +189,7 @@ bool areParamsEqual(const GpuParamDataDesc& paramA, const GpuParamDataDesc& para
 	return equal;
 }
 
-Vector<ShaderBlockDesc> determineValidShareableParamBlocks(const Vector<SPtr<GpuParamDesc>>& paramDescs, const Map<String, SHADER_PARAM_BLOCK_DESC>& shaderDesc)
+Vector<ShaderBlockDesc> DetermineValidShareableParamBlocks(const Vector<SPtr<GpuParamDesc>>& paramDescs, const Map<String, SHADER_PARAM_BLOCK_DESC>& shaderDesc)
 {
 	struct BlockInfo
 	{
@@ -250,7 +250,7 @@ Vector<ShaderBlockDesc> determineValidShareableParamBlocks(const Vector<SPtr<Gpu
 
 				const GpuParamDataDesc& otherParam = otherParamFind->second;
 
-				if(!areParamsEqual(myParam, otherParam, false) || curBlock.Name != otherBlockName)
+				if(!AreParamsEqual(myParam, otherParam, false) || curBlock.Name != otherBlockName)
 					break;
 			}
 
@@ -295,7 +295,7 @@ Vector<ShaderBlockDesc> determineValidShareableParamBlocks(const Vector<SPtr<Gpu
 	return output;
 }
 
-Map<String, const GpuParamDataDesc*> determineValidDataParameters(const Vector<SPtr<GpuParamDesc>>& paramDescs)
+Map<String, const GpuParamDataDesc*> DetermineValidDataParameters(const Vector<SPtr<GpuParamDesc>>& paramDescs)
 {
 	Map<String, const GpuParamDataDesc*> foundDataParams;
 	Map<String, bool> validParams;
@@ -322,7 +322,7 @@ Map<String, const GpuParamDataDesc*> determineValidDataParameters(const Vector<S
 					auto dataFindIter2 = foundDataParams.find(iter2->first);
 
 					const GpuParamDataDesc* otherParam = dataFindIter2->second;
-					if(!areParamsEqual(curParam, *otherParam, true))
+					if(!AreParamsEqual(curParam, *otherParam, true))
 					{
 						validParams[iter2->first] = false;
 						foundDataParams.erase(dataFindIter2);
@@ -335,7 +335,7 @@ Map<String, const GpuParamDataDesc*> determineValidDataParameters(const Vector<S
 	return foundDataParams;
 }
 
-Vector<const GpuParamObjectDesc*> determineValidObjectParameters(const Vector<SPtr<GpuParamDesc>>& paramDescs)
+Vector<const GpuParamObjectDesc*> DetermineValidObjectParameters(const Vector<SPtr<GpuParamDesc>>& paramDescs)
 {
 	Vector<const GpuParamObjectDesc*> validParams;
 
@@ -371,7 +371,7 @@ Vector<const GpuParamObjectDesc*> determineValidObjectParameters(const Vector<SP
 	return validParams;
 }
 
-Map<String, String> determineParameterToBlockMapping(const Vector<SPtr<GpuParamDesc>>& paramDescs)
+Map<String, String> DetermineParameterToBlockMapping(const Vector<SPtr<GpuParamDesc>>& paramDescs)
 {
 	Map<String, String> paramToParamBlock;
 
@@ -400,13 +400,13 @@ Map<String, String> determineParameterToBlockMapping(const Vector<SPtr<GpuParamD
 	return paramToParamBlock;
 }
 
-UnorderedMap<ValidParamKey, String> determineValidParameters(const Vector<SPtr<GpuParamDesc>>& paramDescs, const Map<String, SHADER_DATA_PARAM_DESC>& dataParams, const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams, const Map<String, SHADER_OBJECT_PARAM_DESC>& bufferParams, const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams)
+UnorderedMap<ValidParamKey, String> DetermineValidParameters(const Vector<SPtr<GpuParamDesc>>& paramDescs, const Map<String, SHADER_DATA_PARAM_DESC>& dataParams, const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams, const Map<String, SHADER_OBJECT_PARAM_DESC>& bufferParams, const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams)
 {
 	UnorderedMap<ValidParamKey, String> validParams;
 
-	Map<String, const GpuParamDataDesc*> validDataParameters = determineValidDataParameters(paramDescs);
-	Vector<const GpuParamObjectDesc*> validObjectParameters = determineValidObjectParameters(paramDescs);
-	Map<String, String> paramToParamBlockMap = determineParameterToBlockMapping(paramDescs);
+	Map<String, const GpuParamDataDesc*> validDataParameters = DetermineValidDataParameters(paramDescs);
+	Vector<const GpuParamObjectDesc*> validObjectParameters = DetermineValidObjectParameters(paramDescs);
+	Map<String, String> paramToParamBlockMap = DetermineParameterToBlockMapping(paramDescs);
 
 	// Create data param mappings
 	for(auto iter = dataParams.begin(); iter != dataParams.end(); ++iter)
@@ -492,8 +492,8 @@ TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const S
 	Vector<SPtr<GpuParamDesc>> allParamDescs = getAllParamDescs(technique);
 
 	//// Fill out various helper structures
-	Vector<ShaderBlockDesc> paramBlockData = determineValidShareableParamBlocks(allParamDescs, shader->GetParamBlocks());
-	UnorderedMap<ValidParamKey, String> validParams = determineValidParameters(
+	Vector<ShaderBlockDesc> paramBlockData = DetermineValidShareableParamBlocks(allParamDescs, shader->GetParamBlocks());
+	UnorderedMap<ValidParamKey, String> validParams = DetermineValidParameters(
 		allParamDescs,
 		shader->GetDataParams(),
 		shader->GetTextureParams(),

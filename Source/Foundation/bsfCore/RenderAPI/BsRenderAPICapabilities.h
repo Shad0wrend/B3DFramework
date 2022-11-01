@@ -105,13 +105,13 @@ namespace bs
 			Vector<bs::String> tokens = StringUtil::Split(versionString, ".");
 			if(!tokens.empty())
 			{
-				Major = parsei32(tokens[0]);
+				Major = Parsei32(tokens[0]);
 				if(tokens.size() > 1)
-					Minor = parsei32(tokens[1]);
+					Minor = Parsei32(tokens[1]);
 				if(tokens.size() > 2)
-					Release = parsei32(tokens[2]);
+					Release = Parsei32(tokens[2]);
 				if(tokens.size() > 3)
-					Build = parsei32(tokens[3]);
+					Build = Parsei32(tokens[3]);
 			}
 		}
 

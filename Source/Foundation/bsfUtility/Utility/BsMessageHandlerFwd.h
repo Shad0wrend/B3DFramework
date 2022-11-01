@@ -62,7 +62,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	void BS_UTILITY_EXPORT sendMessage(MessageId message);
+	void BS_UTILITY_EXPORT SendMessage(MessageId message);
 
 	class MessageHandler;
 

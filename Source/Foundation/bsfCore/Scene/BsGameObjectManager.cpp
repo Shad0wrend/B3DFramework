@@ -95,7 +95,7 @@ void GameObjectManager::UnregisterObject(GameObjectHandleBase& object)
 		mObjects.erase(object->GetInstanceId());
 	}
 
-	OnDestroyed(static_object_cast<GameObject>(object));
+	OnDestroyed(B3DStaticGameObjectCast<GameObject>(object));
 	object.Destroy();
 }
 

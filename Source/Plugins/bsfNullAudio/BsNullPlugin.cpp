@@ -22,20 +22,20 @@ public:
 };
 
 /**	Returns a name of the plugin. */
-extern "C" BS_PLUGIN_EXPORT const char* getPluginName()
+extern "C" BS_PLUGIN_EXPORT const char* GetPluginName()
 {
 	static const char* pluginName = "NullAudio";
 	return pluginName;
 }
 
 /**	Entry point to the plugin. Called by the engine when the plugin is loaded. */
-extern "C" BS_PLUGIN_EXPORT void* loadPlugin()
+extern "C" BS_PLUGIN_EXPORT void* LoadPlugin()
 {
 	return B3DNew<NullFactory>();
 }
 
 /**	Exit point of the plugin. Called by the engine before the plugin is unloaded. */
-extern "C" BS_PLUGIN_EXPORT void unloadPlugin(NullFactory* instance)
+extern "C" BS_PLUGIN_EXPORT void UnloadPlugin(NullFactory* instance)
 {
 	B3DDelete(instance);
 }

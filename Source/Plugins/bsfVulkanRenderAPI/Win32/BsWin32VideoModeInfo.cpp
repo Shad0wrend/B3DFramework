@@ -6,7 +6,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-BOOL CALLBACK monitorEnumCallback(HMONITOR hMonitor, HDC hdc, LPRECT rect, LPARAM lParam)
+BOOL CALLBACK MonitorEnumCallback(HMONITOR hMonitor, HDC hdc, LPRECT rect, LPARAM lParam)
 {
 	Vector<HMONITOR>* outputInfos = (Vector<HMONITOR>*)lParam;
 	outputInfos->push_back(hMonitor);
@@ -17,7 +17,7 @@ BOOL CALLBACK monitorEnumCallback(HMONITOR hMonitor, HDC hdc, LPRECT rect, LPARA
 Win32VideoModeInfo::Win32VideoModeInfo()
 {
 	Vector<HMONITOR> handles;
-	EnumDisplayMonitors(0, nullptr, &monitorEnumCallback, (LPARAM)&handles);
+	EnumDisplayMonitors(0, nullptr, &MonitorEnumCallback, (LPARAM)&handles);
 
 	// Sort so that primary is the first output
 	for(auto iter = handles.begin(); iter != handles.end(); ++iter)

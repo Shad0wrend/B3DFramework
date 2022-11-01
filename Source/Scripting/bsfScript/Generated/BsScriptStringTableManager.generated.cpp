@@ -67,6 +67,6 @@ void ScriptStringTableManager::InternalSetTable(uint32_t id, MonoObject* table)
 	ScriptRRefBase* scripttable;
 	scripttable = ScriptRRefBase::ToNative(table);
 	if(scripttable != nullptr)
-		tmptable = static_resource_cast<StringTable>(scripttable->GetHandle());
+		tmptable = B3DStaticResourceCast<StringTable>(scripttable->GetHandle());
 	StringTableManager::Instance().SetTable(id, tmptable);
 }

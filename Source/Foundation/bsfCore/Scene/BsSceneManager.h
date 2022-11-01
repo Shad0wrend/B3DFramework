@@ -291,7 +291,7 @@ namespace bs
 		for(auto& entry : mActiveComponents)
 		{
 			if(IsComponentOfType(entry, rttiId))
-				output.push_back(static_object_cast<T>(entry));
+				output.push_back(B3DStaticGameObjectCast<T>(entry));
 		}
 
 		if(!activeOnly)
@@ -299,13 +299,13 @@ namespace bs
 			for(auto& entry : mInactiveComponents)
 			{
 				if(IsComponentOfType(entry, rttiId))
-					output.push_back(static_object_cast<T>(entry));
+					output.push_back(B3DStaticGameObjectCast<T>(entry));
 			}
 
 			for(auto& entry : mUninitializedComponents)
 			{
 				if(IsComponentOfType(entry, rttiId))
-					output.push_back(static_object_cast<T>(entry));
+					output.push_back(B3DStaticGameObjectCast<T>(entry));
 			}
 		}
 

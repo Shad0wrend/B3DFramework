@@ -76,7 +76,7 @@ namespace bs
 		 * @tparam FWD		Determines what form of forward lighting should the shader support.
 		 */
 		template <ParticleOrientation ORIENT, bool LOCK_Y, bool GPU, bool IS_3D, ParticleForwardLightingType FWD>
-		static const ShaderVariation& getParticleShaderVariation()
+		static const ShaderVariation& GetParticleShaderVariation()
 		{
 			static bool initialized = false;
 			static SmallVector<ShaderVariation::Param, 4> params({
@@ -119,7 +119,7 @@ namespace bs
 		 * @param[in]	forwardLighting		Form of forward lighting the shader should support.
 		 * @return							Object that can be used for looking up the variation technique in the material.
 		 */
-		const ShaderVariation& getParticleShaderVariation(ParticleOrientation orient, bool lockY, bool gpu, bool is3d, ParticleForwardLightingType forwardLighting);
+		const ShaderVariation& GetParticleShaderVariation(ParticleOrientation orient, bool lockY, bool gpu, bool is3d, ParticleForwardLightingType forwardLighting);
 
 		/** Contains information required for rendering a single particle system. */
 		class ParticlesRenderElement : public RenderElement

@@ -16,13 +16,13 @@ using namespace bs;
 const u32 ShapeMeshes3D::kNumVerticesAaLine = 8;
 const u32 ShapeMeshes3D::kNumIndicesAaLine = 30;
 
-inline u8* writeVector3(u8* buffer, u32 stride, const Vector3& value)
+inline u8* WriteVector3(u8* buffer, u32 stride, const Vector3& value)
 {
 	*(Vector3*)buffer = value;
 	return buffer + stride;
 }
 
-inline u8* writeVector2(u8* buffer, u32 stride, const Vector2& value)
+inline u8* WriteVector2(u8* buffer, u32 stride, const Vector2& value)
 {
 	*(Vector2*)buffer = value;
 	return buffer + stride;
@@ -489,15 +489,15 @@ void ShapeMeshes3D::WireAaBox(const AABox& box, u8* outVertices, u32 vertexOffse
 {
 	outVertices += vertexOffset * vertexStride;
 
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_LEFT_BOTTOM));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_RIGHT_BOTTOM));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_RIGHT_TOP));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_LEFT_TOP));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_LEFT_BOTTOM));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_RIGHT_BOTTOM));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_RIGHT_TOP));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_LEFT_TOP));
 
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_RIGHT_BOTTOM));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_LEFT_BOTTOM));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_LEFT_TOP));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_RIGHT_TOP));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_RIGHT_BOTTOM));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_LEFT_BOTTOM));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_LEFT_TOP));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_RIGHT_TOP));
 
 	outIndices += indexOffset;
 
@@ -546,40 +546,40 @@ void ShapeMeshes3D::SolidAaBox(const AABox& box, u8* outVertices, u8* outNormals
 	outVertices += (vertexOffset * vertexStride);
 
 	// Front face
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_LEFT_BOTTOM));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_RIGHT_BOTTOM));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_RIGHT_TOP));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_LEFT_TOP));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_LEFT_BOTTOM));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_RIGHT_BOTTOM));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_RIGHT_TOP));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_LEFT_TOP));
 
 	// Back face
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_RIGHT_BOTTOM));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_LEFT_BOTTOM));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_LEFT_TOP));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_RIGHT_TOP));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_RIGHT_BOTTOM));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_LEFT_BOTTOM));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_LEFT_TOP));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_RIGHT_TOP));
 
 	// Left face
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_LEFT_BOTTOM));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_LEFT_BOTTOM));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_LEFT_TOP));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_LEFT_TOP));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_LEFT_BOTTOM));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_LEFT_BOTTOM));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_LEFT_TOP));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_LEFT_TOP));
 
 	// Right face
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_RIGHT_BOTTOM));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_RIGHT_BOTTOM));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_RIGHT_TOP));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_RIGHT_TOP));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_RIGHT_BOTTOM));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_RIGHT_BOTTOM));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_RIGHT_TOP));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_RIGHT_TOP));
 
 	// Top face
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_LEFT_TOP));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_LEFT_TOP));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_RIGHT_TOP));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_RIGHT_TOP));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_LEFT_TOP));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_LEFT_TOP));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_RIGHT_TOP));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_RIGHT_TOP));
 
 	// Bottom face
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_LEFT_BOTTOM));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_RIGHT_BOTTOM));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_RIGHT_BOTTOM));
-	outVertices = writeVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_LEFT_BOTTOM));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_LEFT_BOTTOM));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::FAR_RIGHT_BOTTOM));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_RIGHT_BOTTOM));
+	outVertices = WriteVector3(outVertices, vertexStride, box.GetCorner(AABox::NEAR_LEFT_BOTTOM));
 
 	// Normals
 	static const Vector3 kFaceNormals[6] = {
@@ -596,10 +596,10 @@ void ShapeMeshes3D::SolidAaBox(const AABox& box, u8* outVertices, u8* outNormals
 		outNormals += (vertexOffset * vertexStride);
 		for(u32 face = 0; face < 6; face++)
 		{
-			outNormals = writeVector3(outNormals, vertexStride, kFaceNormals[face]);
-			outNormals = writeVector3(outNormals, vertexStride, kFaceNormals[face]);
-			outNormals = writeVector3(outNormals, vertexStride, kFaceNormals[face]);
-			outNormals = writeVector3(outNormals, vertexStride, kFaceNormals[face]);
+			outNormals = WriteVector3(outNormals, vertexStride, kFaceNormals[face]);
+			outNormals = WriteVector3(outNormals, vertexStride, kFaceNormals[face]);
+			outNormals = WriteVector3(outNormals, vertexStride, kFaceNormals[face]);
+			outNormals = WriteVector3(outNormals, vertexStride, kFaceNormals[face]);
 		}
 	}
 
@@ -609,10 +609,10 @@ void ShapeMeshes3D::SolidAaBox(const AABox& box, u8* outVertices, u8* outNormals
 		outUVs += (vertexOffset * vertexStride);
 		for(u32 face = 0; face < 6; face++)
 		{
-			outUVs = writeVector2(outUVs, vertexStride, Vector2(0.0f, 1.0f));
-			outUVs = writeVector2(outUVs, vertexStride, Vector2(1.0f, 1.0f));
-			outUVs = writeVector2(outUVs, vertexStride, Vector2(1.0f, 0.0f));
-			outUVs = writeVector2(outUVs, vertexStride, Vector2(0.0f, 0.0f));
+			outUVs = WriteVector2(outUVs, vertexStride, Vector2(0.0f, 1.0f));
+			outUVs = WriteVector2(outUVs, vertexStride, Vector2(1.0f, 1.0f));
+			outUVs = WriteVector2(outUVs, vertexStride, Vector2(1.0f, 0.0f));
+			outUVs = WriteVector2(outUVs, vertexStride, Vector2(0.0f, 0.0f));
 		}
 	}
 
@@ -679,7 +679,7 @@ void ShapeMeshes3D::SolidSphere(const Sphere& sphere, u8* outVertices, u8* outNo
 			uv.X = 0.5f - atan2(normal.X, normal.Z) / Math::kTwoPi;
 			uv.Y = 0.5f - asin(normal.Y) / Math::kPi;
 
-			curUV = writeVector2(curUV, vertexStride, uv);
+			curUV = WriteVector2(curUV, vertexStride, uv);
 		}
 	}
 
@@ -823,18 +823,18 @@ void ShapeMeshes3D::SolidSphere(const Sphere& sphere, u8* outVertices, u8* outNo
 			if(indexToSplit != (u32)-1)
 			{
 				Vector3 position = *(Vector3*)&outVertices[(vertexOffset + i + indexToSplit) * vertexStride];
-				extraPositions = writeVector3(extraPositions, vertexStride, position);
+				extraPositions = WriteVector3(extraPositions, vertexStride, position);
 
 				if(extraNormals)
 				{
 					Vector3 normal = *(Vector3*)&outNormals[(vertexOffset + i + indexToSplit) * vertexStride];
-					extraNormals = writeVector3(extraNormals, vertexStride, normal);
+					extraNormals = WriteVector3(extraNormals, vertexStride, normal);
 				}
 
 				Vector2 uv = *(Vector2*)&outUV[(i + indexToSplit) * vertexStride];
 				uv.X += offset;
 
-				extraUV = writeVector2(extraUV, vertexStride, uv);
+				extraUV = WriteVector2(extraUV, vertexStride, uv);
 
 				// Index 0 maps to vertex 2, index 1 to vertex 1, index 2 to vertex 0
 				if(indexToSplit == 0)
@@ -853,13 +853,13 @@ void ShapeMeshes3D::SolidSphere(const Sphere& sphere, u8* outVertices, u8* outNo
 	// Fill out the remaining extra vertices, just so they aren't uninitialized
 	for(; extraVertIdx < maxExtraVerts; extraVertIdx++)
 	{
-		extraPositions = writeVector3(extraPositions, vertexStride, sphere.GetCenter());
+		extraPositions = WriteVector3(extraPositions, vertexStride, sphere.GetCenter());
 
 		if(extraNormals)
-			extraNormals = writeVector3(extraNormals, vertexStride, Vector3::kUnitZ);
+			extraNormals = WriteVector3(extraNormals, vertexStride, Vector3::kUnitZ);
 
 		if(extraUV)
-			extraUV = writeVector2(extraUV, vertexStride, Vector2::kZero);
+			extraUV = WriteVector2(extraUV, vertexStride, Vector2::kZero);
 	}
 }
 
@@ -887,8 +887,8 @@ void ShapeMeshes3D::SolidArc(const Vector3& center, float radius, const Vector3&
 	bool reverseOrder = amountAngle.ValueDegrees() < 0.0f;
 	Vector3 visibleNormal = normal;
 
-	outVertices = writeVector3(outVertices, vertexStride, center);
-	outNormals = writeVector3(outNormals, vertexStride, visibleNormal);
+	outVertices = WriteVector3(outVertices, vertexStride, center);
+	outNormals = WriteVector3(outNormals, vertexStride, visibleNormal);
 
 	u32 numArcVertices = (quality + 1) * 5;
 	GenerateArcVertices(center, normal, radius, startAngle, amountAngle, Vector2::kOne, numArcVertices, outVertices, vertexOffset, vertexStride);
@@ -896,15 +896,15 @@ void ShapeMeshes3D::SolidArc(const Vector3& center, float radius, const Vector3&
 	u8* otherSideVertices = outVertices + (numArcVertices * vertexStride);
 	u8* otherSideNormals = outNormals + (numArcVertices * vertexStride);
 
-	otherSideVertices = writeVector3(otherSideVertices, vertexStride, center);
-	otherSideNormals = writeVector3(otherSideNormals, vertexStride, -visibleNormal);
+	otherSideVertices = WriteVector3(otherSideVertices, vertexStride, center);
+	otherSideNormals = WriteVector3(otherSideNormals, vertexStride, -visibleNormal);
 
 	for(u32 i = 0; i < numArcVertices; i++)
 	{
-		otherSideVertices = writeVector3(otherSideVertices, vertexStride, *(Vector3*)&outVertices[i * vertexStride]);
+		otherSideVertices = WriteVector3(otherSideVertices, vertexStride, *(Vector3*)&outVertices[i * vertexStride]);
 
-		outNormals = writeVector3(outNormals, vertexStride, visibleNormal);
-		otherSideNormals = writeVector3(otherSideNormals, vertexStride, -visibleNormal);
+		outNormals = WriteVector3(outNormals, vertexStride, visibleNormal);
+		otherSideNormals = WriteVector3(otherSideNormals, vertexStride, -visibleNormal);
 	}
 
 	// UV
@@ -913,7 +913,7 @@ void ShapeMeshes3D::SolidArc(const Vector3& center, float radius, const Vector3&
 		outUV += vertexOffset * vertexStride;
 
 		// Center
-		outUV = writeVector2(outUV, vertexStride, Vector2(0.5f, 0.5f));
+		outUV = WriteVector2(outUV, vertexStride, Vector2(0.5f, 0.5f));
 
 		Vector3 arcNormal = normal;
 		Vector3 right, top;
@@ -928,11 +928,11 @@ void ShapeMeshes3D::SolidArc(const Vector3& center, float radius, const Vector3&
 			uv.X = Vector3::Dot(diff, right) * 0.5f + 0.5f;
 			uv.Y = Vector3::Dot(diff, top) * 0.5f + 0.5f;
 
-			outUV = writeVector2(outUV, vertexStride, uv);
+			outUV = WriteVector2(outUV, vertexStride, uv);
 		}
 
 		// Reverse
-		outUV = writeVector2(outUV, vertexStride, Vector2(0.5f, 0.5f));
+		outUV = WriteVector2(outUV, vertexStride, Vector2(0.5f, 0.5f));
 
 		for(u32 i = 0; i < numArcVertices; i++)
 		{
@@ -943,7 +943,7 @@ void ShapeMeshes3D::SolidArc(const Vector3& center, float radius, const Vector3&
 			uv.X = Vector3::Dot(diff, -right) * 0.5f + 0.5f;
 			uv.Y = Vector3::Dot(diff, -top) * 0.5f + 0.5f;
 
-			outUV = writeVector2(outUV, vertexStride, uv);
+			outUV = WriteVector2(outUV, vertexStride, uv);
 		}
 	}
 
@@ -991,7 +991,7 @@ void ShapeMeshes3D::WireFrustum(const Vector3& position, float aspect, Degree FO
 	outVertices += vertexOffset * vertexStride;
 
 	for(u32 i = 0; i < 8; i++)
-		outVertices = writeVector3(outVertices, vertexStride, position + points[i]);
+		outVertices = WriteVector3(outVertices, vertexStride, position + points[i]);
 
 	outIndices += indexOffset;
 
@@ -1057,15 +1057,15 @@ void ShapeMeshes3D::SolidCone(const Vector3& base, const Vector3& normal, float 
 			uv.X = Vector3::Dot(diff, right) * 0.5f + 0.5f;
 			uv.Y = Vector3::Dot(diff, top) * 0.5f + 0.5f;
 
-			outUV = writeVector2(outUV, vertexStride, uv);
+			outUV = WriteVector2(outUV, vertexStride, uv);
 		}
 
 		// Center base
-		outUV = writeVector2(outUV, vertexStride, Vector2(0.5f, 0.5f));
+		outUV = WriteVector2(outUV, vertexStride, Vector2(0.5f, 0.5f));
 	}
 
 	outVertices += numArcVertices * vertexStride;
-	outVertices = writeVector3(outVertices, vertexStride, base); // Write base vertex
+	outVertices = WriteVector3(outVertices, vertexStride, base); // Write base vertex
 
 	u32 baseIdx = numArcVertices;
 
@@ -1073,7 +1073,7 @@ void ShapeMeshes3D::SolidCone(const Vector3& base, const Vector3& normal, float 
 	{
 		u32 totalNumBaseVertices = numArcVertices + 1;
 		for(u32 i = 0; i < totalNumBaseVertices; i++)
-			outNormals = writeVector3(outNormals, vertexStride, -normal);
+			outNormals = WriteVector3(outNormals, vertexStride, -normal);
 	}
 
 	u32 numTriangles = numArcVertices;
@@ -1122,8 +1122,8 @@ void ShapeMeshes3D::SolidCone(const Vector3& base, const Vector3& normal, float 
 
 			Vector3 triNormal = Vector3::Normalize(normalLeft + normalRight);
 
-			outNormalsBase = writeVector3(outNormalsBase, vertexStride, triNormal);
-			outNormalsTop = writeVector3(outNormalsTop, vertexStride, triNormal);
+			outNormalsBase = WriteVector3(outNormalsBase, vertexStride, triNormal);
+			outNormalsTop = WriteVector3(outNormalsTop, vertexStride, triNormal);
 		}
 	}
 
@@ -1140,7 +1140,7 @@ void ShapeMeshes3D::SolidCone(const Vector3& base, const Vector3& normal, float 
 			uv.X = angle / Math::kTwoPi;
 			uv.Y = 1.0f;
 
-			outUV = writeVector2(outUV, vertexStride, uv);
+			outUV = WriteVector2(outUV, vertexStride, uv);
 			angle += angleIncrement;
 		}
 
@@ -1152,7 +1152,7 @@ void ShapeMeshes3D::SolidCone(const Vector3& base, const Vector3& normal, float 
 			uv.X = angle / Math::kTwoPi;
 			uv.Y = 0.0f;
 
-			outUV = writeVector2(outUV, vertexStride, uv);
+			outUV = WriteVector2(outUV, vertexStride, uv);
 			angle += angleIncrement;
 		}
 	}
@@ -1161,7 +1161,7 @@ void ShapeMeshes3D::SolidCone(const Vector3& base, const Vector3& normal, float 
 	outVertices += numArcVertices * vertexStride;
 
 	for(u32 i = 0; i < numArcVertices; i++)
-		outVertices = writeVector3(outVertices, vertexStride, topVertex);
+		outVertices = WriteVector3(outVertices, vertexStride, topVertex);
 
 	outIndices += numTriangles * 3;
 	u32 curVertBaseOffset = vertexOffset + numArcVertices + 1;
@@ -1207,7 +1207,7 @@ void ShapeMeshes3D::WireCone(const Vector3& base, const Vector3& normal, float h
 
 	// Cone point
 	outVertices += 4 * vertexStride;
-	outVertices = writeVector3(outVertices, vertexStride, base + normal * height);
+	outVertices = WriteVector3(outVertices, vertexStride, base + normal * height);
 
 	vertexOffset += numArcVertices;
 
@@ -1249,14 +1249,14 @@ void ShapeMeshes3D::SolidCylinder(const Vector3& base, const Vector3& normal, fl
 			uv.X = Vector3::Dot(diff, right) * 0.5f + 0.5f;
 			uv.Y = Vector3::Dot(diff, top) * 0.5f + 0.5f;
 
-			outUV = writeVector2(outUV, vertexStride, uv);
+			outUV = WriteVector2(outUV, vertexStride, uv);
 		}
 
-		outUV = writeVector2(outUV, vertexStride, Vector2(0.5f, 0.5f));
+		outUV = WriteVector2(outUV, vertexStride, Vector2(0.5f, 0.5f));
 	}
 
 	outVertices += numArcVertices * vertexStride;
-	outVertices = writeVector3(outVertices, vertexStride, base); // Write base vertex
+	outVertices = WriteVector3(outVertices, vertexStride, base); // Write base vertex
 
 	u32 baseIdx = numArcVertices;
 
@@ -1264,7 +1264,7 @@ void ShapeMeshes3D::SolidCylinder(const Vector3& base, const Vector3& normal, fl
 	{
 		u32 totalNumBaseVertices = numArcVertices + 1;
 		for(u32 i = 0; i < totalNumBaseVertices; i++)
-			outNormals = writeVector3(outNormals, vertexStride, -normal);
+			outNormals = WriteVector3(outNormals, vertexStride, -normal);
 	}
 
 	u32 numTriangles = numArcVertices;
@@ -1305,20 +1305,20 @@ void ShapeMeshes3D::SolidCylinder(const Vector3& base, const Vector3& normal, fl
 			uv.X = Vector3::Dot(diff, right) * 0.5f + 0.5f;
 			uv.Y = Vector3::Dot(diff, top) * 0.5f + 0.5f;
 
-			outUV = writeVector2(outUV, vertexStride, uv);
+			outUV = WriteVector2(outUV, vertexStride, uv);
 		}
 
-		outUV = writeVector2(outUV, vertexStride, Vector2(0.5f, 0.5f));
+		outUV = WriteVector2(outUV, vertexStride, Vector2(0.5f, 0.5f));
 	}
 
 	outVertices += numArcVertices * vertexStride;
-	outVertices = writeVector3(outVertices, vertexStride, topVertex); // Write top vertex
+	outVertices = WriteVector3(outVertices, vertexStride, topVertex); // Write top vertex
 
 	if(outNormals != nullptr)
 	{
 		u32 totalNumBaseVertices = numArcVertices + 1;
 		for(u32 i = 0; i < totalNumBaseVertices; i++)
-			outNormals = writeVector3(outNormals, vertexStride, normal);
+			outNormals = WriteVector3(outNormals, vertexStride, normal);
 	}
 
 	for(u32 i = 0; i < numTriangles - 1; i++)
@@ -1368,8 +1368,8 @@ void ShapeMeshes3D::SolidCylinder(const Vector3& base, const Vector3& normal, fl
 
 			Vector3 triNormal = Vector3::Normalize(normalLeft + normalRight);
 
-			outNormalsBase = writeVector3(outNormalsBase, vertexStride, triNormal);
-			outNormalsCap = writeVector3(outNormalsCap, vertexStride, triNormal);
+			outNormalsBase = WriteVector3(outNormalsBase, vertexStride, triNormal);
+			outNormalsCap = WriteVector3(outNormalsCap, vertexStride, triNormal);
 		}
 	}
 
@@ -1385,7 +1385,7 @@ void ShapeMeshes3D::SolidCylinder(const Vector3& base, const Vector3& normal, fl
 			uv.X = angle / Math::kTwoPi;
 			uv.Y = 1.0f;
 
-			outUV = writeVector2(outUV, vertexStride, uv);
+			outUV = WriteVector2(outUV, vertexStride, uv);
 			angle += angleIncrement;
 		}
 
@@ -1396,7 +1396,7 @@ void ShapeMeshes3D::SolidCylinder(const Vector3& base, const Vector3& normal, fl
 			uv.X = angle / Math::kTwoPi;
 			uv.Y = 0.0f;
 
-			outUV = writeVector2(outUV, vertexStride, uv);
+			outUV = WriteVector2(outUV, vertexStride, uv);
 			angle += angleIncrement;
 		}
 	}
@@ -1469,42 +1469,42 @@ void ShapeMeshes3D::SolidQuad(const Rect3& area, u8* outVertices, u8* outNormals
 	Vector3 botRight = area.GetCenter() + area.GetAxisHorz() * area.GetExtentHorz() - area.GetAxisVert() * area.GetExtentVertical();
 	Vector3 botLeft = area.GetCenter() - area.GetAxisHorz() * area.GetExtentHorz() - area.GetAxisVert() * area.GetExtentVertical();
 
-	outVertices = writeVector3(outVertices, vertexStride, topLeft);
-	outVertices = writeVector3(outVertices, vertexStride, topRight);
-	outVertices = writeVector3(outVertices, vertexStride, botRight);
-	outVertices = writeVector3(outVertices, vertexStride, botLeft);
+	outVertices = WriteVector3(outVertices, vertexStride, topLeft);
+	outVertices = WriteVector3(outVertices, vertexStride, topRight);
+	outVertices = WriteVector3(outVertices, vertexStride, botRight);
+	outVertices = WriteVector3(outVertices, vertexStride, botLeft);
 
-	outVertices = writeVector3(outVertices, vertexStride, topLeft);
-	outVertices = writeVector3(outVertices, vertexStride, topRight);
-	outVertices = writeVector3(outVertices, vertexStride, botRight);
-	outVertices = writeVector3(outVertices, vertexStride, botLeft);
+	outVertices = WriteVector3(outVertices, vertexStride, topLeft);
+	outVertices = WriteVector3(outVertices, vertexStride, topRight);
+	outVertices = WriteVector3(outVertices, vertexStride, botRight);
+	outVertices = WriteVector3(outVertices, vertexStride, botLeft);
 
 	Vector3 normal = area.GetAxisHorz().Cross(area.GetAxisVert());
 	Vector3 reverseNormal = -normal;
 
 	outNormals += (vertexOffset * vertexStride);
-	outNormals = writeVector3(outNormals, vertexStride, normal);
-	outNormals = writeVector3(outNormals, vertexStride, normal);
-	outNormals = writeVector3(outNormals, vertexStride, normal);
-	outNormals = writeVector3(outNormals, vertexStride, normal);
+	outNormals = WriteVector3(outNormals, vertexStride, normal);
+	outNormals = WriteVector3(outNormals, vertexStride, normal);
+	outNormals = WriteVector3(outNormals, vertexStride, normal);
+	outNormals = WriteVector3(outNormals, vertexStride, normal);
 
-	outNormals = writeVector3(outNormals, vertexStride, reverseNormal);
-	outNormals = writeVector3(outNormals, vertexStride, reverseNormal);
-	outNormals = writeVector3(outNormals, vertexStride, reverseNormal);
-	outNormals = writeVector3(outNormals, vertexStride, reverseNormal);
+	outNormals = WriteVector3(outNormals, vertexStride, reverseNormal);
+	outNormals = WriteVector3(outNormals, vertexStride, reverseNormal);
+	outNormals = WriteVector3(outNormals, vertexStride, reverseNormal);
+	outNormals = WriteVector3(outNormals, vertexStride, reverseNormal);
 
 	if(outUV != nullptr)
 	{
 		outUV += (vertexOffset * vertexStride);
-		outUV = writeVector2(outUV, vertexStride, Vector2(0.0f, 0.0f));
-		outUV = writeVector2(outUV, vertexStride, Vector2(1.0f, 0.0f));
-		outUV = writeVector2(outUV, vertexStride, Vector2(1.0f, 1.0f));
-		outUV = writeVector2(outUV, vertexStride, Vector2(0.0f, 1.0f));
+		outUV = WriteVector2(outUV, vertexStride, Vector2(0.0f, 0.0f));
+		outUV = WriteVector2(outUV, vertexStride, Vector2(1.0f, 0.0f));
+		outUV = WriteVector2(outUV, vertexStride, Vector2(1.0f, 1.0f));
+		outUV = WriteVector2(outUV, vertexStride, Vector2(0.0f, 1.0f));
 
-		outUV = writeVector2(outUV, vertexStride, Vector2(0.0f, 0.0f));
-		outUV = writeVector2(outUV, vertexStride, Vector2(1.0f, 0.0f));
-		outUV = writeVector2(outUV, vertexStride, Vector2(1.0f, 1.0f));
-		outUV = writeVector2(outUV, vertexStride, Vector2(0.0f, 1.0f));
+		outUV = WriteVector2(outUV, vertexStride, Vector2(0.0f, 0.0f));
+		outUV = WriteVector2(outUV, vertexStride, Vector2(1.0f, 0.0f));
+		outUV = WriteVector2(outUV, vertexStride, Vector2(1.0f, 1.0f));
+		outUV = WriteVector2(outUV, vertexStride, Vector2(0.0f, 1.0f));
 	}
 
 	outIndices += indexOffset;
@@ -1772,7 +1772,7 @@ void ShapeMeshes3D::GenerateArcVertices(const Vector3& center, const Vector3& up
 	for(u32 i = 0; i < numVertices; i++)
 	{
 		// Note: Ignoring scale
-		outVertices = writeVector3(outVertices, vertexStride, (center + curDirection));
+		outVertices = WriteVector3(outVertices, vertexStride, (center + curDirection));
 		curDirection = increment.Rotate(curDirection);
 	}
 }

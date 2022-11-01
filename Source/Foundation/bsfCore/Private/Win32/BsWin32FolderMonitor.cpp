@@ -346,7 +346,7 @@ void FolderMonitor::StartMonitor(const Path& folderPath, bool subdirectories, Fo
 
 	if(dirHandle == INVALID_HANDLE_VALUE)
 	{
-		BS_EXCEPT(InternalErrorException, "Failed to open folder \"" + folderPath.ToString() + "\" for monitoring. Error code: " + toString((u64)GetLastError()));
+		BS_EXCEPT(InternalErrorException, "Failed to open folder \"" + folderPath.ToString() + "\" for monitoring. Error code: " + ToString((u64)GetLastError()));
 	}
 
 	DWORD filterFlags = 0;
@@ -369,7 +369,7 @@ void FolderMonitor::StartMonitor(const Path& folderPath, bool subdirectories, Fo
 	{
 		m->MFoldersToWatch.erase(m->MFoldersToWatch.end() - 1);
 		B3DDelete(watchInfo);
-		BS_EXCEPT(InternalErrorException, "Failed to open completion port for folder monitoring. Error code: " + toString((u64)GetLastError()));
+		BS_EXCEPT(InternalErrorException, "Failed to open completion port for folder monitoring. Error code: " + ToString((u64)GetLastError()));
 	}
 
 	if(m->MWorkerThread == nullptr)

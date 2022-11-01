@@ -7,7 +7,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-static void deleteBuffer(HardwareBuffer* buffer)
+static void DeleteHardwareBuffer(HardwareBuffer* buffer)
 {
 	B3DPoolDelete(static_cast<VulkanHardwareBuffer*>(buffer));
 }
@@ -19,7 +19,7 @@ VulkanVertexBuffer::VulkanVertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDevice
 void VulkanVertexBuffer::Initialize()
 {
 	mBuffer = B3DPoolNew<VulkanHardwareBuffer>(VulkanHardwareBuffer::BT_VERTEX, BF_UNKNOWN, mUsage, mSize, mDeviceMask);
-	mBufferDeleter = &deleteBuffer;
+	mBufferDeleter = &DeleteHardwareBuffer;
 
 	VertexBuffer::Initialize();
 }

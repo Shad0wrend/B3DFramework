@@ -9,7 +9,7 @@ using namespace physx;
 
 using namespace bs;
 
-PxDistanceJointFlag::Enum toPxFlag(DistanceJointFlag flag)
+PxDistanceJointFlag::Enum ToPxFlag(DistanceJointFlag flag)
 {
 	switch(flag)
 	{
@@ -34,8 +34,8 @@ PhysXDistanceJoint::PhysXDistanceJoint(PxPhysics* physx, const DISTANCE_JOINT_DE
 	if(desc.Bodies[1].Body != nullptr)
 		actor1 = static_cast<PhysXRigidbody*>(desc.Bodies[1].Body)->GetInternalInternal();
 
-	PxTransform tfrm0 = toPxTransform(desc.Bodies[0].Position, desc.Bodies[0].Rotation);
-	PxTransform tfrm1 = toPxTransform(desc.Bodies[1].Position, desc.Bodies[1].Rotation);
+	PxTransform tfrm0 = ToPxTransform(desc.Bodies[0].Position, desc.Bodies[0].Rotation);
+	PxTransform tfrm1 = ToPxTransform(desc.Bodies[1].Position, desc.Bodies[1].Rotation);
 
 	PxDistanceJoint* joint = PxDistanceJointCreate(*physx, actor0, tfrm0, actor1, tfrm1);
 	joint->userData = this;
@@ -118,12 +118,12 @@ void PhysXDistanceJoint::SetSpring(const Spring& value)
 
 void PhysXDistanceJoint::SetFlag(DistanceJointFlag flag, bool enabled)
 {
-	GetInternal()->setDistanceJointFlag(toPxFlag(flag), enabled);
+	GetInternal()->setDistanceJointFlag(ToPxFlag(flag), enabled);
 }
 
 bool PhysXDistanceJoint::HasFlag(DistanceJointFlag flag) const
 {
-	return GetInternal()->getDistanceJointFlags() & toPxFlag(flag);
+	return GetInternal()->getDistanceJointFlags() & ToPxFlag(flag);
 }
 
 PxDistanceJoint* PhysXDistanceJoint::GetInternal() const

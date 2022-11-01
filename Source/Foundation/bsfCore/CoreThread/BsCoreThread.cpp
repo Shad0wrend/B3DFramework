@@ -382,7 +382,7 @@ CoreThread& GetCoreThread()
 	return CoreThread::Instance();
 }
 
-void throwIfNotCoreThread()
+void ThrowIfNotCoreThread()
 {
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 	if(BS_THREAD_CURRENT_ID != CoreThread::Instance().GetCoreThreadId())
@@ -390,7 +390,7 @@ void throwIfNotCoreThread()
 #endif
 }
 
-void throwIfCoreThread()
+void ThrowIfCoreThread()
 {
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 	if(BS_THREAD_CURRENT_ID == CoreThread::Instance().GetCoreThreadId())

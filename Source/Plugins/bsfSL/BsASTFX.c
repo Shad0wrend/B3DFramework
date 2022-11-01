@@ -65,46 +65,46 @@ OptionInfo OPTION_LOOKUP[] =
 	{ OT_AttrShow, ODT_Int },
 };
 
-NodeOptions* nodeOptionsCreate(void* context)
+NodeOptions* NodeOptionsCreate(void* context)
 {
 	static const int kBufferSize = 5;
 
-	NodeOptions* options = (NodeOptions*)mmalloc(context, sizeof(NodeOptions));
+	NodeOptions* options = (NodeOptions*)Mmalloc(context, sizeof(NodeOptions));
 	options->Count = 0;
 	options->BufferSize = kBufferSize;
 
-	options->Entries = (NodeOption*)mmalloc(context, sizeof(NodeOption) * options->BufferSize);
+	options->Entries = (NodeOption*)Mmalloc(context, sizeof(NodeOption) * options->BufferSize);
 	memset(options->Entries, 0, sizeof(NodeOption) * options->BufferSize);
 
 	return options;
 }
 
-void nodeOptionDelete(NodeOption* option)
+void NodeOptionDelete(NodeOption* option)
 {
 	if (OPTION_LOOKUP[(int)option->Type].DataType == ODT_Complex)
 	{
-		nodeDelete(option->Value.NodePtr);
+		NodeDelete(option->Value.NodePtr);
 		option->Value.NodePtr = 0;
 	}
 	else if (OPTION_LOOKUP[(int)option->Type].DataType == ODT_String)
 	{
-		mmfree((void*)option->Value.StrValue);
+		Mmfree((void*)option->Value.StrValue);
 		option->Value.StrValue = 0;
 	}
 }
 
-void nodeOptionsDelete(NodeOptions* options)
+void NodeOptionsDelete(NodeOptions* options)
 {
 	int i = 0;
 
 	for (i = 0; i < options->Count; i++)
-		nodeOptionDelete(&options->Entries[i]);
+		NodeOptionDelete(&options->Entries[i]);
 
-	mmfree(options->Entries);
-	mmfree(options);
+	Mmfree(options->Entries);
+	Mmfree(options);
 }
 
-void nodeOptionsResize(void* context, NodeOptions* options, int size)
+void NodeOptionsResize(void* context, NodeOptions* options, int size)
 {
 	NodeOption* originalEntries = options->Entries;
 	int originalSize = options->BufferSize;
@@ -120,49 +120,49 @@ void nodeOptionsResize(void* context, NodeOptions* options, int size)
 
 	sizeToCopy = elementsToCopy * sizeof(NodeOption);
 
-	options->Entries = (NodeOption*)mmalloc(context, sizeof(NodeOption) * options->BufferSize);
+	options->Entries = (NodeOption*)Mmalloc(context, sizeof(NodeOption) * options->BufferSize);
 
 	memcpy(options->Entries, originalEntries, sizeToCopy);
 	memset(options->Entries + elementsToCopy, 0, sizeof(NodeOption) * options->BufferSize - sizeToCopy);
 
-	mmfree(originalEntries);
+	Mmfree(originalEntries);
 }
 
-void nodeOptionsGrowIfNeeded(void* context, NodeOptions* options)
+void NodeOptionsGrowIfNeeded(void* context, NodeOptions* options)
 {
 	static const int kBufferGrow = 10;
 
 	if (options->Count == options->BufferSize)
-		nodeOptionsResize(context, options, options->BufferSize + kBufferGrow);
+		NodeOptionsResize(context, options, options->BufferSize + kBufferGrow);
 }
 
-void nodeOptionsAdd(void* context, NodeOptions* options, const NodeOption* option)
+void NodeOptionsAdd(void* context, NodeOptions* options, const NodeOption* option)
 {
-	nodeOptionsGrowIfNeeded(context, options);
+	NodeOptionsGrowIfNeeded(context, options);
 
 	options->Entries[options->Count] = *option;
 	options->Count++;
 }
 
-ASTFXNode* nodeCreate(void* context, NodeType type)
+ASTFXNode* NodeCreate(void* context, NodeType type)
 {
-	ASTFXNode* node = (ASTFXNode*)mmalloc(context, sizeof(ASTFXNode));
-	node->Options = nodeOptionsCreate(context);
+	ASTFXNode* node = (ASTFXNode*)Mmalloc(context, sizeof(ASTFXNode));
+	node->Options = NodeOptionsCreate(context);
 	node->Type = type;
 
 	return node;
 }
 
-void nodeDelete(ASTFXNode* node)
+void NodeDelete(ASTFXNode* node)
 {
-	nodeOptionsDelete(node->Options);
+	NodeOptionsDelete(node->Options);
 
-	mmfree(node);
+	Mmfree(node);
 }
 
-void nodePush(ParseState* parseState, ASTFXNode* node)
+void NodePush(ParseState* parseState, ASTFXNode* node)
 {
-	NodeLink* linkNode = (NodeLink*)mmalloc(parseState->MemContext, sizeof(NodeLink));
+	NodeLink* linkNode = (NodeLink*)Mmalloc(parseState->MemContext, sizeof(NodeLink));
 	linkNode->Next = parseState->NodeStack;
 	linkNode->Node = node;
 
@@ -170,7 +170,7 @@ void nodePush(ParseState* parseState, ASTFXNode* node)
 	parseState->TopNode = node;
 }
 
-void nodePop(ParseState* parseState)
+void NodePop(ParseState* parseState)
 {
 	if (!parseState->NodeStack)
 		return;
@@ -183,16 +183,16 @@ void nodePop(ParseState* parseState)
 	else
 		parseState->TopNode = 0;
 
-	mmfree(toRemove);
+	Mmfree(toRemove);
 }
 
-void beginCodeBlock(ParseState* parseState, RawCodeType type)
+void BeginCodeBlock(ParseState* parseState, RawCodeType type)
 {
-	RawCode* rawCodeBlock = (RawCode*)mmalloc(parseState->MemContext, sizeof(RawCode));
+	RawCode* rawCodeBlock = (RawCode*)Mmalloc(parseState->MemContext, sizeof(RawCode));
 	rawCodeBlock->Index = parseState->NumRawCodeBlocks[type];
 	rawCodeBlock->Size = 0;
 	rawCodeBlock->Capacity = 4096;
-	rawCodeBlock->Code = mmalloc(parseState->MemContext, rawCodeBlock->Capacity);
+	rawCodeBlock->Code = Mmalloc(parseState->MemContext, rawCodeBlock->Capacity);
 	rawCodeBlock->Next = parseState->RawCodeBlock[type];
 
 	parseState->NumRawCodeBlocks[type]++;
@@ -205,20 +205,20 @@ void beginCodeBlock(ParseState* parseState, RawCodeType type)
 	{
 		const char* define = "#define ";
 
-		appendCodeBlock(parseState, type, define, (int)strlen(define));
-		appendCodeBlock(parseState, type, parseState->Defines[i].Name, (int)strlen(parseState->Defines[i].Name));
+		AppendCodeBlock(parseState, type, define, (int)strlen(define));
+		AppendCodeBlock(parseState, type, parseState->Defines[i].Name, (int)strlen(parseState->Defines[i].Name));
 
 		if (parseState->Defines[i].Expr != 0)
 		{
-			appendCodeBlock(parseState, type, " ", 1);
-			appendCodeBlock(parseState, type, parseState->Defines[i].Expr, (int)strlen(parseState->Defines[i].Expr));
+			AppendCodeBlock(parseState, type, " ", 1);
+			AppendCodeBlock(parseState, type, parseState->Defines[i].Expr, (int)strlen(parseState->Defines[i].Expr));
 		}
 
-		appendCodeBlock(parseState, type, "\n", 1);
+		AppendCodeBlock(parseState, type, "\n", 1);
 	}
 }
 
-void appendCodeBlock(ParseState* parseState, RawCodeType type, const char* value, int size)
+void AppendCodeBlock(ParseState* parseState, RawCodeType type, const char* value, int size)
 {
 	RawCode* rawCode = parseState->RawCodeBlock[type];
 
@@ -230,9 +230,9 @@ void appendCodeBlock(ParseState* parseState, RawCodeType type, const char* value
 			newCapacity *= 2;
 		} while ((rawCode->Size + size) > newCapacity);
 
-		char* newBuffer = mmalloc(parseState->MemContext, newCapacity);
+		char* newBuffer = Mmalloc(parseState->MemContext, newCapacity);
 		memcpy(newBuffer, rawCode->Code, rawCode->Size);
-		mmfree(rawCode->Code);
+		Mmfree(rawCode->Code);
 
 		rawCode->Code = newBuffer;
 		rawCode->Capacity = newCapacity;
@@ -242,12 +242,12 @@ void appendCodeBlock(ParseState* parseState, RawCodeType type, const char* value
 	rawCode->Size += size;
 }
 
-int getCodeBlockIndex(ParseState* parseState, RawCodeType type)
+int GetCodeBlockIndex(ParseState* parseState, RawCodeType type)
 {
 	return parseState->RawCodeBlock[type]->Index;
 }
 
-char* getCurrentFilename(ParseState* parseState)
+char* GetCurrentFilename(ParseState* parseState)
 {
 	if (!parseState->IncludeStack)
 		return NULL;
@@ -255,7 +255,7 @@ char* getCurrentFilename(ParseState* parseState)
 	return parseState->IncludeStack->Data->Filename;
 }
 
-void addDefine(ParseState* parseState, const char* value)
+void AddDefine(ParseState* parseState, const char* value)
 {
 	int defineIdx = parseState->NumDefines;
 	parseState->NumDefines++;
@@ -263,20 +263,20 @@ void addDefine(ParseState* parseState, const char* value)
 	if(parseState->NumDefines > parseState->DefineCapacity)
 	{
 		int newCapacity = parseState->DefineCapacity * 2;
-		DefineEntry* newDefines = mmalloc(parseState->MemContext, newCapacity * sizeof(DefineEntry));
+		DefineEntry* newDefines = Mmalloc(parseState->MemContext, newCapacity * sizeof(DefineEntry));
 
 		memcpy(newDefines, parseState->Defines, parseState->DefineCapacity * sizeof(DefineEntry));
 
-		mmfree(parseState->Defines);
+		Mmfree(parseState->Defines);
 		parseState->Defines = newDefines;
 		parseState->DefineCapacity = newCapacity;
 	}
 
-	parseState->Defines[defineIdx].Name = mmalloc_strdup(parseState->MemContext, value);
+	parseState->Defines[defineIdx].Name = MmallocStrdup(parseState->MemContext, value);
 	parseState->Defines[defineIdx].Expr = 0;
 }
 
-void addDefineExpr(ParseState* parseState, const char* value)
+void AddDefineExpr(ParseState* parseState, const char* value)
 {
 	int defineIdx = parseState->NumDefines - 1;
 	if(defineIdx < 0)
@@ -285,10 +285,10 @@ void addDefineExpr(ParseState* parseState, const char* value)
 		return;
 	}
 
-	parseState->Defines[defineIdx].Expr = mmalloc_strdup(parseState->MemContext, value);
+	parseState->Defines[defineIdx].Expr = MmallocStrdup(parseState->MemContext, value);
 }
 
-int hasDefine(ParseState* parseState, const char* value)
+int HasDefine(ParseState* parseState, const char* value)
 {
 	for (int i = 0; i < parseState->NumDefines; i++)
 	{
@@ -299,7 +299,7 @@ int hasDefine(ParseState* parseState, const char* value)
 	return 0;
 }
 
-int isDefineEnabled(ParseState* parseState, const char* value)
+int IsDefineEnabled(ParseState* parseState, const char* value)
 {
 	for (int i = 0; i < parseState->NumDefines; i++)
 	{
@@ -316,7 +316,7 @@ int isDefineEnabled(ParseState* parseState, const char* value)
 	return 0;
 }
 
-void removeDefine(ParseState* parseState, const char* value)
+void RemoveDefine(ParseState* parseState, const char* value)
 {
 	for (int i = 0; i < parseState->NumDefines; i++)
 	{
@@ -332,9 +332,9 @@ void removeDefine(ParseState* parseState, const char* value)
 	}
 }
 
-int pushConditionalDef(ParseState* parseState, int state)
+int PushConditionalDef(ParseState* parseState, int state)
 {
-	ConditionalData* conditional = mmalloc(parseState->MemContext, sizeof(ConditionalData));
+	ConditionalData* conditional = Mmalloc(parseState->MemContext, sizeof(ConditionalData));
 	conditional->Enabled = state && (parseState->ConditionalStack == 0 || parseState->ConditionalStack->Enabled);
 	conditional->SelfEnabled = state;
 	conditional->Name = NULL;
@@ -347,9 +347,9 @@ int pushConditionalDef(ParseState* parseState, int state)
 	return conditional->Enabled;
 }
 
-void pushConditional(ParseState* parseState, const char* name)
+void PushConditional(ParseState* parseState, const char* name)
 {
-	ConditionalData* conditional = mmalloc(parseState->MemContext, sizeof(ConditionalData));
+	ConditionalData* conditional = Mmalloc(parseState->MemContext, sizeof(ConditionalData));
 	conditional->Enabled = (parseState->ConditionalStack == 0 || parseState->ConditionalStack->Enabled);
 	conditional->SelfEnabled = 0;
 	conditional->Op = CO_None;
@@ -358,24 +358,24 @@ void pushConditional(ParseState* parseState, const char* name)
 	conditional->Next = parseState->ConditionalStack;
 
 	if(name)
-		conditional->Name = mmalloc_strdup(parseState->MemContext, name);
+		conditional->Name = MmallocStrdup(parseState->MemContext, name);
 
 	parseState->ConditionalStack = conditional;
 }
 
-void setConditional(ParseState* parseState, const char* name)
+void SetConditional(ParseState* parseState, const char* name)
 {
 	assert(parseState->ConditionalStack > 0);
 
 	ConditionalData* conditional = parseState->ConditionalStack;
 	ConditionalData* parent = conditional->Next;
 
-	conditional->Name = mmalloc_strdup(parseState->MemContext, name);
+	conditional->Name = MmallocStrdup(parseState->MemContext, name);
 	conditional->Enabled = (parent == 0 || parent->Enabled);
 	conditional->SelfEnabled = 0;
 }
 
-void setConditionalOp(ParseState* parseState, ConditionalOp op)
+void SetConditionalOp(ParseState* parseState, ConditionalOp op)
 {
 	assert(parseState->ConditionalStack > 0);
 
@@ -383,15 +383,15 @@ void setConditionalOp(ParseState* parseState, ConditionalOp op)
 	conditional->Op = op;
 }
 
-void setConditionalVal(ParseState* parseState, const char* value)
+void SetConditionalVal(ParseState* parseState, const char* value)
 {
 	assert(parseState->ConditionalStack > 0);
 
 	ConditionalData* conditional = parseState->ConditionalStack;
-	conditional->Value = mmalloc_strdup(parseState->MemContext, value);
+	conditional->Value = MmallocStrdup(parseState->MemContext, value);
 }
 
-int evalConditional(ParseState* parseState)
+int EvalConditional(ParseState* parseState)
 {
 	assert(parseState->ConditionalStack > 0);
 
@@ -432,7 +432,7 @@ int evalConditional(ParseState* parseState)
 	return conditional->Enabled;
 }
 
-int setConditionalState(ParseState* parseState, int state)
+int SetConditionalState(ParseState* parseState, int state)
 {
 	if (parseState->ConditionalStack == 0)
 		return 1;
@@ -446,16 +446,16 @@ int setConditionalState(ParseState* parseState, int state)
 	return conditional->Enabled;
 }
 
-int switchConditional(ParseState* parseState)
+int SwitchConditional(ParseState* parseState)
 {
 	if (parseState->ConditionalStack == 0)
 		return 1;
 
 	ConditionalData* conditional = parseState->ConditionalStack;
-	return setConditionalState(parseState, !conditional->SelfEnabled);
+	return SetConditionalState(parseState, !conditional->SelfEnabled);
 }
 
-int popConditional(ParseState* parseState)
+int PopConditional(ParseState* parseState)
 {
 	if (parseState->ConditionalStack == 0)
 		return 1;
@@ -464,21 +464,21 @@ int popConditional(ParseState* parseState)
 	parseState->ConditionalStack = conditional->Next;
 
 	if(conditional->Value)
-		mmfree(conditional->Value);
+		Mmfree(conditional->Value);
 
 	if(conditional->Name)
-		mmfree(conditional->Name);
+		Mmfree(conditional->Name);
 
-	mmfree(conditional);
+	Mmfree(conditional);
 
 	return parseState->ConditionalStack == 0 || parseState->ConditionalStack->Enabled;
 }
 
-ParseState* parseStateCreate()
+ParseState* ParseStateCreate()
 {
 	ParseState* parseState = (ParseState*)malloc(sizeof(ParseState));
-	parseState->MemContext = mmalloc_new_context();
-	parseState->RootNode = nodeCreate(parseState->MemContext, NT_Root);
+	parseState->MemContext = MmallocNewContext();
+	parseState->RootNode = NodeCreate(parseState->MemContext, NT_Root);
 	parseState->TopNode = 0;
 	parseState->NodeStack = 0;
 	parseState->IncludeStack = 0;
@@ -498,20 +498,20 @@ ParseState* parseStateCreate()
 	parseState->ConditionalStack = 0;
 	parseState->DefineCapacity = 10;
 	parseState->NumDefines = 0;
-	parseState->Defines = mmalloc(parseState->MemContext, parseState->DefineCapacity * sizeof(DefineEntry));
+	parseState->Defines = Mmalloc(parseState->MemContext, parseState->DefineCapacity * sizeof(DefineEntry));
 
-	nodePush(parseState, parseState->RootNode);
+	NodePush(parseState, parseState->RootNode);
 
 	return parseState;
 }
 
-void parseStateDelete(ParseState* parseState)
+void ParseStateDelete(ParseState* parseState)
 {
 	while (parseState->NodeStack != 0)
-		nodePop(parseState);
+		NodePop(parseState);
 
-	nodeDelete(parseState->RootNode);
-	mmalloc_free_context(parseState->MemContext);
+	NodeDelete(parseState->RootNode);
+	MmallocFreeContext(parseState->MemContext);
 
 	free(parseState);
 }

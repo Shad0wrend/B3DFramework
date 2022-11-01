@@ -80,7 +80,7 @@ void ScriptMaterial::InternalSetShader(ScriptMaterial* thisPtr, MonoObject* shad
 	ScriptRRefBase* scriptshader;
 	scriptshader = ScriptRRefBase::ToNative(shader);
 	if(scriptshader != nullptr)
-		tmpshader = static_resource_cast<Shader>(scriptshader->GetHandle());
+		tmpshader = B3DStaticResourceCast<Shader>(scriptshader->GetHandle());
 	thisPtr->GetHandle()->SetShader(tmpshader);
 }
 
@@ -334,7 +334,7 @@ void ScriptMaterial::InternalCreate0(MonoObject* managedInstance, MonoObject* sh
 	ScriptRRefBase* scriptshader;
 	scriptshader = ScriptRRefBase::ToNative(shader);
 	if(scriptshader != nullptr)
-		tmpshader = static_resource_cast<Shader>(scriptshader->GetHandle());
+		tmpshader = B3DStaticResourceCast<Shader>(scriptshader->GetHandle());
 	ResourceHandle<Material> instance = Material::Create(tmpshader);
 	ScriptResourceManager::Instance().CreateBuiltinScriptResource(instance, managedInstance);
 }
@@ -347,7 +347,7 @@ void ScriptMaterial::InternalSetTexture(ScriptMaterial* thisPtr, MonoString* nam
 	ScriptRRefBase* scriptvalue;
 	scriptvalue = ScriptRRefBase::ToNative(value);
 	if(scriptvalue != nullptr)
-		tmpvalue = static_resource_cast<Texture>(scriptvalue->GetHandle());
+		tmpvalue = B3DStaticResourceCast<Texture>(scriptvalue->GetHandle());
 	MaterialEx::SetTexture(thisPtr->GetHandle(), tmpname, tmpvalue, mipLevel, numMipLevels, arraySlice, numArraySlices);
 }
 
@@ -377,7 +377,7 @@ void ScriptMaterial::InternalSetSpriteTexture(ScriptMaterial* thisPtr, MonoStrin
 	ScriptRRefBase* scriptvalue;
 	scriptvalue = ScriptRRefBase::ToNative(value);
 	if(scriptvalue != nullptr)
-		tmpvalue = static_resource_cast<SpriteTexture>(scriptvalue->GetHandle());
+		tmpvalue = B3DStaticResourceCast<SpriteTexture>(scriptvalue->GetHandle());
 	MaterialEx::SetSpriteTexture(thisPtr->GetHandle(), tmpname, tmpvalue);
 }
 

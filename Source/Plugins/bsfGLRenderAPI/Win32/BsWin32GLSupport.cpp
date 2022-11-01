@@ -10,13 +10,13 @@
 #include "GL/wglew.h"
 #include <algorithm>
 
-GLenum __stdcall wglewContextInit(bs::ct::GLSupport* glSupport);
+GLenum __stdcall WglewContextInit(bs::ct::GLSupport* glSupport);
 
 using namespace bs;
 using namespace bs::ct;
 
 template <class C>
-void remove_duplicates(C& c)
+void RemoveDuplicates(C& c)
 {
 	std::sort(c.begin(), c.end());
 	typename C::iterator p = std::unique(c.begin(), c.end());
@@ -34,7 +34,7 @@ SPtr<bs::RenderWindow> Win32GLSupport::NewWindow(RENDER_WINDOW_DESC& desc, u32 w
 	{
 		u64 hWnd;
 		parentWindow->GetCustomAttribute("WINDOW", &hWnd);
-		desc.PlatformSpecific["parentWindowHandle"] = toString(hWnd);
+		desc.PlatformSpecific["parentWindowHandle"] = ToString(hWnd);
 	}
 
 	bs::Win32RenderWindow* window = new(B3DAllocate<bs::Win32RenderWindow>()) bs::Win32RenderWindow(desc, windowId, *this);
@@ -62,7 +62,7 @@ void Win32GLSupport::InitializeExtensions()
 
 	GLSupport::InitializeExtensions();
 
-	wglewContextInit(this);
+	WglewContextInit(this);
 
 	// Check for W32 specific extensions probe function
 	auto _wglGetExtensionsString = (PFNWGLGETEXTENSIONSSTRINGARBPROC)wglGetProcAddress("wglGetExtensionsString");
@@ -115,7 +115,7 @@ SPtr<Win32Context> Win32GLSupport::CreateContext(HDC hdc, HGLRC externalGlrc)
 				glrc = wglCreateContext(hdc);
 
 			if(glrc == 0)
-				BS_EXCEPT(RenderingAPIException, "wglCreateContext failed: " + translateWGLError());
+				BS_EXCEPT(RenderingAPIException, "wglCreateContext failed: " + TranslateWglError());
 
 			createdNew = true;
 		}
@@ -247,7 +247,7 @@ void Win32GLSupport::InitialiseWgl()
 						mMultisampleLevels.push_back(samples);
 					}
 				}
-				remove_duplicates(mMultisampleLevels);
+				RemoveDuplicates(mMultisampleLevels);
 			}
 		}
 
@@ -343,7 +343,7 @@ SPtr<VideoModeInfo> Win32GLSupport::GetVideoModeInfo() const
 }
 
 namespace bs { namespace ct {
-String translateWGLError()
+String TranslateWglError()
 {
 	int winError = GetLastError();
 	char errDesc[255];

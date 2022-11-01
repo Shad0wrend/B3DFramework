@@ -118,7 +118,7 @@ namespace bs
 		template <class T>
 		ResourceHandle<T> Load(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default)
 		{
-			return static_resource_cast<T>(Load(filePath, loadFlags));
+			return B3DStaticResourceCast<T>(Load(filePath, loadFlags));
 		}
 
 		/**

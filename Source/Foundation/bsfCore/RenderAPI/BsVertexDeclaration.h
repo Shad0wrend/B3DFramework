@@ -196,7 +196,7 @@ namespace bs
 	};
 
 	/**	Converts a vertex semantic enum to a readable name. */
-	BS_CORE_EXPORT String toString(const VertexElementSemantic& val);
+	BS_CORE_EXPORT String ToString(const VertexElementSemantic& val);
 
 	/** @} */
 

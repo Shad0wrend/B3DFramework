@@ -8,7 +8,7 @@
 
 using namespace bs;
 
-u32 calcIndexSize(IndexType type)
+u32 CalcIndexSize(IndexType type)
 {
 	switch(type)
 	{
@@ -20,21 +20,21 @@ u32 calcIndexSize(IndexType type)
 	}
 }
 
-void checkValidDesc(const INDEX_BUFFER_DESC& desc)
+void CheckValidDesc(const INDEX_BUFFER_DESC& desc)
 {
 	if(desc.NumIndices == 0)
 		BS_EXCEPT(InvalidParametersException, "Index buffer index count is not allowed to be zero.");
 }
 
 IndexBufferProperties::IndexBufferProperties(IndexType idxType, u32 numIndices)
-	: mIndexType(idxType), mNumIndices(numIndices), mIndexSize(calcIndexSize(idxType))
+	: mIndexType(idxType), mNumIndices(numIndices), mIndexSize(CalcIndexSize(idxType))
 {}
 
 IndexBuffer::IndexBuffer(const INDEX_BUFFER_DESC& desc)
 	: mProperties(desc.IndexType, desc.NumIndices), mUsage(desc.Usage)
 {
 #if BS_DEBUG_MODE
-	checkValidDesc(desc);
+	CheckValidDesc(desc);
 #endif
 }
 
@@ -61,11 +61,11 @@ SPtr<IndexBuffer> IndexBuffer::Create(const INDEX_BUFFER_DESC& desc)
 namespace bs { namespace ct
 {
 IndexBuffer::IndexBuffer(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
-	: HardwareBuffer(calcIndexSize(desc.IndexType) * desc.NumIndices, desc.Usage, deviceMask)
+	: HardwareBuffer(CalcIndexSize(desc.IndexType) * desc.NumIndices, desc.Usage, deviceMask)
 	, mProperties(desc.IndexType, desc.NumIndices)
 {
 #if BS_DEBUG_MODE
-	checkValidDesc(desc);
+	CheckValidDesc(desc);
 #endif
 }
 

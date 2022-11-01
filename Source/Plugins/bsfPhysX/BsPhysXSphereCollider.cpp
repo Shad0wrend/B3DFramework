@@ -15,7 +15,7 @@ PhysXSphereCollider::PhysXSphereCollider(PxPhysics* physx, PxScene* scene, const
 	PxSphereGeometry geometry(radius);
 
 	PxShape* shape = physx->createShape(geometry, *GetPhysX().GetDefaultMaterial(), true);
-	shape->setLocalPose(toPxTransform(position, rotation));
+	shape->setLocalPose(ToPxTransform(position, rotation));
 	shape->userData = this;
 
 	mInternal = B3DNew<FPhysXCollider>(scene, shape);

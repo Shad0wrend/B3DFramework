@@ -12,7 +12,7 @@
 using namespace bs;
 
 /** Converts a sim thread pipeline state descriptor to a core thread one. */
-void convertPassDesc(const PIPELINE_STATE_DESC& input, ct::PIPELINE_STATE_DESC& output)
+void ConvertPassDesc(const PIPELINE_STATE_DESC& input, ct::PIPELINE_STATE_DESC& output)
 {
 	output.BlendState = input.BlendState != nullptr ? input.BlendState->GetCore() : nullptr;
 	output.RasterizerState = input.RasterizerState != nullptr ? input.RasterizerState->GetCore() : nullptr;
@@ -77,7 +77,7 @@ SPtr<ct::GraphicsPipelineState> GraphicsPipelineState::GetCore() const
 SPtr<ct::CoreObject> GraphicsPipelineState::CreateCore() const
 {
 	ct::PIPELINE_STATE_DESC desc;
-	convertPassDesc(mData, desc);
+	ConvertPassDesc(mData, desc);
 
 	return ct::RenderStateManager::Instance().CreateGraphicsPipelineStateInternal(desc);
 }

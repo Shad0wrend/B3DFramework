@@ -146,7 +146,7 @@ namespace bs
 				BS_LOG(Error, Generic, "Trying to get AsyncOp return value but the operation hasn't completed.");
 #endif
 
-			return any_cast<ReturnType>(mData->MReturnValue);
+			return AnyCast<ReturnType>(mData->MReturnValue);
 		}
 
 	public: // ***** INTERNAL ******

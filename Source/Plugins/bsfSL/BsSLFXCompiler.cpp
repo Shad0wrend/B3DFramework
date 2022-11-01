@@ -53,13 +53,13 @@ void SLFXDebugPrint(ASTFXNode* node, String indent)
 		switch(odt)
 		{
 		case ODT_Bool:
-			value = toString(node->Options->Entries[i].Value.IntValue != 0);
+			value = ToString(node->Options->Entries[i].Value.IntValue != 0);
 			break;
 		case ODT_Int:
-			value = toString(node->Options->Entries[i].Value.IntValue);
+			value = ToString(node->Options->Entries[i].Value.IntValue);
 			break;
 		case ODT_Float:
-			value = toString(node->Options->Entries[i].Value.FloatValue);
+			value = ToString(node->Options->Entries[i].Value.FloatValue);
 			break;
 		case ODT_String:
 			value = node->Options->Entries[i].Value.StrValue;
@@ -67,7 +67,7 @@ void SLFXDebugPrint(ASTFXNode* node, String indent)
 		case ODT_Matrix:
 			{
 				Matrix4 mat4 = *(Matrix4*)(node->Options->Entries[i].Value.MatrixValue);
-				value = toString(mat4);
+				value = ToString(mat4);
 			}
 			break;
 		default:
@@ -184,7 +184,7 @@ private:
 		{
 			if(!headline.empty())
 			{
-				String s = toString((u32)reports.size()) + " " + headline;
+				String s = ToString((u32)reports.size()) + " " + headline;
 				output << s << std::endl;
 				output << String(s.size(), '-') << std::endl;
 			}
@@ -273,7 +273,7 @@ GpuParamDataType ReflTypeToDataType(Xsc::Reflection::DataType type)
 	}
 }
 
-HTexture getBuiltinTexture(u32 idx)
+HTexture GetBuiltinTexture(u32 idx)
 {
 	if(idx == 1)
 		return BuiltinResources::GetTexture(BuiltinTexture::White);
@@ -285,7 +285,7 @@ HTexture getBuiltinTexture(u32 idx)
 	return HTexture();
 }
 
-u32 getStructSize(i32 structIdx, const std::vector<Xsc::Reflection::Struct>& structLookup)
+u32 GetStructSize(i32 structIdx, const std::vector<Xsc::Reflection::Struct>& structLookup)
 {
 	if(structIdx < 0 || structIdx >= (i32)structLookup.size())
 		return 0;
@@ -306,13 +306,13 @@ u32 getStructSize(i32 structIdx, const std::vector<Xsc::Reflection::Struct>& str
 			size += typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize * entry.arraySize;
 		}
 		else if(entry.type == Xsc::Reflection::VariableType::Struct)
-			size += getStructSize(entry.baseType, structLookup);
+			size += GetStructSize(entry.baseType, structLookup);
 	}
 
 	return size;
 }
 
-TextureAddressingMode parseTexAddrMode(Xsc::Reflection::TextureAddressMode addrMode)
+TextureAddressingMode ParseTexAddrMode(Xsc::Reflection::TextureAddressMode addrMode)
 {
 	switch(addrMode)
 	{
@@ -329,7 +329,7 @@ TextureAddressingMode parseTexAddrMode(Xsc::Reflection::TextureAddressMode addrM
 	}
 }
 
-CompareFunction parseCompFunction(Xsc::Reflection::ComparisonFunc compFunc)
+CompareFunction ParseCompFunction(Xsc::Reflection::ComparisonFunc compFunc)
 {
 	switch(compFunc)
 	{
@@ -353,20 +353,20 @@ CompareFunction parseCompFunction(Xsc::Reflection::ComparisonFunc compFunc)
 	}
 }
 
-SPtr<SamplerState> parseSamplerState(const Xsc::Reflection::SamplerState& sampState)
+SPtr<SamplerState> ParseSamplerState(const Xsc::Reflection::SamplerState& sampState)
 {
 	SAMPLER_STATE_DESC desc;
 
-	desc.AddressMode.U = parseTexAddrMode(sampState.addressU);
-	desc.AddressMode.V = parseTexAddrMode(sampState.addressV);
-	desc.AddressMode.W = parseTexAddrMode(sampState.addressW);
+	desc.AddressMode.U = ParseTexAddrMode(sampState.addressU);
+	desc.AddressMode.V = ParseTexAddrMode(sampState.addressV);
+	desc.AddressMode.W = ParseTexAddrMode(sampState.addressW);
 
 	desc.BorderColor[0] = sampState.borderColor[0];
 	desc.BorderColor[1] = sampState.borderColor[1];
 	desc.BorderColor[2] = sampState.borderColor[2];
 	desc.BorderColor[3] = sampState.borderColor[3];
 
-	desc.ComparisonFunc = parseCompFunction(sampState.comparisonFunc);
+	desc.ComparisonFunc = ParseCompFunction(sampState.comparisonFunc);
 	desc.MaxAniso = sampState.maxAnisotropy;
 	desc.MipMax = sampState.maxLOD;
 	desc.MipMin = sampState.minLOD;
@@ -435,7 +435,7 @@ SPtr<SamplerState> parseSamplerState(const Xsc::Reflection::SamplerState& sampSt
 	return SamplerState::Create(desc);
 }
 
-void parseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DESC& desc)
+void ParseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DESC& desc)
 {
 	for(auto& entry : reflData.uniforms)
 	{
@@ -494,7 +494,7 @@ void parseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DES
 					else
 					{
 						const Xsc::Reflection::DefaultValue& defVal = reflData.defaultValues[entry.defaultValue];
-						desc.AddParameter(SHADER_OBJECT_PARAM_DESC(ident, ident, objType), getBuiltinTexture(defVal.integer));
+						desc.AddParameter(SHADER_OBJECT_PARAM_DESC(ident, ident, objType), GetBuiltinTexture(defVal.integer));
 					}
 
 					parseCommonAttributes();
@@ -527,7 +527,7 @@ void parseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DES
 
 					if(findIter->second.isNonDefault)
 					{
-						SPtr<SamplerState> defaultVal = parseSamplerState(findIter->second);
+						SPtr<SamplerState> defaultVal = ParseSamplerState(findIter->second);
 						desc.AddParameter(SHADER_OBJECT_PARAM_DESC(ident, ident, GPOT_SAMPLER2D), defaultVal);
 
 						if(!alias.empty())
@@ -600,7 +600,7 @@ void parseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DES
 		case Xsc::Reflection::VariableType::Struct:
 			{
 				i32 structIdx = entry.baseType;
-				u32 structSize = getStructSize(structIdx, reflData.structs);
+				u32 structSize = GetStructSize(structIdx, reflData.structs);
 
 				desc.AddParameter(SHADER_DATA_PARAM_DESC(ident, ident, GPDT_STRUCT, StringID::kNone, entry.arraySize, structSize));
 			}
@@ -619,7 +619,7 @@ enum class CrossCompileOutput
 	MVKSL
 };
 
-String crossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput outputType, bool optionalEntry, u32& startBindingSlot, SHADER_DESC* shaderDesc = nullptr, Vector<GpuProgramType>* detectedTypes = nullptr)
+String CrossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput outputType, bool optionalEntry, u32& startBindingSlot, SHADER_DESC* shaderDesc = nullptr, Vector<GpuProgramType>* detectedTypes = nullptr)
 {
 	SPtr<StringStream> input = B3DMakeShared<StringStream>();
 
@@ -778,20 +778,20 @@ String crossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput 
 	}
 
 	if(shaderDesc != nullptr)
-		parseParameters(reflectionData, *shaderDesc);
+		ParseParameters(reflectionData, *shaderDesc);
 
 	return output.str();
 }
 
-String crossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput outputType, u32& startBindingSlot)
+String CrossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput outputType, u32& startBindingSlot)
 {
-	return crossCompile(hlsl, type, outputType, false, startBindingSlot);
+	return CrossCompile(hlsl, type, outputType, false, startBindingSlot);
 }
 
-void reflectHLSL(const String& hlsl, SHADER_DESC& shaderDesc, Vector<GpuProgramType>& entryPoints)
+void ReflectHlsl(const String& hlsl, SHADER_DESC& shaderDesc, Vector<GpuProgramType>& entryPoints)
 {
 	u32 dummy = 0;
-	crossCompile(hlsl, GPT_VERTEX_PROGRAM, CrossCompileOutput::GLSL45, true, dummy, &shaderDesc, &entryPoints);
+	CrossCompile(hlsl, GPT_VERTEX_PROGRAM, CrossCompileOutput::GLSL45, true, dummy, &shaderDesc, &entryPoints);
 }
 
 BSLFXCompileResult BSLFXCompiler::Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages)
@@ -816,10 +816,10 @@ BSLFXCompileResult BSLFXCompiler::ParseFx(ParseState* parseState, const char* so
 		if(define.first.size() == 0)
 			continue;
 
-		addDefine(parseState, define.first.c_str());
+		AddDefine(parseState, define.first.c_str());
 
 		if(define.second.size() > 0)
-			addDefineExpr(parseState, define.second.c_str());
+			AddDefineExpr(parseState, define.second.c_str());
 	}
 
 	yyscan_t scanner;
@@ -1938,11 +1938,11 @@ BSLFXCompileResult BSLFXCompiler::CompileTechniques(
 			for(auto& define : variationDefines)
 				globalDefines[define.first] = define.second;
 
-			ParseState* variationParseState = parseStateCreate();
+			ParseState* variationParseState = ParseStateCreate();
 			output = ParseFx(variationParseState, source.c_str(), globalDefines);
 
 			if(!output.ErrorMessage.empty())
-				parseStateDelete(variationParseState);
+				ParseStateDelete(variationParseState);
 			else
 			{
 				Vector<String> codeBlocks;
@@ -2028,12 +2028,12 @@ BSLFXCompileResult BSLFXCompiler::CompileShader(String source, const UnorderedMa
 	SPtr<ct::Renderer> renderer = RendererManager::Instance().GetActive();
 
 	// Run the lexer/parser and generate the AST
-	ParseState* parseState = parseStateCreate();
+	ParseState* parseState = ParseStateCreate();
 	BSLFXCompileResult output = ParseFx(parseState, source.c_str(), defines);
 
 	if(!output.ErrorMessage.empty())
 	{
-		parseStateDelete(parseState);
+		ParseStateDelete(parseState);
 		return output;
 	}
 
@@ -2045,7 +2045,7 @@ BSLFXCompileResult BSLFXCompiler::CompileShader(String source, const UnorderedMa
 
 	if(!output.ErrorMessage.empty())
 	{
-		parseStateDelete(parseState);
+		ParseStateDelete(parseState);
 		return output;
 	}
 
@@ -2061,7 +2061,7 @@ BSLFXCompileResult BSLFXCompiler::CompileShader(String source, const UnorderedMa
 		rawCode = rawCode->Next;
 	}
 
-	parseStateDelete(parseState);
+	ParseStateDelete(parseState);
 
 	output = PopulateVariations(shaderMetaData);
 
@@ -2139,7 +2139,7 @@ BSLFXCompileResult BSLFXCompiler::CompileTechniques(ParseState* parseState, cons
 
 	if(parseState->RootNode == nullptr || parseState->RootNode->Type != NT_Root)
 	{
-		parseStateDelete(parseState);
+		ParseStateDelete(parseState);
 
 		output.ErrorMessage = "Root is null or not a shader.";
 		return output;
@@ -2236,7 +2236,7 @@ BSLFXCompileResult BSLFXCompiler::CompileTechniques(ParseState* parseState, cons
 		B3DZeroOut(mixinWasParsed, shaderData.size());
 		if(!parseInherited(metaData, entry.second))
 		{
-			parseStateDelete(parseState);
+			ParseStateDelete(parseState);
 			B3DStackFree(mixinWasParsed);
 			return output;
 		}
@@ -2258,7 +2258,7 @@ BSLFXCompileResult BSLFXCompiler::CompileTechniques(ParseState* parseState, cons
 		includeLink = includeLink->Next;
 	}
 
-	parseStateDelete(parseState);
+	ParseStateDelete(parseState);
 
 	// Parse extended HLSL code and generate per-program code, also convert to GLSL/VKSL/MSL
 	const auto end = (u32)shaderData.size();
@@ -2300,7 +2300,7 @@ BSLFXCompileResult BSLFXCompiler::CompileTechniques(ParseState* parseState, cons
 			// type. If performance is ever important here it could be good to update XShaderCompiler so it can
 			// somehow save the AST and then re-use it for multiple actions.
 			Vector<GpuProgramType> types;
-			reflectHLSL(passData.Code, shaderDesc, types);
+			ReflectHlsl(passData.Code, shaderDesc, types);
 
 			auto crossCompilePass = [&types](PassData& passData, CrossCompileOutput language)
 			{
@@ -2311,22 +2311,22 @@ BSLFXCompileResult BSLFXCompiler::CompileTechniques(ParseState* parseState, cons
 					switch(type)
 					{
 					case GPT_VERTEX_PROGRAM:
-						passData.VertexCode = crossCompile(passData.Code, GPT_VERTEX_PROGRAM, language, binding);
+						passData.VertexCode = CrossCompile(passData.Code, GPT_VERTEX_PROGRAM, language, binding);
 						break;
 					case GPT_FRAGMENT_PROGRAM:
-						passData.FragmentCode = crossCompile(passData.Code, GPT_FRAGMENT_PROGRAM, language, binding);
+						passData.FragmentCode = CrossCompile(passData.Code, GPT_FRAGMENT_PROGRAM, language, binding);
 						break;
 					case GPT_GEOMETRY_PROGRAM:
-						passData.GeometryCode = crossCompile(passData.Code, GPT_GEOMETRY_PROGRAM, language, binding);
+						passData.GeometryCode = CrossCompile(passData.Code, GPT_GEOMETRY_PROGRAM, language, binding);
 						break;
 					case GPT_HULL_PROGRAM:
-						passData.HullCode = crossCompile(passData.Code, GPT_HULL_PROGRAM, language, binding);
+						passData.HullCode = CrossCompile(passData.Code, GPT_HULL_PROGRAM, language, binding);
 						break;
 					case GPT_DOMAIN_PROGRAM:
-						passData.DomainCode = crossCompile(passData.Code, GPT_DOMAIN_PROGRAM, language, binding);
+						passData.DomainCode = CrossCompile(passData.Code, GPT_DOMAIN_PROGRAM, language, binding);
 						break;
 					case GPT_COMPUTE_PROGRAM:
-						passData.ComputeCode = crossCompile(passData.Code, GPT_COMPUTE_PROGRAM, language, binding);
+						passData.ComputeCode = CrossCompile(passData.Code, GPT_COMPUTE_PROGRAM, language, binding);
 						break;
 					default:
 						break;

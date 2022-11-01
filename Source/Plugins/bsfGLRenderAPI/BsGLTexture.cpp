@@ -504,7 +504,7 @@ void GLTexture::CreateSurfaceList()
 			mSurfaceList.push_back(B3DMakeSharedFromExisting<GLPixelBuffer>(buf));
 			if(buf->GetWidth() == 0 || buf->GetHeight() == 0 || buf->GetDepth() == 0)
 			{
-				BS_EXCEPT(RenderingAPIException, "Zero sized texture surface on texture face " + toString(face) + " mipmap " + toString(mip) + ". Probably, the GL driver refused to create the texture.");
+				BS_EXCEPT(RenderingAPIException, "Zero sized texture surface on texture face " + ToString(face) + " mipmap " + ToString(mip) + ". Probably, the GL driver refused to create the texture.");
 			}
 		}
 	}

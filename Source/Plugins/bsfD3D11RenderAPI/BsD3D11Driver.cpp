@@ -103,7 +103,7 @@ DXGI_OUTPUT_DESC D3D11Driver::GetOutputDesc(u32 adapterOutputIdx) const
 	IDXGIOutput* output = nullptr;
 	if(mDXGIAdapter->EnumOutputs(adapterOutputIdx, &output) == DXGI_ERROR_NOT_FOUND)
 	{
-		BS_EXCEPT(InvalidParametersException, "Cannot find output with the specified index: " + toString(adapterOutputIdx));
+		BS_EXCEPT(InvalidParametersException, "Cannot find output with the specified index: " + ToString(adapterOutputIdx));
 	}
 
 	output->GetDesc(&desc);

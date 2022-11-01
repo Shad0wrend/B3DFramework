@@ -144,7 +144,7 @@ namespace bs
 			BS_ASSERT(context != nullptr && B3DRTTIIsOfType<CoreSerializationContext>(context));
 			auto coreContext = static_cast<CoreSerializationContext*>(context);
 
-			GODeserializationData& goDeserializationData = any_cast_ref<GODeserializationData>(so->mRTTIData);
+			GODeserializationData& goDeserializationData = AnyCastRef<GODeserializationData>(so->mRTTIData);
 
 			// Register the newly created SO with the GameObjectManager and provide it with the original ID so that
 			// deserialized handles pointing to this object can be resolved.

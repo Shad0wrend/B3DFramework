@@ -15,7 +15,7 @@
 
 namespace bs { namespace ct {
 
-void setSamplerState(const SPtr<GpuParams>& params, GpuProgramType gpType, const String& name, const String& secondaryName, const SPtr<SamplerState>& samplerState, bool optional = false)
+void SetSamplerState(const SPtr<GpuParams>& params, GpuProgramType gpType, const String& name, const String& secondaryName, const SPtr<SamplerState>& samplerState, bool optional = false)
 {
 	if(params->HasSamplerState(gpType, name))
 		params->SetSamplerState(gpType, name, samplerState);
@@ -316,7 +316,7 @@ EyeAdaptationBasicSetupMat::EyeAdaptationBasicSetupMat()
 	desc.MipFilter = FO_POINT;
 
 	SPtr<SamplerState> samplerState = SamplerState::Create(desc);
-	setSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gInputSamp", "gInputTex", samplerState);
+	SetSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gInputSamp", "gInputTex", samplerState);
 }
 
 void EyeAdaptationBasicSetupMat::Execute(const SPtr<Texture>& input, const SPtr<RenderTarget>& output, float frameDelta, const AutoExposureSettings& settings, float exposureScale)
@@ -1029,7 +1029,7 @@ GaussianDOFSeparateMat::GaussianDOFSeparateMat()
 	desc.AddressMode.W = TAM_CLAMP;
 
 	SPtr<SamplerState> samplerState = SamplerState::Create(desc);
-	setSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gColorSamp", "gColorTex", samplerState);
+	SetSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gColorSamp", "gColorTex", samplerState);
 }
 
 void GaussianDOFSeparateMat::Execute(const SPtr<Texture>& color, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings)
@@ -1546,7 +1546,7 @@ BuildHiZMat::BuildHiZMat()
 		inputSampDesc.MipFilter = FO_POINT;
 
 		SPtr<SamplerState> inputSampState = SamplerState::Create(inputSampDesc);
-		setSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gDepthSamp", "gDepthTex", inputSampState);
+		SetSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gDepthSamp", "gDepthTex", inputSampState);
 	}
 }
 
@@ -1678,7 +1678,7 @@ SSAOMat::SSAOMat()
 	randomSampDesc.AddressMode.W = TAM_WRAP;
 
 	SPtr<SamplerState> randomSampState = SamplerState::Create(randomSampDesc);
-	setSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gRandomSamp", "gRandomTex", randomSampState);
+	SetSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gRandomSamp", "gRandomTex", randomSampState);
 }
 
 void SSAOMat::Execute(const RendererView& view, const SSAOTextureInputs& textures, const SPtr<RenderTexture>& destination, const AmbientOcclusionSettings& settings)
@@ -2350,7 +2350,7 @@ EncodeDepthMat::EncodeDepthMat()
 	sampDesc.AddressMode.W = TAM_CLAMP;
 
 	SPtr<SamplerState> samplerState = SamplerState::Create(sampDesc);
-	setSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gInputSamp", "gInputTex", samplerState);
+	SetSamplerState(mParams, GPT_FRAGMENT_PROGRAM, "gInputSamp", "gInputTex", samplerState);
 }
 
 void EncodeDepthMat::Execute(const SPtr<Texture>& depth, float near, float far, const SPtr<RenderTarget>& output)

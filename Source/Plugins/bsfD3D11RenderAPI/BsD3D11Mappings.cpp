@@ -955,6 +955,6 @@ D3D11_MAP D3D11Mappings::GetLockOptions(GpuLockOptions lockOptions)
 		break;
 	};
 
-	BS_EXCEPT(RenderingAPIException, "Invalid lock option. No DX11 equivalent of: " + toString(lockOptions));
+	BS_EXCEPT(RenderingAPIException, "Invalid lock option. No DX11 equivalent of: " + ToString(lockOptions));
 	return D3D11_MAP_WRITE;
 }

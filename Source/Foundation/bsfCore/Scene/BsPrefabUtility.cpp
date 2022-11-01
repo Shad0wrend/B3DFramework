@@ -48,7 +48,7 @@ struct LinkedInstanceData
  *
  * @note	Does not recurse into child prefab instances.
  */
-void recordInstanceData(const HSceneObject& so, SceneObjectProxy& output, UnorderedMap<u32, LinkedInstanceData>& linkedInstanceData)
+void RecordInstanceData(const HSceneObject& so, SceneObjectProxy& output, UnorderedMap<u32, LinkedInstanceData>& linkedInstanceData)
 {
 	struct StackData
 	{
@@ -112,7 +112,7 @@ void recordInstanceData(const HSceneObject& so, SceneObjectProxy& output, Unorde
  *
  * @note	Does not recurse into child prefab instances.
  */
-void restoreLinkedInstanceData(const HSceneObject& so, SceneObjectProxy& proxy, UnorderedMap<u32, LinkedInstanceData>& linkedInstanceData)
+void RestoreLinkedInstanceData(const HSceneObject& so, SceneObjectProxy& proxy, UnorderedMap<u32, LinkedInstanceData>& linkedInstanceData)
 {
 	Stack<HSceneObject> todo;
 	todo.push(so);
@@ -168,7 +168,7 @@ void restoreLinkedInstanceData(const HSceneObject& so, SceneObjectProxy& proxy, 
  *
  * @note	Does not recurse into child prefab instances.
  */
-void restoreUnlinkedInstanceData(const HSceneObject& so, SceneObjectProxy& proxy)
+void RestoreUnlinkedInstanceData(const HSceneObject& so, SceneObjectProxy& proxy)
 {
 	struct StackEntry
 	{
@@ -281,7 +281,7 @@ void restoreUnlinkedInstanceData(const HSceneObject& so, SceneObjectProxy& proxy
 void PrefabUtility::RevertToPrefab(const HSceneObject& so)
 {
 	UUID prefabLinkUUID = so->GetPrefabLink();
-	HPrefab prefabLink = static_resource_cast<Prefab>(GetResources().LoadFromUuid(prefabLinkUUID, false, ResourceLoadFlag::None));
+	HPrefab prefabLink = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(prefabLinkUUID, false, ResourceLoadFlag::None));
 
 	if(!prefabLink.IsLoaded(false))
 		return;
@@ -289,7 +289,7 @@ void PrefabUtility::RevertToPrefab(const HSceneObject& so)
 	// Save IDs, destroy original, create new, restore IDs
 	::impl::SceneObjectProxy soProxy;
 	UnorderedMap<u32, ::impl::LinkedInstanceData> linkedInstanceData;
-	::impl::recordInstanceData(so, soProxy, linkedInstanceData);
+	::impl::RecordInstanceData(so, soProxy, linkedInstanceData);
 
 	HSceneObject parent = so->GetParent();
 
@@ -303,7 +303,7 @@ void PrefabUtility::RevertToPrefab(const HSceneObject& so)
 	newInstance->mParent->RemoveChild(newInstance);
 	newInstance->mParent = parent;
 
-	::impl::restoreLinkedInstanceData(newInstance, soProxy, linkedInstanceData);
+	::impl::RestoreLinkedInstanceData(newInstance, soProxy, linkedInstanceData);
 }
 
 void PrefabUtility::UpdateFromPrefab(const HSceneObject& so)
@@ -369,14 +369,14 @@ void PrefabUtility::UpdateFromPrefab(const HSceneObject& so)
 	for(auto iter = prefabInstanceRoots.rbegin(); iter != prefabInstanceRoots.rend(); ++iter)
 	{
 		HSceneObject current = *iter;
-		HPrefab prefabLink = static_resource_cast<Prefab>(GetResources().LoadFromUuid(current->mPrefabLinkUUID, false, ResourceLoadFlag::None));
+		HPrefab prefabLink = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(current->mPrefabLinkUUID, false, ResourceLoadFlag::None));
 
 		if(prefabLink.IsLoaded(false) && prefabLink->GetHash() != current->mPrefabHash)
 		{
 			// Save IDs, destroy original, create new, restore IDs
 			::impl::SceneObjectProxy soProxy;
 			UnorderedMap<u32, ::impl::LinkedInstanceData> linkedInstanceData;
-			::impl::recordInstanceData(current, soProxy, linkedInstanceData);
+			::impl::RecordInstanceData(current, soProxy, linkedInstanceData);
 
 			HSceneObject parent = current->GetParent();
 			SPtr<PrefabDiff> prefabDiff = current->mPrefabDiff;
@@ -390,8 +390,8 @@ void PrefabUtility::UpdateFromPrefab(const HSceneObject& so)
 			// at once (i.e. during the ::CloneInternal() call above) will share GameObjectHandleData so we can simply replace
 			// to what they point to, affecting all of the handles to that object. (In another words, we can modify the
 			// new handles at this point, but old ones must keep referencing what they already were.)
-			::impl::restoreLinkedInstanceData(newInstance, soProxy, linkedInstanceData);
-			::impl::restoreUnlinkedInstanceData(newInstance, soProxy);
+			::impl::RestoreLinkedInstanceData(newInstance, soProxy, linkedInstanceData);
+			::impl::RestoreUnlinkedInstanceData(newInstance, soProxy);
 
 			newPrefabInstanceData.push_back({ newInstance, parent, prefabDiff, newInstance->GetLinkId() });
 		}
@@ -553,7 +553,7 @@ void PrefabUtility::RecordPrefabDiff(const HSceneObject& sceneObject)
 		{
 			current->mPrefabDiff = nullptr;
 
-			HPrefab prefabLink = static_resource_cast<Prefab>(GetResources().LoadFromUuid(current->mPrefabLinkUUID, false, ResourceLoadFlag::None));
+			HPrefab prefabLink = B3DStaticResourceCast<Prefab>(GetResources().LoadFromUuid(current->mPrefabLinkUUID, false, ResourceLoadFlag::None));
 			if(prefabLink.IsLoaded(false))
 				current->mPrefabDiff = PrefabDiff::Create(prefabLink->GetRootInternal(), current->GetHandle());
 		}

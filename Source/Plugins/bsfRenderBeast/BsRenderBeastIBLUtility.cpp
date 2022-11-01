@@ -306,7 +306,7 @@ IrradianceReduceSHMat::IrradianceReduceSHMat()
 	mParamBuffer = gIrradianceReduceSHParamDef.CreateBuffer();
 
 	mParams->SetParamBlockBuffer("Params", mParamBuffer);
-	mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "GetInput", mInputBuffer);
+	mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gInput", mInputBuffer);
 	mParams->GetLoadStoreTextureParam(GPT_COMPUTE_PROGRAM, "gOutput", mOutputTexture);
 }
 
@@ -444,7 +444,7 @@ void RenderBeastIBLUtility::FilterCubemapForSpecular(const SPtr<Texture>& cubema
 	rapi.SetRenderTarget(nullptr);
 }
 
-bool supportsComputeSH()
+bool SupportsComputeSh()
 {
 	return GetRenderBeast()->GetFeatureSet() == RenderBeastFeatureSet::Desktop;
 }
@@ -452,7 +452,7 @@ bool supportsComputeSH()
 void RenderBeastIBLUtility::FilterCubemapForIrradiance(const SPtr<Texture>& cubemap, const SPtr<Texture>& output) const
 {
 	SPtr<Texture> coeffTexture;
-	if(supportsComputeSH())
+	if(SupportsComputeSh())
 	{
 		IrradianceComputeSHMat* shCompute = IrradianceComputeSHMat::GetVariation(5);
 		IrradianceReduceSHMat* shReduce = IrradianceReduceSHMat::GetVariation(5);
@@ -489,7 +489,7 @@ void RenderBeastIBLUtility::FilterCubemapForIrradiance(const SPtr<Texture>& cube
 
 void RenderBeastIBLUtility::FilterCubemapForIrradiance(const SPtr<Texture>& cubemap, const SPtr<Texture>& output, u32 outputIdx) const
 {
-	if(supportsComputeSH())
+	if(SupportsComputeSh())
 	{
 		IrradianceComputeSHMat* shCompute = IrradianceComputeSHMat::GetVariation(3);
 		IrradianceReduceSHMat* shReduce = IrradianceReduceSHMat::GetVariation(3);

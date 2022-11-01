@@ -235,7 +235,7 @@ T UTF32To16(char32_t input, T output, u32 maxElems, char16_t invalidChar = 0)
 }
 
 template <typename T>
-T wideToUTF32(T begin, T end, char32_t& output, char32_t invalidChar = 0)
+T WideToUtF32(T begin, T end, char32_t& output, char32_t invalidChar = 0)
 {
 	if(sizeof(wchar_t) == 4) // Assuming UTF-32 (i.e. Unix)
 	{
@@ -257,7 +257,7 @@ char32_t ANSIToUTF32(char input, const std::locale& locale = std::locale(""))
 	wchar_t wideChar = facet.widen(input);
 
 	char32_t output;
-	wideToUTF32(&wideChar, &wideChar + 1, output);
+	WideToUtF32(&wideChar, &wideChar + 1, output);
 
 	return output;
 }
@@ -330,7 +330,7 @@ String UTF8::FromWide(const WString& input)
 	while(iter != input.end())
 	{
 		char32_t u32char;
-		iter = wideToUTF32(iter, input.end(), u32char);
+		iter = WideToUtF32(iter, input.end(), u32char);
 		UTF32To8(u32char, backInserter, 4);
 	}
 

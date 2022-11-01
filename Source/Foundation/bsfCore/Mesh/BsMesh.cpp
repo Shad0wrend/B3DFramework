@@ -185,25 +185,25 @@ HMesh Mesh::Create(u32 numVertices, u32 numIndices, const SPtr<VertexDataDesc>& 
 	desc.IndexType = indexType;
 
 	SPtr<Mesh> meshPtr = CreatePtrInternal(desc);
-	return static_resource_cast<Mesh>(GetResources().CreateResourceHandleInternal(meshPtr));
+	return B3DStaticResourceCast<Mesh>(GetResources().CreateResourceHandleInternal(meshPtr));
 }
 
 HMesh Mesh::Create(const MESH_DESC& desc)
 {
 	SPtr<Mesh> meshPtr = CreatePtrInternal(desc);
-	return static_resource_cast<Mesh>(GetResources().CreateResourceHandleInternal(meshPtr));
+	return B3DStaticResourceCast<Mesh>(GetResources().CreateResourceHandleInternal(meshPtr));
 }
 
 HMesh Mesh::Create(const SPtr<MeshData>& initialMeshData, const MESH_DESC& desc)
 {
 	SPtr<Mesh> meshPtr = CreatePtrInternal(initialMeshData, desc);
-	return static_resource_cast<Mesh>(GetResources().CreateResourceHandleInternal(meshPtr));
+	return B3DStaticResourceCast<Mesh>(GetResources().CreateResourceHandleInternal(meshPtr));
 }
 
 HMesh Mesh::Create(const SPtr<MeshData>& initialMeshData, int usage, DrawOperationType drawOp)
 {
 	SPtr<Mesh> meshPtr = CreatePtrInternal(initialMeshData, usage, drawOp);
-	return static_resource_cast<Mesh>(GetResources().CreateResourceHandleInternal(meshPtr));
+	return B3DStaticResourceCast<Mesh>(GetResources().CreateResourceHandleInternal(meshPtr));
 }
 
 SPtr<Mesh> Mesh::CreatePtrInternal(const MESH_DESC& desc)

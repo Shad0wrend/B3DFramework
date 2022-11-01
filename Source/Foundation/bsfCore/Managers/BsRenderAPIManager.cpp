@@ -29,7 +29,7 @@ SPtr<RenderWindow> RenderAPIManager::Initialize(const String& pluginFilename, RE
 	{
 		typedef const char* (*GetPluginNameFunc)();
 
-		GetPluginNameFunc getPluginNameFunc = (GetPluginNameFunc)loadedLibrary->GetSymbol("getPluginName");
+		GetPluginNameFunc getPluginNameFunc = (GetPluginNameFunc)loadedLibrary->GetSymbol("GetPluginName");
 		name = getPluginNameFunc();
 	}
 

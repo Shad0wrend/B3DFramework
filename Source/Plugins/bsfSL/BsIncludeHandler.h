@@ -5,7 +5,7 @@
 
 #include "BsASTFX.h"
 
-char* includePush(ParseState* state, const char* filename, int line, int column, int* size);
-void includePop(ParseState* state);
+char* IncludePush(ParseState* state, const char* filename, int line, int column, int* size);
+void IncludePop(ParseState* state);
 
 #endif

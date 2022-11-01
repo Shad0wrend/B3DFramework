@@ -183,7 +183,7 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 
 				if(B3DRTTIIsOfType<Shader>(outputRes.Get()))
 				{
-					HShader shader = static_resource_cast<Shader>(outputRes);
+					HShader shader = B3DStaticResourceCast<Shader>(outputRes);
 					if(!VerifyAndReportShader(shader))
 					{
 						iter = queuedOps.erase(iter);
@@ -220,7 +220,7 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 
 				if(mode == AssetType::Sprite)
 				{
-					HTexture tex = static_resource_cast<Texture>(outputRes);
+					HTexture tex = B3DStaticResourceCast<Texture>(outputRes);
 					std::string spriteUUID = entry["SpriteUUID"];
 
 					bool isAnimated = entry.find("Animation") != entry.end();
@@ -243,7 +243,7 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 				if(isIcon)
 				{
 					IconData iconData;
-					iconData.Source = static_resource_cast<Texture>(outputRes);
+					iconData.Source = B3DStaticResourceCast<Texture>(outputRes);
 					iconData.Name = name.c_str();
 
 					if(mode == AssetType::Normal)
@@ -289,7 +289,7 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 		Resources::Instance().Save(texture, path, true, compress);
 		manifest->RegisterResource(texture.GetUuid(), path);
 
-		return static_resource_cast<Texture>(texture);
+		return B3DStaticResourceCast<Texture>(texture);
 	};
 
 	for(u32 i = 0; i < (u32)iconsToGenerate.size(); i++)
@@ -354,7 +354,7 @@ void BuiltinResourcesHelper::ImportFont(const Path& inputFile, const String& out
 		u32 pageIdx = 0;
 		for(auto tex : fontData->TexturePages)
 		{
-			texPageOutputPath.SetFilename(fontName + u8"_" + toString(size) + u8"_texpage_" + toString(pageIdx) + u8".asset");
+			texPageOutputPath.SetFilename(fontName + u8"_" + ToString(size) + u8"_texpage_" + ToString(pageIdx) + u8".asset");
 
 			Resources::Instance().Save(tex, texPageOutputPath, true);
 			manifest->RegisterResource(tex.GetUuid(), texPageOutputPath);

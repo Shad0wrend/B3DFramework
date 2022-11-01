@@ -68,7 +68,7 @@ namespace bs
 		template <class T>
 		ResourceHandle<T> Import(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr, const UUID& UUID = UUID::kEmpty)
 		{
-			return static_resource_cast<T>(Import(inputFilePath, importOptions, UUID));
+			return B3DStaticResourceCast<T>(Import(inputFilePath, importOptions, UUID));
 		}
 
 		/**

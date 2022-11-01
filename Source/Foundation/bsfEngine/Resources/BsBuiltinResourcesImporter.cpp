@@ -30,7 +30,7 @@ static Path sOutputFolder;
 static Path sManifestPath;
 static SPtr<ResourceManifest> sManifest;
 
-void processAssets(bool, bool, time_t);
+void ProcessAssets(bool, bool, time_t);
 
 int main(int argc, char* argv[])
 {
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 			sManifest = ResourceManifest::Create("BuiltinResources");
 			GetResources().RegisterResourceManifest(sManifest);
 
-			processAssets(generateGenerated, fullReimport, lastUpdateTime);
+			ProcessAssets(generateGenerated, fullReimport, lastUpdateTime);
 			BuiltinResourcesHelper::WriteTimestamp(sOutputFolder + kTimestampName);
 
 			ResourceManifest::Save(sManifest, sManifestPath, sOutputFolder);
@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
 
 using namespace bs;
 
-void generateTextures()
+void GenerateTextures()
 {
 	SPtr<PixelData> blackPixelData = PixelData::Create(2, 2, 1, PF_RGBA8);
 	blackPixelData->SetColorAt(Color::kBlack, 0, 0);
@@ -158,7 +158,7 @@ void generateTextures()
 	saveTexture(normalPath, normalTexture, "afb29163-1ef0-4440-9cfb-c1ebb3b3d452");
 }
 
-void generateMeshes()
+void GenerateMeshes()
 {
 	SPtr<VertexDataDesc> vertexDesc = B3DMakeShared<VertexDataDesc>();
 	vertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
@@ -249,7 +249,7 @@ void generateMeshes()
 	saveMesh(discPath, discMesh, "6f496313-344a-495c-83e8-152e3053c52d");
 }
 
-SPtr<GUISkin> generateGUISkin()
+SPtr<GUISkin> GenerateGuiSkin()
 {
 	using nlohmann::json;
 
@@ -273,15 +273,15 @@ SPtr<GUISkin> generateGUISkin()
 	return skin;
 }
 
-void processAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTime)
+void ProcessAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTime)
 {
 	using nlohmann::json;
 
 	// Hidden dependency: Textures need to be generated before shaders as they may use the default textures
 	if(generateGenerated)
 	{
-		generateTextures();
-		generateMeshes();
+		GenerateTextures();
+		GenerateMeshes();
 	}
 
 	const Path dataListsFilePath = sInputFolder + kDataListJson;
@@ -736,7 +736,7 @@ void processAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTi
 		String fileName(name.data(), name.size());
 		UUID UUID(String(uuidStr.data(), uuidStr.size()));
 
-		const SPtr<GUISkin> skin = generateGUISkin();
+		const SPtr<GUISkin> skin = GenerateGuiSkin();
 		const Path outputPath = sOutputFolder + (fileName + u8".asset");
 
 		HResource skinResource = GetResources().CreateResourceHandleInternal(skin, UUID);

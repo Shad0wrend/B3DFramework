@@ -208,7 +208,7 @@ void CCharacterController::TriggerOnColliderHit(const ControllerColliderCollisio
 	if(hit.ColliderRaw)
 	{
 		const auto collider = (CCollider*)hit.ColliderRaw->GetOwnerInternal(PhysicsOwnerType::Component);
-		hit.Collider = static_object_cast<CCollider>(collider->GetHandle());
+		hit.Collider = B3DStaticGameObjectCast<CCollider>(collider->GetHandle());
 	}
 
 	OnColliderHit(hit);
@@ -222,7 +222,7 @@ void CCharacterController::TriggerOnControllerHit(const ControllerControllerColl
 	if(hit.ControllerRaw)
 	{
 		const auto controller = (CCharacterController*)hit.ControllerRaw->GetOwnerInternal(PhysicsOwnerType::Component);
-		hit.Controller = static_object_cast<CCharacterController>(controller->GetHandle());
+		hit.Controller = B3DStaticGameObjectCast<CCharacterController>(controller->GetHandle());
 	}
 
 	OnControllerHit(hit);

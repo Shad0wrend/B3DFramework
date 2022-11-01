@@ -22,7 +22,7 @@ SPtr<RenderWindow> D3D11RenderWindowManager::CreateImpl(RENDER_WINDOW_DESC& desc
 	{
 		u64 hWnd;
 		parentWindow->GetCustomAttribute("WINDOW", &hWnd);
-		desc.PlatformSpecific["parentWindowHandle"] = toString(hWnd);
+		desc.PlatformSpecific["parentWindowHandle"] = ToString(hWnd);
 	}
 
 	// Create the window

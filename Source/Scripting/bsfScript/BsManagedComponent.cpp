@@ -331,7 +331,7 @@ void ManagedComponent::InstantiateInternal()
 		{
 			if(component.Get() == this)
 			{
-				componentHandle = static_object_cast<ManagedComponent>(component);
+				componentHandle = B3DStaticGameObjectCast<ManagedComponent>(component);
 				break;
 			}
 		}

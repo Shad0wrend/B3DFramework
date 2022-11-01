@@ -145,7 +145,7 @@ void CCollider::SetRigidbody(const HRigidbody& rigidbody, bool internal)
 	if(mInternal != nullptr && !internal)
 	{
 		if(mParent != nullptr)
-			mParent->RemoveCollider(static_object_cast<CCollider>(mThisHandle));
+			mParent->RemoveCollider(B3DStaticGameObjectCast<CCollider>(mThisHandle));
 
 		Rigidbody* rigidBodyPtr = nullptr;
 
@@ -155,7 +155,7 @@ void CCollider::SetRigidbody(const HRigidbody& rigidbody, bool internal)
 		mInternal->SetRigidbody(rigidBodyPtr);
 
 		if(rigidbody != nullptr)
-			rigidbody->AddCollider(static_object_cast<CCollider>(mThisHandle));
+			rigidbody->AddCollider(B3DStaticGameObjectCast<CCollider>(mThisHandle));
 	}
 
 	mParent = rigidbody;
@@ -206,7 +206,7 @@ void CCollider::RestoreInternal()
 void CCollider::DestroyInternal()
 {
 	if(mParent != nullptr)
-		mParent->RemoveCollider(static_object_cast<CCollider>(mThisHandle));
+		mParent->RemoveCollider(B3DStaticGameObjectCast<CCollider>(mThisHandle));
 
 	mParent = nullptr;
 
@@ -309,12 +309,12 @@ void CCollider::TriggerOnCollisionBegin(const CollisionDataRaw& data)
 {
 	CollisionData hit;
 	hit.ContactPoints = data.ContactPoints;
-	hit.Collider[0] = static_object_cast<CCollider>(mThisHandle);
+	hit.Collider[0] = B3DStaticGameObjectCast<CCollider>(mThisHandle);
 
 	if(data.Colliders[1] != nullptr)
 	{
 		CCollider* other = (CCollider*)data.Colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
-		hit.Collider[1] = static_object_cast<CCollider>(other->GetHandle());
+		hit.Collider[1] = B3DStaticGameObjectCast<CCollider>(other->GetHandle());
 	}
 
 	OnCollisionBegin(hit);
@@ -324,12 +324,12 @@ void CCollider::TriggerOnCollisionStay(const CollisionDataRaw& data)
 {
 	CollisionData hit;
 	hit.ContactPoints = data.ContactPoints;
-	hit.Collider[0] = static_object_cast<CCollider>(mThisHandle);
+	hit.Collider[0] = B3DStaticGameObjectCast<CCollider>(mThisHandle);
 
 	if(data.Colliders[1] != nullptr)
 	{
 		CCollider* other = (CCollider*)data.Colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
-		hit.Collider[1] = static_object_cast<CCollider>(other->GetHandle());
+		hit.Collider[1] = B3DStaticGameObjectCast<CCollider>(other->GetHandle());
 	}
 
 	OnCollisionStay(hit);
@@ -339,12 +339,12 @@ void CCollider::TriggerOnCollisionEnd(const CollisionDataRaw& data)
 {
 	CollisionData hit;
 	hit.ContactPoints = data.ContactPoints;
-	hit.Collider[0] = static_object_cast<CCollider>(mThisHandle);
+	hit.Collider[0] = B3DStaticGameObjectCast<CCollider>(mThisHandle);
 
 	if(data.Colliders[1] != nullptr)
 	{
 		CCollider* other = (CCollider*)data.Colliders[1]->GetOwnerInternal(PhysicsOwnerType::Component);
-		hit.Collider[1] = static_object_cast<CCollider>(other->GetHandle());
+		hit.Collider[1] = B3DStaticGameObjectCast<CCollider>(other->GetHandle());
 	}
 
 	OnCollisionEnd(hit);

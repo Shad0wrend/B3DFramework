@@ -29,10 +29,10 @@ namespace bs
 	}
 
 	/** Generates an MD5 hash string for the provided source string. */
-	String BS_UTILITY_EXPORT md5(const WString& source);
+	String BS_UTILITY_EXPORT Md5(const WString& source);
 
 	/**	Generates an MD5 hash string for the provided source string. */
-	String BS_UTILITY_EXPORT md5(const String& source);
+	String BS_UTILITY_EXPORT Md5(const String& source);
 
 	/** Sets contents of a struct to zero. */
 	template <class T>

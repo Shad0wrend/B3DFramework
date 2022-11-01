@@ -126,7 +126,7 @@ const TBuiltInResource DefaultTBuiltInResource = {
 	}
 };
 
-VertexElementType mapGLSLangToVertexElemType(const glslang::TType& type)
+static VertexElementType MapGLSLangToVertexElemType(const glslang::TType& type)
 {
 	if(type.isVector())
 	{
@@ -177,7 +177,7 @@ VertexElementType mapGLSLangToVertexElemType(const glslang::TType& type)
 	return VET_UNKNOWN;
 }
 
-GpuParamDataType mapGLSLangToGpuParamDataType(const glslang::TType& type)
+static GpuParamDataType MapGLSLangToGpuParamDataType(const glslang::TType& type)
 {
 	if(type.getBasicType() == glslang::EbtStruct)
 		return GPDT_STRUCT;
@@ -271,7 +271,7 @@ GpuParamDataType mapGLSLangToGpuParamDataType(const glslang::TType& type)
 	return GPDT_UNKNOWN;
 }
 
-GpuBufferFormat mapSamplerBasicType(const glslang::TSampler& sampler)
+static GpuBufferFormat MapSamplerBasicType(const glslang::TSampler& sampler)
 {
 	u32 vectorSize = sampler.vectorSize;
 	switch(sampler.type)
@@ -367,7 +367,7 @@ struct GLSLAttribute
 			return -1;
 
 		u32 length = (u32)mName.size();
-		return parsei32(name.substr(length));
+		return Parsei32(name.substr(length));
 	}
 
 	/**	Returns the semantic of this attribute. */
@@ -378,7 +378,7 @@ private:
 	VertexElementSemantic mSemantic;
 };
 
-bool attribNameToElementSemantic(const String& name, VertexElementSemantic& semantic, u16& index)
+static bool AttributeNameToElementSemantic(const String& name, VertexElementSemantic& semantic, u16& index)
 {
 	static GLSLAttribute attributes[] = {
 		GLSLAttribute("bs_position", VES_POSITION),
@@ -415,7 +415,7 @@ bool attribNameToElementSemantic(const String& name, VertexElementSemantic& sema
 	return false;
 }
 
-bool parseVertexAttributes(const glslang::TProgram* program, Vector<VertexElement>& elementList, String& log)
+static bool ParseVertexAttributes(const glslang::TProgram* program, Vector<VertexElement>& elementList, String& log)
 {
 	int numAttributes = program->getNumLiveAttributes();
 	for(int i = 0; i < numAttributes; i++)
@@ -435,9 +435,9 @@ bool parseVertexAttributes(const glslang::TProgram* program, Vector<VertexElemen
 
 		VertexElementSemantic semantic = VES_POSITION;
 		u16 index = 0;
-		if(attribNameToElementSemantic(attribName, semantic, index))
+		if(AttributeNameToElementSemantic(attribName, semantic, index))
 		{
-			VertexElementType type = mapGLSLangToVertexElemType(*ttype);
+			VertexElementType type = MapGLSLangToVertexElemType(*ttype);
 			if(type == VET_UNKNOWN)
 				BS_LOG(Error, RenderBackend, "Cannot determine vertex input attribute type for attribute: {0}", attribName);
 
@@ -456,7 +456,7 @@ bool parseVertexAttributes(const glslang::TProgram* program, Vector<VertexElemen
 	return true;
 }
 
-void parseStruct(const glslang::TTypeList* typeList, u32& size)
+static void ParseStruct(const glslang::TTypeList* typeList, u32& size)
 {
 	for(auto iter = typeList->begin(); iter != typeList->end(); ++iter)
 	{
@@ -465,7 +465,7 @@ void parseStruct(const glslang::TTypeList* typeList, u32& size)
 		if(ttype->getBasicType() == glslang::EbtStruct)
 		{
 			const glslang::TTypeList* childTypeList = ttype->getStruct();
-			parseStruct(childTypeList, size);
+			ParseStruct(childTypeList, size);
 		}
 		else
 		{
@@ -473,7 +473,7 @@ void parseStruct(const glslang::TTypeList* typeList, u32& size)
 			if(ttype->isArray())
 				arraySize = (u32)ttype->getCumulativeArraySize();
 
-			GpuParamDataType paramType = mapGLSLangToGpuParamDataType(*ttype);
+			GpuParamDataType paramType = MapGLSLangToGpuParamDataType(*ttype);
 			if(paramType == GPDT_UNKNOWN)
 			{
 				BS_LOG(Warning, RenderBackend, "Cannot determine type for uniform inside a struct.");
@@ -486,7 +486,7 @@ void parseStruct(const glslang::TTypeList* typeList, u32& size)
 	}
 }
 
-bool parseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, String& log)
+static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, String& log)
 {
 	// Parse individual uniforms
 	struct UniformInfo
@@ -524,7 +524,7 @@ bool parseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, String&
 			param.Slot = qualifier.layoutBinding;
 			param.Set = qualifier.layoutSet;
 			param.Type = GPOT_UNKNOWN;
-			param.ElementType = mapSamplerBasicType(sampler);
+			param.ElementType = MapSamplerBasicType(sampler);
 
 			if(param.Set == glslang::TQualifier::layoutSetEnd)
 				param.Set = 0;
@@ -672,14 +672,14 @@ bool parseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, String&
 					paramType = GPDT_STRUCT;
 
 					const glslang::TTypeList* paramTypeList = paramTType->getStruct();
-					parseStruct(paramTypeList, elementSize);
+					ParseStruct(paramTypeList, elementSize);
 
 					// Struct alignment always a multiple of vec4
 					arrayStride = Math::DivideAndRoundUp(elementSize, 4U) * 4;
 				}
 				else
 				{
-					paramType = mapGLSLangToGpuParamDataType(*paramTType);
+					paramType = MapGLSLangToGpuParamDataType(*paramTType);
 				}
 
 				if(paramType == GPDT_UNKNOWN)
@@ -831,13 +831,13 @@ SPtr<GpuProgramBytecode> GLSLToSPIRV::Convert(const GPU_PROGRAM_DESC& desc)
 
 	// Parse uniforms
 	bytecode->ParamDesc = B3DMakeShared<GpuParamDesc>();
-	if(!parseUniforms(program, *bytecode->ParamDesc, bytecode->Messages))
+	if(!ParseUniforms(program, *bytecode->ParamDesc, bytecode->Messages))
 		goto cleanup;
 
 	// If vertex program, retrieve information about vertex inputs
 	if(desc.Type == GPT_VERTEX_PROGRAM)
 	{
-		if(!parseVertexAttributes(program, bytecode->VertexInput, bytecode->Messages))
+		if(!ParseVertexAttributes(program, bytecode->VertexInput, bytecode->Messages))
 			goto cleanup;
 	}
 

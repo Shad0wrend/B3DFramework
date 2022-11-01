@@ -215,13 +215,13 @@ u64 Importer::WaitForAsync(SpecificImporter* importer)
 }
 
 template <class ReturnType>
-void doImport(TAsyncOp<ReturnType> op, SpecificImporter* importer, const Path& filePath, const UUID& uuid, const SPtr<const ImportOptions>& importOptions)
+void DoImport(TAsyncOp<ReturnType> op, SpecificImporter* importer, const Path& filePath, const UUID& uuid, const SPtr<const ImportOptions>& importOptions)
 {
 	assert(false && "Invalid template instantiation called.");
 }
 
 template <>
-void doImport(TAsyncOp<HResource> op, SpecificImporter* importer, const Path& filePath, const UUID& uuid, const SPtr<const ImportOptions>& importOptions)
+void DoImport(TAsyncOp<HResource> op, SpecificImporter* importer, const Path& filePath, const UUID& uuid, const SPtr<const ImportOptions>& importOptions)
 {
 	SPtr<Resource> resourcePtr = importer->Import(filePath, importOptions);
 
@@ -235,7 +235,7 @@ void doImport(TAsyncOp<HResource> op, SpecificImporter* importer, const Path& fi
 }
 
 template <>
-void doImport(TAsyncOp<SPtr<MultiResource>> op, SpecificImporter* importer, const Path& filePath, const UUID& uuid, const SPtr<const ImportOptions>& importOptions)
+void DoImport(TAsyncOp<SPtr<MultiResource>> op, SpecificImporter* importer, const Path& filePath, const UUID& uuid, const SPtr<const ImportOptions>& importOptions)
 {
 	Vector<SubResourceRaw> rawSubresources = importer->ImportAll(filePath, importOptions);
 
@@ -272,7 +272,7 @@ void Importer::QueueForImport(SpecificImporter* importer, const Path& inputFileP
 		"ImportWorker",
 		[this, importer, inputFilePath, importOptions, uuid, taskId, op]
 		{
-			doImport(op, importer, inputFilePath, uuid, importOptions);
+			DoImport(op, importer, inputFilePath, uuid, importOptions);
 
 			// Clear itself from the task list so we don't unnecessarily keep a reference. But first make sure we are the
 			// last task by comparing the ids.

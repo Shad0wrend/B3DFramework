@@ -78,13 +78,13 @@ void ScriptCCollider::OnCollisionEnd(const CollisionData& p0)
 
 void ScriptCCollider::InternalSetIsTrigger(ScriptCColliderBase* thisPtr, bool value)
 {
-	static_object_cast<CCollider>(thisPtr->GetComponent())->SetIsTrigger(value);
+	B3DStaticGameObjectCast<CCollider>(thisPtr->GetComponent())->SetIsTrigger(value);
 }
 
 bool ScriptCCollider::InternalGetIsTrigger(ScriptCColliderBase* thisPtr)
 {
 	bool tmp__output;
-	tmp__output = static_object_cast<CCollider>(thisPtr->GetComponent())->GetIsTrigger();
+	tmp__output = B3DStaticGameObjectCast<CCollider>(thisPtr->GetComponent())->GetIsTrigger();
 
 	bool __output;
 	__output = tmp__output;
@@ -94,13 +94,13 @@ bool ScriptCCollider::InternalGetIsTrigger(ScriptCColliderBase* thisPtr)
 
 void ScriptCCollider::InternalSetMass(ScriptCColliderBase* thisPtr, float mass)
 {
-	static_object_cast<CCollider>(thisPtr->GetComponent())->SetMass(mass);
+	B3DStaticGameObjectCast<CCollider>(thisPtr->GetComponent())->SetMass(mass);
 }
 
 float ScriptCCollider::InternalGetMass(ScriptCColliderBase* thisPtr)
 {
 	float tmp__output;
-	tmp__output = static_object_cast<CCollider>(thisPtr->GetComponent())->GetMass();
+	tmp__output = B3DStaticGameObjectCast<CCollider>(thisPtr->GetComponent())->GetMass();
 
 	float __output;
 	__output = tmp__output;
@@ -114,14 +114,14 @@ void ScriptCCollider::InternalSetMaterial(ScriptCColliderBase* thisPtr, MonoObje
 	ScriptRRefBase* scriptmaterial;
 	scriptmaterial = ScriptRRefBase::ToNative(material);
 	if(scriptmaterial != nullptr)
-		tmpmaterial = static_resource_cast<PhysicsMaterial>(scriptmaterial->GetHandle());
-	static_object_cast<CCollider>(thisPtr->GetComponent())->SetMaterial(tmpmaterial);
+		tmpmaterial = B3DStaticResourceCast<PhysicsMaterial>(scriptmaterial->GetHandle());
+	B3DStaticGameObjectCast<CCollider>(thisPtr->GetComponent())->SetMaterial(tmpmaterial);
 }
 
 MonoObject* ScriptCCollider::InternalGetMaterial(ScriptCColliderBase* thisPtr)
 {
 	ResourceHandle<PhysicsMaterial> tmp__output;
-	tmp__output = static_object_cast<CCollider>(thisPtr->GetComponent())->GetMaterial();
+	tmp__output = B3DStaticGameObjectCast<CCollider>(thisPtr->GetComponent())->GetMaterial();
 
 	MonoObject* __output;
 	ScriptRRefBase* script__output;
@@ -136,13 +136,13 @@ MonoObject* ScriptCCollider::InternalGetMaterial(ScriptCColliderBase* thisPtr)
 
 void ScriptCCollider::InternalSetContactOffset(ScriptCColliderBase* thisPtr, float value)
 {
-	static_object_cast<CCollider>(thisPtr->GetComponent())->SetContactOffset(value);
+	B3DStaticGameObjectCast<CCollider>(thisPtr->GetComponent())->SetContactOffset(value);
 }
 
 float ScriptCCollider::InternalGetContactOffset(ScriptCColliderBase* thisPtr)
 {
 	float tmp__output;
-	tmp__output = static_object_cast<CCollider>(thisPtr->GetComponent())->GetContactOffset();
+	tmp__output = B3DStaticGameObjectCast<CCollider>(thisPtr->GetComponent())->GetContactOffset();
 
 	float __output;
 	__output = tmp__output;
@@ -152,13 +152,13 @@ float ScriptCCollider::InternalGetContactOffset(ScriptCColliderBase* thisPtr)
 
 void ScriptCCollider::InternalSetRestOffset(ScriptCColliderBase* thisPtr, float value)
 {
-	static_object_cast<CCollider>(thisPtr->GetComponent())->SetRestOffset(value);
+	B3DStaticGameObjectCast<CCollider>(thisPtr->GetComponent())->SetRestOffset(value);
 }
 
 float ScriptCCollider::InternalGetRestOffset(ScriptCColliderBase* thisPtr)
 {
 	float tmp__output;
-	tmp__output = static_object_cast<CCollider>(thisPtr->GetComponent())->GetRestOffset();
+	tmp__output = B3DStaticGameObjectCast<CCollider>(thisPtr->GetComponent())->GetRestOffset();
 
 	float __output;
 	__output = tmp__output;
@@ -168,13 +168,13 @@ float ScriptCCollider::InternalGetRestOffset(ScriptCColliderBase* thisPtr)
 
 void ScriptCCollider::InternalSetLayer(ScriptCColliderBase* thisPtr, uint64_t layer)
 {
-	static_object_cast<CCollider>(thisPtr->GetComponent())->SetLayer(layer);
+	B3DStaticGameObjectCast<CCollider>(thisPtr->GetComponent())->SetLayer(layer);
 }
 
 uint64_t ScriptCCollider::InternalGetLayer(ScriptCColliderBase* thisPtr)
 {
 	uint64_t tmp__output;
-	tmp__output = static_object_cast<CCollider>(thisPtr->GetComponent())->GetLayer();
+	tmp__output = B3DStaticGameObjectCast<CCollider>(thisPtr->GetComponent())->GetLayer();
 
 	uint64_t __output;
 	__output = tmp__output;
@@ -184,13 +184,13 @@ uint64_t ScriptCCollider::InternalGetLayer(ScriptCColliderBase* thisPtr)
 
 void ScriptCCollider::InternalSetCollisionReportMode(ScriptCColliderBase* thisPtr, CollisionReportMode mode)
 {
-	static_object_cast<CCollider>(thisPtr->GetComponent())->SetCollisionReportMode(mode);
+	B3DStaticGameObjectCast<CCollider>(thisPtr->GetComponent())->SetCollisionReportMode(mode);
 }
 
 CollisionReportMode ScriptCCollider::InternalGetCollisionReportMode(ScriptCColliderBase* thisPtr)
 {
 	CollisionReportMode tmp__output;
-	tmp__output = static_object_cast<CCollider>(thisPtr->GetComponent())->GetCollisionReportMode();
+	tmp__output = B3DStaticGameObjectCast<CCollider>(thisPtr->GetComponent())->GetCollisionReportMode();
 
 	CollisionReportMode __output;
 	__output = tmp__output;

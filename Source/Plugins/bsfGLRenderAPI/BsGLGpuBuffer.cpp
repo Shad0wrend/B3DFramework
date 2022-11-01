@@ -8,7 +8,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-static void deleteBuffer(HardwareBuffer* buffer)
+static void DeleteBuffer(HardwareBuffer* buffer)
 {
 	B3DPoolDelete(static_cast<GLHardwareBuffer*>(buffer));
 }
@@ -38,7 +38,7 @@ GLGpuBuffer::~GLGpuBuffer()
 
 void GLGpuBuffer::Initialize()
 {
-	mBufferDeleter = &deleteBuffer;
+	mBufferDeleter = &DeleteBuffer;
 
 	// Create a buffer if not wrapping an external one
 	if(!mBuffer)

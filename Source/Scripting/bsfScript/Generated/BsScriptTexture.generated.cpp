@@ -59,7 +59,7 @@ MonoObject* ScriptTexture::InternalReadData(ScriptTexture* thisPtr, uint32_t fac
 	MonoObject* __output;
 	auto convertCallback = [](const Any& returnVal)
 	{
-		SPtr<PixelData> nativeObj = any_cast<SPtr<PixelData>>(returnVal);
+		SPtr<PixelData> nativeObj = AnyCast<SPtr<PixelData>>(returnVal);
 		MonoObject* monoObj;
 		monoObj = ScriptPixelData::Create(nativeObj);
 		return monoObj;

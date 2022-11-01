@@ -206,7 +206,7 @@ void GUIListBox::OpenListBox()
 	u32 i = 0;
 	for(auto& elem : mElements)
 	{
-		String identifier = toString(i);
+		String identifier = ToString(i);
 		desc.DropDownData.Entries.push_back(GUIDropDownDataEntry::Button(identifier, std::bind(&GUIListBox::ElementSelected, this, i)));
 		desc.DropDownData.LocalizedNames[identifier] = elem;
 		i++;

@@ -75,7 +75,7 @@ void ScriptParticleVectorFieldSettings::InternalSetVectorField(ScriptParticleVec
 	ScriptRRefBase* scriptvalue;
 	scriptvalue = ScriptRRefBase::ToNative(value);
 	if(scriptvalue != nullptr)
-		tmpvalue = static_resource_cast<VectorField>(scriptvalue->GetHandle());
+		tmpvalue = B3DStaticResourceCast<VectorField>(scriptvalue->GetHandle());
 	thisPtr->GetInternal()->VectorField = tmpvalue;
 }
 

@@ -103,7 +103,7 @@ void LocalizedStringData::UpdateString(const bs::String& _string)
 				{
 					numRemovedChars += numParamChars + 2; // +2 for open and closed brackets
 
-					u32 paramIdx = parseu32(bracketChars.str());
+					u32 paramIdx = Parseu32(bracketChars.str());
 					paramOffsets.push_back(ParamOffset(paramIdx, i + 1 - numRemovedChars));
 				}
 				else
@@ -270,7 +270,7 @@ SPtr<LocalizedStringData> StringTable::GetStringData(const String& identifier, L
 
 HStringTable StringTable::Create()
 {
-	return static_resource_cast<StringTable>(GetResources().CreateResourceHandleInternal(CreatePtrInternal()));
+	return B3DStaticResourceCast<StringTable>(GetResources().CreateResourceHandleInternal(CreatePtrInternal()));
 }
 
 SPtr<StringTable> StringTable::CreatePtrInternal()

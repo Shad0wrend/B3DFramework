@@ -30,7 +30,7 @@ namespace bs
 			BS_ASSERT(context != nullptr && B3DRTTIIsOfType<CoreSerializationContext>(context));
 			auto coreContext = static_cast<CoreSerializationContext*>(context);
 
-			GODeserializationData& deserializationData = any_cast_ref<GODeserializationData>(comp->mRTTIData);
+			GODeserializationData& deserializationData = AnyCastRef<GODeserializationData>(comp->mRTTIData);
 
 			// This shouldn't be null during normal deserialization but could be during some other operations, like applying
 			// a binary diff.

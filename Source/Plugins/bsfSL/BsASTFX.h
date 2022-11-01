@@ -307,40 +307,40 @@ struct tagASTFXNode
 
 extern OptionInfo OPTION_LOOKUP[OT_Count];
 
-NodeOptions* nodeOptionsCreate(void* context);
-void nodeOptionDelete(NodeOption* option);
-void nodeOptionsDelete(NodeOptions* options);
-void nodeOptionsResize(void* context, NodeOptions* options, int size);
-void nodeOptionsGrowIfNeeded(void* context, NodeOptions* options);
-void nodeOptionsAdd(void* context, NodeOptions* options, const NodeOption* option);
+NodeOptions* NodeOptionsCreate(void* context);
+void NodeOptionDelete(NodeOption* option);
+void NodeOptionsDelete(NodeOptions* options);
+void NodeOptionsResize(void* context, NodeOptions* options, int size);
+void NodeOptionsGrowIfNeeded(void* context, NodeOptions* options);
+void NodeOptionsAdd(void* context, NodeOptions* options, const NodeOption* option);
 
-ASTFXNode* nodeCreate(void* context, NodeType type);
-void nodeDelete(ASTFXNode* node);
+ASTFXNode* NodeCreate(void* context, NodeType type);
+void NodeDelete(ASTFXNode* node);
 
-void nodePush(ParseState* parseState, ASTFXNode* node);
-void nodePop(ParseState* parseState);
+void NodePush(ParseState* parseState, ASTFXNode* node);
+void NodePop(ParseState* parseState);
 
-void beginCodeBlock(ParseState* parseState, RawCodeType type);
-void appendCodeBlock(ParseState* parseState, RawCodeType type, const char* value, int size);
-int getCodeBlockIndex(ParseState* parseState, RawCodeType type);
+void BeginCodeBlock(ParseState* parseState, RawCodeType type);
+void AppendCodeBlock(ParseState* parseState, RawCodeType type, const char* value, int size);
+int GetCodeBlockIndex(ParseState* parseState, RawCodeType type);
 
-void addDefine(ParseState* parseState, const char* value);
-void addDefineExpr(ParseState* parseState, const char* value);
-int hasDefine(ParseState* parseState, const char* value);
-void removeDefine(ParseState* parseState, const char* value);
+void AddDefine(ParseState* parseState, const char* value);
+void AddDefineExpr(ParseState* parseState, const char* value);
+int HasDefine(ParseState* parseState, const char* value);
+void RemoveDefine(ParseState* parseState, const char* value);
 
-int pushConditionalDef(ParseState* parseState, int state);
-void pushConditional(ParseState* parseState, const char* name);
-void setConditionalOp(ParseState* parseState, ConditionalOp op);
-void setConditionalVal(ParseState* parseState, const char* value);
-int evalConditional(ParseState* parseState);
-int switchConditional(ParseState* parseState);
-void setConditional(ParseState* parseState, const char* name);
-int popConditional(ParseState* parseState);
+int PushConditionalDef(ParseState* parseState, int state);
+void PushConditional(ParseState* parseState, const char* name);
+void SetConditionalOp(ParseState* parseState, ConditionalOp op);
+void SetConditionalVal(ParseState* parseState, const char* value);
+int EvalConditional(ParseState* parseState);
+int SwitchConditional(ParseState* parseState);
+void SetConditional(ParseState* parseState, const char* name);
+int PopConditional(ParseState* parseState);
 
-char* getCurrentFilename(ParseState* parseState);
+char* GetCurrentFilename(ParseState* parseState);
 
-ParseState* parseStateCreate();
-void parseStateDelete(ParseState* parseState);
+ParseState* ParseStateCreate();
+void ParseStateDelete(ParseState* parseState);
 
 #endif

@@ -236,7 +236,7 @@ u32 TextDataBase::TextLine::FillBuffer(u32 page, Vector2* vertices, Vector2* uvs
 				numQuads++;
 
 				if(offset > size)
-					BS_EXCEPT(InternalErrorException, "Out of buffer bounds. Buffer size: " + toString(size));
+					BS_EXCEPT(InternalErrorException, "Out of buffer bounds. Buffer size: " + ToString(size));
 			}
 
 			penX += word.GetWidth();
@@ -301,7 +301,7 @@ u32 TextDataBase::TextLine::FillBuffer(u32 page, Vector2* vertices, Vector2* uvs
 				numQuads++;
 
 				if(offset > size)
-					BS_EXCEPT(InternalErrorException, "Out of buffer bounds. Buffer size: " + toString(size));
+					BS_EXCEPT(InternalErrorException, "Out of buffer bounds. Buffer size: " + ToString(size));
 			}
 		}
 	}

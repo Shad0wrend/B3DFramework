@@ -45,7 +45,7 @@ void ScriptCSkybox::InternalSetTexture(ScriptCSkybox* thisPtr, MonoObject* textu
 	ScriptRRefBase* scripttexture;
 	scripttexture = ScriptRRefBase::ToNative(texture);
 	if(scripttexture != nullptr)
-		tmptexture = static_resource_cast<Texture>(scripttexture->GetHandle());
+		tmptexture = B3DStaticResourceCast<Texture>(scripttexture->GetHandle());
 	thisPtr->GetHandle()->SetTexture(tmptexture);
 }
 

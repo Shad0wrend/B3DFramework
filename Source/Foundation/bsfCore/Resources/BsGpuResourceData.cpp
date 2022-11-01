@@ -7,7 +7,7 @@
 
 namespace
 {
-void verifyLockAndThread(const bs::GpuResourceData* data)
+void VerifyLockAndThread(const bs::GpuResourceData* data)
 {
 	using namespace bs;
 #if !BS_FORCE_SINGLETHREADED_RENDERING
@@ -45,13 +45,13 @@ GpuResourceData& GpuResourceData::operator=(const GpuResourceData& rhs)
 
 u8* GpuResourceData::GetData() const
 {
-	verifyLockAndThread(this);
+	VerifyLockAndThread(this);
 	return mData;
 }
 
 void GpuResourceData::SetData(UPtr<u8[]>& data)
 {
-	verifyLockAndThread(this);
+	VerifyLockAndThread(this);
 
 	FreeInternalBuffer();
 
@@ -66,7 +66,7 @@ void GpuResourceData::AllocateInternalBuffer()
 
 void GpuResourceData::AllocateInternalBuffer(u32 size)
 {
-	verifyLockAndThread(this);
+	VerifyLockAndThread(this);
 
 	FreeInternalBuffer();
 
@@ -79,7 +79,7 @@ void GpuResourceData::FreeInternalBuffer()
 	if(mData == nullptr || !mOwnsData)
 		return;
 
-	verifyLockAndThread(this);
+	VerifyLockAndThread(this);
 
 	B3DFree(mData);
 	mData = nullptr;
@@ -87,7 +87,7 @@ void GpuResourceData::FreeInternalBuffer()
 
 void GpuResourceData::SetExternalBuffer(u8* data)
 {
-	verifyLockAndThread(this);
+	VerifyLockAndThread(this);
 
 	FreeInternalBuffer();
 

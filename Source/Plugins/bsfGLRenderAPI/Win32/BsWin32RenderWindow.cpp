@@ -18,7 +18,7 @@
 #include "Private/Win32/BsWin32Window.h"
 #include "Math/BsMath.h"
 
-GLenum GLEWAPIENTRY wglewContextInit(bs::ct::GLSupport* glSupport);
+GLenum GLEWAPIENTRY WglewContextInit(bs::ct::GLSupport* glSupport);
 
 using namespace bs;
 
@@ -153,11 +153,11 @@ void Win32RenderWindow::Initialize()
 
 	auto opt = mDesc.PlatformSpecific.find("parentWindowHandle");
 	if(opt != mDesc.PlatformSpecific.end())
-		windowDesc.Parent = (HWND)parseu64(opt->second);
+		windowDesc.Parent = (HWND)Parseu64(opt->second);
 
 	opt = mDesc.PlatformSpecific.find("externalWindowHandle");
 	if(opt != mDesc.PlatformSpecific.end())
-		windowDesc.External = (HWND)parseu64(opt->second);
+		windowDesc.External = (HWND)Parseu64(opt->second);
 
 	const Win32VideoModeInfo& videoModeInfo = static_cast<const Win32VideoModeInfo&>(RenderAPI::Instance().GetVideoModeInfo());
 	u32 numOutputs = videoModeInfo.GetNumOutputs();

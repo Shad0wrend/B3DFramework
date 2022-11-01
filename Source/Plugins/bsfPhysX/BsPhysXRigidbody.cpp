@@ -14,7 +14,7 @@ using namespace physx;
 
 using namespace bs;
 
-PxForceMode::Enum toPxForceMode(ForceMode mode)
+PxForceMode::Enum ToPxForceMode(ForceMode mode)
 {
 	switch(mode)
 	{
@@ -31,7 +31,7 @@ PxForceMode::Enum toPxForceMode(ForceMode mode)
 	return PxForceMode::eFORCE;
 }
 
-PxForceMode::Enum toPxForceMode(PointForceMode mode)
+PxForceMode::Enum ToPxForceMode(PointForceMode mode)
 {
 	switch(mode)
 	{
@@ -48,7 +48,7 @@ PhysXRigidbody::PhysXRigidbody(PxPhysics* physx, PxScene* scene, const HSceneObj
 	: Rigidbody(linkedSO)
 {
 	const Transform& tfrm = linkedSO->GetTransform();
-	PxTransform pxTfrm = toPxTransform(tfrm.GetPosition(), tfrm.GetRotation());
+	PxTransform pxTfrm = ToPxTransform(tfrm.GetPosition(), tfrm.GetRotation());
 
 	mInternal = physx->createRigidDynamic(pxTfrm);
 	mInternal->userData = this;
@@ -70,7 +70,7 @@ void PhysXRigidbody::Move(const Vector3& position)
 		if(!mInternal->getKinematicTarget(target))
 			target = PxTransform(PxIdentity);
 
-		target.p = toPxVector(position);
+		target.p = ToPxVector(position);
 
 		mInternal->setKinematicTarget(target);
 	}
@@ -88,7 +88,7 @@ void PhysXRigidbody::Rotate(const Quaternion& rotation)
 		if(!mInternal->getKinematicTarget(target))
 			target = PxTransform(PxIdentity);
 
-		target.q = toPxQuaternion(rotation);
+		target.q = ToPxQuaternion(rotation);
 
 		mInternal->setKinematicTarget(target);
 	}
@@ -100,17 +100,17 @@ void PhysXRigidbody::Rotate(const Quaternion& rotation)
 
 Vector3 PhysXRigidbody::GetPosition() const
 {
-	return fromPxVector(mInternal->getGlobalPose().p);
+	return FromPxVector(mInternal->getGlobalPose().p);
 }
 
 Quaternion PhysXRigidbody::GetRotation() const
 {
-	return fromPxQuaternion(mInternal->getGlobalPose().q);
+	return FromPxQuaternion(mInternal->getGlobalPose().q);
 }
 
 void PhysXRigidbody::SetTransform(const Vector3& pos, const Quaternion& rot)
 {
-	mInternal->setGlobalPose(toPxTransform(pos, rot));
+	mInternal->setGlobalPose(ToPxTransform(pos, rot));
 }
 
 void PhysXRigidbody::SetMass(float mass)
@@ -176,22 +176,22 @@ bool PhysXRigidbody::GetUseGravity() const
 
 void PhysXRigidbody::SetVelocity(const Vector3& velocity)
 {
-	mInternal->setLinearVelocity(toPxVector(velocity));
+	mInternal->setLinearVelocity(ToPxVector(velocity));
 }
 
 Vector3 PhysXRigidbody::GetVelocity() const
 {
-	return fromPxVector(mInternal->getLinearVelocity());
+	return FromPxVector(mInternal->getLinearVelocity());
 }
 
 void PhysXRigidbody::SetAngularVelocity(const Vector3& velocity)
 {
-	mInternal->setAngularVelocity(toPxVector(velocity));
+	mInternal->setAngularVelocity(ToPxVector(velocity));
 }
 
 Vector3 PhysXRigidbody::GetAngularVelocity() const
 {
-	return fromPxVector(mInternal->getAngularVelocity());
+	return FromPxVector(mInternal->getAngularVelocity());
 }
 
 void PhysXRigidbody::SetDrag(float drag)
@@ -222,12 +222,12 @@ void PhysXRigidbody::SetInertiaTensor(const Vector3& tensor)
 		return;
 	}
 
-	mInternal->setMassSpaceInertiaTensor(toPxVector(tensor));
+	mInternal->setMassSpaceInertiaTensor(ToPxVector(tensor));
 }
 
 Vector3 PhysXRigidbody::GetInertiaTensor() const
 {
-	return fromPxVector(mInternal->getMassSpaceInertiaTensor());
+	return FromPxVector(mInternal->getMassSpaceInertiaTensor());
 }
 
 void PhysXRigidbody::SetMaxAngularVelocity(float maxVelocity)
@@ -248,19 +248,19 @@ void PhysXRigidbody::SetCenterOfMass(const Vector3& position, const Quaternion& 
 		return;
 	}
 
-	mInternal->setCMassLocalPose(toPxTransform(position, rotation));
+	mInternal->setCMassLocalPose(ToPxTransform(position, rotation));
 }
 
 Vector3 PhysXRigidbody::GetCenterOfMassPosition() const
 {
 	PxTransform cMassTfrm = mInternal->getCMassLocalPose();
-	return fromPxVector(cMassTfrm.p);
+	return FromPxVector(cMassTfrm.p);
 }
 
 Quaternion PhysXRigidbody::GetCenterOfMassRotation() const
 {
 	PxTransform cMassTfrm = mInternal->getCMassLocalPose();
-	return fromPxQuaternion(cMassTfrm.q);
+	return FromPxQuaternion(cMassTfrm.q);
 }
 
 void PhysXRigidbody::SetPositionSolverCount(u32 count)
@@ -318,23 +318,23 @@ void PhysXRigidbody::SetFlags(RigidbodyFlag flags)
 
 void PhysXRigidbody::AddForce(const Vector3& force, ForceMode mode)
 {
-	mInternal->addForce(toPxVector(force), toPxForceMode(mode));
+	mInternal->addForce(ToPxVector(force), ToPxForceMode(mode));
 }
 
 void PhysXRigidbody::AddTorque(const Vector3& force, ForceMode mode)
 {
-	mInternal->addTorque(toPxVector(force), toPxForceMode(mode));
+	mInternal->addTorque(ToPxVector(force), ToPxForceMode(mode));
 }
 
 void PhysXRigidbody::AddForceAtPoint(const Vector3& force, const Vector3& position, PointForceMode mode)
 {
-	const PxVec3& pxForce = toPxVector(force);
-	const PxVec3& pxPos = toPxVector(position);
+	const PxVec3& pxForce = ToPxVector(force);
+	const PxVec3& pxPos = ToPxVector(position);
 
 	const PxTransform globalPose = mInternal->getGlobalPose();
 	PxVec3 centerOfMass = globalPose.transform(mInternal->getCMassLocalPose().p);
 
-	PxForceMode::Enum pxMode = toPxForceMode(mode);
+	PxForceMode::Enum pxMode = ToPxForceMode(mode);
 
 	PxVec3 torque = (pxPos - centerOfMass).cross(pxForce);
 	mInternal->addForce(pxForce, pxMode);
@@ -343,7 +343,7 @@ void PhysXRigidbody::AddForceAtPoint(const Vector3& force, const Vector3& positi
 
 Vector3 PhysXRigidbody::GetVelocityAtPoint(const Vector3& point) const
 {
-	const PxVec3& pxPoint = toPxVector(point);
+	const PxVec3& pxPoint = ToPxVector(point);
 
 	const PxTransform globalPose = mInternal->getGlobalPose();
 	const PxVec3 centerOfMass = globalPose.transform(mInternal->getCMassLocalPose().p);
@@ -352,7 +352,7 @@ Vector3 PhysXRigidbody::GetVelocityAtPoint(const Vector3& point) const
 	PxVec3 velocity = mInternal->getLinearVelocity();
 	velocity += mInternal->getAngularVelocity().cross(rpoint);
 
-	return fromPxVector(velocity);
+	return FromPxVector(velocity);
 }
 
 void PhysXRigidbody::UpdateMassDistribution()

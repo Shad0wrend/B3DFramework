@@ -5,7 +5,7 @@
 #include <assert.h>
 
 using namespace bs;
-bool checkIfDestroyed(ScriptGameObject* nativeInstance)
+bool CheckIfDestroyed(ScriptGameObject* nativeInstance)
 {
 	HGameObject go = nativeInstance->GetNativeHandle();
 	if(go.IsDestroyed())
@@ -66,7 +66,7 @@ u64 ScriptGameObject::InternalGetInstanceId(ScriptGameObject* nativeInstance)
 
 void ScriptGameObject::InternalGetUuid(ScriptGameObject* nativeInstance, UUID* uuid)
 {
-	if(checkIfDestroyed(nativeInstance))
+	if(CheckIfDestroyed(nativeInstance))
 	{
 		*uuid = UUID::kEmpty;
 		return;

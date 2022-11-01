@@ -18,7 +18,7 @@ u32 GLSLGpuProgram::sDomainShaderCount = 0;
 u32 GLSLGpuProgram::sHullShaderCount = 0;
 u32 GLSLGpuProgram::sComputeShaderCount = 0;
 
-bool checkForGLSLError(const GLuint programObj, String& outErrorMsg)
+bool CheckForGlslError(const GLuint programObj, String& outErrorMsg)
 {
 	StringStream stream;
 
@@ -248,7 +248,7 @@ void GLSLGpuProgram::Initialize()
 		BS_CHECK_GL_ERROR();
 
 		mCompileMessages = "";
-		mIsCompiled = !checkForGLSLError(mGLHandle, mCompileMessages);
+		mIsCompiled = !CheckForGlslError(mGLHandle, mCompileMessages);
 	}
 
 	if(mIsCompiled)

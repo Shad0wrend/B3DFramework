@@ -381,7 +381,7 @@ static const char *const yytname[] =
 #endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
-static const unsigned char kYyr1[] =
+static const unsigned char yyr1[] =
 {
        0,    72,    73,    73,    74,    74,    74,    75,    76,    77,
       77,    78,    78,    78,    78,    78,    79,    80,    80,    81,
@@ -400,7 +400,7 @@ static const unsigned char kYyr1[] =
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
-static const unsigned char kYyr2[] =
+static const unsigned char yyr2[] =
 {
        0,     2,     0,     2,     1,     1,     1,     5,     1,     0,
        2,     4,     4,     4,     4,     4,     5,     2,     2,     0,
@@ -419,7 +419,7 @@ static const unsigned char kYyr2[] =
 };
 
 /* YYDPREC[RULE-NUM] -- Dynamic precedence of rule #RULE-NUM (0 if none).  */
-static const unsigned char kYydprec[] =
+static const unsigned char yydprec[] =
 {
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
@@ -438,7 +438,7 @@ static const unsigned char kYydprec[] =
 };
 
 /* YYMERGER[RULE-NUM] -- Index of merging function for rule #RULE-NUM.  */
-static const unsigned char kYymerger[] =
+static const unsigned char yymerger[] =
 {
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
@@ -459,7 +459,7 @@ static const unsigned char kYymerger[] =
 /* YYDEFACT[S] -- default reduction number in state S.  Performed when
    YYTABLE doesn't specify something else to do.  Zero means the default
    is an error.  */
-static const unsigned char kYydefact[] =
+static const unsigned char yydefact[] =
 {
        2,     8,     0,     0,     0,     0,     2,     4,     0,     5,
        0,     6,     0,    17,    35,    18,     1,     3,     9,    19,
@@ -499,7 +499,7 @@ static const unsigned char kYydefact[] =
 };
 
 /* YYPDEFGOTO[NTERM-NUM].  */
-static const short int kYydefgoto[] =
+static const short int yydefgoto[] =
 {
       -1,     5,     6,     7,     8,    26,    27,     9,    10,    38,
       39,    40,    41,    42,    90,    11,    12,    43,    44,    91,
@@ -513,7 +513,7 @@ static const short int kYydefgoto[] =
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
 #define YYPACT_NINF -276
-static const short int kYypact[] =
+static const short int yypact[] =
 {
        0,  -276,    22,    24,    28,    12,     0,  -276,   -36,  -276,
      -27,  -276,   -20,  -276,  -276,  -276,  -276,  -276,    20,    32,
@@ -553,7 +553,7 @@ static const short int kYypact[] =
 };
 
 /* YYPGOTO[NTERM-NUM].  */
-static const short int kYypgoto[] =
+static const short int yypgoto[] =
 {
     -276,   243,  -276,  -276,  -276,   240,  -276,  -276,  -276,   234,
     -276,  -276,  -276,  -276,   120,  -276,  -276,  -276,  -276,   207,
@@ -568,7 +568,7 @@ static const short int kYypgoto[] =
    positive, shift that token.  If negative, reduce the rule which
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 #define YYTABLE_NINF -1
-static const unsigned short int kYytable[] =
+static const unsigned short int yytable[] =
 {
      198,   192,    95,   193,   303,   220,   221,   229,    93,   310,
       94,   233,    16,   234,     1,     2,     3,     4,   221,   152,
@@ -614,7 +614,7 @@ static const unsigned short int kYytable[] =
    list of conflicting reductions corresponding to action entry for
    state STATE-NUM in yytable.  0 means no conflicts.  The list in
    yyconfl is terminated by a rule number of 0.  */
-static const unsigned char kYyconflp[] =
+static const unsigned char yyconflp[] =
 {
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
@@ -658,12 +658,12 @@ static const unsigned char kYyconflp[] =
 
 /* YYCONFL[I] -- lists of conflicting rule numbers, each terminated by
    0, pointed into by YYCONFLP.  */
-static const short int kYyconfl[] =
+static const short int yyconfl[] =
 {
        0
 };
 
-static const short int kYycheck[] =
+static const short int yycheck[] =
 {
      150,     3,     7,     5,    11,    11,    24,   180,    72,   284,
       72,    45,     0,    47,    14,    15,    16,    17,    24,    61,
@@ -707,7 +707,7 @@ static const short int kYycheck[] =
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
-static const unsigned char kYystos[] =
+static const unsigned char yystos[] =
 {
        0,    14,    15,    16,    17,    73,    74,    75,    76,    79,
       80,    87,    88,     7,     7,     7,     0,    73,    63,    63,
@@ -851,8 +851,8 @@ yy_location_print_ (yyo, yylocp)
 #define yylloc (yystackp->yyloc)
 
 
-static const int kYyeof = 0;
-static const int kYyempty = -2;
+static const int YYEOF = 0;
+static const int YYEMPTY = -2;
 
 typedef enum { yyok, yyaccept, yyabort, yyerr } YYRESULTTAG;
 
@@ -1275,7 +1275,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 3:
 
-    { nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
+    { NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
     break;
 
   case 4:
@@ -1295,20 +1295,20 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 7:
 
-    { nodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 8:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_Options); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_Options); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 		}
     break;
 
   case 10:
 
-    { nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
+    { NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
     break;
 
   case 11:
@@ -1338,34 +1338,34 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 16:
 
-    { nodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 17:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_Shader); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_Shader); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 			
 			NodeOption entry; entry.Type = OT_Identifier; entry.Value.StrValue = (((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (2))].yystate.yysemantics.yysval.StrValue);
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &entry); 
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &entry); 
 		}
     break;
 
   case 18:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_Mixin); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_Mixin); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 			
 			NodeOption entry; entry.Type = OT_Identifier; entry.Value.StrValue = (((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (2))].yystate.yysemantics.yysval.StrValue);
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &entry); 
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &entry); 
 		}
     break;
 
   case 20:
 
-    { nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
+    { NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
     break;
 
   case 22:
@@ -1400,14 +1400,14 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 29:
 
-    { nodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 30:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_Tags); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_Tags); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 		}
     break;
 
@@ -1415,7 +1415,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
     { 
 			NodeOption entry; entry.Type = OT_TagValue; entry.Value.StrValue = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.StrValue);
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &entry); 
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &entry); 
 		}
     break;
 
@@ -1423,7 +1423,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
     { 
 			NodeOption entry; entry.Type = OT_TagValue; entry.Value.StrValue = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (3))].yystate.yysemantics.yysval.StrValue);
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &entry); 
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &entry); 
 		}
     break;
 
@@ -1434,9 +1434,9 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 		index.Type = OT_Index; 
 		index.Value.IntValue = (((yyGLRStackItem const *)yyvsp)[YYFILL ((5) - (8))].yystate.yysemantics.yysval.IntValue);
 
-		nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &index);	
+		NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &index);	
 	
-		nodePop(parse_state); 
+		NodePop(parse_state); 
 		((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (8))].yystate.yysemantics.yysval.NodePtr); 
 	}
     break;
@@ -1444,30 +1444,30 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 35:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_SubShader); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_SubShader); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 			
 			NodeOption entry; entry.Type = OT_Identifier; entry.Value.StrValue = (((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (2))].yystate.yysemantics.yysval.StrValue);
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &entry); 
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &entry); 
 		}
     break;
 
   case 36:
 
-    { nodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 37:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_Pass); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_Pass); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 		}
     break;
 
   case 39:
 
-    { nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
+    { NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
     break;
 
   case 41:
@@ -1497,25 +1497,25 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 46:
 
-    { nodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 47:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_Variations); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_Variations); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 		}
     break;
 
   case 49:
 
-    { nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
+    { NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
     break;
 
   case 50:
 
-    { nodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_Variation; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_Variation; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 51:
@@ -1527,7 +1527,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
     { 
 			NodeOption attrEntry; attrEntry.Type = OT_Attributes; attrEntry.Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodePtr);
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &attrEntry);
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &attrEntry);
 
 			((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (2))].yystate.yysemantics.yysval.NodePtr);			
 		}
@@ -1536,11 +1536,11 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 53:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_Variation); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_Variation); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 			
 			NodeOption entry; entry.Type = OT_Identifier; entry.Value.StrValue = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.StrValue);
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &entry); 		
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &entry); 		
 		}
     break;
 
@@ -1548,7 +1548,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
     { 
 			NodeOption entry; entry.Type = OT_VariationOption; entry.Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.NodePtr); 
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &entry);
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &entry);
 		}
     break;
 
@@ -1556,7 +1556,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
     { 
 			NodeOption entry; entry.Type = OT_VariationOption; entry.Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (3))].yystate.yysemantics.yysval.NodePtr); 
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &entry);
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &entry);
 		}
     break;
 
@@ -1564,7 +1564,7 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
     { 
 			((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.NodePtr);
-			nodePop(parse_state);
+			NodePop(parse_state);
 		}
     break;
 
@@ -1572,20 +1572,20 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
     { 
 			NodeOption attrEntry; attrEntry.Type = OT_Attributes; attrEntry.Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodePtr);
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &attrEntry);
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &attrEntry);
 		
 			((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((2) - (2))].yystate.yysemantics.yysval.NodePtr);
-			nodePop(parse_state); 
+			NodePop(parse_state); 
 		}
     break;
 
   case 59:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_VariationOption); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_VariationOption); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 			
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.NodeOptionValue)); 	 
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.NodeOptionValue)); 	 
 		}
     break;
 
@@ -1601,20 +1601,20 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 62:
 
-    { nodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 63:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_Raster); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_Raster); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 		}
     break;
 
   case 65:
 
-    { nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
+    { NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
     break;
 
   case 66:
@@ -1659,20 +1659,20 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 74:
 
-    { nodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 75:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_Depth); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_Depth); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 		}
     break;
 
   case 77:
 
-    { nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
+    { NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
     break;
 
   case 78:
@@ -1692,20 +1692,20 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 81:
 
-    { nodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 82:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_Stencil); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_Stencil); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 		}
     break;
 
   case 84:
 
-    { nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
+    { NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
     break;
 
   case 85:
@@ -1725,22 +1725,22 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 88:
 
-    { nodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_StencilOpFront; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_StencilOpFront; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 89:
 
-    { nodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_StencilOpBack; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_StencilOpBack; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 90:
 
-    { nodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_StencilOpFront; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_StencilOpFront; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 91:
 
-    { nodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_StencilOpBack; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_StencilOpBack; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 92:
@@ -1750,20 +1750,20 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 93:
 
-    { nodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 94:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_Blend); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_Blend); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 		}
     break;
 
   case 96:
 
-    { nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
+    { NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
     break;
 
   case 97:
@@ -1788,9 +1788,9 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 		index.Type = OT_Index; 
 		index.Value.IntValue = (((yyGLRStackItem const *)yyvsp)[YYFILL ((5) - (8))].yystate.yysemantics.yysval.IntValue);
 
-		nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &index);
+		NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &index);
 
-		nodePop(parse_state); 
+		NodePop(parse_state); 
 		((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (8))].yystate.yysemantics.yysval.NodePtr);
 	}
     break;
@@ -1798,24 +1798,24 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 101:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_Code); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_Code); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 		}
     break;
 
   case 102:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_StencilOp); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_StencilOp); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 		}
     break;
 
   case 103:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_StencilOp); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_StencilOp); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 		}
     break;
 
@@ -1827,16 +1827,16 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 			NodeOption pass; pass.Type = OT_PassOp; pass.Value.IntValue = (((yyGLRStackItem const *)yyvsp)[YYFILL ((5) - (7))].yystate.yysemantics.yysval.IntValue);
 			NodeOption cmp; cmp.Type = OT_CompareFunc; cmp.Value.IntValue = (((yyGLRStackItem const *)yyvsp)[YYFILL ((7) - (7))].yystate.yysemantics.yysval.IntValue);
 
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &fail);
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &zfail);
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &pass);
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &cmp);
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &fail);
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &zfail);
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &pass);
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &cmp);
 		}
     break;
 
   case 106:
 
-    { nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
+    { NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
     break;
 
   case 107:
@@ -1861,20 +1861,20 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 111:
 
-    { nodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 112:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_Target); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_Target); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 		}
     break;
 
   case 114:
 
-    { nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
+    { NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
     break;
 
   case 115:
@@ -1889,22 +1889,22 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 117:
 
-    { nodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_Color; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_Color; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 118:
 
-    { nodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_Alpha; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_Alpha; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 119:
 
-    { nodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_Color; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_Color; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 120:
 
-    { nodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_Alpha; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodeOptionValue).Type = OT_Alpha; ((*yyvalp).NodeOptionValue).Value.NodePtr = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (5))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 121:
@@ -1915,22 +1915,22 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
   case 122:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_BlendDef); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_BlendDef); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 		}
     break;
 
   case 123:
 
     { 
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_BlendDef); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_BlendDef); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 		}
     break;
 
   case 125:
 
-    { nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
+    { NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (2))].yystate.yysemantics.yysval.NodeOptionValue)); }
     break;
 
   case 126:
@@ -1940,9 +1940,9 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 			NodeOption dst; dst.Type = OT_Dest; dst.Value.IntValue = (((yyGLRStackItem const *)yyvsp)[YYFILL ((3) - (5))].yystate.yysemantics.yysval.IntValue);
 			NodeOption op; op.Type = OT_Op; op.Value.IntValue = (((yyGLRStackItem const *)yyvsp)[YYFILL ((5) - (5))].yystate.yysemantics.yysval.IntValue);
 
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &src);
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &dst);
-			nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &op);
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &src);
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &dst);
+			NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &op);
 		}
     break;
 
@@ -1963,25 +1963,25 @@ yyuserAction (yyRuleNum yyn, int yyrhslen, yyGLRStackItem* yyvsp,
 
   case 130:
 
-    { nodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (3))].yystate.yysemantics.yysval.NodePtr); }
+    { NodePop(parse_state); ((*yyvalp).NodePtr) = (((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (3))].yystate.yysemantics.yysval.NodePtr); }
     break;
 
   case 131:
 
     {
-			((*yyvalp).NodePtr) = nodeCreate(parse_state->MemContext, NT_Attributes); 
-			nodePush(parse_state, ((*yyvalp).NodePtr));
+			((*yyvalp).NodePtr) = NodeCreate(parse_state->MemContext, NT_Attributes); 
+			NodePush(parse_state, ((*yyvalp).NodePtr));
 		}
     break;
 
   case 133:
 
-    { nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.NodeOptionValue)); }
+    { NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (1))].yystate.yysemantics.yysval.NodeOptionValue)); }
     break;
 
   case 134:
 
-    { nodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (3))].yystate.yysemantics.yysval.NodeOptionValue)); }
+    { NodeOptionsAdd(parse_state->MemContext, parse_state->TopNode->Options, &(((yyGLRStackItem const *)yyvsp)[YYFILL ((1) - (3))].yystate.yysemantics.yysval.NodeOptionValue)); }
     break;
 
   case 135:
@@ -2054,14 +2054,14 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, YYLTYPE *yylocatio
 static inline int
 yyrhsLength (yyRuleNum yyrule)
 {
-  return kYyr2[yyrule];
+  return yyr2[yyrule];
 }
 
 static void
 yydestroyGLRState (char const *yymsg, yyGLRState *yys, ParseState* parse_state, yyscan_t scanner)
 {
   if (yys->yyresolved)
-    yydestruct (yymsg, kYystos[yys->yylrState],
+    yydestruct (yymsg, yystos[yys->yylrState],
                 &yys->yysemantics.yysval, &yys->yyloc, parse_state, scanner);
   else
     {
@@ -2095,7 +2095,7 @@ yydestroyGLRState (char const *yymsg, yyGLRState *yys, ParseState* parse_state, 
 static inline yySymbol
 yylhsNonterm (yyRuleNum yyrule)
 {
-  return kYyr1[yyrule];
+  return yyr1[yyrule];
 }
 
 #define yypact_value_is_default(Yystate) \
@@ -2106,14 +2106,14 @@ yylhsNonterm (yyRuleNum yyrule)
 static inline yybool
 yyisDefaultedState (yyStateNum yystate)
 {
-  return yypact_value_is_default (kYypact[yystate]);
+  return yypact_value_is_default (yypact[yystate]);
 }
 
 /** The default reduction for STATE, assuming it has one.  */
 static inline yyRuleNum
 yydefaultAction (yyStateNum yystate)
 {
-  return kYydefact[yystate];
+  return yydefact[yystate];
 }
 
 #define yytable_value_is_error(Yytable_value) \
@@ -2131,22 +2131,22 @@ static inline void
 yygetLRActions (yyStateNum yystate, int yytoken,
                 int* yyaction, const short int** yyconflicts)
 {
-  int yyindex = kYypact[yystate] + yytoken;
-  if (yypact_value_is_default (kYypact[yystate])
-      || yyindex < 0 || YYLAST < yyindex || kYycheck[yyindex] != yytoken)
+  int yyindex = yypact[yystate] + yytoken;
+  if (yypact_value_is_default (yypact[yystate])
+      || yyindex < 0 || YYLAST < yyindex || yycheck[yyindex] != yytoken)
     {
-      *yyaction = -kYydefact[yystate];
-      *yyconflicts = kYyconfl;
+      *yyaction = -yydefact[yystate];
+      *yyconflicts = yyconfl;
     }
   else if (! yytable_value_is_error (yytable[yyindex]))
     {
-      *yyaction = kYytable[yyindex];
-      *yyconflicts = kYyconfl + kYyconflp[yyindex];
+      *yyaction = yytable[yyindex];
+      *yyconflicts = yyconfl + yyconflp[yyindex];
     }
   else
     {
       *yyaction = 0;
-      *yyconflicts = kYyconfl + kYyconflp[yyindex];
+      *yyconflicts = yyconfl + yyconflp[yyindex];
     }
 }
 
@@ -2154,11 +2154,11 @@ static inline yyStateNum
 yyLRgotoState (yyStateNum yystate, yySymbol yylhs)
 {
   int yyr;
-  yyr = kYypgoto[yylhs - YYNTOKENS] + yystate;
-  if (0 <= yyr && yyr <= YYLAST && kYycheck[yyr] == yystate)
-    return kYytable[yyr];
+  yyr = yypgoto[yylhs - YYNTOKENS] + yystate;
+  if (0 <= yyr && yyr <= YYLAST && yycheck[yyr] == yystate)
+    return yytable[yyr];
   else
-    return kYydefgoto[yylhs - YYNTOKENS];
+    return yydefgoto[yylhs - YYNTOKENS];
 }
 
 static inline yybool
@@ -2208,7 +2208,7 @@ yyaddDeferredAction (yyGLRStack* yystackp, size_t yyk, yyGLRState* yystate,
       yynewOption->yyloc = yylloc;
     }
   else
-    yynewOption->yyrawchar = kYyempty;
+    yynewOption->yyrawchar = YYEMPTY;
   yynewOption->yynext = yystate->yysemantics.yyfirstVal;
   yystate->yysemantics.yyfirstVal = yynewOption;
 
@@ -2733,11 +2733,11 @@ static int
 yypreference (yySemanticOption* y0, yySemanticOption* y1)
 {
   yyRuleNum r0 = y0->yyrule, r1 = y1->yyrule;
-  int p0 = kYydprec[r0], p1 = kYydprec[r1];
+  int p0 = yydprec[r0], p1 = yydprec[r1];
 
   if (p0 == p1)
     {
-      if (kYymerger[r0] == 0 || kYymerger[r0] != kYymerger[r1])
+      if (yymerger[r0] == 0 || yymerger[r0] != yymerger[r1])
         return 0;
       else
         return 1;
@@ -2995,12 +2995,12 @@ yyresolveValue (yyGLRState* yys, yyGLRStack* yystackp, ParseState* parse_state, 
   if (yymerge)
     {
       yySemanticOption* yyp;
-      int yyprec = kYydprec[yybest->yyrule];
+      int yyprec = yydprec[yybest->yyrule];
       yyflag = yyresolveAction (yybest, yystackp, &yysval, yylocp, parse_state, scanner);
       if (yyflag == yyok)
         for (yyp = yybest->yynext; yyp != YY_NULL; yyp = yyp->yynext)
           {
-            if (yyprec == kYydprec[yyp->yyrule])
+            if (yyprec == yydprec[yyp->yyrule])
               {
                 YYSTYPE yysval_other;
                 YYLTYPE yydummy;
@@ -3008,11 +3008,11 @@ yyresolveValue (yyGLRState* yys, yyGLRStack* yystackp, ParseState* parse_state, 
                 if (yyflag != yyok)
                   {
                     yydestruct ("Cleanup: discarding incompletely merged value for",
-                                kYystos[yys->yylrState],
+                                yystos[yys->yylrState],
                                 &yysval, yylocp, parse_state, scanner);
                     break;
                   }
-                yyuserMerge (kYymerger[yyp->yyrule], &yysval, &yysval_other);
+                yyuserMerge (yymerger[yyp->yyrule], &yysval, &yysval_other);
               }
           }
     }
@@ -3109,15 +3109,15 @@ yyprocessOneStack (yyGLRStack* yystackp, size_t yyk,
         {
           yySymbol yytoken;
           yystackp->yytops.yylookaheadNeeds[yyk] = yytrue;
-          if (yychar == kYyempty)
+          if (yychar == YYEMPTY)
             {
               YYDPRINTF ((stderr, "Reading a token: "));
               yychar = YYLEX;
             }
 
-          if (yychar <= kYyeof)
+          if (yychar <= YYEOF)
             {
-              yychar = yytoken = kYyeof;
+              yychar = yytoken = YYEOF;
               YYDPRINTF ((stderr, "Now at end of input.\n"));
             }
           else
@@ -3307,9 +3307,9 @@ yyrecoverSyntaxError (yyGLRStack* yystackp, ParseState* parse_state, yyscan_t sc
     while (YYID (yytrue))
       {
         yySymbol yytoken;
-        if (yychar == kYyeof)
+        if (yychar == YYEOF)
           yyFail (yystackp, &yylloc, parse_state, scanner, YY_NULL);
-        if (yychar != kYyempty)
+        if (yychar != YYEMPTY)
           {
             /* We throw away the lookahead, but the error range
                of the shifted error token must take it into account.  */
@@ -3324,9 +3324,9 @@ yyrecoverSyntaxError (yyGLRStack* yystackp, ParseState* parse_state, yyscan_t sc
           }
         YYDPRINTF ((stderr, "Reading a token: "));
         yychar = YYLEX;
-        if (yychar <= kYyeof)
+        if (yychar <= YYEOF)
           {
-            yychar = yytoken = kYyeof;
+            yychar = yytoken = YYEOF;
             YYDPRINTF ((stderr, "Now at end of input.\n"));
           }
         else
@@ -3334,13 +3334,13 @@ yyrecoverSyntaxError (yyGLRStack* yystackp, ParseState* parse_state, yyscan_t sc
             yytoken = YYTRANSLATE (yychar);
             YY_SYMBOL_PRINT ("Next token is", yytoken, &yylval, &yylloc);
           }
-        yyj = kYypact[yystackp->yytops.yystates[0]->yylrState];
+        yyj = yypact[yystackp->yytops.yystates[0]->yylrState];
         if (yypact_value_is_default (yyj))
           return;
         yyj += yytoken;
-        if (yyj < 0 || YYLAST < yyj || kYycheck[yyj] != yytoken)
+        if (yyj < 0 || YYLAST < yyj || yycheck[yyj] != yytoken)
           {
-            if (kYydefact[yystackp->yytops.yystates[0]->yylrState] != 0)
+            if (yydefact[yystackp->yytops.yystates[0]->yylrState] != 0)
               return;
           }
         else if (! yytable_value_is_error (yytable[yyj]))
@@ -3363,12 +3363,12 @@ yyrecoverSyntaxError (yyGLRStack* yystackp, ParseState* parse_state, yyscan_t sc
   while (yystackp->yytops.yystates[0] != YY_NULL)
     {
       yyGLRState *yys = yystackp->yytops.yystates[0];
-      yyj = kYypact[yys->yylrState];
+      yyj = yypact[yys->yylrState];
       if (! yypact_value_is_default (yyj))
         {
           yyj += YYTERROR;
-          if (0 <= yyj && yyj <= YYLAST && kYycheck[yyj] == YYTERROR
-              && yyisShiftAction (kYytable[yyj]))
+          if (0 <= yyj && yyj <= YYLAST && yycheck[yyj] == YYTERROR
+              && yyisShiftAction (yytable[yyj]))
             {
               /* Shift the error token.  */
               /* First adjust its location.*/
@@ -3377,7 +3377,7 @@ yyrecoverSyntaxError (yyGLRStack* yystackp, ParseState* parse_state, yyscan_t sc
               YYLLOC_DEFAULT (yyerrloc, (yystackp->yyerror_range), 2);
               YY_SYMBOL_PRINT ("Shifting", yystos[yytable[yyj]],
                                &yylval, &yyerrloc);
-              yyglrShift (yystackp, 0, kYytable[yyj],
+              yyglrShift (yystackp, 0, yytable[yyj],
                           yys->yyposn, &yylval, &yyerrloc);
               yys = yystackp->yytops.yystates[0];
               break;
@@ -3425,7 +3425,7 @@ yyparse (ParseState* parse_state, yyscan_t scanner)
 
   YYDPRINTF ((stderr, "Starting parse\n"));
 
-  yychar = kYyempty;
+  yychar = YYEMPTY;
   yylval = yyval_default;
   yylloc = yyloc_default;
 
@@ -3471,15 +3471,15 @@ yyparse (ParseState* parse_state, yyscan_t scanner)
           else
             {
               yySymbol yytoken;
-              if (yychar == kYyempty)
+              if (yychar == YYEMPTY)
                 {
                   YYDPRINTF ((stderr, "Reading a token: "));
                   yychar = YYLEX;
                 }
 
-              if (yychar <= kYyeof)
+              if (yychar <= YYEOF)
                 {
-                  yychar = yytoken = kYyeof;
+                  yychar = yytoken = YYEOF;
                   YYDPRINTF ((stderr, "Now at end of input.\n"));
                 }
               else
@@ -3494,7 +3494,7 @@ yyparse (ParseState* parse_state, yyscan_t scanner)
               if (yyisShiftAction (yyaction))
                 {
                   YY_SYMBOL_PRINT ("Shifting", yytoken, &yylval, &yylloc);
-                  yychar = kYyempty;
+                  yychar = YYEMPTY;
                   yyposn += 1;
                   yyglrShift (&yystack, 0, yyaction, yyposn, &yylval, &yylloc);
                   if (0 < yystack.yyerrState)
@@ -3517,7 +3517,7 @@ yyparse (ParseState* parse_state, yyscan_t scanner)
           size_t yys;
 
           for (yys = 0; yys < yystack.yytops.yysize; yys += 1)
-            yystackp->yytops.yylookaheadNeeds[yys] = yychar != kYyempty;
+            yystackp->yytops.yylookaheadNeeds[yys] = yychar != YYEMPTY;
 
           /* yyprocessOneStack returns one of three things:
 
@@ -3559,7 +3559,7 @@ yyparse (ParseState* parse_state, yyscan_t scanner)
              before the loop to make sure the user destructor for yylval isn't
              called twice.  */
           yytoken_to_shift = YYTRANSLATE (yychar);
-          yychar = kYyempty;
+          yychar = YYEMPTY;
           yyposn += 1;
           for (yys = 0; yys < yystack.yytops.yysize; yys += 1)
             {
@@ -3610,7 +3610,7 @@ yyparse (ParseState* parse_state, yyscan_t scanner)
   goto yyreturn;
 
  yyreturn:
-  if (yychar != kYyempty)
+  if (yychar != YYEMPTY)
     yydestruct ("Cleanup: discarding lookahead",
                 YYTRANSLATE (yychar), &yylval, &yylloc, parse_state, scanner);
 
@@ -3729,6 +3729,6 @@ void yyerror(YYLTYPE *locp, ParseState* parse_state, yyscan_t scanner, const cha
 	parse_state->HasError = 1;
 	parse_state->ErrorLine = locp->first_line;
 	parse_state->ErrorColumn = locp->first_column;
-	parse_state->ErrorMessage = mmalloc_strdup(parse_state->MemContext, msg);
+	parse_state->ErrorMessage = MmallocStrdup(parse_state->MemContext, msg);
 	parse_state->ErrorFile = locp->filename;
 }

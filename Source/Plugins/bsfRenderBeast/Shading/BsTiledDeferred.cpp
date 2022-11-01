@@ -134,7 +134,7 @@ TiledDeferredLightingMat* TiledDeferredLightingMat::GetVariation(u32 msaaCount)
 
 TextureArrayToMSAATexture::TextureArrayToMSAATexture()
 {
-	mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "GetInput", mInputParam);
+	mParams->GetTextureParam(GPT_FRAGMENT_PROGRAM, "gInput", mInputParam);
 }
 
 void TextureArrayToMSAATexture::Execute(const SPtr<Texture>& inputArray, const SPtr<Texture>& target)
@@ -222,7 +222,7 @@ void ClearLoadStoreMat::Execute(const SPtr<GpuBuffer>& target, const Color& clea
 
 /** Helper method used for initializing variations of the ClearLoadStore material. */
 template <ClearLoadStoreType OBJ_TYPE, ClearLoadStoreDataType DATA_TYPE, u32 NUM_COMPONENTS>
-static const ShaderVariation& getClearLoadStoreVariation()
+static const ShaderVariation& GetClearLoadStoreVariation()
 {
 	static ShaderVariation variation = ShaderVariation(
 		{
@@ -236,19 +236,19 @@ static const ShaderVariation& getClearLoadStoreVariation()
 }
 
 template <ClearLoadStoreType BUFFER_TYPE, ClearLoadStoreDataType DATA_TYPE>
-const ShaderVariation& getClearLoadStoreVariation(u32 numComponents)
+const ShaderVariation& GetClearLoadStoreVariation(u32 numComponents)
 {
 	switch(numComponents)
 	{
 	default:
 	case 1:
-		return getClearLoadStoreVariation<BUFFER_TYPE, DATA_TYPE, 0>();
+		return GetClearLoadStoreVariation<BUFFER_TYPE, DATA_TYPE, 0>();
 	case 2:
-		return getClearLoadStoreVariation<BUFFER_TYPE, DATA_TYPE, 1>();
+		return GetClearLoadStoreVariation<BUFFER_TYPE, DATA_TYPE, 1>();
 	case 3:
-		return getClearLoadStoreVariation<BUFFER_TYPE, DATA_TYPE, 2>();
+		return GetClearLoadStoreVariation<BUFFER_TYPE, DATA_TYPE, 2>();
 	case 4:
-		return getClearLoadStoreVariation<BUFFER_TYPE, DATA_TYPE, 3>();
+		return GetClearLoadStoreVariation<BUFFER_TYPE, DATA_TYPE, 3>();
 	}
 }
 
@@ -259,24 +259,24 @@ ClearLoadStoreMat* ClearLoadStoreMat::GetVariation(ClearLoadStoreType objType, C
 	default:
 	case ClearLoadStoreType::Texture:
 		if(dataType == ClearLoadStoreDataType::Float)
-			return Get(getClearLoadStoreVariation<ClearLoadStoreType::Texture, ClearLoadStoreDataType::Float>(numComponents));
+			return Get(GetClearLoadStoreVariation<ClearLoadStoreType::Texture, ClearLoadStoreDataType::Float>(numComponents));
 		else
-			return Get(getClearLoadStoreVariation<ClearLoadStoreType::Texture, ClearLoadStoreDataType::Int>(numComponents));
+			return Get(GetClearLoadStoreVariation<ClearLoadStoreType::Texture, ClearLoadStoreDataType::Int>(numComponents));
 	case ClearLoadStoreType::TextureArray:
 		if(dataType == ClearLoadStoreDataType::Float)
-			return Get(getClearLoadStoreVariation<ClearLoadStoreType::TextureArray, ClearLoadStoreDataType::Float>(numComponents));
+			return Get(GetClearLoadStoreVariation<ClearLoadStoreType::TextureArray, ClearLoadStoreDataType::Float>(numComponents));
 		else
-			return Get(getClearLoadStoreVariation<ClearLoadStoreType::TextureArray, ClearLoadStoreDataType::Int>(numComponents));
+			return Get(GetClearLoadStoreVariation<ClearLoadStoreType::TextureArray, ClearLoadStoreDataType::Int>(numComponents));
 	case ClearLoadStoreType::Buffer:
 		if(dataType == ClearLoadStoreDataType::Float)
-			return Get(getClearLoadStoreVariation<ClearLoadStoreType::Buffer, ClearLoadStoreDataType::Float>(numComponents));
+			return Get(GetClearLoadStoreVariation<ClearLoadStoreType::Buffer, ClearLoadStoreDataType::Float>(numComponents));
 		else
-			return Get(getClearLoadStoreVariation<ClearLoadStoreType::Buffer, ClearLoadStoreDataType::Int>(numComponents));
+			return Get(GetClearLoadStoreVariation<ClearLoadStoreType::Buffer, ClearLoadStoreDataType::Int>(numComponents));
 	case ClearLoadStoreType::StructuredBuffer:
 		if(dataType == ClearLoadStoreDataType::Float)
-			return Get(getClearLoadStoreVariation<ClearLoadStoreType::StructuredBuffer, ClearLoadStoreDataType::Float>(numComponents));
+			return Get(GetClearLoadStoreVariation<ClearLoadStoreType::StructuredBuffer, ClearLoadStoreDataType::Float>(numComponents));
 		else
-			return Get(getClearLoadStoreVariation<ClearLoadStoreType::StructuredBuffer, ClearLoadStoreDataType::Int>(numComponents));
+			return Get(GetClearLoadStoreVariation<ClearLoadStoreType::StructuredBuffer, ClearLoadStoreDataType::Int>(numComponents));
 	}
 }
 

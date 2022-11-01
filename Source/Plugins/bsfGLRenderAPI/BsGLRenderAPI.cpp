@@ -73,7 +73,7 @@ void B3DCheckForOpenGLError(const char* function, const char* file, i32 line)
 }
 
 #if BS_OPENGL_4_3 || BS_OPENGLES_3_2
-void openGlErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, GLvoid* userParam);
+void OpenGlErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, GLvoid* userParam);
 #endif
 
 /************************************************************************/
@@ -83,7 +83,7 @@ void openGlErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 GLRenderAPI::GLRenderAPI()
 {
 	// Get our GLSupport
-	mGLSupport = ct::getGLSupport();
+	mGLSupport = ct::GetGlSupport();
 
 	for(u32 i = 0; i < BS_MAX_MULTIPLE_RENDER_TARGETS; i++)
 		mColorWrite[i][0] = mColorWrite[i][1] = mColorWrite[i][2] = mColorWrite[i][3] = true;
@@ -2319,7 +2319,7 @@ void GLRenderAPI::InitFromCaps(RenderAPICapabilities* caps)
 #if BS_DEBUG_MODE && (BS_OPENGL_4_3 || BS_OPENGLES_3_2)
 	if(mGLSupport->CheckExtension("GL_ARB_debug_output"))
 	{
-		glDebugMessageCallback(&openGlErrorCallback, 0);
+		glDebugMessageCallback(&OpenGlErrorCallback, 0);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	}
 #endif
@@ -2375,11 +2375,11 @@ void GLRenderAPI::InitCapabilities(RenderAPICapabilities& caps) const
 	DriverVersion driverVersion;
 	if(!tokens.empty())
 	{
-		driverVersion.Major = parsei32(tokens[0]);
+		driverVersion.Major = Parsei32(tokens[0]);
 		if(tokens.size() > 1)
-			driverVersion.Minor = parsei32(tokens[1]);
+			driverVersion.Minor = Parsei32(tokens[1]);
 		if(tokens.size() > 2)
-			driverVersion.Release = parsei32(tokens[2]);
+			driverVersion.Release = Parsei32(tokens[2]);
 	}
 	driverVersion.Build = 0;
 
@@ -2702,7 +2702,7 @@ GpuParamBlockDesc GLRenderAPI::GenerateParamBlockDesc(const String& name, Vector
 }
 
 #if BS_OPENGL_4_3 || BS_OPENGLES_3_2
-void openGlErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, GLvoid* userParam)
+void OpenGlErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, GLvoid* userParam)
 {
 	if(type != GL_DEBUG_TYPE_PERFORMANCE && type != GL_DEBUG_TYPE_OTHER)
 	{

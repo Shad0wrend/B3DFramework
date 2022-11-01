@@ -28,25 +28,25 @@ enum MaterialLoadFlags
 };
 
 template <class T>
-bool isShaderValid(const T& shader)
+bool IsShaderValid(const T& shader)
 {
 	return false;
 }
 
 template <>
-bool isShaderValid(const HShader& shader)
+bool IsShaderValid(const HShader& shader)
 {
 	return shader.IsLoaded();
 }
 
 template <>
-bool isShaderValid(const SPtr<ct::Shader>& shader)
+bool IsShaderValid(const SPtr<ct::Shader>& shader)
 {
 	return shader != nullptr;
 }
 
 template <bool Core>
-SPtr<CoreVariantType<Material, Core>> getMaterialPtr(const TMaterial<Core>* material)
+SPtr<CoreVariantType<Material, Core>> GetMaterialPtr(const TMaterial<Core>* material)
 {
 	return std::static_pointer_cast<CoreVariantType<Material, Core>>(
 		static_cast<const CoreVariantType<Material, Core>*>(material)->GetThisPtr());
@@ -311,7 +311,7 @@ TMaterialParamStruct<Core> TMaterial<Core>::GetParamStruct(const String& name) c
 {
 	ThrowIfNotInitialized();
 
-	return TMaterialParamStruct<Core>(name, getMaterialPtr(this));
+	return TMaterialParamStruct<Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
@@ -319,7 +319,7 @@ TMaterialColorGradientParam<Core> TMaterial<Core>::GetParamColorGradient(const S
 {
 	ThrowIfNotInitialized();
 
-	return TMaterialColorGradientParam<Core>(name, getMaterialPtr(this));
+	return TMaterialColorGradientParam<Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
@@ -327,7 +327,7 @@ TMaterialCurveParam<float, Core> TMaterial<Core>::GetParamFloatCurve(const Strin
 {
 	ThrowIfNotInitialized();
 
-	return TMaterialCurveParam<float, Core>(name, getMaterialPtr(this));
+	return TMaterialCurveParam<float, Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
@@ -335,7 +335,7 @@ TMaterialParamTexture<Core> TMaterial<Core>::GetParamTexture(const String& name)
 {
 	ThrowIfNotInitialized();
 
-	return TMaterialParamTexture<Core>(name, getMaterialPtr(this));
+	return TMaterialParamTexture<Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
@@ -343,7 +343,7 @@ TMaterialParamSpriteTexture<Core> TMaterial<Core>::GetParamSpriteTexture(const S
 {
 	ThrowIfNotInitialized();
 
-	return TMaterialParamSpriteTexture<Core>(name, getMaterialPtr(this));
+	return TMaterialParamSpriteTexture<Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
@@ -351,7 +351,7 @@ TMaterialParamLoadStoreTexture<Core> TMaterial<Core>::GetParamLoadStoreTexture(c
 {
 	ThrowIfNotInitialized();
 
-	return TMaterialParamLoadStoreTexture<Core>(name, getMaterialPtr(this));
+	return TMaterialParamLoadStoreTexture<Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
@@ -359,7 +359,7 @@ TMaterialParamBuffer<Core> TMaterial<Core>::GetParamBuffer(const String& name) c
 {
 	ThrowIfNotInitialized();
 
-	return TMaterialParamBuffer<Core>(name, getMaterialPtr(this));
+	return TMaterialParamBuffer<Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
@@ -367,7 +367,7 @@ TMaterialParamSampState<Core> TMaterial<Core>::GetParamSamplerState(const String
 {
 	ThrowIfNotInitialized();
 
-	return TMaterialParamSampState<Core>(name, getMaterialPtr(this));
+	return TMaterialParamSampState<Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
@@ -381,7 +381,7 @@ void TMaterial<Core>::InitializeTechniques()
 {
 	mTechniques.clear();
 
-	if(isShaderValid(mShader))
+	if(IsShaderValid(mShader))
 	{
 		mParams = B3DMakeShared<MaterialParamsType>(mShader);
 		mTechniques = mShader->GetCompatibleTechniques();
@@ -526,7 +526,7 @@ void TMaterial<Core>::GetParam(const String& name, TMaterialDataParam<T, Core>& 
 {
 	ThrowIfNotInitialized();
 
-	output = TMaterialDataParam<T, Core>(name, getMaterialPtr(this));
+	output = TMaterialDataParam<T, Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
@@ -687,7 +687,7 @@ CoreSyncData Material::SyncToCore(FrameAlloc* allocator)
 	u32 size = sizeof(bool) + sizeof(u32) * 2 + sizeof(SPtr<ct::Shader>) +
 		sizeof(SPtr<ct::Technique>) * numTechniques + paramsSize;
 
-	size += csync_size(mVariation);
+	size += CoreSyncGetSize(mVariation);
 
 	u8* buffer = allocator->Alloc(size);
 	Bitstream stream(buffer, size);
@@ -716,7 +716,7 @@ CoreSyncData Material::SyncToCore(FrameAlloc* allocator)
 		mParams->GetSyncData(stream.Cursor(), paramsSize, syncAllParams);
 
 	stream.SkipBytes(paramsSize);
-	csync_write(mVariation, stream);
+	B3DCoreSyncWrite(mVariation, stream);
 
 	return CoreSyncData(buffer, size);
 }
@@ -806,11 +806,11 @@ HMaterial Material::Clone()
 	outputStream->Seek(0);
 	SPtr<Material> cloneObj = std::static_pointer_cast<Material>(serializer.Decode(outputStream, (u32)outputStream->Size()));
 
-	return static_resource_cast<Material>(GetResources().CreateResourceHandleInternal(cloneObj));
+	return B3DStaticResourceCast<Material>(GetResources().CreateResourceHandleInternal(cloneObj));
 }
 
 template <class T>
-void copyParam(const SPtr<MaterialParams>& from, Material* to, const String& name, const MaterialParams::ParamData& paramRef, u32 arraySize)
+void CopyParam(const SPtr<MaterialParams>& from, Material* to, const String& name, const MaterialParams::ParamData& paramRef, u32 arraySize)
 {
 	TMaterialDataParam<T, false> param;
 	to->GetParam(name, param);
@@ -832,30 +832,30 @@ void Material::SetParams(const SPtr<MaterialParams>& params)
 		void(const SPtr<MaterialParams>&, Material*, const String&, const MaterialParams::ParamData&, u32)>
 		copyParamLookup[GPDT_COUNT];
 
-	copyParamLookup[GPDT_FLOAT1] = &copyParam<float>;
-	copyParamLookup[GPDT_FLOAT2] = &copyParam<Vector2>;
-	copyParamLookup[GPDT_FLOAT3] = &copyParam<Vector3>;
-	copyParamLookup[GPDT_FLOAT4] = &copyParam<Vector4>;
+	copyParamLookup[GPDT_FLOAT1] = &CopyParam<float>;
+	copyParamLookup[GPDT_FLOAT2] = &CopyParam<Vector2>;
+	copyParamLookup[GPDT_FLOAT3] = &CopyParam<Vector3>;
+	copyParamLookup[GPDT_FLOAT4] = &CopyParam<Vector4>;
 
-	copyParamLookup[GPDT_INT1] = &copyParam<int>;
-	copyParamLookup[GPDT_INT2] = &copyParam<Vector2I>;
-	copyParamLookup[GPDT_INT3] = &copyParam<Vector3I>;
-	copyParamLookup[GPDT_INT4] = &copyParam<Vector4I>;
+	copyParamLookup[GPDT_INT1] = &CopyParam<int>;
+	copyParamLookup[GPDT_INT2] = &CopyParam<Vector2I>;
+	copyParamLookup[GPDT_INT3] = &CopyParam<Vector3I>;
+	copyParamLookup[GPDT_INT4] = &CopyParam<Vector4I>;
 
-	copyParamLookup[GPDT_MATRIX_2X2] = &copyParam<Matrix2>;
-	copyParamLookup[GPDT_MATRIX_2X3] = &copyParam<Matrix2x3>;
-	copyParamLookup[GPDT_MATRIX_2X4] = &copyParam<Matrix2x4>;
+	copyParamLookup[GPDT_MATRIX_2X2] = &CopyParam<Matrix2>;
+	copyParamLookup[GPDT_MATRIX_2X3] = &CopyParam<Matrix2x3>;
+	copyParamLookup[GPDT_MATRIX_2X4] = &CopyParam<Matrix2x4>;
 
-	copyParamLookup[GPDT_MATRIX_3X3] = &copyParam<Matrix3>;
-	copyParamLookup[GPDT_MATRIX_3X2] = &copyParam<Matrix3x2>;
-	copyParamLookup[GPDT_MATRIX_3X4] = &copyParam<Matrix3x4>;
+	copyParamLookup[GPDT_MATRIX_3X3] = &CopyParam<Matrix3>;
+	copyParamLookup[GPDT_MATRIX_3X2] = &CopyParam<Matrix3x2>;
+	copyParamLookup[GPDT_MATRIX_3X4] = &CopyParam<Matrix3x4>;
 
-	copyParamLookup[GPDT_MATRIX_4X4] = &copyParam<Matrix4>;
-	copyParamLookup[GPDT_MATRIX_4X2] = &copyParam<Matrix4x2>;
-	copyParamLookup[GPDT_MATRIX_4X3] = &copyParam<Matrix4x3>;
+	copyParamLookup[GPDT_MATRIX_4X4] = &CopyParam<Matrix4>;
+	copyParamLookup[GPDT_MATRIX_4X2] = &CopyParam<Matrix4x2>;
+	copyParamLookup[GPDT_MATRIX_4X3] = &CopyParam<Matrix4x3>;
 
-	copyParamLookup[GPDT_BOOL] = &copyParam<int>;
-	copyParamLookup[GPDT_COLOR] = &copyParam<Color>;
+	copyParamLookup[GPDT_BOOL] = &CopyParam<int>;
+	copyParamLookup[GPDT_COLOR] = &CopyParam<Color>;
 
 	auto& dataParams = mShader->GetDataParams();
 	for(auto& param : dataParams)
@@ -996,7 +996,7 @@ HMaterial Material::Create()
 	const SPtr<Material> materialPtr = CreateEmpty();
 	materialPtr->Initialize();
 
-	return static_resource_cast<Material>(GetResources().CreateResourceHandleInternal(materialPtr));
+	return B3DStaticResourceCast<Material>(GetResources().CreateResourceHandleInternal(materialPtr));
 }
 
 HMaterial Material::Create(const HShader& shader)
@@ -1010,7 +1010,7 @@ HMaterial Material::Create(const HShader& shader, const ShaderVariation& variati
 	materialPtr->SetThisPtrInternal(materialPtr);
 	materialPtr->Initialize();
 
-	return static_resource_cast<Material>(GetResources().CreateResourceHandleInternal(materialPtr));
+	return B3DStaticResourceCast<Material>(GetResources().CreateResourceHandleInternal(materialPtr));
 }
 
 SPtr<Material> Material::CreateEmpty()
@@ -1099,7 +1099,7 @@ void Material::SyncToCore(const CoreSyncData& data)
 	stream.SkipBytes(paramsSize);
 
 	mVariation.ClearParams();
-	csync_read(mVariation, stream);
+	B3DCoreSyncRead(mVariation, stream);
 }
 
 SPtr<Material> Material::Create(const SPtr<Shader>& shader)

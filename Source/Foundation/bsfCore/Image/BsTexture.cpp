@@ -292,14 +292,14 @@ HTexture Texture::Create(const TEXTURE_DESC& desc)
 {
 	SPtr<Texture> texturePtr = CreatePtrInternal(desc);
 
-	return static_resource_cast<Texture>(GetResources().CreateResourceHandleInternal(texturePtr));
+	return B3DStaticResourceCast<Texture>(GetResources().CreateResourceHandleInternal(texturePtr));
 }
 
 HTexture Texture::Create(const SPtr<PixelData>& pixelData, int usage, bool hwGammaCorrection)
 {
 	SPtr<Texture> texturePtr = CreatePtrInternal(pixelData, usage, hwGammaCorrection);
 
-	return static_resource_cast<Texture>(GetResources().CreateResourceHandleInternal(texturePtr));
+	return B3DStaticResourceCast<Texture>(GetResources().CreateResourceHandleInternal(texturePtr));
 }
 
 SPtr<Texture> Texture::CreatePtrInternal(const TEXTURE_DESC& desc)

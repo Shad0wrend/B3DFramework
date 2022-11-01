@@ -169,7 +169,7 @@ namespace bs
 		 */
 		static void DelayedOnDeserializationEnded(PrefabDiff* prefabDiff)
 		{
-			Vector<SerializedHandle>& handleData = any_cast_ref<Vector<SerializedHandle>>(prefabDiff->mRTTIData);
+			Vector<SerializedHandle>& handleData = AnyCastRef<Vector<SerializedHandle>>(prefabDiff->mRTTIData);
 
 			for(auto& serializedHandle : handleData)
 			{

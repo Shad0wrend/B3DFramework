@@ -94,7 +94,7 @@ void ScriptDepthOfFieldSettings::InternalSetBokehShape(ScriptDepthOfFieldSetting
 	ScriptRRefBase* scriptvalue;
 	scriptvalue = ScriptRRefBase::ToNative(value);
 	if(scriptvalue != nullptr)
-		tmpvalue = static_resource_cast<Texture>(scriptvalue->GetHandle());
+		tmpvalue = B3DStaticResourceCast<Texture>(scriptvalue->GetHandle());
 	thisPtr->GetInternal()->BokehShape = tmpvalue;
 }
 

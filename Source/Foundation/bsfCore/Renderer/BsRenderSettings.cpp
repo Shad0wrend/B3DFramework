@@ -350,10 +350,10 @@ void TRenderSettings<Core>::RttiEnumFields(Processor p)
 template struct TRenderSettings<false>;
 template struct TRenderSettings<true>;
 
-template void TRenderSettings<false>::RttiEnumFields(RttiCoreSyncSize);
+template void TRenderSettings<false>::RttiEnumFields(RttiB3DCoreSyncSize);
 template void TRenderSettings<false>::RttiEnumFields(RttiCoreSyncWriter);
 
-template void TRenderSettings<true>::RttiEnumFields(RttiCoreSyncSize);
+template void TRenderSettings<true>::RttiEnumFields(RttiB3DCoreSyncSize);
 template void TRenderSettings<true>::RttiEnumFields(RttiCoreSyncReader);
 
 RTTITypeBase* RenderSettings::GetRttiStatic()

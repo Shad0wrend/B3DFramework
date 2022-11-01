@@ -7,7 +7,7 @@
 
 using namespace bs;
 
-u32 getMaterialId(SpriteMaterialTransparency transparency, bool animated)
+u32 GetMaterialId(SpriteMaterialTransparency transparency, bool animated)
 {
 	switch(transparency)
 	{
@@ -18,7 +18,7 @@ u32 getMaterialId(SpriteMaterialTransparency transparency, bool animated)
 	}
 }
 
-ShaderVariation getMaterialVariation(SpriteMaterialTransparency transparency, bool animated)
+ShaderVariation GetMaterialVariation(SpriteMaterialTransparency transparency, bool animated)
 {
 	return ShaderVariation(SmallVector<ShaderVariation::Param, 4>({ ShaderVariation::Param("TRANSPARENCY", (i32)transparency),
 																	ShaderVariation::Param("ANIMATED", animated) }));
@@ -26,9 +26,9 @@ ShaderVariation getMaterialVariation(SpriteMaterialTransparency transparency, bo
 
 SpriteImageMaterial::SpriteImageMaterial(SpriteMaterialTransparency transparency, bool animated)
 	: SpriteMaterial(
-		  getMaterialId(transparency, animated),
+		  GetMaterialId(transparency, animated),
 		  BuiltinResources::Instance().CreateSpriteImageMaterial(),
-		  getMaterialVariation(transparency, animated),
+		  GetMaterialVariation(transparency, animated),
 		  !animated)
 {}
 
