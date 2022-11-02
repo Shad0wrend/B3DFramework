@@ -27,7 +27,7 @@ namespace bs
 			if(comp->mRTTIData.Empty())
 				return;
 
-			BS_ASSERT(context != nullptr && B3DRTTIIsOfType<CoreSerializationContext>(context));
+			B3D_ASSERT(context != nullptr && B3DRTTIIsOfType<CoreSerializationContext>(context));
 			auto coreContext = static_cast<CoreSerializationContext*>(context);
 
 			GODeserializationData& deserializationData = AnyCastRef<GODeserializationData>(comp->mRTTIData);
@@ -63,7 +63,7 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
+			B3D_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
 			return nullptr;
 		}
 	};

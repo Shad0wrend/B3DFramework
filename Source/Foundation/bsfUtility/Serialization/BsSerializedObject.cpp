@@ -73,7 +73,7 @@ SPtr<SerializedInstance> SerializedDataBlock::Clone(bool cloneData)
 	{
 		if(Stream->IsFile())
 		{
-			BS_LOG(Warning, Generic, "Cloning a file stream. Streaming is disabled and stream data will be loaded into memory.");
+			B3D_LOG(Warning, Generic, "Cloning a file stream. Streaming is disabled and stream data will be loaded into memory.");
 		}
 
 		auto stream = B3DMakeShared<MemoryDataStream>(Size);

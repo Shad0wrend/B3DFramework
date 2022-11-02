@@ -56,7 +56,7 @@ void MonoAssembly::Load()
 	SPtr<DataStream> assemblyStream = FileSystem::OpenFile(mPath, true);
 	if(assemblyStream == nullptr)
 	{
-		BS_LOG(Error, Script, "Cannot load assembly at path \"{0}\" because the file doesn't exist", mPath);
+		B3D_LOG(Error, Script, "Cannot load assembly at path \"{0}\" because the file doesn't exist", mPath);
 		return;
 	}
 
@@ -72,7 +72,7 @@ void MonoAssembly::Load()
 
 	if(status != MONO_IMAGE_OK || image == nullptr)
 	{
-		BS_LOG(Error, Script, "Failed loading image data for assembly \"{0}\"", mPath);
+		B3D_LOG(Error, Script, "Failed loading image data for assembly \"{0}\"", mPath);
 		return;
 	}
 
@@ -99,14 +99,14 @@ void MonoAssembly::Load()
 	mMonoAssembly = mono_assembly_load_from_full(image, imageName.c_str(), &status, false);
 	if(status != MONO_IMAGE_OK || mMonoAssembly == nullptr)
 	{
-		BS_LOG(Error, Script, "Failed loading assembly \"{0}\"", mPath);
+		B3D_LOG(Error, Script, "Failed loading assembly \"{0}\"", mPath);
 		return;
 	}
 
 	mMonoImage = image;
 	if(mMonoImage == nullptr)
 	{
-		BS_EXCEPT(InvalidParametersException, "Cannot get script assembly image.");
+		B3D_EXCEPT(InvalidParametersException, "Cannot get script assembly image.");
 	}
 
 	mIsLoaded = true;
@@ -118,7 +118,7 @@ void MonoAssembly::LoadFromImage(MonoImage* image)
 	::MonoAssembly* monoAssembly = mono_image_get_assembly(image);
 	if(monoAssembly == nullptr)
 	{
-		BS_EXCEPT(InvalidParametersException, "Cannot get assembly from image.");
+		B3D_EXCEPT(InvalidParametersException, "Cannot get assembly from image.");
 	}
 
 	mMonoAssembly = monoAssembly;
@@ -185,7 +185,7 @@ void MonoAssembly::Invoke(const String& functionName)
 MonoClass* MonoAssembly::GetClass(const String& namespaceName, const String& name) const
 {
 	if(!mIsLoaded)
-		BS_EXCEPT(InvalidStateException, "Trying to use an unloaded assembly.");
+		B3D_EXCEPT(InvalidStateException, "Trying to use an unloaded assembly.");
 
 	MonoAssembly::ClassId classId(namespaceName, name);
 	auto iterFind = mClasses.find(classId);
@@ -207,7 +207,7 @@ MonoClass* MonoAssembly::GetClass(const String& namespaceName, const String& nam
 MonoClass* MonoAssembly::GetClass(::MonoClass* rawMonoClass) const
 {
 	if(!mIsLoaded)
-		BS_EXCEPT(InvalidStateException, "Trying to use an unloaded assembly.");
+		B3D_EXCEPT(InvalidStateException, "Trying to use an unloaded assembly.");
 
 	if(rawMonoClass == nullptr)
 		return nullptr;
@@ -238,7 +238,7 @@ MonoClass* MonoAssembly::GetClass(::MonoClass* rawMonoClass) const
 MonoClass* MonoAssembly::GetClass(const String& ns, const String& typeName, ::MonoClass* rawMonoClass) const
 {
 	if(!mIsLoaded)
-		BS_EXCEPT(InvalidStateException, "Trying to use an unloaded assembly.");
+		B3D_EXCEPT(InvalidStateException, "Trying to use an unloaded assembly.");
 
 	if(rawMonoClass == nullptr)
 		return nullptr;

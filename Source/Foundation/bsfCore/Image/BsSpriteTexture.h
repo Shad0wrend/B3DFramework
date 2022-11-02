@@ -19,7 +19,7 @@ namespace bs
 	 * row, up to @p count frames. Frames in rows/colums past @p count. @p fps frames are evaluated every second, allowing
 	 * you to control animation speed.
 	 */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportAsStruct(true)) SpriteSheetGridAnimation
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportAsStruct(true)) SpriteSheetGridAnimation
 	{
 		SpriteSheetGridAnimation() = default;
 
@@ -47,7 +47,7 @@ namespace bs
 	};
 
 	/** Type of playback to use for an animation of a SpriteTexture. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) SpriteAnimationPlayback
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) SpriteAnimationPlayback
 	{
 		/** Do not animate. */
 		None,
@@ -79,7 +79,7 @@ namespace bs
 		 * Determines the offset into the referenced texture where the sprite starts. The offset is in UV coordinates,
 		 * in range [0, 1].
 		 */
-		BS_SCRIPT_EXPORT(ExportName(Offset), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Offset), Property(Setter))
 
 		void SetOffset(const Vector2& offset)
 		{
@@ -88,12 +88,12 @@ namespace bs
 		}
 
 		/** @copydoc SetOffset() */
-		BS_SCRIPT_EXPORT(ExportName(Offset), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Offset), Property(Getter))
 
 		Vector2 GetOffset() const { return mUVOffset; }
 
 		/** Determines the size of the sprite in the referenced texture. Size is in UV coordinates, range [0, 1]. */
-		BS_SCRIPT_EXPORT(ExportName(Scale), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Scale), Property(Setter))
 
 		void SetScale(const Vector2& scale)
 		{
@@ -102,7 +102,7 @@ namespace bs
 		}
 
 		/** @copydoc SetScale() */
-		BS_SCRIPT_EXPORT(ExportName(Scale), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Scale), Property(Getter))
 
 		Vector2 GetScale() const { return mUVScale; }
 
@@ -124,7 +124,7 @@ namespace bs
 		 * which can be evaluated over time. In order to view the animation you must also enable playback through
 		 * setAnimationPlayback().
 		 */
-		BS_SCRIPT_EXPORT(ExportName(Animation), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Animation), Property(Setter))
 
 		void SetAnimation(const SpriteSheetGridAnimation& anim)
 		{
@@ -133,12 +133,12 @@ namespace bs
 		}
 
 		/** @copydoc SetAnimation */
-		BS_SCRIPT_EXPORT(ExportName(Animation), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Animation), Property(Getter))
 
 		const SpriteSheetGridAnimation& GetAnimation() const { return mAnimation; }
 
 		/** Determines if and how should the sprite animation play. */
-		BS_SCRIPT_EXPORT(ExportName(AnimationPlayback), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(AnimationPlayback), Property(Setter))
 
 		void SetAnimationPlayback(SpriteAnimationPlayback playback)
 		{
@@ -147,7 +147,7 @@ namespace bs
 		}
 
 		/** @copydoc SetAnimationPlayback */
-		BS_SCRIPT_EXPORT(ExportName(AnimationPlayback), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(AnimationPlayback), Property(Getter))
 
 		SpriteAnimationPlayback GetAnimationPlayback() const { return mPlayback; };
 
@@ -194,49 +194,49 @@ namespace bs
 	 * for multiple sprites (texture atlasing). Sprite textures also allow you to specify sprite sheet animation by varying
 	 * which portion of the UV is selected over time.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) SpriteTexture : public Resource, public TSpriteTexture<false>
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) SpriteTexture : public Resource, public TSpriteTexture<false>
 	{
 	public:
 		/**	Determines the internal texture that the sprite texture references. */
-		BS_SCRIPT_EXPORT(ExportName(Texture), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Texture), Property(Setter))
 		void SetTexture(const HTexture& texture);
 
 		/**	@copydoc SetTexture() */
-		BS_SCRIPT_EXPORT(ExportName(Texture), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Texture), Property(Getter))
 
 		const HTexture& GetTexture() const { return mAtlasTexture; }
 
 		/**	Returns width of the sprite texture in pixels. */
-		BS_SCRIPT_EXPORT(ExportName(Width), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Width), Property(Getter))
 		u32 GetWidth() const;
 
 		/**	Returns height of the sprite texture in pixels. */
-		BS_SCRIPT_EXPORT(ExportName(Height), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Height), Property(Getter))
 		u32 GetHeight() const;
 
 		/**
 		 * Returns width of a single animation frame sprite texture in pixels. If the texture has no animation this
 		 * is the same as getWidth().
 		 */
-		BS_SCRIPT_EXPORT(ExportName(FrameWidth), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(FrameWidth), Property(Getter))
 		u32 GetFrameWidth() const;
 
 		/**
 		 * Returns height of a single animation frame sprite texture in pixels. If the texture has no animation this
 		 * is the same as getHeight().
 		 */
-		BS_SCRIPT_EXPORT(ExportName(FrameHeight), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(FrameHeight), Property(Getter))
 		u32 GetFrameHeight() const;
 
 		/**	Retrieves a core implementation of a sprite texture usable only from the core thread. */
 		SPtr<ct::SpriteTexture> GetCore() const;
 
 		/**	Creates a new sprite texture that references the entire area of the provided texture. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(SpriteTexture))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(SpriteTexture))
 		static HSpriteTexture Create(const HTexture& texture);
 
 		/**	Creates a new sprite texture that references a sub-area of the provided	texture. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(SpriteTexture))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(SpriteTexture))
 		static HSpriteTexture Create(const Vector2& uvOffset, const Vector2& uvScale, const HTexture& texture);
 
 		/**	Checks if the sprite texture and its internal texture have been loaded. */

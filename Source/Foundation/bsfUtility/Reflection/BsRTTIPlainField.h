@@ -36,7 +36,7 @@ namespace bs
 
 			/*if(mType.id != SerializableType<DataType>().id)
 			{
-				BS_EXCEPT(InternalErrorException,
+				B3D_EXCEPT(InternalErrorException,
 					"Invalid field type.",
 					"SerializableSimpleTypeFieldBase::checkType()");
 			}*/
@@ -124,8 +124,8 @@ namespace bs
 			BitLength size = RTTIPlainType<DataType>::GetSize(DataType(), info, false);
 			if(RTTIPlainType<DataType>::hasDynamicSize == 0 && size.Bytes > 255)
 			{
-				assert(false);
-				BS_LOG(Error, RTTI, "Trying to create a plain RTTI field with size larger than 255. In order to use larger sizes for plain "
+				B3D_ASSERT(false);
+				B3D_LOG(Error, RTTI, "Trying to create a plain RTTI field with size larger than 255. In order to use larger sizes for plain "
 									"types please specialize RTTIPlainType, set hasDynamicSize to true.");
 			}
 
@@ -155,8 +155,8 @@ namespace bs
 			BitLength size = RTTIPlainType<DataType>::GetSize(DataType(), info, false);
 			if(RTTIPlainType<DataType>::hasDynamicSize == 0 && size.Bytes > 255)
 			{
-				assert(false);
-				BS_LOG(Error, RTTI, "Trying to create a plain RTTI field with size larger than 255. In order to use larger sizes for plain "
+				B3D_ASSERT(false);
+				B3D_LOG(Error, RTTI, "Trying to create a plain RTTI field with size larger than 255. In order to use larger sizes for plain "
 									"types please specialize RTTIPlainType, set hasDynamicSize to true.");
 			}
 
@@ -212,7 +212,7 @@ namespace bs
 
 			if(!ArraySetSize)
 			{
-				BS_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no array size setter.");
+				B3D_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no array size setter.");
 			}
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
@@ -257,7 +257,7 @@ namespace bs
 
 			if(!Setter)
 			{
-				BS_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no setter.");
+				B3D_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no setter.");
 			}
 
 			(rttiObject->*Setter)(castObject, value);
@@ -276,7 +276,7 @@ namespace bs
 
 			if(!ArraySetter)
 			{
-				BS_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no setter.");
+				B3D_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no setter.");
 			}
 
 			(rttiObject->*ArraySetter)(castObject, index, value);

@@ -100,7 +100,7 @@ void TextureEx::SetPixelsArray(const HTexture& thisPtr, const Vector<Color>& col
 
 	if(texNumElements != numElements)
 	{
-		BS_LOG(Warning, Texture, "SetPixels called with incorrect dimensions. Ignoring call.");
+		B3D_LOG(Warning, Texture, "SetPixels called with incorrect dimensions. Ignoring call.");
 		return;
 	}
 

@@ -51,7 +51,7 @@ FileDecoder::FileDecoder(const Path& fileLocation)
 
 	if(mInputStream->Size() > std::numeric_limits<u32>::max())
 	{
-		BS_EXCEPT(InternalErrorException, "File size is larger that u32 can hold. Ask a programmer to use a bigger data type.");
+		B3D_EXCEPT(InternalErrorException, "File size is larger that u32 can hold. Ask a programmer to use a bigger data type.");
 	}
 }
 

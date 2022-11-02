@@ -61,7 +61,7 @@ namespace bs
 	 * Primary class for holding geometry. Stores data in the form of vertex buffers and optionally an index buffer, which
 	 * may be bound to the pipeline for drawing. May contain multiple sub-meshes.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Mesh : public MeshBase
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Mesh : public MeshBase
 	{
 	public:
 		virtual ~Mesh() = default;
@@ -113,12 +113,12 @@ namespace bs
 		SPtr<MeshData> GetCachedData() const { return mCPUData; }
 
 		/** Gets the skeleton required for animation of this mesh, if any is available. */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Skeleton))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Skeleton))
 
 		SPtr<Skeleton> GetSkeleton() const { return mSkeleton; }
 
 		/** Returns an object containing all shapes used for morph animation, if any are available. */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(MorphShapes))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(MorphShapes))
 
 		SPtr<MorphShapes> GetMorphShapes() const { return mMorphShapes; }
 

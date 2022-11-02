@@ -145,7 +145,7 @@ const Plane& ConvexVolume::GetPlane(FrustumPlane whichPlane) const
 {
 	if(whichPlane >= mPlanes.size())
 	{
-		BS_EXCEPT(InvalidParametersException, "Requested plane does not exist in this volume.");
+		B3D_EXCEPT(InvalidParametersException, "Requested plane does not exist in this volume.");
 	}
 
 	return mPlanes[whichPlane];

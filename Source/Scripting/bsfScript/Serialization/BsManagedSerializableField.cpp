@@ -375,7 +375,7 @@ void* ManagedSerializableFieldDataBool::GetValue(const SPtr<ManagedSerializableT
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Bool))
 		return &Value;
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -384,7 +384,7 @@ void* ManagedSerializableFieldDataChar::GetValue(const SPtr<ManagedSerializableT
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Char))
 		return &Value;
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -393,7 +393,7 @@ void* ManagedSerializableFieldDataI8::GetValue(const SPtr<ManagedSerializableTyp
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I8))
 		return &Value;
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -402,7 +402,7 @@ void* ManagedSerializableFieldDataU8::GetValue(const SPtr<ManagedSerializableTyp
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U8))
 		return &Value;
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -411,7 +411,7 @@ void* ManagedSerializableFieldDataI16::GetValue(const SPtr<ManagedSerializableTy
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I16))
 		return &Value;
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -420,7 +420,7 @@ void* ManagedSerializableFieldDataU16::GetValue(const SPtr<ManagedSerializableTy
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U16))
 		return &Value;
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -429,7 +429,7 @@ void* ManagedSerializableFieldDataI32::GetValue(const SPtr<ManagedSerializableTy
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I32))
 		return &Value;
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -438,7 +438,7 @@ void* ManagedSerializableFieldDataU32::GetValue(const SPtr<ManagedSerializableTy
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U32))
 		return &Value;
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -447,7 +447,7 @@ void* ManagedSerializableFieldDataI64::GetValue(const SPtr<ManagedSerializableTy
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I64))
 		return &Value;
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -456,7 +456,7 @@ void* ManagedSerializableFieldDataU64::GetValue(const SPtr<ManagedSerializableTy
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U64))
 		return &Value;
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -469,7 +469,7 @@ void* ManagedSerializableFieldDataFloat::GetValue(const SPtr<ManagedSerializable
 			return &Value;
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -482,7 +482,7 @@ void* ManagedSerializableFieldDataDouble::GetValue(const SPtr<ManagedSerializabl
 			return &Value;
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -500,7 +500,7 @@ void* ManagedSerializableFieldDataString::GetValue(const SPtr<ManagedSerializabl
 		}
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -517,7 +517,7 @@ void* ManagedSerializableFieldDataResourceRef::GetValue(const SPtr<ManagedSerial
 		   refTypeInfo->MType == ScriptReferenceType::ManagedResource)
 		{
 			ScriptResourceBase* scriptResource = ScriptResourceManager::Instance().GetScriptResource(Value, false);
-			assert(scriptResource != nullptr);
+			B3D_ASSERT(scriptResource != nullptr);
 
 			return scriptResource->GetManagedInstance();
 		}
@@ -549,7 +549,7 @@ void* ManagedSerializableFieldDataResourceRef::GetValue(const SPtr<ManagedSerial
 		return ScriptRRefBase::Create(Value, resourceRRefClass);
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -576,7 +576,7 @@ void* ManagedSerializableFieldDataGameObjectRef::GetValue(const SPtr<ManagedSeri
 			{
 				ScriptManagedComponent* scriptComponent =
 					ScriptGameObjectManager::Instance().GetManagedScriptComponent(B3DStaticGameObjectCast<ManagedComponent>(Value));
-				assert(scriptComponent != nullptr);
+				B3D_ASSERT(scriptComponent != nullptr);
 
 				return scriptComponent->GetManagedInstance();
 			}
@@ -589,7 +589,7 @@ void* ManagedSerializableFieldDataGameObjectRef::GetValue(const SPtr<ManagedSeri
 			{
 				ScriptComponentBase* scriptComponent =
 					ScriptGameObjectManager::Instance().GetBuiltinScriptComponent(B3DStaticGameObjectCast<Component>(Value));
-				assert(scriptComponent != nullptr);
+				B3D_ASSERT(scriptComponent != nullptr);
 
 				return scriptComponent->GetManagedInstance();
 			}
@@ -598,7 +598,7 @@ void* ManagedSerializableFieldDataGameObjectRef::GetValue(const SPtr<ManagedSeri
 		}
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -620,7 +620,7 @@ void* ManagedSerializableFieldDataReflectableRef::GetValue(const SPtr<ManagedSer
 		return info->CreateCallback(Value);
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -646,7 +646,7 @@ void* ManagedSerializableFieldDataObject::GetValue(const SPtr<ManagedSerializabl
 		return nullptr;
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -662,7 +662,7 @@ void* ManagedSerializableFieldDataArray::GetValue(const SPtr<ManagedSerializable
 		return nullptr;
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -678,7 +678,7 @@ void* ManagedSerializableFieldDataList::GetValue(const SPtr<ManagedSerializableT
 		return nullptr;
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -694,7 +694,7 @@ void* ManagedSerializableFieldDataDictionary::GetValue(const SPtr<ManagedSeriali
 		return nullptr;
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -703,7 +703,7 @@ MonoObject* ManagedSerializableFieldDataBool::GetValueBoxed(const SPtr<ManagedSe
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Bool))
 		return MonoUtil::Box(MonoUtil::GetBoolClass(), &Value);
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -712,7 +712,7 @@ MonoObject* ManagedSerializableFieldDataChar::GetValueBoxed(const SPtr<ManagedSe
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::Char))
 		return MonoUtil::Box(MonoUtil::GetCharClass(), &Value);
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -721,7 +721,7 @@ MonoObject* ManagedSerializableFieldDataI8::GetValueBoxed(const SPtr<ManagedSeri
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I8))
 		return MonoUtil::Box(MonoUtil::GetSByteClass(), &Value);
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -730,7 +730,7 @@ MonoObject* ManagedSerializableFieldDataU8::GetValueBoxed(const SPtr<ManagedSeri
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U8))
 		return MonoUtil::Box(MonoUtil::GetByteClass(), &Value);
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -739,7 +739,7 @@ MonoObject* ManagedSerializableFieldDataI16::GetValueBoxed(const SPtr<ManagedSer
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I16))
 		return MonoUtil::Box(MonoUtil::GetInT16Class(), &Value);
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -748,7 +748,7 @@ MonoObject* ManagedSerializableFieldDataU16::GetValueBoxed(const SPtr<ManagedSer
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U16))
 		return MonoUtil::Box(MonoUtil::GetUinT16Class(), &Value);
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -757,7 +757,7 @@ MonoObject* ManagedSerializableFieldDataI32::GetValueBoxed(const SPtr<ManagedSer
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I32))
 		return MonoUtil::Box(MonoUtil::GetInT32Class(), &Value);
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -766,7 +766,7 @@ MonoObject* ManagedSerializableFieldDataU32::GetValueBoxed(const SPtr<ManagedSer
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U32))
 		return MonoUtil::Box(MonoUtil::GetUinT32Class(), &Value);
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -775,7 +775,7 @@ MonoObject* ManagedSerializableFieldDataI64::GetValueBoxed(const SPtr<ManagedSer
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::I64))
 		return MonoUtil::Box(MonoUtil::GetInT64Class(), &Value);
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -784,7 +784,7 @@ MonoObject* ManagedSerializableFieldDataU64::GetValueBoxed(const SPtr<ManagedSer
 	if(IsPrimitiveOrEnumType(typeInfo, ScriptPrimitiveType::U64))
 		return MonoUtil::Box(MonoUtil::GetUinT64Class(), &Value);
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -797,7 +797,7 @@ MonoObject* ManagedSerializableFieldDataFloat::GetValueBoxed(const SPtr<ManagedS
 			return MonoUtil::Box(MonoUtil::GetFloatClass(), &Value);
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -810,7 +810,7 @@ MonoObject* ManagedSerializableFieldDataDouble::GetValueBoxed(const SPtr<Managed
 			return MonoUtil::Box(MonoUtil::GetDoubleClass(), &Value);
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 
@@ -846,7 +846,7 @@ MonoObject* ManagedSerializableFieldDataObject::GetValueBoxed(const SPtr<Managed
 		return nullptr;
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
+	B3D_EXCEPT(InvalidParametersException, "Requesting an invalid type in serializable field.");
 	return nullptr;
 }
 

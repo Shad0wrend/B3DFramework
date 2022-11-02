@@ -89,7 +89,7 @@ const Path& Paths::GetEditorDataPath()
 			path = Path(kRawAppRoot) + kFrameworkDataPath;
 
 			if(!FileSystem::Exists(path))
-				BS_LOG(Error, FileSystem, "Cannot find builtin assets for the editor at path '{0}'.", path);
+				B3D_LOG(Error, FileSystem, "Cannot find builtin assets for the editor at path '{0}'.", path);
 		}
 
 		initialized = true;

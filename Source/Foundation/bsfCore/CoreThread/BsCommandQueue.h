@@ -266,7 +266,7 @@ namespace bs
 		static UnorderedSet<QueueBreakpoint, QueueBreakpoint::HashFunction, QueueBreakpoint::EqualFunction> SetBreakpoints;
 		static Mutex CommandQueueBreakpointMutex;
 
-		/** Checks if the specified command has a breakpoint and throw an assert if it does. */
+		/** Checks if the specified command has a breakpoint and throw an B3D_ASSERT if it does. */
 		static void BreakIfNeeded(u32 queueIdx, u32 commandIdx);
 #endif
 	};

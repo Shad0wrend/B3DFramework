@@ -415,7 +415,7 @@ void CreateTonemapLUTMat::InitDefinesInternal(ShaderDefines& defines)
 
 void CreateTonemapLUTMat::Execute3D(const SPtr<Texture>& output, const RenderSettings& settings)
 {
-	assert(mIs3D);
+	B3D_ASSERT(mIs3D);
 	BS_RENMAT_PROFILE_BLOCK
 
 	PopulateParamBuffers(settings);
@@ -431,7 +431,7 @@ void CreateTonemapLUTMat::Execute3D(const SPtr<Texture>& output, const RenderSet
 
 void CreateTonemapLUTMat::Execute2D(const SPtr<RenderTexture>& output, const RenderSettings& settings)
 {
-	assert(!mIs3D);
+	B3D_ASSERT(!mIs3D);
 	BS_RENMAT_PROFILE_BLOCK
 
 	PopulateParamBuffers(settings);

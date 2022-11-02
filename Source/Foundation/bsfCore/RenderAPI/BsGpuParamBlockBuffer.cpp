@@ -28,7 +28,7 @@ void GpuParamBlockBuffer::Write(u32 offset, const void* data, u32 size)
 #if BS_DEBUG_MODE
 	if((offset + size) > mSize)
 	{
-		BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
+		B3D_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
 											  "Available range: 0 .. " +
 					  ToString(mSize) + ". "
 										"Wanted range: " +
@@ -45,7 +45,7 @@ void GpuParamBlockBuffer::Read(u32 offset, void* data, u32 size)
 #if BS_DEBUG_MODE
 	if((offset + size) > mSize)
 	{
-		BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
+		B3D_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
 											  "Available range: 0 .. " +
 					  ToString(mSize) + ". "
 										"Wanted range: " +
@@ -61,7 +61,7 @@ void GpuParamBlockBuffer::ZeroOut(u32 offset, u32 size)
 #if BS_DEBUG_MODE
 	if((offset + size) > mSize)
 	{
-		BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
+		B3D_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
 											  "Available range: 0 .. " +
 					  ToString(mSize) + ". "
 										"Wanted range: " +
@@ -128,7 +128,7 @@ void GpuParamBlockBuffer::Write(u32 offset, const void* data, u32 size)
 #if BS_DEBUG_MODE
 	if((offset + size) > mSize)
 	{
-		BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
+		B3D_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
 											  "Available range: 0 .. " +
 					  ToString(mSize) + ". "
 										"Wanted range: " +
@@ -145,7 +145,7 @@ void GpuParamBlockBuffer::Read(u32 offset, void* data, u32 size)
 #if BS_DEBUG_MODE
 	if((offset + size) > mSize)
 	{
-		BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
+		B3D_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
 											  "Available range: 0 .. " +
 					  ToString(mSize) + ". "
 										"Wanted range: " +
@@ -161,7 +161,7 @@ void GpuParamBlockBuffer::ZeroOut(u32 offset, u32 size)
 #if BS_DEBUG_MODE
 	if((offset + size) > mSize)
 	{
-		BS_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
+		B3D_EXCEPT(InvalidParametersException, "Wanted range is out of buffer bounds. "
 											  "Available range: 0 .. " +
 					  ToString(mSize) + ". "
 										"Wanted range: " +
@@ -191,7 +191,7 @@ void GpuParamBlockBuffer::WriteToGpu(const u8* data, u32 queueIdx)
 
 void GpuParamBlockBuffer::SyncToCore(const CoreSyncData& data)
 {
-	assert(mSize == data.GetBufferSize());
+	B3D_ASSERT(mSize == data.GetBufferSize());
 
 	Write(0, data.GetBuffer(), data.GetBufferSize());
 }

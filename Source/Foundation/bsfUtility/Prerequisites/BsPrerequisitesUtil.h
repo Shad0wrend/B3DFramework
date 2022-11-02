@@ -198,10 +198,10 @@
 
 #if BS_DEBUG_MODE
 #	define BS_DEBUG_ONLY(x) x
-#	define BS_ASSERT(x) assert(x)
+#	define B3D_ASSERT(x) assert(x)
 #else
 #	define BS_DEBUG_ONLY(x)
-#	define BS_ASSERT(x)
+#	define B3D_ASSERT(x)
 #endif
 
 // Short-hand names for various built-in types

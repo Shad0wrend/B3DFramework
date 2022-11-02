@@ -141,7 +141,7 @@ namespace bs
 			if(so->mRTTIData.Empty())
 				return;
 
-			BS_ASSERT(context != nullptr && B3DRTTIIsOfType<CoreSerializationContext>(context));
+			B3D_ASSERT(context != nullptr && B3DRTTIIsOfType<CoreSerializationContext>(context));
 			auto coreContext = static_cast<CoreSerializationContext*>(context);
 
 			GODeserializationData& goDeserializationData = AnyCastRef<GODeserializationData>(so->mRTTIData);

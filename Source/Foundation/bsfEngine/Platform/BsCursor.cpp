@@ -64,7 +64,7 @@ void Cursor::SetCursor(const String& name)
 	auto iterFind = mCustomIconNameToId.find(name);
 	if(iterFind == mCustomIconNameToId.end())
 	{
-		BS_LOG(Warning, Platform, "Cannot find cursor icon with name: " + name);
+		B3D_LOG(Warning, Platform, "Cannot find cursor icon with name: " + name);
 		return;
 	}
 
@@ -165,7 +165,7 @@ void Cursor::RestoreCursorIcon(CursorType type)
 		break;
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Invalid cursor type: " + ToString((u32)type));
+	B3D_EXCEPT(InvalidParametersException, "Invalid cursor type: " + ToString((u32)type));
 }
 
 void Cursor::UpdateCursorImage()

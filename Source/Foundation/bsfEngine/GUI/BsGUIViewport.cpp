@@ -86,6 +86,6 @@ void GUIViewport::ChangeParentWidgetInternal(GUIWidget* widget)
 		SPtr<RenderTarget> cameraRenderTarget = mCamera->GetViewport()->GetTarget();
 
 		if(guiRenderTarget != cameraRenderTarget)
-			BS_EXCEPT(InvalidParametersException, "Camera provided to GUIViewport must use the same render target as the GUIWidget this element is located on.")
+			B3D_EXCEPT(InvalidParametersException, "Camera provided to GUIViewport must use the same render target as the GUIWidget this element is located on.")
 	}
 }

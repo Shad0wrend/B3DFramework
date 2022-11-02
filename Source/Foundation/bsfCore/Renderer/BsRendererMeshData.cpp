@@ -31,7 +31,7 @@ void RendererMeshData::GetPositions(Vector3* buffer, u32 size)
 		return;
 
 	u32 numElements = mMeshData->GetNumVertices();
-	assert(numElements * sizeof(Vector3) == size);
+	B3D_ASSERT(numElements * sizeof(Vector3) == size);
 
 	mMeshData->GetVertexData(VES_POSITION, buffer, size);
 }
@@ -42,7 +42,7 @@ void RendererMeshData::SetPositions(Vector3* buffer, u32 size)
 		return;
 
 	u32 numElements = mMeshData->GetNumVertices();
-	assert(numElements * sizeof(Vector3) == size);
+	B3D_ASSERT(numElements * sizeof(Vector3) == size);
 
 	mMeshData->SetVertexData(VES_POSITION, buffer, size);
 }
@@ -53,7 +53,7 @@ void RendererMeshData::GetNormals(Vector3* buffer, u32 size)
 		return;
 
 	u32 numElements = mMeshData->GetNumVertices();
-	assert(numElements * sizeof(Vector3) == size);
+	B3D_ASSERT(numElements * sizeof(Vector3) == size);
 
 	u8* normalSrc = mMeshData->GetElementData(VES_NORMAL);
 	u32 stride = mMeshData->GetVertexDesc()->GetVertexStride(0);
@@ -67,7 +67,7 @@ void RendererMeshData::SetNormals(Vector3* buffer, u32 size)
 		return;
 
 	u32 numElements = mMeshData->GetNumVertices();
-	assert(numElements * sizeof(Vector3) == size);
+	B3D_ASSERT(numElements * sizeof(Vector3) == size);
 
 	u8* normalDst = mMeshData->GetElementData(VES_NORMAL);
 	u32 stride = mMeshData->GetVertexDesc()->GetVertexStride(0);
@@ -81,7 +81,7 @@ void RendererMeshData::GetTangents(Vector4* buffer, u32 size)
 		return;
 
 	u32 numElements = mMeshData->GetNumVertices();
-	assert(numElements * sizeof(Vector4) == size);
+	B3D_ASSERT(numElements * sizeof(Vector4) == size);
 
 	u8* tangentSrc = mMeshData->GetElementData(VES_TANGENT);
 	u32 stride = mMeshData->GetVertexDesc()->GetVertexStride(0);
@@ -95,7 +95,7 @@ void RendererMeshData::SetTangents(Vector4* buffer, u32 size)
 		return;
 
 	u32 numElements = mMeshData->GetNumVertices();
-	assert(numElements * sizeof(Vector4) == size);
+	B3D_ASSERT(numElements * sizeof(Vector4) == size);
 
 	u8* tangentDst = mMeshData->GetElementData(VES_TANGENT);
 	u32 stride = mMeshData->GetVertexDesc()->GetVertexStride(0);
@@ -109,7 +109,7 @@ void RendererMeshData::GetColors(Color* buffer, u32 size)
 		return;
 
 	u32 numElements = mMeshData->GetNumVertices();
-	assert(numElements * sizeof(Vector4) == size);
+	B3D_ASSERT(numElements * sizeof(Vector4) == size);
 
 	u8* colorSrc = mMeshData->GetElementData(VES_COLOR);
 	u32 stride = mMeshData->GetVertexDesc()->GetVertexStride(0);
@@ -130,7 +130,7 @@ void RendererMeshData::SetColors(Color* buffer, u32 size)
 		return;
 
 	u32 numElements = mMeshData->GetNumVertices();
-	assert(numElements * sizeof(Vector4) == size);
+	B3D_ASSERT(numElements * sizeof(Vector4) == size);
 
 	u8* colorDst = mMeshData->GetElementData(VES_COLOR);
 	u32 stride = mMeshData->GetVertexDesc()->GetVertexStride(0);
@@ -151,7 +151,7 @@ void RendererMeshData::SetColors(u32* buffer, u32 size)
 		return;
 
 	u32 numElements = mMeshData->GetNumVertices();
-	assert(numElements * sizeof(u32) == size);
+	B3D_ASSERT(numElements * sizeof(u32) == size);
 
 	mMeshData->SetVertexData(VES_COLOR, buffer, size);
 }
@@ -162,7 +162,7 @@ void RendererMeshData::GetUV0(Vector2* buffer, u32 size)
 		return;
 
 	u32 numElements = mMeshData->GetNumVertices();
-	assert(numElements * sizeof(Vector2) == size);
+	B3D_ASSERT(numElements * sizeof(Vector2) == size);
 
 	mMeshData->GetVertexData(VES_TEXCOORD, buffer, size, 0);
 }
@@ -173,7 +173,7 @@ void RendererMeshData::SetUV0(Vector2* buffer, u32 size)
 		return;
 
 	u32 numElements = mMeshData->GetNumVertices();
-	assert(numElements * sizeof(Vector2) == size);
+	B3D_ASSERT(numElements * sizeof(Vector2) == size);
 
 	mMeshData->SetVertexData(VES_TEXCOORD, buffer, size, 0);
 }
@@ -184,7 +184,7 @@ void RendererMeshData::GetUV1(Vector2* buffer, u32 size)
 		return;
 
 	u32 numElements = mMeshData->GetNumVertices();
-	assert(numElements * sizeof(Vector2) == size);
+	B3D_ASSERT(numElements * sizeof(Vector2) == size);
 
 	mMeshData->GetVertexData(VES_TEXCOORD, buffer, size, 1);
 }
@@ -195,7 +195,7 @@ void RendererMeshData::SetUV1(Vector2* buffer, u32 size)
 		return;
 
 	u32 numElements = mMeshData->GetNumVertices();
-	assert(numElements * sizeof(Vector2) == size);
+	B3D_ASSERT(numElements * sizeof(Vector2) == size);
 
 	mMeshData->SetVertexData(VES_TEXCOORD, buffer, size, 1);
 }
@@ -209,7 +209,7 @@ void RendererMeshData::GetBoneWeights(BoneWeight* buffer, u32 size)
 		return;
 
 	u32 numElements = mMeshData->GetNumVertices();
-	assert(numElements * sizeof(BoneWeight) == size);
+	B3D_ASSERT(numElements * sizeof(BoneWeight) == size);
 
 	u8* weightPtr = mMeshData->GetElementData(VES_BLEND_WEIGHTS);
 	u8* indexPtr = mMeshData->GetElementData(VES_BLEND_INDICES);
@@ -247,7 +247,7 @@ void RendererMeshData::SetBoneWeights(BoneWeight* buffer, u32 size)
 		return;
 
 	u32 numElements = mMeshData->GetNumVertices();
-	assert(numElements * sizeof(BoneWeight) == size);
+	B3D_ASSERT(numElements * sizeof(BoneWeight) == size);
 
 	u8* weightPtr = mMeshData->GetElementData(VES_BLEND_WEIGHTS);
 	u8* indexPtr = mMeshData->GetElementData(VES_BLEND_INDICES);
@@ -281,7 +281,7 @@ void RendererMeshData::GetIndices(u32* buffer, u32 size)
 	u32 indexSize = mMeshData->GetIndexElementSize();
 	u32 numIndices = mMeshData->GetNumIndices();
 
-	assert(numIndices * indexSize == size);
+	B3D_ASSERT(numIndices * indexSize == size);
 
 	if(mMeshData->GetIndexType() == IT_16BIT)
 	{
@@ -307,7 +307,7 @@ void RendererMeshData::SetIndices(u32* buffer, u32 size)
 	u32 indexSize = mMeshData->GetIndexElementSize();
 	u32 numIndices = mMeshData->GetNumIndices();
 
-	assert(numIndices * indexSize == size);
+	B3D_ASSERT(numIndices * indexSize == size);
 
 	if(mMeshData->GetIndexType() == IT_16BIT)
 	{

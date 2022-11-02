@@ -60,7 +60,7 @@ namespace bs
 
 		void minimum(K& key, V& value)
 		{
-			assert(mSize > 0);
+			B3D_ASSERT(mSize > 0);
 
 			key = mPtr[0]->key;
 			value = mPtr[0]->value;
@@ -98,7 +98,7 @@ namespace bs
 
 		void erase(K& key, V& value)
 		{
-			assert(mSize > 0);
+			B3D_ASSERT(mSize > 0);
 
 			HeapNode<K, V>* root = mPtr[0];
 			key = root->key;

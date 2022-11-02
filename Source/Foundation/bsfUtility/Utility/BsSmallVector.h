@@ -231,14 +231,14 @@ namespace bs
 
 		Type& operator[](u32 index)
 		{
-			assert(index < mSize && "Array index out-of-range.");
+			B3D_ASSERT(index < mSize && "Array index out-of-range.");
 
 			return mElements[index];
 		}
 
 		const Type& operator[](u32 index) const
 		{
-			assert(index < mSize && "Array index out-of-range.");
+			B3D_ASSERT(index < mSize && "Array index out-of-range.");
 
 			return mElements[index];
 		}
@@ -279,25 +279,25 @@ namespace bs
 
 		Type& Front()
 		{
-			assert(!Empty());
+			B3D_ASSERT(!Empty());
 			return mElements[0];
 		}
 
 		Type& Back()
 		{
-			assert(!Empty());
+			B3D_ASSERT(!Empty());
 			return mElements[mSize - 1];
 		}
 
 		const Type& Front() const
 		{
-			assert(!Empty());
+			B3D_ASSERT(!Empty());
 			return mElements[0];
 		}
 
 		const Type& Back() const
 		{
-			assert(!Empty());
+			B3D_ASSERT(!Empty());
 			return mElements[mSize - 1];
 		}
 
@@ -344,15 +344,15 @@ namespace bs
 
 		void Pop()
 		{
-			assert(mSize > 0 && "Popping an empty array.");
+			B3D_ASSERT(mSize > 0 && "Popping an empty array.");
 			mSize--;
 			mElements[mSize].~Type();
 		}
 
 		Iterator Erase(ConstIterator iter)
 		{
-			assert(iter >= Begin() && "Iterator to erase is out of bounds.");
-			assert(iter < End() && "Erasing at past-the-end iterator.");
+			B3D_ASSERT(iter >= Begin() && "Iterator to erase is out of bounds.");
+			B3D_ASSERT(iter < End() && "Erasing at past-the-end iterator.");
 
 			Iterator toErase = const_cast<Iterator>(iter);
 			std::move(toErase + 1, End(), toErase);
@@ -477,7 +477,7 @@ namespace bs
 
 		void Grow(u32 capacity)
 		{
-			assert(capacity > N);
+			B3D_ASSERT(capacity > N);
 
 			// Allocate memory with the new capacity (caller guarantees never to call this with capacity <= N, so we don't
 			// need to worry about the static buffer)

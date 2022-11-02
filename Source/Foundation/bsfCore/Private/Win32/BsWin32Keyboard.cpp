@@ -32,20 +32,20 @@ void InitializeDirectInput(Keyboard::Pimpl* m, HWND hWnd)
 	dipdw.dwData = DI_BUFFER_SIZE_KEYBOARD;
 
 	if(FAILED(m->DirectInput->CreateDevice(GUID_SysKeyboard, &m->Keyboard, nullptr)))
-		BS_EXCEPT(InternalErrorException, "DirectInput keyboard init: Failed to create device.");
+		B3D_EXCEPT(InternalErrorException, "DirectInput keyboard init: Failed to create device.");
 
 	if(FAILED(m->Keyboard->SetDataFormat(&c_dfDIKeyboard)))
-		BS_EXCEPT(InternalErrorException, "DirectInput keyboard init: Failed to set format.");
+		B3D_EXCEPT(InternalErrorException, "DirectInput keyboard init: Failed to set format.");
 
 	if(FAILED(m->Keyboard->SetCooperativeLevel(hWnd, m->CoopSettings)))
-		BS_EXCEPT(InternalErrorException, "DirectInput keyboard init: Failed to set coop level.");
+		B3D_EXCEPT(InternalErrorException, "DirectInput keyboard init: Failed to set coop level.");
 
 	if(FAILED(m->Keyboard->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph)))
-		BS_EXCEPT(InternalErrorException, "DirectInput keyboard init: Failed to set property.");
+		B3D_EXCEPT(InternalErrorException, "DirectInput keyboard init: Failed to set property.");
 
 	HRESULT hr = m->Keyboard->Acquire();
 	if(FAILED(hr) && hr != DIERR_OTHERAPPHASPRIO)
-		BS_EXCEPT(InternalErrorException, "DirectInput keyboard init: Failed to acquire device.");
+		B3D_EXCEPT(InternalErrorException, "DirectInput keyboard init: Failed to acquire device.");
 
 	m->HWnd = hWnd;
 }
@@ -108,7 +108,7 @@ void Keyboard::Capture()
 
 	if(FAILED(hr))
 	{
-		BS_LOG(Error, Platform, "Failed to read keyboard input. Internal error. ");
+		B3D_LOG(Error, Platform, "Failed to read keyboard input. Internal error. ");
 		return;
 	}
 

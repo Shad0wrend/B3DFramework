@@ -26,14 +26,14 @@ void MemStack::EndThread()
 
 u8* MemStack::Alloc(u32 numBytes)
 {
-	assert(ThreadMemStack != nullptr && "Stack allocation failed. Did you call beginThread?");
+	B3D_ASSERT(ThreadMemStack != nullptr && "Stack allocation failed. Did you call beginThread?");
 
 	return ThreadMemStack->Alloc(numBytes);
 }
 
 void MemStack::DeallocLast(u8* data)
 {
-	assert(ThreadMemStack != nullptr && "Stack deallocation failed. Did you call beginThread?");
+	B3D_ASSERT(ThreadMemStack != nullptr && "Stack deallocation failed. Did you call beginThread?");
 
 	ThreadMemStack->Dealloc(data);
 }

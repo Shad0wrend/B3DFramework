@@ -10,7 +10,7 @@ using namespace bs;
 D3D11RenderWindowManager::D3D11RenderWindowManager(ct::D3D11RenderAPI* renderSystem)
 	: mRenderSystem(renderSystem)
 {
-	assert(mRenderSystem != nullptr);
+	B3D_ASSERT(mRenderSystem != nullptr);
 }
 
 SPtr<RenderWindow> D3D11RenderWindowManager::CreateImpl(RENDER_WINDOW_DESC& desc, u32 windowId, const SPtr<RenderWindow>& parentWindow)

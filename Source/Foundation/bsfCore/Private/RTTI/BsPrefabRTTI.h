@@ -38,13 +38,13 @@ namespace bs
 
 		void OnDeserializationStarted(IReflectable* ptr, SerializationContext* context)
 		{
-			BS_ASSERT(context != nullptr && B3DRTTIIsOfType<CoreSerializationContext>(context));
+			B3D_ASSERT(context != nullptr && B3DRTTIIsOfType<CoreSerializationContext>(context));
 			auto coreContext = static_cast<CoreSerializationContext*>(context);
 
 			// Make sure external IDs are broken because we do some ID matching when dealing with prefabs and keeping
 			// the invalid external references could cause it to match invalid objects in case they end up having the
 			// same ID.
-			BS_ASSERT(!coreContext->GoState);
+			B3D_ASSERT(!coreContext->GoState);
 			coreContext->GoState = B3DMakeShared<GameObjectDeserializationState>(GODM_BreakExternal | GODM_UseNewIds);
 		}
 

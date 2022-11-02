@@ -35,7 +35,7 @@ bool ScriptComponentBase::CheckIfDestroyed(const GameObjectHandleBase& handle)
 {
 	if(handle.IsDestroyed())
 	{
-		BS_LOG(Warning, Scene, "Trying to access a destroyed GameObject with instance ID: {0}", handle.GetInstanceId());
+		B3D_LOG(Warning, Scene, "Trying to access a destroyed GameObject with instance ID: {0}", handle.GetInstanceId());
 		return true;
 	}
 
@@ -45,7 +45,7 @@ bool ScriptComponentBase::CheckIfDestroyed(const GameObjectHandleBase& handle)
 ScriptComponent::ScriptComponent(MonoObject* instance)
 	: ScriptObject(instance)
 {
-	assert(instance != nullptr);
+	B3D_ASSERT(instance != nullptr);
 }
 
 void ScriptComponent::InitRuntimeData()
@@ -261,7 +261,7 @@ void ScriptComponent::InternalRemoveComponent(MonoObject* parentSceneObject, Mon
 		}
 	}
 
-	BS_LOG(Warning, Scene, "Attempting to remove a component that doesn't exists on SceneObject \"{0}\"", so->GetName());
+	B3D_LOG(Warning, Scene, "Attempting to remove a component that doesn't exists on SceneObject \"{0}\"", so->GetName());
 }
 
 MonoObject* ScriptComponent::InternalGetSceneObject(ScriptComponentBase* nativeInstance)
@@ -274,7 +274,7 @@ MonoObject* ScriptComponent::InternalGetSceneObject(ScriptComponentBase* nativeI
 
 	ScriptSceneObject* scriptSO = ScriptGameObjectManager::Instance().GetOrCreateScriptSceneObject(sceneObject);
 
-	assert(scriptSO->GetManagedInstance() != nullptr);
+	B3D_ASSERT(scriptSO->GetManagedInstance() != nullptr);
 	return scriptSO->GetManagedInstance();
 }
 

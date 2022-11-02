@@ -46,7 +46,7 @@ SPtr<Resource> SLImporter::Import(const Path& filePath, SPtr<const ImportOptions
 		else
 			file = result.ErrorFile;
 
-		BS_LOG(Error, BSLCompiler, "Compilation error when importing shader \"{0}\":\n{1}. Location: {2} ({3})", file, result.ErrorMessage, result.ErrorLine, result.ErrorColumn);
+		B3D_LOG(Error, BSLCompiler, "Compilation error when importing shader \"{0}\":\n{1}. Location: {2} ({3})", file, result.ErrorMessage, result.ErrorLine, result.ErrorColumn);
 	}
 
 	return result.Shader;

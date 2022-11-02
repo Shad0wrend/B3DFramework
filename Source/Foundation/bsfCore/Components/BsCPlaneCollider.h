@@ -17,25 +17,25 @@ namespace bs
 	 *
 	 * @note Wraps PlaneCollider as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(PlaneCollider)) CPlaneCollider : public CCollider
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(PlaneCollider)) CPlaneCollider : public CCollider
 	{
 	public:
 		CPlaneCollider(const HSceneObject& parent);
 
 		/** Normal vector that determines the local orientation of the plane. */
-		BS_SCRIPT_EXPORT(ExportName(Normal), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Normal), Property(Setter))
 		void SetNormal(const Vector3& normal);
 
 		/** @copydoc SetNormal() */
-		BS_SCRIPT_EXPORT(ExportName(Normal), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Normal), Property(Getter))
 		Vector3 GetNormal() const { return mNormal; }
 
 		/** Determines the distance of the plane from the local origin, along its normal vector. */
-		BS_SCRIPT_EXPORT(ExportName(Distance), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Distance), Property(Setter))
 		void SetDistance(float distance);
 
 		/** @copydoc SetDistance() */
-		BS_SCRIPT_EXPORT(ExportName(Distance), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Distance), Property(Getter))
 		float GetDistance() const { return mDistance; }
 
 		/** @name Internal

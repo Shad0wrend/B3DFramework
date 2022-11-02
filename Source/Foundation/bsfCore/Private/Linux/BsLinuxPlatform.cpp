@@ -250,7 +250,7 @@ int x11ErrorHandler(::Display* display, XErrorEvent* event)
 
 	char buffer[256];
 	XGetErrorText(display, event->error_code, buffer, sizeof(buffer));
-	BS_LOG(Warning, Platform, "X11 error: " + String(buffer));
+	B3D_LOG(Warning, Platform, "X11 error: " + String(buffer));
 
 	return 0;
 }
@@ -1263,12 +1263,12 @@ void Platform::StartUpInternal()
 	int firstEvent;
 	int firstError;
 	if(!XQueryExtension(mData->xDisplay, "XInputExtension", &mData->xInput2Opcode, &firstEvent, &firstError))
-		BS_EXCEPT(InternalErrorException, "X Server doesn't support the XInput extension");
+		B3D_EXCEPT(InternalErrorException, "X Server doesn't support the XInput extension");
 
 	int majorVersion = 2;
 	int minorVersion = 0;
 	if(XIQueryVersion(mData->xDisplay, &majorVersion, &minorVersion) != Success)
-		BS_EXCEPT(InternalErrorException, "X Server doesn't support at least the XInput 2.0 extension");
+		B3D_EXCEPT(InternalErrorException, "X Server doesn't support at least the XInput 2.0 extension");
 
 	// Let XInput know we are interested in raw mouse movement events
 	constexpr int maskLen = XIMaskLen(XI_LASTEVENT);

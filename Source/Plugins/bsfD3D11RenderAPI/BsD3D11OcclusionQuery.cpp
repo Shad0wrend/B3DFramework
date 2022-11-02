@@ -13,7 +13,7 @@ using namespace bs::ct;
 D3D11OcclusionQuery::D3D11OcclusionQuery(bool binary, u32 deviceIdx)
 	: OcclusionQuery(binary)
 {
-	assert(deviceIdx == 0 && "Multiple GPUs not supported natively on DirectX 11.");
+	B3D_ASSERT(deviceIdx == 0 && "Multiple GPUs not supported natively on DirectX 11.");
 
 	D3D11RenderAPI* rs = static_cast<D3D11RenderAPI*>(RenderAPI::InstancePtr());
 	D3D11Device& device = rs->GetPrimaryDevice();
@@ -24,7 +24,7 @@ D3D11OcclusionQuery::D3D11OcclusionQuery(bool binary, u32 deviceIdx)
 
 	HRESULT hr = device.GetD3D11Device()->CreateQuery(&queryDesc, &mQuery);
 	if(hr != S_OK)
-		BS_EXCEPT(RenderingAPIException, "Failed to create an occlusion query.");
+		B3D_EXCEPT(RenderingAPIException, "Failed to create an occlusion query.");
 
 	mContext = device.GetImmediateContext();
 

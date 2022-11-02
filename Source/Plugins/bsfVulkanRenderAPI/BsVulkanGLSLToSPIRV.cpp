@@ -439,7 +439,7 @@ static bool ParseVertexAttributes(const glslang::TProgram* program, Vector<Verte
 		{
 			VertexElementType type = MapGLSLangToVertexElemType(*ttype);
 			if(type == VET_UNKNOWN)
-				BS_LOG(Error, RenderBackend, "Cannot determine vertex input attribute type for attribute: {0}", attribName);
+				B3D_LOG(Error, RenderBackend, "Cannot determine vertex input attribute type for attribute: {0}", attribName);
 
 			elementList.push_back(VertexElement(0, location, type, semantic, index));
 		}
@@ -448,7 +448,7 @@ static bool ParseVertexAttributes(const glslang::TProgram* program, Vector<Verte
 			// Ignore built-in attributes
 			if(memcmp(attribName, "gl_", 3) != 0)
 			{
-				BS_LOG(Error, RenderBackend, "Cannot determine vertex input attribute semantic for attribute: {0}", attribName);
+				B3D_LOG(Error, RenderBackend, "Cannot determine vertex input attribute semantic for attribute: {0}", attribName);
 			}
 		}
 	}
@@ -476,7 +476,7 @@ static void ParseStruct(const glslang::TTypeList* typeList, u32& size)
 			GpuParamDataType paramType = MapGLSLangToGpuParamDataType(*ttype);
 			if(paramType == GPDT_UNKNOWN)
 			{
-				BS_LOG(Warning, RenderBackend, "Cannot determine type for uniform inside a struct.");
+				B3D_LOG(Warning, RenderBackend, "Cannot determine type for uniform inside a struct.");
 				continue;
 			}
 
@@ -593,7 +593,7 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 			}
 
 			if(param.Type == GPOT_UNKNOWN)
-				BS_LOG(Error, RenderBackend, "Cannot determine type for uniform: {0}", name);
+				B3D_LOG(Error, RenderBackend, "Cannot determine type for uniform: {0}", name);
 		}
 		else
 		{
@@ -684,7 +684,7 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 
 				if(paramType == GPDT_UNKNOWN)
 				{
-					BS_LOG(Warning, RenderBackend, "Cannot determine type for uniform: {0}", name);
+					B3D_LOG(Warning, RenderBackend, "Cannot determine type for uniform: {0}", name);
 					continue;
 				}
 
@@ -718,7 +718,7 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 					// Ensure our calculation matches the glslang provided one. We don't use glslang directly because
 					// for some cases offset is not provided (e.g. structs that have members optimized out).
 					const UniformInfo& uniformInfo = findIter->second;
-					assert((uniformInfo.BufferOffset / 4) == bufferOffset);
+					B3D_ASSERT((uniformInfo.BufferOffset / 4) == bufferOffset);
 				}
 				else
 				{

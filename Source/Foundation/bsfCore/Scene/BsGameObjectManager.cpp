@@ -105,8 +105,8 @@ GameObjectDeserializationState::GameObjectDeserializationState(u32 options)
 
 GameObjectDeserializationState::~GameObjectDeserializationState()
 {
-	BS_ASSERT(mUnresolvedHandles.empty() && "Deserialization state being destroyed before all handles are resolved.");
-	BS_ASSERT(mDeserializedObjects.empty() && "Deserialization state being destroyed before all objects are resolved.");
+	B3D_ASSERT(mUnresolvedHandles.empty() && "Deserialization state being destroyed before all handles are resolved.");
+	B3D_ASSERT(mDeserializedObjects.empty() && "Deserialization state being destroyed before all objects are resolved.");
 }
 
 void GameObjectDeserializationState::Resolve()
@@ -210,7 +210,7 @@ void GameObjectDeserializationState::RegisterUnresolvedHandle(u64 originalId, Ga
 
 void GameObjectDeserializationState::RegisterObject(u64 originalId, GameObjectHandleBase& object)
 {
-	assert(originalId != 0 && "Invalid game object ID.");
+	B3D_ASSERT(originalId != 0 && "Invalid game object ID.");
 
 	const auto iterFind = mUnresolvedHandleData.find(originalId);
 	if(iterFind != mUnresolvedHandleData.end())

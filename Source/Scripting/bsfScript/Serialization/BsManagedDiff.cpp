@@ -25,7 +25,7 @@ SPtr<SerializedObject> ManagedDiff::GenerateDiffInternal(IReflectable* orgObj, I
 	}
 	else
 	{
-		assert(orgObj->GetTypeId() == TID_ScriptSerializableObject);
+		B3D_ASSERT(orgObj->GetTypeId() == TID_ScriptSerializableObject);
 		orgManSerzObj = static_cast<ManagedSerializableObject*>(orgObj);
 	}
 
@@ -40,7 +40,7 @@ SPtr<SerializedObject> ManagedDiff::GenerateDiffInternal(IReflectable* orgObj, I
 	}
 	else
 	{
-		assert(newObj->GetTypeId() == TID_ScriptSerializableObject);
+		B3D_ASSERT(newObj->GetTypeId() == TID_ScriptSerializableObject);
 		newManSerzObj = static_cast<ManagedSerializableObject*>(newObj);
 	}
 

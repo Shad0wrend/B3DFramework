@@ -13,11 +13,11 @@ namespace bs
 	 */
 
 	/** Generates pseudo random numbers using the Xorshift128 algorithm. Suitable for high performance requirements. */
-	class BS_SCRIPT_EXPORT(DocumentationGroup(Math)) Random
+	class B3D_SCRIPT_EXPORT(DocumentationGroup(Math)) Random
 	{
 	public:
 		/** Initializes a new generator using the specified seed. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		Random(uint32_t seed = 0)
 		{
@@ -25,7 +25,7 @@ namespace bs
 		}
 
 		/** Changes the seed of the generator to the specified value. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		void SetSeed(uint32_t seed)
 		{
@@ -36,7 +36,7 @@ namespace bs
 		}
 
 		/** Returns a random value in range [0, std::numeric_limits<uint32_t>::max()]. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		uint32_t Get() const
 		{
@@ -58,11 +58,11 @@ namespace bs
 		}
 
 		/** Returns a random value in range [min, max]. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		int32_t GetRange(int32_t min, int32_t max) const
 		{
-			assert(max > min);
+			B3D_ASSERT(max > min);
 
 			// Note: Not using modulo for performance
 			const int32_t range = max - min + 1;
@@ -72,7 +72,7 @@ namespace bs
 		}
 
 		/** Returns a random value in range [0, 1]. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		float GetUNorm() const
 		{
@@ -81,7 +81,7 @@ namespace bs
 		}
 
 		/** Returns a random value in range [-1, 1]. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		float GetSNorm() const
 		{
@@ -89,7 +89,7 @@ namespace bs
 		}
 
 		/** Returns a random unit vector in three dimensions. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		Vector3 GetUnitVector() const
 		{
@@ -112,7 +112,7 @@ namespace bs
 		}
 
 		/** Returns a random unit vector in two dimensions. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		Vector2 GetUnitVector2D() const
 		{
@@ -134,7 +134,7 @@ namespace bs
 		}
 
 		/** Returns a random point inside a unit sphere. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		Vector3 GetPointInSphere() const
 		{
@@ -148,7 +148,7 @@ namespace bs
 		 * will generate points within the entire sphere volume. Intermediate values represent the shell, which is a volume
 		 * between two concentric spheres.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		Vector3 GetPointInSphereShell(float thickness) const
 		{
@@ -159,7 +159,7 @@ namespace bs
 		}
 
 		/** Returns a random point inside a unit circle. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		Vector2 GetPointInCircle() const
 		{
@@ -173,7 +173,7 @@ namespace bs
 		 * generate points within the entire circle surface. Intermediate values represent the shell, which is the surface
 		 * between two concentric circles.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		Vector2 GetPointInCircleShell(float thickness) const
 		{
@@ -184,7 +184,7 @@ namespace bs
 		}
 
 		/** Returns a random point on a unit arc with the specified length (angle). Angle of 360 represents a circle. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		Vector2 GetPointInArc(Degree angle) const
 		{
@@ -198,7 +198,7 @@ namespace bs
 		 * generate points on the arc edge, while thickness of 1 will generate points on the entire arc 'slice'.
 		 * Intermediate vlaues represent the shell, which is the surface between two concentric circles.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		Vector2 GetPointInArcShell(Degree angle, float thickness) const
 		{
@@ -211,7 +211,7 @@ namespace bs
 		}
 
 		/** Returns a random set of Barycentric coordinates that may be used for generating random points on a triangle. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		Vector3 GetBarycentric() const
 		{

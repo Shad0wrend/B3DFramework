@@ -124,7 +124,7 @@ void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const
 								{
 									if(objToDecode.DecodeInProgress)
 									{
-										BS_LOG(Warning, Generic, "Detected a circular reference when decoding. "
+										B3D_LOG(Warning, Generic, "Detected a circular reference when decoding. "
 																 "Referenced object's fields will be resolved in an undefined order "
 																 "(i.e. one of the objects will not be fully deserialized when assigned "
 																 "to its field). Use RTTI_Flag_WeakRef to get rid of this warning and tell "
@@ -219,7 +219,7 @@ void IntermediateSerializer::DecodeEntry(const SPtr<IReflectable>& object, const
 							{
 								if(objToDecode.DecodeInProgress)
 								{
-									BS_LOG(Warning, Generic, "Detected a circular reference when decoding. Referenced "
+									B3D_LOG(Warning, Generic, "Detected a circular reference when decoding. Referenced "
 															 "object's fields will be resolved in an undefined order (i.e. one of the "
 															 "objects will not be fully deserialized when assigned to its field). "
 															 "Use RTTI_Flag_WeakRef to get rid of this warning and tell the system which of"
@@ -480,7 +480,7 @@ SPtr<SerializedInstance> IntermediateSerializer::EncodeFieldInternal(IReflectabl
 				break;
 			}
 		default:
-			BS_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(field->Schema.Type)) + ", Is array: " + ToString(field->Schema.IsArray));
+			B3D_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(field->Schema.Type)) + ", Is array: " + ToString(field->Schema.IsArray));
 		}
 	}
 	else
@@ -552,7 +552,7 @@ SPtr<SerializedInstance> IntermediateSerializer::EncodeFieldInternal(IReflectabl
 				break;
 			}
 		default:
-			BS_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(field->Schema.Type)) + ", Is array: " + ToString(field->Schema.IsArray));
+			B3D_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(field->Schema.Type)) + ", Is array: " + ToString(field->Schema.IsArray));
 		}
 	}
 

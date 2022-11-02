@@ -71,7 +71,7 @@ namespace bs
 				B3DRTTIRead(data.mDuration, stream);
 				break;
 			default:
-				BS_LOG(Error, RTTI, "Unknown version of ColorGradient data. Unable to deserialize.");
+				B3D_LOG(Error, RTTI, "Unknown version of ColorGradient data. Unable to deserialize.");
 				break;
 			}
 
@@ -145,7 +145,7 @@ namespace bs
 				B3DRTTIRead(data.mDuration, stream);
 				break;
 			default:
-				BS_LOG(Error, RTTI, "Unknown version of ColorGradientHDR data. Unable to deserialize.");
+				B3D_LOG(Error, RTTI, "Unknown version of ColorGradientHDR data. Unable to deserialize.");
 				break;
 			}
 

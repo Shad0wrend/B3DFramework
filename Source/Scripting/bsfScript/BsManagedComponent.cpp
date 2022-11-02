@@ -227,11 +227,11 @@ void ManagedComponent::Initialize(ScriptManagedComponent* owner)
 	{
 		MonoAssembly* engineAssembly = MonoManager::Instance().GetAssembly(kEngineAssembly);
 		if(engineAssembly == nullptr)
-			BS_EXCEPT(InvalidStateException, String(kEngineAssembly) + " assembly is not loaded.");
+			B3D_EXCEPT(InvalidStateException, String(kEngineAssembly) + " assembly is not loaded.");
 
 		MonoClass* runInEditorAttrib = engineAssembly->GetClass(kEngineNs, "RunInEditor");
 		if(runInEditorAttrib == nullptr)
-			BS_EXCEPT(InvalidStateException, "Cannot find RunInEditor managed class.");
+			B3D_EXCEPT(InvalidStateException, "Cannot find RunInEditor managed class.");
 
 		bool runInEditor = mManagedClass->GetAttribute(runInEditorAttrib) != nullptr;
 		if(runInEditor)
@@ -337,7 +337,7 @@ void ManagedComponent::InstantiateInternal()
 		}
 	}
 
-	assert(componentHandle != nullptr);
+	B3D_ASSERT(componentHandle != nullptr);
 	ScriptGameObjectManager::Instance().CreateManagedScriptComponent(instance, componentHandle);
 }
 

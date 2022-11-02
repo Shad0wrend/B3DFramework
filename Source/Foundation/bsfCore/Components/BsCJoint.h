@@ -17,58 +17,58 @@ namespace bs
 	 *
 	 * @note Wraps Joint as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(Joint)) CJoint : public Component
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(Joint)) CJoint : public Component
 	{
 	public:
 		CJoint(const HSceneObject& parent, JOINT_DESC& desc);
 		virtual ~CJoint() = default;
 
 		/** @copydoc Joint::GetBody */
-		BS_SCRIPT_EXPORT(ExportName(GetBody))
+		B3D_SCRIPT_EXPORT(ExportName(GetBody))
 		HRigidbody GetBody(JointBody body) const;
 
 		/** @copydoc Joint::SetBody */
-		BS_SCRIPT_EXPORT(ExportName(SetBody))
+		B3D_SCRIPT_EXPORT(ExportName(SetBody))
 		void SetBody(JointBody body, const HRigidbody& value);
 
 		/** @copydoc Joint::GetPosition */
-		BS_SCRIPT_EXPORT(ExportName(GetPosition))
+		B3D_SCRIPT_EXPORT(ExportName(GetPosition))
 		Vector3 GetPosition(JointBody body) const;
 
 		/** @copydoc Joint::GetRotation */
-		BS_SCRIPT_EXPORT(ExportName(GetRotation))
+		B3D_SCRIPT_EXPORT(ExportName(GetRotation))
 		Quaternion GetRotation(JointBody body) const;
 
 		/** @copydoc Joint::SetTransform */
-		BS_SCRIPT_EXPORT(ExportName(SetTransform))
+		B3D_SCRIPT_EXPORT(ExportName(SetTransform))
 		void SetTransform(JointBody body, const Vector3& position, const Quaternion& rotation);
 
 		/** @copydoc Joint::GetBreakForce */
-		BS_SCRIPT_EXPORT(ExportName(BreakForce), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(BreakForce), Property(Getter))
 		float GetBreakForce() const;
 
 		/** @copydoc Joint::SetBreakForce */
-		BS_SCRIPT_EXPORT(ExportName(BreakForce), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(BreakForce), Property(Setter))
 		void SetBreakForce(float force);
 
 		/** @copydoc Joint::GetBreakTorque */
-		BS_SCRIPT_EXPORT(ExportName(BreakTorque), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(BreakTorque), Property(Getter))
 		float GetBreakTorque() const;
 
 		/** @copydoc Joint::SetBreakTorque */
-		BS_SCRIPT_EXPORT(ExportName(BreakTorque), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(BreakTorque), Property(Setter))
 		void SetBreakTorque(float torque);
 
 		/** @copydoc Joint::GetEnableCollision */
-		BS_SCRIPT_EXPORT(ExportName(EnableCollision), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(EnableCollision), Property(Getter))
 		bool GetEnableCollision() const;
 
 		/** @copydoc Joint::SetEnableCollision */
-		BS_SCRIPT_EXPORT(ExportName(EnableCollision), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(EnableCollision), Property(Setter))
 		void SetEnableCollision(bool value);
 
 		/** @copydoc Joint::OnJointBreak */
-		BS_SCRIPT_EXPORT(ExportName(OnJointBreak))
+		B3D_SCRIPT_EXPORT(ExportName(OnJointBreak))
 		Event<void()> OnJointBreak;
 
 		/** @name Internal

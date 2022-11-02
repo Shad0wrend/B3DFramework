@@ -7,5 +7,5 @@ using namespace bs;
 
 void ExceptionTestOutput::OutputFail(const String& desc, const String& function, const String& file, long line)
 {
-	BS_EXCEPT(UnitTestException, desc);
+	B3D_EXCEPT(UnitTestException, desc);
 }

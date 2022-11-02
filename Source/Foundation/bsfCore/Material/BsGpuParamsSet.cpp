@@ -420,7 +420,7 @@ UnorderedMap<ValidParamKey, String> DetermineValidParameters(const Vector<SPtr<G
 		if(findIter->second->Type != iter->second.Type &&
 		   !(iter->second.Type == GPDT_COLOR && (findIter->second->Type == GPDT_FLOAT4 || findIter->second->Type == GPDT_FLOAT3)))
 		{
-			BS_LOG(Warning, Material, "Ignoring shader parameter \"{0}\". Type doesn't match the one defined in the "
+			B3D_LOG(Warning, Material, "Ignoring shader parameter \"{0}\". Type doesn't match the one defined in the "
 									  "GPU program. Shader defined type: {1} - Gpu program defined type: {2}",
 				   iter->first, iter->second.Type, findIter->second->Type);
 			continue;
@@ -429,7 +429,7 @@ UnorderedMap<ValidParamKey, String> DetermineValidParameters(const Vector<SPtr<G
 		auto findBlockIter = paramToParamBlockMap.find(iter->second.GpuVariableName);
 
 		if(findBlockIter == paramToParamBlockMap.end())
-			BS_EXCEPT(InternalErrorException, "Parameter doesn't exist in param to param block map but exists in valid param map.");
+			B3D_EXCEPT(InternalErrorException, "Parameter doesn't exist in param to param block map but exists in valid param map.");
 
 		ValidParamKey key(iter->second.GpuVariableName, MaterialParams::ParamType::Data);
 		validParams.insert(std::make_pair(key, iter->first));
@@ -516,7 +516,7 @@ TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const S
 	}
 
 	//// Assign param block buffers and generate information about data parameters
-	assert(numPasses < 64); // BlockInfo flags uses u64 for tracking usage
+	B3D_ASSERT(numPasses < 64); // BlockInfo flags uses u64 for tracking usage
 	for(u32 i = 0; i < numPasses; i++)
 	{
 		SPtr<GpuParamsType> paramPtr = mPassParams[i];
@@ -582,7 +582,7 @@ TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const S
 					u32 paramIdx = params->GetParamIndex(iterFind->second);
 
 					// Parameter shouldn't be in the valid parameter list if it cannot be found
-					assert(paramIdx != (u32)-1);
+					B3D_ASSERT(paramIdx != (u32)-1);
 
 					mDataParamInfos.push_back(DataParamInfo());
 					DataParamInfo& paramInfo = mDataParamInfos.back();
@@ -644,7 +644,7 @@ TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const S
 						auto result = params->GetParamIndex(iterFind->second, paramType, GPDT_UNKNOWN, 0, paramIdx);
 
 						// Parameter shouldn't be in the valid parameter list if it cannot be found
-						assert(result == MaterialParams::GetParamResult::Success);
+						B3D_ASSERT(result == MaterialParams::GetParamResult::Success);
 
 						objParamInfos.push_back(ObjectParamInfo());
 						ObjectParamInfo& paramInfo = objParamInfos.back();
@@ -822,7 +822,7 @@ void TGpuParamsSet<Core>::SetParamBlockBuffer(u32 index, const ParamBlockPtrType
 	BlockInfo& blockInfo = mBlocks[index];
 	if(!blockInfo.Shareable)
 	{
-		BS_LOG(Error, RenderBackend, "Cannot set parameter block buffer with the name \"{0}\". "
+		B3D_LOG(Error, RenderBackend, "Cannot set parameter block buffer with the name \"{0}\". "
 									 "Buffer is not assignable. ",
 			   blockInfo.Name);
 		return;
@@ -860,7 +860,7 @@ void TGpuParamsSet<Core>::SetParamBlockBuffer(const String& name, const ParamBlo
 	u32 bufferIdx = GetParamBlockBufferIndex(name);
 	if(bufferIdx == (u32)-1)
 	{
-		BS_LOG(Error, RenderBackend, "Cannot set parameter block buffer with the name \"{0}\". Buffer name not found. ", name);
+		B3D_LOG(Error, RenderBackend, "Cannot set parameter block buffer with the name \"{0}\". Buffer name not found. ", name);
 		return;
 	}
 
@@ -1006,7 +1006,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 			{
 				if(materialParamInfo->DataType == GPDT_FLOAT1)
 				{
-					assert(paramSize == sizeof(float));
+					B3D_ASSERT(paramSize == sizeof(float));
 
 					for(u32 i = 0; i < arraySize; i++)
 					{
@@ -1028,7 +1028,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 				}
 				else if(materialParamInfo->DataType == GPDT_FLOAT4)
 				{
-					assert(paramSize == sizeof(Rect2));
+					B3D_ASSERT(paramSize == sizeof(Rect2));
 
 					CoreVariantHandleType<SpriteTexture, Core> spriteTexture =
 						params->GetOwningSpriteTexture(*materialParamInfo);
@@ -1053,7 +1053,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 				{
 					for(u32 i = 0; i < arraySize; i++)
 					{
-						assert(paramSize == sizeof(Color));
+						B3D_ASSERT(paramSize == sizeof(Color));
 
 						u32 readOffset = i * paramSize;
 						u32 writeOffset = (paramInfo.Offset + paramInfo.ArrayStride * i) * sizeof(u32);

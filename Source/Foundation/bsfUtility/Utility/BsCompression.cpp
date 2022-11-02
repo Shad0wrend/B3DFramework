@@ -114,7 +114,7 @@ public:
 		else
 		{
 			BufferPiece& piece = mBufferPieces.back();
-			assert(piece.Buffer == data);
+			B3D_ASSERT(piece.Buffer == data);
 
 			piece.Size = n;
 		}
@@ -180,7 +180,7 @@ SPtr<MemoryDataStream> Compression::Compress(const SPtr<DataStream>& input, std:
 
 	size_t bytesWritten = snappy::Compress(&src, &dst);
 	SPtr<MemoryDataStream> output = dst.GetOutput();
-	assert(output->Size() == bytesWritten);
+	B3D_ASSERT(output->Size() == bytesWritten);
 
 	return output;
 }
@@ -192,7 +192,7 @@ SPtr<MemoryDataStream> Compression::Decompress(const SPtr<DataStream>& input, st
 
 	if(!snappy::Uncompress(&src, &dst))
 	{
-		BS_LOG(Error, Generic, "Decompression failed, corrupt data.");
+		B3D_LOG(Error, Generic, "Decompression failed, corrupt data.");
 		return nullptr;
 	}
 

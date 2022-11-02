@@ -50,7 +50,7 @@ namespace bs
 
 			uint8_t version;
 			B3DRTTIRead(version, stream);
-			assert(version == 0);
+			B3D_ASSERT(version == 0);
 
 			B3DRTTIRead(data.Name, stream);
 			B3DRTTIRead(data.Type, stream);

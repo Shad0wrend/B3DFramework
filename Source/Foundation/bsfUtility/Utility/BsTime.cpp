@@ -83,7 +83,7 @@ u32 Time::GetFixedUpdateStepInternal(u64& step)
 			numIterations = (u32)Math::DivideAndRoundUp(simulationAmount, (i64)stepus);
 		}
 
-		assert(numIterations <= mNumRemainingFixedUpdates);
+		B3D_ASSERT(numIterations <= mNumRemainingFixedUpdates);
 
 		mNumRemainingFixedUpdates -= numIterations;
 		mNumRemainingFixedUpdates = std::min(kMaxAccumFixedUpdates, mNumRemainingFixedUpdates + kNewFixedUpdatesPerFrame);

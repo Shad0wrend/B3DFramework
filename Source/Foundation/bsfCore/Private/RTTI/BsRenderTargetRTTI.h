@@ -22,7 +22,7 @@ namespace bs
 	public:
 		SPtr<IReflectable> NewRttiObject()
 		{
-			BS_EXCEPT(InvalidStateException, "Unable to instantiate abstract class.");
+			B3D_EXCEPT(InvalidStateException, "Unable to instantiate abstract class.");
 			return nullptr;
 		}
 
@@ -43,7 +43,7 @@ namespace bs
 	public:
 		SPtr<IReflectable> NewRttiObject()
 		{
-			BS_EXCEPT(InvalidStateException, "This object cannot be instantiated using reflection.");
+			B3D_EXCEPT(InvalidStateException, "This object cannot be instantiated using reflection.");
 			return nullptr;
 		}
 
@@ -64,7 +64,7 @@ namespace bs
 	public:
 		SPtr<IReflectable> NewRttiObject()
 		{
-			BS_EXCEPT(InvalidStateException, "This object cannot be instantiated using reflection.");
+			B3D_EXCEPT(InvalidStateException, "This object cannot be instantiated using reflection.");
 			return nullptr;
 		}
 

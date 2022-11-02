@@ -13,7 +13,7 @@ VulkanDescriptorSet::VulkanDescriptorSet(VulkanResourceManager* owner, VkDescrip
 VulkanDescriptorSet::~VulkanDescriptorSet()
 {
 	VkResult result = vkFreeDescriptorSets(mOwner->GetDevice().GetLogical(), mPool, 1, &mSet);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 }
 
 void VulkanDescriptorSet::Write(VkWriteDescriptorSet* entries, u32 count)

@@ -29,7 +29,7 @@ namespace ct {
 GLRenderTexture::GLRenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 	: RenderTexture(desc, deviceIdx), mProperties(desc, true), mFB(nullptr)
 {
-	assert(deviceIdx == 0 && "Multiple GPUs not supported natively on OpenGL.");
+	B3D_ASSERT(deviceIdx == 0 && "Multiple GPUs not supported natively on OpenGL.");
 }
 
 GLRenderTexture::~GLRenderTexture()
@@ -78,7 +78,7 @@ void GLRenderTexture::Initialize()
 				{
 					if(mColorSurfaces[i]->GetNumArraySlices() != glColorSurface->GetProperties().GetNumFaces())
 					{
-						BS_LOG(Warning, RenderBackend, "OpenGL doesn't support binding of arbitrary ranges for array "
+						B3D_LOG(Warning, RenderBackend, "OpenGL doesn't support binding of arbitrary ranges for array "
 													   "textures. The entire range will be bound instead.");
 					}
 

@@ -37,7 +37,7 @@ namespace bs
 
 	/** Keyframe specialization for integers (no tangents). */
 	template <>
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(KeyFrameInt), ExportAsStruct(true)) TKeyframe<i32>
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(KeyFrameInt), ExportAsStruct(true)) TKeyframe<i32>
 	{
 		i32 Value; /**< Value of the key. */
 		float Time; /**< Position of the key along the animation spline. */
@@ -53,10 +53,10 @@ namespace bs
 		}
 	};
 
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(KeyFrame), ExportAsStruct(true)) TKeyframe<float>;
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(KeyFrameVec3), ExportAsStruct(true)) TKeyframe<Vector3>;
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(KeyFrameVec2), ExportAsStruct(true)) TKeyframe<Vector2>;
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(KeyFrameQuat), ExportAsStruct(true)) TKeyframe<Quaternion>;
+	template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(KeyFrame), ExportAsStruct(true)) TKeyframe<float>;
+	template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(KeyFrameVec3), ExportAsStruct(true)) TKeyframe<Vector3>;
+	template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(KeyFrameVec2), ExportAsStruct(true)) TKeyframe<Vector2>;
+	template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(KeyFrameQuat), ExportAsStruct(true)) TKeyframe<Quaternion>;
 
 	/**
 	 * Animation spline represented by a set of keyframes, each representing an endpoint of a cubic hermite curve. The
@@ -75,7 +75,7 @@ namespace bs
 		 *
 		 * @param[in]	keyframes	Keyframes to initialize the curve with. They must be sorted by time.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		TAnimationCurve(const Vector<KeyFrame>& keyframes);
 
 		/**
@@ -102,7 +102,7 @@ namespace bs
 		 *						value will be clamped.
 		 * @return				Interpolated value from the curve at provided time.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		T Evaluate(float time, bool loop = true) const;
 
 		/**
@@ -180,7 +180,7 @@ namespace bs
 		const TKeyframe<T>& GetKeyFrame(u32 idx) const { return mKeyframes[idx]; }
 
 		/** Returns a list of all keyframes in the curve. */
-		BS_SCRIPT_EXPORT(ExportName(KeyFrames), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(KeyFrames), Property(Getter))
 
 		const Vector<TKeyframe<T>>& GetKeyFrames() const { return mKeyframes; }
 
@@ -243,15 +243,15 @@ namespace bs
 	};
 
 #ifdef BS_SBGEN
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(AnimationCurve)) TAnimationCurve<float>;
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(Vector3Curve)) TAnimationCurve<Vector3>;
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(Vector2Curve)) TAnimationCurve<Vector2>;
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(QuaternionCurve)) TAnimationCurve<Quaternion>;
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(IntegerCurve)) TAnimationCurve<i32>;
+	template class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(AnimationCurve)) TAnimationCurve<float>;
+	template class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(Vector3Curve)) TAnimationCurve<Vector3>;
+	template class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(Vector2Curve)) TAnimationCurve<Vector2>;
+	template class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(QuaternionCurve)) TAnimationCurve<Quaternion>;
+	template class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(IntegerCurve)) TAnimationCurve<i32>;
 #endif
 
 	/** Flags that describe an animation curve. */
-	enum class BS_SCRIPT_EXPORT(ExportName(AnimationCurveFlags)) AnimationCurveFlag
+	enum class B3D_SCRIPT_EXPORT(ExportName(AnimationCurveFlags)) AnimationCurveFlag
 	{
 		/**
 		 * If enabled, the curve was imported from an external file and not created within the engine. This will affect
@@ -306,11 +306,11 @@ namespace bs
 	};
 
 #ifdef BS_SBGEN
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedFloatCurve), ExportAsStruct(true)) TNamedAnimationCurve<float>;
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedVector3Curve), ExportAsStruct(true)) TNamedAnimationCurve<Vector3>;
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedVector2Curve), ExportAsStruct(true)) TNamedAnimationCurve<Vector2>;
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedQuaternionCurve), ExportAsStruct(true)) TNamedAnimationCurve<Quaternion>;
-	template class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedIntegerCurve), ExportAsStruct(true)) TNamedAnimationCurve<i32>;
+	template class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedFloatCurve), ExportAsStruct(true)) TNamedAnimationCurve<float>;
+	template class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedVector3Curve), ExportAsStruct(true)) TNamedAnimationCurve<Vector3>;
+	template class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedVector2Curve), ExportAsStruct(true)) TNamedAnimationCurve<Vector2>;
+	template class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedQuaternionCurve), ExportAsStruct(true)) TNamedAnimationCurve<Quaternion>;
+	template class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(NamedIntegerCurve), ExportAsStruct(true)) TNamedAnimationCurve<i32>;
 #endif
 
 	/** @} */

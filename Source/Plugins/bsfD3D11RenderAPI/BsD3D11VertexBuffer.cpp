@@ -15,7 +15,7 @@ static void DeleteHardwareBuffer(HardwareBuffer* buffer)
 D3D11VertexBuffer::D3D11VertexBuffer(D3D11Device& device, const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
 	: VertexBuffer(desc, deviceMask), mDevice(device), mStreamOut(desc.StreamOut)
 {
-	assert((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on DirectX 11.");
+	B3D_ASSERT((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on DirectX 11.");
 }
 
 void D3D11VertexBuffer::Initialize()

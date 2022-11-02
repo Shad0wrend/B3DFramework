@@ -157,7 +157,7 @@ namespace bs
 			{
 				auto findIter = mNodeTypes.find(T::GetNodeId());
 				if(findIter != mNodeTypes.end())
-					BS_LOG(Error, Renderer, "Found two render compositor nodes with the same name \"{0}\".", String(T::GetNodeId().CStr()));
+					B3D_LOG(Error, Renderer, "Found two render compositor nodes with the same name \"{0}\".", String(T::GetNodeId().CStr()));
 
 				mNodeTypes[T::GetNodeId()] = B3DNew<TNodeType<T>>();
 			}

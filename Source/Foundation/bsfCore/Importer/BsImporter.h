@@ -17,30 +17,30 @@ namespace bs
 	 * Contains a resource that was imported from a file that contains multiple resources (for example an animation from an
 	 * FBX file).
 	 */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Importer), ExportAsStruct(true), API(Framework)) SubResource
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), ExportAsStruct(true), API(Framework)) SubResource
 	{
 		String Name; /**< Unique name of the sub-resource. */
 		BS_NORREF HResource Value; /**< Contents of the sub-resource. */
 	};
 
 	/** Contains a group of resources imported from a single source file. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework)) MultiResource
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework)) MultiResource
 	{
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		MultiResource() = default;
 
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		MultiResource(const Vector<SubResource>& entries)
 			: Entries(entries)
 		{}
 
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		Vector<SubResource> Entries;
 	};
 
 	/** Module responsible for importing various asset types and converting them to types usable by the engine. */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework)) Importer : public Module<Importer>
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework)) Importer : public Module<Importer>
 	{
 	public:
 		Importer();
@@ -61,7 +61,7 @@ namespace bs
 		 * @see		createImportOptions
 		 * @note	Thread safe.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		BS_NORREF HResource Import(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr, const UUID& UUID = UUID::kEmpty);
 
 		/** @copydoc Import */
@@ -75,7 +75,7 @@ namespace bs
 		 * Same as import(), except it imports a resource without blocking the main thread. The resulting resource will be
 		 * placed in the returned AsyncOp object when the import ends.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		TAsyncOp<HResource> ImportAsync(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr, const UUID& UUID = UUID::kEmpty);
 
 		/**
@@ -92,14 +92,14 @@ namespace bs
 		 * @see		createImportOptions
 		 * @note	Thread safe.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		SPtr<MultiResource> ImportAll(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr);
 
 		/**
 		 * Same as importAll(), except it imports a resource without blocking the main thread. The returned AsyncOp will
 		 * contain a list of the imported resources, after the import ends.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		TAsyncOp<SPtr<MultiResource>> ImportAllAsync(const Path& inputFilePath, SPtr<const ImportOptions> importOptions = nullptr);
 
 		/**
@@ -130,7 +130,7 @@ namespace bs
 		 *
 		 * @param[in]	extension	The extension without the leading dot.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool SupportsFileType(const String& extension) const;
 
 		/**

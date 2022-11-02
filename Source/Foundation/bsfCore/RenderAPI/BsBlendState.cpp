@@ -42,56 +42,56 @@ BlendProperties::BlendProperties(const BLEND_STATE_DESC& desc)
 
 bool BlendProperties::GetBlendEnabled(u32 renderTargetIdx) const
 {
-	assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
+	B3D_ASSERT(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
 	return mData.RenderTargetDesc[renderTargetIdx].BlendEnable;
 }
 
 BlendFactor BlendProperties::GetSrcBlend(u32 renderTargetIdx) const
 {
-	assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
+	B3D_ASSERT(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
 	return mData.RenderTargetDesc[renderTargetIdx].SrcBlend;
 }
 
 BlendFactor BlendProperties::GetDstBlend(u32 renderTargetIdx) const
 {
-	assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
+	B3D_ASSERT(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
 	return mData.RenderTargetDesc[renderTargetIdx].DstBlend;
 }
 
 BlendOperation BlendProperties::GetBlendOperation(u32 renderTargetIdx) const
 {
-	assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
+	B3D_ASSERT(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
 	return mData.RenderTargetDesc[renderTargetIdx].BlendOp;
 }
 
 BlendFactor BlendProperties::GetAlphaSrcBlend(u32 renderTargetIdx) const
 {
-	assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
+	B3D_ASSERT(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
 	return mData.RenderTargetDesc[renderTargetIdx].SrcBlendAlpha;
 }
 
 BlendFactor BlendProperties::GetAlphaDstBlend(u32 renderTargetIdx) const
 {
-	assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
+	B3D_ASSERT(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
 	return mData.RenderTargetDesc[renderTargetIdx].DstBlendAlpha;
 }
 
 BlendOperation BlendProperties::GetAlphaBlendOperation(u32 renderTargetIdx) const
 {
-	assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
+	B3D_ASSERT(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
 	return mData.RenderTargetDesc[renderTargetIdx].BlendOpAlpha;
 }
 
 u8 BlendProperties::GetRenderTargetWriteMask(u32 renderTargetIdx) const
 {
-	assert(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
+	B3D_ASSERT(renderTargetIdx < BS_MAX_MULTIPLE_RENDER_TARGETS);
 
 	return mData.RenderTargetDesc[renderTargetIdx].RenderTargetWriteMask;
 }

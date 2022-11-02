@@ -19,16 +19,16 @@ namespace bs
 	 */
 
 	/** Determines type of distribution used by distribution properties. */
-	enum BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) PropertyDistributionType
+	enum B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) PropertyDistributionType
 	{
 		/** The distribution is a costant value. */
-		PDT_Constant BS_SCRIPT_EXPORT(ExportName(Constant)),
+		PDT_Constant B3D_SCRIPT_EXPORT(ExportName(Constant)),
 		/** The distribution is a random value in a specified constant range. */
-		PDT_RandomRange BS_SCRIPT_EXPORT(ExportName(RandomRange)),
+		PDT_RandomRange B3D_SCRIPT_EXPORT(ExportName(RandomRange)),
 		/** The distribution is a time-varying value. */
-		PDT_Curve BS_SCRIPT_EXPORT(ExportName(Curve)),
+		PDT_Curve B3D_SCRIPT_EXPORT(ExportName(Curve)),
 		/** The distribution is a random value in a specified time-varying range. */
-		PDT_RandomCurveRange BS_SCRIPT_EXPORT(ExportName(RandomCurveRange))
+		PDT_RandomCurveRange B3D_SCRIPT_EXPORT(ExportName(RandomCurveRange))
 	};
 
 	/* @} */
@@ -42,7 +42,7 @@ namespace bs
 	struct TColorDistribution
 	{
 		/** Creates a new empty distribution. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		TColorDistribution()
 			: mType(PDT_Constant)
@@ -51,7 +51,7 @@ namespace bs
 		{}
 
 		/** Creates a new distribution that returns a constant color. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		TColorDistribution(const Color& color)
 			: mType(PDT_Constant)
@@ -60,7 +60,7 @@ namespace bs
 		{}
 
 		/** Creates a new distribution that returns a random color in the specified range. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		TColorDistribution(const Color& minColor, const Color& maxColor)
 			: mType(PDT_RandomRange)
@@ -69,7 +69,7 @@ namespace bs
 		{}
 
 		/** Creates a new distribution that evaluates a color gradient. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		TColorDistribution(const T& gradient)
 			: mType(PDT_Curve), mMinGradient(gradient), mMaxGradient(gradient)
@@ -82,7 +82,7 @@ namespace bs
 		}
 
 		/** Creates a new distribution that returns a random color in a range determined by two gradients. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		TColorDistribution(const T& minGradient, const T& maxGradient)
 			: mType(PDT_RandomCurveRange), mMinGradient(minGradient), mMaxGradient(maxGradient)
@@ -95,7 +95,7 @@ namespace bs
 		}
 
 		/** Returns the type of the represented distribution. */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(DistributionType))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(DistributionType))
 
 		PropertyDistributionType GetType() const { return mType; }
 
@@ -103,14 +103,14 @@ namespace bs
 		 * Returns the constant value of the distribution, or the minimal value of a constant range. Undefined if
 		 * the distribution is represented by a gradient.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		Color GetMinConstant() const { return mMinGradient.GetKey(0).Color; }
 
 		/**
 		 * Returns the maximum value of a constant range. Only defined if the distribution represents a non-gradient range.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		Color GetMaxConstant() const { return mMaxGradient.GetKey(0).Color; }
 
@@ -118,7 +118,7 @@ namespace bs
 		 * Returns the gradient representing the distribution, or the first gradient representing a gradient range.
 		 * Undefined if the distribution is represented by a constant or a non-gradient range.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		const T& GetMinGradient() const { return mMinGradient; }
 
@@ -126,7 +126,7 @@ namespace bs
 		 * Returns the curve representing the second gradient of a gradient range. Only defined if the distribution
 		 * represents a gradient range.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		const T& GetMaxGradient() const { return mMaxGradient; }
 
@@ -245,8 +245,8 @@ namespace bs
 	using ColorHDRDistribution = TColorDistribution<ColorGradientHDR>;
 
 #ifdef BS_SBGEN
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(ColorDistribution)) TColorDistribution<ColorGradient>;
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(ColorHDRDistribution)) TColorDistribution<ColorGradientHDR>;
+	template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(ColorDistribution)) TColorDistribution<ColorGradient>;
+	template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(ColorHDRDistribution)) TColorDistribution<ColorGradientHDR>;
 #endif
 
 	/** Specifies a value as a distribution, which can include a constant value, random range or a curve. */
@@ -254,7 +254,7 @@ namespace bs
 	struct TDistribution
 	{
 		/** Creates a new empty distribution. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		TDistribution()
 			: mType(PDT_Constant)
@@ -262,7 +262,7 @@ namespace bs
 			, mMaxCurve({ TKeyframe<T>{ T(), TCurveProperties<T>::GetZero(), TCurveProperties<T>::GetZero(), 0.0f } })
 		{}
 		/** Creates a new distribution that returns a constant value. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		TDistribution(T value)
 			: mType(PDT_Constant)
@@ -271,7 +271,7 @@ namespace bs
 		{}
 
 		/** Creates a new distribution that returns a random value in the specified range. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		TDistribution(T minValue, T maxValue)
 			: mType(PDT_RandomRange)
@@ -280,7 +280,7 @@ namespace bs
 		{}
 
 		/** Creates a new distribution that evaluates a curve. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		TDistribution(const TAnimationCurve<T>& curve)
 			: mType(PDT_Curve), mMinCurve(curve), mMaxCurve(curve)
@@ -293,7 +293,7 @@ namespace bs
 		}
 
 		/** Creates a new distribution that returns a random value in a range determined by two curves. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		TDistribution(const TAnimationCurve<T>& minCurve, const TAnimationCurve<T>& maxCurve)
 			: mType(PDT_RandomCurveRange), mMinCurve(minCurve), mMaxCurve(maxCurve)
@@ -306,7 +306,7 @@ namespace bs
 		}
 
 		/** Returns the type of the represented distribution. */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(DistributionType))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(DistributionType))
 
 		PropertyDistributionType GetType() const { return mType; }
 
@@ -314,14 +314,14 @@ namespace bs
 		 * Returns the constant value of the distribution, or the minimal value of a constant range. Undefined if
 		 * the distribution is represented by a curve.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		const T& GetMinConstant() const { return mMinCurve.GetKeyFrames()[0].Value; }
 
 		/**
 		 * Returns the maximum value of a constant range. Only defined if the distribution represents a non-curve range.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		const T& GetMaxConstant() const { return mMaxCurve.GetKeyFrames()[0].Value; }
 
@@ -329,7 +329,7 @@ namespace bs
 		 * Returns the curve representing the distribution, or the first curve representing a curve range. Undefined if
 		 * the distribution is represented by a constant or a non-curve range.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		const TAnimationCurve<T>& GetMinCurve() const { return mMinCurve; }
 
@@ -337,7 +337,7 @@ namespace bs
 		 * Returns the curve representing the second curve of a curve range. Only defined if the distribution represents
 		 * a curve range.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		const TAnimationCurve<T>& GetMaxCurve() const { return mMaxCurve; }
 
@@ -352,7 +352,7 @@ namespace bs
 		 * @return				Evaluated value.
 		 *
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		T Evaluate(float t, float factor) const
 		{
@@ -385,7 +385,7 @@ namespace bs
 		 * @return				Evaluated value.
 		 *
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		T Evaluate(float t, const Random& factor) const
 		{
@@ -448,9 +448,9 @@ namespace bs
 	using Vector2Distribution = TDistribution<Vector2>;
 
 #ifdef BS_SBGEN
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(FloatDistribution)) TDistribution<float>;
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(Vector3Distribution)) TDistribution<Vector3>;
-	template struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(Vector2Distribution)) TDistribution<Vector2>;
+	template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(FloatDistribution)) TDistribution<float>;
+	template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(Vector3Distribution)) TDistribution<Vector3>;
+	template struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(Vector2Distribution)) TDistribution<Vector2>;
 #endif
 
 	/** @} */

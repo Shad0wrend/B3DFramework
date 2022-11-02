@@ -163,7 +163,7 @@ SpecificImporter* Importer::PrepareForImport(const Path& filePath, SPtr<const Im
 {
 	if(!FileSystem::IsFile(filePath))
 	{
-		BS_LOG(Warning, Importer, "Trying to import asset that doesn't exists. Asset path: {0}", filePath);
+		B3D_LOG(Warning, Importer, "Trying to import asset that doesn't exists. Asset path: {0}", filePath);
 		return nullptr;
 	}
 
@@ -178,7 +178,7 @@ SpecificImporter* Importer::PrepareForImport(const Path& filePath, SPtr<const Im
 		SPtr<const ImportOptions> defaultImportOptions = importer->GetDefaultImportOptions();
 		if(importOptions->GetTypeId() != defaultImportOptions->GetTypeId())
 		{
-			BS_EXCEPT(InvalidParametersException, "Provided import options is not of valid type. "
+			B3D_EXCEPT(InvalidParametersException, "Provided import options is not of valid type. "
 												  "Expected: " +
 						  defaultImportOptions->GetTypeName() + ". Got: " + importOptions->GetTypeName() + ".");
 		}
@@ -217,7 +217,7 @@ u64 Importer::WaitForAsync(SpecificImporter* importer)
 template <class ReturnType>
 void DoImport(TAsyncOp<ReturnType> op, SpecificImporter* importer, const Path& filePath, const UUID& uuid, const SPtr<const ImportOptions>& importOptions)
 {
-	assert(false && "Invalid template instantiation called.");
+	B3D_ASSERT(false && "Invalid template instantiation called.");
 }
 
 template <>
@@ -305,7 +305,7 @@ SPtr<ImportOptions> Importer::CreateImportOptions(const Path& inputFilePath)
 {
 	if(!FileSystem::IsFile(inputFilePath))
 	{
-		BS_LOG(Warning, Importer, "Trying to import asset that doesn't exists. Asset path: {0}", inputFilePath);
+		B3D_LOG(Warning, Importer, "Trying to import asset that doesn't exists. Asset path: {0}", inputFilePath);
 		return nullptr;
 	}
 
@@ -320,7 +320,7 @@ void Importer::RegisterAssetImporterInternal(SpecificImporter* importer)
 {
 	if(!importer)
 	{
-		BS_LOG(Warning, Importer, "Trying to register a null asset importer!");
+		B3D_LOG(Warning, Importer, "Trying to register a null asset importer!");
 		return;
 	}
 
@@ -336,7 +336,7 @@ SpecificImporter* Importer::GetImporterForFile(const Path& inputFilePath) const
 	ext = ext.substr(1, ext.size() - 1); // Remove the .
 	if(!SupportsFileType(ext))
 	{
-		BS_LOG(Warning, Importer, "There is no importer for the provided file type. ({0})", inputFilePath);
+		B3D_LOG(Warning, Importer, "There is no importer for the provided file type. ({0})", inputFilePath);
 		return nullptr;
 	}
 

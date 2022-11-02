@@ -80,7 +80,7 @@ namespace bs
 		/** Returns a row of the matrix. */
 		Vector4& operator[](u32 row)
 		{
-			assert(row < 4);
+			B3D_ASSERT(row < 4);
 
 			return *(Vector4*)m[row];
 		}
@@ -88,7 +88,7 @@ namespace bs
 		/** Returns a row of the matrix. */
 		const Vector4& operator[](u32 row) const
 		{
-			assert(row < 4);
+			B3D_ASSERT(row < 4);
 
 			return *(Vector4*)m[row];
 		}
@@ -199,7 +199,7 @@ namespace bs
 		/** Returns the specified column of the matrix, ignoring the last row. */
 		Vector3 GetColumn(u32 col) const
 		{
-			assert(col < 4);
+			B3D_ASSERT(col < 4);
 
 			return Vector3(m[0][col], m[1][col], m[2][col]);
 		}
@@ -207,7 +207,7 @@ namespace bs
 		/** Returns the specified column of the matrix. */
 		Vector4 GetColumn4D(u32 col) const
 		{
-			assert(col < 4);
+			B3D_ASSERT(col < 4);
 
 			return Vector4(m[0][col], m[1][col], m[2][col], m[3][col]);
 		}

@@ -19,7 +19,7 @@
 #include <fstream>
 
 #define HANDLE_PATH_ERROR(path__, errno__) \
-	BS_LOG(Error, FileSystem, (String(__FUNCTION__) + ": " + (path__) + ": " + (strerror(errno__))));
+	B3D_LOG(Error, FileSystem, (String(__FUNCTION__) + ": " + (path__) + ": " + (strerror(errno__))));
 
 using namespace bs;
 
@@ -119,14 +119,14 @@ void FileSystem::MoveFile(const Path& oldPath, const Path& newPath)
 		src.close();
 		if(!src)
 		{
-			BS_LOG(Error, FileSystem, String(__FUNCTION__) + ": renaming " + oldPathStr + " to " + newPathStr + ": " + strerror(errno));
+			B3D_LOG(Error, FileSystem, String(__FUNCTION__) + ": renaming " + oldPathStr + " to " + newPathStr + ": " + strerror(errno));
 			return; // Do not remove source if we failed!
 		}
 
 		// Then, remove source file (hopefully succeeds)
 		if(std::remove(oldPathStr.c_str()) == -1)
 		{
-			BS_LOG(Error, FileSystem, String(__FUNCTION__) + ": renaming " + oldPathStr + " to " + newPathStr + ": " + strerror(errno));
+			B3D_LOG(Error, FileSystem, String(__FUNCTION__) + ": renaming " + oldPathStr + " to " + newPathStr + ": " + strerror(errno));
 		}
 	}
 }
@@ -244,7 +244,7 @@ Path FileSystem::GetWorkingDirectoryPath()
 	if(getcwd(buffer, PATH_MAX) != nullptr)
 		wd = buffer;
 	else
-		BS_LOG(Error, FileSystem, String("Error when calling getcwd(): ") + strerror(errno));
+		B3D_LOG(Error, FileSystem, String("Error when calling getcwd(): ") + strerror(errno));
 
 	B3DFree(buffer);
 	return Path(wd);
@@ -339,7 +339,7 @@ Path FileSystem::GetTempDirectoryPath()
 
 	if(directoryName == nullptr)
 	{
-		BS_LOG(Error, FileSystem, String(__FUNCTION__) + ": " + strerror(errno));
+		B3D_LOG(Error, FileSystem, String(__FUNCTION__) + ": " + strerror(errno));
 		return Path(StringUtil::BLANK);
 	}
 

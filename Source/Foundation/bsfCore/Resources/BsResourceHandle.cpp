@@ -113,7 +113,7 @@ void ResourceHandleBase::ThrowIfNotLoaded() const
 #if BS_DEBUG_MODE
 	if(!IsLoaded(false))
 	{
-		BS_EXCEPT(InternalErrorException, "Trying to access a resource that hasn't been loaded yet.");
+		B3D_EXCEPT(InternalErrorException, "Trying to access a resource that hasn't been loaded yet.");
 	}
 #endif
 }

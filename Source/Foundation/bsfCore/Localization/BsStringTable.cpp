@@ -264,7 +264,7 @@ SPtr<LocalizedStringData> StringTable::GetStringData(const String& identifier, L
 			return defaultIterFind->second;
 	}
 
-	BS_EXCEPT(InvalidParametersException, "There is no string data for the provided identifier.");
+	B3D_EXCEPT(InvalidParametersException, "There is no string data for the provided identifier.");
 	return nullptr;
 }
 

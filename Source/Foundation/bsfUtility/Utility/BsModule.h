@@ -27,12 +27,12 @@ namespace bs
 		{
 			if(!IsStartedUp())
 			{
-				BS_EXCEPT(InternalErrorException, "Trying to access a module but it hasn't been started up yet.");
+				B3D_EXCEPT(InternalErrorException, "Trying to access a module but it hasn't been started up yet.");
 			}
 
 			if(IsDestroyed())
 			{
-				BS_EXCEPT(InternalErrorException, "Trying to access a destroyed module.");
+				B3D_EXCEPT(InternalErrorException, "Trying to access a destroyed module.");
 			}
 
 			return *InstanceInternal();
@@ -46,12 +46,12 @@ namespace bs
 		{
 			if(!IsStartedUp())
 			{
-				BS_EXCEPT(InternalErrorException, "Trying to access a module but it hasn't been started up yet.");
+				B3D_EXCEPT(InternalErrorException, "Trying to access a module but it hasn't been started up yet.");
 			}
 
 			if(IsDestroyed())
 			{
-				BS_EXCEPT(InternalErrorException, "Trying to access a destroyed module.");
+				B3D_EXCEPT(InternalErrorException, "Trying to access a destroyed module.");
 			}
 
 			return InstanceInternal();
@@ -62,7 +62,7 @@ namespace bs
 		static void StartUp(Args&&... args)
 		{
 			if(IsStartedUp())
-				BS_EXCEPT(InternalErrorException, "Trying to start an already started module.");
+				B3D_EXCEPT(InternalErrorException, "Trying to start an already started module.");
 
 			InstanceInternal() = B3DNew<T>(std::forward<Args>(args)...);
 			IsStartedUp() = true;
@@ -80,7 +80,7 @@ namespace bs
 			static_assert(std::is_base_of<T, SubType>::value, "Provided type is not derived from type the Module is initialized with.");
 
 			if(IsStartedUp())
-				BS_EXCEPT(InternalErrorException, "Trying to start an already started module.");
+				B3D_EXCEPT(InternalErrorException, "Trying to start an already started module.");
 
 			InstanceInternal() = B3DNew<SubType>(std::forward<Args>(args)...);
 			IsStartedUp() = true;
@@ -93,12 +93,12 @@ namespace bs
 		{
 			if(IsDestroyed())
 			{
-				BS_EXCEPT(InternalErrorException, "Trying to shut down an already shut down module.");
+				B3D_EXCEPT(InternalErrorException, "Trying to shut down an already shut down module.");
 			}
 
 			if(!IsStartedUp())
 			{
-				BS_EXCEPT(InternalErrorException, "Trying to shut down a module which was never started.");
+				B3D_EXCEPT(InternalErrorException, "Trying to shut down a module which was never started.");
 			}
 
 			((Module*)InstanceInternal())->OnShutDown();

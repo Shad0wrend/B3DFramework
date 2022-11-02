@@ -11,7 +11,7 @@ D3D11CommandBuffer::D3D11CommandBuffer(GpuQueueType type, u32 deviceIdx, u32 que
 	: CommandBuffer(type, deviceIdx, queueIdx, secondary)
 {
 	if(deviceIdx != 0)
-		BS_EXCEPT(InvalidParametersException, "Only a single device supported on DX11.");
+		B3D_EXCEPT(InvalidParametersException, "Only a single device supported on DX11.");
 }
 
 void D3D11CommandBuffer::QueueCommand(const std::function<void()> command)
@@ -19,7 +19,7 @@ void D3D11CommandBuffer::QueueCommand(const std::function<void()> command)
 #if BS_DEBUG_MODE
 	if(GetState() == CommandBufferState::Executing)
 	{
-		BS_LOG(Error, RenderBackend, "Cannot modify a command buffer that's still executing.");
+		B3D_LOG(Error, RenderBackend, "Cannot modify a command buffer that's still executing.");
 		return;
 	}
 #endif
@@ -37,13 +37,13 @@ void D3D11CommandBuffer::ExecuteCommands()
 #if BS_DEBUG_MODE
 	if(mIsSecondary)
 	{
-		BS_LOG(Error, RenderBackend, "Cannot execute commands on a secondary buffer.");
+		B3D_LOG(Error, RenderBackend, "Cannot execute commands on a secondary buffer.");
 		return;
 	}
 
 	if(GetState() == CommandBufferState::Executing)
 	{
-		BS_LOG(Error, RenderBackend, "Cannot submit a command buffer that's still executing.");
+		B3D_LOG(Error, RenderBackend, "Cannot submit a command buffer that's still executing.");
 		return;
 	}
 #endif

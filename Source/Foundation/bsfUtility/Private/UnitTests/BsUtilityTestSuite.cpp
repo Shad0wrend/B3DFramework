@@ -680,7 +680,7 @@ void UtilityTestSuite::testQuadtree()
 		overlapElements.push_back(element);
 
 		// Manually check for intersections
-		assert(quadtreeData.elements[element].box.overlaps(queryBounds));
+		B3D_ASSERT(quadtreeData.elements[element].box.overlaps(queryBounds));
 	}
 
 	// Ensure that all we have found all possible overlaps by manually testing all elements
@@ -690,7 +690,7 @@ void UtilityTestSuite::testQuadtree()
 		if(entry.box.overlaps(queryBounds))
 		{
 			auto iterFind = std::find(overlapElements.begin(), overlapElements.end(), elemIdx);
-			assert(iterFind != overlapElements.end());
+			B3D_ASSERT(iterFind != overlapElements.end());
 		}
 
 		elemIdx++;

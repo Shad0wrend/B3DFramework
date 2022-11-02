@@ -199,7 +199,7 @@ namespace bs
 		/** Frees the internal memory buffers. All external allocations must be freed before calling this. */
 		void Clear()
 		{
-			assert(mTotalAllocBytes == 0);
+			B3D_ASSERT(mTotalAllocBytes == 0);
 
 			mFreePtr = 0;
 			mDynamicAlloc.Clear();

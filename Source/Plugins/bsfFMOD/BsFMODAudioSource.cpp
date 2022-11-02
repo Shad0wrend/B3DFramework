@@ -97,7 +97,7 @@ void FMODAudioSource::Play()
 
 	if(mChannel == nullptr)
 	{
-		assert(mStreamingSound == nullptr);
+		B3D_ASSERT(mStreamingSound == nullptr);
 
 		FMOD::System* fmod = GetFMODAudio().GetFMODInternal();
 
@@ -115,7 +115,7 @@ void FMODAudioSource::Play()
 
 		if(fmod->playSound(sound, nullptr, true, &mChannel) != FMOD_OK)
 		{
-			BS_LOG(Error, Audio, "Failed playing sound.");
+			B3D_LOG(Error, Audio, "Failed playing sound.");
 
 			if(mStreamingSound != nullptr)
 			{

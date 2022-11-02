@@ -119,27 +119,27 @@ namespace bs
 	};
 
 	/** Describes operation that will be used for rendering a certain set of vertices. */
-	enum BS_SCRIPT_EXPORT(ExportName(MeshTopology), DocumentationGroup(Rendering)) DrawOperationType
+	enum B3D_SCRIPT_EXPORT(ExportName(MeshTopology), DocumentationGroup(Rendering)) DrawOperationType
 	{
 		/** Each vertex represents a point. */
-		DOT_POINT_LIST BS_SCRIPT_EXPORT(ExportName(PointList)) = 1,
+		DOT_POINT_LIST B3D_SCRIPT_EXPORT(ExportName(PointList)) = 1,
 		/** Each sequential pair of vertices represent a line. */
-		DOT_LINE_LIST BS_SCRIPT_EXPORT(ExportName(LineList)) = 2,
+		DOT_LINE_LIST B3D_SCRIPT_EXPORT(ExportName(LineList)) = 2,
 		/** Each vertex (except the first) forms a line with the previous vertex. */
-		DOT_LINE_STRIP BS_SCRIPT_EXPORT(ExportName(LineStrip)) = 3,
+		DOT_LINE_STRIP B3D_SCRIPT_EXPORT(ExportName(LineStrip)) = 3,
 		/** Each sequential 3-tuple of vertices represent a triangle. */
-		DOT_TRIANGLE_LIST BS_SCRIPT_EXPORT(ExportName(TriangleList)) = 4,
+		DOT_TRIANGLE_LIST B3D_SCRIPT_EXPORT(ExportName(TriangleList)) = 4,
 		/** Each vertex (except the first two) form a triangle with the previous two vertices. */
-		DOT_TRIANGLE_STRIP BS_SCRIPT_EXPORT(ExportName(TriangleStrip)) = 5,
+		DOT_TRIANGLE_STRIP B3D_SCRIPT_EXPORT(ExportName(TriangleStrip)) = 5,
 		/** Each vertex (except the first two) form a triangle with the first vertex and previous vertex. */
-		DOT_TRIANGLE_FAN BS_SCRIPT_EXPORT(ExportName(TriangleFan)) = 6
+		DOT_TRIANGLE_FAN B3D_SCRIPT_EXPORT(ExportName(TriangleFan)) = 6
 	};
 
 	/**	Type of mesh indices used, used for determining maximum number of vertices in a mesh. */
-	enum BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) IndexType
+	enum B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) IndexType
 	{
-		IT_16BIT BS_SCRIPT_EXPORT(ExportName(Index16)), /**< 16-bit indices. */
-		IT_32BIT BS_SCRIPT_EXPORT(ExportName(Index32)) /**< 32-bit indices. */
+		IT_16BIT B3D_SCRIPT_EXPORT(ExportName(Index16)), /**< 16-bit indices. */
+		IT_32BIT B3D_SCRIPT_EXPORT(ExportName(Index32)) /**< 32-bit indices. */
 	};
 
 	/** These values represent a hint to the driver when locking a hardware buffer. */
@@ -332,25 +332,25 @@ namespace bs
 	};
 
 	/**	Available texture types. */
-	enum BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) TextureType
+	enum B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) TextureType
 	{
 		/** One dimensional texture. Just a row of pixels. */
-		TEX_TYPE_1D BS_SCRIPT_EXPORT(ExportName(Texture1D)) = 1,
+		TEX_TYPE_1D B3D_SCRIPT_EXPORT(ExportName(Texture1D)) = 1,
 		/** Two dimensional texture. */
-		TEX_TYPE_2D BS_SCRIPT_EXPORT(ExportName(Texture2D)) = 2,
+		TEX_TYPE_2D B3D_SCRIPT_EXPORT(ExportName(Texture2D)) = 2,
 		/** Three dimensional texture. */
-		TEX_TYPE_3D BS_SCRIPT_EXPORT(ExportName(Texture3D)) = 3,
+		TEX_TYPE_3D B3D_SCRIPT_EXPORT(ExportName(Texture3D)) = 3,
 		/** Texture consisting out of six 2D textures describing an inside of a cube. Allows special sampling. */
-		TEX_TYPE_CUBE_MAP BS_SCRIPT_EXPORT(ExportName(TextureCube)) = 4
+		TEX_TYPE_CUBE_MAP B3D_SCRIPT_EXPORT(ExportName(TextureCube)) = 4
 	};
 
 	/**	Projection type to use by the camera. */
-	enum BS_SCRIPT_EXPORT() ProjectionType
+	enum B3D_SCRIPT_EXPORT() ProjectionType
 	{
 		/** Projection type where object size remains constant and parallel lines remain parallel. */
-		PT_ORTHOGRAPHIC BS_SCRIPT_EXPORT(ExportName(Orthographic)),
+		PT_ORTHOGRAPHIC B3D_SCRIPT_EXPORT(ExportName(Orthographic)),
 		/** Projection type that emulates human vision. Objects farther away appear smaller. */
-		PT_PERSPECTIVE BS_SCRIPT_EXPORT(ExportName(Perspective))
+		PT_PERSPECTIVE B3D_SCRIPT_EXPORT(ExportName(Perspective))
 	};
 
 	/**	Contains data about a type used for GPU data parameters. */
@@ -498,7 +498,7 @@ namespace bs
 	BS_FLAGS_OPERATORS(ShaderFlag)
 
 	/** Valid types of a mesh used for physics. */
-	enum class BS_SCRIPT_EXPORT() PhysicsMeshType
+	enum class B3D_SCRIPT_EXPORT() PhysicsMeshType
 	{
 		/**
 		 * A regular triangle mesh. Mesh can be of arbitrary size but cannot be used for triggers and non-kinematic
@@ -513,7 +513,7 @@ namespace bs
 	};
 
 	/** Determines the type of the source image for generating cubemaps. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Utility), API(Framework), API(Editor)) CubemapSourceType
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Utility), API(Framework), API(Editor)) CubemapSourceType
 	{
 		/** Source is a single image that will be replicated on all cubemap faces. */
 		Single,
@@ -532,7 +532,7 @@ namespace bs
 	};
 
 	/** Names of individual components of a vector. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Utility)) VectorComponent
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Utility)) VectorComponent
 	{
 		X,
 		Y,
@@ -541,7 +541,7 @@ namespace bs
 	};
 
 	/** Names of individual components of a color. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Utility)) ColorComponent
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Utility)) ColorComponent
 	{
 		R,
 		G,
@@ -550,7 +550,7 @@ namespace bs
 	};
 
 	/** Identifiers representing a range of values. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Utility)) RangeComponent
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Utility)) RangeComponent
 	{
 		Min,
 		Max
@@ -584,7 +584,7 @@ namespace bs
 	 * Controls what kind of mobility restrictions a scene object has. This is used primarily as a performance hint to
 	 * other systems. Generally the more restricted the mobility the higher performance can be achieved.
 	 */
-	enum class BS_SCRIPT_EXPORT() ObjectMobility
+	enum class B3D_SCRIPT_EXPORT() ObjectMobility
 	{
 		/** Scene object can be moved and has no mobility restrictions. */
 		Movable,
@@ -613,7 +613,7 @@ namespace bs
 	};
 
 	/**	References a subset of surfaces within a texture. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportAsStruct(true)) TextureSurface
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportAsStruct(true)) TextureSurface
 	{
 		TextureSurface(u32 mipLevel = 0, u32 numMipLevels = 1, u32 face = 0, u32 numFaces = 1)
 			: MipLevel(mipLevel), NumMipLevels(numMipLevels), Face(face), NumFaces(numFaces)
@@ -664,7 +664,7 @@ namespace bs
 		template <class T>
 		const T& GetData() const
 		{
-			assert(sizeof(T) == size);
+			B3D_ASSERT(sizeof(T) == size);
 
 			return *(T*)data;
 		}

@@ -15,7 +15,7 @@ GLHardwareBuffer::GLHardwareBuffer(GLenum target, u32 size, GpuBufferUsage usage
 	BS_CHECK_GL_ERROR();
 
 	if(!mBufferId)
-		BS_EXCEPT(InternalErrorException, "Cannot create GL buffer");
+		B3D_EXCEPT(InternalErrorException, "Cannot create GL buffer");
 
 	glBindBuffer(target, mBufferId);
 	BS_CHECK_GL_ERROR();
@@ -67,7 +67,7 @@ void* GLHardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u32 
 		BS_CHECK_GL_ERROR();
 
 		if(buffer == nullptr)
-			BS_EXCEPT(InternalErrorException, "Cannot map OpenGL buffer.");
+			B3D_EXCEPT(InternalErrorException, "Cannot map OpenGL buffer.");
 
 		mZeroLocked = false;
 	}
@@ -90,7 +90,7 @@ void GLHardwareBuffer::Unmap()
 		if(!glUnmapBuffer(mTarget))
 		{
 			BS_CHECK_GL_ERROR();
-			BS_EXCEPT(InternalErrorException, "Buffer data corrupted, please reload.");
+			B3D_EXCEPT(InternalErrorException, "Buffer data corrupted, please reload.");
 		}
 	}
 }

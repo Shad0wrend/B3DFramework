@@ -49,7 +49,7 @@ void CameraBase::SetNearClipDistance(float nearPlane)
 {
 	if(nearPlane <= 0)
 	{
-		BS_LOG(Error, Renderer, "Near clip distance must be greater than zero.");
+		B3D_LOG(Error, Renderer, "Near clip distance must be greater than zero.");
 		return;
 	}
 

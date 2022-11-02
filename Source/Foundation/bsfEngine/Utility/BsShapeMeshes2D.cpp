@@ -18,8 +18,8 @@ void ShapeMeshes2D::SolidQuad(const Rect2& area, const SPtr<MeshData>& meshData,
 	u32* indexData = meshData->GetIndices32();
 	u8* positionData = meshData->GetElementData(VES_POSITION);
 
-	assert((vertexOffset + 4) <= meshData->GetNumVertices());
-	assert((indexOffset + 6) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + 4) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + 6) <= meshData->GetNumIndices());
 
 	Vector<Vector2> points;
 	points.push_back(Vector2(area.X, area.Y));
@@ -35,8 +35,8 @@ void ShapeMeshes2D::PixelLine(const Vector2& a, const Vector2& b, const SPtr<Mes
 	u32* indexData = meshData->GetIndices32();
 	u8* positionData = meshData->GetElementData(VES_POSITION);
 
-	assert((vertexOffset + 2) <= meshData->GetNumVertices());
-	assert((indexOffset + 2) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + 2) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + 2) <= meshData->GetNumIndices());
 
 	PixelLine(a, b, positionData, vertexOffset, meshData->GetVertexDesc()->GetVertexStride(), indexData, indexOffset);
 }
@@ -49,10 +49,10 @@ void ShapeMeshes2D::QuadLine(const Vector2& a, const Vector2& b, float width, fl
 
 void ShapeMeshes2D::PixelLineList(const Vector<Vector2>& linePoints, const SPtr<MeshData>& meshData, u32 vertexOffset, u32 indexOffset)
 {
-	assert(linePoints.size() % 2 == 0);
+	B3D_ASSERT(linePoints.size() % 2 == 0);
 
-	assert((vertexOffset + linePoints.size() * 2) <= meshData->GetNumVertices());
-	assert((indexOffset + linePoints.size() * 2) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + linePoints.size() * 2) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + linePoints.size() * 2) <= meshData->GetNumIndices());
 
 	u32 curVertOffset = vertexOffset;
 	u32 curIdxOffset = indexOffset;
@@ -73,11 +73,11 @@ void ShapeMeshes2D::PixelLineList(const Vector<Vector2>& linePoints, const SPtr<
 void ShapeMeshes2D::QuadLineList(const Vector<Vector2>& linePoints, float width, float border, const Color& color, const SPtr<MeshData>& meshData, u32 vertexOffset, u32 indexOffset)
 {
 	u32 numPoints = (u32)linePoints.size();
-	assert(numPoints >= 2);
+	B3D_ASSERT(numPoints >= 2);
 
 	u32 numLines = (u32)linePoints.size() - 1;
-	assert((vertexOffset + (numLines * 2 + 2)) <= meshData->GetNumVertices());
-	assert((indexOffset + (numLines * 6)) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + (numLines * 2 + 2)) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + (numLines * 6)) <= meshData->GetNumIndices());
 
 	u32* outIndices = indexOffset + meshData->GetIndices32();
 	u8* outVertices = vertexOffset + meshData->GetElementData(VES_POSITION);
@@ -116,7 +116,7 @@ void ShapeMeshes2D::QuadLineList(const Vector<Vector2>& linePoints, float width,
 
 void ShapeMeshes2D::QuadLineList(const Vector2* linePoints, u32 numPoints, float width, float border, u8* outVertices, u32 vertexStride, bool indexed)
 {
-	assert(numPoints >= 2);
+	B3D_ASSERT(numPoints >= 2);
 	u32 numLines = numPoints - 1;
 
 	width += border;

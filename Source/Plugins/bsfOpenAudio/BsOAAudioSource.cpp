@@ -443,7 +443,7 @@ void OAAudioSource::Rebuild()
 
 void OAAudioSource::StartStreaming()
 {
-	assert(!mIsStreaming);
+	B3D_ASSERT(!mIsStreaming);
 
 	alGenBuffers(kStreamBufferCount, mStreamBuffers);
 	GetOAAudio().StartStreaming(this);
@@ -454,7 +454,7 @@ void OAAudioSource::StartStreaming()
 
 void OAAudioSource::StopStreaming()
 {
-	assert(mIsStreaming);
+	B3D_ASSERT(mIsStreaming);
 
 	mIsStreaming = false;
 	GetOAAudio().StopStreaming(this);
@@ -539,7 +539,7 @@ void OAAudioSource::StreamUnlocked()
 
 			if(bufferBits == 0)
 			{
-				BS_LOG(Error, Audio, "Error decoding stream.");
+				B3D_LOG(Error, Audio, "Error decoding stream.");
 				return;
 			}
 			else

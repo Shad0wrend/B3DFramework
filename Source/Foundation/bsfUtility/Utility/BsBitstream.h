@@ -543,7 +543,7 @@ namespace bs
 		if(count == 0)
 			return 0;
 
-		assert((mCursor + count) <= mNumBits);
+		B3D_ASSERT((mCursor + count) <= mNumBits);
 
 		uint64_t remaining = count;
 		uint64_t newCursor = mCursor + count;
@@ -615,7 +615,7 @@ namespace bs
 
 	inline uint64_t Bitstream::Read(bool& value)
 	{
-		assert((mCursor + 1) <= mNumBits);
+		B3D_ASSERT((mCursor + 1) <= mNumBits);
 
 		uint64_t srcBitsMod = mCursor & (kBitsPerQuant - 1);
 		uint64_t srcQuant = mCursor >> kBitsPerQuantLoG2;
@@ -652,7 +652,7 @@ namespace bs
 	uint32_t Bitstream::WriteBytes(const T& value)
 	{
 		uint64_t numBits = WriteBits((QuantType*)&value, sizeof(value) * 8);
-		assert((numBits % 8) == 0);
+		B3D_ASSERT((numBits % 8) == 0);
 
 		return (uint32_t)(numBits / 8);
 	}
@@ -662,7 +662,7 @@ namespace bs
 	{
 		QuantType* temp = (QuantType*)&value;
 		uint64_t numBits = ReadBits(temp, sizeof(value) * 8);
-		assert((numBits % 8) == 0);
+		B3D_ASSERT((numBits % 8) == 0);
 
 		return (uint32_t)(numBits / 8);
 	}
@@ -1040,7 +1040,7 @@ namespace bs
 			else
 			{
 				// Caller accessing bits outside of external memory range
-				assert(false);
+				B3D_ASSERT(false);
 			}
 		}
 	}
@@ -1051,7 +1051,7 @@ namespace bs
 
 		if(numBits != mMaxBits)
 		{
-			assert(numBits > mMaxBits);
+			B3D_ASSERT(numBits > mMaxBits);
 
 			const uint32_t numQuants = (uint32_t)Math::DivideAndRoundUp(numBits, (uint64_t)kBitsPerQuant);
 

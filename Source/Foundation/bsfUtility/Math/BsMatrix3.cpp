@@ -11,14 +11,14 @@ const Matrix3 Matrix3::kIdentity{ BS_IDENTITY() };
 
 Vector3 Matrix3::GetColumn(u32 col) const
 {
-	assert(col < 3);
+	B3D_ASSERT(col < 3);
 
 	return Vector3(m[0][col], m[1][col], m[2][col]);
 }
 
 void Matrix3::SetColumn(u32 col, const Vector3& vec)
 {
-	assert(col < 3);
+	B3D_ASSERT(col < 3);
 
 	m[0][col] = vec.X;
 	m[1][col] = vec.Y;

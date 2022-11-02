@@ -10,7 +10,7 @@ bool CheckIfDestroyed(ScriptGameObject* nativeInstance)
 	HGameObject go = nativeInstance->GetNativeHandle();
 	if(go.IsDestroyed())
 	{
-		BS_LOG(Warning, Scene, "Trying to access a destroyed GameObject with instance ID: {0}", go.GetInstanceId());
+		B3D_LOG(Warning, Scene, "Trying to access a destroyed GameObject with instance ID: {0}", go.GetInstanceId());
 		return true;
 	}
 
@@ -24,7 +24,7 @@ ScriptGameObjectBase::ScriptGameObjectBase(MonoObject* instance)
 
 ScriptGameObjectBase::~ScriptGameObjectBase()
 {
-	BS_ASSERT(mGCHandle == 0 && "Object being destroyed without its managed instance being freed first.");
+	B3D_ASSERT(mGCHandle == 0 && "Object being destroyed without its managed instance being freed first.");
 }
 
 MonoObject* ScriptGameObjectBase::GetManagedInstance() const
@@ -34,7 +34,7 @@ MonoObject* ScriptGameObjectBase::GetManagedInstance() const
 
 void ScriptGameObjectBase::SetManagedInstance(::MonoObject* instance)
 {
-	BS_ASSERT(mGCHandle == 0 && "Attempting to set a new managed instance without freeing the old one.");
+	B3D_ASSERT(mGCHandle == 0 && "Attempting to set a new managed instance without freeing the old one.");
 
 	mGCHandle = MonoUtil::NewGcHandle(instance, false);
 }

@@ -36,7 +36,7 @@ namespace bs
 #if BS_DEBUG_MODE
 				if(arrayIdx >= mParamDesc.ArraySize)
 				{
-					BS_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " + ToString(mParamDesc.ArraySize) + ". Requested size: " + ToString(arrayIdx));
+					B3D_EXCEPT(InvalidParametersException, "Array index out of range. Array size: " + ToString(mParamDesc.ArraySize) + ". Requested size: " + ToString(arrayIdx));
 				}
 #endif
 
@@ -69,7 +69,7 @@ namespace bs
 #if BS_DEBUG_MODE
 				if(arrayIdx >= mParamDesc.ArraySize)
 				{
-					BS_LOG(Error, Material, "Array index out of range. Array size: {0}. Requested size: {1}", mParamDesc.ArraySize, arrayIdx);
+					B3D_LOG(Error, Material, "Array index out of range. Array size: {0}. Requested size: {1}", mParamDesc.ArraySize, arrayIdx);
 					return T();
 				}
 #endif

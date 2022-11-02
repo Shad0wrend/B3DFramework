@@ -60,7 +60,7 @@ ScriptSceneObject* ScriptGameObjectManager::CreateScriptSceneObject(MonoObject* 
 {
 	ScriptSceneObject* so = GetScriptSceneObject(sceneObject);
 	if(so != nullptr)
-		BS_EXCEPT(InvalidStateException, "Script object for this SceneObject already exists.");
+		B3D_EXCEPT(InvalidStateException, "Script object for this SceneObject already exists.");
 
 	ScriptSceneObject* nativeInstance = new(B3DAllocate<ScriptSceneObject>()) ScriptSceneObject(existingInstance, sceneObject);
 	mScriptSceneObjects[sceneObject.GetInstanceId()] = nativeInstance;

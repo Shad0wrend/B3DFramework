@@ -83,7 +83,7 @@ FMODAudio::~FMODAudio()
 {
 	StopManualSources();
 
-	assert(mListeners.empty() && mSources.empty()); // Everything should be destroyed at this point
+	B3D_ASSERT(mListeners.empty() && mSources.empty()); // Everything should be destroyed at this point
 	mFMOD->release();
 }
 
@@ -127,7 +127,7 @@ void FMODAudio::SetActiveDevice(const AudioDevice& device)
 		}
 	}
 
-	BS_LOG(Warning, Audio, "Failed changing audio device to: {0}", device.Name);
+	B3D_LOG(Warning, Audio, "Failed changing audio device to: {0}", device.Name);
 }
 
 SPtr<AudioClip> FMODAudio::CreateClip(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc)

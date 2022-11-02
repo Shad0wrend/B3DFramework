@@ -30,13 +30,13 @@ GLFrameBufferObject::~GLFrameBufferObject()
 
 void GLFrameBufferObject::BindSurface(u32 attachment, const GLSurfaceDesc &target)
 {
-	assert(attachment < BS_MAX_MULTIPLE_RENDER_TARGETS);
+	B3D_ASSERT(attachment < BS_MAX_MULTIPLE_RENDER_TARGETS);
 	mColor[attachment] = target;
 }
 
 void GLFrameBufferObject::UnbindSurface(u32 attachment)
 {
-	assert(attachment < BS_MAX_MULTIPLE_RENDER_TARGETS);
+	B3D_ASSERT(attachment < BS_MAX_MULTIPLE_RENDER_TARGETS);
 	mColor[attachment].Buffer = nullptr;
 }
 
@@ -130,10 +130,10 @@ void GLFrameBufferObject::Rebuild()
 	case GL_FRAMEBUFFER_COMPLETE:
 		break;
 	case GL_FRAMEBUFFER_UNSUPPORTED:
-		BS_LOG(Error, RenderBackend, "All framebuffer formats with this texture internal format unsupported");
+		B3D_LOG(Error, RenderBackend, "All framebuffer formats with this texture internal format unsupported");
 		break;
 	default:
-		BS_LOG(Error, RenderBackend, "Framebuffer incomplete or other FBO status error");
+		B3D_LOG(Error, RenderBackend, "Framebuffer incomplete or other FBO status error");
 	}
 }
 

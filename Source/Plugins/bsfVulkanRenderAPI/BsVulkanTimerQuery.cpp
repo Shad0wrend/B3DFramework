@@ -71,7 +71,7 @@ void VulkanTimerQuery::End(const SPtr<CommandBuffer>& cb)
 {
 	if(mQueries.empty())
 	{
-		BS_LOG(Error, RenderBackend, "end() called but query was never started.");
+		B3D_LOG(Error, RenderBackend, "end() called but query was never started.");
 		return;
 	}
 
@@ -99,7 +99,7 @@ bool VulkanTimerQuery::IsInProgressInternal() const
 
 void VulkanTimerQuery::InterruptInternal(VulkanCmdBuffer& cb)
 {
-	assert(!mQueries.empty() && !mQueryEndCalled);
+	B3D_ASSERT(!mQueries.empty() && !mQueryEndCalled);
 
 	mQueryEndCalled = true;
 	mQueryFinalized = false;

@@ -167,7 +167,7 @@ namespace bs
 		 */
 		static int32_t CeilToInt(float val)
 		{
-			assert(val >= std::numeric_limits<int32_t>::min() && val <= std::numeric_limits<int32_t>::max());
+			B3D_ASSERT(val >= std::numeric_limits<int32_t>::min() && val <= std::numeric_limits<int32_t>::max());
 
 			// Positive values need offset in order to truncate towards positive infinity (cast truncates towards zero)
 			return val >= 0.0f ? (int32_t)(val + kBiggestFloatSmallerThanOne) : (int32_t)val;
@@ -179,7 +179,7 @@ namespace bs
 		 */
 		static uint32_t CeilToPosInt(float val)
 		{
-			assert(val >= 0 && val <= std::numeric_limits<uint32_t>::max());
+			B3D_ASSERT(val >= 0 && val <= std::numeric_limits<uint32_t>::max());
 
 			return (uint32_t)(val + kBiggestFloatSmallerThanOne);
 		}
@@ -223,7 +223,7 @@ namespace bs
 		 */
 		static int FloorToInt(float val)
 		{
-			assert(val >= std::numeric_limits<int32_t>::min() && val <= std::numeric_limits<int32_t>::max());
+			B3D_ASSERT(val >= std::numeric_limits<int32_t>::min() && val <= std::numeric_limits<int32_t>::max());
 
 			// Negative values need offset in order to truncate towards negative infinity (cast truncates towards zero)
 			return val >= 0.0f ? (int32_t)val : (int32_t)(val - kBiggestFloatSmallerThanOne);
@@ -235,7 +235,7 @@ namespace bs
 		 */
 		static uint32_t FloorToPosInt(float val)
 		{
-			assert(val >= 0 && val <= std::numeric_limits<uint32_t>::max());
+			B3D_ASSERT(val >= 0 && val <= std::numeric_limits<uint32_t>::max());
 
 			return (uint32_t)val;
 		}
@@ -250,7 +250,7 @@ namespace bs
 		template <typename T>
 		static T Clamp(T val, T minval, T maxval)
 		{
-			assert(minval <= maxval && "Invalid clamp range");
+			B3D_ASSERT(minval <= maxval && "Invalid clamp range");
 			return std::max(std::min(val, maxval), minval);
 		}
 

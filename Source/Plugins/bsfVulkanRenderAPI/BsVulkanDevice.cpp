@@ -130,7 +130,7 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice device, u32 deviceIdx)
 	deviceInfo.ppEnabledLayerNames = nullptr;
 
 	VkResult result = vkCreateDevice(device, &deviceInfo, gVulkanAllocator, &mLogicalDevice);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	// Retrieve queues
 	for(u32 i = 0; i < GQT_COUNT; i++)
@@ -166,7 +166,7 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice device, u32 deviceIdx)
 VulkanDevice::~VulkanDevice()
 {
 	VkResult result = vkDeviceWaitIdle(mLogicalDevice);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	for(u32 i = 0; i < GQT_COUNT; i++)
 	{
@@ -192,7 +192,7 @@ VulkanDevice::~VulkanDevice()
 void VulkanDevice::WaitIdle()
 {
 	VkResult result = vkDeviceWaitIdle(mLogicalDevice);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	RefreshStates(true);
 }
@@ -231,12 +231,12 @@ SurfaceFormat VulkanDevice::GetSurfaceFormat(const VkSurfaceKHR& surface, bool g
 {
 	uint32_t numFormats;
 	VkResult result = vkGetPhysicalDeviceSurfaceFormatsKHR(mPhysicalDevice, surface, &numFormats, nullptr);
-	assert(result == VK_SUCCESS);
-	assert(numFormats > 0);
+	B3D_ASSERT(result == VK_SUCCESS);
+	B3D_ASSERT(numFormats > 0);
 
 	VkSurfaceFormatKHR* surfaceFormats = B3DStackAllocate<VkSurfaceFormatKHR>(numFormats);
 	result = vkGetPhysicalDeviceSurfaceFormatsKHR(mPhysicalDevice, surface, &numFormats, surfaceFormats);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	SurfaceFormat output;
 	output.ColorFormat = VK_FORMAT_R8G8B8A8_UNORM;
@@ -317,7 +317,7 @@ SurfaceFormat VulkanDevice::GetSurfaceFormat(const VkSurfaceKHR& surface, bool g
 
 			if(gamma)
 			{
-				BS_LOG(Error, RenderBackend, "Cannot find a valid sRGB format for a render window surface, "
+				B3D_LOG(Error, RenderBackend, "Cannot find a valid sRGB format for a render window surface, "
 											 "falling back to a default format.");
 			}
 		}
@@ -335,10 +335,10 @@ VmaAllocation VulkanDevice::AllocateMemory(VkImage image, VkMemoryPropertyFlags 
 	VmaAllocationInfo allocInfo;
 	VmaAllocation allocation;
 	VkResult result = vmaAllocateMemoryForImage(mAllocator, image, &allocCI, &allocation, &allocInfo);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	result = vkBindImageMemory(mLogicalDevice, image, allocInfo.deviceMemory, allocInfo.offset);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	return allocation;
 }
@@ -351,10 +351,10 @@ VmaAllocation VulkanDevice::AllocateMemory(VkBuffer buffer, VkMemoryPropertyFlag
 	VmaAllocationInfo allocInfo;
 	VmaAllocation memory;
 	VkResult result = vmaAllocateMemoryForBuffer(mAllocator, buffer, &allocCI, &memory, &allocInfo);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	result = vkBindBufferMemory(mLogicalDevice, buffer, allocInfo.deviceMemory, allocInfo.offset);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	return memory;
 }

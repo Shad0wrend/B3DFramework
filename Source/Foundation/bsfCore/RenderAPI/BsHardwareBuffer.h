@@ -36,7 +36,7 @@ namespace bs
 		 */
 		virtual void* Lock(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx = 0, u32 queueIdx = 0)
 		{
-			assert(!IsLocked() && "Cannot lock this buffer, it is already locked!");
+			B3D_ASSERT(!IsLocked() && "Cannot lock this buffer, it is already locked!");
 			void* ret = Map(offset, length, options, deviceIdx, queueIdx);
 			mIsLocked = true;
 
@@ -61,7 +61,7 @@ namespace bs
 		/**	Releases the lock on this buffer. */
 		virtual void Unlock()
 		{
-			assert(IsLocked() && "Cannot unlock this buffer, it is not locked!");
+			B3D_ASSERT(IsLocked() && "Cannot unlock this buffer, it is not locked!");
 
 			Unmap();
 			mIsLocked = false;

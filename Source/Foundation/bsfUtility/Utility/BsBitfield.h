@@ -129,7 +129,7 @@ namespace bs
 
 		ReferenceType operator*() const
 		{
-			assert((bool)*this);
+			B3D_ASSERT((bool)*this);
 
 			return ReferenceType(mOwner.mData[mDwordIndex], mMask);
 		}
@@ -233,7 +233,7 @@ namespace bs
 
 		BitReference operator[](uint32_t idx)
 		{
-			assert(idx < mNumBits);
+			B3D_ASSERT(idx < mNumBits);
 
 			const uint32_t bitMask = 1 << (idx & (kBitsPerDword - 1));
 			uint32_t& data = mData[idx >> kBitsPerDwordLoG2];
@@ -243,7 +243,7 @@ namespace bs
 
 		BitReferenceConst operator[](uint32_t idx) const
 		{
-			assert(idx < mNumBits);
+			B3D_ASSERT(idx < mNumBits);
 
 			const uint32_t bitMask = 1 << (idx & (kBitsPerDword - 1));
 			uint32_t& data = mData[idx >> kBitsPerDwordLoG2];
@@ -271,7 +271,7 @@ namespace bs
 		/** Removes a bit at the specified index. */
 		void Remove(uint32_t index)
 		{
-			assert(index < mNumBits);
+			B3D_ASSERT(index < mNumBits);
 
 			const uint32_t dwordIndex = index >> kBitsPerDwordLoG2;
 			const uint32_t mask = 1 << (index & (kBitsPerDword - 1));
@@ -429,7 +429,7 @@ namespace bs
 
 			if(numBits != mMaxBits)
 			{
-				assert(numBits > mMaxBits);
+				B3D_ASSERT(numBits > mMaxBits);
 
 				const uint32_t numDwords = Math::DivideAndRoundUp(numBits, kBitsPerDword);
 

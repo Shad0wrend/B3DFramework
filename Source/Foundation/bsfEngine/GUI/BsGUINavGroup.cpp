@@ -267,7 +267,7 @@ void GUINavGroup::RegisterElement(GUIElement* element, i32 tabIdx)
 void GUINavGroup::SetIndex(GUIElement* element, i32 tabIdx)
 {
 	const auto iterFind = mElements.find(element);
-	assert(iterFind != mElements.end());
+	B3D_ASSERT(iterFind != mElements.end());
 
 	const i32 existingTabIdx = iterFind->second;
 	mElements[element] = tabIdx;

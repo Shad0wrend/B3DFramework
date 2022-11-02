@@ -35,7 +35,7 @@ const GUIElementStyle* GUISkin::GetStyle(const String& guiElemType) const
 	if(iterFind != mStyles.end())
 		return &iterFind->second;
 
-	BS_LOG(Warning, GUI, "Cannot find GUI style with name: {0}. Returning default style.", guiElemType);
+	B3D_LOG(Warning, GUI, "Cannot find GUI style with name: {0}. Returning default style.", guiElemType);
 
 	return &DefaultStyle;
 }

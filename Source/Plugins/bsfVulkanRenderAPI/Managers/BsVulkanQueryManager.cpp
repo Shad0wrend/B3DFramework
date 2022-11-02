@@ -55,7 +55,7 @@ VulkanQueryPool::PoolInfo& VulkanQueryPool::AllocatePool(VkQueryType type)
 
 	PoolInfo poolInfo;
 	VkResult result = vkCreateQueryPool(mDevice.GetLogical(), &queryPoolCI, gVulkanAllocator, &poolInfo.Pool);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	Vector<PoolInfo>& poolInfos = type == VK_QUERY_TYPE_TIMESTAMP ? mTimerPools : mOcclusionPools;
 	poolInfo.StartIdx = (u32)poolInfos.size() * NUM_QUERIES_PER_POOL;
@@ -197,7 +197,7 @@ bool VulkanQuery::GetResult(u64& result) const
 
 	VkDevice vkDevice = mOwner->GetDevice().GetLogical();
 	VkResult vkResult = vkGetQueryPoolResults(vkDevice, mPool, mQueryIdx, 1, sizeof(result), &result, sizeof(result), VK_QUERY_RESULT_64_BIT);
-	assert(vkResult == VK_SUCCESS || vkResult == VK_NOT_READY);
+	B3D_ASSERT(vkResult == VK_SUCCESS || vkResult == VK_NOT_READY);
 
 	return vkResult == VK_SUCCESS;
 }

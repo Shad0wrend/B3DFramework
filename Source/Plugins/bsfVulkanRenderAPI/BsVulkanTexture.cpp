@@ -106,7 +106,7 @@ VulkanImage::~VulkanImage()
 	u32 numSubresources = mNumFaces * mNumMipLevels;
 	for(u32 i = 0; i < numSubresources; i++)
 	{
-		assert(!mSubresources[i]->IsBound()); // Image beeing freed but its subresources are still bound somewhere
+		B3D_ASSERT(!mSubresources[i]->IsBound()); // Image beeing freed but its subresources are still bound somewhere
 
 		mSubresources[i]->Destroy();
 	}
@@ -222,7 +222,7 @@ VkImageView VulkanImage::CreateView(const TextureSurface& surface, VkFormat form
 
 	VkImageView view;
 	VkResult result = vkCreateImageView(mOwner->GetDevice().GetLogical(), &mImageViewCI, gVulkanAllocator, &view);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	mImageViewCI.viewType = oldViewType;
 	mImageViewCI.format = oldFormat;
@@ -291,7 +291,7 @@ VkImageSubresourceRange VulkanImage::GetRange(const TextureSurface& surface) con
 
 VulkanImageSubresource* VulkanImage::GetSubresource(u32 face, u32 mipLevel)
 {
-	assert(mipLevel * mNumFaces + face < mNumFaces * mNumMipLevels);
+	B3D_ASSERT(mipLevel * mNumFaces + face < mNumFaces * mNumMipLevels);
 	return mSubresources[mipLevel * mNumFaces + face];
 }
 
@@ -320,7 +320,7 @@ void VulkanImage::Map(u32 face, u32 mipLevel, PixelData& output) const
 
 	u8* data;
 	VkResult result = vkMapMemory(device.GetLogical(), memory, memoryOffset + layout.offset, layout.size, 0, (void**)&data);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	output.SetExternalBuffer(data);
 }
@@ -335,7 +335,7 @@ u8* VulkanImage::Map(u32 offset, u32 size) const
 
 	u8* data;
 	VkResult result = vkMapMemory(device.GetLogical(), memory, memoryOffset + offset, size, 0, (void**)&data);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	return data;
 }
@@ -427,7 +427,7 @@ VkAccessFlags VulkanImage::GetAccessFlags(VkImageLayout layout, bool readOnly)
 		break;
 	default:
 		accessFlags = 0;
-		BS_LOG(Warning, RenderBackend, "Unsupported source layout for Vulkan image.");
+		B3D_LOG(Warning, RenderBackend, "Unsupported source layout for Vulkan image.");
 		break;
 	}
 
@@ -608,7 +608,7 @@ VulkanTexture::~VulkanTexture()
 		mImages[i]->Destroy();
 	}
 
-	assert(mStagingBuffer == nullptr);
+	B3D_ASSERT(mStagingBuffer == nullptr);
 
 	BS_INC_RENDER_STAT_CAT(ResDestroyed, RenderStatObject_Texture);
 }
@@ -742,7 +742,7 @@ VulkanImage* VulkanTexture::CreateImage(VulkanDevice& device, PixelFormat format
 
 	VkImage image;
 	VkResult result = vkCreateImage(vkDevice, &mImageCI, gVulkanAllocator, &image);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	VmaAllocation allocation = device.AllocateMemory(image, flags);
 	return device.GetResourceManager().Create<VulkanImage>(image, allocation, mImageCI.initialLayout, mImageCI.format, GetProperties());
@@ -767,15 +767,15 @@ VulkanBuffer* VulkanTexture::CreateStaging(VulkanDevice& device, const PixelData
 
 	VkBuffer buffer;
 	VkResult result = vkCreateBuffer(vkDevice, &bufferCI, gVulkanAllocator, &buffer);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	VkMemoryPropertyFlags flags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 	VmaAllocation allocation = device.AllocateMemory(buffer, flags);
 
 	u32 blockSize = PixelUtil::GetBlockSize(pixelData.GetFormat());
 
-	assert(pixelData.GetRowPitch() % blockSize == 0);
-	assert(pixelData.GetSlicePitch() % blockSize == 0);
+	B3D_ASSERT(pixelData.GetRowPitch() % blockSize == 0);
+	B3D_ASSERT(pixelData.GetSlicePitch() % blockSize == 0);
 
 	u32 rowPitchInPixels = pixelData.GetRowPitch() / blockSize;
 	u32 slicePitchInPixels = pixelData.GetSlicePitch() / blockSize;
@@ -872,7 +872,7 @@ void VulkanTexture::CopyImpl(const SPtr<Texture>& target, const TEXTURE_COPY_DES
 
 	if((srcProps.GetUsage() & TU_DEPTHSTENCIL) != 0 || (dstProps.GetUsage() & TU_DEPTHSTENCIL) != 0)
 	{
-		BS_LOG(Error, RenderBackend, "Texture copy/resolve isn't supported for depth-stencil textures.");
+		B3D_LOG(Error, RenderBackend, "Texture copy/resolve isn't supported for depth-stencil textures.");
 		return;
 	}
 
@@ -882,7 +882,7 @@ void VulkanTexture::CopyImpl(const SPtr<Texture>& target, const TEXTURE_COPY_DES
 	{
 		if(srcProps.GetNumSamples() != dstProps.GetNumSamples())
 		{
-			BS_LOG(Error, RenderBackend, "When copying textures their multisample counts must match. Ignoring copy.");
+			B3D_LOG(Error, RenderBackend, "When copying textures their multisample counts must match. Ignoring copy.");
 			return;
 		}
 	}
@@ -1006,7 +1006,7 @@ PixelData VulkanTexture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face
 
 	if(props.GetNumSamples() > 1)
 	{
-		BS_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
+		B3D_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
 		return PixelData();
 	}
 
@@ -1054,11 +1054,11 @@ PixelData VulkanTexture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face
 	{
 		// Initially the texture will be in preinitialized layout, and it will transition to general layout on first
 		// use in shader. No further transitions are allowed for directly mappable textures.
-		assert(subresource->GetLayout() == VK_IMAGE_LAYOUT_PREINITIALIZED || subresource->GetLayout() == VK_IMAGE_LAYOUT_GENERAL);
+		B3D_ASSERT(subresource->GetLayout() == VK_IMAGE_LAYOUT_PREINITIALIZED || subresource->GetLayout() == VK_IMAGE_LAYOUT_GENERAL);
 
 		// GPU should never be allowed to write to a directly mappable texture, since only linear tiling is supported
 		// for direct mapping, and we don't support using it with either storage textures or render targets.
-		assert(!mSupportsGPUWrites);
+		B3D_ASSERT(!mSupportsGPUWrites);
 
 		// Check is the GPU currently reading from the image
 		u32 useMask = subresource->GetUseInfo(VulkanAccessFlag::Read);
@@ -1396,7 +1396,7 @@ void VulkanTexture::ReadDataImpl(PixelData& dest, u32 mipLevel, u32 face, u32 de
 {
 	if(mProperties.GetNumSamples() > 1)
 	{
-		BS_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
+		B3D_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
 		return;
 	}
 
@@ -1414,7 +1414,7 @@ void VulkanTexture::WriteDataImpl(const PixelData& src, u32 mipLevel, u32 face, 
 
 	if(mProperties.GetNumSamples() > 1)
 	{
-		BS_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
+		B3D_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
 		return;
 	}
 
@@ -1423,7 +1423,7 @@ void VulkanTexture::WriteDataImpl(const PixelData& src, u32 mipLevel, u32 face, 
 
 	if(face > 0 && mProperties.GetTextureType() == TEX_TYPE_3D)
 	{
-		BS_LOG(Error, RenderBackend, "3D texture arrays are not supported.");
+		B3D_LOG(Error, RenderBackend, "3D texture arrays are not supported.");
 		return;
 	}
 

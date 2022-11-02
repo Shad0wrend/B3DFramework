@@ -180,7 +180,7 @@ bool BinaryCompare::Compare(IReflectable& a, IReflectable& b)
 						break;
 					}
 				default:
-					BS_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(curGenericField->Schema.Type)) + ", Is array: " + ToString(curGenericField->Schema.IsArray));
+					B3D_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(curGenericField->Schema.Type)) + ", Is array: " + ToString(curGenericField->Schema.IsArray));
 				}
 			}
 			else
@@ -292,7 +292,7 @@ bool BinaryCompare::Compare(IReflectable& a, IReflectable& b)
 						break;
 					}
 				default:
-					BS_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(curGenericField->Schema.Type)) + ", Is array: " + ToString(curGenericField->Schema.IsArray));
+					B3D_EXCEPT(InternalErrorException, "Error encoding data. Encountered a type I don't know how to encode. Type: " + ToString(u32(curGenericField->Schema.Type)) + ", Is array: " + ToString(curGenericField->Schema.IsArray));
 				}
 			}
 		}

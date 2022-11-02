@@ -197,7 +197,7 @@ void RenderTexture::Initialize()
 			SPtr<Texture> texture = mDesc.ColorSurfaces[i].Texture;
 
 			if((texture->GetProperties().GetUsage() & TU_RENDERTARGET) == 0)
-				BS_EXCEPT(InvalidParametersException, "Provided texture is not created with render target usage.");
+				B3D_EXCEPT(InvalidParametersException, "Provided texture is not created with render target usage.");
 
 			mColorSurfaces[i] = texture->RequestView(mDesc.ColorSurfaces[i].MipLevel, 1, mDesc.ColorSurfaces[i].Face, mDesc.ColorSurfaces[i].NumFaces, GVU_RENDERTARGET);
 		}
@@ -208,7 +208,7 @@ void RenderTexture::Initialize()
 		SPtr<Texture> texture = mDesc.DepthStencilSurface.Texture;
 
 		if((texture->GetProperties().GetUsage() & TU_DEPTHSTENCIL) == 0)
-			BS_EXCEPT(InvalidParametersException, "Provided texture is not created with depth stencil usage.");
+			B3D_EXCEPT(InvalidParametersException, "Provided texture is not created with depth stencil usage.");
 
 		mDepthStencilSurface = texture->RequestView(mDesc.DepthStencilSurface.MipLevel, 1, mDesc.DepthStencilSurface.Face, mDesc.DepthStencilSurface.NumFaces, GVU_DEPTHSTENCIL);
 	}
@@ -273,7 +273,7 @@ void RenderTexture::ThrowIfBuffersDontMatch() const
 			errorInfo += "\nNum. slices: " + ToString(curNumSlices) + "/" + ToString(firstNumSlices);
 			errorInfo += "\nMultisample Count: " + ToString(curMsCount) + "/" + ToString(firstMsCount);
 
-			BS_EXCEPT(InvalidParametersException, "Provided color textures don't match!" + errorInfo);
+			B3D_EXCEPT(InvalidParametersException, "Provided color textures don't match!" + errorInfo);
 		}
 	}
 
@@ -290,12 +290,12 @@ void RenderTexture::ThrowIfBuffersDontMatch() const
 
 		if((firstSurfaceView->GetFirstArraySlice() + firstSurfaceView->GetNumArraySlices()) > numSlices)
 		{
-			BS_EXCEPT(InvalidParametersException, "Provided number of faces is out of range. Face: " + ToString(firstSurfaceView->GetFirstArraySlice() + firstSurfaceView->GetNumArraySlices()) + ". Max num faces: " + ToString(numSlices));
+			B3D_EXCEPT(InvalidParametersException, "Provided number of faces is out of range. Face: " + ToString(firstSurfaceView->GetFirstArraySlice() + firstSurfaceView->GetNumArraySlices()) + ". Max num faces: " + ToString(numSlices));
 		}
 
 		if(firstSurfaceView->GetMostDetailedMip() > firstTexProps.GetNumMipmaps())
 		{
-			BS_EXCEPT(InvalidParametersException, "Provided number of mip maps is out of range. Mip level: " + ToString(firstSurfaceView->GetMostDetailedMip()) + ". Max num mipmaps: " + ToString(firstTexProps.GetNumMipmaps()));
+			B3D_EXCEPT(InvalidParametersException, "Provided number of mip maps is out of range. Mip level: " + ToString(firstSurfaceView->GetMostDetailedMip()) + ". Max num mipmaps: " + ToString(firstTexProps.GetNumMipmaps()));
 		}
 
 		if(mDepthStencilSurface == nullptr)
@@ -319,7 +319,7 @@ void RenderTexture::ThrowIfBuffersDontMatch() const
 			errorInfo += "\nHeight: " + ToString(depthTexProps.GetHeight()) + "/" + ToString(firstTexProps.GetHeight());
 			errorInfo += "\nMultisample Count: " + ToString(depthMsCount) + "/" + ToString(colorMsCount);
 
-			BS_EXCEPT(InvalidParametersException, "Provided texture and depth stencil buffer don't match!" + errorInfo);
+			B3D_EXCEPT(InvalidParametersException, "Provided texture and depth stencil buffer don't match!" + errorInfo);
 		}
 	}
 }

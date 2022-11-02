@@ -207,7 +207,7 @@ struct NetworkPeer::Pimpl
 	NetworkId getOrRegisterNetworkId(const SystemAddress& address, const RakNetGUID& guid)
 	{
 		i32 systemIndex = address.systemIndex;
-		assert(systemIndex >= 0 && systemIndex < (i32)networkIdMapping.size());
+		B3D_ASSERT(systemIndex >= 0 && systemIndex < (i32)networkIdMapping.size());
 
 		NetworkConnection& connection = networkIdMapping[systemIndex];
 		if(connection.systemAddress != address || connection.guid != guid)
@@ -297,7 +297,7 @@ NetworkPeer::NetworkPeer(const NETWORK_PEER_DESC& desc)
 		{
 			if(address.ipType == IPV6)
 			{
-				BS_LOG(Error, Network, "IPV6 not supported for listener addreses on this backend");
+				B3D_LOG(Error, Network, "IPV6 not supported for listener addreses on this backend");
 				descriptors[i] = SocketDescriptor();
 			}
 			else // IPV4
@@ -315,37 +315,37 @@ NetworkPeer::NetworkPeer(const NETWORK_PEER_DESC& desc)
 	switch(result)
 	{
 	case RAKNET_ALREADY_STARTED:
-		BS_LOG(Warning, Network, "Failed to start RakNet peer, RakNet already started.");
+		B3D_LOG(Warning, Network, "Failed to start RakNet peer, RakNet already started.");
 		break;
 	case INVALID_SOCKET_DESCRIPTORS:
-		BS_LOG(Error, Network, "Failed to start RakNet peer, invalid socket descriptors provided.");
+		B3D_LOG(Error, Network, "Failed to start RakNet peer, invalid socket descriptors provided.");
 		break;
 	case INVALID_MAX_CONNECTIONS:
-		BS_LOG(Error, Network, "Failed to start RakNet peer, invalid max. connection count provided.");
+		B3D_LOG(Error, Network, "Failed to start RakNet peer, invalid max. connection count provided.");
 		break;
 	case SOCKET_FAMILY_NOT_SUPPORTED:
-		BS_LOG(Error, Network, "Failed to start RakNet peer, socket family not supported.");
+		B3D_LOG(Error, Network, "Failed to start RakNet peer, socket family not supported.");
 		break;
 	case SOCKET_PORT_ALREADY_IN_USE:
-		BS_LOG(Error, Network, "Failed to start RakNet peer, port already in use.");
+		B3D_LOG(Error, Network, "Failed to start RakNet peer, port already in use.");
 		break;
 	case SOCKET_FAILED_TO_BIND:
-		BS_LOG(Error, Network, "Failed to start RakNet peer, socket failed to bind.");
+		B3D_LOG(Error, Network, "Failed to start RakNet peer, socket failed to bind.");
 		break;
 	case SOCKET_FAILED_TEST_SEND:
-		BS_LOG(Error, Network, "Failed to start RakNet peer, socket failed to test send.");
+		B3D_LOG(Error, Network, "Failed to start RakNet peer, socket failed to test send.");
 		break;
 	case PORT_CANNOT_BE_ZERO:
-		BS_LOG(Error, Network, "Failed to start RakNet peer, port cannot be zero.");
+		B3D_LOG(Error, Network, "Failed to start RakNet peer, port cannot be zero.");
 		break;
 	case FAILED_TO_CREATE_NETWORK_THREAD:
-		BS_LOG(Error, Network, "Failed to start RakNet peer, failed to create the network thread.");
+		B3D_LOG(Error, Network, "Failed to start RakNet peer, failed to create the network thread.");
 		break;
 	case COULD_NOT_GENERATE_GUID:
-		BS_LOG(Error, Network, "Failed to start RakNet peer, failed to generate GUID.");
+		B3D_LOG(Error, Network, "Failed to start RakNet peer, failed to generate GUID.");
 		break;
 	case STARTUP_OTHER_FAILURE:
-		BS_LOG(Error, Network, "Failed to start RakNet peer, unknown failure.");
+		B3D_LOG(Error, Network, "Failed to start RakNet peer, unknown failure.");
 		break;
 	default:
 		break;
@@ -371,19 +371,19 @@ bool NetworkPeer::connect(const char* host, u16 port)
 		switch(result)
 		{
 		case INVALID_PARAMETER:
-			BS_LOG(Error, Network, "Unable to connect to {0}|{1}, invalid parameter.", host, port);
+			B3D_LOG(Error, Network, "Unable to connect to {0}|{1}, invalid parameter.", host, port);
 			break;
 		case CANNOT_RESOLVE_DOMAIN_NAME:
-			BS_LOG(Error, Network, "Unable to connect to {0}|{1}, domain name cannot be resolved.", host, port);
+			B3D_LOG(Error, Network, "Unable to connect to {0}|{1}, domain name cannot be resolved.", host, port);
 			break;
 		case ALREADY_CONNECTED_TO_ENDPOINT:
-			BS_LOG(Warning, Network, "Unable to connect to {0}|{1}, already connected.", host, port);
+			B3D_LOG(Warning, Network, "Unable to connect to {0}|{1}, already connected.", host, port);
 			break;
 		case CONNECTION_ATTEMPT_ALREADY_IN_PROGRESS:
-			BS_LOG(Warning, Network, "Unable to connect to {0}|{1}, connection attempt already in progress.", host, port);
+			B3D_LOG(Warning, Network, "Unable to connect to {0}|{1}, connection attempt already in progress.", host, port);
 			break;
 		case SECURITY_INITIALIZATION_FAILED:
-			BS_LOG(Error, Network, "Unable to connect to {0}|{1}, security initialization failed.", host, port);
+			B3D_LOG(Error, Network, "Unable to connect to {0}|{1}, security initialization failed.", host, port);
 			break;
 		default:
 			break;
@@ -405,7 +405,7 @@ void NetworkPeer::disconnect(const NetworkId& id, bool silent)
 	const RakNetGUID* guid = m->GetGUID(id);
 	if(!guid)
 	{
-		BS_LOG(Error, Network, "Cannot disconnect from {0}, invalid network ID provided.", id.id);
+		B3D_LOG(Error, Network, "Cannot disconnect from {0}, invalid network ID provided.", id.id);
 		return;
 	}
 
@@ -444,7 +444,7 @@ void NetworkPeer::send(const PacketData& data, const NetworkId& id, const Packet
 	const RakNetGUID* guid = m->GetGUID(id);
 	if(!guid)
 	{
-		BS_LOG(Error, Network, "Cannot send to {0}, invalid network ID provided.", id.id);
+		B3D_LOG(Error, Network, "Cannot send to {0}, invalid network ID provided.", id.id);
 		return;
 	}
 
@@ -509,7 +509,7 @@ NetworkEncoder::NetworkEncoder()
 
 NetworkEncoder::~NetworkEncoder()
 {
-	assert(mBufferPieces.empty());
+	B3D_ASSERT(mBufferPieces.empty());
 
 	for(auto& entry : mBufferPiecePool)
 		B3DFree(entry.buffer);
@@ -529,7 +529,7 @@ void NetworkEncoder::encode(u8 type, const UUID& uuid, IReflectable* object, Ser
 		if(mBufferPieces.empty())
 			allocBufferPiece();
 
-		assert(bytesWritten <= WRITE_BUFFER_SIZE);
+		B3D_ASSERT(bytesWritten <= WRITE_BUFFER_SIZE);
 
 		u32 bufferSize = WRITE_BUFFER_SIZE - mBufferPieces.back().size;
 
@@ -731,7 +731,7 @@ void Network::host(const SmallVector<NetworkAddress, 4>& listenAddresses, u32 ti
 {
 	if(mPeer)
 	{
-		BS_LOG(Error, Network, "Cannot start hosting when an existing network connection is active.");
+		B3D_LOG(Error, Network, "Cannot start hosting when an existing network connection is active.");
 		return;
 	}
 
@@ -750,7 +750,7 @@ void Network::connect(const char* host, u16 port)
 {
 	if(mPeer)
 	{
-		BS_LOG(Error, Network, "Cannot connect when an existing network connection is active.");
+		B3D_LOG(Error, Network, "Cannot connect when an existing network connection is active.");
 		return;
 	}
 
@@ -793,7 +793,7 @@ void Network::update(float dt)
 				// TODO - Need to send state for all current objects to the newly connected peer
 				break;
 			case NetworkEventType::IncomingNoFree:
-				BS_LOG(Warning, Network, "Refused incoming connection due to maximum connection count being reached.");
+				B3D_LOG(Warning, Network, "Refused incoming connection due to maximum connection count being reached.");
 				break;
 			case NetworkEventType::Disconnected: break;
 			case NetworkEventType::LostConnection: break;
@@ -821,7 +821,7 @@ void Network::update(float dt)
 			for(auto& entry : mActions)
 			{
 				auto iterFind = mNetworkObjects.find(entry.uuid);
-				assert(iterFind != mNetworkObjects.end());
+				B3D_ASSERT(iterFind != mNetworkObjects.end());
 
 				ObjectInfo& objInfo = iterFind->second;
 

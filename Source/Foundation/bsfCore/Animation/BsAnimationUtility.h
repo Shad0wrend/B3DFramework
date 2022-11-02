@@ -88,7 +88,7 @@ namespace bs
 	};
 
 	/** Helper class for dealing with animations, animation clips and curves. */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Animation)) AnimationUtility
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Animation)) AnimationUtility
 	{
 	public:
 		/**
@@ -102,27 +102,27 @@ namespace bs
 		static void WrapTime(float& time, float start, float end, bool loop);
 
 		/** Converts a curve in euler angles (in degrees) into a curve using quaternions. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		static SPtr<TAnimationCurve<Quaternion>> EulerToQuaternionCurve(const SPtr<TAnimationCurve<Vector3>>& eulerCurve, EulerAngleOrder order = EulerAngleOrder::YXZ);
 
 		/** Converts a curve in quaternions into a curve using euler angles (in degrees). */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		static SPtr<TAnimationCurve<Vector3>> QuaternionToEulerCurve(const SPtr<TAnimationCurve<Quaternion>>& quatCurve);
 
 		/** Splits a Vector3 curve into three individual curves, one for each component. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		static Vector<SPtr<TAnimationCurve<float>>> SplitCurve3D(const SPtr<TAnimationCurve<Vector3>>& compoundCurve);
 
 		/** Combines three single component curves into a Vector3 curve. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		static SPtr<TAnimationCurve<Vector3>> CombineCurve3D(const Vector<SPtr<TAnimationCurve<float>>>& curveComponents);
 
 		/** Splits a Vector2 curve into two individual curves, one for each component. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		static Vector<SPtr<TAnimationCurve<float>>> SplitCurve2D(const SPtr<TAnimationCurve<Vector2>>& compoundCurve);
 
 		/** Combines two single component curves into a Vector2 curve. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		static SPtr<TAnimationCurve<Vector2>> CombineCurve2D(const Vector<SPtr<TAnimationCurve<float>>>& curveComponents);
 
 		/** Splits a multi-component curve into multiple individual curves, one for each component. */
@@ -144,7 +144,7 @@ namespace bs
 		static void CalculateRange(const Vector<TAnimationCurve<float>>& curves, float& xMin, float& xMax, float& yMin, float& yMax);
 
 		/** @copydoc CalculateRange(const Vector<TAnimationCurve<float>>&, float&, float&, float&, float&) */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		static void CalculateRange(const Vector<SPtr<TAnimationCurve<float>>>& curves, float& xMin, float& xMax, float& yMin, float& yMax);
 
 		/** Scales all curve values and tangents by the specified scale factor. */
@@ -161,7 +161,7 @@ namespace bs
 	};
 
 	/** Type of tangent on a keyframe in an animation curve. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Animation)) TangentType
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation)) TangentType
 	{
 		In = 1 << 0,
 		Out = 1 << 1
@@ -171,7 +171,7 @@ namespace bs
 	 * Flags that are used for describing how are tangents calculated for a specific keyframe in an animation curve.
 	 * Modes for "in" and "out" tangents can be combined.
 	 */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(TangentMode)) TangentModeBits
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(TangentMode)) TangentModeBits
 	{
 		/** Both tangents are calculated automatically based on the two surrounding keyframes. */
 		Auto = 0,
@@ -199,7 +199,7 @@ namespace bs
 	BS_FLAGS_OPERATORS(TangentModeBits)
 
 	/* Structure containing a reference to a keyframe as a curve index, and a keyframe index within that curve. */
-	struct BS_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Animation)) KeyframeRef
+	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Animation)) KeyframeRef
 	{
 		KeyframeRef() = default;
 
@@ -212,7 +212,7 @@ namespace bs
 	};
 
 	/** Structure containing a reference to a keyframe tangent, as a keyframe reference and type of the tangent. */
-	struct BS_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Animation)) TangentRef
+	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Animation)) TangentRef
 	{
 		TangentRef() = default;
 

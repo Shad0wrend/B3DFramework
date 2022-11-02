@@ -51,7 +51,7 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 
 	FT_Error error = FT_Init_FreeType(&library);
 	if(error)
-		BS_EXCEPT(InternalErrorException, "Error occurred during FreeType library initialization.");
+		B3D_EXCEPT(InternalErrorException, "Error occurred during FreeType library initialization.");
 
 	FT_Face face;
 
@@ -62,11 +62,11 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 
 	if(error == FT_Err_Unknown_File_Format)
 	{
-		BS_EXCEPT(InternalErrorException, "Failed to load font file: " + filePath.ToString() + ". Unsupported file format.");
+		B3D_EXCEPT(InternalErrorException, "Failed to load font file: " + filePath.ToString() + ". Unsupported file format.");
 	}
 	else if(error)
 	{
-		BS_EXCEPT(InternalErrorException, "Failed to load font file: " + filePath.ToString() + ". Unknown error.");
+		B3D_EXCEPT(InternalErrorException, "Failed to load font file: " + filePath.ToString() + ". Unknown error.");
 	}
 
 	Vector<CharRange> charIndexRanges = fontImportOptions->CharIndexRanges;
@@ -117,7 +117,7 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 
 		FT_F26Dot6 ftSize = (FT_F26Dot6)(fontSizes[i] * (1 << 6));
 		if(FT_Set_Char_Size(face, ftSize, 0, dpi, dpi))
-			BS_EXCEPT(InternalErrorException, "Could not set character size.");
+			B3D_EXCEPT(InternalErrorException, "Could not set character size.");
 
 		SPtr<FontBitmap> fontData = B3DMakeShared<FontBitmap>();
 
@@ -131,12 +131,12 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 				error = FT_Load_Char(face, (FT_ULong)charIdx, loadFlags);
 
 				if(error)
-					BS_EXCEPT(InternalErrorException, "Failed to load a character");
+					B3D_EXCEPT(InternalErrorException, "Failed to load a character");
 
 				FT_Render_Glyph(face->glyph, renderMode);
 
 				if(error)
-					BS_EXCEPT(InternalErrorException, "Failed to render a character");
+					B3D_EXCEPT(InternalErrorException, "Failed to render a character");
 
 				FT_GlyphSlot slot = face->glyph;
 
@@ -154,12 +154,12 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 			error = FT_Load_Glyph(face, (FT_ULong)0, loadFlags);
 
 			if(error)
-				BS_EXCEPT(InternalErrorException, "Failed to load a character");
+				B3D_EXCEPT(InternalErrorException, "Failed to load a character");
 
 			FT_Render_Glyph(face->glyph, renderMode);
 
 			if(error)
-				BS_EXCEPT(InternalErrorException, "Failed to render a character");
+				B3D_EXCEPT(InternalErrorException, "Failed to render a character");
 
 			FT_GlyphSlot slot = face->glyph;
 
@@ -213,17 +213,17 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 				}
 
 				if(error)
-					BS_EXCEPT(InternalErrorException, "Failed to load a character");
+					B3D_EXCEPT(InternalErrorException, "Failed to load a character");
 
 				FT_Render_Glyph(face->glyph, renderMode);
 
 				if(error)
-					BS_EXCEPT(InternalErrorException, "Failed to render a character");
+					B3D_EXCEPT(InternalErrorException, "Failed to render a character");
 
 				FT_GlyphSlot slot = face->glyph;
 
 				if(slot->bitmap.buffer == nullptr && slot->bitmap.rows > 0 && slot->bitmap.width > 0)
-					BS_EXCEPT(InternalErrorException, "Failed to render glyph bitmap");
+					B3D_EXCEPT(InternalErrorException, "Failed to render glyph bitmap");
 
 				u8* sourceBuffer = slot->bitmap.buffer;
 				u8* dstBuffer = pixelBuffer + (curElement.Output.Y * pageIter->Width * 2) + curElement.Output.X * 2;
@@ -261,7 +261,7 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 					}
 				}
 				else
-					BS_EXCEPT(InternalErrorException, "Unsupported pixel mode for a FreeType bitmap.");
+					B3D_EXCEPT(InternalErrorException, "Unsupported pixel mode for a FreeType bitmap.");
 
 				// Store character information
 				CharDesc charDesc;
@@ -299,7 +299,7 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 							error = FT_Get_Kerning(face, charIdx, kerningCharIdx, FT_KERNING_DEFAULT, &resultKerning);
 
 							if(error)
-								BS_EXCEPT(InternalErrorException, "Failed to get kerning information for character: " + ToString(charIdx));
+								B3D_EXCEPT(InternalErrorException, "Failed to get kerning information for character: " + ToString(charIdx));
 
 							i32 kerningX = (i32)(resultKerning.x >> 6); // Y kerning is ignored because it is so rare
 							if(kerningX == 0) // We don't store 0 kerning, this is assumed default
@@ -355,7 +355,7 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 		error = FT_Load_Char(face, 32, loadFlags);
 
 		if(error)
-			BS_EXCEPT(InternalErrorException, "Failed to load a character");
+			B3D_EXCEPT(InternalErrorException, "Failed to load a character");
 
 		fontData->SpaceWidth = face->glyph->advance.x >> 6;
 

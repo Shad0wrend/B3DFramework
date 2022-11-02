@@ -86,7 +86,7 @@ NullHardwareBuffer::NullHardwareBuffer(GpuBufferUsage usage, u32 elementCount, u
 
 void* NullHardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx)
 {
-	assert(mStagingBuffer == nullptr);
+	B3D_ASSERT(mStagingBuffer == nullptr);
 
 	mStagingBuffer = B3DAllocate(mSize);
 	return mStagingBuffer;

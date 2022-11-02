@@ -251,7 +251,7 @@ void VulkanGraphicsPipelineState::Initialize()
 	mDynamicStates[2] = VK_DYNAMIC_STATE_STENCIL_REFERENCE;
 
 	u32 numDynamicStates = sizeof(mDynamicStates) / sizeof(mDynamicStates[0]);
-	assert(numDynamicStates == 3);
+	B3D_ASSERT(numDynamicStates == 3);
 
 	mDynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 	mDynamicStateInfo.pNext = nullptr;
@@ -473,7 +473,7 @@ VulkanPipeline* VulkanGraphicsPipelineState::CreatePipeline(u32 deviceIdx, Vulka
 
 	VkPipeline pipeline;
 	VkResult result = vkCreateGraphicsPipelines(vkDevice, VK_NULL_HANDLE, 1, &mPipelineInfo, gVulkanAllocator, &pipeline);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	// Restore previous stencil op states
 	mDepthStencilInfo.front.passOp = oldFrontPassOp;
@@ -565,7 +565,7 @@ void VulkanComputePipelineState::Initialize()
 
 		VkPipeline pipeline;
 		VkResult result = vkCreateComputePipelines(devices[i]->GetLogical(), VK_NULL_HANDLE, 1, &pipelineCI, gVulkanAllocator, &pipeline);
-		assert(result == VK_SUCCESS);
+		B3D_ASSERT(result == VK_SUCCESS);
 
 		mPerDeviceData[i].Pipeline = rescManager.Create<VulkanPipeline>(pipeline);
 		mPerDeviceData[i].PipelineLayout = pipelineCI.layout;

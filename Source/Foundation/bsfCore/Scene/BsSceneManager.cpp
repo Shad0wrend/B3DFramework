@@ -223,7 +223,7 @@ void SceneManager::SetComponentState(ComponentState state)
 {
 	if(mDisableStateChange)
 	{
-		BS_LOG(Warning, Scene, "Component state cannot be changed from the calling locating. "
+		B3D_LOG(Warning, Scene, "Component state cannot be changed from the calling locating. "
 							   "Are you calling it from Component callbacks?");
 		return;
 	}
@@ -447,7 +447,7 @@ void SceneManager::RemoveFromStateList(const HComponent& component)
 	u32 lastIdx;
 	DecodeComponentId(list.back()->GetSceneManagerId(), lastIdx, listType);
 
-	assert(list[idx] == component);
+	B3D_ASSERT(list[idx] == component);
 
 	if(idx != lastIdx)
 	{
@@ -511,7 +511,7 @@ void SceneManager::ProcessStateChanges()
 
 u32 SceneManager::EncodeComponentId(u32 idx, u32 type)
 {
-	assert(idx <= (0x3FFFFFFF));
+	B3D_ASSERT(idx <= (0x3FFFFFFF));
 
 	return (type << 30) | idx;
 }

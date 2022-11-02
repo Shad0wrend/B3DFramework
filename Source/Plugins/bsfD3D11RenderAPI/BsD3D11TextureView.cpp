@@ -150,7 +150,7 @@ ID3D11ShaderResourceView* D3D11TextureView::CreateSrv(const D3D11Texture* textur
 
 		break;
 	default:
-		BS_EXCEPT(InvalidParametersException, "Invalid texture type for this view type.");
+		B3D_EXCEPT(InvalidParametersException, "Invalid texture type for this view type.");
 	}
 
 	desc.Format = texture->GetColorFormat();
@@ -163,7 +163,7 @@ ID3D11ShaderResourceView* D3D11TextureView::CreateSrv(const D3D11Texture* textur
 	if(FAILED(hr) || d3d11rs->GetPrimaryDevice().HasError())
 	{
 		String msg = d3d11rs->GetPrimaryDevice().GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create ShaderResourceView: " + msg);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create ShaderResourceView: " + msg);
 	}
 
 	return srv;
@@ -236,7 +236,7 @@ ID3D11RenderTargetView* D3D11TextureView::CreateRtv(const D3D11Texture* texture,
 		desc.Texture2DArray.MipSlice = mipSlice;
 		break;
 	default:
-		BS_EXCEPT(InvalidParametersException, "Invalid texture type for this view type.");
+		B3D_EXCEPT(InvalidParametersException, "Invalid texture type for this view type.");
 	}
 
 	desc.Format = texture->GetColorFormat();
@@ -249,7 +249,7 @@ ID3D11RenderTargetView* D3D11TextureView::CreateRtv(const D3D11Texture* texture,
 	if(FAILED(hr) || d3d11rs->GetPrimaryDevice().HasError())
 	{
 		String msg = d3d11rs->GetPrimaryDevice().GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create RenderTargetView: " + msg);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create RenderTargetView: " + msg);
 	}
 
 	return rtv;
@@ -306,7 +306,7 @@ ID3D11UnorderedAccessView* D3D11TextureView::CreateUav(const D3D11Texture* textu
 		desc.Texture2DArray.MipSlice = mipSlice;
 		break;
 	default:
-		BS_EXCEPT(InvalidParametersException, "Invalid texture type for this view type.");
+		B3D_EXCEPT(InvalidParametersException, "Invalid texture type for this view type.");
 	}
 
 	desc.Format = texture->GetDxgiFormat();
@@ -319,7 +319,7 @@ ID3D11UnorderedAccessView* D3D11TextureView::CreateUav(const D3D11Texture* textu
 	if(FAILED(hr) || d3d11rs->GetPrimaryDevice().HasError())
 	{
 		String msg = d3d11rs->GetPrimaryDevice().GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create UnorderedAccessView: " + msg);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create UnorderedAccessView: " + msg);
 	}
 
 	return uav;
@@ -392,7 +392,7 @@ ID3D11DepthStencilView* D3D11TextureView::CreateDsv(const D3D11Texture* texture,
 		desc.Texture2DArray.MipSlice = mipSlice;
 		break;
 	default:
-		BS_EXCEPT(InvalidParametersException, "Invalid texture type for this view type.");
+		B3D_EXCEPT(InvalidParametersException, "Invalid texture type for this view type.");
 	}
 
 	desc.Format = texture->GetDepthStencilFormat();
@@ -414,7 +414,7 @@ ID3D11DepthStencilView* D3D11TextureView::CreateDsv(const D3D11Texture* texture,
 	if(FAILED(hr) || d3d11rs->GetPrimaryDevice().HasError())
 	{
 		String msg = d3d11rs->GetPrimaryDevice().GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create DepthStencilView: " + msg);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create DepthStencilView: " + msg);
 	}
 
 	return dsv;

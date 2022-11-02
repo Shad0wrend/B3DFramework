@@ -154,7 +154,7 @@ GUIMenuItem* GUIMenu::GetMenuItem(const String& path)
 void GUIMenu::RemoveMenuItem(const GUIMenuItem* item)
 {
 	GUIMenuItem* parent = item->mParent;
-	assert(parent != nullptr);
+	B3D_ASSERT(parent != nullptr);
 
 	parent->RemoveChild(item->GetName());
 }

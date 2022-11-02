@@ -424,7 +424,7 @@ template <class T>
 static T Evaluate(const TKeyframe<T>& lhs, const TKeyframe<T>& rhs, float time)
 {
 	float length = rhs.Time - lhs.Time;
-	assert(length > 0.0f);
+	B3D_ASSERT(length > 0.0f);
 
 	float t;
 	T leftTangent;
@@ -554,7 +554,7 @@ static void CalcMinMaxIntegrated(std::pair<T, T>& minmax, float start, float end
 template <>
 static void CalcMinMaxIntegrated(std::pair<i32, i32>& minmax, float start, float end, const i32& sum, i32 (&coeffs)[4])
 {
-	assert(false && "Not implemented");
+	B3D_ASSERT(false && "Not implemented");
 }
 
 template <class T>
@@ -604,7 +604,7 @@ static void CalcMinMaxIntegratedDouble(std::pair<T, T>& minmax, float start, flo
 template <>
 static void CalcMinMaxIntegratedDouble(std::pair<i32, i32>& minmax, float start, float end, const i32& doubleSum, const i32& sum, i32 (&coeffs)[4])
 {
-	assert(false && "Not implemented");
+	B3D_ASSERT(false && "Not implemented");
 }
 } // namespace bs
 
@@ -622,7 +622,7 @@ TAnimationCurve<T>::TAnimationCurve(const Vector<KeyFrame>& keyframes)
 		float time = keyframes[0].Time;
 		for(u32 i = 1; i < (u32)keyframes.size(); i++)
 		{
-			assert(keyframes[i].Time >= time);
+			B3D_ASSERT(keyframes[i].Time >= time);
 			time = keyframes[i].Time;
 		}
 	}
@@ -1123,7 +1123,7 @@ std::pair<T, T> TAnimationCurve<T>::CalculateRangeIntegratedDouble(const TCurveI
 template <class T>
 void TAnimationCurve<T>::BuildIntegrationCache(const TCurveIntegrationCache<T>& cache) const
 {
-	assert(!cache.segmentSums);
+	B3D_ASSERT(!cache.segmentSums);
 
 	const auto numKeyframes = (u32)mKeyframes.size();
 	if(numKeyframes <= 1)
@@ -1153,7 +1153,7 @@ void TAnimationCurve<T>::BuildIntegrationCache(const TCurveIntegrationCache<T>& 
 template <class T>
 void TAnimationCurve<T>::BuildDoubleIntegrationCache(const TCurveIntegrationCache<T>& cache) const
 {
-	assert(!cache.segmentSums);
+	B3D_ASSERT(!cache.segmentSums);
 
 	const auto numKeyframes = (u32)mKeyframes.size();
 	if(numKeyframes <= 1)

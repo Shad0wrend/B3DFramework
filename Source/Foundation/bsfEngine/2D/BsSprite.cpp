@@ -33,8 +33,8 @@ u32 Sprite::FillBuffer(u8* vertices, u8* uv, u32* indices, u32 vertexOffset, u32
 	u32 numVertices = renderElem.NumQuads * 4;
 	u32 numIndices = renderElem.NumQuads * 6;
 
-	assert((startVert + numVertices) <= maxVertIdx);
-	assert((startIndex + numIndices) <= maxIndexIdx);
+	B3D_ASSERT((startVert + numVertices) <= maxVertIdx);
+	B3D_ASSERT((startIndex + numIndices) <= maxIndexIdx);
 
 	u8* vertDst = vertices + startVert * vertexStride;
 	u8* uvDst = uv + startVert * vertexStride;

@@ -436,7 +436,7 @@ namespace bs
 				}
 				break;
 			default:
-				BS_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
+				B3D_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
 				break;
 			}
 
@@ -509,7 +509,7 @@ namespace bs
 					B3DRTTIRead(data.Index, stream);
 					break;
 				default:
-					BS_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
+					B3D_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
 					break;
 				}
 			}

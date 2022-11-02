@@ -479,7 +479,7 @@ void AnimationProxy::Rebuild(Vector<AnimationClipInfo>& clipInfos, const Vector<
 			curLayerIdx++;
 
 			// Must be larger than zero otherwise the layer.states pointer will point to data held by some other layer
-			assert(layer.NumStates > 0);
+			B3D_ASSERT(layer.NumStates > 0);
 		}
 
 		Matrix4 invRootTransform(BsIdentity);
@@ -745,7 +745,7 @@ void Animation::BlendAdditive(const HAnimationClip& clip, float weight, float fa
 {
 	if(clip != nullptr && !clip->IsAdditive())
 	{
-		BS_LOG(Warning, Renderer, "blendAdditive() called with a clip that doesn't contain additive animation. Ignoring.");
+		B3D_LOG(Warning, Renderer, "blendAdditive() called with a clip that doesn't contain additive animation. Ignoring.");
 
 		// Stop any clips on this layer, even if invalid
 		HAnimationClip nullClip;
@@ -1370,7 +1370,7 @@ void Animation::UpdateAnimProxy(float timeDelta)
 			auto iterFind = mSceneObjects.find(soInfo.Id);
 			if(iterFind == mSceneObjects.end())
 			{
-				assert(false); // Should never happen
+				B3D_ASSERT(false); // Should never happen
 				continue;
 			}
 

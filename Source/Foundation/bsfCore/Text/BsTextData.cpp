@@ -141,7 +141,7 @@ u32 TextDataBase::TextLine::RemoveLastWord()
 {
 	if(mIsEmpty)
 	{
-		assert(false);
+		B3D_ASSERT(false);
 		return 0;
 	}
 
@@ -236,7 +236,7 @@ u32 TextDataBase::TextLine::FillBuffer(u32 page, Vector2* vertices, Vector2* uvs
 				numQuads++;
 
 				if(offset > size)
-					BS_EXCEPT(InternalErrorException, "Out of buffer bounds. Buffer size: " + ToString(size));
+					B3D_EXCEPT(InternalErrorException, "Out of buffer bounds. Buffer size: " + ToString(size));
 			}
 
 			penX += word.GetWidth();
@@ -301,7 +301,7 @@ u32 TextDataBase::TextLine::FillBuffer(u32 page, Vector2* vertices, Vector2* uvs
 				numQuads++;
 
 				if(offset > size)
-					BS_EXCEPT(InternalErrorException, "Out of buffer bounds. Buffer size: " + ToString(size));
+					B3D_EXCEPT(InternalErrorException, "Out of buffer bounds. Buffer size: " + ToString(size));
 			}
 		}
 	}
@@ -362,7 +362,7 @@ TextDataBase::TextDataBase(const U32String& text, const HFont& font, u32 fontSiz
 
 	if(mFontData->Size != fontSize)
 	{
-		BS_LOG(Warning, GUI, "Unable to find font with specified size ({0}). Using nearest available size: {1}", fontSize, mFontData->Size);
+		B3D_LOG(Warning, GUI, "Unable to find font with specified size ({0}). Using nearest available size: {1}", fontSize, mFontData->Size);
 	}
 
 	bool widthIsLimited = width > 0;

@@ -32,7 +32,7 @@ void ProfilerGPU::BeginFrame()
 {
 	if(mIsFrameActive)
 	{
-		BS_LOG(Error, Profiler, "Cannot begin a frame because another frame is active.");
+		B3D_LOG(Error, Profiler, "Cannot begin a frame because another frame is active.");
 		return;
 	}
 
@@ -45,13 +45,13 @@ void ProfilerGPU::EndFrame(bool discard)
 {
 	if(!mActiveSamples.empty())
 	{
-		BS_LOG(Error, Profiler, "Attempting to end a frame while a sample is active.");
+		B3D_LOG(Error, Profiler, "Attempting to end a frame while a sample is active.");
 		return;
 	}
 
 	if(mIsViewActive)
 	{
-		BS_LOG(Error, Profiler, "Attempting to end a frame while a view is active.");
+		B3D_LOG(Error, Profiler, "Attempting to end a frame while a view is active.");
 		return;
 	}
 
@@ -70,13 +70,13 @@ void ProfilerGPU::BeginView(u64 id, ProfilerString title)
 {
 	if(!mIsFrameActive)
 	{
-		BS_LOG(Error, Profiler, "Cannot begin a view because no frame is active.");
+		B3D_LOG(Error, Profiler, "Cannot begin a view because no frame is active.");
 		return;
 	}
 
 	if(mIsViewActive)
 	{
-		BS_LOG(Error, Profiler, "Cannot begin a view because another view is active.");
+		B3D_LOG(Error, Profiler, "Cannot begin a view because another view is active.");
 		return;
 	}
 
@@ -93,7 +93,7 @@ void ProfilerGPU::EndView()
 {
 	if(!mActiveSamples.empty())
 	{
-		BS_LOG(Error, Profiler, "Attempting to end a view while a sample is active.");
+		B3D_LOG(Error, Profiler, "Attempting to end a view while a sample is active.");
 		return;
 	}
 
@@ -108,7 +108,7 @@ void ProfilerGPU::BeginSample(ProfilerString name)
 {
 	if(!mIsFrameActive)
 	{
-		BS_LOG(Error, Profiler, "Cannot begin a sample because no frame is active.");
+		B3D_LOG(Error, Profiler, "Cannot begin a sample because no frame is active.");
 		return;
 	}
 
@@ -140,7 +140,7 @@ void ProfilerGPU::EndSample(const ProfilerString& name)
 	ProfiledSample* lastSample = mActiveSamples.top();
 	if(lastSample->Name != name)
 	{
-		BS_LOG(Error, Profiler, "Attempting to end a sample that doesn't match. Got: {0}. Expected: {1}", name.c_str(), lastSample->Name.c_str());
+		B3D_LOG(Error, Profiler, "Attempting to end a sample that doesn't match. Got: {0}. Expected: {1}", name.c_str(), lastSample->Name.c_str());
 		return;
 	}
 
@@ -161,7 +161,7 @@ GPUProfilerReport ProfilerGPU::GetNextReport()
 
 	if(mReportCount == 0)
 	{
-		BS_LOG(Error, Profiler, "No reports are available.");
+		B3D_LOG(Error, Profiler, "No reports are available.");
 		return GPUProfilerReport();
 	}
 

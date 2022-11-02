@@ -930,7 +930,7 @@ bool GUIManager::FindElementUnderPointer(const Vector2I& pointerScreenPos, bool 
 
 		if(iterFind == activeWindows.end())
 		{
-			BS_EXCEPT(InternalErrorException, "GUI manager has a reference to a window that doesn't exist. \
+			B3D_EXCEPT(InternalErrorException, "GUI manager has a reference to a window that doesn't exist. \
 												  Please detach all GUIWidgets from windows before destroying a window.");
 		}
 	}
@@ -1320,7 +1320,7 @@ GUIMouseButton GUIManager::ButtonToGuiButton(PointerEventButton pointerButton) c
 	else if(pointerButton == PointerEventButton::Right)
 		return GUIMouseButton::Right;
 
-	BS_EXCEPT(InvalidParametersException, "Provided button is not a GUI supported mouse button.");
+	B3D_EXCEPT(InvalidParametersException, "Provided button is not a GUI supported mouse button.");
 	return GUIMouseButton::Left;
 }
 
@@ -1863,7 +1863,7 @@ void GUIRenderer::UpdateDrawGroups(const SPtr<Camera>& camera, u64 widgetId, u32
 			widget->DrawGroupMesh = nullptr;
 	}
 
-	assert(data.GroupDirtyState.size() == widget->DrawGroups.size());
+	B3D_ASSERT(data.GroupDirtyState.size() == widget->DrawGroups.size());
 
 	for(u32 i = 0; i < (u32)data.GroupDirtyState.size(); i++)
 	{

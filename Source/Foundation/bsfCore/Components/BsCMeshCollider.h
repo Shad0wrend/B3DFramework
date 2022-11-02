@@ -17,17 +17,17 @@ namespace bs
 	 *
 	 * @note Wraps MeshCollider as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(MeshCollider)) CMeshCollider : public CCollider
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(MeshCollider)) CMeshCollider : public CCollider
 	{
 	public:
 		CMeshCollider(const HSceneObject& parent);
 
 		/** @copydoc MeshCollider::SetMesh */
-		BS_SCRIPT_EXPORT(ExportName(Mesh), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Mesh), Property(Setter))
 		void SetMesh(const HPhysicsMesh& mesh);
 
 		/** @copydoc MeshCollider::GetMesh */
-		BS_SCRIPT_EXPORT(ExportName(Mesh), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Mesh), Property(Getter))
 		HPhysicsMesh GetMesh() const { return mMesh; }
 
 		/** @name Internal

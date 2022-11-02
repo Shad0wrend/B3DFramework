@@ -19,7 +19,7 @@ VulkanEvent::VulkanEvent(VulkanResourceManager* owner)
 	eventCI.flags = 0;
 
 	VkResult result = vkCreateEvent(vkDevice, &eventCI, gVulkanAllocator, &mEvent);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 }
 
 VulkanEvent::~VulkanEvent()
@@ -39,7 +39,7 @@ void VulkanEvent::Reset()
 	VkDevice vkDevice = mOwner->GetDevice().GetLogical();
 
 	VkResult result = vkResetEvent(vkDevice, mEvent);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 }
 
 VulkanEventQuery::VulkanEventQuery(VulkanDevice& device)

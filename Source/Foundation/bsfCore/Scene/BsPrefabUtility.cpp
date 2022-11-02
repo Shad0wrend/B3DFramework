@@ -214,7 +214,7 @@ void RestoreUnlinkedInstanceData(const HSceneObject& so, SceneObjectProxy& proxy
 					break;
 				}
 
-				assert(foundInstanceData);
+				B3D_ASSERT(foundInstanceData);
 			}
 		}
 
@@ -234,7 +234,7 @@ void RestoreUnlinkedInstanceData(const HSceneObject& so, SceneObjectProxy& proxy
 					if(current.Proxy->Children[childProxyIdx].LinkId != (u32)-1)
 						continue;
 
-					assert(current.Proxy->Children[childProxyIdx].LinkId == (u32)-1);
+					B3D_ASSERT(current.Proxy->Children[childProxyIdx].LinkId == (u32)-1);
 					child->SetInstanceDataInternal(current.Proxy->Children[childProxyIdx].InstanceData);
 					child->SetUUIDInternal(current.Proxy->Children[childProxyIdx].Uuid);
 
@@ -251,7 +251,7 @@ void RestoreUnlinkedInstanceData(const HSceneObject& so, SceneObjectProxy& proxy
 					break;
 				}
 
-				assert(foundInstanceData);
+				B3D_ASSERT(foundInstanceData);
 			}
 			else
 			{
@@ -484,7 +484,7 @@ void PrefabUtility::GeneratePrefabIds(const HSceneObject& sceneObject)
 
 	if(currentId < startingId)
 	{
-		BS_EXCEPT(InternalErrorException, "Prefab ran out of IDs to assign. "
+		B3D_EXCEPT(InternalErrorException, "Prefab ran out of IDs to assign. "
 										  "Consider increasing the size of the prefab ID data type.");
 	}
 }

@@ -38,7 +38,7 @@ HResource Resources::Load(const Path& filePath, ResourceLoadFlags loadFlags)
 {
 	if(!FileSystem::IsFile(filePath))
 	{
-		BS_LOG(Warning, Resources, "Cannot load resource. Specified file: {0} doesn't exist.", filePath);
+		B3D_LOG(Warning, Resources, "Cannot load resource. Specified file: {0} doesn't exist.", filePath);
 		return HResource();
 	}
 
@@ -64,7 +64,7 @@ HResource Resources::LoadAsync(const Path& filePath, ResourceLoadFlags loadFlags
 {
 	if(!FileSystem::IsFile(filePath))
 	{
-		BS_LOG(Warning, Resources, "Cannot load resource. Specified file: '{0}' doesn't exist.", filePath);
+		B3D_LOG(Warning, Resources, "Cannot load resource. Specified file: '{0}' doesn't exist.", filePath);
 		return HResource();
 	}
 
@@ -161,13 +161,13 @@ Resources::LoadInfo Resources::LoadInternal(const UUID& uuid, const Path& filePa
 		{
 			if(!alreadyLoading)
 			{
-				BS_LOG(Verbose, Resources, "Cannot load resource. Resource with UUID '{0}' doesn't exist.", uuid);
+				B3D_LOG(Verbose, Resources, "Cannot load resource. Resource with UUID '{0}' doesn't exist.", uuid);
 				loadFailed = true;
 			}
 		}
 		else if(!FileSystem::IsFile(filePath))
 		{
-			BS_LOG(Verbose, Resources, "Cannot load resource. Specified file: '{0}' doesn't exist.", filePath);
+			B3D_LOG(Verbose, Resources, "Cannot load resource. Specified file: '{0}' doesn't exist.", filePath);
 			loadFailed = true;
 		}
 
@@ -428,7 +428,7 @@ SPtr<Resource> Resources::LoadFromDiskAndDeserialize(const Path& filePath, bool 
 
 	if(stream->Size() > std::numeric_limits<u32>::max())
 	{
-		BS_EXCEPT(InternalErrorException, "File size is larger that u32 can hold. Ask a programmer to use a bigger data type.");
+		B3D_EXCEPT(InternalErrorException, "File size is larger that u32 can hold. Ask a programmer to use a bigger data type.");
 	}
 
 	CoreSerializationContext serzContext;
@@ -474,11 +474,11 @@ SPtr<Resource> Resources::LoadFromDiskAndDeserialize(const Path& filePath, bool 
 	}
 
 	if(loadedData == nullptr)
-		BS_LOG(Error, Resources, "Unable to load resource at path \"{0}\"", filePath);
+		B3D_LOG(Error, Resources, "Unable to load resource at path \"{0}\"", filePath);
 	else
 	{
 		if(!loadedData->IsDerivedFrom(Resource::GetRttiStatic()))
-			BS_EXCEPT(InternalErrorException, "Loaded class doesn't derive from Resource.");
+			B3D_EXCEPT(InternalErrorException, "Loaded class doesn't derive from Resource.");
 	}
 
 	SPtr<Resource> resource = std::static_pointer_cast<Resource>(loadedData);
@@ -514,7 +514,7 @@ void Resources::Release(ResourceHandleBase& resource)
 			{
 				LoadedResourceData& resData = iterFind->second;
 
-				assert(resData.NumInternalRefs > 0);
+				B3D_ASSERT(resData.NumInternalRefs > 0);
 				resData.NumInternalRefs--;
 				resource.RemoveInternalRef();
 
@@ -539,7 +539,7 @@ void Resources::UnloadAllUnused()
 			const LoadedResourceData& resData = iter->second;
 
 			std::uint32_t refCount = resData.Resource.mData->MRefCount.load(std::memory_order_relaxed);
-			assert(refCount > 0); // No references but kept in mLoadedResources list?
+			B3D_ASSERT(refCount > 0); // No references but kept in mLoadedResources list?
 
 			if(refCount == resData.NumInternalRefs) // Only internal references exist, free it
 				resourcesToUnload.push_back(resData.Resource.Lock());
@@ -617,7 +617,7 @@ void Resources::Destroy(ResourceHandleBase& resource)
 		}
 		else
 		{
-			assert(false); // This should never happen but in case it does fail silently in release mode
+			B3D_ASSERT(false); // This should never happen but in case it does fail silently in release mode
 		}
 	}
 
@@ -648,7 +648,7 @@ void Resources::Save(const HResource& resource, const Path& filePath, bool overw
 	const bool fileExists = FileSystem::IsFile(filePath);
 	if(fileExists && !overwrite)
 	{
-		BS_LOG(Error, Resources, "Another file exists at the specified location. Not saving.");
+		B3D_LOG(Error, Resources, "Another file exists at the specified location. Not saving.");
 		return;
 	}
 
@@ -674,7 +674,7 @@ void Resources::SaveInternal(const SPtr<Resource>& resource, const Path& filePat
 {
 	if(!resource->mKeepSourceData)
 	{
-		BS_LOG(Warning, Resources, "Saving a resource that was created/loaded without KeepSourceData flag."
+		B3D_LOG(Warning, Resources, "Saving a resource that was created/loaded without KeepSourceData flag."
 								   "Some data might not be available for saving. File path: {0}",
 			   filePath);
 	}
@@ -708,7 +708,7 @@ void Resources::SaveInternal(const SPtr<Resource>& resource, const Path& filePat
 		{
 			if(safetyCounter > 10)
 			{
-				BS_LOG(Error, Resources, "Internal error. Unable to save resource due to not being able to find a unique filename.");
+				B3D_LOG(Error, Resources, "Internal error. Unable to save resource due to not being able to find a unique filename.");
 				return;
 			}
 
@@ -912,7 +912,7 @@ float Resources::GetLoadProgress(const HResource& resource, bool includeDependen
 	totalBytesLoaded += loadData->ResData.Size * loadData->Progress.load(std::memory_order_relaxed);
 
 	float totalBytesToLoad = (float)(loadData->DependencySize + loadData->ResData.Size);
-	assert(totalBytesLoaded <= totalBytesToLoad);
+	B3D_ASSERT(totalBytesLoaded <= totalBytesToLoad);
 
 	return std::min(1.0f, totalBytesLoaded / totalBytesToLoad);
 }

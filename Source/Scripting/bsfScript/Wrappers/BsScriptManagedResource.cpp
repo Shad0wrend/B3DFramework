@@ -16,7 +16,7 @@ using namespace bs;
 ScriptManagedResource::ScriptManagedResource(MonoObject* instance, const HManagedResource& resource)
 	: ScriptObject(instance), mResource(resource)
 {
-	BS_ASSERT(instance != nullptr);
+	B3D_ASSERT(instance != nullptr);
 
 	MonoUtil::GetClassName(instance, mNamespace, mType);
 	mGCHandle = MonoUtil::NewGcHandle(instance, false);
@@ -82,7 +82,7 @@ void ScriptManagedResource::OnManagedInstanceDeletedInternal(bool assemblyRefres
 		// instance which is only freed on unload().
 		// Note: During domain unload this could get called even if not all instances are released, but ManagedResourceManager
 		// should make sure all instances are unloaded before that happens.
-		BS_ASSERT(mResource == nullptr || !mResource.IsLoaded());
+		B3D_ASSERT(mResource == nullptr || !mResource.IsLoaded());
 
 		ScriptResourceManager::Instance().DestroyScriptResource(this);
 	}

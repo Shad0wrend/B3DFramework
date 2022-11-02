@@ -22,13 +22,13 @@ CoreObject::~CoreObject()
 	{
 		// Object must be released with Destroy() otherwise engine can still try to use it, even if it was destructed
 		// (e.g. if an object has one of its methods queued in a command queue, and is destructed, you will be accessing invalid memory)
-		BS_EXCEPT(InternalErrorException, "Destructor called but object is not destroyed. This will result in nasty issues.");
+		B3D_EXCEPT(InternalErrorException, "Destructor called but object is not destroyed. This will result in nasty issues.");
 	}
 
 #if BS_DEBUG_MODE
 	if(!mThis.expired())
 	{
-		BS_EXCEPT(InternalErrorException, "Shared pointer to this object still has active references but "
+		B3D_EXCEPT(InternalErrorException, "Shared pointer to this object still has active references but "
 										  "the object is being deleted? You shouldn't delete CoreObjects manually.");
 	}
 #endif
@@ -42,7 +42,7 @@ void CoreObject::Destroy()
 	if(RequiresInitOnCoreThread())
 	{
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-		assert(BS_THREAD_CURRENT_ID != CoreThread::Instance().GetCoreThreadId() && "Cannot destroy sim thead object from core thread.");
+		B3D_ASSERT(BS_THREAD_CURRENT_ID != CoreThread::Instance().GetCoreThreadId() && "Cannot destroy sim thead object from core thread.");
 #endif
 
 		// This will only destroy the ct::CoreObject if this was the last reference
@@ -64,7 +64,7 @@ void CoreObject::Initialize()
 			mCoreSpecific->SetScheduledToBeInitialized(true);
 
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-			assert(BS_THREAD_CURRENT_ID != CoreThread::Instance().GetCoreThreadId() && "Cannot initialize sim thread object from core thread.");
+			B3D_ASSERT(BS_THREAD_CURRENT_ID != CoreThread::Instance().GetCoreThreadId() && "Cannot initialize sim thread object from core thread.");
 #endif
 
 			QueueInitializeGpuCommand(mCoreSpecific);

@@ -66,7 +66,7 @@ void RenderCompositor::Build(const RendererView& view, const StringID& finalNode
 			auto iterFind = mNodeTypes.find(nodeId);
 			if(iterFind == mNodeTypes.end())
 			{
-				BS_LOG(Error, Renderer, "Cannot find render compositor node of type \"{0}\".", String(nodeId.CStr()));
+				B3D_LOG(Error, Renderer, "Cannot find render compositor node of type \"{0}\".", String(nodeId.CStr()));
 				return false;
 			}
 
@@ -122,7 +122,7 @@ void RenderCompositor::Build(const RendererView& view, const StringID& finalNode
 				// Check if invalid
 				if(curIdx == (u32)-1)
 				{
-					BS_LOG(Error, Renderer, "Render compositor nodes recursion detected. Node \"{0}\" "
+					B3D_LOG(Error, Renderer, "Render compositor nodes recursion detected. Node \"{0}\" "
 											"depends on node \"{1}\" which is not available at this stage.",
 						   String(nodeId.CStr()), String(iterFind->first.CStr()));
 					return false;
@@ -579,7 +579,7 @@ void RCNodeSceneColor::Swap(RCNodeLightAccumulation* lightAccumNode)
 
 void RCNodeSceneColor::SetExternalTexture(const SPtr<PooledRenderTexture>& texture)
 {
-	assert(SceneColorTexArray == nullptr);
+	B3D_ASSERT(SceneColorTexArray == nullptr);
 
 	SceneColorTex = texture;
 }
@@ -2780,7 +2780,7 @@ void RCNodeBloom::Render(const RenderCompositorNodeInputs& inputs)
 	constexpr u32 PREFERRED_NUM_DOWNSAMPLE_LEVELS = 6;
 	const u32 availableDownsamples = sceneDownsamplesNode->AvailableDownsamples;
 	const u32 numDownsamples = Math::Min(availableDownsamples, PREFERRED_NUM_DOWNSAMPLE_LEVELS);
-	assert(numDownsamples >= 1);
+	B3D_ASSERT(numDownsamples >= 1);
 
 	// Blur & clip the downsampled entries and add them together
 	const u32 quality = Math::Clamp(settings.Bloom.Quality, 0U, 3U);
@@ -2865,7 +2865,7 @@ void RCNodeScreenSpaceLensFlare::Render(const RenderCompositorNodeInputs& inputs
 
 	const u32 availableDownsamples = sceneDownsamplesNode->AvailableDownsamples;
 	const u32 numDownsamples = Math::Clamp(settings.ScreenSpaceLensFlare.DownsampleCount, 1U, availableDownsamples);
-	assert(numDownsamples >= 1);
+	B3D_ASSERT(numDownsamples >= 1);
 
 	SPtr<PooledRenderTexture> downsampledTex = sceneDownsamplesNode->Output[numDownsamples - 1];
 	const TextureProperties& sceneTexProps = downsampledTex->Texture->GetProperties();

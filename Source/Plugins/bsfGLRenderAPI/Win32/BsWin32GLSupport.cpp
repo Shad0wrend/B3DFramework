@@ -58,7 +58,7 @@ void Win32GLSupport::Stop()
 
 void Win32GLSupport::InitializeExtensions()
 {
-	assert(mInitialWindow != nullptr);
+	B3D_ASSERT(mInitialWindow != nullptr);
 
 	GLSupport::InitializeExtensions();
 
@@ -115,7 +115,7 @@ SPtr<Win32Context> Win32GLSupport::CreateContext(HDC hdc, HGLRC externalGlrc)
 				glrc = wglCreateContext(hdc);
 
 			if(glrc == 0)
-				BS_EXCEPT(RenderingAPIException, "wglCreateContext failed: " + TranslateWglError());
+				B3D_EXCEPT(RenderingAPIException, "wglCreateContext failed: " + TranslateWglError());
 
 			createdNew = true;
 		}
@@ -167,7 +167,7 @@ void Win32GLSupport::InitialiseWgl()
 		0);
 
 	if(hwnd == nullptr)
-		BS_EXCEPT(RenderingAPIException, "CreateWindow() failed");
+		B3D_EXCEPT(RenderingAPIException, "CreateWindow() failed");
 
 	HDC hdc = GetDC(hwnd);
 

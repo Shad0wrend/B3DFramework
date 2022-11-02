@@ -28,7 +28,7 @@ const SubMesh& MeshProperties::GetSubMesh(u32 subMeshIdx) const
 {
 	if(subMeshIdx >= mSubMeshes.size())
 	{
-		BS_EXCEPT(InvalidParametersException, "Invalid sub-mesh index (" + ToString(subMeshIdx) + "). Number of sub-meshes available: " + ToString((int)mSubMeshes.size()));
+		B3D_EXCEPT(InvalidParametersException, "Invalid sub-mesh index (" + ToString(subMeshIdx) + "). Number of sub-meshes available: " + ToString((int)mSubMeshes.size()));
 	}
 
 	return mSubMeshes[subMeshIdx];

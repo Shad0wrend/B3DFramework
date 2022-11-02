@@ -15,9 +15,9 @@ namespace bs
 	 */
 
 	/** Settings that control automatic exposure (eye adaptation) post-process. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) AutoExposureSettings : public IReflectable
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) AutoExposureSettings : public IReflectable
 	{
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		AutoExposureSettings() = default;
 
 		/**
@@ -25,7 +25,7 @@ namespace bs
 		 * average brightness of the scene. Any luminance value below this value will not be included in the histogram and
 		 * ignored in scene brightness calculations. In log2 units (-8 = 1/256). In the range [-16, 0].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ -16, 0 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ -16, 0 ]), UI(AsSlider))
 		float HistogramLog2Min = -8.0f;
 
 		/**
@@ -33,7 +33,7 @@ namespace bs
 		 * average brightness of the scene. Any luminance value above this value will not be included in the histogram and
 		 * ignored in scene brightness calculations. In log2 units (4 = 16). In the range [0, 16].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 16 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 16 ]), UI(AsSlider))
 		float HistogramLog2Max = 4.0f;
 
 		/**
@@ -43,7 +43,7 @@ namespace bs
 		 * in scene brightness calculations. This allows you to remove outliers on the lower end of the histogram (for
 		 * example a few very dark pixels in an otherwise bright image). In range [0.0f, 1.0f].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]), UI(AsSlider))
 		float HistogramPctLow = 0.8f;
 
 		/**
@@ -53,7 +53,7 @@ namespace bs
 		 * in scene brightness calculations. This allows you to remove outliers on the high end of the histogram (for
 		 * example a few very bright pixels). In range [0.0f, 1.0f].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]), UI(AsSlider))
 		float HistogramPctHigh = 0.985f;
 
 		/**
@@ -61,7 +61,7 @@ namespace bs
 		 * is never too high (for example when in a very dark room you probably do not want the exposure to be so high that
 		 * everything is still visible). In range [0.0f, 10.0f].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 10 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 10 ]), UI(AsSlider))
 		float MinEyeAdaptation = 0.003f;
 
 		/**
@@ -69,21 +69,21 @@ namespace bs
 		 * is never too low (for example when looking at a very bright light source you probably don't want the exposure to
 		 * be so low that the rest of the scene is all white (overexposed). In range [0.0f, 10.0f].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 10 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 10 ]), UI(AsSlider))
 		float MaxEyeAdaptation = 2.0f;
 
 		/**
 		 * Determines how quickly does the eye adaptation adjust to larger values. This affects how quickly does the
 		 * automatic exposure changes when the scene brightness increases. In range [0.01f, 20.0f].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0.01, 20 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0.01, 20 ]), UI(AsSlider))
 		float EyeAdaptationSpeedUp = 3.0f;
 
 		/**
 		 * Determines how quickly does the eye adaptation adjust to smaller values. This affects how quickly does the
 		 * automatic exposure changes when the scene brightness decreases. In range [0.01f, 20.0f].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0.01, 20 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0.01, 20 ]), UI(AsSlider))
 		float EyeAdaptationSpeedDown = 3.0f;
 
 		/************************************************************************/
@@ -101,49 +101,49 @@ namespace bs
 	};
 
 	/** Settings that control tonemap post-process. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) TonemappingSettings : public IReflectable
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) TonemappingSettings : public IReflectable
 	{
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		TonemappingSettings() = default;
 
 		/**
 		 * Controls the shoulder (upper non-linear) section of the filmic curve used for tonemapping. Mostly affects bright
 		 * areas of the image and allows you to reduce over-exposure.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float FilmicCurveShoulderStrength = 0.15f;
 
 		/**
 		 * Controls the linear (middle) section of the filmic curve used for tonemapping. Mostly affects mid-range areas of
 		 * the image.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float FilmicCurveLinearStrength = 0.5f;
 
 		/**
 		 * Controls the linear (middle) section of the filmic curve used for tonemapping. Mostly affects mid-range areas of
 		 * the image and allows you to control how quickly does the curve climb.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float FilmicCurveLinearAngle = 0.1f;
 
 		/**
 		 * Controls the toe (lower non-linear) section of the filmic curve used for tonemapping. Mostly affects dark areas
 		 * of the image and allows you to reduce under-exposure.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float FilmicCurveToeStrength = 0.2f;
 
 		/** Controls the toe (lower non-linear) section of the filmic curve. used for tonemapping. Affects low-range. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float FilmicCurveToeNumerator = 0.02f;
 
 		/** Controls the toe (lower non-linear) section of the filmic curve used for tonemapping. Affects low-range. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float FilmicCurveToeDenominator = 0.3f;
 
 		/** Controls the white point of the filmic curve used for tonemapping. Affects the entire curve. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float FilmicCurveLinearWhitePoint = 11.2f;
 
 		/************************************************************************/
@@ -161,9 +161,9 @@ namespace bs
 	};
 
 	/** Settings that control white balance post-process. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) WhiteBalanceSettings : public IReflectable
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) WhiteBalanceSettings : public IReflectable
 	{
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		WhiteBalanceSettings() = default;
 
 		/**
@@ -171,7 +171,7 @@ namespace bs
 		 *
 		 * Moves along the Planckian locus. In range [1500.0f, 15000.0f].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 1500, 15000 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 1500, 15000 ]), UI(AsSlider))
 		float Temperature = 6500.0f;
 
 		/**
@@ -181,7 +181,7 @@ namespace bs
 		 *
 		 * In range [-1.0f, 1.0f].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ -1, 1 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ -1, 1 ]), UI(AsSlider))
 		float Tint = 0.0f;
 
 		/************************************************************************/
@@ -199,7 +199,7 @@ namespace bs
 	};
 
 	/** Settings that control color grading post-process. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT() ColorGradingSettings : public IReflectable
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT() ColorGradingSettings : public IReflectable
 	{
 		ColorGradingSettings() = default;
 
@@ -207,28 +207,28 @@ namespace bs
 		 * Saturation to be applied during color grading. Larger values increase vibrancy of the image.
 		 * In range [0.0f, 2.0f].
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		Vector3 Saturation = Vector3::kOne;
 
 		/**
 		 * Contrast to be applied during color grading. Larger values increase difference between light and dark areas of
 		 * the image. In range [0.0f, 2.0f].
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		Vector3 Contrast = Vector3::kOne;
 
 		/**
 		 * Gain to be applied during color grading. Simply increases all color values by an equal scale.
 		 * In range [0.0f, 2.0f].
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		Vector3 Gain = Vector3::kOne;
 
 		/**
 		 * Gain to be applied during color grading. Simply offsets all color values by an equal amount.
 		 * In range [-1.0f, 1.0f].
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		Vector3 Offset = Vector3::kZero;
 
 		/************************************************************************/
@@ -246,13 +246,13 @@ namespace bs
 	};
 
 	/** Settings that control screen space ambient occlusion. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) AmbientOcclusionSettings : public IReflectable
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) AmbientOcclusionSettings : public IReflectable
 	{
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		AmbientOcclusionSettings() = default;
 
 		/** Enables or disables the screen space ambient occlusion effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool Enabled = true;
 
 		/**
@@ -261,7 +261,7 @@ namespace bs
 		 * quality or noise because of low sampling precision. Usually best to keep at around a meter, valid range
 		 * is roughly [0.05, 5.0].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0.05, 5 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0.05, 5 ]), UI(AsSlider))
 		float Radius = 1.5f;
 
 		/**
@@ -269,28 +269,28 @@ namespace bs
 		 * details to be lost in areas where occlusion isn't high. Value is in millimeters. Usually best to keep at a few
 		 * dozen millimeters, valid range is roughly [0, 200].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 200 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 200 ]), UI(AsSlider))
 		float Bias = 1.0f;
 
 		/**
 		 * Distance (in view space, in meters) after which AO starts fading out. The fade process will happen over the
 		 * range as specified by @p fadeRange.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float FadeDistance = 500.0f;
 
 		/**
 		 * Range (in view space, in meters) in which AO fades out from 100% to 0%. AO starts fading out after the distance
 		 * specified in @p fadeDistance.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float FadeRange = 50.0f;
 
 		/**
 		 * Linearly scales the intensity of the AO effect. Values less than 1 make the AO effect less pronounced, and vice
 		 * versa. Valid range is roughly [0.2, 2].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0.2, 2 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0.2, 2 ]), UI(AsSlider))
 		float Intensity = 1.0f;
 
 		/**
@@ -298,14 +298,14 @@ namespace bs
 		 * control and will cause the darkening to ramp up exponentially. Valid range is roughly [1, 4], where 1 means no
 		 * extra darkening will occur.
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 1, 4 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 1, 4 ]), UI(AsSlider))
 		float Power = 4.0f;
 
 		/**
 		 * Quality level of generated ambient occlusion. In range [0, 4]. Higher levels yield higher quality AO at the cost
 		 * of performance.
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 4 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 4 ]), UI(AsSlider))
 		u32 Quality = 3;
 
 		/************************************************************************/
@@ -323,7 +323,7 @@ namespace bs
 	};
 
 	/** Types of available depth of field effects. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) DepthOfFieldType
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) DepthOfFieldType
 	{
 		/**
 		 * Fastest depth of field variant, uses gaussian blur to approximate depth of field on near and far objects, but
@@ -345,18 +345,18 @@ namespace bs
 		DepthOfFieldSettingsBase() = default;
 
 		/** Enables or disables the depth of field effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool Enabled = false;
 
 		/** Type of depth of field effect to use. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		DepthOfFieldType Type = DepthOfFieldType::Gaussian;
 
 		/**
 		 * Distance from the camera at which the focal plane is located in. Objects at this distance will be fully in focus.
 		 * In world units (meters).
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float FocalDistance = 0.75f;
 
 		/**
@@ -365,42 +365,42 @@ namespace bs
 		 * of depth-of-field you can set this to zero for a more physically-based effect, or keep it non-zero for more
 		 * artistic control. In world units (meters).
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float FocalRange = 0.75f;
 
 		/**
 		 * Determines the size of the range within which objects transition from focused to fully unfocused, at the near
 		 * plane. Only relevant for Gaussian and Bokeh depth of field. In world units (meters).
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float NearTransitionRange = 0.25f;
 
 		/**
 		 * Determines the size of the range within which objects transition from focused to fully unfocused, at the far
 		 * plane. Only relevant for Gaussian and Bokeh depth of field. In world units (meters).
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float FarTransitionRange = 0.25f;
 
 		/**
 		 * Determines the amount of blur to apply to fully unfocused objects that are closer to camera than the in-focus
 		 * zone. Set to zero to disable near-field blur. Only relevant for Gaussian depth of field.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float NearBlurAmount = 0.02f;
 
 		/**
 		 * Determines the amount of blur to apply to fully unfocused objects that are farther away from camera than the
 		 * in-focus zone. Set to zero to disable far-field blur. Only relevant for Gaussian depth of field.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float FarBlurAmount = 0.02f;
 
 		/**
 		 * Determines the maximum size of the blur kernel, in percent of view size. Larger values cost more performance.
 		 * Only relevant when using Bokeh depth of field.
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]))
 		float MaxBokehSize = 0.025f;
 
 		/**
@@ -409,7 +409,7 @@ namespace bs
 		 * samples will be required, but may decrease quality of the effect. Only relevant when using Bokeh depth of
 		 * field.
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 10.0 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 10.0 ]))
 		float AdaptiveColorThreshold = 1.0f;
 
 		/**
@@ -418,22 +418,22 @@ namespace bs
 		 * don't cost much. Increasing this value can improve performance as less higher fidelity samples will be required,
 		 * but may decrease quality of the effect. Only relevant when using Bokeh depth of field.
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 1.0 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 1.0 ]))
 		float AdaptiveRadiusThreshold = 0.1f;
 
 		/** Camera aperture size in mm. Only relevant when using Bokeh depth of field. */
-		BS_SCRIPT_EXPORT(UIValueRange([ 1, 200 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 1, 200 ]))
 		float ApertureSize = 50.0f;
 
 		/** Focal length of the camera's lens (e.g. 75mm). Only relevant when using Bokeh depth of field. */
-		BS_SCRIPT_EXPORT(UIValueRange([ 1, 500 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 1, 500 ]))
 		float FocalLength = 50.0f;
 
 		/**
 		 * Camera sensor width and height, in mm. Used for controlling the size of the circle of confusion. Only relevant
 		 * when using Bokeh depth of field.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		Vector2 SensorSize = Vector2(22.2f, 14.8f);
 
 		/**
@@ -442,7 +442,7 @@ namespace bs
 		 * if the background is much brighter than the foreground. Use @p occlusionDepthRange to tweak the effect.
 		 *
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool BokehOcclusion = true;
 
 		/**
@@ -450,7 +450,7 @@ namespace bs
 		 * faded out as the depth difference between the flare's origin pixel and the destination pixel grows larger.
 		 * Only relevant if @p bokehOcclusion is turned on.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float OcclusionDepthRange = 1.0f;
 
 	protected:
@@ -464,7 +464,7 @@ namespace bs
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 
 		/** Texture to use for the bokeh shape. Only relevant when using Bokeh depth of field. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		TextureType BokehShape;
 
 		/************************************************************************/
@@ -480,9 +480,9 @@ namespace bs
 	};
 
 	/** Settings that control the depth-of-field effect. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT() DepthOfFieldSettings : TDepthOfFieldSettings<false>, IReflectable
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT() DepthOfFieldSettings : TDepthOfFieldSettings<false>, IReflectable
 	{
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		DepthOfFieldSettings() = default;
 
 		/************************************************************************/
@@ -497,14 +497,14 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread variant of DepthOfFieldSettings. */
-		struct BS_CORE_EXPORT BS_SCRIPT_EXPORT() DepthOfFieldSettings : TDepthOfFieldSettings<true>
+		struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT() DepthOfFieldSettings : TDepthOfFieldSettings<true>
 		{
 			DepthOfFieldSettings() = default;
 		};
 	} // namespace ct
 
 	/** Determines which parts of the scene will trigger motion blur. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) MotionBlurDomain
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) MotionBlurDomain
 	{
 		/** Camera movement and rotation will result in full-screen motion blur. */
 		CameraOnly,
@@ -521,7 +521,7 @@ namespace bs
 	};
 
 	/** Type of filter to use when filtering samples contributing to a blurred pixel. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) MotionBlurFilter
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) MotionBlurFilter
 	{
 		/** Samples will be simply averaged together to create the blurred pixel. */
 		Simple,
@@ -536,7 +536,7 @@ namespace bs
 	};
 
 	/** Determines the number of samples to take during motion blur filtering. */
-	enum class BS_SCRIPT_EXPORT() MotionBlurQuality
+	enum class B3D_SCRIPT_EXPORT() MotionBlurQuality
 	{
 		/** 4 samples per pixel. */
 		VeryLow,
@@ -551,28 +551,28 @@ namespace bs
 	};
 
 	/** Settings that control the motion blur effect. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) MotionBlurSettings : public IReflectable
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) MotionBlurSettings : public IReflectable
 	{
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		MotionBlurSettings() = default;
 
 		/** Enables or disables the motion blur effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool Enabled = false;
 
 		/** Determines which parts of the scene will trigger motion blur. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		MotionBlurDomain Domain = MotionBlurDomain::CameraAndObject;
 
 		/** Type of filter to use when filtering samples contributing to a blurred pixel. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		MotionBlurFilter Filter = MotionBlurFilter::Reconstruction;
 
 		/**
 		 * Determines the number of samples to take during motion blur filtering. Increasing this value will
 		 * yield higher quality blur at the cost of the performance.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		MotionBlurQuality Quality = MotionBlurQuality::Medium;
 
 		/**
@@ -581,7 +581,7 @@ namespace bs
 		 * 1920 * 0.01 = 20px). This clamps the maximum velocity that can affect the blur, as higher velocities
 		 * require higher radius. Very high values can adversely affect performance as cache accesses become more random.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float MaximumRadius = 0.01f; // TODO - Set this in pixels, but always up/downsample to a specific resolution? Would improve cache performance.
 
 		/************************************************************************/
@@ -599,13 +599,13 @@ namespace bs
 	};
 
 	/** Settings that control temporal anti-aliasing. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) TemporalAASettings : public IReflectable
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) TemporalAASettings : public IReflectable
 	{
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		TemporalAASettings() = default;
 
 		/** Enables or disables temporal anti-aliasing. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool Enabled = false;
 
 		/**
@@ -613,11 +613,11 @@ namespace bs
 		 * will use subsequent positions until this number of reached, at which point the positions start getting
 		 * re-used from the start.
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 4, 128 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 4, 128 ]))
 		u32 JitteredPositionCount = 8;
 
 		/** Determines the distance between temporal AA samples. Larger values result in a sharper image. */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]))
 		float Sharpness = 1.0f;
 
 		/************************************************************************/
@@ -642,13 +642,13 @@ namespace bs
 	 * for rougher (more glossy rather than mirror-like) surfaces. Those surfaces require a higher number of samples to
 	 * achieve the glossy look, so we instead fall back to refl. probes which are pre-filtered and can be quickly sampled.
 	 */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ScreenSpaceReflectionsSettings : public IReflectable
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ScreenSpaceReflectionsSettings : public IReflectable
 	{
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		ScreenSpaceReflectionsSettings() = default;
 
 		/** Enables or disables the SSR effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool Enabled = true;
 
 		/**
@@ -656,18 +656,18 @@ namespace bs
 		 * better precision. This results in higher quality, as well as a higher performance requirement. Valid range is
 		 * [0, 4], default is 2.
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 4 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 4 ]), UI(AsSlider))
 		u32 Quality = 2;
 
 		/** Intensity of the screen space reflections. Valid range is [0, 1]. Default is 1 (100%). */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]), UI(AsSlider))
 		float Intensity = 1.0f;
 
 		/**
 		 * Roughness at which screen space reflections start fading out and become replaced with refl. probes. Valid range
 		 * is [0, 1]. Default is 0.8.
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]), UI(AsSlider))
 		float MaxRoughness = 0.8f;
 
 		/************************************************************************/
@@ -685,20 +685,20 @@ namespace bs
 	};
 
 	/** Settings that control the bloom effect. Bloom adds an extra highlight to bright areas of the scene. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) BloomSettings : public IReflectable
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) BloomSettings : public IReflectable
 	{
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		BloomSettings() = default;
 
 		/** Enables or disables the bloom effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool Enabled = false;
 
 		/**
 		 * Quality of the bloom effect. Higher values will use higher resolution texture for calculating bloom, at the cost
 		 * of lower performance. Valid range is [0, 3], default is 2.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		u32 Quality = 2;
 
 		/**
@@ -707,24 +707,24 @@ namespace bs
 		 * it is scaled by exposure. Set to zero or negative to disable the threshold and include all pixels in the
 		 * calculations.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float Threshold = 1.0f;
 
 		/**
 		 * Determines the intensity of the bloom effect. Ideally should be in [0, 4] range but higher values are allowed.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float Intensity = 0.5f;
 
 		/** Tint color to apply to the bloom highlight. A pure white means the bloom inherits the underlying scene color. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		Color Tint = Color::kWhite;
 
 		/**
 		 * Determines the percent of the texture to account for when filtering for bloom. Larger values will include
 		 * farther away pixels.
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0.01, 1.0 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0.01, 1.0 ]))
 		float FilterSize = 0.15f;
 
 		/************************************************************************/
@@ -742,13 +742,13 @@ namespace bs
 	};
 
 	/** Settings that control the screen-space lens flare effect. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ScreenSpaceLensFlareSettings : public IReflectable
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ScreenSpaceLensFlareSettings : public IReflectable
 	{
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		ScreenSpaceLensFlareSettings() = default;
 
 		/** Enables or disables the lens flare effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool Enabled = false;
 
 		/**
@@ -756,7 +756,7 @@ namespace bs
 		 * will use higher resolution texture for calculating lens flare, at the cost of lower performance.
 		 * Valid range is [1, 6], default is 4.
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 1, 6 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 1, 6 ]))
 		u32 DownsampleCount = 4;
 
 		/**
@@ -764,79 +764,79 @@ namespace bs
 		 * with luminance below this value will be ignored for the purposes of lens flare. Set to zero or negative to
 		 * disable the threshold and include all pixels in the calculations.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float Threshold = 32.0f;
 
 		/** Determines the number of ghost features to appear, shown as blurred blobs of bright areas of the scene. */
-		BS_SCRIPT_EXPORT(UIValueRange([ 1, 10 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 1, 10 ]))
 		u32 GhostCount = 2;
 
 		/**
 		 * Determines the distance between ghost features. Value is in normalized screen space, in range [0,1] where
 		 * 1 represents the full screen length.
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]))
 		float GhostSpacing = 0.5f;
 
 		/**
 		 * Determines the brightness of the lens flare effect. Value of 1 means the lens flare will be displayed at the
 		 * same intensity as the scene it was derived from. In range [0, 1], default being 0.05.
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]))
 		float Brightness = 0.05f;
 
 		/**
 		 * Determines the size of the filter when blurring the lens flare features. Larger values yield a blurrier image
 		 * and will require more performance.
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0.01, 1.0 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0.01, 1.0 ]))
 		float FilterSize = 0.2f;
 
 		/** Determines if a halo effect should be rendered as part of the lens flare. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool Halo = true;
 
 		/**
 		 * Determines how far away from the screen center does the halo appear, in normalized screen space (range [0,1])
 		 * where 0.5 represents half screen length.
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]))
 		float HaloRadius = 0.35f;
 
 		/** Determines the thickness of the halo ring. In normalized screen space (range [0.01,0.5]). */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0.01, 0.5 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0.01, 0.5 ]))
 		float HaloThickness = 0.15f;
 
 		/**
 		 * Determines the minimal threshold of pixel luminance to be included for halo generation. Any pixel with
 		 * luminance below this value will be ignored for the purposes of halo generation.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float HaloThreshold = 4.0f;
 
 		/** Determines the shape of the halo. Set to value other than 1 to make the halo an oval rather than a circle. */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 2 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 2 ]))
 		float HaloAspectRatio = 1.0f;
 
 		/**
 		 * Enables or disables chromatic aberration of the lens flare and halo features. Chromatic aberration separates
 		 * the values of red, green and blue channels according to a user provided offset.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool ChromaticAberration = true;
 
 		/**
 		 * Determines the distance between pixels within which to sample different channels. The value is in
 		 * UV coordinates, range [0, 1].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]))
 		float ChromaticAberrationOffset = 0.01f;
 
 		/**
 		 * Uses a higher quality upscaling when blending the lens flare features with scene color. Results in less blocky
 		 * artifacts at a cost to performance.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool BicubicUpsampling = false;
 
 		/************************************************************************/
@@ -854,7 +854,7 @@ namespace bs
 	};
 
 	/** Types of available chromatic aberration effects. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ChromaticAberrationType
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ChromaticAberrationType
 	{
 		/** Simple chromatic aberration effect that is fast to execute. */
 		Simple,
@@ -872,18 +872,18 @@ namespace bs
 		ChromaticAberrationSettingsBase() = default;
 
 		/** Enables or disables the effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool Enabled = false;
 
 		/** Type of algorithm to use for rendering the effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		ChromaticAberrationType Type = ChromaticAberrationType::Simple;
 
 		/**
 		 * Determines the brightness of the lens flare effect. Value of 1 means the lens flare will be displayed at the
 		 * same intensity as the scene it was derived from. In range [0, 1], default being 0.05.
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 1 ]))
 		float ShiftAmount = 0.05f;
 
 	protected:
@@ -901,7 +901,7 @@ namespace bs
 		 * This texture should be 3x1 size, where the first pixel modules red, second green and third blue channel.
 		 * If using the complex aberration effect you can use a larger texture, Nx1 size.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		TextureType FringeTexture;
 
 		/************************************************************************/
@@ -917,9 +917,9 @@ namespace bs
 	};
 
 	/** Settings that control the chromatic aberration effect. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT() ChromaticAberrationSettings : TChromaticAberrationSettings<false>, IReflectable
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT() ChromaticAberrationSettings : TChromaticAberrationSettings<false>, IReflectable
 	{
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		ChromaticAberrationSettings() = default;
 
 		/************************************************************************/
@@ -941,21 +941,21 @@ namespace bs
 	} // namespace ct
 
 	/** Settings that control the film grain effect. Film grains adds a time-varying noise effect over the entire image. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) FilmGrainSettings : public IReflectable
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) FilmGrainSettings : public IReflectable
 	{
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		FilmGrainSettings() = default;
 
 		/** Enables or disables the effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool Enabled = false;
 
 		/** Controls how intense are the displayed film grains. */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 100.0 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 100.0 ]))
 		float Intensity = 16.0f;
 
 		/** Controls at what speed do the film grains change. */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 100.0 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 100.0 ]))
 		float Speed = 10.0f;
 
 		/************************************************************************/
@@ -973,9 +973,9 @@ namespace bs
 	};
 
 	/** Various options that control shadow rendering for a specific view. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ShadowSettings : public IReflectable
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ShadowSettings : public IReflectable
 	{
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		ShadowSettings() = default;
 
 		/**
@@ -983,7 +983,7 @@ namespace bs
 		 * higher quality shadows nearer to the viewer, as the shadow map resolution isn't being used up on far away
 		 * portions of the scene. In world units (meters).
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float DirectionalShadowDistance = 250.0f;
 
 		/**
@@ -991,7 +991,7 @@ namespace bs
 		 * individual cascade has less area to cover, but can significantly increase performance cost, as well as a minor
 		 * increase in memory cost. Valid range is roughly [1, 6].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 1, 6 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 1, 6 ]), UI(AsSlider))
 		u32 NumCascades = 4;
 
 		/**
@@ -1001,14 +1001,14 @@ namespace bs
 		 * yield higher resolution shadows). Higher values increase the size disparity between near and far cascades at
 		 * an exponential rate. Valid range is roughly [1, 4].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 1, 4 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 1, 4 ]), UI(AsSlider))
 		float CascadeDistributionExponent = 3.0f;
 
 		/**
 		 * Determines the number of samples used for percentage closer shadow map filtering. Higher values yield higher
 		 * quality shadows, at the cost of performance. Valid range is [1, 4].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 1, 4 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 1, 4 ]), UI(AsSlider))
 		u32 ShadowFilteringQuality = 4;
 
 		/************************************************************************/
@@ -1037,7 +1037,7 @@ namespace bs
 		 * manually adjust the automatic exposure. When automatic exposure is turned off you can use exposureScale to
 		 * manually set the exposure.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool EnableAutoExposure = true;
 
 		/**
@@ -1045,7 +1045,7 @@ namespace bs
 		 *
 		 * @see	enableAutoExposure
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		AutoExposureSettings AutoExposure;
 
 		/**
@@ -1058,7 +1058,7 @@ namespace bs
 		 * If this is disabled, then color grading and white balancing will not be enabled either. Only relevant for HDR
 		 * images.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool EnableTonemapping = true;
 
 		/**
@@ -1066,7 +1066,7 @@ namespace bs
 		 *
 		 * @see	enableTonemapping
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		TonemappingSettings Tonemapping;
 
 		/**
@@ -1074,43 +1074,43 @@ namespace bs
 		 * specified temperature into a scene illuminated by a standard D65 illuminant (average midday light) in order to
 		 * simulate the effects of chromatic adaptation of the human visual system.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		WhiteBalanceSettings WhiteBalance;
 
 		/** Parameters used for customizing color grading. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		ColorGradingSettings ColorGrading;
 
 		/** Parameters used for customizing screen space ambient occlusion. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		AmbientOcclusionSettings AmbientOcclusion;
 
 		/** Parameters used for customizing screen space reflections. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		ScreenSpaceReflectionsSettings ScreenSpaceReflections;
 
 		/** Parameters used for customizing the bloom effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		BloomSettings Bloom;
 
 		/** Parameters used for customizing the screen space lens flare effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		ScreenSpaceLensFlareSettings ScreenSpaceLensFlare;
 
 		/** Parameters used for customizing the film grain effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		FilmGrainSettings FilmGrain;
 
 		/** Parameters used for customizing the motion blur effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		MotionBlurSettings MotionBlur;
 
 		/** Parameters used for customizing the temporal anti-aliasing effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		TemporalAASettings TemporalAa;
 
 		/** Enables the fast approximate anti-aliasing effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool EnableFxaa = true;
 
 		/**
@@ -1118,7 +1118,7 @@ namespace bs
 		 * yield brighter image. Allows you to customize exposure manually, applied on top of eye adaptation exposure (if
 		 * enabled). In range [-8, 8].
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ -8, 8 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ -8, 8 ]), UI(AsSlider))
 		float ExposureScale = 1.25f;
 
 		/**
@@ -1126,7 +1126,7 @@ namespace bs
 		 * on the best gamma curve for the output device is chosen automatically and this value can by used to merely tweak
 		 * that curve. If tonemapping is turned off this is the exact value of the gamma curve that will be applied.
 		 */
-		BS_SCRIPT_EXPORT(UIValueRange([ 1, 3 ]), UI(AsSlider))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 1, 3 ]), UI(AsSlider))
 		float Gamma = 2.2f;
 
 		/**
@@ -1134,18 +1134,18 @@ namespace bs
 		 * range of values. The stored light is then converted into visible color range using exposure and a tone mapping
 		 * operator.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool EnableHdr = true;
 
 		/**
 		 * Determines if scene objects will be lit by lights. If disabled everything will be rendered using their albedo
 		 * texture with no lighting applied.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool EnableLighting = true;
 
 		/** Determines if shadows cast by lights should be rendered. Only relevant if lighting is turned on. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool EnableShadows = true;
 
 		/**
@@ -1153,15 +1153,15 @@ namespace bs
 		 * an effect that requires this information. Note that effects such as motion blur or temporal anti-aliasing
 		 * might force the velocity buffer to be enabled regardless of this setting.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool EnableVelocityBuffer = false;
 
 		/** Parameters used for customizing shadow rendering. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		ShadowSettings ShadowSettings;
 
 		/** Determines if indirect lighting (e.g. from light probes or the sky) is rendered. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool EnableIndirectLighting = true;
 
 		/**
@@ -1169,21 +1169,21 @@ namespace bs
 		 * depth buffer or multi-sampled render targets and will not render any scene objects. This can improve performance
 		 * and memory usage for overlay-only views.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool OverlayOnly = false;
 
 		/**
 		 * If enabled the camera will use the skybox for rendering the background. A skybox has to be present in the scene.
 		 * When disabled the camera will use the clear color for rendering the background.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool EnableSkybox = true;
 
 		/**
 		 * The absolute base cull-distance for objects rendered through this camera in world units. Objects will use this
 		 * distance and apply their own factor to it to determine whether they should be visible.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float CullDistance = FLT_MAX;
 
 	protected:
@@ -1195,11 +1195,11 @@ namespace bs
 	struct BS_CORE_EXPORT TRenderSettings : RenderSettingsBase
 	{
 		/** Parameters used for customizing the gaussian depth of field effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		CoreVariantType<DepthOfFieldSettings, Core> DepthOfField;
 
 		/** Parameters used for customizing the chromatic aberration effect. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		CoreVariantType<ChromaticAberrationSettings, Core> ChromaticAberration;
 
 		/************************************************************************/
@@ -1215,9 +1215,9 @@ namespace bs
 	};
 
 	/** Settings that control rendering for a specific camera (view). */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderSettings : TRenderSettings<false>, IReflectable
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderSettings : TRenderSettings<false>, IReflectable
 	{
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		RenderSettings() = default;
 		virtual ~RenderSettings() = default;
 
@@ -1234,7 +1234,7 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread variant of RenderSettings. */
-		struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderSettings : TRenderSettings<true>
+		struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderSettings : TRenderSettings<true>
 		{
 			RenderSettings() = default;
 			virtual ~RenderSettings() = default;

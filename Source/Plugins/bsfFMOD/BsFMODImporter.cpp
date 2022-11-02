@@ -49,7 +49,7 @@ SPtr<Resource> FMODImporter::Import(const Path& filePath, SPtr<const ImportOptio
 		String pathStr = filePath.ToString();
 		if(GetFMODAudio().GetFMODInternal()->createSound(pathStr.c_str(), FMOD_CREATESAMPLE, nullptr, &sound) != FMOD_OK)
 		{
-			BS_LOG(Error, Audio, "Failed importing audio file: {0}", pathStr);
+			B3D_LOG(Error, Audio, "Failed importing audio file: {0}", pathStr);
 			return nullptr;
 		}
 	}
@@ -62,7 +62,7 @@ SPtr<Resource> FMODImporter::Import(const Path& filePath, SPtr<const ImportOptio
 
 	if(format != FMOD_SOUND_FORMAT_PCM8 && format != FMOD_SOUND_FORMAT_PCM16 && format != FMOD_SOUND_FORMAT_PCM24 && format != FMOD_SOUND_FORMAT_PCM32 && format != FMOD_SOUND_FORMAT_PCMFLOAT)
 	{
-		BS_LOG(Error, Audio, "Failed importing audio file, invalid imported format: ", filePath);
+		B3D_LOG(Error, Audio, "Failed importing audio file, invalid imported format: ", filePath);
 		return nullptr;
 	}
 
@@ -80,7 +80,7 @@ SPtr<Resource> FMODImporter::Import(const Path& filePath, SPtr<const ImportOptio
 	u32 bytesPerSample = info.BitDepth / 8;
 	u32 bufferSize = info.NumSamples * bytesPerSample;
 	u8* sampleBuffer = (u8*)B3DAllocate(bufferSize);
-	assert(bufferSize == size);
+	B3D_ASSERT(bufferSize == size);
 
 	u8* startData = nullptr;
 	u8* endData = nullptr;
@@ -90,7 +90,7 @@ SPtr<Resource> FMODImporter::Import(const Path& filePath, SPtr<const ImportOptio
 
 	if(format == FMOD_SOUND_FORMAT_PCMFLOAT)
 	{
-		assert(info.BitDepth == 32);
+		B3D_ASSERT(info.BitDepth == 32);
 
 		u32* output = (u32*)sampleBuffer;
 		for(u32 i = 0; i < info.NumSamples; i++)

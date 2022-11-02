@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note	Wraps Animation as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(Animation)) CAnimation : public Component
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(Animation)) CAnimation : public Component
 	{
 		/** Information about scene objects bound to a specific animation curve. */
 		struct SceneObjectMappingInfo
@@ -36,72 +36,72 @@ namespace bs
 		 * use the play(), blend() and crossFade() methods to queue clips for playback manually, and setState() method for
 		 * modify their states individually.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(DefaultClip), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(DefaultClip), Property(Setter))
 		void SetDefaultClip(const HAnimationClip& clip);
 
 		/** @copydoc SetDefaultClip */
-		BS_SCRIPT_EXPORT(ExportName(DefaultClip), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(DefaultClip), Property(Getter))
 
 		HAnimationClip GetDefaultClip() const { return mDefaultClip; }
 
 		/** @copydoc Animation::SetWrapMode */
-		BS_SCRIPT_EXPORT(ExportName(WrapMode), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(WrapMode), Property(Setter))
 		void SetWrapMode(AnimWrapMode wrapMode);
 
 		/** @copydoc SetWrapMode */
-		BS_SCRIPT_EXPORT(ExportName(WrapMode), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(WrapMode), Property(Getter))
 		AnimWrapMode GetWrapMode() const { return mWrapMode; }
 
 		/** @copydoc Animation::SetSpeed */
-		BS_SCRIPT_EXPORT(ExportName(Speed), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Speed), Property(Setter))
 		void SetSpeed(float speed);
 
 		/** @copydoc SetSpeed */
-		BS_SCRIPT_EXPORT(ExportName(Speed), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Speed), Property(Getter))
 		float GetSpeed() const { return mSpeed; }
 
 		/** @copydoc Animation::Play */
-		BS_SCRIPT_EXPORT(ExportName(Play))
+		B3D_SCRIPT_EXPORT(ExportName(Play))
 		void Play(const HAnimationClip& clip);
 
 		/** @copydoc Animation::BlendAdditive */
-		BS_SCRIPT_EXPORT(ExportName(BlendAdditive))
+		B3D_SCRIPT_EXPORT(ExportName(BlendAdditive))
 		void BlendAdditive(const HAnimationClip& clip, float weight, float fadeLength = 0.0f, u32 layer = 0);
 
 		/** @copydoc Animation::Blend1D */
-		BS_SCRIPT_EXPORT(ExportName(Blend1D))
+		B3D_SCRIPT_EXPORT(ExportName(Blend1D))
 		void Blend1D(const Blend1DInfo& info, float t);
 
 		/** @copydoc Animation::Blend2D */
-		BS_SCRIPT_EXPORT(ExportName(Blend2D))
+		B3D_SCRIPT_EXPORT(ExportName(Blend2D))
 		void Blend2D(const Blend2DInfo& info, const Vector2& t);
 
 		/** @copydoc Animation::CrossFade */
-		BS_SCRIPT_EXPORT(ExportName(CrossFade))
+		B3D_SCRIPT_EXPORT(ExportName(CrossFade))
 		void CrossFade(const HAnimationClip& clip, float fadeLength);
 
 		/** @copydoc Animation::Sample */
-		BS_SCRIPT_EXPORT(ExportName(Sample))
+		B3D_SCRIPT_EXPORT(ExportName(Sample))
 		void Sample(const HAnimationClip& clip, float time);
 
 		/** @copydoc Animation::Stop */
-		BS_SCRIPT_EXPORT(ExportName(Stop))
+		B3D_SCRIPT_EXPORT(ExportName(Stop))
 		void Stop(u32 layer);
 
 		/** @copydoc Animation::StopAll */
-		BS_SCRIPT_EXPORT(ExportName(StopAll))
+		B3D_SCRIPT_EXPORT(ExportName(StopAll))
 		void StopAll();
 
 		/** @copydoc Animation::IsPlaying */
-		BS_SCRIPT_EXPORT(ExportName(IsPlaying), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(IsPlaying), Property(Getter))
 		bool IsPlaying() const;
 
 		/** @copydoc Animation::GetState */
-		BS_SCRIPT_EXPORT(ExportName(GetState))
+		B3D_SCRIPT_EXPORT(ExportName(GetState))
 		bool GetState(const HAnimationClip& clip, AnimationClipState& state);
 
 		/** @copydoc Animation::SetState */
-		BS_SCRIPT_EXPORT(ExportName(SetState))
+		B3D_SCRIPT_EXPORT(ExportName(SetState))
 		void SetState(const HAnimationClip& clip, AnimationClipState state);
 
 		/**
@@ -111,44 +111,44 @@ namespace bs
 		 *					animating.
 		 * @param weight	Weight that determines how much of the channel to apply to the mesh, in range [0, 1].
 		 */
-		BS_SCRIPT_EXPORT(ExportName(SetMorphChannelWeight))
+		B3D_SCRIPT_EXPORT(ExportName(SetMorphChannelWeight))
 		void SetMorphChannelWeight(const String& name, float weight);
 
 		/** Determines bounds that will be used for animation and mesh culling. Only relevant if setUseBounds() is set to true. */
-		BS_SCRIPT_EXPORT(ExportName(Bounds), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Bounds), Property(Setter))
 		void SetBounds(const AABox& bounds);
 
 		/** @copydoc SetBounds */
-		BS_SCRIPT_EXPORT(ExportName(Bounds), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Bounds), Property(Getter))
 		const AABox& GetBounds() const { return mBounds; }
 
 		/**
 		 * Determines should animation bounds be used for visibility determination (culling). If false the bounds of the
 		 * mesh attached to the relevant CRenderable component will be used instead.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(UseBounds), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(UseBounds), Property(Setter))
 		void SetUseBounds(bool enable);
 
 		/** @copydoc SetUseBounds */
-		BS_SCRIPT_EXPORT(ExportName(UseBounds), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(UseBounds), Property(Getter))
 
 		bool GetUseBounds() const { return mUseBounds; }
 
 		/** Enables or disables culling of the animation when out of view. Culled animation will not be evaluated. */
-		BS_SCRIPT_EXPORT(ExportName(Cull), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Cull), Property(Setter))
 		void SetEnableCull(bool enable);
 
 		/** Checks whether the animation will be evaluated when it is out of view. */
-		BS_SCRIPT_EXPORT(ExportName(Cull), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Cull), Property(Getter))
 
 		bool GetEnableCull() const { return mEnableCull; }
 
 		/** @copydoc Animation::GetNumClips */
-		BS_SCRIPT_EXPORT(InteropOnly(true))
+		B3D_SCRIPT_EXPORT(InteropOnly(true))
 		u32 GetNumClips() const;
 
 		/** @copydoc Animation::GetClip */
-		BS_SCRIPT_EXPORT(InteropOnly(true))
+		B3D_SCRIPT_EXPORT(InteropOnly(true))
 		HAnimationClip GetClip(u32 idx) const;
 
 		/** Triggered whenever an animation event is reached. */
@@ -193,11 +193,11 @@ namespace bs
 		 * animation component to know which property to assign which values from an animation curve. This should be called
 		 * whenever playback for a new clip starts, or when clip curves change.
 		 */
-		BS_SCRIPT_EXPORT(InteropOnly(true))
+		B3D_SCRIPT_EXPORT(InteropOnly(true))
 		void RefreshClipMappingsInternal();
 
 		/** @copydoc Animation::GetGenericCurveValue */
-		BS_SCRIPT_EXPORT(InteropOnly(true))
+		B3D_SCRIPT_EXPORT(InteropOnly(true))
 		bool GetGenericCurveValueInternal(u32 curveIdx, float& value);
 
 		/**
@@ -207,19 +207,19 @@ namespace bs
 		 * explicitly disabled. Returns true if the preview mode was enabled (which could fail if the component is
 		 * currently running).
 		 */
-		BS_SCRIPT_EXPORT(InteropOnly(true))
+		B3D_SCRIPT_EXPORT(InteropOnly(true))
 		bool TogglePreviewModeInternal(bool enabled);
 
 		/** Triggered when the list of properties animated via generic animation curves needs to be recreated (script only). */
-		BS_SCRIPT_EXPORT(ExportName(RebuildFloatProperties))
+		B3D_SCRIPT_EXPORT(ExportName(RebuildFloatProperties))
 		std::function<void(const HAnimationClip&)> ScriptRebuildFloatPropertiesInternal;
 
 		/** Triggered when generic animation curves values need be applied to the properties they effect (script only). */
-		BS_SCRIPT_EXPORT(ExportName(_UpdateFloatProperties))
+		B3D_SCRIPT_EXPORT(ExportName(_UpdateFloatProperties))
 		std::function<void()> ScriptUpdateFloatPropertiesInternal;
 
 		/** Triggers a callback in script code when animation event is triggered (script only). */
-		BS_SCRIPT_EXPORT(ExportName(EventTriggered))
+		B3D_SCRIPT_EXPORT(ExportName(EventTriggered))
 		std::function<void(const HAnimationClip&, const String&)> ScriptOnEventTriggeredInternal;
 
 		/** @} */

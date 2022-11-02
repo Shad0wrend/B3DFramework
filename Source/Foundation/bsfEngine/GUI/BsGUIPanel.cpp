@@ -129,7 +129,7 @@ void GUIPanel::UpdateOptimalLayoutSizesInternal()
 
 void GUIPanel::GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const
 {
-	assert(mChildren.size() == numElements);
+	B3D_ASSERT(mChildren.size() == numElements);
 
 	// Panel always uses optimal sizes and explicit positions
 	u32 childIdx = 0;

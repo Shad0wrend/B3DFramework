@@ -91,7 +91,7 @@ void GUILayoutX::UpdateOptimalLayoutSizesInternal()
 
 void GUILayoutX::GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const
 {
-	assert(mChildren.size() == numElements);
+	B3D_ASSERT(mChildren.size() == numElements);
 
 	u32 totalOptimalSize = mySizeRange.Optimal.X;
 	u32 totalNonClampedSize = 0;

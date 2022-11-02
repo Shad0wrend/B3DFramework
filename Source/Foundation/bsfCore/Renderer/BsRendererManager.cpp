@@ -32,7 +32,7 @@ void RendererManager::SetActive(const String& name)
 
 	if(mActiveRenderer == nullptr)
 	{
-		BS_EXCEPT(InternalErrorException, "Cannot initialize renderer. Renderer with the name '" + name + "' cannot be found.")
+		B3D_EXCEPT(InternalErrorException, "Cannot initialize renderer. Renderer with the name '" + name + "' cannot be found.")
 	}
 }
 
@@ -44,7 +44,7 @@ void RendererManager::Initialize()
 
 void RendererManager::RegisterFactoryInternal(SPtr<RendererFactory> factory)
 {
-	assert(factory != nullptr);
+	B3D_ASSERT(factory != nullptr);
 
 	mAvailableFactories.push_back(factory);
 }

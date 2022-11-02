@@ -24,7 +24,7 @@ SPtr<Rigidbody> Rigidbody::Create(const HSceneObject& linkedSO)
 
 	if(!scene)
 	{
-		BS_LOG(Error, Physics, "Trying to create a Rigidbody with an uninstantiated scene object.");
+		B3D_LOG(Error, Physics, "Trying to create a Rigidbody with an uninstantiated scene object.");
 		return nullptr;
 	}
 

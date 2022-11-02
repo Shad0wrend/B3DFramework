@@ -43,7 +43,7 @@ void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stre
 	// Encode primary object and its value types
 	if(!EncodeEntry(object, objectId, bufferedStream, flags))
 	{
-		BS_LOG(Error, Serialization, "Destination buffer is null or not large enough.");
+		B3D_LOG(Error, Serialization, "Destination buffer is null or not large enough.");
 		return;
 	}
 
@@ -66,7 +66,7 @@ void BinarySerializer::Encode(IReflectable* object, const SPtr<DataStream>& stre
 
 			if(!EncodeEntry(curObject.get(), curObjectid, bufferedStream, flags))
 			{
-				BS_LOG(Error, Serialization, "Destination buffer is null or not large enough.");
+				B3D_LOG(Error, Serialization, "Destination buffer is null or not large enough.");
 				return;
 			}
 
@@ -124,7 +124,7 @@ SPtr<IReflectable> BinarySerializer::Decode(const SPtr<DataStream>& stream, u32 
 	{
 		if(!schema)
 		{
-			BS_LOG(Error, Serialization, "Cannot decode an object without meta-data nor schema.");
+			B3D_LOG(Error, Serialization, "Cannot decode an object without meta-data nor schema.");
 			return nullptr;
 		}
 	}
@@ -148,7 +148,7 @@ SPtr<IReflectable> BinarySerializer::Decode(const SPtr<DataStream>& stream, u32 
 
 		if(objectIsBaseClass)
 		{
-			BS_EXCEPT(InternalErrorException, "Encountered a base-class object while looking for a new object. "
+			B3D_EXCEPT(InternalErrorException, "Encountered a base-class object while looking for a new object. "
 											  "Base class objects are only supposed to be parts of a larger object.");
 		}
 
@@ -172,7 +172,7 @@ SPtr<IReflectable> BinarySerializer::Decode(const SPtr<DataStream>& stream, u32 
 				// If no meta, it's expected the pass over the root object has populated mDecodeObjectMap with object instances
 				// as well as references to the schema
 				auto iterFind = mDecodeObjectMap.find(objectId);
-				assert(iterFind != mDecodeObjectMap.end());
+				B3D_ASSERT(iterFind != mDecodeObjectMap.end());
 
 				ObjectToDecode& objectToDecode = iterFind->second;
 				objectToDecode.Offset = bufferedStream.Tell();
@@ -187,7 +187,7 @@ SPtr<IReflectable> BinarySerializer::Decode(const SPtr<DataStream>& stream, u32 
 	}
 	while(DecodeEntry(bufferedStream, endBits, flags, nullptr, curSchema));
 
-	assert(bufferedStream.Tell() == endBits);
+	B3D_ASSERT(bufferedStream.Tell() == endBits);
 
 	// Don't set report callback until we actually do the reads
 	mReportProgress = std::move(progress);
@@ -206,7 +206,7 @@ SPtr<IReflectable> BinarySerializer::Decode(const SPtr<DataStream>& stream, u32 
 	bufferedStream.Seek((uint64_t)endBits);
 	stream->Seek(end);
 
-	assert(bufferedStream.Tell() == endBits);
+	B3D_ASSERT(bufferedStream.Tell() == endBits);
 
 	if(mReportProgress)
 		mReportProgress(1.0f);
@@ -333,7 +333,7 @@ bool BinarySerializer::EncodeEntry(IReflectable* object, u32 objectId, BufferedB
 						break;
 					}
 				default:
-					BS_LOG(Error, Serialization, "Error encoding data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", curGenericField->Schema.Type, curGenericField->Schema.IsArray);
+					B3D_LOG(Error, Serialization, "Error encoding data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", curGenericField->Schema.Type, curGenericField->Schema.IsArray);
 				}
 			}
 			else
@@ -400,7 +400,7 @@ bool BinarySerializer::EncodeEntry(IReflectable* object, u32 objectId, BufferedB
 						break;
 					}
 				default:
-					BS_LOG(Error, Serialization, "Error encoding data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", curGenericField->Schema.Type, curGenericField->Schema.IsArray);
+					B3D_LOG(Error, Serialization, "Error encoding data. Encountered a type I don't know how to encode. Type: {0}, Is array: {1}", curGenericField->Schema.Type, curGenericField->Schema.IsArray);
 				}
 			}
 
@@ -433,7 +433,7 @@ bool BinarySerializer::DecodeEntry(BufferedBitstreamReader& stream, size_t dataE
 
 	if(objectIsBaseClass)
 	{
-		BS_EXCEPT(InternalErrorException, "Encountered a base-class object while looking for a new object. "
+		B3D_EXCEPT(InternalErrorException, "Encountered a base-class object while looking for a new object. "
 										  "Base class objects are only supposed to be parts of a larger object.");
 	}
 
@@ -586,17 +586,17 @@ bool BinarySerializer::DecodeEntry(BufferedBitstreamReader& stream, size_t dataE
 		{
 			if(!fieldSchema.HasDynamicSize && curGenericField->Schema.Size != fieldSchema.Size)
 			{
-				BS_EXCEPT(InternalErrorException, "Data type mismatch. Type size stored in file and actual type size don't match. (" + ToString(curGenericField->Schema.Size.Bytes) + " vs. " + ToString(fieldSchema.Size.Bytes) + ")");
+				B3D_EXCEPT(InternalErrorException, "Data type mismatch. Type size stored in file and actual type size don't match. (" + ToString(curGenericField->Schema.Size.Bytes) + " vs. " + ToString(fieldSchema.Size.Bytes) + ")");
 			}
 
 			if(curGenericField->Schema.IsArray != fieldSchema.IsArray)
 			{
-				BS_EXCEPT(InternalErrorException, "Data type mismatch. One is array, other is a single type.");
+				B3D_EXCEPT(InternalErrorException, "Data type mismatch. One is array, other is a single type.");
 			}
 
 			if(curGenericField->Schema.Type != fieldSchema.Type)
 			{
-				BS_EXCEPT(InternalErrorException, "Data type mismatch. Field types don't match. " + ToString(u32(curGenericField->Schema.Type)) + " vs. " + ToString(u32(fieldSchema.Type)));
+				B3D_EXCEPT(InternalErrorException, "Data type mismatch. Field types don't match. " + ToString(u32(curGenericField->Schema.Type)) + " vs. " + ToString(u32(fieldSchema.Type)));
 			}
 		}
 
@@ -643,7 +643,7 @@ bool BinarySerializer::DecodeEntry(BufferedBitstreamReader& stream, size_t dataE
 							{
 								if(childObjectId != 0)
 								{
-									BS_LOG(Warning, Generic, "When deserializing, object ID: {0} was found but no such "
+									B3D_LOG(Warning, Generic, "When deserializing, object ID: {0} was found but no such "
 															 "object was contained in the file.",
 										   childObjectId);
 								}
@@ -659,7 +659,7 @@ bool BinarySerializer::DecodeEntry(BufferedBitstreamReader& stream, size_t dataE
 								{
 									if(objToDecode.DecodeInProgress)
 									{
-										BS_LOG(Warning, Generic, "Detected a circular reference when decoding. Referenced "
+										B3D_LOG(Warning, Generic, "Detected a circular reference when decoding. Referenced "
 																 "object's fields will be resolved in an undefined order (i.e. one of the "
 																 "objects will not be fully deserialized when assigned to its field). "
 																 "Use RTTI_Flag_WeakRef to get rid of this warning and tell the system which of"
@@ -752,7 +752,7 @@ bool BinarySerializer::DecodeEntry(BufferedBitstreamReader& stream, size_t dataE
 					break;
 				}
 			default:
-				BS_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + ToString(u32(fieldSchema.Type)) + ", Is array: " + ToString(fieldSchema.IsArray));
+				B3D_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + ToString(u32(fieldSchema.Type)) + ", Is array: " + ToString(fieldSchema.IsArray));
 			}
 		}
 		else
@@ -787,7 +787,7 @@ bool BinarySerializer::DecodeEntry(BufferedBitstreamReader& stream, size_t dataE
 						{
 							if(childObjectId != 0)
 							{
-								BS_LOG(Warning, Generic, "When deserializing, object ID: {0} was found but no such object "
+								B3D_LOG(Warning, Generic, "When deserializing, object ID: {0} was found but no such object "
 														 "was contained in the file.",
 									   childObjectId);
 							}
@@ -803,7 +803,7 @@ bool BinarySerializer::DecodeEntry(BufferedBitstreamReader& stream, size_t dataE
 							{
 								if(objToDecode.DecodeInProgress)
 								{
-									BS_LOG(Warning, Generic, "Detected a circular reference when decoding. Referenced "
+									B3D_LOG(Warning, Generic, "Detected a circular reference when decoding. Referenced "
 															 "object's fields will be resolved in an undefined order (i.e. one of the objects "
 															 "will not be fully deserialized when assigned to its field). Use "
 															 "RTTI_Flag_WeakRef to get rid of this warning and tell the system which of the "
@@ -913,7 +913,7 @@ bool BinarySerializer::DecodeEntry(BufferedBitstreamReader& stream, size_t dataE
 							uint64_t curOffset = stream.Tell();
 
 							// Data blocks don't support data that isn't byte aligned, but encoder should take care of that
-							assert((curOffset % 8) == 0);
+							B3D_ASSERT((curOffset % 8) == 0);
 							curOffset /= 8;
 
 							dataStream->Seek(curOffset);
@@ -935,7 +935,7 @@ bool BinarySerializer::DecodeEntry(BufferedBitstreamReader& stream, size_t dataE
 					break;
 				}
 			default:
-				BS_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + ToString(u32(fieldSchema.Type)) + ", Is array: " + ToString(fieldSchema.IsArray));
+				B3D_EXCEPT(InternalErrorException, "Error decoding data. Encountered a type I don't know how to decode. Type: " + ToString(u32(fieldSchema.Type)) + ", Is array: " + ToString(fieldSchema.IsArray));
 			}
 
 			stream.ClearBuffered(false);
@@ -1020,7 +1020,7 @@ RTTIFieldSchema BinarySerializer::DecodeFieldMetaData(u32 encodedData, bool& ter
 {
 	if(IsObjectMetaData(encodedData))
 	{
-		BS_EXCEPT(InternalErrorException, "Meta data represents an object description but is trying to be decoded as a field descriptor.");
+		B3D_EXCEPT(InternalErrorException, "Meta data represents an object description but is trying to be decoded as a field descriptor.");
 	}
 
 	terminator = (encodedData & 0x40) != 0;
@@ -1081,7 +1081,7 @@ void BinarySerializer::SkipBuiltinType(u32 fieldType, BufferedBitstreamReader& s
 			break;
 		}
 	default:
-		assert(false);
+		B3D_ASSERT(false);
 		break;
 	}
 }
@@ -1090,7 +1090,7 @@ bool BinarySerializer::IsFieldTerminator(u8 data)
 {
 	if(IsObjectMetaData(data))
 	{
-		BS_EXCEPT(InternalErrorException, "Meta data represents an object description but is trying to be decoded as a field descriptor.");
+		B3D_EXCEPT(InternalErrorException, "Meta data represents an object description but is trying to be decoded as a field descriptor.");
 	}
 
 	return (data & 0x40) != 0;
@@ -1106,7 +1106,7 @@ BinarySerializer::ObjectMetaData BinarySerializer::EncodeObjectMetaData(u32 objI
 
 	if(objId > 1073741823)
 	{
-		BS_EXCEPT(InvalidParametersException, "Object ID is larger than we can store (max 30 bits): " + ToString(objId));
+		B3D_EXCEPT(InvalidParametersException, "Object ID is larger than we can store (max 30 bits): " + ToString(objId));
 	}
 
 	ObjectMetaData metaData;
@@ -1119,7 +1119,7 @@ void BinarySerializer::DecodeObjectMetaData(ObjectMetaData encodedData, u32& obj
 {
 	if(!IsObjectMetaData(encodedData.ObjectMeta))
 	{
-		BS_EXCEPT(InternalErrorException, "Meta data represents a field description but is trying to be decoded as an object descriptor.");
+		B3D_EXCEPT(InternalErrorException, "Meta data represents a field description but is trying to be decoded as an object descriptor.");
 	}
 
 	DecodeObjectMetaData(encodedData.ObjectMeta, objId, isBaseClass);
@@ -1136,7 +1136,7 @@ u32 BinarySerializer::EncodeObjectMetaData(u32 objId, bool isBaseClass)
 
 	if(objId > 1073741823)
 	{
-		BS_EXCEPT(InvalidParametersException, "Object ID is larger than we can store (max 30 bits): " + ToString(objId));
+		B3D_EXCEPT(InvalidParametersException, "Object ID is larger than we can store (max 30 bits): " + ToString(objId));
 	}
 
 	return (objId << 2) | (isBaseClass ? 0x02 : 0) | 0x01;
@@ -1146,7 +1146,7 @@ void BinarySerializer::DecodeObjectMetaData(u32 encodedData, u32& objId, bool& i
 {
 	if(!IsObjectMetaData(encodedData))
 	{
-		BS_EXCEPT(InternalErrorException, "Meta data represents a field description but is trying to be decoded as an object descriptor.");
+		B3D_EXCEPT(InternalErrorException, "Meta data represents a field description but is trying to be decoded as an object descriptor.");
 	}
 
 	objId = (encodedData >> 2) & 0x3FFFFFFF;
@@ -1167,7 +1167,7 @@ u32 BinarySerializer::ReadObjectMetaData(BufferedBitstreamReader& stream, Binary
 		objectMetaData.TypeId = 0;
 
 		if(stream.ReadBytes(objectMetaData) != sizeof(ObjectMetaData))
-			BS_EXCEPT(InternalErrorException, "Error decoding data.");
+			B3D_EXCEPT(InternalErrorException, "Error decoding data.");
 
 		DecodeObjectMetaData(objectMetaData, objId, objTypeId, isBaseType);
 		return sizeof(ObjectMetaData) * 8;
@@ -1182,7 +1182,7 @@ u32 BinarySerializer::ReadObjectMetaData(BufferedBitstreamReader& stream, Binary
 		else
 		{
 			if(stream.ReadBytes(objectMetaData) != sizeof(objectMetaData))
-				BS_EXCEPT(InternalErrorException, "Error decoding data.");
+				B3D_EXCEPT(InternalErrorException, "Error decoding data.");
 
 			bitsRead = sizeof(objectMetaData) * 8;
 		}

@@ -9,7 +9,7 @@ using namespace bs::ct;
 D3D11Device::D3D11Device(ID3D11Device* device)
 	: mD3D11Device(device)
 {
-	assert(device != nullptr);
+	B3D_ASSERT(device != nullptr);
 
 	if(device)
 	{
@@ -20,7 +20,7 @@ D3D11Device::D3D11Device(ID3D11Device* device)
 		HRESULT hr = mD3D11Device->QueryInterface(__uuidof(ID3D11InfoQueue), (LPVOID*)&mInfoQueue);
 
 		if(FAILED(hr))
-			BS_EXCEPT(RenderingAPIException, "Unable to query D3D11InfoQueue");
+			B3D_EXCEPT(RenderingAPIException, "Unable to query D3D11InfoQueue");
 
 		SetExceptionsErrorLevel(D3D11ERR_ERROR);
 #endif
@@ -32,7 +32,7 @@ D3D11Device::D3D11Device(ID3D11Device* device)
 			HRESULT hr = mD3D11Device->CreateClassLinkage(&mClassLinkage);
 
 			if(FAILED(hr))
-				BS_EXCEPT(RenderingAPIException, "Unable to create class linkage.");
+				B3D_EXCEPT(RenderingAPIException, "Unable to create class linkage.");
 		}
 
 		// Get feature options

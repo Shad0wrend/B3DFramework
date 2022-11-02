@@ -36,7 +36,7 @@ void VulkanQueue::Submit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemap
 	GetSubmitInfo(&vkCmdBuffer, signalSemaphores, BS_MAX_VULKAN_CB_DEPENDENCIES + 1, mSemaphoresTemp.data(), semaphoresCount, submitInfo);
 
 	VkResult result = vkQueueSubmit(mQueue, 1, &submitInfo, cmdBuffer->GetFence());
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	cmdBuffer->SetIsSubmitted();
 	mLastCommandBuffer = cmdBuffer;
@@ -109,7 +109,7 @@ void VulkanQueue::SubmitQueued()
 	mActiveSubmissions.push_back(SubmitInfo(lastCB, mNextSubmitIdx++, totalNumSemaphores, numCBs));
 
 	VkResult result = vkQueueSubmit(mQueue, numCBs, submitInfos, mLastCommandBuffer->GetFence());
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	mQueuedBuffers.clear();
 	mQueuedSemaphores.clear();
@@ -170,7 +170,7 @@ VkResult VulkanQueue::Present(VulkanSwapChain* swapChain, VulkanSemaphore** wait
 	}
 
 	VkResult result = vkQueuePresentKHR(mQueue, &presentInfo);
-	assert(result == VK_SUCCESS || result == VK_SUBOPTIMAL_KHR || result == VK_ERROR_OUT_OF_DATE_KHR);
+	B3D_ASSERT(result == VK_SUCCESS || result == VK_SUBOPTIMAL_KHR || result == VK_ERROR_OUT_OF_DATE_KHR);
 
 	mActiveSubmissions.push_back(SubmitInfo(nullptr, mNextSubmitIdx++, semaphoresCount, 0));
 	return result;
@@ -179,7 +179,7 @@ VkResult VulkanQueue::Present(VulkanSwapChain* swapChain, VulkanSemaphore** wait
 void VulkanQueue::WaitIdle() const
 {
 	VkResult result = vkQueueWaitIdle(mQueue);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 }
 
 void VulkanQueue::RefreshStates(bool forceWait, bool queueEmpty)
@@ -198,7 +198,7 @@ void VulkanQueue::RefreshStates(bool forceWait, bool queueEmpty)
 
 		if(!cmdBuffer->CheckFenceStatus(forceWait))
 		{
-			assert(!forceWait);
+			B3D_ASSERT(!forceWait);
 			break; // No chance of any later CBs of being done either
 		}
 

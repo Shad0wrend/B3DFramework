@@ -17,26 +17,26 @@ namespace bs
 	 *
 	 * @note Wraps SphereCollider as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(SphereCollider)) CSphereCollider : public CCollider
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(SphereCollider)) CSphereCollider : public CCollider
 	{
 	public:
 		CSphereCollider(const HSceneObject& parent, float radius = 1.0f);
 
 		/** @copydoc SphereCollider::SetRadius */
-		BS_SCRIPT_EXPORT(ExportName(Radius), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Radius), Property(Setter))
 		void SetRadius(float radius);
 
 		/** @copydoc SphereCollider::GetRadius */
-		BS_SCRIPT_EXPORT(ExportName(Radius), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Radius), Property(Getter))
 
 		float GetRadius() const { return mRadius; }
 
 		/** Determines position of the sphere shape, relative to the component's scene object. */
-		BS_SCRIPT_EXPORT(ExportName(Center), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Center), Property(Setter))
 		void SetCenter(const Vector3& center);
 
 		/** @copydoc SetCenter() */
-		BS_SCRIPT_EXPORT(ExportName(Center), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Center), Property(Getter))
 
 		Vector3 GetCenter() const { return mLocalPosition; }
 

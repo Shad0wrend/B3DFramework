@@ -100,7 +100,7 @@ void VulkanTransferBuffer::Flush(bool wait)
 		mQueue->WaitIdle();
 		mDevice->RefreshStates(true);
 
-		assert(!mCB->IsSubmitted());
+		B3D_ASSERT(!mCB->IsSubmitted());
 	}
 
 	mCB = nullptr;
@@ -134,7 +134,7 @@ SPtr<CommandBuffer> VulkanCommandBufferManager::CreateInternal(GpuQueueType type
 	u32 numDevices = mRapi.GetNumDevicesInternal();
 	if(deviceIdx >= numDevices)
 	{
-		BS_LOG(Error, RenderBackend, "Cannot create command buffer, invalid device index: {0}. Valid range: [0, {1}).", deviceIdx, numDevices);
+		B3D_LOG(Error, RenderBackend, "Cannot create command buffer, invalid device index: {0}. Valid range: [0, {1}).", deviceIdx, numDevices);
 
 		return nullptr;
 	}
@@ -187,7 +187,7 @@ void VulkanCommandBufferManager::GetSyncSemaphores(u32 deviceIdx, u32 syncMask, 
 
 	if(semaphoreRequestFailed)
 	{
-		BS_LOG(Error, RenderBackend, "Failed to allocate semaphores for a command buffer sync. This means some of the "
+		B3D_LOG(Error, RenderBackend, "Failed to allocate semaphores for a command buffer sync. This means some of the "
 									 "dependency requests will not be fulfilled. This happened because a command buffer has too many "
 									 "dependant command buffers. The maximum allowed number is {0} but can be increased by incrementing the "
 									 "value of BS_MAX_VULKAN_CB_DEPENDENCIES.",
@@ -197,7 +197,7 @@ void VulkanCommandBufferManager::GetSyncSemaphores(u32 deviceIdx, u32 syncMask, 
 
 VulkanTransferBuffer* VulkanCommandBufferManager::GetTransferBuffer(u32 deviceIdx, GpuQueueType type, u32 queueIdx)
 {
-	assert(deviceIdx < mNumDevices);
+	B3D_ASSERT(deviceIdx < mNumDevices);
 
 	PerDeviceData& deviceData = mDeviceData[deviceIdx];
 
@@ -208,7 +208,7 @@ VulkanTransferBuffer* VulkanCommandBufferManager::GetTransferBuffer(u32 deviceId
 
 void VulkanCommandBufferManager::FlushTransferBuffers(u32 deviceIdx)
 {
-	assert(deviceIdx < mNumDevices);
+	B3D_ASSERT(deviceIdx < mNumDevices);
 
 	PerDeviceData& deviceData = mDeviceData[deviceIdx];
 	for(u32 i = 0; i < GQT_COUNT; i++)

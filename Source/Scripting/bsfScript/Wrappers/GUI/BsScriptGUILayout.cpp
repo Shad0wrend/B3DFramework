@@ -79,7 +79,7 @@ void ScriptGUILayout::RemoveChild(ScriptGUIElementBaseTBase* element)
 
 	if(iterFind != mChildren.end())
 	{
-		assert(iterFind->GcHandle != 0);
+		B3D_ASSERT(iterFind->GcHandle != 0);
 
 		MonoUtil::FreeGcHandle(iterFind->GcHandle);
 		iterFind->GcHandle = 0;
@@ -197,7 +197,7 @@ void ScriptGUILayout::InternalClear(ScriptGUILayout* instance)
 	{
 		instance->GetInternalValue()->RemoveElement(child.Element->GetGuiElement());
 
-		assert(child.GcHandle != 0);
+		B3D_ASSERT(child.GcHandle != 0);
 
 		MonoUtil::FreeGcHandle(child.GcHandle);
 		child.GcHandle = 0;

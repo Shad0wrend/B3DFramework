@@ -159,13 +159,13 @@ void Input::InitRawInput()
 		return;
 
 	if(IsWindow((HWND)mWindowHandle) == 0)
-		BS_EXCEPT(InvalidStateException, "RawInputManager failed to initialized. Invalid HWND provided.")
+		B3D_EXCEPT(InvalidStateException, "RawInputManager failed to initialized. Invalid HWND provided.")
 
 	HINSTANCE hInst = GetModuleHandle(0);
 
 	HRESULT hr = DirectInput8Create(hInst, DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&mPlatformData->DirectInput, nullptr);
 	if(FAILED(hr))
-		BS_EXCEPT(InternalErrorException, "Unable to initialize DirectInput.");
+		B3D_EXCEPT(InternalErrorException, "Unable to initialize DirectInput.");
 
 	mPlatformData->KbSettings = DISCL_FOREGROUND | DISCL_NONEXCLUSIVE;
 	mPlatformData->MouseSettings = DISCL_FOREGROUND | DISCL_NONEXCLUSIVE;

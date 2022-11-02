@@ -45,7 +45,7 @@ namespace bs
 	 */
 
 	/** Structure that is used for initializing a render window. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(RenderAPI), ExportAsStruct(true), API(Framework)) RENDER_WINDOW_DESC
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(RenderAPI), ExportAsStruct(true), API(Framework)) RENDER_WINDOW_DESC
 	{
 		/** Output monitor, frame buffer resize and refresh rate. */
 		VideoMode VideoMode;
@@ -102,7 +102,7 @@ namespace bs
 		bool HideUntilSwap = false;
 
 		/** Platform-specific creation options. */
-		BS_SCRIPT_EXPORT(Exclude(true))
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		UnorderedMap<String, String> PlatformSpecific;
 	};
 

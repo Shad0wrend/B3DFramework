@@ -32,7 +32,7 @@ void ScriptGUI::StartUp()
 
 	auto createPanel = []()
 	{
-		assert(sPanel == nullptr);
+		B3D_ASSERT(sPanel == nullptr);
 
 		MonoObject* guiPanel = ScriptGUIPanel::CreateFromExisting(sGUIWidget->GetPanel());
 		sPanel = ScriptGUILayout::ToNative(guiPanel);

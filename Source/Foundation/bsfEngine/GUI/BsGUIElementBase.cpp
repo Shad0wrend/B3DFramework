@@ -432,7 +432,7 @@ LayoutSizeRange GUIElementBase::GetLayoutSizeRangeInternal() const
 
 void GUIElementBase::GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, const LayoutSizeRange& mySizeRange) const
 {
-	assert(mChildren.size() == 0);
+	B3D_ASSERT(mChildren.size() == 0);
 }
 
 void GUIElementBase::SetParentInternal(GUIElementBase* parent)
@@ -454,7 +454,7 @@ void GUIElementBase::SetParentInternal(GUIElementBase* parent)
 
 void GUIElementBase::RegisterChildElementInternal(GUIElementBase* element)
 {
-	assert(!element->IsDestroyedInternal());
+	B3D_ASSERT(!element->IsDestroyedInternal());
 
 	GUIElementBase* parentElement = element->GetParentInternal();
 	if(parentElement != nullptr)
@@ -493,7 +493,7 @@ void GUIElementBase::UnregisterChildElementInternal(GUIElementBase* element)
 	}
 
 	if(!foundElem)
-		BS_EXCEPT(InvalidParametersException, "Provided element is not a part of this element.");
+		B3D_EXCEPT(InvalidParametersException, "Provided element is not a part of this element.");
 }
 
 void GUIElementBase::DestroyChildElements()
@@ -523,12 +523,12 @@ void GUIElementBase::DestroyChildElements()
 		}
 	}
 
-	assert(mChildren.empty());
+	B3D_ASSERT(mChildren.empty());
 }
 
 void GUIElementBase::ChangeParentWidgetInternal(GUIWidget* widget)
 {
-	assert(!IsDestroyedInternal());
+	B3D_ASSERT(!IsDestroyedInternal());
 
 	if(mParentWidget != widget)
 	{

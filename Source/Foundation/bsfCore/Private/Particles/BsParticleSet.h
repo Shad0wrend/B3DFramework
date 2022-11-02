@@ -135,7 +135,7 @@ namespace bs
 		/** Copies data from @p other buffers to this object. */
 		void Copy(const ParticleSetData& other)
 		{
-			assert(Capacity >= other.Capacity);
+			B3D_ASSERT(Capacity >= other.Capacity);
 
 			B3DCopy(PrevPosition, other.PrevPosition, other.Capacity);
 			B3DCopy(Position, other.Position, other.Capacity);
@@ -203,7 +203,7 @@ namespace bs
 			// while removal will happen only once, this should be the more performant approach, but will likely be worth
 			// profiling in the future. An alternative approach is to flag dead particles without moving them.
 
-			assert(idx < mCount);
+			B3D_ASSERT(idx < mCount);
 
 			const u32 lastIdx = mCount - 1;
 			if(idx != lastIdx)

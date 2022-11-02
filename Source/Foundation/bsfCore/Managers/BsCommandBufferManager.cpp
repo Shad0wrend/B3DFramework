@@ -7,7 +7,7 @@ using namespace bs::ct;
 
 SPtr<CommandBuffer> CommandBufferManager::Create(GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary)
 {
-	assert(deviceIdx < BS_MAX_DEVICES);
+	B3D_ASSERT(deviceIdx < BS_MAX_DEVICES);
 
 	return CreateInternal(type, deviceIdx, queueIdx, secondary);
 }

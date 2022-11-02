@@ -10,7 +10,7 @@ using namespace bs::ct;
 
 GLTimerQuery::GLTimerQuery(u32 deviceIdx)
 {
-	assert(deviceIdx == 0 && "Multiple GPUs not supported natively on OpenGL.");
+	B3D_ASSERT(deviceIdx == 0 && "Multiple GPUs not supported natively on OpenGL.");
 
 	GLuint queries[2];
 	glGenQueries(2, queries);

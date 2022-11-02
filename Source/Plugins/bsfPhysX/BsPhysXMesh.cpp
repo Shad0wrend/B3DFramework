@@ -106,14 +106,14 @@ bool CookMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type, u8** data, u
 	PxCooking* cooking = GetPhysX().GetCooking();
 	if(cooking == nullptr)
 	{
-		BS_LOG(Warning, Physics, "Attempting to cook a physics mesh but cooking is not enabled globally.");
+		B3D_LOG(Warning, Physics, "Attempting to cook a physics mesh but cooking is not enabled globally.");
 		return false;
 	}
 
 	SPtr<VertexDataDesc> vertexDesc = meshData->GetVertexDesc();
 	if(!vertexDesc->HasElement(VES_POSITION))
 	{
-		BS_LOG(Warning, Physics, "Provided PhysicsMesh mesh data has no vertex positions.");
+		B3D_LOG(Warning, Physics, "Provided PhysicsMesh mesh data has no vertex positions.");
 		return false;
 	}
 
@@ -121,7 +121,7 @@ bool CookMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type, u8** data, u
 	{
 		if(!CookConvex(cooking, meshData, data, size))
 		{
-			BS_LOG(Warning, Physics, "Failed cooking a convex mesh. Perpahs it is too complex? Maximum number of "
+			B3D_LOG(Warning, Physics, "Failed cooking a convex mesh. Perpahs it is too complex? Maximum number of "
 									 "convex vertices is 256.");
 			return false;
 		}
@@ -253,7 +253,7 @@ SPtr<MeshData> FPhysXMesh::GetMeshData() const
 		{
 			PxHullPolygon face;
 			bool status = mConvexMesh->getPolygonData(i, face);
-			assert(status);
+			B3D_ASSERT(status);
 
 			numIndices += (face.mNbVerts - 2) * 3;
 		}
@@ -282,7 +282,7 @@ SPtr<MeshData> FPhysXMesh::GetMeshData() const
 		{
 			PxHullPolygon face;
 			bool status = mConvexMesh->getPolygonData(i, face);
-			assert(status);
+			B3D_ASSERT(status);
 
 			const PxU8* faceIndices = convexIndices + face.mIndexBase;
 			for(u32 j = 2; j < face.mNbVerts; j++)

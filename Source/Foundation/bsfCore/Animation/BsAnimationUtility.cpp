@@ -135,7 +135,7 @@ SPtr<TAnimationCurve<Quaternion>> AnimationUtility::EulerToQuaternionCurve(
 				Quaternion curQuat = lastQuat * partQuat;
 
 				// Ensure rotation is not over 180 degrees
-				assert(curQuat.Dot(lastQuat) >= 0.0f);
+				B3D_ASSERT(curQuat.Dot(lastQuat) >= 0.0f);
 
 				addKeyframe(curTime, curQuat);
 				lastTime = curTime;

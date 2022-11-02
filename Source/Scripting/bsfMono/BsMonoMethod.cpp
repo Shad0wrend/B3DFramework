@@ -72,7 +72,7 @@ MonoClass* MonoMethod::GetParameterType(u32 paramIdx) const
 		CacheSignature();
 
 	if(paramIdx >= mCachedNumParameters)
-		BS_EXCEPT(InvalidParametersException, "Parameter index out of range. Valid range is [0, " + ToString(mCachedNumParameters - 1) + "]");
+		B3D_EXCEPT(InvalidParametersException, "Parameter index out of range. Valid range is [0, " + ToString(mCachedNumParameters - 1) + "]");
 
 	return mCachedParameters[paramIdx];
 }
@@ -131,7 +131,7 @@ MonoMemberVisibility MonoMethod::GetVisibility()
 	else if(flags == MONO_METHOD_ATTR_PUBLIC)
 		return MonoMemberVisibility::Public;
 
-	assert(false);
+	B3D_ASSERT(false);
 	return MonoMemberVisibility::Private;
 }
 

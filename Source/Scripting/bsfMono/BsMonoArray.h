@@ -46,7 +46,7 @@ namespace bs
 		u8* GetRaw(u32 idx, u32 size)
 		{
 #if BS_DEBUG_MODE
-			assert(size == ElementSize());
+			B3D_ASSERT(size == ElementSize());
 #endif
 			return GetArrayAddrInternal(mInternal, size, idx);
 		}
@@ -59,7 +59,7 @@ namespace bs
 		T* GetRaw(u32 idx = 0)
 		{
 #if BS_DEBUG_MODE
-			assert(sizeof(T) == ElementSize());
+			B3D_ASSERT(sizeof(T) == ElementSize());
 #endif
 			return (T*)GetArrayAddrInternal(mInternal, sizeof(T), idx);
 		}

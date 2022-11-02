@@ -341,7 +341,7 @@ void FolderMonitor::startMonitor(const Path& folderPath, bool subdirectories, Fo
 {
 	if(!FileSystem::IsDirectory(folderPath))
 	{
-		BS_LOG(Error, Platform, "Provided path \"{0}\" is not a directory.", folderPath);
+		B3D_LOG(Error, Platform, "Provided path \"{0}\" is not a directory.", folderPath);
 		return;
 	}
 
@@ -351,21 +351,21 @@ void FolderMonitor::startMonitor(const Path& folderPath, bool subdirectories, Fo
 		// Identical monitor exists
 		if(monitor->folderToMonitor.equals(folderPath))
 		{
-			BS_LOG(Warning, Platform, "Folder is already monitored, cannot monitor it again.");
+			B3D_LOG(Warning, Platform, "Folder is already monitored, cannot monitor it again.");
 			return;
 		}
 
 		// This directory is part of a directory that's being monitored
 		if(monitor->monitorSubdirectories && folderPath.includes(monitor->folderToMonitor))
 		{
-			BS_LOG(Warning, Platform, "Folder is already monitored, cannot monitor it again.");
+			B3D_LOG(Warning, Platform, "Folder is already monitored, cannot monitor it again.");
 			return;
 		}
 
 		// This directory would include a directory of another monitor
 		if(subdirectories && monitor->folderToMonitor.includes(folderPath))
 		{
-			BS_LOG(Warning, Platform, "Cannot add a recursive monitor as it conflicts with a previously monitored path.");
+			B3D_LOG(Warning, Platform, "Cannot add a recursive monitor as it conflicts with a previously monitored path.");
 			return;
 		}
 	}
@@ -386,7 +386,7 @@ void FolderMonitor::startMonitor(const Path& folderPath, bool subdirectories, Fo
 		m->workerThread = B3DNew<Thread>(std::bind(&FolderMonitor::workerThreadMain, this));
 
 		if(m->workerThread == nullptr)
-			BS_LOG(Error, Platform, "Failed to create a new worker thread for folder monitoring");
+			B3D_LOG(Error, Platform, "Failed to create a new worker thread for folder monitoring");
 	}
 }
 

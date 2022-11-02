@@ -15,7 +15,7 @@ ScriptResourceBase::ScriptResourceBase(MonoObject* instance)
 
 ScriptResourceBase::~ScriptResourceBase()
 {
-	BS_ASSERT(mGCHandle == 0 && "Object being destroyed without its managed instance being freed first.");
+	B3D_ASSERT(mGCHandle == 0 && "Object being destroyed without its managed instance being freed first.");
 }
 
 MonoObject* ScriptResourceBase::GetManagedInstance() const
@@ -38,7 +38,7 @@ MonoObject* ScriptResourceBase::GetRRef(const HResource& resource, u32 rttiId)
 
 void ScriptResourceBase::SetManagedInstance(::MonoObject* instance)
 {
-	BS_ASSERT(mGCHandle == 0 && "Attempting to set a new managed instance without freeing the old one.");
+	B3D_ASSERT(mGCHandle == 0 && "Attempting to set a new managed instance without freeing the old one.");
 
 	mGCHandle = MonoUtil::NewGcHandle(instance, false);
 }

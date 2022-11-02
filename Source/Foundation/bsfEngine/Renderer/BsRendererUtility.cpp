@@ -209,7 +209,7 @@ void RendererUtility::Draw(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u
 		for(auto iter = vertexBuffers.begin(); iter != vertexBuffers.end(); ++iter)
 		{
 			if(iter->first >= BS_MAX_BOUND_VERTEX_BUFFERS)
-				BS_EXCEPT(InvalidParametersException, "Buffer index out of range");
+				B3D_EXCEPT(InvalidParametersException, "Buffer index out of range");
 
 			startSlot = std::min(iter->first, startSlot);
 			endSlot = std::max(iter->first, endSlot);
@@ -250,7 +250,7 @@ void RendererUtility::DrawMorph(const SPtr<MeshBase>& mesh, const SubMesh& subMe
 	for(auto iter = meshBuffers.begin(); iter != meshBuffers.end(); ++iter)
 	{
 		if(iter->first >= BS_MAX_BOUND_VERTEX_BUFFERS)
-			BS_EXCEPT(InvalidParametersException, "Buffer index out of range");
+			B3D_EXCEPT(InvalidParametersException, "Buffer index out of range");
 
 		startSlot = std::min(iter->first, startSlot);
 		endSlot = std::max(iter->first, endSlot);

@@ -41,7 +41,7 @@ namespace bs
 		 */
 		physx::PxTriangleMesh* GetTriangleInternal() const
 		{
-			assert(mType == PhysicsMeshType::Triangle);
+			B3D_ASSERT(mType == PhysicsMeshType::Triangle);
 			return mTriangleMesh;
 		}
 
@@ -51,7 +51,7 @@ namespace bs
 		 */
 		physx::PxConvexMesh* GetConvexInternal() const
 		{
-			assert(mType == PhysicsMeshType::Convex);
+			B3D_ASSERT(mType == PhysicsMeshType::Convex);
 			return mConvexMesh;
 		}
 

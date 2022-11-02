@@ -46,7 +46,7 @@ namespace bs
 
 			~MemBlock()
 			{
-				assert(FreeElems == ElemsPerBlock && "Not all elements were deallocated from a block.");
+				B3D_ASSERT(FreeElems == ElemsPerBlock && "Not all elements were deallocated from a block.");
 			}
 
 			/**
@@ -147,7 +147,7 @@ namespace bs
 				curBlock = curBlock->NextBlock;
 			}
 
-			assert(false);
+			B3D_ASSERT(false);
 		}
 
 		/** Allocates and constructs a single pool element. */

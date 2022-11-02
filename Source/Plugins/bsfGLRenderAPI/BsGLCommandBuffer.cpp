@@ -9,7 +9,7 @@ GLCommandBuffer::GLCommandBuffer(GpuQueueType type, u32 deviceIdx, u32 queueIdx,
 	: CommandBuffer(type, deviceIdx, queueIdx, secondary)
 {
 	if(deviceIdx != 0)
-		BS_EXCEPT(InvalidParametersException, "Only a single device supported on OpenGL.");
+		B3D_EXCEPT(InvalidParametersException, "Only a single device supported on OpenGL.");
 }
 
 void GLCommandBuffer::QueueCommand(const std::function<void()> command)
@@ -17,7 +17,7 @@ void GLCommandBuffer::QueueCommand(const std::function<void()> command)
 #if BS_DEBUG_MODE
 	if(GetState() == CommandBufferState::Executing)
 	{
-		BS_LOG(Error, RenderBackend, "Cannot modify a command buffer that's still executing.");
+		B3D_LOG(Error, RenderBackend, "Cannot modify a command buffer that's still executing.");
 		return;
 	}
 #endif
@@ -35,13 +35,13 @@ void GLCommandBuffer::ExecuteCommands()
 #if BS_DEBUG_MODE
 	if(mIsSecondary)
 	{
-		BS_LOG(Error, RenderBackend, "Cannot execute commands on a secondary buffer.");
+		B3D_LOG(Error, RenderBackend, "Cannot execute commands on a secondary buffer.");
 		return;
 	}
 
 	if(GetState() == CommandBufferState::Executing)
 	{
-		BS_LOG(Error, RenderBackend, "Cannot submit a command buffer that's still executing.");
+		B3D_LOG(Error, RenderBackend, "Cannot submit a command buffer that's still executing.");
 		return;
 	}
 #endif

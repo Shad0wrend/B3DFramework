@@ -101,8 +101,8 @@ void ScriptArray::SetArrayValInternal(MonoArray* array, u32 idx, const u8* value
 	::MonoClass* arrayClass = mono_object_get_class((MonoObject*)(array));
 	::MonoClass* elementClass = mono_class_get_element_class(arrayClass);
 
-	BS_ASSERT((u32)mono_class_array_element_size(elementClass) == size);
-	BS_ASSERT((idx + count) <= mono_array_length(array));
+	B3D_ASSERT((u32)mono_class_array_element_size(elementClass) == size);
+	B3D_ASSERT((idx + count) <= mono_array_length(array));
 
 	if(mono_class_is_valuetype(elementClass))
 		mono_value_copy_array(array, idx, (void*)value, count);

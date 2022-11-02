@@ -419,7 +419,7 @@ ParticlePerFrameData* ParticleManager::Update(const EvaluatedAnimationData& anim
 			{
 				Lock lock(mMutex);
 
-				assert(mNumActiveWorkers > 0);
+				B3D_ASSERT(mNumActiveWorkers > 0);
 				mNumActiveWorkers--;
 
 				if(simulationDataCPU)
@@ -452,7 +452,7 @@ ParticlePerFrameData* ParticleManager::Update(const EvaluatedAnimationData& anim
 
 void ParticleManager::SortParticles(const ParticleSet& set, ParticleSortMode sortMode, const Vector3& viewPoint, u32* indices)
 {
-	assert(sortMode != ParticleSortMode::None);
+	B3D_ASSERT(sortMode != ParticleSortMode::None);
 
 	struct ParticleSortData
 	{

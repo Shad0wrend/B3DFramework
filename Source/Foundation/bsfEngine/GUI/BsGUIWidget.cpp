@@ -98,7 +98,7 @@ void GUIDrawGroups::Add(GUIGroupElement& groupElement, u32 renderElementIdx, u32
 	u32 elemDepth = element->GetDepthInternal() + renderElement.Depth;
 
 	SpriteMaterial* spriteMaterial = renderElement.Material;
-	assert(spriteMaterial != nullptr);
+	B3D_ASSERT(spriteMaterial != nullptr);
 
 	GUIDrawGroup& group = mDrawGroups[groupIdx];
 	if(spriteMaterial->AllowBatching())
@@ -158,7 +158,7 @@ void GUIDrawGroups::Remove(GUIGroupElement& groupElement, u32 renderElementIdx)
 	auto iterFind = std::find_if(mDrawGroups.begin(), mDrawGroups.end(), [drawGroupId = groupElement.Groups[renderElementIdx]](const GUIDrawGroup& group)
 								 { return group.Id == drawGroupId; });
 
-	assert(iterFind != mDrawGroups.end());
+	B3D_ASSERT(iterFind != mDrawGroups.end());
 	if(iterFind != mDrawGroups.end())
 	{
 		u32 idx = (u32)(iterFind - mDrawGroups.begin());
@@ -197,7 +197,7 @@ void GUIDrawGroups::Remove(GUIGroupElement& groupElement, u32 renderElementIdx, 
 	// Attempt to merge with previous group
 	if(group.NonCachedElements.empty() && group.MinDepth > 0)
 	{
-		assert(groupIdx > 0);
+		B3D_ASSERT(groupIdx > 0);
 
 		u32 prevGroupIdx = groupIdx - 1;
 		GUIDrawGroup& prevGroup = mDrawGroups[prevGroupIdx];
@@ -207,7 +207,7 @@ void GUIDrawGroups::Remove(GUIGroupElement& groupElement, u32 renderElementIdx, 
 		for(auto& entry : group.CachedElements)
 		{
 			auto iterFind = mElements.find(entry.Element);
-			assert(iterFind != mElements.end());
+			B3D_ASSERT(iterFind != mElements.end());
 			if(iterFind != mElements.end())
 				iterFind->second.Groups[entry.RenderElementIdx] = prevGroup.Id;
 
@@ -267,12 +267,12 @@ GUIDrawGroupRenderDataUpdate GUIDrawGroups::RebuildDirty(bool forceRebuildMeshes
 			i32 drawGroupId = groupElement.Groups[i];
 
 			// All render elements draw group IDs should be assigned at this point
-			assert(drawGroupId != -1);
+			B3D_ASSERT(drawGroupId != -1);
 
 			auto iterFind2 = std::find_if(mDrawGroups.begin(), mDrawGroups.end(), [drawGroupId](const GUIDrawGroup& group)
 										  { return group.Id == drawGroupId; });
 
-			assert(iterFind2 != mDrawGroups.end());
+			B3D_ASSERT(iterFind2 != mDrawGroups.end());
 			if(iterFind2 != mDrawGroups.end())
 			{
 				GUIDrawGroup& group = *iterFind2;
@@ -408,7 +408,7 @@ GUIDrawGroupRenderDataUpdate GUIDrawGroups::RebuildDirty(bool forceRebuildMeshes
 			auto* element = const_cast<GUIElement*>(entry.first);
 			auto iterFind = mElements.find(element);
 
-			assert(iterFind != mElements.end());
+			B3D_ASSERT(iterFind != mElements.end());
 			if(iterFind == mElements.end())
 				continue;
 
@@ -520,7 +520,7 @@ void GUIDrawGroups::RebuildMeshes()
 
 				SpriteMaterial* spriteMaterial = renderElem.Material;
 				const SpriteMaterialInfo& matInfo = *renderElem.MatInfo;
-				assert(spriteMaterial != nullptr);
+				B3D_ASSERT(spriteMaterial != nullptr);
 
 				u64 hash = spriteMaterial->GetMergeHash(matInfo);
 				FrameVector<GUIMaterialGroup>& groupsPerMaterial = materialGroups[hash];
@@ -600,10 +600,10 @@ void GUIDrawGroups::RebuildMeshes()
 					foundGroup->MinDepth = std::min(foundGroup->MinDepth, elemDepth);
 
 					// It's expected that GUI element doesn't use same material for different mesh types so this should always be true
-					assert(renderElem.Type == foundGroup->MeshType);
+					B3D_ASSERT(renderElem.Type == foundGroup->MeshType);
 
 					// Draw groups are super-set of material groups, so a material group cannot cross a draw group boundary
-					assert(foundGroup->DrawGroup == &entry);
+					B3D_ASSERT(foundGroup->DrawGroup == &entry);
 
 					foundGroup->NumVertices += renderElem.NumVertices;
 					foundGroup->NumIndices += renderElem.NumIndices;
@@ -740,7 +740,7 @@ void GUIDrawGroups::RebuildMeshes()
 GUIDrawGroups::GUIDrawGroup& GUIDrawGroups::Split(u32 groupIdx, u32 depth)
 {
 	GUIDrawGroup& group = mDrawGroups[groupIdx];
-	assert(depth > group.MinDepth);
+	B3D_ASSERT(depth > group.MinDepth);
 
 	u32 maxDepth = group.MinDepth + group.DepthRange;
 	group.DepthRange = depth - group.MinDepth;
@@ -761,7 +761,7 @@ GUIDrawGroups::GUIDrawGroup& GUIDrawGroups::Split(u32 groupIdx, u32 depth)
 	for(auto& entry : newSplitGroup.CachedElements)
 	{
 		auto iterFind = mElements.find(entry.Element);
-		assert(iterFind != mElements.end());
+		B3D_ASSERT(iterFind != mElements.end());
 		if(iterFind != mElements.end())
 			iterFind->second.Groups[entry.RenderElementIdx] = newSplitGroup.Id;
 	}
@@ -1018,7 +1018,7 @@ void GUIWidget::UpdateLayoutInternal()
 		if(currentElem->IsDirtyInternal())
 		{
 			GUIElementBase* updateParent = currentElem->GetUpdateParentInternal();
-			assert(updateParent != nullptr || currentElem == mPanel);
+			B3D_ASSERT(updateParent != nullptr || currentElem == mPanel);
 
 			if(updateParent != nullptr)
 				UpdateLayoutInternal(updateParent);
@@ -1096,7 +1096,7 @@ void GUIWidget::UpdateLayoutInternal(GUIElementBase* elem)
 
 void GUIWidget::RegisterElementInternal(GUIElementBase* elem)
 {
-	assert(elem != nullptr && !elem->IsDestroyedInternal());
+	B3D_ASSERT(elem != nullptr && !elem->IsDestroyedInternal());
 
 	if(elem->GetTypeInternal() == GUIElementBase::Type::Element)
 	{
@@ -1112,7 +1112,7 @@ void GUIWidget::RegisterElementInternal(GUIElementBase* elem)
 
 void GUIWidget::UnregisterElementInternal(GUIElementBase* elem)
 {
-	assert(elem != nullptr);
+	B3D_ASSERT(elem != nullptr);
 
 	auto iterFind = std::find(begin(mElements), end(mElements), elem);
 

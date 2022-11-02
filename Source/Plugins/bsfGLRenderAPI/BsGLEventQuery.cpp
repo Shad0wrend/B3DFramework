@@ -9,7 +9,7 @@ using namespace bs::ct;
 
 GLEventQuery::GLEventQuery(u32 deviceIdx)
 {
-	assert(deviceIdx == 0 && "Multiple GPUs not supported natively on OpenGL.");
+	B3D_ASSERT(deviceIdx == 0 && "Multiple GPUs not supported natively on OpenGL.");
 
 	glGenQueries(1, &mQueryObj);
 	BS_CHECK_GL_ERROR();

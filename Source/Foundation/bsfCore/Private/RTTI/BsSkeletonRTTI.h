@@ -25,7 +25,7 @@ namespace bs
 		{
 			obj->mNumBones = size;
 
-			assert(obj->mInvBindPoses == nullptr);
+			B3D_ASSERT(obj->mInvBindPoses == nullptr);
 			obj->mInvBindPoses = B3DNewMultiple<Matrix4>(size);
 		}
 
@@ -37,7 +37,7 @@ namespace bs
 		{
 			obj->mNumBones = size;
 
-			assert(obj->mBoneInfo == nullptr);
+			B3D_ASSERT(obj->mBoneInfo == nullptr);
 			obj->mBoneInfo = B3DNewMultiple<SkeletonBoneInfo>(size);
 		}
 
@@ -49,7 +49,7 @@ namespace bs
 		{
 			obj->mNumBones = size;
 
-			assert(obj->mBoneTransforms == nullptr);
+			B3D_ASSERT(obj->mBoneTransforms == nullptr);
 			obj->mBoneTransforms = B3DNewMultiple<Transform>(size);
 		}
 

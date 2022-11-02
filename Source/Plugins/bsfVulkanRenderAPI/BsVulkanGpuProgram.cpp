@@ -91,7 +91,7 @@ void VulkanGpuProgram::Initialize()
 		u32 workgroupSize[3] = { 1, 1, 1 };
 		if(mType == GPT_COMPUTE_PROGRAM)
 		{
-			assert(codeSize > sizeof(workgroupSize));
+			B3D_ASSERT(codeSize > sizeof(workgroupSize));
 
 			memcpy(workgroupSize, code, sizeof(workgroupSize));
 			code += sizeof(workgroupSize);
@@ -118,7 +118,7 @@ void VulkanGpuProgram::Initialize()
 
 				VkShaderModule shaderModule;
 				VkResult result = vkCreateShaderModule(vkDevice, &moduleCI, gVulkanAllocator, &shaderModule);
-				assert(result == VK_SUCCESS);
+				B3D_ASSERT(result == VK_SUCCESS);
 
 #if BS_PLATFORM == BS_PLATFORM_OSX
 				if(mType == GPT_COMPUTE_PROGRAM)

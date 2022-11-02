@@ -228,7 +228,7 @@ void D3D11RenderWindow::SwapBuffers(u32 syncMask)
 		HRESULT hr = mSwapChain->Present(GetProperties().Vsync ? GetProperties().VsyncInterval : 0, 0);
 
 		if(FAILED(hr))
-			BS_EXCEPT(RenderingAPIException, "Error Presenting surfaces");
+			B3D_EXCEPT(RenderingAPIException, "Error Presenting surfaces");
 	}
 }
 
@@ -577,7 +577,7 @@ void D3D11RenderWindow::CopyToMemory(PixelData& dst, FrameBuffer buffer)
 		if(FAILED(hr) || mDevice.HasError())
 		{
 			String errorDescription = mDevice.GetErrorDescription();
-			BS_EXCEPT(RenderingAPIException, "Error creating texture\nError Description:" + errorDescription);
+			B3D_EXCEPT(RenderingAPIException, "Error creating texture\nError Description:" + errorDescription);
 		}
 
 		mDevice.GetImmediateContext()->ResolveSubresource(backbuffer, D3D11CalcSubresource(0, 0, 1), mBackBuffer, D3D11CalcSubresource(0, 0, 1), desc.Format);
@@ -597,7 +597,7 @@ void D3D11RenderWindow::CopyToMemory(PixelData& dst, FrameBuffer buffer)
 	if(FAILED(hr) || mDevice.HasError())
 	{
 		String errorDescription = mDevice.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Error creating texture\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "Error creating texture\nError Description:" + errorDescription);
 	}
 
 	// Copy the back buffer
@@ -700,7 +700,7 @@ void D3D11RenderWindow::CreateSwapChain()
 	SAFE_RELEASE(pDXGIDevice);
 
 	if(FAILED(hr))
-		BS_EXCEPT(RenderingAPIException, "Unable to create swap chain. Error code: " + ToString(hr));
+		B3D_EXCEPT(RenderingAPIException, "Unable to create swap chain. Error code: " + ToString(hr));
 
 	BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_SwapChain);
 }
@@ -711,9 +711,9 @@ void D3D11RenderWindow::CreateSizeDependedD3DResources()
 
 	HRESULT hr = mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&mBackBuffer);
 	if(FAILED(hr))
-		BS_EXCEPT(RenderingAPIException, "Unable to Get Back Buffer for swap chain");
+		B3D_EXCEPT(RenderingAPIException, "Unable to Get Back Buffer for swap chain");
 
-	assert(mBackBuffer && !mRenderTargetView);
+	B3D_ASSERT(mBackBuffer && !mRenderTargetView);
 
 	D3D11_TEXTURE2D_DESC BBDesc;
 	mBackBuffer->GetDesc(&BBDesc);
@@ -729,7 +729,7 @@ void D3D11RenderWindow::CreateSizeDependedD3DResources()
 	if(FAILED(hr))
 	{
 		String errorDescription = mDevice.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Unable to create rendertagert view\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "Unable to create rendertagert view\nError Description:" + errorDescription);
 	}
 
 	mDepthStencilView = nullptr;
@@ -767,7 +767,7 @@ void D3D11RenderWindow::ResizeSwapChainBuffers(u32 width, u32 height)
 	HRESULT hr = mSwapChain->ResizeBuffers(mSwapChainDesc.BufferCount, width, height, mSwapChainDesc.BufferDesc.Format, Flags);
 
 	if(hr != S_OK)
-		BS_EXCEPT(InternalErrorException, "Call to ResizeBuffers failed.");
+		B3D_EXCEPT(InternalErrorException, "Call to ResizeBuffers failed.");
 
 	mSwapChain->GetDesc(&mSwapChainDesc);
 	mProperties.Width = mSwapChainDesc.BufferDesc.Width;
@@ -783,14 +783,14 @@ IDXGIDevice* D3D11RenderWindow::QueryDxgiDevice()
 {
 	if(mDevice.GetD3D11Device() == nullptr)
 	{
-		BS_EXCEPT(RenderingAPIException, "D3D11Device is null.");
+		B3D_EXCEPT(RenderingAPIException, "D3D11Device is null.");
 	}
 
 	IDXGIDevice* pDXGIDevice = nullptr;
 	HRESULT hr = mDevice.GetD3D11Device()->QueryInterface(__uuidof(IDXGIDevice), (void**)&pDXGIDevice);
 
 	if(FAILED(hr))
-		BS_EXCEPT(RenderingAPIException, "Unable to query a DXGIDevice.");
+		B3D_EXCEPT(RenderingAPIException, "Unable to query a DXGIDevice.");
 
 	return pDXGIDevice;
 }

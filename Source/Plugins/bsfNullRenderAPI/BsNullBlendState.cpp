@@ -36,7 +36,7 @@ void NullBlendState::createInternal()
 	if(FAILED(hr) || device.hasError())
 	{
 		String errorDescription = device.getErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create blend state.\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create blend state.\nError Description:" + errorDescription);
 	}
 
 	BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_BlendState);

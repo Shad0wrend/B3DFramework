@@ -13,34 +13,34 @@ namespace bs
 	 */
 
 	/**	Contains textures and data about every character for a bitmap font of a specific size. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(GUI_Engine)) FontBitmap : public IReflectable
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI_Engine)) FontBitmap : public IReflectable
 	{
 		/**	Returns a character description for the character with the specified Unicode key. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		const CharDesc& GetCharDesc(u32 charId) const;
 
 		/** Font size for which the data is contained. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		u32 Size;
 
 		/** Y offset to the baseline on which the characters are placed, in pixels. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		i32 BaselineOffset;
 
 		/** Height of a single line of the font, in pixels. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		u32 LineHeight;
 
 		/** Character to use when data for a character is missing. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		CharDesc MissingGlyph;
 
 		/** Width of a space in pixels. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		u32 SpaceWidth;
 
 		/** Textures in which the character's pixels are stored. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		Vector<HTexture> TexturePages;
 
 		/** All characters in the font referenced by character ID. */
@@ -59,7 +59,7 @@ namespace bs
 	 * Font resource containing data about textual characters and how to render text. Contains one or multiple font
 	 * bitmaps, each for a specific size.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(GUI_Engine)) Font : public Resource
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(GUI_Engine)) Font : public Resource
 	{
 	public:
 		virtual ~Font() = default;
@@ -70,7 +70,7 @@ namespace bs
 		 * @param[in]	size	Size of the bitmap in points.
 		 * @return				Bitmap object if it exists, false otherwise.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		SPtr<FontBitmap> GetBitmap(u32 size) const;
 
 		/**
@@ -79,7 +79,7 @@ namespace bs
 		 * @param[in]	size	Size of the bitmap in points.
 		 * @return				Nearest available bitmap size.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		i32 GetClosestSize(u32 size) const;
 
 		/**	Creates a new font from the provided per-size font data. */

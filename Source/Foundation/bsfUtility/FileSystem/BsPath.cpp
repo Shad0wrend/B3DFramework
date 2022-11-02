@@ -380,7 +380,7 @@ const String& Path::GetDirectory(u32 idx) const
 {
 	if(idx >= (u32)mDirectories.size())
 	{
-		BS_EXCEPT(InvalidParametersException, "Index out of range: " + bs::ToString(idx) + ". Valid range: [0, " + bs::ToString((u32)mDirectories.size() - 1) + "]");
+		B3D_EXCEPT(InvalidParametersException, "Index out of range: " + bs::ToString(idx) + ". Valid range: [0, " + bs::ToString((u32)mDirectories.size() - 1) + "]");
 	}
 
 	return mDirectories[idx];
@@ -407,7 +407,7 @@ void Path::Clear()
 
 void Path::ThrowInvalidPathException(const String& path) const
 {
-	BS_EXCEPT(InvalidParametersException, "Incorrectly formatted path provided: " + path);
+	B3D_EXCEPT(InvalidParametersException, "Incorrectly formatted path provided: " + path);
 }
 
 String Path::BuildWindows() const

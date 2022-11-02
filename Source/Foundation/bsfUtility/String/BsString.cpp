@@ -768,6 +768,6 @@ bool IsNumber(const WString& val)
 
 void StringThrowDataOverflowException()
 {
-	BS_EXCEPT(InternalErrorException, "Data overflow! Size doesn't fit into 32 bits.");
+	B3D_EXCEPT(InternalErrorException, "Data overflow! Size doesn't fit into 32 bits.");
 }
 } // namespace bs

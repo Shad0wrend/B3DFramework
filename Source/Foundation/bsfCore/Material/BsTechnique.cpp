@@ -49,7 +49,7 @@ template <bool Core>
 SPtr<typename TTechnique<Core>::PassType> TTechnique<Core>::GetPass(u32 idx) const
 {
 	if(idx < 0 || idx >= (u32)mPasses.size())
-		BS_EXCEPT(InvalidParametersException, "Index out of range: " + ToString(idx));
+		B3D_EXCEPT(InvalidParametersException, "Index out of range: " + ToString(idx));
 
 	return mPasses[idx];
 }

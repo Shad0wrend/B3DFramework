@@ -20,7 +20,7 @@ namespace bs
 	 */
 
 	/** Descriptor structure used for initialization of a VectorField. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(VectorFieldOptions)) VECTOR_FIELD_DESC
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(VectorFieldOptions)) VECTOR_FIELD_DESC
 	{
 		/** Number of entries in the vector field along the X axis. */
 		u32 CountX = 1;
@@ -77,7 +77,7 @@ namespace bs
 	 * Represents a three dimensional field of vectors. It is represented by spatial bounds which are split into a grid
 	 * of values with user-defined density, where each grid cell is assigned a vector.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) VectorField : public Resource, public TVectorField<false>
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) VectorField : public Resource, public TVectorField<false>
 	{
 	public:
 		/**	Retrieves a core implementation of a vector field usable only from the core thread. */
@@ -94,7 +94,7 @@ namespace bs
 		 * @param[in]	values	Values to assign to the vector field. Number of entries must match
 		 *						countX * countY * countZ.
 		 */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static HVectorField Create(const VECTOR_FIELD_DESC& desc, const Vector<Vector3>& values);
 
 		/** @name Internal

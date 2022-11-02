@@ -288,7 +288,7 @@ namespace bs
 			const GpuParamDataTypeInfo& typeInfo = GpuParams::kParamSizes.Lookup[dataType];
 			u32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
-			assert(sizeof(output) == paramTypeSize);
+			B3D_ASSERT(sizeof(output) == paramTypeSize);
 			memcpy(&output, &mDataParamsBuffer[paramInfo.Offset], paramTypeSize);
 		}
 
@@ -318,7 +318,7 @@ namespace bs
 			const GpuParamDataTypeInfo& typeInfo = GpuParams::kParamSizes.Lookup[dataType];
 			u32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
-			assert(sizeof(input) == paramTypeSize);
+			B3D_ASSERT(sizeof(input) == paramTypeSize);
 			memcpy(&mDataParamsBuffer[paramInfo.Offset], &input, paramTypeSize);
 
 			param.Version = ++mParamVersion;

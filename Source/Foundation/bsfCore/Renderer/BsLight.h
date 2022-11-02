@@ -18,13 +18,13 @@ namespace bs
 	 */
 
 	/** Light type that determines how is light information parsed by the renderer and other systems. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) LightType
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) LightType
 	{
 		Directional,
 		Radial,
 		Spot,
 
-		Count BS_SCRIPT_EXPORT(Exclude(true)) // Keep at end
+		Count B3D_SCRIPT_EXPORT(Exclude(true)) // Keep at end
 	};
 
 	/** @} */

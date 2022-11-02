@@ -120,7 +120,7 @@ namespace bs
 	 * @note
 	 * Sim thread unless noted otherwise. Retrieve core implementation from getCore() for core thread only functionality.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderTarget : public IReflectable, public CoreObject
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderTarget : public IReflectable, public CoreObject
 	{
 	public:
 		RenderTarget();

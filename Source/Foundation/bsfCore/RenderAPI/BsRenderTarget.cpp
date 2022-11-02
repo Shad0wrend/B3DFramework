@@ -40,7 +40,7 @@ const RenderTargetProperties& RenderTarget::GetProperties() const
 
 void RenderTarget::GetCustomAttribute(const String& name, void* pData) const
 {
-	BS_EXCEPT(InvalidParametersException, "Attribute not found.");
+	B3D_EXCEPT(InvalidParametersException, "Attribute not found.");
 }
 
 /************************************************************************/
@@ -77,6 +77,6 @@ const RenderTargetProperties& RenderTarget::GetProperties() const
 
 void RenderTarget::GetCustomAttribute(const String& name, void* pData) const
 {
-	BS_EXCEPT(InvalidParametersException, "Attribute not found.");
+	B3D_EXCEPT(InvalidParametersException, "Attribute not found.");
 }
 }}

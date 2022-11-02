@@ -31,7 +31,7 @@ struct VertexConnectivity
 				u32 vertexIdx = 0;
 				memcpy(&vertexIdx, indices + idx * indexSize, indexSize);
 
-				assert(vertexIdx < mNumVertices);
+				B3D_ASSERT(vertexIdx < mNumVertices);
 				struct VertexFaces& faces = VertexFaces[vertexIdx];
 				if(faces.NumFaces >= mMaxFacesPerVertex)
 					ResizeFaceArray(mMaxFacesPerVertex * 2);
@@ -589,7 +589,7 @@ void TriangleClipper2D::ConvertToMesh(const std::function<void(Vector2*, Vector2
 
 		// Note: Consider using Delaunay triangulation to avoid skinny triangles
 		u32 numWritten = 0;
-		assert(kBufferSize % 3 == 0);
+		B3D_ASSERT(kBufferSize % 3 == 0);
 		for(auto& face : allFaces)
 		{
 			for(u32 i = 0; i < (u32)face.size() - 2; i++)
@@ -688,7 +688,7 @@ void TriangleClipper3D::ConvertToMesh(const std::function<void(Vector3*, Vector2
 
 		// Note: Consider using Delaunay triangulation to avoid skinny triangles
 		u32 numWritten = 0;
-		assert(kBufferSize % 3 == 0);
+		B3D_ASSERT(kBufferSize % 3 == 0);
 		for(auto& face : allFaces)
 		{
 			for(u32 i = 0; i < (u32)face.size() - 2; i++)

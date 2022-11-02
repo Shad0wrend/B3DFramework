@@ -26,9 +26,9 @@ void FreeImageLoadErrorHandler(FREE_IMAGE_FORMAT fif, const char* message)
 	// Callback method as required by FreeImage to report problems
 	const char* typeName = FreeImage_GetFormatFromFIF(fif);
 	if(typeName)
-		BS_LOG(Error, FreeImageImporter, "FreeImage error: '{0}' when loading format {1}", message, typeName);
+		B3D_LOG(Error, FreeImageImporter, "FreeImage error: '{0}' when loading format {1}", message, typeName);
 	else
-		BS_LOG(Error, FreeImageImporter, "FreeImage error: '{0}'", message);
+		B3D_LOG(Error, FreeImageImporter, "FreeImage error: '{0}'", message);
 }
 
 FreeImgImporter::FreeImgImporter()
@@ -222,7 +222,7 @@ SPtr<PixelData> FreeImgImporter::ImportRawImage(const Path& filePath)
 		SPtr<DataStream> fileData = FileSystem::OpenFile(filePath, true);
 		if(fileData->Size() > std::numeric_limits<u32>::max())
 		{
-			BS_EXCEPT(InternalErrorException, "File size larger than supported!");
+			B3D_EXCEPT(InternalErrorException, "File size larger than supported!");
 		}
 
 		u32 magicLen = std::min((u32)fileData->Size(), 32u);
@@ -234,7 +234,7 @@ SPtr<PixelData> FreeImgImporter::ImportRawImage(const Path& filePath)
 		auto findFormat = mExtensionToFID.find(fileExtension);
 		if(findFormat == mExtensionToFID.end())
 		{
-			BS_EXCEPT(InvalidParametersException, "Type of the file provided is not supported by this importer. File type: " + fileExtension);
+			B3D_EXCEPT(InvalidParametersException, "Type of the file provided is not supported by this importer. File type: " + fileExtension);
 		}
 
 		imageFormat = (FREE_IMAGE_FORMAT)findFormat->second;
@@ -256,7 +256,7 @@ SPtr<PixelData> FreeImgImporter::ImportRawImage(const Path& filePath)
 		(FREE_IMAGE_FORMAT)imageFormat, fiMem);
 	if(!fiBitmap)
 	{
-		BS_EXCEPT(InternalErrorException, "Error decoding image");
+		B3D_EXCEPT(InternalErrorException, "Error decoding image");
 	}
 
 	u32 width = FreeImage_GetWidth(fiBitmap);
@@ -278,7 +278,7 @@ SPtr<PixelData> FreeImgImporter::ImportRawImage(const Path& filePath)
 	case FIT_INT32:
 	case FIT_DOUBLE:
 	default:
-		BS_EXCEPT(InternalErrorException, "Unknown or unsupported image format");
+		B3D_EXCEPT(InternalErrorException, "Unknown or unsupported image format");
 
 		break;
 	case FIT_BITMAP:
@@ -318,12 +318,12 @@ SPtr<PixelData> FreeImgImporter::ImportRawImage(const Path& filePath)
 			// cannot be 16-bit greyscale since that's FIT_u16
 			if(FreeImage_GetGreenMask(fiBitmap) == FI16_565_GREEN_MASK)
 			{
-				assert(false && "Format not supported by the engine. TODO.");
+				B3D_ASSERT(false && "Format not supported by the engine. TODO.");
 				return nullptr;
 			}
 			else
 			{
-				assert(false && "Format not supported by the engine. TODO.");
+				B3D_ASSERT(false && "Format not supported by the engine. TODO.");
 				return nullptr;
 				// FreeImage doesn't support 4444 format so must be 1555
 			}
@@ -353,7 +353,7 @@ SPtr<PixelData> FreeImgImporter::ImportRawImage(const Path& filePath)
 	case FIT_UINT16:
 	case FIT_INT16:
 		// 16-bit greyscale
-		assert(false && "No INT pixel formats supported currently. TODO.");
+		B3D_ASSERT(false && "No INT pixel formats supported currently. TODO.");
 		return nullptr;
 		break;
 	case FIT_FLOAT:
@@ -631,7 +631,7 @@ bool FreeImgImporter::GenerateCubemap(const SPtr<PixelData>& source, CubemapSour
 			}
 			else
 			{
-				BS_LOG(Warning, FreeImageImporter, "Unable to generate a cubemap: unrecognized face configuration.");
+				B3D_LOG(Warning, FreeImageImporter, "Unable to generate a cubemap: unrecognized face configuration.");
 				return false;
 			}
 		}
@@ -656,13 +656,13 @@ bool FreeImgImporter::GenerateCubemap(const SPtr<PixelData>& source, CubemapSour
 
 	if(faceSize.X != faceSize.Y)
 	{
-		BS_LOG(Warning, FreeImageImporter, "Unable to generate a cubemap: width & height must match.");
+		B3D_LOG(Warning, FreeImageImporter, "Unable to generate a cubemap: width & height must match.");
 		return false;
 	}
 
 	if(!Bitwise::IsPow2(faceSize.X))
 	{
-		BS_LOG(Warning, FreeImageImporter, "Unable to generate a cubemap: width & height must be powers of 2.");
+		B3D_LOG(Warning, FreeImageImporter, "Unable to generate a cubemap: width & height must be powers of 2.");
 		return false;
 	}
 

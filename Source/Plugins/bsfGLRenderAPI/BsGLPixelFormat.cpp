@@ -326,7 +326,7 @@ GLenum GLPixelUtil::GetDepthStencilTypeFromPf(PixelFormat format)
 		break;
 	}
 
-	BS_LOG(Error, RenderBackend, "Invalid depth stencil format");
+	B3D_LOG(Error, RenderBackend, "Invalid depth stencil format");
 	return PF_D32_S8X24;
 }
 
@@ -346,7 +346,7 @@ GLenum GLPixelUtil::GetDepthStencilFormatFromPf(PixelFormat format)
 		break;
 	}
 
-	BS_LOG(Error, RenderBackend, "Invalid depth stencil format");
+	B3D_LOG(Error, RenderBackend, "Invalid depth stencil format");
 	return GL_DEPTH_STENCIL;
 }
 

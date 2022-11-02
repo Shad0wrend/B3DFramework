@@ -75,7 +75,7 @@ void VulkanSamplerState::CreateInternal()
 
 		VkSampler sampler;
 		VkResult result = vkCreateSampler(devices[i]->GetLogical(), &samplerInfo, gVulkanAllocator, &sampler);
-		assert(result == VK_SUCCESS);
+		B3D_ASSERT(result == VK_SUCCESS);
 
 		mSamplers[i] = devices[i]->GetResourceManager().Create<VulkanSampler>(sampler);
 	}

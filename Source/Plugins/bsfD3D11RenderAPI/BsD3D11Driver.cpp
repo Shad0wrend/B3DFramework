@@ -39,7 +39,7 @@ D3D11Driver::~D3D11Driver()
 
 void D3D11Driver::Construct()
 {
-	assert(mDXGIAdapter != nullptr);
+	B3D_ASSERT(mDXGIAdapter != nullptr);
 
 	u32 outputIdx = 0;
 	IDXGIOutput* output = nullptr;
@@ -103,7 +103,7 @@ DXGI_OUTPUT_DESC D3D11Driver::GetOutputDesc(u32 adapterOutputIdx) const
 	IDXGIOutput* output = nullptr;
 	if(mDXGIAdapter->EnumOutputs(adapterOutputIdx, &output) == DXGI_ERROR_NOT_FOUND)
 	{
-		BS_EXCEPT(InvalidParametersException, "Cannot find output with the specified index: " + ToString(adapterOutputIdx));
+		B3D_EXCEPT(InvalidParametersException, "Cannot find output with the specified index: " + ToString(adapterOutputIdx));
 	}
 
 	output->GetDesc(&desc);

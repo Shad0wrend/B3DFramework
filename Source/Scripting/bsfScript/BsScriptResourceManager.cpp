@@ -108,7 +108,7 @@ void ScriptResourceManager::DestroyScriptResource(ScriptResourceBase* resource)
 	const UUID& uuid = resourceHandle.GetUuid();
 
 	if(uuid.Empty())
-		BS_EXCEPT(InvalidParametersException, "Provided resource handle has an undefined resource UUID.");
+		B3D_EXCEPT(InvalidParametersException, "Provided resource handle has an undefined resource UUID.");
 
 #if BS_DEBUG_MODE
 	for(auto& kvp : mScriptRRefsPerType)
@@ -119,7 +119,7 @@ void ScriptResourceManager::DestroyScriptResource(ScriptResourceBase* resource)
 		// native resource is destroyed, which we handle in onResourceDestroyed. And only other destruction should
 		// happen during assembly refresh, which we handled in clearRRefs().
 		const auto iterFind = rrefs.find(uuid);
-		assert(iterFind == rrefs.end());
+		B3D_ASSERT(iterFind == rrefs.end());
 	}
 #endif
 
@@ -156,12 +156,12 @@ void ScriptResourceManager::ClearRRefs()
 void ScriptResourceManager::ThrowExceptionIfInvalidOrDuplicateInternal(const UUID& uuid) const
 {
 	if(uuid.Empty())
-		BS_EXCEPT(InvalidParametersException, "Provided resource handle has an undefined resource UUID.");
+		B3D_EXCEPT(InvalidParametersException, "Provided resource handle has an undefined resource UUID.");
 
 	auto findIter = mScriptResources.find(uuid);
 	if(findIter != mScriptResources.end())
 	{
-		BS_EXCEPT(InvalidStateException, "Provided resource handle already has a script resource. \
+		B3D_EXCEPT(InvalidStateException, "Provided resource handle already has a script resource. \
 											 Retrieve the existing instance instead of creating a new one.");
 	}
 }

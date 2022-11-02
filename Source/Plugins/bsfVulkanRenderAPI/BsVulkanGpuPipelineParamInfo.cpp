@@ -123,7 +123,7 @@ void VulkanGpuPipelineParamInfo::Initialize()
 			for(auto& entry : params)
 			{
 				u32 bindingIdx = GetBindingIdx(entry.second.Set, entry.second.Slot);
-				assert(bindingIdx != (u32)-1);
+				B3D_ASSERT(bindingIdx != (u32)-1);
 
 				VkDescriptorSetLayoutBinding& binding = bindings[bindingIdx];
 				binding.descriptorCount = 1;
@@ -137,7 +137,7 @@ void VulkanGpuPipelineParamInfo::Initialize()
 			for(auto& entry : params)
 			{
 				u32 bindingIdx = GetBindingIdx(entry.second.Set, entry.second.Slot);
-				assert(bindingIdx != (u32)-1);
+				B3D_ASSERT(bindingIdx != (u32)-1);
 
 				VkDescriptorSetLayoutBinding& binding = bindings[bindingIdx];
 				binding.descriptorCount = 1;
@@ -157,7 +157,7 @@ void VulkanGpuPipelineParamInfo::Initialize()
 		for(auto& entry : paramDesc->Samplers)
 		{
 			u32 bindingIdx = GetBindingIdx(entry.second.Set, entry.second.Slot);
-			assert(bindingIdx != (u32)-1);
+			B3D_ASSERT(bindingIdx != (u32)-1);
 
 			VkDescriptorSetLayoutBinding& binding = bindings[bindingIdx];
 
@@ -179,7 +179,7 @@ void VulkanGpuPipelineParamInfo::Initialize()
 		for(auto& entry : paramDesc->Buffers)
 		{
 			u32 bindingIdx = GetBindingIdx(entry.second.Set, entry.second.Slot);
-			assert(bindingIdx != (u32)-1);
+			B3D_ASSERT(bindingIdx != (u32)-1);
 
 			VkDescriptorSetLayoutBinding& binding = bindings[bindingIdx];
 			binding.descriptorCount = 1;

@@ -37,7 +37,7 @@ void DynamicLibrary::Load()
 
 	if(!mHandle)
 	{
-		BS_EXCEPT(InternalErrorException, "Could not load dynamic library " + mName + ".  System Error: " + DynlibError());
+		B3D_EXCEPT(InternalErrorException, "Could not load dynamic library " + mName + ".  System Error: " + DynlibError());
 	}
 }
 
@@ -48,7 +48,7 @@ void DynamicLibrary::Unload()
 
 	if(DYNLIB_UNLOAD(mHandle))
 	{
-		BS_EXCEPT(InternalErrorException, "Could not unload dynamic library " + mName + ".  System Error: " + DynlibError());
+		B3D_EXCEPT(InternalErrorException, "Could not unload dynamic library " + mName + ".  System Error: " + DynlibError());
 	}
 
 	mHandle = nullptr;

@@ -38,7 +38,7 @@ bool OggVorbisEncoder::Open(std::function<void(u8*, u32)> writeCallback, u32 sam
 	i32 status = vorbis_encode_init_vbr(&mVorbisInfo, numChannels, sampleRate, 0.4f);
 	if(status != 0)
 	{
-		BS_LOG(Error, Audio, "Failed to write Ogg Vorbis file.");
+		B3D_LOG(Error, Audio, "Failed to write Ogg Vorbis file.");
 		Close();
 		return false;
 	}
@@ -56,7 +56,7 @@ bool OggVorbisEncoder::Open(std::function<void(u8*, u32)> writeCallback, u32 sam
 
 	if(status != 0)
 	{
-		BS_LOG(Error, Audio, "Failed to write Ogg Vorbis file.");
+		B3D_LOG(Error, Audio, "Failed to write Ogg Vorbis file.");
 		Close();
 		return false;
 	}
@@ -143,7 +143,7 @@ void OggVorbisEncoder::Write(u8* samples, u32 numSamples)
 			}
 		}
 		else
-			assert(false);
+			B3D_ASSERT(false);
 
 		// Signal how many frames were written
 		vorbis_analysis_wrote(&mVorbisState, numFramesToWrite);

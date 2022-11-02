@@ -117,7 +117,7 @@ void PhysXRigidbody::SetMass(float mass)
 {
 	if(((u32)mFlags & (u32)RigidbodyFlag::AutoMass) != 0)
 	{
-		BS_LOG(Warning, Physics, "Attempting to set Rigidbody mass, but it has automatic mass calculation turned on.");
+		B3D_LOG(Warning, Physics, "Attempting to set Rigidbody mass, but it has automatic mass calculation turned on.");
 		return;
 	}
 
@@ -218,7 +218,7 @@ void PhysXRigidbody::SetInertiaTensor(const Vector3& tensor)
 {
 	if(((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) != 0)
 	{
-		BS_LOG(Warning, Physics, "Attempting to set Rigidbody inertia tensor, but it has automatic tensor calculation turned on.");
+		B3D_LOG(Warning, Physics, "Attempting to set Rigidbody inertia tensor, but it has automatic tensor calculation turned on.");
 		return;
 	}
 
@@ -244,7 +244,7 @@ void PhysXRigidbody::SetCenterOfMass(const Vector3& position, const Quaternion& 
 {
 	if(((u32)mFlags & (u32)RigidbodyFlag::AutoTensors) != 0)
 	{
-		BS_LOG(Warning, Physics, "Attempting to set Rigidbody center of mass, but it has automatic tensor calculation turned on.");
+		B3D_LOG(Warning, Physics, "Attempting to set Rigidbody center of mass, but it has automatic tensor calculation turned on.");
 		return;
 	}
 

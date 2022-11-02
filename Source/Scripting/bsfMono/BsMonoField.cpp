@@ -94,7 +94,7 @@ MonoMemberVisibility MonoField::GetVisibility()
 	else if(flags == MONO_FIELD_ATTR_PUBLIC)
 		return MonoMemberVisibility::Public;
 
-	assert(false);
+	B3D_ASSERT(false);
 	return MonoMemberVisibility::Private;
 }
 

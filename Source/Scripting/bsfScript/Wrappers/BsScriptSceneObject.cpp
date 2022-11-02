@@ -183,7 +183,7 @@ MonoObject* ScriptSceneObject::InternalGetChild(ScriptSceneObject* nativeInstanc
 	u32 numChildren = nativeInstance->mSceneObject->GetNumChildren();
 	if(idx >= numChildren)
 	{
-		BS_LOG(Warning, Scene, "Attempting to access an out of range SceneObject child. Provided index: \"{0}\". "
+		B3D_LOG(Warning, Scene, "Attempting to access an out of range SceneObject child. Provided index: \"{0}\". "
 							   "Valid range: [0, {1})",
 			   idx, numChildren);
 		return nullptr;
@@ -411,7 +411,7 @@ bool ScriptSceneObject::CheckIfDestroyed(ScriptSceneObject* nativeInstance)
 {
 	if(nativeInstance->mSceneObject.IsDestroyed())
 	{
-		BS_LOG(Warning, Scene, "Trying to access a destroyed SceneObject with instance ID: {0}", +nativeInstance->mSceneObject.GetInstanceId());
+		B3D_LOG(Warning, Scene, "Trying to access a destroyed SceneObject with instance ID: {0}", +nativeInstance->mSceneObject.GetInstanceId());
 		return true;
 	}
 

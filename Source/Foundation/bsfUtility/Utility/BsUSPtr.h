@@ -62,7 +62,7 @@ namespace bs
 
 		void reset(T* ptr) // NOLINT
 		{
-			assert(ptr == nullptr || (ptr != mPtr));
+			B3D_ASSERT(ptr == nullptr || (ptr != mPtr));
 
 			Release();
 
@@ -80,13 +80,13 @@ namespace bs
 
 		T& operator*() const
 		{
-			assert(mPtr != nullptr);
+			B3D_ASSERT(mPtr != nullptr);
 			return *mPtr;
 		}
 
 		T* operator->() const
 		{
-			assert(mPtr != nullptr);
+			B3D_ASSERT(mPtr != nullptr);
 			return mPtr;
 		}
 

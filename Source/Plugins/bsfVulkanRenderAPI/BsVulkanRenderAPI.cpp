@@ -82,11 +82,11 @@ static VkBool32 DebugMessageCallback(VkDebugReportFlagsEXT flags, VkDebugReportO
 	message << ": [" << pLayerPrefix << "] Code " << msgCode << ": " << pMsg << std::endl;
 
 	if(flags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
-		BS_EXCEPT(RenderingAPIException, message.str())
+		B3D_EXCEPT(RenderingAPIException, message.str())
 	else if(flags & VK_DEBUG_REPORT_WARNING_BIT_EXT || flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
-		BS_LOG(Warning, RenderBackend, message.str());
+		B3D_LOG(Warning, RenderBackend, message.str());
 	else
-		BS_LOG(Info, RenderBackend, message.str());
+		B3D_LOG(Info, RenderBackend, message.str());
 
 	// Don't abort calls that caused a validation message
 	return VK_FALSE;
@@ -175,7 +175,7 @@ void VulkanRenderAPI::Initialize()
 	instanceInfo.ppEnabledExtensionNames = extensions;
 
 	VkResult result = vkCreateInstance(&instanceInfo, gVulkanAllocator, &mInstance);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	// Set up debugging
 #if BS_DEBUG_MODE && USE_VALIDATION_LAYERS
@@ -193,7 +193,7 @@ void VulkanRenderAPI::Initialize()
 	debugInfo.flags = debugFlags;
 
 	result = vkCreateDebugReportCallbackEXT(mInstance, &debugInfo, nullptr, &mDebugCallback);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 #endif
 
 #if BS_PLATFORM == BS_PLATFORM_OSX
@@ -210,11 +210,11 @@ void VulkanRenderAPI::Initialize()
 
 	// Enumerate all devices
 	result = vkEnumeratePhysicalDevices(mInstance, &mNumDevices, nullptr);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	Vector<VkPhysicalDevice> physicalDevices(mNumDevices);
 	result = vkEnumeratePhysicalDevices(mInstance, &mNumDevices, physicalDevices.data());
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	mDevices.resize(mNumDevices);
 	for(uint32_t i = 0; i < mNumDevices; i++)
@@ -560,7 +560,7 @@ void VulkanRenderAPI::SwapBuffers(const SPtr<RenderTarget>& target, u32 syncMask
 
 void VulkanRenderAPI::AddCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary)
 {
-	BS_EXCEPT(NotImplementedException, "Secondary command buffers not implemented");
+	B3D_EXCEPT(NotImplementedException, "Secondary command buffers not implemented");
 }
 
 void VulkanRenderAPI::SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, u32 syncMask)

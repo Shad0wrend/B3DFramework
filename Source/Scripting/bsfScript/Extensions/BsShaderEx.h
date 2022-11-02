@@ -14,7 +14,7 @@ namespace bs
 	/** @cond SCRIPT_EXTENSIONS */
 
 	/** Type of parameters that can be defined by a shader. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ShaderParameterType
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ShaderParameterType
 	{
 		Float,
 		Vector2,
@@ -30,7 +30,7 @@ namespace bs
 	};
 
 	/** Flags used to further describe a shader parameter. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ShaderParameterFlag
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ShaderParameterFlag
 	{
 		None = 0,
 
@@ -48,7 +48,7 @@ namespace bs
 	BS_FLAGS_OPERATORS(ShaderParameterFlag)
 
 	/** Contains information about a single shader parameter. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportAsStruct(true)) ShaderParameter
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportAsStruct(true)) ShaderParameter
 	{
 		/** Name of the parameter variable. */
 		String Name;
@@ -64,11 +64,11 @@ namespace bs
 	};
 
 	/** Extension class for Shader, for adding additional functionality for the script version of the class. */
-	class BS_SCRIPT_EXPORT(ExtensionMethodForType(Shader)) ShaderEx
+	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(Shader)) ShaderEx
 	{
 	public:
 		/** Returns information about all parameters available in the shader. */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Shader), Property(Getter), ExportName(Parameters))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Shader), Property(Getter), ExportName(Parameters))
 		static Vector<ShaderParameter> GetParameters(const HShader& thisPtr);
 	};
 

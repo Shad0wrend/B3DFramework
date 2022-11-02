@@ -180,7 +180,7 @@ void D3D11RenderUtility::InitClearQuadResources()
 			String(static_cast<const char*>(errors->GetBufferPointer()));
 
 		SAFE_RELEASE(errors);
-		BS_EXCEPT(RenderingAPIException, message);
+		B3D_EXCEPT(RenderingAPIException, message);
 	}
 
 	SAFE_RELEASE(errors);
@@ -190,7 +190,7 @@ void D3D11RenderUtility::InitClearQuadResources()
 	if(FAILED(hr))
 	{
 		SAFE_RELEASE(microcode);
-		BS_EXCEPT(RenderingAPIException, "Cannot create D3D11 high-level shader.");
+		B3D_EXCEPT(RenderingAPIException, "Cannot create D3D11 high-level shader.");
 	}
 
 	// Compile vertex shader
@@ -202,7 +202,7 @@ void D3D11RenderUtility::InitClearQuadResources()
 			String(static_cast<const char*>(errors->GetBufferPointer()));
 
 		SAFE_RELEASE(errors);
-		BS_EXCEPT(RenderingAPIException, message);
+		B3D_EXCEPT(RenderingAPIException, message);
 	}
 
 	SAFE_RELEASE(errors);
@@ -212,7 +212,7 @@ void D3D11RenderUtility::InitClearQuadResources()
 	if(FAILED(hr))
 	{
 		SAFE_RELEASE(microcode);
-		BS_EXCEPT(RenderingAPIException, "Cannot create D3D11 high-level shader.");
+		B3D_EXCEPT(RenderingAPIException, "Cannot create D3D11 high-level shader.");
 	}
 
 	// Create input layout
@@ -241,7 +241,7 @@ void D3D11RenderUtility::InitClearQuadResources()
 
 	if(FAILED(hr))
 	{
-		BS_EXCEPT(RenderingAPIException, "Cannot create D3D11 input layout.");
+		B3D_EXCEPT(RenderingAPIException, "Cannot create D3D11 input layout.");
 	}
 
 	// Create vertex buffer
@@ -273,7 +273,7 @@ void D3D11RenderUtility::InitClearQuadResources()
 	if(FAILED(hr) || mDevice->HasError())
 	{
 		String msg = mDevice->GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create D3D11 buffer: " + msg);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create D3D11 buffer: " + msg);
 	}
 
 	// Create index buffer
@@ -302,6 +302,6 @@ void D3D11RenderUtility::InitClearQuadResources()
 	if(FAILED(hr) || mDevice->HasError())
 	{
 		String msg = mDevice->GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create D3D11 buffer: " + msg);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create D3D11 buffer: " + msg);
 	}
 }

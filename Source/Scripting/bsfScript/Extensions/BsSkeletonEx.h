@@ -14,7 +14,7 @@ namespace bs
 	/** @cond SCRIPT_EXTENSIONS */
 
 	/** Contains internal information about a single bone in a Skeleton. */
-	struct BS_SCRIPT_EXPORT(ExportName(BoneInfo), ExportAsStruct(true)) SkeletonBoneInfoEx
+	struct B3D_SCRIPT_EXPORT(ExportName(BoneInfo), ExportAsStruct(true)) SkeletonBoneInfoEx
 	{
 		/** Unique name of the bone. */
 		String Name;
@@ -27,7 +27,7 @@ namespace bs
 	};
 
 	/** Extension class for Skeleton, for adding additional functionality for the script version of the class. */
-	class BS_SCRIPT_EXPORT(ExtensionMethodForType(Skeleton)) SkeletonEx
+	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(Skeleton)) SkeletonEx
 	{
 	public:
 		/** Returns information about a bone at the provided index.
@@ -35,7 +35,7 @@ namespace bs
 		 * @param[in] boneIdx	Index of the bone to retrieve information for.
 		 * @return				Information about the bone at the specified index.
 		 */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Skeleton), ExportName(GetBoneInfo))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Skeleton), ExportName(GetBoneInfo))
 		static SkeletonBoneInfoEx GetBoneInfo(const SPtr<Skeleton>& thisPtr, int boneIdx);
 	};
 

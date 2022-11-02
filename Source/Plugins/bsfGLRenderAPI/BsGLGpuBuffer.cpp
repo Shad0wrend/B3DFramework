@@ -16,7 +16,7 @@ static void DeleteBuffer(HardwareBuffer* buffer)
 GLGpuBuffer::GLGpuBuffer(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
 	: GpuBuffer(desc, deviceMask)
 {
-	assert((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on OpenGL.");
+	B3D_ASSERT((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on OpenGL.");
 
 	mFormat = GLPixelUtil::GetBufferFormat(desc.Format);
 }
@@ -50,7 +50,7 @@ void GLGpuBuffer::Initialize()
 			u32 size = props.GetElementCount() * props.GetElementSize();
 			mBuffer = B3DPoolNew<GLHardwareBuffer>(GL_SHADER_STORAGE_BUFFER, size, props.GetUsage());
 #else
-			BS_LOG(Warning, RenderBackend, "SSBOs are not supported on the current OpenGL version.");
+			B3D_LOG(Warning, RenderBackend, "SSBOs are not supported on the current OpenGL version.");
 #endif
 		}
 		else

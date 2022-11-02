@@ -82,7 +82,7 @@ void ScriptScene::SetActiveScene(const HPrefab& prefab)
 	}
 	else
 	{
-		BS_LOG(Error, Scene, "Attempting to activate a scene that hasn't finished loading yet.");
+		B3D_LOG(Error, Scene, "Attempting to activate a scene that hasn't finished loading yet.");
 	}
 }
 

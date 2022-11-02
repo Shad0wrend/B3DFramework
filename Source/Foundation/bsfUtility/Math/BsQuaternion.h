@@ -87,14 +87,14 @@ namespace bs
 
 		float operator[](const size_t i) const
 		{
-			assert(i < 4);
+			B3D_ASSERT(i < 4);
 
 			return *(&X + i);
 		}
 
 		float& operator[](const size_t i)
 		{
-			assert(i < 4);
+			B3D_ASSERT(i < 4);
 
 			return *(&X + i);
 		}
@@ -212,7 +212,7 @@ namespace bs
 
 		Quaternion operator/(float rhs) const
 		{
-			assert(rhs != 0.0);
+			B3D_ASSERT(rhs != 0.0);
 
 			const float inv = 1.0f / rhs;
 			return Quaternion(W * inv, X * inv, Y * inv, Z * inv);

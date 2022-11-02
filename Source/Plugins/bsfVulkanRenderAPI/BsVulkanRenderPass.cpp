@@ -225,7 +225,7 @@ VkRenderPass VulkanRenderPass::CreateVariant(RenderSurfaceMask loadMask, RenderS
 
 	VkRenderPass output;
 	VkResult result = vkCreateRenderPass(mDevice, &mRenderPassCI, gVulkanAllocator, &output);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	return output;
 }

@@ -20,7 +20,7 @@ namespace bs
 	 */
 
 	/** Types of emission modes. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmissionModeType
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmissionModeType
 	{
 		/** Position will be picked randomly on a shape. */
 		Random,
@@ -38,7 +38,7 @@ namespace bs
 	};
 
 	/** Controls how are particle positions on a shape chosen. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true)) ParticleEmissionMode
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true)) ParticleEmissionMode
 	{
 		/** Type that determines general behaviour. */
 		ParticleEmissionModeType Type = ParticleEmissionModeType::Random;
@@ -59,7 +59,7 @@ namespace bs
 	/**
 	 * Base class from all emitter shapes. Emitter shapes determine the position and direction of newly created particles.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterShape : public IReflectable
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterShape : public IReflectable
 	{
 	public:
 		virtual ~ParticleEmitterShape() = default;
@@ -106,7 +106,7 @@ namespace bs
 	};
 
 	/** Determines the emission type for the cone particle emitter shape. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterConeType
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterConeType
 	{
 		/** Emit particles only from the cone base. */
 		Base,
@@ -115,7 +115,7 @@ namespace bs
 	};
 
 	/** Information describing a ParticleEmitterConeShape. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleConeShapeOptions)) PARTICLE_CONE_SHAPE_DESC
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleConeShapeOptions)) PARTICLE_CONE_SHAPE_DESC
 	{
 		/** Determines where on the cone are the particles emitter from. */
 		ParticleEmitterConeType Type = ParticleEmitterConeType::Base;
@@ -148,7 +148,7 @@ namespace bs
 	 * controling the radial arc of the emitted portion of the volume, as well as thickness of the cone emission volume.
 	 * All particles will have random normals within the distribution of the cone.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterConeShape : public ParticleEmitterShape
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterConeShape : public ParticleEmitterShape
 	{
 	public:
 		ParticleEmitterConeShape(const PARTICLE_CONE_SHAPE_DESC& desc);
@@ -156,19 +156,19 @@ namespace bs
 		virtual ~ParticleEmitterConeShape() = default;
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
 		void SetOptions(const PARTICLE_CONE_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc SetOptions */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
 		const PARTICLE_CONE_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter cone shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterConeShape> Create(const PARTICLE_CONE_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter cone shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterConeShape> Create();
 
 		/**
@@ -203,7 +203,7 @@ namespace bs
 	};
 
 	/** Information describing a ParticleEmitterSphereShape. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleSphereShapeOptions)) PARTICLE_SPHERE_SHAPE_DESC
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleSphereShapeOptions)) PARTICLE_SPHERE_SHAPE_DESC
 	{
 		/** Radius of the sphere. */
 		float Radius = 1.0f;
@@ -221,26 +221,26 @@ namespace bs
 	 * volume or a proportion of the volume depending on the thickness parameter. All particles will have normals pointing
 	 * outwards in a spherical direction.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterSphereShape : public ParticleEmitterShape
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterSphereShape : public ParticleEmitterShape
 	{
 	public:
 		ParticleEmitterSphereShape() = default;
 		ParticleEmitterSphereShape(const PARTICLE_SPHERE_SHAPE_DESC& desc);
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
 		void SetOptions(const PARTICLE_SPHERE_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc SetOptions */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
 		const PARTICLE_SPHERE_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter sphere shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterSphereShape> Create(const PARTICLE_SPHERE_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter sphere shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterSphereShape> Create();
 
 		/**
@@ -269,7 +269,7 @@ namespace bs
 	};
 
 	/** Information describing a ParticleEmitterHemisphereShape. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleHemisphereShapeOptions)) PARTICLE_HEMISPHERE_SHAPE_DESC
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleHemisphereShapeOptions)) PARTICLE_HEMISPHERE_SHAPE_DESC
 	{
 		/** Radius of the hemisphere. */
 		float Radius = 1.0f;
@@ -287,26 +287,26 @@ namespace bs
 	 * the entire volume or a proportion of the volume depending on the thickness parameter. All particles will have
 	 * normals pointing outwards in a spherical direction.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterHemisphereShape : public ParticleEmitterShape
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterHemisphereShape : public ParticleEmitterShape
 	{
 	public:
 		ParticleEmitterHemisphereShape() = default;
 		ParticleEmitterHemisphereShape(const PARTICLE_HEMISPHERE_SHAPE_DESC& desc);
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
 		void SetOptions(const PARTICLE_HEMISPHERE_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc SetOptions */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
 		const PARTICLE_HEMISPHERE_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter sphere shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterHemisphereShape> Create(const PARTICLE_HEMISPHERE_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter sphere shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterHemisphereShape> Create();
 
 		/**
@@ -335,7 +335,7 @@ namespace bs
 	};
 
 	/** Determines the emission type for the cone particle emitter shape. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterBoxType
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterBoxType
 	{
 		/** Particles will be emitted from the entire volume. */
 		Volume,
@@ -346,7 +346,7 @@ namespace bs
 	};
 
 	/** Information describing a ParticleEmitterBoxShape. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleBoxShapeOptions)) PARTICLE_BOX_SHAPE_DESC
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleBoxShapeOptions)) PARTICLE_BOX_SHAPE_DESC
 	{
 		/** Determines from which portion of the box should particles be emitted from. */
 		ParticleEmitterBoxType Type = ParticleEmitterBoxType::Volume;
@@ -359,26 +359,26 @@ namespace bs
 	 * Particle emitter shape that emits particles from an axis aligned box. Particles can be emitted from box volume,
 	 * surface or edges. All particles have their normals set to positive Z direction.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterBoxShape : public ParticleEmitterShape
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterBoxShape : public ParticleEmitterShape
 	{
 	public:
 		ParticleEmitterBoxShape() = default;
 		ParticleEmitterBoxShape(const PARTICLE_BOX_SHAPE_DESC& desc);
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
 		void SetOptions(const PARTICLE_BOX_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc SetOptions */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
 		const PARTICLE_BOX_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter box shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterBoxShape> Create(const PARTICLE_BOX_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter box shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterBoxShape> Create();
 
 		/**
@@ -410,7 +410,7 @@ namespace bs
 	};
 
 	/** Information describing a ParticleEmitterLineShape. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleLineShapeOptions)) PARTICLE_LINE_SHAPE_DESC
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleLineShapeOptions)) PARTICLE_LINE_SHAPE_DESC
 	{
 		/** Length of the line. */
 		float Length = 1.0f;
@@ -420,26 +420,26 @@ namespace bs
 	};
 
 	/** Particle emitter shape that emits particles from a line segment. */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterLineShape : public ParticleEmitterShape
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterLineShape : public ParticleEmitterShape
 	{
 	public:
 		ParticleEmitterLineShape() = default;
 		ParticleEmitterLineShape(const PARTICLE_LINE_SHAPE_DESC& desc);
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
 		void SetOptions(const PARTICLE_LINE_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc SetOptions */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
 		const PARTICLE_LINE_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter edge shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterLineShape> Create(const PARTICLE_LINE_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter edge shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterLineShape> Create();
 
 		/**
@@ -471,7 +471,7 @@ namespace bs
 	};
 
 	/** Information describing a ParticleEmitterCircleShape. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleCircleShapeOptions)) PARTICLE_CIRCLE_SHAPE_DESC
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleCircleShapeOptions)) PARTICLE_CIRCLE_SHAPE_DESC
 	{
 		/** Radius of the circle. */
 		float Radius = 1.0f;
@@ -495,7 +495,7 @@ namespace bs
 	 * emit only from circle edge, the entire surface or just a part of the surface. Using the arc parameter you can emit
 	 * from a specific angular portion of the circle.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterCircleShape : public ParticleEmitterShape
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterCircleShape : public ParticleEmitterShape
 	{
 	public:
 		ParticleEmitterCircleShape() = default;
@@ -503,19 +503,19 @@ namespace bs
 		virtual ~ParticleEmitterCircleShape() = default;
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
 		void SetOptions(const PARTICLE_CIRCLE_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc SetOptions */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
 		const PARTICLE_CIRCLE_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter circle shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterCircleShape> Create(const PARTICLE_CIRCLE_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter circle shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterCircleShape> Create();
 
 		/**
@@ -547,33 +547,33 @@ namespace bs
 	};
 
 	/** Information describing a ParticleEmitterRectShape. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleRectShapeOptions)) PARTICLE_RECT_SHAPE_DESC
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleRectShapeOptions)) PARTICLE_RECT_SHAPE_DESC
 	{
 		/** Extents of the rectangle. */
 		Vector2 Extents = Vector2::kOne;
 	};
 
 	/** Particle emitter shape that emits particles from the surface of a rectangle. */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterRectShape : public ParticleEmitterShape
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterRectShape : public ParticleEmitterShape
 	{
 	public:
 		ParticleEmitterRectShape() = default;
 		ParticleEmitterRectShape(const PARTICLE_RECT_SHAPE_DESC& desc);
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
 		void SetOptions(const PARTICLE_RECT_SHAPE_DESC& options) { mInfo = options; }
 
 		/** @copydoc SetOptions */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
 		const PARTICLE_RECT_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter rectangle shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterRectShape> Create(const PARTICLE_RECT_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter rectangle shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterRectShape> Create();
 
 		/**
@@ -602,7 +602,7 @@ namespace bs
 	};
 
 	/** Determines the emission type for the mesh particle emitter shape. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterMeshType
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterMeshType
 	{
 		/** Particles will be emitted from mesh vertices. */
 		Vertex,
@@ -613,7 +613,7 @@ namespace bs
 	};
 
 	/** Information describing a ParticleEmitterStaticMeshShape. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleStaticMeshShapeOptions)) PARTICLE_STATIC_MESH_SHAPE_DESC
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleStaticMeshShapeOptions)) PARTICLE_STATIC_MESH_SHAPE_DESC
 	{
 		/** Determines from which portion of the mesh are the particles emitted from. */
 		ParticleEmitterMeshType Type = ParticleEmitterMeshType::Triangle;
@@ -714,7 +714,7 @@ namespace bs
 	 * emitted from mesh vertices, edges or triangles. If information about normals exists, particles will also inherit
 	 * the normals.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterStaticMeshShape : public ParticleEmitterShape
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterStaticMeshShape : public ParticleEmitterShape
 	{
 	public:
 		ParticleEmitterStaticMeshShape(const PARTICLE_STATIC_MESH_SHAPE_DESC& desc);
@@ -722,19 +722,19 @@ namespace bs
 		virtual ~ParticleEmitterStaticMeshShape() = default;
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
 		void SetOptions(const PARTICLE_STATIC_MESH_SHAPE_DESC& options);
 
 		/** @copydoc SetOptions */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
 		const PARTICLE_STATIC_MESH_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter static mesh shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterStaticMeshShape> Create(const PARTICLE_STATIC_MESH_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter static mesh shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterStaticMeshShape> Create();
 
 		/**
@@ -761,7 +761,7 @@ namespace bs
 	};
 
 	/** Information describing a ParticleEmitterSkinnedMeshShape. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleSkinnedMeshShapeOptions)) PARTICLE_SKINNED_MESH_SHAPE_DESC
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true), ExportName(ParticleSkinnedMeshShapeOptions)) PARTICLE_SKINNED_MESH_SHAPE_DESC
 	{
 		/** Determines from which portion of the mesh are the particles emitted from. */
 		ParticleEmitterMeshType Type = ParticleEmitterMeshType::Triangle;
@@ -786,7 +786,7 @@ namespace bs
 	 * emitted from mesh vertices, edges or triangles. If information about normals exists, particles will also inherit
 	 * the normals.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterSkinnedMeshShape : public ParticleEmitterShape
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitterSkinnedMeshShape : public ParticleEmitterShape
 	{
 	public:
 		ParticleEmitterSkinnedMeshShape(const PARTICLE_SKINNED_MESH_SHAPE_DESC& desc);
@@ -794,19 +794,19 @@ namespace bs
 		virtual ~ParticleEmitterSkinnedMeshShape() = default;
 
 		/** Options describing the shape. */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Options), UI(Inline))
 		void SetOptions(const PARTICLE_SKINNED_MESH_SHAPE_DESC& options);
 
 		/** @copydoc SetOptions */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Options))
 		const PARTICLE_SKINNED_MESH_SHAPE_DESC& GetOptions() const { return mInfo; }
 
 		/** Creates a new particle emitter skinned mesh shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterSkinnedMeshShape> Create(const PARTICLE_SKINNED_MESH_SHAPE_DESC& desc);
 
 		/** Creates a new particle emitter skinned mesh shape. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitterSkinnedMeshShape> Create();
 
 		/**
@@ -833,7 +833,7 @@ namespace bs
 	};
 
 	/** Specifies a burst of particles that occurs at a certain time point. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true)) ParticleBurst
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportAsStruct(true)) ParticleBurst
 	{
 		ParticleBurst() = default;
 
@@ -858,161 +858,161 @@ namespace bs
 	};
 
 	/** Handles spawning of new particles using the specified parameters and shape. */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitter : public ParticleModule
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEmitter : public ParticleModule
 	{
 	public:
 		/** Shape over which to emit the particles. */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Shape))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Shape))
 		void SetShape(SPtr<ParticleEmitterShape> shape) { mShape = std::move(shape); }
 
 		/** @copydoc SetShape */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Shape))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Shape))
 		const SPtr<ParticleEmitterShape>& GetShape() const { return mShape; }
 
 		/** Determines the number of particles that are emitted every second. */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(EmissionRate))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(EmissionRate))
 		void SetEmissionRate(FloatDistribution value) { mEmissionRate = std::move(value); }
 
 		/** @copydoc SetEmissionRate */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(EmissionRate))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(EmissionRate))
 		const FloatDistribution& GetEmissionRate() const { return mEmissionRate; }
 
 		/** Determines discrete intervals to emit particles. */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(EmissionBursts))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(EmissionBursts))
 		void SetEmissionBursts(Vector<ParticleBurst> bursts);
 
 		/** @copydoc SetEmissionBursts */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(EmissionBursts))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(EmissionBursts))
 		const Vector<ParticleBurst>& GetEmissionBursts() const { return mBursts; }
 
 		/** Determines the lifetime of particles when they are initially spawned, in seconds. */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(InitialLifetime))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(InitialLifetime))
 		void SetInitialLifetime(FloatDistribution value) { mInitialLifetime = std::move(value); }
 
 		/** @copydoc SetInitialLifetime */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(InitialLifetime))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(InitialLifetime))
 		const FloatDistribution& GetInitialLifetime() const { return mInitialLifetime; }
 
 		/**
 		 * Sets the initial speed of the particles, in meters/second. The speed is applied along the particle's velocity
 		 * direction, which is determined by the emission shape and potentially other properties.
 		 */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(InitialSpeed))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(InitialSpeed))
 		void SetInitialSpeed(FloatDistribution value) { mInitialSpeed = std::move(value); }
 
 		/** @copydoc SetInitialSpeed */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(InitialSpeed))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(InitialSpeed))
 		const FloatDistribution& GetInitialSpeed() const { return mInitialSpeed; }
 
 		/**
 		 * Determines the size of the particles when initially spawned. The size is applied uniformly in all dimensions.
 		 * Only used if 3D size is disabled.
 		 */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(InitialSize))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(InitialSize))
 		void SetInitialSize(FloatDistribution value) { mInitialSize = std::move(value); }
 
 		/** @copydoc SetInitialSize */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(InitialSize))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(InitialSize))
 		const FloatDistribution& GetInitialSize() const { return mInitialSize; }
 
 		/**
 		 * Determines the size of the particles when initially spawned. Size can be specified for each dimension separately.
 		 * Only used if 3D size is enabled.
 		 */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(InitialSize3D))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(InitialSize3D))
 		void SetInitialSize3D(Vector3Distribution value) { mInitialSize3D = std::move(value); }
 
 		/** @copydoc SetInitialSize3D */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(InitialSize3D))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(InitialSize3D))
 		const Vector3Distribution& GetInitialSize3D() const { return mInitialSize3D; }
 
 		/**
 		 * Determines should the initial particle size be applied uniformly (if disabled), or evaluated separately for each
 		 * dimension (if enabled).
 		 */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Use3DSize))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Use3DSize))
 		void SetUse3DSize(bool value) { mUse3DSize = value; }
 
 		/** @copydoc SetUse3DSize */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Use3DSize))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Use3DSize))
 		bool GetUse3DSize() const { return mUse3DSize; }
 
 		/**
 		 * Determines the rotation of the particles when initially spawned, in degrees. The rotation is applied around the
 		 * particle's local Z axis. Only used if 3D rotation is disabled.
 		 */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(InitialRotation))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(InitialRotation))
 		void SetInitialRotation(FloatDistribution value) { mInitialRotation = std::move(value); }
 
 		/** @copydoc SetInitialRotation */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(InitialRotation))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(InitialRotation))
 		const FloatDistribution& GetInitialRotation() const { return mInitialRotation; }
 
 		/**
 		 * Determines the rotation of the particles when initially spawned, in Euler angles. Only used if 3D rotation is
 		 * enabled.
 		 */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(InitialRotation3D))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(InitialRotation3D))
 		void SetInitialRotation3D(Vector3Distribution value) { mInitialRotation3D = std::move(value); }
 
 		/** @copydoc SetInitialRotation3D */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(InitialRotation3D))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(InitialRotation3D))
 		const Vector3Distribution& GetInitialRotation3D() const { return mInitialRotation3D; }
 
 		/**
 		 * Determines should the initial particle rotation be a single angle applied around a Z axis (if disabled), or a
 		 * set of Euler angles that allow you to rotate around every axis (if enabled).
 		 */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(Use3DRotation))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(Use3DRotation))
 		void SetUse3DRotation(bool value) { mUse3DRotation = value; }
 
 		/** @copydoc SetUse3DRotation */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(Use3DRotation))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(Use3DRotation))
 		bool GetUse3DRotation() const { return mUse3DRotation; }
 
 		/** Determines the initial color (in RGB channels) and transparency (in A channel) of particles. */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(InitialColor))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(InitialColor))
 		void SetInitialColor(const ColorDistribution& value) { mInitialColor = value; }
 
 		/** @copydoc SetInitialColor */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(InitialColor))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(InitialColor))
 		const ColorDistribution& GetInitialColor() const { return mInitialColor; }
 
 		/**
 		 * Determines a range of values determining a random offset to apply to particle position after it has been emitted.
 		 * Offset will be randomly selected in all three axes in range [-value, value].
 		 */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(RandomOffset))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(RandomOffset))
 		void SetRandomOffset(float value) { mRandomOffset = value; }
 
 		/** @copydoc SetRandomOffset */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(RandomOffset))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(RandomOffset))
 		float GetRandomOffset() const { return mRandomOffset; }
 
 		/**
 		 * Determines should particle U texture coordinate be randomly flipped, mirroring the image. The value represents
 		 * a percent of particles that should be flipped, in range [0, 1].
 		 */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(FlipU))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(FlipU))
 		void SetFlipU(float value) { mFlipU = Math::Clamp01(value); }
 
 		/** @copydoc SetFlipU */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(FlipU))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(FlipU))
 		float GetFlipU() const { return mFlipU; }
 
 		/**
 		 * Determines should particle V texture coordinate be randomly flipped, mirroring the image. The value represents
 		 * a percent of particles that should be flipped, in range [0, 1].
 		 */
-		BS_SCRIPT_EXPORT(Property(Setter), ExportName(FlipV))
+		B3D_SCRIPT_EXPORT(Property(Setter), ExportName(FlipV))
 		void SetFlipV(float value) { mFlipV = Math::Clamp01(value); }
 
 		/** @copydoc SetFlipV */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(FlipV))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(FlipV))
 		float GetFlipV() const { return mFlipV; }
 
 		/** Creates a new emitter. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ParticleEmitter> Create();
 
 	private:

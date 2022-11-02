@@ -11,7 +11,7 @@ namespace bs
 	 */
 
 	/**	Represents a 3D region of pixels used for referencing pixel data. */
-	struct BS_CORE_EXPORT BS_SCRIPT_EXPORT(ExportAsStruct(true), ExportName(PixelVolume)) PixelVolume
+	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true), ExportName(PixelVolume)) PixelVolume
 	{
 		u32 Left = 0;
 		u32 Top = 0;
@@ -25,13 +25,13 @@ namespace bs
 		PixelVolume(u32 left, u32 top, u32 right, u32 bottom)
 			: Left(left), Top(top), Right(right), Bottom(bottom), Front(0), Back(1)
 		{
-			assert(right >= left && bottom >= top && Back >= Front);
+			B3D_ASSERT(right >= left && bottom >= top && Back >= Front);
 		}
 
 		PixelVolume(u32 left, u32 top, u32 front, u32 right, u32 bottom, u32 back)
 			: Left(left), Top(top), Right(right), Bottom(bottom), Front(front), Back(back)
 		{
-			assert(right >= left && bottom >= top && back >= front);
+			B3D_ASSERT(right >= left && bottom >= top && back >= front);
 		}
 
 		/**	Return true if the other box is a part of this one. */

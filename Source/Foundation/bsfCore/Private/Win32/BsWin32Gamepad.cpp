@@ -45,20 +45,20 @@ void InitializeDirectInput(Gamepad::Pimpl* m, HWND hWnd)
 	dipdw.dwData = DI_BUFFER_SIZE_GAMEPAD;
 
 	if(FAILED(m->DirectInput->CreateDevice(m->Info.GuidInstance, &m->Gamepad, nullptr)))
-		BS_EXCEPT(InternalErrorException, "DirectInput gamepad init: Failed to create device.");
+		B3D_EXCEPT(InternalErrorException, "DirectInput gamepad init: Failed to create device.");
 
 	if(FAILED(m->Gamepad->SetDataFormat(&c_dfDIJoystick2)))
-		BS_EXCEPT(InternalErrorException, "DirectInput gamepad init: Failed to set format.");
+		B3D_EXCEPT(InternalErrorException, "DirectInput gamepad init: Failed to set format.");
 
 	if(FAILED(m->Gamepad->SetCooperativeLevel(hWnd, m->CoopSettings)))
-		BS_EXCEPT(InternalErrorException, "DirectInput gamepad init: Failed to set coop level.");
+		B3D_EXCEPT(InternalErrorException, "DirectInput gamepad init: Failed to set coop level.");
 
 	if(FAILED(m->Gamepad->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph)))
-		BS_EXCEPT(InternalErrorException, "DirectInput gamepad init: Failed to set property.");
+		B3D_EXCEPT(InternalErrorException, "DirectInput gamepad init: Failed to set property.");
 
 	HRESULT hr = m->Gamepad->Acquire();
 	if(FAILED(hr) && hr != DIERR_OTHERAPPHASPRIO)
-		BS_EXCEPT(InternalErrorException, "DirectInput gamepad init: Failed to acquire device.");
+		B3D_EXCEPT(InternalErrorException, "DirectInput gamepad init: Failed to acquire device.");
 
 	m->HWnd = hWnd;
 }

@@ -54,7 +54,7 @@ void D3D11DepthStencilState::CreateInternal()
 	if(FAILED(hr) || device.HasError())
 	{
 		String errorDescription = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create depth stencil state.\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create depth stencil state.\nError Description:" + errorDescription);
 	}
 
 	BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_DepthStencilState);

@@ -280,7 +280,7 @@ void VulkanGpuParams::SetParamBlockBuffer(u32 set, u32 slot, const SPtr<GpuParam
 	u32 bindingIdx = vkParamInfo.GetBindingIdx(set, slot);
 	if(bindingIdx == (u32)-1)
 	{
-		BS_LOG(Error, RenderBackend, "Provided set/slot combination is not used by the GPU program: {0},{1}.", set, slot);
+		B3D_LOG(Error, RenderBackend, "Provided set/slot combination is not used by the GPU program: {0},{1}.", set, slot);
 		return;
 	}
 
@@ -329,7 +329,7 @@ void VulkanGpuParams::SetTexture(u32 set, u32 slot, const SPtr<Texture>& texture
 	u32 bindingIdx = vkParamInfo.GetBindingIdx(set, slot);
 	if(bindingIdx == (u32)-1)
 	{
-		BS_LOG(Error, RenderBackend, "Provided set/slot combination is not used by the GPU program: {0},{1}.", set, slot);
+		B3D_LOG(Error, RenderBackend, "Provided set/slot combination is not used by the GPU program: {0},{1}.", set, slot);
 		return;
 	}
 
@@ -390,7 +390,7 @@ void VulkanGpuParams::SetLoadStoreTexture(u32 set, u32 slot, const SPtr<Texture>
 	u32 bindingIdx = vkParamInfo.GetBindingIdx(set, slot);
 	if(bindingIdx == (u32)-1)
 	{
-		BS_LOG(Error, RenderBackend, "Provided set/slot combination is not used by the GPU program: {0},{1}.", set, slot);
+		B3D_LOG(Error, RenderBackend, "Provided set/slot combination is not used by the GPU program: {0},{1}.", set, slot);
 		return;
 	}
 
@@ -442,7 +442,7 @@ void VulkanGpuParams::SetBuffer(u32 set, u32 slot, const SPtr<GpuBuffer>& buffer
 	u32 bindingIdx = vkParamInfo.GetBindingIdx(set, slot);
 	if(bindingIdx == (u32)-1)
 	{
-		BS_LOG(Error, RenderBackend, "Provided set/slot combination is not used by the GPU program: {0},{1}.", set, slot);
+		B3D_LOG(Error, RenderBackend, "Provided set/slot combination is not used by the GPU program: {0},{1}.", set, slot);
 		return;
 	}
 
@@ -530,7 +530,7 @@ void VulkanGpuParams::SetSamplerState(u32 set, u32 slot, const SPtr<SamplerState
 	u32 bindingIdx = vkParamInfo.GetBindingIdx(set, slot);
 	if(bindingIdx == (u32)-1)
 	{
-		BS_LOG(Error, RenderBackend, "Provided set/slot combination is not used by the GPU program: {0},{1}.", set, slot);
+		B3D_LOG(Error, RenderBackend, "Provided set/slot combination is not used by the GPU program: {0},{1}.", set, slot);
 		return;
 	}
 
@@ -633,7 +633,7 @@ void VulkanGpuParams::PrepareForBind(VulkanCmdBuffer& buffer, VkDescriptorSet* s
 		buffer.RegisterBuffer(resource, BufferUseFlagBits::Parameter, VulkanAccessFlag::Read, stages);
 
 		// Check if internal resource changed from what was previously bound in the descriptor set
-		assert(perDeviceData.UniformBuffers[i] != VK_NULL_HANDLE);
+		B3D_ASSERT(perDeviceData.UniformBuffers[i] != VK_NULL_HANDLE);
 
 		VkBuffer vkBuffer = resource->GetHandle();
 		if(perDeviceData.UniformBuffers[i] != vkBuffer)
@@ -697,7 +697,7 @@ void VulkanGpuParams::PrepareForBind(VulkanCmdBuffer& buffer, VkDescriptorSet* s
 		buffer.RegisterBuffer(resource, BufferUseFlagBits::Generic, useFlags, stages);
 
 		// Check if internal resource changed from what was previously bound in the descriptor set
-		assert(perDeviceData.Buffers[i] != VK_NULL_HANDLE);
+		B3D_ASSERT(perDeviceData.Buffers[i] != VK_NULL_HANDLE);
 
 		VkBuffer vkBuffer = resource->GetHandle();
 		if(perDeviceData.Buffers[i] != vkBuffer)
@@ -749,7 +749,7 @@ void VulkanGpuParams::PrepareForBind(VulkanCmdBuffer& buffer, VkDescriptorSet* s
 		buffer.RegisterResource(resource, VulkanAccessFlag::Read);
 
 		// Check if internal resource changed from what was previously bound in the descriptor set
-		assert(perDeviceData.Samplers[i] != VK_NULL_HANDLE);
+		B3D_ASSERT(perDeviceData.Samplers[i] != VK_NULL_HANDLE);
 
 		VkSampler vkSampler = resource->GetHandle();
 		if(perDeviceData.Samplers[i] != vkSampler)
@@ -801,7 +801,7 @@ void VulkanGpuParams::PrepareForBind(VulkanCmdBuffer& buffer, VkDescriptorSet* s
 		buffer.RegisterImageShader(resource, range, VK_IMAGE_LAYOUT_GENERAL, useFlags, stages);
 
 		// Check if internal resource changed from what was previously bound in the descriptor set
-		assert(perDeviceData.StorageImages[i] != VK_NULL_HANDLE);
+		B3D_ASSERT(perDeviceData.StorageImages[i] != VK_NULL_HANDLE);
 
 		VkImage vkImage = resource->GetHandle();
 		if(perDeviceData.StorageImages[i] != vkImage)
@@ -868,7 +868,7 @@ void VulkanGpuParams::PrepareForBind(VulkanCmdBuffer& buffer, VkDescriptorSet* s
 		layout = buffer.GetCurrentLayout(resource, range, true);
 
 		// Check if internal resource changed from what was previously bound in the descriptor set
-		assert(perDeviceData.SampledImages[i] != VK_NULL_HANDLE);
+		B3D_ASSERT(perDeviceData.SampledImages[i] != VK_NULL_HANDLE);
 
 		VkDescriptorImageInfo& imgInfo = perDeviceData.PerSetData[set].WriteInfos[bindingIdx].Image;
 

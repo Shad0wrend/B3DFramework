@@ -17,25 +17,25 @@ namespace bs
 	 *
 	 * @note Wraps BoxCollider as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(BoxCollider)) CBoxCollider : public CCollider
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(BoxCollider)) CBoxCollider : public CCollider
 	{
 	public:
 		CBoxCollider(const HSceneObject& parent, const Vector3& extents = Vector3(0.5f, 0.5f, 0.5f));
 
 		/** @copydoc BoxCollider::SetExtents */
-		BS_SCRIPT_EXPORT(ExportName(Extents), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Extents), Property(Setter))
 		void SetExtents(const Vector3& extents);
 
 		/** @copydoc BoxCollider::GetExtents */
-		BS_SCRIPT_EXPORT(ExportName(Extents), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Extents), Property(Getter))
 		Vector3 GetExtents() const { return mExtents; }
 
 		/** Determines the position of the box shape, relative to the component's scene object. */
-		BS_SCRIPT_EXPORT(ExportName(Center), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Center), Property(Setter))
 		void SetCenter(const Vector3& center);
 
 		/** @copydoc SetCenter() */
-		BS_SCRIPT_EXPORT(ExportName(Center), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Center), Property(Getter))
 		Vector3 GetCenter() const { return mLocalPosition; }
 
 		/** @name Internal

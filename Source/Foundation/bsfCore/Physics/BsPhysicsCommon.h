@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/** Information about a single contact point during physics collision. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) ContactPoint
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) ContactPoint
 	{
 		Vector3 Position; /**< Contact point in world space. */
 		Vector3 Normal; /**< Normal pointing from the second shape to the first shape. */
@@ -32,7 +32,7 @@ namespace bs
 	};
 
 	/** Information about a collision between two physics objects. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) CollisionData
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) CollisionData
 	{
 		/** Components of the colliders that have collided. */
 		HCollider Collider[2];
@@ -57,7 +57,7 @@ namespace bs
 	};
 
 	/** Determines which collision events will be reported by physics objects. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Physics)) CollisionReportMode
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) CollisionReportMode
 	{
 		None, /**< No collision events will be triggered. */
 		Report, /**< Collision events will be triggered when object enters and/or leaves collision. */
@@ -69,7 +69,7 @@ namespace bs
 	};
 
 	/** Hit information from a physics query. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) PhysicsQueryHit
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) PhysicsQueryHit
 	{
 		Vector3 Point; /**< Position of the hit in world space. */
 		Vector3 Normal; /**< Normal to the surface that was hit. */
@@ -91,7 +91,7 @@ namespace bs
 		 */
 		HCollider Collider;
 
-		BS_SCRIPT_EXPORT(Exclude(true))
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		bs::Collider* ColliderRaw = nullptr; /**< Collider that was hit. */
 	};
 

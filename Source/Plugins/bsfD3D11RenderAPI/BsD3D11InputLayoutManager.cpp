@@ -151,7 +151,7 @@ void D3D11InputLayoutManager::AddNewInputLayout(const SPtr<VertexDeclaration>& v
 		&newEntry->InputLayout);
 
 	if(FAILED(hr) || device.HasError())
-		BS_EXCEPT(RenderingAPIException, "Unable to set D3D11 vertex declaration" + device.GetErrorDescription());
+		B3D_EXCEPT(RenderingAPIException, "Unable to set D3D11 vertex declaration" + device.GetErrorDescription());
 
 	// Create key and add to the layout map
 	VertexDeclarationKey pair;
@@ -167,7 +167,7 @@ void D3D11InputLayoutManager::RemoveLeastUsed()
 {
 	if(!mWarningShown)
 	{
-		BS_LOG(Warning, RenderBackend, "Input layout buffer is full, pruning last {0} elements. This is probably okay "
+		B3D_LOG(Warning, RenderBackend, "Input layout buffer is full, pruning last {0} elements. This is probably okay "
 									   "unless you are creating a massive amount of input layouts as they will get re-created every frame. "
 									   "In that case you should increase the layout buffer size. This warning won't be shown again.",
 			   NUM_ELEMENTS_TO_PRUNE);

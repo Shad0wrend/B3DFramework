@@ -83,7 +83,7 @@ namespace bs
 		{
 			if(mSyncData == nullptr)
 			{
-				BS_LOG(Error, Generic, "No sync data is available. Cannot block until AsyncOp is complete.");
+				B3D_LOG(Error, Generic, "No sync data is available. Cannot block until AsyncOp is complete.");
 				return;
 			}
 
@@ -100,7 +100,7 @@ namespace bs
 		{
 #if BS_DEBUG_MODE
 			if(!HasCompleted())
-				BS_LOG(Error, Generic, "Trying to get AsyncOp return value but the operation hasn't completed.");
+				B3D_LOG(Error, Generic, "Trying to get AsyncOp return value but the operation hasn't completed.");
 #endif
 
 			return mData->MReturnValue;
@@ -143,7 +143,7 @@ namespace bs
 		{
 #if BS_DEBUG_MODE
 			if(!HasCompleted())
-				BS_LOG(Error, Generic, "Trying to get AsyncOp return value but the operation hasn't completed.");
+				B3D_LOG(Error, Generic, "Trying to get AsyncOp return value but the operation hasn't completed.");
 #endif
 
 			return AnyCast<ReturnType>(mData->MReturnValue);

@@ -238,14 +238,14 @@ void TGpuParams<Core>::SetParamBlockBuffer(GpuProgramType type, const String& na
 	const SPtr<GpuParamDesc>& paramDescs = mParamInfo->GetParamDesc(type);
 	if(paramDescs == nullptr)
 	{
-		BS_LOG(Warning, RenderBackend, "Cannot find parameter block with the name: '{0}'", name);
+		B3D_LOG(Warning, RenderBackend, "Cannot find parameter block with the name: '{0}'", name);
 		return;
 	}
 
 	auto iterFind = paramDescs->ParamBlocks.find(name);
 	if(iterFind == paramDescs->ParamBlocks.end())
 	{
-		BS_LOG(Warning, RenderBackend, "Cannot find parameter block with the name: '{0}'", name);
+		B3D_LOG(Warning, RenderBackend, "Cannot find parameter block with the name: '{0}'", name);
 		return;
 	}
 
@@ -277,7 +277,7 @@ void TGpuParams<Core>::GetParam(GpuProgramType type, const String& name, TGpuDat
 	if(paramDescs == nullptr)
 	{
 		output = TGpuDataParam<T, Core>(nullptr, nullptr);
-		BS_LOG(Warning, RenderBackend, "Cannot find parameter with the name: '{0}'", name);
+		B3D_LOG(Warning, RenderBackend, "Cannot find parameter with the name: '{0}'", name);
 		return;
 	}
 
@@ -285,7 +285,7 @@ void TGpuParams<Core>::GetParam(GpuProgramType type, const String& name, TGpuDat
 	if(iterFind == paramDescs->Params.end())
 	{
 		output = TGpuDataParam<T, Core>(nullptr, nullptr);
-		BS_LOG(Warning, RenderBackend, "Cannot find parameter with the name: '{0}'", name);
+		B3D_LOG(Warning, RenderBackend, "Cannot find parameter with the name: '{0}'", name);
 	}
 	else
 		output = TGpuDataParam<T, Core>(&iterFind->second, GetThisPtrInternal());
@@ -298,7 +298,7 @@ void TGpuParams<Core>::GetStructParam(GpuProgramType type, const String& name, T
 	if(paramDescs == nullptr)
 	{
 		output = TGpuParamStruct<Core>(nullptr, nullptr);
-		BS_LOG(Warning, RenderBackend, "Cannot find struct parameter with the name: '{0}'", name);
+		B3D_LOG(Warning, RenderBackend, "Cannot find struct parameter with the name: '{0}'", name);
 		return;
 	}
 
@@ -306,7 +306,7 @@ void TGpuParams<Core>::GetStructParam(GpuProgramType type, const String& name, T
 	if(iterFind == paramDescs->Params.end() || iterFind->second.Type != GPDT_STRUCT)
 	{
 		output = TGpuParamStruct<Core>(nullptr, nullptr);
-		BS_LOG(Warning, RenderBackend, "Cannot find struct parameter with the name: '{0}'", name);
+		B3D_LOG(Warning, RenderBackend, "Cannot find struct parameter with the name: '{0}'", name);
 	}
 	else
 		output = TGpuParamStruct<Core>(&iterFind->second, GetThisPtrInternal());
@@ -319,7 +319,7 @@ void TGpuParams<Core>::GetTextureParam(GpuProgramType type, const String& name, 
 	if(paramDescs == nullptr)
 	{
 		output = TGpuParamTexture<Core>(nullptr, nullptr);
-		BS_LOG(Warning, RenderBackend, "Cannot find texture parameter with the name: '{0}'", name);
+		B3D_LOG(Warning, RenderBackend, "Cannot find texture parameter with the name: '{0}'", name);
 		return;
 	}
 
@@ -327,7 +327,7 @@ void TGpuParams<Core>::GetTextureParam(GpuProgramType type, const String& name, 
 	if(iterFind == paramDescs->Textures.end())
 	{
 		output = TGpuParamTexture<Core>(nullptr, nullptr);
-		BS_LOG(Warning, RenderBackend, "Cannot find texture parameter with the name: '{0}'", name);
+		B3D_LOG(Warning, RenderBackend, "Cannot find texture parameter with the name: '{0}'", name);
 	}
 	else
 		output = TGpuParamTexture<Core>(&iterFind->second, GetThisPtrInternal());
@@ -340,7 +340,7 @@ void TGpuParams<Core>::GetLoadStoreTextureParam(GpuProgramType type, const Strin
 	if(paramDescs == nullptr)
 	{
 		output = TGpuParamLoadStoreTexture<Core>(nullptr, nullptr);
-		BS_LOG(Warning, RenderBackend, "Cannot find load-store parameter with the name: '{0}'", name);
+		B3D_LOG(Warning, RenderBackend, "Cannot find load-store parameter with the name: '{0}'", name);
 		return;
 	}
 
@@ -348,7 +348,7 @@ void TGpuParams<Core>::GetLoadStoreTextureParam(GpuProgramType type, const Strin
 	if(iterFind == paramDescs->LoadStoreTextures.end())
 	{
 		output = TGpuParamLoadStoreTexture<Core>(nullptr, nullptr);
-		BS_LOG(Warning, RenderBackend, "Cannot find load-store parameter with the name: '{0}'", name);
+		B3D_LOG(Warning, RenderBackend, "Cannot find load-store parameter with the name: '{0}'", name);
 	}
 	else
 		output = TGpuParamLoadStoreTexture<Core>(&iterFind->second, GetThisPtrInternal());
@@ -361,7 +361,7 @@ void TGpuParams<Core>::GetBufferParam(GpuProgramType type, const String& name, T
 	if(paramDescs == nullptr)
 	{
 		output = TGpuParamBuffer<Core>(nullptr, nullptr);
-		BS_LOG(Warning, RenderBackend, "Cannot find buffer parameter with the name: '{0}'", name);
+		B3D_LOG(Warning, RenderBackend, "Cannot find buffer parameter with the name: '{0}'", name);
 		return;
 	}
 
@@ -369,7 +369,7 @@ void TGpuParams<Core>::GetBufferParam(GpuProgramType type, const String& name, T
 	if(iterFind == paramDescs->Buffers.end())
 	{
 		output = TGpuParamBuffer<Core>(nullptr, nullptr);
-		BS_LOG(Warning, RenderBackend, "Cannot find buffer parameter with the name: '{0}'", name);
+		B3D_LOG(Warning, RenderBackend, "Cannot find buffer parameter with the name: '{0}'", name);
 	}
 	else
 		output = TGpuParamBuffer<Core>(&iterFind->second, GetThisPtrInternal());
@@ -382,7 +382,7 @@ void TGpuParams<Core>::GetSamplerStateParam(GpuProgramType type, const String& n
 	if(paramDescs == nullptr)
 	{
 		output = TGpuParamSampState<Core>(nullptr, nullptr);
-		BS_LOG(Warning, RenderBackend, "Cannot find sampler state parameter with the name: '{0}'", name);
+		B3D_LOG(Warning, RenderBackend, "Cannot find sampler state parameter with the name: '{0}'", name);
 		return;
 	}
 
@@ -390,7 +390,7 @@ void TGpuParams<Core>::GetSamplerStateParam(GpuProgramType type, const String& n
 	if(iterFind == paramDescs->Samplers.end())
 	{
 		output = TGpuParamSampState<Core>(nullptr, nullptr);
-		BS_LOG(Warning, RenderBackend, "Cannot find sampler state parameter with the name: '{0}'", name);
+		B3D_LOG(Warning, RenderBackend, "Cannot find sampler state parameter with the name: '{0}'", name);
 	}
 	else
 		output = TGpuParamSampState<Core>(&iterFind->second, GetThisPtrInternal());
@@ -764,7 +764,7 @@ void GpuParams::SyncToCore(const CoreSyncData& data)
 	u32 bufferArrayOffset = loadStoreTextureArrayOffset + loadStoreTextureArraySize;
 	u32 samplerArrayOffset = bufferArrayOffset + bufferArraySize;
 
-	assert(data.GetBufferSize() == totalSize);
+	B3D_ASSERT(data.GetBufferSize() == totalSize);
 
 	u8* dataPtr = data.GetBuffer();
 

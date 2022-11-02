@@ -37,7 +37,7 @@ namespace bs
 	};
 
 	/** Contains information about an instantiated scene. */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Scene)) SceneInstance
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Scene)) SceneInstance
 	{
 		struct ConstructPrivately
 		{};
@@ -46,17 +46,17 @@ namespace bs
 		SceneInstance(ConstructPrivately dummy, const String& name, const HSceneObject& root, const SPtr<PhysicsScene>& physicsScene);
 
 		/** Name of the scene. */
-		BS_SCRIPT_EXPORT(ExportName(Name), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Name), Property(Getter))
 
 		const String& GetName() const { return mName; }
 
 		/** Root object of the scene. */
-		BS_SCRIPT_EXPORT(ExportName(Root), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Root), Property(Getter))
 
 		const HSceneObject& GetRoot() const { return mRoot; }
 
 		/** Checks is the scene currently active. IF inactive the scene properties aside from the name are undefined. */
-		BS_SCRIPT_EXPORT(ExportName(IsActive), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(IsActive), Property(Getter))
 
 		bool IsActive() const { return mIsActive; }
 
@@ -64,7 +64,7 @@ namespace bs
 		 * Physical representation of the scene, as assigned by the physics sub-system. Exact implementation depends on the
 		 * physics plugin used.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(Physics), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Physics), Property(Getter))
 
 		const SPtr<PhysicsScene>& GetPhysicsScene() const { return mPhysicsScene; }
 

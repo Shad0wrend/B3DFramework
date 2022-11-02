@@ -75,8 +75,8 @@ namespace bs
 		 *
 		 * @param[in]	success		If true success is reported, otherwise failure.
 		 * @param[in]	desc		Message describing the nature of the failure.
-		 * @param[in]	file		Name of the source code file the assertment originates from.
-		 * @param[in]	line		Line number at which the assertment was triggered at.
+		 * @param[in]	file		Name of the source code file the B3D_ASSERTment originates from.
+		 * @param[in]	line		Line number at which the B3D_ASSERTment was triggered at.
 		 */
 		void Assertment(bool success, const String& desc, const String& file, long line);
 

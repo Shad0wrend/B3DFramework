@@ -901,7 +901,7 @@ D3D11_PRIMITIVE_TOPOLOGY D3D11Mappings::GetPrimitiveType(DrawOperationType type)
 	case DOT_TRIANGLE_STRIP:
 		return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
 	case DOT_TRIANGLE_FAN:
-		BS_EXCEPT(InvalidParametersException, "D3D11 doesn't support triangle fan primitive type.");
+		B3D_EXCEPT(InvalidParametersException, "D3D11 doesn't support triangle fan primitive type.");
 	}
 
 	return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -955,6 +955,6 @@ D3D11_MAP D3D11Mappings::GetLockOptions(GpuLockOptions lockOptions)
 		break;
 	};
 
-	BS_EXCEPT(RenderingAPIException, "Invalid lock option. No DX11 equivalent of: " + ToString(lockOptions));
+	B3D_EXCEPT(RenderingAPIException, "Invalid lock option. No DX11 equivalent of: " + ToString(lockOptions));
 	return D3D11_MAP_WRITE;
 }

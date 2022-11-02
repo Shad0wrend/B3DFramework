@@ -18,7 +18,7 @@ namespace bs
 	 */
 
 	/** Flags that determine which portion of the viewport to clear. */
-	enum class BS_SCRIPT_EXPORT(ExportName(ClearFlags)) ClearFlagBits
+	enum class B3D_SCRIPT_EXPORT(ExportName(ClearFlags)) ClearFlagBits
 	{
 		Empty,
 		Color = 1 << 0,
@@ -36,50 +36,50 @@ namespace bs
 		virtual ~ViewportBase() = default;
 
 		/** Determines the area that the viewport covers. Coordinates are in normalized [0, 1] range. */
-		BS_SCRIPT_EXPORT(ExportName(Area), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Area), Property(Setter))
 		void SetArea(const Rect2& area);
 
 		/** @copydoc SetArea() */
-		BS_SCRIPT_EXPORT(ExportName(Area), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Area), Property(Getter))
 		Rect2 GetArea() const { return mNormArea; }
 
 		/**	Returns the area of the render target covered by the viewport, in pixels. */
-		BS_SCRIPT_EXPORT(ExportName(PixelArea), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(PixelArea), Property(Getter))
 		Rect2I GetPixelArea() const;
 
 		/** Determines which portions of the render target should be cleared before rendering to this viewport is performed. */
-		BS_SCRIPT_EXPORT(ExportName(ClearFlags), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(ClearFlags), Property(Setter))
 		void SetClearFlags(ClearFlags flags);
 
 		/** @copydoc SetClearFlags() */
-		BS_SCRIPT_EXPORT(ExportName(ClearFlags), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(ClearFlags), Property(Getter))
 		ClearFlags GetClearFlags() const { return mClearFlags; }
 
 		/**	Sets values to clear color, depth and stencil buffers to. */
 		void SetClearValues(const Color& clearColor, float clearDepth = 0.0f, u16 clearStencil = 0);
 
 		/** Determines the color to clear the viewport to before rendering, if color clear is enabled. */
-		BS_SCRIPT_EXPORT(ExportName(ClearColor), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(ClearColor), Property(Setter))
 		void SetClearColorValue(const Color& color);
 
 		/** @copydoc SetClearColorValue() */
-		BS_SCRIPT_EXPORT(ExportName(ClearColor), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(ClearColor), Property(Getter))
 		const Color& GetClearColorValue() const { return mClearColorValue; }
 
 		/** Determines the value to clear the depth buffer to before rendering, if depth clear is enabled. */
-		BS_SCRIPT_EXPORT(ExportName(ClearDepth), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(ClearDepth), Property(Setter))
 		void SetClearDepthValue(float depth);
 
 		/** @copydoc SetClearDepthValue() */
-		BS_SCRIPT_EXPORT(ExportName(ClearDepth), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(ClearDepth), Property(Getter))
 		float GetClearDepthValue() const { return mClearDepthValue; }
 
 		/** Determines the value to clear the stencil buffer to before rendering, if stencil clear is enabled. */
-		BS_SCRIPT_EXPORT(ExportName(ClearStencil), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(ClearStencil), Property(Setter))
 		void SetClearStencilValue(u16 value);
 
 		/** @copydoc SetClearStencilValue() */
-		BS_SCRIPT_EXPORT(ExportName(ClearStencil), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(ClearStencil), Property(Getter))
 		u16 GetClearStencilValue() const { return mClearStencilValue; }
 
 	protected:
@@ -138,15 +138,15 @@ namespace bs
 	 * Viewport determines to which RenderTarget should rendering be performed. It allows you to render to a sub-region of the
 	 * target by specifying the area rectangle, and allows you to set up color/depth/stencil clear values for that specific region.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Viewport : public IReflectable, public CoreObject, public TViewport<false>
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Viewport : public IReflectable, public CoreObject, public TViewport<false>
 	{
 	public:
 		/**	Determines the render target the viewport is associated with. */
-		BS_SCRIPT_EXPORT(ExportName(Target), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Target), Property(Setter))
 		void SetTarget(const SPtr<RenderTarget>& target);
 
 		/** @copydoc setTarget() */
-		BS_SCRIPT_EXPORT(ExportName(Target), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Target), Property(Getter))
 
 		SPtr<RenderTarget> GetTarget() const { return mTarget; }
 
@@ -158,7 +158,7 @@ namespace bs
 		 *
 		 * @note	Viewport coordinates are normalized in [0, 1] range.
 		 */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(Viewport))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(Viewport))
 		static SPtr<Viewport> Create(const SPtr<RenderTarget>& target, float x = 0.0f, float y = 0.0f, float width = 1.0f, float height = 1.0f);
 
 	protected:

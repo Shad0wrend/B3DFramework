@@ -47,7 +47,7 @@ namespace bs
 
 #if BS_COMPILER == BS_COMPILER_CLANG
 /** @ref scriptBindingMacro */
-#	define BS_SCRIPT_EXPORT(...) __attribute__((annotate("se," #	__VA_ARGS__)))
+#	define B3D_SCRIPT_EXPORT(...) __attribute__((annotate("se," #	__VA_ARGS__)))
 
 /**
  * When applied to a parameter, makes it a variable argument parameter in the scripting interface (if supported
@@ -62,7 +62,7 @@ namespace bs
 #	define BS_NORREF __attribute__((annotate("norref")))
 #else
 /** @ref scriptBindingMacro */
-#	define BS_SCRIPT_EXPORT(...)
+#	define B3D_SCRIPT_EXPORT(...)
 
 /**
  * When applied to a parameter, makes it a variable argument parameter in the scripting interface (if supported
@@ -82,7 +82,7 @@ namespace bs
 	 */
 
 	/** Values that represent in which order are euler angles applied when used in transformations. */
-	enum class BS_SCRIPT_EXPORT() EulerAngleOrder
+	enum class B3D_SCRIPT_EXPORT() EulerAngleOrder
 	{
 		XYZ,
 		XZY,

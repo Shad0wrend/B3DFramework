@@ -56,7 +56,7 @@ namespace bs
 		 */
 		void Init()
 		{
-			assert(mData == nullptr);
+			B3D_ASSERT(mData == nullptr);
 
 			if(mNumBytes > 0)
 				mData = (u8*)B3DAllocate(mNumBytes);
@@ -70,7 +70,7 @@ namespace bs
 		 */
 		GroupAlloc& Reserve(u32 amount)
 		{
-			assert(mData == nullptr);
+			B3D_ASSERT(mData == nullptr);
 
 			mNumBytes += amount;
 			return *this;
@@ -85,7 +85,7 @@ namespace bs
 		template <class T>
 		GroupAlloc& Reserve(u32 count = 1)
 		{
-			assert(mData == nullptr);
+			B3D_ASSERT(mData == nullptr);
 
 			mNumBytes += sizeof(T) * count;
 			return *this;
@@ -98,7 +98,7 @@ namespace bs
 		 */
 		u8* Alloc(u32 amount)
 		{
-			assert(mDataPtr + amount <= (mData + mNumBytes));
+			B3D_ASSERT(mDataPtr + amount <= (mData + mNumBytes));
 
 			u8* output = mDataPtr;
 			mDataPtr += amount;

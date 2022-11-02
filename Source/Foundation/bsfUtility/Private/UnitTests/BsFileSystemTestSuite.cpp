@@ -41,7 +41,7 @@ void FileSystemTestSuite::StartUp()
 	mTestDirectory = FileSystem::GetWorkingDirectoryPath() + testDirectoryName;
 	if(FileSystem::Exists(mTestDirectory))
 	{
-		BS_EXCEPT(InternalErrorException, String("Directory '") + testDirectoryName + "' should not already exist; you should remove it manually.");
+		B3D_EXCEPT(InternalErrorException, String("Directory '") + testDirectoryName + "' should not already exist; you should remove it manually.");
 	}
 	else
 	{

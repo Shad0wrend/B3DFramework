@@ -184,7 +184,7 @@ void LinuxRenderWindow::Initialize()
 	// externally, but XInitThreads might be required if problems occur.
 	VkInstance instance = mRenderAPI.GetInstanceInternal();
 	VkResult result = vkCreateXlibSurfaceKHR(instance, &surfaceCreateInfo, gVulkanAllocator, &mSurface);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	SPtr<VulkanDevice> presentDevice = mRenderAPI.GetPresentDeviceInternal();
 	VkPhysicalDevice physicalDevice = presentDevice->GetPhysical();
@@ -199,7 +199,7 @@ void LinuxRenderWindow::Initialize()
 		// Note: Not supporting present only queues at the moment
 		// Note: Also present device can only return one family of graphics queue, while there could be more (some of
 		// which support present)
-		BS_EXCEPT(RenderingAPIException, "Cannot find a graphics queue that also supports present operations.");
+		B3D_EXCEPT(RenderingAPIException, "Cannot find a graphics queue that also supports present operations.");
 	}
 
 	SurfaceFormat format = presentDevice->GetSurfaceFormat(mSurface, mDesc.gamma);
@@ -262,7 +262,7 @@ void LinuxRenderWindow::setVideoMode(i32 screen, RROutput output, RRMode mode)
 	XRRScreenResources* screenRes = XRRGetScreenResources(display, rootWindow);
 	if(screenRes == nullptr)
 	{
-		BS_LOG(Error, Platform, "XRR: Failed to retrieve screen resources. ");
+		B3D_LOG(Error, Platform, "XRR: Failed to retrieve screen resources. ");
 		return;
 	}
 
@@ -271,7 +271,7 @@ void LinuxRenderWindow::setVideoMode(i32 screen, RROutput output, RRMode mode)
 	{
 		XRRFreeScreenResources(screenRes);
 
-		BS_LOG(Error, Platform, "XRR: Failed to retrieve output info for output: {0}", (u32)output);
+		B3D_LOG(Error, Platform, "XRR: Failed to retrieve output info for output: {0}", (u32)output);
 		return;
 	}
 
@@ -281,7 +281,7 @@ void LinuxRenderWindow::setVideoMode(i32 screen, RROutput output, RRMode mode)
 		XRRFreeScreenResources(screenRes);
 		XRRFreeOutputInfo(outputInfo);
 
-		BS_LOG(Error, Platform, "XRR: Failed to retrieve CRTC info for output: {0}", (u32)output);
+		B3D_LOG(Error, Platform, "XRR: Failed to retrieve CRTC info for output: {0}", (u32)output);
 		return;
 	}
 
@@ -290,7 +290,7 @@ void LinuxRenderWindow::setVideoMode(i32 screen, RROutput output, RRMode mode)
 	Status status = XRRSetCrtcConfig(display, screenRes, outputInfo->crtc, CurrentTime, crtcInfo->x, crtcInfo->y, mode, crtcInfo->rotation, &output, 1);
 
 	if(status != Success)
-		BS_LOG(Error, Platform, "XRR: XRRSetCrtcConfig failed.");
+		B3D_LOG(Error, Platform, "XRR: XRRSetCrtcConfig failed.");
 
 	XRRFreeCrtcInfo(crtcInfo);
 	XRRFreeOutputInfo(outputInfo);
@@ -310,7 +310,7 @@ void LinuxRenderWindow::setFullscreen(const VideoMode& mode)
 	u32 outputIdx = mode.outputIdx;
 	if(outputIdx >= videoModeInfo.getNumOutputs())
 	{
-		BS_LOG(Error, Platform, "Invalid output device index.");
+		B3D_LOG(Error, Platform, "Invalid output device index.");
 		return;
 	}
 
@@ -337,7 +337,7 @@ void LinuxRenderWindow::setFullscreen(const VideoMode& mode)
 		XRRScreenResources* screenRes = XRRGetScreenResources(display, rootWindow);
 		if(screenRes == nullptr)
 		{
-			BS_LOG(Error, Platform, "XRR: Failed to retrieve screen resources. ");
+			B3D_LOG(Error, Platform, "XRR: Failed to retrieve screen resources. ");
 			return;
 		}
 
@@ -346,7 +346,7 @@ void LinuxRenderWindow::setFullscreen(const VideoMode& mode)
 		{
 			XRRFreeScreenResources(screenRes);
 
-			BS_LOG(Error, Platform, "XRR: Failed to retrieve output info for output: {0}", (u32)outputID);
+			B3D_LOG(Error, Platform, "XRR: Failed to retrieve output info for output: {0}", (u32)outputID);
 			return;
 		}
 
@@ -356,7 +356,7 @@ void LinuxRenderWindow::setFullscreen(const VideoMode& mode)
 			XRRFreeScreenResources(screenRes);
 			XRRFreeOutputInfo(outputInfo);
 
-			BS_LOG(Error, Platform, "XRR: Failed to retrieve CRTC info for output: {0}", (u32)outputID);
+			B3D_LOG(Error, Platform, "XRR: Failed to retrieve CRTC info for output: {0}", (u32)outputID);
 			return;
 		}
 
@@ -398,7 +398,7 @@ void LinuxRenderWindow::setFullscreen(const VideoMode& mode)
 		{
 			LinuxPlatform::unlockX();
 
-			BS_LOG(Error, Platform, "Unable to enter fullscreen, unsupported video mode requested.");
+			B3D_LOG(Error, Platform, "Unable to enter fullscreen, unsupported video mode requested.");
 			return;
 		}
 
@@ -450,7 +450,7 @@ void LinuxRenderWindow::setWindowed(u32 width, u32 height)
 	u32 outputIdx = 0; // 0 is always primary
 	if(outputIdx >= videoModeInfo.getNumOutputs())
 	{
-		BS_LOG(Error, Platform, "Invalid output device index.");
+		B3D_LOG(Error, Platform, "Invalid output device index.");
 		return;
 	}
 
@@ -595,7 +595,7 @@ void LinuxRenderWindow::swapBuffers(u32 syncMask)
 	SPtr<VulkanDevice> presentDevice = mRenderAPI.GetPresentDeviceInternal();
 
 	// Assuming present queue is always graphics
-	assert(presentDevice->GetQueueFamily(GQT_GRAPHICS) == mPresentQueueFamily);
+	B3D_ASSERT(presentDevice->GetQueueFamily(GQT_GRAPHICS) == mPresentQueueFamily);
 
 	// Find an appropriate queue to execute on
 	VulkanQueue* queue = presentDevice->GetQueue(GQT_GRAPHICS, 0);
@@ -633,7 +633,7 @@ void LinuxRenderWindow::copyToMemory(PixelData& dst, FrameBuffer buffer)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
-	assert(false && "Not implemented");
+	B3D_ASSERT(false && "Not implemented");
 }
 
 void LinuxRenderWindow::getCustomAttribute(const String& name, void* data) const

@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/**	Structure containing parameters for starting the application. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Application), ExportAsStruct(true), API(Framework)) START_UP_DESC
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Application), ExportAsStruct(true), API(Framework)) START_UP_DESC
 	{
 		String RenderApi; /**< Name of the render system plugin to use. */
 		String Renderer; /**< Name of the renderer plugin to use. */
@@ -45,11 +45,11 @@ namespace bs
 		 *If specified Log will call this function whenever a new log message is added. If this returns true then
 		 * the default action of the log will be skipped.
 		 */
-		BS_SCRIPT_EXPORT(Exclude(true))
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		std::function<bool(const String& message, LogVerbosity verbosity, u32 category)> LogCallback;
 
 		/** Crash handling customization */
-		BS_SCRIPT_EXPORT(Exclude(true))
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		CrashHandlerSettings CrashHandling;
 	};
 

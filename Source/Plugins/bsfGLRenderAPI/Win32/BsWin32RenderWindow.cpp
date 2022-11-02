@@ -204,13 +204,13 @@ void Win32RenderWindow::Initialize()
 
 				if(ChangeDisplaySettingsEx(mDeviceName, &displayDeviceMode, NULL, CDS_FULLSCREEN | CDS_TEST, NULL) != DISP_CHANGE_SUCCESSFUL)
 				{
-					BS_EXCEPT(RenderingAPIException, "ChangeDisplaySettings with user display frequency failed.");
+					B3D_EXCEPT(RenderingAPIException, "ChangeDisplaySettings with user display frequency failed.");
 				}
 			}
 
 			if(ChangeDisplaySettingsEx(mDeviceName, &displayDeviceMode, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL)
 			{
-				BS_EXCEPT(RenderingAPIException, "ChangeDisplaySettings failed.");
+				B3D_EXCEPT(RenderingAPIException, "ChangeDisplaySettings failed.");
 			}
 		}
 	}
@@ -246,7 +246,7 @@ void Win32RenderWindow::Initialize()
 		}
 
 		if(!formatOk)
-			BS_EXCEPT(RenderingAPIException, "Failed selecting pixel format.");
+			B3D_EXCEPT(RenderingAPIException, "Failed selecting pixel format.");
 	}
 
 	// Record what gamma option we used in the end
@@ -307,7 +307,7 @@ void Win32RenderWindow::SetFullscreen(u32 width, u32 height, float refreshRate, 
 
 	if(ChangeDisplaySettingsEx(monitorInfo.szDevice, &displayDeviceMode, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL)
 	{
-		BS_EXCEPT(RenderingAPIException, "ChangeDisplaySettings failed");
+		B3D_EXCEPT(RenderingAPIException, "ChangeDisplaySettings failed");
 	}
 
 	props.Top = monitorInfo.rcMonitor.top;
@@ -498,7 +498,7 @@ void Win32RenderWindow::CopyToMemory(PixelData& dst, FrameBuffer buffer)
 	   (dst.GetBottom() > GetProperties().Height) ||
 	   (dst.GetFront() != 0) || (dst.GetBack() != 1))
 	{
-		BS_EXCEPT(InvalidParametersException, "Invalid box.");
+		B3D_EXCEPT(InvalidParametersException, "Invalid box.");
 	}
 
 	if(buffer == FB_AUTO)
@@ -511,7 +511,7 @@ void Win32RenderWindow::CopyToMemory(PixelData& dst, FrameBuffer buffer)
 
 	if((format == GL_NONE) || (type == 0))
 	{
-		BS_EXCEPT(InvalidParametersException, "Unsupported format.");
+		B3D_EXCEPT(InvalidParametersException, "Unsupported format.");
 	}
 
 	// Must change the packing to ensure no overruns!

@@ -189,14 +189,14 @@ namespace bs
 
 		Type& operator[](u32 index)
 		{
-			assert(index < mSize && "Array index out-of-range.");
+			B3D_ASSERT(index < mSize && "Array index out-of-range.");
 
 			return mElements[index];
 		}
 
 		const Type& operator[](u32 index) const
 		{
-			assert(index < mSize && "Array index out-of-range.");
+			B3D_ASSERT(index < mSize && "Array index out-of-range.");
 
 			return mElements[index];
 		}
@@ -261,25 +261,25 @@ namespace bs
 
 		Type& Front()
 		{
-			assert(!Empty());
+			B3D_ASSERT(!Empty());
 			return *mElements[0];
 		}
 
 		Type& Back()
 		{
-			assert(!Empty());
+			B3D_ASSERT(!Empty());
 			return *mElements[mSize - 1];
 		}
 
 		const Type& Front() const
 		{
-			assert(!Empty());
+			B3D_ASSERT(!Empty());
 			return mElements[0];
 		}
 
 		const Type& Back() const
 		{
-			assert(!Empty());
+			B3D_ASSERT(!Empty());
 			return mElements[mSize - 1];
 		}
 
@@ -301,7 +301,7 @@ namespace bs
 
 		void Pop()
 		{
-			assert(mSize > 0 && "Popping an empty array.");
+			B3D_ASSERT(mSize > 0 && "Popping an empty array.");
 			--mSize;
 			mElements[mSize].~Type();
 		}
@@ -414,7 +414,7 @@ namespace bs
 
 		bool SwapAndErase(Iterator iter)
 		{
-			assert(!Empty());
+			B3D_ASSERT(!Empty());
 
 			auto iterLast = end() - 1;
 
@@ -541,8 +541,8 @@ namespace bs
 
 		Iterator Erase(ConstIterator first, ConstIterator last)
 		{
-			assert(first >= begin() && "Iterator to insert is out of bounds.");
-			assert(last < end() && "Inserting at past-the-end iterator.");
+			B3D_ASSERT(first >= begin() && "Iterator to insert is out of bounds.");
+			B3D_ASSERT(last < end() && "Inserting at past-the-end iterator.");
 
 			Iterator iter = const_cast<Iterator>(first);
 
@@ -560,8 +560,8 @@ namespace bs
 
 		Iterator Erase(ConstIterator it)
 		{
-			assert(it >= begin() && "Iterator to erase is out of bounds.");
-			assert(it < end() && "Erasing at past-the-end iterator.");
+			B3D_ASSERT(it >= begin() && "Iterator to erase is out of bounds.");
+			B3D_ASSERT(it < end() && "Erasing at past-the-end iterator.");
 
 			Iterator toErase = const_cast<Iterator>(it);
 			std::move(toErase + 1, end(), toErase);

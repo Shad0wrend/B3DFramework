@@ -117,7 +117,7 @@ SPtr<ManagedSerializableFieldData> ManagedSerializableArray::GetFieldData(u32 ar
 		ScriptArray scriptArray(array);
 
 		u32 numElems = scriptArray.Size();
-		assert(arrayIdx < numElems);
+		B3D_ASSERT(arrayIdx < numElems);
 
 		void* arrayValue = scriptArray.GetRaw(arrayIdx, mElemSize);
 
@@ -190,7 +190,7 @@ void ManagedSerializableArray::SetValueInternal(MonoArray* obj, u32 arrayIdx, vo
 {
 	ScriptArray scriptArray(obj);
 	u32 numElems = (u32)scriptArray.Size();
-	assert(arrayIdx < numElems);
+	B3D_ASSERT(arrayIdx < numElems);
 
 	scriptArray.SetRaw(arrayIdx, (u8*)val, mElemSize);
 }
@@ -208,7 +208,7 @@ u32 ManagedSerializableArray::ToSequentialIdx(const Vector<u32>& idx) const
 	u32 mNumDims = (u32)mNumElements.size();
 
 	if(idx.size() != mNumDims)
-		BS_EXCEPT(InvalidParametersException, "Provided index doesn't have the correct number of dimensions");
+		B3D_EXCEPT(InvalidParametersException, "Provided index doesn't have the correct number of dimensions");
 
 	if(mNumElements.size() == 0)
 		return 0;
@@ -230,7 +230,7 @@ void ManagedSerializableArray::Resize(const Vector<u32>& newSizes)
 {
 	if(mGCHandle != 0)
 	{
-		assert(mArrayTypeInfo->MRank == (u32)newSizes.size());
+		B3D_ASSERT(mArrayTypeInfo->MRank == (u32)newSizes.size());
 
 		u32 srcCount = 1;
 		for(auto& numElems : mNumElements)

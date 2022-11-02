@@ -163,7 +163,7 @@ namespace bs
 	};
 
 	/** Represents a single potential value of a shader variation parameter and optionally its name. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Renderer), ExportAsStruct(true)) ShaderVariationParamValue
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Renderer), ExportAsStruct(true)) ShaderVariationParamValue
 	{
 		/** Optional human-readable name describing what this particular value represents. */
 		String Name;
@@ -173,7 +173,7 @@ namespace bs
 	};
 
 	/** Represents a single shader variation parameter and a set of all possible values. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Renderer), ExportAsStruct(true)) ShaderVariationParamInfo
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Renderer), ExportAsStruct(true)) ShaderVariationParamInfo
 	{
 		/** Optional human-readable name describing the variation parameter. */
 		String Name;
@@ -426,7 +426,7 @@ namespace bs
 		 * Returns the list of all variation parameters supported by this shader, possible values of each parameter and
 		 * other meta-data.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(VariationParams), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(VariationParams), Property(Getter))
 
 		const Vector<ShaderVariationParamInfo> GetVariationParams() const { return mDesc.VariationParams; }
 
@@ -580,7 +580,7 @@ namespace bs
 	 * programs.
 	 * @endscript
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Shader : public Resource, public TShader<false>
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Shader : public Resource, public TShader<false>
 	{
 	public:
 		/** Retrieves an implementation of a shader usable only from the core thread. */

@@ -168,10 +168,10 @@ namespace bs
 	 * exception.
 	 */
 	// BSF doesn't actually use exceptions, so we just emulate the unhandled exception handler by crashing the application.
-#ifndef BS_EXCEPT
-#	define BS_EXCEPT(type, desc)                                                                                                  \
+#ifndef B3D_EXCEPT
+#	define B3D_EXCEPT(type, desc)                                                                                                  \
 		{                                                                                                                          \
-			static_assert((std::is_base_of<bs::Exception, type>::value), "Invalid exception type (" #type ") for BS_EXCEPT macro." \
+			static_assert((std::is_base_of<bs::Exception, type>::value), "Invalid exception type (" #type ") for B3D_EXCEPT macro." \
 																		 " It needs to derive from bs::Exception.");               \
 			GetCrashHandler().ReportCrash(#type, desc, __PRETTY_FUNCTION__, __FILE__, __LINE__);                                     \
 			PlatformUtility::Terminate(true);                                                                                      \

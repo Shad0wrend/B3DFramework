@@ -19,7 +19,7 @@ VulkanDescriptorLayout::VulkanDescriptorLayout(VulkanDevice& device, VkDescripto
 	layoutCI.pBindings = bindings;
 
 	VkResult result = vkCreateDescriptorSetLayout(device.GetLogical(), &layoutCI, gVulkanAllocator, &mLayout);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 }
 
 VulkanDescriptorLayout::~VulkanDescriptorLayout()
@@ -37,7 +37,7 @@ size_t VulkanDescriptorLayout::CalculateHash(VkDescriptorSetLayoutBinding* bindi
 		B3DCombineHash(bindingHash, bindings[i].descriptorCount);
 		B3DCombineHash(bindingHash, bindings[i].descriptorType);
 		B3DCombineHash(bindingHash, bindings[i].stageFlags);
-		assert(bindings[i].pImmutableSamplers == nullptr); // Not accounted for in hash, assumed always null
+		B3D_ASSERT(bindings[i].pImmutableSamplers == nullptr); // Not accounted for in hash, assumed always null
 
 		B3DCombineHash(hash, bindingHash);
 	}

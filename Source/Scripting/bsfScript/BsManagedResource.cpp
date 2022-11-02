@@ -32,7 +32,7 @@ ManagedResource::ManagedResource(MonoObject* managedInstance)
 	MonoClass* managedClass = MonoManager::Instance().FindClass(metaData->TypeNamespace, metaData->TypeName);
 	if(managedClass == nullptr)
 	{
-		BS_LOG(Warning, Script, "Cannot create managed component: {0}.{1} because that type doesn't exist.", metaData->TypeNamespace, metaData->TypeName);
+		B3D_LOG(Warning, Script, "Cannot create managed component: {0}.{1} because that type doesn't exist.", metaData->TypeNamespace, metaData->TypeName);
 		return;
 	}
 }

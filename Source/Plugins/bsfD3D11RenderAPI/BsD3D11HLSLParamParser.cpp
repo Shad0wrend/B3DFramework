@@ -21,19 +21,19 @@ void D3D11HLSLParamParser::Parse(ID3DBlob* microcode, GpuProgramType type, GpuPa
 	const char* assemblyCode = static_cast<const char*>(pIDisassembly->GetBufferPointer());
 
 	if(FAILED(hr))
-		BS_EXCEPT(RenderingAPIException, "Unable to disassemble shader.");
+		B3D_EXCEPT(RenderingAPIException, "Unable to disassemble shader.");
 
 	ID3D11ShaderReflection* shaderReflection;
 	hr = D3DReflect((void*)microcode->GetBufferPointer(), microcode->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&shaderReflection);
 
 	if(FAILED(hr))
-		BS_EXCEPT(RenderingAPIException, "Cannot reflect D3D11 high-level shader.");
+		B3D_EXCEPT(RenderingAPIException, "Cannot reflect D3D11 high-level shader.");
 
 	D3D11_SHADER_DESC shaderDesc;
 	hr = shaderReflection->GetDesc(&shaderDesc);
 
 	if(FAILED(hr))
-		BS_EXCEPT(RenderingAPIException, "Cannot reflect D3D11 high-level shader.");
+		B3D_EXCEPT(RenderingAPIException, "Cannot reflect D3D11 high-level shader.");
 
 	if(inputParams != nullptr)
 	{
@@ -43,7 +43,7 @@ void D3D11HLSLParamParser::Parse(ID3DBlob* microcode, GpuProgramType type, GpuPa
 			hr = shaderReflection->GetInputParameterDesc(i, &inputParamDesc);
 
 			if(FAILED(hr))
-				BS_EXCEPT(RenderingAPIException, "Cannot get input param desc with index: " + ToString(i));
+				B3D_EXCEPT(RenderingAPIException, "Cannot get input param desc with index: " + ToString(i));
 
 			// We don't care about system value semantics
 			if(StringUtil::StartsWith(String(inputParamDesc.SemanticName), "sv_"))
@@ -59,7 +59,7 @@ void D3D11HLSLParamParser::Parse(ID3DBlob* microcode, GpuProgramType type, GpuPa
 		hr = shaderReflection->GetResourceBindingDesc(i, &bindingDesc);
 
 		if(FAILED(hr))
-			BS_EXCEPT(RenderingAPIException, "Cannot get resource binding desc with index: " + ToString(i));
+			B3D_EXCEPT(RenderingAPIException, "Cannot get resource binding desc with index: " + ToString(i));
 
 		ParseResource(bindingDesc, type, desc);
 	}
@@ -146,7 +146,7 @@ void D3D11HLSLParamParser::ParseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceD
 						isTexture = false;
 						break;
 					default:
-						BS_LOG(Warning, RenderBackend, "Skipping texture because it has unsupported dimension: {0}", resourceDesc.Dimension);
+						B3D_LOG(Warning, RenderBackend, "Skipping texture because it has unsupported dimension: {0}", resourceDesc.Dimension);
 					}
 
 					if(memberDesc.Type != GPOT_UNKNOWN)
@@ -211,7 +211,7 @@ void D3D11HLSLParamParser::ParseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceD
 						desc.Buffers.insert(std::make_pair(memberDesc.Name, memberDesc));
 						break;
 					default:
-						BS_LOG(Warning, RenderBackend, "Skipping typed UAV because it has unsupported dimension: {0}", resourceDesc.Dimension);
+						B3D_LOG(Warning, RenderBackend, "Skipping typed UAV because it has unsupported dimension: {0}", resourceDesc.Dimension);
 					}
 
 					break;
@@ -247,7 +247,7 @@ void D3D11HLSLParamParser::ParseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceD
 				desc.Buffers.insert(std::make_pair(memberDesc.Name, memberDesc));
 				break;
 			default:
-				BS_LOG(Warning, RenderBackend, "Skipping resource because it has unsupported type: {0}", resourceDesc.Type);
+				B3D_LOG(Warning, RenderBackend, "Skipping resource because it has unsupported type: {0}", resourceDesc.Type);
 			}
 		}
 	}
@@ -258,7 +258,7 @@ void D3D11HLSLParamParser::ParseBuffer(ID3D11ShaderReflectionConstantBuffer* buf
 	D3D11_SHADER_BUFFER_DESC constantBufferDesc;
 	HRESULT hr = bufferReflection->GetDesc(&constantBufferDesc);
 	if(FAILED(hr))
-		BS_EXCEPT(RenderingAPIException, "Failed to retrieve HLSL constant buffer description.");
+		B3D_EXCEPT(RenderingAPIException, "Failed to retrieve HLSL constant buffer description.");
 
 	if(constantBufferDesc.Type != D3D_CT_CBUFFER && constantBufferDesc.Type != D3D_CT_TBUFFER)
 	{
@@ -275,7 +275,7 @@ void D3D11HLSLParamParser::ParseBuffer(ID3D11ShaderReflectionConstantBuffer* buf
 		hr = varRef->GetDesc(&varDesc);
 
 		if(FAILED(hr))
-			BS_EXCEPT(RenderingAPIException, "Failed to retrieve HLSL constant buffer variable description.");
+			B3D_EXCEPT(RenderingAPIException, "Failed to retrieve HLSL constant buffer variable description.");
 
 		ID3D11ShaderReflectionType* varRefType = varRef->GetType();
 		D3D11_SHADER_TYPE_DESC varTypeDesc;
@@ -332,7 +332,7 @@ void D3D11HLSLParamParser::ParseVariable(D3D11_SHADER_TYPE_DESC& varTypeDesc, D3
 				memberDesc.Type = GPDT_FLOAT1;
 				break;
 			default:
-				BS_LOG(Warning, RenderBackend, "Skipping variable because it has unsupported type: {0}", varTypeDesc.Type);
+				B3D_LOG(Warning, RenderBackend, "Skipping variable because it has unsupported type: {0}", varTypeDesc.Type);
 			}
 		}
 		break;
@@ -436,7 +436,7 @@ void D3D11HLSLParamParser::ParseVariable(D3D11_SHADER_TYPE_DESC& varTypeDesc, D3
 		memberDesc.Type = GPDT_STRUCT;
 		break;
 	default:
-		BS_LOG(Warning, RenderBackend, "Skipping variable because it has unsupported class: {0}", varTypeDesc.Class);
+		B3D_LOG(Warning, RenderBackend, "Skipping variable because it has unsupported class: {0}", varTypeDesc.Class);
 	}
 
 	desc.Params.insert(std::make_pair(memberDesc.Name, memberDesc));

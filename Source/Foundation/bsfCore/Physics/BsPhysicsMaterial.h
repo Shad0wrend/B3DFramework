@@ -15,7 +15,7 @@ namespace bs
 	 * Material that controls how two physical objects interact with each other. Materials of both objects are used during
 	 * their interaction and their combined values are used.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics)) PhysicsMaterial : public Resource
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) PhysicsMaterial : public Resource
 	{
 	public:
 		virtual ~PhysicsMaterial() = default;
@@ -24,33 +24,33 @@ namespace bs
 		 * Controls friction when two in-contact objects are not moving lateral to each other (for example how difficult
 		 * it is to get an object moving from a static state while it is in contact with other object(s)).
 		 */
-		BS_SCRIPT_EXPORT(ExportName(StaticFriction), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(StaticFriction), Property(Setter))
 		virtual void SetStaticFriction(float value) = 0;
 
 		/** @copydoc SetStaticFriction() */
-		BS_SCRIPT_EXPORT(ExportName(StaticFriction), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(StaticFriction), Property(Getter))
 		virtual float GetStaticFriction() const = 0;
 
 		/**
 		 * Controls friction when two in-contact objects are moving lateral to each other (for example how quickly does an
 		 * object slow down when sliding along another object).
 		 */
-		BS_SCRIPT_EXPORT(ExportName(DynamicFriction), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(DynamicFriction), Property(Setter))
 		virtual void SetDynamicFriction(float value) = 0;
 
 		/** @copydoc SetDynamicFriction() */
-		BS_SCRIPT_EXPORT(ExportName(DynamicFriction), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(DynamicFriction), Property(Getter))
 		virtual float GetDynamicFriction() const = 0;
 
 		/**
 		 * Controls "bounciness" of an object during a collision. Value of 1 means the collision is elastic, and value of 0
 		 * means the value is inelastic. Must be in [0, 1] range.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(Restitution), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Restitution), Property(Setter))
 		virtual void SetRestitutionCoefficient(float value) = 0;
 
 		/** @copydoc SetRestitutionCoefficient() */
-		BS_SCRIPT_EXPORT(ExportName(Restitution), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Restitution), Property(Getter))
 		virtual float GetRestitutionCoefficient() const = 0;
 
 		/**
@@ -66,7 +66,7 @@ namespace bs
 		 *								collision is elastic, and value of 0 means the value is inelastic. Must be in
 		 *								[0, 1] range.
 		 */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(PhysicsMaterial))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(PhysicsMaterial))
 		static HPhysicsMaterial Create(float staticFriction = 0.0f, float dynamicFriction = 0.0f, float restitution = 0.0f);
 
 		/** @name Internal

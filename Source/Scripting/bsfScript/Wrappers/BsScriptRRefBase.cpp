@@ -17,7 +17,7 @@ ScriptRRefBase::ScriptRRefBase(MonoObject* instance, ResourceHandle<Resource> re
 
 ScriptRRefBase::~ScriptRRefBase()
 {
-	BS_ASSERT(mGCHandle == 0 && "Object being destroyed without its managed instance being freed first.");
+	B3D_ASSERT(mGCHandle == 0 && "Object being destroyed without its managed instance being freed first.");
 }
 
 void ScriptRRefBase::InitRuntimeData()
@@ -40,7 +40,7 @@ ScriptRRefBase* ScriptRRefBase::CreateInternal(const ResourceHandle<Resource>& h
 			type = metaData.ScriptClass;
 		else
 		{
-			assert(type->IsSubClassOf(metaData.ScriptClass));
+			B3D_ASSERT(type->IsSubClassOf(metaData.ScriptClass));
 		}
 	}
 

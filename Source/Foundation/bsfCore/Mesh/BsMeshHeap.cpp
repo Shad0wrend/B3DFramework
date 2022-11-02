@@ -280,7 +280,7 @@ void MeshHeap::Alloc(SPtr<TransientMesh> mesh, const SPtr<MeshData>& meshData)
 		u32 otherVertSize = meshData->GetVertexDesc()->GetVertexStride(i);
 		if(otherVertSize != vertSize)
 		{
-			BS_EXCEPT(InvalidParametersException, "Provided vertex size for stream " + ToString(i) + " doesn't match meshes vertex size. Needed: " + ToString(vertSize) + ". Got: " + ToString(otherVertSize));
+			B3D_EXCEPT(InvalidParametersException, "Provided vertex size for stream " + ToString(i) + " doesn't match meshes vertex size. Needed: " + ToString(vertSize) + ". Got: " + ToString(otherVertSize));
 		}
 
 		SPtr<VertexBuffer> vertexBuffer = mVertexData->GetBuffer(i);
@@ -298,7 +298,7 @@ void MeshHeap::Alloc(SPtr<TransientMesh> mesh, const SPtr<MeshData>& meshData)
 	// Ensure index sizes match
 	if(meshData->GetIndexElementSize() != idxSize)
 	{
-		BS_EXCEPT(InvalidParametersException, "Provided index size doesn't match meshes index size. Needed: " + ToString(idxSize) + ". Got: " + ToString(meshData->GetIndexElementSize()));
+		B3D_EXCEPT(InvalidParametersException, "Provided index size doesn't match meshes index size. Needed: " + ToString(idxSize) + ". Got: " + ToString(meshData->GetIndexElementSize()));
 	}
 
 	u8* idxDest = mCPUIndexData + idxChunkStart * idxSize;
@@ -309,7 +309,7 @@ void MeshHeap::Alloc(SPtr<TransientMesh> mesh, const SPtr<MeshData>& meshData)
 void MeshHeap::Dealloc(SPtr<TransientMesh> mesh)
 {
 	auto findIter = mMeshAllocData.find(mesh->GetMeshHeapId());
-	assert(findIter != mMeshAllocData.end());
+	B3D_ASSERT(findIter != mMeshAllocData.end());
 
 	AllocatedData& allocData = findIter->second;
 	if(allocData.UseFlags == UseFlags::GPUFree)
@@ -538,7 +538,7 @@ SPtr<VertexDataDesc> MeshHeap::GetVertexDesc() const
 u32 MeshHeap::GetVertexOffset(u32 meshId) const
 {
 	auto findIter = mMeshAllocData.find(meshId);
-	assert(findIter != mMeshAllocData.end());
+	B3D_ASSERT(findIter != mMeshAllocData.end());
 
 	u32 chunkIdx = findIter->second.VertChunkIdx;
 	return mVertChunks[chunkIdx].Start;
@@ -547,7 +547,7 @@ u32 MeshHeap::GetVertexOffset(u32 meshId) const
 u32 MeshHeap::GetIndexOffset(u32 meshId) const
 {
 	auto findIter = mMeshAllocData.find(meshId);
-	assert(findIter != mMeshAllocData.end());
+	B3D_ASSERT(findIter != mMeshAllocData.end());
 
 	u32 chunkIdx = findIter->second.IdxChunkIdx;
 	return mIdxChunks[chunkIdx].Start;
@@ -556,10 +556,10 @@ u32 MeshHeap::GetIndexOffset(u32 meshId) const
 void MeshHeap::NotifyUsedOnGpu(u32 meshId)
 {
 	auto findIter = mMeshAllocData.find(meshId);
-	assert(findIter != mMeshAllocData.end());
+	B3D_ASSERT(findIter != mMeshAllocData.end());
 
 	AllocatedData& allocData = findIter->second;
-	assert(allocData.UseFlags != UseFlags::Free);
+	B3D_ASSERT(allocData.UseFlags != UseFlags::Free);
 
 	if(allocData.UseFlags == UseFlags::GPUFree)
 		allocData.UseFlags = UseFlags::Used;
@@ -577,7 +577,7 @@ void MeshHeap::NotifyUsedOnGpu(u32 meshId)
 void MeshHeap::QueryTriggered(SPtr<MeshHeap> thisPtr, u32 meshId, u32 queryId)
 {
 	auto findIter = thisPtr->mMeshAllocData.find(meshId);
-	assert(findIter != thisPtr->mMeshAllocData.end());
+	B3D_ASSERT(findIter != thisPtr->mMeshAllocData.end());
 
 	AllocatedData& allocData = findIter->second;
 
@@ -586,7 +586,7 @@ void MeshHeap::QueryTriggered(SPtr<MeshHeap> thisPtr, u32 meshId, u32 queryId)
 	QueryData& queryData = thisPtr->mEventQueries[allocData.EventQueryIdx];
 	if(queryId == queryData.QueryId)
 	{
-		assert(allocData.UseFlags != UseFlags::Free && allocData.UseFlags != UseFlags::GPUFree);
+		B3D_ASSERT(allocData.UseFlags != UseFlags::Free && allocData.UseFlags != UseFlags::GPUFree);
 
 		if(allocData.UseFlags == UseFlags::CPUFree)
 		{

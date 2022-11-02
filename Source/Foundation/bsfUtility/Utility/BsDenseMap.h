@@ -249,7 +249,7 @@ namespace bs
 				}
 			}
 
-			assert(size() == 0 && "The number of nodes is imbalance");
+			B3D_ASSERT(size() == 0 && "The number of nodes is imbalance");
 			mTombstones = 0;
 		}
 
@@ -298,7 +298,7 @@ namespace bs
 
 		bool erase(const Key& key)
 		{
-			assert(size() != 0);
+			B3D_ASSERT(size() != 0);
 			DensePair* temp;
 
 			if(!lookup(key, temp))
@@ -311,7 +311,7 @@ namespace bs
 
 		bool erase(Iterator iter)
 		{
-			assert(size() != 0);
+			B3D_ASSERT(size() != 0);
 			DensePair* temp = &*iter;
 
 			update(temp);
@@ -419,7 +419,7 @@ namespace bs
 
 			const Key EmptyKey = getEmptyKey();
 			const Key TombstoneKey = getTombstoneKey();
-			assert(!(key == EmptyKey) && !(key == TombstoneKey) && "Empty/Tombstone value shouldn't be inserted into map!");
+			B3D_ASSERT(!(key == EmptyKey) && !(key == TombstoneKey) && "Empty/Tombstone value shouldn't be inserted into map!");
 
 			while(1)
 			{
@@ -461,7 +461,7 @@ namespace bs
 			mEntries = 0;
 			mTombstones = 0;
 			mCount = n;
-			assert(n && (n & (n - 1)) == 0 && "initial buckets must be a power of two!");
+			B3D_ASSERT(n && (n & (n - 1)) == 0 && "initial buckets must be a power of two!");
 
 			mBuckets = B3DAllocateMultiple<DensePair>(n);
 
@@ -498,7 +498,7 @@ namespace bs
 
 					// silence warning
 					f = f;
-					assert(!f && "Key already in new map");
+					B3D_ASSERT(!f && "Key already in new map");
 
 					destBucket->first = pair->first;
 					new(&destBucket->second) Value(pair->second);

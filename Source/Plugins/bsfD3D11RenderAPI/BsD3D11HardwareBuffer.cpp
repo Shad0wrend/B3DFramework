@@ -24,13 +24,13 @@ D3D11HardwareBuffer::D3D11HardwareBuffer(BufferType btype, GpuBufferUsage usage,
 	{
 		if(isLoadStore)
 		{
-			BS_LOG(Warning, RenderBackend, "LoadStore usage and useSystemMem cannot be used together.");
+			B3D_LOG(Warning, RenderBackend, "LoadStore usage and useSystemMem cannot be used together.");
 			isLoadStore = false;
 		}
 
 		if(streamOut)
 		{
-			BS_LOG(Warning, RenderBackend, "useSystemMem and streamOut cannot be used together.");
+			B3D_LOG(Warning, RenderBackend, "useSystemMem and streamOut cannot be used together.");
 			streamOut = false;
 		}
 	}
@@ -39,13 +39,13 @@ D3D11HardwareBuffer::D3D11HardwareBuffer(BufferType btype, GpuBufferUsage usage,
 	{
 		if(btype == BT_CONSTANT)
 		{
-			BS_LOG(Warning, RenderBackend, "Constant buffers cannot be bound with LoadStore usage.");
+			B3D_LOG(Warning, RenderBackend, "Constant buffers cannot be bound with LoadStore usage.");
 			isLoadStore = false;
 		}
 
 		if(D3D11Mappings::IsDynamic(usage))
 		{
-			BS_LOG(Warning, RenderBackend, "Dynamic usage not supported with LoadStore usage.");
+			B3D_LOG(Warning, RenderBackend, "Dynamic usage not supported with LoadStore usage.");
 			usage = (GpuBufferUsage)(usage & ~GBU_DYNAMIC);
 		}
 	}
@@ -54,7 +54,7 @@ D3D11HardwareBuffer::D3D11HardwareBuffer(BufferType btype, GpuBufferUsage usage,
 	{
 		if(btype == BT_CONSTANT)
 		{
-			BS_LOG(Warning, RenderBackend, "Constant buffers cannot be used with streamOut.");
+			B3D_LOG(Warning, RenderBackend, "Constant buffers cannot be used with streamOut.");
 			streamOut = false;
 		}
 	}
@@ -115,7 +115,7 @@ D3D11HardwareBuffer::D3D11HardwareBuffer(BufferType btype, GpuBufferUsage usage,
 	if(FAILED(hr) || mDevice.HasError())
 	{
 		String msg = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create D3D11 buffer: " + msg);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create D3D11 buffer: " + msg);
 	}
 }
 
@@ -130,7 +130,7 @@ D3D11HardwareBuffer::~D3D11HardwareBuffer()
 void* D3D11HardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx)
 {
 	if(length > mSize)
-		BS_EXCEPT(RenderingAPIException, "Provided length " + ToString(length) + " larger than the buffer " + ToString(mSize) + ".");
+		B3D_EXCEPT(RenderingAPIException, "Provided length " + ToString(length) + " larger than the buffer " + ToString(mSize) + ".");
 
 	// Use direct (and faster) Map/Unmap if dynamic write, or a staging read/write
 	if((mDesc.Usage == D3D11_USAGE_DYNAMIC && options != GBL_READ_ONLY) || mDesc.Usage == D3D11_USAGE_STAGING)
@@ -192,10 +192,10 @@ void* D3D11HardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u
 		}
 
 		if(D3D11Mappings::IsMappingRead(mapType) && (mDesc.CPUAccessFlags & D3D11_CPU_ACCESS_READ) == 0)
-			BS_LOG(Error, RenderBackend, "Trying to read a buffer, but buffer wasn't created with a read access flag.");
+			B3D_LOG(Error, RenderBackend, "Trying to read a buffer, but buffer wasn't created with a read access flag.");
 
 		if(D3D11Mappings::IsMappingWrite(mapType) && (mDesc.CPUAccessFlags & D3D11_CPU_ACCESS_WRITE) == 0)
-			BS_LOG(Error, RenderBackend, "Trying to write to a buffer, but buffer wasn't created with a write access flag.");
+			B3D_LOG(Error, RenderBackend, "Trying to write to a buffer, but buffer wasn't created with a write access flag.");
 
 		D3D11_MAPPED_SUBRESOURCE mappedSubResource;
 		mappedSubResource.pData = nullptr;
@@ -205,7 +205,7 @@ void* D3D11HardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u
 		if(FAILED(hr) || mDevice.HasError())
 		{
 			String msg = mDevice.GetErrorDescription();
-			BS_EXCEPT(RenderingAPIException, "Error calling Map: " + msg);
+			B3D_EXCEPT(RenderingAPIException, "Error calling Map: " + msg);
 		}
 
 		return static_cast<void*>(static_cast<char*>(mappedSubResource.pData) + offset);
@@ -265,7 +265,7 @@ void D3D11HardwareBuffer::CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32
 			if(mDevice.HasError())
 			{
 				String errorDescription = mDevice.GetErrorDescription();
-				BS_EXCEPT(RenderingAPIException, "Cannot copy D3D11 resource\nError Description:" + errorDescription);
+				B3D_EXCEPT(RenderingAPIException, "Cannot copy D3D11 resource\nError Description:" + errorDescription);
 			}
 		}
 		else
@@ -283,7 +283,7 @@ void D3D11HardwareBuffer::CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32
 			if(mDevice.HasError())
 			{
 				String errorDescription = mDevice.GetErrorDescription();
-				BS_EXCEPT(RenderingAPIException, "Cannot copy D3D11 subresource region\nError Description:" + errorDescription);
+				B3D_EXCEPT(RenderingAPIException, "Cannot copy D3D11 subresource region\nError Description:" + errorDescription);
 			}
 		}
 	};
@@ -326,7 +326,7 @@ void D3D11HardwareBuffer::WriteData(u32 offset, u32 length, const void* pSource,
 	{
 		if(mBufferType == BT_CONSTANT)
 		{
-			assert(offset == 0);
+			B3D_ASSERT(offset == 0);
 			mDevice.GetImmediateContext()->UpdateSubresource(mD3DBuffer, 0, nullptr, pSource, 0, 0);
 		}
 		else
@@ -343,5 +343,5 @@ void D3D11HardwareBuffer::WriteData(u32 offset, u32 length, const void* pSource,
 		}
 	}
 	else
-		BS_LOG(Error, RenderBackend, "Trying to write into a buffer with unsupported usage: {0}", mDesc.Usage);
+		B3D_LOG(Error, RenderBackend, "Trying to write into a buffer with unsupported usage: {0}", mDesc.Usage);
 }

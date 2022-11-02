@@ -37,7 +37,7 @@ namespace bs
 	};
 
 	/** Flags that mark which portion of a scene-object is modified. */
-	enum class BS_SCRIPT_EXPORT(API(Editor), DocumentationGroup(Utility - Editor)) SceneObjectDiffFlags
+	enum class B3D_SCRIPT_EXPORT(API(Editor), DocumentationGroup(Utility - Editor)) SceneObjectDiffFlags
 	{
 		Name = 0x01,
 		Position = 0x02,

@@ -285,13 +285,13 @@ void MaterialParamsBase::ReportGetParamError(GetParamResult errorCode, const Str
 	switch(errorCode)
 	{
 	case GetParamResult::NotFound:
-		BS_LOG(Warning, Material, "Material doesn't have a parameter named {0}.", name);
+		B3D_LOG(Warning, Material, "Material doesn't have a parameter named {0}.", name);
 		break;
 	case GetParamResult::InvalidType:
-		BS_LOG(Warning, Material, "Parameter \"{0}\" is not of the requested type.", name);
+		B3D_LOG(Warning, Material, "Parameter \"{0}\" is not of the requested type.", name);
 		break;
 	case GetParamResult::IndexOutOfBounds:
-		BS_LOG(Warning, Material, "Parameter \"{0}\" array index {1} out of range.", name, arrayIdx);
+		B3D_LOG(Warning, Material, "Parameter \"{0}\" array index {1} out of range.", name, arrayIdx);
 		break;
 	default:
 		break;
@@ -616,7 +616,7 @@ void TMaterialParams<Core>::GetStructData(const ParamData& param, void* value, u
 	const ParamStructDataType& structParam = mStructParams[param.Index + arrayIdx];
 	if(structParam.DataSize != size)
 	{
-		BS_LOG(Warning, Material, "Size mismatch when writing to a struct. Provided size was {0} bytes but the struct "
+		B3D_LOG(Warning, Material, "Size mismatch when writing to a struct. Provided size was {0} bytes but the struct "
 								  "size is {1} bytes",
 			   size, structParam.DataSize);
 		return;
@@ -631,7 +631,7 @@ void TMaterialParams<Core>::SetStructData(const ParamData& param, const void* va
 	const ParamStructDataType& structParam = mStructParams[param.Index + arrayIdx];
 	if(structParam.DataSize != size)
 	{
-		BS_LOG(Warning, Material, "Size mismatch when writing to a struct. Provided size was {0} bytes but the struct "
+		B3D_LOG(Warning, Material, "Size mismatch when writing to a struct. Provided size was {0} bytes but the struct "
 								  "size is {1} bytes",
 			   size, structParam.DataSize);
 		return;
@@ -898,7 +898,7 @@ void MaterialParams::GetSyncData(u8* buffer, u32& size, bool forceAll)
 
 	if(size != totalSize)
 	{
-		BS_LOG(Error, Material, "Invalid buffer size provided, ignoring.");
+		B3D_LOG(Error, Material, "Invalid buffer size provided, ignoring.");
 		return;
 	}
 

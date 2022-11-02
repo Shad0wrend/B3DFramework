@@ -144,9 +144,9 @@ void TextureArrayToMSAATexture::Execute(const SPtr<Texture>& inputArray, const S
 	const TextureProperties& inputProps = inputArray->GetProperties();
 	const TextureProperties& targetProps = target->GetProperties();
 
-	assert(inputProps.GetNumArraySlices() == targetProps.GetNumSamples());
-	assert(inputProps.GetWidth() == targetProps.GetWidth());
-	assert(inputProps.GetHeight() == targetProps.GetHeight());
+	B3D_ASSERT(inputProps.GetNumArraySlices() == targetProps.GetNumSamples());
+	B3D_ASSERT(inputProps.GetWidth() == targetProps.GetWidth());
+	B3D_ASSERT(inputProps.GetHeight() == targetProps.GetHeight());
 
 	mInputParam.Set(inputArray);
 
@@ -184,7 +184,7 @@ void ClearLoadStoreMat::Execute(const SPtr<Texture>& target, const Color& clearV
 	const TextureProperties& props = target->GetProperties();
 	PixelFormat pf = props.GetFormat();
 
-	assert(!PixelUtil::IsCompressed(pf));
+	B3D_ASSERT(!PixelUtil::IsCompressed(pf));
 
 	mOutputTextureParam.Set(target, surface);
 

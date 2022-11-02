@@ -52,7 +52,7 @@ namespace bs
 	template <class T>
 	void B3DZeroOut(T* arr, size_t count)
 	{
-		assert(arr != nullptr);
+		B3D_ASSERT(arr != nullptr);
 		std::memset(arr, 0, sizeof(T) * count);
 	}
 
@@ -85,7 +85,7 @@ namespace bs
 	template <class T, class A = StdAlloc<T>>
 	bool B3DSwapAndErase(Vector<T, A>& container, const typename Vector<T, A>::iterator iter)
 	{
-		assert(!container.empty());
+		B3D_ASSERT(!container.empty());
 
 		auto iterLast = container.end() - 1;
 

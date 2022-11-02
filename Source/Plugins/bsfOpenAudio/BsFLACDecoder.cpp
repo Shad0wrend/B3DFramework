@@ -83,7 +83,7 @@ FLAC__StreamDecoderWriteStatus StreamWrite(const FLAC__StreamDecoder*, const FLA
 		data->Overflow.reserve(extraBytes);
 	}
 
-	assert(bytesPerSample <= 4);
+	B3D_ASSERT(bytesPerSample <= 4);
 	for(u32 i = 0; i < frame->header.blocksize; i++)
 	{
 		for(u32 j = 0; j < frame->header.channels; j++)
@@ -164,7 +164,7 @@ bool FLACDecoder::Open(const SPtr<DataStream>& stream, AudioDataInfo& info, u32 
 	mDecoder = FLAC__stream_decoder_new();
 	if(mDecoder == nullptr)
 	{
-		BS_LOG(Error, Audio, "Failed to open a FLAC file.");
+		B3D_LOG(Error, Audio, "Failed to open a FLAC file.");
 		return false;
 	}
 
@@ -175,7 +175,7 @@ bool FLACDecoder::Open(const SPtr<DataStream>& stream, AudioDataInfo& info, u32 
 	if(!FLAC__stream_decoder_process_until_end_of_metadata(mDecoder))
 	{
 		Close();
-		BS_LOG(Error, Audio, "Failed to open a FLAC file.");
+		B3D_LOG(Error, Audio, "Failed to open a FLAC file.");
 		return false;
 	}
 

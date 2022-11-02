@@ -60,7 +60,7 @@ namespace bs
 #ifdef BS_DEBUG_MODE
 			if(mData >= mEnd)
 			{
-				BS_EXCEPT(InternalErrorException, "Vertex element iterator out of buffer bounds.");
+				B3D_EXCEPT(InternalErrorException, "Vertex element iterator out of buffer bounds.");
 			}
 #endif
 
@@ -80,7 +80,7 @@ namespace bs
 	};
 
 	/** Contains per-vertex bone weights and indexes used for skinning, for up to four bones. */
-	struct BS_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Utility)) BoneWeight
+	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Utility)) BoneWeight
 	{
 		int Index0;
 		int Index1;

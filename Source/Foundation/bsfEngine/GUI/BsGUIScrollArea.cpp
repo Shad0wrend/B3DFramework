@@ -97,7 +97,7 @@ void GUIScrollArea::GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* el
 
 void GUIScrollArea::GetElementAreasInternal(const Rect2I& layoutArea, Rect2I* elementAreas, u32 numElements, const Vector<LayoutSizeRange>& sizeRanges, Vector2I& visibleSize, Vector2I& contentSize) const
 {
-	assert(mChildren.size() == numElements && numElements == 3);
+	B3D_ASSERT(mChildren.size() == numElements && numElements == 3);
 
 	u32 layoutIdx = 0;
 	u32 horzScrollIdx = 0;

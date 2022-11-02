@@ -172,7 +172,7 @@ void Texture::UpdateCpuBuffers(u32 subresourceIdx, const PixelData& pixelData)
 
 	if(subresourceIdx >= (u32)mCPUSubresourceData.size())
 	{
-		BS_LOG(Error, Texture, "Invalid subresource index: {0}. Supported range: 0 .. {1}", subresourceIdx, (u32)mCPUSubresourceData.size());
+		B3D_LOG(Error, Texture, "Invalid subresource index: {0}. Supported range: 0 .. {1}", subresourceIdx, (u32)mCPUSubresourceData.size());
 		return;
 	}
 
@@ -186,12 +186,12 @@ void Texture::UpdateCpuBuffers(u32 subresourceIdx, const PixelData& pixelData)
 	if(pixelData.GetWidth() != mipWidth || pixelData.GetHeight() != mipHeight ||
 	   pixelData.GetDepth() != mipDepth || pixelData.GetFormat() != mProperties.GetFormat())
 	{
-		BS_LOG(Error, Texture, "Provided buffer is not of valid dimensions or format in order to update this texture.");
+		B3D_LOG(Error, Texture, "Provided buffer is not of valid dimensions or format in order to update this texture.");
 		return;
 	}
 
 	if(mCPUSubresourceData[subresourceIdx]->GetSize() != pixelData.GetSize())
-		BS_EXCEPT(InternalErrorException, "Buffer sizes don't match.");
+		B3D_EXCEPT(InternalErrorException, "Buffer sizes don't match.");
 
 	u8* dest = mCPUSubresourceData[subresourceIdx]->GetData();
 	u8* src = pixelData.GetData();
@@ -203,7 +203,7 @@ void Texture::ReadCachedData(PixelData& dest, u32 face, u32 mipLevel)
 {
 	if((mProperties.GetUsage() & TU_CPUCACHED) == 0)
 	{
-		BS_LOG(Error, Texture, "Attempting to read CPU data from a texture that is created without CPU caching.");
+		B3D_LOG(Error, Texture, "Attempting to read CPU data from a texture that is created without CPU caching.");
 		return;
 	}
 
@@ -213,19 +213,19 @@ void Texture::ReadCachedData(PixelData& dest, u32 face, u32 mipLevel)
 	if(dest.GetWidth() != mipWidth || dest.GetHeight() != mipHeight ||
 	   dest.GetDepth() != mipDepth || dest.GetFormat() != mProperties.GetFormat())
 	{
-		BS_LOG(Error, Texture, "Provided buffer is not of valid dimensions or format in order to read from this texture.");
+		B3D_LOG(Error, Texture, "Provided buffer is not of valid dimensions or format in order to read from this texture.");
 		return;
 	}
 
 	u32 subresourceIdx = mProperties.MapToSubresourceIdx(face, mipLevel);
 	if(subresourceIdx >= (u32)mCPUSubresourceData.size())
 	{
-		BS_LOG(Error, Texture, "Invalid subresource index: {0}. Supported range: 0 .. {1}", subresourceIdx, (u32)mCPUSubresourceData.size());
+		B3D_LOG(Error, Texture, "Invalid subresource index: {0}. Supported range: 0 .. {1}", subresourceIdx, (u32)mCPUSubresourceData.size());
 		return;
 	}
 
 	if(mCPUSubresourceData[subresourceIdx]->GetSize() != dest.GetSize())
-		BS_EXCEPT(InternalErrorException, "Buffer sizes don't match.");
+		B3D_EXCEPT(InternalErrorException, "Buffer sizes don't match.");
 
 	u8* srcPtr = mCPUSubresourceData[subresourceIdx]->GetData();
 	u8* destPtr = dest.GetData();
@@ -371,7 +371,7 @@ void Texture::ReadData(PixelData& dest, u32 mipLevel, u32 face, u32 deviceIdx, u
 	if(pixelData.GetWidth() != mipWidth || pixelData.GetHeight() != mipHeight ||
 	   pixelData.GetDepth() != mipDepth || pixelData.GetFormat() != mProperties.GetFormat())
 	{
-		BS_LOG(Error, Texture, "Provided buffer is not of valid dimensions or format in order to read from this texture.");
+		B3D_LOG(Error, Texture, "Provided buffer is not of valid dimensions or format in order to read from this texture.");
 		return;
 	}
 
@@ -384,13 +384,13 @@ PixelData Texture::Lock(GpuLockOptions options, u32 mipLevel, u32 face, u32 devi
 
 	if(mipLevel > mProperties.GetNumMipmaps())
 	{
-		BS_LOG(Error, Texture, "Invalid mip level: {0}. Min is 0, max is {1}", mipLevel, mProperties.GetNumMipmaps());
+		B3D_LOG(Error, Texture, "Invalid mip level: {0}. Min is 0, max is {1}", mipLevel, mProperties.GetNumMipmaps());
 		return PixelData(0, 0, 0, PF_UNKNOWN);
 	}
 
 	if(face >= mProperties.GetNumFaces())
 	{
-		BS_LOG(Error, Texture, "Invalid face index: {0}. Min is 0, max is {1}", face, mProperties.GetNumFaces());
+		B3D_LOG(Error, Texture, "Invalid face index: {0}. Min is 0, max is {1}", face, mProperties.GetNumFaces());
 		return PixelData(0, 0, 0, PF_UNKNOWN);
 	}
 
@@ -410,43 +410,43 @@ void Texture::Copy(const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc, c
 
 	if(target->mProperties.GetTextureType() != mProperties.GetTextureType())
 	{
-		BS_LOG(Error, Texture, "Source and destination textures must be of same type.");
+		B3D_LOG(Error, Texture, "Source and destination textures must be of same type.");
 		return;
 	}
 
 	if(mProperties.GetFormat() != target->mProperties.GetFormat()) // Note: It might be okay to use different formats of the same size
 	{
-		BS_LOG(Error, Texture, "Source and destination texture formats must match.");
+		B3D_LOG(Error, Texture, "Source and destination texture formats must match.");
 		return;
 	}
 
 	if(target->mProperties.GetNumSamples() > 1 && mProperties.GetNumSamples() != target->mProperties.GetNumSamples())
 	{
-		BS_LOG(Error, Texture, "When copying to a multisampled texture, source texture must have the same number of samples.");
+		B3D_LOG(Error, Texture, "When copying to a multisampled texture, source texture must have the same number of samples.");
 		return;
 	}
 
 	if(desc.SrcFace >= mProperties.GetNumFaces())
 	{
-		BS_LOG(Error, Texture, "Invalid source face index.");
+		B3D_LOG(Error, Texture, "Invalid source face index.");
 		return;
 	}
 
 	if(desc.DstFace >= target->mProperties.GetNumFaces())
 	{
-		BS_LOG(Error, Texture, "Invalid destination face index.");
+		B3D_LOG(Error, Texture, "Invalid destination face index.");
 		return;
 	}
 
 	if(desc.SrcMip > mProperties.GetNumMipmaps())
 	{
-		BS_LOG(Error, Texture, "Source mip level out of range. Valid range is [0, {0}].", mProperties.GetNumMipmaps());
+		B3D_LOG(Error, Texture, "Source mip level out of range. Valid range is [0, {0}].", mProperties.GetNumMipmaps());
 		return;
 	}
 
 	if(desc.DstMip > target->mProperties.GetNumMipmaps())
 	{
-		BS_LOG(Error, Texture, "Destination mip level out of range. Valid range is [0, {0}].", target->mProperties.GetNumMipmaps());
+		B3D_LOG(Error, Texture, "Destination mip level out of range. Valid range is [0, {0}].", target->mProperties.GetNumMipmaps());
 		return;
 	}
 
@@ -474,7 +474,7 @@ void Texture::Copy(const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc, c
 	   desc.DstPosition.Y < 0 || desc.DstPosition.Y >= (i32)dstHeight ||
 	   desc.DstPosition.Z < 0 || desc.DstPosition.Z >= (i32)dstDepth)
 	{
-		BS_LOG(Error, Texture, "Destination position falls outside the destination texture.");
+		B3D_LOG(Error, Texture, "Destination position falls outside the destination texture.");
 		return;
 	}
 
@@ -491,7 +491,7 @@ void Texture::Copy(const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc, c
 		   desc.SrcVolume.Top >= srcHeight || desc.SrcVolume.Bottom > srcHeight ||
 		   desc.SrcVolume.Front >= srcDepth || desc.SrcVolume.Back > srcDepth)
 		{
-			BS_LOG(Error, Texture, "Source volume falls outside the source texture.");
+			B3D_LOG(Error, Texture, "Source volume falls outside the source texture.");
 			return;
 		}
 
@@ -508,7 +508,7 @@ void Texture::Copy(const SPtr<Texture>& target, const TEXTURE_COPY_DESC& desc, c
 
 	if(dstRight > dstWidth || dstBottom > dstHeight || dstBack > dstDepth)
 	{
-		BS_LOG(Error, Texture, "Destination volume falls outside the destination texture.");
+		B3D_LOG(Error, Texture, "Destination volume falls outside the destination texture.");
 		return;
 	}
 
@@ -521,13 +521,13 @@ void Texture::Clear(const Color& value, u32 mipLevel, u32 face, u32 queueIdx)
 
 	if(face >= mProperties.GetNumFaces())
 	{
-		BS_LOG(Error, Texture, "Invalid face index.");
+		B3D_LOG(Error, Texture, "Invalid face index.");
 		return;
 	}
 
 	if(mipLevel > mProperties.GetNumMipmaps())
 	{
-		BS_LOG(Error, Texture, "Mip level out of range. Valid range is [0, {0}].", mProperties.GetNumMipmaps());
+		B3D_LOG(Error, Texture, "Mip level out of range. Valid range is [0, {0}].", mProperties.GetNumMipmaps());
 		return;
 	}
 

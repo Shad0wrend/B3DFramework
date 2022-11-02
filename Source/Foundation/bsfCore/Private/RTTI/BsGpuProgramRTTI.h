@@ -163,7 +163,7 @@ namespace bs
 
 			uint32_t version = 0;
 			B3DRTTIRead(version, stream);
-			assert(version == kVersion);
+			B3D_ASSERT(version == kVersion);
 
 			B3DRTTIRead(data.Name, stream);
 			B3DRTTIRead(data.ElementSize, stream);
@@ -287,7 +287,7 @@ namespace bs
 
 			uint32_t version = 0;
 			B3DRTTIRead(version, stream);
-			assert(version == kVersion);
+			B3D_ASSERT(version == kVersion);
 
 			B3DRTTIRead(data.Name, stream);
 			B3DRTTIRead(data.Set, stream);

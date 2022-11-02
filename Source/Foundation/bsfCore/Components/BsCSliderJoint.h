@@ -17,33 +17,33 @@ namespace bs
 	 *
 	 * @note	Wraps SliderJoint as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(SliderJoint)) CSliderJoint : public CJoint
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(SliderJoint)) CSliderJoint : public CJoint
 	{
 	public:
 		CSliderJoint(const HSceneObject& parent);
 
 		/** @copydoc SliderJoint::GetPosition */
-		BS_SCRIPT_EXPORT(ExportName(Position), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Position), Property(Getter))
 		float GetPosition() const;
 
 		/** @copydoc SliderJoint::GetSpeed */
-		BS_SCRIPT_EXPORT(ExportName(Speed), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Speed), Property(Getter))
 		float GetSpeed() const;
 
 		/** @copydoc SliderJoint::GetLimit */
-		BS_SCRIPT_EXPORT(ExportName(Limit), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Limit), Property(Getter))
 		LimitLinearRange GetLimit() const;
 
 		/** @copydoc SliderJoint::SetLimit */
-		BS_SCRIPT_EXPORT(ExportName(Limit), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Limit), Property(Setter))
 		void SetLimit(const LimitLinearRange& limit);
 
 		/** @copydoc SliderJoint::SetFlag */
-		BS_SCRIPT_EXPORT(ExportName(SetFlag))
+		B3D_SCRIPT_EXPORT(ExportName(SetFlag))
 		void SetFlag(SliderJointFlag flag, bool enabled);
 
 		/** @copydoc SliderJoint::HasFlag */
-		BS_SCRIPT_EXPORT(ExportName(HasFlag))
+		B3D_SCRIPT_EXPORT(ExportName(HasFlag))
 		bool HasFlag(SliderJointFlag flag) const;
 
 		/** @name Internal

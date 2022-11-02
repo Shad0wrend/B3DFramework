@@ -30,20 +30,20 @@ void InitializeDirectInput(Mouse::Pimpl* m, HWND hWnd)
 	dipdw.dwData = DI_BUFFER_SIZE_MOUSE;
 
 	if(FAILED(m->DirectInput->CreateDevice(GUID_SysMouse, &m->Mouse, nullptr)))
-		BS_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to create device.");
+		B3D_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to create device.");
 
 	if(FAILED(m->Mouse->SetDataFormat(&c_dfDIMouse2)))
-		BS_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to set format.");
+		B3D_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to set format.");
 
 	if(FAILED(m->Mouse->SetCooperativeLevel(hWnd, m->CoopSettings)))
-		BS_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to set coop level.");
+		B3D_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to set coop level.");
 
 	if(FAILED(m->Mouse->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph)))
-		BS_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to set property.");
+		B3D_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to set property.");
 
 	HRESULT hr = m->Mouse->Acquire();
 	if(FAILED(hr) && hr != DIERR_OTHERAPPHASPRIO)
-		BS_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to acquire device.");
+		B3D_EXCEPT(InternalErrorException, "DirectInput mouse init: Failed to acquire device.");
 
 	m->HWnd = hWnd;
 }

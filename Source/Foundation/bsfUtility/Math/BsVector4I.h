@@ -11,7 +11,7 @@ namespace bs
 	 */
 
 	/** A four dimensional vector with integer coordinates. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) Vector4I
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) Vector4I
 	{
 		i32 X = 0;
 		i32 Y = 0;
@@ -26,7 +26,7 @@ namespace bs
 
 		i32 operator[](size_t i) const
 		{
-			assert(i < 4);
+			B3D_ASSERT(i < 4);
 
 			switch(i)
 			{
@@ -40,7 +40,7 @@ namespace bs
 
 		i32& operator[](size_t i)
 		{
-			assert(i < 4);
+			B3D_ASSERT(i < 4);
 
 			switch(i)
 			{

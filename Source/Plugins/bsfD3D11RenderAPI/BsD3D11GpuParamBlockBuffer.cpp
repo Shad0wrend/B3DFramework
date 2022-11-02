@@ -12,7 +12,7 @@ using namespace bs::ct;
 D3D11GpuParamBlockBuffer::D3D11GpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 	: GpuParamBlockBuffer(size, usage, deviceMask)
 {
-	assert((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on DirectX 11.");
+	B3D_ASSERT((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on DirectX 11.");
 }
 
 D3D11GpuParamBlockBuffer::~D3D11GpuParamBlockBuffer()

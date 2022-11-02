@@ -48,7 +48,7 @@ SPtr<RenderWindow> RenderAPIManager::Initialize(const String& pluginFilename, RE
 
 void RenderAPIManager::RegisterFactory(SPtr<RenderAPIFactory> factory)
 {
-	assert(factory != nullptr);
+	B3D_ASSERT(factory != nullptr);
 
 	mAvailableFactories.push_back(factory);
 }

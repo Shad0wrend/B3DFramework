@@ -402,7 +402,7 @@ void LightProbeVolume::Initialize()
 {
 	// Set SH coefficients loaded from the file
 	u32 numCoefficients = (u32)mInitCoefficients.size();
-	assert(mInitCoefficients.size() == mProbeMap.size());
+	B3D_ASSERT(mInitCoefficients.size() == mProbeMap.size());
 
 	ResizeCoefficientTexture(std::max(32U, numCoefficients));
 

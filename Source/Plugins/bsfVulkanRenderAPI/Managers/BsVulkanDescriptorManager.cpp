@@ -134,7 +134,7 @@ VulkanDescriptorSet* VulkanDescriptorManager::CreateSet(VulkanDescriptorLayout* 
 		allocateInfo.descriptorPool = mPools.back()->GetHandle();
 
 		result = vkAllocateDescriptorSets(mDevice.GetLogical(), &allocateInfo, &set);
-		assert(result == VK_SUCCESS);
+		B3D_ASSERT(result == VK_SUCCESS);
 	}
 
 	return mDevice.GetResourceManager().Create<VulkanDescriptorSet>(set, allocateInfo.descriptorPool);
@@ -164,7 +164,7 @@ VkPipelineLayout VulkanDescriptorManager::GetPipelineLayout(VulkanDescriptorLayo
 
 	VkPipelineLayout pipelineLayout;
 	VkResult result = vkCreatePipelineLayout(mDevice.GetLogical(), &layoutCI, gVulkanAllocator, &pipelineLayout);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	B3DStackFree(setLayouts);
 

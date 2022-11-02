@@ -344,8 +344,8 @@ u32 GpuParticleResources::AllocTile()
 
 void GpuParticleResources::FreeTile(u32 tile)
 {
-	assert(tile < kTileCount);
-	assert(mNumFreeTiles < kTileCount);
+	B3D_ASSERT(tile < kTileCount);
+	B3D_ASSERT(mNumFreeTiles < kTileCount);
 
 	mFreeTiles[mNumFreeTiles] = tile;
 	mNumFreeTiles++;
@@ -592,7 +592,7 @@ bool GpuParticleSystem::FreeInactiveTiles(GpuParticleResources& resources)
 	for(u32 i = 0; i < numFreeTiles; i++)
 	{
 		const u32 freeIdx = mActiveTiles.Find(false);
-		assert(freeIdx != (u32)-1);
+		B3D_ASSERT(freeIdx != (u32)-1);
 
 		const u32 lastIdx = (u32)mTiles.size() - 1;
 
@@ -1282,7 +1282,7 @@ u32 GpuParticleSortPrepareMat::Execute(const GpuParticleSystem& system, u32 syst
 {
 	static constexpr u32 kMaxNumGroups = 128;
 
-	assert(systemIdx < std::pow(2, 16));
+	B3D_ASSERT(systemIdx < std::pow(2, 16));
 
 	const u32 numParticles = system.GetNumTiles() * GpuParticleResources::kParticlesPerTile;
 

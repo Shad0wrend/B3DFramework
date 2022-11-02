@@ -60,30 +60,30 @@ namespace bs
 
 		if(errorLevel == 0)
 		{
-			BS_LOG(Error, Script, "Mono: {0} in domain {1}", message, logDomain);
+			B3D_LOG(Error, Script, "Mono: {0} in domain {1}", message, logDomain);
 		}
 		else if(errorLevel <= 2)
 		{
-			BS_LOG(Error, Script, "Mono: {0} in domain {1} [{2}]", message, logDomain, logLevel);
+			B3D_LOG(Error, Script, "Mono: {0} in domain {1} [{2}]", message, logDomain, logLevel);
 		}
 		else if(errorLevel <= 3)
 		{
-			BS_LOG(Warning, Script, "Mono: {0} in domain {1} [{2}]", message, logDomain, logLevel);
+			B3D_LOG(Warning, Script, "Mono: {0} in domain {1} [{2}]", message, logDomain, logLevel);
 		}
 		else
 		{
-			BS_LOG(Info, Particles, "Mono: {0} in domain {1} [{2}]", message, logDomain, logLevel);
+			B3D_LOG(Info, Particles, "Mono: {0} in domain {1} [{2}]", message, logDomain, logLevel);
 		}
 	}
 
 	void MonoPrintCallback(const char* string, mono_bool isStdout)
 	{
-		BS_LOG(Warning, Script, "Mono error: {0}", string);
+		B3D_LOG(Warning, Script, "Mono error: {0}", string);
 	}
 
 	void MonoPrintErrorCallback(const char* string, mono_bool isStdout)
 	{
-		BS_LOG(Error, Script, "Mono error: {0}", string);
+		B3D_LOG(Error, Script, "Mono error: {0}", string);
 	}
 } // namespace bs
 
@@ -130,7 +130,7 @@ MonoManager::MonoManager()
 
 	mRootDomain = mono_jit_init_version("bsfMono", kMonoVersionData[(int)kMonoVersion].Version.c_str());
 	if(mRootDomain == nullptr)
-		BS_EXCEPT(InternalErrorException, "Cannot initialize Mono runtime.");
+		B3D_EXCEPT(InternalErrorException, "Cannot initialize Mono runtime.");
 
 	mono_thread_set_main(mono_thread_current());
 
@@ -156,10 +156,10 @@ bs::MonoAssembly& MonoManager::LoadAssembly(const Path& path, const String& name
 
 		mScriptDomain = mono_domain_create_appdomain(const_cast<char*>(appDomainName.c_str()), nullptr);
 		if(mScriptDomain == nullptr)
-			BS_EXCEPT(InternalErrorException, "Cannot create script app domain.");
+			B3D_EXCEPT(InternalErrorException, "Cannot create script app domain.");
 
 		if(!mono_domain_set(mScriptDomain, true))
-			BS_EXCEPT(InternalErrorException, "Cannot set script app domain.");
+			B3D_EXCEPT(InternalErrorException, "Cannot set script app domain.");
 	}
 
 	auto iterFind = mAssemblies.find(name);
@@ -194,7 +194,7 @@ void MonoManager::InitializeScriptTypes(MonoAssembly& assembly)
 		meta->ScriptClass = assembly.GetClass(meta->Ns, meta->Name);
 		if(meta->ScriptClass == nullptr)
 		{
-			BS_EXCEPT(InvalidParametersException, "Unable to find class of type: \"" + meta->Ns + "::" + meta->Name + "\"");
+			B3D_EXCEPT(InvalidParametersException, "Unable to find class of type: \"" + meta->Ns + "::" + meta->Name + "\"");
 		}
 
 		if(meta->ScriptClass->HasField("mCachedPtr"))

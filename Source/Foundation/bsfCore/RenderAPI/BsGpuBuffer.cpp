@@ -103,21 +103,21 @@ GpuBuffer::GpuBuffer(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
 	: HardwareBuffer(GetBufferSize(desc), desc.Usage, deviceMask), mProperties(desc)
 {
 	if(desc.Type != GBT_STANDARD)
-		assert(desc.Format == BF_UNKNOWN && "Format must be set to BF_UNKNOWN when using non-standard buffers");
+		B3D_ASSERT(desc.Format == BF_UNKNOWN && "Format must be set to BF_UNKNOWN when using non-standard buffers");
 	else
-		assert(desc.ElementSize == 0 && "No element size can be provided for standard buffer. Size is determined from format.");
+		B3D_ASSERT(desc.ElementSize == 0 && "No element size can be provided for standard buffer. Size is determined from format.");
 }
 
 GpuBuffer::GpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer)
 	: HardwareBuffer(GetBufferSize(desc), desc.Usage, underlyingBuffer->GetDeviceMask()), mProperties(desc), mBuffer(underlyingBuffer.get()), mSharedBuffer(std::move(underlyingBuffer)), mIsExternalBuffer(true)
 {
 	const auto& props = GetProperties();
-	assert(mSharedBuffer->GetSize() == (props.GetElementCount() * props.GetElementSize()));
+	B3D_ASSERT(mSharedBuffer->GetSize() == (props.GetElementCount() * props.GetElementSize()));
 
 	if(desc.Type != GBT_STANDARD)
-		assert(desc.Format == BF_UNKNOWN && "Format must be set to BF_UNKNOWN when using non-standard buffers");
+		B3D_ASSERT(desc.Format == BF_UNKNOWN && "Format must be set to BF_UNKNOWN when using non-standard buffers");
 	else
-		assert(desc.ElementSize == 0 && "No element size can be provided for standard buffer. Size is determined from format.");
+		B3D_ASSERT(desc.ElementSize == 0 && "No element size can be provided for standard buffer. Size is determined from format.");
 }
 
 GpuBuffer::~GpuBuffer()
@@ -181,7 +181,7 @@ SPtr<GpuBuffer> GpuBuffer::GetView(GpuBufferType type, GpuBufferFormat format, u
 	const u32 elemSize = type == GBT_STANDARD ? bs::GpuBuffer::GetFormatSize(format) : elementSize;
 	if((mBuffer->GetSize() % elemSize) != 0)
 	{
-		BS_LOG(Error, RenderBackend, "Size of the buffer isn't divisible by individual element size provided for the buffer view.");
+		B3D_LOG(Error, RenderBackend, "Size of the buffer isn't divisible by individual element size provided for the buffer view.");
 		return nullptr;
 	}
 

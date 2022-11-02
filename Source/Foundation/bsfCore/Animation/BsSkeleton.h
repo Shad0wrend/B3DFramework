@@ -114,7 +114,7 @@ namespace bs
 	 * Contains information about bones required for skeletal animation.
 	 * @endscript
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Animation)) Skeleton : public IReflectable // Note: Must be immutable in order to be usable on multiple threads
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Animation)) Skeleton : public IReflectable // Note: Must be immutable in order to be usable on multiple threads
 	{
 	public:
 		~Skeleton();
@@ -152,7 +152,7 @@ namespace bs
 		void GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const SkeletonMask& mask, const AnimationStateLayer* layers, u32 numLayers);
 
 		/** Returns the total number of bones in the skeleton. */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(NumBones))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(NumBones))
 
 		u32 GetNumBones() const { return mNumBones; }
 

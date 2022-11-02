@@ -48,7 +48,7 @@ void ScriptObjectManager::RefreshAssemblies(const Vector<AssemblyRefreshInfo>& a
 	ProcessFinalizedObjects(true);
 
 	for(auto& scriptObject : mScriptObjects)
-		assert(scriptObject->IsPersistent() && "Non-persistent ScriptObject alive after domain unload.");
+		B3D_ASSERT(scriptObject->IsPersistent() && "Non-persistent ScriptObject alive after domain unload.");
 
 	ScriptAssemblyManager::Instance().ClearAssemblyInfo();
 
@@ -76,7 +76,7 @@ void ScriptObjectManager::RefreshAssemblies(const Vector<AssemblyRefreshInfo>& a
 
 void ScriptObjectManager::NotifyObjectFinalized(ScriptObjectBase* instance)
 {
-	assert(instance != nullptr);
+	B3D_ASSERT(instance != nullptr);
 
 	Lock lock(mMutex);
 	mFinalizedObjects[mFinalizedQueueIdx].push_back(instance);

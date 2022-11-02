@@ -69,7 +69,7 @@ VulkanFramebuffer::VulkanFramebuffer(VulkanResourceManager* owner, VulkanRenderP
 
 	VkDevice device = mOwner->GetDevice().GetLogical();
 	VkResult result = vkCreateFramebuffer(device, &framebufferCI, gVulkanAllocator, &mVkFramebuffer);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 }
 
 VulkanFramebuffer::~VulkanFramebuffer()

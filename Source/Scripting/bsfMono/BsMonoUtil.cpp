@@ -140,7 +140,7 @@ u32 MonoUtil::NewWeakGcHandle(MonoObject* object)
 
 void MonoUtil::FreeGcHandle(u32 handle)
 {
-	assert(handle != 0);
+	B3D_ASSERT(handle != 0);
 
 	mono_gchandle_free(handle);
 }
@@ -387,6 +387,6 @@ void MonoUtil::ThrowIfException(MonoObject* exception)
 		// Note: If you modify this format make sure to also modify Debug.ParseExceptionMessage in managed code.
 		String msg = "Managed exception: " + MonoToString(exceptionMsg) + "\n" + MonoToString(exceptionStackTrace);
 
-		BS_LOG(Error, Script, msg);
+		B3D_LOG(Error, Script, msg);
 	}
 }

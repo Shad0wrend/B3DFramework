@@ -50,7 +50,7 @@ void GpuBufferView::Initialize(D3D11GpuBuffer* buffer, GPU_BUFFER_VIEW_DESC& des
 
 	if((desc.Usage & GVU_RENDERTARGET) != 0 || (desc.Usage & GVU_DEPTHSTENCIL) != 0)
 	{
-		BS_EXCEPT(NotImplementedException, "Invalid usage flags for a GPU buffer view.");
+		B3D_EXCEPT(NotImplementedException, "Invalid usage flags for a GPU buffer view.");
 	}
 
 	BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_ResourceView);
@@ -93,7 +93,7 @@ ID3D11ShaderResourceView* GpuBufferView::CreateSrv(D3D11GpuBuffer* buffer, u32 f
 	if(FAILED(hr) || d3d11rs->GetPrimaryDevice().HasError())
 	{
 		String msg = d3d11rs->GetPrimaryDevice().GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create ShaderResourceView: " + msg);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create ShaderResourceView: " + msg);
 	}
 
 	return srv;
@@ -146,7 +146,7 @@ ID3D11UnorderedAccessView* GpuBufferView::CreateUav(D3D11GpuBuffer* buffer, u32 
 	if(FAILED(hr) || d3d11rs->GetPrimaryDevice().HasError())
 	{
 		String msg = d3d11rs->GetPrimaryDevice().GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create UnorderedAccessView: " + msg);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create UnorderedAccessView: " + msg);
 	}
 
 	return uav;

@@ -57,7 +57,7 @@ void VulkanOcclusionQuery::End(const SPtr<CommandBuffer>& cb)
 {
 	if(mQueries.empty())
 	{
-		BS_LOG(Error, RenderBackend, "end() called but query was never started.");
+		B3D_LOG(Error, RenderBackend, "end() called but query was never started.");
 		return;
 	}
 
@@ -86,7 +86,7 @@ bool VulkanOcclusionQuery::IsInProgressInternal() const
 
 void VulkanOcclusionQuery::InterruptInternal(VulkanCmdBuffer& cb)
 {
-	assert(!mQueries.empty() && !mQueryEndCalled);
+	B3D_ASSERT(!mQueries.empty() && !mQueryEndCalled);
 
 	mQueryEndCalled = true;
 	mQueryFinalized = false;

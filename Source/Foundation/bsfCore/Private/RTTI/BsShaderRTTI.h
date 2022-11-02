@@ -78,7 +78,7 @@ namespace bs
 					B3DRTTIRead(data.AttribIdx, stream);
 					break;
 				default:
-					BS_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
+					B3D_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
 					break;
 				}
 			}
@@ -151,7 +151,7 @@ namespace bs
 					B3DRTTIRead(data.AttribIdx, stream);
 					break;
 				default:
-					BS_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
+					B3D_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
 					break;
 				}
 			}
@@ -263,7 +263,7 @@ namespace bs
 				B3DRTTIRead(data.NextParamIdx, stream);
 				break;
 			default:
-				BS_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
+				B3D_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
 				break;
 			}
 
@@ -314,7 +314,7 @@ namespace bs
 
 			uint8_t version;
 			B3DRTTIRead(version, stream);
-			assert(version == 0);
+			B3D_ASSERT(version == 0);
 
 			B3DRTTIRead(data.Name, stream);
 			B3DRTTIRead(data.Value, stream);
@@ -369,7 +369,7 @@ namespace bs
 
 			uint8_t version;
 			B3DRTTIRead(version, stream);
-			assert(version == 0);
+			B3D_ASSERT(version == 0);
 
 			B3DRTTIRead(data.Name, stream);
 			B3DRTTIRead(data.Identifier, stream);

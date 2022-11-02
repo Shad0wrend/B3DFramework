@@ -237,7 +237,7 @@ void CJoint::NotifyRigidbodyMoved(const HRigidbody& body)
 	else if(mBodies[1] == body)
 		UpdateTransform(JointBody::Anchor);
 	else
-		assert(false); // Not allowed to happen
+		B3D_ASSERT(false); // Not allowed to happen
 }
 
 bool CJoint::IsBodyValid(const HRigidbody& body)

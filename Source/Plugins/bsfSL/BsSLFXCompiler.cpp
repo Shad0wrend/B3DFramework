@@ -37,14 +37,14 @@ using namespace bs;
 // Print out the FX AST, only for debug purposes
 void SLFXDebugPrint(ASTFXNode* node, String indent)
 {
-	BS_LOG(Info, BSLCompiler, indent + "NODE {0}", node->Type);
+	B3D_LOG(Info, BSLCompiler, indent + "NODE {0}", node->Type);
 
 	for(int i = 0; i < node->Options->Count; i++)
 	{
 		OptionDataType odt = OPTION_LOOKUP[(int)node->Options->Entries[i].Type].DataType;
 		if(odt == ODT_Complex)
 		{
-			BS_LOG(Info, BSLCompiler, "{0}{1}. {2}", indent, i, node->Options->Entries[i].Type);
+			B3D_LOG(Info, BSLCompiler, "{0}{1}. {2}", indent, i, node->Options->Entries[i].Type);
 			SLFXDebugPrint(node->Options->Entries[i].Value.NodePtr, indent + "\t");
 			continue;
 		}
@@ -74,7 +74,7 @@ void SLFXDebugPrint(ASTFXNode* node, String indent)
 			break;
 		}
 
-		BS_LOG(Info, BSLCompiler, "{0}{1}. {2} = {3}", indent, i, node->Options->Entries[i].Type, value);
+		B3D_LOG(Info, BSLCompiler, "{0}{1}. {2} = {3}", indent, i, node->Options->Entries[i].Type, value);
 	}
 }
 
@@ -734,7 +734,7 @@ String CrossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput 
 			StringStream logOutput;
 			log.GetMessages(logOutput);
 
-			BS_LOG(Error, BSLCompiler, "Shader cross compilation failed. Log: \n\n{0}", logOutput.str());
+			B3D_LOG(Error, BSLCompiler, "Shader cross compilation failed. Log: \n\n{0}", logOutput.str());
 			return "";
 		}
 	}
@@ -772,7 +772,7 @@ String CrossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput 
 			StringStream logOutput;
 			log.GetMessages(logOutput);
 
-			BS_LOG(Error, BSLCompiler, "Shader cross compilation failed. Log: \n\n{0}", logOutput.str());
+			B3D_LOG(Error, BSLCompiler, "Shader cross compilation failed. Log: \n\n{0}", logOutput.str());
 			return "";
 		}
 	}
@@ -967,7 +967,7 @@ BSLFXCompileResult BSLFXCompiler::ParseMetaDataAndOptions(ASTFXNode* rootNode, V
 
 void BSLFXCompiler::ParseVariations(ShaderMetaData& metaData, ASTFXNode* variations)
 {
-	assert(variations->Type == NT_Variation);
+	B3D_ASSERT(variations->Type == NT_Variation);
 
 	VariationData variationData;
 	for(int i = 0; i < variations->Options->Count; i++)
@@ -1005,7 +1005,7 @@ void BSLFXCompiler::ParseVariations(ShaderMetaData& metaData, ASTFXNode* variati
 
 BSLFXCompiler::VariationOption BSLFXCompiler::ParseVariationOption(ASTFXNode* variationOption)
 {
-	assert(variationOption->Type == NT_VariationOption);
+	B3D_ASSERT(variationOption->Type == NT_VariationOption);
 
 	VariationOption output;
 	for(int i = 0; i < variationOption->Options->Count; i++)
@@ -1037,7 +1037,7 @@ BSLFXCompiler::VariationOption BSLFXCompiler::ParseVariationOption(ASTFXNode* va
 
 BSLFXCompiler::AttributeData BSLFXCompiler::ParseAttributes(ASTFXNode* attributes)
 {
-	assert(attributes->Type == NT_Attributes);
+	B3D_ASSERT(attributes->Type == NT_Attributes);
 
 	AttributeData attributeData;
 	for(int i = 0; i < attributes->Options->Count; i++)

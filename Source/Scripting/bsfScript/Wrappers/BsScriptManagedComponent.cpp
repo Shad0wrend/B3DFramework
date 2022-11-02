@@ -20,7 +20,7 @@ using namespace bs;
 ScriptManagedComponent::ScriptManagedComponent(MonoObject* instance, const HManagedComponent& component)
 	: ScriptObject(instance), mComponent(component), mTypeMissing(false)
 {
-	assert(instance != nullptr);
+	B3D_ASSERT(instance != nullptr);
 
 	MonoUtil::GetClassName(instance, mNamespace, mType);
 	mGCHandle = MonoUtil::NewGcHandle(instance, false);
@@ -64,7 +64,7 @@ void ScriptManagedComponent::InternalInvoke(ScriptManagedComponent* nativeInstan
 
 	if(!found)
 	{
-		BS_LOG(Warning, Script, "Method invoke failed. Cannot find method \"{0}\" on component of type \"{1}\".", methodName, compClass->GetTypeName());
+		B3D_LOG(Warning, Script, "Method invoke failed. Cannot find method \"{0}\" on component of type \"{1}\".", methodName, compClass->GetTypeName());
 	}
 }
 

@@ -134,7 +134,7 @@ void FrameAlloc::Clear()
 {
 	if(mLastFrame != nullptr)
 	{
-		assert(mBlocks.size() > 0 && mNextBlockIdx > 0);
+		B3D_ASSERT(mBlocks.size() > 0 && mNextBlockIdx > 0);
 
 		Free((u8*)mLastFrame);
 
@@ -155,7 +155,7 @@ void FrameAlloc::Clear()
 			{
 				u8* dataEnd = curBlock->MData + curBlock->MFreePtr;
 				u32 sizeInBlock = (u32)(dataEnd - framePtr);
-				assert(sizeInBlock <= curBlock->MFreePtr);
+				B3D_ASSERT(sizeInBlock <= curBlock->MFreePtr);
 
 				curBlock->MFreePtr -= sizeInBlock;
 				if(curBlock->MFreePtr == 0)
@@ -205,7 +205,7 @@ void FrameAlloc::Clear()
 	{
 #if BS_DEBUG_MODE
 		if(mTotalAllocBytes.load() > 0)
-			BS_EXCEPT(InvalidStateException, "Not all frame allocated bytes were properly released.");
+			B3D_EXCEPT(InvalidStateException, "Not all frame allocated bytes were properly released.");
 #endif
 
 		if(mBlocks.size() > 1)

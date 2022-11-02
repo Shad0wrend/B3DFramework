@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** Flags that can be used to control resource loading. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Resources)) ResourceLoadFlag
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Resources)) ResourceLoadFlag
 	{
 		/** No flags. */
 		None = 0,
@@ -44,7 +44,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Resources), API(Framework)) Resources : public Module<Resources>
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Resources), API(Framework)) Resources : public Module<Resources>
 	{
 		/** Information about a loaded resource. */
 		struct LoadedResourceData
@@ -111,7 +111,7 @@ namespace bs
 		 *
 		 * @see		release(ResourceHandleBase&), unloadAllUnused()
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		BS_NORREF HResource Load(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
 
 		/** @copydoc Load(const Path&, ResourceLoadFlags) */
@@ -145,7 +145,7 @@ namespace bs
 		 *
 		 * @see		Load(const Path&, ResourceLoadFlags)
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		HResource LoadAsync(const Path& filePath, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
 
 		/** @copydoc LoadAsync */
@@ -165,7 +165,7 @@ namespace bs
 		 *
 		 * @see		Load(const Path&, bool)
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		HResource LoadFromUuid(const UUID& uuid, bool async = false, ResourceLoadFlags loadFlags = ResourceLoadFlag::Default);
 
 		/**
@@ -178,7 +178,7 @@ namespace bs
 		 *
 		 * @param[in]	resource	Handle of the resource to release.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		void Release(const HResource& resource) { Release((ResourceHandleBase&)resource); }
 
@@ -190,11 +190,11 @@ namespace bs
 		 *
 		 * @see		release(const HResource&)
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		void UnloadAllUnused();
 
 		/** Forces unload of all resources, whether they are being used or not. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		void UnloadAll();
 
 		/**
@@ -216,7 +216,7 @@ namespace bs
 		 * @note
 		 * Thread safe if you guarantee the resource isn't being written to from another thread.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		void Save(BS_NORREF const HResource& resource, const Path& filePath, bool overwrite, bool compress = false);
 
 		/**
@@ -236,7 +236,7 @@ namespace bs
 		 * @note
 		 * Thread safe if you guarantee the resource isn't being written to from another thread.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		void Save(BS_NORREF const HResource& resource, bool compress = false);
 
 		/**
@@ -252,7 +252,7 @@ namespace bs
 		 * @param[in]	filePath	Full path to the resource to get dependencies for.
 		 * @return					List of dependencies represented as UUIDs.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		Vector<UUID> GetDependencies(const Path& filePath);
 
 		/**
@@ -263,7 +263,7 @@ namespace bs
 		 *								asynchronously loaded.
 		 * @return						True if loaded or loading in progress, false otherwise.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool IsLoaded(const UUID& uuid, bool checkInProgress = true);
 
 		/**
@@ -275,7 +275,7 @@ namespace bs
 		 *										of this resource and all of its dependencies.
 		 * @return								Load progress in range [0, 1].
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		float GetLoadProgress(const HResource& resource, bool includeDependencies = true);
 
 		/**
@@ -287,11 +287,11 @@ namespace bs
 		 * application restart, then you must save the resource manifest before closing the application and restore it
 		 * upon startup. Otherwise resources will be assigned brand new UUIDs and references will be broken.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		void RegisterResourceManifest(const SPtr<ResourceManifest>& manifest);
 
 		/**	Unregisters a resource manifest previously registered with registerResourceManifest(). */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		void UnregisterResourceManifest(const SPtr<ResourceManifest>& manifest);
 
 		/**
@@ -303,15 +303,15 @@ namespace bs
 		 *
 		 * @see		registerResourceManifest
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		SPtr<ResourceManifest> GetResourceManifest(const String& name) const;
 
 		/** Attempts to retrieve file path from the provided UUID. Returns true if successful, false otherwise. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool GetFilePathFromUuid(const UUID& uuid, Path& filePath) const;
 
 		/** Attempts to retrieve UUID from the provided file path. Returns true if successful, false otherwise. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool GetUuidFromFilePath(const Path& path, UUID& uuid) const;
 
 		/**
@@ -321,7 +321,7 @@ namespace bs
 		 * It is undefined from which thread this will get called from. Most definitely not the sim thread if resource was
 		 * being loaded asynchronously.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		Event<void(BS_NORREF const HResource&)> OnResourceLoaded;
 
 		/**
@@ -329,7 +329,7 @@ namespace bs
 		 *
 		 * @note	It is undefined from which thread this will get called from.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		Event<void(const UUID&)> OnResourceDestroyed;
 
 		/**
@@ -337,7 +337,7 @@ namespace bs
 		 *
 		 * @note	It is undefined from which thread this will get called from.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		Event<void(BS_NORREF const HResource&)> OnResourceModified;
 
 	public: // ***** INTERNAL ******

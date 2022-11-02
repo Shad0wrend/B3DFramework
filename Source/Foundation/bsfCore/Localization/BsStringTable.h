@@ -15,7 +15,7 @@ namespace bs
 	 * A set of all languages that localized strings can be translated to. Loosely based on ISO 639-1 two letter language
 	 * codes.
 	 */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Localization)) Language
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Localization)) Language
 	{
 		Afar,
 		Abkhazian,
@@ -251,7 +251,7 @@ namespace bs
 	 */
 
 	/** Used for string localization. Stores strings and their translations in various languages. */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Localization)) StringTable : public Resource
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Localization)) StringTable : public Resource
 	{
 		// TODO - When editing string table I will need to ensure that all languages of the same string have the same number of parameters
 
@@ -265,28 +265,28 @@ namespace bs
 		 * @param[in]	identifier		Identifier to look for.
 		 * @return						True if the identifier exists in the table, false otherwise.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool Contains(const String& identifier);
 
 		/** Returns a total number of strings in the table. */
-		BS_SCRIPT_EXPORT(ExportName(NumStrings), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(NumStrings), Property(Getter))
 
 		u32 GetNumStrings() const { return (u32)mIdentifiers.size(); }
 
 		/** Returns all identifiers that the string table contains localized strings for. */
-		BS_SCRIPT_EXPORT(ExportName(Identifiers), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Identifiers), Property(Getter))
 		Vector<String> GetIdentifiers() const;
 
 		/**	Adds or modifies string translation for the specified language. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		void SetString(const String& identifier, Language language, const String& value);
 
 		/**	Returns a string translation for the specified language. Returns the identifier itself if one doesn't exist. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		String GetString(const String& identifier, Language language);
 
 		/** Removes the string described by identifier, from all languages. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		void RemoveString(const String& identifier);
 
 		/**
@@ -313,7 +313,7 @@ namespace bs
 		SPtr<LocalizedStringData> GetStringData(const String& identifier, Language language, bool insertIfNonExisting = true);
 
 		/** Creates a new empty string table resource. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(StringTable))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(StringTable))
 		static HStringTable Create();
 
 		static const Language kDefaultLanguage;

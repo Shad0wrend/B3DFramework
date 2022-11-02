@@ -767,7 +767,7 @@ void VulkanUtility::CutRange(const VkImageSubresourceRange& toCut, const VkImage
 		}
 	}
 
-	assert(numAreas <= 5);
+	B3D_ASSERT(numAreas <= 5);
 }
 
 bool VulkanUtility::RangeOverlaps(const VkImageSubresourceRange& a, const VkImageSubresourceRange& b)

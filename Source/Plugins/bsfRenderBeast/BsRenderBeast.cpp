@@ -700,7 +700,7 @@ void RenderBeast::UpdateReflProbeArray()
 				{
 					if(!probeInfo.ErrorFlagged)
 					{
-						BS_LOG(Error, Renderer, "Cubemap texture invalid to use as a reflection cubemap. "
+						B3D_LOG(Error, Renderer, "Cubemap texture invalid to use as a reflection cubemap. "
 												"Check texture size (must be {0}x{0}) and mip-map count",
 							   IBLUtility::kReflectionCubemapSize);
 

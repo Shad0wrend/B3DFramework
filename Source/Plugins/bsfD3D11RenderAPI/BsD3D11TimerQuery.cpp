@@ -12,7 +12,7 @@ using namespace bs::ct;
 
 D3D11TimerQuery::D3D11TimerQuery(u32 deviceIdx)
 {
-	assert(deviceIdx == 0 && "Multiple GPUs not supported natively on DirectX 11.");
+	B3D_ASSERT(deviceIdx == 0 && "Multiple GPUs not supported natively on DirectX 11.");
 
 	D3D11RenderAPI* rs = static_cast<D3D11RenderAPI*>(RenderAPI::InstancePtr());
 	D3D11Device& device = rs->GetPrimaryDevice();
@@ -24,7 +24,7 @@ D3D11TimerQuery::D3D11TimerQuery(u32 deviceIdx)
 	HRESULT hr = device.GetD3D11Device()->CreateQuery(&queryDesc, &mDisjointQuery);
 	if(hr != S_OK)
 	{
-		BS_EXCEPT(RenderingAPIException, "Failed to create a timer query.");
+		B3D_EXCEPT(RenderingAPIException, "Failed to create a timer query.");
 	}
 
 	queryDesc.Query = D3D11_QUERY_TIMESTAMP;
@@ -32,13 +32,13 @@ D3D11TimerQuery::D3D11TimerQuery(u32 deviceIdx)
 	hr = device.GetD3D11Device()->CreateQuery(&queryDesc, &mBeginQuery);
 	if(hr != S_OK)
 	{
-		BS_EXCEPT(RenderingAPIException, "Failed to create a timer query.");
+		B3D_EXCEPT(RenderingAPIException, "Failed to create a timer query.");
 	}
 
 	hr = device.GetD3D11Device()->CreateQuery(&queryDesc, &mEndQuery);
 	if(hr != S_OK)
 	{
-		BS_EXCEPT(RenderingAPIException, "Failed to create a timer query.");
+		B3D_EXCEPT(RenderingAPIException, "Failed to create a timer query.");
 	}
 
 	mContext = device.GetImmediateContext();
@@ -138,5 +138,5 @@ void D3D11TimerQuery::Finalize()
 		mTimeDelta = (delta / (float)frequency) * 1000.0f;
 	}
 	else
-		BS_LOG(Verbose, RenderBackend, "Unrealiable GPU timer query detected.");
+		B3D_LOG(Verbose, RenderBackend, "Unrealiable GPU timer query detected.");
 }

@@ -33,7 +33,7 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(const
 			auto result = params->GetParamIndex(samplerParam.first, MaterialParams::ParamType::Sampler, GPDT_UNKNOWN, 0, paramIdx);
 
 			// Parameter shouldn't be in the valid parameter list if it cannot be found
-			assert(result == MaterialParams::GetParamResult::Success);
+			B3D_ASSERT(result == MaterialParams::GetParamResult::Success);
 			const MaterialParamsBase::ParamData* materialParamData = params->GetParamData(paramIdx);
 
 			u32 overrideIdx = (u32)overrides.size();

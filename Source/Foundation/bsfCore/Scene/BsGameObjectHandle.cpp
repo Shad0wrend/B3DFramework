@@ -28,7 +28,7 @@ void GameObjectHandleBase::ThrowIfDestroyed() const
 {
 	if(IsDestroyed())
 	{
-		BS_EXCEPT(InternalErrorException, "Trying to access an object that has been destroyed.");
+		B3D_EXCEPT(InternalErrorException, "Trying to access an object that has been destroyed.");
 	}
 }
 

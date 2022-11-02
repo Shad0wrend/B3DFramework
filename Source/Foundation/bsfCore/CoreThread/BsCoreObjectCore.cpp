@@ -37,7 +37,7 @@ void CoreObject::Synchronize()
 	{
 #if BS_DEBUG_MODE
 		if(BS_THREAD_CURRENT_ID == CoreThread::Instance().GetCoreThreadId())
-			BS_EXCEPT(InternalErrorException, "You cannot call this method on the core thread. It will cause a deadlock!");
+			B3D_EXCEPT(InternalErrorException, "You cannot call this method on the core thread. It will cause a deadlock!");
 #endif
 
 		GetCoreThread().SubmitAll(true);
@@ -46,7 +46,7 @@ void CoreObject::Synchronize()
 		while(!IsInitialized())
 		{
 			if(!IsScheduledToBeInitialized())
-				BS_EXCEPT(InternalErrorException, "Attempting to wait until initialization finishes but object is not scheduled to be initialized.");
+				B3D_EXCEPT(InternalErrorException, "Attempting to wait until initialization finishes but object is not scheduled to be initialized.");
 
 			mCoreGpuObjectLoadedCondition.wait(lock);
 		}

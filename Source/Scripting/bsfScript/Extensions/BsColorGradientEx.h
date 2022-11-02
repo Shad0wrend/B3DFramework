@@ -14,20 +14,20 @@ namespace bs
 	/** @cond SCRIPT_EXTENSIONS */
 
 	/** Extension class for ColorGradient, for adding additional functionality for the script interface. */
-	class BS_SCRIPT_EXPORT(ExtensionMethodForType(ColorGradient)) ColorGradientEx
+	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(ColorGradient)) ColorGradientEx
 	{
 	public:
 		/** @copydoc ColorGradient::Evaluate */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(ColorGradient))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(ColorGradient))
 		static Color Evaluate(const SPtr<ColorGradient>& thisPtr, float t);
 	};
 
 	/** Extension class for ColorGradientHDr, for adding additional functionality for the script interface. */
-	class BS_SCRIPT_EXPORT(ExtensionMethodForType(ColorGradientHDR)) ColorGradientHDREx
+	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(ColorGradientHDR)) ColorGradientHDREx
 	{
 	public:
 		/** @copydoc ColorGradientHDR::Evaluate */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(ColorGradientHDR))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(ColorGradientHDR))
 		static Color Evaluate(const SPtr<ColorGradientHDR>& thisPtr, float t);
 	};
 

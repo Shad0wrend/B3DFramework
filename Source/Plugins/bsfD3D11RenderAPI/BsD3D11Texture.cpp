@@ -18,7 +18,7 @@ using namespace bs::ct;
 D3D11Texture::D3D11Texture(const TEXTURE_DESC& desc, const SPtr<PixelData>& initialData, GpuDeviceFlags deviceMask)
 	: Texture(desc, initialData, deviceMask)
 {
-	assert((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on DirectX 11.");
+	B3D_ASSERT((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on DirectX 11.");
 }
 
 D3D11Texture::~D3D11Texture()
@@ -51,7 +51,7 @@ void D3D11Texture::Initialize()
 		Create3DTex();
 		break;
 	default:
-		BS_EXCEPT(RenderingAPIException, "Unknown texture type");
+		B3D_EXCEPT(RenderingAPIException, "Unknown texture type");
 	}
 
 	BS_INC_RENDER_STAT_CAT(ResCreated, RenderStatObject_Texture);
@@ -128,7 +128,7 @@ void D3D11Texture::CopyImpl(const SPtr<Texture>& target, const TEXTURE_COPY_DESC
 			if(device.HasError())
 			{
 				String errorDescription = device.GetErrorDescription();
-				BS_EXCEPT(RenderingAPIException, "D3D11 device cannot copy subresource\nError Description:" + errorDescription);
+				B3D_EXCEPT(RenderingAPIException, "D3D11 device cannot copy subresource\nError Description:" + errorDescription);
 			}
 		}
 	};
@@ -148,7 +148,7 @@ void D3D11Texture::CopyImpl(const SPtr<Texture>& target, const TEXTURE_COPY_DESC
 PixelData D3D11Texture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
 {
 	if(mProperties.GetNumSamples() > 1)
-		BS_EXCEPT(InvalidStateException, "Multisampled textures cannot be accessed from the CPU directly.");
+		B3D_EXCEPT(InvalidStateException, "Multisampled textures cannot be accessed from the CPU directly.");
 
 #if BS_PROFILING_ENABLED
 	if(options == GBL_READ_ONLY || options == GBL_READ_WRITE)
@@ -185,7 +185,7 @@ PixelData D3D11Texture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face,
 		{
 			if(flags == D3D11_MAP_WRITE)
 			{
-				BS_LOG(Error, RenderBackend, "Dynamic textures only support discard or no-overwrite writes. Falling back to no-overwrite.");
+				B3D_LOG(Error, RenderBackend, "Dynamic textures only support discard or no-overwrite writes. Falling back to no-overwrite.");
 				flags = D3D11_MAP_WRITE_DISCARD;
 			}
 
@@ -220,7 +220,7 @@ void D3D11Texture::ReadDataImpl(PixelData& dest, u32 mipLevel, u32 face, u32 dev
 {
 	if(mProperties.GetNumSamples() > 1)
 	{
-		BS_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
+		B3D_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
 		return;
 	}
 
@@ -235,7 +235,7 @@ void D3D11Texture::WriteDataImpl(const PixelData& src, u32 mipLevel, u32 face, b
 
 	if(mProperties.GetNumSamples() > 1)
 	{
-		BS_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
+		B3D_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
 		return;
 	}
 
@@ -244,7 +244,7 @@ void D3D11Texture::WriteDataImpl(const PixelData& src, u32 mipLevel, u32 face, b
 
 	if(face > 0 && mProperties.GetTextureType() == TEX_TYPE_3D)
 	{
-		BS_LOG(Error, RenderBackend, "3D texture arrays are not supported.");
+		B3D_LOG(Error, RenderBackend, "3D texture arrays are not supported.");
 		return;
 	}
 
@@ -268,14 +268,14 @@ void D3D11Texture::WriteDataImpl(const PixelData& src, u32 mipLevel, u32 face, b
 		if(device.HasError())
 		{
 			String errorDescription = device.GetErrorDescription();
-			BS_EXCEPT(RenderingAPIException, "D3D11 device cannot map texture\nError Description:" + errorDescription);
+			B3D_EXCEPT(RenderingAPIException, "D3D11 device cannot map texture\nError Description:" + errorDescription);
 		}
 
 		BS_INC_RENDER_STAT_CAT(ResWrite, RenderStatObject_Texture);
 	}
 	else
 	{
-		BS_EXCEPT(RenderingAPIException, "Trying to write into a buffer with unsupported usage: " + ToString(mProperties.GetUsage()));
+		B3D_EXCEPT(RenderingAPIException, "Trying to write into a buffer with unsupported usage: " + ToString(mProperties.GetUsage()));
 	}
 }
 
@@ -290,7 +290,7 @@ void D3D11Texture::Create1DTex()
 	u32 numFaces = mProperties.GetNumFaces();
 
 	// We must have those defined here
-	assert(width > 0);
+	B3D_ASSERT(width > 0);
 
 	// Determine which D3D11 pixel format we'll use
 	HRESULT hr;
@@ -298,7 +298,7 @@ void D3D11Texture::Create1DTex()
 
 	if(format != closestFormat)
 	{
-		BS_LOG(Verbose, RenderBackend, "Provided pixel format is not supported by the driver: {0}. Falling back on: {1}.", format, closestFormat);
+		B3D_LOG(Verbose, RenderBackend, "Provided pixel format is not supported by the driver: {0}. Falling back on: {1}.", format, closestFormat);
 	}
 
 	mInternalFormat = closestFormat;
@@ -359,7 +359,7 @@ void D3D11Texture::Create1DTex()
 	if(FAILED(hr) || device.HasError())
 	{
 		String errorDescription = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Error creating texture\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "Error creating texture\nError Description:" + errorDescription);
 	}
 
 	hr = m1DTex->QueryInterface(__uuidof(ID3D11Resource), (void**)&mTex);
@@ -367,14 +367,14 @@ void D3D11Texture::Create1DTex()
 	if(FAILED(hr) || device.HasError())
 	{
 		String errorDescription = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Can't get base texture\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "Can't get base texture\nError Description:" + errorDescription);
 	}
 
 	m1DTex->GetDesc(&desc);
 
 	if(numMips != (desc.MipLevels - 1))
 	{
-		BS_EXCEPT(RenderingAPIException, "Driver returned different number of mip maps than requested. "
+		B3D_EXCEPT(RenderingAPIException, "Driver returned different number of mip maps than requested. "
 										 "Requested: " +
 					  ToString(numMips) + ". Got: " + ToString(desc.MipLevels - 1) + ".");
 	}
@@ -421,7 +421,7 @@ void D3D11Texture::Create2DTex()
 
 	if(format != closestFormat)
 	{
-		BS_LOG(Verbose, RenderBackend, "Provided pixel format is not supported by the driver: {0}. Falling back on: {1}.", format, closestFormat);
+		B3D_LOG(Verbose, RenderBackend, "Provided pixel format is not supported by the driver: {0}. Falling back on: {1}.", format, closestFormat);
 	}
 
 	mInternalFormat = closestFormat;
@@ -490,7 +490,7 @@ void D3D11Texture::Create2DTex()
 			desc.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
 		else
 		{
-			BS_LOG(Warning, RenderBackend, "Unable to create a load-store texture with multiple samples. This is not "
+			B3D_LOG(Warning, RenderBackend, "Unable to create a load-store texture with multiple samples. This is not "
 										   "supported on DirectX 11. Ignoring load-store usage flag.");
 		}
 	}
@@ -504,7 +504,7 @@ void D3D11Texture::Create2DTex()
 	if(FAILED(hr) || device.HasError())
 	{
 		String errorDescription = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Error creating texture\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "Error creating texture\nError Description:" + errorDescription);
 	}
 
 	hr = m2DTex->QueryInterface(__uuidof(ID3D11Resource), (void**)&mTex);
@@ -512,14 +512,14 @@ void D3D11Texture::Create2DTex()
 	if(FAILED(hr) || device.HasError())
 	{
 		String errorDescription = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Can't get base texture\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "Can't get base texture\nError Description:" + errorDescription);
 	}
 
 	m2DTex->GetDesc(&desc);
 
 	if(numMips != (desc.MipLevels - 1))
 	{
-		BS_EXCEPT(RenderingAPIException, "Driver returned different number of mip maps than requested. "
+		B3D_EXCEPT(RenderingAPIException, "Driver returned different number of mip maps than requested. "
 										 "Requested: " +
 					  ToString(numMips) + ". Got: " + ToString(desc.MipLevels - 1) + ".");
 	}
@@ -555,7 +555,7 @@ void D3D11Texture::Create3DTex()
 	bool readableDepth = true;
 
 	// We must have those defined here
-	assert(width > 0 && height > 0 && depth > 0);
+	B3D_ASSERT(width > 0 && height > 0 && depth > 0);
 
 	// Determine which D3D11 pixel format we'll use
 	HRESULT hr;
@@ -563,7 +563,7 @@ void D3D11Texture::Create3DTex()
 
 	if(format != closestFormat)
 	{
-		BS_LOG(Verbose, RenderBackend, "Provided pixel format is not supported by the driver: {0}. Falling back on: {1}.", format, closestFormat);
+		B3D_LOG(Verbose, RenderBackend, "Provided pixel format is not supported by the driver: {0}. Falling back on: {1}.", format, closestFormat);
 	}
 
 	mInternalFormat = closestFormat;
@@ -620,7 +620,7 @@ void D3D11Texture::Create3DTex()
 	if(FAILED(hr) || device.HasError())
 	{
 		String errorDescription = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Error creating texture\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "Error creating texture\nError Description:" + errorDescription);
 	}
 
 	hr = m3DTex->QueryInterface(__uuidof(ID3D11Resource), (void**)&mTex);
@@ -628,7 +628,7 @@ void D3D11Texture::Create3DTex()
 	if(FAILED(hr) || device.HasError())
 	{
 		String errorDescription = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Can't get base texture\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "Can't get base texture\nError Description:" + errorDescription);
 	}
 
 	// Create texture view
@@ -636,7 +636,7 @@ void D3D11Texture::Create3DTex()
 
 	if(mProperties.GetNumMipmaps() != (desc.MipLevels - 1))
 	{
-		BS_EXCEPT(RenderingAPIException, "Driver returned different number of mip maps than requested. "
+		B3D_EXCEPT(RenderingAPIException, "Driver returned different number of mip maps than requested. "
 										 "Requested: " +
 					  ToString(mProperties.GetNumMipmaps()) + ". Got: " + ToString(desc.MipLevels - 1) + ".");
 	}
@@ -676,7 +676,7 @@ void* D3D11Texture::Map(ID3D11Resource* res, D3D11_MAP flags, u32 mipLevel, u32 
 	if(device.HasError())
 	{
 		String errorDescription = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "D3D11 device cannot map texture\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "D3D11 device cannot map texture\nError Description:" + errorDescription);
 	}
 
 	rowPitch = pMappedResource.RowPitch;
@@ -694,7 +694,7 @@ void D3D11Texture::Unmap(ID3D11Resource* res)
 	if(device.HasError())
 	{
 		String errorDescription = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "D3D11 device unmap resource\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "D3D11 device unmap resource\nError Description:" + errorDescription);
 	}
 }
 
@@ -743,7 +743,7 @@ void D3D11Texture::Unmapstaticbuffer()
 	if(device.HasError())
 	{
 		String errorDescription = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "D3D11 device cannot map texture\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "D3D11 device cannot map texture\nError Description:" + errorDescription);
 	}
 
 	if(mStaticBuffer != nullptr)

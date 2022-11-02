@@ -31,7 +31,7 @@ StringID::InitStatics::InitStatics()
 template <class T>
 void StringID::Construct(T const& name)
 {
-	assert(StringIDUtil<T>::Size(name) <= kStringSize);
+	B3D_ASSERT(StringIDUtil<T>::Size(name) <= kStringSize);
 
 	u32 hash = CalcHash(name) & (sizeof(mStringHashTable) / sizeof(mStringHashTable[0]) - 1);
 	InternalData* existingEntry = mStringHashTable[hash];
@@ -89,8 +89,8 @@ StringID::InternalData* StringID::AllocEntry()
 {
 	u32 chunkIdx = mNextId / kElementsPerChunk;
 
-	assert(chunkIdx < kMaxChunkCount);
-	assert(chunkIdx <= mNumChunks); // Can only increment sequentially
+	B3D_ASSERT(chunkIdx < kMaxChunkCount);
+	B3D_ASSERT(chunkIdx <= mNumChunks); // Can only increment sequentially
 
 	if(chunkIdx >= mNumChunks)
 	{

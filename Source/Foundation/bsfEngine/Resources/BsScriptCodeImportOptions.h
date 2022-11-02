@@ -13,17 +13,17 @@ namespace bs
 	 */
 
 	/** Contains import options you may use to control how is a file containing script source code importer. */
-	class BS_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ScriptCodeImportOptions : public ImportOptions
+	class BS_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ScriptCodeImportOptions : public ImportOptions
 	{
 	public:
 		ScriptCodeImportOptions() = default;
 
 		/**	Determines whether the script is editor-only or a normal game script. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool EditorScript = false;
 
 		/** Creates a new import options object that allows you to customize how is script code imported. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 		static SPtr<ScriptCodeImportOptions> Create();
 
 		/************************************************************************/

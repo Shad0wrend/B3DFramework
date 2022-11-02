@@ -19,7 +19,7 @@ using namespace bs::ct;
 GLTexture::GLTexture(GLSupport& support, const TEXTURE_DESC& desc, const SPtr<PixelData>& initialData, GpuDeviceFlags deviceMask)
 	: Texture(desc, initialData, deviceMask), mGLSupport(support)
 {
-	assert((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on OpenGL.");
+	B3D_ASSERT((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on OpenGL.");
 }
 
 GLTexture::~GLTexture()
@@ -52,7 +52,7 @@ void GLTexture::Initialize()
 
 	if(pixFormat != mInternalFormat)
 	{
-		BS_LOG(Warning, RenderBackend, "Provided pixel format is not supported by the driver: {0}. "
+		B3D_LOG(Warning, RenderBackend, "Provided pixel format is not supported by the driver: {0}. "
 									   "Falling back on: {1}.",
 			   pixFormat, mInternalFormat);
 	}
@@ -61,7 +61,7 @@ void GLTexture::Initialize()
 	u32 maxMips = PixelUtil::GetMaxMipmaps(width, height, depth, mProperties.GetFormat());
 	if(numMips > maxMips)
 	{
-		BS_LOG(Error, RenderBackend, "Invalid number of mipmaps. Maximum allowed is: {0}", maxMips);
+		B3D_LOG(Error, RenderBackend, "Invalid number of mipmaps. Maximum allowed is: {0}", maxMips);
 		numMips = maxMips;
 	}
 
@@ -69,7 +69,7 @@ void GLTexture::Initialize()
 	{
 		if(texType != TEX_TYPE_2D && texType != TEX_TYPE_CUBE_MAP)
 		{
-			BS_LOG(Error, RenderBackend, "Only 2D and cubemap depth stencil textures are supported. Ignoring depth-stencil flag.");
+			B3D_LOG(Error, RenderBackend, "Only 2D and cubemap depth stencil textures are supported. Ignoring depth-stencil flag.");
 			usage &= ~TU_DEPTHSTENCIL;
 		}
 	}
@@ -211,7 +211,7 @@ void GLTexture::Initialize()
 			}
 			else
 			{
-				BS_LOG(Error, RenderBackend, "Unsupported texture type for depth-stencil attachment usage.");
+				B3D_LOG(Error, RenderBackend, "Unsupported texture type for depth-stencil attachment usage.");
 			}
 		}
 		else
@@ -371,10 +371,10 @@ GLenum GLTexture::GetGlTextureTarget(GpuParamObjectType type)
 PixelData GLTexture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
 {
 	if(mProperties.GetNumSamples() > 1)
-		BS_EXCEPT(InvalidStateException, "Multisampled textures cannot be accessed from the CPU directly.");
+		B3D_EXCEPT(InvalidStateException, "Multisampled textures cannot be accessed from the CPU directly.");
 
 	if(mLockedBuffer != nullptr)
-		BS_EXCEPT(InternalErrorException, "Trying to lock a buffer that's already locked.");
+		B3D_EXCEPT(InternalErrorException, "Trying to lock a buffer that's already locked.");
 
 	u32 mipWidth = std::max(1u, mProperties.GetWidth() >> mipLevel);
 	u32 mipHeight = std::max(1u, mProperties.GetHeight() >> mipLevel);
@@ -392,7 +392,7 @@ void GLTexture::UnlockImpl()
 {
 	if(mLockedBuffer == nullptr)
 	{
-		BS_LOG(Error, RenderBackend, "Trying to unlock a buffer that's not locked.");
+		B3D_LOG(Error, RenderBackend, "Trying to unlock a buffer that's not locked.");
 		return;
 	}
 
@@ -404,7 +404,7 @@ void GLTexture::ReadDataImpl(PixelData& dest, u32 mipLevel, u32 face, u32 device
 {
 	if(mProperties.GetNumSamples() > 1)
 	{
-		BS_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
+		B3D_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
 		return;
 	}
 
@@ -424,7 +424,7 @@ void GLTexture::WriteDataImpl(const PixelData& src, u32 mipLevel, u32 face, bool
 {
 	if(mProperties.GetNumSamples() > 1)
 	{
-		BS_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
+		B3D_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
 		return;
 	}
 
@@ -504,7 +504,7 @@ void GLTexture::CreateSurfaceList()
 			mSurfaceList.push_back(B3DMakeSharedFromExisting<GLPixelBuffer>(buf));
 			if(buf->GetWidth() == 0 || buf->GetHeight() == 0 || buf->GetDepth() == 0)
 			{
-				BS_EXCEPT(RenderingAPIException, "Zero sized texture surface on texture face " + ToString(face) + " mipmap " + ToString(mip) + ". Probably, the GL driver refused to create the texture.");
+				B3D_EXCEPT(RenderingAPIException, "Zero sized texture surface on texture face " + ToString(face) + " mipmap " + ToString(mip) + ". Probably, the GL driver refused to create the texture.");
 			}
 		}
 	}
@@ -515,13 +515,13 @@ SPtr<GLPixelBuffer> GLTexture::GetBuffer(u32 face, u32 mipmap)
 	THROW_IF_NOT_CORE_THREAD;
 
 	if(face >= mProperties.GetNumFaces())
-		BS_EXCEPT(InvalidParametersException, "Face index out of range");
+		B3D_EXCEPT(InvalidParametersException, "Face index out of range");
 
 	if(mipmap > mProperties.GetNumMipmaps())
-		BS_EXCEPT(InvalidParametersException, "Mipmap index out of range");
+		B3D_EXCEPT(InvalidParametersException, "Mipmap index out of range");
 
 	unsigned int idx = face * (mProperties.GetNumMipmaps() + 1) + mipmap;
-	assert(idx < mSurfaceList.size());
+	B3D_ASSERT(idx < mSurfaceList.size());
 	return mSurfaceList[idx];
 }
 

@@ -20,7 +20,7 @@ u32 D3D11GpuProgram::GlobalProgramId = 0;
 D3D11GpuProgram::D3D11GpuProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags deviceMask)
 	: GpuProgram(desc, deviceMask)
 {
-	assert((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on DirectX 11.");
+	B3D_ASSERT((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on DirectX 11.");
 }
 
 D3D11GpuProgram::~D3D11GpuProgram()
@@ -90,7 +90,7 @@ void D3D11GpuVertexProgram::LoadFromMicrocode(D3D11Device& device, const DataBlo
 	if(FAILED(hr) || device.HasError())
 	{
 		String errorDescription = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create D3D11 vertex shader from microcode\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create D3D11 vertex shader from microcode\nError Description:" + errorDescription);
 	}
 }
 
@@ -116,7 +116,7 @@ void D3D11GpuFragmentProgram::LoadFromMicrocode(D3D11Device& device, const DataB
 	if(FAILED(hr) || device.HasError())
 	{
 		String errorDescription = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create D3D11 pixel shader from microcode.\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create D3D11 pixel shader from microcode.\nError Description:" + errorDescription);
 	}
 }
 
@@ -142,7 +142,7 @@ void D3D11GpuGeometryProgram::LoadFromMicrocode(D3D11Device& device, const DataB
 	if(FAILED(hr) || device.HasError())
 	{
 		String errorDescription = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create D3D11 geometry shader from microcode.\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create D3D11 geometry shader from microcode.\nError Description:" + errorDescription);
 	}
 }
 
@@ -168,7 +168,7 @@ void D3D11GpuDomainProgram::LoadFromMicrocode(D3D11Device& device, const DataBlo
 	if(FAILED(hr) || device.HasError())
 	{
 		String errorDescription = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create D3D11 domain shader from microcode.\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create D3D11 domain shader from microcode.\nError Description:" + errorDescription);
 	}
 }
 
@@ -195,7 +195,7 @@ void D3D11GpuHullProgram::LoadFromMicrocode(D3D11Device& device, const DataBlob&
 	if(FAILED(hr) || device.HasError())
 	{
 		String errorDescription = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create D3D11 hull shader from microcode.\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create D3D11 hull shader from microcode.\nError Description:" + errorDescription);
 	}
 }
 
@@ -221,7 +221,7 @@ void D3D11GpuComputeProgram::LoadFromMicrocode(D3D11Device& device, const DataBl
 	if(FAILED(hr) || device.HasError())
 	{
 		String errorDescription = device.GetErrorDescription();
-		BS_EXCEPT(RenderingAPIException, "Cannot create D3D11 compute shader from microcode.\nError Description:" + errorDescription);
+		B3D_EXCEPT(RenderingAPIException, "Cannot create D3D11 compute shader from microcode.\nError Description:" + errorDescription);
 	}
 }
 

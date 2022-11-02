@@ -34,7 +34,7 @@ void TSHADER_DESC<Core>::AddParameter(SHADER_DATA_PARAM_DESC paramDesc, u8* defa
 {
 	if(paramDesc.Type == GPDT_STRUCT && paramDesc.ElementSize <= 0)
 	{
-		BS_LOG(Error, Material, "You need to provide a non-zero element size for a struct parameter.");
+		B3D_LOG(Error, Material, "You need to provide a non-zero element size for a struct parameter.");
 		return;
 	}
 
@@ -169,7 +169,7 @@ void TSHADER_DESC<Core>::SetParameterAttribute(const String& name, const SHADER_
 
 	if(!paramDesc)
 	{
-		BS_LOG(Warning, Material, "Attempting to apply a shader parameter attribute to a non-existing parameter.");
+		B3D_LOG(Warning, Material, "Attempting to apply a shader parameter attribute to a non-existing parameter.");
 		return;
 	}
 
@@ -177,13 +177,13 @@ void TSHADER_DESC<Core>::SetParameterAttribute(const String& name, const SHADER_
 	{
 		if(paramDescObj)
 		{
-			BS_LOG(Warning, Material, "Attempting to apply SpriteUV attribute to an object parameter is not supported.");
+			B3D_LOG(Warning, Material, "Attempting to apply SpriteUV attribute to an object parameter is not supported.");
 			return;
 		}
 
 		if(paramDescData->Type != GPDT_FLOAT4)
 		{
-			BS_LOG(Warning, Material, "SpriteUV attribute can only be applied to 4D vectors.");
+			B3D_LOG(Warning, Material, "SpriteUV attribute can only be applied to 4D vectors.");
 			return;
 		}
 	}
@@ -265,7 +265,7 @@ GpuParamType TShader<Core>::GetParamType(const String& name) const
 	if(findIterSampler != mDesc.SamplerParams.end())
 		return GPT_SAMPLER;
 
-	BS_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
+	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
 	return GPT_DATA;
 }
 
@@ -276,7 +276,7 @@ const SHADER_DATA_PARAM_DESC& TShader<Core>::GetDataParamDesc(const String& name
 	if(findIterData != mDesc.DataParams.end())
 		return findIterData->second;
 
-	BS_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
+	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
 	static SHADER_DATA_PARAM_DESC dummy;
 	return dummy;
 }
@@ -288,7 +288,7 @@ const SHADER_OBJECT_PARAM_DESC& TShader<Core>::GetTextureParamDesc(const String&
 	if(findIterObject != mDesc.TextureParams.end())
 		return findIterObject->second;
 
-	BS_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
+	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
 	static SHADER_OBJECT_PARAM_DESC dummy;
 	return dummy;
 }
@@ -300,7 +300,7 @@ const SHADER_OBJECT_PARAM_DESC& TShader<Core>::GetSamplerParamDesc(const String&
 	if(findIterObject != mDesc.SamplerParams.end())
 		return findIterObject->second;
 
-	BS_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
+	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
 	static SHADER_OBJECT_PARAM_DESC dummy;
 	return dummy;
 }
@@ -312,7 +312,7 @@ const SHADER_OBJECT_PARAM_DESC& TShader<Core>::GetBufferParamDesc(const String& 
 	if(findIterObject != mDesc.BufferParams.end())
 		return findIterObject->second;
 
-	BS_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
+	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
 	static SHADER_OBJECT_PARAM_DESC dummy;
 	return dummy;
 }
@@ -613,7 +613,7 @@ HShader Shader::Create(const String& name, const SHADER_DESC& desc)
 SPtr<Shader> Shader::CreatePtrInternal(const String& name, const SHADER_DESC& desc)
 {
 	u32 id = ct::Shader::mNextShaderId.fetch_add(1, std::memory_order_relaxed);
-	assert(id < std::numeric_limits<u32>::max() && "Created too many shaders, reached maximum id.");
+	B3D_ASSERT(id < std::numeric_limits<u32>::max() && "Created too many shaders, reached maximum id.");
 
 	SPtr<Shader> newShader = B3DMakeCoreFromExisting<Shader>(new(B3DAllocate<Shader>()) Shader(name, desc, id));
 	newShader->SetThisPtrInternal(newShader);
@@ -625,7 +625,7 @@ SPtr<Shader> Shader::CreatePtrInternal(const String& name, const SHADER_DESC& de
 SPtr<Shader> Shader::CreateEmpty()
 {
 	u32 id = ct::Shader::mNextShaderId.fetch_add(1, std::memory_order_relaxed);
-	assert(id < std::numeric_limits<u32>::max() && "Created too many shaders, reached maximum id.");
+	B3D_ASSERT(id < std::numeric_limits<u32>::max() && "Created too many shaders, reached maximum id.");
 
 	SPtr<Shader> newShader = B3DMakeCoreFromExisting<Shader>(new(B3DAllocate<Shader>()) Shader(id));
 	newShader->SetThisPtrInternal(newShader);
@@ -665,7 +665,7 @@ Shader::Shader(const String& name, const SHADER_DESC& desc, u32 id)
 SPtr<Shader> Shader::Create(const String& name, const SHADER_DESC& desc)
 {
 	u32 id = mNextShaderId.fetch_add(1, std::memory_order_relaxed);
-	assert(id < std::numeric_limits<u32>::max() && "Created too many shaders, reached maximum id.");
+	B3D_ASSERT(id < std::numeric_limits<u32>::max() && "Created too many shaders, reached maximum id.");
 
 	Shader* shaderCore = new(B3DAllocate<Shader>()) Shader(name, desc, id);
 	SPtr<Shader> shaderCorePtr = B3DMakeSharedFromExisting<Shader>(shaderCore);

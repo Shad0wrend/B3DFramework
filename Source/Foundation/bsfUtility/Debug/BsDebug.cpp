@@ -41,11 +41,11 @@ void LogToIdeConsole(const bs::String& message, const char* channel)
 
 using namespace bs;
 
-BS_LOG_CATEGORY_IMPL(Uncategorized)
-BS_LOG_CATEGORY_IMPL(FileSystem)
-BS_LOG_CATEGORY_IMPL(RTTI)
-BS_LOG_CATEGORY_IMPL(Generic)
-BS_LOG_CATEGORY_IMPL(Platform)
+B3D_LOG_CATEGORY_IMPL(Uncategorized)
+B3D_LOG_CATEGORY_IMPL(FileSystem)
+B3D_LOG_CATEGORY_IMPL(RTTI)
+B3D_LOG_CATEGORY_IMPL(Generic)
+B3D_LOG_CATEGORY_IMPL(Platform)
 
 void Debug::Log(const String& message, LogVerbosity verbosity, u32 category)
 {
@@ -92,7 +92,7 @@ void Debug::WriteAsBmp(u8* rawPixels, u32 bytesPerPixel, u32 width, u32 height, 
 		if(overwrite)
 			FileSystem::Remove(filePath);
 		else
-			BS_EXCEPT(FileNotFoundException, "File already exists at specified location: " + filePath.ToString());
+			B3D_EXCEPT(FileNotFoundException, "File already exists at specified location: " + filePath.ToString());
 	}
 
 	SPtr<DataStream> ds = FileSystem::CreateAndOpenFile(filePath);

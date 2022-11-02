@@ -108,16 +108,16 @@ public:
 		{
 		case 0:
 			ss << "PhysX info (" << errorCode << "): " << message << " at " << file << ":" << line;
-			BS_LOG(Info, Physics, ss.str());
+			B3D_LOG(Info, Physics, ss.str());
 			break;
 		case 1:
 			ss << "PhysX warning (" << errorCode << "): " << message << " at " << file << ":" << line;
-			BS_LOG(Warning, Physics, ss.str());
+			B3D_LOG(Warning, Physics, ss.str());
 			break;
 		case 2:
 			ss << "PhysX error (" << errorCode << "): " << message << " at " << file << ":" << line;
-			BS_LOG(Error, Physics, ss.str());
-			BS_ASSERT(false); // Halt execution on debug builds when error occurs
+			B3D_LOG(Error, Physics, ss.str());
+			B3D_ASSERT(false); // Halt execution on debug builds when error occurs
 			break;
 		}
 	}
@@ -317,7 +317,7 @@ class PhysXBroadPhaseCallback : public PxBroadPhaseCallback
 	{
 		Collider* collider = (Collider*)shape.userData;
 		if(collider != nullptr)
-			BS_LOG(Warning, Physics, "Physics object out of bounds. Consider increasing broadphase region!");
+			B3D_LOG(Warning, Physics, "Physics object out of bounds. Consider increasing broadphase region!");
 	}
 
 	void onObjectOutOfBounds(PxAggregate& aggregate) override
@@ -522,7 +522,7 @@ PhysX::PhysX(const PHYSICS_INIT_DESC& input)
 
 PhysX::~PhysX()
 {
-	assert(mScenes.empty() && "All scenes must be freed before physics system shutdown");
+	B3D_ASSERT(mScenes.empty() && "All scenes must be freed before physics system shutdown");
 
 	if(mCooking != nullptr)
 		mCooking->release();
@@ -549,7 +549,7 @@ void PhysX::FixedUpdate(float step)
 
 		u32 errorState;
 		if(!scene->mScene->fetchResults(true, &errorState))
-			BS_LOG(Warning, Physics, "Physics simulation failed. Error code: {0}", errorState);
+			B3D_LOG(Warning, Physics, "Physics simulation failed. Error code: {0}", errorState);
 	}
 
 	B3DFrameFreeAligned(scratchBuffer);
@@ -728,7 +728,7 @@ SPtr<PhysicsScene> PhysX::CreatePhysicsScene()
 void PhysX::NotifySceneDestroyedInternal(PhysXScene* scene)
 {
 	auto iterFind = std::find(mScenes.begin(), mScenes.end(), scene);
-	assert(iterFind != mScenes.end());
+	B3D_ASSERT(iterFind != mScenes.end());
 
 	mScenes.erase(iterFind);
 }

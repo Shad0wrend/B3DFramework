@@ -42,14 +42,14 @@ namespace bs
 
 		i32 operator[](size_t i) const
 		{
-			assert(i < 2);
+			B3D_ASSERT(i < 2);
 
 			return *(&X + i);
 		}
 
 		i32& operator[](size_t i)
 		{
-			assert(i < 2);
+			B3D_ASSERT(i < 2);
 
 			return *(&X + i);
 		}
@@ -99,14 +99,14 @@ namespace bs
 
 		Vector2I operator/(int val) const
 		{
-			assert(val != 0);
+			B3D_ASSERT(val != 0);
 
 			return Vector2I(X / val, Y / val);
 		}
 
 		Vector2 operator/(float val) const
 		{
-			assert(val != 0);
+			B3D_ASSERT(val != 0);
 
 			return Vector2(X / val, Y / val);
 		}
@@ -170,7 +170,7 @@ namespace bs
 
 		Vector2I& operator/=(i32 val)
 		{
-			assert(val != 0);
+			B3D_ASSERT(val != 0);
 
 			X /= val;
 			Y /= val;

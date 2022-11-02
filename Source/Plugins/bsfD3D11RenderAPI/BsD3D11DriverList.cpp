@@ -33,7 +33,7 @@ void D3D11DriverList::Enumerate(IDXGIFactory1* dxgiFactory)
 		if(FAILED(hr))
 		{
 			SAFE_RELEASE(dxgiAdapter);
-			BS_EXCEPT(InternalErrorException, "Enumerating adapters failed.");
+			B3D_EXCEPT(InternalErrorException, "Enumerating adapters failed.");
 		}
 
 		mDriverList.push_back(B3DNew<D3D11Driver>(adapterIdx, dxgiAdapter));
@@ -61,6 +61,6 @@ D3D11Driver* D3D11DriverList::Item(const String& name) const
 			return (*it);
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Cannot find video mode with the specified name.");
+	B3D_EXCEPT(InvalidParametersException, "Cannot find video mode with the specified name.");
 	return nullptr;
 }

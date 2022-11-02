@@ -369,10 +369,10 @@ namespace bs
 		 */
 		static uint32_t LerpByte(uint32_t from, uint32_t to, uint32_t t)
 		{
-			assert((from & 0xFF) == from);
-			assert((to & 0xFF) == to);
-			assert((t & 0xFF) == t);
-			assert(from <= to);
+			B3D_ASSERT((from & 0xFF) == from);
+			B3D_ASSERT((to & 0xFF) == to);
+			B3D_ASSERT((t & 0xFF) == t);
+			B3D_ASSERT(from <= to);
 
 			return (from + (((to - from) * t) >> 8)) & 0xFF;
 		}
@@ -384,10 +384,10 @@ namespace bs
 		 */
 		static uint32_t LerpWord(uint32_t from, uint32_t to, uint32_t t)
 		{
-			assert((from & 0xFFFF) == from);
-			assert((to & 0xFFFF) == to);
-			assert((t & 0xFFFF) == t);
-			assert(from <= to);
+			B3D_ASSERT((from & 0xFFFF) == from);
+			B3D_ASSERT((to & 0xFFFF) == to);
+			B3D_ASSERT((t & 0xFFFF) == t);
+			B3D_ASSERT(from <= to);
 
 			return (from + (((to - from) * t) >> 16)) & 0xFFFF;
 		}
@@ -399,10 +399,10 @@ namespace bs
 		 */
 		static uint32_t InvLerpByte(uint32_t from, uint32_t to, uint32_t val)
 		{
-			assert((from & 0xFF) == from);
-			assert((to & 0xFF) == to);
-			assert((val & 0xFF) == val);
-			assert(from <= to);
+			B3D_ASSERT((from & 0xFF) == from);
+			B3D_ASSERT((to & 0xFF) == to);
+			B3D_ASSERT((val & 0xFF) == val);
+			B3D_ASSERT(from <= to);
 
 			return ((val - from) << 8) / std::max(to - from, 1u);
 		}
@@ -414,10 +414,10 @@ namespace bs
 		 */
 		static uint32_t InvLerpWord(uint32_t from, uint32_t to, uint32_t val)
 		{
-			assert((from & 0xFFFF) == from);
-			assert((to & 0xFFFF) == to);
-			assert((val & 0xFFFF) == val);
-			assert(from <= to);
+			B3D_ASSERT((from & 0xFFFF) == from);
+			B3D_ASSERT((to & 0xFFFF) == to);
+			B3D_ASSERT((val & 0xFFFF) == val);
+			B3D_ASSERT(from <= to);
 
 			return ((val - from) << 16) / std::max(to - from, 1u);
 		}

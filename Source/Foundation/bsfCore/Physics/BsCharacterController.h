@@ -19,21 +19,21 @@ namespace bs
 	 * automatically climb when heights are greater than the assigned step offset. However due to the shape of the capsule
 	 * it might automatically climb over slightly larger heights than assigned step offsets.
 	 */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Physics)) CharacterClimbingMode
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) CharacterClimbingMode
 	{
 		Normal, /**< Normal behaviour. Capsule character controller will be able to auto-step even above the step offset. */
 		Constrained /**< The system will attempt to limit auto-step to the provided step offset and no higher. */
 	};
 
 	/** Controls behaviour when a character controller reaches a slope thats larger than its slope offset. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Physics)) CharacterNonWalkableMode
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) CharacterNonWalkableMode
 	{
 		Prevent, /**< Character will be prevented from going further, but will be allowed to move laterally. */
 		PreventAndSlide /**< Character will be prevented from going further, but also slide down the slope. */
 	};
 
 	/** Reports in which directions is the character colliding with other objects. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Physics)) CharacterCollisionFlag
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) CharacterCollisionFlag
 	{
 		Sides = 0x1, /**< Character is colliding with its sides. */
 		Up = 0x2, /**< Character is colliding with the ceiling. */
@@ -241,7 +241,7 @@ namespace bs
 	};
 
 	/** Contains data about a collision of a character controller and another object. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) ControllerCollision
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) ControllerCollision
 	{
 		Vector3 Position; /**< Contact position. */
 		Vector3 Normal; /**< Contact normal. */
@@ -250,7 +250,7 @@ namespace bs
 	};
 
 	/** Contains data about a collision of a character controller and a collider. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) ControllerColliderCollision : ControllerCollision
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) ControllerColliderCollision : ControllerCollision
 	{
 		/**
 		 * Component of the controller that was touched. Can be null if the controller has no component parent, in which
@@ -258,13 +258,13 @@ namespace bs
 		 */
 		HCollider Collider;
 
-		BS_SCRIPT_EXPORT(Exclude(true))
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		bs::Collider* ColliderRaw; /**< Collider that was touched. */
 		u32 TriangleIndex; /**< Touched triangle index for mesh colliders. */
 	};
 
 	/** Contains data about a collision between two character controllers. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) ControllerControllerCollision : ControllerCollision
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) ControllerControllerCollision : ControllerCollision
 	{
 		/**
 		 * Component of the controller that was touched. Can be null if the controller has no component parent, in which
@@ -272,7 +272,7 @@ namespace bs
 		 */
 		HCharacterController Controller;
 
-		BS_SCRIPT_EXPORT(Exclude(true))
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		CharacterController* ControllerRaw; /**< Controller that was touched. */
 	};
 

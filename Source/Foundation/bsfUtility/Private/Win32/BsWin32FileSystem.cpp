@@ -17,60 +17,60 @@ void Win32HandleError(DWORD error, const WString& path)
 	switch(error)
 	{
 	case ERROR_FILE_NOT_FOUND:
-		BS_LOG(Error, FileSystem, "File at path: \"{0}\" not found.", path);
+		B3D_LOG(Error, FileSystem, "File at path: \"{0}\" not found.", path);
 		break;
 	case ERROR_PATH_NOT_FOUND:
 	case ERROR_BAD_NETPATH:
 	case ERROR_CANT_RESOLVE_FILENAME:
 	case ERROR_INVALID_DRIVE:
-		BS_LOG(Error, FileSystem, "Path \"{0}\" not found.", path);
+		B3D_LOG(Error, FileSystem, "Path \"{0}\" not found.", path);
 		break;
 	case ERROR_ACCESS_DENIED:
-		BS_LOG(Error, FileSystem, "Access to path \"{0}\" denied.", path);
+		B3D_LOG(Error, FileSystem, "Access to path \"{0}\" denied.", path);
 		break;
 	case ERROR_ALREADY_EXISTS:
 	case ERROR_FILE_EXISTS:
-		BS_LOG(Error, FileSystem, "File/folder at path \"{0}\" already exists.", path);
+		B3D_LOG(Error, FileSystem, "File/folder at path \"{0}\" already exists.", path);
 		break;
 	case ERROR_INVALID_NAME:
 	case ERROR_DIRECTORY:
 	case ERROR_FILENAME_EXCED_RANGE:
 	case ERROR_BAD_PATHNAME:
-		BS_LOG(Error, FileSystem, "Invalid path string: \"{0}\".", path);
+		B3D_LOG(Error, FileSystem, "Invalid path string: \"{0}\".", path);
 		break;
 	case ERROR_FILE_READ_ONLY:
-		BS_LOG(Error, FileSystem, "File at path \"{0}\" is read only.", path);
+		B3D_LOG(Error, FileSystem, "File at path \"{0}\" is read only.", path);
 		break;
 	case ERROR_CANNOT_MAKE:
-		BS_LOG(Error, FileSystem, "Cannot create file/folder at path: \"{0}\".", path);
+		B3D_LOG(Error, FileSystem, "Cannot create file/folder at path: \"{0}\".", path);
 		break;
 	case ERROR_DIR_NOT_EMPTY:
-		BS_LOG(Error, FileSystem, "Directory at path \"{0}\" not empty.", path);
+		B3D_LOG(Error, FileSystem, "Directory at path \"{0}\" not empty.", path);
 		break;
 	case ERROR_WRITE_FAULT:
-		BS_LOG(Error, FileSystem, "Error while writing a file at path \"{0}\".", path);
+		B3D_LOG(Error, FileSystem, "Error while writing a file at path \"{0}\".", path);
 		break;
 	case ERROR_READ_FAULT:
-		BS_LOG(Error, FileSystem, "Error while reading a file at path \"{0}\".", path);
+		B3D_LOG(Error, FileSystem, "Error while reading a file at path \"{0}\".", path);
 		break;
 	case ERROR_SHARING_VIOLATION:
-		BS_LOG(Error, FileSystem, "Sharing violation at path \"{0}\".", path);
+		B3D_LOG(Error, FileSystem, "Sharing violation at path \"{0}\".", path);
 		break;
 	case ERROR_LOCK_VIOLATION:
-		BS_LOG(Error, FileSystem, "Lock violation at path \"{0}\".", path);
+		B3D_LOG(Error, FileSystem, "Lock violation at path \"{0}\".", path);
 		break;
 	case ERROR_HANDLE_EOF:
-		BS_LOG(Error, FileSystem, "End of file reached for file at path \"{0}\".", path);
+		B3D_LOG(Error, FileSystem, "End of file reached for file at path \"{0}\".", path);
 		break;
 	case ERROR_HANDLE_DISK_FULL:
 	case ERROR_DISK_FULL:
-		BS_LOG(Error, FileSystem, "Disk full.");
+		B3D_LOG(Error, FileSystem, "Disk full.");
 		break;
 	case ERROR_NEGATIVE_SEEK:
-		BS_LOG(Error, FileSystem, "Negative seek.");
+		B3D_LOG(Error, FileSystem, "Negative seek.");
 		break;
 	default:
-		BS_LOG(Error, FileSystem, "Undefined file system exception: {0}", (u32)error);
+		B3D_LOG(Error, FileSystem, "Undefined file system exception: {0}", (u32)error);
 		break;
 	}
 }
@@ -279,7 +279,7 @@ SPtr<DataStream> FileSystem::OpenFile(const Path& fullPath, bool readOnly)
 
 	if(!Win32PathExists(pathString) || !Win32IsFile(pathString))
 	{
-		BS_LOG(Warning, Platform, "Attempting to open a file that doesn't exist: {0}", fullPath);
+		B3D_LOG(Warning, Platform, "Attempting to open a file that doesn't exist: {0}", fullPath);
 		return nullptr;
 	}
 

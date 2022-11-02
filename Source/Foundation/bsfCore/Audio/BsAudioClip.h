@@ -12,14 +12,14 @@ namespace bs
 	 */
 
 	/** Valid internal engine audio formats. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Audio)) AudioFormat
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Audio)) AudioFormat
 	{
 		PCM, /**< Pulse code modulation audio ("raw" uncompressed audio). */
 		VORBIS /**< Vorbis compressed audio. */
 	};
 
 	/** Modes that determine how and when is audio data read. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Audio)) AudioReadMode
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Audio)) AudioReadMode
 	{
 		/** Entire audio clip will be loaded and decompressed. Uses most memory but has lowest CPU impact. */
 		LoadDecompressed,
@@ -72,23 +72,23 @@ namespace bs
 	 * Audio clip stores audio data in a compressed or uncompressed format. Clips can be provided to audio sources or
 	 * other audio methods to be played.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Audio)) AudioClip : public Resource
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Audio)) AudioClip : public Resource
 	{
 	public:
 		virtual ~AudioClip() = default;
 
 		/** Returns the size of a single sample, in bits. */
-		BS_SCRIPT_EXPORT(ExportName(BitDepth), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(BitDepth), Property(Getter))
 
 		u32 GetBitDepth() const { return mDesc.BitDepth; }
 
 		/** Returns how many samples per second is the audio encoded in. */
-		BS_SCRIPT_EXPORT(ExportName(SampleRate), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(SampleRate), Property(Getter))
 
 		u32 GetFrequency() const { return mDesc.Frequency; }
 
 		/** Returns the number of channels provided by the clip. */
-		BS_SCRIPT_EXPORT(ExportName(NumChannels), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(NumChannels), Property(Getter))
 
 		u32 GetNumChannels() const { return mDesc.NumChannels; }
 
@@ -97,7 +97,7 @@ namespace bs
 		 *
 		 * @see	AudioFormat
 		 */
-		BS_SCRIPT_EXPORT(ExportName(Format), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Format), Property(Getter))
 
 		AudioFormat GetFormat() const { return mDesc.Format; }
 
@@ -106,22 +106,22 @@ namespace bs
 		 *
 		 * @see	AudioReadMode
 		 */
-		BS_SCRIPT_EXPORT(ExportName(ReadMode), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(ReadMode), Property(Getter))
 
 		AudioReadMode GetReadMode() const { return mDesc.ReadMode; }
 
 		/** Returns the length of the audio clip, in seconds. */
-		BS_SCRIPT_EXPORT(ExportName(Duration), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Duration), Property(Getter))
 
 		float GetLength() const { return mLength; }
 
 		/** Returns the total number of samples in the clip (includes all channels). */
-		BS_SCRIPT_EXPORT(ExportName(NumSamples), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(NumSamples), Property(Getter))
 
 		u32 GetNumSamples() const { return mNumSamples; }
 
 		/** Determines will the clip be played a spatial 3D sound, or as a normal sound (for example music). */
-		BS_SCRIPT_EXPORT(ExportName(Is3D), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Is3D), Property(Getter))
 
 		bool Is3D() const { return mDesc.Is3D; }
 

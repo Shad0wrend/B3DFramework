@@ -48,7 +48,7 @@ void D3D11RenderAPI::Initialize()
 
 	HRESULT hr = CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&mDXGIFactory);
 	if(FAILED(hr))
-		BS_EXCEPT(RenderingAPIException, "Failed to create Direct3D11 DXGIFactory");
+		B3D_EXCEPT(RenderingAPIException, "Failed to create Direct3D11 DXGIFactory");
 
 	mDriverList = B3DNew<D3D11DriverList>(mDXGIFactory);
 	mActiveD3DDriver = mDriverList->Item(0); // TODO: Always get first driver, for now
@@ -91,7 +91,7 @@ void D3D11RenderAPI::Initialize()
 	}
 
 	if(FAILED(hr))
-		BS_EXCEPT(RenderingAPIException, "Failed to create Direct3D11 object. D3D11CreateDeviceN returned this error code: " + ToString(hr));
+		B3D_EXCEPT(RenderingAPIException, "Failed to create Direct3D11 object. D3D11CreateDeviceN returned this error code: " + ToString(hr));
 
 	mDevice = B3DNew<D3D11Device>(device);
 
@@ -587,7 +587,7 @@ void D3D11RenderAPI::SetGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<C
 		B3DClearAllocatorFrame();
 
 		if(mDevice->HasError())
-			BS_EXCEPT(RenderingAPIException, "Failed to set GPU parameters: " + mDevice->GetErrorDescription());
+			B3D_EXCEPT(RenderingAPIException, "Failed to set GPU parameters: " + mDevice->GetErrorDescription());
 	};
 
 	auto execute = [=]()
@@ -625,7 +625,7 @@ void D3D11RenderAPI::SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u3
 		u32 maxBoundVertexBuffers = mCurrentCapabilities[0].MaxBoundVertexBuffers;
 		if(index < 0 || (index + numBuffers) >= maxBoundVertexBuffers)
 		{
-			BS_EXCEPT(InvalidParametersException, "Invalid vertex index: " + ToString(index) + ". Valid range is 0 .. " + ToString(maxBoundVertexBuffers - 1));
+			B3D_EXCEPT(InvalidParametersException, "Invalid vertex index: " + ToString(index) + ". Valid range is 0 .. " + ToString(maxBoundVertexBuffers - 1));
 		}
 
 		ID3D11Buffer* dx11buffers[BS_MAX_BOUND_VERTEX_BUFFERS];
@@ -673,7 +673,7 @@ void D3D11RenderAPI::SetIndexBuffer(const SPtr<IndexBuffer>& buffer, const SPtr<
 		else if(indexBuffer->GetProperties().GetType() == IT_32BIT)
 			indexFormat = DXGI_FORMAT_R32_UINT;
 		else
-			BS_EXCEPT(InternalErrorException, "Unsupported index format: " + ToString(indexBuffer->GetProperties().GetType()));
+			B3D_EXCEPT(InternalErrorException, "Unsupported index format: " + ToString(indexBuffer->GetProperties().GetType()));
 
 		mDevice->GetImmediateContext()->IASetIndexBuffer(indexBuffer->GetD3DIndexBuffer(), indexFormat, 0);
 	};
@@ -737,7 +737,7 @@ void D3D11RenderAPI::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount, 
 
 #if BS_DEBUG_MODE
 		if(mDevice->HasError())
-			BS_LOG(Warning, RenderBackend, mDevice->GetErrorDescription());
+			B3D_LOG(Warning, RenderBackend, mDevice->GetErrorDescription());
 #endif
 	};
 
@@ -772,7 +772,7 @@ void D3D11RenderAPI::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffse
 
 #if BS_DEBUG_MODE
 		if(mDevice->HasError())
-			BS_LOG(Warning, RenderBackend, mDevice->GetErrorDescription());
+			B3D_LOG(Warning, RenderBackend, mDevice->GetErrorDescription());
 #endif
 	};
 
@@ -799,7 +799,7 @@ void D3D11RenderAPI::DispatchCompute(u32 numGroupsX, u32 numGroupsY, u32 numGrou
 
 #if BS_DEBUG_MODE
 		if(mDevice->HasError())
-			BS_LOG(Warning, RenderBackend, mDevice->GetErrorDescription());
+			B3D_LOG(Warning, RenderBackend, mDevice->GetErrorDescription());
 #endif
 	};
 
@@ -997,7 +997,7 @@ void D3D11RenderAPI::SetRenderTarget(const SPtr<RenderTarget>& target, u32 readO
 		// Bind render targets
 		mDevice->GetImmediateContext()->OMSetRenderTargets(maxRenderTargets, views, depthStencilView);
 		if(mDevice->HasError())
-			BS_EXCEPT(RenderingAPIException, "Failed to setRenderTarget : " + mDevice->GetErrorDescription());
+			B3D_EXCEPT(RenderingAPIException, "Failed to setRenderTarget : " + mDevice->GetErrorDescription());
 
 		B3DDeleteMultiple(views, maxRenderTargets);
 		ApplyViewport();
@@ -1026,7 +1026,7 @@ void D3D11RenderAPI::AddCommands(const SPtr<CommandBuffer>& commandBuffer, const
 {
 	// We're not supporting this as we don't support command buffer command queuing at all (i.e. they are executed
 	// straight away).
-	BS_LOG(Error, RenderBackend, "Secondary command buffers not supported on DirectX 11.");
+	B3D_LOG(Error, RenderBackend, "Secondary command buffers not supported on DirectX 11.");
 }
 
 void D3D11RenderAPI::SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, u32 syncMask)
@@ -1385,14 +1385,14 @@ void D3D11RenderAPI::ApplyInputLayout()
 {
 	if(mActiveVertexDeclaration == nullptr)
 	{
-		BS_LOG(Warning, RenderBackend, "Cannot apply input layout without a vertex declaration. Set vertex declaration "
+		B3D_LOG(Warning, RenderBackend, "Cannot apply input layout without a vertex declaration. Set vertex declaration "
 									   "before calling this method.");
 		return;
 	}
 
 	if(mActiveVertexShader == nullptr)
 	{
-		BS_LOG(Warning, RenderBackend, "Cannot apply input layout without a vertex shader. Set vertex shader before "
+		B3D_LOG(Warning, RenderBackend, "Cannot apply input layout without a vertex shader. Set vertex shader before "
 									   "calling this method.");
 		return;
 	}

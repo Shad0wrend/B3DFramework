@@ -216,13 +216,13 @@ namespace bs
 
 	inline void BufferedBitstreamReader::Preload(uint32_t count)
 	{
-		assert(mCursor >= mBufferedRangeStart);
+		B3D_ASSERT(mCursor >= mBufferedRangeStart);
 
 		if((mCursor + (uint64_t)count * 8) <= mBufferedRangeEnd)
 			return;
 
 		// Pre-load the next chunk
-		assert((mBufferedRangeEnd % 8) == 0);
+		B3D_ASSERT((mBufferedRangeEnd % 8) == 0);
 		uint64_t remainingBytes = mLength - mBufferedRangeEnd / 8;
 
 		uint64_t numBytesToPreload = std::min(std::max(mPreloadSize, (uint64_t)count), remainingBytes);
@@ -239,7 +239,7 @@ namespace bs
 
 		mDataStream->Seek((size_t)(mBufferedRangeEnd / 8));
 		if(mDataStream->Read(mBitstream->Cursor(), numBytesToPreload) != numBytesToPreload)
-			BS_EXCEPT(InternalErrorException, "Error reading data.");
+			B3D_EXCEPT(InternalErrorException, "Error reading data.");
 
 		mBitstream->Seek(orgPos);
 		mBufferedRangeEnd += numBytesToPreload * 8;
@@ -324,7 +324,7 @@ namespace bs
 		uint64_t bitsToFlush = bytesToFlush * Bitstream::kBitsPerQuant;
 		uint64_t leftoverBits = bitsInBuffer - bitsToFlush;
 
-		assert(leftoverBits < Bitstream::kBitsPerQuant);
+		B3D_ASSERT(leftoverBits < Bitstream::kBitsPerQuant);
 
 		Bitstream::QuantType quant = 0;
 		if(force && leftoverBits > 0)
@@ -334,7 +334,7 @@ namespace bs
 			mBitstream->WriteBits(&quant, bitsToPad);
 			bitsInBuffer += bitsToPad;
 
-			assert((bitsInBuffer % Bitstream::kBitsPerQuant) == 0);
+			B3D_ASSERT((bitsInBuffer % Bitstream::kBitsPerQuant) == 0);
 
 			bytesToFlush = bitsInBuffer >> Bitstream::kBitsPerQuantLoG2;
 			bitsToFlush = bytesToFlush * Bitstream::kBitsPerQuant;

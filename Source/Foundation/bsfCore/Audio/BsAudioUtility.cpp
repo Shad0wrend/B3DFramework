@@ -139,7 +139,7 @@ void AudioUtility::ConvertToMono(const u8* input, u8* output, u32 bitDepth, u32 
 		ConvertToMono32((i32*)input, (i32*)output, numSamples, numChannels);
 		break;
 	default:
-		assert(false);
+		B3D_ASSERT(false);
 		break;
 	}
 }
@@ -172,7 +172,7 @@ void AudioUtility::ConvertBitDepth(const u8* input, u32 inBitDepth, u8* output, 
 		// Do nothing
 		break;
 	default:
-		assert(false);
+		B3D_ASSERT(false);
 		break;
 	}
 
@@ -191,7 +191,7 @@ void AudioUtility::ConvertBitDepth(const u8* input, u32 inBitDepth, u8* output, 
 		memcpy(output, srcBuffer, numSamples * sizeof(i32));
 		break;
 	default:
-		assert(false);
+		B3D_ASSERT(false);
 		break;
 	}
 
@@ -245,7 +245,7 @@ void AudioUtility::ConvertToFloat(const u8* input, u32 inBitDepth, float* output
 		}
 	}
 	else
-		assert(false);
+		B3D_ASSERT(false);
 }
 
 i32 AudioUtility::Convert24To32Bits(const u8* input)

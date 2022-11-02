@@ -11,7 +11,7 @@ using namespace bs::ct;
 GLOcclusionQuery::GLOcclusionQuery(bool binary, u32 deviceIdx)
 	: OcclusionQuery(binary)
 {
-	assert(deviceIdx == 0 && "Multiple GPUs not supported natively on OpenGL.");
+	B3D_ASSERT(deviceIdx == 0 && "Multiple GPUs not supported natively on OpenGL.");
 
 	glGenQueries(1, &mQueryObj);
 	BS_CHECK_GL_ERROR();

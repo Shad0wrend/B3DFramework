@@ -63,7 +63,7 @@ FolderMonitor::FolderWatchInfo::FolderWatchInfo(const Path& folderToMonitor, HAN
 
 FolderMonitor::FolderWatchInfo::~FolderWatchInfo()
 {
-	assert(MState == MonitorState::Inactive);
+	B3D_ASSERT(MState == MonitorState::Inactive);
 
 	StopMonitor(0);
 }
@@ -90,7 +90,7 @@ void FolderMonitor::FolderWatchInfo::StartMonitor(HANDLE compPortHandle)
 			MState = MonitorState::Inactive;
 		}
 
-		BS_EXCEPT(InternalErrorException, "Failed to start folder monitor on folder \"" + MFolderToMonitor.ToString() + "\" because ReadDirectoryChangesW failed.");
+		B3D_EXCEPT(InternalErrorException, "Failed to start folder monitor on folder \"" + MFolderToMonitor.ToString() + "\" because ReadDirectoryChangesW failed.");
 	}
 }
 
@@ -145,7 +145,7 @@ bool FolderMonitor::FileNotifyInfo::GetNext()
 		if((DWORD)((u8*)mCurrentRecord - mBuffer) > mBufferSize)
 		{
 			// Gone out of range, something bad happened
-			assert(false);
+			B3D_ASSERT(false);
 
 			mCurrentRecord = oldRecord;
 		}
@@ -158,7 +158,7 @@ bool FolderMonitor::FileNotifyInfo::GetNext()
 
 DWORD FolderMonitor::FileNotifyInfo::GetAction() const
 {
-	assert(mCurrentRecord != nullptr);
+	B3D_ASSERT(mCurrentRecord != nullptr);
 
 	if(mCurrentRecord)
 		return mCurrentRecord->Action;
@@ -337,7 +337,7 @@ void FolderMonitor::StartMonitor(const Path& folderPath, bool subdirectories, Fo
 {
 	if(!FileSystem::IsDirectory(folderPath))
 	{
-		BS_LOG(Error, Generic, "Provided path \"{0}\" is not a directory", folderPath);
+		B3D_LOG(Error, Generic, "Provided path \"{0}\" is not a directory", folderPath);
 		return;
 	}
 
@@ -346,7 +346,7 @@ void FolderMonitor::StartMonitor(const Path& folderPath, bool subdirectories, Fo
 
 	if(dirHandle == INVALID_HANDLE_VALUE)
 	{
-		BS_EXCEPT(InternalErrorException, "Failed to open folder \"" + folderPath.ToString() + "\" for monitoring. Error code: " + ToString((u64)GetLastError()));
+		B3D_EXCEPT(InternalErrorException, "Failed to open folder \"" + folderPath.ToString() + "\" for monitoring. Error code: " + ToString((u64)GetLastError()));
 	}
 
 	DWORD filterFlags = 0;
@@ -369,7 +369,7 @@ void FolderMonitor::StartMonitor(const Path& folderPath, bool subdirectories, Fo
 	{
 		m->MFoldersToWatch.erase(m->MFoldersToWatch.end() - 1);
 		B3DDelete(watchInfo);
-		BS_EXCEPT(InternalErrorException, "Failed to open completion port for folder monitoring. Error code: " + ToString((u64)GetLastError()));
+		B3D_EXCEPT(InternalErrorException, "Failed to open completion port for folder monitoring. Error code: " + ToString((u64)GetLastError()));
 	}
 
 	if(m->MWorkerThread == nullptr)
@@ -380,7 +380,7 @@ void FolderMonitor::StartMonitor(const Path& folderPath, bool subdirectories, Fo
 		{
 			m->MFoldersToWatch.erase(m->MFoldersToWatch.end() - 1);
 			B3DDelete(watchInfo);
-			BS_EXCEPT(InternalErrorException, "Failed to create a new worker thread for folder monitoring");
+			B3D_EXCEPT(InternalErrorException, "Failed to create a new worker thread for folder monitoring");
 		}
 	}
 
@@ -392,7 +392,7 @@ void FolderMonitor::StartMonitor(const Path& folderPath, bool subdirectories, Fo
 	{
 		m->MFoldersToWatch.erase(m->MFoldersToWatch.end() - 1);
 		B3DDelete(watchInfo);
-		BS_EXCEPT(InternalErrorException, "Failed to create a new worker thread for folder monitoring");
+		B3D_EXCEPT(InternalErrorException, "Failed to create a new worker thread for folder monitoring");
 	}
 }
 
@@ -460,7 +460,7 @@ void FolderMonitor::WorkerThreadMain()
 
 		if(!GetQueuedCompletionStatus(m->MCompPortHandle, &numBytes, (PULONG_PTR)&watchInfo, &overlapped, INFINITE))
 		{
-			assert(false);
+			B3D_ASSERT(false);
 			// TODO: Folder handle was lost most likely. Not sure how to deal with that. Shutdown watch on this folder and cleanup?
 		}
 
@@ -478,7 +478,7 @@ void FolderMonitor::WorkerThreadMain()
 			case MonitorState::Starting:
 				if(!ReadDirectoryChangesW(watchInfo->MDirHandle, watchInfo->MBuffer, FolderWatchInfo::kReadBufferSize, watchInfo->MMonitorSubdirectories, watchInfo->MMonitorFlags, &watchInfo->MBufferSize, &watchInfo->MOverlapped, nullptr))
 				{
-					assert(false); // TODO - Possibly the buffer was too small?
+					B3D_ASSERT(false); // TODO - Possibly the buffer was too small?
 					watchInfo->MReadError = GetLastError();
 				}
 				else
@@ -501,7 +501,7 @@ void FolderMonitor::WorkerThreadMain()
 
 					if(!ReadDirectoryChangesW(watchInfo->MDirHandle, watchInfo->MBuffer, FolderWatchInfo::kReadBufferSize, watchInfo->MMonitorSubdirectories, watchInfo->MMonitorFlags, &watchInfo->MBufferSize, &watchInfo->MOverlapped, nullptr))
 					{
-						assert(false); // TODO: Failed during normal operation, possibly the buffer was too small. Shutdown watch on this folder and cleanup?
+						B3D_ASSERT(false); // TODO: Failed during normal operation, possibly the buffer was too small. Shutdown watch on this folder and cleanup?
 						watchInfo->MReadError = GetLastError();
 					}
 					else

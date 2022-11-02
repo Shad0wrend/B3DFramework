@@ -31,7 +31,7 @@ D3D11VideoOutputInfo::D3D11VideoOutputInfo(IDXGIOutput* output, u32 outputIdx)
 	if(FAILED(hr))
 	{
 		SAFE_RELEASE(output);
-		BS_EXCEPT(InternalErrorException, "Error while enumerating adapter output video modes.");
+		B3D_EXCEPT(InternalErrorException, "Error while enumerating adapter output video modes.");
 	}
 
 	DXGI_MODE_DESC* modeDesc = B3DNewMultiple<DXGI_MODE_DESC>(numModes);
@@ -42,7 +42,7 @@ D3D11VideoOutputInfo::D3D11VideoOutputInfo(IDXGIOutput* output, u32 outputIdx)
 		B3DDeleteMultiple(modeDesc, numModes);
 
 		SAFE_RELEASE(output);
-		BS_EXCEPT(InternalErrorException, "Error while enumerating adapter output video modes.");
+		B3D_EXCEPT(InternalErrorException, "Error while enumerating adapter output video modes.");
 	}
 
 	for(u32 i = 0; i < numModes; i++)

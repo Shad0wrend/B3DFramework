@@ -33,8 +33,8 @@ void ShapeMeshes3D::WireAaBox(const AABox& box, const SPtr<MeshData>& meshData, 
 	u32* indexData = meshData->GetIndices32();
 	u8* positionData = meshData->GetElementData(VES_POSITION);
 
-	assert((vertexOffset + 8) <= meshData->GetNumVertices());
-	assert((indexOffset + 24) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + 8) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + 24) <= meshData->GetNumIndices());
 
 	WireAaBox(box, positionData, vertexOffset, meshData->GetVertexDesc()->GetVertexStride(), indexData, indexOffset);
 }
@@ -51,8 +51,8 @@ void ShapeMeshes3D::SolidAaBox(const AABox& box, const SPtr<MeshData>& meshData,
 	u32 numIndices = meshData->GetNumIndices();
 	u32 vertexStride = desc->GetVertexStride();
 
-	assert((vertexOffset + 24) <= meshData->GetNumVertices());
-	assert((indexOffset + 36) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + 24) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + 36) <= meshData->GetNumIndices());
 
 	u8* uvData = nullptr;
 	if(desc->HasElement(VES_TEXCOORD))
@@ -72,8 +72,8 @@ void ShapeMeshes3D::WireSphere(const Sphere& sphere, const SPtr<MeshData>& meshD
 	u32 requiredNumVertices, requiredNumIndices;
 	GetNumElementsWireSphere(quality, requiredNumVertices, requiredNumIndices);
 
-	assert((vertexOffset + requiredNumVertices) <= meshData->GetNumVertices());
-	assert((indexOffset + requiredNumIndices) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + requiredNumVertices) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + requiredNumIndices) <= meshData->GetNumIndices());
 
 	u32 verticesPerArc = (quality + 1) * 5;
 	u32 indicesPerArc = (verticesPerArc - 1) * 2;
@@ -90,8 +90,8 @@ void ShapeMeshes3D::WireHemisphere(const Sphere& sphere, const SPtr<MeshData>& m
 	u32 requiredNumVertices, requiredNumIndices;
 	GetNumElementsWireHemisphere(quality, requiredNumVertices, requiredNumIndices);
 
-	assert((vertexOffset + requiredNumVertices) <= meshData->GetNumVertices());
-	assert((indexOffset + requiredNumIndices) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + requiredNumVertices) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + requiredNumIndices) <= meshData->GetNumIndices());
 
 	u32 verticesPerArc = (quality + 1) * 5;
 	u32 indicesPerArc = (verticesPerArc - 1) * 2;
@@ -118,8 +118,8 @@ void ShapeMeshes3D::SolidSphere(const Sphere& sphere, const SPtr<MeshData>& mesh
 	u32 requiredNumVertices, requiredNumIndices;
 	GetNumElementsSphere(quality, requiredNumVertices, requiredNumIndices);
 
-	assert((vertexOffset + requiredNumVertices) <= numVertices);
-	assert((indexOffset + requiredNumIndices) <= numIndices);
+	B3D_ASSERT((vertexOffset + requiredNumVertices) <= numVertices);
+	B3D_ASSERT((indexOffset + requiredNumIndices) <= numIndices);
 
 	u8* uvData = nullptr;
 	if(desc->HasElement(VES_TEXCOORD))
@@ -152,8 +152,8 @@ void ShapeMeshes3D::WireArc(const Vector3& center, float radius, const Vector3& 
 	u32 requiredNumVertices, requiredNumIndices;
 	GetNumElementsWireArc(quality, requiredNumVertices, requiredNumIndices);
 
-	assert((vertexOffset + requiredNumVertices) <= meshData->GetNumVertices());
-	assert((indexOffset + requiredNumIndices) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + requiredNumVertices) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + requiredNumIndices) <= meshData->GetNumIndices());
 
 	WireArc(center, radius, normal, startAngle, amountAngle, positionData, vertexOffset, meshData->GetVertexDesc()->GetVertexStride(), indexData, indexOffset, quality);
 }
@@ -173,8 +173,8 @@ void ShapeMeshes3D::SolidArc(const Vector3& center, float radius, const Vector3&
 	u32 requiredNumVertices, requiredNumIndices;
 	GetNumElementsArc(quality, requiredNumVertices, requiredNumIndices);
 
-	assert((vertexOffset + requiredNumVertices) <= meshData->GetNumVertices());
-	assert((indexOffset + requiredNumIndices) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + requiredNumVertices) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + requiredNumIndices) <= meshData->GetNumIndices());
 
 	u8* uvData = nullptr;
 	if(desc->HasElement(VES_TEXCOORD))
@@ -194,8 +194,8 @@ void ShapeMeshes3D::WireFrustum(const Vector3& position, float aspect, Degree FO
 	u32* indexData = meshData->GetIndices32();
 	u8* positionData = meshData->GetElementData(VES_POSITION);
 
-	assert((vertexOffset + 8) <= meshData->GetNumVertices());
-	assert((indexOffset + 24) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + 8) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + 24) <= meshData->GetNumIndices());
 
 	WireFrustum(position, aspect, FOV, near, far, positionData, vertexOffset, meshData->GetVertexDesc()->GetVertexStride(), indexData, indexOffset);
 }
@@ -215,8 +215,8 @@ void ShapeMeshes3D::SolidCone(const Vector3& base, const Vector3& normal, float 
 	u32 requiredNumVertices, requiredNumIndices;
 	GetNumElementsCone(quality, requiredNumVertices, requiredNumIndices);
 
-	assert((vertexOffset + requiredNumVertices) <= meshData->GetNumVertices());
-	assert((indexOffset + requiredNumIndices) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + requiredNumVertices) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + requiredNumIndices) <= meshData->GetNumIndices());
 
 	u8* uvData = nullptr;
 	if(desc->HasElement(VES_TEXCOORD))
@@ -239,8 +239,8 @@ void ShapeMeshes3D::WireCone(const Vector3& base, const Vector3& normal, float h
 	u32 requiredNumVertices, requiredNumIndices;
 	GetNumElementsWireCone(quality, requiredNumVertices, requiredNumIndices);
 
-	assert((vertexOffset + requiredNumVertices) <= meshData->GetNumVertices());
-	assert((indexOffset + requiredNumIndices) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + requiredNumVertices) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + requiredNumIndices) <= meshData->GetNumIndices());
 
 	WireCone(base, normal, height, radius, scale, positionData, vertexOffset, meshData->GetVertexDesc()->GetVertexStride(), indexData, indexOffset, quality);
 }
@@ -260,8 +260,8 @@ void ShapeMeshes3D::SolidCylinder(const Vector3& base, const Vector3& normal, fl
 	u32 requiredNumVertices, requiredNumIndices;
 	GetNumElementsCylinder(quality, requiredNumVertices, requiredNumIndices);
 
-	assert((vertexOffset + requiredNumVertices) <= meshData->GetNumVertices());
-	assert((indexOffset + requiredNumIndices) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + requiredNumVertices) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + requiredNumIndices) <= meshData->GetNumIndices());
 
 	u8* uvData = nullptr;
 	if(desc->HasElement(VES_TEXCOORD))
@@ -284,8 +284,8 @@ void ShapeMeshes3D::WireCylinder(const Vector3& base, const Vector3& normal, flo
 	u32 requiredNumVertices, requiredNumIndices;
 	GetNumElementsWireCylinder(quality, requiredNumVertices, requiredNumIndices);
 
-	assert((vertexOffset + requiredNumVertices) <= meshData->GetNumVertices());
-	assert((indexOffset + requiredNumIndices) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + requiredNumVertices) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + requiredNumIndices) <= meshData->GetNumIndices());
 
 	WireCylinder(base, normal, height, radius, scale, positionData, vertexOffset, meshData->GetVertexDesc()->GetVertexStride(), indexData, indexOffset, quality);
 }
@@ -302,8 +302,8 @@ void ShapeMeshes3D::SolidQuad(const Rect3& area, const SPtr<MeshData>& meshData,
 	u32 numIndices = meshData->GetNumIndices();
 	u32 vertexStride = desc->GetVertexStride();
 
-	assert((vertexOffset + 8) <= numVertices);
-	assert((indexOffset + 12) <= numIndices);
+	B3D_ASSERT((vertexOffset + 8) <= numVertices);
+	B3D_ASSERT((indexOffset + 12) <= numIndices);
 
 	u8* uvData = nullptr;
 	if(desc->HasElement(VES_TEXCOORD))
@@ -323,18 +323,18 @@ void ShapeMeshes3D::PixelLine(const Vector3& a, const Vector3& b, const SPtr<Mes
 	u32* indexData = meshData->GetIndices32();
 	u8* positionData = meshData->GetElementData(VES_POSITION);
 
-	assert((vertexOffset + 2) <= meshData->GetNumVertices());
-	assert((indexOffset + 2) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + 2) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + 2) <= meshData->GetNumIndices());
 
 	PixelLine(a, b, positionData, vertexOffset, meshData->GetVertexDesc()->GetVertexStride(), indexData, indexOffset);
 }
 
 void ShapeMeshes3D::PixelLineList(const Vector<Vector3>& linePoints, const SPtr<MeshData>& meshData, u32 vertexOffset, u32 indexOffset)
 {
-	assert(linePoints.size() % 2 == 0);
+	B3D_ASSERT(linePoints.size() % 2 == 0);
 
-	assert((vertexOffset + linePoints.size()) <= meshData->GetNumVertices());
-	assert((indexOffset + linePoints.size()) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + linePoints.size()) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + linePoints.size()) <= meshData->GetNumIndices());
 
 	u32 curVertOffset = vertexOffset;
 	u32 curIdxOffset = indexOffset;
@@ -358,18 +358,18 @@ void ShapeMeshes3D::AntialiasedLine(const Vector3& a, const Vector3& b, const Ve
 	u8* positionData = meshData->GetElementData(VES_POSITION);
 	u8* colorData = meshData->GetElementData(VES_COLOR);
 
-	assert((vertexOffset + kNumVerticesAaLine) <= meshData->GetNumVertices());
-	assert((indexOffset + kNumIndicesAaLine) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + kNumVerticesAaLine) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + kNumIndicesAaLine) <= meshData->GetNumIndices());
 
 	AntialiasedLine(a, b, up, width, borderWidth, color, positionData, colorData, vertexOffset, meshData->GetVertexDesc()->GetVertexStride(), indexData, indexOffset);
 }
 
 void ShapeMeshes3D::AntialiasedLineList(const Vector<Vector3>& linePoints, const Vector3& up, float width, float borderWidth, const Color& color, const SPtr<MeshData>& meshData, u32 vertexOffset, u32 indexOffset)
 {
-	assert(linePoints.size() % 2 == 0);
+	B3D_ASSERT(linePoints.size() % 2 == 0);
 
-	assert((vertexOffset + linePoints.size() * 4) <= meshData->GetNumVertices());
-	assert((indexOffset + linePoints.size() * 15) <= meshData->GetNumIndices());
+	B3D_ASSERT((vertexOffset + linePoints.size() * 4) <= meshData->GetNumVertices());
+	B3D_ASSERT((indexOffset + linePoints.size() * 15) <= meshData->GetNumIndices());
 
 	u32 curVertOffset = vertexOffset;
 	u32 curIdxOffset = indexOffset;
@@ -844,7 +844,7 @@ void ShapeMeshes3D::SolidSphere(const Sphere& sphere, u8* outVertices, u8* outNo
 
 				outIndices[i + indexToSplit] = vertexOffset + numIndices + extraVertIdx;
 
-				assert(extraVertIdx < maxExtraVerts);
+				B3D_ASSERT(extraVertIdx < maxExtraVerts);
 				extraVertIdx++;
 			}
 		}
@@ -1757,7 +1757,7 @@ u32 ShapeMeshes3D::SubdivideTriangleOnSphere(const Vector3& center, float radius
 
 void ShapeMeshes3D::GenerateArcVertices(const Vector3& center, const Vector3& up, float radius, Degree startAngle, Degree angleAmount, Vector2 scale, u32 numVertices, u8* outVertices, u32 vertexOffset, u32 vertexStride)
 {
-	assert(numVertices >= 2);
+	B3D_ASSERT(numVertices >= 2);
 
 	Quaternion alignWithStart = Quaternion(-Vector3::kUnitY, startAngle);
 	Quaternion alignWithUp = Quaternion::GetRotationFromTo(Vector3::kUnitY, up);

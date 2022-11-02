@@ -10,7 +10,7 @@ using namespace bs;
 GLRenderWindowManager::GLRenderWindowManager(ct::GLRenderAPI* renderSystem)
 	: mRenderSystem(renderSystem)
 {
-	assert(mRenderSystem != nullptr);
+	B3D_ASSERT(mRenderSystem != nullptr);
 }
 
 SPtr<RenderWindow> GLRenderWindowManager::CreateImpl(RENDER_WINDOW_DESC& desc, u32 windowId, const SPtr<RenderWindow>& parentWindow)

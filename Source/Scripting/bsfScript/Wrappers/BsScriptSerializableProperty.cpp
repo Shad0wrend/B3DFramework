@@ -56,7 +56,7 @@ void ScriptSerializableProperty::InternalCreateInstance(MonoObject* instance, Mo
 	SPtr<ManagedSerializableTypeInfo> typeInfo = ScriptAssemblyManager::Instance().GetTypeInfo(engineClass);
 	if(typeInfo == nullptr)
 	{
-		BS_LOG(Warning, Script, "Cannot create an instance of type \"{0}\", it is not marked as serializable.", engineClass->GetFullName());
+		B3D_LOG(Warning, Script, "Cannot create an instance of type \"{0}\", it is not marked as serializable.", engineClass->GetFullName());
 		return;
 	}
 

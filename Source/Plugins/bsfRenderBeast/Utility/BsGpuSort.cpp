@@ -231,7 +231,7 @@ u32 GpuSort::Sort(const GpuSortBuffers& buffers, u32 numKeys, u32 keyMask)
 
 	if(errorMsg)
 	{
-		BS_LOG(Error, Renderer, "GpuSort failed: {0}", errorMsg);
+		B3D_LOG(Error, Renderer, "GpuSort failed: {0}", errorMsg);
 		return 0;
 	}
 
@@ -245,7 +245,7 @@ u32 GpuSort::Sort(const GpuSortBuffers& buffers, u32 numKeys, u32 keyMask)
 
 	if(!validSize)
 	{
-		BS_LOG(Error, Renderer, "GpuSort failed: All sort buffers must have the same size.");
+		B3D_LOG(Error, Renderer, "GpuSort failed: All sort buffers must have the same size.");
 		return 0;
 	}
 
@@ -459,7 +459,7 @@ void RunSortTest()
 	helperBuffers[0]->ReadData(0, helperBufferLength * sizeof(u32), bufferCounts.data());
 
 	for(u32 i = 0; i < (u32)counts.size(); i++)
-		assert(bufferCounts[i] == counts[i]);
+		B3D_ASSERT(bufferCounts[i] == counts[i]);
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////// Calculate offsets //////////////////////////////////////////////////
@@ -555,7 +555,7 @@ void RunSortTest()
 	helperBuffers[1]->ReadData(0, helperBufferLength * sizeof(u32), bufferOffsets.data());
 
 	for(u32 i = 0; i < (u32)offsets.size(); i++)
-		assert(bufferOffsets[i] == offsets[i]);
+		B3D_ASSERT(bufferOffsets[i] == offsets[i]);
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////// Reorder ////////////////////////////////////////////////////////
@@ -786,9 +786,9 @@ void RunSortTest()
 	sortBuffers.Keys[1]->ReadData(0, count * sizeof(u32), bufferSortedKeys.data());
 
 	for(u32 i = 0; i < count; i++)
-		assert(bufferSortedKeys[i] == sortedKeys[i]);
+		B3D_ASSERT(bufferSortedKeys[i] == sortedKeys[i]);
 
 	// Ensure everything is actually sorted
-	assert(std::is_sorted(sortedKeys.begin(), sortedKeys.end()));
+	B3D_ASSERT(std::is_sorted(sortedKeys.begin(), sortedKeys.end()));
 }
 }} // namespace bs::ct

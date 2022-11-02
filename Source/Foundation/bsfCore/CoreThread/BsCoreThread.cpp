@@ -262,7 +262,7 @@ void CoreThread::Submit(bool blockUntilComplete)
 AsyncOp CoreThread::QueueReturnCommand(std::function<void(AsyncOp&)> commandCallback, CoreThreadQueueFlags flags)
 {
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-	assert(BS_THREAD_CURRENT_ID != GetCoreThreadId() && "Cannot queue commands on the core thread for the core thread");
+	B3D_ASSERT(BS_THREAD_CURRENT_ID != GetCoreThreadId() && "Cannot queue commands on the core thread for the core thread");
 #endif
 
 	if(!flags.IsSet(CTQF_InternalQueue))
@@ -297,7 +297,7 @@ AsyncOp CoreThread::QueueReturnCommand(std::function<void(AsyncOp&)> commandCall
 void CoreThread::QueueCommand(std::function<void()> commandCallback, CoreThreadQueueFlags flags)
 {
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-	assert(BS_THREAD_CURRENT_ID != GetCoreThreadId() && "Cannot queue commands on the core thread for the core thread");
+	B3D_ASSERT(BS_THREAD_CURRENT_ID != GetCoreThreadId() && "Cannot queue commands on the core thread for the core thread");
 #endif
 
 	if(!flags.IsSet(CTQF_InternalQueue))
@@ -386,7 +386,7 @@ void ThrowIfNotCoreThread()
 {
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 	if(BS_THREAD_CURRENT_ID != CoreThread::Instance().GetCoreThreadId())
-		BS_EXCEPT(InternalErrorException, "This method can only be accessed from the core thread.");
+		B3D_EXCEPT(InternalErrorException, "This method can only be accessed from the core thread.");
 #endif
 }
 
@@ -394,7 +394,7 @@ void ThrowIfCoreThread()
 {
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 	if(BS_THREAD_CURRENT_ID == CoreThread::Instance().GetCoreThreadId())
-		BS_EXCEPT(InternalErrorException, "This method cannot be accessed from the core thread.");
+		B3D_EXCEPT(InternalErrorException, "This method cannot be accessed from the core thread.");
 #endif
 }
 } // namespace bs

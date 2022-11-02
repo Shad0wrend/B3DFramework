@@ -10,10 +10,10 @@ using namespace bs;
 void CheckValidDesc(const VERTEX_BUFFER_DESC& desc)
 {
 	if(desc.VertexSize == 0)
-		BS_EXCEPT(InvalidParametersException, "Vertex buffer vertex size is not allowed to be zero.");
+		B3D_EXCEPT(InvalidParametersException, "Vertex buffer vertex size is not allowed to be zero.");
 
 	if(desc.NumVerts == 0)
-		BS_EXCEPT(InvalidParametersException, "Vertex buffer vertex count is not allowed to be zero.");
+		B3D_EXCEPT(InvalidParametersException, "Vertex buffer vertex count is not allowed to be zero.");
 }
 
 VertexBufferProperties::VertexBufferProperties(u32 numVertices, u32 vertexSize)
@@ -134,7 +134,7 @@ SPtr<GpuBuffer> VertexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat f
 	u32 elemSize = type == GBT_STANDARD ? bs::GpuBuffer::GetFormatSize(format) : elementSize;
 	if((mBuffer->GetSize() % elemSize) != 0)
 	{
-		BS_LOG(Error, RenderBackend, "Size of the buffer isn't divisible by individual element size provided for the buffer view.");
+		B3D_LOG(Error, RenderBackend, "Size of the buffer isn't divisible by individual element size provided for the buffer view.");
 		return nullptr;
 	}
 

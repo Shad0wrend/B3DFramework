@@ -34,7 +34,7 @@ MonoObject* ScriptAsyncOpBase::CreateInternal(const AsyncOpBase& op, const std::
 
 	if(!returnTypeClass)
 	{
-		BS_LOG(Error, Generic, "Unable to create a managed AsyncOp. Using an unsupported return value type?");
+		B3D_LOG(Error, Generic, "Unable to create a managed AsyncOp. Using an unsupported return value type?");
 		return nullptr;
 	}
 

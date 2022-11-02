@@ -80,12 +80,12 @@ PixelData PixelData::GetSubVolume(const PixelVolume& volume) const
 			return *this;
 		}
 
-		BS_EXCEPT(InvalidParametersException, "Cannot return subvolume of compressed PixelBuffer");
+		B3D_EXCEPT(InvalidParametersException, "Cannot return subvolume of compressed PixelBuffer");
 	}
 
 	if(!mExtents.Contains(volume))
 	{
-		BS_EXCEPT(InvalidParametersException, "Bounds out of range");
+		B3D_EXCEPT(InvalidParametersException, "Bounds out of range");
 	}
 
 	const size_t elemSize = PixelUtil::GetNumElemBytes(mFormat);
@@ -201,7 +201,7 @@ void PixelData::SetColorsInternal(const T& colors, u32 numElements)
 	u32 totalNumElements = width * height * depth;
 	if(numElements != totalNumElements)
 	{
-		BS_LOG(Error, PixelUtility, "Unable to set colors, invalid array size.");
+		B3D_LOG(Error, PixelUtility, "Unable to set colors, invalid array size.");
 		return;
 	}
 
@@ -251,7 +251,7 @@ void PixelData::SetColors(const Color& color)
 
 	u32 pixelSize = PixelUtil::GetNumElemBytes(mFormat);
 	u32 packedColor[4];
-	assert(pixelSize <= sizeof(packedColor));
+	B3D_ASSERT(pixelSize <= sizeof(packedColor));
 
 	PixelUtil::PackColor(color, mFormat, packedColor);
 

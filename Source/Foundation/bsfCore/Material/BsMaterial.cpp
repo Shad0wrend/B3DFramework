@@ -533,10 +533,10 @@ template <bool Core>
 void TMaterial<Core>::ThrowIfNotInitialized() const
 {
 	if(mShader == nullptr)
-		BS_EXCEPT(InternalErrorException, "Material does not have shader set.");
+		B3D_EXCEPT(InternalErrorException, "Material does not have shader set.");
 
 	if(mTechniques.empty())
-		BS_EXCEPT(InternalErrorException, "Shader does not contain a supported technique.");
+		B3D_EXCEPT(InternalErrorException, "Shader does not contain a supported technique.");
 }
 
 template class TMaterial<false>;

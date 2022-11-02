@@ -329,7 +329,7 @@ void ScriptAssemblyManager::ClearAssemblyInfo()
 SPtr<ManagedSerializableTypeInfo> ScriptAssemblyManager::GetTypeInfo(MonoClass* monoClass)
 {
 	if(!mBaseTypesInitialized)
-		BS_EXCEPT(InvalidStateException, "Calling getTypeInfo without previously initializing base types.");
+		B3D_EXCEPT(InvalidStateException, "Calling getTypeInfo without previously initializing base types.");
 
 	MonoPrimitiveType monoPrimitiveType = MonoUtil::GetPrimitiveType(monoClass->GetInternalClassInternal());
 
@@ -443,7 +443,7 @@ SPtr<ManagedSerializableTypeInfo> ScriptAssemblyManager::GetTypeInfo(MonoClass* 
 				BuiltinResourceInfo* builtinInfo = GetBuiltinResourceInfo(type);
 				if(builtinInfo == nullptr)
 				{
-					assert(false && "Unable to find information about a built-in resource. Did you update BuiltinResourceTypes list?");
+					B3D_ASSERT(false && "Unable to find information about a built-in resource. Did you update BuiltinResourceTypes list?");
 					return nullptr;
 				}
 
@@ -477,7 +477,7 @@ SPtr<ManagedSerializableTypeInfo> ScriptAssemblyManager::GetTypeInfo(MonoClass* 
 				BuiltinComponentInfo* builtinInfo = GetBuiltinComponentInfo(type);
 				if(builtinInfo == nullptr)
 				{
-					assert(false && "Unable to find information about a built-in component. Did you update BuiltinComponents list?");
+					B3D_ASSERT(false && "Unable to find information about a built-in component. Did you update BuiltinComponents list?");
 					return nullptr;
 				}
 
@@ -615,127 +615,127 @@ void ScriptAssemblyManager::InitializeBaseTypes()
 	// Get necessary classes for detecting needed class & field information
 	MonoAssembly* corlib = MonoManager::Instance().GetAssembly("corlib");
 	if(corlib == nullptr)
-		BS_EXCEPT(InvalidStateException, "corlib assembly is not loaded.");
+		B3D_EXCEPT(InvalidStateException, "corlib assembly is not loaded.");
 
 	MonoAssembly* engineAssembly = MonoManager::Instance().GetAssembly(kEngineAssembly);
 	if(engineAssembly == nullptr)
-		BS_EXCEPT(InvalidStateException, String(kEngineAssembly) + " assembly is not loaded.");
+		B3D_EXCEPT(InvalidStateException, String(kEngineAssembly) + " assembly is not loaded.");
 
 	mBuiltin.SystemArrayClass = corlib->GetClass("System", "Array");
 	if(mBuiltin.SystemArrayClass == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find System.Array managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find System.Array managed class.");
 
 	mBuiltin.SystemGenericListClass = corlib->GetClass("System.Collections.Generic", "List`1");
 	if(mBuiltin.SystemGenericListClass == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find List<T> managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find List<T> managed class.");
 
 	mBuiltin.SystemGenericDictionaryClass = corlib->GetClass("System.Collections.Generic", "Dictionary`2");
 	if(mBuiltin.SystemGenericDictionaryClass == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find Dictionary<TKey, TValue> managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find Dictionary<TKey, TValue> managed class.");
 
 	mBuiltin.SystemTypeClass = corlib->GetClass("System", "Type");
 	if(mBuiltin.SystemTypeClass == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find Type managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find Type managed class.");
 
 	mBuiltin.SerializeObjectAttribute = engineAssembly->GetClass(kEngineNs, "SerializeObject");
 	if(mBuiltin.SerializeObjectAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find SerializableObject managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find SerializableObject managed class.");
 
 	mBuiltin.DontSerializeFieldAttribute = engineAssembly->GetClass(kEngineNs, "DontSerializeField");
 	if(mBuiltin.DontSerializeFieldAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find DontSerializeField managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find DontSerializeField managed class.");
 
 	mBuiltin.RangeAttribute = engineAssembly->GetClass(kEngineNs, "Range");
 	if(mBuiltin.RangeAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find Range managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find Range managed class.");
 
 	mBuiltin.StepAttribute = engineAssembly->GetClass(kEngineNs, "Step");
 	if(mBuiltin.StepAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find Step managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find Step managed class.");
 
 	mBuiltin.LayerMaskAttribute = engineAssembly->GetClass(kEngineNs, "LayerMask");
 	if(mBuiltin.LayerMaskAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find LayerMask managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find LayerMask managed class.");
 
 	mBuiltin.AsQuaternionAttribute = engineAssembly->GetClass(kEngineNs, "AsQuaternion");
 	if(mBuiltin.AsQuaternionAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find AsQuaternion managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find AsQuaternion managed class.");
 
 	mBuiltin.NativeWrapperAttribute = engineAssembly->GetClass(kEngineNs, "NativeWrapper");
 	if(mBuiltin.NativeWrapperAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find NativeWrapper managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find NativeWrapper managed class.");
 
 	mBuiltin.NotNullAttribute = engineAssembly->GetClass(kEngineNs, "NotNull");
 	if(mBuiltin.NotNullAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find NotNull managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find NotNull managed class.");
 
 	mBuiltin.PassByCopyAttribute = engineAssembly->GetClass(kEngineNs, "PassByCopy");
 	if(mBuiltin.PassByCopyAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find PassByCopy managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find PassByCopy managed class.");
 
 	mBuiltin.ApplyOnDirtyAttribute = engineAssembly->GetClass(kEngineNs, "ApplyOnDirty");
 	if(mBuiltin.ApplyOnDirtyAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find ApplyOnDirty managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find ApplyOnDirty managed class.");
 
 	mBuiltin.ComponentClass = engineAssembly->GetClass(kEngineNs, "Component");
 	if(mBuiltin.ComponentClass == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find Component managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find Component managed class.");
 
 	mBuiltin.ManagedComponentClass = engineAssembly->GetClass(kEngineNs, "ManagedComponent");
 	if(mBuiltin.ManagedComponentClass == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find ManagedComponent managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find ManagedComponent managed class.");
 
 	mBuiltin.MissingComponentClass = engineAssembly->GetClass(kEngineNs, "MissingComponent");
 	if(mBuiltin.MissingComponentClass == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find MissingComponent managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find MissingComponent managed class.");
 
 	mBuiltin.SceneObjectClass = engineAssembly->GetClass(kEngineNs, "SceneObject");
 	if(mBuiltin.SceneObjectClass == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find SceneObject managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find SceneObject managed class.");
 
 	mBuiltin.RrefBaseClass = engineAssembly->GetClass(kEngineNs, "RRefBase");
 	if(mBuiltin.RrefBaseClass == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find RRefBase managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find RRefBase managed class.");
 
 	mBuiltin.GenericRRefClass = engineAssembly->GetClass(kEngineNs, "RRef`1");
 	if(mBuiltin.GenericRRefClass == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find RRef<T> managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find RRef<T> managed class.");
 
 	mBuiltin.GenericAsyncOpClass = engineAssembly->GetClass(kEngineNs, "AsyncOp`1");
 	if(mBuiltin.GenericAsyncOpClass == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find AsyncOp<T> managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find AsyncOp<T> managed class.");
 
 	mBuiltin.SerializeFieldAttribute = engineAssembly->GetClass(kEngineNs, "SerializeField");
 	if(mBuiltin.SerializeFieldAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find SerializeField managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find SerializeField managed class.");
 
 	mBuiltin.HideInInspectorAttribute = engineAssembly->GetClass(kEngineNs, "HideInInspector");
 	if(mBuiltin.HideInInspectorAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find HideInInspector managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find HideInInspector managed class.");
 
 	mBuiltin.ShowInInspectorAttribute = engineAssembly->GetClass(kEngineNs, "ShowInInspector");
 	if(mBuiltin.ShowInInspectorAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find ShowInInspector managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find ShowInInspector managed class.");
 
 	mBuiltin.CategoryAttribute = engineAssembly->GetClass(kEngineNs, "Category");
 	if(mBuiltin.CategoryAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find Category managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find Category managed class.");
 
 	mBuiltin.OrderAttribute = engineAssembly->GetClass(kEngineNs, "Order");
 	if(mBuiltin.OrderAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find Order managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find Order managed class.");
 
 	mBuiltin.InlineAttribute = engineAssembly->GetClass(kEngineNs, "Inline");
 	if(mBuiltin.InlineAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find Inline managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find Inline managed class.");
 
 	mBuiltin.LoadOnAssignAttribute = engineAssembly->GetClass(kEngineNs, "LoadOnAssign");
 	if(mBuiltin.LoadOnAssignAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find LoadOnAssign managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find LoadOnAssign managed class.");
 
 	mBuiltin.HdrAttribute = engineAssembly->GetClass(kEngineNs, "HDR");
 	if(mBuiltin.HdrAttribute == nullptr)
-		BS_EXCEPT(InvalidStateException, "Cannot find HDR managed class.");
+		B3D_EXCEPT(InvalidStateException, "Cannot find HDR managed class.");
 
 	mBaseTypesInitialized = true;
 }
@@ -882,14 +882,14 @@ SPtr<IReflectable> ScriptAssemblyManager::GetReflectableFromManagedObject(MonoOb
 
 		if(MonoUtil::IsEnum(klass))
 		{
-			BS_LOG(Warning, Script, "Unsupported type provided.");
+			B3D_LOG(Warning, Script, "Unsupported type provided.");
 			return nullptr;
 		}
 
 		MonoPrimitiveType monoPrimitiveType = MonoUtil::GetPrimitiveType(klass);
 		if(monoPrimitiveType != MonoPrimitiveType::Class && monoPrimitiveType != MonoPrimitiveType::ValueType)
 		{
-			BS_LOG(Warning, Script, "Unsupported type provided.");
+			B3D_LOG(Warning, Script, "Unsupported type provided.");
 			return nullptr;
 		}
 
@@ -901,7 +901,7 @@ SPtr<IReflectable> ScriptAssemblyManager::GetReflectableFromManagedObject(MonoOb
 			if(monoClass == ScriptResource::GetMetaData()->ScriptClass ||
 			   monoClass == ScriptManagedResource::GetMetaData()->ScriptClass)
 			{
-				BS_LOG(Warning, Script, "Unsupported type provided.");
+				B3D_LOG(Warning, Script, "Unsupported type provided.");
 				return nullptr;
 			}
 
@@ -928,7 +928,7 @@ SPtr<IReflectable> ScriptAssemblyManager::GetReflectableFromManagedObject(MonoOb
 				BuiltinResourceInfo* builtinInfo = GetBuiltinResourceInfo(type);
 				if(builtinInfo == nullptr)
 				{
-					assert(false && "Unable to find information about a built-in resource. Did you update BuiltinResourceTypes list?");
+					B3D_ASSERT(false && "Unable to find information about a built-in resource. Did you update BuiltinResourceTypes list?");
 					return nullptr;
 				}
 
@@ -946,7 +946,7 @@ SPtr<IReflectable> ScriptAssemblyManager::GetReflectableFromManagedObject(MonoOb
 		{
 			if(monoClass == mBuiltin.ComponentClass || monoClass == mBuiltin.ManagedComponentClass)
 			{
-				BS_LOG(Warning, Script, "Unsupported type provided.");
+				B3D_LOG(Warning, Script, "Unsupported type provided.");
 				return nullptr;
 			}
 
@@ -973,7 +973,7 @@ SPtr<IReflectable> ScriptAssemblyManager::GetReflectableFromManagedObject(MonoOb
 				BuiltinComponentInfo* builtinInfo = GetBuiltinComponentInfo(type);
 				if(builtinInfo == nullptr)
 				{
-					assert(false && "Unable to find information about a built-in component. Did you update BuiltinComponents list?");
+					B3D_ASSERT(false && "Unable to find information about a built-in component. Did you update BuiltinComponents list?");
 					return nullptr;
 				}
 
@@ -996,7 +996,7 @@ SPtr<IReflectable> ScriptAssemblyManager::GetReflectableFromManagedObject(MonoOb
 		SPtr<ManagedSerializableObjectInfo> objInfo;
 		if(!Instance().GetSerializableObjectInfo(elementNs, elementTypeName, objInfo))
 		{
-			BS_LOG(Error, Script, "Object has no serialization meta-data.");
+			B3D_LOG(Error, Script, "Object has no serialization meta-data.");
 			return nullptr;
 		}
 
@@ -1006,7 +1006,7 @@ SPtr<IReflectable> ScriptAssemblyManager::GetReflectableFromManagedObject(MonoOb
 			::MonoReflectionType* monoType = MonoUtil::GetType(monoClass);
 
 			const ReflectableTypeInfo* reflTypeInfo = Instance().GetReflectableTypeInfo(monoType);
-			assert(reflTypeInfo);
+			B3D_ASSERT(reflTypeInfo);
 
 			ScriptReflectableBase* scriptReflectable = nullptr;
 
@@ -1020,7 +1020,7 @@ SPtr<IReflectable> ScriptAssemblyManager::GetReflectableFromManagedObject(MonoOb
 			SPtr<ManagedSerializableObject> managedObj = ManagedSerializableObject::CreateFromExisting(value);
 			if(!managedObj)
 			{
-				BS_LOG(Error, Script, "Object failed to serialize due to an internal error.");
+				B3D_LOG(Error, Script, "Object failed to serialize due to an internal error.");
 				return nullptr;
 			}
 

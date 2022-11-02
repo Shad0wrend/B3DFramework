@@ -124,7 +124,7 @@ void Mesh::UpdateCpuBuffer(u32 subresourceIdx, const MeshData& pixelData)
 
 	if(subresourceIdx > 0)
 	{
-		BS_LOG(Error, Mesh, "Invalid subresource index: {0}. Supported range: 0 .. 1.", subresourceIdx);
+		B3D_LOG(Error, Mesh, "Invalid subresource index: {0}. Supported range: 0 .. 1.", subresourceIdx);
 		return;
 	}
 
@@ -133,12 +133,12 @@ void Mesh::UpdateCpuBuffer(u32 subresourceIdx, const MeshData& pixelData)
 	   pixelData.GetIndexType() != mIndexType ||
 	   pixelData.GetVertexDesc()->GetVertexStride() != mVertexDesc->GetVertexStride())
 	{
-		BS_LOG(Error, Mesh, "Provided buffer is not of valid dimensions or format in order to update this mesh.");
+		B3D_LOG(Error, Mesh, "Provided buffer is not of valid dimensions or format in order to update this mesh.");
 		return;
 	}
 
 	if(mCPUData->GetSize() != pixelData.GetSize())
-		BS_EXCEPT(InternalErrorException, "Buffer sizes don't match.");
+		B3D_EXCEPT(InternalErrorException, "Buffer sizes don't match.");
 
 	u8* dest = mCPUData->GetData();
 	u8* src = pixelData.GetData();
@@ -334,7 +334,7 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 	{
 		if((mUsage & MU_STATIC) != 0)
 		{
-			BS_LOG(Warning, Mesh, "Buffer discard is enabled but buffer was not created as dynamic. Disabling discard.");
+			B3D_LOG(Warning, Mesh, "Buffer discard is enabled but buffer was not created as dynamic. Disabling discard.");
 			discardEntireBuffer = false;
 		}
 	}
@@ -342,7 +342,7 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 	{
 		if((mUsage & MU_DYNAMIC) != 0)
 		{
-			BS_LOG(Warning, Mesh, "Buffer discard is not enabled but buffer was created as dynamic. Enabling discard.");
+			B3D_LOG(Warning, Mesh, "Buffer discard is not enabled but buffer was created as dynamic. Enabling discard.");
 			discardEntireBuffer = true;
 		}
 	}
@@ -355,7 +355,7 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 
 	if(meshData.GetIndexElementSize() != ibProps.GetIndexSize())
 	{
-		BS_LOG(Error, Mesh, "Provided index size doesn't match meshes index size. Needed: {0}. Got: {1}", ibProps.GetIndexSize(), meshData.GetIndexElementSize());
+		B3D_LOG(Error, Mesh, "Provided index size doesn't match meshes index size. Needed: {0}. Got: {1}", ibProps.GetIndexSize(), meshData.GetIndexElementSize());
 
 		return;
 	}
@@ -363,7 +363,7 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 	if(indicesSize > mIndexBuffer->GetSize())
 	{
 		indicesSize = mIndexBuffer->GetSize();
-		BS_LOG(Error, Mesh, "Index buffer values are being written out of valid range.");
+		B3D_LOG(Error, Mesh, "Index buffer values are being written out of valid range.");
 	}
 
 	mIndexBuffer->WriteData(0, indicesSize, srcIdxData, discardEntireBuffer ? BWT_DISCARD : BWT_NORMAL, queueIdx);
@@ -382,7 +382,7 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 		u32 otherVertSize = meshData.GetVertexDesc()->GetVertexStride(i);
 		if(myVertSize != otherVertSize)
 		{
-			BS_LOG(Error, Mesh, "Provided vertex size for stream {0} doesn't match meshes vertex size. "
+			B3D_LOG(Error, Mesh, "Provided vertex size for stream {0} doesn't match meshes vertex size. "
 								"Needed: {1}. Got: {2}",
 				   i, myVertSize, otherVertSize);
 
@@ -397,7 +397,7 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 		if(bufferSize > vertexBuffer->GetSize())
 		{
 			bufferSize = vertexBuffer->GetSize();
-			BS_LOG(Error, Mesh, "Vertex buffer values for stream \"{0}\" are being written out of valid range.", i);
+			B3D_LOG(Error, Mesh, "Vertex buffer values for stream \"{0}\" are being written out of valid range.", i);
 		}
 
 		vertexBuffer->WriteData(0, bufferSize, srcVertBufferData, discardEntireBuffer ? BWT_DISCARD : BWT_NORMAL, queueIdx);
@@ -421,7 +421,7 @@ void Mesh::ReadData(MeshData& meshData, u32 deviceIdx, u32 queueIdx)
 
 		if(meshData.GetIndexElementSize() != ibProps.GetIndexSize())
 		{
-			BS_LOG(Error, Mesh, "Provided index size doesn't match meshes index size. Needed: {0}. Got: {1}", ibProps.GetIndexSize(), meshData.GetIndexElementSize());
+			B3D_LOG(Error, Mesh, "Provided index size doesn't match meshes index size. Needed: {0}. Got: {1}", ibProps.GetIndexSize(), meshData.GetIndexElementSize());
 			return;
 		}
 
@@ -440,7 +440,7 @@ void Mesh::ReadData(MeshData& meshData, u32 deviceIdx, u32 queueIdx)
 		u32 indicesSize = numIndicesToCopy * idxElemSize;
 		if(indicesSize > meshData.GetIndexBufferSize())
 		{
-			BS_LOG(Error, Mesh, "Provided buffer doesn't have enough space to store mesh indices.");
+			B3D_LOG(Error, Mesh, "Provided buffer doesn't have enough space to store mesh indices.");
 			return;
 		}
 
@@ -467,7 +467,7 @@ void Mesh::ReadData(MeshData& meshData, u32 deviceIdx, u32 queueIdx)
 			u32 otherVertSize = meshData.GetVertexDesc()->GetVertexStride(streamIdx);
 			if(myVertSize != otherVertSize)
 			{
-				BS_LOG(Error, Mesh, "Provided vertex size for stream {0} doesn't match meshes vertex size. "
+				B3D_LOG(Error, Mesh, "Provided vertex size for stream {0} doesn't match meshes vertex size. "
 									"Needed: {1}. Got: {2}",
 					   streamIdx, myVertSize, otherVertSize);
 
@@ -479,7 +479,7 @@ void Mesh::ReadData(MeshData& meshData, u32 deviceIdx, u32 queueIdx)
 
 			if(bufferSize > vertexBuffer->GetSize())
 			{
-				BS_LOG(Error, Mesh, "Vertex buffer values for stream \"{0}\" are being read out of valid range.", streamIdx);
+				B3D_LOG(Error, Mesh, "Vertex buffer values for stream \"{0}\" are being read out of valid range.", streamIdx);
 				continue;
 			}
 

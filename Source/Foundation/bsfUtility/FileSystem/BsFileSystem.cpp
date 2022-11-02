@@ -31,7 +31,7 @@ void FileSystem::Copy(const Path& oldPath, const Path& newPath, bool overwriteEx
 					FileSystem::Remove(destinationPath);
 				else
 				{
-					BS_LOG(Warning, FileSystem, "Copy operation failed because another file already exists at the new "
+					B3D_LOG(Warning, FileSystem, "Copy operation failed because another file already exists at the new "
 												"path: \"{0}\"",
 						   destinationPath);
 					return;
@@ -101,7 +101,7 @@ void FileSystem::Move(const Path& oldPath, const Path& newPath, bool overwriteEx
 			FileSystem::Remove(newPath);
 		else
 		{
-			BS_LOG(Warning, FileSystem, "Move operation failed because another file already exists at the new "
+			B3D_LOG(Warning, FileSystem, "Move operation failed because another file already exists at the new "
 										"path: \"{0}\"",
 				   newPath);
 			return;

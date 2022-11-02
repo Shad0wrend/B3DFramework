@@ -10,7 +10,7 @@ namespace bs
 	 */
 
 	/**	Type of GUI element states. */
-	enum class BS_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(GUI)) GUIElementState
+	enum class B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(GUI)) GUIElementState
 	{
 		Normal = 0x01, /**< Normal state when element is not being iteracted with. */
 		Hover = 0x02, /**< State when pointer is hovering over the element. */
@@ -24,12 +24,12 @@ namespace bs
 		FocusedHoverOn = 0x110, /**< Same as FocusedHover, if the element is also in the "on" state. */
 
 		// Helpers
-		TypeMask BS_SCRIPT_EXPORT(Exclude(true)) = 0xFF, /**< Mask for determining the state type (ignoring the on state). */
-		OnFlag BS_SCRIPT_EXPORT(Exclude(true)) = 0x100 /**< Flag that differentiates between on and off states. */
+		TypeMask B3D_SCRIPT_EXPORT(Exclude(true)) = 0xFF, /**< Mask for determining the state type (ignoring the on state). */
+		OnFlag B3D_SCRIPT_EXPORT(Exclude(true)) = 0x100 /**< Flag that differentiates between on and off states. */
 	};
 
 	/**	Contains separate GUI content images for every possible GUI element state. */
-	struct BS_EXPORT BS_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(GUI)) GUIContentImages
+	struct BS_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(GUI)) GUIContentImages
 	{
 		GUIContentImages() = default;
 
@@ -51,7 +51,7 @@ namespace bs
 	 * Holds data used for displaying content in a GUIElement. Content can consist of a string, image, a tooltip or none
 	 * of those.
 	 */
-	class BS_EXPORT BS_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(GUI)) GUIContent
+	class BS_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(GUI)) GUIContent
 	{
 	public:
 		/**	Constructs an empty content. */

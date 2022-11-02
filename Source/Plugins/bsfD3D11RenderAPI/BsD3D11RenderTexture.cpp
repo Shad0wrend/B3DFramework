@@ -14,7 +14,7 @@ namespace bs { namespace ct {
 D3D11RenderTexture::D3D11RenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 	: RenderTexture(desc, deviceIdx), mProperties(desc, false)
 {
-	assert(deviceIdx == 0 && "Multiple GPUs not supported natively on DirectX 11.");
+	B3D_ASSERT(deviceIdx == 0 && "Multiple GPUs not supported natively on DirectX 11.");
 }
 
 void D3D11RenderTexture::GetCustomAttribute(const String& name, void* data) const

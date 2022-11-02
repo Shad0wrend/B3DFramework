@@ -11,7 +11,7 @@ namespace bs
 	 */
 
 	/** A three dimensional vector with integer coordinates. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) Vector3I
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Math), ExportAsStruct(true)) Vector3I
 	{
 		i32 X = 0;
 		i32 Y = 0;
@@ -25,7 +25,7 @@ namespace bs
 
 		i32 operator[](size_t i) const
 		{
-			assert(i < 3);
+			B3D_ASSERT(i < 3);
 
 			switch(i)
 			{
@@ -38,7 +38,7 @@ namespace bs
 
 		i32& operator[](size_t i)
 		{
-			assert(i < 3);
+			B3D_ASSERT(i < 3);
 
 			switch(i)
 			{

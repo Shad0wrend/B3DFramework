@@ -433,7 +433,7 @@ SPtr<BlendState> RenderStateManager::FindCachedState(const BLEND_STATE_DESC& des
 	}
 
 	id = mNextBlendStateId++;
-	assert(id <= 0x3FF); // 10 bits maximum
+	B3D_ASSERT(id <= 0x3FF); // 10 bits maximum
 
 	return nullptr;
 }
@@ -454,7 +454,7 @@ SPtr<RasterizerState> RenderStateManager::FindCachedState(const RASTERIZER_STATE
 	}
 
 	id = mNextRasterizerStateId++;
-	assert(id <= 0x3FF); // 10 bits maximum
+	B3D_ASSERT(id <= 0x3FF); // 10 bits maximum
 
 	return nullptr;
 }
@@ -475,7 +475,7 @@ SPtr<DepthStencilState> RenderStateManager::FindCachedState(const DEPTH_STENCIL_
 	}
 
 	id = mNextDepthStencilStateId++;
-	assert(id <= 0x3FF); // 10 bits maximum
+	B3D_ASSERT(id <= 0x3FF); // 10 bits maximum
 
 	return nullptr;
 }

@@ -180,7 +180,7 @@ void Win32RenderWindow::Initialize()
 
 	VkInstance instance = mRenderAPI.GetInstanceInternal();
 	VkResult result = vkCreateWin32SurfaceKHR(instance, &surfaceCreateInfo, gVulkanAllocator, &mSurface);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	SPtr<VulkanDevice> presentDevice = mRenderAPI.GetPresentDeviceInternal();
 	VkPhysicalDevice physicalDevice = presentDevice->GetPhysical();
@@ -195,7 +195,7 @@ void Win32RenderWindow::Initialize()
 		// Note: Not supporting present only queues at the moment
 		// Note: Also present device can only return one family of graphics queue, while there could be more (some of
 		// which support present)
-		BS_EXCEPT(RenderingAPIException, "Cannot find a graphics queue that also supports present operations.");
+		B3D_EXCEPT(RenderingAPIException, "Cannot find a graphics queue that also supports present operations.");
 	}
 
 	SurfaceFormat format = presentDevice->GetSurfaceFormat(mSurface, mDesc.Gamma);
@@ -227,13 +227,13 @@ void Win32RenderWindow::Initialize()
 
 				if(ChangeDisplaySettingsEx(NULL, &displayDeviceMode, NULL, CDS_FULLSCREEN | CDS_TEST, NULL) != DISP_CHANGE_SUCCESSFUL)
 				{
-					BS_EXCEPT(RenderingAPIException, "ChangeDisplaySettings with user display frequency failed.");
+					B3D_EXCEPT(RenderingAPIException, "ChangeDisplaySettings with user display frequency failed.");
 				}
 			}
 
 			if(ChangeDisplaySettingsEx(NULL, &displayDeviceMode, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL)
 			{
-				BS_EXCEPT(RenderingAPIException, "ChangeDisplaySettings failed.");
+				B3D_EXCEPT(RenderingAPIException, "ChangeDisplaySettings failed.");
 			}
 		}
 	}
@@ -274,7 +274,7 @@ void Win32RenderWindow::SwapBuffers(u32 syncMask)
 	SPtr<VulkanDevice> presentDevice = mRenderAPI.GetPresentDeviceInternal();
 
 	// Assuming present queue is always graphics
-	assert(presentDevice->GetQueueFamily(GQT_GRAPHICS) == mPresentQueueFamily);
+	B3D_ASSERT(presentDevice->GetQueueFamily(GQT_GRAPHICS) == mPresentQueueFamily);
 
 	// Find an appropriate queue to execute on
 	VulkanQueue* queue = presentDevice->GetQueue(GQT_GRAPHICS, 0);
@@ -431,7 +431,7 @@ void Win32RenderWindow::SetFullscreen(u32 width, u32 height, float refreshRate, 
 
 	if(ChangeDisplaySettingsEx(monitorInfo.szDevice, &displayDeviceMode, NULL, CDS_FULLSCREEN, NULL) != DISP_CHANGE_SUCCESSFUL)
 	{
-		BS_EXCEPT(RenderingAPIException, "ChangeDisplaySettings failed");
+		B3D_EXCEPT(RenderingAPIException, "ChangeDisplaySettings failed");
 	}
 
 	props.Top = monitorInfo.rcMonitor.top;

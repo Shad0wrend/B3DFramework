@@ -207,7 +207,7 @@ void IconUtility::UpdateIconExe(const Path& path, const Map<u32, SPtr<PixelData>
 	u16 magicNum;
 	stream.read((char*)&magicNum, sizeof(magicNum));
 	if(magicNum != MSDOS_SIGNATURE)
-		BS_EXCEPT(InvalidStateException, "Provided file is not a valid executable.");
+		B3D_EXCEPT(InvalidStateException, "Provided file is not a valid executable.");
 
 	// Read the MSDOS header and skip over it
 	stream.seekg(0);
@@ -222,14 +222,14 @@ void IconUtility::UpdateIconExe(const Path& path, const Map<u32, SPtr<PixelData>
 	stream.read((char*)&peSignature, sizeof(peSignature));
 
 	if(peSignature != PE_SIGNATURE)
-		BS_EXCEPT(InvalidStateException, "Provided file is not in PE format.");
+		B3D_EXCEPT(InvalidStateException, "Provided file is not in PE format.");
 
 	// Read COFF header
 	COFFHeader coffHeader;
 	stream.read((char*)&coffHeader, sizeof(COFFHeader));
 
 	if(coffHeader.SizeOptHeader == 0) // .exe files always have an optional header
-		BS_EXCEPT(InvalidStateException, "Provided file is not a valid executable.");
+		B3D_EXCEPT(InvalidStateException, "Provided file is not a valid executable.");
 
 	u32 numSectionHeaders = coffHeader.NumSections;
 
@@ -256,7 +256,7 @@ void IconUtility::UpdateIconExe(const Path& path, const Map<u32, SPtr<PixelData>
 		dataDirectory = optionalHeader.DataDirectory + PE_IMAGE_DIRECTORY_ENTRY_RESOURCE;
 	}
 	else
-		BS_EXCEPT(InvalidStateException, "Unrecognized PE format.");
+		B3D_EXCEPT(InvalidStateException, "Unrecognized PE format.");
 
 	// Read section headers
 	auto sectionHeaderPos = optionalHeaderPos + (std::ifstream::pos_type)coffHeader.SizeOptHeader;

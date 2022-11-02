@@ -41,7 +41,7 @@ VulkanSemaphore::VulkanSemaphore(VulkanResourceManager* owner)
 	semaphoreCI.flags = 0;
 
 	VkResult result = vkCreateSemaphore(owner->GetDevice().GetLogical(), &semaphoreCI, gVulkanAllocator, &mSemaphore);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 }
 
 VulkanSemaphore::~VulkanSemaphore()
@@ -115,7 +115,7 @@ VulkanCmdBuffer* VulkanCmdBufferPool::GetBuffer(u32 queueFamily, bool secondary)
 		}
 	}
 
-	assert(i < BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY && "Too many command buffers allocated. Increment BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY to a higher value. ");
+	B3D_ASSERT(i < BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY && "Too many command buffers allocated. Increment BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY to a higher value. ");
 
 	buffers[i] = CreateBuffer(queueFamily, secondary);
 	buffers[i]->Begin();
@@ -211,7 +211,7 @@ VulkanCmdBuffer::VulkanCmdBuffer(VulkanDevice& device, u32 id, VkCommandPool poo
 	cmdBufferAllocInfo.commandBufferCount = 1;
 
 	VkResult result = vkAllocateCommandBuffers(mDevice.GetLogical(), &cmdBufferAllocInfo, &mCmdBuffer);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	VkFenceCreateInfo fenceCI;
 	fenceCI.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
@@ -219,7 +219,7 @@ VulkanCmdBuffer::VulkanCmdBuffer(VulkanDevice& device, u32 id, VkCommandPool poo
 	fenceCI.flags = 0;
 
 	result = vkCreateFence(mDevice.GetLogical(), &fenceCI, gVulkanAllocator, &mFence);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 }
 
 VulkanCmdBuffer::~VulkanCmdBuffer()
@@ -231,10 +231,10 @@ VulkanCmdBuffer::~VulkanCmdBuffer()
 		// Wait 1s
 		u64 waitTime = 1000 * 1000 * 1000;
 		VkResult result = vkWaitForFences(device, 1, &mFence, true, waitTime);
-		assert(result == VK_SUCCESS || result == VK_TIMEOUT);
+		B3D_ASSERT(result == VK_SUCCESS || result == VK_TIMEOUT);
 
 		if(result == VK_TIMEOUT)
-			BS_LOG(Warning, RenderBackend, "Freeing a command buffer before done executing because fence wait expired!");
+			B3D_LOG(Warning, RenderBackend, "Freeing a command buffer before done executing because fence wait expired!");
 
 		// Resources have been marked as used, make sure to notify them we're done with them
 		Reset();
@@ -245,7 +245,7 @@ VulkanCmdBuffer::~VulkanCmdBuffer()
 		for(auto& entry : mResources)
 		{
 			ResourceUseHandle& useHandle = entry.second;
-			assert(!useHandle.Used);
+			B3D_ASSERT(!useHandle.Used);
 
 			entry.first->NotifyUnbound();
 		}
@@ -256,7 +256,7 @@ VulkanCmdBuffer::~VulkanCmdBuffer()
 			ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
 			ResourceUseHandle& useHandle = imageInfo.UseHandle;
-			assert(!useHandle.Used);
+			B3D_ASSERT(!useHandle.Used);
 
 			entry.first->NotifyUnbound();
 		}
@@ -264,7 +264,7 @@ VulkanCmdBuffer::~VulkanCmdBuffer()
 		for(auto& entry : mBuffers)
 		{
 			ResourceUseHandle& useHandle = entry.second.UseHandle;
-			assert(!useHandle.Used);
+			B3D_ASSERT(!useHandle.Used);
 
 			entry.first->NotifyUnbound();
 		}
@@ -273,7 +273,7 @@ VulkanCmdBuffer::~VulkanCmdBuffer()
 		for(auto& entry : mSwapChains)
 		{
 			ResourceUseHandle& useHandle = entry.second;
-			assert(!useHandle.Used);
+			B3D_ASSERT(!useHandle.Used);
 
 			entry.first->NotifyUnbound();
 		}
@@ -301,7 +301,7 @@ u32 VulkanCmdBuffer::GetDeviceIdx() const
 
 void VulkanCmdBuffer::Begin()
 {
-	assert(mState == State::Ready);
+	B3D_ASSERT(mState == State::Ready);
 
 	VkCommandBufferBeginInfo beginInfo;
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -310,21 +310,21 @@ void VulkanCmdBuffer::Begin()
 	beginInfo.pInheritanceInfo = nullptr;
 
 	VkResult result = vkBeginCommandBuffer(mCmdBuffer, &beginInfo);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	mState = State::Recording;
 }
 
 void VulkanCmdBuffer::End()
 {
-	assert(mState == State::Recording);
+	B3D_ASSERT(mState == State::Recording);
 
 	// If a clear is queued, execute the render pass with no additional instructions
 	if(mClearMask)
 		ExecuteClearPass();
 
 	VkResult result = vkEndCommandBuffer(mCmdBuffer);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	mRenderTarget = nullptr;
 	mState = State::RecordingDone;
@@ -332,11 +332,11 @@ void VulkanCmdBuffer::End()
 
 void VulkanCmdBuffer::BeginRenderPass()
 {
-	assert(mState == State::Recording);
+	B3D_ASSERT(mState == State::Recording);
 
 	if(mFramebuffer == nullptr)
 	{
-		BS_LOG(Warning, RenderBackend, "Attempting to begin a render pass but no render target is bound to the command buffer.");
+		B3D_LOG(Warning, RenderBackend, "Attempting to begin a render pass but no render target is bound to the command buffer.");
 		return;
 	}
 
@@ -375,7 +375,7 @@ void VulkanCmdBuffer::BeginRenderPass()
 
 void VulkanCmdBuffer::EndRenderPass()
 {
-	assert(mState == State::RecordingRenderPass);
+	B3D_ASSERT(mState == State::RecordingRenderPass);
 
 	vkCmdEndRenderPass(mCmdBuffer);
 
@@ -436,11 +436,11 @@ VulkanSemaphore* VulkanCmdBuffer::RequestInterQueueSemaphore() const
 
 void VulkanCmdBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask)
 {
-	assert(IsReadyForSubmit());
+	B3D_ASSERT(IsReadyForSubmit());
 
 	// Make sure to reset the CB fence before we submit it
 	VkResult result = vkResetFences(mDevice.GetLogical(), 1, &mFence);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	// If there are any query resets needed, execute those first
 	VulkanDevice& device = queue->GetDevice();
@@ -696,7 +696,7 @@ void VulkanCmdBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask)
 	for(auto& entry : mResources)
 	{
 		ResourceUseHandle& useHandle = entry.second;
-		assert(!useHandle.Used);
+		B3D_ASSERT(!useHandle.Used);
 
 		useHandle.Used = true;
 		entry.first->NotifyUsed(mGlobalQueueIdx, mQueueFamily, useHandle.Flags);
@@ -708,7 +708,7 @@ void VulkanCmdBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask)
 		ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
 		ResourceUseHandle& useHandle = imageInfo.UseHandle;
-		assert(!useHandle.Used);
+		B3D_ASSERT(!useHandle.Used);
 
 		useHandle.Used = true;
 		entry.first->NotifyUsed(mGlobalQueueIdx, mQueueFamily, useHandle.Flags);
@@ -717,7 +717,7 @@ void VulkanCmdBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask)
 	for(auto& entry : mBuffers)
 	{
 		ResourceUseHandle& useHandle = entry.second.UseHandle;
-		assert(!useHandle.Used);
+		B3D_ASSERT(!useHandle.Used);
 
 		useHandle.Used = true;
 		entry.first->NotifyUsed(mGlobalQueueIdx, mQueueFamily, useHandle.Flags);
@@ -726,7 +726,7 @@ void VulkanCmdBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask)
 	for(auto& entry : mSwapChains)
 	{
 		ResourceUseHandle& useHandle = entry.second;
-		assert(!useHandle.Used);
+		B3D_ASSERT(!useHandle.Used);
 
 		useHandle.Used = true;
 		entry.first->NotifyUsed(mGlobalQueueIdx, mQueueFamily, useHandle.Flags);
@@ -760,7 +760,7 @@ void VulkanCmdBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask)
 bool VulkanCmdBuffer::CheckFenceStatus(bool block) const
 {
 	VkResult result = vkWaitForFences(mDevice.GetLogical(), 1, &mFence, true, block ? 1'000'000'000 : 0);
-	assert(result == VK_SUCCESS || result == VK_TIMEOUT);
+	B3D_ASSERT(result == VK_SUCCESS || result == VK_TIMEOUT);
 
 	return result == VK_SUCCESS;
 }
@@ -777,7 +777,7 @@ void VulkanCmdBuffer::Reset()
 		for(auto& entry : mResources)
 		{
 			ResourceUseHandle& useHandle = entry.second;
-			assert(useHandle.Used);
+			B3D_ASSERT(useHandle.Used);
 
 			entry.first->NotifyDone(mGlobalQueueIdx, useHandle.Flags);
 		}
@@ -788,7 +788,7 @@ void VulkanCmdBuffer::Reset()
 			ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
 			ResourceUseHandle& useHandle = imageInfo.UseHandle;
-			assert(useHandle.Used);
+			B3D_ASSERT(useHandle.Used);
 
 			entry.first->NotifyDone(mGlobalQueueIdx, useHandle.Flags);
 		}
@@ -796,7 +796,7 @@ void VulkanCmdBuffer::Reset()
 		for(auto& entry : mBuffers)
 		{
 			ResourceUseHandle& useHandle = entry.second.UseHandle;
-			assert(useHandle.Used);
+			B3D_ASSERT(useHandle.Used);
 
 			entry.first->NotifyDone(mGlobalQueueIdx, useHandle.Flags);
 		}
@@ -805,7 +805,7 @@ void VulkanCmdBuffer::Reset()
 		for(auto& entry : mSwapChains)
 		{
 			ResourceUseHandle& useHandle = entry.second;
-			assert(useHandle.Used);
+			B3D_ASSERT(useHandle.Used);
 
 			entry.first->NotifyDone(mGlobalQueueIdx, useHandle.Flags);
 		}
@@ -845,7 +845,7 @@ void VulkanCmdBuffer::Reset()
 
 void VulkanCmdBuffer::SetRenderTarget(const SPtr<RenderTarget>& rt, u32 readOnlyFlags, RenderSurfaceMask loadMask)
 {
-	assert(mState != State::Submitted);
+	B3D_ASSERT(mState != State::Submitted);
 
 	VulkanFramebuffer* newFB;
 	VulkanSwapChain* swapChain = nullptr;
@@ -879,7 +879,7 @@ void VulkanCmdBuffer::SetRenderTarget(const SPtr<RenderTarget>& rt, u32 readOnly
 	// Warn if invalid load mask
 	if(loadMask.IsSet(RT_DEPTH) && !loadMask.IsSet(RT_STENCIL))
 	{
-		BS_LOG(Warning, RenderBackend, "setRenderTarget() invalid load mask, depth enabled but stencil disabled. "
+		B3D_LOG(Warning, RenderBackend, "setRenderTarget() invalid load mask, depth enabled but stencil disabled. "
 									   "This is not supported. Both will be loaded.");
 
 		loadMask.Set(RT_STENCIL);
@@ -887,7 +887,7 @@ void VulkanCmdBuffer::SetRenderTarget(const SPtr<RenderTarget>& rt, u32 readOnly
 
 	if(!loadMask.IsSet(RT_DEPTH) && loadMask.IsSet(RT_STENCIL))
 	{
-		BS_LOG(Warning, RenderBackend, "setRenderTarget() invalid load mask, stencil enabled but depth disabled. "
+		B3D_LOG(Warning, RenderBackend, "setRenderTarget() invalid load mask, stencil enabled but depth disabled. "
 									   "This is not supported. Both will be loaded.");
 
 		loadMask.Set(RT_DEPTH);
@@ -1012,7 +1012,7 @@ void VulkanCmdBuffer::ClearViewport(const Rect2I& area, u32 buffers, const Color
 					{
 						// Note: This could be supported relatively easily: we would need to issue multiple separate
 						// clear commands for such framebuffers.
-						BS_LOG(Error, RenderBackend, "Attempting to clear a texture that has multiple multi-layer "
+						B3D_LOG(Error, RenderBackend, "Attempting to clear a texture that has multiple multi-layer "
 													 "surfaces with mismatching starting layers. This is currently not supported.");
 					}
 				}
@@ -1050,7 +1050,7 @@ void VulkanCmdBuffer::ClearViewport(const Rect2I& area, u32 buffers, const Color
 					{
 						// Note: This could be supported relatively easily: we would need to issue multiple separate
 						// clear commands for such framebuffers.
-						BS_LOG(Error, RenderBackend, "Attempting to clear a texture that has multiple multi-layer "
+						B3D_LOG(Error, RenderBackend, "Attempting to clear a texture that has multiple multi-layer "
 													 "surfaces with mismatching starting layers. This is currently not supported.");
 					}
 				}
@@ -1289,7 +1289,7 @@ bool VulkanCmdBuffer::BindGraphicsPipeline()
 
 		if(subresourceInfo.UseFlags.IsSet(ImageUseFlagBits::Shader) && !pipeline->IsColorReadOnly(i))
 		{
-			BS_LOG(Warning, RenderBackend, "Framebuffer attachment also used as a shader input, but color writes "
+			B3D_LOG(Warning, RenderBackend, "Framebuffer attachment also used as a shader input, but color writes "
 										   "aren't disabled. This will result in undefined behavior.");
 		}
 	}
@@ -1301,7 +1301,7 @@ bool VulkanCmdBuffer::BindGraphicsPipeline()
 
 		if(subresourceInfo.UseFlags.IsSet(ImageUseFlagBits::Shader) && !pipeline->IsDepthReadOnly())
 		{
-			BS_LOG(Warning, RenderBackend, "Framebuffer attachment also used as a shader input, but depth/stencil "
+			B3D_LOG(Warning, RenderBackend, "Framebuffer attachment also used as a shader input, but depth/stencil "
 										   "writes aren't disabled. This will result in undefined behavior.");
 		}
 	}
@@ -1584,7 +1584,7 @@ void VulkanCmdBuffer::UpdateFinalLayouts()
 
 void VulkanCmdBuffer::ExecuteClearPass()
 {
-	assert(mState == State::Recording);
+	B3D_ASSERT(mState == State::Recording);
 
 	ExecuteWriteHazardBarrier();
 	ExecuteLayoutTransitions();
@@ -1901,14 +1901,14 @@ void VulkanCmdBuffer::RegisterResource(VulkanResource* res, VulkanAccessFlags fl
 	{
 		ResourceUseHandle& useHandle = insertResult.first->second;
 
-		assert(!useHandle.Used);
+		B3D_ASSERT(!useHandle.Used);
 		useHandle.Flags |= flags;
 	}
 }
 
 void VulkanCmdBuffer::RegisterImageShader(VulkanImage* image, const VkImageSubresourceRange& range, VkImageLayout layout, VulkanAccessFlags access, VkPipelineStageFlags stages)
 {
-	assert(layout != VK_IMAGE_LAYOUT_UNDEFINED);
+	B3D_ASSERT(layout != VK_IMAGE_LAYOUT_UNDEFINED);
 	RegisterResource(image, range, ImageUseFlagBits::Shader, layout, layout, access, stages);
 }
 
@@ -1919,7 +1919,7 @@ void VulkanCmdBuffer::RegisterImageFramebuffer(VulkanImage* image, const VkImage
 
 void VulkanCmdBuffer::RegisterImageTransfer(VulkanImage* image, const VkImageSubresourceRange& range, VkImageLayout layout, VulkanAccessFlags access)
 {
-	assert(layout != VK_IMAGE_LAYOUT_UNDEFINED);
+	B3D_ASSERT(layout != VK_IMAGE_LAYOUT_UNDEFINED);
 	RegisterResource(image, range, ImageUseFlagBits::Transfer, layout, layout, access, VK_PIPELINE_STAGE_TRANSFER_BIT);
 }
 
@@ -1988,7 +1988,7 @@ void VulkanCmdBuffer::RegisterResource(VulkanImage* image, const VkImageSubresou
 		u32 imageInfoIdx = insertResult.first->second;
 		ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
 
-		assert(!imageInfo.UseHandle.Used);
+		B3D_ASSERT(!imageInfo.UseHandle.Used);
 		imageInfo.UseHandle.Flags |= access;
 
 		// See if there is an overlap between existing ranges and the new range. And if so break them up accordingly.
@@ -2181,7 +2181,7 @@ void VulkanCmdBuffer::RegisterBuffer(VulkanBuffer* res, BufferUseFlagBits useFla
 	{
 		BufferInfo& bufferInfo = insertResult.first->second;
 
-		assert(!bufferInfo.UseHandle.Used);
+		B3D_ASSERT(!bufferInfo.UseHandle.Used);
 
 		// Transfer write hazards are handled externally
 		bool resetRenderPass = false;
@@ -2275,7 +2275,7 @@ void VulkanCmdBuffer::RegisterResource(VulkanFramebuffer* res, RenderSurfaceMask
 	{
 		ResourceUseHandle& useHandle = insertResult.first->second;
 
-		assert(!useHandle.Used);
+		B3D_ASSERT(!useHandle.Used);
 		useHandle.Flags |= VulkanAccessFlag::Write;
 	}
 
@@ -2334,7 +2334,7 @@ void VulkanCmdBuffer::RegisterResource(VulkanSwapChain* res)
 	{
 		ResourceUseHandle& useHandle = insertResult.first->second;
 
-		assert(!useHandle.Used);
+		B3D_ASSERT(!useHandle.Used);
 		useHandle.Flags |= VulkanAccessFlag::Write;
 	}
 }
@@ -2351,7 +2351,7 @@ void VulkanCmdBuffer::UpdateShaderSubresource(VulkanImage* image, u32 imageInfoI
 		{
 			// Currently the system doesn't support image being bound to framebuffer, yet being written to by the
 			// shader. This seems like an unlikely scenario.
-			assert(!access.IsSet(VulkanAccessFlag::Write));
+			B3D_ASSERT(!access.IsSet(VulkanAccessFlag::Write));
 		}
 		else
 		{
@@ -2540,7 +2540,7 @@ VulkanCmdBuffer::ImageSubresourceInfo& VulkanCmdBuffer::FindSubresourceInfo(Vulk
 		}
 	}
 
-	assert(false); // Caller should ensure the subresource actually exists, so this shouldn't happen
+	B3D_ASSERT(false); // Caller should ensure the subresource actually exists, so this shouldn't happen
 	return subresourceInfos[0];
 }
 
@@ -2627,7 +2627,7 @@ void VulkanCommandBuffer::AcquireNewBuffer()
 	VulkanCmdBufferPool& pool = mDevice.GetCmdBufferPool();
 
 	if(mBuffer != nullptr)
-		assert(mBuffer->IsSubmitted());
+		B3D_ASSERT(mBuffer->IsSubmitted());
 
 	u32 queueFamily = mDevice.GetQueueFamily(mType);
 	mBuffer = pool.GetBuffer(queueFamily, mIsSecondary);
@@ -2637,7 +2637,7 @@ void VulkanCommandBuffer::Submit(u32 syncMask)
 {
 	if(GetState() == CommandBufferState::Executing)
 	{
-		BS_LOG(Error, RenderBackend, "Cannot submit a command buffer that's still executing.");
+		B3D_LOG(Error, RenderBackend, "Cannot submit a command buffer that's still executing.");
 		return;
 	}
 
@@ -2657,7 +2657,7 @@ void VulkanCommandBuffer::Submit(u32 syncMask)
 
 	if(!timerQueries.empty() || !occlusionQueries.empty())
 	{
-		BS_LOG(Warning, RenderBackend, "Submitting a command buffer with {0} timer queries "
+		B3D_LOG(Warning, RenderBackend, "Submitting a command buffer with {0} timer queries "
 									   "and {1} occlusion queries that are still open. The queries will be closed automatically.",
 			   timerQueries.size(), occlusionQueries.size());
 

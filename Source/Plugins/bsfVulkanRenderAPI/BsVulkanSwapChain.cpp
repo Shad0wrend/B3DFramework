@@ -22,7 +22,7 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, VkSurfaceKHR surf
 	// Determine swap chain dimensions
 	VkSurfaceCapabilitiesKHR surfaceCaps;
 	result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfaceCaps);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	VkExtent2D swapchainExtent;
 	// If width/height is 0xFFFFFFFF, we can manually specify width, height
@@ -40,12 +40,12 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, VkSurfaceKHR surf
 	// Find present mode
 	uint32_t numPresentModes;
 	result = vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &numPresentModes, nullptr);
-	assert(result == VK_SUCCESS);
-	assert(numPresentModes > 0);
+	B3D_ASSERT(result == VK_SUCCESS);
+	B3D_ASSERT(numPresentModes > 0);
 
 	VkPresentModeKHR* presentModes = B3DStackAllocate<VkPresentModeKHR>(numPresentModes);
 	result = vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &numPresentModes, presentModes);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
 	if(!vsync)
@@ -110,15 +110,15 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, VkSurfaceKHR surf
 	swapChainCI.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 
 	result = vkCreateSwapchainKHR(mDevice, &swapChainCI, gVulkanAllocator, &mSwapChain);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	result = vkGetSwapchainImagesKHR(mDevice, mSwapChain, &numImages, nullptr);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	// Get the swap chain images
 	VkImage* images = B3DStackAllocate<VkImage>(numImages);
 	result = vkGetSwapchainImagesKHR(mDevice, mSwapChain, &numImages, images);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	VULKAN_IMAGE_DESC imageDesc;
 	imageDesc.Format = colorFormat;
@@ -164,7 +164,7 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, VkSurfaceKHR surf
 
 		VkImage depthStencilImage;
 		result = vkCreateImage(mDevice, &depthStencilImageCI, gVulkanAllocator, &depthStencilImage);
-		assert(result == VK_SUCCESS);
+		B3D_ASSERT(result == VK_SUCCESS);
 
 		imageDesc.Image = depthStencilImage;
 		imageDesc.Usage = TU_DEPTHSTENCIL;
@@ -218,8 +218,8 @@ VulkanSwapChain::~VulkanSwapChain()
 		{
 			// Swap chain images only live as long as the swap chain, so its invalid if they are being used somewhere,
 			// and same goes for the framebuffer since it depends on those images.
-			assert(!surface.Image->IsBound());
-			assert(!surface.Framebuffer->IsBound());
+			B3D_ASSERT(!surface.Image->IsBound());
+			B3D_ASSERT(!surface.Framebuffer->IsBound());
 
 			surface.Framebuffer->Destroy();
 			surface.Framebuffer = nullptr;
@@ -257,7 +257,7 @@ VkResult VulkanSwapChain::AcquireBackBuffer()
 
 	mCurrentSemaphoreIdx = (mCurrentSemaphoreIdx + 1) % mSurfaces.size();
 
-	assert(!mSurfaces[imageIndex].Acquired && "Same swap chain surface being acquired twice in a row without present().");
+	B3D_ASSERT(!mSurfaces[imageIndex].Acquired && "Same swap chain surface being acquired twice in a row without present().");
 	mSurfaces[imageIndex].Acquired = true;
 	mSurfaces[imageIndex].NeedsWait = true;
 
@@ -271,7 +271,7 @@ bool VulkanSwapChain::PrepareForPresent(u32& backBufferIdx)
 	if(!mSurfaces[mCurrentBackBufferIdx].Acquired)
 		return false;
 
-	assert(mSurfaces[mCurrentBackBufferIdx].Acquired && "Attempting to present an unacquired back buffer.");
+	B3D_ASSERT(mSurfaces[mCurrentBackBufferIdx].Acquired && "Attempting to present an unacquired back buffer.");
 	mSurfaces[mCurrentBackBufferIdx].Acquired = false;
 
 	backBufferIdx = mCurrentBackBufferIdx;

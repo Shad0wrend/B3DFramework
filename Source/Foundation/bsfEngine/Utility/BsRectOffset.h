@@ -11,7 +11,7 @@ namespace bs
 	 */
 
 	/** Rectangle represented in the form of offsets from some parent rectangle. */
-	struct BS_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Math)) RectOffset
+	struct B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Math)) RectOffset
 	{
 		RectOffset() = default;
 

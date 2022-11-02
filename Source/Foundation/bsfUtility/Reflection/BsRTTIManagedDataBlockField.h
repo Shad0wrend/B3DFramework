@@ -59,14 +59,14 @@ namespace bs
 
 		u32 GetArraySize(RTTITypeBase* rtti, void* object) override
 		{
-			BS_EXCEPT(InternalErrorException, "Data block types don't support arrays.");
+			B3D_EXCEPT(InternalErrorException, "Data block types don't support arrays.");
 
 			return 0;
 		}
 
 		void SetArraySize(RTTITypeBase* rtti, void* object, u32 size) override
 		{
-			BS_EXCEPT(InternalErrorException, "Data block types don't support arrays.");
+			B3D_EXCEPT(InternalErrorException, "Data block types don't support arrays.");
 		}
 
 		SPtr<DataStream> GetValue(RTTITypeBase* rtti, void* object, u32& size) override

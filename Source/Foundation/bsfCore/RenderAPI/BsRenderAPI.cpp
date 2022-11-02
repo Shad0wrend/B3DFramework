@@ -177,7 +177,7 @@ const RenderAPICapabilities& RenderAPI::GetCapabilities(u32 deviceIdx) const
 {
 	if(deviceIdx >= mNumDevices)
 	{
-		BS_LOG(Warning, RenderBackend, "Invalid device index provided: {0}. Valid range is: [0, {1}).", deviceIdx, mNumDevices);
+		B3D_LOG(Warning, RenderBackend, "Invalid device index provided: {0}. Valid range is: [0, {1}).", deviceIdx, mNumDevices);
 		return mCurrentCapabilities[0];
 	}
 

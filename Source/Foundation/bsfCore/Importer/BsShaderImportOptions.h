@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** Supported types of low-level shading languages. */
-	enum class BS_SCRIPT_EXPORT(DocumentationGroup(Importer), ExportName(ShadingLanguageFlags), API(Framework), API(Editor)) ShadingLanguageFlag
+	enum class B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), ExportName(ShadingLanguageFlags), API(Framework), API(Editor)) ShadingLanguageFlag
 	{
 		/** High level shading language used by DirectX backend. */
 		HLSL = 1 << 0,
@@ -30,7 +30,7 @@ namespace bs
 	BS_FLAGS_OPERATORS(ShadingLanguageFlag)
 
 	/** Contains import options you may use to control how is a shader imported. */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ShaderImportOptions : public ImportOptions
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ShaderImportOptions : public ImportOptions
 	{
 	public:
 		/**
@@ -39,7 +39,7 @@ namespace bs
 		 * @param[in]	define		Name of the define.
 		 * @param[in]	value		Value to assign to the define.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		void SetDefine(const String& define, const String& value)
 		{
@@ -53,7 +53,7 @@ namespace bs
 		 * @param[out]	value		value of the define. Only defined if the method returns true.
 		 * @returns					True if the define was found, false otherwise.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		bool GetDefine(const String& define, String& value) const
 		{
@@ -73,7 +73,7 @@ namespace bs
 		 * @param[in]	define		Name of the define to check.
 		 * @returns					True if the define was found, false otherwise.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		bool HasDefine(const String& define) const
 		{
@@ -86,7 +86,7 @@ namespace bs
 		 *
 		 * @param[in]	define		Name of the define to unregister.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		void RemoveDefine(const String& define)
 		{
@@ -100,11 +100,11 @@ namespace bs
 		 * Flags that control which shading languages should the BSL shader be converted into. This ultimately controls on
 		 * which render backends it will be able to run on.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		ShadingLanguageFlags Languages = ShadingLanguageFlag::All;
 
 		/** Creates a new import options object that allows you to customize how are meshes imported. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(T))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(T))
 
 		static SPtr<ShaderImportOptions> Create() { return B3DMakeShared<ShaderImportOptions>(); }
 

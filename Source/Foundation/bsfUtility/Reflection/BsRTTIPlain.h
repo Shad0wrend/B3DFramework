@@ -330,7 +330,7 @@ namespace bs
 			stream.WriteBytes(size.Bytes);
 
 			size = p() + sizeof(uint32_t);
-			assert(size.Bits == 0);
+			B3D_ASSERT(size.Bits == 0);
 
 			stream.Seek(sizePos);
 			stream.WriteBytes(size.Bytes);

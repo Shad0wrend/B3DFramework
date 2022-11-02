@@ -160,7 +160,7 @@ namespace bs
 
 			if(!Setter)
 			{
-				BS_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no setter.");
+				B3D_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no setter.");
 			}
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
@@ -176,7 +176,7 @@ namespace bs
 
 			if(!ArraySetter)
 			{
-				BS_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no setter.");
+				B3D_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no setter.");
 			}
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);
@@ -202,7 +202,7 @@ namespace bs
 
 			if(!ArraySetSize)
 			{
-				BS_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no array size setter.");
+				B3D_EXCEPT(InternalErrorException, "Specified field (" + Name + ") has no array size setter.");
 			}
 
 			InterfaceType* rttiObject = static_cast<InterfaceType*>(rtti);

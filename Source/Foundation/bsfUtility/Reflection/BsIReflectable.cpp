@@ -11,7 +11,7 @@ void IReflectable::RegisterRTTITypeInternal(RTTITypeBase* rttiType)
 {
 	if(IsTypeIdDuplicateInternal(rttiType->GetRttiId()))
 	{
-		BS_EXCEPT(InternalErrorException, "RTTI type \"" + rttiType->GetRttiName() + "\" has a duplicate ID: " + ToString(rttiType->GetRttiId()));
+		B3D_EXCEPT(InternalErrorException, "RTTI type \"" + rttiType->GetRttiName() + "\" has a duplicate ID: " + ToString(rttiType->GetRttiId()));
 	}
 
 	GetAllRttiTypes()[rttiType->GetRttiId()] = rttiType;
@@ -84,7 +84,7 @@ void IReflectable::CheckForCircularReferencesInternal()
 				   (!myReflectablePtrField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef) &&
 					!otherReflectablePtrField->Schema.Info.Flags.IsSet(RTTIFieldFlag::WeakRef)))
 				{
-					BS_EXCEPT(InternalErrorException, "Found circular reference on RTTI type: " + myType->GetRttiName() + " to type: " + otherType->GetRttiName() + ". Either remove one of the references or mark it" + " as a weak reference when defining the RTTI field.");
+					B3D_EXCEPT(InternalErrorException, "Found circular reference on RTTI type: " + myType->GetRttiName() + " to type: " + otherType->GetRttiName() + ". Either remove one of the references or mark it" + " as a weak reference when defining the RTTI field.");
 				}
 			}
 		}

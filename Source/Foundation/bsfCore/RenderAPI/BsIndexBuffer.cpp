@@ -23,7 +23,7 @@ u32 CalcIndexSize(IndexType type)
 void CheckValidDesc(const INDEX_BUFFER_DESC& desc)
 {
 	if(desc.NumIndices == 0)
-		BS_EXCEPT(InvalidParametersException, "Index buffer index count is not allowed to be zero.");
+		B3D_EXCEPT(InvalidParametersException, "Index buffer index count is not allowed to be zero.");
 }
 
 IndexBufferProperties::IndexBufferProperties(IndexType idxType, u32 numIndices)
@@ -146,7 +146,7 @@ SPtr<GpuBuffer> IndexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat fo
 	u32 elemSize = type == GBT_STANDARD ? bs::GpuBuffer::GetFormatSize(format) : elementSize;
 	if((mBuffer->GetSize() % elemSize) != 0)
 	{
-		BS_LOG(Error, RenderBackend, "Size of the buffer isn't divisible by individual element size provided for the buffer view.");
+		B3D_LOG(Error, RenderBackend, "Size of the buffer isn't divisible by individual element size provided for the buffer view.");
 		return nullptr;
 	}
 

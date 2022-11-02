@@ -112,7 +112,7 @@ Rect2I GUIInputTool::GetLocalCharRect(u32 charIdx) const
 		return charRect;
 	}
 
-	BS_LOG(Error, GUI, "Invalid character index: {0}", charIdx);
+	B3D_LOG(Error, GUI, "Invalid character index: {0}", charIdx);
 	return Rect2I();
 }
 
@@ -189,7 +189,7 @@ u32 GUIInputTool::GetLineForChar(u32 charIdx, bool newlineCountsOnNextLine) cons
 		idx++;
 	}
 
-	BS_LOG(Error, GUI, "Invalid character index: {0}", charIdx);
+	B3D_LOG(Error, GUI, "Invalid character index: {0}", charIdx);
 	return 0;
 }
 

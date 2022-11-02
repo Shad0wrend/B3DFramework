@@ -20,7 +20,7 @@ static void DeleteHardwareBuffer(HardwareBuffer* buffer)
 D3D11GpuBuffer::D3D11GpuBuffer(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
 	: GpuBuffer(desc, deviceMask)
 {
-	assert((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on DirectX 11.");
+	B3D_ASSERT((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on DirectX 11.");
 }
 
 D3D11GpuBuffer::D3D11GpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer)
@@ -55,7 +55,7 @@ void D3D11GpuBuffer::Initialize()
 			bufferType = D3D11HardwareBuffer::BT_INDIRECTARGUMENT;
 			break;
 		default:
-			BS_EXCEPT(InvalidParametersException, "Unsupported buffer type " + ToString(props.GetType()));
+			B3D_EXCEPT(InvalidParametersException, "Unsupported buffer type " + ToString(props.GetType()));
 		}
 
 		mBuffer = B3DPoolNew<D3D11HardwareBuffer>(bufferType, props.GetUsage(), props.GetElementCount(), props.GetElementSize(), rapi->GetPrimaryDevice(), false, false);
@@ -111,7 +111,7 @@ void D3D11GpuBuffer::ReleaseView(GpuBufferView* view)
 	auto iterFind = buffer->mBufferViews.find(view->GetDesc());
 	if(iterFind == buffer->mBufferViews.end())
 	{
-		BS_EXCEPT(InternalErrorException, "Trying to release a buffer view that doesn't exist!");
+		B3D_EXCEPT(InternalErrorException, "Trying to release a buffer view that doesn't exist!");
 	}
 
 	iterFind->second->RefCount--;

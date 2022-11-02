@@ -101,7 +101,7 @@ void GUICanvas::DrawTriangleStrip(const Vector<Vector2I>& vertices, const Color&
 {
 	if(vertices.size() < 3)
 	{
-		BS_LOG(Warning, GUI, "Invalid number of vertices. Ignoring call.");
+		B3D_LOG(Warning, GUI, "Invalid number of vertices. Ignoring call.");
 		return;
 	}
 
@@ -147,7 +147,7 @@ void GUICanvas::DrawTriangleList(const Vector<Vector2I>& vertices, const Color& 
 {
 	if(vertices.size() < 3 || vertices.size() % 3 != 0)
 	{
-		BS_LOG(Warning, GUI, "Invalid number of vertices. Ignoring call.");
+		B3D_LOG(Warning, GUI, "Invalid number of vertices. Ignoring call.");
 		return;
 	}
 
@@ -372,8 +372,8 @@ void GUICanvas::FillBuffer(
 			u32 numVertices = element.ClippedNumVertices;
 			u32 numIndices = numVertices;
 
-			assert((startVert + numVertices) <= maxVertIdx);
-			assert((startIndex + numIndices) <= maxIndexIdx);
+			B3D_ASSERT((startVert + numVertices) <= maxVertIdx);
+			B3D_ASSERT((startIndex + numIndices) <= maxIndexIdx);
 
 			u8* vertDst = vertices + startVert * vertexStride;
 			u8* uvDst = uvs + startVert * vertexStride;
@@ -404,8 +404,8 @@ void GUICanvas::FillBuffer(
 			u32 numVertices = element.ClippedNumVertices;
 			u32 numIndices = numVertices;
 
-			assert((startVert + numVertices) <= maxVertIdx);
-			assert((startIndex + numIndices) <= maxIndexIdx);
+			B3D_ASSERT((startVert + numVertices) <= maxVertIdx);
+			B3D_ASSERT((startIndex + numIndices) <= maxIndexIdx);
 
 			u8* vertDst = vertices + startVert * vertexStride;
 			u32* indexDst = indices + startIndex;
@@ -426,7 +426,7 @@ void GUICanvas::FillBuffer(
 
 void GUICanvas::BuildImageElement(const CanvasElement& element)
 {
-	assert(element.Type == CanvasElementType::Image);
+	B3D_ASSERT(element.Type == CanvasElementType::Image);
 
 	const ImageElementData& imageData = mImageData[element.DataId];
 
@@ -453,7 +453,7 @@ void GUICanvas::BuildImageElement(const CanvasElement& element)
 
 void GUICanvas::BuildTextElement(const CanvasElement& element)
 {
-	assert(element.Type == CanvasElementType::Text);
+	B3D_ASSERT(element.Type == CanvasElementType::Text);
 
 	const TextElementData& textData = mTextData[element.DataId];
 
@@ -468,7 +468,7 @@ void GUICanvas::BuildTextElement(const CanvasElement& element)
 
 void GUICanvas::BuildTriangleElement(const CanvasElement& element, const Vector2& offset, const Rect2I& clipRect) const
 {
-	assert(element.Type == CanvasElementType::Triangle || element.Type == CanvasElementType::Line);
+	B3D_ASSERT(element.Type == CanvasElementType::Triangle || element.Type == CanvasElementType::Line);
 
 	if(element.Type == CanvasElementType::Triangle)
 	{
@@ -596,5 +596,5 @@ const GUICanvas::CanvasElement& GUICanvas::FindElement(u32 renderElementIdx) con
 			start = middle + 1;
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Cannot find requested GUI render element.");
+	B3D_EXCEPT(InvalidParametersException, "Cannot find requested GUI render element.");
 }

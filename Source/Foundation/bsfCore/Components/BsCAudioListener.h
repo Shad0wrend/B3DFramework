@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note	Wraps AudioListener as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Audio), ExportName(AudioListener)) CAudioListener : public Component
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Audio), ExportName(AudioListener)) CAudioListener : public Component
 	{
 	public:
 		CAudioListener(const HSceneObject& parent);

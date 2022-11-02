@@ -298,7 +298,7 @@ PooledThread* ThreadPool::GetThread(const String& name)
 	}
 
 	if(mThreads.size() >= mMaxCapacity)
-		BS_EXCEPT(InvalidStateException, "Unable to create a new thread in the pool because maximum capacity has been reached.");
+		B3D_EXCEPT(InvalidStateException, "Unable to create a new thread in the pool because maximum capacity has been reached.");
 
 	PooledThread* newThread = CreateThread(name);
 	mThreads.push_back(newThread);

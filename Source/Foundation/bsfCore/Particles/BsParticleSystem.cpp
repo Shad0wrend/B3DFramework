@@ -179,7 +179,7 @@ void ParticleSystem::SetLayer(u64 layer)
 
 	if(!isPow2)
 	{
-		BS_LOG(Warning, Particles, "Invalid layer provided. Only one layer bit may be set. Ignoring.");
+		B3D_LOG(Warning, Particles, "Invalid layer provided. Only one layer bit may be set. Ignoring.");
 		return;
 	}
 
@@ -510,7 +510,7 @@ void ParticleSystem::SetLayer(u64 layer)
 
 	if(!isPow2)
 	{
-		BS_LOG(Warning, Particles, "Invalid layer provided. Only one layer bit may be set. Ignoring.");
+		B3D_LOG(Warning, Particles, "Invalid layer provided. Only one layer bit may be set. Ignoring.");
 		return;
 	}
 

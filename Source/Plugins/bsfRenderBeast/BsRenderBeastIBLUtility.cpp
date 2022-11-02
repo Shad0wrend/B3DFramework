@@ -115,7 +115,7 @@ void IrradianceComputeSHMat::Execute(const SPtr<Texture>& source, u32 face, cons
 
 	auto& props = source->GetProperties();
 	u32 faceSize = props.GetWidth();
-	assert(faceSize == props.GetHeight());
+	B3D_ASSERT(faceSize == props.GetHeight());
 
 	Vector2I dispatchSize;
 	dispatchSize.X = Math::DivideAndRoundUp(faceSize, kTileWidth * kPixelsPerThread);
@@ -138,7 +138,7 @@ SPtr<GpuBuffer> IrradianceComputeSHMat::CreateOutputBuffer(const SPtr<Texture>& 
 {
 	auto& props = source->GetProperties();
 	u32 faceSize = props.GetWidth();
-	assert(faceSize == props.GetHeight());
+	B3D_ASSERT(faceSize == props.GetHeight());
 
 	Vector2I dispatchSize;
 	dispatchSize.X = Math::DivideAndRoundUp(faceSize, kTileWidth * kPixelsPerThread);

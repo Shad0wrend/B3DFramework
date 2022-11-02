@@ -153,7 +153,7 @@ static void ValidateBasePassMaterial(Material& material, RenderableAnimType anim
 				for(auto& entry : missingElements)
 					wrnStream << "\t" << ToString(entry.GetSemantic()) << entry.GetSemanticIdx() << std::endl;
 
-				BS_LOG(Warning, Renderer, wrnStream.str());
+				B3D_LOG(Warning, Renderer, wrnStream.str());
 				break;
 			}
 		}
@@ -174,7 +174,7 @@ RendererScene::~RendererScene()
 	for(auto& entry : mInfo.Views)
 		B3DDelete(entry);
 
-	assert(mSamplerOverrides.empty());
+	B3D_ASSERT(mSamplerOverrides.empty());
 }
 
 void RendererScene::RegisterCamera(Camera* camera)
@@ -456,7 +456,7 @@ void RendererScene::RegisterRenderable(Renderable* renderable)
 		SPtr<Shader> shader = element.Material->GetShader();
 		if(shader == nullptr)
 		{
-			BS_LOG(Warning, Renderer, "Missing shader on material.");
+			B3D_LOG(Warning, Renderer, "Missing shader on material.");
 			continue;
 		}
 
@@ -570,7 +570,7 @@ void RendererScene::RegisterReflectionProbe(ReflectionProbe* probe)
 
 	if(probeInfo.ArrayIdx > kMaxReflectionCubemaps)
 	{
-		BS_LOG(Error, Renderer, "Reached the maximum number of allowed reflection probe cubemaps at once. "
+		B3D_LOG(Error, Renderer, "Reached the maximum number of allowed reflection probe cubemaps at once. "
 								"Ignoring reflection probe data.");
 	}
 }
@@ -1448,7 +1448,7 @@ void RendererScene::FreeSamplerStateOverrides(RenderElement& elem)
 	SamplerOverrideKey samplerKey(elem.Material, elem.DefaultTechniqueIdx);
 
 	auto iterFind = mSamplerOverrides.find(samplerKey);
-	assert(iterFind != mSamplerOverrides.end());
+	B3D_ASSERT(iterFind != mSamplerOverrides.end());
 
 	MaterialSamplerOverrides* samplerOverrides = iterFind->second;
 	samplerOverrides->RefCount--;

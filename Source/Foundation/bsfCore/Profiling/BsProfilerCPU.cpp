@@ -170,7 +170,7 @@ void ProfilerCPU::ThreadInfo::Begin(const char* _name)
 {
 	if(IsActive)
 	{
-		BS_LOG(Warning, Profiler, "Profiler::beginThread called on a thread that was already being sampled");
+		B3D_LOG(Warning, Profiler, "Profiler::beginThread called on a thread that was already being sampled");
 		return;
 	}
 
@@ -197,11 +197,11 @@ void ProfilerCPU::ThreadInfo::End()
 	ActiveBlocks->pop();
 
 	if(!IsActive)
-		BS_LOG(Warning, Profiler, "Profiler::endThread called on a thread that isn't being sampled.");
+		B3D_LOG(Warning, Profiler, "Profiler::endThread called on a thread that isn't being sampled.");
 
 	if(ActiveBlocks->size() > 0)
 	{
-		BS_LOG(Warning, Profiler, "Profiler::endThread called but not all sample pairs were closed. "
+		B3D_LOG(Warning, Profiler, "Profiler::endThread called but not all sample pairs were closed. "
 								  "Sampling data will not be valid.");
 
 		while(ActiveBlocks->size() > 0)
@@ -355,19 +355,19 @@ void ProfilerCPU::EndSample(const char* name)
 #if BS_DEBUG_MODE
 	if(block == nullptr)
 	{
-		BS_LOG(Warning, Profiler, "Mismatched CPUProfiler::endSample. No beginSample was called.");
+		B3D_LOG(Warning, Profiler, "Mismatched CPUProfiler::endSample. No beginSample was called.");
 		return;
 	}
 
 	if(thread->ActiveBlock.Type == ActiveSamplingType::Precise)
 	{
-		BS_LOG(Warning, Profiler, "Mismatched CPUProfiler::endSample. Was expecting Profiler::endSamplePrecise.");
+		B3D_LOG(Warning, Profiler, "Mismatched CPUProfiler::endSample. Was expecting Profiler::endSamplePrecise.");
 		return;
 	}
 
 	if(strcmp(block->Name, name) != 0)
 	{
-		BS_LOG(Warning, Profiler, "Mismatched CPUProfiler::endSample. Was expecting \"{0}\" but got \"{1}\". "
+		B3D_LOG(Warning, Profiler, "Mismatched CPUProfiler::endSample. Was expecting \"{0}\" but got \"{1}\". "
 								  "Sampling data will not be valid.",
 			   block->Name, name);
 		return;
@@ -423,19 +423,19 @@ void ProfilerCPU::EndSamplePrecise(const char* name)
 #if BS_DEBUG_MODE
 	if(block == nullptr)
 	{
-		BS_LOG(Warning, Profiler, "Mismatched Profiler::endSamplePrecise. No beginSamplePrecise was called.");
+		B3D_LOG(Warning, Profiler, "Mismatched Profiler::endSamplePrecise. No beginSamplePrecise was called.");
 		return;
 	}
 
 	if(thread->ActiveBlock.Type == ActiveSamplingType::Basic)
 	{
-		BS_LOG(Warning, Profiler, "Mismatched CPUProfiler::endSamplePrecise. Was expecting Profiler::endSample.");
+		B3D_LOG(Warning, Profiler, "Mismatched CPUProfiler::endSamplePrecise. Was expecting Profiler::endSample.");
 		return;
 	}
 
 	if(strcmp(block->Name, name) != 0)
 	{
-		BS_LOG(Warning, Profiler, "Mismatched Profiler::endSamplePrecise. Was expecting \"{0}\" but got \"{1}\". "
+		B3D_LOG(Warning, Profiler, "Mismatched Profiler::endSamplePrecise. Was expecting \"{0}\" but got \"{1}\". "
 								  "Sampling data will not be valid.",
 			   block->Name, name);
 		return;

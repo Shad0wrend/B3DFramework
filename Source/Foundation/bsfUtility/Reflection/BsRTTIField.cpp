@@ -23,11 +23,11 @@ void RTTIField::CheckIsArray(bool array) const
 {
 	if(array && !Schema.IsArray)
 	{
-		BS_EXCEPT(InternalErrorException, "Invalid field type. Needed an array type but got a single type.");
+		B3D_EXCEPT(InternalErrorException, "Invalid field type. Needed an array type but got a single type.");
 	}
 
 	if(!array && Schema.IsArray)
 	{
-		BS_EXCEPT(InternalErrorException, "Invalid field type. Needed a single type but got an array type.");
+		B3D_EXCEPT(InternalErrorException, "Invalid field type. Needed a single type but got an array type.");
 	}
 }

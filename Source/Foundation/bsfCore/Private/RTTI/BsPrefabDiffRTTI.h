@@ -100,7 +100,7 @@ namespace bs
 		{
 			PrefabDiff* prefabDiff = static_cast<PrefabDiff*>(obj);
 
-			BS_ASSERT(context != nullptr && B3DRTTIIsOfType<CoreSerializationContext>(context));
+			B3D_ASSERT(context != nullptr && B3DRTTIIsOfType<CoreSerializationContext>(context));
 			auto coreContext = static_cast<CoreSerializationContext*>(context);
 
 			if(coreContext->GoState)
@@ -112,9 +112,9 @@ namespace bs
 
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
-			BS_ASSERT(context != nullptr && B3DRTTIIsOfType<CoreSerializationContext>(context));
+			B3D_ASSERT(context != nullptr && B3DRTTIIsOfType<CoreSerializationContext>(context));
 			const auto coreContext = static_cast<CoreSerializationContext*>(context);
-			BS_ASSERT(coreContext->GoState);
+			B3D_ASSERT(coreContext->GoState);
 
 			// Make sure to deserialize all game object handles since their IDs need to be updated. Normally they are
 			// updated automatically upon deserialization but since we store them in intermediate form we need to manually

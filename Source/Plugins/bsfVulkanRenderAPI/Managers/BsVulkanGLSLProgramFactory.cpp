@@ -83,7 +83,7 @@ SPtr<GpuProgramBytecode> VulkanGLSLProgramFactory::CompileBytecode(const GPU_PRO
 		return msl;
 	}
 
-	assert((spirv->instructions.size % sizeof(u32)) == 0);
+	B3D_ASSERT((spirv->instructions.size % sizeof(u32)) == 0);
 
 	// Compile to MSL
 	spirv_cross::CompilerMSL compiler((u32*)spirv->instructions.data, spirv->instructions.size / sizeof(u32));
@@ -113,7 +113,7 @@ SPtr<GpuProgramBytecode> VulkanGLSLProgramFactory::CompileBytecode(const GPU_PRO
 			stage = spv::ExecutionModelGLCompute;
 			break;
 		default:
-			assert(false);
+			B3D_ASSERT(false);
 			break;
 		}
 

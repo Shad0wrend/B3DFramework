@@ -52,7 +52,7 @@ void RendererMaterialManager::InitOnCore(const Vector<SPtr<ct::Shader>>& shaders
 
 		if(!shaders[i])
 		{
-			BS_LOG(Error, Renderer, "Failed to load renderer material: {0}", materials[i].ShaderPath);
+			B3D_LOG(Error, Renderer, "Failed to load renderer material: {0}", materials[i].ShaderPath);
 			continue;
 		}
 

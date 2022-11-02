@@ -14,7 +14,7 @@ using namespace bs;
 void throwIfNotSimThread()
 {
 	if(BS_THREAD_CURRENT_ID != CoreApplication::Instance().GetSimThreadId())
-		BS_EXCEPT(InternalErrorException, "This method can only be accessed from the simulation thread.");
+		B3D_EXCEPT(InternalErrorException, "This method can only be accessed from the simulation thread.");
 }
 
 #	define THROW_IF_NOT_SIM_THREAD throwIfNotSimThread();
@@ -30,7 +30,7 @@ ResourceListenerManager::ResourceListenerManager()
 
 ResourceListenerManager::~ResourceListenerManager()
 {
-	assert(mResourceToListenerMap.empty() && "Not all resource listeners had their resources unregistered properly.");
+	B3D_ASSERT(mResourceToListenerMap.empty() && "Not all resource listeners had their resources unregistered properly.");
 
 	mResourceLoadedConn.Disconnect();
 	mResourceModifiedConn.Disconnect();
@@ -168,7 +168,7 @@ void ResourceListenerManager::SendResourceLoaded(const HResource& resource)
 	for(auto& listener : relevantListeners)
 	{
 #if BS_DEBUG_MODE
-		assert(mActiveListeners.find(listener) != mActiveListeners.end() && "Attempting to notify a destroyed IResourceListener");
+		B3D_ASSERT(mActiveListeners.find(listener) != mActiveListeners.end() && "Attempting to notify a destroyed IResourceListener");
 #endif
 
 		listener->NotifyResourceLoaded(resource);
@@ -187,7 +187,7 @@ void ResourceListenerManager::SendResourceModified(const HResource& resource)
 	for(auto& listener : relevantListeners)
 	{
 #if BS_DEBUG_MODE
-		assert(mActiveListeners.find(listener) != mActiveListeners.end() && "Attempting to notify a destroyed IResourceListener");
+		B3D_ASSERT(mActiveListeners.find(listener) != mActiveListeners.end() && "Attempting to notify a destroyed IResourceListener");
 #endif
 
 		listener->NotifyResourceChanged(resource);

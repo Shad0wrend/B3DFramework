@@ -88,7 +88,7 @@ void GUIDropDownContent::SetRange(u32 start, u32 end)
 	while(GetNumChildrenInternal() > 0)
 	{
 		GUIElementBase* child = GetChildInternal(GetNumChildrenInternal() - 1);
-		assert(child->GetTypeInternal() == GUIElementBase::Type::Element);
+		B3D_ASSERT(child->GetTypeInternal() == GUIElementBase::Type::Element);
 
 		GUIElement::Destroy(static_cast<GUIElement*>(child));
 	}

@@ -68,7 +68,7 @@ bool GLVertexArrayObject::operator!=(const GLVertexArrayObject& obj)
 
 GLVertexArrayObjectManager::~GLVertexArrayObjectManager()
 {
-	assert(mVAObjects.size() == 0 && "VertexArrayObjectManager getting shut down but not all VA objects were released.");
+	B3D_ASSERT(mVAObjects.size() == 0 && "VertexArrayObjectManager getting shut down but not all VA objects were released.");
 }
 
 const GLVertexArrayObject& GLVertexArrayObjectManager::GetVao(const SPtr<GLSLGpuProgram>& vertexProgram, const SPtr<VertexDeclaration>& vertexDecl, const std::array<SPtr<VertexBuffer>, 32>& boundBuffers)

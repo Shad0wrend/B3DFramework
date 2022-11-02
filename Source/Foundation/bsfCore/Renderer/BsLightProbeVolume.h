@@ -61,12 +61,12 @@ namespace bs
 	};
 
 	/** Information about a single probe in the light probe volume. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportAsStruct(true)) LightProbeInfo
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportAsStruct(true)) LightProbeInfo
 	{
 		u32 Handle;
 		Vector3 Position;
 
-		BS_SCRIPT_EXPORT(Exclude(true))
+		B3D_SCRIPT_EXPORT(Exclude(true))
 		LightProbeSHCoefficients ShCoefficients;
 	};
 

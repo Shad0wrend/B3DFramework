@@ -107,7 +107,7 @@ String DataStream::GetAsString()
 			dataOffset = 4;
 		else if(IsUtF32Be(headerBytes))
 		{
-			BS_LOG(Warning, Generic, "UTF-32 big endian decoding not supported");
+			B3D_LOG(Warning, Generic, "UTF-32 big endian decoding not supported");
 			return u8"";
 		}
 	}
@@ -124,7 +124,7 @@ String DataStream::GetAsString()
 			dataOffset = 2;
 		else if(IsUtF16Be(headerBytes))
 		{
-			BS_LOG(Warning, Generic, "UTF-16 big endian decoding not supported");
+			B3D_LOG(Warning, Generic, "UTF-16 big endian decoding not supported");
 			return u8"";
 		}
 	}
@@ -209,7 +209,7 @@ MemoryDataStream::MemoryDataStream(const MemoryDataStream& sourceStream)
 	mData = mCursor = static_cast<uint8_t*>(B3DAllocate(mSize));
 	mEnd = mData + sourceStream.Read(mData, mSize);
 
-	assert(mEnd >= mCursor);
+	B3D_ASSERT(mEnd >= mCursor);
 }
 
 MemoryDataStream::MemoryDataStream(const SPtr<DataStream>& sourceStream)
@@ -221,7 +221,7 @@ MemoryDataStream::MemoryDataStream(const SPtr<DataStream>& sourceStream)
 	mData = mCursor = static_cast<uint8_t*>(B3DAllocate(mSize));
 	mEnd = mData + sourceStream->Read(mData, mSize);
 
-	assert(mEnd >= mCursor);
+	B3D_ASSERT(mEnd >= mCursor);
 }
 
 MemoryDataStream::MemoryDataStream(MemoryDataStream&& other)
@@ -302,7 +302,7 @@ size_t MemoryDataStream::Read(void* buf, size_t count) const
 	if(cnt == 0)
 		return 0;
 
-	assert(cnt <= count);
+	B3D_ASSERT(cnt <= count);
 
 	memcpy(buf, mCursor, cnt);
 	mCursor += cnt;
@@ -353,13 +353,13 @@ size_t DataStream::WriteBits(const uint8_t* data, uint32_t count)
 
 void MemoryDataStream::Skip(size_t count)
 {
-	assert((mCursor + count) <= mEnd);
+	B3D_ASSERT((mCursor + count) <= mEnd);
 	mCursor = std::min(mCursor + count, mEnd);
 }
 
 void MemoryDataStream::Seek(size_t pos)
 {
-	assert((mData + pos) <= mEnd);
+	B3D_ASSERT((mData + pos) <= mEnd);
 	mCursor = std::min(mData + pos, mEnd);
 }
 
@@ -405,7 +405,7 @@ void MemoryDataStream::Realloc(size_t numBytes)
 {
 	if(numBytes != mSize)
 	{
-		assert(numBytes > mSize);
+		B3D_ASSERT(numBytes > mSize);
 
 		// Note: Eventually add support for custom allocators
 		auto buffer = B3DAllocateMultiple<uint8_t>(numBytes);
@@ -455,7 +455,7 @@ FileDataStream::FileDataStream(const Path& path, AccessMode accessMode, bool fre
 	// Should check ensure open succeeded, in case fail for some reason.
 	if(mInStream->fail())
 	{
-		BS_LOG(Warning, FileSystem, "Cannot open file: " + path.ToString());
+		B3D_LOG(Warning, FileSystem, "Cannot open file: " + path.ToString());
 		return;
 	}
 

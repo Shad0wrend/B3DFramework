@@ -129,7 +129,7 @@ const EvaluatedAnimationData* AnimationManager::Update(bool async)
 
 			Lock lock(mMutex);
 			{
-				assert(mNumActiveWorkers > 0);
+				B3D_ASSERT(mNumActiveWorkers > 0);
 				mNumActiveWorkers--;
 			}
 

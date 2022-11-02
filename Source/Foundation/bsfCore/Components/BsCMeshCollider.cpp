@@ -27,7 +27,7 @@ void CMeshCollider::SetMesh(const HPhysicsMesh& mesh)
 
 	if(GetIsTrigger() && mesh->GetType() == PhysicsMeshType::Triangle)
 	{
-		BS_LOG(Warning, Physics, "Triangle meshes are not supported on Trigger colliders.");
+		B3D_LOG(Warning, Physics, "Triangle meshes are not supported on Trigger colliders.");
 		return;
 	}
 

@@ -35,7 +35,7 @@ u32 MeshData::GetNumIndices() const
 u16* MeshData::GetIndices16() const
 {
 	if(mIndexType != IT_16BIT)
-		BS_EXCEPT(InternalErrorException, "Attempting to get 16bit index buffer, but internally allocated buffer is 32 bit.");
+		B3D_EXCEPT(InternalErrorException, "Attempting to get 16bit index buffer, but internally allocated buffer is 32 bit.");
 
 	u32 indexBufferOffset = GetIndexBufferOffset();
 
@@ -45,7 +45,7 @@ u16* MeshData::GetIndices16() const
 u32* MeshData::GetIndices32() const
 {
 	if(mIndexType != IT_32BIT)
-		BS_EXCEPT(InternalErrorException, "Attempting to get 32bit index buffer, but internally allocated buffer is 16 bit.");
+		B3D_EXCEPT(InternalErrorException, "Attempting to get 32bit index buffer, but internally allocated buffer is 16 bit.");
 
 	u32 indexBufferOffset = GetIndexBufferOffset();
 
@@ -86,7 +86,7 @@ SPtr<MeshData> MeshData::Combine(const Vector<SPtr<MeshData>>& meshes, const Vec
 				{
 					if(newElement.GetType() != existingElement.GetType())
 					{
-						BS_EXCEPT(NotImplementedException, "Two elements have same semantics but different types. This is not supported.");
+						B3D_EXCEPT(NotImplementedException, "Two elements have same semantics but different types. This is not supported.");
 					}
 
 					alreadyExistsIdx = idx;
@@ -183,11 +183,11 @@ SPtr<MeshData> MeshData::Combine(const Vector<SPtr<MeshData>>& meshes, const Vec
 
 void MeshData::SetVertexData(VertexElementSemantic semantic, void* data, u32 size, u32 semanticIdx, u32 streamIdx)
 {
-	assert(data != nullptr);
+	B3D_ASSERT(data != nullptr);
 
 	if(!mVertexData->HasElement(semantic, semanticIdx, streamIdx))
 	{
-		BS_LOG(Warning, Mesh, "MeshData doesn't contain an element of specified type: Semantic: {0}, "
+		B3D_LOG(Warning, Mesh, "MeshData doesn't contain an element of specified type: Semantic: {0}, "
 							  "Semantic index: {1}, Stream index: {2}",
 			   semantic, semanticIdx, streamIdx);
 		return;
@@ -198,7 +198,7 @@ void MeshData::SetVertexData(VertexElementSemantic semantic, void* data, u32 siz
 
 	if(totalSize != size)
 	{
-		BS_EXCEPT(InvalidParametersException, "Buffer sizes don't match. Expected: " + ToString(totalSize) + ". Got: " + ToString(size));
+		B3D_EXCEPT(InvalidParametersException, "Buffer sizes don't match. Expected: " + ToString(totalSize) + ". Got: " + ToString(size));
 	}
 
 	u32 indexBufferOffset = GetIndexBufferSize();
@@ -218,11 +218,11 @@ void MeshData::SetVertexData(VertexElementSemantic semantic, void* data, u32 siz
 
 void MeshData::GetVertexData(VertexElementSemantic semantic, void* data, u32 size, u32 semanticIdx, u32 streamIdx)
 {
-	assert(data != nullptr);
+	B3D_ASSERT(data != nullptr);
 
 	if(!mVertexData->HasElement(semantic, semanticIdx, streamIdx))
 	{
-		BS_LOG(Warning, Mesh, "MeshData doesn't contain an element of specified type: Semantic: {0}, "
+		B3D_LOG(Warning, Mesh, "MeshData doesn't contain an element of specified type: Semantic: {0}, "
 							  "Semantic index: {1}, Stream index: {2}",
 			   semantic, semanticIdx, streamIdx);
 		return;
@@ -233,7 +233,7 @@ void MeshData::GetVertexData(VertexElementSemantic semantic, void* data, u32 siz
 
 	if(totalSize != size)
 	{
-		BS_EXCEPT(InvalidParametersException, "Buffer sizes don't match. Expected: " + ToString(totalSize) + ". Got: " + ToString(size));
+		B3D_EXCEPT(InvalidParametersException, "Buffer sizes don't match. Expected: " + ToString(totalSize) + ". Got: " + ToString(size));
 	}
 
 	u32 indexBufferOffset = GetIndexBufferSize();
@@ -291,7 +291,7 @@ void MeshData::GetDataForIterator(VertexElementSemantic semantic, u32 semanticId
 {
 	if(!mVertexData->HasElement(semantic, semanticIdx, streamIdx))
 	{
-		BS_EXCEPT(InvalidParametersException, "MeshData doesn't contain an element of specified type: Semantic: " + ToString(semantic) + ", Semantic index: " + ToString(semanticIdx) + ", Stream index: " + ToString(streamIdx));
+		B3D_EXCEPT(InvalidParametersException, "MeshData doesn't contain an element of specified type: Semantic: " + ToString(semantic) + ", Semantic index: " + ToString(semanticIdx) + ", Stream index: " + ToString(streamIdx));
 	}
 
 	u32 indexBufferOffset = GetIndexBufferSize();

@@ -13,13 +13,13 @@ namespace bs
 	 */
 
 	/** Identifier for a device that can be used for playing audio. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Audio), ExportAsStruct(true)) AudioDevice
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Audio), ExportAsStruct(true)) AudioDevice
 	{
 		String Name;
 	};
 
 	/** Provides global functionality relating to sounds and music. */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Audio)) Audio : public Module<Audio>
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Audio)) Audio : public Module<Audio>
 	{
 	public:
 		virtual ~Audio() = default;
@@ -35,35 +35,35 @@ namespace bs
 		void Play(const HAudioClip& clip, const Vector3& position = Vector3::kZero, float volume = 1.0f);
 
 		/** Determines global audio volume. In range [0, 1]. */
-		BS_SCRIPT_EXPORT(ExportName(Volume), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Volume), Property(Setter))
 		virtual void SetVolume(float volume) = 0;
 
 		/** @copydoc SetVolume() */
-		BS_SCRIPT_EXPORT(ExportName(Volume), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Volume), Property(Getter))
 		virtual float GetVolume() const = 0;
 
 		/** Determines if audio reproduction is paused globally. */
-		BS_SCRIPT_EXPORT(ExportName(Paused), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Paused), Property(Setter))
 		virtual void SetPaused(bool paused) = 0;
 
 		/** @copydoc SetPaused() */
-		BS_SCRIPT_EXPORT(ExportName(Paused), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Paused), Property(Getter))
 		virtual bool IsPaused() const = 0;
 
 		/** Determines the device on which is the audio played back on. */
-		BS_SCRIPT_EXPORT(ExportName(ActiveDevice), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(ActiveDevice), Property(Setter))
 		virtual void SetActiveDevice(const AudioDevice& device) = 0;
 
 		/** @copydoc SetActiveDevice() */
-		BS_SCRIPT_EXPORT(ExportName(ActiveDevice), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(ActiveDevice), Property(Getter))
 		virtual AudioDevice GetActiveDevice() const = 0;
 
 		/** Returns the default audio device identifier. */
-		BS_SCRIPT_EXPORT(ExportName(DefaultDevice), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(DefaultDevice), Property(Getter))
 		virtual AudioDevice GetDefaultDevice() const = 0;
 
 		/** Returns a list of all available audio devices. */
-		BS_SCRIPT_EXPORT(ExportName(AllDevices), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(AllDevices), Property(Getter))
 		virtual const Vector<AudioDevice>& GetAllDevices() const = 0;
 
 		/** @name Internal

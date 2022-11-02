@@ -59,10 +59,10 @@ void VulkanRenderTexture::Initialize()
 		if(texture->GetProperties().GetTextureType() == TEX_TYPE_3D)
 		{
 			if(view->GetFirstArraySlice() > 0)
-				BS_LOG(Error, RenderBackend, "Non-zero array slice offset not supported when rendering to a 3D texture.");
+				B3D_LOG(Error, RenderBackend, "Non-zero array slice offset not supported when rendering to a 3D texture.");
 
 			if(view->GetNumArraySlices() > 1)
-				BS_LOG(Error, RenderBackend, "Cannot specify array slices when rendering to a 3D texture.");
+				B3D_LOG(Error, RenderBackend, "Cannot specify array slices when rendering to a 3D texture.");
 
 			surface.Face = 0;
 			surface.NumFaces = mProperties.NumSlices;
@@ -100,10 +100,10 @@ void VulkanRenderTexture::Initialize()
 			if(texture->GetProperties().GetTextureType() == TEX_TYPE_3D)
 			{
 				if(view->GetFirstArraySlice() > 0)
-					BS_LOG(Error, RenderBackend, "Non-zero array slice offset not supported when rendering to a 3D texture.");
+					B3D_LOG(Error, RenderBackend, "Non-zero array slice offset not supported when rendering to a 3D texture.");
 
 				if(view->GetNumArraySlices() > 1)
-					BS_LOG(Error, RenderBackend, "Cannot specify array slices when rendering to a 3D texture.");
+					B3D_LOG(Error, RenderBackend, "Cannot specify array slices when rendering to a 3D texture.");
 
 				surface.Face = 0;
 				surface.NumFaces = 1;

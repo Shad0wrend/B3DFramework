@@ -115,7 +115,7 @@ void CommandQueueBase::PlaybackWithNotify(bs::Queue<QueuedCommand>* commands, st
 
 			if(!command.AsyncOp.HasCompleted())
 			{
-				BS_LOG(Warning, CoreThread, "Async operation return value wasn't resolved properly. Resolving automatically to nullptr. "
+				B3D_LOG(Warning, CoreThread, "Async operation return value wasn't resolved properly. Resolving automatically to nullptr. "
 											"Make sure to complete the operation before returning from the command callback method.");
 				command.AsyncOp.CompleteOperationInternal(nullptr);
 			}
@@ -163,7 +163,7 @@ bool CommandQueueBase::IsEmpty()
 
 void CommandQueueBase::ThrowInvalidThreadException(const String& message) const
 {
-	BS_EXCEPT(InternalErrorException, message);
+	B3D_EXCEPT(InternalErrorException, message);
 }
 
 #if BS_DEBUG_MODE
@@ -201,7 +201,7 @@ void CommandQueueBase::BreakIfNeeded(u32 queueIdx, u32 commandIdx)
 
 	if(iterFind != SetBreakpoints.end())
 	{
-		assert(false && "Command queue breakpoint triggered!");
+		B3D_ASSERT(false && "Command queue breakpoint triggered!");
 	}
 }
 #else

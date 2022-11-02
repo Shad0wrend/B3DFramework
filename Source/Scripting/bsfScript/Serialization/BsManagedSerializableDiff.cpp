@@ -134,7 +134,7 @@ ManagedSerializableDiff::ManagedSerializableDiff()
 
 SPtr<ManagedSerializableDiff> ManagedSerializableDiff::Create(const ManagedSerializableObject* oldObj, const ManagedSerializableObject* newObj)
 {
-	assert(oldObj != nullptr && newObj != nullptr);
+	B3D_ASSERT(oldObj != nullptr && newObj != nullptr);
 
 	SPtr<ManagedSerializableObjectInfo> oldObjInfo = oldObj->GetObjectInfo();
 	SPtr<ManagedSerializableObjectInfo> newObjInfo = newObj->GetObjectInfo();
@@ -431,7 +431,7 @@ SPtr<ManagedSerializableDiff::Modification> ManagedSerializableDiff::GenerateDif
 			}
 			break;
 		default:
-			assert(false); // Invalid type
+			B3D_ASSERT(false); // Invalid type
 			break;
 		}
 	}

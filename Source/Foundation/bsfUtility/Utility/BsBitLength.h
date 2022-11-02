@@ -16,7 +16,7 @@ namespace bs
 		BitLength(uint32_t bytes = 0, uint8_t bits = 0)
 			: Bytes(bytes), Bits(bits)
 		{
-			assert(bits < 8);
+			B3D_ASSERT(bits < 8);
 		}
 
 		bool operator==(const BitLength& rhs) const

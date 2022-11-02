@@ -41,7 +41,7 @@ u8* VulkanBuffer::Map(VkDeviceSize offset, VkDeviceSize length) const
 
 	u8* data;
 	VkResult result = vkMapMemory(device.GetLogical(), memory, memoryOffset + offset, length, 0, (void**)&data);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	return data;
 }
@@ -139,7 +139,7 @@ VkBufferView VulkanBuffer::GetView(VkFormat format)
 
 	VkBufferView view;
 	VkResult result = vkCreateBufferView(GetDevice().GetLogical(), &viewCI, gVulkanAllocator, &view);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	mViews.push_back(ViewInfo(format, view));
 	return view;
@@ -152,12 +152,12 @@ void VulkanBuffer::FreeView(VkBufferView view)
 
 	if(iterFind != mViews.end())
 	{
-		assert(iterFind->UseCount > 0);
+		B3D_ASSERT(iterFind->UseCount > 0);
 		iterFind->UseCount--;
 	}
 	else
 	{
-		assert(false);
+		B3D_ASSERT(false);
 	}
 }
 
@@ -240,7 +240,7 @@ VulkanHardwareBuffer::~VulkanHardwareBuffer()
 		mBuffers[i]->Destroy();
 	}
 
-	assert(mStagingBuffer == nullptr);
+	B3D_ASSERT(mStagingBuffer == nullptr);
 }
 
 VulkanBuffer* VulkanHardwareBuffer::CreateBuffer(VulkanDevice& device, u32 size, bool staging, bool readable)
@@ -285,7 +285,7 @@ VulkanBuffer* VulkanHardwareBuffer::CreateBuffer(VulkanDevice& device, u32 size,
 
 	VkBuffer buffer;
 	VkResult result = vkCreateBuffer(vkDevice, &mBufferCI, gVulkanAllocator, &buffer);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 
 	VmaAllocation allocation = device.AllocateMemory(buffer, flags);
 
@@ -297,7 +297,7 @@ void* VulkanHardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, 
 {
 	if((offset + length) > mSize)
 	{
-		BS_LOG(Error, RenderBackend, "Provided offset({0}) + length({1}) is larger than the buffer {2}.", offset, length, mSize);
+		B3D_LOG(Error, RenderBackend, "Provided offset({0}) + length({1}) is larger than the buffer {2}.", offset, length, mSize);
 
 		return nullptr;
 	}
@@ -484,7 +484,7 @@ void* VulkanHardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, 
 
 		// Submit the command buffer and wait until it finishes
 		transferCB->Flush(true);
-		assert(!buffer->IsUsed());
+		B3D_ASSERT(!buffer->IsUsed());
 	}
 
 	return mStagingBuffer->Map(0, length);
@@ -618,7 +618,7 @@ void VulkanHardwareBuffer::CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u3
 {
 	if((dstOffset + length) > mSize)
 	{
-		BS_LOG(Error, RenderBackend, "Provided offset({0}) + length({1}) is larger than the destination buffer {2}. "
+		B3D_LOG(Error, RenderBackend, "Provided offset({0}) + length({1}) is larger than the destination buffer {2}. "
 									 "Copy operation aborted.",
 			   dstOffset, length, mSize);
 
@@ -627,7 +627,7 @@ void VulkanHardwareBuffer::CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u3
 
 	if((srcOffset + length) > srcBuffer.GetSize())
 	{
-		BS_LOG(Error, RenderBackend, "Provided offset({0}) + length({1}) is larger than the source buffer {2}. "
+		B3D_LOG(Error, RenderBackend, "Provided offset({0}) + length({1}) is larger than the source buffer {2}. "
 									 "Copy operation aborted.",
 			   srcOffset, length, srcBuffer.GetSize());
 

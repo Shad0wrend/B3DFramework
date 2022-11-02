@@ -17,41 +17,41 @@ namespace bs
 	 *
 	 * @note	Wraps HingeJoint as a Component.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(HingeJoint)) CHingeJoint : public CJoint
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(HingeJoint)) CHingeJoint : public CJoint
 	{
 	public:
 		CHingeJoint(const HSceneObject& parent);
 
 		/** @copydoc HingeJoint::GetAngle */
-		BS_SCRIPT_EXPORT(ExportName(Angle), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Angle), Property(Getter))
 		Radian GetAngle() const;
 
 		/** @copydoc HingeJoint::GetSpeed */
-		BS_SCRIPT_EXPORT(ExportName(Speed), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Speed), Property(Getter))
 		float GetSpeed() const;
 
 		/** @copydoc HingeJoint::GetLimit */
-		BS_SCRIPT_EXPORT(ExportName(Limit), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Limit), Property(Getter))
 		LimitAngularRange GetLimit() const;
 
 		/** @copydoc HingeJoint::SetLimit */
-		BS_SCRIPT_EXPORT(ExportName(Limit), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Limit), Property(Setter))
 		void SetLimit(const LimitAngularRange& limit);
 
 		/** @copydoc HingeJoint::GetDrive */
-		BS_SCRIPT_EXPORT(ExportName(Drive), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Drive), Property(Getter))
 		HingeJointDrive GetDrive() const;
 
 		/** @copydoc HingeJoint::SetDrive */
-		BS_SCRIPT_EXPORT(ExportName(Drive), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Drive), Property(Setter))
 		void SetDrive(const HingeJointDrive& drive);
 
 		/** @copydoc HingeJoint::SetFlag */
-		BS_SCRIPT_EXPORT(ExportName(SetFlag))
+		B3D_SCRIPT_EXPORT(ExportName(SetFlag))
 		void SetFlag(HingeJointFlag flag, bool enabled);
 
 		/** @copydoc HingeJoint::HasFlag */
-		BS_SCRIPT_EXPORT(ExportName(HasFlag))
+		B3D_SCRIPT_EXPORT(ExportName(HasFlag))
 		bool HasFlag(HingeJointFlag flag) const;
 
 		/** @name Internal

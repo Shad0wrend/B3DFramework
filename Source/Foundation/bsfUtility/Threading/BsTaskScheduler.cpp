@@ -104,7 +104,7 @@ void TaskScheduler::AddTask(SPtr<Task> task)
 {
 	Lock lock(mReadyMutex);
 
-	assert(task->mState != 1 && "Task is already executing, it cannot be executed again until it finishes.");
+	B3D_ASSERT(task->mState != 1 && "Task is already executing, it cannot be executed again until it finishes.");
 
 	task->mParent = this;
 	task->mTaskId = mNextTaskId++;
@@ -261,7 +261,7 @@ void TaskScheduler::WaitUntilComplete(const Task* task)
 			auto iterFind = std::find_if(mTaskQueue.begin(), mTaskQueue.end(), [task](const SPtr<Task>& x)
 										 { return x.get() == task; });
 
-			assert(iterFind != mTaskQueue.end());
+			B3D_ASSERT(iterFind != mTaskQueue.end());
 
 			queuedTask = *iterFind;
 			mTaskQueue.erase(iterFind);

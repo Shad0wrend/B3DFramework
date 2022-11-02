@@ -71,7 +71,7 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			BS_EXCEPT(InvalidStateException, "Cannot instantiate an abstract class.");
+			B3D_EXCEPT(InvalidStateException, "Cannot instantiate an abstract class.");
 			return nullptr;
 		}
 	};

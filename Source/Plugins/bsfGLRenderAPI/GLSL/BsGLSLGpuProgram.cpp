@@ -143,7 +143,7 @@ void GLSLGpuProgram::Initialize()
 		{
 			if(source[i] == '\n' || source[i] == '\r')
 			{
-				assert(sizeof(source[i]) == sizeof(GLchar));
+				B3D_ASSERT(sizeof(source[i]) == sizeof(GLchar));
 
 				GLchar* lineData = (GLchar*)B3DStackAllocate(sizeof(GLchar) * (lineLength + 2));
 				memcpy(lineData, &source[i - lineLength], sizeof(GLchar) * lineLength);
@@ -179,7 +179,7 @@ void GLSLGpuProgram::Initialize()
 		if(lineLength > 0)
 		{
 			u32 end = (u32)source.size() - 1;
-			assert(sizeof(source[end]) == sizeof(GLchar));
+			B3D_ASSERT(sizeof(source[end]) == sizeof(GLchar));
 
 			GLchar* lineData = (GLchar*)B3DStackAllocate(sizeof(GLchar) * (lineLength + 1));
 			memcpy(lineData, &source[source.size() - lineLength], sizeof(GLchar) * lineLength);

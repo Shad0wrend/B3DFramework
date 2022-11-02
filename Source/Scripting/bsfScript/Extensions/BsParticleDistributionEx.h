@@ -14,15 +14,15 @@ namespace bs
 	/** @cond SCRIPT_EXTENSIONS */
 
 	/** Extension class for ColorDistribution, for adding additional functionality for the script interface. */
-	class BS_SCRIPT_EXPORT(ExtensionMethodForType(ColorDistribution)) ColorDistributionEx
+	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(ColorDistribution)) ColorDistributionEx
 	{
 	public:
 		/** @copydoc ColorDistribution::Evaluate(float, float) */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(ColorDistribution))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(ColorDistribution))
 		static Color Evaluate(const SPtr<ColorDistribution>& thisPtr, float t, float factor);
 
 		/** @copydoc ColorDistribution::Evaluate(float, const Random&) */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(ColorDistribution))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(ColorDistribution))
 		static Color Evaluate(const SPtr<ColorDistribution>& thisPtr, float t, Random& factor);
 	};
 

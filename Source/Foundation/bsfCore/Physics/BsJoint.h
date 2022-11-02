@@ -109,7 +109,7 @@ namespace bs
 	 * Controls spring parameters for a physics joint limits. If a limit is soft (body bounces back due to restition when
 	 * the limit is reached) the spring will pull the body back towards the limit using the specified parameters.
 	 */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) Spring
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) Spring
 	{
 		/** Constructs a spring with no force. */
 		Spring() {}
@@ -137,7 +137,7 @@ namespace bs
 	};
 
 	/** Contains common values used by all Joint limit types. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) LimitCommon
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) LimitCommon
 	{
 		LimitCommon(float contactDist = -1.0f)
 			: ContactDist(contactDist)
@@ -164,7 +164,7 @@ namespace bs
 	};
 
 	/** Represents a joint limit between two distance values. Lower value must be less than the upper value. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) LimitLinearRange : LimitCommon
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) LimitLinearRange : LimitCommon
 	{
 		/** Constructs an empty limit. */
 		LimitLinearRange()
@@ -211,7 +211,7 @@ namespace bs
 	};
 
 	/** Represents a joint limit between zero a single distance value. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) LimitLinear : LimitCommon
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) LimitLinear : LimitCommon
 	{
 		/** Constructs an empty limit. */
 		LimitLinear()
@@ -253,7 +253,7 @@ namespace bs
 	};
 
 	/** Represents a joint limit between two angles. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) LimitAngularRange : LimitCommon
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) LimitAngularRange : LimitCommon
 	{
 		/** Constructs an empty limit. */
 		LimitAngularRange()
@@ -293,16 +293,16 @@ namespace bs
 		}
 
 		/** Lower angle of the limit. Must be less than #upper. */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 359 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 359 ]))
 		Radian Lower = Radian(0.0f);
 
 		/** Upper angle of the limit. Must be less than #lower. */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 359 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 359 ]))
 		Radian Upper = Radian(0.0f);
 	};
 
 	/** Represents a joint limit that contraints movement to within an elliptical cone. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) LimitConeRange : LimitCommon
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportAsStruct(true)) LimitConeRange : LimitCommon
 	{
 		/** Constructs a limit with a 45 degree cone. */
 		LimitConeRange()
@@ -343,11 +343,11 @@ namespace bs
 		}
 
 		/** Y angle of the cone. Movement is constrainted between 0 and this angle on the Y axis. */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 180 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 180 ]))
 		Radian YLimitAngle = Radian(Math::kHalfPi);
 
 		/** Z angle of the cone. Movement is constrainted between 0 and this angle on the Z axis. */
-		BS_SCRIPT_EXPORT(UIValueRange([ 0, 180 ]))
+		B3D_SCRIPT_EXPORT(UIValueRange([ 0, 180 ]))
 		Radian ZLimitAngle = Radian(Math::kHalfPi);
 	};
 

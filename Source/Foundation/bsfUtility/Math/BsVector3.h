@@ -43,14 +43,14 @@ namespace bs
 
 		float operator[](u32 i) const
 		{
-			assert(i < 3);
+			B3D_ASSERT(i < 3);
 
 			return *(&X + i);
 		}
 
 		float& operator[](u32 i)
 		{
-			assert(i < 3);
+			B3D_ASSERT(i < 3);
 
 			return *(&X + i);
 		}
@@ -108,7 +108,7 @@ namespace bs
 
 		Vector3 operator/(float val) const
 		{
-			assert(val != 0.0);
+			B3D_ASSERT(val != 0.0);
 
 			float fInv = 1.0f / val;
 			return Vector3(X * fInv, Y * fInv, Z * fInv);
@@ -215,7 +215,7 @@ namespace bs
 
 		Vector3& operator/=(float rhs)
 		{
-			assert(rhs != 0.0f);
+			B3D_ASSERT(rhs != 0.0f);
 
 			float inv = 1.0f / rhs;
 

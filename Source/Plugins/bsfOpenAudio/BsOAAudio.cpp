@@ -61,7 +61,7 @@ OAAudio::OAAudio()
 		mDevice = alcOpenDevice(nullptr);
 
 	if(mDevice == nullptr)
-		BS_LOG(Error, Audio, "Failed to open OpenAL device: {0}", defaultDeviceName);
+		B3D_LOG(Error, Audio, "Failed to open OpenAL device: {0}", defaultDeviceName);
 
 	RebuildContexts();
 }
@@ -70,7 +70,7 @@ OAAudio::~OAAudio()
 {
 	StopManualSources();
 
-	assert(mListeners.empty() && mSources.empty()); // Everything should be destroyed at this point
+	B3D_ASSERT(mListeners.empty() && mSources.empty()); // Everything should be destroyed at this point
 	ClearContexts();
 
 	if(mDevice != nullptr)
@@ -131,7 +131,7 @@ void OAAudio::SetActiveDevice(const AudioDevice& device)
 	String narrowName = device.Name;
 	mDevice = alcOpenDevice(narrowName.c_str());
 	if(mDevice == nullptr)
-		BS_LOG(Error, Audio, "Failed to open OpenAL device: ", narrowName);
+		B3D_LOG(Error, Audio, "Failed to open OpenAL device: ", narrowName);
 
 	RebuildContexts();
 }
@@ -193,7 +193,7 @@ ALCcontext* OAAudio::GetContextInternal(const OAAudioListener* listener) const
 {
 	if(mListeners.size() > 0)
 	{
-		assert(mListeners.size() == mContexts.size());
+		B3D_ASSERT(mListeners.size() == mContexts.size());
 
 		u32 numContexts = (u32)mContexts.size();
 		for(u32 i = 0; i < numContexts; i++)
@@ -205,7 +205,7 @@ ALCcontext* OAAudio::GetContextInternal(const OAAudioListener* listener) const
 	else
 		return mContexts[0];
 
-	BS_LOG(Error, Audio, "Unable to find context for an audio listener.");
+	B3D_LOG(Error, Audio, "Unable to find context for an audio listener.");
 	return nullptr;
 }
 
@@ -318,7 +318,7 @@ ALenum OAAudio::GetOpenALBufferFormatInternal(u32 numChannels, u32 bitDepth)
 			case 7: return alGetEnumValue("AL_FORMAT_61CHN8");
 			case 8: return alGetEnumValue("AL_FORMAT_71CHN8");
 			default:
-				assert(false);
+				B3D_ASSERT(false);
 				return 0;
 			}
 		}
@@ -333,7 +333,7 @@ ALenum OAAudio::GetOpenALBufferFormatInternal(u32 numChannels, u32 bitDepth)
 			case 7: return alGetEnumValue("AL_FORMAT_61CHN16");
 			case 8: return alGetEnumValue("AL_FORMAT_71CHN16");
 			default:
-				assert(false);
+				B3D_ASSERT(false);
 				return 0;
 			}
 		}
@@ -348,12 +348,12 @@ ALenum OAAudio::GetOpenALBufferFormatInternal(u32 numChannels, u32 bitDepth)
 			case 7: return alGetEnumValue("AL_FORMAT_61CHN32");
 			case 8: return alGetEnumValue("AL_FORMAT_71CHN32");
 			default:
-				assert(false);
+				B3D_ASSERT(false);
 				return 0;
 			}
 		}
 	default:
-		assert(false);
+		B3D_ASSERT(false);
 		return 0;
 	}
 }
@@ -378,7 +378,7 @@ void OAAudio::WriteToOpenALBufferInternal(u32 bufferId, u8* samples, const Audio
 			}
 			else
 			{
-				BS_LOG(Warning, RenderBackend, "OpenAL doesn't support bit depth larger than 16. Your audio data will be truncated.");
+				B3D_LOG(Warning, RenderBackend, "OpenAL doesn't support bit depth larger than 16. Your audio data will be truncated.");
 
 				u32 bufferSize = info.NumSamples * 2;
 				u8* sampleBuffer16 = (u8*)B3DStackAllocate(bufferSize);

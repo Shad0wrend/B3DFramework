@@ -190,13 +190,13 @@ u32 GpuPipelineParamInfoBase::GetSequentialSlot(ParamType type, u32 set, u32 slo
 #if BS_DEBUG_MODE
 	if(set >= mNumSets)
 	{
-		BS_LOG(Error, RenderBackend, "Set index out of range: Valid range: [0, {0}). Requested: {1}.", mNumSets, set);
+		B3D_LOG(Error, RenderBackend, "Set index out of range: Valid range: [0, {0}). Requested: {1}.", mNumSets, set);
 		return -1;
 	}
 
 	if(slot >= mSetInfos[set].NumSlots)
 	{
-		BS_LOG(Error, RenderBackend, "Slot index out of range: Valid range: [0, {0}). Requested: {1}.", mSetInfos[set].NumSlots, slot);
+		B3D_LOG(Error, RenderBackend, "Slot index out of range: Valid range: [0, {0}). Requested: {1}.", mSetInfos[set].NumSlots, slot);
 		return -1;
 	}
 
@@ -210,7 +210,7 @@ u32 GpuPipelineParamInfoBase::GetSequentialSlot(ParamType type, u32 set, u32 slo
 				return mSetInfos[set].SlotSamplers[slot];
 		}
 
-		BS_LOG(Error, RenderBackend, "Requested parameter is not of the valid type. Requested: {0}. Actual: {1}.", (u32)type, (u32)mSetInfos[set].SlotTypes[slot]);
+		B3D_LOG(Error, RenderBackend, "Requested parameter is not of the valid type. Requested: {0}. Actual: {1}.", (u32)type, (u32)mSetInfos[set].SlotTypes[slot]);
 		return -1;
 	}
 
@@ -224,7 +224,7 @@ void GpuPipelineParamInfoBase::GetBinding(ParamType type, u32 sequentialSlot, u3
 #if BS_DEBUG_MODE
 	if(sequentialSlot >= mNumElementsPerType[(int)type])
 	{
-		BS_LOG(Error, RenderBackend, "Sequential slot index out of range: Valid range: [0, {0}). Requested: {1}.", mNumElementsPerType[(int)type], sequentialSlot);
+		B3D_LOG(Error, RenderBackend, "Sequential slot index out of range: Valid range: [0, {0}). Requested: {1}.", mNumElementsPerType[(int)type], sequentialSlot);
 
 		set = 0;
 		slot = 0;

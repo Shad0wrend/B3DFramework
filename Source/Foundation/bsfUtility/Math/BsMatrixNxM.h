@@ -47,7 +47,7 @@ namespace bs
 		/** Returns a row of the matrix. */
 		float* operator[](u32 row) const
 		{
-			assert(row < N);
+			B3D_ASSERT(row < N);
 
 			return (float*)Data[row];
 		}

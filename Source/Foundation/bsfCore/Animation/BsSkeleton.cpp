@@ -144,7 +144,7 @@ void Skeleton::GetPose(Matrix4* pose, LocalSkeletonPose& localPose, const Skelet
 {
 	// Note: If more performance is required this method could be optimized with vector instructions
 
-	assert(localPose.NumBones == mNumBones);
+	B3D_ASSERT(localPose.NumBones == mNumBones);
 
 	for(u32 i = 0; i < mNumBones; i++)
 	{

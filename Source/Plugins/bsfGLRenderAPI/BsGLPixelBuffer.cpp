@@ -42,8 +42,8 @@ void GLPixelBuffer::FreeBuffer()
 
 void* GLPixelBuffer::Lock(u32 offset, u32 length, GpuLockOptions options)
 {
-	assert(!mIsLocked && "Cannot lock this buffer, it is already locked!");
-	assert(offset == 0 && length == mSizeInBytes && "Cannot lock memory region, most lock box or entire buffer");
+	B3D_ASSERT(!mIsLocked && "Cannot lock this buffer, it is already locked!");
+	B3D_ASSERT(offset == 0 && length == mSizeInBytes && "Cannot lock memory region, most lock box or entire buffer");
 
 	PixelVolume volume(0, 0, 0, mWidth, mHeight, mDepth);
 	const PixelData& lockedData = Lock(volume, options);
@@ -71,7 +71,7 @@ const PixelData& GLPixelBuffer::Lock(const PixelVolume& lockBox, GpuLockOptions 
 
 void GLPixelBuffer::Unlock()
 {
-	assert(mIsLocked && "Cannot unlock this buffer, it is not locked!");
+	B3D_ASSERT(mIsLocked && "Cannot unlock this buffer, it is not locked!");
 
 	if(mCurrentLockOptions != GBL_READ_ONLY)
 	{
@@ -85,12 +85,12 @@ void GLPixelBuffer::Unlock()
 
 void GLPixelBuffer::Upload(const PixelData& data, const PixelVolume& dest)
 {
-	BS_EXCEPT(RenderingAPIException, "Upload not possible for this pixel buffer type");
+	B3D_EXCEPT(RenderingAPIException, "Upload not possible for this pixel buffer type");
 }
 
 void GLPixelBuffer::Download(const PixelData& data)
 {
-	BS_EXCEPT(RenderingAPIException, "Download not possible for this pixel buffer type");
+	B3D_EXCEPT(RenderingAPIException, "Download not possible for this pixel buffer type");
 }
 
 void GLPixelBuffer::BlitFromTexture(GLTextureBuffer* src)
@@ -100,12 +100,12 @@ void GLPixelBuffer::BlitFromTexture(GLTextureBuffer* src)
 
 void GLPixelBuffer::BlitFromTexture(GLTextureBuffer* src, const PixelVolume& srcBox, const PixelVolume& dstBox)
 {
-	BS_EXCEPT(RenderingAPIException, "BlitFromTexture not possible for this pixel buffer type");
+	B3D_EXCEPT(RenderingAPIException, "BlitFromTexture not possible for this pixel buffer type");
 }
 
 void GLPixelBuffer::BindToFramebuffer(GLenum attachment, u32 zoffset, bool allLayers)
 {
-	BS_EXCEPT(RenderingAPIException, "Framebuffer bind not possible for this pixel buffer type");
+	B3D_EXCEPT(RenderingAPIException, "Framebuffer bind not possible for this pixel buffer type");
 }
 
 GLTextureBuffer::GLTextureBuffer(GLenum target, GLuint id, GLint face, GLint level, PixelFormat format, GpuBufferUsage usage, bool hwGamma, u32 multisampleCount)
@@ -160,7 +160,7 @@ void GLTextureBuffer::Upload(const PixelData& data, const PixelVolume& dest)
 {
 	if((mUsage & TU_DEPTHSTENCIL) != 0)
 	{
-		BS_LOG(Error, RenderBackend, "Writing to depth stencil texture from CPU not supported.");
+		B3D_LOG(Error, RenderBackend, "Writing to depth stencil texture from CPU not supported.");
 		return;
 	}
 
@@ -180,7 +180,7 @@ void GLTextureBuffer::Upload(const PixelData& data, const PixelVolume& dest)
 		const bool isConsecutive = data.GetRowPitch() == expectedRowPitch && data.GetSlicePitch() == expectedSlicePitch;
 		if(data.GetFormat() != mFormat || !isConsecutive)
 		{
-			BS_LOG(Error, RenderBackend, "Compressed images must be consecutive, in the source format");
+			B3D_LOG(Error, RenderBackend, "Compressed images must be consecutive, in the source format");
 			return;
 		}
 
@@ -280,7 +280,7 @@ void GLTextureBuffer::Download(const PixelData& data)
 {
 	if(data.GetWidth() != GetWidth() || data.GetHeight() != GetHeight() || data.GetDepth() != GetDepth())
 	{
-		BS_LOG(Error, RenderBackend, "Only download of entire buffer is supported by OpenGL.");
+		B3D_LOG(Error, RenderBackend, "Only download of entire buffer is supported by OpenGL.");
 		return;
 	}
 
@@ -300,7 +300,7 @@ void GLTextureBuffer::Download(const PixelData& data)
 		const bool isConsecutive = data.GetRowPitch() == expectedRowPitch && data.GetSlicePitch() == expectedSlicePitch;
 		if(data.GetFormat() != mFormat || !isConsecutive)
 		{
-			BS_LOG(Error, RenderBackend, "Compressed images must be consecutive, in the source format");
+			B3D_LOG(Error, RenderBackend, "Compressed images must be consecutive, in the source format");
 			return;
 		}
 
@@ -448,7 +448,7 @@ void GLTextureBuffer::BlitFromTexture(GLTextureBuffer* src, const PixelVolume& s
 	{
 #if BS_OPENGL_4_3 || BS_OPENGLES_3_2
 		if(!(mTarget == GL_TEXTURE_2D || mTarget == GL_TEXTURE_2D_MULTISAMPLE))
-			BS_EXCEPT(InvalidParametersException, "Non-2D multisampled texture not supported.");
+			B3D_EXCEPT(InvalidParametersException, "Non-2D multisampled texture not supported.");
 #endif
 
 		GLint currentFBO = 0;
@@ -494,7 +494,7 @@ void GLTextureBuffer::BlitFromTexture(GLTextureBuffer* src, const PixelVolume& s
 	else // Just plain copy
 	{
 		if(mMultisampleCount != src->mMultisampleCount)
-			BS_EXCEPT(InvalidParametersException, "When copying textures their multisample counts must match.");
+			B3D_EXCEPT(InvalidParametersException, "When copying textures their multisample counts must match.");
 
 		if(mTarget == GL_TEXTURE_3D) // 3D textures can't have arrays so their Z coordinate is handled differently
 		{

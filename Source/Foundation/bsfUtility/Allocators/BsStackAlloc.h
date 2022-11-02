@@ -65,7 +65,7 @@ namespace bs
 			void Dealloc(u8* data, u32 amount)
 			{
 				MFreePtr -= amount;
-				assert((&MData[MFreePtr]) == data && "Out of order stack deallocation detected. Deallocations need to happen in order opposite of allocations.");
+				B3D_ASSERT((&MData[MFreePtr]) == data && "Out of order stack deallocation detected. Deallocations need to happen in order opposite of allocations.");
 			}
 
 			u8* MData = nullptr;
@@ -83,7 +83,7 @@ namespace bs
 
 		~MemStackInternal()
 		{
-			assert(mFreeBlock->MFreePtr == 0 && "Not all blocks were released before shutting down the stack allocator.");
+			B3D_ASSERT(mFreeBlock->MFreePtr == 0 && "Not all blocks were released before shutting down the stack allocator.");
 
 			MemBlock* curBlock = mFreeBlock;
 			while(curBlock != nullptr)

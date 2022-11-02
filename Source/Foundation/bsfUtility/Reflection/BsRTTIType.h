@@ -592,7 +592,7 @@ namespace bs
 
 		bool IsDerivedFrom(RTTITypeBase* base) override
 		{
-			assert(base != nullptr);
+			B3D_ASSERT(base != nullptr);
 
 			Stack<RTTITypeBase*> todo;
 			todo.push(base);

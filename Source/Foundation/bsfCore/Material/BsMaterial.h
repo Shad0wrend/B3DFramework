@@ -62,7 +62,7 @@ namespace bs
 		/** Registers a new tag to look for when searching for the technique. */
 		void AddTag(const StringID& tag)
 		{
-			BS_ASSERT(NumTags < kMaxNumTags);
+			B3D_ASSERT(NumTags < kMaxNumTags);
 
 			Tags[NumTags] = tag;
 			NumTags++;
@@ -140,7 +140,7 @@ namespace bs
 		virtual ~TMaterial() = default;
 
 		/** Returns the currently active shader. */
-		BS_SCRIPT_EXPORT(ExportName(Shader), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Shader), Property(Getter))
 
 		ShaderType GetShader() const { return mShader; }
 
@@ -150,7 +150,7 @@ namespace bs
 		 * technique is considered the default technique and which subset of techniques are searched during a call to
 		 * findTechnique().
 		 */
-		BS_SCRIPT_EXPORT(ExportName(Variation), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExportName(Variation), Property(Getter))
 
 		const ShaderVariation& GetVariation() const { return mVariation; }
 
@@ -220,7 +220,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		void SetFloat(const String& name, float value, u32 arrayIdx = 0) { return GetParamFloat(name).Set(value, arrayIdx); }
 
@@ -230,7 +230,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		void SetFloatCurve(const String& name, TAnimationCurve<float> value, u32 arrayIdx = 0)
 		{
@@ -242,7 +242,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		void SetColor(const String& name, const Color& value, u32 arrayIdx = 0) { return GetParamColor(name).Set(value, arrayIdx); }
 
@@ -252,7 +252,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		void SetColorGradient(const String& name, const ColorGradientHDR& value, u32 arrayIdx = 0)
 		{
@@ -264,7 +264,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(SetVector2))
+		B3D_SCRIPT_EXPORT(ExportName(SetVector2))
 
 		void SetVec2(const String& name, const Vector2& value, u32 arrayIdx = 0) { return GetParamVec2(name).Set(value, arrayIdx); }
 
@@ -273,7 +273,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(SetVector3))
+		B3D_SCRIPT_EXPORT(ExportName(SetVector3))
 
 		void SetVec3(const String& name, const Vector3& value, u32 arrayIdx = 0) { return GetParamVec3(name).Set(value, arrayIdx); }
 
@@ -282,7 +282,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(SetVector4))
+		B3D_SCRIPT_EXPORT(ExportName(SetVector4))
 
 		void SetVec4(const String& name, const Vector4& value, u32 arrayIdx = 0) { return GetParamVec4(name).Set(value, arrayIdx); }
 
@@ -291,7 +291,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(SetMatrix3))
+		B3D_SCRIPT_EXPORT(ExportName(SetMatrix3))
 
 		void SetMat3(const String& name, const Matrix3& value, u32 arrayIdx = 0) { return GetParamMat3(name).Set(value, arrayIdx); }
 
@@ -300,7 +300,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index to assign the value to.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(SetMatrix4))
+		B3D_SCRIPT_EXPORT(ExportName(SetMatrix4))
 
 		void SetMat4(const String& name, const Matrix4& value, u32 arrayIdx = 0) { return GetParamMat4(name).Set(value, arrayIdx); }
 
@@ -353,7 +353,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		float GetFloat(const String& name, u32 arrayIdx = 0) const { return GetParamFloat(name).Get(arrayIdx); }
 
@@ -364,7 +364,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		const TAnimationCurve<float>& GetFloatCurve(const String& name, u32 arrayIdx = 0) const
 		{
@@ -378,7 +378,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		Color GetColor(const String& name, u32 arrayIdx = 0) const { return GetParamColor(name).Get(arrayIdx); }
 
@@ -389,7 +389,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 
 		const ColorGradientHDR& GetColorGradient(const String& name, u32 arrayIdx = 0) const
 		{
@@ -401,7 +401,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(GetVector2))
+		B3D_SCRIPT_EXPORT(ExportName(GetVector2))
 
 		Vector2 GetVec2(const String& name, u32 arrayIdx = 0) const { return GetParamVec2(name).Get(arrayIdx); }
 
@@ -410,7 +410,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(GetVector3))
+		B3D_SCRIPT_EXPORT(ExportName(GetVector3))
 
 		Vector3 GetVec3(const String& name, u32 arrayIdx = 0) const { return GetParamVec3(name).Get(arrayIdx); }
 
@@ -419,7 +419,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(GetVector4))
+		B3D_SCRIPT_EXPORT(ExportName(GetVector4))
 
 		Vector4 GetVec4(const String& name, u32 arrayIdx = 0) const { return GetParamVec4(name).Get(arrayIdx); }
 
@@ -428,7 +428,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(GetMatrix3))
+		B3D_SCRIPT_EXPORT(ExportName(GetMatrix3))
 
 		Matrix3 GetMat3(const String& name, u32 arrayIdx = 0) const { return GetParamMat3(name).Get(arrayIdx); }
 
@@ -437,7 +437,7 @@ namespace bs
 		 *
 		 * Optionally if the parameter is an array you may provide an array index you which to retrieve.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(GetMatrix4))
+		B3D_SCRIPT_EXPORT(ExportName(GetMatrix4))
 
 		Matrix4 GetMat4(const String& name, u32 arrayIdx = 0) const { return GetParamMat4(name).Get(arrayIdx); }
 
@@ -445,7 +445,7 @@ namespace bs
 		 * Checks does the data parameter with the specified name currently contains animated data. This could be
 		 * an animation curve or a color gradient.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		bool IsAnimated(const String& name, u32 arrayIdx = 0);
 
 		/** Returns a texture assigned with the parameter with the specified name. */
@@ -765,7 +765,7 @@ namespace bs
 	 */
 
 	/** @copydoc MaterialBase */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Material : public Resource, public TMaterial<false>, public IResourceListener
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Material : public Resource, public TMaterial<false>, public IResourceListener
 	{
 	public:
 		~Material() = default;
@@ -774,11 +774,11 @@ namespace bs
 		 * Sets a shader that will be used by the material. Material will be initialized using all compatible techniques
 		 * from the shader. Shader must be set before doing any other operations with the material.
 		 */
-		BS_SCRIPT_EXPORT(ExportName(Shader), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExportName(Shader), Property(Setter))
 		void SetShader(const HShader& shader);
 
 		/** @copydoc TMaterial<Core>::GetVariation() const */
-		BS_SCRIPT_EXPORT(ExportName(Variation), Property(Setter), UI(Hide))
+		B3D_SCRIPT_EXPORT(ExportName(Variation), Property(Setter), UI(Hide))
 		void SetVariation(const ShaderVariation& variation);
 
 		/** Retrieves an implementation of a material usable only from the core thread. */
@@ -787,7 +787,7 @@ namespace bs
 		void Initialize() override;
 
 		/** Creates a deep copy of the material and returns the new object. */
-		BS_SCRIPT_EXPORT(ExportName(Clone))
+		B3D_SCRIPT_EXPORT(ExportName(Clone))
 		HMaterial Clone();
 
 		/**
@@ -795,11 +795,11 @@ namespace bs
 		 *
 		 * @note	Make sure you call Material::setShader before using it.
 		 */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(Material))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(Material))
 		static HMaterial Create();
 
 		/** Creates a new material with the specified shader. */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(Material))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(Material))
 		static HMaterial Create(const HShader& shader);
 
 		/**

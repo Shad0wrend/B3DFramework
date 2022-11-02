@@ -39,7 +39,7 @@ void SpriteMaterial::Initialize()
 {
 	// Make sure that mMaterial assignment completes on the previous thread before continuing
 	const bool materialStored = mMaterialStored.load(std::memory_order_acquire);
-	assert(materialStored == true);
+	B3D_ASSERT(materialStored == true);
 
 	const SPtr<ct::Pass>& pass = mMaterial->GetPass(0, mTechnique);
 
@@ -65,7 +65,7 @@ void SpriteMaterial::Initialize()
 	mAlphaParamBufferIdx = mAlphaParams->GetParamBlockBufferIndex("GUIParams");
 
 	if(mParamBufferIdx == (u32)-1 || mAlphaParamBufferIdx == (u32)-1)
-		BS_LOG(Error, GUI, "Sprite material shader missing \"GUIParams\" block.");
+		B3D_LOG(Error, GUI, "Sprite material shader missing \"GUIParams\" block.");
 }
 
 void SpriteMaterial::Destroy(const SPtr<ct::Material>& material, const SPtr<ct::GpuParamsSet>& params, const SPtr<ct::GpuParamsSet>& alphaParams)

@@ -15,46 +15,46 @@ namespace bs
 	/** @cond SCRIPT_EXTENSIONS */
 
 	/** Extension class for Texture, for adding additional functionality for the script version of PixelData. */
-	class BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture)) TextureEx
+	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture)) TextureEx
 	{
 	public:
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(Texture), Visibility(Private))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(Texture), Visibility(Private))
 		static HTexture Create(PixelFormat format, u32 width, u32 height, u32 depth, TextureType texType, TextureUsage usage, u32 numSamples, bool hasMipmaps, bool gammaCorrection);
 
 		/** @copydoc TextureProperties::GetFormat */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(PixelFormat), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(PixelFormat), Property(Getter))
 		static PixelFormat GetPixelFormat(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::GetUsage */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Usage), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Usage), Property(Getter))
 		static TextureUsage GetUsage(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::GetTextureType */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Type), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Type), Property(Getter))
 		static TextureType GetType(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::GetWidth */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Width), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Width), Property(Getter))
 		static u32 GetWidth(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::GetHeight */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Height), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Height), Property(Getter))
 		static u32 GetHeight(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::GetDepth */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Depth), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(Depth), Property(Getter))
 		static u32 GetDepth(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::IsHardwareGammaEnabled */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(GammaSpace), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(GammaSpace), Property(Getter))
 		static bool GetGammaCorrection(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::GetNumSamples */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(SampleCount), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(SampleCount), Property(Getter))
 		static u32 GetSampleCount(const HTexture& thisPtr);
 
 		/** @copydoc TextureProperties::GetNumMipmaps */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(MipMapCount), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(MipMapCount), Property(Getter))
 		static u32 GetMipmapCount(const HTexture& thisPtr);
 
 		/**
@@ -68,7 +68,7 @@ namespace bs
 		 *					cubemap array it has to be a multiple of 6).
 		 * @return			A set of pixels for the specified mip level.
 		 */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(GetPixels))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(GetPixels))
 		static SPtr<PixelData> GetPixels(const HTexture& thisPtr, u32 face = 0, u32 mipLevel = 0);
 
 		/**
@@ -81,7 +81,7 @@ namespace bs
 		 *					specified in the CubeFace enum. Array textures can have an arbitrary number of faces (if it's a
 		 *					cubemap array it has to be a multiple of 6).
 		 */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(SetPixels))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(SetPixels))
 		static void SetPixels(const HTexture& thisPtr, const SPtr<PixelData>& data, u32 face = 0, u32 mipLevel = 0);
 
 		/**
@@ -95,7 +95,7 @@ namespace bs
 		 *					specified in the CubeFace enum. Array textures can have an arbitrary number of faces (if it's a
 		 *					cubemap array it has to be a multiple of 6).
 		 */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(SetPixels))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(Texture), ExportName(SetPixels))
 		static void SetPixelsArray(const HTexture& thisPtr, const Vector<Color>& colors, u32 face = 0, u32 mipLevel = 0);
 	};
 

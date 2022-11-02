@@ -16,7 +16,7 @@ namespace bs
 	 *
 	 * Use {0}, {1}, etc. in the string value for values that might change dynamically.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(ExportName(LocString), DocumentationGroup(Localization)) HString
+	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(ExportName(LocString), DocumentationGroup(Localization)) HString
 	{
 	public:
 		/**
@@ -26,7 +26,7 @@ namespace bs
 		 * @param[in]	identifier		String you can use for later referencing the localized string.
 		 * @param[in]	stringTableId	Unique identifier of the string table to retrieve the string from.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		explicit HString(const String& identifier, u32 stringTableId = 0);
 
 		/**
@@ -38,7 +38,7 @@ namespace bs
 		 *								assigned depends on the StringTable::DEFAULT_LANGUAGE value.
 		 * @param[in]	stringTableId	Unique identifier of the string table to retrieve the string from.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		explicit HString(const String& identifier, const String& defaultString, u32 stringTableId = 0);
 
 		/**
@@ -46,11 +46,11 @@ namespace bs
 		 *
 		 * @param[in]	stringTableId	Unique identifier of the string table to retrieve the string from.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		HString(u32 stringTableId);
 
 		/** Creates a new empty localized string. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		HString();
 
 		HString(const HString& copy);
@@ -60,7 +60,7 @@ namespace bs
 
 		operator const String&() const;
 
-		BS_SCRIPT_EXPORT(InteropOnly(true))
+		B3D_SCRIPT_EXPORT(InteropOnly(true))
 		const String& GetValue() const;
 
 		/**
@@ -69,7 +69,7 @@ namespace bs
 		 *
 		 * @note	This is useful for strings that have dynamically changing values, like numbers, embedded in them.
 		 */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		void SetParameter(u32 idx, const String& value);
 
 		/** Returns an empty string. */

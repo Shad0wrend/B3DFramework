@@ -63,7 +63,7 @@ namespace bs
 	 */
 
 	/** Single key in a ColorGradient. */
-	struct BS_SCRIPT_EXPORT(DocumentationGroup(Image), ExportAsStruct(true)) ColorGradientKey
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Image), ExportAsStruct(true)) ColorGradientKey
 	{
 		ColorGradientKey() = default;
 
@@ -85,37 +85,37 @@ namespace bs
 
 		static constexpr u32 kMaxKeys = 8;
 
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		TColorGradient() = default;
 
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		TColorGradient(const Color& color);
 
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		TColorGradient(const Vector<ColorGradientKey>& keys);
 
 		/** Evaluates a color at the specified @p t. */
 		COLOR Evaluate(float t) const;
 
 		/** Keys that control the gradient, sorted by time from first to last. Key times should be in range [0, 1]. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		void SetKeys(const Vector<ColorGradientKey>& keys, float duration = 1.0f);
 
 		/** @copydoc SetKeys */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		Vector<ColorGradientKey> GetKeys() const;
 
 		/** Returns the number of color keys in the gradient. */
-		BS_SCRIPT_EXPORT(Property(Getter), ExportName(NumKeys))
+		B3D_SCRIPT_EXPORT(Property(Getter), ExportName(NumKeys))
 
 		u32 GetNumKeys() const { return mNumKeys; }
 
 		/** Returns the color key at the specified index. If out of range an empty key is returned. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		ColorGradientKey GetKey(u32 idx) const;
 
 		/** Specify a "gradient" that represents a single color value. */
-		BS_SCRIPT_EXPORT()
+		B3D_SCRIPT_EXPORT()
 		void SetConstant(const Color& color);
 
 		/**
@@ -143,7 +143,7 @@ namespace bs
 	 * keys that get interpolated between. Stores colors as 32-bit integers, and is therefor unable to represent
 	 * a color range outside of [0, 1] - see ColorGradientHDR for an alternative.
 	 */
-	class BS_UTILITY_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Image)) ColorGradient : public TColorGradient<RGBA, uint16_t>
+	class BS_UTILITY_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Image)) ColorGradient : public TColorGradient<RGBA, uint16_t>
 	{
 		using TColorGradient::TColorGradient;
 
@@ -154,7 +154,7 @@ namespace bs
 	 * Represents a range of color values over some parameters, similar to a curve. Internally represented as a set of
 	 * keys that get interpolated between. Capable of representing HDR colors, unlike the normal ColorGradient.
 	 */
-	class BS_UTILITY_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Image)) ColorGradientHDR : public TColorGradient<Color, float>
+	class BS_UTILITY_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Image)) ColorGradientHDR : public TColorGradient<Color, float>
 	{
 		using TColorGradient::TColorGradient;
 

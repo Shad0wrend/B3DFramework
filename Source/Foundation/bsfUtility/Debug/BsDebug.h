@@ -110,19 +110,19 @@ namespace bs
 	/** A simpler way of accessing the Debug module. */
 	BS_UTILITY_EXPORT Debug& GetDebug();
 
-#ifndef BS_LOG_VERBOSITY
+#ifndef B3D_LOG_VERBOSITY
 #	if BS_DEBUG_MODE
-#		define BS_LOG_VERBOSITY LogVerbosity::Log
+#		define B3D_LOG_VERBOSITY LogVerbosity::Log
 #	else
-#		define BS_LOG_VERBOSITY LogVerbosity::Warning
+#		define B3D_LOG_VERBOSITY LogVerbosity::Warning
 #	endif
 #endif
 
 /**
- * Defines a new log category to use with BS_LOG. Each category must have a unique ID. A matching call to
- * BS_LOG_CATEGORY_IMPL must be done in the source file.
+ * Defines a new log category to use with B3D_LOG. Each category must have a unique ID. A matching call to
+ * B3D_LOG_CATEGORY_IMPL must be done in the source file.
  */
-#define BS_LOG_CATEGORY(name, id) \
+#define B3D_LOG_CATEGORY(name, id) \
 	struct LogCategory##name      \
 	{                             \
 		enum                      \
@@ -132,29 +132,29 @@ namespace bs
 		static bool sRegistered;  \
 	};
 
-/** Registers the name of the category. Should be placed in the implementation file for each corresponding BS_LOG_CATEGORY call. */
-#define BS_LOG_CATEGORY_IMPL(name) bool LogCategory##name::sRegistered = Log::RegisterCategoryInternal(LogCategory##name::_id, #name);
+/** Registers the name of the category. Should be placed in the implementation file for each corresponding B3D_LOG_CATEGORY call. */
+#define B3D_LOG_CATEGORY_IMPL(name) bool LogCategory##name::sRegistered = Log::RegisterCategoryInternal(LogCategory##name::_id, #name);
 
 /** Get the ID of the log category based on its name. */
-#define BS_LOG_GET_CATEGORY_ID(category) LogCategory##category::_id
+#define B3D_LOG_GET_CATEGORY_ID(category) LogCategory##category::_id
 
-#define BS_LOG(verbosity, category, message, ...)                                                                                                                                                                            \
+#define B3D_LOG(verbosity, category, message, ...)                                                                                                                                                                            \
 	do                                                                                                                                                                                                                       \
 	{                                                                                                                                                                                                                        \
 		using namespace ::bs;                                                                                                                                                                                                \
-		if((i32)LogVerbosity::verbosity <= (i32)BS_LOG_VERBOSITY)                                                                                                                                                            \
+		if((i32)LogVerbosity::verbosity <= (i32)B3D_LOG_VERBOSITY)                                                                                                                                                            \
 		{                                                                                                                                                                                                                    \
 			GetDebug().Log(StringUtil::Format(message, ##__VA_ARGS__) + String("\n\t\t in ") + __PRETTY_FUNCTION__ + " [" + __FILE__ + ":" + ToString(__LINE__) + "]\n", LogVerbosity::verbosity, LogCategory##category::_id); \
 		}                                                                                                                                                                                                                    \
 	}                                                                                                                                                                                                                        \
 	while(0)
 
-	BS_LOG_CATEGORY(Uncategorized, 0)
-	BS_LOG_CATEGORY(FileSystem, 1)
-	BS_LOG_CATEGORY(RTTI, 2)
-	BS_LOG_CATEGORY(Generic, 3)
-	BS_LOG_CATEGORY(Platform, 4)
-	BS_LOG_CATEGORY(Serialization, 5)
+	B3D_LOG_CATEGORY(Uncategorized, 0)
+	B3D_LOG_CATEGORY(FileSystem, 1)
+	B3D_LOG_CATEGORY(RTTI, 2)
+	B3D_LOG_CATEGORY(Generic, 3)
+	B3D_LOG_CATEGORY(Platform, 4)
+	B3D_LOG_CATEGORY(Serialization, 5)
 
 	/** @} */
 } // namespace bs

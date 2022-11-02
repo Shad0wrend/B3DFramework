@@ -43,7 +43,7 @@ VulkanDescriptorPool::VulkanDescriptorPool(VulkanDevice& device)
 	poolCI.pPoolSizes = poolSizes;
 
 	VkResult result = vkCreateDescriptorPool(mDevice.GetLogical(), &poolCI, gVulkanAllocator, &mPool);
-	assert(result == VK_SUCCESS);
+	B3D_ASSERT(result == VK_SUCCESS);
 }
 
 VulkanDescriptorPool::~VulkanDescriptorPool()

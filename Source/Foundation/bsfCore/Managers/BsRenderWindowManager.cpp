@@ -231,7 +231,7 @@ void RenderWindowManager::WindowDestroyed(RenderWindow* window)
 		auto iterFind = std::find(begin(mCreatedWindows), end(mCreatedWindows), window);
 
 		if(iterFind == mCreatedWindows.end())
-			BS_EXCEPT(InternalErrorException, "Trying to destroy a window that is not in the created windows list.");
+			B3D_EXCEPT(InternalErrorException, "Trying to destroy a window that is not in the created windows list.");
 
 		mCreatedWindows.erase(iterFind);
 		mDirtyProperties.erase(window);

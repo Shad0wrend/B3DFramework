@@ -99,14 +99,14 @@ namespace bs
 
 		float operator[](const u32 i) const
 		{
-			assert(i < 4);
+			B3D_ASSERT(i < 4);
 
 			return *(&R + i);
 		}
 
 		float& operator[](const u32 i)
 		{
-			assert(i < 4);
+			B3D_ASSERT(i < 4);
 
 			return *(&R + i);
 		}
@@ -150,7 +150,7 @@ namespace bs
 
 		Color operator/(float rhs) const
 		{
-			assert(rhs != 0.0f);
+			B3D_ASSERT(rhs != 0.0f);
 			float invRhs = 1.0f / rhs;
 
 			return Color(R * invRhs, G * invRhs, B * invRhs, A * invRhs);
@@ -193,7 +193,7 @@ namespace bs
 
 		Color& operator/=(float rhs)
 		{
-			assert(rhs != 0.0f);
+			B3D_ASSERT(rhs != 0.0f);
 
 			float invRhs = 1.0f / rhs;
 

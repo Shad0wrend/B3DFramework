@@ -13,36 +13,36 @@ namespace bs
 	/** @cond SCRIPT_EXTENSIONS */
 
 	/** Extension class for RenderTarget, for adding additional functionality for the script interface. */
-	class BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget)) RenderTargetEx
+	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget)) RenderTargetEx
 	{
 	public:
 		/** @copydoc RenderTargetProperties::Width */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(Width), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(Width), Property(Getter))
 		static u32 GetWidth(const SPtr<RenderTarget>& thisPtr);
 
 		/** @copydoc RenderTargetProperties::Height */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(Height), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(Height), Property(Getter))
 		static u32 GetHeight(const SPtr<RenderTarget>& thisPtr);
 
 		/** @copydoc RenderTargetProperties::HwGamma */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(GammaCorrection), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(GammaCorrection), Property(Getter))
 		static bool GetGammaCorrection(const SPtr<RenderTarget>& thisPtr);
 
 		/** @copydoc RenderTargetProperties::Priority */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(Priority), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(Priority), Property(Getter))
 		static i32 GetPriority(const SPtr<RenderTarget>& thisPtr);
 
 		/** @copydoc RenderTargetProperties::Priority */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(Priority), Property(Setter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(Priority), Property(Setter))
 		static void SetPriority(const SPtr<RenderTarget>& thisPtr, i32 priority);
 
 		/** @copydoc RenderTargetProperties::MultisampleCount */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(SampleCount), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(RenderTarget), ExportName(SampleCount), Property(Getter))
 		static u32 GetSampleCount(const SPtr<RenderTarget>& thisPtr);
 	};
 
 	/** Extension class for RenderTexture, for adding additional functionality for the script interface. */
-	class BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTexture)) RenderTextureEx
+	class B3D_SCRIPT_EXPORT(ExtensionMethodForType(RenderTexture)) RenderTextureEx
 	{
 	public:
 		/**
@@ -57,7 +57,7 @@ namespace bs
 		 * @param[in]	depthStencilFormat	Format of the depth/stencil buffer, if @p createDepth is enabled. Format must
 		 *									be a valid depth/stencil format.
 		 */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(RenderTexture))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(RenderTexture))
 		static SPtr<RenderTexture> Create(PixelFormat format, int width, int height, int numSamples = 1, bool gammaCorrection = false, bool createDepth = false, PixelFormat depthStencilFormat = PF_D32);
 
 		/**
@@ -65,7 +65,7 @@ namespace bs
 		 *
 		 * @param[in]	colorSurface			Color texture to render color data to.
 		 */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(RenderTexture))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(RenderTexture))
 		static SPtr<RenderTexture> Create(BS_NORREF const HTexture& colorSurface);
 
 		/**
@@ -74,7 +74,7 @@ namespace bs
 		 * @param[in]	colorSurface			Color texture to render color data to.
 		 * @param[in]	depthStencilSurface		Optional depth/stencil texture to render depth/stencil data to.
 		 */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(RenderTexture))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(RenderTexture))
 		static SPtr<RenderTexture> Create(BS_NORREF const HTexture& colorSurface, BS_NORREF const HTexture& depthStencilSurface);
 
 		/**
@@ -82,7 +82,7 @@ namespace bs
 		 *
 		 * @param[in]	colorSurface			Color texture(s) to render color data to.
 		 */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(RenderTexture))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(RenderTexture))
 		static SPtr<RenderTexture> Create(BS_NORREF const Vector<HTexture>& colorSurface);
 
 		/**
@@ -91,19 +91,19 @@ namespace bs
 		 * @param[in]	colorSurface			Color texture(s) to render color data to.
 		 * @param[in]	depthStencilSurface		Optional depth/stencil texture to render depth/stencil data to.
 		 */
-		BS_SCRIPT_EXPORT(ExtensionConstructorForType(RenderTexture))
+		B3D_SCRIPT_EXPORT(ExtensionConstructorForType(RenderTexture))
 		static SPtr<RenderTexture> Create(BS_NORREF const Vector<HTexture>& colorSurface, BS_NORREF const HTexture& depthStencilSurface);
 
 		/** Returns the primary color surface that contains rendered color data. */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTexture), ExportName(ColorSurface), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(RenderTexture), ExportName(ColorSurface), Property(Getter))
 		static BS_NORREF HTexture GetColorSurface(const SPtr<RenderTexture>& thisPtr);
 
 		/** Returns all the color surfaces. */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTexture), ExportName(ColorSurfaces), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(RenderTexture), ExportName(ColorSurfaces), Property(Getter))
 		static BS_NORREF Vector<HTexture> GetColorSurfaces(const SPtr<RenderTexture>& thisPtr);
 
 		/** Returns the depth/stencil surface that contains rendered depth and stencil data. */
-		BS_SCRIPT_EXPORT(ExtensionMethodForType(RenderTexture), ExportName(DepthStencilSurface), Property(Getter))
+		B3D_SCRIPT_EXPORT(ExtensionMethodForType(RenderTexture), ExportName(DepthStencilSurface), Property(Getter))
 		static BS_NORREF HTexture GetDepthStencilSurface(const SPtr<RenderTexture>& thisPtr);
 	};
 

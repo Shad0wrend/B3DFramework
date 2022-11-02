@@ -55,7 +55,7 @@ Vector<VertexElement> GLSLParamParser::BuildVertexDeclaration(GLuint glProgram)
 			// Ignore built-in attributes
 			if(memcmp(attributeName, "gl_", 3) != 0)
 			{
-				BS_LOG(Warning, RenderBackend, "Cannot determine vertex input attribute type for attribute: {0}", String(attributeName));
+				B3D_LOG(Warning, RenderBackend, "Cannot determine vertex input attribute type for attribute: {0}", String(attributeName));
 			}
 		}
 	}
@@ -131,7 +131,7 @@ VertexElementType GLSLParamParser::GlTypeToAttributeType(GLenum glType)
 	case GL_UNSIGNED_INT_VEC4:
 		return VET_UINT4;
 	default:
-		BS_EXCEPT(NotImplementedException, "Unsupported vertex attribute type.");
+		B3D_EXCEPT(NotImplementedException, "Unsupported vertex attribute type.");
 	}
 
 	return VET_FLOAT4;
@@ -688,11 +688,11 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 		glGetActiveUniformBlockiv(glProgram, iter->second.Slot - 1, GL_UNIFORM_BLOCK_DATA_SIZE, &blockSize);
 		BS_CHECK_GL_ERROR();
 
-		assert(blockSize % 4 == 0);
+		B3D_ASSERT(blockSize % 4 == 0);
 		blockSize = blockSize / 4;
 
 		if((i32)iter->second.BlockSize != blockSize)
-			BS_EXCEPT(InternalErrorException, "OpenGL specified and manual uniform block buffer sizes don't match!");
+			B3D_EXCEPT(InternalErrorException, "OpenGL specified and manual uniform block buffer sizes don't match!");
 	}
 #endif
 
@@ -789,7 +789,7 @@ void GLSLParamParser::DetermineParamInfo(GpuParamDataDesc& desc, const String& p
 		desc.ElementSize = 12;
 		break;
 	default:
-		BS_EXCEPT(InternalErrorException, "Invalid shader parameter type: " + toString(uniformType) + " for parameter " + paramName);
+		B3D_EXCEPT(InternalErrorException, "Invalid shader parameter type: " + toString(uniformType) + " for parameter " + paramName);
 	}
 
 	if(arraySize > 1)
@@ -800,7 +800,7 @@ void GLSLParamParser::DetermineParamInfo(GpuParamDataDesc& desc, const String& p
 
 		if(arrayStride > 0)
 		{
-			assert(arrayStride % 4 == 0);
+			B3D_ASSERT(arrayStride % 4 == 0);
 
 			desc.ArrayElementStride = arrayStride / 4;
 		}

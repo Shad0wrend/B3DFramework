@@ -64,7 +64,7 @@ void TColorGradient<COLOR, TIME>::SetKeys(const Vector<ColorGradientKey>& keys, 
 		float time = keys[0].Time;
 		for(u32 i = 1; i < (u32)keys.size(); i++)
 		{
-			assert(keys[i].Time >= time);
+			B3D_ASSERT(keys[i].Time >= time);
 			time = keys[i].Time;
 		}
 	}
@@ -72,7 +72,7 @@ void TColorGradient<COLOR, TIME>::SetKeys(const Vector<ColorGradientKey>& keys, 
 
 	if(keys.size() > kMaxKeys)
 	{
-		BS_LOG(Warning, Generic, "Number of keys in ColorGradient exceeds the support number ({0}). "
+		B3D_LOG(Warning, Generic, "Number of keys in ColorGradient exceeds the support number ({0}). "
 								 "Keys will be ignored.",
 			   kMaxKeys);
 	}

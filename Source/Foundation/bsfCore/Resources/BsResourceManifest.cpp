@@ -123,7 +123,7 @@ void ResourceManifest::Save(const SPtr<ResourceManifest>& manifest, const Path& 
 		{
 			if(!relativePath.Includes(elem.first))
 			{
-				BS_EXCEPT(InvalidStateException, "Path in resource manifest cannot be made relative to: \"" + relativePath.ToString() + "\". Path: \"" + elem.first.ToString() + "\"");
+				B3D_EXCEPT(InvalidStateException, "Path in resource manifest cannot be made relative to: \"" + relativePath.ToString() + "\". Path: \"" + elem.first.ToString() + "\"");
 			}
 
 			Path elementRelativePath = elem.first.GetRelative(relativePath);
@@ -135,7 +135,7 @@ void ResourceManifest::Save(const SPtr<ResourceManifest>& manifest, const Path& 
 		{
 			if(!relativePath.Includes(elem.second))
 			{
-				BS_EXCEPT(InvalidStateException, "Path in resource manifest cannot be made relative to: \"" + relativePath.ToString() + "\". Path: \"" + elem.second.ToString() + "\"");
+				B3D_EXCEPT(InvalidStateException, "Path in resource manifest cannot be made relative to: \"" + relativePath.ToString() + "\". Path: \"" + elem.second.ToString() + "\"");
 			}
 
 			Path elementRelativePath = elem.second.GetRelative(relativePath);

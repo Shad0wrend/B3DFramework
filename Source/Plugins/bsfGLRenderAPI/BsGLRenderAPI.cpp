@@ -68,7 +68,7 @@ void B3DCheckForOpenGLError(const char* function, const char* file, i32 line)
 			errorCode = glGetError();
 		}
 
-		BS_LOG(Warning, RenderBackend, errorOutput.str());
+		B3D_LOG(Warning, RenderBackend, errorOutput.str());
 	}
 }
 
@@ -478,7 +478,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<Comm
 						   (surface.numMipLevels != 0 && surface.numMipLevels != props.getNumMipmaps()) ||
 						   (surface.numFaces != 0 && surface.numFaces != props.getNumFaces()))
 						{
-							BS_LOG(Warning, RenderBackend, "Attempting to bind only a part of a texture, but texture views are not supported. "
+							B3D_LOG(Warning, RenderBackend, "Attempting to bind only a part of a texture, but texture views are not supported. "
 														   "Entire texture will be bound instead.");
 						}
 
@@ -671,14 +671,14 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<Comm
 
 						if(!bindAllLayers && surface.NumFaces > 1)
 						{
-							BS_LOG(Warning, RenderBackend, "Attempting to bind multiple faces of a load-store texture."
+							B3D_LOG(Warning, RenderBackend, "Attempting to bind multiple faces of a load-store texture."
 														   "You are allowed to bind either a single face, or all the faces of the texture. Only "
 														   "the first face will be bound instead.");
 						}
 
 						if(surface.NumMipLevels > 1)
 						{
-							BS_LOG(Warning, RenderBackend, "Attempting to bind multiple mip levels of a load-store "
+							B3D_LOG(Warning, RenderBackend, "Attempting to bind multiple mip levels of a load-store "
 														   "texture. This is not supported and only the first provided level will be bound.");
 						}
 
@@ -989,7 +989,7 @@ void GLRenderAPI::SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u32 n
 	u32 lastIdx = index + numBuffers;
 	if(lastIdx > kMaxVbCount)
 	{
-		BS_LOG(Error, RenderBackend, "Provided vertex buffer slot range is invalid: {0} to {1}.", index, index + numBuffers);
+		B3D_LOG(Error, RenderBackend, "Provided vertex buffer slot range is invalid: {0} to {1}.", index, index + numBuffers);
 		return;
 	}
 #endif
@@ -1107,7 +1107,7 @@ void GLRenderAPI::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, 
 
 		if(mBoundIndexBuffer == nullptr)
 		{
-			BS_LOG(Warning, RenderBackend, "Cannot draw indexed because index buffer is not set.");
+			B3D_LOG(Warning, RenderBackend, "Cannot draw indexed because index buffer is not set.");
 			return;
 		}
 
@@ -1171,7 +1171,7 @@ void GLRenderAPI::DispatchCompute(u32 numGroupsX, u32 numGroupsY, u32 numGroupsZ
 
 		if(mCurrentComputeProgram == nullptr)
 		{
-			BS_LOG(Warning, RenderBackend, "Cannot dispatch compute without a set compute program.");
+			B3D_LOG(Warning, RenderBackend, "Cannot dispatch compute without a set compute program.");
 			return;
 		}
 
@@ -1184,7 +1184,7 @@ void GLRenderAPI::DispatchCompute(u32 numGroupsX, u32 numGroupsY, u32 numGroupsZ
 
 		glMemoryBarrier(GL_ALL_BARRIER_BITS);
 #else
-		BS_LOG(Warning, RenderBackend, "Compute shaders not supported on current OpenGL version.");
+		B3D_LOG(Warning, RenderBackend, "Compute shaders not supported on current OpenGL version.");
 #endif
 	};
 
@@ -1283,7 +1283,7 @@ void GLRenderAPI::AddCommands(const SPtr<CommandBuffer>& commandBuffer, const SP
 {
 	// We're not supporting this as we don't support command buffer command queuing at all (i.e. they are executed
 	// straight away).
-	BS_LOG(Error, RenderBackend, "Secondary command buffers not supported on OpenGL.");
+	B3D_LOG(Error, RenderBackend, "Secondary command buffers not supported on OpenGL.");
 }
 
 void GLRenderAPI::SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, u32 syncMask)
@@ -2028,7 +2028,7 @@ bool GLRenderAPI::ActivateGlTextureUnit(u16 unit)
 		}
 		else
 		{
-			BS_LOG(Warning, RenderBackend, "Provided texture unit index is higher than OpenGL supports. Provided: {0}. "
+			B3D_LOG(Warning, RenderBackend, "Provided texture unit index is higher than OpenGL supports. Provided: {0}. "
 										   "Supported range: 0 .. {1}",
 				   unit, GetCapabilities(0).NumCombinedTextureUnits - 1);
 			return false;
@@ -2043,25 +2043,25 @@ bool GLRenderAPI::ActivateGlTextureUnit(u16 unit)
 void GLRenderAPI::BeginDraw()
 {
 	if(mDrawCallInProgress)
-		BS_EXCEPT(InternalErrorException, "Calling beginDraw without finishing previous draw call. Please call endDraw().");
+		B3D_EXCEPT(InternalErrorException, "Calling beginDraw without finishing previous draw call. Please call endDraw().");
 
 	mDrawCallInProgress = true;
 
 	if(mCurrentVertexProgram == nullptr)
 	{
-		BS_LOG(Warning, RenderBackend, "Cannot render without a set vertex shader.");
+		B3D_LOG(Warning, RenderBackend, "Cannot render without a set vertex shader.");
 		return;
 	}
 
 	if(mBoundVertexDeclaration == nullptr)
 	{
-		BS_LOG(Warning, RenderBackend, "Cannot render without a set vertex declaration.");
+		B3D_LOG(Warning, RenderBackend, "Cannot render without a set vertex declaration.");
 		return;
 	}
 
 	if(mScissorRectDirty)
 	{
-		assert(mScissorEnabled);
+		B3D_ASSERT(mScissorEnabled);
 		SetScissorTestEnable(true);
 	}
 
@@ -2303,7 +2303,7 @@ SPtr<GLSLGpuProgram> GLRenderAPI::GetActiveProgram(GpuProgramType gptype) const
 	case GPT_COMPUTE_PROGRAM:
 		return mCurrentComputeProgram;
 	default:
-		BS_EXCEPT(InvalidParametersException, "Unsupported gpu program type: " + toString(gptype));
+		B3D_EXCEPT(InvalidParametersException, "Unsupported gpu program type: " + toString(gptype));
 	}
 
 	return nullptr;
@@ -2313,7 +2313,7 @@ void GLRenderAPI::InitFromCaps(RenderAPICapabilities* caps)
 {
 	if(caps->RenderApiName != GetName())
 	{
-		BS_EXCEPT(InvalidParametersException, "Trying to initialize GLRenderAPI from RenderSystemCapabilities that do not support OpenGL");
+		B3D_EXCEPT(InvalidParametersException, "Trying to initialize GLRenderAPI from RenderSystemCapabilities that do not support OpenGL");
 	}
 
 #if BS_DEBUG_MODE && (BS_OPENGL_4_3 || BS_OPENGLES_3_2)
@@ -2706,7 +2706,7 @@ void OpenGlErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 {
 	if(type != GL_DEBUG_TYPE_PERFORMANCE && type != GL_DEBUG_TYPE_OTHER)
 	{
-		BS_EXCEPT(RenderingAPIException, "OpenGL error: " + String(message));
+		B3D_EXCEPT(RenderingAPIException, "OpenGL error: " + String(message));
 	}
 }
 #endif

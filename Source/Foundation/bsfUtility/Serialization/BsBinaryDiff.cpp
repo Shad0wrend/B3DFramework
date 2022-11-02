@@ -563,7 +563,7 @@ RTTIObjectWrapper<true> RTTIFieldWrapper<true>::GetObject() const
 		return RTTIObjectWrapper<true>(obj, field->GetType());
 	}
 
-	assert(false && "Invalid field type");
+	B3D_ASSERT(false && "Invalid field type");
 	return RTTIObjectWrapper<true>(nullptr, nullptr);
 }
 
@@ -1074,7 +1074,7 @@ void IDiff::ApplyDiff(const SPtr<IReflectable>& object, const SPtr<SerializedObj
 						rttiInstance = iter->first;
 				}
 
-				assert(rttiInstance);
+				B3D_ASSERT(rttiInstance);
 			}
 			break;
 		case Diff_ObjectEnd:

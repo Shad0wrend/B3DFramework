@@ -108,7 +108,7 @@ unsigned short VertexElement::GetTypeCount(VertexElementType etype)
 		break;
 	}
 
-	BS_EXCEPT(InvalidParametersException, "Invalid type");
+	B3D_EXCEPT(InvalidParametersException, "Invalid type");
 	return 0;
 }
 
@@ -196,7 +196,7 @@ bool VertexDeclarationProperties::operator!=(const VertexDeclarationProperties& 
 
 const VertexElement* VertexDeclarationProperties::GetElement(u16 index) const
 {
-	assert(index < mElementList.size() && "Index out of bounds");
+	B3D_ASSERT(index < mElementList.size() && "Index out of bounds");
 
 	auto iter = mElementList.begin();
 	for(u16 i = 0; i < index; ++i)

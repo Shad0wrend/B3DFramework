@@ -40,7 +40,7 @@ void TMaterialDataParam<T, Core>::Set(const T& value, u32 arrayIdx) const
 
 	if(arrayIdx >= this->mArraySize)
 	{
-		BS_LOG(Warning, Material, "Array index out of range. Provided index was {0} but array length is {1}", arrayIdx, this->mArraySize);
+		B3D_LOG(Warning, Material, "Array index out of range. Provided index was {0} but array length is {1}", arrayIdx, this->mArraySize);
 		return;
 	}
 
@@ -73,7 +73,7 @@ void TMaterialCurveParam<T, Core>::Set(TAnimationCurve<T> value, u32 arrayIdx) c
 
 	if(arrayIdx >= this->mArraySize)
 	{
-		BS_LOG(Warning, Material, "Array index out of range. Provided index was {0} but array length is {1}", arrayIdx, this->mArraySize);
+		B3D_LOG(Warning, Material, "Array index out of range. Provided index was {0} but array length is {1}", arrayIdx, this->mArraySize);
 		return;
 	}
 
@@ -106,7 +106,7 @@ void TMaterialColorGradientParam<Core>::Set(const ColorGradientHDR& value, u32 a
 
 	if(arrayIdx >= this->mArraySize)
 	{
-		BS_LOG(Warning, Material, "Array index out of range. Provided index was {0} but array length is {1}", arrayIdx, this->mArraySize);
+		B3D_LOG(Warning, Material, "Array index out of range. Provided index was {0} but array length is {1}", arrayIdx, this->mArraySize);
 		return;
 	}
 
@@ -139,7 +139,7 @@ void TMaterialParamStruct<Core>::Set(const void* value, u32 sizeBytes, u32 array
 
 	if(arrayIdx >= this->mArraySize)
 	{
-		BS_LOG(Warning, Material, "Array index out of range. Provided index was {0} but array length is {1}", arrayIdx, this->mArraySize);
+		B3D_LOG(Warning, Material, "Array index out of range. Provided index was {0} but array length is {1}", arrayIdx, this->mArraySize);
 		return;
 	}
 

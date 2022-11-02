@@ -22,7 +22,7 @@ namespace bs
 
 		virtual ~BaseConnectionData()
 		{
-			assert(!HandleLinks && !IsActive);
+			B3D_ASSERT(!HandleLinks && !IsActive);
 		}
 
 		virtual void Deactivate()

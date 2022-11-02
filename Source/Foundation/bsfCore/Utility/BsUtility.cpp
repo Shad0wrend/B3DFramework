@@ -219,7 +219,7 @@ class CoreSerializationContextRTTI : public RTTIType<CoreSerializationContext, S
 
 	SPtr<IReflectable> NewRttiObject() override
 	{
-		BS_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
+		B3D_EXCEPT(InternalErrorException, "Cannot instantiate an abstract class.");
 		return nullptr;
 	}
 };

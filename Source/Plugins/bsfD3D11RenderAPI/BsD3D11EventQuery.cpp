@@ -12,7 +12,7 @@ using namespace bs::ct;
 
 D3D11EventQuery::D3D11EventQuery(u32 deviceIdx)
 {
-	assert(deviceIdx == 0 && "Multiple GPUs not supported natively on DirectX 11.");
+	B3D_ASSERT(deviceIdx == 0 && "Multiple GPUs not supported natively on DirectX 11.");
 
 	D3D11RenderAPI* rs = static_cast<D3D11RenderAPI*>(RenderAPI::InstancePtr());
 	D3D11Device& device = rs->GetPrimaryDevice();
@@ -24,7 +24,7 @@ D3D11EventQuery::D3D11EventQuery(u32 deviceIdx)
 	HRESULT hr = device.GetD3D11Device()->CreateQuery(&queryDesc, &mQuery);
 	if(hr != S_OK)
 	{
-		BS_EXCEPT(RenderingAPIException, "Failed to create an Event query.");
+		B3D_EXCEPT(RenderingAPIException, "Failed to create an Event query.");
 	}
 
 	mContext = device.GetImmediateContext();
