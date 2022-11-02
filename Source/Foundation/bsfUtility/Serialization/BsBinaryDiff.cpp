@@ -16,8 +16,6 @@ namespace bs
 	struct SerializationContext;
 } // namespace bs
 
-namespace impl
-{
 /** Helper class that wraps either an IReflectable or a SerializedObject object instance. */
 template <bool REFL>
 class RTTIObjectWrapper
@@ -1004,7 +1002,6 @@ SPtr<SerializedObject> GenerateDiff(RTTIObjectWrapper<REFL_ORG> orgObj, RTTIObje
 
 	return output;
 }
-} // namespace impl
 
 SPtr<SerializedObject> IDiff::GenerateDiff(const SPtr<IReflectable>& orgObj, const SPtr<IReflectable>& newObj, bool replicableOnly)
 {
@@ -1184,29 +1181,29 @@ SPtr<SerializedObject> BinaryDiff::GenerateDiffInternal(IReflectable* orgObj, IR
 {
 	if(orgObj->GetTypeId() == TID_SerializedObject)
 	{
-		::impl::RTTIObjectWrapper<false> orgObjWrapper(static_cast<SerializedObject*>(orgObj));
+		RTTIObjectWrapper<false> orgObjWrapper(static_cast<SerializedObject*>(orgObj));
 
 		if(newObj->GetTypeId() == TID_SerializedObject)
 		{
-			::impl::RTTIObjectWrapper<false> newObjWrapper(static_cast<SerializedObject*>(newObj));
-			return ::impl::GenerateDiff(orgObjWrapper, newObjWrapper, objectMap, replicableOnly);
+			RTTIObjectWrapper<false> newObjWrapper(static_cast<SerializedObject*>(newObj));
+			return ::GenerateDiff(orgObjWrapper, newObjWrapper, objectMap, replicableOnly);
 		}
 
-		::impl::RTTIObjectWrapper<true> newObjWrapper(newObj, newObj->GetRtti());
-		return ::impl::GenerateDiff(orgObjWrapper, newObjWrapper, objectMap, replicableOnly);
+		RTTIObjectWrapper<true> newObjWrapper(newObj, newObj->GetRtti());
+		return ::GenerateDiff(orgObjWrapper, newObjWrapper, objectMap, replicableOnly);
 	}
 	else
 	{
-		::impl::RTTIObjectWrapper<true> orgObjWrapper(orgObj, orgObj->GetRtti());
+		RTTIObjectWrapper<true> orgObjWrapper(orgObj, orgObj->GetRtti());
 
 		if(newObj->GetTypeId() == TID_SerializedObject)
 		{
-			::impl::RTTIObjectWrapper<false> newObjWrapper(static_cast<SerializedObject*>(newObj));
-			return ::impl::GenerateDiff(orgObjWrapper, newObjWrapper, objectMap, replicableOnly);
+			RTTIObjectWrapper<false> newObjWrapper(static_cast<SerializedObject*>(newObj));
+			return ::GenerateDiff(orgObjWrapper, newObjWrapper, objectMap, replicableOnly);
 		}
 
-		::impl::RTTIObjectWrapper<true> newObjWrapper(newObj, newObj->GetRtti());
-		return ::impl::GenerateDiff(orgObjWrapper, newObjWrapper, objectMap, replicableOnly);
+		RTTIObjectWrapper<true> newObjWrapper(newObj, newObj->GetRtti());
+		return ::GenerateDiff(orgObjWrapper, newObjWrapper, objectMap, replicableOnly);
 	}
 }
 

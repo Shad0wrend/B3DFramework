@@ -144,7 +144,7 @@ void GUIInputBox::UpdateRenderElementsInternal()
 
 	// Populate GUI render elements from the sprites
 	{
-		using T = impl::GUIRenderElementHelper;
+		using T = GUIRenderElementHelper;
 		T::Populate({ T::SpriteInfo(mTextSprite, 1), T::SpriteInfo(mImageSprite, 3), T::SpriteInfo(caretSprite) }, mRenderElements);
 
 		if(mSelectionShown)

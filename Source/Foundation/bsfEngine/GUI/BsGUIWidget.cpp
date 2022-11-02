@@ -17,8 +17,6 @@
 
 using namespace bs;
 
-namespace impl
-{
 SPtr<VertexDataDesc> GetGUITriangleMeshDesc()
 {
 	static SPtr<VertexDataDesc> sDesc;
@@ -45,7 +43,6 @@ SPtr<VertexDataDesc> GetGUILineMeshDesc()
 
 	return sDesc;
 }
-} // namespace impl
 
 GUIDrawGroups::GUIDrawGroups(GUIWidget* parentWidget)
 	: mWidget(parentWidget)
@@ -661,7 +658,7 @@ void GUIDrawGroups::RebuildMeshes()
 		}
 
 		SPtr<MeshData> meshData[2];
-		SPtr<VertexDataDesc> vertexDesc[2] = { ::impl::GetGUITriangleMeshDesc(), ::impl::GetGUILineMeshDesc() };
+		SPtr<VertexDataDesc> vertexDesc[2] = { GetGUITriangleMeshDesc(), GetGUILineMeshDesc() };
 
 		u8* vertices[2] = { nullptr, nullptr };
 		u32* indices[2] = { nullptr, nullptr };

@@ -334,59 +334,56 @@ namespace bs
 	/** @} */
 
 	/** @cond IMPLEMENTATION */
-	namespace impl
+	/** Helper class used for populating GUIRenderElement information from Sprite objects. */
+	struct GUIRenderElementHelper
 	{
-		/** Helper class used for populating GUIRenderElement information from Sprite objects. */
-		struct GUIRenderElementHelper
+		/**
+		 * Contains the sprite to generate render element data for, as well as additional data not provided in the
+		 * sprite itself.
+		 */
+		struct SpriteInfo
 		{
-			/**
-			 * Contains the sprite to generate render element data for, as well as additional data not provided in the
-			 * sprite itself.
-			 */
-			struct SpriteInfo
+			SpriteInfo(Sprite* sprite, u32 depth = 0, GUIMeshType meshType = GUIMeshType::Triangle)
+				: Sprite(sprite), Depth(depth), MeshType(meshType)
+			{}
+
+			Sprite* Sprite;
+			u32 Depth = 0;
+			GUIMeshType MeshType = GUIMeshType::Triangle;
+		};
+
+		/**
+		 * Determines the total number of requires render elements from the provided set of sprites, and initializes that
+		 * many render elements from the sprite render elements and the extra information provided in SpriteInfo.
+		 */
+		template <u32 N>
+		static void Populate(const SpriteInfo (&spriteInfos)[N], SmallVector<GUIRenderElement, 4>& output)
+		{
+			u32 totalCount = 0;
+			for(u32 i = 0; i < N; i++)
+				totalCount += spriteInfos[i].Sprite ? spriteInfos[i].Sprite->GetNumRenderElements() : 0;
+
+			output.Resize(totalCount);
+
+			u32 globalIdx = 0;
+			for(u32 i = 0; i < N; i++)
 			{
-				SpriteInfo(Sprite* sprite, u32 depth = 0, GUIMeshType meshType = GUIMeshType::Triangle)
-					: Sprite(sprite), Depth(depth), MeshType(meshType)
-				{}
+				const SpriteInfo& spriteInfo = spriteInfos[i];
 
-				Sprite* Sprite;
-				u32 Depth = 0;
-				GUIMeshType MeshType = GUIMeshType::Triangle;
-			};
-
-			/**
-			 * Determines the total number of requires render elements from the provided set of sprites, and initializes that
-			 * many render elements from the sprite render elements and the extra information provided in SpriteInfo.
-			 */
-			template <u32 N>
-			static void Populate(const SpriteInfo (&spriteInfos)[N], SmallVector<GUIRenderElement, 4>& output)
-			{
-				u32 totalCount = 0;
-				for(u32 i = 0; i < N; i++)
-					totalCount += spriteInfos[i].Sprite ? spriteInfos[i].Sprite->GetNumRenderElements() : 0;
-
-				output.Resize(totalCount);
-
-				u32 globalIdx = 0;
-				for(u32 i = 0; i < N; i++)
+				u32 count = spriteInfo.Sprite ? spriteInfo.Sprite->GetNumRenderElements() : 0;
+				for(u32 j = 0; j < count; j++)
 				{
-					const SpriteInfo& spriteInfo = spriteInfos[i];
+					GUIRenderElement& renderElem = output[globalIdx];
+					spriteInfo.Sprite->GetRenderElementInfo(j, renderElem);
 
-					u32 count = spriteInfo.Sprite ? spriteInfo.Sprite->GetNumRenderElements() : 0;
-					for(u32 j = 0; j < count; j++)
-					{
-						GUIRenderElement& renderElem = output[globalIdx];
-						spriteInfo.Sprite->GetRenderElementInfo(j, renderElem);
+					renderElem.Depth = spriteInfo.Depth;
+					renderElem.Type = spriteInfo.MeshType;
 
-						renderElem.Depth = spriteInfo.Depth;
-						renderElem.Type = spriteInfo.MeshType;
-
-						globalIdx++;
-					}
+					globalIdx++;
 				}
 			}
-		};
-	} // namespace impl
+		}
+	};
 
 	/** @endcond */
 } // namespace bs

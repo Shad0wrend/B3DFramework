@@ -15,117 +15,114 @@ namespace bs
 	////////////// Various helper methods used for syncing data between the simulation and the core threads. ///////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	namespace detail
+	// Checks is the provided type a shared pointer
+	template <typename T>
+	struct is_shared_ptr : std::false_type
+	{};
+
+	template <typename T>
+	struct is_shared_ptr<SPtr<T>> : std::true_type
+	{};
+
+	// Checks is the provided type a resource handle
+	template <typename T>
+	struct is_resource_handle : std::false_type
+	{};
+
+	template <typename T>
+	struct is_resource_handle<ResourceHandle<T>> : std::true_type
+	{};
+
+	// Returns the underlying type if the provided type is a resource handle, or itself otherwise
+	template <typename T>
+	struct decay_handle
 	{
-		// Checks is the provided type a shared pointer
-		template <typename T>
-		struct is_shared_ptr : std::false_type
-		{};
+		using value = T;
+	};
 
-		template <typename T>
-		struct is_shared_ptr<SPtr<T>> : std::true_type
-		{};
+	template <typename T>
+	struct decay_handle<ResourceHandle<T>>
+	{
+		using value = T;
+	};
 
-		// Checks is the provided type a resource handle
-		template <typename T>
-		struct is_resource_handle : std::false_type
-		{};
+	// Returns the underlying type if the provided type is a shared pointer, or itself otherwise
+	template <typename T>
+	struct decay_sptr
+	{
+		using value = T;
+	};
 
-		template <typename T>
-		struct is_resource_handle<ResourceHandle<T>> : std::true_type
-		{};
+	template <typename T>
+	struct decay_sptr<SPtr<T>>
+	{
+		using value = typename SPtr<T>::element_type;
+	};
 
-		// Returns the underlying type if the provided type is a resource handle, or itself otherwise
-		template <typename T>
-		struct decay_handle
-		{
-			using value = T;
-		};
+	// Checks if a specific template specialization exists
+	template <class T, std::size_t = sizeof(T)>
+	std::true_type IsCompleteImpl(T*);
+	std::false_type IsCompleteImpl(...);
+	template <class T>
+	using is_complete = decltype(is_complete_impl(std::declval<T*>()));
 
-		template <typename T>
-		struct decay_handle<ResourceHandle<T>>
-		{
-			using value = T;
-		};
+	template <typename T>
+	using decay_all_t = typename decay_sptr<typename decay_handle<std::decay_t<T>>::value>::value;
 
-		// Returns the underlying type if the provided type is a shared pointer, or itself otherwise
-		template <typename T>
-		struct decay_sptr
-		{
-			using value = T;
-		};
+	// Converts a ResourceHandle to an underlying SPtr, or if the type is not a ResourceHandle it just passes it
+	// through as is.
 
-		template <typename T>
-		struct decay_sptr<SPtr<T>>
-		{
-			using value = typename SPtr<T>::element_type;
-		};
+	/** Pass non-resource-handle types as is. */
+	template <class T>
+	T&& RemoveHandle(T&& value, std::enable_if_t<!is_resource_handle<std::decay_t<T>>::value>* = 0)
+	{
+		return std::forward<T>(value);
+	}
 
-		// Checks if a specific template specialization exists
-		template <class T, std::size_t = sizeof(T)>
-		std::true_type IsCompleteImpl(T*);
-		std::false_type IsCompleteImpl(...);
-		template <class T>
-		using is_complete = decltype(is_complete_impl(std::declval<T*>()));
+	/** Convert a resource handle to the underlying resource SPtr. */
+	template <class T>
+	decltype(((std::decay_t<T>*)nullptr)->GetInternalPtr()) RemoveHandle(T&& handle, std::enable_if_t<is_resource_handle<std::decay_t<T>>::value>* = 0)
+	{
+		if(handle.IsLoaded(false))
+			return handle.GetInternalPtr();
 
-		template <typename T>
-		using decay_all_t = typename decay_sptr<typename decay_handle<std::decay_t<T>>::value>::value;
+		return nullptr;
+	}
 
-		// Converts a ResourceHandle to an underlying SPtr, or if the type is not a ResourceHandle it just passes it
-		// through as is.
+	// Converts a sim thread CoreObject into a core thread CoreObject. If the type is not a core-object, it is just
+	// passed through as is.
 
-		/** Pass non-resource-handle types as is. */
-		template <class T>
-		T&& RemoveHandle(T&& value, std::enable_if_t<!is_resource_handle<std::decay_t<T>>::value>* = 0)
-		{
-			return std::forward<T>(value);
-		}
+	/** Pass non-shared-pointers as is, they aren't core objects. */
+	template <class T>
+	T&& GetCoreObject(T&& value, std::enable_if_t<!is_shared_ptr<std::decay_t<T>>::value>* = 0)
+	{
+		return std::forward<T>(value);
+	}
 
-		/** Convert a resource handle to the underlying resource SPtr. */
-		template <class T>
-		decltype(((std::decay_t<T>*)nullptr)->GetInternalPtr()) RemoveHandle(T&& handle, std::enable_if_t<is_resource_handle<std::decay_t<T>>::value>* = 0)
-		{
-			if(handle.IsLoaded(false))
-				return handle.GetInternalPtr();
+	/** Pass shared-pointers to non-classes as is, they aren't core objects. */
+	template <class T>
+	T&& GetCoreObject(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value && !std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value>* = 0)
+	{
+		return std::forward<T>(value);
+	}
 
-			return nullptr;
-		}
+	/** Pass shared-pointers to classes that don't derive from CoreObject as is, they aren't core objects. */
+	template <class T>
+	T&& GetCoreObject(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value && (std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value && !std::is_base_of<CoreObject, std::decay_t<typename std::decay_t<T>::element_type>>::value)>* = 0)
+	{
+		return std::forward<T>(value);
+	}
 
-		// Converts a sim thread CoreObject into a core thread CoreObject. If the type is not a core-object, it is just
-		// passed through as is.
+	/** Convert shared-pointers with classes that derive from CoreObject to their core thread variants. */
+	template <class T>
+	decltype(((std::decay_t<typename std::decay_t<T>::element_type>*)nullptr)->GetCore())
+	GetCoreObject(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value && (std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value && std::is_base_of<CoreObject, std::decay_t<typename std::decay_t<T>::element_type>>::value)>* = 0)
+	{
+		if(value)
+			return value->GetCore();
 
-		/** Pass non-shared-pointers as is, they aren't core objects. */
-		template <class T>
-		T&& GetCoreObject(T&& value, std::enable_if_t<!is_shared_ptr<std::decay_t<T>>::value>* = 0)
-		{
-			return std::forward<T>(value);
-		}
-
-		/** Pass shared-pointers to non-classes as is, they aren't core objects. */
-		template <class T>
-		T&& GetCoreObject(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value && !std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value>* = 0)
-		{
-			return std::forward<T>(value);
-		}
-
-		/** Pass shared-pointers to classes that don't derive from CoreObject as is, they aren't core objects. */
-		template <class T>
-		T&& GetCoreObject(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value && (std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value && !std::is_base_of<CoreObject, std::decay_t<typename std::decay_t<T>::element_type>>::value)>* = 0)
-		{
-			return std::forward<T>(value);
-		}
-
-		/** Convert shared-pointers with classes that derive from CoreObject to their core thread variants. */
-		template <class T>
-		decltype(((std::decay_t<typename std::decay_t<T>::element_type>*)nullptr)->GetCore())
-		GetCoreObject(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value && (std::is_class<std::decay_t<typename std::decay_t<T>::element_type>>::value && std::is_base_of<CoreObject, std::decay_t<typename std::decay_t<T>::element_type>>::value)>* = 0)
-		{
-			if(value)
-				return value->GetCore();
-
-			return nullptr;
-		}
-	} // namespace detail
+		return nullptr;
+	}
 
 	/** @} */
 
@@ -162,18 +159,18 @@ namespace bs
 		template <class T>
 		void operator()(T&& value, std::enable_if_t<!has_rttiEnumFields<T>::kValue>* = 0)
 		{
-			WriteInternal(detail::GetCoreObject(detail::RemoveHandle(std::forward<T>(value))));
+			WriteInternal(GetCoreObject(RemoveHandle(std::forward<T>(value))));
 		}
 
 	private:
 		template <class T>
-		void WriteInternal(T&& value, std::enable_if_t<!detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
+		void WriteInternal(T&& value, std::enable_if_t<!is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			B3DRTTIWrite(value, mStream);
 		}
 
 		template <class T>
-		void WriteInternal(T&& value, std::enable_if_t<detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
+		void WriteInternal(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			using SPtrType = std::decay_t<T>;
 
@@ -217,13 +214,13 @@ namespace bs
 
 	private:
 		template <class T>
-		void ReadInternal(T&& value, std::enable_if_t<!detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
+		void ReadInternal(T&& value, std::enable_if_t<!is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			B3DRTTIRead(value, mStream);
 		}
 
 		template <class T>
-		void ReadInternal(T&& value, std::enable_if_t<detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
+		void ReadInternal(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			using SPtrType = std::decay_t<T>;
 
@@ -265,18 +262,18 @@ namespace bs
 		template <class T>
 		void operator()(T&& value, std::enable_if_t<!has_rttiEnumFields<T>::kValue>* = 0)
 		{
-			GetSizeInternal(detail::GetCoreObject(detail::RemoveHandle(std::forward<T>(value))));
+			GetSizeInternal(GetCoreObject(RemoveHandle(std::forward<T>(value))));
 		}
 
 	private:
 		template <class T>
-		void GetSizeInternal(T&& value, std::enable_if_t<!detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
+		void GetSizeInternal(T&& value, std::enable_if_t<!is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			mSize += B3DRTTISize(value).Bytes;
 		}
 
 		template <class T>
-		void GetSizeInternal(T&& value, std::enable_if_t<detail::is_shared_ptr<std::decay_t<T>>::value>* = 0)
+		void GetSizeInternal(T&& value, std::enable_if_t<is_shared_ptr<std::decay_t<T>>::value>* = 0)
 		{
 			using SPtrType = std::decay_t<T>;
 			mSize += sizeof(SPtrType);

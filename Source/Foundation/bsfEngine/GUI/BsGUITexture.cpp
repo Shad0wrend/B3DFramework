@@ -169,7 +169,7 @@ void GUITexture::UpdateRenderElementsInternal()
 
 	// Populate GUI render elements from the sprites
 	{
-		using T = impl::GUIRenderElementHelper;
+		using T = GUIRenderElementHelper;
 		T::Populate({ T::SpriteInfo(mImageSprite) }, mRenderElements);
 	}
 

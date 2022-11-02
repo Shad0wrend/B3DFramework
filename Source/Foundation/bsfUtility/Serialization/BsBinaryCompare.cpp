@@ -6,8 +6,6 @@
 
 using namespace bs;
 
-namespace impl
-{
 template <class T>
 struct ScopeGuard
 {
@@ -24,7 +22,6 @@ ScopeGuard<T> MakeScopeGuard(T callback)
 {
 	return ScopeGuard<T>{ callback };
 }
-} // namespace impl
 
 BinaryCompare::BinaryCompare()
 	: mAlloc(&GetFrameAllocator())
@@ -54,7 +51,7 @@ bool BinaryCompare::Compare(IReflectable& a, IReflectable& b)
 	};
 
 	FrameStack<RTTIPair> rttiInstances;
-	auto cleanup = ::impl::MakeScopeGuard([&]()
+	auto cleanup = MakeScopeGuard([&]()
 										  {
 			while (!rttiInstances.empty())
 			{

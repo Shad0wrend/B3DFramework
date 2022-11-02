@@ -8,8 +8,6 @@
 
 using namespace bs;
 
-namespace impl
-{
 /**	Contains saved Component instance data. */
 struct ComponentProxy
 {
@@ -276,7 +274,6 @@ void RestoreUnlinkedInstanceData(const HSceneObject& so, SceneObjectProxy& proxy
 		}
 	}
 }
-} // namespace impl
 
 void PrefabUtility::RevertToPrefab(const HSceneObject& so)
 {
@@ -287,9 +284,9 @@ void PrefabUtility::RevertToPrefab(const HSceneObject& so)
 		return;
 
 	// Save IDs, destroy original, create new, restore IDs
-	::impl::SceneObjectProxy soProxy;
-	UnorderedMap<u32, ::impl::LinkedInstanceData> linkedInstanceData;
-	::impl::RecordInstanceData(so, soProxy, linkedInstanceData);
+	SceneObjectProxy soProxy;
+	UnorderedMap<u32, LinkedInstanceData> linkedInstanceData;
+	RecordInstanceData(so, soProxy, linkedInstanceData);
 
 	HSceneObject parent = so->GetParent();
 
@@ -303,7 +300,7 @@ void PrefabUtility::RevertToPrefab(const HSceneObject& so)
 	newInstance->mParent->RemoveChild(newInstance);
 	newInstance->mParent = parent;
 
-	::impl::RestoreLinkedInstanceData(newInstance, soProxy, linkedInstanceData);
+	RestoreLinkedInstanceData(newInstance, soProxy, linkedInstanceData);
 }
 
 void PrefabUtility::UpdateFromPrefab(const HSceneObject& so)
@@ -374,9 +371,9 @@ void PrefabUtility::UpdateFromPrefab(const HSceneObject& so)
 		if(prefabLink.IsLoaded(false) && prefabLink->GetHash() != current->mPrefabHash)
 		{
 			// Save IDs, destroy original, create new, restore IDs
-			::impl::SceneObjectProxy soProxy;
-			UnorderedMap<u32, ::impl::LinkedInstanceData> linkedInstanceData;
-			::impl::RecordInstanceData(current, soProxy, linkedInstanceData);
+			SceneObjectProxy soProxy;
+			UnorderedMap<u32, LinkedInstanceData> linkedInstanceData;
+			RecordInstanceData(current, soProxy, linkedInstanceData);
 
 			HSceneObject parent = current->GetParent();
 			SPtr<PrefabDiff> prefabDiff = current->mPrefabDiff;
@@ -390,8 +387,8 @@ void PrefabUtility::UpdateFromPrefab(const HSceneObject& so)
 			// at once (i.e. during the ::CloneInternal() call above) will share GameObjectHandleData so we can simply replace
 			// to what they point to, affecting all of the handles to that object. (In another words, we can modify the
 			// new handles at this point, but old ones must keep referencing what they already were.)
-			::impl::RestoreLinkedInstanceData(newInstance, soProxy, linkedInstanceData);
-			::impl::RestoreUnlinkedInstanceData(newInstance, soProxy);
+			RestoreLinkedInstanceData(newInstance, soProxy, linkedInstanceData);
+			RestoreUnlinkedInstanceData(newInstance, soProxy);
 
 			newPrefabInstanceData.push_back({ newInstance, parent, prefabDiff, newInstance->GetLinkId() });
 		}

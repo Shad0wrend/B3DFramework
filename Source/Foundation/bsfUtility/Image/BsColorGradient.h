@@ -14,50 +14,47 @@ namespace bs
 	 */
 
 	/** Helper used for implementing specializations of TColorGradient. */
-	namespace impl
+	template <class COLOR>
+	class TGradientHelper
+	{};
+
+	template <>
+	class TGradientHelper<RGBA>
 	{
-		template <class COLOR>
-		class TGradientHelper
-		{};
+	public:
+		using INNER_TIME_TYPE = uint32_t;
 
-		template <>
-		class TGradientHelper<RGBA>
-		{
-		public:
-			using INNER_TIME_TYPE = uint32_t;
+		static uint32_t GetInternalTime(float t) { return Bitwise::UnormToUint<16>(t); }
 
-			static uint32_t GetInternalTime(float t) { return Bitwise::UnormToUint<16>(t); }
+		static float FromInternalTime(uint16_t t) { return Bitwise::UintToUnorm<16>(t); }
 
-			static float FromInternalTime(uint16_t t) { return Bitwise::UintToUnorm<16>(t); }
+		static RGBA ToInternalColor(const Color& color) { return color.GetAsRgba(); }
 
-			static RGBA ToInternalColor(const Color& color) { return color.GetAsRgba(); }
+		static Color FromInternalColor(RGBA color) { return Color::FromRgba(color); }
 
-			static Color FromInternalColor(RGBA color) { return Color::FromRgba(color); }
+		static uint32_t InvLerp(uint32_t from, uint32_t to, uint32_t val) { return Bitwise::InvLerpWord(from, to, val) >> 8; }
 
-			static uint32_t InvLerp(uint32_t from, uint32_t to, uint32_t val) { return Bitwise::InvLerpWord(from, to, val) >> 8; }
+		static uint32_t ToLerpFactor(float factor) { return Bitwise::UnormToUint<8>(factor); }
+	};
 
-			static uint32_t ToLerpFactor(float factor) { return Bitwise::UnormToUint<8>(factor); }
-		};
+	template <>
+	class TGradientHelper<Color>
+	{
+	public:
+		using INNER_TIME_TYPE = float;
 
-		template <>
-		class TGradientHelper<Color>
-		{
-		public:
-			using INNER_TIME_TYPE = float;
+		static float GetInternalTime(float t) { return t; }
 
-			static float GetInternalTime(float t) { return t; }
+		static float FromInternalTime(float t) { return t; }
 
-			static float FromInternalTime(float t) { return t; }
+		static Color ToInternalColor(const Color& color) { return color; }
 
-			static Color ToInternalColor(const Color& color) { return color; }
+		static Color FromInternalColor(const Color& color) { return color; }
 
-			static Color FromInternalColor(const Color& color) { return color; }
+		static float InvLerp(float from, float to, float val) { return Math::InvLerp(val, from, to); }
 
-			static float InvLerp(float from, float to, float val) { return Math::InvLerp(val, from, to); }
-
-			static float ToLerpFactor(float factor) { return factor; }
-		};
-	} // namespace impl
+		static float ToLerpFactor(float factor) { return factor; }
+	};
 
 	/** @} */
 

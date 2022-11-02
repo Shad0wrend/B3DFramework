@@ -12,64 +12,61 @@ namespace bs
 	 *  @{
 	 */
 
-	namespace impl
+	/** Helper method for implementing variable-parameter Math::Min. */
+	template <typename T>
+	const T& Min(const T& in)
 	{
-		/** Helper method for implementing variable-parameter Math::Min. */
-		template <typename T>
-		const T& Min(const T& in)
-		{
-			return in;
-		}
+		return in;
+	}
 
-		/** Helper method for implementing variable-parameter Math::Min. */
-		template <typename A, typename B>
-		std::common_type_t<A, B> Min(const A& a, const B& b)
-		{
-			return a < b ? a : b;
-		}
+	/** Helper method for implementing variable-parameter Math::Min. */
+	template <typename A, typename B>
+	std::common_type_t<A, B> Min(const A& a, const B& b)
+	{
+		return a < b ? a : b;
+	}
 
-		/** Helper method for implementing variable-parameter Math::Min. */
-		template <typename A, typename B, typename... Args>
-		std::common_type_t<A, B, Args...> Min(const A& a, const B& b, const Args&... args)
-		{
-			return min(min(a, b), min(args...));
-		}
+	/** Helper method for implementing variable-parameter Math::Min. */
+	template <typename A, typename B, typename... Args>
+	std::common_type_t<A, B, Args...> Min(const A& a, const B& b, const Args&... args)
+	{
+		return min(min(a, b), min(args...));
+	}
 
-		/** Helper method for implementing variable-parameter Math::Max. */
-		template <typename T>
-		const T& Max(const T& in)
-		{
-			return in;
-		}
+	/** Helper method for implementing variable-parameter Math::Max. */
+	template <typename T>
+	const T& Max(const T& in)
+	{
+		return in;
+	}
 
-		/** Helper method for implementing variable-parameter Math::Max. */
-		template <typename A, typename B>
-		std::common_type_t<A, B> Max(const A& a, const B& b)
-		{
-			return a > b ? a : b;
-		}
+	/** Helper method for implementing variable-parameter Math::Max. */
+	template <typename A, typename B>
+	std::common_type_t<A, B> Max(const A& a, const B& b)
+	{
+		return a > b ? a : b;
+	}
 
-		/** Helper method for implementing variable-parameter Math::Max. */
-		template <typename A, typename B, typename... Args>
-		std::common_type_t<A, B, Args...> Max(const A& a, const B& b, const Args&... args)
-		{
-			return max(max(a, b), max(args...));
-		}
+	/** Helper method for implementing variable-parameter Math::Max. */
+	template <typename A, typename B, typename... Args>
+	std::common_type_t<A, B, Args...> Max(const A& a, const B& b, const Args&... args)
+	{
+		return max(max(a, b), max(args...));
+	}
 
-		/** Helper method for implementing Math::Gcd. */
-		template <typename A, typename B>
-		std::common_type_t<A, B> Gcd(const A& a, const B& b)
-		{
-			return (b == 0) ? a : gcd(b, a % b);
-		}
+	/** Helper method for implementing Math::Gcd. */
+	template <typename A, typename B>
+	std::common_type_t<A, B> Gcd(const A& a, const B& b)
+	{
+		return (b == 0) ? a : gcd(b, a % b);
+	}
 
-		/** Helper method for implementing Math::Lcm. */
-		template <typename A, typename B>
-		std::common_type_t<A, B> Lcm(const A& a, const B& b)
-		{
-			return (a * b) / gcd(a, b);
-		}
-	} // namespace impl
+	/** Helper method for implementing Math::Lcm. */
+	template <typename A, typename B>
+	std::common_type_t<A, B> Lcm(const A& a, const B& b)
+	{
+		return (a * b) / gcd(a, b);
+	}
 
 	/** @} */
 
@@ -629,42 +626,42 @@ namespace bs
 		template <typename A, typename B>
 		static std::common_type_t<A, B> Min(const A& a, const B& b)
 		{
-			return impl::Min(a, b);
+			return bs::Min(a, b);
 		}
 
 		/** Returns the minimum value of all the values provided. */
 		template <typename A, typename B, typename... Args>
 		static std::common_type_t<A, B, Args...> Min(const A& a, const B& b, const Args&... args)
 		{
-			return impl::min(a, b, args...);
+			return bs::Min(a, b, args...);
 		}
 
 		/** Returns the maximum value of the two provided. */
 		template <typename A, typename B>
 		static std::common_type_t<A, B> Max(const A& a, const B& b)
 		{
-			return impl::Max(a, b);
+			return bs::Max(a, b);
 		}
 
 		/** Returns the maximum value of all the values provided. */
 		template <typename A, typename B, typename... Args>
 		static std::common_type_t<A, B, Args...> Max(const A& a, const B& b, const Args&... args)
 		{
-			return impl::max(a, b, args...);
+			return bs::Max(a, b, args...);
 		}
 
 		/** Return the greater common divisor between two values. */
 		template <typename A, typename B>
 		static std::common_type_t<A, B> Gcd(const A& a, const B& b)
 		{
-			return impl::gcd(a, b);
+			return bs::Gcd(a, b);
 		}
 
 		/** Return the least common multiple between two values. */
 		template <typename A, typename B>
 		static std::common_type_t<A, B> Lcm(const A& a, const B& b)
 		{
-			return impl::lcm(a, b);
+			return bs::Lcm(a, b);
 		}
 
 		/**

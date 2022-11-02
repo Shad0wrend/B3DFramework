@@ -104,7 +104,7 @@ void GUIScrollBar::UpdateRenderElementsInternal()
 
 	// Populate GUI render elements from the sprites
 	{
-		using T = impl::GUIRenderElementHelper;
+		using T = GUIRenderElementHelper;
 		T::Populate({ T::SpriteInfo(mImageSprite, 2) }, mRenderElements); // +2 depth because child buttons use +1
 	}
 

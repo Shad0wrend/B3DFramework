@@ -78,10 +78,10 @@ LookupTable TColorDistribution<T>::ToLookupTable(u32 numSamples, bool ignoreRang
 			float t = minT;
 			for(u32 i = 0; i < numSamples; i++)
 			{
-				AddToVector(impl::TGradientHelper<typename T::ColorType>::FromInternalColor(mMinGradient.Evaluate(t)), values);
+				AddToVector(TGradientHelper<typename T::ColorType>::FromInternalColor(mMinGradient.Evaluate(t)), values);
 
 				if(useRange)
-					AddToVector(impl::TGradientHelper<typename T::ColorType>::FromInternalColor(mMaxGradient.Evaluate(t)), values);
+					AddToVector(TGradientHelper<typename T::ColorType>::FromInternalColor(mMaxGradient.Evaluate(t)), values);
 
 				t += sampleInterval;
 			}

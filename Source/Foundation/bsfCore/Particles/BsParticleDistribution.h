@@ -143,7 +143,7 @@ namespace bs
 		 */
 		typename T::ColorType Evaluate(float t, float factor) const
 		{
-			const auto lerpFactor = impl::TGradientHelper<typename T::ColorType>::ToLerpFactor(factor);
+			const auto lerpFactor = TGradientHelper<typename T::ColorType>::ToLerpFactor(factor);
 			switch(mType)
 			{
 			default:
@@ -190,7 +190,7 @@ namespace bs
 					const auto minColor = mMinGradient.Evaluate(0.0f);
 					const auto maxColor = mMaxGradient.Evaluate(0.0f);
 
-					const auto lerpFactor = impl::TGradientHelper<typename T::ColorType>::ToLerpFactor(factor.GetUNorm());
+					const auto lerpFactor = TGradientHelper<typename T::ColorType>::ToLerpFactor(factor.GetUNorm());
 					return Color::Lerp(lerpFactor, minColor, maxColor);
 				}
 			case PDT_Curve:
@@ -200,7 +200,7 @@ namespace bs
 					const auto minColor = mMinGradient.Evaluate(t);
 					const auto maxColor = mMaxGradient.Evaluate(t);
 
-					const auto lerpFactor = impl::TGradientHelper<typename T::ColorType>::ToLerpFactor(factor.GetUNorm());
+					const auto lerpFactor = TGradientHelper<typename T::ColorType>::ToLerpFactor(factor.GetUNorm());
 					return Color::Lerp(lerpFactor, minColor, maxColor);
 				}
 			}

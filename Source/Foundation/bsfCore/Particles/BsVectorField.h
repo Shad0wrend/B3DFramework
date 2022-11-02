@@ -41,34 +41,31 @@ namespace bs
 	 *  @{
 	 */
 
-	namespace detail
+	/** Common functionality for both the sim and core thread variants of VectorField. */
+	template <bool Core>
+	class BS_CORE_EXPORT TVectorField
 	{
-		/** Common functionality for both the sim and core thread variants of VectorField. */
-		template <bool Core>
-		class BS_CORE_EXPORT TVectorField
-		{
-		public:
-			using TextureType = SPtr<CoreVariantType<Texture, Core>>;
+	public:
+		using TextureType = SPtr<CoreVariantType<Texture, Core>>;
 
-			TVectorField() = default;
+		TVectorField() = default;
 
-			TVectorField(const VECTOR_FIELD_DESC& desc)
-				: mDesc(desc)
-			{}
+		TVectorField(const VECTOR_FIELD_DESC& desc)
+			: mDesc(desc)
+		{}
 
-			virtual ~TVectorField() = default;
+		virtual ~TVectorField() = default;
 
-			/** Returns the internal texture representing the vector field. */
-			TextureType GetTexture() const { return mTexture; }
+		/** Returns the internal texture representing the vector field. */
+		TextureType GetTexture() const { return mTexture; }
 
-			/** Returns a structure describing the properties of the object. */
-			const VECTOR_FIELD_DESC& GetDesc() const { return mDesc; }
+		/** Returns a structure describing the properties of the object. */
+		const VECTOR_FIELD_DESC& GetDesc() const { return mDesc; }
 
-		protected:
-			VECTOR_FIELD_DESC mDesc;
-			TextureType mTexture;
-		};
-	} // namespace detail
+	protected:
+		VECTOR_FIELD_DESC mDesc;
+		TextureType mTexture;
+	};
 
 	/** @} */
 
@@ -80,7 +77,7 @@ namespace bs
 	 * Represents a three dimensional field of vectors. It is represented by spatial bounds which are split into a grid
 	 * of values with user-defined density, where each grid cell is assigned a vector.
 	 */
-	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) VectorField : public Resource, public detail::TVectorField<false>
+	class BS_CORE_EXPORT BS_SCRIPT_EXPORT(DocumentationGroup(Particles)) VectorField : public Resource, public TVectorField<false>
 	{
 	public:
 		/**	Retrieves a core implementation of a vector field usable only from the core thread. */
@@ -137,7 +134,7 @@ namespace bs
 		 */
 
 		/** Core thread version of a bs::VectorField. */
-		class BS_CORE_EXPORT VectorField : public CoreObject, public detail::TVectorField<true>
+		class BS_CORE_EXPORT VectorField : public CoreObject, public TVectorField<true>
 		{
 		public:
 			VectorField(const VECTOR_FIELD_DESC& desc, const SPtr<Texture>& texture);

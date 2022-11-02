@@ -78,7 +78,7 @@ void GUILabel::UpdateRenderElementsInternal()
 
 	// Populate GUI render elements from the sprites
 	{
-		using T = impl::GUIRenderElementHelper;
+		using T = GUIRenderElementHelper;
 		T::Populate({ T::SpriteInfo(mTextSprite), T::SpriteInfo(mImageSprite, 1) }, mRenderElements);
 	}
 

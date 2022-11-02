@@ -13,9 +13,7 @@
 
 using namespace bs;
 
-namespace impl
-{
-SPtr<ct::Texture> getSpriteTextureAtlas(const SPtr<ct::SpriteTexture>& spriteTexture)
+SPtr<ct::Texture> GetSpriteTextureAtlas(const SPtr<ct::SpriteTexture>& spriteTexture)
 {
 	if(spriteTexture)
 		return spriteTexture->GetTexture();
@@ -23,14 +21,13 @@ SPtr<ct::Texture> getSpriteTextureAtlas(const SPtr<ct::SpriteTexture>& spriteTex
 	return nullptr;
 }
 
-HTexture getSpriteTextureAtlas(const HSpriteTexture& spriteTexture)
+HTexture GetSpriteTextureAtlas(const HSpriteTexture& spriteTexture)
 {
 	if(spriteTexture.IsLoaded())
 		return spriteTexture->GetTexture();
 
 	return HTexture();
 }
-} // namespace impl
 
 MaterialParamsBase::MaterialParamsBase(
 	const Map<String, SHADER_DATA_PARAM_DESC>& dataParams,
@@ -659,7 +656,7 @@ void TMaterialParams<Core>::GetTexture(const ParamData& param, TextureType& valu
 	if(textureParam.Texture)
 		value = textureParam.Texture;
 	else if(textureParam.SpriteTexture)
-		value = ::impl::getSpriteTextureAtlas(textureParam.SpriteTexture);
+		value = GetSpriteTextureAtlas(textureParam.SpriteTexture);
 
 	surface = textureParam.Surface;
 }

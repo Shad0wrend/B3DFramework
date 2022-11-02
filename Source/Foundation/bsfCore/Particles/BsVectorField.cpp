@@ -9,11 +9,8 @@
 
 namespace bs
 {
-	namespace detail
-	{
 	template class TVectorField<false>;
 	template class TVectorField<true>;
-	} // namespace detail
 }
 
 using namespace bs;
