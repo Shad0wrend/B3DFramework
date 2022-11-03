@@ -72,7 +72,7 @@ namespace bs
 	 * Audio clip stores audio data in a compressed or uncompressed format. Clips can be provided to audio sources or
 	 * other audio methods to be played.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Audio)) AudioClip : public Resource
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Audio)) AudioClip : public Resource
 	{
 	public:
 		virtual ~AudioClip() = default;

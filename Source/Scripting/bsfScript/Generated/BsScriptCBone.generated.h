@@ -12,7 +12,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptCBone : public TScriptComponent<ScriptCBone, CBone>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCBone : public TScriptComponent<ScriptCBone, CBone>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Bone")

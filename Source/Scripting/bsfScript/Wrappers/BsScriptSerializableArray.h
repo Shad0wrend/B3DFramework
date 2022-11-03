@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for ManagedSerializableArray. */
-	class BS_SCR_BE_EXPORT ScriptSerializableArray : public ScriptObject<ScriptSerializableArray>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSerializableArray : public ScriptObject<ScriptSerializableArray>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SerializableArray")

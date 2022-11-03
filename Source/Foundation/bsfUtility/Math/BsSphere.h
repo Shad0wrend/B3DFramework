@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** A sphere represented by a center point and a radius. */
-	class BS_UTILITY_EXPORT Sphere
+	class B3D_UTILITY_EXPORT Sphere
 	{
 	public:
 		/** Default constructor. Creates a unit sphere around the origin. */

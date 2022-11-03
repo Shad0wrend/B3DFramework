@@ -392,7 +392,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT SubShaderRTTI : public RTTIType<SubShader, IReflectable, SubShaderRTTI>
+	class B3D_CORE_EXPORT SubShaderRTTI : public RTTIType<SubShader, IReflectable, SubShaderRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -418,7 +418,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT ShaderRTTI : public RTTIType<Shader, Resource, ShaderRTTI>
+	class B3D_CORE_EXPORT ShaderRTTI : public RTTIType<Shader, Resource, ShaderRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -543,7 +543,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT ShaderMetaDataRTTI : public RTTIType<ShaderMetaData, ResourceMetaData, ShaderMetaDataRTTI>
+	class B3D_CORE_EXPORT ShaderMetaDataRTTI : public RTTIType<ShaderMetaData, ResourceMetaData, ShaderMetaDataRTTI>
 	{
 	private:
 		Vector<String>& GetIncludes(ShaderMetaData* obj) { return obj->Includes; }

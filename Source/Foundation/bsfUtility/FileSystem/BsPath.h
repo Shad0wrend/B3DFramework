@@ -21,7 +21,7 @@ namespace bs
 	 * paths end with a separator (\ or / depending on platform). System won't fail if you don't but it will be easier to
 	 * misuse.
 	 */
-	class BS_UTILITY_EXPORT Path
+	class B3D_UTILITY_EXPORT Path
 	{
 	public:
 		enum class PathType

@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note	Wraps DistanceJoint as a Component.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(DistanceJoint)) CDistanceJoint : public CJoint
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(DistanceJoint)) CDistanceJoint : public CJoint
 	{
 	public:
 		CDistanceJoint(const HSceneObject& parent);

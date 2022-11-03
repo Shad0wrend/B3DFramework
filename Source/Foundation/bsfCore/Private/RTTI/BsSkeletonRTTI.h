@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT SkeletonRTTI : public RTTIType<Skeleton, IReflectable, SkeletonRTTI>
+	class B3D_CORE_EXPORT SkeletonRTTI : public RTTIType<Skeleton, IReflectable, SkeletonRTTI>
 	{
 	private:
 		Matrix4& GetBindPose(Skeleton* obj, u32 idx) { return obj->mInvBindPoses[idx]; }

@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Base class for all resources. */
-	class BS_CORE_EXPORT Resource : public IReflectable, public CoreObject
+	class B3D_CORE_EXPORT Resource : public IReflectable, public CoreObject
 	{
 	public:
 		Resource(bool requiresGpuInitialization = true);

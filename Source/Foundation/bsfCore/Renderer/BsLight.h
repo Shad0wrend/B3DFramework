@@ -34,7 +34,7 @@ namespace bs
 	 */
 
 	/** Base class for both sim and core thread Light implementations. */
-	class BS_CORE_EXPORT LightBase : public SceneActor
+	class B3D_CORE_EXPORT LightBase : public SceneActor
 	{
 	public:
 		LightBase();
@@ -211,7 +211,7 @@ namespace bs
 	}
 
 	/** Illuminates a portion of the scene covered by the light. */
-	class BS_CORE_EXPORT Light : public IReflectable, public CoreObject, public LightBase
+	class B3D_CORE_EXPORT Light : public IReflectable, public CoreObject, public LightBase
 	{
 	public:
 		/**	Retrieves an implementation of the light usable only from the core thread. */
@@ -257,7 +257,7 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread usable version of bs::Light. */
-		class BS_CORE_EXPORT Light : public CoreObject, public LightBase
+		class B3D_CORE_EXPORT Light : public CoreObject, public LightBase
 		{
 		public:
 			~Light();

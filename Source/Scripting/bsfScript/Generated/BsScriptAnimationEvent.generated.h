@@ -14,7 +14,7 @@ namespace bs
 		float Time;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptAnimationEvent : public ScriptObject<ScriptAnimationEvent>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAnimationEvent : public ScriptObject<ScriptAnimationEvent>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "AnimationEvent")

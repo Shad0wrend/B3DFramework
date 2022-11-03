@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Resource meta-data for user-defined managed resources. */
-	class BS_SCR_BE_EXPORT ManagedResourceMetaData : public ResourceMetaData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedResourceMetaData : public ResourceMetaData
 	{
 	public:
 		String TypeNamespace;

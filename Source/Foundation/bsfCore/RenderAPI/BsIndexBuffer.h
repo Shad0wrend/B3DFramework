@@ -21,7 +21,7 @@ namespace bs
 	};
 
 	/**	Contains information about an index buffer. */
-	class BS_CORE_EXPORT IndexBufferProperties
+	class B3D_CORE_EXPORT IndexBufferProperties
 	{
 	public:
 		IndexBufferProperties(IndexType idxType, u32 numIndexes);
@@ -45,7 +45,7 @@ namespace bs
 	};
 
 	/** Hardware buffer that hold indices that reference vertices in a vertex buffer. */
-	class BS_CORE_EXPORT IndexBuffer : public CoreObject
+	class B3D_CORE_EXPORT IndexBuffer : public CoreObject
 	{
 	public:
 		virtual ~IndexBuffer() {}
@@ -83,7 +83,7 @@ namespace bs
 		 */
 
 		/** Core thread specific implementation of an bs::IndexBuffer. */
-		class BS_CORE_EXPORT IndexBuffer : public CoreObject, public HardwareBuffer
+		class B3D_CORE_EXPORT IndexBuffer : public CoreObject, public HardwareBuffer
 		{
 		public:
 			IndexBuffer(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);

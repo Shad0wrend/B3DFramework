@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/** Component wrapper for GUIWidget. */
-	class BS_EXPORT CGUIWidget : public Component
+	class B3D_EXPORT CGUIWidget : public Component
 	{
 	public:
 		virtual ~CGUIWidget() = default;

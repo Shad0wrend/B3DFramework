@@ -34,7 +34,7 @@ namespace bs
 	};
 
 	/**	Interop class between C++ & CLR for ManagedSerializableFieldInfo. */
-	class BS_SCR_BE_EXPORT ScriptSerializableField : public ScriptObject<ScriptSerializableField>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSerializableField : public ScriptObject<ScriptSerializableField>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SerializableField")
@@ -63,7 +63,7 @@ namespace bs
 	};
 
 	/** Interop class between C++ & CLR for SerializableFieldStyle. */
-	class BS_SCR_BE_EXPORT ScriptSerializableFieldStyle : public ScriptObject<ScriptSerializableFieldStyle>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSerializableFieldStyle : public ScriptObject<ScriptSerializableFieldStyle>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SerializableFieldStyle")

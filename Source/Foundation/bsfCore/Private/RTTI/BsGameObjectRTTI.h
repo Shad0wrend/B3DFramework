@@ -24,7 +24,7 @@ namespace bs
 		u64 OriginalId = 0;
 	};
 
-	class BS_CORE_EXPORT GameObjectRTTI : public RTTIType<GameObject, IReflectable, GameObjectRTTI>
+	class B3D_CORE_EXPORT GameObjectRTTI : public RTTIType<GameObject, IReflectable, GameObjectRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS

@@ -38,7 +38,7 @@ namespace bs
 	};
 
 	/** Updates properties of all active particles in a particle system in some way. */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEvolver : public ParticleModule
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleEvolver : public ParticleModule
 	{
 	public:
 		ParticleEvolver() = default;
@@ -85,7 +85,7 @@ namespace bs
 	 * Provides functionality for particle texture animation. Uses the sprite texture assigned to the particle's material
 	 * to determine animation properties.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleTextureAnimation : public ParticleEvolver
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleTextureAnimation : public ParticleEvolver
 	{
 	public:
 		ParticleTextureAnimation() = default;
@@ -147,7 +147,7 @@ namespace bs
 	};
 
 	/** Moves particles so that their sprites orbit their center according to the provided offset and rotation values. */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleOrbit : public ParticleEvolver
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleOrbit : public ParticleEvolver
 	{
 	public:
 		ParticleOrbit() = default;
@@ -200,7 +200,7 @@ namespace bs
 	};
 
 	/** Applies linear velocity to the particles. */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleVelocity : public ParticleEvolver
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleVelocity : public ParticleEvolver
 	{
 	public:
 		ParticleVelocity() = default;
@@ -253,7 +253,7 @@ namespace bs
 	};
 
 	/** Applies an arbitrary force to the particles. */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleForce : public ParticleEvolver
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleForce : public ParticleEvolver
 	{
 	public:
 		ParticleForce() = default;
@@ -303,7 +303,7 @@ namespace bs
 	};
 
 	/** Applies gravity to the particles. */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleGravity : public ParticleEvolver
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleGravity : public ParticleEvolver
 	{
 	public:
 		ParticleGravity() = default;
@@ -353,7 +353,7 @@ namespace bs
 	};
 
 	/** Changes the color of the particles over the particle lifetime. */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleColor : public ParticleEvolver
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleColor : public ParticleEvolver
 	{
 	public:
 		ParticleColor() = default; // RTTI only
@@ -417,7 +417,7 @@ namespace bs
 	};
 
 	/** Changes the size of the particles over the particle lifetime. */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleSize : public ParticleEvolver
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleSize : public ParticleEvolver
 	{
 	public:
 		ParticleSize() = default;
@@ -479,7 +479,7 @@ namespace bs
 	};
 
 	/** Rotates the particles over the particle lifetime. */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleRotation : public ParticleEvolver
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleRotation : public ParticleEvolver
 	{
 	public:
 		ParticleRotation() = default;
@@ -566,7 +566,7 @@ namespace bs
 	};
 
 	/** Particle evolver that allows particles to collide with the world. */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleCollisions : public ParticleEvolver
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleCollisions : public ParticleEvolver
 	{
 	public:
 		ParticleCollisions() = default;

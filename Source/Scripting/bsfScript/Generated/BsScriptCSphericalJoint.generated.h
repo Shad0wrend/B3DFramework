@@ -20,7 +20,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptCSphericalJoint : public TScriptComponent<ScriptCSphericalJoint, CSphericalJoint, ScriptCJointBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCSphericalJoint : public TScriptComponent<ScriptCSphericalJoint, CSphericalJoint, ScriptCJointBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SphericalJoint")

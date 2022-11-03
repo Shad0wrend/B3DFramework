@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/** Provides common functionality used by all Collider types. */
-	class BS_CORE_EXPORT FCollider
+	class B3D_CORE_EXPORT FCollider
 	{
 	public:
 		virtual ~FCollider() = default;

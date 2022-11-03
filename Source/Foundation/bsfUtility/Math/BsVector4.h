@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** A four dimensional vector. */
-	class BS_UTILITY_EXPORT Vector4
+	class B3D_UTILITY_EXPORT Vector4
 	{
 	public:
 		float X, Y, Z, W;

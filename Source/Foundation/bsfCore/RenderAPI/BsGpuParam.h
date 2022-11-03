@@ -76,7 +76,7 @@ namespace bs
 	 * @see		Material
 	 */
 	template <class T, bool Core>
-	class BS_CORE_EXPORT TGpuDataParam
+	class B3D_CORE_EXPORT TGpuDataParam
 	{
 	private:
 		using GpuParamBufferType = SPtr<CoreVariantType<GpuParamBlockBuffer, Core>>;
@@ -119,7 +119,7 @@ namespace bs
 
 	/** @copydoc TGpuDataParam */
 	template <bool Core>
-	class BS_CORE_EXPORT TGpuParamStruct
+	class B3D_CORE_EXPORT TGpuParamStruct
 	{
 	public:
 		using GpuParamBufferType = SPtr<CoreVariantType<GpuParamBlockBuffer, Core>>;
@@ -153,7 +153,7 @@ namespace bs
 
 	/** @copydoc TGpuDataParam */
 	template <bool Core>
-	class BS_CORE_EXPORT TGpuParamTexture
+	class B3D_CORE_EXPORT TGpuParamTexture
 	{
 	private:
 		friend class GpuParams;
@@ -188,7 +188,7 @@ namespace bs
 
 	/** @copydoc TGpuDataParam */
 	template <bool Core>
-	class BS_CORE_EXPORT TGpuParamLoadStoreTexture
+	class B3D_CORE_EXPORT TGpuParamLoadStoreTexture
 	{
 	private:
 		friend class GpuParams;
@@ -223,7 +223,7 @@ namespace bs
 
 	/** @copydoc TGpuDataParam */
 	template <bool Core>
-	class BS_CORE_EXPORT TGpuParamBuffer
+	class B3D_CORE_EXPORT TGpuParamBuffer
 	{
 	private:
 		friend class GpuParams;
@@ -258,7 +258,7 @@ namespace bs
 
 	/** @copydoc TGpuDataParam */
 	template <bool Core>
-	class BS_CORE_EXPORT TGpuParamSampState
+	class B3D_CORE_EXPORT TGpuParamSampState
 	{
 	private:
 		friend class GpuParams;

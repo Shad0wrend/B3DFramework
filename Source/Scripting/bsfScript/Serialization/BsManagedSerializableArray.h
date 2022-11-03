@@ -28,7 +28,7 @@ namespace bs
 	 * state you can call deserialize() to populated a managed object from the cached data.
 	 *
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableArray : public IReflectable
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableArray : public IReflectable
 	{
 	private:
 		struct ConstructPrivately

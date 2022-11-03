@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/**	Helper class for easily creating common 3D shapes. */
-	class BS_EXPORT ShapeMeshes3D
+	class B3D_EXPORT ShapeMeshes3D
 	{
 	public:
 		/**

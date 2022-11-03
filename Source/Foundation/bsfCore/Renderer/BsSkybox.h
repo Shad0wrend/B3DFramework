@@ -26,7 +26,7 @@ namespace bs
 	};
 
 	/** Base class for both core and sim thread implementations of a skybox. */
-	class BS_CORE_EXPORT SkyboxBase : public SceneActor
+	class B3D_CORE_EXPORT SkyboxBase : public SceneActor
 	{
 	public:
 		SkyboxBase() = default;
@@ -51,7 +51,7 @@ namespace bs
 
 	/** Templated base class for both core and sim thread implementations of a skybox. */
 	template <bool Core>
-	class BS_CORE_EXPORT TSkybox : public SkyboxBase
+	class B3D_CORE_EXPORT TSkybox : public SkyboxBase
 	{
 	public:
 		using TextureType = CoreVariantHandleType<Texture, Core>;
@@ -83,7 +83,7 @@ namespace bs
 	}
 
 	/** Allows you to specify an environment map to use for sampling radiance of the sky. */
-	class BS_CORE_EXPORT Skybox : public IReflectable, public CoreObject, public TSkybox<false>
+	class B3D_CORE_EXPORT Skybox : public IReflectable, public CoreObject, public TSkybox<false>
 	{
 	public:
 		~Skybox();
@@ -129,7 +129,7 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread usable version of a bs::Skybox */
-		class BS_CORE_EXPORT Skybox : public CoreObject, public TSkybox<true>
+		class B3D_CORE_EXPORT Skybox : public CoreObject, public TSkybox<true>
 		{
 		public:
 			~Skybox();

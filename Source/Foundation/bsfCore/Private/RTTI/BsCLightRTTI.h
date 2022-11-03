@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT CLightRTTI : public RTTIType<CLight, Component, CLightRTTI>
+	class B3D_CORE_EXPORT CLightRTTI : public RTTIType<CLight, Component, CLightRTTI>
 	{
 	private:
 		SPtr<Light> GetInternal(CLight* obj) { return obj->mInternal; }

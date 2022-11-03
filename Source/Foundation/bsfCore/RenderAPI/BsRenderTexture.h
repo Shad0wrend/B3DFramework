@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Structure that describes a render texture color and depth/stencil surfaces. */
-	struct BS_CORE_EXPORT RENDER_TEXTURE_DESC
+	struct B3D_CORE_EXPORT RENDER_TEXTURE_DESC
 	{
 		RENDER_SURFACE_DESC ColorSurfaces[BS_MAX_MULTIPLE_RENDER_TARGETS];
 		RENDER_SURFACE_DESC DepthStencilSurface;
@@ -25,7 +25,7 @@ namespace bs
 	}
 
 	/**	Contains various properties that describe a render texture. */
-	class BS_CORE_EXPORT RenderTextureProperties : public RenderTargetProperties
+	class B3D_CORE_EXPORT RenderTextureProperties : public RenderTargetProperties
 	{
 	public:
 		RenderTextureProperties(const RENDER_TEXTURE_DESC& desc, bool requiresFlipping);
@@ -46,7 +46,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only. Retrieve core implementation from getCore() for core thread only functionality.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderTexture : public RenderTarget
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderTexture : public RenderTarget
 	{
 	public:
 		virtual ~RenderTexture() = default;
@@ -117,7 +117,7 @@ namespace bs
 		 *
 		 * @note	References core textures instead of texture handles.
 		 */
-		struct BS_CORE_EXPORT RENDER_TEXTURE_DESC
+		struct B3D_CORE_EXPORT RENDER_TEXTURE_DESC
 		{
 			RENDER_SURFACE_DESC ColorSurfaces[BS_MAX_MULTIPLE_RENDER_TARGETS];
 			RENDER_SURFACE_DESC DepthStencilSurface;
@@ -128,7 +128,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		class BS_CORE_EXPORT RenderTexture : public RenderTarget
+		class B3D_CORE_EXPORT RenderTexture : public RenderTarget
 		{
 		public:
 			RenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx);

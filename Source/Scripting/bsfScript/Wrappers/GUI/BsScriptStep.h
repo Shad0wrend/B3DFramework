@@ -8,7 +8,7 @@
 namespace bs
 {
 	/**	Interop class between C++ & CLR for Step attribute. */
-	class BS_SCR_BE_EXPORT ScriptStep : public ScriptObject<ScriptStep>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptStep : public ScriptObject<ScriptStep>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Step")

@@ -17,7 +17,7 @@ namespace bs
 		bool Use3DSize;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptPARTICLE_SIZE_DESC : public ScriptObject<ScriptPARTICLE_SIZE_DESC>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPARTICLE_SIZE_DESC : public ScriptObject<ScriptPARTICLE_SIZE_DESC>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleSizeOptions")

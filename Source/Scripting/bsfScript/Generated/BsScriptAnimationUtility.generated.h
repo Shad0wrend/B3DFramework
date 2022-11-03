@@ -13,7 +13,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptAnimationUtility : public ScriptObject<ScriptAnimationUtility>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAnimationUtility : public ScriptObject<ScriptAnimationUtility>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "AnimationUtility")

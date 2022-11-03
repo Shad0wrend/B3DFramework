@@ -20,7 +20,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptCSliderJoint : public TScriptComponent<ScriptCSliderJoint, CSliderJoint, ScriptCJointBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCSliderJoint : public TScriptComponent<ScriptCSliderJoint, CSliderJoint, ScriptCJointBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SliderJoint")

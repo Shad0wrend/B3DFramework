@@ -18,7 +18,7 @@ namespace bs
 	/**
 	 * Contains various Linux specific platform functionality;
 	 */
-	class BS_CORE_EXPORT LinuxPlatform : public Platform
+	class B3D_CORE_EXPORT LinuxPlatform : public Platform
 	{
 	public:
 		/** Returns the active X11 display. */

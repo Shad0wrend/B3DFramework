@@ -45,7 +45,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptTAnimationCurvefloat : public ScriptObject<ScriptTAnimationCurvefloat>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTAnimationCurvefloat : public ScriptObject<ScriptTAnimationCurvefloat>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "AnimationCurve")
@@ -64,7 +64,7 @@ namespace bs
 		static MonoArray* InternalGetKeyFrames(ScriptTAnimationCurvefloat* thisPtr);
 	};
 
-	class BS_SCR_BE_EXPORT ScriptTAnimationCurveVector3 : public ScriptObject<ScriptTAnimationCurveVector3>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTAnimationCurveVector3 : public ScriptObject<ScriptTAnimationCurveVector3>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Vector3Curve")
@@ -83,7 +83,7 @@ namespace bs
 		static MonoArray* InternalGetKeyFrames(ScriptTAnimationCurveVector3* thisPtr);
 	};
 
-	class BS_SCR_BE_EXPORT ScriptTAnimationCurveVector2 : public ScriptObject<ScriptTAnimationCurveVector2>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTAnimationCurveVector2 : public ScriptObject<ScriptTAnimationCurveVector2>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Vector2Curve")
@@ -102,7 +102,7 @@ namespace bs
 		static MonoArray* InternalGetKeyFrames(ScriptTAnimationCurveVector2* thisPtr);
 	};
 
-	class BS_SCR_BE_EXPORT ScriptTAnimationCurveQuaternion : public ScriptObject<ScriptTAnimationCurveQuaternion>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTAnimationCurveQuaternion : public ScriptObject<ScriptTAnimationCurveQuaternion>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "QuaternionCurve")
@@ -121,7 +121,7 @@ namespace bs
 		static MonoArray* InternalGetKeyFrames(ScriptTAnimationCurveQuaternion* thisPtr);
 	};
 
-	class BS_SCR_BE_EXPORT ScriptTAnimationCurveint32_t : public ScriptObject<ScriptTAnimationCurveint32_t>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTAnimationCurveint32_t : public ScriptObject<ScriptTAnimationCurveint32_t>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "IntegerCurve")

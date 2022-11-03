@@ -21,7 +21,7 @@ namespace bs
 	 * @note
 	 * Thread safe.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Resources), API(Framework)) ResourceManifest : public IReflectable
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Resources), API(Framework)) ResourceManifest : public IReflectable
 	{
 		struct ConstructPrivately
 		{};

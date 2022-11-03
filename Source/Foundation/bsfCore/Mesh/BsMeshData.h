@@ -94,7 +94,7 @@ namespace bs
 	};
 
 	/** Contains mesh vertex and index data used for initializing, updating and reading mesh data from Mesh. */
-	class BS_CORE_EXPORT MeshData : public GpuResourceData
+	class B3D_CORE_EXPORT MeshData : public GpuResourceData
 	{
 	public:
 		/**

@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** Handles that performs equality comparison for managed objects. */
-	class BS_SCR_BE_EXPORT ManagedCompare : public ICompare
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedCompare : public ICompare
 	{
 	public:
 		virtual ~ManagedCompare() = default;

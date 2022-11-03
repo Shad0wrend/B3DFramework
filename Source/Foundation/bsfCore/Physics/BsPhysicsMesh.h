@@ -17,7 +17,7 @@ namespace bs
 	 * Represents a physics mesh that can be used with a MeshCollider. Physics mesh can be a generic triangle mesh
 	 * or a convex mesh. Convex meshes are limited to 255 faces.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) PhysicsMesh : public Resource
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics)) PhysicsMesh : public Resource
 	{
 	public:
 		PhysicsMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type);
@@ -77,7 +77,7 @@ namespace bs
 	 */
 
 	/** Foundation that contains a specific implementation of a PhysicsMesh. */
-	class BS_CORE_EXPORT FPhysicsMesh : public IReflectable
+	class B3D_CORE_EXPORT FPhysicsMesh : public IReflectable
 	{
 	public:
 		FPhysicsMesh(const SPtr<MeshData>& meshData, PhysicsMeshType type);

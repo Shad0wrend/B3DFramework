@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_SCR_BE_EXPORT ManagedSerializableAssemblyInfoRTTI : public RTTIType<ManagedSerializableAssemblyInfo, IReflectable, ManagedSerializableAssemblyInfoRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableAssemblyInfoRTTI : public RTTIType<ManagedSerializableAssemblyInfo, IReflectable, ManagedSerializableAssemblyInfoRTTI>
 	{
 	private:
 		String& GetName(ManagedSerializableAssemblyInfo* obj)
@@ -72,7 +72,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableObjectInfoRTTI : public RTTIType<ManagedSerializableObjectInfo, IReflectable, ManagedSerializableObjectInfoRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableObjectInfoRTTI : public RTTIType<ManagedSerializableObjectInfo, IReflectable, ManagedSerializableObjectInfoRTTI>
 	{
 	private:
 		using RTTIType<ManagedSerializableObjectInfo, IReflectable, ManagedSerializableObjectInfoRTTI>::GetBaseClass;
@@ -142,7 +142,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableMemberInfoRTTI : public RTTIType<ManagedSerializableMemberInfo, IReflectable, ManagedSerializableMemberInfoRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableMemberInfoRTTI : public RTTIType<ManagedSerializableMemberInfo, IReflectable, ManagedSerializableMemberInfoRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -177,7 +177,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldInfoRTTI : public RTTIType<ManagedSerializableFieldInfo, ManagedSerializableMemberInfo, ManagedSerializableFieldInfoRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldInfoRTTI : public RTTIType<ManagedSerializableFieldInfo, ManagedSerializableMemberInfo, ManagedSerializableFieldInfoRTTI>
 	{
 	private:
 	public:
@@ -201,7 +201,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializablePropertyInfoRTTI : public RTTIType<ManagedSerializablePropertyInfo, ManagedSerializableMemberInfo, ManagedSerializablePropertyInfoRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializablePropertyInfoRTTI : public RTTIType<ManagedSerializablePropertyInfo, ManagedSerializableMemberInfo, ManagedSerializablePropertyInfoRTTI>
 	{
 	private:
 	public:
@@ -225,7 +225,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoRTTI : public RTTIType<ManagedSerializableTypeInfo, IReflectable, ManagedSerializableTypeInfoRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoRTTI : public RTTIType<ManagedSerializableTypeInfo, IReflectable, ManagedSerializableTypeInfoRTTI>
 	{
 	private:
 	public:
@@ -250,7 +250,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoPrimitiveRTTI : public RTTIType<ManagedSerializableTypeInfoPrimitive, ManagedSerializableTypeInfo, ManagedSerializableTypeInfoPrimitiveRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoPrimitiveRTTI : public RTTIType<ManagedSerializableTypeInfoPrimitive, ManagedSerializableTypeInfo, ManagedSerializableTypeInfoPrimitiveRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -279,7 +279,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoEnumRTTI : public RTTIType<ManagedSerializableTypeInfoEnum, ManagedSerializableTypeInfo, ManagedSerializableTypeInfoEnumRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoEnumRTTI : public RTTIType<ManagedSerializableTypeInfoEnum, ManagedSerializableTypeInfo, ManagedSerializableTypeInfoEnumRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -310,7 +310,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoRefRTTI : public RTTIType<ManagedSerializableTypeInfoRef, ManagedSerializableTypeInfo, ManagedSerializableTypeInfoRefRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoRefRTTI : public RTTIType<ManagedSerializableTypeInfoRef, ManagedSerializableTypeInfo, ManagedSerializableTypeInfoRefRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -342,7 +342,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoRRefRTTI : public RTTIType<ManagedSerializableTypeInfoRRef, ManagedSerializableTypeInfo, ManagedSerializableTypeInfoRRefRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoRRefRTTI : public RTTIType<ManagedSerializableTypeInfoRRef, ManagedSerializableTypeInfo, ManagedSerializableTypeInfoRRefRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -371,7 +371,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoObjectRTTI : public RTTIType<ManagedSerializableTypeInfoObject, ManagedSerializableTypeInfo, ManagedSerializableTypeInfoObjectRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoObjectRTTI : public RTTIType<ManagedSerializableTypeInfoObject, ManagedSerializableTypeInfo, ManagedSerializableTypeInfoObjectRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -405,7 +405,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoArrayRTTI : public RTTIType<ManagedSerializableTypeInfoArray, ManagedSerializableTypeInfo, ManagedSerializableTypeInfoArrayRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoArrayRTTI : public RTTIType<ManagedSerializableTypeInfoArray, ManagedSerializableTypeInfo, ManagedSerializableTypeInfoArrayRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -435,7 +435,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoListRTTI : public RTTIType<ManagedSerializableTypeInfoList, ManagedSerializableTypeInfo, ManagedSerializableTypeInfoListRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoListRTTI : public RTTIType<ManagedSerializableTypeInfoList, ManagedSerializableTypeInfo, ManagedSerializableTypeInfoListRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -464,7 +464,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoDictionaryRTTI : public RTTIType<ManagedSerializableTypeInfoDictionary, ManagedSerializableTypeInfo, ManagedSerializableTypeInfoDictionaryRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoDictionaryRTTI : public RTTIType<ManagedSerializableTypeInfoDictionary, ManagedSerializableTypeInfo, ManagedSerializableTypeInfoDictionaryRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS

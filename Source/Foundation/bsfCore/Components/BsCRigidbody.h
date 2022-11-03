@@ -22,7 +22,7 @@ namespace bs
 	 *
 	 * @note Wraps Rigidbody as a Component.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(Rigidbody)) CRigidbody : public Component
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(Rigidbody)) CRigidbody : public Component
 	{
 	public:
 		CRigidbody(const HSceneObject& parent);

@@ -15,7 +15,7 @@ namespace bs
 	 */
 
 	/** Base class that is used for implementing both sim and core versions of Technique. */
-	class BS_CORE_EXPORT TechniqueBase
+	class B3D_CORE_EXPORT TechniqueBase
 	{
 	public:
 		TechniqueBase(const String& language, const Vector<StringID>& tags, const ShaderVariation& variation);
@@ -41,7 +41,7 @@ namespace bs
 
 	/** Templated class that is used for implementing both sim and core versions of Technique. */
 	template <bool Core>
-	class BS_CORE_EXPORT TTechnique : public TechniqueBase
+	class B3D_CORE_EXPORT TTechnique : public TechniqueBase
 	{
 	public:
 		using PassType = CoreVariantType<Pass, Core>;
@@ -79,7 +79,7 @@ namespace bs
 	 * For example, if you are supporting DirectX11 and OpenGL you will want to have two techniques, one using HLSL based
 	 * GPU programs, other using GLSL. Those techniques should try to mirror each other's end results.
 	 */
-	class BS_CORE_EXPORT Technique : public IReflectable, public CoreObject, public TTechnique<false>
+	class B3D_CORE_EXPORT Technique : public IReflectable, public CoreObject, public TTechnique<false>
 	{
 	public:
 		Technique(const String& language, const Vector<StringID>& tags, const ShaderVariation& variation, const Vector<SPtr<Pass>>& passes);
@@ -141,7 +141,7 @@ namespace bs
 		 */
 
 		/** Core thread version of bs::Technique. */
-		class BS_CORE_EXPORT Technique : public CoreObject, public TTechnique<true>
+		class B3D_CORE_EXPORT Technique : public CoreObject, public TTechnique<true>
 		{
 		public:
 			Technique(const String& language, const Vector<StringID>& tags, const ShaderVariation& variation, const Vector<SPtr<Pass>>& passes);

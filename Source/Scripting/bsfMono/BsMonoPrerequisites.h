@@ -8,28 +8,28 @@
 #if BS_PLATFORM == BS_PLATFORM_WIN32 // Windows
 #	if BS_COMPILER == BS_COMPILER_MSVC
 #		if defined(BS_MONO_STATIC_LIB)
-#			define BS_MONO_EXPORT
+#			define B3D_MONO_EXPORT
 #		else
-#			if defined(BS_MONO_EXPORTS)
-#				define BS_MONO_EXPORT __declspec(dllexport)
+#			if defined(B3D_MONO_EXPORTS)
+#				define B3D_MONO_EXPORT __declspec(dllexport)
 #			else
-#				define BS_MONO_EXPORT __declspec(dllimport)
+#				define B3D_MONO_EXPORT __declspec(dllimport)
 #			endif
 #		endif
 #	else
 #		if defined(BS_MONO_STATIC_LIB)
-#			define BS_MONO_EXPORT
+#			define B3D_MONO_EXPORT
 #		else
-#			if defined(BS_MONO_EXPORTS)
-#				define BS_MONO_EXPORT __attribute__((dllexport))
+#			if defined(B3D_MONO_EXPORTS)
+#				define B3D_MONO_EXPORT __attribute__((dllexport))
 #			else
-#				define BS_MONO_EXPORT __attribute__((dllimport))
+#				define B3D_MONO_EXPORT __attribute__((dllimport))
 #			endif
 #		endif
 #	endif
 #	define BS_MONO_HIDDEN
 #else // Linux/Mac settings
-#	define BS_MONO_EXPORT __attribute__((visibility("default")))
+#	define B3D_MONO_EXPORT __attribute__((visibility("default")))
 #	define BS_MONO_HIDDEN __attribute__((visibility("hidden")))
 #endif
 

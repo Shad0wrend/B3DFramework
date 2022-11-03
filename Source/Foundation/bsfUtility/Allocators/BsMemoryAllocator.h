@@ -103,12 +103,12 @@ namespace bs
 	class MemoryCounter
 	{
 	public:
-		static BS_UTILITY_EXPORT uint64_t GetNumAllocs()
+		static B3D_UTILITY_EXPORT uint64_t GetNumAllocs()
 		{
 			return Allocs;
 		}
 
-		static BS_UTILITY_EXPORT uint64_t GetNumFrees()
+		static B3D_UTILITY_EXPORT uint64_t GetNumFrees()
 		{
 			return Frees;
 		}
@@ -117,9 +117,9 @@ namespace bs
 		friend class MemoryAllocatorBase;
 
 		// Threadlocal data can't be exported, so some magic to make it accessible from MemoryAllocator
-		static BS_UTILITY_EXPORT void IncAllocCount() { ++Allocs; }
+		static B3D_UTILITY_EXPORT void IncAllocCount() { ++Allocs; }
 
-		static BS_UTILITY_EXPORT void IncFreeCount() { ++Frees; }
+		static B3D_UTILITY_EXPORT void IncFreeCount() { ++Frees; }
 
 		static BS_THREADLOCAL uint64_t Allocs;
 		static BS_THREADLOCAL uint64_t Frees;

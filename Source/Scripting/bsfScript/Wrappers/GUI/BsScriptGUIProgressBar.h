@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for GUIProgressBar.  */
-	class BS_SCR_BE_EXPORT ScriptGUIProgressBar : public TScriptGUIElement<ScriptGUIProgressBar>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIProgressBar : public TScriptGUIElement<ScriptGUIProgressBar>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIProgressBar")

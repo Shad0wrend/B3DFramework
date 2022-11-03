@@ -48,7 +48,7 @@ namespace bs
 	};
 
 	/** Contains serializable meta-data about a single RTTI field. */
-	struct BS_UTILITY_EXPORT RTTIFieldSchema : IReflectable
+	struct B3D_UTILITY_EXPORT RTTIFieldSchema : IReflectable
 	{
 		RTTIFieldSchema() = default;
 
@@ -80,7 +80,7 @@ namespace bs
 	 * Most of the methods for retrieving and setting data accept "void *" for both the data and the owning class instance.
 	 * It is up to the caller to ensure that pointer is of proper type.
 	 */
-	struct BS_UTILITY_EXPORT RTTIField
+	struct B3D_UTILITY_EXPORT RTTIField
 	{
 		String Name;
 		RTTIFieldSchema Schema;

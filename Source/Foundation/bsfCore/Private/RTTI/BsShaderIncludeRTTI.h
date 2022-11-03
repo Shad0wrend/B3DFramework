@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT ShaderIncludeRTTI : public RTTIType<ShaderInclude, Resource, ShaderIncludeRTTI>
+	class B3D_CORE_EXPORT ShaderIncludeRTTI : public RTTIType<ShaderInclude, Resource, ShaderIncludeRTTI>
 	{
 	private:
 		String& GetString(ShaderInclude* obj) { return obj->mString; }

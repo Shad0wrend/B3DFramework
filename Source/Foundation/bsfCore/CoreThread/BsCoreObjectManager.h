@@ -21,7 +21,7 @@ namespace bs
 	 * @note	Internal class.
 	 * @note	Thread safe unless specified otherwise.
 	 */
-	class BS_CORE_EXPORT CoreObjectManager : public Module<CoreObjectManager>
+	class B3D_CORE_EXPORT CoreObjectManager : public Module<CoreObjectManager>
 	{
 		/**
 		 * Stores dirty data that is to be transferred from sim  thread to core thread part of a CoreObject, for a single

@@ -23,7 +23,7 @@ namespace bs
 	};
 
 	/** A joint that maintains an upper or lower (or both) bound on the distance between two bodies. */
-	class BS_CORE_EXPORT DistanceJoint : public Joint
+	class B3D_CORE_EXPORT DistanceJoint : public Joint
 	{
 	public:
 		DistanceJoint(const DISTANCE_JOINT_DESC& desc) {}

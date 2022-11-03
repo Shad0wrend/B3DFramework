@@ -35,7 +35,7 @@ namespace bs
 	};
 
 	/**	Import options that allow you to control how is a font imported. */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Text), API(Framework), API(Editor)) FontImportOptions : public ImportOptions
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Text), API(Framework), API(Editor)) FontImportOptions : public ImportOptions
 	{
 	public:
 		FontImportOptions() = default;

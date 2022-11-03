@@ -17,7 +17,7 @@ namespace bs
 	 */
 
 	/**	Descriptor used for creating a platform specific native window. */
-	struct BS_UTILITY_EXPORT WINDOW_DESC
+	struct B3D_UTILITY_EXPORT WINDOW_DESC
 	{
 		WINDOW_DESC() = default;
 
@@ -53,7 +53,7 @@ namespace bs
 	};
 
 	/**	Represents a Windows native window. */
-	class BS_UTILITY_EXPORT Win32Window
+	class B3D_UTILITY_EXPORT Win32Window
 	{
 	public:
 		Win32Window(const WINDOW_DESC& desc);

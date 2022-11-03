@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT PrefabRTTI : public RTTIType<Prefab, Resource, PrefabRTTI>
+	class B3D_CORE_EXPORT PrefabRTTI : public RTTIType<Prefab, Resource, PrefabRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS

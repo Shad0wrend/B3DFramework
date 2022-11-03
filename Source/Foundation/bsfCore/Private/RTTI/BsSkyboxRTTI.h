@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT SkyboxRTTI : public RTTIType<Skybox, IReflectable, SkyboxRTTI>
+	class B3D_CORE_EXPORT SkyboxRTTI : public RTTIType<Skybox, IReflectable, SkyboxRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS

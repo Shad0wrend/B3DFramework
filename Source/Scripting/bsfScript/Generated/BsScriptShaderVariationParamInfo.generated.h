@@ -18,7 +18,7 @@ namespace bs
 		MonoArray* Values;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptShaderVariationParamInfo : public ScriptObject<ScriptShaderVariationParamInfo>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptShaderVariationParamInfo : public ScriptObject<ScriptShaderVariationParamInfo>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ShaderVariationParamInfo")

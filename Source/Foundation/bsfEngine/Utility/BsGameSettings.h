@@ -15,7 +15,7 @@ namespace bs
 	 * Contains settings used for controlling game start-up, as well as persisting various other properties through game
 	 * sessions.
 	 */
-	class BS_EXPORT GameSettings : public IReflectable
+	class B3D_EXPORT GameSettings : public IReflectable
 	{
 	public:
 		GameSettings() = default;

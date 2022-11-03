@@ -18,7 +18,7 @@ namespace bs
 	 * @see		BLEND_STATE_DESC
 	 * @see		BlendState
 	 */
-	struct BS_CORE_EXPORT RENDER_TARGET_BLEND_STATE_DESC
+	struct B3D_CORE_EXPORT RENDER_TARGET_BLEND_STATE_DESC
 	{
 		bool operator==(const RENDER_TARGET_BLEND_STATE_DESC& rhs) const;
 
@@ -74,7 +74,7 @@ namespace bs
 	};
 
 	/** Structure that describes render pipeline blend states. Used for initializing BlendState. */
-	struct BS_CORE_EXPORT BLEND_STATE_DESC
+	struct B3D_CORE_EXPORT BLEND_STATE_DESC
 	{
 		bool operator==(const BLEND_STATE_DESC& rhs) const;
 
@@ -101,7 +101,7 @@ namespace bs
 	};
 
 	/** Properties of a BlendState. Shared between sim and core thread versions of BlendState. */
-	class BS_CORE_EXPORT BlendProperties
+	class B3D_CORE_EXPORT BlendProperties
 	{
 	public:
 		BlendProperties(const BLEND_STATE_DESC& desc);
@@ -154,7 +154,7 @@ namespace bs
 	 *
 	 * @note	Blend states are immutable. Sim thread only.
 	 */
-	class BS_CORE_EXPORT BlendState : public IReflectable, public CoreObject
+	class B3D_CORE_EXPORT BlendState : public IReflectable, public CoreObject
 	{
 	public:
 		virtual ~BlendState();
@@ -207,7 +207,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class BS_CORE_EXPORT BlendState : public CoreObject
+		class B3D_CORE_EXPORT BlendState : public CoreObject
 		{
 		public:
 			virtual ~BlendState();

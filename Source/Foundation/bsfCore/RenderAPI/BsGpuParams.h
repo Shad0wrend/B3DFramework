@@ -189,7 +189,7 @@ namespace bs
 	class GpuPipelineParamInfoBase;
 
 	/** Contains functionality common for both sim and core thread version of GpuParams. */
-	class BS_CORE_EXPORT GpuParamsBase
+	class B3D_CORE_EXPORT GpuParamsBase
 	{
 	public:
 		virtual ~GpuParamsBase() = default;
@@ -248,7 +248,7 @@ namespace bs
 
 	/** Templated version of GpuParams that contains functionality for both sim and core thread versions of stored data. */
 	template <bool Core>
-	class BS_CORE_EXPORT TGpuParams : public GpuParamsBase
+	class B3D_CORE_EXPORT TGpuParams : public GpuParamsBase
 	{
 	public:
 		using GpuParamsType = CoreVariantType<GpuParams, Core>;
@@ -418,7 +418,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	class BS_CORE_EXPORT GpuParams : public CoreObject, public TGpuParams<false>, public IResourceListener
+	class B3D_CORE_EXPORT GpuParams : public CoreObject, public TGpuParams<false>, public IResourceListener
 	{
 	public:
 		~GpuParams() {}
@@ -483,7 +483,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		class BS_CORE_EXPORT GpuParams : public CoreObject, public TGpuParams<true>
+		class B3D_CORE_EXPORT GpuParams : public CoreObject, public TGpuParams<true>
 		{
 		public:
 			virtual ~GpuParams() {}

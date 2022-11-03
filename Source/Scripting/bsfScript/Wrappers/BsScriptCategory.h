@@ -8,7 +8,7 @@
 namespace bs
 {
 	/**	Interop class between C++ & CLR for the Category attribute. */
-	class BS_SCR_BE_EXPORT ScriptCategory : public ScriptObject<ScriptCategory>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCategory : public ScriptObject<ScriptCategory>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Category")

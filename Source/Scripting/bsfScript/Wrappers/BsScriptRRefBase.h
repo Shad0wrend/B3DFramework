@@ -16,7 +16,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for RRefBase and RRef<T>. */
-	class BS_SCR_BE_EXPORT ScriptRRefBase : public ScriptObject<ScriptRRefBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRRefBase : public ScriptObject<ScriptRRefBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "RRefBase")

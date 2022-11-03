@@ -8,28 +8,28 @@
 #if BS_PLATFORM == BS_PLATFORM_WIN32 // Windows
 #	if BS_COMPILER == BS_COMPILER_MSVC
 #		if defined(BS_SCR_BE_STATIC_LIB) || defined(BS_SBGEN)
-#			define BS_SCR_BE_EXPORT
+#			define B3D_SCRIPT_INTEROP_EXPORT
 #		else
-#			if defined(BS_SCR_BE_EXPORTS)
-#				define BS_SCR_BE_EXPORT __declspec(dllexport)
+#			if defined(B3D_SCRIPT_INTEROP_EXPORTS)
+#				define B3D_SCRIPT_INTEROP_EXPORT __declspec(dllexport)
 #			else
-#				define BS_SCR_BE_EXPORT __declspec(dllimport)
+#				define B3D_SCRIPT_INTEROP_EXPORT __declspec(dllimport)
 #			endif
 #		endif
 #	else
 #		if defined(BS_SCR_BE_STATIC_LIB) || defined(BS_SBGEN)
-#			define BS_SCR_BE_EXPORT
+#			define B3D_SCRIPT_INTEROP_EXPORT
 #		else
-#			if defined(BS_SCR_BE_EXPORTS)
-#				define BS_SCR_BE_EXPORT __attribute__((dllexport))
+#			if defined(B3D_SCRIPT_INTEROP_EXPORTS)
+#				define B3D_SCRIPT_INTEROP_EXPORT __attribute__((dllexport))
 #			else
-#				define BS_SCR_BE_EXPORT __attribute__((dllimport))
+#				define B3D_SCRIPT_INTEROP_EXPORT __attribute__((dllimport))
 #			endif
 #		endif
 #	endif
 #	define BS_SCR_BE_HIDDEN
 #else // Linux/Mac settings
-#	define BS_SCR_BE_EXPORT __attribute__((visibility("default")))
+#	define B3D_SCRIPT_INTEROP_EXPORT __attribute__((visibility("default")))
 #	define BS_SCR_BE_HIDDEN __attribute__((visibility("hidden")))
 #endif
 

@@ -15,7 +15,7 @@ namespace bs
 namespace bs
 {
 #if !BS_IS_BANSHEE3D
-	class BS_SCR_BE_EXPORT ScriptResourceManifest : public TScriptReflectable<ScriptResourceManifest, ResourceManifest>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptResourceManifest : public TScriptReflectable<ScriptResourceManifest, ResourceManifest>
 	{
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ResourceManifest")

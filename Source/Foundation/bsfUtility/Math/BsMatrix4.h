@@ -16,7 +16,7 @@ namespace bs
 	 */
 
 	/** Class representing a 4x4 matrix, in row major format. */
-	class BS_UTILITY_EXPORT Matrix4
+	class B3D_UTILITY_EXPORT Matrix4
 	{
 	public:
 		Matrix4() = default;

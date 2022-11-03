@@ -14,7 +14,7 @@ namespace bs
 	 * Encapsulates information about a single Mono (managed) method belonging to some managed class. This object also
 	 * allows you to invoke the method.
 	 */
-	class BS_MONO_EXPORT MonoMethod
+	class B3D_MONO_EXPORT MonoMethod
 	{
 	public:
 		~MonoMethod();

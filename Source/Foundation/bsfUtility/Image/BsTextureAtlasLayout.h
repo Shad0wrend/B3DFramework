@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** Organizes a set of textures into a single larger texture (an atlas) by minimizing empty space. */
-	class BS_UTILITY_EXPORT TextureAtlasLayout
+	class B3D_UTILITY_EXPORT TextureAtlasLayout
 	{
 		/** Represent a single node in the texture atlas binary tree. */
 		class TexAtlasNode
@@ -100,7 +100,7 @@ namespace bs
 	};
 
 	/** Utility class used for texture atlas layouts. */
-	class BS_UTILITY_EXPORT TextureAtlasUtility
+	class B3D_UTILITY_EXPORT TextureAtlasUtility
 	{
 	public:
 		/**

@@ -7,9 +7,6 @@ add_library(bsfD3D11RenderAPI SHARED ${BS_D3D11RENDERAPI_SRC})
 # Common flags
 add_common_flags(bsfD3D11RenderAPI)
 
-# Defines
-target_compile_definitions(bsfD3D11RenderAPI PRIVATE -DBS_RSD3D11_EXPORTS)
-
 # Includes
 target_include_directories(bsfD3D11RenderAPI PRIVATE "./")
 

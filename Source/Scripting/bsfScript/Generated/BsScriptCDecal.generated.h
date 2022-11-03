@@ -13,7 +13,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptCDecal : public TScriptComponent<ScriptCDecal, CDecal>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCDecal : public TScriptComponent<ScriptCDecal, CDecal>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Decal")

@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptAnimationClipState : public ScriptObject<ScriptAnimationClipState>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAnimationClipState : public ScriptObject<ScriptAnimationClipState>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "AnimationClipState")

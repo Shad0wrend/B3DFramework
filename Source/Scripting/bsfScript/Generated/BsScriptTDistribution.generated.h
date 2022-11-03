@@ -25,7 +25,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptTDistributionfloat : public ScriptObject<ScriptTDistributionfloat>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTDistributionfloat : public ScriptObject<ScriptTDistributionfloat>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "FloatDistribution")
@@ -53,7 +53,7 @@ namespace bs
 		static float InternalEvaluate0(ScriptTDistributionfloat* thisPtr, float t, MonoObject* factor);
 	};
 
-	class BS_SCR_BE_EXPORT ScriptTDistributionVector3 : public ScriptObject<ScriptTDistributionVector3>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTDistributionVector3 : public ScriptObject<ScriptTDistributionVector3>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Vector3Distribution")
@@ -81,7 +81,7 @@ namespace bs
 		static void InternalEvaluate0(ScriptTDistributionVector3* thisPtr, float t, MonoObject* factor, Vector3* __output);
 	};
 
-	class BS_SCR_BE_EXPORT ScriptTDistributionVector2 : public ScriptObject<ScriptTDistributionVector2>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTDistributionVector2 : public ScriptObject<ScriptTDistributionVector2>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Vector2Distribution")

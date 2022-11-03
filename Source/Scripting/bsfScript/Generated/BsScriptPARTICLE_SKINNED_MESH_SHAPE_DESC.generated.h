@@ -16,7 +16,7 @@ namespace bs
 		MonoObject* Renderable;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC : public ScriptObject<ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC : public ScriptObject<ScriptPARTICLE_SKINNED_MESH_SHAPE_DESC>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleSkinnedMeshShapeOptions")

@@ -56,7 +56,7 @@ namespace bs
 	 */
 
 	/** Common base class for both sim and core thread implementations of Camera. */
-	class BS_CORE_EXPORT CameraBase : public SceneActor
+	class B3D_CORE_EXPORT CameraBase : public SceneActor
 	{
 	public:
 		virtual ~CameraBase() = default;
@@ -471,7 +471,7 @@ namespace bs
 
 	/** Templated common base class for both sim and core thread implementations of Camera. */
 	template <bool Core>
-	class BS_CORE_EXPORT TCamera : public CameraBase
+	class B3D_CORE_EXPORT TCamera : public CameraBase
 	{
 		using ViewportType = CoreVariantType<Viewport, Core>;
 		using RenderSettingsType = CoreVariantType<RenderSettings, Core>;
@@ -518,7 +518,7 @@ namespace bs
 	 * Camera determines how is world geometry projected onto a 2D surface. You may position and orient it in space, set
 	 * options like aspect ratio and field or view and it outputs view and projection matrices required for rendering.
 	 */
-	class BS_CORE_EXPORT Camera : public IReflectable, public CoreObject, public TCamera<false>
+	class B3D_CORE_EXPORT Camera : public IReflectable, public CoreObject, public TCamera<false>
 	{
 	public:
 		/**
@@ -570,7 +570,7 @@ namespace bs
 	namespace ct
 	{
 		/** @copydoc bs::Camera */
-		class BS_CORE_EXPORT Camera : public CoreObject, public TCamera<true>
+		class B3D_CORE_EXPORT Camera : public CoreObject, public TCamera<true>
 		{
 		public:
 			~Camera();

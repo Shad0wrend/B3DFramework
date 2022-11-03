@@ -11,7 +11,7 @@ namespace bs
 	 */
 
 	/**	Utility class containing methods for various common Mono/Script related operations. */
-	class BS_MONO_EXPORT MonoUtil
+	class B3D_MONO_EXPORT MonoUtil
 	{
 	public:
 		/**	Converts a Mono (managed) string to a native wide string. */

@@ -20,7 +20,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptCCamera : public TScriptComponent<ScriptCCamera, CCamera>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCCamera : public TScriptComponent<ScriptCCamera, CCamera>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Camera")

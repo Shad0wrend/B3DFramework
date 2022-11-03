@@ -16,7 +16,7 @@ namespace bs
 	 */
 
 	/** A collider with sphere geometry. */
-	class BS_CORE_EXPORT SphereCollider : public Collider
+	class B3D_CORE_EXPORT SphereCollider : public Collider
 	{
 	public:
 		SphereCollider() = default;

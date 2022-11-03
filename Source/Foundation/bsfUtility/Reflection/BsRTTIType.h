@@ -352,7 +352,7 @@ namespace bs
 	 *	- Arrays of both plain and reflectable types are supported
 	 *	- Data blocks - A managed or unmanaged block of data. See ManagedDataBlock.
 	 */
-	class BS_UTILITY_EXPORT RTTITypeBase
+	class B3D_UTILITY_EXPORT RTTITypeBase
 	{
 	public:
 		RTTITypeBase() = default;
@@ -710,7 +710,7 @@ namespace bs
 	InitRTTIOnStart<Type, BaseType> RTTIType<Type, BaseType, MyRTTIType>::initOnStart;
 
 	/** Extendable class to be used by the user to provide extra information to RTTIType objects during serialization. */
-	struct BS_UTILITY_EXPORT SerializationContext : IReflectable
+	struct B3D_UTILITY_EXPORT SerializationContext : IReflectable
 	{
 		u32 Flags = 0;
 
@@ -737,7 +737,7 @@ namespace bs
 	}
 
 	/** Creates a new object just from its type ID. */
-	BS_UTILITY_EXPORT SPtr<IReflectable> B3DRTTICreate(u32 rttiId);
+	B3D_UTILITY_EXPORT SPtr<IReflectable> B3DRTTICreate(u32 rttiId);
 
 	/** Checks is the current object a subclass of some type. */
 	template <class T>

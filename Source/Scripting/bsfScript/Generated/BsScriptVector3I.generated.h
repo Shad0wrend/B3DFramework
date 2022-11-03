@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptVector3I : public ScriptObject<ScriptVector3I>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptVector3I : public ScriptObject<ScriptVector3I>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Vector3I")

@@ -15,7 +15,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for GUILayoutUtility. */
-	class BS_SCR_BE_EXPORT ScriptGUILayoutUtility : public ScriptObject<ScriptGUILayoutUtility>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUILayoutUtility : public ScriptObject<ScriptGUILayoutUtility>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIUtility")

@@ -15,7 +15,7 @@ namespace bs
 	 * Base class for creating import options from. Import options are specific for each importer and control how is data
 	 * imported.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ImportOptions : public IReflectable
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ImportOptions : public IReflectable
 	{
 	public:
 		virtual ~ImportOptions() = default;

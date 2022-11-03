@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT CJointRTTI : public RTTIType<CJoint, Component, CJointRTTI>
+	class B3D_CORE_EXPORT CJointRTTI : public RTTIType<CJoint, Component, CJointRTTI>
 	{
 		BS_BEGIN_RTTI_MEMBERS
 			BS_RTTI_MEMBER_REFL_NAMED(mBodyA, mBodies[0], 0)

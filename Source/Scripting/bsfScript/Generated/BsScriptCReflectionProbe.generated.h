@@ -14,7 +14,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptCReflectionProbe : public TScriptComponent<ScriptCReflectionProbe, CReflectionProbe>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCReflectionProbe : public TScriptComponent<ScriptCReflectionProbe, CReflectionProbe>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ReflectionProbe")

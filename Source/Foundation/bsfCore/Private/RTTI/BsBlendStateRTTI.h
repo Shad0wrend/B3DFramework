@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT BlendStateRTTI : public RTTIType<BlendState, IReflectable, BlendStateRTTI>
+	class B3D_CORE_EXPORT BlendStateRTTI : public RTTIType<BlendState, IReflectable, BlendStateRTTI>
 	{
 	private:
 		BLEND_STATE_DESC& GetData(BlendState* obj) { return obj->mProperties.mData; }

@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptParticleEmissionMode : public ScriptObject<ScriptParticleEmissionMode>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleEmissionMode : public ScriptObject<ScriptParticleEmissionMode>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleEmissionMode")

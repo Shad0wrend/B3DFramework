@@ -42,7 +42,7 @@ namespace bs
 	 * modified immediately since that setFocus() call could have originated in sendCommandEvent and elements in focus array
 	 * would be modified while still being iterated upon.
 	 */
-	class BS_EXPORT GUIManager : public Module<GUIManager>
+	class B3D_EXPORT GUIManager : public Module<GUIManager>
 	{
 		/**	Valid states of a drag and drop operation. */
 		enum class DragState
@@ -418,7 +418,7 @@ namespace bs
 		extern GUISpriteParamBlockDef gGUISpriteParamBlockDef;
 
 		/**	Handles GUI rendering on the core thread. */
-		class BS_EXPORT GUIRenderer : public RendererExtension
+		class B3D_EXPORT GUIRenderer : public RendererExtension
 		{
 			friend class bs::GUIManager;
 
@@ -463,7 +463,7 @@ namespace bs
 	} // namespace ct
 
 	/** Provides easier access to GUIManager. */
-	BS_EXPORT GUIManager& GetGUIManager();
+	B3D_EXPORT GUIManager& GetGUIManager();
 
 	/** @} */
 } // namespace bs

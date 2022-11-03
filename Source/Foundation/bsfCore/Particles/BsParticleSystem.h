@@ -94,7 +94,7 @@ namespace bs
 	};
 
 	/** Controls depth buffer collisions for GPU simulated particles. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleDepthCollisionSettings : IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles)) ParticleDepthCollisionSettings : IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		ParticleDepthCollisionSettings() = default;
@@ -331,7 +331,7 @@ namespace bs
 	 */
 
 	/** Settings used for controlling a vector field in a GPU simulated particle system. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles))
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles))
 		ParticleVectorFieldSettings : TParticleVectorFieldSettings<false>,
 									  IReflectable
 	{
@@ -405,7 +405,7 @@ namespace bs
 	 */
 
 	/** Generic settings used for controlling a ParticleSystem. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles))
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles))
 		ParticleSystemSettings : TParticleSystemSettings<false>,
 								 IReflectable
 	{
@@ -419,7 +419,7 @@ namespace bs
 	};
 
 	/** Settings used for controlling particle system GPU simulation. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles))
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles))
 		ParticleGpuSimulationSettings : TParticleGpuSimulationSettings<false>,
 										IReflectable
 	{
@@ -466,7 +466,7 @@ namespace bs
 	 * The particle system requires you to specify at least one ParticleEmitter, which controls how are new particles
 	 * generated. You will also want to specify one or more ParticleEvolver%s, which change particle properties over time.
 	 */
-	class BS_CORE_EXPORT ParticleSystem final : public IReflectable, public CoreObject, public SceneActor, public INonCopyable
+	class B3D_CORE_EXPORT ParticleSystem final : public IReflectable, public CoreObject, public SceneActor, public INonCopyable
 	{
 	public:
 		~ParticleSystem() final;
@@ -663,7 +663,7 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread counterpart of bs::ParticleSystem. */
-		class BS_CORE_EXPORT ParticleSystem final : public CoreObject, public SceneActor, public INonCopyable
+		class B3D_CORE_EXPORT ParticleSystem final : public CoreObject, public SceneActor, public INonCopyable
 		{
 		public:
 			~ParticleSystem();

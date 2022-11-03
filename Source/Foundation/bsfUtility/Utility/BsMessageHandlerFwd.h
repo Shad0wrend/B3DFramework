@@ -20,7 +20,7 @@ namespace bs
 	 * @note
 	 * This class is not thread safe and should only be used on the sim thread.
 	 */
-	class BS_UTILITY_EXPORT MessageId
+	class B3D_UTILITY_EXPORT MessageId
 	{
 	public:
 		MessageId() = default;
@@ -41,7 +41,7 @@ namespace bs
 	};
 
 	/** Handle to a subscription for a specific message in the global messaging system. */
-	class BS_UTILITY_EXPORT HMessage
+	class B3D_UTILITY_EXPORT HMessage
 	{
 	public:
 		HMessage() = default;
@@ -62,7 +62,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	void BS_UTILITY_EXPORT SendMessage(MessageId message);
+	void B3D_UTILITY_EXPORT SendMessage(MessageId message);
 
 	class MessageHandler;
 

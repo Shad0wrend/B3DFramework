@@ -16,7 +16,7 @@ namespace bs
 	 * directly in the inerop object). Serializable property wraps all types of serializable entries, whether they're
 	 * object fields, array entries, dictionary entries, etc. and offers a simple interface to access them.
 	 */
-	class BS_SCR_BE_EXPORT ScriptSerializableProperty : public ScriptObject<ScriptSerializableProperty>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSerializableProperty : public ScriptObject<ScriptSerializableProperty>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SerializableProperty")

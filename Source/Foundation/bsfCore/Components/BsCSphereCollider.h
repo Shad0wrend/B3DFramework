@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note Wraps SphereCollider as a Component.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(SphereCollider)) CSphereCollider : public CCollider
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(SphereCollider)) CSphereCollider : public CCollider
 	{
 	public:
 		CSphereCollider(const HSceneObject& parent, float radius = 1.0f);

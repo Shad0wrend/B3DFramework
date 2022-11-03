@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Manages opening and closing of a drop down box. */
-	class BS_EXPORT GUIDropDownBoxManager : public Module<GUIDropDownBoxManager>
+	class B3D_EXPORT GUIDropDownBoxManager : public Module<GUIDropDownBoxManager>
 	{
 	public:
 		~GUIDropDownBoxManager();

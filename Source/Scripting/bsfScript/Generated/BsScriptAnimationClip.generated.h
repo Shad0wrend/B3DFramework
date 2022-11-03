@@ -18,7 +18,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptAnimationClip : public TScriptResource<ScriptAnimationClip, AnimationClip>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAnimationClip : public TScriptResource<ScriptAnimationClip, AnimationClip>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "AnimationClip")

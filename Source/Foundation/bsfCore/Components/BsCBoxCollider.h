@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note Wraps BoxCollider as a Component.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(BoxCollider)) CBoxCollider : public CCollider
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(BoxCollider)) CBoxCollider : public CCollider
 	{
 	public:
 		CBoxCollider(const HSceneObject& parent, const Vector3& extents = Vector3(0.5f, 0.5f, 0.5f));

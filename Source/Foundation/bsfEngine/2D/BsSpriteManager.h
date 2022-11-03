@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/** Contains materials used for sprite rendering. */
-	class BS_EXPORT SpriteManager : public Module<SpriteManager>
+	class B3D_EXPORT SpriteManager : public Module<SpriteManager>
 	{
 		/** Types of sprite materials accessible by default. */
 		enum class BuiltinSpriteMaterialType

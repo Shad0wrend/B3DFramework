@@ -18,7 +18,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptPhysicsMesh : public TScriptResource<ScriptPhysicsMesh, PhysicsMesh>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPhysicsMesh : public TScriptResource<ScriptPhysicsMesh, PhysicsMesh>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "PhysicsMesh")

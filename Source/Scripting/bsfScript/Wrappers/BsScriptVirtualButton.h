@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for VirtualButton. */
-	class BS_SCR_BE_EXPORT ScriptVirtualButton : public ScriptObject<ScriptVirtualButton>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptVirtualButton : public ScriptObject<ScriptVirtualButton>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "VirtualButton")

@@ -11,7 +11,7 @@ namespace bs
 	 */
 
 	/** Provides methods to converting between UTF-8 character encoding and other popular encodings. */
-	class BS_UTILITY_EXPORT UTF8
+	class B3D_UTILITY_EXPORT UTF8
 	{
 	public:
 		/**

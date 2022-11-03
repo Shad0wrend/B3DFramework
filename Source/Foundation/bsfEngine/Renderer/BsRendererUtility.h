@@ -19,7 +19,7 @@ namespace bs
 		 */
 
 		/** Shader that copies a source texture into a render target, and optionally resolves it. */
-		class BS_EXPORT BlitMat : public RendererMaterial<BlitMat>
+		class B3D_EXPORT BlitMat : public RendererMaterial<BlitMat>
 		{
 			RMAT_DEF("Blit.bsl");
 
@@ -68,7 +68,7 @@ namespace bs
 		extern CompositeParamDef gCompositeParamDef;
 
 		/** Blends the contents of the provided texture with the bound render target. */
-		class BS_EXPORT CompositeMat : public RendererMaterial<CompositeMat>
+		class B3D_EXPORT CompositeMat : public RendererMaterial<CompositeMat>
 		{
 			RMAT_DEF("Composite.bsl");
 
@@ -100,7 +100,7 @@ namespace bs
 		extern BicubicUpsampleParamDef gBicubicUpsampleParamDef;
 
 		/** Samples the source texture using bicubic filtering and outputs the results to the provided render target. */
-		class BS_EXPORT BicubicUpsampleMat : public RendererMaterial<BicubicUpsampleMat>
+		class B3D_EXPORT BicubicUpsampleMat : public RendererMaterial<BicubicUpsampleMat>
 		{
 			RMAT_DEF("BicubicUpsample.bsl");
 
@@ -147,7 +147,7 @@ namespace bs
 		extern ClearParamDef gClearParamDef;
 
 		/** Shader that clears the currently bound render target to an integer value. */
-		class BS_EXPORT ClearMat : public RendererMaterial<ClearMat>
+		class B3D_EXPORT ClearMat : public RendererMaterial<ClearMat>
 		{
 			RMAT_DEF("Clear.bsl");
 
@@ -166,7 +166,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		class BS_EXPORT RendererUtility : public Module<RendererUtility>
+		class B3D_EXPORT RendererUtility : public Module<RendererUtility>
 		{
 		public:
 			RendererUtility();
@@ -323,7 +323,7 @@ namespace bs
 		};
 
 		/** Provides easy access to RendererUtility. */
-		BS_EXPORT RendererUtility& GetRendererUtility();
+		B3D_EXPORT RendererUtility& GetRendererUtility();
 
 		/** @} */
 	} // namespace ct

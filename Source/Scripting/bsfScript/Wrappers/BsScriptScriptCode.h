@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for ScriptCode. */
-	class BS_SCR_BE_EXPORT ScriptScriptCode : public TScriptResource<ScriptScriptCode, ScriptCode>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptScriptCode : public TScriptResource<ScriptScriptCode, ScriptCode>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ScriptCode")

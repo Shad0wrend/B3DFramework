@@ -16,7 +16,6 @@ add_common_flags(bsfPhysX)
 target_include_directories(bsfPhysX PRIVATE "./")
 
 # Defines
-target_compile_definitions(bsfPhysX PRIVATE -DBS_PHYSX_EXPORTS)
 target_compile_definitions(bsfPhysX PRIVATE $<$<CONFIG:Debug>:_DEBUG> $<$<CONFIG:RelWithDebInfo>:NDEBUG> $<$<CONFIG:MINSIZEREL>:NDEBUG>
 		$<$<CONFIG:Release>:NDEBUG>)
 

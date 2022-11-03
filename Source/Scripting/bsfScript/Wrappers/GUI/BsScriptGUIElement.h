@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/** Interop class between C++ & CLR for all elements inheriting from GUIElementBase. */
-	class BS_SCR_BE_EXPORT ScriptGUIElementBaseTBase : public ScriptObjectBase
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIElementBaseTBase : public ScriptObjectBase
 	{
 	public:
 		ScriptGUIElementBaseTBase(MonoObject* instance);
@@ -77,7 +77,7 @@ namespace bs
 	};
 
 	/** Interop class between C++ & CLR for all elements inheriting from GUIElement. */
-	class BS_SCR_BE_EXPORT ScriptGUIElementTBase : public ScriptGUIElementBaseTBase
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIElementTBase : public ScriptGUIElementBaseTBase
 	{
 	public:
 		ScriptGUIElementTBase(MonoObject* instance);
@@ -115,7 +115,7 @@ namespace bs
 	 * Interop class between C++ & CLR for GUIElement. This includes only base methods belonging directly to GUIElement
 	 * while specific GUI element implementations have their own interop classes.
 	 */
-	class BS_SCR_BE_EXPORT ScriptGUIElement : public ScriptObject<ScriptGUIElement>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIElement : public ScriptObject<ScriptGUIElement>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIElement")

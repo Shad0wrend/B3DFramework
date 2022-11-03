@@ -24,7 +24,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptCRigidbody : public TScriptComponent<ScriptCRigidbody, CRigidbody>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCRigidbody : public TScriptComponent<ScriptCRigidbody, CRigidbody>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Rigidbody")

@@ -15,7 +15,7 @@ namespace bs
 	 */
 
 	/** A collider represented by an arbitrary mesh. */
-	class BS_CORE_EXPORT MeshCollider : public Collider, public IResourceListener
+	class B3D_CORE_EXPORT MeshCollider : public Collider, public IResourceListener
 	{
 	public:
 		MeshCollider() = default;

@@ -17,7 +17,7 @@ namespace bs
 		Spring Spring;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptLimitLinear : public ScriptObject<ScriptLimitLinear>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptLimitLinear : public ScriptObject<ScriptLimitLinear>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "LimitLinear")

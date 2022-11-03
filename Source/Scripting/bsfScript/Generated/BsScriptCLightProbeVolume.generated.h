@@ -21,7 +21,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptCLightProbeVolume : public TScriptComponent<ScriptCLightProbeVolume, CLightProbeVolume>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCLightProbeVolume : public TScriptComponent<ScriptCLightProbeVolume, CLightProbeVolume>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "LightProbeVolume")

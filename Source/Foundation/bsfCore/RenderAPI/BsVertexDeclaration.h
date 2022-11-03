@@ -58,7 +58,7 @@ namespace bs
 	};
 
 	/**	Describes a single vertex element in a vertex declaration. */
-	class BS_CORE_EXPORT VertexElement
+	class B3D_CORE_EXPORT VertexElement
 	{
 	public:
 		VertexElement() = default;
@@ -122,7 +122,7 @@ namespace bs
 	};
 
 	/**	Contains information about a vertex declaration. */
-	class BS_CORE_EXPORT VertexDeclarationProperties
+	class B3D_CORE_EXPORT VertexDeclarationProperties
 	{
 	public:
 		VertexDeclarationProperties(const Vector<VertexElement>& elements);
@@ -162,7 +162,7 @@ namespace bs
 	 *
 	 * @note	Sim thread.
 	 */
-	class BS_CORE_EXPORT VertexDeclaration : public IReflectable, public CoreObject
+	class B3D_CORE_EXPORT VertexDeclaration : public IReflectable, public CoreObject
 	{
 	public:
 		virtual ~VertexDeclaration() {}
@@ -196,7 +196,7 @@ namespace bs
 	};
 
 	/**	Converts a vertex semantic enum to a readable name. */
-	BS_CORE_EXPORT String ToString(const VertexElementSemantic& val);
+	B3D_CORE_EXPORT String ToString(const VertexElementSemantic& val);
 
 	/** @} */
 
@@ -211,7 +211,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class BS_CORE_EXPORT VertexDeclaration : public CoreObject
+		class B3D_CORE_EXPORT VertexDeclaration : public CoreObject
 		{
 		public:
 			virtual ~VertexDeclaration() = default;

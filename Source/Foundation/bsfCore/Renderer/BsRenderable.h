@@ -33,7 +33,7 @@ namespace bs
 	 * render any Renderable objects visible by a camera.
 	 */
 	template <bool Core>
-	class BS_CORE_EXPORT TRenderable : public SceneActor
+	class B3D_CORE_EXPORT TRenderable : public SceneActor
 	{
 		using MeshType = CoreVariantHandleType<Mesh, Core>;
 		using MaterialType = CoreVariantHandleType<Material, Core>;
@@ -161,7 +161,7 @@ namespace bs
 	 */
 
 	/** @copydoc TRenderable */
-	class BS_CORE_EXPORT Renderable : public IReflectable, public CoreObject, public TRenderable<false>, public IResourceListener
+	class B3D_CORE_EXPORT Renderable : public IReflectable, public CoreObject, public TRenderable<false>, public IResourceListener
 	{
 	public:
 		/**	Gets world bounds of the mesh rendered by this object. */
@@ -228,7 +228,7 @@ namespace bs
 	namespace ct
 	{
 		/** @copydoc TRenderable */
-		class BS_CORE_EXPORT Renderable : public CoreObject, public TRenderable<true>
+		class B3D_CORE_EXPORT Renderable : public CoreObject, public TRenderable<true>
 		{
 		public:
 			~Renderable();

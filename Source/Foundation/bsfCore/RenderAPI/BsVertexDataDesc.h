@@ -15,7 +15,7 @@ namespace bs
 	 * Contains information about layout of vertices in a buffer. This is very similar to VertexDeclaration but unlike
 	 * VertexDeclaration it has no render API object to back it up and is very lightweight.
 	 */
-	class BS_CORE_EXPORT VertexDataDesc : public IReflectable
+	class B3D_CORE_EXPORT VertexDataDesc : public IReflectable
 	{
 	public:
 		VertexDataDesc() = default;

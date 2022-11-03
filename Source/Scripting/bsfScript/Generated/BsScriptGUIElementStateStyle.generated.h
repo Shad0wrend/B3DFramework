@@ -15,7 +15,7 @@ namespace bs
 		Color TextColor;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptGUIElementStateStyle : public ScriptObject<ScriptGUIElementStateStyle>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIElementStateStyle : public ScriptObject<ScriptGUIElementStateStyle>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIElementStateStyle")

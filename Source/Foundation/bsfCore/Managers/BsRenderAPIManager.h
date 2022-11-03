@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/** Manager that handles render system start up. */
-	class BS_CORE_EXPORT RenderAPIManager : public Module<RenderAPIManager>
+	class B3D_CORE_EXPORT RenderAPIManager : public Module<RenderAPIManager>
 	{
 	public:
 		RenderAPIManager() = default;

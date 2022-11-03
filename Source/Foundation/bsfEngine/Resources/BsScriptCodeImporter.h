@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Imports C# script source code files (.cs). */
-	class BS_EXPORT ScriptCodeImporter : public SpecificImporter
+	class B3D_EXPORT ScriptCodeImporter : public SpecificImporter
 	{
 	public:
 		bool IsExtensionSupported(const String& ext) const override;

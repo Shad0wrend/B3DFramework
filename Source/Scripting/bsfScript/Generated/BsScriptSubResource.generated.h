@@ -15,7 +15,7 @@ namespace bs
 		MonoObject* Value;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptSubResource : public ScriptObject<ScriptSubResource>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSubResource : public ScriptObject<ScriptSubResource>
 	{
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "SubResource")

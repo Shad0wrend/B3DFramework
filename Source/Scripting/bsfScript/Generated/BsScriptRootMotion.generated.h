@@ -19,7 +19,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptRootMotion : public ScriptObject<ScriptRootMotion>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRootMotion : public ScriptObject<ScriptRootMotion>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "RootMotion")

@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/**	Base class for all Component interop classes. */
-	class BS_SCR_BE_EXPORT ScriptComponentBase : public ScriptGameObjectBase
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptComponentBase : public ScriptGameObjectBase
 	{
 	public:
 		ScriptComponentBase(MonoObject* instance);
@@ -38,7 +38,7 @@ namespace bs
 
 	/**	Base class for a specific builtin component's interop object. */
 	template <class ScriptClass, class CompType, class BaseType = ScriptComponentBase>
-	class BS_SCR_BE_EXPORT TScriptComponent : public ScriptObject<ScriptClass, BaseType>
+	class B3D_SCRIPT_INTEROP_EXPORT TScriptComponent : public ScriptObject<ScriptClass, BaseType>
 	{
 	public:
 		/**	Returns a generic handle to the internal wrapped component. */
@@ -90,7 +90,7 @@ namespace bs
 	};
 
 	/**	Interop class between C++ & CLR for Component. */
-	class BS_SCR_BE_EXPORT ScriptComponent : public ScriptObject<ScriptComponent, ScriptComponentBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptComponent : public ScriptObject<ScriptComponent, ScriptComponentBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Component")

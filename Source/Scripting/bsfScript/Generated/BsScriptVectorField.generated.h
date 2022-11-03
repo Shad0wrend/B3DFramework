@@ -19,7 +19,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptVectorField : public TScriptResource<ScriptVectorField, VectorField>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptVectorField : public TScriptResource<ScriptVectorField, VectorField>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "VectorField")

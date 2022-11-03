@@ -24,7 +24,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptPhysicsScene : public ScriptObject<ScriptPhysicsScene>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPhysicsScene : public ScriptObject<ScriptPhysicsScene>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "PhysicsScene")

@@ -1076,7 +1076,7 @@ void Resources::LoadCallback(const Path& filePath, HResource& resource, bool loa
 
 namespace bs
 {
-BS_CORE_EXPORT Resources& GetResources()
+B3D_CORE_EXPORT Resources& GetResources()
 {
 	return Resources::Instance();
 }

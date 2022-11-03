@@ -15,7 +15,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptRandom : public ScriptObject<ScriptRandom>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRandom : public ScriptObject<ScriptRandom>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Random")

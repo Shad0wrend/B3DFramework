@@ -18,7 +18,7 @@ namespace bs
 		MonoObject* Tooltip;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptGUIContent : public ScriptObject<ScriptGUIContent>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIContent : public ScriptObject<ScriptGUIContent>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIContent")

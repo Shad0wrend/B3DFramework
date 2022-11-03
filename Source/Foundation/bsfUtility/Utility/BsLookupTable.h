@@ -15,7 +15,7 @@ namespace bs
 	 * for sampling that function at arbitrary time intervals. The sampling is fast but precision is limited to the number
 	 * of samples.
 	 */
-	class BS_UTILITY_EXPORT LookupTable
+	class B3D_UTILITY_EXPORT LookupTable
 	{
 	public:
 		/**

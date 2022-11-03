@@ -36,9 +36,6 @@ target_include_directories(bsfVulkanRenderAPI PRIVATE
 	"../Shared/"
 )
 
-# Defines
-target_compile_definitions(bsfVulkanRenderAPI PRIVATE -DBS_VULKAN_EXPORTS)
-
 # Libraries	
 ## External libs: Vulkan, MoltenVK, glslang, SPIR-V Cross
 if(APPLE) # MacOS

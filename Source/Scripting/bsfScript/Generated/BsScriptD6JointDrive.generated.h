@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptD6JointDrive : public ScriptObject<ScriptD6JointDrive>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptD6JointDrive : public ScriptObject<ScriptD6JointDrive>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "D6JointDrive")

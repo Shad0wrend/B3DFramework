@@ -88,7 +88,7 @@ namespace bs
 		};
 
 		/** Base class for all parameter blocks. */
-		struct BS_CORE_EXPORT ParamBlock
+		struct B3D_CORE_EXPORT ParamBlock
 		{
 			virtual ~ParamBlock();
 			virtual void Initialize() = 0;
@@ -98,7 +98,7 @@ namespace bs
 		 * Takes care of initializing param block definitions in a delayed manner since they depend on engine systems yet
 		 * are usually used as global variables which are initialized before engine systems are ready.
 		 */
-		class BS_CORE_EXPORT ParamBlockManager : public Module<ParamBlockManager>
+		class B3D_CORE_EXPORT ParamBlockManager : public Module<ParamBlockManager>
 		{
 		public:
 			ParamBlockManager();

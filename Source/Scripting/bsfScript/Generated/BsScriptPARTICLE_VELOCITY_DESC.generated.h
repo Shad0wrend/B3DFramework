@@ -15,7 +15,7 @@ namespace bs
 		bool WorldSpace;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptPARTICLE_VELOCITY_DESC : public ScriptObject<ScriptPARTICLE_VELOCITY_DESC>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPARTICLE_VELOCITY_DESC : public ScriptObject<ScriptPARTICLE_VELOCITY_DESC>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleVelocityOptions")

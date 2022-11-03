@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT CAudioSourceRTTI : public RTTIType<CAudioSource, Component, CAudioSourceRTTI>
+	class B3D_CORE_EXPORT CAudioSourceRTTI : public RTTIType<CAudioSource, Component, CAudioSourceRTTI>
 	{
 		BS_BEGIN_RTTI_MEMBERS
 			// BS_RTTI_MEMBER_REFLPTR(mInternal, 0)

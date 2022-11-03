@@ -30,7 +30,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	class BS_CORE_EXPORT RenderAPI
+	class B3D_CORE_EXPORT RenderAPI
 	{
 	public:
 		/**
@@ -180,7 +180,7 @@ namespace bs
 		 * @note	Accessible on any thread for methods accepting a CommandBuffer. Otherwise core thread unless specifically
 		 *			noted otherwise on per-method basis.
 		 */
-		class BS_CORE_EXPORT RenderAPI : public Module<RenderAPI>
+		class B3D_CORE_EXPORT RenderAPI : public Module<RenderAPI>
 		{
 		public:
 			RenderAPI();

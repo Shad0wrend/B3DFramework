@@ -19,7 +19,7 @@ namespace bs
 		Spring Spring;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptLimitConeRange : public ScriptObject<ScriptLimitConeRange>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptLimitConeRange : public ScriptObject<ScriptLimitConeRange>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "LimitConeRange")

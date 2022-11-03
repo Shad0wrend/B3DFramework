@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note	Wraps CharacterController as a Component.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(CharacterController)) CCharacterController : public Component
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(CharacterController)) CCharacterController : public Component
 	{
 	public:
 		CCharacterController(const HSceneObject& parent);

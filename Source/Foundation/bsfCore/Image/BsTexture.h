@@ -111,11 +111,11 @@ namespace bs
 		 */
 		Vector3I DstPosition;
 
-		BS_CORE_EXPORT static TEXTURE_COPY_DESC DEFAULT;
+		B3D_CORE_EXPORT static TEXTURE_COPY_DESC DEFAULT;
 	};
 
 	/** Properties of a Texture. Shared between sim and core thread versions of a Texture. */
-	class BS_CORE_EXPORT TextureProperties
+	class B3D_CORE_EXPORT TextureProperties
 	{
 	public:
 		TextureProperties() = default;
@@ -200,7 +200,7 @@ namespace bs
 	 *
 	 * @note	Sim thread.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Texture : public Resource
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Texture : public Resource
 	{
 	public:
 		/**
@@ -353,7 +353,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class BS_CORE_EXPORT Texture : public CoreObject
+		class B3D_CORE_EXPORT Texture : public CoreObject
 		{
 		public:
 			Texture(const TEXTURE_DESC& desc, const SPtr<PixelData>& initData, GpuDeviceFlags deviceMask);

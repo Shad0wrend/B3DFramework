@@ -39,7 +39,7 @@ namespace bs
 	 * Represents a X11 window. Note that all accesses (including creation and destruction) to objects of this class must
 	 * be locked by the main X11 lock accessible through LinuxPlatform.
 	 */
-	class BS_UTILITY_EXPORT LinuxWindow
+	class B3D_UTILITY_EXPORT LinuxWindow
 	{
 	public:
 		LinuxWindow(const WINDOW_DESC& desc);

@@ -15,7 +15,7 @@ namespace bs
 	 */
 
 	/** Helper class for performing SerializedObject <-> IReflectable encoding & decoding. */
-	class BS_UTILITY_EXPORT IntermediateSerializer
+	class B3D_UTILITY_EXPORT IntermediateSerializer
 	{
 	public:
 		IntermediateSerializer();

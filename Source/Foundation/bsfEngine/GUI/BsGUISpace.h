@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** GUI element that may be inserted into layouts in order to make a space of a fixed size. */
-	class BS_EXPORT GUIFixedSpace : public GUIElementBase
+	class B3D_EXPORT GUIFixedSpace : public GUIElementBase
 	{
 	public:
 		GUIFixedSpace(u32 size)
@@ -70,7 +70,7 @@ namespace bs
 	 * For example if you had a horizontal layout with a button, and you wanted to align that button to the right of the
 	 * layout, you would insert a flexible space before the button in the layout.
 	 */
-	class BS_EXPORT GUIFlexibleSpace : public GUIElementBase
+	class B3D_EXPORT GUIFlexibleSpace : public GUIElementBase
 	{
 	public:
 		GUIFlexibleSpace() {}

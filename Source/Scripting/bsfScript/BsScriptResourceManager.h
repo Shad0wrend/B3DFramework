@@ -18,7 +18,7 @@ namespace bs
 	 * Handles creation and lookup of script interop objects for resources. Since resources can be created in native code
 	 * yet used by managed code this manager provides lookups to find managed equivalents of native resources.
 	 */
-	class BS_SCR_BE_EXPORT ScriptResourceManager : public Module<ScriptResourceManager>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptResourceManager : public Module<ScriptResourceManager>
 	{
 	public:
 		ScriptResourceManager();

@@ -30,7 +30,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only unless specified otherwise.
 	 */
-	class BS_CORE_EXPORT ProfilingManager : public Module<ProfilingManager>
+	class B3D_CORE_EXPORT ProfilingManager : public Module<ProfilingManager>
 	{
 	public:
 		ProfilingManager();
@@ -72,7 +72,7 @@ namespace bs
 	};
 
 	/** Easy way to access ProfilingManager. */
-	BS_CORE_EXPORT ProfilingManager& GetProfiler();
+	B3D_CORE_EXPORT ProfilingManager& GetProfiler();
 
 	/** @} */
 } // namespace bs

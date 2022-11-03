@@ -11,7 +11,7 @@ namespace bs
 	 */
 
 	/** Helper class that performs cloning of an object that implements RTTI. */
-	class BS_UTILITY_EXPORT BinaryCloner
+	class B3D_UTILITY_EXPORT BinaryCloner
 	{
 	public:
 		/**

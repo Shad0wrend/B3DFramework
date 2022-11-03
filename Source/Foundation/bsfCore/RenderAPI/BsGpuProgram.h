@@ -37,7 +37,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	class BS_CORE_EXPORT GpuProgram : public IReflectable, public CoreObject
+	class B3D_CORE_EXPORT GpuProgram : public IReflectable, public CoreObject
 	{
 	public:
 		/** Information returned when compiling a GPU program. */
@@ -110,7 +110,7 @@ namespace bs
 	 * A GPU program compiled to an intermediate bytecode format, as well as any relevant meta-data that could be
 	 * extracted from that format.
 	 */
-	struct BS_CORE_EXPORT GpuProgramBytecode : IReflectable
+	struct B3D_CORE_EXPORT GpuProgramBytecode : IReflectable
 	{
 		~GpuProgramBytecode();
 
@@ -154,7 +154,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		class BS_CORE_EXPORT GpuProgram : public CoreObject
+		class B3D_CORE_EXPORT GpuProgram : public CoreObject
 		{
 		public:
 			virtual ~GpuProgram();

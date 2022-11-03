@@ -27,7 +27,7 @@ namespace bs
 	typedef SPtr<GameObjectInstanceData> GameObjectInstanceDataPtr;
 
 	/**	Internal data shared between GameObject handles. */
-	struct BS_CORE_EXPORT GameObjectHandleData
+	struct B3D_CORE_EXPORT GameObjectHandleData
 	{
 		GameObjectHandleData() = default;
 
@@ -47,7 +47,7 @@ namespace bs
 	 * be able to reference another one without the other one knowing. But if that is the case I also need to handle the
 	 * case when the other object we're referencing has been deleted, and that is the main purpose of this class.
 	 */
-	class BS_CORE_EXPORT GameObjectHandleBase : public IReflectable
+	class B3D_CORE_EXPORT GameObjectHandleBase : public IReflectable
 	{
 	public:
 		GameObjectHandleBase()

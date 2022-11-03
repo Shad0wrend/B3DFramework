@@ -23,7 +23,7 @@ namespace bs
 	};
 
 	/** Represents a convex volume defined by planes representing the volume border. */
-	class BS_UTILITY_EXPORT ConvexVolume
+	class B3D_UTILITY_EXPORT ConvexVolume
 	{
 	public:
 		ConvexVolume() = default;

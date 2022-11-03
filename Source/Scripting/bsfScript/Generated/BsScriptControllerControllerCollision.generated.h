@@ -18,7 +18,7 @@ namespace bs
 		float MotionAmount;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptControllerControllerCollision : public ScriptObject<ScriptControllerControllerCollision>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptControllerControllerCollision : public ScriptObject<ScriptControllerControllerCollision>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ControllerControllerCollision")

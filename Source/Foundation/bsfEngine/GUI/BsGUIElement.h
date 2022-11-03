@@ -48,7 +48,7 @@ namespace bs
 	 * Represents parent class for all visible GUI elements. Contains methods needed for positioning, rendering and
 	 * handling input.
 	 */
-	class BS_EXPORT GUIElement : public GUIElementBase
+	class B3D_EXPORT GUIElement : public GUIElementBase
 	{
 	public:
 		/**	Different sub-types of GUI elements. */

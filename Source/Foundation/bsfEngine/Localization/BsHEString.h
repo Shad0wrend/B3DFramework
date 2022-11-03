@@ -12,7 +12,7 @@ namespace bs
 	 * Helper class used for constructing HString%s that references the engine string table. Engine string table is just
 	 * a separate string table so it doesn't conflict with the game string table.
 	 */
-	class BS_EXPORT HEString
+	class B3D_EXPORT HEString
 	{
 	public:
 		/**

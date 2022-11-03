@@ -38,7 +38,7 @@ namespace bs
 	 */
 
 	/** Base class for both core and sim thread implementations of a reflection probe. */
-	class BS_CORE_EXPORT ReflectionProbeBase : public SceneActor
+	class B3D_CORE_EXPORT ReflectionProbeBase : public SceneActor
 	{
 	public:
 		ReflectionProbeBase() = default;
@@ -104,7 +104,7 @@ namespace bs
 
 	/** Templated base class for both core and sim thread implementations of a reflection probe. */
 	template <bool Core>
-	class BS_CORE_EXPORT TReflectionProbe : public ReflectionProbeBase
+	class B3D_CORE_EXPORT TReflectionProbe : public ReflectionProbeBase
 	{
 	public:
 		using TextureType = CoreVariantType<Texture, Core>;
@@ -145,7 +145,7 @@ namespace bs
 	 * Specifies a location at which a pre-computed texture containing scene radiance will be generated. This texture will
 	 * then be used by the renderer to provide specular reflections.
 	 */
-	class BS_CORE_EXPORT ReflectionProbe : public IReflectable, public CoreObject, public TReflectionProbe<false>
+	class B3D_CORE_EXPORT ReflectionProbe : public IReflectable, public CoreObject, public TReflectionProbe<false>
 	{
 	public:
 		~ReflectionProbe();
@@ -228,7 +228,7 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread usable version of a bs::ReflectionProbe */
-		class BS_CORE_EXPORT ReflectionProbe : public CoreObject, public TReflectionProbe<true>
+		class B3D_CORE_EXPORT ReflectionProbe : public CoreObject, public TReflectionProbe<true>
 		{
 		public:
 			~ReflectionProbe();

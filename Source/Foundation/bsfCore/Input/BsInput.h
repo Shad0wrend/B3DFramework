@@ -22,7 +22,7 @@ namespace bs
 	 * Primary module used for dealing with input. Allows you to receieve and query raw or OS input for
 	 * mouse/keyboard/gamepad.
 	 */
-	class BS_CORE_EXPORT Input : public Module<Input>
+	class B3D_CORE_EXPORT Input : public Module<Input>
 	{
 		/** Possible button states. */
 		enum class ButtonState
@@ -348,7 +348,7 @@ namespace bs
 	};
 
 	/** Provides global access to Input. */
-	BS_CORE_EXPORT Input& GetInput();
+	B3D_CORE_EXPORT Input& GetInput();
 
 	/** @} */
 } // namespace bs

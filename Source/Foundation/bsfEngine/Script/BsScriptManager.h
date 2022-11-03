@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Abstraction that handles a specific set of script libraries. */
-	class BS_EXPORT ScriptLibrary
+	class B3D_EXPORT ScriptLibrary
 	{
 	public:
 		virtual ~ScriptLibrary() = default;
@@ -31,7 +31,7 @@ namespace bs
 	};
 
 	/**	Handles initialization of a scripting system. */
-	class BS_EXPORT ScriptManager : public Module<ScriptManager>
+	class B3D_EXPORT ScriptManager : public Module<ScriptManager>
 	{
 	public:
 		ScriptManager();

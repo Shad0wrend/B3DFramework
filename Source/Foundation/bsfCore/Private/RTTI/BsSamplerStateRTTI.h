@@ -17,7 +17,7 @@ namespace bs
 
 	BS_ALLOW_MEMCPY_SERIALIZATION(SAMPLER_STATE_DESC);
 
-	class BS_CORE_EXPORT SamplerStateRTTI : public RTTIType<SamplerState, IReflectable, SamplerStateRTTI>
+	class B3D_CORE_EXPORT SamplerStateRTTI : public RTTIType<SamplerState, IReflectable, SamplerStateRTTI>
 	{
 	private:
 		SAMPLER_STATE_DESC& GetData(SamplerState* obj) { return obj->mProperties.mData; }

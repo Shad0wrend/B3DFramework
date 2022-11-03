@@ -37,7 +37,7 @@ namespace bs
 	};
 
 	/** Contains information about an instantiated scene. */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Scene)) SceneInstance
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Scene)) SceneInstance
 	{
 		struct ConstructPrivately
 		{};
@@ -81,7 +81,7 @@ namespace bs
 	 * Keeps track of all active SceneObject%s and their components. Keeps track of component state and triggers their
 	 * events. Updates the transforms of objects as SceneObject%s move.
 	 */
-	class BS_CORE_EXPORT SceneManager : public Module<SceneManager>
+	class B3D_CORE_EXPORT SceneManager : public Module<SceneManager>
 	{
 	public:
 		SceneManager();
@@ -280,7 +280,7 @@ namespace bs
 	};
 
 	/**	Provides easy access to the SceneManager. */
-	BS_CORE_EXPORT SceneManager& GetSceneManager();
+	B3D_CORE_EXPORT SceneManager& GetSceneManager();
 
 	template <class T>
 	Vector<GameObjectHandle<T>> SceneManager::FindComponents(bool activeOnly)

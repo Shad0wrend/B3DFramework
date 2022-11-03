@@ -15,7 +15,7 @@ namespace bs
 	 * Contains all attributes that are output by GUI layouts and assigned to GUI elements. This includes element position,
 	 * size and depth.
 	 */
-	struct BS_EXPORT GUILayoutData
+	struct B3D_EXPORT GUILayoutData
 	{
 		GUILayoutData()
 		{

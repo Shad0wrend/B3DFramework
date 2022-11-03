@@ -15,7 +15,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptDepthOfFieldSettings : public TScriptReflectable<ScriptDepthOfFieldSettings, DepthOfFieldSettings>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptDepthOfFieldSettings : public TScriptReflectable<ScriptDepthOfFieldSettings, DepthOfFieldSettings>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "DepthOfFieldSettings")

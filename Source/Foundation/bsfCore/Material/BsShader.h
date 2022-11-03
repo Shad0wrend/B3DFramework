@@ -195,7 +195,7 @@ namespace bs
 	 * a specific interface that can be utilized by the renderer, usually similar/identical to the default built-in
 	 * technique.
 	 */
-	struct BS_CORE_EXPORT SubShader : TSubShader<false>, IReflectable
+	struct B3D_CORE_EXPORT SubShader : TSubShader<false>, IReflectable
 	{
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
@@ -230,7 +230,7 @@ namespace bs
 
 	/** Structure used for initializing a shader. */
 	template <bool Core>
-	struct BS_CORE_EXPORT TSHADER_DESC
+	struct B3D_CORE_EXPORT TSHADER_DESC
 	{
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 		using SamplerStateType = SPtr<CoreVariantType<SamplerState, Core>>;
@@ -386,7 +386,7 @@ namespace bs
 
 	/**	Templated version of Shader used for implementing both sim and core thread variants. */
 	template <bool Core>
-	class BS_CORE_EXPORT TShader
+	class B3D_CORE_EXPORT TShader
 	{
 	public:
 		using TechniqueType = CoreVariantType<Technique, Core>;
@@ -580,7 +580,7 @@ namespace bs
 	 * programs.
 	 * @endscript
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Shader : public Resource, public TShader<false>
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Shader : public Resource, public TShader<false>
 	{
 	public:
 		/** Retrieves an implementation of a shader usable only from the core thread. */
@@ -661,7 +661,7 @@ namespace bs
 	 */
 
 	/** Shader specific resource meta-data containing information about referenced include files. */
-	class BS_CORE_EXPORT ShaderMetaData : public ResourceMetaData
+	class B3D_CORE_EXPORT ShaderMetaData : public ResourceMetaData
 	{
 	public:
 		Vector<String> Includes;
@@ -684,7 +684,7 @@ namespace bs
 		 */
 
 		/** Core thread version of Shader. */
-		class BS_CORE_EXPORT Shader : public CoreObject, public TShader<true>
+		class B3D_CORE_EXPORT Shader : public CoreObject, public TShader<true>
 		{
 		public:
 			/** @copydoc bs::Shader::Create */

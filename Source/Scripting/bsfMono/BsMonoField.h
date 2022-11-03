@@ -14,7 +14,7 @@ namespace bs
 	 * Encapsulates information about a single Mono (managed) field belonging to some managed class. This object also
 	 * allows you to set or retrieve values to/from specific instances containing the field.
 	 */
-	class BS_MONO_EXPORT MonoField
+	class B3D_MONO_EXPORT MonoField
 	{
 	public:
 		/**	Returns the name of the field. */

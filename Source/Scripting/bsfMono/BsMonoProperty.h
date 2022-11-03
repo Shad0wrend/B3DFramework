@@ -14,7 +14,7 @@ namespace bs
 	 * Encapsulates information about a single Mono (managed) property belonging to some managed class. This object
 	 * also allows you to set or retrieve values to/from specific instances containing the property.
 	 */
-	class BS_MONO_EXPORT MonoProperty
+	class B3D_MONO_EXPORT MonoProperty
 	{
 	public:
 		/**	Returns the name of the property. */

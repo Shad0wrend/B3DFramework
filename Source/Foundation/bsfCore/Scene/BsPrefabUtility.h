@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** Performs various prefab specific operations. */
-	class BS_CORE_EXPORT PrefabUtility
+	class B3D_CORE_EXPORT PrefabUtility
 	{
 	public:
 		/**

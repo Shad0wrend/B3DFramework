@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptRectOffset : public ScriptObject<ScriptRectOffset>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRectOffset : public ScriptObject<ScriptRectOffset>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "RectOffset")

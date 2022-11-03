@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Resource containing script source code. */
-	class BS_EXPORT ScriptCode : public Resource
+	class B3D_EXPORT ScriptCode : public Resource
 	{
 	public:
 		/**	Gets the source code contained in the resource. */

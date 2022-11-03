@@ -61,7 +61,7 @@ namespace bs
 	};
 
 	/**	Holds references to built-in resources used by the core engine. */
-	class BS_EXPORT BuiltinResources : public bs::Module<BuiltinResources>
+	class B3D_EXPORT BuiltinResources : public bs::Module<BuiltinResources>
 	{
 	public:
 		BuiltinResources();
@@ -267,7 +267,7 @@ namespace bs
 	};
 
 	/**	Provides easy access to BuiltinResources. */
-	BS_EXPORT BuiltinResources& GetBuiltinResources();
+	B3D_EXPORT BuiltinResources& GetBuiltinResources();
 
 	/** @} */
 } // namespace bs

@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT CDecalRTTI : public RTTIType<CDecal, Component, CDecalRTTI>
+	class B3D_CORE_EXPORT CDecalRTTI : public RTTIType<CDecal, Component, CDecalRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS

@@ -21,7 +21,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptTexture : public TScriptResource<ScriptTexture, Texture>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTexture : public TScriptResource<ScriptTexture, Texture>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Texture")

@@ -61,7 +61,7 @@ namespace bs
 	 *
 	 * @note	Core thread only except where noted otherwise.
 	 */
-	class BS_CORE_EXPORT ProfilerGPU : public Module<ProfilerGPU>
+	class B3D_CORE_EXPORT ProfilerGPU : public Module<ProfilerGPU>
 	{
 	private:
 		struct ProfiledSample
@@ -215,7 +215,7 @@ namespace bs
 	};
 
 	/** Provides global access to ProfilerGPU instance. */
-	BS_CORE_EXPORT ProfilerGPU& GetProfilerGPU();
+	B3D_CORE_EXPORT ProfilerGPU& GetProfilerGPU();
 
 	/** Profiling macros that allow profiling functionality to be disabled at compile time. */
 #if BS_PROFILING_ENABLED

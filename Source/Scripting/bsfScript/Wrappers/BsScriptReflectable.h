@@ -16,7 +16,7 @@ namespace bs
 	 * Base class for all interop object that derive from IReflectable (except for those that have their own specialized
 	 * base classes, such as resources and components).
 	 */
-	class BS_SCR_BE_EXPORT ScriptReflectableBase : public ScriptObjectBase
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptReflectableBase : public ScriptObjectBase
 	{
 	public:
 		/**	Returns the wrapped reflectable object. */
@@ -33,7 +33,7 @@ namespace bs
 
 	/**	Base class for a specific reflectable's interop object. */
 	template <class ScriptClass, class InternalType, class BaseType = ScriptReflectableBase>
-	class BS_SCR_BE_EXPORT TScriptReflectable : public ScriptObject<ScriptClass, BaseType>
+	class B3D_SCRIPT_INTEROP_EXPORT TScriptReflectable : public ScriptObject<ScriptClass, BaseType>
 	{
 	public:
 		/** Returns the wrapped reflectable object. */

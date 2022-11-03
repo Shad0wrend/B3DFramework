@@ -51,7 +51,7 @@ namespace bs
 	 * The shape and mass of a rigidbody is governed by its colliders. You must attach at least one collider for the
 	 * rigidbody to be valid.
 	 */
-	class BS_CORE_EXPORT Rigidbody
+	class B3D_CORE_EXPORT Rigidbody
 	{
 	public:
 		/**

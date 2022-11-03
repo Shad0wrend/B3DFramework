@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	GUI widget that renders a tooltip overlaid over other GUI elements. */
-	class BS_EXPORT GUITooltip : public CGUIWidget
+	class B3D_EXPORT GUITooltip : public CGUIWidget
 	{
 	public:
 		/**	Name of the style used for tooltip's background frame. */

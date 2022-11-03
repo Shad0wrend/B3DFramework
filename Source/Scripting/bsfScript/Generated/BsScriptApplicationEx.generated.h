@@ -25,7 +25,7 @@ namespace bs
 namespace bs
 {
 #if !BS_IS_BANSHEE3D
-	class BS_SCR_BE_EXPORT ScriptApplicationEx : public ScriptObject<ScriptApplicationEx>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptApplicationEx : public ScriptObject<ScriptApplicationEx>
 	{
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Application")

@@ -63,7 +63,7 @@ namespace bs
 	 * spline can be evaluated at any time, and uses caching to speed up multiple sequential evaluations.
 	 */
 	template <class T>
-	class BS_CORE_EXPORT TAnimationCurve // Note: Curves are expected to be immutable for threading purposes
+	class B3D_CORE_EXPORT TAnimationCurve // Note: Curves are expected to be immutable for threading purposes
 	{
 	public:
 		typedef TKeyframe<T> KeyFrame;

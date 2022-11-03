@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @see		IResourceListener
 	 */
-	class BS_CORE_EXPORT ResourceListenerManager : public Module<ResourceListenerManager>
+	class B3D_CORE_EXPORT ResourceListenerManager : public Module<ResourceListenerManager>
 	{
 	public:
 		ResourceListenerManager();

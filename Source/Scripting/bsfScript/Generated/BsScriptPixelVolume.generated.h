@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptPixelVolume : public ScriptObject<ScriptPixelVolume>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPixelVolume : public ScriptObject<ScriptPixelVolume>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "PixelVolume")

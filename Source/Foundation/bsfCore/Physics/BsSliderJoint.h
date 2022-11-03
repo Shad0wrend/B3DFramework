@@ -23,7 +23,7 @@ namespace bs
 	/**
 	 * Joint that removes all but a single translational degree of freedom. Bodies are allowed to move along a single axis.
 	 */
-	class BS_CORE_EXPORT SliderJoint : public Joint
+	class B3D_CORE_EXPORT SliderJoint : public Joint
 	{
 	public:
 		SliderJoint(const SLIDER_JOINT_DESC& desc) {}

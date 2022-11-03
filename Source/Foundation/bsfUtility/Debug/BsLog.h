@@ -36,7 +36,7 @@ namespace bs
 	};
 
 	/** A single log entry, containing a message and a channel the message was recorded on. */
-	class BS_UTILITY_EXPORT LogEntry
+	class B3D_UTILITY_EXPORT LogEntry
 	{
 	public:
 		LogEntry() = default;
@@ -70,7 +70,7 @@ namespace bs
 	 *
 	 * @note	Thread safe.
 	 */
-	class BS_UTILITY_EXPORT Log
+	class B3D_UTILITY_EXPORT Log
 	{
 	public:
 		Log() = default;

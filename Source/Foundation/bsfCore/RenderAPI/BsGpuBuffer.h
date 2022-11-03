@@ -38,7 +38,7 @@ namespace bs
 	 * Information about a GpuBuffer. Allows core and non-core versions of GpuBuffer to share the same structure for
 	 * properties.
 	 */
-	class BS_CORE_EXPORT GpuBufferProperties
+	class B3D_CORE_EXPORT GpuBufferProperties
 	{
 	public:
 		GpuBufferProperties(const GPU_BUFFER_DESC& desc);
@@ -73,7 +73,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	class BS_CORE_EXPORT GpuBuffer : public CoreObject
+	class B3D_CORE_EXPORT GpuBuffer : public CoreObject
 	{
 	public:
 		virtual ~GpuBuffer() = default;
@@ -113,7 +113,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		class BS_CORE_EXPORT GpuBuffer : public CoreObject, public HardwareBuffer
+		class B3D_CORE_EXPORT GpuBuffer : public CoreObject, public HardwareBuffer
 		{
 		public:
 			virtual ~GpuBuffer();

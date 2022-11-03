@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for PlainText. */
-	class BS_SCR_BE_EXPORT ScriptPlainText : public TScriptResource<ScriptPlainText, PlainText>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPlainText : public TScriptResource<ScriptPlainText, PlainText>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "PlainText")

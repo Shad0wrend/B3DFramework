@@ -15,7 +15,7 @@ namespace bs
 		MonoArray* Clips;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptBlend1DInfo : public ScriptObject<ScriptBlend1DInfo>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptBlend1DInfo : public ScriptObject<ScriptBlend1DInfo>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Blend1DInfo")

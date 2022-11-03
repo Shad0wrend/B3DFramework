@@ -16,7 +16,7 @@ namespace bs
 		MonoObject* BotRightClip;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptBlend2DInfo : public ScriptObject<ScriptBlend2DInfo>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptBlend2DInfo : public ScriptObject<ScriptBlend2DInfo>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Blend2DInfo")

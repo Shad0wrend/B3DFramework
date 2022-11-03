@@ -12,7 +12,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptSceneInstance : public ScriptObject<ScriptSceneInstance>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSceneInstance : public ScriptObject<ScriptSceneInstance>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SceneInstance")

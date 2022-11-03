@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Helper class for easily creating common 2D shapes. */
-	class BS_EXPORT ShapeMeshes2D
+	class B3D_EXPORT ShapeMeshes2D
 	{
 	public:
 		/**

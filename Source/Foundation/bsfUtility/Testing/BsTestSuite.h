@@ -20,7 +20,7 @@ namespace bs
 	 * Primary class for unit testing. Override and register unit tests in constructor then run the tests using the
 	 * desired method of output.
 	 */
-	class BS_UTILITY_EXPORT TestSuite
+	class B3D_UTILITY_EXPORT TestSuite
 	{
 	public:
 		typedef void (TestSuite::*Func)();

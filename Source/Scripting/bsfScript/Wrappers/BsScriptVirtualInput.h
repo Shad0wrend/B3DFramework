@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for VirtualInput. */
-	class BS_SCR_BE_EXPORT ScriptVirtualInput : public ScriptObject<ScriptVirtualInput>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptVirtualInput : public ScriptObject<ScriptVirtualInput>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "VirtualInput")

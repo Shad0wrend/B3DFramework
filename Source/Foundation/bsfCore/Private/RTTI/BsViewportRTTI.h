@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT ViewportRTTI : public RTTIType<Viewport, IReflectable, ViewportRTTI>
+	class B3D_CORE_EXPORT ViewportRTTI : public RTTIType<Viewport, IReflectable, ViewportRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS

@@ -5,7 +5,7 @@
 
 using namespace bs;
 
-extern "C" BS_PLUGIN_EXPORT const char* GetPluginName()
+extern "C" B3D_PLUGIN_EXPORT const char* GetPluginName()
 {
 	return ct::D3D11RenderAPIFactory::SystemName;
 }

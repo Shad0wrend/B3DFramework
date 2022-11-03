@@ -53,7 +53,7 @@ namespace bs
 	 * of the standard physics model to handle various issues with manually moving kinematic objects. Uses a capsule to
 	 * represent the character's bounds.
 	 */
-	class BS_CORE_EXPORT CharacterController
+	class B3D_CORE_EXPORT CharacterController
 	{
 	public:
 		CharacterController(const CHAR_CONTROLLER_DESC& desc) {}

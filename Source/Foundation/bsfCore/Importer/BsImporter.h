@@ -40,7 +40,7 @@ namespace bs
 	};
 
 	/** Module responsible for importing various asset types and converting them to types usable by the engine. */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework)) Importer : public Module<Importer>
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework)) Importer : public Module<Importer>
 	{
 	public:
 		Importer();
@@ -217,7 +217,7 @@ namespace bs
 	};
 
 	/** Provides easier access to Importer. */
-	BS_CORE_EXPORT Importer& GetImporter();
+	B3D_CORE_EXPORT Importer& GetImporter();
 
 	/** @} */
 } // namespace bs

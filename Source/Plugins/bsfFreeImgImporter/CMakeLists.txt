@@ -14,7 +14,7 @@ add_common_flags(bsfFreeImgImporter)
 target_include_directories(bsfFreeImgImporter PRIVATE "./")
 
 # Defines
-target_compile_definitions(bsfFreeImgImporter PRIVATE -DBS_FREEIMG_EXPORTS -D_MBCS -DFREEIMAGE_LIB)
+target_compile_definitions(bsfFreeImgImporter PRIVATE -D_MBCS -DFREEIMAGE_LIB)
 
 # Libraries
 ## External lib: FreeImage

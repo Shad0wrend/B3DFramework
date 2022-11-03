@@ -16,7 +16,7 @@ namespace bs
 	 *
 	 * @note Purpose of this class is primarily to be a wrapper around a list of objects to make serialization easier.
 	 */
-	class BS_CORE_EXPORT SavedResourceData : public IReflectable
+	class B3D_CORE_EXPORT SavedResourceData : public IReflectable
 	{
 	public:
 		SavedResourceData() = default;

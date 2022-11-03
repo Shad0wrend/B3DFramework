@@ -22,7 +22,7 @@ namespace bs
 	};
 
 	/** Contains information about a vertex buffer buffer. */
-	class BS_CORE_EXPORT VertexBufferProperties
+	class B3D_CORE_EXPORT VertexBufferProperties
 	{
 	public:
 		VertexBufferProperties(u32 numVertices, u32 vertexSize);
@@ -42,7 +42,7 @@ namespace bs
 	};
 
 	/**	Specialization of a hardware buffer used for holding vertex data. */
-	class BS_CORE_EXPORT VertexBuffer : public CoreObject
+	class B3D_CORE_EXPORT VertexBuffer : public CoreObject
 	{
 	public:
 		virtual ~VertexBuffer() = default;
@@ -80,7 +80,7 @@ namespace bs
 		 */
 
 		/** Core thread specific implementation of a bs::VertexBuffer. */
-		class BS_CORE_EXPORT VertexBuffer : public CoreObject, public HardwareBuffer
+		class B3D_CORE_EXPORT VertexBuffer : public CoreObject, public HardwareBuffer
 		{
 		public:
 			VertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);

@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT ResourceHandleRTTI : public RTTIType<TResourceHandleBase<false>, IReflectable, ResourceHandleRTTI>
+	class B3D_CORE_EXPORT ResourceHandleRTTI : public RTTIType<TResourceHandleBase<false>, IReflectable, ResourceHandleRTTI>
 	{
 	private:
 		UUID& GetUuid(TResourceHandleBase<false>* obj) { return obj->mData != nullptr ? obj->mData->MUuid : UUID::kEmpty; }
@@ -64,7 +64,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT WeakResourceHandleRTTI : public RTTIType<TResourceHandleBase<true>, IReflectable, WeakResourceHandleRTTI>
+	class B3D_CORE_EXPORT WeakResourceHandleRTTI : public RTTIType<TResourceHandleBase<true>, IReflectable, WeakResourceHandleRTTI>
 	{
 	private:
 		UUID& GetUuid(TResourceHandleBase<true>* obj) { return obj->mData != nullptr ? obj->mData->MUuid : UUID::kEmpty; }

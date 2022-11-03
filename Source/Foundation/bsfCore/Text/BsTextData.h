@@ -109,7 +109,7 @@ namespace bs
 		 *
 		 * @note	Due to the way allocation is handled, this class is not allowed to have a destructor.
 		 */
-		class BS_CORE_EXPORT TextLine
+		class B3D_CORE_EXPORT TextLine
 		{
 		public:
 			/**	Returns width of the line in pixels. */
@@ -218,32 +218,32 @@ namespace bs
 		 *
 		 * After this object is constructed you may call various getter methods to get needed information.
 		 */
-		BS_CORE_EXPORT TextDataBase(const U32String& text, const HFont& font, u32 fontSize, u32 width = 0, u32 height = 0, bool wordWrap = false, bool wordBreak = true);
-		BS_CORE_EXPORT virtual ~TextDataBase() = default;
+		B3D_CORE_EXPORT TextDataBase(const U32String& text, const HFont& font, u32 fontSize, u32 width = 0, u32 height = 0, bool wordWrap = false, bool wordBreak = true);
+		B3D_CORE_EXPORT virtual ~TextDataBase() = default;
 
 		/**	Returns the number of lines that were generated. */
-		BS_CORE_EXPORT u32 GetNumLines() const { return mNumLines; }
+		B3D_CORE_EXPORT u32 GetNumLines() const { return mNumLines; }
 
 		/**	Returns the number of font pages references by the used characters. */
-		BS_CORE_EXPORT u32 GetNumPages() const { return mNumPageInfos; }
+		B3D_CORE_EXPORT u32 GetNumPages() const { return mNumPageInfos; }
 
 		/**	Returns the height of a line in pixels. */
-		BS_CORE_EXPORT u32 GetLineHeight() const;
+		B3D_CORE_EXPORT u32 GetLineHeight() const;
 
 		/**	Gets information describing a single line at the specified index. */
-		BS_CORE_EXPORT const TextLine& GetLine(u32 idx) const { return mLines[idx]; }
+		B3D_CORE_EXPORT const TextLine& GetLine(u32 idx) const { return mLines[idx]; }
 
 		/**	Returns font texture for the provided page index.  */
-		BS_CORE_EXPORT const HTexture& GetTextureForPage(u32 page) const;
+		B3D_CORE_EXPORT const HTexture& GetTextureForPage(u32 page) const;
 
 		/**	Returns the number of quads used by all the characters in the provided page. */
-		BS_CORE_EXPORT u32 GetNumQuadsForPage(u32 page) const { return mPageInfos[page].NumQuads; }
+		B3D_CORE_EXPORT u32 GetNumQuadsForPage(u32 page) const { return mPageInfos[page].NumQuads; }
 
 		/**	Returns the width of the actual text in pixels. */
-		BS_CORE_EXPORT u32 GetWidth() const;
+		B3D_CORE_EXPORT u32 GetWidth() const;
 
 		/**	Returns the height of the actual text in pixels. */
-		BS_CORE_EXPORT u32 GetHeight() const;
+		B3D_CORE_EXPORT u32 GetHeight() const;
 
 	protected:
 		/**
@@ -258,7 +258,7 @@ namespace bs
 		 *
 		 * @note	Must be called after text data has been constructed and is in the temporary buffers.
 		 */
-		BS_CORE_EXPORT void GeneratePersistentData(const U32String& text, u8* buffer, u32& size, bool freeTemporary = true);
+		B3D_CORE_EXPORT void GeneratePersistentData(const U32String& text, u8* buffer, u32& size, bool freeTemporary = true);
 
 	private:
 		friend class TextLine;

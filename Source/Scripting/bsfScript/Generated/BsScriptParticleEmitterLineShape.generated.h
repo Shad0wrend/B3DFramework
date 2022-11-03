@@ -20,7 +20,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptParticleEmitterLineShape : public TScriptReflectable<ScriptParticleEmitterLineShape, ParticleEmitterLineShape, ScriptParticleEmitterShapeBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleEmitterLineShape : public TScriptReflectable<ScriptParticleEmitterLineShape, ParticleEmitterLineShape, ScriptParticleEmitterShapeBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleEmitterLineShape")

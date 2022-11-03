@@ -16,7 +16,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	class BS_CORE_EXPORT DeferredCallManager : public Module<DeferredCallManager>
+	class B3D_CORE_EXPORT DeferredCallManager : public Module<DeferredCallManager>
 	{
 	public:
 		DeferredCallManager() = default;

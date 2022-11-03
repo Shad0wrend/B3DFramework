@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	A text input event representing input of a single character. */
-	class BS_EXPORT GUITextInputEvent
+	class B3D_EXPORT GUITextInputEvent
 	{
 	public:
 		GUITextInputEvent() = default;

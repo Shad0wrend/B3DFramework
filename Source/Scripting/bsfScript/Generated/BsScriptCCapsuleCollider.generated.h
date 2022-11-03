@@ -14,7 +14,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptCCapsuleCollider : public TScriptComponent<ScriptCCapsuleCollider, CCapsuleCollider, ScriptCColliderBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCCapsuleCollider : public TScriptComponent<ScriptCCapsuleCollider, CCapsuleCollider, ScriptCColliderBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "CapsuleCollider")

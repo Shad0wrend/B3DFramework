@@ -22,7 +22,7 @@ namespace bs
 	 *  - Dynamic: Dynamic geometry that is a part of a Rigidbody. A set of colliders defines the shape of the parent
 	 *		       rigidbody.
 	 */
-	class BS_CORE_EXPORT Collider
+	class B3D_CORE_EXPORT Collider
 	{
 	public:
 		Collider() = default;

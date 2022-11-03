@@ -14,7 +14,7 @@ namespace bs
 namespace bs
 {
 #if !BS_IS_BANSHEE3D
-	class BS_SCR_BE_EXPORT ScriptImportOptionsBase : public ScriptReflectableBase
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptImportOptionsBase : public ScriptReflectableBase
 	{
 	public:
 		ScriptImportOptionsBase(MonoObject* instance);
@@ -24,7 +24,7 @@ namespace bs
 		SPtr<ImportOptions> GetInternal() const;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptImportOptions : public TScriptReflectable<ScriptImportOptions, ImportOptions, ScriptImportOptionsBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptImportOptions : public TScriptReflectable<ScriptImportOptions, ImportOptions, ScriptImportOptionsBase>
 	{
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "ImportOptions")

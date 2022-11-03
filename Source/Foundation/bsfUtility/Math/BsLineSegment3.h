@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** Represents a line segment in three dimensional space defined by a start and an end point. */
-	class BS_UTILITY_EXPORT LineSegment3
+	class B3D_UTILITY_EXPORT LineSegment3
 	{
 	public:
 		LineSegment3() = default;

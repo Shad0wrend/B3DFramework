@@ -19,9 +19,6 @@ target_include_directories(bsfFMOD PRIVATE
 	"./"
 	"../bsfOpenAudio/")
 
-# Defines
-target_compile_definitions(bsfFMOD PRIVATE -DBS_FMOD_EXPORTS)
-
 # Libraries
 ## External libs: FMOD, Vorbis, Ogg
 target_link_libraries(bsfFMOD PRIVATE ${FMOD_LIBRARIES})	

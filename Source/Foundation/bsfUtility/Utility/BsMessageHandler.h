@@ -16,7 +16,7 @@ namespace bs
 	 *
 	 * @note Sim thread only.
 	 */
-	class BS_UTILITY_EXPORT MessageHandler : public Module<MessageHandler>
+	class B3D_UTILITY_EXPORT MessageHandler : public Module<MessageHandler>
 	{
 		struct MessageHandlerData
 		{

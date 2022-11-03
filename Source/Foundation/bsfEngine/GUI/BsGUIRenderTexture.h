@@ -15,7 +15,7 @@ namespace bs
 	 * Allows you to display a render texture in the GUI. Has the same functionality as GUITexture, but also forwards any
 	 * input to underlying GUI elements being rendered on the provided render texture.
 	 */
-	class BS_EXPORT GUIRenderTexture : public GUITexture
+	class B3D_EXPORT GUIRenderTexture : public GUITexture
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles. */

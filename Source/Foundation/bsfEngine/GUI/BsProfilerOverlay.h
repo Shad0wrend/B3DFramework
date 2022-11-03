@@ -16,7 +16,7 @@ namespace bs
 	class ProfilerOverlay;
 
 	/**	Handles rendering of Profiler information as an overlay in a viewport. */
-	class BS_EXPORT ProfilerOverlay
+	class B3D_EXPORT ProfilerOverlay
 	{
 	public:
 		/**	Holds data about GUI elements in a single row of a "CPU basic" sample. */

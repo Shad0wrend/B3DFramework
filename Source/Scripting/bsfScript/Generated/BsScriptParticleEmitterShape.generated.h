@@ -13,7 +13,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptParticleEmitterShapeBase : public ScriptReflectableBase
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleEmitterShapeBase : public ScriptReflectableBase
 	{
 	public:
 		ScriptParticleEmitterShapeBase(MonoObject* instance);
@@ -23,7 +23,7 @@ namespace bs
 		SPtr<ParticleEmitterShape> GetInternal() const;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptParticleEmitterShape : public TScriptReflectable<ScriptParticleEmitterShape, ParticleEmitterShape, ScriptParticleEmitterShapeBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleEmitterShape : public TScriptReflectable<ScriptParticleEmitterShape, ParticleEmitterShape, ScriptParticleEmitterShapeBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleEmitterShape")

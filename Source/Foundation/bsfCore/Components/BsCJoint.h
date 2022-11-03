@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note Wraps Joint as a Component.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(Joint)) CJoint : public Component
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(Joint)) CJoint : public Component
 	{
 	public:
 		CJoint(const HSceneObject& parent, JOINT_DESC& desc);

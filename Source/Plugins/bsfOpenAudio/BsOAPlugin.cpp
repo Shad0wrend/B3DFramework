@@ -23,14 +23,14 @@ public:
 };
 
 /**	Returns a name of the plugin. */
-extern "C" BS_PLUGIN_EXPORT const char* GetPluginName()
+extern "C" B3D_PLUGIN_EXPORT const char* GetPluginName()
 {
 	static const char* pluginName = "OpenAudio";
 	return pluginName;
 }
 
 /**	Entry point to the plugin. Called by the engine when the plugin is loaded. */
-extern "C" BS_PLUGIN_EXPORT void* LoadPlugin()
+extern "C" B3D_PLUGIN_EXPORT void* LoadPlugin()
 {
 	OAImporter* importer = B3DNew<OAImporter>();
 	Importer::Instance().RegisterAssetImporterInternal(importer);
@@ -39,7 +39,7 @@ extern "C" BS_PLUGIN_EXPORT void* LoadPlugin()
 }
 
 /**	Exit point of the plugin. Called by the engine before the plugin is unloaded. */
-extern "C" BS_PLUGIN_EXPORT void UnloadPlugin(OAFactory* instance)
+extern "C" B3D_PLUGIN_EXPORT void UnloadPlugin(OAFactory* instance)
 {
 	B3DDelete(instance);
 }

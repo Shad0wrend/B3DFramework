@@ -36,7 +36,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	class BS_CORE_EXPORT GameObjectManager : public Module<GameObjectManager>
+	class B3D_CORE_EXPORT GameObjectManager : public Module<GameObjectManager>
 	{
 	public:
 		GameObjectManager() = default;
@@ -116,7 +116,7 @@ namespace bs
 	};
 
 	/** Resolves game object handles and ID during deserialization of a game object hierarchy. */
-	class BS_CORE_EXPORT GameObjectDeserializationState
+	class B3D_CORE_EXPORT GameObjectDeserializationState
 	{
 	private:
 		/**	Contains data for an yet unresolved game object handle. */

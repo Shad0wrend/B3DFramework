@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note	Wraps ReflectionProbe as a Component.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportName(ReflectionProbe)) CReflectionProbe : public Component
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportName(ReflectionProbe)) CReflectionProbe : public Component
 	{
 	public:
 		CReflectionProbe(const HSceneObject& parent);

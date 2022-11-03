@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Manages displaying tooltips over GUI elements. */
-	class BS_EXPORT GUITooltipManager : public Module<GUITooltipManager>
+	class B3D_EXPORT GUITooltipManager : public Module<GUITooltipManager>
 	{
 	public:
 		~GUITooltipManager();

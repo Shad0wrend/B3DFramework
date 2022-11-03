@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for Debug. */
-	class BS_SCR_BE_EXPORT ScriptDebug : public ScriptObject<ScriptDebug>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptDebug : public ScriptObject<ScriptDebug>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Debug")

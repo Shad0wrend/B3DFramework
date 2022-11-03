@@ -11,7 +11,7 @@ namespace bs
 	 */
 
 	/** Represents a 2D rectangle using integer values. Rectangle is represented with an origin in top left and width/height. */
-	class BS_UTILITY_EXPORT Rect2I
+	class B3D_UTILITY_EXPORT Rect2I
 	{
 	public:
 		constexpr Rect2I() = default;

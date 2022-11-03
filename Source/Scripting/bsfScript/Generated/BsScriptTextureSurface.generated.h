@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptTextureSurface : public ScriptObject<ScriptTextureSurface>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTextureSurface : public ScriptObject<ScriptTextureSurface>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "TextureSurface")

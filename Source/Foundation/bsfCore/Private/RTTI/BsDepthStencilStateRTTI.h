@@ -17,7 +17,7 @@ namespace bs
 
 	BS_ALLOW_MEMCPY_SERIALIZATION(DEPTH_STENCIL_STATE_DESC);
 
-	class BS_CORE_EXPORT DepthStencilStateRTTI : public RTTIType<DepthStencilState, IReflectable, DepthStencilStateRTTI>
+	class B3D_CORE_EXPORT DepthStencilStateRTTI : public RTTIType<DepthStencilState, IReflectable, DepthStencilStateRTTI>
 	{
 	private:
 		DEPTH_STENCIL_STATE_DESC& GetData(DepthStencilState* obj) { return obj->mProperties.mData; }

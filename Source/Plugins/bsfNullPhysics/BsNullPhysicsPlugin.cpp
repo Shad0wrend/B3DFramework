@@ -6,7 +6,7 @@
 
 using namespace bs;
 
-class BS_PLUGIN_EXPORT NullPhysicsFactory : public PhysicsFactory
+class B3D_PLUGIN_EXPORT NullPhysicsFactory : public PhysicsFactory
 {
 public:
 	void StartUp(bool cooking)
@@ -23,12 +23,12 @@ public:
 	}
 };
 
-extern "C" BS_PLUGIN_EXPORT NullPhysicsFactory* LoadPlugin()
+extern "C" B3D_PLUGIN_EXPORT NullPhysicsFactory* LoadPlugin()
 {
 	return B3DNew<NullPhysicsFactory>();
 }
 
-extern "C" BS_PLUGIN_EXPORT void UnloadPlugin(NullPhysicsFactory* instance)
+extern "C" B3D_PLUGIN_EXPORT void UnloadPlugin(NullPhysicsFactory* instance)
 {
 	B3DDelete(instance);
 }

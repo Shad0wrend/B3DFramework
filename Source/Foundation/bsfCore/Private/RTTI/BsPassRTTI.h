@@ -42,7 +42,7 @@ namespace bs
 		inline RTTITypeBase* GetRtti() const override;
 	};
 
-	class BS_CORE_EXPORT SerializedGpuProgramDataRTTI : public RTTIType<SerializedGpuProgramData, IReflectable, SerializedGpuProgramDataRTTI>
+	class B3D_CORE_EXPORT SerializedGpuProgramDataRTTI : public RTTIType<SerializedGpuProgramData, IReflectable, SerializedGpuProgramDataRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -82,7 +82,7 @@ namespace bs
 		return GetRttiStatic();
 	}
 
-	class BS_CORE_EXPORT PassRTTI : public RTTIType<Pass, IReflectable, PassRTTI>
+	class B3D_CORE_EXPORT PassRTTI : public RTTIType<Pass, IReflectable, PassRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS

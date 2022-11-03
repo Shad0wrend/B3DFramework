@@ -13,7 +13,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptGUISkin : public TScriptResource<ScriptGUISkin, GUISkin>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUISkin : public TScriptResource<ScriptGUISkin, GUISkin>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUISkin")

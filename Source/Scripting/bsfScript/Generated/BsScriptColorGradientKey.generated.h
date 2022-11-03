@@ -15,7 +15,7 @@ namespace bs
 		float Time;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptColorGradientKey : public ScriptObject<ScriptColorGradientKey>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptColorGradientKey : public ScriptObject<ScriptColorGradientKey>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ColorGradientKey")

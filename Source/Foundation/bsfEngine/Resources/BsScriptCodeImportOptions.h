@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/** Contains import options you may use to control how is a file containing script source code importer. */
-	class BS_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ScriptCodeImportOptions : public ImportOptions
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ScriptCodeImportOptions : public ImportOptions
 	{
 	public:
 		ScriptCodeImportOptions() = default;

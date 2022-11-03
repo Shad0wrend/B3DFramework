@@ -20,7 +20,7 @@ namespace bs
 	 * Represents an interface RTTI objects need to implement if they want to provide custom method of comparing
 	 * their objects for equality.
 	 */
-	class BS_UTILITY_EXPORT ICompare
+	class B3D_UTILITY_EXPORT ICompare
 	{
 	public:
 		virtual ~ICompare() = default;
@@ -30,7 +30,7 @@ namespace bs
 	};
 
 	/** Compares native IReflectable objects for equality. */
-	class BS_UTILITY_EXPORT BinaryCompare : public ICompare
+	class B3D_UTILITY_EXPORT BinaryCompare : public ICompare
 	{
 	public:
 		BinaryCompare();

@@ -21,7 +21,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptPixelData : public TScriptReflectable<ScriptPixelData, PixelData>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPixelData : public TScriptReflectable<ScriptPixelData, PixelData>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "PixelData")

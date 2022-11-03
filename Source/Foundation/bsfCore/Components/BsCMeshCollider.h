@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note Wraps MeshCollider as a Component.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(MeshCollider)) CMeshCollider : public CCollider
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(MeshCollider)) CMeshCollider : public CCollider
 	{
 	public:
 		CMeshCollider(const HSceneObject& parent);

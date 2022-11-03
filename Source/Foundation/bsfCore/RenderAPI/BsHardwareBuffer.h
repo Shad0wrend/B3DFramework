@@ -17,7 +17,7 @@ namespace bs
 	 * @note	Core thread only.
 	 * @note	Be aware that reading from non-system memory hardware buffers is usually slow and should be avoided.
 	 */
-	class BS_CORE_EXPORT HardwareBuffer
+	class B3D_CORE_EXPORT HardwareBuffer
 	{
 	public:
 		virtual ~HardwareBuffer() = default;

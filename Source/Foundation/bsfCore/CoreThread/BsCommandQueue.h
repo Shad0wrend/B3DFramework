@@ -124,7 +124,7 @@ namespace bs
 	};
 
 	/** Manages a list of commands that can be queued for later execution on the core thread. */
-	class BS_CORE_EXPORT CommandQueueBase
+	class B3D_CORE_EXPORT CommandQueueBase
 	{
 	public:
 		/**

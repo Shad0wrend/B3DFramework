@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for GUICanvas. */
-	class BS_SCR_BE_EXPORT ScriptGUICanvas : public TScriptGUIElement<ScriptGUICanvas>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUICanvas : public TScriptGUIElement<ScriptGUICanvas>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUICanvas")

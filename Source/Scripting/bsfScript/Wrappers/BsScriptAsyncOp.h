@@ -28,7 +28,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for AsyncOpBase and AsyncOp<T>. */
-	class BS_SCR_BE_EXPORT ScriptAsyncOpBase : public ScriptObject<ScriptAsyncOpBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAsyncOpBase : public ScriptObject<ScriptAsyncOpBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "AsyncOpBase")

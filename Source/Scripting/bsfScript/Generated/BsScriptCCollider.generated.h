@@ -19,7 +19,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptCColliderBase : public ScriptComponentBase
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCColliderBase : public ScriptComponentBase
 	{
 	public:
 		ScriptCColliderBase(MonoObject* instance);
@@ -27,7 +27,7 @@ namespace bs
 		virtual ~ScriptCColliderBase() {}
 	};
 
-	class BS_SCR_BE_EXPORT ScriptCCollider : public TScriptComponent<ScriptCCollider, CCollider, ScriptCColliderBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCCollider : public TScriptComponent<ScriptCCollider, CCollider, ScriptCColliderBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Collider")

@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note Wraps ParticleSystem as a Component.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(ParticleSystem)) CParticleSystem : public Component
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Particles), ExportName(ParticleSystem)) CParticleSystem : public Component
 	{
 	public:
 		CParticleSystem(const HSceneObject& parent);

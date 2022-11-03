@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/** Helper class for creating and parsing managed arrays.*/
-	class BS_MONO_EXPORT ScriptArray
+	class B3D_MONO_EXPORT ScriptArray
 	{
 	public:
 		/** Wraps an existing array and allows you to get/set its values. */
@@ -140,25 +140,25 @@ namespace bs
 		}
 
 		template <>
-		BS_MONO_EXPORT String ScriptArrayGet(MonoArray* array, u32 idx);
+		B3D_MONO_EXPORT String ScriptArrayGet(MonoArray* array, u32 idx);
 
 		template <>
-		BS_MONO_EXPORT WString ScriptArrayGet(MonoArray* array, u32 idx);
+		B3D_MONO_EXPORT WString ScriptArrayGet(MonoArray* array, u32 idx);
 
 		template <>
-		BS_MONO_EXPORT Path ScriptArrayGet(MonoArray* array, u32 idx);
+		B3D_MONO_EXPORT Path ScriptArrayGet(MonoArray* array, u32 idx);
 
 		template <>
-		BS_MONO_EXPORT void ScriptArraySet<String>(MonoArray* array, u32 idx, const String& value);
+		B3D_MONO_EXPORT void ScriptArraySet<String>(MonoArray* array, u32 idx, const String& value);
 
 		template <>
-		BS_MONO_EXPORT void ScriptArraySet<WString>(MonoArray* array, u32 idx, const WString& value);
+		B3D_MONO_EXPORT void ScriptArraySet<WString>(MonoArray* array, u32 idx, const WString& value);
 
 		template <>
-		BS_MONO_EXPORT void ScriptArraySet<Path>(MonoArray* array, u32 idx, const Path& value);
+		B3D_MONO_EXPORT void ScriptArraySet<Path>(MonoArray* array, u32 idx, const Path& value);
 
 		template <>
-		BS_MONO_EXPORT void ScriptArraySet<std::nullptr_t>(MonoArray* array, u32 idx, const std::nullptr_t& value);
+		B3D_MONO_EXPORT void ScriptArraySet<std::nullptr_t>(MonoArray* array, u32 idx, const std::nullptr_t& value);
 
 		template <class T>
 		inline ScriptArray ScriptArrayCreate(u32 size)

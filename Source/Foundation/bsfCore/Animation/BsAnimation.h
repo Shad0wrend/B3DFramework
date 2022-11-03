@@ -111,7 +111,7 @@ namespace bs
 	};
 
 	/** Represents an animation clip used in 1D blending. Each clip has a position on the number line. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Animation)) BlendClipInfo
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Animation)) BlendClipInfo
 	{
 		BlendClipInfo() = default;
 
@@ -120,7 +120,7 @@ namespace bs
 	};
 
 	/** Defines a 1D blend where multiple animation clips are blended between each other using linear interpolation. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Animation)) Blend1DInfo
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(Animation)) Blend1DInfo
 	{
 		Vector<BlendClipInfo> Clips;
 	};
@@ -283,7 +283,7 @@ namespace bs
 	 * thread for updating attached scene objects and bones (if skeleton is attached), or the data is made available for
 	 * manual queries in the case of generic animation.
 	 */
-	class BS_CORE_EXPORT Animation : public CoreObject, public IResourceListener
+	class B3D_CORE_EXPORT Animation : public CoreObject, public IResourceListener
 	{
 	public:
 		~Animation();

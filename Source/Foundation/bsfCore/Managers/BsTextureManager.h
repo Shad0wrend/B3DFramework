@@ -18,7 +18,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	class BS_CORE_EXPORT TextureManager : public Module<TextureManager>
+	class B3D_CORE_EXPORT TextureManager : public Module<TextureManager>
 	{
 	public:
 		virtual ~TextureManager() = default;
@@ -85,7 +85,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		class BS_CORE_EXPORT TextureManager : public Module<TextureManager>
+		class B3D_CORE_EXPORT TextureManager : public Module<TextureManager>
 		{
 		public:
 			virtual ~TextureManager() = default;

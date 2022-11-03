@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for GUILayout derived classes. */
-	class BS_SCR_BE_EXPORT ScriptGUILayout : public TScriptGUIElementBase<ScriptGUILayout>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUILayout : public TScriptGUIElementBase<ScriptGUILayout>
 	{
 	protected:
 		/**	Contains information about an interop object that represents a child of the layout. */
@@ -81,7 +81,7 @@ namespace bs
 	};
 
 	/**	Interop class between C++ & CLR for GUIPanel.  */
-	class BS_SCR_BE_EXPORT ScriptGUIPanel : public ScriptObject<ScriptGUIPanel>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIPanel : public ScriptObject<ScriptGUIPanel>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIPanel")
@@ -94,7 +94,7 @@ namespace bs
 	};
 
 	/**	Specialized ScriptGUILayout that is used only in GUI scroll areas. */
-	class BS_SCR_BE_EXPORT ScriptGUIScrollAreaLayout : public ScriptGUILayout
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIScrollAreaLayout : public ScriptGUILayout
 	{
 	public:
 		/**

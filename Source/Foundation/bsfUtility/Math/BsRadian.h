@@ -18,7 +18,7 @@ namespace bs
 	 * @note
 	 * Radian values are interchangeable with Degree values, and conversions will be done automatically between them.
 	 */
-	class BS_UTILITY_EXPORT Radian
+	class B3D_UTILITY_EXPORT Radian
 	{
 	public:
 		constexpr Radian() = default;

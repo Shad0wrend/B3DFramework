@@ -17,7 +17,7 @@ namespace bs
 	 * layer between native Component and a Mono user defined component type since managed types cannot simply derive
 	 * from Component to implement its functionality.
 	 */
-	class BS_SCR_BE_EXPORT ManagedComponent : public Component
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedComponent : public Component
 	{
 	public:
 		~ManagedComponent() = default;

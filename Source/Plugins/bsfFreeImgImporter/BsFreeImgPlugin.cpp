@@ -5,13 +5,13 @@
 
 using namespace bs;
 
-extern "C" BS_PLUGIN_EXPORT const char* GetPluginName()
+extern "C" B3D_PLUGIN_EXPORT const char* GetPluginName()
 {
 	static const char* pluginName = "FreeImageImporter";
 	return pluginName;
 }
 
-extern "C" BS_PLUGIN_EXPORT void* LoadPlugin()
+extern "C" B3D_PLUGIN_EXPORT void* LoadPlugin()
 {
 	FreeImgImporter* importer = B3DNew<FreeImgImporter>();
 	Importer::Instance().RegisterAssetImporterInternal(importer);

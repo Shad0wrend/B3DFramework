@@ -18,7 +18,7 @@ namespace bs
 		bool IsCustom;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptVideoMode : public ScriptObject<ScriptVideoMode>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptVideoMode : public ScriptObject<ScriptVideoMode>
 	{
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "VideoMode")

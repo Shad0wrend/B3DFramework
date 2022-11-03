@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Class containing meta-information describing a resource. */
-	class BS_CORE_EXPORT ResourceMetaData : public IReflectable
+	class B3D_CORE_EXPORT ResourceMetaData : public IReflectable
 	{
 	public:
 		String DisplayName;

@@ -15,7 +15,7 @@ namespace bs
 		Vector3 Position;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptLightProbeInfo : public ScriptObject<ScriptLightProbeInfo>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptLightProbeInfo : public ScriptObject<ScriptLightProbeInfo>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "LightProbeInfo")

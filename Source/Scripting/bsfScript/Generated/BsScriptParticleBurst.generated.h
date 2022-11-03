@@ -17,7 +17,7 @@ namespace bs
 		float Interval;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptParticleBurst : public ScriptObject<ScriptParticleBurst>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptParticleBurst : public ScriptObject<ScriptParticleBurst>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleBurst")

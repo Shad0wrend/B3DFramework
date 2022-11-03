@@ -14,7 +14,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptAudioClip : public TScriptResource<ScriptAudioClip, AudioClip>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAudioClip : public TScriptResource<ScriptAudioClip, AudioClip>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "AudioClip")

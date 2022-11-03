@@ -17,7 +17,7 @@ namespace bs
 		 *
 		 * @see		GpuBuffer
 		 */
-		struct BS_CORE_EXPORT GPU_BUFFER_VIEW_DESC
+		struct B3D_CORE_EXPORT GPU_BUFFER_VIEW_DESC
 		{
 			u32 FirstElement;
 			u32 ElementWidth;

@@ -17,7 +17,7 @@ namespace bs
 	 */
 
 	/** Thread synchronization primitives used by AsyncOps and their callers. */
-	class BS_UTILITY_EXPORT AsyncOpSyncData
+	class B3D_UTILITY_EXPORT AsyncOpSyncData
 	{
 	public:
 		Mutex MMutex;
@@ -28,7 +28,7 @@ namespace bs
 	 * Flag used for creating async operations signaling that we want to create an empty AsyncOp with no internal
 	 * memory storage.
 	 */
-	struct BS_UTILITY_EXPORT AsyncOpEmpty
+	struct B3D_UTILITY_EXPORT AsyncOpEmpty
 	{};
 
 	/** @} */
@@ -39,7 +39,7 @@ namespace bs
 	 */
 
 	/** Common base for all TAsyncOp specializations. */
-	class BS_UTILITY_EXPORT AsyncOpBase
+	class B3D_UTILITY_EXPORT AsyncOpBase
 	{
 	private:
 		struct AsyncOpData
@@ -119,7 +119,7 @@ namespace bs
 	 * You are allowed (and meant to) to copy this by value.
 	 */
 	template <class ReturnType>
-	class BS_UTILITY_EXPORT TAsyncOp : public AsyncOpBase
+	class B3D_UTILITY_EXPORT TAsyncOp : public AsyncOpBase
 	{
 	public:
 		using ReturnValueType = ReturnType;

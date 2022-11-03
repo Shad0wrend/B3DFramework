@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/** Base class for all data types used in intermediate IReflectable object representation. */
-	struct BS_UTILITY_EXPORT SerializedInstance : IReflectable
+	struct B3D_UTILITY_EXPORT SerializedInstance : IReflectable
 	{
 		virtual ~SerializedInstance() = default;
 
@@ -38,7 +38,7 @@ namespace bs
 	};
 
 	/** Contains data for a single field in a serialized object. */
-	struct BS_UTILITY_EXPORT SerializedEntry : IReflectable
+	struct B3D_UTILITY_EXPORT SerializedEntry : IReflectable
 	{
 		SerializedEntry() = default;
 
@@ -55,7 +55,7 @@ namespace bs
 	};
 
 	/** Contains a sub-set of fields of a SerializedObject for a single class in a class hierarchy. */
-	struct BS_UTILITY_EXPORT SerializedSubObject : IReflectable
+	struct B3D_UTILITY_EXPORT SerializedSubObject : IReflectable
 	{
 		SerializedSubObject() = default;
 
@@ -89,7 +89,7 @@ namespace bs
 	 * memory but complex objects, their references and fields are available as their own serialized objects and can be
 	 * iterated over, viewed, compared or modified. Serialized object can later be decoded back into a IReflectable object.
 	 */
-	struct BS_UTILITY_EXPORT SerializedObject : SerializedInstance
+	struct B3D_UTILITY_EXPORT SerializedObject : SerializedInstance
 	{
 		/** Returns the RTTI type ID for the most-derived class of this object. */
 		u32 GetRootTypeId() const;
@@ -131,7 +131,7 @@ namespace bs
 	};
 
 	/** Contains data for a serialized value of a specific field or array entry. */
-	struct BS_UTILITY_EXPORT SerializedField : SerializedInstance
+	struct B3D_UTILITY_EXPORT SerializedField : SerializedInstance
 	{
 		SerializedField() = default;
 
@@ -157,7 +157,7 @@ namespace bs
 	};
 
 	/** Contains data for a serialized value of a data block field. */
-	struct BS_UTILITY_EXPORT SerializedDataBlock : SerializedInstance
+	struct B3D_UTILITY_EXPORT SerializedDataBlock : SerializedInstance
 	{
 		SerializedDataBlock() = default;
 
@@ -177,7 +177,7 @@ namespace bs
 	};
 
 	/** A serialized value representing a single entry in an array. */
-	struct BS_UTILITY_EXPORT SerializedArrayEntry : IReflectable
+	struct B3D_UTILITY_EXPORT SerializedArrayEntry : IReflectable
 	{
 		SerializedArrayEntry() = default;
 
@@ -194,7 +194,7 @@ namespace bs
 	};
 
 	/** A serialized array containing a list of all its entries. */
-	struct BS_UTILITY_EXPORT SerializedArray : SerializedInstance
+	struct B3D_UTILITY_EXPORT SerializedArray : SerializedInstance
 	{
 		SerializedArray() = default;
 

@@ -33,7 +33,7 @@ namespace bs
 	};
 
 	/** Module that in some way modified or effects a ParticleSystem. */
-	class BS_CORE_EXPORT ParticleModule : public IReflectable, INonCopyable
+	class B3D_CORE_EXPORT ParticleModule : public IReflectable, INonCopyable
 	{
 	public:
 		ParticleModule(const ParticleModule&) = delete;

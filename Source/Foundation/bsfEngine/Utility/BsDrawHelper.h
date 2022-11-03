@@ -18,7 +18,7 @@ namespace bs
 	 */
 
 	/**	Helper class for immediate drawing of common geometric shapes. */
-	class BS_EXPORT DrawHelper
+	class B3D_EXPORT DrawHelper
 	{
 	public:
 		/** Controls in what order will elements be rendered, depending on some reference point. */

@@ -23,7 +23,7 @@ namespace bs
 	};
 
 	/** Static class containing various utility methods that do not fit anywhere else. */
-	class BS_CORE_EXPORT Utility
+	class B3D_CORE_EXPORT Utility
 	{
 	public:
 		/**
@@ -50,7 +50,7 @@ namespace bs
 	};
 
 	/** Provides extra information and maintains state during serialization of various RTTI types in the core. */
-	struct BS_CORE_EXPORT CoreSerializationContext : SerializationContext
+	struct B3D_CORE_EXPORT CoreSerializationContext : SerializationContext
 	{
 		SPtr<GameObjectDeserializationState> GoState;
 		bool GoDeserializationActive = false;

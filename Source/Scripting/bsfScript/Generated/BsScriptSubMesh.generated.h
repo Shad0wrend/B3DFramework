@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptSubMesh : public ScriptObject<ScriptSubMesh>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSubMesh : public ScriptObject<ScriptSubMesh>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SubMesh")

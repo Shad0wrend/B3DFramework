@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_UTILITY_EXPORT SerializedInstanceRTTI : public RTTIType<SerializedInstance, IReflectable, SerializedInstanceRTTI>
+	class B3D_UTILITY_EXPORT SerializedInstanceRTTI : public RTTIType<SerializedInstance, IReflectable, SerializedInstanceRTTI>
 	{
 	public:
 		const String& GetRttiName()
@@ -35,7 +35,7 @@ namespace bs
 		}
 	};
 
-	class BS_UTILITY_EXPORT SerializedFieldRTTI : public RTTIType<SerializedField, SerializedInstance, SerializedFieldRTTI>
+	class B3D_UTILITY_EXPORT SerializedFieldRTTI : public RTTIType<SerializedField, SerializedInstance, SerializedFieldRTTI>
 	{
 	private:
 		SPtr<DataStream> GetData(SerializedField* obj, u32& size)
@@ -77,7 +77,7 @@ namespace bs
 		}
 	};
 
-	class BS_UTILITY_EXPORT SerializedDataBlockRTTI : public RTTIType<SerializedDataBlock, SerializedInstance, SerializedDataBlockRTTI>
+	class B3D_UTILITY_EXPORT SerializedDataBlockRTTI : public RTTIType<SerializedDataBlock, SerializedInstance, SerializedDataBlockRTTI>
 	{
 	private:
 		SPtr<DataStream> GetData(SerializedDataBlock* obj, u32& size)
@@ -121,7 +121,7 @@ namespace bs
 		}
 	};
 
-	class BS_UTILITY_EXPORT SerializedObjectRTTI : public RTTIType<SerializedObject, SerializedInstance, SerializedObjectRTTI>
+	class B3D_UTILITY_EXPORT SerializedObjectRTTI : public RTTIType<SerializedObject, SerializedInstance, SerializedObjectRTTI>
 	{
 	private:
 		SerializedSubObject& GetEntry(SerializedObject* obj, u32 arrayIdx)
@@ -167,7 +167,7 @@ namespace bs
 		}
 	};
 
-	class BS_UTILITY_EXPORT SerializedArrayRTTI : public RTTIType<SerializedArray, SerializedInstance, SerializedArrayRTTI>
+	class B3D_UTILITY_EXPORT SerializedArrayRTTI : public RTTIType<SerializedArray, SerializedInstance, SerializedArrayRTTI>
 	{
 	private:
 		u32& GetNumElements(SerializedArray* obj)
@@ -235,7 +235,7 @@ namespace bs
 		Vector<SerializedArrayEntry> mSequentialEntries;
 	};
 
-	class BS_UTILITY_EXPORT SerializedSubObjectRTTI : public RTTIType<SerializedSubObject, IReflectable, SerializedSubObjectRTTI>
+	class B3D_UTILITY_EXPORT SerializedSubObjectRTTI : public RTTIType<SerializedSubObject, IReflectable, SerializedSubObjectRTTI>
 	{
 	private:
 		u32& GetTypeId(SerializedSubObject* obj)
@@ -303,7 +303,7 @@ namespace bs
 		Vector<SerializedEntry> mSequentialEntries;
 	};
 
-	class BS_UTILITY_EXPORT SerializedEntryRTTI : public RTTIType<SerializedEntry, IReflectable, SerializedEntryRTTI>
+	class B3D_UTILITY_EXPORT SerializedEntryRTTI : public RTTIType<SerializedEntry, IReflectable, SerializedEntryRTTI>
 	{
 	private:
 		u32& GetFieldId(SerializedEntry* obj)
@@ -350,7 +350,7 @@ namespace bs
 		}
 	};
 
-	class BS_UTILITY_EXPORT SerializedArrayEntryRTTI : public RTTIType<SerializedArrayEntry, IReflectable, SerializedArrayEntryRTTI>
+	class B3D_UTILITY_EXPORT SerializedArrayEntryRTTI : public RTTIType<SerializedArrayEntry, IReflectable, SerializedArrayEntryRTTI>
 	{
 	private:
 		u32& GetArrayIdx(SerializedArrayEntry* obj)

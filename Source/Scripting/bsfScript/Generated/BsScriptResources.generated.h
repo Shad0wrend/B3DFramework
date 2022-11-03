@@ -15,7 +15,7 @@ namespace bs
 namespace bs
 {
 #if !BS_IS_BANSHEE3D
-	class BS_SCR_BE_EXPORT ScriptResources : public ScriptObject<ScriptResources>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptResources : public ScriptObject<ScriptResources>
 	{
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "Resources")

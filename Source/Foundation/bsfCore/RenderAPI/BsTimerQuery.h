@@ -18,7 +18,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		class BS_CORE_EXPORT TimerQuery
+		class B3D_CORE_EXPORT TimerQuery
 		{
 		public:
 			virtual ~TimerQuery() = default;

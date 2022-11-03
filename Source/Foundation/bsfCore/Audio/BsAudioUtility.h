@@ -11,7 +11,7 @@ namespace bs
 	 */
 
 	/** Provides various utility functionality relating to audio. */
-	class BS_CORE_EXPORT AudioUtility
+	class B3D_CORE_EXPORT AudioUtility
 	{
 	public:
 		/**

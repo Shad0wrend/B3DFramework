@@ -28,7 +28,7 @@ namespace bs
 	 * Whether or not an audio source is spatial is controlled by the assigned AudioClip. The volume and the pitch of a
 	 * spatial audio source is controlled by its position and the AudioListener's position/direction/velocity.
 	 */
-	class BS_CORE_EXPORT AudioSource : public IReflectable, public SceneActor, public IResourceListener
+	class B3D_CORE_EXPORT AudioSource : public IReflectable, public SceneActor, public IResourceListener
 	{
 	public:
 		virtual ~AudioSource() = default;

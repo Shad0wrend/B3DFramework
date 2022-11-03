@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/** Represents a capsule with a line segment and a radius. */
-	class BS_UTILITY_EXPORT Capsule
+	class B3D_UTILITY_EXPORT Capsule
 	{
 	public:
 		Capsule() = default;

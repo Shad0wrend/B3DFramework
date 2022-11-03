@@ -11,7 +11,7 @@ namespace bs
 	 */
 
 	/** Utility class for generating BMP images. */
-	class BS_UTILITY_EXPORT BitmapWriter
+	class B3D_UTILITY_EXPORT BitmapWriter
 	{
 	public:
 		/**

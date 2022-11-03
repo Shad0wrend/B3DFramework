@@ -14,7 +14,7 @@ add_common_flags(bsfFontImporter)
 target_include_directories(bsfFontImporter PRIVATE "./")
 
 # Defines
-target_compile_definitions(bsfFontImporter PRIVATE -DBS_FONT_EXPORTS -DUSE_FREETYPE2_STATIC)
+target_compile_definitions(bsfFontImporter PRIVATE -DUSE_FREETYPE2_STATIC)
 
 # Libraries
 ## External lib: FreeType

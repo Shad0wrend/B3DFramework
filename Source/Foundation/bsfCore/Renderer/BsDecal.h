@@ -16,7 +16,7 @@ namespace bs
 	 */
 
 	/** Base class for both core and sim thread implementations of Decal. */
-	class BS_CORE_EXPORT DecalBase : public SceneActor
+	class B3D_CORE_EXPORT DecalBase : public SceneActor
 	{
 	public:
 		DecalBase();
@@ -107,7 +107,7 @@ namespace bs
 
 	/** Templated base class for both core and sim thread implementations of Decal. */
 	template <bool Core>
-	class BS_CORE_EXPORT TDecal : public DecalBase
+	class B3D_CORE_EXPORT TDecal : public DecalBase
 	{
 	public:
 		using MaterialType = CoreVariantHandleType<Material, Core>;
@@ -152,7 +152,7 @@ namespace bs
 	 * Specifies a decal that will be projected onto scene geometry. User can set the material to use when rendering
 	 * the decal, as well as control decal orientation and size.
 	 */
-	class BS_CORE_EXPORT Decal : public IReflectable, public CoreObject, public TDecal<false>
+	class B3D_CORE_EXPORT Decal : public IReflectable, public CoreObject, public TDecal<false>
 	{
 	public:
 		/**	Retrieves an implementation of the decal usable only from the core thread. */
@@ -195,7 +195,7 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread version of a bs::Decal */
-		class BS_CORE_EXPORT Decal : public CoreObject, public TDecal<true>
+		class B3D_CORE_EXPORT Decal : public CoreObject, public TDecal<true>
 		{
 		public:
 			~Decal();

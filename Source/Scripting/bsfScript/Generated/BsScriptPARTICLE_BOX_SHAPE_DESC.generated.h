@@ -16,7 +16,7 @@ namespace bs
 		Vector3 Extents;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptPARTICLE_BOX_SHAPE_DESC : public ScriptObject<ScriptPARTICLE_BOX_SHAPE_DESC>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPARTICLE_BOX_SHAPE_DESC : public ScriptObject<ScriptPARTICLE_BOX_SHAPE_DESC>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ParticleBoxShapeOptions")

@@ -16,7 +16,7 @@ namespace bs
 	 * Allows you to register global keyboard shortcuts that trigger callbacks when a certain key, or a key combination is
 	 * pressed.
 	 */
-	class BS_EXPORT ShortcutManager : public Module<ShortcutManager>
+	class B3D_EXPORT ShortcutManager : public Module<ShortcutManager>
 	{
 	public:
 		ShortcutManager();

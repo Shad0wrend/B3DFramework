@@ -19,7 +19,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	class BS_CORE_EXPORT GpuProgramManager : public Module<GpuProgramManager>
+	class B3D_CORE_EXPORT GpuProgramManager : public Module<GpuProgramManager>
 	{
 	public:
 		/** @copydoc GpuProgram::Create */
@@ -35,7 +35,7 @@ namespace bs
 	namespace ct
 	{
 		/** Factory responsible for creating GPU programs of a certain type. */
-		class BS_CORE_EXPORT GpuProgramFactory
+		class B3D_CORE_EXPORT GpuProgramFactory
 		{
 		public:
 			GpuProgramFactory() = default;
@@ -57,7 +57,7 @@ namespace bs
 		 *
 		 * @note	Core thread only unless otherwise specified.
 		 */
-		class BS_CORE_EXPORT GpuProgramManager : public Module<GpuProgramManager>
+		class B3D_CORE_EXPORT GpuProgramManager : public Module<GpuProgramManager>
 		{
 		public:
 			GpuProgramManager();
@@ -105,7 +105,7 @@ namespace bs
 		};
 
 		/**	Factory that creates null GPU programs.  */
-		class BS_CORE_EXPORT NullProgramFactory : public GpuProgramFactory
+		class B3D_CORE_EXPORT NullProgramFactory : public GpuProgramFactory
 		{
 		public:
 			NullProgramFactory() = default;

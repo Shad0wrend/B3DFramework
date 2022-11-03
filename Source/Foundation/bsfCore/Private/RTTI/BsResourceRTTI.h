@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT ResourceRTTI : public RTTIType<Resource, IReflectable, ResourceRTTI>
+	class B3D_CORE_EXPORT ResourceRTTI : public RTTIType<Resource, IReflectable, ResourceRTTI>
 	{
 	private:
 		u32& GetSize(Resource* obj) { return obj->mSize; }

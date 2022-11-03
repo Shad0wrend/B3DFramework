@@ -19,7 +19,7 @@ namespace bs
 	 * Color represented as 4 components, each being a floating point value ranging from 0 to 1. Color components are
 	 * red, green, blue and alpha.
 	 */
-	class BS_UTILITY_EXPORT Color
+	class B3D_UTILITY_EXPORT Color
 	{
 	public:
 		static const Color kZero;

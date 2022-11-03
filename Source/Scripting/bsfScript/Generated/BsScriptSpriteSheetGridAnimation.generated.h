@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptSpriteSheetGridAnimation : public ScriptObject<ScriptSpriteSheetGridAnimation>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpriteSheetGridAnimation : public ScriptObject<ScriptSpriteSheetGridAnimation>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SpriteSheetGridAnimation")

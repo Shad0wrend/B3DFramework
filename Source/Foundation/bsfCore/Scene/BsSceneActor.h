@@ -32,7 +32,7 @@ namespace bs
 	 * some functionality directly, rather than relying on attached Components. Scene actors can be considered as a
 	 * lower-level alternative to SceneObject/Component model. In fact many Components internally just wrap scene actors.
 	 */
-	class BS_CORE_EXPORT SceneActor
+	class B3D_CORE_EXPORT SceneActor
 	{
 	public:
 		SceneActor() = default;

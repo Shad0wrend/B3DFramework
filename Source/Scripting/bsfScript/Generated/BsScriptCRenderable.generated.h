@@ -13,7 +13,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptCRenderable : public TScriptComponent<ScriptCRenderable, CRenderable>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCRenderable : public TScriptComponent<ScriptCRenderable, CRenderable>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Renderable")

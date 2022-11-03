@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldKeyRTTI : public RTTIType<ManagedSerializableFieldKey, IReflectable, ManagedSerializableFieldKeyRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldKeyRTTI : public RTTIType<ManagedSerializableFieldKey, IReflectable, ManagedSerializableFieldKeyRTTI>
 	{
 	private:
 		u16& GetTypeId(ManagedSerializableFieldKey* obj) { return obj->MTypeId; }
@@ -50,7 +50,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataRTTI : public RTTIType<ManagedSerializableFieldData, IReflectable, ManagedSerializableFieldDataRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataRTTI : public RTTIType<ManagedSerializableFieldData, IReflectable, ManagedSerializableFieldDataRTTI>
 	{
 	private:
 	public:
@@ -76,7 +76,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataEntryRTTI : public RTTIType<ManagedSerializableFieldDataEntry, IReflectable, ManagedSerializableFieldDataEntryRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataEntryRTTI : public RTTIType<ManagedSerializableFieldDataEntry, IReflectable, ManagedSerializableFieldDataEntryRTTI>
 	{
 	private:
 		SPtr<ManagedSerializableFieldKey> GetKey(ManagedSerializableFieldDataEntry* obj) { return obj->MKey; }
@@ -111,7 +111,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataBoolRTTI : public RTTIType<ManagedSerializableFieldDataBool, ManagedSerializableFieldData, ManagedSerializableFieldDataBoolRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataBoolRTTI : public RTTIType<ManagedSerializableFieldDataBool, ManagedSerializableFieldData, ManagedSerializableFieldDataBoolRTTI>
 	{
 	private:
 		bool& GetValue(ManagedSerializableFieldDataBool* obj) { return obj->Value; }
@@ -141,7 +141,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataCharRTTI : public RTTIType<ManagedSerializableFieldDataChar, ManagedSerializableFieldData, ManagedSerializableFieldDataCharRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataCharRTTI : public RTTIType<ManagedSerializableFieldDataChar, ManagedSerializableFieldData, ManagedSerializableFieldDataCharRTTI>
 	{
 	private:
 		wchar_t& GetValue(ManagedSerializableFieldDataChar* obj) { return obj->Value; }
@@ -171,7 +171,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataI8RTTI : public RTTIType<ManagedSerializableFieldDataI8, ManagedSerializableFieldData, ManagedSerializableFieldDataI8RTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataI8RTTI : public RTTIType<ManagedSerializableFieldDataI8, ManagedSerializableFieldData, ManagedSerializableFieldDataI8RTTI>
 	{
 	private:
 		i8& GetValue(ManagedSerializableFieldDataI8* obj) { return obj->Value; }
@@ -201,7 +201,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataU8RTTI : public RTTIType<ManagedSerializableFieldDataU8, ManagedSerializableFieldData, ManagedSerializableFieldDataU8RTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataU8RTTI : public RTTIType<ManagedSerializableFieldDataU8, ManagedSerializableFieldData, ManagedSerializableFieldDataU8RTTI>
 	{
 	private:
 		u8& GetValue(ManagedSerializableFieldDataU8* obj) { return obj->Value; }
@@ -231,7 +231,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataI16RTTI : public RTTIType<ManagedSerializableFieldDataI16, ManagedSerializableFieldData, ManagedSerializableFieldDataI16RTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataI16RTTI : public RTTIType<ManagedSerializableFieldDataI16, ManagedSerializableFieldData, ManagedSerializableFieldDataI16RTTI>
 	{
 	private:
 		i16& GetValue(ManagedSerializableFieldDataI16* obj) { return obj->Value; }
@@ -261,7 +261,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataU16RTTI : public RTTIType<ManagedSerializableFieldDataU16, ManagedSerializableFieldData, ManagedSerializableFieldDataU16RTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataU16RTTI : public RTTIType<ManagedSerializableFieldDataU16, ManagedSerializableFieldData, ManagedSerializableFieldDataU16RTTI>
 	{
 	private:
 		u16& GetValue(ManagedSerializableFieldDataU16* obj) { return obj->Value; }
@@ -291,7 +291,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataI32RTTI : public RTTIType<ManagedSerializableFieldDataI32, ManagedSerializableFieldData, ManagedSerializableFieldDataI32RTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataI32RTTI : public RTTIType<ManagedSerializableFieldDataI32, ManagedSerializableFieldData, ManagedSerializableFieldDataI32RTTI>
 	{
 	private:
 		i32& GetValue(ManagedSerializableFieldDataI32* obj) { return obj->Value; }
@@ -321,7 +321,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataU32RTTI : public RTTIType<ManagedSerializableFieldDataU32, ManagedSerializableFieldData, ManagedSerializableFieldDataU32RTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataU32RTTI : public RTTIType<ManagedSerializableFieldDataU32, ManagedSerializableFieldData, ManagedSerializableFieldDataU32RTTI>
 	{
 	private:
 		u32& GetValue(ManagedSerializableFieldDataU32* obj) { return obj->Value; }
@@ -351,7 +351,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataI64RTTI : public RTTIType<ManagedSerializableFieldDataI64, ManagedSerializableFieldData, ManagedSerializableFieldDataI64RTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataI64RTTI : public RTTIType<ManagedSerializableFieldDataI64, ManagedSerializableFieldData, ManagedSerializableFieldDataI64RTTI>
 	{
 	private:
 		i64& GetValue(ManagedSerializableFieldDataI64* obj) { return obj->Value; }
@@ -381,7 +381,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataU64RTTI : public RTTIType<ManagedSerializableFieldDataU64, ManagedSerializableFieldData, ManagedSerializableFieldDataU64RTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataU64RTTI : public RTTIType<ManagedSerializableFieldDataU64, ManagedSerializableFieldData, ManagedSerializableFieldDataU64RTTI>
 	{
 	private:
 		u64& GetValue(ManagedSerializableFieldDataU64* obj) { return obj->Value; }
@@ -411,7 +411,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataFloatRTTI : public RTTIType<ManagedSerializableFieldDataFloat, ManagedSerializableFieldData, ManagedSerializableFieldDataFloatRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataFloatRTTI : public RTTIType<ManagedSerializableFieldDataFloat, ManagedSerializableFieldData, ManagedSerializableFieldDataFloatRTTI>
 	{
 	private:
 		float& GetValue(ManagedSerializableFieldDataFloat* obj) { return obj->Value; }
@@ -441,7 +441,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataDoubleRTTI : public RTTIType<ManagedSerializableFieldDataDouble, ManagedSerializableFieldData, ManagedSerializableFieldDataDoubleRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataDoubleRTTI : public RTTIType<ManagedSerializableFieldDataDouble, ManagedSerializableFieldData, ManagedSerializableFieldDataDoubleRTTI>
 	{
 	private:
 		double& GetValue(ManagedSerializableFieldDataDouble* obj) { return obj->Value; }
@@ -471,7 +471,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataStringRTTI : public RTTIType<ManagedSerializableFieldDataString, ManagedSerializableFieldData, ManagedSerializableFieldDataStringRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataStringRTTI : public RTTIType<ManagedSerializableFieldDataString, ManagedSerializableFieldData, ManagedSerializableFieldDataStringRTTI>
 	{
 	private:
 		WString& GetValue(ManagedSerializableFieldDataString* obj) { return obj->Value; }
@@ -501,7 +501,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataResourceRefRTTI : public RTTIType<ManagedSerializableFieldDataResourceRef, ManagedSerializableFieldData, ManagedSerializableFieldDataResourceRefRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataResourceRefRTTI : public RTTIType<ManagedSerializableFieldDataResourceRef, ManagedSerializableFieldData, ManagedSerializableFieldDataResourceRefRTTI>
 	{
 	private:
 		HResource& GetValue(ManagedSerializableFieldDataResourceRef* obj) { return obj->Value; }
@@ -531,7 +531,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataGameObjectRefRTTI : public RTTIType<ManagedSerializableFieldDataGameObjectRef, ManagedSerializableFieldData, ManagedSerializableFieldDataGameObjectRefRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataGameObjectRefRTTI : public RTTIType<ManagedSerializableFieldDataGameObjectRef, ManagedSerializableFieldData, ManagedSerializableFieldDataGameObjectRefRTTI>
 	{
 	private:
 		HGameObject& GetValue(ManagedSerializableFieldDataGameObjectRef* obj) { return obj->Value; }
@@ -561,7 +561,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataReflectableRefRTTI : public RTTIType<ManagedSerializableFieldDataReflectableRef, ManagedSerializableFieldData, ManagedSerializableFieldDataReflectableRefRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataReflectableRefRTTI : public RTTIType<ManagedSerializableFieldDataReflectableRef, ManagedSerializableFieldData, ManagedSerializableFieldDataReflectableRefRTTI>
 	{
 	private:
 		SPtr<IReflectable> GetValue(ManagedSerializableFieldDataReflectableRef* obj) { return obj->Value; }
@@ -591,7 +591,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataObjectRTTI : public RTTIType<ManagedSerializableFieldDataObject, ManagedSerializableFieldData, ManagedSerializableFieldDataObjectRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataObjectRTTI : public RTTIType<ManagedSerializableFieldDataObject, ManagedSerializableFieldData, ManagedSerializableFieldDataObjectRTTI>
 	{
 	private:
 		SPtr<ManagedSerializableObject> GetValue(ManagedSerializableFieldDataObject* obj) { return obj->Value; }
@@ -621,7 +621,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataArrayRTTI : public RTTIType<ManagedSerializableFieldDataArray, ManagedSerializableFieldData, ManagedSerializableFieldDataArrayRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataArrayRTTI : public RTTIType<ManagedSerializableFieldDataArray, ManagedSerializableFieldData, ManagedSerializableFieldDataArrayRTTI>
 	{
 	private:
 		SPtr<ManagedSerializableArray> GetValue(ManagedSerializableFieldDataArray* obj) { return obj->Value; }
@@ -651,7 +651,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataListRTTI : public RTTIType<ManagedSerializableFieldDataList, ManagedSerializableFieldData, ManagedSerializableFieldDataListRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataListRTTI : public RTTIType<ManagedSerializableFieldDataList, ManagedSerializableFieldData, ManagedSerializableFieldDataListRTTI>
 	{
 	private:
 		SPtr<ManagedSerializableList> GetValue(ManagedSerializableFieldDataList* obj) { return obj->Value; }
@@ -681,7 +681,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataDictionaryRTTI : public RTTIType<ManagedSerializableFieldDataDictionary, ManagedSerializableFieldData, ManagedSerializableFieldDataDictionaryRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataDictionaryRTTI : public RTTIType<ManagedSerializableFieldDataDictionary, ManagedSerializableFieldData, ManagedSerializableFieldDataDictionaryRTTI>
 	{
 	private:
 		SPtr<ManagedSerializableDictionary> GetValue(ManagedSerializableFieldDataDictionary* obj) { return obj->Value; }

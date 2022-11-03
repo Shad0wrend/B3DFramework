@@ -29,7 +29,7 @@ namespace bs
 	 * Type of object that can be referenced by a GameObject handle. Each object has an unique ID and is registered with
 	 * the GameObjectManager.
 	 */
-	class BS_CORE_EXPORT GameObject : public IReflectable
+	class B3D_CORE_EXPORT GameObject : public IReflectable
 	{
 	public:
 		GameObject() = default;

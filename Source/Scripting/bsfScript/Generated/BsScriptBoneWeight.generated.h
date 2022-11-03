@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptBoneWeight : public ScriptObject<ScriptBoneWeight>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptBoneWeight : public ScriptObject<ScriptBoneWeight>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "BoneWeight")

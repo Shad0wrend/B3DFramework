@@ -13,7 +13,7 @@ namespace bs
 		 */
 
 		/** Data describing a texture view. */
-		struct BS_CORE_EXPORT TEXTURE_VIEW_DESC
+		struct B3D_CORE_EXPORT TEXTURE_VIEW_DESC
 		{
 			/**
 			 * First mip level of the parent texture the view binds (0 - base level). This applied to all array slices
@@ -48,7 +48,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class BS_CORE_EXPORT TextureView
+		class B3D_CORE_EXPORT TextureView
 		{
 		public:
 			class HashFunction

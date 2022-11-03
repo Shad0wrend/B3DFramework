@@ -31,7 +31,7 @@ namespace bs
 	};
 
 	/** Contains code common to both sim and core thread implementations of GpuPipelineParamInfo. */
-	class BS_CORE_EXPORT GpuPipelineParamInfoBase
+	class B3D_CORE_EXPORT GpuPipelineParamInfoBase
 	{
 	public:
 		/** Types of GPU parameters. */
@@ -114,7 +114,7 @@ namespace bs
 	};
 
 	/** Holds meta-data about a set of GPU parameters used by a single pipeline state. */
-	class BS_CORE_EXPORT GpuPipelineParamInfo : public CoreObject, public GpuPipelineParamInfoBase
+	class B3D_CORE_EXPORT GpuPipelineParamInfo : public CoreObject, public GpuPipelineParamInfoBase
 	{
 	public:
 		virtual ~GpuPipelineParamInfo() = default;
@@ -142,7 +142,7 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread version of a bs::GpuPipelineParamInfo. */
-		class BS_CORE_EXPORT GpuPipelineParamInfo : public CoreObject, public GpuPipelineParamInfoBase
+		class B3D_CORE_EXPORT GpuPipelineParamInfo : public CoreObject, public GpuPipelineParamInfoBase
 		{
 		public:
 			virtual ~GpuPipelineParamInfo() = default;

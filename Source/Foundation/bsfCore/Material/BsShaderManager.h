@@ -15,7 +15,7 @@ namespace bs
 	 * Interface that provides a method for finding a shader include resource based on the name of the include that was
 	 * provided in a shader file.
 	 */
-	class BS_CORE_EXPORT IShaderIncludeHandler
+	class B3D_CORE_EXPORT IShaderIncludeHandler
 	{
 	public:
 		virtual ~IShaderIncludeHandler() = default;
@@ -31,14 +31,14 @@ namespace bs
 	 * Implements shader include finding by converting the shader include name into a path that the resource will be loaded
 	 * from.
 	 */
-	class BS_CORE_EXPORT DefaultShaderIncludeHandler : public IShaderIncludeHandler
+	class B3D_CORE_EXPORT DefaultShaderIncludeHandler : public IShaderIncludeHandler
 	{
 	public:
 		HShaderInclude FindInclude(const String& name) const override;
 	};
 
 	/**	A global manager that handles various shader specific operations. */
-	class BS_CORE_EXPORT ShaderManager : public Module<ShaderManager>
+	class B3D_CORE_EXPORT ShaderManager : public Module<ShaderManager>
 	{
 	public:
 		ShaderManager(const SPtr<IShaderIncludeHandler>& handler) { mIncludeHandler = handler; }

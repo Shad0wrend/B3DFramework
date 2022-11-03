@@ -54,7 +54,7 @@ namespace bs
 	 * 	  - Commands can also be submitted directly to the internal command queue (via a special flag), but with a
 	 * 	    performance cost due to extra synchronization required.
 	 */
-	class BS_CORE_EXPORT CoreThread : public Module<CoreThread>
+	class B3D_CORE_EXPORT CoreThread : public Module<CoreThread>
 	{
 		/** Contains data about an queue for a specific thread. */
 		struct ThreadQueueContainer
@@ -228,13 +228,13 @@ namespace bs
 	 *
 	 * @see		CoreThread
 	 */
-	BS_CORE_EXPORT CoreThread& GetCoreThread();
+	B3D_CORE_EXPORT CoreThread& GetCoreThread();
 
 	/**	Throws an exception if current thread isn't the core thread. */
-	BS_CORE_EXPORT void ThrowIfNotCoreThread();
+	B3D_CORE_EXPORT void ThrowIfNotCoreThread();
 
 	/** Throws an exception if current thread is the core thread. */
-	BS_CORE_EXPORT void ThrowIfCoreThread();
+	B3D_CORE_EXPORT void ThrowIfCoreThread();
 
 #if BS_DEBUG_MODE
 #	define THROW_IF_NOT_CORE_THREAD ThrowIfNotCoreThread();

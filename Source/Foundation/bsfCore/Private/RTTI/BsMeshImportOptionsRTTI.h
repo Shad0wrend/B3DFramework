@@ -16,7 +16,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT MeshImportOptionsRTTI : public RTTIType<MeshImportOptions, ImportOptions, MeshImportOptionsRTTI>
+	class B3D_CORE_EXPORT MeshImportOptionsRTTI : public RTTIType<MeshImportOptions, ImportOptions, MeshImportOptionsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -51,7 +51,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT ImportedAnimationEventsRTTI : public RTTIType<ImportedAnimationEvents, IReflectable, ImportedAnimationEventsRTTI>
+	class B3D_CORE_EXPORT ImportedAnimationEventsRTTI : public RTTIType<ImportedAnimationEvents, IReflectable, ImportedAnimationEventsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -76,7 +76,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT AnimationSplitInfoRTTI : public RTTIType<AnimationSplitInfo, IReflectable, AnimationSplitInfoRTTI>
+	class B3D_CORE_EXPORT AnimationSplitInfoRTTI : public RTTIType<AnimationSplitInfo, IReflectable, AnimationSplitInfoRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS

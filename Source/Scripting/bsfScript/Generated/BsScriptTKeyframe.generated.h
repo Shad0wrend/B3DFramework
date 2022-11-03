@@ -19,7 +19,7 @@
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptTKeyframeint32_t : public ScriptObject<ScriptTKeyframeint32_t>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTKeyframeint32_t : public ScriptObject<ScriptTKeyframeint32_t>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "KeyFrameInt")
@@ -31,7 +31,7 @@ namespace bs
 		ScriptTKeyframeint32_t(MonoObject* managedInstance);
 	};
 
-	class BS_SCR_BE_EXPORT ScriptTKeyframefloat : public ScriptObject<ScriptTKeyframefloat>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTKeyframefloat : public ScriptObject<ScriptTKeyframefloat>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "KeyFrame")
@@ -51,7 +51,7 @@ namespace bs
 		float Time;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptTKeyframeVector3 : public ScriptObject<ScriptTKeyframeVector3>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTKeyframeVector3 : public ScriptObject<ScriptTKeyframeVector3>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "KeyFrameVec3")
@@ -73,7 +73,7 @@ namespace bs
 		float Time;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptTKeyframeVector2 : public ScriptObject<ScriptTKeyframeVector2>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTKeyframeVector2 : public ScriptObject<ScriptTKeyframeVector2>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "KeyFrameVec2")
@@ -95,7 +95,7 @@ namespace bs
 		float Time;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptTKeyframeQuaternion : public ScriptObject<ScriptTKeyframeQuaternion>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTKeyframeQuaternion : public ScriptObject<ScriptTKeyframeQuaternion>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "KeyFrameQuat")

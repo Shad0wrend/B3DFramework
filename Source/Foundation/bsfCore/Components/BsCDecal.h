@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/** Wraps Decal as a Component. */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportName(Decal)) CDecal : public Component
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportName(Decal)) CDecal : public Component
 	{
 	public:
 		CDecal(const HSceneObject& parent);

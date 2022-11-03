@@ -25,7 +25,7 @@ namespace bs
 	 * Essentially this ensures that the anchor points of the two bodies are always coincident. Bodies are allowed to
 	 * rotate around the anchor points, and their rotatation can be limited by an elliptical cone.
 	 */
-	class BS_CORE_EXPORT SphericalJoint : public Joint
+	class B3D_CORE_EXPORT SphericalJoint : public Joint
 	{
 	public:
 		SphericalJoint(const SPHERICAL_JOINT_DESC& desc) {}

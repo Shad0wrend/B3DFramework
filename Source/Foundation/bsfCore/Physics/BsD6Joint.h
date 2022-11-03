@@ -94,7 +94,7 @@ namespace bs
 	 * constraint (for example for slider), twist constraint (rotating around X) and swing constraint (rotating around Y and
 	 * Z). It also allows you to constrain limits to only specific axes or completely lock specific axes.
 	 */
-	class BS_CORE_EXPORT D6Joint : public Joint
+	class B3D_CORE_EXPORT D6Joint : public Joint
 	{
 	public:
 		D6Joint(const D6_JOINT_DESC& desc) {}

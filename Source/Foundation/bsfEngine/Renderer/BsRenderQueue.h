@@ -38,7 +38,7 @@ namespace bs
 		 * material, and can influence rendering of transparent or opaque objects, or be used to improve performance by grouping
 		 * similar objects together.
 		 */
-		class BS_EXPORT RenderQueue
+		class B3D_EXPORT RenderQueue
 		{
 			/**	Data used for renderable element sorting. Represents a single pass for a single mesh. */
 			struct SortableElement

@@ -29,7 +29,7 @@ namespace bs
 	};
 
 	/**	Contains separate GUI content images for every possible GUI element state. */
-	struct BS_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(GUI)) GUIContentImages
+	struct B3D_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(GUI)) GUIContentImages
 	{
 		GUIContentImages() = default;
 
@@ -51,7 +51,7 @@ namespace bs
 	 * Holds data used for displaying content in a GUIElement. Content can consist of a string, image, a tooltip or none
 	 * of those.
 	 */
-	class BS_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(GUI)) GUIContent
+	class B3D_EXPORT B3D_SCRIPT_EXPORT(ExportAsStruct(true), DocumentationGroup(GUI)) GUIContent
 	{
 	public:
 		/**	Constructs an empty content. */

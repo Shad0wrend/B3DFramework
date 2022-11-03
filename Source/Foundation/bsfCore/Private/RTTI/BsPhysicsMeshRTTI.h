@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT PhysicsMeshRTTI : public RTTIType<PhysicsMesh, Resource, PhysicsMeshRTTI>
+	class B3D_CORE_EXPORT PhysicsMeshRTTI : public RTTIType<PhysicsMesh, Resource, PhysicsMeshRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -49,7 +49,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT FPhysicsMeshRTTI : public RTTIType<FPhysicsMesh, IReflectable, FPhysicsMeshRTTI>
+	class B3D_CORE_EXPORT FPhysicsMeshRTTI : public RTTIType<FPhysicsMesh, IReflectable, FPhysicsMeshRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS

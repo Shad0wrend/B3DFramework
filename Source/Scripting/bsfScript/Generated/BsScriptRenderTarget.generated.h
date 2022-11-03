@@ -18,7 +18,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptRenderTargetBase : public ScriptReflectableBase
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRenderTargetBase : public ScriptReflectableBase
 	{
 	public:
 		ScriptRenderTargetBase(MonoObject* instance);
@@ -28,7 +28,7 @@ namespace bs
 		SPtr<RenderTarget> GetInternal() const;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptRenderTarget : public TScriptReflectable<ScriptRenderTarget, RenderTarget, ScriptRenderTargetBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRenderTarget : public TScriptReflectable<ScriptRenderTarget, RenderTarget, ScriptRenderTargetBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "RenderTarget")

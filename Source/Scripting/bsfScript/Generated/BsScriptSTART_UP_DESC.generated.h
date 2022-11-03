@@ -24,7 +24,7 @@ namespace bs
 		MonoArray* Importers;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptSTART_UP_DESC : public ScriptObject<ScriptSTART_UP_DESC>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSTART_UP_DESC : public ScriptObject<ScriptSTART_UP_DESC>
 	{
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "StartUpDesc")

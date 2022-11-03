@@ -16,7 +16,7 @@ namespace bs
 	 * Manages string tables used for localizing text. Allows you to add and remove different tables and change the active
 	 * language.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(ExportName(StringTables), DocumentationGroup(Localization)) StringTableManager : public Module<StringTableManager>
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(ExportName(StringTables), DocumentationGroup(Localization)) StringTableManager : public Module<StringTableManager>
 	{
 	public:
 		StringTableManager() = default;
@@ -62,7 +62,7 @@ namespace bs
 	};
 
 	/** Provides easier access to StringTableManager. */
-	BS_CORE_EXPORT StringTableManager& GetStringTableManager();
+	B3D_CORE_EXPORT StringTableManager& GetStringTableManager();
 
 	/** @} */
 } // namespace bs

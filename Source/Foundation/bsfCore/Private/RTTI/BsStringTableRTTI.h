@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT StringTableRTTI : public RTTIType<StringTable, Resource, StringTableRTTI>
+	class B3D_CORE_EXPORT StringTableRTTI : public RTTIType<StringTable, Resource, StringTableRTTI>
 	{
 	private:
 		Language& GetActiveLanguage(StringTable* obj) { return obj->mActiveLanguage; }

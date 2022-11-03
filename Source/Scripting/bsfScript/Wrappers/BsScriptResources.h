@@ -16,7 +16,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for Resources & GameResourceManager. */
-	class BS_SCR_BE_EXPORT ScriptResources : public ScriptObject<ScriptResources>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptResources : public ScriptObject<ScriptResources>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Resources")

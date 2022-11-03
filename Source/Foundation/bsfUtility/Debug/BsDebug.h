@@ -25,7 +25,7 @@ namespace bs
 	 *
 	 * @note	Thread safe.
 	 */
-	class BS_UTILITY_EXPORT Debug
+	class B3D_UTILITY_EXPORT Debug
 	{
 	public:
 		Debug() = default;
@@ -108,7 +108,7 @@ namespace bs
 	};
 
 	/** A simpler way of accessing the Debug module. */
-	BS_UTILITY_EXPORT Debug& GetDebug();
+	B3D_UTILITY_EXPORT Debug& GetDebug();
 
 #ifndef B3D_LOG_VERBOSITY
 #	if BS_DEBUG_MODE

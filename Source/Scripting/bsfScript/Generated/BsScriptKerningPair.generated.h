@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptKerningPair : public ScriptObject<ScriptKerningPair>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptKerningPair : public ScriptObject<ScriptKerningPair>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "KerningPair")

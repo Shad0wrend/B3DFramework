@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Implements external methods for the SerializableUtility managed class. */
-	class BS_SCR_BE_EXPORT ScriptSerializableUtility : public ScriptObject<ScriptSerializableUtility>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSerializableUtility : public ScriptObject<ScriptSerializableUtility>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "SerializableUtility")

@@ -18,7 +18,7 @@ namespace bs
 		Flags<ShaderParameterFlag> Flags;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptShaderParameter : public ScriptObject<ScriptShaderParameter>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptShaderParameter : public ScriptObject<ScriptShaderParameter>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ShaderParameter")

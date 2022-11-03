@@ -81,7 +81,7 @@ namespace bs
 	BS_FLAGS_OPERATORS(ScriptTypeFlag);
 
 	/**	Contains information about a type of a managed serializable object. */
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfo : public IReflectable
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfo : public IReflectable
 	{
 	public:
 		virtual ~ManagedSerializableTypeInfo() = default;
@@ -111,7 +111,7 @@ namespace bs
 	};
 
 	/**	Contains information about a type of a managed serializable primitive (for example int, float, etc.). */
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoPrimitive : public ManagedSerializableTypeInfo
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoPrimitive : public ManagedSerializableTypeInfo
 	{
 	public:
 		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
@@ -130,7 +130,7 @@ namespace bs
 	};
 
 	/**	Contains information about a type of a managed serializable enum. */
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoEnum : public ManagedSerializableTypeInfo
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoEnum : public ManagedSerializableTypeInfo
 	{
 	public:
 		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
@@ -151,7 +151,7 @@ namespace bs
 	};
 
 	/**	Contains information about a type of a managed serializable game object or resourcee. */
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoRef : public ManagedSerializableTypeInfo
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoRef : public ManagedSerializableTypeInfo
 	{
 	public:
 		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
@@ -173,7 +173,7 @@ namespace bs
 	};
 
 	/**	Contains information about a type of a reference to a resource. */
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoRRef : public ManagedSerializableTypeInfo
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoRRef : public ManagedSerializableTypeInfo
 	{
 	public:
 		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
@@ -192,7 +192,7 @@ namespace bs
 	};
 
 	/**	Contains information about a type of a managed serializable complex object (for example struct or class). */
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoObject : public ManagedSerializableTypeInfo
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoObject : public ManagedSerializableTypeInfo
 	{
 	public:
 		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
@@ -216,7 +216,7 @@ namespace bs
 	};
 
 	/**	Contains information about a type of a managed serializable Array. */
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoArray : public ManagedSerializableTypeInfo
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoArray : public ManagedSerializableTypeInfo
 	{
 	public:
 		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
@@ -236,7 +236,7 @@ namespace bs
 	};
 
 	/**	Contains information about a type of a managed serializable List. */
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoList : public ManagedSerializableTypeInfo
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoList : public ManagedSerializableTypeInfo
 	{
 	public:
 		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
@@ -255,7 +255,7 @@ namespace bs
 	};
 
 	/**	Contains information about a type of a managed serializable Dictionary. */
-	class BS_SCR_BE_EXPORT ManagedSerializableTypeInfoDictionary : public ManagedSerializableTypeInfo
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableTypeInfoDictionary : public ManagedSerializableTypeInfo
 	{
 	public:
 		bool Matches(const SPtr<ManagedSerializableTypeInfo>& typeInfo) const override;
@@ -275,7 +275,7 @@ namespace bs
 	};
 
 	/**	Contains data about a single member in a managed complex object. */
-	class BS_SCR_BE_EXPORT ManagedSerializableMemberInfo : public IReflectable
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableMemberInfo : public IReflectable
 	{
 	public:
 		ManagedSerializableMemberInfo() = default;
@@ -324,7 +324,7 @@ namespace bs
 	};
 
 	/**	Contains data about a single field in a managed complex object. */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldInfo : public ManagedSerializableMemberInfo
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldInfo : public ManagedSerializableMemberInfo
 	{
 	public:
 		ManagedSerializableFieldInfo() = default;
@@ -345,7 +345,7 @@ namespace bs
 	};
 
 	/**	Contains data about a single property in a managed complex object. */
-	class BS_SCR_BE_EXPORT ManagedSerializablePropertyInfo : public ManagedSerializableMemberInfo
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializablePropertyInfo : public ManagedSerializableMemberInfo
 	{
 	public:
 		ManagedSerializablePropertyInfo() = default;
@@ -366,7 +366,7 @@ namespace bs
 	};
 
 	/** Contains data about fields of a complex object, and the object's class hierarchy if it belongs to one. */
-	class BS_SCR_BE_EXPORT ManagedSerializableObjectInfo : public IReflectable
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableObjectInfo : public IReflectable
 	{
 	public:
 		ManagedSerializableObjectInfo() = default;
@@ -405,7 +405,7 @@ namespace bs
 	};
 
 	/**	Contains information about all managed serializable objects in a specific managed assembly. */
-	class BS_SCR_BE_EXPORT ManagedSerializableAssemblyInfo : public IReflectable
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableAssemblyInfo : public IReflectable
 	{
 	public:
 		String MName;

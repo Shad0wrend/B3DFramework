@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note	Not thread safe.
 	 */
-	class BS_UTILITY_EXPORT DynamicLibraryManager : public Module<DynamicLibraryManager>
+	class B3D_UTILITY_EXPORT DynamicLibraryManager : public Module<DynamicLibraryManager>
 	{
 	public:
 		/**
@@ -35,7 +35,7 @@ namespace bs
 	};
 
 	/** Easy way of accessing DynLibManager. */
-	BS_UTILITY_EXPORT DynamicLibraryManager& GetDynamicLibraryManager();
+	B3D_UTILITY_EXPORT DynamicLibraryManager& GetDynamicLibraryManager();
 
 	/** @} */
 } // namespace bs

@@ -19,7 +19,7 @@ namespace bs
 	 *
 	 * @note	Sim thread.
 	 */
-	class BS_CORE_EXPORT TransientMesh : public MeshBase
+	class B3D_CORE_EXPORT TransientMesh : public MeshBase
 	{
 	public:
 		virtual ~TransientMesh();
@@ -61,7 +61,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class BS_CORE_EXPORT TransientMesh : public MeshBase
+		class B3D_CORE_EXPORT TransientMesh : public MeshBase
 		{
 		public:
 			TransientMesh(const SPtr<MeshHeap>& parentHeap, u32 id, u32 numVertices, u32 numIndices, const Vector<SubMesh>& subMeshes);

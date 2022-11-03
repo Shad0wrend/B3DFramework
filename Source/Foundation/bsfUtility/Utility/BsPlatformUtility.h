@@ -37,7 +37,7 @@ namespace bs
 	};
 
 	/** Provides access to various operating system specific utility functions. */
-	class BS_UTILITY_EXPORT PlatformUtility
+	class B3D_UTILITY_EXPORT PlatformUtility
 	{
 	public:
 		/**

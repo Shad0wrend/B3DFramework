@@ -46,7 +46,7 @@ namespace bs
 	 *    inactive, then the component is considered to be in Stopped state, regardless whether the ComponentFlag::AlwaysRun
 	 *    flag is set or not.
 	 **/
-	class BS_CORE_EXPORT Component : public GameObject
+	class B3D_CORE_EXPORT Component : public GameObject
 	{
 	public:
 		/**	Returns the SceneObject this Component is assigned to. */

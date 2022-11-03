@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT CSkyboxRTTI : public RTTIType<CSkybox, Component, CSkyboxRTTI>
+	class B3D_CORE_EXPORT CSkyboxRTTI : public RTTIType<CSkybox, Component, CSkyboxRTTI>
 	{
 	private:
 		SPtr<Skybox> GetInternal(CSkybox* obj) { return obj->mInternal; }

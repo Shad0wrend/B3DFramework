@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/** Handles initialization/shutdown of the script systems and loading/refresh of engine-specific assemblies. */
-	class BS_SCR_BE_EXPORT EngineScriptLibrary : public ScriptLibrary
+	class B3D_SCRIPT_INTEROP_EXPORT EngineScriptLibrary : public ScriptLibrary
 	{
 	public:
 		EngineScriptLibrary() = default;

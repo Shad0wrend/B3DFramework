@@ -16,7 +16,7 @@ namespace bs
 	 * origin. Axes should be perpendicular to each other and they extend in both positive and negative directions from the
 	 * origin by the amount specified by extents.
 	 */
-	class BS_UTILITY_EXPORT Rect3
+	class B3D_UTILITY_EXPORT Rect3
 	{
 	public:
 		Rect3() = default;

@@ -353,7 +353,7 @@ SpecificImporter* Importer::GetImporterForFile(const Path& inputFilePath) const
 
 namespace bs
 {
-BS_CORE_EXPORT Importer& GetImporter()
+B3D_CORE_EXPORT Importer& GetImporter()
 {
 	return Importer::Instance();
 }

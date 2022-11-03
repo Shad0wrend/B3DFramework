@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT ComponentRTTI : public RTTIType<Component, GameObject, ComponentRTTI>
+	class B3D_CORE_EXPORT ComponentRTTI : public RTTIType<Component, GameObject, ComponentRTTI>
 	{
 	public:
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override

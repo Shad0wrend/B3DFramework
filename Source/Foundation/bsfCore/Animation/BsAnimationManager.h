@@ -57,7 +57,7 @@ namespace bs
 	 * Keeps track of all active animations, queues animation thread tasks and synchronizes data between simulation, core
 	 * and animation threads.
 	 */
-	class BS_CORE_EXPORT AnimationManager : public Module<AnimationManager>
+	class B3D_CORE_EXPORT AnimationManager : public Module<AnimationManager>
 	{
 	public:
 		AnimationManager();
@@ -145,7 +145,7 @@ namespace bs
 	};
 
 	/** Provides easier access to AnimationManager. */
-	BS_CORE_EXPORT AnimationManager& GetAnimationManager();
+	B3D_CORE_EXPORT AnimationManager& GetAnimationManager();
 
 	/** @} */
 } // namespace bs

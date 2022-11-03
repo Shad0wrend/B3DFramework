@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for Quaternion. */
-	class BS_SCR_BE_EXPORT ScriptQuaternion : public ScriptObject<ScriptQuaternion>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptQuaternion : public ScriptObject<ScriptQuaternion>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Quaternion")

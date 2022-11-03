@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT FontBitmapRTTI : public RTTIType<FontBitmap, IReflectable, FontBitmapRTTI>
+	class B3D_CORE_EXPORT FontBitmapRTTI : public RTTIType<FontBitmap, IReflectable, FontBitmapRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -46,7 +46,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT FontRTTI : public RTTIType<Font, Resource, FontRTTI>
+	class B3D_CORE_EXPORT FontRTTI : public RTTIType<Font, Resource, FontRTTI>
 	{
 	private:
 		FontBitmap& GetBitmap(Font* obj, u32 idx)

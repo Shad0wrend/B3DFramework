@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT CD6JointRTTI : public RTTIType<CD6Joint, CJoint, CD6JointRTTI>
+	class B3D_CORE_EXPORT CD6JointRTTI : public RTTIType<CD6Joint, CJoint, CD6JointRTTI>
 	{
 		D6JointMotion& GetMotion(CD6Joint* obj, u32 idx) { return obj->mDesc.Motion[idx]; }
 

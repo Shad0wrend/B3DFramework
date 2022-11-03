@@ -13,9 +13,6 @@ add_common_flags(bsfFBXImporter)
 # Includes
 target_include_directories(bsfFBXImporter PRIVATE "./")
 
-# Defines
-target_compile_definitions(bsfFBXImporter PRIVATE -DBS_FBX_EXPORTS)
-
 # Libraries
 ## External lib: FBX
 target_link_libraries(bsfFBXImporter PRIVATE ${FBXSDK_LIBRARIES})

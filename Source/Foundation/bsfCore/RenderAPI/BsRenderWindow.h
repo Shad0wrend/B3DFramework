@@ -45,7 +45,7 @@ namespace bs
 	 */
 
 	/** Structure that is used for initializing a render window. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(RenderAPI), ExportAsStruct(true), API(Framework)) RENDER_WINDOW_DESC
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(RenderAPI), ExportAsStruct(true), API(Framework)) RENDER_WINDOW_DESC
 	{
 		/** Output monitor, frame buffer resize and refresh rate. */
 		VideoMode VideoMode;
@@ -107,7 +107,7 @@ namespace bs
 	};
 
 	/**	Contains various properties that describe a render window. */
-	class BS_CORE_EXPORT RenderWindowProperties : public RenderTargetProperties
+	class B3D_CORE_EXPORT RenderWindowProperties : public RenderTargetProperties
 	{
 	public:
 		RenderWindowProperties(const RENDER_WINDOW_DESC& desc);
@@ -139,7 +139,7 @@ namespace bs
 	 * Operating system window with a specific position, size and style. Each window serves as a surface that can be
 	 * rendered into by RenderAPI operations.
 	 */
-	class BS_CORE_EXPORT RenderWindow : public RenderTarget
+	class B3D_CORE_EXPORT RenderWindow : public RenderTarget
 	{
 	public:
 		virtual ~RenderWindow() = default;
@@ -294,7 +294,7 @@ namespace bs
 		 */
 
 		/** Core thread counterpart of bs::RenderWindow. */
-		class BS_CORE_EXPORT RenderWindow : public RenderTarget
+		class B3D_CORE_EXPORT RenderWindow : public RenderTarget
 		{
 		public:
 			RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId);

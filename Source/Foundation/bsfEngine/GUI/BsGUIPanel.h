@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Represents a GUI panel that you can use for free placement of GUI elements within its bounds. */
-	class BS_EXPORT GUIPanel final : public GUILayout
+	class B3D_EXPORT GUIPanel final : public GUILayout
 	{
 	public:
 		GUIPanel() = default;

@@ -21,7 +21,7 @@ namespace bs
 	 *
 	 * All primitive types supported by managed serialization are supported (see ScriptPrimitiveType).
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableDiff : public IReflectable
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableDiff : public IReflectable
 	{
 	public:
 		/**	A base class for all modifications recorded in a diff. */

@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	GUI element that is used for representing entries in a drop down menu. */
-	class BS_EXPORT GUIDropDownContent : public GUIElementContainer
+	class B3D_EXPORT GUIDropDownContent : public GUIElementContainer
 	{
 		/**	Contains various GUI elements used for displaying a single menu entry. */
 		struct VisibleElement

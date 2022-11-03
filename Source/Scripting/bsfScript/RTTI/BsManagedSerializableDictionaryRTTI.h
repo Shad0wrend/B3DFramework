@@ -13,7 +13,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_SCR_BE_EXPORT ManagedSerializableDictionaryKeyValueRTTI : public RTTIType<ManagedSerializableDictionaryKeyValue, IReflectable, ManagedSerializableDictionaryKeyValueRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableDictionaryKeyValueRTTI : public RTTIType<ManagedSerializableDictionaryKeyValue, IReflectable, ManagedSerializableDictionaryKeyValueRTTI>
 	{
 	private:
 		SPtr<ManagedSerializableFieldData> GetKey(ManagedSerializableDictionaryKeyValue* obj)
@@ -60,7 +60,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableDictionaryRTTI : public RTTIType<ManagedSerializableDictionary, IReflectable, ManagedSerializableDictionaryRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableDictionaryRTTI : public RTTIType<ManagedSerializableDictionary, IReflectable, ManagedSerializableDictionaryRTTI>
 	{
 	private:
 		SPtr<ManagedSerializableTypeInfoDictionary> GetTypeInfo(ManagedSerializableDictionary* obj) { return obj->mDictionaryTypeInfo; }

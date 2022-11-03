@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note Wraps CapsuleCollider as a Component.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(CapsuleCollider)) CCapsuleCollider : public CCollider
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(CapsuleCollider)) CCapsuleCollider : public CCollider
 	{
 	public:
 		CCapsuleCollider(const HSceneObject& parent, float radius = 1.0f, float halfHeight = 0.5f);

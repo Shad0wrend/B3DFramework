@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptSpring : public ScriptObject<ScriptSpring>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSpring : public ScriptObject<ScriptSpring>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Spring")

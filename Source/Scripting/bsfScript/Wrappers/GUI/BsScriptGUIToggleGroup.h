@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for GUIToggleGroup. */
-	class BS_SCR_BE_EXPORT ScriptGUIToggleGroup : public ScriptObject<ScriptGUIToggleGroup>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIToggleGroup : public ScriptObject<ScriptGUIToggleGroup>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIToggleGroup")

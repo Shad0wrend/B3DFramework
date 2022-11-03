@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for Prefab. */
-	class BS_SCR_BE_EXPORT ScriptPrefab : public TScriptResource<ScriptPrefab, Prefab>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPrefab : public TScriptResource<ScriptPrefab, Prefab>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Prefab")

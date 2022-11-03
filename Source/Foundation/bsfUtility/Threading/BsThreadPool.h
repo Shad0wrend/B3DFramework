@@ -14,7 +14,7 @@ namespace bs
 	class ThreadPool;
 
 	/** Handle to a thread managed by ThreadPool. */
-	class BS_UTILITY_EXPORT HThread
+	class B3D_UTILITY_EXPORT HThread
 	{
 	public:
 		HThread() = default;
@@ -39,7 +39,7 @@ namespace bs
 	 */
 
 	/**	Wrapper around a thread that is used within ThreadPool. */
-	class BS_UTILITY_EXPORT PooledThread
+	class B3D_UTILITY_EXPORT PooledThread
 	{
 	public:
 		PooledThread(const String& name)
@@ -148,7 +148,7 @@ namespace bs
 	 * Class that maintains a pool of threads we can easily retrieve and use for any task. This saves on the cost of
 	 * creating and destroying threads.
 	 */
-	class BS_UTILITY_EXPORT ThreadPool : public Module<ThreadPool>
+	class B3D_UTILITY_EXPORT ThreadPool : public Module<ThreadPool>
 	{
 	public:
 		/**

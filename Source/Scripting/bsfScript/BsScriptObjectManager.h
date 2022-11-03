@@ -27,7 +27,7 @@ namespace bs
 	};
 
 	/**	Keeps track of all script interop objects and handles assembly refresh. */
-	class BS_SCR_BE_EXPORT ScriptObjectManager : public Module<ScriptObjectManager>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptObjectManager : public Module<ScriptObjectManager>
 	{
 	public:
 		ScriptObjectManager() = default;

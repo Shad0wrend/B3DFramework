@@ -70,7 +70,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT AnimationClipRTTI : public RTTIType<AnimationClip, Resource, AnimationClipRTTI>
+	class B3D_CORE_EXPORT AnimationClipRTTI : public RTTIType<AnimationClip, Resource, AnimationClipRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS

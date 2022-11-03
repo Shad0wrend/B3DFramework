@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for Input. */
-	class BS_SCR_BE_EXPORT ScriptInput : public ScriptObject<ScriptInput>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptInput : public ScriptObject<ScriptInput>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Input")

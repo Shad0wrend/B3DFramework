@@ -27,7 +27,7 @@ namespace bs
 	 * You can transfer an object in linked state to serialized state by calling serialize(). If an object is in serialized
 	 * state you can call deserialize() to populated a managed object from the cached data.
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableList : public IReflectable
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableList : public IReflectable
 	{
 	private:
 		struct ConstructPrivately

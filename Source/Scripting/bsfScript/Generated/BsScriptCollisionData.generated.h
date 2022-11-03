@@ -16,7 +16,7 @@ namespace bs
 		MonoArray* ContactPoints;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptCollisionData : public ScriptObject<ScriptCollisionData>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCollisionData : public ScriptObject<ScriptCollisionData>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "CollisionData")

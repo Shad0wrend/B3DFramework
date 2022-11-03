@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** Creates and destroys a specific audio system implementation. */
-	class BS_CORE_EXPORT AudioFactory
+	class B3D_CORE_EXPORT AudioFactory
 	{
 	public:
 		virtual ~AudioFactory() = default;
@@ -25,7 +25,7 @@ namespace bs
 	};
 
 	/** Takes care of loading, initializing and shutting down of a particular audio system implementation. */
-	class BS_CORE_EXPORT AudioManager : public Module<AudioManager>
+	class B3D_CORE_EXPORT AudioManager : public Module<AudioManager>
 	{
 	public:
 		/**

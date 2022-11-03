@@ -29,7 +29,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptShader : public TScriptResource<ScriptShader, Shader>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptShader : public TScriptResource<ScriptShader, Shader>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Shader")

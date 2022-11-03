@@ -18,7 +18,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_SCR_BE_EXPORT ManagedComponentRTTI : public RTTIType<ManagedComponent, Component, ManagedComponentRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedComponentRTTI : public RTTIType<ManagedComponent, Component, ManagedComponentRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS

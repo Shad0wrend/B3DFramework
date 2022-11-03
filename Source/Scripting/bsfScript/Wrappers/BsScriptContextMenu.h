@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for GUIContextMenu. */
-	class BS_SCR_BE_EXPORT ScriptContextMenu : public ScriptObject<ScriptContextMenu>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptContextMenu : public ScriptObject<ScriptContextMenu>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ContextMenu")

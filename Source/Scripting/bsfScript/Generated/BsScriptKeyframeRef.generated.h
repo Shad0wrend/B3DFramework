@@ -8,7 +8,7 @@
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptKeyframeRef : public ScriptObject<ScriptKeyframeRef>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptKeyframeRef : public ScriptObject<ScriptKeyframeRef>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "KeyframeRef")

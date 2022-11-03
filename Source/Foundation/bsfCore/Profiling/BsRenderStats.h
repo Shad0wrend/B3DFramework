@@ -24,7 +24,7 @@ namespace bs
 	};
 
 	/** Object that stores various render statistics. */
-	struct BS_CORE_EXPORT RenderStatsData
+	struct B3D_CORE_EXPORT RenderStatsData
 	{
 		RenderStatsData() = default;
 
@@ -55,7 +55,7 @@ namespace bs
 	 *
 	 * @note	Core thread only.
 	 */
-	class BS_CORE_EXPORT RenderStats : public Module<RenderStats>
+	class B3D_CORE_EXPORT RenderStats : public Module<RenderStats>
 	{
 	public:
 		/** Increments draw call counter indicating how many times were render system API Draw methods called. */

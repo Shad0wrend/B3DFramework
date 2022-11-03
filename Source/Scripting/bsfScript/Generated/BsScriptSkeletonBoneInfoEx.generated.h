@@ -16,7 +16,7 @@ namespace bs
 		Matrix4 InvBindPose;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptSkeletonBoneInfoEx : public ScriptObject<ScriptSkeletonBoneInfoEx>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSkeletonBoneInfoEx : public ScriptObject<ScriptSkeletonBoneInfoEx>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "BoneInfo")

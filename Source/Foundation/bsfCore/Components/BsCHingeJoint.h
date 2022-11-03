@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note	Wraps HingeJoint as a Component.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(HingeJoint)) CHingeJoint : public CJoint
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Physics), ExportName(HingeJoint)) CHingeJoint : public CJoint
 	{
 	public:
 		CHingeJoint(const HSceneObject& parent);

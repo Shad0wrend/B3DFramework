@@ -42,9 +42,6 @@ add_common_flags(bsfSL)
 # Includes
 target_include_directories(bsfSL PRIVATE "./")
 
-# Defines
-target_compile_definitions(bsfSL PRIVATE -DBS_SL_EXPORTS)
-
 # Pre-build step
 if(B3D_BUILD_BSL_PARSER AND WIN32)
 	add_custom_command(TARGET bsfSL PRE_BUILD

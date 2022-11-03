@@ -206,7 +206,7 @@ namespace bs
 	 *
 	 * @see		GpuResourceData
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT() PixelData : public GpuResourceData
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT() PixelData : public GpuResourceData
 	{
 	public:
 		PixelData() = default;

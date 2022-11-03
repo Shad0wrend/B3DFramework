@@ -40,7 +40,7 @@ namespace bs
 	 * Each scene object can have one or multiple Component%s attached to it, where the components inherit the scene
 	 * object's transform, and receive updates about transform and hierarchy changes.
 	 */
-	class BS_CORE_EXPORT SceneObject : public GameObject
+	class B3D_CORE_EXPORT SceneObject : public GameObject
 	{
 		/**	Flags that signify which part of the SceneObject needs updating. */
 		enum DirtyFlags

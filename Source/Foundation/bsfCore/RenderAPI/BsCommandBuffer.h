@@ -13,7 +13,7 @@ namespace bs
 		 */
 
 		/** Mask that determines synchronization between command buffers executing on different hardware queues. */
-		class BS_CORE_EXPORT CommandSyncMask
+		class B3D_CORE_EXPORT CommandSyncMask
 		{
 		public:
 			/**
@@ -63,7 +63,7 @@ namespace bs
 		 * must always be created on the core thread. Same command buffer cannot be used on multiple threads simulateously
 		 * without external synchronization.
 		 */
-		class BS_CORE_EXPORT CommandBuffer
+		class B3D_CORE_EXPORT CommandBuffer
 		{
 		public:
 			virtual ~CommandBuffer() = default;

@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** A ray in 3D space represented with an origin and direction. */
-	class BS_UTILITY_EXPORT Ray
+	class B3D_UTILITY_EXPORT Ray
 	{
 	public:
 		Ray() = default;

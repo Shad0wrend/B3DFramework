@@ -26,7 +26,7 @@ namespace bs
 		MonoArray* KerningPairs;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptCharDesc : public ScriptObject<ScriptCharDesc>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCharDesc : public ScriptObject<ScriptCharDesc>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "CharDesc")

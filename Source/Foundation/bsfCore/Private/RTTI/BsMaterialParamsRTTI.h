@@ -21,7 +21,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT MaterialParamTextureDataRTTI : public RTTIType<MaterialParamTextureData, IReflectable, MaterialParamTextureDataRTTI>
+	class B3D_CORE_EXPORT MaterialParamTextureDataRTTI : public RTTIType<MaterialParamTextureData, IReflectable, MaterialParamTextureDataRTTI>
 	{
 	public:
 		BS_BEGIN_RTTI_MEMBERS
@@ -48,7 +48,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT MaterialParamStructDataRTTI : public RTTIType<MaterialParamStructData, IReflectable, MaterialParamStructDataRTTI>
+	class B3D_CORE_EXPORT MaterialParamStructDataRTTI : public RTTIType<MaterialParamStructData, IReflectable, MaterialParamStructDataRTTI>
 	{
 	public:
 		SPtr<DataStream> GetDataBuffer(MaterialParamStructData* obj, u32& size)
@@ -88,7 +88,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT MaterialParamsRTTI : public RTTIType<MaterialParams, IReflectable, MaterialParamsRTTI>
+	class B3D_CORE_EXPORT MaterialParamsRTTI : public RTTIType<MaterialParams, IReflectable, MaterialParamsRTTI>
 	{
 	public:
 		struct MaterialParam

@@ -17,7 +17,7 @@ namespace bs
 
 	BS_ALLOW_MEMCPY_SERIALIZATION(RASTERIZER_STATE_DESC);
 
-	class BS_CORE_EXPORT RasterizerStateRTTI : public RTTIType<RasterizerState, IReflectable, RasterizerStateRTTI>
+	class B3D_CORE_EXPORT RasterizerStateRTTI : public RTTIType<RasterizerState, IReflectable, RasterizerStateRTTI>
 	{
 	private:
 		RASTERIZER_STATE_DESC& GetData(RasterizerState* obj) { return obj->mProperties.mData; }

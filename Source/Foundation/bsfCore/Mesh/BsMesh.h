@@ -16,7 +16,7 @@ namespace bs
 	 */
 
 	/** Descriptor object used for creation of a new Mesh object. */
-	struct BS_CORE_EXPORT MESH_DESC
+	struct B3D_CORE_EXPORT MESH_DESC
 	{
 		MESH_DESC() {}
 
@@ -61,7 +61,7 @@ namespace bs
 	 * Primary class for holding geometry. Stores data in the form of vertex buffers and optionally an index buffer, which
 	 * may be bound to the pipeline for drawing. May contain multiple sub-meshes.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Mesh : public MeshBase
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) Mesh : public MeshBase
 	{
 	public:
 		virtual ~Mesh() = default;
@@ -267,7 +267,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class BS_CORE_EXPORT Mesh : public MeshBase
+		class B3D_CORE_EXPORT Mesh : public MeshBase
 		{
 		public:
 			Mesh(const SPtr<MeshData>& initialMeshData, const MESH_DESC& desc, GpuDeviceFlags deviceMask);

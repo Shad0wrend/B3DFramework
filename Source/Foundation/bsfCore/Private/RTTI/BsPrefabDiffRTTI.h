@@ -18,7 +18,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT PrefabComponentDiffRTTI : public RTTIType<PrefabComponentDiff, IReflectable, PrefabComponentDiffRTTI>
+	class B3D_CORE_EXPORT PrefabComponentDiffRTTI : public RTTIType<PrefabComponentDiff, IReflectable, PrefabComponentDiffRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -43,7 +43,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT PrefabObjectDiffRTTI : public RTTIType<PrefabObjectDiff, IReflectable, PrefabObjectDiffRTTI>
+	class B3D_CORE_EXPORT PrefabObjectDiffRTTI : public RTTIType<PrefabObjectDiff, IReflectable, PrefabObjectDiffRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -82,7 +82,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT PrefabDiffRTTI : public RTTIType<PrefabDiff, IReflectable, PrefabDiffRTTI>
+	class B3D_CORE_EXPORT PrefabDiffRTTI : public RTTIType<PrefabDiff, IReflectable, PrefabDiffRTTI>
 	{
 		/**	Contains data about a game object handle serialized in a prefab diff.  */
 		struct SerializedHandle

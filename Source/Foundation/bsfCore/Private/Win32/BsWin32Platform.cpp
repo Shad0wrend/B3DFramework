@@ -16,13 +16,13 @@
 using namespace bs;
 
 /** Encapsulate native cursor data so we can avoid including windows.h as it pollutes the global namespace. */
-struct BS_CORE_EXPORT NativeCursorData
+struct B3D_CORE_EXPORT NativeCursorData
 {
 	HCURSOR Cursor;
 };
 
 /**	Encapsulate drop target data so we can avoid including windows.h as it pollutes the global namespace. */
-struct BS_CORE_EXPORT NativeDropTargetData
+struct B3D_CORE_EXPORT NativeDropTargetData
 {
 	Map<const RenderWindow*, Win32DropTarget*> DropTargetsPerWindow;
 	Vector<Win32DropTarget*> DropTargetsToInitialize;

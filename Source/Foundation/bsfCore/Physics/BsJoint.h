@@ -20,7 +20,7 @@ namespace bs
 	 * Base class for all Joint types. Joints constrain how two rigidbodies move relative to one another (for example a door
 	 * hinge). One of the bodies in the joint must always be movable (non-kinematic).
 	 */
-	class BS_CORE_EXPORT Joint
+	class B3D_CORE_EXPORT Joint
 	{
 	public:
 		Joint() = default;

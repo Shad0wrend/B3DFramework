@@ -18,7 +18,7 @@ namespace bs
 	 * Essentially a light-weight identifier for the field so that we don't need to store entire field type for each field
 	 * when serializing. Instead field types are stored separately and we just use this object for lookup.
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldKey : public IReflectable
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldKey : public IReflectable
 	{
 	public:
 		ManagedSerializableFieldKey() = default;
@@ -53,7 +53,7 @@ namespace bs
 	 * must call serialize() before performing RTTI serialization. After field data has been serialized you should not call
 	 * any methods on it before calling deserialize().
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldData : public IReflectable
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldData : public IReflectable
 	{
 	public:
 		virtual ~ManagedSerializableFieldData() = default;
@@ -139,7 +139,7 @@ namespace bs
 	};
 
 	/**	Contains type and value of a single field in an object. */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataEntry : public IReflectable
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataEntry : public IReflectable
 	{
 	public:
 		static SPtr<ManagedSerializableFieldDataEntry> Create(const SPtr<ManagedSerializableFieldKey>& key, const SPtr<ManagedSerializableFieldData>& value);
@@ -162,7 +162,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataBool : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataBool : public ManagedSerializableFieldData
 	{
 	public:
 		ManagedSerializableFieldDataBool() = default;
@@ -189,7 +189,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataChar : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataChar : public ManagedSerializableFieldData
 	{
 	public:
 		ManagedSerializableFieldDataChar() = default;
@@ -216,7 +216,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataI8 : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataI8 : public ManagedSerializableFieldData
 	{
 	public:
 		ManagedSerializableFieldDataI8() = default;
@@ -243,7 +243,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataU8 : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataU8 : public ManagedSerializableFieldData
 	{
 	public:
 		ManagedSerializableFieldDataU8() = default;
@@ -270,7 +270,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataI16 : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataI16 : public ManagedSerializableFieldData
 	{
 	public:
 		ManagedSerializableFieldDataI16() = default;
@@ -297,7 +297,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataU16 : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataU16 : public ManagedSerializableFieldData
 	{
 	public:
 		ManagedSerializableFieldDataU16() = default;
@@ -324,7 +324,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataI32 : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataI32 : public ManagedSerializableFieldData
 	{
 	public:
 		ManagedSerializableFieldDataI32() = default;
@@ -351,7 +351,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataU32 : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataU32 : public ManagedSerializableFieldData
 	{
 	public:
 		ManagedSerializableFieldDataU32() = default;
@@ -378,7 +378,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataI64 : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataI64 : public ManagedSerializableFieldData
 	{
 	public:
 		ManagedSerializableFieldDataI64() = default;
@@ -405,7 +405,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataU64 : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataU64 : public ManagedSerializableFieldData
 	{
 	public:
 		ManagedSerializableFieldDataU64() = default;
@@ -432,7 +432,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataFloat : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataFloat : public ManagedSerializableFieldData
 	{
 	public:
 		ManagedSerializableFieldDataFloat() = default;
@@ -459,7 +459,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataDouble : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataDouble : public ManagedSerializableFieldData
 	{
 	public:
 		ManagedSerializableFieldDataDouble() = default;
@@ -486,7 +486,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataString : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataString : public ManagedSerializableFieldData
 	{
 	public:
 		ManagedSerializableFieldDataString() = default;
@@ -514,7 +514,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataResourceRef : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataResourceRef : public ManagedSerializableFieldData
 	{
 	public:
 		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
@@ -539,7 +539,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataGameObjectRef : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataGameObjectRef : public ManagedSerializableFieldData
 	{
 	public:
 		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
@@ -564,7 +564,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataReflectableRef : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataReflectableRef : public ManagedSerializableFieldData
 	{
 	public:
 		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
@@ -589,7 +589,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataObject : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataObject : public ManagedSerializableFieldData
 	{
 	public:
 		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
@@ -616,7 +616,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataArray : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataArray : public ManagedSerializableFieldData
 	{
 	public:
 		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
@@ -643,7 +643,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataList : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataList : public ManagedSerializableFieldData
 	{
 	public:
 		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;
@@ -670,7 +670,7 @@ namespace bs
 	 *
 	 * @copydoc	ManagedSerializableFieldData
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableFieldDataDictionary : public ManagedSerializableFieldData
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableFieldDataDictionary : public ManagedSerializableFieldData
 	{
 	public:
 		void* GetValue(const SPtr<ManagedSerializableTypeInfo>& typeInfo) override;

@@ -59,7 +59,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	class BS_CORE_EXPORT CoreApplication : public Module<CoreApplication>
+	class B3D_CORE_EXPORT CoreApplication : public Module<CoreApplication>
 	{
 	public:
 		CoreApplication(START_UP_DESC desc);
@@ -175,7 +175,7 @@ namespace bs
 	};
 
 	/**	Provides easy access to CoreApplication. */
-	BS_CORE_EXPORT CoreApplication& GetCoreApplication();
+	B3D_CORE_EXPORT CoreApplication& GetCoreApplication();
 
 	/** @} */
 } // namespace bs

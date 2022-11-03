@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @see		DepthStencilState
 	 */
-	struct BS_CORE_EXPORT DEPTH_STENCIL_STATE_DESC
+	struct B3D_CORE_EXPORT DEPTH_STENCIL_STATE_DESC
 	{
 		bool operator==(const DEPTH_STENCIL_STATE_DESC& rhs) const;
 
@@ -81,7 +81,7 @@ namespace bs
 	};
 
 	/** Properties of DepthStencilState. Shared between sim and core thread versions of DepthStencilState. */
-	class BS_CORE_EXPORT DepthStencilProperties
+	class B3D_CORE_EXPORT DepthStencilProperties
 	{
 	public:
 		DepthStencilProperties(const DEPTH_STENCIL_STATE_DESC& desc);
@@ -146,7 +146,7 @@ namespace bs
 	 *
 	 * @note	Depth stencil states are immutable. Sim thread only.
 	 */
-	class BS_CORE_EXPORT DepthStencilState : public IReflectable, public CoreObject
+	class B3D_CORE_EXPORT DepthStencilState : public IReflectable, public CoreObject
 	{
 	public:
 		virtual ~DepthStencilState() = default;
@@ -200,7 +200,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class BS_CORE_EXPORT DepthStencilState : public CoreObject
+		class B3D_CORE_EXPORT DepthStencilState : public CoreObject
 		{
 		public:
 			virtual ~DepthStencilState();

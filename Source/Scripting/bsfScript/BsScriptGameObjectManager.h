@@ -17,7 +17,7 @@ namespace bs
 	 * Manages all active GameObject interop objects. GameObjects can be created from native code and used in managed code
 	 * therefore we need to keep a dictionary or all the native objects we have mapped to managed objects.
 	 */
-	class BS_SCR_BE_EXPORT ScriptGameObjectManager : public Module<ScriptGameObjectManager>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGameObjectManager : public Module<ScriptGameObjectManager>
 	{
 		/**	Contains information about a single interop object containing a game object. */
 		struct ScriptGameObjectEntry

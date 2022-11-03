@@ -8,7 +8,7 @@
 namespace bs
 {
 	/**	Interop class between C++ & CLR for the Range attribute. */
-	class BS_SCR_BE_EXPORT ScriptRange : public ScriptObject<ScriptRange>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRange : public ScriptObject<ScriptRange>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Range")

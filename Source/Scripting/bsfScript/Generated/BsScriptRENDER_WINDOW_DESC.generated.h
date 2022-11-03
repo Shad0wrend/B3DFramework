@@ -33,7 +33,7 @@ namespace bs
 		bool HideUntilSwap;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptRENDER_WINDOW_DESC : public ScriptObject<ScriptRENDER_WINDOW_DESC>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRENDER_WINDOW_DESC : public ScriptObject<ScriptRENDER_WINDOW_DESC>
 	{
 	public:
 		SCRIPT_OBJ(ENGINE_ASSEMBLY, ENGINE_NS, "RenderWindowDesc")

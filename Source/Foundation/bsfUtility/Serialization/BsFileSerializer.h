@@ -13,7 +13,7 @@ namespace bs
 	struct SerializationContext;
 
 	/** Encodes the provided object to the specified file using the RTTI system. */
-	class BS_UTILITY_EXPORT FileEncoder
+	class B3D_UTILITY_EXPORT FileEncoder
 	{
 	public:
 		FileEncoder(const Path& fileLocation);
@@ -35,7 +35,7 @@ namespace bs
 	};
 
 	/** Decodes objects from the specified file using the RTTI system. */
-	class BS_UTILITY_EXPORT FileDecoder
+	class B3D_UTILITY_EXPORT FileDecoder
 	{
 	public:
 		FileDecoder(const Path& fileLocation);

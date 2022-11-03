@@ -20,7 +20,7 @@ namespace bs
 	};
 
 	/**	A GUI element container with support for vertical & horizontal scrolling. */
-	class BS_EXPORT GUIScrollArea : public GUIElementContainer
+	class B3D_EXPORT GUIScrollArea : public GUIElementContainer
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles. */

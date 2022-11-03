@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Contains key and value data used for serializing a managed dictionary. */
-	struct BS_SCR_BE_EXPORT ManagedSerializableDictionaryKeyValue : public IReflectable
+	struct B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableDictionaryKeyValue : public IReflectable
 	{
 		ManagedSerializableDictionaryKeyValue() {}
 
@@ -48,7 +48,7 @@ namespace bs
 	 * You can transfer an object in linked state to serialized state by calling serialize(). If an object is in serialized
 	 * state you can call deserialize() to populated a managed object from the cached data.
 	 */
-	class BS_SCR_BE_EXPORT ManagedSerializableDictionary : public IReflectable
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableDictionary : public IReflectable
 	{
 	private:
 		struct ConstructPrivately

@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for a global always-accessible GUIWidget. */
-	class BS_SCR_BE_EXPORT ScriptGUI : public ScriptObject<ScriptGUI>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUI : public ScriptObject<ScriptGUI>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUI")

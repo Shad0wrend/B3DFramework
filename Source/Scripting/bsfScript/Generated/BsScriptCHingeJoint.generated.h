@@ -22,7 +22,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptCHingeJoint : public TScriptComponent<ScriptCHingeJoint, CHingeJoint, ScriptCJointBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCHingeJoint : public TScriptComponent<ScriptCHingeJoint, CHingeJoint, ScriptCJointBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "HingeJoint")

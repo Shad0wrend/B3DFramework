@@ -16,7 +16,7 @@ namespace bs
 		Spring Spring;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptLimitCommon : public ScriptObject<ScriptLimitCommon>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptLimitCommon : public ScriptObject<ScriptLimitCommon>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "LimitCommon")

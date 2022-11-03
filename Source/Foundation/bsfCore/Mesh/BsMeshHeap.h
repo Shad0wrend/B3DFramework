@@ -25,7 +25,7 @@ namespace bs
 	 * @note
 	 * Sim thread only
 	 */
-	class BS_CORE_EXPORT MeshHeap : public CoreObject
+	class B3D_CORE_EXPORT MeshHeap : public CoreObject
 	{
 	public:
 		/**
@@ -86,7 +86,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		class BS_CORE_EXPORT MeshHeap : public CoreObject
+		class B3D_CORE_EXPORT MeshHeap : public CoreObject
 		{
 			/**	Signifies how is a data chunk used. */
 			enum class UseFlags

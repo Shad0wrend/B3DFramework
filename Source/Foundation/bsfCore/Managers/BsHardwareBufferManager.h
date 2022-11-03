@@ -22,7 +22,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	class BS_CORE_EXPORT HardwareBufferManager : public Module<HardwareBufferManager>
+	class B3D_CORE_EXPORT HardwareBufferManager : public Module<HardwareBufferManager>
 	{
 	public:
 		HardwareBufferManager() = default;
@@ -81,7 +81,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		class BS_CORE_EXPORT HardwareBufferManager : public Module<HardwareBufferManager>
+		class B3D_CORE_EXPORT HardwareBufferManager : public Module<HardwareBufferManager>
 		{
 		public:
 			virtual ~HardwareBufferManager() {}

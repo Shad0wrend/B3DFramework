@@ -17,7 +17,7 @@ namespace bs
 		AABox Bounds;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptVECTOR_FIELD_DESC : public ScriptObject<ScriptVECTOR_FIELD_DESC>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptVECTOR_FIELD_DESC : public ScriptObject<ScriptVECTOR_FIELD_DESC>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "VectorFieldOptions")

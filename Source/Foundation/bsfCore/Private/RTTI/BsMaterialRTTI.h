@@ -13,7 +13,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT MaterialRTTI : public RTTIType<Material, Resource, MaterialRTTI>
+	class B3D_CORE_EXPORT MaterialRTTI : public RTTIType<Material, Resource, MaterialRTTI>
 	{
 	private:
 		HShader& GetShader(Material* obj) { return obj->mShader; }

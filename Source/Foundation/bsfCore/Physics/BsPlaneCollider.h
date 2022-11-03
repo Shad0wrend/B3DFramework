@@ -16,7 +16,7 @@ namespace bs
 	 */
 
 	/** A collider with plane geometry. Plane colliders cannot be a part of non-kinematic rigidbodies. */
-	class BS_CORE_EXPORT PlaneCollider : public Collider
+	class B3D_CORE_EXPORT PlaneCollider : public Collider
 	{
 	public:
 		PlaneCollider() = default;

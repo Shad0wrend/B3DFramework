@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note	No renderer is active by default. You must make a renderer active before doing any rendering.
 	 */
-	class BS_CORE_EXPORT RendererManager : public Module<RendererManager>
+	class B3D_CORE_EXPORT RendererManager : public Module<RendererManager>
 	{
 	public:
 		~RendererManager();

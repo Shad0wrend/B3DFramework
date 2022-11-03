@@ -26,7 +26,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptMaterial : public TScriptResource<ScriptMaterial, Material>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptMaterial : public TScriptResource<ScriptMaterial, Material>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Material")

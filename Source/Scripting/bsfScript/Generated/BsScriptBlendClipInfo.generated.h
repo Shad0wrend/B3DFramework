@@ -14,7 +14,7 @@ namespace bs
 		float Position;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptBlendClipInfo : public ScriptObject<ScriptBlendClipInfo>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptBlendClipInfo : public ScriptObject<ScriptBlendClipInfo>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "BlendClipInfo")

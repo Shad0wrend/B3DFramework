@@ -78,7 +78,7 @@ namespace bs
 	 * state.
 	 */
 	template <bool Core>
-	class BS_CORE_EXPORT TGraphicsPipelineState
+	class B3D_CORE_EXPORT TGraphicsPipelineState
 	{
 	public:
 		using BlendStateType = SPtr<CoreVariantType<BlendState, Core>>;
@@ -132,7 +132,7 @@ namespace bs
 	 * state.
 	 */
 	template <bool Core>
-	class BS_CORE_EXPORT TComputePipelineState
+	class B3D_CORE_EXPORT TComputePipelineState
 	{
 	public:
 		using GpuProgramType = SPtr<CoreVariantType<GpuProgram, Core>>;
@@ -164,7 +164,7 @@ namespace bs
 	 * states (vertex, fragment, geometry, etc. GPU programs), as well as a set of fixed states (blend, rasterizer,
 	 * depth-stencil). Once created the state is immutable, and can be bound to RenderAPI for rendering.
 	 */
-	class BS_CORE_EXPORT GraphicsPipelineState : public CoreObject, public TGraphicsPipelineState<false>
+	class B3D_CORE_EXPORT GraphicsPipelineState : public CoreObject, public TGraphicsPipelineState<false>
 	{
 	public:
 		virtual ~GraphicsPipelineState() = default;
@@ -192,7 +192,7 @@ namespace bs
 	 * of a single programmable state (GPU program). Once created the state is immutable, and can be bound to RenderAPI for
 	 * use.
 	 */
-	class BS_CORE_EXPORT ComputePipelineState : public CoreObject, public TComputePipelineState<false>
+	class B3D_CORE_EXPORT ComputePipelineState : public CoreObject, public TComputePipelineState<false>
 	{
 	public:
 		virtual ~ComputePipelineState() = default;
@@ -224,7 +224,7 @@ namespace bs
 		 */
 
 		/** Core thread version of a bs::GraphicsPipelineState. */
-		class BS_CORE_EXPORT GraphicsPipelineState : public CoreObject, public TGraphicsPipelineState<true>
+		class B3D_CORE_EXPORT GraphicsPipelineState : public CoreObject, public TGraphicsPipelineState<true>
 		{
 		public:
 			GraphicsPipelineState(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask);
@@ -240,7 +240,7 @@ namespace bs
 		};
 
 		/** Core thread version of a bs::ComputePipelineState. */
-		class BS_CORE_EXPORT ComputePipelineState : public CoreObject, public TComputePipelineState<true>
+		class B3D_CORE_EXPORT ComputePipelineState : public CoreObject, public TComputePipelineState<true>
 		{
 		public:
 			ComputePipelineState(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask);

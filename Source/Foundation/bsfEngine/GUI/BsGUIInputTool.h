@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Represents a single line of text used by the input tools. */
-	class BS_EXPORT GUIInputLineDesc
+	class B3D_EXPORT GUIInputLineDesc
 	{
 	public:
 		/**
@@ -62,7 +62,7 @@ namespace bs
 	};
 
 	/** Base class for input helper tools, like caret and text selection. */
-	class BS_EXPORT GUIInputTool
+	class B3D_EXPORT GUIInputTool
 	{
 	public:
 		GUIInputTool() = default;

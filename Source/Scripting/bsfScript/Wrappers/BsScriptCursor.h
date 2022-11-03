@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for Cursor. */
-	class BS_SCR_BE_EXPORT ScriptCursor : public ScriptObject<ScriptCursor>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCursor : public ScriptObject<ScriptCursor>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Cursor")

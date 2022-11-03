@@ -13,7 +13,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptShaderVariation : public TScriptReflectable<ScriptShaderVariation, ShaderVariation>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptShaderVariation : public TScriptReflectable<ScriptShaderVariation, ShaderVariation>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ShaderVariation")

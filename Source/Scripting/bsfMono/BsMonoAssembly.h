@@ -11,7 +11,7 @@ namespace bs
 	 */
 
 	/**	Contains information about a single Mono (managed) assembly. */
-	class BS_MONO_EXPORT MonoAssembly
+	class B3D_MONO_EXPORT MonoAssembly
 	{
 	public:
 		/** @cond INTERNAL */

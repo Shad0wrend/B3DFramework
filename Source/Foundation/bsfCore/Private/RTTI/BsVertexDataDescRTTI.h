@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT VertexDataDescRTTI : public RTTIType<VertexDataDesc, IReflectable, VertexDataDescRTTI>
+	class B3D_CORE_EXPORT VertexDataDescRTTI : public RTTIType<VertexDataDesc, IReflectable, VertexDataDescRTTI>
 	{
 	private:
 		VertexElement& GetVertexElementData(VertexDataDesc* obj, u32 arrayIdx) { return obj->mVertexElements[arrayIdx]; }

@@ -15,7 +15,7 @@ namespace bs
 	struct FIXED_JOINT_DESC;
 
 	/** Physics joint that will maintain a fixed distance and orientation between its two attached bodies. */
-	class BS_CORE_EXPORT FixedJoint : public Joint
+	class B3D_CORE_EXPORT FixedJoint : public Joint
 	{
 	public:
 		FixedJoint(const FIXED_JOINT_DESC& desc) {}

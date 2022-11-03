@@ -18,7 +18,7 @@ namespace bs
 		 *
 		 * @note Core thread only.
 		 */
-		class BS_CORE_EXPORT CommandBufferManager : public Module<CommandBufferManager>
+		class B3D_CORE_EXPORT CommandBufferManager : public Module<CommandBufferManager>
 		{
 		public:
 			virtual ~CommandBufferManager() = default;

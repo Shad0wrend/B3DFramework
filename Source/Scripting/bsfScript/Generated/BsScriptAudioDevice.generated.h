@@ -13,7 +13,7 @@ namespace bs
 		MonoString* Name;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptAudioDevice : public ScriptObject<ScriptAudioDevice>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAudioDevice : public ScriptObject<ScriptAudioDevice>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "AudioDevice")

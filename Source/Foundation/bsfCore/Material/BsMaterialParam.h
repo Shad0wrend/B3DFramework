@@ -19,7 +19,7 @@ namespace bs
 
 	/** Common functionality for all material data params. */
 	template <int DATA_TYPE, bool Core>
-	class BS_CORE_EXPORT TMaterialDataCommon
+	class B3D_CORE_EXPORT TMaterialDataCommon
 	{
 	protected:
 		using MaterialPtrType = SPtr<CoreVariantType<Material, Core>>;
@@ -58,7 +58,7 @@ namespace bs
 	 * @see		Material
 	 */
 	template <class T, bool Core>
-	class BS_CORE_EXPORT TMaterialDataParam : public TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>
+	class B3D_CORE_EXPORT TMaterialDataParam : public TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>
 	{
 		using Base = TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>;
 
@@ -74,7 +74,7 @@ namespace bs
 
 	/** @copydoc TMaterialDataParam */
 	template <class T, bool Core>
-	class BS_CORE_EXPORT TMaterialCurveParam : public TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>
+	class B3D_CORE_EXPORT TMaterialCurveParam : public TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>
 	{
 		using Base = TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>;
 
@@ -90,7 +90,7 @@ namespace bs
 
 	/** @copydoc TMaterialDataParam */
 	template <bool Core>
-	class BS_CORE_EXPORT TMaterialColorGradientParam : public TMaterialDataCommon<GPDT_COLOR, Core>
+	class B3D_CORE_EXPORT TMaterialColorGradientParam : public TMaterialDataCommon<GPDT_COLOR, Core>
 	{
 		using Base = TMaterialDataCommon<GPDT_COLOR, Core>;
 
@@ -106,7 +106,7 @@ namespace bs
 
 	/** @copydoc TMaterialDataParam */
 	template <bool Core>
-	class BS_CORE_EXPORT TMaterialParamStruct : public TMaterialDataCommon<GPDT_STRUCT, Core>
+	class B3D_CORE_EXPORT TMaterialParamStruct : public TMaterialDataCommon<GPDT_STRUCT, Core>
 	{
 		using Base = TMaterialDataCommon<GPDT_STRUCT, Core>;
 
@@ -125,7 +125,7 @@ namespace bs
 
 	/** @copydoc TMaterialDataParam */
 	template <bool Core>
-	class BS_CORE_EXPORT TMaterialParamTexture
+	class B3D_CORE_EXPORT TMaterialParamTexture
 	{
 		using MaterialPtrType = SPtr<CoreVariantType<Material, Core>>;
 		using MaterialParamsType = CoreVariantType<MaterialParams, Core>;
@@ -155,7 +155,7 @@ namespace bs
 
 	/** @copydoc TMaterialDataParam */
 	template <bool Core>
-	class BS_CORE_EXPORT TMaterialParamSpriteTexture
+	class B3D_CORE_EXPORT TMaterialParamSpriteTexture
 	{
 		using MaterialPtrType = SPtr<CoreVariantType<Material, Core>>;
 		using MaterialParamsType = CoreVariantType<MaterialParams, Core>;
@@ -186,7 +186,7 @@ namespace bs
 
 	/** @copydoc TMaterialDataParam */
 	template <bool Core>
-	class BS_CORE_EXPORT TMaterialParamLoadStoreTexture
+	class B3D_CORE_EXPORT TMaterialParamLoadStoreTexture
 	{
 		using MaterialPtrType = SPtr<CoreVariantType<Material, Core>>;
 		using MaterialParamsType = CoreVariantType<MaterialParams, Core>;
@@ -216,7 +216,7 @@ namespace bs
 
 	/** @copydoc TMaterialDataParam */
 	template <bool Core>
-	class BS_CORE_EXPORT TMaterialParamBuffer
+	class B3D_CORE_EXPORT TMaterialParamBuffer
 	{
 		using MaterialPtrType = SPtr<CoreVariantType<Material, Core>>;
 		using MaterialParamsType = CoreVariantType<MaterialParams, Core>;
@@ -246,7 +246,7 @@ namespace bs
 
 	/** @copydoc TMaterialDataParam */
 	template <bool Core>
-	class BS_CORE_EXPORT TMaterialParamSampState
+	class B3D_CORE_EXPORT TMaterialParamSampState
 	{
 		using MaterialPtrType = SPtr<CoreVariantType<Material, Core>>;
 		using MaterialParamsType = CoreVariantType<MaterialParams, Core>;

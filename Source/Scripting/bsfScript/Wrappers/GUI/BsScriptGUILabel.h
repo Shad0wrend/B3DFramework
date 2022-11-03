@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for GUILabel. */
-	class BS_SCR_BE_EXPORT ScriptGUILabel : public TScriptGUIElement<ScriptGUILabel>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUILabel : public TScriptGUIElement<ScriptGUILabel>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUILabel")

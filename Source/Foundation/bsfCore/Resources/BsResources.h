@@ -44,7 +44,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Resources), API(Framework)) Resources : public Module<Resources>
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Resources), API(Framework)) Resources : public Module<Resources>
 	{
 		/** Information about a loaded resource. */
 		struct LoadedResourceData
@@ -407,7 +407,7 @@ namespace bs
 	};
 
 	/** Provides easier access to Resources manager. */
-	BS_CORE_EXPORT Resources& GetResources();
+	B3D_CORE_EXPORT Resources& GetResources();
 
 	/** @} */
 } // namespace bs

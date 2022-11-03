@@ -15,7 +15,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT CAnimationRTTI : public RTTIType<CAnimation, Component, CAnimationRTTI>
+	class B3D_CORE_EXPORT CAnimationRTTI : public RTTIType<CAnimation, Component, CAnimationRTTI>
 	{
 		BS_BEGIN_RTTI_MEMBERS
 			BS_RTTI_MEMBER_REFL(mDefaultClip, 0)

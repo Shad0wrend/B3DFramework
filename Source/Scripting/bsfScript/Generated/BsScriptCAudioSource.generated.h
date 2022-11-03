@@ -13,7 +13,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptCAudioSource : public TScriptComponent<ScriptCAudioSource, CAudioSource>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCAudioSource : public TScriptComponent<ScriptCAudioSource, CAudioSource>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "AudioSource")

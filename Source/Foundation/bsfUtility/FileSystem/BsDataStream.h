@@ -22,7 +22,7 @@ namespace bs
 	 * General purpose class used for encapsulating the reading and writing of data from and to various sources using a
 	 * common interface.
 	 */
-	class BS_UTILITY_EXPORT DataStream
+	class B3D_UTILITY_EXPORT DataStream
 	{
 	public:
 		enum AccessMode
@@ -188,7 +188,7 @@ namespace bs
 	};
 
 	/** Data stream for handling data from memory. */
-	class BS_UTILITY_EXPORT MemoryDataStream : public DataStream
+	class B3D_UTILITY_EXPORT MemoryDataStream : public DataStream
 	{
 	public:
 		/**
@@ -270,7 +270,7 @@ namespace bs
 	};
 
 	/** Data stream for handling data from standard streams. */
-	class BS_UTILITY_EXPORT FileDataStream : public DataStream
+	class B3D_UTILITY_EXPORT FileDataStream : public DataStream
 	{
 	public:
 		/**

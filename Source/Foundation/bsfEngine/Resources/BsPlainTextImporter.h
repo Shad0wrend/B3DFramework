@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Imports plain text files (.txt, .xml, .json). */
-	class BS_EXPORT PlainTextImporter : public SpecificImporter
+	class B3D_EXPORT PlainTextImporter : public SpecificImporter
 	{
 	public:
 		bool IsExtensionSupported(const String& ext) const override;

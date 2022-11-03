@@ -15,7 +15,7 @@ namespace bs
 	 */
 
 	/** Provides access to various Windows specific utility functions. */
-	class BS_UTILITY_EXPORT Win32PlatformUtility
+	class B3D_UTILITY_EXPORT Win32PlatformUtility
 	{
 	public:
 		/**

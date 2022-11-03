@@ -15,7 +15,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptCJointBase : public ScriptComponentBase
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCJointBase : public ScriptComponentBase
 	{
 	public:
 		ScriptCJointBase(MonoObject* instance);
@@ -23,7 +23,7 @@ namespace bs
 		virtual ~ScriptCJointBase() {}
 	};
 
-	class BS_SCR_BE_EXPORT ScriptCJoint : public TScriptComponent<ScriptCJoint, CJoint, ScriptCJointBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCJoint : public TScriptComponent<ScriptCJoint, CJoint, ScriptCJointBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Joint")

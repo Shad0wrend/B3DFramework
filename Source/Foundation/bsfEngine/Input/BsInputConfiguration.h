@@ -15,7 +15,7 @@ namespace bs
 	 * Describes a virtual button. Virtual buttons allow you to map custom actions without needing to know about what
 	 * physical buttons trigger those actions.
 	 */
-	struct BS_EXPORT VIRTUAL_BUTTON_DESC
+	struct B3D_EXPORT VIRTUAL_BUTTON_DESC
 	{
 		VIRTUAL_BUTTON_DESC() = default;
 
@@ -38,7 +38,7 @@ namespace bs
 	 * Describes a virtual axis. Virtual axes allow you to map custom axes without needing to know the actual physical
 	 * device handling those axes.
 	 */
-	struct BS_EXPORT VIRTUAL_AXIS_DESC
+	struct B3D_EXPORT VIRTUAL_AXIS_DESC
 	{
 		VIRTUAL_AXIS_DESC() = default;
 
@@ -80,7 +80,7 @@ namespace bs
 	 *
 	 * @see		VIRTUAL_BUTTON_DESC
 	 */
-	class BS_EXPORT VirtualButton
+	class B3D_EXPORT VirtualButton
 	{
 	public:
 		VirtualButton() = default;
@@ -112,7 +112,7 @@ namespace bs
 	 *
 	 * @see		VIRTUAL_AXIS_DESC
 	 */
-	class BS_EXPORT VirtualAxis
+	class B3D_EXPORT VirtualAxis
 	{
 	public:
 		VirtualAxis() = default;
@@ -131,7 +131,7 @@ namespace bs
 	};
 
 	/**	Contains virtual <-> physical key mappings. */
-	class BS_EXPORT InputConfiguration
+	class B3D_EXPORT InputConfiguration
 	{
 		static const int kMaxNumDevicesPerType = 8;
 		static const int kMaxNumDevices = (u32)InputDevice::Count * kMaxNumDevicesPerType;

@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** A two dimensional vector with integer coordinates.*/
-	struct BS_UTILITY_EXPORT Vector2I
+	struct B3D_UTILITY_EXPORT Vector2I
 	{
 		i32 X = 0;
 		i32 Y = 0;

@@ -18,7 +18,7 @@ namespace bs
 	 */
 
 	/** Handles creation of various render states. */
-	class BS_CORE_EXPORT RenderStateManager : public Module<RenderStateManager>
+	class B3D_CORE_EXPORT RenderStateManager : public Module<RenderStateManager>
 	{
 	public:
 		/**
@@ -96,7 +96,7 @@ namespace bs
 	namespace ct
 	{
 		/**	Handles creation of various render states. */
-		class BS_CORE_EXPORT RenderStateManager : public Module<RenderStateManager>
+		class B3D_CORE_EXPORT RenderStateManager : public Module<RenderStateManager>
 		{
 		private:
 			/**	Contains data about a cached blend state. */

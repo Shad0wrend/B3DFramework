@@ -71,7 +71,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT ShaderVariationRTTI : public RTTIType<ShaderVariation, IReflectable, ShaderVariationRTTI>
+	class B3D_CORE_EXPORT ShaderVariationRTTI : public RTTIType<ShaderVariation, IReflectable, ShaderVariationRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS

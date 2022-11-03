@@ -12,7 +12,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptPhysicsMaterial : public TScriptResource<ScriptPhysicsMaterial, PhysicsMaterial>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPhysicsMaterial : public TScriptResource<ScriptPhysicsMaterial, PhysicsMaterial>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "PhysicsMaterial")

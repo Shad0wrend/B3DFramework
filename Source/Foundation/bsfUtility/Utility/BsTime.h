@@ -16,7 +16,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only unless where specified otherwise.
 	 */
-	class BS_UTILITY_EXPORT Time : public Module<Time>
+	class B3D_UTILITY_EXPORT Time : public Module<Time>
 	{
 	public:
 		Time();
@@ -178,7 +178,7 @@ namespace bs
 	};
 
 	/** Easier way to access the Time module. */
-	BS_UTILITY_EXPORT Time& GetTime();
+	B3D_UTILITY_EXPORT Time& GetTime();
 
 	/** @} */
 } // namespace bs

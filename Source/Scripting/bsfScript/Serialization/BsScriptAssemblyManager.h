@@ -62,7 +62,7 @@ namespace bs
 	};
 
 	/**	Stores data about managed serializable objects in specified assemblies. */
-	class BS_SCR_BE_EXPORT ScriptAssemblyManager : public Module<ScriptAssemblyManager>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAssemblyManager : public Module<ScriptAssemblyManager>
 	{
 	public:
 		/**

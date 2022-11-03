@@ -15,7 +15,7 @@ namespace bs
 	 */
 
 	/** Structure that contains information about what part of the texture represents the render surface. */
-	struct BS_CORE_EXPORT RENDER_SURFACE_DESC
+	struct B3D_CORE_EXPORT RENDER_SURFACE_DESC
 	{
 		RENDER_SURFACE_DESC() {}
 
@@ -41,7 +41,7 @@ namespace bs
 		 *
 		 * @note	References core textures instead of texture handles.
 		 */
-		struct BS_CORE_EXPORT RENDER_SURFACE_DESC
+		struct B3D_CORE_EXPORT RENDER_SURFACE_DESC
 		{
 			RENDER_SURFACE_DESC() {}
 
@@ -62,7 +62,7 @@ namespace bs
 	} // namespace ct
 
 	/** Contains various properties that describe a render target. */
-	class BS_CORE_EXPORT RenderTargetProperties
+	class B3D_CORE_EXPORT RenderTargetProperties
 	{
 	public:
 		virtual ~RenderTargetProperties() = default;
@@ -120,7 +120,7 @@ namespace bs
 	 * @note
 	 * Sim thread unless noted otherwise. Retrieve core implementation from getCore() for core thread only functionality.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderTarget : public IReflectable, public CoreObject
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderTarget : public IReflectable, public CoreObject
 	{
 	public:
 		RenderTarget();
@@ -181,7 +181,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		class BS_CORE_EXPORT RenderTarget : public CoreObject
+		class B3D_CORE_EXPORT RenderTarget : public CoreObject
 		{
 		public:
 			/** Frame buffer type when double-buffering is used. */

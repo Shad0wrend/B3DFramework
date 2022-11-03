@@ -17,7 +17,7 @@ namespace bs
 		float Separation;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptContactPoint : public ScriptObject<ScriptContactPoint>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptContactPoint : public ScriptObject<ScriptContactPoint>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ContactPoint")

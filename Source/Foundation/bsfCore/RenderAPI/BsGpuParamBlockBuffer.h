@@ -21,7 +21,7 @@ namespace bs
 	 *
 	 * @note	Sim thread only.
 	 */
-	class BS_CORE_EXPORT GpuParamBlockBuffer : public CoreObject
+	class B3D_CORE_EXPORT GpuParamBlockBuffer : public CoreObject
 	{
 	public:
 		GpuParamBlockBuffer(u32 size, GpuBufferUsage usage);
@@ -82,7 +82,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		class BS_CORE_EXPORT GpuParamBlockBuffer : public CoreObject
+		class B3D_CORE_EXPORT GpuParamBlockBuffer : public CoreObject
 		{
 		public:
 			GpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);

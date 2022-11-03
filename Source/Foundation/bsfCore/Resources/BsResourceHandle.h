@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Data that is shared between all resource handles. */
-	struct BS_CORE_EXPORT ResourceHandleData
+	struct B3D_CORE_EXPORT ResourceHandleData
 	{
 		SPtr<Resource> MPtr;
 		UUID MUuid;
@@ -26,7 +26,7 @@ namespace bs
 	 *    the engine. The handle will be made valid as soon as the resource is loaded.
 	 *	- Handles can be serialized and deserialized, therefore saving/restoring references to their original resource.
 	 */
-	class BS_CORE_EXPORT ResourceHandleBase : public IReflectable
+	class B3D_CORE_EXPORT ResourceHandleBase : public IReflectable
 	{
 	public:
 		/**
@@ -120,12 +120,12 @@ namespace bs
 	 * Handles differences in reference counting depending if the handle is normal or weak.
 	 */
 	template <bool WeakHandle>
-	class BS_CORE_EXPORT TResourceHandleBase : public ResourceHandleBase
+	class B3D_CORE_EXPORT TResourceHandleBase : public ResourceHandleBase
 	{};
 
 	/**	Specialization of TResourceHandleBase for weak handles. Weak handles do no reference counting. */
 	template <>
-	class BS_CORE_EXPORT TResourceHandleBase<true> : public ResourceHandleBase
+	class B3D_CORE_EXPORT TResourceHandleBase<true> : public ResourceHandleBase
 	{
 	protected:
 		void AddRef(){};
@@ -142,7 +142,7 @@ namespace bs
 
 	/**	Specialization of TResourceHandleBase for normal (non-weak) handles. */
 	template <>
-	class BS_CORE_EXPORT TResourceHandleBase<false> : public ResourceHandleBase
+	class B3D_CORE_EXPORT TResourceHandleBase<false> : public ResourceHandleBase
 	{
 	protected:
 		void AddRef()

@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note	Wraps Light as a Component.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportName(Light)) CLight : public Component
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportName(Light)) CLight : public Component
 	{
 	public:
 		CLight(const HSceneObject& parent, LightType type = LightType::Radial, Color color = Color::kWhite, float intensity = 100.0f, float range = 1.0f, bool castsShadows = false, Degree spotAngle = Degree(45), Degree spotFalloffAngle = Degree(40));

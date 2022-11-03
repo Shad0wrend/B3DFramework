@@ -20,7 +20,7 @@ namespace bs
 	 *
 	 * @see		SamplerState
 	 */
-	struct BS_CORE_EXPORT SAMPLER_STATE_DESC
+	struct B3D_CORE_EXPORT SAMPLER_STATE_DESC
 	{
 		SAMPLER_STATE_DESC(){};
 
@@ -62,7 +62,7 @@ namespace bs
 	};
 
 	/** Properties of SamplerState. Shared between sim and core thread versions of SamplerState. */
-	class BS_CORE_EXPORT SamplerProperties
+	class B3D_CORE_EXPORT SamplerProperties
 	{
 	public:
 		SamplerProperties(const SAMPLER_STATE_DESC& desc);
@@ -128,7 +128,7 @@ namespace bs
 	 * @note
 	 * Sim thread.
 	 */
-	class BS_CORE_EXPORT SamplerState : public IReflectable, public CoreObject
+	class B3D_CORE_EXPORT SamplerState : public IReflectable, public CoreObject
 	{
 	public:
 		virtual ~SamplerState() = default;
@@ -180,7 +180,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class BS_CORE_EXPORT SamplerState : public CoreObject
+		class B3D_CORE_EXPORT SamplerState : public CoreObject
 		{
 		public:
 			virtual ~SamplerState();

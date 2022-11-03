@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_EXPORT PlainTextRTTI : public RTTIType<PlainText, Resource, PlainTextRTTI>
+	class B3D_EXPORT PlainTextRTTI : public RTTIType<PlainText, Resource, PlainTextRTTI>
 	{
 	private:
 		WString& GetString(PlainText* obj) { return obj->mString; }

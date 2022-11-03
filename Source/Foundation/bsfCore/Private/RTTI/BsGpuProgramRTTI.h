@@ -18,7 +18,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT GpuProgramBytecodeRTTI : public RTTIType<GpuProgramBytecode, IReflectable, GpuProgramBytecodeRTTI>
+	class B3D_CORE_EXPORT GpuProgramBytecodeRTTI : public RTTIType<GpuProgramBytecode, IReflectable, GpuProgramBytecodeRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -48,7 +48,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT GpuParamDescRTTI : public RTTIType<GpuParamDesc, IReflectable, GpuParamDescRTTI>
+	class B3D_CORE_EXPORT GpuParamDescRTTI : public RTTIType<GpuParamDesc, IReflectable, GpuParamDescRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -78,7 +78,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT GpuProgramRTTI : public RTTIType<GpuProgram, IReflectable, GpuProgramRTTI>
+	class B3D_CORE_EXPORT GpuProgramRTTI : public RTTIType<GpuProgram, IReflectable, GpuProgramRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS

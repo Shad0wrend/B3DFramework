@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/** Structure that describes pipeline rasterizer state. Used for initializing a RasterizerState. */
-	struct BS_CORE_EXPORT RASTERIZER_STATE_DESC
+	struct B3D_CORE_EXPORT RASTERIZER_STATE_DESC
 	{
 		bool operator==(const RASTERIZER_STATE_DESC& rhs) const;
 
@@ -77,7 +77,7 @@ namespace bs
 	};
 
 	/** Properties of RasterizerState. Shared between sim and core thread versions of RasterizerState. */
-	class BS_CORE_EXPORT RasterizerProperties
+	class B3D_CORE_EXPORT RasterizerProperties
 	{
 	public:
 		RasterizerProperties(const RASTERIZER_STATE_DESC& desc);
@@ -127,7 +127,7 @@ namespace bs
 	 *
 	 * @note	Rasterizer states are immutable. Sim thread only.
 	 */
-	class BS_CORE_EXPORT RasterizerState : public IReflectable, public CoreObject
+	class B3D_CORE_EXPORT RasterizerState : public IReflectable, public CoreObject
 	{
 	public:
 		virtual ~RasterizerState();
@@ -180,7 +180,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class BS_CORE_EXPORT RasterizerState : public CoreObject
+		class B3D_CORE_EXPORT RasterizerState : public CoreObject
 		{
 		public:
 			virtual ~RasterizerState();

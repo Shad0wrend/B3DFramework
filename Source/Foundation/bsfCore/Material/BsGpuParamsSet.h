@@ -15,7 +15,7 @@ namespace bs
 
 	/** Contains a set of GpuParams used for a single technique within a Material. */
 	template <bool Core>
-	class BS_CORE_EXPORT TGpuParamsSet
+	class B3D_CORE_EXPORT TGpuParamsSet
 	{
 		using GpuParamsType = CoreVariantType<GpuParams, Core>;
 		using MaterialParamsType = CoreVariantType<MaterialParams, Core>;
@@ -181,7 +181,7 @@ namespace bs
 	};
 
 	/** Sim thread version of TGpuParamsSet<Core>. */
-	class BS_CORE_EXPORT GpuParamsSet : public TGpuParamsSet<false>
+	class B3D_CORE_EXPORT GpuParamsSet : public TGpuParamsSet<false>
 	{
 	public:
 		GpuParamsSet() = default;
@@ -194,7 +194,7 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread version of TGpuParamsSet<Core>. */
-		class BS_CORE_EXPORT GpuParamsSet : public TGpuParamsSet<true>
+		class B3D_CORE_EXPORT GpuParamsSet : public TGpuParamsSet<true>
 		{
 		public:
 			GpuParamsSet() = default;

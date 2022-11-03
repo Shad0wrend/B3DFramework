@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Contains valid size range for a GUI element in a GUI layout. */
-	struct BS_EXPORT LayoutSizeRange
+	struct B3D_EXPORT LayoutSizeRange
 	{
 		Vector2I Optimal;
 		Vector2I Min;
@@ -29,7 +29,7 @@ namespace bs
 	};
 
 	/**	Options that control how an element is positioned and sized. */
-	struct BS_EXPORT GUIDimensions
+	struct B3D_EXPORT GUIDimensions
 	{
 		/**	Creates new default layout options. */
 		static GUIDimensions Create();

@@ -10,9 +10,6 @@ add_common_flags(bsfRenderBeast)
 # Includes
 target_include_directories(bsfRenderBeast PRIVATE "./")
 
-# Defines
-target_compile_definitions(bsfRenderBeast PRIVATE -DBS_BSRND_EXPORTS)
-
 # Libraries
 ## Local libs
 target_link_libraries(bsfRenderBeast bsf)

@@ -30,7 +30,7 @@ namespace bs
 	BS_FLAGS_OPERATORS(ShadingLanguageFlag)
 
 	/** Contains import options you may use to control how is a shader imported. */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ShaderImportOptions : public ImportOptions
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ShaderImportOptions : public ImportOptions
 	{
 	public:
 		/**

@@ -19,7 +19,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptFontBitmap : public TScriptReflectable<ScriptFontBitmap, FontBitmap>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptFontBitmap : public TScriptReflectable<ScriptFontBitmap, FontBitmap>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "FontBitmap")

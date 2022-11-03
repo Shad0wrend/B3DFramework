@@ -15,7 +15,7 @@ namespace bs
 	class GUIElementStyleLoader;
 
 	/**	Provides various methods commonly used for managing builtin resources. */
-	class BS_EXPORT BuiltinResourcesHelper
+	class B3D_EXPORT BuiltinResourcesHelper
 	{
 	public:
 		/** Flags that can control asset import. */
@@ -117,7 +117,7 @@ namespace bs
 	 * Determines how are resources for GUIElementStyle loaded, when it is being decoded from a non-binary format that only
 	 * stores resource names.
 	 */
-	class BS_EXPORT GUIElementStyleLoader
+	class B3D_EXPORT GUIElementStyleLoader
 	{
 	public:
 		virtual ~GUIElementStyleLoader() = default;
@@ -130,7 +130,7 @@ namespace bs
 	};
 
 	/** Handles loading of GUIELementStyle resources by retrieving them from the builtin resources folder. */
-	class BS_EXPORT BuiltinResourceGUIElementStyleLoader final : public GUIElementStyleLoader
+	class B3D_EXPORT BuiltinResourceGUIElementStyleLoader final : public GUIElementStyleLoader
 	{
 	public:
 		BuiltinResourceGUIElementStyleLoader(const Path& fontPath, const Path& texturePath);

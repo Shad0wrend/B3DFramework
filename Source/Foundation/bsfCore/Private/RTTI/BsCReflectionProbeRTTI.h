@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT CReflectionProbeRTTI : public RTTIType<CReflectionProbe, Component, CReflectionProbeRTTI>
+	class B3D_CORE_EXPORT CReflectionProbeRTTI : public RTTIType<CReflectionProbe, Component, CReflectionProbeRTTI>
 	{
 	private:
 		SPtr<ReflectionProbe> GetInternal(CReflectionProbe* obj) { return obj->mInternal; }

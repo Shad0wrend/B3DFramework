@@ -18,7 +18,7 @@ namespace bs
 	 *
 	 * @note	Wraps a Renderable as a Component.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportName(Renderable)) CRenderable : public Component
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportName(Renderable)) CRenderable : public Component
 	{
 	public:
 		/** @copydoc Renderable::SetMesh */

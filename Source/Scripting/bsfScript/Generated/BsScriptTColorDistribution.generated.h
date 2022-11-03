@@ -20,7 +20,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptTColorDistributionColorGradient : public ScriptObject<ScriptTColorDistributionColorGradient>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTColorDistributionColorGradient : public ScriptObject<ScriptTColorDistributionColorGradient>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ColorDistribution")
@@ -46,7 +46,7 @@ namespace bs
 		static MonoObject* InternalGetMaxGradient(ScriptTColorDistributionColorGradient* thisPtr);
 	};
 
-	class BS_SCR_BE_EXPORT ScriptTColorDistributionColorGradientHDR : public ScriptObject<ScriptTColorDistributionColorGradientHDR>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTColorDistributionColorGradientHDR : public ScriptObject<ScriptTColorDistributionColorGradientHDR>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ColorHDRDistribution")

@@ -32,7 +32,7 @@ namespace bs
 	};
 
 	/** Properties of a Mesh. Shared between sim and core thread versions of a Mesh. */
-	class BS_CORE_EXPORT MeshProperties
+	class B3D_CORE_EXPORT MeshProperties
 	{
 	public:
 		MeshProperties();
@@ -84,7 +84,7 @@ namespace bs
 	 *
 	 * @note	Sim thread.
 	 */
-	class BS_CORE_EXPORT MeshBase : public Resource
+	class B3D_CORE_EXPORT MeshBase : public Resource
 	{
 	public:
 		/**
@@ -142,7 +142,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class BS_CORE_EXPORT MeshBase : public CoreObject
+		class B3D_CORE_EXPORT MeshBase : public CoreObject
 		{
 		public:
 			MeshBase(u32 numVertices, u32 numIndices, const Vector<SubMesh>& subMeshes);

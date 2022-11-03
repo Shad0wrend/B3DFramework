@@ -88,7 +88,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT LightProbeVolumeRTTI : public RTTIType<LightProbeVolume, IReflectable, LightProbeVolumeRTTI>
+	class B3D_CORE_EXPORT LightProbeVolumeRTTI : public RTTIType<LightProbeVolume, IReflectable, LightProbeVolumeRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS

@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** Represents a 2D rectangle using real values. Rectangle is represented with an origin in top left and width/height. */
-	class BS_UTILITY_EXPORT Rect2
+	class B3D_UTILITY_EXPORT Rect2
 	{
 	public:
 		Rect2() = default;

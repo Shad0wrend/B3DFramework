@@ -15,7 +15,7 @@ namespace bs
 	 * Shader include handler for the engine. It loads includes relative to the application working directory and supports
 	 * special $ENGINE$ folder for built-in includes.
 	 */
-	class BS_EXPORT EngineShaderIncludeHandler : public IShaderIncludeHandler
+	class B3D_EXPORT EngineShaderIncludeHandler : public IShaderIncludeHandler
 	{
 	public:
 		HShaderInclude FindInclude(const String& name) const override;

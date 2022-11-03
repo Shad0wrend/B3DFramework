@@ -12,7 +12,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptFont : public TScriptResource<ScriptFont, Font>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptFont : public TScriptResource<ScriptFont, Font>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Font")

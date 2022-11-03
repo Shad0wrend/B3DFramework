@@ -22,7 +22,7 @@ namespace bs
 #endif
 
 	/** Contains common engine paths and utility method for searching for paths. */
-	class BS_EXPORT Paths
+	class B3D_EXPORT Paths
 	{
 	public:
 		/**	Returns the absolute path where the builtin framework-specific assets are located. */

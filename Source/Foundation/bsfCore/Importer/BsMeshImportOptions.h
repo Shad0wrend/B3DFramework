@@ -21,7 +21,7 @@ namespace bs
 	};
 
 	/** Information about how to split an AnimationClip into multiple separate clips. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) AnimationSplitInfo : IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) AnimationSplitInfo : IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		AnimationSplitInfo() = default;
@@ -54,7 +54,7 @@ namespace bs
 	};
 
 	/** A set of animation events that will be added to an animation clip during animation import. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ImportedAnimationEvents : IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) ImportedAnimationEvents : IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		ImportedAnimationEvents() = default;
@@ -77,7 +77,7 @@ namespace bs
 	/**
 	 * Contains import options you may use to control how is a mesh imported from some external format into engine format.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) MeshImportOptions : public ImportOptions
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Importer), API(Framework), API(Editor)) MeshImportOptions : public ImportOptions
 	{
 	public:
 		MeshImportOptions() = default;

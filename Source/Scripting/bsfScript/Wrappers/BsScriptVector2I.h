@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for Vector2I. */
-	class BS_SCR_BE_EXPORT ScriptVector2I : public ScriptObject<ScriptVector2I>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptVector2I : public ScriptObject<ScriptVector2I>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Vector2I")

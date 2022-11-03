@@ -28,7 +28,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptCAnimation : public TScriptComponent<ScriptCAnimation, CAnimation>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCAnimation : public TScriptComponent<ScriptCAnimation, CAnimation>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Animation")

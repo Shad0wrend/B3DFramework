@@ -26,7 +26,7 @@ namespace bs
 	 *
 	 * You will receive events with the specified drop area as long as it is active.
 	 */
-	class BS_CORE_EXPORT DropTarget
+	class B3D_CORE_EXPORT DropTarget
 	{
 	public:
 		~DropTarget();

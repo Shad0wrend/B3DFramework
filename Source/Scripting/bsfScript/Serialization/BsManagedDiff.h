@@ -15,7 +15,7 @@ namespace bs
 	 * Diff handler that performs RTTI object diff for managed objects. Managed objects require special diff handling since
 	 * their serialization works differently.
 	 */
-	class BS_SCR_BE_EXPORT ManagedDiff : public IDiff
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedDiff : public IDiff
 	{
 	protected:
 		SPtr<SerializedObject> GenerateDiffInternal(IReflectable* orgObj, IReflectable* newObj, ObjectMap& objectMap, bool replicableOnly) override;

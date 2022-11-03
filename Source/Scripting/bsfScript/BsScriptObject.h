@@ -37,7 +37,7 @@ namespace bs
 	/**
 	 * Base class for all script interop objects. Interop objects form a connection between C++ and CLR classes and methods.
 	 */
-	class BS_SCR_BE_EXPORT ScriptObjectBase
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptObjectBase
 	{
 	public:
 		ScriptObjectBase(MonoObject* instance);
@@ -75,7 +75,7 @@ namespace bs
 	};
 
 	/**	Base class for all persistent interop objects. Persistent objects persist through assembly reload. */
-	class BS_SCR_BE_EXPORT PersistentScriptObjectBase : public ScriptObjectBase
+	class B3D_SCRIPT_INTEROP_EXPORT PersistentScriptObjectBase : public ScriptObjectBase
 	{
 	public:
 		PersistentScriptObjectBase(MonoObject* instance);
@@ -196,7 +196,7 @@ namespace bs
 	static void InitRuntimeData();
 
 	/**	Interop class between C++ & CLR for ScriptObject. */
-	class BS_SCR_BE_EXPORT ScriptObjectImpl : public ScriptObject<ScriptObjectImpl>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptObjectImpl : public ScriptObject<ScriptObjectImpl>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ScriptObject")

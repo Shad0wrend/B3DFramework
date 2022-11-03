@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_EXPORT GUISkinEntry : public IReflectable
+	class B3D_EXPORT GUISkinEntry : public IReflectable
 	{
 	public:
 		GUISkinEntry() = default;
@@ -29,7 +29,7 @@ namespace bs
 		RTTITypeBase* GetRtti() const;
 	};
 
-	class BS_EXPORT GUISkinEntryRTTI : public RTTIType<GUISkinEntry, IReflectable, GUISkinEntryRTTI>
+	class B3D_EXPORT GUISkinEntryRTTI : public RTTIType<GUISkinEntry, IReflectable, GUISkinEntryRTTI>
 	{
 	private:
 		String& GetName(GUISkinEntry* obj) { return obj->Name; }
@@ -64,7 +64,7 @@ namespace bs
 		}
 	};
 
-	class BS_EXPORT GUISkinRTTI : public RTTIType<GUISkin, Resource, GUISkinRTTI>
+	class B3D_EXPORT GUISkinRTTI : public RTTIType<GUISkin, Resource, GUISkinRTTI>
 	{
 	private:
 		GUISkinEntry& GetStyle(GUISkin* obj, u32 idx)

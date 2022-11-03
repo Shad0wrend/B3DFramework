@@ -19,7 +19,7 @@ namespace bs
 		 *
 		 * @note	Used just for more easily passing around vertex information.
 		 */
-		class BS_CORE_EXPORT VertexData
+		class B3D_CORE_EXPORT VertexData
 		{
 		public:
 			VertexData() = default;

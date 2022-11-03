@@ -51,7 +51,7 @@ namespace bs
 	};
 
 	/**	A sprite consisting of a quads representing a text string. */
-	class BS_EXPORT TextSprite : public Sprite
+	class B3D_EXPORT TextSprite : public Sprite
 	{
 	public:
 		TextSprite() = default;

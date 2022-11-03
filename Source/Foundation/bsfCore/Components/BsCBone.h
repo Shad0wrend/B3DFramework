@@ -15,7 +15,7 @@ namespace bs
 	 * Component that maps animation for specific bone also be applied to the SceneObject this component is attached to.
 	 * The component will attach to the first found parent Animation component.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(Bone)) CBone : public Component
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Animation), ExportName(Bone)) CBone : public Component
 	{
 	public:
 		CBone(const HSceneObject& parent);

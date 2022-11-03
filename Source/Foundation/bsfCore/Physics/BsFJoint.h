@@ -25,7 +25,7 @@ namespace bs
 	 */
 
 	/** Provides common functionality used by all Joint types. */
-	class BS_CORE_EXPORT FJoint
+	class B3D_CORE_EXPORT FJoint
 	{
 	public:
 		FJoint(const JOINT_DESC& desc) {}

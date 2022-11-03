@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/** GUI element representing an element with a draggable handle of a variable size. */
-	class BS_EXPORT GUIScrollBar : public GUIElement
+	class B3D_EXPORT GUIScrollBar : public GUIElement
 	{
 	public:
 		/** Style type name for the horizontal scroll handle. */

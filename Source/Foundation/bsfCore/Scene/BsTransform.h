@@ -17,7 +17,7 @@ namespace bs
 	/**
 	 * Contains information about 3D object's position, rotation and scale, and provides methods to manipulate it.
 	 */
-	class BS_CORE_EXPORT Transform : public IReflectable
+	class B3D_CORE_EXPORT Transform : public IReflectable
 	{
 	public:
 		Transform() = default;

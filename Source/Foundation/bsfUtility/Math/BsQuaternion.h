@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/** Represents a quaternion used for 3D rotations. */
-	class BS_UTILITY_EXPORT Quaternion
+	class B3D_UTILITY_EXPORT Quaternion
 	{
 	private:
 		struct EulerAngleOrderData

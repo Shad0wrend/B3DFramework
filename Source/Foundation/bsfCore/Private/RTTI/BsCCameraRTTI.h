@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT CCameraRTTI : public RTTIType<CCamera, Component, CCameraRTTI>
+	class B3D_CORE_EXPORT CCameraRTTI : public RTTIType<CCamera, Component, CCameraRTTI>
 	{
 	private:
 		SPtr<Camera> GetInternal(CCamera* obj) { return obj->mInternal; }

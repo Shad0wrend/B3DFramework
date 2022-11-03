@@ -52,7 +52,7 @@ namespace bs
 	};
 
 	/** Contains all parameter information for a GPU program, including data and object parameters, plus parameter blocks. */
-	struct BS_CORE_EXPORT GpuParamDesc : IReflectable
+	struct B3D_CORE_EXPORT GpuParamDesc : IReflectable
 	{
 		Map<String, GpuParamBlockDesc> ParamBlocks;
 		Map<String, GpuParamDataDesc> Params;

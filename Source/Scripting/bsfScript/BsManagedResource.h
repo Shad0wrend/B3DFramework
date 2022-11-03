@@ -14,7 +14,7 @@ namespace bs
 	struct ResourceBackupData;
 
 	/** Resource that internally wraps a managed resource object that can be of user-defined type. */
-	class BS_SCR_BE_EXPORT ManagedResource : public Resource
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedResource : public Resource
 	{
 	public:
 		/**	Returns the internal managed resource object. */

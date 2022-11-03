@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for PixelUtility. */
-	class BS_SCR_BE_EXPORT ScriptPixelUtility : public ScriptObject<ScriptPixelUtility>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptPixelUtility : public ScriptObject<ScriptPixelUtility>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "PixelUtility")

@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** A plane represented by a normal and a distance. */
-	class BS_UTILITY_EXPORT Plane
+	class B3D_UTILITY_EXPORT Plane
 	{
 	public:
 		/**

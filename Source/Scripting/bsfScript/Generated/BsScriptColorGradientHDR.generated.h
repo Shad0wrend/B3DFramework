@@ -24,7 +24,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptColorGradientHDR : public ScriptObject<ScriptColorGradientHDR>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptColorGradientHDR : public ScriptObject<ScriptColorGradientHDR>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "ColorGradientHDR")

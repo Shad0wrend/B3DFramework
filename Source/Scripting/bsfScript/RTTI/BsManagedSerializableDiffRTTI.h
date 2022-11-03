@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_SCR_BE_EXPORT ModifiedFieldRTTI : public RTTIType<ManagedSerializableDiff::ModifiedField, IReflectable, ModifiedFieldRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ModifiedFieldRTTI : public RTTIType<ManagedSerializableDiff::ModifiedField, IReflectable, ModifiedFieldRTTI>
 	{
 	private:
 		SPtr<ManagedSerializableTypeInfo> GetParentType(ManagedSerializableDiff::ModifiedField* obj)
@@ -72,7 +72,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ModifiedArrayEntryRTTI : public RTTIType<ManagedSerializableDiff::ModifiedArrayEntry, IReflectable, ModifiedArrayEntryRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ModifiedArrayEntryRTTI : public RTTIType<ManagedSerializableDiff::ModifiedArrayEntry, IReflectable, ModifiedArrayEntryRTTI>
 	{
 	private:
 		u32& GetIdx(ManagedSerializableDiff::ModifiedArrayEntry* obj)
@@ -119,7 +119,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ModifiedDictionaryEntryRTTI : public RTTIType<ManagedSerializableDiff::ModifiedDictionaryEntry, IReflectable, ModifiedDictionaryEntryRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ModifiedDictionaryEntryRTTI : public RTTIType<ManagedSerializableDiff::ModifiedDictionaryEntry, IReflectable, ModifiedDictionaryEntryRTTI>
 	{
 	private:
 		SPtr<ManagedSerializableFieldData> GetKey(ManagedSerializableDiff::ModifiedDictionaryEntry* obj)
@@ -166,7 +166,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ModificationRTTI : public RTTIType<ManagedSerializableDiff::Modification, IReflectable, ModificationRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ModificationRTTI : public RTTIType<ManagedSerializableDiff::Modification, IReflectable, ModificationRTTI>
 	{
 	public:
 		ModificationRTTI()
@@ -189,7 +189,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ModifiedObjectRTTI : public RTTIType<ManagedSerializableDiff::ModifiedObject, ManagedSerializableDiff::Modification, ModifiedObjectRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ModifiedObjectRTTI : public RTTIType<ManagedSerializableDiff::ModifiedObject, ManagedSerializableDiff::Modification, ModifiedObjectRTTI>
 	{
 	private:
 		ManagedSerializableDiff::ModifiedField& GetFieldEntry(ManagedSerializableDiff::ModifiedObject* obj, u32 arrayIdx)
@@ -235,7 +235,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ModifiedArrayRTTI : public RTTIType<ManagedSerializableDiff::ModifiedArray, ManagedSerializableDiff::Modification, ModifiedArrayRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ModifiedArrayRTTI : public RTTIType<ManagedSerializableDiff::ModifiedArray, ManagedSerializableDiff::Modification, ModifiedArrayRTTI>
 	{
 	private:
 		Vector<u32>& GetOrigSizes(ManagedSerializableDiff::ModifiedArray* obj)
@@ -303,7 +303,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ModifiedDictionaryRTTI : public RTTIType<ManagedSerializableDiff::ModifiedDictionary, ManagedSerializableDiff::Modification, ModifiedDictionaryRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ModifiedDictionaryRTTI : public RTTIType<ManagedSerializableDiff::ModifiedDictionary, ManagedSerializableDiff::Modification, ModifiedDictionaryRTTI>
 	{
 	private:
 		SPtr<ManagedSerializableFieldData> GetRemovedEntry(ManagedSerializableDiff::ModifiedDictionary* obj, u32 arrayIdx)
@@ -370,7 +370,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ModifiedEntryRTTI : public RTTIType<ManagedSerializableDiff::ModifiedEntry, ManagedSerializableDiff::Modification, ModifiedEntryRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ModifiedEntryRTTI : public RTTIType<ManagedSerializableDiff::ModifiedEntry, ManagedSerializableDiff::Modification, ModifiedEntryRTTI>
 	{
 	private:
 		SPtr<ManagedSerializableFieldData> GetValue(ManagedSerializableDiff::ModifiedEntry* obj)
@@ -406,7 +406,7 @@ namespace bs
 		}
 	};
 
-	class BS_SCR_BE_EXPORT ManagedSerializableDiffRTTI : public RTTIType<ManagedSerializableDiff, IReflectable, ManagedSerializableDiffRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableDiffRTTI : public RTTIType<ManagedSerializableDiff, IReflectable, ManagedSerializableDiffRTTI>
 	{
 	private:
 		SPtr<ManagedSerializableDiff::ModifiedObject> GetModificationRoot(ManagedSerializableDiff* obj)

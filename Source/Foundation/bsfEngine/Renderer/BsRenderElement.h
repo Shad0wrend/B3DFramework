@@ -14,7 +14,7 @@ namespace bs
 		 */
 
 		/** Contains all information needed for rendering a single sub-mesh. Closely tied with Renderer. */
-		class BS_EXPORT RenderElement
+		class B3D_EXPORT RenderElement
 		{
 		public:
 			/**	Reference to the mesh to render. */

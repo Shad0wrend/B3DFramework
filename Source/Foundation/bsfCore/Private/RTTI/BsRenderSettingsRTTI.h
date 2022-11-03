@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT AutoExposureSettingsRTTI : public RTTIType<AutoExposureSettings, IReflectable, AutoExposureSettingsRTTI>
+	class B3D_CORE_EXPORT AutoExposureSettingsRTTI : public RTTIType<AutoExposureSettings, IReflectable, AutoExposureSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -46,7 +46,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT TonemappingSettingsRTTI : public RTTIType<TonemappingSettings, IReflectable, TonemappingSettingsRTTI>
+	class B3D_CORE_EXPORT TonemappingSettingsRTTI : public RTTIType<TonemappingSettings, IReflectable, TonemappingSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -77,7 +77,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT WhiteBalanceSettingsRTTI : public RTTIType<WhiteBalanceSettings, IReflectable, WhiteBalanceSettingsRTTI>
+	class B3D_CORE_EXPORT WhiteBalanceSettingsRTTI : public RTTIType<WhiteBalanceSettings, IReflectable, WhiteBalanceSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -103,7 +103,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT ColorGradingSettingsRTTI : public RTTIType<ColorGradingSettings, IReflectable, ColorGradingSettingsRTTI>
+	class B3D_CORE_EXPORT ColorGradingSettingsRTTI : public RTTIType<ColorGradingSettings, IReflectable, ColorGradingSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -131,7 +131,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT DepthOfFieldSettingsRTTI : public RTTIType<DepthOfFieldSettings, IReflectable, DepthOfFieldSettingsRTTI>
+	class B3D_CORE_EXPORT DepthOfFieldSettingsRTTI : public RTTIType<DepthOfFieldSettings, IReflectable, DepthOfFieldSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -172,7 +172,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT AmbientOcclusionSettingsRTTI : public RTTIType<AmbientOcclusionSettings, IReflectable, AmbientOcclusionSettingsRTTI>
+	class B3D_CORE_EXPORT AmbientOcclusionSettingsRTTI : public RTTIType<AmbientOcclusionSettings, IReflectable, AmbientOcclusionSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -204,7 +204,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT MotionBlurSettingsRTTI : public RTTIType<MotionBlurSettings, IReflectable, MotionBlurSettingsRTTI>
+	class B3D_CORE_EXPORT MotionBlurSettingsRTTI : public RTTIType<MotionBlurSettings, IReflectable, MotionBlurSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -233,7 +233,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT TemporalAASettingsRTTI : public RTTIType<TemporalAASettings, IReflectable, TemporalAASettingsRTTI>
+	class B3D_CORE_EXPORT TemporalAASettingsRTTI : public RTTIType<TemporalAASettings, IReflectable, TemporalAASettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -260,7 +260,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT ScreenSpaceReflectionsSettingsRTTI : public RTTIType<ScreenSpaceReflectionsSettings, IReflectable, ScreenSpaceReflectionsSettingsRTTI>
+	class B3D_CORE_EXPORT ScreenSpaceReflectionsSettingsRTTI : public RTTIType<ScreenSpaceReflectionsSettings, IReflectable, ScreenSpaceReflectionsSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -288,7 +288,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT BloomSettingsRTTI : public RTTIType<BloomSettings, IReflectable, BloomSettingsRTTI>
+	class B3D_CORE_EXPORT BloomSettingsRTTI : public RTTIType<BloomSettings, IReflectable, BloomSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -318,7 +318,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT ScreenSpaceLensFlareSettingsRTTI : public RTTIType<ScreenSpaceLensFlareSettings, IReflectable, ScreenSpaceLensFlareSettingsRTTI>
+	class B3D_CORE_EXPORT ScreenSpaceLensFlareSettingsRTTI : public RTTIType<ScreenSpaceLensFlareSettings, IReflectable, ScreenSpaceLensFlareSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -357,7 +357,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT ChromaticAberrationSettingsRTTI : public RTTIType<ChromaticAberrationSettings, IReflectable, ChromaticAberrationSettingsRTTI>
+	class B3D_CORE_EXPORT ChromaticAberrationSettingsRTTI : public RTTIType<ChromaticAberrationSettings, IReflectable, ChromaticAberrationSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -385,7 +385,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT FilmGrainSettingsRTTI : public RTTIType<FilmGrainSettings, IReflectable, FilmGrainSettingsRTTI>
+	class B3D_CORE_EXPORT FilmGrainSettingsRTTI : public RTTIType<FilmGrainSettings, IReflectable, FilmGrainSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -412,7 +412,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT ShadowSettingsRTTI : public RTTIType<ShadowSettings, IReflectable, ShadowSettingsRTTI>
+	class B3D_CORE_EXPORT ShadowSettingsRTTI : public RTTIType<ShadowSettings, IReflectable, ShadowSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS
@@ -440,7 +440,7 @@ namespace bs
 		}
 	};
 
-	class BS_CORE_EXPORT RenderSettingsRTTI : public RTTIType<RenderSettings, IReflectable, RenderSettingsRTTI>
+	class B3D_CORE_EXPORT RenderSettingsRTTI : public RTTIType<RenderSettings, IReflectable, RenderSettingsRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS

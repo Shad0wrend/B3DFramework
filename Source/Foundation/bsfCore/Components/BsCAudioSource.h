@@ -17,7 +17,7 @@ namespace bs
 	 *
 	 * @note Wraps AudioSource as a Component.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Audio), ExportName(AudioSource)) CAudioSource : public Component
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Audio), ExportName(AudioSource)) CAudioSource : public Component
 	{
 	public:
 		CAudioSource(const HSceneObject& parent);

@@ -18,7 +18,7 @@ namespace bs
 	} // namespace ct
 
 	/**	Initializes and handles all renderer materials. */
-	class BS_EXPORT RendererMaterialManager : public Module<RendererMaterialManager>
+	class B3D_EXPORT RendererMaterialManager : public Module<RendererMaterialManager>
 	{
 		/**	Information used for initializing a renderer material managed by this module. */
 		struct RendererMaterialData

@@ -11,7 +11,7 @@ namespace bs
 	 */
 
 	/**	Contains information required for initializing and handling a single script class. */
-	struct BS_MONO_EXPORT ScriptMeta
+	struct B3D_MONO_EXPORT ScriptMeta
 	{
 		ScriptMeta();
 		ScriptMeta(const String& assembly, const String& ns, const String& name, std::function<void()> initCallback);

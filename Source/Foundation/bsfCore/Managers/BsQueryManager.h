@@ -19,7 +19,7 @@ namespace bs
 		 *
 		 * @note	Core thread only.
 		 */
-		class BS_CORE_EXPORT QueryManager : public Module<QueryManager>
+		class B3D_CORE_EXPORT QueryManager : public Module<QueryManager>
 		{
 		public:
 			QueryManager() = default;

@@ -24,7 +24,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptSkeleton : public TScriptReflectable<ScriptSkeleton, Skeleton>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptSkeleton : public TScriptReflectable<ScriptSkeleton, Skeleton>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Skeleton")

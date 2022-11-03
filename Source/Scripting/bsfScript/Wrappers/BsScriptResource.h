@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/**	Base class for all resource interop objects. */
-	class BS_SCR_BE_EXPORT ScriptResourceBase : public PersistentScriptObjectBase
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptResourceBase : public PersistentScriptObjectBase
 	{
 	public:
 		/**	Returns a generic handle to the internal wrapped resource. */
@@ -80,7 +80,7 @@ namespace bs
 
 	/**	Base class for a specific resource's interop object. */
 	template <class ScriptClass, class ResType, class BaseType = ScriptResourceBase>
-	class BS_SCR_BE_EXPORT TScriptResource : public ScriptObject<ScriptClass, BaseType>
+	class B3D_SCRIPT_INTEROP_EXPORT TScriptResource : public ScriptObject<ScriptClass, BaseType>
 	{
 	public:
 		/**	Returns a generic handle to the internal wrapped resource. */
@@ -140,7 +140,7 @@ namespace bs
 	};
 
 	/**	Interop class between C++ & CLR for Resource. */
-	class BS_SCR_BE_EXPORT ScriptResource : public ScriptObject<ScriptResource, ScriptResourceBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptResource : public ScriptObject<ScriptResource, ScriptResourceBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Resource")
@@ -159,7 +159,7 @@ namespace bs
 	};
 
 	/**	Interop class between C++ & CLR for UUID. */
-	class BS_SCR_BE_EXPORT ScriptUUID : public ScriptObject<ScriptUUID>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptUUID : public ScriptObject<ScriptUUID>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "UUID")

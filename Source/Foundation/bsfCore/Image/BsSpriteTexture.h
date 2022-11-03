@@ -66,7 +66,7 @@ namespace bs
 	 */
 
 	/** Base class used for both sim and core thread SpriteTexture implementations. */
-	class BS_CORE_EXPORT SpriteTextureBase
+	class B3D_CORE_EXPORT SpriteTextureBase
 	{
 	public:
 		SpriteTextureBase(const Vector2& uvOffset, const Vector2& uvScale)
@@ -164,7 +164,7 @@ namespace bs
 
 	/** Templated base class used for both sim and core thread SpriteTexture implementations. */
 	template <bool Core>
-	class BS_CORE_EXPORT TSpriteTexture : public SpriteTextureBase
+	class B3D_CORE_EXPORT TSpriteTexture : public SpriteTextureBase
 	{
 	public:
 		using TextureType = CoreVariantHandleType<Texture, Core>;
@@ -194,7 +194,7 @@ namespace bs
 	 * for multiple sprites (texture atlasing). Sprite textures also allow you to specify sprite sheet animation by varying
 	 * which portion of the UV is selected over time.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) SpriteTexture : public Resource, public TSpriteTexture<false>
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) SpriteTexture : public Resource, public TSpriteTexture<false>
 	{
 	public:
 		/**	Determines the internal texture that the sprite texture references. */
@@ -295,7 +295,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class BS_CORE_EXPORT SpriteTexture : public CoreObject, public TSpriteTexture<true>
+		class B3D_CORE_EXPORT SpriteTexture : public CoreObject, public TSpriteTexture<true>
 		{
 		public:
 			/**	Determines the internal texture that the sprite texture references. */

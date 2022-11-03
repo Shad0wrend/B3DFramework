@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	A slider with a draggable handle that can be vertical or horizontal. */
-	class BS_EXPORT GUISlider : public GUIElementContainer
+	class B3D_EXPORT GUISlider : public GUIElementContainer
 	{
 	public:
 		/**	Name of the style for the handle button used by the slider. */
@@ -109,7 +109,7 @@ namespace bs
 	 */
 
 	/**	A horizontal slider with a draggable handle. */
-	class BS_EXPORT GUISliderHorz : public GUISlider
+	class B3D_EXPORT GUISliderHorz : public GUISlider
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */
@@ -138,7 +138,7 @@ namespace bs
 	};
 
 	/**	A vertical slider with a draggable handle. */
-	class BS_EXPORT GUISliderVert : public GUISlider
+	class B3D_EXPORT GUISliderVert : public GUISlider
 	{
 	public:
 		/** Returns type name of the GUI element used for finding GUI element styles.  */

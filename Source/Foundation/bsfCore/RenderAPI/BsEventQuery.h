@@ -21,7 +21,7 @@ namespace bs
 		 * @note
 		 * Core thread only.
 		 */
-		class BS_CORE_EXPORT EventQuery
+		class B3D_CORE_EXPORT EventQuery
 		{
 		public:
 			EventQuery() = default;

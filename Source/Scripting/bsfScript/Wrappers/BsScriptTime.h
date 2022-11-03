@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for Time. */
-	class BS_SCR_BE_EXPORT ScriptTime : public ScriptObject<ScriptTime>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTime : public ScriptObject<ScriptTime>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Time")

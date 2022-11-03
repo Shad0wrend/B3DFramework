@@ -18,7 +18,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_SCR_BE_EXPORT ManagedSerializableArrayRTTI : public RTTIType<ManagedSerializableArray, IReflectable, ManagedSerializableArrayRTTI>
+	class B3D_SCRIPT_INTEROP_EXPORT ManagedSerializableArrayRTTI : public RTTIType<ManagedSerializableArray, IReflectable, ManagedSerializableArrayRTTI>
 	{
 	private:
 		SPtr<ManagedSerializableTypeInfoArray> GetTypeInfo(ManagedSerializableArray* obj)

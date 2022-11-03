@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/** Creates and destroys a specific physics implementation. */
-	class BS_CORE_EXPORT PhysicsFactory
+	class B3D_CORE_EXPORT PhysicsFactory
 	{
 	public:
 		virtual ~PhysicsFactory() = default;
@@ -25,7 +25,7 @@ namespace bs
 	};
 
 	/** Takes care of loading, initializing and shutting down of a particular physics implementation. */
-	class BS_CORE_EXPORT PhysicsManager : public Module<PhysicsManager>
+	class B3D_CORE_EXPORT PhysicsManager : public Module<PhysicsManager>
 	{
 	public:
 		/**

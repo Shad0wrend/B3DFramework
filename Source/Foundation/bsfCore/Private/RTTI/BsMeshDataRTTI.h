@@ -18,7 +18,7 @@ namespace bs
 
 	BS_ALLOW_MEMCPY_SERIALIZATION(IndexType);
 
-	class BS_CORE_EXPORT MeshDataRTTI : public RTTIType<MeshData, GpuResourceData, MeshDataRTTI>
+	class B3D_CORE_EXPORT MeshDataRTTI : public RTTIType<MeshData, GpuResourceData, MeshDataRTTI>
 	{
 	private:
 		SPtr<VertexDataDesc> GetVertexData(MeshData* obj) { return obj->mVertexData; }

@@ -205,28 +205,28 @@
 #if BS_PLATFORM == BS_PLATFORM_WIN32 // Windows
 #	if BS_COMPILER == BS_COMPILER_MSVC
 #		if defined(BS_STATIC_LIB)
-#			define BS_CORE_EXPORT
+#			define B3D_CORE_EXPORT
 #		else
-#			if defined(BS_CORE_EXPORTS)
-#				define BS_CORE_EXPORT __declspec(dllexport)
+#			if defined(B3D_CORE_EXPORTS)
+#				define B3D_CORE_EXPORT __declspec(dllexport)
 #			else
-#				define BS_CORE_EXPORT __declspec(dllimport)
+#				define B3D_CORE_EXPORT __declspec(dllimport)
 #			endif
 #		endif
 #	else
 #		if defined(BS_STATIC_LIB)
-#			define BS_CORE_EXPORT
+#			define B3D_CORE_EXPORT
 #		else
-#			if defined(BS_CORE_EXPORTS)
-#				define BS_CORE_EXPORT __attribute__((dllexport))
+#			if defined(B3D_CORE_EXPORTS)
+#				define B3D_CORE_EXPORT __attribute__((dllexport))
 #			else
-#				define BS_CORE_EXPORT __attribute__((dllimport))
+#				define B3D_CORE_EXPORT __attribute__((dllimport))
 #			endif
 #		endif
 #	endif
 #	define BS_CORE_HIDDEN
 #else // Linux/Mac settings
-#	define BS_CORE_EXPORT __attribute__((visibility("default")))
+#	define B3D_CORE_EXPORT __attribute__((visibility("default")))
 #	define BS_CORE_HIDDEN __attribute__((visibility("hidden")))
 #endif
 
@@ -790,7 +790,7 @@ namespace bs
 	 *
 	 * @param[in]	callback	The callback.
 	 */
-	void BS_CORE_EXPORT DeferredCall(std::function<void()> callback);
+	void B3D_CORE_EXPORT DeferredCall(std::function<void()> callback);
 
 	// Special types for use by profilers
 	typedef std::basic_string<char, std::char_traits<char>, StdAlloc<char, ProfilerAlloc>> ProfilerString;
@@ -802,7 +802,7 @@ namespace bs
 	using ProfilerStack = std::stack<T, std::deque<T, A>>;
 
 	/** Default thread policy for the framework. Performs special startup/shutdown on threads managed by thread pool. */
-	class BS_CORE_EXPORT ThreadDefaultPolicy
+	class B3D_CORE_EXPORT ThreadDefaultPolicy
 	{
 	public:
 		static void OnThreadStarted(const String& name)

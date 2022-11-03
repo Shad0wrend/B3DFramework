@@ -11,7 +11,7 @@ namespace bs
 	 */
 
 	/** Utility class for dealing with files. */
-	class BS_UTILITY_EXPORT FileSystem
+	class B3D_UTILITY_EXPORT FileSystem
 	{
 	public:
 		/**
@@ -143,7 +143,7 @@ namespace bs
 	 * Locks access to files on the same drive, allowing only one file to be read at a time, per drive. This prevents
 	 * multiple threads accessing multiple files on the same drive at once, ruining performance on mechanical drives.
 	 */
-	class BS_UTILITY_EXPORT FileScheduler final
+	class B3D_UTILITY_EXPORT FileScheduler final
 	{
 	public:
 		/**

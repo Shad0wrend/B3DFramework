@@ -20,7 +20,7 @@ target_include_directories(bsfGLRenderAPI PRIVATE
 )
 
 # Defines
-target_compile_definitions(bsfGLRenderAPI PRIVATE -DBS_RSGL_EXPORTS -DGLEW_STATIC)
+target_compile_definitions(bsfGLRenderAPI PRIVATE -DGLEW_STATIC)
 
 # Libraries
 if(WIN32)

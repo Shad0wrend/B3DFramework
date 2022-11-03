@@ -16,7 +16,7 @@ namespace bs
 	 * Prefab is a saveable hierarchy of scene objects. In general it can serve as any grouping of scene objects
 	 * (for example a level) or be used as a form of a template instantiated and reused throughout the scene.
 	 */
-	class BS_CORE_EXPORT Prefab : public Resource
+	class B3D_CORE_EXPORT Prefab : public Resource
 	{
 	public:
 		Prefab();

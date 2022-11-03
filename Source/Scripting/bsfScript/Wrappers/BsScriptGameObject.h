@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Base class for all GameObject interop classes. */
-	class BS_SCR_BE_EXPORT ScriptGameObjectBase : public PersistentScriptObjectBase
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGameObjectBase : public PersistentScriptObjectBase
 	{
 	public:
 		ScriptGameObjectBase(MonoObject* instance);
@@ -47,7 +47,7 @@ namespace bs
 	};
 
 	/**	Interop class between C++ & CLR for GameObject. */
-	class BS_SCR_BE_EXPORT ScriptGameObject : public ScriptObject<ScriptGameObject, ScriptGameObjectBase>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGameObject : public ScriptObject<ScriptGameObject, ScriptGameObjectBase>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GameObject")

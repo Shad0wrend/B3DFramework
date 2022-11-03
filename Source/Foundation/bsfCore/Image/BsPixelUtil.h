@@ -80,7 +80,7 @@ namespace bs
 	};
 
 	/**	Utility methods for converting and managing pixel data and formats. */
-	class BS_CORE_EXPORT PixelUtil
+	class B3D_CORE_EXPORT PixelUtil
 	{
 	public:
 		/**	Filtering types to use when scaling images. */

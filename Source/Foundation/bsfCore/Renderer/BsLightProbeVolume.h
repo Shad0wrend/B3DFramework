@@ -77,7 +77,7 @@ namespace bs
 	 *
 	 * The volume can never have less than 4 probes.
 	 */
-	class BS_CORE_EXPORT LightProbeVolume : public IReflectable, public CoreObject, public SceneActor
+	class B3D_CORE_EXPORT LightProbeVolume : public IReflectable, public CoreObject, public SceneActor
 	{
 		/** Internal information about a single light probe. */
 		struct ProbeInfo
@@ -233,7 +233,7 @@ namespace bs
 		};
 
 		/** Core thread usable version of bs::LightProbeVolume. */
-		class BS_CORE_EXPORT LightProbeVolume : public CoreObject, public SceneActor
+		class B3D_CORE_EXPORT LightProbeVolume : public CoreObject, public SceneActor
 		{
 		public:
 			~LightProbeVolume();

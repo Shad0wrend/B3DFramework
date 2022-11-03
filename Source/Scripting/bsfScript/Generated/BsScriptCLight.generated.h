@@ -16,7 +16,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptCLight : public TScriptComponent<ScriptCLight, CLight>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptCLight : public TScriptComponent<ScriptCLight, CLight>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Light")

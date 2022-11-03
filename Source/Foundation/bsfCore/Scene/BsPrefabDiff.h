@@ -21,7 +21,7 @@ namespace bs
 	 *
 	 * @see		PrefabDiff
 	 */
-	struct BS_CORE_EXPORT PrefabComponentDiff : public IReflectable
+	struct B3D_CORE_EXPORT PrefabComponentDiff : public IReflectable
 	{
 		i32 Id;
 		SPtr<SerializedObject> Data;
@@ -51,7 +51,7 @@ namespace bs
 	 *
 	 * @see		PrefabDiff
 	 */
-	struct BS_CORE_EXPORT PrefabObjectDiff : public IReflectable
+	struct B3D_CORE_EXPORT PrefabObjectDiff : public IReflectable
 	{
 		PrefabObjectDiff() {}
 
@@ -86,7 +86,7 @@ namespace bs
 	 * Contains modifications between an prefab and its instance. The modifications are a set of added/removed children or
 	 * components and per-field "diffs" of their components.
 	 */
-	class BS_CORE_EXPORT PrefabDiff : public IReflectable
+	class B3D_CORE_EXPORT PrefabDiff : public IReflectable
 	{
 	public:
 		/**

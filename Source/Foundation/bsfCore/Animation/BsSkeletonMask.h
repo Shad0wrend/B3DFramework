@@ -14,7 +14,7 @@ namespace bs
 	 * Contains a bitfield that determines which skeleton bones are enabled or disabled during skeletal animation. Use
 	 * SkeletonMaskBuilder to create a mask for a specific skeleton.
 	 */
-	class BS_CORE_EXPORT SkeletonMask
+	class B3D_CORE_EXPORT SkeletonMask
 	{
 	public:
 		SkeletonMask() = default;
@@ -33,7 +33,7 @@ namespace bs
 	};
 
 	/** Builds a SkeletonMask for a specific skeleton. */
-	class BS_CORE_EXPORT SkeletonMaskBuilder
+	class B3D_CORE_EXPORT SkeletonMaskBuilder
 	{
 	public:
 		SkeletonMaskBuilder(const SPtr<Skeleton>& skeleton);

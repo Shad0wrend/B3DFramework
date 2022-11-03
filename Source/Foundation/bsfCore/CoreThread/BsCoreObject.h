@@ -23,7 +23,7 @@ namespace bs
 	 *			other hand should be used exclusively on the simulation thread. Types that exist on both threads need to
 	 *			implement both of these.
 	 */
-	class BS_CORE_EXPORT CoreObject
+	class B3D_CORE_EXPORT CoreObject
 	{
 	protected:
 		/** Values that represent current state of the core object */

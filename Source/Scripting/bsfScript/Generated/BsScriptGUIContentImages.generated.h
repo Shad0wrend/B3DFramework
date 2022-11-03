@@ -20,7 +20,7 @@ namespace bs
 		MonoObject* FocusedOn;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptGUIContentImages : public ScriptObject<ScriptGUIContentImages>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIContentImages : public ScriptObject<ScriptGUIContentImages>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIContentImages")

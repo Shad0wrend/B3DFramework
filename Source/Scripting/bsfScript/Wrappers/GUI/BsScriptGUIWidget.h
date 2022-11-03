@@ -14,7 +14,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for GUIWidget. */
-	class BS_SCR_BE_EXPORT ScriptGUIWidget : public ScriptObject<ScriptGUIWidget>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIWidget : public ScriptObject<ScriptGUIWidget>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "NativeGUIWidget")

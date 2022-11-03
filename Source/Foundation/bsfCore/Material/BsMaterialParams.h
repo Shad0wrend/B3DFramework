@@ -35,7 +35,7 @@ namespace bs
 	};
 
 	/** Common functionality for MaterialParams and ct::MaterialParams. */
-	class BS_CORE_EXPORT MaterialParamsBase
+	class B3D_CORE_EXPORT MaterialParamsBase
 	{
 	public:
 		/** Type of material parameter. */
@@ -413,7 +413,7 @@ namespace bs
 	};
 
 	/** Raw data for a single structure parameter. */
-	class BS_CORE_EXPORT MaterialParamStructDataCore
+	class B3D_CORE_EXPORT MaterialParamStructDataCore
 	{
 	public:
 		u8* Data;
@@ -421,7 +421,7 @@ namespace bs
 	};
 
 	/** Raw data for a single structure parameter. */
-	class BS_CORE_EXPORT MaterialParamStructData : public IReflectable
+	class B3D_CORE_EXPORT MaterialParamStructData : public IReflectable
 	{
 	public:
 		u8* Data;
@@ -433,7 +433,7 @@ namespace bs
 	};
 
 	/** Data for a single texture parameter. */
-	class BS_CORE_EXPORT MaterialParamTextureDataCore
+	class B3D_CORE_EXPORT MaterialParamTextureDataCore
 	{
 	public:
 		SPtr<ct::Texture> Texture;
@@ -443,7 +443,7 @@ namespace bs
 	};
 
 	/** Data for a single texture parameter. */
-	class BS_CORE_EXPORT MaterialParamTextureData : public IReflectable
+	class B3D_CORE_EXPORT MaterialParamTextureData : public IReflectable
 	{
 	public:
 		HTexture Texture;
@@ -457,28 +457,28 @@ namespace bs
 	};
 
 	/** Data for a single buffer parameter. */
-	class BS_CORE_EXPORT MaterialParamBufferDataCore
+	class B3D_CORE_EXPORT MaterialParamBufferDataCore
 	{
 	public:
 		SPtr<ct::GpuBuffer> Value;
 	};
 
 	/** Data for a single buffer parameter. */
-	class BS_CORE_EXPORT MaterialParamBufferData
+	class B3D_CORE_EXPORT MaterialParamBufferData
 	{
 	public:
 		SPtr<GpuBuffer> Value;
 	};
 
 	/** Data for a single sampler state parameter. */
-	class BS_CORE_EXPORT MaterialParamSamplerStateDataCore
+	class B3D_CORE_EXPORT MaterialParamSamplerStateDataCore
 	{
 	public:
 		SPtr<ct::SamplerState> Value;
 	};
 
 	/** Data for a single sampler state parameter. */
-	class BS_CORE_EXPORT MaterialParamSamplerStateData
+	class B3D_CORE_EXPORT MaterialParamSamplerStateData
 	{
 	public:
 		SPtr<SamplerState> Value;
@@ -509,7 +509,7 @@ namespace bs
 
 	/** Common code that may be specialized for both MaterialParams and ct::MaterialParams. */
 	template <bool Core>
-	class BS_CORE_EXPORT TMaterialParams : public MaterialParamsBase
+	class B3D_CORE_EXPORT TMaterialParams : public MaterialParamsBase
 	{
 	public:
 		using GpuParamsType = CoreVariantType<GpuParams, Core>;
@@ -810,7 +810,7 @@ namespace bs
 	 * optimizes out a variable in a GPU program we should still be able to store it, either for later when the variable
 	 * will be introduced, or for other techniques that might have that variable implemented.
 	 */
-	class BS_CORE_EXPORT MaterialParams : public IReflectable, public TMaterialParams<false>
+	class B3D_CORE_EXPORT MaterialParams : public IReflectable, public TMaterialParams<false>
 	{
 	public:
 		/** @copydoc TMaterialParams::TMaterialParams(const ShaderType&, u64) */
@@ -854,7 +854,7 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread version of MaterialParams. */
-		class BS_CORE_EXPORT MaterialParams : public TMaterialParams<true>
+		class B3D_CORE_EXPORT MaterialParams : public TMaterialParams<true>
 		{
 		public:
 			/** Initializes the core thread version of MaterialParams from its sim thread counterpart. */

@@ -38,7 +38,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptAnimationCurves : public ScriptObject<ScriptAnimationCurves>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAnimationCurves : public ScriptObject<ScriptAnimationCurves>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "AnimationCurves")

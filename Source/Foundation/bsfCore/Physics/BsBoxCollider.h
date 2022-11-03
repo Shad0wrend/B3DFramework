@@ -16,7 +16,7 @@ namespace bs
 	 */
 
 	/** Collider with box geometry. */
-	class BS_CORE_EXPORT BoxCollider : public Collider
+	class B3D_CORE_EXPORT BoxCollider : public Collider
 	{
 	public:
 		BoxCollider() = default;

@@ -28,7 +28,7 @@ namespace bs
 	 *
 	 * @note	Thread safe.
 	 */
-	class BS_UTILITY_EXPORT Task
+	class B3D_UTILITY_EXPORT Task
 	{
 		struct PrivatelyConstruct
 		{};
@@ -84,7 +84,7 @@ namespace bs
 	 *
 	 * @note	Thread safe.
 	 */
-	class BS_UTILITY_EXPORT TaskGroup
+	class B3D_UTILITY_EXPORT TaskGroup
 	{
 		struct PrivatelyConstruct
 		{};
@@ -142,7 +142,7 @@ namespace bs
 	 * By default the task scheduler will create as many threads as there are physical CPU cores. You may add or remove
 	 * threads using addWorker()/removeWorker() methods.
 	 */
-	class BS_UTILITY_EXPORT TaskScheduler : public Module<TaskScheduler>
+	class B3D_UTILITY_EXPORT TaskScheduler : public Module<TaskScheduler>
 	{
 	public:
 		TaskScheduler();

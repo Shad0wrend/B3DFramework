@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Contains various helper methods used by GUI. */
-	class BS_EXPORT GUIHelper
+	class B3D_EXPORT GUIHelper
 	{
 	public:
 		/**

@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/** Axis aligned box represented by minimum and maximum point. */
-	class BS_UTILITY_EXPORT AABox
+	class B3D_UTILITY_EXPORT AABox
 	{
 	public:
 		/** Different corners of a box. */

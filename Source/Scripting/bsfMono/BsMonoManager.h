@@ -19,7 +19,7 @@ namespace bs
 	};
 
 	/**	Loads Mono script assemblies and manages script objects. */
-	class BS_MONO_EXPORT MonoManager : public Module<MonoManager>
+	class B3D_MONO_EXPORT MonoManager : public Module<MonoManager>
 	{
 	public:
 		MonoManager();

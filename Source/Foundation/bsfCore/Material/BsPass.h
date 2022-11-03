@@ -42,7 +42,7 @@ namespace bs
 
 	/** Contains common functionality used by both sim and core thread versions of Pass. */
 	template <bool Core>
-	class BS_CORE_EXPORT TPass
+	class B3D_CORE_EXPORT TPass
 	{
 	public:
 		using BlendStateType = CoreVariantType<BlendState, Core>;
@@ -114,7 +114,7 @@ namespace bs
 	 *
 	 * @note	Sim thread.
 	 */
-	class BS_CORE_EXPORT Pass : public IReflectable, public CoreObject, public TPass<false>
+	class B3D_CORE_EXPORT Pass : public IReflectable, public CoreObject, public TPass<false>
 	{
 	public:
 		virtual ~Pass() = default;
@@ -166,7 +166,7 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class BS_CORE_EXPORT Pass : public CoreObject, public TPass<true>
+		class B3D_CORE_EXPORT Pass : public CoreObject, public TPass<true>
 		{
 		public:
 			virtual ~Pass() = default;

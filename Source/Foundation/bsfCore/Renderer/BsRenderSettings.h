@@ -15,7 +15,7 @@ namespace bs
 	 */
 
 	/** Settings that control automatic exposure (eye adaptation) post-process. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) AutoExposureSettings : public IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) AutoExposureSettings : public IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		AutoExposureSettings() = default;
@@ -101,7 +101,7 @@ namespace bs
 	};
 
 	/** Settings that control tonemap post-process. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) TonemappingSettings : public IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) TonemappingSettings : public IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		TonemappingSettings() = default;
@@ -161,7 +161,7 @@ namespace bs
 	};
 
 	/** Settings that control white balance post-process. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) WhiteBalanceSettings : public IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) WhiteBalanceSettings : public IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		WhiteBalanceSettings() = default;
@@ -199,7 +199,7 @@ namespace bs
 	};
 
 	/** Settings that control color grading post-process. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT() ColorGradingSettings : public IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT() ColorGradingSettings : public IReflectable
 	{
 		ColorGradingSettings() = default;
 
@@ -246,7 +246,7 @@ namespace bs
 	};
 
 	/** Settings that control screen space ambient occlusion. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) AmbientOcclusionSettings : public IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) AmbientOcclusionSettings : public IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		AmbientOcclusionSettings() = default;
@@ -340,7 +340,7 @@ namespace bs
 	};
 
 	/** Base class for both sim and core thread variants of DepthOfFieldSettings. */
-	struct BS_CORE_EXPORT DepthOfFieldSettingsBase
+	struct B3D_CORE_EXPORT DepthOfFieldSettingsBase
 	{
 		DepthOfFieldSettingsBase() = default;
 
@@ -459,7 +459,7 @@ namespace bs
 
 	/** Template version of DepthOfFieldSettings that can be specialized for either core or simulation thread. */
 	template <bool Core>
-	struct BS_CORE_EXPORT TDepthOfFieldSettings : DepthOfFieldSettingsBase
+	struct B3D_CORE_EXPORT TDepthOfFieldSettings : DepthOfFieldSettingsBase
 	{
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 
@@ -480,7 +480,7 @@ namespace bs
 	};
 
 	/** Settings that control the depth-of-field effect. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT() DepthOfFieldSettings : TDepthOfFieldSettings<false>, IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT() DepthOfFieldSettings : TDepthOfFieldSettings<false>, IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		DepthOfFieldSettings() = default;
@@ -497,7 +497,7 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread variant of DepthOfFieldSettings. */
-		struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT() DepthOfFieldSettings : TDepthOfFieldSettings<true>
+		struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT() DepthOfFieldSettings : TDepthOfFieldSettings<true>
 		{
 			DepthOfFieldSettings() = default;
 		};
@@ -551,7 +551,7 @@ namespace bs
 	};
 
 	/** Settings that control the motion blur effect. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) MotionBlurSettings : public IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) MotionBlurSettings : public IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		MotionBlurSettings() = default;
@@ -599,7 +599,7 @@ namespace bs
 	};
 
 	/** Settings that control temporal anti-aliasing. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) TemporalAASettings : public IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) TemporalAASettings : public IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		TemporalAASettings() = default;
@@ -642,7 +642,7 @@ namespace bs
 	 * for rougher (more glossy rather than mirror-like) surfaces. Those surfaces require a higher number of samples to
 	 * achieve the glossy look, so we instead fall back to refl. probes which are pre-filtered and can be quickly sampled.
 	 */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ScreenSpaceReflectionsSettings : public IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ScreenSpaceReflectionsSettings : public IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		ScreenSpaceReflectionsSettings() = default;
@@ -685,7 +685,7 @@ namespace bs
 	};
 
 	/** Settings that control the bloom effect. Bloom adds an extra highlight to bright areas of the scene. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) BloomSettings : public IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) BloomSettings : public IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		BloomSettings() = default;
@@ -742,7 +742,7 @@ namespace bs
 	};
 
 	/** Settings that control the screen-space lens flare effect. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ScreenSpaceLensFlareSettings : public IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ScreenSpaceLensFlareSettings : public IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		ScreenSpaceLensFlareSettings() = default;
@@ -867,7 +867,7 @@ namespace bs
 	};
 
 	/** Base class used for both sim and core thread variants of ChromaticAberrationSettings. */
-	struct BS_CORE_EXPORT ChromaticAberrationSettingsBase
+	struct B3D_CORE_EXPORT ChromaticAberrationSettingsBase
 	{
 		ChromaticAberrationSettingsBase() = default;
 
@@ -892,7 +892,7 @@ namespace bs
 
 	/** Template version of ChromaticAberrationSettings that can be specialized for either core or simulation thread. */
 	template <bool Core>
-	struct BS_CORE_EXPORT TChromaticAberrationSettings : ChromaticAberrationSettingsBase
+	struct B3D_CORE_EXPORT TChromaticAberrationSettings : ChromaticAberrationSettingsBase
 	{
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 
@@ -917,7 +917,7 @@ namespace bs
 	};
 
 	/** Settings that control the chromatic aberration effect. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT() ChromaticAberrationSettings : TChromaticAberrationSettings<false>, IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT() ChromaticAberrationSettings : TChromaticAberrationSettings<false>, IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		ChromaticAberrationSettings() = default;
@@ -934,14 +934,14 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread variant of ChromaticAberrationSettings. */
-		struct BS_CORE_EXPORT ChromaticAberrationSettings : TChromaticAberrationSettings<true>
+		struct B3D_CORE_EXPORT ChromaticAberrationSettings : TChromaticAberrationSettings<true>
 		{
 			ChromaticAberrationSettings() = default;
 		};
 	} // namespace ct
 
 	/** Settings that control the film grain effect. Film grains adds a time-varying noise effect over the entire image. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) FilmGrainSettings : public IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) FilmGrainSettings : public IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		FilmGrainSettings() = default;
@@ -973,7 +973,7 @@ namespace bs
 	};
 
 	/** Various options that control shadow rendering for a specific view. */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ShadowSettings : public IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) ShadowSettings : public IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		ShadowSettings() = default;
@@ -1026,7 +1026,7 @@ namespace bs
 	};
 
 	/** Base class for both sim and core thread variants of RenderSettings. */
-	struct BS_CORE_EXPORT RenderSettingsBase
+	struct B3D_CORE_EXPORT RenderSettingsBase
 	{
 		RenderSettingsBase() = default;
 
@@ -1192,7 +1192,7 @@ namespace bs
 
 	/** Template version of RenderSettings that can be specialized for either core or simulation thread. */
 	template <bool Core>
-	struct BS_CORE_EXPORT TRenderSettings : RenderSettingsBase
+	struct B3D_CORE_EXPORT TRenderSettings : RenderSettingsBase
 	{
 		/** Parameters used for customizing the gaussian depth of field effect. */
 		B3D_SCRIPT_EXPORT()
@@ -1215,7 +1215,7 @@ namespace bs
 	};
 
 	/** Settings that control rendering for a specific camera (view). */
-	struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderSettings : TRenderSettings<false>, IReflectable
+	struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderSettings : TRenderSettings<false>, IReflectable
 	{
 		B3D_SCRIPT_EXPORT()
 		RenderSettings() = default;
@@ -1234,7 +1234,7 @@ namespace bs
 	namespace ct
 	{
 		/** Core thread variant of RenderSettings. */
-		struct BS_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderSettings : TRenderSettings<true>
+		struct B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) RenderSettings : TRenderSettings<true>
 		{
 			RenderSettings() = default;
 			virtual ~RenderSettings() = default;

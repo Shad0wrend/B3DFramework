@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for GUIRenderTexture. */
-	class BS_SCR_BE_EXPORT ScriptGUIRenderTexture : public TScriptGUIElement<ScriptGUIRenderTexture>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIRenderTexture : public TScriptGUIElement<ScriptGUIRenderTexture>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIRenderTexture")

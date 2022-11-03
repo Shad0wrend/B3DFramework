@@ -15,7 +15,7 @@ namespace bs
 	 * A 3x3 matrix. Can be used for non-homogenous transformations of three dimensional vectors and points. In row major
 	 * format.
 	 */
-	class BS_UTILITY_EXPORT Matrix3
+	class B3D_UTILITY_EXPORT Matrix3
 	{
 	private:
 		struct EulerAngleOrderData

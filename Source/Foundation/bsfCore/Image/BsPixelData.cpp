@@ -230,8 +230,8 @@ void PixelData::SetColorsInternal(const T& colors, u32 numElements)
 	}
 }
 
-template BS_CORE_EXPORT void PixelData::SetColorsInternal(Color* const&, u32);
-template BS_CORE_EXPORT void PixelData::SetColorsInternal(const Vector<Color>&, u32);
+template B3D_CORE_EXPORT void PixelData::SetColorsInternal(Color* const&, u32);
+template B3D_CORE_EXPORT void PixelData::SetColorsInternal(const Vector<Color>&, u32);
 
 void PixelData::SetColors(const Vector<Color>& colors)
 {

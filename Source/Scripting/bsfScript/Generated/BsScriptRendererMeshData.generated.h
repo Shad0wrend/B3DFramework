@@ -24,7 +24,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptRendererMeshData : public ScriptObject<ScriptRendererMeshData>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptRendererMeshData : public ScriptObject<ScriptRendererMeshData>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "MeshData")

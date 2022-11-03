@@ -19,7 +19,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT SceneObjectRTTI : public RTTIType<SceneObject, GameObject, SceneObjectRTTI>
+	class B3D_CORE_EXPORT SceneObjectRTTI : public RTTIType<SceneObject, GameObject, SceneObjectRTTI>
 	{
 	private:
 		Transform& GetTransform(SceneObject* obj) { return obj->mWorldTfrm; }

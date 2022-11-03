@@ -15,7 +15,7 @@ namespace bs
 	 */
 
 	/** Bounds represented by an axis aligned box and a sphere. */
-	class BS_UTILITY_EXPORT Bounds
+	class B3D_UTILITY_EXPORT Bounds
 	{
 	public:
 		Bounds() = default;

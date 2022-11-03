@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/**	Interop class between C++ & CLR for ScriptColor. */
-	class BS_SCR_BE_EXPORT ScriptColor : public ScriptObject<ScriptColor>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptColor : public ScriptObject<ScriptColor>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Color")

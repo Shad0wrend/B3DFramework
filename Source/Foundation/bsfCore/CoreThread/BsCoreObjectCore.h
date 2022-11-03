@@ -19,7 +19,7 @@ namespace bs
 		 * @note	Core thread only.
 		 * @note	Different CoreObject implementations should implement this class for their own needs.
 		 */
-		class BS_CORE_EXPORT CoreObject
+		class B3D_CORE_EXPORT CoreObject
 		{
 		protected:
 			/** Values that represent current state of the object */

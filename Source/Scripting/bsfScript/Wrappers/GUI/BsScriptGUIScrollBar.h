@@ -14,7 +14,7 @@ namespace bs
 	class GUIScrollBar;
 
 	/**	Interop class between C++ & CLR for GUIScrollBar.  */
-	class BS_SCR_BE_EXPORT ScriptGUIScrollBar : public TScriptGUIElement<ScriptGUIScrollBar>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIScrollBar : public TScriptGUIElement<ScriptGUIScrollBar>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIScrollBar")
@@ -33,7 +33,7 @@ namespace bs
 	};
 
 	/**	Interop class between C++ & CLR for GUIScrollBarH.  */
-	class BS_SCR_BE_EXPORT ScriptGUIScrollBarH : public TScriptGUIElement<ScriptGUIScrollBarH>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIScrollBarH : public TScriptGUIElement<ScriptGUIScrollBarH>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIScrollBarH")
@@ -54,7 +54,7 @@ namespace bs
 	};
 
 	/**	Interop class between C++ & CLR for GUIScrollBarV.  */
-	class BS_SCR_BE_EXPORT ScriptGUIScrollBarV : public TScriptGUIElement<ScriptGUIScrollBarV>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIScrollBarV : public TScriptGUIElement<ScriptGUIScrollBarV>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIScrollBarV")
@@ -75,7 +75,7 @@ namespace bs
 	};
 
 	/**	Interop class between C++ & CLR for GUIResizeableScrollBarH.  */
-	class BS_SCR_BE_EXPORT ScriptGUIResizeableScrollBarH : public TScriptGUIElement<ScriptGUIResizeableScrollBarH>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIResizeableScrollBarH : public TScriptGUIElement<ScriptGUIResizeableScrollBarH>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIResizeableScrollBarH")
@@ -96,7 +96,7 @@ namespace bs
 	};
 
 	/**	Interop class between C++ & CLR for GUIResizeableScrollBarV.  */
-	class BS_SCR_BE_EXPORT ScriptGUIResizeableScrollBarV : public TScriptGUIElement<ScriptGUIResizeableScrollBarV>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptGUIResizeableScrollBarV : public TScriptGUIElement<ScriptGUIResizeableScrollBarV>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "GUIResizeableScrollBarV")

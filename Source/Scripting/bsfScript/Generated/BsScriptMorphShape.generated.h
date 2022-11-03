@@ -13,7 +13,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptMorphShape : public TScriptReflectable<ScriptMorphShape, MorphShape>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptMorphShape : public TScriptReflectable<ScriptMorphShape, MorphShape>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "MorphShape")

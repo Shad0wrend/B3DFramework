@@ -14,7 +14,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT TransformRTTI : public RTTIType<Transform, IReflectable, TransformRTTI>
+	class B3D_CORE_EXPORT TransformRTTI : public RTTIType<Transform, IReflectable, TransformRTTI>
 	{
 	private:
 		BS_BEGIN_RTTI_MEMBERS

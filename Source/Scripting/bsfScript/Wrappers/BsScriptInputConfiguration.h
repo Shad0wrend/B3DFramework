@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/** Interop class between C++ & CLR for InputConfiguration. */
-	class BS_SCR_BE_EXPORT ScriptInputConfiguration : public ScriptObject<ScriptInputConfiguration>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptInputConfiguration : public ScriptObject<ScriptInputConfiguration>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "InputConfiguration")
@@ -61,7 +61,7 @@ namespace bs
 	};
 
 	/**	Interop class between C++ & CLR for VirtualAxis. */
-	class BS_SCR_BE_EXPORT ScriptVirtualAxis : public ScriptObject<ScriptVirtualAxis>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptVirtualAxis : public ScriptObject<ScriptVirtualAxis>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "VirtualAxis")

@@ -16,7 +16,7 @@ namespace bs
 		TangentType Type;
 	};
 
-	class BS_SCR_BE_EXPORT ScriptTangentRef : public ScriptObject<ScriptTangentRef>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptTangentRef : public ScriptObject<ScriptTangentRef>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "TangentRef")

@@ -18,7 +18,7 @@ namespace bs
 
 namespace bs
 {
-	class BS_SCR_BE_EXPORT ScriptAudio : public ScriptObject<ScriptAudio>
+	class B3D_SCRIPT_INTEROP_EXPORT ScriptAudio : public ScriptObject<ScriptAudio>
 	{
 	public:
 		SCRIPT_OBJ(kEngineAssembly, kEngineNs, "Audio")

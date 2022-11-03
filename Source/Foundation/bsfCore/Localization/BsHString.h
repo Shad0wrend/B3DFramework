@@ -16,7 +16,7 @@ namespace bs
 	 *
 	 * Use {0}, {1}, etc. in the string value for values that might change dynamically.
 	 */
-	class BS_CORE_EXPORT B3D_SCRIPT_EXPORT(ExportName(LocString), DocumentationGroup(Localization)) HString
+	class B3D_CORE_EXPORT B3D_SCRIPT_EXPORT(ExportName(LocString), DocumentationGroup(Localization)) HString
 	{
 	public:
 		/**

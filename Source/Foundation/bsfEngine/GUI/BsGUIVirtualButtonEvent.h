@@ -12,7 +12,7 @@ namespace bs
 	 */
 
 	/**	Holds data about a GUI event that happens when a virtual button is pressed. */
-	class BS_EXPORT GUIVirtualButtonEvent
+	class B3D_EXPORT GUIVirtualButtonEvent
 	{
 	public:
 		GUIVirtualButtonEvent() = default;

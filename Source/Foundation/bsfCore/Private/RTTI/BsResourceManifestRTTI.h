@@ -18,7 +18,7 @@ namespace bs
 	 *  @{
 	 */
 
-	class BS_CORE_EXPORT ResourceManifestRTTI : public RTTIType<ResourceManifest, IReflectable, ResourceManifestRTTI>
+	class B3D_CORE_EXPORT ResourceManifestRTTI : public RTTIType<ResourceManifest, IReflectable, ResourceManifestRTTI>
 	{
 	private:
 		String& GetName(ResourceManifest* obj) { return obj->mName; }

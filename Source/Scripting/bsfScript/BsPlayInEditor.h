@@ -20,7 +20,7 @@ namespace bs
 	};
 
 	/** Handles functionality specific to running the game in editor. */
-	class BS_SCR_BE_EXPORT B3D_SCRIPT_EXPORT(API(Editor), DocumentationGroup(Editor - General)) PlayInEditor : public Module<PlayInEditor>
+	class B3D_SCRIPT_INTEROP_EXPORT B3D_SCRIPT_EXPORT(API(Editor), DocumentationGroup(Editor - General)) PlayInEditor : public Module<PlayInEditor>
 	{
 	public:
 		PlayInEditor();
