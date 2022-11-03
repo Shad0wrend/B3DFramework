@@ -8,7 +8,7 @@
 #include "BsScriptVideoMode.generated.h"
 
 using namespace bs;
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 ScriptRENDER_WINDOW_DESC::ScriptRENDER_WINDOW_DESC(MonoObject* managedInstance)
 	: ScriptObject(managedInstance)
 {}

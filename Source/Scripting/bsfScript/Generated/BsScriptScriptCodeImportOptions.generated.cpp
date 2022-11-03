@@ -7,7 +7,7 @@
 #include "BsScriptScriptCodeImportOptions.generated.h"
 
 using namespace bs;
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 ScriptScriptCodeImportOptions::ScriptScriptCodeImportOptions(MonoObject* managedInstance, const SPtr<ScriptCodeImportOptions>& value)
 	: TScriptReflectable(managedInstance, value)
 {

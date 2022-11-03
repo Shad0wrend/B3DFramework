@@ -213,7 +213,7 @@ function(install_dependency_binary FILE_PATH CONFIG)
 
 		set(SRC_PATH "${BSF_SOURCE_DIR}/../bin/${PLATFORM}/${CONFIG}/${FULL_FILE_NAME}")
 
-		if(NOT BS_IS_BANSHEE3D)
+		if(NOT B3D_IS_ENGINE)
 			set(DEST_DIR bin)
 		else()
 			set(DEST_DIR .)
@@ -241,10 +241,10 @@ function(install_dependency_binary FILE_PATH CONFIG)
 
 		set(SRC_PATH ${FILE_PATH})
 		
-		if(NOT BS_IS_BANSHEE3D)
-			set(DEST_DIR lib/bsf-${BS_FRAMEWORK_VERSION_MAJOR}.${BS_FRAMEWORK_VERSION_MINOR}.${BS_FRAMEWORK_VERSION_PATCH})
+		if(NOT B3D_IS_ENGINE)
+			set(DEST_DIR lib/bsf-${B3D_FRAMEWORK_VERSION_MAJOR}.${B3D_FRAMEWORK_VERSION_MINOR}.${B3D_FRAMEWORK_VERSION_PATCH})
 		else()
-			set(DEST_DIR lib/b3d-${BS_B3D_VERSION_MAJOR}.${BS_B3D_VERSION_MINOR}.${BS_B3D_VERSION_PATCH})
+			set(DEST_DIR lib/b3d-${B3D_VERSION_MAJOR}.${B3D_VERSION_MINOR}.${B3D_VERSION_PATCH})
 		endif()
 	endif()
 
@@ -278,7 +278,7 @@ MACRO(install_dependency_dll FOLDER_NAME SRC_DIR LIB_NAME)
 		set(PLATFORM "x86")
 	endif()
 
-	if(NOT BS_IS_BANSHEE3D)
+	if(NOT B3D_IS_ENGINE)
 		set(BIN_DIR bin)
 	else()
 		set(BIN_DIR .)
@@ -412,7 +412,7 @@ endfunction()
 function(install_bsf_target targetName)
 	strip_symbols(${targetName} symbolsFile)
 	
-	if(NOT BS_IS_BANSHEE3D)
+	if(NOT B3D_IS_ENGINE)
 		set(BIN_DIR bin)
 		install(
 			TARGETS ${targetName}
@@ -517,7 +517,7 @@ function(generate_csharp_project folder project_name namespace assembly refs pro
 	set(BS_SHARP_ROOT_NS ${namespace})
 	set(BS_SHARP_ASSEMBLY_NAME ${assembly})
 	
-	if(BS_IS_BANSHEE3D)
+	if(B3D_IS_ENGINE)
 		set(BS_SHARP_DEFINES "IS_B3D;")
 	endif()
 
@@ -610,17 +610,17 @@ function(add_common_flags target)
 	endif()
 
 	if (${target_type} STREQUAL "SHARED_LIBRARY")
-		set_property(TARGET ${target} PROPERTY VERSION ${BS_FRAMEWORK_VERSION_MAJOR}.${BS_FRAMEWORK_VERSION_MINOR}.${BS_FRAMEWORK_VERSION_PATCH})
-		set_property(TARGET ${target} PROPERTY SOVERSION ${BS_FRAMEWORK_VERSION_MAJOR})
+		set_property(TARGET ${target} PROPERTY VERSION ${B3D_FRAMEWORK_VERSION_MAJOR}.${B3D_FRAMEWORK_VERSION_MINOR}.${B3D_FRAMEWORK_VERSION_PATCH})
+		set_property(TARGET ${target} PROPERTY SOVERSION ${B3D_FRAMEWORK_VERSION_MAJOR})
 	endif()
 
 	if(APPLE)
-		set_property(TARGET ${target} PROPERTY INSTALL_RPATH "@loader_path;@loader_path/../lib;@loader_path/bsf-${BS_FRAMEWORK_VERSION_MAJOR}.${BS_FRAMEWORK_VERSION_MINOR}.${BS_FRAMEWORK_VERSION_PATCH}")
+		set_property(TARGET ${target} PROPERTY INSTALL_RPATH "@loader_path;@loader_path/../lib;@loader_path/bsf-${B3D_FRAMEWORK_VERSION_MAJOR}.${B3D_FRAMEWORK_VERSION_MINOR}.${B3D_FRAMEWORK_VERSION_PATCH}")
 	else()
 		if (${target_type} STREQUAL "EXECUTABLE")
-			set_property(TARGET ${target} PROPERTY INSTALL_RPATH "\$ORIGIN/../lib:\$ORIGIN/../lib/bsf-${BS_FRAMEWORK_VERSION_MAJOR}.${BS_FRAMEWORK_VERSION_MINOR}.${BS_FRAMEWORK_VERSION_PATCH}")
+			set_property(TARGET ${target} PROPERTY INSTALL_RPATH "\$ORIGIN/../lib:\$ORIGIN/../lib/bsf-${B3D_FRAMEWORK_VERSION_MAJOR}.${B3D_FRAMEWORK_VERSION_MINOR}.${B3D_FRAMEWORK_VERSION_PATCH}")
 		else()
-			set_property(TARGET ${target} PROPERTY INSTALL_RPATH "\$ORIGIN:\$ORIGIN/bsf-${BS_FRAMEWORK_VERSION_MAJOR}.${BS_FRAMEWORK_VERSION_MINOR}.${BS_FRAMEWORK_VERSION_PATCH}")
+			set_property(TARGET ${target} PROPERTY INSTALL_RPATH "\$ORIGIN:\$ORIGIN/bsf-${B3D_FRAMEWORK_VERSION_MAJOR}.${B3D_FRAMEWORK_VERSION_MINOR}.${B3D_FRAMEWORK_VERSION_PATCH}")
 		endif()
 	endif()
 endfunction()

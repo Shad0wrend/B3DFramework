@@ -10,7 +10,7 @@
 
 namespace bs
 {
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 	struct __START_UP_DESCInterop
 	{
 		MonoString* RenderApi;

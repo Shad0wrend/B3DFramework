@@ -40,10 +40,10 @@ int main(int argc, char* argv[])
 		return 2;
 
 	START_UP_DESC desc;
-	desc.RenderApi = BS_RENDER_API_MODULE;
-	desc.Renderer = BS_RENDERER_MODULE;
-	desc.Audio = BS_AUDIO_MODULE;
-	desc.Physics = BS_PHYSICS_MODULE;
+	desc.RenderApi = B3D_RENDER_BACKEND;
+	desc.Renderer = B3D_RENDERER;
+	desc.Audio = B3D_AUDIO_BACKEND;
+	desc.Physics = B3D_PHYSICS_BACKEND;
 
 	desc.Importers.push_back("bsfFreeImgImporter");
 	desc.Importers.push_back("bsfFBXImporter");

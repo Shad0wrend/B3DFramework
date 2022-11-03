@@ -493,7 +493,7 @@ void SceneObject::SetParent(const HSceneObject& parent, bool keepWorldTransform)
 	if(parent.IsDestroyed())
 		return;
 
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 	UUID originalPrefab = GetPrefabLink();
 #endif
 
@@ -502,7 +502,7 @@ void SceneObject::SetParent(const HSceneObject& parent, bool keepWorldTransform)
 
 	SetParentInternal(parent, keepWorldTransform);
 
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 	if(GetCoreApplication().IsEditor())
 	{
 		UUID newPrefab = GetPrefabLink();

@@ -8,7 +8,7 @@
 #include "FileSystem/BsDataStream.h"
 #include "Utility/BsTime.h"
 
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 #	include "BsEngineConfig.h"
 #endif
 
@@ -232,7 +232,7 @@ table td
 <style type="text/css">
 )";
 
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 	static const char* htmlPostStyleHeader =
 		R"(</style>
 <title>Banshee Engine Log</title>
@@ -271,7 +271,7 @@ table td
 	stream << htmlPreStyleHeader;
 	stream << style;
 	stream << htmlPostStyleHeader;
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 	stream << "<h1>Banshee Engine Log</h1>\n";
 #else
 	stream << "<h1>bs::framework Log</h1>\n";
@@ -280,7 +280,7 @@ table td
 	stream << "<h2>System information</h2>\n";
 
 	// Write header information
-	stream << "<p>bs::framework version: " << BS_VERSION_MAJOR << "." << BS_VERSION_MINOR << "." << BS_VERSION_PATCH << "</p>\n";
+	stream << "<p>bs::framework version: " << B3D_FRAMEWORK_VERSION_MAJOR << "." << B3D_FRAMEWORK_VERSION_MINOR << "." << B3D_FRAMEWORK_VERSION_PATCH << "</p>\n";
 
 	if(Time::IsStarted())
 		stream << "<p>Started on: " << GetTime().GetAppStartUpDateString(false) << "</p>\n";
@@ -373,7 +373,7 @@ String GetSpacesIndentationInternal(size_t numSpaces)
 
 void Debug::SaveTextLog(const Path& path) const
 {
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 	static const char* engineHeader = "This is Banshee Engine ";
 	static const char* bsfBasedHeader = "Based on bs::framework ";
 #else
@@ -381,11 +381,11 @@ void Debug::SaveTextLog(const Path& path) const
 #endif
 
 	StringStream stream;
-#if BS_IS_BANSHEE3D
-	stream << engineHeader << BS_B3D_VERSION_MAJOR << "." << BS_B3D_VERSION_MINOR << "." << BS_B3D_VERSION_PATCH << "\n";
-	stream << bsfBasedHeader << BS_VERSION_MAJOR << "." << BS_VERSION_MINOR << "." << BS_VERSION_PATCH << "\n";
+#if B3D_IS_ENGINE
+	stream << engineHeader << B3D_VERSION_MAJOR << "." << B3D_VERSION_MINOR << "." << B3D_VERSION_PATCH << "\n";
+	stream << bsfBasedHeader << B3D_FRAMEWORK_VERSION_MAJOR << "." << B3D_FRAMEWORK_VERSION_MINOR << "." << B3D_FRAMEWORK_VERSION_PATCH << "\n";
 #else
-	stream << bsfOnlyHeader << BS_VERSION_MAJOR << "." << BS_VERSION_MINOR << "." << BS_VERSION_PATCH << "\n";
+	stream << bsfOnlyHeader << B3D_VERSION_MAJOR << "." << B3D_VERSION_MINOR << "." << B3D_VERSION_PATCH << "\n";
 #endif
 	if(Time::IsStarted())
 		stream << "Started on: " << GetTime().GetAppStartUpDateString(false) << "\n";

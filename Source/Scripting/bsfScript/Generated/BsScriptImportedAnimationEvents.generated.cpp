@@ -7,7 +7,7 @@
 #include "BsScriptAnimationEvent.generated.h"
 
 using namespace bs;
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 ScriptImportedAnimationEvents::ScriptImportedAnimationEvents(MonoObject* managedInstance, const SPtr<ImportedAnimationEvents>& value)
 	: TScriptReflectable(managedInstance, value)
 {

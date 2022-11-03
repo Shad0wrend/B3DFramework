@@ -8,7 +8,7 @@
 #include "BsScriptRENDER_WINDOW_DESC.generated.h"
 
 using namespace bs;
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 ScriptSTART_UP_DESC::ScriptSTART_UP_DESC(MonoObject* managedInstance)
 	: ScriptObject(managedInstance)
 {}

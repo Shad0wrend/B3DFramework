@@ -11,7 +11,7 @@
 #include "BsScriptResourceManifest.generated.h"
 
 using namespace bs;
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 ScriptResources::OnResourceLoadedThunkDef ScriptResources::OnResourceLoadedThunk;
 ScriptResources::OnResourceDestroyedThunkDef ScriptResources::OnResourceDestroyedThunk;
 ScriptResources::OnResourceModifiedThunkDef ScriptResources::OnResourceModifiedThunk;

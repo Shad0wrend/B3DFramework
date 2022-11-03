@@ -9,7 +9,7 @@
 #include "Wrappers/BsScriptResource.h"
 
 using namespace bs;
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 ScriptSubResource::ScriptSubResource(MonoObject* managedInstance)
 	: ScriptObject(managedInstance)
 {}

@@ -8,7 +8,7 @@
 
 namespace bs
 {
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 	struct __VideoModeInterop
 	{
 		uint32_t Width;

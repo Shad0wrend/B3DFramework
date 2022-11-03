@@ -6,7 +6,7 @@
 #include "BsMonoUtil.h"
 
 using namespace bs;
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 ScriptImportOptionsBase::ScriptImportOptionsBase(MonoObject* managedInstance)
 	: ScriptReflectableBase(managedInstance)
 {}

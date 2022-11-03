@@ -26,7 +26,7 @@ UUID ScriptScene::sActiveSceneUUID;
 String ScriptScene::sActiveSceneName;
 bool ScriptScene::sIsGenericPrefab;
 
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 ScriptScene::OnUpdateThunkDef ScriptScene::onUpdateThunk;
 #endif
 
@@ -39,7 +39,7 @@ void ScriptScene::InitRuntimeData()
 	metaData.ScriptClass->AddInternalCall("Internal_GetRoot", (void*)&ScriptScene::InternalGetRoot);
 	metaData.ScriptClass->AddInternalCall("Internal_GetMainCameraSO", (void*)&ScriptScene::InternalGetMainCameraSo);
 
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 	metaData.ScriptClass->AddInternalCall("Internal_SetActiveScene", (void*)&ScriptScene::InternalSetActiveScene);
 	metaData.ScriptClass->AddInternalCall("Internal_ClearScene", (void*)&ScriptScene::InternalClearScene);
 
@@ -62,7 +62,7 @@ void ScriptScene::ShutDown()
 
 void ScriptScene::Update()
 {
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 	MonoUtil::InvokeThunk(onUpdateThunk);
 #endif
 }
@@ -148,7 +148,7 @@ MonoObject* ScriptScene::InternalGetMainCameraSo()
 	return cameraSo->GetManagedInstance();
 }
 
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 void ScriptScene::InternalSetActiveScene(ScriptPrefab* scriptPrefab)
 {
 	HPrefab prefab = scriptPrefab->GetHandle();

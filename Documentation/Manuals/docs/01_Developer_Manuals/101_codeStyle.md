@@ -23,7 +23,7 @@ When making changes or additions that you plan on contributing to `bsf`, you mus
  - Non-public class/struct fields should be prefixed with `m`, followed by a capital first letter (e.g. `int mClassMemberField;`).
  - Non-constant global variables and methods should be prefixed with an `g`, followed by a capital first letter (e.g. `const Application& GetApplication();`).
  - Constant global variables should be written in all caps with underscores separating the words (e.g. `int NUM_ELEMENTS = 5;`).
- - Macros should be written in all caps with underscores separating the words, and prefixed with `BS_` (e.g. `#define BS_EXCEPT`).
+ - Macros should be written in all caps with underscores separating the words, and prefixed with `B3D_` (e.g. `#define B3D_EXCEPT`).
  - Static non-constant variables should be prefixed with an `s`, followed by a capital first letter (e.g. `bool sIsInitialized;`).
  - Static constant variables should be written in all caps with underscores separating the words (e.g. `int NUM_ELEMENTS = 5;`).
  - Everything needs to be part of the `bs` namespace

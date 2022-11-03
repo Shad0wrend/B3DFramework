@@ -300,7 +300,7 @@ Path BuiltinResources::GetIconFolder()
 	return Paths::GetDataPath() + kIconFolder;
 }
 
-#if BS_IS_BANSHEE3D || defined BS_IS_ASSET_TOOL
+#if B3D_IS_ENGINE || defined BS_IS_ASSET_TOOL
 Path BuiltinResources::GetEditorShaderIncludeFolder()
 {
 	return Paths::GetEditorDataPath() + kShaderIncludeFolder;

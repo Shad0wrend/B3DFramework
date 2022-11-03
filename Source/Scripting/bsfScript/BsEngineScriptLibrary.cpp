@@ -30,7 +30,7 @@ void EngineScriptLibrary::Initialize()
 	Path engineAssemblyPath = GetEngineAssemblyPath();
 	const String ASSEMBLY_ENTRY_POINT = "Program::Start";
 
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 	MonoManager::StartUp();
 	MonoAssembly& engineAssembly = MonoManager::Instance().LoadAssembly(engineAssemblyPath.ToString(), kEngineAssembly);
 #endif
@@ -54,7 +54,7 @@ void EngineScriptLibrary::Initialize()
 
 	ScriptAssemblyManager::Instance().LoadAssemblyInfo(kEngineAssembly, mEngineTypeMappings);
 
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 	engineAssembly.Invoke(ASSEMBLY_ENTRY_POINT);
 #endif
 }
@@ -69,7 +69,7 @@ void EngineScriptLibrary::Update()
 
 void EngineScriptLibrary::Reload()
 {
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 	Path engineAssemblyPath = GetEngineAssemblyPath();
 
 	// Do a full refresh if we have already loaded script assemblies
@@ -119,7 +119,7 @@ void EngineScriptLibrary::ShutdownModules()
 	ScriptScene::ShutDown();
 	ManagedResourceManager::ShutDown();
 
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 	MonoManager::ShutDown();
 #else
 	MonoManager::Instance().unloadAll();
@@ -145,7 +145,7 @@ Path EngineScriptLibrary::GetEngineAssemblyPath() const
 	return assemblyPath;
 }
 
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 Path EngineScriptLibrary::GetGameAssemblyPath() const
 {
 	Path assemblyPath = GetScriptAssemblyFolder();

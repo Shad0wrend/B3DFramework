@@ -21,9 +21,9 @@ namespace bs
         public static int GetPatchVersionNumber() { return verPatch; }
         public static int GetCurrentReleaseYearNumber() { return currRelYear; }
 
-        private const int verMajor = @BS_B3D_VERSION_MAJOR@;
-        private const int verMinor = @BS_B3D_VERSION_MINOR@;
-        private const int verPatch = @BS_B3D_VERSION_PATCH@;
-        private const int currRelYear = @BS_B3D_CURRENT_RELEASE_YEAR@;
+        private const int verMajor = @B3D_VERSION_MAJOR@;
+        private const int verMinor = @B3D_VERSION_MINOR@;
+        private const int verPatch = @B3D_VERSION_PATCH@;
+        private const int currRelYear = @B3D_CURRENT_RELEASE_YEAR@;
     }
 }

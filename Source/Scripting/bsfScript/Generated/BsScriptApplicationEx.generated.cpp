@@ -9,7 +9,7 @@
 #include "BsScriptSTART_UP_DESC.generated.h"
 
 using namespace bs;
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 ScriptApplicationEx::ScriptApplicationEx(MonoObject* managedInstance, const SPtr<ApplicationEx>& value)
 	: ScriptObject(managedInstance), mInternal(value)
 {

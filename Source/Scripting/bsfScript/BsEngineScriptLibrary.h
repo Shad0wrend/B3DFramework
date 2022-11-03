@@ -26,7 +26,7 @@ namespace bs
 		/**	Returns the absolute path to the builtin managed engine assembly file. */
 		Path GetEngineAssemblyPath() const;
 
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 		/**	Returns the absolute path to the game managed assembly file. */
 		Path GetGameAssemblyPath() const;
 #endif

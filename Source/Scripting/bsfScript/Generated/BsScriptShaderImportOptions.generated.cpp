@@ -7,7 +7,7 @@
 #include "BsScriptShaderImportOptions.generated.h"
 
 using namespace bs;
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 ScriptShaderImportOptions::ScriptShaderImportOptions(MonoObject* managedInstance, const SPtr<ShaderImportOptions>& value)
 	: TScriptReflectable(managedInstance, value)
 {

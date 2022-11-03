@@ -30,7 +30,7 @@ target_compile_definitions(bsfScript PUBLIC -DBS_SCR_BE_STATIC_LIB)
 target_link_libraries(bsfScript bsfMono bsf)
 
 # Runtime executable
-if(NOT BS_IS_BANSHEE3D)
+if(NOT B3D_IS_ENGINE)
 	# Target for running framework scripting assemblies
 	add_executable(bsfSharp WIN32 BsScriptExec.cpp BsScriptWin32Resource.rc)
 	target_link_libraries(bsfSharp bsfScript bsfMono bsf)

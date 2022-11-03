@@ -1,8 +1,8 @@
 # Version
-set (BS_FRAMEWORK_VERSION_MAJOR 1)
-set (BS_FRAMEWORK_VERSION_MINOR 1)
-set (BS_FRAMEWORK_VERSION_PATCH 0)
-set (BS_FRAMEWORK_CURRENT_RELEASE_YEAR 2019)
+set (B3D_FRAMEWORK_VERSION_MAJOR 1)
+set (B3D_FRAMEWORK_VERSION_MINOR 1)
+set (B3D_FRAMEWORK_VERSION_PATCH 0)
+set (B3D_FRAMEWORK_CURRENT_RELEASE_YEAR 2019)
 
 set (BS_FRAMEWORK_PREBUILT_DEPENDENCIES_VERSION 11)
 set (BS_FRAMEWORK_SRC_DEPENDENCIES_VERSION 1)
@@ -110,10 +110,10 @@ else()
 	set(RENDERER_MODULE_LIB bsfNullRenderer)
 endif()
 
-if((SCRIPT_API AND (NOT SCRIPT_API MATCHES "None")) OR BS_IS_BANSHEE3D)
-	set(BS_SCRIPTING_ENABLED 1)
+if((SCRIPT_API AND (NOT SCRIPT_API MATCHES "None")) OR B3D_IS_ENGINE)
+	set(B3D_IS_SCRIPTING_ENABLED 1)
 else()
-	set(BS_SCRIPTING_ENABLED 0)
+	set(B3D_IS_SCRIPTING_ENABLED 0)
 endif()
 
 ## Generate config files
@@ -191,11 +191,11 @@ else() # Otherwise include only chosen ones
 		add_subdirectory(Plugins/bsfNullRenderer)
 	endif()
 	
-	if((SCRIPT_API AND (NOT SCRIPT_API MATCHES "None")) OR BS_IS_BANSHEE3D)
+	if((SCRIPT_API AND (NOT SCRIPT_API MATCHES "None")) OR B3D_IS_ENGINE)
 		add_subdirectory(Scripting/bsfScript)
 	endif()
 	
-	if((SCRIPT_API AND SCRIPT_API MATCHES "C#") OR BS_IS_BANSHEE3D)
+	if((SCRIPT_API AND SCRIPT_API MATCHES "C#") OR B3D_IS_ENGINE)
 		add_subdirectory(Scripting/bsfMono)
 		add_subdirectory(Scripting/bsfSharp)
 	endif()
@@ -245,7 +245,7 @@ add_importer_dependencies(bsfImportTool)
 
 set_property(TARGET bsfImportTool PROPERTY FOLDER Utilities)
 
-if(NOT BS_IS_BANSHEE3D)
+if(NOT B3D_IS_ENGINE)
 	install(TARGETS bsfImportTool RUNTIME DESTINATION bin)	
 endif()
 	
@@ -267,11 +267,11 @@ file (STRINGS ${DOC_IMAGES_VERSION_FILE} DOC_IMAGES_VERSION)
 check_and_update_builtin_assets(bsfDocImages ${BSF_SOURCE_DIR}/../Documentation Documentation ${DOC_IMAGES_VERSION} NO)
 
 ## Script binding generation
-if(((SCRIPT_API AND (NOT SCRIPT_API MATCHES "None")) OR BS_IS_BANSHEE3D) AND B3D_SCRIPT_BINDING_GENERATION)
+if(((SCRIPT_API AND (NOT SCRIPT_API MATCHES "None")) OR B3D_IS_ENGINE) AND B3D_SCRIPT_BINDING_GENERATION)
 	include(${BSF_SOURCE_DIR}/CMake/GenerateScriptBindings.cmake)
 endif()
 
-if(NOT BS_IS_BANSHEE3D)
+if(NOT B3D_IS_ENGINE)
 	set(DATA_DST_DIR bin)
 else()
 	set(DATA_DST_DIR .)

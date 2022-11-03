@@ -7,7 +7,7 @@
 #include "BsScriptAudioClipImportOptions.generated.h"
 
 using namespace bs;
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 ScriptAudioClipImportOptions::ScriptAudioClipImportOptions(MonoObject* managedInstance, const SPtr<AudioClipImportOptions>& value)
 	: TScriptReflectable(managedInstance, value)
 {

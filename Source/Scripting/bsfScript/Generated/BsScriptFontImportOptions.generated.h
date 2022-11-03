@@ -16,7 +16,7 @@ namespace bs
 
 namespace bs
 {
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 	class B3D_SCRIPT_INTEROP_EXPORT ScriptFontImportOptions : public TScriptReflectable<ScriptFontImportOptions, FontImportOptions, ScriptImportOptionsBase>
 	{
 	public:

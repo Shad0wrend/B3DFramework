@@ -4,8 +4,8 @@ title: Logging	messages
 Logging can be a useful way to debug issues during development, or notify the user that an error occurred. In bs::f it is handled though the @bs::Debug class, which can recognize what severity the message is and from what component or module it came. Use @bs::GetDebug for an easy way to access the **Debug** instance.
 
 To log a new message, you can use two of the following methods:
- - Use the @BS_LOG macro.
- - Use the @bs::Debug::log function, which is similar to the macro but requires the use of @BS_LOG_GET_CATEGORY_ID macro when providing the log category if the user doesn't know the ID of the category.
+ - Use the @B3D_LOG macro.
+ - Use the @bs::Debug::log function, which is similar to the macro but requires the use of @B3D_LOG_GET_CATEGORY_ID macro when providing the log category if the user doesn't know the ID of the category.
  
 ~~~~~~~~~~~~~{.cpp}
 UINT32 x = 5;
@@ -25,14 +25,14 @@ GetDebug().saveLog("C:\myLog.html", SavedLogType::HTML);
 GetDebug().saveLog("C:\myLog.txt", SavedLogType::Textual);
 ~~~~~~~~~~~~~
 
-Sometimes you want to register your own log categories than the what bs::f provides. For that you can use @BS_LOG_CATEGORY macro that will create the Log category to use based on the given ID number.
+Sometimes you want to register your own log categories than the what bs::f provides. For that you can use @B3D_LOG_CATEGORY macro that will create the Log category to use based on the given ID number.
 
 ~~~~~~~~~~~~~{.cpp}
 BS_LOG_CATEGORY(UserApp, 100)
 BS_LOG_CATEGORY(UserModule, 120)
 ~~~~~~~~~~~~~
 
-Finally, the category should be registered to the @bs::Log class that is responsible for storing log entries and the names of the categories based on their ID, so that the outputted log would contain the name of the category. This can be done by using the @BS_LOG_CATEGORY_IMPL macro. The instance of @bs::Log can be accessed by calling @bs::Debug::getLog().
+Finally, the category should be registered to the @bs::Log class that is responsible for storing log entries and the names of the categories based on their ID, so that the outputted log would contain the name of the category. This can be done by using the @B3D_LOG_CATEGORY_IMPL macro. The instance of @bs::Log can be accessed by calling @bs::Debug::getLog().
 
 ~~~~~~~~~~~~~{.cpp}
 BS_LOG_CATEGORY_IMPL(UserApp)

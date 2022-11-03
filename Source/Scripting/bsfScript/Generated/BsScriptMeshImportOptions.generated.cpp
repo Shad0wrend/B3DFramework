@@ -9,7 +9,7 @@
 #include "BsScriptMeshImportOptions.generated.h"
 
 using namespace bs;
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 ScriptMeshImportOptions::ScriptMeshImportOptions(MonoObject* managedInstance, const SPtr<MeshImportOptions>& value)
 	: TScriptReflectable(managedInstance, value)
 {

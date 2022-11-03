@@ -116,7 +116,7 @@ void VulkanRenderAPI::Initialize()
 	appInfo.pApplicationName = "bs::framework app";
 	appInfo.applicationVersion = 1;
 	appInfo.pEngineName = "bs::framework";
-	appInfo.engineVersion = (BS_VERSION_MAJOR << 24) | (BS_VERSION_MINOR << 16) | BS_VERSION_PATCH;
+	appInfo.engineVersion = (B3D_FRAMEWORK_VERSION_MAJOR << 24) | (B3D_FRAMEWORK_VERSION_MINOR << 16) | B3D_FRAMEWORK_VERSION_PATCH;
 
 	// MoltenVK doesn't support 1.1, but we don't need it since the only feature we use from it right now is SPIR-V 1.3,
 	// and that's not relevant for MoltenVK as SPIR-V gets translated to MSL anyway.

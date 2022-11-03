@@ -11,7 +11,7 @@
 #include "BsApplication.h"
 
 using namespace bs;
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 ScriptResources::ScriptResources(MonoObject* instance)
 	: ScriptObject(instance)
 {}

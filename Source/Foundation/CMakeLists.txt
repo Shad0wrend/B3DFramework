@@ -67,10 +67,10 @@ target_compile_definitions(bsf PRIVATE
 	-DB3D_EXPORTS
 	-DB3D_CORE_EXPORTS
 	-DB3D_UTILITY_EXPORTS
-	$<$<CONFIG:Debug>:BS_CONFIG=BS_CONFIG_DEBUG>
-	$<$<CONFIG:RelWithDebInfo>:BS_CONFIG=BS_CONFIG_RELWITHDEBINFO>
-	$<$<CONFIG:MinSizeRel>:BS_CONFIG=BS_CONFIG_MINSIZEREL>
-	$<$<CONFIG:Release>:BS_CONFIG=BS_CONFIG_RELEASE>)
+	$<$<CONFIG:Debug>:B3D_CONFIG=B3D_CONFIG_ID_DEBUG>
+	$<$<CONFIG:RelWithDebInfo>:B3D_CONFIG=B3D_CONFIG_ID_RELWITHDEBINFO>
+	$<$<CONFIG:MinSizeRel>:B3D_CONFIG=B3D_CONFIG_ID_MINSIZEREL>
+	$<$<CONFIG:Release>:B3D_CONFIG=B3D_CONFIG_ID_RELEASE>)
 
 if(MSVC)
 	if(NOT BSF_ENABLE_RTTI)
@@ -143,7 +143,7 @@ endif()
 set_property(TARGET bsf PROPERTY FOLDER Foundation)
 
 # Install
-if(NOT BS_IS_BANSHEE3D)
+if(NOT B3D_IS_ENGINE)
 	install(
 		DIRECTORY bsfUtility
 		DESTINATION include
@@ -188,7 +188,7 @@ endif()
 
 install_bsf_target(bsf)
 
-if(NOT BS_IS_BANSHEE3D)
+if(NOT B3D_IS_ENGINE)
 	# This doesn't actually install anything as it is an imported library
 	# but it is required because it is a dependency of the bsf target
 	install(TARGETS ThirdParty EXPORT bsf)

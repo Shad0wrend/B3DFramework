@@ -10,7 +10,7 @@
 
 namespace bs
 {
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 	struct __RENDER_WINDOW_DESCInterop
 	{
 		__VideoModeInterop VideoMode;

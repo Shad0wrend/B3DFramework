@@ -152,7 +152,7 @@ namespace bs
 		/**	Returns absolute path to the builtin icons folder. */
 		static Path GetIconFolder();
 
-#if BS_IS_BANSHEE3D || defined BS_IS_ASSET_TOOL
+#if B3D_IS_ENGINE || defined BS_IS_ASSET_TOOL
 		/**	Returns absolute path to the editor builtin shader include folder. */
 		static Path GetEditorShaderIncludeFolder();
 

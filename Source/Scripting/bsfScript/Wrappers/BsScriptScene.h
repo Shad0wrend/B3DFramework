@@ -51,7 +51,7 @@ namespace bs
 		static MonoObject* InternalGetRoot();
 		static MonoObject* InternalGetMainCameraSo();
 
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 		static void InternalSetActiveScene(ScriptPrefab* scriptPrefab);
 		static void InternalClearScene();
 

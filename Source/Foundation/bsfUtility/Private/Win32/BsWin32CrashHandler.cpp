@@ -449,7 +449,7 @@ void Win32PopupErrorMessageBox(const WString& msg, const Path& folder)
 {
 	WString simpleErrorMessage = msg + L"\n\nFor more information check the crash report located at:\n " + UTF8::ToWide(folder.ToString());
 
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 	MessageBoxW(nullptr, simpleErrorMessage.c_str(), L"Banshee fatal error!", MB_OK);
 #else
 	MessageBoxW(nullptr, simpleErrorMessage.c_str(), L"bs::framework fatal error!", MB_OK);

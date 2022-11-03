@@ -7,7 +7,7 @@
 #include "BsScriptTextureImportOptions.generated.h"
 
 using namespace bs;
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 ScriptTextureImportOptions::ScriptTextureImportOptions(MonoObject* managedInstance, const SPtr<TextureImportOptions>& value)
 	: TScriptReflectable(managedInstance, value)
 {

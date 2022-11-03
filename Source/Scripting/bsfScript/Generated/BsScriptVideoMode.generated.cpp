@@ -6,7 +6,7 @@
 #include "BsMonoUtil.h"
 
 using namespace bs;
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 ScriptVideoMode::ScriptVideoMode(MonoObject* managedInstance)
 	: ScriptObject(managedInstance)
 {}

@@ -913,7 +913,7 @@ u32 TAnimationCurve<T>::FindKey(float time)
 template <class T>
 TKeyframe<T> TAnimationCurve<T>::EvaluateKey(const KeyFrame& lhs, const KeyFrame& rhs, float time) const
 {
-	return EvaluateKey(lhs, rhs, time);
+	return bs::EvaluateKey(lhs, rhs, time);
 }
 
 template <class T>

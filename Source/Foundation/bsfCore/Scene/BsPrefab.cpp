@@ -134,7 +134,7 @@ HSceneObject Prefab::InstantiateInternal(bool preserveUUIDs) const
 	if(mRoot == nullptr)
 		return HSceneObject();
 
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 	if(GetCoreApplication().IsEditor())
 	{
 		// Update any child prefab instances in case their prefabs changed

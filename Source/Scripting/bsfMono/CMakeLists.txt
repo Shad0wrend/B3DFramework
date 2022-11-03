@@ -30,7 +30,7 @@ target_link_libraries(bsfMono PUBLIC ${mono_LIBRARIES})
 target_link_libraries(bsfMono PUBLIC bsf)
 
 # Runtime executable
-if(BS_IS_BANSHEE3D)
+if(B3D_IS_ENGINE)
 	# Target for running generic Mono code
 	add_executable(MonoExec BsMonoExec.cpp)
 	target_link_libraries(MonoExec ${mono_LIBRARIES})

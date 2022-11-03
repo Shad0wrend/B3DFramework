@@ -26,7 +26,7 @@ const Path& Paths::GetDataPath()
 		if(FileSystem::Exists(kFrameworkDataPath))
 			path = FileSystem::GetWorkingDirectoryPath() + kFrameworkDataPath;
 		else
-#if BS_IS_BANSHEE3D
+#if B3D_IS_ENGINE
 			path = Path(kRawAppRoot) + Path("Source/bsf") + kFrameworkDataPath;
 #else
 			path = Path(RAW_APP_ROOT) + FRAMEWORK_DATA_PATH;

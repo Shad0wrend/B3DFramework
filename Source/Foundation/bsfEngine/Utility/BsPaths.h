@@ -8,7 +8,7 @@ namespace bs
 	 *  @{
 	 */
 
-#if BS_IS_BANSHEE3D || defined BS_IS_ASSET_TOOL
+#if B3D_IS_ENGINE || defined BS_IS_ASSET_TOOL
 #	define BS_INCLUDE_B3D_PATHS 1
 #else
 #	define BS_INCLUDE_B3D_PATHS 0

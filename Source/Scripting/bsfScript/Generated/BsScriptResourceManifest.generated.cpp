@@ -7,7 +7,7 @@
 #include "BsScriptResourceManifest.generated.h"
 
 using namespace bs;
-#if !BS_IS_BANSHEE3D
+#if !B3D_IS_ENGINE
 ScriptResourceManifest::ScriptResourceManifest(MonoObject* managedInstance, const SPtr<ResourceManifest>& value)
 	: TScriptReflectable(managedInstance, value)
 {
