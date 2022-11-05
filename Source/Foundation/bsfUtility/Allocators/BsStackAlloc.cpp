@@ -5,7 +5,7 @@
 
 using namespace bs;
 
-BS_THREADLOCAL MemStackInternal<1024 * 1024>* MemStack::ThreadMemStack = nullptr;
+B3D_THREADLOCAL MemStackInternal<1024 * 1024>* MemStack::ThreadMemStack = nullptr;
 
 void MemStack::BeginThread()
 {

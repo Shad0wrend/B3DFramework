@@ -24,7 +24,7 @@ ProfilingManager::~ProfilingManager()
 
 void ProfilingManager::UpdateInternal()
 {
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 	mSavedSimReports[mNextSimReportIdx].CpuReport = GetProfilerCPU().GenerateReport();
 
 	GetProfilerCPU().Reset();
@@ -35,7 +35,7 @@ void ProfilingManager::UpdateInternal()
 
 void ProfilingManager::UpdateCoreInternal()
 {
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 	Lock lock(mSync);
 	mSavedCoreReports[mNextCoreReportIdx].CpuReport = GetProfilerCPU().GenerateReport();
 

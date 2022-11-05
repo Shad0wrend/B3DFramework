@@ -13,7 +13,7 @@ void VerifyLockAndThread(const bs::GpuResourceData* data)
 #if !BS_FORCE_SINGLETHREADED_RENDERING
 	if(data->IsLocked())
 	{
-		if(BS_THREAD_CURRENT_ID != CoreThread::Instance().GetCoreThreadId())
+		if(B3D_CURRENT_THREAD_ID != CoreThread::Instance().GetCoreThreadId())
 			B3D_EXCEPT(InternalErrorException, "You are not allowed to access buffer data from non-core thread when the buffer is locked.");
 	}
 #endif

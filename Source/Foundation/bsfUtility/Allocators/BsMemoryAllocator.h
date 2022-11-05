@@ -121,8 +121,8 @@ namespace bs
 
 		static B3D_UTILITY_EXPORT void IncFreeCount() { ++Frees; }
 
-		static BS_THREADLOCAL uint64_t Allocs;
-		static BS_THREADLOCAL uint64_t Frees;
+		static B3D_THREADLOCAL uint64_t Allocs;
+		static B3D_THREADLOCAL uint64_t Frees;
 	};
 
 	/** Base class all memory allocators need to inherit. Provides allocation and free counting. */
@@ -147,7 +147,7 @@ namespace bs
 		/** Allocates @p bytes bytes. */
 		static void* Allocate(size_t bytes)
 		{
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 			IncAllocCount();
 #endif
 
@@ -160,7 +160,7 @@ namespace bs
 		 */
 		static void* AllocateAligned(size_t bytes, size_t alignment)
 		{
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 			IncAllocCount();
 #endif
 
@@ -170,7 +170,7 @@ namespace bs
 		/** Allocates @p bytes and aligns them to a 16 byte boundary. */
 		static void* AllocateAligned16(size_t bytes)
 		{
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 			IncAllocCount();
 #endif
 
@@ -180,7 +180,7 @@ namespace bs
 		/** Frees the memory at the specified location. */
 		static void Free(void* ptr)
 		{
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 			IncFreeCount();
 #endif
 
@@ -190,7 +190,7 @@ namespace bs
 		/** Frees memory allocated with allocateAligned() */
 		static void FreeAligned(void* ptr)
 		{
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 			IncFreeCount();
 #endif
 
@@ -200,7 +200,7 @@ namespace bs
 		/** Frees memory allocated with allocateAligned16() */
 		static void FreeAligned16(void* ptr)
 		{
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 			IncFreeCount();
 #endif
 

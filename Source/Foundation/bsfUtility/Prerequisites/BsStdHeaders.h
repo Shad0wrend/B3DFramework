@@ -57,7 +57,9 @@ extern "C" {
 #	undef min
 #	undef max
 #	if !defined(NOMINMAX) && defined(_MSC_VER)
+// NOLINTBEGIN
 #		define NOMINMAX // required to stop windows.h messing up std::min
+// NOLINTEND
 #	endif
 #	if defined(__MINGW32__)
 #		include <unistd.h>

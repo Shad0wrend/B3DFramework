@@ -77,9 +77,9 @@ if(!isReady)
 
 ## Other
 The previous sections covered all the primitives, but there is some more useful functionality to be aware of:
- - @BS_THREAD_HARDWARE_CONCURRENCY - Returns number of logical CPU cores.
- - @BS_THREAD_CURRENT_ID - Returns @ThreadId of the current thread.
- - @BS_THREAD_SLEEP - Pauses the current thread for a set number of milliseconds.
+ - @B3D_THREAD_HARDWARE_CONCURRENCY - Returns number of logical CPU cores.
+ - @B3D_CURRENT_THREAD_ID - Returns @ThreadId of the current thread.
+ - @B3D_THREAD_SLEEP - Pauses the current thread for a set number of milliseconds.
 
 # Thread pool
 Instead of using **Thread** as described in the previous section, you can instead use the @bs::ThreadPool module for running threads. It allows you to re-use threads and avoid paying the cost of thread creation and destruction. It keeps any thread that was retired in idle state, and will re-use it when user requests a new thread.

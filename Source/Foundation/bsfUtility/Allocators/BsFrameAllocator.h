@@ -440,7 +440,7 @@ namespace bs
 	 *  @{
 	 */
 
-	extern BS_THREADLOCAL FrameAlloc* _GlobalFrameAlloc;
+	extern B3D_THREADLOCAL FrameAlloc* _GlobalFrameAlloc;
 
 	/**
 	 * Specialized memory allocator implementations that allows use of a global frame allocator in normal
@@ -459,7 +459,7 @@ namespace bs
 		/** @copydoc MemoryAllocator::AllocateAligned */
 		static void* AllocateAligned(size_t bytes, size_t alignment)
 		{
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 			IncAllocCount();
 #endif
 
@@ -469,7 +469,7 @@ namespace bs
 		/** @copydoc MemoryAllocator::AllocateAligned16 */
 		static void* AllocateAligned16(size_t bytes)
 		{
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 			IncAllocCount();
 #endif
 
@@ -485,7 +485,7 @@ namespace bs
 		/** @copydoc MemoryAllocator::FreeAligned */
 		static void FreeAligned(void* ptr)
 		{
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 			IncFreeCount();
 #endif
 
@@ -495,7 +495,7 @@ namespace bs
 		/** @copydoc MemoryAllocator::FreeAligned16 */
 		static void FreeAligned16(void* ptr)
 		{
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 			IncFreeCount();
 #endif
 

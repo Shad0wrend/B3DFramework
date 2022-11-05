@@ -250,7 +250,7 @@ namespace bs
 		static B3D_UTILITY_EXPORT void DeallocLast(u8* data);
 
 	private:
-		static BS_THREADLOCAL MemStackInternal<1024 * 1024>* ThreadMemStack;
+		static B3D_THREADLOCAL MemStackInternal<1024 * 1024>* ThreadMemStack;
 	};
 
 	/** @} */

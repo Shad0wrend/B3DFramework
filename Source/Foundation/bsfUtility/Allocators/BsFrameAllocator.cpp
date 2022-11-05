@@ -282,7 +282,7 @@ void FrameAlloc::SetOwnerThread(ThreadId thread)
 
 namespace bs
 {
-BS_THREADLOCAL FrameAlloc* _GlobalFrameAlloc = nullptr;
+B3D_THREADLOCAL FrameAlloc* _GlobalFrameAlloc = nullptr;
 
 B3D_UTILITY_EXPORT FrameAlloc& GetFrameAllocator()
 {

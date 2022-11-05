@@ -5,8 +5,6 @@
 
 using namespace bs;
 
-UnorderedMap<u32, String> Log::sCategories;
-
 Log::~Log()
 {
 	Clear();
@@ -95,11 +93,17 @@ Vector<LogEntry> Log::GetEntries() const
 	return mEntries;
 }
 
+UnorderedMap<u32, String>& Log::GetCategoriesMap()
+{
+	static UnorderedMap<u32, String> sCategories;
+	return sCategories;
+}
+
 bool Log::RegisterCategoryInternal(u32 id, const char* name)
 {
 	if(!CategoryExists(id))
 	{
-		sCategories.emplace(id, name);
+		GetCategoriesMap().emplace(id, name);
 		return true;
 	}
 
@@ -108,13 +112,13 @@ bool Log::RegisterCategoryInternal(u32 id, const char* name)
 
 bool Log::CategoryExists(u32 id)
 {
-	return sCategories.find(id) != sCategories.end();
+	return GetCategoriesMap().find(id) != GetCategoriesMap().end();
 }
 
 bool Log::GetCategoryName(u32 id, String& name)
 {
-	auto search = sCategories.find(id);
-	if(search != sCategories.end())
+	auto search = GetCategoriesMap().find(id);
+	if(search != GetCategoriesMap().end())
 	{
 		name = search->second;
 		return true;

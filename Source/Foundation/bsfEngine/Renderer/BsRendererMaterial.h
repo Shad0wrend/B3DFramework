@@ -10,7 +10,7 @@
 #include "Material/BsPass.h"
 #include "RenderAPI/BsRenderAPI.h"
 
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 #	include "Profiling/BsProfilerGPU.h"
 #endif
 
@@ -60,7 +60,7 @@ namespace bs
 			ShaderVariations Variations;
 			ShaderDefines Defines;
 
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 			ProfilerString ProfilerSampleName;
 #endif
 		};

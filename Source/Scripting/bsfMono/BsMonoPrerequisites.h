@@ -87,7 +87,7 @@ namespace bs
 } // namespace bs
 
 #if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
-#	define B3D_THUNKCALL BS_STDCALL
+#	define B3D_THUNKCALL B3D_STDCALL
 #else
 #	define B3D_THUNKCALL
 #endif

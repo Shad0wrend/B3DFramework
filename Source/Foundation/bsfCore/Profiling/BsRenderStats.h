@@ -145,7 +145,7 @@ namespace bs
 		RenderStatsData mData;
 	};
 
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 #	define B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(Stat, Category) RenderStats::Instance().Inc##Stat((u32)Category)
 #	define B3D_INCREMENT_RENDER_STATISTIC(Stat) RenderStats::Instance().Inc##Stat()
 #	define B3D_ADD_RENDER_STATISTIC(Stat, Count) RenderStats::Instance().Add##Stat(Count)

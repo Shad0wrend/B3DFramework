@@ -63,7 +63,7 @@ void RendererMaterialManager::InitOnCore(const Vector<SPtr<ct::Shader>>& shaders
 		for(auto& entry : techniques)
 			materials[i].MetaData->Variations.Add(entry->GetVariation());
 
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 		const String& filename = materials[i].ShaderPath.GetFilename(false);
 		materials[i].MetaData->ProfilerSampleName = ProfilerString("RM: ") +
 			ProfilerString(filename.data(), filename.size());

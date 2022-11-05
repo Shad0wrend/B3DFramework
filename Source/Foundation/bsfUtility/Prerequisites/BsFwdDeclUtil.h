@@ -53,7 +53,7 @@ namespace bs
  * When applied to a parameter, makes it a variable argument parameter in the scripting interface (if supported
  * by the scripting language.
  */
-#	define BS_PARAMS __attribute__((annotate("params")))
+#	define B3D_PARAMS __attribute__((annotate("params")))
 
 /**
  * When applied to a parameter or a field of ResourceHandle type, makes that element be exported as a raw resource in
@@ -68,7 +68,7 @@ namespace bs
  * When applied to a parameter, makes it a variable argument parameter in the scripting interface (if supported
  * by the scripting language).
  */
-#	define BS_PARAMS
+#	define B3D_PARAMS
 
 /**
  * When applied to a parameter or a field of ResourceHandle type, makes that element be exported as a raw resource in

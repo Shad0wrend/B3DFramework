@@ -44,31 +44,31 @@ T UTF8To32(T begin, T end, char32_t& output, char32_t invalidChar = 0)
 		output += (u8)(*begin);
 		++begin;
 		output <<= 6;
-		BS_FALLTHROUGH;
+		B3D_FALLTHROUGH;
 	case 5:
 		output += (u8)(*begin);
 		++begin;
 		output <<= 6;
-		BS_FALLTHROUGH;
+		B3D_FALLTHROUGH;
 	case 4:
 		output += (u8)(*begin);
 		++begin;
 		output <<= 6;
-		BS_FALLTHROUGH;
+		B3D_FALLTHROUGH;
 	case 3:
 		output += (u8)(*begin);
 		++begin;
 		output <<= 6;
-		BS_FALLTHROUGH;
+		B3D_FALLTHROUGH;
 	case 2:
 		output += (u8)(*begin);
 		++begin;
 		output <<= 6;
-		BS_FALLTHROUGH;
+		B3D_FALLTHROUGH;
 	case 1:
 		output += (u8)(*begin);
 		++begin;
-		BS_FALLTHROUGH;
+		B3D_FALLTHROUGH;
 	default: break;
 	}
 
@@ -124,16 +124,16 @@ T UTF32To8(char32_t input, T output, u32 maxElems, char invalidChar = 0)
 	case 4:
 		bytes[3] = (char)((input | 0x80) & 0xBF);
 		input >>= 6;
-		BS_FALLTHROUGH;
+		B3D_FALLTHROUGH;
 	case 3:
 		bytes[2] = (char)((input | 0x80) & 0xBF);
 		input >>= 6;
-		BS_FALLTHROUGH;
+		B3D_FALLTHROUGH;
 	case 2:
 		bytes[1] = (char)((input | 0x80) & 0xBF);
 		input >>= 6;
-		BS_FALLTHROUGH;
-	case 1: bytes[0] = (char)(input | headers[numBytes]); BS_FALLTHROUGH;
+		B3D_FALLTHROUGH;
+	case 1: bytes[0] = (char)(input | headers[numBytes]); B3D_FALLTHROUGH;
 	default: break;
 	}
 

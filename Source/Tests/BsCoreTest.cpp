@@ -53,16 +53,16 @@ void CoreTestSuite::testAnimCurveIntegration()
 
 	{
 		TCurveIntegrationCache<float> cache;
-		BS_TEST_ASSERT(Math::ApproxEquals(curveConstant.evaluateIntegrated(0.0f, cache), 0.0f, EPSILON));
-		BS_TEST_ASSERT(Math::ApproxEquals(curveConstant.evaluateIntegrated(0.5f, cache), 0.5f, EPSILON));
-		BS_TEST_ASSERT(Math::ApproxEquals(curveConstant.evaluateIntegrated(1.0f, cache), 1.0f, EPSILON));
+		B3D_TEST_ASSERT(Math::ApproxEquals(curveConstant.evaluateIntegrated(0.0f, cache), 0.0f, EPSILON));
+		B3D_TEST_ASSERT(Math::ApproxEquals(curveConstant.evaluateIntegrated(0.5f, cache), 0.5f, EPSILON));
+		B3D_TEST_ASSERT(Math::ApproxEquals(curveConstant.evaluateIntegrated(1.0f, cache), 1.0f, EPSILON));
 	}
 
 	{
 		TCurveIntegrationCache<float> cache;
-		BS_TEST_ASSERT(Math::ApproxEquals(curveLinear.evaluateIntegrated(0.0f, cache), 0.0f, EPSILON));
-		BS_TEST_ASSERT(Math::ApproxEquals(curveLinear.evaluateIntegrated(0.5f, cache), 0.125f, EPSILON));
-		BS_TEST_ASSERT(Math::ApproxEquals(curveLinear.evaluateIntegrated(1.0f, cache), 0.5f, EPSILON));
+		B3D_TEST_ASSERT(Math::ApproxEquals(curveLinear.evaluateIntegrated(0.0f, cache), 0.0f, EPSILON));
+		B3D_TEST_ASSERT(Math::ApproxEquals(curveLinear.evaluateIntegrated(0.5f, cache), 0.125f, EPSILON));
+		B3D_TEST_ASSERT(Math::ApproxEquals(curveLinear.evaluateIntegrated(1.0f, cache), 0.5f, EPSILON));
 	}
 
 	{
@@ -71,7 +71,7 @@ void CoreTestSuite::testAnimCurveIntegration()
 		float times[] = { 0.0f, 0.5f, 1.0f };
 		for(auto time : times)
 		{
-			BS_TEST_ASSERT(Math::ApproxEquals(curveConstant.evaluateIntegratedDouble(time, cache), evalPosition(1.0f, 0.0f, time), EPSILON));
+			B3D_TEST_ASSERT(Math::ApproxEquals(curveConstant.evaluateIntegratedDouble(time, cache), evalPosition(1.0f, 0.0f, time), EPSILON));
 		}
 	}
 
@@ -81,12 +81,12 @@ void CoreTestSuite::testAnimCurveIntegration()
 		float times[] = { 0.0f, 0.5f, 1.0f, 2.0f, 3.0f, 5.0f, 10.0f };
 		for(auto time : times)
 		{
-			BS_TEST_ASSERT(Math::ApproxEquals(curveAcceleration.evaluateIntegrated(time, cache), evalVelocity(-9.81f, time), EPSILON));
+			B3D_TEST_ASSERT(Math::ApproxEquals(curveAcceleration.evaluateIntegrated(time, cache), evalVelocity(-9.81f, time), EPSILON));
 		}
 
 		std::pair<float, float> range = curveAcceleration.calculateRangeIntegrated(cache);
-		BS_TEST_ASSERT(Math::ApproxEquals(range.first, -98.1f, EPSILON));
-		BS_TEST_ASSERT(Math::ApproxEquals(range.second, 0.0f, EPSILON));
+		B3D_TEST_ASSERT(Math::ApproxEquals(range.first, -98.1f, EPSILON));
+		B3D_TEST_ASSERT(Math::ApproxEquals(range.second, 0.0f, EPSILON));
 	}
 
 	{
@@ -95,12 +95,12 @@ void CoreTestSuite::testAnimCurveIntegration()
 		float times[] = { 0.0f, 0.5f, 1.0f, 2.0f, 3.0f, 5.0f, 10.0f };
 		for(auto time : times)
 		{
-			BS_TEST_ASSERT(Math::ApproxEquals(curveAcceleration.evaluateIntegratedDouble(time, cache), evalPosition(-9.81f, 0.0f, time)));
+			B3D_TEST_ASSERT(Math::ApproxEquals(curveAcceleration.evaluateIntegratedDouble(time, cache), evalPosition(-9.81f, 0.0f, time)));
 		}
 
 		std::pair<float, float> range = curveAcceleration.calculateRangeIntegratedDouble(cache);
-		BS_TEST_ASSERT(Math::ApproxEquals(range.first, -490.5f, EPSILON));
-		BS_TEST_ASSERT(Math::ApproxEquals(range.second, 0.0f, EPSILON));
+		B3D_TEST_ASSERT(Math::ApproxEquals(range.first, -490.5f, EPSILON));
+		B3D_TEST_ASSERT(Math::ApproxEquals(range.second, 0.0f, EPSILON));
 	}
 }
 
@@ -132,7 +132,7 @@ void CoreTestSuite::testLookupTable()
 		Vector3 valueCurve = curve.evaluate(t);
 
 		for(u32 j = 0; j < 3; j++)
-			BS_TEST_ASSERT(Math::ApproxEquals(valueLookup[j], valueCurve[j], EPSILON));
+			B3D_TEST_ASSERT(Math::ApproxEquals(valueLookup[j], valueCurve[j], EPSILON));
 	}
 }
 

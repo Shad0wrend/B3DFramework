@@ -333,7 +333,7 @@ namespace bs
 			u32 NextFreePageInfo;
 		};
 
-		static BS_THREADLOCAL BufferData* MemBuffer;
+		static B3D_THREADLOCAL BufferData* MemBuffer;
 
 		/**	Allocates an initial set of buffers that will be reused while parsing text data. */
 		static void InitAlloc();

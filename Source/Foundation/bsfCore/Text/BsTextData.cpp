@@ -569,7 +569,7 @@ void TextDataBase::InitAlloc()
 		MemBuffer = B3DNew<BufferData>();
 }
 
-BS_THREADLOCAL TextDataBase::BufferData* TextDataBase::MemBuffer = nullptr;
+B3D_THREADLOCAL TextDataBase::BufferData* TextDataBase::MemBuffer = nullptr;
 
 TextDataBase::BufferData::BufferData()
 {

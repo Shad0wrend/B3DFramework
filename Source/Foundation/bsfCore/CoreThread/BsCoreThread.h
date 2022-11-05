@@ -68,7 +68,7 @@ namespace bs
 		 *  members will not have external linkage. */
 		struct QueueData
 		{
-			static BS_THREADLOCAL ThreadQueueContainer* current;
+			static B3D_THREADLOCAL ThreadQueueContainer* current;
 		};
 
 	public:

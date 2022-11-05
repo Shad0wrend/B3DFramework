@@ -67,7 +67,7 @@ void TaskGroup::Wait()
 TaskScheduler::TaskScheduler()
 	: mTaskQueue(&TaskScheduler::TaskCompare)
 {
-	mMaxActiveTasks = BS_THREAD_HARDWARE_CONCURRENCY;
+	mMaxActiveTasks = B3D_THREAD_HARDWARE_CONCURRENCY;
 
 	mTaskSchedulerThread = ThreadPool::Instance().Run("TaskScheduler", std::bind(&TaskScheduler::RunMain, this));
 }

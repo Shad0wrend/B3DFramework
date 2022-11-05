@@ -17,13 +17,13 @@ namespace bs
 	 */
 
 	/** Returns the number of logical CPU cores. */
-#define BS_THREAD_HARDWARE_CONCURRENCY std::thread::hardware_concurrency()
+#define B3D_THREAD_HARDWARE_CONCURRENCY std::thread::hardware_concurrency()
 
 	/** Returns the ThreadId of the current thread. */
-#define BS_THREAD_CURRENT_ID std::this_thread::get_id()
+#define B3D_CURRENT_THREAD_ID std::this_thread::get_id()
 
 	/** Causes the current thread to sleep for the provided amount of milliseconds. */
-#define BS_THREAD_SLEEP(ms) std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+#define B3D_THREAD_SLEEP(ms) std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 
 	/** Wrapper for the C++ std::mutex. */
 	using Mutex = std::mutex;

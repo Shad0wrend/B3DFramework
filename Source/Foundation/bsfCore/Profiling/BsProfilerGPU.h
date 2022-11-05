@@ -218,7 +218,7 @@ namespace bs
 	B3D_CORE_EXPORT ProfilerGPU& GetProfilerGPU();
 
 	/** Profiling macros that allow profiling functionality to be disabled at compile time. */
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 #	define BS_GPU_PROFILE_BEGIN(name) GetProfilerGPU().BeginSample(name);
 #	define BS_GPU_PROFILE_END(name) GetProfilerGPU().EndSample(name);
 #else
@@ -232,7 +232,7 @@ namespace bs
 	 */
 	struct ProfileGPUBlock
 	{
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 		ProfileGPUBlock(ProfilerString name)
 		{
 			mSampleName = std::move(name);
@@ -243,7 +243,7 @@ namespace bs
 		{}
 #endif
 
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 		~ProfileGPUBlock()
 		{
 			GetProfilerGPU().EndSample(mSampleName);
@@ -251,7 +251,7 @@ namespace bs
 #endif
 
 	private:
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 		ProfilerString mSampleName;
 #endif
 	};

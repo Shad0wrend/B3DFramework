@@ -150,7 +150,7 @@ PixelData D3D11Texture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face,
 	if(mProperties.GetNumSamples() > 1)
 		B3D_EXCEPT(InvalidStateException, "Multisampled textures cannot be accessed from the CPU directly.");
 
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 	if(options == GBL_READ_ONLY || options == GBL_READ_WRITE)
 	{
 		B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResRead, RenderStatObject_Texture);

@@ -159,7 +159,7 @@ void ProfilerCPU::PreciseProfileData::ResumeLastSample()
 	Samples.erase(Samples.end() - 1);
 }
 
-BS_THREADLOCAL ProfilerCPU::ThreadInfo* ProfilerCPU::ThreadInfo::activeThread = nullptr;
+B3D_THREADLOCAL ProfilerCPU::ThreadInfo* ProfilerCPU::ThreadInfo::activeThread = nullptr;
 
 ProfilerCPU::ThreadInfo::ThreadInfo()
 	: FrameAlloc(1024 * 512)

@@ -69,7 +69,7 @@ B3D_LOG_CATEGORY_IMPL(Script)
 B3D_LOG_CATEGORY_IMPL(Importer)
 
 CoreApplication::CoreApplication(START_UP_DESC desc)
-	: mPrimaryWindow(nullptr), mStartUpDesc(desc), mRendererPlugin(nullptr), mIsFrameRenderingFinished(true), mSimThreadId(BS_THREAD_CURRENT_ID), mRunMainLoop(false)
+	: mPrimaryWindow(nullptr), mStartUpDesc(desc), mRendererPlugin(nullptr), mIsFrameRenderingFinished(true), mSimThreadId(B3D_CURRENT_THREAD_ID), mRunMainLoop(false)
 {
 	// Ensure all errors are reported properly
 	CrashHandler::StartUp(desc.CrashHandling);
@@ -143,7 +143,7 @@ CoreApplication::~CoreApplication()
 
 void CoreApplication::OnStartUp()
 {
-	u32 numWorkerThreads = BS_THREAD_HARDWARE_CONCURRENCY - 1; // Number of cores while excluding current thread.
+	u32 numWorkerThreads = B3D_THREAD_HARDWARE_CONCURRENCY - 1; // Number of cores while excluding current thread.
 
 	Platform::StartUpInternal();
 	MemStack::BeginThread();

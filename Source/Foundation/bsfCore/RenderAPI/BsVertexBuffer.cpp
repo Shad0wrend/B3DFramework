@@ -75,7 +75,7 @@ void VertexBuffer::Initialize()
 
 void* VertexBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx)
 {
-#if BS_PROFILING_ENABLED
+#if B3D_PROFILING_ENABLED
 	if(options == GBL_READ_ONLY || options == GBL_READ_WRITE)
 	{
 		B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResRead, RenderStatObject_VertexBuffer);

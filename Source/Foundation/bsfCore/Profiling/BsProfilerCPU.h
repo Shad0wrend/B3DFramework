@@ -229,7 +229,7 @@ namespace bs
 			/** Deletes the provided block. */
 			void ReleaseBlock(ProfiledBlock* block);
 
-			static BS_THREADLOCAL ThreadInfo* activeThread;
+			static B3D_THREADLOCAL ThreadInfo* activeThread;
 			bool IsActive = false;
 
 			ProfiledBlock* RootBlock = nullptr;

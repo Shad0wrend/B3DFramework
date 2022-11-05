@@ -23,7 +23,7 @@ namespace bs
 
 		struct
 		{
-#if BS_ENDIAN == BS_ENDIAN_BIG
+#if B3D_ENDIAN == B3D_ENDIAN_BIG
 			u32 negative : 1;
 			u32 exponent : 8;
 			u32 mantissa : 23;
@@ -42,7 +42,7 @@ namespace bs
 
 		struct
 		{
-#if BS_ENDIAN == BS_ENDIAN_BIG
+#if B3D_ENDIAN == B3D_ENDIAN_BIG
 			u32 exponent : 5;
 			u32 mantissa : 5;
 #else
@@ -59,7 +59,7 @@ namespace bs
 
 		struct
 		{
-#if BS_ENDIAN == BS_ENDIAN_BIG
+#if B3D_ENDIAN == B3D_ENDIAN_BIG
 			u32 exponent : 5;
 			u32 mantissa : 6;
 #else
@@ -434,7 +434,7 @@ namespace bs
 				((u16*)dest)[0] = (u16)value;
 				break;
 			case 3:
-#if BS_ENDIAN == BS_ENDIAN_BIG
+#if B3D_ENDIAN == B3D_ENDIAN_BIG
 				((u8*)dest)[0] = (u8)((value >> 16) & 0xFF);
 				((u8*)dest)[1] = (u8)((value >> 8) & 0xFF);
 				((u8*)dest)[2] = (u8)(value & 0xFF);
@@ -460,7 +460,7 @@ namespace bs
 			case 2:
 				return ((u16*)src)[0];
 			case 3:
-#if BS_ENDIAN == BS_ENDIAN_BIG
+#if B3D_ENDIAN == B3D_ENDIAN_BIG
 				return ((u32)((u8*)src)[0] << 16) |
 					((u32)((u8*)src)[1] << 8) |
 					((u32)((u8*)src)[2]);

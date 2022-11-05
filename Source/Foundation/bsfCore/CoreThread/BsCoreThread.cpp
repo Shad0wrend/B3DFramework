@@ -10,7 +10,7 @@ using namespace std::placeholders;
 using namespace bs;
 
 CoreThread::QueueData CoreThread::mPerThreadQueue;
-BS_THREADLOCAL CoreThread::ThreadQueueContainer* CoreThread::QueueData::current = nullptr;
+B3D_THREADLOCAL CoreThread::ThreadQueueContainer* CoreThread::QueueData::current = nullptr;
 
 #if BS_CORE_THREAD_IS_MAIN
 bool CoreThread::sAppStarted = false;
@@ -23,12 +23,12 @@ void CoreThread::OnStartUp()
 	for(u32 i = 0; i < kNumSyncBuffers; i++)
 	{
 		mFrameAllocs[i] = B3DNew<FrameAlloc>();
-		mFrameAllocs[i]->SetOwnerThread(BS_THREAD_CURRENT_ID); // Sim thread
+		mFrameAllocs[i]->SetOwnerThread(B3D_CURRENT_THREAD_ID); // Sim thread
 	}
 
-	mSimThreadId = BS_THREAD_CURRENT_ID;
+	mSimThreadId = B3D_CURRENT_THREAD_ID;
 	mCoreThreadId = mSimThreadId; // For now
-	mCommandQueue = B3DNew<CommandQueue<CommandQueueSync>>(BS_THREAD_CURRENT_ID);
+	mCommandQueue = B3DNew<CommandQueue<CommandQueueSync>>(B3D_CURRENT_THREAD_ID);
 
 	InitCoreThread();
 }
@@ -55,7 +55,7 @@ CoreThread::~CoreThread()
 
 	for(u32 i = 0; i < kNumSyncBuffers; i++)
 	{
-		mFrameAllocs[i]->SetOwnerThread(BS_THREAD_CURRENT_ID); // Sim thread
+		mFrameAllocs[i]->SetOwnerThread(B3D_CURRENT_THREAD_ID); // Sim thread
 		B3DDelete(mFrameAllocs[i]);
 	}
 }
@@ -108,7 +108,7 @@ void CoreThread::RunCoreThread()
 		Lock lock(mThreadStartedMutex);
 
 		mCoreThreadStarted = true;
-		mCoreThreadId = BS_THREAD_CURRENT_ID;
+		mCoreThreadId = B3D_CURRENT_THREAD_ID;
 	}
 
 	mCoreThreadStartedCondition.notify_one();
@@ -154,7 +154,7 @@ void CoreThread::ShutdownCoreThread()
 	// Wake all threads. They will quit after they see the shutdown flag
 	mCommandReadyCondition.notify_all();
 
-	mCoreThreadId = BS_THREAD_CURRENT_ID;
+	mCoreThreadId = B3D_CURRENT_THREAD_ID;
 
 #	if !BS_CORE_THREAD_IS_MAIN
 	mCoreThread.BlockUntilComplete();
@@ -166,10 +166,10 @@ SPtr<CommandQueue<CommandQueueSync>> CoreThread::GetQueue()
 {
 	if(mPerThreadQueue.current == nullptr)
 	{
-		SPtr<CommandQueue<CommandQueueSync>> newQueue = B3DMakeShared<CommandQueue<CommandQueueSync>>(BS_THREAD_CURRENT_ID);
+		SPtr<CommandQueue<CommandQueueSync>> newQueue = B3DMakeShared<CommandQueue<CommandQueueSync>>(B3D_CURRENT_THREAD_ID);
 		mPerThreadQueue.current = B3DNew<ThreadQueueContainer>();
 		mPerThreadQueue.current->Queue = newQueue;
-		mPerThreadQueue.current->IsMain = BS_THREAD_CURRENT_ID == mSimThreadId;
+		mPerThreadQueue.current->IsMain = B3D_CURRENT_THREAD_ID == mSimThreadId;
 
 		Lock lock(mSubmitMutex);
 		mAllQueues.push_back(mPerThreadQueue.current);
@@ -262,7 +262,7 @@ void CoreThread::Submit(bool blockUntilComplete)
 AsyncOp CoreThread::QueueReturnCommand(std::function<void(AsyncOp&)> commandCallback, CoreThreadQueueFlags flags)
 {
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-	B3D_ASSERT(BS_THREAD_CURRENT_ID != GetCoreThreadId() && "Cannot queue commands on the core thread for the core thread");
+	B3D_ASSERT(B3D_CURRENT_THREAD_ID != GetCoreThreadId() && "Cannot queue commands on the core thread for the core thread");
 #endif
 
 	if(!flags.IsSet(CTQF_InternalQueue))
@@ -297,7 +297,7 @@ AsyncOp CoreThread::QueueReturnCommand(std::function<void(AsyncOp&)> commandCall
 void CoreThread::QueueCommand(std::function<void()> commandCallback, CoreThreadQueueFlags flags)
 {
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-	B3D_ASSERT(BS_THREAD_CURRENT_ID != GetCoreThreadId() && "Cannot queue commands on the core thread for the core thread");
+	B3D_ASSERT(B3D_CURRENT_THREAD_ID != GetCoreThreadId() && "Cannot queue commands on the core thread for the core thread");
 #endif
 
 	if(!flags.IsSet(CTQF_InternalQueue))
@@ -332,7 +332,7 @@ void CoreThread::Update()
 		mFrameAllocs[i]->SetOwnerThread(mCoreThreadId);
 
 	mActiveFrameAlloc = (mActiveFrameAlloc + 1) % 2;
-	mFrameAllocs[mActiveFrameAlloc]->SetOwnerThread(BS_THREAD_CURRENT_ID); // Sim thread
+	mFrameAllocs[mActiveFrameAlloc]->SetOwnerThread(B3D_CURRENT_THREAD_ID); // Sim thread
 	mFrameAllocs[mActiveFrameAlloc]->Clear();
 }
 
@@ -385,7 +385,7 @@ CoreThread& GetCoreThread()
 void ThrowIfNotCoreThread()
 {
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-	if(BS_THREAD_CURRENT_ID != CoreThread::Instance().GetCoreThreadId())
+	if(B3D_CURRENT_THREAD_ID != CoreThread::Instance().GetCoreThreadId())
 		B3D_EXCEPT(InternalErrorException, "This method can only be accessed from the core thread.");
 #endif
 }
@@ -393,7 +393,7 @@ void ThrowIfNotCoreThread()
 void ThrowIfCoreThread()
 {
 #if !BS_FORCE_SINGLETHREADED_RENDERING
-	if(BS_THREAD_CURRENT_ID == CoreThread::Instance().GetCoreThreadId())
+	if(B3D_CURRENT_THREAD_ID == CoreThread::Instance().GetCoreThreadId())
 		B3D_EXCEPT(InternalErrorException, "This method cannot be accessed from the core thread.");
 #endif
 }

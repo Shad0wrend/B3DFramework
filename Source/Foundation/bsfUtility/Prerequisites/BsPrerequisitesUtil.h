@@ -132,7 +132,7 @@
  *	Very specialized base classes, templates and helper code used for construction of more concrete types.
  */
 
-#define BS_PROFILING_ENABLED 1
+#define B3D_PROFILING_ENABLED 1
 
 // Config from the build system
 #include "BsFrameworkConfig.h"
@@ -197,10 +197,10 @@
 #endif
 
 #if B3D_DEBUG
-#	define BS_DEBUG_ONLY(x) x
+#	define B3D_DEBUG_ONLY(x) x
 #	define B3D_ASSERT(x) assert(x)
 #else
-#	define BS_DEBUG_ONLY(x)
+#	define B3D_DEBUG_ONLY(x)
 #	define B3D_ASSERT(x)
 #endif
 

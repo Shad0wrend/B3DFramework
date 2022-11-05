@@ -24,7 +24,7 @@ namespace bs
 
 		bool IsValidThread(ThreadId ownerThread) const
 		{
-			return BS_THREAD_CURRENT_ID == ownerThread;
+			return B3D_CURRENT_THREAD_ID == ownerThread;
 		}
 
 		LockGuard Lock();

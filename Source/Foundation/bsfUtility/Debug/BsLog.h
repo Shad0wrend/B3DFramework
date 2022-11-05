@@ -128,7 +128,7 @@ namespace bs
 		static bool CategoryExists(u32 id);
 
 		/** Returns the number of registered log categories. */
-		static u32 GetNumCategories() { return (u32)sCategories.size(); };
+		static u32 GetNumCategories() { return (u32)GetCategoriesMap().size(); };
 
 		/**
 		 *  Get the name of the category based on its ID.
@@ -159,6 +159,9 @@ namespace bs
 	private:
 		friend class Debug;
 
+		/** Returns a modifyable map containing all the log categories. */
+		static UnorderedMap<u32, String>& GetCategoriesMap();
+
 		/** Returns all log entries, including those marked as unread. */
 		Vector<LogEntry> GetAllEntries() const;
 
@@ -167,8 +170,6 @@ namespace bs
 		u64 mHash = 0;
 
 		mutable RecursiveMutex mMutex;
-
-		static UnorderedMap<u32, String> sCategories;
 	};
 
 	/** @} */

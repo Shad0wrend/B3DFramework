@@ -204,7 +204,7 @@ Resources::LoadInfo Resources::LoadInternal(const UUID& uuid, const Path& filePa
 				loadData->Progress.store(0.0f, std::memory_order_relaxed);
 
 				// Make resource listener trigger before exit if loading synchronously on the main thread
-				loadData->NotifyImmediately = synchronous && BS_THREAD_CURRENT_ID == GetCoreApplication().GetSimThreadId();
+				loadData->NotifyImmediately = synchronous && B3D_CURRENT_THREAD_ID == GetCoreApplication().GetSimThreadId();
 
 				// Register dependencies and count them so we know when the resource is fully loaded
 				if(loadDependencies && savedResourceData != nullptr)
@@ -236,7 +236,7 @@ Resources::LoadInfo Resources::LoadInternal(const UUID& uuid, const Path& filePa
 						loadData->Progress.store(0.0f, std::memory_order_relaxed);
 
 						// Make resource listener trigger before exit if loading synchronously
-						loadData->NotifyImmediately = synchronous && BS_THREAD_CURRENT_ID == GetCoreApplication().GetSimThreadId();
+						loadData->NotifyImmediately = synchronous && B3D_CURRENT_THREAD_ID == GetCoreApplication().GetSimThreadId();
 					}
 					else
 						loadData = mInProgressResources[uuid];

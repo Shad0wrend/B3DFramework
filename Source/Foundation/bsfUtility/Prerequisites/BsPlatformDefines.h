@@ -17,39 +17,39 @@
 #define B3D_ARCHITECTURE_ID_x86_32 1
 #define B3D_ARCHITECTURE_ID_x86_64 2
 
-#define BS_ENDIAN_LITTLE 1
-#define BS_ENDIAN_BIG 2
-#define BS_ENDIAN BS_ENDIAN_LITTLE
+#define B3D_ENDIAN_ID_LITTLE 1
+#define B3D_ENDIAN_BIG 2
+#define B3D_ENDIAN B3D_ENDIAN_ID_LITTLE
 
 // Finds the compiler type and version.
 #if defined(__clang__)
 #	define B3D_COMPILER B3D_COMPILER_ID_CLANG
-#	define BS_COMP_VER __clang_version__
-#	define BS_THREADLOCAL __thread
-#	define BS_STDCALL __attribute__((stdcall))
-#	define BS_CDECL __attribute__((cdecl))
-#	define BS_FALLTHROUGH [[clang::fallthrough]];
+#	define B3D_COMPILER_VERSION __clang_version__
+#	define B3D_THREADLOCAL __thread
+#	define B3D_STDCALL __attribute__((stdcall))
+#	define B3D_CDECL __attribute__((cdecl))
+#	define B3D_FALLTHROUGH [[clang::fallthrough]];
 #elif defined(__GNUC__) // Check after Clang, as Clang defines this too
 #	define B3D_COMPILER B3D_COMPILER_ID_GCC
-#	define BS_COMP_VER (((__GNUC__)*100) + (__GNUC_MINOR__ * 10) + __GNUC_PATCHLEVEL__)
-#	define BS_THREADLOCAL __thread
-#	define BS_STDCALL __attribute__((stdcall))
-#	define BS_CDECL __attribute__((cdecl))
-#	define BS_FALLTHROUGH __attribute__((fallthrough));
+#	define B3D_COMPILER_VERSION (((__GNUC__)*100) + (__GNUC_MINOR__ * 10) + __GNUC_PATCHLEVEL__)
+#	define B3D_THREADLOCAL __thread
+#	define B3D_STDCALL __attribute__((stdcall))
+#	define B3D_CDECL __attribute__((cdecl))
+#	define B3D_FALLTHROUGH __attribute__((fallthrough));
 #elif defined(__INTEL_COMPILER)
 #	define B3D_COMPILER B3D_COMPILER_ID_INTEL
-#	define BS_COMP_VER __INTEL_COMPILER
-#	define BS_STDCALL __stdcall
-#	define BS_CDECL __cdecl
-#	define BS_FALLTHROUGH
-// BS_THREADLOCAL define is down below because Intel compiler defines it differently based on platform
+#	define B3D_COMPILER_VERSION __INTEL_COMPILER
+#	define B3D_STDCALL __stdcall
+#	define B3D_CDECL __cdecl
+#	define B3D_FALLTHROUGH
+// B3D_THREADLOCAL define is down below because Intel compiler defines it differently based on platform
 #elif defined(_MSC_VER) // Check after Clang and Intel, since we could be building with either within VS
 #	define B3D_COMPILER B3D_COMPILER_ID_MSVC
-#	define BS_COMP_VER _MSC_VER
-#	define BS_THREADLOCAL __declspec(thread)
-#	define BS_STDCALL __stdcall
-#	define BS_CDECL __cdecl
-#	define BS_FALLTHROUGH
+#	define B3D_COMPILER_VERSION _MSC_VER
+#	define B3D_THREADLOCAL __declspec(thread)
+#	define B3D_STDCALL __stdcall
+#	define B3D_CDECL __cdecl
+#	define B3D_FALLTHROUGH
 #	undef __PRETTY_FUNCTION__
 #	define __PRETTY_FUNCTION__ __FUNCSIG__
 #else
@@ -124,7 +124,7 @@
 #	endif
 
 #	if B3D_COMPILER == B3D_COMPILER_ID_INTEL
-#		define BS_THREADLOCAL __declspec(thread)
+#		define B3D_THREADLOCAL __declspec(thread)
 #	endif
 #endif
 
@@ -137,6 +137,6 @@
 #	endif
 
 #	if B3D_COMPILER == B3D_COMPILER_ID_INTEL
-#		define BS_THREADLOCAL __thread
+#		define B3D_THREADLOCAL __thread
 #	endif
 #endif
