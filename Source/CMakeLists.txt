@@ -193,6 +193,7 @@ else() # Otherwise include only chosen ones
 	
 	if((SCRIPT_API AND (NOT SCRIPT_API MATCHES "None")) OR B3D_IS_ENGINE)
 		add_subdirectory(Scripting/bsfScript)
+		add_subdirectory(Scripting/bsfSharpExec)
 	endif()
 	
 	if((SCRIPT_API AND SCRIPT_API MATCHES "C#") OR B3D_IS_ENGINE)

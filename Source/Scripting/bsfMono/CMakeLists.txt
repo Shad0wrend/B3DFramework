@@ -1,5 +1,5 @@
 # Source files and their filters
-include(CMakeSources.cmake)
+B3DGlobSourceFiles(${CMAKE_CURRENT_SOURCE_DIR} "" "" BS_MONO_SRC)
 
 # Ensure pre-built binary dependencies are up to date
 if(B3D_USE_BUNDLED_LIBRARIES)

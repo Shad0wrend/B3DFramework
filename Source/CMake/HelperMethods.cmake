@@ -38,6 +38,7 @@ function(B3DGlobSourceFiles parentPath path foldersToIgnore outSourceFiles)
 				# Skip platform specific files that aren't for the current platform
 				if( (${child} MATCHES "Win32" AND NOT WIN32) OR
 				(${child} MATCHES "MacOS" AND NOT APPLE) OR
+				(${child} MATCHES "macOS" AND NOT APPLE) OR
 				(${child} MATCHES "Linux" AND NOT LINUX) OR
 				(${child} MATCHES "Unix" AND NOT LINUX AND NOT APPLE))
 					continue()
