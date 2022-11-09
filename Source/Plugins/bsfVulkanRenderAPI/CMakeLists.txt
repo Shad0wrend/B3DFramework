@@ -39,14 +39,16 @@ target_include_directories(bsfVulkanRenderAPI PRIVATE
 
 # Libraries	
 ## External libs: Vulkan, MoltenVK, glslang, SPIR-V Cross
+
+### Note: It's important to link glslang before Vulkan, as it contains its own glslang libraries. This ensures the search finds out local version first.
+target_link_libraries(bsfVulkanRenderAPI PRIVATE ${glslang_LIBRARIES})
+
 if(APPLE) # MacOS
 	target_link_libraries(bsfVulkanRenderAPI PRIVATE ${MoltenVK_LIBRARIES})
 	target_link_libraries(bsfVulkanRenderAPI PRIVATE ${SPIRVCross_LIBRARIES})
 else()
 	target_link_libraries(bsfVulkanRenderAPI PRIVATE ${Vulkan_LIBRARIES})
 endif()
-
-target_link_libraries(bsfVulkanRenderAPI PRIVATE ${glslang_LIBRARIES})
 
 ## OS libs
 if(APPLE) # MacOS
