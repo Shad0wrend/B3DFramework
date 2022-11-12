@@ -745,7 +745,7 @@ void D3D11RenderWindow::CreateSizeDependedD3DResources()
 		texDesc.NumSamples = GetProperties().MultisampleCount;
 
 		mDepthStencilBuffer = Texture::Create(texDesc);
-		mDepthStencilView = mDepthStencilBuffer->RequestView(0, 1, 0, 1, GVU_DEPTHSTENCIL);
+		mDepthStencilView = mDepthStencilBuffer->RequestView(TextureSurface(0, 1, 0, 1), GVU_DEPTHSTENCIL);
 	}
 	else
 		mDepthStencilBuffer = nullptr;

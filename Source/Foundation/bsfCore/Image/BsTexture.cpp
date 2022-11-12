@@ -546,7 +546,7 @@ void Texture::ClearImpl(const Color& value, u32 mipLevel, u32 face, u32 queueIdx
 /* 								TEXTURE VIEW                      		*/
 /************************************************************************/
 
-SPtr<TextureView> Texture::CreateView(const TEXTURE_VIEW_DESC& desc)
+SPtr<TextureView> Texture::CreateView(const TextureViewInformation& desc)
 {
 	return B3DMakeSharedFromExisting<TextureView>(new(B3DAllocate<TextureView>()) TextureView(desc));
 }
@@ -556,17 +556,14 @@ void Texture::ClearBufferViews()
 	mTextureViews.clear();
 }
 
-SPtr<TextureView> Texture::RequestView(u32 mostDetailMip, u32 numMips, u32 firstArraySlice, u32 numArraySlices, GpuViewUsage usage)
+SPtr<TextureView> Texture::RequestView(const TextureSurface& surface, GpuViewUsage usage)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
 	const TextureProperties& texProps = GetProperties();
 
-	TEXTURE_VIEW_DESC key;
-	key.MostDetailMip = mostDetailMip;
-	key.NumMips = numMips == 0 ? (texProps.GetNumMipmaps() + 1) : numMips;
-	key.FirstArraySlice = firstArraySlice;
-	key.NumArraySlices = numArraySlices == 0 ? texProps.GetNumFaces() : numArraySlices;
+	TextureViewInformation key;
+	key.Surface = surface;
 	key.Usage = usage;
 
 	auto iterFind = mTextureViews.find(key);

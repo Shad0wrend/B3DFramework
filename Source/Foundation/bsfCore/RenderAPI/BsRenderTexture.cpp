@@ -199,7 +199,8 @@ void RenderTexture::Initialize()
 			if((texture->GetProperties().GetUsage() & TU_RENDERTARGET) == 0)
 				B3D_EXCEPT(InvalidParametersException, "Provided texture is not created with render target usage.");
 
-			mColorSurfaces[i] = texture->RequestView(mDesc.ColorSurfaces[i].MipLevel, 1, mDesc.ColorSurfaces[i].Face, mDesc.ColorSurfaces[i].NumFaces, GVU_RENDERTARGET);
+			const TextureSurface textureSurface(mDesc.ColorSurfaces[i].MipLevel, 1, mDesc.ColorSurfaces[i].Face, mDesc.ColorSurfaces[i].NumFaces);
+			mColorSurfaces[i] = texture->RequestView(textureSurface, GVU_RENDERTARGET);
 		}
 	}
 
@@ -210,7 +211,8 @@ void RenderTexture::Initialize()
 		if((texture->GetProperties().GetUsage() & TU_DEPTHSTENCIL) == 0)
 			B3D_EXCEPT(InvalidParametersException, "Provided texture is not created with depth stencil usage.");
 
-		mDepthStencilSurface = texture->RequestView(mDesc.DepthStencilSurface.MipLevel, 1, mDesc.DepthStencilSurface.Face, mDesc.DepthStencilSurface.NumFaces, GVU_DEPTHSTENCIL);
+		const TextureSurface textureSurface(mDesc.DepthStencilSurface.MipLevel, 1, mDesc.DepthStencilSurface.Face, mDesc.DepthStencilSurface.NumFaces);
+		mDepthStencilSurface = texture->RequestView(textureSurface, GVU_DEPTHSTENCIL);
 	}
 
 	ThrowIfBuffersDontMatch();
@@ -252,8 +254,8 @@ void RenderTexture::ThrowIfBuffersDontMatch() const
 		u32 curMsCount = curTexProps.GetNumSamples();
 		u32 firstMsCount = firstTexProps.GetNumSamples();
 
-		u32 curNumSlices = mColorSurfaces[i]->GetNumArraySlices();
-		u32 firstNumSlices = mColorSurfaces[firstSurfaceIdx]->GetNumArraySlices();
+		u32 curNumSlices = mColorSurfaces[i]->GetInformation().Surface.FaceCount;
+		u32 firstNumSlices = mColorSurfaces[firstSurfaceIdx]->GetInformation().Surface.FaceCount;
 
 		if(curMsCount == 0)
 			curMsCount = 1;
@@ -280,7 +282,8 @@ void RenderTexture::ThrowIfBuffersDontMatch() const
 	if(firstSurfaceIdx != (u32)-1)
 	{
 		const TextureProperties& firstTexProps = mDesc.ColorSurfaces[firstSurfaceIdx].Texture->GetProperties();
-		SPtr<TextureView> firstSurfaceView = mColorSurfaces[firstSurfaceIdx];
+		const SPtr<TextureView> firstSurfaceView = mColorSurfaces[firstSurfaceIdx];
+		const TextureSurface& firstViewSurface = firstSurfaceView->GetInformation().Surface;
 
 		u32 numSlices;
 		if(firstTexProps.GetTextureType() == TEX_TYPE_3D)
@@ -288,14 +291,14 @@ void RenderTexture::ThrowIfBuffersDontMatch() const
 		else
 			numSlices = firstTexProps.GetNumFaces();
 
-		if((firstSurfaceView->GetFirstArraySlice() + firstSurfaceView->GetNumArraySlices()) > numSlices)
+		if((firstViewSurface.Face + firstViewSurface.FaceCount) > numSlices)
 		{
-			B3D_EXCEPT(InvalidParametersException, "Provided number of faces is out of range. Face: " + ToString(firstSurfaceView->GetFirstArraySlice() + firstSurfaceView->GetNumArraySlices()) + ". Max num faces: " + ToString(numSlices));
+			B3D_EXCEPT(InvalidParametersException, "Provided number of faces is out of range. Face: " + ToString(firstViewSurface.Face + firstViewSurface.FaceCount) + ". Max num faces: " + ToString(numSlices));
 		}
 
-		if(firstSurfaceView->GetMostDetailedMip() > firstTexProps.GetNumMipmaps())
+		if(firstViewSurface.MipLevel > firstTexProps.GetNumMipmaps())
 		{
-			B3D_EXCEPT(InvalidParametersException, "Provided number of mip maps is out of range. Mip level: " + ToString(firstSurfaceView->GetMostDetailedMip()) + ". Max num mipmaps: " + ToString(firstTexProps.GetNumMipmaps()));
+			B3D_EXCEPT(InvalidParametersException, "Provided number of mip maps is out of range. Mip level: " + ToString(firstViewSurface.MipLevel) + ". Max num mipmaps: " + ToString(firstTexProps.GetNumMipmaps()));
 		}
 
 		if(mDepthStencilSurface == nullptr)

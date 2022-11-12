@@ -212,7 +212,10 @@ namespace bs
 		}
 
 		/** Returns the nearest integer equal or lower of the provided value. */
-		static float Floor(float val) { return (float)std::floor(val); }
+		static float Floor(float val) { return std::floor(val); }
+
+		/** Returns the nearest integer equal or lower of the provided value. */
+		static double Floor(double val) { return std::floor(val); }
 
 		/** Returns the nearest integer equal or lower of the provided value. */
 		static float FastFloor(float val) { return (val >= 0) ? (float)val : (float)val - 1.0f; }
@@ -244,6 +247,19 @@ namespace bs
 		static float RoundToMultiple(float x, float multiple)
 		{
 			return Floor((x + multiple * 0.5f) / multiple) * multiple;
+		}
+
+		/** Rounds @p x to the nearest multiple of @p multiple. */
+		static double RoundToMultiple(double x, double multiple)
+		{
+			return Floor((x + multiple * 0.5) / multiple) * multiple;
+		}
+
+		/** Rounds @p x to the nearest multiple of @p multiple. */
+		template <class T>
+		static T RoundToMultiple(T x, T multiple)
+		{
+			return ((x + multiple - 1) / multiple) * multiple;
 		}
 
 		/** Clamp a value within an inclusive range. */

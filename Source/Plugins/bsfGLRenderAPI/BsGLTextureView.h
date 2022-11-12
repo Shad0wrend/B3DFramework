@@ -28,7 +28,7 @@ namespace bs
 		protected:
 			friend class GLTexture;
 
-			GLTextureView(const GLTexture* texture, const TEXTURE_VIEW_DESC& desc);
+			GLTextureView(const GLTexture* texture, const TextureViewInformation& desc);
 
 		private:
 			GLuint mViewID = 0;

@@ -17,16 +17,17 @@ namespace bs
 		class VulkanImageSubresource;
 
 		/** Descriptor used for initializing a VulkanImage. */
-		struct VULKAN_IMAGE_DESC
+		struct VulkanImageCreateInformation
 		{
-			VkImage Image; /**< Internal Vulkan image object */
+			VkImage Image = VK_NULL_HANDLE; /**< Internal Vulkan image object */
 			VmaAllocation Allocation; /** Information about the memory allocated for this image. */
-			VkImageLayout Layout; /**< Initial layout of the image. */
-			TextureType Type; /**< Type of the image. */
-			VkFormat Format; /**< Pixel format of the image. */
-			u32 NumFaces; /**< Number of faces (array slices, or cube-map faces). */
-			u32 NumMipLevels; /**< Number of mipmap levels per face. */
-			u32 Usage; /** Determines how will the image be used. */
+			VkImageLayout Layout = VK_IMAGE_LAYOUT_UNDEFINED; /**< Initial layout of the image. */
+			TextureType Type = TEX_TYPE_2D; /**< Type of the image. */
+			VkFormat Format = VK_FORMAT_UNDEFINED; /**< Pixel format of the image. */
+			u32 FaceCount = 1; /**< Number of faces (array slices, or cube-map faces). */
+			u32 DepthSliceCount = 1; /**< Number of depth slices (only relevant for 3D textures). */
+			u32 MipLevelCount = 1; /**< Number of mipmap levels per face. */
+			u32 Usage = 0; /** Determines how will the image be used. */
 		};
 
 		/** Wrapper around a Vulkan image object that manages its usage and lifetime. */
@@ -51,7 +52,7 @@ namespace bs
 			 * @param[in]	ownsImage	If true, this object will take care of releasing the image and its memory, otherwise
 			 *							it is expected they will be released externally.
 			 */
-			VulkanImage(VulkanResourceManager* owner, const VULKAN_IMAGE_DESC& desc, bool ownsImage = true);
+			VulkanImage(VulkanResourceManager* owner, const VulkanImageCreateInformation& desc, bool ownsImage = true);
 			~VulkanImage();
 
 			/** Returns the internal handle to the Vulkan object. */
@@ -63,38 +64,38 @@ namespace bs
 			/**
 			 * Returns an image view that covers all faces and mip maps of the texture.
 			 *
-			 * @param[in]	framebuffer	Set to true if the view will be used as a framebuffer attachment. Ensures proper
-			 *							attachment flags are set on the view.
+			 * @param[in]	isPartOfFramebuffer	Set to true if the view will be used as a framebuffer attachment. Ensures proper
+			 *									attachment flags are set on the view.
 			 */
-			VkImageView GetView(bool framebuffer) const;
+			VkImageView GetView(bool isPartOfFramebuffer) const;
 
 			/**
 			 * Returns an image view that covers the specified faces and mip maps of the texture.
 			 *
-			 * @param[in]	surface		Surface that describes which faces and mip levels to retrieve the view for.
-			 * @param[in]	framebuffer	Set to true if the view will be used as a framebuffer attachment. Ensures proper
-			 *							attachment flags are set on the view.
+			 * @param[in]	surface				Surface that describes which faces and mip levels to retrieve the view for.
+			 * @param[in]	isPartOfFramebuffer	Set to true if the view will be used as a framebuffer attachment. Ensures proper
+			 *									attachment flags are set on the view.
 			 */
-			VkImageView GetView(const TextureSurface& surface, bool framebuffer) const;
+			VkImageView GetView(const TextureSurface& surface, bool isPartOfFramebuffer) const;
 
 			/**
 			 * Returns an image view with a specific format.
 			 *
-			 * @param[in]	format		Format to view the texture pixels as.
-			 * @param[in]	framebuffer	Set to true if the view will be used as a framebuffer attachment. Ensures proper
-			 *							attachment flags are set on the view.
+			 * @param[in]	format				Format to view the texture pixels as.
+			 * @param[in]	isPartOfFramebuffer	Set to true if the view will be used as a framebuffer attachment. Ensures proper
+			 *									attachment flags are set on the view.
 			 */
-			VkImageView GetView(VkFormat format, bool framebuffer) const;
+			VkImageView GetView(VkFormat format, bool isPartOfFramebuffer = false) const;
 
 			/**
 			 * Returns an image view that covers the specified faces and mip maps of the texture, with a specific format.
 			 *
 			 * @param[in]	format		Format to view the texture pixels as.
 			 * @param[in]	surface		Surface that describes which faces and mip levels to retrieve the view for.
-			 * @param[in]	framebuffer	Set to true if the view will be used as a framebuffer attachment. Ensures proper
+			 * @param[in]	isPartOfFrameBuffer	Set to true if the view will be used as a framebuffer attachment. Ensures proper
 			 *							attachment flags are set on the view.
 			 */
-			VkImageView GetView(VkFormat format, const TextureSurface& surface, bool framebuffer) const;
+			VkImageView GetView(VkFormat format, const TextureSurface& surface, bool isPartOfFrameBuffer) const;
 
 			/** Get aspect flags that represent the contents of this image. */
 			VkImageAspectFlags GetAspectFlags() const;
@@ -157,15 +158,22 @@ namespace bs
 
 		private:
 			/** Creates a new view of the provided part (or entirety) of surface. */
-			VkImageView CreateView(const TextureSurface& surface, VkFormat format, VkImageAspectFlags aspectMask) const;
+			VkImageView CreateView(const TextureSurface& surface, VkFormat format, VkImageAspectFlags aspectMask, bool isPartOfFramebuffer) const;
+
+			/**
+			 * If layer or mip count in the provided surface is set to zero, ensures they are set to the actual layer count.
+			 * Set @p isPartOfFramebuffer to true if the surface is used as a framebuffer attachment. Returned surface is the
+			 * same as @p surface, for convenience.
+			 */
+			const TextureSurface& CalculateExplicitSurface(TextureSurface& surface, bool isPartOfFramebuffer) const;
 
 			/** Contains information about view for a specific surface(s) of this image. */
-			struct ImageViewInfo
+			struct ImageViewInformation
 			{
 				TextureSurface Surface;
-				bool Framebuffer;
-				VkImageView View;
-				VkFormat Format;
+				bool IsPartOfFramebuffer = false;
+				VkImageView View = VK_NULL_HANDLE;
+				VkFormat Format = VK_FORMAT_UNDEFINED;
 			};
 
 			VkImage mImage;
@@ -175,12 +183,13 @@ namespace bs
 			i32 mUsage;
 			bool mOwnsImage;
 
-			u32 mNumFaces;
-			u32 mNumMipLevels;
+			u32 mFaceCount;
+			u32 mDepthSliceCount;
+			u32 mMipLevelCount;
 			VulkanImageSubresource** mSubresources;
 
 			mutable VkImageViewCreateInfo mImageViewCI;
-			mutable Vector<ImageViewInfo> mImageInfos;
+			mutable Vector<ImageViewInformation> mImageInfos;
 		};
 
 		/** Represents a single sub-resource (face & mip level) of a larger image object. */

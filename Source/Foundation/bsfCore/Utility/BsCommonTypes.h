@@ -615,15 +615,22 @@ namespace bs
 	/**	References a subset of surfaces within a texture. */
 	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering), ExportAsStruct(true)) TextureSurface
 	{
-		TextureSurface(u32 mipLevel = 0, u32 numMipLevels = 1, u32 face = 0, u32 numFaces = 1)
-			: MipLevel(mipLevel), NumMipLevels(numMipLevels), Face(face), NumFaces(numFaces)
+		TextureSurface(u32 mipLevel = 0, u32 mipLevelCount = 1, u32 face = 0, u32 faceCount = 1, bool isBoundAs2DArray = false)
+			: MipLevel(mipLevel), MipLevelCount(mipLevelCount), Face(face), FaceCount(faceCount), IsBoundAs2DArray(isBoundAs2DArray)
 		{}
+
+		bool operator==(const TextureSurface& rhs) const
+		{
+			return MipLevel == rhs.MipLevel && MipLevelCount == rhs.MipLevelCount && Face == rhs.Face && FaceCount == rhs.FaceCount && IsBoundAs2DArray == rhs.IsBoundAs2DArray;
+		}
+
+		bool operator!=(const TextureSurface& rhs) const { return !operator==(rhs); }
 
 		/** First mip level to reference. */
 		u32 MipLevel;
 
 		/** Number of mip levels to reference. Must be greater than zero. */
-		u32 NumMipLevels;
+		u32 MipLevelCount;
 
 		/**
 		 * First face to reference. Face can represent a single cubemap face, or a single array entry in a
@@ -633,7 +640,10 @@ namespace bs
 		u32 Face;
 
 		/** Number of faces to reference, if the texture has more than one. */
-		u32 NumFaces;
+		u32 FaceCount;
+
+		/** Forces a cubemap or a 3D texture to be bound as a 2D texture array. */
+		bool IsBoundAs2DArray;
 
 		/** Surface that covers all texture sub-resources. */
 		static B3D_CORE_EXPORT const TextureSurface kComplete;

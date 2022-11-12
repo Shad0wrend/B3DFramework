@@ -55,19 +55,20 @@ void GLRenderTexture::Initialize()
 			GLSurfaceDesc surfaceDesc;
 			surfaceDesc.NumSamples = GetProperties().MultisampleCount;
 
-			if(mColorSurfaces[i]->GetNumArraySlices() == 1) // Binding a single texture layer
+			const TextureSurface& viewSurface = mColorSurfaces[i]->GetInformation().Surface;
+			if(viewSurface.FaceCount == 1) // Binding a single texture layer
 			{
 				surfaceDesc.AllLayers = glColorSurface->GetProperties().GetNumFaces() == 1;
 
 				if(glColorSurface->GetProperties().GetTextureType() != TEX_TYPE_3D)
 				{
 					surfaceDesc.Zoffset = 0;
-					surfaceDesc.Buffer = glColorSurface->GetBuffer(mColorSurfaces[i]->GetFirstArraySlice(), mColorSurfaces[i]->GetMostDetailedMip());
+					surfaceDesc.Buffer = glColorSurface->GetBuffer(viewSurface.Face, viewSurface.MipLevel);
 				}
 				else
 				{
 					surfaceDesc.Zoffset = 0;
-					surfaceDesc.Buffer = glColorSurface->GetBuffer(0, mColorSurfaces[i]->GetMostDetailedMip());
+					surfaceDesc.Buffer = glColorSurface->GetBuffer(0, viewSurface.MipLevel);
 				}
 			}
 			else // Binding an array of textures or a range of 3D texture slices
@@ -76,19 +77,19 @@ void GLRenderTexture::Initialize()
 
 				if(glColorSurface->GetProperties().GetTextureType() != TEX_TYPE_3D)
 				{
-					if(mColorSurfaces[i]->GetNumArraySlices() != glColorSurface->GetProperties().GetNumFaces())
+					if(viewSurface.FaceCount != glColorSurface->GetProperties().GetNumFaces())
 					{
 						B3D_LOG(Warning, RenderBackend, "OpenGL doesn't support binding of arbitrary ranges for array "
 													   "textures. The entire range will be bound instead.");
 					}
 
 					surfaceDesc.Zoffset = 0;
-					surfaceDesc.Buffer = glColorSurface->GetBuffer(0, mColorSurfaces[i]->GetMostDetailedMip());
+					surfaceDesc.Buffer = glColorSurface->GetBuffer(0, viewSurface.MipLevel);
 				}
 				else
 				{
 					surfaceDesc.Zoffset = 0;
-					surfaceDesc.Buffer = glColorSurface->GetBuffer(0, mColorSurfaces[i]->GetMostDetailedMip());
+					surfaceDesc.Buffer = glColorSurface->GetBuffer(0, viewSurface.MipLevel);
 				}
 			}
 
@@ -106,16 +107,17 @@ void GLRenderTexture::Initialize()
 		SPtr<GLPixelBuffer> depthStencilBuffer = nullptr;
 
 		bool allLayers = true;
-		if(mDepthStencilSurface->GetNumArraySlices() == 1) // Binding a single texture layer
+		const TextureSurface& viewSurface = mDepthStencilSurface->GetInformation().Surface;
+		if(viewSurface.FaceCount == 1) // Binding a single texture layer
 			allLayers = glDepthStencilTexture->GetProperties().GetNumFaces() == 1;
 
 		if(glDepthStencilTexture->GetProperties().GetTextureType() != TEX_TYPE_3D)
 		{
 			u32 firstSlice = 0;
 			if(!allLayers)
-				firstSlice = mDepthStencilSurface->GetFirstArraySlice();
+				firstSlice = viewSurface.Face;
 
-			depthStencilBuffer = glDepthStencilTexture->GetBuffer(firstSlice, mDepthStencilSurface->GetMostDetailedMip());
+			depthStencilBuffer = glDepthStencilTexture->GetBuffer(firstSlice, viewSurface.MipLevel);
 		}
 
 		mFB->BindDepthStencil(depthStencilBuffer, allLayers);

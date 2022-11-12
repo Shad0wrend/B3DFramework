@@ -11,22 +11,25 @@
 using namespace bs;
 using namespace bs::ct;
 
-D3D11TextureView::D3D11TextureView(const D3D11Texture* texture, const TEXTURE_VIEW_DESC& desc)
+D3D11TextureView::D3D11TextureView(const D3D11Texture* texture, const TextureViewInformation& desc)
 	: TextureView(desc)
 {
-	if((mDesc.Usage & GVU_RANDOMWRITE) != 0)
-		mUAV = CreateUav(texture, mDesc.MostDetailMip, mDesc.FirstArraySlice, mDesc.NumArraySlices);
-	else if((mDesc.Usage & GVU_RENDERTARGET) != 0)
-		mRTV = CreateRtv(texture, mDesc.MostDetailMip, mDesc.FirstArraySlice, mDesc.NumArraySlices);
-	else if((mDesc.Usage & GVU_DEPTHSTENCIL) != 0)
+	const u32 explicitMipCount = desc.Surface.MipLevelCount == 0 ? texture->GetProperties().GetNumMipmaps() + 1 : desc.Surface.MipLevelCount;
+	const u32 explicitFaceCount = desc.Surface.FaceCount == 0 ? texture->GetProperties().GetNumFaces() + 1 : desc.Surface.FaceCount;
+
+	if((mInformation.Usage & GVU_RANDOMWRITE) != 0)
+		mUAV = CreateUav(texture, mInformation.Surface.MipLevel, mInformation.Surface.Face, explicitFaceCount);
+	else if((mInformation.Usage & GVU_RENDERTARGET) != 0)
+		mRTV = CreateRtv(texture, mInformation.Surface.MipLevel, mInformation.Surface.Face, explicitFaceCount);
+	else if((mInformation.Usage & GVU_DEPTHSTENCIL) != 0)
 	{
-		mWDepthWStencilView = CreateDsv(texture, mDesc.MostDetailMip, mDesc.FirstArraySlice, mDesc.NumArraySlices, false, false);
-		mRODepthWStencilView = CreateDsv(texture, mDesc.MostDetailMip, mDesc.FirstArraySlice, mDesc.NumArraySlices, true, false);
-		mRODepthROStencilView = CreateDsv(texture, mDesc.MostDetailMip, mDesc.FirstArraySlice, mDesc.NumArraySlices, true, true);
-		mWDepthROStencilView = CreateDsv(texture, mDesc.MostDetailMip, mDesc.FirstArraySlice, mDesc.NumArraySlices, false, true);
+		mWDepthWStencilView = CreateDsv(texture, mInformation.Surface.MipLevel, mInformation.Surface.Face, explicitFaceCount, false, false);
+		mRODepthWStencilView = CreateDsv(texture, mInformation.Surface.MipLevel, mInformation.Surface.Face, explicitFaceCount, true, false);
+		mRODepthROStencilView = CreateDsv(texture, mInformation.Surface.MipLevel, mInformation.Surface.Face, explicitFaceCount, true, true);
+		mWDepthROStencilView = CreateDsv(texture, mInformation.Surface.MipLevel, mInformation.Surface.Face, explicitFaceCount, false, true);
 	}
 	else
-		mSRV = CreateSrv(texture, mDesc.MostDetailMip, mDesc.NumMips, mDesc.FirstArraySlice, mDesc.NumArraySlices);
+		mSRV = CreateSrv(texture, mInformation.Surface.MipLevel, explicitMipCount, mInformation.Surface.Face, explicitFaceCount);
 }
 
 D3D11TextureView::~D3D11TextureView()

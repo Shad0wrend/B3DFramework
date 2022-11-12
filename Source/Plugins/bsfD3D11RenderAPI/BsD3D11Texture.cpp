@@ -384,11 +384,11 @@ void D3D11Texture::Create1DTex()
 	// Create texture view
 	if((usage & TU_DEPTHSTENCIL) == 0 || readableDepth)
 	{
-		TEXTURE_VIEW_DESC viewDesc;
-		viewDesc.MostDetailMip = 0;
-		viewDesc.NumMips = desc.MipLevels;
-		viewDesc.FirstArraySlice = 0;
-		viewDesc.NumArraySlices = desc.ArraySize;
+		TextureViewInformation viewDesc;
+		viewDesc.Surface.MipLevel = 0;
+		viewDesc.Surface.MipLevelCount = desc.MipLevels;
+		viewDesc.Surface.Face = 0;
+		viewDesc.Surface.FaceCount = desc.ArraySize;
 		viewDesc.Usage = GVU_DEFAULT;
 
 		mShaderResourceView = B3DMakeSharedFromExisting<D3D11TextureView>(new(B3DAllocate<D3D11TextureView>()) D3D11TextureView(this, viewDesc));
@@ -529,11 +529,11 @@ void D3D11Texture::Create2DTex()
 	// Create shader texture view
 	if((usage & TU_DEPTHSTENCIL) == 0 || readableDepth)
 	{
-		TEXTURE_VIEW_DESC viewDesc;
-		viewDesc.MostDetailMip = 0;
-		viewDesc.NumMips = desc.MipLevels;
-		viewDesc.FirstArraySlice = 0;
-		viewDesc.NumArraySlices = desc.ArraySize;
+		TextureViewInformation viewDesc;
+		viewDesc.Surface.MipLevel = 0;
+		viewDesc.Surface.MipLevelCount = desc.MipLevels;
+		viewDesc.Surface.Face = 0;
+		viewDesc.Surface.FaceCount = desc.ArraySize;
 		viewDesc.Usage = GVU_DEFAULT;
 
 		mShaderResourceView = B3DMakeSharedFromExisting<D3D11TextureView>(new(B3DAllocate<D3D11TextureView>()) D3D11TextureView(this, viewDesc));
@@ -645,11 +645,11 @@ void D3D11Texture::Create3DTex()
 
 	if((usage & TU_DEPTHSTENCIL) == 0 || readableDepth)
 	{
-		TEXTURE_VIEW_DESC viewDesc;
-		viewDesc.MostDetailMip = 0;
-		viewDesc.NumMips = desc.MipLevels;
-		viewDesc.FirstArraySlice = 0;
-		viewDesc.NumArraySlices = 1;
+		TextureViewInformation viewDesc;
+		viewDesc.Surface.MipLevel = 0;
+		viewDesc.Surface.MipLevelCount = desc.MipLevels;
+		viewDesc.Surface.Face = 0;
+		viewDesc.Surface.FaceCount = 1;
 		viewDesc.Usage = GVU_DEFAULT;
 
 		mShaderResourceView = B3DMakeSharedFromExisting<D3D11TextureView>(new(B3DAllocate<D3D11TextureView>()) D3D11TextureView(this, viewDesc));
@@ -804,7 +804,7 @@ void D3D11Texture::CreateStagingBuffer()
 	}
 }
 
-SPtr<TextureView> D3D11Texture::CreateView(const TEXTURE_VIEW_DESC& desc)
+SPtr<TextureView> D3D11Texture::CreateView(const TextureViewInformation& desc)
 {
 	return B3DMakeSharedFromExisting<D3D11TextureView>(new(B3DAllocate<D3D11TextureView>()) D3D11TextureView(this, desc));
 }

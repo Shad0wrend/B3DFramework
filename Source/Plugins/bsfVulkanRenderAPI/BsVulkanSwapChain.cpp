@@ -120,13 +120,14 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, VkSurfaceKHR surf
 	result = vkGetSwapchainImagesKHR(mDevice, mSwapChain, &numImages, images);
 	B3D_ASSERT(result == VK_SUCCESS);
 
-	VULKAN_IMAGE_DESC imageDesc;
+	VulkanImageCreateInformation imageDesc;
 	imageDesc.Format = colorFormat;
 	imageDesc.Type = TEX_TYPE_2D;
 	imageDesc.Usage = TU_RENDERTARGET;
 	imageDesc.Layout = VK_IMAGE_LAYOUT_UNDEFINED;
-	imageDesc.NumFaces = 1;
-	imageDesc.NumMipLevels = 1;
+	imageDesc.FaceCount = 1;
+	imageDesc.MipLevelCount = 1;
+	imageDesc.DepthSliceCount = 1;
 	imageDesc.Allocation = VK_NULL_HANDLE;
 
 	mSurfaces.resize(numImages);

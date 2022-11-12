@@ -53,7 +53,7 @@ namespace bs
 		protected:
 			friend class D3D11Texture;
 
-			D3D11TextureView(const D3D11Texture* texture, const TEXTURE_VIEW_DESC& desc);
+			D3D11TextureView(const D3D11Texture* texture, const TextureViewInformation& desc);
 
 		private:
 			/**

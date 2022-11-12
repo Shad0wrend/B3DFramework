@@ -355,11 +355,11 @@ void VulkanGpuParams::SetTexture(u32 set, u32 slot, const SPtr<Texture>& texture
 			auto& texProps = texture->GetProperties();
 
 			TextureSurface actualSurface = surface;
-			if(surface.NumMipLevels == 0)
-				actualSurface.NumMipLevels = texProps.GetNumMipmaps() + 1;
+			if(surface.MipLevelCount == 0)
+				actualSurface.MipLevelCount = texProps.GetNumMipmaps() + 1;
 
-			if(surface.NumFaces == 0)
-				actualSurface.NumFaces = texProps.GetNumFaces();
+			if(surface.FaceCount == 0)
+				actualSurface.FaceCount = texProps.GetNumFaces();
 
 			perSetData.WriteInfos[bindingIdx].Image.imageView = imageRes->GetView(actualSurface, false);
 			mPerDeviceData[i].SampledImages[sequentialIdx] = imageRes->GetHandle();

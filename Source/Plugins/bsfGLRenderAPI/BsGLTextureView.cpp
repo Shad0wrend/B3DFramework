@@ -6,7 +6,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-GLTextureView::GLTextureView(const GLTexture* texture, const TEXTURE_VIEW_DESC& desc)
+GLTextureView::GLTextureView(const GLTexture* texture, const TextureViewInformation& desc)
 	: TextureView(desc)
 {
 	const TextureProperties& props = texture->GetProperties();
@@ -16,7 +16,7 @@ GLTextureView::GLTextureView(const GLTexture* texture, const TEXTURE_VIEW_DESC& 
 	{
 	case TEX_TYPE_1D:
 		{
-			if(desc.NumArraySlices <= 1)
+			if(desc.Surface.FaceCount <= 1)
 				target = GL_TEXTURE_1D;
 			else
 				target = GL_TEXTURE_1D_ARRAY;
@@ -27,14 +27,14 @@ GLTextureView::GLTextureView(const GLTexture* texture, const TEXTURE_VIEW_DESC& 
 		{
 			if(props.GetNumSamples() <= 1)
 			{
-				if(desc.NumArraySlices <= 1)
+				if(desc.Surface.FaceCount <= 1)
 					target = GL_TEXTURE_2D;
 				else
 					target = GL_TEXTURE_2D_ARRAY;
 			}
 			else
 			{
-				if(desc.NumArraySlices <= 1)
+				if(desc.Surface.FaceCount <= 1)
 					target = GL_TEXTURE_2D_MULTISAMPLE;
 				else
 					target = GL_TEXTURE_2D_MULTISAMPLE_ARRAY;
@@ -46,16 +46,16 @@ GLTextureView::GLTextureView(const GLTexture* texture, const TEXTURE_VIEW_DESC& 
 		break;
 	case TEX_TYPE_CUBE_MAP:
 		{
-			if(desc.NumArraySlices % 6 == 0)
+			if(desc.Surface.FaceCount % 6 == 0)
 			{
-				if(desc.NumArraySlices == 6)
+				if(desc.Surface.FaceCount == 6)
 					target = GL_TEXTURE_CUBE_MAP;
 				else
 					target = GL_TEXTURE_CUBE_MAP_ARRAY;
 			}
 			else
 			{
-				if(desc.NumArraySlices == 1)
+				if(desc.Surface.FaceCount == 1)
 					target = GL_TEXTURE_2D;
 				else
 					target = GL_TEXTURE_2D_ARRAY;
@@ -75,14 +75,14 @@ GLTextureView::GLTextureView(const GLTexture* texture, const TEXTURE_VIEW_DESC& 
 		target,
 		originalTexture,
 		texture->GetGlFormat(),
-		desc.MostDetailMip,
-		desc.NumMips,
-		desc.FirstArraySlice,
-		desc.NumArraySlices);
+		desc.Surface.MipLevel,
+		desc.Surface.MipLevelCount,
+		desc.Surface.Face,
+		desc.Surface.FaceCount);
 	B3D_CHECK_GL_ERROR();
 #endif
 
-	mTarget = GLTexture::GetGlTextureTarget(props.GetTextureType(), props.GetNumSamples(), desc.NumArraySlices);
+	mTarget = GLTexture::GetGlTextureTarget(props.GetTextureType(), props.GetNumSamples(), desc.Surface.FaceCount);
 }
 
 GLTextureView::~GLTextureView()

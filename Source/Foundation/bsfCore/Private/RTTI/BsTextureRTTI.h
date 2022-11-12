@@ -19,8 +19,6 @@ namespace bs
 	 *  @{
 	 */
 
-	B3D_ALLOW_MEMCPY_SERIALIZATION(TextureSurface);
-
 	class B3D_CORE_EXPORT TextureRTTI : public RTTIType<Texture, Resource, TextureRTTI>
 	{
 	private:

@@ -38,7 +38,6 @@ void VulkanRenderTexture::Initialize()
 	VULKAN_FRAMEBUFFER_DESC fbDesc;
 	fbDesc.Width = mProperties.Width;
 	fbDesc.Height = mProperties.Height;
-	fbDesc.Layers = mProperties.NumSlices;
 
 	for(u32 i = 0; i < B3D_MAXIMUM_RENDER_TARGET_COUNT; ++i)
 	{
@@ -52,30 +51,37 @@ void VulkanRenderTexture::Initialize()
 		if(image == nullptr)
 			continue;
 
+		const TextureSurface& viewSurface = view->GetInformation().Surface;
+		const u32 viewExplicitMipLevelCount = viewSurface.MipLevelCount == 0 ? (texture->GetProperties().GetNumMipmaps() + 1) : viewSurface.MipLevelCount;
+		const u32 viewExplicitLayerCount = viewSurface.FaceCount == 0 ? texture->GetProperties().GetNumFaces() : viewSurface.FaceCount;
+
 		TextureSurface surface;
-		surface.MipLevel = view->GetMostDetailedMip();
-		surface.NumMipLevels = view->GetNumMips();
+		surface.MipLevel = viewSurface.MipLevel;
+		surface.MipLevelCount = viewExplicitMipLevelCount;
 
 		if(texture->GetProperties().GetTextureType() == TEX_TYPE_3D)
 		{
-			if(view->GetFirstArraySlice() > 0)
+			if(viewSurface.Face > 0)
 				B3D_LOG(Error, RenderBackend, "Non-zero array slice offset not supported when rendering to a 3D texture.");
 
-			if(view->GetNumArraySlices() > 1)
+			if(viewExplicitLayerCount > 1)
 				B3D_LOG(Error, RenderBackend, "Cannot specify array slices when rendering to a 3D texture.");
 
+			const u32 layerCount = texture->GetProperties().GetDepth();
+
 			surface.Face = 0;
-			surface.NumFaces = mProperties.NumSlices;
+			surface.FaceCount = layerCount;
 
 			fbDesc.Color[i].BaseLayer = 0;
+			fbDesc.Layers = layerCount;
 		}
 		else
 		{
-			surface.Face = view->GetFirstArraySlice();
-			surface.NumFaces = view->GetNumArraySlices();
+			surface.Face = viewSurface.Face;
+			surface.FaceCount = viewExplicitLayerCount;
 
-			fbDesc.Color[i].BaseLayer = view->GetFirstArraySlice();
-			fbDesc.Layers = view->GetNumArraySlices();
+			fbDesc.Color[i].BaseLayer = viewSurface.Face;
+			fbDesc.Layers = viewExplicitLayerCount;
 		}
 
 		fbDesc.Color[i].Image = image;
@@ -93,32 +99,35 @@ void VulkanRenderTexture::Initialize()
 		VulkanImage* image = texture->GetResource(mDeviceIdx);
 		if(image != nullptr)
 		{
+			const TextureSurface& viewSurface = view->GetInformation().Surface;
+			const u32 viewExplicitMipCount = viewSurface.MipLevelCount == 0 ? (texture->GetProperties().GetNumMipmaps() + 1) : viewSurface.MipLevelCount;
+			const u32 viewExplicitLayerCount = viewSurface.FaceCount == 0 ? texture->GetProperties().GetNumFaces() : viewSurface.FaceCount;
+
 			TextureSurface surface;
-			surface.MipLevel = view->GetMostDetailedMip();
-			surface.NumMipLevels = view->GetNumMips();
+			surface.MipLevel = viewSurface.MipLevel;
+			surface.MipLevelCount = viewExplicitMipCount;
+			surface.Face = viewSurface.Face;
 
 			if(texture->GetProperties().GetTextureType() == TEX_TYPE_3D)
 			{
-				if(view->GetFirstArraySlice() > 0)
+				if(viewSurface.Face > 0)
 					B3D_LOG(Error, RenderBackend, "Non-zero array slice offset not supported when rendering to a 3D texture.");
 
-				if(view->GetNumArraySlices() > 1)
+				if(viewExplicitLayerCount > 1)
 					B3D_LOG(Error, RenderBackend, "Cannot specify array slices when rendering to a 3D texture.");
 
-				surface.Face = 0;
-				surface.NumFaces = 1;
+				surface.FaceCount = 1;
+				fbDesc.Layers = 1;
 			}
 			else
 			{
-				surface.Face = view->GetFirstArraySlice();
-				surface.NumFaces = view->GetNumArraySlices();
-
-				fbDesc.Layers = view->GetNumArraySlices();
+				surface.FaceCount = viewExplicitLayerCount;
+				fbDesc.Layers = viewExplicitLayerCount;
 			}
 
 			fbDesc.Depth.Image = image;
 			fbDesc.Depth.Surface = surface;
-			fbDesc.Depth.BaseLayer = view->GetFirstArraySlice();
+			fbDesc.Depth.BaseLayer = viewSurface.Face;
 
 			rpDesc.Depth.Enabled = true;
 			rpDesc.Depth.Format = VulkanUtility::GetPixelFormat(texture->GetProperties().GetFormat(), texture->GetProperties().IsHardwareGammaEnabled());

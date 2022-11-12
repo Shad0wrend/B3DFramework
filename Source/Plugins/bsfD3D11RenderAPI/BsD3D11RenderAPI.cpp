@@ -383,7 +383,7 @@ void D3D11RenderAPI::SetGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<C
 
 					if(texture != nullptr)
 					{
-						SPtr<TextureView> texView = texture->RequestView(surface.MipLevel, surface.NumMipLevels, surface.Face, surface.NumFaces, GVU_DEFAULT);
+						SPtr<TextureView> texView = texture->RequestView(surface, GVU_DEFAULT);
 
 						D3D11TextureView* d3d11texView = static_cast<D3D11TextureView*>(texView.get());
 						srvs[slot] = d3d11texView->GetSrv();
@@ -434,7 +434,7 @@ void D3D11RenderAPI::SetGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<C
 
 					if(texture != nullptr)
 					{
-						SPtr<TextureView> texView = texture->RequestView(surface.MipLevel, 1, surface.Face, surface.NumFaces, GVU_RANDOMWRITE);
+						SPtr<TextureView> texView = texture->RequestView(TextureSurface(surface.MipLevel, 1, surface.Face, surface.FaceCount), GVU_RANDOMWRITE);
 
 						D3D11TextureView* d3d11texView = static_cast<D3D11TextureView*>(texView.get());
 						uavs[slot] = d3d11texView->GetUav();

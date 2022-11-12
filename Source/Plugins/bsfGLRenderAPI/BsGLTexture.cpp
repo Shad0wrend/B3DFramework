@@ -525,7 +525,7 @@ SPtr<GLPixelBuffer> GLTexture::GetBuffer(u32 face, u32 mipmap)
 	return mSurfaceList[idx];
 }
 
-SPtr<TextureView> GLTexture::CreateView(const TEXTURE_VIEW_DESC& desc)
+SPtr<TextureView> GLTexture::CreateView(const TextureViewInformation& desc)
 {
 	return B3DMakeSharedFromExisting<GLTextureView>(new(B3DAllocate<GLTextureView>()) GLTextureView(this, desc));
 }

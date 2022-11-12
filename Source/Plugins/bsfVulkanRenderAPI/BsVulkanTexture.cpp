@@ -13,15 +13,16 @@
 using namespace bs;
 using namespace bs::ct;
 
-static VULKAN_IMAGE_DESC CreateImageDesc(VkImage image, VmaAllocation allocation, VkImageLayout layout, VkFormat actualFormat, const TextureProperties& props)
+static VulkanImageCreateInformation BuildImageCreateInformation(VkImage image, VmaAllocation allocation, VkImageLayout layout, VkFormat actualFormat, const TextureProperties& props)
 {
-	VULKAN_IMAGE_DESC desc;
+	VulkanImageCreateInformation desc;
 	desc.Image = image;
 	desc.Allocation = allocation;
 	desc.Type = props.GetTextureType();
 	desc.Format = actualFormat;
-	desc.NumFaces = props.GetNumFaces();
-	desc.NumMipLevels = props.GetNumMipmaps() + 1;
+	desc.FaceCount = props.GetNumFaces();
+	desc.DepthSliceCount = props.GetDepth();
+	desc.MipLevelCount = props.GetNumMipmaps() + 1;
 	desc.Layout = layout;
 	desc.Usage = (u32)props.GetUsage();
 
@@ -29,11 +30,11 @@ static VULKAN_IMAGE_DESC CreateImageDesc(VkImage image, VmaAllocation allocation
 }
 
 VulkanImage::VulkanImage(VulkanResourceManager* owner, VkImage image, VmaAllocation allocation, VkImageLayout layout, VkFormat actualFormat, const TextureProperties& props, bool ownsImage)
-	: VulkanImage(owner, CreateImageDesc(image, allocation, layout, actualFormat, props), ownsImage)
+	: VulkanImage(owner, BuildImageCreateInformation(image, allocation, layout, actualFormat, props), ownsImage)
 {}
 
-VulkanImage::VulkanImage(VulkanResourceManager* owner, const VULKAN_IMAGE_DESC& desc, bool ownsImage)
-	: VulkanResource(owner, false), mImage(desc.Image), mAllocation(desc.Allocation), mFramebufferMainView(VK_NULL_HANDLE), mUsage(desc.Usage), mOwnsImage(ownsImage), mNumFaces(desc.NumFaces), mNumMipLevels(desc.NumMipLevels)
+VulkanImage::VulkanImage(VulkanResourceManager* owner, const VulkanImageCreateInformation& desc, bool ownsImage)
+	: VulkanResource(owner, false), mImage(desc.Image), mAllocation(desc.Allocation), mFramebufferMainView(VK_NULL_HANDLE), mUsage(desc.Usage), mOwnsImage(ownsImage), mFaceCount(desc.FaceCount), mDepthSliceCount(desc.DepthSliceCount), mMipLevelCount(desc.MipLevelCount)
 {
 	mImageViewCI.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	mImageViewCI.pNext = nullptr;
@@ -64,37 +65,27 @@ VulkanImage::VulkanImage(VulkanResourceManager* owner, const VULKAN_IMAGE_DESC& 
 		break;
 	}
 
-	TextureSurface completeSurface(0, desc.NumMipLevels, 0, desc.NumFaces);
+	TextureSurface completeSurface(0, 0, 0, 0);
+
+	// For depth stencil attachments we need a special view for shader reads and for framebuffer attachment, so we create two main views
 	if((mUsage & TU_DEPTHSTENCIL) != 0)
 	{
-		mFramebufferMainView = CreateView(completeSurface, desc.Format, GetAspectFlags());
-		mMainView = CreateView(completeSurface, desc.Format, VK_IMAGE_ASPECT_DEPTH_BIT);
+		mFramebufferMainView = CreateView(completeSurface, desc.Format, GetAspectFlags(), true);
+		mMainView = CreateView(completeSurface, desc.Format, VK_IMAGE_ASPECT_DEPTH_BIT, false);
 	}
 	else
-		mMainView = CreateView(completeSurface, desc.Format, VK_IMAGE_ASPECT_COLOR_BIT);
-
-	ImageViewInfo mainViewInfo;
-	mainViewInfo.Surface = completeSurface;
-	mainViewInfo.Framebuffer = false;
-	mainViewInfo.View = mMainView;
-	mainViewInfo.Format = desc.Format;
-
-	mImageInfos.push_back(mainViewInfo);
-
-	if(mFramebufferMainView != VK_NULL_HANDLE)
 	{
-		ImageViewInfo fbMainViewInfo;
-		fbMainViewInfo.Surface = completeSurface;
-		fbMainViewInfo.Framebuffer = true;
-		fbMainViewInfo.View = mFramebufferMainView;
-		fbMainViewInfo.Format = desc.Format;
+		// For 3D render attachments we also require a special view for framebuffer attachments
+		if(mDepthSliceCount > 1 && (mUsage & TU_RENDERTARGET) != 0)
+			mFramebufferMainView = CreateView(completeSurface, desc.Format, VK_IMAGE_ASPECT_COLOR_BIT, true);
 
-		mImageInfos.push_back(fbMainViewInfo);
+		// For all other cases (non-framebuffer attachment, or a non-3D non-depth-stencil attachment) regular view will suffice.
+		mMainView = CreateView(completeSurface, desc.Format, VK_IMAGE_ASPECT_COLOR_BIT, false);
 	}
 
-	u32 numSubresources = mNumFaces * mNumMipLevels;
-	mSubresources = (VulkanImageSubresource**)B3DAllocate(sizeof(VulkanImageSubresource*) * numSubresources);
-	for(u32 i = 0; i < numSubresources; i++)
+	const u32 subresourceCount = mFaceCount * mMipLevelCount;
+	mSubresources = (VulkanImageSubresource**)B3DAllocate(sizeof(VulkanImageSubresource*) * subresourceCount);
+	for(u32 i = 0; i < subresourceCount; i++)
 		mSubresources[i] = owner->Create<VulkanImageSubresource>(desc.Layout);
 }
 
@@ -103,13 +94,16 @@ VulkanImage::~VulkanImage()
 	VulkanDevice& device = mOwner->GetDevice();
 	VkDevice vkDevice = device.GetLogical();
 
-	u32 numSubresources = mNumFaces * mNumMipLevels;
-	for(u32 i = 0; i < numSubresources; i++)
+	const u32 subresourceCount = mFaceCount * mMipLevelCount;
+	for(u32 i = 0; i < subresourceCount; i++)
 	{
 		B3D_ASSERT(!mSubresources[i]->IsBound()); // Image beeing freed but its subresources are still bound somewhere
 
 		mSubresources[i]->Destroy();
 	}
+
+	B3DFree(mSubresources);
+	mSubresources = nullptr;
 
 	for(auto& entry : mImageInfos)
 		vkDestroyImageView(vkDevice, entry.View, gVulkanAllocator);
@@ -121,92 +115,108 @@ VulkanImage::~VulkanImage()
 	}
 }
 
-VkImageView VulkanImage::GetView(bool framebuffer) const
+VkImageView VulkanImage::GetView(bool isPartOfFramebuffer) const
 {
-	if(framebuffer && (mUsage & TU_DEPTHSTENCIL) != 0)
-		return mFramebufferMainView;
+	if(isPartOfFramebuffer)
+	{
+		if((mUsage & TU_DEPTHSTENCIL) != 0)
+			return mFramebufferMainView;
+
+		if(mDepthSliceCount > 1 && (mUsage & TU_RENDERTARGET) != 0)
+			return mFramebufferMainView;
+	}
 
 	return mMainView;
 }
 
-VkImageView VulkanImage::GetView(const TextureSurface& surface, bool framebuffer) const
+VkImageView VulkanImage::GetView(const TextureSurface& surface, bool isPartOfFramebuffer) const
 {
-	return GetView(mImageViewCI.format, surface, framebuffer);
+	return GetView(mImageViewCI.format, surface, isPartOfFramebuffer);
 }
 
-VkImageView VulkanImage::GetView(VkFormat format, bool framebuffer) const
+VkImageView VulkanImage::GetView(VkFormat format, bool isPartOfFramebuffer) const
 {
-	TextureSurface completeSurface(0, mNumMipLevels, 0, mNumFaces);
-	return GetView(format, completeSurface, framebuffer);
+	TextureSurface completeSurface(0, mMipLevelCount, 0, mFaceCount);
+	return GetView(format, completeSurface, isPartOfFramebuffer);
 }
 
-VkImageView VulkanImage::GetView(VkFormat format, const TextureSurface& surface, bool framebuffer) const
+VkImageView VulkanImage::GetView(VkFormat format, const TextureSurface& surface, bool isPartOfFrameBuffer) const
 {
+	TextureSurface explicitSurface = surface;
+	CalculateExplicitSurface(explicitSurface, isPartOfFrameBuffer);
+
 	for(auto& entry : mImageInfos)
 	{
-		if(surface.MipLevel == entry.Surface.MipLevel &&
-		   surface.NumMipLevels == entry.Surface.NumMipLevels &&
-		   surface.Face == entry.Surface.Face &&
-		   surface.NumFaces == entry.Surface.NumFaces &&
-		   format == entry.Format)
-		{
-			if((mUsage & TU_DEPTHSTENCIL) == 0)
-				return entry.View;
-			else
-			{
-				if(framebuffer == entry.Framebuffer)
-					return entry.View;
-			}
-		}
+		// Check if framebuffer field matches, but only if this is a depth-stencil framebuffer attachment or a 3D render texture attachment. For all other
+		// cases we're free to use the regular view.
+		const bool isFramebufferFieldMatching =
+			isPartOfFrameBuffer == entry.IsPartOfFramebuffer ||
+			((mUsage & TU_DEPTHSTENCIL) == 0 && ((mUsage & TU_RENDERTARGET) == 0 || mDepthSliceCount <= 1));
+
+		if(explicitSurface == entry.Surface && format == entry.Format && isFramebufferFieldMatching)
+			return entry.View;
 	}
 
-	ImageViewInfo info;
-	info.Surface = surface;
-	info.Framebuffer = framebuffer;
-	info.Format = format;
-
+	VkImageView view = VK_NULL_HANDLE;
 	if((mUsage & TU_DEPTHSTENCIL) != 0)
 	{
-		if(framebuffer)
-			info.View = CreateView(surface, format, GetAspectFlags());
+		if(isPartOfFrameBuffer)
+			view = CreateView(explicitSurface, format, GetAspectFlags(), isPartOfFrameBuffer);
 		else
-			info.View = CreateView(surface, format, VK_IMAGE_ASPECT_DEPTH_BIT);
+			view = CreateView(explicitSurface, format, VK_IMAGE_ASPECT_DEPTH_BIT, isPartOfFrameBuffer);
 	}
 	else
-		info.View = CreateView(surface, format, VK_IMAGE_ASPECT_COLOR_BIT);
+	{
+		view = CreateView(explicitSurface, format, VK_IMAGE_ASPECT_COLOR_BIT, isPartOfFrameBuffer);
+	}
 
-	mImageInfos.push_back(info);
-
-	return info.View;
+	return view;
 }
 
-VkImageView VulkanImage::CreateView(const TextureSurface& surface, VkFormat format, VkImageAspectFlags aspectMask) const
+VkImageView VulkanImage::CreateView(const TextureSurface& surface, VkFormat format, VkImageAspectFlags aspectMask, bool isPartOfFramebuffer) const
 {
 	VkImageViewType oldViewType = mImageViewCI.viewType;
 	VkFormat oldFormat = mImageViewCI.format;
 
-	const u32 numFaces = surface.NumFaces == 0 ? mNumFaces : surface.NumFaces;
+	u32 layerCount = surface.FaceCount;
+	if(layerCount == 0)
+	{
+		// 3D textures bound as framebuffer attachments are bound as 2D texture arrays
+		if(isPartOfFramebuffer && mDepthSliceCount > 1)
+			layerCount = mDepthSliceCount;
+		else
+			layerCount = mFaceCount;
+	}
 
 	switch(oldViewType)
 	{
 	case VK_IMAGE_VIEW_TYPE_CUBE:
-		if(numFaces == 1)
+		if(layerCount == 1)
 			mImageViewCI.viewType = VK_IMAGE_VIEW_TYPE_2D;
-		else if(numFaces % 6 == 0)
+		else if(layerCount % 6 == 0)
 		{
-			if(mNumFaces > 6)
-				mImageViewCI.viewType = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
+			if(surface.IsBoundAs2DArray)
+			{
+				mImageViewCI.viewType = VK_IMAGE_VIEW_TYPE_2D_ARRAY;
+			}
+			else
+			{
+				if(mFaceCount > 6)
+				{
+					mImageViewCI.viewType = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
+				}
+			}
 		}
 		else
 			mImageViewCI.viewType = VK_IMAGE_VIEW_TYPE_2D_ARRAY;
 		break;
 	case VK_IMAGE_VIEW_TYPE_1D:
-		if(mNumFaces > 1)
+		if(layerCount > 1)
 			mImageViewCI.viewType = VK_IMAGE_VIEW_TYPE_1D_ARRAY;
 		break;
 	case VK_IMAGE_VIEW_TYPE_2D:
 	case VK_IMAGE_VIEW_TYPE_3D:
-		if(mNumFaces > 1)
+		if(layerCount > 1 || surface.IsBoundAs2DArray)
 			mImageViewCI.viewType = VK_IMAGE_VIEW_TYPE_2D_ARRAY;
 		break;
 	default:
@@ -215,9 +225,9 @@ VkImageView VulkanImage::CreateView(const TextureSurface& surface, VkFormat form
 
 	mImageViewCI.subresourceRange.aspectMask = aspectMask;
 	mImageViewCI.subresourceRange.baseMipLevel = surface.MipLevel;
-	mImageViewCI.subresourceRange.levelCount = surface.NumMipLevels == 0 ? VK_REMAINING_MIP_LEVELS : surface.NumMipLevels;
+	mImageViewCI.subresourceRange.levelCount = surface.MipLevelCount == 0 ? VK_REMAINING_MIP_LEVELS : surface.MipLevelCount;
 	mImageViewCI.subresourceRange.baseArrayLayer = surface.Face;
-	mImageViewCI.subresourceRange.layerCount = surface.NumFaces == 0 ? VK_REMAINING_ARRAY_LAYERS : surface.NumFaces;
+	mImageViewCI.subresourceRange.layerCount = layerCount;
 	mImageViewCI.format = format;
 
 	VkImageView view;
@@ -226,8 +236,48 @@ VkImageView VulkanImage::CreateView(const TextureSurface& surface, VkFormat form
 
 	mImageViewCI.viewType = oldViewType;
 	mImageViewCI.format = oldFormat;
+
+	// Always use explicit surface for lookup
+	TextureSurface explicitSurface = surface;
+	CalculateExplicitSurface(explicitSurface, isPartOfFramebuffer);
+
+	ImageViewInformation viewInformation;
+	viewInformation.Surface = explicitSurface;
+	viewInformation.IsPartOfFramebuffer = isPartOfFramebuffer;
+	viewInformation.View = view;
+	viewInformation.Format = format;
+
+	mImageInfos.push_back(viewInformation);
+
 	return view;
 }
+
+const TextureSurface& VulkanImage::CalculateExplicitSurface(TextureSurface& surface, bool isPartOfFramebuffer) const
+{
+	if(surface.MipLevelCount == 0)
+		surface.MipLevelCount = mMipLevelCount;
+
+	if(surface.FaceCount == 0)
+	{
+		const bool is3D = mDepthSliceCount > 1;
+
+		if(is3D)
+		{
+			if(isPartOfFramebuffer || surface.IsBoundAs2DArray)
+			{
+				// This forces CreateView() to view the 3D texture as a 2D array
+				surface.FaceCount = mDepthSliceCount;
+			}
+		}
+		else
+		{
+			surface.FaceCount = mFaceCount;
+		}
+	}
+
+	return surface;
+}
+
 
 VkImageLayout VulkanImage::GetOptimalLayout() const
 {
@@ -269,9 +319,9 @@ VkImageSubresourceRange VulkanImage::GetRange() const
 {
 	VkImageSubresourceRange range;
 	range.baseArrayLayer = 0;
-	range.layerCount = mNumFaces;
+	range.layerCount = mFaceCount;
 	range.baseMipLevel = 0;
-	range.levelCount = mNumMipLevels;
+	range.levelCount = mMipLevelCount;
 	range.aspectMask = GetAspectFlags();
 
 	return range;
@@ -281,9 +331,9 @@ VkImageSubresourceRange VulkanImage::GetRange(const TextureSurface& surface) con
 {
 	VkImageSubresourceRange range;
 	range.baseArrayLayer = surface.Face;
-	range.layerCount = surface.NumFaces == 0 ? mNumFaces : surface.NumFaces;
+	range.layerCount = Math::Min(surface.FaceCount == 0 ? mFaceCount : surface.FaceCount, mFaceCount);
 	range.baseMipLevel = surface.MipLevel;
-	range.levelCount = surface.NumMipLevels == 0 ? mNumMipLevels : surface.NumMipLevels;
+	range.levelCount = Math::Min(surface.MipLevelCount == 0 ? mMipLevelCount : surface.MipLevelCount, mMipLevelCount);
 	range.aspectMask = GetAspectFlags();
 
 	return range;
@@ -291,8 +341,8 @@ VkImageSubresourceRange VulkanImage::GetRange(const TextureSurface& surface) con
 
 VulkanImageSubresource* VulkanImage::GetSubresource(u32 face, u32 mipLevel)
 {
-	B3D_ASSERT(mipLevel * mNumFaces + face < mNumFaces * mNumMipLevels);
-	return mSubresources[mipLevel * mNumFaces + face];
+	B3D_ASSERT(mipLevel * mFaceCount + face < mFaceCount * mMipLevelCount);
+	return mSubresources[mipLevel * mFaceCount + face];
 }
 
 void VulkanImage::Map(u32 face, u32 mipLevel, PixelData& output) const
@@ -634,6 +684,10 @@ void VulkanTexture::Initialize()
 		break;
 	case TEX_TYPE_3D:
 		mImageCI.imageType = VK_IMAGE_TYPE_3D;
+
+		if((mProperties.GetUsage() & TU_RENDERTARGET) != 0)
+			mImageCI.flags |= VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT;
+
 		break;
 	case TEX_TYPE_CUBE_MAP:
 		mImageCI.imageType = VK_IMAGE_TYPE_2D;

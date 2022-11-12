@@ -459,12 +459,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<Comm
 					if(glTex != nullptr)
 					{
 #if BS_OPENGL_4_3 || BS_OPENGLES_3_1
-						SPtr<TextureView> texView = glTex->RequestView(
-							surface.MipLevel,
-							surface.NumMipLevels,
-							surface.Face,
-							surface.NumFaces,
-							GVU_DEFAULT);
+						SPtr<TextureView> texView = glTex->RequestView(surface, GVU_DEFAULT);
 
 						GLTextureView* glTexView = static_cast<GLTextureView*>(texView.get());
 
@@ -667,16 +662,16 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<Comm
 						GLTexture* tex = static_cast<GLTexture*>(texture.get());
 						auto& texProps = tex->GetProperties();
 
-						bindAllLayers = texProps.GetNumFaces() == surface.NumFaces || surface.NumFaces == 0;
+						bindAllLayers = texProps.GetNumFaces() == surface.FaceCount || surface.FaceCount == 0;
 
-						if(!bindAllLayers && surface.NumFaces > 1)
+						if(!bindAllLayers && surface.FaceCount > 1)
 						{
 							B3D_LOG(Warning, RenderBackend, "Attempting to bind multiple faces of a load-store texture."
 														   "You are allowed to bind either a single face, or all the faces of the texture. Only "
 														   "the first face will be bound instead.");
 						}
 
-						if(surface.NumMipLevels > 1)
+						if(surface.MipLevelCount > 1)
 						{
 							B3D_LOG(Warning, RenderBackend, "Attempting to bind multiple mip levels of a load-store "
 														   "texture. This is not supported and only the first provided level will be bound.");

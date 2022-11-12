@@ -64,7 +64,7 @@ namespace bs
 			void CreateSurfaceList();
 
 			/**	Creates an empty and uninitialized texture view object. */
-			SPtr<TextureView> CreateView(const TEXTURE_VIEW_DESC& desc);
+			SPtr<TextureView> CreateView(const TextureViewInformation& desc);
 
 		private:
 			GLuint mTextureID = 0;

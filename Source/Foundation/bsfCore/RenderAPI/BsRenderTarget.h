@@ -74,12 +74,6 @@ namespace bs
 		u32 Height = 0;
 
 		/**
-		 * Number of three dimensional slices of the render target. This will be number of layers for array
-		 * textures or number of faces cube textures.
-		 */
-		u32 NumSlices = 0;
-
-		/**
 		 * Controls in what order is the render target rendered to compared to other render targets. Targets with higher
 		 * priority will be rendered before ones with lower priority.
 		 */

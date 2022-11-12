@@ -7,25 +7,26 @@ using namespace bs;
 
 namespace bs { namespace ct
 {
-size_t TextureView::HashFunction::operator()(const TEXTURE_VIEW_DESC &key) const
+size_t TextureView::HashFunction::operator()(const TextureViewInformation &key) const
 {
 	size_t seed = 0;
-	B3DCombineHash(seed, key.MostDetailMip);
-	B3DCombineHash(seed, key.NumMips);
-	B3DCombineHash(seed, key.FirstArraySlice);
-	B3DCombineHash(seed, key.NumArraySlices);
+	B3DCombineHash(seed, key.Surface.MipLevel);
+	B3DCombineHash(seed, key.Surface.MipLevelCount);
+	B3DCombineHash(seed, key.Surface.Face);
+	B3DCombineHash(seed, key.Surface.FaceCount);
+	B3DCombineHash(seed, key.Surface.IsBoundAs2DArray);
 	B3DCombineHash(seed, key.Usage);
 
 	return seed;
 }
 
-bool TextureView::EqualFunction::operator()(const TEXTURE_VIEW_DESC &a, const TEXTURE_VIEW_DESC &b) const
+bool TextureView::EqualFunction::operator()(const TextureViewInformation &a, const TextureViewInformation &b) const
 {
-	return a.MostDetailMip == b.MostDetailMip && a.NumMips == b.NumMips && a.FirstArraySlice == b.FirstArraySlice && a.NumArraySlices == b.NumArraySlices && a.Usage == b.Usage;
+	return a.Surface == b.Surface && a.Usage == b.Usage;
 }
 
-TextureView::TextureView(const TEXTURE_VIEW_DESC &desc)
-	: mDesc(desc)
+TextureView::TextureView(const TextureViewInformation &desc)
+	: mInformation(desc)
 {
 }
 }}

@@ -458,11 +458,11 @@ namespace bs
 
 			/**
 			 * Requests a texture view for the specified mip and array ranges. Returns an existing view of one for the specified
-			 * ranges already exists, otherwise creates a new one. You must release all views by calling releaseView() when done.
+			 * ranges already exists, otherwise creates a new one. You must release all views by calling ReleaseView() when done.
 			 *
 			 * @note	Core thread only.
 			 */
-			SPtr<TextureView> RequestView(u32 mostDetailMip, u32 numMips, u32 firstArraySlice, u32 numArraySlices, GpuViewUsage usage);
+			SPtr<TextureView> RequestView(const TextureSurface& surface, GpuViewUsage usage);
 
 			/** Returns a plain white texture. */
 			static SPtr<Texture> WHITE;
@@ -497,12 +497,12 @@ namespace bs
 			/************************************************************************/
 
 			/**	Creates a view of a specific subresource in a texture. */
-			virtual SPtr<TextureView> CreateView(const TEXTURE_VIEW_DESC& desc);
+			virtual SPtr<TextureView> CreateView(const TextureViewInformation& desc);
 
 			/** Releases all internal texture view references. */
 			void ClearBufferViews();
 
-			UnorderedMap<TEXTURE_VIEW_DESC, SPtr<TextureView>, TextureView::HashFunction, TextureView::EqualFunction> mTextureViews;
+			UnorderedMap<TextureViewInformation, SPtr<TextureView>, TextureView::HashFunction, TextureView::EqualFunction> mTextureViews;
 			TextureProperties mProperties;
 			SPtr<PixelData> mInitData;
 		};
