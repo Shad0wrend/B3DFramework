@@ -54,6 +54,10 @@ PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR = nullptr;
 PFN_vkGetSwapchainImagesKHR vkGetSwapchainImagesKHR = nullptr;
 PFN_vkAcquireNextImageKHR vkAcquireNextImageKHR = nullptr;
 PFN_vkQueuePresentKHR vkQueuePresentKHR = nullptr;
+
+/** When enabled the Vulkan backend will prefer an integrated GPU over a discrete one. */
+static const bool kVulkanPreferIntegratedGPU = false;
+
 }} // namespace bs::ct
 
 using namespace bs;
@@ -209,42 +213,40 @@ void VulkanRenderAPI::Initialize()
 #endif
 
 	// Enumerate all devices
-	result = vkEnumeratePhysicalDevices(mInstance, &mNumDevices, nullptr);
+	u32 phyicalDeviceCount = 0;
+	result = vkEnumeratePhysicalDevices(mInstance, &phyicalDeviceCount, nullptr);
 	B3D_ASSERT(result == VK_SUCCESS);
 
-	Vector<VkPhysicalDevice> physicalDevices(mNumDevices);
-	result = vkEnumeratePhysicalDevices(mInstance, &mNumDevices, physicalDevices.data());
+	Vector<VkPhysicalDevice> physicalDevices(phyicalDeviceCount);
+	result = vkEnumeratePhysicalDevices(mInstance, &phyicalDeviceCount, physicalDevices.data());
 	B3D_ASSERT(result == VK_SUCCESS);
 
+	// For now always initialize a single device, as otherwise we run into problems with RenderDoc
+	mNumDevices = 1;
 	mDevices.resize(mNumDevices);
+
 	for(uint32_t i = 0; i < mNumDevices; i++)
 		mDevices[i] = B3DMakeShared<VulkanDevice>(physicalDevices[i], i);
 
 	// Find primary device
-	// Note: MULTIGPU - Detect multiple similar devices here if supporting multi-GPU
-	for(uint32_t i = 0; i < mNumDevices; i++)
+	uint32_t primaryDeviceIndex = 0;
+	for(uint32_t i = 0; i < phyicalDeviceCount; i++)
 	{
-		bool isPrimary = mDevices[i]->GetDeviceProperties().deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
+		VkPhysicalDeviceProperties deviceProperties;
+		vkGetPhysicalDeviceProperties(physicalDevices[i], &deviceProperties);
 
+		const bool isPrimary = kVulkanPreferIntegratedGPU ? deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU : deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
 		if(isPrimary)
 		{
-			mDevices[i]->SetIsPrimary();
-			mPrimaryDevices.push_back(mDevices[i]);
-
-			// Make sure the primary device is first in the list
-			if(i != 0)
-			{
-				mDevices[0]->SetIndex(i);
-				mDevices[i]->SetIndex(0);
-
-				std::swap(mDevices[0], mDevices[i]);
-			}
-
-			break;
+			primaryDeviceIndex = i;
 		}
 	}
 
-	if(mPrimaryDevices.size() == 0)
+	mDevices[0] = B3DMakeShared<VulkanDevice>(physicalDevices[primaryDeviceIndex], 0);
+	mDevices[0]->SetIsPrimary();
+	mPrimaryDevices.push_back(mDevices[0]);
+
+	if(mPrimaryDevices.empty())
 	{
 		mDevices[0]->SetIsPrimary();
 		mPrimaryDevices.push_back(mDevices[0]);

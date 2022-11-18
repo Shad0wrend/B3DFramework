@@ -18,7 +18,7 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice device, u32 deviceIdx)
 {
 	// Set to default
 	for(u32 i = 0; i < GQT_COUNT; i++)
-		mQueueInfos[i].FamilyIdx = (u32)-1;
+		mQueueInfos[i].FamilyIndex = (u32)-1;
 
 	vkGetPhysicalDeviceProperties(device, &mDeviceProperties);
 	vkGetPhysicalDeviceFeatures(device, &mDeviceFeatures);
@@ -34,7 +34,7 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice device, u32 deviceIdx)
 	const float defaultQueuePriorities[BS_MAX_QUEUES_PER_TYPE] = { 0.0f };
 	Vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 
-	auto populateQueueInfo = [&](GpuQueueType type, uint32_t familyIdx)
+	auto fnPopulateQueueInfo = [&](GpuQueueType type, uint32_t familyIdx)
 	{
 		queueCreateInfos.push_back(VkDeviceQueueCreateInfo());
 
@@ -46,16 +46,16 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice device, u32 deviceIdx)
 		createInfo.queueCount = std::min(queueFamilyProperties[familyIdx].queueCount, (uint32_t)BS_MAX_QUEUES_PER_TYPE);
 		createInfo.pQueuePriorities = defaultQueuePriorities;
 
-		mQueueInfos[type].FamilyIdx = familyIdx;
+		mQueueInfos[type].FamilyIndex = familyIdx;
 		mQueueInfos[type].Queues.resize(createInfo.queueCount, nullptr);
 	};
 
 	// Look for dedicated compute queues
 	for(u32 i = 0; i < (u32)queueFamilyProperties.size(); i++)
 	{
-		if((queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) && (queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0)
+		if((queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) != 0 && (queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0)
 		{
-			populateQueueInfo(GQT_COMPUTE, i);
+			fnPopulateQueueInfo(GQT_COMPUTE, i);
 			break;
 		}
 	}
@@ -63,11 +63,11 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice device, u32 deviceIdx)
 	// Look for dedicated upload queues
 	for(u32 i = 0; i < (u32)queueFamilyProperties.size(); i++)
 	{
-		if((queueFamilyProperties[i].queueFlags & VK_QUEUE_TRANSFER_BIT) &&
+		if((queueFamilyProperties[i].queueFlags & VK_QUEUE_TRANSFER_BIT) != 0 &&
 		   ((queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0) &&
 		   ((queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) == 0))
 		{
-			populateQueueInfo(GQT_UPLOAD, i);
+			fnPopulateQueueInfo(GQT_UPLOAD, i);
 			break;
 		}
 	}
@@ -75,43 +75,79 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice device, u32 deviceIdx)
 	// Looks for graphics queues
 	for(u32 i = 0; i < (u32)queueFamilyProperties.size(); i++)
 	{
-		if(queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+		if((queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0)
 		{
-			populateQueueInfo(GQT_GRAPHICS, i);
+			fnPopulateQueueInfo(GQT_GRAPHICS, i);
 			break;
 		}
 	}
 
-	// Set up extensions
-	const char* extensions[5];
-	uint32_t numExtensions = 0;
+	// If we haven't found a dedicated upload queue, look for any non-graphics queue
+	if(mQueueInfos[GQT_UPLOAD].Queues.empty())
+	{
+		for(UINT32 i = 0; i < (UINT32)queueFamilyProperties.size(); i++)
+		{
+			if(!mQueueInfos[GQT_GRAPHICS].Queues.empty() && mQueueInfos[GQT_GRAPHICS].FamilyIndex == i)
+				continue;
 
-	extensions[numExtensions++] = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
-	extensions[numExtensions++] = VK_KHR_MAINTENANCE1_EXTENSION_NAME;
-	extensions[numExtensions++] = VK_KHR_MAINTENANCE2_EXTENSION_NAME;
+			if((queueFamilyProperties[i].queueFlags & VK_QUEUE_TRANSFER_BIT) != 0)
+			{
+				fnPopulateQueueInfo(GQT_UPLOAD, i);
+				break;
+			}
+		}
+	}
+
+	// If we haven't found a dedicated compue queue, look for any that aren't yet used by the graphics and upload queues
+	if(mQueueInfos[GQT_COMPUTE].Queues.empty())
+	{
+		for(UINT32 i = 0; i < (UINT32)queueFamilyProperties.size(); i++)
+		{
+			if((!mQueueInfos[GQT_GRAPHICS].Queues.empty() && mQueueInfos[GQT_GRAPHICS].FamilyIndex == i) || (!mQueueInfos[GQT_UPLOAD].Queues.empty() && mQueueInfos[GQT_UPLOAD].FamilyIndex == i))
+				continue;
+
+			if((queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) != 0)
+			{
+				fnPopulateQueueInfo(GQT_COMPUTE, i);
+				break;
+			}
+		}
+	}
+
+	// Set up extensions
+	const char* extensions[6];
+	uint32_t extensionCount = 0;
+
+	extensions[extensionCount++] = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
+	extensions[extensionCount++] = VK_KHR_MAINTENANCE1_EXTENSION_NAME;
+	extensions[extensionCount++] = VK_KHR_MAINTENANCE2_EXTENSION_NAME;
 
 	// Enumerate supported extensions
 	bool dedicatedAllocExt = false;
 	bool getMemReqExt = false;
 
-	uint32_t numAvailableExtensions = 0;
-	vkEnumerateDeviceExtensionProperties(device, nullptr, &numAvailableExtensions, nullptr);
-	if(numAvailableExtensions > 0)
+	uint32_t availableExtensionCount = 0;
+	vkEnumerateDeviceExtensionProperties(device, nullptr, &availableExtensionCount, nullptr);
+	if(availableExtensionCount > 0)
 	{
-		Vector<VkExtensionProperties> availableExtensions(numAvailableExtensions);
-		if(vkEnumerateDeviceExtensionProperties(device, nullptr, &numAvailableExtensions, availableExtensions.data()) == VK_SUCCESS)
+		Vector<VkExtensionProperties> availableExtensions(availableExtensionCount);
+		if(vkEnumerateDeviceExtensionProperties(device, nullptr, &availableExtensionCount, availableExtensions.data()) == VK_SUCCESS)
 		{
-			for(auto entry : extensions)
+			for(auto entry : availableExtensions)
 			{
-				if(entry == VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME)
+				if(strcmp(entry.extensionName, VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME) == 0)
 				{
-					extensions[numExtensions++] = VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME;
+					extensions[extensionCount++] = VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME;
 					dedicatedAllocExt = true;
 				}
-				else if(entry == VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME)
+				else if(strcmp(entry.extensionName, VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME) == 0)
 				{
-					extensions[numExtensions++] = VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME;
+					extensions[extensionCount++] = VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME;
 					getMemReqExt = true;
+				}
+				else if(strcmp(entry.extensionName, VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME) == 0)
+				{
+					extensions[extensionCount++] = VK_EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME;
 				}
 			}
 		}
@@ -124,7 +160,7 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice device, u32 deviceIdx)
 	deviceInfo.queueCreateInfoCount = (uint32_t)queueCreateInfos.size();
 	deviceInfo.pQueueCreateInfos = queueCreateInfos.data();
 	deviceInfo.pEnabledFeatures = &mDeviceFeatures;
-	deviceInfo.enabledExtensionCount = numExtensions;
+	deviceInfo.enabledExtensionCount = extensionCount;
 	deviceInfo.ppEnabledExtensionNames = extensions;
 	deviceInfo.enabledLayerCount = 0;
 	deviceInfo.ppEnabledLayerNames = nullptr;
@@ -139,7 +175,7 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice device, u32 deviceIdx)
 		for(u32 j = 0; j < numQueues; j++)
 		{
 			VkQueue queue;
-			vkGetDeviceQueue(mLogicalDevice, mQueueInfos[i].FamilyIdx, j, &queue);
+			vkGetDeviceQueue(mLogicalDevice, mQueueInfos[i].FamilyIndex, j, &queue);
 
 			mQueueInfos[i].Queues[j] = B3DNew<VulkanQueue>(*this, queue, (GpuQueueType)i, j);
 		}

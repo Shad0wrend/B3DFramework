@@ -69,7 +69,7 @@ namespace bs
 			 * Returns index of the queue family for the specified queue type. Returns -1 if no queues for the specified type
 			 * exist. There will always be a queue family for the graphics type.
 			 */
-			u32 GetQueueFamily(GpuQueueType type) const { return mQueueInfos[(int)type].FamilyIdx; }
+			u32 GetQueueFamily(GpuQueueType type) const { return mQueueInfos[(int)type].FamilyIndex; }
 
 			/**
 			 * Fills out a mask that has bits set for every queue index that maps to the same physical queue as the provided
@@ -140,7 +140,7 @@ namespace bs
 			/** Contains data about a set of queues of a specific type. */
 			struct QueueInfo
 			{
-				u32 FamilyIdx;
+				u32 FamilyIndex;
 				Vector<VulkanQueue*> Queues;
 			};
 
