@@ -32,6 +32,8 @@ namespace bs
 			/** Returns a buffer that can be used for structured storage when no other buffer is bound. */
 			VulkanHardwareBuffer* GetDummyStructuredBuffer() const { return mDummyStructuredBuffer; }
 
+			/** Returns a buffer that can be used for vertex buffers when no other buffer is bound. */
+			VulkanHardwareBuffer* GetDummyVertexBuffer() const { return mDummyVertexBuffer; }
 		protected:
 			SPtr<VertexBuffer> CreateVertexBufferInternal(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
 			SPtr<IndexBuffer> CreateIndexBufferInternal(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
@@ -44,6 +46,7 @@ namespace bs
 			VulkanHardwareBuffer* mDummyStorageBuffer;
 			VulkanHardwareBuffer* mDummyUniformBuffer;
 			VulkanHardwareBuffer* mDummyStructuredBuffer;
+			VulkanHardwareBuffer* mDummyVertexBuffer;
 		};
 
 		/** @} */

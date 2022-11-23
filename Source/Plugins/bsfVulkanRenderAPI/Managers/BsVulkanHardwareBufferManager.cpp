@@ -28,6 +28,9 @@ VulkanHardwareBufferManager::VulkanHardwareBufferManager()
 
 	mDummyStructuredBuffer = B3DNew<VulkanHardwareBuffer>(
 		VulkanHardwareBuffer::BT_STRUCTURED, BF_UNKNOWN, GBU_LOADSTORE, 16, GDF_DEFAULT);
+
+	mDummyVertexBuffer = B3DNew<VulkanHardwareBuffer>(
+		VulkanHardwareBuffer::BT_VERTEX, BF_32X4F, GBU_STATIC, 16, GDF_DEFAULT);
 }
 
 VulkanHardwareBufferManager::~VulkanHardwareBufferManager()
@@ -36,6 +39,7 @@ VulkanHardwareBufferManager::~VulkanHardwareBufferManager()
 	B3DDelete(mDummyStorageBuffer);
 	B3DDelete(mDummyUniformBuffer);
 	B3DDelete(mDummyStructuredBuffer);
+	B3DDelete(mDummyVertexBuffer);
 }
 
 SPtr<ct::VertexBuffer> VulkanHardwareBufferManager::CreateVertexBufferInternal(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)

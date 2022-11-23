@@ -48,8 +48,8 @@ namespace bs
 			void UpdateViews();
 
 		private:
-			VkBuffer mCachedBuffers[BS_MAX_DEVICES]{};
-			VkBufferView mBufferViews[BS_MAX_DEVICES]{};
+			VkBuffer mCachedBuffers[B3D_MAX_DEVICES]{};
+			VkBufferView mBufferViews[B3D_MAX_DEVICES]{};
 		};
 
 		/** @} */

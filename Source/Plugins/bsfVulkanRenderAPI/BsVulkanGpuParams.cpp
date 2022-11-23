@@ -30,7 +30,7 @@ VulkanGpuParams::~VulkanGpuParams()
 	Lock lock(mMutex);
 
 	u32 numSets = mParamInfo->GetNumSets();
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(mPerDeviceData[i].PerSetData == nullptr)
 			continue;
@@ -50,12 +50,12 @@ void VulkanGpuParams::Initialize()
 	VulkanGpuPipelineParamInfo& vkParamInfo = static_cast<VulkanGpuPipelineParamInfo&>(*mParamInfo);
 
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-	VulkanDevice* devices[BS_MAX_DEVICES];
+	VulkanDevice* devices[B3D_MAX_DEVICES];
 
 	VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
 	u32 numDevices = 0;
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(devices[i] != nullptr)
 			numDevices++;
@@ -95,7 +95,7 @@ void VulkanGpuParams::Initialize()
 	VulkanHardwareBufferManager& vkBufManager = static_cast<VulkanHardwareBufferManager&>(
 		HardwareBufferManager::Instance());
 
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(devices[i] == nullptr)
 		{
@@ -289,7 +289,7 @@ void VulkanGpuParams::SetParamBlockBuffer(u32 set, u32 slot, const SPtr<GpuParam
 	Lock lock(mMutex);
 
 	auto* vulkanParamBlockBuffer = static_cast<VulkanGpuParamBlockBuffer*>(paramBlockBuffer.get());
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(mPerDeviceData[i].PerSetData == nullptr)
 			continue;
@@ -338,7 +338,7 @@ void VulkanGpuParams::SetTexture(u32 set, u32 slot, const SPtr<Texture>& texture
 	Lock lock(mMutex);
 
 	VulkanTexture* vulkanTexture = static_cast<VulkanTexture*>(texture.get());
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(mPerDeviceData[i].PerSetData == nullptr)
 			continue;
@@ -399,7 +399,7 @@ void VulkanGpuParams::SetLoadStoreTexture(u32 set, u32 slot, const SPtr<Texture>
 	Lock lock(mMutex);
 
 	VulkanTexture* vulkanTexture = static_cast<VulkanTexture*>(texture.get());
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(mPerDeviceData[i].PerSetData == nullptr)
 			continue;
@@ -451,7 +451,7 @@ void VulkanGpuParams::SetBuffer(u32 set, u32 slot, const SPtr<GpuBuffer>& buffer
 	Lock lock(mMutex);
 
 	VulkanGpuBuffer* vulkanBuffer = static_cast<VulkanGpuBuffer*>(buffer.get());
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(mPerDeviceData[i].PerSetData == nullptr)
 			continue;
@@ -539,7 +539,7 @@ void VulkanGpuParams::SetSamplerState(u32 set, u32 slot, const SPtr<SamplerState
 	Lock lock(mMutex);
 
 	VulkanSamplerState* vulkanSampler = static_cast<VulkanSamplerState*>(sampler.get());
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(mPerDeviceData[i].PerSetData == nullptr)
 			continue;

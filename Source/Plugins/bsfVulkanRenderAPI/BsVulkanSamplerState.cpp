@@ -23,7 +23,7 @@ VulkanSamplerState::VulkanSamplerState(const SAMPLER_STATE_DESC& desc, GpuDevice
 
 VulkanSamplerState::~VulkanSamplerState()
 {
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(mSamplers[i] == nullptr)
 			return;
@@ -64,11 +64,11 @@ void VulkanSamplerState::CreateInternal()
 	samplerInfo.unnormalizedCoordinates = false;
 
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-	VulkanDevice* devices[BS_MAX_DEVICES];
+	VulkanDevice* devices[B3D_MAX_DEVICES];
 	VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
 	// Allocate samplers per-device
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(devices[i] == nullptr)
 			break;

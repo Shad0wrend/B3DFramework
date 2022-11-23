@@ -17,11 +17,11 @@ void VulkanGpuPipelineParamInfo::Initialize()
 {
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 
-	VulkanDevice* devices[BS_MAX_DEVICES];
+	VulkanDevice* devices[B3D_MAX_DEVICES];
 	VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
 	u32 numDevices = 0;
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(devices[i] != nullptr)
 			numDevices++;
@@ -45,7 +45,7 @@ void VulkanGpuPipelineParamInfo::Initialize()
 	GpuParamObjectType* types = mAlloc.Alloc<GpuParamObjectType>(mNumElements);
 	GpuBufferFormat* elementTypes = mAlloc.Alloc<GpuBufferFormat>(mNumElements);
 
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(devices[i] == nullptr)
 		{
@@ -206,7 +206,7 @@ void VulkanGpuPipelineParamInfo::Initialize()
 	}
 
 	// Allocate layouts per-device
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(mLayouts[i] == nullptr)
 			continue;
@@ -219,7 +219,7 @@ void VulkanGpuPipelineParamInfo::Initialize()
 
 VulkanDescriptorLayout* VulkanGpuPipelineParamInfo::GetLayout(u32 deviceIdx, u32 layoutIdx) const
 {
-	if(deviceIdx >= BS_MAX_DEVICES || mLayouts[deviceIdx] == nullptr)
+	if(deviceIdx >= B3D_MAX_DEVICES || mLayouts[deviceIdx] == nullptr)
 		return nullptr;
 
 	return mLayouts[deviceIdx][layoutIdx];

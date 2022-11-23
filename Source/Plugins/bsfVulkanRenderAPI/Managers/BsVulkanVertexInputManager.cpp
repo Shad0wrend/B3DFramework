@@ -8,27 +8,27 @@
 using namespace bs;
 using namespace bs::ct;
 
-VulkanVertexInput::VulkanVertexInput(u32 id, const VkPipelineVertexInputStateCreateInfo& createInfo)
-	: mId(id), mCreateInfo(createInfo)
+VulkanVertexInput::VulkanVertexInput(u32 id, const VkPipelineVertexInputStateCreateInfo& createInfo, u32 bindingCount)
+	: mId(id), mBindingCount(bindingCount), mCreateInfo(createInfo)
 {}
 
-const int VulkanVertexInputManager::NUM_ELEMENTS_TO_PRUNE;
+const int VulkanVertexInputManager::kElementCountToPrune;
 
 size_t VulkanVertexInputManager::HashFunc::operator()(const VertexDeclarationKey& key) const
 {
 	size_t hash = 0;
-	B3DCombineHash(hash, key.BufferDeclId);
-	B3DCombineHash(hash, key.ShaderDeclId);
+	B3DCombineHash(hash, key.BufferDeclarationId);
+	B3DCombineHash(hash, key.ShaderDeclarationId);
 
 	return hash;
 }
 
 bool VulkanVertexInputManager::EqualFunc::operator()(const VertexDeclarationKey& a, const VertexDeclarationKey& b) const
 {
-	if(a.BufferDeclId != b.BufferDeclId)
+	if(a.BufferDeclarationId != b.BufferDeclarationId)
 		return false;
 
-	if(a.ShaderDeclId != b.ShaderDeclId)
+	if(a.ShaderDeclarationId != b.ShaderDeclarationId)
 		return false;
 
 	return true;
@@ -60,13 +60,13 @@ SPtr<VulkanVertexInput> VulkanVertexInputManager::GetVertexInfo(
 	Lock lock(mMutex);
 
 	VertexDeclarationKey pair;
-	pair.BufferDeclId = vbDecl->GetId();
-	pair.ShaderDeclId = shaderDecl->GetId();
+	pair.BufferDeclarationId = vbDecl->GetId();
+	pair.ShaderDeclarationId = shaderDecl->GetId();
 
 	auto iterFind = mVertexInputMap.find(pair);
 	if(iterFind == mVertexInputMap.end())
 	{
-		if(mVertexInputMap.size() >= DECLARATION_BUFFER_SIZE)
+		if(mVertexInputMap.size() >= kDeclarationBufferSize)
 			RemoveLeastUsed(); // Prune so the buffer doesn't just infinitely grow
 
 		AddNew(vbDecl, shaderDecl);
@@ -78,87 +78,109 @@ SPtr<VulkanVertexInput> VulkanVertexInputManager::GetVertexInfo(
 	return iterFind->second.VertexInput;
 }
 
-void VulkanVertexInputManager::AddNew(const SPtr<VertexDeclaration>& vbDecl, const SPtr<VertexDeclaration>& shaderInputDecl)
+void VulkanVertexInputManager::AddNew(const SPtr<VertexDeclaration>& vertexBufferDeclaration, const SPtr<VertexDeclaration>& shaderInputDeclaration)
 {
-	const Vector<VertexElement>& vbElements = vbDecl->GetProperties().GetElements();
-	const Vector<VertexElement>& inputElements = shaderInputDecl->GetProperties().GetElements();
+	const Vector<VertexElement>& vertexBufferElements = vertexBufferDeclaration->GetProperties().GetElements();
+	const Vector<VertexElement>& shaderInputElements = shaderInputDeclaration->GetProperties().GetElements();
 
-	u32 numAttributes = 0;
-	u32 numBindings = 0;
+	const u32 attributeCount = (u32)shaderInputElements.size();
 
-	for(auto& vbElem : vbElements)
+	bool areAnyShaderInputsMissing = false;
+	u32 bindingCount = 0;
+	for(const auto& shaderInputElement : shaderInputElements)
 	{
-		bool foundSemantic = false;
-		for(auto& inputElem : inputElements)
+		const VertexElement* matchingElement = nullptr;
+		for(const auto& vertexBufferElement : vertexBufferElements)
 		{
-			if(inputElem.GetSemantic() == vbElem.GetSemantic() && inputElem.GetSemanticIdx() == vbElem.GetSemanticIdx())
+			if(shaderInputElement.GetSemantic() == vertexBufferElement.GetSemantic() && shaderInputElement.GetSemanticIdx() == vertexBufferElement.GetSemanticIdx())
 			{
-				foundSemantic = true;
+				matchingElement = &vertexBufferElement;
 				break;
 			}
 		}
 
-		if(!foundSemantic) // Shader needs to have a matching input attribute, otherwise we skip it
+		if(matchingElement == nullptr)
+		{
+			areAnyShaderInputsMissing = true;
 			continue;
+		}
 
-		numAttributes++;
-		numBindings = std::max(numBindings, (u32)vbElem.GetStreamIdx() + 1);
+		bindingCount = Math::Max(bindingCount, (u32)matchingElement->GetStreamIdx() + 1);
 	}
+
+	// Add extra binding to store the empty vertex buffer for missing attributes
+	if(areAnyShaderInputsMissing)
+		bindingCount++;
 
 	VertexInputEntry newEntry;
 	GroupAlloc& alloc = newEntry.Allocator;
 
-	alloc.Reserve<VkVertexInputAttributeDescription>(numAttributes)
-		.Reserve<VkVertexInputBindingDescription>(numBindings)
+	alloc.Reserve<VkVertexInputAttributeDescription>(attributeCount)
+		.Reserve<VkVertexInputBindingDescription>(bindingCount)
 		.Init();
 
-	newEntry.Attributes = alloc.Alloc<VkVertexInputAttributeDescription>(numAttributes);
-	newEntry.Bindings = alloc.Alloc<VkVertexInputBindingDescription>(numBindings);
+	newEntry.Attributes = alloc.Alloc<VkVertexInputAttributeDescription>(attributeCount);
+	newEntry.Bindings = alloc.Alloc<VkVertexInputBindingDescription>(bindingCount);
 
-	for(u32 i = 0; i < numBindings; i++)
+	bool* isFirstAttributeInVertexBuffer = B3DStackAllocate<bool>(bindingCount);
+	for(u32 i = 0; i < bindingCount; i++)
 	{
+		// This is the empty buffer binding we use if any shader inputs are missing
+		const bool isNullBinding = areAnyShaderInputsMissing && ((i + 1) == bindingCount);
+
 		VkVertexInputBindingDescription& binding = newEntry.Bindings[i];
 		binding.binding = i;
 		binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		binding.stride = vbDecl->GetProperties().GetVertexSize(i);
+		binding.stride = isNullBinding ? 0 : vertexBufferDeclaration->GetProperties().GetVertexSize(i);
+
+		isFirstAttributeInVertexBuffer[i] = true;
 	}
 
-	u32 attribIdx = 0;
-	bool isFirstInBinding = true;
-	for(auto& vbElem : vbElements)
+	u32 attributeIndex = 0;
+	for(auto& shaderInputElement : shaderInputElements)
 	{
-		VkVertexInputAttributeDescription& attribute = newEntry.Attributes[attribIdx];
+		VkVertexInputAttributeDescription& attribute = newEntry.Attributes[attributeIndex];
 
-		bool foundSemantic = false;
-		for(auto& inputElem : inputElements)
+		const VertexElement* matchingElement = nullptr;
+		for(auto& vertexBufferElement : vertexBufferElements)
 		{
-			if(inputElem.GetSemantic() == vbElem.GetSemantic() && inputElem.GetSemanticIdx() == vbElem.GetSemanticIdx())
+			if(shaderInputElement.GetSemantic() == vertexBufferElement.GetSemantic() && shaderInputElement.GetSemanticIdx() == vertexBufferElement.GetSemanticIdx())
 			{
-				foundSemantic = true;
-				attribute.location = inputElem.GetOffset();
+				matchingElement = &vertexBufferElement;
 				break;
 			}
 		}
 
-		if(!foundSemantic) // Shader needs to have a matching input attribute, otherwise we skip it
-			continue;
+		attribute.location = shaderInputElement.GetOffset();
 
-		attribute.binding = vbElem.GetStreamIdx();
-		attribute.format = VulkanUtility::GetVertexType(vbElem.GetType());
-		attribute.offset = vbElem.GetOffset();
-
-		VkVertexInputBindingDescription& binding = newEntry.Bindings[attribute.binding];
-
-		bool isPerVertex = vbElem.GetInstanceStepRate() == 0;
-		if(isFirstInBinding)
+		bool isSteppingPerVertex;
+		if(matchingElement != nullptr)
 		{
-			binding.inputRate = isPerVertex ? VK_VERTEX_INPUT_RATE_VERTEX : VK_VERTEX_INPUT_RATE_INSTANCE;
-			isFirstInBinding = false;
+			attribute.binding = matchingElement->GetStreamIdx();
+			attribute.format = VulkanUtility::GetVertexType(matchingElement->GetType());
+			attribute.offset = matchingElement->GetOffset();
+
+			isSteppingPerVertex = matchingElement->GetInstanceStepRate() == 0;
 		}
 		else
 		{
-			if((binding.inputRate == VK_VERTEX_INPUT_RATE_VERTEX && !isPerVertex) ||
-			   (binding.inputRate == VK_VERTEX_INPUT_RATE_INSTANCE && isPerVertex))
+			attribute.binding = bindingCount - 1;
+			attribute.format = VulkanUtility::GetVertexType(shaderInputElement.GetType());
+			attribute.offset = 0;
+
+			isSteppingPerVertex = true;
+		}
+
+		VkVertexInputBindingDescription& binding = newEntry.Bindings[attribute.binding];
+		if(isFirstAttributeInVertexBuffer[attribute.binding])
+		{
+			binding.inputRate = isSteppingPerVertex ? VK_VERTEX_INPUT_RATE_VERTEX : VK_VERTEX_INPUT_RATE_INSTANCE;
+			isFirstAttributeInVertexBuffer[attribute.binding] = false;
+		}
+		else
+		{
+			if((binding.inputRate == VK_VERTEX_INPUT_RATE_VERTEX && !isSteppingPerVertex) ||
+			   (binding.inputRate == VK_VERTEX_INPUT_RATE_INSTANCE && isSteppingPerVertex))
 			{
 				B3D_LOG(Error, RenderBackend, "Found multiple vertex attributes belonging to the same binding but with "
 											 "different input rates. All attributes in a binding must have the same input rate. Ignoring "
@@ -166,26 +188,26 @@ void VulkanVertexInputManager::AddNew(const SPtr<VertexDeclaration>& vbDecl, con
 			}
 		}
 
-		attribIdx++;
+		attributeIndex++;
 	}
 
-	numAttributes = attribIdx; // It's possible some attributes were invalid, in which case we keep the memory allocated but ignore them otherwise
+	B3DStackFree(isFirstAttributeInVertexBuffer);
 
 	VkPipelineVertexInputStateCreateInfo vertexInputCI;
 	vertexInputCI.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vertexInputCI.pNext = nullptr;
 	vertexInputCI.flags = 0;
 	vertexInputCI.pVertexBindingDescriptions = newEntry.Bindings;
-	vertexInputCI.vertexBindingDescriptionCount = numBindings;
+	vertexInputCI.vertexBindingDescriptionCount = bindingCount;
 	vertexInputCI.pVertexAttributeDescriptions = newEntry.Attributes;
-	vertexInputCI.vertexAttributeDescriptionCount = numAttributes;
+	vertexInputCI.vertexAttributeDescriptionCount = attributeCount;
 
 	// Create key and add to the layout map
 	VertexDeclarationKey pair;
-	pair.BufferDeclId = vbDecl->GetId();
-	pair.ShaderDeclId = shaderInputDecl->GetId();
+	pair.BufferDeclarationId = vertexBufferDeclaration->GetId();
+	pair.ShaderDeclarationId = shaderInputDeclaration->GetId();
 
-	newEntry.VertexInput = B3DMakeShared<VulkanVertexInput>(mNextId++, vertexInputCI);
+	newEntry.VertexInput = B3DMakeShared<VulkanVertexInput>(mNextId++, vertexInputCI, bindingCount);
 	newEntry.LastUsedIdx = ++mLastUsedCounter;
 
 	mVertexInputMap[pair] = std::move(newEntry);
@@ -200,7 +222,7 @@ void VulkanVertexInputManager::RemoveLeastUsed()
 		B3D_LOG(Warning, RenderBackend, "Vertex input buffer is full, pruning last {0} elements. This is "
 									   "probably okay unless you are creating a massive amount of input layouts as they will get re-created every "
 									   "frame. In that case you should increase the layout buffer size. This warning won't be shown again.",
-			   NUM_ELEMENTS_TO_PRUNE);
+			   kElementCountToPrune);
 
 		mWarningShown = true;
 	}
@@ -217,7 +239,7 @@ void VulkanVertexInputManager::RemoveLeastUsed()
 		mVertexInputMap.erase(inputLayoutIter);
 
 		elemsRemoved++;
-		if(elemsRemoved >= NUM_ELEMENTS_TO_PRUNE)
+		if(elemsRemoved >= kElementCountToPrune)
 			break;
 	}
 }

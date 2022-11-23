@@ -27,7 +27,7 @@ VulkanGpuBuffer::~VulkanGpuBuffer()
 {
 	if(mBuffer)
 	{
-		for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+		for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 		{
 			if(mBufferViews[i] == VK_NULL_HANDLE)
 				continue;
@@ -106,7 +106,7 @@ void VulkanGpuBuffer::UpdateViews()
 	if(mProperties.GetType() == GBT_STRUCTURED)
 		return;
 
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		VulkanBuffer* buffer = static_cast<VulkanHardwareBuffer*>(mBuffer)->GetResource(i);
 

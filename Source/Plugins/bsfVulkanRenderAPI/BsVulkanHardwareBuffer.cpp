@@ -192,11 +192,11 @@ VulkanHardwareBuffer::VulkanHardwareBuffer(BufferType type, GpuBufferFormat form
 	mBufferCI.pQueueFamilyIndices = nullptr;
 
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-	VulkanDevice* devices[BS_MAX_DEVICES];
+	VulkanDevice* devices[B3D_MAX_DEVICES];
 	VulkanUtility::GetDevices(rapi, deviceMask, devices);
 
 	// Allocate buffers per-device
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(devices[i] == nullptr)
 			continue;
@@ -207,7 +207,7 @@ VulkanHardwareBuffer::VulkanHardwareBuffer(BufferType type, GpuBufferFormat form
 
 VulkanHardwareBuffer::~VulkanHardwareBuffer()
 {
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(mBuffers[i] == nullptr)
 			continue;
@@ -658,7 +658,7 @@ void VulkanHardwareBuffer::WriteData(u32 offset, u32 length, const void* source,
 		lockOptions = GBL_WRITE_ONLY_DISCARD;
 
 	// Write to every device
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(mBuffers[i] == nullptr)
 			continue;

@@ -587,11 +587,11 @@ VkSamplerMipmapMode VulkanUtility::GetMipFilter(FilterOptions filter)
 	return VK_SAMPLER_MIPMAP_MODE_LINEAR;
 }
 
-void VulkanUtility::GetDevices(const VulkanRenderAPI& rapi, GpuDeviceFlags flags, VulkanDevice* (&devices)[BS_MAX_DEVICES])
+void VulkanUtility::GetDevices(const VulkanRenderAPI& rapi, GpuDeviceFlags flags, VulkanDevice* (&devices)[B3D_MAX_DEVICES])
 {
 	u32 numDevices = rapi.GetDeviceCount();
 
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(i >= numDevices)
 		{

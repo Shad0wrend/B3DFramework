@@ -18,6 +18,7 @@
 #include "BsVulkanTimerQuery.h"
 #include "BsVulkanOcclusionQuery.h"
 #include "BsVulkanRenderPass.h"
+#include "Managers/BsVulkanHardwareBufferManager.h"
 
 #if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
 #	include "Win32/BsWin32RenderWindow.h"
@@ -1209,7 +1210,7 @@ void VulkanCmdBuffer::SetGpuParams(const SPtr<GpuParams>& gpuParams)
 		mBoundParamsDirty = true;
 	else
 	{
-		mNumBoundDescriptorSets = 0;
+		mBoundDescriptorSetCount = 0;
 		mBoundParamsDirty = false;
 	}
 
@@ -1297,21 +1298,21 @@ bool VulkanCmdBuffer::IsReadyForRender()
 
 bool VulkanCmdBuffer::BindGraphicsPipeline()
 {
-	SPtr<VertexDeclaration> inputDecl = mGraphicsPipeline->GetInputDeclaration();
-	SPtr<VulkanVertexInput> vertexInput = VulkanVertexInputManager::Instance().GetVertexInfo(mVertexDecl, inputDecl);
+	const SPtr<VertexDeclaration> vertexShaderInputDeclaration = mGraphicsPipeline->GetInputDeclaration();
+	const SPtr<VulkanVertexInput> vertexShaderInput = VulkanVertexInputManager::Instance().GetVertexInfo(mVertexDecl, vertexShaderInputDeclaration);
 
-	VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
-	VulkanPipeline* pipeline = mGraphicsPipeline->GetPipeline(mDevice.GetIndex(), renderPass, mRenderTargetReadOnlyFlags, mDrawOp, vertexInput);
+	VulkanRenderPass *const renderPass = mFramebuffer->GetRenderPass();
+	VulkanPipeline *const pipeline = mGraphicsPipeline->GetPipeline(mDevice.GetIndex(), renderPass, mRenderTargetReadOnlyFlags, mDrawOp, vertexShaderInput);
 
 	if(pipeline == nullptr)
 		return false;
 
 	// Check that pipeline matches the read-only state of any framebuffer attachments
-	u32 numColorAttachments = renderPass->GetColorAttachmentCount();
-	for(u32 i = 0; i < numColorAttachments; i++)
+	u32 colorAttachmentCount = renderPass->GetColorAttachmentCount();
+	for(u32 i = 0; i < colorAttachmentCount; i++)
 	{
-		const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetColorAttachment(i);
-		ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.Image, fbAttachment.Surface.Face, fbAttachment.Surface.MipLevel);
+		const VulkanFramebufferAttachment& framebufferAttachment = mFramebuffer->GetColorAttachment(i);
+		ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(framebufferAttachment.Image, framebufferAttachment.Surface.Face, framebufferAttachment.Surface.MipLevel);
 
 		if(subresourceInfo.UseFlags.IsSet(ImageUseFlagBits::Shader) && !pipeline->IsColorReadOnly(i))
 		{
@@ -1322,8 +1323,8 @@ bool VulkanCmdBuffer::BindGraphicsPipeline()
 
 	if(renderPass->HasDepthAttachment())
 	{
-		const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetDepthStencilAttachment();
-		ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(fbAttachment.Image, fbAttachment.Surface.Face, fbAttachment.Surface.MipLevel);
+		const VulkanFramebufferAttachment& framebufferAttachment = mFramebuffer->GetDepthStencilAttachment();
+		ImageSubresourceInfo& subresourceInfo = FindSubresourceInfo(framebufferAttachment.Image, framebufferAttachment.Surface.Face, framebufferAttachment.Surface.MipLevel);
 
 		if(subresourceInfo.UseFlags.IsSet(ImageUseFlagBits::Shader) && !pipeline->IsDepthReadOnly())
 		{
@@ -1338,6 +1339,7 @@ bool VulkanCmdBuffer::BindGraphicsPipeline()
 	vkCmdBindPipeline(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetHandle());
 	BindDynamicStates(true);
 
+	mRequiredVertexBufferBindingCount = pipeline->GetVertexBufferBindingCount();
 	mGfxPipelineRequiresBind = false;
 	return true;
 }
@@ -1390,51 +1392,25 @@ void VulkanCmdBuffer::BindDynamicStates(bool forceAll)
 
 void VulkanCmdBuffer::BindVertexInputs()
 {
-	if(!mVertexBuffers.empty())
+	if(mRequiredVertexBufferBindingCount > 0)
 	{
-		u32 lastValidIdx = (u32)-1;
-		u32 curIdx = 0;
-		for(auto& vertexBuffer : mVertexBuffers)
+		auto& vulkanHardwareBufferManager = static_cast<VulkanHardwareBufferManager&>(HardwareBufferManager::Instance());
+		VulkanBuffer *const dummyVertexBuffer = vulkanHardwareBufferManager.GetDummyVertexBuffer()->GetResource(mDevice.GetIndex());
+
+		for(u32 bindingIndex = 0; bindingIndex < mRequiredVertexBufferBindingCount; bindingIndex++)
 		{
-			bool validBuffer = false;
-			if(vertexBuffer != nullptr)
-			{
-				VulkanBuffer* resource = vertexBuffer->GetResource(mDevice.GetIndex());
-				if(resource != nullptr)
-				{
-					mVertexBuffersTemp[curIdx] = resource->GetHandle();
+			VulkanBuffer* resource = nullptr;
+			if(bindingIndex < (u32)mVertexBuffers.size() && mVertexBuffers[bindingIndex] != nullptr)
+				resource = mVertexBuffers[bindingIndex]->GetResource(mDevice.GetIndex());
 
-					RegisterBuffer(resource, BufferUseFlagBits::Vertex, VulkanAccessFlag::Read);
+			if(resource == nullptr)
+				resource = dummyVertexBuffer;
 
-					if(lastValidIdx == (u32)-1)
-						lastValidIdx = curIdx;
-
-					validBuffer = true;
-				}
-			}
-
-			if(!validBuffer && lastValidIdx != (u32)-1)
-			{
-				u32 count = curIdx - lastValidIdx;
-				if(count > 0)
-				{
-					vkCmdBindVertexBuffers(mCmdBuffer, lastValidIdx, count, mVertexBuffersTemp, mVertexBufferOffsetsTemp);
-
-					lastValidIdx = (u32)-1;
-				}
-			}
-
-			curIdx++;
+			mVertexBuffersTemp[bindingIndex] = resource->GetHandle();
+			RegisterBuffer(resource, BufferUseFlagBits::Vertex, VulkanAccessFlag::Read);
 		}
 
-		if(lastValidIdx != (u32)-1)
-		{
-			u32 count = curIdx - lastValidIdx;
-			if(count > 0)
-			{
-				vkCmdBindVertexBuffers(mCmdBuffer, lastValidIdx, count, mVertexBuffersTemp, mVertexBufferOffsetsTemp);
-			}
-		}
+		vkCmdBindVertexBuffers(mCmdBuffer, 0, mRequiredVertexBufferBindingCount, mVertexBuffersTemp, mVertexBufferOffsetsTemp);
 	}
 
 	if(mIndexBuffer != nullptr)
@@ -1458,17 +1434,17 @@ void VulkanCmdBuffer::BindGpuParams()
 	{
 		if(mBoundParams != nullptr)
 		{
-			mNumBoundDescriptorSets = mBoundParams->GetNumSets();
+			mBoundDescriptorSetCount = mBoundParams->GetNumSets();
 			mBoundParams->PrepareForBind(*this, mDescriptorSetsTemp);
 		}
 		else
-			mNumBoundDescriptorSets = 0;
+			mBoundDescriptorSetCount = 0;
 
 		mBoundParamsDirty = false;
 	}
 	else
 	{
-		mNumBoundDescriptorSets = 0;
+		mBoundDescriptorSetCount = 0;
 	}
 }
 
@@ -1646,12 +1622,6 @@ void VulkanCmdBuffer::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount)
 	if(!IsInRenderPass())
 		BeginRenderPass();
 
-	if(mVertexInputsDirty)
-	{
-		BindVertexInputs();
-		mVertexInputsDirty = false;
-	}
-
 	if(mGfxPipelineRequiresBind)
 	{
 		if(!BindGraphicsPipeline())
@@ -1660,14 +1630,21 @@ void VulkanCmdBuffer::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount)
 	else
 		BindDynamicStates(false);
 
+	// Important to call this after the pipeline is bound so we know how many vertex buffers it expects
+	if(mVertexInputsDirty)
+	{
+		BindVertexInputs();
+		mVertexInputsDirty = false;
+	}
+
 	if(mDescriptorSetsBindState.IsSet(DescriptorSetBindFlag::Graphics))
 	{
-		if(mNumBoundDescriptorSets > 0)
+		if(mBoundDescriptorSetCount > 0)
 		{
 			u32 deviceIdx = mDevice.GetIndex();
 			VkPipelineLayout pipelineLayout = mGraphicsPipeline->GetPipelineLayout(deviceIdx);
 
-			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, mNumBoundDescriptorSets, mDescriptorSetsTemp, 0, nullptr);
+			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, mBoundDescriptorSetCount, mDescriptorSetsTemp, 0, nullptr);
 		}
 
 		mDescriptorSetsBindState.Unset(DescriptorSetBindFlag::Graphics);
@@ -1691,12 +1668,6 @@ void VulkanCmdBuffer::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffs
 	if(!IsInRenderPass())
 		BeginRenderPass();
 
-	if(mVertexInputsDirty)
-	{
-		BindVertexInputs();
-		mVertexInputsDirty = false;
-	}
-
 	if(mGfxPipelineRequiresBind)
 	{
 		if(!BindGraphicsPipeline())
@@ -1705,14 +1676,21 @@ void VulkanCmdBuffer::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffs
 	else
 		BindDynamicStates(false);
 
+	// Important to call this after the pipeline is bound so we know how many vertex buffers it expects
+	if(mVertexInputsDirty)
+	{
+		BindVertexInputs();
+		mVertexInputsDirty = false;
+	}
+
 	if(mDescriptorSetsBindState.IsSet(DescriptorSetBindFlag::Graphics))
 	{
-		if(mNumBoundDescriptorSets > 0)
+		if(mBoundDescriptorSetCount > 0)
 		{
 			u32 deviceIdx = mDevice.GetIndex();
 			VkPipelineLayout pipelineLayout = mGraphicsPipeline->GetPipelineLayout(deviceIdx);
 
-			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, mNumBoundDescriptorSets, mDescriptorSetsTemp, 0, nullptr);
+			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, mBoundDescriptorSetCount, mDescriptorSetsTemp, 0, nullptr);
 		}
 
 		mDescriptorSetsBindState.Unset(DescriptorSetBindFlag::Graphics);
@@ -1758,10 +1736,10 @@ void VulkanCmdBuffer::Dispatch(u32 numGroupsX, u32 numGroupsY, u32 numGroupsZ)
 
 	if(mDescriptorSetsBindState.IsSet(DescriptorSetBindFlag::Compute))
 	{
-		if(mNumBoundDescriptorSets > 0)
+		if(mBoundDescriptorSetCount > 0)
 		{
 			VkPipelineLayout pipelineLayout = mComputePipeline->GetPipelineLayout(deviceIdx);
-			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout, 0, mNumBoundDescriptorSets, mDescriptorSetsTemp, 0, nullptr);
+			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout, 0, mBoundDescriptorSetCount, mDescriptorSetsTemp, 0, nullptr);
 		}
 
 		mDescriptorSetsBindState.Unset(DescriptorSetBindFlag::Compute);

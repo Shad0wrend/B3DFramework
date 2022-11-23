@@ -83,7 +83,7 @@ namespace bs
 
 			void Initialize() override;
 
-			PerDeviceData mPerDeviceData[BS_MAX_DEVICES];
+			PerDeviceData mPerDeviceData[B3D_MAX_DEVICES];
 			GpuDeviceFlags mDeviceMask;
 			bool* mSetsDirty = nullptr;
 

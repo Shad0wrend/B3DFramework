@@ -144,7 +144,7 @@ namespace bs
 			/** Creates a new buffer for the specified device, matching the current buffer properties. */
 			VulkanBuffer* CreateBuffer(VulkanDevice& device, u32 size, bool staging, bool readable);
 
-			VulkanBuffer* mBuffers[BS_MAX_DEVICES];
+			VulkanBuffer* mBuffers[B3D_MAX_DEVICES];
 
 			VulkanBuffer* mStagingBuffer;
 			u8* mStagingMemory;

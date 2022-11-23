@@ -655,7 +655,7 @@ VulkanTexture::VulkanTexture(const TEXTURE_DESC& desc, const SPtr<PixelData>& in
 
 VulkanTexture::~VulkanTexture()
 {
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(mImages[i] == nullptr)
 			return;
@@ -766,11 +766,11 @@ void VulkanTexture::Initialize()
 	mImageCI.pQueueFamilyIndices = nullptr;
 
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-	VulkanDevice* devices[BS_MAX_DEVICES];
+	VulkanDevice* devices[B3D_MAX_DEVICES];
 	VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
 	// Allocate buffers per-device
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(devices[i] == nullptr)
 			continue;
@@ -1504,7 +1504,7 @@ void VulkanTexture::WriteDataImpl(const PixelData& src, u32 mipLevel, u32 face, 
 	}
 
 	// Write to every device
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(mImages[i] == nullptr)
 			continue;

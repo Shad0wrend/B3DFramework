@@ -82,7 +82,7 @@ namespace bs
 			 * Populates the provided array with Vulkan devices that correspond to provided flags. Sets null in unused slots.
 			 * Each device is placed at its own index in the output array.
 			 */
-			static void GetDevices(const VulkanRenderAPI& rapi, GpuDeviceFlags flags, VulkanDevice* (&devices)[BS_MAX_DEVICES]);
+			static void GetDevices(const VulkanRenderAPI& rapi, GpuDeviceFlags flags, VulkanDevice* (&devices)[B3D_MAX_DEVICES]);
 
 			/** Checks is a flag for a particular device enabled. */
 			static bool IsDeviceIdxSet(const VulkanRenderAPI& rapi, u32 idx, GpuDeviceFlags flags);

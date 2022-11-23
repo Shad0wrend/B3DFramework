@@ -269,8 +269,8 @@ namespace bs
 			/** Returns pitch information for a particular image subresource. */
 			ImageSubresourcePitch GetPitchForSubresource(VulkanImage* image, u32 face, u32 mipLevel) const;
 
-			VulkanImage* mImages[BS_MAX_DEVICES];
-			PixelFormat mInternalFormats[BS_MAX_DEVICES];
+			VulkanImage* mImages[B3D_MAX_DEVICES];
+			PixelFormat mInternalFormats[B3D_MAX_DEVICES];
 			GpuDeviceFlags mDeviceMask;
 
 			VulkanBuffer* mStagingBuffer;

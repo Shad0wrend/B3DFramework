@@ -47,7 +47,7 @@ namespace bs
 
 			void CreateInternal() override;
 
-			VulkanSampler* mSamplers[BS_MAX_DEVICES];
+			VulkanSampler* mSamplers[B3D_MAX_DEVICES];
 			GpuDeviceFlags mDeviceMask;
 		};
 

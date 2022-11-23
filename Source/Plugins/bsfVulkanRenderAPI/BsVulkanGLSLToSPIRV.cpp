@@ -708,6 +708,14 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 					stride = Math::DivideAndRoundUp(elementSize, 4U) * 4;
 					bufferOffset = Math::DivideAndRoundUp(bufferOffset, 4U) * 4;
 				}
+				else if(paramTType->isMatrix())
+				{
+					// Matrices get rounded up to vec4
+					const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::kParamSizes.Lookup[paramType];
+
+					stride = Math::DivideAndRoundUp(typeInfo.BaseTypeSize * typeInfo.NumColumns / 4U, 4U) * 4 * typeInfo.NumRows;
+					bufferOffset = Math::DivideAndRoundUp(bufferOffset, 4U) * 4;
+				}
 				else
 					stride = VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(paramType, arraySize, bufferOffset);
 

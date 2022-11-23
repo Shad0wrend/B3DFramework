@@ -694,7 +694,8 @@ namespace bs
 			Rect2I mScissor{ 0, 0, 0, 0 };
 			u32 mStencilRef = 0;
 			DrawOperationType mDrawOp = DOT_TRIANGLE_LIST;
-			u32 mNumBoundDescriptorSets = 0;
+			u32 mRequiredVertexBufferBindingCount = 0;
+			u32 mBoundDescriptorSetCount = 0;
 			bool mGfxPipelineRequiresBind : 1;
 			bool mCmpPipelineRequiresBind : 1;
 			bool mViewportRequiresBind : 1;

@@ -36,7 +36,7 @@ VulkanGpuProgram::VulkanGpuProgram(const GPU_PROGRAM_DESC& desc, GpuDeviceFlags 
 
 VulkanGpuProgram::~VulkanGpuProgram()
 {
-	for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 	{
 		if(mModules[i] != nullptr)
 			mModules[i]->Destroy();
@@ -82,7 +82,7 @@ void VulkanGpuProgram::Initialize()
 	if(mIsCompiled)
 	{
 		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-		VulkanDevice* devices[BS_MAX_DEVICES];
+		VulkanDevice* devices[B3D_MAX_DEVICES];
 
 		u32 codeSize = mBytecode->Instructions.Size;
 		u8* code = mBytecode->Instructions.Data;
@@ -109,7 +109,7 @@ void VulkanGpuProgram::Initialize()
 
 		VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
-		for(u32 i = 0; i < BS_MAX_DEVICES; i++)
+		for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
 		{
 			if(devices[i] != nullptr)
 			{

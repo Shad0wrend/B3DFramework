@@ -20,7 +20,7 @@ namespace bs
 		class VulkanPipeline : public VulkanResource
 		{
 		public:
-			VulkanPipeline(VulkanResourceManager* owner, VkPipeline pipeline, const std::array<bool, B3D_MAXIMUM_RENDER_TARGET_COUNT>& colorReadOnly, bool depthStencilReadOnly);
+			VulkanPipeline(VulkanResourceManager* owner, VkPipeline pipeline, const std::array<bool, B3D_MAXIMUM_RENDER_TARGET_COUNT>& colorReadOnly, bool depthStencilReadOnly, u32 vertexBufferBindingCount);
 			VulkanPipeline(VulkanResourceManager* owner, VkPipeline pipeline);
 			~VulkanPipeline();
 
@@ -33,11 +33,15 @@ namespace bs
 			/** Checks is the depth attachment read-only. Only relevant for graphics pipelines. */
 			bool IsDepthReadOnly() const { return mReadOnlyDepth; }
 
+			/** Gets the number of vertex buffers can be bound to the pipeline. */
+			u32 GetVertexBufferBindingCount() const { return mVertexBufferBindingCount; } 
+
 		private:
 			VkPipeline mPipeline;
 
 			std::array<bool, B3D_MAXIMUM_RENDER_TARGET_COUNT> mReadOnlyColor;
 			bool mReadOnlyDepth = false;
+			u32 mVertexBufferBindingCount = 0;
 		};
 
 		/**	Vulkan implementation of a graphics pipeline state. */
@@ -90,17 +94,17 @@ namespace bs
 			/**
 			 * Create a new Vulkan graphics pipeline.
 			 *
-			 * @param[in]	deviceIdx			Index of the device to create the pipeline for.
+			 * @param[in]	deviceIndex			Index of the device to create the pipeline for.
 			 * @param[in]	renderPass			Render pass that the pipeline will be used with, or one compatible.
 			 * @param[in]	readOnlyFlags		Flags that control which portion of the framebuffer is read-only. Accepts
 			 *									combinations of FrameBufferType enum.
-			 * @param[in]	drawOp				Type of geometry that will be drawn using the pipeline.
+			 * @param[in]	primitiveType		Type of geometry that will be drawn using the pipeline.
 			 * @param[in]	vertexInput			State describing inputs to the vertex program.
 			 * @return							Vulkan graphics pipeline object.
 			 *
 			 * @note	Thread safe.
 			 */
-			VulkanPipeline* CreatePipeline(u32 deviceIdx, VulkanRenderPass* renderPass, u32 readOnlyFlags, DrawOperationType drawOp, const SPtr<VulkanVertexInput>& vertexInput);
+			VulkanPipeline* CreatePipeline(u32 deviceIndex, VulkanRenderPass* renderPass, u32 readOnlyFlags, DrawOperationType primitiveType, const SPtr<VulkanVertexInput>& vertexInput);
 
 			/**	Key uniquely identifying GPU pipelines. */
 			struct GpuPipelineKey
@@ -151,7 +155,7 @@ namespace bs
 			SPtr<VertexDeclaration> mVertexDecl;
 
 			GpuDeviceFlags mDeviceMask;
-			PerDeviceData mPerDeviceData[BS_MAX_DEVICES];
+			PerDeviceData mPerDeviceData[B3D_MAX_DEVICES];
 
 			Mutex mMutex;
 		};
@@ -166,13 +170,13 @@ namespace bs
 			 * Returns a pipeline object for the specified device index. If the device index doesn't match a bit in the
 			 * device mask provided on pipeline creation, null is returned.
 			 */
-			VulkanPipeline* GetPipeline(u32 deviceIdx) const;
+			VulkanPipeline* GetPipeline(u32 deviceIndex) const;
 
 			/**
 			 * Returns a pipeline layout object for the specified device index. If the device index doesn't match a bit in the
 			 * device mask provided on pipeline creation, null is returned.
 			 */
-			VkPipelineLayout GetPipelineLayout(u32 deviceIdx) const;
+			VkPipelineLayout GetPipelineLayout(u32 deviceIndex) const;
 
 			/**
 			 * Registers any resources used by the pipeline with the provided command buffer. This should be called whenever
@@ -196,7 +200,7 @@ namespace bs
 			};
 
 			GpuDeviceFlags mDeviceMask;
-			PerDeviceData mPerDeviceData[BS_MAX_DEVICES];
+			PerDeviceData mPerDeviceData[B3D_MAX_DEVICES];
 		};
 
 		/** @} */

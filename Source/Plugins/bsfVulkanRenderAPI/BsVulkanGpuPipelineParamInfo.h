@@ -63,7 +63,7 @@ namespace bs
 			GpuDeviceFlags mDeviceMask;
 
 			SetExtraInfo* mSetExtraInfos = nullptr;
-			VulkanDescriptorLayout** mLayouts[BS_MAX_DEVICES];
+			VulkanDescriptorLayout** mLayouts[B3D_MAX_DEVICES];
 			LayoutInfo* mLayoutInfos;
 
 			GroupAlloc mAlloc;

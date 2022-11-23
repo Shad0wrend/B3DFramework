@@ -52,7 +52,7 @@ namespace bs
 
 		private:
 			GpuDeviceFlags mDeviceMask;
-			VulkanShaderModule* mModules[BS_MAX_DEVICES];
+			VulkanShaderModule* mModules[B3D_MAX_DEVICES];
 		};
 
 		/** Identifier of the compiler used for compiling Vulkan GPU programs. */

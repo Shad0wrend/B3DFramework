@@ -18,7 +18,7 @@ namespace bs
 		class VulkanVertexInput
 		{
 		public:
-			VulkanVertexInput(u32 id, const VkPipelineVertexInputStateCreateInfo& createInfo);
+			VulkanVertexInput(u32 id, const VkPipelineVertexInputStateCreateInfo& createInfo, u32 bindingCount);
 
 			/** Returns an object contining the necessary information to initialize the vertex input on a pipeline. */
 			const VkPipelineVertexInputStateCreateInfo* GetCreateInfo() const { return &mCreateInfo; }
@@ -26,8 +26,12 @@ namespace bs
 			/** Returns an identifier which uniquely represents this vertex input configuration. */
 			u32 GetId() const { return mId; }
 
+			/** Returns the number of vertex buffers that are expected to be bound as vertex input. */
+			u32 GetVertexBufferBindingCount() const { return mBindingCount; }
+
 		private:
 			u32 mId;
+			u32 mBindingCount = 0;
 			VkPipelineVertexInputStateCreateInfo mCreateInfo;
 		};
 
@@ -40,8 +44,8 @@ namespace bs
 			/**	Key uniquely identifying buffer and shader vertex declarations. */
 			struct VertexDeclarationKey
 			{
-				u32 BufferDeclId;
-				u32 ShaderDeclId;
+				u32 BufferDeclarationId;
+				u32 ShaderDeclarationId;
 			};
 
 			/**	Creates a hash from vertex declaration key. */
@@ -84,14 +88,14 @@ namespace bs
 
 		private:
 			/**	Creates a vertex input using the specified parameters and stores it in the input layout map. */
-			void AddNew(const SPtr<VertexDeclaration>& vbDecl, const SPtr<VertexDeclaration>& shaderDecl);
+			void AddNew(const SPtr<VertexDeclaration>& vertexBufferDeclaration, const SPtr<VertexDeclaration>& shaderInputDeclaration);
 
 			/**	Removes the least used vertex input. */
 			void RemoveLeastUsed();
 
 		private:
-			static const int DECLARATION_BUFFER_SIZE = 1024;
-			static const int NUM_ELEMENTS_TO_PRUNE = 64;
+			static const int kDeclarationBufferSize = 1024;
+			static const int kElementCountToPrune = 64;
 
 			UnorderedMap<VertexDeclarationKey, VertexInputEntry, HashFunc, EqualFunc> mVertexInputMap;
 

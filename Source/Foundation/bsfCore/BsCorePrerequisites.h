@@ -196,7 +196,7 @@
 #define BS_MAX_QUEUES_PER_TYPE 8
 
 /** Maximum number of hardware devices usable at once. */
-#define BS_MAX_DEVICES 5U
+#define B3D_MAX_DEVICES 5U
 
 /** Maximum number of devices one resource can exist at the same time. */
 #define BS_MAX_LINKED_DEVICES 4U
