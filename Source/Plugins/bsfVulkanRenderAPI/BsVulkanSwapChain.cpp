@@ -81,7 +81,9 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, VkSurfaceKHR surf
 
 	B3DStackFree(presentModes);
 
-	uint32_t numImages = surfaceCaps.minImageCount;
+	// Note: Ideally we refactor the submit thread so it can work properly with two images
+	constexpr u32 kPreferredImageCount = 3; // One extra required due to the separate submit thread.
+	u32 imageCount = Math::Clamp(kPreferredImageCount, surfaceCaps.minImageCount, surfaceCaps.maxImageCount);
 
 	VkSurfaceTransformFlagsKHR transform;
 	if(surfaceCaps.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR)
@@ -94,7 +96,7 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, VkSurfaceKHR surf
 	swapChainCI.pNext = nullptr;
 	swapChainCI.flags = 0;
 	swapChainCI.surface = surface;
-	swapChainCI.minImageCount = numImages;
+	swapChainCI.minImageCount = imageCount;
 	swapChainCI.imageFormat = colorFormat;
 	swapChainCI.imageColorSpace = colorSpace;
 	swapChainCI.imageExtent = { swapchainExtent.width, swapchainExtent.height };
@@ -112,12 +114,12 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, VkSurfaceKHR surf
 	result = vkCreateSwapchainKHR(mDevice, &swapChainCI, gVulkanAllocator, &mSwapChain);
 	B3D_ASSERT(result == VK_SUCCESS);
 
-	result = vkGetSwapchainImagesKHR(mDevice, mSwapChain, &numImages, nullptr);
+	result = vkGetSwapchainImagesKHR(mDevice, mSwapChain, &imageCount, nullptr);
 	B3D_ASSERT(result == VK_SUCCESS);
 
 	// Get the swap chain images
-	VkImage* images = B3DStackAllocate<VkImage>(numImages);
-	result = vkGetSwapchainImagesKHR(mDevice, mSwapChain, &numImages, images);
+	VkImage* images = B3DStackAllocate<VkImage>(imageCount);
+	result = vkGetSwapchainImagesKHR(mDevice, mSwapChain, &imageCount, images);
 	B3D_ASSERT(result == VK_SUCCESS);
 
 	VulkanImageCreateInformation imageDesc;
@@ -130,19 +132,19 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, VkSurfaceKHR surf
 	imageDesc.DepthSliceCount = 1;
 	imageDesc.Allocation = VK_NULL_HANDLE;
 
-	mSurfaces.resize(numImages);
-	for(u32 i = 0; i < numImages; i++)
+	mSurfaces.resize(imageCount);
+	for(u32 imageIndex = 0; imageIndex < imageCount; imageIndex++)
 	{
-		imageDesc.Image = images[i];
+		imageDesc.Image = images[imageIndex];
 
-		mSurfaces[i].Acquired = false;
-		mSurfaces[i].NeedsWait = false;
-		mSurfaces[i].Image = owner->Create<VulkanImage>(imageDesc, false, false);
-		mSurfaces[i].Sync = owner->Create<VulkanSemaphore>();
+		mSurfaces[imageIndex].Acquired = false;
+		mSurfaces[imageIndex].NeedsWait = false;
+		mSurfaces[imageIndex].Image = owner->Create<VulkanImage>(imageDesc, false, false);
+		mSurfaces[imageIndex].Semaphore = owner->Create<VulkanSemaphore>();
 
-		if(mSurfaces[i].Image != nullptr)
+		if(mSurfaces[imageIndex].Image != nullptr)
 		{
-			mSurfaces[i].Image->SetName(StringUtil::Format("Color attachment #{0}", i));
+			mSurfaces[imageIndex].Image->SetName(StringUtil::Format("Color attachment #{0}", imageIndex));
 		}
 	}
 
@@ -202,13 +204,13 @@ VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, VkSurfaceKHR surf
 		rpDesc.DepthAttachment.IsEnabled = true;
 	}
 
-	VulkanRenderPass* renderPass = VulkanRenderPasses::Instance().Get(mDevice, rpDesc);
+	VulkanRenderPass* renderPass = VulkanRenderPassCache::Instance().FindOrCreateRenderPass(mDevice, rpDesc);
 
 	// Create a framebuffer for each swap chain buffer
 	u32 numFramebuffers = (u32)mSurfaces.size();
 	for(u32 i = 0; i < numFramebuffers; i++)
 	{
-		VULKAN_FRAMEBUFFER_DESC& desc = mSurfaces[i].FramebufferDesc;
+		VulkanFramebufferInformation& desc = mSurfaces[i].FramebufferInformation;
 		desc.Width = mWidth;
 		desc.Height = mHeight;
 		desc.Layers = 1;
@@ -240,8 +242,8 @@ VulkanSwapChain::~VulkanSwapChain()
 			surface.Image->Destroy();
 			surface.Image = nullptr;
 
-			surface.Sync->Destroy();
-			surface.Sync = nullptr;
+			surface.Semaphore->Destroy();
+			surface.Semaphore = nullptr;
 		}
 
 		vkDestroySwapchainKHR(mDevice, mSwapChain, gVulkanAllocator);
@@ -254,47 +256,59 @@ VulkanSwapChain::~VulkanSwapChain()
 	}
 }
 
-VkResult VulkanSwapChain::AcquireBackBuffer()
+VkResult VulkanSwapChain::AcquireImage(u32& outAcquiredImageIndex)
 {
-	uint32_t imageIndex;
+	const u32 maximumImageCount = (u32)(mSurfaces.size() - 1);
+	if(mAcquiredImageCount >= maximumImageCount)
+	{
+		B3D_LOG(Error, RenderBackend, "Unable to acquire a swap chain image. Maximum number of images has already been acquired.");
+		return VK_NOT_READY;
+	}
 
-	VkResult result = vkAcquireNextImageKHR(mDevice, mSwapChain, UINT64_MAX, mSurfaces[mCurrentSemaphoreIdx].Sync->GetHandle(), VK_NULL_HANDLE, &imageIndex);
+	uint32_t imageIndex;
+	VkResult result = vkAcquireNextImageKHR(mDevice, mSwapChain, UINT64_MAX, mSurfaces[mLastAcquiredSemaphoreIndex].Semaphore->GetHandle(), VK_NULL_HANDLE, &imageIndex);
 
 	if(result != VK_SUCCESS)
 		return result;
 
 	// In case surfaces aren't being distributed in round-robin fashion the image and semaphore indices might not match,
 	// in which case just move the semaphores
-	if(imageIndex != mCurrentSemaphoreIdx)
-		std::swap(mSurfaces[mCurrentSemaphoreIdx].Sync, mSurfaces[imageIndex].Sync);
+	if(imageIndex != mLastAcquiredSemaphoreIndex)
+		std::swap(mSurfaces[mLastAcquiredSemaphoreIndex].Semaphore, mSurfaces[imageIndex].Semaphore);
 
-	mCurrentSemaphoreIdx = (mCurrentSemaphoreIdx + 1) % mSurfaces.size();
+	mLastAcquiredSemaphoreIndex = (mLastAcquiredSemaphoreIndex + 1) % mSurfaces.size();
 
 	B3D_ASSERT(!mSurfaces[imageIndex].Acquired && "Same swap chain surface being acquired twice in a row without present().");
 	mSurfaces[imageIndex].Acquired = true;
 	mSurfaces[imageIndex].NeedsWait = true;
 
-	mCurrentBackBufferIdx = imageIndex;
+	mLastAcquiredImageIndex = imageIndex;
+	mAcquiredImageCount++;
 
+	outAcquiredImageIndex = imageIndex;
 	return VK_SUCCESS;
 }
 
-bool VulkanSwapChain::PrepareForPresent(u32& backBufferIdx)
+bool VulkanSwapChain::PrepareForPresent(u32& outImageIndex)
 {
-	if(!mSurfaces[mCurrentBackBufferIdx].Acquired)
+	if(mAcquiredImageCount == 0)
 		return false;
 
-	B3D_ASSERT(mSurfaces[mCurrentBackBufferIdx].Acquired && "Attempting to present an unacquired back buffer.");
-	mSurfaces[mCurrentBackBufferIdx].Acquired = false;
+	const u32 imageCount = (UINT32)mSurfaces.size();
+	const u32 offset = (imageCount - mAcquiredImageCount) + 1;
+	const u32 imageToPresent = (mLastAcquiredImageIndex + offset) % imageCount;
 
-	backBufferIdx = mCurrentBackBufferIdx;
+	if(!mSurfaces[imageToPresent].Acquired)
+		return false;
+
+	mSurfaces[imageToPresent].Acquired = false;
+	mAcquiredImageCount--;
+
+	outImageIndex = imageToPresent;
 	return true;
 }
 
-void VulkanSwapChain::NotifyBackBufferWaitIssued()
+void VulkanSwapChain::NotifyBackBufferWaitIssued(u32 imageIndex)
 {
-	if(!mSurfaces[mCurrentBackBufferIdx].Acquired)
-		return;
-
-	mSurfaces[mCurrentBackBufferIdx].NeedsWait = false;
+	mSurfaces[imageIndex].NeedsWait = false;
 }

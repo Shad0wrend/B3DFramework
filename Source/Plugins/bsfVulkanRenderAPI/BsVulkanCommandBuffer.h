@@ -156,14 +156,15 @@ namespace bs
 			/**
 			 * Submits the command buffer for execution.
 			 *
-			 * @param[in]	queue		Queue to submit the command buffer on.
-			 * @param[in]	queueIdx	Index of the queue the command buffer was submitted on. Note that this may be different
-			 *							from the actual VulkanQueue index since multiple command buffer queue indices can map
-			 *							to the same queue.
-			 * @param[in]	syncMask	Mask that controls which other command buffers does this command buffer depend upon
-			 *							(if any). See description of @p syncMask parameter in RenderAPI::executeCommands().
+			 * @param	queue		Queue to submit the command buffer on.
+			 * @param	queueIdx	Index of the queue the command buffer was submitted on. Note that this may be different
+			 *						from the actual VulkanQueue index since multiple command buffer queue indices can map
+			 *						to the same queue.
+			 * @param	syncMask	Mask that controls which other command buffers does this command buffer depend upon
+			 *						(if any). See description of @p syncMask parameter in RenderAPI::ExecuteCommands().
+			 * @return				Sequential index of the submit on the queue, or ~0u if nothing was submitted.
 			 */
-			void Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask);
+			u32 Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask);
 
 			/** Returns the handle to the internal Vulkan command buffer wrapped by this object. */
 			VkCommandBuffer GetHandle() const { return mCmdBuffer; }
@@ -291,7 +292,7 @@ namespace bs
 			 * Assigns a render target the the command buffer. This render target's framebuffer and render pass will be used
 			 * when beginRenderPass() is called. Command buffer must not be currently recording a render pass.
 			 */
-			void SetRenderTarget(const SPtr<RenderTarget>& rt, u32 readOnlyFlags, RenderSurfaceMask loadMask);
+			void SetRenderTarget(const SPtr<RenderTarget>& renderTarget, u32 readOnlyFlags, RenderSurfaceMask loadMask);
 
 			/** Clears the entirety currently bound render target. */
 			void ClearRenderTarget(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask);
@@ -324,7 +325,7 @@ namespace bs
 			void SetDrawOp(DrawOperationType drawOp);
 
 			/** Sets one or multiple vertex buffers that will be used for subsequent draw() or drawIndexed() calls. */
-			void SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u32 numBuffers);
+			void SetVertexBuffers(u32 startIndex, SPtr<VertexBuffer>* buffers, u32 bufferCount);
 
 			/** Sets an index buffer that will be used for subsequent drawIndexed() calls. */
 			void SetIndexBuffer(const SPtr<IndexBuffer>& buffer);
@@ -522,6 +523,13 @@ namespace bs
 
 				u32 SubresourceInfoIdx;
 				u32 NumSubresourceInfos;
+			};
+
+			/** Information an acquires swap chain image. */
+			struct SwapChainImageInformation
+			{
+				VulkanSwapChain* SwapChain = nullptr;
+				u32 ImageIndex = ~0u;
 			};
 
 			/** Contains information about a range of Vulkan image sub-resources bound/used on this command buffer. */
@@ -766,7 +774,7 @@ namespace bs
 			UnorderedMap<VulkanImage*, u32> mQueuedLayoutTransitions;
 			Vector<VulkanEvent*> mQueuedEvents;
 			Vector<VulkanQuery*> mQueuedQueryResets;
-			UnorderedSet<VulkanSwapChain*> mActiveSwapChains;
+			Vector<SwapChainImageInformation> mAcquiredSwapChainImages;
 
 			SPtr<RenderTarget> mRenderTarget;
 			bool mRenderTargetModified = false;
@@ -781,10 +789,11 @@ namespace bs
 			/**
 			 * Submits the command buffer for execution.
 			 *
-			 * @param[in]	syncMask	Mask that controls which other command buffers does this command buffer depend upon
-			 *							(if any). See description of @p syncMask parameter in RenderAPI::executeCommands().
+			 * @param	syncMask		Mask that controls which other command buffers does this command buffer depend upon
+			 *							(if any). See description of @p syncMask parameter in RenderAPI::ExecuteCommands().
+			 * @return					Sequential index of the submit on the queue, or ~0u if nothing was submitted.
 			 */
-			void Submit(u32 syncMask);
+			u32 Submit(u32 syncMask);
 
 			/** Called by the backend when we have been notified the command buffer has finished executing on the GPU. */
 			void NotifyExecutionCompleted();

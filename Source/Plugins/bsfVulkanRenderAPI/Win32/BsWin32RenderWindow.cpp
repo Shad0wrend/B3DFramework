@@ -83,7 +83,7 @@ SPtr<ct::CoreObject> Win32RenderWindow::CreateCore() const
 namespace bs {
 namespace ct {
 Win32RenderWindow::Win32RenderWindow(const RENDER_WINDOW_DESC& desc, u32 windowId, VulkanRenderAPI& renderAPI)
-	: RenderWindow(desc, windowId), mProperties(desc), mSyncedProperties(desc), mWindow(nullptr), mIsChild(false), mShowOnSwap(false), mDisplayFrequency(0), mRenderAPI(renderAPI), mRequiresNewBackBuffer(true)
+	: RenderWindow(desc, windowId), mProperties(desc), mSyncedProperties(desc), mWindow(nullptr), mIsChild(false), mShowOnSwap(false), mDisplayFrequency(0), mRenderAPI(renderAPI), mRequiresNewSwapChainImage(true)
 {}
 
 Win32RenderWindow::~Win32RenderWindow()
@@ -247,20 +247,28 @@ void Win32RenderWindow::Initialize()
 	RenderWindow::Initialize();
 }
 
-void Win32RenderWindow::AcquireBackBuffer()
+u32 Win32RenderWindow::AcquireNextSwapChainImageIfRequired()
 {
 	// We haven't presented the current back buffer yet, so just use that one
-	if(!mRequiresNewBackBuffer)
-		return;
+	if(!mRequiresNewSwapChainImage)
+		return mSwapChain->GetLastAcquiredImageIndex();
 
-	VkResult acquireResult = mSwapChain->AcquireBackBuffer();
+	u32 imageIndex = 0;
+
+	const VkResult acquireResult = mSwapChain->AcquireImage(imageIndex);
 	if(acquireResult == VK_SUBOPTIMAL_KHR || acquireResult == VK_ERROR_OUT_OF_DATE_KHR)
 	{
 		RebuildSwapChain();
-		mSwapChain->AcquireBackBuffer();
+		mSwapChain->AcquireImage(imageIndex);
 	}
 
-	mRequiresNewBackBuffer = false;
+	mRequiresNewSwapChainImage = false;
+	return imageIndex;
+}
+
+void Win32RenderWindow::NotifyNewSwapChainImageIsRequired()
+{
+	mRequiresNewSwapChainImage = true;
 }
 
 void Win32RenderWindow::SwapBuffers(u32 syncMask)
@@ -278,32 +286,34 @@ void Win32RenderWindow::SwapBuffers(u32 syncMask)
 
 	// Find an appropriate queue to execute on
 	VulkanQueue* queue = presentDevice->GetQueue(GQT_GRAPHICS, 0);
-	u32 queueMask = presentDevice->GetQueueMask(GQT_GRAPHICS, 0);
+	const u32 queueMask = presentDevice->GetQueueMask(GQT_GRAPHICS, 0);
 
-	// Ignore myself
+	// Ignore myself as this semaphore is handled in VulkanQueue::present() already
 	syncMask &= ~queueMask;
 
 	u32 deviceIdx = presentDevice->GetIndex();
 	VulkanCommandBufferManager& cbm = static_cast<VulkanCommandBufferManager&>(CommandBufferManager::Instance());
 
-	u32 numSemaphores;
-	cbm.GetSyncSemaphores(deviceIdx, syncMask, mSemaphoresTemp, numSemaphores);
+	u32 semaphoreCount;
+	cbm.GetSyncSemaphores(deviceIdx, syncMask, mSemaphoresTemp, semaphoreCount);
+
+	u32 swapChainImageIndex = 0;
+	if(!mSwapChain->PrepareForPresent(swapChainImageIndex))
+		return; // Nothing to present
 
 	// Wait on present (i.e. until the back buffer becomes available), if we haven't already done so
-	const SwapChainSurface& surface = mSwapChain->GetBackBuffer();
+	const SwapChainImage& surface = mSwapChain->GetImage(swapChainImageIndex);
 	if(surface.NeedsWait)
 	{
-		mSemaphoresTemp[numSemaphores] = mSwapChain->GetBackBuffer().Sync;
-		numSemaphores++;
+		mSemaphoresTemp[semaphoreCount] = surface.Semaphore;
+		semaphoreCount++;
 
-		mSwapChain->NotifyBackBufferWaitIssued();
+		mSwapChain->NotifyBackBufferWaitIssued(swapChainImageIndex);
 	}
 
-	VkResult presentResult = queue->Present(mSwapChain, mSemaphoresTemp, numSemaphores);
+	VkResult presentResult = queue->Present(mSwapChain, swapChainImageIndex, mSemaphoresTemp, semaphoreCount);
 	if(presentResult == VK_SUBOPTIMAL_KHR || presentResult == VK_ERROR_OUT_OF_DATE_KHR)
 		RebuildSwapChain();
-
-	mRequiresNewBackBuffer = true;
 }
 
 void Win32RenderWindow::Move(i32 left, i32 top)
@@ -528,28 +538,12 @@ HWND Win32RenderWindow::GetWindowHandleInternal() const
 
 void Win32RenderWindow::GetCustomAttribute(const String& name, void* data) const
 {
-	if(name == "FB")
-	{
-		VulkanFramebuffer** fb = (VulkanFramebuffer**)data;
-		*fb = mSwapChain->GetBackBuffer().Framebuffer;
-		return;
-	}
-
-	if(name == "SC")
-	{
-		VulkanSwapChain** sc = (VulkanSwapChain**)data;
-		*sc = mSwapChain;
-		return;
-	}
-
 	if(name == "WINDOW")
 	{
 		u64* pWnd = (u64*)data;
 		*pWnd = (u64)mWindow->GetHWnd();
 		return;
 	}
-
-	RenderWindow::GetCustomAttribute(name, data);
 }
 
 void Win32RenderWindow::WindowMovedOrResizedInternal()
@@ -569,8 +563,6 @@ void Win32RenderWindow::WindowMovedOrResizedInternal()
 		props.Width = mWindow->GetWidth();
 		props.Height = mWindow->GetHeight();
 	}
-
-	RebuildSwapChain();
 }
 
 void Win32RenderWindow::SyncProperties()

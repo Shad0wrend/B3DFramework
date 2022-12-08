@@ -329,13 +329,13 @@ u32 VulkanRenderPass::GetClearEntryCount(RenderSurfaceMask clearMask) const
 	return std::min(attachmentCount, GetColorAttachmentCount());
 }
 
-VulkanRenderPasses::~VulkanRenderPasses()
+VulkanRenderPassCache::~VulkanRenderPassCache()
 {
 	for(auto& entry : mVariants)
 		B3DDelete(entry.second);
 }
 
-VulkanRenderPass* VulkanRenderPasses::Get(const VkDevice& device, const VulkanRenderPassCreateInformation& desc)
+VulkanRenderPass* VulkanRenderPassCache::FindOrCreateRenderPass(const VkDevice& device, const VulkanRenderPassCreateInformation& desc)
 {
 	VariantKey key(device, desc);
 
@@ -354,11 +354,11 @@ VulkanRenderPass* VulkanRenderPasses::Get(const VkDevice& device, const VulkanRe
 	return pass;
 }
 
-VulkanRenderPasses::VariantKey::VariantKey(const VkDevice& device, const VulkanRenderPassCreateInformation& createInformation)
+VulkanRenderPassCache::VariantKey::VariantKey(const VkDevice& device, const VulkanRenderPassCreateInformation& createInformation)
 	: Device(device), CreateInformation(createInformation)
 {}
 
-size_t VulkanRenderPasses::VariantKey::HashFunction::operator()(const VariantKey& v) const
+size_t VulkanRenderPassCache::VariantKey::HashFunction::operator()(const VariantKey& v) const
 {
 	size_t hash = 0;
 	B3DCombineHash(hash, v.Device);
@@ -367,7 +367,7 @@ size_t VulkanRenderPasses::VariantKey::HashFunction::operator()(const VariantKey
 	return hash;
 }
 
-bool VulkanRenderPasses::VariantKey::EqualFunction::operator()(const VariantKey& lhs, const VariantKey& rhs) const
+bool VulkanRenderPassCache::VariantKey::EqualFunction::operator()(const VariantKey& lhs, const VariantKey& rhs) const
 {
 	return lhs.Device == rhs.Device && lhs.CreateInformation.IsCompatible(rhs.CreateInformation);
 }

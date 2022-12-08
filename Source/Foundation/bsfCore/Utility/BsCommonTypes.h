@@ -692,3 +692,25 @@ namespace bs
 
 	/** @} */
 } // namespace bs
+
+/** @cond STDLIB */
+
+namespace std {
+
+template <>
+struct hash<bs::TextureSurface>
+{
+	size_t operator()(const bs::TextureSurface& value) const
+	{
+		size_t hash = 0;
+		bs::B3DCombineHash(hash, value.MipLevel);
+		bs::B3DCombineHash(hash, value.MipLevelCount);
+		bs::B3DCombineHash(hash, value.Face);
+		bs::B3DCombineHash(hash, value.FaceCount);
+
+		return hash;
+	}
+};
+} // namespace std
+
+/** @endcond */

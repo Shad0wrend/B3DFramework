@@ -3,6 +3,7 @@
 #pragma once
 
 #include "BsVulkanPrerequisites.h"
+#include "BsVulkanRenderPass.h"
 #include "BsVulkanResource.h"
 
 namespace bs
@@ -16,7 +17,7 @@ namespace bs
 		 */
 
 		/** Represents a single attachment in a Vulkan frame-buffer. */
-		struct VULKAN_ATTACHMENT_DESC
+		struct VulkanFramebufferAttachmentInformation
 		{
 			/** Image to attach or null if none. */
 			VulkanImage* Image = nullptr;
@@ -29,13 +30,13 @@ namespace bs
 		};
 
 		/** Contains parameters used for initializing VulkanFrameBuffer object. */
-		struct VULKAN_FRAMEBUFFER_DESC
+		struct VulkanFramebufferInformation
 		{
 			/** Images describing the color attachments. */
-			VULKAN_ATTACHMENT_DESC Color[B3D_MAXIMUM_RENDER_TARGET_COUNT];
+			VulkanFramebufferAttachmentInformation Color[B3D_MAXIMUM_RENDER_TARGET_COUNT];
 
 			/** Image describing the depth attachment. */
-			VULKAN_ATTACHMENT_DESC Depth;
+			VulkanFramebufferAttachmentInformation Depth;
 
 			/** Width of the images, in pixels. All images must be the same size. */
 			u32 Width = 0;
@@ -70,7 +71,7 @@ namespace bs
 			 *							formats and sample counts match.
 			 * @param[in]	desc		Description of the frame buffer.
 			 */
-			VulkanFramebuffer(VulkanResourceManager* owner, VulkanRenderPass* renderPass, const VULKAN_FRAMEBUFFER_DESC& desc);
+			VulkanFramebuffer(VulkanResourceManager* owner, VulkanRenderPass* renderPass, const VulkanFramebufferInformation& desc);
 			~VulkanFramebuffer();
 
 			/** Returns a unique ID of this framebuffer. */
@@ -112,6 +113,58 @@ namespace bs
 			VulkanFramebufferAttachment mDepthStencilAttachment;
 
 			static u32 sNextValidId;
+		};
+
+		/** Creates and caches framebuffers. */
+		class VulkanFramebufferCache : public Module<VulkanFramebufferCache>
+		{
+		public:
+			~VulkanFramebufferCache();
+
+			/**
+			 * Searches for a framebuffer matching the provided framebuffer information, that is also compatible with the provided render pass information. If one
+			 * cannot be found a new one is created, added to the internal cache, and returned.
+			 *
+			 * @note	Thread safe.
+			 *
+			 * @param	device						Device to create the framebuffer on.
+			 * @param	framebufferInformation		Information about the framebuffer.
+			 * @param	renderPassInformation		Information about the render pass the framebuffer will be used with.
+			 * @return								Existing cached framebuffer, or a brand new framebuffer.
+			 */
+			VulkanFramebuffer* FindOrCreateFramebuffer(const VulkanDevice& device, const VulkanFramebufferInformation& framebufferInformation, const VulkanRenderPassCreateInformation& renderPassInformation);
+
+			/**
+			 * Notifies the system that an image was destroyed. If any framebuffer is using the image, their cache entries will be invalidated.
+			 *
+			 * @note	Thread safe.
+			 */
+			void NotifyImageDestroyed(const VkImage& image);
+
+		private:
+			struct FramebufferVariantKey
+			{
+				FramebufferVariantKey(const VkDevice& device, const VulkanFramebufferInformation& framebufferInformation, const VulkanRenderPassCreateInformation& renderPassInformation);
+
+				class HashFunction
+				{
+				public:
+					size_t operator()(const FramebufferVariantKey& key) const;
+				};
+
+				class EqualFunction
+				{
+				public:
+					bool operator()(const FramebufferVariantKey& lhs, const FramebufferVariantKey& rhs) const;
+				};
+
+				VkDevice Device = VK_NULL_HANDLE;
+				VulkanFramebufferInformation FramebufferInformation;
+				VulkanRenderPassCreateInformation RenderPassInformation;
+			};
+
+			mutable Mutex mMutex;
+			mutable UnorderedMap<FramebufferVariantKey, VulkanFramebuffer*, FramebufferVariantKey::HashFunction, FramebufferVariantKey::EqualFunction> mCache;
 		};
 
 		/** @} */

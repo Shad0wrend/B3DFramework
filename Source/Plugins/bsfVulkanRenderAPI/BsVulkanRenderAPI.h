@@ -52,6 +52,9 @@ namespace bs
 			 * @{
 			 */
 
+			/** Submits any queued swap buffer operations for execution. */
+			void SubmitQueuedSwapOperations();
+
 			/** Returns the internal Vulkan instance object. */
 			VkInstance GetInstance() const { return mInstance; }
 
@@ -90,6 +93,18 @@ namespace bs
 			VulkanCommandBuffer* GetCb(const SPtr<CommandBuffer>& buffer);
 
 		private:
+			/** Queued swap chain operation. */
+			struct QueuedSwapOperation
+			{
+				QueuedSwapOperation(const SPtr<RenderTarget>& target = nullptr, const VulkanSwapChain* swapChain = nullptr, u32 syncMask = ~0u)
+					: Target(target), SwapChain(swapChain), SyncMask(syncMask)
+				{}
+
+				SPtr<RenderTarget> Target;
+				const VulkanSwapChain* SwapChain;
+				u32 SyncMask = ~0u;
+			};
+
 			VkInstance mInstance = nullptr;
 
 			Vector<SPtr<VulkanDevice>> mDevices;
@@ -97,6 +112,8 @@ namespace bs
 
 			SPtr<VulkanCommandBuffer> mMainCommandBuffer;
 			Vector<SPtr<CommandBuffer>> mSubmittedCommandBuffers;
+
+			Vector<QueuedSwapOperation> mQueuedSwapOperations;
 
 			VulkanGLSLProgramFactory* mGLSLFactory;
 

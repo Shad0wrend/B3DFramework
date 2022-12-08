@@ -55,6 +55,8 @@ namespace bs
 			VulkanImage(VulkanResourceManager* owner, const VulkanImageCreateInformation& desc, bool ownsImage = true, bool isShaderReadAllowed = true);
 			~VulkanImage();
 
+			void Destroy() override;
+
 			/** Returns the internal handle to the Vulkan object. */
 			VkImage GetHandle() const { return mImage; }
 

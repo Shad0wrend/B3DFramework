@@ -40,15 +40,15 @@ void VulkanTransferBuffer::Allocate()
 	mCommandBuffer = mDevice->GetCmdBufferPool().GetBuffer(queueFamily, false);
 }
 
-void VulkanTransferBuffer::Flush(bool wait)
+u32 VulkanTransferBuffer::Flush(bool wait)
 {
 	if(mCommandBuffer == nullptr)
-		return;
+		return ~0u;
 
 	const u32 syncMask = mSyncMask & ~mQueueMask; // Don't sync with itself
 
 	mCommandBuffer->End();
-	mCommandBuffer->Submit(mQueue, mQueueIdx, syncMask);
+	const u32 submitIndex = mCommandBuffer->Submit(mQueue, mQueueIdx, syncMask);
 
 	if(wait)
 	{
@@ -59,6 +59,7 @@ void VulkanTransferBuffer::Flush(bool wait)
 	}
 
 	mCommandBuffer = nullptr;
+	return submitIndex;
 }
 
 VulkanCommandBufferManager::VulkanCommandBufferManager(const VulkanRenderAPI& rapi)

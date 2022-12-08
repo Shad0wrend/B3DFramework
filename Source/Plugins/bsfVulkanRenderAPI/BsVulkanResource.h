@@ -154,7 +154,7 @@ namespace bs
 			 * Destroys the resource and frees its memory. If the resource is currently being used on a device, the
 			 * destruction is delayed until the device is done with it.
 			 */
-			void Destroy();
+			virtual void Destroy();
 
 		protected:
 			/** Possible states of this object. */

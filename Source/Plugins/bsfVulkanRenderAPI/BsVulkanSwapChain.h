@@ -14,15 +14,15 @@ namespace bs
 		 */
 
 		/** Description of a single swap chain surface. */
-		struct SwapChainSurface
+		struct SwapChainImage
 		{
-			VulkanImage* Image;
-			VulkanSemaphore* Sync;
-			bool Acquired;
-			bool NeedsWait;
+			VulkanImage* Image = VK_NULL_HANDLE;
+			VulkanSemaphore* Semaphore = VK_NULL_HANDLE;
+			bool Acquired = false;
+			bool NeedsWait = false;
 
-			VulkanFramebuffer* Framebuffer;
-			VULKAN_FRAMEBUFFER_DESC FramebufferDesc;
+			VulkanFramebuffer* Framebuffer = nullptr;
+			VulkanFramebufferInformation FramebufferInformation;
 		};
 
 		/** Vulkan swap chain containing two or more buffers for rendering and presenting onto the screen. */
@@ -49,33 +49,37 @@ namespace bs
 			u32 GetHeight() const { return mHeight; }
 
 			/**
-			 * Attempts to acquire a new back buffer image. Caller can retrieve the surface by calling getBackBuffer(). Caller
+			 * Attempts to acquire a new swap chain image. Caller can retrieve the surface by calling GetImage(). Caller
 			 * must wait on the semaphore provided by the surface before rendering to it. Method might fail if the swap
-			 * chain is no longer valid, and failure result will be returned.
+			 * chain is no longer valid, and failure result will be returned. Index of the returned image will be returned
+			 * in @p outAcquiredImageIndex.
 			 *
-			 * @note Must only be called once in-between present() calls, or before the first present() call.
+			 * @note Must only be called once in-between Present() calls, or before the first Present() call.
 			 */
-			VkResult AcquireBackBuffer();
+			VkResult AcquireImage(u32& outAcquiredImageIndex);
 
 			/**
-			 * Prepares the swap chain for the present operation.
+			 * Prepares the swap chain for the present operation for the first image that has been acquired but not yet presented.
 			 *
-			 * @param[out] backBufferIdx	Index of the image representing the current back buffer.
+			 * @param[out] outImageIndex	Index of the image representing the current back buffer.
 			 * @return						True if there is anything to present, false otherwise.
 			 */
-			bool PrepareForPresent(u32& backBufferIdx);
+			bool PrepareForPresent(u32& outImageIndex);
 
-			/** Notifies the chain that the semaphore waiting for the back buffer to become available is being waited on. */
-			void NotifyBackBufferWaitIssued();
+			/** Notifies the swap chain that the semaphore waiting for the provided swap chain image to become available is being waited on. */
+			void NotifyBackBufferWaitIssued(u32 imageIndex);
 
-			/** Returns information describing the current back buffer. */
-			const SwapChainSurface& GetBackBuffer() { return mSurfaces[mCurrentBackBufferIdx]; }
+			/** Returns information describing the swap chain image at the provided index. */
+			const SwapChainImage& GetImage(u32 imageIndex) const { return mSurfaces[imageIndex]; }
 
 			/** Returns the number of available color surfaces. */
-			u32 GetNumColorSurfaces() const { return (u32)mSurfaces.size(); }
+			u32 GetColorSurfaceCount() const { return (u32)mSurfaces.size(); }
 
 			/** Returns the internal swap chain handle. */
 			VkSwapchainKHR GetHandle() const { return mSwapChain; }
+
+			/** Returns the image index of the last acquired swap chain image. */
+			u32 GetLastAcquiredImageIndex() const { return mLastAcquiredImageIndex; }
 
 		private:
 			/** Destroys current swap chain and depth stencil image (if any). */
@@ -86,12 +90,13 @@ namespace bs
 
 			u32 mWidth = 0;
 			u32 mHeight = 0;
-			Vector<SwapChainSurface> mSurfaces;
+			Vector<SwapChainImage> mSurfaces;
 
 			VulkanImage* mDepthStencilImage = nullptr;
 
-			u32 mCurrentSemaphoreIdx = 0;
-			u32 mCurrentBackBufferIdx = 0;
+			u32 mLastAcquiredSemaphoreIndex = 0;
+			u32 mLastAcquiredImageIndex = 0;
+			u32 mAcquiredImageCount = 0;
 		};
 
 		/** @} */

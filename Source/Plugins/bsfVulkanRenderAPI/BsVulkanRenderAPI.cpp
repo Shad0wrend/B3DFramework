@@ -19,8 +19,11 @@
 #include "BsVulkanGpuParamBlockBuffer.h"
 
 #include <vulkan/vulkan.h>
+
+#include "BsVulkanFramebuffer.h"
 #include "BsVulkanUtility.h"
 #include "BsVulkanRenderPass.h"
+#include "Win32/BsWin32RenderWindow.h"
 
 #if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
 #	include "Win32/BsWin32VideoModeInfo.h"
@@ -454,7 +457,8 @@ void VulkanRenderAPI::Initialize()
 	TextureManager::StartUp<VulkanTextureManager>();
 
 	// Create the render pass manager
-	VulkanRenderPasses::StartUp();
+	VulkanRenderPassCache::StartUp();
+	VulkanFramebufferCache::StartUp();
 
 	// Create hardware buffer manager
 	bs::HardwareBufferManager::StartUp();
@@ -504,7 +508,8 @@ void VulkanRenderAPI::DestroyCore()
 	bs::RenderWindowManager::ShutDown();
 	HardwareBufferManager::ShutDown();
 	bs::HardwareBufferManager::ShutDown();
-	VulkanRenderPasses::ShutDown();
+	VulkanFramebufferCache::ShutDown();
+	VulkanRenderPassCache::ShutDown();
 	TextureManager::ShutDown();
 	bs::TextureManager::ShutDown();
 
@@ -711,8 +716,30 @@ void VulkanRenderAPI::SwapBuffers(const SPtr<RenderTarget>& target, u32 syncMask
 {
 	THROW_IF_NOT_CORE_THREAD;
 
+	// Retrieve the swap chain before command buffer submit, as the submit might internally rebuild the swap chain.
+	VulkanSwapChain* swapChain = nullptr;
+
+	if(target != nullptr && target->GetProperties().IsWindow)
+	{
+#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+		Win32RenderWindow* window = static_cast<Win32RenderWindow*>(target.get());
+#elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
+		LinuxRenderWindow* window = static_cast<LinuxRenderWindow*>(target.get());
+#elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+		MacOSRenderWindow* window = static_cast<MacOSRenderWindow*>(target.get());
+#endif
+
+		swapChain = window->GetSwapChain();
+		window->NotifyNewSwapChainImageIsRequired();
+	}
+
 	SubmitCommandBuffer(mMainCommandBuffer, syncMask);
-	target->SwapBuffers(syncMask);
+
+	if(swapChain != nullptr)
+	{
+		// Delaying swap operation because it may block the calling thread until GPU finishes
+		mQueuedSwapOperations.push_back(QueuedSwapOperation(target, swapChain, syncMask));
+	}
 
 	// See if any command buffers finished executing
 	for(u32 i = 0; i < (u32)mDevices.size(); i++)
@@ -773,6 +800,8 @@ void VulkanRenderAPI::SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuff
 {
 	THROW_IF_NOT_CORE_THREAD;
 
+	SubmitQueuedSwapOperations();
+
 	VulkanCommandBuffer* cmdBuffer = GetCb(commandBuffer);
 
 	// Submit all transfer buffers first
@@ -790,6 +819,31 @@ void VulkanRenderAPI::SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuff
 	{
 		mSubmittedCommandBuffers.push_back(commandBuffer);
 	}
+}
+
+void VulkanRenderAPI::SubmitQueuedSwapOperations()
+{
+	for(const auto& entry : mQueuedSwapOperations)
+	{
+		if(entry.Target == nullptr || !entry.Target->GetProperties().IsWindow)
+			continue;
+
+#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+		Win32RenderWindow* window = static_cast<Win32RenderWindow*>(entry.Target.get());
+#elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
+		LinuxRenderWindow* window = static_cast<LinuxRenderWindow*>(entry.Target.get());
+#elif B3D_PLATFORM == B3D_PLATFORM_ID_OSX
+		MacOSRenderWindow* window = static_cast<MacOSRenderWindow*>(entry.Target.get());
+#endif
+
+		// If the swap chain changed, we ignore the queued swaps for the destroyed swap chain
+		if(window->GetSwapChain() != entry.SwapChain)
+			continue;
+
+		entry.Target->SwapBuffers(entry.SyncMask);
+	}
+
+	mQueuedSwapOperations.clear();
 }
 
 SPtr<CommandBuffer> VulkanRenderAPI::GetMainCommandBuffer() const

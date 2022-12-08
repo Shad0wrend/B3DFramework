@@ -164,10 +164,10 @@ namespace bs
 		};
 
 		/** Manages creation and caching of render passes. */
-		class VulkanRenderPasses : public Module<VulkanRenderPasses>
+		class VulkanRenderPassCache : public Module<VulkanRenderPassCache>
 		{
 		public:
-			~VulkanRenderPasses();
+			~VulkanRenderPassCache();
 
 			/**
 			 * Returns an existing matching render pass or creates a new one with specified settings.
@@ -176,7 +176,7 @@ namespace bs
 			 * @param[in]	desc		Descriptor describing the requested pass.
 			 * @return					Brand new render pass, or an existing one if one was found matching the descriptor.
 			 */
-			VulkanRenderPass* Get(const VkDevice& device, const VulkanRenderPassCreateInformation& desc);
+			VulkanRenderPass* FindOrCreateRenderPass(const VkDevice& device, const VulkanRenderPassCreateInformation& desc);
 
 		private:
 			/** Key used for identifying different types of frame-buffer variants. */

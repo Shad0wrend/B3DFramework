@@ -35,10 +35,11 @@ namespace bs
 			/**
 			 * Submits the command buffer on the queue.
 			 *
-			 *	@param[in]	wait	If true, the caller thread will wait until all device operations on the command buffer's
-			 *						queue complete.
+			 * @param	wait	If true, the caller thread will wait until all device operations on the command buffer's
+			 *					queue complete.
+			 * @return			Sequential index of the submit on the queue the command buffer was submitted on, or ~0u if nothing was submitted.
 			 */
-			void Flush(bool wait);
+			u32 Flush(bool wait);
 
 			/** Returns the internal command buffer. */
 			VulkanCmdBuffer* GetCb() const { return mCommandBuffer; }

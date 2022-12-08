@@ -70,11 +70,18 @@ namespace bs
 			void SetWindowed(u32 width, u32 height) override;
 			void SetVSync(bool enabled, u32 interval = 1) override;
 
-			/** Prepares the back buffer for rendering. Should be called before it is bound to the GPU. */
-			void AcquireBackBuffer();
 			void SwapBuffers(u32 syncMask = 0xFFFFFFFF) override;
 			void GetCustomAttribute(const String& name, void* data) const override;
 			void WindowMovedOrResizedInternal() override;
+
+			/** Prepares the next swap chain image for rendering if required. Returns the index of the acquired swap chain image, or ~0u if it was unable to acquire the image. If acquire is not required, returns the index of the last acquired image. */
+			u32 AcquireNextSwapChainImageIfRequired();
+
+			/** Notifies the swap chain that a new swap chain image should be returned when calling AcquireNextSwapChainImageIfRequired(). This should be called after an image has been processed and is ready to present. */
+			void NotifyNewSwapChainImageIsRequired();
+
+			/** Returns the swap chain owned by the window. */
+			VulkanSwapChain* GetSwapChain() const { return mSwapChain; }
 
 			/**	Returns internal window handle. */
 			HWND GetWindowHandleInternal() const;
@@ -104,7 +111,7 @@ namespace bs
 			u32 mPresentQueueFamily;
 			VulkanSwapChain* mSwapChain = nullptr;
 			VulkanSemaphore* mSemaphoresTemp[BS_MAX_UNIQUE_QUEUES + 1]; // +1 for present semaphore
-			bool mRequiresNewBackBuffer;
+			bool mRequiresNewSwapChainImage;
 
 			RenderWindowProperties mProperties;
 			RenderWindowProperties mSyncedProperties;

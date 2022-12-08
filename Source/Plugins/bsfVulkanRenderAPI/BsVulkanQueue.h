@@ -37,8 +37,8 @@ namespace bs
 			 */
 			bool IsExecuting() const;
 
-			/** Submits the provided command buffer on the queue. */
-			void Submit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, u32 semaphoresCount);
+			/** Submits the provided command buffer on the queue. Returns a sequential index of the submit on the queue, or ~0u if nothing was submitted. */
+			u32 Submit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, u32 semaphoresCount);
 
 			/**
 			 * Stores information about a submit internally, but doesn't actually execute it. The intended use is to queue
@@ -47,18 +47,19 @@ namespace bs
 			 */
 			void QueueSubmit(VulkanCmdBuffer* cmdBuffer, VulkanSemaphore** waitSemaphores, u32 semaphoresCount);
 
-			/** Submits all previously queued commands buffers, as recorded by queueSubmit(). */
-			void SubmitQueued();
+			/** Submits all previously queued commands buffers, as recorded by QueueSubmit(). Returns a sequential index of the last submitted buffer on the queue, or ~0u if nothing was submitted.*/
+			u32 SubmitQueued();
 
 			/**
 			 * Presents the back buffer of the provided swap chain.
 			 *
-			 * @param[in]	swapChain			Swap chain whose back buffer to present.
-			 * @param[in]	waitSemaphores		Optional semaphores to wait on before presenting the queue.
-			 * @param[in]	semaphoresCount		Number of semaphores in the @p semaphores array.
-			 * @return							Return code of the present operation.
+			 * @param	swapChain			Swap chain whose back buffer to present.
+			 * @param	swapChainImageIndex	Index of the swap chain image to be presented. Must have been acquired previously.
+			 * @param	waitSemaphores		Optional semaphores to wait on before presenting the queue.
+			 * @param	semaphoresCount		Number of semaphores in the @p semaphores array.
+			 * @return						Return code of the present operation.
 			 */
-			VkResult Present(VulkanSwapChain* swapChain, VulkanSemaphore** waitSemaphores, u32 semaphoresCount);
+			VkResult Present(VulkanSwapChain* swapChain, u32 swapChainImageIndex, VulkanSemaphore** waitSemaphores, u32 semaphoresCount);
 
 			/** Blocks the calling thread until all operations on the queue finish. */
 			void WaitIdle() const;
@@ -67,11 +68,12 @@ namespace bs
 			 * Checks if any of the active command buffers finished executing on the queue and updates their states
 			 * accordingly.
 			 *
-			 * @param[in]	forceWait	Set to true if the system should wait until all command buffers finish executing.
-			 * @param[in]	queueEmpty	Set to true if the caller guarantees the queue will be empty (e.g. on shutdown). This
-			 *							allows the system to free all needed resources.
+			 * @param	forceWait				Set to true if the system should wait until all command buffers finish executing.
+			 * @param	queueEmpty				Set to true if the caller guarantees the queue will be empty (e.g. on shutdown). This
+			 *									allows the system to free all needed resources.
+			 * @param	lastSubmitIndex			Index of the last submitted command buffer which should be checked. If ~0u is provided, all submitted command buffers will be checked.
 			 */
-			void RefreshStates(bool forceWait, bool queueEmpty = false);
+			void RefreshStates(bool forceWait, bool queueEmpty = false, u32 lastSubmitIndex = ~0u);
 
 			/** Returns the last command buffer that was submitted on this queue. */
 			VulkanCmdBuffer* GetLastCommandBuffer() const { return mLastCommandBuffer; }
@@ -120,7 +122,7 @@ namespace bs
 			Queue<VulkanSemaphore*> mActiveSemaphores;
 			VulkanCmdBuffer* mLastCommandBuffer = nullptr;
 			bool mLastCBSemaphoreUsed = false;
-			u32 mNextSubmitIdx = 1;
+			u32 mNextSubmitIndex = 1;
 
 			Vector<VkSemaphore> mSemaphoresTemp;
 		};

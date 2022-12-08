@@ -3,6 +3,7 @@
 #include "BsVulkanTexture.h"
 #include "BsVulkanRenderAPI.h"
 #include "BsVulkanDevice.h"
+#include "BsVulkanFramebuffer.h"
 #include "BsVulkanUtility.h"
 #include "Managers/BsVulkanCommandBufferManager.h"
 #include "BsVulkanHardwareBuffer.h"
@@ -113,6 +114,17 @@ VulkanImage::~VulkanImage()
 		vkDestroyImage(vkDevice, mImage, gVulkanAllocator);
 		device.FreeMemory(mAllocation);
 	}
+}
+
+void VulkanImage::Destroy()
+{
+	const bool isUsedAsRenderTarget = (mUsage & (TU_RENDERTARGET | TU_DEPTHSTENCIL)) != 0;
+	if(isUsedAsRenderTarget && VulkanFramebufferCache::IsStarted())
+	{
+		VulkanFramebufferCache::Instance().NotifyImageDestroyed(GetHandle());
+	}
+
+	VulkanResource::Destroy();
 }
 
 void VulkanImage::SetName(const StringView& name)

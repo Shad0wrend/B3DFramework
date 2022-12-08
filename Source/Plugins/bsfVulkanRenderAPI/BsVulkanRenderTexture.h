@@ -43,9 +43,12 @@ namespace bs
 		{
 		public:
 			VulkanRenderTexture(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx);
-			~VulkanRenderTexture() override;
+			~VulkanRenderTexture() override = default;
 
 			void GetCustomAttribute(const String& name, void* data) const override;
+
+			/** Returns the underlying framebuffer object. */
+			VulkanFramebuffer* GetFramebuffer() const { return mFramebuffer; }
 
 		protected:
 			void Initialize() override;

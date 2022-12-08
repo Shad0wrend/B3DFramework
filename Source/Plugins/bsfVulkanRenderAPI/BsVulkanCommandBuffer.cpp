@@ -18,6 +18,7 @@
 #include "BsVulkanTimerQuery.h"
 #include "BsVulkanOcclusionQuery.h"
 #include "BsVulkanRenderPass.h"
+#include "BsVulkanRenderTexture.h"
 #include "Managers/BsVulkanHardwareBufferManager.h"
 
 #if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
@@ -533,7 +534,7 @@ VulkanSemaphore* VulkanCmdBuffer::RequestInterQueueSemaphore() const
 	return mInterQueueSemaphores[mNumUsedInterQueueSemaphores++];
 }
 
-void VulkanCmdBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask)
+u32 VulkanCmdBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask)
 {
 	B3D_ASSERT(IsReadyForSubmit());
 
@@ -751,12 +752,12 @@ void VulkanCmdBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask)
 	cbm.GetSyncSemaphores(deviceIdx, syncMask, mSemaphoresTemp.data(), numSemaphores);
 
 	// Wait on present (i.e. until the back buffer becomes available) for any swap chains
-	for(auto& entry : mActiveSwapChains)
+	for(auto& entry : mAcquiredSwapChainImages)
 	{
-		const SwapChainSurface& surface = entry->GetBackBuffer();
-		if(surface.NeedsWait)
+		const SwapChainImage& swapChainImage = entry.SwapChain->GetImage(entry.ImageIndex);
+		if(swapChainImage.NeedsWait)
 		{
-			VulkanSemaphore* semaphore = entry->GetBackBuffer().Sync;
+			VulkanSemaphore *const semaphore = swapChainImage.Semaphore;
 
 			if(numSemaphores >= (u32)mSemaphoresTemp.size())
 				mSemaphoresTemp.push_back(semaphore);
@@ -765,7 +766,7 @@ void VulkanCmdBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask)
 
 			numSemaphores++;
 
-			entry->NotifyBackBufferWaitIssued();
+			entry.SwapChain->NotifyBackBufferWaitIssued(entry.ImageIndex);
 		}
 	}
 
@@ -802,7 +803,7 @@ void VulkanCmdBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask)
 	}
 
 	queue->QueueSubmit(this, mSemaphoresTemp.data(), numSemaphores);
-	queue->SubmitQueued();
+	const u32 submitIndex = queue->SubmitQueued();
 
 	mGlobalQueueIdx = CommandSyncMask::GetGlobalQueueIdx(queue->GetType(), queueIdx);
 	for(auto& entry : mResources)
@@ -866,7 +867,9 @@ void VulkanCmdBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask)
 	mIndexBuffer = nullptr;
 	mVertexBuffers.clear();
 	mVertexInputsDirty = true;
-	mActiveSwapChains.clear();
+	mAcquiredSwapChainImages.clear();
+
+	return submitIndex;
 }
 
 bool VulkanCmdBuffer::UpdateExecutionStatus(bool block)
@@ -974,37 +977,48 @@ void VulkanCmdBuffer::Reset()
 	}
 }
 
-void VulkanCmdBuffer::SetRenderTarget(const SPtr<RenderTarget>& rt, u32 readOnlyFlags, RenderSurfaceMask loadMask)
+void VulkanCmdBuffer::SetRenderTarget(const SPtr<RenderTarget>& renderTarget, u32 readOnlyFlags, RenderSurfaceMask loadMask)
 {
 	B3D_ASSERT(mState != State::Submitted);
 
-	VulkanFramebuffer* newFB;
+	VulkanFramebuffer* newFramebuffer;
 	VulkanSwapChain* swapChain = nullptr;
-	if(rt != nullptr)
+	if(renderTarget != nullptr)
 	{
-		if(rt->GetProperties().IsWindow)
+		if(renderTarget->GetProperties().IsWindow)
 		{
 #if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
-			Win32RenderWindow* window = static_cast<Win32RenderWindow*>(rt.get());
+			Win32RenderWindow* window = static_cast<Win32RenderWindow*>(renderTarget.get());
 #elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
 			LinuxRenderWindow* window = static_cast<LinuxRenderWindow*>(rt.get());
 #elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
 			MacOSRenderWindow* window = static_cast<MacOSRenderWindow*>(rt.get());
 #endif
-			window->AcquireBackBuffer();
 
-			rt->GetCustomAttribute("SC", &swapChain);
-			mActiveSwapChains.insert(swapChain);
+			swapChain = window->GetSwapChain();
+
+			SwapChainImageInformation swapChainImageInformation;
+			swapChainImageInformation.SwapChain = swapChain;
+			swapChainImageInformation.ImageIndex = window->AcquireNextSwapChainImageIfRequired();
+
+			const auto found = std::find_if(mAcquiredSwapChainImages.begin(), mAcquiredSwapChainImages.end(), [swapChain](const SwapChainImageInformation& info) { return info.SwapChain == swapChain; });
+			if(found == mAcquiredSwapChainImages.end())
+				mAcquiredSwapChainImages.push_back(swapChainImageInformation);
+
+			newFramebuffer = swapChain->GetImage(swapChainImageInformation.ImageIndex).Framebuffer;
 		}
-
-		rt->GetCustomAttribute("FB", &newFB);
+		else
+		{
+			const VulkanRenderTexture* const renderTexture = static_cast<VulkanRenderTexture*>(renderTarget.get());
+			newFramebuffer = renderTexture->GetFramebuffer();
+		}
 	}
 	else
 	{
-		newFB = nullptr;
+		newFramebuffer = nullptr;
 	}
 
-	mRenderTarget = rt;
+	mRenderTarget = renderTarget;
 	mRenderTargetModified = false;
 	mIsRenderPassInterrupted = false;
 
@@ -1025,7 +1039,7 @@ void VulkanCmdBuffer::SetRenderTarget(const SPtr<RenderTarget>& rt, u32 readOnly
 		loadMask.Set(RT_DEPTH);
 	}
 
-	if(mFramebuffer == newFB && mRenderTargetReadOnlyFlags == readOnlyFlags && mRenderTargetLoadMask == loadMask)
+	if(mFramebuffer == newFramebuffer && mRenderTargetReadOnlyFlags == readOnlyFlags && mRenderTargetLoadMask == loadMask)
 		return;
 
 	if(IsInRenderPass())
@@ -1075,7 +1089,7 @@ void VulkanCmdBuffer::SetRenderTarget(const SPtr<RenderTarget>& rt, u32 readOnly
 		}
 	}
 
-	if(newFB == nullptr)
+	if(newFramebuffer == nullptr)
 	{
 		mFramebuffer = nullptr;
 		mRenderTargetReadOnlyFlags = 0;
@@ -1083,7 +1097,7 @@ void VulkanCmdBuffer::SetRenderTarget(const SPtr<RenderTarget>& rt, u32 readOnly
 	}
 	else
 	{
-		mFramebuffer = newFB;
+		mFramebuffer = newFramebuffer;
 		mRenderTargetReadOnlyFlags = readOnlyFlags;
 		mRenderTargetLoadMask = loadMask;
 	}
@@ -1352,25 +1366,40 @@ void VulkanCmdBuffer::SetDrawOp(DrawOperationType drawOp)
 	mGfxPipelineRequiresBind = true;
 }
 
-void VulkanCmdBuffer::SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u32 numBuffers)
+void VulkanCmdBuffer::SetVertexBuffers(u32 startIndex, SPtr<VertexBuffer>* buffers, u32 bufferCount)
 {
-	if(numBuffers == 0)
-		return;
+	const u32 endIndex = startIndex + bufferCount;
+	if(endIndex <= mVertexBuffers.size())
+	{
+		bool isDifferenceFound = false;
+		for(u32 vertexBufferIndex = startIndex; vertexBufferIndex < endIndex; vertexBufferIndex++)
+		{
+			if(mVertexBuffers[vertexBufferIndex] != buffers[vertexBufferIndex])
+			{
+				isDifferenceFound = true;
+				break;
+			}
+		}
 
-	u32 endIdx = index + numBuffers;
-	if(mVertexBuffers.size() < endIdx)
-		mVertexBuffers.resize(endIdx);
+		if(!isDifferenceFound)
+			return;
+	}
 
-	for(u32 i = index; i < endIdx; i++)
-		mVertexBuffers[i] = std::static_pointer_cast<VulkanVertexBuffer>(buffers[i]);
+	if(mVertexBuffers.size() < endIndex)
+		mVertexBuffers.resize(endIndex);
+
+	for(u32 vertexBufferIndex = startIndex; vertexBufferIndex < endIndex; vertexBufferIndex++)
+		mVertexBuffers[vertexBufferIndex] = std::static_pointer_cast<VulkanVertexBuffer>(buffers[vertexBufferIndex]);
 
 	mVertexInputsDirty = true;
 }
 
 void VulkanCmdBuffer::SetIndexBuffer(const SPtr<IndexBuffer>& buffer)
 {
-	mIndexBuffer = std::static_pointer_cast<VulkanIndexBuffer>(buffer);
+	if(mIndexBuffer == buffer)
+		return;
 
+	mIndexBuffer = std::static_pointer_cast<VulkanIndexBuffer>(buffer);
 	mVertexInputsDirty = true;
 }
 
@@ -2926,12 +2955,12 @@ void VulkanCommandBuffer::AcquireNewBuffer()
 	mBuffer->SetName(mName);
 }
 
-void VulkanCommandBuffer::Submit(u32 syncMask)
+u32 VulkanCommandBuffer::Submit(u32 syncMask)
 {
 	if(GetState() == CommandBufferState::Executing)
 	{
 		B3D_LOG(Error, RenderBackend, "Cannot submit a command buffer that's still executing.");
-		return;
+		return ~0u;
 	}
 
 	// Ignore myself
@@ -2964,15 +2993,16 @@ void VulkanCommandBuffer::Submit(u32 syncMask)
 	if(mBuffer->IsRecording())
 		mBuffer->End();
 
+	u32 submitIndex = ~0u;
 	if(mBuffer->IsReadyForSubmit()) // Possibly nothing was recorded in the buffer
 	{
-		mBuffer->Submit(mQueue, mQueueIdx, syncMask);
+		submitIndex = mBuffer->Submit(mQueue, mQueueIdx, syncMask);
 		mDevice.RefreshStates(false);
 	}
 
 	mIsSubmitted = true;
+	return submitIndex;
 }
-
 
 void VulkanCommandBuffer::SetName(const StringView& name)
 {
