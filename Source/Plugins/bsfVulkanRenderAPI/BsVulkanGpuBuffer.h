@@ -13,7 +13,7 @@ namespace bs
 		 *  @{
 		 */
 
-		/**	DirectX 11 implementation of a generic GPU buffer. */
+		/**	Vulkan implementation of a generic GPU buffer. */
 		class VulkanGpuBuffer : public GpuBuffer
 		{
 		public:
@@ -37,8 +37,8 @@ namespace bs
 		protected:
 			friend class VulkanHardwareBufferManager;
 
-			VulkanGpuBuffer(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask);
-			VulkanGpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer);
+			VulkanGpuBuffer(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask);
+			VulkanGpuBuffer(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer);
 
 			void Initialize() override;
 			void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx = 0, u32 queueIdx = 0) override;

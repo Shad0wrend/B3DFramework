@@ -20,9 +20,9 @@ u32 CalcIndexSize(IndexType type)
 	}
 }
 
-void CheckValidDesc(const INDEX_BUFFER_DESC& desc)
+void CheckValidDesc(const IndexBufferCreateInformation& desc)
 {
-	if(desc.NumIndices == 0)
+	if(desc.IndexCount == 0)
 		B3D_EXCEPT(InvalidParametersException, "Index buffer index count is not allowed to be zero.");
 }
 
@@ -30,8 +30,8 @@ IndexBufferProperties::IndexBufferProperties(IndexType idxType, u32 numIndices)
 	: mIndexType(idxType), mNumIndices(numIndices), mIndexSize(CalcIndexSize(idxType))
 {}
 
-IndexBuffer::IndexBuffer(const INDEX_BUFFER_DESC& desc)
-	: mProperties(desc.IndexType, desc.NumIndices), mUsage(desc.Usage)
+IndexBuffer::IndexBuffer(const IndexBufferCreateInformation& desc)
+	: mProperties(desc.IndexType, desc.IndexCount), mUsage(desc.Usage)
 {
 #if B3D_DEBUG
 	CheckValidDesc(desc);
@@ -45,24 +45,24 @@ SPtr<ct::IndexBuffer> IndexBuffer::GetCore() const
 
 SPtr<ct::CoreObject> IndexBuffer::CreateCore() const
 {
-	INDEX_BUFFER_DESC desc;
+	IndexBufferCreateInformation desc;
 	desc.IndexType = mProperties.mIndexType;
-	desc.NumIndices = mProperties.mNumIndices;
+	desc.IndexCount = mProperties.mNumIndices;
 	desc.Usage = mUsage;
 
 	return ct::HardwareBufferManager::Instance().CreateIndexBufferInternal(desc);
 }
 
-SPtr<IndexBuffer> IndexBuffer::Create(const INDEX_BUFFER_DESC& desc)
+SPtr<IndexBuffer> IndexBuffer::Create(const IndexBufferCreateInformation& desc)
 {
 	return HardwareBufferManager::Instance().CreateIndexBuffer(desc);
 }
 
 namespace bs { namespace ct
 {
-IndexBuffer::IndexBuffer(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
-	: HardwareBuffer(CalcIndexSize(desc.IndexType) * desc.NumIndices, desc.Usage, deviceMask)
-	, mProperties(desc.IndexType, desc.NumIndices)
+IndexBuffer::IndexBuffer(const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
+	: HardwareBuffer(HardwareBufferType::Index, CalcIndexSize(desc.IndexType) * desc.IndexCount, desc.Usage, deviceMask)
+	, mProperties(desc.IndexType, desc.IndexCount)
 {
 #if B3D_DEBUG
 	CheckValidDesc(desc);
@@ -150,7 +150,7 @@ SPtr<GpuBuffer> IndexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat fo
 		return nullptr;
 	}
 
-	GPU_BUFFER_DESC desc;
+	GpuBufferCreateInformation desc;
 	desc.Type = type;
 	desc.Format = format;
 	desc.Usage = mUsage;
@@ -166,7 +166,7 @@ SPtr<GpuBuffer> IndexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat fo
 	return newView;
 }
 
-SPtr<IndexBuffer> IndexBuffer::Create(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
+SPtr<IndexBuffer> IndexBuffer::Create(const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
 {
 	return HardwareBufferManager::Instance().CreateIndexBuffer(desc, deviceMask);
 }

@@ -290,7 +290,7 @@ SPtr<ct::CoreObject> LightProbeVolume::CreateCore() const
 {
 	ct::LightProbeVolume* handler = new(B3DAllocate<ct::LightProbeVolume>()) ct::LightProbeVolume(mProbes);
 	SPtr<ct::LightProbeVolume> handlerPtr = B3DMakeSharedFromExisting<ct::LightProbeVolume>(handler);
-	handlerPtr->SetThisPtrInternal(handlerPtr);
+	handlerPtr->SetShared(handlerPtr);
 
 	return handlerPtr;
 }

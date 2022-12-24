@@ -18,7 +18,7 @@ namespace bs
 		class D3D11IndexBuffer : public IndexBuffer
 		{
 		public:
-			D3D11IndexBuffer(D3D11Device& device, const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask);
+			D3D11IndexBuffer(D3D11Device& device, const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask);
 
 			/**	Gets the internal DX11 index buffer object. */
 			ID3D11Buffer* GetD3DIndexBuffer() const { return static_cast<D3D11HardwareBuffer*>(mBuffer)->GetD3DBuffer(); }

@@ -28,7 +28,7 @@ SPtr<Texture> D3D11TextureManager::CreateTextureInternal(const TextureCreateInfo
 	D3D11Texture* tex = new(B3DAllocate<D3D11Texture>()) D3D11Texture(desc, initialData, deviceMask);
 
 	SPtr<D3D11Texture> texPtr = B3DMakeSharedFromExisting<D3D11Texture>(tex);
-	texPtr->SetThisPtrInternal(texPtr);
+	texPtr->SetShared(texPtr);
 
 	return texPtr;
 }
@@ -36,7 +36,7 @@ SPtr<Texture> D3D11TextureManager::CreateTextureInternal(const TextureCreateInfo
 SPtr<RenderTexture> D3D11TextureManager::CreateRenderTextureInternal(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 {
 	SPtr<D3D11RenderTexture> texPtr = B3DMakeShared<D3D11RenderTexture>(desc, deviceIdx);
-	texPtr->SetThisPtrInternal(texPtr);
+	texPtr->SetShared(texPtr);
 
 	return texPtr;
 }

@@ -69,7 +69,7 @@ SPtr<ct::CoreObject> VectorField::CreateCore() const
 	ct::VectorField* vectorField = new(B3DAllocate<ct::VectorField>()) ct::VectorField(mDesc, mTexture->GetCore());
 
 	SPtr<ct::VectorField> vectorFieldPtr = B3DMakeSharedFromExisting<ct::VectorField>(vectorField);
-	vectorFieldPtr->SetThisPtrInternal(vectorFieldPtr);
+	vectorFieldPtr->SetShared(vectorFieldPtr);
 
 	return vectorFieldPtr;
 }

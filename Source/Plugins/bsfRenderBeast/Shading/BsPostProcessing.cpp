@@ -1254,8 +1254,8 @@ BokehDOFMat::BokehDOFMat()
 	mTileVertexDecl = VertexDeclaration::Create(tileVertexDesc);
 
 	// Prepare vertex buffer for rendering tiles
-	VERTEX_BUFFER_DESC tileVertexBufferDesc;
-	tileVertexBufferDesc.NumVerts = kQuadsPerTile * 4;
+	VertexBufferCreateInformation tileVertexBufferDesc;
+	tileVertexBufferDesc.VertexCount = kQuadsPerTile * 4;
 	tileVertexBufferDesc.VertexSize = tileVertexDesc->GetVertexStride();
 
 	mTileVertexBuffer = VertexBuffer::Create(tileVertexBufferDesc);
@@ -1272,9 +1272,9 @@ BokehDOFMat::BokehDOFMat()
 	mTileVertexBuffer->Unlock();
 
 	// Prepare indices for rendering tiles
-	INDEX_BUFFER_DESC tileIndexBufferDesc;
+	IndexBufferCreateInformation tileIndexBufferDesc;
 	tileIndexBufferDesc.IndexType = IT_16BIT;
-	tileIndexBufferDesc.NumIndices = kQuadsPerTile * 6;
+	tileIndexBufferDesc.IndexCount = kQuadsPerTile * 6;
 
 	mTileIndexBuffer = IndexBuffer::Create(tileIndexBufferDesc);
 

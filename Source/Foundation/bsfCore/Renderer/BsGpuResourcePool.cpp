@@ -101,7 +101,7 @@ SPtr<PooledStorageBuffer> GpuResourcePool::Get(const POOLED_STORAGE_BUFFER_DESC&
 	SPtr<PooledStorageBuffer> newBuffer = B3DMakeShared<PooledStorageBuffer>(mCurrentFrame);
 	mBuffers.Add(newBuffer);
 
-	GPU_BUFFER_DESC bufferDesc;
+	GpuBufferCreateInformation bufferDesc;
 	bufferDesc.Type = desc.type;
 	bufferDesc.ElementSize = desc.elementSize;
 	bufferDesc.ElementCount = desc.numElements;

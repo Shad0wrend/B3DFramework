@@ -127,7 +127,7 @@ SPtr<ct::CoreObject> Pass::CreateCore() const
 	ct::Pass* pass = new(B3DAllocate<ct::Pass>()) ct::Pass(mData);
 
 	SPtr<ct::Pass> passPtr = B3DMakeSharedFromExisting(pass);
-	passPtr->SetThisPtrInternal(passPtr);
+	passPtr->SetShared(passPtr);
 
 	return passPtr;
 }
@@ -210,7 +210,7 @@ SPtr<Pass> Pass::Create(const PASS_DESC& desc)
 {
 	Pass* newPass = new(B3DAllocate<Pass>()) Pass(desc);
 	SPtr<Pass> newPassPtr = B3DMakeSharedFromExisting<Pass>(newPass);
-	newPassPtr->SetThisPtrInternal(newPassPtr);
+	newPassPtr->SetShared(newPassPtr);
 	newPassPtr->Initialize();
 
 	return newPassPtr;

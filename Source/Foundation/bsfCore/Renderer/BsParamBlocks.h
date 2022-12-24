@@ -61,6 +61,46 @@ namespace bs
 			}
 
 			/**
+			 * Writes parameter data to the provided memory location.
+			 *
+			 * @param	destination		Parameter block memory origin. The per-parameter offset is applied internally to determine the final destination.
+			 * @param	value			Value to write to the memory.
+			 * @param	arrayIndex		Optional array index, in case the parameter represents an array.
+			 */
+			void Set(u8* const destination, const T& value, u32 arrayIndex = 0) const
+			{
+#if B3D_DEBUG
+				if(arrayIndex >= mParamDesc.ArraySize)
+				{
+					B3D_LOG(Error, RenderBackend, "Array index out of range. Array size: {0}. Requested size: {1}", mParamDesc.ArraySize, arrayIndex);
+					return;
+				}
+#endif
+
+				const u32 elementSizeBytes = mParamDesc.ElementSize * sizeof(u32);
+				const u32 sizeBytes = std::min(elementSizeBytes, (u32)sizeof(T)); // Truncate if it doesn't fit within parameter size
+				const u32 offset = (mParamDesc.CpuMemOffset + arrayIndex * mParamDesc.ArrayElementStride) * sizeof(u32);
+
+				const bool transposeMatrices = GetRenderBackendCapabilities().Conventions.MatrixOrder == Conventions::MatrixOrder::ColumnMajor;
+				if(TransposePolicy<T>::TransposeEnabled(transposeMatrices))
+				{
+					auto transposed = TransposePolicy<T>::Transpose(value);
+					memcpy(destination + offset, &transposed, sizeBytes);
+				}
+				else
+				{
+					memcpy(destination + offset, &value, sizeBytes);
+				}
+
+				// Set unused bytes to 0
+				if(sizeBytes < elementSizeBytes)
+				{
+					const u32 diffSize = elementSizeBytes - sizeBytes;
+					memset(destination + offset + sizeBytes, 0, diffSize);
+				}
+			}
+
+			/**
 			 * Gets the parameter in the provided parameter block buffer. Caller is responsible for ensuring the param block
 			 * buffer contains this parameter.
 			 */
@@ -126,10 +166,15 @@ namespace bs
 			ParamBlockManager::RegisterBlock(this);                                                  \
 		}                                                                                            \
                                                                                                      \
-		SPtr<GpuParamBlockBuffer> CreateBuffer() const                                               \
+		SPtr<GpuParamBlockBuffer> CreateBuffer(GpuBufferUsage usage = GBU_DYNAMIC) const             \
 		{                                                                                            \
-			return GpuParamBlockBuffer::Create(mBlockSize);                                          \
+			return GpuParamBlockBuffer::Create(mBlockSize, usage);                                   \
 		}                                                                                            \
+																									 \
+		u32 GetSize() const																			 \
+		{																						     \
+			return mBlockSize;																		 \
+		}																					 \
                                                                                                      \
 	private:                                                                                         \
 		friend class ParamBlockManager;                                                              \

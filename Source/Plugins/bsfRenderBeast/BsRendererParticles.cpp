@@ -314,7 +314,7 @@ ParticleBillboardTextures* ParticleTexturePool::CreateNewBillboardTextures(u32 s
 	texDesc.Name = "Particle Billboard Size & Frame Index";
 	output->SizeAndFrameIdx = Texture::Create(texDesc);
 
-	GPU_BUFFER_DESC bufferDesc;
+	GpuBufferCreateInformation bufferDesc;
 	bufferDesc.Type = GBT_STANDARD;
 	bufferDesc.ElementCount = size * size;
 	bufferDesc.Format = BF_16X2U;
@@ -351,7 +351,7 @@ ParticleMeshTextures* ParticleTexturePool::CreateNewMeshTextures(u32 size)
 	texDesc.Name = "Particle Mesh Rotation";
 	output->Rotation = Texture::Create(texDesc);
 
-	GPU_BUFFER_DESC bufferDesc;
+	GpuBufferCreateInformation bufferDesc;
 	bufferDesc.Type = GBT_STANDARD;
 	bufferDesc.ElementCount = size * size;
 	bufferDesc.Format = BF_16X2U;
@@ -379,8 +379,8 @@ ParticleRenderer::ParticleRenderer()
 
 	m->BillboardVd = VertexDeclaration::Create(vertexDesc);
 
-	VERTEX_BUFFER_DESC vbDesc;
-	vbDesc.NumVerts = 4;
+	VertexBufferCreateInformation vbDesc;
+	vbDesc.VertexCount = 4;
 	vbDesc.VertexSize = m->BillboardVd->GetProperties().GetVertexSize(0);
 	m->BillboardVb = VertexBuffer::Create(vbDesc);
 

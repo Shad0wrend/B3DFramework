@@ -11,7 +11,7 @@ SPtr<ct::GpuProgram> GLSLProgramFactory::Create(const GpuProgramCreateInformatio
 	GLSLGpuProgram* prog = new(B3DAllocate<GLSLGpuProgram>()) GLSLGpuProgram(desc, deviceMask);
 
 	SPtr<GLSLGpuProgram> gpuProg = B3DMakeSharedFromExisting<GLSLGpuProgram>(prog);
-	gpuProg->SetThisPtrInternal(gpuProg);
+	gpuProg->SetShared(gpuProg);
 
 	return gpuProg;
 }
@@ -24,7 +24,7 @@ SPtr<ct::GpuProgram> GLSLProgramFactory::Create(GpuProgramType type, GpuDeviceFl
 	GLSLGpuProgram* prog = new(B3DAllocate<GLSLGpuProgram>()) GLSLGpuProgram(desc, deviceMask);
 
 	SPtr<GLSLGpuProgram> gpuProg = B3DMakeSharedFromExisting<GLSLGpuProgram>(prog);
-	gpuProg->SetThisPtrInternal(gpuProg);
+	gpuProg->SetShared(gpuProg);
 
 	return gpuProg;
 }

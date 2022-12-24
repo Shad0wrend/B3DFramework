@@ -189,7 +189,7 @@ SPtr<ct::CoreObject> ReflectionProbe::CreateCore() const
 
 	ct::ReflectionProbe* probe = new(B3DAllocate<ct::ReflectionProbe>()) ct::ReflectionProbe(mType, mRadius, mExtents, filteredTexture);
 	SPtr<ct::ReflectionProbe> probePtr = B3DMakeSharedFromExisting<ct::ReflectionProbe>(probe);
-	probePtr->SetThisPtrInternal(probePtr);
+	probePtr->SetShared(probePtr);
 
 	return probePtr;
 }

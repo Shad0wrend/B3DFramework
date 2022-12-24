@@ -173,35 +173,35 @@ void VulkanBuffer::DestroyUnusedViews()
 	}
 }
 
-VulkanHardwareBuffer::VulkanHardwareBuffer(BufferType type, GpuBufferFormat format, GpuBufferUsage usage, u32 size, GpuDeviceFlags deviceMask)
-	: HardwareBuffer(size, usage, deviceMask), mBuffers(), mStagingBuffer(nullptr), mStagingMemory(nullptr), mMappedDeviceIdx(-1), mMappedGlobalQueueIdx(-1), mMappedOffset(0), mMappedSize(0), mMappedLockOptions(GBL_WRITE_ONLY), mDirectlyMappable((usage & GBU_DYNAMIC) != 0), mSupportsGPUWrites(type == BT_STRUCTURED || ((usage & GBU_LOADSTORE) == GBU_LOADSTORE)), mIsMapped(false)
+VulkanHardwareBuffer::VulkanHardwareBuffer(HardwareBufferType type, GpuBufferUsage usage, u32 size, GpuDeviceFlags deviceMask)
+	: HardwareBuffer(type, size, usage, deviceMask), mBuffers(), mStagingBuffer(nullptr), mStagingMemory(nullptr), mMappedDeviceIdx(-1), mMappedGlobalQueueIdx(-1), mMappedOffset(0), mMappedSize(0), mMappedLockOptions(GBL_WRITE_ONLY), mDirectlyMappable((usage & GBU_DYNAMIC) != 0), mSupportsGPUWrites(type == HardwareBufferType::Structured || ((usage & GBU_LOADSTORE) == GBU_LOADSTORE)), mIsMapped(false)
 {
 	VkBufferUsageFlags usageFlags = 0;
 	switch(type)
 	{
-	case BT_VERTEX:
+	case HardwareBufferType::Vertex:
 		usageFlags = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 
 		if((usage & GBU_LOADSTORE) == GBU_LOADSTORE)
 			usageFlags |= VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT;
 		break;
-	case BT_INDEX:
+	case HardwareBufferType::Index:
 		usageFlags = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
 
 		if((usage & GBU_LOADSTORE) == GBU_LOADSTORE)
 			usageFlags |= VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT;
 		break;
-	case BT_UNIFORM:
+	case HardwareBufferType::Uniform:
 		usageFlags = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
 		break;
-	case BT_GENERIC:
+	case HardwareBufferType::Generic:
 		usageFlags = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT;
 
 		if((usage & GBU_LOADSTORE) == GBU_LOADSTORE)
 			usageFlags |= VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT;
 
 		break;
-	case BT_STRUCTURED:
+	case HardwareBufferType::Structured:
 		usageFlags = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 		break;
 	}

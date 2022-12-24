@@ -8,7 +8,7 @@
 
 using namespace bs;
 
-u32 GetBufferSize(const GPU_BUFFER_DESC& desc)
+u32 GetBufferSize(const GpuBufferCreateInformation& desc)
 {
 	u32 elementSize;
 
@@ -20,14 +20,14 @@ u32 GetBufferSize(const GPU_BUFFER_DESC& desc)
 	return elementSize * desc.ElementCount;
 }
 
-GpuBufferProperties::GpuBufferProperties(const GPU_BUFFER_DESC& desc)
+GpuBufferProperties::GpuBufferProperties(const GpuBufferCreateInformation& desc)
 	: mDesc(desc)
 {
 	if(mDesc.Type == GBT_STANDARD)
 		mDesc.ElementSize = GpuBuffer::GetFormatSize(mDesc.Format);
 }
 
-GpuBuffer::GpuBuffer(const GPU_BUFFER_DESC& desc)
+GpuBuffer::GpuBuffer(const GpuBufferCreateInformation& desc)
 	: mProperties(desc)
 {
 }
@@ -92,15 +92,15 @@ u32 GpuBuffer::GetFormatSize(GpuBufferFormat format)
 	return lookup[(u32)format];
 }
 
-SPtr<GpuBuffer> GpuBuffer::Create(const GPU_BUFFER_DESC& desc)
+SPtr<GpuBuffer> GpuBuffer::Create(const GpuBufferCreateInformation& desc)
 {
 	return HardwareBufferManager::Instance().CreateGpuBuffer(desc);
 }
 
 namespace bs { namespace ct
 {
-GpuBuffer::GpuBuffer(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
-	: HardwareBuffer(GetBufferSize(desc), desc.Usage, deviceMask), mProperties(desc)
+GpuBuffer::GpuBuffer(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
+	: HardwareBuffer(HardwareBufferType::Generic, GetBufferSize(desc), desc.Usage, deviceMask), mProperties(desc)
 {
 	if(desc.Type != GBT_STANDARD)
 		B3D_ASSERT(desc.Format == BF_UNKNOWN && "Format must be set to BF_UNKNOWN when using non-standard buffers");
@@ -108,8 +108,8 @@ GpuBuffer::GpuBuffer(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
 		B3D_ASSERT(desc.ElementSize == 0 && "No element size can be provided for standard buffer. Size is determined from format.");
 }
 
-GpuBuffer::GpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer)
-	: HardwareBuffer(GetBufferSize(desc), desc.Usage, underlyingBuffer->GetDeviceMask()), mProperties(desc), mBuffer(underlyingBuffer.get()), mSharedBuffer(std::move(underlyingBuffer)), mIsExternalBuffer(true)
+GpuBuffer::GpuBuffer(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
+	: HardwareBuffer(HardwareBufferType::Generic, GetBufferSize(desc), desc.Usage, underlyingBuffer->GetDeviceMask()), mProperties(desc), mBuffer(underlyingBuffer.get()), mSharedBuffer(std::move(underlyingBuffer)), mIsExternalBuffer(true)
 {
 	const auto& props = GetProperties();
 	B3D_ASSERT(mSharedBuffer->GetSize() == (props.GetElementCount() * props.GetElementSize()));
@@ -185,7 +185,7 @@ SPtr<GpuBuffer> GpuBuffer::GetView(GpuBufferType type, GpuBufferFormat format, u
 		return nullptr;
 	}
 
-	GPU_BUFFER_DESC desc;
+	GpuBufferCreateInformation desc;
 	desc.Type = type;
 	desc.Format = format;
 	desc.Usage = mUsage;
@@ -202,12 +202,12 @@ SPtr<GpuBuffer> GpuBuffer::GetView(GpuBufferType type, GpuBufferFormat format, u
 	return newView;
 }
 
-SPtr<GpuBuffer> GpuBuffer::Create(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
+SPtr<GpuBuffer> GpuBuffer::Create(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
 {
 	return HardwareBufferManager::Instance().CreateGpuBuffer(desc, deviceMask);
 }
 
-SPtr<GpuBuffer> GpuBuffer::Create(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer)
+SPtr<GpuBuffer> GpuBuffer::Create(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
 {
 	return HardwareBufferManager::Instance().CreateGpuBuffer(desc, std::move(underlyingBuffer));
 }

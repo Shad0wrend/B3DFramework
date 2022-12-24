@@ -149,7 +149,7 @@ void VulkanGpuPipelineParamInfo::Initialize()
 			}
 		};
 
-		setUpBlockBindings(paramDesc->ParamBlocks, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+		setUpBlockBindings(paramDesc->ParamBlocks, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC);
 		setUpBindings(paramDesc->Textures, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 		setUpBindings(paramDesc->LoadStoreTextures, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
 

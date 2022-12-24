@@ -17,7 +17,7 @@ namespace bs
 		class VulkanVertexBuffer : public VertexBuffer
 		{
 		public:
-			VulkanVertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask);
+			VulkanVertexBuffer(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask);
 
 			/**
 			 * Gets the resource wrapping the buffer object, on the specified device. If GPU param block buffer's device mask

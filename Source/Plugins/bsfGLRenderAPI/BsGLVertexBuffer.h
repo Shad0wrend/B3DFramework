@@ -19,7 +19,7 @@ namespace bs
 		class GLVertexBuffer : public VertexBuffer
 		{
 		public:
-			GLVertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask);
+			GLVertexBuffer(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask);
 			~GLVertexBuffer();
 
 			/**	Returns internal OpenGL buffer ID. */

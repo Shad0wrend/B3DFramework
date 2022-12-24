@@ -212,7 +212,9 @@ void VulkanGpuParams::Initialize()
 					else
 					{
 						bool useView = writeSetInfo.descriptorType != VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER &&
-							writeSetInfo.descriptorType != VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+							writeSetInfo.descriptorType != VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC &&
+							writeSetInfo.descriptorType != VK_DESCRIPTOR_TYPE_STORAGE_BUFFER &&
+							writeSetInfo.descriptorType != VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
 
 						if(!useView)
 						{
@@ -220,7 +222,7 @@ void VulkanGpuParams::Initialize()
 							bufferInfo.offset = 0;
 							bufferInfo.range = VK_WHOLE_SIZE;
 
-							if(writeSetInfo.descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
+							if(writeSetInfo.descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER || writeSetInfo.descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC)
 							{
 								VulkanHardwareBuffer* buffer = vkBufManager.GetDummyUniformBuffer();
 								bufferInfo.buffer = buffer->GetResource(deviceIndex)->GetHandle();
@@ -296,10 +298,17 @@ void VulkanGpuParams::SetParamBlockBuffer(u32 set, u32 slot, const SPtr<GpuParam
 			continue;
 
 		VulkanBuffer* vulkanBuffer;
+		VkDeviceSize bufferSize;
 		if(vulkanParamBlockBuffer != nullptr)
+		{
 			vulkanBuffer = vulkanParamBlockBuffer->GetResource(deviceIndex);
+			bufferSize = vulkanParamBlockBuffer->GetSize();
+		}
 		else
+		{
 			vulkanBuffer = nullptr;
+			bufferSize = VK_WHOLE_SIZE;
+		}
 
 		PerSetData& perSetData = mPerDeviceData[deviceIndex].PerSetData[set];
 
@@ -317,6 +326,7 @@ void VulkanGpuParams::SetParamBlockBuffer(u32 set, u32 slot, const SPtr<GpuParam
 		if(vkBuffer != mPerDeviceData[deviceIndex].UniformBuffers[sequentialIndex])
 		{
 			perSetData.WriteInfos[bindingIndex].Buffer.buffer = vkBuffer;
+			perSetData.WriteInfos[bindingIndex].Buffer.range = bufferSize;
 			mPerDeviceData[deviceIndex].UniformBuffers[sequentialIndex] = vkBuffer;
 
 			mSetsDirty[set] = true;
@@ -477,7 +487,7 @@ void VulkanGpuParams::SetBuffer(u32 set, u32 slot, const SPtr<GpuBuffer>& buffer
 		PerSetData& perSetData = mPerDeviceData[deviceIndex].PerSetData[set];
 		VkWriteDescriptorSet& writeSetInfo = perSetData.WriteSetInfos[bindingIndex];
 
-		const bool useView = writeSetInfo.descriptorType != VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		const bool useView = writeSetInfo.descriptorType != VK_DESCRIPTOR_TYPE_STORAGE_BUFFER && writeSetInfo.descriptorType != VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
 		VkBufferView vkBufferView = VK_NULL_HANDLE;
 		if(bufferRes == nullptr)
 		{
@@ -579,12 +589,12 @@ void VulkanGpuParams::SetSamplerState(u32 set, u32 slot, const SPtr<SamplerState
 	mSetsDirty[set] = true;
 }
 
-u32 VulkanGpuParams::GetNumSets() const
+u32 VulkanGpuParams::GetSetCount() const
 {
 	return mParamInfo->GetSetCount();
 }
 
-void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDescriptorSet* sets)
+void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDescriptorSet* outSets, Vector<u32>& outDynamicOffsets)
 {
 	u32 deviceIdx = buffer.GetDeviceIdx();
 
@@ -594,12 +604,15 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 
 	VulkanGpuPipelineParamInfo& vkParamInfo = static_cast<VulkanGpuPipelineParamInfo&>(*mParamInfo);
 
-	u32 numParamBlocks = vkParamInfo.GetElementCount(GpuPipelineParamInfo::ParamType::ParamBlock);
-	u32 numTextures = vkParamInfo.GetElementCount(GpuPipelineParamInfo::ParamType::Texture);
-	u32 numStorageTextures = vkParamInfo.GetElementCount(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
-	u32 numBuffers = vkParamInfo.GetElementCount(GpuPipelineParamInfo::ParamType::Buffer);
-	u32 numSamplers = vkParamInfo.GetElementCount(GpuPipelineParamInfo::ParamType::SamplerState);
+	u32 parameterBlockCount = vkParamInfo.GetElementCount(GpuPipelineParamInfo::ParamType::ParamBlock);
+	u32 sampledTextureCount = vkParamInfo.GetElementCount(GpuPipelineParamInfo::ParamType::Texture);
+	u32 storageTextureCount = vkParamInfo.GetElementCount(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
+	u32 bufferCount = vkParamInfo.GetElementCount(GpuPipelineParamInfo::ParamType::Buffer);
+	u32 samplerCount = vkParamInfo.GetElementCount(GpuPipelineParamInfo::ParamType::SamplerState);
 	u32 setCount = vkParamInfo.GetSetCount();
+
+	FrameScope frameScope;
+	FrameVector<u32> dynamicOffsetMapping(perDeviceData.PerSetData->ElementCount, ~0u);
 
 	Lock lock(mMutex);
 
@@ -608,13 +621,18 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 	// to discard used resources and create new ones).
 	// Note: Makes the assumption that this object (and all of the resources it holds) are externally locked, and will
 	// not be modified on another thread while being bound.
-	for(u32 i = 0; i < numParamBlocks; i++)
+	for(u32 parameterBlockIndex = 0; parameterBlockIndex < parameterBlockCount; parameterBlockIndex++)
 	{
 		VulkanBuffer* resource = nullptr;
-		if(mParamBlockBuffers[i] != nullptr)
+		VkDeviceSize bufferSize = VK_WHOLE_SIZE;
+		u32 dynamicOffset = 0;
+
+		if(mParamBlockBuffers[parameterBlockIndex] != nullptr)
 		{
-			VulkanGpuParamBlockBuffer* element = static_cast<VulkanGpuParamBlockBuffer*>(mParamBlockBuffers[i].get());
+			VulkanGpuParamBlockBuffer* element = static_cast<VulkanGpuParamBlockBuffer*>(mParamBlockBuffers[parameterBlockIndex].get());
 			resource = element->GetResource(deviceIdx);
+			bufferSize = element->GetSize();
+			dynamicOffset = element->GetOffset();
 		}
 
 		if(resource == nullptr)
@@ -627,7 +645,7 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 		}
 
 		u32 set, slot;
-		mParamInfo->GetBinding(GpuPipelineParamInfo::ParamType::ParamBlock, i, set, slot);
+		mParamInfo->GetBinding(GpuPipelineParamInfo::ParamType::ParamBlock, parameterBlockIndex, set, slot);
 
 		u32 bindingIdx = vkParamInfo.GetBindingIdx(set, slot);
 		VkDescriptorSetLayoutBinding* perSetBindings = vkParamInfo.GetBindings(set);
@@ -637,19 +655,22 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 		buffer.RegisterBuffer(resource, BufferUseFlagBits::Parameter, VulkanAccessFlag::Read, stages);
 
 		// Check if internal resource changed from what was previously bound in the descriptor set
-		B3D_ASSERT(perDeviceData.UniformBuffers[i] != VK_NULL_HANDLE);
+		B3D_ASSERT(perDeviceData.UniformBuffers[parameterBlockIndex] != VK_NULL_HANDLE);
 
 		VkBuffer vkBuffer = resource->GetHandle();
-		if(perDeviceData.UniformBuffers[i] != vkBuffer)
+		if(perDeviceData.UniformBuffers[parameterBlockIndex] != vkBuffer)
 		{
-			perDeviceData.UniformBuffers[i] = vkBuffer;
+			perDeviceData.UniformBuffers[parameterBlockIndex] = vkBuffer;
 			perDeviceData.PerSetData[set].WriteInfos[bindingIdx].Buffer.buffer = vkBuffer;
+			perDeviceData.PerSetData[set].WriteInfos[bindingIdx].Buffer.range = bufferSize;
 
 			mSetsDirty[set] = true;
 		}
+
+		dynamicOffsetMapping[bindingIdx] = dynamicOffset;
 	}
 
-	for(u32 i = 0; i < numBuffers; i++)
+	for(u32 i = 0; i < bufferCount; i++)
 	{
 		u32 set, slot;
 		mParamInfo->GetBinding(GpuPipelineParamInfo::ParamType::Buffer, i, set, slot);
@@ -739,7 +760,7 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 		}
 	}
 
-	for(u32 i = 0; i < numSamplers; i++)
+	for(u32 i = 0; i < samplerCount; i++)
 	{
 		if(mSamplerStates[i] == nullptr)
 			continue;
@@ -770,7 +791,7 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 		}
 	}
 
-	for(u32 i = 0; i < numStorageTextures; i++)
+	for(u32 i = 0; i < storageTextureCount; i++)
 	{
 		u32 set, slot;
 		mParamInfo->GetBinding(GpuPipelineParamInfo::ParamType::LoadStoreTexture, i, set, slot);
@@ -826,7 +847,7 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 		}
 	}
 
-	for(u32 i = 0; i < numTextures; i++)
+	for(u32 i = 0; i < sampledTextureCount; i++)
 	{
 		u32 set, slot;
 		mParamInfo->GetBinding(GpuPipelineParamInfo::ParamType::Texture, i, set, slot);
@@ -901,6 +922,13 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 		}
 	}
 
+	// Output dynamic offsets
+	for(u32 dynamicOffset : dynamicOffsetMapping)
+	{
+		if(dynamicOffset != ~0u)
+			outDynamicOffsets.push_back(dynamicOffset);
+	}
+
 	// Acquire sets as needed, and updated their contents if dirty
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 	VulkanDevice& device = *rapi.GetDevice(deviceIdx);
@@ -952,6 +980,6 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 		VulkanDescriptorSet* set = perDeviceData.PerSetData[i].LastUsedSet;
 
 		buffer.RegisterResource(set, VulkanAccessFlag::Read);
-		sets[i] = set->GetHandle();
+		outSets[i] = set->GetHandle();
 	}
 }

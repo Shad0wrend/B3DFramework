@@ -20,11 +20,11 @@ namespace bs
 		class NullHardwareBufferManager final : public HardwareBufferManager
 		{
 		protected:
-			SPtr<VertexBuffer> CreateVertexBufferInternal(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
-			SPtr<IndexBuffer> CreateIndexBufferInternal(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
+			SPtr<VertexBuffer> CreateVertexBufferInternal(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
+			SPtr<IndexBuffer> CreateIndexBufferInternal(const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
 			SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBufferInternal(u32 size, GpuBufferUsage usage = GBU_DYNAMIC, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
-			SPtr<GpuBuffer> CreateGpuBufferInternal(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
-			SPtr<GpuBuffer> CreateGpuBufferInternal(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer) override;
+			SPtr<GpuBuffer> CreateGpuBufferInternal(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
+			SPtr<GpuBuffer> CreateGpuBufferInternal(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer) override;
 		};
 
 		/**	Class containing common functionality for all Null hardware buffers. */
@@ -48,8 +48,8 @@ namespace bs
 		class NullGpuBuffer final : public GpuBuffer
 		{
 		public:
-			NullGpuBuffer(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask);
-			NullGpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer);
+			NullGpuBuffer(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask);
+			NullGpuBuffer(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer);
 
 		protected:
 			friend class NullHardwareBufferManager;
@@ -71,7 +71,7 @@ namespace bs
 		class NullIndexBuffer final : public IndexBuffer
 		{
 		public:
-			NullIndexBuffer(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask);
+			NullIndexBuffer(const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask);
 
 		protected:
 			void Initialize() override;
@@ -81,7 +81,7 @@ namespace bs
 		class NullVertexBuffer final : public VertexBuffer
 		{
 		public:
-			NullVertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask);
+			NullVertexBuffer(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask);
 
 		protected:
 			void Initialize() override;

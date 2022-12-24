@@ -27,7 +27,7 @@ namespace bs
 			void SetSamplerState(u32 set, u32 slot, const SPtr<SamplerState>& sampler) override;
 
 			/** Returns the total number of descriptor sets used by this object. */
-			u32 GetNumSets() const;
+			u32 GetSetCount() const;
 
 			/**
 			 * Prepares the internal descriptor sets for a bind operation on the provided command buffer. It generates and/or
@@ -36,13 +36,13 @@ namespace bs
 			 * Caller must perform external locking if some other thread could write to this object while it is being bound.
 			 * The same applies to any resources held by this object.
 			 *
-			 * @param[in]	buffer	Buffer on which the parameters will be bound to.
-			 * @param[out]	sets	Pre-allocated buffer in which the descriptor set handled will be written. Must be of
-			 *						getNumSets() size.
+			 * @param[in]	buffer				Buffer on which the parameters will be bound to.
+			 * @param[out]	outSets				Pre-allocated buffer in which the descriptor set handled will be written. Must be of GetSetCount() size.
+			 * @param[out]	outDynamicOffsets	Dynamic offsets required for binding the descriptor sets.
 			 *
 			 * @note	Thread safe.
 			 */
-			void PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDescriptorSet* sets);
+			void PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDescriptorSet* outSets, Vector<u32>& outDynamicOffsets);
 
 		protected:
 			/** Contains data about writing to either buffer or a texture descriptor. */

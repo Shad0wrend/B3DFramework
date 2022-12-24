@@ -94,7 +94,7 @@ const char* CheckSortBuffer(GpuBuffer& buffer)
 /** Creates a helper buffers used for storing intermediate information during GpuSort::sort. */
 SPtr<GpuBuffer> CreateHelperBuffer()
 {
-	GPU_BUFFER_DESC desc;
+	GpuBufferCreateInformation desc;
 	desc.ElementCount = kMaxNumGroups * kNumDigits;
 	desc.Format = BF_32X1U;
 	desc.Usage = GBU_LOADSTORE;
@@ -278,7 +278,7 @@ GpuSortBuffers GpuSort::CreateSortBuffers(u32 numElements, bool values)
 {
 	GpuSortBuffers output;
 
-	GPU_BUFFER_DESC bufferDesc;
+	GpuBufferCreateInformation bufferDesc;
 	bufferDesc.ElementCount = numElements;
 	bufferDesc.Format = BF_32X1U;
 	bufferDesc.Type = GBT_STANDARD;

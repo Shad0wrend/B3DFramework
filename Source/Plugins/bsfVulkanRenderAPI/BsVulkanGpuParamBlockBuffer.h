@@ -14,23 +14,17 @@ namespace bs
 		 */
 
 		/**	Vulkan implementation of a parameter block buffer (uniform buffer in Vulkan lingo). */
-		class VulkanGpuParamBlockBuffer : public GpuParamBlockBuffer
+		class VulkanGpuParamBlockBuffer final : public GpuParamBlockBuffer
 		{
 		public:
 			VulkanGpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);
-			~VulkanGpuParamBlockBuffer();
+			VulkanGpuParamBlockBuffer(const SPtr<HardwareBuffer>& backingMemory, u32 offset, u32 size);
 
 			/**
 			 * Gets the resource wrapping the buffer object, on the specified device. If GPU param block buffer's device mask
 			 * doesn't include the provided device, null is returned.
 			 */
 			VulkanBuffer* GetResource(u32 deviceIdx) const;
-
-		protected:
-			void Initialize() override;
-
-		private:
-			GpuDeviceFlags mDeviceMask;
 		};
 
 		/** @} */

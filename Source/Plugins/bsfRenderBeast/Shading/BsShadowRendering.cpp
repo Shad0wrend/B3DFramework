@@ -706,16 +706,16 @@ ShadowRendering::ShadowRendering(u32 shadowMapSize)
 
 	// Create plane index and vertex buffers
 	{
-		VERTEX_BUFFER_DESC vbDesc;
-		vbDesc.NumVerts = 8;
+		VertexBufferCreateInformation vbDesc;
+		vbDesc.VertexCount = 8;
 		vbDesc.Usage = GBU_DYNAMIC;
 		vbDesc.VertexSize = mPositionOnlyVD->GetProperties().GetVertexSize(0);
 
 		mPlaneVB = VertexBuffer::Create(vbDesc);
 
-		INDEX_BUFFER_DESC ibDesc;
+		IndexBufferCreateInformation ibDesc;
 		ibDesc.IndexType = IT_32BIT;
-		ibDesc.NumIndices = 12;
+		ibDesc.IndexCount = 12;
 
 		mPlaneIB = IndexBuffer::Create(ibDesc);
 
@@ -734,16 +734,16 @@ ShadowRendering::ShadowRendering(u32 shadowMapSize)
 
 	// Create frustum index and vertex buffers
 	{
-		VERTEX_BUFFER_DESC vbDesc;
-		vbDesc.NumVerts = 8;
+		VertexBufferCreateInformation vbDesc;
+		vbDesc.VertexCount = 8;
 		vbDesc.Usage = GBU_DYNAMIC;
 		vbDesc.VertexSize = mPositionOnlyVD->GetProperties().GetVertexSize(0);
 
 		mFrustumVB = VertexBuffer::Create(vbDesc);
 
-		INDEX_BUFFER_DESC ibDesc;
+		IndexBufferCreateInformation ibDesc;
 		ibDesc.IndexType = IT_32BIT;
-		ibDesc.NumIndices = 36;
+		ibDesc.IndexCount = 36;
 
 		mFrustumIB = IndexBuffer::Create(ibDesc);
 		mFrustumIB->WriteData(0, sizeof(AABox::kCubeIndices), AABox::kCubeIndices);

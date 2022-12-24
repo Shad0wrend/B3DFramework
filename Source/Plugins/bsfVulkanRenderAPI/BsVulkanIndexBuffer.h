@@ -17,7 +17,7 @@ namespace bs
 		class VulkanIndexBuffer : public IndexBuffer
 		{
 		public:
-			VulkanIndexBuffer(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask);
+			VulkanIndexBuffer(const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask);
 
 			/**
 			 * Gets the resource wrapping the buffer object, on the specified device. If GPU param block buffer's device mask

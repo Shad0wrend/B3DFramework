@@ -276,7 +276,7 @@ void VisibleLightData::Update(const SceneInfo& sceneInfo, const RendererViewGrou
 			// Allocate at least one block even if no lights, to avoid issues with null buffers
 			u32 bufferSize = std::max(1, Math::CeilToInt(size / (float)kLightDataBufferIncrement)) * kLightDataBufferIncrement;
 
-			GPU_BUFFER_DESC bufferDesc;
+			GpuBufferCreateInformation bufferDesc;
 			bufferDesc.Type = GBT_STRUCTURED;
 			bufferDesc.ElementCount = bufferSize / sizeof(LightData);
 			bufferDesc.ElementSize = sizeof(LightData);

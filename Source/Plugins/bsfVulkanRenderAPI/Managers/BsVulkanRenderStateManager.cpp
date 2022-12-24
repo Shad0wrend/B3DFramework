@@ -12,7 +12,7 @@ SPtr<ct::SamplerState> VulkanRenderStateManager::CreateSamplerStateInternalInter
 {
 	SPtr<VulkanSamplerState> samplerState =
 		B3DMakeSharedFromExisting<VulkanSamplerState>(new(B3DAllocate<VulkanSamplerState>()) VulkanSamplerState(desc, deviceMask));
-	samplerState->SetThisPtrInternal(samplerState);
+	samplerState->SetShared(samplerState);
 
 	return samplerState;
 }
@@ -23,7 +23,7 @@ SPtr<ct::GraphicsPipelineState> VulkanRenderStateManager::CreateGraphicsPipeline
 	SPtr<VulkanGraphicsPipelineState> pipelineState =
 		B3DMakeSharedFromExisting<VulkanGraphicsPipelineState>(new(B3DAllocate<VulkanGraphicsPipelineState>())
 													   VulkanGraphicsPipelineState(desc, deviceMask));
-	pipelineState->SetThisPtrInternal(pipelineState);
+	pipelineState->SetShared(pipelineState);
 
 	return pipelineState;
 }
@@ -34,7 +34,7 @@ SPtr<ct::ComputePipelineState> VulkanRenderStateManager::CreateComputePipelineSt
 	SPtr<VulkanComputePipelineState> pipelineState =
 		B3DMakeSharedFromExisting<VulkanComputePipelineState>(new(B3DAllocate<VulkanComputePipelineState>())
 													  VulkanComputePipelineState(program, deviceMask));
-	pipelineState->SetThisPtrInternal(pipelineState);
+	pipelineState->SetShared(pipelineState);
 
 	return pipelineState;
 }
@@ -45,7 +45,7 @@ SPtr<ct::GpuPipelineParamInfo> VulkanRenderStateManager::CreatePipelineParamInfo
 	SPtr<VulkanGpuPipelineParamInfo> paramInfo =
 		B3DMakeSharedFromExisting<VulkanGpuPipelineParamInfo>(new(B3DAllocate<VulkanGpuPipelineParamInfo>())
 													  VulkanGpuPipelineParamInfo(desc, deviceMask));
-	paramInfo->SetThisPtrInternal(paramInfo);
+	paramInfo->SetShared(paramInfo);
 
 	return paramInfo;
 }

@@ -14,7 +14,7 @@ static void DeleteBuffer(HardwareBuffer* buffer)
 	B3DPoolDelete(static_cast<GLHardwareBuffer*>(buffer));
 }
 
-GLIndexBuffer::GLIndexBuffer(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
+GLIndexBuffer::GLIndexBuffer(const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
 	: IndexBuffer(desc, deviceMask)
 {
 	B3D_ASSERT((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on OpenGL.");

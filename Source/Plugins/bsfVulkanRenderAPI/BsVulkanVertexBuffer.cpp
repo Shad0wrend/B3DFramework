@@ -12,13 +12,13 @@ static void DeleteHardwareBuffer(HardwareBuffer* buffer)
 	B3DPoolDelete(static_cast<VulkanHardwareBuffer*>(buffer));
 }
 
-VulkanVertexBuffer::VulkanVertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
+VulkanVertexBuffer::VulkanVertexBuffer(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
 	: VertexBuffer(desc, deviceMask), mDeviceMask(deviceMask)
 {}
 
 void VulkanVertexBuffer::Initialize()
 {
-	mBuffer = B3DPoolNew<VulkanHardwareBuffer>(VulkanHardwareBuffer::BT_VERTEX, BF_UNKNOWN, mUsage, mSize, mDeviceMask);
+	mBuffer = B3DPoolNew<VulkanHardwareBuffer>(HardwareBufferType::Vertex, mUsage, mSize, mDeviceMask);
 	mBufferDeleter = &DeleteHardwareBuffer;
 
 	VertexBuffer::Initialize();

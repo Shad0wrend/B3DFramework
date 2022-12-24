@@ -146,7 +146,7 @@ SPtr<GpuBuffer> IrradianceComputeSHMat::CreateOutputBuffer(const SPtr<Texture>& 
 
 	numCoeffSets = dispatchSize.X * dispatchSize.Y * 6;
 
-	GPU_BUFFER_DESC bufferDesc;
+	GpuBufferCreateInformation bufferDesc;
 	bufferDesc.Type = GBT_STRUCTURED;
 	bufferDesc.ElementCount = numCoeffSets;
 	bufferDesc.Format = BF_UNKNOWN;

@@ -76,7 +76,7 @@ SPtr<ct::CoreObject> Win32RenderWindow::CreateCore() const
 
 	RENDER_WINDOW_DESC desc = mDesc;
 	SPtr<ct::CoreObject> coreObj = B3DMakeShared<ct::Win32RenderWindow>(desc, mWindowId, rapi);
-	coreObj->SetThisPtrInternal(coreObj);
+	coreObj->SetShared(coreObj);
 
 	return coreObj;
 }

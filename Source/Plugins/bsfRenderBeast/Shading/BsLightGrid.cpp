@@ -31,7 +31,7 @@ LightGridLLCreationMat::LightGridLLCreationMat()
 	mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gProbesLLHeads", mProbesLLHeadsParam);
 	mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gProbesLL", mProbesLLParam);
 
-	GPU_BUFFER_DESC desc;
+	GpuBufferCreateInformation desc;
 	desc.ElementCount = 1;
 	desc.Format = BF_UNKNOWN;
 	desc.Usage = GBU_LOADSTORE;
@@ -57,7 +57,7 @@ void LightGridLLCreationMat::SetParams(const Vector3I& gridSize, const SPtr<GpuP
 
 	if(numCells > mBufferNumCells || mBufferNumCells == 0)
 	{
-		GPU_BUFFER_DESC desc;
+		GpuBufferCreateInformation desc;
 		desc.ElementCount = numCells;
 		desc.Format = BF_UNKNOWN;
 		desc.Usage = GBU_LOADSTORE;
@@ -145,7 +145,7 @@ LightGridLLReductionMat::LightGridLLReductionMat()
 	mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gGridProbeOffsetAndSize", mGridProbeOffsetAndSizeParam);
 	mParams->GetBufferParam(GPT_COMPUTE_PROGRAM, "gGridProbeIndices", mGridProbeIndicesParam);
 
-	GPU_BUFFER_DESC desc;
+	GpuBufferCreateInformation desc;
 	desc.ElementCount = 2;
 	desc.Format = BF_UNKNOWN;
 	desc.Usage = GBU_LOADSTORE;
@@ -168,7 +168,7 @@ void LightGridLLReductionMat::SetParams(const Vector3I& gridSize, const SPtr<Gpu
 
 	if(numCells > mBufferNumCells || mBufferNumCells == 0)
 	{
-		GPU_BUFFER_DESC desc;
+		GpuBufferCreateInformation desc;
 		desc.ElementCount = numCells;
 		desc.Format = BF_32X4U;
 		desc.Usage = GBU_LOADSTORE;

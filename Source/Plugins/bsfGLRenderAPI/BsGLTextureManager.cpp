@@ -38,7 +38,7 @@ SPtr<Texture> GLTextureManager::CreateTextureInternal(const TextureCreateInforma
 	GLTexture* tex = new(B3DAllocate<GLTexture>()) GLTexture(mGLSupport, desc, initialData, deviceMask);
 
 	SPtr<GLTexture> texPtr = B3DMakeSharedFromExisting<GLTexture>(tex);
-	texPtr->SetThisPtrInternal(texPtr);
+	texPtr->SetShared(texPtr);
 
 	return texPtr;
 }
@@ -46,7 +46,7 @@ SPtr<Texture> GLTextureManager::CreateTextureInternal(const TextureCreateInforma
 SPtr<RenderTexture> GLTextureManager::CreateRenderTextureInternal(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 {
 	SPtr<GLRenderTexture> texPtr = B3DMakeShared<GLRenderTexture>(desc, deviceIdx);
-	texPtr->SetThisPtrInternal(texPtr);
+	texPtr->SetShared(texPtr);
 
 	return texPtr;
 }

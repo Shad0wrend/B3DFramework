@@ -303,7 +303,7 @@ SPtr<GraphicsPipelineState> RenderStateManager::CreateGraphicsPipelineStateInter
 		B3DMakeSharedFromExisting<GraphicsPipelineState>(new(B3DAllocate<GraphicsPipelineState>())
 												 GraphicsPipelineState(desc, deviceMask));
 
-	pipelineState->SetThisPtrInternal(pipelineState);
+	pipelineState->SetShared(pipelineState);
 
 	return pipelineState;
 }
@@ -314,7 +314,7 @@ SPtr<ComputePipelineState> RenderStateManager::CreateComputePipelineStateInterna
 		B3DMakeSharedFromExisting<ComputePipelineState>(new(B3DAllocate<ComputePipelineState>())
 												ComputePipelineState(program, deviceMask));
 
-	pipelineState->SetThisPtrInternal(pipelineState);
+	pipelineState->SetShared(pipelineState);
 
 	return pipelineState;
 }
@@ -326,7 +326,7 @@ SPtr<GpuPipelineParamInfo> RenderStateManager::CreatePipelineParamInfoInternal(
 		B3DMakeSharedFromExisting<GpuPipelineParamInfo>(new(B3DAllocate<GpuPipelineParamInfo>())
 												GpuPipelineParamInfo(desc, deviceMask));
 
-	paramInfo->SetThisPtrInternal(paramInfo);
+	paramInfo->SetShared(paramInfo);
 
 	return paramInfo;
 }
@@ -484,7 +484,7 @@ SPtr<SamplerState> RenderStateManager::CreateSamplerStateInternalInternal(const 
 {
 	SPtr<SamplerState> state =
 		B3DMakeSharedFromExisting<SamplerState>(new(B3DAllocate<SamplerState>()) SamplerState(desc, deviceMask));
-	state->SetThisPtrInternal(state);
+	state->SetShared(state);
 
 	return state;
 }
@@ -492,7 +492,7 @@ SPtr<SamplerState> RenderStateManager::CreateSamplerStateInternalInternal(const 
 SPtr<DepthStencilState> RenderStateManager::CreateDepthStencilStateInternalInternal(const DEPTH_STENCIL_STATE_DESC& desc, u32 id) const
 {
 	SPtr<DepthStencilState> state = B3DMakeSharedFromExisting<DepthStencilState>(new(B3DAllocate<DepthStencilState>()) DepthStencilState(desc, id));
-	state->SetThisPtrInternal(state);
+	state->SetShared(state);
 
 	return state;
 }
@@ -500,7 +500,7 @@ SPtr<DepthStencilState> RenderStateManager::CreateDepthStencilStateInternalInter
 SPtr<RasterizerState> RenderStateManager::CreateRasterizerStateInternalInternal(const RASTERIZER_STATE_DESC& desc, u32 id) const
 {
 	SPtr<RasterizerState> state = B3DMakeSharedFromExisting<RasterizerState>(new(B3DAllocate<RasterizerState>()) RasterizerState(desc, id));
-	state->SetThisPtrInternal(state);
+	state->SetShared(state);
 
 	return state;
 }
@@ -508,7 +508,7 @@ SPtr<RasterizerState> RenderStateManager::CreateRasterizerStateInternalInternal(
 SPtr<BlendState> RenderStateManager::CreateBlendStateInternalInternal(const BLEND_STATE_DESC& desc, u32 id) const
 {
 	SPtr<BlendState> state = B3DMakeSharedFromExisting<BlendState>(new(B3DAllocate<BlendState>()) BlendState(desc, id));
-	state->SetThisPtrInternal(state);
+	state->SetShared(state);
 
 	return state;
 }

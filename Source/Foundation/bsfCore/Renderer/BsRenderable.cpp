@@ -233,7 +233,7 @@ SPtr<ct::CoreObject> Renderable::CreateCore() const
 {
 	ct::Renderable* handler = new(B3DAllocate<ct::Renderable>()) ct::Renderable();
 	SPtr<ct::Renderable> handlerPtr = B3DMakeSharedFromExisting<ct::Renderable>(handler);
-	handlerPtr->SetThisPtrInternal(handlerPtr);
+	handlerPtr->SetShared(handlerPtr);
 
 	return handlerPtr;
 }
@@ -526,7 +526,7 @@ Bounds Renderable::GetBounds() const
 
 SPtr<GpuBuffer> CreateBoneMatrixBuffer(u32 numBones)
 {
-	GPU_BUFFER_DESC desc;
+	GpuBufferCreateInformation desc;
 	desc.ElementCount = numBones * 3;
 	desc.ElementSize = 0;
 	desc.Type = GBT_STANDARD;
@@ -585,9 +585,9 @@ void Renderable::CreateAnimationBuffers()
 		u32 vertexSize = sizeof(Vector3) + sizeof(u32);
 		u32 numVertices = morphShapes->GetNumVertices();
 
-		VERTEX_BUFFER_DESC desc;
+		VertexBufferCreateInformation desc;
 		desc.VertexSize = vertexSize;
-		desc.NumVerts = numVertices;
+		desc.VertexCount = numVertices;
 		desc.Usage = GBU_DYNAMIC;
 
 		SPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(desc);

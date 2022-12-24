@@ -13,10 +13,10 @@ namespace bs
 	 */
 
 	/** Descriptor structure used for initialization of a VertexBuffer. */
-	struct VERTEX_BUFFER_DESC
+	struct VertexBufferCreateInformation
 	{
-		u32 VertexSize; /**< Size of a single vertex in the buffer, in bytes. */
-		u32 NumVerts; /**< Number of vertices the buffer can hold. */
+		u32 VertexSize = 0; /**< Size of a single vertex in the buffer, in bytes. */
+		u32 VertexCount = 0; /**< Number of vertices the buffer can hold. */
 		GpuBufferUsage Usage = GBU_STATIC; /**< Usage that tells the hardware how will be buffer be used. */
 		bool StreamOut = false; /**< If true the buffer will be usable for streaming out data from the GPU. */
 	};
@@ -25,19 +25,19 @@ namespace bs
 	class B3D_CORE_EXPORT VertexBufferProperties
 	{
 	public:
-		VertexBufferProperties(u32 numVertices, u32 vertexSize);
+		VertexBufferProperties(u32 vertexCount, u32 vertexSize);
 
 		/**	Gets the size in bytes of a single vertex in this buffer. */
 		u32 GetVertexSize() const { return mVertexSize; }
 
 		/**	Get the number of vertices in this buffer. */
-		u32 GetNumVertices() const { return mNumVertices; }
+		u32 GetVertexCount() const { return mVertexCount; }
 
 	protected:
 		friend class VertexBuffer;
 		friend class ct::VertexBuffer;
 
-		u32 mNumVertices;
+		u32 mVertexCount;
 		u32 mVertexSize;
 	};
 
@@ -55,14 +55,14 @@ namespace bs
 		SPtr<ct::VertexBuffer> GetCore() const;
 
 		/** @copydoc HardwareBufferManager::CreateVertexBuffer */
-		static SPtr<VertexBuffer> Create(const VERTEX_BUFFER_DESC& desc);
+		static SPtr<VertexBuffer> Create(const VertexBufferCreateInformation& desc);
 
 		static const int kMaxSemanticIdx = 8;
 
 	protected:
 		friend class HardwareBufferManager;
 
-		VertexBuffer(const VERTEX_BUFFER_DESC& desc);
+		VertexBuffer(const VertexBufferCreateInformation& desc);
 
 		SPtr<ct::CoreObject> CreateCore() const override;
 
@@ -83,7 +83,7 @@ namespace bs
 		class B3D_CORE_EXPORT VertexBuffer : public CoreObject, public HardwareBuffer
 		{
 		public:
-			VertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			VertexBuffer(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 			virtual ~VertexBuffer();
 
 			/**	Returns information about the vertex buffer. */
@@ -112,7 +112,7 @@ namespace bs
 			SPtr<GpuBuffer> GetLoadStore(GpuBufferType type, GpuBufferFormat format, u32 elementSize = 0);
 
 			/** @copydoc HardwareBufferManager::CreateVertexBuffer */
-			static SPtr<VertexBuffer> Create(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			static SPtr<VertexBuffer> Create(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		protected:
 			friend class HardwareBufferManager;

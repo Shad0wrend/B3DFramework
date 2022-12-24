@@ -25,17 +25,17 @@ RendererUtility::RendererUtility()
 		mFullscreenQuadVDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
 		mFullscreenQuadVDesc->AddVertElem(VET_FLOAT2, VES_TEXCOORD);
 
-		INDEX_BUFFER_DESC ibDesc;
+		IndexBufferCreateInformation ibDesc;
 		ibDesc.IndexType = IT_32BIT;
-		ibDesc.NumIndices = 6;
+		ibDesc.IndexCount = 6;
 		ibDesc.Usage = GBU_DYNAMIC;
 
 		mFullScreenQuadIB = IndexBuffer::Create(ibDesc);
 		mFullscreenQuadVDecl = VertexDeclaration::Create(mFullscreenQuadVDesc);
 
-		VERTEX_BUFFER_DESC vbDesc;
+		VertexBufferCreateInformation vbDesc;
 		vbDesc.VertexSize = mFullscreenQuadVDecl->GetProperties().GetVertexSize(0);
-		vbDesc.NumVerts = 4 * kNumQuadVbSlots;
+		vbDesc.VertexCount = 4 * kNumQuadVbSlots;
 		vbDesc.Usage = GBU_DYNAMIC;
 
 		mFullScreenQuadVB = VertexBuffer::Create(vbDesc);

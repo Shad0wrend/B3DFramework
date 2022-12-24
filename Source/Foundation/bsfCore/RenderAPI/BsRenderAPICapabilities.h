@@ -174,6 +174,9 @@ namespace bs
 		/** The number of vertices a geometry program can emit in a single run. */
 		u32 GeometryProgramNumOutputVertices = 0;
 
+		/** Minimum alignment required for uniform buffers that are sub-allocated within a larger buffer. */
+		u32 MinimumUniformBufferOffsetAlignment = 16;
+
 		/** Horizontal texel offset used for mapping texels to pixels. */
 		float HorizontalTexelOffset = 0.0f;
 

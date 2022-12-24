@@ -226,7 +226,7 @@ SPtr<ct::CoreObject> Light::CreateCore() const
 	ct::Light* handler = new(B3DAllocate<ct::Light>())
 		ct::Light(mType, mColor, mIntensity, mAttRadius, mSourceRadius, mCastsShadows, mSpotAngle, mSpotFalloffAngle);
 	SPtr<ct::Light> handlerPtr = B3DMakeSharedFromExisting<ct::Light>(handler);
-	handlerPtr->SetThisPtrInternal(handlerPtr);
+	handlerPtr->SetShared(handlerPtr);
 
 	return handlerPtr;
 }

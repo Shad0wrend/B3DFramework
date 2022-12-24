@@ -787,6 +787,7 @@ namespace bs
 			Vector<VulkanEvent*> mQueuedEvents;
 			Vector<VulkanQuery*> mQueuedQueryResets;
 			Vector<SwapChainImageInformation> mAcquiredSwapChainImages;
+			Vector<u32> mDynamicDescriptorOffsetsToBind;
 
 			SPtr<RenderTarget> mRenderTarget;
 			bool mRenderTargetModified = false;

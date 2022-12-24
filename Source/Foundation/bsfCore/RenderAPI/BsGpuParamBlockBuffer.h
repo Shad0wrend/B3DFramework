@@ -86,6 +86,7 @@ namespace bs
 		{
 		public:
 			GpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);
+			GpuParamBlockBuffer(const SPtr<HardwareBuffer>& backingMemory, u32 offset, u32 size);
 			virtual ~GpuParamBlockBuffer();
 
 			/**
@@ -129,19 +130,43 @@ namespace bs
 			/**	Returns the size of the buffer in bytes. */
 			u32 GetSize() const { return mSize; }
 
-			/** @copydoc HardwareBufferManager::CreateGpuParamBlockBuffer */
+			/** If the parameter block buffer was created using external backing memory, this allows you to change at which offset (in bytes) does the GPU parameter block start at. */
+			void SetOffset(u32 offset) { mOffset = offset; }
+
+			/** @copydoc SetOffset */
+			u32 GetOffset() const { return mOffset; }
+
+			/**
+			 * Creates an GPU parameter block that you can use for setting parameters for GPU programs. 
+			 *
+			 * @param	size		Size of the parameter buffer in bytes.
+			 * @param	usage		Usage that tells the hardware how will be buffer be used.
+			 * @param	deviceMask	Usage mask that determines on which devices will the buffer be created on.
+			 * @return				Newly created buffer.
+			 */
 			static SPtr<GpuParamBlockBuffer> Create(u32 size, GpuBufferUsage usage = GBU_DYNAMIC, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
+			/**
+			 * Creates an GPU parameter block that you can use for setting parameters for GPU programs. Uses a pre-allocated buffer for its backing memory.
+			 *
+			 * @param	backingMemory		Buffer that contains the memory for the GPU parameter block buffer. Must be at least of @p size bytes.
+			 * @param	offset				Offset into backing memory at which the parameter block buffer starts.
+			 * @param	size				Size of the parameter buffer in bytes.
+			 * @return						Newly created buffer.
+			 */
+			static SPtr<GpuParamBlockBuffer> Create(const SPtr<HardwareBuffer>& backingMemory, u32 offset, u32 size);
 		protected:
 			friend class HardwareBufferManager;
 
 			void SyncToCore(const CoreSyncData& data) override;
 			void Initialize() override;
 
-			HardwareBuffer* mBuffer;
+			SPtr<HardwareBuffer> mBuffer;
 
 			GpuBufferUsage mUsage;
+			GpuDeviceFlags mDeviceMask = GDF_DEFAULT;
 			u32 mSize;
+			u32 mOffset = 0;
 
 			u8* mCachedData;
 			bool mGPUBufferDirty;

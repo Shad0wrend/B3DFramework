@@ -669,7 +669,7 @@ SPtr<ct::CoreObject> Material::CreateCore() const
 		material = new(B3DAllocate<ct::Material>()) ct::Material(shader, mVariation);
 
 	SPtr<ct::Material> materialPtr = B3DMakeSharedFromExisting<ct::Material>(material);
-	materialPtr->SetThisPtrInternal(materialPtr);
+	materialPtr->SetShared(materialPtr);
 
 	return materialPtr;
 }
@@ -1106,7 +1106,7 @@ SPtr<Material> Material::Create(const SPtr<Shader>& shader)
 {
 	Material* material = new(B3DAllocate<Material>()) Material(shader, ShaderVariation::kEmpty);
 	SPtr<Material> materialPtr = B3DMakeSharedFromExisting<Material>(material);
-	materialPtr->SetThisPtrInternal(materialPtr);
+	materialPtr->SetShared(materialPtr);
 	materialPtr->Initialize();
 
 	return materialPtr;

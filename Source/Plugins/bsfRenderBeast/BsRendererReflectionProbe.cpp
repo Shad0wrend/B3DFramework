@@ -59,7 +59,7 @@ void VisibleReflProbeData::Update(const SceneInfo& sceneInfo, const RendererView
 			// Allocate at least one block even if no probes, to avoid issues with null buffers
 			u32 bufferSize = std::max(1, Math::CeilToInt(size / (float)kReflProbeBufferIncrement)) * kReflProbeBufferIncrement;
 
-			GPU_BUFFER_DESC bufferDesc;
+			GpuBufferCreateInformation bufferDesc;
 			bufferDesc.Type = GBT_STRUCTURED;
 			bufferDesc.ElementCount = bufferSize / sizeof(ReflProbeData);
 			bufferDesc.ElementSize = sizeof(ReflProbeData);

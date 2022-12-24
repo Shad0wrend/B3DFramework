@@ -109,7 +109,7 @@ SPtr<ct::CoreObject> Mesh::CreateCore() const
 	ct::Mesh* obj = new(B3DAllocate<ct::Mesh>()) ct::Mesh(mCPUData, meshCreateInformation, GDF_DEFAULT);
 
 	SPtr<ct::CoreObject> meshCore = B3DMakeSharedFromExisting<ct::Mesh>(obj);
-	meshCore->SetThisPtrInternal(meshCore);
+	meshCore->SetShared(meshCore);
 
 	if((mUsage & MU_CPUCACHED) == 0)
 		mCPUData = nullptr;
@@ -269,9 +269,9 @@ void Mesh::Initialize()
 	bool isDynamic = (mUsage & MU_DYNAMIC) != 0;
 	int usage = isDynamic ? GBU_DYNAMIC : GBU_STATIC;
 
-	INDEX_BUFFER_DESC ibDesc;
+	IndexBufferCreateInformation ibDesc;
 	ibDesc.IndexType = mIndexType;
-	ibDesc.NumIndices = mProperties.IndexCount;
+	ibDesc.IndexCount = mProperties.IndexCount;
 	ibDesc.Usage = (GpuBufferUsage)usage;
 
 	mIndexBuffer = IndexBuffer::Create(ibDesc, mDeviceMask);
@@ -285,9 +285,9 @@ void Mesh::Initialize()
 		if(!mVertexDesc->HasStream(i))
 			continue;
 
-		VERTEX_BUFFER_DESC vbDesc;
+		VertexBufferCreateInformation vbDesc;
 		vbDesc.VertexSize = mVertexData->VertexDeclaration->GetProperties().GetVertexSize(i);
-		vbDesc.NumVerts = mVertexData->VertexCount;
+		vbDesc.VertexCount = mVertexData->VertexCount;
 		vbDesc.Usage = (GpuBufferUsage)usage;
 
 		SPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(vbDesc, mDeviceMask);
@@ -513,7 +513,7 @@ SPtr<Mesh> Mesh::Create(u32 vertexCount, u32 indexCount, const SPtr<VertexDataDe
 	meshCreateInformation.IndexType = indexType;
 
 	SPtr<Mesh> mesh = B3DMakeSharedFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(nullptr, meshCreateInformation, deviceMask));
-	mesh->SetThisPtrInternal(mesh);
+	mesh->SetShared(mesh);
 	mesh->Initialize();
 
 	return mesh;
@@ -523,7 +523,7 @@ SPtr<Mesh> Mesh::Create(const MeshCreateInformation& meshCreateInformation, GpuD
 {
 	SPtr<Mesh> mesh = B3DMakeSharedFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(nullptr, meshCreateInformation, deviceMask));
 
-	mesh->SetThisPtrInternal(mesh);
+	mesh->SetShared(mesh);
 	mesh->Initialize();
 
 	return mesh;
@@ -540,7 +540,7 @@ SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, const MeshCreateI
 	SPtr<Mesh> mesh =
 		B3DMakeSharedFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(initialMeshData, meshCreateInformationCopy, deviceMask));
 
-	mesh->SetThisPtrInternal(mesh);
+	mesh->SetShared(mesh);
 	mesh->Initialize();
 
 	return mesh;
@@ -559,7 +559,7 @@ SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, int usage, DrawOp
 	SPtr<Mesh> mesh =
 		B3DMakeSharedFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(initialMeshData, meshCreateInformation, deviceMask));
 
-	mesh->SetThisPtrInternal(mesh);
+	mesh->SetShared(mesh);
 	mesh->Initialize();
 
 	return mesh;

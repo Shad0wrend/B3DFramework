@@ -43,7 +43,7 @@ SPtr<ct::GpuProgram> D3D11HLSLProgramFactory::Create(const GpuProgramCreateInfor
 	}
 
 	if(gpuProg != nullptr)
-		gpuProg->SetThisPtrInternal(gpuProg);
+		gpuProg->SetShared(gpuProg);
 
 	return gpuProg;
 }
@@ -84,7 +84,7 @@ SPtr<ct::GpuProgram> D3D11HLSLProgramFactory::Create(GpuProgramType type, GpuDev
 	}
 
 	if(gpuProg != nullptr)
-		gpuProg->SetThisPtrInternal(gpuProg);
+		gpuProg->SetShared(gpuProg);
 
 	return gpuProg;
 }

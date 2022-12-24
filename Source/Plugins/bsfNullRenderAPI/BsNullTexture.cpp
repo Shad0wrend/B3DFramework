@@ -19,7 +19,7 @@ namespace bs { namespace ct {
 SPtr<Texture> NullTextureManager::CreateTextureInternal(const TextureCreateInformation& desc, const SPtr<PixelData>& initialData, GpuDeviceFlags deviceMask)
 {
 	SPtr<NullTexture> texPtr = B3DMakeShared<NullTexture>(desc, initialData, deviceMask);
-	texPtr->SetThisPtrInternal(texPtr);
+	texPtr->SetShared(texPtr);
 
 	return texPtr;
 }
@@ -27,7 +27,7 @@ SPtr<Texture> NullTextureManager::CreateTextureInternal(const TextureCreateInfor
 SPtr<RenderTexture> NullTextureManager::CreateRenderTextureInternal(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 {
 	SPtr<NullRenderTexture> texPtr = B3DMakeShared<NullRenderTexture>(desc, deviceIdx);
-	texPtr->SetThisPtrInternal(texPtr);
+	texPtr->SetShared(texPtr);
 
 	return texPtr;
 }

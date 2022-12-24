@@ -90,7 +90,7 @@ SPtr<ct::CoreObject> Technique::CreateCore() const
 		passes);
 
 	SPtr<ct::Technique> techniquePtr = B3DMakeSharedFromExisting<ct::Technique>(technique);
-	techniquePtr->SetThisPtrInternal(techniquePtr);
+	techniquePtr->SetShared(techniquePtr);
 
 	return techniquePtr;
 }
@@ -150,7 +150,7 @@ SPtr<Technique> Technique::Create(const String& language, const Vector<SPtr<Pass
 {
 	Technique* technique = new(B3DAllocate<Technique>()) Technique(language, {}, ShaderVariation(), passes);
 	SPtr<Technique> techniquePtr = B3DMakeSharedFromExisting<Technique>(technique);
-	techniquePtr->SetThisPtrInternal(techniquePtr);
+	techniquePtr->SetShared(techniquePtr);
 	techniquePtr->Initialize();
 
 	return techniquePtr;
@@ -160,7 +160,7 @@ SPtr<Technique> Technique::Create(const String& language, const Vector<StringID>
 {
 	Technique* technique = new(B3DAllocate<Technique>()) Technique(language, tags, variation, passes);
 	SPtr<Technique> techniquePtr = B3DMakeSharedFromExisting<Technique>(technique);
-	techniquePtr->SetThisPtrInternal(techniquePtr);
+	techniquePtr->SetShared(techniquePtr);
 	techniquePtr->Initialize();
 
 	return techniquePtr;

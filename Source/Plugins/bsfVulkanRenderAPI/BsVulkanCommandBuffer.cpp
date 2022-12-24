@@ -1591,8 +1591,10 @@ void VulkanInternalCommandBuffer::BindGpuParams()
 	{
 		if(mBoundParams != nullptr)
 		{
-			mBoundDescriptorSetCount = mBoundParams->GetNumSets();
-			mBoundParams->PrepareForBind(*this, mDescriptorSetsTemp);
+			mBoundDescriptorSetCount = mBoundParams->GetSetCount();
+
+			mDynamicDescriptorOffsetsToBind.clear();
+			mBoundParams->PrepareForBind(*this, mDescriptorSetsTemp, mDynamicDescriptorOffsetsToBind);
 		}
 		else
 			mBoundDescriptorSetCount = 0;
@@ -1818,7 +1820,7 @@ void VulkanInternalCommandBuffer::Draw(u32 vertexOffset, u32 vertexCount, u32 in
 			u32 deviceIdx = mDevice.GetIndex();
 			VkPipelineLayout pipelineLayout = mGraphicsPipeline->GetPipelineLayout(deviceIdx);
 
-			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, mBoundDescriptorSetCount, mDescriptorSetsTemp, 0, nullptr);
+			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, mBoundDescriptorSetCount, mDescriptorSetsTemp, (u32)mDynamicDescriptorOffsetsToBind.size(), mDynamicDescriptorOffsetsToBind.data());
 		}
 
 		mDescriptorSetsBindState.Unset(DescriptorSetBindFlag::Graphics);
@@ -1864,7 +1866,7 @@ void VulkanInternalCommandBuffer::DrawIndexed(u32 startIndex, u32 indexCount, u3
 			u32 deviceIdx = mDevice.GetIndex();
 			VkPipelineLayout pipelineLayout = mGraphicsPipeline->GetPipelineLayout(deviceIdx);
 
-			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, mBoundDescriptorSetCount, mDescriptorSetsTemp, 0, nullptr);
+			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, mBoundDescriptorSetCount, mDescriptorSetsTemp, (u32)mDynamicDescriptorOffsetsToBind.size(), mDynamicDescriptorOffsetsToBind.data());
 		}
 
 		mDescriptorSetsBindState.Unset(DescriptorSetBindFlag::Graphics);
@@ -1913,7 +1915,7 @@ void VulkanInternalCommandBuffer::Dispatch(u32 numGroupsX, u32 numGroupsY, u32 n
 		if(mBoundDescriptorSetCount > 0)
 		{
 			VkPipelineLayout pipelineLayout = mComputePipeline->GetPipelineLayout(deviceIdx);
-			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout, 0, mBoundDescriptorSetCount, mDescriptorSetsTemp, 0, nullptr);
+			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout, 0, mBoundDescriptorSetCount, mDescriptorSetsTemp, (u32)mDynamicDescriptorOffsetsToBind.size(), mDynamicDescriptorOffsetsToBind.data());
 		}
 
 		mDescriptorSetsBindState.Unset(DescriptorSetBindFlag::Compute);

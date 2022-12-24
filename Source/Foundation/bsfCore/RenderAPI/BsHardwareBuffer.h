@@ -10,6 +10,16 @@ namespace bs
 	 *  @{
 	 */
 
+	/**	Determines in what way will a HardwareBuffer be used in. */
+	enum class HardwareBufferType
+	{
+		Vertex, /**< Contains mesh vertices and associated properties. */
+		Index, /**< Contains mesh indices that determine which vertices form a triangle. */
+		Uniform, /**< Contains read-only GPU program parameters. */
+		Generic, /**< Contains generic non-formatted GPU data. */
+		Structured /**< Contains generic structured GPU data. */
+	};
+
 	/**
 	 * Abstract class defining common features of hardware buffers. Hardware buffers usually represent areas of memory the
 	 * GPU or the driver can access directly.
@@ -138,12 +148,13 @@ namespace bs
 		/**
 		 * Constructs a new buffer.
 		 *
-		 * @param[in]	size			Size of the buffer, in bytes.
-		 * @param[in]	usage			Hint on how the buffer is intended to be used.
-		 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
+		 * @param	type			Determines how will the buffer be used.
+		 * @param	size			Size of the buffer, in bytes.
+		 * @param	usage			Hint on how the buffer is intended to be used.
+		 * @param	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
-		HardwareBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
-			: mSize(size), mUsage(usage), mDeviceMask(deviceMask)
+		HardwareBuffer(HardwareBufferType type, u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+			: mType(type), mSize(size), mUsage(usage), mDeviceMask(deviceMask)
 		{}
 
 		/** @copydoc Lock */
@@ -153,6 +164,7 @@ namespace bs
 		virtual void Unmap() {}
 
 	protected:
+		HardwareBufferType mType = HardwareBufferType::Generic;
 		String mName;
 		u32 mSize;
 		GpuBufferUsage mUsage;

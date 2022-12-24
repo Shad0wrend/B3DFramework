@@ -7,21 +7,21 @@
 
 using namespace bs;
 
-void CheckValidDesc(const VERTEX_BUFFER_DESC& desc)
+void CheckValidDesc(const VertexBufferCreateInformation& desc)
 {
 	if(desc.VertexSize == 0)
 		B3D_EXCEPT(InvalidParametersException, "Vertex buffer vertex size is not allowed to be zero.");
 
-	if(desc.NumVerts == 0)
+	if(desc.VertexCount == 0)
 		B3D_EXCEPT(InvalidParametersException, "Vertex buffer vertex count is not allowed to be zero.");
 }
 
-VertexBufferProperties::VertexBufferProperties(u32 numVertices, u32 vertexSize)
-	: mNumVertices(numVertices), mVertexSize(vertexSize)
+VertexBufferProperties::VertexBufferProperties(u32 vertexCount, u32 vertexSize)
+	: mVertexCount(vertexCount), mVertexSize(vertexSize)
 {}
 
-VertexBuffer::VertexBuffer(const VERTEX_BUFFER_DESC& desc)
-	: mProperties(desc.NumVerts, desc.VertexSize), mUsage(desc.Usage), mStreamOut(desc.StreamOut)
+VertexBuffer::VertexBuffer(const VertexBufferCreateInformation& desc)
+	: mProperties(desc.VertexCount, desc.VertexSize), mUsage(desc.Usage), mStreamOut(desc.StreamOut)
 {
 #if B3D_DEBUG
 	CheckValidDesc(desc);
@@ -30,9 +30,9 @@ VertexBuffer::VertexBuffer(const VERTEX_BUFFER_DESC& desc)
 
 SPtr<ct::CoreObject> VertexBuffer::CreateCore() const
 {
-	VERTEX_BUFFER_DESC desc;
+	VertexBufferCreateInformation desc;
 	desc.VertexSize = mProperties.mVertexSize;
-	desc.NumVerts = mProperties.mNumVertices;
+	desc.VertexCount = mProperties.mVertexCount;
 	desc.Usage = mUsage;
 	desc.StreamOut = mStreamOut;
 
@@ -44,15 +44,15 @@ SPtr<ct::VertexBuffer> VertexBuffer::GetCore() const
 	return std::static_pointer_cast<ct::VertexBuffer>(mCoreSpecific);
 }
 
-SPtr<VertexBuffer> VertexBuffer::Create(const VERTEX_BUFFER_DESC& desc)
+SPtr<VertexBuffer> VertexBuffer::Create(const VertexBufferCreateInformation& desc)
 {
 	return HardwareBufferManager::Instance().CreateVertexBuffer(desc);
 }
 
 namespace bs { namespace ct
 {
-VertexBuffer::VertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
-	: HardwareBuffer(desc.VertexSize * desc.NumVerts, desc.Usage, deviceMask), mProperties(desc.NumVerts, desc.VertexSize)
+VertexBuffer::VertexBuffer(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
+	: HardwareBuffer(HardwareBufferType::Vertex, desc.VertexSize * desc.VertexCount, desc.Usage, deviceMask), mProperties(desc.VertexCount, desc.VertexSize)
 {
 #if B3D_DEBUG
 	CheckValidDesc(desc);
@@ -138,7 +138,7 @@ SPtr<GpuBuffer> VertexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat f
 		return nullptr;
 	}
 
-	GPU_BUFFER_DESC desc;
+	GpuBufferCreateInformation desc;
 	desc.Type = type;
 	desc.Format = format;
 	desc.Usage = mUsage;
@@ -154,7 +154,7 @@ SPtr<GpuBuffer> VertexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat f
 	return newView;
 }
 
-SPtr<VertexBuffer> VertexBuffer::Create(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
+SPtr<VertexBuffer> VertexBuffer::Create(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
 {
 	return HardwareBufferManager::Instance().CreateVertexBuffer(desc, deviceMask);
 }

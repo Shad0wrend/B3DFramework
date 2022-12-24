@@ -149,7 +149,7 @@ SPtr<ct::CoreObject> Skybox::CreateCore() const
 
 	ct::Skybox* skybox = new(B3DAllocate<ct::Skybox>()) ct::Skybox(radiance, filteredRadiance, irradiance);
 	SPtr<ct::Skybox> skyboxPtr = B3DMakeSharedFromExisting<ct::Skybox>(skybox);
-	skyboxPtr->SetThisPtrInternal(skyboxPtr);
+	skyboxPtr->SetShared(skyboxPtr);
 
 	return skyboxPtr;
 }

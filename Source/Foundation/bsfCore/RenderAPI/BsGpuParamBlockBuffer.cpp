@@ -99,13 +99,18 @@ SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(u32 size, GpuBufferUsage u
 namespace bs { namespace ct
 {
 GpuParamBlockBuffer::GpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
-	: mUsage(usage), mSize(size), mCachedData(nullptr), mGPUBufferDirty(false)
+	: mUsage(usage), mSize(size), mCachedData(nullptr), mGPUBufferDirty(false), mDeviceMask(deviceMask)
 {
 	if(mSize > 0)
 	{
 		mCachedData = (u8*)B3DAllocate(mSize);
 		memset(mCachedData, 0, mSize);
 	}
+}
+
+GpuParamBlockBuffer::GpuParamBlockBuffer(const SPtr<HardwareBuffer>& backingMemory, u32 offset, u32 size)
+	: mUsage(GBU_DYNAMIC), mSize(size), mOffset(offset), mBuffer(backingMemory), mCachedData(nullptr), mGPUBufferDirty(false), mDeviceMask(GDF_DEFAULT)
+{
 }
 
 GpuParamBlockBuffer::~GpuParamBlockBuffer()
@@ -119,6 +124,11 @@ GpuParamBlockBuffer::~GpuParamBlockBuffer()
 void GpuParamBlockBuffer::Initialize()
 {
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResCreated, RenderStatObject_GpuParamBuffer);
+
+	if(mBuffer == nullptr)
+	{
+		mBuffer = HardwareBufferManager::Instance().CreateHardwareBuffer(HardwareBufferType::Uniform, mSize, mUsage, mDeviceMask);
+	}
 
 	CoreObject::Initialize();
 }
@@ -135,6 +145,12 @@ void GpuParamBlockBuffer::Write(u32 offset, const void* data, u32 size)
 					  ToString(offset) + " .. " + ToString(offset + size) + ".");
 	}
 #endif
+
+	if(mCachedData == nullptr)
+	{
+		B3D_LOG(Error, RenderBackend, "Cannot write to GpuParamBlockBuffer. Buffer has external backing memory and write needs to be done externally.");
+		return;
+	}
 
 	memcpy(mCachedData + offset, data, size);
 	mGPUBufferDirty = true;
@@ -153,6 +169,12 @@ void GpuParamBlockBuffer::Read(u32 offset, void* data, u32 size)
 	}
 #endif
 
+	if(mCachedData == nullptr)
+	{
+		B3D_LOG(Error, RenderBackend, "Cannot read from GpuParamBlockBuffer. Buffer has external backing memory and read needs to be done externally.");
+		return;
+	}
+
 	memcpy(data, mCachedData + offset, size);
 }
 
@@ -169,13 +191,19 @@ void GpuParamBlockBuffer::ZeroOut(u32 offset, u32 size)
 	}
 #endif
 
+	if(mCachedData == nullptr)
+	{
+		B3D_LOG(Error, RenderBackend, "Cannot write to GpuParamBlockBuffer. Buffer has external backing memory and write needs to be done externally.");
+		return;
+	}
+
 	memset(mCachedData + offset, 0, size);
 	mGPUBufferDirty = true;
 }
 
 void GpuParamBlockBuffer::FlushToGpu(u32 queueIdx)
 {
-	if(mGPUBufferDirty)
+	if(mGPUBufferDirty && mCachedData != nullptr)
 	{
 		WriteToGpu(mCachedData, queueIdx);
 		mGPUBufferDirty = false;
@@ -184,7 +212,7 @@ void GpuParamBlockBuffer::FlushToGpu(u32 queueIdx)
 
 void GpuParamBlockBuffer::WriteToGpu(const u8* data, u32 queueIdx)
 {
-	mBuffer->WriteData(0, mSize, data, BWT_DISCARD, queueIdx);
+	mBuffer->WriteData(mOffset, mSize, data, BWT_NORMAL, queueIdx);
 
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResWrite, RenderStatObject_GpuParamBuffer);
 }
@@ -199,5 +227,10 @@ void GpuParamBlockBuffer::SyncToCore(const CoreSyncData& data)
 SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 {
 	return HardwareBufferManager::Instance().CreateGpuParamBlockBuffer(size, usage, deviceMask);
+}
+
+SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(const SPtr<HardwareBuffer>& backingMemory, u32 offset, u32 size)
+{
+	return HardwareBufferManager::Instance().CreateGpuParamBlockBuffer(backingMemory, offset, size);
 }
 }}

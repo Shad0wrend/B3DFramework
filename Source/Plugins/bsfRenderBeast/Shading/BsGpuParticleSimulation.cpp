@@ -307,7 +307,7 @@ GpuParticleResources::GpuParticleResources()
 	}
 
 	// Allocate the buffer containing keys used for sorting
-	GPU_BUFFER_DESC sortKeysBufferDesc;
+	GpuBufferCreateInformation sortKeysBufferDesc;
 	sortKeysBufferDesc.Type = GBT_STANDARD;
 	sortKeysBufferDesc.Format = BF_32X1U;
 	sortKeysBufferDesc.ElementCount = kTexSize * kTexSize;
@@ -317,7 +317,7 @@ GpuParticleResources::GpuParticleResources()
 	mSortBuffers.Keys[1] = GpuBuffer::Create(sortKeysBufferDesc);
 
 	// Allocate the buffer containing sorted particle indices
-	GPU_BUFFER_DESC sortedIndicesBufferDesc;
+	GpuBufferCreateInformation sortedIndicesBufferDesc;
 	sortedIndicesBufferDesc.Type = GBT_STANDARD;
 	sortedIndicesBufferDesc.Format = BF_16X2U;
 	sortedIndicesBufferDesc.ElementCount = kTexSize * kTexSize;
@@ -406,8 +406,8 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 	InjectVertexDecl = VertexDeclaration::Create(injectVertexDesc);
 
 	// Prepare UV coordinates for rendering tiles
-	VERTEX_BUFFER_DESC tileUVBufferDesc;
-	tileUVBufferDesc.NumVerts = kParticlesPerInstance * 4;
+	VertexBufferCreateInformation tileUVBufferDesc;
+	tileUVBufferDesc.VertexCount = kParticlesPerInstance * 4;
 	tileUVBufferDesc.VertexSize = tileVertexDesc->GetVertexStride();
 
 	TileUVs = VertexBuffer::Create(tileUVBufferDesc);
@@ -425,8 +425,8 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 	TileUVs->Unlock();
 
 	// Prepare UV coordinates for rendering particles
-	VERTEX_BUFFER_DESC particleUVBufferDesc;
-	particleUVBufferDesc.NumVerts = kParticlesPerInstance * 4;
+	VertexBufferCreateInformation particleUVBufferDesc;
+	particleUVBufferDesc.VertexCount = kParticlesPerInstance * 4;
 	particleUVBufferDesc.VertexSize = tileVertexDesc->GetVertexStride();
 
 	ParticleUVs = VertexBuffer::Create(particleUVBufferDesc);
@@ -444,9 +444,9 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 	ParticleUVs->Unlock();
 
 	// Prepare indices for rendering tiles & particles
-	INDEX_BUFFER_DESC spriteIndexBufferDesc;
+	IndexBufferCreateInformation spriteIndexBufferDesc;
 	spriteIndexBufferDesc.IndexType = IT_16BIT;
-	spriteIndexBufferDesc.NumIndices = kParticlesPerInstance * 6;
+	spriteIndexBufferDesc.IndexCount = kParticlesPerInstance * 6;
 
 	SpriteIndices = IndexBuffer::Create(spriteIndexBufferDesc);
 
@@ -480,7 +480,7 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 	SpriteIndices->Unlock();
 
 	// Prepare a scratch buffer we'll use to clear tiles
-	GPU_BUFFER_DESC tileScratchBufferDesc;
+	GpuBufferCreateInformation tileScratchBufferDesc;
 	tileScratchBufferDesc.Type = GBT_STANDARD;
 	tileScratchBufferDesc.Format = BF_32X2F;
 	tileScratchBufferDesc.ElementCount = kNumScratchTiles;
@@ -489,8 +489,8 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 	TileScratch = GpuBuffer::Create(tileScratchBufferDesc);
 
 	// Prepare a scratch buffer we'll use to inject new particles
-	VERTEX_BUFFER_DESC injectScratchBufferDesc;
-	injectScratchBufferDesc.NumVerts = kNumScratchParticles;
+	VertexBufferCreateInformation injectScratchBufferDesc;
+	injectScratchBufferDesc.VertexCount = kNumScratchParticles;
 	injectScratchBufferDesc.VertexSize = injectVertexDesc->GetVertexStride(0);
 	injectScratchBufferDesc.Usage = GBU_DYNAMIC;
 
@@ -626,7 +626,7 @@ void GpuParticleSystem::UpdateGpuBuffers()
 	// Tile offsets buffer
 	if(numTiles > 0)
 	{
-		GPU_BUFFER_DESC tilesBufferDesc;
+		GpuBufferCreateInformation tilesBufferDesc;
 		tilesBufferDesc.Type = GBT_STANDARD;
 		tilesBufferDesc.Format = BF_32X2F;
 		tilesBufferDesc.ElementCount = numTilesToAllocates;
@@ -649,7 +649,7 @@ void GpuParticleSystem::UpdateGpuBuffers()
 
 	if(numParticles > 0)
 	{
-		GPU_BUFFER_DESC particleUVDesc;
+		GpuBufferCreateInformation particleUVDesc;
 		particleUVDesc.Type = GBT_STANDARD;
 		particleUVDesc.Format = BF_16X2U;
 		particleUVDesc.ElementCount = numParticles;
@@ -1230,7 +1230,7 @@ AABox GpuParticleBoundsMat::Execute(const SPtr<GpuBuffer>& indices, u32 numParti
 	gGpuParticleBoundsParamsDef.gNumExtraIterations.Set(mInputBuffer, extraIterations);
 	gGpuParticleBoundsParamsDef.gNumParticles.Set(mInputBuffer, numParticles);
 
-	GPU_BUFFER_DESC outputDesc;
+	GpuBufferCreateInformation outputDesc;
 	outputDesc.Type = GBT_STANDARD;
 	outputDesc.Format = BF_32X2U;
 	outputDesc.ElementCount = numGroups * 2;
@@ -1352,8 +1352,8 @@ GpuParticleCurves::GpuParticleCurves()
 	mInjectVertexDecl = VertexDeclaration::Create(injectVertexDesc);
 
 	// Prepare UV coordinates for injecting curves
-	VERTEX_BUFFER_DESC injectUVBufferDesc;
-	injectUVBufferDesc.NumVerts = 4;
+	VertexBufferCreateInformation injectUVBufferDesc;
+	injectUVBufferDesc.VertexCount = 4;
 	injectUVBufferDesc.VertexSize = injectVertexDesc->GetVertexStride(1);
 
 	mInjectUV = VertexBuffer::Create(injectUVBufferDesc);
@@ -1368,9 +1368,9 @@ GpuParticleCurves::GpuParticleCurves()
 	mInjectUV->Unlock();
 
 	// Prepare indices for injecting curves
-	INDEX_BUFFER_DESC injectIndexBufferDesc;
+	IndexBufferCreateInformation injectIndexBufferDesc;
 	injectIndexBufferDesc.IndexType = IT_16BIT;
-	injectIndexBufferDesc.NumIndices = 6;
+	injectIndexBufferDesc.IndexCount = 6;
 
 	mInjectIndices = IndexBuffer::Create(injectIndexBufferDesc);
 
@@ -1402,8 +1402,8 @@ GpuParticleCurves::GpuParticleCurves()
 	mInjectIndices->Unlock();
 
 	// Prepare a scratch buffer we'll use to inject new curves
-	VERTEX_BUFFER_DESC injectScratchBufferDesc;
-	injectScratchBufferDesc.NumVerts = kScratchNumVertices;
+	VertexBufferCreateInformation injectScratchBufferDesc;
+	injectScratchBufferDesc.VertexCount = kScratchNumVertices;
 	injectScratchBufferDesc.VertexSize = injectVertexDesc->GetVertexStride(0);
 	injectScratchBufferDesc.Usage = GBU_DYNAMIC;
 

@@ -8,23 +8,14 @@ using namespace bs;
 using namespace bs::ct;
 
 VulkanGpuParamBlockBuffer::VulkanGpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
-	: GpuParamBlockBuffer(size, usage, deviceMask), mDeviceMask(deviceMask)
+	: GpuParamBlockBuffer(size, usage, deviceMask)
 {}
 
-VulkanGpuParamBlockBuffer::~VulkanGpuParamBlockBuffer()
-{
-	if(mBuffer != nullptr)
-		B3DPoolDelete(static_cast<VulkanHardwareBuffer*>(mBuffer));
-}
-
-void VulkanGpuParamBlockBuffer::Initialize()
-{
-	mBuffer = B3DPoolNew<VulkanHardwareBuffer>(VulkanHardwareBuffer::BT_UNIFORM, BF_UNKNOWN, mUsage, mSize, mDeviceMask);
-
-	GpuParamBlockBuffer::Initialize();
-}
+VulkanGpuParamBlockBuffer::VulkanGpuParamBlockBuffer(const SPtr<HardwareBuffer>& backingMemory, u32 offset, u32 size)
+	: GpuParamBlockBuffer(backingMemory, offset, size)
+{}
 
 VulkanBuffer* VulkanGpuParamBlockBuffer::GetResource(u32 deviceIdx) const
 {
-	return static_cast<VulkanHardwareBuffer*>(mBuffer)->GetResource(deviceIdx);
+	return static_cast<VulkanHardwareBuffer*>(mBuffer.get())->GetResource(deviceIdx);
 }

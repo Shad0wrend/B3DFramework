@@ -163,7 +163,7 @@ SPtr<Texture> VulkanTextureManager::CreateTextureInternal(const TextureCreateInf
 	VulkanTexture* tex = new(B3DAllocate<VulkanTexture>()) VulkanTexture(desc, initialData, deviceMask);
 
 	SPtr<VulkanTexture> texPtr = B3DMakeSharedFromExisting<VulkanTexture>(tex);
-	texPtr->SetThisPtrInternal(texPtr);
+	texPtr->SetShared(texPtr);
 
 	return texPtr;
 }
@@ -171,7 +171,7 @@ SPtr<Texture> VulkanTextureManager::CreateTextureInternal(const TextureCreateInf
 SPtr<RenderTexture> VulkanTextureManager::CreateRenderTextureInternal(const RENDER_TEXTURE_DESC& desc, u32 deviceIdx)
 {
 	SPtr<VulkanRenderTexture> texPtr = B3DMakeShared<VulkanRenderTexture>(desc, deviceIdx);
-	texPtr->SetThisPtrInternal(texPtr);
+	texPtr->SetShared(texPtr);
 
 	return texPtr;
 }

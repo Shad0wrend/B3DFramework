@@ -49,7 +49,7 @@ SPtr<ct::GpuProgram> VulkanGLSLProgramFactory::Create(const GpuProgramCreateInfo
 {
 	SPtr<GpuProgram> gpuProg = B3DMakeSharedFromExisting<VulkanGpuProgram>(new(B3DAllocate<VulkanGpuProgram>())
 																   VulkanGpuProgram(desc, deviceMask));
-	gpuProg->SetThisPtrInternal(gpuProg);
+	gpuProg->SetShared(gpuProg);
 
 	return gpuProg;
 }
@@ -61,7 +61,7 @@ SPtr<ct::GpuProgram> VulkanGLSLProgramFactory::Create(GpuProgramType type, GpuDe
 
 	SPtr<GpuProgram> gpuProg = B3DMakeSharedFromExisting<VulkanGpuProgram>(new(B3DAllocate<VulkanGpuProgram>())
 																   VulkanGpuProgram(desc, deviceMask));
-	gpuProg->SetThisPtrInternal(gpuProg);
+	gpuProg->SetShared(gpuProg);
 
 	return gpuProg;
 }

@@ -37,7 +37,7 @@ SPtr<ct::CoreObject> NullRenderWindow::CreateCore() const
 {
 	RENDER_WINDOW_DESC desc = mDesc;
 	SPtr<ct::CoreObject> coreObj = B3DMakeShared<ct::NullRenderWindow>(desc, mWindowId);
-	coreObj->SetThisPtrInternal(coreObj);
+	coreObj->SetShared(coreObj);
 
 	return coreObj;
 }

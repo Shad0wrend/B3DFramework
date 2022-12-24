@@ -13,7 +13,7 @@ namespace bs
 	 */
 
 	/** Descriptor structure used for initialization of a GpuBuffer. */
-	struct GPU_BUFFER_DESC
+	struct GpuBufferCreateInformation
 	{
 		/** Number of elements in the buffer. */
 		u32 ElementCount = 0;
@@ -41,7 +41,7 @@ namespace bs
 	class B3D_CORE_EXPORT GpuBufferProperties
 	{
 	public:
-		GpuBufferProperties(const GPU_BUFFER_DESC& desc);
+		GpuBufferProperties(const GpuBufferCreateInformation& desc);
 
 		/**
 		 * Returns the type of the GPU buffer. Type determines which kind of views (if any) can be created for the buffer,
@@ -64,7 +64,7 @@ namespace bs
 	protected:
 		friend class GpuBuffer;
 
-		GPU_BUFFER_DESC mDesc;
+		GpuBufferCreateInformation mDesc;
 	};
 
 	/**
@@ -88,12 +88,12 @@ namespace bs
 		static u32 GetFormatSize(GpuBufferFormat format);
 
 		/** @copydoc HardwareBufferManager::CreateGpuBuffer */
-		static SPtr<GpuBuffer> Create(const GPU_BUFFER_DESC& desc);
+		static SPtr<GpuBuffer> Create(const GpuBufferCreateInformation& desc);
 
 	protected:
 		friend class HardwareBufferManager;
 
-		GpuBuffer(const GPU_BUFFER_DESC& desc);
+		GpuBuffer(const GpuBufferCreateInformation& desc);
 
 		SPtr<ct::CoreObject> CreateCore() const override;
 
@@ -141,20 +141,20 @@ namespace bs
 			SPtr<GpuBuffer> GetView(GpuBufferType type, GpuBufferFormat format, u32 elementSize = 0);
 
 			/** @copydoc bs::HardwareBufferManager::CreateGpuBuffer */
-			static SPtr<GpuBuffer> Create(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			static SPtr<GpuBuffer> Create(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 			/**
 			 * Creates a view of an existing hardware buffer. No internal buffer will be allocated and the provided buffer
 			 * will be used for all internal operations instead. Information provided in @p desc (such as element size and
 			 * count) must match the provided @p underlyingBuffer.
 			 */
-			static SPtr<GpuBuffer> Create(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer);
+			static SPtr<GpuBuffer> Create(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer);
 
 		protected:
 			friend class HardwareBufferManager;
 
-			GpuBuffer(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask);
-			GpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer);
+			GpuBuffer(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask);
+			GpuBuffer(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer);
 
 			void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx = 0, u32 queueIdx = 0) override;
 			void Unmap() override;

@@ -80,7 +80,7 @@ SPtr<ct::CoreObject> D3D11RenderWindow::CreateCore() const
 	// Create the window
 	RENDER_WINDOW_DESC desc = mDesc;
 	SPtr<ct::CoreObject> coreObj = B3DMakeShared<ct::D3D11RenderWindow>(desc, mWindowId, d3d11rs->GetPrimaryDevice(), d3d11rs->GetDxgiFactory());
-	coreObj->SetThisPtrInternal(coreObj);
+	coreObj->SetShared(coreObj);
 
 	return coreObj;
 }

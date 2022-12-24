@@ -764,7 +764,7 @@ void LightProbes::ResizeTetrahedronBuffer(u32 count)
 {
 	static constexpr u32 kElementSize = Math::DivideAndRoundUp((u32)sizeof(TetrahedronDataGPU), 4U);
 
-	GPU_BUFFER_DESC desc;
+	GpuBufferCreateInformation desc;
 	desc.Type = GBT_STANDARD;
 	desc.ElementSize = 0;
 	desc.ElementCount = count * kElementSize;
@@ -779,7 +779,7 @@ void LightProbes::ResizeTetrahedronFaceBuffer(u32 count)
 {
 	static constexpr u32 kElementSize = Math::DivideAndRoundUp((u32)sizeof(TetrahedronFaceDataGPU), 4U);
 
-	GPU_BUFFER_DESC desc;
+	GpuBufferCreateInformation desc;
 	desc.Type = GBT_STANDARD;
 	desc.ElementSize = 0;
 	desc.ElementCount = count * kElementSize;

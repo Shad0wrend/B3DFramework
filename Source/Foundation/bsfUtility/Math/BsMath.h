@@ -184,6 +184,13 @@ namespace bs
 			return (uint32_t)(val + kBiggestFloatSmallerThanOne);
 		}
 
+		/** Rounds up @p x to the multiple of @p multiple. */
+		template <class T>
+		static T CeilToMultiple(T x, T multiple)
+		{
+			return DivideAndRoundUp(x, multiple) * multiple;
+		}
+
 		/** Returns the integer nearest to the provided value. */
 		static float Round(float val) { return (float)std::floor(val + 0.5f); }
 

@@ -453,7 +453,7 @@ SPtr<ct::CoreObject> Shader::CreateCore() const
 
 	ct::Shader* shaderCore = new(B3DAllocate<ct::Shader>()) ct::Shader(mName, ConvertDesc(mDesc), mId);
 	SPtr<ct::Shader> shaderCorePtr = B3DMakeSharedFromExisting<ct::Shader>(shaderCore);
-	shaderCorePtr->SetThisPtrInternal(shaderCorePtr);
+	shaderCorePtr->SetShared(shaderCorePtr);
 
 	return shaderCorePtr;
 }
@@ -669,7 +669,7 @@ SPtr<Shader> Shader::Create(const String& name, const SHADER_DESC& desc)
 
 	Shader* shaderCore = new(B3DAllocate<Shader>()) Shader(name, desc, id);
 	SPtr<Shader> shaderCorePtr = B3DMakeSharedFromExisting<Shader>(shaderCore);
-	shaderCorePtr->SetThisPtrInternal(shaderCorePtr);
+	shaderCorePtr->SetShared(shaderCorePtr);
 	shaderCorePtr->Initialize();
 
 	return shaderCorePtr;

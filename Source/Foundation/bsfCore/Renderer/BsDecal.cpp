@@ -111,7 +111,7 @@ SPtr<ct::CoreObject> Decal::CreateCore() const
 
 	ct::Decal* decal = new(B3DAllocate<ct::Decal>()) ct::Decal(material, mSize, mMaxDistance);
 	SPtr<ct::Decal> decalPtr = B3DMakeSharedFromExisting<ct::Decal>(decal);
-	decalPtr->SetThisPtrInternal(decalPtr);
+	decalPtr->SetShared(decalPtr);
 
 	return decalPtr;
 }

@@ -12,7 +12,7 @@ static void DeleteHardwareBuffer(HardwareBuffer* buffer)
 	B3DPoolDelete(static_cast<D3D11HardwareBuffer*>(buffer));
 }
 
-D3D11IndexBuffer::D3D11IndexBuffer(D3D11Device& device, const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
+D3D11IndexBuffer::D3D11IndexBuffer(D3D11Device& device, const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
 	: IndexBuffer(desc, deviceMask), mDevice(device)
 {
 	B3D_ASSERT((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on DirectX.");

@@ -15,11 +15,11 @@ static void DeleteHardwareBuffer(HardwareBuffer* buffer)
 	B3DPoolDelete(static_cast<VulkanHardwareBuffer*>(buffer));
 }
 
-VulkanGpuBuffer::VulkanGpuBuffer(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
+VulkanGpuBuffer::VulkanGpuBuffer(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
 	: GpuBuffer(desc, deviceMask)
 {}
 
-VulkanGpuBuffer::VulkanGpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer)
+VulkanGpuBuffer::VulkanGpuBuffer(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
 	: GpuBuffer(desc, std::move(underlyingBuffer))
 {}
 
@@ -50,14 +50,14 @@ void VulkanGpuBuffer::Initialize()
 	// Create a new buffer if external buffer is not provided
 	if(!mBuffer)
 	{
-		VulkanHardwareBuffer::BufferType bufferType;
+		HardwareBufferType bufferType;
 		if(props.GetType() == GBT_STRUCTURED)
-			bufferType = VulkanHardwareBuffer::BT_STRUCTURED;
+			bufferType = HardwareBufferType::Structured;
 		else
-			bufferType = VulkanHardwareBuffer::BT_GENERIC;
+			bufferType = HardwareBufferType::Generic;
 
 		u32 size = props.GetElementCount() * props.GetElementSize();
-		mBuffer = B3DPoolNew<VulkanHardwareBuffer>(bufferType, props.GetFormat(), props.GetUsage(), size, mDeviceMask);
+		mBuffer = B3DPoolNew<VulkanHardwareBuffer>(bufferType, props.GetUsage(), size, mDeviceMask);
 	}
 
 	UpdateViews();

@@ -426,7 +426,7 @@ SPtr<ct::CoreObject> ParticleSystem::CreateCore() const
 {
 	ct::ParticleSystem* rawPtr = new(B3DAllocate<ct::ParticleSystem>()) ct::ParticleSystem(mId);
 	SPtr<ct::ParticleSystem> ptr = B3DMakeSharedFromExisting<ct::ParticleSystem>(rawPtr);
-	ptr->SetThisPtrInternal(ptr);
+	ptr->SetShared(ptr);
 
 	return ptr;
 }

@@ -144,7 +144,7 @@ SPtr<ct::CoreObject> SpriteTexture::CreateCore() const
 	ct::SpriteTexture* spriteTexture = new(B3DAllocate<ct::SpriteTexture>()) ct::SpriteTexture(mUVOffset, mUVScale, std::move(texturePtr), mAnimation, mPlayback);
 
 	SPtr<ct::SpriteTexture> spriteTexPtr = B3DMakeSharedFromExisting<ct::SpriteTexture>(spriteTexture);
-	spriteTexPtr->SetThisPtrInternal(spriteTexPtr);
+	spriteTexPtr->SetShared(spriteTexPtr);
 
 	return spriteTexPtr;
 }

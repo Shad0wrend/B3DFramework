@@ -53,7 +53,7 @@ void CoreObject::Synchronize()
 	}
 }
 
-void CoreObject::SetThisPtrInternal(SPtr<CoreObject> ptrThis)
+void CoreObject::SetShared(SPtr<CoreObject> ptrThis)
 {
 	mThis = ptrThis;
 }

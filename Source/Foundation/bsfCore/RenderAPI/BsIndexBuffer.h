@@ -13,10 +13,10 @@ namespace bs
 	 */
 
 	/** Descriptor structure used for initialization of an IndexBuffer. */
-	struct INDEX_BUFFER_DESC
+	struct IndexBufferCreateInformation
 	{
-		IndexType IndexType; /**< Index type, determines the size of a single index. */
-		u32 NumIndices; /**< Number of indices can buffer can hold. */
+		IndexType IndexType = IT_32BIT; /**< Index type, determines the size of a single index. */
+		u32 IndexCount = 0; /**< Number of indices can buffer can hold. */
 		GpuBufferUsage Usage = GBU_STATIC; /**< Usage that tells the hardware how will be buffer be used. */
 	};
 
@@ -61,12 +61,12 @@ namespace bs
 		SPtr<ct::IndexBuffer> GetCore() const;
 
 		/** @copydoc HardwareBufferManager::CreateIndexBuffer */
-		static SPtr<IndexBuffer> Create(const INDEX_BUFFER_DESC& desc);
+		static SPtr<IndexBuffer> Create(const IndexBufferCreateInformation& desc);
 
 	protected:
 		friend class HardwareBufferManager;
 
-		IndexBuffer(const INDEX_BUFFER_DESC& desc);
+		IndexBuffer(const IndexBufferCreateInformation& desc);
 
 		SPtr<ct::CoreObject> CreateCore() const override;
 
@@ -86,7 +86,7 @@ namespace bs
 		class B3D_CORE_EXPORT IndexBuffer : public CoreObject, public HardwareBuffer
 		{
 		public:
-			IndexBuffer(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			IndexBuffer(const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 			virtual ~IndexBuffer();
 
 			/**	Returns information about the index buffer. */
@@ -115,7 +115,7 @@ namespace bs
 			SPtr<GpuBuffer> GetLoadStore(GpuBufferType type, GpuBufferFormat format, u32 elementSize = 0);
 
 			/** @copydoc HardwareBufferManager::CreateIndexBuffer */
-			static SPtr<IndexBuffer> Create(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			static SPtr<IndexBuffer> Create(const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		protected:
 			friend class HardwareBufferManager;

@@ -21,17 +21,17 @@ SPtr<VertexDeclaration> HardwareBufferManager::CreateVertexDeclaration(const SPt
 	return declPtr;
 }
 
-SPtr<VertexBuffer> HardwareBufferManager::CreateVertexBuffer(const VERTEX_BUFFER_DESC& desc)
+SPtr<VertexBuffer> HardwareBufferManager::CreateVertexBuffer(const VertexBufferCreateInformation& createInformation)
 {
-	SPtr<VertexBuffer> vbuf = B3DMakeCoreFromExisting<VertexBuffer>(new(B3DAllocate<VertexBuffer>()) VertexBuffer(desc));
+	SPtr<VertexBuffer> vbuf = B3DMakeCoreFromExisting<VertexBuffer>(new(B3DAllocate<VertexBuffer>()) VertexBuffer(createInformation));
 	vbuf->SetThisPtrInternal(vbuf);
 	vbuf->Initialize();
 	return vbuf;
 }
 
-SPtr<IndexBuffer> HardwareBufferManager::CreateIndexBuffer(const INDEX_BUFFER_DESC& desc)
+SPtr<IndexBuffer> HardwareBufferManager::CreateIndexBuffer(const IndexBufferCreateInformation& createInformation)
 {
-	SPtr<IndexBuffer> ibuf = B3DMakeCoreFromExisting<IndexBuffer>(new(B3DAllocate<IndexBuffer>()) IndexBuffer(desc));
+	SPtr<IndexBuffer> ibuf = B3DMakeCoreFromExisting<IndexBuffer>(new(B3DAllocate<IndexBuffer>()) IndexBuffer(createInformation));
 	ibuf->SetThisPtrInternal(ibuf);
 	ibuf->Initialize();
 	return ibuf;
@@ -45,9 +45,9 @@ SPtr<GpuParamBlockBuffer> HardwareBufferManager::CreateGpuParamBlockBuffer(u32 s
 	return paramBlockPtr;
 }
 
-SPtr<GpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GPU_BUFFER_DESC& desc)
+SPtr<GpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GpuBufferCreateInformation& createInformation)
 {
-	SPtr<GpuBuffer> gbuf = B3DMakeCoreFromExisting<GpuBuffer>(new(B3DAllocate<GpuBuffer>()) GpuBuffer(desc));
+	SPtr<GpuBuffer> gbuf = B3DMakeCoreFromExisting<GpuBuffer>(new(B3DAllocate<GpuBuffer>()) GpuBuffer(createInformation));
 	gbuf->SetThisPtrInternal(gbuf);
 	gbuf->Initialize();
 
@@ -100,23 +100,23 @@ bool HardwareBufferManager::VertexDeclarationKey::EqualFunction::operator()(cons
 	return true;
 }
 
-SPtr<IndexBuffer> HardwareBufferManager::CreateIndexBuffer(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
+SPtr<IndexBuffer> HardwareBufferManager::CreateIndexBuffer(const IndexBufferCreateInformation& createInformation, GpuDeviceFlags deviceMask)
 {
-	SPtr<IndexBuffer> ibuf = CreateIndexBufferInternal(desc, deviceMask);
+	SPtr<IndexBuffer> ibuf = CreateIndexBufferInternal(createInformation, deviceMask);
 	ibuf->Initialize();
 	return ibuf;
 }
 
-SPtr<VertexBuffer> HardwareBufferManager::CreateVertexBuffer(const VERTEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
+SPtr<VertexBuffer> HardwareBufferManager::CreateVertexBuffer(const VertexBufferCreateInformation& createInformation, GpuDeviceFlags deviceMask)
 {
-	SPtr<VertexBuffer> vbuf = CreateVertexBufferInternal(desc, deviceMask);
+	SPtr<VertexBuffer> vbuf = CreateVertexBufferInternal(createInformation, deviceMask);
 	vbuf->Initialize();
 	return vbuf;
 }
 
-SPtr<VertexDeclaration> HardwareBufferManager::CreateVertexDeclaration(const SPtr<VertexDataDesc>& desc, GpuDeviceFlags deviceMask)
+SPtr<VertexDeclaration> HardwareBufferManager::CreateVertexDeclaration(const SPtr<VertexDataDesc>& createInformation, GpuDeviceFlags deviceMask)
 {
-	Vector<VertexElement> elements = desc->CreateElements();
+	Vector<VertexElement> elements = createInformation->CreateElements();
 
 	return CreateVertexDeclaration(elements, deviceMask);
 }
@@ -152,7 +152,15 @@ SPtr<GpuParamBlockBuffer> HardwareBufferManager::CreateGpuParamBlockBuffer(u32 s
 	return paramBlockPtr;
 }
 
-SPtr<GpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GPU_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
+SPtr<GpuParamBlockBuffer> HardwareBufferManager::CreateGpuParamBlockBuffer(const SPtr<HardwareBuffer>& owner, u32 offset, u32 size)
+{
+	SPtr<GpuParamBlockBuffer> paramBlockPtr = CreateGpuParamBlockBufferInternal(owner, offset, size);
+	paramBlockPtr->Initialize();
+
+	return paramBlockPtr;
+}
+
+SPtr<GpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
 {
 	SPtr<GpuBuffer> gbuf = CreateGpuBufferInternal(desc, deviceMask);
 	gbuf->Initialize();
@@ -160,7 +168,7 @@ SPtr<GpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GPU_BUFFER_DESC& de
 	return gbuf;
 }
 
-SPtr<GpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GPU_BUFFER_DESC& desc, SPtr<HardwareBuffer> underlyingBuffer)
+SPtr<GpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
 {
 	SPtr<GpuBuffer> gbuf = CreateGpuBufferInternal(desc, std::move(underlyingBuffer));
 	gbuf->Initialize();
@@ -174,7 +182,7 @@ SPtr<VertexDeclaration> HardwareBufferManager::CreateVertexDeclarationInternal(
 	VertexDeclaration* decl = new(B3DAllocate<VertexDeclaration>()) VertexDeclaration(elements, deviceMask);
 
 	SPtr<VertexDeclaration> ret = B3DMakeSharedFromExisting<VertexDeclaration>(decl);
-	ret->SetThisPtrInternal(ret);
+	ret->SetShared(ret);
 
 	return ret;
 }
@@ -184,7 +192,7 @@ SPtr<GpuParams> HardwareBufferManager::CreateGpuParamsInternal(
 {
 	GpuParams* params = new(B3DAllocate<GpuParams>()) GpuParams(paramInfo, deviceMask);
 	SPtr<GpuParams> paramsPtr = B3DMakeSharedFromExisting<GpuParams>(params);
-	paramsPtr->SetThisPtrInternal(paramsPtr);
+	paramsPtr->SetShared(paramsPtr);
 
 	return paramsPtr;
 }

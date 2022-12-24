@@ -72,7 +72,7 @@ SPtr<ct::CoreObject> Win32RenderWindow::CreateCore() const
 {
 	RENDER_WINDOW_DESC desc = mDesc;
 	SPtr<ct::Win32RenderWindow> coreObj = B3DMakeShared<ct::Win32RenderWindow>(desc, mWindowId, mGLSupport);
-	coreObj->SetThisPtrInternal(coreObj);
+	coreObj->SetShared(coreObj);
 
 	mGLSupport.NotifyWindowCreatedInternal(coreObj.get());
 	return coreObj;

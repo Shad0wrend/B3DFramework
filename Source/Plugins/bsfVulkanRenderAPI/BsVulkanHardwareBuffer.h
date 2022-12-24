@@ -126,22 +126,7 @@ namespace bs
 		class VulkanHardwareBuffer : public HardwareBuffer
 		{
 		public:
-			/**	Available types of Vulkan buffers. */
-			enum BufferType
-			{
-				/** Contains geometry vertices and their properties. */
-				BT_VERTEX,
-				/** Contains triangle to vertex mapping. */
-				BT_INDEX,
-				/** Contains GPU program parameters. */
-				BT_UNIFORM,
-				/** Generic GPU buffer containing non-formatted data. */
-				BT_GENERIC,
-				/** Generic GPU buffer containing structured data. */
-				BT_STRUCTURED
-			};
-
-			VulkanHardwareBuffer(BufferType type, GpuBufferFormat format, GpuBufferUsage usage, u32 size, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			VulkanHardwareBuffer(HardwareBufferType type, GpuBufferUsage usage, u32 size, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 			~VulkanHardwareBuffer();
 
 			void SetName(const StringView& name) override;

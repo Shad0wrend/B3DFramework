@@ -12,13 +12,13 @@ static void DeleteHardwareBuffer(HardwareBuffer* buffer)
 	B3DPoolDelete(static_cast<VulkanHardwareBuffer*>(buffer));
 }
 
-VulkanIndexBuffer::VulkanIndexBuffer(const INDEX_BUFFER_DESC& desc, GpuDeviceFlags deviceMask)
+VulkanIndexBuffer::VulkanIndexBuffer(const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
 	: IndexBuffer(desc, deviceMask), mDeviceMask(deviceMask)
 {}
 
 void VulkanIndexBuffer::Initialize()
 {
-	mBuffer = B3DPoolNew<VulkanHardwareBuffer>(VulkanHardwareBuffer::BT_INDEX, BF_UNKNOWN, mUsage, mSize, mDeviceMask);
+	mBuffer = B3DPoolNew<VulkanHardwareBuffer>(HardwareBufferType::Index, mUsage, mSize, mDeviceMask);
 	mBufferDeleter = &DeleteHardwareBuffer;
 
 	IndexBuffer::Initialize();

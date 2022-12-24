@@ -719,7 +719,7 @@ SPtr<ct::CoreObject> Camera::CreateCore() const
 {
 	ct::Camera* handler = new(B3DAllocate<ct::Camera>()) ct::Camera(mViewport->GetCore());
 	SPtr<ct::Camera> handlerPtr = B3DMakeSharedFromExisting<ct::Camera>(handler);
-	handlerPtr->SetThisPtrInternal(handlerPtr);
+	handlerPtr->SetShared(handlerPtr);
 
 	return handlerPtr;
 }

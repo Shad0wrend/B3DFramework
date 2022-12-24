@@ -1016,6 +1016,7 @@ void VulkanRenderAPI::InitCapabilites()
 		caps.NumCombinedParamBlockBuffers = caps.NumGpuParamBlockBuffersPerStage[GPT_FRAGMENT_PROGRAM] + caps.NumGpuParamBlockBuffersPerStage[GPT_VERTEX_PROGRAM] + caps.NumGpuParamBlockBuffersPerStage[GPT_GEOMETRY_PROGRAM] + caps.NumGpuParamBlockBuffersPerStage[GPT_HULL_PROGRAM] + caps.NumGpuParamBlockBuffersPerStage[GPT_DOMAIN_PROGRAM] + caps.NumGpuParamBlockBuffersPerStage[GPT_COMPUTE_PROGRAM];
 
 		caps.NumCombinedLoadStoreTextureUnits = caps.NumLoadStoreTextureUnitsPerStage[GPT_FRAGMENT_PROGRAM] + caps.NumLoadStoreTextureUnitsPerStage[GPT_COMPUTE_PROGRAM];
+		caps.MinimumUniformBufferOffsetAlignment = (u32)deviceLimits.minUniformBufferOffsetAlignment;
 
 		caps.AddShaderProfile("glsl");
 

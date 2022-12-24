@@ -48,7 +48,7 @@ public:
 SPtr<GpuProgram> NullProgramFactory::Create(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask)
 {
 	SPtr<NullProgram> ret = B3DMakeShared<NullProgram>();
-	ret->SetThisPtrInternal(ret);
+	ret->SetShared(ret);
 
 	return ret;
 }
@@ -56,7 +56,7 @@ SPtr<GpuProgram> NullProgramFactory::Create(const GpuProgramCreateInformation& d
 SPtr<GpuProgram> NullProgramFactory::Create(GpuProgramType type, GpuDeviceFlags deviceMask)
 {
 	SPtr<NullProgram> ret = B3DMakeShared<NullProgram>();
-	ret->SetThisPtrInternal(ret);
+	ret->SetShared(ret);
 
 	return ret;
 }
