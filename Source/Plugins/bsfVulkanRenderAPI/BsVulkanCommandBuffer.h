@@ -7,6 +7,7 @@
 #include "BsVulkanRenderAPI.h"
 #include "BsVulkanResource.h"
 #include "BsVulkanGpuPipelineState.h"
+#include "Utility/BsDenseMap.h"
 
 namespace bs
 {
@@ -732,9 +733,9 @@ namespace bs
 			u32 mRenderTargetReadOnlyFlags = 0;
 			RenderSurfaceMask mRenderTargetLoadMask = RT_NONE;
 
-			UnorderedMap<VulkanResource*, ResourceUseHandle> mResources;
-			UnorderedMap<VulkanResource*, u32> mImages;
-			UnorderedMap<VulkanResource*, BufferInfo> mBuffers;
+			DenseMap<VulkanResource*, ResourceUseHandle> mResources;
+			DenseMap<VulkanResource*, u32> mImages;
+			DenseMap<VulkanResource*, BufferInfo> mBuffers;
 			UnorderedMap<VulkanSwapChain*, ResourceUseHandle> mSwapChains;
 			UnorderedSet<VulkanOcclusionQuery*> mOcclusionQueries;
 			UnorderedSet<VulkanTimerQuery*> mTimerQueries;

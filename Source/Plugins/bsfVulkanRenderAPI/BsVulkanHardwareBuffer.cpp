@@ -338,6 +338,10 @@ void* VulkanHardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, 
 	GpuQueueType queueType;
 	u32 localQueueIdx = CommandSyncMask::GetQueueIdxAndType(queueIdx, queueType);
 
+	const bool canDiscardBuffer =
+		(options == GBL_WRITE_ONLY_DISCARD) ||
+		(options == GBL_WRITE_ONLY_DISCARD_RANGE && offset == 0 && length == mSize);
+
 	VkAccessFlags accessFlags;
 	if(options == GBL_READ_ONLY)
 		accessFlags = VK_ACCESS_HOST_READ_BIT;
@@ -373,9 +377,9 @@ void* VulkanHardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, 
 
 				// Copy contents of the current buffer to the new one, unless caller explicitly specifies he doesn't
 				// care about the current contents
-				if(options != GBL_WRITE_ONLY_DISCARD)
+				if(!canDiscardBuffer)
 				{
-					u8* src = buffer->Map(0, mSize, true);
+					u8* src = buffer->Map(0, mSize, mSupportsGPUWrites);
 					u8* dst = newBuffer->Map(0, mSize);
 
 					memcpy(dst, src, length);
@@ -393,7 +397,7 @@ void* VulkanHardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, 
 		}
 
 		// Caller doesn't care about buffer contents, so just discard the existing buffer and create a new one
-		if(options == GBL_WRITE_ONLY_DISCARD)
+		if(canDiscardBuffer)
 		{
 			buffer->Destroy();
 
@@ -439,7 +443,7 @@ void* VulkanHardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, 
 				VulkanBuffer* newBuffer = CreateBuffer(device, mSize, false, true);
 
 				// Copy contents of the current buffer to the new one
-				u8* src = buffer->Map(0, mSize, true);
+				u8* src = buffer->Map(0, mSize, mSupportsGPUWrites);
 				u8* dst = newBuffer->Map(0, mSize);
 
 				memcpy(dst, src, length);
@@ -452,7 +456,7 @@ void* VulkanHardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, 
 				mBuffers[deviceIdx] = buffer;
 			}
 
-			return buffer->Map(offset, length, true);
+			return buffer->Map(offset, length, mSupportsGPUWrites);
 		}
 
 		// Otherwise, we're doing write only, in which case it's best to use the staging buffer to avoid waiting
@@ -538,6 +542,10 @@ void VulkanHardwareBuffer::Unmap()
 			VulkanBuffer* buffer = mBuffers[mMappedDeviceIdx];
 			VulkanTransferBuffer* transferCB = cbManager.GetTransferBuffer(mMappedDeviceIdx, queueType, localQueueIdx);
 
+			const bool canDiscardBuffer =
+				(mMappedLockOptions == GBL_WRITE_ONLY_DISCARD) ||
+				(mMappedLockOptions == GBL_WRITE_ONLY_DISCARD_RANGE && mMappedOffset == 0 && mMappedSize == mSize);
+
 			// If the buffer is used in any way on the GPU, we need to wait for that use to finish before
 			// we issue our copy
 			u32 useMask = buffer->GetUseInfo(VulkanAccessFlag::Read | VulkanAccessFlag::Write);
@@ -552,7 +560,7 @@ void VulkanHardwareBuffer::Unmap()
 					// Fall through to copy()
 				}
 				// Caller doesn't care about buffer contents, so just discard the existing buffer and create a new one
-				else if(mMappedLockOptions == GBL_WRITE_ONLY_DISCARD)
+				else if(canDiscardBuffer)
 				{
 					buffer->Destroy();
 

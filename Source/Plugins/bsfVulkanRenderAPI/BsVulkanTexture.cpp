@@ -1202,7 +1202,7 @@ PixelData VulkanTexture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face
 					VkMemoryRequirements memReqs;
 					vkGetImageMemoryRequirements(device.GetLogical(), image->GetHandle(), &memReqs);
 
-					u8* src = image->Map(0, (u32)memReqs.size, true);
+					u8* src = image->Map(0, (u32)memReqs.size, mSupportsGPUWrites);
 					u8* dst = newImage->Map(0, (u32)memReqs.size);
 
 					memcpy(dst, src, memReqs.size);
@@ -1267,7 +1267,7 @@ PixelData VulkanTexture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face
 				VkMemoryRequirements memReqs;
 				vkGetImageMemoryRequirements(device.GetLogical(), image->GetHandle(), &memReqs);
 
-				u8* src = image->Map(0, (u32)memReqs.size, true);
+				u8* src = image->Map(0, (u32)memReqs.size, mSupportsGPUWrites);
 				u8* dst = newImage->Map(0, (u32)memReqs.size);
 
 				memcpy(dst, src, memReqs.size);
@@ -1280,7 +1280,7 @@ PixelData VulkanTexture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face
 				mImages[deviceIdx] = image;
 			}
 
-			image->Map(face, mipLevel, lockedArea, true);
+			image->Map(face, mipLevel, lockedArea, mSupportsGPUWrites);
 			return lockedArea;
 		}
 

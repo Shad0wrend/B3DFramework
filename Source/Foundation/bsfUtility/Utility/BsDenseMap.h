@@ -324,9 +324,9 @@ namespace bs
 			DensePair* temp;
 
 			if(lookup(key, temp))
-				return temp;
+				return *temp;
 
-			return insertBucket(key, Value(), temp);
+			return *insertBucket(key, Value(), temp);
 		}
 
 	private:
@@ -549,7 +549,7 @@ namespace bs
 
 		u32 getTombstones() const { return mTombstones; }
 
-		static u32 getHashValue(const Key& key) { return B3DHash(key); }
+		static u32 getHashValue(const Key& key) { return (u32)B3DHash(key); }
 
 		static const Key getEmptyKey() { return KeyInfo::getEmptyKey(); }
 

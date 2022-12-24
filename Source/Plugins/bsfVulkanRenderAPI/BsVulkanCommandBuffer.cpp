@@ -200,12 +200,13 @@ void GetPipelineStageFlags(const Vector<T>& barriers, VkPipelineStageFlags& src,
 }
 
 const Color kDebugLabelColor = Color::kBansheeOrange;
+constexpr u32 kMaximumBoundDescriptorSets = 64;
 
 VulkanInternalCommandBuffer::VulkanInternalCommandBuffer(VulkanDevice& device, VulkanThread ownerThread, u32 id, VkCommandPool pool, u32 queueFamily, bool secondary)
 	: mId(id), mQueueFamily(queueFamily), mDevice(device), mPool(pool), mNeedsWARMemoryBarrier(false), mNeedsRAWMemoryBarrier(false), mGfxPipelineRequiresBind(true), mCmpPipelineRequiresBind(true), mViewportRequiresBind(true), mStencilRefRequiresBind(true), mScissorRequiresBind(true), mBoundParamsDirty(false), mVertexInputsDirty(false), mOwnerThread(ownerThread)
 {
-	u32 maxBoundDescriptorSets = device.GetDeviceProperties().limits.maxBoundDescriptorSets;
-	mDescriptorSetsTemp = (VkDescriptorSet*)B3DAllocate(sizeof(VkDescriptorSet) * maxBoundDescriptorSets);
+	const u32 maximumBoundDescriptorSets = Math::Min(kMaximumBoundDescriptorSets, device.GetDeviceProperties().limits.maxBoundDescriptorSets);
+	mDescriptorSetsTemp = (VkDescriptorSet*)B3DAllocate(sizeof(VkDescriptorSet) * maximumBoundDescriptorSets);
 
 	VkCommandBufferAllocateInfo cmdBufferAllocInfo;
 	cmdBufferAllocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -1143,6 +1144,9 @@ void VulkanInternalCommandBuffer::SetRenderTarget(const SPtr<RenderTarget>& rend
 	}
 
 	mGfxPipelineRequiresBind = true;
+
+	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
+	mVertexInputsDirty = true;
 }
 
 void VulkanInternalCommandBuffer::ClearViewport(const Rect2I& area, u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
@@ -1329,6 +1333,9 @@ void VulkanInternalCommandBuffer::SetPipelineState(const SPtr<GraphicsPipelineSt
 
 	mGraphicsPipeline = std::static_pointer_cast<VulkanGraphicsPipelineState>(state);
 	mGfxPipelineRequiresBind = true;
+
+	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
+	mVertexInputsDirty = true;
 }
 
 void VulkanInternalCommandBuffer::SetPipelineState(const SPtr<ComputePipelineState>& state)
@@ -1393,6 +1400,9 @@ void VulkanInternalCommandBuffer::SetDrawOp(DrawOperationType drawOp)
 
 	mDrawOp = drawOp;
 	mGfxPipelineRequiresBind = true;
+
+	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
+	mVertexInputsDirty = true;
 }
 
 void VulkanInternalCommandBuffer::SetVertexBuffers(u32 startIndex, SPtr<VertexBuffer>* buffers, u32 bufferCount)
@@ -1439,6 +1449,9 @@ void VulkanInternalCommandBuffer::SetVertexDeclaration(const SPtr<VertexDeclarat
 
 	mVertexDecl = decl;
 	mGfxPipelineRequiresBind = true;
+
+	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
+	mVertexInputsDirty = true;
 }
 
 bool VulkanInternalCommandBuffer::IsReadyForRender()
@@ -1829,6 +1842,9 @@ void VulkanInternalCommandBuffer::Draw(u32 vertexOffset, u32 vertexCount, u32 in
 
 void VulkanInternalCommandBuffer::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 instanceCount)
 {
+	if(indexCount == 0)
+		return;
+
 	if(!IsReadyForRender())
 		return;
 
@@ -2968,7 +2984,16 @@ Rect2I VulkanInternalCommandBuffer::GetRenderPassArea() const
 VulkanCommandBuffer::~VulkanCommandBuffer()
 {
 	if(mBuffer != nullptr)
+	{
+		if(mBuffer->IsRecording())
+		{
+			// If there are any non-submitted resources, this will release them
+			mBuffer->End();
+			mBuffer->Reset();
+		}
+
 		mBuffer->SetOwner(nullptr);
+	}
 }
 
 void VulkanCommandBuffer::AcquireNewBuffer()

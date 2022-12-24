@@ -509,6 +509,12 @@ void VulkanRenderAPI::DestroyCore()
 {
 	THROW_IF_NOT_CORE_THREAD;
 
+	if(mMainCommandBuffer != nullptr)
+	{
+		SubmitCommandBuffer(mMainCommandBuffer);
+	}
+		
+
 	GetVulkanSubmitThread().WaitUntilIdle(true);
 	GetVulkanSubmitThread().RefreshCommandBufferCompletionStates();
 
