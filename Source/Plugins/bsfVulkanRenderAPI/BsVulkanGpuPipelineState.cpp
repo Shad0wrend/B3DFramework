@@ -299,7 +299,7 @@ void VulkanGraphicsPipelineState::Initialize()
 		VulkanDescriptorManager& descManager = mPerDeviceData[i].Device->GetDescriptorManager();
 		VulkanGpuPipelineParamInfo& vkParamInfo = static_cast<VulkanGpuPipelineParamInfo&>(*mParamInfo);
 
-		u32 numLayouts = vkParamInfo.GetNumSets();
+		u32 numLayouts = vkParamInfo.GetSetCount();
 		VulkanDescriptorLayout** layouts = (VulkanDescriptorLayout**)B3DStackAllocate(sizeof(VulkanDescriptorLayout*) * numLayouts);
 
 		for(u32 j = 0; j < numLayouts; j++)
@@ -548,7 +548,7 @@ void VulkanComputePipelineState::Initialize()
 		VulkanResourceManager& rescManager = devices[i]->GetResourceManager();
 		VulkanGpuPipelineParamInfo& vkParamInfo = static_cast<VulkanGpuPipelineParamInfo&>(*mParamInfo);
 
-		u32 numLayouts = vkParamInfo.GetNumSets();
+		u32 numLayouts = vkParamInfo.GetSetCount();
 		VulkanDescriptorLayout** layouts = (VulkanDescriptorLayout**)B3DStackAllocate(sizeof(VulkanDescriptorLayout*) * numLayouts);
 
 		for(u32 j = 0; j < numLayouts; j++)

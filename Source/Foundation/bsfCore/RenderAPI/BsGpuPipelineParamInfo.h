@@ -50,13 +50,13 @@ namespace bs
 		virtual ~GpuPipelineParamInfoBase() = default;
 
 		/** Gets the total number of sets. */
-		u32 GetNumSets() const { return mNumSets; }
+		u32 GetSetCount() const { return mNumSets; }
 
 		/** Returns the total number of elements across all sets. */
-		u32 GetNumElements() const { return mNumElements; }
+		u32 GetElementCount() const { return mNumElements; }
 
 		/** Returns the number of elements in all sets for the specified parameter type. */
-		u32 GetNumElements(ParamType type) { return mNumElementsPerType[(int)type]; }
+		u32 GetElementCount(ParamType type) { return mNumElementsPerType[(int)type]; }
 
 		/**
 		 * Converts a set/slot combination into a sequential index that maps to the parameter in that parameter type's

@@ -56,13 +56,14 @@ namespace bs
 			/** All GPU param data related to a single descriptor set. */
 			struct PerSetData
 			{
-				VulkanDescriptorSet* LatestSet;
+				VulkanDescriptorSet* LastUsedSet;
 				Vector<VulkanDescriptorSet*> Sets;
 
 				VkWriteDescriptorSet* WriteSetInfos;
 				WriteInfo* WriteInfos;
 
-				u32 NumElements;
+				u32 ElementCount;
+				u32 LastFreeSetIndex = ~0u;
 			};
 
 			/** All GPU param data beloning to a single device. */

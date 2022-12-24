@@ -22,7 +22,7 @@ namespace bs
 			~VulkanGpuPipelineParamInfo() = default;
 
 			/** Returns the number of bindings present at the layout at the specified index. */
-			u32 GetNumBindings(u32 layoutIdx) const { return mLayoutInfos[layoutIdx].NumBindings; }
+			u32 GetBindingCount(u32 layoutIdx) const { return mLayoutInfos[layoutIdx].NumBindings; }
 
 			/** Returns a pointer to an array of bindings for the layout at the specified index. */
 			VkDescriptorSetLayoutBinding* GetBindings(u32 layoutIdx) const { return mLayoutInfos[layoutIdx].Bindings; }

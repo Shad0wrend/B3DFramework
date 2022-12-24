@@ -138,11 +138,11 @@ template <bool Core>
 TGpuParams<Core>::TGpuParams(const SPtr<GpuPipelineParamInfoBase>& paramInfo)
 	: GpuParamsBase(paramInfo)
 {
-	const u32 parameterBlockCount = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::ParamBlock);
-	const u32 textureCount = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Texture);
-	const u32 storageTextureCount = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
-	const u32 bufferCount = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Buffer);
-	const u32 samplerCount = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::SamplerState);
+	const u32 parameterBlockCount = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::ParamBlock);
+	const u32 textureCount = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::Texture);
+	const u32 storageTextureCount = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
+	const u32 bufferCount = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::Buffer);
+	const u32 samplerCount = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::SamplerState);
 
 	const u32 parameterBlockEntrySize = Math::RoundToMultiple((u32)sizeof(ParamsBufferType), 16u);
 	const u32 textureEntrySize = Math::RoundToMultiple((u32)sizeof(TextureData), 16u);
@@ -194,11 +194,11 @@ TGpuParams<Core>::TGpuParams(const SPtr<GpuPipelineParamInfoBase>& paramInfo)
 template <bool Core>
 TGpuParams<Core>::~TGpuParams()
 {
-	const u32 parameterBlockCount = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::ParamBlock);
-	const u32 textureCount = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Texture);
-	const u32 loadStoreTextureCount = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
-	const u32 bufferCount = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Buffer);
-	const u32 samplerCount = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::SamplerState);
+	const u32 parameterBlockCount = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::ParamBlock);
+	const u32 textureCount = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::Texture);
+	const u32 loadStoreTextureCount = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
+	const u32 bufferCount = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::Buffer);
+	const u32 samplerCount = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::SamplerState);
 
 	for(u32 i = 0; i < parameterBlockCount; i++)
 		mParamBlockBuffers[i].~ParamsBufferType();
@@ -621,11 +621,11 @@ SPtr<GpuParams> GpuParams::Create(const SPtr<GpuPipelineParamInfo>& paramInfo)
 
 CoreSyncData GpuParams::SyncToCore(FrameAlloc* allocator)
 {
-	u32 numParamBlocks = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::ParamBlock);
-	u32 numTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Texture);
-	u32 numStorageTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
-	u32 numBuffers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Buffer);
-	u32 numSamplers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::SamplerState);
+	u32 numParamBlocks = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::ParamBlock);
+	u32 numTextures = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::Texture);
+	u32 numStorageTextures = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
+	u32 numBuffers = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::Buffer);
+	u32 numSamplers = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::SamplerState);
 
 	u32 sampledSurfacesSize = numTextures * sizeof(TextureSurface);
 	u32 loadStoreSurfacesSize = numStorageTextures * sizeof(TextureSurface);
@@ -715,8 +715,8 @@ CoreSyncData GpuParams::SyncToCore(FrameAlloc* allocator)
 
 void GpuParams::GetListenerResources(Vector<HResource>& resources)
 {
-	u32 numTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Texture);
-	u32 numStorageTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
+	u32 numTextures = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::Texture);
+	u32 numStorageTextures = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
 
 	for(u32 i = 0; i < numTextures; i++)
 	{
@@ -745,11 +745,11 @@ SPtr<GpuParams> GpuParams::GetThisPtrInternal() const
 
 void GpuParams::SyncToCore(const CoreSyncData& data)
 {
-	u32 numParamBlocks = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::ParamBlock);
-	u32 numTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Texture);
-	u32 numStorageTextures = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
-	u32 numBuffers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::Buffer);
-	u32 numSamplers = mParamInfo->GetNumElements(GpuPipelineParamInfo::ParamType::SamplerState);
+	u32 numParamBlocks = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::ParamBlock);
+	u32 numTextures = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::Texture);
+	u32 numStorageTextures = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
+	u32 numBuffers = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::Buffer);
+	u32 numSamplers = mParamInfo->GetElementCount(GpuPipelineParamInfo::ParamType::SamplerState);
 
 	u32 sampledSurfacesSize = numTextures * sizeof(TextureSurface);
 	u32 loadStoreSurfacesSize = numStorageTextures * sizeof(TextureSurface);
