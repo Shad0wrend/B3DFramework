@@ -430,6 +430,60 @@ namespace bs
 		GPOT_UNKNOWN = 0xffff
 	};
 
+	/** Returns information about GPU parameter types. */
+	struct GpuParameterTypeInformation 
+	{
+		static bool Is1DTexture(const GpuParamObjectType type)
+		{
+			return type == GPOT_RWTEXTURE1D || type == GPOT_TEXTURE1D;
+		}
+
+		static bool Is1DTextureArray(const GpuParamObjectType type)
+		{
+			return type == GPOT_RWTEXTURE1DARRAY || type == GPOT_TEXTURE1DARRAY;
+		}
+
+		static bool Is2DTexture(GpuParamObjectType type)
+		{
+			return type == GPOT_RWTEXTURE2D || type == GPOT_RWTEXTURE2DMS || type == GPOT_TEXTURE2D || type == GPOT_TEXTURE2DMS;
+		}
+
+		static bool Is2DTextureArray(GpuParamObjectType type)
+		{
+			return type == GPOT_RWTEXTURE2DARRAY || type == GPOT_RWTEXTURE2DMSARRAY || type == GPOT_TEXTURE2DARRAY || type == GPOT_TEXTURE2DMSARRAY;
+		}
+
+		static bool Is3DTexture(GpuParamObjectType type)
+		{
+			return type == GPOT_RWTEXTURE3D || type == GPOT_TEXTURE3D;
+		}
+
+		static bool IsCubeTexture(GpuParamObjectType type)
+		{
+			return type == GPOT_TEXTURECUBE;
+		}
+
+		static bool IsCubeTextureArray(GpuParamObjectType type)
+		{
+			return type == GPOT_TEXTURECUBEARRAY;
+		}
+
+		static bool IsTexture(GpuParamObjectType type)
+		{
+			return Is1DTexture(type) || Is1DTextureArray(type) || Is2DTexture(type) || Is2DTextureArray(type) || Is3DTexture(type) || IsCubeTexture(type) || IsCubeTextureArray(type);
+		}
+
+		static bool IsSampler(GpuParamObjectType type)
+		{
+			return type == GPOT_SAMPLER1D || type == GPOT_SAMPLER2D || type == GPOT_SAMPLER2DMS || type == GPOT_SAMPLER3D || type == GPOT_SAMPLERCUBE;
+		}
+
+		static bool IsBuffer(GpuParamObjectType type)
+		{
+			return !IsTexture(type) && !IsSampler(type) && type != GPOT_UNKNOWN;
+		}
+	};
+
 	/** Types of GPU queues. */
 	enum GpuQueueType
 	{

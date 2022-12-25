@@ -81,7 +81,7 @@ void D3D11HLSLParamParser::ParseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceD
 	{
 		if(resourceDesc.Type == D3D_SIT_CBUFFER || resourceDesc.Type == D3D_SIT_TBUFFER)
 		{
-			GpuParamBlockDesc blockDesc;
+			GpuParameterBlockInformation blockDesc;
 			blockDesc.Name = resourceDesc.Name;
 			blockDesc.Slot = resourceDesc.BindPoint + i;
 			blockDesc.Set = MapParameterToSet(type, ParamType::ConstantBuffer);
@@ -96,7 +96,7 @@ void D3D11HLSLParamParser::ParseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceD
 		}
 		else
 		{
-			GpuParamObjectDesc memberDesc;
+			GpuObjectParameterInformation memberDesc;
 			memberDesc.Name = resourceDesc.Name;
 			memberDesc.Slot = resourceDesc.BindPoint + i;
 			memberDesc.Type = GPOT_UNKNOWN;
@@ -266,7 +266,7 @@ void D3D11HLSLParamParser::ParseBuffer(ID3D11ShaderReflectionConstantBuffer* buf
 		return;
 	}
 
-	GpuParamBlockDesc& blockDesc = desc.ParamBlocks[constantBufferDesc.Name];
+	GpuParameterBlockInformation& blockDesc = desc.ParamBlocks[constantBufferDesc.Name];
 
 	for(u32 j = 0; j < constantBufferDesc.Variables; j++)
 	{
@@ -287,9 +287,9 @@ void D3D11HLSLParamParser::ParseBuffer(ID3D11ShaderReflectionConstantBuffer* buf
 	blockDesc.BlockSize = constantBufferDesc.Size / 4;
 }
 
-void D3D11HLSLParamParser::ParseVariable(D3D11_SHADER_TYPE_DESC& varTypeDesc, D3D11_SHADER_VARIABLE_DESC& varDesc, GpuParamDesc& desc, GpuParamBlockDesc& paramBlock)
+void D3D11HLSLParamParser::ParseVariable(D3D11_SHADER_TYPE_DESC& varTypeDesc, D3D11_SHADER_VARIABLE_DESC& varDesc, GpuParamDesc& desc, GpuParameterBlockInformation& paramBlock)
 {
-	GpuParamDataDesc memberDesc;
+	GpuDataParameterInformation memberDesc;
 	memberDesc.Name = varDesc.Name;
 	memberDesc.ParamBlockSlot = paramBlock.Slot;
 	memberDesc.ParamBlockSet = paramBlock.Set;

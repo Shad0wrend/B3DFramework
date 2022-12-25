@@ -19,9 +19,9 @@ namespace bs
 	 *  @{
 	 */
 
-	struct SHADER_DATA_PARAM_DESC;
-	struct SHADER_OBJECT_PARAM_DESC;
-	struct SHADER_PARAM_ATTRIBUTE;
+	struct ShaderDataParameterInformation;
+	struct ShaderObjectParameterInformation;
+	struct ShaderParameterAttribute;
 
 	/** Types of textures that can be assigned to a material texture parameter. */
 	enum class MateralParamTextureType
@@ -80,10 +80,10 @@ namespace bs
 		 * Creates a new material params object and initializes enough room for parameters from the provided parameter data.
 		 */
 		MaterialParamsBase(
-			const Map<String, SHADER_DATA_PARAM_DESC>& dataParams,
-			const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams,
-			const Map<String, SHADER_OBJECT_PARAM_DESC>& bufferParams,
-			const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams,
+			const Map<String, ShaderDataParameterInformation>& dataParams,
+			const Map<String, ShaderObjectParameterInformation>& textureParams,
+			const Map<String, ShaderObjectParameterInformation>& bufferParams,
+			const Map<String, ShaderObjectParameterInformation>& samplerParams,
 			u64 initialParamVersion);
 
 		/** Constructor for serialization use only. */

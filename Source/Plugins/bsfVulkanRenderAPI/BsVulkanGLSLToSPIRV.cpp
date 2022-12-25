@@ -519,7 +519,7 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 
 			const glslang::TSampler& sampler = ttype->getSampler();
 
-			GpuParamObjectDesc param;
+			GpuObjectParameterInformation param;
 			param.Name = name;
 			param.Slot = qualifier.layoutBinding;
 			param.Set = qualifier.layoutSet;
@@ -550,6 +550,11 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 					desc.LoadStoreTextures[name] = param;
 				else
 					desc.Buffers[name] = param;
+
+				if(ttype->getArraySizes() != nullptr)
+					param.ArraySize = (u32)ttype->getCumulativeArraySize();
+				else
+					param.ArraySize = 1;
 			}
 			else
 			{
@@ -589,6 +594,11 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 						desc.Textures[name] = param;
 					else
 						desc.Buffers[name] = param;
+
+					if(ttype->getArraySizes() != nullptr)
+						param.ArraySize = (u32)ttype->getCumulativeArraySize();
+					else
+						param.ArraySize = 1;
 				}
 			}
 
@@ -626,7 +636,7 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 
 		if(qualifier.storage == glslang::EvqBuffer) // Shared storage buffer
 		{
-			GpuParamObjectDesc param;
+			GpuObjectParameterInformation param;
 			param.Name = name;
 			param.Slot = qualifier.layoutBinding;
 			param.Set = qualifier.layoutSet;
@@ -641,7 +651,7 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 		{
 			int size = Math::DivideAndRoundUp(program->getUniformBlockSize(i), 16) * 16;
 
-			GpuParamBlockDesc blockDesc;
+			GpuParameterBlockInformation blockDesc;
 			blockDesc.Name = name;
 			blockDesc.BlockSize = size / 4;
 			blockDesc.IsShareable = true;
@@ -738,7 +748,7 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 
 				if(!unusedMember)
 				{
-					GpuParamDataDesc paramDesc;
+					GpuDataParameterInformation paramDesc;
 					paramDesc.Name = paramName;
 					paramDesc.Type = paramType;
 					paramDesc.ParamBlockSet = blockDesc.Set;

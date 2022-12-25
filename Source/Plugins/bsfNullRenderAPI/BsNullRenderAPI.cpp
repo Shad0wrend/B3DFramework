@@ -99,9 +99,9 @@ void NullRenderAPI::ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest
 	dest = matrix;
 }
 
-GpuParamBlockDesc NullRenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params)
+GpuParameterBlockInformation NullRenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params)
 {
-	GpuParamBlockDesc block;
+	GpuParameterBlockInformation block;
 	block.BlockSize = 0;
 	block.IsShareable = true;
 	block.Name = name;

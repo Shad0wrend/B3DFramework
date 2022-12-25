@@ -435,7 +435,7 @@ SPtr<SamplerState> ParseSamplerState(const Xsc::Reflection::SamplerState& sampSt
 	return SamplerState::Create(desc);
 }
 
-void ParseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DESC& desc)
+void ParseParameters(const Xsc::Reflection::ReflectionData& reflData, ShaderCreateInformation& desc)
 {
 	for(auto& entry : reflData.uniforms)
 	{
@@ -447,9 +447,9 @@ void ParseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DES
 		{
 			if(!entry.readableName.empty())
 			{
-				SHADER_PARAM_ATTRIBUTE attribute;
+				ShaderParameterAttribute attribute;
 				attribute.Value.assign(entry.readableName.data(), entry.readableName.size());
-				attribute.NextParamIdx = (u32)-1;
+				attribute.NextParameterIndex = (u32)-1;
 				attribute.Type = ShaderParamAttributeType::Name;
 
 				desc.SetParameterAttribute(ident, attribute);
@@ -457,8 +457,8 @@ void ParseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DES
 
 			if((entry.flags & Xsc::Reflection::Uniform::Flags::HideInInspector) != 0)
 			{
-				SHADER_PARAM_ATTRIBUTE attribute;
-				attribute.NextParamIdx = (u32)-1;
+				ShaderParameterAttribute attribute;
+				attribute.NextParameterIndex = (u32)-1;
 				attribute.Type = ShaderParamAttributeType::HideInInspector;
 
 				desc.SetParameterAttribute(ident, attribute);
@@ -466,8 +466,8 @@ void ParseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DES
 
 			if((entry.flags & Xsc::Reflection::Uniform::Flags::HDR) != 0)
 			{
-				SHADER_PARAM_ATTRIBUTE attribute;
-				attribute.NextParamIdx = (u32)-1;
+				ShaderParameterAttribute attribute;
+				attribute.NextParameterIndex = (u32)-1;
 				attribute.Type = ShaderParamAttributeType::HDR;
 
 				desc.SetParameterAttribute(ident, attribute);
@@ -490,11 +490,11 @@ void ParseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DES
 						continue;
 
 					if(entry.defaultValue == -1)
-						desc.AddParameter(SHADER_OBJECT_PARAM_DESC(ident, ident, objType));
+						desc.AddParameter(ShaderObjectParameterInformation(ident, ident, objType, StringID::kNone, entry.arraySize));
 					else
 					{
 						const Xsc::Reflection::DefaultValue& defVal = reflData.defaultValues[entry.defaultValue];
-						desc.AddParameter(SHADER_OBJECT_PARAM_DESC(ident, ident, objType), GetBuiltinTexture(defVal.integer));
+						desc.AddParameter(ShaderObjectParameterInformation(ident, ident, objType, StringID::kNone, entry.arraySize), GetBuiltinTexture(defVal.integer));
 					}
 
 					parseCommonAttributes();
@@ -507,7 +507,7 @@ void ParseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DES
 						continue;
 
 					objType = ReflTypeToBufferType((Xsc::Reflection::BufferType)entry.baseType);
-					desc.AddParameter(SHADER_OBJECT_PARAM_DESC(ident, ident, objType));
+					desc.AddParameter(ShaderObjectParameterInformation(ident, ident, objType, StringID::kNone, entry.arraySize));
 
 					parseCommonAttributes();
 				}
@@ -528,22 +528,22 @@ void ParseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DES
 					if(findIter->second.isNonDefault)
 					{
 						SPtr<SamplerState> defaultVal = ParseSamplerState(findIter->second);
-						desc.AddParameter(SHADER_OBJECT_PARAM_DESC(ident, ident, GPOT_SAMPLER2D), defaultVal);
+						desc.AddParameter(ShaderObjectParameterInformation(ident, ident, GPOT_SAMPLER2D), defaultVal);
 
 						if(!alias.empty())
-							desc.AddParameter(SHADER_OBJECT_PARAM_DESC(ident, alias, GPOT_SAMPLER2D), defaultVal);
+							desc.AddParameter(ShaderObjectParameterInformation(ident, alias, GPOT_SAMPLER2D), defaultVal);
 					}
 					else
 					{
-						desc.AddParameter(SHADER_OBJECT_PARAM_DESC(ident, ident, GPOT_SAMPLER2D));
+						desc.AddParameter(ShaderObjectParameterInformation(ident, ident, GPOT_SAMPLER2D));
 
 						if(!alias.empty())
-							desc.AddParameter(SHADER_OBJECT_PARAM_DESC(ident, alias, GPOT_SAMPLER2D));
+							desc.AddParameter(ShaderObjectParameterInformation(ident, alias, GPOT_SAMPLER2D));
 					}
 				}
 				else
 				{
-					desc.AddParameter(SHADER_OBJECT_PARAM_DESC(ident, ident, GPOT_SAMPLER2D));
+					desc.AddParameter(ShaderObjectParameterInformation(ident, ident, GPOT_SAMPLER2D));
 				}
 				break;
 			}
@@ -575,19 +575,19 @@ void ParseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DES
 					u32 arraySize = entry.arraySize;
 
 					if(entry.defaultValue == -1)
-						desc.AddParameter(SHADER_DATA_PARAM_DESC(ident, ident, type, StringID::kNone, arraySize));
+						desc.AddParameter(ShaderDataParameterInformation(ident, ident, type, StringID::kNone, arraySize));
 					else
 					{
 						const Xsc::Reflection::DefaultValue& defVal = reflData.defaultValues[entry.defaultValue];
 
-						desc.AddParameter(SHADER_DATA_PARAM_DESC(ident, ident, type, StringID::kNone, arraySize, 0), (u8*)defVal.matrix);
+						desc.AddParameter(ShaderDataParameterInformation(ident, ident, type, StringID::kNone, arraySize, 0), (u8*)defVal.matrix);
 					}
 
 					if(!entry.spriteUVRef.empty() && (type == GPDT_FLOAT4))
 					{
-						SHADER_PARAM_ATTRIBUTE attribute;
+						ShaderParameterAttribute attribute;
 						attribute.Value.assign(entry.spriteUVRef.data(), entry.spriteUVRef.size());
-						attribute.NextParamIdx = (u32)-1;
+						attribute.NextParameterIndex = (u32)-1;
 						attribute.Type = ShaderParamAttributeType::SpriteUV;
 
 						desc.SetParameterAttribute(ident, attribute);
@@ -602,7 +602,7 @@ void ParseParameters(const Xsc::Reflection::ReflectionData& reflData, SHADER_DES
 				i32 structIdx = entry.baseType;
 				u32 structSize = GetStructSize(structIdx, reflData.structs);
 
-				desc.AddParameter(SHADER_DATA_PARAM_DESC(ident, ident, GPDT_STRUCT, StringID::kNone, entry.arraySize, structSize));
+				desc.AddParameter(ShaderDataParameterInformation(ident, ident, GPDT_STRUCT, StringID::kNone, entry.arraySize, structSize));
 			}
 			break;
 		default:;
@@ -619,7 +619,7 @@ enum class CrossCompileOutput
 	MVKSL
 };
 
-String CrossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput outputType, bool optionalEntry, u32& startBindingSlot, SHADER_DESC* shaderDesc = nullptr, Vector<GpuProgramType>* detectedTypes = nullptr)
+String CrossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput outputType, bool optionalEntry, u32& startBindingSlot, ShaderCreateInformation* shaderDesc = nullptr, Vector<GpuProgramType>* detectedTypes = nullptr)
 {
 	SPtr<StringStream> input = B3DMakeShared<StringStream>();
 
@@ -788,7 +788,7 @@ String CrossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput 
 	return CrossCompile(hlsl, type, outputType, false, startBindingSlot);
 }
 
-void ReflectHlsl(const String& hlsl, SHADER_DESC& shaderDesc, Vector<GpuProgramType>& entryPoints)
+void ReflectHlsl(const String& hlsl, ShaderCreateInformation& shaderDesc, Vector<GpuProgramType>& entryPoints)
 {
 	u32 dummy = 0;
 	CrossCompile(hlsl, GPT_VERTEX_PROGRAM, CrossCompileOutput::GLSL45, true, dummy, &shaderDesc, &entryPoints);
@@ -797,7 +797,7 @@ void ReflectHlsl(const String& hlsl, SHADER_DESC& shaderDesc, Vector<GpuProgramT
 BSLFXCompileResult BSLFXCompiler::Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages)
 {
 	// Parse global shader options & shader meta-data
-	SHADER_DESC shaderDesc;
+	ShaderCreateInformation shaderDesc;
 	Vector<String> includes;
 
 	BSLFXCompileResult output = CompileShader(source, defines, languages, shaderDesc, includes);
@@ -918,7 +918,7 @@ BSLFXCompiler::ShaderMetaData BSLFXCompiler::ParseShaderMetaData(ASTFXNode* shad
 	return metaData;
 }
 
-BSLFXCompileResult BSLFXCompiler::ParseMetaDataAndOptions(ASTFXNode* rootNode, Vector<std::pair<ASTFXNode*, ShaderMetaData>>& shaderMetaData, Vector<SubShaderData>& subShaderData, SHADER_DESC& shaderDesc)
+BSLFXCompileResult BSLFXCompiler::ParseMetaDataAndOptions(ASTFXNode* rootNode, Vector<std::pair<ASTFXNode*, ShaderMetaData>>& shaderMetaData, Vector<SubShaderData>& subShaderData, ShaderCreateInformation& shaderDesc)
 {
 	BSLFXCompileResult output;
 
@@ -1704,7 +1704,7 @@ BSLFXCompiler::SubShaderData BSLFXCompiler::ParseSubShader(ASTFXNode* subShader)
 	return subShaderData;
 }
 
-void BSLFXCompiler::ParseOptions(ASTFXNode* optionsNode, SHADER_DESC& shaderDesc)
+void BSLFXCompiler::ParseOptions(ASTFXNode* optionsNode, ShaderCreateInformation& shaderDesc)
 {
 	if(optionsNode == nullptr || optionsNode->Type != NT_Options)
 		return;
@@ -1816,18 +1816,18 @@ BSLFXCompileResult BSLFXCompiler::PopulateVariations(Vector<std::pair<ASTFXNode*
 	return output;
 }
 
-void BSLFXCompiler::PopulateVariationParamInfos(const ShaderMetaData& shaderMetaData, SHADER_DESC& desc)
+void BSLFXCompiler::PopulateVariationParamInfos(const ShaderMetaData& shaderMetaData, ShaderCreateInformation& desc)
 {
 	for(auto& entry : shaderMetaData.Variations)
 	{
-		ShaderVariationParamInfo paramInfo;
+		ShaderVariationParameterInformation paramInfo;
 		paramInfo.IsInternal = entry.Internal;
 		paramInfo.Name = entry.Name;
 		paramInfo.Identifier = entry.Identifier;
 
 		for(auto& value : entry.Values)
 		{
-			ShaderVariationParamValue paramValue;
+			ShaderVariationParameterValue paramValue;
 			paramValue.Name = value.Name;
 			paramValue.Value = value.Value;
 
@@ -1840,7 +1840,7 @@ void BSLFXCompiler::PopulateVariationParamInfos(const ShaderMetaData& shaderMeta
 
 BSLFXCompileResult BSLFXCompiler::CompileTechniques(
 	const Vector<std::pair<ASTFXNode*, ShaderMetaData>>& shaderMetaData, const String& source,
-	const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, SHADER_DESC& shaderDesc,
+	const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, ShaderCreateInformation& shaderDesc,
 	Vector<String>& includes)
 {
 	BSLFXCompileResult output;
@@ -2023,7 +2023,7 @@ BSLFXCompileResult BSLFXCompiler::CompileTechniques(
 	return output;
 }
 
-BSLFXCompileResult BSLFXCompiler::CompileShader(String source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, SHADER_DESC& shaderDesc, Vector<String>& includes)
+BSLFXCompileResult BSLFXCompiler::CompileShader(String source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, ShaderCreateInformation& shaderDesc, Vector<String>& includes)
 {
 	SPtr<ct::Renderer> renderer = RendererManager::Instance().GetActive();
 
@@ -2110,7 +2110,7 @@ BSLFXCompileResult BSLFXCompiler::CompileShader(String source, const UnorderedMa
 			subShaderSource << "\n";
 			subShaderSource << subShaderCode;
 
-			SHADER_DESC subShaderDesc;
+			ShaderCreateInformation subShaderDesc;
 			Vector<String> subShaderIncludes;
 			BSLFXCompileResult subShaderOutput = CompileShader(subShaderSource.str(), subShaderDefines, languages, subShaderDesc, subShaderIncludes);
 
@@ -2119,7 +2119,7 @@ BSLFXCompileResult BSLFXCompiler::CompileShader(String source, const UnorderedMa
 
 			// Clear the sub-shader descriptor of any data other than techniques
 			Vector<SPtr<Technique>> techniques = subShaderDesc.Techniques;
-			subShaderDesc = SHADER_DESC();
+			subShaderDesc = ShaderCreateInformation();
 			subShaderDesc.Techniques = techniques;
 
 			SubShader subShader;
@@ -2133,7 +2133,7 @@ BSLFXCompileResult BSLFXCompiler::CompileShader(String source, const UnorderedMa
 	return output;
 }
 
-BSLFXCompileResult BSLFXCompiler::CompileTechniques(ParseState* parseState, const String& name, const Vector<String>& codeBlocks, const ShaderVariation& variation, ShadingLanguageFlags languages, UnorderedSet<String>& includes, SHADER_DESC& shaderDesc)
+BSLFXCompileResult BSLFXCompiler::CompileTechniques(ParseState* parseState, const String& name, const Vector<String>& codeBlocks, const ShaderVariation& variation, ShadingLanguageFlags languages, UnorderedSet<String>& includes, ShaderCreateInformation& shaderDesc)
 {
 	BSLFXCompileResult output;
 

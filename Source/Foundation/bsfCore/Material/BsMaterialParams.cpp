@@ -30,10 +30,10 @@ HTexture GetSpriteTextureAtlas(const HSpriteTexture& spriteTexture)
 }
 
 MaterialParamsBase::MaterialParamsBase(
-	const Map<String, SHADER_DATA_PARAM_DESC>& dataParams,
-	const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams,
-	const Map<String, SHADER_OBJECT_PARAM_DESC>& bufferParams,
-	const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams,
+	const Map<String, ShaderDataParameterInformation>& dataParams,
+	const Map<String, ShaderObjectParameterInformation>& textureParams,
+	const Map<String, ShaderObjectParameterInformation>& bufferParams,
+	const Map<String, ShaderObjectParameterInformation>& samplerParams,
 	u64 initialParamVersion)
 	: mParamVersion(initialParamVersion)
 {
@@ -341,8 +341,8 @@ TMaterialParams<Core>::TMaterialParams(const ShaderType& shader, u64 initialPara
 		ParamTextureDataType& param = mTextureParams[textureIdx];
 		param.IsLoadStore = false;
 
-		if(entry.second.DefaultValueIdx != (u32)-1)
-			mDefaultTextureParams[textureIdx] = shader->GetDefaultTexture(entry.second.DefaultValueIdx);
+		if(entry.second.DefaultValueIndex != (u32)-1)
+			mDefaultTextureParams[textureIdx] = shader->GetDefaultTexture(entry.second.DefaultValueIndex);
 
 		textureIdx++;
 	}
@@ -351,8 +351,8 @@ TMaterialParams<Core>::TMaterialParams(const ShaderType& shader, u64 initialPara
 	u32 samplerIdx = 0;
 	for(auto& entry : samplerParams)
 	{
-		if(entry.second.DefaultValueIdx != (u32)-1)
-			mDefaultSamplerStateParams[samplerIdx] = shader->GetDefaultSampler(entry.second.DefaultValueIdx);
+		if(entry.second.DefaultValueIndex != (u32)-1)
+			mDefaultSamplerStateParams[samplerIdx] = shader->GetDefaultSampler(entry.second.DefaultValueIndex);
 
 		samplerIdx++;
 	}
@@ -378,10 +378,10 @@ TMaterialParams<Core>::TMaterialParams(const ShaderType& shader, u64 initialPara
 		else
 		{
 			// Check for SpriteUV attribute
-			u32 attribIdx = entry.second.AttribIdx;
+			u32 attribIdx = entry.second.AttributeIndex;
 			while(attribIdx != (u32)-1)
 			{
-				const SHADER_PARAM_ATTRIBUTE& attrib = paramAttributes[attribIdx];
+				const ShaderParameterAttribute& attrib = paramAttributes[attribIdx];
 				if(attrib.Type == ShaderParamAttributeType::SpriteUV)
 				{
 					// Find referenced texture
@@ -396,7 +396,7 @@ TMaterialParams<Core>::TMaterialParams(const ShaderType& shader, u64 initialPara
 					}
 				}
 
-				attribIdx = attrib.NextParamIdx;
+				attribIdx = attrib.NextParameterIndex;
 			}
 		}
 	}

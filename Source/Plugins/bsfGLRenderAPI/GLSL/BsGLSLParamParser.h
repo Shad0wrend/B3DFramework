@@ -93,7 +93,7 @@ namespace bs
 			 * @param[in]	programHandle	Internal OpenGL handle to the GPU program.
 			 * @param[in]	uniformIndex	Unique uniform index to retrieve data from. Obtained from OpenGL parsing methods.
 			 */
-			void DetermineParamInfo(GpuParamDataDesc& desc, const String& paramName, GLuint programHandle, GLuint uniformIndex);
+			void DetermineParamInfo(GpuDataParameterInformation& desc, const String& paramName, GLuint programHandle, GLuint uniformIndex);
 
 			/**
 			 * Attempts to find out a vertex element semantic based on input parameter name. GLSL has no concept of semantics,

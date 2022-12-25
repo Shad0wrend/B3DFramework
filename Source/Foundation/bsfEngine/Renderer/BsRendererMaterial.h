@@ -257,7 +257,7 @@ namespace bs
 						const auto& textureParams = mShader->GetTextureParams();
 						for(auto& param : textureParams)
 						{
-							u32 defaultValueIdx = param.second.DefaultValueIdx;
+							u32 defaultValueIdx = param.second.DefaultValueIndex;
 							if(defaultValueIdx == (u32)-1)
 								continue;
 
@@ -279,7 +279,7 @@ namespace bs
 						const auto& samplerParams = mShader->GetSamplerParams();
 						for(auto& param : samplerParams)
 						{
-							u32 defaultValueIdx = param.second.DefaultValueIdx;
+							u32 defaultValueIdx = param.second.DefaultValueIndex;
 							if(defaultValueIdx == (u32)-1)
 								continue;
 

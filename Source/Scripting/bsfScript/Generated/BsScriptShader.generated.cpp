@@ -38,7 +38,7 @@ namespace bs
 
 	MonoArray* ScriptShader::InternalGetVariationParams(ScriptShader* thisPtr)
 	{
-		Vector<ShaderVariationParamInfo> vec__output;
+		Vector<ShaderVariationParameterInformation> vec__output;
 		vec__output = thisPtr->GetHandle()->GetVariationParams();
 
 		MonoArray* __output;

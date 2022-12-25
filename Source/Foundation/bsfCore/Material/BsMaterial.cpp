@@ -412,13 +412,13 @@ void TMaterial<Core>::SetParamValue(const String& name, u8* buffer, u32 numEleme
 template <bool Core>
 void TMaterial<Core>::InitDefaultParameters()
 {
-	const Map<String, SHADER_DATA_PARAM_DESC>& dataParams = mShader->GetDataParams();
+	const Map<String, ShaderDataParameterInformation>& dataParams = mShader->GetDataParams();
 	for(auto& paramData : dataParams)
 	{
-		if(paramData.second.DefaultValueIdx == (u32)-1)
+		if(paramData.second.DefaultValueIndex == (u32)-1)
 			continue;
 
-		u8* buffer = (u8*)mShader->GetDefaultValue(paramData.second.DefaultValueIdx);
+		u8* buffer = (u8*)mShader->GetDefaultValue(paramData.second.DefaultValueIndex);
 		if(buffer == nullptr)
 			continue;
 
@@ -499,23 +499,23 @@ void TMaterial<Core>::InitDefaultParameters()
 		}
 	}
 
-	const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams = mShader->GetTextureParams();
+	const Map<String, ShaderObjectParameterInformation>& textureParams = mShader->GetTextureParams();
 	for(auto& param : textureParams)
 	{
-		if(param.second.DefaultValueIdx == (u32)-1)
+		if(param.second.DefaultValueIndex == (u32)-1)
 			continue;
 
-		TextureType defaultTex = mShader->GetDefaultTexture(param.second.DefaultValueIdx);
+		TextureType defaultTex = mShader->GetDefaultTexture(param.second.DefaultValueIndex);
 		GetParamTexture(param.first).Set(defaultTex);
 	}
 
-	const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams = mShader->GetSamplerParams();
+	const Map<String, ShaderObjectParameterInformation>& samplerParams = mShader->GetSamplerParams();
 	for(auto& param : samplerParams)
 	{
-		if(param.second.DefaultValueIdx == (u32)-1)
+		if(param.second.DefaultValueIndex == (u32)-1)
 			continue;
 
-		SamplerStateType defaultSampler = mShader->GetDefaultSampler(param.second.DefaultValueIdx);
+		SamplerStateType defaultSampler = mShader->GetDefaultSampler(param.second.DefaultValueIndex);
 		GetParamSamplerState(param.first).Set(defaultSampler);
 	}
 }

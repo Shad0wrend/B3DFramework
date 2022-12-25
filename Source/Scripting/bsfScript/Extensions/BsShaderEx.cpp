@@ -9,10 +9,10 @@ Vector<ShaderParameter> ShaderEx::GetParameters(const HShader& thisPtr)
 	if(!thisPtr.IsLoaded())
 		return Vector<ShaderParameter>();
 
-	const Map<String, SHADER_DATA_PARAM_DESC>& dataParams = thisPtr->GetDataParams();
-	const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams = thisPtr->GetTextureParams();
-	const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams = thisPtr->GetSamplerParams();
-	const Vector<SHADER_PARAM_ATTRIBUTE> attributes = thisPtr->GetParamAttributes();
+	const Map<String, ShaderDataParameterInformation>& dataParams = thisPtr->GetDataParams();
+	const Map<String, ShaderObjectParameterInformation>& textureParams = thisPtr->GetTextureParams();
+	const Map<String, ShaderObjectParameterInformation>& samplerParams = thisPtr->GetSamplerParams();
+	const Vector<ShaderParameterAttribute> attributes = thisPtr->GetParamAttributes();
 
 	Vector<ShaderParameter> paramInfos;
 	auto parseParam = [&paramInfos, &attributes](const String& identifier, ShaderParameterType type, bool isInternal, u32 attribIdx)
@@ -24,7 +24,7 @@ Vector<ShaderParameter> ShaderEx::GetParameters(const HShader& thisPtr)
 
 		while(attribIdx != (u32)-1)
 		{
-			const SHADER_PARAM_ATTRIBUTE& attrib = attributes[attribIdx];
+			const ShaderParameterAttribute& attrib = attributes[attribIdx];
 			if(attrib.Type == ShaderParamAttributeType::Name)
 				output.Name = attrib.Value;
 			else if(attrib.Type == ShaderParamAttributeType::HideInInspector)
@@ -32,7 +32,7 @@ Vector<ShaderParameter> ShaderEx::GetParameters(const HShader& thisPtr)
 			else if(attrib.Type == ShaderParamAttributeType::HDR)
 				output.Flags |= ShaderParameterFlag::HDR;
 
-			attribIdx = attrib.NextParamIdx;
+			attribIdx = attrib.NextParameterIndex;
 		}
 
 		if(output.Name.empty())
@@ -83,7 +83,7 @@ Vector<ShaderParameter> ShaderEx::GetParameters(const HShader& thisPtr)
 		}
 
 		if(isValidType)
-			parseParam(param.first, type, isInternal, param.second.AttribIdx);
+			parseParam(param.first, type, isInternal, param.second.AttributeIndex);
 	}
 
 	for(auto& param : textureParams)
@@ -111,7 +111,7 @@ Vector<ShaderParameter> ShaderEx::GetParameters(const HShader& thisPtr)
 		}
 
 		if(isValidType)
-			parseParam(param.first, type, isInternal, param.second.AttribIdx);
+			parseParam(param.first, type, isInternal, param.second.AttributeIndex);
 	}
 
 	for(auto& param : samplerParams)
@@ -119,7 +119,7 @@ Vector<ShaderParameter> ShaderEx::GetParameters(const HShader& thisPtr)
 		ShaderParameterType type = ShaderParameterType::Sampler;
 		bool isInternal = !param.second.RendererSemantic.Empty();
 
-		parseParam(param.first, type, isInternal, param.second.AttribIdx);
+		parseParam(param.first, type, isInternal, param.second.AttributeIndex);
 	}
 
 	return paramInfos;

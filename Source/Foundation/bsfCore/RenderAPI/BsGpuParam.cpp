@@ -17,7 +17,7 @@ TGpuDataParam<T, Core>::TGpuDataParam()
 {}
 
 template <class T, bool Core>
-TGpuDataParam<T, Core>::TGpuDataParam(GpuParamDataDesc* paramDesc, const GpuParamsType& parent)
+TGpuDataParam<T, Core>::TGpuDataParam(GpuDataParameterInformation* paramDesc, const GpuParamsType& parent)
 	: mParent(parent), mParamDesc(paramDesc)
 {}
 
@@ -92,7 +92,7 @@ TGpuParamStruct<Core>::TGpuParamStruct()
 {}
 
 template <bool Core>
-TGpuParamStruct<Core>::TGpuParamStruct(GpuParamDataDesc* paramDesc, const GpuParamsType& parent)
+TGpuParamStruct<Core>::TGpuParamStruct(GpuDataParameterInformation* paramDesc, const GpuParamsType& parent)
 	: mParent(parent), mParamDesc(paramDesc)
 {}
 
@@ -181,29 +181,29 @@ TGpuParamTexture<Core>::TGpuParamTexture()
 {}
 
 template <bool Core>
-TGpuParamTexture<Core>::TGpuParamTexture(GpuParamObjectDesc* paramDesc, const GpuParamsType& parent)
+TGpuParamTexture<Core>::TGpuParamTexture(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent)
 	: mParent(parent), mParamDesc(paramDesc)
 {}
 
 template <bool Core>
-void TGpuParamTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface) const
+void TGpuParamTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface, u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return;
 
-	mParent->SetTexture(mParamDesc->Set, mParamDesc->Slot, texture, surface);
+	mParent->SetTexture(mParamDesc->Set, mParamDesc->Slot, texture, surface, arrayIndex);
 
 	mParent->MarkResourcesDirtyInternal();
 	mParent->MarkCoreDirtyInternal();
 }
 
 template <bool Core>
-typename TGpuParamTexture<Core>::TextureType TGpuParamTexture<Core>::Get() const
+typename TGpuParamTexture<Core>::TextureType TGpuParamTexture<Core>::Get(u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return TextureType();
 
-	return mParent->GetTexture(mParamDesc->Set, mParamDesc->Slot);
+	return mParent->GetTexture(mParamDesc->Set, mParamDesc->Slot, arrayIndex);
 }
 
 template <bool Core>
@@ -212,29 +212,29 @@ TGpuParamBuffer<Core>::TGpuParamBuffer()
 {}
 
 template <bool Core>
-TGpuParamBuffer<Core>::TGpuParamBuffer(GpuParamObjectDesc* paramDesc, const GpuParamsType& parent)
+TGpuParamBuffer<Core>::TGpuParamBuffer(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent)
 	: mParent(parent), mParamDesc(paramDesc)
 {}
 
 template <bool Core>
-void TGpuParamBuffer<Core>::Set(const BufferType& buffer) const
+void TGpuParamBuffer<Core>::Set(const BufferType& buffer, u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return;
 
-	mParent->SetBuffer(mParamDesc->Set, mParamDesc->Slot, buffer);
+	mParent->SetBuffer(mParamDesc->Set, mParamDesc->Slot, buffer, arrayIndex);
 
 	mParent->MarkResourcesDirtyInternal();
 	mParent->MarkCoreDirtyInternal();
 }
 
 template <bool Core>
-typename TGpuParamBuffer<Core>::BufferType TGpuParamBuffer<Core>::Get() const
+typename TGpuParamBuffer<Core>::BufferType TGpuParamBuffer<Core>::Get(u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return BufferType();
 
-	return mParent->GetBuffer(mParamDesc->Set, mParamDesc->Slot);
+	return mParent->GetBuffer(mParamDesc->Set, mParamDesc->Slot, arrayIndex);
 }
 
 template <bool Core>
@@ -243,29 +243,29 @@ TGpuParamLoadStoreTexture<Core>::TGpuParamLoadStoreTexture()
 {}
 
 template <bool Core>
-TGpuParamLoadStoreTexture<Core>::TGpuParamLoadStoreTexture(GpuParamObjectDesc* paramDesc, const GpuParamsType& parent)
+TGpuParamLoadStoreTexture<Core>::TGpuParamLoadStoreTexture(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent)
 	: mParent(parent), mParamDesc(paramDesc)
 {}
 
 template <bool Core>
-void TGpuParamLoadStoreTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface) const
+void TGpuParamLoadStoreTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface, u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return;
 
-	mParent->SetLoadStoreTexture(mParamDesc->Set, mParamDesc->Slot, texture, surface);
+	mParent->SetLoadStoreTexture(mParamDesc->Set, mParamDesc->Slot, texture, surface, arrayIndex);
 
 	mParent->MarkResourcesDirtyInternal();
 	mParent->MarkCoreDirtyInternal();
 }
 
 template <bool Core>
-typename TGpuParamLoadStoreTexture<Core>::TextureType TGpuParamLoadStoreTexture<Core>::Get() const
+typename TGpuParamLoadStoreTexture<Core>::TextureType TGpuParamLoadStoreTexture<Core>::Get(u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return TextureType();
 
-	return mParent->GetTexture(mParamDesc->Set, mParamDesc->Slot);
+	return mParent->GetTexture(mParamDesc->Set, mParamDesc->Slot, arrayIndex);
 }
 
 template <bool Core>
@@ -274,29 +274,29 @@ TGpuParamSampState<Core>::TGpuParamSampState()
 {}
 
 template <bool Core>
-TGpuParamSampState<Core>::TGpuParamSampState(GpuParamObjectDesc* paramDesc, const GpuParamsType& parent)
+TGpuParamSampState<Core>::TGpuParamSampState(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent)
 	: mParent(parent), mParamDesc(paramDesc)
 {}
 
 template <bool Core>
-void TGpuParamSampState<Core>::Set(const SamplerStateType& samplerState) const
+void TGpuParamSampState<Core>::Set(const SamplerStateType& samplerState, u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return;
 
-	mParent->SetSamplerState(mParamDesc->Set, mParamDesc->Slot, samplerState);
+	mParent->SetSamplerState(mParamDesc->Set, mParamDesc->Slot, samplerState, arrayIndex);
 
 	mParent->MarkResourcesDirtyInternal();
 	mParent->MarkCoreDirtyInternal();
 }
 
 template <bool Core>
-typename TGpuParamSampState<Core>::SamplerStateType TGpuParamSampState<Core>::Get() const
+typename TGpuParamSampState<Core>::SamplerStateType TGpuParamSampState<Core>::Get(u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return SamplerStateType();
 
-	return mParent->GetSamplerState(mParamDesc->Set, mParamDesc->Slot);
+	return mParent->GetSamplerState(mParamDesc->Set, mParamDesc->Slot, arrayIndex);
 }
 
 template class TGpuDataParam<float, false>;

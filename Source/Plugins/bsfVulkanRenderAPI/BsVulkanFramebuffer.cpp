@@ -32,9 +32,9 @@ VulkanFramebuffer::VulkanFramebuffer(VulkanResourceManager* owner, VulkanRenderP
 		mColorAttachments[attachmentIdx].Surface = desc.Color[i].Surface;
 
 		if(desc.Color[i].Surface.MipLevelCount == 0)
-			attachmentViews[attachmentIdx] = desc.Color[i].Image->GetView(true);
+			attachmentViews[attachmentIdx] = desc.Color[i].Image->GetView(true).Handle;
 		else
-			attachmentViews[attachmentIdx] = desc.Color[i].Image->GetView(desc.Color[i].Surface, true);
+			attachmentViews[attachmentIdx] = desc.Color[i].Image->GetView(desc.Color[i].Surface, true).Handle;
 
 		attachmentIdx++;
 	}
@@ -48,9 +48,9 @@ VulkanFramebuffer::VulkanFramebuffer(VulkanResourceManager* owner, VulkanRenderP
 		mDepthStencilAttachment.Surface = desc.Depth.Surface;
 
 		if(desc.Depth.Surface.MipLevelCount == 0)
-			attachmentViews[attachmentIdx] = desc.Depth.Image->GetView(true);
+			attachmentViews[attachmentIdx] = desc.Depth.Image->GetView(true).Handle;
 		else
-			attachmentViews[attachmentIdx] = desc.Depth.Image->GetView(desc.Depth.Surface, true);
+			attachmentViews[attachmentIdx] = desc.Depth.Image->GetView(desc.Depth.Surface, true).Handle;
 
 		attachmentIdx++;
 	}

@@ -229,7 +229,7 @@ namespace bs
 		bool HasParamBlock(GpuProgramType type, const String& name) const;
 
 		/**	Gets a descriptor for a parameter block buffer with the specified name. */
-		GpuParamBlockDesc* GetParamBlockDesc(GpuProgramType type, const String& name) const;
+		GpuParameterBlockInformation* GetParamBlockDesc(GpuProgramType type, const String& name) const;
 
 		/** Marks the sim thread object as dirty, causing it to sync its contents with its core thread counterpart. */
 		virtual void MarkCoreDirtyInternal() {}
@@ -241,7 +241,7 @@ namespace bs
 		GpuParamsBase(const SPtr<GpuPipelineParamInfoBase>& paramInfo);
 
 		/**	Gets a descriptor for a data parameter with the specified name. */
-		GpuParamDataDesc* GetParamDesc(GpuProgramType type, const String& name) const;
+		GpuDataParameterInformation* GetParamDesc(GpuProgramType type, const String& name) const;
 
 		SPtr<GpuPipelineParamInfoBase> mParamInfo;
 	};
@@ -285,26 +285,26 @@ namespace bs
 		/** @copydoc GetParam */
 		void GetSamplerStateParam(GpuProgramType type, const String& name, TGpuParamSampState<Core>& output) const;
 
-		/**	Gets a parameter block buffer from the specified set/slot combination. */
-		ParamsBufferType GetParamBlockBuffer(u32 set, u32 slot) const;
+		/**	Gets a parameter block buffer from the specified set/slot/array index combination. */
+		ParamsBufferType GetParamBlockBuffer(u32 set, u32 slot, u32 arrayIndex = 0) const;
 
-		/**	Gets a texture bound to the specified set/slot combination. */
-		TextureType GetTexture(u32 set, u32 slot) const;
+		/**	Gets a texture bound to the specified set/slot/array index combination. */
+		TextureType GetTexture(u32 set, u32 slot, u32 arrayIndex = 0) const;
 
-		/**	Gets a load/store texture bound to the specified set/slot combination. */
-		TextureType GetLoadStoreTexture(u32 set, u32 slot) const;
+		/**	Gets a load/store texture bound to the specified set/slot/array index combination. */
+		TextureType GetLoadStoreTexture(u32 set, u32 slot, u32 arrayIndex = 0) const;
 
-		/**	Gets a buffer bound to the specified set/slot combination. */
-		BufferType GetBuffer(u32 set, u32 slot) const;
+		/**	Gets a buffer bound to the specified set/slot/array index combination. */
+		BufferType GetBuffer(u32 set, u32 slot, u32 arrayIndex = 0) const;
 
-		/**	Gets a sampler state bound to the specified set/slot combination. */
-		SamplerType GetSamplerState(u32 set, u32 slot) const;
+		/**	Gets a sampler state bound to the specified set/slot/array index combination. */
+		SamplerType GetSamplerState(u32 set, u32 slot, u32 arrayIndex = 0) const;
 
 		/** Gets information that determines which texture surfaces to bind as a sampled texture parameter. */
-		const TextureSurface& GetTextureSurface(u32 set, u32 slot) const;
+		const TextureSurface& GetTextureSurface(u32 set, u32 slot, u32 arrayIndex = 0) const;
 
 		/** Gets information that determines which texture surfaces to bind as a load/store parameter. */
-		const TextureSurface& GetLoadStoreSurface(u32 set, u32 slot) const;
+		const TextureSurface& GetLoadStoreSurface(u32 set, u32 slot, u32 arrayIndex = 0) const;
 
 		/**
 		 * Assigns the provided parameter block buffer to a buffer with the specified name, for the specified GPU program
@@ -312,7 +312,7 @@ namespace bs
 		 *
 		 * It is up to the caller to guarantee the provided buffer matches parameter block descriptor for this slot.
 		 */
-		void SetParamBlockBuffer(GpuProgramType type, const String& name, const ParamsBufferType& paramBlockBuffer);
+		void SetParamBlockBuffer(GpuProgramType type, const String& name, const ParamsBufferType& paramBlockBuffer, u32 arrayIndex = 0);
 
 		/**
 		 * Assigns the provided parameter block buffer to a buffer with the specified name, for any stages that reference
@@ -321,28 +321,28 @@ namespace bs
 		 * It is up to the caller to guarantee the provided buffer matches parameter block descriptor for this slot.
 		 * It is up to the caller that all stages using this buffer name refer to the same buffer type.
 		 */
-		void SetParamBlockBuffer(const String& name, const ParamsBufferType& paramBlockBuffer);
+		void SetParamBlockBuffer(const String& name, const ParamsBufferType& paramBlockBuffer, u32 arrayIndex = 0);
 
 		/**
-		 * Sets the parameter buffer with the specified set/slot combination.Any following parameter reads or writes that are
-		 * referencing that buffer will use the new buffer. Set/slot information for a specific buffer can be extracted
+		 * Sets the parameter buffer with the specified set/slot/array index combination.Any following parameter reads or writes that are
+		 * referencing that buffer will use the new buffer. Set/slot/array index information for a specific buffer can be extracted
 		 * from GPUProgram's GpuParamDesc structure.
 		 *
 		 * It is up to the caller to guarantee the provided buffer matches parameter block descriptor for this slot.
 		 */
-		virtual void SetParamBlockBuffer(u32 set, u32 slot, const ParamsBufferType& paramBlockBuffer);
+		virtual void SetParamBlockBuffer(u32 set, u32 slot, const ParamsBufferType& paramBlockBuffer, u32 arrayIndex = 0);
 
 		/**	Sets a texture at the specified set/slot combination. */
-		virtual void SetTexture(u32 set, u32 slot, const TextureType& texture, const TextureSurface& surface = TextureSurface::kComplete);
+		virtual void SetTexture(u32 set, u32 slot, const TextureType& texture, const TextureSurface& surface = TextureSurface::kComplete, u32 arrayIndex = 0);
 
 		/**	Sets a load/store texture at the specified set/slot combination. */
-		virtual void SetLoadStoreTexture(u32 set, u32 slot, const TextureType& texture, const TextureSurface& surface);
+		virtual void SetLoadStoreTexture(u32 set, u32 slot, const TextureType& texture, const TextureSurface& surface, u32 arrayIndex = 0);
 
 		/**	Sets a buffer at the specified set/slot combination. */
-		virtual void SetBuffer(u32 set, u32 slot, const BufferType& buffer);
+		virtual void SetBuffer(u32 set, u32 slot, const BufferType& buffer, u32 arrayIndex = 0);
 
 		/**	Sets a sampler state at the specified set/slot combination. */
-		virtual void SetSamplerState(u32 set, u32 slot, const SamplerType& sampler);
+		virtual void SetSamplerState(u32 set, u32 slot, const SamplerType& sampler, u32 arrayIndex = 0);
 
 		/**	Assigns a data value to the parameter with the specified name. */
 		template <class T>

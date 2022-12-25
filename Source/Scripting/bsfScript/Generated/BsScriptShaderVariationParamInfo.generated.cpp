@@ -26,9 +26,9 @@ namespace bs
 		return *(__ShaderVariationParamInfoInterop*)MonoUtil::Unbox(value);
 	}
 
-	ShaderVariationParamInfo ScriptShaderVariationParamInfo::FromInterop(const __ShaderVariationParamInfoInterop& value)
+	ShaderVariationParameterInformation ScriptShaderVariationParamInfo::FromInterop(const __ShaderVariationParamInfoInterop& value)
 	{
-		ShaderVariationParamInfo output;
+		ShaderVariationParameterInformation output;
 		String tmpName;
 		tmpName = MonoUtil::MonoToString(value.Name);
 		output.Name = tmpName;
@@ -36,7 +36,7 @@ namespace bs
 		tmpIdentifier = MonoUtil::MonoToString(value.Identifier);
 		output.Identifier = tmpIdentifier;
 		output.IsInternal = value.IsInternal;
-		SmallVector<ShaderVariationParamValue, 4> vecValues;
+		SmallVector<ShaderVariationParameterValue, 4> vecValues;
 		if(value.Values != nullptr)
 		{
 			ScriptArray arrayValues(value.Values);
@@ -51,7 +51,7 @@ namespace bs
 		return output;
 	}
 
-	__ShaderVariationParamInfoInterop ScriptShaderVariationParamInfo::ToInterop(const ShaderVariationParamInfo& value)
+	__ShaderVariationParamInfoInterop ScriptShaderVariationParamInfo::ToInterop(const ShaderVariationParameterInformation& value)
 	{
 		__ShaderVariationParamInfoInterop output;
 		MonoString* tmpName;

@@ -24,13 +24,13 @@ RTTITypeBase* SubShader::GetRtti() const
 }
 
 template <bool Core>
-TSHADER_DESC<Core>::TSHADER_DESC()
+TShaderCreateInformation<Core>::TShaderCreateInformation()
 	: QueueSortType(QueueSortType::None), QueuePriority(0), SeparablePasses(false), Flags(0)
 {
 }
 
 template <bool Core>
-void TSHADER_DESC<Core>::AddParameter(SHADER_DATA_PARAM_DESC paramDesc, u8* defaultValue)
+void TShaderCreateInformation<Core>::AddParameter(ShaderDataParameterInformation paramDesc, u8* defaultValue)
 {
 	if(paramDesc.Type == GPDT_STRUCT && paramDesc.ElementSize <= 0)
 	{
@@ -44,20 +44,20 @@ void TSHADER_DESC<Core>::AddParameter(SHADER_DATA_PARAM_DESC paramDesc, u8* defa
 
 	if(defaultValue != nullptr)
 	{
-		paramDesc.DefaultValueIdx = (u32)DataDefaultValues.size();
+		paramDesc.DefaultValueIndex = (u32)DataDefaultValues.size();
 		u32 defaultValueSize = Shader::GetDataParamSize(paramDesc.Type);
 
-		DataDefaultValues.resize(paramDesc.DefaultValueIdx + defaultValueSize);
-		memcpy(&DataDefaultValues[paramDesc.DefaultValueIdx], defaultValue, defaultValueSize);
+		DataDefaultValues.resize(paramDesc.DefaultValueIndex + defaultValueSize);
+		memcpy(&DataDefaultValues[paramDesc.DefaultValueIndex], defaultValue, defaultValueSize);
 	}
 	else
-		paramDesc.DefaultValueIdx = (u32)-1;
+		paramDesc.DefaultValueIndex = (u32)-1;
 
 	DataParams[paramDesc.Name] = paramDesc;
 }
 
 template <bool Core>
-void TSHADER_DESC<Core>::AddParameter(SHADER_OBJECT_PARAM_DESC paramDesc)
+void TShaderCreateInformation<Core>::AddParameter(ShaderObjectParameterInformation paramDesc)
 {
 	u32 defaultValueIdx = (u32)-1;
 
@@ -65,7 +65,7 @@ void TSHADER_DESC<Core>::AddParameter(SHADER_OBJECT_PARAM_DESC paramDesc)
 }
 
 template <bool Core>
-void TSHADER_DESC<Core>::AddParameter(SHADER_OBJECT_PARAM_DESC paramDesc, const SamplerStateType& defaultValue)
+void TShaderCreateInformation<Core>::AddParameter(ShaderObjectParameterInformation paramDesc, const SamplerStateType& defaultValue)
 {
 	u32 defaultValueIdx = (u32)-1;
 	if(Shader::IsSampler(paramDesc.Type) && defaultValue != nullptr)
@@ -78,7 +78,7 @@ void TSHADER_DESC<Core>::AddParameter(SHADER_OBJECT_PARAM_DESC paramDesc, const 
 }
 
 template <bool Core>
-void TSHADER_DESC<Core>::AddParameter(SHADER_OBJECT_PARAM_DESC paramDesc, const TextureType& defaultValue)
+void TShaderCreateInformation<Core>::AddParameter(ShaderObjectParameterInformation paramDesc, const TextureType& defaultValue)
 {
 	u32 defaultValueIdx = (u32)-1;
 	if(Shader::IsTexture(paramDesc.Type) && defaultValue != nullptr)
@@ -91,26 +91,26 @@ void TSHADER_DESC<Core>::AddParameter(SHADER_OBJECT_PARAM_DESC paramDesc, const 
 }
 
 template <bool Core>
-void TSHADER_DESC<Core>::AddParameterInternal(SHADER_OBJECT_PARAM_DESC paramDesc, u32 defaultValueIdx)
+void TShaderCreateInformation<Core>::AddParameterInternal(ShaderObjectParameterInformation paramDesc, u32 defaultValueIdx)
 {
-	Map<String, SHADER_OBJECT_PARAM_DESC>* DEST_LOOKUP[] = { &TextureParams, &BufferParams, &SamplerParams };
+	Map<String, ShaderObjectParameterInformation>* DEST_LOOKUP[] = { &TextureParams, &BufferParams, &SamplerParams };
 	u32 destIdx = 0;
 	if(Shader::IsBuffer(paramDesc.Type))
 		destIdx = 1;
 	else if(Shader::IsSampler(paramDesc.Type))
 		destIdx = 2;
 
-	Map<String, SHADER_OBJECT_PARAM_DESC>& paramsMap = *DEST_LOOKUP[destIdx];
+	Map<String, ShaderObjectParameterInformation>& paramsMap = *DEST_LOOKUP[destIdx];
 
 	auto iterFind = paramsMap.find(paramDesc.Name);
 	if(iterFind == paramsMap.end())
 	{
-		paramDesc.DefaultValueIdx = defaultValueIdx;
+		paramDesc.DefaultValueIndex = defaultValueIdx;
 		paramsMap[paramDesc.Name] = paramDesc;
 	}
 	else
 	{
-		SHADER_OBJECT_PARAM_DESC& desc = iterFind->second;
+		ShaderObjectParameterInformation& desc = iterFind->second;
 
 		// If same name but different properties, we ignore this param
 		if(desc.Type != paramDesc.Type || desc.RendererSemantic != paramDesc.RendererSemantic)
@@ -133,15 +133,15 @@ void TSHADER_DESC<Core>::AddParameterInternal(SHADER_OBJECT_PARAM_DESC paramDesc
 }
 
 template <bool Core>
-void TSHADER_DESC<Core>::SetParameterAttribute(const String& name, const SHADER_PARAM_ATTRIBUTE& attrib)
+void TShaderCreateInformation<Core>::SetParameterAttribute(const String& name, const ShaderParameterAttribute& attrib)
 {
-	SHADER_DATA_PARAM_DESC* paramDescData = nullptr;
+	ShaderDataParameterInformation* paramDescData = nullptr;
 
 	const auto findIterData = DataParams.find(name);
 	if(findIterData != DataParams.end())
 		paramDescData = &findIterData->second;
 
-	SHADER_OBJECT_PARAM_DESC* paramDescObj = nullptr;
+	ShaderObjectParameterInformation* paramDescObj = nullptr;
 	if(!paramDescData)
 	{
 		const auto findIterTexture = TextureParams.find(name);
@@ -163,7 +163,7 @@ void TSHADER_DESC<Core>::SetParameterAttribute(const String& name, const SHADER_
 		}
 	}
 
-	SHADER_PARAM_COMMON* paramDesc = paramDescData;
+	ShaderParameterInformation* paramDesc = paramDescData;
 	if(!paramDesc)
 		paramDesc = paramDescObj;
 
@@ -189,11 +189,11 @@ void TSHADER_DESC<Core>::SetParameterAttribute(const String& name, const SHADER_
 	}
 
 	// Look for duplicate attributes
-	u32 curAttribIdx = paramDesc->AttribIdx;
+	u32 curAttribIdx = paramDesc->AttributeIndex;
 	bool found = false;
 	while(curAttribIdx != (u32)-1)
 	{
-		SHADER_PARAM_ATTRIBUTE& curAttrib = ParamAttributes[curAttribIdx];
+		ShaderParameterAttribute& curAttrib = ParamAttributes[curAttribIdx];
 		if(curAttrib.Type == attrib.Type)
 		{
 			curAttrib = attrib;
@@ -202,7 +202,7 @@ void TSHADER_DESC<Core>::SetParameterAttribute(const String& name, const SHADER_
 			break;
 		}
 
-		curAttribIdx = curAttrib.NextParamIdx;
+		curAttribIdx = curAttrib.NextParameterIndex;
 	}
 
 	if(!found)
@@ -210,17 +210,17 @@ void TSHADER_DESC<Core>::SetParameterAttribute(const String& name, const SHADER_
 		const auto attribIdx = (u32)ParamAttributes.size();
 		ParamAttributes.emplace_back(attrib);
 
-		if(paramDesc->AttribIdx != (u32)-1)
-			ParamAttributes.back().NextParamIdx = paramDesc->AttribIdx;
+		if(paramDesc->AttributeIndex != (u32)-1)
+			ParamAttributes.back().NextParameterIndex = paramDesc->AttributeIndex;
 
-		paramDesc->AttribIdx = attribIdx;
+		paramDesc->AttributeIndex = attribIdx;
 	}
 }
 
 template <bool Core>
-void TSHADER_DESC<Core>::SetParamBlockAttribs(const String& name, bool shared, GpuBufferUsage usage, StringID rendererSemantic)
+void TShaderCreateInformation<Core>::SetParamBlockAttribs(const String& name, bool shared, GpuBufferUsage usage, StringID rendererSemantic)
 {
-	SHADER_PARAM_BLOCK_DESC desc;
+	ShaderParameterBlockInformation desc;
 	desc.Name = name;
 	desc.Shared = shared;
 	desc.Usage = usage;
@@ -229,8 +229,8 @@ void TSHADER_DESC<Core>::SetParamBlockAttribs(const String& name, bool shared, G
 	ParamBlocks[name] = desc;
 }
 
-template struct TSHADER_DESC<false>;
-template struct TSHADER_DESC<true>;
+template struct TShaderCreateInformation<false>;
+template struct TShaderCreateInformation<true>;
 
 template <bool Core>
 TShader<Core>::TShader(u32 id)
@@ -238,7 +238,7 @@ TShader<Core>::TShader(u32 id)
 {}
 
 template <bool Core>
-TShader<Core>::TShader(const String& name, const TSHADER_DESC<Core>& desc, u32 id)
+TShader<Core>::TShader(const String& name, const TShaderCreateInformation<Core>& desc, u32 id)
 	: mName(name), mDesc(desc), mId(id)
 {}
 
@@ -270,50 +270,50 @@ GpuParamType TShader<Core>::GetParamType(const String& name) const
 }
 
 template <bool Core>
-const SHADER_DATA_PARAM_DESC& TShader<Core>::GetDataParamDesc(const String& name) const
+const ShaderDataParameterInformation& TShader<Core>::GetDataParamDesc(const String& name) const
 {
 	auto findIterData = mDesc.DataParams.find(name);
 	if(findIterData != mDesc.DataParams.end())
 		return findIterData->second;
 
 	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
-	static SHADER_DATA_PARAM_DESC dummy;
+	static ShaderDataParameterInformation dummy;
 	return dummy;
 }
 
 template <bool Core>
-const SHADER_OBJECT_PARAM_DESC& TShader<Core>::GetTextureParamDesc(const String& name) const
+const ShaderObjectParameterInformation& TShader<Core>::GetTextureParamDesc(const String& name) const
 {
 	auto findIterObject = mDesc.TextureParams.find(name);
 	if(findIterObject != mDesc.TextureParams.end())
 		return findIterObject->second;
 
 	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
-	static SHADER_OBJECT_PARAM_DESC dummy;
+	static ShaderObjectParameterInformation dummy;
 	return dummy;
 }
 
 template <bool Core>
-const SHADER_OBJECT_PARAM_DESC& TShader<Core>::GetSamplerParamDesc(const String& name) const
+const ShaderObjectParameterInformation& TShader<Core>::GetSamplerParamDesc(const String& name) const
 {
 	auto findIterObject = mDesc.SamplerParams.find(name);
 	if(findIterObject != mDesc.SamplerParams.end())
 		return findIterObject->second;
 
 	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
-	static SHADER_OBJECT_PARAM_DESC dummy;
+	static ShaderObjectParameterInformation dummy;
 	return dummy;
 }
 
 template <bool Core>
-const SHADER_OBJECT_PARAM_DESC& TShader<Core>::GetBufferParamDesc(const String& name) const
+const ShaderObjectParameterInformation& TShader<Core>::GetBufferParamDesc(const String& name) const
 {
 	auto findIterObject = mDesc.BufferParams.find(name);
 	if(findIterObject != mDesc.BufferParams.end())
 		return findIterObject->second;
 
 	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
-	static SHADER_OBJECT_PARAM_DESC dummy;
+	static ShaderObjectParameterInformation dummy;
 	return dummy;
 }
 
@@ -424,8 +424,8 @@ Vector<SPtr<typename TShader<Core>::TechniqueType>> TShader<Core>::GetCompatible
 template class TShader<false>;
 template class TShader<true>;
 
-Shader::Shader(const String& name, const SHADER_DESC& desc, u32 id)
-	: TShader(name, desc, id)
+Shader::Shader(const String& name, const ShaderCreateInformation& createInformation, u32 id)
+	: TShader(name, createInformation, id)
 {
 	mMetaData = B3DMakeShared<ShaderMetaData>();
 }
@@ -458,48 +458,48 @@ SPtr<ct::CoreObject> Shader::CreateCore() const
 	return shaderCorePtr;
 }
 
-ct::SHADER_DESC Shader::ConvertDesc(const SHADER_DESC& desc) const
+ct::ShaderCreateInformation Shader::ConvertDesc(const ShaderCreateInformation& createInformation) const
 {
-	ct::SHADER_DESC output;
-	output.DataParams = desc.DataParams;
-	output.TextureParams = desc.TextureParams;
-	output.SamplerParams = desc.SamplerParams;
-	output.BufferParams = desc.BufferParams;
-	output.ParamBlocks = desc.ParamBlocks;
-	output.ParamAttributes = desc.ParamAttributes;
+	ct::ShaderCreateInformation output;
+	output.DataParams = createInformation.DataParams;
+	output.TextureParams = createInformation.TextureParams;
+	output.SamplerParams = createInformation.SamplerParams;
+	output.BufferParams = createInformation.BufferParams;
+	output.ParamBlocks = createInformation.ParamBlocks;
+	output.ParamAttributes = createInformation.ParamAttributes;
 
-	output.DataDefaultValues = desc.DataDefaultValues;
+	output.DataDefaultValues = createInformation.DataDefaultValues;
 
-	output.SamplerDefaultValues.resize(desc.SamplerDefaultValues.size());
-	for(u32 i = 0; i < (u32)desc.SamplerDefaultValues.size(); i++)
+	output.SamplerDefaultValues.resize(createInformation.SamplerDefaultValues.size());
+	for(u32 i = 0; i < (u32)createInformation.SamplerDefaultValues.size(); i++)
 	{
-		if(desc.SamplerDefaultValues[i] != nullptr)
-			output.SamplerDefaultValues[i] = desc.SamplerDefaultValues[i]->GetCore();
+		if(createInformation.SamplerDefaultValues[i] != nullptr)
+			output.SamplerDefaultValues[i] = createInformation.SamplerDefaultValues[i]->GetCore();
 		else
 			output.SamplerDefaultValues[i] = nullptr;
 	}
 
-	output.TextureDefaultValues.resize(desc.TextureDefaultValues.size());
-	for(u32 i = 0; i < (u32)desc.TextureDefaultValues.size(); i++)
+	output.TextureDefaultValues.resize(createInformation.TextureDefaultValues.size());
+	for(u32 i = 0; i < (u32)createInformation.TextureDefaultValues.size(); i++)
 	{
-		if(desc.TextureDefaultValues[i].IsLoaded())
-			output.TextureDefaultValues[i] = desc.TextureDefaultValues[i]->GetCore();
+		if(createInformation.TextureDefaultValues[i].IsLoaded())
+			output.TextureDefaultValues[i] = createInformation.TextureDefaultValues[i]->GetCore();
 		else
 			output.TextureDefaultValues[i] = nullptr;
 	}
 
-	output.QueuePriority = desc.QueuePriority;
-	output.QueueSortType = desc.QueueSortType;
-	output.SeparablePasses = desc.SeparablePasses;
-	output.Flags = desc.Flags;
+	output.QueuePriority = createInformation.QueuePriority;
+	output.QueueSortType = createInformation.QueueSortType;
+	output.SeparablePasses = createInformation.SeparablePasses;
+	output.Flags = createInformation.Flags;
 
-	for(auto& entry : desc.Techniques)
+	for(auto& entry : createInformation.Techniques)
 	{
 		if(entry)
 			output.Techniques.push_back(entry->GetCore());
 	}
 
-	for(auto& entry : desc.SubShaders)
+	for(auto& entry : createInformation.SubShaders)
 	{
 		ct::SubShader subShader;
 		subShader.Name = entry.Name;
@@ -510,7 +510,7 @@ ct::SHADER_DESC Shader::ConvertDesc(const SHADER_DESC& desc) const
 		output.SubShaders.push_back(subShader);
 	}
 
-	output.VariationParams = desc.VariationParams;
+	output.VariationParams = createInformation.VariationParams;
 
 	// Ignoring default values as they are not needed for syncing since
 	// they're initialized through the material.
@@ -603,19 +603,19 @@ u32 Shader::GetDataParamSize(GpuParamDataType type)
 	return 0;
 }
 
-HShader Shader::Create(const String& name, const SHADER_DESC& desc)
+HShader Shader::Create(const String& name, const ShaderCreateInformation& createInformation)
 {
-	SPtr<Shader> newShader = CreatePtrInternal(name, desc);
+	SPtr<Shader> newShader = CreatePtrInternal(name, createInformation);
 
 	return B3DStaticResourceCast<Shader>(GetResources().CreateResourceHandleInternal(newShader));
 }
 
-SPtr<Shader> Shader::CreatePtrInternal(const String& name, const SHADER_DESC& desc)
+SPtr<Shader> Shader::CreatePtrInternal(const String& name, const ShaderCreateInformation& createInformation)
 {
 	u32 id = ct::Shader::mNextShaderId.fetch_add(1, std::memory_order_relaxed);
 	B3D_ASSERT(id < std::numeric_limits<u32>::max() && "Created too many shaders, reached maximum id.");
 
-	SPtr<Shader> newShader = B3DMakeCoreFromExisting<Shader>(new(B3DAllocate<Shader>()) Shader(name, desc, id));
+	SPtr<Shader> newShader = B3DMakeCoreFromExisting<Shader>(new(B3DAllocate<Shader>()) Shader(name, createInformation, id));
 	newShader->SetThisPtrInternal(newShader);
 	newShader->Initialize();
 
@@ -657,17 +657,17 @@ namespace bs { namespace ct
 {
 std::atomic<u32> Shader::mNextShaderId;
 
-Shader::Shader(const String& name, const SHADER_DESC& desc, u32 id)
-	: TShader(name, desc, id)
+Shader::Shader(const String& name, const ShaderCreateInformation& createInformation, u32 id)
+	: TShader(name, createInformation, id)
 {
 }
 
-SPtr<Shader> Shader::Create(const String& name, const SHADER_DESC& desc)
+SPtr<Shader> Shader::Create(const String& name, const ShaderCreateInformation& createInformation)
 {
 	u32 id = mNextShaderId.fetch_add(1, std::memory_order_relaxed);
 	B3D_ASSERT(id < std::numeric_limits<u32>::max() && "Created too many shaders, reached maximum id.");
 
-	Shader* shaderCore = new(B3DAllocate<Shader>()) Shader(name, desc, id);
+	Shader* shaderCore = new(B3DAllocate<Shader>()) Shader(name, createInformation, id);
 	SPtr<Shader> shaderCorePtr = B3DMakeSharedFromExisting<Shader>(shaderCore);
 	shaderCorePtr->SetShared(shaderCorePtr);
 	shaderCorePtr->Initialize();

@@ -893,9 +893,9 @@ void VulkanRenderAPI::ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& de
 	dest[2][3] = (dest[2][3] + dest[3][3]) / 2;
 }
 
-GpuParamBlockDesc VulkanRenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params)
+GpuParameterBlockInformation VulkanRenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params)
 {
-	GpuParamBlockDesc block;
+	GpuParameterBlockInformation block;
 	block.BlockSize = 0;
 	block.IsShareable = true;
 	block.Name = name;

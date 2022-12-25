@@ -31,6 +31,13 @@ namespace bs
 			u32 Usage = 0; /** Determines how will the image be used. */
 		};
 
+		/** Wrapper around VkImageView. */
+		struct VulkanImageView
+		{
+			VkImageView Handle = VK_NULL_HANDLE;
+			VkImageViewType Type = VK_IMAGE_VIEW_TYPE_MAX_ENUM;
+		};
+
 		/** Wrapper around a Vulkan image object that manages its usage and lifetime. */
 		class VulkanImage : public VulkanResource
 		{
@@ -73,7 +80,7 @@ namespace bs
 			 * @param[in]	isPartOfFramebuffer	Set to true if the view will be used as a framebuffer attachment. Ensures proper
 			 *									attachment flags are set on the view.
 			 */
-			VkImageView GetView(bool isPartOfFramebuffer) const;
+			VulkanImageView GetView(bool isPartOfFramebuffer) const;
 
 			/**
 			 * Returns an image view that covers the specified faces and mip maps of the texture.
@@ -82,7 +89,7 @@ namespace bs
 			 * @param[in]	isPartOfFramebuffer	Set to true if the view will be used as a framebuffer attachment. Ensures proper
 			 *									attachment flags are set on the view.
 			 */
-			VkImageView GetView(const TextureSurface& surface, bool isPartOfFramebuffer) const;
+			VulkanImageView GetView(const TextureSurface& surface, bool isPartOfFramebuffer) const;
 
 			/**
 			 * Returns an image view with a specific format.
@@ -91,7 +98,7 @@ namespace bs
 			 * @param[in]	isPartOfFramebuffer	Set to true if the view will be used as a framebuffer attachment. Ensures proper
 			 *									attachment flags are set on the view.
 			 */
-			VkImageView GetView(VkFormat format, bool isPartOfFramebuffer = false) const;
+			VulkanImageView GetView(VkFormat format, bool isPartOfFramebuffer = false) const;
 
 			/**
 			 * Returns an image view that covers the specified faces and mip maps of the texture, with a specific format.
@@ -101,7 +108,7 @@ namespace bs
 			 * @param[in]	isPartOfFrameBuffer	Set to true if the view will be used as a framebuffer attachment. Ensures proper
 			 *							attachment flags are set on the view.
 			 */
-			VkImageView GetView(VkFormat format, const TextureSurface& surface, bool isPartOfFrameBuffer) const;
+			VulkanImageView GetView(VkFormat format, const TextureSurface& surface, bool isPartOfFrameBuffer) const;
 
 			/** Get aspect flags that represent the contents of this image. */
 			VkImageAspectFlags GetAspectFlags() const;
@@ -178,7 +185,7 @@ namespace bs
 
 		private:
 			/** Creates a new view of the provided part (or entirety) of surface. */
-			VkImageView CreateView(const TextureSurface& surface, VkFormat format, VkImageAspectFlags aspectMask, bool isPartOfFramebuffer) const;
+			VulkanImageView CreateView(const TextureSurface& surface, VkFormat format, VkImageAspectFlags aspectMask, bool isPartOfFramebuffer) const;
 
 			/**
 			 * If layer or mip count in the provided surface is set to zero, ensures they are set to the actual layer count.
@@ -192,14 +199,14 @@ namespace bs
 			{
 				TextureSurface Surface;
 				bool IsPartOfFramebuffer = false;
-				VkImageView View = VK_NULL_HANDLE;
+				VulkanImageView View;
 				VkFormat Format = VK_FORMAT_UNDEFINED;
 			};
 
 			VkImage mImage;
 			VmaAllocation mAllocation;
-			VkImageView mMainView;
-			VkImageView mFramebufferMainView;
+			VulkanImageView mMainView;
+			VulkanImageView mFramebufferMainView;
 			i32 mUsage;
 			bool mOwnsImage;
 			bool mIsShaderReadAllowed = true;

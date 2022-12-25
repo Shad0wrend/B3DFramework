@@ -611,7 +611,7 @@ u32 BuiltinResourcesHelper::CheckForModifications(const Path& folder, const Path
 
 bool BuiltinResourcesHelper::VerifyAndReportShader(const HShader& shader)
 {
-	if(!shader.IsLoaded(false) || shader->GetNumTechniques() == 0)
+	if(!shader.IsLoaded(false) || shader->GetTechniqueCount() == 0)
 	{
 #if B3D_DEBUG
 		B3D_EXCEPT(InvalidStateException, "Error occured while compiling a shader. Check earlier log messages for exact error.");

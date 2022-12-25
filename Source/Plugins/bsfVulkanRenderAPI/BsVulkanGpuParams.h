@@ -20,11 +20,11 @@ namespace bs
 		public:
 			~VulkanGpuParams() override;
 
-			void SetParamBlockBuffer(u32 set, u32 slot, const SPtr<GpuParamBlockBuffer>& paramBlockBuffer) override;
-			void SetTexture(u32 set, u32 slot, const SPtr<Texture>& texture, const TextureSurface& surface = TextureSurface::kComplete) override;
-			void SetLoadStoreTexture(u32 set, u32 slot, const SPtr<Texture>& texture, const TextureSurface& surface) override;
-			void SetBuffer(u32 set, u32 slot, const SPtr<GpuBuffer>& buffer) override;
-			void SetSamplerState(u32 set, u32 slot, const SPtr<SamplerState>& sampler) override;
+			void SetParamBlockBuffer(u32 set, u32 slot, const SPtr<GpuParamBlockBuffer>& paramBlockBuffer, u32 arrayIndex = 0) override;
+			void SetTexture(u32 set, u32 slot, const SPtr<Texture>& texture, const TextureSurface& surface = TextureSurface::kComplete, u32 arrayIndex = 0) override;
+			void SetLoadStoreTexture(u32 set, u32 slot, const SPtr<Texture>& texture, const TextureSurface& surface, u32 arrayIndex = 0) override;
+			void SetBuffer(u32 set, u32 slot, const SPtr<GpuBuffer>& buffer, u32 arrayIndex = 0) override;
+			void SetSamplerState(u32 set, u32 slot, const SPtr<SamplerState>& sampler, u32 arrayIndex = 0) override;
 
 			/** Returns the total number of descriptor sets used by this object. */
 			u32 GetSetCount() const;
@@ -45,14 +45,6 @@ namespace bs
 			void PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDescriptorSet* outSets, Vector<u32>& outDynamicOffsets);
 
 		protected:
-			/** Contains data about writing to either buffer or a texture descriptor. */
-			union WriteInfo
-			{
-				VkDescriptorImageInfo Image;
-				VkDescriptorBufferInfo Buffer;
-				VkBufferView BufferView;
-			};
-
 			/** All GPU param data related to a single descriptor set. */
 			struct PerSetData
 			{
@@ -60,7 +52,9 @@ namespace bs
 				Vector<VulkanDescriptorSet*> Sets;
 
 				VkWriteDescriptorSet* WriteSetInfos;
-				WriteInfo* WriteInfos;
+				VkDescriptorImageInfo* ImageWriteInfos;
+				VkDescriptorBufferInfo* BufferWriteInfos;
+				VkBufferView* BufferViews;
 
 				u32 ElementCount;
 				u32 LastFreeSetIndex = ~0u;

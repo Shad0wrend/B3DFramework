@@ -50,29 +50,41 @@ namespace bs
 		virtual ~GpuPipelineParamInfoBase() = default;
 
 		/** Gets the total number of sets. */
-		u32 GetSetCount() const { return mNumSets; }
+		u32 GetSetCount() const { return mSetCount; }
 
 		/** Returns the total number of elements across all sets. */
-		u32 GetElementCount() const { return mNumElements; }
+		u32 GetResourceCount() const { return mResourceCount; }
 
 		/** Returns the number of elements in all sets for the specified parameter type. */
-		u32 GetElementCount(ParamType type) { return mNumElementsPerType[(int)type]; }
+		u32 GetResourceCount(ParamType type) const { return mResourceCountPerType[(u32)type]; }
+
+		/** Returns the total number of slots across all sets. */
+		u32 GetBindingSlotCount() const { return mBindingSlotCount; }
+
+		/** Returns the number of slots in all sets for the specified parameter type. */
+		u32 GetBindingSlotCount(ParamType type) { return mBindingSlotCountPerType[(u32)type]; }
 
 		/**
-		 * Converts a set/slot combination into a sequential index that maps to the parameter in that parameter type's
-		 * array.
+		 * Converts a set/slot/array index combination into a sequential index that maps to the parameter in that parameter type's array.
 		 *
-		 * If the set or slot is out of valid range, the method logs an error and returns -1. Only performs range checking
-		 * in debug mode.
+		 * If the set, slot or array index is out of valid range, the method logs an error and returns ~0u. Only performs range checking in debug mode.
 		 */
-		u32 GetSequentialSlot(ParamType type, u32 set, u32 slot) const;
+		u32 GetSequentialResourceIndex(ParamType type, u32 set, u32 slot, u32 arrayIndex) const;
 
-		/** Converts a sequential slot index into a set/slot combination. */
-		void GetBinding(ParamType type, u32 sequentialSlot, u32& set, u32& slot) const;
+		/**
+		 * Converts a set and slot combination into a sequential index that maps to the parameter in that parameter type's array. This is similar to
+		 * GetSequentialResourceIndex(), but does not account for array indices.
+		 *
+		 * If the set or slot is out of valid range, the method logs an error and returns ~0u. Only performs range checking in debug mode.
+		 */
+		u32 GetSequentialBindingIndex(ParamType type, u32 set, u32 slot) const;
+
+		/** Converts a sequential binding index index into a set/slot combination. */
+		void GetBinding(ParamType type, u32 sequentialBindingIndex, u32& set, u32& slot) const;
 
 		/**
 		 * Finds set/slot indices of a parameter with the specified name for the specified GPU program stage. Set/slot
-		 * indices are set to -1 if a stage doesn't have a block with the specified name.
+		 * indices are set to ~0u if a stage doesn't have a block with the specified name.
 		 */
 		void GetBinding(GpuProgramType progType, ParamType type, const String& name, GpuParamBinding& binding);
 
@@ -82,6 +94,9 @@ namespace bs
 		 */
 		void GetBindings(ParamType type, const String& name, GpuParamBinding (&bindings)[GPT_COUNT]);
 
+		/** Returns the number of entries in the array at the specified binding index. */
+		u32 GetArraySize(ParamType type, u32 sequentialBindingIndex);
+
 		/** Returns descriptions of individual parameters for the specified GPU program type. */
 		const SPtr<GpuParamDesc>& GetParamDesc(GpuProgramType type) const { return mParamDescs[(int)type]; }
 
@@ -89,25 +104,32 @@ namespace bs
 		/** Information about a single set in the param info object. */
 		struct SetInfo
 		{
-			u32* SlotIndices;
-			ParamType* SlotTypes;
-			u32* SlotSamplers;
-			u32 NumSlots;
+			u32* SlotToSequentialBindingIndex = nullptr;
+			u32* SlotToSequentialResourceIndex = nullptr;
+			u32* SlotToSequentialSamplerBindingIndex = nullptr;
+			u32* SlotToSequentialSamplerResourceIndex = nullptr;
+			u32* SlotArraySizes = nullptr;
+			ParamType* SlotTypes = nullptr;
+			u32 SlotCount = 0;
 		};
 
 		/** Information how a resource maps to a certain set/slot. */
 		struct ResourceInfo
 		{
-			u32 Set;
-			u32 Slot;
+			u32 Set = 0;
+			u32 Slot = 0;
+			u32 ArraySize = 1;
 		};
 
 		std::array<SPtr<GpuParamDesc>, 6> mParamDescs;
 
-		u32 mNumSets;
-		u32 mNumElements;
-		SetInfo* mSetInfos;
-		u32 mNumElementsPerType[(int)ParamType::Count];
+		u32 mSetCount = 0;
+		SetInfo* mSetInfos = nullptr;
+
+		u32 mBindingSlotCount = 0;
+		u32 mBindingSlotCountPerType[(int)ParamType::Count];
+		u32 mResourceCount = 0;
+		u32 mResourceCountPerType[(int)ParamType::Count];
 		ResourceInfo* mResourceInfos[(int)ParamType::Count];
 
 		GroupAlloc mAlloc;

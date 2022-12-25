@@ -23,7 +23,7 @@ namespace bs
 		public:
 			ParamBlockParam() = default;
 
-			ParamBlockParam(const GpuParamDataDesc& paramDesc)
+			ParamBlockParam(const GpuDataParameterInformation& paramDesc)
 				: mParamDesc(paramDesc)
 			{}
 
@@ -124,7 +124,7 @@ namespace bs
 			}
 
 		protected:
-			GpuParamDataDesc mParamDesc;
+			GpuDataParameterInformation mParamDesc;
 		};
 
 		/** Base class for all parameter blocks. */
@@ -158,7 +158,7 @@ namespace bs
  * to GPU program buffers (for example uniform buffer in OpenGL or constant buffer in DX). Must be followed by
  * B3D_PARAM_BLOCK_END.
  */
-#define B3D_PARAM_BLOCK_BEGIN(Name)                                                                   \
+#define B3D_PARAM_BLOCK_BEGIN(Name)                                                                  \
 	struct Name : ParamBlock                                                                         \
 	{                                                                                                \
 		Name()                                                                                       \
@@ -174,7 +174,7 @@ namespace bs
 		u32 GetSize() const																			 \
 		{																						     \
 			return mBlockSize;																		 \
-		}																					 \
+		}																							 \
                                                                                                      \
 	private:                                                                                         \
 		friend class ParamBlockManager;                                                              \
@@ -184,17 +184,17 @@ namespace bs
 			mParams = GetEntries();                                                                  \
 			RenderAPI& rapi = RenderAPI::Instance();                                                 \
                                                                                                      \
-			GpuParamBlockDesc blockDesc = rapi.GenerateParamBlockDesc(#Name, mParams);               \
-			mBlockSize = blockDesc.BlockSize * sizeof(u32);                                          \
+			GpuParameterBlockInformation blockInformation = rapi.GenerateParamBlockDesc(#Name, mParams);  \
+			mBlockSize = blockInformation.BlockSize * sizeof(u32);                                   \
                                                                                                      \
 			InitEntries();                                                                           \
 		}                                                                                            \
                                                                                                      \
 		struct META_FirstEntry                                                                       \
 		{};                                                                                          \
-		static void META_GetPrevEntries(Vector<GpuParamDataDesc>& params, META_FirstEntry id)        \
+		static void META_GetPrevEntries(Vector<GpuDataParameterInformation>& params, META_FirstEntry id)        \
 		{}                                                                                           \
-		void META_InitPrevEntry(const Vector<GpuParamDataDesc>& params, u32 idx, META_FirstEntry id) \
+		void META_InitPrevEntry(const Vector<GpuDataParameterInformation>& params, u32 idx, META_FirstEntry id) \
 		{}                                                                                           \
                                                                                                      \
 		typedef META_FirstEntry
@@ -207,19 +207,19 @@ namespace bs
                                                                                                         \
 	struct META_NextEntry_##Name_                                                                       \
 	{};                                                                                                 \
-	static void META_GetPrevEntries(Vector<GpuParamDataDesc>& params, META_NextEntry_##Name_ id)        \
+	static void META_GetPrevEntries(Vector<GpuDataParameterInformation>& params, META_NextEntry_##Name_ id)        \
 	{                                                                                                   \
 		META_GetPrevEntries(params, META_Entry_##Name_());                                              \
                                                                                                         \
-		params.push_back(GpuParamDataDesc());                                                           \
-		GpuParamDataDesc& newEntry = params.back();                                                     \
+		params.push_back(GpuDataParameterInformation());                                                \
+		GpuDataParameterInformation& newEntry = params.back();                                          \
 		newEntry.Name = #Name_;                                                                         \
 		newEntry.Type = (GpuParamDataType)TGpuDataParamInfo<Type_>::TypeId;                             \
 		newEntry.ArraySize = ElementCount;                                                              \
 		newEntry.ElementSize = sizeof(Type_);                                                           \
 	}                                                                                                   \
                                                                                                         \
-	void META_InitPrevEntry(const Vector<GpuParamDataDesc>& params, u32 idx, META_NextEntry_##Name_ id) \
+	void META_InitPrevEntry(const Vector<GpuDataParameterInformation>& params, u32 idx, META_NextEntry_##Name_ id) \
 	{                                                                                                   \
 		META_InitPrevEntry(params, idx - 1, META_Entry_##Name_());                                      \
 		Name_ = ParamBlockParam<Type_>(params[idx]);                                                    \
@@ -237,12 +237,12 @@ private:                                                                        
 #define B3D_PARAM_BLOCK_ENTRY(Type, Name) B3D_PARAM_BLOCK_ENTRY_ARRAY(Type, Name, 1)
 
 /** Ends parameter block definition. See B3D_PARAM_BLOCK_BEGIN. */
-#define B3D_PARAM_BLOCK_END                                                      \
+#define B3D_PARAM_BLOCK_END                                                     \
 	META_LastEntry;                                                             \
                                                                                 \
-	static Vector<GpuParamDataDesc> GetEntries()                                \
+	static Vector<GpuDataParameterInformation> GetEntries()                     \
 	{                                                                           \
-		Vector<GpuParamDataDesc> entries;                                       \
+		Vector<GpuDataParameterInformation> entries;                            \
 		META_GetPrevEntries(entries, META_LastEntry());                         \
 		return entries;                                                         \
 	}                                                                           \
@@ -252,7 +252,7 @@ private:                                                                        
 		META_InitPrevEntry(mParams, (u32)mParams.size() - 1, META_LastEntry()); \
 	}                                                                           \
                                                                                 \
-	Vector<GpuParamDataDesc> mParams;                                           \
+	Vector<GpuDataParameterInformation> mParams;                                \
 	u32 mBlockSize;                                                             \
 	}                                                                           \
 	;

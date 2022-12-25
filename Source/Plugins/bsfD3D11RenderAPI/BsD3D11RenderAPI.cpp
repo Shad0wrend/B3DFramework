@@ -1304,9 +1304,9 @@ void D3D11RenderAPI::ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& des
 	dest[2][3] = (dest[2][3] + dest[3][3]) / 2;
 }
 
-GpuParamBlockDesc D3D11RenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params)
+GpuParameterBlockInformation D3D11RenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params)
 {
-	GpuParamBlockDesc block;
+	GpuParameterBlockInformation block;
 	block.BlockSize = 0;
 	block.IsShareable = true;
 	block.Name = name;

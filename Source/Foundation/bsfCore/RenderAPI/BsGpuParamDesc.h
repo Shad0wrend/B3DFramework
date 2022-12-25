@@ -11,7 +11,7 @@ namespace bs
 	 */
 
 	/** Describes a single GPU program data (for example int, float, Vector2) parameter. */
-	struct GpuParamDataDesc
+	struct GpuDataParameterInformation
 	{
 		String Name;
 		u32 ElementSize; /**< In multiples of 4 bytes. */
@@ -26,23 +26,19 @@ namespace bs
 	};
 
 	/**	Describes a single GPU program object (for example texture, sampler state) parameter. */
-	struct GpuParamObjectDesc
+	struct GpuObjectParameterInformation
 	{
 		String Name;
 		GpuParamObjectType Type;
 
-		/** Slot within a set. Uniquely identifies bind location in the GPU pipeline, together with the set. */
-		u32 Slot;
-
-		/** Uniquely identifies the bind location in the GPU pipeline, together with the slot. */
-		u32 Set;
-
-		/** Underlying type of individual elements in the buffer or texture. */
-		GpuBufferFormat ElementType = BF_UNKNOWN;
+		u32 Slot; /**< Slot within a set. Uniquely identifies bind location in the GPU pipeline, together with the set. */
+		u32 Set; /**< Uniquely identifies the bind location in the GPU pipeline, together with the slot. */
+		GpuBufferFormat ElementType = BF_UNKNOWN; /**< Underlying type of individual elements in the buffer or texture. */
+		u32 ArraySize = 1; /**< Number of elements in the array, if the parameter is an array. */
 	};
 
 	/**	Describes a GPU program parameter block (collection of GPU program data parameters). */
-	struct GpuParamBlockDesc
+	struct GpuParameterBlockInformation
 	{
 		String Name;
 		u32 Slot; /** Slot within a set. Uniquely identifies bind location in the GPU pipeline, together with the set. */
@@ -54,13 +50,13 @@ namespace bs
 	/** Contains all parameter information for a GPU program, including data and object parameters, plus parameter blocks. */
 	struct B3D_CORE_EXPORT GpuParamDesc : IReflectable
 	{
-		Map<String, GpuParamBlockDesc> ParamBlocks;
-		Map<String, GpuParamDataDesc> Params;
+		Map<String, GpuParameterBlockInformation> ParamBlocks;
+		Map<String, GpuDataParameterInformation> Params;
 
-		Map<String, GpuParamObjectDesc> Samplers;
-		Map<String, GpuParamObjectDesc> Textures;
-		Map<String, GpuParamObjectDesc> LoadStoreTextures;
-		Map<String, GpuParamObjectDesc> Buffers;
+		Map<String, GpuObjectParameterInformation> Samplers;
+		Map<String, GpuObjectParameterInformation> Textures;
+		Map<String, GpuObjectParameterInformation> LoadStoreTextures;
+		Map<String, GpuObjectParameterInformation> Buffers;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/

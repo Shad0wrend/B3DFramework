@@ -84,7 +84,7 @@ namespace bs
 
 	public:
 		TGpuDataParam();
-		TGpuDataParam(GpuParamDataDesc* paramDesc, const GpuParamsType& parent);
+		TGpuDataParam(GpuDataParameterInformation* paramDesc, const GpuParamsType& parent);
 
 		/**
 		 * Sets a parameter value at the specified array index. If parameter does not contain an array leave the index at 0.
@@ -104,7 +104,7 @@ namespace bs
 		T Get(u32 arrayIdx = 0) const;
 
 		/** Returns meta-data about the parameter. */
-		const GpuParamDataDesc& GetDesc() const { return *mParamDesc; }
+		const GpuDataParameterInformation& GetDesc() const { return *mParamDesc; }
 
 		/** Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const
@@ -114,7 +114,7 @@ namespace bs
 
 	protected:
 		GpuParamsType mParent;
-		GpuParamDataDesc* mParamDesc;
+		GpuDataParameterInformation* mParamDesc;
 	};
 
 	/** @copydoc TGpuDataParam */
@@ -126,7 +126,7 @@ namespace bs
 		using GpuParamsType = SPtr<CoreVariantType<GpuParams, Core>>;
 
 		TGpuParamStruct();
-		TGpuParamStruct(GpuParamDataDesc* paramDesc, const GpuParamsType& parent);
+		TGpuParamStruct(GpuDataParameterInformation* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::Set */
 		void Set(const void* value, u32 sizeBytes, u32 arrayIdx = 0) const;
@@ -138,7 +138,7 @@ namespace bs
 		u32 GetElementSize() const;
 
 		/** Returns meta-data about the parameter. */
-		const GpuParamDataDesc& GetDesc() const { return *mParamDesc; }
+		const GpuDataParameterInformation& GetDesc() const { return *mParamDesc; }
 
 		/**	Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const
@@ -148,7 +148,7 @@ namespace bs
 
 	protected:
 		GpuParamsType mParent;
-		GpuParamDataDesc* mParamDesc;
+		GpuDataParameterInformation* mParamDesc;
 	};
 
 	/** @copydoc TGpuDataParam */
@@ -164,16 +164,16 @@ namespace bs
 
 	public:
 		TGpuParamTexture();
-		TGpuParamTexture(GpuParamObjectDesc* paramDesc, const GpuParamsType& parent);
+		TGpuParamTexture(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::Set */
-		void Set(const TextureType& texture, const TextureSurface& surface = TextureSurface::kComplete) const;
+		void Set(const TextureType& texture, const TextureSurface& surface = TextureSurface::kComplete, u32 arrayIndex = 0) const;
 
 		/** @copydoc TGpuDataParam::Get */
-		TextureType Get() const;
+		TextureType Get(u32 arrayIndex = 0) const;
 
 		/** @copydoc TGpuDataParam::GetDesc */
-		const GpuParamObjectDesc& GetDesc() const { return *mParamDesc; }
+		const GpuObjectParameterInformation& GetDesc() const { return *mParamDesc; }
 
 		/** Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const
@@ -183,7 +183,7 @@ namespace bs
 
 	protected:
 		GpuParamsType mParent;
-		GpuParamObjectDesc* mParamDesc;
+		GpuObjectParameterInformation* mParamDesc;
 	};
 
 	/** @copydoc TGpuDataParam */
@@ -199,16 +199,16 @@ namespace bs
 
 	public:
 		TGpuParamLoadStoreTexture();
-		TGpuParamLoadStoreTexture(GpuParamObjectDesc* paramDesc, const GpuParamsType& parent);
+		TGpuParamLoadStoreTexture(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::Set */
-		void Set(const TextureType& texture, const TextureSurface& surface = TextureSurface()) const;
+		void Set(const TextureType& texture, const TextureSurface& surface = TextureSurface(), u32 arrayIndex = 0) const;
 
 		/** @copydoc TGpuDataParam::Get */
-		TextureType Get() const;
+		TextureType Get(u32 arrayIndex = 0) const;
 
 		/** @copydoc TGpuDataParam::GetDesc */
-		const GpuParamObjectDesc& GetDesc() const { return *mParamDesc; }
+		const GpuObjectParameterInformation& GetDesc() const { return *mParamDesc; }
 
 		/**	Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const
@@ -218,7 +218,7 @@ namespace bs
 
 	protected:
 		GpuParamsType mParent;
-		GpuParamObjectDesc* mParamDesc;
+		GpuObjectParameterInformation* mParamDesc;
 	};
 
 	/** @copydoc TGpuDataParam */
@@ -234,16 +234,16 @@ namespace bs
 
 	public:
 		TGpuParamBuffer();
-		TGpuParamBuffer(GpuParamObjectDesc* paramDesc, const GpuParamsType& parent);
+		TGpuParamBuffer(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::Set */
-		void Set(const BufferType& buffer) const;
+		void Set(const BufferType& buffer, u32 arrayIndex = 0) const;
 
 		/** @copydoc TGpuDataParam::Get */
-		BufferType Get() const;
+		BufferType Get(u32 arrayIndex = 0) const;
 
 		/** @copydoc TGpuDataParam::GetDesc */
-		const GpuParamObjectDesc& GetDesc() const { return *mParamDesc; }
+		const GpuObjectParameterInformation& GetDesc() const { return *mParamDesc; }
 
 		/** Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const
@@ -253,7 +253,7 @@ namespace bs
 
 	protected:
 		GpuParamsType mParent;
-		GpuParamObjectDesc* mParamDesc;
+		GpuObjectParameterInformation* mParamDesc;
 	};
 
 	/** @copydoc TGpuDataParam */
@@ -269,16 +269,16 @@ namespace bs
 
 	public:
 		TGpuParamSampState();
-		TGpuParamSampState(GpuParamObjectDesc* paramDesc, const GpuParamsType& parent);
+		TGpuParamSampState(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::Set */
-		void Set(const SamplerStateType& samplerState) const;
+		void Set(const SamplerStateType& samplerState, u32 arrayIndex = 0) const;
 
 		/** @copydoc TGpuDataParam::Get */
-		SamplerStateType Get() const;
+		SamplerStateType Get(u32 arrayIndex = 0) const;
 
 		/** @copydoc TGpuDataParam::GetDesc */
-		const GpuParamObjectDesc& GetDesc() const { return *mParamDesc; }
+		const GpuObjectParameterInformation& GetDesc() const { return *mParamDesc; }
 
 		/**	Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const
@@ -288,7 +288,7 @@ namespace bs
 
 	protected:
 		GpuParamsType mParent;
-		GpuParamObjectDesc* mParamDesc;
+		GpuObjectParameterInformation* mParamDesc;
 	};
 
 	/** @} */

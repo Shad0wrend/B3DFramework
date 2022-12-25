@@ -133,7 +133,7 @@ namespace bs
 		 * Parses the root AST node and outputs a list of all mixins/shaders and their meta-data, sub-shader meta-data,
 		 * as well as any global shader options.
 		 */
-		static BSLFXCompileResult ParseMetaDataAndOptions(ASTFXNode* rootNode, Vector<std::pair<ASTFXNode*, ShaderMetaData>>& metaData, Vector<SubShaderData>& subShaders, SHADER_DESC& shaderDesc);
+		static BSLFXCompileResult ParseMetaDataAndOptions(ASTFXNode* rootNode, Vector<std::pair<ASTFXNode*, ShaderMetaData>>& metaData, Vector<SubShaderData>& subShaders, ShaderCreateInformation& shaderDesc);
 
 		/** Parses the sub-shader node and outputs the relevant data. */
 		static SubShaderData ParseSubShader(ASTFXNode* subShader);
@@ -250,7 +250,7 @@ namespace bs
 		 * @param[in]	optionsNode		Node to parse.
 		 * @param[in]	shaderDesc		Descriptor to apply the found options to.
 		 */
-		static void ParseOptions(ASTFXNode* optionsNode, SHADER_DESC& shaderDesc);
+		static void ParseOptions(ASTFXNode* optionsNode, ShaderCreateInformation& shaderDesc);
 
 		/**
 		 * Iterates over all provided mixins/shaders and inherits any variations. The variations are written in-place, to
@@ -259,7 +259,7 @@ namespace bs
 		static BSLFXCompileResult PopulateVariations(Vector<std::pair<ASTFXNode*, ShaderMetaData>>& shaderMetaData);
 
 		/** Populates the information about variation parameters and their values. */
-		static void PopulateVariationParamInfos(const ShaderMetaData& shaderMetaData, SHADER_DESC& desc);
+		static void PopulateVariationParamInfos(const ShaderMetaData& shaderMetaData, ShaderCreateInformation& desc);
 
 		/**
 		 * Parses the provided source and generates a SHADER_DESC containing techniques for all shader variations, any
@@ -275,7 +275,7 @@ namespace bs
 		 * @param[out]	includes			A list of all include files included by the BSL source.
 		 * @return							A result object containing an error message if not successful.
 		 */
-		static BSLFXCompileResult CompileShader(String source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, SHADER_DESC& shaderDesc, Vector<String>& includes);
+		static BSLFXCompileResult CompileShader(String source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, ShaderCreateInformation& shaderDesc, Vector<String>& includes);
 
 		/**
 		 * Uses the provided list of shaders/mixins to generate a list of techniques. A technique is generated for
@@ -294,7 +294,7 @@ namespace bs
 		 * @param[out]	includes			A list of all include files included by the BSL source.
 		 * @return							A result object containing an error message if not successful.
 		 */
-		static BSLFXCompileResult CompileTechniques(const Vector<std::pair<ASTFXNode*, ShaderMetaData>>& shaderMetaData, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, SHADER_DESC& shaderDesc, Vector<String>& includes);
+		static BSLFXCompileResult CompileTechniques(const Vector<std::pair<ASTFXNode*, ShaderMetaData>>& shaderMetaData, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, ShaderCreateInformation& shaderDesc, Vector<String>& includes);
 
 		/**
 		 * Generates a set of techniques for a single variation. Uses AST parse state as input, which must be created using
@@ -312,7 +312,7 @@ namespace bs
 		 *								registered with.
 		 * @return						A result object containing an error message if not successful.
 		 */
-		static BSLFXCompileResult CompileTechniques(ParseState* parseState, const String& name, const Vector<String>& codeBlocks, const ShaderVariation& variation, ShadingLanguageFlags languages, UnorderedSet<String>& includes, SHADER_DESC& shaderDesc);
+		static BSLFXCompileResult CompileTechniques(ParseState* parseState, const String& name, const Vector<String>& codeBlocks, const ShaderVariation& variation, ShadingLanguageFlags languages, UnorderedSet<String>& includes, ShaderCreateInformation& shaderDesc);
 
 		/**
 		 * Converts a null-terminated string into a standard string, and eliminates quotes that are assumed to be at the

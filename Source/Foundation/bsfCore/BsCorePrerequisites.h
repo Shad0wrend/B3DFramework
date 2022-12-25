@@ -380,9 +380,9 @@ namespace bs
 	class RenderStateManager;
 	class GpuParamBlock;
 	struct GpuParamDesc;
-	struct GpuParamDataDesc;
-	struct GpuParamObjectDesc;
-	struct GpuParamBlockDesc;
+	struct GpuDataParameterInformation;
+	struct GpuObjectParameterInformation;
+	struct GpuParameterBlockInformation;
 	class ShaderInclude;
 	class CoreObject;
 	class ImportOptions;

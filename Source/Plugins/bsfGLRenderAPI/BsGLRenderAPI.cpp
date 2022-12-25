@@ -718,7 +718,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<Comm
 
 						for(auto iter = paramDesc->Params.begin(); iter != paramDesc->Params.end(); ++iter)
 						{
-							const GpuParamDataDesc& param = iter->second;
+							const GpuDataParameterInformation& param = iter->second;
 
 							if(param.ParamBlockSlot != 0) // 0 means uniforms are not in a block
 								continue;
@@ -2644,9 +2644,9 @@ void GLRenderAPI::ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest)
 	dest = matrix;
 }
 
-GpuParamBlockDesc GLRenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuParamDataDesc>& params)
+GpuParameterBlockInformation GLRenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params)
 {
-	GpuParamBlockDesc block;
+	GpuParameterBlockInformation block;
 	block.BlockSize = 0;
 	block.IsShareable = true;
 	block.Name = name;

@@ -53,7 +53,7 @@ namespace bs
 			 * Parses a variable with the specified type and variable description. Adds the variable in the provided GPU params
 			 * description object and assigns it to the provided param block.
 			 */
-			void ParseVariable(D3D11_SHADER_TYPE_DESC& varTypeDesc, D3D11_SHADER_VARIABLE_DESC& varDesc, GpuParamDesc& desc, GpuParamBlockDesc& paramBlock);
+			void ParseVariable(D3D11_SHADER_TYPE_DESC& varTypeDesc, D3D11_SHADER_VARIABLE_DESC& varDesc, GpuParamDesc& desc, GpuParameterBlockInformation& paramBlock);
 
 			/** Maps a parameter in a specific shader stage, of a specific type to a unique set index. */
 			static u32 MapParameterToSet(GpuProgramType progType, ParamType paramType);

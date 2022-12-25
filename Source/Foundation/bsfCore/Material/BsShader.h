@@ -32,13 +32,13 @@ namespace bs
 		ShaderType Shader;
 	};
 
-	/** Shared memebers between SHADER_DATA_PARAM_DESC and SHADER_OBJECT_PARAM_DESC */
-	struct SHADER_PARAM_COMMON
+	/** Information about a shader parameter. */
+	struct ShaderParameterInformation
 	{
-		SHADER_PARAM_COMMON() = default;
+		ShaderParameterInformation() = default;
 
-		SHADER_PARAM_COMMON(String name, String gpuVariableName, StringID rendererSemantic = StringID::kNone)
-			: Name(std::move(name)), GpuVariableName(gpuVariableName), RendererSemantic(rendererSemantic)
+		ShaderParameterInformation(String name, String gpuVariableName, StringID rendererSemantic = StringID::kNone)
+			: Name(std::move(name)), GpuVariableName(std::move(gpuVariableName)), RendererSemantic(rendererSemantic)
 		{}
 
 		/** The name of the parameter. Name must be unique between all data and object parameters in a shader. */
@@ -57,10 +57,10 @@ namespace bs
 		StringID RendererSemantic;
 
 		/** Index of the default value inside the Shader. Should not be set externally by the user. */
-		u32 DefaultValueIdx = (u32)-1;
+		u32 DefaultValueIndex = ~0u;
 
 		/** Index to a set of optional attributes attached to the parameter. Should not be set externally by the user. */
-		u32 AttribIdx = (u32)-1;
+		u32 AttributeIndex = ~0u;
 	};
 
 	/** @} */
@@ -72,14 +72,14 @@ namespace bs
 	/**
 	 * Describes a single data (int, Vector2, etc.) shader parameter.
 	 *
-	 * @see	Shader::addParameter().
+	 * @see	Shader::AddParameter().
 	 */
-	struct SHADER_DATA_PARAM_DESC : SHADER_PARAM_COMMON
+	struct ShaderDataParameterInformation : ShaderParameterInformation
 	{
-		SHADER_DATA_PARAM_DESC() = default;
+		ShaderDataParameterInformation() = default;
 
-		SHADER_DATA_PARAM_DESC(String name, String gpuVariableName, GpuParamDataType type, StringID rendererSemantic = StringID::kNone, u32 arraySize = 1, u32 elementSize = 0)
-			: SHADER_PARAM_COMMON(std::move(name), std::move(gpuVariableName), rendererSemantic)
+		ShaderDataParameterInformation(String name, String gpuVariableName, GpuParamDataType type, StringID rendererSemantic = StringID::kNone, u32 arraySize = 1, u32 elementSize = 0)
+			: ShaderParameterInformation(std::move(name), std::move(gpuVariableName), rendererSemantic)
 			, Type(type)
 			, ArraySize(arraySize)
 			, ElementSize(elementSize)
@@ -101,30 +101,28 @@ namespace bs
 	/**
 	 * Describes a single object (texture, sampler state, etc.) shader parameter.
 	 *
-	 * @see	Shader::addParameter().
+	 * @see	Shader::AddParameter().
 	 */
-	struct SHADER_OBJECT_PARAM_DESC : SHADER_PARAM_COMMON
+	struct ShaderObjectParameterInformation : ShaderParameterInformation
 	{
-		SHADER_OBJECT_PARAM_DESC() = default;
+		ShaderObjectParameterInformation() = default;
 
-		SHADER_OBJECT_PARAM_DESC(String name, String gpuVariableName, GpuParamObjectType type, StringID rendererSemantic = StringID::kNone)
-			: SHADER_PARAM_COMMON(std::move(name), gpuVariableName, rendererSemantic), Type(type)
+		ShaderObjectParameterInformation(String name, String gpuVariableName, GpuParamObjectType type, StringID rendererSemantic = StringID::kNone, u32 arraySize = 1)
+			: ShaderParameterInformation(std::move(name), gpuVariableName, rendererSemantic), Type(type), ArraySize(arraySize)
 		{
 			GpuVariableNames.emplace_back(gpuVariableName);
 		}
 
-		/** The type of the parameter, must be the same as the type in GpuProgram. */
-		GpuParamObjectType Type = GPOT_TEXTURE2D;
-
-		/** Names of all GPU variables this shader parameter maps to. */
-		Vector<String> GpuVariableNames;
+		GpuParamObjectType Type = GPOT_TEXTURE2D; /**< The type of the parameter, must be the same as the type in GpuProgram. */
+		u32 ArraySize = 1; /**< Number of elements in the array, if the parameter is an array. */
+		Vector<String> GpuVariableNames; /**< Names of all GPU variables this shader parameter maps to. */
 	};
 
 	/** Describes a shader parameter block. */
-	struct SHADER_PARAM_BLOCK_DESC
+	struct ShaderParameterBlockInformation
 	{
 		String Name;
-		bool Shared;
+		bool Shared = false;
 		StringID RendererSemantic;
 		GpuBufferUsage Usage;
 	};
@@ -150,7 +148,7 @@ namespace bs
 	};
 
 	/** Optional attribute that can be applied to a shader parameter. */
-	struct SHADER_PARAM_ATTRIBUTE
+	struct ShaderParameterAttribute
 	{
 		/** Type of the attribute. */
 		ShaderParamAttributeType Type = (ShaderParamAttributeType)0;
@@ -159,11 +157,11 @@ namespace bs
 		String Value;
 
 		/** Index of the next attribute in the linked list for this parameter. Should not be set externally by the user. */
-		u32 NextParamIdx = (u32)-1;
+		u32 NextParameterIndex = ~0u;
 	};
 
 	/** Represents a single potential value of a shader variation parameter and optionally its name. */
-	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Renderer), ExportAsStruct(true)) ShaderVariationParamValue
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Renderer), ExportAsStruct(true)) ShaderVariationParameterValue
 	{
 		/** Optional human-readable name describing what this particular value represents. */
 		String Name;
@@ -173,7 +171,7 @@ namespace bs
 	};
 
 	/** Represents a single shader variation parameter and a set of all possible values. */
-	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Renderer), ExportAsStruct(true)) ShaderVariationParamInfo
+	struct B3D_SCRIPT_EXPORT(DocumentationGroup(Renderer), ExportAsStruct(true)) ShaderVariationParameterInformation
 	{
 		/** Optional human-readable name describing the variation parameter. */
 		String Name;
@@ -185,7 +183,7 @@ namespace bs
 		bool IsInternal = true;
 
 		/** A list of potential values this parameter can take on. */
-		SmallVector<ShaderVariationParamValue, 4> Values;
+		SmallVector<ShaderVariationParameterValue, 4> Values;
 	};
 
 	/**
@@ -230,14 +228,14 @@ namespace bs
 
 	/** Structure used for initializing a shader. */
 	template <bool Core>
-	struct B3D_CORE_EXPORT TSHADER_DESC
+	struct B3D_CORE_EXPORT TShaderCreateInformation
 	{
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 		using SamplerStateType = SPtr<CoreVariantType<SamplerState, Core>>;
 		using TechniqueType = CoreVariantType<Technique, Core>;
 		using SubShaderType = typename TSubShaderType<Core>::Type;
 
-		TSHADER_DESC();
+		TShaderCreateInformation();
 
 		/**
 		 * Registers a new data (int, Vector2, etc.) parameter you that you may then use via Material by providing the
@@ -251,7 +249,7 @@ namespace bs
 		 *
 		 * @note	If multiple parameters are given with the same name but different types behavior is undefined.
 		 */
-		void AddParameter(SHADER_DATA_PARAM_DESC paramDesc, u8* defaultValue = nullptr);
+		void AddParameter(ShaderDataParameterInformation paramDesc, u8* defaultValue = nullptr);
 
 		/**
 		 * Registers a new object (texture, sampler state, etc.) parameter you that you may then use via Material by
@@ -268,7 +266,7 @@ namespace bs
 		 * parameter is useful when you are defining a shader that supports techniques across different render systems
 		 * where GPU variable names for the same parameters might differ.
 		 */
-		void AddParameter(SHADER_OBJECT_PARAM_DESC paramDesc);
+		void AddParameter(ShaderObjectParameterInformation paramDesc);
 
 		/**
 		 * @see	SHADER_DESC::addParameter(SHADER_OBJECT_PARAM_DESC)
@@ -278,7 +276,7 @@ namespace bs
 		 * object parameter upon Material creation. Default sampler value is only valid if the object type is one of the
 		 * sampler types.
 		 */
-		void AddParameter(SHADER_OBJECT_PARAM_DESC paramDesc, const SamplerStateType& defaultValue);
+		void AddParameter(ShaderObjectParameterInformation paramDesc, const SamplerStateType& defaultValue);
 
 		/**
 		 * @see	SHADER_DESC::addParameter(SHADER_OBJECT_PARAM_DESC)
@@ -288,7 +286,7 @@ namespace bs
 		 * object parameter upon Material creation. Default texture value is only valid if the object type is one of the
 		 * texture types.
 		 */
-		void AddParameter(SHADER_OBJECT_PARAM_DESC paramDesc, const TextureType& defaultValue);
+		void AddParameter(ShaderObjectParameterInformation paramDesc, const TextureType& defaultValue);
 
 		/**
 		 * Applies an attribute to the parameter with the specified name.
@@ -296,7 +294,7 @@ namespace bs
 		 * @param[in]	name	Name of an object or data parameter to apply the attribute to.
 		 * @param[in]	attrib	Structure describing the attribute to apply.
 		 */
-		void SetParameterAttribute(const String& name, const SHADER_PARAM_ATTRIBUTE& attrib);
+		void SetParameterAttribute(const String& name, const ShaderParameterAttribute& attrib);
 
 		/**
 		 * Changes parameters of a parameter block with the specified name.
@@ -362,18 +360,18 @@ namespace bs
 		 * Information about all variation parameters and their possible values. Each permutation of variation parameters
 		 * represents a separate shader technique.
 		 */
-		Vector<ShaderVariationParamInfo> VariationParams;
+		Vector<ShaderVariationParameterInformation> VariationParams;
 
-		Map<String, SHADER_DATA_PARAM_DESC> DataParams;
-		Map<String, SHADER_OBJECT_PARAM_DESC> TextureParams;
-		Map<String, SHADER_OBJECT_PARAM_DESC> BufferParams;
-		Map<String, SHADER_OBJECT_PARAM_DESC> SamplerParams;
-		Map<String, SHADER_PARAM_BLOCK_DESC> ParamBlocks;
+		Map<String, ShaderDataParameterInformation> DataParams;
+		Map<String, ShaderObjectParameterInformation> TextureParams;
+		Map<String, ShaderObjectParameterInformation> BufferParams;
+		Map<String, ShaderObjectParameterInformation> SamplerParams;
+		Map<String, ShaderParameterBlockInformation> ParamBlocks;
 
 		Vector<u8> DataDefaultValues;
 		Vector<SamplerStateType> SamplerDefaultValues;
 		Vector<TextureType> TextureDefaultValues;
-		Vector<SHADER_PARAM_ATTRIBUTE> ParamAttributes;
+		Vector<ShaderParameterAttribute> ParamAttributes;
 
 	private:
 		/**
@@ -381,7 +379,7 @@ namespace bs
 		 *
 		 * @note	Common method shared by different addParameter overloads.
 		 */
-		void AddParameterInternal(SHADER_OBJECT_PARAM_DESC paramDesc, u32 defaultValueIdx);
+		void AddParameterInternal(ShaderObjectParameterInformation paramDesc, u32 defaultValueIdx);
 	};
 
 	/**	Templated version of Shader used for implementing both sim and core thread variants. */
@@ -390,16 +388,16 @@ namespace bs
 	{
 	public:
 		using TechniqueType = CoreVariantType<Technique, Core>;
-		using TextureType = typename TSHADER_DESC<Core>::TextureType;
-		using SamplerStateType = typename TSHADER_DESC<Core>::SamplerStateType;
+		using TextureType = typename TShaderCreateInformation<Core>::TextureType;
+		using SamplerStateType = typename TShaderCreateInformation<Core>::SamplerStateType;
 		using SubShaderType = typename TSubShaderType<Core>::Type;
 
 		TShader(u32 id);
-		TShader(const String& name, const TSHADER_DESC<Core>& desc, u32 id);
+		TShader(const String& name, const TShaderCreateInformation<Core>& desc, u32 id);
 		virtual ~TShader();
 
 		/** Returns the total number of techniques in this shader. */
-		u32 GetNumTechniques() const { return (u32)mDesc.Techniques.size(); }
+		u32 GetTechniqueCount() const { return (u32)mDesc.Techniques.size(); }
 
 		/** Returns the list of all supported techniques based on current render API and renderer. */
 		Vector<SPtr<TechniqueType>> GetCompatibleTechniques() const;
@@ -428,26 +426,26 @@ namespace bs
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(VariationParams), Property(Getter))
 
-		const Vector<ShaderVariationParamInfo> GetVariationParams() const { return mDesc.VariationParams; }
+		const Vector<ShaderVariationParameterInformation> GetVariationParams() const { return mDesc.VariationParams; }
 
 		/**
 		 * Returns currently active queue sort type.
 		 *
-		 * @see		SHADER_DESC::queueSortType
+		 * @see		ShaderCreateInformation::QueueSortType
 		 */
 		QueueSortType GetQueueSortType() const { return mDesc.QueueSortType; }
 
 		/**
 		 * Returns currently active queue priority.
 		 *
-		 * @see		SHADER_DESC::queuePriority
+		 * @see		ShaderCreateInformation::QueuePriority
 		 */
 		i32 GetQueuePriority() const { return mDesc.QueuePriority; }
 
 		/**
 		 * Returns if separable passes are allowed.
 		 *
-		 * @see		SHADER_DESC::separablePasses
+		 * @see		ShaderCreateInformation::SeparablePasses
 		 */
 		bool GetAllowSeparablePasses() const { return mDesc.SeparablePasses; }
 
@@ -463,25 +461,25 @@ namespace bs
 		/**
 		 * Returns description for a data parameter with the specified name. Throws exception if the parameter doesn't exist.
 		 */
-		const SHADER_DATA_PARAM_DESC& GetDataParamDesc(const String& name) const;
+		const ShaderDataParameterInformation& GetDataParamDesc(const String& name) const;
 
 		/**
 		 * Returns description for a texture parameter with the specified name. Throws exception if the parameter doesn't
 		 * exist.
 		 */
-		const SHADER_OBJECT_PARAM_DESC& GetTextureParamDesc(const String& name) const;
+		const ShaderObjectParameterInformation& GetTextureParamDesc(const String& name) const;
 
 		/**
 		 * Returns description for a sampler parameter with the specified name. Throws exception if the parameter doesn't
 		 * exist.
 		 */
-		const SHADER_OBJECT_PARAM_DESC& GetSamplerParamDesc(const String& name) const;
+		const ShaderObjectParameterInformation& GetSamplerParamDesc(const String& name) const;
 
 		/**
 		 * Returns description for a buffer parameter with the specified name. Throws exception if the parameter doesn't
 		 * exist.
 		 */
-		const SHADER_OBJECT_PARAM_DESC& GetBufferParamDesc(const String& name) const;
+		const ShaderObjectParameterInformation& GetBufferParamDesc(const String& name) const;
 
 		/** Checks if the parameter with the specified name exists, and is a data parameter. */
 		bool HasDataParam(const String& name) const;
@@ -499,22 +497,22 @@ namespace bs
 		bool HasParamBlock(const String& name) const;
 
 		/**	Returns a map of all data parameters in the shader. */
-		const Map<String, SHADER_DATA_PARAM_DESC>& GetDataParams() const { return mDesc.DataParams; }
+		const Map<String, ShaderDataParameterInformation>& GetDataParams() const { return mDesc.DataParams; }
 
 		/**	Returns a map of all texture parameters in the shader. */
-		const Map<String, SHADER_OBJECT_PARAM_DESC>& GetTextureParams() const { return mDesc.TextureParams; }
+		const Map<String, ShaderObjectParameterInformation>& GetTextureParams() const { return mDesc.TextureParams; }
 
 		/**	Returns a map of all buffer parameters in the shader. */
-		const Map<String, SHADER_OBJECT_PARAM_DESC>& GetBufferParams() const { return mDesc.BufferParams; }
+		const Map<String, ShaderObjectParameterInformation>& GetBufferParams() const { return mDesc.BufferParams; }
 
 		/** Returns a map of all sampler parameters in the shader. */
-		const Map<String, SHADER_OBJECT_PARAM_DESC>& GetSamplerParams() const { return mDesc.SamplerParams; }
+		const Map<String, ShaderObjectParameterInformation>& GetSamplerParams() const { return mDesc.SamplerParams; }
 
 		/** Returns a map of all parameter blocks. */
-		const Map<String, SHADER_PARAM_BLOCK_DESC>& GetParamBlocks() const { return mDesc.ParamBlocks; }
+		const Map<String, ShaderParameterBlockInformation>& GetParamBlocks() const { return mDesc.ParamBlocks; }
 
 		/** Returns a list of all parameter attributes, as referenced by individual parameters. */
-		const Vector<SHADER_PARAM_ATTRIBUTE>& GetParamAttributes() const { return mDesc.ParamAttributes; }
+		const Vector<ShaderParameterAttribute>& GetParamAttributes() const { return mDesc.ParamAttributes; }
 
 		/**
 		 * Returns a default texture for a parameter that has the specified default value index (retrieved from the
@@ -539,7 +537,7 @@ namespace bs
 
 	protected:
 		String mName;
-		TSHADER_DESC<Core> mDesc;
+		TShaderCreateInformation<Core> mDesc;
 		u32 mId;
 	};
 
@@ -551,7 +549,7 @@ namespace bs
 		 *  @{
 		 */
 
-		typedef TSHADER_DESC<true> SHADER_DESC;
+		typedef TShaderCreateInformation<true> ShaderCreateInformation;
 
 		/** Core thread version of bs::SubShader. */
 		typedef TSubShader<true> SubShader;
@@ -563,7 +561,7 @@ namespace bs
 	 *  @{
 	 */
 
-	typedef TSHADER_DESC<false> SHADER_DESC;
+	typedef TShaderCreateInformation<false> ShaderCreateInformation;
 
 	/**
 	 * @native
@@ -615,7 +613,7 @@ namespace bs
 		static u32 GetDataParamSize(GpuParamDataType type);
 
 		/**	Creates a new shader resource using the provided descriptor and techniques. */
-		static HShader Create(const String& name, const SHADER_DESC& desc);
+		static HShader Create(const String& name, const ShaderCreateInformation& createInformation);
 
 		/**	Returns a shader object but doesn't initialize it. */
 		static SPtr<Shader> CreateEmpty();
@@ -628,20 +626,20 @@ namespace bs
 		/**
 		 * Creates a new shader object using the provided descriptor and techniques.
 		 *
-		 * @note	Internal method. Use create() for normal use.
+		 * @note	Internal method. Use Create() for normal use.
 		 */
-		static SPtr<Shader> CreatePtrInternal(const String& name, const SHADER_DESC& desc);
+		static SPtr<Shader> CreatePtrInternal(const String& name, const ShaderCreateInformation& createInformation);
 
 		/** @} */
 
 	private:
-		Shader(const String& name, const SHADER_DESC& desc, u32 id);
+		Shader(const String& name, const ShaderCreateInformation& createInformation, u32 id);
 
 		void GetCoreDependencies(Vector<CoreObject*>& dependencies) override;
 		SPtr<ct::CoreObject> CreateCore() const override;
 
 		/** Converts a sim thread version of the shader descriptor to a core thread version. */
-		ct::SHADER_DESC ConvertDesc(const SHADER_DESC& desc) const;
+		ct::ShaderCreateInformation ConvertDesc(const ShaderCreateInformation& createInformation) const;
 
 	private:
 		/************************************************************************/
@@ -688,12 +686,12 @@ namespace bs
 		{
 		public:
 			/** @copydoc bs::Shader::Create */
-			static SPtr<Shader> Create(const String& name, const SHADER_DESC& desc);
+			static SPtr<Shader> Create(const String& name, const ShaderCreateInformation& createInformation);
 
 		protected:
 			friend class bs::Shader;
 
-			Shader(const String& name, const SHADER_DESC& desc, u32 id);
+			Shader(const String& name, const ShaderCreateInformation& createInformation, u32 id);
 
 			static std::atomic<u32> mNextShaderId;
 		};

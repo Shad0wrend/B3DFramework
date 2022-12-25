@@ -197,7 +197,7 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 
 	GLchar* uniformName = (GLchar*)B3DAllocate(sizeof(GLchar) * maxBufferSize);
 
-	GpuParamBlockDesc newGlobalBlockDesc;
+	GpuParameterBlockInformation newGlobalBlockDesc;
 	newGlobalBlockDesc.Slot = 0;
 	newGlobalBlockDesc.Set = MapParameterToSet(type, ParamType::UniformBlock);
 	newGlobalBlockDesc.Name = "BS_INTERNAL_Globals";
@@ -205,7 +205,7 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 	newGlobalBlockDesc.IsShareable = false;
 
 	returnParamDesc.ParamBlocks[newGlobalBlockDesc.Name] = newGlobalBlockDesc;
-	GpuParamBlockDesc& globalBlockDesc = returnParamDesc.ParamBlocks[newGlobalBlockDesc.Name];
+	GpuParameterBlockInformation& globalBlockDesc = returnParamDesc.ParamBlocks[newGlobalBlockDesc.Name];
 
 	// Enumerate uniform blocks
 	GLint uniformBlockCount = 0;
@@ -234,7 +234,7 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 		B3D_CHECK_GL_ERROR();
 #endif
 
-		GpuParamBlockDesc newBlockDesc;
+		GpuParameterBlockInformation newBlockDesc;
 		newBlockDesc.Slot = index + 1;
 		newBlockDesc.Set = MapParameterToSet(type, ParamType::UniformBlock);
 		newBlockDesc.Name = uniformName;
@@ -258,7 +258,7 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 		glGetProgramResourceName(glProgram, GL_SHADER_STORAGE_BLOCK, index, maxBufferSize, &unusedSize, uniformName);
 		B3D_CHECK_GL_ERROR();
 
-		GpuParamObjectDesc bufferParam;
+		GpuObjectParameterInformation bufferParam;
 		bufferParam.Name = uniformName;
 		bufferParam.Slot = index;
 		bufferParam.Type = GPOT_RWSTRUCTURED_BUFFER;
@@ -269,7 +269,7 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 #endif
 
 	Map<String, u32> foundFirstArrayIndex;
-	Map<String, GpuParamDataDesc> foundStructs;
+	Map<String, GpuDataParameterInformation> foundStructs;
 
 	// Get the number of active uniforms
 	GLint uniformCount = 0;
@@ -514,13 +514,13 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 
 		if(isSampler)
 		{
-			GpuParamObjectDesc samplerParam;
+			GpuObjectParameterInformation samplerParam;
 			samplerParam.Name = paramName;
 			samplerParam.Type = samplerType;
 			samplerParam.Slot = glGetUniformLocation(glProgram, uniformName);
 			samplerParam.Set = MapParameterToSet(type, ParamType::Sampler);
 
-			GpuParamObjectDesc textureParam;
+			GpuObjectParameterInformation textureParam;
 			textureParam.Name = paramName;
 			textureParam.Type = textureType;
 			textureParam.Slot = samplerParam.Slot;
@@ -533,7 +533,7 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 		}
 		else if(isImage)
 		{
-			GpuParamObjectDesc textureParam;
+			GpuObjectParameterInformation textureParam;
 			textureParam.Name = paramName;
 			textureParam.Type = textureType;
 			textureParam.Slot = glGetUniformLocation(glProgram, uniformName);
@@ -545,7 +545,7 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 		}
 		else if(isBuffer)
 		{
-			GpuParamObjectDesc bufferParam;
+			GpuObjectParameterInformation bufferParam;
 			bufferParam.Name = paramName;
 			bufferParam.Type = GPOT_BYTE_BUFFER;
 			bufferParam.Slot = glGetUniformLocation(glProgram, uniformName);
@@ -557,7 +557,7 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 		}
 		else if(isRWBuffer)
 		{
-			GpuParamObjectDesc bufferParam;
+			GpuObjectParameterInformation bufferParam;
 			bufferParam.Name = paramName;
 			bufferParam.Type = GPOT_RWBYTE_BUFFER;
 			bufferParam.Slot = glGetUniformLocation(glProgram, uniformName);
@@ -578,7 +578,7 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 			glGetActiveUniformsiv(glProgram, 1, &index, GL_UNIFORM_BLOCK_INDEX, &blockIndex);
 			B3D_CHECK_GL_ERROR();
 
-			GpuParamDataDesc gpuParam;
+			GpuDataParameterInformation gpuParam;
 
 			if(isInArray)
 				gpuParam.Name = cleanParamName;
@@ -597,7 +597,7 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 				gpuParam.GpuMemOffset = blockOffset;
 
 				String& blockName = blockSlotToName[blockIndex + 1];
-				GpuParamBlockDesc& curBlockDesc = returnParamDesc.ParamBlocks[blockName];
+				GpuParameterBlockInformation& curBlockDesc = returnParamDesc.ParamBlocks[blockName];
 
 				gpuParam.ParamBlockSlot = curBlockDesc.Slot;
 				gpuParam.ParamBlockSet = MapParameterToSet(type, ParamType::UniformBlock);
@@ -632,8 +632,8 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 			// Create new definition if one doesn't exist
 			if(findExistingStruct == foundStructs.end())
 			{
-				foundStructs[structName] = GpuParamDataDesc();
-				GpuParamDataDesc& structDesc = foundStructs[structName];
+				foundStructs[structName] = GpuDataParameterInformation();
+				GpuDataParameterInformation& structDesc = foundStructs[structName];
 				structDesc.Type = GPDT_STRUCT;
 				structDesc.Name = structName;
 				structDesc.ArraySize = 1;
@@ -646,7 +646,7 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 			}
 
 			// Update struct with size of the new parameter
-			GpuParamDataDesc& structDesc = foundStructs[structName];
+			GpuDataParameterInformation& structDesc = foundStructs[structName];
 
 			if(arrayIdx == (u32)firstArrayIndex) // Determine element size only using the first array element
 			{
@@ -671,7 +671,7 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 	// Param blocks always need to be a multiple of 4, so make it so
 	for(auto iter = returnParamDesc.ParamBlocks.begin(); iter != returnParamDesc.ParamBlocks.end(); ++iter)
 	{
-		GpuParamBlockDesc& blockDesc = iter->second;
+		GpuParameterBlockInformation& blockDesc = iter->second;
 
 		if(blockDesc.BlockSize % 4 != 0)
 			blockDesc.BlockSize += (4 - (blockDesc.BlockSize % 4));
@@ -699,7 +699,7 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 	B3DFree(uniformName);
 }
 
-void GLSLParamParser::DetermineParamInfo(GpuParamDataDesc& desc, const String& paramName, GLuint programHandle, GLuint uniformIndex)
+void GLSLParamParser::DetermineParamInfo(GpuDataParameterInformation& desc, const String& paramName, GLuint programHandle, GLuint uniformIndex)
 {
 	GLint arraySize;
 	glGetActiveUniformsiv(programHandle, 1, &uniformIndex, GL_UNIFORM_SIZE, &arraySize);

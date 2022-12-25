@@ -36,7 +36,7 @@ VulkanImage::VulkanImage(VulkanResourceManager* owner, VkImage image, VmaAllocat
 {}
 
 VulkanImage::VulkanImage(VulkanResourceManager* owner, const VulkanImageCreateInformation& desc, bool ownsImage, bool isShaderReadAllowed)
-	: VulkanResource(owner, false), mImage(desc.Image), mAllocation(desc.Allocation), mFramebufferMainView(VK_NULL_HANDLE), mUsage(desc.Usage), mOwnsImage(ownsImage), mIsShaderReadAllowed(isShaderReadAllowed), mFaceCount(desc.FaceCount), mDepthSliceCount(desc.DepthSliceCount), mMipLevelCount(desc.MipLevelCount)
+	: VulkanResource(owner, false), mImage(desc.Image), mAllocation(desc.Allocation), mUsage(desc.Usage), mOwnsImage(ownsImage), mIsShaderReadAllowed(isShaderReadAllowed), mFaceCount(desc.FaceCount), mDepthSliceCount(desc.DepthSliceCount), mMipLevelCount(desc.MipLevelCount)
 {
 	mImageViewCI.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	mImageViewCI.pNext = nullptr;
@@ -111,7 +111,7 @@ VulkanImage::~VulkanImage()
 		Lock lock(mViewsMutex);
 
 		for(auto& entry : mImageInfos)
-			vkDestroyImageView(vkDevice, entry.View, gVulkanAllocator);
+			vkDestroyImageView(vkDevice, entry.View.Handle, gVulkanAllocator);
 	}
 
 	if(mOwnsImage)
@@ -147,7 +147,7 @@ void VulkanImage::SetName(const StringView& name)
 	vkSetDebugUtilsObjectNameEXT(mOwner->GetDevice().GetLogical(), &objectNameInfo);
 }
 
-VkImageView VulkanImage::GetView(bool isPartOfFramebuffer) const
+VulkanImageView VulkanImage::GetView(bool isPartOfFramebuffer) const
 {
 	if(isPartOfFramebuffer)
 	{
@@ -161,18 +161,18 @@ VkImageView VulkanImage::GetView(bool isPartOfFramebuffer) const
 	return mMainView;
 }
 
-VkImageView VulkanImage::GetView(const TextureSurface& surface, bool isPartOfFramebuffer) const
+VulkanImageView VulkanImage::GetView(const TextureSurface& surface, bool isPartOfFramebuffer) const
 {
 	return GetView(mImageViewCI.format, surface, isPartOfFramebuffer);
 }
 
-VkImageView VulkanImage::GetView(VkFormat format, bool isPartOfFramebuffer) const
+VulkanImageView VulkanImage::GetView(VkFormat format, bool isPartOfFramebuffer) const
 {
 	TextureSurface completeSurface(0, mMipLevelCount, 0, mFaceCount);
 	return GetView(format, completeSurface, isPartOfFramebuffer);
 }
 
-VkImageView VulkanImage::GetView(VkFormat format, const TextureSurface& surface, bool isPartOfFrameBuffer) const
+VulkanImageView VulkanImage::GetView(VkFormat format, const TextureSurface& surface, bool isPartOfFrameBuffer) const
 {
 	TextureSurface explicitSurface = surface;
 	CalculateExplicitSurface(explicitSurface, isPartOfFrameBuffer);
@@ -190,7 +190,7 @@ VkImageView VulkanImage::GetView(VkFormat format, const TextureSurface& surface,
 			return entry.View;
 	}
 
-	VkImageView view = VK_NULL_HANDLE;
+	VulkanImageView view;
 	if((mUsage & TU_DEPTHSTENCIL) != 0)
 	{
 		if(isPartOfFrameBuffer)
@@ -206,7 +206,7 @@ VkImageView VulkanImage::GetView(VkFormat format, const TextureSurface& surface,
 	return view;
 }
 
-VkImageView VulkanImage::CreateView(const TextureSurface& surface, VkFormat format, VkImageAspectFlags aspectMask, bool isPartOfFramebuffer) const
+VulkanImageView VulkanImage::CreateView(const TextureSurface& surface, VkFormat format, VkImageAspectFlags aspectMask, bool isPartOfFramebuffer) const
 {
 	VkImageViewType oldViewType = mImageViewCI.viewType;
 	VkFormat oldFormat = mImageViewCI.format;
@@ -263,8 +263,10 @@ VkImageView VulkanImage::CreateView(const TextureSurface& surface, VkFormat form
 	mImageViewCI.subresourceRange.layerCount = layerCount;
 	mImageViewCI.format = format;
 
-	VkImageView view;
-	VkResult result = vkCreateImageView(mOwner->GetDevice().GetLogical(), &mImageViewCI, gVulkanAllocator, &view);
+	VulkanImageView view;
+	view.Type = mImageViewCI.viewType;
+
+	VkResult result = vkCreateImageView(mOwner->GetDevice().GetLogical(), &mImageViewCI, gVulkanAllocator, &view.Handle);
 	B3D_ASSERT(result == VK_SUCCESS);
 
 	mImageViewCI.viewType = oldViewType;

@@ -179,7 +179,7 @@ Vector<SPtr<GpuParamDesc>> getAllParamDescs(const SPtr<ct::Technique>& technique
 	return allParamDescs;
 }
 
-bool AreParamsEqual(const GpuParamDataDesc& paramA, const GpuParamDataDesc& paramB, bool ignoreBufferOffsets)
+bool AreParamsEqual(const GpuDataParameterInformation& paramA, const GpuDataParameterInformation& paramB, bool ignoreBufferOffsets)
 {
 	bool equal = paramA.ArraySize == paramB.ArraySize && paramA.ElementSize == paramB.ElementSize && paramA.Type == paramB.Type && paramA.ArrayElementStride == paramB.ArrayElementStride;
 
@@ -189,17 +189,17 @@ bool AreParamsEqual(const GpuParamDataDesc& paramA, const GpuParamDataDesc& para
 	return equal;
 }
 
-Vector<ShaderBlockDesc> DetermineValidShareableParamBlocks(const Vector<SPtr<GpuParamDesc>>& paramDescs, const Map<String, SHADER_PARAM_BLOCK_DESC>& shaderDesc)
+Vector<ShaderBlockDesc> DetermineValidShareableParamBlocks(const Vector<SPtr<GpuParamDesc>>& paramDescs, const Map<String, ShaderParameterBlockInformation>& shaderDesc)
 {
 	struct BlockInfo
 	{
 		BlockInfo() {}
 
-		BlockInfo(const GpuParamBlockDesc* blockDesc, const SPtr<GpuParamDesc>& paramDesc, bool isValid = true)
+		BlockInfo(const GpuParameterBlockInformation* blockDesc, const SPtr<GpuParamDesc>& paramDesc, bool isValid = true)
 			: BlockDesc(blockDesc), ParamDesc(paramDesc), IsValid(isValid)
 		{}
 
-		const GpuParamBlockDesc* BlockDesc;
+		const GpuParameterBlockInformation* BlockDesc;
 		SPtr<GpuParamDesc> ParamDesc;
 		bool IsValid;
 		u32 Set;
@@ -214,7 +214,7 @@ Vector<ShaderBlockDesc> DetermineValidShareableParamBlocks(const Vector<SPtr<Gpu
 		const GpuParamDesc& curDesc = **iter;
 		for(auto blockIter = curDesc.ParamBlocks.begin(); blockIter != curDesc.ParamBlocks.end(); ++blockIter)
 		{
-			const GpuParamBlockDesc& curBlock = blockIter->second;
+			const GpuParameterBlockInformation& curBlock = blockIter->second;
 
 			if(!curBlock.IsShareable) // Non-shareable buffers are handled differently, they're allowed same names
 				continue;
@@ -226,7 +226,7 @@ Vector<ShaderBlockDesc> DetermineValidShareableParamBlocks(const Vector<SPtr<Gpu
 				continue;
 			}
 
-			const GpuParamBlockDesc& otherBlock = *iterFind->second.BlockDesc;
+			const GpuParameterBlockInformation& otherBlock = *iterFind->second.BlockDesc;
 
 			// The block was already determined as invalid, no need to check further
 			if(!iterFind->second.IsValid)
@@ -237,7 +237,7 @@ Vector<ShaderBlockDesc> DetermineValidShareableParamBlocks(const Vector<SPtr<Gpu
 
 			for(auto myParamIter = curDesc.Params.begin(); myParamIter != curDesc.Params.end(); ++myParamIter)
 			{
-				const GpuParamDataDesc& myParam = myParamIter->second;
+				const GpuDataParameterInformation& myParam = myParamIter->second;
 
 				if(myParam.ParamBlockSet != curBlock.Set || myParam.ParamBlockSlot != curBlock.Slot)
 					continue; // Param is in another block, so we will check it when its time for that block
@@ -248,7 +248,7 @@ Vector<ShaderBlockDesc> DetermineValidShareableParamBlocks(const Vector<SPtr<Gpu
 				if(otherParamFind == otherDesc->Params.end())
 					break;
 
-				const GpuParamDataDesc& otherParam = otherParamFind->second;
+				const GpuDataParameterInformation& otherParam = otherParamFind->second;
 
 				if(!AreParamsEqual(myParam, otherParam, false) || curBlock.Name != otherBlockName)
 					break;
@@ -272,7 +272,7 @@ Vector<ShaderBlockDesc> DetermineValidShareableParamBlocks(const Vector<SPtr<Gpu
 		if(!entry.second.IsValid)
 			continue;
 
-		const GpuParamBlockDesc& curBlock = *entry.second.BlockDesc;
+		const GpuParameterBlockInformation& curBlock = *entry.second.BlockDesc;
 
 		ShaderBlockDesc shaderBlockDesc;
 		shaderBlockDesc.External = false;
@@ -295,9 +295,9 @@ Vector<ShaderBlockDesc> DetermineValidShareableParamBlocks(const Vector<SPtr<Gpu
 	return output;
 }
 
-Map<String, const GpuParamDataDesc*> DetermineValidDataParameters(const Vector<SPtr<GpuParamDesc>>& paramDescs)
+Map<String, const GpuDataParameterInformation*> DetermineValidDataParameters(const Vector<SPtr<GpuParamDesc>>& paramDescs)
 {
-	Map<String, const GpuParamDataDesc*> foundDataParams;
+	Map<String, const GpuDataParameterInformation*> foundDataParams;
 	Map<String, bool> validParams;
 
 	for(auto iter = paramDescs.begin(); iter != paramDescs.end(); ++iter)
@@ -307,7 +307,7 @@ Map<String, const GpuParamDataDesc*> DetermineValidDataParameters(const Vector<S
 		// Check regular data params
 		for(auto iter2 = curDesc.Params.begin(); iter2 != curDesc.Params.end(); ++iter2)
 		{
-			const GpuParamDataDesc& curParam = iter2->second;
+			const GpuDataParameterInformation& curParam = iter2->second;
 
 			auto dataFindIter = validParams.find(iter2->first);
 			if(dataFindIter == validParams.end())
@@ -321,7 +321,7 @@ Map<String, const GpuParamDataDesc*> DetermineValidDataParameters(const Vector<S
 				{
 					auto dataFindIter2 = foundDataParams.find(iter2->first);
 
-					const GpuParamDataDesc* otherParam = dataFindIter2->second;
+					const GpuDataParameterInformation* otherParam = dataFindIter2->second;
 					if(!AreParamsEqual(curParam, *otherParam, true))
 					{
 						validParams[iter2->first] = false;
@@ -335,9 +335,9 @@ Map<String, const GpuParamDataDesc*> DetermineValidDataParameters(const Vector<S
 	return foundDataParams;
 }
 
-Vector<const GpuParamObjectDesc*> DetermineValidObjectParameters(const Vector<SPtr<GpuParamDesc>>& paramDescs)
+Vector<const GpuObjectParameterInformation*> DetermineValidObjectParameters(const Vector<SPtr<GpuParamDesc>>& paramDescs)
 {
-	Vector<const GpuParamObjectDesc*> validParams;
+	Vector<const GpuObjectParameterInformation*> validParams;
 
 	for(auto iter = paramDescs.begin(); iter != paramDescs.end(); ++iter)
 	{
@@ -380,7 +380,7 @@ Map<String, String> DetermineParameterToBlockMapping(const Vector<SPtr<GpuParamD
 		const GpuParamDesc& curDesc = **iter;
 		for(auto iter2 = curDesc.Params.begin(); iter2 != curDesc.Params.end(); ++iter2)
 		{
-			const GpuParamDataDesc& curParam = iter2->second;
+			const GpuDataParameterInformation& curParam = iter2->second;
 
 			auto iterFind = paramToParamBlock.find(curParam.Name);
 			if(iterFind != paramToParamBlock.end())
@@ -400,12 +400,12 @@ Map<String, String> DetermineParameterToBlockMapping(const Vector<SPtr<GpuParamD
 	return paramToParamBlock;
 }
 
-UnorderedMap<ValidParamKey, String> DetermineValidParameters(const Vector<SPtr<GpuParamDesc>>& paramDescs, const Map<String, SHADER_DATA_PARAM_DESC>& dataParams, const Map<String, SHADER_OBJECT_PARAM_DESC>& textureParams, const Map<String, SHADER_OBJECT_PARAM_DESC>& bufferParams, const Map<String, SHADER_OBJECT_PARAM_DESC>& samplerParams)
+UnorderedMap<ValidParamKey, String> DetermineValidParameters(const Vector<SPtr<GpuParamDesc>>& paramDescs, const Map<String, ShaderDataParameterInformation>& dataParams, const Map<String, ShaderObjectParameterInformation>& textureParams, const Map<String, ShaderObjectParameterInformation>& bufferParams, const Map<String, ShaderObjectParameterInformation>& samplerParams)
 {
 	UnorderedMap<ValidParamKey, String> validParams;
 
-	Map<String, const GpuParamDataDesc*> validDataParameters = DetermineValidDataParameters(paramDescs);
-	Vector<const GpuParamObjectDesc*> validObjectParameters = DetermineValidObjectParameters(paramDescs);
+	Map<String, const GpuDataParameterInformation*> validDataParameters = DetermineValidDataParameters(paramDescs);
+	Vector<const GpuObjectParameterInformation*> validObjectParameters = DetermineValidObjectParameters(paramDescs);
 	Map<String, String> paramToParamBlockMap = DetermineParameterToBlockMapping(paramDescs);
 
 	// Create data param mappings
@@ -436,7 +436,7 @@ UnorderedMap<ValidParamKey, String> DetermineValidParameters(const Vector<SPtr<G
 	}
 
 	// Create object param mappings
-	auto determineObjectMappings = [&](const Map<String, SHADER_OBJECT_PARAM_DESC>& params, MaterialParams::ParamType paramType)
+	auto determineObjectMappings = [&](const Map<String, ShaderObjectParameterInformation>& params, MaterialParams::ParamType paramType)
 	{
 		for(auto iter = params.begin(); iter != params.end(); ++iter)
 		{
@@ -543,7 +543,7 @@ TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const S
 
 			for(auto iterBlockDesc = desc->ParamBlocks.begin(); iterBlockDesc != desc->ParamBlocks.end(); ++iterBlockDesc)
 			{
-				const GpuParamBlockDesc& blockDesc = iterBlockDesc->second;
+				const GpuParameterBlockInformation& blockDesc = iterBlockDesc->second;
 
 				u32 globalBlockIdx = (u32)-1;
 				if(!blockDesc.IsShareable)
@@ -629,7 +629,7 @@ TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const S
 			{
 				GpuProgramType progType = (GpuProgramType)j;
 
-				auto processObjectParams = [&](const Map<String, GpuParamObjectDesc>& gpuParams,
+				auto processObjectParams = [&](const Map<String, GpuObjectParameterInformation>& gpuParams,
 											   u32 stageIdx, MaterialParams::ParamType paramType)
 				{
 					for(auto& param : gpuParams)
@@ -1112,7 +1112,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 				TextureType texture;
 				params->GetTexture(*materialParamInfo, texture, surface);
 
-				paramPtr->SetTexture(paramInfo.SetIdx, paramInfo.SlotIdx, texture, surface);
+				paramPtr->SetTexture(paramInfo.SetIdx, paramInfo.SlotIdx, texture, surface, 0);
 			}
 
 			for(u32 k = 0; k < stageInfo.NumLoadStoreTextures; k++)
@@ -1127,7 +1127,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 				TextureType texture;
 				params->GetLoadStoreTexture(*materialParamInfo, texture, surface);
 
-				paramPtr->SetLoadStoreTexture(paramInfo.SetIdx, paramInfo.SlotIdx, texture, surface);
+				paramPtr->SetLoadStoreTexture(paramInfo.SetIdx, paramInfo.SlotIdx,texture, surface, 0);
 			}
 
 			for(u32 k = 0; k < stageInfo.NumBuffers; k++)
@@ -1141,7 +1141,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 				BufferType buffer;
 				params->GetBuffer(*materialParamInfo, buffer);
 
-				paramPtr->SetBuffer(paramInfo.SetIdx, paramInfo.SlotIdx, buffer);
+				paramPtr->SetBuffer(paramInfo.SetIdx, paramInfo.SlotIdx, buffer, 0);
 			}
 
 			for(u32 k = 0; k < stageInfo.NumSamplerStates; k++)
@@ -1155,7 +1155,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 				SamplerStateType samplerState;
 				params->GetSamplerState(*materialParamInfo, samplerState);
 
-				paramPtr->SetSamplerState(paramInfo.SetIdx, paramInfo.SlotIdx, samplerState);
+				paramPtr->SetSamplerState(paramInfo.SetIdx, paramInfo.SlotIdx, samplerState, 0);
 			}
 		}
 

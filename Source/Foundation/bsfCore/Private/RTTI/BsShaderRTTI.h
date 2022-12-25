@@ -20,7 +20,7 @@ namespace bs
 	 */
 
 	template <>
-	struct RTTIPlainType<SHADER_DATA_PARAM_DESC>
+	struct RTTIPlainType<ShaderDataParameterInformation>
 	{
 		enum
 		{
@@ -32,7 +32,7 @@ namespace bs
 			hasDynamicSize = 1
 		};
 
-		static BitLength ToMemory(const SHADER_DATA_PARAM_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const ShaderDataParameterInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr u32 kVersion = 1;
 
@@ -46,14 +46,14 @@ namespace bs
 				size += B3DRTTIWrite(data.Name, stream);
 				size += B3DRTTIWrite(data.GpuVariableName, stream);
 				size += B3DRTTIWrite(data.ElementSize, stream);
-				size += B3DRTTIWrite(data.DefaultValueIdx, stream);
+				size += B3DRTTIWrite(data.DefaultValueIndex, stream);
 				size += B3DRTTIWrite(kVersion, stream);
-				size += B3DRTTIWrite(data.AttribIdx, stream);
+				size += B3DRTTIWrite(data.AttributeIndex, stream);
 
 				return size; });
 		}
 
-		static BitLength FromMemory(SHADER_DATA_PARAM_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(ShaderDataParameterInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			BitLength sizeRead = B3DRTTIReadSizeHeader(stream, compress, size);
@@ -64,7 +64,7 @@ namespace bs
 			sizeRead += B3DRTTIRead(data.Name, stream);
 			sizeRead += B3DRTTIRead(data.GpuVariableName, stream);
 			sizeRead += B3DRTTIRead(data.ElementSize, stream);
-			sizeRead += B3DRTTIRead(data.DefaultValueIdx, stream);
+			sizeRead += B3DRTTIRead(data.DefaultValueIndex, stream);
 
 			// There's more to read, meaning we're reading a newer version of the format
 			// (In the first version, version field is missing, so we check this way).
@@ -75,7 +75,7 @@ namespace bs
 				switch(version)
 				{
 				case 1:
-					B3DRTTIRead(data.AttribIdx, stream);
+					B3DRTTIRead(data.AttributeIndex, stream);
 					break;
 				default:
 					B3D_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
@@ -86,11 +86,11 @@ namespace bs
 			return size;
 		}
 
-		static BitLength GetSize(const SHADER_DATA_PARAM_DESC& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const ShaderDataParameterInformation& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = B3DRTTISize(data.ArraySize) + B3DRTTISize(data.RendererSemantic) + B3DRTTISize(data.Type) +
 				B3DRTTISize(data.Name) + B3DRTTISize(data.GpuVariableName) + B3DRTTISize(data.ElementSize) +
-				B3DRTTISize(data.DefaultValueIdx) + B3DRTTISize(data.AttribIdx) + sizeof(uint32_t);
+				B3DRTTISize(data.DefaultValueIndex) + B3DRTTISize(data.AttributeIndex) + sizeof(uint32_t);
 
 			B3DRTTIAddHeaderSize(dataSize, compress);
 			return dataSize;
@@ -98,7 +98,7 @@ namespace bs
 	};
 
 	template <>
-	struct RTTIPlainType<SHADER_OBJECT_PARAM_DESC>
+	struct RTTIPlainType<ShaderObjectParameterInformation>
 	{
 		enum
 		{
@@ -110,9 +110,9 @@ namespace bs
 			hasDynamicSize = 1
 		};
 
-		static BitLength ToMemory(const SHADER_OBJECT_PARAM_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const ShaderObjectParameterInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			static constexpr uint32_t kVersion = 1;
+			static constexpr uint32_t kVersion = 2;
 
 			return B3DRTTIWriteWithSizeHeader(stream, data, compress, [&data, &stream]()
 											   {
@@ -121,14 +121,15 @@ namespace bs
 				size += B3DRTTIWrite(data.Type, stream);
 				size += B3DRTTIWrite(data.Name, stream);
 				size += B3DRTTIWrite(data.GpuVariableNames, stream);
-				size += B3DRTTIWrite(data.DefaultValueIdx, stream);
+				size += B3DRTTIWrite(data.DefaultValueIndex, stream);
 				size += B3DRTTIWrite(kVersion, stream);
-				size += B3DRTTIWrite(data.AttribIdx, stream);
+				size += B3DRTTIWrite(data.AttributeIndex, stream);
+				size += B3DRTTIWrite(data.ArraySize, stream);
 
 				return size; });
 		}
 
-		static BitLength FromMemory(SHADER_OBJECT_PARAM_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(ShaderObjectParameterInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			BitLength sizeRead = B3DRTTIReadSizeHeader(stream, compress, size);
@@ -137,7 +138,7 @@ namespace bs
 			sizeRead += B3DRTTIRead(data.Type, stream);
 			sizeRead += B3DRTTIRead(data.Name, stream);
 			sizeRead += B3DRTTIRead(data.GpuVariableNames, stream);
-			sizeRead += B3DRTTIRead(data.DefaultValueIdx, stream);
+			sizeRead += B3DRTTIRead(data.DefaultValueIndex, stream);
 
 			// There's more to read, meaning we're reading a newer version of the format
 			// (In the first version, version field is missing, so we check this way).
@@ -145,25 +146,22 @@ namespace bs
 			{
 				uint32_t version = 0;
 				B3DRTTIRead(version, stream);
-				switch(version)
-				{
-				case 1:
-					B3DRTTIRead(data.AttribIdx, stream);
-					break;
-				default:
-					B3D_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
-					break;
-				}
+
+				if(version >= 1)
+					B3DRTTIRead(data.AttributeIndex, stream);
+
+				if(version >= 2)
+					B3DRTTIRead(data.ArraySize, stream);
 			}
 
 			return size;
 		}
 
-		static BitLength GetSize(const SHADER_OBJECT_PARAM_DESC& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const ShaderObjectParameterInformation& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = B3DRTTISize(data.RendererSemantic) + B3DRTTISize(data.Type) +
 				B3DRTTISize(data.Name) + B3DRTTISize(data.GpuVariableNames) +
-				B3DRTTISize(data.DefaultValueIdx) + B3DRTTISize(data.AttribIdx) + sizeof(uint32_t);
+				B3DRTTISize(data.DefaultValueIndex) + B3DRTTISize(data.AttributeIndex) + B3DRTTISize(data.ArraySize) + sizeof(uint32_t);
 
 			B3DRTTIAddHeaderSize(dataSize, compress);
 			return dataSize;
@@ -171,7 +169,7 @@ namespace bs
 	};
 
 	template <>
-	struct RTTIPlainType<SHADER_PARAM_BLOCK_DESC>
+	struct RTTIPlainType<ShaderParameterBlockInformation>
 	{
 		enum
 		{
@@ -183,7 +181,7 @@ namespace bs
 			hasDynamicSize = 1
 		};
 
-		static BitLength ToMemory(const SHADER_PARAM_BLOCK_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const ShaderParameterBlockInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return B3DRTTIWriteWithSizeHeader(stream, data, compress, [&data, &stream]()
 											   {
@@ -196,7 +194,7 @@ namespace bs
 				return size; });
 		}
 
-		static BitLength FromMemory(SHADER_PARAM_BLOCK_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(ShaderParameterBlockInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			B3DRTTIReadSizeHeader(stream, compress, size);
@@ -209,7 +207,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength GetSize(const SHADER_PARAM_BLOCK_DESC& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const ShaderParameterBlockInformation& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = B3DRTTISize(data.Shared) + B3DRTTISize(data.Usage) +
 				B3DRTTISize(data.Name) + B3DRTTISize(data.RendererSemantic);
@@ -220,7 +218,7 @@ namespace bs
 	};
 
 	template <>
-	struct RTTIPlainType<SHADER_PARAM_ATTRIBUTE>
+	struct RTTIPlainType<ShaderParameterAttribute>
 	{
 		enum
 		{
@@ -232,7 +230,7 @@ namespace bs
 			hasDynamicSize = 1
 		};
 
-		static BitLength ToMemory(const SHADER_PARAM_ATTRIBUTE& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const ShaderParameterAttribute& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr u32 kVersion = 0;
 
@@ -242,12 +240,12 @@ namespace bs
 				size += B3DRTTIWrite(kVersion, stream);
 				size += B3DRTTIWrite(data.Type, stream);
 				size += B3DRTTIWrite(data.Value, stream);
-				size += B3DRTTIWrite(data.NextParamIdx, stream);
+				size += B3DRTTIWrite(data.NextParameterIndex, stream);
 
 				return size; });
 		}
 
-		static BitLength FromMemory(SHADER_PARAM_ATTRIBUTE& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(ShaderParameterAttribute& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			B3DRTTIReadSizeHeader(stream, compress, size);
@@ -260,7 +258,7 @@ namespace bs
 			case 0:
 				B3DRTTIRead(data.Type, stream);
 				B3DRTTIRead(data.Value, stream);
-				B3DRTTIRead(data.NextParamIdx, stream);
+				B3DRTTIRead(data.NextParameterIndex, stream);
 				break;
 			default:
 				B3D_LOG(Error, RTTI, "Unknown version. Unable to deserialize.");
@@ -270,10 +268,10 @@ namespace bs
 			return size;
 		}
 
-		static BitLength GetSize(const SHADER_PARAM_ATTRIBUTE& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const ShaderParameterAttribute& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = B3DRTTISize(data.Type) + B3DRTTISize(data.Value) +
-				B3DRTTISize(data.NextParamIdx) + sizeof(uint32_t);
+				B3DRTTISize(data.NextParameterIndex) + sizeof(uint32_t);
 
 			B3DRTTIAddHeaderSize(dataSize, compress);
 			return dataSize;
@@ -281,7 +279,7 @@ namespace bs
 	};
 
 	template <>
-	struct RTTIPlainType<ShaderVariationParamValue>
+	struct RTTIPlainType<ShaderVariationParameterValue>
 	{
 		enum
 		{
@@ -293,7 +291,7 @@ namespace bs
 			hasDynamicSize = 1
 		};
 
-		static BitLength ToMemory(const ShaderVariationParamValue& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const ShaderVariationParameterValue& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr uint8_t kVersion = 0;
 
@@ -307,7 +305,7 @@ namespace bs
 				return size; });
 		}
 
-		static BitLength FromMemory(ShaderVariationParamValue& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(ShaderVariationParameterValue& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			B3DRTTIReadSizeHeader(stream, compress, size);
@@ -322,7 +320,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength GetSize(const ShaderVariationParamValue& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const ShaderVariationParameterValue& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = sizeof(uint8_t);
 			dataSize += B3DRTTISize(data.Name);
@@ -334,7 +332,7 @@ namespace bs
 	};
 
 	template <>
-	struct RTTIPlainType<ShaderVariationParamInfo>
+	struct RTTIPlainType<ShaderVariationParameterInformation>
 	{
 		enum
 		{
@@ -346,7 +344,7 @@ namespace bs
 			hasDynamicSize = 1
 		};
 
-		static BitLength ToMemory(const ShaderVariationParamInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const ShaderVariationParameterInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			static constexpr uint8_t kVersion = 0;
 
@@ -362,7 +360,7 @@ namespace bs
 				return size; });
 		}
 
-		static BitLength FromMemory(ShaderVariationParamInfo& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(ShaderVariationParameterInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			B3DRTTIReadSizeHeader(stream, compress, size);
@@ -379,7 +377,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength GetSize(const ShaderVariationParamInfo& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const ShaderVariationParameterInformation& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = sizeof(uint8_t);
 			dataSize += B3DRTTISize(data.Name);
@@ -440,7 +438,7 @@ namespace bs
 			B3D_RTTI_MEMBER_PLAIN_ARRAY_NAMED(mVariationParams, mDesc.VariationParams, 16)
 		B3D_RTTI_END_MEMBERS
 
-		SHADER_DATA_PARAM_DESC& GetDataParam(Shader* obj, u32 idx)
+		ShaderDataParameterInformation& GetDataParam(Shader* obj, u32 idx)
 		{
 			auto iter = obj->mDesc.DataParams.begin();
 			for(u32 i = 0; i < idx; i++) ++iter;
@@ -448,13 +446,13 @@ namespace bs
 			return iter->second;
 		}
 
-		void SetDataParam(Shader* obj, u32 idx, SHADER_DATA_PARAM_DESC& val) { obj->mDesc.DataParams[val.Name] = val; }
+		void SetDataParam(Shader* obj, u32 idx, ShaderDataParameterInformation& val) { obj->mDesc.DataParams[val.Name] = val; }
 
 		u32 GetDataParamsArraySize(Shader* obj) { return (u32)obj->mDesc.DataParams.size(); }
 
 		void SetDataParamsArraySize(Shader* obj, u32 size) {} // Do nothing
 
-		SHADER_OBJECT_PARAM_DESC& GetTextureParam(Shader* obj, u32 idx)
+		ShaderObjectParameterInformation& GetTextureParam(Shader* obj, u32 idx)
 		{
 			auto iter = obj->mDesc.TextureParams.begin();
 			for(u32 i = 0; i < idx; i++) ++iter;
@@ -462,13 +460,13 @@ namespace bs
 			return iter->second;
 		}
 
-		void SetTextureParam(Shader* obj, u32 idx, SHADER_OBJECT_PARAM_DESC& val) { obj->mDesc.TextureParams[val.Name] = val; }
+		void SetTextureParam(Shader* obj, u32 idx, ShaderObjectParameterInformation& val) { obj->mDesc.TextureParams[val.Name] = val; }
 
 		u32 GetTextureParamsArraySize(Shader* obj) { return (u32)obj->mDesc.TextureParams.size(); }
 
 		void SetTextureParamsArraySize(Shader* obj, u32 size) {} // Do nothing
 
-		SHADER_OBJECT_PARAM_DESC& GetSamplerParam(Shader* obj, u32 idx)
+		ShaderObjectParameterInformation& GetSamplerParam(Shader* obj, u32 idx)
 		{
 			auto iter = obj->mDesc.SamplerParams.begin();
 			for(u32 i = 0; i < idx; i++) ++iter;
@@ -476,13 +474,13 @@ namespace bs
 			return iter->second;
 		}
 
-		void SetSamplerParam(Shader* obj, u32 idx, SHADER_OBJECT_PARAM_DESC& val) { obj->mDesc.SamplerParams[val.Name] = val; }
+		void SetSamplerParam(Shader* obj, u32 idx, ShaderObjectParameterInformation& val) { obj->mDesc.SamplerParams[val.Name] = val; }
 
 		u32 GetSamplerParamsArraySize(Shader* obj) { return (u32)obj->mDesc.SamplerParams.size(); }
 
 		void SetSamplerParamsArraySize(Shader* obj, u32 size) {} // Do nothing
 
-		SHADER_OBJECT_PARAM_DESC& GetBufferParam(Shader* obj, u32 idx)
+		ShaderObjectParameterInformation& GetBufferParam(Shader* obj, u32 idx)
 		{
 			auto iter = obj->mDesc.BufferParams.begin();
 			for(u32 i = 0; i < idx; i++) ++iter;
@@ -490,13 +488,13 @@ namespace bs
 			return iter->second;
 		}
 
-		void SetBufferParam(Shader* obj, u32 idx, SHADER_OBJECT_PARAM_DESC& val) { obj->mDesc.BufferParams[val.Name] = val; }
+		void SetBufferParam(Shader* obj, u32 idx, ShaderObjectParameterInformation& val) { obj->mDesc.BufferParams[val.Name] = val; }
 
 		u32 GetBufferParamsArraySize(Shader* obj) { return (u32)obj->mDesc.BufferParams.size(); }
 
 		void SetBufferParamsArraySize(Shader* obj, u32 size) {} // Do nothing
 
-		SHADER_PARAM_BLOCK_DESC& GetParamBlock(Shader* obj, u32 idx)
+		ShaderParameterBlockInformation& GetParamBlock(Shader* obj, u32 idx)
 		{
 			auto iter = obj->mDesc.ParamBlocks.begin();
 			for(u32 i = 0; i < idx; i++) ++iter;
@@ -504,7 +502,7 @@ namespace bs
 			return iter->second;
 		}
 
-		void SetParamBlock(Shader* obj, u32 idx, SHADER_PARAM_BLOCK_DESC& val) { obj->mDesc.ParamBlocks[val.Name] = val; }
+		void SetParamBlock(Shader* obj, u32 idx, ShaderParameterBlockInformation& val) { obj->mDesc.ParamBlocks[val.Name] = val; }
 
 		u32 GetParamBlocksArraySize(Shader* obj) { return (u32)obj->mDesc.ParamBlocks.size(); }
 

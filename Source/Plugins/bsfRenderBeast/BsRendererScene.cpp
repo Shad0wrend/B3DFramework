@@ -415,8 +415,8 @@ void RendererScene::RegisterRenderable(Renderable* renderable)
 			const bool useForwardRendering = shaderFlags.IsSet(ShaderFlag::Forward) || shaderFlags.IsSet(ShaderFlag::Transparent);
 			bool supportsClusteredForward = GetRenderBeast()->GetFeatureSet() == RenderBeastFeatureSet::Desktop;
 
-			const Vector<ShaderVariationParamInfo>& variationParams = shader->GetVariationParams();
-			const bool shaderCanWriteVelocity = std::find_if(variationParams.begin(), variationParams.end(), [](const ShaderVariationParamInfo& x)
+			const Vector<ShaderVariationParameterInformation>& variationParams = shader->GetVariationParams();
+			const bool shaderCanWriteVelocity = std::find_if(variationParams.begin(), variationParams.end(), [](const ShaderVariationParameterInformation& x)
 															 { return x.Identifier == "WRITE_VELOCITY"; }) != variationParams.end();
 
 			const bool writeVelocity = shaderCanWriteVelocity && renderable->GetWriteVelocity();
