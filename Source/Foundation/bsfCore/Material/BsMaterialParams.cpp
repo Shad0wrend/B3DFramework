@@ -49,7 +49,7 @@ MaterialParamsBase::MaterialParamsBase(
 			mNumStructParams += arraySize;
 		else
 		{
-			const GpuParamDataTypeInfo& typeInfo = GpuParams::kParamSizes.Lookup[(int)param.second.Type];
+			const GpuDataParameterTypeInformation& typeInfo = GpuParams::kParamSizes.Lookup[(int)param.second.Type];
 			u32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 			mDataSize += arraySize * paramSize;
@@ -97,7 +97,7 @@ MaterialParamsBase::MaterialParamsBase(
 		{
 			dataParam.Index = dataParamIdx;
 
-			const GpuParamDataTypeInfo& typeInfo = GpuParams::kParamSizes.Lookup[(int)dataParam.DataType];
+			const GpuDataParameterTypeInformation& typeInfo = GpuParams::kParamSizes.Lookup[(int)dataParam.DataType];
 			const u32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 			for(u32 i = 0; i < arraySize; i++)
 			{
@@ -242,7 +242,7 @@ u32 MaterialParamsBase::GetParamIndex(const String& name) const
 	return iterFind->second;
 }
 
-MaterialParamsBase::GetParamResult MaterialParamsBase::GetParamIndex(const String& name, ParamType type, GpuParamDataType dataType, u32 arrayIdx, u32& output) const
+MaterialParamsBase::GetParamResult MaterialParamsBase::GetParamIndex(const String& name, ParamType type, GpuDataParameterType dataType, u32 arrayIdx, u32& output) const
 {
 	auto iterFind = mParamLookup.find(name);
 	if(iterFind == mParamLookup.end())
@@ -261,7 +261,7 @@ MaterialParamsBase::GetParamResult MaterialParamsBase::GetParamIndex(const Strin
 	return GetParamResult::Success;
 }
 
-MaterialParamsBase::GetParamResult MaterialParamsBase::GetParamData(const String& name, ParamType type, GpuParamDataType dataType, u32 arrayIdx, const ParamData** output) const
+MaterialParamsBase::GetParamResult MaterialParamsBase::GetParamData(const String& name, ParamType type, GpuDataParameterType dataType, u32 arrayIdx, const ParamData** output) const
 {
 	auto iterFind = mParamLookup.find(name);
 	if(iterFind == mParamLookup.end())
@@ -830,7 +830,7 @@ void MaterialParams::GetSyncData(u8* buffer, u32& size, bool forceAll)
 				}
 				else
 				{
-					const GpuParamDataTypeInfo& typeInfo = GpuParams::kParamSizes.Lookup[(int)param.DataType];
+					const GpuDataParameterTypeInformation& typeInfo = GpuParams::kParamSizes.Lookup[(int)param.DataType];
 					const u32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 					// Param index
@@ -946,7 +946,7 @@ void MaterialParams::GetSyncData(u8* buffer, u32& size, bool forceAll)
 				}
 				else
 				{
-					const GpuParamDataTypeInfo& typeInfo = GpuParams::kParamSizes.Lookup[(int)param.DataType];
+					const GpuDataParameterTypeInformation& typeInfo = GpuParams::kParamSizes.Lookup[(int)param.DataType];
 					const u32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 					const u32 dataSize = arraySize * paramSize;
@@ -1242,7 +1242,7 @@ void MaterialParams::SetSyncData(u8* buffer, u32 size)
 		param.Version = mParamVersion;
 
 		const u32 arraySize = param.ArraySize > 1 ? param.ArraySize : 1;
-		const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::kParamSizes.Lookup[(int)param.DataType];
+		const GpuDataParameterTypeInformation& typeInfo = bs::GpuParams::kParamSizes.Lookup[(int)param.DataType];
 		const u32 paramSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 		const DataParamInfo& paramInfo = mDataParams[param.Index];

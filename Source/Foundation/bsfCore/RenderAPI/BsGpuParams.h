@@ -60,8 +60,37 @@ namespace bs
 		};
 	};
 
+	template<> struct TGpuDataParamInfo<double>
+	{
+		enum
+		{
+			TypeId = GPDT_DOUBLE1
+		};
+	};
+	template<> struct TGpuDataParamInfo<Vector2D>
+	{
+		enum
+		{
+			TypeId = GPDT_DOUBLE2
+		};
+	};
+	template<> struct TGpuDataParamInfo<Vector3D>
+	{
+		enum
+		{
+			TypeId = GPDT_DOUBLE3
+		};
+	};
+	template<> struct TGpuDataParamInfo<Vector4D>
+	{
+		enum
+		{
+			TypeId = GPDT_DOUBLE4
+		};
+	};
+
 	template <>
-	struct TGpuDataParamInfo<int>
+	struct TGpuDataParamInfo<i32>
 	{
 		enum
 		{
@@ -93,6 +122,42 @@ namespace bs
 		enum
 		{
 			TypeId = GPDT_INT4
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<u32>
+	{
+		enum
+		{
+			TypeId = GPDT_UINT1
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Vector2UI>
+	{
+		enum
+		{
+			TypeId = GPDT_UINT2
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Vector3UI>
+	{
+		enum
+		{
+			TypeId = GPDT_UINT3
+		};
+	};
+
+	template <>
+	struct TGpuDataParamInfo<Vector4UI>
+	{
+		enum
+		{
+			TypeId = GPDT_UINT4
 		};
 	};
 
@@ -268,22 +333,22 @@ namespace bs
 		 * Parameter handles will be invalidated when their parent GpuParams object changes.
 		 */
 		template <class T>
-		void GetParam(GpuProgramType type, const String& name, TGpuDataParam<T, Core>& output) const;
+		void GetParam(GpuProgramType type, const String& name, TGpuParameterPrimitive<T, Core>& output) const;
 
 		/** @copydoc GetParam */
-		void GetStructParam(GpuProgramType type, const String& name, TGpuParamStruct<Core>& output) const;
+		void GetStructParam(GpuProgramType type, const String& name, TGpuParameterStruct<Core>& output) const;
 
 		/** @copydoc GetParam */
-		void GetTextureParam(GpuProgramType type, const String& name, TGpuParamTexture<Core>& output) const;
+		void GetTextureParam(GpuProgramType type, const String& name, TGpuParameterSampledTexture<Core>& output) const;
 
 		/** @copydoc GetParam */
-		void GetLoadStoreTextureParam(GpuProgramType type, const String& name, TGpuParamLoadStoreTexture<Core>& output) const;
+		void GetLoadStoreTextureParam(GpuProgramType type, const String& name, TGpuParameterStorageTexture<Core>& output) const;
 
 		/** @copydoc GetParam */
-		void GetBufferParam(GpuProgramType type, const String& name, TGpuParamBuffer<Core>& output) const;
+		void GetBufferParam(GpuProgramType type, const String& name, TGpuParameterBuffer<Core>& output) const;
 
 		/** @copydoc GetParam */
-		void GetSamplerStateParam(GpuProgramType type, const String& name, TGpuParamSampState<Core>& output) const;
+		void GetSamplerStateParam(GpuProgramType type, const String& name, TGpuParameterSampler<Core>& output) const;
 
 		/**	Gets a parameter block buffer from the specified set/slot/array index combination. */
 		ParamsBufferType GetParamBlockBuffer(u32 set, u32 slot, u32 arrayIndex = 0) const;
@@ -348,7 +413,7 @@ namespace bs
 		template <class T>
 		void SetParam(GpuProgramType type, const String& name, const T& value)
 		{
-			TGpuDataParam<T, Core> param;
+			TGpuParameterPrimitive<T, Core> param;
 			GetParam(type, name, param);
 			param.Set(value);
 		}
@@ -356,7 +421,7 @@ namespace bs
 		/**	Assigns a texture to the parameter with the specified name. */
 		void SetTexture(GpuProgramType type, const String& name, const TextureType& texture, const TextureSurface& surface = TextureSurface::kComplete)
 		{
-			TGpuParamTexture<Core> param;
+			TGpuParameterSampledTexture<Core> param;
 			GetTextureParam(type, name, param);
 			param.Set(texture, surface);
 		}
@@ -364,7 +429,7 @@ namespace bs
 		/**	Assigns a load/store texture to the parameter with the specified name. */
 		void SetLoadStoreTexture(GpuProgramType type, const String& name, const TextureType& texture, const TextureSurface& surface)
 		{
-			TGpuParamLoadStoreTexture<Core> param;
+			TGpuParameterStorageTexture<Core> param;
 			GetLoadStoreTextureParam(type, name, param);
 			param.Set(texture, surface);
 		}
@@ -372,7 +437,7 @@ namespace bs
 		/**	Assigns a buffer to the parameter with the specified name. */
 		void SetBuffer(GpuProgramType type, const String& name, const BufferType& buffer)
 		{
-			TGpuParamBuffer<Core> param;
+			TGpuParameterBuffer<Core> param;
 			GetBufferParam(type, name, param);
 			param.Set(buffer);
 		}
@@ -380,7 +445,7 @@ namespace bs
 		/**	Assigns a sampler state to the parameter with the specified name. */
 		void SetSamplerState(GpuProgramType type, const String& name, const SamplerType& sampler)
 		{
-			TGpuParamSampState<Core> param;
+			TGpuParameterSampler<Core> param;
 			GetSamplerStateParam(type, name, param);
 			param.Set(sampler);
 		}
@@ -445,7 +510,7 @@ namespace bs
 		static SPtr<GpuParams> Create(const SPtr<GpuPipelineParamInfo>& paramInfo);
 
 		/** Contains a lookup table for sizes of all data parameters. Sizes are in bytes. */
-		const static GpuDataParamInfos kParamSizes;
+		const static GpuDataParameterTypeInformationLookup kParamSizes;
 
 		/** @name Internal
 		 *  @{

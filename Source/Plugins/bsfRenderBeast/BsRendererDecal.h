@@ -83,10 +83,10 @@ namespace bs
 			float MaterialAnimationTime = 0.0f;
 
 			/** Texture input for the depth buffer. */
-			GpuParamTexture DepthInputTexture;
+			GpuParameterSampledTexture DepthInputTexture;
 
 			/** Texture input for the mask buffer. */
-			GpuParamTexture MaskInputTexture;
+			GpuParameterSampledTexture MaskInputTexture;
 
 			void Draw() const override;
 		};

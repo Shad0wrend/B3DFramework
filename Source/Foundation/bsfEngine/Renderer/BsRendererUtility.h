@@ -57,7 +57,7 @@ namespace bs
 			static BlitMat* GetVariation(u32 msaaCount, bool isColor, bool isFiltered);
 
 		private:
-			GpuParamTexture mSource;
+			GpuParameterSampledTexture mSource;
 			bool mIsFiltered = false;
 		};
 
@@ -87,7 +87,7 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mSourceTex;
+			GpuParameterSampledTexture mSourceTex;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(BicubicUpsampleParamDef)
@@ -137,7 +137,7 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mSourceTex;
+			GpuParameterSampledTexture mSourceTex;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(ClearParamDef)

@@ -197,7 +197,7 @@ void Matrix3::Bidiagonalize(Matrix3& matA, Matrix3& matL, Matrix3& matR)
 	bool bIdentity;
 
 	// Map first column to (*,0,0)
-	length = Math::Sqrt(matA[0][0] * matA[0][0] + matA[1][0] * matA[1][0] + matA[2][0] * matA[2][0]);
+	length = Math::SquareRoot(matA[0][0] * matA[0][0] + matA[1][0] * matA[1][0] + matA[2][0] * matA[2][0]);
 	if(length > 0.0f)
 	{
 		sign = (matA[0][0] > 0.0f ? 1.0f : -1.0f);
@@ -233,7 +233,7 @@ void Matrix3::Bidiagonalize(Matrix3& matA, Matrix3& matL, Matrix3& matR)
 	}
 
 	// Map first row to (*,*,0)
-	length = Math::Sqrt(matA[0][1] * matA[0][1] + matA[0][2] * matA[0][2]);
+	length = Math::SquareRoot(matA[0][1] * matA[0][1] + matA[0][2] * matA[0][2]);
 	if(length > 0.0)
 	{
 		sign = (matA[0][1] > 0.0f ? 1.0f : -1.0f);
@@ -263,7 +263,7 @@ void Matrix3::Bidiagonalize(Matrix3& matA, Matrix3& matL, Matrix3& matR)
 	}
 
 	// Map second column to (*,*,0)
-	length = Math::Sqrt(matA[1][1] * matA[1][1] + matA[2][1] * matA[2][1]);
+	length = Math::SquareRoot(matA[1][1] * matA[1][1] + matA[2][1] * matA[2][1]);
 	if(length > 0.0)
 	{
 		sign = (matA[1][1] > 0.0f ? 1.0f : -1.0f);
@@ -310,14 +310,14 @@ void Matrix3::GolubKahanStep(Matrix3& matA, Matrix3& matL, Matrix3& matR)
 	float t12 = matA[1][1] * matA[1][2];
 	float trace = f11 + t22;
 	float diff = f11 - t22;
-	float discr = Math::Sqrt(diff * diff + 4.0f * t12 * t12);
+	float discr = Math::SquareRoot(diff * diff + 4.0f * t12 * t12);
 	float root1 = 0.5f * (trace + discr);
 	float root2 = 0.5f * (trace - discr);
 
 	// Adjust right
 	float y = matA[0][0] - (abs(root1 - t22) <= abs(root2 - t22) ? root1 : root2);
 	float z = matA[0][1];
-	float invLength = Math::InvSqrt(y * y + z * z);
+	float invLength = Math::InverseSquareRoot(y * y + z * z);
 	float sin = z * invLength;
 	float cos = -y * invLength;
 
@@ -340,7 +340,7 @@ void Matrix3::GolubKahanStep(Matrix3& matA, Matrix3& matL, Matrix3& matR)
 	// Adjust left
 	y = matA[0][0];
 	z = matA[1][0];
-	invLength = Math::InvSqrt(y * y + z * z);
+	invLength = Math::InverseSquareRoot(y * y + z * z);
 	sin = z * invLength;
 	cos = -y * invLength;
 
@@ -364,7 +364,7 @@ void Matrix3::GolubKahanStep(Matrix3& matA, Matrix3& matL, Matrix3& matR)
 	// Adjust right
 	y = matA[0][1];
 	z = matA[0][2];
-	invLength = Math::InvSqrt(y * y + z * z);
+	invLength = Math::InverseSquareRoot(y * y + z * z);
 	sin = z * invLength;
 	cos = -y * invLength;
 
@@ -387,7 +387,7 @@ void Matrix3::GolubKahanStep(Matrix3& matA, Matrix3& matL, Matrix3& matR)
 	// Adjust left
 	y = matA[1][1];
 	z = matA[2][1];
-	invLength = Math::InvSqrt(y * y + z * z);
+	invLength = Math::InverseSquareRoot(y * y + z * z);
 	sin = z * invLength;
 	cos = -y * invLength;
 
@@ -435,8 +435,8 @@ void Matrix3::SingularValueDecomposition(Matrix3& matL, Vector3& matS, Matrix3& 
 			{
 				// 2x2 closed form factorization
 				tmp = (mat[1][1] * mat[1][1] - mat[2][2] * mat[2][2] + mat[1][2] * mat[1][2]) / (mat[1][2] * mat[2][2]);
-				tan0 = 0.5f * (tmp + Math::Sqrt(tmp * tmp + 4.0f));
-				cos0 = Math::InvSqrt(1.0f + tan0 * tan0);
+				tan0 = 0.5f * (tmp + Math::SquareRoot(tmp * tmp + 4.0f));
+				cos0 = Math::InverseSquareRoot(1.0f + tan0 * tan0);
 				sin0 = tan0 * cos0;
 
 				for(col = 0; col < 3; col++)
@@ -448,7 +448,7 @@ void Matrix3::SingularValueDecomposition(Matrix3& matL, Vector3& matS, Matrix3& 
 				}
 
 				tan1 = (mat[1][2] - mat[2][2] * tan0) / mat[1][1];
-				cos1 = Math::InvSqrt(1.0f + tan1 * tan1);
+				cos1 = Math::InverseSquareRoot(1.0f + tan1 * tan1);
 				sin1 = -tan1 * cos1;
 
 				for(row = 0; row < 3; row++)
@@ -471,8 +471,8 @@ void Matrix3::SingularValueDecomposition(Matrix3& matL, Vector3& matS, Matrix3& 
 			{
 				// 2x2 closed form factorization
 				tmp = (mat[0][0] * mat[0][0] + mat[1][1] * mat[1][1] - mat[0][1] * mat[0][1]) / (mat[0][1] * mat[1][1]);
-				tan0 = 0.5f * (-tmp + Math::Sqrt(tmp * tmp + 4.0f));
-				cos0 = Math::InvSqrt(1.0f + tan0 * tan0);
+				tan0 = 0.5f * (-tmp + Math::SquareRoot(tmp * tmp + 4.0f));
+				cos0 = Math::InverseSquareRoot(1.0f + tan0 * tan0);
 				sin0 = tan0 * cos0;
 
 				for(col = 0; col < 3; col++)
@@ -484,7 +484,7 @@ void Matrix3::SingularValueDecomposition(Matrix3& matL, Vector3& matS, Matrix3& 
 				}
 
 				tan1 = (mat[0][1] - mat[1][1] * tan0) / mat[0][0];
-				cos1 = Math::InvSqrt(1.0f + tan1 * tan1);
+				cos1 = Math::InverseSquareRoot(1.0f + tan1 * tan1);
 				sin1 = -tan1 * cos1;
 
 				for(row = 0; row < 3; row++)
@@ -522,7 +522,7 @@ void Matrix3::SingularValueDecomposition(Matrix3& matL, Vector3& matS, Matrix3& 
 void Matrix3::Orthonormalize()
 {
 	// Compute q0
-	float invLength = Math::InvSqrt(m[0][0] * m[0][0] + m[1][0] * m[1][0] + m[2][0] * m[2][0]);
+	float invLength = Math::InverseSquareRoot(m[0][0] * m[0][0] + m[1][0] * m[1][0] + m[2][0] * m[2][0]);
 
 	m[0][0] *= invLength;
 	m[1][0] *= invLength;
@@ -535,7 +535,7 @@ void Matrix3::Orthonormalize()
 	m[1][1] -= dot0 * m[1][0];
 	m[2][1] -= dot0 * m[2][0];
 
-	invLength = Math::InvSqrt(m[0][1] * m[0][1] + m[1][1] * m[1][1] + m[2][1] * m[2][1]);
+	invLength = Math::InverseSquareRoot(m[0][1] * m[0][1] + m[1][1] * m[1][1] + m[2][1] * m[2][1]);
 
 	m[0][1] *= invLength;
 	m[1][1] *= invLength;
@@ -549,7 +549,7 @@ void Matrix3::Orthonormalize()
 	m[1][2] -= dot0 * m[1][0] + dot1 * m[1][1];
 	m[2][2] -= dot0 * m[2][0] + dot1 * m[2][1];
 
-	invLength = Math::InvSqrt(m[0][2] * m[0][2] + m[1][2] * m[1][2] + m[2][2] * m[2][2]);
+	invLength = Math::InverseSquareRoot(m[0][2] * m[0][2] + m[1][2] * m[1][2] + m[2][2] * m[2][2]);
 
 	m[0][2] *= invLength;
 	m[1][2] *= invLength;
@@ -568,7 +568,7 @@ void Matrix3::Decomposition(Quaternion& rotation, Vector3& scale) const
 void Matrix3::QDUDecomposition(Matrix3& matQ, Vector3& vecD, Vector3& vecU) const
 {
 	// Build orthogonal matrix Q
-	float invLength = Math::InvSqrt(m[0][0] * m[0][0] + m[1][0] * m[1][0] + m[2][0] * m[2][0]);
+	float invLength = Math::InverseSquareRoot(m[0][0] * m[0][0] + m[1][0] * m[1][0] + m[2][0] * m[2][0]);
 	matQ[0][0] = m[0][0] * invLength;
 	matQ[1][0] = m[1][0] * invLength;
 	matQ[2][0] = m[2][0] * invLength;
@@ -578,7 +578,7 @@ void Matrix3::QDUDecomposition(Matrix3& matQ, Vector3& vecD, Vector3& vecU) cons
 	matQ[1][1] = m[1][1] - dot * matQ[1][0];
 	matQ[2][1] = m[2][1] - dot * matQ[2][0];
 
-	invLength = Math::InvSqrt(matQ[0][1] * matQ[0][1] + matQ[1][1] * matQ[1][1] + matQ[2][1] * matQ[2][1]);
+	invLength = Math::InverseSquareRoot(matQ[0][1] * matQ[0][1] + matQ[1][1] * matQ[1][1] + matQ[2][1] * matQ[2][1]);
 	matQ[0][1] *= invLength;
 	matQ[1][1] *= invLength;
 	matQ[2][1] *= invLength;
@@ -593,7 +593,7 @@ void Matrix3::QDUDecomposition(Matrix3& matQ, Vector3& vecD, Vector3& vecU) cons
 	matQ[1][2] -= dot * matQ[1][1];
 	matQ[2][2] -= dot * matQ[2][1];
 
-	invLength = Math::InvSqrt(matQ[0][2] * matQ[0][2] + matQ[1][2] * matQ[1][2] + matQ[2][2] * matQ[2][2]);
+	invLength = Math::InverseSquareRoot(matQ[0][2] * matQ[0][2] + matQ[1][2] * matQ[1][2] + matQ[2][2] * matQ[2][2]);
 	matQ[0][2] *= invLength;
 	matQ[1][2] *= invLength;
 	matQ[2][2] *= invLength;
@@ -662,7 +662,7 @@ void Matrix3::ToAxisAngle(Vector3& axis, Radian& radians) const
 				if(m[0][0] >= m[2][2])
 				{
 					// r00 is maximum diagonal term
-					axis.X = 0.5f * Math::Sqrt(m[0][0] - m[1][1] - m[2][2] + 1.0f);
+					axis.X = 0.5f * Math::SquareRoot(m[0][0] - m[1][1] - m[2][2] + 1.0f);
 					fHalfInverse = 0.5f / axis.X;
 					axis.Y = fHalfInverse * m[0][1];
 					axis.Z = fHalfInverse * m[0][2];
@@ -670,7 +670,7 @@ void Matrix3::ToAxisAngle(Vector3& axis, Radian& radians) const
 				else
 				{
 					// r22 is maximum diagonal term
-					axis.Z = 0.5f * Math::Sqrt(m[2][2] - m[0][0] - m[1][1] + 1.0f);
+					axis.Z = 0.5f * Math::SquareRoot(m[2][2] - m[0][0] - m[1][1] + 1.0f);
 					fHalfInverse = 0.5f / axis.Z;
 					axis.X = fHalfInverse * m[0][2];
 					axis.Y = fHalfInverse * m[1][2];
@@ -682,7 +682,7 @@ void Matrix3::ToAxisAngle(Vector3& axis, Radian& radians) const
 				if(m[1][1] >= m[2][2])
 				{
 					// r11 is maximum diagonal term
-					axis.Y = 0.5f * Math::Sqrt(m[1][1] - m[0][0] - m[2][2] + 1.0f);
+					axis.Y = 0.5f * Math::SquareRoot(m[1][1] - m[0][0] - m[2][2] + 1.0f);
 					fHalfInverse = 0.5f / axis.Y;
 					axis.X = fHalfInverse * m[0][1];
 					axis.Z = fHalfInverse * m[1][2];
@@ -690,7 +690,7 @@ void Matrix3::ToAxisAngle(Vector3& axis, Radian& radians) const
 				else
 				{
 					// r22 is maximum diagonal term
-					axis.Z = 0.5f * Math::Sqrt(m[2][2] - m[0][0] - m[1][1] + 1.0f);
+					axis.Z = 0.5f * Math::SquareRoot(m[2][2] - m[0][0] - m[1][1] + 1.0f);
 					fHalfInverse = 0.5f / axis.Z;
 					axis.X = fHalfInverse * m[0][2];
 					axis.Y = fHalfInverse * m[1][2];
@@ -855,7 +855,7 @@ void Matrix3::Tridiagonal(float diag[3], float subDiag[3])
 	subDiag[2] = 0.0;
 	if(abs(fC) >= kEpsilon)
 	{
-		float length = Math::Sqrt(fB * fB + fC * fC);
+		float length = Math::SquareRoot(fB * fB + fC * fC);
 		float invLength = 1.0f / length;
 		fB *= invLength;
 		fC *= invLength;
@@ -915,7 +915,7 @@ bool Matrix3::QLAlgorithm(float diag[3], float subDiag[3])
 				break;
 
 			float tmp0 = (diag[i + 1] - diag[i]) / (2.0f * subDiag[i]);
-			float tmp1 = Math::Sqrt(tmp0 * tmp0 + 1.0f);
+			float tmp1 = Math::SquareRoot(tmp0 * tmp0 + 1.0f);
 
 			if(tmp0 < 0.0f)
 				tmp0 = diag[j] - diag[i] + subDiag[i] / (tmp0 - tmp1);
@@ -933,7 +933,7 @@ bool Matrix3::QLAlgorithm(float diag[3], float subDiag[3])
 				if(abs(tmp3) >= abs(tmp0))
 				{
 					cos = tmp0 / tmp3;
-					tmp1 = Math::Sqrt(cos * cos + 1.0f);
+					tmp1 = Math::SquareRoot(cos * cos + 1.0f);
 					subDiag[k + 1] = tmp3 * tmp1;
 					sin = 1.0f / tmp1;
 					cos *= sin;
@@ -941,7 +941,7 @@ bool Matrix3::QLAlgorithm(float diag[3], float subDiag[3])
 				else
 				{
 					sin = tmp3 / tmp0;
-					tmp1 = Math::Sqrt(sin * sin + 1.0f);
+					tmp1 = Math::SquareRoot(sin * sin + 1.0f);
 					subDiag[k + 1] = tmp0 * tmp1;
 					cos = 1.0f / tmp1;
 					sin *= cos;

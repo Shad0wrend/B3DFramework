@@ -126,6 +126,11 @@ namespace bs
 	using Vector3F = TVector3<float>;
 	using Vector3D = TVector3<double>;
 
+	template<typename T> struct TVector4;
+	using Vector4 = TVector4<float>;
+	using Vector4F = TVector4<float>;
+	using Vector4D = TVector4<double>;
+
 	template<typename T> class TRadian;
 	using Radian = TRadian<float>;
 	using RadianF = TRadian<float>;
@@ -162,7 +167,6 @@ namespace bs
 	class Ray;
 	class Capsule;
 	class Sphere;
-	class Vector4;
 	class Rect2I;
 	class Rect2;
 	class Rect3;

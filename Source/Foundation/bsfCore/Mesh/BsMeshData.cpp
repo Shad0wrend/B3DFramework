@@ -381,7 +381,7 @@ Bounds MeshData::CalculateBounds() const
 					radiusSqrd = dist;
 			}
 
-			float radius = Math::Sqrt(radiusSqrd);
+			float radius = Math::SquareRoot(radiusSqrd);
 
 			bounds = Bounds(AABox(min, max), Sphere(center, radius));
 			break;

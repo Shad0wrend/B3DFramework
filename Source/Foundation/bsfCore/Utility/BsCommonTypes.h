@@ -258,6 +258,18 @@ namespace bs
 		BF_32X2U, /**< 2D 32-bit unsigned integer format. */
 		BF_32X3U, /**< 3D 32-bit unsigned integer format. */
 		BF_32X4U, /**< 4D 32-bit unsigned integer format. */
+		BF_64X1F, /**< 1D 64-bit floating-point format. */
+		BF_64X2F, /**< 2D 64-bit floating-point format. */
+		BF_64X3F, /**< 3D 64-bit floating-point format. */
+		BF_64X4F, /**< 4D 64-bit floating-point format. */
+		BF_64X1S, /**< 1D 64-bit signed integer format. */
+		BF_64X2S, /**< 2D 64-bit signed integer format. */
+		BF_64X3S, /**< 3D 64-bit signed integer format. */
+		BF_64X4S, /**< 4D 64-bit signed integer format. */
+		BF_64X1U, /**< 1D 64-bit unsigned integer format. */
+		BF_64X2U, /**< 2D 64-bit unsigned integer format. */
+		BF_64X3U, /**< 3D 64-bit unsigned integer format. */
+		BF_64X4U, /**< 4D 64-bit unsigned integer format. */
 		BF_COUNT, /**< Not a valid format. Keep just before BS_UNKNOWN. */
 		BF_UNKNOWN = 0xffff /**< Unknown format (used for non-standard buffers, like structured or raw. */
 	};
@@ -296,7 +308,7 @@ namespace bs
 	};
 
 	/** Type of a parameter in a GPU program. */
-	enum GpuParamType
+	enum GpuParameterType
 	{
 		GPT_DATA, /**< Raw data type like float, Vector3, Color, etc. */
 		GPT_TEXTURE, /**< Texture type (2D, 3D, cube, etc.) */
@@ -305,21 +317,21 @@ namespace bs
 	};
 
 	/**	Type of GPU data parameters that can be used as inputs to a GPU program. */
-	enum GpuParamDataType
+	enum GpuDataParameterType
 	{
-		GPDT_FLOAT1 = 1, /**< 1D floating point value. */
-		GPDT_FLOAT2 = 2, /**< 2D floating point value. */
-		GPDT_FLOAT3 = 3, /**< 3D floating point value. */
-		GPDT_FLOAT4 = 4, /**< 4D floating point value. */
-		GPDT_MATRIX_2X2 = 11, /**< 2x2 matrix. */
-		GPDT_MATRIX_2X3 = 12, /**< 2x3 matrix. */
-		GPDT_MATRIX_2X4 = 13, /**< 2x4 matrix. */
-		GPDT_MATRIX_3X2 = 14, /**< 3x2 matrix. */
-		GPDT_MATRIX_3X3 = 15, /**< 3x3 matrix. */
-		GPDT_MATRIX_3X4 = 16, /**< 3x4 matrix. */
-		GPDT_MATRIX_4X2 = 17, /**< 4x2 matrix. */
-		GPDT_MATRIX_4X3 = 18, /**< 4x3 matrix. */
-		GPDT_MATRIX_4X4 = 19, /**< 4x4 matrix. */
+		GPDT_FLOAT1 = 1, /**< 1D 32-bit floating point value. */
+		GPDT_FLOAT2 = 2, /**< 2D 32-bit floating point value. */
+		GPDT_FLOAT3 = 3, /**< 3D 32-bit floating point value. */
+		GPDT_FLOAT4 = 4, /**< 4D 32-bit floating point value. */
+		GPDT_MATRIX_2X2 = 11, /**< 2x2 matrix with 32-bit floating point elements. */
+		GPDT_MATRIX_2X3 = 12, /**< 2x3 matrix with 32-bit floating point elements. */
+		GPDT_MATRIX_2X4 = 13, /**< 2x4 matrix with 32-bit floating point elements. */
+		GPDT_MATRIX_3X2 = 14, /**< 3x2 matrix with 32-bit floating point elements. */
+		GPDT_MATRIX_3X3 = 15, /**< 3x3 matrix with 32-bit floating point elements. */
+		GPDT_MATRIX_3X4 = 16, /**< 3x4 matrix with 32-bit floating point elements. */
+		GPDT_MATRIX_4X2 = 17, /**< 4x2 matrix with 32-bit floating point elements. */
+		GPDT_MATRIX_4X3 = 18, /**< 4x3 matrix with 32-bit floating point elements. */
+		GPDT_MATRIX_4X4 = 19, /**< 4x4 matrix with 32-bit floating point elements. */
 		GPDT_INT1 = 20, /**< 1D signed integer value. */
 		GPDT_INT2 = 21, /**< 2D signed integer value. */
 		GPDT_INT3 = 22, /**< 3D signed integer value. */
@@ -327,7 +339,37 @@ namespace bs
 		GPDT_BOOL = 24, /**< Boolean value. */
 		GPDT_STRUCT = 25, /**< Variable size structure. */
 		GPDT_COLOR = 26, /**< Same as GPDT_FLOAT4, but can be used to better deduce usage. */
-		GPDT_COUNT = 27, // Keep at end before GPDT_UNKNOWN
+		GPDT_UINT1 = 27, /**< 1D unsigned integer value. */
+		GPDT_UINT2 = 28, /**< 2D unsigned integer value. */
+		GPDT_UINT3 = 29, /**< 3D unsigned integer value. */
+		GPDT_UINT4 = 30, /**< 4D unsigned integer value. */
+		GPDT_DOUBLE1 = 31, /**< 1D 64-bit floating point value. */
+		GPDT_DOUBLE2 = 32, /**< 2D 64-bit floating point value. */
+		GPDT_DOUBLE3 = 33, /**< 3D 64-bit floating point value. */
+		GPDT_DOUBLE4 = 34, /**< 4D 64-bit floating point value. */
+		GPDT_HALF1 = 35, /**< 1D 16-bit floating point value. */
+		GPDT_HALF2 = 36, /**< 2D 16-bit floating point value. */
+		GPDT_HALF3 = 37, /**< 3D 16-bit floating point value. */
+		GPDT_HALF4 = 38, /**< 4D 16-bit floating point value. */
+		GPDT_DOUBLE_MATRIX_2X2 = 39, /**< 2x2 matrix with 64-bit floating point elements. */
+		GPDT_DOUBLE_MATRIX_2X3 = 40, /**< 2x3 matrix with 64-bit floating point elements. */
+		GPDT_DOUBLE_MATRIX_2X4 = 41, /**< 2x4 matrix with 64-bit floating point elements. */
+		GPDT_DOUBLE_MATRIX_3X2 = 42, /**< 3x2 matrix with 64-bit floating point elements. */
+		GPDT_DOUBLE_MATRIX_3X3 = 43, /**< 3x3 matrix with 64-bit floating point elements. */
+		GPDT_DOUBLE_MATRIX_3X4 = 44, /**< 3x4 matrix with 64-bit floating point elements. */
+		GPDT_DOUBLE_MATRIX_4X2 = 45, /**< 4x2 matrix with 64-bit floating point elements. */
+		GPDT_DOUBLE_MATRIX_4X3 = 46, /**< 4x3 matrix with 64-bit floating point elements. */
+		GPDT_DOUBLE_MATRIX_4X4 = 47, /**< 4x4 matrix with 64-bit floating point elements. */
+		GPDT_HALF_MATRIX_2X2 = 48, /**< 2x2 matrix with 16-bit floating point elements. */
+		GPDT_HALF_MATRIX_2X3 = 49, /**< 2x3 matrix with 16-bit floating point elements. */
+		GPDT_HALF_MATRIX_2X4 = 50, /**< 2x4 matrix with 16-bit floating point elements. */
+		GPDT_HALF_MATRIX_3X2 = 51, /**< 3x2 matrix with 16-bit floating point elements. */
+		GPDT_HALF_MATRIX_3X3 = 52, /**< 3x3 matrix with 16-bit floating point elements. */
+		GPDT_HALF_MATRIX_3X4 = 53, /**< 3x4 matrix with 16-bit floating point elements. */
+		GPDT_HALF_MATRIX_4X2 = 54, /**< 4x2 matrix with 16-bit floating point elements. */
+		GPDT_HALF_MATRIX_4X3 = 55, /**< 4x3 matrix with 16-bit floating point elements. */
+		GPDT_HALF_MATRIX_4X4 = 67, /**< 4x4 matrix with 16-bit floating point elements. */
+		GPDT_COUNT = 68, /**< Keep at end before GPDT_UNKNOWN. */
 		GPDT_UNKNOWN = 0xffff
 	};
 
@@ -354,7 +396,7 @@ namespace bs
 	};
 
 	/**	Contains data about a type used for GPU data parameters. */
-	struct GpuParamDataTypeInfo
+	struct GpuDataParameterTypeInformation
 	{
 		u32 BaseTypeSize;
 		u32 Size;
@@ -364,9 +406,9 @@ namespace bs
 	};
 
 	/**	Contains a lookup table for various information of all types used for data GPU parameters. Sizes are in bytes. */
-	struct GpuDataParamInfos
+	struct GpuDataParameterTypeInformationLookup
 	{
-		GpuDataParamInfos()
+		GpuDataParameterTypeInformationLookup()
 		{
 			memset(Lookup, 0, sizeof(Lookup));
 
@@ -388,15 +430,46 @@ namespace bs
 			Lookup[(u32)GPDT_INT2] = { 4, 8, 8, 1, 2 };
 			Lookup[(u32)GPDT_INT3] = { 4, 12, 16, 1, 3 };
 			Lookup[(u32)GPDT_INT4] = { 4, 16, 16, 1, 4 };
+			Lookup[(u32)GPDT_UINT1] = { 4, 4, 4, 1, 1 };
+			Lookup[(u32)GPDT_UINT2] = { 4, 8, 8, 1, 2 };
+			Lookup[(u32)GPDT_UINT3] = { 4, 12, 16, 1, 3 };
+			Lookup[(u32)GPDT_UINT4] = { 4, 16, 16, 1, 4 };
+			Lookup[(u32)GPDT_DOUBLE1] = { 8, 8, 8, 1, 1 };
+			Lookup[(u32)GPDT_DOUBLE2] = { 8, 16, 16, 1, 2 };
+			Lookup[(u32)GPDT_DOUBLE3] = { 8, 24, 32, 1, 3 };
+			Lookup[(u32)GPDT_DOUBLE4] = { 8, 32, 32, 1, 4 };
+			Lookup[(u32)GPDT_HALF1] = { 2, 2, 4, 1, 1 };
+			Lookup[(u32)GPDT_HALF2] = { 2, 4, 4, 1, 2 };
+			Lookup[(u32)GPDT_HALF3] = { 2, 6, 8, 1, 3 };
+			Lookup[(u32)GPDT_HALF4] = { 2, 8, 8, 1, 4 };
+			Lookup[(u32)GPDT_DOUBLE_MATRIX_2X2] = { 8, 32, 16, 2, 2 };
+			Lookup[(u32)GPDT_DOUBLE_MATRIX_2X3] = { 8, 64, 32, 2, 3 };
+			Lookup[(u32)GPDT_DOUBLE_MATRIX_2X4] = { 8, 64, 32, 2, 4 };
+			Lookup[(u32)GPDT_DOUBLE_MATRIX_3X2] = { 8, 48, 16, 3, 2 };
+			Lookup[(u32)GPDT_DOUBLE_MATRIX_3X3] = { 8, 96, 32, 3, 3 };
+			Lookup[(u32)GPDT_DOUBLE_MATRIX_3X4] = { 8, 96, 32, 3, 4 };
+			Lookup[(u32)GPDT_DOUBLE_MATRIX_4X2] = { 8, 64, 16, 4, 2 };
+			Lookup[(u32)GPDT_DOUBLE_MATRIX_4X3] = { 8, 128, 32, 4, 3 };
+			Lookup[(u32)GPDT_DOUBLE_MATRIX_4X4] = { 8, 128, 32, 4, 4 };
+			Lookup[(u32)GPDT_HALF_MATRIX_2X2] = { 2, 8, 4, 2, 2 };
+			Lookup[(u32)GPDT_HALF_MATRIX_2X3] = { 2, 16, 8, 2, 3 };
+			Lookup[(u32)GPDT_HALF_MATRIX_2X4] = { 2, 16, 8, 2, 4 };
+			Lookup[(u32)GPDT_HALF_MATRIX_3X2] = { 2, 12, 4, 3, 2 };
+			Lookup[(u32)GPDT_HALF_MATRIX_3X3] = { 2, 24, 8, 3, 3 };
+			Lookup[(u32)GPDT_HALF_MATRIX_3X4] = { 2, 24, 8, 3, 4 };
+			Lookup[(u32)GPDT_HALF_MATRIX_4X2] = { 2, 16, 4, 4, 2 };
+			Lookup[(u32)GPDT_HALF_MATRIX_4X3] = { 2, 32, 8, 4, 3 };
+			Lookup[(u32)GPDT_HALF_MATRIX_4X4] = { 2, 32, 8, 4, 4 };
+			Lookup[(u32)GPDT_COLOR] = { 4, 16, 16, 1, 4 };
 			Lookup[(u32)GPDT_BOOL] = { 4, 4, 4, 1, 1 };
 			Lookup[(u32)GPDT_STRUCT] = { 4, 0, 16, 1, 1 };
 		}
 
-		GpuParamDataTypeInfo Lookup[GPDT_COUNT];
+		GpuDataParameterTypeInformation Lookup[GPDT_COUNT];
 	};
 
 	/**	Type of GPU object parameters that can be used as inputs to a GPU program. */
-	enum GpuParamObjectType
+	enum GpuParameterObjectType
 	{
 		GPOT_SAMPLER1D = 1, /**< Sampler state for a 1D texture. */
 		GPOT_SAMPLER2D = 2, /**< Sampler state for a 2D texture. */
@@ -431,54 +504,54 @@ namespace bs
 	};
 
 	/** Returns information about GPU parameter types. */
-	struct GpuParameterTypeInformation 
+	struct GpuObjectParameterTypeInformation 
 	{
-		static bool Is1DTexture(const GpuParamObjectType type)
+		static bool Is1DTexture(const GpuParameterObjectType type)
 		{
 			return type == GPOT_RWTEXTURE1D || type == GPOT_TEXTURE1D;
 		}
 
-		static bool Is1DTextureArray(const GpuParamObjectType type)
+		static bool Is1DTextureArray(const GpuParameterObjectType type)
 		{
 			return type == GPOT_RWTEXTURE1DARRAY || type == GPOT_TEXTURE1DARRAY;
 		}
 
-		static bool Is2DTexture(GpuParamObjectType type)
+		static bool Is2DTexture(GpuParameterObjectType type)
 		{
 			return type == GPOT_RWTEXTURE2D || type == GPOT_RWTEXTURE2DMS || type == GPOT_TEXTURE2D || type == GPOT_TEXTURE2DMS;
 		}
 
-		static bool Is2DTextureArray(GpuParamObjectType type)
+		static bool Is2DTextureArray(GpuParameterObjectType type)
 		{
 			return type == GPOT_RWTEXTURE2DARRAY || type == GPOT_RWTEXTURE2DMSARRAY || type == GPOT_TEXTURE2DARRAY || type == GPOT_TEXTURE2DMSARRAY;
 		}
 
-		static bool Is3DTexture(GpuParamObjectType type)
+		static bool Is3DTexture(GpuParameterObjectType type)
 		{
 			return type == GPOT_RWTEXTURE3D || type == GPOT_TEXTURE3D;
 		}
 
-		static bool IsCubeTexture(GpuParamObjectType type)
+		static bool IsCubeTexture(GpuParameterObjectType type)
 		{
 			return type == GPOT_TEXTURECUBE;
 		}
 
-		static bool IsCubeTextureArray(GpuParamObjectType type)
+		static bool IsCubeTextureArray(GpuParameterObjectType type)
 		{
 			return type == GPOT_TEXTURECUBEARRAY;
 		}
 
-		static bool IsTexture(GpuParamObjectType type)
+		static bool IsTexture(GpuParameterObjectType type)
 		{
 			return Is1DTexture(type) || Is1DTextureArray(type) || Is2DTexture(type) || Is2DTextureArray(type) || Is3DTexture(type) || IsCubeTexture(type) || IsCubeTextureArray(type);
 		}
 
-		static bool IsSampler(GpuParamObjectType type)
+		static bool IsSampler(GpuParameterObjectType type)
 		{
 			return type == GPOT_SAMPLER1D || type == GPOT_SAMPLER2D || type == GPOT_SAMPLER2DMS || type == GPOT_SAMPLER3D || type == GPOT_SAMPLERCUBE;
 		}
 
-		static bool IsBuffer(GpuParamObjectType type)
+		static bool IsBuffer(GpuParameterObjectType type)
 		{
 			return !IsTexture(type) && !IsSampler(type) && type != GPOT_UNKNOWN;
 		}

@@ -117,7 +117,7 @@ namespace bs
 			 *								alignment. In multiples of 4 bytes.
 			 * @return						Size of the element, in multiples of 4 bytes.
 			 */
-			static u32 CalcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, u32 arraySize, u32& offset);
+			static u32 CalcInterfaceBlockElementSizeAndOffset(GpuDataParameterType type, u32 arraySize, u32& offset);
 		};
 
 		/** @} */

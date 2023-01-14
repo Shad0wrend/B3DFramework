@@ -60,7 +60,7 @@ namespace bs
 		struct ParamData
 		{
 			ParamType Type;
-			GpuParamDataType DataType;
+			GpuDataParameterType DataType;
 			u32 Index;
 			u32 ArraySize;
 			mutable u64 Version;
@@ -103,7 +103,7 @@ namespace bs
 		template <typename T>
 		void GetDataParam(const String& name, u32 arrayIdx, T& output) const
 		{
-			GpuParamDataType dataType = TGpuDataParamInfo<T>::TypeId;
+			GpuDataParameterType dataType = TGpuDataParamInfo<T>::TypeId;
 
 			const ParamData* param = nullptr;
 			auto result = getParamData(name, ParamType::Data, dataType, arrayIdx, &param);
@@ -112,7 +112,7 @@ namespace bs
 
 			const DataParamInfo& paramInfo = mDataParams[param->index + arrayIdx];
 
-			const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.lookup[dataType];
+			const GpuDataParameterTypeInformation& typeInfo = GpuParams::PARAM_SIZES.lookup[dataType];
 			u32 paramTypeSize = typeInfo.numColumns * typeInfo.numRows * typeInfo.baseTypeSize;
 
 			memcpy(output, &mDataParamsBuffer[paramInfo.offset], sizeof(paramTypeSize));
@@ -131,7 +131,7 @@ namespace bs
 		template <typename T>
 		void SetDataParam(const String& name, u32 arrayIdx, const T& input) const
 		{
-			GpuParamDataType dataType = TGpuDataParamInfo<T>::TypeId;
+			GpuDataParameterType dataType = TGpuDataParamInfo<T>::TypeId;
 
 			const ParamData* param = nullptr;
 			auto result = getParamData(name, ParamType::Data, dataType, arrayIdx, &param);
@@ -140,7 +140,7 @@ namespace bs
 
 			const DataParamInfo& paramInfo = mDataParams[param->index + arrayIdx];
 
-			const GpuParamDataTypeInfo& typeInfo = GpuParams::PARAM_SIZES.lookup[dataType];
+			const GpuDataParameterTypeInformation& typeInfo = GpuParams::PARAM_SIZES.lookup[dataType];
 			u32 paramTypeSize = typeInfo.numColumns * typeInfo.numRows * typeInfo.baseTypeSize;
 
 			memcpy(&mDataParamsBuffer[paramInfo.offset], input, sizeof(paramTypeSize));
@@ -161,7 +161,7 @@ namespace bs
 		const TAnimationCurve<T>& GetCurveParam(const String& name, u32 arrayIdx) const
 		{
 			static TAnimationCurve<T> EMPTY_CURVE;
-			GpuParamDataType dataType = TGpuDataParamInfo<T>::TypeId;
+			GpuDataParameterType dataType = TGpuDataParamInfo<T>::TypeId;
 
 			const ParamData* param = nullptr;
 			auto result = getParamData(name, ParamType::Data, dataType, arrayIdx, &param);
@@ -184,7 +184,7 @@ namespace bs
 		template <typename T>
 		void SetCurveParam(const String& name, u32 arrayIdx, TAnimationCurve<T> input) const
 		{
-			GpuParamDataType dataType = TGpuDataParamInfo<T>::TypeId;
+			GpuDataParameterType dataType = TGpuDataParamInfo<T>::TypeId;
 
 			const ParamData* param = nullptr;
 			auto result = getParamData(name, ParamType::Data, dataType, arrayIdx, &param);
@@ -237,7 +237,7 @@ namespace bs
 		 * @param[out]	output		Index of the requested parameter, only valid if success is returned.
 		 * @return					Success or error state of the request.
 		 */
-		GetParamResult GetParamIndex(const String& name, ParamType type, GpuParamDataType dataType, u32 arrayIdx, u32& output) const;
+		GetParamResult GetParamIndex(const String& name, ParamType type, GpuDataParameterType dataType, u32 arrayIdx, u32& output) const;
 
 		/**
 		 * Returns data about a parameter and reports an error if there is a type or size mismatch, or if the parameter
@@ -254,7 +254,7 @@ namespace bs
 		 *							some other error was reported.
 		 * @return					Success or error state of the request.
 		 */
-		GetParamResult GetParamData(const String& name, ParamType type, GpuParamDataType dataType, u32 arrayIdx, const ParamData** output) const;
+		GetParamResult GetParamData(const String& name, ParamType type, GpuDataParameterType dataType, u32 arrayIdx, const ParamData** output) const;
 
 		/**
 		 * Returns information about a parameter at the specified global index, as retrieved by getParamIndex().
@@ -281,11 +281,11 @@ namespace bs
 		template <typename T>
 		void GetDataParam(const ParamData& param, u32 arrayIdx, T& output) const
 		{
-			GpuParamDataType dataType = (GpuParamDataType)TGpuDataParamInfo<T>::TypeId;
+			GpuDataParameterType dataType = (GpuDataParameterType)TGpuDataParamInfo<T>::TypeId;
 
 			const DataParamInfo& paramInfo = mDataParams[param.Index + arrayIdx];
 
-			const GpuParamDataTypeInfo& typeInfo = GpuParams::kParamSizes.Lookup[dataType];
+			const GpuDataParameterTypeInformation& typeInfo = GpuParams::kParamSizes.Lookup[dataType];
 			u32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 			B3D_ASSERT(sizeof(output) == paramTypeSize);
@@ -300,7 +300,7 @@ namespace bs
 		template <typename T>
 		void SetDataParam(const ParamData& param, u32 arrayIdx, const T& input) const
 		{
-			GpuParamDataType dataType = (GpuParamDataType)TGpuDataParamInfo<T>::TypeId;
+			GpuDataParameterType dataType = (GpuDataParameterType)TGpuDataParamInfo<T>::TypeId;
 
 			DataParamInfo& paramInfo = mDataParams[param.Index + arrayIdx];
 			if(paramInfo.FloatCurve)
@@ -315,7 +315,7 @@ namespace bs
 				paramInfo.ColorGradient = nullptr;
 			}
 
-			const GpuParamDataTypeInfo& typeInfo = GpuParams::kParamSizes.Lookup[dataType];
+			const GpuDataParameterTypeInformation& typeInfo = GpuParams::kParamSizes.Lookup[dataType];
 			u32 paramTypeSize = typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize;
 
 			B3D_ASSERT(sizeof(input) == paramTypeSize);
@@ -332,7 +332,7 @@ namespace bs
 		template <typename T>
 		const TAnimationCurve<T>& GetCurveParam(const ParamData& param, u32 arrayIdx) const
 		{
-			GpuParamDataType dataType = (GpuParamDataType)TGpuDataParamInfo<T>::TypeId;
+			GpuDataParameterType dataType = (GpuDataParameterType)TGpuDataParamInfo<T>::TypeId;
 
 			// Only supported for float types
 			if(dataType == GPDT_FLOAT1)
@@ -354,7 +354,7 @@ namespace bs
 		template <typename T>
 		void SetCurveParam(const ParamData& param, u32 arrayIdx, TAnimationCurve<T> input) const
 		{
-			GpuParamDataType dataType = (GpuParamDataType)TGpuDataParamInfo<T>::TypeId;
+			GpuDataParameterType dataType = (GpuDataParameterType)TGpuDataParamInfo<T>::TypeId;
 
 			// Only supported for float types
 			if(dataType == GPDT_FLOAT1)

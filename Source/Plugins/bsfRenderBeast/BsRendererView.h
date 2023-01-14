@@ -86,7 +86,7 @@ namespace bs
 			static SkyboxMat* GetVariation(bool color);
 
 		private:
-			GpuParamTexture mSkyTextureParam;
+			GpuParameterSampledTexture mSkyTextureParam;
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 		};
 

@@ -12,28 +12,27 @@ namespace bs
 	 */
 
 	/** A four dimensional vector. */
-	class B3D_UTILITY_EXPORT Vector4
+	template<class T>
+	struct TVector4
 	{
-	public:
-		float X, Y, Z, W;
+		T X, Y, Z, W;
 
-	public:
-		Vector4() = default;
+		TVector4() = default;
 
-		constexpr Vector4(BS_ZERO)
-			: X(0.0f), Y(0.0f), Z(0.0f), W(0.0f)
+		constexpr TVector4(BS_ZERO)
+			: X((T)0.0), Y((T)0.0), Z((T)0.0), W((T)0.0)
 		{}
 
-		constexpr Vector4(float x, float y, float z, float w)
+		constexpr TVector4(T x, T y, T z, T w)
 			: X(x), Y(y), Z(z), W(w)
 		{}
 
-		constexpr explicit Vector4(const Vector3& vec, float w = 0.0f)
-			: X(vec.X), Y(vec.Y), Z(vec.Z), W(w)
+		constexpr explicit TVector4(const TVector3<T>& other, T w = (T)0.0)
+			: X(other.X), Y(other.Y), Z(other.Z), W(w)
 		{}
 
 		/** Exchange the contents of this vector with another. */
-		void Swap(Vector4& other)
+		void Swap(TVector4& other)
 		{
 			std::swap(X, other.X);
 			std::swap(Y, other.Y);
@@ -41,33 +40,21 @@ namespace bs
 			std::swap(W, other.W);
 		}
 
-		float operator[](u32 i) const
+		T operator[](u32 i) const
 		{
 			B3D_ASSERT(i < 4);
 
 			return *(&X + i);
 		}
 
-		float& operator[](u32 i)
+		T& operator[](u32 i)
 		{
 			B3D_ASSERT(i < 4);
 
 			return *(&X + i);
 		}
 
-		/** Pointer accessor for direct copying. */
-		float* Ptr()
-		{
-			return &X;
-		}
-
-		/** Pointer accessor for direct copying. */
-		const float* Ptr() const
-		{
-			return &X;
-		}
-
-		Vector4& operator=(float rhs)
+		TVector4& operator=(T rhs)
 		{
 			X = rhs;
 			Y = rhs;
@@ -77,100 +64,100 @@ namespace bs
 			return *this;
 		}
 
-		bool operator==(const Vector4& rhs) const
+		bool operator==(const TVector4& rhs) const
 		{
 			return (X == rhs.X && Y == rhs.Y && Z == rhs.Z && W == rhs.W);
 		}
 
-		bool operator!=(const Vector4& rhs) const
+		bool operator!=(const TVector4& rhs) const
 		{
 			return (X != rhs.X || Y != rhs.Y || Z != rhs.Z || W != rhs.W);
 		}
 
-		Vector4& operator=(const Vector3& rhs)
+		TVector4& operator=(const TVector3<T>& rhs)
 		{
 			X = rhs.X;
 			Y = rhs.Y;
 			Z = rhs.Z;
-			W = 1.0f;
+			W = (T)1.0;
 
 			return *this;
 		}
 
-		Vector4 operator+(const Vector4& rhs) const
+		TVector4 operator+(const TVector4& rhs) const
 		{
-			return Vector4(X + rhs.X, Y + rhs.Y, Z + rhs.Z, W + rhs.W);
+			return TVector4(X + rhs.X, Y + rhs.Y, Z + rhs.Z, W + rhs.W);
 		}
 
-		Vector4 operator-(const Vector4& rhs) const
+		TVector4 operator-(const TVector4& rhs) const
 		{
-			return Vector4(X - rhs.X, Y - rhs.Y, Z - rhs.Z, W - rhs.W);
+			return TVector4(X - rhs.X, Y - rhs.Y, Z - rhs.Z, W - rhs.W);
 		}
 
-		Vector4 operator*(float rhs) const
+		TVector4 operator*(T rhs) const
 		{
-			return Vector4(X * rhs, Y * rhs, Z * rhs, W * rhs);
+			return TVector4(X * rhs, Y * rhs, Z * rhs, W * rhs);
 		}
 
-		Vector4 operator*(const Vector4& rhs) const
+		TVector4 operator*(const TVector4& rhs) const
 		{
-			return Vector4(rhs.X * X, rhs.Y * Y, rhs.Z * Z, rhs.W * W);
+			return TVector4(rhs.X * X, rhs.Y * Y, rhs.Z * Z, rhs.W * W);
 		}
 
-		Vector4 operator/(float rhs) const
+		TVector4 operator/(T rhs) const
 		{
-			B3D_ASSERT(rhs != 0.0f);
+			B3D_ASSERT(rhs != (T)0.0);
 
-			float inv = 1.0f / rhs;
-			return Vector4(X * inv, Y * inv, Z * inv, W * inv);
+			const T inverse = (T)1.0 / rhs;
+			return TVector4(X * inverse, Y * inverse, Z * inverse, W * inverse);
 		}
 
-		Vector4 operator/(const Vector4& rhs) const
+		TVector4 operator/(const TVector4& rhs) const
 		{
-			return Vector4(X / rhs.X, Y / rhs.Y, Z / rhs.Z, W / rhs.W);
+			return TVector4(X / rhs.X, Y / rhs.Y, Z / rhs.Z, W / rhs.W);
 		}
 
-		const Vector4& operator+() const
+		const TVector4& operator+() const
 		{
 			return *this;
 		}
 
-		Vector4 operator-() const
+		TVector4 operator-() const
 		{
-			return Vector4(-X, -Y, -Z, -W);
+			return TVector4(-X, -Y, -Z, -W);
 		}
 
-		friend Vector4 operator*(float lhs, const Vector4& rhs)
+		friend TVector4 operator*(T lhs, const TVector4& rhs)
 		{
-			return Vector4(lhs * rhs.X, lhs * rhs.Y, lhs * rhs.Z, lhs * rhs.W);
+			return TVector4(lhs * rhs.X, lhs * rhs.Y, lhs * rhs.Z, lhs * rhs.W);
 		}
 
-		friend Vector4 operator/(float lhs, const Vector4& rhs)
+		friend TVector4 operator/(T lhs, const TVector4& rhs)
 		{
-			return Vector4(lhs / rhs.X, lhs / rhs.Y, lhs / rhs.Z, lhs / rhs.W);
+			return TVector4(lhs / rhs.X, lhs / rhs.Y, lhs / rhs.Z, lhs / rhs.W);
 		}
 
-		friend Vector4 operator+(const Vector4& lhs, float rhs)
+		friend TVector4 operator+(const TVector4& lhs, T rhs)
 		{
-			return Vector4(lhs.X + rhs, lhs.Y + rhs, lhs.Z + rhs, lhs.W + rhs);
+			return TVector4(lhs.X + rhs, lhs.Y + rhs, lhs.Z + rhs, lhs.W + rhs);
 		}
 
-		friend Vector4 operator+(float lhs, const Vector4& rhs)
+		friend TVector4 operator+(T lhs, const TVector4& rhs)
 		{
-			return Vector4(lhs + rhs.X, lhs + rhs.Y, lhs + rhs.Z, lhs + rhs.W);
+			return TVector4(lhs + rhs.X, lhs + rhs.Y, lhs + rhs.Z, lhs + rhs.W);
 		}
 
-		friend Vector4 operator-(const Vector4& lhs, float rhs)
+		friend TVector4 operator-(const TVector4& lhs, T rhs)
 		{
-			return Vector4(lhs.X - rhs, lhs.Y - rhs, lhs.Z - rhs, lhs.W - rhs);
+			return TVector4(lhs.X - rhs, lhs.Y - rhs, lhs.Z - rhs, lhs.W - rhs);
 		}
 
-		friend Vector4 operator-(float lhs, Vector4& rhs)
+		friend TVector4 operator-(T lhs, TVector4& rhs)
 		{
-			return Vector4(lhs - rhs.X, lhs - rhs.Y, lhs - rhs.Z, lhs - rhs.W);
+			return TVector4(lhs - rhs.X, lhs - rhs.Y, lhs - rhs.Z, lhs - rhs.W);
 		}
 
-		Vector4& operator+=(const Vector4& rhs)
+		TVector4& operator+=(const TVector4& rhs)
 		{
 			X += rhs.X;
 			Y += rhs.Y;
@@ -180,7 +167,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector4& operator-=(const Vector4& rhs)
+		TVector4& operator-=(const TVector4& rhs)
 		{
 			X -= rhs.X;
 			Y -= rhs.Y;
@@ -190,7 +177,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector4& operator*=(float rhs)
+		TVector4& operator*=(T rhs)
 		{
 			X *= rhs;
 			Y *= rhs;
@@ -200,7 +187,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector4& operator+=(float rhs)
+		TVector4& operator+=(T rhs)
 		{
 			X += rhs;
 			Y += rhs;
@@ -210,7 +197,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector4& operator-=(float rhs)
+		TVector4& operator-=(T rhs)
 		{
 			X -= rhs;
 			Y -= rhs;
@@ -220,7 +207,7 @@ namespace bs
 			return *this;
 		}
 
-		Vector4& operator*=(Vector4& rhs)
+		TVector4& operator*=(TVector4& rhs)
 		{
 			X *= rhs.X;
 			Y *= rhs.Y;
@@ -230,21 +217,21 @@ namespace bs
 			return *this;
 		}
 
-		Vector4& operator/=(float rhs)
+		TVector4& operator/=(T rhs)
 		{
-			B3D_ASSERT(rhs != 0.0f);
+			B3D_ASSERT(rhs != (T)0.0);
 
-			float inv = 1.0f / rhs;
+			const T inverse = (T)1.0 / rhs;
 
-			X *= inv;
-			Y *= inv;
-			Z *= inv;
-			W *= inv;
+			X *= inverse;
+			Y *= inverse;
+			Z *= inverse;
+			W *= inverse;
 
 			return *this;
 		}
 
-		Vector4& operator/=(const Vector4& rhs)
+		TVector4& operator/=(const TVector4& rhs)
 		{
 			X /= rhs.X;
 			Y /= rhs.Y;
@@ -255,16 +242,22 @@ namespace bs
 		}
 
 		/** Calculates the dot (scalar) product of this vector with another. */
-		float Dot(const Vector4& vec) const
+		T Dot(const TVector4& rhs) const
 		{
-			return X * vec.X + Y * vec.Y + Z * vec.Z + W * vec.W;
+			return X * rhs.X + Y * rhs.Y + Z * rhs.Z + W * rhs.W;
 		}
 
 		/** Checks are any of the vector components NaN. */
 		inline bool IsNaN() const;
 
-		static const Vector4 kZero;
+		static const TVector4 kZero;
 	};
+
+	template<> const TVector4<float> TVector4<float>::kZero{BsZero};
+	template<> const TVector4<double> TVector4<double>::kZero{BsZero};
+
+	extern template struct TVector4<float>;
+	extern template struct TVector4<double>;
 
 	/** @} */
 } // namespace bs

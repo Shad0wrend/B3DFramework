@@ -307,35 +307,35 @@ SPtr<typename TMaterial<Core>::PassType> TMaterial<Core>::GetPass(u32 passIdx, u
 }
 
 template <bool Core>
-TMaterialParamStruct<Core> TMaterial<Core>::GetParamStruct(const String& name) const
+TMaterialParameterStruct<Core> TMaterial<Core>::GetParamStruct(const String& name) const
 {
 	ThrowIfNotInitialized();
 
-	return TMaterialParamStruct<Core>(name, GetMaterialPtr(this));
+	return TMaterialParameterStruct<Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
-TMaterialColorGradientParam<Core> TMaterial<Core>::GetParamColorGradient(const String& name) const
+TMaterialParameterColorGradient<Core> TMaterial<Core>::GetParamColorGradient(const String& name) const
 {
 	ThrowIfNotInitialized();
 
-	return TMaterialColorGradientParam<Core>(name, GetMaterialPtr(this));
+	return TMaterialParameterColorGradient<Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
-TMaterialCurveParam<float, Core> TMaterial<Core>::GetParamFloatCurve(const String& name) const
+TMaterialParameterCurve<float, Core> TMaterial<Core>::GetParamFloatCurve(const String& name) const
 {
 	ThrowIfNotInitialized();
 
-	return TMaterialCurveParam<float, Core>(name, GetMaterialPtr(this));
+	return TMaterialParameterCurve<float, Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
-TMaterialParamTexture<Core> TMaterial<Core>::GetParamTexture(const String& name) const
+TMaterialParameterSampledTexture<Core> TMaterial<Core>::GetParamTexture(const String& name) const
 {
 	ThrowIfNotInitialized();
 
-	return TMaterialParamTexture<Core>(name, GetMaterialPtr(this));
+	return TMaterialParameterSampledTexture<Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
@@ -347,27 +347,27 @@ TMaterialParamSpriteTexture<Core> TMaterial<Core>::GetParamSpriteTexture(const S
 }
 
 template <bool Core>
-TMaterialParamLoadStoreTexture<Core> TMaterial<Core>::GetParamLoadStoreTexture(const String& name) const
+TMaterialParameterStorageTexture<Core> TMaterial<Core>::GetParamLoadStoreTexture(const String& name) const
 {
 	ThrowIfNotInitialized();
 
-	return TMaterialParamLoadStoreTexture<Core>(name, GetMaterialPtr(this));
+	return TMaterialParameterStorageTexture<Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
-TMaterialParamBuffer<Core> TMaterial<Core>::GetParamBuffer(const String& name) const
+TMaterialParameterBuffer<Core> TMaterial<Core>::GetParamBuffer(const String& name) const
 {
 	ThrowIfNotInitialized();
 
-	return TMaterialParamBuffer<Core>(name, GetMaterialPtr(this));
+	return TMaterialParameterBuffer<Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
-TMaterialParamSampState<Core> TMaterial<Core>::GetParamSamplerState(const String& name) const
+TMaterialParameterSampler<Core> TMaterial<Core>::GetParamSamplerState(const String& name) const
 {
 	ThrowIfNotInitialized();
 
-	return TMaterialParamSampState<Core>(name, GetMaterialPtr(this));
+	return TMaterialParameterSampler<Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
@@ -401,7 +401,7 @@ template <bool Core>
 template <typename T>
 void TMaterial<Core>::SetParamValue(const String& name, u8* buffer, u32 numElements)
 {
-	TMaterialDataParam<T, Core> param;
+	TMaterialParameterPrimitive<T, Core> param;
 	GetParam(name, param);
 
 	T* ptr = (T*)buffer;
@@ -464,7 +464,7 @@ void TMaterial<Core>::InitDefaultParameters()
 			SetParamValue<Matrix4>(paramData.first, buffer, paramData.second.ArraySize);
 			break;
 		case GPDT_INT1:
-			SetParamValue<int>(paramData.first, buffer, paramData.second.ArraySize);
+			SetParamValue<i32>(paramData.first, buffer, paramData.second.ArraySize);
 			break;
 		case GPDT_INT2:
 			SetParamValue<Vector2I>(paramData.first, buffer, paramData.second.ArraySize);
@@ -475,6 +475,18 @@ void TMaterial<Core>::InitDefaultParameters()
 		case GPDT_INT4:
 			SetParamValue<Vector4I>(paramData.first, buffer, paramData.second.ArraySize);
 			break;
+		case GPDT_UINT1:
+			SetParamValue<u32>(paramData.first, buffer, paramData.second.ArraySize);
+			break;
+		case GPDT_UINT2:
+			SetParamValue<Vector2UI>(paramData.first, buffer, paramData.second.ArraySize);
+			break;
+		case GPDT_UINT3:
+			SetParamValue<Vector3UI>(paramData.first, buffer, paramData.second.ArraySize);
+			break;
+		case GPDT_UINT4:
+			SetParamValue<Vector4UI>(paramData.first, buffer, paramData.second.ArraySize);
+			break;
 		case GPDT_BOOL:
 			SetParamValue<int>(paramData.first, buffer, paramData.second.ArraySize);
 			break;
@@ -483,7 +495,7 @@ void TMaterial<Core>::InitDefaultParameters()
 			break;
 		case GPDT_STRUCT:
 			{
-				TMaterialParamStruct<Core> param = GetParamStruct(paramData.first);
+				TMaterialParameterStruct<Core> param = GetParamStruct(paramData.first);
 
 				u32 elementSizeBytes = paramData.second.ElementSize * sizeof(u32);
 				u8* ptr = buffer;
@@ -522,11 +534,11 @@ void TMaterial<Core>::InitDefaultParameters()
 
 template <bool Core>
 template <typename T>
-void TMaterial<Core>::GetParam(const String& name, TMaterialDataParam<T, Core>& output) const
+void TMaterial<Core>::GetParam(const String& name, TMaterialParameterPrimitive<T, Core>& output) const
 {
 	ThrowIfNotInitialized();
 
-	output = TMaterialDataParam<T, Core>(name, GetMaterialPtr(this));
+	output = TMaterialParameterPrimitive<T, Core>(name, GetMaterialPtr(this));
 }
 
 template <bool Core>
@@ -542,43 +554,43 @@ void TMaterial<Core>::ThrowIfNotInitialized() const
 template class TMaterial<false>;
 template class TMaterial<true>;
 
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<float, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<int, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<Color, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<Vector2, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<Vector3, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<Vector4, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<Vector2I, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<Vector3I, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<Vector4I, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<Matrix2, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<Matrix2x3, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<Matrix2x4, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<Matrix3, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<Matrix3x2, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<Matrix3x4, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<Matrix4, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<Matrix4x2, false>&) const;
-template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialDataParam<Matrix4x3, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<float, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<int, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<Color, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<Vector2, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<Vector3, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<Vector4, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<Vector2I, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<Vector3I, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<Vector4I, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<Matrix2, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<Matrix2x3, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<Matrix2x4, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<Matrix3, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<Matrix3x2, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<Matrix3x4, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<Matrix4, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<Matrix4x2, false>&) const;
+template B3D_CORE_EXPORT void TMaterial<false>::GetParam(const String&, TMaterialParameterPrimitive<Matrix4x3, false>&) const;
 
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<float, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<int, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Color, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Vector2, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Vector3, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Vector4, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Vector2I, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Vector3I, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Vector4I, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Matrix2, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Matrix2x3, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Matrix2x4, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Matrix3, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Matrix3x2, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Matrix3x4, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Matrix4, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Matrix4x2, true>&) const;
-template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialDataParam<Matrix4x3, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<float, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<int, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<Color, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<Vector2, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<Vector3, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<Vector4, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<Vector2I, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<Vector3I, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<Vector4I, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<Matrix2, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<Matrix2x3, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<Matrix2x4, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<Matrix3, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<Matrix3x2, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<Matrix3x4, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<Matrix4, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<Matrix4x2, true>&) const;
+template B3D_CORE_EXPORT void TMaterial<true>::GetParam(const String&, TMaterialParameterPrimitive<Matrix4x3, true>&) const;
 
 Material::Material()
 	: mLoadFlags(Load_None)
@@ -812,7 +824,7 @@ HMaterial Material::Clone()
 template <class T>
 void CopyParam(const SPtr<MaterialParams>& from, Material* to, const String& name, const MaterialParams::ParamData& paramRef, u32 arraySize)
 {
-	TMaterialDataParam<T, false> param;
+	TMaterialParameterPrimitive<T, false> param;
 	to->GetParam(name, param);
 
 	T paramData;
@@ -837,10 +849,15 @@ void Material::SetParams(const SPtr<MaterialParams>& params)
 	copyParamLookup[GPDT_FLOAT3] = &CopyParam<Vector3>;
 	copyParamLookup[GPDT_FLOAT4] = &CopyParam<Vector4>;
 
-	copyParamLookup[GPDT_INT1] = &CopyParam<int>;
+	copyParamLookup[GPDT_INT1] = &CopyParam<i32>;
 	copyParamLookup[GPDT_INT2] = &CopyParam<Vector2I>;
 	copyParamLookup[GPDT_INT3] = &CopyParam<Vector3I>;
 	copyParamLookup[GPDT_INT4] = &CopyParam<Vector4I>;
+
+	copyParamLookup[GPDT_UINT1] = &CopyParam<u32>;
+	copyParamLookup[GPDT_UINT2] = &CopyParam<Vector2UI>;
+	copyParamLookup[GPDT_UINT3] = &CopyParam<Vector3UI>;
+	copyParamLookup[GPDT_UINT4] = &CopyParam<Vector4UI>;
 
 	copyParamLookup[GPDT_MATRIX_2X2] = &CopyParam<Matrix2>;
 	copyParamLookup[GPDT_MATRIX_2X3] = &CopyParam<Matrix2x3>;
@@ -877,7 +894,7 @@ void Material::SetParams(const SPtr<MaterialParams>& params)
 		{
 			if(param.second.Type == GPDT_STRUCT)
 			{
-				TMaterialParamStruct<false> curParam = GetParamStruct(param.first);
+				TMaterialParameterStruct<false> curParam = GetParamStruct(param.first);
 
 				u32 structSize = params->GetStructSize(*paramData);
 				if(param.second.ElementSize != structSize)
@@ -902,12 +919,12 @@ void Material::SetParams(const SPtr<MaterialParams>& params)
 
 			if(param.second.Type == GPDT_FLOAT1)
 			{
-				TMaterialCurveParam<float, false> curParam = GetParamFloatCurve(param.first);
+				TMaterialParameterCurve<float, false> curParam = GetParamFloatCurve(param.first);
 				curParam.Set(params->GetCurveParam<float>(*paramData, i), i);
 			}
 			else if(param.second.Type == GPDT_COLOR)
 			{
-				TMaterialColorGradientParam<false> curParam = GetParamColorGradient(param.first);
+				TMaterialParameterColorGradient<false> curParam = GetParamColorGradient(param.first);
 				curParam.Set(params->GetColorGradientParam(*paramData, i), i);
 			}
 		}
@@ -928,7 +945,7 @@ void Material::SetParams(const SPtr<MaterialParams>& params)
 		default:
 		case MateralParamTextureType::Normal:
 			{
-				TMaterialParamTexture<false> curParam = GetParamTexture(param.first);
+				TMaterialParameterSampledTexture<false> curParam = GetParamTexture(param.first);
 
 				HTexture texture;
 				TextureSurface surface;
@@ -938,7 +955,7 @@ void Material::SetParams(const SPtr<MaterialParams>& params)
 			break;
 		case MateralParamTextureType::LoadStore:
 			{
-				TMaterialParamLoadStoreTexture<false> curParam = GetParamLoadStoreTexture(param.first);
+				TMaterialParameterStorageTexture<false> curParam = GetParamLoadStoreTexture(param.first);
 
 				HTexture texture;
 				TextureSurface surface;
@@ -967,7 +984,7 @@ void Material::SetParams(const SPtr<MaterialParams>& params)
 		if(result != MaterialParams::GetParamResult::Success)
 			continue;
 
-		TMaterialParamBuffer<false> curParam = GetParamBuffer(param.first);
+		TMaterialParameterBuffer<false> curParam = GetParamBuffer(param.first);
 
 		SPtr<GpuBuffer> buffer;
 		params->GetBuffer(*paramData, buffer);
@@ -983,7 +1000,7 @@ void Material::SetParams(const SPtr<MaterialParams>& params)
 		if(result != MaterialParams::GetParamResult::Success)
 			continue;
 
-		TMaterialParamSampState<false> curParam = GetParamSamplerState(param.first);
+		TMaterialParameterSampler<false> curParam = GetParamSamplerState(param.first);
 
 		SPtr<SamplerState> samplerState;
 		params->GetSamplerState(*paramData, samplerState);

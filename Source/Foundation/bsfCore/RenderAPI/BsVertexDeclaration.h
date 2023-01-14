@@ -30,10 +30,10 @@ namespace bs
 	/**	Types used to identify base types of vertex element contents. */
 	enum VertexElementType
 	{
-		VET_FLOAT1 = 0, /**< 1D floating point value */
-		VET_FLOAT2 = 1, /**< 2D floating point value */
-		VET_FLOAT3 = 2, /**< 3D floating point value */
-		VET_FLOAT4 = 3, /**< 4D floating point value */
+		VET_FLOAT1 = 0, /**< 1D 32-bit floating point value */
+		VET_FLOAT2 = 1, /**< 2D 32-bit floating point value */
+		VET_FLOAT3 = 2, /**< 3D 32-bit floating point value */
+		VET_FLOAT4 = 3, /**< 4D 32-bit floating point value */
 		VET_COLOR = 4, /**< Color encoded in 32-bits (8-bits per channel). */
 		VET_SHORT1 = 5, /**< 1D 16-bit signed integer value */
 		VET_SHORT2 = 6, /**< 2D 16-bit signed integer value */
@@ -53,6 +53,10 @@ namespace bs
 		VET_UINT2 = 22, /**< 2D 32-bit signed integer value */
 		VET_UINT3 = 23, /**< 3D 32-bit signed integer value */
 		VET_UBYTE4_NORM = 24, /**< 4D 8-bit unsigned integer interpreted as a normalized value in [0, 1] range. */
+		VET_HALF1 = 25, /**< 1D 16-bit floating point value */
+		VET_HALF2 = 26, /**< 2D 16-bit floating point value */
+		VET_HALF3 = 27, /**< 3D 16-bit floating point value */
+		VET_HALF4 = 28, /**< 3D 16-bit floating point value */
 		VET_COUNT, // Keep at end before VET_UNKNOWN
 		VET_UNKNOWN = 0xffff
 	};

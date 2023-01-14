@@ -210,7 +210,7 @@ namespace bs
 		/** Returns the length (magnitude) of the vector. */
 		T Length() const
 		{
-			return Math::Sqrt(X * X + Y * Y);
+			return Math::SquareRoot(X * X + Y * Y);
 		}
 
 		/** Returns the square of the length(magnitude) of the vector. */
@@ -312,7 +312,7 @@ namespace bs
 		static TVector2 Normalize(const TVector2& value)
 		{
 			const T squaredLength = value.X * value.X + value.Y * value.Y;
-			return value * Math::InvSqrt(squaredLength);
+			return value * Math::InverseSquareRoot(squaredLength);
 		}
 
 		/** Normalizes the provided vector and returns the result. Checks if the magnitude is above @p tolerance to avoid division by zero or precision issues. */
@@ -320,7 +320,7 @@ namespace bs
 		{
 			const T squaredLength = value.X * value.X + value.Y * value.Y;
 			if(squaredLength > tolerance)
-				return value * Math::InvSqrt(squaredLength);
+				return value * Math::InverseSquareRoot(squaredLength);
 
 			return value;
 		}

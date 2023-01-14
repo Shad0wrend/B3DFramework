@@ -103,15 +103,15 @@ namespace bs
 			 */
 			void Populate(const SPtr<GpuParams>& params, GpuProgramType programType, bool optional, bool gridIndices, bool probeArray);
 
-			GpuParamTexture SkyReflectionsTexParam;
-			GpuParamTexture AmbientOcclusionTexParam;
-			GpuParamTexture SsrTexParam;
-			GpuParamTexture ReflectionProbeCubemapsTexParam;
+			GpuParameterSampledTexture SkyReflectionsTexParam;
+			GpuParameterSampledTexture AmbientOcclusionTexParam;
+			GpuParameterSampledTexture SsrTexParam;
+			GpuParameterSampledTexture ReflectionProbeCubemapsTexParam;
 
-			GpuParamTexture PreintegratedEnvBrdfParam;
-			GpuParamBuffer ReflectionProbesParam;
+			GpuParameterSampledTexture PreintegratedEnvBrdfParam;
+			GpuParameterBuffer ReflectionProbesParam;
 
-			GpuParamBuffer ReflectionProbeIndicesParam;
+			GpuParameterBuffer ReflectionProbeIndicesParam;
 			GpuParamBinding ReflProbeParamBindings;
 
 			// Only utilized when standard forward rendering is used

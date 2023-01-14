@@ -468,7 +468,7 @@ namespace bs
 		 */
 		MaterialBase::StructData GetStructData(const String& name, u32 arrayIdx = 0) const
 		{
-			TMaterialParamStruct<Core> structParam = GetParamStruct(name);
+			TMaterialParameterStruct<Core> structParam = GetParamStruct(name);
 
 			MaterialBase::StructData data(structParam.GetElementSize());
 			structParam.Get(data.Data.get(), structParam.GetElementSize(), arrayIdx);
@@ -487,9 +487,9 @@ namespace bs
 		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
-		TMaterialDataParam<float, Core> GetParamFloat(const String& name) const
+		TMaterialParameterPrimitive<float, Core> GetParamFloat(const String& name) const
 		{
-			TMaterialDataParam<float, Core> gpuParam;
+			TMaterialParameterPrimitive<float, Core> gpuParam;
 			GetParam(name, gpuParam);
 
 			return gpuParam;
@@ -506,7 +506,7 @@ namespace bs
 		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
-		TMaterialCurveParam<float, Core> GetParamFloatCurve(const String& name) const;
+		TMaterialParameterCurve<float, Core> GetParamFloatCurve(const String& name) const;
 
 		/**
 		 * Returns a handle that allows you to assign a constant value to a color parameter. This handle may be
@@ -519,9 +519,9 @@ namespace bs
 		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
-		TMaterialDataParam<Color, Core> GetParamColor(const String& name) const
+		TMaterialParameterPrimitive<Color, Core> GetParamColor(const String& name) const
 		{
-			TMaterialDataParam<Color, Core> gpuParam;
+			TMaterialParameterPrimitive<Color, Core> gpuParam;
 			GetParam(name, gpuParam);
 
 			return gpuParam;
@@ -538,7 +538,7 @@ namespace bs
 		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
-		TMaterialColorGradientParam<Core> GetParamColorGradient(const String& name) const;
+		TMaterialParameterColorGradient<Core> GetParamColorGradient(const String& name) const;
 
 		/**
 		 * Returns a handle that allows you to assign a constant value to a 2D vector parameter. This handle may be
@@ -551,9 +551,9 @@ namespace bs
 		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
-		TMaterialDataParam<Vector2, Core> GetParamVec2(const String& name) const
+		TMaterialParameterPrimitive<Vector2, Core> GetParamVec2(const String& name) const
 		{
-			TMaterialDataParam<Vector2, Core> gpuParam;
+			TMaterialParameterPrimitive<Vector2, Core> gpuParam;
 			GetParam(name, gpuParam);
 
 			return gpuParam;
@@ -570,9 +570,9 @@ namespace bs
 		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
-		TMaterialDataParam<Vector3, Core> GetParamVec3(const String& name) const
+		TMaterialParameterPrimitive<Vector3, Core> GetParamVec3(const String& name) const
 		{
-			TMaterialDataParam<Vector3, Core> gpuParam;
+			TMaterialParameterPrimitive<Vector3, Core> gpuParam;
 			GetParam(name, gpuParam);
 
 			return gpuParam;
@@ -589,9 +589,9 @@ namespace bs
 		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
-		TMaterialDataParam<Vector4, Core> GetParamVec4(const String& name) const
+		TMaterialParameterPrimitive<Vector4, Core> GetParamVec4(const String& name) const
 		{
-			TMaterialDataParam<Vector4, Core> gpuParam;
+			TMaterialParameterPrimitive<Vector4, Core> gpuParam;
 			GetParam(name, gpuParam);
 
 			return gpuParam;
@@ -608,9 +608,9 @@ namespace bs
 		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
-		TMaterialDataParam<Matrix3, Core> GetParamMat3(const String& name) const
+		TMaterialParameterPrimitive<Matrix3, Core> GetParamMat3(const String& name) const
 		{
-			TMaterialDataParam<Matrix3, Core> gpuParam;
+			TMaterialParameterPrimitive<Matrix3, Core> gpuParam;
 			GetParam(name, gpuParam);
 
 			return gpuParam;
@@ -627,9 +627,9 @@ namespace bs
 		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
-		TMaterialDataParam<Matrix4, Core> GetParamMat4(const String& name) const
+		TMaterialParameterPrimitive<Matrix4, Core> GetParamMat4(const String& name) const
 		{
-			TMaterialDataParam<Matrix4, Core> gpuParam;
+			TMaterialParameterPrimitive<Matrix4, Core> gpuParam;
 			GetParam(name, gpuParam);
 
 			return gpuParam;
@@ -645,7 +645,7 @@ namespace bs
 		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
-		TMaterialParamStruct<Core> GetParamStruct(const String& name) const;
+		TMaterialParameterStruct<Core> GetParamStruct(const String& name) const;
 
 		/**
 		 * Returns a handle that allows you to assign a texture GPU parameter. This handle may be used for more
@@ -657,7 +657,7 @@ namespace bs
 		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
-		TMaterialParamTexture<Core> GetParamTexture(const String& name) const;
+		TMaterialParameterSampledTexture<Core> GetParamTexture(const String& name) const;
 
 		/**
 		 * Returns a handle that allows you to assign a sprite texture GPU parameter. This handle may be used for more
@@ -681,7 +681,7 @@ namespace bs
 		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
-		TMaterialParamLoadStoreTexture<Core> GetParamLoadStoreTexture(const String& name) const;
+		TMaterialParameterStorageTexture<Core> GetParamLoadStoreTexture(const String& name) const;
 
 		/**
 		 * Returns a handle that allows you to assign a buffer GPU parameter. This handle may be used for more
@@ -693,7 +693,7 @@ namespace bs
 		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
-		TMaterialParamBuffer<Core> GetParamBuffer(const String& name) const;
+		TMaterialParameterBuffer<Core> GetParamBuffer(const String& name) const;
 
 		/**
 		 * Returns a handle that allows you to assign a sampler state GPU parameter. This handle may be used for more
@@ -705,7 +705,7 @@ namespace bs
 		 * @note
 		 * If material shader changes this handle will be invalidated.
 		 */
-		TMaterialParamSampState<Core> GetParamSamplerState(const String& name) const;
+		TMaterialParameterSampler<Core> GetParamSamplerState(const String& name) const;
 
 		/**
 		 * Allows you to retrieve a handle to a parameter that you can then use for quickly setting and retrieving parameter
@@ -716,7 +716,7 @@ namespace bs
 		 * of that.
 		 */
 		template <typename T>
-		void GetParam(const String& name, TMaterialDataParam<T, Core>& output) const;
+		void GetParam(const String& name, TMaterialParameterPrimitive<T, Core>& output) const;
 
 		/**
 		 * @name Internal

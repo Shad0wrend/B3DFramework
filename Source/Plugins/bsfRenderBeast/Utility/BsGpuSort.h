@@ -48,7 +48,7 @@ namespace bs
 			 */
 			void Execute(const SPtr<GpuBuffer>& outputCounts);
 
-			GpuParamBuffer MOutputParam;
+			GpuParameterBuffer MOutputParam;
 		};
 
 		/**
@@ -74,8 +74,8 @@ namespace bs
 			 */
 			void Execute(u32 numGroups, const SPtr<GpuParamBlockBuffer>& params, const SPtr<GpuBuffer>& inputKeys, const SPtr<GpuBuffer>& outputCounts);
 
-			GpuParamBuffer MInputKeysParam;
-			GpuParamBuffer MOutputCountsParam;
+			GpuParameterBuffer MInputKeysParam;
+			GpuParameterBuffer MOutputCountsParam;
 		};
 
 		/**
@@ -99,8 +99,8 @@ namespace bs
 			 */
 			void Execute(const SPtr<GpuParamBlockBuffer>& params, const SPtr<GpuBuffer>& inputCounts, const SPtr<GpuBuffer>& outputOffsets);
 
-			GpuParamBuffer MInputCountsParam;
-			GpuParamBuffer MOutputOffsetsParam;
+			GpuParameterBuffer MInputCountsParam;
+			GpuParameterBuffer MOutputOffsetsParam;
 		};
 
 		/**
@@ -129,11 +129,11 @@ namespace bs
 			 */
 			void Execute(u32 numGroups, const SPtr<GpuParamBlockBuffer>& params, const SPtr<GpuBuffer>& inputOffsets, const GpuSortBuffers& buffers, u32 inputBufferIdx);
 
-			GpuParamBuffer MInputOffsetsBufferParam;
-			GpuParamBuffer MInputKeysBufferParam;
-			GpuParamBuffer MInputValuesBufferParam;
-			GpuParamBuffer MOutputKeysBufferParam;
-			GpuParamBuffer MOutputValuesBufferParam;
+			GpuParameterBuffer MInputOffsetsBufferParam;
+			GpuParameterBuffer MInputKeysBufferParam;
+			GpuParameterBuffer MInputValuesBufferParam;
+			GpuParameterBuffer MOutputKeysBufferParam;
+			GpuParameterBuffer MOutputValuesBufferParam;
 		};
 
 		/**

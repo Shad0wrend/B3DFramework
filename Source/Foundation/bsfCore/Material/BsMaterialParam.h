@@ -58,7 +58,7 @@ namespace bs
 	 * @see		Material
 	 */
 	template <class T, bool Core>
-	class B3D_CORE_EXPORT TMaterialDataParam : public TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>
+	class B3D_CORE_EXPORT TMaterialParameterPrimitive : public TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>
 	{
 		using Base = TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>;
 
@@ -72,9 +72,9 @@ namespace bs
 		T Get(u32 arrayIdx = 0) const;
 	};
 
-	/** @copydoc TMaterialDataParam */
+	/** @copydoc TMaterialParameterPrimitive */
 	template <class T, bool Core>
-	class B3D_CORE_EXPORT TMaterialCurveParam : public TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>
+	class B3D_CORE_EXPORT TMaterialParameterCurve : public TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>
 	{
 		using Base = TMaterialDataCommon<TGpuDataParamInfo<T>::TypeId, Core>;
 
@@ -88,9 +88,9 @@ namespace bs
 		const TAnimationCurve<T>& Get(u32 arrayIdx = 0) const;
 	};
 
-	/** @copydoc TMaterialDataParam */
+	/** @copydoc TMaterialParameterPrimitive */
 	template <bool Core>
-	class B3D_CORE_EXPORT TMaterialColorGradientParam : public TMaterialDataCommon<GPDT_COLOR, Core>
+	class B3D_CORE_EXPORT TMaterialParameterColorGradient : public TMaterialDataCommon<GPDT_COLOR, Core>
 	{
 		using Base = TMaterialDataCommon<GPDT_COLOR, Core>;
 
@@ -104,9 +104,9 @@ namespace bs
 		const ColorGradientHDR& Get(u32 arrayIdx = 0) const;
 	};
 
-	/** @copydoc TMaterialDataParam */
+	/** @copydoc TMaterialParameterPrimitive */
 	template <bool Core>
-	class B3D_CORE_EXPORT TMaterialParamStruct : public TMaterialDataCommon<GPDT_STRUCT, Core>
+	class B3D_CORE_EXPORT TMaterialParameterStruct : public TMaterialDataCommon<GPDT_STRUCT, Core>
 	{
 		using Base = TMaterialDataCommon<GPDT_STRUCT, Core>;
 
@@ -123,18 +123,18 @@ namespace bs
 		u32 GetElementSize() const;
 	};
 
-	/** @copydoc TMaterialDataParam */
+	/** @copydoc TMaterialParameterPrimitive */
 	template <bool Core>
-	class B3D_CORE_EXPORT TMaterialParamTexture
+	class B3D_CORE_EXPORT TMaterialParameterSampledTexture
 	{
 		using MaterialPtrType = SPtr<CoreVariantType<Material, Core>>;
 		using MaterialParamsType = CoreVariantType<MaterialParams, Core>;
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 
 	public:
-		TMaterialParamTexture(const String& name, const MaterialPtrType& material);
+		TMaterialParameterSampledTexture(const String& name, const MaterialPtrType& material);
 
-		TMaterialParamTexture() {}
+		TMaterialParameterSampledTexture() {}
 
 		/** @copydoc GpuParamTexture::Set */
 		void Set(const TextureType& texture, const TextureSurface& surface = TextureSurface::kComplete) const;
@@ -153,7 +153,7 @@ namespace bs
 		MaterialPtrType mMaterial;
 	};
 
-	/** @copydoc TMaterialDataParam */
+	/** @copydoc TMaterialParameterPrimitive */
 	template <bool Core>
 	class B3D_CORE_EXPORT TMaterialParamSpriteTexture
 	{
@@ -184,18 +184,18 @@ namespace bs
 		MaterialPtrType mMaterial;
 	};
 
-	/** @copydoc TMaterialDataParam */
+	/** @copydoc TMaterialParameterPrimitive */
 	template <bool Core>
-	class B3D_CORE_EXPORT TMaterialParamLoadStoreTexture
+	class B3D_CORE_EXPORT TMaterialParameterStorageTexture
 	{
 		using MaterialPtrType = SPtr<CoreVariantType<Material, Core>>;
 		using MaterialParamsType = CoreVariantType<MaterialParams, Core>;
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 
 	public:
-		TMaterialParamLoadStoreTexture(const String& name, const MaterialPtrType& material);
+		TMaterialParameterStorageTexture(const String& name, const MaterialPtrType& material);
 
-		TMaterialParamLoadStoreTexture() {}
+		TMaterialParameterStorageTexture() {}
 
 		/** @copydoc GpuParamLoadStoreTexture::Set */
 		void Set(const TextureType& texture, const TextureSurface& surface = TextureSurface()) const;
@@ -214,18 +214,18 @@ namespace bs
 		MaterialPtrType mMaterial;
 	};
 
-	/** @copydoc TMaterialDataParam */
+	/** @copydoc TMaterialParameterPrimitive */
 	template <bool Core>
-	class B3D_CORE_EXPORT TMaterialParamBuffer
+	class B3D_CORE_EXPORT TMaterialParameterBuffer
 	{
 		using MaterialPtrType = SPtr<CoreVariantType<Material, Core>>;
 		using MaterialParamsType = CoreVariantType<MaterialParams, Core>;
 		using BufferType = SPtr<CoreVariantType<GpuBuffer, Core>>;
 
 	public:
-		TMaterialParamBuffer(const String& name, const MaterialPtrType& material);
+		TMaterialParameterBuffer(const String& name, const MaterialPtrType& material);
 
-		TMaterialParamBuffer() {}
+		TMaterialParameterBuffer() {}
 
 		/** @copydoc GpuParamBuffer::Set */
 		void Set(const BufferType& buffer) const;
@@ -244,18 +244,18 @@ namespace bs
 		MaterialPtrType mMaterial;
 	};
 
-	/** @copydoc TMaterialDataParam */
+	/** @copydoc TMaterialParameterPrimitive */
 	template <bool Core>
-	class B3D_CORE_EXPORT TMaterialParamSampState
+	class B3D_CORE_EXPORT TMaterialParameterSampler
 	{
 		using MaterialPtrType = SPtr<CoreVariantType<Material, Core>>;
 		using MaterialParamsType = CoreVariantType<MaterialParams, Core>;
 		using SamplerStateType = SPtr<CoreVariantType<SamplerState, Core>>;
 
 	public:
-		TMaterialParamSampState(const String& name, const MaterialPtrType& material);
+		TMaterialParameterSampler(const String& name, const MaterialPtrType& material);
 
-		TMaterialParamSampState() {}
+		TMaterialParameterSampler() {}
 
 		/** @copydoc GpuParamSampState::Set */
 		void Set(const SamplerStateType& sampState) const;
@@ -280,51 +280,61 @@ namespace bs
 	 *  @{
 	 */
 
-	typedef TMaterialDataParam<float, false> MaterialParamFloat;
-	typedef TMaterialDataParam<Vector2, false> MaterialParamVec2;
-	typedef TMaterialDataParam<Vector3, false> MaterialParamVec3;
-	typedef TMaterialDataParam<Vector4, false> MaterialParamVec4;
-	typedef TMaterialDataParam<int, false> MaterialParamInt;
-	typedef TMaterialDataParam<Vector2I, false> MaterialParamVec2I;
-	typedef TMaterialDataParam<Vector3I, false> MaterialParamVec3I;
-	typedef TMaterialDataParam<Vector4I, false> MaterialParamVec4I;
-	typedef TMaterialDataParam<Matrix3, false> MaterialParamMat3;
-	typedef TMaterialDataParam<Matrix4, false> MaterialParamMat4;
-	typedef TMaterialDataParam<Color, false> MaterialParamColor;
+	typedef TMaterialParameterPrimitive<float, false> MaterialParameterFloat;
+	typedef TMaterialParameterPrimitive<double, false> MaterialParameterDouble;
+	typedef TMaterialParameterPrimitive<Vector2, false> MaterialParameterVector2;
+	typedef TMaterialParameterPrimitive<Vector3, false> MaterialParameterVector3;
+	typedef TMaterialParameterPrimitive<Vector4, false> MaterialParameterVector4;
+	typedef TMaterialParameterPrimitive<i32, false> MaterialParameterI32;
+	typedef TMaterialParameterPrimitive<Vector2I, false> MaterialParameterVector2I;
+	typedef TMaterialParameterPrimitive<Vector3I, false> MaterialParameterVector3I;
+	typedef TMaterialParameterPrimitive<Vector4I, false> MaterialParameterVector4I;
+	typedef TMaterialParameterPrimitive<u32, false> MaterialParameterU32;
+	typedef TMaterialParameterPrimitive<Vector2UI, false> MaterialParameterVector2UI;
+	typedef TMaterialParameterPrimitive<Vector3UI, false> MaterialParameterVector3UI;
+	typedef TMaterialParameterPrimitive<Vector4UI, false> MaterialParameterVector4UI;
+	typedef TMaterialParameterPrimitive<Matrix3, false> MaterialParameterMatrix3;
+	typedef TMaterialParameterPrimitive<Matrix4, false> MaterialParameterMatrix4;
+	typedef TMaterialParameterPrimitive<Color, false> MaterialParameterColor;
 
-	typedef TMaterialParamStruct<false> MaterialParamStruct;
-	typedef TMaterialParamTexture<false> MaterialParamTexture;
-	typedef TMaterialParamLoadStoreTexture<false> MaterialParamLoadStoreTexture;
-	typedef TMaterialParamBuffer<false> MaterialParamBuffer;
-	typedef TMaterialParamSampState<false> MaterialParamSampState;
+	typedef TMaterialParameterStruct<false> MaterialParameterStruct;
+	typedef TMaterialParameterSampledTexture<false> MaterialParameterSampledTexture;
+	typedef TMaterialParameterStorageTexture<false> MaterialParameterStorageTexture;
+	typedef TMaterialParameterBuffer<false> MaterialParameterBuffer;
+	typedef TMaterialParameterSampler<false> MaterialParameterSampler;
 
-	typedef TMaterialCurveParam<float, false> MaterialParamFloatCurve;
-	typedef TMaterialColorGradientParam<false> MaterialParamColorGradient;
-	typedef TMaterialParamSpriteTexture<false> MaterialParamSpriteTexture;
+	typedef TMaterialParameterCurve<float, false> MaterialParameterFloatCurve;
+	typedef TMaterialParameterColorGradient<false> MaterialParameterColorGradient;
+	typedef TMaterialParamSpriteTexture<false> MaterialParameterSpriteTexture;
 
 	namespace ct
 	{
-		typedef TMaterialDataParam<float, true> MaterialParamFloat;
-		typedef TMaterialDataParam<Vector2, true> MaterialParamVec2;
-		typedef TMaterialDataParam<Vector3, true> MaterialParamVec3;
-		typedef TMaterialDataParam<Vector4, true> MaterialParamVec4;
-		typedef TMaterialDataParam<int, true> MaterialParamInt;
-		typedef TMaterialDataParam<Vector2I, true> MaterialParamVec2I;
-		typedef TMaterialDataParam<Vector3I, true> MaterialParamVec3I;
-		typedef TMaterialDataParam<Vector4I, true> MaterialParamVec4I;
-		typedef TMaterialDataParam<Matrix3, true> MaterialParamMat3;
-		typedef TMaterialDataParam<Matrix4, true> MaterialParamMat4;
-		typedef TMaterialDataParam<Color, true> MaterialParamColor;
+		typedef TMaterialParameterPrimitive<float, true> MaterialParameterFloat;
+		typedef TMaterialParameterPrimitive<double, true> MaterialParameterDouble;
+		typedef TMaterialParameterPrimitive<Vector2, true> MaterialParameterVector2;
+		typedef TMaterialParameterPrimitive<Vector3, true> MaterialParameterVector3;
+		typedef TMaterialParameterPrimitive<Vector4, true> MaterialParameterVector4;
+		typedef TMaterialParameterPrimitive<i32, true> MaterialParameterI32;
+		typedef TMaterialParameterPrimitive<Vector2I, true> MaterialParameterVector2I;
+		typedef TMaterialParameterPrimitive<Vector3I, true> MaterialParameterVector3I;
+		typedef TMaterialParameterPrimitive<Vector4I, true> MaterialParameterVector4I;
+		typedef TMaterialParameterPrimitive<u32, true> MaterialParameterU32;
+		typedef TMaterialParameterPrimitive<Vector2UI, true> MaterialParameterVector2UI;
+		typedef TMaterialParameterPrimitive<Vector3UI, true> MaterialParameterVector3UI;
+		typedef TMaterialParameterPrimitive<Vector4UI, true> MaterialParameterVector4UI;
+		typedef TMaterialParameterPrimitive<Matrix3, true> MaterialParameterMatrix3;
+		typedef TMaterialParameterPrimitive<Matrix4, true> MaterialParameterMatrix4;
+		typedef TMaterialParameterPrimitive<Color, true> MaterialParameterColor;
 
-		typedef TMaterialParamStruct<true> MaterialParamStruct;
-		typedef TMaterialParamTexture<true> MaterialParamTexture;
-		typedef TMaterialParamLoadStoreTexture<true> MaterialParamLoadStoreTexture;
-		typedef TMaterialParamBuffer<true> MaterialParamBuffer;
-		typedef TMaterialParamSampState<true> MaterialParamSampState;
+		typedef TMaterialParameterStruct<true> MaterialParameterStruct;
+		typedef TMaterialParameterSampledTexture<true> MaterialParameterSampledTexture;
+		typedef TMaterialParameterStorageTexture<true> MaterialParameterStorageTexture;
+		typedef TMaterialParameterBuffer<true> MaterialParameterBuffer;
+		typedef TMaterialParameterSampler<true> MaterialParameterSampler;
 
-		typedef TMaterialCurveParam<float, true> MaterialParamFloatCurve;
-		typedef TMaterialColorGradientParam<true> MaterialParamColorGradient;
-		typedef TMaterialParamSpriteTexture<true> MaterialParamSpriteTexture;
+		typedef TMaterialParameterCurve<float, true> MaterialParameterFloatCurve;
+		typedef TMaterialParameterColorGradient<true> MaterialParameterColorGradient;
+		typedef TMaterialParamSpriteTexture<true> MaterialParameterSpriteTexture;
 	} // namespace ct
 
 	/** @} */

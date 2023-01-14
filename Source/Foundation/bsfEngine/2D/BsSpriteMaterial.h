@@ -138,8 +138,8 @@ namespace bs
 		SPtr<ct::GpuParamsSet> mAlphaParams;
 		u32 mParamBufferIdx;
 		u32 mAlphaParamBufferIdx;
-		mutable ct::MaterialParamTexture mTextureParam;
-		mutable ct::MaterialParamSampState mSamplerParam;
+		mutable ct::MaterialParameterSampledTexture mTextureParam;
+		mutable ct::MaterialParameterSampler mSamplerParam;
 	};
 
 	/** @} */

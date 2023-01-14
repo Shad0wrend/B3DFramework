@@ -30,7 +30,7 @@ namespace bs
 			void OnStartUp() override;
 
 			/** Returns a dummy (empty) texture that can be bound in a shader slot of the requested type. */
-			VulkanTexture* GetDummyTexture(GpuParamObjectType type) const;
+			VulkanTexture* GetDummyTexture(GpuParameterObjectType type) const;
 
 			/**
 			 * Determines Vulkan format required for binding a dummy texture (as returned by getDummyTexture()) to the shader

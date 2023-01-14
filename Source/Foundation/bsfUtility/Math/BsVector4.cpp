@@ -5,9 +5,11 @@
 
 using namespace bs;
 
-const Vector4 Vector4::kZero{ BS_ZERO() };
-
-bool Vector4::IsNaN() const
+template<class T>
+bool TVector4<T>::IsNaN() const
 {
 	return Math::IsNaN(X) || Math::IsNaN(Y) || Math::IsNaN(Z) || Math::IsNaN(W);
 }
+
+template struct B3D_UTILITY_EXPORT TVector4<float>;
+template struct B3D_UTILITY_EXPORT TVector4<double>;

@@ -65,9 +65,9 @@ Vector<VertexElement> GLSLParamParser::BuildVertexDeclaration(GLuint glProgram)
 	return elementList;
 }
 
-u32 GLSLParamParser::CalcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, u32 arraySize, u32& offset)
+u32 GLSLParamParser::CalcInterfaceBlockElementSizeAndOffset(GpuDataParameterType type, u32 arraySize, u32& offset)
 {
-	const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::kParamSizes.Lookup[type];
+	const GpuDataParameterTypeInformation& typeInfo = bs::GpuParams::kParamSizes.Lookup[type];
 	u32 size = (typeInfo.BaseTypeSize * typeInfo.NumColumns * typeInfo.NumRows) / 4;
 	u32 alignment = typeInfo.Alignment / 4;
 
@@ -378,8 +378,8 @@ void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType 
 		glGetActiveUniformsiv(glProgram, 1, &index, GL_UNIFORM_TYPE, &uniformType);
 		B3D_CHECK_GL_ERROR();
 
-		GpuParamObjectType samplerType = GPOT_UNKNOWN;
-		GpuParamObjectType textureType = GPOT_UNKNOWN;
+		GpuParameterObjectType samplerType = GPOT_UNKNOWN;
+		GpuParameterObjectType textureType = GPOT_UNKNOWN;
 
 		bool isSampler = false;
 		bool isImage = false;

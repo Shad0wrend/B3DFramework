@@ -82,7 +82,7 @@ void VulkanTextureManager::OnStartUp()
 	}
 }
 
-VulkanTexture* VulkanTextureManager::GetDummyTexture(GpuParamObjectType type) const
+VulkanTexture* VulkanTextureManager::GetDummyTexture(GpuParameterObjectType type) const
 {
 	switch(type)
 	{
@@ -125,33 +125,45 @@ VkFormat VulkanTextureManager::GetDummyViewFormat(GpuBufferFormat format)
 	{
 	case BF_16X1F:
 	case BF_32X1F:
+	case BF_64X1F:
 		return VK_FORMAT_R32_SFLOAT;
 	case BF_16X2F:
 	case BF_32X2F:
+	case BF_64X2F:
 		return VK_FORMAT_R16G16_UNORM;
+	case BF_16X4F:
 	case BF_32X3F:
 	case BF_32X4F:
-	case BF_16X4F:
+	case BF_64X3F:
+	case BF_64X4F:
 		return VK_FORMAT_R8G8B8A8_UNORM;
 	case BF_16X1U:
 	case BF_32X1U:
+	case BF_64X1U:
 		return VK_FORMAT_R32_UINT;
 	case BF_16X2U:
 	case BF_32X2U:
+	case BF_64X2U:
 		return VK_FORMAT_R16G16_UINT;
+	case BF_16X4U:
 	case BF_32X3U:
 	case BF_32X4U:
-	case BF_16X4U:
+	case BF_64X3U:
+	case BF_64X4U:
 		return VK_FORMAT_R8G8B8A8_UINT;
 	case BF_16X1S:
 	case BF_32X1S:
+	case BF_64X1S:
 		return VK_FORMAT_R32_SINT;
 	case BF_16X2S:
 	case BF_32X2S:
+	case BF_64X2S:
 		return VK_FORMAT_R16G16_SINT;
+	case BF_16X4S:
 	case BF_32X3S:
 	case BF_32X4S:
-	case BF_16X4S:
+	case BF_64X3S:
+	case BF_64X4S:
 		return VK_FORMAT_R8G8B8A8_SINT;
 	default:
 		return VK_FORMAT_UNDEFINED;

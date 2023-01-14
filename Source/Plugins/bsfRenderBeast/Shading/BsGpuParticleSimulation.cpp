@@ -37,7 +37,7 @@ public:
 	void Bind(const SPtr<GpuBuffer>& tileUVs);
 
 private:
-	GpuParamBuffer mTileUVParam;
+	GpuParameterBuffer mTileUVParam;
 };
 
 /** Material used for adding new particles into the particle state textures. */
@@ -131,19 +131,19 @@ public:
 	static GpuParticleSimulateMat* GetVariation(bool depthCollisions, bool localSpace);
 
 private:
-	GpuParamBuffer mTileUVParam;
-	GpuParamTexture mPosAndTimeTexParam;
-	GpuParamTexture mVelocityTexParam;
-	GpuParamTexture mSizeRotationTexParam;
-	GpuParamTexture mCurvesTexParam;
-	GpuParamTexture mDepthTexParam;
-	GpuParamTexture mNormalsTexParam;
+	GpuParameterBuffer mTileUVParam;
+	GpuParameterSampledTexture mPosAndTimeTexParam;
+	GpuParameterSampledTexture mVelocityTexParam;
+	GpuParameterSampledTexture mSizeRotationTexParam;
+	GpuParameterSampledTexture mCurvesTexParam;
+	GpuParameterSampledTexture mDepthTexParam;
+	GpuParameterSampledTexture mNormalsTexParam;
 	GpuParamBinding mParamsBinding;
 	GpuParamBinding mPerCameraBinding;
 	GpuParamBinding mPerObjectBinding;
 
 	GpuParamBinding mVectorFieldBinding;
-	GpuParamTexture mVectorFieldTexParam;
+	GpuParameterSampledTexture mVectorFieldTexParam;
 
 	GpuParamBinding mDepthCollisionBinding;
 
@@ -181,9 +181,9 @@ public:
 	AABox Execute(const SPtr<GpuBuffer>& indices, u32 numParticles);
 
 private:
-	GpuParamBuffer mParticleIndicesParam;
-	GpuParamBuffer mOutputParam;
-	GpuParamTexture mPosAndTimeTexParam;
+	GpuParameterBuffer mParticleIndicesParam;
+	GpuParameterBuffer mOutputParam;
+	GpuParameterSampledTexture mPosAndTimeTexParam;
 	SPtr<GpuParamBlockBuffer> mInputBuffer;
 };
 
@@ -229,10 +229,10 @@ public:
 	u32 Execute(const GpuParticleSystem& system, u32 systemIdx, const Vector3& viewOrigin, u32 offset, const SPtr<GpuBuffer>& outKeys, const SPtr<GpuBuffer>& outIndices);
 
 private:
-	GpuParamBuffer mInputIndicesParam;
-	GpuParamBuffer mOutputKeysParam;
-	GpuParamBuffer mOutputIndicesParam;
-	GpuParamTexture mPosAndTimeTexParam;
+	GpuParameterBuffer mInputIndicesParam;
+	GpuParameterBuffer mOutputKeysParam;
+	GpuParameterBuffer mOutputIndicesParam;
+	GpuParameterSampledTexture mPosAndTimeTexParam;
 	SPtr<GpuParamBlockBuffer> mInputBuffer;
 };
 

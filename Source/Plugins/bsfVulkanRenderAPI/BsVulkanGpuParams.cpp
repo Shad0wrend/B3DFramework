@@ -20,38 +20,38 @@
 using namespace bs;
 using namespace bs::ct;
 
-static bool EnsureImageViewValidForShader(const VulkanImageView& view, const GpuParamObjectType expectedType)
+static bool EnsureImageViewValidForShader(const VulkanImageView& view, const GpuParameterObjectType expectedType)
 {
 	bool isViewValid = false;
-	GpuParamObjectType actualType = GPOT_UNKNOWN;
+	GpuParameterObjectType actualType = GPOT_UNKNOWN;
 	switch(view.Type)
 	{
 	case VK_IMAGE_VIEW_TYPE_1D:
-		isViewValid = GpuParameterTypeInformation::Is1DTexture(expectedType);
+		isViewValid = GpuObjectParameterTypeInformation::Is1DTexture(expectedType);
 		actualType = GPOT_TEXTURE1D;
 		break;
 	case VK_IMAGE_VIEW_TYPE_2D:
-		isViewValid = GpuParameterTypeInformation::Is2DTexture(expectedType);
+		isViewValid = GpuObjectParameterTypeInformation::Is2DTexture(expectedType);
 		actualType = GPOT_TEXTURE2D;
 		break;
 	case VK_IMAGE_VIEW_TYPE_3D:
-		isViewValid = GpuParameterTypeInformation::Is3DTexture(expectedType);
+		isViewValid = GpuObjectParameterTypeInformation::Is3DTexture(expectedType);
 		actualType = GPOT_TEXTURE3D;
 		break;
 	case VK_IMAGE_VIEW_TYPE_CUBE:
-		isViewValid = GpuParameterTypeInformation::IsCubeTexture(expectedType);
+		isViewValid = GpuObjectParameterTypeInformation::IsCubeTexture(expectedType);
 		actualType = GPOT_TEXTURECUBE;
 		break;
 	case VK_IMAGE_VIEW_TYPE_1D_ARRAY:
-		isViewValid = GpuParameterTypeInformation::Is1DTextureArray(expectedType);
+		isViewValid = GpuObjectParameterTypeInformation::Is1DTextureArray(expectedType);
 		actualType = GPOT_TEXTURE1DARRAY;
 		break;
 	case VK_IMAGE_VIEW_TYPE_2D_ARRAY:
-		isViewValid = GpuParameterTypeInformation::Is2DTextureArray(expectedType);
+		isViewValid = GpuObjectParameterTypeInformation::Is2DTextureArray(expectedType);
 		actualType = GPOT_TEXTURE2DARRAY;
 		break;
 	case VK_IMAGE_VIEW_TYPE_CUBE_ARRAY:
-		isViewValid = GpuParameterTypeInformation::IsCubeTextureArray(expectedType);
+		isViewValid = GpuObjectParameterTypeInformation::IsCubeTextureArray(expectedType);
 		actualType = GPOT_TEXTURECUBEARRAY;
 		break;
 	default: break;
@@ -188,7 +188,7 @@ void VulkanGpuParams::Initialize()
 			perSetData.Sets.push_back(perSetData.LastUsedSet);
 
 			VkDescriptorSetLayoutBinding* perSetBindings = vkParamInfo.GetLayoutBindings(setIndex);
-			GpuParamObjectType* types = vkParamInfo.GetLayoutTypes(setIndex);
+			GpuParameterObjectType* types = vkParamInfo.GetLayoutTypes(setIndex);
 			GpuBufferFormat* elementTypes = vkParamInfo.GetLayoutElementTypes(setIndex);
 			for(u32 layoutBindingIndex = 0; layoutBindingIndex < layoutBindingCount; layoutBindingIndex++)
 			{
@@ -443,8 +443,8 @@ void VulkanGpuParams::SetTexture(u32 set, u32 slot, const SPtr<Texture>& texture
 			vulkanImage = nullptr;
 
 		PerSetData& perSetData = mPerDeviceData[deviceIndex].PerSetData[set];
-		const GpuParamObjectType* const types = pipelineParameterInformation.GetLayoutTypes(set);
-		const GpuParamObjectType objectType = types[usedBindingSequentialIndex];
+		const GpuParameterObjectType* const types = pipelineParameterInformation.GetLayoutTypes(set);
+		const GpuParameterObjectType objectType = types[usedBindingSequentialIndex];
 
 		VulkanImageView imageView;
 		VkImage vkImage = VK_NULL_HANDLE;
@@ -511,8 +511,8 @@ void VulkanGpuParams::SetLoadStoreTexture(u32 set, u32 slot, const SPtr<Texture>
 			vulkanImage = nullptr;
 
 		PerSetData& perSetData = mPerDeviceData[deviceIndex].PerSetData[set];
-		const GpuParamObjectType* const types = pipelineParameterInformation.GetLayoutTypes(set);
-		const GpuParamObjectType objectType = types[usedBindingSequentialIndex];
+		const GpuParameterObjectType* const types = pipelineParameterInformation.GetLayoutTypes(set);
+		const GpuParameterObjectType objectType = types[usedBindingSequentialIndex];
 
 		VulkanImageView imageView;
 		VkImage vkImage = VK_NULL_HANDLE;
@@ -785,8 +785,8 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 			const u32 usedBindingSequentialIndex = vkParamInfo.GetUsedBindingSequentialIndex(set, slot);
 			const u32 usedResourceSequentialIndex = vkParamInfo.GetUsedResourceSequentialIndex(set, slot, arrayIndex);
 
-			GpuParamObjectType* types = vkParamInfo.GetLayoutTypes(set);
-			GpuParamObjectType type = types[usedBindingSequentialIndex];
+			GpuParameterObjectType* types = vkParamInfo.GetLayoutTypes(set);
+			GpuParameterObjectType type = types[usedBindingSequentialIndex];
 
 			VulkanAccessFlags useFlags = VulkanAccessFlag::Read;
 			VulkanBuffer* resource = nullptr;
@@ -930,8 +930,8 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 			}
 
 			const TextureSurface& surface = mLoadStoreTextureData[sequentialResourceIndex].Surface;
-			const GpuParamObjectType* const types = vkParamInfo.GetLayoutTypes(set);
-			const GpuParamObjectType objectType = types[usedBindingSequentialIndex];
+			const GpuParameterObjectType* const types = vkParamInfo.GetLayoutTypes(set);
+			const GpuParameterObjectType objectType = types[usedBindingSequentialIndex];
 
 			VulkanImageView imageView;
 			if(vulkanImage != nullptr)
@@ -1012,8 +1012,8 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 			}
 
 			const TextureSurface& surface = mSampledTextureData[sequentialResourceIndex].Surface;
-			const GpuParamObjectType* const types = vkParamInfo.GetLayoutTypes(set);
-			const GpuParamObjectType objectType = types[usedBindingSequentialIndex];
+			const GpuParameterObjectType* const types = vkParamInfo.GetLayoutTypes(set);
+			const GpuParameterObjectType objectType = types[usedBindingSequentialIndex];
 
 			VulkanImageView imageView;
 			if(vulkanImage != nullptr)

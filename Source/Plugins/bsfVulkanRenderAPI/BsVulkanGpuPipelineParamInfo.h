@@ -31,7 +31,7 @@ namespace bs
 			VkDescriptorSetLayoutBinding* GetLayoutBindings(u32 layoutIndex) const { return mLayoutInfos[layoutIndex].Bindings; }
 
 			/** Returns a pointer to any array of types expected by layout bindings. */
-			GpuParamObjectType* GetLayoutTypes(u32 layoutIndex) const { return mLayoutInfos[layoutIndex].Types; }
+			GpuParameterObjectType* GetLayoutTypes(u32 layoutIndex) const { return mLayoutInfos[layoutIndex].Types; }
 
 			/** Returns a pointer to any array of underlying element types for textures/buffers. */
 			GpuBufferFormat* GetLayoutElementTypes(u32 layoutIndex) const { return mLayoutInfos[layoutIndex].ElementTypes; }
@@ -58,7 +58,7 @@ namespace bs
 			struct LayoutInfo
 			{
 				VkDescriptorSetLayoutBinding* Bindings = nullptr;
-				GpuParamObjectType* Types = nullptr;
+				GpuParameterObjectType* Types = nullptr;
 				GpuBufferFormat* ElementTypes = nullptr;
 				u32* ArraySizes = nullptr;
 				u32 BindingCount = 0;

@@ -897,7 +897,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 
 		if(materialParamInfo->DataType != GPDT_STRUCT)
 		{
-			const GpuParamDataTypeInfo& typeInfo = GpuParams::kParamSizes.Lookup[(int)materialParamInfo->DataType];
+			const GpuDataParameterTypeInformation& typeInfo = GpuParams::kParamSizes.Lookup[(int)materialParamInfo->DataType];
 
 			u32 paramSize;
 			if(materialParamInfo->DataType != GPDT_COLOR)

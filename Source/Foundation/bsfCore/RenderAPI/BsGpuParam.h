@@ -76,15 +76,15 @@ namespace bs
 	 * @see		Material
 	 */
 	template <class T, bool Core>
-	class B3D_CORE_EXPORT TGpuDataParam
+	class B3D_CORE_EXPORT TGpuParameterPrimitive
 	{
 	private:
 		using GpuParamBufferType = SPtr<CoreVariantType<GpuParamBlockBuffer, Core>>;
 		using GpuParamsType = SPtr<CoreVariantType<GpuParams, Core>>;
 
 	public:
-		TGpuDataParam();
-		TGpuDataParam(GpuDataParameterInformation* paramDesc, const GpuParamsType& parent);
+		TGpuParameterPrimitive();
+		TGpuParameterPrimitive(GpuDataParameterInformation* paramDesc, const GpuParamsType& parent);
 
 		/**
 		 * Sets a parameter value at the specified array index. If parameter does not contain an array leave the index at 0.
@@ -117,16 +117,16 @@ namespace bs
 		GpuDataParameterInformation* mParamDesc;
 	};
 
-	/** @copydoc TGpuDataParam */
+	/** @copydoc TGpuParameterPrimitive */
 	template <bool Core>
-	class B3D_CORE_EXPORT TGpuParamStruct
+	class B3D_CORE_EXPORT TGpuParameterStruct
 	{
 	public:
 		using GpuParamBufferType = SPtr<CoreVariantType<GpuParamBlockBuffer, Core>>;
 		using GpuParamsType = SPtr<CoreVariantType<GpuParams, Core>>;
 
-		TGpuParamStruct();
-		TGpuParamStruct(GpuDataParameterInformation* paramDesc, const GpuParamsType& parent);
+		TGpuParameterStruct();
+		TGpuParameterStruct(GpuDataParameterInformation* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::Set */
 		void Set(const void* value, u32 sizeBytes, u32 arrayIdx = 0) const;
@@ -151,9 +151,9 @@ namespace bs
 		GpuDataParameterInformation* mParamDesc;
 	};
 
-	/** @copydoc TGpuDataParam */
+	/** @copydoc TGpuParameterPrimitive */
 	template <bool Core>
-	class B3D_CORE_EXPORT TGpuParamTexture
+	class B3D_CORE_EXPORT TGpuParameterSampledTexture
 	{
 	private:
 		friend class GpuParams;
@@ -163,8 +163,8 @@ namespace bs
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 
 	public:
-		TGpuParamTexture();
-		TGpuParamTexture(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent);
+		TGpuParameterSampledTexture();
+		TGpuParameterSampledTexture(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::Set */
 		void Set(const TextureType& texture, const TextureSurface& surface = TextureSurface::kComplete, u32 arrayIndex = 0) const;
@@ -186,9 +186,9 @@ namespace bs
 		GpuObjectParameterInformation* mParamDesc;
 	};
 
-	/** @copydoc TGpuDataParam */
+	/** @copydoc TGpuParameterPrimitive */
 	template <bool Core>
-	class B3D_CORE_EXPORT TGpuParamLoadStoreTexture
+	class B3D_CORE_EXPORT TGpuParameterStorageTexture
 	{
 	private:
 		friend class GpuParams;
@@ -198,8 +198,8 @@ namespace bs
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 
 	public:
-		TGpuParamLoadStoreTexture();
-		TGpuParamLoadStoreTexture(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent);
+		TGpuParameterStorageTexture();
+		TGpuParameterStorageTexture(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::Set */
 		void Set(const TextureType& texture, const TextureSurface& surface = TextureSurface(), u32 arrayIndex = 0) const;
@@ -221,9 +221,9 @@ namespace bs
 		GpuObjectParameterInformation* mParamDesc;
 	};
 
-	/** @copydoc TGpuDataParam */
+	/** @copydoc TGpuParameterPrimitive */
 	template <bool Core>
-	class B3D_CORE_EXPORT TGpuParamBuffer
+	class B3D_CORE_EXPORT TGpuParameterBuffer
 	{
 	private:
 		friend class GpuParams;
@@ -233,8 +233,8 @@ namespace bs
 		using BufferType = SPtr<CoreVariantType<GpuBuffer, Core>>;
 
 	public:
-		TGpuParamBuffer();
-		TGpuParamBuffer(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent);
+		TGpuParameterBuffer();
+		TGpuParameterBuffer(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::Set */
 		void Set(const BufferType& buffer, u32 arrayIndex = 0) const;
@@ -256,9 +256,9 @@ namespace bs
 		GpuObjectParameterInformation* mParamDesc;
 	};
 
-	/** @copydoc TGpuDataParam */
+	/** @copydoc TGpuParameterPrimitive */
 	template <bool Core>
-	class B3D_CORE_EXPORT TGpuParamSampState
+	class B3D_CORE_EXPORT TGpuParameterSampler
 	{
 	private:
 		friend class GpuParams;
@@ -268,8 +268,8 @@ namespace bs
 		using SamplerStateType = SPtr<CoreVariantType<SamplerState, Core>>;
 
 	public:
-		TGpuParamSampState();
-		TGpuParamSampState(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent);
+		TGpuParameterSampler();
+		TGpuParameterSampler(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::Set */
 		void Set(const SamplerStateType& samplerState, u32 arrayIndex = 0) const;
@@ -297,43 +297,53 @@ namespace bs
 	 *  @{
 	 */
 
-	typedef TGpuDataParam<float, false> GpuParamFloat;
-	typedef TGpuDataParam<Vector2, false> GpuParamVec2;
-	typedef TGpuDataParam<Vector3, false> GpuParamVec3;
-	typedef TGpuDataParam<Vector4, false> GpuParamVec4;
-	typedef TGpuDataParam<int, false> GpuParamInt;
-	typedef TGpuDataParam<Vector2I, false> GpuParamVec2I;
-	typedef TGpuDataParam<Vector3I, false> GpuParamVec3I;
-	typedef TGpuDataParam<Vector4I, false> GpuParamVec4I;
-	typedef TGpuDataParam<Matrix3, false> GpuParamMat3;
-	typedef TGpuDataParam<Matrix4, false> GpuParamMat4;
-	typedef TGpuDataParam<Color, false> GpuParamColor;
+	typedef TGpuParameterPrimitive<float, false> GpuParameterFloat;
+	typedef TGpuParameterPrimitive<double, false> GpuParameterDouble;
+	typedef TGpuParameterPrimitive<Vector2, false> GpuParameterVector2;
+	typedef TGpuParameterPrimitive<Vector3, false> GpuParameterVector3;
+	typedef TGpuParameterPrimitive<Vector4, false> GpuParameterVector4;
+	typedef TGpuParameterPrimitive<i32, false> GpuParameterI32;
+	typedef TGpuParameterPrimitive<Vector2I, false> GpuParameterVector2I;
+	typedef TGpuParameterPrimitive<Vector3I, false> GpuParameterVector3I;
+	typedef TGpuParameterPrimitive<Vector4I, false> GpuParameterVector4I;
+	typedef TGpuParameterPrimitive<u32, false> GpuParameterU32;
+	typedef TGpuParameterPrimitive<Vector2UI, false> GpuParameterVector2UI;
+	typedef TGpuParameterPrimitive<Vector3UI, false> GpuParameterVector3UI;
+	typedef TGpuParameterPrimitive<Vector4UI, false> GpuParameterVector4UI;
+	typedef TGpuParameterPrimitive<Matrix3, false> GpuParameterMatrix3;
+	typedef TGpuParameterPrimitive<Matrix4, false> GpuParameterMatrix4;
+	typedef TGpuParameterPrimitive<Color, false> GpuParameterColor;
 
-	typedef TGpuParamStruct<false> GpuParamStruct;
-	typedef TGpuParamTexture<false> GpuParamTexture;
-	typedef TGpuParamBuffer<false> GpuParamBuffer;
-	typedef TGpuParamSampState<false> GpuParamSampState;
-	typedef TGpuParamLoadStoreTexture<false> GpuParamLoadStoreTexture;
+	typedef TGpuParameterStruct<false> GpuParameterStruct;
+	typedef TGpuParameterBuffer<false> GpuParameterBuffer;
+	typedef TGpuParameterSampler<false> GpuParameterSampler;
+	typedef TGpuParameterSampledTexture<false> GpuParameterSampledTexture;
+	typedef TGpuParameterStorageTexture<false> GpuParameterStorageTexture;
 
 	namespace ct
 	{
-		typedef TGpuDataParam<float, true> GpuParamFloat;
-		typedef TGpuDataParam<Vector2, true> GpuParamVec2;
-		typedef TGpuDataParam<Vector3, true> GpuParamVec3;
-		typedef TGpuDataParam<Vector4, true> GpuParamVec4;
-		typedef TGpuDataParam<int, true> GpuParamInt;
-		typedef TGpuDataParam<Vector2I, true> GpuParamVec2I;
-		typedef TGpuDataParam<Vector3I, true> GpuParamVec3I;
-		typedef TGpuDataParam<Vector4I, true> GpuParamVec4I;
-		typedef TGpuDataParam<Matrix3, true> GpuParamMat3;
-		typedef TGpuDataParam<Matrix4, true> GpuParamMat4;
-		typedef TGpuDataParam<Color, true> GpuParamColor;
+		typedef TGpuParameterPrimitive<float, true> GpuParameterFloat;
+		typedef TGpuParameterPrimitive<double, true> GpuParameterDouble;
+		typedef TGpuParameterPrimitive<Vector2, true> GpuParameterVector2;
+		typedef TGpuParameterPrimitive<Vector3, true> GpuParameterVector3;
+		typedef TGpuParameterPrimitive<Vector4, true> GpuParameterVector4;
+		typedef TGpuParameterPrimitive<i32, true> GpuParameterI32;
+		typedef TGpuParameterPrimitive<Vector2I, true> GpuParameterVector2I;
+		typedef TGpuParameterPrimitive<Vector3I, true> GpuParameterVector3I;
+		typedef TGpuParameterPrimitive<Vector4I, true> GpuParameterVector4I;
+		typedef TGpuParameterPrimitive<u32, true> GpuParameterU32;
+		typedef TGpuParameterPrimitive<Vector2UI, true> GpuParameterVector2UI;
+		typedef TGpuParameterPrimitive<Vector3UI, true> GpuParameterVector3UI;
+		typedef TGpuParameterPrimitive<Vector4UI, true> GpuParameterVector4UI;
+		typedef TGpuParameterPrimitive<Matrix3, true> GpuParameterMatrix3;
+		typedef TGpuParameterPrimitive<Matrix4, true> GpuParameterMatrix4;
+		typedef TGpuParameterPrimitive<Color, true> GpuParameterColor;
 
-		typedef TGpuParamStruct<true> GpuParamStruct;
-		typedef TGpuParamTexture<true> GpuParamTexture;
-		typedef TGpuParamBuffer<true> GpuParamBuffer;
-		typedef TGpuParamSampState<true> GpuParamSampState;
-		typedef TGpuParamLoadStoreTexture<true> GpuParamLoadStoreTexture;
+		typedef TGpuParameterStruct<true> GpuParameterStruct;
+		typedef TGpuParameterBuffer<true> GpuParameterBuffer;
+		typedef TGpuParameterSampler<true> GpuParameterSampler;
+		typedef TGpuParameterSampledTexture<true> GpuParameterSampledTexture;
+		typedef TGpuParameterStorageTexture<true> GpuParameterStorageTexture;
 	} // namespace ct
 
 	/** @} */

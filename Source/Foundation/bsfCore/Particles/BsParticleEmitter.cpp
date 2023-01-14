@@ -417,7 +417,7 @@ ParticleEmitterBoxShape::ParticleEmitterBoxShape(const PARTICLE_BOX_SHAPE_DESC& 
 			float totalSurfaceArea = 0.0f;
 			for(u32 i = 0; i < 3; i++)
 			{
-				mSurfaceArea[i] = Math::Sqr(desc.Extents[i]);
+				mSurfaceArea[i] = Math::Square(desc.Extents[i]);
 				totalSurfaceArea += mSurfaceArea[i];
 			}
 

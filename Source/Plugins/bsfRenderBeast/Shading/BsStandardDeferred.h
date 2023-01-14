@@ -60,7 +60,7 @@ namespace bs
 
 		private:
 			GBufferParams mGBufferParams;
-			GpuParamTexture mLightOcclusionTexParam;
+			GpuParameterSampledTexture mLightOcclusionTexParam;
 		};
 
 		/** Shader that renders point (radial & spot) light sources during deferred rendering light pass. */
@@ -99,7 +99,7 @@ namespace bs
 
 		private:
 			GBufferParams mGBufferParams;
-			GpuParamTexture mLightOcclusionTexParam;
+			GpuParameterSampledTexture mLightOcclusionTexParam;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(PerProbeParamDef)
@@ -282,7 +282,7 @@ namespace bs
 		private:
 			GBufferParams mGBufferParams;
 			ImageBasedLightingParams mIBLParams;
-			GpuParamTexture mIBLRadiance;
+			GpuParameterSampledTexture mIBLRadiance;
 		};
 
 		/** Provides functionality for standard (non-tiled) deferred rendering. */

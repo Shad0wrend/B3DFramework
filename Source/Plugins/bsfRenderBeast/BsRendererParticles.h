@@ -129,52 +129,52 @@ namespace bs
 			struct CpuBillboardSimulationParams
 			{
 				/** Binding spot for the texture containing position and rotation information. */
-				GpuParamTexture PositionAndRotTexture;
+				GpuParameterSampledTexture PositionAndRotTexture;
 
 				/** Binding spot for the texture containing color information. */
-				GpuParamTexture ColorTexture;
+				GpuParameterSampledTexture ColorTexture;
 
 				/** Binding spot for the texture containing size and sub-image index information. */
-				GpuParamTexture SizeAndFrameIdxTexture;
+				GpuParameterSampledTexture SizeAndFrameIdxTexture;
 			};
 
 			/** Parameters relevant for mesh rendering of the outputs of the particle CPU simulation. */
 			struct CpuMeshSimulationParams
 			{
 				/** Binding spot for the texture containing position. */
-				GpuParamTexture PositionTexture;
+				GpuParameterSampledTexture PositionTexture;
 
 				/** Binding spot for the texture containing color information. */
-				GpuParamTexture ColorTexture;
+				GpuParameterSampledTexture ColorTexture;
 
 				/** Binding spot for the texture containing rotation. */
-				GpuParamTexture RotationTexture;
+				GpuParameterSampledTexture RotationTexture;
 
 				/** Binding spot for the texture containing size. */
-				GpuParamTexture SizeTexture;
+				GpuParameterSampledTexture SizeTexture;
 			};
 
 			/** Parameters relevant for rendering the outputs of the particle GPU simulation. */
 			struct GpuSimulationParams
 			{
 				/** Binding spot for the texture containing position (.xyz) and time (.w) information. */
-				GpuParamTexture PositionTimeTexture;
+				GpuParameterSampledTexture PositionTimeTexture;
 
 				/** Binding spot for the texture containing 2D size (.xy) and rotation (.z) information. */
-				GpuParamTexture SizeRotationTexture;
+				GpuParameterSampledTexture SizeRotationTexture;
 
 				/** Binding spot for the texture containing quantized curves used for evaluating various particle properties. */
-				GpuParamTexture CurvesTexture;
+				GpuParameterSampledTexture CurvesTexture;
 			};
 
 			/** Binding locations for the per-camera param block buffer. */
 			GpuParamBinding PerCameraBindings[GPT_COUNT];
 
 			/** Binding spot for the buffer containing instance id -> particle index mapping. */
-			GpuParamBuffer IndicesBuffer;
+			GpuParameterBuffer IndicesBuffer;
 
 			/** Optional texture input for the depth buffer. */
-			GpuParamTexture DepthInputTexture;
+			GpuParameterSampledTexture DepthInputTexture;
 
 			/** Parameters relevant for billboard rendering of the outputs of the particle CPU simulation. */
 			CpuBillboardSimulationParams ParamsCpuBillboard;

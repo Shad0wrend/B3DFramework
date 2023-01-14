@@ -341,7 +341,7 @@ GLenum GLTexture::GetGlTextureTarget(TextureType type, u32 numSamples, u32 numFa
 	};
 }
 
-GLenum GLTexture::GetGlTextureTarget(GpuParamObjectType type)
+GLenum GLTexture::GetGlTextureTarget(GpuParameterObjectType type)
 {
 	switch(type)
 	{

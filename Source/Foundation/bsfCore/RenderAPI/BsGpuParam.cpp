@@ -12,17 +12,17 @@
 using namespace bs;
 
 template <class T, bool Core>
-TGpuDataParam<T, Core>::TGpuDataParam()
+TGpuParameterPrimitive<T, Core>::TGpuParameterPrimitive()
 	: mParamDesc(nullptr)
 {}
 
 template <class T, bool Core>
-TGpuDataParam<T, Core>::TGpuDataParam(GpuDataParameterInformation* paramDesc, const GpuParamsType& parent)
+TGpuParameterPrimitive<T, Core>::TGpuParameterPrimitive(GpuDataParameterInformation* paramDesc, const GpuParamsType& parent)
 	: mParent(parent), mParamDesc(paramDesc)
 {}
 
 template <class T, bool Core>
-void TGpuDataParam<T, Core>::Set(const T& value, u32 arrayIdx) const
+void TGpuParameterPrimitive<T, Core>::Set(const T& value, u32 arrayIdx) const
 {
 	if(mParent == nullptr)
 		return;
@@ -61,7 +61,7 @@ void TGpuDataParam<T, Core>::Set(const T& value, u32 arrayIdx) const
 }
 
 template <class T, bool Core>
-T TGpuDataParam<T, Core>::Get(u32 arrayIdx) const
+T TGpuParameterPrimitive<T, Core>::Get(u32 arrayIdx) const
 {
 	if(mParent == nullptr)
 		return T();
@@ -87,17 +87,17 @@ T TGpuDataParam<T, Core>::Get(u32 arrayIdx) const
 }
 
 template <bool Core>
-TGpuParamStruct<Core>::TGpuParamStruct()
+TGpuParameterStruct<Core>::TGpuParameterStruct()
 	: mParamDesc(nullptr)
 {}
 
 template <bool Core>
-TGpuParamStruct<Core>::TGpuParamStruct(GpuDataParameterInformation* paramDesc, const GpuParamsType& parent)
+TGpuParameterStruct<Core>::TGpuParameterStruct(GpuDataParameterInformation* paramDesc, const GpuParamsType& parent)
 	: mParent(parent), mParamDesc(paramDesc)
 {}
 
 template <bool Core>
-void TGpuParamStruct<Core>::Set(const void* value, u32 sizeBytes, u32 arrayIdx) const
+void TGpuParameterStruct<Core>::Set(const void* value, u32 sizeBytes, u32 arrayIdx) const
 {
 	if(mParent == nullptr)
 		return;
@@ -137,7 +137,7 @@ void TGpuParamStruct<Core>::Set(const void* value, u32 sizeBytes, u32 arrayIdx) 
 }
 
 template <bool Core>
-void TGpuParamStruct<Core>::Get(void* value, u32 sizeBytes, u32 arrayIdx) const
+void TGpuParameterStruct<Core>::Get(void* value, u32 sizeBytes, u32 arrayIdx) const
 {
 	if(mParent == nullptr)
 		return;
@@ -167,7 +167,7 @@ void TGpuParamStruct<Core>::Get(void* value, u32 sizeBytes, u32 arrayIdx) const
 }
 
 template <bool Core>
-u32 TGpuParamStruct<Core>::GetElementSize() const
+u32 TGpuParameterStruct<Core>::GetElementSize() const
 {
 	if(mParent == nullptr)
 		return 0;
@@ -176,17 +176,17 @@ u32 TGpuParamStruct<Core>::GetElementSize() const
 }
 
 template <bool Core>
-TGpuParamTexture<Core>::TGpuParamTexture()
+TGpuParameterSampledTexture<Core>::TGpuParameterSampledTexture()
 	: mParamDesc(nullptr)
 {}
 
 template <bool Core>
-TGpuParamTexture<Core>::TGpuParamTexture(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent)
+TGpuParameterSampledTexture<Core>::TGpuParameterSampledTexture(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent)
 	: mParent(parent), mParamDesc(paramDesc)
 {}
 
 template <bool Core>
-void TGpuParamTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface, u32 arrayIndex) const
+void TGpuParameterSampledTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface, u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return;
@@ -198,7 +198,7 @@ void TGpuParamTexture<Core>::Set(const TextureType& texture, const TextureSurfac
 }
 
 template <bool Core>
-typename TGpuParamTexture<Core>::TextureType TGpuParamTexture<Core>::Get(u32 arrayIndex) const
+typename TGpuParameterSampledTexture<Core>::TextureType TGpuParameterSampledTexture<Core>::Get(u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return TextureType();
@@ -207,17 +207,17 @@ typename TGpuParamTexture<Core>::TextureType TGpuParamTexture<Core>::Get(u32 arr
 }
 
 template <bool Core>
-TGpuParamBuffer<Core>::TGpuParamBuffer()
+TGpuParameterBuffer<Core>::TGpuParameterBuffer()
 	: mParamDesc(nullptr)
 {}
 
 template <bool Core>
-TGpuParamBuffer<Core>::TGpuParamBuffer(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent)
+TGpuParameterBuffer<Core>::TGpuParameterBuffer(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent)
 	: mParent(parent), mParamDesc(paramDesc)
 {}
 
 template <bool Core>
-void TGpuParamBuffer<Core>::Set(const BufferType& buffer, u32 arrayIndex) const
+void TGpuParameterBuffer<Core>::Set(const BufferType& buffer, u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return;
@@ -229,7 +229,7 @@ void TGpuParamBuffer<Core>::Set(const BufferType& buffer, u32 arrayIndex) const
 }
 
 template <bool Core>
-typename TGpuParamBuffer<Core>::BufferType TGpuParamBuffer<Core>::Get(u32 arrayIndex) const
+typename TGpuParameterBuffer<Core>::BufferType TGpuParameterBuffer<Core>::Get(u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return BufferType();
@@ -238,17 +238,17 @@ typename TGpuParamBuffer<Core>::BufferType TGpuParamBuffer<Core>::Get(u32 arrayI
 }
 
 template <bool Core>
-TGpuParamLoadStoreTexture<Core>::TGpuParamLoadStoreTexture()
+TGpuParameterStorageTexture<Core>::TGpuParameterStorageTexture()
 	: mParamDesc(nullptr)
 {}
 
 template <bool Core>
-TGpuParamLoadStoreTexture<Core>::TGpuParamLoadStoreTexture(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent)
+TGpuParameterStorageTexture<Core>::TGpuParameterStorageTexture(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent)
 	: mParent(parent), mParamDesc(paramDesc)
 {}
 
 template <bool Core>
-void TGpuParamLoadStoreTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface, u32 arrayIndex) const
+void TGpuParameterStorageTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface, u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return;
@@ -260,7 +260,7 @@ void TGpuParamLoadStoreTexture<Core>::Set(const TextureType& texture, const Text
 }
 
 template <bool Core>
-typename TGpuParamLoadStoreTexture<Core>::TextureType TGpuParamLoadStoreTexture<Core>::Get(u32 arrayIndex) const
+typename TGpuParameterStorageTexture<Core>::TextureType TGpuParameterStorageTexture<Core>::Get(u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return TextureType();
@@ -269,17 +269,17 @@ typename TGpuParamLoadStoreTexture<Core>::TextureType TGpuParamLoadStoreTexture<
 }
 
 template <bool Core>
-TGpuParamSampState<Core>::TGpuParamSampState()
+TGpuParameterSampler<Core>::TGpuParameterSampler()
 	: mParamDesc(nullptr)
 {}
 
 template <bool Core>
-TGpuParamSampState<Core>::TGpuParamSampState(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent)
+TGpuParameterSampler<Core>::TGpuParameterSampler(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent)
 	: mParent(parent), mParamDesc(paramDesc)
 {}
 
 template <bool Core>
-void TGpuParamSampState<Core>::Set(const SamplerStateType& samplerState, u32 arrayIndex) const
+void TGpuParameterSampler<Core>::Set(const SamplerStateType& samplerState, u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return;
@@ -291,7 +291,7 @@ void TGpuParamSampState<Core>::Set(const SamplerStateType& samplerState, u32 arr
 }
 
 template <bool Core>
-typename TGpuParamSampState<Core>::SamplerStateType TGpuParamSampState<Core>::Get(u32 arrayIndex) const
+typename TGpuParameterSampler<Core>::SamplerStateType TGpuParameterSampler<Core>::Get(u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return SamplerStateType();
@@ -299,55 +299,65 @@ typename TGpuParamSampState<Core>::SamplerStateType TGpuParamSampState<Core>::Ge
 	return mParent->GetSamplerState(mParamDesc->Set, mParamDesc->Slot, arrayIndex);
 }
 
-template class TGpuDataParam<float, false>;
-template class TGpuDataParam<int, false>;
-template class TGpuDataParam<Color, false>;
-template class TGpuDataParam<Vector2, false>;
-template class TGpuDataParam<Vector3, false>;
-template class TGpuDataParam<Vector4, false>;
-template class TGpuDataParam<Vector2I, false>;
-template class TGpuDataParam<Vector3I, false>;
-template class TGpuDataParam<Vector4I, false>;
-template class TGpuDataParam<Matrix2, false>;
-template class TGpuDataParam<Matrix2x3, false>;
-template class TGpuDataParam<Matrix2x4, false>;
-template class TGpuDataParam<Matrix3, false>;
-template class TGpuDataParam<Matrix3x2, false>;
-template class TGpuDataParam<Matrix3x4, false>;
-template class TGpuDataParam<Matrix4, false>;
-template class TGpuDataParam<Matrix4x2, false>;
-template class TGpuDataParam<Matrix4x3, false>;
+template class TGpuParameterPrimitive<float, false>;
+template class TGpuParameterPrimitive<double, false>;
+template class TGpuParameterPrimitive<Color, false>;
+template class TGpuParameterPrimitive<Vector2, false>;
+template class TGpuParameterPrimitive<Vector3, false>;
+template class TGpuParameterPrimitive<Vector4, false>;
+template class TGpuParameterPrimitive<i32, false>;
+template class TGpuParameterPrimitive<Vector2I, false>;
+template class TGpuParameterPrimitive<Vector3I, false>;
+template class TGpuParameterPrimitive<Vector4I, false>;
+template class TGpuParameterPrimitive<u32, false>;
+template class TGpuParameterPrimitive<Vector2UI, false>;
+template class TGpuParameterPrimitive<Vector3UI, false>;
+template class TGpuParameterPrimitive<Vector4UI, false>;
+template class TGpuParameterPrimitive<Matrix2, false>;
+template class TGpuParameterPrimitive<Matrix2x3, false>;
+template class TGpuParameterPrimitive<Matrix2x4, false>;
+template class TGpuParameterPrimitive<Matrix3, false>;
+template class TGpuParameterPrimitive<Matrix3x2, false>;
+template class TGpuParameterPrimitive<Matrix3x4, false>;
+template class TGpuParameterPrimitive<Matrix4, false>;
+template class TGpuParameterPrimitive<Matrix4x2, false>;
+template class TGpuParameterPrimitive<Matrix4x3, false>;
 
-template class TGpuDataParam<float, true>;
-template class TGpuDataParam<int, true>;
-template class TGpuDataParam<Color, true>;
-template class TGpuDataParam<Vector2, true>;
-template class TGpuDataParam<Vector3, true>;
-template class TGpuDataParam<Vector4, true>;
-template class TGpuDataParam<Vector2I, true>;
-template class TGpuDataParam<Vector3I, true>;
-template class TGpuDataParam<Vector4I, true>;
-template class TGpuDataParam<Matrix2, true>;
-template class TGpuDataParam<Matrix2x3, true>;
-template class TGpuDataParam<Matrix2x4, true>;
-template class TGpuDataParam<Matrix3, true>;
-template class TGpuDataParam<Matrix3x2, true>;
-template class TGpuDataParam<Matrix3x4, true>;
-template class TGpuDataParam<Matrix4, true>;
-template class TGpuDataParam<Matrix4x2, true>;
-template class TGpuDataParam<Matrix4x3, true>;
+template class TGpuParameterPrimitive<float, true>;
+template class TGpuParameterPrimitive<double, true>;
+template class TGpuParameterPrimitive<Color, true>;
+template class TGpuParameterPrimitive<Vector2, true>;
+template class TGpuParameterPrimitive<Vector3, true>;
+template class TGpuParameterPrimitive<Vector4, true>;
+template class TGpuParameterPrimitive<i32, true>;
+template class TGpuParameterPrimitive<Vector2I, true>;
+template class TGpuParameterPrimitive<Vector3I, true>;
+template class TGpuParameterPrimitive<Vector4I, true>;
+template class TGpuParameterPrimitive<u32, true>;
+template class TGpuParameterPrimitive<Vector2UI, true>;
+template class TGpuParameterPrimitive<Vector3UI, true>;
+template class TGpuParameterPrimitive<Vector4UI, true>;
+template class TGpuParameterPrimitive<Matrix2, true>;
+template class TGpuParameterPrimitive<Matrix2x3, true>;
+template class TGpuParameterPrimitive<Matrix2x4, true>;
+template class TGpuParameterPrimitive<Matrix3, true>;
+template class TGpuParameterPrimitive<Matrix3x2, true>;
+template class TGpuParameterPrimitive<Matrix3x4, true>;
+template class TGpuParameterPrimitive<Matrix4, true>;
+template class TGpuParameterPrimitive<Matrix4x2, true>;
+template class TGpuParameterPrimitive<Matrix4x3, true>;
 
-template class TGpuParamStruct<false>;
-template class TGpuParamStruct<true>;
+template class TGpuParameterStruct<false>;
+template class TGpuParameterStruct<true>;
 
-template class TGpuParamTexture<false>;
-template class TGpuParamTexture<true>;
+template class TGpuParameterSampledTexture<false>;
+template class TGpuParameterSampledTexture<true>;
 
-template class TGpuParamBuffer<false>;
-template class TGpuParamBuffer<true>;
+template class TGpuParameterBuffer<false>;
+template class TGpuParameterBuffer<true>;
 
-template class TGpuParamSampState<false>;
-template class TGpuParamSampState<true>;
+template class TGpuParameterSampler<false>;
+template class TGpuParameterSampler<true>;
 
-template class TGpuParamLoadStoreTexture<false>;
-template class TGpuParamLoadStoreTexture<true>;
+template class TGpuParameterStorageTexture<false>;
+template class TGpuParameterStorageTexture<true>;

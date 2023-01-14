@@ -17,7 +17,7 @@ TMaterialDataCommon<DATA_TYPE, Core>::TMaterialDataCommon(const String& name, co
 		SPtr<MaterialParamsType> params = material->GetInternalParamsInternal();
 
 		u32 paramIndex;
-		auto result = params->GetParamIndex(name, MaterialParams::ParamType::Data, (GpuParamDataType)DATA_TYPE, 0, paramIndex);
+		auto result = params->GetParamIndex(name, MaterialParams::ParamType::Data, (GpuDataParameterType)DATA_TYPE, 0, paramIndex);
 
 		if(result == MaterialParams::GetParamResult::Success)
 		{
@@ -33,7 +33,7 @@ TMaterialDataCommon<DATA_TYPE, Core>::TMaterialDataCommon(const String& name, co
 }
 
 template <class T, bool Core>
-void TMaterialDataParam<T, Core>::Set(const T& value, u32 arrayIdx) const
+void TMaterialParameterPrimitive<T, Core>::Set(const T& value, u32 arrayIdx) const
 {
 	if(this->mMaterial == nullptr)
 		return;
@@ -52,7 +52,7 @@ void TMaterialDataParam<T, Core>::Set(const T& value, u32 arrayIdx) const
 }
 
 template <class T, bool Core>
-T TMaterialDataParam<T, Core>::Get(u32 arrayIdx) const
+T TMaterialParameterPrimitive<T, Core>::Get(u32 arrayIdx) const
 {
 	T output{};
 	if(this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
@@ -66,7 +66,7 @@ T TMaterialDataParam<T, Core>::Get(u32 arrayIdx) const
 }
 
 template <class T, bool Core>
-void TMaterialCurveParam<T, Core>::Set(TAnimationCurve<T> value, u32 arrayIdx) const
+void TMaterialParameterCurve<T, Core>::Set(TAnimationCurve<T> value, u32 arrayIdx) const
 {
 	if(this->mMaterial == nullptr)
 		return;
@@ -85,7 +85,7 @@ void TMaterialCurveParam<T, Core>::Set(TAnimationCurve<T> value, u32 arrayIdx) c
 }
 
 template <class T, bool Core>
-const TAnimationCurve<T>& TMaterialCurveParam<T, Core>::Get(u32 arrayIdx) const
+const TAnimationCurve<T>& TMaterialParameterCurve<T, Core>::Get(u32 arrayIdx) const
 {
 	static TAnimationCurve<T> EMPTY_CURVE;
 
@@ -99,7 +99,7 @@ const TAnimationCurve<T>& TMaterialCurveParam<T, Core>::Get(u32 arrayIdx) const
 }
 
 template <bool Core>
-void TMaterialColorGradientParam<Core>::Set(const ColorGradientHDR& value, u32 arrayIdx) const
+void TMaterialParameterColorGradient<Core>::Set(const ColorGradientHDR& value, u32 arrayIdx) const
 {
 	if(this->mMaterial == nullptr)
 		return;
@@ -118,7 +118,7 @@ void TMaterialColorGradientParam<Core>::Set(const ColorGradientHDR& value, u32 a
 }
 
 template <bool Core>
-const ColorGradientHDR& TMaterialColorGradientParam<Core>::Get(u32 arrayIdx) const
+const ColorGradientHDR& TMaterialParameterColorGradient<Core>::Get(u32 arrayIdx) const
 {
 	static ColorGradientHDR EMPTY_GRADIENT;
 
@@ -132,7 +132,7 @@ const ColorGradientHDR& TMaterialColorGradientParam<Core>::Get(u32 arrayIdx) con
 }
 
 template <bool Core>
-void TMaterialParamStruct<Core>::Set(const void* value, u32 sizeBytes, u32 arrayIdx) const
+void TMaterialParameterStruct<Core>::Set(const void* value, u32 sizeBytes, u32 arrayIdx) const
 {
 	if(this->mMaterial == nullptr)
 		return;
@@ -151,7 +151,7 @@ void TMaterialParamStruct<Core>::Set(const void* value, u32 sizeBytes, u32 array
 }
 
 template <bool Core>
-void TMaterialParamStruct<Core>::Get(void* value, u32 sizeBytes, u32 arrayIdx) const
+void TMaterialParameterStruct<Core>::Get(void* value, u32 sizeBytes, u32 arrayIdx) const
 {
 	if(this->mMaterial == nullptr || arrayIdx >= this->mArraySize)
 		return;
@@ -163,7 +163,7 @@ void TMaterialParamStruct<Core>::Get(void* value, u32 sizeBytes, u32 arrayIdx) c
 }
 
 template <bool Core>
-u32 TMaterialParamStruct<Core>::GetElementSize() const
+u32 TMaterialParameterStruct<Core>::GetElementSize() const
 {
 	if(this->mMaterial == nullptr)
 		return 0;
@@ -175,7 +175,7 @@ u32 TMaterialParamStruct<Core>::GetElementSize() const
 }
 
 template <bool Core>
-TMaterialParamTexture<Core>::TMaterialParamTexture(const String& name, const MaterialPtrType& material)
+TMaterialParameterSampledTexture<Core>::TMaterialParameterSampledTexture(const String& name, const MaterialPtrType& material)
 	: mParamIndex(0), mMaterial(nullptr)
 {
 	if(material != nullptr)
@@ -196,7 +196,7 @@ TMaterialParamTexture<Core>::TMaterialParamTexture(const String& name, const Mat
 }
 
 template <bool Core>
-void TMaterialParamTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface) const
+void TMaterialParameterSampledTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface) const
 {
 	if(mMaterial == nullptr)
 		return;
@@ -216,7 +216,7 @@ void TMaterialParamTexture<Core>::Set(const TextureType& texture, const TextureS
 }
 
 template <bool Core>
-typename TMaterialParamTexture<Core>::TextureType TMaterialParamTexture<Core>::Get() const
+typename TMaterialParameterSampledTexture<Core>::TextureType TMaterialParameterSampledTexture<Core>::Get() const
 {
 	TextureType texture;
 	if(mMaterial == nullptr)
@@ -291,7 +291,7 @@ typename TMaterialParamSpriteTexture<Core>::SpriteTextureType TMaterialParamSpri
 }
 
 template <bool Core>
-TMaterialParamLoadStoreTexture<Core>::TMaterialParamLoadStoreTexture(const String& name, const MaterialPtrType& material)
+TMaterialParameterStorageTexture<Core>::TMaterialParameterStorageTexture(const String& name, const MaterialPtrType& material)
 	: mParamIndex(0), mMaterial(nullptr)
 {
 	if(material != nullptr)
@@ -312,7 +312,7 @@ TMaterialParamLoadStoreTexture<Core>::TMaterialParamLoadStoreTexture(const Strin
 }
 
 template <bool Core>
-void TMaterialParamLoadStoreTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface) const
+void TMaterialParameterStorageTexture<Core>::Set(const TextureType& texture, const TextureSurface& surface) const
 {
 	if(mMaterial == nullptr)
 		return;
@@ -327,7 +327,7 @@ void TMaterialParamLoadStoreTexture<Core>::Set(const TextureType& texture, const
 }
 
 template <bool Core>
-typename TMaterialParamLoadStoreTexture<Core>::TextureType TMaterialParamLoadStoreTexture<Core>::Get() const
+typename TMaterialParameterStorageTexture<Core>::TextureType TMaterialParameterStorageTexture<Core>::Get() const
 {
 	TextureType texture;
 	if(mMaterial == nullptr)
@@ -344,7 +344,7 @@ typename TMaterialParamLoadStoreTexture<Core>::TextureType TMaterialParamLoadSto
 }
 
 template <bool Core>
-TMaterialParamBuffer<Core>::TMaterialParamBuffer(const String& name, const MaterialPtrType& material)
+TMaterialParameterBuffer<Core>::TMaterialParameterBuffer(const String& name, const MaterialPtrType& material)
 	: mParamIndex(0), mMaterial(nullptr)
 {
 	if(material != nullptr)
@@ -365,7 +365,7 @@ TMaterialParamBuffer<Core>::TMaterialParamBuffer(const String& name, const Mater
 }
 
 template <bool Core>
-void TMaterialParamBuffer<Core>::Set(const BufferType& buffer) const
+void TMaterialParameterBuffer<Core>::Set(const BufferType& buffer) const
 {
 	if(mMaterial == nullptr)
 		return;
@@ -379,7 +379,7 @@ void TMaterialParamBuffer<Core>::Set(const BufferType& buffer) const
 }
 
 template <bool Core>
-typename TMaterialParamBuffer<Core>::BufferType TMaterialParamBuffer<Core>::Get() const
+typename TMaterialParameterBuffer<Core>::BufferType TMaterialParameterBuffer<Core>::Get() const
 {
 	BufferType buffer;
 	if(mMaterial == nullptr)
@@ -393,7 +393,7 @@ typename TMaterialParamBuffer<Core>::BufferType TMaterialParamBuffer<Core>::Get(
 }
 
 template <bool Core>
-TMaterialParamSampState<Core>::TMaterialParamSampState(const String& name, const MaterialPtrType& material)
+TMaterialParameterSampler<Core>::TMaterialParameterSampler(const String& name, const MaterialPtrType& material)
 	: mParamIndex(0), mMaterial(nullptr)
 {
 	if(material != nullptr)
@@ -414,7 +414,7 @@ TMaterialParamSampState<Core>::TMaterialParamSampState(const String& name, const
 }
 
 template <bool Core>
-void TMaterialParamSampState<Core>::Set(const SamplerStateType& sampState) const
+void TMaterialParameterSampler<Core>::Set(const SamplerStateType& sampState) const
 {
 	if(mMaterial == nullptr)
 		return;
@@ -433,7 +433,7 @@ void TMaterialParamSampState<Core>::Set(const SamplerStateType& sampState) const
 }
 
 template <bool Core>
-typename TMaterialParamSampState<Core>::SamplerStateType TMaterialParamSampState<Core>::Get() const
+typename TMaterialParameterSampler<Core>::SamplerStateType TMaterialParameterSampler<Core>::Get() const
 {
 	SamplerStateType samplerState;
 	if(mMaterial == nullptr)
@@ -449,18 +449,23 @@ typename TMaterialParamSampState<Core>::SamplerStateType TMaterialParamSampState
 #define MATERIAL_DATA_PARAM_INSTATIATE(type)                                    \
 	template class TMaterialDataCommon<TGpuDataParamInfo<type>::TypeId, false>; \
 	template class TMaterialDataCommon<TGpuDataParamInfo<type>::TypeId, true>;  \
-	template class TMaterialDataParam<type, false>;                             \
-	template class TMaterialDataParam<type, true>;
+	template class TMaterialParameterPrimitive<type, false>;                    \
+	template class TMaterialParameterPrimitive<type, true>;
 
 MATERIAL_DATA_PARAM_INSTATIATE(float)
-MATERIAL_DATA_PARAM_INSTATIATE(int)
+MATERIAL_DATA_PARAM_INSTATIATE(double)
 MATERIAL_DATA_PARAM_INSTATIATE(Color)
 MATERIAL_DATA_PARAM_INSTATIATE(Vector2)
 MATERIAL_DATA_PARAM_INSTATIATE(Vector3)
 MATERIAL_DATA_PARAM_INSTATIATE(Vector4)
+MATERIAL_DATA_PARAM_INSTATIATE(i32)
 MATERIAL_DATA_PARAM_INSTATIATE(Vector2I)
 MATERIAL_DATA_PARAM_INSTATIATE(Vector3I)
 MATERIAL_DATA_PARAM_INSTATIATE(Vector4I)
+MATERIAL_DATA_PARAM_INSTATIATE(u32)
+MATERIAL_DATA_PARAM_INSTATIATE(Vector2UI)
+MATERIAL_DATA_PARAM_INSTATIATE(Vector3UI)
+MATERIAL_DATA_PARAM_INSTATIATE(Vector4UI)
 MATERIAL_DATA_PARAM_INSTATIATE(Matrix2)
 MATERIAL_DATA_PARAM_INSTATIATE(Matrix2x3)
 MATERIAL_DATA_PARAM_INSTATIATE(Matrix2x4)
@@ -475,26 +480,26 @@ MATERIAL_DATA_PARAM_INSTATIATE(Matrix4x3)
 
 template class TMaterialDataCommon<GPDT_STRUCT, false>;
 template class TMaterialDataCommon<GPDT_STRUCT, true>;
-template class TMaterialParamStruct<false>;
-template class TMaterialParamStruct<true>;
+template class TMaterialParameterStruct<false>;
+template class TMaterialParameterStruct<true>;
 
-template class TMaterialCurveParam<float, false>;
-template class TMaterialCurveParam<float, true>;
+template class TMaterialParameterCurve<float, false>;
+template class TMaterialParameterCurve<float, true>;
 
-template class TMaterialColorGradientParam<false>;
-template class TMaterialColorGradientParam<true>;
+template class TMaterialParameterColorGradient<false>;
+template class TMaterialParameterColorGradient<true>;
 
-template class TMaterialParamTexture<false>;
-template class TMaterialParamTexture<true>;
+template class TMaterialParameterSampledTexture<false>;
+template class TMaterialParameterSampledTexture<true>;
 
 template class TMaterialParamSpriteTexture<false>;
 template class TMaterialParamSpriteTexture<true>;
 
-template class TMaterialParamLoadStoreTexture<false>;
-template class TMaterialParamLoadStoreTexture<true>;
+template class TMaterialParameterStorageTexture<false>;
+template class TMaterialParameterStorageTexture<true>;
 
-template class TMaterialParamBuffer<false>;
-template class TMaterialParamBuffer<true>;
+template class TMaterialParameterBuffer<false>;
+template class TMaterialParameterBuffer<true>;
 
-template class TMaterialParamSampState<false>;
-template class TMaterialParamSampState<true>;
+template class TMaterialParameterSampler<false>;
+template class TMaterialParameterSampler<true>;

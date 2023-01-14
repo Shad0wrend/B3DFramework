@@ -81,15 +81,15 @@ namespace bs
 			void GetOutputs(SPtr<GpuBuffer>& lightsLLHeads, SPtr<GpuBuffer>& lightsLL, SPtr<GpuBuffer>& probesLLHeads, SPtr<GpuBuffer>& probesLL) const;
 
 		private:
-			GpuParamBuffer mLightBufferParam;
-			GpuParamBuffer mLightsCounterParam;
-			GpuParamBuffer mLightsLLHeadsParam;
-			GpuParamBuffer mLightsLLParam;
+			GpuParameterBuffer mLightBufferParam;
+			GpuParameterBuffer mLightsCounterParam;
+			GpuParameterBuffer mLightsLLHeadsParam;
+			GpuParameterBuffer mLightsLLParam;
 
-			GpuParamBuffer mProbesBufferParam;
-			GpuParamBuffer mProbesCounterParam;
-			GpuParamBuffer mProbesLLHeadsParam;
-			GpuParamBuffer mProbesLLParam;
+			GpuParameterBuffer mProbesBufferParam;
+			GpuParameterBuffer mProbesCounterParam;
+			GpuParameterBuffer mProbesLLHeadsParam;
+			GpuParameterBuffer mProbesLLParam;
 
 			SPtr<GpuBuffer> mLightsCounter;
 			SPtr<GpuBuffer> mLightsLLHeads;
@@ -121,19 +121,19 @@ namespace bs
 			void GetOutputs(SPtr<GpuBuffer>& gridLightOffsetsAndSize, SPtr<GpuBuffer>& gridLightIndices, SPtr<GpuBuffer>& gridProbeOffsetsAndSize, SPtr<GpuBuffer>& gridProbeIndices) const;
 
 		private:
-			GpuParamBuffer mLightsLLHeadsParam;
-			GpuParamBuffer mLightsLLParam;
+			GpuParameterBuffer mLightsLLHeadsParam;
+			GpuParameterBuffer mLightsLLParam;
 
-			GpuParamBuffer mProbesLLHeadsParam;
-			GpuParamBuffer mProbesLLParam;
+			GpuParameterBuffer mProbesLLHeadsParam;
+			GpuParameterBuffer mProbesLLParam;
 
-			GpuParamBuffer mGridDataCounterParam;
+			GpuParameterBuffer mGridDataCounterParam;
 
-			GpuParamBuffer mGridLightOffsetAndSizeParam;
-			GpuParamBuffer mGridLightIndicesParam;
+			GpuParameterBuffer mGridLightOffsetAndSizeParam;
+			GpuParameterBuffer mGridLightIndicesParam;
 
-			GpuParamBuffer mGridProbeOffsetAndSizeParam;
-			GpuParamBuffer mGridProbeIndicesParam;
+			GpuParameterBuffer mGridProbeOffsetAndSizeParam;
+			GpuParameterBuffer mGridProbeIndicesParam;
 
 			SPtr<GpuBuffer> mGridDataCounter;
 

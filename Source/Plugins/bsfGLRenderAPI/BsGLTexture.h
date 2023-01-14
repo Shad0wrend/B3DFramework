@@ -46,7 +46,7 @@ namespace bs
 			static GLenum GetGlTextureTarget(TextureType type, u32 numSamples, u32 numFaces);
 
 			/** Picks an OpenGL texture target based on a GPU program parameter type. */
-			static GLenum GetGlTextureTarget(GpuParamObjectType type);
+			static GLenum GetGlTextureTarget(GpuParameterObjectType type);
 
 		protected:
 			friend class GLTextureManager;

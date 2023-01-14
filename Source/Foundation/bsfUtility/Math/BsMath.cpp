@@ -10,32 +10,6 @@ using namespace bs;
 
 const float Math::kLoG2 = std::log(2.0f);
 
-Radian Math::Asin(float val)
-{
-	if(-1.0f < val)
-	{
-		if(val < 1.0f)
-			return Radian(std::asin(val));
-		else
-			return Radian(kHalfPi);
-	}
-	else
-	{
-		return Radian(-kHalfPi);
-	}
-}
-
-float Math::Sign(float val)
-{
-	if(val > 0.0f)
-		return 1.0f;
-
-	if(val < 0.0f)
-		return -1.0f;
-
-	return 0.0f;
-}
-
 float Math::FastSin0(float val)
 {
 	float angleSqr = val * val;

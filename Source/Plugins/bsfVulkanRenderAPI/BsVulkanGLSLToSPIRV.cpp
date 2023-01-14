@@ -142,6 +142,14 @@ static VertexElementType MapGLSLangToVertexElemType(const glslang::TType& type)
 			case 4: return VET_FLOAT4;
 			default: return VET_UNKNOWN;
 			}
+		case glslang::EbtFloat16:
+			switch(vectorSize)
+			{
+			case 2: return VET_HALF2;
+			case 3: return VET_HALF3;
+			case 4: return VET_HALF4;
+			default: return VET_UNKNOWN;
+			}
 		case glslang::EbtInt:
 			switch(vectorSize)
 			{
@@ -168,6 +176,7 @@ static VertexElementType MapGLSLangToVertexElemType(const glslang::TType& type)
 		switch(type.getBasicType())
 		{
 		case glslang::EbtFloat: return VET_FLOAT1;
+		case glslang::EbtFloat16: return VET_HALF1;
 		case glslang::EbtInt: return VET_INT1;
 		case glslang::EbtUint: return VET_UINT1;
 		default: return VET_UNKNOWN;
@@ -177,7 +186,7 @@ static VertexElementType MapGLSLangToVertexElemType(const glslang::TType& type)
 	return VET_UNKNOWN;
 }
 
-static GpuParamDataType MapGLSLangToGpuParamDataType(const glslang::TType& type)
+static GpuDataParameterType MapGLSLangToGpuParamDataType(const glslang::TType& type)
 {
 	if(type.getBasicType() == glslang::EbtStruct)
 		return GPDT_STRUCT;
@@ -196,6 +205,22 @@ static GpuParamDataType MapGLSLangToGpuParamDataType(const glslang::TType& type)
 			case 4: return GPDT_FLOAT4;
 			default: return GPDT_UNKNOWN;
 			}
+		case glslang::EbtDouble:
+			switch(vectorSize)
+			{
+			case 2: return GPDT_DOUBLE2;
+			case 3: return GPDT_DOUBLE3;
+			case 4: return GPDT_DOUBLE4;
+			default: return GPDT_UNKNOWN;
+			}
+		case glslang::EbtFloat16:
+			switch(vectorSize)
+			{
+			case 2: return GPDT_HALF2;
+			case 3: return GPDT_HALF3;
+			case 4: return GPDT_HALF4;
+			default: return GPDT_UNKNOWN;
+			}
 		case glslang::EbtInt:
 			switch(vectorSize)
 			{
@@ -207,9 +232,9 @@ static GpuParamDataType MapGLSLangToGpuParamDataType(const glslang::TType& type)
 		case glslang::EbtUint:
 			switch(vectorSize)
 			{
-			case 2: return GPDT_INT2;
-			case 3: return GPDT_INT3;
-			case 4: return GPDT_INT4;
+			case 2: return GPDT_UINT2;
+			case 3: return GPDT_UINT3;
+			case 4: return GPDT_UINT4;
 			default: return GPDT_UNKNOWN;
 			}
 		default:
@@ -251,6 +276,66 @@ static GpuParamDataType MapGLSLangToGpuParamDataType(const glslang::TType& type)
 			default: break;
 			}
 			break;
+		case glslang::EbtFloat16:
+			switch(type.getMatrixCols())
+			{
+			case 2:
+				switch(type.getMatrixRows())
+				{
+				case 2: return GPDT_HALF_MATRIX_2X2;
+				case 3: return GPDT_HALF_MATRIX_3X2;
+				case 4: return GPDT_HALF_MATRIX_4X2;
+				default: return GPDT_UNKNOWN;
+				}
+			case 3:
+				switch(type.getMatrixRows())
+				{
+				case 2: return GPDT_HALF_MATRIX_2X3;
+				case 3: return GPDT_HALF_MATRIX_3X3;
+				case 4: return GPDT_HALF_MATRIX_4X3;
+				default: return GPDT_UNKNOWN;
+				}
+			case 4:
+				switch(type.getMatrixRows())
+				{
+				case 2: return GPDT_HALF_MATRIX_2X4;
+				case 3: return GPDT_HALF_MATRIX_3X4;
+				case 4: return GPDT_HALF_MATRIX_4X4;
+				default: return GPDT_UNKNOWN;
+				}
+			default: break;
+			}
+			break;
+		case glslang::EbtDouble:
+			switch(type.getMatrixCols())
+			{
+			case 2:
+				switch(type.getMatrixRows())
+				{
+				case 2: return GPDT_DOUBLE_MATRIX_2X2;
+				case 3: return GPDT_DOUBLE_MATRIX_3X2;
+				case 4: return GPDT_DOUBLE_MATRIX_4X2;
+				default: return GPDT_UNKNOWN;
+				}
+			case 3:
+				switch(type.getMatrixRows())
+				{
+				case 2: return GPDT_DOUBLE_MATRIX_2X3;
+				case 3: return GPDT_DOUBLE_MATRIX_3X3;
+				case 4: return GPDT_DOUBLE_MATRIX_4X3;
+				default: return GPDT_UNKNOWN;
+				}
+			case 4:
+				switch(type.getMatrixRows())
+				{
+				case 2: return GPDT_DOUBLE_MATRIX_2X4;
+				case 3: return GPDT_DOUBLE_MATRIX_3X4;
+				case 4: return GPDT_DOUBLE_MATRIX_4X4;
+				default: return GPDT_UNKNOWN;
+				}
+			default: break;
+			}
+			break;
 		default:
 			return GPDT_UNKNOWN;
 		}
@@ -261,8 +346,10 @@ static GpuParamDataType MapGLSLangToGpuParamDataType(const glslang::TType& type)
 		switch(type.getBasicType())
 		{
 		case glslang::EbtFloat: return GPDT_FLOAT1;
+		case glslang::EbtDouble: return GPDT_DOUBLE1;
+		case glslang::EbtFloat16: return GPDT_HALF1;
 		case glslang::EbtInt: return GPDT_INT1;
-		case glslang::EbtUint: return GPDT_INT1;
+		case glslang::EbtUint: return GPDT_UINT1;
 		case glslang::EbtBool: return GPDT_BOOL;
 		default: return GPDT_UNKNOWN;
 		}
@@ -283,6 +370,15 @@ static GpuBufferFormat MapSamplerBasicType(const glslang::TSampler& sampler)
 		case 2: return BF_32X2F;
 		case 3: return BF_32X3F;
 		case 4: return BF_32X4F;
+		default: return BF_UNKNOWN;
+		}
+	case glslang::EbtDouble:
+		switch(vectorSize)
+		{
+		case 1: return BF_64X1F;
+		case 2: return BF_64X2F;
+		case 3: return BF_64X3F;
+		case 4: return BF_64X4F;
 		default: return BF_UNKNOWN;
 		}
 	case glslang::EbtFloat16:
@@ -341,6 +437,24 @@ static GpuBufferFormat MapSamplerBasicType(const glslang::TSampler& sampler)
 		case 2: return BF_32X2U;
 		case 3: return BF_32X3U;
 		case 4: return BF_32X4U;
+		default: return BF_UNKNOWN;
+		}
+	case glslang::EbtInt64:
+		switch(vectorSize)
+		{
+		case 1: return BF_64X1S;
+		case 2: return BF_64X2S;
+		case 3: return BF_64X3S;
+		case 4: return BF_64X4S;
+		default: return BF_UNKNOWN;
+		}
+	case glslang::EbtUint64:
+		switch(vectorSize)
+		{
+		case 1: return BF_64X1U;
+		case 2: return BF_64X2U;
+		case 3: return BF_64X3U;
+		case 4: return BF_64X4U;
 		default: return BF_UNKNOWN;
 		}
 	default:
@@ -473,7 +587,7 @@ static void ParseStruct(const glslang::TTypeList* typeList, u32& size)
 			if(ttype->isArray())
 				arraySize = (u32)ttype->getCumulativeArraySize();
 
-			GpuParamDataType paramType = MapGLSLangToGpuParamDataType(*ttype);
+			GpuDataParameterType paramType = MapGLSLangToGpuParamDataType(*ttype);
 			if(paramType == GPDT_UNKNOWN)
 			{
 				B3D_LOG(Warning, RenderBackend, "Cannot determine type for uniform inside a struct.");
@@ -674,7 +788,7 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 				const glslang::TType* paramTType = iter->type;
 				String paramName = paramTType->getFieldName().c_str();
 
-				GpuParamDataType paramType;
+				GpuDataParameterType paramType;
 				u32 elementSize = 0;
 				u32 arrayStride = 0;
 				if(paramTType->getBasicType() == glslang::EbtStruct)
@@ -701,7 +815,7 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 				u32 arraySize = paramTType->isArray() ? paramTType->getCumulativeArraySize() : 1;
 				if(paramType != GPDT_STRUCT)
 				{
-					const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::kParamSizes.Lookup[paramType];
+					const GpuDataParameterTypeInformation& typeInfo = bs::GpuParams::kParamSizes.Lookup[paramType];
 					elementSize = typeInfo.Size / 4;
 
 					// Array elements in std140 are always rounded to vec4
@@ -721,7 +835,7 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 				else if(paramTType->isMatrix())
 				{
 					// Matrices get rounded up to vec4
-					const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::kParamSizes.Lookup[paramType];
+					const GpuDataParameterTypeInformation& typeInfo = bs::GpuParams::kParamSizes.Lookup[paramType];
 
 					stride = Math::DivideAndRoundUp(typeInfo.BaseTypeSize * typeInfo.NumColumns / 4U, 4U) * 4 * typeInfo.NumRows;
 					bufferOffset = Math::DivideAndRoundUp(bufferOffset, 4U) * 4;

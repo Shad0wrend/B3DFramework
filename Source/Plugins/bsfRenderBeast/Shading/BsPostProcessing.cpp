@@ -292,10 +292,10 @@ void EyeAdaptationMat::PopulateParams(const SPtr<GpuParamBlockBuffer>& paramBuff
 	eyeAdaptationParams[1].Z = settings.EyeAdaptationSpeedUp;
 	eyeAdaptationParams[1].W = settings.EyeAdaptationSpeedDown;
 
-	eyeAdaptationParams[2].X = Math::Pow(2.0f, exposureScale);
+	eyeAdaptationParams[2].X = Math::RaiseToPower(2.0f, exposureScale);
 	eyeAdaptationParams[2].Y = frameDelta;
 
-	eyeAdaptationParams[2].Z = Math::Pow(2.0f, settings.HistogramLog2Min);
+	eyeAdaptationParams[2].Z = Math::RaiseToPower(2.0f, settings.HistogramLog2Min);
 	eyeAdaptationParams[2].W = 0.0f; // Unused
 
 	gEyeAdaptationParamDef.gEyeAdaptationParams.Set(paramBuffer, eyeAdaptationParams[0], 0);
@@ -523,7 +523,7 @@ void TonemappingMat::Execute(const SPtr<Texture>& sceneColor, const SPtr<Texture
 	const TextureProperties& texProps = sceneColor->GetProperties();
 
 	gTonemappingParamDef.gRawGamma.Set(mParamBuffer, 1.0f / settings.Gamma);
-	gTonemappingParamDef.gManualExposureScale.Set(mParamBuffer, Math::Pow(2.0f, settings.ExposureScale));
+	gTonemappingParamDef.gManualExposureScale.Set(mParamBuffer, Math::RaiseToPower(2.0f, settings.ExposureScale));
 	gTonemappingParamDef.gTexSize.Set(mParamBuffer, Vector2((float)texProps.GetWidth(), (float)texProps.GetHeight()));
 	gTonemappingParamDef.gBloomTint.Set(mParamBuffer, settings.Bloom.Tint);
 	gTonemappingParamDef.gNumSamples.Set(mParamBuffer, texProps.GetNumSamples());
@@ -636,7 +636,7 @@ void BloomClipMat::Execute(const SPtr<Texture>& input, float threshold, const SP
 	BS_RENMAT_PROFILE_BLOCK
 
 	gBloomClipParamDef.gThreshold.Set(mParamBuffer, threshold);
-	gBloomClipParamDef.gManualExposureScale.Set(mParamBuffer, Math::Pow(2.0f, settings.ExposureScale));
+	gBloomClipParamDef.gManualExposureScale.Set(mParamBuffer, Math::RaiseToPower(2.0f, settings.ExposureScale));
 
 	// Set parameters
 	mInputTex.Set(input);

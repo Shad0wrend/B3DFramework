@@ -22,7 +22,7 @@ void Quaternion::FromRotationMatrix(const Matrix3& mat)
 	if(trace > 0.0f)
 	{
 		// |w| > 1/2, may as well choose w > 1/2
-		root = Math::Sqrt(trace + 1.0f); // 2w
+		root = Math::SquareRoot(trace + 1.0f); // 2w
 		W = 0.5f * root;
 		root = 0.5f / root; // 1/(4w)
 		X = (mat[2][1] - mat[1][2]) * root;
@@ -44,7 +44,7 @@ void Quaternion::FromRotationMatrix(const Matrix3& mat)
 		u32 j = nextLookup[i];
 		u32 k = nextLookup[j];
 
-		root = Math::Sqrt(mat[i][i] - mat[j][j] - mat[k][k] + 1.0f);
+		root = Math::SquareRoot(mat[i][i] - mat[j][j] - mat[k][k] + 1.0f);
 
 		float* cmpntLookup[3] = { &X, &Y, &Z };
 		*cmpntLookup[i] = 0.5f * root;
@@ -168,7 +168,7 @@ void Quaternion::ToAxisAngle(Vector3& axis, Radian& angle) const
 	if(sqrLength > 0.0)
 	{
 		angle = 2.0 * Math::Acos(W);
-		float invLength = Math::InvSqrt(sqrLength);
+		float invLength = Math::InverseSquareRoot(sqrLength);
 		axis.X = X * invLength;
 		axis.Y = Y * invLength;
 		axis.Z = Z * invLength;
@@ -336,7 +336,7 @@ Quaternion Quaternion::Slerp(float t, const Quaternion& p, const Quaternion& q, 
 	if(abs(cos) < 1 - kEpsilon)
 	{
 		// Standard case (slerp)
-		float sin = Math::Sqrt(1 - Math::Sqr(cos));
+		float sin = Math::SquareRoot(1 - Math::Square(cos));
 		Radian angle = Math::Atan2(sin, cos);
 		float invSin = 1.0f / sin;
 		float coeff0 = Math::Sin((1.0f - t) * angle) * invSin;
@@ -394,7 +394,7 @@ Quaternion Quaternion::GetRotationFromTo(const Vector3& from, const Vector3& des
 	}
 	else
 	{
-		float s = Math::Sqrt((1 + d) * 2);
+		float s = Math::SquareRoot((1 + d) * 2);
 		float invs = 1 / s;
 
 		Vector3 c = v0.Cross(v1);

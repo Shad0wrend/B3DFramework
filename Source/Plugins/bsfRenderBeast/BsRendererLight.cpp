@@ -120,7 +120,7 @@ GBufferParams::GBufferParams(GpuProgramType type, const SPtr<GpuParams>& gpuPara
 
 	if(mParams->HasSamplerState(type, "gDepthBufferSamp"))
 	{
-		GpuParamSampState samplerStateParam;
+		GpuParameterSampler samplerStateParam;
 		mParams->GetSamplerStateParam(type, "gDepthBufferSamp", samplerStateParam);
 
 		SAMPLER_STATE_DESC desc;

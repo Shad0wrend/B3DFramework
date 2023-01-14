@@ -374,7 +374,7 @@ namespace bs
 		static TVector3 Normalize(const TVector3& rhs)
 		{
 			const T squaredLength = Dot(rhs, rhs);
-			return rhs * Math::InvSqrt(squaredLength);
+			return rhs * Math::InverseSquareRoot(squaredLength);
 		}
 
 		/** Normalizes the provided vector and returns the result. Checks if the magnitude is above @p tolerance to avoid division by zero or precision issues. If false, no checks are made. */
@@ -382,7 +382,7 @@ namespace bs
 		{
 			const T squaredLength = Dot(rhs, rhs);
 			if(squaredLength > tolerance)
-				return rhs * Math::InvSqrt(squaredLength);
+				return rhs * Math::InverseSquareRoot(squaredLength);
 
 			return rhs;
 		}

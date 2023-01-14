@@ -110,7 +110,7 @@ GpuParameterBlockInformation NullRenderAPI::GenerateParamBlockDesc(const String&
 
 	for(auto& param : params)
 	{
-		const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::kParamSizes.Lookup[param.Type];
+		const GpuDataParameterTypeInformation& typeInfo = bs::GpuParams::kParamSizes.Lookup[param.Type];
 
 		if(param.ArraySize > 1)
 		{

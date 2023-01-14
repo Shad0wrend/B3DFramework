@@ -193,7 +193,7 @@ void RendererView::BeginFrame(const FrameInfo& frameInfo)
 			float scale = (2.0f - mRenderSettings->TemporalAa.Sharpness) * 0.3f;
 
 			float angle = 2.0f * Math::kPi * u2;
-			float radius = scale * Math::Sqrt(-2.0f * Math::Log(Math::Max(u1, EPSILON)));
+			float radius = scale * Math::SquareRoot(-2.0f * Math::Log(Math::Max(u1, EPSILON)));
 
 			mProperties.TemporalJitter = Vector2(radius * Math::Cos(angle), radius * Math::Sin(angle));
 		}
@@ -341,7 +341,7 @@ float RendererView::GetCurrentExposure() const
 	if(mRenderSettings->EnableAutoExposure)
 		return mPreviousEyeAdaptation;
 
-	return Math::Pow(2.0f, mRenderSettings->ExposureScale);
+	return Math::RaiseToPower(2.0f, mRenderSettings->ExposureScale);
 }
 
 void RendererView::NotifyLuminanceUpdated(u64 frameIdx, SPtr<CommandBuffer> cb, SPtr<PooledRenderTexture> texture) const

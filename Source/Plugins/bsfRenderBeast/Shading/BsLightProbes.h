@@ -80,7 +80,7 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mDepthBufferTex;
+			GpuParameterSampledTexture mDepthBufferTex;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(IrradianceEvaluateParamDef)
@@ -140,12 +140,12 @@ namespace bs
 		private:
 			GBufferParams mGBufferParams;
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mParamInputTex;
-			GpuParamTexture mParamSkyIrradianceTex;
-			GpuParamTexture mParamAmbientOcclusionTex;
-			GpuParamTexture mParamSHCoeffsTexture;
-			GpuParamBuffer mParamTetrahedraBuffer;
-			GpuParamBuffer mParamTetFacesBuffer;
+			GpuParameterSampledTexture mParamInputTex;
+			GpuParameterSampledTexture mParamSkyIrradianceTex;
+			GpuParameterSampledTexture mParamAmbientOcclusionTex;
+			GpuParameterSampledTexture mParamSHCoeffsTexture;
+			GpuParameterBuffer mParamTetrahedraBuffer;
+			GpuParameterBuffer mParamTetFacesBuffer;
 			bool mSkyOnly;
 		};
 

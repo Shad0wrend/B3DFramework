@@ -85,10 +85,10 @@ namespace bs
 		private:
 			SPtr<GpuParams> mParams;
 
-			GpuParamTexture mGBufferA;
-			GpuParamTexture mGBufferB;
-			GpuParamTexture mGBufferC;
-			GpuParamTexture mGBufferDepth;
+			GpuParameterSampledTexture mGBufferA;
+			GpuParameterSampledTexture mGBufferB;
+			GpuParameterSampledTexture mGBufferC;
+			GpuParameterSampledTexture mGBufferDepth;
 		};
 
 		/** Helper struct containing all parameters required for forward lighting. */
@@ -110,19 +110,19 @@ namespace bs
 			 * Parameter to which to bind a buffer containing light grid offsets and size, per grid cell. Used for forward
 			 * rendering.
 			 */
-			GpuParamBuffer GridLightOffsetsAndSizeParam;
+			GpuParameterBuffer GridLightOffsetsAndSizeParam;
 
 			/** Parameter to which to bind a buffer containing all light indices, as mapped by grid offsets & size. */
-			GpuParamBuffer GridLightIndicesParam;
+			GpuParameterBuffer GridLightIndicesParam;
 
 			/** Parameter to which to bind light buffer used for forward rendering. */
-			GpuParamBuffer LightsBufferParam;
+			GpuParameterBuffer LightsBufferParam;
 
 			/**
 			 * Parameter to which to bind a buffer containing reflection probe grid offsets and size, per grid cell. Used for
 			 * forward rendering.
 			 */
-			GpuParamBuffer GridProbeOffsetsAndSizeParam;
+			GpuParameterBuffer GridProbeOffsetsAndSizeParam;
 
 			/**
 			 * Binding for a parameter block containing a list of lights influencing this object. Only used when standard

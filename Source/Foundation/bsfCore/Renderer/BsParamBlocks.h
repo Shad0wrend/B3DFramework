@@ -214,7 +214,7 @@ namespace bs
 		params.push_back(GpuDataParameterInformation());                                                \
 		GpuDataParameterInformation& newEntry = params.back();                                          \
 		newEntry.Name = #Name_;                                                                         \
-		newEntry.Type = (GpuParamDataType)TGpuDataParamInfo<Type_>::TypeId;                             \
+		newEntry.Type = (GpuDataParameterType)TGpuDataParamInfo<Type_>::TypeId;                         \
 		newEntry.ArraySize = ElementCount;                                                              \
 		newEntry.ElementSize = sizeof(Type_);                                                           \
 	}                                                                                                   \

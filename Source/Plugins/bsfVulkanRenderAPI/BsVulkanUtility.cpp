@@ -274,6 +274,18 @@ VkFormat VulkanUtility::GetBufferFormat(GpuBufferFormat format)
 		lookup[BF_32X2U] = VK_FORMAT_R32G32_UINT;
 		lookup[BF_32X3U] = VK_FORMAT_R32G32B32_UINT;
 		lookup[BF_32X4U] = VK_FORMAT_R32G32B32A32_UINT;
+		lookup[BF_64X1F] = VK_FORMAT_R64_SFLOAT;
+		lookup[BF_64X2F] = VK_FORMAT_R64G64_SFLOAT;
+		lookup[BF_64X3F] = VK_FORMAT_R64G64B64_SFLOAT;
+		lookup[BF_64X4F] = VK_FORMAT_R64G64B64A64_SFLOAT;
+		lookup[BF_64X1S] = VK_FORMAT_R64_SINT;
+		lookup[BF_64X2S] = VK_FORMAT_R64G64_SINT;
+		lookup[BF_64X3S] = VK_FORMAT_R64G64B64_SINT;
+		lookup[BF_64X4S] = VK_FORMAT_R64G64B64A64_SINT;
+		lookup[BF_64X1U] = VK_FORMAT_R64_UINT;
+		lookup[BF_64X2U] = VK_FORMAT_R64G64_UINT;
+		lookup[BF_64X3U] = VK_FORMAT_R64G64B64_UINT;
+		lookup[BF_64X4U] = VK_FORMAT_R64G64B64A64_UINT;
 
 		lookupInitialized = true;
 	}
@@ -314,6 +326,10 @@ VkFormat VulkanUtility::GetVertexType(VertexElementType type)
 		lookup[VET_INT3] = VK_FORMAT_R32G32B32_SINT;
 		lookup[VET_INT4] = VK_FORMAT_R32G32B32A32_SINT;
 		lookup[VET_UBYTE4] = VK_FORMAT_R8G8B8A8_UINT;
+		lookup[VET_HALF1] = VK_FORMAT_R16_SFLOAT;
+		lookup[VET_HALF2] = VK_FORMAT_R16G16_SFLOAT;
+		lookup[VET_HALF3] = VK_FORMAT_R16G16B16_SFLOAT;
+		lookup[VET_HALF4] = VK_FORMAT_R16G16B16A16_SFLOAT;
 
 		lookupInitialized = true;
 	}
@@ -821,9 +837,9 @@ bool VulkanUtility::RangeOverlaps(const VkImageSubresourceRange& a, const VkImag
 	return false;
 }
 
-u32 VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(GpuParamDataType type, u32 arraySize, u32& offset)
+u32 VulkanUtility::CalcInterfaceBlockElementSizeAndOffset(GpuDataParameterType type, u32 arraySize, u32& offset)
 {
-	const GpuParamDataTypeInfo& typeInfo = bs::GpuParams::kParamSizes.Lookup[type];
+	const GpuDataParameterTypeInformation& typeInfo = bs::GpuParams::kParamSizes.Lookup[type];
 	u32 size = (typeInfo.BaseTypeSize * typeInfo.NumColumns * typeInfo.NumRows) / 4;
 	u32 alignment = typeInfo.Alignment / 4;
 

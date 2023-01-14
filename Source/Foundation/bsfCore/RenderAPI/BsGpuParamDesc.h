@@ -17,7 +17,7 @@ namespace bs
 		u32 ElementSize; /**< In multiples of 4 bytes. */
 		u32 ArraySize;
 		u32 ArrayElementStride; /**< In multiples of 4 bytes. */
-		GpuParamDataType Type;
+		GpuDataParameterType Type;
 
 		u32 ParamBlockSlot;
 		u32 ParamBlockSet;
@@ -29,7 +29,7 @@ namespace bs
 	struct GpuObjectParameterInformation
 	{
 		String Name;
-		GpuParamObjectType Type;
+		GpuParameterObjectType Type;
 
 		u32 Slot; /**< Slot within a set. Uniquely identifies bind location in the GPU pipeline, together with the set. */
 		u32 Set; /**< Uniquely identifies the bind location in the GPU pipeline, together with the slot. */

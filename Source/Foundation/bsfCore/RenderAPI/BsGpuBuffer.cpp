@@ -82,6 +82,18 @@ u32 GpuBuffer::GetFormatSize(GpuBufferFormat format)
 		lookup[BF_32X2U] = 8;
 		lookup[BF_32X3U] = 12;
 		lookup[BF_32X4U] = 16;
+		lookup[BF_64X1F] = 8;
+		lookup[BF_64X2F] = 16;
+		lookup[BF_64X3F] = 24;
+		lookup[BF_64X4F] = 32;
+		lookup[BF_64X1S] = 8;
+		lookup[BF_64X2S] = 16;
+		lookup[BF_64X3S] = 24;
+		lookup[BF_64X4S] = 32;
+		lookup[BF_64X1U] = 8;
+		lookup[BF_64X2U] = 16;
+		lookup[BF_64X3U] = 24;
+		lookup[BF_64X4U] = 32;
 
 		lookupInitialized = true;
 	}

@@ -32,7 +32,7 @@ void VulkanGpuPipelineParamInfo::Initialize()
 		totalSlotCount += mSetInfos[i].SlotCount;
 
 	mAlloc.Reserve<VkDescriptorSetLayoutBinding>(mBindingSlotCount)
-		.Reserve<GpuParamObjectType>(mBindingSlotCount)
+		.Reserve<GpuParameterObjectType>(mBindingSlotCount)
 		.Reserve<GpuBufferFormat>(mBindingSlotCount)
 		.Reserve<GpuBufferFormat>(mBindingSlotCount)
 		.Reserve<LayoutInfo>(mSetCount)
@@ -44,7 +44,7 @@ void VulkanGpuPipelineParamInfo::Initialize()
 
 	mLayoutInfos = mAlloc.Alloc<LayoutInfo>(mSetCount);
 	VkDescriptorSetLayoutBinding* bindings = mAlloc.Alloc<VkDescriptorSetLayoutBinding>(mBindingSlotCount);
-	GpuParamObjectType* types = mAlloc.Alloc<GpuParamObjectType>(mBindingSlotCount);
+	GpuParameterObjectType* types = mAlloc.Alloc<GpuParameterObjectType>(mBindingSlotCount);
 	GpuBufferFormat* elementTypes = mAlloc.Alloc<GpuBufferFormat>(mBindingSlotCount);
 	u32* elementArraySizes = mAlloc.Alloc<u32>(mBindingSlotCount);
 

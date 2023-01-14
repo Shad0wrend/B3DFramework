@@ -298,8 +298,8 @@ namespace bs
 
 			GBufferParams mGBufferParams;
 
-			GpuParamTexture mShadowMapParam;
-			GpuParamSampState mShadowSamplerParam;
+			GpuParameterSampledTexture mShadowMapParam;
+			GpuParameterSampler mShadowSamplerParam;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(ShadowProjectOmniParamsDef)
@@ -350,8 +350,8 @@ namespace bs
 
 			GBufferParams mGBufferParams;
 
-			GpuParamTexture mShadowMapParam;
-			GpuParamSampState mShadowSamplerParam;
+			GpuParameterSampledTexture mShadowMapParam;
+			GpuParameterSampler mShadowSamplerParam;
 		};
 
 		/** Pixel format used for rendering and storing shadow maps. */

@@ -57,11 +57,11 @@ namespace bs
 			u32 mSampleCount;
 			GBufferParams mGBufferParams;
 
-			GpuParamBuffer mLightBufferParam;
-			GpuParamLoadStoreTexture mOutputTextureParam;
+			GpuParameterBuffer mLightBufferParam;
+			GpuParameterStorageTexture mOutputTextureParam;
 
-			GpuParamTexture mInColorTextureParam;
-			GpuParamTexture mMSAACoverageTexParam;
+			GpuParameterSampledTexture mInColorTextureParam;
+			GpuParameterSampledTexture mMSAACoverageTexParam;
 
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 
@@ -85,7 +85,7 @@ namespace bs
 			void Execute(const SPtr<Texture>& inputArray, const SPtr<Texture>& target);
 
 		private:
-			GpuParamTexture mInputParam;
+			GpuParameterSampledTexture mInputParam;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(ClearLoadStoreParamDef)
@@ -150,8 +150,8 @@ namespace bs
 			/** Number of threads to launch per work group. */
 			static constexpr u32 kNumThreads = 128;
 
-			GpuParamLoadStoreTexture mOutputTextureParam;
-			GpuParamBuffer mOutputBufferParam;
+			GpuParameterStorageTexture mOutputTextureParam;
+			GpuParameterBuffer mOutputBufferParam;
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 		};
 
@@ -201,17 +201,17 @@ namespace bs
 		private:
 			u32 mSampleCount;
 
-			GpuParamTexture mGBufferA;
-			GpuParamTexture mGBufferB;
-			GpuParamTexture mGBufferC;
-			GpuParamTexture mGBufferDepth;
+			GpuParameterSampledTexture mGBufferA;
+			GpuParameterSampledTexture mGBufferB;
+			GpuParameterSampledTexture mGBufferC;
+			GpuParameterSampledTexture mGBufferDepth;
 
-			GpuParamTexture mInColorTextureParam;
-			GpuParamTexture mMSAACoverageTexParam;
+			GpuParameterSampledTexture mInColorTextureParam;
+			GpuParameterSampledTexture mMSAACoverageTexParam;
 
 			ImageBasedLightingParams mImageBasedParams;
 
-			GpuParamLoadStoreTexture mOutputTextureParam;
+			GpuParameterStorageTexture mOutputTextureParam;
 
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 			ReflProbeParamBuffer mReflProbeParamBuffer;

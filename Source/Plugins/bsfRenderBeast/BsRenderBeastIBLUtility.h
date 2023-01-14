@@ -36,7 +36,7 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mInputTexture;
+			GpuParameterSampledTexture mInputTexture;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(ReflectionCubeImportanceSampleParamDef)
@@ -63,7 +63,7 @@ namespace bs
 			static const u32 kNumSamples;
 
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mInputTexture;
+			GpuParameterSampledTexture mInputTexture;
 		};
 
 		/** Vector representing spherical harmonic coefficients for 5 bands. */
@@ -154,8 +154,8 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mInputTexture;
-			GpuParamBuffer mOutputBuffer;
+			GpuParameterSampledTexture mInputTexture;
+			GpuParameterBuffer mOutputBuffer;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(IrradianceReduceSHParamDef)
@@ -206,8 +206,8 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamBuffer mInputBuffer;
-			GpuParamLoadStoreTexture mOutputTexture;
+			GpuParameterBuffer mInputBuffer;
+			GpuParameterStorageTexture mOutputTexture;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(IrradianceComputeSHFragParamDef)
@@ -248,7 +248,7 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mInputTexture;
+			GpuParameterSampledTexture mInputTexture;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(IrradianceAccumulateSHParamDef)
@@ -284,7 +284,7 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mInputTexture;
+			GpuParameterSampledTexture mInputTexture;
 		};
 
 		/**
@@ -313,7 +313,7 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mInputTexture;
+			GpuParameterSampledTexture mInputTexture;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(IrradianceProjectSHParamDef)
@@ -341,7 +341,7 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mInputTexture;
+			GpuParameterSampledTexture mInputTexture;
 		};
 
 		/** Render beast implementation of IBLUtility. */

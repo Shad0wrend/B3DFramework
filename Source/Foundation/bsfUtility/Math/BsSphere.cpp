@@ -42,13 +42,13 @@ void Sphere::Transform(const Matrix4& matrix)
 
 bool Sphere::Contains(const Vector3& v) const
 {
-	return ((v - mCenter).SquaredLength() <= Math::Sqr(mRadius));
+	return ((v - mCenter).SquaredLength() <= Math::Square(mRadius));
 }
 
 bool Sphere::Intersects(const Sphere& s) const
 {
 	return (s.mCenter - mCenter).SquaredLength() <=
-		Math::Sqr(s.mRadius + mRadius);
+		Math::Square(s.mRadius + mRadius);
 }
 
 std::pair<bool, float> Sphere::Intersects(const Ray& ray, bool discardInside) const
@@ -80,9 +80,9 @@ std::pair<bool, float> Sphere::Intersects(const Ray& ray, bool discardInside) co
 		// If d == 0 there is one intersection, if d > 0 there are 2.
 		// We only return the first one.
 
-		float t = (-b - Math::Sqrt(d)) / (2 * a);
+		float t = (-b - Math::SquareRoot(d)) / (2 * a);
 		if(t < 0)
-			t = (-b + Math::Sqrt(d)) / (2 * a);
+			t = (-b + Math::SquareRoot(d)) / (2 * a);
 
 		return std::pair<bool, float>(true, t);
 	}

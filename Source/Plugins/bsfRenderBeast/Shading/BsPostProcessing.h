@@ -55,7 +55,7 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mInputTexture;
+			GpuParameterSampledTexture mInputTexture;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(EyeAdaptHistogramParamDef)
@@ -96,8 +96,8 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mSceneColor;
-			GpuParamLoadStoreTexture mOutputTex;
+			GpuParameterSampledTexture mSceneColor;
+			GpuParameterStorageTexture mOutputTex;
 
 			static const u32 kLoopCountX = 8;
 			static const u32 kLoopCountY = 8;
@@ -126,8 +126,8 @@ namespace bs
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 
-			GpuParamTexture mHistogramTex;
-			GpuParamTexture mEyeAdaptationTex;
+			GpuParameterSampledTexture mHistogramTex;
+			GpuParameterSampledTexture mEyeAdaptationTex;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(EyeAdaptationParamDef)
@@ -158,7 +158,7 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mReducedHistogramTex;
+			GpuParameterSampledTexture mReducedHistogramTex;
 		};
 
 		/**
@@ -183,7 +183,7 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mInputTex;
+			GpuParameterSampledTexture mInputTex;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(EyeAdaptationBasicParamsMatDef)
@@ -212,8 +212,8 @@ namespace bs
 		private:
 			SPtr<GpuParamBlockBuffer> mEyeAdaptationParamsBuffer;
 			SPtr<GpuParamBlockBuffer> mParamsBuffer;
-			GpuParamTexture mCurFrameTexParam;
-			GpuParamTexture mPrevFrameTexParam;
+			GpuParameterSampledTexture mCurFrameTexParam;
+			GpuParameterSampledTexture mPrevFrameTexParam;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(CreateTonemapLUTParamDef)
@@ -292,7 +292,7 @@ namespace bs
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 			SPtr<GpuParamBlockBuffer> mWhiteBalanceParamBuffer;
 
-			GpuParamLoadStoreTexture mOutputTex;
+			GpuParameterStorageTexture mOutputTex;
 			bool mIs3D;
 		};
 
@@ -338,10 +338,10 @@ namespace bs
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 
-			GpuParamTexture mInputTex;
-			GpuParamTexture mBloomTex;
-			GpuParamTexture mColorLUT;
-			GpuParamTexture mEyeAdaptationTex;
+			GpuParameterSampledTexture mInputTex;
+			GpuParameterSampledTexture mBloomTex;
+			GpuParameterSampledTexture mColorLUT;
+			GpuParameterSampledTexture mEyeAdaptationTex;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(BloomClipParamDef)
@@ -394,8 +394,8 @@ namespace bs
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 
-			GpuParamTexture mInputTex;
-			GpuParamTexture mEyeAdaptationTex;
+			GpuParameterSampledTexture mInputTex;
+			GpuParameterSampledTexture mEyeAdaptationTex;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(ScreenSpaceLensFlareParamDef)
@@ -455,8 +455,8 @@ namespace bs
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 
-			GpuParamTexture mInputTex;
-			GpuParamTexture mGradientTex;
+			GpuParameterSampledTexture mInputTex;
+			GpuParameterSampledTexture mGradientTex;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(ChromaticAberrationParamDef)
@@ -506,8 +506,8 @@ namespace bs
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 
-			GpuParamTexture mInputTex;
-			GpuParamTexture mFringeTex;
+			GpuParameterSampledTexture mInputTex;
+			GpuParameterSampledTexture mFringeTex;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(FilmGrainParamDef)
@@ -539,7 +539,7 @@ namespace bs
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 
-			GpuParamTexture mInputTex;
+			GpuParameterSampledTexture mInputTex;
 		};
 
 		const int kMaxBlurSamples = 128;
@@ -619,8 +619,8 @@ namespace bs
 			static float CalcKernelRadius(const SPtr<Texture>& source, float scale, Direction filterDir);
 
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mInputTexture;
-			GpuParamTexture mAdditiveTexture;
+			GpuParameterSampledTexture mInputTexture;
+			GpuParameterSampledTexture mAdditiveTexture;
 			bool mIsAdditive = false;
 		};
 
@@ -691,8 +691,8 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mColorTexture;
-			GpuParamTexture mDepthTexture;
+			GpuParameterSampledTexture mColorTexture;
+			GpuParameterSampledTexture mDepthTexture;
 
 			SPtr<PooledRenderTexture> mOutput0;
 			SPtr<PooledRenderTexture> mOutput1;
@@ -749,10 +749,10 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mFocusedTexture;
-			GpuParamTexture mNearTexture;
-			GpuParamTexture mFarTexture;
-			GpuParamTexture mDepthTexture;
+			GpuParameterSampledTexture mFocusedTexture;
+			GpuParameterSampledTexture mNearTexture;
+			GpuParameterSampledTexture mFarTexture;
+			GpuParameterSampledTexture mDepthTexture;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(DepthOfFieldCommonParamDef)
@@ -812,8 +812,8 @@ namespace bs
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 			SPtr<GpuParamBlockBuffer> mCommonParamBuffer;
-			GpuParamTexture mInputTexture;
-			GpuParamTexture mDepthTexture;
+			GpuParameterSampledTexture mInputTexture;
+			GpuParameterSampledTexture mDepthTexture;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(BokehDOFParamDef)
@@ -873,10 +873,10 @@ namespace bs
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 			SPtr<GpuParamBlockBuffer> mCommonParamBuffer;
-			GpuParamTexture mInputTextureVS;
-			GpuParamTexture mInputTextureFS;
-			GpuParamTexture mBokehTexture;
-			GpuParamTexture mDepthTexture;
+			GpuParameterSampledTexture mInputTextureVS;
+			GpuParameterSampledTexture mInputTextureFS;
+			GpuParameterSampledTexture mBokehTexture;
+			GpuParameterSampledTexture mDepthTexture;
 
 			SPtr<VertexDeclaration> mTileVertexDecl;
 			SPtr<IndexBuffer> mTileIndexBuffer;
@@ -925,9 +925,9 @@ namespace bs
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 			SPtr<GpuParamBlockBuffer> mCommonParamBuffer;
-			GpuParamTexture mUnfocusedTexture;
-			GpuParamTexture mFocusedTexture;
-			GpuParamTexture mDepthTexture;
+			GpuParameterSampledTexture mUnfocusedTexture;
+			GpuParameterSampledTexture mFocusedTexture;
+			GpuParameterSampledTexture mDepthTexture;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(MotionBlurParamDef)
@@ -955,8 +955,8 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mInputTexture;
-			GpuParamTexture mDepthTexture;
+			GpuParameterSampledTexture mInputTexture;
+			GpuParameterSampledTexture mDepthTexture;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(BuildHiZFParamDef)
@@ -1007,7 +1007,7 @@ namespace bs
 			static BuildHiZMat* GetVariation(bool noTextureViews);
 
 		private:
-			GpuParamTexture mInputTexture;
+			GpuParameterSampledTexture mInputTexture;
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 			bool mNoTextureViews = false;
 		};
@@ -1036,7 +1036,7 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mInputTexture;
+			GpuParameterSampledTexture mInputTexture;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(SSAOParamDef)
@@ -1118,11 +1118,11 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mDepthTexture;
-			GpuParamTexture mNormalsTexture;
-			GpuParamTexture mDownsampledAOTexture;
-			GpuParamTexture mSetupAOTexture;
-			GpuParamTexture mRandomTexture;
+			GpuParameterSampledTexture mDepthTexture;
+			GpuParameterSampledTexture mNormalsTexture;
+			GpuParameterSampledTexture mDownsampledAOTexture;
+			GpuParameterSampledTexture mSetupAOTexture;
+			GpuParameterSampledTexture mRandomTexture;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(SSAODownsampleParamDef)
@@ -1156,8 +1156,8 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mDepthTexture;
-			GpuParamTexture mNormalsTexture;
+			GpuParameterSampledTexture mDepthTexture;
+			GpuParameterSampledTexture mNormalsTexture;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(SSAOBlurParamDef)
@@ -1204,8 +1204,8 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mAOTexture;
-			GpuParamTexture mDepthTexture;
+			GpuParameterSampledTexture mAOTexture;
+			GpuParameterSampledTexture mDepthTexture;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(SSRStencilParamDef)
@@ -1322,8 +1322,8 @@ namespace bs
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 			GBufferParams mGBufferParams;
-			GpuParamTexture mSceneColorTexture;
-			GpuParamTexture mHiZTexture;
+			GpuParameterSampledTexture mSceneColorTexture;
+			GpuParameterSampledTexture mHiZTexture;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(TemporalResolveParamDef)
@@ -1403,10 +1403,10 @@ namespace bs
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 			SPtr<GpuParamBlockBuffer> mTemporalParamBuffer;
 
-			GpuParamTexture mSceneColorTexture;
-			GpuParamTexture mPrevColorTexture;
-			GpuParamTexture mSceneDepthTexture;
-			GpuParamTexture mVelocityTexture;
+			GpuParameterSampledTexture mSceneColorTexture;
+			GpuParameterSampledTexture mPrevColorTexture;
+			GpuParameterSampledTexture mSceneDepthTexture;
+			GpuParameterSampledTexture mVelocityTexture;
 
 			bool mHasVelocityTexture = false;
 		};
@@ -1443,7 +1443,7 @@ namespace bs
 
 		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			GpuParamTexture mInputTexture;
+			GpuParameterSampledTexture mInputTexture;
 		};
 
 		/**
@@ -1503,7 +1503,7 @@ namespace bs
 			void Execute(const RendererView& view, const SPtr<Texture>& coverage);
 
 		private:
-			GpuParamTexture mCoverageTexParam;
+			GpuParameterSampledTexture mCoverageTexParam;
 		};
 
 		/** @} */

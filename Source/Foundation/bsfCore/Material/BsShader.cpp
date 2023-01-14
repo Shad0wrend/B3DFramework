@@ -247,7 +247,7 @@ TShader<Core>::~TShader()
 {}
 
 template <bool Core>
-GpuParamType TShader<Core>::GetParamType(const String& name) const
+GpuParameterType TShader<Core>::GetParamType(const String& name) const
 {
 	auto findIterData = mDesc.DataParams.find(name);
 	if(findIterData != mDesc.DataParams.end())
@@ -523,7 +523,7 @@ void Shader::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 		dependencies.push_back(technique.get());
 }
 
-bool Shader::IsSampler(GpuParamObjectType type)
+bool Shader::IsSampler(GpuParameterObjectType type)
 {
 	switch(type)
 	{
@@ -538,7 +538,7 @@ bool Shader::IsSampler(GpuParamObjectType type)
 	}
 }
 
-bool Shader::IsTexture(GpuParamObjectType type)
+bool Shader::IsTexture(GpuParameterObjectType type)
 {
 	switch(type)
 	{
@@ -557,7 +557,7 @@ bool Shader::IsTexture(GpuParamObjectType type)
 	}
 }
 
-bool Shader::IsLoadStoreTexture(GpuParamObjectType type)
+bool Shader::IsLoadStoreTexture(GpuParameterObjectType type)
 {
 	switch(type)
 	{
@@ -574,7 +574,7 @@ bool Shader::IsLoadStoreTexture(GpuParamObjectType type)
 	}
 }
 
-bool Shader::IsBuffer(GpuParamObjectType type)
+bool Shader::IsBuffer(GpuParameterObjectType type)
 {
 	switch(type)
 	{
@@ -592,9 +592,9 @@ bool Shader::IsBuffer(GpuParamObjectType type)
 	}
 }
 
-u32 Shader::GetDataParamSize(GpuParamDataType type)
+u32 Shader::GetDataParamSize(GpuDataParameterType type)
 {
-	static const GpuDataParamInfos kParamSizes;
+	static const GpuDataParameterTypeInformationLookup kParamSizes;
 
 	u32 idx = (u32)type;
 	if(idx < sizeof(GpuParams::kParamSizes.Lookup))

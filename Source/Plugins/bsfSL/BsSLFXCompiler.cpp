@@ -201,7 +201,7 @@ private:
 	Vector<IndentReport> mErrors;
 };
 
-GpuParamObjectType ReflTypeToTextureType(Xsc::Reflection::BufferType type)
+GpuParameterObjectType ReflTypeToTextureType(Xsc::Reflection::BufferType type)
 {
 	switch(type)
 	{
@@ -223,7 +223,7 @@ GpuParamObjectType ReflTypeToTextureType(Xsc::Reflection::BufferType type)
 	}
 }
 
-GpuParamObjectType ReflTypeToBufferType(Xsc::Reflection::BufferType type)
+GpuParameterObjectType ReflTypeToBufferType(Xsc::Reflection::BufferType type)
 {
 	switch(type)
 	{
@@ -239,7 +239,7 @@ GpuParamObjectType ReflTypeToBufferType(Xsc::Reflection::BufferType type)
 	}
 }
 
-GpuParamDataType ReflTypeToDataType(Xsc::Reflection::DataType type)
+GpuDataParameterType ReflTypeToDataType(Xsc::Reflection::DataType type)
 {
 	switch(type)
 	{
@@ -248,18 +248,22 @@ GpuParamDataType ReflTypeToDataType(Xsc::Reflection::DataType type)
 	case Xsc::Reflection::DataType::Float2: return GPDT_FLOAT2;
 	case Xsc::Reflection::DataType::Float3: return GPDT_FLOAT3;
 	case Xsc::Reflection::DataType::Float4: return GPDT_FLOAT4;
-	case Xsc::Reflection::DataType::UInt:
-	case Xsc::Reflection::DataType::Int:
-		return GPDT_INT1;
-	case Xsc::Reflection::DataType::UInt2:
-	case Xsc::Reflection::DataType::Int2:
-		return GPDT_INT2;
-	case Xsc::Reflection::DataType::UInt3:
-	case Xsc::Reflection::DataType::Int3:
-		return GPDT_INT3;
-	case Xsc::Reflection::DataType::UInt4:
-	case Xsc::Reflection::DataType::Int4:
-		return GPDT_INT4;
+	case Xsc::Reflection::DataType::Double: return GPDT_DOUBLE1;
+	case Xsc::Reflection::DataType::Double2: return GPDT_DOUBLE2;
+	case Xsc::Reflection::DataType::Double3: return GPDT_DOUBLE3;
+	case Xsc::Reflection::DataType::Double4: return GPDT_DOUBLE4;
+	case Xsc::Reflection::DataType::Half: return GPDT_HALF1;
+	case Xsc::Reflection::DataType::Half2: return GPDT_HALF2;
+	case Xsc::Reflection::DataType::Half3: return GPDT_HALF3;
+	case Xsc::Reflection::DataType::Half4: return GPDT_HALF4;
+	case Xsc::Reflection::DataType::Int: return GPDT_INT1;
+	case Xsc::Reflection::DataType::Int2: return GPDT_INT2;
+	case Xsc::Reflection::DataType::Int3: return GPDT_INT3;
+	case Xsc::Reflection::DataType::Int4: return GPDT_INT4;
+	case Xsc::Reflection::DataType::UInt: return GPDT_UINT1;
+	case Xsc::Reflection::DataType::UInt2: return GPDT_UINT2;
+	case Xsc::Reflection::DataType::UInt3: return GPDT_UINT3;
+	case Xsc::Reflection::DataType::UInt4: return GPDT_UINT4;
 	case Xsc::Reflection::DataType::Float2x2: return GPDT_MATRIX_2X2;
 	case Xsc::Reflection::DataType::Float2x3: return GPDT_MATRIX_2X3;
 	case Xsc::Reflection::DataType::Float2x4: return GPDT_MATRIX_2X4;
@@ -269,6 +273,24 @@ GpuParamDataType ReflTypeToDataType(Xsc::Reflection::DataType type)
 	case Xsc::Reflection::DataType::Float4x2: return GPDT_MATRIX_4X2;
 	case Xsc::Reflection::DataType::Float4x3: return GPDT_MATRIX_4X3;
 	case Xsc::Reflection::DataType::Float4x4: return GPDT_MATRIX_4X4;
+	case Xsc::Reflection::DataType::Double2x2: return GPDT_DOUBLE_MATRIX_2X2;
+	case Xsc::Reflection::DataType::Double2x3: return GPDT_DOUBLE_MATRIX_2X3;
+	case Xsc::Reflection::DataType::Double2x4: return GPDT_DOUBLE_MATRIX_2X4;
+	case Xsc::Reflection::DataType::Double3x2: return GPDT_DOUBLE_MATRIX_3X4;
+	case Xsc::Reflection::DataType::Double3x3: return GPDT_DOUBLE_MATRIX_3X3;
+	case Xsc::Reflection::DataType::Double3x4: return GPDT_DOUBLE_MATRIX_3X4;
+	case Xsc::Reflection::DataType::Double4x2: return GPDT_DOUBLE_MATRIX_4X2;
+	case Xsc::Reflection::DataType::Double4x3: return GPDT_DOUBLE_MATRIX_4X3;
+	case Xsc::Reflection::DataType::Double4x4: return GPDT_DOUBLE_MATRIX_4X4;
+	case Xsc::Reflection::DataType::Half2x2: return GPDT_HALF_MATRIX_2X2;
+	case Xsc::Reflection::DataType::Half2x3: return GPDT_HALF_MATRIX_2X3;
+	case Xsc::Reflection::DataType::Half2x4: return GPDT_HALF_MATRIX_2X4;
+	case Xsc::Reflection::DataType::Half3x2: return GPDT_HALF_MATRIX_3X4;
+	case Xsc::Reflection::DataType::Half3x3: return GPDT_HALF_MATRIX_3X3;
+	case Xsc::Reflection::DataType::Half3x4: return GPDT_HALF_MATRIX_3X4;
+	case Xsc::Reflection::DataType::Half4x2: return GPDT_HALF_MATRIX_4X2;
+	case Xsc::Reflection::DataType::Half4x3: return GPDT_HALF_MATRIX_4X3;
+	case Xsc::Reflection::DataType::Half4x4: return GPDT_HALF_MATRIX_4X4;
 	default: return GPDT_UNKNOWN;
 	}
 }
@@ -300,9 +322,9 @@ u32 GetStructSize(i32 structIdx, const std::vector<Xsc::Reflection::Struct>& str
 			// Note: We're ignoring any padding. Since we can't guarantee the padding will be same for structs across
 			// different render backends it's expected for the user to set up structs in such a way so padding is not
 			// needed (i.e. add padding variables manually).
-			GpuParamDataType type = ReflTypeToDataType((Xsc::Reflection::DataType)entry.baseType);
+			GpuDataParameterType type = ReflTypeToDataType((Xsc::Reflection::DataType)entry.baseType);
 
-			const GpuParamDataTypeInfo& typeInfo = GpuParams::kParamSizes.Lookup[(int)type];
+			const GpuDataParameterTypeInformation& typeInfo = GpuParams::kParamSizes.Lookup[(int)type];
 			size += typeInfo.NumColumns * typeInfo.NumRows * typeInfo.BaseTypeSize * entry.arraySize;
 		}
 		else if(entry.type == Xsc::Reflection::VariableType::Struct)
@@ -481,7 +503,7 @@ void ParseParameters(const Xsc::Reflection::ReflectionData& reflData, ShaderCrea
 			break;
 		case Xsc::Reflection::VariableType::Buffer:
 			{
-				GpuParamObjectType objType = ReflTypeToTextureType((Xsc::Reflection::BufferType)entry.baseType);
+				GpuParameterObjectType objType = ReflTypeToTextureType((Xsc::Reflection::BufferType)entry.baseType);
 				if(objType != GPOT_UNKNOWN)
 				{
 					// Ignore parameters that were already registered in some previous variation. Note that this implies
@@ -565,7 +587,7 @@ void ParseParameters(const Xsc::Reflection::ReflectionData& reflData, ShaderCrea
 
 				if(!isBlockInternal)
 				{
-					GpuParamDataType type = ReflTypeToDataType((Xsc::Reflection::DataType)entry.baseType);
+					GpuDataParameterType type = ReflTypeToDataType((Xsc::Reflection::DataType)entry.baseType);
 					if((entry.flags & Xsc::Reflection::Uniform::Flags::Color) != 0 &&
 					   (type == GPDT_FLOAT3 || type == GPDT_FLOAT4))
 					{

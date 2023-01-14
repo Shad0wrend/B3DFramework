@@ -78,7 +78,7 @@ namespace bs
 	{
 		ShaderDataParameterInformation() = default;
 
-		ShaderDataParameterInformation(String name, String gpuVariableName, GpuParamDataType type, StringID rendererSemantic = StringID::kNone, u32 arraySize = 1, u32 elementSize = 0)
+		ShaderDataParameterInformation(String name, String gpuVariableName, GpuDataParameterType type, StringID rendererSemantic = StringID::kNone, u32 arraySize = 1, u32 elementSize = 0)
 			: ShaderParameterInformation(std::move(name), std::move(gpuVariableName), rendererSemantic)
 			, Type(type)
 			, ArraySize(arraySize)
@@ -86,7 +86,7 @@ namespace bs
 		{}
 
 		/** The type of the parameter, must be the same as the type in GpuProgram. */
-		GpuParamDataType Type = GPDT_FLOAT1;
+		GpuDataParameterType Type = GPDT_FLOAT1;
 
 		/** If the parameter is an array, the number of elements in the array. Size of 1 means its not an array. */
 		u32 ArraySize = 1;
@@ -107,13 +107,13 @@ namespace bs
 	{
 		ShaderObjectParameterInformation() = default;
 
-		ShaderObjectParameterInformation(String name, String gpuVariableName, GpuParamObjectType type, StringID rendererSemantic = StringID::kNone, u32 arraySize = 1)
+		ShaderObjectParameterInformation(String name, String gpuVariableName, GpuParameterObjectType type, StringID rendererSemantic = StringID::kNone, u32 arraySize = 1)
 			: ShaderParameterInformation(std::move(name), gpuVariableName, rendererSemantic), Type(type), ArraySize(arraySize)
 		{
 			GpuVariableNames.emplace_back(gpuVariableName);
 		}
 
-		GpuParamObjectType Type = GPOT_TEXTURE2D; /**< The type of the parameter, must be the same as the type in GpuProgram. */
+		GpuParameterObjectType Type = GPOT_TEXTURE2D; /**< The type of the parameter, must be the same as the type in GpuProgram. */
 		u32 ArraySize = 1; /**< Number of elements in the array, if the parameter is an array. */
 		Vector<String> GpuVariableNames; /**< Names of all GPU variables this shader parameter maps to. */
 	};
@@ -456,7 +456,7 @@ namespace bs
 		ShaderFlags GetFlags() const { return mDesc.Flags; }
 
 		/** Returns type of the parameter with the specified name. Throws exception if the parameter doesn't exist. */
-		GpuParamType GetParamType(const String& name) const;
+		GpuParameterType GetParamType(const String& name) const;
 
 		/**
 		 * Returns description for a data parameter with the specified name. Throws exception if the parameter doesn't exist.
@@ -594,23 +594,23 @@ namespace bs
 		void SetIncludeFiles(const Vector<String>& includes);
 
 		/**	Checks is the provided object type a sampler. */
-		static bool IsSampler(GpuParamObjectType type);
+		static bool IsSampler(GpuParameterObjectType type);
 
 		/**	Checks is the provided object type a texture. */
-		static bool IsTexture(GpuParamObjectType type);
+		static bool IsTexture(GpuParameterObjectType type);
 
 		/**	Checks is the provided object type a load/store (unordered read/write) texture. */
-		static bool IsLoadStoreTexture(GpuParamObjectType type);
+		static bool IsLoadStoreTexture(GpuParameterObjectType type);
 
 		/** Checks is the provided object type a buffer. */
-		static bool IsBuffer(GpuParamObjectType type);
+		static bool IsBuffer(GpuParameterObjectType type);
 
 		/**
 		 * Returns the size in bytes for a specific data type.
 		 *
 		 * @note	Returns 0 for variable size types like structures.
 		 */
-		static u32 GetDataParamSize(GpuParamDataType type);
+		static u32 GetDataParamSize(GpuDataParameterType type);
 
 		/**	Creates a new shader resource using the provided descriptor and techniques. */
 		static HShader Create(const String& name, const ShaderCreateInformation& createInformation);

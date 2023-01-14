@@ -96,84 +96,119 @@ namespace bs
 		}
 
 		/** Inverse sine. */
-		static Radian Asin(float val);
+		template<class T>
+		static TRadian<T> Asin(T val)
+		{
+			if((T)-1.0 < val)
+			{
+				if(val < (T)1.0)
+					return TRadian<T>(std::asin(val));
+				else
+					return TRadian<T>(kHalfPi);
+			}
+			else
+				return TRadian<T>(-kHalfPi);
+		}
 
 		/** Inverse tangent. */
-		static Radian Atan(float val) { return Radian(std::atan(val)); }
+		template<class T>
+		static TRadian<T> Atan(T val) { return TRadian<T>(std::atan(val)); }
 
 		/** Inverse tangent with two arguments, returns angle between the X axis and the point. */
-		static Radian Atan2(float y, float x) { return Radian(std::atan2(y, x)); }
+		template<class T>
+		static TRadian<T> Atan2(T y, T x) { return TRadian<T>(std::atan2(y, x)); }
 
-		/** Cosine. */
-		static float Cos(const Radian& val) { return (float)std::cos(val.GetValueInRadians()); }
+		template<class T> static T Cos(const TRadian<T>& val) { return (T)std::cos(val.GetValueInRadians()); }
+		template<class T> static T Cos(const TDegree<T>& val) { return (T)std::cos(val.GetValueInRadians()); }
+		static float Cos(float val) { return std::cos(val); }
+		static double Cos(double val) { return std::cos(val); }
 
-		/** Cosine. */
-		static float Cos(float val) { return (float)std::cos(val); }
+		template<class T> static T Sin(const TRadian<T>& val) { return (T)std::sin(val.GetValueInRadians()); }
+		template<class T> static T Sin(const TDegree<T>& val) { return (T)std::sin(val.GetValueInRadians()); }
+		static float Sin(float val) { return std::sin(val); }
+		static double Sin(double val) { return std::sin(val); }
 
-		/** Sine. */
-		static float Sin(const Radian& val) { return (float)std::sin(val.GetValueInRadians()); }
-
-		/** Sine. */
-		static float Sin(float val) { return (float)std::sin(val); }
-
-		/** Tangent. */
-		static float Tan(const Radian& val) { return (float)std::tan(val.GetValueInRadians()); }
-
-		/** Tangent. */
-		static float Tan(float val) { return (float)std::tan(val); }
+		template<class T> static T Tan(const TRadian<T>& val) { return (T)std::tan(val.GetValueInRadians()); }
+		template<class T> static T Tan(const TDegree<T>& val) { return (T)std::tan(val.GetValueInRadians()); }
+		static float Tan(float val) { return std::tan(val); }
+		static double Tan(double val) { return std::tan(val); }
 
 		/** Square root. */
 		template<class T>
-		static T Sqrt(T val) { return (T)std::sqrt(val); }
+		static T SquareRoot(T val) { return (T)std::sqrt(val); }
 
 		/** Square root. */
-		static Radian Sqrt(const Radian& val) { return Radian(std::sqrt(val.GetValueInRadians())); }
+		template<class T>
+		static TRadian<T> SquareRoot(const TRadian<T>& val) { return TRadian<T>((T)std::sqrt(val.GetValueInRadians())); }
 
 		/** Square root. */
-		static Degree Sqrt(const Degree& val) { return Degree(std::sqrt(val.GetValueInDegrees())); }
+		template<class T>
+		static TDegree<T> SquareRoot(const TDegree<T>& val) { return TDegree<T>((T)std::sqrt(val.GetValueInDegrees())); }
 
 		/** Square root followed by an inverse. */
 		template<class T>
-		static T InvSqrt(T val) { return (T)1.0 / sqrt(val); }
+		static T InverseSquareRoot(T val) { return (T)1.0 / sqrt(val); }
 
 		/** Returns square of the provided value. */
-		static float Sqr(float val) { return val * val; }
+		template<class T>
+		static T Square(T val) { return val * val; }
 
 		/** Returns base raised to the provided power. */
-		static float Pow(float base, float exponent) { return (float)std::pow(base, exponent); }
+		template<class T>
+		static T RaiseToPower(T base, T exponent) { return (T)std::pow(base, exponent); }
 
 		/** Returns euler number (e) raised to the provided power. */
-		static float Exp(float val) { return (float)std::exp(val); }
+		template<class T>
+		static T Exp(T val) { return (T)std::exp(val); }
 
 		/** Returns natural (base e) logarithm of the provided value. */
-		static float Log(float val) { return (float)std::log(val); }
+		template<class T>
+		static T Log(T val) { return (T)std::log(val); }
 
 		/** Returns base 2 logarithm of the provided value. */
-		static float Log2(float val) { return (float)(std::log(val) / kLoG2); }
+		template<class T>
+		static T Log2(T val) { return (T)(std::log(val) / (T)kLoG2); }
 
 		/** Returns base N logarithm of the provided value. */
-		static float LogN(float base, float val) { return (float)(std::log(val) / std::log(base)); }
+		template<class T>
+		static T LogN(T base, T val) { return (T)(std::log(val) / std::log(base)); }
 
 		/** Returns the sign of the provided value as 1 or -1. */
-		static float Sign(float val);
+		template<class T>
+		static T Sign(T val)
+		{
+			if(val > (T)0.0)
+				return (T)1.0;
+
+			if(val < (T)0.0)
+				return (T)-1.0;
+
+			return (T)0.0;
+		}
 
 		/** Returns the sign of the provided value as 1 or -1. */
-		static Radian Sign(const Radian& val) { return Radian(Sign(val.GetValueInRadians())); }
+		template<class T>
+		static TRadian<T> Sign(const TRadian<T>& val) { return TRadian<T>(Sign(val.GetValueInRadians())); }
 
 		/** Returns the sign of the provided value as 1 or -1. */
-		static Degree Sign(const Degree& val) { return Degree(Sign(val.GetValueInDegrees())); }
+		template<class T>
+		static TDegree<T> Sign(const TDegree<T>& val) { return TDegree<T>(Sign(val.GetValueInDegrees())); }
 
 		/** Returns the absolute value. */
-		static float Abs(float val) { return float(std::fabs(val)); }
+		template<class T>
+		static T Abs(T val) { return (T)std::fabs(val); }
 
 		/** Returns the absolute value. */
-		static Degree Abs(const Degree& val) { return Degree(std::fabs(val.GetValueInDegrees())); }
+		template<class T>
+		static TDegree<T> Abs(const TDegree<T>& val) { return TDegree<T>(std::fabs(val.GetValueInDegrees())); }
 
 		/** Returns the absolute value. */
-		static Radian Abs(const Radian& val) { return Radian(std::fabs(val.GetValueInRadians())); }
+		template<class T>
+		static TRadian<T> Abs(const TRadian<T>& val) { return TRadian<T>(std::fabs(val.GetValueInRadians())); }
 
 		/** Returns the nearest integer equal or higher to the provided value. */
-		static float Ceil(float val) { return (float)std::ceil(val); }
+		template<class T>
+		static T Ceil(T val) { return (T)std::ceil(val); }
 
 		/**
 		 * Returns the nearest integer equal or higher to the provided value. If you are sure the input is positive use
@@ -206,10 +241,12 @@ namespace bs
 		}
 
 		/** Returns the integer nearest to the provided value. */
-		static float Round(float val) { return (float)std::floor(val + 0.5f); }
+		template<class T>
+		static T Round(T val) { return (T)std::floor(val + (T)0.5); }
 
 		/** Returns the integer nearest to the provided value. */
-		static float FastRound(float val) { return (val >= 0) ? (float)(val + 0.5f) : (float)(val - 0.5f); }
+		template<class T>
+		static T FastRound(T val) { return (val >= (T)0.0) ? (T)(val + (T)0.5) : (T)(val - (T)0.5); }
 
 		/**
 		 * Returns the integer nearest to the provided value. If you are sure the input is positive use roundToPosInt()
@@ -233,35 +270,36 @@ namespace bs
 		}
 
 		/** Returns the nearest integer equal or lower of the provided value. */
-		static float Floor(float val) { return std::floor(val); }
+		template<class T>
+		static T Floor(T val) { return (T)std::floor(val); }
 
 		/** Returns the nearest integer equal or lower of the provided value. */
-		static double Floor(double val) { return std::floor(val); }
-
-		/** Returns the nearest integer equal or lower of the provided value. */
-		static float FastFloor(float val) { return (val >= 0) ? (float)val : (float)val - 1.0f; }
+		template<class T>
+		static T FastFloor(T val) { return (val >= (T)0.0) ? (T)val : (T)val - (T)1.0; }
 
 		/**
 		 * Returns the nearest integer equal or lower of the provided value. If you are sure the input is positive
 		 * use floorToPosInt() for a slightly faster operation.
 		 */
-		static int FloorToInt(float val)
+		template<class T>
+		static i32 FloorToInt(T val)
 		{
-			B3D_ASSERT(val >= std::numeric_limits<int32_t>::min() && val <= std::numeric_limits<int32_t>::max());
+			B3D_ASSERT(val >= std::numeric_limits<i32>::min() && val <= std::numeric_limits<i32>::max());
 
 			// Negative values need offset in order to truncate towards negative infinity (cast truncates towards zero)
-			return val >= 0.0f ? (int32_t)val : (int32_t)(val - kBiggestFloatSmallerThanOne);
+			return val >= (T)0.0 ? (i32)val : (i32)(val - kBiggestFloatSmallerThanOne);
 		}
 
 		/**
 		 * Returns the nearest integer equal or lower of the provided value. Value must be non-negative. Slightly faster
 		 * than floorToInt().
 		 */
-		static uint32_t FloorToPosInt(float val)
+		template<class T>
+		static u32 FloorToPosInt(T val)
 		{
-			B3D_ASSERT(val >= 0 && val <= std::numeric_limits<uint32_t>::max());
+			B3D_ASSERT(val >= (T)0.0 && val <= (T)std::numeric_limits<u32>::max());
 
-			return (uint32_t)val;
+			return (u32)val;
 		}
 
 		/** Rounds @p x to the nearest multiple of @p multiple. */
@@ -299,13 +337,15 @@ namespace bs
 		}
 
 		/** Returns the fractional part of a floating point number. */
-		static float Frac(float val)
+		template <class T>
+		static T Frac(T val)
 		{
-			return val - (float)(int32_t)val;
+			return val - (T)(i32)val;
 		}
 
 		/** Returns a floating point remainder for (@p val / @p length). */
-		static float Repeat(float val, float length)
+		template <class T>
+		static T Repeat(T val, T length)
 		{
 			return val - Floor(val / length) * length;
 		}
@@ -314,9 +354,10 @@ namespace bs
 		 * Wraps the value in range [0, length) and reverses the direction every @p length increment. This results in
 		 * @p val incrementing until @p length, then decrementing back to 0, and so on.
 		 */
-		static float PingPong(float val, float length)
+		template <class T>
+		static T PingPong(T val, T length)
 		{
-			val = Repeat(val, length * 2.0f);
+			val = Repeat(val, length * (T)2.0);
 			return length - fabs(val - length);
 		}
 
@@ -1044,14 +1085,14 @@ namespace bs
 			T r[order + 1][order + 1];
 
 			for(int i = 1; i < order + 1; ++i)
-				h[i] = (b - a) / Math::Pow(2, i - 1);
+				h[i] = (b - a) / Math::RaiseToPower(2, i - 1);
 
 			r[1][1] = h[1] / 2 * (integrand(a) + integrand(b));
 
 			for(int i = 2; i < order + 1; ++i)
 			{
 				T coeff = 0;
-				for(int k = 1; k <= Math::Pow(2, i - 2); ++k)
+				for(int k = 1; k <= Math::RaiseToPower(2, i - 2); ++k)
 					coeff += integrand(a + (2 * k - 1) * h[i]);
 
 				r[i][1] = 0.5 * (r[i - 1][1] + h[i - 1] * coeff);
@@ -1060,7 +1101,7 @@ namespace bs
 			for(int i = 2; i < order + 1; ++i)
 			{
 				for(int j = 2; j <= i; ++j)
-					r[i][j] = r[i][j - 1] + (r[i][j - 1] - r[i - 1][j - 1]) / (Math::Pow(4, j - 1) - 1);
+					r[i][j] = r[i][j - 1] + (r[i][j - 1] - r[i - 1][j - 1]) / (Math::RaiseToPower(4, j - 1) - 1);
 			}
 
 			return r[order][order];
