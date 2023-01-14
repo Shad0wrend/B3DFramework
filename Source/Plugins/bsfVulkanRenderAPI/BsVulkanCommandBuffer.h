@@ -23,7 +23,7 @@ namespace bs
 		 *  @{
 		 */
 
-#define BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY BS_MAX_QUEUES_PER_TYPE * 32
+#define BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY BS_MAX_QUEUES_PER_TYPE * 128
 
 // Maximum number of command buffers that another command buffer can be dependant on (via a sync mask)
 #define BS_MAX_VULKAN_CB_DEPENDENCIES 2
@@ -349,10 +349,10 @@ namespace bs
 			void SetVertexDeclaration(const SPtr<VertexDeclaration>& decl);
 
 			/** Executes a draw command using the currently bound graphics pipeline, vertex buffer and render target. */
-			void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount);
+			void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance);
 
 			/** Executes a draw command using the currently bound graphics pipeline, index & vertex buffer and render target. */
-			void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 instanceCount);
+			void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 instanceCount, u32 firstInstance);
 
 			/** Executes a dispatch command using the currently bound compute pipeline. */
 			void Dispatch(u32 numGroupsX, u32 numGroupsY, u32 numGroupsZ);

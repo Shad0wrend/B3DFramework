@@ -1804,7 +1804,7 @@ void VulkanInternalCommandBuffer::ExecuteClearPass()
 	mClearMask = RT_NONE;
 }
 
-void VulkanInternalCommandBuffer::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount)
+void VulkanInternalCommandBuffer::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance)
 {
 	if(!IsReadyForRender())
 		return;
@@ -1846,11 +1846,11 @@ void VulkanInternalCommandBuffer::Draw(u32 vertexOffset, u32 vertexCount, u32 in
 	if(instanceCount <= 0)
 		instanceCount = 1;
 
-	vkCmdDraw(mCmdBuffer, vertexCount, instanceCount, vertexOffset, 0);
+	vkCmdDraw(mCmdBuffer, vertexCount, instanceCount, vertexOffset, firstInstance);
 	NotifyRenderTargetModified();
 }
 
-void VulkanInternalCommandBuffer::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 instanceCount)
+void VulkanInternalCommandBuffer::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 instanceCount, u32 firstInstance)
 {
 	if(indexCount == 0)
 		return;
@@ -1895,7 +1895,7 @@ void VulkanInternalCommandBuffer::DrawIndexed(u32 startIndex, u32 indexCount, u3
 	if(instanceCount <= 0)
 		instanceCount = 1;
 
-	vkCmdDrawIndexed(mCmdBuffer, indexCount, instanceCount, startIndex, vertexOffset, 0);
+	vkCmdDrawIndexed(mCmdBuffer, indexCount, instanceCount, startIndex, vertexOffset, firstInstance);
 	NotifyRenderTargetModified();
 }
 

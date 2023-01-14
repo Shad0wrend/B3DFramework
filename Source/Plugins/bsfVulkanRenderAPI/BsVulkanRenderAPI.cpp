@@ -660,28 +660,28 @@ void VulkanRenderAPI::SetDrawOperation(DrawOperationType op, const SPtr<CommandB
 	vkCB->SetDrawOp(op);
 }
 
-void VulkanRenderAPI::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount, const SPtr<CommandBuffer>& commandBuffer)
+void VulkanRenderAPI::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance, const SPtr<CommandBuffer>& commandBuffer)
 {
 	u32 primCount = 0;
 
 	VulkanCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
 	VulkanInternalCommandBuffer* vkCB = cb->GetInternal();
 
-	vkCB->Draw(vertexOffset, vertexCount, instanceCount);
+	vkCB->Draw(vertexOffset, vertexCount, instanceCount, firstInstance);
 
 	B3D_INCREMENT_RENDER_STATISTIC(NumDrawCalls);
 	B3D_ADD_RENDER_STATISTIC(NumVertices, vertexCount);
 	B3D_ADD_RENDER_STATISTIC(NumPrimitives, primCount);
 }
 
-void VulkanRenderAPI::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount, const SPtr<CommandBuffer>& commandBuffer)
+void VulkanRenderAPI::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance, const SPtr<CommandBuffer>& commandBuffer)
 {
 	u32 primCount = 0;
 
 	VulkanCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
 	VulkanInternalCommandBuffer* vkCB = cb->GetInternal();
 
-	vkCB->DrawIndexed(startIndex, indexCount, vertexOffset, instanceCount);
+	vkCB->DrawIndexed(startIndex, indexCount, vertexOffset, instanceCount, firstInstance);
 
 	B3D_INCREMENT_RENDER_STATISTIC(NumDrawCalls);
 	B3D_ADD_RENDER_STATISTIC(NumVertices, vertexCount);

@@ -139,7 +139,7 @@ namespace bs
 			 *
 			 * @note	Thread safe.
 			 */
-			void NotifyImageDestroyed(const VkImage& image);
+			void NotifyImageDestroyed(const VulkanImage& image);
 
 		private:
 			struct FramebufferVariantKey

@@ -126,7 +126,7 @@ void VulkanImage::Destroy()
 	const bool isUsedAsRenderTarget = (mUsage & (TU_RENDERTARGET | TU_DEPTHSTENCIL)) != 0;
 	if(isUsedAsRenderTarget && VulkanFramebufferCache::IsStarted())
 	{
-		VulkanFramebufferCache::Instance().NotifyImageDestroyed(GetHandle());
+		VulkanFramebufferCache::Instance().NotifyImageDestroyed(*this);
 	}
 
 	VulkanResource::Destroy();

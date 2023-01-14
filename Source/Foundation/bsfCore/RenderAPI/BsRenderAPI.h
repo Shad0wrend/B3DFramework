@@ -301,30 +301,31 @@ namespace bs
 			 * Draw an object based on currently bound GPU programs, vertex declaration and vertex buffers. Draws directly from
 			 * the vertex buffer without using indices.
 			 *
-			 * @param[in]	vertexOffset	Offset into the currently bound vertex buffer to start drawing from.
-			 * @param[in]	vertexCount		Number of vertices to draw.
-			 * @param[in]	instanceCount	Number of times to draw the provided geometry, each time with an (optionally)
+			 * @param	vertexOffset	Offset into the currently bound vertex buffer to start drawing from.
+			 * @param	vertexCount		Number of vertices to draw.
+			 * @param	instanceCount	Number of times to draw the provided geometry, each time with an (optionally)
 			 *								separate per-instance data.
-			 * @param[in]	commandBuffer	Optional command buffer to queue the operation on. If not provided operation
-			 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
-			 *								Buffer must support graphics operations.
+			 * @param	firstInstance	ID of the first instance to draw.
+			 * @param	commandBuffer	Optional command buffer to queue the operation on. If not provided operation
+			 *							is executed immediately. Otherwise it is executed when executeCommands() is called.
+			 *							Buffer must support graphics operations.
 			 */
-			virtual void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0, u32 firstInstance = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Draw an object based on currently bound GPU programs, vertex declaration, vertex and index buffers.
 			 *
-			 * @param[in]	startIndex		Offset into the currently bound index buffer to start drawing from.
-			 * @param[in]	indexCount		Number of indices to draw.
-			 * @param[in]	vertexOffset	Offset to apply to each vertex index.
-			 * @param[in]	vertexCount		Number of vertices to draw.
-			 * @param[in]	instanceCount	Number of times to draw the provided geometry, each time with an (optionally)
-			 *								separate per-instance data.
-			 * @param[in]	commandBuffer	Optional command buffer to queue the operation on. If not provided operation
+			 * @param	startIndex		Offset into the currently bound index buffer to start drawing from.
+			 * @param	indexCount		Number of indices to draw.
+			 * @param	vertexOffset	Offset to apply to each vertex index.
+			 * @param	vertexCount		Number of vertices to draw.
+			 * @param	instanceCount	Number of times to draw the provided geometry, each time with an (optionally) separate per-instance data.
+			 * @param	firstInstance	ID of the first instance to draw.
+			 * @param	commandBuffer	Optional command buffer to queue the operation on. If not provided operation
 			 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 			 *								Buffer must support graphics operations.
 			 */
-			virtual void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0, u32 firstInstance = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Executes the currently bound compute shader.

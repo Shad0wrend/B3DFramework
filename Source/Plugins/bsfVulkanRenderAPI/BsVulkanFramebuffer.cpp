@@ -105,7 +105,7 @@ VulkanFramebuffer* VulkanFramebufferCache::FindOrCreateFramebuffer(const VulkanD
 	return framebuffer;
 }
 
-void VulkanFramebufferCache::NotifyImageDestroyed(const VkImage& image)
+void VulkanFramebufferCache::NotifyImageDestroyed(const VulkanImage& image)
 {
 	Lock lock(mMutex);
 
@@ -120,8 +120,8 @@ void VulkanFramebufferCache::NotifyImageDestroyed(const VkImage& image)
 			if(attachmentInformation.Image == nullptr)
 				continue;
 
-			const VkImage attachmentImage = attachmentInformation.Image->GetHandle();
-			if(attachmentImage == image)
+			const VulkanImage* const attachmentImage = attachmentInformation.Image;
+			if(attachmentImage == &image)
 			{
 				isEntryFound = true;
 				break;
@@ -134,8 +134,8 @@ void VulkanFramebufferCache::NotifyImageDestroyed(const VkImage& image)
 
 			if(depthAttachmentInformation.Image != nullptr)
 			{
-				const VkImage attachmentImage = depthAttachmentInformation.Image->GetHandle();
-				if(attachmentImage == image)
+				const VulkanImage* const attachmentImage = depthAttachmentInformation.Image;
+				if(attachmentImage == &image)
 					isEntryFound = true;
 			}
 		}
