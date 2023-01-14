@@ -35,19 +35,19 @@ GLTexture::~GLTexture()
 
 void GLTexture::Initialize()
 {
-	u32 width = mProperties.GetWidth();
-	u32 height = mProperties.GetHeight();
-	u32 depth = mProperties.GetDepth();
-	TextureType texType = mProperties.GetTextureType();
-	int usage = mProperties.GetUsage();
-	u32 numMips = mProperties.GetNumMipmaps();
-	u32 numFaces = mProperties.GetNumFaces();
+	u32 width = mProperties.Width;
+	u32 height = mProperties.Height;
+	u32 depth = mProperties.Depth;
+	TextureType texType = mProperties.Type;
+	int usage = mProperties.Usage;
+	u32 numMips = mProperties.MipMapCount;
+	u32 numFaces = mProperties.GetFaceCount();
 
 	// 0-sized textures aren't supported by the API
 	width = std::max(width, 1U);
 	height = std::max(height, 1U);
 
-	PixelFormat pixFormat = mProperties.GetFormat();
+	PixelFormat pixFormat = mProperties.Format;
 	mInternalFormat = GLPixelUtil::GetClosestSupportedPf(pixFormat, texType, usage);
 
 	if(pixFormat != mInternalFormat)
@@ -58,7 +58,7 @@ void GLTexture::Initialize()
 	}
 
 	// Check requested number of mipmaps
-	u32 maxMips = PixelUtil::GetMaxMipmaps(width, height, depth, mProperties.GetFormat());
+	u32 maxMips = PixelUtil::GetMaxMipmaps(width, height, depth, mProperties.Format);
 	if(numMips > maxMips)
 	{
 		B3D_LOG(Error, RenderBackend, "Invalid number of mipmaps. Maximum allowed is: {0}", maxMips);
@@ -85,7 +85,7 @@ void GLTexture::Initialize()
 	glBindTexture(GetGlTextureTarget(), mTextureID);
 	B3D_CHECK_GL_ERROR();
 
-	if(mProperties.GetNumSamples() <= 1)
+	if(mProperties.SampleCount <= 1)
 	{
 		// This needs to be set otherwise the texture doesn't get rendered
 		glTexParameteri(GetGlTextureTarget(), GL_TEXTURE_MAX_LEVEL, numMips - 1);
@@ -93,10 +93,10 @@ void GLTexture::Initialize()
 	}
 
 	// Allocate internal buffer so that glTexSubImageXD can be used
-	mGLFormat = GLPixelUtil::GetGlInternalFormat(mInternalFormat, mProperties.IsHardwareGammaEnabled());
+	mGLFormat = GLPixelUtil::GetGlInternalFormat(mInternalFormat, mProperties.UseHardwareSRGB);
 
-	u32 sampleCount = mProperties.GetNumSamples();
-	if((usage & (TU_RENDERTARGET | TU_DEPTHSTENCIL)) != 0 && mProperties.GetTextureType() == TEX_TYPE_2D && sampleCount > 1)
+	u32 sampleCount = mProperties.SampleCount;
+	if((usage & (TU_RENDERTARGET | TU_DEPTHSTENCIL)) != 0 && mProperties.Type == TEX_TYPE_2D && sampleCount > 1)
 	{
 		if(numFaces <= 1)
 		{
@@ -295,7 +295,7 @@ void GLTexture::Initialize()
 
 GLenum GLTexture::GetGlTextureTarget() const
 {
-	return GetGlTextureTarget(mProperties.GetTextureType(), mProperties.GetNumSamples(), mProperties.GetNumFaces());
+	return GetGlTextureTarget(mProperties.Type, mProperties.SampleCount, mProperties.GetFaceCount());
 }
 
 GLuint GLTexture::GetGlid() const
@@ -368,19 +368,19 @@ GLenum GLTexture::GetGlTextureTarget(GpuParameterObjectType type)
 	}
 }
 
-PixelData GLTexture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
+PixelData GLTexture::LockInternal(GpuLockOptions options, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
 {
-	if(mProperties.GetNumSamples() > 1)
+	if(mProperties.SampleCount > 1)
 		B3D_EXCEPT(InvalidStateException, "Multisampled textures cannot be accessed from the CPU directly.");
 
 	if(mLockedBuffer != nullptr)
 		B3D_EXCEPT(InternalErrorException, "Trying to lock a buffer that's already locked.");
 
-	u32 mipWidth = std::max(1u, mProperties.GetWidth() >> mipLevel);
-	u32 mipHeight = std::max(1u, mProperties.GetHeight() >> mipLevel);
-	u32 mipDepth = std::max(1u, mProperties.GetDepth() >> mipLevel);
+	u32 mipWidth = std::max(1u, mProperties.Width >> mipLevel);
+	u32 mipHeight = std::max(1u, mProperties.Height >> mipLevel);
+	u32 mipDepth = std::max(1u, mProperties.Depth >> mipLevel);
 
-	PixelData lockedArea(mipWidth, mipHeight, mipDepth, mProperties.GetFormat());
+	PixelData lockedArea(mipWidth, mipHeight, mipDepth, mProperties.Format);
 
 	mLockedBuffer = GetBuffer(face, mipLevel);
 	lockedArea.SetExternalBuffer((u8*)mLockedBuffer->Lock(options));
@@ -388,7 +388,7 @@ PixelData GLTexture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face, u3
 	return lockedArea;
 }
 
-void GLTexture::UnlockImpl()
+void GLTexture::UnlockInternal()
 {
 	if(mLockedBuffer == nullptr)
 	{
@@ -400,9 +400,9 @@ void GLTexture::UnlockImpl()
 	mLockedBuffer = nullptr;
 }
 
-void GLTexture::ReadDataImpl(PixelData& dest, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
+void GLTexture::ReadDataInternal(PixelData& dest, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
 {
-	if(mProperties.GetNumSamples() > 1)
+	if(mProperties.SampleCount > 1)
 	{
 		B3D_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
 		return;
@@ -420,9 +420,9 @@ void GLTexture::ReadDataImpl(PixelData& dest, u32 mipLevel, u32 face, u32 device
 		GetBuffer(face, mipLevel)->Download(dest);
 }
 
-void GLTexture::WriteDataImpl(const PixelData& src, u32 mipLevel, u32 face, bool discardWholeBuffer, u32 queueIdx)
+void GLTexture::WriteDataInternal(const PixelData& src, u32 mipLevel, u32 face, bool discardWholeBuffer, u32 queueIdx)
 {
-	if(mProperties.GetNumSamples() > 1)
+	if(mProperties.SampleCount > 1)
 	{
 		B3D_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
 		return;
@@ -440,7 +440,7 @@ void GLTexture::WriteDataImpl(const PixelData& src, u32 mipLevel, u32 face, bool
 		GetBuffer(face, mipLevel)->Upload(src, src.GetExtents());
 }
 
-void GLTexture::CopyImpl(const SPtr<Texture>& target, const TextureCopyInformation& desc, const SPtr<CommandBuffer>& commandBuffer)
+void GLTexture::CopyInternal(const SPtr<Texture>& target, const TextureCopyInformation& desc, const SPtr<CommandBuffer>& commandBuffer)
 {
 	auto executeRef = [this](const SPtr<Texture>& target, const TextureCopyInformation& desc)
 	{
@@ -495,11 +495,11 @@ void GLTexture::CreateSurfaceList()
 {
 	mSurfaceList.clear();
 
-	for(u32 face = 0; face < mProperties.GetNumFaces(); face++)
+	for(u32 face = 0; face < mProperties.GetFaceCount(); face++)
 	{
-		for(u32 mip = 0; mip <= mProperties.GetNumMipmaps(); mip++)
+		for(u32 mip = 0; mip <= mProperties.MipMapCount; mip++)
 		{
-			GLPixelBuffer* buf = B3DNew<GLTextureBuffer>(GetGlTextureTarget(), mTextureID, face, mip, mInternalFormat, static_cast<GpuBufferUsage>(mProperties.GetUsage()), mProperties.IsHardwareGammaEnabled(), mProperties.GetNumSamples());
+			GLPixelBuffer* buf = B3DNew<GLTextureBuffer>(GetGlTextureTarget(), mTextureID, face, mip, mInternalFormat, static_cast<GpuBufferUsage>(mProperties.Usage), mProperties.UseHardwareSRGB, mProperties.SampleCount);
 
 			mSurfaceList.push_back(B3DMakeSharedFromExisting<GLPixelBuffer>(buf));
 			if(buf->GetWidth() == 0 || buf->GetHeight() == 0 || buf->GetDepth() == 0)
@@ -514,13 +514,13 @@ SPtr<GLPixelBuffer> GLTexture::GetBuffer(u32 face, u32 mipmap)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
-	if(face >= mProperties.GetNumFaces())
+	if(face >= mProperties.GetFaceCount())
 		B3D_EXCEPT(InvalidParametersException, "Face index out of range");
 
-	if(mipmap > mProperties.GetNumMipmaps())
+	if(mipmap > mProperties.MipMapCount)
 		B3D_EXCEPT(InvalidParametersException, "Mipmap index out of range");
 
-	unsigned int idx = face * (mProperties.GetNumMipmaps() + 1) + mipmap;
+	unsigned int idx = face * (mProperties.MipMapCount + 1) + mipmap;
 	B3D_ASSERT(idx < mSurfaceList.size());
 	return mSurfaceList[idx];
 }

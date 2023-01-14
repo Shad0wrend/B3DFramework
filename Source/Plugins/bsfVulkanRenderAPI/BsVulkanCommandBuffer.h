@@ -144,7 +144,7 @@ namespace bs
 			u32 GetQueueFamily() const { return mQueueFamily; }
 
 			/** Returns the index of the device this command buffer will execute on. */
-			u32 GetDeviceIdx() const;
+			u32 GetDeviceIndex() const;
 
 			/** Returns the thread that the command buffer is allowed to be used on. */
 			VulkanThread GetOwnerThread() const { return mOwnerThread; }

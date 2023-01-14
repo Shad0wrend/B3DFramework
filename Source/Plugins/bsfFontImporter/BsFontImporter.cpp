@@ -333,7 +333,7 @@ SPtr<Resource> FontImporter::Import(const Path& filePath, SPtr<const ImportOptio
 			HTexture newTex = Texture::Create(textureCreateInformation);
 
 			// It's possible the formats no longer match
-			if(newTex->GetProperties().GetFormat() != pixelData->GetFormat())
+			if(newTex->GetProperties().Format != pixelData->GetFormat())
 			{
 				SPtr<PixelData> temp = newTex->GetProperties().AllocBuffer(0, 0);
 				PixelUtil::BulkPixelConversion(*pixelData, *temp);

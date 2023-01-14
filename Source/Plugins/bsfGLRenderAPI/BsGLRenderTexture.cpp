@@ -58,9 +58,9 @@ void GLRenderTexture::Initialize()
 			const TextureSurface& viewSurface = mColorSurfaces[i]->GetInformation().Surface;
 			if(viewSurface.FaceCount == 1) // Binding a single texture layer
 			{
-				surfaceDesc.AllLayers = glColorSurface->GetProperties().GetNumFaces() == 1;
+				surfaceDesc.AllLayers = glColorSurface->GetProperties().GetFaceCount() == 1;
 
-				if(glColorSurface->GetProperties().GetTextureType() != TEX_TYPE_3D)
+				if(glColorSurface->GetProperties().Type != TEX_TYPE_3D)
 				{
 					surfaceDesc.Zoffset = 0;
 					surfaceDesc.Buffer = glColorSurface->GetBuffer(viewSurface.Face, viewSurface.MipLevel);
@@ -75,9 +75,9 @@ void GLRenderTexture::Initialize()
 			{
 				surfaceDesc.AllLayers = true;
 
-				if(glColorSurface->GetProperties().GetTextureType() != TEX_TYPE_3D)
+				if(glColorSurface->GetProperties().Type != TEX_TYPE_3D)
 				{
-					if(viewSurface.FaceCount != glColorSurface->GetProperties().GetNumFaces())
+					if(viewSurface.FaceCount != glColorSurface->GetProperties().GetFaceCount())
 					{
 						B3D_LOG(Warning, RenderBackend, "OpenGL doesn't support binding of arbitrary ranges for array "
 													   "textures. The entire range will be bound instead.");
@@ -109,9 +109,9 @@ void GLRenderTexture::Initialize()
 		bool allLayers = true;
 		const TextureSurface& viewSurface = mDepthStencilSurface->GetInformation().Surface;
 		if(viewSurface.FaceCount == 1) // Binding a single texture layer
-			allLayers = glDepthStencilTexture->GetProperties().GetNumFaces() == 1;
+			allLayers = glDepthStencilTexture->GetProperties().GetFaceCount() == 1;
 
-		if(glDepthStencilTexture->GetProperties().GetTextureType() != TEX_TYPE_3D)
+		if(glDepthStencilTexture->GetProperties().Type != TEX_TYPE_3D)
 		{
 			u32 firstSlice = 0;
 			if(!allLayers)

@@ -14,8 +14,8 @@ using namespace bs::ct;
 D3D11TextureView::D3D11TextureView(const D3D11Texture* texture, const TextureViewInformation& desc)
 	: TextureView(desc)
 {
-	const u32 explicitMipCount = desc.Surface.MipLevelCount == 0 ? texture->GetProperties().GetNumMipmaps() + 1 : desc.Surface.MipLevelCount;
-	const u32 explicitFaceCount = desc.Surface.FaceCount == 0 ? texture->GetProperties().GetNumFaces() + 1 : desc.Surface.FaceCount;
+	const u32 explicitMipCount = desc.Surface.MipLevelCount == 0 ? texture->GetProperties().MipMapCount + 1 : desc.Surface.MipLevelCount;
+	const u32 explicitFaceCount = desc.Surface.FaceCount == 0 ? texture->GetProperties().GetFaceCount() + 1 : desc.Surface.FaceCount;
 
 	if((mInformation.Usage & GVU_RANDOMWRITE) != 0)
 		mUAV = CreateUav(texture, mInformation.Surface.MipLevel, mInformation.Surface.Face, explicitFaceCount);
@@ -67,9 +67,9 @@ ID3D11ShaderResourceView* D3D11TextureView::CreateSrv(const D3D11Texture* textur
 	ZeroMemory(&desc, sizeof(desc));
 
 	const TextureProperties& texProps = texture->GetProperties();
-	u32 numFaces = texProps.GetNumFaces();
+	u32 numFaces = texProps.GetFaceCount();
 
-	switch(texProps.GetTextureType())
+	switch(texProps.Type)
 	{
 	case TEX_TYPE_1D:
 		if(numFaces <= 1)
@@ -88,7 +88,7 @@ ID3D11ShaderResourceView* D3D11TextureView::CreateSrv(const D3D11Texture* textur
 		}
 		break;
 	case TEX_TYPE_2D:
-		if(texProps.GetNumSamples() > 1)
+		if(texProps.SampleCount > 1)
 		{
 			if(numFaces <= 1)
 			{
@@ -178,9 +178,9 @@ ID3D11RenderTargetView* D3D11TextureView::CreateRtv(const D3D11Texture* texture,
 	ZeroMemory(&desc, sizeof(desc));
 
 	const TextureProperties& texProps = texture->GetProperties();
-	u32 numFaces = texProps.GetNumFaces();
+	u32 numFaces = texProps.GetFaceCount();
 
-	switch(texProps.GetTextureType())
+	switch(texProps.Type)
 	{
 	case TEX_TYPE_1D:
 		if(numFaces <= 1)
@@ -197,7 +197,7 @@ ID3D11RenderTargetView* D3D11TextureView::CreateRtv(const D3D11Texture* texture,
 		}
 		break;
 	case TEX_TYPE_2D:
-		if(texProps.GetNumSamples() > 1)
+		if(texProps.SampleCount > 1)
 		{
 			if(numFaces <= 1)
 			{
@@ -230,7 +230,7 @@ ID3D11RenderTargetView* D3D11TextureView::CreateRtv(const D3D11Texture* texture,
 		desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE3D;
 		desc.Texture3D.MipSlice = mipSlice;
 		desc.Texture3D.FirstWSlice = 0;
-		desc.Texture3D.WSize = texProps.GetDepth();
+		desc.Texture3D.WSize = texProps.Depth;
 		break;
 	case TEX_TYPE_CUBE_MAP:
 		desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
@@ -264,9 +264,9 @@ ID3D11UnorderedAccessView* D3D11TextureView::CreateUav(const D3D11Texture* textu
 	ZeroMemory(&desc, sizeof(desc));
 
 	const TextureProperties& texProps = texture->GetProperties();
-	u32 numFaces = texProps.GetNumFaces();
+	u32 numFaces = texProps.GetFaceCount();
 
-	switch(texProps.GetTextureType())
+	switch(texProps.Type)
 	{
 	case TEX_TYPE_1D:
 		if(numFaces <= 1)
@@ -300,7 +300,7 @@ ID3D11UnorderedAccessView* D3D11TextureView::CreateUav(const D3D11Texture* textu
 		desc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE3D;
 		desc.Texture3D.MipSlice = mipSlice;
 		desc.Texture3D.FirstWSlice = 0;
-		desc.Texture3D.WSize = texProps.GetDepth();
+		desc.Texture3D.WSize = texProps.Depth;
 		break;
 	case TEX_TYPE_CUBE_MAP:
 		desc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
@@ -334,9 +334,9 @@ ID3D11DepthStencilView* D3D11TextureView::CreateDsv(const D3D11Texture* texture,
 	ZeroMemory(&desc, sizeof(desc));
 
 	const TextureProperties& texProps = texture->GetProperties();
-	u32 numFaces = texProps.GetNumFaces();
+	u32 numFaces = texProps.GetFaceCount();
 
-	switch(texProps.GetTextureType())
+	switch(texProps.Type)
 	{
 	case TEX_TYPE_1D:
 		if(numFaces <= 1)
@@ -353,7 +353,7 @@ ID3D11DepthStencilView* D3D11TextureView::CreateDsv(const D3D11Texture* texture,
 		}
 		break;
 	case TEX_TYPE_2D:
-		if(texProps.GetNumSamples() > 1)
+		if(texProps.SampleCount > 1)
 		{
 			if(numFaces <= 1)
 			{
@@ -385,7 +385,7 @@ ID3D11DepthStencilView* D3D11TextureView::CreateDsv(const D3D11Texture* texture,
 	case TEX_TYPE_3D:
 		desc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
 		desc.Texture2DArray.FirstArraySlice = 0;
-		desc.Texture2DArray.ArraySize = texProps.GetDepth();
+		desc.Texture2DArray.ArraySize = texProps.Depth;
 		desc.Texture2DArray.MipSlice = mipSlice;
 		break;
 	case TEX_TYPE_CUBE_MAP:

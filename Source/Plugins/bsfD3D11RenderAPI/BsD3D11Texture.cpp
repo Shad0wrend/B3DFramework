@@ -38,7 +38,7 @@ void D3D11Texture::Initialize()
 {
 	THROW_IF_NOT_CORE_THREAD;
 
-	switch(mProperties.GetTextureType())
+	switch(mProperties.Type)
 	{
 	case TEX_TYPE_1D:
 		Create1DTex();
@@ -58,20 +58,20 @@ void D3D11Texture::Initialize()
 	Texture::Initialize();
 }
 
-void D3D11Texture::CopyImpl(const SPtr<Texture>& target, const TextureCopyInformation& desc, const SPtr<CommandBuffer>& commandBuffer)
+void D3D11Texture::CopyInternal(const SPtr<Texture>& target, const TextureCopyInformation& desc, const SPtr<CommandBuffer>& commandBuffer)
 {
 	auto executeRef = [this](const SPtr<Texture>& target, const TextureCopyInformation& desc)
 	{
 		D3D11Texture* other = static_cast<D3D11Texture*>(target.get());
 
-		u32 srcResIdx = D3D11CalcSubresource(desc.SourceMip, desc.SourceFace, mProperties.GetNumMipmaps() + 1);
-		u32 destResIdx = D3D11CalcSubresource(desc.DestinationMip, desc.DestinationFace, target->GetProperties().GetNumMipmaps() + 1);
+		u32 srcResIdx = D3D11CalcSubresource(desc.SourceMip, desc.SourceFace, mProperties.MipMapCount + 1);
+		u32 destResIdx = D3D11CalcSubresource(desc.DestinationMip, desc.DestinationFace, target->GetProperties().MipMapCount + 1);
 
 		D3D11RenderAPI* rs = static_cast<D3D11RenderAPI*>(RenderAPI::InstancePtr());
 		D3D11Device& device = rs->GetPrimaryDevice();
 
-		bool srcHasMultisample = mProperties.GetNumSamples() > 1;
-		bool destHasMultisample = target->GetProperties().GetNumSamples() > 1;
+		bool srcHasMultisample = mProperties.SampleCount > 1;
+		bool destHasMultisample = target->GetProperties().SampleCount > 1;
 
 		bool copyEntireSurface = desc.SourceVolume.GetWidth() == 0 ||
 			desc.SourceVolume.GetHeight() == 0 ||
@@ -85,10 +85,10 @@ void D3D11Texture::CopyImpl(const SPtr<Texture>& target, const TextureCopyInform
 			{
 				// Need to first resolve to a temporary texture, then copy
 				TextureCreateInformation tempDesc;
-				tempDesc.Width = mProperties.GetWidth();
-				tempDesc.Height = mProperties.GetHeight();
-				tempDesc.Format = mProperties.GetFormat();
-				tempDesc.UseHardwareSRGB = mProperties.IsHardwareGammaEnabled();
+				tempDesc.Width = mProperties.Width;
+				tempDesc.Height = mProperties.Height;
+				tempDesc.Format = mProperties.Format;
+				tempDesc.UseHardwareSRGB = mProperties.UseHardwareSRGB;
 
 				SPtr<D3D11Texture> temporary = std::static_pointer_cast<D3D11Texture>(Texture::Create(tempDesc));
 				device.GetImmediateContext()->ResolveSubresource(temporary->GetDX11Resource(), 0, mTex, srcResIdx, mDXGIFormat);
@@ -145,9 +145,9 @@ void D3D11Texture::CopyImpl(const SPtr<Texture>& target, const TextureCopyInform
 	}
 }
 
-PixelData D3D11Texture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
+PixelData D3D11Texture::LockInternal(GpuLockOptions options, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
 {
-	if(mProperties.GetNumSamples() > 1)
+	if(mProperties.SampleCount > 1)
 		B3D_EXCEPT(InvalidStateException, "Multisampled textures cannot be accessed from the CPU directly.");
 
 #if B3D_PROFILING_ENABLED
@@ -162,9 +162,9 @@ PixelData D3D11Texture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face,
 	}
 #endif
 
-	u32 mipWidth = std::max(1u, mProperties.GetWidth() >> mipLevel);
-	u32 mipHeight = std::max(1u, mProperties.GetHeight() >> mipLevel);
-	u32 mipDepth = std::max(1u, mProperties.GetDepth() >> mipLevel);
+	u32 mipWidth = std::max(1u, mProperties.Width >> mipLevel);
+	u32 mipHeight = std::max(1u, mProperties.Height >> mipLevel);
+	u32 mipDepth = std::max(1u, mProperties.Depth >> mipLevel);
 
 	PixelData lockedArea(mipWidth, mipHeight, mipDepth, mInternalFormat);
 
@@ -181,7 +181,7 @@ PixelData D3D11Texture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face,
 	}
 	else
 	{
-		if((mProperties.GetUsage() & TU_DYNAMIC) != 0)
+		if((mProperties.Usage & TU_DYNAMIC) != 0)
 		{
 			if(flags == D3D11_MAP_WRITE)
 			{
@@ -203,22 +203,22 @@ PixelData D3D11Texture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face,
 	return lockedArea;
 }
 
-void D3D11Texture::UnlockImpl()
+void D3D11Texture::UnlockInternal()
 {
 	if(mLockedForReading)
 		Unmapstagingbuffer();
 	else
 	{
-		if((mProperties.GetUsage() & TU_DYNAMIC) != 0)
+		if((mProperties.Usage & TU_DYNAMIC) != 0)
 			Unmap(mTex);
 		else
 			Unmapstaticbuffer();
 	}
 }
 
-void D3D11Texture::ReadDataImpl(PixelData& dest, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
+void D3D11Texture::ReadDataInternal(PixelData& dest, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
 {
-	if(mProperties.GetNumSamples() > 1)
+	if(mProperties.SampleCount > 1)
 	{
 		B3D_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
 		return;
@@ -229,37 +229,37 @@ void D3D11Texture::ReadDataImpl(PixelData& dest, u32 mipLevel, u32 face, u32 dev
 	Unlock();
 }
 
-void D3D11Texture::WriteDataImpl(const PixelData& src, u32 mipLevel, u32 face, bool discardWholeBuffer, u32 queueIdx)
+void D3D11Texture::WriteDataInternal(const PixelData& src, u32 mipLevel, u32 face, bool discardWholeBuffer, u32 queueIdx)
 {
-	PixelFormat format = mProperties.GetFormat();
+	PixelFormat format = mProperties.Format;
 
-	if(mProperties.GetNumSamples() > 1)
+	if(mProperties.SampleCount > 1)
 	{
 		B3D_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
 		return;
 	}
 
-	mipLevel = Math::Clamp(mipLevel, (u32)mipLevel, mProperties.GetNumMipmaps());
-	face = Math::Clamp(face, (u32)0, mProperties.GetNumFaces() - 1);
+	mipLevel = Math::Clamp(mipLevel, (u32)mipLevel, mProperties.MipMapCount);
+	face = Math::Clamp(face, (u32)0, mProperties.GetFaceCount() - 1);
 
-	if(face > 0 && mProperties.GetTextureType() == TEX_TYPE_3D)
+	if(face > 0 && mProperties.Type == TEX_TYPE_3D)
 	{
 		B3D_LOG(Error, RenderBackend, "3D texture arrays are not supported.");
 		return;
 	}
 
-	if((mProperties.GetUsage() & TU_DYNAMIC) != 0)
+	if((mProperties.Usage & TU_DYNAMIC) != 0)
 	{
 		PixelData myData = Lock(discardWholeBuffer ? GBL_WRITE_ONLY_DISCARD : GBL_WRITE_ONLY, mipLevel, face, 0, queueIdx);
 		PixelUtil::BulkPixelConversion(src, myData);
 		Unlock();
 	}
-	else if((mProperties.GetUsage() & TU_DEPTHSTENCIL) == 0)
+	else if((mProperties.Usage & TU_DEPTHSTENCIL) == 0)
 	{
 		D3D11RenderAPI* rs = static_cast<D3D11RenderAPI*>(RenderAPI::InstancePtr());
 		D3D11Device& device = rs->GetPrimaryDevice();
 
-		UINT subresourceIdx = D3D11CalcSubresource(mipLevel, face, mProperties.GetNumMipmaps() + 1);
+		UINT subresourceIdx = D3D11CalcSubresource(mipLevel, face, mProperties.MipMapCount + 1);
 		u32 rowWidth = D3D11Mappings::GetSizeInBytes(format, src.GetWidth());
 		u32 sliceWidth = D3D11Mappings::GetSizeInBytes(format, src.GetWidth(), src.GetHeight());
 
@@ -275,19 +275,19 @@ void D3D11Texture::WriteDataImpl(const PixelData& src, u32 mipLevel, u32 face, b
 	}
 	else
 	{
-		B3D_EXCEPT(RenderingAPIException, "Trying to write into a buffer with unsupported usage: " + ToString(mProperties.GetUsage()));
+		B3D_EXCEPT(RenderingAPIException, "Trying to write into a buffer with unsupported usage: " + ToString(mProperties.Usage));
 	}
 }
 
 void D3D11Texture::Create1DTex()
 {
-	u32 width = mProperties.GetWidth();
-	int usage = mProperties.GetUsage();
-	u32 numMips = mProperties.GetNumMipmaps();
-	PixelFormat format = mProperties.GetFormat();
-	bool hwGamma = mProperties.IsHardwareGammaEnabled();
+	u32 width = mProperties.Width;
+	int usage = mProperties.Usage;
+	u32 numMips = mProperties.MipMapCount;
+	PixelFormat format = mProperties.Format;
+	bool hwGamma = mProperties.UseHardwareSRGB;
 	PixelFormat closestFormat = D3D11Mappings::GetClosestSupportedPf(format, TEX_TYPE_1D, usage);
-	u32 numFaces = mProperties.GetNumFaces();
+	u32 numFaces = mProperties.GetFaceCount();
 
 	// We must have those defined here
 	B3D_ASSERT(width > 0);
@@ -397,16 +397,16 @@ void D3D11Texture::Create1DTex()
 
 void D3D11Texture::Create2DTex()
 {
-	u32 width = mProperties.GetWidth();
-	u32 height = mProperties.GetHeight();
-	int usage = mProperties.GetUsage();
-	u32 numMips = mProperties.GetNumMipmaps();
-	PixelFormat format = mProperties.GetFormat();
-	bool hwGamma = mProperties.IsHardwareGammaEnabled();
-	u32 sampleCount = mProperties.GetNumSamples();
-	TextureType texType = mProperties.GetTextureType();
+	u32 width = mProperties.Width;
+	u32 height = mProperties.Height;
+	int usage = mProperties.Usage;
+	u32 numMips = mProperties.MipMapCount;
+	PixelFormat format = mProperties.Format;
+	bool hwGamma = mProperties.UseHardwareSRGB;
+	u32 sampleCount = mProperties.SampleCount;
+	TextureType texType = mProperties.Type;
 	PixelFormat closestFormat = D3D11Mappings::GetClosestSupportedPf(format, texType, usage);
-	u32 numFaces = mProperties.GetNumFaces();
+	u32 numFaces = mProperties.GetFaceCount();
 
 	// TODO - Consider making this a parameter eventually
 	bool readableDepth = true;
@@ -542,13 +542,13 @@ void D3D11Texture::Create2DTex()
 
 void D3D11Texture::Create3DTex()
 {
-	u32 width = mProperties.GetWidth();
-	u32 height = mProperties.GetHeight();
-	u32 depth = mProperties.GetDepth();
-	int usage = mProperties.GetUsage();
-	u32 numMips = mProperties.GetNumMipmaps();
-	PixelFormat format = mProperties.GetFormat();
-	bool hwGamma = mProperties.IsHardwareGammaEnabled();
+	u32 width = mProperties.Width;
+	u32 height = mProperties.Height;
+	u32 depth = mProperties.Depth;
+	int usage = mProperties.Usage;
+	u32 numMips = mProperties.MipMapCount;
+	PixelFormat format = mProperties.Format;
+	bool hwGamma = mProperties.UseHardwareSRGB;
 	PixelFormat closestFormat = D3D11Mappings::GetClosestSupportedPf(format, TEX_TYPE_3D, usage);
 
 	// TODO - Consider making this a parameter eventually
@@ -577,14 +577,14 @@ void D3D11Texture::Create3DTex()
 	desc.Format = d3dPF;
 	desc.MiscFlags = 0;
 
-	if((mProperties.GetUsage() & TU_RENDERTARGET) != 0)
+	if((mProperties.Usage & TU_RENDERTARGET) != 0)
 	{
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 		desc.CPUAccessFlags = 0;
 		desc.MipLevels = 1;
 	}
-	else if((mProperties.GetUsage() & TU_DEPTHSTENCIL) != 0)
+	else if((mProperties.Usage & TU_DEPTHSTENCIL) != 0)
 	{
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.CPUAccessFlags = 0;
@@ -634,11 +634,11 @@ void D3D11Texture::Create3DTex()
 	// Create texture view
 	m3DTex->GetDesc(&desc);
 
-	if(mProperties.GetNumMipmaps() != (desc.MipLevels - 1))
+	if(mProperties.MipMapCount != (desc.MipLevels - 1))
 	{
 		B3D_EXCEPT(RenderingAPIException, "Driver returned different number of mip maps than requested. "
 										 "Requested: " +
-					  ToString(mProperties.GetNumMipmaps()) + ". Got: " + ToString(desc.MipLevels - 1) + ".");
+					  ToString(mProperties.MipMapCount) + ". Got: " + ToString(desc.MipLevels - 1) + ".");
 	}
 
 	mDXGIFormat = desc.Format;
@@ -661,16 +661,16 @@ void* D3D11Texture::Map(ID3D11Resource* res, D3D11_MAP flags, u32 mipLevel, u32 
 	D3D11_MAPPED_SUBRESOURCE pMappedResource;
 	pMappedResource.pData = nullptr;
 
-	mipLevel = Math::Clamp(mipLevel, (u32)mipLevel, mProperties.GetNumMipmaps());
-	face = Math::Clamp(face, (u32)0, mProperties.GetNumFaces() - 1);
+	mipLevel = Math::Clamp(mipLevel, (u32)mipLevel, mProperties.MipMapCount);
+	face = Math::Clamp(face, (u32)0, mProperties.GetFaceCount() - 1);
 
-	if(mProperties.GetTextureType() == TEX_TYPE_3D)
+	if(mProperties.Type == TEX_TYPE_3D)
 		face = 0;
 
 	D3D11RenderAPI* rs = static_cast<D3D11RenderAPI*>(RenderAPI::InstancePtr());
 	D3D11Device& device = rs->GetPrimaryDevice();
 
-	mLockedSubresourceIdx = D3D11CalcSubresource(mipLevel, face, mProperties.GetNumMipmaps() + 1);
+	mLockedSubresourceIdx = D3D11CalcSubresource(mipLevel, face, mProperties.MipMapCount + 1);
 	device.GetImmediateContext()->Map(res, mLockedSubresourceIdx, flags, 0, &pMappedResource);
 
 	if(device.HasError())
@@ -723,7 +723,7 @@ void D3D11Texture::Unmapstagingbuffer()
 void* D3D11Texture::Mapstaticbuffer(PixelData lock, u32 mipLevel, u32 face)
 {
 	u32 sizeOfImage = lock.GetConsecutiveSize();
-	mLockedSubresourceIdx = D3D11CalcSubresource(mipLevel, face, mProperties.GetNumMipmaps() + 1);
+	mLockedSubresourceIdx = D3D11CalcSubresource(mipLevel, face, mProperties.MipMapCount + 1);
 
 	mStaticBuffer = B3DNew<PixelData>(lock.GetWidth(), lock.GetHeight(), lock.GetDepth(), lock.GetFormat());
 	mStaticBuffer->AllocateInternalBuffer();
@@ -759,7 +759,7 @@ void D3D11Texture::CreateStagingBuffer()
 {
 	D3D11RenderAPI* rs = static_cast<D3D11RenderAPI*>(RenderAPI::InstancePtr());
 	D3D11Device& device = rs->GetPrimaryDevice();
-	switch(mProperties.GetTextureType())
+	switch(mProperties.Type)
 	{
 	case TEX_TYPE_1D:
 		{

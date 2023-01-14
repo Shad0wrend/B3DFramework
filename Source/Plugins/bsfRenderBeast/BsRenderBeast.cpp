@@ -667,7 +667,7 @@ void RenderBeast::UpdateReflProbeArray()
 		u32 currentCubeArraySize = 0;
 
 		if(sceneInfo.ReflProbeCubemapsTex != nullptr)
-			currentCubeArraySize = sceneInfo.ReflProbeCubemapsTex->GetProperties().GetNumArraySlices();
+			currentCubeArraySize = sceneInfo.ReflProbeCubemapsTex->GetProperties().ArraySliceCount;
 
 		bool forceArrayUpdate = false;
 		if(sceneInfo.ReflProbeCubemapsTex == nullptr || (currentCubeArraySize < numProbes && currentCubeArraySize != kMaxReflectionCubemaps))
@@ -703,10 +703,10 @@ void RenderBeast::UpdateReflProbeArray()
 					continue;
 
 				auto& srcProps = texture->GetProperties();
-				bool isValid = srcProps.GetWidth() == IBLUtility::kReflectionCubemapSize &&
-					srcProps.GetHeight() == IBLUtility::kReflectionCubemapSize &&
-					srcProps.GetNumMipmaps() == cubemapArrayProps.GetNumMipmaps() &&
-					srcProps.GetTextureType() == TEX_TYPE_CUBE_MAP;
+				bool isValid = srcProps.Width == IBLUtility::kReflectionCubemapSize &&
+					srcProps.Height == IBLUtility::kReflectionCubemapSize &&
+					srcProps.MipMapCount == cubemapArrayProps.MipMapCount &&
+					srcProps.Type == TEX_TYPE_CUBE_MAP;
 
 				if(!isValid)
 				{
@@ -723,7 +723,7 @@ void RenderBeast::UpdateReflProbeArray()
 				{
 					for(u32 face = 0; face < 6; face++)
 					{
-						for(u32 mip = 0; mip <= srcProps.GetNumMipmaps(); mip++)
+						for(u32 mip = 0; mip <= srcProps.MipMapCount; mip++)
 						{
 							TextureCopyInformation copyDesc;
 							copyDesc.SourceFace = face;
@@ -761,9 +761,9 @@ void RenderBeast::CaptureSceneCubeMap(const SPtr<Texture>& cubemap, const Vector
 	viewDesc.Target.ClearStencilValue = 0;
 
 	viewDesc.Target.NrmViewRect = Rect2(0, 0, 1.0f, 1.0f);
-	viewDesc.Target.ViewRect = Rect2I(0, 0, texProps.GetWidth(), texProps.GetHeight());
-	viewDesc.Target.TargetWidth = texProps.GetWidth();
-	viewDesc.Target.TargetHeight = texProps.GetHeight();
+	viewDesc.Target.ViewRect = Rect2I(0, 0, texProps.Width, texProps.Height);
+	viewDesc.Target.TargetWidth = texProps.Width;
+	viewDesc.Target.TargetHeight = texProps.Height;
 	viewDesc.Target.NumSamples = 1;
 
 	viewDesc.MainView = false;

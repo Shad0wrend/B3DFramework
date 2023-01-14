@@ -149,8 +149,8 @@ void ImageSprite::Update(const IMAGE_SPRITE_DESC& desc, u64 groupId)
 		renderElem.Vertices[34] = Vector2(topRightStart, bottomStart + bottomBorder);
 		renderElem.Vertices[35] = Vector2(topRightStart + rightBorder, bottomStart + bottomBorder);
 
-		float invWidth = 1.0f / (float)desc.Texture->GetTexture()->GetProperties().GetWidth();
-		float invHeight = 1.0f / (float)desc.Texture->GetTexture()->GetProperties().GetHeight();
+		float invWidth = 1.0f / (float)desc.Texture->GetTexture()->GetProperties().Width;
+		float invHeight = 1.0f / (float)desc.Texture->GetTexture()->GetProperties().Height;
 
 		float uvLeftBorder = desc.BorderLeft * invWidth;
 		float uvRightBorder = desc.BorderRight * invWidth;

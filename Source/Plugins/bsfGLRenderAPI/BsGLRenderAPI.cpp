@@ -662,7 +662,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<Comm
 						GLTexture* tex = static_cast<GLTexture*>(texture.get());
 						auto& texProps = tex->GetProperties();
 
-						bindAllLayers = texProps.GetNumFaces() == surface.FaceCount || surface.FaceCount == 0;
+						bindAllLayers = texProps.GetFaceCount() == surface.FaceCount || surface.FaceCount == 0;
 
 						if(!bindAllLayers && surface.FaceCount > 1)
 						{

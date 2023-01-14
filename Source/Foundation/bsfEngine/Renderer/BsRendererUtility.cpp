@@ -285,11 +285,11 @@ void RendererUtility::Blit(const SPtr<Texture>& texture, const Rect2I& area, boo
 	{
 		fArea.X = 0.0f;
 		fArea.Y = 0.0f;
-		fArea.Width = (float)texProps.GetWidth();
-		fArea.Height = (float)texProps.GetHeight();
+		fArea.Width = (float)texProps.Width;
+		fArea.Height = (float)texProps.Height;
 	}
 
-	BlitMat* blitMat = BlitMat::GetVariation(texProps.GetNumSamples(), !isDepth, isFiltered);
+	BlitMat* blitMat = BlitMat::GetVariation(texProps.SampleCount, !isDepth, isFiltered);
 	blitMat->Execute(texture, fArea, flipUV);
 }
 
@@ -500,7 +500,7 @@ void BicubicUpsampleMat::Execute(const SPtr<Texture>& source, const SPtr<RenderT
 
 	const TextureProperties& sourceProps = source->GetProperties();
 
-	Vector2I texSize(sourceProps.GetWidth(), sourceProps.GetHeight());
+	Vector2I texSize(sourceProps.Width, sourceProps.Height);
 	Vector2 invPixelSize(1.0f / texSize.X, 1.0f / texSize.Y);
 	Vector2 invTwoPixelSize(2.0f / texSize.X, 2.0f / texSize.Y);
 

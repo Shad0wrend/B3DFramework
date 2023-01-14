@@ -12,7 +12,7 @@ GLTextureView::GLTextureView(const GLTexture* texture, const TextureViewInformat
 	const TextureProperties& props = texture->GetProperties();
 
 	GLenum target;
-	switch(props.GetTextureType())
+	switch(props.Type)
 	{
 	case TEX_TYPE_1D:
 		{
@@ -25,7 +25,7 @@ GLTextureView::GLTextureView(const GLTexture* texture, const TextureViewInformat
 	default:
 	case TEX_TYPE_2D:
 		{
-			if(props.GetNumSamples() <= 1)
+			if(props.SampleCount <= 1)
 			{
 				if(desc.Surface.FaceCount <= 1)
 					target = GL_TEXTURE_2D;
@@ -82,7 +82,7 @@ GLTextureView::GLTextureView(const GLTexture* texture, const TextureViewInformat
 	B3D_CHECK_GL_ERROR();
 #endif
 
-	mTarget = GLTexture::GetGlTextureTarget(props.GetTextureType(), props.GetNumSamples(), desc.Surface.FaceCount);
+	mTarget = GLTexture::GetGlTextureTarget(props.Type, props.SampleCount, desc.Surface.FaceCount);
 }
 
 GLTextureView::~GLTextureView()

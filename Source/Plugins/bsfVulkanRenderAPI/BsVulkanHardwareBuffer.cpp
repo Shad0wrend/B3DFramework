@@ -670,7 +670,7 @@ void VulkanHardwareBuffer::CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u3
 	else
 		vkCB = rapi.GetMainVulkanCommandBuffer()->GetInternal();
 
-	u32 deviceIdx = vkCB->GetDeviceIdx();
+	u32 deviceIdx = vkCB->GetDeviceIndex();
 
 	VulkanBuffer* src = vkSource.mBuffers[deviceIdx];
 	VulkanBuffer* dst = mBuffers[deviceIdx];

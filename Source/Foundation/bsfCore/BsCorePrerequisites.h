@@ -404,7 +404,7 @@ namespace bs
 	class VideoModeInfo;
 	struct SubMesh;
 	class IResourceListener;
-	class TextureProperties;
+	struct TextureProperties;
 	class IShaderIncludeHandler;
 	class Prefab;
 	class PrefabDiff;

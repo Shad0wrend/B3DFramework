@@ -54,7 +54,7 @@ SPtr<PooledRenderTexture> GpuResourcePool::Get(const POOLED_RENDER_TEXTURE_DESC&
 		{
 			rtDesc.ColorSurfaces[0].Texture = newTexture->Texture;
 			rtDesc.ColorSurfaces[0].Face = 0;
-			rtDesc.ColorSurfaces[0].NumFaces = newTexture->Texture->GetProperties().GetNumFaces();
+			rtDesc.ColorSurfaces[0].NumFaces = newTexture->Texture->GetProperties().GetFaceCount();
 			rtDesc.ColorSurfaces[0].MipLevel = 0;
 		}
 
@@ -62,7 +62,7 @@ SPtr<PooledRenderTexture> GpuResourcePool::Get(const POOLED_RENDER_TEXTURE_DESC&
 		{
 			rtDesc.DepthStencilSurface.Texture = newTexture->Texture;
 			rtDesc.DepthStencilSurface.Face = 0;
-			rtDesc.DepthStencilSurface.NumFaces = newTexture->Texture->GetProperties().GetNumFaces();
+			rtDesc.DepthStencilSurface.NumFaces = newTexture->Texture->GetProperties().GetFaceCount();
 			rtDesc.DepthStencilSurface.MipLevel = 0;
 		}
 
@@ -173,7 +173,7 @@ bool GpuResourcePool::Matches(const SPtr<Texture>& texture, const POOLED_RENDER_
 {
 	const TextureProperties& texProps = texture->GetProperties();
 
-	bool match = texProps.GetTextureType() == desc.type && texProps.GetFormat() == desc.format && texProps.GetWidth() == desc.width && texProps.GetHeight() == desc.height && (texProps.GetUsage() & desc.flag) == desc.flag && ((desc.type == TEX_TYPE_2D && texProps.IsHardwareGammaEnabled() == desc.hwGamma && texProps.GetNumSamples() == desc.numSamples) || (desc.type == TEX_TYPE_3D && texProps.GetDepth() == desc.depth) || (desc.type == TEX_TYPE_CUBE_MAP)) && texProps.GetNumArraySlices() == desc.arraySize && texProps.GetNumMipmaps() == desc.numMipLevels;
+	bool match = texProps.Type == desc.type && texProps.Format == desc.format && texProps.Width == desc.width && texProps.Height == desc.height && (texProps.Usage & desc.flag) == desc.flag && ((desc.type == TEX_TYPE_2D && texProps.UseHardwareSRGB == desc.hwGamma && texProps.SampleCount == desc.numSamples) || (desc.type == TEX_TYPE_3D && texProps.Depth == desc.depth) || (desc.type == TEX_TYPE_CUBE_MAP)) && texProps.ArraySliceCount == desc.arraySize && texProps.MipMapCount == desc.numMipLevels;
 
 	return match;
 }

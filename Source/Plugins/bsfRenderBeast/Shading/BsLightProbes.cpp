@@ -45,7 +45,7 @@ void TetrahedraRenderMat::Execute(const RendererView& view, const SPtr<Texture>&
 
 	const TextureProperties& texProps = sceneDepth->GetProperties();
 
-	Vector2I texSize(texProps.GetWidth(), texProps.GetHeight());
+	Vector2I texSize(texProps.Width, texProps.Height);
 	gTetrahedraRenderParamDef.gDepthTexSize.Set(mParamBuffer, texSize);
 
 	mDepthBufferTex.Set(sceneDepth);
@@ -272,7 +272,7 @@ void LightProbes::UpdateProbes()
 	for(auto& entry : mVolumes)
 	{
 		SPtr<Texture> localTexture = entry.Volume->GetCoefficientsTexture();
-		numRows += localTexture->GetProperties().GetHeight();
+		numRows += localTexture->GetProperties().Height;
 	}
 
 	if(numRows > mMaxCoefficientRows)
@@ -287,7 +287,7 @@ void LightProbes::UpdateProbes()
 		SPtr<Texture> localTexture = entry.Volume->GetCoefficientsTexture();
 		localTexture->Copy(mProbeCoefficientsGPU, copyDesc);
 
-		rowIdx += localTexture->GetProperties().GetHeight();
+		rowIdx += localTexture->GetProperties().Height;
 	}
 
 	// Gather all positions
@@ -320,7 +320,7 @@ void LightProbes::UpdateProbes()
 		}
 
 		SPtr<Texture> localTexture = entry.Volume->GetCoefficientsTexture();
-		rowIdx += localTexture->GetProperties().GetHeight();
+		rowIdx += localTexture->GetProperties().Height;
 		bufferOffset += (u32)positions.size();
 	}
 

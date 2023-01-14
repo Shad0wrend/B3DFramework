@@ -62,7 +62,7 @@ void DownsampleMat::Execute(const SPtr<Texture>& input, const SPtr<RenderTarget>
 	}
 	else
 	{
-		Vector2 invTextureSize(1.0f / rtProps.GetWidth(), 1.0f / rtProps.GetHeight());
+		Vector2 invTextureSize(1.0f / rtProps.Width, 1.0f / rtProps.Height);
 
 		gDownsampleParamDef.gOffsets.Set(mParamBuffer, invTextureSize * Vector2(-1.0f, -1.0f));
 		gDownsampleParamDef.gOffsets.Set(mParamBuffer, invTextureSize * Vector2(1.0f, -1.0f));
@@ -76,7 +76,7 @@ void DownsampleMat::Execute(const SPtr<Texture>& input, const SPtr<RenderTarget>
 	Bind();
 
 	if(MSAA)
-		GetRendererUtility().DrawScreenQuad(Rect2(0.0f, 0.0f, (float)rtProps.GetWidth(), (float)rtProps.GetHeight()));
+		GetRendererUtility().DrawScreenQuad(Rect2(0.0f, 0.0f, (float)rtProps.Width, (float)rtProps.Height));
 	else
 		GetRendererUtility().DrawScreenQuad();
 
@@ -87,10 +87,10 @@ POOLED_RENDER_TEXTURE_DESC DownsampleMat::GetOutputDesc(const SPtr<Texture>& tar
 {
 	const TextureProperties& rtProps = target->GetProperties();
 
-	u32 width = std::max(1, Math::CeilToInt(rtProps.GetWidth() * 0.5f));
-	u32 height = std::max(1, Math::CeilToInt(rtProps.GetHeight() * 0.5f));
+	u32 width = std::max(1, Math::CeilToInt(rtProps.Width * 0.5f));
+	u32 height = std::max(1, Math::CeilToInt(rtProps.Height * 0.5f));
 
-	return POOLED_RENDER_TEXTURE_DESC::Create2D(rtProps.GetFormat(), width, height, TU_RENDERTARGET);
+	return POOLED_RENDER_TEXTURE_DESC::Create2D(rtProps.Format, width, height, TU_RENDERTARGET);
 }
 
 DownsampleMat* DownsampleMat::GetVariation(u32 quality, bool msaa)
@@ -138,7 +138,7 @@ void EyeAdaptHistogramMat::Execute(const SPtr<Texture>& input, const SPtr<Textur
 	mSceneColor.Set(input);
 
 	const TextureProperties& props = input->GetProperties();
-	Vector4I offsetAndSize(0, 0, (i32)props.GetWidth(), (i32)props.GetHeight());
+	Vector4I offsetAndSize(0, 0, (i32)props.Width, (i32)props.Height);
 
 	gEyeAdaptHistogramParamDef.gHistogramParams.Set(mParamBuffer, GetHistogramScaleOffset(settings));
 	gEyeAdaptHistogramParamDef.gPixelOffsetAndSize.Set(mParamBuffer, offsetAndSize);
@@ -171,8 +171,8 @@ Vector2I EyeAdaptHistogramMat::GetThreadGroupCount(const SPtr<Texture>& target)
 	const TextureProperties& props = target->GetProperties();
 
 	Vector2I threadGroupCount;
-	threadGroupCount.X = ((i32)props.GetWidth() + texelsPerThreadGroupX - 1) / texelsPerThreadGroupX;
-	threadGroupCount.Y = ((i32)props.GetHeight() + texelsPerThreadGroupY - 1) / texelsPerThreadGroupY;
+	threadGroupCount.X = ((i32)props.Width + texelsPerThreadGroupX - 1) / texelsPerThreadGroupX;
+	threadGroupCount.Y = ((i32)props.Height + texelsPerThreadGroupY - 1) / texelsPerThreadGroupY;
 
 	return threadGroupCount;
 }
@@ -341,7 +341,7 @@ void EyeAdaptationBasicSetupMat::Execute(const SPtr<Texture>& input, const SPtr<
 POOLED_RENDER_TEXTURE_DESC EyeAdaptationBasicSetupMat::GetOutputDesc(const SPtr<Texture>& input)
 {
 	auto& props = input->GetProperties();
-	return POOLED_RENDER_TEXTURE_DESC::Create2D(PF_RGBA16F, props.GetWidth(), props.GetHeight(), TU_RENDERTARGET);
+	return POOLED_RENDER_TEXTURE_DESC::Create2D(PF_RGBA16F, props.Width, props.Height, TU_RENDERTARGET);
 }
 
 EyeAdaptationBasicParamsMatDef gEyeAdaptationBasicParamsMatDef;
@@ -372,7 +372,7 @@ void EyeAdaptationBasicMat::Execute(const SPtr<Texture>& curFrame, const SPtr<Te
 	EyeAdaptationMat::PopulateParams(mEyeAdaptationParamsBuffer, frameDelta, settings, exposureScale);
 
 	auto& texProps = curFrame->GetProperties();
-	Vector2I texSize = { (i32)texProps.GetWidth(), (i32)texProps.GetHeight() };
+	Vector2I texSize = { (i32)texProps.Width, (i32)texProps.Height };
 
 	gEyeAdaptationBasicParamsMatDef.gInputTexSize.Set(mParamsBuffer, texSize);
 
@@ -524,9 +524,9 @@ void TonemappingMat::Execute(const SPtr<Texture>& sceneColor, const SPtr<Texture
 
 	gTonemappingParamDef.gRawGamma.Set(mParamBuffer, 1.0f / settings.Gamma);
 	gTonemappingParamDef.gManualExposureScale.Set(mParamBuffer, Math::RaiseToPower(2.0f, settings.ExposureScale));
-	gTonemappingParamDef.gTexSize.Set(mParamBuffer, Vector2((float)texProps.GetWidth(), (float)texProps.GetHeight()));
+	gTonemappingParamDef.gTexSize.Set(mParamBuffer, Vector2((float)texProps.Width, (float)texProps.Height));
 	gTonemappingParamDef.gBloomTint.Set(mParamBuffer, settings.Bloom.Tint);
-	gTonemappingParamDef.gNumSamples.Set(mParamBuffer, texProps.GetNumSamples());
+	gTonemappingParamDef.gNumSamples.Set(mParamBuffer, texProps.SampleCount);
 
 	// Set parameters
 	mInputTex.Set(sceneColor);
@@ -743,7 +743,7 @@ void ChromaticAberrationMat::Execute(const SPtr<Texture>& input, const Chromatic
 	const TextureProperties& texProps = input->GetProperties();
 
 	// Set parameters
-	gChromaticAberrationParamDef.gInputSize.Set(mParamBuffer, Vector2((float)texProps.GetWidth(), (float)texProps.GetHeight()));
+	gChromaticAberrationParamDef.gInputSize.Set(mParamBuffer, Vector2((float)texProps.Width, (float)texProps.Height));
 
 	gChromaticAberrationParamDef.gShiftAmount.Set(mParamBuffer, settings.ShiftAmount);
 
@@ -831,7 +831,7 @@ void GaussianBlurMat::Execute(const SPtr<Texture>& source, float filterSize, con
 	const TextureProperties& srcProps = source->GetProperties();
 	const RenderTextureProperties& dstProps = destination->GetProperties();
 
-	POOLED_RENDER_TEXTURE_DESC tempTextureDesc = POOLED_RENDER_TEXTURE_DESC::Create2D(srcProps.GetFormat(), dstProps.Width, dstProps.Height, TU_RENDERTARGET);
+	POOLED_RENDER_TEXTURE_DESC tempTextureDesc = POOLED_RENDER_TEXTURE_DESC::Create2D(srcProps.Format, dstProps.Width, dstProps.Height, TU_RENDERTARGET);
 	SPtr<PooledRenderTexture> tempTexture = GetGpuResourcePool().Get(tempTextureDesc);
 
 	// Horizontal pass
@@ -946,9 +946,9 @@ float GaussianBlurMat::CalcKernelRadius(const SPtr<Texture>& source, float scale
 
 	u32 length;
 	if(filterDir == DirHorizontal)
-		length = source->GetProperties().GetWidth();
+		length = source->GetProperties().Width;
 	else
-		length = source->GetProperties().GetHeight();
+		length = source->GetProperties().Height;
 
 	// Divide by two because we need the radius
 	return std::min(length * scale / 2, (float)kMaxBlurSamples - 1);
@@ -958,7 +958,7 @@ void GaussianBlurMat::PopulateBuffer(const SPtr<GpuParamBlockBuffer>& buffer, Di
 {
 	const TextureProperties& srcProps = source->GetProperties();
 
-	Vector2 invTexSize(1.0f / srcProps.GetWidth(), 1.0f / srcProps.GetHeight());
+	Vector2 invTexSize(1.0f / srcProps.Width, 1.0f / srcProps.Height);
 
 	std::array<float, kMaxBlurSamples> sampleOffsets;
 	std::array<float, kMaxBlurSamples> sampleWeights;
@@ -1038,10 +1038,10 @@ void GaussianDOFSeparateMat::Execute(const SPtr<Texture>& color, const SPtr<Text
 
 	const TextureProperties& srcProps = color->GetProperties();
 
-	u32 outputWidth = std::max(1U, srcProps.GetWidth() / 2);
-	u32 outputHeight = std::max(1U, srcProps.GetHeight() / 2);
+	u32 outputWidth = std::max(1U, srcProps.Width / 2);
+	u32 outputHeight = std::max(1U, srcProps.Height / 2);
 
-	POOLED_RENDER_TEXTURE_DESC outputTexDesc = POOLED_RENDER_TEXTURE_DESC::Create2D(srcProps.GetFormat(), outputWidth, outputHeight, TU_RENDERTARGET);
+	POOLED_RENDER_TEXTURE_DESC outputTexDesc = POOLED_RENDER_TEXTURE_DESC::Create2D(srcProps.Format, outputWidth, outputHeight, TU_RENDERTARGET);
 	mOutput0 = GetGpuResourcePool().Get(outputTexDesc);
 
 	bool near = mVariation.GetBool("NEAR");
@@ -1061,7 +1061,7 @@ void GaussianDOFSeparateMat::Execute(const SPtr<Texture>& color, const SPtr<Text
 	else
 		rt = mOutput0->RenderTexture;
 
-	Vector2 invTexSize(1.0f / srcProps.GetWidth(), 1.0f / srcProps.GetHeight());
+	Vector2 invTexSize(1.0f / srcProps.Width, 1.0f / srcProps.Height);
 
 	gGaussianDOFParamDef.gHalfPixelOffset.Set(mParamBuffer, invTexSize * 0.5f);
 	gGaussianDOFParamDef.gNearBlurPlane.Set(mParamBuffer, settings.FocalDistance - settings.FocalRange * 0.5f);
@@ -1133,7 +1133,7 @@ void GaussianDOFCombineMat::Execute(const SPtr<Texture>& focused, const SPtr<Tex
 
 	const TextureProperties& srcProps = focused->GetProperties();
 
-	Vector2 invTexSize(1.0f / srcProps.GetWidth(), 1.0f / srcProps.GetHeight());
+	Vector2 invTexSize(1.0f / srcProps.Width, 1.0f / srcProps.Height);
 
 	gGaussianDOFParamDef.gHalfPixelOffset.Set(mParamBuffer, invTexSize * 0.5f);
 	gGaussianDOFParamDef.gNearBlurPlane.Set(mParamBuffer, settings.FocalDistance - settings.FocalRange * 0.5f);
@@ -1190,7 +1190,7 @@ void BokehDOFPrepareMat::Execute(const SPtr<Texture>& input, const SPtr<Texture>
 
 	const TextureProperties& srcProps = input->GetProperties();
 
-	Vector2 invTexSize(1.0f / srcProps.GetWidth(), 1.0f / srcProps.GetHeight());
+	Vector2 invTexSize(1.0f / srcProps.Width, 1.0f / srcProps.Height);
 	gBokehDOFPrepareParamDef.gInvInputSize.Set(mParamBuffer, invTexSize);
 
 	BokehDOFMat::PopulateDofCommonParams(mCommonParamBuffer, settings, view);
@@ -1208,7 +1208,7 @@ void BokehDOFPrepareMat::Execute(const SPtr<Texture>& input, const SPtr<Texture>
 
 	bool MSAA = mVariation.GetInt("MSAA_COUNT") > 1;
 	if(MSAA)
-		GetRendererUtility().DrawScreenQuad(Rect2(0.0f, 0.0f, (float)srcProps.GetWidth(), (float)srcProps.GetHeight()));
+		GetRendererUtility().DrawScreenQuad(Rect2(0.0f, 0.0f, (float)srcProps.Width, (float)srcProps.Height));
 	else
 		GetRendererUtility().DrawScreenQuad();
 }
@@ -1217,8 +1217,8 @@ POOLED_RENDER_TEXTURE_DESC BokehDOFPrepareMat::GetOutputDesc(const SPtr<Texture>
 {
 	const TextureProperties& rtProps = target->GetProperties();
 
-	u32 width = std::max(1U, Math::DivideAndRoundUp(rtProps.GetWidth(), 2U));
-	u32 height = std::max(1U, Math::DivideAndRoundUp(rtProps.GetHeight(), 2U));
+	u32 width = std::max(1U, Math::DivideAndRoundUp(rtProps.Width, 2U));
+	u32 height = std::max(1U, Math::DivideAndRoundUp(rtProps.Height, 2U));
 
 	return POOLED_RENDER_TEXTURE_DESC::Create2D(PF_RGBA16F, width, height, TU_RENDERTARGET);
 }
@@ -1320,19 +1320,19 @@ void BokehDOFMat::Execute(const SPtr<Texture>& input, const RendererView& view, 
 	const TextureProperties& srcProps = input->GetProperties();
 	const RenderTargetProperties& dstProps = output->GetProperties();
 
-	Vector2 inputInvTexSize(1.0f / srcProps.GetWidth(), 1.0f / srcProps.GetHeight());
+	Vector2 inputInvTexSize(1.0f / srcProps.Width, 1.0f / srcProps.Height);
 	Vector2 outputInvTexSize(1.0f / dstProps.Width, 1.0f / dstProps.Height);
 	gBokehDOFParamDef.gInvInputSize.Set(mParamBuffer, inputInvTexSize);
 	gBokehDOFParamDef.gInvOutputSize.Set(mParamBuffer, outputInvTexSize);
 	gBokehDOFParamDef.gAdaptiveThresholdCOC.Set(mParamBuffer, settings.AdaptiveRadiusThreshold);
 	gBokehDOFParamDef.gAdaptiveThresholdColor.Set(mParamBuffer, settings.AdaptiveColorThreshold);
-	gBokehDOFParamDef.gLayerPixelOffset.Set(mParamBuffer, (i32)srcProps.GetHeight() + (i32)kNearFarPadding);
+	gBokehDOFParamDef.gLayerPixelOffset.Set(mParamBuffer, (i32)srcProps.Height + (i32)kNearFarPadding);
 	gBokehDOFParamDef.gInvDepthRange.Set(mParamBuffer, 1.0f / settings.OcclusionDepthRange);
 
-	float bokehSize = settings.MaxBokehSize * srcProps.GetWidth();
+	float bokehSize = settings.MaxBokehSize * srcProps.Width;
 	gBokehDOFParamDef.gBokehSize.Set(mParamBuffer, Vector2(bokehSize, bokehSize));
 
-	Vector2I imageSize(srcProps.GetWidth(), srcProps.GetHeight());
+	Vector2I imageSize(srcProps.Width, srcProps.Height);
 
 	// TODO - Allow tile count to halve (i.e. half sampling rate)
 	Vector2I tileCount = imageSize / 1;
@@ -1370,8 +1370,8 @@ POOLED_RENDER_TEXTURE_DESC BokehDOFMat::GetOutputDesc(const SPtr<Texture>& targe
 {
 	const TextureProperties& rtProps = target->GetProperties();
 
-	u32 width = rtProps.GetWidth();
-	u32 height = rtProps.GetHeight() * 2 + kNearFarPadding;
+	u32 width = rtProps.Width;
+	u32 height = rtProps.Height * 2 + kNearFarPadding;
 
 	return POOLED_RENDER_TEXTURE_DESC::Create2D(PF_RGBA16F, width, height, TU_RENDERTARGET);
 }
@@ -1431,13 +1431,13 @@ void BokehDOFCombineMat::Execute(const SPtr<Texture>& unfocused, const SPtr<Text
 
 	const TextureProperties& focusedProps = focused->GetProperties();
 	const TextureProperties& unfocusedProps = unfocused->GetProperties();
-	u32 halfHeight = std::max(1U, Math::DivideAndRoundUp(focusedProps.GetHeight(), 2U));
+	u32 halfHeight = std::max(1U, Math::DivideAndRoundUp(focusedProps.Height, 2U));
 
-	float uvScale = halfHeight / (float)unfocusedProps.GetHeight();
-	float uvOffset = (halfHeight + BokehDOFMat::kNearFarPadding) / (float)unfocusedProps.GetHeight();
+	float uvScale = halfHeight / (float)unfocusedProps.Height;
+	float uvOffset = (halfHeight + BokehDOFMat::kNearFarPadding) / (float)unfocusedProps.Height;
 
 	Vector2 layerScaleOffset(uvScale, uvOffset);
-	Vector2 focusedImageSize((float)focusedProps.GetWidth(), (float)focusedProps.GetHeight());
+	Vector2 focusedImageSize((float)focusedProps.Width, (float)focusedProps.Height);
 	gBokehDOFCombineParamDef.gLayerAndScaleOffset.Set(mParamBuffer, layerScaleOffset);
 	gBokehDOFCombineParamDef.gFocusedImageSize.Set(mParamBuffer, focusedImageSize);
 
@@ -1562,8 +1562,8 @@ void BuildHiZMat::Execute(const SPtr<Texture>& source, u32 srcMip, const Rect2& 
 		mInputTexture.Set(source);
 
 		auto& props = source->GetProperties();
-		float pixelWidth = (float)props.GetWidth();
-		float pixelHeight = (float)props.GetHeight();
+		float pixelWidth = (float)props.Width;
+		float pixelHeight = (float)props.Height;
 
 		Vector2 halfPixelOffset(0.5f / pixelWidth, 0.5f / pixelHeight);
 
@@ -1606,7 +1606,7 @@ void FXAAMat::Execute(const SPtr<Texture>& source, const SPtr<RenderTarget>& des
 
 	const TextureProperties& srcProps = source->GetProperties();
 
-	Vector2 invTexSize(1.0f / srcProps.GetWidth(), 1.0f / srcProps.GetHeight());
+	Vector2 invTexSize(1.0f / srcProps.Width, 1.0f / srcProps.Height);
 	gFXAAParamDef.gInvTexSize.Set(mParamBuffer, invTexSize);
 
 	mInputTexture.Set(source);
@@ -1733,16 +1733,16 @@ void SSAOMat::Execute(const RendererView& view, const SSAOTextureInputs& texture
 		const TextureProperties& props = textures.AoDownsampled->GetProperties();
 
 		Vector2 downsampledPixelSize;
-		downsampledPixelSize.X = 1.0f / props.GetWidth();
-		downsampledPixelSize.Y = 1.0f / props.GetHeight();
+		downsampledPixelSize.X = 1.0f / props.Width;
+		downsampledPixelSize.Y = 1.0f / props.Height;
 
 		gSSAOParamDef.gDownsampledPixelSize.Set(mParamBuffer, downsampledPixelSize);
 	}
 
 	// Generate a scale which we need to use in order to achieve tiling
 	const TextureProperties& rndProps = textures.RandomRotations->GetProperties();
-	u32 rndWidth = rndProps.GetWidth();
-	u32 rndHeight = rndProps.GetHeight();
+	u32 rndWidth = rndProps.Width;
+	u32 rndHeight = rndProps.Height;
 
 	//// Multiple of random texture size, rounded up
 	u32 scaleWidth = (rtProps.Width + rndWidth - 1) / rndWidth;
@@ -1900,8 +1900,8 @@ void SSAOBlurMat::Execute(const RendererView& view, const SPtr<Texture>& ao, con
 	const TextureProperties& texProps = ao->GetProperties();
 
 	Vector2 pixelSize;
-	pixelSize.X = 1.0f / texProps.GetWidth();
-	pixelSize.Y = 1.0f / texProps.GetHeight();
+	pixelSize.X = 1.0f / texProps.Width;
+	pixelSize.Y = 1.0f / texProps.Height;
 
 	Vector2 pixelOffset(BsZero);
 	if(mVariation.GetBool("DIR_HORZ"))
@@ -1909,7 +1909,7 @@ void SSAOBlurMat::Execute(const RendererView& view, const SPtr<Texture>& ao, con
 	else
 		pixelOffset.Y = pixelSize.Y;
 
-	float scale = viewProps.Target.ViewRect.Width / (float)texProps.GetWidth();
+	float scale = viewProps.Target.ViewRect.Width / (float)texProps.Width;
 
 	gSSAOBlurParamDef.gPixelSize.Set(mParamBuffer, pixelSize);
 	gSSAOBlurParamDef.gPixelOffset.Set(mParamBuffer, pixelOffset);
@@ -2036,15 +2036,15 @@ void SSRTraceMat::Execute(const RendererView& view, GBufferTextures gbuffer, con
 		ndcToHiZUV.Y = -ndcToHiZUV.Y;
 
 	// Maps from [0, 1] to area of HiZ where depth is stored in
-	ndcToHiZUV.X *= (float)viewRect.Width / hiZProps.GetWidth();
-	ndcToHiZUV.Y *= (float)viewRect.Height / hiZProps.GetHeight();
-	ndcToHiZUV.Z *= (float)viewRect.Width / hiZProps.GetWidth();
-	ndcToHiZUV.W *= (float)viewRect.Height / hiZProps.GetHeight();
+	ndcToHiZUV.X *= (float)viewRect.Width / hiZProps.Width;
+	ndcToHiZUV.Y *= (float)viewRect.Height / hiZProps.Height;
+	ndcToHiZUV.Z *= (float)viewRect.Width / hiZProps.Width;
+	ndcToHiZUV.W *= (float)viewRect.Height / hiZProps.Height;
 
 	// Maps from HiZ UV to [0, 1] UV
 	Vector2 HiZUVToScreenUV;
-	HiZUVToScreenUV.X = hiZProps.GetWidth() / (float)viewRect.Width;
-	HiZUVToScreenUV.Y = hiZProps.GetHeight() / (float)viewRect.Height;
+	HiZUVToScreenUV.X = hiZProps.Width / (float)viewRect.Width;
+	HiZUVToScreenUV.Y = hiZProps.Height / (float)viewRect.Height;
 
 	// Used for roughness fading
 	Vector2 roughnessScaleBias = CalcRoughnessFadeScaleBias(settings.MaxRoughness);
@@ -2053,7 +2053,7 @@ void SSRTraceMat::Execute(const RendererView& view, GBufferTextures gbuffer, con
 
 	Vector2I bufferSize(viewRect.Width, viewRect.Height);
 	gSSRTraceParamDef.gHiZSize.Set(mParamBuffer, bufferSize);
-	gSSRTraceParamDef.gHiZNumMips.Set(mParamBuffer, hiZProps.GetNumMipmaps());
+	gSSRTraceParamDef.gHiZNumMips.Set(mParamBuffer, hiZProps.MipMapCount);
 	gSSRTraceParamDef.gNDCToHiZUV.Set(mParamBuffer, ndcToHiZUV);
 	gSSRTraceParamDef.gHiZUVToScreenUV.Set(mParamBuffer, HiZUVToScreenUV);
 	gSSRTraceParamDef.gIntensity.Set(mParamBuffer, settings.Intensity);
@@ -2184,14 +2184,14 @@ void TemporalFilteringMat::Execute(const RendererView& view, const SPtr<Texture>
 	auto& colorProps = curFrame->GetProperties(); // Assuming prev and current frame are the same size
 	auto& depthProps = sceneDepth->GetProperties();
 
-	Vector4 colorPixelSize(1.0f / colorProps.GetWidth(), 1.0f / colorProps.GetHeight(), (float)colorProps.GetWidth(), (float)colorProps.GetHeight());
-	Vector4 depthPixelSize(1.0f / depthProps.GetWidth(), 1.0f / depthProps.GetHeight(), (float)depthProps.GetWidth(), (float)depthProps.GetHeight());
+	Vector4 colorPixelSize(1.0f / colorProps.Width, 1.0f / colorProps.Height, (float)colorProps.Width, (float)colorProps.Height);
+	Vector4 depthPixelSize(1.0f / depthProps.Width, 1.0f / depthProps.Height, (float)depthProps.Width, (float)depthProps.Height);
 
 	Vector4 velocityPixelSize(1.0f, 1.0f, 1.0f, 1.0f);
 	if(mHasVelocityTexture)
 	{
 		auto& velocityProps = velocityTex->GetProperties();
-		velocityPixelSize = Vector4(1.0f / velocityProps.GetWidth(), 1.0f / velocityProps.GetHeight(), (float)velocityProps.GetWidth(), (float)velocityProps.GetHeight());
+		velocityPixelSize = Vector4(1.0f / velocityProps.Width, 1.0f / velocityProps.Height, (float)velocityProps.Width, (float)velocityProps.Height);
 	}
 
 	gTemporalFilteringParamDef.gSceneColorTexelSize.Set(mParamBuffer, colorPixelSize);

@@ -41,22 +41,22 @@ NullTexture::~NullTexture()
 	ClearBufferViews();
 }
 
-PixelData NullTexture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
+PixelData NullTexture::LockInternal(GpuLockOptions options, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
 {
-	u32 mipWidth = std::max(1u, mProperties.GetWidth() >> mipLevel);
-	u32 mipHeight = std::max(1u, mProperties.GetHeight() >> mipLevel);
-	u32 mipDepth = std::max(1u, mProperties.GetDepth() >> mipLevel);
+	u32 mipWidth = std::max(1u, mProperties.Width >> mipLevel);
+	u32 mipHeight = std::max(1u, mProperties.Height >> mipLevel);
+	u32 mipDepth = std::max(1u, mProperties.Depth >> mipLevel);
 
-	mMappedBuffer = B3DNew<PixelData>(mipWidth, mipHeight, mipDepth, mProperties.GetFormat());
+	mMappedBuffer = B3DNew<PixelData>(mipWidth, mipHeight, mipDepth, mProperties.Format);
 	mMappedBuffer->AllocateInternalBuffer();
 
-	PixelData output(mipWidth, mipHeight, mipDepth, mProperties.GetFormat());
+	PixelData output(mipWidth, mipHeight, mipDepth, mProperties.Format);
 	output.SetExternalBuffer(mMappedBuffer->GetData());
 
 	return output;
 }
 
-void NullTexture::UnlockImpl()
+void NullTexture::UnlockInternal()
 {
 	B3DDelete(mMappedBuffer);
 	mMappedBuffer = nullptr;

@@ -20,13 +20,13 @@ static VulkanImageCreateInformation BuildImageCreateInformation(VkImage image, V
 	VulkanImageCreateInformation desc;
 	desc.Image = image;
 	desc.Allocation = allocation;
-	desc.Type = props.GetTextureType();
+	desc.Type = props.Type;
 	desc.Format = actualFormat;
-	desc.FaceCount = props.GetNumFaces();
-	desc.DepthSliceCount = props.GetDepth();
-	desc.MipLevelCount = props.GetNumMipmaps() + 1;
+	desc.FaceCount = props.GetFaceCount();
+	desc.DepthSliceCount = props.Depth;
+	desc.MipLevelCount = props.MipMapCount + 1;
 	desc.Layout = layout;
-	desc.Usage = (u32)props.GetUsage();
+	desc.Usage = (u32)props.Usage;
 
 	return desc;
 }
@@ -707,7 +707,7 @@ void VulkanTexture::Initialize()
 	mImageCI.pNext = nullptr;
 	mImageCI.flags = 0;
 
-	TextureType texType = props.GetTextureType();
+	TextureType texType = props.Type;
 	switch(texType)
 	{
 	case TEX_TYPE_1D:
@@ -719,7 +719,7 @@ void VulkanTexture::Initialize()
 	case TEX_TYPE_3D:
 		mImageCI.imageType = VK_IMAGE_TYPE_3D;
 
-		if((mProperties.GetUsage() & TU_RENDERTARGET) != 0)
+		if((mProperties.Usage & TU_RENDERTARGET) != 0)
 			mImageCI.flags |= VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT;
 
 		break;
@@ -734,7 +734,7 @@ void VulkanTexture::Initialize()
 
 	mImageCI.usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 
-	int usage = props.GetUsage();
+	int usage = props.Usage;
 	if((usage & TU_RENDERTARGET) != 0)
 	{
 		mImageCI.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
@@ -759,8 +759,8 @@ void VulkanTexture::Initialize()
 		// Only support 2D textures, with one sample and one mip level, only used for shader reads
 		// (Optionally check vkGetPhysicalDeviceFormatProperties & vkGetPhysicalDeviceImageFormatProperties for
 		// additional supported configs, but right now there doesn't seem to be any additional support)
-		if(texType == TEX_TYPE_2D && props.GetNumSamples() <= 1 && props.GetNumMipmaps() == 0 &&
-		   props.GetNumFaces() == 1 && (mImageCI.usage & VK_IMAGE_USAGE_SAMPLED_BIT) != 0)
+		if(texType == TEX_TYPE_2D && props.SampleCount <= 1 && props.MipMapCount == 0 &&
+		   props.GetFaceCount() == 1 && (mImageCI.usage & VK_IMAGE_USAGE_SAMPLED_BIT) != 0)
 		{
 			// Also, only support normal textures, not render targets or storage textures
 			if(!mSupportsGPUWrites)
@@ -775,9 +775,9 @@ void VulkanTexture::Initialize()
 	if((usage & TU_MUTABLEFORMAT) != 0)
 		mImageCI.flags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
 
-	u32 width = mProperties.GetWidth();
-	u32 height = mProperties.GetHeight();
-	u32 depth = mProperties.GetDepth();
+	u32 width = mProperties.Width;
+	u32 height = mProperties.Height;
+	u32 depth = mProperties.Depth;
 
 	// 0-sized textures aren't supported by the API
 	width = std::max(width, 1U);
@@ -785,9 +785,9 @@ void VulkanTexture::Initialize()
 	depth = std::max(depth, 1U);
 
 	mImageCI.extent = { width, height, depth };
-	mImageCI.mipLevels = props.GetNumMipmaps() + 1;
-	mImageCI.arrayLayers = props.GetNumFaces();
-	mImageCI.samples = VulkanUtility::GetSampleFlags(props.GetNumSamples());
+	mImageCI.mipLevels = props.MipMapCount + 1;
+	mImageCI.arrayLayers = props.GetFaceCount();
+	mImageCI.samples = VulkanUtility::GetSampleFlags(props.SampleCount);
 	mImageCI.tiling = tiling;
 	mImageCI.initialLayout = layout;
 	mImageCI.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
@@ -807,8 +807,8 @@ void VulkanTexture::Initialize()
 		bool optimalTiling = tiling == VK_IMAGE_TILING_OPTIMAL;
 
 		mInternalFormats[i] = VulkanUtility::GetClosestSupportedPixelFormat(
-			*devices[i], props.GetFormat(), props.GetTextureType(), props.GetUsage(), optimalTiling,
-			props.IsHardwareGammaEnabled());
+			*devices[i], props.Format, props.Type, props.Usage, optimalTiling,
+			props.UseHardwareSRGB);
 
 		mImages[i] = CreateImage(*devices[i], mInternalFormats[i]);
 	}
@@ -837,7 +837,7 @@ VulkanImage* VulkanTexture::CreateImage(VulkanDevice& device, PixelFormat format
 
 	VkDevice vkDevice = device.GetLogical();
 
-	mImageCI.format = VulkanUtility::GetPixelFormat(format, mProperties.IsHardwareGammaEnabled());
+	mImageCI.format = VulkanUtility::GetPixelFormat(format, mProperties.UseHardwareSRGB);
 	;
 
 	VkImage image;
@@ -897,12 +897,12 @@ VulkanBuffer* VulkanTexture::CreateStaging(VulkanDevice& device, const PixelData
 
 void VulkanTexture::CopyImageToImage(VulkanInternalCommandBuffer* commandBuffer, VulkanImage* sourceImage, VulkanImage* destinationImage)
 {
-	const u32 faceCount = mProperties.GetNumFaces();
-	const u32 mipCount = mProperties.GetNumMipmaps() + 1;
+	const u32 faceCount = mProperties.GetFaceCount();
+	const u32 mipCount = mProperties.MipMapCount + 1;
 
-	u32 mipWidth = mProperties.GetWidth();
-	u32 mipHeight = mProperties.GetHeight();
-	u32 mipDepth = mProperties.GetDepth();
+	u32 mipWidth = mProperties.Width;
+	u32 mipHeight = mProperties.Height;
+	u32 mipDepth = mProperties.Depth;
 
 	VkImageCopy *const imageRegions = B3DStackAllocate<VkImageCopy>(mipCount);
 
@@ -961,22 +961,22 @@ ImageSubresourcePitch VulkanTexture::GetPitchForSubresource(VulkanImage* image, 
 	else
 	{
 		u32 mipWidth, mipHeight, mipDepth;
-		PixelUtil::GetSizeForMipLevel(mProperties.GetWidth(), mProperties.GetHeight(), mProperties.GetDepth(), mipLevel, mipWidth, mipHeight, mipDepth);
+		PixelUtil::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, mipLevel, mipWidth, mipHeight, mipDepth);
 
 		u32 rowPitch, depthPitch;
-		PixelUtil::GetPitch(mipWidth, mipHeight, mipDepth, mProperties.GetFormat(), rowPitch, depthPitch);
+		PixelUtil::GetPitch(mipWidth, mipHeight, mipDepth, mProperties.Format, rowPitch, depthPitch);
 
 		subresourceLayout.rowPitch = rowPitch;
 		subresourceLayout.depthPitch = depthPitch;
 	}
 
-	return VulkanImage::ConvertSubresourceLayoutToBlocks(subresourceLayout, mProperties.GetFormat());
+	return VulkanImage::ConvertSubresourceLayoutToBlocks(subresourceLayout, mProperties.Format);
 }
 
 void VulkanTexture::CopyImageSubresourceToBuffer(VulkanInternalCommandBuffer* commandBuffer, VulkanImage* sourceImage, u32 sourceFace, u32 sourceMipLevel, VulkanBuffer* destinationBuffer, bool isBufferReadOnly)
 {
 	VkExtent3D extent;
-	PixelUtil::GetSizeForMipLevel(mProperties.GetWidth(), mProperties.GetHeight(), mProperties.GetDepth(), sourceMipLevel, extent.width, extent.height, extent.depth);
+	PixelUtil::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, sourceMipLevel, extent.width, extent.height, extent.depth);
 
 	const ImageSubresourcePitch pitch = GetPitchForSubresource(sourceImage, sourceFace, sourceMipLevel);
 
@@ -986,7 +986,7 @@ void VulkanTexture::CopyImageSubresourceToBuffer(VulkanInternalCommandBuffer* co
 	subresourceRange.baseMipLevel = sourceMipLevel;
 	subresourceRange.levelCount = 1;
 
-	if((mProperties.GetUsage() & TU_DEPTHSTENCIL) != 0)
+	if((mProperties.Usage & TU_DEPTHSTENCIL) != 0)
 		subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 	else
 		subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -997,31 +997,45 @@ void VulkanTexture::CopyImageSubresourceToBuffer(VulkanInternalCommandBuffer* co
 	commandBuffer->MemoryBarrier(destinationBuffer->GetHandle(), VK_ACCESS_TRANSFER_WRITE_BIT, stagingAccessFlags, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_HOST_BIT);
 }
 
-void VulkanTexture::CopyImpl(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation, const SPtr<CommandBuffer>& commandBuffer)
+void VulkanTexture::CopyInternal(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation, const SPtr<CommandBuffer>& commandBuffer)
 {
 	VulkanTexture* other = static_cast<VulkanTexture*>(target.get());
 
-	const TextureProperties& srcProps = mProperties;
-	const TextureProperties& dstProps = other->GetProperties();
+	const TextureProperties& sourceProperties = mProperties;
+	const TextureProperties& destinationProperties = other->GetProperties();
 
-	bool srcHasMultisample = srcProps.GetNumSamples() > 1;
-	bool destHasMultisample = dstProps.GetNumSamples() > 1;
+	const bool sourceHasMultipleSamples = sourceProperties.SampleCount > 1;
+	const bool destinationHasMultipleSamples = destinationProperties.SampleCount > 1;
 
-	if((srcProps.GetUsage() & TU_DEPTHSTENCIL) != 0 || (dstProps.GetUsage() & TU_DEPTHSTENCIL) != 0)
+	if((sourceProperties.Usage & TU_DEPTHSTENCIL) != 0 || (destinationProperties.Usage & TU_DEPTHSTENCIL) != 0)
 	{
 		B3D_LOG(Error, RenderBackend, "Texture copy/resolve isn't supported for depth-stencil textures.");
 		return;
 	}
 
-	bool needsResolve = srcHasMultisample && !destHasMultisample;
-	bool isMSCopy = srcHasMultisample || destHasMultisample;
+	bool needsResolve = sourceHasMultipleSamples && !destinationHasMultipleSamples;
+	bool isMSCopy = sourceHasMultipleSamples || destinationHasMultipleSamples;
 	if(!needsResolve && isMSCopy)
 	{
-		if(srcProps.GetNumSamples() != dstProps.GetNumSamples())
+		if(sourceProperties.SampleCount != destinationProperties.SampleCount)
 		{
 			B3D_LOG(Error, RenderBackend, "When copying textures their multisample counts must match. Ignoring copy.");
 			return;
 		}
+	}
+
+	VulkanRenderAPI& renderAPI = GetVulkanRenderAPI();
+	VulkanInternalCommandBuffer* internalCommandBuffer = nullptr;
+	if (commandBuffer != nullptr)
+		internalCommandBuffer = static_cast<VulkanCommandBuffer*>(commandBuffer.get())->GetInternal();
+	else
+		internalCommandBuffer = renderAPI.GetMainVulkanCommandBuffer()->GetInternal();
+
+	const u32 deviceIndex = internalCommandBuffer->GetDeviceIndex();
+	if (mInternalFormats[deviceIndex] != other->mInternalFormats[deviceIndex])
+	{
+		B3D_LOG(Error, Texture, "Cannot perform texture copy. Source and destination texture formats must match.");
+		return;
 	}
 
 	VkImageLayout transferSourceLayout = mDirectlyMappable ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
@@ -1036,9 +1050,9 @@ void VulkanTexture::CopyImpl(const SPtr<Texture>& target, const TextureCopyInfor
 	if(copyEntireSurface)
 	{
 		PixelUtil::GetSizeForMipLevel(
-			srcProps.GetWidth(),
-			srcProps.GetHeight(),
-			srcProps.GetDepth(),
+			sourceProperties.Width,
+			sourceProperties.Height,
+			sourceProperties.Depth,
 			copyInformation.SourceMip,
 			mipWidth,
 			mipHeight,
@@ -1057,52 +1071,42 @@ void VulkanTexture::CopyImpl(const SPtr<Texture>& target, const TextureCopyInfor
 	VkImageSubresourceRange sourceRange;
 	sourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	sourceRange.baseArrayLayer = copyInformation.SourceFace;
-	sourceRange.layerCount = 1;
+	sourceRange.layerCount = copyInformation.FaceCount;
 	sourceRange.baseMipLevel = copyInformation.SourceMip;
 	sourceRange.levelCount = 1;
 
 	VkImageSubresourceRange destinationRange;
 	destinationRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	destinationRange.baseArrayLayer = copyInformation.DestinationFace;
-	destinationRange.layerCount = 1;
+	destinationRange.layerCount = copyInformation.FaceCount;
 	destinationRange.baseMipLevel = copyInformation.DestinationMip;
 	destinationRange.levelCount = 1;
 
-	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-
-	VulkanInternalCommandBuffer* vkCB;
-	if(commandBuffer != nullptr)
-		vkCB = static_cast<VulkanCommandBuffer*>(commandBuffer.get())->GetInternal();
-	else
-		vkCB = rapi.GetMainVulkanCommandBuffer()->GetInternal();
-
-	u32 deviceIdx = vkCB->GetDeviceIdx();
-
-	VulkanImage* sourceImage = mImages[deviceIdx];
-	VulkanImage* destinationImage = other->GetResource(deviceIdx);
+	VulkanImage* sourceImage = mImages[deviceIndex];
+	VulkanImage* destinationImage = other->GetResource(deviceIndex);
 
 	if(sourceImage == nullptr || destinationImage == nullptr)
 		return;
 
-	if(vkCB->IsInRenderPass())
-		vkCB->EndRenderPass(true);
+	if(internalCommandBuffer->IsInRenderPass())
+		internalCommandBuffer->EndRenderPass(true);
 
-	if(srcHasMultisample && !destHasMultisample) // Resolving from MS to non-MS texture
+	if(sourceHasMultipleSamples && !destinationHasMultipleSamples) // Resolving from MS to non-MS texture
 	{
 		VkImageResolve resolveRegion;
 		resolveRegion.srcOffset = { (i32)copyInformation.SourceVolume.Left, (i32)copyInformation.SourceVolume.Top, (i32)copyInformation.SourceVolume.Front };
 		resolveRegion.dstOffset = { copyInformation.DestinationPosition.X, copyInformation.DestinationPosition.Y, copyInformation.DestinationPosition.Z };
 		resolveRegion.extent = { mipWidth, mipHeight, mipDepth };
 		resolveRegion.srcSubresource.baseArrayLayer = copyInformation.SourceFace;
-		resolveRegion.srcSubresource.layerCount = 1;
+		resolveRegion.srcSubresource.layerCount = copyInformation.FaceCount;
 		resolveRegion.srcSubresource.mipLevel = copyInformation.SourceMip;
 		resolveRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 		resolveRegion.dstSubresource.baseArrayLayer = copyInformation.DestinationFace;
-		resolveRegion.dstSubresource.layerCount = 1;
+		resolveRegion.dstSubresource.layerCount = copyInformation.FaceCount;
 		resolveRegion.dstSubresource.mipLevel = copyInformation.DestinationMip;
 		resolveRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
-		vkCB->Resolve(sourceImage, destinationImage, transferSourceLayout, transferDestinationLayout, sourceRange, destinationRange, 1, &resolveRegion);
+		internalCommandBuffer->Resolve(sourceImage, destinationImage, transferSourceLayout, transferDestinationLayout, sourceRange, destinationRange, 1, &resolveRegion);
 	}
 	else // Just a normal copy
 	{
@@ -1111,23 +1115,135 @@ void VulkanTexture::CopyImpl(const SPtr<Texture>& target, const TextureCopyInfor
 		imageRegion.dstOffset = { copyInformation.DestinationPosition.X, copyInformation.DestinationPosition.Y, copyInformation.DestinationPosition.Z };
 		imageRegion.extent = { mipWidth, mipHeight, mipDepth };
 		imageRegion.srcSubresource.baseArrayLayer = copyInformation.SourceFace;
-		imageRegion.srcSubresource.layerCount = 1;
+		imageRegion.srcSubresource.layerCount = copyInformation.FaceCount;
 		imageRegion.srcSubresource.mipLevel = copyInformation.SourceMip;
 		imageRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 		imageRegion.dstSubresource.baseArrayLayer = copyInformation.DestinationFace;
-		imageRegion.dstSubresource.layerCount = 1;
+		imageRegion.dstSubresource.layerCount = copyInformation.FaceCount;
 		imageRegion.dstSubresource.mipLevel = copyInformation.DestinationMip;
 		imageRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
-		vkCB->CopyImageToImage(sourceImage, destinationImage, transferSourceLayout, transferDestinationLayout, sourceRange, destinationRange, 1, &imageRegion);
+		internalCommandBuffer->CopyImageToImage(sourceImage, destinationImage, transferSourceLayout, transferDestinationLayout, sourceRange, destinationRange, 1, &imageRegion);
 	}
 }
 
-PixelData VulkanTexture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
+void VulkanTexture::BlitInternal(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation, const SPtr<CommandBuffer>& commandBuffer)
+{
+	VulkanTexture* other = static_cast<VulkanTexture*>(target.get());
+
+	const TextureProperties& sourceProperties = mProperties;
+	const TextureProperties& destinationProperties = other->GetProperties();
+
+	const bool sourceHasMultipleSamples = sourceProperties.SampleCount > 1;
+	const bool destinationHasMultipleSamples = destinationProperties.SampleCount > 1;
+
+	if ((sourceProperties.Usage & TU_DEPTHSTENCIL) != 0 || (destinationProperties.Usage & TU_DEPTHSTENCIL) != 0)
+	{
+		B3D_LOG(Error, RenderBackend, "Texture blit isn't supported for depth-stencil textures.");
+		return;
+	}
+
+	VkImageLayout transferSourceLayout = mDirectlyMappable ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+	VkImageLayout transferDestinationLayout = other->mDirectlyMappable ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+
+	const bool copyFromEntireSurface = blitInformation.SourceVolume.GetWidth() == 0 ||
+		blitInformation.SourceVolume.GetHeight() == 0 ||
+		blitInformation.SourceVolume.GetDepth() == 0;
+
+	PixelVolume sourceVolume = blitInformation.SourceVolume;
+	if (copyFromEntireSurface)
+	{
+		u32 mipWidth, mipHeight, mipDepth;
+		PixelUtil::GetSizeForMipLevel(
+			sourceProperties.Width,
+			sourceProperties.Height,
+			sourceProperties.Depth,
+			blitInformation.SourceMip,
+			mipWidth,
+			mipHeight,
+			mipDepth);
+
+		sourceVolume.Right = sourceVolume.Left + mipWidth;
+		sourceVolume.Bottom = sourceVolume.Top + mipHeight;
+		sourceVolume.Back = sourceVolume.Front + mipDepth;
+	}
+
+	const bool copyToEntireSurface = blitInformation.DestinationVolume.GetWidth() == 0 ||
+		blitInformation.DestinationVolume.GetHeight() == 0 ||
+		blitInformation.DestinationVolume.GetDepth() == 0;
+
+	PixelVolume destinationVolume = blitInformation.DestinationVolume;
+	if (copyToEntireSurface)
+	{
+		u32 mipWidth, mipHeight, mipDepth;
+		PixelUtil::GetSizeForMipLevel(
+			destinationProperties.Width,
+			destinationProperties.Height,
+			destinationProperties.Depth,
+			blitInformation.DestinationMip,
+			mipWidth,
+			mipHeight,
+			mipDepth);
+
+		destinationVolume.Right = destinationVolume.Left + mipWidth;
+		destinationVolume.Bottom = destinationVolume.Top + mipHeight;
+		destinationVolume.Back = destinationVolume.Front + mipDepth;
+	}
+
+	VkImageSubresourceRange sourceRange;
+	sourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	sourceRange.baseArrayLayer = blitInformation.SourceFace;
+	sourceRange.layerCount = blitInformation.FaceCount;
+	sourceRange.baseMipLevel = blitInformation.SourceMip;
+	sourceRange.levelCount = 1;
+
+	VkImageSubresourceRange destinationRange;
+	destinationRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	destinationRange.baseArrayLayer = blitInformation.DestinationFace;
+	destinationRange.layerCount = blitInformation.FaceCount;
+	destinationRange.baseMipLevel = blitInformation.DestinationMip;
+	destinationRange.levelCount = 1;
+
+	VulkanRenderAPI& renderAPI = GetVulkanRenderAPI();
+	VulkanInternalCommandBuffer* internalCommandBuffer = nullptr;
+	if (commandBuffer != nullptr)
+		internalCommandBuffer = static_cast<VulkanCommandBuffer*>(commandBuffer.get())->GetInternal();
+	else
+		internalCommandBuffer = renderAPI.GetMainVulkanCommandBuffer()->GetInternal();
+
+	const u32 deviceIndex = internalCommandBuffer->GetDeviceIndex();
+
+	VulkanImage* sourceImage = mImages[deviceIndex];
+	VulkanImage* destinationImage = other->GetResource(deviceIndex);
+
+	if (sourceImage == nullptr || destinationImage == nullptr)
+		return;
+
+	if (internalCommandBuffer->IsInRenderPass())
+		internalCommandBuffer->EndRenderPass(true);
+
+	VkImageBlit imageBlit;
+	imageBlit.srcSubresource.baseArrayLayer = blitInformation.SourceFace;
+	imageBlit.srcSubresource.layerCount = blitInformation.FaceCount;
+	imageBlit.srcSubresource.mipLevel = blitInformation.SourceMip;
+	imageBlit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	imageBlit.srcOffsets[0] = { (i32)sourceVolume.Left, (i32)sourceVolume.Top, (i32)sourceVolume.Front };
+	imageBlit.srcOffsets[1] = { (i32)sourceVolume.Right, (i32)sourceVolume.Bottom, (i32)sourceVolume.Back };
+	imageBlit.dstSubresource.baseArrayLayer = blitInformation.DestinationFace;
+	imageBlit.dstSubresource.layerCount = blitInformation.FaceCount;
+	imageBlit.dstSubresource.mipLevel = blitInformation.DestinationMip;
+	imageBlit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	imageBlit.dstOffsets[0] = { (i32)destinationVolume.Left, (i32)destinationVolume.Top, (i32)destinationVolume.Front };
+	imageBlit.dstOffsets[1] = { (i32)destinationVolume.Right, (i32)destinationVolume.Bottom, (i32)destinationVolume.Back };
+
+	internalCommandBuffer->Blit(sourceImage, destinationImage, transferSourceLayout, transferDestinationLayout, sourceRange, destinationRange, 1, &imageBlit);
+}
+
+PixelData VulkanTexture::LockInternal(GpuLockOptions options, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
 {
 	const TextureProperties& props = GetProperties();
 
-	if(props.GetNumSamples() > 1)
+	if(props.SampleCount > 1)
 	{
 		B3D_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
 		return PixelData();
@@ -1145,9 +1261,9 @@ PixelData VulkanTexture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face
 	}
 #endif
 
-	u32 mipWidth = std::max(1u, props.GetWidth() >> mipLevel);
-	u32 mipHeight = std::max(1u, props.GetHeight() >> mipLevel);
-	u32 mipDepth = std::max(1u, props.GetDepth() >> mipLevel);
+	u32 mipWidth = std::max(1u, props.Width >> mipLevel);
+	u32 mipHeight = std::max(1u, props.Height >> mipLevel);
+	u32 mipDepth = std::max(1u, props.Depth >> mipLevel);
 
 	PixelData lockedArea(mipWidth, mipHeight, mipDepth, mInternalFormats[deviceIdx]);
 
@@ -1329,7 +1445,7 @@ PixelData VulkanTexture::LockImpl(GpuLockOptions options, u32 mipLevel, u32 face
 	return lockedArea;
 }
 
-void VulkanTexture::UnlockImpl()
+void VulkanTexture::UnlockInternal()
 {
 	// Possibly map() failed with some error
 	if(!mIsMapped)
@@ -1411,7 +1527,7 @@ void VulkanTexture::UnlockImpl()
 					VulkanImage* newImage = CreateImage(device, mInternalFormats[mMappedDeviceIdx]);
 
 					// Avoid copying original contents if the image only has one sub-resource, which we'll overwrite anyway
-					if(props.GetNumMipmaps() > 0 || props.GetNumFaces() > 1)
+					if(props.MipMapCount > 0 || props.GetFaceCount() > 1)
 					{
 						CopyImageToImage(transferCB->GetInternalCommandBuffer(), image, newImage);
 					}
@@ -1430,7 +1546,7 @@ void VulkanTexture::UnlockImpl()
 			range.levelCount = 1;
 
 			VkExtent3D extent;
-			PixelUtil::GetSizeForMipLevel(props.GetWidth(), props.GetHeight(), props.GetDepth(), mMappedMip, extent.width, extent.height, extent.depth);
+			PixelUtil::GetSizeForMipLevel(props.Width, props.Height, props.Depth, mMappedMip, extent.width, extent.height, extent.depth);
 
 			VkImageLayout transferLayout;
 			if(mDirectlyMappable)
@@ -1475,9 +1591,9 @@ TAsyncOp<SPtr<PixelData>> VulkanTexture::ReadDataAsync(u32 mipLevel, u32 face, u
 	else
 		vulkanCommandBufffer = vulkanBackend.GetMainVulkanCommandBuffer()->GetInternal();
 
-	const u32 mipWidth = Math::Max(1u, mProperties.GetWidth() >> mipLevel);
-	const u32 mipHeight = Math::Max(1u, mProperties.GetHeight() >> mipLevel);
-	const u32 mipDepth = Math::Max(1u, mProperties.GetDepth() >> mipLevel);
+	const u32 mipWidth = Math::Max(1u, mProperties.Width >> mipLevel);
+	const u32 mipHeight = Math::Max(1u, mProperties.Height >> mipLevel);
+	const u32 mipDepth = Math::Max(1u, mProperties.Depth >> mipLevel);
 
 	const SPtr<PixelData> pixelData = B3DMakeShared<PixelData>(mipWidth, mipHeight, mipDepth, mInternalFormats[deviceIndex]);
 
@@ -1514,9 +1630,9 @@ TAsyncOp<SPtr<PixelData>> VulkanTexture::ReadDataAsync(u32 mipLevel, u32 face, u
 	return op;
 }
 
-void VulkanTexture::ReadDataImpl(PixelData& dest, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
+void VulkanTexture::ReadDataInternal(PixelData& dest, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
 {
-	if(mProperties.GetNumSamples() > 1)
+	if(mProperties.SampleCount > 1)
 	{
 		B3D_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
 		return;
@@ -1529,21 +1645,21 @@ void VulkanTexture::ReadDataImpl(PixelData& dest, u32 mipLevel, u32 face, u32 de
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResRead, RenderStatObject_Texture);
 }
 
-void VulkanTexture::WriteDataImpl(const PixelData& src, u32 mipLevel, u32 face, bool discardWholeBuffer, u32 queueIdx)
+void VulkanTexture::WriteDataInternal(const PixelData& src, u32 mipLevel, u32 face, bool discardWholeBuffer, u32 queueIdx)
 {
 	if(src.GetSize() == 0)
 		return;
 
-	if(mProperties.GetNumSamples() > 1)
+	if(mProperties.SampleCount > 1)
 	{
 		B3D_LOG(Error, RenderBackend, "Multisampled textures cannot be accessed from the CPU directly.");
 		return;
 	}
 
-	mipLevel = Math::Clamp(mipLevel, (u32)mipLevel, mProperties.GetNumMipmaps());
-	face = Math::Clamp(face, (u32)0, mProperties.GetNumFaces() - 1);
+	mipLevel = Math::Clamp(mipLevel, (u32)mipLevel, mProperties.MipMapCount);
+	face = Math::Clamp(face, (u32)0, mProperties.GetFaceCount() - 1);
 
-	if(face > 0 && mProperties.GetTextureType() == TEX_TYPE_3D)
+	if(face > 0 && mProperties.Type == TEX_TYPE_3D)
 	{
 		B3D_LOG(Error, RenderBackend, "3D texture arrays are not supported.");
 		return;

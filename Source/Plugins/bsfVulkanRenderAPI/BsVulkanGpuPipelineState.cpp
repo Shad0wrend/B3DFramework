@@ -341,7 +341,7 @@ VkPipelineLayout VulkanGraphicsPipelineState::GetPipelineLayout(u32 deviceIdx) c
 
 void VulkanGraphicsPipelineState::RegisterPipelineResources(VulkanInternalCommandBuffer* cmdBuffer)
 {
-	u32 deviceIdx = cmdBuffer->GetDeviceIdx();
+	u32 deviceIdx = cmdBuffer->GetDeviceIndex();
 
 	std::array<VulkanGpuProgram*, 5> programs = {
 		static_cast<VulkanGpuProgram*>(mData.VertexProgram.get()),
@@ -585,7 +585,7 @@ VkPipelineLayout VulkanComputePipelineState::GetPipelineLayout(u32 deviceIndex) 
 
 void VulkanComputePipelineState::RegisterPipelineResources(VulkanInternalCommandBuffer* cmdBuffer)
 {
-	u32 deviceIdx = cmdBuffer->GetDeviceIdx();
+	u32 deviceIdx = cmdBuffer->GetDeviceIndex();
 
 	VulkanGpuProgram* program = static_cast<VulkanGpuProgram*>(mProgram.get());
 	if(program != nullptr)

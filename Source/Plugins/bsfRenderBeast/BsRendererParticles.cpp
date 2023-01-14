@@ -141,7 +141,7 @@ void RendererParticles::BindCpuSimulatedInputs(const ParticleRenderData* renderD
 			RenderElement.ParamsCpuBillboard.SizeAndFrameIdxTexture.Set(textures->SizeAndFrameIdx);
 
 			RenderElement.IndicesBuffer.Set(textures->Indices);
-			texSize = textures->PositionAndRotation->GetProperties().GetWidth();
+			texSize = textures->PositionAndRotation->GetProperties().Width;
 		}
 		break;
 	case ParticleRenderMode::Mesh:
@@ -155,7 +155,7 @@ void RendererParticles::BindCpuSimulatedInputs(const ParticleRenderData* renderD
 			RenderElement.ParamsCpuMesh.SizeTexture.Set(textures->Size);
 
 			RenderElement.IndicesBuffer.Set(textures->Indices);
-			texSize = textures->Position->GetProperties().GetWidth();
+			texSize = textures->Position->GetProperties().Width;
 		}
 		break;
 	}

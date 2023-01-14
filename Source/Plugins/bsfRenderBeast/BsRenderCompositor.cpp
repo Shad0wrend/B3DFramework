@@ -1846,7 +1846,7 @@ void RCNodeTonemapping::Render(const RenderCompositorNodeInputs& inputs)
 	const SPtr<Texture>& sceneColor = sceneColorNode->SceneColorTex->Texture;
 
 	const bool hdr = settings.EnableHdr;
-	const bool msaa = sceneColor->GetProperties().GetNumSamples() > 1;
+	const bool msaa = sceneColor->GetProperties().SampleCount > 1;
 
 	const bool volumeLUT = inputs.FeatureSet == RenderBeastFeatureSet::Desktop;
 	bool gammaOnly;
@@ -2162,7 +2162,7 @@ void RCNodeGaussianDOF::Render(const RenderCompositorNodeInputs& inputs)
 	// Blur the out of focus pixels
 	// Note: Perhaps set up stencil so I can avoid performing blur on unused parts of the textures?
 	const TextureProperties& texProps = nearTex ? nearTex->Texture->GetProperties() : farTex->Texture->GetProperties();
-	POOLED_RENDER_TEXTURE_DESC tempTexDesc = POOLED_RENDER_TEXTURE_DESC::Create2D(texProps.GetFormat(), texProps.GetWidth(), texProps.GetHeight(), TU_RENDERTARGET);
+	POOLED_RENDER_TEXTURE_DESC tempTexDesc = POOLED_RENDER_TEXTURE_DESC::Create2D(texProps.Format, texProps.Width, texProps.Height, TU_RENDERTARGET);
 	SPtr<PooledRenderTexture> tempTexture = GetGpuResourcePool().Get(tempTexDesc);
 
 	SPtr<Texture> blurredNearTex;
@@ -2318,10 +2318,10 @@ void RCNodeSceneColorDownsamples::Render(const RenderCompositorNodeInputs& input
 	const TextureProperties& halfSceneProps = halfSceneColorNode->Output->Texture->GetProperties();
 
 	const u32 totalDownsampleLevels = PixelUtil::GetMaxMipmaps(
-										  halfSceneProps.GetWidth(),
-										  halfSceneProps.GetHeight(),
+										  halfSceneProps.Width,
+										  halfSceneProps.Height,
 										  1,
-										  halfSceneProps.GetFormat()) +
+										  halfSceneProps.Format) +
 		1;
 
 	AvailableDownsamples = Math::Min(kMaxNumDownsamples, totalDownsampleLevels);
@@ -2494,9 +2494,9 @@ void RCNodeSSAO::Render(const RenderCompositorNodeInputs& inputs)
 	SPtr<PooledRenderTexture> resolvedNormals;
 
 	RenderAPI& rapi = RenderAPI::Instance();
-	if(sceneNormals->GetProperties().GetNumSamples() > 1)
+	if(sceneNormals->GetProperties().SampleCount > 1)
 	{
-		POOLED_RENDER_TEXTURE_DESC desc = POOLED_RENDER_TEXTURE_DESC::Create2D(normalsProps.GetFormat(), normalsProps.GetWidth(), normalsProps.GetHeight(), TU_RENDERTARGET);
+		POOLED_RENDER_TEXTURE_DESC desc = POOLED_RENDER_TEXTURE_DESC::Create2D(normalsProps.Format, normalsProps.Width, normalsProps.Height, TU_RENDERTARGET);
 		resolvedNormals = resPool.Get(desc);
 
 		rapi.SetRenderTarget(resolvedNormals->RenderTexture);
@@ -2813,9 +2813,9 @@ void RCNodeBloom::Render(const RenderCompositorNodeInputs& inputs)
 
 		SPtr<PooledRenderTexture> filterOutput = GetGpuResourcePool().Get(
 			POOLED_RENDER_TEXTURE_DESC::Create2D(
-				inputProps.GetFormat(),
-				inputProps.GetWidth(),
-				inputProps.GetHeight(),
+				inputProps.Format,
+				inputProps.Width,
+				inputProps.Height,
 				TU_RENDERTARGET));
 
 		SPtr<PooledRenderTexture> blurInput = downsampledTex;
@@ -2875,9 +2875,9 @@ void RCNodeScreenSpaceLensFlare::Render(const RenderCompositorNodeInputs& inputs
 	// Ghost features
 	SPtr<PooledRenderTexture> featureTex = resPool.Get(
 		POOLED_RENDER_TEXTURE_DESC::Create2D(
-			sceneTexProps.GetFormat(),
-			sceneTexProps.GetWidth(),
-			sceneTexProps.GetHeight(),
+			sceneTexProps.Format,
+			sceneTexProps.Width,
+			sceneTexProps.Height,
 			TU_RENDERTARGET));
 
 	bool haloAspect = lensFlareSettings.HaloAspectRatio != 1.0f;

@@ -144,15 +144,15 @@ void TextureArrayToMSAATexture::Execute(const SPtr<Texture>& inputArray, const S
 	const TextureProperties& inputProps = inputArray->GetProperties();
 	const TextureProperties& targetProps = target->GetProperties();
 
-	B3D_ASSERT(inputProps.GetNumArraySlices() == targetProps.GetNumSamples());
-	B3D_ASSERT(inputProps.GetWidth() == targetProps.GetWidth());
-	B3D_ASSERT(inputProps.GetHeight() == targetProps.GetHeight());
+	B3D_ASSERT(inputProps.ArraySliceCount == targetProps.SampleCount);
+	B3D_ASSERT(inputProps.Width == targetProps.Width);
+	B3D_ASSERT(inputProps.Height == targetProps.Height);
 
 	mInputParam.Set(inputArray);
 
 	Bind();
 
-	Rect2 area(0.0f, 0.0f, (float)targetProps.GetWidth(), (float)targetProps.GetHeight());
+	Rect2 area(0.0f, 0.0f, (float)targetProps.Width, (float)targetProps.Height);
 	GetRendererUtility().DrawScreenQuad(area);
 }
 
@@ -182,14 +182,14 @@ void ClearLoadStoreMat::Execute(const SPtr<Texture>& target, const Color& clearV
 	BS_RENMAT_PROFILE_BLOCK
 
 	const TextureProperties& props = target->GetProperties();
-	PixelFormat pf = props.GetFormat();
+	PixelFormat pf = props.Format;
 
 	B3D_ASSERT(!PixelUtil::IsCompressed(pf));
 
 	mOutputTextureParam.Set(target, surface);
 
-	u32 width = props.GetWidth();
-	u32 height = props.GetHeight();
+	u32 width = props.Width;
+	u32 height = props.Height;
 	gClearLoadStoreParamDef.gSize.Set(mParamBuffer, Vector2I((i32)width, (i32)height));
 	gClearLoadStoreParamDef.gFloatClearVal.Set(mParamBuffer, Vector4(clearValue.R, clearValue.G, clearValue.A, clearValue.A));
 	gClearLoadStoreParamDef.gIntClearVal.Set(mParamBuffer, Vector4I(*(i32*)&clearValue.R, *(i32*)&clearValue.G, *(i32*)&clearValue.A, *(i32*)&clearValue.A));

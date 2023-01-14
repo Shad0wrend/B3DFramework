@@ -1117,7 +1117,7 @@ void ShadowRendering::RenderShadowOcclusion(const RendererView& view, const Rend
 
 			auto shadowMapProps = shadowMap->GetProperties();
 
-			Vector2 shadowMapSize((float)shadowMapProps.GetWidth(), (float)shadowMapProps.GetHeight());
+			Vector2 shadowMapSize((float)shadowMapProps.Width, (float)shadowMapProps.Height);
 			float transitionScale = GetFadeTransition(*light, shadowInfo->SubjectBounds.GetRadius(), shadowInfo->DepthRange, shadowInfo->Area.Width);
 
 			gShadowProjectParamsDef.gFadePlaneDepth.Set(shadowParamBuffer, shadowInfo->DepthFade);

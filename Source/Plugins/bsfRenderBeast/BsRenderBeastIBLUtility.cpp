@@ -67,10 +67,10 @@ void ReflectionCubeImportanceSampleMat::Execute(const SPtr<Texture>& source, u32
 	mInputTexture.Set(source);
 	gReflectionCubeImportanceSampleParamDef.gCubeFace.Set(mParamBuffer, face);
 	gReflectionCubeImportanceSampleParamDef.gMipLevel.Set(mParamBuffer, mip);
-	gReflectionCubeImportanceSampleParamDef.gNumMips.Set(mParamBuffer, source->GetProperties().GetNumMipmaps() + 1);
+	gReflectionCubeImportanceSampleParamDef.gNumMips.Set(mParamBuffer, source->GetProperties().MipMapCount + 1);
 
-	float width = (float)source->GetProperties().GetWidth();
-	float height = (float)source->GetProperties().GetHeight();
+	float width = (float)source->GetProperties().Width;
+	float height = (float)source->GetProperties().Height;
 
 	// First part of the equation for determining mip level to sample from.
 	// See http://http.developer.nvidia.com/GPUGems3/gpugems3_ch20.html
@@ -114,8 +114,8 @@ void IrradianceComputeSHMat::Execute(const SPtr<Texture>& source, u32 face, cons
 	BS_RENMAT_PROFILE_BLOCK
 
 	auto& props = source->GetProperties();
-	u32 faceSize = props.GetWidth();
-	B3D_ASSERT(faceSize == props.GetHeight());
+	u32 faceSize = props.Width;
+	B3D_ASSERT(faceSize == props.Height);
 
 	Vector2I dispatchSize;
 	dispatchSize.X = Math::DivideAndRoundUp(faceSize, kTileWidth * kPixelsPerThread);
@@ -123,7 +123,7 @@ void IrradianceComputeSHMat::Execute(const SPtr<Texture>& source, u32 face, cons
 
 	mInputTexture.Set(source);
 	gIrradianceComputeSHParamDef.gCubeFace.Set(mParamBuffer, face);
-	gIrradianceComputeSHParamDef.gFaceSize.Set(mParamBuffer, source->GetProperties().GetWidth());
+	gIrradianceComputeSHParamDef.gFaceSize.Set(mParamBuffer, source->GetProperties().Width);
 	gIrradianceComputeSHParamDef.gDispatchSize.Set(mParamBuffer, dispatchSize);
 
 	mOutputBuffer.Set(output);
@@ -137,8 +137,8 @@ void IrradianceComputeSHMat::Execute(const SPtr<Texture>& source, u32 face, cons
 SPtr<GpuBuffer> IrradianceComputeSHMat::CreateOutputBuffer(const SPtr<Texture>& source, u32& numCoeffSets)
 {
 	auto& props = source->GetProperties();
-	u32 faceSize = props.GetWidth();
-	B3D_ASSERT(faceSize == props.GetHeight());
+	u32 faceSize = props.Width;
+	B3D_ASSERT(faceSize == props.Height);
 
 	Vector2I dispatchSize;
 	dispatchSize.X = Math::DivideAndRoundUp(faceSize, kTileWidth * kPixelsPerThread);
@@ -186,7 +186,7 @@ void IrradianceComputeSHFragMat::Execute(const SPtr<Texture>& source, u32 face, 
 	mInputTexture.Set(source);
 
 	gIrradianceComputeSHFragParamDef.gCubeFace.Set(mParamBuffer, face);
-	gIrradianceComputeSHFragParamDef.gFaceSize.Set(mParamBuffer, source->GetProperties().GetWidth());
+	gIrradianceComputeSHFragParamDef.gFaceSize.Set(mParamBuffer, source->GetProperties().Width);
 	gIrradianceComputeSHFragParamDef.gCoeffEntryIdx.Set(mParamBuffer, coefficientIdx / 4);
 	gIrradianceComputeSHFragParamDef.gCoeffComponentIdx.Set(mParamBuffer, coefficientIdx % 4);
 
@@ -203,7 +203,7 @@ void IrradianceComputeSHFragMat::Execute(const SPtr<Texture>& source, u32 face, 
 POOLED_RENDER_TEXTURE_DESC IrradianceComputeSHFragMat::GetOutputDesc(const SPtr<Texture>& input)
 {
 	auto& props = input->GetProperties();
-	return POOLED_RENDER_TEXTURE_DESC::CreateCube(PF_RGBA16F, props.GetWidth(), props.GetHeight(), TU_RENDERTARGET);
+	return POOLED_RENDER_TEXTURE_DESC::CreateCube(PF_RGBA16F, props.Width, props.Height, TU_RENDERTARGET);
 }
 
 IrradianceAccumulateSHParamDef gIrradianceAccumulateSHParamDef;
@@ -224,7 +224,7 @@ void IrradianceAccumulateSHMat::Execute(const SPtr<Texture>& source, u32 face, u
 	mInputTexture.Set(source);
 
 	auto& props = source->GetProperties();
-	Vector2 halfPixel(0.5f / props.GetWidth(), 0.5f / props.GetHeight());
+	Vector2 halfPixel(0.5f / props.Width, 0.5f / props.Height);
 
 	gIrradianceAccumulateSHParamDef.gCubeFace.Set(mParamBuffer, face);
 	gIrradianceAccumulateSHParamDef.gCubeMip.Set(mParamBuffer, sourceMip);
@@ -245,7 +245,7 @@ POOLED_RENDER_TEXTURE_DESC IrradianceAccumulateSHMat::GetOutputDesc(const SPtr<T
 	auto& props = input->GetProperties();
 
 	// Assuming it's a cubemap
-	u32 size = std::max(1U, (u32)(props.GetWidth() * 0.5f));
+	u32 size = std::max(1U, (u32)(props.Width * 0.5f));
 
 	return POOLED_RENDER_TEXTURE_DESC::CreateCube(PF_RGBA32F, size, size, TU_RENDERTARGET);
 }
@@ -266,7 +266,7 @@ void IrradianceAccumulateCubeSHMat::Execute(const SPtr<Texture>& source, u32 sou
 	mInputTexture.Set(source);
 
 	auto& props = source->GetProperties();
-	Vector2 halfPixel(0.5f / props.GetWidth(), 0.5f / props.GetHeight());
+	Vector2 halfPixel(0.5f / props.Width, 0.5f / props.Height);
 
 	gIrradianceAccumulateSHParamDef.gCubeFace.Set(mParamBuffer, 0);
 	gIrradianceAccumulateSHParamDef.gCubeMip.Set(mParamBuffer, sourceMip);
@@ -387,9 +387,9 @@ void RenderBeastIBLUtility::FilterCubemapForSpecular(const SPtr<Texture>& cubema
 		TextureCreateInformation cubemapDesc;
 		cubemapDesc.Name = "Specular Cubemap Filter Scratch";
 		cubemapDesc.Type = TEX_TYPE_CUBE_MAP;
-		cubemapDesc.Format = props.GetFormat();
-		cubemapDesc.Width = props.GetWidth();
-		cubemapDesc.Height = props.GetHeight();
+		cubemapDesc.Format = props.Format;
+		cubemapDesc.Width = props.Width;
+		cubemapDesc.Height = props.Height;
 		cubemapDesc.MipMapCount = PixelUtil::GetMaxMipmaps(cubemapDesc.Width, cubemapDesc.Height, 1, cubemapDesc.Format);
 		cubemapDesc.Usage = TU_STATIC | TU_RENDERTARGET;
 
@@ -397,7 +397,7 @@ void RenderBeastIBLUtility::FilterCubemapForSpecular(const SPtr<Texture>& cubema
 	}
 
 	// We sample the cubemaps using importance sampling to generate roughness
-	u32 numMips = props.GetNumMipmaps() + 1;
+	u32 numMips = props.MipMapCount + 1;
 
 	// Before importance sampling the cubemaps we first create box filtered versions for each mip level. This helps fix
 	// the aliasing artifacts that would otherwise be noticeable on importance sampled cubemaps. The aliasing happens
@@ -519,8 +519,8 @@ void RenderBeastIBLUtility::ScaleCubemap(const SPtr<Texture>& src, u32 srcMip, c
 	auto& dstProps = dst->GetProperties();
 
 	SPtr<Texture> scratchTex = src;
-	int sizeSrcLog2 = (int)log2((float)srcProps.GetWidth());
-	int sizeDstLog2 = (int)log2((float)dstProps.GetWidth());
+	int sizeSrcLog2 = (int)log2((float)srcProps.Width);
+	int sizeDstLog2 = (int)log2((float)dstProps.Width);
 
 	int sizeLog2Diff = sizeSrcLog2 - sizeDstLog2;
 
@@ -534,7 +534,7 @@ void RenderBeastIBLUtility::ScaleCubemap(const SPtr<Texture>& src, u32 srcMip, c
 		TextureCreateInformation cubemapDesc;
 		cubemapDesc.Name = "Scale Cubemap Scratch";
 		cubemapDesc.Type = TEX_TYPE_CUBE_MAP;
-		cubemapDesc.Format = srcProps.GetFormat();
+		cubemapDesc.Format = srcProps.Format;
 		cubemapDesc.Width = mipSize;
 		cubemapDesc.Height = mipSize;
 		cubemapDesc.MipMapCount = numDownsamples - 1;
@@ -612,7 +612,7 @@ void RenderBeastIBLUtility::FilterCubemapForIrradianceNonCompute(const SPtr<Text
 
 		// Downsample, summing up coefficients and weights all the way down to 1x1
 		auto& sourceProps = cubemap->GetProperties();
-		u32 numMips = PixelUtil::GetMaxMipmaps(sourceProps.GetWidth(), sourceProps.GetHeight(), 1, sourceProps.GetFormat());
+		u32 numMips = PixelUtil::GetMaxMipmaps(sourceProps.Width, sourceProps.Height, 1, sourceProps.Format);
 
 		SPtr<PooledRenderTexture> downsampleInput = coeffsTex;
 		coeffsTex = nullptr;

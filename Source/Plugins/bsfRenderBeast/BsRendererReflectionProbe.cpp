@@ -162,7 +162,7 @@ void ReflProbeParamBuffer::Populate(const Skybox* sky, u32 numProbes, const SPtr
 		SPtr<Texture> filteredReflections = sky->GetFilteredRadiance();
 		if(filteredReflections)
 		{
-			numSkyMips = filteredReflections->GetProperties().GetNumMipmaps() + 1;
+			numSkyMips = filteredReflections->GetProperties().MipMapCount + 1;
 			skyReflectionsAvailable = 1;
 		}
 
@@ -175,7 +175,7 @@ void ReflProbeParamBuffer::Populate(const Skybox* sky, u32 numProbes, const SPtr
 
 	u32 numReflProbeMips = 0;
 	if(reflectionCubemaps != nullptr)
-		numReflProbeMips = reflectionCubemaps->GetProperties().GetNumMipmaps() + 1;
+		numReflProbeMips = reflectionCubemaps->GetProperties().MipMapCount + 1;
 
 	gReflProbeParamsParamDef.gReflCubemapNumMips.Set(Buffer, numReflProbeMips);
 	gReflProbeParamsParamDef.gUseReflectionMaps.Set(Buffer, capturingReflections ? 0 : 1);

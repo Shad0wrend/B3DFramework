@@ -35,47 +35,47 @@ HTexture TextureEx::Create(PixelFormat format, u32 width, u32 height, u32 depth,
 
 PixelFormat TextureEx::GetPixelFormat(const HTexture& thisPtr)
 {
-	return thisPtr->GetProperties().GetFormat();
+	return thisPtr->GetProperties().Format;
 }
 
 TextureUsage TextureEx::GetUsage(const HTexture& thisPtr)
 {
-	return (TextureUsage)thisPtr->GetProperties().GetUsage();
+	return (TextureUsage)thisPtr->GetProperties().Usage;
 }
 
 TextureType TextureEx::GetType(const HTexture& thisPtr)
 {
-	return thisPtr->GetProperties().GetTextureType();
+	return thisPtr->GetProperties().Type;
 }
 
 u32 TextureEx::GetWidth(const HTexture& thisPtr)
 {
-	return thisPtr->GetProperties().GetWidth();
+	return thisPtr->GetProperties().Width;
 }
 
 u32 TextureEx::GetHeight(const HTexture& thisPtr)
 {
-	return thisPtr->GetProperties().GetHeight();
+	return thisPtr->GetProperties().Height;
 }
 
 u32 TextureEx::GetDepth(const HTexture& thisPtr)
 {
-	return thisPtr->GetProperties().GetDepth();
+	return thisPtr->GetProperties().Depth;
 }
 
 bool TextureEx::GetGammaCorrection(const HTexture& thisPtr)
 {
-	return thisPtr->GetProperties().IsHardwareGammaEnabled();
+	return thisPtr->GetProperties().UseHardwareSRGB;
 }
 
 u32 TextureEx::GetSampleCount(const HTexture& thisPtr)
 {
-	return thisPtr->GetProperties().GetNumSamples();
+	return thisPtr->GetProperties().SampleCount;
 }
 
 u32 TextureEx::GetMipmapCount(const HTexture& thisPtr)
 {
-	return thisPtr->GetProperties().GetNumMipmaps();
+	return thisPtr->GetProperties().MipMapCount;
 }
 
 SPtr<PixelData> TextureEx::GetPixels(const HTexture& thisPtr, u32 face, u32 mipLevel)
@@ -97,7 +97,7 @@ void TextureEx::SetPixelsArray(const HTexture& thisPtr, const Vector<Color>& col
 	u32 numElements = (u32)colors.size();
 
 	const TextureProperties& props = thisPtr->GetProperties();
-	u32 texNumElements = props.GetWidth() * props.GetHeight() * props.GetDepth();
+	u32 texNumElements = props.Width * props.Height * props.Depth;
 
 	if(texNumElements != numElements)
 	{
@@ -105,7 +105,7 @@ void TextureEx::SetPixelsArray(const HTexture& thisPtr, const Vector<Color>& col
 		return;
 	}
 
-	SPtr<PixelData> pixelData = B3DMakeShared<PixelData>(props.GetWidth(), props.GetHeight(), props.GetDepth(), props.GetFormat());
+	SPtr<PixelData> pixelData = B3DMakeShared<PixelData>(props.Width, props.Height, props.Depth, props.Format);
 	pixelData->AllocateInternalBuffer();
 	pixelData->SetColors(colors);
 

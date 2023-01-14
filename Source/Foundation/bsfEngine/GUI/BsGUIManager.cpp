@@ -1673,8 +1673,8 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 
 			TextureCreateInformation textureCreateInformation;
 			textureCreateInformation.Name = "GUI Alpha Stencil";
-			textureCreateInformation.Width = colorProps.GetWidth();
-			textureCreateInformation.Height = colorProps.GetHeight();
+			textureCreateInformation.Width = colorProps.Width;
+			textureCreateInformation.Height = colorProps.Height;
 			textureCreateInformation.Format = PF_D24S8; // TODO: Can we create a stencil only texture here?
 			textureCreateInformation.Usage = TU_DEPTHSTENCIL;
 

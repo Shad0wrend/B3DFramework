@@ -299,7 +299,7 @@ VulkanInternalCommandBuffer::~VulkanInternalCommandBuffer()
 	B3DFree(mDescriptorSetsTemp);
 }
 
-u32 VulkanInternalCommandBuffer::GetDeviceIdx() const
+u32 VulkanInternalCommandBuffer::GetDeviceIndex() const
 {
 	return mDevice.GetIndex();
 }

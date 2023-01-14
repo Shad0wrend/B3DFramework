@@ -48,14 +48,14 @@ void VulkanRenderTexture::Initialize()
 			continue;
 
 		const TextureSurface& viewSurface = view->GetInformation().Surface;
-		const u32 viewExplicitMipLevelCount = viewSurface.MipLevelCount == 0 ? (texture->GetProperties().GetNumMipmaps() + 1) : viewSurface.MipLevelCount;
-		const u32 viewExplicitLayerCount = viewSurface.FaceCount == 0 ? texture->GetProperties().GetNumFaces() : viewSurface.FaceCount;
+		const u32 viewExplicitMipLevelCount = viewSurface.MipLevelCount == 0 ? (texture->GetProperties().MipMapCount + 1) : viewSurface.MipLevelCount;
+		const u32 viewExplicitLayerCount = viewSurface.FaceCount == 0 ? texture->GetProperties().GetFaceCount() : viewSurface.FaceCount;
 
 		TextureSurface surface;
 		surface.MipLevel = viewSurface.MipLevel;
 		surface.MipLevelCount = viewExplicitMipLevelCount;
 
-		if(texture->GetProperties().GetTextureType() == TEX_TYPE_3D)
+		if(texture->GetProperties().Type == TEX_TYPE_3D)
 		{
 			if(viewSurface.Face > 0)
 				B3D_LOG(Error, RenderBackend, "Non-zero array slice offset not supported when rendering to a 3D texture.");
@@ -63,7 +63,7 @@ void VulkanRenderTexture::Initialize()
 			if(viewExplicitLayerCount > 1)
 				B3D_LOG(Error, RenderBackend, "Cannot specify array slices when rendering to a 3D texture.");
 
-			const u32 layerCount = texture->GetProperties().GetDepth();
+			const u32 layerCount = texture->GetProperties().Depth;
 
 			surface.Face = 0;
 			surface.FaceCount = layerCount;
@@ -89,7 +89,7 @@ void VulkanRenderTexture::Initialize()
 		const TextureProperties& textureProperties = texture->GetProperties();
 		const PixelFormat internalFormat = texture->GetInternalFormat(mDeviceIdx);
 
-		renderPassInformation.ColorAttachments[renderTargetIndex].Format = VulkanUtility::GetPixelFormat(internalFormat, textureProperties.IsHardwareGammaEnabled());
+		renderPassInformation.ColorAttachments[renderTargetIndex].Format = VulkanUtility::GetPixelFormat(internalFormat, textureProperties.UseHardwareSRGB);
 	}
 
 	if(mDepthStencilSurface != nullptr)
@@ -101,15 +101,15 @@ void VulkanRenderTexture::Initialize()
 		if(image != nullptr)
 		{
 			const TextureSurface& viewSurface = view->GetInformation().Surface;
-			const u32 viewExplicitMipCount = viewSurface.MipLevelCount == 0 ? (texture->GetProperties().GetNumMipmaps() + 1) : viewSurface.MipLevelCount;
-			const u32 viewExplicitLayerCount = viewSurface.FaceCount == 0 ? texture->GetProperties().GetNumFaces() : viewSurface.FaceCount;
+			const u32 viewExplicitMipCount = viewSurface.MipLevelCount == 0 ? (texture->GetProperties().MipMapCount + 1) : viewSurface.MipLevelCount;
+			const u32 viewExplicitLayerCount = viewSurface.FaceCount == 0 ? texture->GetProperties().GetFaceCount() : viewSurface.FaceCount;
 
 			TextureSurface surface;
 			surface.MipLevel = viewSurface.MipLevel;
 			surface.MipLevelCount = viewExplicitMipCount;
 			surface.Face = viewSurface.Face;
 
-			if(texture->GetProperties().GetTextureType() == TEX_TYPE_3D)
+			if(texture->GetProperties().Type == TEX_TYPE_3D)
 			{
 				if(viewSurface.Face > 0)
 					B3D_LOG(Error, RenderBackend, "Non-zero array slice offset not supported when rendering to a 3D texture.");
@@ -136,7 +136,7 @@ void VulkanRenderTexture::Initialize()
 			const TextureProperties& textureProperties = texture->GetProperties();
 			const PixelFormat internalFormat = texture->GetInternalFormat(mDeviceIdx);
 
-			renderPassInformation.DepthAttachment.Format = VulkanUtility::GetPixelFormat(internalFormat, textureProperties.IsHardwareGammaEnabled());
+			renderPassInformation.DepthAttachment.Format = VulkanUtility::GetPixelFormat(internalFormat, textureProperties.UseHardwareSRGB);
 		}
 	}
 

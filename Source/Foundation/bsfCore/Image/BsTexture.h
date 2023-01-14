@@ -44,8 +44,8 @@ namespace bs
 		MIP_UNLIMITED = 0x7FFFFFFF /**< Create all mip maps down to 1x1. */
 	};
 
-	/** Descriptor structure used for initialization of a Texture. */
-	struct TextureCreateInformation
+	/** Information about a Texture. */
+	struct TextureInformation
 	{
 		/** Optional name of the texture. Used primarily for easier debugging. */
 		String Name;
@@ -81,6 +81,17 @@ namespace bs
 		u32 ArraySliceCount = 1;
 	};
 
+	/** Descriptor structure used for initialization of a Texture. */
+	struct TextureCreateInformation : TextureInformation
+	{
+		TextureCreateInformation() = default;
+		TextureCreateInformation(const TextureInformation& other)
+			:TextureInformation(other)
+		{
+		}
+		
+	};
+
 	/** Structure used for specifying information about a texture copy operation. */
 	struct TextureCopyInformation
 	{
@@ -105,6 +116,9 @@ namespace bs
 		/** Mip level to which to copy. */
 		u32 DestinationMip = 0;
 
+		/** Number of faces to copy. */
+		u32 FaceCount = 1; 
+
 		/**
 		 * Coordinates to write the source pixels to. The destination texture must have enough pixels to fit the entire
 		 * source volume.
@@ -114,46 +128,45 @@ namespace bs
 		B3D_CORE_EXPORT static const TextureCopyInformation kDefault;
 	};
 
+	/** Structure used for specifying information about a texture blit operation. */
+	struct TextureBlitInformation
+	{
+		/**
+		 * Face from which to blit. This can be an entry in an array of textures, or a single face of a cube map. If cubemap
+		 * array, then each array entry takes up six faces.
+		 */
+		u32 SourceFace = 0;
+
+		/** Mip level from which to blit. */
+		u32 SourceMip = 0;
+
+		/** Pixel volume from which to blit from. This defaults to all pixels of the face. */
+		PixelVolume SourceVolume = PixelVolume(0, 0, 0, 0, 0, 0);
+
+		/**
+		 * Face to which to blit. This can be an entry in an array of textures, or a single face of a cube map. If cubemap
+		 * array, then each array entry takes up six faces.
+		 */
+		u32 DestinationFace = 0;
+
+		/** Mip level to which to blit. */
+		u32 DestinationMip = 0;
+
+		/** Number of faces to blit. */
+		u32 FaceCount = 1; 
+
+		/** Pixel volume to which to blit to. This defaults to all pixels of the face. */
+		PixelVolume DestinationVolume = PixelVolume(0, 0, 0, 0, 0, 0);
+
+		B3D_CORE_EXPORT static const TextureBlitInformation kDefault;
+	};
+
 	/** Properties of a Texture. Shared between sim and core thread versions of a Texture. */
-	class B3D_CORE_EXPORT TextureProperties
+	struct B3D_CORE_EXPORT TextureProperties : TextureInformation
 	{
 	public:
 		TextureProperties() = default;
-		TextureProperties(const TextureCreateInformation& desc);
-
-		/**	Gets the type of texture. */
-		TextureType GetTextureType() const { return mDesc.Type; }
-
-		/**
-		 * Gets the number of mipmaps to be used for this texture. This number excludes the top level map (which is always
-		 * assumed to be present).
-		 */
-		u32 GetNumMipmaps() const { return mDesc.MipMapCount; }
-
-		/**
-		 * Determines does the texture contain gamma corrected data. If true then the GPU will automatically convert the
-		 * pixels to linear space before reading from the texture, and convert them to gamma space when writing to the
-		 * texture.
-		 */
-		bool IsHardwareGammaEnabled() const { return mDesc.UseHardwareSRGB; }
-
-		/**	Gets the number of samples used for multisampling (0 or 1 if multisampling is not used). */
-		u32 GetNumSamples() const { return mDesc.SampleCount; }
-
-		/**	Returns the height of the texture.  */
-		u32 GetHeight() const { return mDesc.Height; }
-
-		/**	Returns the width of the texture. */
-		u32 GetWidth() const { return mDesc.Width; }
-
-		/**	Returns the depth of the texture (only applicable for 3D textures). */
-		u32 GetDepth() const { return mDesc.Depth; }
-
-		/**	Returns a value that signals the engine in what way is the texture expected to be used. */
-		int GetUsage() const { return mDesc.Usage; }
-
-		/**	Returns the pixel format for the texture surface. */
-		PixelFormat GetFormat() const { return mDesc.Format; }
+		TextureProperties(const TextureCreateInformation& createInformation);
 
 		/**	Returns true if the texture has an alpha layer. */
 		bool HasAlpha() const;
@@ -162,10 +175,7 @@ namespace bs
 		 * Returns the number of faces this texture has. This includes array slices (if texture is an array texture),
 		 * as well as cube-map faces.
 		 */
-		u32 GetNumFaces() const;
-
-		/** Returns the number of array slices of the texture (if the texture is an array texture). */
-		u32 GetNumArraySlices() const { return mDesc.ArraySliceCount; }
+		u32 GetFaceCount() const;
 
 		/**
 		 * Allocates a buffer that exactly matches the format of the texture described by these properties, for the provided
@@ -190,8 +200,6 @@ namespace bs
 		 * Map a face and a mip level to a sub-resource index you can use for updating or reading a specific sub-resource.
 		 */
 		u32 MapToSubresourceIdx(u32 face, u32 mip) const;
-
-		TextureCreateInformation mDesc;
 	};
 
 	/**
@@ -262,6 +270,30 @@ namespace bs
 		 * The texture must have been created with TU_CPUCACHED usage otherwise this method will not return any data.
 		 */
 		void ReadCachedData(PixelData& data, u32 face = 0, u32 mipLevel = 0);
+
+		/**
+		 * Copies the contents a subresource in this texture to another texture. Texture format and size of the subresource
+		 * must match.
+		 *
+		 * You are allowed to copy from a multisampled to non-multisampled surface, which will resolve the multisampled
+		 * surface before copying.
+		 *
+		 * @param	target						Texture that contains the destination subresource.
+		 * @param	textureCopyInformation		Structure used for customizing the copy operation.
+		 *
+		 * @note This is an @ref asyncMethod "asynchronous method".
+		 */
+		void Copy(const SPtr<Texture>& target, const TextureCopyInformation& textureCopyInformation = TextureCopyInformation::kDefault) const;
+
+		/**
+		 * Blits the contents a subresource in this texture to another texture.
+		 *
+		 * @param	target						Texture that contains the destination subresource.
+		 * @param	textureBlitInformation		Structure used for customizing the blit operation.
+		 *
+		 * @note This is an @ref asyncMethod "asynchronous method".
+		 */
+		void Blit(const SPtr<Texture>& target, const TextureBlitInformation& textureBlitInformation = TextureBlitInformation::kDefault) const;
 
 		/**	Returns properties that contain information about the texture. */
 		const TextureProperties& GetProperties() const { return mProperties; }
@@ -394,12 +426,20 @@ namespace bs
 			 * You are allowed to copy from a multisampled to non-multisampled surface, which will resolve the multisampled
 			 * surface before copying.
 			 *
-			 * @param[in]	target				Texture that contains the destination subresource.
-			 * @param[in]	desc				Structure used for customizing the copy operation.
-			 * @param[in]	commandBuffer		Command buffer to queue the copy operation on. If null, main command buffer is
-			 *									used.
+			 * @param	target				Texture that contains the destination subresource.
+			 * @param	copyInformation		Structure used for customizing the copy operation.
+			 * @param	commandBuffer		Command buffer to queue the copy operation on. If null, main command buffer is used.
 			 */
-			void Copy(const SPtr<Texture>& target, const TextureCopyInformation& desc = TextureCopyInformation::kDefault, const SPtr<CommandBuffer>& commandBuffer = nullptr);
+			void Copy(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation = TextureCopyInformation::kDefault, const SPtr<CommandBuffer>& commandBuffer = nullptr);
+
+			/**
+			 * Blits the contents a subresource in this texture to another texture.
+			 *
+			 * @param	target				Texture that contains the destination subresource.
+			 * @param	blitInformation		Structure used for customizing the copy operation.
+			 * @param	commandBuffer		Command buffer to queue the copy operation on. If null, main command buffer is used.
+			 */
+			void Blit(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation = TextureBlitInformation::kDefault, const SPtr<CommandBuffer>& commandBuffer = nullptr);
 
 			/**
 			 * Sets all the pixels of the specified face and mip level to the provided value.
@@ -489,22 +529,25 @@ namespace bs
 
 		protected:
 			/** @copydoc Lock */
-			virtual PixelData LockImpl(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0, u32 queueIdx = 0) = 0;
+			virtual PixelData LockInternal(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0, u32 queueIdx = 0) = 0;
 
 			/** @copydoc Unlock */
-			virtual void UnlockImpl() = 0;
+			virtual void UnlockInternal() = 0;
 
 			/** @copydoc Copy */
-			virtual void CopyImpl(const SPtr<Texture>& target, const TextureCopyInformation& desc, const SPtr<CommandBuffer>& commandBuffer) = 0;
+			virtual void CopyInternal(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation, const SPtr<CommandBuffer>& commandBuffer) = 0;
+
+			/** @copydoc Blit */
+			virtual void BlitInternal(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation, const SPtr<CommandBuffer>& commandBuffer) = 0;
 
 			/** @copydoc ReadData */
-			virtual void ReadDataImpl(PixelData& dest, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0, u32 queueIdx = 0) = 0;
+			virtual void ReadDataInternal(PixelData& dest, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0, u32 queueIdx = 0) = 0;
 
 			/** @copydoc WriteData */
-			virtual void WriteDataImpl(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, u32 queueIdx = 0) = 0;
+			virtual void WriteDataInternal(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, u32 queueIdx = 0) = 0;
 
 			/** @copydoc Clear */
-			virtual void ClearImpl(const Color& value, u32 mipLevel = 0, u32 face = 0, u32 queueIdx = 0);
+			virtual void ClearInternal(const Color& value, u32 mipLevel = 0, u32 face = 0, u32 queueIdx = 0);
 
 			/************************************************************************/
 			/* 								TEXTURE VIEW                      		*/

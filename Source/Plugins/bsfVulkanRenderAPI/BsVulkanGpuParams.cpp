@@ -690,7 +690,7 @@ u32 VulkanGpuParams::GetSetCount() const
 
 void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDescriptorSet* outSets, Vector<u32>& outDynamicOffsets)
 {
-	u32 deviceIdx = buffer.GetDeviceIdx();
+	u32 deviceIdx = buffer.GetDeviceIndex();
 
 	PerDeviceData& perDeviceData = mPerDeviceData[deviceIdx];
 	if(perDeviceData.PerSetData == nullptr)
@@ -1005,7 +1005,7 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 
 				// Keep dynamic textures in general layout, so they can be easily mapped by CPU
 				const TextureProperties& props = element->GetProperties();
-				if(props.GetUsage() & TU_DYNAMIC)
+				if(props.Usage & TU_DYNAMIC)
 					layout = VK_IMAGE_LAYOUT_GENERAL;
 				else
 					layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
