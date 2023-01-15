@@ -11,7 +11,7 @@
 
 INTEGER			-?[0-9][0-9]*
 INTEGER_16		0[xX][0-9a-fA-F]+
-FLOAT			[0-9]+\.[0-9]+([eE][+-]?[0-9]+)?[fF]?
+FLOAT			[-+]?[0-9]*\.?[0-9]+([eE][+-]?[0-9]+)?[fF]?
 STRING			\"[^"\n]*\"
 IDENTIFIER		[_a-zA-Z][_a-zA-Z0-9]*
 WS				[ \r\n\t]*
@@ -196,6 +196,7 @@ show			{ return TOKEN_SHOW; }
 
 	BEGIN(INITIAL);
 	}
+<INCLUDE>{COMMENT}		{ /* Skip comment */ }
 <INCLUDE>.				{ return yytext[0]; }
 
 <<EOF>>					{
@@ -210,6 +211,7 @@ show			{ return TOKEN_SHOW; }
 <DEFINE_COND>{SPACE}			{ /* Skip blank */ }
 <DEFINE_COND>{IDENTIFIER}		{ AddDefine(yyextra, yytext); BEGIN(DEFINE_COND_EXPR); }
 <DEFINE_COND>{ENDLINE}			{ BEGIN(INITIAL); }
+<DEFINE_COND>{COMMENT}			{ /* Skip comment */ }
 <DEFINE_COND>.					{ return yytext[0]; }
 
 <DEFINE_COND_EXPR>{DEFINE_EXPR}		{ AddDefineExpr(yyextra, yytext); BEGIN(INITIAL); }
@@ -218,6 +220,7 @@ show			{ return TOKEN_SHOW; }
 #undef							{ BEGIN(UNDEF_COND); }
 <UNDEF_COND>{WS}				{ /* Skip blank */ }
 <UNDEF_COND>{IDENTIFIER}		{ RemoveDefine(yyextra, yytext); BEGIN(INITIAL); }
+<UNDEF_COND>{COMMENT}			{ /* Skip comment */ }
 <UNDEF_COND>.					{ return yytext[0]; }
 
 #if								{ BEGIN(CONDITIONAL_IF); }
@@ -237,7 +240,8 @@ show			{ return TOKEN_SHOW; }
 		BEGIN(INITIAL);
 }
 <CONDITIONAL_IF>{SPACE}			{ /* Skip blank */ }
-<CONDITIONAL_IF>.
+<CONDITIONAL_IF>{COMMENT}		{ /* Skip comment */ }
+<CONDITIONAL_IF>.				{ return yytext[0]; }
 
 #ifdef							{ BEGIN(CONDITIONAL_IFDEF); }
 <CONDITIONAL_IFDEF>{WS}			{ /* Skip blank */ }
@@ -248,6 +252,7 @@ show			{ return TOKEN_SHOW; }
 	else
 		BEGIN(INITIAL);
 }
+<CONDITIONAL_IFDEF>{COMMENT}		{ /* Skip comment */ }
 <CONDITIONAL_IFDEF>.				{ return yytext[0]; }
 
 #ifndef								{ BEGIN(CONDITIONAL_IFNDEF); }
@@ -259,6 +264,7 @@ show			{ return TOKEN_SHOW; }
 	else
 		BEGIN(INITIAL);
 }
+<CONDITIONAL_IFNDEF>{COMMENT}		{ /* Skip comment */ }
 <CONDITIONAL_IFNDEF>.				{ return yytext[0]; }
 
 #else							{ 
@@ -300,6 +306,7 @@ show			{ return TOKEN_SHOW; }
 		BEGIN(INITIAL);
 }
 <CONDITIONAL_ELIF>{SPACE}		{ /* Skip blank */ }
+<CONDITIONAL_ELIF>{COMMENT}		{ /* Skip blank */ }
 <CONDITIONAL_ELIF>.				{ return yytext[0]; }
 
 	/* Code block */
@@ -308,9 +315,10 @@ code			{ BEGIN(CODEBLOCK_HEADER); return TOKEN_CODE; }
 	/* Track when the code block begins, insert all code block characters into our own buffer, record a sequential index */
 	/* of all code blocks in the text, and track bracket open/closed state so we know when we're done with the code block. */
 	/* And finally output a sequential code block index to the parser (it shouldn't be aware of anything else in the block). */
-<CODEBLOCK_HEADER>\{	{ BEGIN(CODEBLOCK); BeginCodeBlock(yyextra, RCT_CodeBlock); yyextra->NumOpenBrackets = 1; return yytext[0]; }
-<CODEBLOCK_HEADER>{WS}	{ /* Skip blank */ }
-<CODEBLOCK_HEADER>.		{ return yytext[0]; }
+<CODEBLOCK_HEADER>\{		{ BEGIN(CODEBLOCK); BeginCodeBlock(yyextra, RCT_CodeBlock); yyextra->NumOpenBrackets = 1; return yytext[0]; }
+<CODEBLOCK_HEADER>{WS}		{ /* Skip blank */ }
+<CODEBLOCK_HEADER>{COMMENT} { /* Skip comment */ }
+<CODEBLOCK_HEADER>.			{ return yytext[0]; }
 
 <CODEBLOCK>\{			{ yyextra->NumOpenBrackets++; AppendCodeBlock(yyextra, RCT_CodeBlock, yytext, 1); }
 <CODEBLOCK>\}			{ 
@@ -344,6 +352,7 @@ subshader				{ BEGIN(SUBSHADER_HEADER); return TOKEN_SUBSHADER; }
 	/* And finally output a sequential subshader index to the parser (it shouldn't be aware of anything else in the block). */
 <SUBSHADER_HEADER>\{				{ BEGIN(SUBSHADER_BODY); BeginCodeBlock(yyextra, RCT_SubShaderBlock); yyextra->NumOpenBrackets = 1; return yytext[0]; }
 <SUBSHADER_HEADER>{WS}				{ /* Skip blank */ }
+<SUBSHADER_HEADER>{COMMENT}			{ /* Skip comment */ }
 <SUBSHADER_HEADER>{IDENTIFIER}		{ yylval->StrValue = MmallocStrdup(yyextra->MemContext, yytext); return TOKEN_IDENTIFIER; }
 <SUBSHADER_HEADER>.					{ return yytext[0]; }
 
