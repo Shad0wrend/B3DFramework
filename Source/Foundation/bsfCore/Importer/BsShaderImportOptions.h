@@ -22,6 +22,7 @@ namespace bs
 		VKSL = 1 << 2,
 		/** Metal shading language. */
 		MSL = 1 << 3,
+		Count = 4,
 		/** Helper entry that includes all languages. */
 		All = HLSL | GLSL | VKSL | MSL
 	};

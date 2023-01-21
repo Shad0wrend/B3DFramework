@@ -703,7 +703,7 @@ enum class CrossCompileOutput
 	MVKSL
 };
 
-String CrossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput outputType, bool optionalEntry, u32& startBindingSlot, BSLFXCompileResult& outCompileResult, ShaderCreateInformation* shaderDesc = nullptr, Vector<GpuProgramType>* detectedTypes = nullptr)
+String CrossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput outputType, bool optionalEntry, u32& startBindingSlot, BSLFXCompileResult& outCompileResult, ShaderCreateInformation* shaderDesc = nullptr, SmallVector<GpuProgramType, 2>* detectedTypes = nullptr)
 {
 	SPtr<StringStream> input = B3DMakeShared<StringStream>();
 
@@ -844,21 +844,21 @@ String CrossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput 
 		for(auto& entry : reflectionData.functions)
 		{
 			if(entry.ident == "vsmain")
-				detectedTypes->push_back(GPT_VERTEX_PROGRAM);
+				detectedTypes->Add(GPT_VERTEX_PROGRAM);
 			else if(entry.ident == "fsmain")
-				detectedTypes->push_back(GPT_FRAGMENT_PROGRAM);
+				detectedTypes->Add(GPT_FRAGMENT_PROGRAM);
 			else if(entry.ident == "gsmain")
-				detectedTypes->push_back(GPT_GEOMETRY_PROGRAM);
+				detectedTypes->Add(GPT_GEOMETRY_PROGRAM);
 			else if(entry.ident == "dsmain")
-				detectedTypes->push_back(GPT_DOMAIN_PROGRAM);
+				detectedTypes->Add(GPT_DOMAIN_PROGRAM);
 			else if(entry.ident == "hsmain")
-				detectedTypes->push_back(GPT_HULL_PROGRAM);
+				detectedTypes->Add(GPT_HULL_PROGRAM);
 			else if(entry.ident == "csmain")
-				detectedTypes->push_back(GPT_COMPUTE_PROGRAM);
+				detectedTypes->Add(GPT_COMPUTE_PROGRAM);
 		}
 
 		// If no entry points found, and error occurred, report error
-		if(!compileSuccess && detectedTypes->empty())
+		if(!compileSuccess && detectedTypes->Empty())
 		{
 			StringStream logOutput;
 			log.GetMessages(logOutput);
@@ -882,28 +882,164 @@ String CrossCompile(const String& hlsl, GpuProgramType type, CrossCompileOutput 
 	return CrossCompile(hlsl, type, outputType, false, startBindingSlot, outCompileResult);
 }
 
-void ReflectHlsl(const String& hlsl, ShaderCreateInformation& shaderDesc, Vector<GpuProgramType>& entryPoints, BSLFXCompileResult& outCompileResult)
+void ReflectHlsl(const String& hlsl, ShaderCreateInformation& shaderDesc, SmallVector<GpuProgramType, 2>& entryPoints, BSLFXCompileResult& outCompileResult)
 {
 	u32 dummy = 0;
 	CrossCompile(hlsl, GPT_VERTEX_PROGRAM, CrossCompileOutput::GLSL45, true, dummy, outCompileResult, &shaderDesc, &entryPoints);
 }
 
-BSLFXCompileResult BSLFXCompiler::Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages)
+BSLFXCompileResult BSLFXCompiler::Compile(const String& name, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, SPtr<Shader>& outShader)
 {
-	// Parse global shader options & shader meta-data
-	ShaderCreateInformation shaderDesc;
-	Vector<String> includes;
+	SPtr<BSLFXShaderMetaData> shaderMetaData;
+	BSLFXCompileResult compileStatus = CompileMetaData(source, defines, shaderMetaData);
+	if(!compileStatus.ErrorMessage.empty())
+		return compileStatus;
 
-	BSLFXCompileResult output = CompileShader(source, defines, languages, shaderDesc, includes);
+	B3D_ASSERT(shaderMetaData != nullptr);
 
-	if (output.ErrorMessage.empty())
+		BSLFXCompileResult compileResult;
+
+	SmallVector<ShadingLanguageFlag, (u32)ShadingLanguageFlag::Count> requiredLanguageSet;
+	for(u32 shadingLanguageIndex = 0; shadingLanguageIndex < (u32)ShadingLanguageFlag::Count; shadingLanguageIndex++)
 	{
-		// Generate a shader from the parsed information
-		output.Shader = Shader::CreateShared(name, shaderDesc);
-		output.Shader->SetIncludeFiles(includes);
+		if(languages.IsSet((ShadingLanguageFlag)(1 << shadingLanguageIndex)))
+			requiredLanguageSet.Add((ShadingLanguageFlag)(1 << shadingLanguageIndex));
 	}
 
-	return output;
+	// For every variation, re-parse the file with relevant defines
+	for(auto& variation : shaderMetaData->Variations)
+	{
+		ParsedShaderOrMixinNode parsedNode;
+		compileResult = ParseVariation(shaderMetaData->Name, source, variation, defines, parsedNode);
+
+		if(!compileResult.ErrorMessage.empty())
+			return compileResult;
+
+		for(u32 languageIndex = 0; languageIndex < requiredLanguageSet.size(); ++languageIndex)
+		{
+			const auto passCount = (u32)parsedNode.Passes.size();
+			for(u32 passIndex = 0; passIndex < passCount; passIndex++)
+			{
+				const ParsedShaderPassNode& parsedShaderPassNode = parsedNode.Passes[passIndex];
+
+				// Find valid entry points and parameters
+				// Note: Ideally we don't need to do a full reflection pass for each GPU program type (i.e. by adding some kind of AST caching to XShaderCompiler)
+				ReflectHlsl(parsedShaderPassNode.Code, shaderMetaData->ShaderInformation, shaderMetaData->GPUProgramTypes, compileStatus);
+			}
+
+			SPtr<Technique> compiledVariation;
+			compileStatus = CompileVariation(shaderMetaData->Name, parsedNode, *shaderMetaData, variation, requiredLanguageSet[languageIndex], compiledVariation);
+
+			if(!compileStatus.ErrorMessage.empty())
+				return compileStatus;
+
+			shaderMetaData->ShaderInformation.Techniques.push_back(compiledVariation);
+		}
+	}
+
+	// Verify techniques compile correctly
+	bool hasError = false;
+	StringStream gpuProgError;
+	for(auto& technique : shaderMetaData->ShaderInformation.Techniques)
+	{
+		if(!technique->IsSupported())
+			continue;
+
+		u32 numPasses = technique->GetNumPasses();
+		technique->Compile();
+
+		for(u32 i = 0; i < numPasses; i++)
+		{
+			SPtr<Pass> pass = technique->GetPass(i);
+
+			auto checkCompileStatus = [&](const String& prefix, const SPtr<GpuProgram>& prog)
+			{
+				if(prog != nullptr)
+				{
+					prog->BlockUntilCoreInitialized();
+
+					if(!prog->IsCompiled())
+					{
+						hasError = true;
+						gpuProgError << prefix << ": " << prog->GetCompileErrorMessage() << std::endl;
+					}
+				}
+			};
+
+			const SPtr<GraphicsPipelineState>& graphicsPipeline = pass->GetGraphicsPipelineState();
+			if(graphicsPipeline)
+			{
+				checkCompileStatus("Vertex program", graphicsPipeline->GetVertexProgram());
+				checkCompileStatus("Fragment program", graphicsPipeline->GetFragmentProgram());
+				checkCompileStatus("Geometry program", graphicsPipeline->GetGeometryProgram());
+				checkCompileStatus("Hull program", graphicsPipeline->GetHullProgram());
+				checkCompileStatus("Domain program", graphicsPipeline->GetDomainProgram());
+			}
+
+			const SPtr<ComputePipelineState>& computePipeline = pass->GetComputePipelineState();
+			if(computePipeline)
+				checkCompileStatus("Compute program", computePipeline->GetProgram());
+		}
+	}
+
+	if(hasError)
+	{
+		compileResult.ErrorMessage = "Failed compiling GPU program(s): " + gpuProgError.str();
+		compileResult.ErrorLine = 0;
+		compileResult.ErrorColumn = 0;
+	}
+
+	if(compileStatus.ErrorMessage.empty())
+	{
+		outShader = Shader::CreateShared(name, shaderMetaData->ShaderInformation);
+		outShader->SetIncludeFiles(shaderMetaData->Includes);
+	}
+
+	return compileResult;
+}
+
+BSLFXCompileResult BSLFXCompiler::CompileMetaData(const String& source, const UnorderedMap<String, String>& defines, SPtr<BSLFXShaderMetaData>& outShaderMetaData)
+{
+	SPtr<BSLFXShaderMetaData> shaderMetaData = B3DMakeShared<BSLFXShaderMetaData>();
+
+	ParsedShaderMetaData parsedShaderMetaData;
+	BSLFXCompileResult compileResult = ParseMetaData(source, defines, shaderMetaData->ShaderInformation, parsedShaderMetaData, shaderMetaData->Includes);
+
+	if(!compileResult.ErrorMessage.empty())
+		return compileResult;
+
+	shaderMetaData->Variations = CreateShaderVariations(parsedShaderMetaData);
+	shaderMetaData->Name = parsedShaderMetaData.Name;
+	shaderMetaData->Defines = defines;
+
+	outShaderMetaData = shaderMetaData;
+	return compileResult;
+}
+
+BSLFXCompileResult BSLFXCompiler::CompileVariation(const String& source, const ShaderVariation& variation, ShadingLanguageFlag language, BSLFXShaderMetaData& inOutShaderMetaData, SPtr<Technique>& outVariation)
+{
+	ParsedShaderOrMixinNode parsedNode;
+	BSLFXCompileResult compileResult = ParseVariation(inOutShaderMetaData.Name, source, variation, inOutShaderMetaData.Defines, parsedNode);
+
+	if(!compileResult.ErrorMessage.empty())
+		return compileResult;
+
+	if(!inOutShaderMetaData.HasGPUProgramMetaData)
+	{
+		const auto passCount = (u32)parsedNode.Passes.size();
+		for(u32 passIndex = 0; passIndex < passCount; passIndex++)
+		{
+			const ParsedShaderPassNode& parsedShaderPassNode = parsedNode.Passes[passIndex];
+
+			// Find valid entry points and parameters
+			// Note: Ideally we don't need to do a full reflection pass for each GPU program type (i.e. by adding some kind of AST caching to XShaderCompiler)
+			ReflectHlsl(parsedShaderPassNode.Code, inOutShaderMetaData.ShaderInformation, inOutShaderMetaData.GPUProgramTypes, compileResult);
+		}
+
+		inOutShaderMetaData.HasGPUProgramMetaData = true;
+	}
+
+	return CompileVariation(inOutShaderMetaData.Name, parsedNode, inOutShaderMetaData, variation, language, outVariation);
 }
 
 BSLFXCompileResult BSLFXCompiler::ParseFx(ParseState* parseState, const char* source, const UnorderedMap<String, String>& defines)
@@ -964,9 +1100,9 @@ cleanup:
 	return output;
 }
 
-BSLFXCompiler::ShaderMetaData BSLFXCompiler::ParseShaderMetaData(ASTFXNode* shader)
+BSLFXCompiler::ParsedShaderMetaData BSLFXCompiler::ParseShaderMetaData(ASTFXNode* shader)
 {
-	ShaderMetaData metaData;
+	ParsedShaderMetaData metaData;
 
 	metaData.Language = "hlsl";
 	metaData.IsMixin = shader->Type == NT_Mixin;
@@ -1015,7 +1151,7 @@ BSLFXCompiler::ShaderMetaData BSLFXCompiler::ParseShaderMetaData(ASTFXNode* shad
 	return metaData;
 }
 
-BSLFXCompileResult BSLFXCompiler::ParseMetaDataAndOptions(ASTFXNode* rootNode, Vector<std::pair<ASTFXNode*, ShaderMetaData>>& shaderMetaData, Vector<SubShaderData>& subShaderData, ShaderCreateInformation& shaderDesc)
+BSLFXCompileResult BSLFXCompiler::ParseMetaDataAndOptions(ASTFXNode* rootNode, Vector<std::pair<ASTFXNode*, ParsedShaderMetaData>>& shaderMetaData, ShaderCreateInformation& shaderCreateInformation)
 {
 	BSLFXCompileResult output;
 
@@ -1037,23 +1173,19 @@ BSLFXCompileResult BSLFXCompiler::ParseMetaDataAndOptions(ASTFXNode* rootNode, V
 		switch(option->Type)
 		{
 		case OT_Options:
-			ParseOptions(option->Value.NodePtr, shaderDesc);
+			ParseOptions(option->Value.NodePtr, shaderCreateInformation);
 			break;
 		case OT_Shader:
 			{
 				// We initially parse only meta-data, so we can handle out-of-order mixin/shader definitions
-				ShaderMetaData metaData = ParseShaderMetaData(option->Value.NodePtr);
+				ParsedShaderMetaData metaData = ParseShaderMetaData(option->Value.NodePtr);
 				shaderMetaData.push_back(std::make_pair(option->Value.NodePtr, metaData));
 
 				break;
 			}
 		case OT_SubShader:
-			{
-				SubShaderData data = ParseSubShader(option->Value.NodePtr);
-				subShaderData.push_back(data);
-
-				break;
-			}
+			// No longer supported
+			break;
 		default:
 			break;
 		}
@@ -1062,7 +1194,7 @@ BSLFXCompileResult BSLFXCompiler::ParseMetaDataAndOptions(ASTFXNode* rootNode, V
 	return output;
 }
 
-void BSLFXCompiler::ParseVariations(ShaderMetaData& metaData, ASTFXNode* variations)
+void BSLFXCompiler::ParseVariations(ParsedShaderMetaData& metaData, ASTFXNode* variations)
 {
 	B3D_ASSERT(variations->Type == NT_Variation);
 
@@ -1460,7 +1592,7 @@ void BSLFXCompiler::ParseRenderTargetBlendState(BLEND_STATE_DESC& desc, ASTFXNod
 	index++;
 }
 
-bool BSLFXCompiler::ParseBlendState(PassData& desc, ASTFXNode* blendNode)
+bool BSLFXCompiler::ParseBlendState(ParsedShaderPassNode& desc, ASTFXNode* blendNode)
 {
 	if(blendNode == nullptr || blendNode->Type != NT_Blend)
 		return false;
@@ -1500,7 +1632,7 @@ bool BSLFXCompiler::ParseBlendState(PassData& desc, ASTFXNode* blendNode)
 	return !isDefault;
 }
 
-bool BSLFXCompiler::ParseRasterizerState(PassData& desc, ASTFXNode* rasterNode)
+bool BSLFXCompiler::ParseRasterizerState(ParsedShaderPassNode& desc, ASTFXNode* rasterNode)
 {
 	if(rasterNode == nullptr || rasterNode->Type != NT_Raster)
 		return false;
@@ -1553,7 +1685,7 @@ bool BSLFXCompiler::ParseRasterizerState(PassData& desc, ASTFXNode* rasterNode)
 	return !isDefault;
 }
 
-bool BSLFXCompiler::ParseDepthState(PassData& passData, ASTFXNode* depthNode)
+bool BSLFXCompiler::ParseDepthState(ParsedShaderPassNode& passData, ASTFXNode* depthNode)
 {
 	if(depthNode == nullptr || depthNode->Type != NT_Depth)
 		return false;
@@ -1586,7 +1718,7 @@ bool BSLFXCompiler::ParseDepthState(PassData& passData, ASTFXNode* depthNode)
 	return !isDefault;
 }
 
-bool BSLFXCompiler::ParseStencilState(PassData& passData, ASTFXNode* stencilNode)
+bool BSLFXCompiler::ParseStencilState(ParsedShaderPassNode& passData, ASTFXNode* stencilNode)
 {
 	if(stencilNode == nullptr || stencilNode->Type != NT_Stencil)
 		return false;
@@ -1630,7 +1762,7 @@ bool BSLFXCompiler::ParseStencilState(PassData& passData, ASTFXNode* stencilNode
 	return !isDefault;
 }
 
-void BSLFXCompiler::ParseCodeBlock(ASTFXNode* codeNode, const Vector<String>& codeBlocks, PassData& passData)
+void BSLFXCompiler::ParseCodeBlock(ASTFXNode* codeNode, const Vector<String>& codeBlocks, ParsedShaderPassNode& passData)
 {
 	if(codeNode == nullptr || (codeNode->Type != NT_Code))
 	{
@@ -1650,7 +1782,7 @@ void BSLFXCompiler::ParseCodeBlock(ASTFXNode* codeNode, const Vector<String>& co
 	}
 }
 
-void BSLFXCompiler::ParsePass(ASTFXNode* passNode, const Vector<String>& codeBlocks, PassData& passData)
+void BSLFXCompiler::ParsePass(ASTFXNode* passNode, const Vector<String>& codeBlocks, ParsedShaderPassNode& passData)
 {
 	if(passNode == nullptr || passNode->Type != NT_Pass)
 		return;
@@ -1682,7 +1814,7 @@ void BSLFXCompiler::ParsePass(ASTFXNode* passNode, const Vector<String>& codeBlo
 	}
 }
 
-void BSLFXCompiler::ParseShader(ASTFXNode* shaderNode, const Vector<String>& codeBlocks, ShaderData& shaderData)
+void BSLFXCompiler::ParseShader(ASTFXNode* shaderNode, const Vector<String>& codeBlocks, ParsedShaderOrMixinNode& shaderData)
 {
 	if(shaderNode == nullptr || (shaderNode->Type != NT_Shader && shaderNode->Type != NT_Mixin))
 		return;
@@ -1690,11 +1822,11 @@ void BSLFXCompiler::ParseShader(ASTFXNode* shaderNode, const Vector<String>& cod
 	// There must always be at least one pass
 	if(shaderData.Passes.empty())
 	{
-		shaderData.Passes.push_back(PassData());
+		shaderData.Passes.push_back(ParsedShaderPassNode());
 		shaderData.Passes.back().SeqIdx = 0;
 	}
 
-	PassData combinedCommonPassData;
+	ParsedShaderPassNode combinedCommonPassData;
 
 	u32 nextPassIdx = 0;
 	// Go in reverse because options are added in reverse order during parsing
@@ -1707,7 +1839,7 @@ void BSLFXCompiler::ParseShader(ASTFXNode* shaderNode, const Vector<String>& cod
 		case OT_Pass:
 			{
 				u32 passIdx = nextPassIdx;
-				PassData* passData = nullptr;
+				ParsedShaderPassNode* passData = nullptr;
 				for(auto& entry : shaderData.Passes)
 				{
 					if(entry.SeqIdx == passIdx)
@@ -1716,7 +1848,7 @@ void BSLFXCompiler::ParseShader(ASTFXNode* shaderNode, const Vector<String>& cod
 
 				if(passData == nullptr)
 				{
-					shaderData.Passes.push_back(PassData());
+					shaderData.Passes.push_back(ParsedShaderPassNode());
 					passData = &shaderData.Passes.back();
 
 					passData->SeqIdx = passIdx;
@@ -1731,7 +1863,7 @@ void BSLFXCompiler::ParseShader(ASTFXNode* shaderNode, const Vector<String>& cod
 			break;
 		case OT_Code:
 			{
-				PassData commonPassData;
+				ParsedShaderPassNode commonPassData;
 				ParseCodeBlock(option->Value.NodePtr, codeBlocks, commonPassData);
 
 				for(auto& passData : shaderData.Passes)
@@ -1777,30 +1909,6 @@ void BSLFXCompiler::ParseShader(ASTFXNode* shaderNode, const Vector<String>& cod
 	}
 }
 
-BSLFXCompiler::SubShaderData BSLFXCompiler::ParseSubShader(ASTFXNode* subShader)
-{
-	SubShaderData subShaderData;
-
-	//// Go in reverse because options are added in reverse order during parsing
-	for(int i = subShader->Options->Count - 1; i >= 0; i--)
-	{
-		NodeOption* option = &subShader->Options->Entries[i];
-
-		switch(option->Type)
-		{
-		case OT_Identifier:
-			subShaderData.Name = option->Value.StrValue;
-			break;
-		case OT_Index:
-			subShaderData.CodeBlockIndex = option->Value.IntValue;
-		default:
-			break;
-		}
-	}
-
-	return subShaderData;
-}
-
 void BSLFXCompiler::ParseOptions(ASTFXNode* optionsNode, ShaderCreateInformation& shaderDesc)
 {
 	if(optionsNode == nullptr || optionsNode->Type != NT_Options)
@@ -1833,15 +1941,15 @@ void BSLFXCompiler::ParseOptions(ASTFXNode* optionsNode, ShaderCreateInformation
 	}
 }
 
-BSLFXCompileResult BSLFXCompiler::PopulateVariations(Vector<std::pair<ASTFXNode*, ShaderMetaData>>& shaderMetaData)
+BSLFXCompileResult BSLFXCompiler::PopulateVariations(Vector<std::pair<ASTFXNode*, ParsedShaderMetaData>>& shaderMetaData)
 {
 	BSLFXCompileResult output;
 
 	// Inherit variations from mixins
 	bool* mixinWasParsed = B3DStackAllocate<bool>((u32)shaderMetaData.size());
 
-	std::function<bool(const ShaderMetaData&, ShaderMetaData&)> parseInherited =
-		[&](const ShaderMetaData& metaData, ShaderMetaData& combinedMetaData)
+	std::function<bool(const ParsedShaderMetaData&, ParsedShaderMetaData&)> parseInherited =
+		[&](const ParsedShaderMetaData& metaData, ParsedShaderMetaData& combinedMetaData)
 	{
 		for(auto riter = metaData.Includes.rbegin(); riter != metaData.Includes.rend(); ++riter)
 		{
@@ -1893,12 +2001,12 @@ BSLFXCompileResult BSLFXCompiler::PopulateVariations(Vector<std::pair<ASTFXNode*
 
 	for(auto& entry : shaderMetaData)
 	{
-		const ShaderMetaData& metaData = entry.second;
+		const ParsedShaderMetaData& metaData = entry.second;
 		if(metaData.IsMixin)
 			continue;
 
 		B3DZeroOut(mixinWasParsed, shaderMetaData.size());
-		ShaderMetaData combinedMetaData = metaData;
+		ParsedShaderMetaData combinedMetaData = metaData;
 		if(!parseInherited(metaData, combinedMetaData))
 		{
 			B3DStackFree(mixinWasParsed);
@@ -1913,7 +2021,7 @@ BSLFXCompileResult BSLFXCompiler::PopulateVariations(Vector<std::pair<ASTFXNode*
 	return output;
 }
 
-void BSLFXCompiler::PopulateVariationParamInfos(const ShaderMetaData& shaderMetaData, ShaderCreateInformation& desc)
+void BSLFXCompiler::PopulateVariationParamInfos(const ParsedShaderMetaData& shaderMetaData, ShaderCreateInformation& desc)
 {
 	for(auto& entry : shaderMetaData.Variations)
 	{
@@ -1935,337 +2043,126 @@ void BSLFXCompiler::PopulateVariationParamInfos(const ShaderMetaData& shaderMeta
 	}
 }
 
-BSLFXCompileResult BSLFXCompiler::CompileTechniques(
-	const Vector<std::pair<ASTFXNode*, ShaderMetaData>>& shaderMetaData, const String& source,
-	const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, ShaderCreateInformation& shaderDesc,
-	Vector<String>& includes)
+BSLFXCompileResult BSLFXCompiler::ParseMetaData(const String& source, const UnorderedMap<String, String>& defines, ShaderCreateInformation& outShaderInformation, ParsedShaderMetaData& outShaderMetaData, Vector<String>& outIncludes)
 {
-	BSLFXCompileResult output;
-
-	// Build a list of different variations and re-parse the source using the relevant defines
-	UnorderedSet<String> includeSet;
-	for(auto& entry : shaderMetaData)
-	{
-		const ShaderMetaData& metaData = entry.second;
-		if(metaData.IsMixin)
-			continue;
-
-		// Generate a list of variations
-		Vector<ShaderVariation> variations;
-
-		if(metaData.Variations.empty())
-			variations.push_back(ShaderVariation());
-		else
-		{
-			Vector<const VariationData*> todo;
-			for(u32 i = 0; i < (u32)metaData.Variations.size(); i++)
-				todo.push_back(&metaData.Variations[i]);
-
-			while(!todo.empty())
-			{
-				const VariationData* current = todo.back();
-				todo.erase(todo.end() - 1);
-
-				// Variation parameter that's either defined or isn't
-				if(current->Values.empty())
-				{
-					// This is the first variation parameter, register new variations
-					if(variations.empty())
-					{
-						ShaderVariation a;
-						ShaderVariation b;
-
-						b.AddParam(ShaderVariation::Param(current->Identifier, 1));
-
-						variations.push_back(a);
-						variations.push_back(b);
-					}
-					else // Duplicate existing variations, and add the parameter
-					{
-						u32 numVariations = (u32)variations.size();
-						for(u32 i = 0; i < numVariations; i++)
-						{
-							// Make a copy
-							variations.push_back(variations[i]);
-
-							// Add the parameter to existing variation
-							variations[i].AddParam(ShaderVariation::Param(current->Identifier, 1));
-						}
-					}
-				}
-				else // Variation parameter with multiple values
-				{
-					// This is the first variation parameter, register new variations
-					if(variations.empty())
-					{
-						for(u32 i = 0; i < (u32)current->Values.size(); i++)
-						{
-							ShaderVariation variation;
-							variation.AddParam(ShaderVariation::Param(current->Identifier, current->Values[i].Value));
-
-							variations.push_back(variation);
-						}
-					}
-					else // Duplicate existing variations, and add the parameter
-					{
-						u32 numVariations = (u32)variations.size();
-						for(u32 i = 0; i < numVariations; i++)
-						{
-							for(u32 j = 1; j < (u32)current->Values.size(); j++)
-							{
-								ShaderVariation copy = variations[i];
-								copy.AddParam(ShaderVariation::Param(current->Identifier, current->Values[j].Value));
-
-								variations.push_back(copy);
-							}
-
-							variations[i].AddParam(ShaderVariation::Param(current->Identifier, current->Values[0].Value));
-						}
-					}
-				}
-			}
-		}
-
-		// For every variation, re-parse the file with relevant defines
-		for(auto& variation : variations)
-		{
-			UnorderedMap<String, String> globalDefines = defines;
-			UnorderedMap<String, String> variationDefines = variation.GetDefines().GetAll();
-
-			for(auto& define : variationDefines)
-				globalDefines[define.first] = define.second;
-
-			ParseState* variationParseState = ParseStateCreate();
-			output = ParseFx(variationParseState, source.c_str(), globalDefines);
-
-			if (!output.ErrorMessage.empty())
-			{
-				ParseStateDelete(variationParseState);
-				return output;
-			}
-			else
-			{
-				Vector<String> codeBlocks;
-				RawCode* rawCode = variationParseState->RawCodeBlock[RCT_CodeBlock];
-				while(rawCode != nullptr)
-				{
-					while((i32)codeBlocks.size() <= rawCode->Index)
-						codeBlocks.push_back(String());
-
-					codeBlocks[rawCode->Index] = String(rawCode->Code, rawCode->Size);
-					rawCode = rawCode->Next;
-				}
-
-				output = CompileTechniques(variationParseState, entry.second.Name, codeBlocks, variation, languages, includeSet, shaderDesc);
-
-				if(!output.ErrorMessage.empty())
-					return output;
-			}
-		}
-	}
-
-	// Generate a shader from the parsed techniques
-	for(auto& entry : includeSet)
-		includes.push_back(entry);
-
-	// Verify techniques compile correctly
-	bool hasError = false;
-	StringStream gpuProgError;
-	for(auto& technique : shaderDesc.Techniques)
-	{
-		if(!technique->IsSupported())
-			continue;
-
-		u32 numPasses = technique->GetNumPasses();
-		technique->Compile();
-
-		for(u32 i = 0; i < numPasses; i++)
-		{
-			SPtr<Pass> pass = technique->GetPass(i);
-
-			auto checkCompileStatus = [&](const String& prefix, const SPtr<GpuProgram>& prog)
-			{
-				if(prog != nullptr)
-				{
-					prog->BlockUntilCoreInitialized();
-
-					if(!prog->IsCompiled())
-					{
-						hasError = true;
-						gpuProgError << prefix << ": " << prog->GetCompileErrorMessage() << std::endl;
-					}
-				}
-			};
-
-			const SPtr<GraphicsPipelineState>& graphicsPipeline = pass->GetGraphicsPipelineState();
-			if(graphicsPipeline)
-			{
-				checkCompileStatus("Vertex program", graphicsPipeline->GetVertexProgram());
-				checkCompileStatus("Fragment program", graphicsPipeline->GetFragmentProgram());
-				checkCompileStatus("Geometry program", graphicsPipeline->GetGeometryProgram());
-				checkCompileStatus("Hull program", graphicsPipeline->GetHullProgram());
-				checkCompileStatus("Domain program", graphicsPipeline->GetDomainProgram());
-			}
-
-			const SPtr<ComputePipelineState>& computePipeline = pass->GetComputePipelineState();
-			if(computePipeline)
-				checkCompileStatus("Compute program", computePipeline->GetProgram());
-		}
-	}
-
-	if(hasError)
-	{
-		output.ErrorMessage = "Failed compiling GPU program(s): " + gpuProgError.str();
-		output.ErrorLine = 0;
-		output.ErrorColumn = 0;
-	}
-
-	return output;
-}
-
-BSLFXCompileResult BSLFXCompiler::CompileShader(String source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, ShaderCreateInformation& shaderDesc, Vector<String>& includes)
-{
-	SPtr<ct::Renderer> renderer = RendererManager::Instance().GetActive();
-
-	// Run the lexer/parser and generate the AST
 	ParseState* parseState = ParseStateCreate();
-	BSLFXCompileResult output = ParseFx(parseState, source.c_str(), defines);
+	BSLFXCompileResult compileResult = ParseFx(parseState, source.c_str(), defines);
 
-	if(!output.ErrorMessage.empty())
+	if(!compileResult.ErrorMessage.empty())
 	{
 		ParseStateDelete(parseState);
-		return output;
+		return compileResult;
 	}
 
 	// Parse global shader options & shader meta-data
-	Vector<pair<ASTFXNode*, ShaderMetaData>> shaderMetaData;
-	Vector<SubShaderData> subShaderData;
+	Vector<pair<ASTFXNode*, ParsedShaderMetaData>> shaderMetaDataWithNodes;
+	compileResult = ParseMetaDataAndOptions(parseState->RootNode, shaderMetaDataWithNodes, outShaderInformation);
 
-	output = ParseMetaDataAndOptions(parseState->RootNode, shaderMetaData, subShaderData, shaderDesc);
-
-	if(!output.ErrorMessage.empty())
+	if(!compileResult.ErrorMessage.empty())
 	{
 		ParseStateDelete(parseState);
-		return output;
+		return compileResult;
 	}
 
-	// Parse sub-shader code blocks
-	Vector<String> subShaderCodeBlocks;
-	RawCode* rawCode = parseState->RawCodeBlock[RCT_SubShaderBlock];
-	while(rawCode != nullptr)
+	// Parse includes
+	UnorderedSet<String> includeSet;
+	IncludeLink* includeLink = parseState->Includes;
+	while(includeLink != nullptr)
 	{
-		while((i32)subShaderCodeBlocks.size() <= rawCode->Index)
-			subShaderCodeBlocks.push_back(String());
+		const String& includeFilename = includeLink->Data->Filename;
+		includeSet.insert(includeFilename);
 
-		subShaderCodeBlocks[rawCode->Index] = String(rawCode->Code, rawCode->Size);
-		rawCode = rawCode->Next;
+		includeLink = includeLink->Next;
 	}
+
+	for(auto& entry : includeSet)
+		outIncludes.push_back(entry);
 
 	ParseStateDelete(parseState);
 
-	output = PopulateVariations(shaderMetaData);
+	compileResult = PopulateVariations(shaderMetaDataWithNodes);
 
-	if(!output.ErrorMessage.empty())
-		return output;
+	if(!compileResult.ErrorMessage.empty())
+		return compileResult;
 
 	// Note: Must be called after populateVariations, to ensure variations from mixins are inherited
-	for(auto& entry : shaderMetaData)
+	bool foundShader = false;
+	for(auto& entry : shaderMetaDataWithNodes)
 	{
 		if(entry.second.IsMixin)
 			continue;
 
-		PopulateVariationParamInfos(entry.second, shaderDesc);
-	}
-
-	output = CompileTechniques(shaderMetaData, source, defines, languages, shaderDesc, includes);
-
-	if(!output.ErrorMessage.empty())
-		return output;
-
-	// Parse sub-shaders
-	for(auto& entry : subShaderData)
-	{
-		if(entry.CodeBlockIndex > (u32)subShaderCodeBlocks.size())
-			continue;
-
-		const String& subShaderCode = subShaderCodeBlocks[entry.CodeBlockIndex];
-
-		ct::ShaderExtensionPointInfo extPointInfo = renderer->GetShaderExtensionPointInfo(entry.Name);
-		for(auto& extPointShader : extPointInfo.Shaders)
+		if(foundShader)
 		{
-			Path path = GetBuiltinResources().GetRawShaderFolder();
-			path.Append(extPointShader.Path);
-			path.SetExtension(path.GetExtension());
-
-			StringStream subShaderSource;
-			const UnorderedMap<String, String> subShaderDefines = extPointShader.Defines.GetAll();
-			{
-				Lock fileLock = FileScheduler::GetLock(path);
-
-				SPtr<DataStream> stream = FileSystem::OpenFile(path);
-				if(stream)
-					subShaderSource << stream->GetAsString();
-			}
-
-			subShaderSource << "\n";
-			subShaderSource << subShaderCode;
-
-			ShaderCreateInformation subShaderDesc;
-			Vector<String> subShaderIncludes;
-			BSLFXCompileResult subShaderOutput = CompileShader(subShaderSource.str(), subShaderDefines, languages, subShaderDesc, subShaderIncludes);
-
-			if(!subShaderOutput.ErrorMessage.empty())
-				return subShaderOutput;
-
-			// Clear the sub-shader descriptor of any data other than techniques
-			Vector<SPtr<Technique>> techniques = subShaderDesc.Techniques;
-			subShaderDesc = ShaderCreateInformation();
-			subShaderDesc.Techniques = techniques;
-
-			SubShader subShader;
-			subShader.Name = extPointShader.Name;
-			subShader.Shader = Shader::CreateShared(subShader.Name, subShaderDesc);
-
-			shaderDesc.SubShaders.push_back(subShader);
+			compileResult.ErrorMessage = "Shader compilation failed. Multiple shader nodes found in the same file.";
+			continue;
 		}
+
+		PopulateVariationParamInfos(entry.second, outShaderInformation);
+		outShaderMetaData = entry.second;
+		foundShader = true;
 	}
 
-	return output;
+	return compileResult;
 }
 
-BSLFXCompileResult BSLFXCompiler::CompileTechniques(ParseState* parseState, const String& name, const Vector<String>& codeBlocks, const ShaderVariation& variation, ShadingLanguageFlags languages, UnorderedSet<String>& includes, ShaderCreateInformation& shaderDesc)
+BSLFXCompileResult BSLFXCompiler::ParseVariation(const String& name, const String& source, const ShaderVariation& variation, const UnorderedMap<String, String>& defines, ParsedShaderOrMixinNode& outParsedShader)
 {
-	BSLFXCompileResult output;
+	UnorderedMap<String, String> globalDefines = defines;
+	UnorderedMap<String, String> variationDefines = variation.GetDefines().GetAll();
 
-	if(parseState->RootNode == nullptr || parseState->RootNode->Type != NT_Root)
+	for(auto& define : variationDefines)
+		globalDefines[define.first] = define.second;
+
+	ParseState *const variationParseState = ParseStateCreate();
+	BSLFXCompileResult compileResult = ParseFx(variationParseState, source.c_str(), globalDefines);
+
+	if(!compileResult.ErrorMessage.empty())
 	{
-		ParseStateDelete(parseState);
-
-		output.ErrorMessage = "Root is null or not a shader.";
-		return output;
+		ParseStateDelete(variationParseState);
+		return compileResult;
 	}
 
-	Vector<pair<ASTFXNode*, ShaderData>> shaderData;
+	Vector<String> codeBlocks;
+	RawCode* codeBlock = variationParseState->RawCodeBlock[RCT_CodeBlock];
+	while(codeBlock != nullptr)
+	{
+		while((i32)codeBlocks.size() <= codeBlock->Index)
+			codeBlocks.push_back(String());
+
+		codeBlocks[codeBlock->Index] = String(codeBlock->Code, codeBlock->Size);
+		codeBlock = codeBlock->Next;
+	}
+
+	if(variationParseState->RootNode == nullptr || variationParseState->RootNode->Type != NT_Root)
+	{
+		ParseStateDelete(variationParseState);
+
+		compileResult.ErrorMessage = "Unable to parse RSL shader. Root node is null or not a shader.";
+		return compileResult;
+	}
+
+	Vector<std::pair<ASTFXNode*, ParsedShaderOrMixinNode>> parsedShaders;
 
 	// Go in reverse because options are added in reverse order during parsing
-	for(int i = parseState->RootNode->Options->Count - 1; i >= 0; i--)
+	for(i32 optionIndex = variationParseState->RootNode->Options->Count - 1; optionIndex >= 0; optionIndex--)
 	{
-		NodeOption* option = &parseState->RootNode->Options->Entries[i];
+		NodeOption* const option = &variationParseState->RootNode->Options->Entries[optionIndex];
 
 		switch(option->Type)
 		{
 		case OT_Shader:
 			{
 				// We initially parse only meta-data, so we can handle out-of-order technique definitions
-				ShaderMetaData metaData = ParseShaderMetaData(option->Value.NodePtr);
+				ParsedShaderMetaData variationMetaData = ParseShaderMetaData(option->Value.NodePtr);
 
 				// Skip all techniques except the one we're parsing
-				if(metaData.Name != name && !metaData.IsMixin)
+				if(variationMetaData.Name != name && !variationMetaData.IsMixin)
 					continue;
 
-				shaderData.push_back(std::make_pair(option->Value.NodePtr, ShaderData()));
-				ShaderData& data = shaderData.back().second;
-				data.MetaData = metaData;
+				parsedShaders.push_back(std::make_pair(option->Value.NodePtr, ParsedShaderOrMixinNode()));
+				ParsedShaderOrMixinNode& parsedShader = parsedShaders.back().second;
+				parsedShader.MetaData = variationMetaData;
 
 				break;
 			}
@@ -2274,51 +2171,47 @@ BSLFXCompileResult BSLFXCompiler::CompileTechniques(ParseState* parseState, cons
 		}
 	}
 
-	bool* mixinWasParsed = B3DStackAllocate<bool>((u32)shaderData.size());
-	std::function<bool(const ShaderMetaData&, ShaderData&)> parseInherited =
-		[&](const ShaderMetaData& metaData, ShaderData& outShader)
+	bool* parseStatePerMixin = B3DStackAllocate<bool>((u32)parsedShaders.size());
+	auto fnEnsureMixinsAreParsed = [parseStatePerMixin, &codeBlocks, &compileResult, &parsedShaders](const ParsedShaderMetaData& metaData, ParsedShaderOrMixinNode& outShader, auto& fnEnsureMixinsAreParsed) -> bool
 	{
-		for(auto riter = metaData.Includes.rbegin(); riter != metaData.Includes.rend(); ++riter)
+		for(auto rit = metaData.Includes.rbegin(); rit != metaData.Includes.rend(); ++rit)
 		{
-			const String& includes = *riter;
+			const String& includes = *rit;
 
-			u32 baseIdx = -1;
-			for(u32 i = 0; i < (u32)shaderData.size(); i++)
+			u32 foundMixinIndex = ~0u;
+			for(u32 index = 0; index < (u32)parsedShaders.size(); index++)
 			{
-				auto& entry = shaderData[i];
+				auto& entry = parsedShaders[index];
 				if(!entry.second.MetaData.IsMixin)
 					continue;
 
 				if(entry.second.MetaData.Name == includes)
 				{
-					bool matches =
-						(entry.second.MetaData.Language == metaData.Language ||
-						 entry.second.MetaData.Language == "Any");
+					const bool matches = (entry.second.MetaData.Language == metaData.Language || entry.second.MetaData.Language == "Any");
 
 					// We want the last matching mixin, in order to allow mixins to override each other
 					if(matches)
-						baseIdx = i;
+						foundMixinIndex = index;
 				}
 			}
 
-			if(baseIdx != (u32)-1)
+			if(foundMixinIndex != ~0u)
 			{
-				auto& entry = shaderData[baseIdx];
+				auto& entry = parsedShaders[foundMixinIndex];
 
-				// Was already parsed previously, don't parse it multiple times (happens when multiple mixins
-				// include the same mixin)
-				if(mixinWasParsed[baseIdx])
+				// Was already parsed previously, don't parse it multiple times (happens when multiple mixins include the same mixin)
+				if(parseStatePerMixin[foundMixinIndex])
 					continue;
 
-				if(!parseInherited(entry.second.MetaData, outShader))
+				if(!fnEnsureMixinsAreParsed(entry.second.MetaData, outShader, fnEnsureMixinsAreParsed))
 					return false;
 
 				ParseShader(entry.first, codeBlocks, outShader);
-				mixinWasParsed[baseIdx] = true;
+				parseStatePerMixin[foundMixinIndex] = true;
 			}
 			else
 			{
-				output.ErrorMessage = "Mixin \"" + includes + "\" cannot be found.";
+				compileResult.ErrorMessage = "Mixin \"" + includes + "\" cannot be found.";
 				return false;
 			}
 		}
@@ -2327,334 +2220,242 @@ BSLFXCompileResult BSLFXCompiler::CompileTechniques(ParseState* parseState, cons
 	};
 
 	// Actually parse shaders
-	for(auto& entry : shaderData)
+	for(auto& parsedShader : parsedShaders)
 	{
-		const ShaderMetaData& metaData = entry.second.MetaData;
+		const ParsedShaderMetaData& metaData = parsedShader.second.MetaData;
 		if(metaData.IsMixin)
 			continue;
 
-		B3DZeroOut(mixinWasParsed, shaderData.size());
-		if(!parseInherited(metaData, entry.second))
+		B3DZeroOut(parseStatePerMixin, parsedShaders.size());
+		if(!fnEnsureMixinsAreParsed(metaData, parsedShader.second, fnEnsureMixinsAreParsed))
 		{
-			ParseStateDelete(parseState);
-			B3DStackFree(mixinWasParsed);
-			return output;
+			ParseStateDelete(variationParseState);
+			B3DStackFree(parseStatePerMixin);
+			return compileResult;
 		}
 
-		ParseShader(entry.first, codeBlocks, entry.second);
+		ParseShader(parsedShader.first, codeBlocks, parsedShader.second);
 	}
 
-	B3DStackFree(mixinWasParsed);
+	B3DStackFree(parseStatePerMixin);
 
-	IncludeLink* includeLink = parseState->Includes;
-	while(includeLink != nullptr)
+	bool foundShader = false;
+	for(auto& entry : parsedShaders)
 	{
-		String includeFilename = includeLink->Data->Filename;
-
-		auto iterFind = std::find(includes.begin(), includes.end(), includeFilename);
-		if(iterFind == includes.end())
-			includes.insert(includeFilename);
-
-		includeLink = includeLink->Next;
-	}
-
-	ParseStateDelete(parseState);
-
-	// Parse extended HLSL code and generate per-program code, also convert to GLSL/VKSL/MSL
-	const auto end = (u32)shaderData.size();
-	Vector<pair<ASTFXNode*, ShaderData>> outputShaderData;
-	for(u32 i = 0; i < end; i++)
-	{
-		const ShaderMetaData& metaData = shaderData[i].second.MetaData;
-		if(metaData.IsMixin)
+		if(entry.second.MetaData.IsMixin)
 			continue;
 
-		ShaderData& shaderDataEntry = shaderData[i].second;
-
-		ShaderData hlslShaderData = shaderData[i].second;
-		ShaderData glslShaderData = shaderData[i].second;
-
-		// When working with OpenGL, lower-end feature sets are supported. For other backends, high-end is always assumed.
-		CrossCompileOutput glslVersion = CrossCompileOutput::GLSL41;
-		if(glslShaderData.MetaData.FeatureSet == "HighEnd")
+		if(foundShader)
 		{
-			glslShaderData.MetaData.Language = "glsl";
-			glslVersion = CrossCompileOutput::GLSL45;
-		}
-		else
-			glslShaderData.MetaData.Language = "glsl4_1";
-
-		ShaderData vkslShaderData = shaderData[i].second;
-		vkslShaderData.MetaData.Language = "vksl";
-
-		ShaderData mvksl = shaderData[i].second;
-		mvksl.MetaData.Language = "mvksl";
-
-		const auto numPasses = (u32)shaderDataEntry.Passes.size();
-		for(u32 j = 0; j < numPasses; j++)
-		{
-			PassData& passData = shaderDataEntry.Passes[j];
-
-			// Find valid entry points and parameters
-			// Note: XShaderCompiler needs to do a full pass when doing reflection, and for each individual program
-			// type. If performance is ever important here it could be good to update XShaderCompiler so it can
-			// somehow save the AST and then re-use it for multiple actions.
-			Vector<GpuProgramType> types;
-			ReflectHlsl(passData.Code, shaderDesc, types, output);
-
-			if (!output.ErrorMessage.empty())
-				return output;
-
-			auto crossCompilePass = [&types, &output](PassData& passData, CrossCompileOutput language)
-			{
-				u32 binding = 0;
-
-				for(auto& type : types)
-				{
-					switch(type)
-					{
-					case GPT_VERTEX_PROGRAM:
-						passData.VertexCode = CrossCompile(passData.Code, GPT_VERTEX_PROGRAM, language, binding, output);
-						break;
-					case GPT_FRAGMENT_PROGRAM:
-						passData.FragmentCode = CrossCompile(passData.Code, GPT_FRAGMENT_PROGRAM, language, binding, output);
-						break;
-					case GPT_GEOMETRY_PROGRAM:
-						passData.GeometryCode = CrossCompile(passData.Code, GPT_GEOMETRY_PROGRAM, language, binding, output);
-						break;
-					case GPT_HULL_PROGRAM:
-						passData.HullCode = CrossCompile(passData.Code, GPT_HULL_PROGRAM, language, binding, output);
-						break;
-					case GPT_DOMAIN_PROGRAM:
-						passData.DomainCode = CrossCompile(passData.Code, GPT_DOMAIN_PROGRAM, language, binding, output);
-						break;
-					case GPT_COMPUTE_PROGRAM:
-						passData.ComputeCode = CrossCompile(passData.Code, GPT_COMPUTE_PROGRAM, language, binding, output);
-						break;
-					default:
-						break;
-					}
-
-					if (!output.ErrorMessage.empty())
-						return;
-				}
-			};
-
-			if (languages.IsSet(ShadingLanguageFlag::GLSL))
-			{
-				crossCompilePass(glslShaderData.Passes[j], glslVersion);
-
-				if (!output.ErrorMessage.empty())
-					return output;
-			}
-
-			if (languages.IsSet(ShadingLanguageFlag::VKSL))
-			{
-				crossCompilePass(vkslShaderData.Passes[j], CrossCompileOutput::VKSL45);
-
-				if (!output.ErrorMessage.empty())
-					return output;
-			}
-
-			if (languages.IsSet(ShadingLanguageFlag::MSL))
-			{
-				crossCompilePass(mvksl.Passes[j], CrossCompileOutput::MVKSL);
-
-				if (!output.ErrorMessage.empty())
-					return output;
-			}
-
-			if(languages.IsSet(ShadingLanguageFlag::HLSL))
-			{
-				PassData& hlslPassData = hlslShaderData.Passes[j];
-
-				// Clean non-standard HLSL
-				// Note: Ideally we add a full HLSL output module to XShaderCompiler, instead of using simple regex. This
-				// way the syntax could be enhanced with more complex features, while still being able to output pure
-				// HLSL.
-				static const std::regex kAttrRegex(
-					R"(\[\s*layout\s*\(.*\)\s*\]|\[\s*internal\s*\]|\[\s*color\s*\]|\[\s*alias\s*\(.*\)\s*\]|\[\s*spriteuv\s*\(.*\)\s*\])");
-				hlslPassData.Code = regex_replace(hlslPassData.Code, kAttrRegex, "");
-
-				static const std::regex kAttr2Regex(
-					R"(\[\s*hideInInspector\s*\]|\[\s*name\s*\(".*"\)\s*\]|\[\s*hdr\s*\])");
-				hlslPassData.Code = regex_replace(hlslPassData.Code, kAttr2Regex, "");
-
-				static const std::regex kInitializerRegex(
-					R"((Texture2D|Texture3D)\s*(\S*)\s*=.*;)");
-				hlslPassData.Code = regex_replace(hlslPassData.Code, kInitializerRegex, "$1 $2;");
-
-				static const std::regex kWarpWithSyncRegex(
-					R"(Warp(Group|Device|All)MemoryBarrierWithWarpSync)");
-				hlslPassData.Code = regex_replace(hlslPassData.Code, kWarpWithSyncRegex, "$1MemoryBarrierWithGroupSync");
-
-				static const std::regex kWarpNoSyncRegex(
-					R"(Warp(Group|Device|All)MemoryBarrier)");
-				hlslPassData.Code = regex_replace(hlslPassData.Code, kWarpNoSyncRegex, "$1MemoryBarrier");
-
-				// Note: I'm just copying HLSL code as-is. This code will contain all entry points which could have
-				// an effect on compile time. It would be ideal to remove dead code depending on program type. This would
-				// involve adding a HLSL code generator to XShaderCompiler.
-				for(auto& type : types)
-				{
-					switch(type)
-					{
-					case GPT_VERTEX_PROGRAM:
-						hlslPassData.VertexCode = hlslPassData.Code;
-						break;
-					case GPT_FRAGMENT_PROGRAM:
-						hlslPassData.FragmentCode = hlslPassData.Code;
-						break;
-					case GPT_GEOMETRY_PROGRAM:
-						hlslPassData.GeometryCode = hlslPassData.Code;
-						break;
-					case GPT_HULL_PROGRAM:
-						hlslPassData.HullCode = hlslPassData.Code;
-						break;
-					case GPT_DOMAIN_PROGRAM:
-						hlslPassData.DomainCode = hlslPassData.Code;
-						break;
-					case GPT_COMPUTE_PROGRAM:
-						hlslPassData.ComputeCode = hlslPassData.Code;
-						break;
-					default:
-						break;
-					}
-				}
-			}
+			compileResult.ErrorMessage = "Shader compilation failed. Multiple shader nodes found in the same file.";
+			return compileResult;
 		}
 
-		if (languages.IsSet(ShadingLanguageFlag::HLSL))
-		{
-			outputShaderData.push_back(std::make_pair(nullptr, hlslShaderData));
-		}
-
-		if (languages.IsSet(ShadingLanguageFlag::GLSL))
-		{
-			outputShaderData.push_back(std::make_pair(nullptr, glslShaderData));
-		}
-
-		if (languages.IsSet(ShadingLanguageFlag::VKSL))
-		{
-			outputShaderData.push_back(std::make_pair(nullptr, vkslShaderData));
-		}
-
-		if (languages.IsSet(ShadingLanguageFlag::MSL))
-		{
-			outputShaderData.push_back(std::make_pair(nullptr, mvksl));
-		}
+		outParsedShader = std::move(entry.second);
+		foundShader = true;
 	}
 
-	for(auto& entry : outputShaderData)
+	parsedShaders.clear();
+
+	ParseStateDelete(variationParseState);
+	return compileResult;
+}
+
+BSLFXCompileResult BSLFXCompiler::CompileVariation(const String& name, const ParsedShaderOrMixinNode& parsedShader, const BSLFXShaderMetaData& shaderMetaData, const ShaderVariation& variation, ShadingLanguageFlag language, SPtr<Technique>& outVariation)
+{
+	B3D_ASSERT(!parsedShader.MetaData.IsMixin);
+	B3D_ASSERT(shaderMetaData.GPUProgramTypes.size() > 0);
+
+	BSLFXCompileResult compileResult;
+
+	CrossCompileOutput crossCompileOutputLanguage = CrossCompileOutput::VKSL45;
+	String crossCompileOutputLanguageName;
+	if(language == ShadingLanguageFlag::GLSL)
 	{
-		const ShaderMetaData& metaData = entry.second.MetaData;
-		if(metaData.IsMixin)
-			continue;
+		crossCompileOutputLanguage = CrossCompileOutput::GLSL45;
+		crossCompileOutputLanguageName = "glsl";
+	}
+	else if(language == ShadingLanguageFlag::VKSL)
+	{
+		crossCompileOutputLanguage = CrossCompileOutput::VKSL45;
+		crossCompileOutputLanguageName = "vksl";
+	}
+	else if(language == ShadingLanguageFlag::MSL)
+	{
+		crossCompileOutputLanguage = CrossCompileOutput::MVKSL;
+		crossCompileOutputLanguageName = "mvksl";
+	}
+	else if(language == ShadingLanguageFlag::HLSL)
+	{
+		// No cross compile needed
+		crossCompileOutputLanguageName = "hlsl";
+	}
 
-		Map<u32, SPtr<Pass>, std::greater<u32>> passes;
-		for(auto& passData : entry.second.Passes)
+	struct CrossCompilePassOutput
+	{
+		String ProgramCodePerType[GPT_COUNT];
+	};
+
+	Map<u32, SPtr<Pass>, std::greater<u32>> passes;
+	const auto passCount = (u32)parsedShader.Passes.size();
+	for(u32 passIndex = 0; passIndex < passCount; passIndex++)
+	{
+		const ParsedShaderPassNode& parsedShaderPass = parsedShader.Passes[passIndex];
+
+		auto fnCrossCompilePass = [&shaderMetaData, &compileResult](const ParsedShaderPassNode& parsedShaderPass, CrossCompileOutput language, CrossCompilePassOutput& crossCompiledOutput)
 		{
-			PASS_DESC passDesc;
-			passDesc.BlendStateDesc = passData.BlendDesc;
-			passDesc.RasterizerStateDesc = passData.RasterizerDesc;
-			passDesc.DepthStencilStateDesc = passData.DepthStencilDesc;
-
-			auto createProgram =
-				[&name](const String& language, const String& entry, const String& code, GpuProgramType type) -> GpuProgramCreateInformation
+			u32 binding = 0;
+			for(auto& type : shaderMetaData.GPUProgramTypes)
 			{
-				const char* typeString;
-				switch(type)
-				{
-				case GPT_VERTEX_PROGRAM:
-					typeString = "Vertex";
-					break;
-				case GPT_FRAGMENT_PROGRAM:
-					typeString = "Fragment";
-					break;
-				case GPT_GEOMETRY_PROGRAM:
-					typeString = "Geometry";
-					break;
-				case GPT_DOMAIN_PROGRAM:
-					typeString = "Domain";
-					break;
-				case GPT_HULL_PROGRAM:
-					typeString = "Hull";
-					break;
-				case GPT_COMPUTE_PROGRAM:
-					typeString = "Compute";
-					break;
-				default:
-					typeString = "Unknown";
-					break;
-				}
+				B3D_ASSERT((i32)type < GPT_COUNT);
+				crossCompiledOutput.ProgramCodePerType[(i32)type] = CrossCompile(parsedShaderPass.Code, type, language, binding, compileResult);
 
+				if(!compileResult.ErrorMessage.empty())
+					return;
+			}
+		};
 
-				GpuProgramCreateInformation gpuProgramCreateInformation;
-				gpuProgramCreateInformation.Name = StringUtil::Format("{0} ({1} Program)", name, typeString);
-				gpuProgramCreateInformation.Language = language;
-				gpuProgramCreateInformation.EntryPoint = entry;
-				gpuProgramCreateInformation.Source = code;
-				gpuProgramCreateInformation.Type = type;
+		CrossCompilePassOutput crossCompilePassOutput;
+		if(language == ShadingLanguageFlag::HLSL)
+		{
+			// Clean non-standard HLSL
+			// Note: Ideally we add a full HLSL output module to XShaderCompiler, instead of using simple regex. This
+			// way the syntax could be enhanced with more complex features, while still being able to output pure
+			// HLSL.
+			static const std::regex attrRegex(
+				R"(\[\s*layout\s*\(.*\)\s*\]|\[\s*internal\s*\]|\[\s*color\s*\]|\[\s*alias\s*\(.*\)\s*\]|\[\s*spriteuv\s*\(.*\)\s*\])");
+			String parsedCode = regex_replace(parsedShaderPass.Code, attrRegex, "");
 
-				return gpuProgramCreateInformation;
-			};
+			static const std::regex attr2Regex(
+				R"(\[\s*hideInInspector\s*\]|\[\s*name\s*\(".*"\)\s*\]|\[\s*hdr\s*\])");
+			parsedCode = regex_replace(parsedCode, attr2Regex, "");
 
-			bool isHLSL = metaData.Language == "hlsl";
-			passDesc.VertexProgramDesc = createProgram(
-				metaData.Language,
-				isHLSL ? "vsmain" : "main",
-				passData.VertexCode,
-				GPT_VERTEX_PROGRAM);
+			static const std::regex initializerRegex(
+				R"((Texture2D|Texture3D)\s*(\S*)\s*=.*;)");
+			parsedCode = regex_replace(parsedCode, initializerRegex, "$1 $2;");
 
-			passDesc.FragmentProgramDesc = createProgram(
-				metaData.Language,
-				isHLSL ? "fsmain" : "main",
-				passData.FragmentCode,
-				GPT_FRAGMENT_PROGRAM);
+			static const std::regex warpWithSyncRegex(
+				R"(Warp(Group|Device|All)MemoryBarrierWithWarpSync)");
+			parsedCode = regex_replace(parsedCode, warpWithSyncRegex, "$1MemoryBarrierWithGroupSync");
 
-			passDesc.GeometryProgramDesc = createProgram(
-				metaData.Language,
-				isHLSL ? "gsmain" : "main",
-				passData.GeometryCode,
-				GPT_GEOMETRY_PROGRAM);
+			static const std::regex warpNoSyncRegex(
+				R"(Warp(Group|Device|All)MemoryBarrier)");
+			parsedCode = regex_replace(parsedCode, warpNoSyncRegex, "$1MemoryBarrier");
 
-			passDesc.HullProgramDesc = createProgram(
-				metaData.Language,
-				isHLSL ? "hsmain" : "main",
-				passData.HullCode,
-				GPT_HULL_PROGRAM);
+			// Note: I'm just copying HLSL code as-is. This code will contain all entry points which could have
+			// an effect on compile time. It would be ideal to remove dead code depending on program Type. This would
+			// involve adding a HLSL code generator to XShaderCompiler.
+			for(auto& type : shaderMetaData.GPUProgramTypes)
+			{
+				B3D_ASSERT((i32)type < GPT_COUNT);
+				crossCompilePassOutput.ProgramCodePerType[(i32)type] = parsedCode;
+			}
+		}
+		else // Need to cross compile to correct low-level language
+		{
+			fnCrossCompilePass(parsedShaderPass, crossCompileOutputLanguage, crossCompilePassOutput);
 
-			passDesc.DomainProgramDesc = createProgram(
-				metaData.Language,
-				isHLSL ? "dsmain" : "main",
-				passData.DomainCode,
-				GPT_DOMAIN_PROGRAM);
-
-			passDesc.ComputeProgramDesc = createProgram(
-				metaData.Language,
-				isHLSL ? "csmain" : "main",
-				passData.ComputeCode,
-				GPT_COMPUTE_PROGRAM);
-
-			passDesc.StencilRefValue = passData.StencilRefValue;
-
-			SPtr<Pass> pass = Pass::Create(passDesc);
-			if(pass != nullptr)
-				passes[passData.SeqIdx] = pass;
+			if(!compileResult.ErrorMessage.empty())
+				return compileResult;
 		}
 
-		Vector<SPtr<Pass>> orderedPasses;
-		for(auto& KVP : passes)
-			orderedPasses.push_back(KVP.second);
+		PASS_DESC shaderPassInformation;
+		shaderPassInformation.BlendStateDesc = parsedShaderPass.BlendDesc;
+		shaderPassInformation.RasterizerStateDesc = parsedShaderPass.RasterizerDesc;
+		shaderPassInformation.DepthStencilStateDesc = parsedShaderPass.DepthStencilDesc;
 
-		if(!orderedPasses.empty())
+		auto fnBuildGpuProgramCreateInformation = [&name](const String& language, const String& entry, const String& code, GpuProgramType type) -> GpuProgramCreateInformation
 		{
-			SPtr<Technique> technique = Technique::Create(metaData.Language, metaData.Tags, variation, orderedPasses);
-			shaderDesc.Techniques.push_back(technique);
+			const char* typeString;
+			switch(type)
+			{
+			case GPT_VERTEX_PROGRAM:
+				typeString = "Vertex";
+				break;
+			case GPT_FRAGMENT_PROGRAM:
+				typeString = "Fragment";
+				break;
+			case GPT_GEOMETRY_PROGRAM:
+				typeString = "Geometry";
+				break;
+			case GPT_DOMAIN_PROGRAM:
+				typeString = "Domain";
+				break;
+			case GPT_HULL_PROGRAM:
+				typeString = "Hull";
+				break;
+			case GPT_COMPUTE_PROGRAM:
+				typeString = "Compute";
+				break;
+			default:
+				typeString = "Unknown";
+				break;
+			}
+
+			GpuProgramCreateInformation gpuProgramCreateInformation;
+			gpuProgramCreateInformation.Name = StringUtil::Format("{0} ({1} Program)", name, typeString);
+			gpuProgramCreateInformation.Language = language;
+			gpuProgramCreateInformation.EntryPoint = entry;
+			gpuProgramCreateInformation.Source = code;
+			gpuProgramCreateInformation.Type = type;
+
+			return gpuProgramCreateInformation;
+		};
+
+		const bool isHLSL = language == ShadingLanguageFlag::HLSL;
+		shaderPassInformation.VertexProgramDesc = fnBuildGpuProgramCreateInformation(
+			crossCompileOutputLanguageName,
+			isHLSL ? "vsmain" : "main",
+			crossCompilePassOutput.ProgramCodePerType[GPT_VERTEX_PROGRAM],
+			GPT_VERTEX_PROGRAM);
+
+		shaderPassInformation.FragmentProgramDesc = fnBuildGpuProgramCreateInformation(
+			crossCompileOutputLanguageName,
+			isHLSL ? "fsmain" : "main",
+			crossCompilePassOutput.ProgramCodePerType[GPT_FRAGMENT_PROGRAM],
+			GPT_FRAGMENT_PROGRAM);
+
+		shaderPassInformation.GeometryProgramDesc = fnBuildGpuProgramCreateInformation(
+			crossCompileOutputLanguageName,
+			isHLSL ? "gsmain" : "main",
+			crossCompilePassOutput.ProgramCodePerType[GPT_GEOMETRY_PROGRAM],
+			GPT_GEOMETRY_PROGRAM);
+
+		shaderPassInformation.HullProgramDesc = fnBuildGpuProgramCreateInformation(
+			crossCompileOutputLanguageName,
+			isHLSL ? "hsmain" : "main",
+			crossCompilePassOutput.ProgramCodePerType[GPT_HULL_PROGRAM],
+			GPT_HULL_PROGRAM);
+
+		shaderPassInformation.DomainProgramDesc = fnBuildGpuProgramCreateInformation(
+			crossCompileOutputLanguageName,
+			isHLSL ? "dsmain" : "main",
+			crossCompilePassOutput.ProgramCodePerType[GPT_DOMAIN_PROGRAM],
+			GPT_DOMAIN_PROGRAM);
+
+		shaderPassInformation.ComputeProgramDesc = fnBuildGpuProgramCreateInformation(
+			crossCompileOutputLanguageName,
+			isHLSL ? "csmain" : "main",
+			crossCompilePassOutput.ProgramCodePerType[GPT_COMPUTE_PROGRAM],
+			GPT_COMPUTE_PROGRAM);
+
+		shaderPassInformation.StencilRefValue = parsedShaderPass.StencilRefValue;
+
+		const SPtr<Pass> pass = Pass::Create(shaderPassInformation);
+		if(pass != nullptr)
+		{
+			passes[parsedShaderPass.SeqIdx] = pass;
 		}
 	}
 
-	return output;
+	Vector<SPtr<Pass>> orderedPasses;
+	for(auto& KVP : passes)
+		orderedPasses.push_back(KVP.second);
+
+	if(!orderedPasses.empty())
+		outVariation = Technique::Create(crossCompileOutputLanguageName, parsedShader.MetaData.Tags, variation, orderedPasses);
+
+	return compileResult;
 }
 
 String BSLFXCompiler::RemoveQuotes(const char* input)
@@ -2666,4 +2467,83 @@ String BSLFXCompiler::RemoveQuotes(const char* input)
 		output[i] = input[i + 1];
 
 	return output;
+}
+
+Vector<ShaderVariation> BSLFXCompiler::CreateShaderVariations(const ParsedShaderMetaData& shaderMetaData)
+{
+	if(shaderMetaData.Variations.empty())
+		return { ShaderVariation() };
+
+	Vector<ShaderVariation> variations;
+
+	FrameScope frameScope;
+	FrameVector<const VariationData*> variationsToProcess;
+	for(u32 variationIndex = 0; variationIndex < (u32)shaderMetaData.Variations.size(); variationIndex++)
+		variationsToProcess.push_back(&shaderMetaData.Variations[variationIndex]);
+
+	while(!variationsToProcess.empty())
+	{
+		const VariationData* currentVariation = variationsToProcess.back();
+		variationsToProcess.erase(variationsToProcess.end() - 1);
+
+		// Variation parameter that's either defined or isn't
+		if(currentVariation->Values.empty())
+		{
+			// This is the first variation parameter, register new variations
+			if(variations.empty())
+			{
+				ShaderVariation a;
+				ShaderVariation b;
+
+				b.AddParam(ShaderVariation::Param(currentVariation->Identifier, 1));
+
+				variations.push_back(a);
+				variations.push_back(b);
+			}
+			else // Duplicate existing variations, and add the parameter
+			{
+				const u32 variationCount = (u32)variations.size();
+				for(u32 variationIndex = 0; variationIndex < variationCount; variationIndex++)
+				{
+					// Make a copy
+					variations.push_back(variations[variationIndex]);
+
+					// Add the parameter to existing variation
+					variations[variationIndex].AddParam(ShaderVariation::Param(currentVariation->Identifier, 1));
+				}
+			}
+		}
+		else // Variation parameter with multiple values
+		{
+			// This is the first variation parameter, register new variations
+			if(variations.empty())
+			{
+				for(u32 variationValueIndex = 0; variationValueIndex < (u32)currentVariation->Values.size(); variationValueIndex++)
+				{
+					ShaderVariation variation;
+					variation.AddParam(ShaderVariation::Param(currentVariation->Identifier, currentVariation->Values[variationValueIndex].Value));
+
+					variations.push_back(variation);
+				}
+			}
+			else // Duplicate existing variations, and add the parameter
+			{
+				const u32 variationCount = (u32)variations.size();
+				for(u32 variationIndex = 0; variationIndex < variationCount; variationIndex++)
+				{
+					for(u32 variationValueIndex = 1; variationValueIndex < (u32)currentVariation->Values.size(); variationValueIndex++)
+					{
+						ShaderVariation copy = variations[variationIndex];
+						copy.AddParam(ShaderVariation::Param(currentVariation->Identifier, currentVariation->Values[variationValueIndex].Value));
+
+						variations.push_back(copy);
+					}
+
+					variations[variationIndex].AddParam(ShaderVariation::Param(currentVariation->Identifier, currentVariation->Values[0].Value));
+				}
+			}
+		}
+	}
+
+	return variations;
 }
