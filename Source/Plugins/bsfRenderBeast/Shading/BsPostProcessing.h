@@ -235,65 +235,53 @@ namespace bs
 
 		extern WhiteBalanceParamDef gWhiteBalanceParamDef;
 
-		/**
-		 * Shader that creates a 3D lookup texture that is used to apply tonemapping, color grading, white balancing and gamma
-		 * correction.
-		 */
-		class CreateTonemapLUTMat : public RendererMaterial<CreateTonemapLUTMat>
+		/** Shader that creates a 2D lookup texture that is used to apply tonemapping, color grading, white balancing and gamma correction. Uses a vertex/fragment pipeline. */
+		class CreateTonemap2DLUTMat : public RendererMaterial<CreateTonemap2DLUTMat>
 		{
-			RMAT_DEF_CUSTOMIZED("PPCreateTonemapLUT.bsl");
-
-			/** Helper method used for initializing variations of this material. */
-			template <bool is3D>
-			static const ShaderVariationParameters& GetVariation()
-			{
-				static ShaderVariationParameters variation = ShaderVariationParameters(
-					{
-						ShaderVariationParameter("VOLUME_LUT", is3D),
-					});
-
-				return variation;
-			};
+			RMAT_DEF_CUSTOMIZED("PPCreateTonemap2DLUT.bsl")
 
 		public:
-			CreateTonemapLUTMat();
+			CreateTonemap2DLUTMat();
 
-			/**
-			 * Executes the post-process effect with the provided parameters, generating a 3D LUT using a compute shader.
-			 * Should only be called on the appropriate variation (3D one).
-			 */
-			void Execute3D(const SPtr<Texture>& output, const RenderSettings& settings);
-
-			/**
-			 * Executes the post-process effect with the provided parameters, generating an unwrapped 2D LUT without the use
-			 * of a compute shader. Should only be called on the appropriate variation (non-3D one).
-			 */
-			void Execute2D(const SPtr<RenderTexture>& output, const RenderSettings& settings);
+			/** Executes the post-process effect with the provided parameters, generating an unwrapped 2D LUT using the vertex & fragment shader pipeline. */
+			void Execute(const SPtr<RenderTexture>& output, const RenderSettings& settings);
 
 			/** Returns the texture descriptor that can be used for initializing the output render target. */
 			POOLED_RENDER_TEXTURE_DESC GetOutputDesc() const;
 
-			/**
-			 * Returns the material variation matching the provided parameters.
-			 *
-			 * @param[in]	is3D	If true the material will generate a 3D LUT using a compute shader. Otherwise it will
-			 *						generate an unwrapped 2D LUT withou the use of a compute shader. Depending on this parameter
-			 *						you should call either execute3D() or execute2D() methods to render the material.
-			 */
-			static CreateTonemapLUTMat* GetVariation(bool is3D);
+			/** Populates a parameter block buffer of CreateTonemapLUTParamDef type using the provided settings. */
+			static void PopulateTonemappingParameterBuffer(const RenderSettings& settings, const SPtr<GpuParamBlockBuffer>& parameterBuffer);
 
-			/** Size of the 3D color lookup table. */
+			/** Populates a parameter block buffer of WhiteBalanceParamDef type using the provided settings. */
+			static void PopulateWhiteBalanceParameterBuffer(const RenderSettings& settings, const SPtr<GpuParamBlockBuffer>& parameterBuffer);
+
+			/** Size of a single dimension in the color lookup table. */
 			static const u32 kLutSize = 32;
 
 		private:
-			/** Populates the parameter block buffers using the provided settings. */
-			void PopulateParamBuffers(const RenderSettings& settings);
+			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuParamBlockBuffer> mWhiteBalanceParamBuffer;
+		};
 
+		/** Shader that creates a 3D lookup texture that is used to apply tonemapping, color grading, white balancing and gamma correction. Uses a compute pipeline. */
+		class CreateTonemap3DLUTMat : public RendererMaterial<CreateTonemap3DLUTMat>
+		{
+			RMAT_DEF_CUSTOMIZED("PPCreateTonemap3DLUT.bsl");
+
+		public:
+			CreateTonemap3DLUTMat();
+
+			/** Executes the post-process effect with the provided parameters, generating a 3D LUT using a compute shader. */
+			void Execute(const SPtr<Texture>& output, const RenderSettings& settings);
+
+			/** Returns the texture descriptor that can be used for initializing the output render target. */
+			POOLED_RENDER_TEXTURE_DESC GetOutputDesc() const;
+
+		private:
 			SPtr<GpuParamBlockBuffer> mParamBuffer;
 			SPtr<GpuParamBlockBuffer> mWhiteBalanceParamBuffer;
 
 			GpuParameterStorageTexture mOutputTex;
-			bool mIs3D;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(TonemappingParamDef)

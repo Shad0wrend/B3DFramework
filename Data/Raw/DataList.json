@@ -219,6 +219,10 @@
         {
             "Path": "SpriteCommon.bslinc",
             "UUID": "4249d0c0-4edd-6c00-2b82-4eddf29ba6f0"
+        },
+        {
+            "Path": "PPCreateTonemapLUTCommon.bslinc",
+            "UUID": "23ec5cc3-4a1a-4c37-37b8-4a1a739b5bef"
         }
     ],
     "Shaders": [
@@ -233,10 +237,6 @@
         {
             "Path": "Diffuse.bsl",
             "UUID": "4e2b2437-0a02-456c-8d98-71df27ccf697"
-        },
-        {
-            "Path": "PPCreateTonemapLUT.bsl",
-            "UUID": "766adb8c-1302-4f2d-a26f-6a0f8ff6b147"
         },
         {
             "Path": "PPDownsample.bsl",
@@ -573,6 +573,14 @@
         {
             "Path": "TemporalFiltering.bsl",
             "UUID": "2e904b94-43db-a066-d1ac-43db9b91d61e"
+        },
+        {
+            "Path": "PPCreateTonemap2DLUT.bsl",
+            "UUID": "9312120d-4925-ef6d-60a2-492538c0c34c"
+        },
+        {
+            "Path": "PPCreateTonemap3DLUT.bsl",
+            "UUID": "37d8a24f-44d0-f192-3e81-44d0c10ac350"
         }
     ],
     "Skin": [

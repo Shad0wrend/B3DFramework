@@ -32,7 +32,7 @@ RendererMaterialManager::~RendererMaterialManager()
 	GetCoreThread().QueueCommand(std::bind(&RendererMaterialManager::DestroyOnCore));
 }
 
-void RendererMaterialManager::RegisterMaterialInternal(ct::RendererMaterialMetaData* metaData, const char* shaderPath)
+void RendererMaterialManager::RegisterMaterial(ct::RendererMaterialMetaData* metaData, const char* shaderPath)
 {
 	Lock lock(GetMutex());
 

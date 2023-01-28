@@ -28,7 +28,7 @@ bool TechniqueBase::IsSupported() const
 
 template <bool Core>
 TTechnique<Core>::TTechnique(const WeakSPtr<ShaderType>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<TPrecompiledVariationData<Core>>& precompiledData)
-	: TechniqueBase(language, variationParameters), mOwner(owner), mPasses(precompiledData.value_or(TPrecompiledVariationData<Core>()).PrecompiledPasses), mHasPassData(precompiledData.has_value()), mIsCompiled(precompiledData.has_value())
+	: TechniqueBase(language, variationParameters), mOwner(owner), mPasses(precompiledData.value_or(TPrecompiledVariationData<Core>()).PrecompiledPasses), mHasPassData(precompiledData.has_value())
 { }
 
 template <bool Core>
@@ -39,7 +39,7 @@ TTechnique<Core>::TTechnique()
 template <bool Core>
 SPtr<typename TTechnique<Core>::PassType> TTechnique<Core>::GetPass(u32 index) const
 {
-	if(!mIsCompiled)
+	if(!mHasPassData)
 	{
 		B3D_LOG(Error, Material, "Unable to retrieve shader variation pass. The variation has not been compiled.");
 		return nullptr;
@@ -57,7 +57,7 @@ SPtr<typename TTechnique<Core>::PassType> TTechnique<Core>::GetPass(u32 index) c
 template <bool Core>
 u32 TTechnique<Core>::GetPassCount() const
 {
-	if(!mIsCompiled)
+	if(!mHasPassData)
 	{
 		B3D_LOG(Error, Material, "Unable to retrieve shader variation pass count. The variation has not been compiled.");
 		return 0;
@@ -70,7 +70,7 @@ template <bool Core>
 void TTechnique<Core>::SetCompiledPassData(SmallVector<SPtr<PassType>, 1> compiledPasses)
 {
 	mPasses = std::move(compiledPasses);
-	mIsCompiled = true;
+	mHasPassData = true;
 }
 
 template class TTechnique<false>;

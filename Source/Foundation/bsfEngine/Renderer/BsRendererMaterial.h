@@ -23,7 +23,7 @@
 public:                                                                          \
 	static void InitMetaDataInternal()                                           \
 	{                                                                            \
-		bs::RendererMaterialManager::RegisterMaterialInternal(&mMetaData, path); \
+		bs::RendererMaterialManager::RegisterMaterial(&mMetaData, path);		 \
 	};
 
 /**
@@ -36,7 +36,7 @@ public:                                                                         
 	static void InitMetaDataInternal()                                           \
 	{                                                                            \
 		InitDefinesInternal(mMetaData.Defines);                                  \
-		bs::RendererMaterialManager::RegisterMaterialInternal(&mMetaData, path); \
+		bs::RendererMaterialManager::RegisterMaterial(&mMetaData, path);		 \
 	};                                                                           \
 	static void InitDefinesInternal(ShaderDefines& defines);
 

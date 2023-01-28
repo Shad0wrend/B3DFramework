@@ -394,47 +394,26 @@ POOLED_RENDER_TEXTURE_DESC EyeAdaptationBasicMat::GetOutputDesc()
 CreateTonemapLUTParamDef gCreateTonemapLUTParamDef;
 WhiteBalanceParamDef gWhiteBalanceParamDef;
 
-CreateTonemapLUTMat::CreateTonemapLUTMat()
+CreateTonemap2DLUTMat::CreateTonemap2DLUTMat()
 {
-	mIs3D = mVariation.GetBool("VOLUME_LUT");
-
 	mParamBuffer = gCreateTonemapLUTParamDef.CreateBuffer();
 	mWhiteBalanceParamBuffer = gWhiteBalanceParamDef.CreateBuffer();
 
 	mParams->SetParameterBlockBuffer("Input", mParamBuffer);
 	mParams->SetParameterBlockBuffer("WhiteBalanceInput", mWhiteBalanceParamBuffer);
-
-	if(mIs3D)
-		mParams->GetStorageTextureParameter(GPT_COMPUTE_PROGRAM, "gOutputTex", mOutputTex);
 }
 
-void CreateTonemapLUTMat::InitDefinesInternal(ShaderDefines& defines)
+void CreateTonemap2DLUTMat::InitDefinesInternal(ShaderDefines& defines)
 {
 	defines.Set("LUT_SIZE", kLutSize);
 }
 
-void CreateTonemapLUTMat::Execute3D(const SPtr<Texture>& output, const RenderSettings& settings)
+void CreateTonemap2DLUTMat::Execute(const SPtr<RenderTexture>& output, const RenderSettings& settings)
 {
-	B3D_ASSERT(mIs3D);
 	BS_RENMAT_PROFILE_BLOCK
 
-	PopulateParamBuffers(settings);
-
-	// Dispatch
-	mOutputTex.Set(output);
-
-	Bind();
-
-	RenderAPI& rapi = RenderAPI::Instance();
-	rapi.DispatchCompute(kLutSize / 8, kLutSize / 8, kLutSize);
-}
-
-void CreateTonemapLUTMat::Execute2D(const SPtr<RenderTexture>& output, const RenderSettings& settings)
-{
-	B3D_ASSERT(!mIs3D);
-	BS_RENMAT_PROFILE_BLOCK
-
-	PopulateParamBuffers(settings);
+	PopulateTonemappingParameterBuffer(settings, mParamBuffer);
+	PopulateWhiteBalanceParameterBuffer(settings, mWhiteBalanceParamBuffer);
 
 	// Render
 	RenderAPI& rapi = RenderAPI::Instance();
@@ -446,14 +425,14 @@ void CreateTonemapLUTMat::Execute2D(const SPtr<RenderTexture>& output, const Ren
 	rapi.SetRenderTarget(nullptr);
 }
 
-void CreateTonemapLUTMat::PopulateParamBuffers(const RenderSettings& settings)
+void CreateTonemap2DLUTMat::PopulateTonemappingParameterBuffer(const RenderSettings& settings, const SPtr<GpuParamBlockBuffer>& parameterBuffer)
 {
 	// Set parameters
-	gCreateTonemapLUTParamDef.gGammaAdjustment.Set(mParamBuffer, 2.2f / settings.Gamma);
+	gCreateTonemapLUTParamDef.gGammaAdjustment.Set(parameterBuffer, 2.2f / settings.Gamma);
 
 	// Note: Assuming sRGB (PC monitor) for now, change to Rec.709 when running on console (value 1), or to raw 2.2
 	// gamma when running on Mac (value 2)
-	gCreateTonemapLUTParamDef.gGammaCorrectionType.Set(mParamBuffer, 0);
+	gCreateTonemapLUTParamDef.gGammaCorrectionType.Set(parameterBuffer, 0);
 
 	Vector4 tonemapParams[2];
 	tonemapParams[0].X = settings.Tonemapping.FilmicCurveShoulderStrength;
@@ -466,34 +445,62 @@ void CreateTonemapLUTMat::PopulateParamBuffers(const RenderSettings& settings)
 	tonemapParams[1].Z = settings.Tonemapping.FilmicCurveLinearWhitePoint;
 	tonemapParams[1].W = 0.0f; // Unused
 
-	gCreateTonemapLUTParamDef.gTonemapParams.Set(mParamBuffer, tonemapParams[0], 0);
-	gCreateTonemapLUTParamDef.gTonemapParams.Set(mParamBuffer, tonemapParams[1], 1);
+	gCreateTonemapLUTParamDef.gTonemapParams.Set(parameterBuffer, tonemapParams[0], 0);
+	gCreateTonemapLUTParamDef.gTonemapParams.Set(parameterBuffer, tonemapParams[1], 1);
 
 	// Set color grading params
-	gCreateTonemapLUTParamDef.gSaturation.Set(mParamBuffer, settings.ColorGrading.Saturation);
-	gCreateTonemapLUTParamDef.gContrast.Set(mParamBuffer, settings.ColorGrading.Contrast);
-	gCreateTonemapLUTParamDef.gGain.Set(mParamBuffer, settings.ColorGrading.Gain);
-	gCreateTonemapLUTParamDef.gOffset.Set(mParamBuffer, settings.ColorGrading.Offset);
-
-	// Set white balance params
-	gWhiteBalanceParamDef.gWhiteTemp.Set(mWhiteBalanceParamBuffer, settings.WhiteBalance.Temperature);
-	gWhiteBalanceParamDef.gWhiteOffset.Set(mWhiteBalanceParamBuffer, settings.WhiteBalance.Tint);
+	gCreateTonemapLUTParamDef.gSaturation.Set(parameterBuffer, settings.ColorGrading.Saturation);
+	gCreateTonemapLUTParamDef.gContrast.Set(parameterBuffer, settings.ColorGrading.Contrast);
+	gCreateTonemapLUTParamDef.gGain.Set(parameterBuffer, settings.ColorGrading.Gain);
+	gCreateTonemapLUTParamDef.gOffset.Set(parameterBuffer, settings.ColorGrading.Offset);
 }
 
-POOLED_RENDER_TEXTURE_DESC CreateTonemapLUTMat::GetOutputDesc() const
+void CreateTonemap2DLUTMat::PopulateWhiteBalanceParameterBuffer(const RenderSettings& settings, const SPtr<GpuParamBlockBuffer>& parameterBuffer)
 {
-	if(mIs3D)
-		return POOLED_RENDER_TEXTURE_DESC::Create3D(PF_RGBA8, kLutSize, kLutSize, kLutSize, TU_LOADSTORE);
+	gWhiteBalanceParamDef.gWhiteTemp.Set(parameterBuffer, settings.WhiteBalance.Temperature);
+	gWhiteBalanceParamDef.gWhiteOffset.Set(parameterBuffer, settings.WhiteBalance.Tint);
+}
 
+POOLED_RENDER_TEXTURE_DESC CreateTonemap2DLUTMat::GetOutputDesc() const
+{
 	return POOLED_RENDER_TEXTURE_DESC::Create2D(PF_RGBA8, kLutSize * kLutSize, kLutSize, TU_RENDERTARGET);
 }
 
-CreateTonemapLUTMat* CreateTonemapLUTMat::GetVariation(bool is3D)
+CreateTonemap3DLUTMat::CreateTonemap3DLUTMat()
 {
-	if(is3D)
-		return Get(GetVariation<true>());
+	mParamBuffer = gCreateTonemapLUTParamDef.CreateBuffer();
+	mWhiteBalanceParamBuffer = gWhiteBalanceParamDef.CreateBuffer();
 
-	return Get(GetVariation<false>());
+	mParams->SetParameterBlockBuffer("Input", mParamBuffer);
+	mParams->SetParameterBlockBuffer("WhiteBalanceInput", mWhiteBalanceParamBuffer);
+
+	mParams->GetStorageTextureParameter(GPT_COMPUTE_PROGRAM, "gOutputTex", mOutputTex);
+}
+
+void CreateTonemap3DLUTMat::InitDefinesInternal(ShaderDefines& defines)
+{
+	defines.Set("LUT_SIZE", CreateTonemap2DLUTMat::kLutSize);
+}
+
+void CreateTonemap3DLUTMat::Execute(const SPtr<Texture>& output, const RenderSettings& settings)
+{
+	BS_RENMAT_PROFILE_BLOCK
+
+	CreateTonemap2DLUTMat::PopulateTonemappingParameterBuffer(settings, mParamBuffer);
+	CreateTonemap2DLUTMat::PopulateWhiteBalanceParameterBuffer(settings, mWhiteBalanceParamBuffer);
+
+	// Dispatch
+	mOutputTex.Set(output);
+
+	Bind();
+
+	RenderAPI& rapi = RenderAPI::Instance();
+	rapi.DispatchCompute(CreateTonemap2DLUTMat::kLutSize / 8, CreateTonemap2DLUTMat::kLutSize / 8, CreateTonemap2DLUTMat::kLutSize);
+}
+
+POOLED_RENDER_TEXTURE_DESC CreateTonemap3DLUTMat::GetOutputDesc() const
+{
+	return POOLED_RENDER_TEXTURE_DESC::Create3D(PF_RGBA8, CreateTonemap2DLUTMat::kLutSize, CreateTonemap2DLUTMat::kLutSize, CreateTonemap2DLUTMat::kLutSize, TU_LOADSTORE);
 }
 
 TonemappingParamDef gTonemappingParamDef;
@@ -513,7 +520,7 @@ TonemappingMat::TonemappingMat()
 
 void TonemappingMat::InitDefinesInternal(ShaderDefines& defines)
 {
-	defines.Set("LUT_SIZE", CreateTonemapLUTMat::kLutSize);
+	defines.Set("LUT_SIZE", CreateTonemap2DLUTMat::kLutSize);
 }
 
 void TonemappingMat::Execute(const SPtr<Texture>& sceneColor, const SPtr<Texture>& eyeAdaptation, const SPtr<Texture>& bloom, const SPtr<Texture>& colorLUT, const SPtr<RenderTarget>& output, const RenderSettings& settings)

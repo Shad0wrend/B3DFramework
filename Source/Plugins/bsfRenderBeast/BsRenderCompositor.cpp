@@ -1860,14 +1860,23 @@ void RCNodeTonemapping::Render(const RenderCompositorNodeInputs& inputs)
 
 			if(tonemapLUTDirty) // Rebuild LUT if PP settings changed
 			{
-				CreateTonemapLUTMat* createLUT = CreateTonemapLUTMat::GetVariation(volumeLUT);
-				if(mTonemapLUT == nullptr)
-					mTonemapLUT = GetGpuResourcePool().Get(createLUT->GetOutputDesc());
-
 				if(volumeLUT)
-					createLUT->Execute3D(mTonemapLUT->Texture, settings);
+				{
+					CreateTonemap3DLUTMat* createLUT = CreateTonemap3DLUTMat::Get();
+					if(mTonemapLUT == nullptr)
+						mTonemapLUT = GetGpuResourcePool().Get(createLUT->GetOutputDesc());
+
+					createLUT->Execute(mTonemapLUT->Texture, settings);
+				}
 				else
-					createLUT->Execute2D(mTonemapLUT->RenderTexture, settings);
+				{
+					CreateTonemap2DLUTMat* createLUT = CreateTonemap2DLUTMat::Get();
+					if(mTonemapLUT == nullptr)
+						mTonemapLUT = GetGpuResourcePool().Get(createLUT->GetOutputDesc());
+
+					createLUT->Execute(mTonemapLUT->RenderTexture, settings);
+					
+				}
 
 				mTonemapLastUpdateHash = latestHash;
 			}
