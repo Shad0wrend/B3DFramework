@@ -12,6 +12,14 @@ namespace bs
 	 *  @{
 	 */
 
+	/** Calculates path hash, either from case sensitive or insensitive path. */
+	template<bool CaseSensitive>
+	class PathHashFunction
+	{
+	public:
+		size_t operator()(const Path& a) const { return 0; }
+	};
+
 	/**
 	 * Class for storing and manipulating file paths. Paths may be parsed from and to raw strings according to various
 	 * platform specific path types.
@@ -192,17 +200,11 @@ namespace bs
 		/** Appends another path to the end of this path. */
 		Path& Append(const Path& path);
 
-		/**
-		 * Checks if the current path contains the provided path. Comparison is case insensitive and paths will be compared
-		 * as-is, without canonization.
-		 */
+		/** Checks if the current path contains the provided path. */
 		bool Includes(const Path& child, bool caseSensitive = false) const;
 
-		/**
-		 * Compares two paths and returns true if they match. Comparison is case insensitive and paths will be compared
-		 * as-is, without canonization.
-		 */
-		bool Equals(const Path& other) const;
+		/** Compares two paths and returns true if they match. */
+		bool Equals(const Path& other, bool caseSensitive = false) const;
 
 		/** Change or set the filename in the path. */
 		void SetFilename(const String& filename) { mFilename = filename; }
@@ -455,12 +457,41 @@ namespace bs
 	private:
 		friend struct RTTIPlainType<Path>; // For serialization
 		friend struct ::std::hash<bs::Path>;
+		friend class PathHashFunction<false>;
+		friend class PathHashFunction<true>;
 
 		Vector<String> mDirectories;
 		String mDevice;
 		String mFilename;
 		String mNode;
 		bool mIsAbsolute = false;
+	};
+
+	/**	Compares two paths using either case sensitive or insensitive compare. */
+	template<bool CaseSensitive>
+	class PathEqualsFunction
+	{
+	public:
+		bool operator()(const Path& a, const Path& b) const
+		{
+			return a.Equals(b, CaseSensitive);
+		}
+	};
+
+	/** Calculates path hash from a case insensitive path. */
+	template<>
+	class B3D_UTILITY_EXPORT PathHashFunction<true>
+	{
+	public:
+		size_t operator()(const Path& path) const;
+	};
+
+	/** Calculates path hash from a case insensitive path. */
+	template<>
+	class B3D_UTILITY_EXPORT PathHashFunction<false>
+	{
+	public:
+		size_t operator()(const Path& path) const;
 	};
 
 	/** @} */
@@ -476,15 +507,7 @@ namespace std
 	{
 		size_t operator()(const bs::Path& path) const
 		{
-			size_t hash = 0;
-			bs::B3DCombineHash(hash, path.mFilename);
-			bs::B3DCombineHash(hash, path.mDevice);
-			bs::B3DCombineHash(hash, path.mNode);
-
-			for(auto& dir : path.mDirectories)
-				bs::B3DCombineHash(hash, dir);
-
-			return hash;
+			return bs::PathHashFunction<false>()(path);
 		}
 	};
 } // namespace std

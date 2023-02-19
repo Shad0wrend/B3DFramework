@@ -449,7 +449,7 @@ namespace bs
 		Path mAssociatedPackageFilePath; /**< Path to the file in which the package data has been saved. Empty if package hasn't been saved yet. */
 		SPtr<PackageMetaData> mPackageMetaData;
 
-		UnorderedMap<Path, ResourceInformation*> mResourceInformationByPath; // TODO - Need to use case sensitive compare here
+		UnorderedMap<Path, ResourceInformation*, PathHashFunction<true>, PathEqualsFunction<true>> mResourceInformationByPath;
 		UnorderedMap<UUID, UPtr<ResourceInformation>> mResourceInformationByUUID;
 
 		mutable Mutex mMetaDataMutex;

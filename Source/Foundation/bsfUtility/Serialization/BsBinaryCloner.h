@@ -73,5 +73,37 @@ namespace bs
 		static void RestoreReferences(IReflectable* object, FrameAlloc& alloc, const ObjectReferenceData& referenceData);
 	};
 
+	/**
+	 * Clones the provided object.
+	 *
+	 * @param	object		Object to clone.
+	 * @param	shallow		Determines how are fields containing reflectable pointers. If true, then those pointers will keep pointing to the original
+	 *						object (both the clone and original referencing the same object by the pointer). If false, then the pointer object to will be cloned as well.
+	 */
+	template <class T>
+	SPtr<T> B3DRTTIClone(const T* const object, bool shallow = false)
+	{
+		static_assert((std::is_base_of_v<IReflectable, T>), "Cannot clone object. It needs to derive from bs::IReflectable.");
+
+		if(object == nullptr)
+			return nullptr;
+
+		BinaryCloner cloner;
+		return std::static_pointer_cast<T>(cloner.Clone(const_cast<T*>(object), shallow));
+	}
+
+	/** @copydoc B3DRTTIClone(const IReflectable* const, bool) */
+	template <class T>
+	SPtr<T> B3DRTTIClone(const SPtr<T>& object, bool shallow = false)
+	{
+		static_assert((std::is_base_of_v<IReflectable, T>), "Cannot clone object. It needs to derive from bs::IReflectable.");
+
+		if(object == nullptr)
+			return nullptr;
+
+		BinaryCloner cloner;
+		return std::static_pointer_cast<T>(cloner.Clone(const_cast<T*>(object.get()), shallow));
+	}
+
 	/** @} */
 } // namespace bs

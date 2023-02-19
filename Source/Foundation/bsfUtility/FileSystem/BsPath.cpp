@@ -258,40 +258,40 @@ bool Path::Includes(const Path& child, bool caseSensitive) const
 	return true;
 }
 
-bool Path::Equals(const Path& other) const
+bool Path::Equals(const Path& other, bool caseSensitive) const
 {
 	if(mIsAbsolute != other.mIsAbsolute)
 		return false;
 
 	if(mIsAbsolute)
 	{
-		if(!ComparePathElem(mDevice, other.mDevice))
+		if(!ComparePathElem(mDevice, other.mDevice, caseSensitive))
 			return false;
 	}
 
-	if(!ComparePathElem(mNode, other.mNode))
+	if(!ComparePathElem(mNode, other.mNode, caseSensitive))
 		return false;
 
-	u32 myNumElements = (u32)mDirectories.size();
-	u32 otherNumElements = (u32)other.mDirectories.size();
+	u32 myElementCount = (u32)mDirectories.size();
+	u32 otherElementCount = (u32)other.mDirectories.size();
 
 	if(!mFilename.empty())
-		myNumElements++;
+		myElementCount++;
 
 	if(!other.mFilename.empty())
-		otherNumElements++;
+		otherElementCount++;
 
-	if(myNumElements != otherNumElements)
+	if(myElementCount != otherElementCount)
 		return false;
 
-	if(myNumElements > 0)
+	if(myElementCount > 0)
 	{
-		auto iterMe = mDirectories.begin();
-		auto iterOther = other.mDirectories.begin();
+		auto myDirectoryIterator = mDirectories.begin();
+		auto otherDirectoryIterator = other.mDirectories.begin();
 
-		for(u32 i = 0; i < (myNumElements - 1); i++, ++iterMe, ++iterOther)
+		for(u32 i = 0; i < (myElementCount - 1); i++, ++myDirectoryIterator, ++otherDirectoryIterator)
 		{
-			if(!ComparePathElem(*iterMe, *iterOther))
+			if(!ComparePathElem(*myDirectoryIterator, *otherDirectoryIterator, caseSensitive))
 				return false;
 		}
 
@@ -299,12 +299,12 @@ bool Path::Equals(const Path& other) const
 		{
 			if(!other.mFilename.empty())
 			{
-				if(!ComparePathElem(mFilename, other.mFilename))
+				if(!ComparePathElem(mFilename, other.mFilename, caseSensitive))
 					return false;
 			}
 			else
 			{
-				if(!ComparePathElem(mFilename, *iterOther))
+				if(!ComparePathElem(mFilename, *otherDirectoryIterator, caseSensitive))
 					return false;
 			}
 		}
@@ -312,12 +312,12 @@ bool Path::Equals(const Path& other) const
 		{
 			if(!other.mFilename.empty())
 			{
-				if(!ComparePathElem(*iterMe, other.mFilename))
+				if(!ComparePathElem(*myDirectoryIterator, other.mFilename, caseSensitive))
 					return false;
 			}
 			else
 			{
-				if(!ComparePathElem(*iterMe, *iterOther))
+				if(!ComparePathElem(*myDirectoryIterator, *otherDirectoryIterator, caseSensitive))
 					return false;
 			}
 		}
@@ -540,4 +540,31 @@ void Path::PushDirectory(const String& dir)
 		else
 			mDirectories.push_back(dir);
 	}
+}
+
+size_t PathHashFunction<true>::operator()(const Path& path) const
+{
+	size_t hash = 0;
+	bs::B3DCombineHash(hash, path.mFilename);
+	bs::B3DCombineHash(hash, path.mDevice);
+	bs::B3DCombineHash(hash, path.mNode);
+
+	for(auto& directory : path.mDirectories)
+		bs::B3DCombineHash(hash, directory);
+
+	return hash;
+}
+
+/** Calculates path hash from a case insensitive path. */
+size_t PathHashFunction<false>::operator()(const Path& path) const
+{
+	size_t hash = 0;
+	bs::B3DCombineHash(hash, UTF8::ToLower(path.mFilename));
+	bs::B3DCombineHash(hash, UTF8::ToLower(path.mDevice));
+	bs::B3DCombineHash(hash, UTF8::ToLower(path.mNode));
+
+	for(auto& directory : path.mDirectories)
+		bs::B3DCombineHash(hash, UTF8::ToLower(directory));
+
+	return hash;
 }

@@ -6,6 +6,7 @@
 #include "BsResources.h"
 #include "FileSystem/BsDataStream.h"
 #include "FileSystem/BsFileSystem.h"
+#include "Serialization/BsBinaryCloner.h"
 #include "Serialization/BsBinarySerializer.h"
 #include "Serialization/BsFileSerializer.h"
 #include "Threading/BsTaskScheduler.h"
@@ -240,8 +241,7 @@ void Package::SetResourceMetaData(const UUID& id, const SPtr<PackageResourceUser
 	if (resourceInformation)
 	{
 		// Always make a copy and user might be reading from the meta-data, and we cannot modify it in a thread safe way
-		SPtr<PackageResourceMetaData> metaDataCopy = B3DMakeShared<PackageResourceMetaData>();
-		*metaDataCopy = *resourceInformation->MetaData;
+		const SPtr<PackageResourceMetaData> metaDataCopy = B3DRTTIClone(resourceInformation->MetaData);
 
 		metaDataCopy->UserMetaData = data;
 		resourceInformation->MetaData = metaDataCopy;
@@ -256,8 +256,7 @@ void Package::SetResourceMetaData(const Path& path, const SPtr<PackageResourceUs
 	if (resourceInformation)
 	{
 		// Always make a copy and user might be reading from the meta-data, and we cannot modify it in a thread safe way
-		SPtr<PackageResourceMetaData> metaDataCopy = B3DMakeShared<PackageResourceMetaData>();
-		*metaDataCopy = *resourceInformation->MetaData;
+		const SPtr<PackageResourceMetaData> metaDataCopy = B3DRTTIClone(resourceInformation->MetaData);
 
 		metaDataCopy->UserMetaData = data;
 		resourceInformation->MetaData = metaDataCopy;
@@ -444,9 +443,7 @@ void Package::SetResource(const SPtr<Resource>& resource, bool markAsDirty)
 	}
 
 	// Always make a copy and user might be reading from the meta-data, and we cannot modify it in a thread safe way
-	const SPtr<PackageResourceMetaData> metaDataCopy = B3DMakeShared<PackageResourceMetaData>();
-	*metaDataCopy = *resourceInformation->MetaData;
-
+	const SPtr<PackageResourceMetaData> metaDataCopy = B3DRTTIClone(resourceInformation->MetaData);
 	metaDataCopy->TypeId = resource->GetTypeId();
 
 	const Vector<ResourceDependency> resourceDependencies = Utility::FindResourceDependencies(*resource);
@@ -528,9 +525,7 @@ bool Package::SetResourcePath(const Path& path, const Path& newPath, bool recurs
 		}
 
 		// Always make a copy and user might be reading from the meta-data, and we cannot modify it in a thread safe way
-		const SPtr<PackageResourceMetaData> metaDataCopy = B3DMakeShared<PackageResourceMetaData>();
-		*metaDataCopy = *resourceInformation->MetaData;
-
+		const SPtr<PackageResourceMetaData> metaDataCopy = B3DRTTIClone(resourceInformation->MetaData);
 		metaDataCopy->Path = newPath;
 
 		resourceInformation->MetaData = metaDataCopy;
@@ -556,7 +551,7 @@ bool Package::SetResourcePath(const Path& path, const Path& newPath, bool recurs
 	}
 	else
 	{
-		UnorderedMap<Path, ResourceInformation*> resourceInformationCopy = mResourceInformationByPath;
+		UnorderedMap<Path, ResourceInformation*, PathHashFunction<true>, PathEqualsFunction<true>> resourceInformationCopy = mResourceInformationByPath;
 		for(const auto& resourceInformationPair : resourceInformationCopy)
 		{
 			if(!path.Includes(resourceInformationPair.first, true))
@@ -1121,7 +1116,7 @@ SPtr<Package> Package::Clone() const
 
 	SPtr<Package> output = Create(mName, mId);
 	output->mAssociatedPackageFilePath = mAssociatedPackageFilePath;
-	output->mPackageMetaData = mPackageMetaData; // TODO - Clone this using RTTI
+	output->mPackageMetaData = B3DRTTIClone(mPackageMetaData, false);
 
 	for (const auto& entry : mResourceInformationByUUID)
 	{
@@ -1136,20 +1131,17 @@ SPtr<Package> Package::Clone() const
 
 		B3D_ASSERT(entry.second->LoadState != PackageResourceLoadState::InProgress);
 
-		const SPtr<PackageResourceMetaData> metaDataCopy = B3DMakeShared<PackageResourceMetaData>();
-		*metaDataCopy = *resourceInformation->MetaData; // TODO - Clone this using RTTI? Otherwise the internal user meta-data would not be cloned. Similar case in other copies above.
+		UPtr<ResourceInformation> resourceInformationClone = B3DMakeUnique<ResourceInformation>();
+		resourceInformationClone->MetaData = B3DRTTIClone(resourceInformation->MetaData);
+		resourceInformationClone->LoadState = resourceInformation->LoadState;
+		resourceInformationClone->LoadProgress.store(resourceInformation->LoadProgress.load());
+		resourceInformationClone->OffsetInDataStream = resourceInformation->OffsetInDataStream;
+		resourceInformationClone->SizeInDataStream = resourceInformation->SizeInDataStream;
+		resourceInformationClone->LoadedResource = resourceInformation->LoadedResource;
+		resourceInformationClone->IsLoadedResourceDirty = resourceInformation->IsLoadedResourceDirty;
 
-		UPtr<ResourceInformation> resourceInfoCopy = B3DMakeUnique<ResourceInformation>();
-		resourceInfoCopy->MetaData = metaDataCopy;
-		resourceInfoCopy->LoadState = resourceInformation->LoadState;
-		resourceInfoCopy->LoadProgress.store(resourceInformation->LoadProgress.load());
-		resourceInfoCopy->OffsetInDataStream = resourceInformation->OffsetInDataStream;
-		resourceInfoCopy->SizeInDataStream = resourceInformation->SizeInDataStream;
-		resourceInfoCopy->LoadedResource = resourceInformation->LoadedResource;
-		resourceInfoCopy->IsLoadedResourceDirty = resourceInformation->IsLoadedResourceDirty;
-
-		output->mResourceInformationByPath[metaDataCopy->Path] = resourceInfoCopy.get();
-		output->mResourceInformationByUUID[metaDataCopy->Id] = std::move(resourceInfoCopy);
+		output->mResourceInformationByPath[resourceInformationClone->MetaData->Path] = resourceInformationClone.get();
+		output->mResourceInformationByUUID[resourceInformationClone->MetaData->Id] = std::move(resourceInformationClone);
 	}
 
 	return output;
