@@ -41,15 +41,15 @@ namespace bs
 	public:
 		LogEntry() = default;
 
-		LogEntry(String msg, LogVerbosity verbosity, u32 category)
-			: mMsg(std::move(msg)), mVerbosity(verbosity), mCategory(category), mLocalTime(std::time(nullptr))
+		LogEntry(String msg, LogVerbosity verbosity, const char* categoryName)
+			: mMsg(std::move(msg)), mVerbosity(verbosity), mCategoryName(categoryName), mLocalTime(std::time(nullptr))
 		{}
 
 		/** Determines how important is the message and when should it be displayed. */
 		LogVerbosity GetVerbosity() const { return mVerbosity; }
 
 		/** Category of the system the message originated from. */
-		u32 GetCategory() const { return mCategory; }
+		const char* GetCategoryName() const { return mCategoryName; }
 
 		/** Text of the message. */
 		const String& GetMessage() const { return mMsg; }
@@ -60,8 +60,49 @@ namespace bs
 	private:
 		String mMsg;
 		LogVerbosity mVerbosity = LogVerbosity::Info;
-		u32 mCategory = 0;
+		const char* mCategoryName = nullptr;
 		std::time_t mLocalTime = 0;
+	};
+
+	/** Base class for all log categories. */
+	struct B3D_UTILITY_EXPORT LogCategoryBase
+	{
+	public:
+		LogCategoryBase(const char* name, LogVerbosity defaultMaximumVerbosity);
+		~LogCategoryBase();
+
+		/** Returns the name of the category. */
+		const char* GetName() const { return mName; }
+
+		/** Determines the maximum verbosity reported by this category. Verbosity levels higher than this will not be reported. */
+		LogVerbosity GetMaximumVerbosity() const { return mMaximumVerbosity; }
+
+		/** Returns true is the provided verbosity suppressed for this category. */
+		bool IsVerbositySupressed(LogVerbosity verbosity)
+		{
+			return (u32)verbosity > (u32)mMaximumVerbosity;
+		}
+
+	private:
+		friend class Log;
+
+		/** @copydoc GetMaximumVerbosity */
+		void SetMaximumVerbosity(LogVerbosity maximumVerbosity) { mMaximumVerbosity = maximumVerbosity; }
+
+		const char* mName;
+		LogVerbosity mDefaultMaximumVerbosity;
+		LogVerbosity mMaximumVerbosity;
+	};
+
+	/** Templated base class for a category with some particular default verbosity. */
+	template <LogVerbosity DefaultRunTimeVerbosity, LogVerbosity CompileTimeVerbosity = LogVerbosity::Any>
+	struct LogCategory : public LogCategoryBase
+	{
+		static constexpr LogVerbosity kCompileTimeVerbosity = CompileTimeVerbosity;
+
+		B3D_FORCEINLINE LogCategory(const char* name)
+			: LogCategoryBase(name, DefaultRunTimeVerbosity)
+		{ }
 	};
 
 	/**
@@ -79,20 +120,22 @@ namespace bs
 		/**
 		 * Logs a new message.
 		 *
-		 * @param[in]	message		The message describing the log entry.
-		 * @param[in]	verbosity	Verbosity of the message, determining its importance.
-		 * @param[in]	category	Category of the message, determining which system is it relevant to.
+		 * @param	message			The message describing the log entry.
+		 * @param	verbosity		Verbosity of the message, determining its importance.
+		 * @param	categoryName	Category of the message, determining which system is it relevant to.
 		 */
-		void LogMsg(const String& message, LogVerbosity verbosity, u32 category);
+		void LogMessage(const String& message, LogVerbosity verbosity, const char* categoryName);
 
 		/** Removes all log entries. */
 		void Clear();
 
 		/**
-		 * Removes all log entries for a specific verbosity level and/or category. Specify -1 to clear all verbosity levels
-		 * and/or categories.
+		 * Removes all log entries for a specific category and/or verbosity level.
+		 *
+		 * @param	categoryName	Name of the category to clear. Specify null to clear all categories.
+		 * @param	verbosity		Verbosity level to clear.
 		 */
-		void Clear(LogVerbosity verbosity, u32 category);
+		void Clear(const char* categoryName, LogVerbosity verbosity = LogVerbosity::Any);
 
 		/** Returns all existing log entries. */
 		Vector<LogEntry> GetEntries() const;
@@ -119,40 +162,19 @@ namespace bs
 		 */
 		u64 GetHash() const { return mHash; }
 
-		/**
-		 * Checks if the category with the specified ID exists.
-		 *
-		 *  @param[in] id	Number representing the category's ID.
-		 *  @return			True if exists, otherwise false.
-		 */
-		static bool CategoryExists(u32 id);
-
-		/** Returns the number of registered log categories. */
-		static u32 GetNumCategories() { return (u32)GetCategoriesMap().size(); };
-
-		/**
-		 *  Get the name of the category based on its ID.
-		 *
-		 *  @param[in]	id		Number representing the category's ID.
-		 *  @param[in]	name	Variable in which the name will be written.
-		 *  @return				If found will write the name and return true. Otherwise will write the name "Unknown"
-		 *						and return false.
-		 */
-		static bool GetCategoryName(u32 id, String& name);
+		/** Changes the maximum verbosity for a particular log category. Verbosity levels higher than specified verbosity will not be logged. */
+		static void SetCategoryMaximumVerbosity(const char* name, LogVerbosity maximumVerbosity);
 
 		/**
 		 * @name Internal
 		 * @{
 		 */
 
-		/**
-		 *  Registers the new category with the specified ID and name.
-		 *
-		 *  @param[in] id		Number representing the category's ID.
-		 *  @param[in] name		Name of the category.
-		 *  @return				False if the ID is already taken, otherwise true.
-		 */
-		static bool RegisterCategoryInternal(u32 id, const char* name);
+		/** Registers the new category object. */
+		static void RegisterCategory(LogCategoryBase& category);
+
+		/** Unregisters an existing category object. */
+		static void UnregisterCategory(LogCategoryBase& category);
 
 		/** @} */
 
@@ -160,7 +182,7 @@ namespace bs
 		friend class Debug;
 
 		/** Returns a modifyable map containing all the log categories. */
-		static UnorderedMap<u32, String>& GetCategoriesMap();
+		static UnorderedMultimap<const char*, LogCategoryBase*>& GetCategoriesMap();
 
 		/** Returns all log entries, including those marked as unread. */
 		Vector<LogEntry> GetAllEntries() const;

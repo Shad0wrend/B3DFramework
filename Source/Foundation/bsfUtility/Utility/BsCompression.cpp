@@ -4,27 +4,34 @@
 #include "FileSystem/BsDataStream.h"
 
 // Third party
+#include "BsBitwise.h"
 #include "snappy.h"
 #include "snappy-sinksource.h"
 #include "Debug/BsDebug.h"
 
 using namespace bs;
 
+B3D_LOG_CATEGORY_STATIC(Compression, Log)
+
 /** Source accepting a data stream. Used for Snappy compression library. */
 class DataStreamSource : public snappy::Source
 {
 public:
-	DataStreamSource(const SPtr<DataStream>& stream, std::function<void(float)> reportProgress = nullptr)
+	static constexpr size_t kFileReadBufferSize = 32768;
+
+	DataStreamSource(const DataStream& stream, u64 bytesToRead, std::function<void(float)> reportProgress = nullptr)
 		: mStream(stream), mReportProgress(std::move(reportProgress))
 	{
-		mTotal = mStream->Size() - mStream->Tell();
-		mRemaining = mTotal;
+		const size_t remainingBytesInStream = stream.Size() - stream.Tell();
+		mTotalBytesToRead = bytesToRead == 0 ? remainingBytesInStream : std::min(remainingBytesInStream, bytesToRead);
+		mRemainingBytes = mTotalBytesToRead;
+		mEndAddress = stream.Tell() + mTotalBytesToRead;
 
-		if(mStream->IsFile())
-			mReadBuffer = (char*)B3DAllocate(32768);
+		if(mStream.IsFile())
+			mReadBuffer = (char*)B3DAllocate(kFileReadBufferSize);
 	}
 
-	virtual ~DataStreamSource()
+	~DataStreamSource() override
 	{
 		if(mReadBuffer != nullptr)
 			B3DFree(mReadBuffer);
@@ -32,169 +39,161 @@ public:
 
 	size_t Available() const override
 	{
-		return mRemaining;
+		return mRemainingBytes;
 	}
 
 	const char* Peek(size_t* len) override
 	{
-		if(!mStream->IsFile())
+		if(!mStream.IsFile())
 		{
-			SPtr<MemoryDataStream> memStream = std::static_pointer_cast<MemoryDataStream>(mStream);
+			const auto& memoryStream = static_cast<const MemoryDataStream&>(mStream);
 
 			*len = Available();
-			return (char*)memStream->Data() + mBufferOffset;
+			return (char*)memoryStream.Data() + mReadBufferOffset;
 		}
 		else
 		{
-			while(mBufferOffset >= mReadBufferContentSize)
+			while(mReadBufferOffset >= mReadBufferSize)
 			{
-				mBufferOffset -= mReadBufferContentSize;
-				mReadBufferContentSize = mStream->Read(mReadBuffer, 32768);
+				mReadBufferOffset -= mReadBufferSize;
 
-				if(mReadBufferContentSize == 0)
+				const size_t sizeToRead = std::min(kFileReadBufferSize, mEndAddress - mStream.Tell());
+				mReadBufferSize = mStream.Read(mReadBuffer, sizeToRead);
+
+				if(mReadBufferSize == 0)
 					break;
 			}
 
-			*len = mReadBufferContentSize - mBufferOffset;
-			return (char*)(mReadBuffer + mBufferOffset);
+			*len = mReadBufferSize - mReadBufferOffset;
+			return (char*)(mReadBuffer + mReadBufferOffset);
 		}
 	}
 
 	void Skip(size_t n) override
 	{
-		mBufferOffset += n;
-		mRemaining -= n;
+		mReadBufferOffset += n;
+		mRemainingBytes -= n;
 
 		if(mReportProgress)
-			mReportProgress(1.0f - mRemaining / (float)mTotal);
+			mReportProgress(1.0f - mRemainingBytes / (float)mTotalBytesToRead);
 	}
 
 private:
-	SPtr<DataStream> mStream;
+	const DataStream& mStream;
 	std::function<void(float)> mReportProgress;
 
-	size_t mRemaining;
-	size_t mTotal;
-	size_t mBufferOffset = 0;
+	size_t mRemainingBytes;
+	size_t mTotalBytesToRead;
+	size_t mEndAddress = 0;
 
 	// File streams only
 	char* mReadBuffer = nullptr;
-	size_t mReadBufferContentSize = 0;
+	size_t mReadBufferOffset = 0;
+	size_t mReadBufferSize = 0;
 };
 
 /** Sink (destination) accepting a data stream. Used for Snappy compression library. */
 class DataStreamSink : public snappy::Sink
 {
-	struct BufferPiece
-	{
-		char* Buffer;
-		size_t Size;
-	};
-
 public:
-	DataStreamSink() = default;
+	DataStreamSink(DataStream& outputStream)
+		:mOutputStream(outputStream)
+	{ }
 
 	virtual ~DataStreamSink()
 	{
-		for(auto& entry : mBufferPieces)
-			B3DFree(entry.Buffer);
+		if(mBuffer != nullptr)
+			B3DFree(mBuffer);
 	}
 
 	void Append(const char* data, size_t n) override
 	{
-		if(mBufferPieces.empty() || mBufferPieces.back().Buffer != data)
-		{
-			BufferPiece piece;
-			piece.Buffer = (char*)B3DAllocate((u32)n);
-			piece.Size = n;
+		B3D_ASSERT(mBuffer == data);
+		B3D_ASSERT(n <= mBufferCapacity);
 
-			memcpy(piece.Buffer, data, n);
-			mBufferPieces.push_back(piece);
-		}
-		else
-		{
-			BufferPiece& piece = mBufferPieces.back();
-			B3D_ASSERT(piece.Buffer == data);
-
-			piece.Size = n;
-		}
+		mOutputStream.Write(data, n);
 	}
 
 	char* GetAppendBuffer(size_t len, char* scratch) override
 	{
-		BufferPiece piece;
-		piece.Buffer = (char*)B3DAllocate((u32)len);
-		piece.Size = 0;
+		ReallocateBufferIfNeeded(len);
 
-		mBufferPieces.push_back(piece);
-		return piece.Buffer;
+		return mBuffer;
 	}
 
 	char* GetAppendBufferVariable(size_t min_size, size_t desired_size_hint, char* scratch, size_t scratch_size, size_t* allocated_size) override
 	{
-		BufferPiece piece;
-		piece.Buffer = (char*)B3DAllocate((u32)desired_size_hint);
-		piece.Size = 0;
+		const size_t requiredCapacity = std::max(desired_size_hint, min_size);
+		ReallocateBufferIfNeeded(requiredCapacity);
 
-		mBufferPieces.push_back(piece);
-
-		*allocated_size = desired_size_hint;
-		return piece.Buffer;
+		*allocated_size = requiredCapacity;
+		return mBuffer;
 	}
 
 	void AppendAndTakeOwnership(char* bytes, size_t n, void (*deleter)(void*, const char*, size_t), void* deleter_arg) override
 	{
-		BufferPiece& piece = mBufferPieces.back();
+		mOutputStream.Write(bytes, n);
 
-		if(piece.Buffer != bytes)
+		if(mBuffer != bytes)
 		{
-			memcpy(piece.Buffer, bytes, n);
 			(*deleter)(deleter_arg, bytes, n);
 		}
-
-		piece.Size = n;
-	}
-
-	SPtr<MemoryDataStream> GetOutput()
-	{
-		size_t totalSize = 0;
-		for(auto& entry : mBufferPieces)
-			totalSize += entry.Size;
-
-		SPtr<MemoryDataStream> ds = B3DMakeShared<MemoryDataStream>(totalSize);
-		for(auto& entry : mBufferPieces)
-			ds->Write(entry.Buffer, entry.Size);
-
-		ds->Seek(0);
-		return ds;
 	}
 
 private:
-	Vector<BufferPiece> mBufferPieces;
-};
-
-SPtr<MemoryDataStream> Compression::Compress(const SPtr<DataStream>& input, std::function<void(float)> reportProgress)
-{
-	DataStreamSource src(input, std::move(reportProgress));
-	DataStreamSink dst;
-
-	size_t bytesWritten = snappy::Compress(&src, &dst);
-	SPtr<MemoryDataStream> output = dst.GetOutput();
-	B3D_ASSERT(output->Size() == bytesWritten);
-
-	return output;
-}
-
-SPtr<MemoryDataStream> Compression::Decompress(const SPtr<DataStream>& input, std::function<void(float)> reportProgress)
-{
-	DataStreamSource src(input, std::move(reportProgress));
-	DataStreamSink dst;
-
-	if(!snappy::Uncompress(&src, &dst))
+	/** Reallocates the internal buffer if it doesn't have enough capacity. Does not perserve current buffer data. */
+	void ReallocateBufferIfNeeded(size_t requiredCapacity)
 	{
-		B3D_LOG(Error, Generic, "Decompression failed, corrupt data.");
-		return nullptr;
+		const bool reallocateBuffer = mBuffer == nullptr || mBufferCapacity < requiredCapacity;
+		if(!reallocateBuffer)
+			return;
+
+		if(mBuffer != nullptr)
+		{
+			B3DFree(mBuffer);
+			mBuffer = nullptr;
+			mBufferCapacity = 0;
+		}
+
+		mBuffer = (char*)B3DAllocate(requiredCapacity);
+		mBufferCapacity = requiredCapacity;
 	}
 
-	return dst.GetOutput();
+	DataStream& mOutputStream;
+	char* mBuffer = nullptr;
+	size_t mBufferCapacity = 0;
+};
+
+u64 Compression::Compress(DataStream& input, DataStream& output, u64 inputDataSize, CompressionType compressionType, std::function<void(float)> reportProgress)
+{
+	if(compressionType != CompressionType::Snappy)
+	{
+		B3D_LOG(Error, Compression, "Cannot compress data. Unsupported compression type provided: {0}.", (u32)compressionType);
+		return false;
+	}
+
+	DataStreamSource dataSource(input, inputDataSize, std::move(reportProgress));
+	DataStreamSink dataSink(output);
+
+	return (u64)snappy::Compress(&dataSource, &dataSink);
+}
+
+bool Compression::Decompress(DataStream& input, DataStream& output, u64 inputDataSize, CompressionType compressionType,  std::function<void(float)> reportProgress)
+{
+	if(compressionType != CompressionType::Snappy)
+	{
+		B3D_LOG(Error, Compression, "Cannot decompress data. Unsupported compression type provided: {0}.", (u32)compressionType);
+		return false;
+	}
+
+	DataStreamSource dataSource(input, inputDataSize, std::move(reportProgress));
+	DataStreamSink dataSink(output);
+
+	if(!snappy::Uncompress(&dataSource, &dataSink))
+	{
+		B3D_LOG(Error, Compression, "Cannot decompress data. Corrupt input data.");
+		return false;
+	}
+
+	return true;
 }

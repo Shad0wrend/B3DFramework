@@ -64,7 +64,7 @@ void Cursor::SetCursor(const String& name)
 	auto iterFind = mCustomIconNameToId.find(name);
 	if(iterFind == mCustomIconNameToId.end())
 	{
-		B3D_LOG(Warning, Platform, "Cannot find cursor icon with name: " + name);
+		B3D_LOG(Warning, Platform, "Cannot find cursor icon with name: {0}", name);
 		return;
 	}
 

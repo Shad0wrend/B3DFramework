@@ -42,7 +42,7 @@ void NullPhysicsRigidbody::SetTransform(const Vector3& pos, const Quaternion& ro
 	mRotation = rot;
 }
 
-void NullPhysicsRigidbody::SetCenterOfMass(const class Vector3& position, const Quaternion& rotation)
+void NullPhysicsRigidbody::SetCenterOfMass(const Vector3& position, const Quaternion& rotation)
 {
 	mCenterOfMassPosition = position;
 	mCenterOfMassRotation = rotation;

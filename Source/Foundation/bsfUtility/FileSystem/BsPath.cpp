@@ -218,7 +218,7 @@ Path& Path::MakeRelative(const Path& base)
 	return *this;
 }
 
-bool Path::Includes(const Path& child) const
+bool Path::Includes(const Path& child, bool caseSensitive) const
 {
 	if(mDevice != child.mDevice)
 		return false;
@@ -234,7 +234,7 @@ bool Path::Includes(const Path& child) const
 		if(iterChild == child.mDirectories.end())
 			return false;
 
-		if(!ComparePathElem(*iterChild, *iterParent))
+		if(!ComparePathElem(*iterChild, *iterParent, caseSensitive))
 			return false;
 	}
 
@@ -245,12 +245,12 @@ bool Path::Includes(const Path& child) const
 			if(child.mFilename.empty())
 				return false;
 
-			if(!ComparePathElem(child.mFilename, mFilename))
+			if(!ComparePathElem(child.mFilename, mFilename, caseSensitive))
 				return false;
 		}
 		else
 		{
-			if(!ComparePathElem(*iterChild, mFilename))
+			if(!ComparePathElem(*iterChild, mFilename, caseSensitive))
 				return false;
 		}
 	}
@@ -396,6 +396,22 @@ const String& Path::GetTail() const
 		return StringUtil::kBlank;
 }
 
+Path Path::GetSubPath(u32 directoryCount) const
+{
+	Path output;
+	output.mDevice = mDevice;
+	output.mNode = mNode;
+	output.mIsAbsolute = mIsAbsolute;
+
+	directoryCount = std::min(directoryCount, (u32)mDirectories.size());
+	output.mDirectories.reserve(directoryCount);
+
+	for(u32 directoryIndex = 0; directoryIndex < directoryCount; directoryIndex++)
+		output.mDirectories.push_back(mDirectories[directoryIndex]);
+
+	return output;
+}
+
 void Path::Clear()
 {
 	mDirectories.clear();
@@ -481,8 +497,11 @@ Path& Path::operator+=(const Path& rhs)
 	return Append(rhs);
 }
 
-bool Path::ComparePathElem(const String& left, const String& right)
+bool Path::ComparePathElem(const String& left, const String& right, bool caseSensitive)
 {
+	if(caseSensitive)
+		return left == right;
+
 	// Note: Might be more efficient to perform toLower character by character, and return as soon as comparison
 	// fails. Instead of this way where we're allocating two temporary strings with dynamic memory. Although that
 	// approach is problematic as well because UTF8 case conversion requires external library calls which might not

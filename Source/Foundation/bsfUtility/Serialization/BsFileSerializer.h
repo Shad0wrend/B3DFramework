@@ -17,6 +17,7 @@ namespace bs
 	{
 	public:
 		FileEncoder(const Path& fileLocation);
+		FileEncoder(const SPtr<DataStream>& stream);
 
 		/**
 		 * Parses the provided object, serializes all of its data as specified by its RTTIType and saves the serialized
@@ -39,6 +40,7 @@ namespace bs
 	{
 	public:
 		FileDecoder(const Path& fileLocation);
+		FileDecoder(const SPtr<DataStream>& stream);
 
 		/**
 		 * Deserializes an IReflectable object by reading the binary data at the provided file location.

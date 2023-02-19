@@ -20,7 +20,7 @@ SPtr<ScriptCode> ScriptCode::CreatePtrInternal(const WString& data, bool editorS
 {
 	SPtr<ScriptCode> scriptCodePtr = B3DMakeCoreFromExisting<ScriptCode>(
 		new(B3DAllocate<ScriptCode>()) ScriptCode(data, editorScript));
-	scriptCodePtr->SetThisPtrInternal(scriptCodePtr);
+	scriptCodePtr->SetShared(scriptCodePtr);
 	scriptCodePtr->Initialize();
 
 	return scriptCodePtr;

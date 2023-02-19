@@ -209,7 +209,7 @@ HMesh Mesh::Create(const SPtr<MeshData>& initialMeshData, int usage, DrawOperati
 SPtr<Mesh> Mesh::CreateShared(const MeshCreateInformation& meshCreateInformation)
 {
 	SPtr<Mesh> mesh = B3DMakeCoreFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(meshCreateInformation));
-	mesh->SetThisPtrInternal(mesh);
+	mesh->SetShared(mesh);
 	mesh->Initialize();
 
 	return mesh;
@@ -218,7 +218,7 @@ SPtr<Mesh> Mesh::CreateShared(const MeshCreateInformation& meshCreateInformation
 SPtr<Mesh> Mesh::CreateShared(const SPtr<MeshData>& initialMeshData, const MeshCreateInformation& meshCreateInformation)
 {
 	SPtr<Mesh> mesh = B3DMakeCoreFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(initialMeshData, meshCreateInformation));
-	mesh->SetThisPtrInternal(mesh);
+	mesh->SetShared(mesh);
 	mesh->Initialize();
 
 	return mesh;
@@ -231,7 +231,7 @@ SPtr<Mesh> Mesh::CreateShared(const SPtr<MeshData>& initialMeshData, int usage, 
 	meshCreateInformation.SubMeshes.push_back(SubMesh(0, initialMeshData->GetIndexCount(), primitiveType));
 
 	SPtr<Mesh> mesh = B3DMakeCoreFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(initialMeshData, meshCreateInformation));
-	mesh->SetThisPtrInternal(mesh);
+	mesh->SetShared(mesh);
 	mesh->Initialize();
 
 	return mesh;
@@ -240,7 +240,7 @@ SPtr<Mesh> Mesh::CreateShared(const SPtr<MeshData>& initialMeshData, int usage, 
 SPtr<Mesh> Mesh::CreateEmptyShared()
 {
 	SPtr<Mesh> mesh = B3DMakeCoreFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh());
-	mesh->SetThisPtrInternal(mesh);
+	mesh->SetShared(mesh);
 
 	return mesh;
 }

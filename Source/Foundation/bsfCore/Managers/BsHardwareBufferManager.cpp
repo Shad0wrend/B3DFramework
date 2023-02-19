@@ -15,7 +15,7 @@ SPtr<VertexDeclaration> HardwareBufferManager::CreateVertexDeclaration(const SPt
 	VertexDeclaration* decl = new(B3DAllocate<VertexDeclaration>()) VertexDeclaration(desc->CreateElements());
 
 	SPtr<VertexDeclaration> declPtr = B3DMakeCoreFromExisting<VertexDeclaration>(decl);
-	declPtr->SetThisPtrInternal(declPtr);
+	declPtr->SetShared(declPtr);
 	declPtr->Initialize();
 
 	return declPtr;
@@ -24,7 +24,7 @@ SPtr<VertexDeclaration> HardwareBufferManager::CreateVertexDeclaration(const SPt
 SPtr<VertexBuffer> HardwareBufferManager::CreateVertexBuffer(const VertexBufferCreateInformation& createInformation)
 {
 	SPtr<VertexBuffer> vbuf = B3DMakeCoreFromExisting<VertexBuffer>(new(B3DAllocate<VertexBuffer>()) VertexBuffer(createInformation));
-	vbuf->SetThisPtrInternal(vbuf);
+	vbuf->SetShared(vbuf);
 	vbuf->Initialize();
 	return vbuf;
 }
@@ -32,7 +32,7 @@ SPtr<VertexBuffer> HardwareBufferManager::CreateVertexBuffer(const VertexBufferC
 SPtr<IndexBuffer> HardwareBufferManager::CreateIndexBuffer(const IndexBufferCreateInformation& createInformation)
 {
 	SPtr<IndexBuffer> ibuf = B3DMakeCoreFromExisting<IndexBuffer>(new(B3DAllocate<IndexBuffer>()) IndexBuffer(createInformation));
-	ibuf->SetThisPtrInternal(ibuf);
+	ibuf->SetShared(ibuf);
 	ibuf->Initialize();
 	return ibuf;
 }
@@ -40,7 +40,7 @@ SPtr<IndexBuffer> HardwareBufferManager::CreateIndexBuffer(const IndexBufferCrea
 SPtr<GpuParamBlockBuffer> HardwareBufferManager::CreateGpuParamBlockBuffer(u32 size, GpuBufferUsage usage)
 {
 	SPtr<GpuParamBlockBuffer> paramBlockPtr = B3DMakeCoreFromExisting<GpuParamBlockBuffer>(new(B3DAllocate<GpuParamBlockBuffer>()) GpuParamBlockBuffer(size, usage));
-	paramBlockPtr->SetThisPtrInternal(paramBlockPtr);
+	paramBlockPtr->SetShared(paramBlockPtr);
 	paramBlockPtr->Initialize();
 	return paramBlockPtr;
 }
@@ -48,7 +48,7 @@ SPtr<GpuParamBlockBuffer> HardwareBufferManager::CreateGpuParamBlockBuffer(u32 s
 SPtr<GpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GpuBufferCreateInformation& createInformation)
 {
 	SPtr<GpuBuffer> gbuf = B3DMakeCoreFromExisting<GpuBuffer>(new(B3DAllocate<GpuBuffer>()) GpuBuffer(createInformation));
-	gbuf->SetThisPtrInternal(gbuf);
+	gbuf->SetShared(gbuf);
 	gbuf->Initialize();
 
 	return gbuf;
@@ -58,7 +58,7 @@ SPtr<GpuParams> HardwareBufferManager::CreateGpuParams(const SPtr<GpuPipelinePar
 {
 	GpuParams* params = new(B3DAllocate<GpuParams>()) GpuParams(paramInfo);
 	SPtr<GpuParams> paramsPtr = B3DMakeCoreFromExisting<GpuParams>(params);
-	paramsPtr->SetThisPtrInternal(paramsPtr);
+	paramsPtr->SetShared(paramsPtr);
 	paramsPtr->Initialize();
 
 	return paramsPtr;

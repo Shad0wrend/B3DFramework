@@ -489,7 +489,7 @@ namespace bs
 		u8* GetDefaultValue(u32 index) const;
 
 		/** Returns the unique shader ID. */
-		u32 GetId() const { return mId; }
+		u32 GetShaderId() const { return mShaderId; }
 
 		/**
 		 * @name Internal
@@ -504,7 +504,7 @@ namespace bs
 	protected:
 		String mName;
 		TShaderCreateInformation<Core> mDesc;
-		u32 mId;
+		u32 mShaderId;
 	};
 
 	/** @} */

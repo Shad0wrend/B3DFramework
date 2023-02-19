@@ -34,7 +34,7 @@ void RenderQueue::Add(const RenderElement* element, float distFromCamera, u32 te
 
 	u32 queuePriority = shader->GetQueuePriority();
 	QueueSortType sortType = shader->GetQueueSortType();
-	u32 shaderId = shader->GetId();
+	u32 shaderId = shader->GetShaderId();
 	bool separablePasses = shader->GetAllowSeparablePasses();
 
 	switch(sortType)

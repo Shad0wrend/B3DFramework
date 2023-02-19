@@ -29,7 +29,7 @@ ScriptResourceManager::~ScriptResourceManager()
 
 ScriptManagedResource* ScriptResourceManager::CreateManagedScriptResource(const HManagedResource& resource, MonoObject* instance)
 {
-	const UUID& uuid = resource.GetUuid();
+	const UUID& uuid = resource.GetId();
 #if B3D_DEBUG
 	ThrowExceptionIfInvalidOrDuplicateInternal(uuid);
 #endif
@@ -42,7 +42,7 @@ ScriptManagedResource* ScriptResourceManager::CreateManagedScriptResource(const 
 
 ScriptResourceBase* ScriptResourceManager::CreateBuiltinScriptResource(const HResource& resource, MonoObject* instance)
 {
-	const UUID& uuid = resource.GetUuid();
+	const UUID& uuid = resource.GetId();
 #if B3D_DEBUG
 	ThrowExceptionIfInvalidOrDuplicateInternal(uuid);
 #endif
@@ -64,7 +64,7 @@ ScriptResourceBase* ScriptResourceManager::CreateBuiltinScriptResource(const HRe
 
 ScriptResourceBase* ScriptResourceManager::GetScriptResource(const HResource& resource, bool create)
 {
-	const UUID& uuid = resource.GetUuid();
+	const UUID& uuid = resource.GetId();
 
 	if(uuid.Empty())
 		return nullptr;
@@ -92,12 +92,12 @@ ScriptResourceBase* ScriptResourceManager::GetScriptResource(const UUID& uuid)
 ScriptRRefBase* ScriptResourceManager::GetScriptRRef(const HResource& resource, ::MonoClass* rrefClass)
 {
 	UnorderedMap<UUID, ScriptRRefBase*>& rrefs = mScriptRRefsPerType[rrefClass];
-	const auto iterFind = rrefs.find(resource.GetUuid());
+	const auto iterFind = rrefs.find(resource.GetId());
 	if(iterFind != rrefs.end())
 		return iterFind->second;
 
 	ScriptRRefBase* newRRef = ScriptRRefBase::Create(resource, rrefClass);
-	rrefs[resource.GetUuid()] = newRRef;
+	rrefs[resource.GetId()] = newRRef;
 
 	return newRRef;
 }
@@ -105,7 +105,7 @@ ScriptRRefBase* ScriptResourceManager::GetScriptRRef(const HResource& resource, 
 void ScriptResourceManager::DestroyScriptResource(ScriptResourceBase* resource)
 {
 	HResource resourceHandle = resource->GetGenericHandle();
-	const UUID& uuid = resourceHandle.GetUuid();
+	const UUID& uuid = resourceHandle.GetId();
 
 	if(uuid.Empty())
 		B3D_EXCEPT(InvalidParametersException, "Provided resource handle has an undefined resource UUID.");

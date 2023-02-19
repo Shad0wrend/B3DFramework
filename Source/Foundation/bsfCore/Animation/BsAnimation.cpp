@@ -1279,7 +1279,7 @@ SPtr<Animation> Animation::Create()
 	Animation* anim = new(B3DAllocate<Animation>()) Animation();
 
 	SPtr<Animation> animPtr = B3DMakeCoreFromExisting(anim);
-	animPtr->SetThisPtrInternal(animPtr);
+	animPtr->SetShared(animPtr);
 	animPtr->Initialize();
 
 	return animPtr;

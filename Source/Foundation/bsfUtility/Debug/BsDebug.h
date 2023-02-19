@@ -33,11 +33,11 @@ namespace bs
 		/**
 		 * Logs a new message.
 		 *
-		 * @param[in]	message		The message describing the log entry.
-		 * @param[in]	verbosity	Verbosity of the message, determining its importance.
-		 * @param[in]	category	Category of the message, determining which system is it relevant to.
+		 * @param[in]	message			The message describing the log entry.
+		 * @param[in]	verbosity		Verbosity of the message, determining its importance.
+		 * @param[in]	categoryName	Category of the message, determining which system is it relevant to.
 		 */
-		void Log(const String& message, LogVerbosity verbosity, u32 category = 0);
+		void Log(const String& message, LogVerbosity verbosity, const char* categoryName);
 
 		/** Retrieves the Log used by the Debug instance. */
 		class Log& GetLog() { return mLog; }
@@ -83,7 +83,7 @@ namespace bs
 
 		/** This allows setting a log callback that can override the default action in log */
 		void SetLogCallback(
-			std::function<bool(const String& message, LogVerbosity verbosity, u32 category)> callback)
+			std::function<bool(const String& message, LogVerbosity verbosity, const char* categoryName)> callback)
 		{
 			mCustomLogCallback = callback;
 		}
@@ -104,7 +104,7 @@ namespace bs
 	private:
 		u64 mLogHash = 0;
 		class Log mLog;
-		std::function<bool(const String& message, LogVerbosity verbosity, u32 category)> mCustomLogCallback;
+		std::function<bool(const String& message, LogVerbosity verbosity, const char* categoryName)> mCustomLogCallback;
 	};
 
 	/** A simpler way of accessing the Debug module. */
@@ -118,44 +118,67 @@ namespace bs
 #	endif
 #endif
 
-/**
- * Defines a new log category to use with B3D_LOG. Each category must have a unique ID. A matching call to
- * B3D_LOG_CATEGORY_IMPL must be done in the source file.
- */
-#define B3D_LOG_CATEGORY(name, id) \
-	struct LogCategory##name      \
-	{                             \
-		enum                      \
-		{                         \
-			_id = id              \
-		};                        \
-		static bool sRegistered;  \
-	};
+/** Defines a new log category to use with B3D_LOG. A matching call to B3D_LOG_CATEGORY must be done in the implementation file. */
+#define B3D_LOG_CATEGORY_EXTERN(Name, DefaultRunTimeVerbosity)										\
+	extern struct LogCategory##Name : public LogCategory<LogVerbosity::DefaultRunTimeVerbosity>		\
+	{																								\
+		B3D_FORCEINLINE LogCategory##Name()															\
+			: LogCategory(#Name) {}																	\
+	} LogCategory##Name##Instance;
 
-/** Registers the name of the category. Should be placed in the implementation file for each corresponding B3D_LOG_CATEGORY call. */
-#define B3D_LOG_CATEGORY_IMPL(name) bool LogCategory##name::sRegistered = Log::RegisterCategoryInternal(LogCategory##name::_id, #name);
+/** Defines a new log category to use with B3D_LOG. A matching call to B3D_LOG_CATEGORY_EXTERN must be done in the header file. */
+#define B3D_LOG_CATEGORY(Name) LogCategory##Name LogCategory##Name##Instance;
 
-/** Get the ID of the log category based on its name. */
-#define B3D_LOG_GET_CATEGORY_ID(category) LogCategory##category::_id
+/** Defines a new log category to use with B3D_LOG. Can only be used in implementation files. Category is only valid for a single implementation file. */
+#define B3D_LOG_CATEGORY_STATIC(Name, DefaultRunTimeVerbosity)										\
+	static  struct LogCategory##Name : public LogCategory<LogVerbosity::DefaultRunTimeVerbosity>	\
+	{																								\
+		B3D_FORCEINLINE LogCategory##Name()															\
+			: LogCategory(#Name) {}																	\
+	} LogCategory##Name##Instance;
 
-#define B3D_LOG(verbosity, category, message, ...)                                                                                                                                                                            \
+#define B3D_LOG(Verbosity, Category, Message, ...)                                                                                                                                                                           \
 	do                                                                                                                                                                                                                       \
 	{                                                                                                                                                                                                                        \
 		using namespace ::bs;                                                                                                                                                                                                \
-		if((i32)LogVerbosity::verbosity <= (i32)B3D_LOG_VERBOSITY)                                                                                                                                                            \
+		if((i32)LogVerbosity::Verbosity <= (i32)LogCategory##Category::kCompileTimeVerbosity && !LogCategory##Category##Instance.IsVerbositySupressed(LogVerbosity::Verbosity))                                              \
 		{                                                                                                                                                                                                                    \
-			GetDebug().Log(StringUtil::Format(message, ##__VA_ARGS__) + String("\n\t\t in ") + __PRETTY_FUNCTION__ + " [" + __FILE__ + ":" + ToString(__LINE__) + "]\n", LogVerbosity::verbosity, LogCategory##category::_id); \
+			GetDebug().Log(StringUtil::Format(Message "\n\t\t in ", ##__VA_ARGS__) + __PRETTY_FUNCTION__ + " [" + __FILE__ + ":" + ToString(__LINE__) + "]\n", LogVerbosity::Verbosity, LogCategory##Category##Instance.GetName());	 \
 		}                                                                                                                                                                                                                    \
 	}                                                                                                                                                                                                                        \
 	while(0)
 
-	B3D_LOG_CATEGORY(Uncategorized, 0)
-	B3D_LOG_CATEGORY(FileSystem, 1)
-	B3D_LOG_CATEGORY(RTTI, 2)
-	B3D_LOG_CATEGORY(Generic, 3)
-	B3D_LOG_CATEGORY(Platform, 4)
-	B3D_LOG_CATEGORY(Serialization, 5)
-	B3D_LOG_CATEGORY(UnitTest, 6)
+	B3D_UTILITY_EXPORT B3D_LOG_CATEGORY_EXTERN(Uncategorized, Log)
+	B3D_UTILITY_EXPORT B3D_LOG_CATEGORY_EXTERN(FileSystem, Log)
+	B3D_UTILITY_EXPORT B3D_LOG_CATEGORY_EXTERN(RTTI, Log)
+	B3D_UTILITY_EXPORT B3D_LOG_CATEGORY_EXTERN(Generic, Log)
+	B3D_UTILITY_EXPORT B3D_LOG_CATEGORY_EXTERN(Platform, Log)
+	B3D_UTILITY_EXPORT B3D_LOG_CATEGORY_EXTERN(Serialization, Log)
+	B3D_UTILITY_EXPORT B3D_LOG_CATEGORY_EXTERN(UnitTest, Log)
+
+	// Ensure that our ensure macro implementation is correctly not inlined on MSVC
+	template <typename ReturnType = void, class Function>
+	ReturnType B3D_FORCENOINLINE B3D_CODE_SECTION(".debug.") ExecuteEnsureCallback(Function&& function)
+	{
+		return function();
+	}
+
+	#define B3D_ENSURE_IMPLEMENTATION(captureScope, alwaysCheck, expression, ...) \
+	(B3D_LIKELY(!!(expression)) || (ExecuteEnsureCallback<bool>([captureScope]() B3D_FORCENOINLINE B3D_CODE_SECTION(".debug.") { \
+			static bool sHasFailureBeenReported = false; \
+			if (!sHasFailureBeenReported || alwaysCheck) \
+			{ \
+				sHasFailureBeenReported = true; \
+				B3D_LOG(Error, Uncategorized, ##__VA_ARGS__); \
+				return true; \
+			} \
+			return false; }) && ([]() { B3D_BREAK(); }(), false)))
+
+	#define B3D_ENSURE(InExpression) B3D_ENSURE_IMPLEMENTATION(, true, InExpression,"")
+	#define B3D_ENSURE_LOG(InExpression, InFormat, ...) B3D_ENSURE_IMPLEMENTATION(&, true, InExpression, InFormat, ##__VA_ARGS__)
+	#define B3D_ENSURE_ONCE(InExpression) B3D_ENSURE_IMPLEMENTATION(, false, InExpression, "")
+	#define B3D_ENSURE_ONCE_LOG(InExpression, InFormat, ...) B3D_ENSURE_IMPLEMENTATION(&, false, InExpression, InFormat, ##__VA_ARGS__)
+
 
 	/** @} */
 } // namespace bs

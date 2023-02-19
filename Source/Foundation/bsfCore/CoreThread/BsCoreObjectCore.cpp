@@ -53,8 +53,8 @@ void CoreObject::Synchronize()
 	}
 }
 
-void CoreObject::SetShared(SPtr<CoreObject> ptrThis)
+void CoreObject::SetShared(SPtr<CoreObject> sharedToThis)
 {
-	mThis = ptrThis;
+	mThis = sharedToThis;
 }
 }}

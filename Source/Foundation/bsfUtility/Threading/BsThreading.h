@@ -8,6 +8,8 @@
 #include <chrono>
 #include <mutex>
 #include <condition_variable>
+#include <shared_mutex>
+
 #include "Threading/BsSpinLock.h"
 
 namespace bs
@@ -28,6 +30,9 @@ namespace bs
 	/** Wrapper for the C++ std::mutex. */
 	using Mutex = std::mutex;
 
+	/** Wrapper for the C++ std::shared_mutex. */
+	using SharedMutex = std::shared_mutex;
+
 	/** Wrapper for the C++ std::recursive_mutex. */
 	using RecursiveMutex = std::recursive_mutex;
 
@@ -42,6 +47,12 @@ namespace bs
 
 	/** Wrapper for the C++ std::unique_lock<std::mutex>. */
 	using Lock = std::unique_lock<Mutex>;
+
+	/** Wrapper for the C++ std::shared_lock<std::shared_mutex>. */
+	using SharedLock = std::shared_lock<SharedMutex>;
+
+	/** Wrapper for the C++ std::unique_lock<std::shared_mutex>. */
+	using UniqueLock = std::unique_lock<SharedMutex>;
 
 	/** Wrapper for the C++ std::unique_lock<std::recursive_mutex>. */
 	using RecursiveLock = std::unique_lock<RecursiveMutex>;

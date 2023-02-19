@@ -387,6 +387,6 @@ void MonoUtil::ThrowIfException(MonoObject* exception)
 		// Note: If you modify this format make sure to also modify Debug.ParseExceptionMessage in managed code.
 		String msg = "Managed exception: " + MonoToString(exceptionMsg) + "\n" + MonoToString(exceptionStackTrace);
 
-		B3D_LOG(Error, Script, msg);
+		B3D_LOG(Error, Script, "{0}", msg);
 	}
 }

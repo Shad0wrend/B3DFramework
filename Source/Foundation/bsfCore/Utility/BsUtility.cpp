@@ -62,9 +62,9 @@ void FindResourceDependenciesInternal(IReflectable& obj, FrameAlloc& alloc, bool
 						for(u32 j = 0; j < numElements; j++)
 						{
 							HResource resource = (HResource&)reflectableField->GetArrayValue(rttiInstance, &obj, j);
-							if(!resource.GetUuid().Empty())
+							if(!resource.GetId().Empty())
 							{
-								ResourceDependency& dependency = dependencies[resource.GetUuid()];
+								ResourceDependency& dependency = dependencies[resource.GetId()];
 								dependency.Resource = resource;
 								dependency.NumReferences++;
 							}
@@ -73,9 +73,9 @@ void FindResourceDependenciesInternal(IReflectable& obj, FrameAlloc& alloc, bool
 					else
 					{
 						HResource resource = (HResource&)reflectableField->GetValue(rttiInstance, &obj);
-						if(!resource.GetUuid().Empty())
+						if(!resource.GetId().Empty())
 						{
-							ResourceDependency& dependency = dependencies[resource.GetUuid()];
+							ResourceDependency& dependency = dependencies[resource.GetId()];
 							dependency.Resource = resource;
 							dependency.NumReferences++;
 						}

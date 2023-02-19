@@ -17,7 +17,7 @@ HPhysicsMaterial PhysicsMaterial::Create(float staticFriction, float dynamicFric
 SPtr<PhysicsMaterial> PhysicsMaterial::CreatePtrInternal(float staticFriction, float dynamicFriction, float restitution)
 {
 	SPtr<PhysicsMaterial> newMaterial = GetPhysics().CreateMaterial(staticFriction, dynamicFriction, restitution);
-	newMaterial->SetThisPtrInternal(newMaterial);
+	newMaterial->SetShared(newMaterial);
 	newMaterial->Initialize();
 
 	return newMaterial;

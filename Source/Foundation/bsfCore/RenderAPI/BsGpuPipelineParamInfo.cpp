@@ -418,7 +418,7 @@ SPtr<GpuPipelineParamInfo> GpuPipelineParamInfo::Create(const GPU_PIPELINE_PARAM
 {
 	SPtr<GpuPipelineParamInfo> paramInfo =
 		B3DMakeCoreFromExisting<GpuPipelineParamInfo>(new(B3DAllocate<GpuPipelineParamInfo>()) GpuPipelineParamInfo(desc));
-	paramInfo->SetThisPtrInternal(paramInfo);
+	paramInfo->SetShared(paramInfo);
 	paramInfo->Initialize();
 
 	return paramInfo;

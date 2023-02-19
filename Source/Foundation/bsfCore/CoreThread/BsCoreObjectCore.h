@@ -36,8 +36,8 @@ namespace bs
 			/**	Called on the core thread when the object is first created. */
 			virtual void Initialize();
 
-			/** Returns a shared_ptr version of "this" pointer. */
-			SPtr<CoreObject> GetThisPtr() const { return mThis.lock(); }
+			/** Returns a shared pointer version of "this" pointer. */
+			SPtr<CoreObject> GetShared() const { return mThis.lock(); }
 
 		public: // ***** INTERNAL ******
 			/** @name Internal
@@ -49,7 +49,7 @@ namespace bs
 			 *
 			 * @note	Called automatically by the factory creation methods so user should not call this manually.
 			 */
-			void SetShared(SPtr<CoreObject> ptrThis);
+			void SetShared(SPtr<CoreObject> sharedToThis);
 
 			/** @} */
 

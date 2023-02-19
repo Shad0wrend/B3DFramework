@@ -9,7 +9,7 @@ SPtr<GpuProgram> GpuProgramManager::Create(const GpuProgramCreateInformation& de
 {
 	GpuProgram* program = new(B3DAllocate<GpuProgram>()) GpuProgram(desc);
 	SPtr<GpuProgram> ret = B3DMakeCoreFromExisting<GpuProgram>(program);
-	ret->SetThisPtrInternal(ret);
+	ret->SetShared(ret);
 	ret->Initialize();
 
 	return ret;
@@ -23,7 +23,7 @@ SPtr<GpuProgram> GpuProgramManager::CreateEmpty(const String& language, GpuProgr
 
 	GpuProgram* program = new(B3DAllocate<GpuProgram>()) GpuProgram(desc);
 	SPtr<GpuProgram> ret = B3DMakeCoreFromExisting<GpuProgram>(program);
-	ret->SetThisPtrInternal(ret);
+	ret->SetShared(ret);
 
 	return ret;
 }

@@ -111,7 +111,7 @@ void CoreObject::MarkDependenciesDirty()
 	CoreObjectManager::Instance().NotifyDependenciesDirty(this);
 }
 
-void CoreObject::SetThisPtrInternal(SPtr<CoreObject> ptrThis)
+void CoreObject::SetShared(SPtr<CoreObject> ptrThis)
 {
 	mThis = ptrThis;
 }

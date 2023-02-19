@@ -146,14 +146,14 @@ void ResourceListenerManager::OnResourceLoaded(const HResource& resource)
 {
 	RecursiveLock lock(mMutex);
 
-	mLoadedResources[resource.GetUuid()] = resource;
+	mLoadedResources[resource.GetId()] = resource;
 }
 
 void ResourceListenerManager::OnResourceModified(const HResource& resource)
 {
 	RecursiveLock lock(mMutex);
 
-	mModifiedResources[resource.GetUuid()] = resource;
+	mModifiedResources[resource.GetId()] = resource;
 }
 
 void ResourceListenerManager::SendResourceLoaded(const HResource& resource)

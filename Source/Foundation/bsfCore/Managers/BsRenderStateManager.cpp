@@ -59,7 +59,7 @@ SPtr<ComputePipelineState> RenderStateManager::CreateComputePipelineState(const 
 SPtr<SamplerState> RenderStateManager::CreateSamplerStatePtrInternal(const SAMPLER_STATE_DESC& desc) const
 {
 	SPtr<SamplerState> samplerState = B3DMakeCoreFromExisting<SamplerState>(new(B3DAllocate<SamplerState>()) SamplerState(desc));
-	samplerState->SetThisPtrInternal(samplerState);
+	samplerState->SetShared(samplerState);
 
 	return samplerState;
 }
@@ -67,7 +67,7 @@ SPtr<SamplerState> RenderStateManager::CreateSamplerStatePtrInternal(const SAMPL
 SPtr<DepthStencilState> RenderStateManager::CreateDepthStencilStatePtrInternal(const DEPTH_STENCIL_STATE_DESC& desc) const
 {
 	SPtr<DepthStencilState> depthStencilState = B3DMakeCoreFromExisting<DepthStencilState>(new(B3DAllocate<DepthStencilState>()) DepthStencilState(desc));
-	depthStencilState->SetThisPtrInternal(depthStencilState);
+	depthStencilState->SetShared(depthStencilState);
 
 	return depthStencilState;
 }
@@ -75,7 +75,7 @@ SPtr<DepthStencilState> RenderStateManager::CreateDepthStencilStatePtrInternal(c
 SPtr<RasterizerState> RenderStateManager::CreateRasterizerStatePtrInternal(const RASTERIZER_STATE_DESC& desc) const
 {
 	SPtr<RasterizerState> rasterizerState = B3DMakeCoreFromExisting<RasterizerState>(new(B3DAllocate<RasterizerState>()) RasterizerState(desc));
-	rasterizerState->SetThisPtrInternal(rasterizerState);
+	rasterizerState->SetShared(rasterizerState);
 
 	return rasterizerState;
 }
@@ -83,7 +83,7 @@ SPtr<RasterizerState> RenderStateManager::CreateRasterizerStatePtrInternal(const
 SPtr<BlendState> RenderStateManager::CreateBlendStatePtrInternal(const BLEND_STATE_DESC& desc) const
 {
 	SPtr<BlendState> blendState = B3DMakeCoreFromExisting<BlendState>(new(B3DAllocate<BlendState>()) BlendState(desc));
-	blendState->SetThisPtrInternal(blendState);
+	blendState->SetShared(blendState);
 
 	return blendState;
 }
@@ -92,7 +92,7 @@ SPtr<GraphicsPipelineState> RenderStateManager::CreateGraphicsPipelineStateInter
 {
 	SPtr<GraphicsPipelineState> pipelineState =
 		B3DMakeCoreFromExisting<GraphicsPipelineState>(new(B3DAllocate<GraphicsPipelineState>()) GraphicsPipelineState(desc));
-	pipelineState->SetThisPtrInternal(pipelineState);
+	pipelineState->SetShared(pipelineState);
 
 	return pipelineState;
 }
@@ -101,7 +101,7 @@ SPtr<ComputePipelineState> RenderStateManager::CreateComputePipelineStateInterna
 {
 	SPtr<ComputePipelineState> pipelineState =
 		B3DMakeCoreFromExisting<ComputePipelineState>(new(B3DAllocate<ComputePipelineState>()) ComputePipelineState(program));
-	pipelineState->SetThisPtrInternal(pipelineState);
+	pipelineState->SetShared(pipelineState);
 
 	return pipelineState;
 }

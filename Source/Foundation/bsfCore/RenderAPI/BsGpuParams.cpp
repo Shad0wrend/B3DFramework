@@ -689,7 +689,7 @@ GpuParams::GpuParams(const SPtr<GpuPipelineParamInfo>& paramInfo)
 
 SPtr<GpuParams> GpuParams::GetThisPtrInternal() const
 {
-	return std::static_pointer_cast<GpuParams>(GetThisPtr());
+	return std::static_pointer_cast<GpuParams>(GetShared());
 }
 
 SPtr<ct::GpuParams> GpuParams::GetCore() const
@@ -850,7 +850,7 @@ GpuParams::GpuParams(const SPtr<GpuPipelineParamInfo>& paramInfo, GpuDeviceFlags
 
 SPtr<GpuParams> GpuParams::GetThisPtrInternal() const
 {
-	return std::static_pointer_cast<GpuParams>(GetThisPtr());
+	return std::static_pointer_cast<GpuParams>(GetShared());
 }
 
 void GpuParams::SyncToCore(const CoreSyncData& data)

@@ -33,7 +33,7 @@ HPhysicsMesh PhysicsMesh::Create(const SPtr<MeshData>& meshData, PhysicsMeshType
 SPtr<PhysicsMesh> PhysicsMesh::CreatePtrInternal(const SPtr<MeshData>& meshData, PhysicsMeshType type)
 {
 	SPtr<PhysicsMesh> newMesh = GetPhysics().CreateMesh(meshData, type);
-	newMesh->SetThisPtrInternal(newMesh);
+	newMesh->SetShared(newMesh);
 	newMesh->Initialize();
 
 	return newMesh;

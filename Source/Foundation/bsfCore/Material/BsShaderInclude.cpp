@@ -20,7 +20,7 @@ SPtr<ShaderInclude> ShaderInclude::CreatePtrInternal(const String& includeString
 {
 	SPtr<ShaderInclude> shaderIncludePtr = B3DMakeCoreFromExisting<ShaderInclude>(
 		new(B3DAllocate<ShaderInclude>()) ShaderInclude(includeString));
-	shaderIncludePtr->SetThisPtrInternal(shaderIncludePtr);
+	shaderIncludePtr->SetShared(shaderIncludePtr);
 	shaderIncludePtr->Initialize();
 
 	return shaderIncludePtr;

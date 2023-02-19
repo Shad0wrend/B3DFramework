@@ -13,7 +13,7 @@ SPtr<RenderWindow> RenderWindowManager::Create(RENDER_WINDOW_DESC& desc, SPtr<Re
 	u32 id = ct::RenderWindowManager::Instance().mNextWindowId.fetch_add(1, std::memory_order_relaxed);
 
 	SPtr<RenderWindow> renderWindow = CreateImpl(desc, id, parentWindow);
-	renderWindow->SetThisPtrInternal(renderWindow);
+	renderWindow->SetShared(renderWindow);
 
 	{
 		Lock lock(mWindowMutex);

@@ -189,7 +189,7 @@ SPtr<SpriteTexture> SpriteTexture::CreatePtrInternal(const HTexture& texture)
 {
 	SPtr<SpriteTexture> texturePtr = B3DMakeCoreFromExisting<SpriteTexture>(new(B3DAllocate<SpriteTexture>()) SpriteTexture(Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f), texture));
 
-	texturePtr->SetThisPtrInternal(texturePtr);
+	texturePtr->SetShared(texturePtr);
 	texturePtr->Initialize();
 
 	return texturePtr;
@@ -199,7 +199,7 @@ SPtr<SpriteTexture> SpriteTexture::CreatePtrInternal(const Vector2& uvOffset, co
 {
 	SPtr<SpriteTexture> texturePtr = B3DMakeCoreFromExisting<SpriteTexture>(new(B3DAllocate<SpriteTexture>()) SpriteTexture(uvOffset, uvScale, texture));
 
-	texturePtr->SetThisPtrInternal(texturePtr);
+	texturePtr->SetShared(texturePtr);
 	texturePtr->Initialize();
 
 	return texturePtr;
@@ -209,7 +209,7 @@ SPtr<SpriteTexture> SpriteTexture::CreateEmpty()
 {
 	SPtr<SpriteTexture> texturePtr = B3DMakeCoreFromExisting<SpriteTexture>(new(B3DAllocate<SpriteTexture>()) SpriteTexture(Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f), HTexture()));
 
-	texturePtr->SetThisPtrInternal(texturePtr);
+	texturePtr->SetShared(texturePtr);
 
 	return texturePtr;
 }

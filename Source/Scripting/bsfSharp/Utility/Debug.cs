@@ -43,7 +43,7 @@ namespace bs
     {
         public string message;
         public LogVerbosity verbosity;
-        public int category;
+        public string categoryName;
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ namespace bs
         /// <summary>
         /// Triggered when a new message is added to the debug log.
         /// </summary>
-        public static Action<string, LogVerbosity, int> OnAdded;
+        public static Action<string, LogVerbosity, string> OnAdded;
 
         /// <summary>
         /// Returns a list of all messages in the debug log.
@@ -68,8 +68,8 @@ namespace bs
         /// Logs a new informative message to the global debug log.
         /// </summary>
         /// <param name="message">Message to log.</param>
-        /// <param name="category">Optional index of the category to group the message under.</param>
-        public static void Log(object message, int category = 0)
+        /// <param name="category">Optional category to group the message under.</param>
+        public static void Log(object message, string category = null)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(message.ToString());
@@ -82,8 +82,8 @@ namespace bs
         /// Logs a new warning message to the global debug log.
         /// </summary>
         /// <param name="message">Message to log.</param>
-        /// <param name="category">Optional index of the category to group the message under.</param>
-        public static void LogWarning(object message, int category = 0)
+        /// <param name="category">Optional category to group the message under.</param>
+        public static void LogWarning(object message, string category = null)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(message.ToString());
@@ -96,8 +96,8 @@ namespace bs
         /// Logs a new error message to the global debug log.
         /// </summary>
         /// <param name="message">Message to log.</param>
-        /// <param name="category">Optional index of the category to group the message under.</param>
-        public static void LogError(object message, int category = 0)
+        /// <param name="category">Optional category to group the message under.</param>
+        public static void LogError(object message, string category = null)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(message.ToString());
@@ -111,8 +111,8 @@ namespace bs
         /// </summary>
         /// <param name="message">Message to log.</param>
         /// <param name="verbosity">Verbosity level defining message importance.</param>
-        /// <param name="category">Optional index of the category to group the message under.</param>
-        internal static void LogMessage(object message, LogVerbosity verbosity, int category = 0)
+        /// <param name="category">Optional category to group the message under.</param>
+        internal static void LogMessage(object message, LogVerbosity verbosity, string category = null)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(message.ToString());
@@ -123,11 +123,11 @@ namespace bs
         /// <summary>
         /// Clears all messages of the specified verbosity and/or category from the debug log.
         /// </summary>
+        /// <param name="category">Optional category of the messages to clear. If null, all categories will be cleared.</param>
         /// <param name="verbosity">Verbosity of the messages that should be cleared.</param>
-        /// <param name="category">Optional category of the messages to clear. If -1 all categories will be cleared.</param>
-        internal static void Clear(LogVerbosity verbosity = LogVerbosity.Any, int category = -1)
+        internal static void Clear(string category = null, LogVerbosity verbosity = LogVerbosity.Any)
         {
-            Internal_Clear(verbosity, category);
+            Internal_Clear(category, verbosity);
         }
 
         /// <summary>
@@ -268,25 +268,25 @@ namespace bs
         /// <param name="message">Text of the message.</param>
         /// <param name="verbosity">Verbosity level defining message importance.</param>
         /// <param name="category">Category of the sub-system reporting the message.</param>
-        private static void Internal_OnAdded(string message, LogVerbosity verbosity, int category)
+        private static void Internal_OnAdded(string message, LogVerbosity verbosity, string category)
         {
             OnAdded?.Invoke(message, verbosity, category);
         }
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern void Internal_Log(string message, int category);
+        internal static extern void Internal_Log(string message, string category);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern void Internal_LogWarning(string message, int category);
+        internal static extern void Internal_LogWarning(string message, string category);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern void Internal_LogError(string message, int category);
+        internal static extern void Internal_LogError(string message, string category);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern void Internal_LogMessage(string message, LogVerbosity verbosity, int category);
+        internal static extern void Internal_LogMessage(string message, LogVerbosity verbosity, string category);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
-        internal static extern void Internal_Clear(LogVerbosity verbosity, int category);
+        internal static extern void Internal_Clear(string category, LogVerbosity verbosity);
 
         [MethodImpl(MethodImplOptions.InternalCall)]
         internal static extern LogEntry[] Internal_GetMessages();

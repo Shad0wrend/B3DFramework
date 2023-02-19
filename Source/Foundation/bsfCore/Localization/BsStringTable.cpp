@@ -277,7 +277,7 @@ SPtr<StringTable> StringTable::CreatePtrInternal()
 {
 	SPtr<StringTable> scriptCodePtr = B3DMakeCoreFromExisting<StringTable>(
 		new(B3DAllocate<StringTable>()) StringTable());
-	scriptCodePtr->SetThisPtrInternal(scriptCodePtr);
+	scriptCodePtr->SetShared(scriptCodePtr);
 	scriptCodePtr->Initialize();
 
 	return scriptCodePtr;

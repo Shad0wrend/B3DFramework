@@ -49,7 +49,7 @@ template <bool Core>
 SPtr<CoreVariantType<Material, Core>> GetMaterialPtr(const TMaterial<Core>* material)
 {
 	return std::static_pointer_cast<CoreVariantType<Material, Core>>(
-		static_cast<const CoreVariantType<Material, Core>*>(material)->GetThisPtr());
+		static_cast<const CoreVariantType<Material, Core>*>(material)->GetShared());
 }
 
 template <bool Core>
@@ -1010,7 +1010,7 @@ HMaterial Material::Create(const HShader& shader)
 HMaterial Material::Create(const HShader& shader, const ShaderVariationParameters& variation)
 {
 	SPtr<Material> materialPtr = B3DMakeCoreFromExisting<Material>(new(B3DAllocate<Material>()) Material(shader, variation));
-	materialPtr->SetThisPtrInternal(materialPtr);
+	materialPtr->SetShared(materialPtr);
 	materialPtr->Initialize();
 
 	return B3DStaticResourceCast<Material>(GetResources().CreateResourceHandleInternal(materialPtr));
@@ -1019,7 +1019,7 @@ HMaterial Material::Create(const HShader& shader, const ShaderVariationParameter
 SPtr<Material> Material::CreateEmpty()
 {
 	SPtr<Material> newMat = B3DMakeCoreFromExisting<Material>(new(B3DAllocate<Material>()) Material());
-	newMat->SetThisPtrInternal(newMat);
+	newMat->SetShared(newMat);
 
 	return newMat;
 }

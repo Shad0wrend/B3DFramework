@@ -98,7 +98,7 @@ void ManagedResource::Restore(const ResourceBackupData& data)
 HManagedResource ManagedResource::Create(MonoObject* managedResource)
 {
 	SPtr<ManagedResource> newRes = B3DMakeCoreFromExisting<ManagedResource>(new(B3DAllocate<ManagedResource>()) ManagedResource(managedResource));
-	newRes->SetThisPtrInternal(newRes);
+	newRes->SetShared(newRes);
 	newRes->Initialize();
 
 	HManagedResource handle = B3DStaticResourceCast<ManagedResource>(GetResources().CreateResourceHandleInternal(newRes));
@@ -110,7 +110,7 @@ HManagedResource ManagedResource::Create(MonoObject* managedResource)
 SPtr<ManagedResource> ManagedResource::CreateEmpty()
 {
 	SPtr<ManagedResource> newRes = B3DMakeCoreFromExisting<ManagedResource>(new(B3DAllocate<ManagedResource>()) ManagedResource());
-	newRes->SetThisPtrInternal(newRes);
+	newRes->SetShared(newRes);
 	newRes->Initialize();
 
 	return newRes;

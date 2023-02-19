@@ -53,7 +53,7 @@ namespace bs
 		void Release();
 
 		/** Returns the UUID of the resource the handle is referring to. */
-		const UUID& GetUuid() const { return mData != nullptr ? mData->MUuid : UUID::kEmpty; }
+		const UUID& GetId() const { return mData != nullptr ? mData->MUuid : UUID::kEmpty; }
 
 	public: // ***** INTERNAL ******
 		/** @name Internal
@@ -284,7 +284,7 @@ namespace bs
 		 *
 		 * @note	Throws exception if handle is invalid.
 		 */
-		SPtr<T> GetInternalPtr() const
+		SPtr<T> GetShared() const
 		{
 			this->ThrowIfNotLoaded();
 
@@ -295,6 +295,15 @@ namespace bs
 		TResourceHandle<T, true> GetWeak() const
 		{
 			TResourceHandle<T, true> handle;
+			handle.SetHandleData(this->GetHandleData());
+
+			return handle;
+		}
+
+		/**	Converts a weak handle into a normal handle. */
+		TResourceHandle<T, false> Lock() const
+		{
+			TResourceHandle<T, false> handle;
 			handle.SetHandleData(this->GetHandleData());
 
 			return handle;
@@ -352,15 +361,6 @@ namespace bs
 			this->ReleaseRef();
 			this->mData = data;
 			this->AddRef();
-		}
-
-		/**	Converts a weak handle into a normal handle. */
-		TResourceHandle<T, false> Lock() const
-		{
-			TResourceHandle<Resource, false> handle;
-			handle.SetHandleData(this->GetHandleData());
-
-			return handle;
 		}
 
 		using ResourceHandleBase::SetHandleData;

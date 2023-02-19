@@ -270,7 +270,7 @@ namespace bs
 	};
 
 	/** Data stream for handling data from standard streams. */
-	class B3D_UTILITY_EXPORT FileDataStream : public DataStream
+	class B3D_UTILITY_EXPORT FileDataStream final : public DataStream
 	{
 	public:
 		/**
@@ -282,8 +282,7 @@ namespace bs
 		 *							out of scope.
 		 */
 		FileDataStream(const Path& filePath, AccessMode accessMode = READ, bool freeOnClose = true);
-
-		~FileDataStream();
+		~FileDataStream() override;
 
 		bool IsFile() const override { return true; }
 		size_t Read(void* buf, size_t count) const override;

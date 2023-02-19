@@ -31,7 +31,7 @@ HAudioClip AudioClip::Create(const SPtr<DataStream>& samples, u32 streamSize, u3
 SPtr<AudioClip> AudioClip::CreatePtrInternal(const SPtr<DataStream>& samples, u32 streamSize, u32 numSamples, const AUDIO_CLIP_DESC& desc)
 {
 	SPtr<AudioClip> newClip = GetAudio().CreateClip(samples, streamSize, numSamples, desc);
-	newClip->SetThisPtrInternal(newClip);
+	newClip->SetShared(newClip);
 	newClip->Initialize();
 
 	return newClip;
@@ -42,7 +42,7 @@ SPtr<AudioClip> AudioClip::CreateEmpty()
 	AUDIO_CLIP_DESC desc;
 
 	SPtr<AudioClip> newClip = GetAudio().CreateClip(nullptr, 0, 0, desc);
-	newClip->SetThisPtrInternal(newClip);
+	newClip->SetShared(newClip);
 
 	return newClip;
 }

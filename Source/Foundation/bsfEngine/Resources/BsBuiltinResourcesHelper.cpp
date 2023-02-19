@@ -109,7 +109,7 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 		HResource spriteTex = GetResources().CreateResourceHandleInternal(spriteTexPtr, UUID);
 
 		Resources::Instance().Save(spriteTex, outputPath, true, compress);
-		manifest->RegisterResource(spriteTex.GetUuid(), outputPath);
+		manifest->RegisterResource(spriteTex.GetId(), outputPath);
 	};
 
 	auto generateAnimatedSprite = [&](const HTexture& texture, const String& fileName, const UUID& UUID,
@@ -127,7 +127,7 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 		HResource spriteTex = GetResources().CreateResourceHandleInternal(spriteTexPtr, UUID);
 
 		Resources::Instance().Save(spriteTex, outputPath, true, compress);
-		manifest->RegisterResource(spriteTex.GetUuid(), outputPath);
+		manifest->RegisterResource(spriteTex.GetId(), outputPath);
 	};
 
 	// Start async import for all resources
@@ -169,7 +169,7 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 			if(outputRes != nullptr)
 			{
 				Resources::Instance().Save(outputRes, importOp.OutputPath, true, compress);
-				manifest->RegisterResource(outputRes.GetUuid(), importOp.OutputPath);
+				manifest->RegisterResource(outputRes.GetId(), importOp.OutputPath);
 
 				const nlohmann::json& entry = importOp.JsonEntry;
 
@@ -287,7 +287,7 @@ void BuiltinResourcesHelper::ImportAssets(const nlohmann::json& entries, const V
 		HResource texture = GetResources().CreateResourceHandleInternal(texturePtr, UUID(uuid.c_str()));
 
 		Resources::Instance().Save(texture, path, true, compress);
-		manifest->RegisterResource(texture.GetUuid(), path);
+		manifest->RegisterResource(texture.GetId(), path);
 
 		return B3DStaticResourceCast<Texture>(texture);
 	};
@@ -342,7 +342,7 @@ void BuiltinResourcesHelper::ImportFont(const Path& inputFile, const String& out
 	outputPath.SetFilename(outputPath.GetFilename() + u8".asset");
 
 	Resources::Instance().Save(font, outputPath, true);
-	manifest->RegisterResource(font.GetUuid(), outputPath);
+	manifest->RegisterResource(font.GetId(), outputPath);
 
 	// Save font texture pages as well. TODO - Later maybe figure out a more automatic way to do this
 	for(auto& size : fontSizes)
@@ -357,7 +357,7 @@ void BuiltinResourcesHelper::ImportFont(const Path& inputFile, const String& out
 			texPageOutputPath.SetFilename(fontName + u8"_" + ToString(size) + u8"_texpage_" + ToString(pageIdx) + u8".asset");
 
 			Resources::Instance().Save(tex, texPageOutputPath, true);
-			manifest->RegisterResource(tex.GetUuid(), texPageOutputPath);
+			manifest->RegisterResource(tex.GetId(), texPageOutputPath);
 
 			pageIdx++;
 		}

@@ -1,16 +1,29 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Debug/BsLog.h"
+
+#include "BsDebug.h"
 #include "Error/BsException.h"
 
 using namespace bs;
+
+LogCategoryBase::LogCategoryBase(const char* name, LogVerbosity defaultMaximumVerbosity)
+: mName(name), mDefaultMaximumVerbosity(defaultMaximumVerbosity), mMaximumVerbosity(defaultMaximumVerbosity)
+{
+	Log::RegisterCategory(*this);
+}
+
+LogCategoryBase::~LogCategoryBase()
+{
+	Log::UnregisterCategory(*this);
+}
 
 Log::~Log()
 {
 	Clear();
 }
 
-void Log::LogMsg(const String& message, LogVerbosity verbosity, u32 category)
+void Log::LogMessage(const String& message, LogVerbosity verbosity, const char* category)
 {
 	RecursiveLock lock(mMutex);
 
@@ -29,15 +42,14 @@ void Log::Clear()
 	mHash++;
 }
 
-void Log::Clear(LogVerbosity verbosity, u32 category)
+void Log::Clear(const char* categoryName, LogVerbosity verbosity)
 {
 	RecursiveLock lock(mMutex);
 
 	Vector<LogEntry> newEntries;
 	for(auto& entry : mEntries)
 	{
-		if(((verbosity == LogVerbosity::Any) || entry.GetVerbosity() == verbosity) &&
-		   (category == (u32)-1 || entry.GetCategory() == category))
+		if(((verbosity == LogVerbosity::Any) || entry.GetVerbosity() == verbosity) && (categoryName == nullptr || entry.GetCategoryName() == categoryName))
 			continue;
 
 		newEntries.push_back(entry);
@@ -51,8 +63,7 @@ void Log::Clear(LogVerbosity verbosity, u32 category)
 		LogEntry entry = mUnreadEntries.front();
 		mUnreadEntries.pop();
 
-		if(((verbosity == LogVerbosity::Any) || entry.GetVerbosity() == verbosity) &&
-		   (category == (u32)-1 || entry.GetCategory() == category))
+		if(((verbosity == LogVerbosity::Any) || entry.GetVerbosity() == verbosity) && (categoryName == nullptr || entry.GetCategoryName() == categoryName))
 			continue;
 
 		newUnreadEntries.push(entry);
@@ -93,39 +104,52 @@ Vector<LogEntry> Log::GetEntries() const
 	return mEntries;
 }
 
-UnorderedMap<u32, String>& Log::GetCategoriesMap()
+UnorderedMultimap<const char*, LogCategoryBase*>& Log::GetCategoriesMap()
 {
-	static UnorderedMap<u32, String> sCategories;
+	static UnorderedMultimap<const char*, LogCategoryBase*> sCategories;
 	return sCategories;
 }
 
-bool Log::RegisterCategoryInternal(u32 id, const char* name)
+void Log::RegisterCategory(LogCategoryBase& category)
 {
-	if(!CategoryExists(id))
+	const char* name = category.GetName();
+
+	auto foundRange = GetCategoriesMap().equal_range(name);
+	for(auto it = foundRange.first; it != foundRange.second; ++it)
 	{
-		GetCategoriesMap().emplace(id, name);
-		return true;
+		if(B3D_ENSURE(it->second != &category))
+			continue;
+
+		return;
 	}
 
-	return false;
+	GetCategoriesMap().insert(std::make_pair(name, &category));
 }
 
-bool Log::CategoryExists(u32 id)
+void Log::UnregisterCategory(LogCategoryBase& category)
 {
-	return GetCategoriesMap().find(id) != GetCategoriesMap().end();
-}
+	const char* name = category.GetName();
 
-bool Log::GetCategoryName(u32 id, String& name)
-{
-	auto search = GetCategoriesMap().find(id);
-	if(search != GetCategoriesMap().end())
+	auto foundRange = GetCategoriesMap().equal_range(name);
+	for(auto it = foundRange.first; it != foundRange.second;)
 	{
-		name = search->second;
-		return true;
-	}
+		if(it->second != &category)
+		{
+			++it;
+			continue;
+		}
 
-	name = "Unknown";
-	return false;
+		it = GetCategoriesMap().erase(it);
+	}
+}
+
+void Log::SetCategoryMaximumVerbosity(const char* name, LogVerbosity maximumVerbosity)
+{
+	auto foundRange = GetCategoriesMap().equal_range(name);
+	for(auto it = foundRange.first; it != foundRange.second;)
+	{
+		it->second->SetMaximumVerbosity(maximumVerbosity);
+	}
 }
 
 Vector<LogEntry> Log::GetAllEntries() const

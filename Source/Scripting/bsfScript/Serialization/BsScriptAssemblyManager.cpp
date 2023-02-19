@@ -939,7 +939,7 @@ SPtr<IReflectable> ScriptAssemblyManager::GetReflectableFromManagedObject(MonoOb
 				if(!handle.IsLoaded(false))
 					return nullptr;
 
-				return handle.GetInternalPtr();
+				return handle.GetShared();
 			}
 		}
 		else if(monoClass->IsSubClassOf(mBuiltin.ComponentClass)) // Component

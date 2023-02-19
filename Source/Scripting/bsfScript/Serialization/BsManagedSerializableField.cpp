@@ -1134,7 +1134,7 @@ size_t ManagedSerializableFieldDataString::GetHash()
 
 size_t ManagedSerializableFieldDataResourceRef::GetHash()
 {
-	return B3DHash(Value.GetUuid());
+	return B3DHash(Value.GetId());
 }
 
 size_t ManagedSerializableFieldDataGameObjectRef::GetHash()

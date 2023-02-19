@@ -81,10 +81,10 @@ namespace bs
 
 	/** Convert a resource handle to the underlying resource SPtr. */
 	template <class T>
-	decltype(((std::decay_t<T>*)nullptr)->GetInternalPtr()) RemoveHandle(T&& handle, std::enable_if_t<is_resource_handle<std::decay_t<T>>::value>* = 0)
+	decltype(((std::decay_t<T>*)nullptr)->GetShared()) RemoveHandle(T&& handle, std::enable_if_t<is_resource_handle<std::decay_t<T>>::value>* = 0)
 	{
 		if(handle.IsLoaded(false))
-			return handle.GetInternalPtr();
+			return handle.GetShared();
 
 		return nullptr;
 	}

@@ -56,7 +56,7 @@ HResource Resources::Load(const WeakResourceHandle<Resource>& handle, ResourceLo
 	if(handle.mData == nullptr)
 		return HResource();
 
-	UUID uuid = handle.GetUuid();
+	UUID uuid = handle.GetId();
 	return LoadFromUuid(uuid, false, loadFlags);
 }
 
@@ -258,7 +258,7 @@ Resources::LoadInfo Resources::LoadInternal(const UUID& uuid, const Path& filePa
 								{
 									Vector<ResourceLoadData*>& dependantData = iterFind2->second;
 									auto iterFind3 = std::find_if(dependantData.begin(), dependantData.end(), [&](ResourceLoadData* x)
-																  { return x->ResData.Resource.GetUuid() == output.Resource.GetUuid(); });
+																  { return x->ResData.Resource.GetId() == output.Resource.GetId(); });
 
 									registerDependency = iterFind3 == dependantData.end();
 								}
@@ -457,8 +457,11 @@ SPtr<Resource> Resources::LoadFromDiskAndDeserialize(const Path& filePath, bool 
 
 			if(metaData->GetCompressionMethod() != 0)
 			{
-				stream = Compression::Decompress(stream, [&progress](float val)
-												 { progress.exchange(val * 0.9f, std::memory_order_relaxed); });
+				SPtr<MemoryDataStream> decompressedDataStream = B3DMakeShared<MemoryDataStream>();
+				Compression::Decompress(*stream, *decompressedDataStream, 0, CompressionType::Default, [&progress](float val) { progress.exchange(val * 0.9f, std::memory_order_relaxed); });
+
+				stream = decompressedDataStream;
+				stream->Seek(0);
 
 				BinarySerializer bs;
 				loadedData = bs.Decode(stream, objectSize, BinarySerializerFlag::None, &serzContext, [&progress](float val)
@@ -487,7 +490,7 @@ SPtr<Resource> Resources::LoadFromDiskAndDeserialize(const Path& filePath, bool 
 
 void Resources::Release(ResourceHandleBase& resource)
 {
-	const UUID& uuid = resource.GetUuid();
+	const UUID& uuid = resource.GetId();
 
 	{
 		bool loadInProgress = false;
@@ -577,7 +580,7 @@ void Resources::Destroy(ResourceHandleBase& resource)
 	RecursiveLock lock(mDestroyMutex);
 
 	// If load in progress, first wait until it completes
-	const UUID& uuid = resource.GetUuid();
+	const UUID& uuid = resource.GetId();
 	if(!resource.IsLoaded(false))
 	{
 		bool loadInProgress = false;
@@ -634,7 +637,7 @@ void Resources::Save(const HResource& resource, const Path& filePath, bool overw
 		bool loadInProgress = false;
 		{
 			Lock lock(mInProgressResourcesMutex);
-			auto iterFind2 = mInProgressResources.find(resource.GetUuid());
+			auto iterFind2 = mInProgressResources.find(resource.GetId());
 			if(iterFind2 != mInProgressResources.end())
 				loadInProgress = true;
 		}
@@ -654,10 +657,10 @@ void Resources::Save(const HResource& resource, const Path& filePath, bool overw
 
 	{
 		Lock lock(mDefaultManifestMutex);
-		mDefaultResourceManifest->RegisterResource(resource.GetUuid(), filePath);
+		mDefaultResourceManifest->RegisterResource(resource.GetId(), filePath);
 	}
 
-	SaveInternal(resource.GetInternalPtr(), filePath, compress);
+	SaveInternal(resource.GetShared(), filePath, compress);
 }
 
 void Resources::Save(const HResource& resource, bool compress)
@@ -666,7 +669,7 @@ void Resources::Save(const HResource& resource, bool compress)
 		return;
 
 	Path path;
-	if(GetFilePathFromUuid(resource.GetUuid(), path))
+	if(GetFilePathFromUuid(resource.GetId(), path))
 		Save(resource, path, true, compress);
 }
 
@@ -682,7 +685,7 @@ void Resources::SaveInternal(const SPtr<Resource>& resource, const Path& filePat
 	Vector<ResourceDependency> dependencyList = Utility::FindResourceDependencies(*resource);
 	Vector<UUID> dependencyUUIDs(dependencyList.size());
 	for(u32 i = 0; i < (u32)dependencyList.size(); i++)
-		dependencyUUIDs[i] = dependencyList[i].Resource.GetUuid();
+		dependencyUUIDs[i] = dependencyList[i].Resource.GetId();
 
 	u32 compressionMethod = (compress && resource->IsCompressible()) ? 1 : 0;
 	SPtr<SavedResourceData> resourceData = B3DMakeShared<SavedResourceData>(dependencyUUIDs, resource->AllowAsyncLoading(), compressionMethod);
@@ -756,7 +759,9 @@ void Resources::SaveInternal(const SPtr<Resource>& resource, const Path& filePat
 
 			// Note: We should refactor Compression::compress() so it can write straight to the file stream
 			SPtr<DataStream> srcStream = std::static_pointer_cast<DataStream>(tempStream);
-			SPtr<MemoryDataStream> compressedStream = Compression::Compress(srcStream);
+			SPtr<MemoryDataStream> compressedStream = B3DMakeShared<MemoryDataStream>();
+
+			Compression::Compress(*srcStream, *compressedStream);
 
 			stream->Write(compressedStream->Data(), compressedStream->Size());
 		}
@@ -784,7 +789,7 @@ void Resources::SaveInternal(const SPtr<Resource>& resource, const Path& filePat
 
 void Resources::Update(HResource& handle, const SPtr<Resource>& resource)
 {
-	const UUID& uuid = handle.GetUuid();
+	const UUID& uuid = handle.GetId();
 	handle.SetHandleData(resource, uuid);
 	handle.NotifyLoadComplete();
 
@@ -873,7 +878,7 @@ bool Resources::IsLoaded(const UUID& uuid, bool checkInProgress)
 
 float Resources::GetLoadProgress(const HResource& resource, bool includeDependencies)
 {
-	const UUID& uuid = resource.GetUuid();
+	const UUID& uuid = resource.GetId();
 	if(uuid.Empty())
 		return 0.0f;
 
@@ -901,7 +906,7 @@ float Resources::GetLoadProgress(const HResource& resource, bool includeDependen
 	float totalBytesLoaded = (float)loadData->DependencyLoadedAmount;
 	for(auto& entry : loadData->Dependencies)
 	{
-		auto iterFind3 = mInProgressResources.find(entry.GetUuid());
+		auto iterFind3 = mInProgressResources.find(entry.GetId());
 		if(iterFind3 == mInProgressResources.end())
 			continue;
 
@@ -932,6 +937,8 @@ HResource Resources::CreateResourceHandleInternal(const SPtr<Resource>& obj, con
 
 		if(obj)
 		{
+			obj->SetHandle(newHandle.GetWeak());
+
 			LoadedResourceData& resData = mLoadedResources[UUID];
 			resData.Resource = newHandle.GetWeak();
 		}
@@ -988,7 +995,7 @@ bool Resources::GetUuidFromFilePath(const Path& path, UUID& uuid) const
 
 void Resources::LoadComplete(HResource& resource, bool notifyProgress)
 {
-	UUID uuid = resource.GetUuid();
+	UUID uuid = resource.GetId();
 
 	ResourceLoadData* myLoadData = nullptr;
 	bool finishLoad = true;
@@ -1023,6 +1030,7 @@ void Resources::LoadComplete(HResource& resource, bool notifyProgress)
 
 				mLoadedResources[uuid] = myLoadData->ResData;
 				resource.SetHandleData(myLoadData->LoadedData, uuid);
+				myLoadData->LoadedData->SetHandle(resource.GetWeak());
 			}
 
 			resource.NotifyLoadComplete();
@@ -1058,7 +1066,7 @@ void Resources::LoadCallback(const Path& filePath, HResource& resource, bool loa
 	ResourceLoadData* myLoadData;
 	{
 		Lock lock(mInProgressResourcesMutex);
-		myLoadData = mInProgressResources[resource.GetUuid()];
+		myLoadData = mInProgressResources[resource.GetId()];
 	}
 
 	SPtr<Resource> rawResource = LoadFromDiskAndDeserialize(filePath, loadWithSaveData, myLoadData->Progress);

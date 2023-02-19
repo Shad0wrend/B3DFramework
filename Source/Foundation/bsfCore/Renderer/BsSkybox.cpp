@@ -120,7 +120,7 @@ SPtr<Skybox> Skybox::CreateEmpty()
 {
 	Skybox* skybox = new(B3DAllocate<Skybox>()) Skybox();
 	SPtr<Skybox> skyboxPtr = B3DMakeCoreFromExisting<Skybox>(skybox);
-	skyboxPtr->SetThisPtrInternal(skyboxPtr);
+	skyboxPtr->SetShared(skyboxPtr);
 
 	return skyboxPtr;
 }

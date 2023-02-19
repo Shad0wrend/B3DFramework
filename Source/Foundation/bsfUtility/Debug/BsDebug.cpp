@@ -39,24 +39,29 @@ void LogToIdeConsole(const bs::String& message, const char* channel)
 }
 #endif
 
+namespace bs
+{
+	B3D_LOG_CATEGORY(Uncategorized)
+	B3D_LOG_CATEGORY(FileSystem)
+	B3D_LOG_CATEGORY(RTTI)
+	B3D_LOG_CATEGORY(Generic)
+	B3D_LOG_CATEGORY(Platform)
+	B3D_LOG_CATEGORY(Serialization)
+	B3D_LOG_CATEGORY(UnitTest)
+} // namespace bs
+
 using namespace bs;
 
-B3D_LOG_CATEGORY_IMPL(Uncategorized)
-B3D_LOG_CATEGORY_IMPL(FileSystem)
-B3D_LOG_CATEGORY_IMPL(RTTI)
-B3D_LOG_CATEGORY_IMPL(Generic)
-B3D_LOG_CATEGORY_IMPL(Platform)
-
-void Debug::Log(const String& message, LogVerbosity verbosity, u32 category)
+void Debug::Log(const String& message, LogVerbosity verbosity, const char* categoryName)
 {
 	if(mCustomLogCallback)
 	{
 		// Run the custom callback and if it returns true skip the default action
-		if(mCustomLogCallback(message, verbosity, category))
+		if(mCustomLogCallback(message, verbosity, categoryName))
 			return;
 	}
 
-	mLog.LogMsg(message, verbosity, category);
+	mLog.LogMessage(message, verbosity, categoryName);
 
 	if(verbosity != LogVerbosity::Log)
 	{
@@ -344,9 +349,7 @@ table td
 		stream << R"(			<td>)" << ToString(entry.GetLocalTime(), false, false, TimeToStringConversionType::Time)
 			   << "</td>" << std::endl;
 
-		String categoryName;
-		mLog.GetCategoryName(entry.GetCategory(), categoryName);
-		stream << R"(			<td>)" << categoryName << "</td>" << std::endl;
+		stream << R"(			<td>)" << entry.GetCategoryName() << "</td>" << std::endl;
 
 		String parsedMessage = StringUtil::ReplaceAll(entry.GetMessage(), "\n", "<br>\n");
 
@@ -450,9 +453,9 @@ void Debug::SaveTextLog(const Path& path) const
 			break;
 		}
 
-		String categoryName;
-		mLog.GetCategoryName(entry.GetCategory(), categoryName);
-		builtMsg.append(" <" + categoryName + ">");
+		builtMsg.append(" <");
+		builtMsg.append(entry.GetCategoryName());
+		builtMsg.append(">");
 
 		builtMsg.append(" | ");
 

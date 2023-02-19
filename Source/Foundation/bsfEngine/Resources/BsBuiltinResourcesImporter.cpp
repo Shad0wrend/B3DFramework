@@ -184,7 +184,7 @@ void GenerateTextures()
 		HResource textureResource = GetResources().CreateResourceHandleInternal(texture, bs::UUID(uuid));
 
 		GetResources().Save(textureResource, path, true);
-		sManifest->RegisterResource(textureResource.GetUuid(), path);
+		sManifest->RegisterResource(textureResource.GetId(), path);
 	};
 
 	Path whitePath = outputDir + BuiltinResources::kTextureWhiteFile;
@@ -272,7 +272,7 @@ void GenerateMeshes()
 		HResource meshResource = GetResources().CreateResourceHandleInternal(mesh, bs::UUID(uuid));
 
 		GetResources().Save(meshResource, path, true);
-		sManifest->RegisterResource(meshResource.GetUuid(), path);
+		sManifest->RegisterResource(meshResource.GetId(), path);
 	};
 
 	Path boxPath = outputDir + BuiltinResources::kMeshBoxFile;
@@ -787,7 +787,7 @@ void ProcessAssets(bool generateGenerated, bool forceImport, time_t lastUpdateTi
 		HResource skinResource = GetResources().CreateResourceHandleInternal(skin, UUID);
 
 		GetResources().Save(skinResource, outputPath, true);
-		sManifest->RegisterResource(skinResource.GetUuid(), outputPath);
+		sManifest->RegisterResource(skinResource.GetId(), outputPath);
 	}
 
 	// Generate & save splash screen

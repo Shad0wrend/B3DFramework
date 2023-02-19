@@ -17,7 +17,7 @@ struct ScriptLogEntryData
 {
 	MonoString* Message;
 	LogVerbosity Verbosity;
-	u32 Category;
+	MonoString* CategoryName;
 };
 
 ScriptDebug::ScriptDebug(MonoObject* instance)
@@ -48,34 +48,35 @@ void ScriptDebug::ShutDown()
 
 void ScriptDebug::OnLogEntryAdded(const LogEntry& entry)
 {
-	MonoString* message = MonoUtil::StringToMono(entry.GetMessage());
+	MonoString *const message = MonoUtil::StringToMono(entry.GetMessage());
+	MonoString* const categoryName = MonoUtil::StringToMono(entry.GetCategoryName());
 
-	MonoUtil::InvokeThunk(onAddedThunk, message, (i32)entry.GetVerbosity(), entry.GetCategory());
+	MonoUtil::InvokeThunk(onAddedThunk, message, (i32)entry.GetVerbosity(), categoryName);
 }
 
-void ScriptDebug::InternalLog(MonoString* message, u32 category)
+void ScriptDebug::InternalLog(MonoString* message, MonoString* categoryName)
 {
-	GetDebug().Log(MonoUtil::MonoToString(message), LogVerbosity::Info, category);
+	GetDebug().Log(MonoUtil::MonoToString(message), LogVerbosity::Info, MonoUtil::MonoToString(categoryName).c_str());
 }
 
-void ScriptDebug::InternalLogWarning(MonoString* message, u32 category)
+void ScriptDebug::InternalLogWarning(MonoString* message, MonoString* categoryName)
 {
-	GetDebug().Log(MonoUtil::MonoToString(message), LogVerbosity::Warning, category);
+	GetDebug().Log(MonoUtil::MonoToString(message), LogVerbosity::Warning, MonoUtil::MonoToString(categoryName).c_str());
 }
 
-void ScriptDebug::InternalLogError(MonoString* message, u32 category)
+void ScriptDebug::InternalLogError(MonoString* message, MonoString* categoryName)
 {
-	GetDebug().Log(MonoUtil::MonoToString(message), LogVerbosity::Error, category);
+	GetDebug().Log(MonoUtil::MonoToString(message), LogVerbosity::Error, MonoUtil::MonoToString(categoryName).c_str());
 }
 
-void ScriptDebug::InternalLogMessage(MonoString* message, LogVerbosity type, u32 category)
+void ScriptDebug::InternalLogMessage(MonoString* message, LogVerbosity type, MonoString* categoryName)
 {
-	GetDebug().Log(MonoUtil::MonoToString(message), type, category);
+	GetDebug().Log(MonoUtil::MonoToString(message), type, MonoUtil::MonoToString(categoryName).c_str());
 }
 
-void ScriptDebug::InternalClear(LogVerbosity verbosity, u32 category)
+void ScriptDebug::InternalClear(MonoString* categoryName, LogVerbosity verbosity)
 {
-	GetDebug().GetLog().Clear(verbosity, category);
+	GetDebug().GetLog().Clear(MonoUtil::MonoToString(categoryName).c_str(), verbosity);
 }
 
 MonoArray* ScriptDebug::InternalGetMessages()
@@ -86,9 +87,10 @@ MonoArray* ScriptDebug::InternalGetMessages()
 	ScriptArray output = ScriptArray::Create<ScriptLogEntry>(numEntries);
 	for(u32 i = 0; i < numEntries; i++)
 	{
-		MonoString* message = MonoUtil::StringToMono(entries[i].GetMessage());
+		MonoString* const message = MonoUtil::StringToMono(entries[i].GetMessage());
+		MonoString* const categoryName = MonoUtil::StringToMono(entries[i].GetCategoryName());
 
-		ScriptLogEntryData scriptEntry = { message, entries[i].GetVerbosity(), entries[i].GetCategory() };
+		ScriptLogEntryData scriptEntry = { message, entries[i].GetVerbosity(), categoryName };
 		output.Set(i, scriptEntry);
 	}
 

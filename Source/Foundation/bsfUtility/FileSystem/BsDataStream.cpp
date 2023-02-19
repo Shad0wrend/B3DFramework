@@ -455,7 +455,7 @@ FileDataStream::FileDataStream(const Path& path, AccessMode accessMode, bool fre
 	// Should check ensure open succeeded, in case fail for some reason.
 	if(mInStream->fail())
 	{
-		B3D_LOG(Warning, FileSystem, "Cannot open file: " + path.ToString());
+		B3D_LOG(Warning, FileSystem, "Cannot open file: {0}", path.ToString());
 		return;
 	}
 

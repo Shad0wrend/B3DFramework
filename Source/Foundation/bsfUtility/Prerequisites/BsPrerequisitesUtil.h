@@ -199,9 +199,11 @@
 #if B3D_DEBUG
 #	define B3D_DEBUG_ONLY(x) x
 #	define B3D_ASSERT(x) assert(x)
+#	define B3D_CHECK(x) assert(x)
 #else
 #	define B3D_DEBUG_ONLY(x)
 #	define B3D_ASSERT(x)
+#	define B3D_CHECK(x) (x)
 #endif
 
 // Short-hand names for various built-in types

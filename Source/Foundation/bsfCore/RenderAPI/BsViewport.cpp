@@ -163,7 +163,7 @@ SPtr<Viewport> Viewport::Create(const SPtr<RenderTarget>& target, float x, float
 {
 	Viewport* viewport = new(B3DAllocate<Viewport>()) Viewport(target, x, y, width, height);
 	SPtr<Viewport> viewportPtr = B3DMakeCoreFromExisting<Viewport>(viewport);
-	viewportPtr->SetThisPtrInternal(viewportPtr);
+	viewportPtr->SetShared(viewportPtr);
 	viewportPtr->Initialize();
 
 	return viewportPtr;
@@ -173,7 +173,7 @@ SPtr<Viewport> Viewport::CreateEmpty()
 {
 	Viewport* viewport = new(B3DAllocate<Viewport>()) Viewport();
 	SPtr<Viewport> viewportPtr = B3DMakeCoreFromExisting<Viewport>(viewport);
-	viewportPtr->SetThisPtrInternal(viewportPtr);
+	viewportPtr->SetShared(viewportPtr);
 
 	return viewportPtr;
 }

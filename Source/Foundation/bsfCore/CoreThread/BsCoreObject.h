@@ -72,7 +72,7 @@ namespace bs
 		u64 GetInternalId() const { return mInternalID; }
 
 		/** Returns a shared_ptr version of "this" pointer. */
-		SPtr<CoreObject> GetThisPtr() const { return mThis.lock(); }
+		SPtr<CoreObject> GetShared() const { return mThis.lock(); }
 
 		/**
 		 * Returns an object that contains a core thread specific implementation of this CoreObject. Null is a valid return
@@ -102,7 +102,7 @@ namespace bs
 		 *
 		 * @note	This should be called by the factory creation methods so user doesn't have to call it manually.
 		 */
-		void SetThisPtrInternal(SPtr<CoreObject> ptrThis);
+		void SetShared(SPtr<CoreObject> ptrThis);
 
 		/** Schedules the object to be destroyed, and then deleted. */
 		template <class T, class MemAlloc>

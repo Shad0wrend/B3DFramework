@@ -29,7 +29,7 @@ HPrefab Prefab::Create(const HSceneObject& sceneObject, bool isScene)
 	newPrefab->Initialize(sceneObject);
 
 	HPrefab handle = B3DStaticResourceCast<Prefab>(GetResources().CreateResourceHandleInternal(newPrefab));
-	newPrefab->mUUID = handle.GetUuid();
+	newPrefab->mUUID = handle.GetId();
 	sceneObject->mPrefabLinkUUID = newPrefab->mUUID;
 	newPrefab->GetRootInternal()->mPrefabLinkUUID = newPrefab->mUUID;
 
@@ -39,7 +39,7 @@ HPrefab Prefab::Create(const HSceneObject& sceneObject, bool isScene)
 SPtr<Prefab> Prefab::CreateEmpty()
 {
 	SPtr<Prefab> newPrefab = B3DMakeCoreFromExisting<Prefab>(new(B3DAllocate<Prefab>()) Prefab());
-	newPrefab->SetThisPtrInternal(newPrefab);
+	newPrefab->SetShared(newPrefab);
 
 	return newPrefab;
 }

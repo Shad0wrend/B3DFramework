@@ -108,7 +108,7 @@ MonoObject* ScriptRRefBase::InternalGetResource(ScriptRRefBase* thisPtr)
 		if(GetApplication().IsEditor())
 			loadFlags |= ResourceLoadFlag::KeepSourceData;
 
-		const HResource loadedResource = GetResources().LoadFromUuid(thisPtr->GetHandle().GetUuid(), false, loadFlags);
+		const HResource loadedResource = GetResources().LoadFromUuid(thisPtr->GetHandle().GetId(), false, loadFlags);
 		thisPtr->mScriptResource = ScriptResourceManager::Instance().GetScriptResource(loadedResource, true);
 	}
 
@@ -120,7 +120,7 @@ MonoObject* ScriptRRefBase::InternalGetResource(ScriptRRefBase* thisPtr)
 
 void ScriptRRefBase::InternalGetUuid(ScriptRRefBase* thisPtr, UUID* uuid)
 {
-	*uuid = thisPtr->GetHandle().GetUuid();
+	*uuid = thisPtr->GetHandle().GetId();
 }
 
 MonoObject* ScriptRRefBase::InternalCastAs(ScriptRRefBase* thisPtr, MonoReflectionType* type)

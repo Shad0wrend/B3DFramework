@@ -476,7 +476,7 @@ SPtr<ParticleSystem> ParticleSystem::CreateEmpty()
 {
 	ParticleSystem* rawPtr = new(B3DAllocate<ParticleSystem>()) ParticleSystem();
 	SPtr<ParticleSystem> ptr = B3DMakeCoreFromExisting<ParticleSystem>(rawPtr);
-	ptr->SetThisPtrInternal(ptr);
+	ptr->SetShared(ptr);
 
 	return ptr;
 }

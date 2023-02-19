@@ -46,7 +46,7 @@ namespace bs
 		 * the default action of the log will be skipped.
 		 */
 		B3D_SCRIPT_EXPORT(Exclude(true))
-		std::function<bool(const String& message, LogVerbosity verbosity, u32 category)> LogCallback;
+		std::function<bool(const String& message, LogVerbosity verbosity, const char* categoryName)> LogCallback;
 
 		/** Crash handling customization */
 		B3D_SCRIPT_EXPORT(Exclude(true))

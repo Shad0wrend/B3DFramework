@@ -231,7 +231,7 @@ SPtr<Technique> Technique::Create(const WeakSPtr<Shader>& owner, const String& l
 {
 	Technique* technique = new(B3DAllocate<Technique>()) Technique(owner, language, variationParameters, precompiledData);
 	SPtr<Technique> techniquePtr = B3DMakeCoreFromExisting<Technique>(technique);
-	techniquePtr->SetThisPtrInternal(techniquePtr);
+	techniquePtr->SetShared(techniquePtr);
 	techniquePtr->Initialize();
 
 	return techniquePtr;
@@ -241,7 +241,7 @@ SPtr<Technique> Technique::CreateEmpty()
 {
 	Technique* technique = new(B3DAllocate<Technique>()) Technique();
 	SPtr<Technique> techniquePtr = B3DMakeCoreFromExisting<Technique>(technique);
-	techniquePtr->SetThisPtrInternal(techniquePtr);
+	techniquePtr->SetShared(techniquePtr);
 
 	return techniquePtr;
 }

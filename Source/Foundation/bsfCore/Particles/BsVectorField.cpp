@@ -108,7 +108,7 @@ SPtr<VectorField> VectorField::CreatePtrInternal(const VECTOR_FIELD_DESC& desc, 
 	auto* vectorField = new(B3DAllocate<VectorField>()) VectorField(desc, values);
 
 	SPtr<VectorField> vectorFieldPtr = B3DMakeSharedFromExisting<VectorField>(vectorField);
-	vectorFieldPtr->SetThisPtrInternal(vectorFieldPtr);
+	vectorFieldPtr->SetShared(vectorFieldPtr);
 	vectorFieldPtr->Initialize();
 
 	return vectorFieldPtr;
@@ -119,7 +119,7 @@ SPtr<VectorField> VectorField::CreateEmptyInternal()
 	auto* vectorField = new(B3DAllocate<VectorField>()) VectorField();
 
 	SPtr<VectorField> vectorFieldPtr = B3DMakeSharedFromExisting<VectorField>(vectorField);
-	vectorFieldPtr->SetThisPtrInternal(vectorFieldPtr);
+	vectorFieldPtr->SetShared(vectorFieldPtr);
 
 	return vectorFieldPtr;
 }

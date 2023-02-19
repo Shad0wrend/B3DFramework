@@ -5,6 +5,7 @@
 #include "BsCorePrerequisites.h"
 #include "Reflection/BsRTTIType.h"
 #include "Reflection/BsRTTIPlain.h"
+#include "RTTI/BsUUIDRTTI.h"
 #include "Resources/BsResource.h"
 #include "Resources/BsResourceMetaData.h"
 
@@ -18,19 +19,13 @@ namespace bs
 	class B3D_CORE_EXPORT ResourceRTTI : public RTTIType<Resource, IReflectable, ResourceRTTI>
 	{
 	private:
-		u32& GetSize(Resource* obj) { return obj->mSize; }
-		void SetSize(Resource* obj, u32& size) { obj->mSize = size; }
-
-		SPtr<ResourceMetaData> GetMetaData(Resource* obj) { return obj->mMetaData; }
-		void SetMetaData(Resource* obj, SPtr<ResourceMetaData> value) { obj->mMetaData = value; }
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER_PLAIN(mSize, 0)
+			B3D_RTTI_MEMBER_REFLPTR(mMetaData, 1)
+			B3D_RTTI_MEMBER_PLAIN(mId, 2)
+		B3D_RTTI_END_MEMBERS
 
 	public:
-		ResourceRTTI()
-		{
-			AddPlainField("mSize", 0, &ResourceRTTI::GetSize, &ResourceRTTI::SetSize);
-			AddReflectablePtrField("mMetaData", 1, &ResourceRTTI::GetMetaData, &ResourceRTTI::SetMetaData);
-		}
-
 		void OnDeserializationStarted(IReflectable* obj, SerializationContext* context)
 		{
 			Resource* resource = static_cast<Resource*>(obj);

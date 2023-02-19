@@ -274,12 +274,12 @@ template struct TShaderCreateInformation<true>;
 
 template <bool Core>
 TShader<Core>::TShader(u32 id)
-	: mId(id)
+	: mShaderId(id)
 {}
 
 template <bool Core>
 TShader<Core>::TShader(const String& name, const TShaderCreateInformation<Core>& desc, u32 id)
-	: mName(name), mDesc(desc), mId(id)
+	: mName(name), mDesc(desc), mShaderId(id)
 {}
 
 template <bool Core>
@@ -491,7 +491,7 @@ SPtr<ct::CoreObject> Shader::CreateCore() const
 	for(auto& technique : mDesc.Techniques)
 		techniques.push_back(technique->GetCore());
 
-	ct::Shader* shaderCore = new(B3DAllocate<ct::Shader>()) ct::Shader(mName, TShaderCreateInformation<true>::ConvertToCore(mDesc), mId);
+	ct::Shader* shaderCore = new(B3DAllocate<ct::Shader>()) ct::Shader(mName, TShaderCreateInformation<true>::ConvertToCore(mDesc), mShaderId);
 	SPtr<ct::Shader> shaderCorePtr = B3DMakeSharedFromExisting<ct::Shader>(shaderCore);
 	shaderCorePtr->SetShared(shaderCorePtr);
 
@@ -597,7 +597,7 @@ SPtr<Shader> Shader::CreateShared(const String& name, const ShaderCreateInformat
 	B3D_ASSERT(id < std::numeric_limits<u32>::max() && "Created too many shaders, reached maximum id.");
 
 	SPtr<Shader> newShader = B3DMakeCoreFromExisting<Shader>(new(B3DAllocate<Shader>()) Shader(name, createInformation, id));
-	newShader->SetThisPtrInternal(newShader);
+	newShader->SetShared(newShader);
 	newShader->Initialize();
 
 	return newShader;
@@ -609,7 +609,7 @@ SPtr<Shader> Shader::CreateEmpty()
 	B3D_ASSERT(id < std::numeric_limits<u32>::max() && "Created too many shaders, reached maximum id.");
 
 	SPtr<Shader> newShader = B3DMakeCoreFromExisting<Shader>(new(B3DAllocate<Shader>()) Shader(id));
-	newShader->SetThisPtrInternal(newShader);
+	newShader->SetShared(newShader);
 
 	return newShader;
 }

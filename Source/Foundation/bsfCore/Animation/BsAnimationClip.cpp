@@ -122,7 +122,7 @@ SPtr<AnimationClip> AnimationClip::CreateEmpty()
 	AnimationClip* rawPtr = new(B3DAllocate<AnimationClip>()) AnimationClip();
 
 	SPtr<AnimationClip> newClip = B3DMakeCoreFromExisting<AnimationClip>(rawPtr);
-	newClip->SetThisPtrInternal(newClip);
+	newClip->SetShared(newClip);
 
 	return newClip;
 }
@@ -132,7 +132,7 @@ SPtr<AnimationClip> AnimationClip::CreatePtrInternal(const SPtr<AnimationCurves>
 	AnimationClip* rawPtr = new(B3DAllocate<AnimationClip>()) AnimationClip(curves, isAdditive, sampleRate, rootMotion);
 
 	SPtr<AnimationClip> newClip = B3DMakeCoreFromExisting<AnimationClip>(rawPtr);
-	newClip->SetThisPtrInternal(newClip);
+	newClip->SetShared(newClip);
 	newClip->Initialize();
 
 	return newClip;

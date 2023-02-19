@@ -23,6 +23,11 @@ FileEncoder::FileEncoder(const Path& fileLocation)
 	mOutputStream = FileSystem::CreateAndOpenFile(fileLocation);
 }
 
+FileEncoder::FileEncoder(const SPtr<DataStream>& stream)
+	: mOutputStream(stream)
+{ }
+
+
 void FileEncoder::Encode(IReflectable* object, SerializationContext* context)
 {
 	if(object == nullptr)
@@ -54,6 +59,10 @@ FileDecoder::FileDecoder(const Path& fileLocation)
 		B3D_EXCEPT(InternalErrorException, "File size is larger that u32 can hold. Ask a programmer to use a bigger data type.");
 	}
 }
+
+FileDecoder::FileDecoder(const SPtr<DataStream>& stream)
+	: mInputStream(stream)
+{ }
 
 SPtr<IReflectable> FileDecoder::Decode(SerializationContext* context)
 {

@@ -25,11 +25,38 @@ namespace bs
 		/**	Sets the name of the resource.  */
 		virtual void SetName(const String& name);
 
+		/** Returns a globally unique identifier of the resource. */
+		const UUID& GetId() const { return mId; }
+
+		/** Get a handle to this resource, if there is any associated. */
+		ResourceHandle<Resource> GetHandle() const { return mSelfHandle.Lock(); }
+
 		/**	Retrieves meta-data containing various information describing a resource. */
 		SPtr<ResourceMetaData> GetMetaData() const { return mMetaData; }
 
 		/**	Returns whether or not this resource is allowed to be asynchronously loaded. */
 		virtual bool AllowAsyncLoading() const { return true; }
+
+		/**
+		 * @name Internal
+		 * @{
+		 */
+
+		/** Associates a handle with the resource. Should be called right after the handle for the resource is created, or right after resource load completes. */
+		void SetHandle(const WeakResourceHandle<Resource>& handle)
+		{
+			mSelfHandle = handle;
+			SetId(mSelfHandle.GetId());
+		}
+
+		/** Associates a new id with the resource. If the resource can be referenced via a handle, the UUID must match the handle UUID. */
+		void SetId(const UUID& id)
+		{
+			B3D_ASSERT(mSelfHandle == nullptr || mSelfHandle.GetId() == id);
+			mId = id;
+		}
+
+		/** @} */
 
 	protected:
 		friend class Resources;
@@ -66,6 +93,9 @@ namespace bs
 		 * compression/decompression locally through their streams.
 		 */
 		virtual bool IsCompressible() const { return true; }
+
+		UUID mId;
+		WeakResourceHandle<Resource> mSelfHandle;
 
 		u32 mSize;
 		SPtr<ResourceMetaData> mMetaData;

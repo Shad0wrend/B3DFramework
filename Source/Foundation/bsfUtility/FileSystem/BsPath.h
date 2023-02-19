@@ -196,7 +196,7 @@ namespace bs
 		 * Checks if the current path contains the provided path. Comparison is case insensitive and paths will be compared
 		 * as-is, without canonization.
 		 */
-		bool Includes(const Path& child) const;
+		bool Includes(const Path& child, bool caseSensitive = false) const;
 
 		/**
 		 * Compares two paths and returns true if they match. Comparison is case insensitive and paths will be compared
@@ -234,7 +234,7 @@ namespace bs
 		String GetExtension() const;
 
 		/** Gets the number of directories in the path. */
-		u32 GetNumDirectories() const { return (u32)mDirectories.size(); }
+		u32 GetDirectoryCount() const { return (u32)mDirectories.size(); }
 
 		/** Gets a directory name with the specified index from the path. */
 		const String& GetDirectory(u32 idx) const;
@@ -251,6 +251,9 @@ namespace bs
 		 */
 		const String& GetTail() const;
 
+		/** Returns the portion of the path containing the first @p directoryCount directories. */
+		Path GetSubPath(u32 directoryCount) const;
+
 		/** Clears the path to nothing. */
 		void Clear();
 
@@ -264,7 +267,7 @@ namespace bs
 		Path& operator+=(const Path& rhs);
 
 		/** Compares two path elements (filenames, directory names, etc.). */
-		static bool ComparePathElem(const String& left, const String& right);
+		static bool ComparePathElem(const String& left, const String& right, bool caseSensitive = false);
 
 		/** Combines two paths and returns the result. Right path should be relative. */
 		static Path Combine(const Path& left, const Path& right);

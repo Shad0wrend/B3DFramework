@@ -47,27 +47,30 @@
 #include "Particles/BsParticleManager.h"
 #include "Particles/BsVectorField.h"
 
-using namespace bs;
+namespace bs
+{
+	B3D_LOG_CATEGORY(CoreThread)
+	B3D_LOG_CATEGORY(Renderer)
+	B3D_LOG_CATEGORY(Scene)
+	B3D_LOG_CATEGORY(Physics)
+	B3D_LOG_CATEGORY(Audio)
+	B3D_LOG_CATEGORY(RenderBackend)
+	B3D_LOG_CATEGORY(BSLCompiler)
+	B3D_LOG_CATEGORY(Particles)
+	B3D_LOG_CATEGORY(Resources)
+	B3D_LOG_CATEGORY(FBXImporter)
+	B3D_LOG_CATEGORY(PixelUtility)
+	B3D_LOG_CATEGORY(Texture)
+	B3D_LOG_CATEGORY(Mesh)
+	B3D_LOG_CATEGORY(GUI)
+	B3D_LOG_CATEGORY(Profiler)
+	B3D_LOG_CATEGORY(Material)
+	B3D_LOG_CATEGORY(FreeImageImporter)
+	B3D_LOG_CATEGORY(Script)
+	B3D_LOG_CATEGORY(Importer)
+} // namespace bs
 
-B3D_LOG_CATEGORY_IMPL(CoreThread)
-B3D_LOG_CATEGORY_IMPL(Renderer)
-B3D_LOG_CATEGORY_IMPL(Scene)
-B3D_LOG_CATEGORY_IMPL(Physics)
-B3D_LOG_CATEGORY_IMPL(Audio)
-B3D_LOG_CATEGORY_IMPL(RenderBackend)
-B3D_LOG_CATEGORY_IMPL(BSLCompiler)
-B3D_LOG_CATEGORY_IMPL(Particles)
-B3D_LOG_CATEGORY_IMPL(Resources)
-B3D_LOG_CATEGORY_IMPL(FBXImporter)
-B3D_LOG_CATEGORY_IMPL(PixelUtility)
-B3D_LOG_CATEGORY_IMPL(Texture)
-B3D_LOG_CATEGORY_IMPL(Mesh)
-B3D_LOG_CATEGORY_IMPL(GUI)
-B3D_LOG_CATEGORY_IMPL(Profiler)
-B3D_LOG_CATEGORY_IMPL(Material)
-B3D_LOG_CATEGORY_IMPL(FreeImageImporter)
-B3D_LOG_CATEGORY_IMPL(Script)
-B3D_LOG_CATEGORY_IMPL(Importer)
+using namespace bs;
 
 CoreApplication::CoreApplication(START_UP_DESC desc)
 	: mPrimaryWindow(nullptr), mStartUpDesc(desc), mIsFrameRenderingFinished(true), mSimThreadId(B3D_CURRENT_THREAD_ID), mRunMainLoop(false)

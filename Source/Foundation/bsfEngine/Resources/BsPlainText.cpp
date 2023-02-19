@@ -20,7 +20,7 @@ SPtr<PlainText> PlainText::CreatePtrInternal(const WString& data)
 {
 	SPtr<PlainText> plainTextPtr = B3DMakeCoreFromExisting<PlainText>(
 		new(B3DAllocate<PlainText>()) PlainText(data));
-	plainTextPtr->SetThisPtrInternal(plainTextPtr);
+	plainTextPtr->SetShared(plainTextPtr);
 	plainTextPtr->Initialize();
 
 	return plainTextPtr;

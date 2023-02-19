@@ -700,7 +700,7 @@ SPtr<Camera> Camera::Create()
 {
 	Camera* handler = new(B3DAllocate<Camera>()) Camera();
 	SPtr<Camera> handlerPtr = B3DMakeCoreFromExisting<Camera>(handler);
-	handlerPtr->SetThisPtrInternal(handlerPtr);
+	handlerPtr->SetShared(handlerPtr);
 	handlerPtr->Initialize();
 
 	return handlerPtr;
@@ -710,7 +710,7 @@ SPtr<Camera> Camera::CreateEmpty()
 {
 	Camera* handler = new(B3DAllocate<Camera>()) Camera();
 	SPtr<Camera> handlerPtr = B3DMakeCoreFromExisting<Camera>(handler);
-	handlerPtr->SetThisPtrInternal(handlerPtr);
+	handlerPtr->SetShared(handlerPtr);
 
 	return handlerPtr;
 }
@@ -730,13 +730,13 @@ void Camera::Initialize()
 
 	CoreObject::Initialize();
 
-	GetSceneManager().RegisterCameraInternal(std::static_pointer_cast<Camera>(GetThisPtr()));
+	GetSceneManager().RegisterCameraInternal(std::static_pointer_cast<Camera>(GetShared()));
 }
 
 void Camera::Destroy()
 {
 	if(IsInitialized())
-		GetSceneManager().UnregisterCameraInternal(std::static_pointer_cast<Camera>(GetThisPtr()));
+		GetSceneManager().UnregisterCameraInternal(std::static_pointer_cast<Camera>(GetShared()));
 
 	CoreObject::Destroy();
 }
@@ -744,7 +744,7 @@ void Camera::Destroy()
 void Camera::SetMain(bool main)
 {
 	mMain = main;
-	GetSceneManager().NotifyMainCameraStateChangedInternal(std::static_pointer_cast<Camera>(GetThisPtr()));
+	GetSceneManager().NotifyMainCameraStateChangedInternal(std::static_pointer_cast<Camera>(GetShared()));
 }
 
 Rect2I Camera::GetViewportRect() const

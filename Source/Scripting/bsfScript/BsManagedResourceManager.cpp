@@ -23,10 +23,10 @@ void ManagedResourceManager::Clear()
 
 void ManagedResourceManager::RegisterManagedResource(const WeakResourceHandle<ManagedResource>& resource)
 {
-	mResources.insert(std::make_pair(resource.GetUuid(), resource));
+	mResources.insert(std::make_pair(resource.GetId(), resource));
 }
 
 void ManagedResourceManager::UnregisterManagedResource(const WeakResourceHandle<ManagedResource>& resource)
 {
-	mResources.erase(resource.GetUuid());
+	mResources.erase(resource.GetId());
 }

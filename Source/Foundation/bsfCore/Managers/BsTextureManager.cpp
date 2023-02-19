@@ -12,7 +12,7 @@ SPtr<Texture> TextureManager::CreateTexture(const TextureCreateInformation& desc
 	Texture* tex = new(B3DAllocate<Texture>()) Texture(desc);
 	SPtr<Texture> ret = B3DMakeCoreFromExisting<Texture>(tex);
 
-	ret->SetThisPtrInternal(ret);
+	ret->SetShared(ret);
 	ret->Initialize();
 
 	return ret;
@@ -23,7 +23,7 @@ SPtr<Texture> TextureManager::CreateTexture(const TextureCreateInformation& desc
 	Texture* tex = new(B3DAllocate<Texture>()) Texture(desc, pixelData);
 	SPtr<Texture> ret = B3DMakeCoreFromExisting<Texture>(tex);
 
-	ret->SetThisPtrInternal(ret);
+	ret->SetShared(ret);
 	ret->Initialize();
 
 	return ret;
@@ -33,7 +33,7 @@ SPtr<Texture> TextureManager::CreateEmptyInternal()
 {
 	Texture* tex = new(B3DAllocate<Texture>()) Texture();
 	SPtr<Texture> texture = B3DMakeCoreFromExisting<Texture>(tex);
-	texture->SetThisPtrInternal(texture);
+	texture->SetShared(texture);
 
 	return texture;
 }
@@ -75,7 +75,7 @@ SPtr<RenderTexture> TextureManager::CreateRenderTexture(const TextureCreateInfor
 SPtr<RenderTexture> TextureManager::CreateRenderTexture(const RENDER_TEXTURE_DESC& desc)
 {
 	SPtr<RenderTexture> newRT = CreateRenderTextureImpl(desc);
-	newRT->SetThisPtrInternal(newRT);
+	newRT->SetShared(newRT);
 	newRT->Initialize();
 
 	return newRT;

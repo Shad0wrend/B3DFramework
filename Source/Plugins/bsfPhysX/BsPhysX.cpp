@@ -108,15 +108,15 @@ public:
 		{
 		case 0:
 			ss << "PhysX info (" << errorCode << "): " << message << " at " << file << ":" << line;
-			B3D_LOG(Info, Physics, ss.str());
+			B3D_LOG(Info, Physics, "{0}", ss.str());
 			break;
 		case 1:
 			ss << "PhysX warning (" << errorCode << "): " << message << " at " << file << ":" << line;
-			B3D_LOG(Warning, Physics, ss.str());
+			B3D_LOG(Warning, Physics, "{0}", ss.str());
 			break;
 		case 2:
 			ss << "PhysX error (" << errorCode << "): " << message << " at " << file << ":" << line;
-			B3D_LOG(Error, Physics, ss.str());
+			B3D_LOG(Error, Physics, "{0}", ss.str());
 			B3D_ASSERT(false); // Halt execution on debug builds when error occurs
 			break;
 		}

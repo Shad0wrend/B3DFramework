@@ -153,7 +153,7 @@ static void ValidateBasePassMaterial(Material& material, RenderableAnimType anim
 				for(auto& entry : missingElements)
 					wrnStream << "\t" << ToString(entry.GetSemantic()) << entry.GetSemanticIdx() << std::endl;
 
-				B3D_LOG(Warning, Renderer, wrnStream.str());
+				B3D_LOG(Warning, Renderer, "{0}", wrnStream.str());
 				break;
 			}
 		}

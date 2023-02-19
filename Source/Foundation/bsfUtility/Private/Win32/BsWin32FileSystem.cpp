@@ -322,12 +322,12 @@ bool FileSystem::IsDirectory(const Path& fullPath)
 void FileSystem::CreateDir(const Path& fullPath)
 {
 	Path parentPath = fullPath;
-	while(!Exists(parentPath) && parentPath.GetNumDirectories() > 0)
+	while(!Exists(parentPath) && parentPath.GetDirectoryCount() > 0)
 	{
 		parentPath = parentPath.GetParent();
 	}
 
-	for(u32 i = parentPath.GetNumDirectories(); i < fullPath.GetNumDirectories(); i++)
+	for(u32 i = parentPath.GetDirectoryCount(); i < fullPath.GetDirectoryCount(); i++)
 	{
 		parentPath.Append(fullPath[i]);
 		Win32CreateDirectory(UTF8::ToWide(parentPath.ToString()));

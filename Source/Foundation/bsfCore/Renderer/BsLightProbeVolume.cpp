@@ -271,7 +271,7 @@ SPtr<LightProbeVolume> LightProbeVolume::Create(const AABox& volume, const Vecto
 {
 	LightProbeVolume* probeVolume = new(B3DAllocate<LightProbeVolume>()) LightProbeVolume(volume, cellCount);
 	SPtr<LightProbeVolume> probeVolumePtr = B3DMakeCoreFromExisting<LightProbeVolume>(probeVolume);
-	probeVolumePtr->SetThisPtrInternal(probeVolumePtr);
+	probeVolumePtr->SetShared(probeVolumePtr);
 	probeVolumePtr->Initialize();
 
 	return probeVolumePtr;
@@ -281,7 +281,7 @@ SPtr<LightProbeVolume> LightProbeVolume::CreateEmpty()
 {
 	LightProbeVolume* probeVolume = new(B3DAllocate<LightProbeVolume>()) LightProbeVolume();
 	SPtr<LightProbeVolume> probleVolumePtr = B3DMakeCoreFromExisting<LightProbeVolume>(probeVolume);
-	probleVolumePtr->SetThisPtrInternal(probleVolumePtr);
+	probleVolumePtr->SetShared(probleVolumePtr);
 
 	return probleVolumePtr;
 }
