@@ -88,16 +88,10 @@ namespace bs
 			B3D_RTTI_MEMBER_PLAIN(mSource, 6)
 			B3D_RTTI_MEMBER_PLAIN(mLanguage, 7)
 			B3D_RTTI_MEMBER_PLAIN(mName, 8)
+			B3D_RTTI_MEMBER_REFLPTR(mBytecode, 9)
 		B3D_RTTI_END_MEMBERS
 
 	public:
-		void OnSerializationStarted(IReflectable* obj, SerializationContext* context) override
-		{
-			// Need to ensure the core thread object is initialized
-			GpuProgram* gpuProgram = static_cast<GpuProgram*>(obj);
-			gpuProgram->BlockUntilCoreInitialized();
-		}
-
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			GpuProgram* gpuProgram = static_cast<GpuProgram*>(obj);
@@ -115,9 +109,40 @@ namespace bs
 			return TID_GpuProgram;
 		}
 
-		SPtr<IReflectable> NewRttiObject()
+		SPtr<IReflectable> NewRttiObject() override
 		{
 			return GpuProgramManager::Instance().CreateEmpty("", GPT_VERTEX_PROGRAM); // Params don't matter, they'll get overwritten
+		}
+	};
+
+	class B3D_CORE_EXPORT GpuProgramCreateInformationRTTI : public RTTIType<GpuProgramCreateInformation, IReflectable, GpuProgramCreateInformationRTTI>
+	{
+	private:
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER_PLAIN(Name, 0)
+			B3D_RTTI_MEMBER_PLAIN(Source, 1)
+			B3D_RTTI_MEMBER_PLAIN(EntryPoint, 2)
+			B3D_RTTI_MEMBER_PLAIN(Language, 3)
+			B3D_RTTI_MEMBER_PLAIN(Type, 4)
+			B3D_RTTI_MEMBER_PLAIN(RequiresAdjacency, 5)
+			B3D_RTTI_MEMBER_REFLPTR(Bytecode, 6)
+		B3D_RTTI_END_MEMBERS
+
+	public:
+		const String& GetRttiName() override
+		{
+			static String name = "GpuProgramCreateInformation";
+			return name;
+		}
+
+		u32 GetRttiId() override
+		{
+			return TID_GpuProgramCreateInformation;
+		}
+
+		SPtr<IReflectable> NewRttiObject() override
+		{
+			return B3DMakeShared<GpuProgramCreateInformation>();
 		}
 	};
 

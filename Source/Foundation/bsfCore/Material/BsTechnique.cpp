@@ -85,17 +85,6 @@ void TTechnique<Core>::SetOwner(const WeakSPtr<ShaderType>& owner)
 	SyncToCore();
 }
 
-template class TTechnique<false>;
-template class TTechnique<true>;
-
-Technique::Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData)
-	: TTechnique(owner, language, variationParameters, precompiledData)
-{}
-
-Technique::Technique()
-	: TTechnique()
-{}
-
 template<bool Core>
 TAsyncOp<bool> TTechnique<Core>::Compile()
 {
@@ -141,6 +130,17 @@ TAsyncOp<bool> TTechnique<Core>::Compile()
 	operation.CompleteOperation(true);
 	return operation;
 }
+
+template class TTechnique<false>;
+template class TTechnique<true>;
+
+Technique::Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData)
+	: TTechnique(owner, language, variationParameters, precompiledData)
+{}
+
+Technique::Technique()
+	: TTechnique()
+{}
 
 SPtr<ct::Technique> Technique::GetCore() const
 {
@@ -258,6 +258,10 @@ RTTITypeBase* Technique::GetRtti() const
 
 namespace bs { namespace ct
 {
+Technique::Technique()
+	: TTechnique(WeakSPtr<Shader>(), StringUtil::kBlank, ShaderVariationParameters(), {})
+{ }
+
 Technique::Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData)
 	: TTechnique(owner, language, variationParameters, precompiledData)
 {}
@@ -265,7 +269,17 @@ Technique::Technique(const WeakSPtr<Shader>& owner, const String& language, cons
 SPtr<Technique> Technique::Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData)
 {
 	Technique *const technique = new(B3DAllocate<Technique>()) Technique(owner, language, variationParameters, precompiledData);
-	const SPtr<Technique> techniqueShared = B3DMakeSharedFromExisting<Technique>(technique);
+	SPtr<Technique> techniqueShared = B3DMakeSharedFromExisting<Technique>(technique);
+	techniqueShared->SetShared(techniqueShared);
+	techniqueShared->Initialize();
+
+	return techniqueShared;
+}
+
+SPtr<Technique> Technique::CreateEmpty()
+{
+	Technique* const technique = new(B3DAllocate<Technique>()) Technique();
+	SPtr<Technique> techniqueShared = B3DMakeSharedFromExisting<Technique>(technique);
 	techniqueShared->SetShared(techniqueShared);
 	techniqueShared->Initialize();
 
@@ -313,4 +327,13 @@ void Technique::SyncToCore(const CoreSyncData& data)
 	}
 }
 
+RTTITypeBase* Technique::GetRttiStatic()
+{
+	return CoreTechniqueRTTI::Instance();
+}
+
+RTTITypeBase* Technique::GetRtti() const
+{
+	return Technique::GetRttiStatic();
+}
 }}

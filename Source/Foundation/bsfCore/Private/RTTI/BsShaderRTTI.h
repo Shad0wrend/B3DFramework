@@ -11,6 +11,7 @@
 #include "RTTI/BsFlagsRTTI.h"
 #include "Material/BsShader.h"
 #include "Material/BsMaterial.h"
+#include "Private/RTTI/BsShaderCompilerRTTI.h"
 
 namespace bs
 {
@@ -410,6 +411,8 @@ namespace bs
 
 			B3D_RTTI_MEMBER_PLAIN_ARRAY_NAMED(mParamAttributes, mDesc.ParamAttributes, 15)
 			B3D_RTTI_MEMBER_PLAIN_ARRAY_NAMED(mVariationParams, mDesc.VariationParams, 16)
+
+			B3D_RTTI_MEMBER_REFLPTR_NAMED(mShaderCompilerMetaData, mDesc.CompilerMetaData, 17)
 		B3D_RTTI_END_MEMBERS
 
 		ShaderDataParameterInformation& GetDataParam(Shader* obj, u32 idx)

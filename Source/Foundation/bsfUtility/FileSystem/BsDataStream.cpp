@@ -208,7 +208,7 @@ MemoryDataStream::MemoryDataStream()
 MemoryDataStream::MemoryDataStream(size_t capacity)
 	: DataStream(READ | WRITE)
 {
-	Realloc(capacity);
+	ReallocateBuffer(capacity);
 	mCursor = mData;
 	mEnd = mCursor + capacity;
 }
@@ -218,6 +218,7 @@ MemoryDataStream::MemoryDataStream(void* memory, size_t size)
 {
 	mData = mCursor = static_cast<uint8_t*>(memory);
 	mSize = size;
+	mCapacity = size;
 	mEnd = mData + mSize;
 }
 
@@ -226,8 +227,9 @@ MemoryDataStream::MemoryDataStream(const MemoryDataStream& sourceStream)
 {
 	// Copy data from incoming stream
 	mSize = sourceStream.Size();
+	mCapacity = mSize;
 
-	mData = mCursor = static_cast<uint8_t*>(B3DAllocate(mSize));
+	mData = mCursor = static_cast<uint8_t*>(B3DAllocate(mCapacity));
 	mEnd = mData + sourceStream.Read(mData, mSize);
 
 	B3D_ASSERT(mEnd >= mCursor);
@@ -238,8 +240,9 @@ MemoryDataStream::MemoryDataStream(const SPtr<DataStream>& sourceStream)
 {
 	// Copy data from incoming stream
 	mSize = sourceStream->Size();
+	mCapacity = mSize;
 
-	mData = mCursor = static_cast<uint8_t*>(B3DAllocate(mSize));
+	mData = mCursor = static_cast<uint8_t*>(B3DAllocate(mCapacity));
 	mEnd = mData + sourceStream->Read(mData, mSize);
 
 	B3D_ASSERT(mEnd >= mCursor);
@@ -266,6 +269,7 @@ MemoryDataStream& MemoryDataStream::operator=(const MemoryDataStream& other)
 	if(!other.mOwnsMemory)
 	{
 		this->mSize = other.mSize;
+		this->mCapacity = other.mCapacity;
 		this->mData = other.mData;
 		this->mCursor = other.mCursor;
 		this->mEnd = other.mEnd;
@@ -277,13 +281,14 @@ MemoryDataStream& MemoryDataStream::operator=(const MemoryDataStream& other)
 			B3DFree(mData);
 
 		mSize = 0;
+		mCapacity = 0;
 		mData = nullptr;
 		mCursor = nullptr;
 		mEnd = nullptr;
 
 		this->mOwnsMemory = true;
 
-		Realloc(other.mSize);
+		ReallocateBuffer(other.mSize);
 		mEnd = mData + mSize;
 		mCursor = mData + (other.mCursor - other.mData);
 
@@ -308,14 +313,15 @@ MemoryDataStream& MemoryDataStream::operator=(MemoryDataStream&& other)
 	this->mEnd = std::exchange(other.mEnd, nullptr);
 	this->mData = std::exchange(other.mData, nullptr);
 	this->mSize = std::exchange(other.mSize, 0);
+	this->mCapacity = std::exchange(other.mCapacity, 0);
 	this->mOwnsMemory = std::exchange(other.mOwnsMemory, false);
 
 	return *this;
 }
 
-size_t MemoryDataStream::Read(void* buf, size_t count) const
+size_t MemoryDataStream::Read(void* data, size_t byteCount) const
 {
-	size_t cnt = count;
+	size_t cnt = byteCount;
 
 	if(mCursor + cnt > mEnd)
 		cnt = mEnd - mCursor;
@@ -323,53 +329,58 @@ size_t MemoryDataStream::Read(void* buf, size_t count) const
 	if(cnt == 0)
 		return 0;
 
-	B3D_ASSERT(cnt <= count);
+	B3D_ASSERT(cnt <= byteCount);
 
-	memcpy(buf, mCursor, cnt);
+	memcpy(data, mCursor, cnt);
 	mCursor += cnt;
 
 	return cnt;
 }
 
-size_t MemoryDataStream::Write(const void* buf, size_t count)
+size_t MemoryDataStream::Write(const void* data, size_t byteCount)
 {
-	size_t written = 0;
-	if(IsWriteable())
+	const size_t byteCountToWrite = EnsureEnoughSpace(byteCount);
+	if(byteCountToWrite == 0)
+		return 0;
+
+	memcpy(mCursor, data, byteCountToWrite);
+	mCursor += byteCountToWrite;
+	mEnd = Math::Max(mCursor, mEnd);
+	mSize = mEnd - mData;
+
+	return byteCountToWrite;
+}
+
+size_t MemoryDataStream::Skip(size_t byteCount)
+{
+	const size_t byteCountToSkip = EnsureEnoughSpace(byteCount);
+
+	mCursor += byteCountToSkip;
+	mEnd = Math::Max(mCursor, mEnd);
+	mSize = mEnd - mData;
+
+	return byteCountToSkip;
+}
+
+size_t MemoryDataStream::Seek(size_t position)
+{
+	i64 byteCountToSkip;
+	if(position > mCapacity)
 	{
-		written = count;
-
-		size_t numUsedBytes = (mCursor - mData);
-		size_t newSize = numUsedBytes + count;
-		if(newSize > mSize)
-		{
-			if(mOwnsMemory)
-				Realloc(newSize);
-			else
-				written = mSize - numUsedBytes;
-		}
-
-		if(written == 0)
-			return 0;
-
-		memcpy(mCursor, buf, written);
-		mCursor += written;
-
-		mEnd = std::max(mCursor, mEnd);
+		const size_t requiredExtraSpace = position - mCapacity;
+		byteCountToSkip = (i64)EnsureEnoughSpace(requiredExtraSpace);
+	}
+	else
+	{
+		const size_t currentOffset = mCursor - mData;
+		byteCountToSkip = (i64)position - (i64)currentOffset;
 	}
 
-	return written;
-}
+	mCursor += byteCountToSkip;
+	mEnd = Math::Max(mCursor, mEnd);
+	mSize = mEnd - mData;
 
-void MemoryDataStream::Skip(size_t count)
-{
-	B3D_ASSERT((mCursor + count) <= mEnd);
-	mCursor = std::min(mCursor + count, mEnd);
-}
-
-void MemoryDataStream::Seek(size_t pos)
-{
-	B3D_ASSERT((mData + pos) <= mEnd);
-	mCursor = std::min(mData + pos, mEnd);
+	return mCursor - mData;
 }
 
 size_t MemoryDataStream::Tell() const
@@ -403,31 +414,51 @@ bool MemoryDataStream::Close()
 	return true;
 }
 
-void MemoryDataStream::Realloc(size_t numBytes)
+size_t MemoryDataStream::EnsureEnoughSpace(size_t size)
 {
-	if(numBytes != mSize)
+	size_t availableByteCount = 0;
+	if(IsWriteable())
 	{
-		B3D_ASSERT(numBytes > mSize);
+		availableByteCount = size;
 
-		// Note: Eventually add support for custom allocators
-		auto buffer = B3DAllocateMultiple<uint8_t>(numBytes);
-		if(mData)
+		const size_t currentOffset = mCursor - mData;
+		const size_t newOffset = currentOffset + size;
+		if(newOffset > mCapacity)
 		{
-			mCursor = buffer + (mCursor - mData);
-			mEnd = buffer + (mEnd - mData);
-
-			memcpy(buffer, mData, mSize);
-			B3DFree(mData);
+			if(mOwnsMemory)
+				ReallocateBuffer(mCapacity + std::max(mCapacity, size));
+			else
+				availableByteCount = mCapacity - currentOffset;
 		}
-		else
-		{
-			mCursor = buffer;
-			mEnd = buffer;
-		}
-
-		mData = buffer;
-		mSize = numBytes;
 	}
+
+	return availableByteCount;
+}
+
+void MemoryDataStream::ReallocateBuffer(size_t byteCount)
+{
+	if(byteCount <= mCapacity)
+		return;
+
+	B3D_ASSERT(byteCount > mSize);
+
+	auto buffer = B3DAllocateMultiple<uint8_t>(byteCount);
+	if(mData != nullptr)
+	{
+		mCursor = buffer + (mCursor - mData);
+		mEnd = buffer + (mEnd - mData);
+
+		memcpy(buffer, mData, mSize);
+		B3DFree(mData);
+	}
+	else
+	{
+		mCursor = buffer;
+		mCursor = buffer;
+	}
+
+	mData = buffer;
+	mCapacity = byteCount;
 }
 
 FileDataStream::FileDataStream(const Path& path, AccessMode accessMode)
@@ -465,16 +496,16 @@ bool FileDataStream::Open()
 	return true;
 }
 
-size_t FileDataStream::Read(void* buf, size_t count) const
+size_t FileDataStream::Read(void* data, size_t byteCount) const
 {
 	if(!B3D_ENSURE(mFileStream.is_open()))
 		return 0;
 
-	const_cast<std::fstream&>(mFileStream).read(static_cast<char*>(buf), static_cast<std::streamsize>(count));
+	const_cast<std::fstream&>(mFileStream).read(static_cast<char*>(data), static_cast<std::streamsize>(byteCount));
 	return (size_t)mFileStream.gcount();
 }
 
-size_t FileDataStream::Write(const void* buf, size_t count)
+size_t FileDataStream::Write(const void* data, size_t byteCount)
 {
 	if(!B3D_ENSURE(mFileStream.is_open()))
 		return 0;
@@ -482,33 +513,38 @@ size_t FileDataStream::Write(const void* buf, size_t count)
 	size_t written = 0;
 	if(B3D_ENSURE(IsWriteable()))
 	{
-		mFileStream.write(static_cast<const char*>(buf), static_cast<std::streamsize>(count));
-		written = count;
+		mFileStream.write(static_cast<const char*>(data), static_cast<std::streamsize>(byteCount));
+		written = byteCount;
 	}
 
 	return written;
 }
 
-void FileDataStream::Skip(size_t count)
+size_t FileDataStream::Skip(size_t count)
 {
 	if(!B3D_ENSURE(mFileStream.is_open()))
-		return;
+		return 0;
 
 	// Clear fail status in case eof was set
 	if(mFileStream.eof() && !mFileStream.bad())
 		mFileStream.clear();
+
+	const size_t currentOffset = Tell();
 
 	if(((mAccess & READ) != 0))
 		mFileStream.seekg(static_cast<std::ifstream::pos_type>(count), std::ios::cur);
 
 	if(((mAccess & WRITE) != 0))
 		mFileStream.seekp(static_cast<std::ifstream::pos_type>(count), std::ios::cur);
+
+	const size_t newOffset = Tell();
+	return newOffset - currentOffset;
 }
 
-void FileDataStream::Seek(size_t pos)
+size_t FileDataStream::Seek(size_t pos)
 {
 	if(!B3D_ENSURE(mFileStream.is_open()))
-		return;
+		return Tell();
 
 	// Clear fail status in case eof was set
 	if(mFileStream.eof() && !mFileStream.bad())
@@ -519,6 +555,8 @@ void FileDataStream::Seek(size_t pos)
 
 	if(((mAccess & WRITE) != 0))
 		mFileStream.seekp(static_cast<std::ifstream::pos_type>(pos), std::ios::beg);
+
+	return Tell();
 }
 
 size_t FileDataStream::Tell() const

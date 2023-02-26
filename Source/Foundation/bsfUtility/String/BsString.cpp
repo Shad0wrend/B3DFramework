@@ -65,6 +65,31 @@ Vector<WString> StringUtil::Tokenise(const WString& str, const WString& singleDe
 	return TokeniseInternal<wchar_t>(str, singleDelims, doubleDelims, maxSplits);
 }
 
+String StringUtil::HexToLiteral(const u32* input, u32 count)
+{
+	if(input == nullptr || count == 0)
+		return kBlank;
+
+	constexpr Array<char, 16> kHexadecimalToLiteral = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+
+	String output;
+	output.reserve((size_t)count * 8);
+
+	for(u32 index = 0; index < count; index++)
+	{
+		for(i32 i = 7; i >= 0; --i)
+		{
+			const i32 hexadecimalValue = (input[index] >> (i * 4)) & 0xF;
+			output.push_back(kHexadecimalToLiteral[hexadecimalValue]);
+		}
+
+		if(index < (count - 1))
+			output.push_back('-');
+	}
+
+	return output;
+}
+
 void StringUtil::ToLowerCase(String& str)
 {
 	std::transform(str.begin(), str.end(), str.begin(), tolower);

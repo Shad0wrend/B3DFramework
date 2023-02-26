@@ -10,6 +10,16 @@
 
 using namespace bs;
 
+RTTITypeBase* GpuProgramCreateInformation::GetRttiStatic()
+{
+	return GpuProgramCreateInformationRTTI::Instance();
+}
+
+RTTITypeBase* GpuProgramCreateInformation::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
 GpuProgramBytecode::~GpuProgramBytecode()
 {
 	if(Instructions.Data)

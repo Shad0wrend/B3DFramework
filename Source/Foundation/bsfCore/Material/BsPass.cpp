@@ -20,7 +20,7 @@ TPass<Core>::TPass()
 }
 
 template <bool Core>
-TPass<Core>::TPass(const PASS_DESC& data)
+TPass<Core>::TPass(const PassCreateInformation& data)
 	: mData(data)
 {
 }
@@ -113,8 +113,8 @@ void TPass<Core>::RttiEnumFields(P p)
 template class TPass<false>;
 template class TPass<true>;
 
-Pass::Pass(const PASS_DESC& desc)
-	: TPass(desc)
+Pass::Pass(const PassCreateInformation& createInformation)
+	: TPass(createInformation)
 {}
 
 SPtr<ct::Pass> Pass::GetCore() const
@@ -157,7 +157,7 @@ CoreSyncData Pass::SyncToCore(FrameAlloc* allocator)
 	return CoreSyncData(data, size);
 }
 
-SPtr<Pass> Pass::Create(const PASS_DESC& desc)
+SPtr<Pass> Pass::Create(const PassCreateInformation& desc)
 {
 	Pass* newPass = new(B3DAllocate<Pass>()) Pass(desc);
 	SPtr<Pass> newPassPtr = B3DMakeCoreFromExisting<Pass>(newPass);
@@ -188,7 +188,7 @@ RTTITypeBase* Pass::GetRtti() const
 
 namespace bs { namespace ct
 {
-Pass::Pass(const PASS_DESC& desc)
+Pass::Pass(const PassCreateInformation& desc)
 	: TPass(desc)
 {}
 
@@ -206,13 +206,33 @@ void Pass::SyncToCore(const CoreSyncData& data)
 	B3DCoreSyncRead(*this, stream);
 }
 
-SPtr<Pass> Pass::Create(const PASS_DESC& desc)
+SPtr<Pass> Pass::Create(const PassCreateInformation& createInformation)
 {
-	Pass* newPass = new(B3DAllocate<Pass>()) Pass(desc);
+	Pass* newPass = new(B3DAllocate<Pass>()) Pass(createInformation);
 	SPtr<Pass> newPassPtr = B3DMakeSharedFromExisting<Pass>(newPass);
 	newPassPtr->SetShared(newPassPtr);
 	newPassPtr->Initialize();
 
 	return newPassPtr;
+}
+
+SPtr<Pass> Pass::CreateEmpty()
+{
+	Pass* const pass = new(B3DAllocate<Pass>()) Pass();
+	SPtr<Pass> passShared = B3DMakeSharedFromExisting(pass);
+	passShared->SetShared(passShared);
+	passShared->Initialize();
+
+	return passShared;
+}
+
+RTTITypeBase* Pass::GetRttiStatic()
+{
+	return CorePassRTTI::Instance();
+}
+
+RTTITypeBase* Pass::GetRtti() const
+{
+	return Pass::GetRttiStatic();
 }
 }}

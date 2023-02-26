@@ -167,6 +167,9 @@ namespace bs
 		B3D_SCRIPT_EXPORT(ExportName(ParamNames), Property(Getter))
 		Vector<String> GetParamNames() const;
 
+		/** Creates a unique name created from all parameters and their values. */
+		String CreateVariationName() const;
+
 		/**
 		 * Checks if this variation matches some other variation.
 		 *

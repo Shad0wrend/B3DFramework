@@ -581,6 +581,9 @@ namespace bs
 		/**	Returns a shader object but doesn't initialize it. */
 		static SPtr<Shader> CreateEmpty();
 
+		/** Computes a hash from shader source code. */
+		static Array<u64, 2> ComputeHash(const String& string);
+
 	public: // ***** INTERNAL ******
 		/** @name Internal
 		 *  @{

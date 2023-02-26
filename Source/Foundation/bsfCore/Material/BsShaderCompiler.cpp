@@ -1,13 +1,23 @@
 //************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsShaderCompiler.h"
-
+#include "Private/RTTI/BsShaderCompilerRTTI.h"
 #include "FileSystem/BsDataStream.h"
 #include "FileSystem/BsFileSystem.h"
 #include "Managers/BsGpuProgramManager.h"
 #include "Resources/BsBuiltinResources.h"
 
 using namespace bs;
+
+RTTITypeBase* ShaderCompilerMetaData::GetRttiStatic()
+{
+	return ShaderCompilerMetaDataRTTI::Instance();
+}
+
+RTTITypeBase* ShaderCompilerMetaData::GetRtti() const
+{
+	return ShaderCompilerMetaData::GetRttiStatic();
+}
 
 SPtr<IShaderCompiler> ShaderCompilers::GetCompiler(const String& language)
 {

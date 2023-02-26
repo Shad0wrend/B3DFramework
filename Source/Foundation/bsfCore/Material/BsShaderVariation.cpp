@@ -100,6 +100,38 @@ Vector<String> ShaderVariationParameters::GetParamNames() const
 	return params;
 }
 
+String ShaderVariationParameters::CreateVariationName() const
+{
+	bool isFirst = true;
+	StringStream output;
+	for(const auto& entry : mParams)
+	{
+		if(isFirst)
+		{
+			output << "-";
+			isFirst = false;
+		}
+
+		output << entry.first.CStr() << "-";
+
+		switch(entry.second.Type)
+		{
+		case ShaderVariationParameterType::Int:
+		case ShaderVariationParameterType::Bool:
+			output << ToString(entry.second.I);
+			break;
+		case ShaderVariationParameterType::UInt:
+			output << ToString(entry.second.Ui);
+			break;
+		case ShaderVariationParameterType::Float:
+			output << ToString(entry.second.F);
+			break;
+		}
+	}
+
+	return output.str();
+}
+
 ShaderDefines ShaderVariationParameters::GetDefines() const
 {
 	ShaderDefines defines;

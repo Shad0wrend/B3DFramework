@@ -629,7 +629,7 @@ namespace bs
 		TID_BlendStateDesc = 1150,
 		TID_RasterizerStateDesc = 1151,
 		TID_DepthStencilStateDesc = 1152,
-		TID_SerializedGpuProgramData = 1153,
+		// TID_SerializedGpuProgramData = 1153,
 		TID_SubShader = 1154,
 		TID_ParticleSystem = 1155,
 		TID_ColorDistribution = 1156,
@@ -694,6 +694,10 @@ namespace bs
 		TID_Package = 1215,
 		TID_PersistentCacheObject = 1216,
 		TID_PersistentCacheMetaData = 1217,
+		TID_GpuProgramCreateInformation = 1218,
+		TID_CorePass = 1219,
+		TID_CoreTechnique = 1220,
+		TID_ShaderCompilerMetaData = 1221,
 
 		// Moved from Engine layer
 		TID_CCamera = 30000,

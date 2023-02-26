@@ -13,6 +13,7 @@
 
 #include "BsBSLParser.h"
 #include "BsHLSLCrossCompiler.h"
+#include "Managers/BsGpuProgramManager.h"
 
 using namespace std;
 using namespace bs;
@@ -250,7 +251,7 @@ ShaderCompilerResult BSLCompiler::TCompileVariation(const String& name, const BS
 				return compileResult;
 		}
 
-		PASS_DESC shaderPassInformation;
+		PassCreateInformation shaderPassInformation;
 		shaderPassInformation.BlendStateDesc = parsedShaderPass.BlendStateInformation;
 		shaderPassInformation.RasterizerStateDesc = parsedShaderPass.RasterizerStateInformation;
 		shaderPassInformation.DepthStencilStateDesc = parsedShaderPass.DepthStencilStateInformation;
@@ -289,6 +290,7 @@ ShaderCompilerResult BSLCompiler::TCompileVariation(const String& name, const BS
 			gpuProgramCreateInformation.EntryPoint = entry;
 			gpuProgramCreateInformation.Source = code;
 			gpuProgramCreateInformation.Type = type;
+			gpuProgramCreateInformation.Bytecode = ct::GpuProgramManager::Instance().CompileBytecode(gpuProgramCreateInformation);
 
 			return gpuProgramCreateInformation;
 		};
@@ -338,7 +340,6 @@ ShaderCompilerResult BSLCompiler::TCompileVariation(const String& name, const BS
 			passes[parsedShaderPass.SequentialIndex] = pass;
 		}
 	}
-
 
 	SmallVector<SPtr<PassType>, 1> orderedPasses;
 	for(auto& KVP : passes)

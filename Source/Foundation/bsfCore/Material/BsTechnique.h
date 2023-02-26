@@ -175,6 +175,8 @@ namespace bs
 
 	/** @} */
 
+	class CoreTechniqueRTTI;
+
 	namespace ct
 	{
 		/** @addtogroup Material-Internal
@@ -182,7 +184,7 @@ namespace bs
 		 */
 
 		/** Core thread version of bs::Technique. */
-		class B3D_CORE_EXPORT Technique : public CoreObject, public TTechnique<true>
+		class B3D_CORE_EXPORT Technique : public IReflectable, public CoreObject, public TTechnique<true>
 		{
 		public:
 			Technique(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData);
@@ -190,9 +192,25 @@ namespace bs
 			/** @copydoc bs::Technique::Create(const WeakSPtr<Shader>&, const String&, const ShaderVariationParameters&, const Optional<PrecompiledVariationData>&) */
 			static SPtr<Technique> Create(const WeakSPtr<Shader>& owner, const String& language, const ShaderVariationParameters& variationParameters, const Optional<PrecompiledVariationData>& precompiledData = {});
 
+			/**	Creates a new empty technique. */
+			static SPtr<Technique> CreateEmpty();
+
 		protected:
 			void SyncToCore(const CoreSyncData& data) override;
 			Technique& GetSelf() override { return *this; }
+
+		private:
+			/************************************************************************/
+			/* 								RTTI		                     		*/
+			/************************************************************************/
+
+			/** Serialization only constructor. */
+			Technique();
+
+		public:
+			friend class bs::CoreTechniqueRTTI;
+			static RTTITypeBase* GetRttiStatic();
+			RTTITypeBase* GetRtti() const override;
 		};
 
 		/** @} */

@@ -10,6 +10,7 @@
 #include "Material/BsPass.h"
 #include "RenderAPI/BsSamplerState.h"
 #include "Image/BsTexture.h"
+#include "ThirdParty/CityHash/city.h"
 
 using namespace bs;
 
@@ -612,6 +613,12 @@ SPtr<Shader> Shader::CreateEmpty()
 	newShader->SetShared(newShader);
 
 	return newShader;
+}
+
+Array<u64, 2> Shader::ComputeHash(const String& string)
+{
+	const uint128 hash = CityHash128(string.data(), string.length());
+	return { hash.first, hash.second };
 }
 
 RTTITypeBase* Shader::GetRttiStatic()

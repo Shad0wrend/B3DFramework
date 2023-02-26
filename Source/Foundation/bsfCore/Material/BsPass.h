@@ -19,7 +19,7 @@ namespace bs
 	 */
 
 	/** Descriptor structure used for initializing a shader pass. */
-	struct PASS_DESC
+	struct PassCreateInformation
 	{
 		BLEND_STATE_DESC BlendStateDesc;
 		RASTERIZER_STATE_DESC RasterizerStateDesc;
@@ -91,12 +91,12 @@ namespace bs
 		/** @} */
 	protected:
 		TPass();
-		TPass(const PASS_DESC& desc);
+		TPass(const PassCreateInformation& createInformation);
 
 		/** Creates either the graphics or the compute pipeline state from the stored pass data. */
 		void CreatePipelineState();
 
-		PASS_DESC mData;
+		PassCreateInformation mData;
 		SPtr<GraphicsPipelineStateType> mGraphicsPipelineState;
 		SPtr<ComputePipelineStateType> mComputePipelineState;
 	};
@@ -130,13 +130,13 @@ namespace bs
 		void Compile();
 
 		/**	Creates a new empty pass. */
-		static SPtr<Pass> Create(const PASS_DESC& desc);
+		static SPtr<Pass> Create(const PassCreateInformation& desc);
 
 	protected:
 		friend class Technique;
 
 		Pass() = default;
-		Pass(const PASS_DESC& desc);
+		Pass(const PassCreateInformation& createInformation);
 
 		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 		SPtr<ct::CoreObject> CreateCore() const override;
@@ -155,6 +155,8 @@ namespace bs
 
 	/** @} */
 
+	class CorePassRTTI;
+
 	namespace ct
 	{
 		/** @addtogroup Material-Internal
@@ -166,13 +168,16 @@ namespace bs
 		 *
 		 * @note	Core thread.
 		 */
-		class B3D_CORE_EXPORT Pass : public CoreObject, public TPass<true>
+		class B3D_CORE_EXPORT Pass : public IReflectable, public CoreObject, public TPass<true>
 		{
 		public:
 			virtual ~Pass() = default;
 
+			/**	Creates a new pass. */
+			static SPtr<Pass> Create(const PassCreateInformation& createInformation);
+
 			/**	Creates a new empty pass. */
-			static SPtr<Pass> Create(const PASS_DESC& desc);
+			static SPtr<Pass> CreateEmpty();
 
 			/** @copydoc bs::Pass::Compile */
 			void Compile();
@@ -182,9 +187,17 @@ namespace bs
 			friend class Technique;
 
 			Pass() = default;
-			Pass(const PASS_DESC& desc);
+			Pass(const PassCreateInformation& desc);
 
 			void SyncToCore(const CoreSyncData& data) override;
+
+			/************************************************************************/
+			/* 								RTTI		                     		*/
+			/************************************************************************/
+		public:
+			friend class bs::CorePassRTTI;
+			static RTTITypeBase* GetRttiStatic();
+			RTTITypeBase* GetRtti() const override;
 		};
 
 		/** @} */

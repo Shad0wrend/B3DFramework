@@ -17,7 +17,7 @@ namespace bs
 	struct GpuProgramBytecode;
 
 	/** Descriptor structure used for initialization of a GpuProgram. */
-	struct GpuProgramCreateInformation
+	struct B3D_CORE_EXPORT GpuProgramCreateInformation : public IReflectable
 	{
 		String Name; /**< Name of the program. Used primarily for debugging. */
 		String Source; /**< Source code to compile the program from. */
@@ -31,6 +31,13 @@ namespace bs
 		 * when supported by the render backend. Call ct::GpuProgram::CompileBytecode to generate it.
 		 */
 		SPtr<GpuProgramBytecode> Bytecode;
+
+		/************************************************************************/
+		/* 								SERIALIZATION                      		*/
+		/************************************************************************/
+		friend class GpuProgramCreateInformationRTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
 	};
 
 	/**
@@ -145,6 +152,8 @@ namespace bs
 
 	/** @} */
 
+	class CoreGpuProgramRTTI;
+
 	namespace ct
 	{
 		/** @addtogroup RenderAPI-Internal
@@ -212,8 +221,6 @@ namespace bs
 			static SPtr<GpuProgramBytecode> CompileBytecode(const GpuProgramCreateInformation& desc);
 
 		protected:
-			friend class GpuProgramRTTI;
-
 			GpuProgram(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask);
 
 			bool mNeedsAdjacencyInfo;

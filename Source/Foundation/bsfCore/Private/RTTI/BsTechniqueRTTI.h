@@ -52,6 +52,40 @@ namespace bs
 		}
 	};
 
+	class B3D_CORE_EXPORT CoreTechniqueRTTI : public RTTIType<ct::Technique, IReflectable, CoreTechniqueRTTI>
+	{
+	private:
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER_REFLPTR_ARRAY(mPasses, 0)
+			B3D_RTTI_MEMBER_PLAIN(mLanguage, 1)
+			B3D_RTTI_MEMBER_REFL(mVariationParameters, 2)
+			B3D_RTTI_MEMBER_PLAIN(mHasPassData, 3)
+		B3D_RTTI_END_MEMBERS
+
+	public:
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		{
+			ct::Technique* technique = static_cast<ct::Technique*>(obj);
+			technique->Initialize();
+		}
+
+		const String& GetRttiName() override
+		{
+			static String name = "CoreTechnique";
+			return name;
+		}
+
+		u32 GetRttiId() override
+		{
+			return TID_CoreTechnique;
+		}
+
+		SPtr<IReflectable> NewRttiObject() override
+		{
+			return ct::Technique::CreateEmpty();
+		}
+	};
+
 	/** @} */
 	/** @endcond */
 } // namespace bs
