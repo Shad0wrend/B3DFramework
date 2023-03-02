@@ -24,7 +24,7 @@ namespace bs
 		protected:
 			friend class D3D11RenderStateManager;
 
-			D3D11SamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask);
+			D3D11SamplerState(const SamplerStateInformation& desc, GpuDeviceFlags deviceMask);
 
 			void CreateInternal() override;
 

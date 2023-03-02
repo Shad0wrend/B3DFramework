@@ -87,9 +87,7 @@ namespace bs
 		TextureCreateInformation() = default;
 		TextureCreateInformation(const TextureInformation& other)
 			:TextureInformation(other)
-		{
-		}
-		
+		{ }
 	};
 
 	/** Structure used for specifying information about a texture copy operation. */

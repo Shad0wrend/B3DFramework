@@ -45,8 +45,8 @@ const EvaluatedAnimationData* AnimationManager::Update(bool async)
 		// Advance the buffers (last write buffer becomes read buffer)
 		if(mSwapBuffers)
 		{
-			mPoseReadBufferIdx = (mPoseReadBufferIdx + 1) % (CoreThread::kNumSyncBuffers + 1);
-			mPoseWriteBufferIdx = (mPoseWriteBufferIdx + 1) % (CoreThread::kNumSyncBuffers + 1);
+			mPoseReadBufferIdx = (mPoseReadBufferIdx + 1) % (CoreThread::kSyncBufferCount + 1);
+			mPoseWriteBufferIdx = (mPoseWriteBufferIdx + 1) % (CoreThread::kSyncBufferCount + 1);
 
 			mSwapBuffers = false;
 		}
@@ -200,7 +200,7 @@ void AnimationManager::EvaluateAnimation(AnimationProxy* anim, u32& curBoneIdx)
 	// Evaluation
 	EvaluatedAnimationData& renderData = mAnimData[mPoseWriteBufferIdx];
 
-	u32 prevPoseBufferIdx = (mPoseWriteBufferIdx + CoreThread::kNumSyncBuffers) % (CoreThread::kNumSyncBuffers + 1);
+	u32 prevPoseBufferIdx = (mPoseWriteBufferIdx + CoreThread::kSyncBufferCount) % (CoreThread::kSyncBufferCount + 1);
 	EvaluatedAnimationData& prevRenderData = mAnimData[prevPoseBufferIdx];
 
 	EvaluatedAnimationData::AnimInfo animInfo;

@@ -67,7 +67,7 @@ PersistentCache::CacheOperation::~CacheOperation()
 {
 	const SPtr<PersistentCache> cacheShared = Cache.lock();
 
-	if(!B3D_ENSURE(cacheShared))
+	if(!cacheShared)
 		return;
 
 	cacheShared->NotifyOperationWillEnd(EntryPath, Type);
@@ -75,18 +75,27 @@ PersistentCache::CacheOperation::~CacheOperation()
 
 PersistentCache::~PersistentCache()
 {
-	Lock lock(mMutex);
-	WaitForAllOperationsToComplete(lock);
+	{
+		Lock lock(mMutex);
+		WaitForAllOperationsToComplete(lock);
+	}
+
+	WriteDirtyMetaData();
 }
 
 void PersistentCache::Initialize(const Path& cacheFolder)
 {
 	{
+		{
+			Lock lock(mMutex);
+
+			// Make sure all existing operations complete, and data is saved
+			WaitForAllOperationsToComplete(lock);
+		}
+
+		WriteDirtyMetaData();
+
 		Lock lock(mMutex);
-
-		// Make sure all existing operations complete, and data is saved
-		WaitForAllOperationsToComplete(lock);
-
 		mUsedCacheSizeInBytes = 0;
 		mIsAnyEntryMetaDataDirty = false;
 		mEntries.clear();
@@ -104,9 +113,6 @@ void PersistentCache::Initialize(const Path& cacheFolder)
 		if (FileSystem::Exists(mCacheFolder))
 		{
 			auto fnOnFileFound = [this](const Path& path) -> bool {
-				if(path.GetExtension() != Package::kPackageExtension)
-					return true;
-
 				SPtr<Package> package = Package::Load(path);
 				if(!B3D_ENSURE(package != nullptr))
 					return true;
@@ -133,7 +139,10 @@ void PersistentCache::Initialize(const Path& cacheFolder)
 					cacheEntry.LastUsedTimestamp = cacheObjectMetaData->LastUsedTimestamp;
 					cacheEntry.SizeInBytes = FileSystem::GetFileSize(path);
 
-					mEntries[path] = cacheEntry;
+					Path relativePath = path;
+					relativePath.MakeRelative(mCacheFolder);
+
+					mEntries[relativePath] = cacheEntry;
 					mUsedCacheSizeInBytes += cacheEntry.SizeInBytes;
 				}
 
@@ -460,20 +469,25 @@ void PersistentCache::NotifyOperationWillEnd(const Path& path, CacheOperationTyp
 	Lock lock(mMutex);
 
 	const auto found = mEntries.find(path);
-	B3D_ASSERT(found != mEntries.end());
-
 	if (type == CacheOperationType::Read)
 	{
-		B3D_ASSERT(found->second.ActiveReadOperationCount > 0);
-		found->second.ActiveReadOperationCount--;
+		if(B3D_ENSURE(found != mEntries.end()))
+		{
+			B3D_ASSERT(found->second.ActiveReadOperationCount > 0);
+			found->second.ActiveReadOperationCount--;
+		}
 
 		B3D_ASSERT(mTotalActiveReadOperationCount > 0);
 		mTotalActiveReadOperationCount--;
 	}
 	else
 	{
-		B3D_ASSERT(found->second.IsWriteOperationActive);
-		found->second.IsWriteOperationActive = false;
+		// It won't be part of entries if this is a write operation that failed
+		if(found != mEntries.end())
+		{
+			B3D_ASSERT(found->second.IsWriteOperationActive);
+			found->second.IsWriteOperationActive = false;
+		}
 
 		B3D_ASSERT(mTotalActiveWriteOperationCount > 0);
 		mTotalActiveWriteOperationCount--;
@@ -648,7 +662,7 @@ bool PersistentCache::SetPackageForEntry(const CacheOperation& operation, const 
 	// First write to a temporary file
 	// Note: This means we might temporarily exceed cache capacity, but that's fine as alternatives are too complex to implement.
 	static constexpr const char* kCacheStagingDirectory = "Staging";
-	const Path temporaryPackageDirectory = mCacheFolder = kCacheStagingDirectory;
+	const Path temporaryPackageDirectory = mCacheFolder + kCacheStagingDirectory;
 	FileSystem::CreateDir(temporaryPackageDirectory);
 
 	Path temporaryPackagePath = temporaryPackageDirectory;
@@ -719,7 +733,7 @@ bool PersistentCache::SetPackageForEntry(const CacheOperation& operation, const 
 	{
 		Lock lock(mMutex);
 
-		const u64 newSize = mSizeLimitInBytes + fileSize;
+		const u64 newSize = mUsedCacheSizeInBytes + fileSize;
 		isEvictionRequired = newSize > mSizeLimitInBytes;
 
 		if(isEvictionRequired)
@@ -774,15 +788,13 @@ void PersistentCache::WaitForAllOperationsToComplete(Lock& lock)
 	{
 		mOperationCompletedSignal.wait(lock);
 	}
-
-	WriteDirtyMetaData();
 }
 
 void PersistentCache::SetMaximumCacheSize(u64 sizeLimitInMb)
 {
 	{
 		Lock lock(mMutex);
-		mSizeLimitInBytes = sizeLimitInMb * 1024 * 1024;
+		mSizeLimitInBytes = sizeLimitInMb * Bitwise::kBytesInMegabyte;
 	}
 
 	RunEvictionIfRequired();

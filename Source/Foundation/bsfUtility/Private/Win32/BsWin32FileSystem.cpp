@@ -7,6 +7,10 @@
 #include "String/BsUnicode.h"
 #include <windows.h>
 
+#include <shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
+#include "shlobj.h"
+
 #undef CopyFile
 #undef MoveFile
 
@@ -528,3 +532,17 @@ Path FileSystem::GetTempDirectoryPath()
 	const String utf8dir = UTF8::FromWide(Win32GetTempDirectory());
 	return Path(utf8dir);
 }
+
+Path FileSystem::GetApplicationDataFolder()
+{
+	wchar_t appDataPath[MAX_PATH];
+
+	if(SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, appDataPath)))
+	{
+		return Path(UTF8::FromWide(appDataPath)) + "Banshee3D";
+	}
+
+	// Fallback
+	return GetWorkingDirectoryPath();
+}
+

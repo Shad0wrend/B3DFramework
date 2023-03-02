@@ -9,7 +9,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-SPtr<ct::SamplerState> D3D11RenderStateManager::CreateSamplerStateInternalInternal(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask) const
+SPtr<ct::SamplerState> D3D11RenderStateManager::CreateSamplerStateInternalInternal(const SamplerStateInformation& desc, GpuDeviceFlags deviceMask) const
 {
 	SPtr<SamplerState> ret = B3DMakeSharedFromExisting<D3D11SamplerState>(new(B3DAllocate<D3D11SamplerState>()) D3D11SamplerState(desc, deviceMask));
 	ret->SetShared(ret);

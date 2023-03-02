@@ -23,18 +23,34 @@ static SPtr<Shader> CreateShader(const String& name, const ShaderCreateInformati
 	SPtr<Shader> shader = Shader::CreateShared(name, shaderCreateInformation);
 	shader->SetIncludeFiles(includes);
 
+	const SPtr<ShaderCompilerMetaData> compilerMetaData = shaderCreateInformation.CompilerMetaData;
+	if(compilerMetaData != nullptr)
+	{
+		for(const auto& includePath : includes)
+			compilerMetaData->IncludeHashes[includePath] = Shader::ComputeIncludeHash(includePath);
+	}
+
 	return shader;
 }
 
 static SPtr<ct::Shader> CreateShader(const String& name, const ct::ShaderCreateInformation& shaderCreateInformation, const Vector<String>& includes)
 {
-	return ct::Shader::Create(name, shaderCreateInformation);
+	SPtr<ct::Shader> shader = ct::Shader::Create(name, shaderCreateInformation);
+
+	const SPtr<ShaderCompilerMetaData> compilerMetaData = shaderCreateInformation.CompilerMetaData;
+	if(compilerMetaData != nullptr)
+	{
+		for(const auto& includePath : includes)
+			compilerMetaData->IncludeHashes[includePath] = Shader::ComputeIncludeHash(includePath);
+	}
+
+	return shader;
 }
 
 template<bool Core>
 ShaderCompilerResult BSLCompiler::TCompile(const String& name, const String& source, const UnorderedMap<String, String>& defines, ShadingLanguageFlags languages, bool compileVariations, SPtr<CoreVariantType<Shader, Core>>& outShader)
 {
-	TShaderCreateInformation<Core> shaderCreateInformation;
+	CoreVariantType<ShaderCreateInformation, Core> shaderCreateInformation;
 	Vector<String> shaderIncludes;
 
 	BSLParsedShaderMetaData parsedShaderMetaData;

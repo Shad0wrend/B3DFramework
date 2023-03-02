@@ -301,6 +301,8 @@ namespace bs
 	CORE_OBJECT_FORWARD_DECLARE_STRUCT(DepthOfFieldSettings)
 	CORE_OBJECT_FORWARD_DECLARE_STRUCT(ChromaticAberrationSettings)
 	CORE_OBJECT_FORWARD_DECLARE_STRUCT(RenderSettings)
+	CORE_OBJECT_FORWARD_DECLARE_STRUCT(ShaderInformation)
+	CORE_OBJECT_FORWARD_DECLARE_STRUCT(ShaderCreateInformation)
 
 	class Collider;
 	class Rigidbody;
@@ -456,7 +458,7 @@ namespace bs
 	// RTTI
 	class MeshRTTI;
 	// Desc structs
-	struct SAMPLER_STATE_DESC;
+	struct SamplerStateInformation;
 	struct DEPTH_STENCIL_STATE_DESC;
 	struct RASTERIZER_STATE_DESC;
 	struct BLEND_STATE_DESC;
@@ -698,6 +700,10 @@ namespace bs
 		TID_CorePass = 1219,
 		TID_CoreTechnique = 1220,
 		TID_ShaderCompilerMetaData = 1221,
+		TID_ShaderInformationBase = 1222,
+		TID_ShaderInformation = 1223,
+		TID_CoreShaderInformation = 1224,
+		TID_CoreShader = 1225,
 
 		// Moved from Engine layer
 		TID_CCamera = 30000,

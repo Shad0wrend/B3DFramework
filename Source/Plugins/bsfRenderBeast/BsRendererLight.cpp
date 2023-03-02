@@ -124,7 +124,7 @@ void GBufferParams::Initialize(GpuProgramType type, const SPtr<GpuParams>& gpuPa
 		GpuParameterSampler samplerStateParam;
 		mParams->GetSamplerStateParameter(type, "gDepthBufferSamp", samplerStateParam);
 
-		SAMPLER_STATE_DESC desc;
+		SamplerStateInformation desc;
 		desc.MinFilter = FO_POINT;
 		desc.MagFilter = FO_POINT;
 		desc.MipFilter = FO_POINT;

@@ -17,7 +17,7 @@ VulkanSampler::~VulkanSampler()
 	vkDestroySampler(mOwner->GetDevice().GetLogical(), mSampler, gVulkanAllocator);
 }
 
-VulkanSamplerState::VulkanSamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask)
+VulkanSamplerState::VulkanSamplerState(const SamplerStateInformation& desc, GpuDeviceFlags deviceMask)
 	: SamplerState(desc, deviceMask), mSamplers(), mDeviceMask(deviceMask)
 {}
 

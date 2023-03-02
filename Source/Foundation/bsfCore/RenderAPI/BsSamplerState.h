@@ -15,17 +15,13 @@ namespace bs
 	 *  @{
 	 */
 
-	/**
-	 * Structure used for initializing a SamplerState.
-	 *
-	 * @see		SamplerState
-	 */
-	struct B3D_CORE_EXPORT SAMPLER_STATE_DESC
+	/** Information describing a SamplerState. */
+	struct B3D_CORE_EXPORT SamplerStateInformation
 	{
-		SAMPLER_STATE_DESC(){};
+		SamplerStateInformation() = default;
 
-		bool operator==(const SAMPLER_STATE_DESC& rhs) const;
-		bool operator!=(const SAMPLER_STATE_DESC& rhs) const { return !this->operator==(rhs); }
+		bool operator==(const SamplerStateInformation& rhs) const;
+		bool operator!=(const SamplerStateInformation& rhs) const { return !this->operator==(rhs); }
 
 		/** Determines how are texture coordinates outside of [0, 1] range handled. */
 		UVWAddressingMode AddressMode;
@@ -62,11 +58,21 @@ namespace bs
 		CompareFunction ComparisonFunc = CMPF_ALWAYS_PASS;
 	};
 
+	/** Descriptor structure used for initialization of a SamplerState. */
+	struct B3D_CORE_EXPORT SamplerStateCreateInformation : SamplerStateInformation
+	{
+		SamplerStateCreateInformation() = default;
+
+		SamplerStateCreateInformation(const SamplerStateInformation& other)
+			: SamplerStateInformation(other)
+		{ }
+	};
+
 	/** Properties of SamplerState. Shared between sim and core thread versions of SamplerState. */
 	class B3D_CORE_EXPORT SamplerProperties
 	{
 	public:
-		SamplerProperties(const SAMPLER_STATE_DESC& desc);
+		SamplerProperties(const SamplerStateInformation& desc);
 
 		/**
 		 * Returns texture addressing mode for each possible texture coordinate. Addressing modes determine how are texture
@@ -109,14 +115,14 @@ namespace bs
 		u64 GetHash() const { return mHash; }
 
 		/**	Returns the descriptor originally used for creating the sampler state. */
-		SAMPLER_STATE_DESC GetDesc() const { return mData; }
+		SamplerStateInformation GetDesc() const { return mData; }
 
 	protected:
 		friend class SamplerState;
 		friend class ct::SamplerState;
 		friend class SamplerStateRTTI;
 
-		SAMPLER_STATE_DESC mData;
+		SamplerStateInformation mData;
 		u64 mHash;
 	};
 
@@ -141,16 +147,16 @@ namespace bs
 		SPtr<ct::SamplerState> GetCore() const;
 
 		/**	Creates a new sampler state using the provided descriptor structure. */
-		static SPtr<SamplerState> Create(const SAMPLER_STATE_DESC& desc);
+		static SPtr<SamplerState> Create(const SamplerStateCreateInformation& desc);
 
 		/**	Returns the default sampler state. */
 		static const SPtr<SamplerState>& GetDefault();
 
 		/**	Generates a hash value from a sampler state descriptor. */
-		static u64 GenerateHash(const SAMPLER_STATE_DESC& desc);
+		static u64 GenerateHash(const SamplerStateInformation& desc);
 
 	protected:
-		SamplerState(const SAMPLER_STATE_DESC& desc);
+		SamplerState(const SamplerStateCreateInformation& desc);
 
 		SPtr<ct::CoreObject> CreateCore() const override;
 
@@ -190,7 +196,7 @@ namespace bs
 			const SamplerProperties& GetProperties() const;
 
 			/**	@copydoc RenderStateManager::CreateSamplerState */
-			static SPtr<SamplerState> Create(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			static SPtr<SamplerState> Create(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 			/**	Returns the default sampler state. */
 			static const SPtr<SamplerState>& GetDefault();
@@ -198,7 +204,7 @@ namespace bs
 		protected:
 			friend class RenderStateManager;
 
-			SamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask);
+			SamplerState(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask);
 
 			/** @copydoc CoreObject::Initialize */
 			void Initialize() override;
@@ -222,9 +228,9 @@ namespace std
 {
 	/**	Hash value generator for SAMPLER_STATE_DESC. */
 	template <>
-	struct hash<bs::SAMPLER_STATE_DESC>
+	struct hash<bs::SamplerStateInformation>
 	{
-		size_t operator()(const bs::SAMPLER_STATE_DESC& value) const
+		size_t operator()(const bs::SamplerStateInformation& value) const
 		{
 			return (size_t)bs::SamplerState::GenerateHash(value);
 		}

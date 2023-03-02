@@ -104,7 +104,7 @@ namespace bs
 
 	protected:
 		/** Returns a reference to itself using the most derived type. */
-		virtual TechniqueType& GetSelf() = 0;
+		virtual SPtr<TechniqueType> GetSelf() = 0;
 
 		WeakSPtr<ShaderType> mOwner;
 		SmallVector<SPtr<PassType>, 1> mPasses;
@@ -154,7 +154,7 @@ namespace bs
 		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 		void SyncToCore() override;
 
-		Technique& GetSelf() override { return *this; }
+		SPtr<Technique> GetSelf() override { return std::static_pointer_cast<Technique>(GetShared()); }
 
 		/**	Creates a new technique but doesn't initialize it. */
 		static SPtr<Technique> CreateEmpty();
@@ -197,7 +197,7 @@ namespace bs
 
 		protected:
 			void SyncToCore(const CoreSyncData& data) override;
-			Technique& GetSelf() override { return *this; }
+			SPtr<Technique> GetSelf() override { return std::static_pointer_cast<Technique>(GetShared()); }
 
 		private:
 			/************************************************************************/

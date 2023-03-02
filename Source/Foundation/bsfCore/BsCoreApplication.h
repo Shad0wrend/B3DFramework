@@ -6,6 +6,7 @@
 #include "Utility/BsModule.h"
 #include "RenderAPI/BsRenderWindow.h"
 #include "Utility/BsEvent.h"
+#include "Utility/BsPersistentCache.h"
 
 namespace bs
 {
@@ -112,6 +113,9 @@ namespace bs
 		/**	Returns true if the application is running in an editor, false if standalone. */
 		virtual bool IsEditor() const { return false; }
 
+		/** Returns cache for storing application-wide data that persists application reset. */
+		PersistentCache& GetApplicationCache() { return *mApplicationCache; }
+
 		/**
 		 * Loads a plugin.
 		 *
@@ -174,6 +178,7 @@ namespace bs
 		u64 mFrameStep = 16666; // 60 times a second in microseconds
 		u64 mLastFrameTime = 0; // Microseconds
 
+		SPtr<PersistentCache> mApplicationCache;
 		UnorderedMap<String, LoadedPlugin> mLoadedPlugins;
 
 		bool mIsFrameRenderingFinished;

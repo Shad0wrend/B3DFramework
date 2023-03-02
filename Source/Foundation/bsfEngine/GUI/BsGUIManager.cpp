@@ -1569,7 +1569,7 @@ GUIRenderer::GUIRenderer()
 
 void GUIRenderer::Initialize(const Any& data)
 {
-	SAMPLER_STATE_DESC ssDesc;
+	SamplerStateInformation ssDesc;
 	ssDesc.MagFilter = FO_POINT;
 	ssDesc.MinFilter = FO_POINT;
 	ssDesc.MipFilter = FO_POINT;

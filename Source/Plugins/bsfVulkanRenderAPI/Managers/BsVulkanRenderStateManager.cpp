@@ -8,7 +8,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-SPtr<ct::SamplerState> VulkanRenderStateManager::CreateSamplerStateInternalInternal(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask) const
+SPtr<ct::SamplerState> VulkanRenderStateManager::CreateSamplerStateInternalInternal(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask) const
 {
 	SPtr<VulkanSamplerState> samplerState =
 		B3DMakeSharedFromExisting<VulkanSamplerState>(new(B3DAllocate<VulkanSamplerState>()) VulkanSamplerState(desc, deviceMask));

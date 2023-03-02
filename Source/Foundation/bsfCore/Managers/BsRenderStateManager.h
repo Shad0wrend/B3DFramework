@@ -26,7 +26,7 @@ namespace bs
 		 *
 		 * @param[in]	desc	Object describing the sampler state to create.
 		 */
-		SPtr<SamplerState> CreateSamplerState(const SAMPLER_STATE_DESC& desc) const;
+		SPtr<SamplerState> CreateSamplerState(const SamplerStateCreateInformation& desc) const;
 
 		/** Creates and initializes a new DepthStencilState. */
 		SPtr<DepthStencilState> CreateDepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc) const;
@@ -52,7 +52,7 @@ namespace bs
 		SPtr<ComputePipelineState> CreateComputePipelineState(const SPtr<GpuProgram>& program) const;
 
 		/** Creates an uninitialized sampler state. Requires manual initialization after creation. */
-		SPtr<SamplerState> CreateSamplerStatePtrInternal(const SAMPLER_STATE_DESC& desc) const;
+		SPtr<SamplerState> CreateSamplerStatePtrInternal(const SamplerStateCreateInformation& desc) const;
 
 		/** Creates an uninitialized depth-stencil state. Requires manual initialization after creation. */
 		SPtr<DepthStencilState> CreateDepthStencilStatePtrInternal(const DEPTH_STENCIL_STATE_DESC& desc) const;
@@ -145,7 +145,7 @@ namespace bs
 			 * @copydoc bs::RenderStateManager::CreateSamplerState
 			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 			 */
-			SPtr<SamplerState> CreateSamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
+			SPtr<SamplerState> CreateSamplerState(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
 
 			/** @copydoc bs::RenderStateManager::CreateDepthStencilState */
 			SPtr<DepthStencilState> CreateDepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc) const;
@@ -172,7 +172,7 @@ namespace bs
 			SPtr<GpuPipelineParamInfo> CreatePipelineParamInfo(const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
 
 			/** Creates an uninitialized sampler state. Requires manual initialization after creation. */
-			SPtr<SamplerState> CreateSamplerStateInternal(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
+			SPtr<SamplerState> CreateSamplerStateInternal(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
 
 			/** Creates an uninitialized depth-stencil state. Requires manual initialization after creation. */
 			SPtr<DepthStencilState> CreateDepthStencilStateInternal(const DEPTH_STENCIL_STATE_DESC& desc) const;
@@ -217,7 +217,7 @@ namespace bs
 			void OnShutDown() override;
 
 			/** @copydoc CreateSamplerState */
-			virtual SPtr<SamplerState> CreateSamplerStateInternalInternal(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask) const;
+			virtual SPtr<SamplerState> CreateSamplerStateInternalInternal(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask) const;
 
 			/** @copydoc CreateBlendState */
 			virtual SPtr<BlendState> CreateBlendStateInternalInternal(const BLEND_STATE_DESC& desc, u32 id) const;
@@ -230,7 +230,7 @@ namespace bs
 
 		private:
 			/**	Triggered when a new sampler state is created. */
-			void NotifySamplerStateCreated(const SAMPLER_STATE_DESC& desc, const SPtr<SamplerState>& state) const;
+			void NotifySamplerStateCreated(const SamplerStateCreateInformation& desc, const SPtr<SamplerState>& state) const;
 
 			/**	Triggered when a new sampler state is created. */
 			void NotifyBlendStateCreated(const BLEND_STATE_DESC& desc, const CachedBlendState& state) const;
@@ -245,13 +245,13 @@ namespace bs
 			 * Triggered when the last reference to a specific sampler state is destroyed, which means we must clear our cached
 			 * version as well.
 			 */
-			void NotifySamplerStateDestroyed(const SAMPLER_STATE_DESC& desc) const;
+			void NotifySamplerStateDestroyed(const SamplerStateInformation& desc) const;
 
 			/**
 			 * Attempts to find a cached sampler state corresponding to the provided descriptor. Returns null if one doesn't
 			 * exist.
 			 */
-			SPtr<SamplerState> FindCachedState(const SAMPLER_STATE_DESC& desc) const;
+			SPtr<SamplerState> FindCachedState(const SamplerStateInformation& desc) const;
 
 			/**
 			 * Attempts to find a cached blend state corresponding to the provided descriptor. Returns null if one doesn't exist.
@@ -275,7 +275,7 @@ namespace bs
 			mutable SPtr<RasterizerState> mDefaultRasterizerState;
 			mutable SPtr<DepthStencilState> mDefaultDepthStencilState;
 
-			mutable UnorderedMap<SAMPLER_STATE_DESC, std::weak_ptr<SamplerState>> mCachedSamplerStates;
+			mutable UnorderedMap<SamplerStateInformation, std::weak_ptr<SamplerState>> mCachedSamplerStates;
 			mutable UnorderedMap<BLEND_STATE_DESC, CachedBlendState> mCachedBlendStates;
 			mutable UnorderedMap<RASTERIZER_STATE_DESC, CachedRasterizerState> mCachedRasterizerStates;
 			mutable UnorderedMap<DEPTH_STENCIL_STATE_DESC, CachedDepthStencilState> mCachedDepthStencilStates;

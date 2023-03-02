@@ -137,12 +137,6 @@ namespace bs
 		 */
 		void Clear();
 
-		/**
-		 * Changes the frame allocator owner thread. After the owner thread has changed only allocations from that thread
-		 * can be made.
-		 */
-		void SetOwnerThread(ThreadId thread);
-
 	private:
 		u32 mBlockSize;
 		Vector<MemBlock*> mBlocks;

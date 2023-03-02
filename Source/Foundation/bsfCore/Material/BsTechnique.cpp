@@ -2,6 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Material/BsTechnique.h"
 
+#include "BsCoreApplication.h"
 #include "BsShaderCompiler.h"
 #include "Error/BsException.h"
 #include "RenderAPI/BsRenderAPI.h"
@@ -10,6 +11,7 @@
 #include "Renderer/BsRenderer.h"
 #include "Managers/BsGpuProgramManager.h"
 #include "Private/RTTI/BsTechniqueRTTI.h"
+#include "Utility/BsPersistentCache.h"
 
 using namespace bs;
 
@@ -93,36 +95,72 @@ TAsyncOp<bool> TTechnique<Core>::Compile()
 
 	if(!mHasPassData)
 	{
-		SPtr<IShaderCompiler> shaderCompiler = ShaderCompilers::Instance().GetCompiler("bsl");
-		if(shaderCompiler == nullptr)
-		{
-			B3D_LOG(Error, Material, "Cannot compile variation. BSL shader compiler is not available.");
-			operation.CompleteOperation(true);
-			return operation;
-		}
-
 		const SPtr<ShaderType> owner = mOwner.lock();
-		B3D_ASSERT(owner != nullptr);
-
-		const ShadingLanguageFlag language = ShaderCompilers::ParseShadingLanguage(mLanguage);
-		const ShaderCompilerResult compileResult = shaderCompiler->CompileVariation(*owner, mVariationParameters, language, GetSelf());
-
-		if(!compileResult.ErrorMessage.empty())
+		if(!B3D_ENSURE(owner != nullptr))
 		{
-			B3D_LOG(Error, Renderer, "Compilation error when compiling a variation for shader \"{0}\":\n{1}. Location: {2} ({3})", owner->GetShaderName(), compileResult.ErrorMessage, compileResult.ErrorLine, compileResult.ErrorColumn);
-			operation.CompleteOperation(true);
+			B3D_LOG(Error, Material, "Cannot compile shader variation. Parent shader is not assigned.");
+			operation.CompleteOperation(false);
 			return operation;
 		}
 
-		mHasPassData = true;
+		const String& variationName = mVariationParameters.CreateVariationName();
+
+		StringStream hashStringStream;
+		hashStringStream << variationName << "\n";
+
+		const SPtr<ShaderCompilerMetaData>& shaderCompilerMetaData = owner->GetCompilerMetaData();
+		if(shaderCompilerMetaData != nullptr)
+		{
+			for(const auto& cachedIncludePair : shaderCompilerMetaData->IncludeHashes)
+				hashStringStream << cachedIncludePair.first << " = " << StringUtil::HexToLiteral(cachedIncludePair.second.data(), (u32)cachedIncludePair.second.size()) << "\n";
+		}
+
+		const String& hashString = hashStringStream.str();
+		const Array<u64, 2> variationHash = Shader::ComputeHash(hashString);
+
+		Path cacheName;
+		PersistentCache& cache = GetCoreApplication().GetApplicationCache();
+
+		if(shaderCompilerMetaData != nullptr && !shaderCompilerMetaData->NameInCache.empty())
+		{
+			cacheName = Path(shaderCompilerMetaData->NameInCache)+ mLanguage + StringUtil::HexToLiteral(variationHash.data(), (u32)variationHash.size());
+
+			const SPtr<TechniqueType> cachedTechnique = cache.TryGetEntry<TechniqueType>(cacheName);
+			if(cachedTechnique != nullptr)
+				GetSelf()->SetCompiledPassData(cachedTechnique->mPasses);
+		}
+
+		if(!mHasPassData)
+		{
+			SPtr<IShaderCompiler> shaderCompiler = ShaderCompilers::Instance().GetCompiler("bsl");
+			if(shaderCompiler == nullptr)
+			{
+				B3D_LOG(Error, Material, "Cannot compile variation. BSL shader compiler is not available.");
+				operation.CompleteOperation(false);
+				return operation;
+			}
+
+			const ShadingLanguageFlag language = ShaderCompilers::ParseShadingLanguage(mLanguage);
+			const ShaderCompilerResult compileResult = shaderCompiler->CompileVariation(*owner, mVariationParameters, language, *GetSelf());
+
+			if(!compileResult.ErrorMessage.empty())
+			{
+				B3D_LOG(Error, Renderer, "Compilation error when compiling a variation for shader \"{0}\":\n{1}. Location: {2} ({3})", owner->GetShaderName(), compileResult.ErrorMessage, compileResult.ErrorLine, compileResult.ErrorColumn);
+				operation.CompleteOperation(false);
+				return operation;
+			}
+
+			if(!cacheName.IsEmpty())
+				cache.SetEntry(cacheName, GetSelf());
+
+			mHasPassData = true;
+		}
 	}
 
 	if(!mIsCompiled)
 	{
 		for(auto& pass : mPasses)
-		{
 			pass->Compile();
-		}
 
 		mIsCompiled = true;
 	}

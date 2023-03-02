@@ -276,10 +276,6 @@ void FrameAlloc::DeallocBlock(MemBlock* block)
 	B3DFreeAligned16(block);
 }
 
-void FrameAlloc::SetOwnerThread(ThreadId thread)
-{
-}
-
 namespace bs
 {
 B3D_THREADLOCAL FrameAlloc* _GlobalFrameAlloc = nullptr;

@@ -263,7 +263,7 @@ bool SamplerOverrideUtility::CheckNeedsOverride(const SPtr<SamplerState>& sample
 SPtr<SamplerState> SamplerOverrideUtility::GenerateSamplerOverride(const SPtr<SamplerState>& samplerState, const SPtr<RenderBeastOptions>& options)
 {
 	const SamplerProperties& props = samplerState->GetProperties();
-	SAMPLER_STATE_DESC desc = props.GetDesc();
+	SamplerStateInformation desc = props.GetDesc();
 
 	switch(options->Filtering)
 	{

@@ -503,8 +503,8 @@ void TMaterial<Core>::InitDefaultParameters()
 		if(param.second.DefaultValueIndex == (u32)-1)
 			continue;
 
-		TextureType defaultTex = mShader->GetDefaultTexture(param.second.DefaultValueIndex);
-		GetParamTexture(param.first).Set(defaultTex);
+		const TextureType texture = param.second.Type == GPOT_TEXTURE3D ? mShader->GetDefault3DTexture(param.second.DefaultValueIndex) : mShader->GetDefault2DTexture(param.second.DefaultValueIndex);
+		GetParamTexture(param.first).Set(texture);
 	}
 
 	const Map<String, ShaderObjectParameterInformation>& samplerParams = mShader->GetSamplerParams();

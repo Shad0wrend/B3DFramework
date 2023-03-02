@@ -452,6 +452,9 @@ namespace bs
 		/** Converts one or multiple 32-bit numbers into a literal hexidecimal representation. Each entry is separated with a desh. */
 		static String HexToLiteral(const u32* input, u32 count);
 
+		/** Converts one or multiple 64-bit numbers into a literal hexidecimal representation. Each entry is separated with a desh. */
+		static String HexToLiteral(const u64* input, u32 count);
+
 		/** Converts all the characters in the string to lower case. Does not handle UTF8 encoded strings. */
 		static void ToLowerCase(String& str);
 

@@ -341,8 +341,11 @@ TMaterialParams<Core>::TMaterialParams(const ShaderType& shader, u64 initialPara
 		ParamTextureDataType& param = mTextureParams[textureIdx];
 		param.IsLoadStore = false;
 
-		if(entry.second.DefaultValueIndex != (u32)-1)
-			mDefaultTextureParams[textureIdx] = shader->GetDefaultTexture(entry.second.DefaultValueIndex);
+		if(entry.second.DefaultValueIndex != ~0u)
+		{
+			const TextureType texture = entry.second.Type == GPOT_TEXTURE3D ? shader->GetDefault3DTexture(entry.second.DefaultValueIndex) : shader->GetDefault2DTexture(entry.second.DefaultValueIndex);
+			mDefaultTextureParams[textureIdx] = texture;
+		}
 
 		textureIdx++;
 	}

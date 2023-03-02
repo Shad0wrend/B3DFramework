@@ -12,6 +12,7 @@
 #include "Material/BsShader.h"
 #include "Material/BsMaterial.h"
 #include "Private/RTTI/BsShaderCompilerRTTI.h"
+#include "Private/RTTI/BsSamplerStateRTTI.h"
 
 namespace bs
 {
@@ -391,114 +392,116 @@ namespace bs
 		}
 	};
 
+	class B3D_CORE_EXPORT ShaderInformationBaseRTTI : public RTTIType<ShaderInformationBase, IReflectable, ShaderInformationBaseRTTI>
+	{
+	private:
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER_PLAIN(QueueSortType, 0)
+			B3D_RTTI_MEMBER_PLAIN(QueuePriority, 1)
+			B3D_RTTI_MEMBER_PLAIN(SeparablePasses, 2)
+			B3D_RTTI_MEMBER_PLAIN(Flags, 3)
+
+			B3D_RTTI_MEMBER_PLAIN_MAP(DataParams, 4, Name)
+			B3D_RTTI_MEMBER_PLAIN_MAP(TextureParams, 5, Name)
+			B3D_RTTI_MEMBER_PLAIN_MAP(SamplerParams, 6, Name)
+			B3D_RTTI_MEMBER_PLAIN_MAP(BufferParams, 7, Name)
+			B3D_RTTI_MEMBER_PLAIN_MAP(ParamBlocks, 8, Name)
+
+			B3D_RTTI_MEMBER_PLAIN_ARRAY(DataDefaultValues, 9)
+			B3D_RTTI_MEMBER_PLAIN_ARRAY(TextureDefaultValues, 10)
+			B3D_RTTI_MEMBER_PLAIN_ARRAY(SamplerDefaultValues, 11)
+
+			B3D_RTTI_MEMBER_PLAIN_ARRAY(ParamAttributes, 12)
+			B3D_RTTI_MEMBER_PLAIN_ARRAY(VariationParams, 13)
+
+			B3D_RTTI_MEMBER_REFLPTR(CompilerMetaData, 14)
+		B3D_RTTI_END_MEMBERS
+
+	public:
+		const String& GetRttiName() override
+		{
+			static String name = "ShaderInformationBase";
+			return name;
+		}
+
+		u32 GetRttiId() override
+		{
+			return TID_ShaderInformationBase;
+		}
+
+		SPtr<IReflectable> NewRttiObject() override
+		{
+			return B3DMakeShared<ShaderInformationBase>();
+		}
+	};
+
+	class B3D_CORE_EXPORT ShaderInformationRTTI : public RTTIType<ShaderInformation, ShaderInformationBase, ShaderInformationRTTI>
+	{
+	private:
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER_REFLPTR_ARRAY(Techniques, 0)
+		B3D_RTTI_END_MEMBERS
+
+	public:
+		const String& GetRttiName() override
+		{
+			static String name = "ShaderInformation";
+			return name;
+		}
+
+		u32 GetRttiId() override
+		{
+			return TID_ShaderInformation;
+		}
+
+		SPtr<IReflectable> NewRttiObject() override
+		{
+			return B3DMakeShared<ShaderInformation>();
+		}
+	};
+
+	class B3D_CORE_EXPORT CoreShaderInformationRTTI : public RTTIType<ct::ShaderInformation, ShaderInformationBase, CoreShaderInformationRTTI>
+	{
+	private:
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER_REFLPTR_ARRAY(Techniques, 0)
+		B3D_RTTI_END_MEMBERS
+
+	public:
+		const String& GetRttiName() override
+		{
+			static String name = "CoreShaderInformation";
+			return name;
+		}
+
+		u32 GetRttiId() override
+		{
+			return TID_CoreShaderInformation;
+		}
+
+		SPtr<IReflectable> NewRttiObject() override
+		{
+			return B3DMakeShared<ct::ShaderInformation>();
+		}
+	};
+
 	class B3D_CORE_EXPORT ShaderRTTI : public RTTIType<Shader, Resource, ShaderRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_REFLPTR_ARRAY_NAMED(mTechniques, mDesc.Techniques, 0)
-			B3D_RTTI_MEMBER_PLAIN(mName, 1)
-
-			B3D_RTTI_MEMBER_PLAIN_NAMED(mQueueSortType, mDesc.QueueSortType, 7)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(mQueuePriority, mDesc.QueuePriority, 8)
-			B3D_RTTI_MEMBER_PLAIN_NAMED(mSeparablePasses, mDesc.SeparablePasses, 9)
-
-			B3D_RTTI_MEMBER_PLAIN_NAMED(mDataDefaultValues, mDesc.DataDefaultValues, 10)
-			B3D_RTTI_MEMBER_REFL_ARRAY_NAMED(mTextureDefaultValues, mDesc.TextureDefaultValues, 11)
-			B3D_RTTI_MEMBER_REFLPTR_ARRAY_NAMED(mSamplerDefaultValues, mDesc.SamplerDefaultValues, 12)
-
-			B3D_RTTI_MEMBER_PLAIN_NAMED(mFlags, mDesc.Flags, 13)
-			//B3D_RTTI_MEMBER_REFL_ARRAY_NAMED(mSubShaders, mDesc.SubShaders, 14)
-
-			B3D_RTTI_MEMBER_PLAIN_ARRAY_NAMED(mParamAttributes, mDesc.ParamAttributes, 15)
-			B3D_RTTI_MEMBER_PLAIN_ARRAY_NAMED(mVariationParams, mDesc.VariationParams, 16)
-
-			B3D_RTTI_MEMBER_REFLPTR_NAMED(mShaderCompilerMetaData, mDesc.CompilerMetaData, 17)
+			B3D_RTTI_MEMBER_PLAIN(mName, 0)
+			B3D_RTTI_MEMBER_REFL(mInformation, 1)
 		B3D_RTTI_END_MEMBERS
 
-		ShaderDataParameterInformation& GetDataParam(Shader* obj, u32 idx)
-		{
-			auto iter = obj->mDesc.DataParams.begin();
-			for(u32 i = 0; i < idx; i++) ++iter;
-
-			return iter->second;
-		}
-
-		void SetDataParam(Shader* obj, u32 idx, ShaderDataParameterInformation& val) { obj->mDesc.DataParams[val.Name] = val; }
-
-		u32 GetDataParamsArraySize(Shader* obj) { return (u32)obj->mDesc.DataParams.size(); }
-
-		void SetDataParamsArraySize(Shader* obj, u32 size) {} // Do nothing
-
-		ShaderObjectParameterInformation& GetTextureParam(Shader* obj, u32 idx)
-		{
-			auto iter = obj->mDesc.TextureParams.begin();
-			for(u32 i = 0; i < idx; i++) ++iter;
-
-			return iter->second;
-		}
-
-		void SetTextureParam(Shader* obj, u32 idx, ShaderObjectParameterInformation& val) { obj->mDesc.TextureParams[val.Name] = val; }
-
-		u32 GetTextureParamsArraySize(Shader* obj) { return (u32)obj->mDesc.TextureParams.size(); }
-
-		void SetTextureParamsArraySize(Shader* obj, u32 size) {} // Do nothing
-
-		ShaderObjectParameterInformation& GetSamplerParam(Shader* obj, u32 idx)
-		{
-			auto iter = obj->mDesc.SamplerParams.begin();
-			for(u32 i = 0; i < idx; i++) ++iter;
-
-			return iter->second;
-		}
-
-		void SetSamplerParam(Shader* obj, u32 idx, ShaderObjectParameterInformation& val) { obj->mDesc.SamplerParams[val.Name] = val; }
-
-		u32 GetSamplerParamsArraySize(Shader* obj) { return (u32)obj->mDesc.SamplerParams.size(); }
-
-		void SetSamplerParamsArraySize(Shader* obj, u32 size) {} // Do nothing
-
-		ShaderObjectParameterInformation& GetBufferParam(Shader* obj, u32 idx)
-		{
-			auto iter = obj->mDesc.BufferParams.begin();
-			for(u32 i = 0; i < idx; i++) ++iter;
-
-			return iter->second;
-		}
-
-		void SetBufferParam(Shader* obj, u32 idx, ShaderObjectParameterInformation& val) { obj->mDesc.BufferParams[val.Name] = val; }
-
-		u32 GetBufferParamsArraySize(Shader* obj) { return (u32)obj->mDesc.BufferParams.size(); }
-
-		void SetBufferParamsArraySize(Shader* obj, u32 size) {} // Do nothing
-
-		ShaderParameterBlockInformation& GetParamBlock(Shader* obj, u32 idx)
-		{
-			auto iter = obj->mDesc.ParamBlocks.begin();
-			for(u32 i = 0; i < idx; i++) ++iter;
-
-			return iter->second;
-		}
-
-		void SetParamBlock(Shader* obj, u32 idx, ShaderParameterBlockInformation& val) { obj->mDesc.ParamBlocks[val.Name] = val; }
-
-		u32 GetParamBlocksArraySize(Shader* obj) { return (u32)obj->mDesc.ParamBlocks.size(); }
-
-		void SetParamBlocksArraySize(Shader* obj, u32 size) {} // Do nothing
-
 	public:
-		ShaderRTTI()
-		{
-			AddPlainArrayField("mDataParams", 2, &ShaderRTTI::GetDataParam, &ShaderRTTI::GetDataParamsArraySize, &ShaderRTTI::SetDataParam, &ShaderRTTI::SetDataParamsArraySize);
-			AddPlainArrayField("mTextureParams", 3, &ShaderRTTI::GetTextureParam, &ShaderRTTI::GetTextureParamsArraySize, &ShaderRTTI::SetTextureParam, &ShaderRTTI::SetTextureParamsArraySize);
-			AddPlainArrayField("mSamplerParams", 4, &ShaderRTTI::GetSamplerParam, &ShaderRTTI::GetSamplerParamsArraySize, &ShaderRTTI::SetSamplerParam, &ShaderRTTI::SetSamplerParamsArraySize);
-			AddPlainArrayField("mBufferParams", 5, &ShaderRTTI::GetBufferParam, &ShaderRTTI::GetBufferParamsArraySize, &ShaderRTTI::SetBufferParam, &ShaderRTTI::SetBufferParamsArraySize);
-			AddPlainArrayField("mParamBlocks", 6, &ShaderRTTI::GetParamBlock, &ShaderRTTI::GetParamBlocksArraySize, &ShaderRTTI::SetParamBlock, &ShaderRTTI::SetParamBlocksArraySize);
-		}
-
 		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
 		{
 			Shader* shader = static_cast<Shader*>(obj);
 			shader->Initialize();
+
+			// Note: Important to call Initialize before the call below, because it will trigger a sync to render thread, and shaders render thread representation only gets created once Initialize() is called.
+			for(const auto& technique : shader->mInformation.Techniques)
+				technique->SetOwner(std::static_pointer_cast<Shader>(shader->GetShared()));
 		}
 
 		const String& GetRttiName() override
@@ -515,6 +518,42 @@ namespace bs
 		SPtr<IReflectable> NewRttiObject() override
 		{
 			return Shader::CreateEmpty();
+		}
+	};
+
+	class B3D_CORE_EXPORT CoreShaderRTTI : public RTTIType<ct::Shader, IReflectable, CoreShaderRTTI>
+	{
+	private:
+		B3D_RTTI_BEGIN_MEMBERS
+			B3D_RTTI_MEMBER_PLAIN(mName, 0)
+			B3D_RTTI_MEMBER_REFL(mInformation, 1)
+		B3D_RTTI_END_MEMBERS
+
+	public:
+		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
+		{
+			ct::Shader* const shader = static_cast<ct::Shader*>(obj);
+
+			for(const auto& technique : shader->mInformation.Techniques)
+				technique->SetOwner(std::static_pointer_cast<ct::Shader>(shader->GetShared()));
+
+			shader->Initialize();
+		}
+
+		const String& GetRttiName() override
+		{
+			static String name = "CoreShader";
+			return name;
+		}
+
+		u32 GetRttiId() override
+		{
+			return TID_CoreShader;
+		}
+
+		SPtr<IReflectable> NewRttiObject() override
+		{
+			return ct::Shader::CreateEmpty();
 		}
 	};
 

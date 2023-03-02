@@ -34,8 +34,7 @@ Application::Application(const START_UP_DESC& desc)
 Application::~Application()
 {
 	// Cleanup any new objects queued for destruction by unloaded scripts
-	CoreObjectManager::Instance().SyncToCore();
-	GetCoreThread().Update();
+	CoreObjectManager::Instance().SyncToCore(true);
 	GetCoreThread().SubmitAll(true);
 
 	Cursor::ShutDown();

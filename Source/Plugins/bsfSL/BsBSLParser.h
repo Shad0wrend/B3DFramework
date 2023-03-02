@@ -90,13 +90,13 @@ namespace bs
 		 */
 		static ShaderCompilerResult ParseMetaData(const String& source, const UnorderedMap<String, String>& defines, ShaderCreateInformation& inOutShaderInformation, BSLParsedShaderMetaData& outShaderMetaData, Vector<String>& outIncludes)
 		{
-			return TParseMetaData(source, defines, inOutShaderInformation, outShaderMetaData, outIncludes);
+			return TParseMetaData<false>(source, defines, inOutShaderInformation, outShaderMetaData, outIncludes);
 		}
 
 		/** @copydoc ParseMetaData(const String&, const UnorderedMap<String, String>&, ShaderCreateInformation&, BSLParsedShaderMetaData&, Vector<String>&). */
 		static ShaderCompilerResult ParseMetaData(const String& source, const UnorderedMap<String, String>& defines, ct::ShaderCreateInformation& inOutShaderInformation, BSLParsedShaderMetaData& outShaderMetaData, Vector<String>& outIncludes)
 		{
-			return TParseMetaData(source, defines, inOutShaderInformation, outShaderMetaData, outIncludes);
+			return TParseMetaData<true>(source, defines, inOutShaderInformation, outShaderMetaData, outIncludes);
 		}
 
 		/**
@@ -135,7 +135,7 @@ namespace bs
 
 		/** Templated version of ParseMetaData for both main and render thread. */
 		template<bool Core>
-		static ShaderCompilerResult TParseMetaData(const String& source, const UnorderedMap<String, String>& defines, TShaderCreateInformation<Core>& inOutShaderInformation, BSLParsedShaderMetaData& outShaderMetaData, Vector<String>& outIncludes);
+		static ShaderCompilerResult TParseMetaData(const String& source, const UnorderedMap<String, String>& defines, CoreVariantType<ShaderCreateInformation, Core>& inOutShaderInformation, BSLParsedShaderMetaData& outShaderMetaData, Vector<String>& outIncludes);
 
 		/** Parses the shader/mixin node and outputs the relevant meta-data. */
 		static BSLParsedShaderMetaData ParseShaderMetaData(ASTFXNode* shader);
@@ -145,7 +145,7 @@ namespace bs
 		 * as well as any global shader options.
 		 */
 		template<bool Core>
-		static ShaderCompilerResult TParseMetaDataAndOptions(ASTFXNode* rootNode, Vector<std::pair<ASTFXNode*, BSLParsedShaderMetaData>>& metaData, TShaderCreateInformation<Core>& shaderCreateInformation);
+		static ShaderCompilerResult TParseMetaDataAndOptions(ASTFXNode* rootNode, Vector<std::pair<ASTFXNode*, BSLParsedShaderMetaData>>& metaData, CoreVariantType<ShaderCreateInformation, Core>& shaderCreateInformation);
 
 		/** Parses shader variations and writes them to the provided meta-data object. */
 		static void ParseVariations(BSLParsedShaderMetaData& metaData, ASTFXNode* variations);
@@ -256,11 +256,11 @@ namespace bs
 		/**
 		 * Parser the options AST node that contains global shader options.
 		 *
-		 * @param[in]	optionsNode		Node to parse.
-		 * @param[in]	shaderDesc		Descriptor to apply the found options to.
+		 * @param	optionsNode						Node to parse.
+		 * @param	outShaderCreateInformation		Descriptor to apply the found options to.
 		 */
 		template<bool Core>
-		static void TParseOptions(ASTFXNode* optionsNode, TShaderCreateInformation<Core>& outShaderCreateInformation);
+		static void TParseOptions(ASTFXNode* optionsNode, CoreVariantType<ShaderCreateInformation, Core>& outShaderCreateInformation);
 
 		/**
 		 * Iterates over all provided mixins/shaders and inherits any variations. The variations are written in-place, to
@@ -270,7 +270,7 @@ namespace bs
 
 		/** Populates the information about variation parameters and their values. */
 		template<bool Core>
-		static void TPopulateVariationParameters(const BSLParsedShaderMetaData& shaderMetaData, TShaderCreateInformation<Core>& shaderCreateInformation);
+		static void TPopulateVariationParameters(const BSLParsedShaderMetaData& shaderMetaData, CoreVariantType<ShaderCreateInformation, Core>& shaderCreateInformation);
 
 		/**
 		 * Converts a null-terminated string into a standard string, and eliminates quotes that are assumed to be at the

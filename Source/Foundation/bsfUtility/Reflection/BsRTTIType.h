@@ -107,10 +107,10 @@ namespace bs
                                                                                                                                      \
 	typedef META_NextEntry_##name
 
-/**
- * Registers a new member field in the RTTI type. The field references the @p name member in the owner class.
- * The type of the member must be an array of valid plain types. Each field must specify a unique ID for @p id.
- */
+	/**
+	 * Registers a new member field in the RTTI type. The field references the @p name member in the owner class.
+	 * The type of the member must be an array of valid plain types. Each field must specify a unique ID for @p id.
+	 */
 #define B3D_RTTI_MEMBER_PLAIN_ARRAY(name, id) B3D_RTTI_MEMBER_PLAIN_ARRAY_FULL(name, name, id, bs::RTTIFieldInfo::DEFAULT)
 
 	/**
@@ -122,6 +122,63 @@ namespace bs
 	 * Same as B3D_RTTI_MEMBER_PLAIN_ARRAY, but allows you to specify an info structure that further describes the field.
 	 */
 #define B3D_RTTI_MEMBER_PLAIN_ARRAY_INFO(name, id, info) B3D_RTTI_MEMBER_PLAIN_ARRAY_FULL(name, name, id, info)
+
+	/**
+	 * Same as B3D_RTTI_MEMBER_PLAIN_MAP, but allows you to specify separate names for the field name and the member
+	 * variable, as well as an optional info structure further describing the field.
+	 */
+#define B3D_RTTI_MEMBER_PLAIN_MAP_FULL(name, field, id, key, info)                                                                   \
+	META_Entry_##name;                                                                                                               \
+                                                                                                                                     \
+	std::common_type<decltype(OwnerType::field)>::type::mapped_type& Get##name(OwnerType* object, ::bs::u32 index)                   \
+	{                                                                                                                                \
+		auto iterator = object->field.begin();                                                                                       \
+		for(u32 i = 0; i < index; i++)                                                                                               \
+		{                                                                                                                            \
+			++iterator;                                                                                                              \
+		}                                                                                                                            \
+		return iterator->second;                                                                                                     \
+	}                                                                                                                                \
+	void Set##name(OwnerType* object, ::bs::u32 index, std::common_type<decltype(OwnerType::field)>::type::mapped_type& value)       \
+	{                                                                                                                                \
+		object->field[value.key] = value;                                                                                            \
+	}                                                                                                                                \
+	::bs::u32 GetSize##name(OwnerType* object)                                                                                       \
+	{                                                                                                                                \
+		return (::bs::u32)object->field.size();                                                                                      \
+	}                                                                                                                                \
+	void SetSize##name(OwnerType* object, ::bs::u32 size)                                                                            \
+	{ /* Do nothing*/                                                                                                                \
+	}                                                                                                                                \
+                                                                                                                                     \
+	struct META_NextEntry_##name                                                                                                     \
+	{                                                                                                                                \
+	};                                                                                                                               \
+	void META_InitPrevEntry(META_NextEntry_##name typeId)                                                                            \
+	{                                                                                                                                \
+		AddPlainArrayField(#name, id, &MyType::Get##name, &MyType::GetSize##name, &MyType::Set##name, &MyType::SetSize##name, info); \
+		META_InitPrevEntry(META_Entry_##name());                                                                                     \
+	}                                                                                                                                \
+                                                                                                                                     \
+	typedef META_NextEntry_##name
+
+/**
+ * Registers a new member field in the RTTI type. The field references the @p name member in the owner class.
+ * The type of the member must be a map of valid plain types. The mapped value must also contain the key as one of its fields, provided as @p key.
+ * Each field must specify a unique ID for @p id.
+ */
+#define B3D_RTTI_MEMBER_PLAIN_MAP(name, id, key) B3D_RTTI_MEMBER_PLAIN_MAP_FULL(name, name, id, key, bs::RTTIFieldInfo::DEFAULT)
+
+/**
+ * Same as B3D_RTTI_MEMBER_PLAIN_MAP, but allows you to specify separate names for the field name and the member variable.
+ */
+#define B3D_RTTI_MEMBER_PLAIN_MAP_NAMED(name, field, id, key) B3D_RTTI_MEMBER_PLAIN_MAP_FULL(name, field, id, key, bs::RTTIFieldInfo::DEFAULT)
+
+/**
+ * Same as B3D, but allows you to specify an info structure that further describes the field.
+ */
+#define B3D_RTTI_MEMBER_PLAIN_MAP_INFO(name, id, key, info) B3D_RTTI_MEMBER_PLAIN_MAP_FULL(name, name, id, key, info)
+
 
 /**
  * Same as B3D_RTTI_MEMBER_REFL, but allows you to specify separate names for the field name and the member variable,

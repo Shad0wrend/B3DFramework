@@ -12,6 +12,8 @@ using namespace bs;
 CoreObjectManager::CoreObjectManager()
 	: mNextAvailableID(1)
 {
+	for(u32 allocatorIndex = 0; allocatorIndex < B3DSize(mSyncAllocators); allocatorIndex++)
+		mSyncAllocators[allocatorIndex] = B3DNew<FrameAlloc>();
 }
 
 CoreObjectManager::~CoreObjectManager()
@@ -29,6 +31,11 @@ CoreObjectManager::~CoreObjectManager()
 										  "engine objects before shutdown.");
 	}
 #endif
+
+	for(u32 allocatorIndex = 0; allocatorIndex < B3DSize(mSyncAllocators); allocatorIndex++)
+	{
+		B3DDelete(mSyncAllocators[allocatorIndex]);
+	}
 }
 
 u64 CoreObjectManager::GenerateId()
@@ -63,7 +70,7 @@ void CoreObjectManager::UnregisterObject(CoreObject* object)
 			SPtr<ct::CoreObject> coreObject = object->GetCore();
 			if(coreObject != nullptr)
 			{
-				CoreSyncData objSyncData = object->SyncToCore(GetCoreThread().GetFrameAlloc());
+				CoreSyncData objSyncData = object->SyncToCore(mSyncAllocators[mActiveFrameAllocatorIndex]);
 
 				mDestroyedSyncData.push_back(CoreStoredSyncObjData(coreObject, internalId, objSyncData));
 
@@ -211,10 +218,18 @@ void CoreObjectManager::UpdateDependencies(CoreObject* object, Vector<CoreObject
 	B3DClearAllocatorFrame();
 }
 
-void CoreObjectManager::SyncToCore()
+void CoreObjectManager::SyncToCore(bool swapBuffers)
 {
-	SyncDownload(GetCoreThread().GetFrameAlloc());
+	Lock lock(mObjectsMutex);
+
+	SyncDownload(mSyncAllocators[mActiveFrameAllocatorIndex]);
 	GetCoreThread().QueueCommand(std::bind(&CoreObjectManager::SyncUpload, this));
+
+	if(swapBuffers)
+	{
+		mActiveFrameAllocatorIndex = (mActiveFrameAllocatorIndex + 1) % B3DSize(mSyncAllocators);
+		mSyncAllocators[mActiveFrameAllocatorIndex]->Clear();
+	}
 }
 
 void CoreObjectManager::SyncToCore(CoreObject* object)
@@ -228,7 +243,7 @@ void CoreObjectManager::SyncToCore(CoreObject* object)
 
 	Lock lock(mObjectsMutex);
 
-	FrameAlloc* allocator = GetCoreThread().GetFrameAlloc();
+	FrameAlloc* allocator = mSyncAllocators[mActiveFrameAllocatorIndex];
 	Vector<IndividualCoreSyncData> syncData;
 
 	std::function<void(CoreObject*)> syncObject = [&](CoreObject* curObj)
@@ -292,11 +307,7 @@ void CoreObjectManager::SyncToCore(CoreObject* object)
 
 void CoreObjectManager::SyncDownload(FrameAlloc* allocator)
 {
-	Lock lock(mObjectsMutex);
-
-	mCoreSyncData.push_back(CoreStoredSyncData());
-	CoreStoredSyncData& syncData = mCoreSyncData.back();
-
+	CoreStoredSyncData syncData;
 	syncData.Alloc = allocator;
 
 	// Add all objects dependant on the dirty objects
@@ -387,16 +398,22 @@ void CoreObjectManager::SyncDownload(FrameAlloc* allocator)
 
 	mDirtyObjects.clear();
 	mDestroyedSyncData.clear();
+
+	mCoreSyncData.emplace_back(std::move(syncData));
 }
 
 void CoreObjectManager::SyncUpload()
 {
-	Lock lock(mObjectsMutex);
+	CoreStoredSyncData syncData;
+	{
+		Lock lock(mObjectsMutex);
 
-	if(mCoreSyncData.size() == 0)
-		return;
+		if(mCoreSyncData.empty())
+			return;
 
-	CoreStoredSyncData& syncData = mCoreSyncData.front();
+		syncData = std::move(mCoreSyncData.front());
+		mCoreSyncData.pop_front();
+	}
 
 	for(auto& objSyncData : syncData.Entries)
 	{
@@ -412,5 +429,4 @@ void CoreObjectManager::SyncUpload()
 
 	syncData.DestroyedObjects.clear();
 	syncData.Entries.clear();
-	mCoreSyncData.pop_front();
 }

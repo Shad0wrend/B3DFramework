@@ -130,6 +130,9 @@ namespace bs
 		/** Returns the path to a directory where temporary files may be stored. */
 		static Path GetTempDirectoryPath();
 
+		/** Returns the application data folder for the current user. */
+		static Path GetApplicationDataFolder();
+
 	private:
 		/** Copy a single file. Internal function used by copy(). */
 		static bool CopyFile(const Path& oldPath, const Path& newPath);

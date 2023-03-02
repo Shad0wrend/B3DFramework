@@ -11,11 +11,6 @@ namespace bs
 	 *  @{
 	 */
 
-	template<bool Core>
-	struct TShaderCreateInformation;
-
-	typedef TShaderCreateInformation<false> ShaderCreateInformation;
-
 	/** Types of supported code output when cross compiling HLSL to GLSL. */
 	enum class HLSLCrossCompileOutput
 	{
@@ -28,7 +23,6 @@ namespace bs
 	/**	Transforms HLSL into other shading languages, and also outputs reflection data. */
 	class HLSLCrossCompiler
 	{
-		// TODO - Embed SPIRVCross and GLSLang here so I can immediately output MSL and SPIR-V, instead of always outputting GLSL
 	public:
 		/**
 		 * Cross compiles the provided HLSL source code into the requested output language.
@@ -53,18 +47,18 @@ namespace bs
 		 */
 		static ShaderCompilerResult Reflect(const String& hlsl, ShaderCreateInformation& outShaderCreateInformation, SmallVector<GpuProgramType, 2>& outEntryPoints)
 		{
-			return TReflect(hlsl, outShaderCreateInformation, outEntryPoints);
+			return TReflect<false>(hlsl, outShaderCreateInformation, outEntryPoints);
 		}
 
 		/** @copydoc Reflect(const String&, ShaderCreateInformation&, SmallVector<GpuProgramType, 2>&) */
 		static ShaderCompilerResult Reflect(const String& hlsl, ct::ShaderCreateInformation& outShaderCreateInformation, SmallVector<GpuProgramType, 2>& outEntryPoints)
 		{
-			return TReflect(hlsl, outShaderCreateInformation, outEntryPoints);
+			return TReflect<true>(hlsl, outShaderCreateInformation, outEntryPoints);
 		}
 
 	private:
 		template<bool Core>
-		static ShaderCompilerResult TReflect(const String& hlsl, TShaderCreateInformation<Core>& outShaderCreateInformation, SmallVector<GpuProgramType, 2>& outEntryPoints); // TODO - Output reflection information in a more generalized form, rather than ShaderCreateInformation
+		static ShaderCompilerResult TReflect(const String& hlsl, CoreVariantType<ShaderCreateInformation, Core>& outShaderCreateInformation, SmallVector<GpuProgramType, 2>& outEntryPoints); // TODO - Output reflection information in a more generalized form, rather than ShaderCreateInformation
 	};
 
 	/** @} */

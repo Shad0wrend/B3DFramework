@@ -8,7 +8,7 @@
 
 using namespace bs;
 
-SPtr<SamplerState> RenderStateManager::CreateSamplerState(const SAMPLER_STATE_DESC& desc) const
+SPtr<SamplerState> RenderStateManager::CreateSamplerState(const SamplerStateCreateInformation& desc) const
 {
 	SPtr<SamplerState> state = CreateSamplerStatePtrInternal(desc);
 	state->Initialize();
@@ -56,7 +56,7 @@ SPtr<ComputePipelineState> RenderStateManager::CreateComputePipelineState(const 
 	return state;
 }
 
-SPtr<SamplerState> RenderStateManager::CreateSamplerStatePtrInternal(const SAMPLER_STATE_DESC& desc) const
+SPtr<SamplerState> RenderStateManager::CreateSamplerStatePtrInternal(const SamplerStateCreateInformation& desc) const
 {
 	SPtr<SamplerState> samplerState = B3DMakeCoreFromExisting<SamplerState>(new(B3DAllocate<SamplerState>()) SamplerState(desc));
 	samplerState->SetShared(samplerState);
@@ -109,7 +109,7 @@ SPtr<ComputePipelineState> RenderStateManager::CreateComputePipelineStateInterna
 const SPtr<SamplerState>& RenderStateManager::GetDefaultSamplerState() const
 {
 	if(mDefaultSamplerState == nullptr)
-		mDefaultSamplerState = CreateSamplerState(SAMPLER_STATE_DESC());
+		mDefaultSamplerState = CreateSamplerState(SamplerStateInformation());
 
 	return mDefaultSamplerState;
 }
@@ -140,7 +140,7 @@ const SPtr<DepthStencilState>& RenderStateManager::GetDefaultDepthStencilState()
 
 namespace bs { namespace ct
 {
-SPtr<SamplerState> RenderStateManager::CreateSamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask) const
+SPtr<SamplerState> RenderStateManager::CreateSamplerState(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask) const
 {
 	SPtr<SamplerState> state = FindCachedState(desc);
 	if(state == nullptr)
@@ -233,7 +233,7 @@ SPtr<GpuPipelineParamInfo> RenderStateManager::CreatePipelineParamInfo(
 	return paramInfo;
 }
 
-SPtr<SamplerState> RenderStateManager::CreateSamplerStateInternal(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask) const
+SPtr<SamplerState> RenderStateManager::CreateSamplerStateInternal(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask) const
 {
 	SPtr<SamplerState> state = FindCachedState(desc);
 	if(state == nullptr)
@@ -342,7 +342,7 @@ void RenderStateManager::OnShutDown()
 const SPtr<SamplerState>& RenderStateManager::GetDefaultSamplerState() const
 {
 	if(mDefaultSamplerState == nullptr)
-		mDefaultSamplerState = CreateSamplerState(SAMPLER_STATE_DESC());
+		mDefaultSamplerState = CreateSamplerState(SamplerStateInformation());
 
 	return mDefaultSamplerState;
 }
@@ -371,7 +371,7 @@ const SPtr<DepthStencilState>& RenderStateManager::GetDefaultDepthStencilState()
 	return mDefaultDepthStencilState;
 }
 
-void RenderStateManager::NotifySamplerStateCreated(const SAMPLER_STATE_DESC& desc, const SPtr<SamplerState>& state) const
+void RenderStateManager::NotifySamplerStateCreated(const SamplerStateCreateInformation& desc, const SPtr<SamplerState>& state) const
 {
 	Lock lock(mMutex);
 
@@ -399,14 +399,14 @@ void RenderStateManager::NotifyDepthStencilStateCreated(const DEPTH_STENCIL_STAT
 	mCachedDepthStencilStates[desc] = state;
 }
 
-void RenderStateManager::NotifySamplerStateDestroyed(const SAMPLER_STATE_DESC& desc) const
+void RenderStateManager::NotifySamplerStateDestroyed(const SamplerStateInformation& desc) const
 {
 	Lock lock(mMutex);
 
 	mCachedSamplerStates.erase(desc);
 }
 
-SPtr<SamplerState> RenderStateManager::FindCachedState(const SAMPLER_STATE_DESC& desc) const
+SPtr<SamplerState> RenderStateManager::FindCachedState(const SamplerStateInformation& desc) const
 {
 	Lock lock(mMutex);
 
@@ -480,7 +480,7 @@ SPtr<DepthStencilState> RenderStateManager::FindCachedState(const DEPTH_STENCIL_
 	return nullptr;
 }
 
-SPtr<SamplerState> RenderStateManager::CreateSamplerStateInternalInternal(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask) const
+SPtr<SamplerState> RenderStateManager::CreateSamplerStateInternalInternal(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask) const
 {
 	SPtr<SamplerState> state =
 		B3DMakeSharedFromExisting<SamplerState>(new(B3DAllocate<SamplerState>()) SamplerState(desc, deviceMask));

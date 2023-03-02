@@ -6,6 +6,7 @@
 #include "FileSystem/BsFileSystem.h"
 #include "Managers/BsGpuProgramManager.h"
 #include "Resources/BsBuiltinResources.h"
+#include "Utility/BsPersistentCache.h"
 
 using namespace bs;
 
@@ -34,7 +35,6 @@ SPtr<CoreVariantType<Shader, Core>> ShaderCompilers::GetOrCompileShader(const Pa
 	using ShaderType = CoreVariantType<Shader, Core>;
 
 	const SPtr<DataStream> shaderFileStream = FileSystem::OpenFile(shaderPath);
-
 	if(shaderFileStream == nullptr)
 	{
 		B3D_LOG(Error, Resources, "Shader compilation failed for shader \"{0}\". Shader source cannot be found.", shaderPath);
@@ -42,11 +42,39 @@ SPtr<CoreVariantType<Shader, Core>> ShaderCompilers::GetOrCompileShader(const Pa
 	}
 
 	const String& shaderSource = shaderFileStream->GetAsString();
-	const String& shaderName = shaderPath.ToString();
 	const ShadingLanguageFlag activeShadingLanguage = DetectActiveShadingLanguage();
+	const String shadingLanguageName = String(GetShadingLanguageName(activeShadingLanguage)) + "/";
+	const String& shaderName = shaderPath.GetFilename(false);
+	const Array<u64, 2> shaderHash = Shader::ComputeHash(shaderSource);
+	const String shaderNameInCache = cachePrefix + shaderName + "/";
 
-	SPtr<CoreVariantType<Shader, Core>> shader;
-	// TODO - Add caching
+	const Path shaderPathInCache = Path(shaderNameInCache) + shadingLanguageName + "MetaData";
+	PersistentCache& cache = GetCoreApplication().GetApplicationCache();
+
+	SPtr<ShaderType> shader = cache.TryGetEntry<ShaderType>(shaderPathInCache);
+	if(shader != nullptr)
+	{
+		const SPtr<ShaderCompilerMetaData> compilerMetaData = shader->GetCompilerMetaData();
+		if(compilerMetaData != nullptr)
+		{
+			if(shaderHash != compilerMetaData->ShaderHash)
+			{
+				shader = nullptr;
+			}
+			else
+			{
+				for(const auto& includeHash : compilerMetaData->IncludeHashes)
+				{
+					const Array<u64, 2> newIncludeHash = Shader::ComputeIncludeHash(includeHash.first);
+					if(newIncludeHash != includeHash.second)
+					{
+						shader = nullptr;
+						break;
+					}
+				}
+			}
+		}
+	}
 
 	if(shader == nullptr)
 	{
@@ -68,6 +96,15 @@ SPtr<CoreVariantType<Shader, Core>> ShaderCompilers::GetOrCompileShader(const Pa
 		{
 			B3D_LOG(Error, Resources, "Shader compilation failed for shader \"{0}\". Unknown compilation failure.", shaderPath);
 			return nullptr;
+		}
+
+		const SPtr<ShaderCompilerMetaData> compilerMetaData = shader->GetCompilerMetaData();
+		if(B3D_ENSURE(compilerMetaData != nullptr))
+		{
+			compilerMetaData->NameInCache = shaderNameInCache;
+			compilerMetaData->ShaderHash = shaderHash;
+
+			cache.SetEntry(shaderPathInCache, shader);
 		}
 	}
 

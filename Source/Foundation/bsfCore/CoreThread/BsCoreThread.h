@@ -110,21 +110,6 @@ namespace bs
 		void QueueCommand(std::function<void()> commandCallback, CoreThreadQueueFlags flags = CTQF_Default);
 
 		/**
-		 * Called once every frame.
-		 *
-		 * @note	Must be called before sim thread schedules any core thread operations for the frame.
-		 */
-		void Update();
-
-		/**
-		 * Returns a frame allocator that should be used for allocating temporary data being passed to the core thread. As the
-		 * name implies the data only lasts one frame, so you need to be careful not to use it for longer than that.
-		 *
-		 * @note	Sim thread only.
-		 */
-		FrameAlloc* GetFrameAlloc() const;
-
-		/**
 		 * @name Internal
 		 * @{
 		 */
@@ -152,16 +137,9 @@ namespace bs
 		 *  - New core thread frame starts, it reads some data from buffer 1.
 		 *  - ...
 		 */
-		static const int kNumSyncBuffers = 2;
+		static constexpr int kSyncBufferCount = 2;
 
 	private:
-		/**
-		 * Double buffered frame allocators. Means sim thread cannot be more than 1 frame ahead of core thread (If that changes
-		 * you should be able to easily add more).
-		 */
-		FrameAlloc* mFrameAllocs[kNumSyncBuffers];
-		u32 mActiveFrameAlloc = 0;
-
 		static QueueData mPerThreadQueue;
 		Vector<ThreadQueueContainer*> mAllQueues;
 

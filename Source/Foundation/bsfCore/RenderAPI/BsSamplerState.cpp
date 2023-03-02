@@ -6,7 +6,7 @@
 
 using namespace bs;
 
-bool SAMPLER_STATE_DESC::operator==(const SAMPLER_STATE_DESC& rhs) const
+bool SamplerStateInformation::operator==(const SamplerStateInformation& rhs) const
 {
 	return AddressMode == rhs.AddressMode &&
 		MinFilter == rhs.MinFilter &&
@@ -20,7 +20,7 @@ bool SAMPLER_STATE_DESC::operator==(const SAMPLER_STATE_DESC& rhs) const
 		ComparisonFunc == rhs.ComparisonFunc;
 }
 
-SamplerProperties::SamplerProperties(const SAMPLER_STATE_DESC& desc)
+SamplerProperties::SamplerProperties(const SamplerStateInformation& desc)
 	: mData(desc), mHash(SamplerState::GenerateHash(desc))
 {}
 
@@ -44,7 +44,7 @@ const Color& SamplerProperties::GetBorderColor() const
 	return mData.BorderColor;
 }
 
-SamplerState::SamplerState(const SAMPLER_STATE_DESC& desc)
+SamplerState::SamplerState(const SamplerStateCreateInformation& desc)
 	: mProperties(desc)
 {
 }
@@ -59,7 +59,7 @@ SPtr<ct::CoreObject> SamplerState::CreateCore() const
 	return ct::RenderStateManager::Instance().CreateSamplerStateInternal(mProperties.mData);
 }
 
-SPtr<SamplerState> SamplerState::Create(const SAMPLER_STATE_DESC& desc)
+SPtr<SamplerState> SamplerState::Create(const SamplerStateCreateInformation& desc)
 {
 	return RenderStateManager::Instance().CreateSamplerState(desc);
 }
@@ -69,7 +69,7 @@ const SPtr<SamplerState>& SamplerState::GetDefault()
 	return RenderStateManager::Instance().GetDefaultSamplerState();
 }
 
-u64 SamplerState::GenerateHash(const SAMPLER_STATE_DESC& desc)
+u64 SamplerState::GenerateHash(const SamplerStateInformation& desc)
 {
 	size_t hash = 0;
 	B3DCombineHash(hash, (u32)desc.AddressMode.U);
@@ -110,7 +110,7 @@ RTTITypeBase* SamplerState::GetRtti() const
 namespace bs { namespace ct
 {
 
-SamplerState::SamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask)
+SamplerState::SamplerState(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask)
 	: mProperties(desc)
 {
 }
@@ -136,7 +136,7 @@ const SamplerProperties& SamplerState::GetProperties() const
 	return mProperties;
 }
 
-SPtr<SamplerState> SamplerState::Create(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask)
+SPtr<SamplerState> SamplerState::Create(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask)
 {
 	return RenderStateManager::Instance().CreateSamplerState(desc, deviceMask);
 }

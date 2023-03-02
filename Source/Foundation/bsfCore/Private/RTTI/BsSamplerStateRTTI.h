@@ -15,14 +15,14 @@ namespace bs
 	 *  @{
 	 */
 
-	B3D_ALLOW_MEMCPY_SERIALIZATION(SAMPLER_STATE_DESC);
+	B3D_ALLOW_MEMCPY_SERIALIZATION(SamplerStateInformation);
 
 	class B3D_CORE_EXPORT SamplerStateRTTI : public RTTIType<SamplerState, IReflectable, SamplerStateRTTI>
 	{
 	private:
-		SAMPLER_STATE_DESC& GetData(SamplerState* obj) { return obj->mProperties.mData; }
+		SamplerStateInformation& GetData(SamplerState* obj) { return obj->mProperties.mData; }
 
-		void SetData(SamplerState* obj, SAMPLER_STATE_DESC& val) { obj->mProperties.mData = val; }
+		void SetData(SamplerState* obj, SamplerStateInformation& val) { obj->mProperties.mData = val; }
 
 	public:
 		SamplerStateRTTI()
@@ -49,7 +49,7 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject()
 		{
-			return RenderStateManager::Instance().CreateSamplerStatePtrInternal(SAMPLER_STATE_DESC());
+			return RenderStateManager::Instance().CreateSamplerStatePtrInternal(SamplerStateInformation());
 		}
 	};
 

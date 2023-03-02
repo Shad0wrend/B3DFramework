@@ -310,7 +310,7 @@ void EyeAdaptationBasicSetupMat::Initialize()
 	mGPUParameters->SetParameterBlockBuffer("EyeAdaptationParams", mParamBuffer);
 	mGPUParameters->GetTextureParameter(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTex);
 
-	SAMPLER_STATE_DESC desc;
+	SamplerStateInformation desc;
 	desc.MinFilter = FO_POINT;
 	desc.MagFilter = FO_POINT;
 	desc.MipFilter = FO_POINT;
@@ -1027,7 +1027,7 @@ void GaussianDOFSeparateMat::Initialize()
 	mGPUParameters->GetTextureParameter(GPT_FRAGMENT_PROGRAM, "gColorTex", mColorTexture);
 	mGPUParameters->GetTextureParameter(GPT_FRAGMENT_PROGRAM, "gDepthTex", mDepthTexture);
 
-	SAMPLER_STATE_DESC desc;
+	SamplerStateInformation desc;
 	desc.MinFilter = FO_POINT;
 	desc.MagFilter = FO_POINT;
 	desc.MipFilter = FO_POINT;
@@ -1489,7 +1489,7 @@ void MotionBlurMat::Initialize()
 	mGPUParameters->GetTextureParameter(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTexture);
 	mGPUParameters->GetTextureParameter(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", mDepthTexture);
 
-	SAMPLER_STATE_DESC pointSampDesc;
+	SamplerStateInformation pointSampDesc;
 	pointSampDesc.MinFilter = FO_POINT;
 	pointSampDesc.MagFilter = FO_POINT;
 	pointSampDesc.MipFilter = FO_POINT;
@@ -1547,7 +1547,7 @@ void BuildHiZMat::Initialize()
 		mParamBuffer = gBuildHiZParamDef.CreateBuffer();
 		mGPUParameters->SetParameterBlockBuffer(GPT_FRAGMENT_PROGRAM, "Input", mParamBuffer);
 
-		SAMPLER_STATE_DESC inputSampDesc;
+		SamplerStateInformation inputSampDesc;
 		inputSampDesc.MinFilter = FO_POINT;
 		inputSampDesc.MagFilter = FO_POINT;
 		inputSampDesc.MipFilter = FO_POINT;
@@ -1650,7 +1650,7 @@ void SSAOMat::Initialize()
 
 	mGPUParameters->GetTextureParameter(GPT_FRAGMENT_PROGRAM, "gRandomTex", mRandomTexture);
 
-	SAMPLER_STATE_DESC inputSampDesc;
+	SamplerStateInformation inputSampDesc;
 	inputSampDesc.MinFilter = FO_POINT;
 	inputSampDesc.MagFilter = FO_POINT;
 	inputSampDesc.MipFilter = FO_POINT;
@@ -1676,7 +1676,7 @@ void SSAOMat::Initialize()
 			mGPUParameters->SetSamplerState(GPT_FRAGMENT_PROGRAM, "gDownsampledAO", inputSampState);
 	}
 
-	SAMPLER_STATE_DESC randomSampDesc;
+	SamplerStateInformation randomSampDesc;
 	randomSampDesc.MinFilter = FO_POINT;
 	randomSampDesc.MagFilter = FO_POINT;
 	randomSampDesc.MipFilter = FO_POINT;
@@ -1823,7 +1823,7 @@ void SSAODownsampleMat::Initialize()
 	mGPUParameters->GetTextureParameter(GPT_FRAGMENT_PROGRAM, "gDepthTex", mDepthTexture);
 	mGPUParameters->GetTextureParameter(GPT_FRAGMENT_PROGRAM, "gNormalsTex", mNormalsTexture);
 
-	SAMPLER_STATE_DESC inputSampDesc;
+	SamplerStateInformation inputSampDesc;
 	inputSampDesc.MinFilter = FO_LINEAR;
 	inputSampDesc.MagFilter = FO_LINEAR;
 	inputSampDesc.MipFilter = FO_LINEAR;
@@ -1881,7 +1881,7 @@ void SSAOBlurMat::Initialize()
 	mGPUParameters->GetTextureParameter(GPT_FRAGMENT_PROGRAM, "gInputTex", mAOTexture);
 	mGPUParameters->GetTextureParameter(GPT_FRAGMENT_PROGRAM, "gDepthTex", mDepthTexture);
 
-	SAMPLER_STATE_DESC inputSampDesc;
+	SamplerStateInformation inputSampDesc;
 	inputSampDesc.MinFilter = FO_POINT;
 	inputSampDesc.MagFilter = FO_POINT;
 	inputSampDesc.MipFilter = FO_POINT;
@@ -2000,7 +2000,7 @@ void SSRTraceMat::Initialize()
 	if(mGPUParameters->HasParamBlock(GPT_FRAGMENT_PROGRAM, "Input"))
 		mGPUParameters->SetParameterBlockBuffer(GPT_FRAGMENT_PROGRAM, "Input", mParamBuffer);
 
-	SAMPLER_STATE_DESC desc;
+	SamplerStateInformation desc;
 	desc.MinFilter = FO_POINT;
 	desc.MagFilter = FO_POINT;
 	desc.MipFilter = FO_POINT;
@@ -2140,7 +2140,7 @@ void TemporalFilteringMat::Initialize()
 	mGPUParameters->SetParameterBlockBuffer(GPT_FRAGMENT_PROGRAM, "Input", mParamBuffer);
 	mGPUParameters->SetParameterBlockBuffer(GPT_FRAGMENT_PROGRAM, "TemporalInput", mTemporalParamBuffer);
 
-	SAMPLER_STATE_DESC pointSampDesc;
+	SamplerStateInformation pointSampDesc;
 	pointSampDesc.MinFilter = FO_POINT;
 	pointSampDesc.MagFilter = FO_POINT;
 	pointSampDesc.MipFilter = FO_POINT;
@@ -2155,7 +2155,7 @@ void TemporalFilteringMat::Initialize()
 	else
 		mGPUParameters->SetSamplerState(GPT_FRAGMENT_PROGRAM, "gSceneDepth", pointSampState);
 
-	SAMPLER_STATE_DESC linearSampDesc;
+	SamplerStateInformation linearSampDesc;
 	linearSampDesc.MinFilter = FO_POINT;
 	linearSampDesc.MagFilter = FO_POINT;
 	linearSampDesc.MipFilter = FO_POINT;
@@ -2348,7 +2348,7 @@ void EncodeDepthMat::Initialize()
 	mGPUParameters->SetParameterBlockBuffer("Params", mParamBuffer);
 	mGPUParameters->GetTextureParameter(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTexture);
 
-	SAMPLER_STATE_DESC sampDesc;
+	SamplerStateInformation sampDesc;
 	sampDesc.MinFilter = FO_POINT;
 	sampDesc.MagFilter = FO_POINT;
 	sampDesc.MipFilter = FO_POINT;

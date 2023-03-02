@@ -43,7 +43,7 @@ namespace bs
 		protected:
 			friend class VulkanRenderStateManager;
 
-			VulkanSamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask);
+			VulkanSamplerState(const SamplerStateInformation& desc, GpuDeviceFlags deviceMask);
 
 			void CreateInternal() override;
 

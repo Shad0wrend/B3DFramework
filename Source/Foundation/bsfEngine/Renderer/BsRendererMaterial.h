@@ -531,7 +531,7 @@ namespace bs
 					{
 						if(mGPUParameters->HasTexture(progType, varName))
 						{
-							SPtr<Texture> texture = mShader->GetDefaultTexture(defaultValueIdx);
+							const SPtr<Texture> texture = param.second.Type == GPOT_TEXTURE3D ? mShader->GetDefault3DTexture(defaultValueIdx) : mShader->GetDefault2DTexture(defaultValueIdx);
 							mGPUParameters->SetTexture(progType, varName, texture);
 						}
 					}

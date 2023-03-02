@@ -1,6 +1,7 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "2D/BsSprite.h"
+#include "CoreThread/BsCoreObjectManager.h"
 #include "Material/BsMaterial.h"
 #include "Image/BsTexture.h"
 #include "Mesh/BsMesh.h"

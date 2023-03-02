@@ -17,7 +17,7 @@ namespace bs
 		class NullRenderStateManager : public RenderStateManager
 		{
 		protected:
-			SPtr<SamplerState> CreateSamplerStateInternalInternal(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask) const override;
+			SPtr<SamplerState> CreateSamplerStateInternalInternal(const SamplerStateInformation& desc, GpuDeviceFlags deviceMask) const override;
 			SPtr<BlendState> CreateBlendStateInternalInternal(const BLEND_STATE_DESC& desc, u32 id) const override;
 			SPtr<RasterizerState> CreateRasterizerStateInternalInternal(const RASTERIZER_STATE_DESC& desc, u32 id) const override;
 			SPtr<DepthStencilState> CreateDepthStencilStateInternalInternal(const DEPTH_STENCIL_STATE_DESC& desc, u32 id) const override;
@@ -54,7 +54,7 @@ namespace bs
 		class NullSamplerState : public SamplerState
 		{
 		public:
-			NullSamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask)
+			NullSamplerState(const SamplerStateInformation& desc, GpuDeviceFlags deviceMask)
 				: SamplerState(desc, deviceMask)
 			{}
 		};

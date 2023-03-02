@@ -874,7 +874,7 @@ SPtr<Resource> Package::LoadAndDeserializeResource(const UUID& id, size_t offset
 		
 		{
 			BinarySerializer binarySerializer;
-			loadedData = binarySerializer.Decode(dataStream, sizeInStream, BinarySerializerFlag::None, &serializationContext,
+			loadedData = binarySerializer.Decode(dataStream, (u32)sizeInStream, BinarySerializerFlag::None, &serializationContext,
 				[&outProgress](float progress) { outProgress.exchange(progress, std::memory_order_relaxed); });
 		}
 		else
@@ -885,6 +885,8 @@ SPtr<Resource> Package::LoadAndDeserializeResource(const UUID& id, size_t offset
 			const bool decompressionSuccessful = Compression::Decompress(*dataStream, *uncompressedStream, sizeInStream, compressionType, [&outProgress, kCompressionProgressWeight](float progress) {
 				outProgress.exchange(progress * kCompressionProgressWeight, std::memory_order_relaxed);
 			});
+
+			uncompressedStream->Seek(0);
 
 			if (decompressionSuccessful)
 			{
@@ -1190,7 +1192,8 @@ SPtr<Package> Package::Load(const Path& path)
 		return nullptr;
 
 	SPtr<Package> package = Load(stream);
-	package->mAssociatedPackageFilePath = path;
+	if(package)
+		package->mAssociatedPackageFilePath = path;
 
 	return package;
 }

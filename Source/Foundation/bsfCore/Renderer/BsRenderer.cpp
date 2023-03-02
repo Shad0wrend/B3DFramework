@@ -190,7 +190,7 @@ void RendererTask::Wait()
 	// Note: wait() might only get called during serialization, in which case we might call these methods just once
 	// before a level save, instead for every individual component
 	GetSceneManager().UpdateCoreObjectTransformsInternal();
-	CoreObjectManager::Instance().SyncToCore();
+	CoreObjectManager::Instance().SyncToCore(false);
 
 	auto worker = [this]()
 	{

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
+#include "BsCoreThread.h"
 #include "CoreThread/BsCoreObjectCore.h"
 #include "Utility/BsModule.h"
 
@@ -83,10 +84,16 @@ namespace bs
 		 * Synchronizes all dirty CoreObjects with the core thread. Their dirty data will be allocated using the global
 		 * frame allocator and then queued for update using the core thread queue for the calling thread.
 		 *
+		 *	@param swapBuffers		Switch ownership of the current buffer from the main thread to the core thread. All data written during sync download
+		 *							will now become owned by the core thread, and a new buffer will be made available on the main thread. Note that
+		 *							there is a limited number of buffers (as specified by CoreThread::kSyncBufferCount), and the caller must ensure
+		 *							that the core thread is still not using the oldest buffer. Generally this is done by ensuring that the core thread
+		 *							never runs more than `CoreThread::kSyncBufferCount - 1` frames ahead of the main thread).
+		 *
 		 * @note	Sim thread only.
 		 * @note	This is an @ref asyncMethod "asynchronous method".
 		 */
-		void SyncToCore();
+		void SyncToCore(bool swapBuffers);
 
 		/**
 		 * Synchronizes an individual dirty CoreObject with the core thread. Its dirty data will be allocated using the
@@ -133,6 +140,15 @@ namespace bs
 
 		Vector<CoreStoredSyncObjData> mDestroyedSyncData;
 		List<CoreStoredSyncData> mCoreSyncData;
+
+		/**
+		 * Allocators used for passing temporary data from main thread to the core thread every frame. As external code
+		 * guarantees that core thread will never go more than CoreThread::kSyncBufferCount frames ahead of the main thread,
+		 * we use a ring-buffer of allocators. We use one extra buffer as one buffer could currently be in progress of
+		 * being passed from main to core thread.
+		 */
+		FrameAlloc* mSyncAllocators[CoreThread::kSyncBufferCount + 1];
+		u32 mActiveFrameAllocatorIndex = 0;
 
 		Mutex mObjectsMutex;
 	};

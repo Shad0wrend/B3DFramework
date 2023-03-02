@@ -195,7 +195,7 @@ void ShadowProjectMat::Initialize()
 	else
 		mGPUParameters->GetSamplerStateParameter(GPT_FRAGMENT_PROGRAM, "gShadowTex", mShadowSamplerParam);
 
-	SAMPLER_STATE_DESC desc;
+	SamplerStateInformation desc;
 	desc.MinFilter = FO_POINT;
 	desc.MagFilter = FO_POINT;
 	desc.MipFilter = FO_POINT;
@@ -265,7 +265,7 @@ void ShadowProjectOmniMat::Initialize()
 	else
 		mGPUParameters->GetSamplerStateParameter(GPT_FRAGMENT_PROGRAM, "gShadowCubeTex", mShadowSamplerParam);
 
-	SAMPLER_STATE_DESC desc;
+	SamplerStateInformation desc;
 	desc.MinFilter = FO_LINEAR;
 	desc.MagFilter = FO_LINEAR;
 	desc.MipFilter = FO_POINT;

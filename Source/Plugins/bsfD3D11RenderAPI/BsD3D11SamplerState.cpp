@@ -9,7 +9,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-D3D11SamplerState::D3D11SamplerState(const SAMPLER_STATE_DESC& desc, GpuDeviceFlags deviceMask)
+D3D11SamplerState::D3D11SamplerState(const SamplerStateInformation& desc, GpuDeviceFlags deviceMask)
 	: SamplerState(desc, deviceMask)
 {}
 

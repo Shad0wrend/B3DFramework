@@ -20,7 +20,7 @@ void TetrahedraRenderMat::Initialize()
 {
 	mGPUParameters->GetTextureParameter(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", mDepthBufferTex);
 
-	SAMPLER_STATE_DESC pointSampDesc;
+	SamplerStateInformation pointSampDesc;
 	pointSampDesc.MinFilter = FO_POINT;
 	pointSampDesc.MagFilter = FO_POINT;
 	pointSampDesc.MipFilter = FO_POINT;

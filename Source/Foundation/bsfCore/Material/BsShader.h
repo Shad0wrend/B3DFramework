@@ -7,6 +7,7 @@
 #include "String/BsStringID.h"
 #include "Resources/BsResourceMetaData.h"
 #include "Material/BsTechnique.h"
+#include "RenderAPI/BsSamplerState.h"
 
 namespace bs
 {
@@ -182,18 +183,19 @@ namespace bs
 	 *  @{
 	 */
 
-	/** Structure used for initializing a shader. */
-	template <bool Core>
-	struct B3D_CORE_EXPORT TShaderCreateInformation
+	/** Built-in texture types that can be assigned as default values for shader texture inputs. */
+	enum class ShaderDefaultTextureType
 	{
-		using TextureType = CoreVariantHandleType<Texture, Core>;
-		using SamplerStateType = SPtr<CoreVariantType<SamplerState, Core>>;
-		using TechniqueType = CoreVariantType<Technique, Core>;
+		None,
+		White,
+		Black,
+		Normal
+	};
 
-		TShaderCreateInformation();
-
-		/** Converts non-core variant of the object into the core variant. */
-		static TShaderCreateInformation<true> ConvertToCore(const TShaderCreateInformation<false>& value);
+	/** Structure used for initializing a shader. */
+	struct B3D_CORE_EXPORT ShaderInformationBase : public IReflectable
+	{
+		ShaderInformationBase();
 
 		/**
 		 * Registers a new data (int, Vector2, etc.) parameter you that you may then use via Material by providing the
@@ -234,7 +236,7 @@ namespace bs
 		 * object parameter upon Material creation. Default sampler value is only valid if the object type is one of the
 		 * sampler types.
 		 */
-		void AddParameter(ShaderObjectParameterInformation paramDesc, const SamplerStateType& defaultValue);
+		void AddParameter(ShaderObjectParameterInformation paramDesc, const SamplerStateCreateInformation& defaultValue);
 
 		/**
 		 * @see	SHADER_DESC::addParameter(SHADER_OBJECT_PARAM_DESC)
@@ -244,7 +246,7 @@ namespace bs
 		 * object parameter upon Material creation. Default texture value is only valid if the object type is one of the
 		 * texture types.
 		 */
-		void AddParameter(ShaderObjectParameterInformation paramDesc, const TextureType& defaultValue);
+		void AddParameter(ShaderObjectParameterInformation paramDesc, ShaderDefaultTextureType defaultValue);
 
 		/**
 		 * Applies an attribute to the parameter with the specified name.
@@ -308,9 +310,6 @@ namespace bs
 		/** Flags that let the renderer know how should it interpret the shader. */
 		ShaderFlags Flags;
 
-		/** Techniques to initialize the shader with. */
-		Vector<SPtr<TechniqueType>> Techniques;
-
 		/**
 		 * Information about all variation parameters and their possible values. Each permutation of variation parameters
 		 * represents a separate shader technique.
@@ -327,8 +326,8 @@ namespace bs
 		Map<String, ShaderParameterBlockInformation> ParamBlocks;
 
 		Vector<u8> DataDefaultValues;
-		Vector<SamplerStateType> SamplerDefaultValues;
-		Vector<TextureType> TextureDefaultValues;
+		Vector<SamplerStateInformation> SamplerDefaultValues;
+		Vector<ShaderDefaultTextureType> TextureDefaultValues;
 		Vector<ShaderParameterAttribute> ParamAttributes;
 
 	private:
@@ -338,6 +337,72 @@ namespace bs
 		 * @note	Common method shared by different addParameter overloads.
 		 */
 		void AddParameterInternal(ShaderObjectParameterInformation paramDesc, u32 defaultValueIdx);
+
+		/************************************************************************/
+		/* 								SERIALIZATION                      		*/
+		/************************************************************************/
+	public:
+		friend class ShaderInformationBaseRTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
+	};
+
+	class CoreShaderInformationRTTI;
+
+	namespace ct
+	{
+	struct B3D_CORE_EXPORT ShaderInformation : ShaderInformationBase
+	{
+		ShaderInformation() = default;
+
+		/** Techniques to initialize the shader with. */
+		Vector<SPtr<Technique>> Techniques;
+
+		/************************************************************************/
+		/* 								SERIALIZATION                      		*/
+		/************************************************************************/
+	public:
+		friend class bs::CoreShaderInformationRTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
+	};
+
+	/** Descriptor structure used for initialization of a Shader. */
+	struct ShaderCreateInformation : ShaderInformation
+	{
+		ShaderCreateInformation() = default;
+		ShaderCreateInformation(const ShaderInformation& other)
+			:ShaderInformation(other)
+		{ }
+	};
+	} // namespace ct
+
+	struct B3D_CORE_EXPORT ShaderInformation : ShaderInformationBase 
+	{
+		ShaderInformation() = default;
+
+		/** Converts object to the render thread variant. */
+		static ct::ShaderInformation ConvertToCore(const ShaderInformation& other);
+
+		/** Techniques to initialize the shader with. */
+		Vector<SPtr<Technique>> Techniques;
+
+		/************************************************************************/
+		/* 								SERIALIZATION                      		*/
+		/************************************************************************/
+	public:
+		friend class ShaderInformationRTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
+	};
+
+	/** Descriptor structure used for initialization of a Shader. */
+	struct ShaderCreateInformation : ShaderInformation
+	{
+		ShaderCreateInformation() = default;
+		ShaderCreateInformation(const ShaderInformation& other)
+			:ShaderInformation(other)
+		{ }
 	};
 
 	/**	Templated version of Shader used for implementing both sim and core thread variants. */
@@ -346,18 +411,20 @@ namespace bs
 	{
 	public:
 		using TechniqueType = CoreVariantType<Technique, Core>;
-		using TextureType = typename TShaderCreateInformation<Core>::TextureType;
-		using SamplerStateType = typename TShaderCreateInformation<Core>::SamplerStateType;
+		using TextureType = CoreVariantHandleType<Texture, Core>;
+		using SamplerStateType = CoreVariantType<SamplerState, Core>;
+		using ShaderInformationType = CoreVariantType<ShaderInformation, Core>;
+		using ShaderCreateInformationType = CoreVariantType<ShaderCreateInformation, Core>;
 
 		TShader(u32 id);
-		TShader(const String& name, const TShaderCreateInformation<Core>& desc, u32 id);
+		TShader(const String& name, const ShaderCreateInformationType& createInformation, u32 id);
 		virtual ~TShader();
 
 		/** Returns the name of the shader. */
 		String GetShaderName() const { return mName; }
 
 		/** Returns the total number of techniques in this shader. */
-		u32 GetTechniqueCount() const { return (u32)mDesc.Techniques.size(); }
+		u32 GetTechniqueCount() const { return (u32)mInformation.Techniques.size(); }
 
 		/** Returns the list of all supported techniques based on current render API and renderer. */
 		Vector<SPtr<TechniqueType>> GetCompatibleTechniques() const;
@@ -375,41 +442,41 @@ namespace bs
 		Vector<SPtr<TechniqueType>> GetCompatibleTechniques(const ShaderVariationParameters& variation, bool exact) const;
 
 		/** Returns a list of all techniques in this shader. */
-		const Vector<SPtr<TechniqueType>>& GetTechniques() const { return mDesc.Techniques; }
+		const Vector<SPtr<TechniqueType>>& GetTechniques() const { return mInformation.Techniques; }
 
 		/**
 		 * Returns the list of all variation parameters supported by this shader, possible values of each parameter and
 		 * other meta-data.
 		 */
 		B3D_SCRIPT_EXPORT(ExportName(VariationParams), Property(Getter))
-		const Vector<ShaderVariationParameterInformation> GetVariationParams() const { return mDesc.VariationParams; }
+		const Vector<ShaderVariationParameterInformation> GetVariationParams() const { return mInformation.VariationParams; }
 
 		/**
 		 * Returns currently active queue sort type.
 		 *
 		 * @see		ShaderCreateInformation::QueueSortType
 		 */
-		QueueSortType GetQueueSortType() const { return mDesc.QueueSortType; }
+		QueueSortType GetQueueSortType() const { return mInformation.QueueSortType; }
 
 		/**
 		 * Returns currently active queue priority.
 		 *
 		 * @see		ShaderCreateInformation::QueuePriority
 		 */
-		i32 GetQueuePriority() const { return mDesc.QueuePriority; }
+		i32 GetQueuePriority() const { return mInformation.QueuePriority; }
 
 		/**
 		 * Returns if separable passes are allowed.
 		 *
 		 * @see		ShaderCreateInformation::SeparablePasses
 		 */
-		bool GetAllowSeparablePasses() const { return mDesc.SeparablePasses; }
+		bool GetAllowSeparablePasses() const { return mInformation.SeparablePasses; }
 
 		/**
 		 * Returns flags that control how the renderer interprets the shader. Actual interpretation of the flags depends on
 		 * the active renderer.
 		 */
-		ShaderFlags GetFlags() const { return mDesc.Flags; }
+		ShaderFlags GetFlags() const { return mInformation.Flags; }
 
 		/** Returns type of the parameter with the specified name. Throws exception if the parameter doesn't exist. */
 		GpuParameterType GetParamType(const String& name) const;
@@ -453,34 +520,40 @@ namespace bs
 		bool HasParamBlock(const String& name) const;
 
 		/**	Returns a map of all data parameters in the shader. */
-		const Map<String, ShaderDataParameterInformation>& GetDataParams() const { return mDesc.DataParams; }
+		const Map<String, ShaderDataParameterInformation>& GetDataParams() const { return mInformation.DataParams; }
 
 		/**	Returns a map of all texture parameters in the shader. */
-		const Map<String, ShaderObjectParameterInformation>& GetTextureParams() const { return mDesc.TextureParams; }
+		const Map<String, ShaderObjectParameterInformation>& GetTextureParams() const { return mInformation.TextureParams; }
 
 		/**	Returns a map of all buffer parameters in the shader. */
-		const Map<String, ShaderObjectParameterInformation>& GetBufferParams() const { return mDesc.BufferParams; }
+		const Map<String, ShaderObjectParameterInformation>& GetBufferParams() const { return mInformation.BufferParams; }
 
 		/** Returns a map of all sampler parameters in the shader. */
-		const Map<String, ShaderObjectParameterInformation>& GetSamplerParams() const { return mDesc.SamplerParams; }
+		const Map<String, ShaderObjectParameterInformation>& GetSamplerParams() const { return mInformation.SamplerParams; }
 
 		/** Returns a map of all parameter blocks. */
-		const Map<String, ShaderParameterBlockInformation>& GetParamBlocks() const { return mDesc.ParamBlocks; }
+		const Map<String, ShaderParameterBlockInformation>& GetParamBlocks() const { return mInformation.ParamBlocks; }
 
 		/** Returns a list of all parameter attributes, as referenced by individual parameters. */
-		const Vector<ShaderParameterAttribute>& GetParamAttributes() const { return mDesc.ParamAttributes; }
+		const Vector<ShaderParameterAttribute>& GetParamAttributes() const { return mInformation.ParamAttributes; }
 
 		/**
-		 * Returns a default texture for a parameter that has the specified default value index (retrieved from the
+		 * Returns a default 2D texture for a parameter that has the specified default value index (retrieved from the
 		 * parameters descriptor).
 		 */
-		TextureType GetDefaultTexture(u32 index) const;
+		TextureType GetDefault2DTexture(u32 index) const;
+
+		/**
+		 * Returns a default 3D texture for a parameter that has the specified default value index (retrieved from the
+		 * parameters descriptor).
+		 */
+		TextureType GetDefault3DTexture(u32 index) const;
 
 		/**
 		 * Returns a default sampler state for a parameter that has the specified default value index (retrieved from the
 		 * parameters descriptor).
 		 */
-		SamplerStateType GetDefaultSampler(u32 index) const;
+		SPtr<SamplerStateType> GetDefaultSampler(u32 index) const;
 
 		/**
 		 * Returns a pointer to the internal buffer containing the default value for a data parameter that has the
@@ -497,34 +570,21 @@ namespace bs
 		 */
 
 		/** Returns the meta-data required by the shader compiler to compile individual shader variations. */
-		const SPtr<ShaderCompilerMetaData>& GetCompilerMetaData() const { return mDesc.CompilerMetaData; }
+		const SPtr<ShaderCompilerMetaData>& GetCompilerMetaData() const { return mInformation.CompilerMetaData; }
 
 		/** @} */
 
 	protected:
 		String mName;
-		TShaderCreateInformation<Core> mDesc;
+		ShaderInformationType mInformation;
 		u32 mShaderId;
 	};
 
 	/** @} */
 
-	namespace ct
-	{
-		/** @addtogroup Material-Internal
-		 *  @{
-		 */
-
-		typedef TShaderCreateInformation<true> ShaderCreateInformation;
-
-		/** @} */
-	} // namespace ct
-
 	/** @addtogroup Material
 	 *  @{
 	 */
-
-	typedef TShaderCreateInformation<false> ShaderCreateInformation;
 
 	/**
 	 * @native
@@ -584,6 +644,14 @@ namespace bs
 		/** Computes a hash from shader source code. */
 		static Array<u64, 2> ComputeHash(const String& string);
 
+		/**
+		 * Computes a hash for a shader include at the provided path.
+		 *
+		 * @param	path			Relative path to the include, as provided in the shader source.
+		 * @return					Computed hash value.
+		 */
+		static Array<u64, 2> ComputeIncludeHash(const String& path);
+
 	public: // ***** INTERNAL ******
 		/** @name Internal
 		 *  @{
@@ -638,6 +706,8 @@ namespace bs
 
 	/** @} */
 
+	class CoreShaderRTTI;
+
 	namespace ct
 	{
 		/** @addtogroup Material-Internal
@@ -645,11 +715,15 @@ namespace bs
 		 */
 
 		/** Core thread version of Shader. */
-		class B3D_CORE_EXPORT Shader : public CoreObject, public TShader<true>
+		class B3D_CORE_EXPORT Shader : public IReflectable, public CoreObject, public TShader<true>
 		{
 		public:
 			/** @copydoc bs::Shader::Create */
 			static SPtr<Shader> Create(const String& name, const ShaderCreateInformation& createInformation);
+
+			/** Creates an empty shader. */
+			static SPtr<Shader> CreateEmpty();
+
 
 		protected:
 			friend class bs::Shader;
@@ -657,6 +731,17 @@ namespace bs
 			Shader(const String& name, const ShaderCreateInformation& createInformation, u32 id);
 
 			static std::atomic<u32> mNextShaderId;
+
+		private:
+			/************************************************************************/
+			/* 								RTTI		                     		*/
+			/************************************************************************/
+			Shader(u32 id);
+
+		public:
+			friend class CoreShaderRTTI;
+			static RTTITypeBase* GetRttiStatic();
+			RTTITypeBase* GetRtti() const override;
 		};
 
 		/** @} */

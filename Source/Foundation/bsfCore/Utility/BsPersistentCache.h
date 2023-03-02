@@ -45,11 +45,11 @@ namespace bs
 
 	private:
 		PersistentCacheObject(const SPtr<IReflectable>& object)
-			: mObjects({ object })
+			: Resource(false), mObjects({ object })
 		{ }
 
 		PersistentCacheObject(const SmallVector<SPtr<IReflectable>, 1>& objects)
-			: mObjects(objects)
+			: Resource(false), mObjects(objects)
 		{ }
 
 		SmallVector<SPtr<IReflectable>, 1> mObjects;
@@ -83,7 +83,7 @@ namespace bs
 	/** @} */
 
 	/** Cache that will persist between application runs. */
-	class B3D_CORE_EXPORT PersistentCache : std::enable_shared_from_this<PersistentCache>
+	class B3D_CORE_EXPORT PersistentCache : public std::enable_shared_from_this<PersistentCache>
 	{
 		/** Information about a single entry in the cache. */
 		struct CacheEntry
@@ -237,7 +237,7 @@ namespace bs
 
 		Path mCacheFolder;
 		u64 mUsedCacheSizeInBytes = 0;
-		u64 mSizeLimitInBytes = 2048;
+		u64 mSizeLimitInBytes = (u64)2048 * Bitwise::kBytesInMegabyte;
 		UnorderedMap<Path, CacheEntry> mEntries;
 		bool mIsAnyEntryMetaDataDirty = false;
 

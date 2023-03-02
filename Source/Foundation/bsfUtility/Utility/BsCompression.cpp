@@ -103,30 +103,41 @@ public:
 	virtual ~DataStreamSink()
 	{
 		if(mBuffer != nullptr)
+		{
+			B3D_ASSERT(mWasLastBufferAppended);
 			B3DFree(mBuffer);
+		}
 	}
 
 	void Append(const char* data, size_t n) override
 	{
-		B3D_ASSERT(mBuffer == data);
-		B3D_ASSERT(n <= mBufferCapacity);
+		if(mBuffer == data)
+		{
+			B3D_ASSERT(n <= mBufferCapacity);
+			mWasLastBufferAppended = true;
+		}
 
 		mOutputStream.Write(data, n);
 	}
 
 	char* GetAppendBuffer(size_t len, char* scratch) override
 	{
+		B3D_ASSERT(mBuffer == nullptr || mWasLastBufferAppended);
 		ReallocateBufferIfNeeded(len);
 
+		mWasLastBufferAppended = false;
 		return mBuffer;
 	}
 
 	char* GetAppendBufferVariable(size_t min_size, size_t desired_size_hint, char* scratch, size_t scratch_size, size_t* allocated_size) override
 	{
+		B3D_ASSERT(mBuffer == nullptr || mWasLastBufferAppended);
+
 		const size_t requiredCapacity = std::max(desired_size_hint, min_size);
 		ReallocateBufferIfNeeded(requiredCapacity);
 
 		*allocated_size = requiredCapacity;
+		mWasLastBufferAppended = false;
 		return mBuffer;
 	}
 
@@ -162,6 +173,7 @@ private:
 	DataStream& mOutputStream;
 	char* mBuffer = nullptr;
 	size_t mBufferCapacity = 0;
+	bool mWasLastBufferAppended = false;
 };
 
 u64 Compression::Compress(DataStream& input, DataStream& output, u64 inputDataSize, CompressionType compressionType, std::function<void(float)> reportProgress)

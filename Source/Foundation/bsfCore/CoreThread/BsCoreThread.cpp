@@ -20,12 +20,6 @@ Signal CoreThread::sAppStartedCondition;
 
 void CoreThread::OnStartUp()
 {
-	for(u32 i = 0; i < kNumSyncBuffers; i++)
-	{
-		mFrameAllocs[i] = B3DNew<FrameAlloc>();
-		mFrameAllocs[i]->SetOwnerThread(B3D_CURRENT_THREAD_ID); // Sim thread
-	}
-
 	mSimThreadId = B3D_CURRENT_THREAD_ID;
 	mCoreThreadId = mSimThreadId; // For now
 	mCommandQueue = B3DNew<CommandQueue<CommandQueueSync>>(B3D_CURRENT_THREAD_ID);
@@ -51,12 +45,6 @@ CoreThread::~CoreThread()
 	{
 		B3DDelete(mCommandQueue);
 		mCommandQueue = nullptr;
-	}
-
-	for(u32 i = 0; i < kNumSyncBuffers; i++)
-	{
-		mFrameAllocs[i]->SetOwnerThread(B3D_CURRENT_THREAD_ID); // Sim thread
-		B3DDelete(mFrameAllocs[i]);
 	}
 }
 
@@ -324,21 +312,6 @@ void CoreThread::QueueCommand(std::function<void()> commandCallback, CoreThreadQ
 		if(blockUntilComplete)
 			BlockUntilCommandCompleted(commandId);
 	}
-}
-
-void CoreThread::Update()
-{
-	for(u32 i = 0; i < kNumSyncBuffers; i++)
-		mFrameAllocs[i]->SetOwnerThread(mCoreThreadId);
-
-	mActiveFrameAlloc = (mActiveFrameAlloc + 1) % 2;
-	mFrameAllocs[mActiveFrameAlloc]->SetOwnerThread(B3D_CURRENT_THREAD_ID); // Sim thread
-	mFrameAllocs[mActiveFrameAlloc]->Clear();
-}
-
-FrameAlloc* CoreThread::GetFrameAlloc() const
-{
-	return mFrameAllocs[mActiveFrameAlloc];
 }
 
 void CoreThread::BlockUntilCommandCompleted(u32 commandId)

@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Material/BsShader.h"
+
+#include "BsShaderManager.h"
 #include "Material/BsTechnique.h"
 #include "Error/BsException.h"
 #include "Debug/BsDebug.h"
@@ -10,68 +12,17 @@
 #include "Material/BsPass.h"
 #include "RenderAPI/BsSamplerState.h"
 #include "Image/BsTexture.h"
+#include "Resources/BsBuiltinResources.h"
 #include "ThirdParty/CityHash/city.h"
 
 using namespace bs;
 
-template <bool Core>
-TShaderCreateInformation<Core>::TShaderCreateInformation()
+ShaderInformationBase::ShaderInformationBase()
 	: QueueSortType(QueueSortType::None), QueuePriority(0), SeparablePasses(false), Flags(0)
 {
 }
 
-template<bool Core>
-TShaderCreateInformation<true> TShaderCreateInformation<Core>::ConvertToCore(const TShaderCreateInformation<false>& value)
-{
-	ct::ShaderCreateInformation output;
-	output.DataParams = value.DataParams;
-	output.TextureParams = value.TextureParams;
-	output.SamplerParams = value.SamplerParams;
-	output.BufferParams = value.BufferParams;
-	output.ParamBlocks = value.ParamBlocks;
-	output.ParamAttributes = value.ParamAttributes;
-
-	output.DataDefaultValues = value.DataDefaultValues;
-
-	output.SamplerDefaultValues.resize(value.SamplerDefaultValues.size());
-	for(u32 i = 0; i < (u32)value.SamplerDefaultValues.size(); i++)
-	{
-		if(value.SamplerDefaultValues[i] != nullptr)
-			output.SamplerDefaultValues[i] = value.SamplerDefaultValues[i]->GetCore();
-		else
-			output.SamplerDefaultValues[i] = nullptr;
-	}
-
-	output.TextureDefaultValues.resize(value.TextureDefaultValues.size());
-	for(u32 i = 0; i < (u32)value.TextureDefaultValues.size(); i++)
-	{
-		if(value.TextureDefaultValues[i].IsLoaded())
-			output.TextureDefaultValues[i] = value.TextureDefaultValues[i]->GetCore();
-		else
-			output.TextureDefaultValues[i] = nullptr;
-	}
-
-	output.QueuePriority = value.QueuePriority;
-	output.QueueSortType = value.QueueSortType;
-	output.SeparablePasses = value.SeparablePasses;
-	output.Flags = value.Flags;
-
-	for(auto& entry : value.Techniques)
-	{
-		if(entry != nullptr)
-			output.Techniques.push_back(entry->GetCore());
-	}
-
-	output.VariationParams = value.VariationParams;
-	output.CompilerMetaData = value.CompilerMetaData;
-
-	// Ignoring default values as they are not needed for syncing since
-	// they're initialized through the material.
-	return output;
-}
-
-template <bool Core>
-void TShaderCreateInformation<Core>::AddParameter(ShaderDataParameterInformation paramDesc, u8* defaultValue)
+void ShaderInformationBase::AddParameter(ShaderDataParameterInformation paramDesc, u8* defaultValue)
 {
 	if(paramDesc.Type == GPDT_STRUCT && paramDesc.ElementSize <= 0)
 	{
@@ -97,19 +48,17 @@ void TShaderCreateInformation<Core>::AddParameter(ShaderDataParameterInformation
 	DataParams[paramDesc.Name] = paramDesc;
 }
 
-template <bool Core>
-void TShaderCreateInformation<Core>::AddParameter(ShaderObjectParameterInformation paramDesc)
+void ShaderInformationBase::AddParameter(ShaderObjectParameterInformation paramDesc)
 {
 	u32 defaultValueIdx = (u32)-1;
 
 	AddParameterInternal(std::move(paramDesc), defaultValueIdx);
 }
 
-template <bool Core>
-void TShaderCreateInformation<Core>::AddParameter(ShaderObjectParameterInformation paramDesc, const SamplerStateType& defaultValue)
+void ShaderInformationBase::AddParameter(ShaderObjectParameterInformation paramDesc, const SamplerStateCreateInformation& defaultValue)
 {
 	u32 defaultValueIdx = (u32)-1;
-	if(Shader::IsSampler(paramDesc.Type) && defaultValue != nullptr)
+	if(Shader::IsSampler(paramDesc.Type))
 	{
 		defaultValueIdx = (u32)SamplerDefaultValues.size();
 		SamplerDefaultValues.push_back(defaultValue);
@@ -118,11 +67,10 @@ void TShaderCreateInformation<Core>::AddParameter(ShaderObjectParameterInformati
 	AddParameterInternal(std::move(paramDesc), defaultValueIdx);
 }
 
-template <bool Core>
-void TShaderCreateInformation<Core>::AddParameter(ShaderObjectParameterInformation paramDesc, const TextureType& defaultValue)
+void ShaderInformationBase::AddParameter(ShaderObjectParameterInformation paramDesc, ShaderDefaultTextureType defaultValue)
 {
 	u32 defaultValueIdx = (u32)-1;
-	if(Shader::IsTexture(paramDesc.Type) && defaultValue != nullptr)
+	if(Shader::IsTexture(paramDesc.Type))
 	{
 		defaultValueIdx = (u32)TextureDefaultValues.size();
 		TextureDefaultValues.push_back(defaultValue);
@@ -131,8 +79,7 @@ void TShaderCreateInformation<Core>::AddParameter(ShaderObjectParameterInformati
 	AddParameterInternal(std::move(paramDesc), defaultValueIdx);
 }
 
-template <bool Core>
-void TShaderCreateInformation<Core>::AddParameterInternal(ShaderObjectParameterInformation paramDesc, u32 defaultValueIdx)
+void ShaderInformationBase::AddParameterInternal(ShaderObjectParameterInformation paramDesc, u32 defaultValueIdx)
 {
 	Map<String, ShaderObjectParameterInformation>* DEST_LOOKUP[] = { &TextureParams, &BufferParams, &SamplerParams };
 	u32 destIdx = 0;
@@ -173,8 +120,7 @@ void TShaderCreateInformation<Core>::AddParameterInternal(ShaderObjectParameterI
 	}
 }
 
-template <bool Core>
-void TShaderCreateInformation<Core>::SetParameterAttribute(const String& name, const ShaderParameterAttribute& attrib)
+void ShaderInformationBase::SetParameterAttribute(const String& name, const ShaderParameterAttribute& attrib)
 {
 	ShaderDataParameterInformation* paramDescData = nullptr;
 
@@ -258,8 +204,7 @@ void TShaderCreateInformation<Core>::SetParameterAttribute(const String& name, c
 	}
 }
 
-template <bool Core>
-void TShaderCreateInformation<Core>::SetParamBlockAttribs(const String& name, bool shared, GpuBufferUsage usage, StringID rendererSemantic)
+void ShaderInformationBase::SetParamBlockAttribs(const String& name, bool shared, GpuBufferUsage usage, StringID rendererSemantic)
 {
 	ShaderParameterBlockInformation desc;
 	desc.Name = name;
@@ -270,8 +215,124 @@ void TShaderCreateInformation<Core>::SetParamBlockAttribs(const String& name, bo
 	ParamBlocks[name] = desc;
 }
 
-template struct TShaderCreateInformation<false>;
-template struct TShaderCreateInformation<true>;
+RTTITypeBase* ShaderInformationBase::GetRttiStatic()
+{
+	return ShaderInformationBaseRTTI::Instance();
+}
+
+RTTITypeBase* ShaderInformationBase::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+ct::ShaderInformation ShaderInformation::ConvertToCore(const ShaderInformation& value)
+{
+	ct::ShaderInformation output;
+	output.DataParams = value.DataParams;
+	output.TextureParams = value.TextureParams;
+	output.SamplerParams = value.SamplerParams;
+	output.BufferParams = value.BufferParams;
+	output.ParamBlocks = value.ParamBlocks;
+	output.ParamAttributes = value.ParamAttributes;
+
+	output.DataDefaultValues = value.DataDefaultValues;
+	output.SamplerDefaultValues = value.SamplerDefaultValues;
+	output.TextureDefaultValues = value.TextureDefaultValues;
+
+	output.QueuePriority = value.QueuePriority;
+	output.QueueSortType = value.QueueSortType;
+	output.SeparablePasses = value.SeparablePasses;
+	output.Flags = value.Flags;
+
+	for(auto& entry : value.Techniques)
+	{
+		if(entry != nullptr)
+			output.Techniques.push_back(entry->GetCore());
+	}
+
+	output.VariationParams = value.VariationParams;
+	output.CompilerMetaData = value.CompilerMetaData;
+
+	// Ignoring default values as they are not needed for syncing since
+	// they're initialized through the material.
+	return output;
+}
+
+RTTITypeBase* ShaderInformation::GetRttiStatic()
+{
+	return ShaderInformationRTTI::Instance();
+}
+
+RTTITypeBase* ShaderInformation::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
+namespace bs::ct {
+RTTITypeBase* ShaderInformation::GetRttiStatic()
+{
+	return CoreShaderInformationRTTI::Instance();
+}
+
+RTTITypeBase* ShaderInformation::GetRtti() const
+{
+	return GetRttiStatic();
+}
+} // namespace ct
+
+template <bool Core>
+CoreVariantHandleType<Texture, Core> GetBuiltin2DTexture(ShaderDefaultTextureType texture);
+
+template <>
+CoreVariantHandleType<Texture, true> GetBuiltin2DTexture<true>(ShaderDefaultTextureType texture)
+{
+	if(texture == ShaderDefaultTextureType::White)
+		return ct::BuiltinResources::Instance().WhiteTexture2D;
+	else if(texture == ShaderDefaultTextureType::Black)
+		return ct::BuiltinResources::Instance().BlackTexture2D;
+	else if(texture == ShaderDefaultTextureType::Normal)
+		return ct::BuiltinResources::Instance().NormalTexture2D;
+
+	return nullptr;
+}
+
+template <>
+CoreVariantHandleType<Texture, false> GetBuiltin2DTexture<false>(ShaderDefaultTextureType texture)
+{
+	if(texture == ShaderDefaultTextureType::White)
+		return BuiltinResources::GetTexture(BuiltinTexture::White);
+	else if(texture == ShaderDefaultTextureType::Black)
+		return BuiltinResources::GetTexture(BuiltinTexture::Black);
+	else if(texture == ShaderDefaultTextureType::Normal)
+		return BuiltinResources::GetTexture(BuiltinTexture::Normal);
+
+	return HTexture();
+}
+
+template <bool Core>
+CoreVariantHandleType<Texture, Core> GetBuiltin3DTexture(ShaderDefaultTextureType texture);
+
+template <>
+CoreVariantHandleType<Texture, true> GetBuiltin3DTexture<true>(ShaderDefaultTextureType texture)
+{
+	if(texture == ShaderDefaultTextureType::White)
+		return ct::BuiltinResources::Instance().WhiteTexture3D;
+	else if(texture == ShaderDefaultTextureType::Black)
+		return ct::BuiltinResources::Instance().BlackTexture3D;
+
+	return nullptr;
+}
+
+template <>
+CoreVariantHandleType<Texture, false> GetBuiltin3DTexture<false>(ShaderDefaultTextureType texture)
+{
+	if(texture == ShaderDefaultTextureType::White)
+		return BuiltinResources::GetTexture(BuiltinTexture::White3D);
+	else if(texture == ShaderDefaultTextureType::Black)
+		return BuiltinResources::GetTexture(BuiltinTexture::Black3D);
+
+	return HTexture();
+}
 
 template <bool Core>
 TShader<Core>::TShader(u32 id)
@@ -279,8 +340,8 @@ TShader<Core>::TShader(u32 id)
 {}
 
 template <bool Core>
-TShader<Core>::TShader(const String& name, const TShaderCreateInformation<Core>& desc, u32 id)
-	: mName(name), mDesc(desc), mShaderId(id)
+TShader<Core>::TShader(const String& name, const ShaderCreateInformationType& createInformation, u32 id)
+	: mName(name), mInformation(createInformation), mShaderId(id)
 {}
 
 template <bool Core>
@@ -290,20 +351,20 @@ TShader<Core>::~TShader()
 template <bool Core>
 GpuParameterType TShader<Core>::GetParamType(const String& name) const
 {
-	auto findIterData = mDesc.DataParams.find(name);
-	if(findIterData != mDesc.DataParams.end())
+	auto findIterData = mInformation.DataParams.find(name);
+	if(findIterData != mInformation.DataParams.end())
 		return GPT_DATA;
 
-	auto findIterTexture = mDesc.TextureParams.find(name);
-	if(findIterTexture != mDesc.TextureParams.end())
+	auto findIterTexture = mInformation.TextureParams.find(name);
+	if(findIterTexture != mInformation.TextureParams.end())
 		return GPT_TEXTURE;
 
-	auto findIterBuffer = mDesc.BufferParams.find(name);
-	if(findIterBuffer != mDesc.BufferParams.end())
+	auto findIterBuffer = mInformation.BufferParams.find(name);
+	if(findIterBuffer != mInformation.BufferParams.end())
 		return GPT_BUFFER;
 
-	auto findIterSampler = mDesc.SamplerParams.find(name);
-	if(findIterSampler != mDesc.SamplerParams.end())
+	auto findIterSampler = mInformation.SamplerParams.find(name);
+	if(findIterSampler != mInformation.SamplerParams.end())
 		return GPT_SAMPLER;
 
 	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
@@ -313,8 +374,8 @@ GpuParameterType TShader<Core>::GetParamType(const String& name) const
 template <bool Core>
 const ShaderDataParameterInformation& TShader<Core>::GetDataParamDesc(const String& name) const
 {
-	auto findIterData = mDesc.DataParams.find(name);
-	if(findIterData != mDesc.DataParams.end())
+	auto findIterData = mInformation.DataParams.find(name);
+	if(findIterData != mInformation.DataParams.end())
 		return findIterData->second;
 
 	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
@@ -325,8 +386,8 @@ const ShaderDataParameterInformation& TShader<Core>::GetDataParamDesc(const Stri
 template <bool Core>
 const ShaderObjectParameterInformation& TShader<Core>::GetTextureParamDesc(const String& name) const
 {
-	auto findIterObject = mDesc.TextureParams.find(name);
-	if(findIterObject != mDesc.TextureParams.end())
+	auto findIterObject = mInformation.TextureParams.find(name);
+	if(findIterObject != mInformation.TextureParams.end())
 		return findIterObject->second;
 
 	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
@@ -337,8 +398,8 @@ const ShaderObjectParameterInformation& TShader<Core>::GetTextureParamDesc(const
 template <bool Core>
 const ShaderObjectParameterInformation& TShader<Core>::GetSamplerParamDesc(const String& name) const
 {
-	auto findIterObject = mDesc.SamplerParams.find(name);
-	if(findIterObject != mDesc.SamplerParams.end())
+	auto findIterObject = mInformation.SamplerParams.find(name);
+	if(findIterObject != mInformation.SamplerParams.end())
 		return findIterObject->second;
 
 	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
@@ -349,8 +410,8 @@ const ShaderObjectParameterInformation& TShader<Core>::GetSamplerParamDesc(const
 template <bool Core>
 const ShaderObjectParameterInformation& TShader<Core>::GetBufferParamDesc(const String& name) const
 {
-	auto findIterObject = mDesc.BufferParams.find(name);
-	if(findIterObject != mDesc.BufferParams.end())
+	auto findIterObject = mInformation.BufferParams.find(name);
+	if(findIterObject != mInformation.BufferParams.end())
 		return findIterObject->second;
 
 	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
@@ -361,8 +422,8 @@ const ShaderObjectParameterInformation& TShader<Core>::GetBufferParamDesc(const 
 template <bool Core>
 bool TShader<Core>::HasDataParam(const String& name) const
 {
-	auto findIterData = mDesc.DataParams.find(name);
-	if(findIterData != mDesc.DataParams.end())
+	auto findIterData = mInformation.DataParams.find(name);
+	if(findIterData != mInformation.DataParams.end())
 		return true;
 
 	return false;
@@ -371,8 +432,8 @@ bool TShader<Core>::HasDataParam(const String& name) const
 template <bool Core>
 bool TShader<Core>::HasTextureParam(const String& name) const
 {
-	auto findIterObject = mDesc.TextureParams.find(name);
-	if(findIterObject != mDesc.TextureParams.end())
+	auto findIterObject = mInformation.TextureParams.find(name);
+	if(findIterObject != mInformation.TextureParams.end())
 		return true;
 
 	return false;
@@ -381,8 +442,8 @@ bool TShader<Core>::HasTextureParam(const String& name) const
 template <bool Core>
 bool TShader<Core>::HasSamplerParam(const String& name) const
 {
-	auto findIterObject = mDesc.SamplerParams.find(name);
-	if(findIterObject != mDesc.SamplerParams.end())
+	auto findIterObject = mInformation.SamplerParams.find(name);
+	if(findIterObject != mInformation.SamplerParams.end())
 		return true;
 
 	return false;
@@ -391,8 +452,8 @@ bool TShader<Core>::HasSamplerParam(const String& name) const
 template <bool Core>
 bool TShader<Core>::HasBufferParam(const String& name) const
 {
-	auto findIterObject = mDesc.BufferParams.find(name);
-	if(findIterObject != mDesc.BufferParams.end())
+	auto findIterObject = mInformation.BufferParams.find(name);
+	if(findIterObject != mInformation.BufferParams.end())
 		return true;
 
 	return false;
@@ -401,36 +462,45 @@ bool TShader<Core>::HasBufferParam(const String& name) const
 template <bool Core>
 bool TShader<Core>::HasParamBlock(const String& name) const
 {
-	auto findIterObject = mDesc.ParamBlocks.find(name);
-	if(findIterObject != mDesc.ParamBlocks.end())
+	auto findIterObject = mInformation.ParamBlocks.find(name);
+	if(findIterObject != mInformation.ParamBlocks.end())
 		return true;
 
 	return false;
 }
 
 template <bool Core>
-typename TShader<Core>::TextureType TShader<Core>::GetDefaultTexture(u32 index) const
+typename TShader<Core>::TextureType TShader<Core>::GetDefault2DTexture(u32 index) const
 {
-	if(index < (u32)mDesc.TextureDefaultValues.size())
-		return mDesc.TextureDefaultValues[index];
+	if(index < (u32)mInformation.TextureDefaultValues.size())
+		return GetBuiltin2DTexture<Core>(mInformation.TextureDefaultValues[index]);
 
 	return TextureType();
 }
 
 template <bool Core>
-typename TShader<Core>::SamplerStateType TShader<Core>::GetDefaultSampler(u32 index) const
+typename TShader<Core>::TextureType TShader<Core>::GetDefault3DTexture(u32 index) const
 {
-	if(index < (u32)mDesc.SamplerDefaultValues.size())
-		return mDesc.SamplerDefaultValues[index];
+	if(index < (u32)mInformation.TextureDefaultValues.size())
+		return GetBuiltin3DTexture<Core>(mInformation.TextureDefaultValues[index]);
 
-	return SamplerStateType();
+	return TextureType();
+}
+
+template <bool Core>
+SPtr<typename TShader<Core>::SamplerStateType> TShader<Core>::GetDefaultSampler(u32 index) const
+{
+	if(index < (u32)mInformation.SamplerDefaultValues.size())
+		return SamplerStateType::Create(mInformation.SamplerDefaultValues[index]);
+
+	return SPtr<SamplerStateType>();
 }
 
 template <bool Core>
 u8* TShader<Core>::GetDefaultValue(u32 index) const
 {
-	if(index < (u32)mDesc.DataDefaultValues.size())
-		return (u8*)&mDesc.DataDefaultValues[index];
+	if(index < (u32)mInformation.DataDefaultValues.size())
+		return (u8*)&mInformation.DataDefaultValues[index];
 
 	return nullptr;
 }
@@ -439,7 +509,7 @@ template <bool Core>
 Vector<SPtr<typename TShader<Core>::TechniqueType>> TShader<Core>::GetCompatibleTechniques() const
 {
 	Vector<SPtr<TechniqueType>> output;
-	for(auto& technique : mDesc.Techniques)
+	for(auto& technique : mInformation.Techniques)
 	{
 		if(technique->IsSupported())
 			output.push_back(technique);
@@ -453,7 +523,7 @@ Vector<SPtr<typename TShader<Core>::TechniqueType>> TShader<Core>::GetCompatible
 	const ShaderVariationParameters& variation, bool exact) const
 {
 	Vector<SPtr<TechniqueType>> output;
-	for(auto& technique : mDesc.Techniques)
+	for(auto& technique : mInformation.Techniques)
 	{
 		if(technique->IsSupported() && technique->GetVariationParameters().Matches(variation, exact))
 			output.push_back(technique);
@@ -489,10 +559,10 @@ void Shader::SetIncludeFiles(const Vector<String>& includes)
 SPtr<ct::CoreObject> Shader::CreateCore() const
 {
 	Vector<SPtr<ct::Technique>> techniques;
-	for(auto& technique : mDesc.Techniques)
+	for(auto& technique : mInformation.Techniques)
 		techniques.push_back(technique->GetCore());
 
-	ct::Shader* shaderCore = new(B3DAllocate<ct::Shader>()) ct::Shader(mName, TShaderCreateInformation<true>::ConvertToCore(mDesc), mShaderId);
+	ct::Shader* shaderCore = new(B3DAllocate<ct::Shader>()) ct::Shader(mName, ShaderInformation::ConvertToCore(mInformation), mShaderId);
 	SPtr<ct::Shader> shaderCorePtr = B3DMakeSharedFromExisting<ct::Shader>(shaderCore);
 	shaderCorePtr->SetShared(shaderCorePtr);
 
@@ -501,7 +571,7 @@ SPtr<ct::CoreObject> Shader::CreateCore() const
 
 void Shader::GetCoreDependencies(Vector<CoreObject*>& dependencies)
 {
-	for(auto& technique : mDesc.Techniques)
+	for(auto& technique : mInformation.Techniques)
 		dependencies.push_back(technique.get());
 }
 
@@ -621,6 +691,15 @@ Array<u64, 2> Shader::ComputeHash(const String& string)
 	return { hash.first, hash.second };
 }
 
+Array<u64, 2> Shader::ComputeIncludeHash(const String& path)
+{
+	const Optional<String> shaderIncludeSource = ShaderManager::Instance().FindIncludeSource(path);
+	if(!shaderIncludeSource.has_value())
+		return { 0, 0 };
+
+	return ComputeHash(shaderIncludeSource.value());
+}
+
 RTTITypeBase* Shader::GetRttiStatic()
 {
 	return ShaderRTTI::Instance();
@@ -645,21 +724,47 @@ namespace bs { namespace ct
 {
 std::atomic<u32> Shader::mNextShaderId;
 
+Shader::Shader( u32 id)
+	: TShader(id)
+{ }
+
 Shader::Shader(const String& name, const ShaderCreateInformation& createInformation, u32 id)
 	: TShader(name, createInformation, id)
-{
-}
+{ }
 
 SPtr<Shader> Shader::Create(const String& name, const ShaderCreateInformation& createInformation)
 {
-	u32 id = mNextShaderId.fetch_add(1, std::memory_order_relaxed);
+	const u32 id = mNextShaderId.fetch_add(1, std::memory_order_relaxed);
 	B3D_ASSERT(id < std::numeric_limits<u32>::max() && "Created too many shaders, reached maximum id.");
 
-	Shader* shaderCore = new(B3DAllocate<Shader>()) Shader(name, createInformation, id);
+	Shader* const shaderCore = new(B3DAllocate<Shader>()) Shader(name, createInformation, id);
 	SPtr<Shader> shaderCorePtr = B3DMakeSharedFromExisting<Shader>(shaderCore);
 	shaderCorePtr->SetShared(shaderCorePtr);
 	shaderCorePtr->Initialize();
 
 	return shaderCorePtr;
 }
+
+SPtr<Shader> Shader::CreateEmpty()
+{
+	const uint32 id = mNextShaderId.fetch_add(1, std::memory_order_relaxed);
+	B3D_ASSERT(id < std::numeric_limits<uint32>::max() && "Created too many shaders, reached maximum id.");
+
+	Shader* const shaderCore = new(B3DAllocate<Shader>()) Shader(id);
+	SPtr<Shader> shaderCoreShared = B3DMakeSharedFromExisting<Shader>(shaderCore);
+	shaderCoreShared->SetShared(shaderCoreShared);
+
+	return shaderCoreShared;
+}
+
+RTTITypeBase* Shader::GetRttiStatic()
+{
+	return CoreShaderRTTI::Instance();
+}
+
+RTTITypeBase* Shader::GetRtti() const
+{
+	return GetRttiStatic();
+}
+
 }}

@@ -270,58 +270,16 @@ static CompareFunction XSCConvertComparisonFunction(Xsc::Reflection::ComparisonF
 	}
 }
 
-template<bool Core>
-static CoreVariantHandleType<Texture, Core> GetBuiltinTexture(u32 index);
-
-template<>
-static CoreVariantHandleType<Texture, false> GetBuiltinTexture<false>(u32 index)
+static ShaderDefaultTextureType GetBuiltinTexture(u32 index)
 {
 	if(index == 1)
-		return BuiltinResources::GetTexture(BuiltinTexture::White);
+		return ShaderDefaultTextureType::White;
 	else if(index == 2)
-		return BuiltinResources::GetTexture(BuiltinTexture::Black);
+		return ShaderDefaultTextureType::Black;
 	else if(index == 3)
-		return BuiltinResources::GetTexture(BuiltinTexture::Normal);
+		return ShaderDefaultTextureType::Normal;
 
-	return HTexture();
-}
-
-template<>
-static CoreVariantHandleType<Texture, true> GetBuiltinTexture<true>(u32 index)
-{
-	if(index == 1)
-		return ct::BuiltinResources::Instance().WhiteTexture2D;
-	else if(index == 2)
-		return ct::BuiltinResources::Instance().BlackTexture2D;
-	else if(index == 3)
-		return ct::BuiltinResources::Instance().NormalTexture2D;
-
-	return nullptr;
-}
-
-template<bool Core>
-static CoreVariantHandleType<Texture, Core> GetBuiltin3DTexture(u32 index);
-
-template<>
-static CoreVariantHandleType<Texture, false> GetBuiltin3DTexture<false>(u32 index)
-{
-	if (index == 1)
-		return BuiltinResources::GetTexture(BuiltinTexture::White3D);
-	else if (index == 2)
-		return BuiltinResources::GetTexture(BuiltinTexture::Black3D);
-
-	return HTexture();
-}
-
-template<>
-static CoreVariantHandleType<Texture, true> GetBuiltin3DTexture<true>(u32 index)
-{
-	if(index == 1)
-		return ct::BuiltinResources::Instance().WhiteTexture3D;
-	else if(index == 2)
-		return ct::BuiltinResources::Instance().BlackTexture3D;
-
-	return nullptr;
+	return ShaderDefaultTextureType::None;
 }
 
 static u32 CalculateStructSize(i32 structIndex, const std::vector<Xsc::Reflection::Struct>& structLookup)
@@ -351,9 +309,9 @@ static u32 CalculateStructSize(i32 structIndex, const std::vector<Xsc::Reflectio
 	return size;
 }
 
-static SAMPLER_STATE_DESC ParseSamplerState(const Xsc::Reflection::SamplerState& samplerReflectionInformation)
+static SamplerStateCreateInformation ParseSamplerState(const Xsc::Reflection::SamplerState& samplerReflectionInformation)
 {
-	SAMPLER_STATE_DESC samplerCreateInformation;
+	SamplerStateCreateInformation samplerCreateInformation;
 
 	samplerCreateInformation.AddressMode.U = XSCConvertTextureAddressingMode(samplerReflectionInformation.addressU);
 	samplerCreateInformation.AddressMode.V = XSCConvertTextureAddressingMode(samplerReflectionInformation.addressV);
@@ -434,7 +392,7 @@ static SAMPLER_STATE_DESC ParseSamplerState(const Xsc::Reflection::SamplerState&
 }
 
 template<bool Core>
-static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionData, ShaderCompilerResult& outCompileResult, TShaderCreateInformation<Core>& outShaderCreateInformation)
+static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionData, ShaderCompilerResult& outCompileResult, CoreVariantType<ShaderCreateInformation, Core>& outShaderCreateInformation)
 {
 	for(auto& entry : reflectionData.uniforms)
 	{
@@ -485,12 +443,12 @@ static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionDat
 				if(objType != GPOT_UNKNOWN)
 				{
 					const bool hasDefaultValue = entry.defaultValue == -1;
-					CoreVariantHandleType<Texture, Core> defaultValue;
+					ShaderDefaultTextureType defaultValue = ShaderDefaultTextureType::None;
 
 					if (!hasDefaultValue)
 					{
 						const Xsc::Reflection::DefaultValue& reflectedDefaultValue = reflectionData.defaultValues[entry.defaultValue];
-						defaultValue = objType == GPOT_TEXTURE3D ? GetBuiltin3DTexture<Core>(reflectedDefaultValue.integer) : GetBuiltinTexture<Core>(reflectedDefaultValue.integer);
+						defaultValue = GetBuiltinTexture(reflectedDefaultValue.integer);
 					}
 
 					// Warn if parameter was already registered in some previous variation with a different value
@@ -505,7 +463,7 @@ static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionDat
 
 						if (!hasDefaultValue)
 						{
-							const CoreVariantHandleType<Texture, Core> existingTexture = outShaderCreateInformation.TextureDefaultValues[foundTextureParameter->second.DefaultValueIndex];
+							const ShaderDefaultTextureType existingTexture = outShaderCreateInformation.TextureDefaultValues[foundTextureParameter->second.DefaultValueIndex];
 							if (existingTexture != defaultValue)
 							{
 								outCompileResult.ErrorMessage = StringUtil::Format("Shader cross compilation failed. Texture parameter '{0}' has a different default value across variations.", entry.ident.c_str());
@@ -541,7 +499,7 @@ static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionDat
 			{
 				if(auto foundSamplerReflectionData = reflectionData.samplerStates.find(entry.ident); foundSamplerReflectionData != reflectionData.samplerStates.end())
 				{
-					SAMPLER_STATE_DESC defaultSamplerStateCreateInformation;
+					SamplerStateCreateInformation defaultSamplerStateCreateInformation;
 					if (foundSamplerReflectionData->second.isNonDefault)
 						defaultSamplerStateCreateInformation = ParseSamplerState(foundSamplerReflectionData->second);
 
@@ -556,8 +514,8 @@ static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionDat
 
 						if (foundSamplerReflectionData->second.isNonDefault)
 						{
-							const SPtr<const CoreVariantType<SamplerState, Core>> existingSamplerState = outShaderCreateInformation.SamplerDefaultValues[foundSamplerParameter->second.DefaultValueIndex];
-							if (existingSamplerState->GetProperties().GetDesc() != defaultSamplerStateCreateInformation)
+							const SamplerStateInformation& existingSamplerState = outShaderCreateInformation.SamplerDefaultValues[foundSamplerParameter->second.DefaultValueIndex];
+							if (existingSamplerState != defaultSamplerStateCreateInformation)
 							{
 								outCompileResult.ErrorMessage = StringUtil::Format("Shader cross compilation failed. Sampler parameter '{0}' has a different default value across variations.", entry.ident.c_str());
 								return false;
@@ -570,11 +528,10 @@ static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionDat
 					const String alias = foundSamplerReflectionData->second.alias.c_str();
 					if(foundSamplerReflectionData->second.isNonDefault)
 					{
-						const SPtr<CoreVariantType<SamplerState, Core>> defaultValue = CoreVariantType<SamplerState, Core>::Create(defaultSamplerStateCreateInformation);
-						outShaderCreateInformation.AddParameter(ShaderObjectParameterInformation(ident, ident, GPOT_SAMPLER2D), defaultValue);
+						outShaderCreateInformation.AddParameter(ShaderObjectParameterInformation(ident, ident, GPOT_SAMPLER2D), defaultSamplerStateCreateInformation);
 
 						if(!alias.empty())
-							outShaderCreateInformation.AddParameter(ShaderObjectParameterInformation(ident, alias, GPOT_SAMPLER2D), defaultValue);
+							outShaderCreateInformation.AddParameter(ShaderObjectParameterInformation(ident, alias, GPOT_SAMPLER2D), defaultSamplerStateCreateInformation);
 					}
 					else
 					{
@@ -662,7 +619,7 @@ static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionDat
 }
 
 template<bool Core>
-static String CrossCompile(const String& hlsl, GpuProgramType type, HLSLCrossCompileOutput outputType, bool optionalEntry, u32& startBindingSlot, ShaderCompilerResult& outCompileResult, TShaderCreateInformation<Core>* outShaderCreateInformation = nullptr, SmallVector<GpuProgramType, 2>* detectedTypes = nullptr)
+static String CrossCompile(const String& hlsl, GpuProgramType type, HLSLCrossCompileOutput outputType, bool optionalEntry, u32& startBindingSlot, ShaderCompilerResult& outCompileResult, CoreVariantType<ShaderCreateInformation, Core>* outShaderCreateInformation = nullptr, SmallVector<GpuProgramType, 2>* detectedTypes = nullptr)
 {
 	SPtr<StringStream> input = B3DMakeShared<StringStream>();
 
@@ -829,7 +786,7 @@ static String CrossCompile(const String& hlsl, GpuProgramType type, HLSLCrossCom
 
 	if (outShaderCreateInformation != nullptr)
 	{
-		if (!ParseParameters(reflectionData, outCompileResult, *outShaderCreateInformation))
+		if (!ParseParameters<Core>(reflectionData, outCompileResult, *outShaderCreateInformation))
 			return "";
 	}
 
@@ -845,14 +802,14 @@ ShaderCompilerResult HLSLCrossCompiler::CrossCompile(const String& hlsl, GpuProg
 }
 
 template<bool Core>
-ShaderCompilerResult HLSLCrossCompiler::TReflect(const String& hlsl, TShaderCreateInformation<Core>& outShaderCreateInformation, SmallVector<GpuProgramType, 2>& outEntryPoints)
+ShaderCompilerResult HLSLCrossCompiler::TReflect(const String& hlsl, CoreVariantType<ShaderCreateInformation, Core>& outShaderCreateInformation, SmallVector<GpuProgramType, 2>& outEntryPoints)
 {
 	ShaderCompilerResult compileResult;
 	u32 dummy = 0;
-	::CrossCompile(hlsl, GPT_VERTEX_PROGRAM, HLSLCrossCompileOutput::GLSL45, true, dummy, compileResult, &outShaderCreateInformation, &outEntryPoints);
+	::CrossCompile<Core>(hlsl, GPT_VERTEX_PROGRAM, HLSLCrossCompileOutput::GLSL45, true, dummy, compileResult, &outShaderCreateInformation, &outEntryPoints);
 
 	return compileResult;
 }
 
-template ShaderCompilerResult HLSLCrossCompiler::TReflect<false>(const String& hlsl, TShaderCreateInformation<false>& outShaderCreateInformation, SmallVector<GpuProgramType, 2>& outEntryPoints);
-template ShaderCompilerResult HLSLCrossCompiler::TReflect<true>(const String& hlsl, TShaderCreateInformation<true>& outShaderCreateInformation, SmallVector<GpuProgramType, 2>& outEntryPoints);
+template ShaderCompilerResult HLSLCrossCompiler::TReflect<false>(const String& hlsl, CoreVariantType<ShaderCreateInformation, false>& outShaderCreateInformation, SmallVector<GpuProgramType, 2>& outEntryPoints);
+template ShaderCompilerResult HLSLCrossCompiler::TReflect<true>(const String& hlsl, CoreVariantType<ShaderCreateInformation, true>& outShaderCreateInformation, SmallVector<GpuProgramType, 2>& outEntryPoints);

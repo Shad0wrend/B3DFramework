@@ -42,6 +42,7 @@
 #include "Audio/BsAudioManager.h"
 #include "Audio/BsAudio.h"
 #include "Animation/BsAnimationManager.h"
+#include "FileSystem/BsFileSystem.h"
 #include "Material/BsShaderCompiler.h"
 #include "Renderer/BsParamBlocks.h"
 #include "Particles/BsParticleManager.h"
@@ -115,8 +116,7 @@ CoreApplication::~CoreApplication()
 
 	// All CoreObject related modules should be shut down now. They have likely queued CoreObjects for destruction, so
 	// we need to wait for those objects to get destroyed before continuing.
-	CoreObjectManager::Instance().SyncToCore();
-	GetCoreThread().Update();
+	CoreObjectManager::Instance().SyncToCore(true);
 	GetCoreThread().SubmitAll(true);
 
 	UnloadPlugin(mStartUpDesc.Renderer);
@@ -154,6 +154,9 @@ void CoreApplication::OnStartUp()
 
 	Platform::StartUpInternal();
 	MemStack::BeginThread();
+
+	mApplicationCache = B3DMakeShared<PersistentCache>();
+	mApplicationCache->Initialize(FileSystem::GetApplicationDataFolder());
 
 	ShaderCompilers::StartUp();
 	ShaderManager::StartUp(GetShaderIncludeHandler());
@@ -303,6 +306,8 @@ void CoreApplication::RunMainLoopFrame()
 
 	PostUpdate();
 
+	mApplicationCache->Update();
+
 	PerFrameData perFrameData;
 
 	// Evaluate animation after scene and plugin updates because the renderer will just now be displaying the
@@ -341,7 +346,6 @@ void CoreApplication::RunMainLoopFrame()
 	GetCoreThread().QueueCommand(&Platform::CoreUpdateInternal, CTQF_InternalQueue);
 	GetCoreThread().QueueCommand(std::bind(&ct::RenderWindowManager::UpdateInternal, ct::RenderWindowManager::InstancePtr()), CTQF_InternalQueue);
 
-	GetCoreThread().Update();
 	GetCoreThread().SubmitAll();
 
 	GetCoreThread().QueueCommand(std::bind(&::bs::CoreApplication::FrameRenderingFinishedCallback, this), CTQF_InternalQueue);
