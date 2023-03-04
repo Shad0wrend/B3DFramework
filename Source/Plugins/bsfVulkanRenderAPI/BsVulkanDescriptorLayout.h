@@ -16,7 +16,7 @@ namespace bs
 		class VulkanDescriptorLayout
 		{
 		public:
-			VulkanDescriptorLayout(VulkanDevice& device, VkDescriptorSetLayoutBinding* bindings, u32 numBindings);
+			VulkanDescriptorLayout(VulkanGpuDevice& device, VkDescriptorSetLayoutBinding* bindings, u32 numBindings);
 			~VulkanDescriptorLayout();
 
 			/** Returns a handle to the Vulkan set layout object. */
@@ -29,7 +29,7 @@ namespace bs
 			static size_t CalculateHash(VkDescriptorSetLayoutBinding* bindings, u32 numBindings);
 
 		protected:
-			VulkanDevice& mDevice;
+			VulkanGpuDevice& mDevice;
 			VkDescriptorSetLayout mLayout;
 			size_t mHash;
 		};

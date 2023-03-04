@@ -150,7 +150,7 @@ namespace bs
 			}
 
 			/** Returns the device this resource is created on. */
-			VulkanDevice& GetDevice() const;
+			VulkanGpuDevice& GetDevice() const;
 
 			/**
 			 * Destroys the resource and frees its memory. If the resource is currently being used on a device, the
@@ -188,7 +188,7 @@ namespace bs
 		class VulkanResourceManager
 		{
 		public:
-			VulkanResourceManager(VulkanDevice& device);
+			VulkanResourceManager(VulkanGpuDevice& device);
 			~VulkanResourceManager();
 
 			/**
@@ -209,7 +209,7 @@ namespace bs
 			}
 
 			/** Returns the device that owns this manager. */
-			VulkanDevice& GetDevice() const { return mDevice; }
+			VulkanGpuDevice& GetDevice() const { return mDevice; }
 
 		private:
 			friend VulkanResource;
@@ -220,7 +220,7 @@ namespace bs
 			 */
 			void Destroy(VulkanResource* resource);
 
-			VulkanDevice& mDevice;
+			VulkanGpuDevice& mDevice;
 
 #if B3D_DEBUG
 			UnorderedSet<VulkanResource*> mResources;

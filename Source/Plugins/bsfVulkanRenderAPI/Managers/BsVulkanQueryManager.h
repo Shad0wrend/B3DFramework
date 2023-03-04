@@ -22,7 +22,7 @@ namespace bs
 		class VulkanQueryPool
 		{
 		public:
-			VulkanQueryPool(VulkanDevice& device);
+			VulkanQueryPool(VulkanGpuDevice& device);
 			~VulkanQueryPool();
 
 			/**
@@ -73,7 +73,7 @@ namespace bs
 
 			static const u32 NUM_QUERIES_PER_POOL = 16;
 
-			VulkanDevice& mDevice;
+			VulkanGpuDevice& mDevice;
 
 			Vector<VulkanQuery*> mTimerQueries;
 			Vector<VulkanQuery*> mOcclusionQueries;

@@ -9,7 +9,7 @@
 #include "BsVulkanHardwareBuffer.h"
 #include "RenderAPI/BsGpuParamDesc.h"
 #include "BsVulkanUtility.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 
 using namespace bs;
 using namespace bs::ct;

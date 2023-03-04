@@ -3,7 +3,7 @@
 #include "BsVulkanSwapChain.h"
 #include "BsVulkanTexture.h"
 #include "BsVulkanRenderAPI.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "BsVulkanGpuBackend.h"
 #include "BsVulkanQueue.h"
 #include "Managers/BsVulkanCommandBufferManager.h"
@@ -21,7 +21,7 @@ VulkanSurface::~VulkanSurface()
 VulkanSwapChain::VulkanSwapChain(VulkanResourceManager* owner, const SPtr<VulkanSurface>& surface, u32 width, u32 height, bool vsync, VkFormat colorFormat, VkColorSpaceKHR colorSpace, bool createDepth, VkFormat depthFormat, VulkanSwapChain* oldSwapChain)
 	: VulkanResource(owner, false), mSurface(surface)
 {
-	VulkanDevice& device = owner->GetDevice();
+	VulkanGpuDevice& device = owner->GetDevice();
 	mDevice = device.GetLogical();
 
 	VkResult result;
@@ -383,7 +383,7 @@ void VulkanSwapChain::Present(u32 imageIndex, VulkanQueue& queue, u32 syncMask)
 
 	if(imageLayout != VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
 	{
-		VulkanDevice& device = queue.GetDevice();
+		VulkanGpuDevice& device = queue.GetDevice();
 		VulkanCommandBufferPool& commandBufferPool = GetVulkanSubmitThread().GetCommandBufferPool(device.GetIndex());
 
 		const u32 queueFamily = device.GetQueueFamily(queue.GetType());
@@ -417,7 +417,7 @@ void VulkanSwapChain::Present(u32 imageIndex, VulkanQueue& queue, u32 syncMask)
 		imageSubresource->SetLayout(VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 	}
 
-	VulkanDevice& presentDevice = queue.GetDevice();
+	VulkanGpuDevice& presentDevice = queue.GetDevice();
 	const u32 queueMask = presentDevice.GetQueueMask(queue.GetType(), queue.GetIndex());
 
 	// Ignore myself as we handle this in VulkanQueue::Present() already

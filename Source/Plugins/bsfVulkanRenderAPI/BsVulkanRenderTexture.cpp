@@ -5,7 +5,7 @@
 #include "BsVulkanTexture.h"
 #include "BsVulkanUtility.h"
 #include "BsVulkanRenderAPI.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "BsVulkanRenderPass.h"
 
 using namespace bs;
@@ -34,7 +34,7 @@ void VulkanRenderTexture::Initialize()
 	framebufferInformation.Width = mProperties.Width;
 	framebufferInformation.Height = mProperties.Height;
 
-	const SPtr<VulkanDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(mDeviceIdx);
+	const SPtr<VulkanGpuDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(mDeviceIdx);
 	for(u32 renderTargetIndex = 0; renderTargetIndex < B3D_MAXIMUM_RENDER_TARGET_COUNT; ++renderTargetIndex)
 	{
 		if(mColorSurfaces[renderTargetIndex] == nullptr)

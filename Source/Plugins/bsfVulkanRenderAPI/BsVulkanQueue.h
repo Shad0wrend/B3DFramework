@@ -16,13 +16,13 @@ namespace bs
 		class VulkanQueue
 		{
 		public:
-			VulkanQueue(VulkanDevice& device, VkQueue queue, GpuQueueType type, u32 index);
+			VulkanQueue(VulkanGpuDevice& device, VkQueue queue, GpuQueueType type, u32 index);
 
 			/** Returns the internal handle to the Vulkan queue object. */
 			VkQueue GetHandle() const { return mQueue; }
 
 			/** Returns the device that owns the queue. */
-			VulkanDevice& GetDevice() const { return mDevice; }
+			VulkanGpuDevice& GetDevice() const { return mDevice; }
 
 			/** Returns the type of the queue. */
 			GpuQueueType GetType() const { return mType; }
@@ -152,7 +152,7 @@ namespace bs
 				u32 SemaphoreCount;
 			};
 
-			VulkanDevice& mDevice;
+			VulkanGpuDevice& mDevice;
 			VkQueue mQueue;
 			GpuQueueType mType;
 			u32 mIndex;

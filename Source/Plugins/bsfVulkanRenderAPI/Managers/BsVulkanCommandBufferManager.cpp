@@ -3,7 +3,7 @@
 #include "Managers/BsVulkanCommandBufferManager.h"
 #include "BsVulkanCommandBuffer.h"
 #include "BsVulkanRenderAPI.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "BsVulkanQueue.h"
 #include "BsVulkanSubmitThread.h"
 #include "BsVulkanTexture.h"
@@ -11,7 +11,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-VulkanTransferBuffer::VulkanTransferBuffer(VulkanDevice* device, GpuQueueType type, u32 queueIdx)
+VulkanTransferBuffer::VulkanTransferBuffer(VulkanGpuDevice* device, GpuQueueType type, u32 queueIdx)
 	: mDevice(device), mType(type), mQueueIndex(queueIdx)
 {
 	u32 queueCount = device->GetQueueCountForType(mType);
@@ -66,7 +66,7 @@ VulkanCommandBufferManager::VulkanCommandBufferManager()
 	mDeviceData = B3DNewMultiple<PerDeviceData>(mDeviceCount);
 	for(u32 i = 0; i < mDeviceCount; i++)
 	{
-		const SPtr<VulkanDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(i);
+		const SPtr<VulkanGpuDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(i);
 
 		for(u32 j = 0; j < GQT_COUNT; j++)
 		{
@@ -93,7 +93,7 @@ SPtr<CommandBuffer> VulkanCommandBufferManager::CreateInternal(GpuQueueType type
 		return nullptr;
 	}
 
-	const SPtr<VulkanDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIdx);
+	const SPtr<VulkanGpuDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIdx);
 
 	CommandBuffer* buffer = new(B3DAllocate<VulkanCommandBuffer>()) VulkanCommandBuffer(*device, type, deviceIdx, queueIdx, secondary);
 
@@ -105,7 +105,7 @@ void VulkanCommandBufferManager::GetSyncSemaphores(u32 deviceIdx, u32 syncMask, 
 	AssertIfNotVulkanSubmitThread();
 
 	bool semaphoreRequestFailed = false;
-	const SPtr<VulkanDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIdx);
+	const SPtr<VulkanGpuDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIdx);
 
 	u32 semaphoreIndex = 0;
 	for(u32 queueTypeIndex = 0; queueTypeIndex < GQT_COUNT; queueTypeIndex++)

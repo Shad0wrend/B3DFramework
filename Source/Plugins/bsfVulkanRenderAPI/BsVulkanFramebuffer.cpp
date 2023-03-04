@@ -3,7 +3,7 @@
 #include "BsVulkanFramebuffer.h"
 #include "BsVulkanTexture.h"
 #include "BsVulkanUtility.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "BsVulkanRenderPass.h"
 
 using namespace bs;
@@ -85,7 +85,7 @@ VulkanFramebufferCache::~VulkanFramebufferCache()
 		entry.second->Destroy();
 }
 
-VulkanFramebuffer* VulkanFramebufferCache::FindOrCreateFramebuffer(const VulkanDevice& device, const VulkanFramebufferInformation& framebufferInformation, const VulkanRenderPassCreateInformation& renderPassInformation)
+VulkanFramebuffer* VulkanFramebufferCache::FindOrCreateFramebuffer(const VulkanGpuDevice& device, const VulkanFramebufferInformation& framebufferInformation, const VulkanRenderPassCreateInformation& renderPassInformation)
 {
 	FramebufferVariantKey key(device.GetLogical(), framebufferInformation, renderPassInformation);
 

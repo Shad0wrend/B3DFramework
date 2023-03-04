@@ -1,6 +1,6 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "BsVulkanQueue.h"
 #include "BsVulkanCommandBuffer.h"
 #include "BsVulkanUtility.h"
@@ -26,7 +26,7 @@ static_assert(false, "Other platform includes go here.");
 using namespace bs;
 using namespace bs::ct;
 
-VulkanDevice::VulkanDevice(VkPhysicalDevice device, u32 deviceIdx)
+VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device, u32 deviceIdx)
 	: mPhysicalDevice(device), mDeviceIdx(deviceIdx), mQueueInfos()
 {
 	// Set to default
@@ -228,7 +228,7 @@ VulkanDevice::VulkanDevice(VkPhysicalDevice device, u32 deviceIdx)
 #endif
 }
 
-VulkanDevice::~VulkanDevice()
+VulkanGpuDevice::~VulkanGpuDevice()
 {
 	B3DDelete(mDescriptorManager);
 	B3DDelete(mQueryPool);
@@ -241,7 +241,7 @@ VulkanDevice::~VulkanDevice()
 	vkDestroyDevice(mLogicalDevice, gVulkanAllocator);
 }
 
-void VulkanDevice::WaitUntilIdle() const
+void VulkanGpuDevice::WaitUntilIdle() const
 {
 	AssertIfNotVulkanSubmitThread();
 
@@ -249,7 +249,7 @@ void VulkanDevice::WaitUntilIdle() const
 	B3D_ASSERT(result == VK_SUCCESS);
 }
 
-void VulkanDevice::DoForEachQueue(const std::function<void(VulkanQueue&)>&& callback) const
+void VulkanGpuDevice::DoForEachQueue(const std::function<void(VulkanQueue&)>&& callback) const
 {
 	for(u32 queueTypeIndex = 0; queueTypeIndex < GQT_COUNT; queueTypeIndex++)
 	{
@@ -264,7 +264,7 @@ void VulkanDevice::DoForEachQueue(const std::function<void(VulkanQueue&)>&& call
 	}
 }
 
-u32 VulkanDevice::GetQueueMask(GpuQueueType type, u32 queueIdx) const
+u32 VulkanGpuDevice::GetQueueMask(GpuQueueType type, u32 queueIdx) const
 {
 	u32 numQueues = GetQueueCountForType(type);
 	if(numQueues == 0)
@@ -281,7 +281,7 @@ u32 VulkanDevice::GetQueueMask(GpuQueueType type, u32 queueIdx) const
 	return idMask;
 }
 
-SurfaceFormat VulkanDevice::GetSurfaceFormat(const VkSurfaceKHR& surface, bool gamma) const
+SurfaceFormat VulkanGpuDevice::GetSurfaceFormat(const VkSurfaceKHR& surface, bool gamma) const
 {
 	uint32_t numFormats;
 	VkResult result = vkGetPhysicalDeviceSurfaceFormatsKHR(mPhysicalDevice, surface, &numFormats, nullptr);
@@ -381,7 +381,7 @@ SurfaceFormat VulkanDevice::GetSurfaceFormat(const VkSurfaceKHR& surface, bool g
 	return output;
 }
 
-VmaAllocation VulkanDevice::AllocateMemory(VkImage image, VmaMemoryUsage usage)
+VmaAllocation VulkanGpuDevice::AllocateMemory(VkImage image, VmaMemoryUsage usage)
 {
 	VmaAllocationCreateInfo allocationCreateInformation = {};
 	allocationCreateInformation.usage = usage;
@@ -397,7 +397,7 @@ VmaAllocation VulkanDevice::AllocateMemory(VkImage image, VmaMemoryUsage usage)
 	return allocation;
 }
 
-VmaAllocation VulkanDevice::AllocateMemory(VkBuffer buffer, VmaMemoryUsage usage)
+VmaAllocation VulkanGpuDevice::AllocateMemory(VkBuffer buffer, VmaMemoryUsage usage)
 {
 	VmaAllocationCreateInfo allocationCreateInformation = {};
 	allocationCreateInformation.usage = usage;
@@ -413,12 +413,12 @@ VmaAllocation VulkanDevice::AllocateMemory(VkBuffer buffer, VmaMemoryUsage usage
 	return memory;
 }
 
-void VulkanDevice::FreeMemory(VmaAllocation allocation)
+void VulkanGpuDevice::FreeMemory(VmaAllocation allocation)
 {
 	vmaFreeMemory(mAllocator, allocation);
 }
 
-void* VulkanDevice::MapMemory(const VmaAllocation& allocation) const
+void* VulkanGpuDevice::MapMemory(const VmaAllocation& allocation) const
 {
 	void* data;
 	VkResult result = vmaMapMemory(mAllocator, allocation, &data);
@@ -427,24 +427,24 @@ void* VulkanDevice::MapMemory(const VmaAllocation& allocation) const
 	return data;
 }
 
-void VulkanDevice::UnmapMemory(const VmaAllocation& allocation) const
+void VulkanGpuDevice::UnmapMemory(const VmaAllocation& allocation) const
 {
 	vmaUnmapMemory(mAllocator, allocation);
 }
 
-void VulkanDevice::InvalidateMemory(const VmaAllocation& allocation, VkDeviceSize offset, VkDeviceSize size) const
+void VulkanGpuDevice::InvalidateMemory(const VmaAllocation& allocation, VkDeviceSize offset, VkDeviceSize size) const
 {
 	VkResult result = vmaInvalidateAllocation(mAllocator, allocation, offset, size);
 	B3D_ASSERT(result == VK_SUCCESS);
 }
 
-void VulkanDevice::FlushMemory(const VmaAllocation& allocation, VkDeviceSize offset, VkDeviceSize size) const
+void VulkanGpuDevice::FlushMemory(const VmaAllocation& allocation, VkDeviceSize offset, VkDeviceSize size) const
 {
 	VkResult result = vmaFlushAllocation(mAllocator, allocation, offset, size);
 	B3D_ASSERT(result == VK_SUCCESS);
 }
 
-void VulkanDevice::GetAllocationInfo(VmaAllocation allocation, VkDeviceMemory& memory, VkDeviceSize& offset)
+void VulkanGpuDevice::GetAllocationInfo(VmaAllocation allocation, VkDeviceMemory& memory, VkDeviceSize& offset)
 {
 	VmaAllocationInfo allocInfo;
 	vmaGetAllocationInfo(mAllocator, allocation, &allocInfo);
@@ -453,7 +453,7 @@ void VulkanDevice::GetAllocationInfo(VmaAllocation allocation, VkDeviceMemory& m
 	offset = allocInfo.offset;
 }
 
-uint32_t VulkanDevice::FindMemoryType(uint32_t requirementBits, VkMemoryPropertyFlags wantedFlags)
+uint32_t VulkanGpuDevice::FindMemoryType(uint32_t requirementBits, VkMemoryPropertyFlags wantedFlags)
 {
 	for(uint32_t i = 0; i < mMemoryProperties.memoryTypeCount; i++)
 	{
@@ -467,7 +467,7 @@ uint32_t VulkanDevice::FindMemoryType(uint32_t requirementBits, VkMemoryProperty
 	return -1;
 }
 
-void VulkanDevice::InitializeCapabilities()
+void VulkanGpuDevice::InitializeCapabilities()
 {
 	const VkPhysicalDeviceProperties& deviceProperties = GetDeviceProperties();
 	const VkPhysicalDeviceFeatures& deviceFeatures =GetDeviceFeatures();

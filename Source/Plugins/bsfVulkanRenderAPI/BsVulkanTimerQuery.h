@@ -17,7 +17,7 @@ namespace bs
 		class VulkanTimerQuery : public TimerQuery
 		{
 		public:
-			VulkanTimerQuery(VulkanDevice& device);
+			VulkanTimerQuery(VulkanGpuDevice& device);
 			~VulkanTimerQuery() override;
 
 			void Begin(const SPtr<CommandBuffer>& cb) override;
@@ -35,7 +35,7 @@ namespace bs
 			void Interrupt(VulkanInternalCommandBuffer& cb);
 
 		private:
-			VulkanDevice& mDevice;
+			VulkanGpuDevice& mDevice;
 			Vector<std::pair<VulkanQuery*, VulkanQuery*>> mQueries;
 
 			float mTimeDelta = 0.0f;

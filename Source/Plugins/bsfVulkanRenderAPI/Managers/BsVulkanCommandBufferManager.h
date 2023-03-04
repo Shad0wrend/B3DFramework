@@ -19,7 +19,7 @@ namespace bs
 		{
 		public:
 			VulkanTransferBuffer() = default;
-			VulkanTransferBuffer(VulkanDevice* device, GpuQueueType type, u32 queueIdx);
+			VulkanTransferBuffer(VulkanGpuDevice* device, GpuQueueType type, u32 queueIdx);
 			~VulkanTransferBuffer();
 
 			/**
@@ -49,7 +49,7 @@ namespace bs
 			/** Allocates a new internal command buffer. */
 			void Allocate();
 
-			VulkanDevice* mDevice = nullptr;
+			VulkanGpuDevice* mDevice = nullptr;
 			GpuQueueType mType = GQT_GRAPHICS;
 			u32 mQueueIndex = 0;
 			VulkanQueue* mQueue = nullptr;

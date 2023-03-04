@@ -19,7 +19,7 @@ namespace bs
 		{
 		public:
 			/**	Finds the closest pixel format that a specific Vulkan device supports. */
-			static PixelFormat GetClosestSupportedPixelFormat(const VulkanDevice& device, PixelFormat format, TextureType texType, int usage, bool optimalTiling, bool hwGamma);
+			static PixelFormat GetClosestSupportedPixelFormat(const VulkanGpuDevice& device, PixelFormat format, TextureType texType, int usage, bool optimalTiling, bool hwGamma);
 
 			/** Converts between framework's and Vulkan pixel format. */
 			static VkFormat GetPixelFormat(PixelFormat format, bool sRGB = false);
@@ -88,7 +88,7 @@ namespace bs
 			 * Populates the provided array with Vulkan devices that correspond to provided flags. Sets null in unused slots.
 			 * Each device is placed at its own index in the output array.
 			 */
-			static void GetDevices(const VulkanRenderAPI& rapi, GpuDeviceFlags flags, VulkanDevice* (&devices)[B3D_MAX_DEVICES]);
+			static void GetDevices(const VulkanRenderAPI& rapi, GpuDeviceFlags flags, VulkanGpuDevice* (&devices)[B3D_MAX_DEVICES]);
 
 			/** Checks is a flag for a particular device enabled. */
 			static bool IsDeviceIdxSet(const VulkanRenderAPI& rapi, u32 idx, GpuDeviceFlags flags);

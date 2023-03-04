@@ -3,7 +3,7 @@
 #include "BsVulkanRenderPass.h"
 #include "BsVulkanTexture.h"
 #include "BsVulkanUtility.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 
 using namespace bs;
 using namespace bs::ct;

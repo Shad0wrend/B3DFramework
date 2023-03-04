@@ -17,7 +17,7 @@ namespace bs
 		class VulkanOcclusionQuery : public OcclusionQuery
 		{
 		public:
-			VulkanOcclusionQuery(VulkanDevice& device, bool binary);
+			VulkanOcclusionQuery(VulkanGpuDevice& device, bool binary);
 			~VulkanOcclusionQuery() override;
 
 			void Begin(const SPtr<CommandBuffer>& cb) override;
@@ -37,7 +37,7 @@ namespace bs
 		private:
 			friend class QueryManager;
 
-			VulkanDevice& mDevice;
+			VulkanGpuDevice& mDevice;
 			Vector<VulkanQuery*> mQueries;
 
 			u64 mNumSamples = 0;

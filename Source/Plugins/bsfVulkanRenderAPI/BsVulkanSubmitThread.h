@@ -53,7 +53,7 @@ namespace bs::ct
 		 * Queues an operation that checks the completion status of any command buffers submitted on the provided device. This needs to be followed by
 		 * RefreshCommandBufferCompletionStates() in order for the change to register on the render thread.
 		 */
-		void QueueRefreshCommandBufferCompletionStates(const VulkanDevice* device);
+		void QueueRefreshCommandBufferCompletionStates(const VulkanGpuDevice* device);
 
 		/**
 		 * Blocks the calling thread until all commands have finished executing.

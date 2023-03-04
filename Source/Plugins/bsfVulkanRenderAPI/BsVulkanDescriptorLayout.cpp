@@ -1,12 +1,12 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanDescriptorLayout.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 
 using namespace bs;
 using namespace bs::ct;
 
-VulkanDescriptorLayout::VulkanDescriptorLayout(VulkanDevice& device, VkDescriptorSetLayoutBinding* bindings, u32 numBindings)
+VulkanDescriptorLayout::VulkanDescriptorLayout(VulkanGpuDevice& device, VkDescriptorSetLayoutBinding* bindings, u32 numBindings)
 	: mDevice(device)
 {
 	mHash = CalculateHash(bindings, numBindings);

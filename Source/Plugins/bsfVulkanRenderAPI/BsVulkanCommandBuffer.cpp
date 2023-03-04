@@ -3,7 +3,7 @@
 #include "BsVulkanCommandBuffer.h"
 #include "Managers/BsVulkanCommandBufferManager.h"
 #include "BsVulkanUtility.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "BsVulkanGpuParams.h"
 #include "BsVulkanQueue.h"
 #include "BsVulkanTexture.h"
@@ -51,7 +51,7 @@ VulkanSemaphore::~VulkanSemaphore()
 	vkDestroySemaphore(mOwner->GetDevice().GetLogical(), mSemaphore, gVulkanAllocator);
 }
 
-VulkanCommandBufferPool::VulkanCommandBufferPool(VulkanDevice& device, VulkanThread thread)
+VulkanCommandBufferPool::VulkanCommandBufferPool(VulkanGpuDevice& device, VulkanThread thread)
 	: mDevice(device), mOwnerThread(thread)
 {
 	for(u32 i = 0; i < GQT_COUNT; i++)
@@ -202,7 +202,7 @@ void GetPipelineStageFlags(const Vector<T>& barriers, VkPipelineStageFlags& src,
 const Color kDebugLabelColor = Color::kBansheeOrange;
 constexpr u32 kMaximumBoundDescriptorSets = 64;
 
-VulkanInternalCommandBuffer::VulkanInternalCommandBuffer(VulkanDevice& device, VulkanThread ownerThread, u32 id, VkCommandPool pool, u32 queueFamily, bool secondary)
+VulkanInternalCommandBuffer::VulkanInternalCommandBuffer(VulkanGpuDevice& device, VulkanThread ownerThread, u32 id, VkCommandPool pool, u32 queueFamily, bool secondary)
 	: mId(id), mQueueFamily(queueFamily), mDevice(device), mPool(pool), mNeedsWARMemoryBarrier(false), mNeedsRAWMemoryBarrier(false), mGfxPipelineRequiresBind(true), mCmpPipelineRequiresBind(true), mViewportRequiresBind(true), mStencilRefRequiresBind(true), mScissorRequiresBind(true), mBoundParamsDirty(false), mVertexInputsDirty(false), mOwnerThread(ownerThread)
 {
 	const u32 maximumBoundDescriptorSets = Math::Min(kMaximumBoundDescriptorSets, device.GetDeviceProperties().limits.maxBoundDescriptorSets);
@@ -541,7 +541,7 @@ u32 VulkanInternalCommandBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 sy
 
 	B3D_ASSERT(IsReadyForSubmit());
 
-	VulkanDevice& device = queue->GetDevice();
+	VulkanGpuDevice& device = queue->GetDevice();
 	VulkanCommandBufferPool& commandBufferPool = GetVulkanSubmitThread().GetCommandBufferPool(device.GetIndex());
 
 	// If there are any query resets needed, execute those first
@@ -2910,7 +2910,7 @@ void VulkanInternalCommandBuffer::NotifyRenderTargetModified()
 	mRenderTargetModified = true;
 }
 
-VulkanCommandBuffer::VulkanCommandBuffer(VulkanDevice& device, GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary)
+VulkanCommandBuffer::VulkanCommandBuffer(VulkanGpuDevice& device, GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary)
 	: CommandBuffer(type, deviceIdx, queueIdx, secondary), mBuffer(nullptr), mDevice(device), mQueue(nullptr), mIdMask(0)
 {
 	u32 numQueues = device.GetQueueCountForType(mType);

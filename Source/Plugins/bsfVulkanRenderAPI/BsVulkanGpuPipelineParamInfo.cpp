@@ -3,7 +3,7 @@
 #include "BsVulkanGpuPipelineParamInfo.h"
 #include "BsVulkanUtility.h"
 #include "BsVulkanRenderAPI.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "RenderAPI/BsGpuParamDesc.h"
 
 using namespace bs;
@@ -17,7 +17,7 @@ void VulkanGpuPipelineParamInfo::Initialize()
 {
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 
-	VulkanDevice* devices[B3D_MAX_DEVICES];
+	VulkanGpuDevice* devices[B3D_MAX_DEVICES];
 	VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
 	u32 deviceCount = 0;

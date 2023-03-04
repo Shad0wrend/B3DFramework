@@ -2,14 +2,14 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanUtility.h"
 #include "BsVulkanRenderAPI.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "Error/BsException.h"
 #include "RenderAPI/BsGpuParams.h"
 
 using namespace bs;
 using namespace bs::ct;
 
-PixelFormat VulkanUtility::GetClosestSupportedPixelFormat(const VulkanDevice& device, PixelFormat format, TextureType texType, int usage, bool optimalTiling, bool hwGamma)
+PixelFormat VulkanUtility::GetClosestSupportedPixelFormat(const VulkanGpuDevice& device, PixelFormat format, TextureType texType, int usage, bool optimalTiling, bool hwGamma)
 {
 	// Check for any obvious issues first
 	PixelUtil::CheckFormat(format, texType, usage);
@@ -615,7 +615,7 @@ VkSamplerMipmapMode VulkanUtility::GetMipFilter(FilterOptions filter)
 	return VK_SAMPLER_MIPMAP_MODE_LINEAR;
 }
 
-void VulkanUtility::GetDevices(const VulkanRenderAPI& rapi, GpuDeviceFlags flags, VulkanDevice* (&devices)[B3D_MAX_DEVICES])
+void VulkanUtility::GetDevices(const VulkanRenderAPI& rapi, GpuDeviceFlags flags, VulkanGpuDevice* (&devices)[B3D_MAX_DEVICES])
 {
 	const u32 deviceCount = GetVulkanGpuBackend().GetDeviceCount();
 
@@ -627,7 +627,7 @@ void VulkanUtility::GetDevices(const VulkanRenderAPI& rapi, GpuDeviceFlags flags
 			continue;
 		}
 
-		VulkanDevice* device = GetVulkanGpuBackend().GetVulkanDevice(i).get();
+		VulkanGpuDevice* device = GetVulkanGpuBackend().GetVulkanDevice(i).get();
 
 		if(IsDeviceIdxSet(rapi, i, flags))
 			devices[i] = device;
@@ -687,7 +687,7 @@ VkViewport VulkanUtility::ToVulkanViewport(const Rect2I& input, float minDepth, 
 
 bool VulkanUtility::IsDeviceIdxSet(const VulkanRenderAPI& rapi, u32 idx, GpuDeviceFlags flags)
 {
-	VulkanDevice* device = GetVulkanGpuBackend().GetVulkanDevice(idx).get();
+	VulkanGpuDevice* device = GetVulkanGpuBackend().GetVulkanDevice(idx).get();
 
 	return ((flags & (1 << idx)) != 0 || (flags == GDF_DEFAULT && device->IsPrimary()));
 }

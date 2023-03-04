@@ -50,7 +50,7 @@ namespace bs
 		class Win32VideoMode;
 		class VulkanVertexDeclaration;
 		class VulkanHardwareBuffer;
-		class VulkanDevice;
+		class VulkanGpuDevice;
 		class VulkanGLSLProgramFactory;
 		class VulkanSwapChain;
 		class VulkanFramebuffer;

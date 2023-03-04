@@ -86,7 +86,7 @@ namespace bs
 		class VulkanDescriptorManager
 		{
 		public:
-			VulkanDescriptorManager(VulkanDevice& device);
+			VulkanDescriptorManager(VulkanGpuDevice& device);
 			~VulkanDescriptorManager();
 
 			/** Attempts to find an existing one, or allocates a new descriptor set layout from the provided set of bindings. */
@@ -99,7 +99,7 @@ namespace bs
 			VkPipelineLayout GetPipelineLayout(VulkanDescriptorLayout** layouts, u32 numLayouts);
 
 		protected:
-			VulkanDevice& mDevice;
+			VulkanGpuDevice& mDevice;
 
 			UnorderedSet<VulkanLayoutKey> mLayouts;
 			UnorderedMap<VulkanPipelineLayoutKey, VkPipelineLayout> mPipelineLayouts;

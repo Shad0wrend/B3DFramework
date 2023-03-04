@@ -153,12 +153,12 @@ void VulkanResource::Destroy()
 		mOwner->Destroy(this);
 }
 
-VulkanDevice& VulkanResource::GetDevice() const
+VulkanGpuDevice& VulkanResource::GetDevice() const
 {
 	return mOwner->GetDevice();
 }
 
-VulkanResourceManager::VulkanResourceManager(VulkanDevice& device)
+VulkanResourceManager::VulkanResourceManager(VulkanGpuDevice& device)
 	: mDevice(device)
 {}
 

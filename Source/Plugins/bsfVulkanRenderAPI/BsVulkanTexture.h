@@ -298,7 +298,7 @@ namespace bs
 
 		private:
 			/** Creates a new image for the specified device, matching the current properties. */
-			VulkanImage* CreateImage(VulkanDevice& device, PixelFormat format);
+			VulkanImage* CreateImage(VulkanGpuDevice& device, PixelFormat format);
 
 			/**
 			 * Creates a staging buffer that can be used for texture transfer operations.
@@ -308,7 +308,7 @@ namespace bs
 			 * @param[in]	needsRead	True if we will be copying data from the buffer, false if just reading. True if both.
 			 * @return					Newly allocated buffer.
 			 */
-			VulkanBuffer* CreateStaging(VulkanDevice& device, const PixelData& pixelData, bool needsRead);
+			VulkanBuffer* CreateStaging(VulkanGpuDevice& device, const PixelData& pixelData, bool needsRead);
 
 			/**
 			 * Copies all sub-resources from the source image to the destination image. Caller must ensure the images

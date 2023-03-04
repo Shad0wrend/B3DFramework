@@ -4,7 +4,7 @@
 #include "BsVulkanDescriptorLayout.h"
 #include "BsVulkanDescriptorSet.h"
 #include "BsVulkanDescriptorPool.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "BsVulkanResource.h"
 
 using namespace bs;
@@ -69,7 +69,7 @@ size_t VulkanPipelineLayoutKey::CalculateHash() const
 	return hash;
 }
 
-VulkanDescriptorManager::VulkanDescriptorManager(VulkanDevice& device)
+VulkanDescriptorManager::VulkanDescriptorManager(VulkanGpuDevice& device)
 	: mDevice(device)
 {
 	mPools.push_back(B3DNew<VulkanDescriptorPool>(device));

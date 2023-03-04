@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanTexture.h"
 #include "BsVulkanRenderAPI.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "BsVulkanFramebuffer.h"
 #include "BsVulkanUtility.h"
 #include "Managers/BsVulkanCommandBufferManager.h"
@@ -93,7 +93,7 @@ VulkanImage::VulkanImage(VulkanResourceManager* owner, const VulkanImageCreateIn
 
 VulkanImage::~VulkanImage()
 {
-	VulkanDevice& device = mOwner->GetDevice();
+	VulkanGpuDevice& device = mOwner->GetDevice();
 	VkDevice vkDevice = device.GetLogical();
 
 	const u32 subresourceCount = mFaceCount * mMipLevelCount;
@@ -362,7 +362,7 @@ VulkanImageSubresource* VulkanImage::GetSubresource(u32 face, u32 mipLevel)
 
 VkSubresourceLayout VulkanImage::GetSubresourceLayout(u32 face, u32 mipLevel) const
 {
-	VulkanDevice& device = mOwner->GetDevice();
+	VulkanGpuDevice& device = mOwner->GetDevice();
 
 	VkImageSubresource subresourceRange;
 	subresourceRange.mipLevel = mipLevel;
@@ -402,7 +402,7 @@ ImageSubresourcePitch VulkanImage::ConvertSubresourceLayoutToBlocks(const VkSubr
 
 void VulkanImage::Map(u32 face, u32 mipLevel, PixelData& output, bool isInvalidateRequired) const
 {
-	VulkanDevice& device = mOwner->GetDevice();
+	VulkanGpuDevice& device = mOwner->GetDevice();
 
 	VkImageSubresource range;
 	range.mipLevel = mipLevel;
@@ -425,7 +425,7 @@ void VulkanImage::Map(u32 face, u32 mipLevel, PixelData& output, bool isInvalida
 
 u8* VulkanImage::Map(VkDeviceSize offset, VkDeviceSize size, bool isInvalidateRequired) const
 {
-	VulkanDevice& device = mOwner->GetDevice();
+	VulkanGpuDevice& device = mOwner->GetDevice();
 
 	if(isInvalidateRequired)
 		device.InvalidateMemory(mAllocation, offset, size);
@@ -440,7 +440,7 @@ u8* VulkanImage::Map(VkDeviceSize offset, VkDeviceSize size, bool isInvalidateRe
 
 void VulkanImage::Unmap(bool isFlushRequired)
 {
-	VulkanDevice& device = mOwner->GetDevice();
+	VulkanGpuDevice& device = mOwner->GetDevice();
 
 	device.UnmapMemory(mAllocation);
 
@@ -795,7 +795,7 @@ void VulkanTexture::Initialize()
 	mImageCI.pQueueFamilyIndices = nullptr;
 
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-	VulkanDevice* devices[B3D_MAX_DEVICES];
+	VulkanGpuDevice* devices[B3D_MAX_DEVICES];
 	VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
 	// Allocate buffers per-device
@@ -830,7 +830,7 @@ void VulkanTexture::SetName(const StringView& name)
 	}
 }
 
-VulkanImage* VulkanTexture::CreateImage(VulkanDevice& device, PixelFormat format)
+VulkanImage* VulkanTexture::CreateImage(VulkanGpuDevice& device, PixelFormat format)
 {
 	bool directlyMappable = mImageCI.tiling == VK_IMAGE_TILING_LINEAR;
 	VmaMemoryUsage memoryUsage = directlyMappable ? VMA_MEMORY_USAGE_CPU_TO_GPU : VMA_MEMORY_USAGE_GPU_ONLY;
@@ -851,7 +851,7 @@ VulkanImage* VulkanTexture::CreateImage(VulkanDevice& device, PixelFormat format
 	return vulkanImage;
 }
 
-VulkanBuffer* VulkanTexture::CreateStaging(VulkanDevice& device, const PixelData& pixelData, bool readable)
+VulkanBuffer* VulkanTexture::CreateStaging(VulkanGpuDevice& device, const PixelData& pixelData, bool readable)
 {
 	VkBufferCreateInfo bufferCI;
 	bufferCI.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -1279,7 +1279,7 @@ PixelData VulkanTexture::LockInternal(GpuLockOptions options, u32 mipLevel, u32 
 	mMappedMip = mipLevel;
 	mMappedLockOptions = options;
 
-	VulkanDevice& device = *GetVulkanGpuBackend().GetVulkanDevice(deviceIdx);
+	VulkanGpuDevice& device = *GetVulkanGpuBackend().GetVulkanDevice(deviceIdx);
 
 	VulkanCommandBufferManager& cbManager = GetVulkanCommandBufferManager();
 	GpuQueueType queueType;
@@ -1464,7 +1464,7 @@ void VulkanTexture::UnlockInternal()
 		// If the caller wrote anything to the staging buffer, we need to upload it back to the main buffer
 		if(isWrite)
 		{
-			VulkanDevice& device = *GetVulkanGpuBackend().GetVulkanDevice(mMappedDeviceIdx);
+			VulkanGpuDevice& device = *GetVulkanGpuBackend().GetVulkanDevice(mMappedDeviceIdx);
 
 			VulkanCommandBufferManager& cbManager = GetVulkanCommandBufferManager();
 			GpuQueueType queueType;
@@ -1581,7 +1581,7 @@ TAsyncOp<SPtr<PixelData>> VulkanTexture::ReadDataAsync(u32 mipLevel, u32 face, u
 	}
 
 	VulkanRenderAPI& vulkanBackend = GetVulkanRenderAPI();
-	VulkanDevice& device = *GetVulkanGpuBackend().GetVulkanDevice(deviceIndex);
+	VulkanGpuDevice& device = *GetVulkanGpuBackend().GetVulkanDevice(deviceIndex);
 
 	VulkanInternalCommandBuffer* vulkanCommandBufffer;
 	if(commandBuffer != nullptr)

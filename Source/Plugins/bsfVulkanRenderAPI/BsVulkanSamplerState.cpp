@@ -1,7 +1,7 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanSamplerState.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "BsVulkanUtility.h"
 #include "BsVulkanRenderAPI.h"
 
@@ -64,7 +64,7 @@ void VulkanSamplerState::CreateInternal()
 	samplerInfo.unnormalizedCoordinates = false;
 
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-	VulkanDevice* devices[B3D_MAX_DEVICES];
+	VulkanGpuDevice* devices[B3D_MAX_DEVICES];
 	VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
 	// Allocate samplers per-device

@@ -4,7 +4,7 @@
 #include "CoreThread/BsCoreThread.h"
 #include "Profiling/BsRenderStats.h"
 #include "RenderAPI/BsGpuParamDesc.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "Managers/BsVulkanTextureManager.h"
 #include "Managers/BsVulkanRenderWindowManager.h"
 #include "Managers/BsVulkanHardwareBufferManager.h"
@@ -294,7 +294,7 @@ void VulkanRenderAPI::BeginFrame()
 
 void VulkanRenderAPI::EndFrame()
 {
-	VulkanDevice* const vulkanGpuDevice = static_cast<VulkanDevice*>(mPrimaryGpuDevice.get());
+	VulkanGpuDevice* const vulkanGpuDevice = static_cast<VulkanGpuDevice*>(mPrimaryGpuDevice.get());
 	if(vulkanGpuDevice == nullptr)
 		return;
 

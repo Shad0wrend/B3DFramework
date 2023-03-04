@@ -1,7 +1,7 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanGpuPipelineState.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "BsVulkanGpuProgram.h"
 #include "BsVulkanFramebuffer.h"
 #include "BsVulkanUtility.h"
@@ -284,7 +284,7 @@ void VulkanGraphicsPipelineState::Initialize()
 
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 
-	VulkanDevice* devices[B3D_MAX_DEVICES];
+	VulkanGpuDevice* devices[B3D_MAX_DEVICES];
 	VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
 	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
@@ -466,7 +466,7 @@ VulkanPipeline* VulkanGraphicsPipelineState::CreatePipeline(u32 deviceIndex, Vul
 		stageOutputIdx++;
 	}
 
-	VulkanDevice* device = mPerDeviceData[deviceIndex].Device;
+	VulkanGpuDevice* device = mPerDeviceData[deviceIndex].Device;
 	VkDevice vkDevice = mPerDeviceData[deviceIndex].Device->GetLogical();
 
 	VkPipeline pipeline;
@@ -532,7 +532,7 @@ void VulkanComputePipelineState::Initialize()
 
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 
-	VulkanDevice* devices[B3D_MAX_DEVICES];
+	VulkanGpuDevice* devices[B3D_MAX_DEVICES];
 	VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
 	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)

@@ -132,7 +132,7 @@ namespace bs
 			 * @param	renderPassInformation		Information about the render pass the framebuffer will be used with.
 			 * @return								Existing cached framebuffer, or a brand new framebuffer.
 			 */
-			VulkanFramebuffer* FindOrCreateFramebuffer(const VulkanDevice& device, const VulkanFramebufferInformation& framebufferInformation, const VulkanRenderPassCreateInformation& renderPassInformation);
+			VulkanFramebuffer* FindOrCreateFramebuffer(const VulkanGpuDevice& device, const VulkanFramebufferInformation& framebufferInformation, const VulkanRenderPassCreateInformation& renderPassInformation);
 
 			/**
 			 * Notifies the system that an image was destroyed. If any framebuffer is using the image, their cache entries will be invalidated.

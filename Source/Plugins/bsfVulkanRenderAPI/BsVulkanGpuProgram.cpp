@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanGpuProgram.h"
 #include "BsVulkanRenderAPI.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "BsVulkanUtility.h"
 #include "RenderAPI/BsGpuParams.h"
 #include "RenderAPI/BsGpuParamDesc.h"
@@ -98,7 +98,7 @@ void VulkanGpuProgram::Initialize()
 	if(mIsCompiled)
 	{
 		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-		VulkanDevice* devices[B3D_MAX_DEVICES];
+		VulkanGpuDevice* devices[B3D_MAX_DEVICES];
 
 		u32 codeSize = mBytecode->Instructions.Size;
 		u8* code = mBytecode->Instructions.Data;
@@ -167,7 +167,7 @@ void VulkanGpuProgram::SetName(const StringView& name)
 		return;
 
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-	VulkanDevice* devices[B3D_MAX_DEVICES];
+	VulkanGpuDevice* devices[B3D_MAX_DEVICES];
 	VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
 	for(UINT32 i = 0; i < B3D_MAX_DEVICES; i++)

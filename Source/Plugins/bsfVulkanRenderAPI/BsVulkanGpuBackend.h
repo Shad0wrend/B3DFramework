@@ -4,7 +4,7 @@
 
 #include "BsVulkanPrerequisites.h"
 #include "RenderAPI/BsGpuBackend.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 
 namespace bs
 {
@@ -27,15 +27,15 @@ namespace bs
 		VkInstance GetVkInstance() const { return mInstance; }
 
 		/** Returns a Vulkan device at the specified index. Must be in range [0, GetDeviceCount()) */
-		const SPtr<ct::VulkanDevice>& GetVulkanDevice(u32 index) const { return mDevices[index]; }
+		const SPtr<ct::VulkanGpuDevice>& GetVulkanDevice(u32 index) const { return mDevices[index]; }
 
 		/** Returns the primary device that supports swap chain present operations. */
-		const SPtr<ct::VulkanDevice>& GetPresentDevice() const { return mPresentDevice; }
+		const SPtr<ct::VulkanGpuDevice>& GetPresentDevice() const { return mPresentDevice; }
 	private:
 		VkInstance mInstance = nullptr;
 
-		SmallVector<SPtr<ct::VulkanDevice>, 2> mDevices;
-		SPtr<ct::VulkanDevice> mPresentDevice;
+		SmallVector<SPtr<ct::VulkanGpuDevice>, 2> mDevices;
+		SPtr<ct::VulkanGpuDevice> mPresentDevice;
 
 		ct::VulkanGLSLProgramFactory* mGLSLFactory = nullptr;
 

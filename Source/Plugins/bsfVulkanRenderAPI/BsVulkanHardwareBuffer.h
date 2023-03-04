@@ -145,7 +145,7 @@ namespace bs
 			void Unmap() override;
 
 			/** Creates a new buffer for the specified device, matching the current buffer properties. */
-			VulkanBuffer* CreateBuffer(VulkanDevice& device, u32 size, bool staging, bool readable);
+			VulkanBuffer* CreateBuffer(VulkanGpuDevice& device, u32 size, bool staging, bool readable);
 
 			VulkanBuffer* mBuffers[B3D_MAX_DEVICES];
 

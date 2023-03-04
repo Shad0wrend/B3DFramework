@@ -27,11 +27,11 @@ namespace bs
 		};
 
 		/** Represents a single GPU device usable by Vulkan. */
-		class VulkanDevice : public GpuDevice
+		class VulkanGpuDevice : public GpuDevice
 		{
 		public:
-			VulkanDevice(VkPhysicalDevice device, u32 deviceIdx);
-			~VulkanDevice();
+			VulkanGpuDevice(VkPhysicalDevice device, u32 deviceIdx);
+			~VulkanGpuDevice();
 
 			bool IsInitialized() const override { return true; }
 			bool Initialize() override { return true; } // Initialized on construction

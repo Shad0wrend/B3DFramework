@@ -1,7 +1,7 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanOcclusionQuery.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "Managers/BsVulkanQueryManager.h"
 #include "BsVulkanRenderAPI.h"
 #include "BsVulkanCommandBuffer.h"
@@ -10,7 +10,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-VulkanOcclusionQuery::VulkanOcclusionQuery(VulkanDevice& device, bool binary)
+VulkanOcclusionQuery::VulkanOcclusionQuery(VulkanGpuDevice& device, bool binary)
 	: OcclusionQuery(binary), mDevice(device), mQueryEndCalled(false), mQueryFinalized(false)
 {
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResCreated, RenderStatObject_Query);

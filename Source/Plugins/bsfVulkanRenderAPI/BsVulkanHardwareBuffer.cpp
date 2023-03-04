@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanHardwareBuffer.h"
 #include "BsVulkanRenderAPI.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "BsVulkanUtility.h"
 #include "Managers/BsVulkanCommandBufferManager.h"
 #include "BsVulkanCommandBuffer.h"
@@ -22,7 +22,7 @@ VulkanBuffer::VulkanBuffer(VulkanResourceManager* owner, VkBuffer buffer, VmaAll
 
 VulkanBuffer::~VulkanBuffer()
 {
-	VulkanDevice& device = mOwner->GetDevice();
+	VulkanGpuDevice& device = mOwner->GetDevice();
 
 	{
 		Lock lock(mMutex);
@@ -51,7 +51,7 @@ void VulkanBuffer::SetName(const StringView& name)
 
 u8* VulkanBuffer::Map(VkDeviceSize offset, VkDeviceSize size, bool isInvalidateRequired) const
 {
-	VulkanDevice& device = mOwner->GetDevice();
+	VulkanGpuDevice& device = mOwner->GetDevice();
 
 	if(isInvalidateRequired)
 		device.InvalidateMemory(mAllocation, offset, size);
@@ -66,7 +66,7 @@ u8* VulkanBuffer::Map(VkDeviceSize offset, VkDeviceSize size, bool isInvalidateR
 
 void VulkanBuffer::Unmap(bool isFlushRequired)
 {
-	VulkanDevice& device = mOwner->GetDevice();
+	VulkanGpuDevice& device = mOwner->GetDevice();
 
 	device.UnmapMemory(mAllocation);
 
@@ -215,7 +215,7 @@ VulkanHardwareBuffer::VulkanHardwareBuffer(HardwareBufferType type, GpuBufferUsa
 	mBufferCI.pQueueFamilyIndices = nullptr;
 
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-	VulkanDevice* devices[B3D_MAX_DEVICES];
+	VulkanGpuDevice* devices[B3D_MAX_DEVICES];
 	VulkanUtility::GetDevices(rapi, deviceMask, devices);
 
 	// Allocate buffers per-device
@@ -241,7 +241,7 @@ VulkanHardwareBuffer::~VulkanHardwareBuffer()
 	B3D_ASSERT(mStagingBuffer == nullptr);
 }
 
-VulkanBuffer* VulkanHardwareBuffer::CreateBuffer(VulkanDevice& device, u32 size, bool staging, bool readable)
+VulkanBuffer* VulkanHardwareBuffer::CreateBuffer(VulkanGpuDevice& device, u32 size, bool staging, bool readable)
 {
 	// Not allowed to have size 0 buffer
 	if(size == 0)
@@ -331,7 +331,7 @@ void* VulkanHardwareBuffer::Map(u32 offset, u32 length, GpuLockOptions options, 
 	mMappedSize = length;
 	mMappedLockOptions = options;
 
-	VulkanDevice& device = *GetVulkanGpuBackend().GetVulkanDevice(deviceIdx);
+	VulkanGpuDevice& device = *GetVulkanGpuBackend().GetVulkanDevice(deviceIdx);
 
 	VulkanCommandBufferManager& cbManager = GetVulkanCommandBufferManager();
 	GpuQueueType queueType;
@@ -532,7 +532,7 @@ void VulkanHardwareBuffer::Unmap()
 		if(isWrite)
 		{
 			VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-			VulkanDevice& device = *GetVulkanGpuBackend().GetVulkanDevice(mMappedDeviceIdx);
+			VulkanGpuDevice& device = *GetVulkanGpuBackend().GetVulkanDevice(mMappedDeviceIdx);
 
 			VulkanCommandBufferManager& cbManager = GetVulkanCommandBufferManager();
 			GpuQueueType queueType;

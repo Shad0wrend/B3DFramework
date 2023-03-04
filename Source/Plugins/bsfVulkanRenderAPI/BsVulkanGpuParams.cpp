@@ -3,7 +3,7 @@
 #include "BsVulkanGpuParams.h"
 #include "BsVulkanUtility.h"
 #include "BsVulkanRenderAPI.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "BsVulkanGpuParamBlockBuffer.h"
 #include "BsVulkanGpuBuffer.h"
 #include "BsVulkanTexture.h"
@@ -95,7 +95,7 @@ void VulkanGpuParams::Initialize()
 	VulkanGpuPipelineParamInfo& vkParamInfo = static_cast<VulkanGpuPipelineParamInfo&>(*mParamInfo);
 
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-	VulkanDevice* devices[B3D_MAX_DEVICES];
+	VulkanGpuDevice* devices[B3D_MAX_DEVICES];
 
 	VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
@@ -1096,7 +1096,7 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 
 	// Acquire sets as needed, and updated their contents if dirty
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-	const SPtr<VulkanDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIdx);
+	const SPtr<VulkanGpuDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIdx);
 	VulkanDescriptorManager& descManager = device->GetDescriptorManager();
 
 	for(u32 setIndex = 0; setIndex < setCount; setIndex++)

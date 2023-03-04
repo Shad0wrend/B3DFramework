@@ -38,14 +38,14 @@ namespace bs
 		class VulkanEventQuery : public EventQuery
 		{
 		public:
-			VulkanEventQuery(VulkanDevice& device);
+			VulkanEventQuery(VulkanGpuDevice& device);
 			~VulkanEventQuery() override;
 
 			void Begin(const SPtr<CommandBuffer>& cb) override;
 			bool IsReady() const override;
 
 		private:
-			VulkanDevice& mDevice;
+			VulkanGpuDevice& mDevice;
 			VulkanEvent* mEvent;
 		};
 

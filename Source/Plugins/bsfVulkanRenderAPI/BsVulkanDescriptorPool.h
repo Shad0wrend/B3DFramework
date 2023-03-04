@@ -16,7 +16,7 @@ namespace bs
 		class VulkanDescriptorPool
 		{
 		public:
-			VulkanDescriptorPool(VulkanDevice& device);
+			VulkanDescriptorPool(VulkanGpuDevice& device);
 			~VulkanDescriptorPool();
 
 			/** Returns a handle to the internal Vulkan descriptor pool. */
@@ -30,7 +30,7 @@ namespace bs
 			static const u32 sMaxBuffers = 2048;
 			static const u32 sMaxUniformBuffers = 2048;
 
-			VulkanDevice& mDevice;
+			VulkanGpuDevice& mDevice;
 			VkDescriptorPool mPool;
 		};
 

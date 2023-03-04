@@ -48,7 +48,7 @@ namespace bs
 		class VulkanCommandBufferPool
 		{
 		public:
-			VulkanCommandBufferPool(VulkanDevice& device, VulkanThread ownerThread);
+			VulkanCommandBufferPool(VulkanGpuDevice& device, VulkanThread ownerThread);
 			~VulkanCommandBufferPool();
 
 			/**
@@ -69,7 +69,7 @@ namespace bs
 			/** Creates a new command buffer. */
 			VulkanInternalCommandBuffer* CreateBuffer(u32 queueFamily, bool secondary);
 
-			VulkanDevice& mDevice;
+			VulkanGpuDevice& mDevice;
 			UnorderedMap<u32, PoolInfo> mPools;
 			u32 mNextId = 1;
 			VulkanThread mOwnerThread;
@@ -134,7 +134,7 @@ namespace bs
 			};
 
 		public:
-			VulkanInternalCommandBuffer(VulkanDevice& device, VulkanThread ownerThread, u32 id, VkCommandPool pool, u32 queueFamily, bool secondary);
+			VulkanInternalCommandBuffer(VulkanGpuDevice& device, VulkanThread ownerThread, u32 id, VkCommandPool pool, u32 queueFamily, bool secondary);
 			~VulkanInternalCommandBuffer();
 
 			/** Returns an unique identifier of this command buffer. */
@@ -721,7 +721,7 @@ namespace bs
 			u32 mId;
 			u32 mQueueFamily;
 			State mState = State::Ready;
-			VulkanDevice& mDevice;
+			VulkanGpuDevice& mDevice;
 			VulkanCommandBuffer* mOwner = nullptr;
 			VkCommandPool mPool;
 			VkCommandBuffer mCmdBuffer;
@@ -829,7 +829,7 @@ namespace bs
 		private:
 			friend class VulkanCommandBufferManager;
 
-			VulkanCommandBuffer(VulkanDevice& device, GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary);
+			VulkanCommandBuffer(VulkanGpuDevice& device, GpuQueueType type, u32 deviceIdx, u32 queueIdx, bool secondary);
 
 			/**
 			 * Tasks the command buffer to find a new internal command buffer. Call this after the command buffer has been
@@ -838,7 +838,7 @@ namespace bs
 			void AcquireNewBuffer();
 
 			VulkanInternalCommandBuffer* mBuffer;
-			VulkanDevice& mDevice;
+			VulkanGpuDevice& mDevice;
 			VulkanQueue* mQueue;
 			u32 mIdMask;
 			bool mIsCompleted = false;

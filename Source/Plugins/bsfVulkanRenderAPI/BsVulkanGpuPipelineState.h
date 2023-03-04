@@ -131,7 +131,7 @@ namespace bs
 			/** Contains pipeline data specific to a single Vulkan device. */
 			struct PerDeviceData
 			{
-				VulkanDevice* Device;
+				VulkanGpuDevice* Device;
 				VkPipelineLayout PipelineLayout;
 				UnorderedMap<GpuPipelineKey, VulkanPipeline*, HashFunc, EqualFunc> Pipelines;
 			};
@@ -190,7 +190,7 @@ namespace bs
 			/** Contains pipeline data specific to a single Vulkan device. */
 			struct PerDeviceData
 			{
-				VulkanDevice* Device;
+				VulkanGpuDevice* Device;
 				VulkanPipeline* Pipeline;
 				VkPipelineLayout PipelineLayout;
 			};

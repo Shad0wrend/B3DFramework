@@ -8,9 +8,8 @@
 #include "Profiling/BsRenderStats.h"
 #include "Managers/BsRenderWindowManager.h"
 #include "BsVulkanRenderAPI.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "BsVulkanSwapChain.h"
-#include "BsVulkanDevice.h"
 #include "BsVulkanCommandBuffer.h"
 #include "BsVulkanGpuBackend.h"
 #include "Managers/BsVulkanCommandBufferManager.h"
@@ -185,7 +184,7 @@ void Win32RenderWindow::Initialize()
 
 	mSurface = B3DMakeShared<VulkanSurface>(vkSurface);
 
-	SPtr<VulkanDevice> presentDevice = GetVulkanGpuBackend().GetPresentDevice();
+	SPtr<VulkanGpuDevice> presentDevice = GetVulkanGpuBackend().GetPresentDevice();
 	VkPhysicalDevice physicalDevice = presentDevice->GetPhysical();
 
 	mPresentQueueFamily = presentDevice->GetQueueFamily(GQT_GRAPHICS);
@@ -518,7 +517,7 @@ void Win32RenderWindow::RebuildSwapChain()
 {
 	GetVulkanSubmitThread().WaitUntilIdle();
 
-	SPtr<VulkanDevice> presentDevice = GetVulkanGpuBackend().GetPresentDevice();
+	SPtr<VulkanGpuDevice> presentDevice = GetVulkanGpuBackend().GetPresentDevice();
 	VulkanSwapChain* oldSwapChain = mSwapChain;
 	oldSwapChain->MarkAsRetired();
 

@@ -5,7 +5,7 @@
 #include "Profiling/BsRenderStats.h"
 #include "Error/BsException.h"
 #include "BsVulkanUtility.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 
 using namespace bs;
 using namespace bs::ct;

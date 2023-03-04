@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanSubmitThread.h"
 #include "BsVulkanCommandBuffer.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 #include "BsVulkanQueue.h"
 #include "BsVulkanSwapChain.h"
 #include "Threading/BsTaskScheduler.h"
@@ -27,7 +27,7 @@ VulkanSubmitThread::VulkanSubmitThread()
 		const u32 deviceCount = GetVulkanGpuBackend().GetDeviceCount();
 		for(u32 deviceIndex = 0; deviceIndex < deviceCount; deviceIndex++)
 		{
-			const SPtr<VulkanDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIndex);
+			const SPtr<VulkanGpuDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIndex);
 			mCommandBufferPools[deviceIndex] = B3DMakeUnique<VulkanCommandBufferPool>(*device, VulkanThread::Submit);
 		}
 	};
@@ -72,7 +72,7 @@ void VulkanSubmitThread::QueuePresent(VulkanQueue& queue, VulkanSwapChain& swapC
 
 	auto fnCommand = [this, acquiredImageIndex, &queue, &swapChain, syncMask]
 	{
-		VulkanDevice& device = queue.GetDevice();
+		VulkanGpuDevice& device = queue.GetDevice();
 
 		TaskScheduler::Instance().AddWorker();
 		device.WaitUntilIdle();
@@ -109,7 +109,7 @@ void VulkanSubmitThread::QueueImageAcquire(VulkanSwapChain& swapChain)
 	RunSubmitThreadCommand(mCommandQueue, std::move(fnCommand), "Acquire swap chain image");
 }
 
-void VulkanSubmitThread::QueueRefreshCommandBufferCompletionStates(const VulkanDevice* device)
+void VulkanSubmitThread::QueueRefreshCommandBufferCompletionStates(const VulkanGpuDevice* device)
 {
 	if(device == nullptr)
 		return;
@@ -129,7 +129,7 @@ void VulkanSubmitThread::WaitUntilIdle(bool performCleanupForShutdown)
 		const u32 deviceCount = GetVulkanGpuBackend().GetDeviceCount();
 		for(u32 deviceIndex = 0; deviceIndex < deviceCount; deviceIndex++)
 		{
-			const SPtr<VulkanDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIndex);
+			const SPtr<VulkanGpuDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIndex);
 
 			TaskScheduler::Instance().AddWorker();
 			device->WaitUntilIdle();
@@ -156,7 +156,7 @@ void VulkanSubmitThread::RefreshCommandBufferCompletionStates() const
 	const u32 deviceCount = GetVulkanGpuBackend().GetDeviceCount();
 	for(u32 deviceIndex = 0; deviceIndex < deviceCount; deviceIndex++)
 	{
-		const SPtr<VulkanDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIndex);
+		const SPtr<VulkanGpuDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIndex);
 
 		device->DoForEachQueue([](VulkanQueue& queue) { queue.RefreshCompletionStateOnRenderThread(); });
 	}

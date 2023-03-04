@@ -1,12 +1,12 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanDescriptorPool.h"
-#include "BsVulkanDevice.h"
+#include "BsVulkanGpuDevice.h"
 
 using namespace bs;
 using namespace bs::ct;
 
-VulkanDescriptorPool::VulkanDescriptorPool(VulkanDevice& device)
+VulkanDescriptorPool::VulkanDescriptorPool(VulkanGpuDevice& device)
 	: mDevice(device)
 {
 	VkDescriptorPoolSize poolSizes[8];
