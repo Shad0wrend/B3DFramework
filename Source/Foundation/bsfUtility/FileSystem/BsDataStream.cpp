@@ -531,11 +531,10 @@ size_t FileDataStream::Skip(size_t count)
 
 	const size_t currentOffset = Tell();
 
-	if(((mAccess & READ) != 0))
-		mFileStream.seekg(static_cast<std::ifstream::pos_type>(count), std::ios::cur);
-
 	if(((mAccess & WRITE) != 0))
 		mFileStream.seekp(static_cast<std::ifstream::pos_type>(count), std::ios::cur);
+	else
+		mFileStream.seekg(static_cast<std::ifstream::pos_type>(count), std::ios::cur);
 
 	const size_t newOffset = Tell();
 	return newOffset - currentOffset;

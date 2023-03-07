@@ -150,6 +150,8 @@ namespace bs
 		{
 			auto memStream = std::static_pointer_cast<MemoryDataStream>(dataStream);
 			mMemBitstream = Bitstream(memStream->Data(), (uint32_t)memStream->Size());
+			mMemBitstream.Seek(mCursor);
+
 			mBitstream = &mMemBitstream;
 
 			mBufferedRangeStart = 0;
