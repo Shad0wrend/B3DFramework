@@ -106,7 +106,7 @@ SPtr<PooledStorageBuffer> GpuResourcePool::Get(const POOLED_STORAGE_BUFFER_DESC&
 	bufferDesc.ElementSize = desc.elementSize;
 	bufferDesc.ElementCount = desc.numElements;
 	bufferDesc.Format = desc.format;
-	bufferDesc.Usage = desc.usage;
+	bufferDesc.Flags = desc.flags;
 
 	newBuffer->Buffer = GenericGpuBuffer::Create(bufferDesc);
 
@@ -191,7 +191,7 @@ bool GpuResourcePool::Matches(const SPtr<GenericGpuBuffer>& buffer, const POOLED
 			match = props.GetElementSize() == desc.elementSize;
 
 		if(match)
-			match = props.GetUsage() == desc.usage;
+			match = props.GetFlags() == desc.flags;
 	}
 
 	return match;
@@ -248,26 +248,26 @@ POOLED_RENDER_TEXTURE_DESC POOLED_RENDER_TEXTURE_DESC::CreateCube(PixelFormat fo
 	return desc;
 }
 
-POOLED_STORAGE_BUFFER_DESC POOLED_STORAGE_BUFFER_DESC::CreateStandard(GpuBufferFormat format, u32 numElements, GpuBufferUsage usage)
+POOLED_STORAGE_BUFFER_DESC POOLED_STORAGE_BUFFER_DESC::CreateStandard(GpuBufferFormat format, u32 numElements, GpuBufferFlags flags)
 {
 	POOLED_STORAGE_BUFFER_DESC desc;
 	desc.type = GBT_STANDARD;
 	desc.format = format;
 	desc.numElements = numElements;
 	desc.elementSize = 0;
-	desc.usage = usage;
+	desc.flags = flags;
 
 	return desc;
 }
 
-POOLED_STORAGE_BUFFER_DESC POOLED_STORAGE_BUFFER_DESC::CreateStructured(u32 elementSize, u32 numElements, GpuBufferUsage usage)
+POOLED_STORAGE_BUFFER_DESC POOLED_STORAGE_BUFFER_DESC::CreateStructured(u32 elementSize, u32 numElements, GpuBufferFlags flags)
 {
 	POOLED_STORAGE_BUFFER_DESC desc;
 	desc.type = GBT_STRUCTURED;
 	desc.format = BF_UNKNOWN;
 	desc.numElements = numElements;
 	desc.elementSize = elementSize;
-	desc.usage = usage;
+	desc.flags = flags;
 
 	return desc;
 }

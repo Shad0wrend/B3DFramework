@@ -435,7 +435,7 @@ static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionDat
 		switch(entry.type)
 		{
 		case Xsc::Reflection::VariableType::UniformBuffer:
-			outShaderCreateInformation.SetParamBlockAttribs(entry.ident.c_str(), false, GBU_STATIC);
+			outShaderCreateInformation.SetParamBlockAttribs(entry.ident.c_str(), false, GpuBufferFlag::StoreOnGPU);
 			break;
 		case Xsc::Reflection::VariableType::Buffer:
 			{

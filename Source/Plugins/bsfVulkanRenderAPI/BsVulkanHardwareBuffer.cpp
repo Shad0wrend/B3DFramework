@@ -173,38 +173,31 @@ void VulkanBuffer::DestroyUnusedViews()
 	}
 }
 
-VulkanHardwareBuffer::VulkanHardwareBuffer(HardwareBufferType type, GpuBufferUsage usage, u32 size, GpuDeviceFlags deviceMask)
-	: HardwareBuffer(type, size, usage, deviceMask), mBuffers(), mStagingBuffer(nullptr), mStagingMemory(nullptr), mMappedDeviceIdx(-1), mMappedGlobalQueueIdx(-1), mMappedOffset(0), mMappedSize(0), mMappedLockOptions(GBL_WRITE_ONLY), mDirectlyMappable((usage & GBU_DYNAMIC) != 0), mSupportsGPUWrites(type == HardwareBufferType::Structured || ((usage & GBU_LOADSTORE) == GBU_LOADSTORE)), mIsMapped(false)
+VulkanHardwareBuffer::VulkanHardwareBuffer(HardwareBufferType type, GpuBufferFlags flags, u32 size, GpuDeviceFlags deviceMask)
+	: HardwareBuffer(type, size, flags, deviceMask), mBuffers(), mStagingBuffer(nullptr), mStagingMemory(nullptr), mMappedDeviceIdx(-1), mMappedGlobalQueueIdx(-1), mMappedOffset(0), mMappedSize(0), mMappedLockOptions(GBL_WRITE_ONLY), mDirectlyMappable((flags.IsSetAny(GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::StoreOnCPU)) != 0), mSupportsGPUWrites(flags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU)), mIsMapped(false)
 {
 	VkBufferUsageFlags usageFlags = 0;
 	switch(type)
 	{
 	case HardwareBufferType::Vertex:
 		usageFlags = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-
-		if((usage & GBU_LOADSTORE) == GBU_LOADSTORE)
-			usageFlags |= VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT;
 		break;
 	case HardwareBufferType::Index:
 		usageFlags = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-
-		if((usage & GBU_LOADSTORE) == GBU_LOADSTORE)
-			usageFlags |= VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT;
 		break;
 	case HardwareBufferType::Uniform:
 		usageFlags = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
 		break;
 	case HardwareBufferType::Generic:
 		usageFlags = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT;
-
-		if((usage & GBU_LOADSTORE) == GBU_LOADSTORE)
-			usageFlags |= VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT;
-
 		break;
 	case HardwareBufferType::Structured:
 		usageFlags = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 		break;
 	}
+
+	if(flags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
+		usageFlags |= VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT; // TODO - Perhaps have a separate flag for UNIFORM_TEXEL?
 
 	mBufferCI.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 	mBufferCI.pNext = nullptr;
@@ -262,11 +255,11 @@ VulkanBuffer* VulkanHardwareBuffer::CreateBuffer(VulkanGpuDevice& device, u32 si
 	mBufferCI.size = size;
 
 	VmaMemoryUsage memoryUsage;
-	if(staging)
+	if(staging || mBufferFlags.IsSet(GpuBufferFlag::StoreOnCPU))
 		memoryUsage = VMA_MEMORY_USAGE_CPU_ONLY;
-	else if(mDirectlyMappable)
+	else if(mBufferFlags.IsSet(GpuBufferFlag::StoreOnCPUWithGPUAccess))
 		memoryUsage = VMA_MEMORY_USAGE_CPU_TO_GPU;
-	else
+	else // StoreOnGPU
 		memoryUsage = VMA_MEMORY_USAGE_GPU_ONLY;
 
 	VkDevice vkDevice = device.GetLogical();

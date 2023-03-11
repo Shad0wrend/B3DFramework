@@ -768,7 +768,7 @@ void LightProbes::ResizeTetrahedronBuffer(u32 count)
 	desc.Type = GBT_STANDARD;
 	desc.ElementSize = 0;
 	desc.ElementCount = count * kElementSize;
-	desc.Usage = GBU_STATIC;
+	desc.Flags = GpuBufferFlag::StoreOnGPU;
 	desc.Format = BF_32X4U;
 
 	mTetrahedronInfosGPU = GenericGpuBuffer::Create(desc);
@@ -783,7 +783,7 @@ void LightProbes::ResizeTetrahedronFaceBuffer(u32 count)
 	desc.Type = GBT_STANDARD;
 	desc.ElementSize = 0;
 	desc.ElementCount = count * kElementSize;
-	desc.Usage = GBU_STATIC;
+	desc.Flags = GpuBufferFlag::StoreOnGPU;
 	desc.Format = BF_32X4F;
 
 	mTetrahedronFaceInfosGPU = GenericGpuBuffer::Create(desc);

@@ -79,7 +79,7 @@ const char* CheckSortBuffer(GenericGpuBuffer& buffer)
 		"All buffers provided to GpuSort must use a 32-bit unsigned integer format.";
 
 	const GenericGpuBufferProperties& bufferProps = buffer.GetProperties();
-	if((bufferProps.GetUsage() & GBU_LOADSTORE) != GBU_LOADSTORE)
+	if(!bufferProps.GetFlags().IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
 		return kInvalidGpuWriteMsg;
 
 	if(bufferProps.GetType() != GBT_STANDARD)
@@ -97,7 +97,7 @@ SPtr<GenericGpuBuffer> CreateHelperBuffer()
 	GenericGpuBufferCreateInformation desc;
 	desc.ElementCount = kMaxNumGroups * kNumDigits;
 	desc.Format = BF_32X1U;
-	desc.Usage = GBU_LOADSTORE;
+	desc.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
 	desc.Type = GBT_STANDARD;
 
 	return GenericGpuBuffer::Create(desc);
@@ -282,7 +282,7 @@ GpuSortBuffers GpuSort::CreateSortBuffers(u32 numElements, bool values)
 	bufferDesc.ElementCount = numElements;
 	bufferDesc.Format = BF_32X1U;
 	bufferDesc.Type = GBT_STANDARD;
-	bufferDesc.Usage = GBU_LOADSTORE;
+	bufferDesc.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
 
 	output.Keys[0] = GenericGpuBuffer::Create(bufferDesc);
 	output.Keys[1] = GenericGpuBuffer::Create(bufferDesc);

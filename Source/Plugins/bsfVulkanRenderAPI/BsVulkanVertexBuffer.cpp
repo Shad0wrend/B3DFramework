@@ -18,7 +18,7 @@ VulkanVertexBuffer::VulkanVertexBuffer(const VertexBufferCreateInformation& desc
 
 void VulkanVertexBuffer::Initialize()
 {
-	mBuffer = B3DPoolNew<VulkanHardwareBuffer>(HardwareBufferType::Vertex, mUsage, mSize, mDeviceMask);
+	mBuffer = B3DPoolNew<VulkanHardwareBuffer>(HardwareBufferType::Vertex, mBufferFlags, mSize, mDeviceMask);
 	mBufferDeleter = &DeleteHardwareBuffer;
 
 	VertexBuffer::Initialize();

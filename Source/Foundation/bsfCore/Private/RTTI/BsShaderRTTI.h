@@ -189,7 +189,7 @@ namespace bs
 											   {
 				BitLength size = 0;
 				size += B3DRTTIWrite(data.Shared, stream);
-				size += B3DRTTIWrite(data.Usage, stream);
+				size += B3DRTTIWrite(data.Flags, stream);
 				size += B3DRTTIWrite(data.Name, stream);
 				size += B3DRTTIWrite(data.RendererSemantic, stream);
 
@@ -202,7 +202,7 @@ namespace bs
 			B3DRTTIReadSizeHeader(stream, compress, size);
 
 			B3DRTTIRead(data.Shared, stream);
-			B3DRTTIRead(data.Usage, stream);
+			B3DRTTIRead(data.Flags, stream);
 			B3DRTTIRead(data.Name, stream);
 			B3DRTTIRead(data.RendererSemantic, stream);
 
@@ -211,7 +211,7 @@ namespace bs
 
 		static BitLength GetSize(const ShaderParameterBlockInformation& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
-			BitLength dataSize = B3DRTTISize(data.Shared) + B3DRTTISize(data.Usage) +
+			BitLength dataSize = B3DRTTISize(data.Shared) + B3DRTTISize(data.Flags) +
 				B3DRTTISize(data.Name) + B3DRTTISize(data.RendererSemantic);
 
 			B3DRTTIAddHeaderSize(dataSize, compress);

@@ -809,7 +809,7 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 				auto* element = static_cast<VulkanGenericGpuBuffer*>(mBuffers[sequentialResourceIndex].get());
 				resource = element->GetResource(deviceIdx);
 
-				if((element->GetProperties().GetUsage() & GBU_LOADSTORE) == GBU_LOADSTORE)
+				if(element->GetProperties().GetFlags().IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
 					useFlags |= VulkanAccessFlag::Write;
 			}
 

@@ -63,7 +63,7 @@ using namespace bs;
 struct ShaderBlockDesc
 {
 	String Name;
-	GpuBufferUsage Usage;
+	GpuBufferFlags Flags;
 	int Size;
 	bool External;
 	u32 SequentialIdx;
@@ -276,7 +276,7 @@ Vector<ShaderBlockDesc> DetermineValidShareableParamBlocks(const Vector<SPtr<Gpu
 
 		ShaderBlockDesc shaderBlockDesc;
 		shaderBlockDesc.External = false;
-		shaderBlockDesc.Usage = GBU_STATIC;
+		shaderBlockDesc.Flags = GpuBufferFlag::StoreOnGPU;
 		shaderBlockDesc.Size = curBlock.BlockSize * sizeof(u32);
 		shaderBlockDesc.Name = entry.first;
 		shaderBlockDesc.Set = curBlock.Set;
@@ -286,7 +286,7 @@ Vector<ShaderBlockDesc> DetermineValidShareableParamBlocks(const Vector<SPtr<Gpu
 		if(iterFind != shaderDesc.end())
 		{
 			shaderBlockDesc.External = iterFind->second.Shared || iterFind->second.RendererSemantic != StringID::kNone;
-			shaderBlockDesc.Usage = iterFind->second.Usage;
+			shaderBlockDesc.Flags = iterFind->second.Flags;
 		}
 
 		output.push_back(shaderBlockDesc);
@@ -507,7 +507,7 @@ TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const S
 	{
 		ParamBlockPtrType newParamBlockBuffer;
 		if(!paramBlock.External)
-			newParamBlockBuffer = ParamBlockType::Create(paramBlock.Size, paramBlock.Usage);
+			newParamBlockBuffer = ParamBlockType::Create(paramBlock.Size, paramBlock.Flags);
 
 		paramBlock.SequentialIdx = (u32)mBlocks.size();
 

@@ -186,25 +186,6 @@ namespace bs
 		GPT_COUNT // Keep at end
 	};
 
-	/**
-	 * Values that represent hardware buffer usage. These usually determine in what type of memory is buffer placed in,
-	 * however that depends on rendering API.
-	 */
-	enum GpuBufferUsage
-	{
-		/**
-		 * Signifies that you don't plan on modifying the buffer often (or at all) after creation. Modifying such buffer
-		 * will involve a larger performance hit. Mutually exclusive with GBU_DYNAMIC.
-		 */
-		GBU_STATIC = 1 << 0,
-		/**
-		 * Signifies that you will modify this buffer fairly often (e.g. every frame). Mutually exclusive with GBU_STATIC.
-		 */
-		GBU_DYNAMIC = 1 << 1,
-		/** Siginifies that the buffer can be used for arbitrary load/store operations on the GPU. Implies GBU_STATIC. */
-		GBU_LOADSTORE = GBU_STATIC | 1 << 2
-	};
-
 	/** Types of generic GPU buffers that may be attached to GPU programs. */
 	enum GpuBufferType
 	{

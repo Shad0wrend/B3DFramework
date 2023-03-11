@@ -204,27 +204,27 @@ namespace bs
 			/**
 			 * Creates a descriptor for a storage buffer containing primitive data types.
 			 *
-			 * @param[in]	format		Format of individual buffer entries.
-			 * @param[in]	numElements	Number of elements in the buffer.
-			 * @param[in]	usage		Usage flag hinting the driver how is buffer going to be used.
+			 * @param	format		Format of individual buffer entries.
+			 * @param	numElements	Number of elements in the buffer.
+			 * @param	flags		Flags that control the behaviour of the buffer.
 			 */
-			static POOLED_STORAGE_BUFFER_DESC CreateStandard(GpuBufferFormat format, u32 numElements, GpuBufferUsage usage = GBU_LOADSTORE);
+			static POOLED_STORAGE_BUFFER_DESC CreateStandard(GpuBufferFormat format, u32 numElements, GpuBufferFlags flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU);
 
 			/**
 			 * Creates a descriptor for a storage buffer containing structures.
 			 *
-			 * @param[in]	elementSize		Size of a single structure in the buffer.
-			 * @param[in]	numElements		Number of elements in the buffer.
-			 * @param[in]	usage		Usage flag hinting the driver how is buffer going to be used.
+			 * @param	elementSize		Size of a single structure in the buffer.
+			 * @param	numElements		Number of elements in the buffer.
+			 * @param	flags		Flags that control the behaviour of the buffer.
 			 */
-			static POOLED_STORAGE_BUFFER_DESC CreateStructured(u32 elementSize, u32 numElements, GpuBufferUsage usage = GBU_LOADSTORE);
+			static POOLED_STORAGE_BUFFER_DESC CreateStructured(u32 elementSize, u32 numElements, GpuBufferFlags flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU);
 
 		private:
 			friend class GpuResourcePool;
 
 			GpuBufferType type;
 			GpuBufferFormat format;
-			GpuBufferUsage usage;
+			GpuBufferFlags flags;
 			u32 numElements;
 			u32 elementSize;
 		};

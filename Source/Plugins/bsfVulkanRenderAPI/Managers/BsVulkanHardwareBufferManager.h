@@ -20,7 +20,7 @@ namespace bs
 			VulkanHardwareBufferManager();
 			~VulkanHardwareBufferManager();
 
-			SPtr<HardwareBuffer> CreateHardwareBuffer(HardwareBufferType type, u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask) override;
+			SPtr<HardwareBuffer> CreateHardwareBuffer(HardwareBufferType type, u32 size, GpuBufferFlags flags, GpuDeviceFlags deviceMask) override;
 
 			/** Returns a buffer that can be used for buffer read operations when no other buffer is bound. */
 			VulkanHardwareBuffer* GetDummyReadBuffer() const { return mDummyReadBuffer; }
@@ -39,7 +39,7 @@ namespace bs
 		protected:
 			SPtr<VertexBuffer> CreateVertexBufferInternal(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
 			SPtr<IndexBuffer> CreateIndexBufferInternal(const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
-			SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBufferInternal(u32 size, GpuBufferUsage usage = GBU_DYNAMIC, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
+			SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBufferInternal(u32 size, GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
 			SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBufferInternal(const SPtr<HardwareBuffer>& backingMemory, u32 offset, u32 size) override;
 			SPtr<GenericGpuBuffer> CreateGpuBufferInternal(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
 			SPtr<GenericGpuBuffer> CreateGpuBufferInternal(const GenericGpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer) override;

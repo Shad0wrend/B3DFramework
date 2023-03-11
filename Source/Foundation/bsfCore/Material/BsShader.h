@@ -7,6 +7,7 @@
 #include "String/BsStringID.h"
 #include "Resources/BsResourceMetaData.h"
 #include "Material/BsTechnique.h"
+#include "RenderAPI/BsHardwareBuffer.h"
 #include "RenderAPI/BsSamplerState.h"
 
 namespace bs
@@ -115,7 +116,7 @@ namespace bs
 		String Name;
 		bool Shared = false;
 		StringID RendererSemantic;
-		GpuBufferUsage Usage;
+		GpuBufferFlags Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU;
 	};
 
 	/** Available attribute types that can be assigned to Shader parameters. */
@@ -259,23 +260,22 @@ namespace bs
 		/**
 		 * Changes parameters of a parameter block with the specified name.
 		 *
-		 * @param[in]	name				Name of the parameter block. This should correspond with the name specified in
-		 *									the GPU program code.
-		 * @param[in]	shared				If parameter block is marked as shared it will not be automatically created by
-		 *									the Material. You will need to create it elsewhere and then assign it manually.
-		 * @param[in]	usage				Specified how often do we plan on modifying the buffer, which determines how is
-		 *									the buffer internally stored for best performance.
-		 * @param[in]	rendererSemantic	(optional) Semantic that allows you to specify the use of this parameter block
-		 *									in the renderer. The actual value of the semantic depends on the current
-		 *									Renderer and its supported list of semantics. Elements with a renderer semantic
-		 *									will not have their parameter block automatically created (similar to "shared"
-		 *									argument), but instead a Renderer will create an assign it instead. Be aware
-		 *									that renderers have strict policies on what and how are parameters stored in the
-		 *									buffer and you will need to respect them. If you don't respect them your shader
-		 *									will be deemed incompatible and won't be used. Value of 0 signifies the parameter
-		 *									block is not used by the renderer.
+		 * @param	name				Name of the parameter block. This should correspond with the name specified in
+		 *								the GPU program code.
+		 * @param	shared				If parameter block is marked as shared it will not be automatically created by
+		 *								the Material. You will need to create it elsewhere and then assign it manually.
+		 * @param	flags				Flags that control the behaviour of the parameter block buffer.
+		 * @param	rendererSemantic	(optional) Semantic that allows you to specify the use of this parameter block
+	 *									in the renderer. The actual value of the semantic depends on the current
+	 *									Renderer and its supported list of semantics. Elements with a renderer semantic
+	 *									will not have their parameter block automatically created (similar to "shared"
+	 *									argument), but instead a Renderer will create an assign it instead. Be aware
+	 *									that renderers have strict policies on what and how are parameters stored in the
+	 *									buffer and you will need to respect them. If you don't respect them your shader
+	 *									will be deemed incompatible and won't be used. Value of 0 signifies the parameter
+	 *									block is not used by the renderer.
 		 */
-		void SetParamBlockAttribs(const String& name, bool shared, GpuBufferUsage usage, StringID rendererSemantic = StringID::kNone);
+		void SetParamBlockAttribs(const String& name, bool shared, GpuBufferFlags flags, StringID rendererSemantic = StringID::kNone);
 
 		/**
 		 * Sorting type to use when performing sort in the render queue. Default value is sort front to back which causes

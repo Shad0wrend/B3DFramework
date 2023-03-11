@@ -166,9 +166,9 @@ namespace bs
 			ParamBlockManager::RegisterBlock(this);                                                  \
 		}                                                                                            \
                                                                                                      \
-		SPtr<GpuParamBlockBuffer> CreateBuffer(GpuBufferUsage usage = GBU_DYNAMIC) const             \
+		SPtr<GpuParamBlockBuffer> CreateBuffer(GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU) const             \
 		{                                                                                            \
-			return GpuParamBlockBuffer::Create(mBlockSize, usage);                                   \
+			return GpuParamBlockBuffer::Create(mBlockSize, flags);                                   \
 		}                                                                                            \
 																									 \
 		u32 GetSize() const																			 \

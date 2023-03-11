@@ -317,7 +317,7 @@ GpuParticleResources::GpuParticleResources()
 	sortKeysBufferDesc.Type = GBT_STANDARD;
 	sortKeysBufferDesc.Format = BF_32X1U;
 	sortKeysBufferDesc.ElementCount = kTexSize * kTexSize;
-	sortKeysBufferDesc.Usage = GBU_LOADSTORE;
+	sortKeysBufferDesc.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
 
 	mSortBuffers.Keys[0] = GenericGpuBuffer::Create(sortKeysBufferDesc);
 	mSortBuffers.Keys[1] = GenericGpuBuffer::Create(sortKeysBufferDesc);
@@ -327,7 +327,7 @@ GpuParticleResources::GpuParticleResources()
 	sortedIndicesBufferDesc.Type = GBT_STANDARD;
 	sortedIndicesBufferDesc.Format = BF_16X2U;
 	sortedIndicesBufferDesc.ElementCount = kTexSize * kTexSize;
-	sortedIndicesBufferDesc.Usage = GBU_LOADSTORE;
+	sortedIndicesBufferDesc.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
 
 	mSortedIndices[0] = GenericGpuBuffer::Create(sortedIndicesBufferDesc);
 	mSortedIndices[1] = GenericGpuBuffer::Create(sortedIndicesBufferDesc);
@@ -490,7 +490,7 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 	tileScratchBufferDesc.Type = GBT_STANDARD;
 	tileScratchBufferDesc.Format = BF_32X2F;
 	tileScratchBufferDesc.ElementCount = kNumScratchTiles;
-	tileScratchBufferDesc.Usage = GBU_DYNAMIC;
+	tileScratchBufferDesc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
 
 	TileScratch = GenericGpuBuffer::Create(tileScratchBufferDesc);
 
@@ -498,7 +498,7 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 	VertexBufferCreateInformation injectScratchBufferDesc;
 	injectScratchBufferDesc.VertexCount = kNumScratchParticles;
 	injectScratchBufferDesc.VertexSize = injectVertexDesc->GetVertexStride(0);
-	injectScratchBufferDesc.Usage = GBU_DYNAMIC;
+	injectScratchBufferDesc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
 
 	InjectScratch = VertexBuffer::Create(injectScratchBufferDesc);
 }
@@ -636,7 +636,7 @@ void GpuParticleSystem::UpdateGpuBuffers()
 		tilesBufferDesc.Type = GBT_STANDARD;
 		tilesBufferDesc.Format = BF_32X2F;
 		tilesBufferDesc.ElementCount = numTilesToAllocates;
-		tilesBufferDesc.Usage = GBU_DYNAMIC;
+		tilesBufferDesc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
 
 		mTileUVs = GenericGpuBuffer::Create(tilesBufferDesc);
 
@@ -659,7 +659,7 @@ void GpuParticleSystem::UpdateGpuBuffers()
 		particleUVDesc.Type = GBT_STANDARD;
 		particleUVDesc.Format = BF_16X2U;
 		particleUVDesc.ElementCount = numParticles;
-		particleUVDesc.Usage = GBU_DYNAMIC;
+		particleUVDesc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
 
 		mParticleIndices = GenericGpuBuffer::Create(particleUVDesc);
 		auto* particleIndices = (u32*)mParticleIndices->Lock(GBL_WRITE_ONLY_NO_OVERWRITE);
@@ -1240,7 +1240,7 @@ AABox GpuParticleBoundsMat::Execute(const SPtr<GenericGpuBuffer>& indices, u32 n
 	outputDesc.Type = GBT_STANDARD;
 	outputDesc.Format = BF_32X2U;
 	outputDesc.ElementCount = numGroups * 2;
-	outputDesc.Usage = GBU_DYNAMIC;
+	outputDesc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
 
 	SPtr<GenericGpuBuffer> output = GenericGpuBuffer::Create(outputDesc);
 
@@ -1411,7 +1411,7 @@ GpuParticleCurves::GpuParticleCurves()
 	VertexBufferCreateInformation injectScratchBufferDesc;
 	injectScratchBufferDesc.VertexCount = kScratchNumVertices;
 	injectScratchBufferDesc.VertexSize = injectVertexDesc->GetVertexStride(0);
-	injectScratchBufferDesc.Usage = GBU_DYNAMIC;
+	injectScratchBufferDesc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
 
 	mInjectScratch = VertexBuffer::Create(injectScratchBufferDesc);
 }

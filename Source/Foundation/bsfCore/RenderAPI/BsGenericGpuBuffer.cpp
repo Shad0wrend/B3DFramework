@@ -112,7 +112,7 @@ SPtr<GenericGpuBuffer> GenericGpuBuffer::Create(const GenericGpuBufferCreateInfo
 namespace bs { namespace ct
 {
 GenericGpuBuffer::GenericGpuBuffer(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
-	: HardwareBuffer(HardwareBufferType::Generic, GetBufferSize(desc), desc.Usage, deviceMask), mProperties(desc)
+	: HardwareBuffer(HardwareBufferType::Generic, GetBufferSize(desc), desc.Flags, deviceMask), mProperties(desc)
 {
 	if(desc.Type != GBT_STANDARD)
 		B3D_ASSERT(desc.Format == BF_UNKNOWN && "Format must be set to BF_UNKNOWN when using non-standard buffers");
@@ -121,7 +121,7 @@ GenericGpuBuffer::GenericGpuBuffer(const GenericGpuBufferCreateInformation& desc
 }
 
 GenericGpuBuffer::GenericGpuBuffer(const GenericGpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
-	: HardwareBuffer(HardwareBufferType::Generic, GetBufferSize(desc), desc.Usage, underlyingBuffer->GetDeviceMask()), mProperties(desc), mBuffer(underlyingBuffer.get()), mSharedBuffer(std::move(underlyingBuffer)), mIsExternalBuffer(true)
+	: HardwareBuffer(HardwareBufferType::Generic, GetBufferSize(desc), desc.Flags, underlyingBuffer->GetDeviceMask()), mProperties(desc), mBuffer(underlyingBuffer.get()), mSharedBuffer(std::move(underlyingBuffer)), mIsExternalBuffer(true)
 {
 	const auto& props = GetProperties();
 	B3D_ASSERT(mSharedBuffer->GetSize() == (props.GetElementCount() * props.GetElementSize()));
@@ -200,7 +200,7 @@ SPtr<GenericGpuBuffer> GenericGpuBuffer::GetView(GpuBufferType type, GpuBufferFo
 	GenericGpuBufferCreateInformation desc;
 	desc.Type = type;
 	desc.Format = format;
-	desc.Usage = mUsage;
+	desc.Flags = mBufferFlags;
 	desc.ElementSize = elementSize;
 	desc.ElementCount = mBuffer->GetSize() / elemSize;
 

@@ -7,8 +7,8 @@
 using namespace bs;
 using namespace bs::ct;
 
-VulkanGpuParamBlockBuffer::VulkanGpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
-	: GpuParamBlockBuffer(size, usage, deviceMask)
+VulkanGpuParamBlockBuffer::VulkanGpuParamBlockBuffer(u32 size, GpuBufferFlags flags, GpuDeviceFlags deviceMask)
+	: GpuParamBlockBuffer(size, flags, deviceMask)
 {}
 
 VulkanGpuParamBlockBuffer::VulkanGpuParamBlockBuffer(const SPtr<HardwareBuffer>& backingMemory, u32 offset, u32 size)

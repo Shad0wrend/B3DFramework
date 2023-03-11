@@ -21,7 +21,7 @@ VertexBufferProperties::VertexBufferProperties(u32 vertexCount, u32 vertexSize)
 {}
 
 VertexBuffer::VertexBuffer(const VertexBufferCreateInformation& desc)
-	: mProperties(desc.VertexCount, desc.VertexSize), mUsage(desc.Usage), mStreamOut(desc.StreamOut)
+	: mProperties(desc.VertexCount, desc.VertexSize), mFlags(desc.Flags), mStreamOut(desc.StreamOut)
 {
 #if B3D_DEBUG
 	CheckValidDesc(desc);
@@ -33,7 +33,7 @@ SPtr<ct::CoreObject> VertexBuffer::CreateCore() const
 	VertexBufferCreateInformation desc;
 	desc.VertexSize = mProperties.mVertexSize;
 	desc.VertexCount = mProperties.mVertexCount;
-	desc.Usage = mUsage;
+	desc.Flags = mFlags;
 	desc.StreamOut = mStreamOut;
 
 	return ct::HardwareBufferManager::Instance().CreateVertexBufferInternal(desc);
@@ -52,7 +52,7 @@ SPtr<VertexBuffer> VertexBuffer::Create(const VertexBufferCreateInformation& des
 namespace bs { namespace ct
 {
 VertexBuffer::VertexBuffer(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
-	: HardwareBuffer(HardwareBufferType::Vertex, desc.VertexSize * desc.VertexCount, desc.Usage, deviceMask), mProperties(desc.VertexCount, desc.VertexSize)
+	: HardwareBuffer(HardwareBufferType::Vertex, desc.VertexSize * desc.VertexCount, desc.Flags, deviceMask), mProperties(desc.VertexCount, desc.VertexSize)
 {
 #if B3D_DEBUG
 	CheckValidDesc(desc);
@@ -115,7 +115,7 @@ void VertexBuffer::CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOff
 
 SPtr<GenericGpuBuffer> VertexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat format, u32 elementSize)
 {
-	if((mUsage & GBU_LOADSTORE) != GBU_LOADSTORE)
+	if(!mBufferFlags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
 		return nullptr;
 
 	for(const auto& entry : mLoadStoreViews)
@@ -141,7 +141,7 @@ SPtr<GenericGpuBuffer> VertexBuffer::GetLoadStore(GpuBufferType type, GpuBufferF
 	GenericGpuBufferCreateInformation desc;
 	desc.Type = type;
 	desc.Format = format;
-	desc.Usage = mUsage;
+	desc.Flags = mBufferFlags;
 	desc.ElementSize = elementSize;
 	desc.ElementCount = mBuffer->GetSize() / elemSize;
 

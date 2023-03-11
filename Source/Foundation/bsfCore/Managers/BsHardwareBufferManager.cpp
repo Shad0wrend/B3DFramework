@@ -37,9 +37,9 @@ SPtr<IndexBuffer> HardwareBufferManager::CreateIndexBuffer(const IndexBufferCrea
 	return ibuf;
 }
 
-SPtr<GpuParamBlockBuffer> HardwareBufferManager::CreateGpuParamBlockBuffer(u32 size, GpuBufferUsage usage)
+SPtr<GpuParamBlockBuffer> HardwareBufferManager::CreateGpuParamBlockBuffer(u32 size, GpuBufferFlags flags)
 {
-	SPtr<GpuParamBlockBuffer> paramBlockPtr = B3DMakeCoreFromExisting<GpuParamBlockBuffer>(new(B3DAllocate<GpuParamBlockBuffer>()) GpuParamBlockBuffer(size, usage));
+	SPtr<GpuParamBlockBuffer> paramBlockPtr = B3DMakeCoreFromExisting<GpuParamBlockBuffer>(new(B3DAllocate<GpuParamBlockBuffer>()) GpuParamBlockBuffer(size, flags));
 	paramBlockPtr->SetShared(paramBlockPtr);
 	paramBlockPtr->Initialize();
 	return paramBlockPtr;
@@ -144,9 +144,9 @@ SPtr<VertexDeclaration> HardwareBufferManager::CreateVertexDeclaration(const Vec
 	return declPtr;
 }
 
-SPtr<GpuParamBlockBuffer> HardwareBufferManager::CreateGpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+SPtr<GpuParamBlockBuffer> HardwareBufferManager::CreateGpuParamBlockBuffer(u32 size, GpuBufferFlags flags, GpuDeviceFlags deviceMask)
 {
-	SPtr<GpuParamBlockBuffer> paramBlockPtr = CreateGpuParamBlockBufferInternal(size, usage, deviceMask);
+	SPtr<GpuParamBlockBuffer> paramBlockPtr = CreateGpuParamBlockBufferInternal(size, flags, deviceMask);
 	paramBlockPtr->Initialize();
 
 	return paramBlockPtr;

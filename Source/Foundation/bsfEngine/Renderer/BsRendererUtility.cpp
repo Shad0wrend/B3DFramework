@@ -28,7 +28,7 @@ RendererUtility::RendererUtility()
 		IndexBufferCreateInformation ibDesc;
 		ibDesc.IndexType = IT_32BIT;
 		ibDesc.IndexCount = 6;
-		ibDesc.Usage = GBU_DYNAMIC;
+		ibDesc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
 
 		mFullScreenQuadIB = IndexBuffer::Create(ibDesc);
 		mFullscreenQuadVDecl = VertexDeclaration::Create(mFullscreenQuadVDesc);
@@ -36,7 +36,7 @@ RendererUtility::RendererUtility()
 		VertexBufferCreateInformation vbDesc;
 		vbDesc.VertexSize = mFullscreenQuadVDecl->GetProperties().GetVertexSize(0);
 		vbDesc.VertexCount = 4 * kNumQuadVbSlots;
-		vbDesc.Usage = GBU_DYNAMIC;
+		vbDesc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
 
 		mFullScreenQuadVB = VertexBuffer::Create(vbDesc);
 

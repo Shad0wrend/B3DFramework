@@ -30,8 +30,8 @@ namespace bs
 		/** Format if the data in the buffer. Only relevant for standard buffers, must be BF_UNKNOWN otherwise. */
 		GpuBufferFormat Format = BF_32X4F;
 
-		/** Usage that tells the hardware how will be buffer be used. */
-		GpuBufferUsage Usage = GBU_STATIC;
+		/** Flags that control the behavior of the buffer. */
+		GpuBufferFlags Flags = GpuBufferFlag::StoreOnGPU;
 	};
 
 	/**
@@ -53,7 +53,7 @@ namespace bs
 		GpuBufferFormat GetFormat() const { return mDesc.Format; }
 
 		/** Returns buffer usage which determines how are planning on updating the buffer contents. */
-		GpuBufferUsage GetUsage() const { return mDesc.Usage; }
+		GpuBufferFlags GetFlags() const { return mDesc.Flags; }
 
 		/**	Returns number of elements in the buffer. */
 		u32 GetElementCount() const { return mDesc.ElementCount; }

@@ -17,7 +17,7 @@ namespace bs
 	{
 		IndexType IndexType = IT_32BIT; /**< Index type, determines the size of a single index. */
 		u32 IndexCount = 0; /**< Number of indices can buffer can hold. */
-		GpuBufferUsage Usage = GBU_STATIC; /**< Usage that tells the hardware how will be buffer be used. */
+		GpuBufferFlags Flags = GpuBufferFlag::StoreOnGPU; /**< Usage that tells the hardware how will be buffer be used. */
 	};
 
 	/**	Contains information about an index buffer. */
@@ -71,7 +71,7 @@ namespace bs
 		SPtr<ct::CoreObject> CreateCore() const override;
 
 		IndexBufferProperties mProperties;
-		GpuBufferUsage mUsage;
+		GpuBufferFlags mBufferFlags;
 	};
 
 	/** @} */

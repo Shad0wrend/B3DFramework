@@ -57,7 +57,7 @@ void VulkanGenericGpuBuffer::Initialize()
 			bufferType = HardwareBufferType::Generic;
 
 		u32 size = props.GetElementCount() * props.GetElementSize();
-		mBuffer = B3DPoolNew<VulkanHardwareBuffer>(bufferType, props.GetUsage(), size, mDeviceMask);
+		mBuffer = B3DPoolNew<VulkanHardwareBuffer>(bufferType, props.GetFlags(), size, mDeviceMask);
 	}
 
 	UpdateViews();

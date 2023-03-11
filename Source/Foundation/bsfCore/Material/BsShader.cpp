@@ -204,12 +204,12 @@ void ShaderInformationBase::SetParameterAttribute(const String& name, const Shad
 	}
 }
 
-void ShaderInformationBase::SetParamBlockAttribs(const String& name, bool shared, GpuBufferUsage usage, StringID rendererSemantic)
+void ShaderInformationBase::SetParamBlockAttribs(const String& name, bool shared, GpuBufferFlags flags, StringID rendererSemantic)
 {
 	ShaderParameterBlockInformation desc;
 	desc.Name = name;
 	desc.Shared = shared;
-	desc.Usage = usage;
+	desc.Flags = flags;
 	desc.RendererSemantic = rendererSemantic;
 
 	ParamBlocks[name] = desc;

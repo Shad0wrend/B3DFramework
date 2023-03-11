@@ -699,7 +699,7 @@ ShadowRendering::ShadowRendering(u32 shadowMapSize)
 	{
 		VertexBufferCreateInformation vbDesc;
 		vbDesc.VertexCount = 8;
-		vbDesc.Usage = GBU_DYNAMIC;
+		vbDesc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
 		vbDesc.VertexSize = mPositionOnlyVD->GetProperties().GetVertexSize(0);
 
 		mPlaneVB = VertexBuffer::Create(vbDesc);
@@ -727,7 +727,7 @@ ShadowRendering::ShadowRendering(u32 shadowMapSize)
 	{
 		VertexBufferCreateInformation vbDesc;
 		vbDesc.VertexCount = 8;
-		vbDesc.Usage = GBU_DYNAMIC;
+		vbDesc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
 		vbDesc.VertexSize = mPositionOnlyVD->GetProperties().GetVertexSize(0);
 
 		mFrustumVB = VertexBuffer::Create(vbDesc);

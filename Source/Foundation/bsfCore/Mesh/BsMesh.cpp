@@ -267,12 +267,12 @@ void Mesh::Initialize()
 	THROW_IF_NOT_CORE_THREAD;
 
 	bool isDynamic = (mUsage & MU_DYNAMIC) != 0;
-	int usage = isDynamic ? GBU_DYNAMIC : GBU_STATIC;
+	GpuBufferFlags flags = isDynamic ? GpuBufferFlag::StoreOnCPUWithGPUAccess : GpuBufferFlag::StoreOnGPU;
 
 	IndexBufferCreateInformation ibDesc;
 	ibDesc.IndexType = mIndexType;
 	ibDesc.IndexCount = mProperties.IndexCount;
-	ibDesc.Usage = (GpuBufferUsage)usage;
+	ibDesc.Flags = flags;
 
 	mIndexBuffer = IndexBuffer::Create(ibDesc, mDeviceMask);
 
@@ -288,7 +288,7 @@ void Mesh::Initialize()
 		VertexBufferCreateInformation vbDesc;
 		vbDesc.VertexSize = mVertexData->VertexDeclaration->GetProperties().GetVertexSize(i);
 		vbDesc.VertexCount = mVertexData->VertexCount;
-		vbDesc.Usage = (GpuBufferUsage)usage;
+		vbDesc.Flags = flags;
 
 		SPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(vbDesc, mDeviceMask);
 		mVertexData->SetBuffer(i, vertexBuffer);

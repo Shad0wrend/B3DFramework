@@ -19,9 +19,9 @@ namespace bs
 	enum B3D_SCRIPT_EXPORT(DocumentationGroup(Rendering)) TextureUsage
 	{
 		/** A regular texture that is not often or ever updated from the CPU. */
-		TU_STATIC B3D_SCRIPT_EXPORT(ExportName(Default)) = GBU_STATIC,
+		TU_STATIC B3D_SCRIPT_EXPORT(ExportName(Default)) = 1 << 0,
 		/** A regular texture that is often updated by the CPU. */
-		TU_DYNAMIC B3D_SCRIPT_EXPORT(ExportName(Dynamic)) = GBU_DYNAMIC,
+		TU_DYNAMIC B3D_SCRIPT_EXPORT(ExportName(Dynamic)) = 1 << 1,
 		/** Texture that can be rendered to by the GPU. */
 		TU_RENDERTARGET B3D_SCRIPT_EXPORT(ExportName(Render)) = 0x200,
 		/** Texture used as a depth/stencil buffer by the GPU. */

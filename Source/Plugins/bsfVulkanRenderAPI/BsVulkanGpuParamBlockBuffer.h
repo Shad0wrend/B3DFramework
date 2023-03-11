@@ -17,7 +17,7 @@ namespace bs
 		class VulkanGpuParamBlockBuffer final : public GpuParamBlockBuffer
 		{
 		public:
-			VulkanGpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);
+			VulkanGpuParamBlockBuffer(u32 size, GpuBufferFlags flags, GpuDeviceFlags deviceMask);
 			VulkanGpuParamBlockBuffer(const SPtr<HardwareBuffer>& backingMemory, u32 offset, u32 size);
 
 			/**

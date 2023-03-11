@@ -34,7 +34,7 @@ void LightGridLLCreationMat::Initialize()
 	GenericGpuBufferCreateInformation desc;
 	desc.ElementCount = 1;
 	desc.Format = BF_UNKNOWN;
-	desc.Usage = GBU_LOADSTORE;
+	desc.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
 	desc.Type = GBT_STRUCTURED;
 	desc.ElementSize = 4;
 
@@ -60,7 +60,7 @@ void LightGridLLCreationMat::SetParams(const Vector3I& gridSize, const SPtr<GpuP
 		GenericGpuBufferCreateInformation desc;
 		desc.ElementCount = numCells;
 		desc.Format = BF_UNKNOWN;
-		desc.Usage = GBU_LOADSTORE;
+		desc.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
 		desc.Type = GBT_STRUCTURED;
 		desc.ElementSize = 4;
 
@@ -149,7 +149,7 @@ void LightGridLLReductionMat::Initialize()
 	GenericGpuBufferCreateInformation desc;
 	desc.ElementCount = 2;
 	desc.Format = BF_UNKNOWN;
-	desc.Usage = GBU_LOADSTORE;
+	desc.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
 	desc.Type = GBT_STRUCTURED;
 	desc.ElementSize = 4;
 
@@ -172,7 +172,7 @@ void LightGridLLReductionMat::SetParams(const Vector3I& gridSize, const SPtr<Gpu
 		GenericGpuBufferCreateInformation desc;
 		desc.ElementCount = numCells;
 		desc.Format = BF_32X4U;
-		desc.Usage = GBU_LOADSTORE;
+		desc.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
 		desc.Type = GBT_STANDARD;
 		desc.ElementSize = 0;
 

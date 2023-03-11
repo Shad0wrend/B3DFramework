@@ -31,7 +31,7 @@ IndexBufferProperties::IndexBufferProperties(IndexType idxType, u32 numIndices)
 {}
 
 IndexBuffer::IndexBuffer(const IndexBufferCreateInformation& desc)
-	: mProperties(desc.IndexType, desc.IndexCount), mUsage(desc.Usage)
+	: mProperties(desc.IndexType, desc.IndexCount), mBufferFlags(desc.Flags)
 {
 #if B3D_DEBUG
 	CheckValidDesc(desc);
@@ -48,7 +48,7 @@ SPtr<ct::CoreObject> IndexBuffer::CreateCore() const
 	IndexBufferCreateInformation desc;
 	desc.IndexType = mProperties.mIndexType;
 	desc.IndexCount = mProperties.mNumIndices;
-	desc.Usage = mUsage;
+	desc.Flags = mBufferFlags;
 
 	return ct::HardwareBufferManager::Instance().CreateIndexBufferInternal(desc);
 }
@@ -61,7 +61,7 @@ SPtr<IndexBuffer> IndexBuffer::Create(const IndexBufferCreateInformation& desc)
 namespace bs { namespace ct
 {
 IndexBuffer::IndexBuffer(const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
-	: HardwareBuffer(HardwareBufferType::Index, CalcIndexSize(desc.IndexType) * desc.IndexCount, desc.Usage, deviceMask)
+	: HardwareBuffer(HardwareBufferType::Index, CalcIndexSize(desc.IndexType) * desc.IndexCount, desc.Flags, deviceMask)
 	, mProperties(desc.IndexType, desc.IndexCount)
 {
 #if B3D_DEBUG
@@ -127,7 +127,7 @@ void IndexBuffer::CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffs
 
 SPtr<GenericGpuBuffer> IndexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat format, u32 elementSize)
 {
-	if((mUsage & GBU_LOADSTORE) != GBU_LOADSTORE)
+	if(!mBufferFlags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
 		return nullptr;
 
 	for(const auto& entry : mLoadStoreViews)
@@ -153,7 +153,7 @@ SPtr<GenericGpuBuffer> IndexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFo
 	GenericGpuBufferCreateInformation desc;
 	desc.Type = type;
 	desc.Format = format;
-	desc.Usage = mUsage;
+	desc.Flags = mBufferFlags;
 	desc.ElementSize = elementSize;
 	desc.ElementCount = mBuffer->GetSize() / elemSize;
 

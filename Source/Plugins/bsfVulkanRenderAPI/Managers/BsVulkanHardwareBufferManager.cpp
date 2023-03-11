@@ -18,19 +18,19 @@ VulkanHardwareBufferManager::VulkanHardwareBufferManager()
 {
 	// Note: When multi-GPU is properly tested, make sure to create these textures on all GPUs
 	mDummyReadBuffer = B3DNew<VulkanHardwareBuffer>(
-		HardwareBufferType::Generic, GBU_STATIC, 16, GDF_DEFAULT);
+		HardwareBufferType::Generic, GpuBufferFlag::StoreOnGPU, 16, GDF_DEFAULT);
 
 	mDummyStorageBuffer = B3DNew<VulkanHardwareBuffer>(
-		HardwareBufferType::Generic, GBU_LOADSTORE, 16, GDF_DEFAULT);
+		HardwareBufferType::Generic, GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU, 16, GDF_DEFAULT);
 
 	mDummyUniformBuffer = B3DNew<VulkanHardwareBuffer>(
-		HardwareBufferType::Uniform, GBU_STATIC, 16, GDF_DEFAULT);
+		HardwareBufferType::Uniform, GpuBufferFlag::StoreOnGPU, 16, GDF_DEFAULT);
 
 	mDummyStructuredBuffer = B3DNew<VulkanHardwareBuffer>(
-		HardwareBufferType::Structured, GBU_LOADSTORE, 16, GDF_DEFAULT);
+		HardwareBufferType::Structured, GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU, 16, GDF_DEFAULT);
 
 	mDummyVertexBuffer = B3DNew<VulkanHardwareBuffer>(
-		HardwareBufferType::Vertex, GBU_STATIC, 16, GDF_DEFAULT);
+		HardwareBufferType::Vertex, GpuBufferFlag::StoreOnGPU, 16, GDF_DEFAULT);
 }
 
 VulkanHardwareBufferManager::~VulkanHardwareBufferManager()
@@ -42,9 +42,9 @@ VulkanHardwareBufferManager::~VulkanHardwareBufferManager()
 	B3DDelete(mDummyVertexBuffer);
 }
 
-SPtr<HardwareBuffer> VulkanHardwareBufferManager::CreateHardwareBuffer(HardwareBufferType type, u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+SPtr<HardwareBuffer> VulkanHardwareBufferManager::CreateHardwareBuffer(HardwareBufferType type, u32 size, GpuBufferFlags flags, GpuDeviceFlags deviceMask)
 {
-	return B3DMakeShared<VulkanHardwareBuffer>(type, usage, size, deviceMask);
+	return B3DMakeShared<VulkanHardwareBuffer>(type, flags, size, deviceMask);
 }
 
 SPtr<ct::VertexBuffer> VulkanHardwareBufferManager::CreateVertexBufferInternal(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
@@ -63,10 +63,10 @@ SPtr<ct::IndexBuffer> VulkanHardwareBufferManager::CreateIndexBufferInternal(con
 	return ret;
 }
 
-SPtr<ct::GpuParamBlockBuffer> VulkanHardwareBufferManager::CreateGpuParamBlockBufferInternal(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+SPtr<ct::GpuParamBlockBuffer> VulkanHardwareBufferManager::CreateGpuParamBlockBufferInternal(u32 size, GpuBufferFlags flags, GpuDeviceFlags deviceMask)
 {
 	VulkanGpuParamBlockBuffer* paramBlockBuffer =
-		new(B3DAllocate<VulkanGpuParamBlockBuffer>()) VulkanGpuParamBlockBuffer(size, usage, deviceMask);
+		new(B3DAllocate<VulkanGpuParamBlockBuffer>()) VulkanGpuParamBlockBuffer(size, flags, deviceMask);
 
 	SPtr<GpuParamBlockBuffer> paramBlockBufferPtr = B3DMakeSharedFromExisting<VulkanGpuParamBlockBuffer>(paramBlockBuffer);
 	paramBlockBufferPtr->SetShared(paramBlockBufferPtr);

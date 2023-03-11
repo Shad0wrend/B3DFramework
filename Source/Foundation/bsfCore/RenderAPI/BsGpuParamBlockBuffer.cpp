@@ -7,8 +7,8 @@
 
 using namespace bs;
 
-GpuParamBlockBuffer::GpuParamBlockBuffer(u32 size, GpuBufferUsage usage)
-	: mUsage(usage), mSize(size), mCachedData(nullptr)
+GpuParamBlockBuffer::GpuParamBlockBuffer(u32 size, GpuBufferFlags flags)
+	: mFlags(flags), mSize(size), mCachedData(nullptr)
 {
 	if(mSize > 0)
 	{
@@ -80,7 +80,7 @@ SPtr<ct::GpuParamBlockBuffer> GpuParamBlockBuffer::GetCore() const
 
 SPtr<ct::CoreObject> GpuParamBlockBuffer::CreateCore() const
 {
-	return ct::HardwareBufferManager::Instance().CreateGpuParamBlockBufferInternal(mSize, mUsage);
+	return ct::HardwareBufferManager::Instance().CreateGpuParamBlockBufferInternal(mSize, mFlags);
 }
 
 CoreSyncData GpuParamBlockBuffer::SyncToCore(FrameAlloc* allocator)
@@ -91,15 +91,15 @@ CoreSyncData GpuParamBlockBuffer::SyncToCore(FrameAlloc* allocator)
 	return CoreSyncData(buffer, mSize);
 }
 
-SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(u32 size, GpuBufferUsage usage)
+SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(u32 size, GpuBufferFlags flags)
 {
-	return HardwareBufferManager::Instance().CreateGpuParamBlockBuffer(size, usage);
+	return HardwareBufferManager::Instance().CreateGpuParamBlockBuffer(size, flags);
 }
 
 namespace bs { namespace ct
 {
-GpuParamBlockBuffer::GpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
-	: mUsage(usage), mSize(size), mCachedData(nullptr), mGPUBufferDirty(false), mDeviceMask(deviceMask)
+GpuParamBlockBuffer::GpuParamBlockBuffer(u32 size, GpuBufferFlags flags, GpuDeviceFlags deviceMask)
+	: mBufferFlags(flags), mSize(size), mCachedData(nullptr), mGPUBufferDirty(false), mDeviceMask(deviceMask)
 {
 	if(mSize > 0)
 	{
@@ -109,7 +109,7 @@ GpuParamBlockBuffer::GpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDevi
 }
 
 GpuParamBlockBuffer::GpuParamBlockBuffer(const SPtr<HardwareBuffer>& backingMemory, u32 offset, u32 size)
-	: mUsage(GBU_DYNAMIC), mSize(size), mOffset(offset), mBuffer(backingMemory), mCachedData(nullptr), mGPUBufferDirty(false), mDeviceMask(GDF_DEFAULT)
+	: mBufferFlags(GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU), mSize(size), mOffset(offset), mBuffer(backingMemory), mCachedData(nullptr), mGPUBufferDirty(false), mDeviceMask(GDF_DEFAULT)
 {
 }
 
@@ -127,7 +127,7 @@ void GpuParamBlockBuffer::Initialize()
 
 	if(mBuffer == nullptr)
 	{
-		mBuffer = HardwareBufferManager::Instance().CreateHardwareBuffer(HardwareBufferType::Uniform, mSize, mUsage, mDeviceMask);
+		mBuffer = HardwareBufferManager::Instance().CreateHardwareBuffer(HardwareBufferType::Uniform, mSize, mBufferFlags, mDeviceMask);
 	}
 
 	CoreObject::Initialize();
@@ -224,9 +224,9 @@ void GpuParamBlockBuffer::SyncToCore(const CoreSyncData& data)
 	Write(0, data.GetBuffer(), data.GetBufferSize());
 }
 
-SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(u32 size, GpuBufferFlags flags, GpuDeviceFlags deviceMask)
 {
-	return HardwareBufferManager::Instance().CreateGpuParamBlockBuffer(size, usage, deviceMask);
+	return HardwareBufferManager::Instance().CreateGpuParamBlockBuffer(size, flags, deviceMask);
 }
 
 SPtr<GpuParamBlockBuffer> GpuParamBlockBuffer::Create(const SPtr<HardwareBuffer>& backingMemory, u32 offset, u32 size)

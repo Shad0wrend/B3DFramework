@@ -20,6 +20,45 @@ namespace bs
 		Structured /**< Contains generic structured GPU data. */
 	};
 
+	/** Flags that determine how a GpuBuffer behaves. */
+	enum class GpuBufferFlag
+	{
+		/**
+		 * Ensures the buffer is placed into memory on the GPU device. This allows the GPU to access the buffer quickly, but makes updating the buffer slower.
+		 * CPU cannot read or write to this buffer directly, and a staging buffer must be used (it will be created internally for you, or you can use an explicit
+		 * buffer via StoreOnCPU).
+		 *
+		 * Generally you wish to use this if your buffer is immutable or is not updated often from the CPU. If your buffer is updating every frame then
+		 * PlaceOnCPUWithGPUAccess could be more efficient. Mutually exclusive with StoreOnCPUWithGPUAccess and StoreOnCPU.
+		 */
+		StoreOnGPU = 1 << 0,
+
+		/**
+		 * Places the buffer into CPU memory accessible to the GPU. This means the buffer is faster to update from the CPU (and may be updated without a
+		 * staging buffer), but it's slower to access by the GPU as the memory access happens through the PCI Express bus. One exception is if your GPU is
+		 * integrated on the CPU die, then this memory can be accessed directly by the GPU. Mutually exclusive with StoreOnGPU and StoreOnCPU.
+		 */
+		StoreOnCPUWithGPUAccess = 1 << 1,
+
+		/**
+		 * Places the buffer into CPU memory that cannot be accessed by the GPU. You can use this for staging buffers that receive and send data from/to a buffer on the
+		 * GPU via the Copy operation. Mutually exclusive with StoreOnGPU and StoreOnCPUWithGPUAccess.
+		 */
+		StoreOnCPU = 1 << 2,
+
+		/**
+		 * Ensures that the GPU can perform write operations in the buffer. Generally this is used for buffers used in compute operations. StoreOnGPU memory
+		 * flag must be used.
+		 */
+		AllowWritesOnTheGPU = 1 << 2,
+
+		/** If set, a buffer will maintain a separate CPU-only buffer into which you may write via WriteCached(). Writes can then be sent to the GPU all at once via a FlushToGPU() call. */
+		AllowWriteCachingOnCPU = 1 << 3,
+	};
+
+	using GpuBufferFlags = Flags<GpuBufferFlag>;
+	B3D_FLAGS_OPERATORS(GpuBufferFlag);
+
 	/**
 	 * Abstract class defining common features of hardware buffers. Hardware buffers usually represent areas of memory the
 	 * GPU or the driver can access directly.
@@ -150,11 +189,11 @@ namespace bs
 		 *
 		 * @param	type			Determines how will the buffer be used.
 		 * @param	size			Size of the buffer, in bytes.
-		 * @param	usage			Hint on how the buffer is intended to be used.
+		 * @param	flags			Flags that control the behavior of the buffer.
 		 * @param	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
-		HardwareBuffer(HardwareBufferType type, u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
-			: mType(type), mSize(size), mUsage(usage), mDeviceMask(deviceMask)
+		HardwareBuffer(HardwareBufferType type, u32 size, GpuBufferFlags flags, GpuDeviceFlags deviceMask)
+			: mType(type), mSize(size), mBufferFlags(flags), mDeviceMask(deviceMask)
 		{}
 
 		/** @copydoc Lock */
@@ -167,7 +206,7 @@ namespace bs
 		HardwareBufferType mType = HardwareBufferType::Generic;
 		String mName;
 		u32 mSize;
-		GpuBufferUsage mUsage;
+		GpuBufferFlags mBufferFlags;
 		GpuDeviceFlags mDeviceMask;
 
 		bool mIsLocked = false;

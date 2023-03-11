@@ -150,7 +150,7 @@ SPtr<GenericGpuBuffer> IrradianceComputeSHMat::CreateOutputBuffer(const SPtr<Tex
 	bufferDesc.Type = GBT_STRUCTURED;
 	bufferDesc.ElementCount = numCoeffSets;
 	bufferDesc.Format = BF_UNKNOWN;
-	bufferDesc.Usage = GBU_LOADSTORE;
+	bufferDesc.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU;
 
 	if(mVariationParameters.GetInt("SH_ORDER") == 3)
 		bufferDesc.ElementSize = sizeof(SHCoeffsAndWeight3);

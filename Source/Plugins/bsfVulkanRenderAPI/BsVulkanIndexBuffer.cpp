@@ -18,7 +18,7 @@ VulkanIndexBuffer::VulkanIndexBuffer(const IndexBufferCreateInformation& desc, G
 
 void VulkanIndexBuffer::Initialize()
 {
-	mBuffer = B3DPoolNew<VulkanHardwareBuffer>(HardwareBufferType::Index, mUsage, mSize, mDeviceMask);
+	mBuffer = B3DPoolNew<VulkanHardwareBuffer>(HardwareBufferType::Index, mBufferFlags, mSize, mDeviceMask);
 	mBufferDeleter = &DeleteHardwareBuffer;
 
 	IndexBuffer::Initialize();

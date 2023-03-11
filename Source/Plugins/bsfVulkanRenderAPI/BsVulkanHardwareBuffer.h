@@ -126,7 +126,7 @@ namespace bs
 		class VulkanHardwareBuffer : public HardwareBuffer
 		{
 		public:
-			VulkanHardwareBuffer(HardwareBufferType type, GpuBufferUsage usage, u32 size, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			VulkanHardwareBuffer(HardwareBufferType type, GpuBufferFlags flags, u32 size, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 			~VulkanHardwareBuffer();
 
 			void SetName(const StringView& name) override;

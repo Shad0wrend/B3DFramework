@@ -17,7 +17,7 @@ namespace bs
 	{
 		u32 VertexSize = 0; /**< Size of a single vertex in the buffer, in bytes. */
 		u32 VertexCount = 0; /**< Number of vertices the buffer can hold. */
-		GpuBufferUsage Usage = GBU_STATIC; /**< Usage that tells the hardware how will be buffer be used. */
+		GpuBufferFlags Flags = GpuBufferFlag::StoreOnGPU; /** Flags that control the behavior of the buffer. */
 		bool StreamOut = false; /**< If true the buffer will be usable for streaming out data from the GPU. */
 	};
 
@@ -67,7 +67,7 @@ namespace bs
 		SPtr<ct::CoreObject> CreateCore() const override;
 
 		VertexBufferProperties mProperties;
-		GpuBufferUsage mUsage;
+		GpuBufferFlags mFlags;
 		bool mStreamOut;
 	};
 

@@ -531,7 +531,7 @@ SPtr<GenericGpuBuffer> CreateBoneMatrixBuffer(u32 numBones)
 	desc.ElementSize = 0;
 	desc.Type = GBT_STANDARD;
 	desc.Format = BF_32X4F;
-	desc.Usage = GBU_DYNAMIC;
+	desc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
 
 	SPtr<GenericGpuBuffer> buffer = GenericGpuBuffer::Create(desc);
 	u8* dest = (u8*)buffer->Lock(0, numBones * 3 * sizeof(Vector4), GBL_WRITE_ONLY_DISCARD);
@@ -588,7 +588,7 @@ void Renderable::CreateAnimationBuffers()
 		VertexBufferCreateInformation desc;
 		desc.VertexSize = vertexSize;
 		desc.VertexCount = numVertices;
-		desc.Usage = GBU_DYNAMIC;
+		desc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
 
 		SPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(desc);
 

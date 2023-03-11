@@ -3,6 +3,7 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
+#include "BsHardwareBuffer.h"
 #include "CoreThread/BsCoreObject.h"
 
 namespace bs
@@ -24,7 +25,7 @@ namespace bs
 	class B3D_CORE_EXPORT GpuParamBlockBuffer : public CoreObject
 	{
 	public:
-		GpuParamBlockBuffer(u32 size, GpuBufferUsage usage);
+		GpuParamBlockBuffer(u32 size, GpuBufferFlags flags);
 		virtual ~GpuParamBlockBuffer();
 
 		/**
@@ -58,13 +59,13 @@ namespace bs
 		SPtr<ct::GpuParamBlockBuffer> GetCore() const;
 
 		/** @copydoc HardwareBufferManager::CreateGpuParamBlockBuffer */
-		static SPtr<GpuParamBlockBuffer> Create(u32 size, GpuBufferUsage usage = GBU_DYNAMIC);
+		static SPtr<GpuParamBlockBuffer> Create(u32 size, GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU);
 
 	protected:
 		SPtr<ct::CoreObject> CreateCore() const override;
 		CoreSyncData SyncToCore(FrameAlloc* allocator) override;
 
-		GpuBufferUsage mUsage;
+		GpuBufferFlags mFlags;
 		u32 mSize;
 		u8* mCachedData;
 	};
@@ -85,7 +86,7 @@ namespace bs
 		class B3D_CORE_EXPORT GpuParamBlockBuffer : public CoreObject
 		{
 		public:
-			GpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);
+			GpuParamBlockBuffer(u32 size, GpuBufferFlags flags, GpuDeviceFlags deviceMask);
 			GpuParamBlockBuffer(const SPtr<HardwareBuffer>& backingMemory, u32 offset, u32 size);
 			virtual ~GpuParamBlockBuffer();
 
@@ -140,11 +141,11 @@ namespace bs
 			 * Creates an GPU parameter block that you can use for setting parameters for GPU programs. 
 			 *
 			 * @param	size		Size of the parameter buffer in bytes.
-			 * @param	usage		Usage that tells the hardware how will be buffer be used.
+			 * @param	flags		Flags that control the behavior of the buffer.
 			 * @param	deviceMask	Usage mask that determines on which devices will the buffer be created on.
 			 * @return				Newly created buffer.
 			 */
-			static SPtr<GpuParamBlockBuffer> Create(u32 size, GpuBufferUsage usage = GBU_DYNAMIC, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			static SPtr<GpuParamBlockBuffer> Create(u32 size, GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 			/**
 			 * Creates an GPU parameter block that you can use for setting parameters for GPU programs. Uses a pre-allocated buffer for its backing memory.
@@ -163,7 +164,7 @@ namespace bs
 
 			SPtr<HardwareBuffer> mBuffer;
 
-			GpuBufferUsage mUsage;
+			GpuBufferFlags mBufferFlags;
 			GpuDeviceFlags mDeviceMask = GDF_DEFAULT;
 			u32 mSize;
 			u32 mOffset = 0;
