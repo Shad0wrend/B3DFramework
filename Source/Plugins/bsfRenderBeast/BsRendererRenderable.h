@@ -75,10 +75,10 @@ namespace bs
 			ImageBasedLightingParams ImageBasedParams;
 
 			/** GPU buffer containing element's bone matrices, if it requires any. */
-			SPtr<GpuBuffer> BoneMatrixBuffer;
+			SPtr<GenericGpuBuffer> BoneMatrixBuffer;
 
 			/** GPU buffer containing element's bone matrices for the previous frame, if it requires any. */
-			SPtr<GpuBuffer> BonePrevMatrixBuffer;
+			SPtr<GenericGpuBuffer> BonePrevMatrixBuffer;
 
 			/** Vertex buffer containing element's morph shape vertices, if it has any. */
 			SPtr<VertexBuffer> MorphShapeBuffer;

@@ -1,6 +1,6 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "RenderAPI/BsGpuBuffer.h"
+#include "RenderAPI/BsGenericGpuBuffer.h"
 #include "Error/BsException.h"
 #include "RenderAPI/BsRenderAPI.h"
 #include "Managers/BsHardwareBufferManager.h"
@@ -8,41 +8,41 @@
 
 using namespace bs;
 
-u32 GetBufferSize(const GpuBufferCreateInformation& desc)
+u32 GetBufferSize(const GenericGpuBufferCreateInformation& desc)
 {
 	u32 elementSize;
 
 	if(desc.Type == GBT_STANDARD)
-		elementSize = GpuBuffer::GetFormatSize(desc.Format);
+		elementSize = GenericGpuBuffer::GetFormatSize(desc.Format);
 	else
 		elementSize = desc.ElementSize;
 
 	return elementSize * desc.ElementCount;
 }
 
-GpuBufferProperties::GpuBufferProperties(const GpuBufferCreateInformation& desc)
+GenericGpuBufferProperties::GenericGpuBufferProperties(const GenericGpuBufferCreateInformation& desc)
 	: mDesc(desc)
 {
 	if(mDesc.Type == GBT_STANDARD)
-		mDesc.ElementSize = GpuBuffer::GetFormatSize(mDesc.Format);
+		mDesc.ElementSize = GenericGpuBuffer::GetFormatSize(mDesc.Format);
 }
 
-GpuBuffer::GpuBuffer(const GpuBufferCreateInformation& desc)
+GenericGpuBuffer::GenericGpuBuffer(const GenericGpuBufferCreateInformation& desc)
 	: mProperties(desc)
 {
 }
 
-SPtr<ct::GpuBuffer> GpuBuffer::GetCore() const
+SPtr<ct::GenericGpuBuffer> GenericGpuBuffer::GetCore() const
 {
-	return std::static_pointer_cast<ct::GpuBuffer>(mCoreSpecific);
+	return std::static_pointer_cast<ct::GenericGpuBuffer>(mCoreSpecific);
 }
 
-SPtr<ct::CoreObject> GpuBuffer::CreateCore() const
+SPtr<ct::CoreObject> GenericGpuBuffer::CreateCore() const
 {
 	return ct::HardwareBufferManager::Instance().CreateGpuBufferInternal(mProperties.mDesc);
 }
 
-u32 GpuBuffer::GetFormatSize(GpuBufferFormat format)
+u32 GenericGpuBuffer::GetFormatSize(GpuBufferFormat format)
 {
 	static bool lookupInitialized = false;
 
@@ -104,14 +104,14 @@ u32 GpuBuffer::GetFormatSize(GpuBufferFormat format)
 	return lookup[(u32)format];
 }
 
-SPtr<GpuBuffer> GpuBuffer::Create(const GpuBufferCreateInformation& desc)
+SPtr<GenericGpuBuffer> GenericGpuBuffer::Create(const GenericGpuBufferCreateInformation& desc)
 {
 	return HardwareBufferManager::Instance().CreateGpuBuffer(desc);
 }
 
 namespace bs { namespace ct
 {
-GpuBuffer::GpuBuffer(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
+GenericGpuBuffer::GenericGpuBuffer(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
 	: HardwareBuffer(HardwareBufferType::Generic, GetBufferSize(desc), desc.Usage, deviceMask), mProperties(desc)
 {
 	if(desc.Type != GBT_STANDARD)
@@ -120,7 +120,7 @@ GpuBuffer::GpuBuffer(const GpuBufferCreateInformation& desc, GpuDeviceFlags devi
 		B3D_ASSERT(desc.ElementSize == 0 && "No element size can be provided for standard buffer. Size is determined from format.");
 }
 
-GpuBuffer::GpuBuffer(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
+GenericGpuBuffer::GenericGpuBuffer(const GenericGpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
 	: HardwareBuffer(HardwareBufferType::Generic, GetBufferSize(desc), desc.Usage, underlyingBuffer->GetDeviceMask()), mProperties(desc), mBuffer(underlyingBuffer.get()), mSharedBuffer(std::move(underlyingBuffer)), mIsExternalBuffer(true)
 {
 	const auto& props = GetProperties();
@@ -132,7 +132,7 @@ GpuBuffer::GpuBuffer(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer
 		B3D_ASSERT(desc.ElementSize == 0 && "No element size can be provided for standard buffer. Size is determined from format.");
 }
 
-GpuBuffer::~GpuBuffer()
+GenericGpuBuffer::~GenericGpuBuffer()
 {
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResDestroyed, RenderStatObject_GpuBuffer);
 
@@ -140,13 +140,13 @@ GpuBuffer::~GpuBuffer()
 		mBufferDeleter(mBuffer);
 }
 
-void GpuBuffer::Initialize()
+void GenericGpuBuffer::Initialize()
 {
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResCreated, RenderStatObject_GpuBuffer);
 	CoreObject::Initialize();
 }
 
-void* GpuBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx)
+void* GenericGpuBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx)
 {
 #if B3D_PROFILING_ENABLED
 	if(options == GBL_READ_ONLY || options == GBL_READ_WRITE)
@@ -163,41 +163,41 @@ void* GpuBuffer::Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceI
 	return mBuffer->Lock(offset, length, options, deviceIdx, queueIdx);
 }
 
-void GpuBuffer::Unmap()
+void GenericGpuBuffer::Unmap()
 {
 	mBuffer->Unlock();
 }
 
-void GpuBuffer::ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx, u32 queueIdx)
+void GenericGpuBuffer::ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx, u32 queueIdx)
 {
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResRead, RenderStatObject_GpuBuffer);
 
 	mBuffer->ReadData(offset, length, dest, deviceIdx, queueIdx);
 }
 
-void GpuBuffer::WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags, u32 queueIdx)
+void GenericGpuBuffer::WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags, u32 queueIdx)
 {
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResWrite, RenderStatObject_GpuBuffer);
 
 	mBuffer->WriteData(offset, length, source, writeFlags, queueIdx);
 }
 
-void GpuBuffer::CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer, const SPtr<CommandBuffer>& commandBuffer)
+void GenericGpuBuffer::CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer, const SPtr<CommandBuffer>& commandBuffer)
 {
-	auto& srcGpuBuffer = static_cast<GpuBuffer&>(srcBuffer);
+	auto& srcGpuBuffer = static_cast<GenericGpuBuffer&>(srcBuffer);
 	mBuffer->CopyData(*srcGpuBuffer.mBuffer, srcOffset, dstOffset, length, discardWholeBuffer, commandBuffer);
 }
 
-SPtr<GpuBuffer> GpuBuffer::GetView(GpuBufferType type, GpuBufferFormat format, u32 elementSize)
+SPtr<GenericGpuBuffer> GenericGpuBuffer::GetView(GpuBufferType type, GpuBufferFormat format, u32 elementSize)
 {
-	const u32 elemSize = type == GBT_STANDARD ? bs::GpuBuffer::GetFormatSize(format) : elementSize;
+	const u32 elemSize = type == GBT_STANDARD ? bs::GenericGpuBuffer::GetFormatSize(format) : elementSize;
 	if((mBuffer->GetSize() % elemSize) != 0)
 	{
 		B3D_LOG(Error, RenderBackend, "Size of the buffer isn't divisible by individual element size provided for the buffer view.");
 		return nullptr;
 	}
 
-	GpuBufferCreateInformation desc;
+	GenericGpuBufferCreateInformation desc;
 	desc.Type = type;
 	desc.Format = format;
 	desc.Usage = mUsage;
@@ -210,16 +210,16 @@ SPtr<GpuBuffer> GpuBuffer::GetView(GpuBufferType type, GpuBufferFormat format, u
 		mIsExternalBuffer = false;
 	}
 
-	SPtr<GpuBuffer> newView = Create(desc, mSharedBuffer);
+	SPtr<GenericGpuBuffer> newView = Create(desc, mSharedBuffer);
 	return newView;
 }
 
-SPtr<GpuBuffer> GpuBuffer::Create(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
+SPtr<GenericGpuBuffer> GenericGpuBuffer::Create(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
 {
 	return HardwareBufferManager::Instance().CreateGpuBuffer(desc, deviceMask);
 }
 
-SPtr<GpuBuffer> GpuBuffer::Create(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
+SPtr<GenericGpuBuffer> GenericGpuBuffer::Create(const GenericGpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
 {
 	return HardwareBufferManager::Instance().CreateGpuBuffer(desc, std::move(underlyingBuffer));
 }

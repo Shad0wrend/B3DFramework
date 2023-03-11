@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsGLPrerequisites.h"
-#include "RenderAPI/BsGpuBuffer.h"
+#include "RenderAPI/BsGenericGpuBuffer.h"
 #include "BsGLHardwareBuffer.h"
 
 namespace bs
@@ -15,7 +15,7 @@ namespace bs
 		 */
 
 		/**	OpenGL implementation of a generic GPU buffer. */
-		class GLGpuBuffer : public GpuBuffer
+		class GLGpuBuffer : public GenericGpuBuffer
 		{
 		public:
 			~GLGpuBuffer();
@@ -35,8 +35,8 @@ namespace bs
 		protected:
 			friend class GLHardwareBufferManager;
 
-			GLGpuBuffer(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask);
-			GLGpuBuffer(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer);
+			GLGpuBuffer(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask);
+			GLGpuBuffer(const GenericGpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer);
 
 			void Initialize() override;
 

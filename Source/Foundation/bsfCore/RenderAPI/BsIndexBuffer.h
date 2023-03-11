@@ -112,7 +112,7 @@ namespace bs
 			 *								can happen if the buffer hasn't been created with GBU_LOADSTORE usage or if the
 			 *								element size doesn't divide the current buffer size.
 			 */
-			SPtr<GpuBuffer> GetLoadStore(GpuBufferType type, GpuBufferFormat format, u32 elementSize = 0);
+			SPtr<GenericGpuBuffer> GetLoadStore(GpuBufferType type, GpuBufferFormat format, u32 elementSize = 0);
 
 			/** @copydoc HardwareBufferManager::CreateIndexBuffer */
 			static SPtr<IndexBuffer> Create(const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
@@ -128,7 +128,7 @@ namespace bs
 
 			HardwareBuffer* mBuffer = nullptr;
 			SPtr<HardwareBuffer> mSharedBuffer;
-			Vector<SPtr<GpuBuffer>> mLoadStoreViews;
+			Vector<SPtr<GenericGpuBuffer>> mLoadStoreViews;
 
 			typedef void (*Deleter)(HardwareBuffer*);
 			Deleter mBufferDeleter = nullptr;

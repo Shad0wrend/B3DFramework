@@ -3,7 +3,7 @@
 #include "Managers/BsVulkanHardwareBufferManager.h"
 #include "BsVulkanVertexBuffer.h"
 #include "BsVulkanIndexBuffer.h"
-#include "BsVulkanGpuBuffer.h"
+#include "BsVulkanGenericGpuBuffer.h"
 #include "BsVulkanGpuParamBlockBuffer.h"
 #include "BsVulkanGpuParams.h"
 #include "BsVulkanHardwareBuffer.h"
@@ -85,21 +85,21 @@ SPtr<ct::GpuParamBlockBuffer> VulkanHardwareBufferManager::CreateGpuParamBlockBu
 	return parameterBlockBufferShared;
 }
 
-SPtr<ct::GpuBuffer> VulkanHardwareBufferManager::CreateGpuBufferInternal(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
+SPtr<ct::GenericGpuBuffer> VulkanHardwareBufferManager::CreateGpuBufferInternal(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
 {
-	VulkanGpuBuffer* buffer = new(B3DAllocate<VulkanGpuBuffer>()) VulkanGpuBuffer(desc, deviceMask);
+	VulkanGenericGpuBuffer* buffer = new(B3DAllocate<VulkanGenericGpuBuffer>()) VulkanGenericGpuBuffer(desc, deviceMask);
 
-	SPtr<VulkanGpuBuffer> bufferPtr = B3DMakeSharedFromExisting<VulkanGpuBuffer>(buffer);
+	SPtr<VulkanGenericGpuBuffer> bufferPtr = B3DMakeSharedFromExisting<VulkanGenericGpuBuffer>(buffer);
 	bufferPtr->SetShared(bufferPtr);
 
 	return bufferPtr;
 }
 
-SPtr<ct::GpuBuffer> VulkanHardwareBufferManager::CreateGpuBufferInternal(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
+SPtr<ct::GenericGpuBuffer> VulkanHardwareBufferManager::CreateGpuBufferInternal(const GenericGpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
 {
-	VulkanGpuBuffer* buffer = new(B3DAllocate<VulkanGpuBuffer>()) VulkanGpuBuffer(desc, std::move(underlyingBuffer));
+	VulkanGenericGpuBuffer* buffer = new(B3DAllocate<VulkanGenericGpuBuffer>()) VulkanGenericGpuBuffer(desc, std::move(underlyingBuffer));
 
-	SPtr<VulkanGpuBuffer> bufferPtr = B3DMakeSharedFromExisting<VulkanGpuBuffer>(buffer);
+	SPtr<VulkanGenericGpuBuffer> bufferPtr = B3DMakeSharedFromExisting<VulkanGenericGpuBuffer>(buffer);
 	bufferPtr->SetShared(bufferPtr);
 
 	return bufferPtr;

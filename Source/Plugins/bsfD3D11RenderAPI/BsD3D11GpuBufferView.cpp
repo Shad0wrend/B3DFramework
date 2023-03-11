@@ -58,7 +58,7 @@ void GpuBufferView::Initialize(D3D11GpuBuffer* buffer, GPU_BUFFER_VIEW_DESC& des
 
 ID3D11ShaderResourceView* GpuBufferView::CreateSrv(D3D11GpuBuffer* buffer, u32 firstElement, u32 elementWidth, u32 numElements)
 {
-	const GpuBufferProperties& props = buffer->GetProperties();
+	const GenericGpuBufferProperties& props = buffer->GetProperties();
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC desc;
 	ZeroMemory(&desc, sizeof(desc));
@@ -101,7 +101,7 @@ ID3D11ShaderResourceView* GpuBufferView::CreateSrv(D3D11GpuBuffer* buffer, u32 f
 
 ID3D11UnorderedAccessView* GpuBufferView::CreateUav(D3D11GpuBuffer* buffer, u32 firstElement, u32 numElements, bool useCounter)
 {
-	const GpuBufferProperties& props = buffer->GetProperties();
+	const GenericGpuBufferProperties& props = buffer->GetProperties();
 
 	D3D11_UNORDERED_ACCESS_VIEW_DESC desc;
 	ZeroMemory(&desc, sizeof(desc));

@@ -43,7 +43,7 @@ namespace bs
 				: mLastUsedFrame(lastUsedFrame)
 			{}
 
-			SPtr<GpuBuffer> Buffer;
+			SPtr<GenericGpuBuffer> Buffer;
 
 		private:
 			friend class GpuResourcePool;
@@ -126,7 +126,7 @@ namespace bs
 			 * @param[in]	desc	Descriptor structure that describes what kind of buffer to match.
 			 * @return				True if the buffer matches the descriptor, false otherwise.
 			 */
-			static bool Matches(const SPtr<GpuBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc);
+			static bool Matches(const SPtr<GenericGpuBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc);
 
 			DynArray<SPtr<PooledRenderTexture>> mTextures;
 			DynArray<SPtr<PooledStorageBuffer>> mBuffers;

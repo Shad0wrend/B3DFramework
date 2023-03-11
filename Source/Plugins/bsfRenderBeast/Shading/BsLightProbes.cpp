@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsLightProbes.h"
 #include "Renderer/BsLightProbeVolume.h"
-#include "RenderAPI/BsGpuBuffer.h"
+#include "RenderAPI/BsGenericGpuBuffer.h"
 #include "BsRendererView.h"
 #include "BsRenderBeastIBLUtility.h"
 #include "Mesh/BsMesh.h"
@@ -764,14 +764,14 @@ void LightProbes::ResizeTetrahedronBuffer(u32 count)
 {
 	static constexpr u32 kElementSize = Math::DivideAndRoundUp((u32)sizeof(TetrahedronDataGPU), 4U);
 
-	GpuBufferCreateInformation desc;
+	GenericGpuBufferCreateInformation desc;
 	desc.Type = GBT_STANDARD;
 	desc.ElementSize = 0;
 	desc.ElementCount = count * kElementSize;
 	desc.Usage = GBU_STATIC;
 	desc.Format = BF_32X4U;
 
-	mTetrahedronInfosGPU = GpuBuffer::Create(desc);
+	mTetrahedronInfosGPU = GenericGpuBuffer::Create(desc);
 	mMaxTetrahedra = count;
 }
 
@@ -779,14 +779,14 @@ void LightProbes::ResizeTetrahedronFaceBuffer(u32 count)
 {
 	static constexpr u32 kElementSize = Math::DivideAndRoundUp((u32)sizeof(TetrahedronFaceDataGPU), 4U);
 
-	GpuBufferCreateInformation desc;
+	GenericGpuBufferCreateInformation desc;
 	desc.Type = GBT_STANDARD;
 	desc.ElementSize = 0;
 	desc.ElementCount = count * kElementSize;
 	desc.Usage = GBU_STATIC;
 	desc.Format = BF_32X4F;
 
-	mTetrahedronFaceInfosGPU = GpuBuffer::Create(desc);
+	mTetrahedronFaceInfosGPU = GenericGpuBuffer::Create(desc);
 	mMaxFaces = count;
 }
 

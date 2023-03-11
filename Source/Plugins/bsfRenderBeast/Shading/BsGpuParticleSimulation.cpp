@@ -6,7 +6,7 @@
 #include "Renderer/BsGpuResourcePool.h"
 #include "RenderAPI/BsVertexBuffer.h"
 #include "RenderAPI/BsIndexBuffer.h"
-#include "RenderAPI/BsGpuBuffer.h"
+#include "RenderAPI/BsGenericGpuBuffer.h"
 #include "RenderAPI/BsVertexDataDesc.h"
 #include "RenderAPI/BsGpuPipelineParamInfo.h"
 #include "Particles/BsVectorField.h"
@@ -35,7 +35,7 @@ public:
 	void Initialize() override;
 
 	/** Binds the material to the pipeline, along with the @p tileUVs buffer containing locations of tiles to clear. */
-	void Bind(const SPtr<GpuBuffer>& tileUVs);
+	void Bind(const SPtr<GenericGpuBuffer>& tileUVs);
 
 private:
 	GpuParameterBuffer mTileUVParam;
@@ -129,7 +129,7 @@ public:
 	 * @param[in]	depthCollisionParams	Parameter buffer for controlling depth buffer collisions, if enabled.
 	 *
 	 */
-	void BindPerCallParams(const SPtr<GpuBuffer>& tileUVs, const SPtr<GpuParamBlockBuffer>& perObjectParams, const SPtr<GpuParamBlockBuffer>& vectorFieldParams, const SPtr<Texture>& vectorFieldTexture, const SPtr<GpuParamBlockBuffer>& depthCollisionParams);
+	void BindPerCallParams(const SPtr<GenericGpuBuffer>& tileUVs, const SPtr<GpuParamBlockBuffer>& perObjectParams, const SPtr<GpuParamBlockBuffer>& vectorFieldParams, const SPtr<Texture>& vectorFieldTexture, const SPtr<GpuParamBlockBuffer>& depthCollisionParams);
 
 	/** Returns the material variation matching the provided parameters. */
 	static GpuParticleSimulateMat* GetVariation(bool depthCollisions, bool localSpace);
@@ -183,7 +183,7 @@ public:
 	 * @param[in]	indices			Buffer containing offsets into the position texture for each particle.
 	 * @param[in]	numParticles	Number of particle in the provided indices buffer.
 	 */
-	AABox Execute(const SPtr<GpuBuffer>& indices, u32 numParticles);
+	AABox Execute(const SPtr<GenericGpuBuffer>& indices, u32 numParticles);
 
 private:
 	GpuParameterBuffer mParticleIndicesParam;
@@ -232,7 +232,7 @@ public:
 	 *								as @p outKeys.
 	 * @return						Number of particle that were written to the buffers.
 	 */
-	u32 Execute(const GpuParticleSystem& system, u32 systemIdx, const Vector3& viewOrigin, u32 offset, const SPtr<GpuBuffer>& outKeys, const SPtr<GpuBuffer>& outIndices);
+	u32 Execute(const GpuParticleSystem& system, u32 systemIdx, const Vector3& viewOrigin, u32 offset, const SPtr<GenericGpuBuffer>& outKeys, const SPtr<GenericGpuBuffer>& outIndices);
 
 private:
 	GpuParameterBuffer mInputIndicesParam;
@@ -258,7 +258,7 @@ struct GpuParticleHelperBuffers
 	SPtr<IndexBuffer> SpriteIndices;
 	SPtr<VertexDeclaration> TileVertexDecl;
 	SPtr<VertexDeclaration> InjectVertexDecl;
-	SPtr<GpuBuffer> TileScratch;
+	SPtr<GenericGpuBuffer> TileScratch;
 	SPtr<VertexBuffer> InjectScratch;
 };
 
@@ -313,24 +313,24 @@ GpuParticleResources::GpuParticleResources()
 	}
 
 	// Allocate the buffer containing keys used for sorting
-	GpuBufferCreateInformation sortKeysBufferDesc;
+	GenericGpuBufferCreateInformation sortKeysBufferDesc;
 	sortKeysBufferDesc.Type = GBT_STANDARD;
 	sortKeysBufferDesc.Format = BF_32X1U;
 	sortKeysBufferDesc.ElementCount = kTexSize * kTexSize;
 	sortKeysBufferDesc.Usage = GBU_LOADSTORE;
 
-	mSortBuffers.Keys[0] = GpuBuffer::Create(sortKeysBufferDesc);
-	mSortBuffers.Keys[1] = GpuBuffer::Create(sortKeysBufferDesc);
+	mSortBuffers.Keys[0] = GenericGpuBuffer::Create(sortKeysBufferDesc);
+	mSortBuffers.Keys[1] = GenericGpuBuffer::Create(sortKeysBufferDesc);
 
 	// Allocate the buffer containing sorted particle indices
-	GpuBufferCreateInformation sortedIndicesBufferDesc;
+	GenericGpuBufferCreateInformation sortedIndicesBufferDesc;
 	sortedIndicesBufferDesc.Type = GBT_STANDARD;
 	sortedIndicesBufferDesc.Format = BF_16X2U;
 	sortedIndicesBufferDesc.ElementCount = kTexSize * kTexSize;
 	sortedIndicesBufferDesc.Usage = GBU_LOADSTORE;
 
-	mSortedIndices[0] = GpuBuffer::Create(sortedIndicesBufferDesc);
-	mSortedIndices[1] = GpuBuffer::Create(sortedIndicesBufferDesc);
+	mSortedIndices[0] = GenericGpuBuffer::Create(sortedIndicesBufferDesc);
+	mSortedIndices[1] = GenericGpuBuffer::Create(sortedIndicesBufferDesc);
 
 	mSortBuffers.Values[0] = mSortedIndices[0]->GetView(GBT_STANDARD, BF_32X1U);
 	mSortBuffers.Values[1] = mSortedIndices[1]->GetView(GBT_STANDARD, BF_32X1U);
@@ -387,7 +387,7 @@ Vector2 GpuParticleResources::GetParticleCoords(u32 subTileId)
 	return tileOffset / (float)kTexSize;
 }
 
-const SPtr<GpuBuffer>& GpuParticleResources::GetSortedIndices() const
+const SPtr<GenericGpuBuffer>& GpuParticleResources::GetSortedIndices() const
 {
 	return mSortedIndices[mSortedIndicesBufferIdx];
 }
@@ -486,13 +486,13 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 	SpriteIndices->Unlock();
 
 	// Prepare a scratch buffer we'll use to clear tiles
-	GpuBufferCreateInformation tileScratchBufferDesc;
+	GenericGpuBufferCreateInformation tileScratchBufferDesc;
 	tileScratchBufferDesc.Type = GBT_STANDARD;
 	tileScratchBufferDesc.Format = BF_32X2F;
 	tileScratchBufferDesc.ElementCount = kNumScratchTiles;
 	tileScratchBufferDesc.Usage = GBU_DYNAMIC;
 
-	TileScratch = GpuBuffer::Create(tileScratchBufferDesc);
+	TileScratch = GenericGpuBuffer::Create(tileScratchBufferDesc);
 
 	// Prepare a scratch buffer we'll use to inject new particles
 	VertexBufferCreateInformation injectScratchBufferDesc;
@@ -632,13 +632,13 @@ void GpuParticleSystem::UpdateGpuBuffers()
 	// Tile offsets buffer
 	if(numTiles > 0)
 	{
-		GpuBufferCreateInformation tilesBufferDesc;
+		GenericGpuBufferCreateInformation tilesBufferDesc;
 		tilesBufferDesc.Type = GBT_STANDARD;
 		tilesBufferDesc.Format = BF_32X2F;
 		tilesBufferDesc.ElementCount = numTilesToAllocates;
 		tilesBufferDesc.Usage = GBU_DYNAMIC;
 
-		mTileUVs = GpuBuffer::Create(tilesBufferDesc);
+		mTileUVs = GenericGpuBuffer::Create(tilesBufferDesc);
 
 		auto* tileUVs = (Vector2*)mTileUVs->Lock(GBL_WRITE_ONLY_NO_OVERWRITE);
 		for(u32 i = 0; i < numTiles; i++)
@@ -655,13 +655,13 @@ void GpuParticleSystem::UpdateGpuBuffers()
 
 	if(numParticles > 0)
 	{
-		GpuBufferCreateInformation particleUVDesc;
+		GenericGpuBufferCreateInformation particleUVDesc;
 		particleUVDesc.Type = GBT_STANDARD;
 		particleUVDesc.Format = BF_16X2U;
 		particleUVDesc.ElementCount = numParticles;
 		particleUVDesc.Usage = GBU_DYNAMIC;
 
-		mParticleIndices = GpuBuffer::Create(particleUVDesc);
+		mParticleIndices = GenericGpuBuffer::Create(particleUVDesc);
 		auto* particleIndices = (u32*)mParticleIndices->Lock(GBL_WRITE_ONLY_NO_OVERWRITE);
 
 		u32 idx = 0;
@@ -1074,7 +1074,7 @@ void GpuParticleClearMat::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("TILES_PER_INSTANCE", kTilesPerInstance);
 }
 
-void GpuParticleClearMat::Bind(const SPtr<GpuBuffer>& tileUVs)
+void GpuParticleClearMat::Bind(const SPtr<GenericGpuBuffer>& tileUVs)
 {
 	mTileUVParam.Set(tileUVs);
 
@@ -1172,7 +1172,7 @@ void GpuParticleSimulateMat::BindGlobal(GpuParticleResources& resources, const S
 	RendererMaterial::Bind(false);
 }
 
-void GpuParticleSimulateMat::BindPerCallParams(const SPtr<GpuBuffer>& tileUVs, const SPtr<GpuParamBlockBuffer>& perObjectParams, const SPtr<GpuParamBlockBuffer>& vectorFieldParams, const SPtr<Texture>& vectorFieldTexture, const SPtr<GpuParamBlockBuffer>& depthCollisionParams)
+void GpuParticleSimulateMat::BindPerCallParams(const SPtr<GenericGpuBuffer>& tileUVs, const SPtr<GpuParamBlockBuffer>& perObjectParams, const SPtr<GpuParamBlockBuffer>& vectorFieldParams, const SPtr<Texture>& vectorFieldTexture, const SPtr<GpuParamBlockBuffer>& depthCollisionParams)
 {
 	mTileUVParam.Set(tileUVs);
 	mGPUParameters->SetParameterBlockBuffer(mVectorFieldBinding.Set, mVectorFieldBinding.Slot, vectorFieldParams);
@@ -1222,7 +1222,7 @@ void GpuParticleBoundsMat::Bind(const SPtr<Texture>& positionAndTime)
 	RendererMaterial::Bind();
 }
 
-AABox GpuParticleBoundsMat::Execute(const SPtr<GpuBuffer>& indices, u32 numParticles)
+AABox GpuParticleBoundsMat::Execute(const SPtr<GenericGpuBuffer>& indices, u32 numParticles)
 {
 	static constexpr u32 kMaxNumGroups = 128;
 
@@ -1236,13 +1236,13 @@ AABox GpuParticleBoundsMat::Execute(const SPtr<GpuBuffer>& indices, u32 numParti
 	gGpuParticleBoundsParamsDef.gNumExtraIterations.Set(mInputBuffer, extraIterations);
 	gGpuParticleBoundsParamsDef.gNumParticles.Set(mInputBuffer, numParticles);
 
-	GpuBufferCreateInformation outputDesc;
+	GenericGpuBufferCreateInformation outputDesc;
 	outputDesc.Type = GBT_STANDARD;
 	outputDesc.Format = BF_32X2U;
 	outputDesc.ElementCount = numGroups * 2;
 	outputDesc.Usage = GBU_DYNAMIC;
 
-	SPtr<GpuBuffer> output = GpuBuffer::Create(outputDesc);
+	SPtr<GenericGpuBuffer> output = GenericGpuBuffer::Create(outputDesc);
 
 	mParticleIndicesParam.Set(indices);
 	mOutputParam.Set(output);
@@ -1287,7 +1287,7 @@ void GpuParticleSortPrepareMat::Bind(const SPtr<Texture>& positionAndTime)
 	RendererMaterial::Bind(false);
 }
 
-u32 GpuParticleSortPrepareMat::Execute(const GpuParticleSystem& system, u32 systemIdx, const Vector3& viewOrigin, u32 offset, const SPtr<GpuBuffer>& outKeys, const SPtr<GpuBuffer>& outIndices)
+u32 GpuParticleSortPrepareMat::Execute(const GpuParticleSystem& system, u32 systemIdx, const Vector3& viewOrigin, u32 offset, const SPtr<GenericGpuBuffer>& outKeys, const SPtr<GenericGpuBuffer>& outIndices)
 {
 	static constexpr u32 kMaxNumGroups = 128;
 

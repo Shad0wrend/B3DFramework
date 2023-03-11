@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "2D/BsSpriteMaterials.h"
 #include "Resources/BsBuiltinResources.h"
-#include "RenderAPI/BsGpuBuffer.h"
+#include "RenderAPI/BsGenericGpuBuffer.h"
 #include "Material/BsMaterial.h"
 
 using namespace bs;

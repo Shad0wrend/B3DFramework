@@ -13,16 +13,16 @@ static void DeleteBuffer(HardwareBuffer* buffer)
 	B3DPoolDelete(static_cast<GLHardwareBuffer*>(buffer));
 }
 
-GLGpuBuffer::GLGpuBuffer(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
-	: GpuBuffer(desc, deviceMask)
+GLGpuBuffer::GLGpuBuffer(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
+	: GenericGpuBuffer(desc, deviceMask)
 {
 	B3D_ASSERT((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on OpenGL.");
 
 	mFormat = GLPixelUtil::GetBufferFormat(desc.Format);
 }
 
-GLGpuBuffer::GLGpuBuffer(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
-	: GpuBuffer(desc, std::move(underlyingBuffer))
+GLGpuBuffer::GLGpuBuffer(const GenericGpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
+	: GenericGpuBuffer(desc, std::move(underlyingBuffer))
 {
 	mFormat = GLPixelUtil::GetBufferFormat(desc.Format);
 }
@@ -74,5 +74,5 @@ void GLGpuBuffer::Initialize()
 		B3D_CHECK_GL_ERROR();
 	}
 
-	GpuBuffer::Initialize();
+	GenericGpuBuffer::Initialize();
 }

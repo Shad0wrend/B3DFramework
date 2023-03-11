@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsRendererReflectionProbe.h"
 #include "Material/BsMaterial.h"
-#include "RenderAPI/BsGpuBuffer.h"
+#include "RenderAPI/BsGenericGpuBuffer.h"
 #include "Renderer/BsReflectionProbe.h"
 #include "BsRenderBeast.h"
 #include "Renderer/BsRendererUtility.h"
@@ -59,13 +59,13 @@ void VisibleReflProbeData::Update(const SceneInfo& sceneInfo, const RendererView
 			// Allocate at least one block even if no probes, to avoid issues with null buffers
 			u32 bufferSize = std::max(1, Math::CeilToInt(size / (float)kReflProbeBufferIncrement)) * kReflProbeBufferIncrement;
 
-			GpuBufferCreateInformation bufferDesc;
+			GenericGpuBufferCreateInformation bufferDesc;
 			bufferDesc.Type = GBT_STRUCTURED;
 			bufferDesc.ElementCount = bufferSize / sizeof(ReflProbeData);
 			bufferDesc.ElementSize = sizeof(ReflProbeData);
 			bufferDesc.Format = BF_UNKNOWN;
 
-			mProbeBuffer = GpuBuffer::Create(bufferDesc);
+			mProbeBuffer = GenericGpuBuffer::Create(bufferDesc);
 		}
 
 		if(size > 0)

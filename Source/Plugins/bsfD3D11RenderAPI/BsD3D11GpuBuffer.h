@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsD3D11Prerequisites.h"
-#include "RenderAPI/BsGpuBuffer.h"
+#include "RenderAPI/BsGenericGpuBuffer.h"
 #include "BsD3D11GpuBufferView.h"
 
 namespace bs
@@ -15,7 +15,7 @@ namespace bs
 		 */
 
 		/**	DirectX 11 implementation of a generic GPU buffer. */
-		class D3D11GpuBuffer : public GpuBuffer
+		class D3D11GpuBuffer : public GenericGpuBuffer
 		{
 		public:
 			~D3D11GpuBuffer();
@@ -55,8 +55,8 @@ namespace bs
 		protected:
 			friend class D3D11HardwareBufferManager;
 
-			D3D11GpuBuffer(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask);
-			D3D11GpuBuffer(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer);
+			D3D11GpuBuffer(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask);
+			D3D11GpuBuffer(const GenericGpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer);
 
 			/**	Destroys all buffer views regardless if their reference count is zero or not. */
 			void ClearBufferViews();

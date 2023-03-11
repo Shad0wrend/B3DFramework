@@ -5,7 +5,7 @@
 #include "BsNullPrerequisites.h"
 #include "Managers/BsHardwareBufferManager.h"
 #include "Allocators/BsPoolAlloc.h"
-#include "RenderAPI/BsGpuBuffer.h"
+#include "RenderAPI/BsGenericGpuBuffer.h"
 #include "RenderAPI/BsGpuParamBlockBuffer.h"
 
 namespace bs
@@ -23,8 +23,8 @@ namespace bs
 			SPtr<VertexBuffer> CreateVertexBufferInternal(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
 			SPtr<IndexBuffer> CreateIndexBufferInternal(const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
 			SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBufferInternal(u32 size, GpuBufferUsage usage = GBU_DYNAMIC, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
-			SPtr<GpuBuffer> CreateGpuBufferInternal(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
-			SPtr<GpuBuffer> CreateGpuBufferInternal(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer) override;
+			SPtr<GenericGpuBuffer> CreateGpuBufferInternal(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
+			SPtr<GenericGpuBuffer> CreateGpuBufferInternal(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer) override;
 		};
 
 		/**	Class containing common functionality for all Null hardware buffers. */
@@ -45,7 +45,7 @@ namespace bs
 		};
 
 		/**	Null implementation of a generic GPU buffer. */
-		class NullGpuBuffer final : public GpuBuffer
+		class NullGpuBuffer final : public GenericGpuBuffer
 		{
 		public:
 			NullGpuBuffer(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask);

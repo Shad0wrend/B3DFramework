@@ -5,7 +5,7 @@
 #include "BsVulkanRenderAPI.h"
 #include "BsVulkanGpuDevice.h"
 #include "BsVulkanGpuParamBlockBuffer.h"
-#include "BsVulkanGpuBuffer.h"
+#include "BsVulkanGenericGpuBuffer.h"
 #include "BsVulkanTexture.h"
 #include "BsVulkanHardwareBuffer.h"
 #include "BsVulkanDescriptorSet.h"
@@ -557,7 +557,7 @@ bool VulkanGpuParams::SetStorageTexture(u32 set, u32 slot, const SPtr<Texture>& 
 	return true;
 }
 
-bool VulkanGpuParams::SetBuffer(u32 set, u32 slot, const SPtr<GpuBuffer>& buffer, u32 arrayIndex)
+bool VulkanGpuParams::SetBuffer(u32 set, u32 slot, const SPtr<GenericGpuBuffer>& buffer, u32 arrayIndex)
 {
 	if (!GpuParams::SetBuffer(set, slot, buffer, arrayIndex))
 		return false;
@@ -576,7 +576,7 @@ bool VulkanGpuParams::SetBuffer(u32 set, u32 slot, const SPtr<GpuBuffer>& buffer
 
 	Lock lock(mMutex);
 
-	VulkanGpuBuffer* vulkanBuffer = static_cast<VulkanGpuBuffer*>(buffer.get());
+	VulkanGenericGpuBuffer* vulkanBuffer = static_cast<VulkanGenericGpuBuffer*>(buffer.get());
 	for(u32 deviceIndex = 0; deviceIndex < B3D_MAX_DEVICES; deviceIndex++)
 	{
 		if(mPerDeviceData[deviceIndex].PerSetData == nullptr)
@@ -806,7 +806,7 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 			VulkanBuffer* resource = nullptr;
 			if(mBuffers[sequentialResourceIndex] != nullptr)
 			{
-				auto* element = static_cast<VulkanGpuBuffer*>(mBuffers[sequentialResourceIndex].get());
+				auto* element = static_cast<VulkanGenericGpuBuffer*>(mBuffers[sequentialResourceIndex].get());
 				resource = element->GetResource(deviceIdx);
 
 				if((element->GetProperties().GetUsage() & GBU_LOADSTORE) == GBU_LOADSTORE)
@@ -857,7 +857,7 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 				{
 					if(mBuffers[sequentialResourceIndex] != nullptr)
 					{
-						auto* element = static_cast<VulkanGpuBuffer*>(mBuffers[sequentialResourceIndex].get());
+						auto* element = static_cast<VulkanGenericGpuBuffer*>(mBuffers[sequentialResourceIndex].get());
 						view = element->GetView(deviceIdx);
 					}
 					else

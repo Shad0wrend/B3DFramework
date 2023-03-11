@@ -10,7 +10,7 @@
 
 namespace bs
 {
-	struct GpuBufferCreateInformation;
+	struct GenericGpuBufferCreateInformation;
 	struct GPU_PARAMS_DESC;
 
 	/** @addtogroup RenderAPI-Internal
@@ -60,7 +60,7 @@ namespace bs
 		 *
 		 * @param[in]	createInformation  	Description of the buffer to create.
 		 */
-		SPtr<GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& createInformation);
+		SPtr<GenericGpuBuffer> CreateGpuBuffer(const GenericGpuBufferCreateInformation& createInformation);
 
 		/**
 		 * Creates a new vertex declaration from a list of vertex elements.
@@ -132,10 +132,10 @@ namespace bs
 			 * @copydoc bs::HardwareBufferManager::CreateGpuBuffer
 			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 			 */
-			SPtr<GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			SPtr<GenericGpuBuffer> CreateGpuBuffer(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
-			/** @copydoc GpuBuffer::Create(const GPU_BUFFER_DESC&, SPtr<HardwareBuffer>) */
-			SPtr<GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer);
+			/** @copydoc GenericGpuBuffer::Create(const GPU_BUFFER_DESC&, SPtr<HardwareBuffer>) */
+			SPtr<GenericGpuBuffer> CreateGpuBuffer(const GenericGpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer);
 
 			/** @copydoc GpuParams::Create(const SPtr<GpuPipelineParamInfo>&, GpuDeviceFlags) */
 			SPtr<GpuParams> CreateGpuParams(const SPtr<GpuPipelineParamInfo>& paramInfo, GpuDeviceFlags deviceMask = GDF_DEFAULT);
@@ -147,8 +147,8 @@ namespace bs
 			friend class VertexBuffer;
 			friend class bs::VertexDeclaration;
 			friend class bs::GpuParamBlockBuffer;
-			friend class bs::GpuBuffer;
-			friend class GpuBuffer;
+			friend class bs::GenericGpuBuffer;
+			friend class GenericGpuBuffer;
 
 			/** Key for use in the vertex declaration map. */
 			struct VertexDeclarationKey
@@ -183,10 +183,10 @@ namespace bs
 			virtual SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBufferInternal(const SPtr<HardwareBuffer>& owner, u32 offset, u32 size) = 0;
 
 			/** @copydoc CreateGpuBuffer(const GPU_BUFFER_DESC&, GpuDeviceFlags) */
-			virtual SPtr<GpuBuffer> CreateGpuBufferInternal(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) = 0;
+			virtual SPtr<GenericGpuBuffer> CreateGpuBufferInternal(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) = 0;
 
 			/** @copydoc CreateGpuBuffer(const GPU_BUFFER_DESC&, SPtr<HardwareBuffer>) */
-			virtual SPtr<GpuBuffer> CreateGpuBufferInternal(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer) = 0;
+			virtual SPtr<GenericGpuBuffer> CreateGpuBufferInternal(const GenericGpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer) = 0;
 
 			/** @copydoc CreateVertexDeclaration(const Vector<VertexElement>&, GpuDeviceFlags) */
 			virtual SPtr<VertexDeclaration> CreateVertexDeclarationInternal(const Vector<VertexElement>& elements, GpuDeviceFlags deviceMask = GDF_DEFAULT);

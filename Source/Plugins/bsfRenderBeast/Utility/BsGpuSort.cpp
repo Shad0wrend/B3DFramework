@@ -1,7 +1,7 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Utility/BsGpuSort.h"
-#include "RenderAPI/BsGpuBuffer.h"
+#include "RenderAPI/BsGenericGpuBuffer.h"
 #include "Math/BsRandom.h"
 #include "Renderer/BsRendererUtility.h"
 
@@ -69,7 +69,7 @@ SPtr<GpuParamBlockBuffer> CreateGpuSortParams(const GpuSortProperties& props)
  * Checks can the provided buffer be used for GPU sort operation. Returns a pointer to the error message if check failed
  * or nullptr if check passed.
  */
-const char* CheckSortBuffer(GpuBuffer& buffer)
+const char* CheckSortBuffer(GenericGpuBuffer& buffer)
 {
 	static constexpr const char* kInvalidGpuWriteMsg =
 		"All buffers provided to GpuSort must be created with GBU_LOADSTORE flags enabled.";
@@ -78,7 +78,7 @@ const char* CheckSortBuffer(GpuBuffer& buffer)
 	static constexpr const char* kInvalidFormatMsg =
 		"All buffers provided to GpuSort must use a 32-bit unsigned integer format.";
 
-	const GpuBufferProperties& bufferProps = buffer.GetProperties();
+	const GenericGpuBufferProperties& bufferProps = buffer.GetProperties();
 	if((bufferProps.GetUsage() & GBU_LOADSTORE) != GBU_LOADSTORE)
 		return kInvalidGpuWriteMsg;
 
@@ -92,15 +92,15 @@ const char* CheckSortBuffer(GpuBuffer& buffer)
 }
 
 /** Creates a helper buffers used for storing intermediate information during GpuSort::sort. */
-SPtr<GpuBuffer> CreateHelperBuffer()
+SPtr<GenericGpuBuffer> CreateHelperBuffer()
 {
-	GpuBufferCreateInformation desc;
+	GenericGpuBufferCreateInformation desc;
 	desc.ElementCount = kMaxNumGroups * kNumDigits;
 	desc.Format = BF_32X1U;
 	desc.Usage = GBU_LOADSTORE;
 	desc.Type = GBT_STANDARD;
 
-	return GpuBuffer::Create(desc);
+	return GenericGpuBuffer::Create(desc);
 }
 
 void RadixSortClearMat::Initialize()
@@ -113,7 +113,7 @@ void RadixSortClearMat::InitDefinesInternal(ShaderDefines& defines)
 	InitCommonDefines(defines);
 }
 
-void RadixSortClearMat::Execute(const SPtr<GpuBuffer>& outputOffsets)
+void RadixSortClearMat::Execute(const SPtr<GenericGpuBuffer>& outputOffsets)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -134,7 +134,7 @@ void RadixSortCountMat::InitDefinesInternal(ShaderDefines& defines)
 	InitCommonDefines(defines);
 }
 
-void RadixSortCountMat::Execute(u32 numGroups, const SPtr<GpuParamBlockBuffer>& params, const SPtr<GpuBuffer>& inputKeys, const SPtr<GpuBuffer>& outputOffsets)
+void RadixSortCountMat::Execute(u32 numGroups, const SPtr<GpuParamBlockBuffer>& params, const SPtr<GenericGpuBuffer>& inputKeys, const SPtr<GenericGpuBuffer>& outputOffsets)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -158,7 +158,7 @@ void RadixSortPrefixScanMat::InitDefinesInternal(ShaderDefines& defines)
 	InitCommonDefines(defines);
 }
 
-void RadixSortPrefixScanMat::Execute(const SPtr<GpuParamBlockBuffer>& params, const SPtr<GpuBuffer>& inputCounts, const SPtr<GpuBuffer>& outputOffsets)
+void RadixSortPrefixScanMat::Execute(const SPtr<GpuParamBlockBuffer>& params, const SPtr<GenericGpuBuffer>& inputCounts, const SPtr<GenericGpuBuffer>& outputOffsets)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -185,7 +185,7 @@ void RadixSortReorderMat::InitDefinesInternal(ShaderDefines& defines)
 	InitCommonDefines(defines);
 }
 
-void RadixSortReorderMat::Execute(u32 numGroups, const SPtr<GpuParamBlockBuffer>& params, const SPtr<GpuBuffer>& inputPrefix, const GpuSortBuffers& buffers, u32 inputBufferIdx)
+void RadixSortReorderMat::Execute(u32 numGroups, const SPtr<GpuParamBlockBuffer>& params, const SPtr<GenericGpuBuffer>& inputPrefix, const GpuSortBuffers& buffers, u32 inputBufferIdx)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -278,19 +278,19 @@ GpuSortBuffers GpuSort::CreateSortBuffers(u32 numElements, bool values)
 {
 	GpuSortBuffers output;
 
-	GpuBufferCreateInformation bufferDesc;
+	GenericGpuBufferCreateInformation bufferDesc;
 	bufferDesc.ElementCount = numElements;
 	bufferDesc.Format = BF_32X1U;
 	bufferDesc.Type = GBT_STANDARD;
 	bufferDesc.Usage = GBU_LOADSTORE;
 
-	output.Keys[0] = GpuBuffer::Create(bufferDesc);
-	output.Keys[1] = GpuBuffer::Create(bufferDesc);
+	output.Keys[0] = GenericGpuBuffer::Create(bufferDesc);
+	output.Keys[1] = GenericGpuBuffer::Create(bufferDesc);
 
 	if(values)
 	{
-		output.Values[0] = GpuBuffer::Create(bufferDesc);
-		output.Values[1] = GpuBuffer::Create(bufferDesc);
+		output.Values[0] = GenericGpuBuffer::Create(bufferDesc);
+		output.Values[1] = GenericGpuBuffer::Create(bufferDesc);
 	}
 
 	return output;
@@ -323,7 +323,7 @@ void RunSortTest()
 	GpuSortBuffers sortBuffers = GpuSort::CreateSortBuffers(count);
 	sortBuffers.Keys[0]->WriteData(0, sortBuffers.Keys[0]->GetSize(), inputKeys.data(), BWT_DISCARD);
 
-	SPtr<GpuBuffer> helperBuffers[2];
+	SPtr<GenericGpuBuffer> helperBuffers[2];
 	helperBuffers[0] = CreateHelperBuffer();
 	helperBuffers[1] = CreateHelperBuffer();
 

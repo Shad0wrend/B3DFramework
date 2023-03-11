@@ -1,7 +1,7 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsTiledDeferred.h"
-#include "RenderAPI/BsGpuBuffer.h"
+#include "RenderAPI/BsGenericGpuBuffer.h"
 #include "Renderer/BsReflectionProbe.h"
 #include "Renderer/BsRendererUtility.h"
 #include "Renderer/BsSkybox.h"
@@ -202,7 +202,7 @@ void ClearLoadStoreMat::Execute(const SPtr<Texture>& target, const Color& clearV
 	RenderAPI::Instance().DispatchCompute(numGroupsX, numGroupsY);
 }
 
-void ClearLoadStoreMat::Execute(const SPtr<GpuBuffer>& target, const Color& clearValue)
+void ClearLoadStoreMat::Execute(const SPtr<GenericGpuBuffer>& target, const Color& clearValue)
 {
 	BS_RENMAT_PROFILE_BLOCK
 

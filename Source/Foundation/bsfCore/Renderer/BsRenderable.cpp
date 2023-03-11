@@ -10,7 +10,7 @@
 #include "Renderer/BsRenderer.h"
 #include "Animation/BsAnimation.h"
 #include "Animation/BsMorphShapes.h"
-#include "RenderAPI/BsGpuBuffer.h"
+#include "RenderAPI/BsGenericGpuBuffer.h"
 #include "Animation/BsAnimationManager.h"
 #include "Scene/BsSceneManager.h"
 #include "CoreThread/BsCoreObjectSync.h"
@@ -524,16 +524,16 @@ Bounds Renderable::GetBounds() const
 	}
 }
 
-SPtr<GpuBuffer> CreateBoneMatrixBuffer(u32 numBones)
+SPtr<GenericGpuBuffer> CreateBoneMatrixBuffer(u32 numBones)
 {
-	GpuBufferCreateInformation desc;
+	GenericGpuBufferCreateInformation desc;
 	desc.ElementCount = numBones * 3;
 	desc.ElementSize = 0;
 	desc.Type = GBT_STANDARD;
 	desc.Format = BF_32X4F;
 	desc.Usage = GBU_DYNAMIC;
 
-	SPtr<GpuBuffer> buffer = GpuBuffer::Create(desc);
+	SPtr<GenericGpuBuffer> buffer = GenericGpuBuffer::Create(desc);
 	u8* dest = (u8*)buffer->Lock(0, numBones * 3 * sizeof(Vector4), GBL_WRITE_ONLY_DISCARD);
 
 	// Initialize bone transforms to identity, so the object renders properly even if no animation is animating it

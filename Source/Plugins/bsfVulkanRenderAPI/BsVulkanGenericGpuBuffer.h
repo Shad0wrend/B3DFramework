@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsVulkanPrerequisites.h"
-#include "RenderAPI/BsGpuBuffer.h"
+#include "RenderAPI/BsGenericGpuBuffer.h"
 
 namespace bs
 {
@@ -14,10 +14,10 @@ namespace bs
 		 */
 
 		/**	Vulkan implementation of a generic GPU buffer. */
-		class VulkanGpuBuffer : public GpuBuffer
+		class VulkanGenericGpuBuffer : public GenericGpuBuffer
 		{
 		public:
-			~VulkanGpuBuffer();
+			~VulkanGenericGpuBuffer();
 
 			void ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx = 0, u32 queueIdx = 0) override;
 			void WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL, u32 queueIdx = 0) override;
@@ -37,8 +37,8 @@ namespace bs
 		protected:
 			friend class VulkanHardwareBufferManager;
 
-			VulkanGpuBuffer(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask);
-			VulkanGpuBuffer(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer);
+			VulkanGenericGpuBuffer(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask);
+			VulkanGenericGpuBuffer(const GenericGpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer);
 
 			void Initialize() override;
 			void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx = 0, u32 queueIdx = 0) override;

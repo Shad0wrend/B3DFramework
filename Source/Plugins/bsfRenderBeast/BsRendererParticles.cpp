@@ -3,7 +3,7 @@
 #include "BsRendererParticles.h"
 #include "Particles/BsParticleManager.h"
 #include "Renderer/BsRendererUtility.h"
-#include "RenderAPI/BsGpuBuffer.h"
+#include "RenderAPI/BsGenericGpuBuffer.h"
 #include "RenderAPI/BsVertexBuffer.h"
 #include "Mesh/BsMeshData.h"
 #include "Mesh/BsMesh.h"
@@ -75,7 +75,7 @@ const ShaderVariationParameters& GetParticleShaderVariation(ParticleOrientation 
 ParticlesParamDef gParticlesParamDef;
 GpuParticlesParamDef gGpuParticlesParamDef;
 
-void WriteIndices(GpuBuffer* buffer, const Vector<u32>& input, u32 texSize)
+void WriteIndices(GenericGpuBuffer* buffer, const Vector<u32>& input, u32 texSize)
 {
 	const auto numParticles = (u32)input.size();
 	if(numParticles == 0)
@@ -179,7 +179,7 @@ void RendererParticles::BindGpuSimulatedInputs(const GpuParticleResources& gpuSi
 	const GpuParticleStateTextures& gpuSimStateTextures = gpuSimResources.GetCurrentState();
 	const GpuParticleStaticTextures& gpuSimStaticTextures = gpuSimResources.GetStaticTextures();
 	const GpuParticleCurves& gpuCurves = gpuSimResources.GetCurveTexture();
-	const SPtr<GpuBuffer>& sortedIndices = gpuSimResources.GetSortedIndices();
+	const SPtr<GenericGpuBuffer>& sortedIndices = gpuSimResources.GetSortedIndices();
 
 	RenderElement.ParamsGpu.PositionTimeTexture.Set(gpuSimStateTextures.PositionAndTimeTex);
 	RenderElement.ParamsGpu.SizeRotationTexture.Set(gpuSimStaticTextures.SizeAndRotationTex);
@@ -314,12 +314,12 @@ ParticleBillboardTextures* ParticleTexturePool::CreateNewBillboardTextures(u32 s
 	texDesc.Name = "Particle Billboard Size & Frame Index";
 	output->SizeAndFrameIdx = Texture::Create(texDesc);
 
-	GpuBufferCreateInformation bufferDesc;
+	GenericGpuBufferCreateInformation bufferDesc;
 	bufferDesc.Type = GBT_STANDARD;
 	bufferDesc.ElementCount = size * size;
 	bufferDesc.Format = BF_16X2U;
 
-	output->Indices = GpuBuffer::Create(bufferDesc);
+	output->Indices = GenericGpuBuffer::Create(bufferDesc);
 
 	mBillboardBufferList[size].Buffers.push_back(output);
 	return output;
@@ -351,12 +351,12 @@ ParticleMeshTextures* ParticleTexturePool::CreateNewMeshTextures(u32 size)
 	texDesc.Name = "Particle Mesh Rotation";
 	output->Rotation = Texture::Create(texDesc);
 
-	GpuBufferCreateInformation bufferDesc;
+	GenericGpuBufferCreateInformation bufferDesc;
 	bufferDesc.Type = GBT_STANDARD;
 	bufferDesc.ElementCount = size * size;
 	bufferDesc.Format = BF_16X2U;
 
-	output->Indices = GpuBuffer::Create(bufferDesc);
+	output->Indices = GenericGpuBuffer::Create(bufferDesc);
 
 	mMeshBufferList[size].Buffers.push_back(output);
 	return output;

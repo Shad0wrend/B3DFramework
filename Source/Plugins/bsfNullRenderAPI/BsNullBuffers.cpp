@@ -29,7 +29,7 @@ SPtr<ct::GpuParamBlockBuffer> NullHardwareBufferManager::CreateGpuParamBlockBuff
 	return paramBlockBufferPtr;
 }
 
-SPtr<ct::GpuBuffer> NullHardwareBufferManager::CreateGpuBufferInternal(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
+SPtr<ct::GenericGpuBuffer> NullHardwareBufferManager::CreateGpuBufferInternal(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
 {
 	SPtr<NullGpuBuffer> bufferPtr = B3DMakeShared<NullGpuBuffer>(desc, deviceMask);
 	bufferPtr->SetShared(bufferPtr);
@@ -37,7 +37,7 @@ SPtr<ct::GpuBuffer> NullHardwareBufferManager::CreateGpuBufferInternal(const Gpu
 	return bufferPtr;
 }
 
-SPtr<ct::GpuBuffer> NullHardwareBufferManager::CreateGpuBufferInternal(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
+SPtr<ct::GenericGpuBuffer> NullHardwareBufferManager::CreateGpuBufferInternal(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
 {
 	SPtr<NullGpuBuffer> bufferPtr = B3DMakeShared<NullGpuBuffer>(desc, std::move(underlyingBuffer));
 	bufferPtr->SetShared(bufferPtr);
@@ -51,11 +51,11 @@ static void DeleteHardwareBuffer(HardwareBuffer* buffer)
 }
 
 NullGpuBuffer::NullGpuBuffer(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
-	: GpuBuffer(desc, deviceMask)
+	: GenericGpuBuffer(desc, deviceMask)
 {}
 
 NullGpuBuffer::NullGpuBuffer(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
-	: GpuBuffer(desc, std::move(underlyingBuffer))
+	: GenericGpuBuffer(desc, std::move(underlyingBuffer))
 {}
 
 void NullGpuBuffer::Initialize()
@@ -67,7 +67,7 @@ void NullGpuBuffer::Initialize()
 	if(!mBuffer)
 		mBuffer = B3DPoolNew<NullHardwareBuffer>(props.GetUsage(), props.GetElementCount(), props.GetElementSize());
 
-	GpuBuffer::Initialize();
+	GenericGpuBuffer::Initialize();
 }
 
 NullGpuParamBlockBuffer::NullGpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)

@@ -162,10 +162,10 @@ namespace bs
 			 * tetrahedrons, while the second half is populated by information about outer faces (triangles). @p numTetrahedra
 			 * marks the spot where split happens.
 			 */
-			SPtr<GpuBuffer> Tetrahedra;
+			SPtr<GenericGpuBuffer> Tetrahedra;
 
 			/** Contains additional information about outer tetrahedron faces, required for extrapolating tetrahedron data. */
-			SPtr<GpuBuffer> Faces;
+			SPtr<GenericGpuBuffer> Faces;
 
 			/**
 			 * Mesh representing the entire light probe volume. Each vertex has an associated tetrahedron (or face) index which
@@ -278,8 +278,8 @@ namespace bs
 			Vector<TetrahedronData> mTetrahedronInfos;
 
 			SPtr<Texture> mProbeCoefficientsGPU;
-			SPtr<GpuBuffer> mTetrahedronInfosGPU;
-			SPtr<GpuBuffer> mTetrahedronFaceInfosGPU;
+			SPtr<GenericGpuBuffer> mTetrahedronInfosGPU;
+			SPtr<GenericGpuBuffer> mTetrahedronFaceInfosGPU;
 			SPtr<Mesh> mVolumeMesh;
 			u32 mNumValidTetrahedra;
 

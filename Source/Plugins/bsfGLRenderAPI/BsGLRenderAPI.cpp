@@ -550,7 +550,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<Comm
 				for(auto& entry : paramDesc->Buffers)
 				{
 					u32 binding = entry.second.Slot;
-					SPtr<GpuBuffer> buffer = gpuParams->GetBuffer(entry.second.Set, binding);
+					SPtr<GenericGpuBuffer> buffer = gpuParams->GetBuffer(entry.second.Set, binding);
 
 					GLGpuBuffer* glBuffer = static_cast<GLGpuBuffer*>(buffer.get());
 

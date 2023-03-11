@@ -3,7 +3,7 @@
 #include "RenderAPI/BsVertexBuffer.h"
 #include "Managers/BsHardwareBufferManager.h"
 #include "Profiling/BsRenderStats.h"
-#include "RenderAPI/BsGpuBuffer.h"
+#include "RenderAPI/BsGenericGpuBuffer.h"
 
 using namespace bs;
 
@@ -113,14 +113,14 @@ void VertexBuffer::CopyData(HardwareBuffer& srcBuffer, u32 srcOffset, u32 dstOff
 	mBuffer->CopyData(*srcVertexBuffer.mBuffer, srcOffset, dstOffset, length, discardWholeBuffer, commandBuffer);
 }
 
-SPtr<GpuBuffer> VertexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat format, u32 elementSize)
+SPtr<GenericGpuBuffer> VertexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat format, u32 elementSize)
 {
 	if((mUsage & GBU_LOADSTORE) != GBU_LOADSTORE)
 		return nullptr;
 
 	for(const auto& entry : mLoadStoreViews)
 	{
-		const GpuBufferProperties& props = entry->GetProperties();
+		const GenericGpuBufferProperties& props = entry->GetProperties();
 		if(props.GetType() == type)
 		{
 			if(type == GBT_STANDARD && props.GetFormat() == format)
@@ -131,14 +131,14 @@ SPtr<GpuBuffer> VertexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat f
 		}
 	}
 
-	u32 elemSize = type == GBT_STANDARD ? bs::GpuBuffer::GetFormatSize(format) : elementSize;
+	u32 elemSize = type == GBT_STANDARD ? bs::GenericGpuBuffer::GetFormatSize(format) : elementSize;
 	if((mBuffer->GetSize() % elemSize) != 0)
 	{
 		B3D_LOG(Error, RenderBackend, "Size of the buffer isn't divisible by individual element size provided for the buffer view.");
 		return nullptr;
 	}
 
-	GpuBufferCreateInformation desc;
+	GenericGpuBufferCreateInformation desc;
 	desc.Type = type;
 	desc.Format = format;
 	desc.Usage = mUsage;
@@ -148,7 +148,7 @@ SPtr<GpuBuffer> VertexBuffer::GetLoadStore(GpuBufferType type, GpuBufferFormat f
 	if(!mSharedBuffer)
 		mSharedBuffer = B3DMakeSharedFromExisting(mBuffer, mBufferDeleter);
 
-	SPtr<GpuBuffer> newView = GpuBuffer::Create(desc, mSharedBuffer);
+	SPtr<GenericGpuBuffer> newView = GenericGpuBuffer::Create(desc, mSharedBuffer);
 	mLoadStoreViews.push_back(newView);
 
 	return newView;

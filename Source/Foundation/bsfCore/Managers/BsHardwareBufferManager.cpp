@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Managers/BsHardwareBufferManager.h"
 #include "RenderAPI/BsVertexData.h"
-#include "RenderAPI/BsGpuBuffer.h"
+#include "RenderAPI/BsGenericGpuBuffer.h"
 #include "RenderAPI/BsVertexDeclaration.h"
 #include "RenderAPI/BsGpuParamBlockBuffer.h"
 #include "RenderAPI/BsVertexDataDesc.h"
@@ -45,9 +45,9 @@ SPtr<GpuParamBlockBuffer> HardwareBufferManager::CreateGpuParamBlockBuffer(u32 s
 	return paramBlockPtr;
 }
 
-SPtr<GpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GpuBufferCreateInformation& createInformation)
+SPtr<GenericGpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GenericGpuBufferCreateInformation& createInformation)
 {
-	SPtr<GpuBuffer> gbuf = B3DMakeCoreFromExisting<GpuBuffer>(new(B3DAllocate<GpuBuffer>()) GpuBuffer(createInformation));
+	SPtr<GenericGpuBuffer> gbuf = B3DMakeCoreFromExisting<GenericGpuBuffer>(new(B3DAllocate<GenericGpuBuffer>()) GenericGpuBuffer(createInformation));
 	gbuf->SetShared(gbuf);
 	gbuf->Initialize();
 
@@ -160,17 +160,17 @@ SPtr<GpuParamBlockBuffer> HardwareBufferManager::CreateGpuParamBlockBuffer(const
 	return paramBlockPtr;
 }
 
-SPtr<GpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
+SPtr<GenericGpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
 {
-	SPtr<GpuBuffer> gbuf = CreateGpuBufferInternal(desc, deviceMask);
+	SPtr<GenericGpuBuffer> gbuf = CreateGpuBufferInternal(desc, deviceMask);
 	gbuf->Initialize();
 
 	return gbuf;
 }
 
-SPtr<GpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
+SPtr<GenericGpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GenericGpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
 {
-	SPtr<GpuBuffer> gbuf = CreateGpuBufferInternal(desc, std::move(underlyingBuffer));
+	SPtr<GenericGpuBuffer> gbuf = CreateGpuBufferInternal(desc, std::move(underlyingBuffer));
 	gbuf->Initialize();
 
 	return gbuf;

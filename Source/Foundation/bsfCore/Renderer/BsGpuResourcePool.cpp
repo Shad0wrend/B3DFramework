@@ -3,7 +3,7 @@
 #include "BsGpuResourcePool.h"
 #include "RenderAPI/BsRenderTexture.h"
 #include "Image/BsTexture.h"
-#include "RenderAPI/BsGpuBuffer.h"
+#include "RenderAPI/BsGenericGpuBuffer.h"
 
 using namespace bs;
 
@@ -101,14 +101,14 @@ SPtr<PooledStorageBuffer> GpuResourcePool::Get(const POOLED_STORAGE_BUFFER_DESC&
 	SPtr<PooledStorageBuffer> newBuffer = B3DMakeShared<PooledStorageBuffer>(mCurrentFrame);
 	mBuffers.Add(newBuffer);
 
-	GpuBufferCreateInformation bufferDesc;
+	GenericGpuBufferCreateInformation bufferDesc;
 	bufferDesc.Type = desc.type;
 	bufferDesc.ElementSize = desc.elementSize;
 	bufferDesc.ElementCount = desc.numElements;
 	bufferDesc.Format = desc.format;
 	bufferDesc.Usage = desc.usage;
 
-	newBuffer->Buffer = GpuBuffer::Create(bufferDesc);
+	newBuffer->Buffer = GenericGpuBuffer::Create(bufferDesc);
 
 	return newBuffer;
 }
@@ -178,9 +178,9 @@ bool GpuResourcePool::Matches(const SPtr<Texture>& texture, const POOLED_RENDER_
 	return match;
 }
 
-bool GpuResourcePool::Matches(const SPtr<GpuBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc)
+bool GpuResourcePool::Matches(const SPtr<GenericGpuBuffer>& buffer, const POOLED_STORAGE_BUFFER_DESC& desc)
 {
-	const GpuBufferProperties& props = buffer->GetProperties();
+	const GenericGpuBufferProperties& props = buffer->GetProperties();
 
 	bool match = props.GetType() == desc.type && props.GetElementCount() == desc.numElements;
 	if(match)

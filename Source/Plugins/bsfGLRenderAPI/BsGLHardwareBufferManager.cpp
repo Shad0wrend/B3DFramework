@@ -39,21 +39,21 @@ SPtr<ct::GpuParamBlockBuffer> GLHardwareBufferManager::CreateGpuParamBlockBuffer
 	return paramBlockBufferPtr;
 }
 
-SPtr<ct::GpuBuffer> GLHardwareBufferManager::CreateGpuBufferInternal(const GpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
+SPtr<ct::GenericGpuBuffer> GLHardwareBufferManager::CreateGpuBufferInternal(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
 {
 	GLGpuBuffer* buffer = new(B3DAllocate<GLGpuBuffer>()) GLGpuBuffer(desc, deviceMask);
 
-	SPtr<GpuBuffer> bufferPtr = B3DMakeSharedFromExisting<GLGpuBuffer>(buffer);
+	SPtr<GenericGpuBuffer> bufferPtr = B3DMakeSharedFromExisting<GLGpuBuffer>(buffer);
 	bufferPtr->SetShared(bufferPtr);
 
 	return bufferPtr;
 }
 
-SPtr<ct::GpuBuffer> GLHardwareBufferManager::CreateGpuBufferInternal(const GpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
+SPtr<ct::GenericGpuBuffer> GLHardwareBufferManager::CreateGpuBufferInternal(const GenericGpuBufferCreateInformation& desc, SPtr<HardwareBuffer> underlyingBuffer)
 {
 	GLGpuBuffer* buffer = new(B3DAllocate<GLGpuBuffer>()) GLGpuBuffer(desc, std::move(underlyingBuffer));
 
-	SPtr<GpuBuffer> bufferPtr = B3DMakeSharedFromExisting<GLGpuBuffer>(buffer);
+	SPtr<GenericGpuBuffer> bufferPtr = B3DMakeSharedFromExisting<GLGpuBuffer>(buffer);
 	bufferPtr->SetShared(bufferPtr);
 
 	return bufferPtr;
