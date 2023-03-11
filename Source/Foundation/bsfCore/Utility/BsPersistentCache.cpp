@@ -112,7 +112,14 @@ void PersistentCache::Initialize(const Path& cacheFolder)
 		// If the cache folder already exists, load all the data from it
 		if (FileSystem::Exists(mCacheFolder))
 		{
-			auto fnOnFileFound = [this](const Path& path) -> bool {
+			const Path& stagingFolder = mCacheFolder + kCacheStagingDirectory;
+			auto fnOnFileFound = [this, &stagingFolder](const Path& path) -> bool {
+				if(stagingFolder.Includes(path))
+				{
+					FileSystem::Remove(path);
+					return true;
+				}
+
 				SPtr<Package> package = Package::Load(path);
 				if(!B3D_ENSURE(package != nullptr))
 					return true;
@@ -661,7 +668,6 @@ bool PersistentCache::SetPackageForEntry(const CacheOperation& operation, const 
 
 	// First write to a temporary file
 	// Note: This means we might temporarily exceed cache capacity, but that's fine as alternatives are too complex to implement.
-	static constexpr const char* kCacheStagingDirectory = "Staging";
 	const Path temporaryPackageDirectory = mCacheFolder + kCacheStagingDirectory;
 	FileSystem::CreateDir(temporaryPackageDirectory);
 

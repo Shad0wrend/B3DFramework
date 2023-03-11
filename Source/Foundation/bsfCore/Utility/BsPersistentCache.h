@@ -190,6 +190,7 @@ namespace bs
 
 	private:
 		static constexpr const char* kCacheRootFolderName = "PersistentCache";
+		static constexpr const char* kCacheStagingDirectory = "Staging";
 		static constexpr float kEvictPercent = 0.25f; /**< Determines what percent of the cache total size to try to evict. */
 
 		/** Notifies the cache that a new CacheOperation has started. Caller must be holding the cache mutex lock during the call. */
