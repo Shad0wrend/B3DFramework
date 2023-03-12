@@ -69,22 +69,22 @@ namespace bs
 	class B3D_CORE_EXPORT HardwareBuffer
 	{
 	public:
-		virtual ~HardwareBuffer() = default;
+		virtual ~HardwareBuffer();
 
 		/** Assigns an name to the buffer, primarily used for easier debugging. */
 		virtual void SetName(const StringView& name) { mName = name; }
 
 		/**
-		 * Locks a portion of the buffer and returns pointer to the locked area. You must call unlock() when done.
+		 * Locks a portion of the buffer and returns pointer to the locked area. You must call Unlock() when done.
 		 *
-		 * @param[in]	offset		Offset in bytes from which to lock the buffer.
-		 * @param[in]	length		Length of the area you want to lock, in bytes.
-		 * @param[in]	options		Signifies what you want to do with the returned pointer. Caller must ensure not to do
-		 *							anything he hasn't requested (for example don't try to read from the buffer unless you
-		 *							requested it here).
-		 * @param[in]	deviceIdx	Index of the device whose memory to map. If the buffer doesn't exist on this device,
-		 *							the method returns null.
-		 * @param[in]	queueIdx	Device queue to perform any read/write operations on. See @ref queuesDoc.
+		 * @param	offset		Offset in bytes from which to lock the buffer.
+		 * @param	length		Length of the area you want to lock, in bytes.
+		 * @param	options		Signifies what you want to do with the returned pointer. Caller must ensure not to do
+		 *						anything he hasn't requested (for example don't try to read from the buffer unless you
+		 *						requested it here).
+		 * @param	deviceIdx	Index of the device whose memory to map. If the buffer doesn't exist on this device,
+		 *						the method returns null.
+		 * @param	queueIdx	Device queue to perform any read/write operations on. See @ref queuesDoc.
 		 */
 		virtual void* Lock(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx = 0, u32 queueIdx = 0)
 		{
@@ -96,14 +96,14 @@ namespace bs
 		}
 
 		/**
-		 * Locks the entire buffer and returns pointer to the locked area. You must call unlock() when done.
+		 * Locks the entire buffer and returns pointer to the locked area. You must call Unlock() when done.
 		 *
-		 * @param[in]	options		Signifies what you want to do with the returned pointer. Caller must ensure not to do
-		 *							anything he hasn't requested (for example don't try to read from the buffer unless you
-		 *							requested it here).
-		 * @param[in]	deviceIdx	Index of the device whose memory to map. If the buffer doesn't exist on this device,
-		 *							the method returns null.
-		 * @param[in]	queueIdx	Device queue to perform any read/write operations on. See @ref queuesDoc.
+		 * @param	options		Signifies what you want to do with the returned pointer. Caller must ensure not to do
+		 *						anything he hasn't requested (for example don't try to read from the buffer unless you
+		 *						requested it here).
+		 * @param	deviceIdx	Index of the device whose memory to map. If the buffer doesn't exist on this device,
+		 *						the method returns null.
+		 * @param	queueIdx	Device queue to perform any read/write operations on. See @ref queuesDoc.
 		 */
 		void* Lock(GpuLockOptions options, u32 deviceIdx = 0, u32 queueIdx = 0)
 		{
@@ -123,25 +123,25 @@ namespace bs
 		 * Reads data from a portion of the buffer and copies it to the destination buffer. Caller must ensure destination
 		 * buffer is large enough.
 		 *
-		 * @param[in]	offset		Offset in bytes from which to copy the data.
-		 * @param[in]	length		Length of the area you want to copy, in bytes.
-		 * @param[in]	dest		Destination buffer large enough to store the read data. Data is written from the start
+		 * @param	offset			Offset in bytes from which to copy the data.
+		 * @param	length			Length of the area you want to copy, in bytes.
+		 * @param	destination		Destination buffer large enough to store the read data. Data is written from the start
 		 *							of the buffer (@p offset is only applied to the source).
-		 * @param[in]	deviceIdx	Index of the device whose memory to read. If the buffer doesn't exist on this device,
+		 * @param	deviceIdx		Index of the device whose memory to read. If the buffer doesn't exist on this device,
 		 *							no data will be read.
-		 * @param[in]	queueIdx	Device queue to perform the read operation on. See @ref queuesDoc.
+		 * @param	queueIdx		Device queue to perform the read operation on. See @ref queuesDoc.
 		 */
-		virtual void ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx = 0, u32 queueIdx = 0) = 0;
+		virtual void ReadData(u32 offset, u32 length, void* destination, u32 deviceIdx = 0, u32 queueIdx = 0) = 0;
 
 		/**
 		 * Writes data into a portion of the buffer from the source memory.
 		 *
-		 * @param[in]	offset		Offset in bytes from which to copy the data.
-		 * @param[in]	length		Length of the area you want to copy, in bytes.
-		 * @param[in]	source		Source buffer containing the data to write. Data is read from the start of the buffer
-		 *							(@p offset is only applied to the destination).
-		 * @param[in]	writeFlags	Optional write flags that may affect performance.
-		 * @param[in]	queueIdx	Device queue to perform the write operation on. See @ref queuesDoc.
+		 * @param	offset		Offset in bytes from which to copy the data.
+		 * @param	length		Length of the area you want to copy, in bytes.
+		 * @param	source		Source buffer containing the data to write. Data is read from the start of the buffer
+		 *						(@p offset is only applied to the destination).
+		 * @param	writeFlags	Optional write flags that may affect performance.
+		 * @param	queueIdx	Device queue to perform the write operation on. See @ref queuesDoc.
 		 */
 		virtual void WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL, u32 queueIdx = 0) = 0;
 
@@ -162,15 +162,29 @@ namespace bs
 		/**
 		 * Copy data from the provided buffer into this buffer. If buffers are not the same size, smaller size will be used.
 		 *
-		 * @param[in]	srcBuffer		Hardware buffer to copy from.
-		 * @param[in]	commandBuffer	Command buffer to queue the copy operation on. If null, main command buffer is
-		 *								used.
+		 * @param	source			Hardware buffer to copy from.
+		 * @param	commandBuffer	Command buffer to queue the copy operation on. If null, main command buffer is used.
 		 */
-		virtual void CopyData(HardwareBuffer& srcBuffer, const SPtr<ct::CommandBuffer>& commandBuffer = nullptr)
+		virtual void CopyData(HardwareBuffer& source, const SPtr<ct::CommandBuffer>& commandBuffer = nullptr)
 		{
-			u32 sz = std::min(GetSize(), srcBuffer.GetSize());
-			CopyData(srcBuffer, 0, 0, sz, true, commandBuffer);
+			const u32 sizeToCopy = std::min(GetSize(), source.GetSize());
+			CopyData(source, 0, 0, sizeToCopy, true, commandBuffer);
 		}
+
+		/**
+		 * Writes the data into the CPU cached buffer. Buffer must have been created with AllowWriteCachingOnCPU flag. In order
+		 * for the data to actually reach the underlying buffer you must call FlushCache().
+		 */
+		virtual void WriteToCache(u32 offset, u32 length, const void* source);
+
+		/**
+		 * Clears the specified area of the cache. Buffer must have been created with AllowWriteCachingOnCPU flag. In order
+		 * for the data to actually reach the underlying buffer you must call FlushCache().
+		 */
+		virtual void ZeroOutCache(u32 offset, u32 length);
+
+		/** Flushes the cached to the underlying buffer. Buffer must have been created with AllowWriteCachingOnCPU flag. */
+		virtual void FlushCache();
 
 		/** Returns the size of this buffer in bytes. */
 		u32 GetSize() const { return mSize; }
@@ -192,9 +206,7 @@ namespace bs
 		 * @param	flags			Flags that control the behavior of the buffer.
 		 * @param	deviceMask		Mask that determines on which GPU devices should the object be created on.
 		 */
-		HardwareBuffer(HardwareBufferType type, u32 size, GpuBufferFlags flags, GpuDeviceFlags deviceMask)
-			: mType(type), mSize(size), mBufferFlags(flags), mDeviceMask(deviceMask)
-		{}
+		HardwareBuffer(HardwareBufferType type, u32 size, GpuBufferFlags flags, GpuDeviceFlags deviceMask);
 
 		/** @copydoc Lock */
 		virtual void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx) { return nullptr; }
@@ -208,6 +220,8 @@ namespace bs
 		u32 mSize;
 		GpuBufferFlags mBufferFlags;
 		GpuDeviceFlags mDeviceMask;
+		u8* mCache = nullptr;
+		bool mIsCacheDirty = false;
 
 		bool mIsLocked = false;
 	};
