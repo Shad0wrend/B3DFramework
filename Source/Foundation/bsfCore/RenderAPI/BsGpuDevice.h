@@ -6,6 +6,8 @@
 
 namespace bs
 {
+	struct GpuBufferCreateInformation;
+
 	/** @addtogroup RenderAPI
 	 *  @{
 	 */
@@ -28,6 +30,9 @@ namespace bs
 
 		/** Returns information about available output devices and their video modes. */
 		virtual const VideoModeInfo& GetVideoModeInfo() const = 0;
+
+		/** Creates a new GPU buffer. */
+		virtual SPtr<ct::GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& createInformation) = 0;
 
 		/** Create a new event query. */
 		virtual SPtr<ct::EventQuery> CreateEventQuery() = 0;

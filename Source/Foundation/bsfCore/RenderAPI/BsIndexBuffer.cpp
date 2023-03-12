@@ -61,8 +61,7 @@ SPtr<IndexBuffer> IndexBuffer::Create(const IndexBufferCreateInformation& desc)
 namespace bs { namespace ct
 {
 IndexBuffer::IndexBuffer(const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
-	: GpuBuffer(GpuBufferType::Index, CalcIndexSize(desc.IndexType) * desc.IndexCount, desc.Flags, deviceMask)
-	, mProperties(desc.IndexType, desc.IndexCount)
+	: GpuBuffer(GpuBufferCreateInformation::CreateIndex(desc.IndexType, desc.IndexCount, desc.Flags)), mProperties(desc.IndexType, desc.IndexCount)
 {
 #if B3D_DEBUG
 	CheckValidDesc(desc);

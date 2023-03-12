@@ -1,6 +1,9 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "RenderAPI/BsGpuParamBlockBuffer.h"
+
+#include "BsApplication.h"
+#include "BsGpuDevice.h"
 #include "RenderAPI/BsGpuBuffer.h"
 #include "Managers/BsHardwareBufferManager.h"
 #include "Profiling/BsRenderStats.h"
@@ -127,7 +130,14 @@ void GpuParamBlockBuffer::Initialize()
 
 	if(mBuffer == nullptr)
 	{
-		mBuffer = HardwareBufferManager::Instance().CreateHardwareBuffer(GpuBufferType::Uniform, mSize, mBufferFlags, mDeviceMask);
+		GpuBufferCreateInformation createInformation;
+		createInformation.Type = GpuBufferType::Uniform;
+		createInformation.Flags = mBufferFlags;
+		createInformation.Uniform.Size = mSize;
+
+		SPtr<GpuDevice> gpuDevice = Application::Instance().GetPrimaryGpuDevice();
+		if(B3D_ENSURE(gpuDevice != nullptr))
+			mBuffer = GetApplication().GetPrimaryGpuDevice()->CreateGpuBuffer(createInformation);
 	}
 
 	CoreObject::Initialize();

@@ -1,6 +1,7 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanIndexBuffer.h"
+#include "BsVulkanGpuBackend.h"
 #include "BsVulkanGpuBuffer.h"
 #include "Profiling/BsRenderStats.h"
 
@@ -18,7 +19,7 @@ VulkanIndexBuffer::VulkanIndexBuffer(const IndexBufferCreateInformation& desc, G
 
 void VulkanIndexBuffer::Initialize()
 {
-	mBuffer = B3DPoolNew<VulkanGpuBuffer>(GpuBufferType::Index, mBufferFlags, mSize, mDeviceMask);
+	mBuffer = B3DPoolNew<VulkanGpuBuffer>(*GetVulkanGpuBackend().GetVulkanDevice(0), GpuBufferCreateInformation::CreateIndex(mProperties.GetType(), mProperties.GetNumIndices(), mBufferFlags));
 	mBufferDeleter = &DeleteHardwareBuffer;
 
 	IndexBuffer::Initialize();

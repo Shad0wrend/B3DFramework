@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanVertexBuffer.h"
+
+#include "BsVulkanGpuBackend.h"
 #include "BsVulkanGpuBuffer.h"
 #include "Profiling/BsRenderStats.h"
 
@@ -18,7 +20,7 @@ VulkanVertexBuffer::VulkanVertexBuffer(const VertexBufferCreateInformation& desc
 
 void VulkanVertexBuffer::Initialize()
 {
-	mBuffer = B3DPoolNew<VulkanGpuBuffer>(GpuBufferType::Vertex, mBufferFlags, mSize, mDeviceMask);
+	mBuffer = B3DPoolNew<VulkanGpuBuffer>(*GetVulkanGpuBackend().GetVulkanDevice(0), GpuBufferCreateInformation::CreateVertex(mProperties.GetVertexSize(), mProperties.GetVertexCount(), mBufferFlags));
 	mBufferDeleter = &DeleteHardwareBuffer;
 
 	VertexBuffer::Initialize();

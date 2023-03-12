@@ -122,11 +122,11 @@ namespace bs
 			mutable Mutex mViewsMutex;
 		};
 
-		/**	Class containing common functionality for all Vulkan hardware buffers. */
+		/**	Vulkan-specific implementation of GpuBuffer. */
 		class VulkanGpuBuffer : public GpuBuffer
 		{
 		public:
-			VulkanGpuBuffer(GpuBufferType type, GpuBufferFlags flags, u32 size, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			VulkanGpuBuffer(VulkanGpuDevice& device, const GpuBufferCreateInformation& createInformation);
 			~VulkanGpuBuffer();
 
 			void SetName(const StringView& name) override;
@@ -138,7 +138,11 @@ namespace bs
 			 * Gets the resource wrapping the buffer object, on the specified device. If hardware buffer device mask doesn't
 			 * include the provided device, null is returned.
 			 */
-			VulkanBuffer* GetResource(u32 deviceIdx) const { return mBuffers[deviceIdx]; }
+			VulkanBuffer* GetResource(u32 deviceIdx) const
+			{
+				B3D_ASSERT(deviceIdx == 0);
+				return mBuffer;
+			}
 
 		protected:
 			void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx) override;
@@ -147,15 +151,15 @@ namespace bs
 			/** Creates a new buffer for the specified device, matching the current buffer properties. */
 			VulkanBuffer* CreateBuffer(VulkanGpuDevice& device, u32 size, bool staging, bool readable);
 
-			VulkanBuffer* mBuffers[B3D_MAX_DEVICES];
+			VulkanGpuDevice& mDevice;
+			VulkanBuffer* mBuffer = nullptr;
 
-			VulkanBuffer* mStagingBuffer;
-			u8* mStagingMemory;
-			u32 mMappedDeviceIdx;
-			u32 mMappedGlobalQueueIdx;
-			u32 mMappedOffset;
-			u32 mMappedSize;
-			GpuLockOptions mMappedLockOptions;
+			VulkanBuffer* mStagingBuffer = nullptr;
+			u8* mStagingMemory = nullptr;
+			u32 mMappedGlobalQueueIdx = ~0u;
+			u32 mMappedOffset = 0;
+			u32 mMappedSize = 0;
+			GpuLockOptions mMappedLockOptions = GBL_WRITE_ONLY;
 
 			VkBufferCreateInfo mBufferCI;
 			VkBufferUsageFlags mUsageFlags;

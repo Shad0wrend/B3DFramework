@@ -22,6 +22,7 @@ static_assert(false, "Other platform includes go here.");
 
 #define VMA_IMPLEMENTATION
 #include "BsVulkanEventQuery.h"
+#include "BsVulkanGpuBuffer.h"
 #include "BsVulkanOcclusionQuery.h"
 #include "BsVulkanTimerQuery.h"
 #include "ThirdParty/vk_mem_alloc.h"
@@ -242,6 +243,11 @@ VulkanGpuDevice::~VulkanGpuDevice()
 
 	vmaDestroyAllocator(mAllocator);
 	vkDestroyDevice(mLogicalDevice, gVulkanAllocator);
+}
+
+SPtr<GpuBuffer> VulkanGpuDevice::CreateGpuBuffer(const GpuBufferCreateInformation& createInformation)
+{
+	return B3DMakeSharedFromExisting(new(B3DAllocate<VulkanGpuBuffer>()) VulkanGpuBuffer(*this, createInformation));
 }
 
 SPtr<EventQuery> VulkanGpuDevice::CreateEventQuery()

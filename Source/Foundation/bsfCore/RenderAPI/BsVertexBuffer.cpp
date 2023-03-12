@@ -52,7 +52,7 @@ SPtr<VertexBuffer> VertexBuffer::Create(const VertexBufferCreateInformation& des
 namespace bs { namespace ct
 {
 VertexBuffer::VertexBuffer(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
-	: GpuBuffer(GpuBufferType::Vertex, desc.VertexSize * desc.VertexCount, desc.Flags, deviceMask), mProperties(desc.VertexCount, desc.VertexSize)
+	: GpuBuffer(GpuBufferCreateInformation::CreateVertex(desc.VertexSize, desc.VertexCount, desc.Flags)), mProperties(desc.VertexCount, desc.VertexSize)
 {
 #if B3D_DEBUG
 	CheckValidDesc(desc);

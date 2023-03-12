@@ -20,8 +20,6 @@ namespace bs
 			VulkanHardwareBufferManager();
 			~VulkanHardwareBufferManager();
 
-			SPtr<GpuBuffer> CreateHardwareBuffer(GpuBufferType type, u32 size, GpuBufferFlags flags, GpuDeviceFlags deviceMask) override;
-
 			/** Returns a buffer that can be used for buffer read operations when no other buffer is bound. */
 			VulkanGpuBuffer* GetDummyReadBuffer() const { return mDummyReadBuffer; }
 

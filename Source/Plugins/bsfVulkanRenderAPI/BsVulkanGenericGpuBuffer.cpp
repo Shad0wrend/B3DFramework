@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanGenericGpuBuffer.h"
+
+#include "BsVulkanGpuBackend.h"
 #include "BsVulkanGpuBuffer.h"
 #include "Profiling/BsRenderStats.h"
 #include "Error/BsException.h"
@@ -50,14 +52,23 @@ void VulkanGenericGpuBuffer::Initialize()
 	// Create a new buffer if external buffer is not provided
 	if(!mBuffer)
 	{
-		GpuBufferType bufferType;
+		GpuBufferCreateInformation createInformation;
 		if(props.GetType() == GBT_STRUCTURED)
-			bufferType = GpuBufferType::Structured;
+		{
+			createInformation.Type = GpuBufferType::StructuredStorage;
+			createInformation.Flags = props.GetFlags();
+			createInformation.StructuredStorage.ElementSize = props.GetElementSize();
+			createInformation.StructuredStorage.Count = props.GetElementCount();
+		}
 		else
-			bufferType = GpuBufferType::Generic;
+		{
+			createInformation.Type = GpuBufferType::SimpleStorage;
+			createInformation.Flags = props.GetFlags();
+			createInformation.SimpleStorage.Format = props.GetFormat();
+			createInformation.SimpleStorage.Count = props.GetElementCount();
+		}
 
-		u32 size = props.GetElementCount() * props.GetElementSize();
-		mBuffer = B3DPoolNew<VulkanGpuBuffer>(bufferType, props.GetFlags(), size, mDeviceMask);
+		mBuffer = B3DPoolNew<VulkanGpuBuffer>(*GetVulkanGpuBackend().GetVulkanDevice(0), createInformation);
 	}
 
 	UpdateViews();
@@ -106,23 +117,20 @@ void VulkanGenericGpuBuffer::UpdateViews()
 	if(mProperties.GetType() == GBT_STRUCTURED)
 		return;
 
-	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
+	VulkanBuffer* buffer = static_cast<VulkanGpuBuffer*>(mBuffer)->GetResource(0);
+
+	VkBuffer newBufferHandle = VK_NULL_HANDLE;
+
+	if(buffer)
+		newBufferHandle = buffer->GetHandle();
+
+	if(mCachedBuffers[0] != newBufferHandle)
 	{
-		VulkanBuffer* buffer = static_cast<VulkanGpuBuffer*>(mBuffer)->GetResource(i);
+		if(newBufferHandle != VK_NULL_HANDLE)
+			mBufferViews[0] = buffer->GetView(VulkanUtility::GetBufferFormat(mProperties.GetFormat()));
+		else
+			mBufferViews[0] = VK_NULL_HANDLE;
 
-		VkBuffer newBufferHandle = VK_NULL_HANDLE;
-
-		if(buffer)
-			newBufferHandle = buffer->GetHandle();
-
-		if(mCachedBuffers[i] != newBufferHandle)
-		{
-			if(newBufferHandle != VK_NULL_HANDLE)
-				mBufferViews[i] = buffer->GetView(VulkanUtility::GetBufferFormat(mProperties.GetFormat()));
-			else
-				mBufferViews[i] = VK_NULL_HANDLE;
-
-			mCachedBuffers[i] = newBufferHandle;
-		}
+		mCachedBuffers[0] = newBufferHandle;
 	}
 }

@@ -87,16 +87,6 @@ namespace bs
 			virtual ~HardwareBufferManager() {}
 
 			/**
-			 * Creates a generic buffer allocated on the GPU. This buffer can be used as a backing memory for specific buffer types.
-			 *
-			 * @param	type			Determines what buffers can this buffer be used as a backing memory for.
-			 * @param	size			Size of the buffer in bytes.
-			 * @param	usage			Determines how is the buffer intended to be used.
-			 * @param	deviceMask		Mask that determines on which GPU devices should the object be created on.
-			 */
-			virtual SPtr<GpuBuffer> CreateHardwareBuffer(GpuBufferType type, u32 size, GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess, GpuDeviceFlags deviceMask = GDF_DEFAULT) = 0;
-
-			/**
 			 * @copydoc bs::HardwareBufferManager::CreateVertexBuffer
 			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 			 */

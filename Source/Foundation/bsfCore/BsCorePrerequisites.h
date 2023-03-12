@@ -422,6 +422,7 @@ namespace bs
 	class AudioClipImportOptions;
 	class AnimationClip;
 	class GpuPipelineParamInfo;
+	class GpuDevice;
 	template <class T>
 	class TAnimationCurve;
 	struct AnimationCurves;
@@ -500,6 +501,7 @@ namespace bs
 		class RenderWindowManager;
 		class RenderStateManager;
 		class HardwareBufferManager;
+		class GpuBuffer;
 	} // namespace ct
 } // namespace bs
 

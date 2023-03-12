@@ -20,6 +20,26 @@ u32 GetBufferSize(const GenericGpuBufferCreateInformation& desc)
 	return elementSize * desc.ElementCount;
 }
 
+static GpuBufferCreateInformation GetCreateInformation(const GenericGpuBufferCreateInformation& createInformation)
+{
+	GpuBufferCreateInformation output;
+	output.Type = createInformation.Type == GBT_STANDARD ? GpuBufferType::SimpleStorage : GpuBufferType::StructuredStorage;
+	output.Flags = createInformation.Flags;
+
+	if(output.Type == GpuBufferType::SimpleStorage)
+	{
+		output.SimpleStorage.Format = createInformation.Format;
+		output.SimpleStorage.Count = createInformation.ElementCount;
+	}
+	else
+	{
+		output.StructuredStorage.ElementSize = createInformation.ElementSize;
+		output.StructuredStorage.Count = createInformation.ElementCount;
+	}
+
+	return output;
+}
+
 GenericGpuBufferProperties::GenericGpuBufferProperties(const GenericGpuBufferCreateInformation& desc)
 	: mDesc(desc)
 {
@@ -112,7 +132,7 @@ SPtr<GenericGpuBuffer> GenericGpuBuffer::Create(const GenericGpuBufferCreateInfo
 namespace bs { namespace ct
 {
 GenericGpuBuffer::GenericGpuBuffer(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
-	: GpuBuffer(GpuBufferType::Generic, GetBufferSize(desc), desc.Flags, deviceMask), mProperties(desc)
+	: GpuBuffer(GetCreateInformation(desc)), mProperties(desc)
 {
 	if(desc.Type != GBT_STANDARD)
 		B3D_ASSERT(desc.Format == BF_UNKNOWN && "Format must be set to BF_UNKNOWN when using non-standard buffers");
@@ -121,7 +141,7 @@ GenericGpuBuffer::GenericGpuBuffer(const GenericGpuBufferCreateInformation& desc
 }
 
 GenericGpuBuffer::GenericGpuBuffer(const GenericGpuBufferCreateInformation& desc, SPtr<GpuBuffer> underlyingBuffer)
-	: GpuBuffer(GpuBufferType::Generic, GetBufferSize(desc), desc.Flags, underlyingBuffer->GetDeviceMask()), mProperties(desc), mBuffer(underlyingBuffer.get()), mSharedBuffer(std::move(underlyingBuffer)), mIsExternalBuffer(true)
+	: GpuBuffer(GetCreateInformation(desc)), mProperties(desc), mBuffer(underlyingBuffer.get()), mSharedBuffer(std::move(underlyingBuffer)), mIsExternalBuffer(true)
 {
 	const auto& props = GetProperties();
 	B3D_ASSERT(mSharedBuffer->GetSize() == (props.GetElementCount() * props.GetElementSize()));
