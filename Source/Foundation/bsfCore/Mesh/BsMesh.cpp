@@ -266,15 +266,19 @@ void Mesh::Initialize()
 {
 	THROW_IF_NOT_CORE_THREAD;
 
-	bool isDynamic = (mUsage & MU_DYNAMIC) != 0;
-	GpuBufferFlags flags = isDynamic ? GpuBufferFlag::StoreOnCPUWithGPUAccess : GpuBufferFlag::StoreOnGPU;
+	const bool isDynamic = (mUsage & MU_DYNAMIC) != 0;
+	const GpuBufferFlags flags = isDynamic ? GpuBufferFlag::StoreOnCPUWithGPUAccess : GpuBufferFlag::StoreOnGPU;
 
-	IndexBufferCreateInformation ibDesc;
-	ibDesc.IndexType = mIndexType;
-	ibDesc.IndexCount = mProperties.IndexCount;
-	ibDesc.Flags = flags;
+	B3D_ENSURE(mDeviceMask == GDF_DEFAULT);
+	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 
-	mIndexBuffer = IndexBuffer::Create(ibDesc, mDeviceMask);
+	GpuBufferInformation indexBufferCreateInformation;
+	indexBufferCreateInformation.Type = GpuBufferType::Index;
+	indexBufferCreateInformation.Flags = flags;
+	indexBufferCreateInformation.Index.Type = mIndexType;
+	indexBufferCreateInformation.Index.Count = mProperties.IndexCount;
+
+	mIndexBuffer = gpuDevice->CreateGpuBuffer(indexBufferCreateInformation);
 
 	mVertexData = B3DMakeShared<VertexData>();
 	mVertexData->VertexCount = mProperties.VertexCount;
@@ -312,7 +316,7 @@ SPtr<VertexData> Mesh::GetVertexData() const
 	return mVertexData;
 }
 
-SPtr<IndexBuffer> Mesh::GetIndexBuffer() const
+SPtr<GpuBuffer> Mesh::GetIndexBuffer() const
 {
 	THROW_IF_NOT_CORE_THREAD;
 
@@ -348,14 +352,17 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 	}
 
 	// Indices
-	const IndexBufferProperties& ibProps = mIndexBuffer->GetProperties();
+	const GpuBufferInformation& indexBufferInformation = mIndexBuffer->GetInformation();
+
+	B3D_ENSURE(indexBufferInformation.Type == GpuBufferType::Index);
+	const u32 indexBufferIndexSize = bs::GpuBuffer::GetIndexSize(indexBufferInformation.Index.Type);
 
 	u32 indicesSize = meshData.GetIndexBufferSize();
 	u8* srcIdxData = meshData.GetIndexData();
 
-	if(meshData.GetIndexElementSize() != ibProps.GetIndexSize())
+	if(meshData.GetIndexElementSize() != indexBufferIndexSize)
 	{
-		B3D_LOG(Error, Mesh, "Provided index size doesn't match meshes index size. Needed: {0}. Got: {1}", ibProps.GetIndexSize(), meshData.GetIndexElementSize());
+		B3D_LOG(Error, Mesh, "Provided index size doesn't match meshes index size. Needed: {0}. Got: {1}", indexBufferIndexSize, meshData.GetIndexElementSize());
 
 		return;
 	}
@@ -411,22 +418,25 @@ void Mesh::ReadData(MeshData& meshData, u32 deviceIdx, u32 queueIdx)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
+	const GpuBufferInformation& indexBufferInformation = mIndexBuffer->GetInformation();
+	B3D_ENSURE(indexBufferInformation.Type == GpuBufferType::Index);
+
 	IndexType indexType = IT_32BIT;
 	if(mIndexBuffer)
-		indexType = mIndexBuffer->GetProperties().GetType();
+		indexType = indexBufferInformation.Index.Type;
+
+	const u32 indexBufferIndexSize = bs::GpuBuffer::GetIndexSize(indexType);
 
 	if(mIndexBuffer)
 	{
-		const IndexBufferProperties& ibProps = mIndexBuffer->GetProperties();
-
-		if(meshData.GetIndexElementSize() != ibProps.GetIndexSize())
+		if(meshData.GetIndexElementSize() != indexBufferIndexSize)
 		{
-			B3D_LOG(Error, Mesh, "Provided index size doesn't match meshes index size. Needed: {0}. Got: {1}", ibProps.GetIndexSize(), meshData.GetIndexElementSize());
+			B3D_LOG(Error, Mesh, "Provided index size doesn't match meshes index size. Needed: {0}. Got: {1}", indexBufferIndexSize, meshData.GetIndexElementSize());
 			return;
 		}
 
 		u8* idxData = static_cast<u8*>(mIndexBuffer->Lock(GBL_READ_ONLY, deviceIdx, queueIdx));
-		u32 idxElemSize = ibProps.GetIndexSize();
+		u32 idxElemSize = indexBufferIndexSize;
 
 		u8* indices = nullptr;
 

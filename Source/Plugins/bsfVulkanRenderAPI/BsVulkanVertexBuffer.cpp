@@ -20,7 +20,7 @@ VulkanVertexBuffer::VulkanVertexBuffer(const VertexBufferCreateInformation& desc
 
 void VulkanVertexBuffer::Initialize()
 {
-	mBuffer = B3DPoolNew<VulkanGpuBuffer>(*GetVulkanGpuBackend().GetVulkanDevice(0), GpuBufferCreateInformation::CreateVertex(mProperties.GetVertexSize(), mProperties.GetVertexCount(), mBufferFlags));
+	mBuffer = B3DPoolNew<VulkanGpuBuffer>(*GetVulkanGpuBackend().GetVulkanDevice(0), GpuBufferCreateInformation::CreateVertex(mProperties.GetVertexSize(), mProperties.GetVertexCount(), mInformation.Flags));
 	mBuffer->Initialize();
 
 	mBufferDeleter = &DeleteHardwareBuffer;

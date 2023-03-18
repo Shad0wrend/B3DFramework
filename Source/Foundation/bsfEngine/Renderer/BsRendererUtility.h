@@ -314,7 +314,7 @@ namespace bs
 		private:
 			static constexpr u32 kNumQuadVbSlots = 1024;
 
-			SPtr<IndexBuffer> mFullScreenQuadIB;
+			SPtr<GpuBuffer> mFullScreenQuadIB;
 			SPtr<VertexBuffer> mFullScreenQuadVB;
 			SPtr<VertexDataDesc> mFullscreenQuadVDesc;
 			SPtr<VertexDeclaration> mFullscreenQuadVDecl;

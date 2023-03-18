@@ -264,7 +264,6 @@ namespace bs
 		typedef ct::TYPE Type;                   \
 	};
 
-	CORE_OBJECT_FORWARD_DECLARE(IndexBuffer)
 	CORE_OBJECT_FORWARD_DECLARE(VertexBuffer)
 	CORE_OBJECT_FORWARD_DECLARE(GenericGpuBuffer)
 	CORE_OBJECT_FORWARD_DECLARE(GpuProgram)

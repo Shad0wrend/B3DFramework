@@ -115,7 +115,7 @@ void VertexBuffer::CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, 
 
 SPtr<GenericGpuBuffer> VertexBuffer::GetLoadStore(GenericGpuBufferType type, GpuBufferFormat format, u32 elementSize)
 {
-	if(!mBufferFlags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
+	if(!mInformation.Flags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
 		return nullptr;
 
 	for(const auto& entry : mLoadStoreViews)
@@ -131,7 +131,7 @@ SPtr<GenericGpuBuffer> VertexBuffer::GetLoadStore(GenericGpuBufferType type, Gpu
 		}
 	}
 
-	u32 elemSize = type == GBT_STANDARD ? bs::GenericGpuBuffer::GetFormatSize(format) : elementSize;
+	u32 elemSize = type == GBT_STANDARD ? bs::GpuBuffer::GetFormatSize(format) : elementSize;
 	if((mBuffer->GetSize() % elemSize) != 0)
 	{
 		B3D_LOG(Error, RenderBackend, "Size of the buffer isn't divisible by individual element size provided for the buffer view.");
@@ -141,7 +141,7 @@ SPtr<GenericGpuBuffer> VertexBuffer::GetLoadStore(GenericGpuBufferType type, Gpu
 	GenericGpuBufferCreateInformation desc;
 	desc.Type = type;
 	desc.Format = format;
-	desc.Flags = mBufferFlags;
+	desc.Flags = mInformation.Flags;
 	desc.ElementSize = elementSize;
 	desc.ElementCount = mBuffer->GetSize() / elemSize;
 

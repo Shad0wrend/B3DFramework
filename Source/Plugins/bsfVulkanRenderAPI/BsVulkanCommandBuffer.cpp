@@ -7,7 +7,6 @@
 #include "BsVulkanGpuParams.h"
 #include "BsVulkanQueue.h"
 #include "BsVulkanTexture.h"
-#include "BsVulkanIndexBuffer.h"
 #include "BsVulkanVertexBuffer.h"
 #include "BsVulkanGpuBuffer.h"
 #include "BsVulkanFramebuffer.h"
@@ -1443,12 +1442,12 @@ void VulkanInternalCommandBuffer::SetVertexBuffers(u32 startIndex, SPtr<VertexBu
 	mVertexInputsDirty = true;
 }
 
-void VulkanInternalCommandBuffer::SetIndexBuffer(const SPtr<IndexBuffer>& buffer)
+void VulkanInternalCommandBuffer::SetIndexBuffer(const SPtr<GpuBuffer>& buffer)
 {
 	if(mIndexBuffer == buffer)
 		return;
 
-	mIndexBuffer = std::static_pointer_cast<VulkanIndexBuffer>(buffer);
+	mIndexBuffer = std::static_pointer_cast<VulkanGpuBuffer>(buffer);
 	mVertexInputsDirty = true;
 }
 
@@ -1593,7 +1592,10 @@ void VulkanInternalCommandBuffer::BindVertexInputs()
 		if(resource != nullptr)
 		{
 			VkBuffer vkBuffer = resource->GetHandle();
-			VkIndexType indexType = VulkanUtility::GetIndexType(mIndexBuffer->GetProperties().GetType());
+			VkIndexType indexType = VK_INDEX_TYPE_UINT32;
+
+			if(B3D_ENSURE(mIndexBuffer->GetInformation().Type == GpuBufferType::Index))
+				indexType = VulkanUtility::GetIndexType(mIndexBuffer->GetInformation().Index.Type);
 
 			RegisterBuffer(resource, BufferUseFlagBits::Index, VulkanAccessFlag::Read);
 

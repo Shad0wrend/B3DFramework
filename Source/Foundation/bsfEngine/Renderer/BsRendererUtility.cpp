@@ -20,17 +20,20 @@ namespace bs { namespace ct
 {
 RendererUtility::RendererUtility()
 {
+	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+
 	{
 		mFullscreenQuadVDesc = B3DMakeShared<VertexDataDesc>();
 		mFullscreenQuadVDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
 		mFullscreenQuadVDesc->AddVertElem(VET_FLOAT2, VES_TEXCOORD);
 
-		IndexBufferCreateInformation ibDesc;
-		ibDesc.IndexType = IT_32BIT;
-		ibDesc.IndexCount = 6;
-		ibDesc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
+		GpuBufferCreateInformation indexBufferCreateInformation;
+		indexBufferCreateInformation.Type = GpuBufferType::Index;
+		indexBufferCreateInformation.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
+		indexBufferCreateInformation.Index.Type = IT_32BIT;
+		indexBufferCreateInformation.Index.Count = 6;
 
-		mFullScreenQuadIB = IndexBuffer::Create(ibDesc);
+		mFullScreenQuadIB = gpuDevice->CreateGpuBuffer(indexBufferCreateInformation);
 		mFullscreenQuadVDecl = VertexDeclaration::Create(mFullscreenQuadVDesc);
 
 		VertexBufferCreateInformation vbDesc;
@@ -223,7 +226,7 @@ void RendererUtility::Draw(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u
 		rapi.SetVertexBuffers(startSlot, buffers, endSlot - startSlot + 1);
 	}
 
-	SPtr<IndexBuffer> indexBuffer = mesh->GetIndexBuffer();
+	SPtr<GpuBuffer> indexBuffer = mesh->GetIndexBuffer();
 	rapi.SetIndexBuffer(indexBuffer);
 
 	rapi.SetDrawOperation(subMesh.DrawOp);
@@ -265,7 +268,7 @@ void RendererUtility::DrawMorph(const SPtr<MeshBase>& mesh, const SubMesh& subMe
 	allBuffers[1] = morphVertices;
 	rapi.SetVertexBuffers(startSlot, allBuffers, endSlot - startSlot + 1);
 
-	SPtr<IndexBuffer> indexBuffer = mesh->GetIndexBuffer();
+	SPtr<GpuBuffer> indexBuffer = mesh->GetIndexBuffer();
 	rapi.SetIndexBuffer(indexBuffer);
 
 	rapi.SetDrawOperation(subMesh.DrawOp);

@@ -36,112 +36,112 @@ namespace bs
 	{
 	public:
 		/**
-		 * @see ct::RenderAPI::setGpuParams()
+		 * @see ct::RenderAPI::SetGpuParams()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
 		static void SetGpuParams(const SPtr<GpuParams>& gpuParams);
 
 		/**
-		 * @see ct::RenderAPI::setGraphicsPipeline()
+		 * @see ct::RenderAPI::SetGraphicsPipeline()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
 		static void SetGraphicsPipeline(const SPtr<GraphicsPipelineState>& pipelineState);
 
 		/**
-		 * @see ct::RenderAPI::setComputePipeline()
+		 * @see ct::RenderAPI::SetComputePipeline()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
 		static void SetComputePipeline(const SPtr<ComputePipelineState>& pipelineState);
 
 		/**
-		 * @see ct::RenderAPI::setVertexBuffers()
+		 * @see ct::RenderAPI::SetVertexBuffers()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
 		static void SetVertexBuffers(u32 index, const Vector<SPtr<VertexBuffer>>& buffers);
 
 		/**
-		 * @see ct::RenderAPI::setIndexBuffer()
+		 * @see ct::RenderAPI::SetIndexBuffer()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void SetIndexBuffer(const SPtr<IndexBuffer>& buffer);
+		static void SetIndexBuffer(const SPtr<GpuBuffer>& buffer);
 
 		/**
-		 * @see ct::RenderAPI::setVertexDeclaration()
+		 * @see ct::RenderAPI::SetVertexDeclaration()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
 		static void SetVertexDeclaration(const SPtr<VertexDeclaration>& vertexDeclaration);
 
 		/**
-		 * @see ct::RenderAPI::setViewport()
+		 * @see ct::RenderAPI::SetViewport()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
 		static void SetViewport(const Rect2& area);
 
 		/**
-		 * @see ct::RenderAPI::setStencilRef()
+		 * @see ct::RenderAPI::SetStencilRef()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
 		static void SetStencilRef(u32 value);
 
 		/**
-		 * @see ct::RenderAPI::setDrawOperation()
+		 * @see ct::RenderAPI::SetDrawOperation()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
 		static void SetDrawOperation(DrawOperationType op);
 
 		/**
-		 * @see ct::RenderAPI::setRenderTarget()
+		 * @see ct::RenderAPI::SetRenderTarget()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
 		static void SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags = 0, RenderSurfaceMask loadMask = RT_NONE);
 
 		/**
-		 * @see ct::RenderAPI::clearRenderTarget()
+		 * @see ct::RenderAPI::ClearRenderTarget()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
 		static void ClearRenderTarget(u32 buffers, const Color& color = Color::kBlack, float depth = 1.0f, u16 stencil = 0, u8 targetMask = 0xFF);
 
 		/**
-		 * @see ct::RenderAPI::clearViewport()
+		 * @see ct::RenderAPI::ClearViewport()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
 		static void ClearViewport(u32 buffers, const Color& color = Color::kBlack, float depth = 1.0f, u16 stencil = 0, u8 targetMask = 0xFF);
 
 		/**
-		 * @see ct::RenderAPI::swapBuffers()
+		 * @see ct::RenderAPI::SwapBuffers()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
 		static void SwapBuffers(const SPtr<RenderTarget>& target);
 
 		/**
-		 * @see ct::RenderAPI::draw()
+		 * @see ct::RenderAPI::Draw()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
 		static void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0);
 
 		/**
-		 * @see ct::RenderAPI::drawIndexed()
+		 * @see ct::RenderAPI::DrawIndexed()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
 		static void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0);
 
 		/**
-		 * @see ct::RenderAPI::dispatchCompute()
+		 * @see ct::RenderAPI::DispatchCompute()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
@@ -273,7 +273,7 @@ namespace bs
 			 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 			 *								Buffer must support graphics operations.
 			 */
-			virtual void SetIndexBuffer(const SPtr<IndexBuffer>& buffer, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void SetIndexBuffer(const SPtr<GpuBuffer>& buffer, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Sets the vertex declaration to use when drawing. Vertex declaration is used to decode contents of a single

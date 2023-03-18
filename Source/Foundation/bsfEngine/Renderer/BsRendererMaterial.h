@@ -149,6 +149,7 @@ namespace bs
 
 			ShaderVariationParameters mVariationParameters;
 			SPtr<Shader> mShader;
+			SPtr<GpuDevice> mGpuDevice;
 		};
 
 		/**	Helper class to initialize all renderer materials as soon as the library is loaded. */
@@ -496,6 +497,7 @@ namespace bs
 		template<class T>
 		void RendererMaterial<T>::InitializeInternal(u32 variationIndex)
 		{
+			mGpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 			mShader = mMetaData.Shader;
 			mVariationParameters = mMetaData.VariationParameterSet.Get(variationIndex);
 

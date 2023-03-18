@@ -5,7 +5,6 @@
 #include "Renderer/BsRendererMaterial.h"
 #include "Renderer/BsGpuResourcePool.h"
 #include "RenderAPI/BsVertexBuffer.h"
-#include "RenderAPI/BsIndexBuffer.h"
 #include "RenderAPI/BsGenericGpuBuffer.h"
 #include "RenderAPI/BsVertexDataDesc.h"
 #include "RenderAPI/BsGpuPipelineParamInfo.h"
@@ -255,7 +254,7 @@ struct GpuParticleHelperBuffers
 
 	SPtr<VertexBuffer> TileUVs;
 	SPtr<VertexBuffer> ParticleUVs;
-	SPtr<IndexBuffer> SpriteIndices;
+	SPtr<GpuBuffer> SpriteIndices;
 	SPtr<VertexDeclaration> TileVertexDecl;
 	SPtr<VertexDeclaration> InjectVertexDecl;
 	SPtr<GenericGpuBuffer> TileScratch;
@@ -394,6 +393,8 @@ const SPtr<GenericGpuBuffer>& GpuParticleResources::GetSortedIndices() const
 
 GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 {
+	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+
 	// Prepare vertex declaration for rendering tiles
 	SPtr<VertexDataDesc> tileVertexDesc = B3DMakeShared<VertexDataDesc>();
 	tileVertexDesc->AddVertElem(VET_FLOAT2, VES_TEXCOORD);
@@ -450,11 +451,12 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 	ParticleUVs->Unlock();
 
 	// Prepare indices for rendering tiles & particles
-	IndexBufferCreateInformation spriteIndexBufferDesc;
-	spriteIndexBufferDesc.IndexType = IT_16BIT;
-	spriteIndexBufferDesc.IndexCount = kParticlesPerInstance * 6;
+	GpuBufferCreateInformation spriteIndexBufferCreateInformation;
+	spriteIndexBufferCreateInformation.Type = GpuBufferType::Index;
+	spriteIndexBufferCreateInformation.Index.Type = IT_16BIT;
+	spriteIndexBufferCreateInformation.Index.Count = kParticlesPerInstance * 6;
 
-	SpriteIndices = IndexBuffer::Create(spriteIndexBufferDesc);
+	SpriteIndices = gpuDevice->CreateGpuBuffer(spriteIndexBufferCreateInformation);
 
 	auto* const indices = (u16*)SpriteIndices->Lock(GBL_WRITE_ONLY_DISCARD);
 
@@ -1335,6 +1337,8 @@ struct GpuParticleCurveInject
 
 GpuParticleCurves::GpuParticleCurves()
 {
+	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+
 	TextureCreateInformation textureCreateInformation;
 	textureCreateInformation.Name = "GPU Particles Curves";
 	textureCreateInformation.Format = PF_RGBA16F;
@@ -1374,11 +1378,12 @@ GpuParticleCurves::GpuParticleCurves()
 	mInjectUV->Unlock();
 
 	// Prepare indices for injecting curves
-	IndexBufferCreateInformation injectIndexBufferDesc;
-	injectIndexBufferDesc.IndexType = IT_16BIT;
-	injectIndexBufferDesc.IndexCount = 6;
+	GpuBufferCreateInformation injectIndexBufferCreateInformation;
+	injectIndexBufferCreateInformation.Type = GpuBufferType::Index;
+	injectIndexBufferCreateInformation.Index.Type = IT_16BIT;
+	injectIndexBufferCreateInformation.Index.Count = 6;
 
-	mInjectIndices = IndexBuffer::Create(injectIndexBufferDesc);
+	mInjectIndices = gpuDevice->CreateGpuBuffer(injectIndexBufferCreateInformation);
 
 	const GpuBackendConventions& rapiConventions = GetGpuDeviceCapabilities().Conventions;
 

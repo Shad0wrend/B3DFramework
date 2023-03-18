@@ -690,6 +690,8 @@ const float ShadowRendering::kCascadeFractionFade = 0.1f;
 ShadowRendering::ShadowRendering(u32 shadowMapSize)
 	: mShadowMapSize(shadowMapSize)
 {
+	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+
 	SPtr<VertexDataDesc> vertexDesc = VertexDataDesc::Create();
 	vertexDesc->AddVertElem(VET_FLOAT3, VES_POSITION);
 
@@ -704,11 +706,12 @@ ShadowRendering::ShadowRendering(u32 shadowMapSize)
 
 		mPlaneVB = VertexBuffer::Create(vbDesc);
 
-		IndexBufferCreateInformation ibDesc;
-		ibDesc.IndexType = IT_32BIT;
-		ibDesc.IndexCount = 12;
+		GpuBufferCreateInformation indexBufferCreateInformation;
+		indexBufferCreateInformation.Type = GpuBufferType::Index;
+		indexBufferCreateInformation.Index.Type = IT_32BIT;
+		indexBufferCreateInformation.Index.Count = 12;
 
-		mPlaneIB = IndexBuffer::Create(ibDesc);
+		mPlaneIB = gpuDevice->CreateGpuBuffer(indexBufferCreateInformation);
 
 		u32 indices[] = {
 			// Far plane, back facing
@@ -732,11 +735,12 @@ ShadowRendering::ShadowRendering(u32 shadowMapSize)
 
 		mFrustumVB = VertexBuffer::Create(vbDesc);
 
-		IndexBufferCreateInformation ibDesc;
-		ibDesc.IndexType = IT_32BIT;
-		ibDesc.IndexCount = 36;
+		GpuBufferCreateInformation indexBufferCreateInformation;
+		indexBufferCreateInformation.Type = GpuBufferType::Index;
+		indexBufferCreateInformation.Index.Type = IT_32BIT;
+		indexBufferCreateInformation.Index.Count = 36;
 
-		mFrustumIB = IndexBuffer::Create(ibDesc);
+		mFrustumIB = gpuDevice->CreateGpuBuffer(indexBufferCreateInformation);
 		mFrustumIB->WriteData(0, sizeof(AABox::kCubeIndices), AABox::kCubeIndices);
 	}
 }

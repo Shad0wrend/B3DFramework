@@ -9,26 +9,6 @@
 
 using namespace bs;
 
-static u32 CalculateBufferSize(const GpuBufferCreateInformation& createInformation)
-{
-	switch(createInformation.Type)
-	{
-	case GpuBufferType::Vertex:
-		return createInformation.Vertex.Count * createInformation.Vertex.ElementSize;
-	case GpuBufferType::Index:
-		return createInformation.Index.Count * (createInformation.Index.Type == IT_32BIT ? 4 : 2);
-	case GpuBufferType::Uniform: 
-		return createInformation.Uniform.Size;
-	case GpuBufferType::SimpleStorage:
-		return createInformation.SimpleStorage.Count * GenericGpuBuffer::GetFormatSize(createInformation.SimpleStorage.Format);
-	case GpuBufferType::StructuredStorage: 
-		return createInformation.StructuredStorage.Count * createInformation.StructuredStorage.ElementSize;
-	}
-
-	B3D_ENSURE(false);
-	return 128;
-}
-
 GpuBuffer::GpuBuffer(const GpuBufferCreateInformation& createInformation)
 	: mInformation(createInformation)
 { }
@@ -57,12 +37,94 @@ SPtr<GpuBuffer> GpuBuffer::Create(const GpuBufferCreateInformation& createInform
 	return buffer;
 }
 
+u32 GpuBuffer::GetFormatSize(GpuBufferFormat format)
+{
+	static bool lookupInitialized = false;
+
+	static u32 lookup[BF_COUNT];
+	if(!lookupInitialized)
+	{
+		lookup[BF_16X1F] = 2;
+		lookup[BF_16X2F] = 4;
+		lookup[BF_16X4F] = 8;
+		lookup[BF_32X1F] = 4;
+		lookup[BF_32X2F] = 8;
+		lookup[BF_32X3F] = 12;
+		lookup[BF_32X4F] = 16;
+		lookup[BF_8X1] = 1;
+		lookup[BF_8X2] = 2;
+		lookup[BF_8X4] = 4;
+		lookup[BF_16X1] = 2;
+		lookup[BF_16X2] = 4;
+		lookup[BF_16X4] = 8;
+		lookup[BF_8X1S] = 1;
+		lookup[BF_8X2S] = 2;
+		lookup[BF_8X4S] = 4;
+		lookup[BF_16X1S] = 2;
+		lookup[BF_16X2S] = 4;
+		lookup[BF_16X4S] = 8;
+		lookup[BF_32X1S] = 4;
+		lookup[BF_32X2S] = 8;
+		lookup[BF_32X3S] = 12;
+		lookup[BF_32X4S] = 16;
+		lookup[BF_8X1U] = 1;
+		lookup[BF_8X2U] = 2;
+		lookup[BF_8X4U] = 4;
+		lookup[BF_16X1U] = 2;
+		lookup[BF_16X2U] = 4;
+		lookup[BF_16X4U] = 8;
+		lookup[BF_32X1U] = 4;
+		lookup[BF_32X2U] = 8;
+		lookup[BF_32X3U] = 12;
+		lookup[BF_32X4U] = 16;
+		lookup[BF_64X1F] = 8;
+		lookup[BF_64X2F] = 16;
+		lookup[BF_64X3F] = 24;
+		lookup[BF_64X4F] = 32;
+		lookup[BF_64X1S] = 8;
+		lookup[BF_64X2S] = 16;
+		lookup[BF_64X3S] = 24;
+		lookup[BF_64X4S] = 32;
+		lookup[BF_64X1U] = 8;
+		lookup[BF_64X2U] = 16;
+		lookup[BF_64X3U] = 24;
+		lookup[BF_64X4U] = 32;
+
+		lookupInitialized = true;
+	}
+
+	if(format >= BF_COUNT)
+		return 0;
+
+	return lookup[(u32)format];
+}
+
+u32 GpuBuffer::CalculateBufferSize(const GpuBufferInformation& information)
+{
+	switch(information.Type)
+	{
+	case GpuBufferType::Vertex:
+		return information.Vertex.Count * information.Vertex.ElementSize;
+	case GpuBufferType::Index:
+		return information.Index.Count * (GetIndexSize(information.Index.Type));
+	case GpuBufferType::Uniform: 
+		return information.Uniform.Size;
+	case GpuBufferType::SimpleStorage:
+		return information.SimpleStorage.Count * GetFormatSize(information.SimpleStorage.Format);
+	case GpuBufferType::StructuredStorage: 
+		return information.StructuredStorage.Count * information.StructuredStorage.ElementSize;
+	}
+
+	B3D_ENSURE(false);
+	return 128;
+}
+
 namespace bs::ct
 {
 	GpuBuffer::GpuBuffer(const GpuBufferCreateInformation& createInformation)
-		: mType(createInformation.Type), mSize(CalculateBufferSize(createInformation)), mBufferFlags(createInformation.Flags)
+		: mInformation(createInformation), mSize(bs::GpuBuffer::CalculateBufferSize(createInformation))
 	{
-		if(mBufferFlags.IsSet(GpuBufferFlag::AllowWriteCachingOnCPU))
+		if(mInformation.Flags.IsSet(GpuBufferFlag::AllowWriteCachingOnCPU))
 		{
 			mCache = (u8*)B3DAllocate(mSize);
 		}

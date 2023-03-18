@@ -275,7 +275,7 @@ namespace bs
 			void Initialize() override;
 
 			SPtr<VertexData> GetVertexData() const override;
-			SPtr<IndexBuffer> GetIndexBuffer() const override;
+			SPtr<GpuBuffer> GetIndexBuffer() const override;
 			SPtr<VertexDataDesc> GetVertexDescription() const override;
 
 			/** Returns a skeleton that can be used for animating the mesh. */
@@ -367,7 +367,7 @@ namespace bs
 			void UpdateBounds(const MeshData& meshData);
 
 			SPtr<VertexData> mVertexData;
-			SPtr<IndexBuffer> mIndexBuffer;
+			SPtr<GpuBuffer> mIndexBuffer;
 
 			SPtr<VertexDataDesc> mVertexDesc;
 			int mUsage;

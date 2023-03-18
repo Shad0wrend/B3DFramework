@@ -679,11 +679,11 @@ namespace bs
 			SPtr<VertexDeclaration> mPositionOnlyVD;
 
 			// Mesh information used for drawing near & far planes
-			mutable SPtr<IndexBuffer> mPlaneIB;
+			mutable SPtr<GpuBuffer> mPlaneIB;
 			mutable SPtr<VertexBuffer> mPlaneVB;
 
 			// Mesh information used for drawing a shadow frustum
-			mutable SPtr<IndexBuffer> mFrustumIB;
+			mutable SPtr<GpuBuffer> mFrustumIB;
 			mutable SPtr<VertexBuffer> mFrustumVB;
 
 			Vector<bool> mRenderableVisibility; // Transient

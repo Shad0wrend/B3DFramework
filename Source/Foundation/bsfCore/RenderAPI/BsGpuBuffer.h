@@ -200,6 +200,15 @@ namespace bs
 		/** Creates a new buffer. */
 		static SPtr<GpuBuffer> Create(const GpuBufferCreateInformation& createInformation);
 
+		/** Returns the size of a single element in the buffer, of the provided format, in bytes. */
+		static u32 GetFormatSize(GpuBufferFormat format);
+
+		/** Returns teh size of a single index buffer element of the specified type, in bytes. */
+		static u32 GetIndexSize(IndexType type) { return type == IT_32BIT ? 4 : 2; }
+
+		/** Calculates the size of a buffer described by the provided information, in bytes. */
+		static u32 CalculateBufferSize(const GpuBufferInformation& information);
+
 	protected:
 		GpuBuffer(const GpuBufferCreateInformation& createInformation);
 
@@ -216,6 +225,9 @@ namespace bs::ct
 	{
 	public:
 		virtual ~GpuBuffer();
+
+		/** Returns information describing the buffer. */
+		const GpuBufferInformation& GetInformation() const { return mInformation; }
 
 		/** Assigns an name to the buffer, primarily used for easier debugging. */
 		virtual void SetName(const StringView& name) { mName = name; }
@@ -351,10 +363,9 @@ namespace bs::ct
 		virtual void Unmap() {}
 
 	protected:
-		GpuBufferType mType = GpuBufferType::SimpleStorage;
+		GpuBufferInformation mInformation;
 		String mName;
 		u32 mSize;
-		GpuBufferFlags mBufferFlags;
 		u8* mCache = nullptr;
 		bool mIsCacheDirty = false;
 

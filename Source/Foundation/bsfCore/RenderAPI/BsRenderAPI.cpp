@@ -47,7 +47,7 @@ void RenderAPI::SetVertexBuffers(u32 index, const Vector<SPtr<VertexBuffer>>& bu
 	GetCoreThread().QueueCommand(std::bind(resizeFunc, ct::RenderAPI::InstancePtr(), index, coreBuffers));
 }
 
-void RenderAPI::SetIndexBuffer(const SPtr<IndexBuffer>& buffer)
+void RenderAPI::SetIndexBuffer(const SPtr<GpuBuffer>& buffer)
 {
 	GetCoreThread().QueueCommand(std::bind(&ct::RenderAPI::SetIndexBuffer, ct::RenderAPI::InstancePtr(), buffer->GetCore(), nullptr));
 }

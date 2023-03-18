@@ -84,9 +84,6 @@ namespace bs
 		/** Retrieves a core implementation of a GPU buffer usable only from the core thread. */
 		SPtr<ct::GenericGpuBuffer> GetCore() const;
 
-		/** Returns the size of a single element in the buffer, of the provided format, in bytes. */
-		static u32 GetFormatSize(GpuBufferFormat format);
-
 		/** @copydoc HardwareBufferManager::CreateGpuBuffer */
 		static SPtr<GenericGpuBuffer> Create(const GenericGpuBufferCreateInformation& desc);
 

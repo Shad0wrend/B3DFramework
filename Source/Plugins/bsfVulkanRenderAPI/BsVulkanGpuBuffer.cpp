@@ -174,7 +174,7 @@ void VulkanBuffer::DestroyUnusedViews()
 }
 
 VulkanGpuBuffer::VulkanGpuBuffer(VulkanGpuDevice& device, const GpuBufferCreateInformation& createInformation)
-	: GpuBuffer(createInformation), mDevice(device), mDirectlyMappable((mBufferFlags.IsSetAny(GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::StoreOnCPU)) != 0), mSupportsGPUWrites(mBufferFlags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU)), mIsMapped(false)
+	: GpuBuffer(createInformation), mDevice(device), mDirectlyMappable((createInformation.Flags.IsSetAny(GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::StoreOnCPU)) != 0), mSupportsGPUWrites(createInformation.Flags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU)), mIsMapped(false)
 { }
 
 VulkanGpuBuffer::~VulkanGpuBuffer()
@@ -188,11 +188,11 @@ VulkanGpuBuffer::~VulkanGpuBuffer()
 void VulkanGpuBuffer::Initialize()
 {
 	VkBufferUsageFlags usageFlags = 0;
-	switch(mType)
+	switch(mInformation.Type)
 	{
 	case GpuBufferType::Vertex:
 		usageFlags = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-	if(mBufferFlags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
+	if(mInformation.Flags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
 		usageFlags |= VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT;
 		break;
 	case GpuBufferType::Index:
@@ -209,9 +209,9 @@ void VulkanGpuBuffer::Initialize()
 		break;
 	}
 
-	if(mBufferFlags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
+	if(mInformation.Flags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
 	{
-		if(mType == GpuBufferType::SimpleStorage)
+		if(mInformation.Type == GpuBufferType::SimpleStorage)
 			usageFlags |= VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT;
 		else
 			usageFlags |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
@@ -249,9 +249,9 @@ VulkanBuffer* VulkanGpuBuffer::CreateBuffer(VulkanGpuDevice& device, u32 size, b
 	mBufferCI.size = size;
 
 	VmaMemoryUsage memoryUsage;
-	if(staging || mBufferFlags.IsSet(GpuBufferFlag::StoreOnCPU))
+	if(staging || mInformation.Flags.IsSet(GpuBufferFlag::StoreOnCPU))
 		memoryUsage = VMA_MEMORY_USAGE_CPU_ONLY;
-	else if(mBufferFlags.IsSet(GpuBufferFlag::StoreOnCPUWithGPUAccess))
+	else if(mInformation.Flags.IsSet(GpuBufferFlag::StoreOnCPUWithGPUAccess))
 		memoryUsage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 	else // StoreOnGPU
 		memoryUsage = VMA_MEMORY_USAGE_GPU_ONLY;

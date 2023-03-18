@@ -1279,11 +1279,12 @@ void BokehDOFMat::Initialize()
 	mTileVertexBuffer->Unlock();
 
 	// Prepare indices for rendering tiles
-	IndexBufferCreateInformation tileIndexBufferDesc;
-	tileIndexBufferDesc.IndexType = IT_16BIT;
-	tileIndexBufferDesc.IndexCount = kQuadsPerTile * 6;
+	GpuBufferCreateInformation tileIndexBufferCreateInformation;
+	tileIndexBufferCreateInformation.Type = GpuBufferType::Index;
+	tileIndexBufferCreateInformation.Index.Type = IT_16BIT;
+	tileIndexBufferCreateInformation.Index.Count = kQuadsPerTile * 6;
 
-	mTileIndexBuffer = IndexBuffer::Create(tileIndexBufferDesc);
+	mTileIndexBuffer = mGpuDevice->CreateGpuBuffer(tileIndexBufferCreateInformation);
 
 	auto* const indices = (u16*)mTileIndexBuffer->Lock(GBL_WRITE_ONLY_DISCARD);
 

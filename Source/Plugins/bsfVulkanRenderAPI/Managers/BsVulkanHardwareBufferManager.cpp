@@ -2,7 +2,6 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Managers/BsVulkanHardwareBufferManager.h"
 #include "BsVulkanVertexBuffer.h"
-#include "BsVulkanIndexBuffer.h"
 #include "BsVulkanGenericGpuBuffer.h"
 #include "BsVulkanGpuBackend.h"
 #include "BsVulkanGpuParamBlockBuffer.h"
@@ -32,14 +31,6 @@ VulkanHardwareBufferManager::VulkanHardwareBufferManager()
 SPtr<ct::VertexBuffer> VulkanHardwareBufferManager::CreateVertexBufferInternal(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
 {
 	SPtr<VulkanVertexBuffer> ret = B3DMakeShared<VulkanVertexBuffer>(desc, deviceMask);
-	ret->SetShared(ret);
-
-	return ret;
-}
-
-SPtr<ct::IndexBuffer> VulkanHardwareBufferManager::CreateIndexBufferInternal(const IndexBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
-{
-	SPtr<VulkanIndexBuffer> ret = B3DMakeShared<VulkanIndexBuffer>(desc, deviceMask);
 	ret->SetShared(ret);
 
 	return ret;

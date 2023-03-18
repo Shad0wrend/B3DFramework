@@ -133,7 +133,7 @@ namespace bs
 			virtual SPtr<VertexData> GetVertexData() const = 0;
 
 			/**	Get index data used for rendering. */
-			virtual SPtr<IndexBuffer> GetIndexBuffer() const = 0;
+			virtual SPtr<GpuBuffer> GetIndexBuffer() const = 0;
 
 			/**
 			 * Returns an offset into the vertex buffers that is returned by getVertexData() that signifies where this meshes
