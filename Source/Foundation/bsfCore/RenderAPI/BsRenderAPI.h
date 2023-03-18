@@ -61,7 +61,7 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void SetVertexBuffers(u32 index, const Vector<SPtr<VertexBuffer>>& buffers);
+		static void SetVertexBuffers(u32 index, const Vector<SPtr<GpuBuffer>>& buffers);
 
 		/**
 		 * @see ct::RenderAPI::SetIndexBuffer()
@@ -262,7 +262,7 @@ namespace bs
 			 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 			 *								Buffer must support graphics operations.
 			 */
-			virtual void SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u32 numBuffers, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void SetVertexBuffers(u32 index, SPtr<GpuBuffer>* buffers, u32 numBuffers, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Sets an index buffer to use when drawing. Indices in an index buffer reference vertices in the vertex buffer,

@@ -4,6 +4,7 @@
 
 #include "BsVulkanPrerequisites.h"
 #include "Managers/BsHardwareBufferManager.h"
+#include "RenderAPI/BsGpuBuffer.h"
 
 namespace bs
 {
@@ -34,7 +35,6 @@ namespace bs
 			/** Returns a buffer that can be used for vertex buffers when no other buffer is bound. */
 			VulkanGpuBuffer* GetDummyVertexBuffer() const { return mDummyVertexBuffer.get(); }
 		protected:
-			SPtr<VertexBuffer> CreateVertexBufferInternal(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
 			SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBufferInternal(u32 size, GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;
 			SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBufferInternal(const SPtr<GpuBuffer>& backingMemory, u32 offset, u32 size) override;
 			SPtr<GenericGpuBuffer> CreateGpuBufferInternal(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) override;

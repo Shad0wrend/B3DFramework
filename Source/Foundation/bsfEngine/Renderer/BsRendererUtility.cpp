@@ -36,12 +36,13 @@ RendererUtility::RendererUtility()
 		mFullScreenQuadIB = gpuDevice->CreateGpuBuffer(indexBufferCreateInformation);
 		mFullscreenQuadVDecl = VertexDeclaration::Create(mFullscreenQuadVDesc);
 
-		VertexBufferCreateInformation vbDesc;
-		vbDesc.VertexSize = mFullscreenQuadVDecl->GetProperties().GetVertexSize(0);
-		vbDesc.VertexCount = 4 * kNumQuadVbSlots;
-		vbDesc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
+		GpuBufferCreateInformation vertexBufferCreateInformation;
+		vertexBufferCreateInformation.Type = GpuBufferType::Vertex;
+		vertexBufferCreateInformation.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
+		vertexBufferCreateInformation.Vertex.ElementSize = mFullscreenQuadVDecl->GetProperties().GetVertexSize(0);
+		vertexBufferCreateInformation.Vertex.Count = 4 * kNumQuadVbSlots;
 
-		mFullScreenQuadVB = VertexBuffer::Create(vbDesc);
+		mFullScreenQuadVB = gpuDevice->CreateGpuBuffer(vertexBufferCreateInformation);
 
 		u32 indices[]{ 0, 1, 2, 1, 3, 2 };
 		mFullScreenQuadIB->WriteData(0, sizeof(indices), indices, BWT_DISCARD);
@@ -205,7 +206,7 @@ void RendererUtility::Draw(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u
 	auto& vertexBuffers = vertexData->GetBuffers();
 	if(vertexBuffers.size() > 0)
 	{
-		SPtr<VertexBuffer> buffers[BS_MAX_BOUND_VERTEX_BUFFERS];
+		SPtr<GpuBuffer> buffers[BS_MAX_BOUND_VERTEX_BUFFERS];
 
 		u32 endSlot = 0;
 		u32 startSlot = BS_MAX_BOUND_VERTEX_BUFFERS;
@@ -237,7 +238,7 @@ void RendererUtility::Draw(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u
 	mesh->NotifyUsedOnGPU();
 }
 
-void RendererUtility::DrawMorph(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, const SPtr<VertexBuffer>& morphVertices, const SPtr<VertexDeclaration>& morphVertexDeclaration)
+void RendererUtility::DrawMorph(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, const SPtr<GpuBuffer>& morphVertices, const SPtr<VertexDeclaration>& morphVertexDeclaration)
 {
 	// Bind buffers and draw
 	RenderAPI& rapi = RenderAPI::Instance();
@@ -246,7 +247,7 @@ void RendererUtility::DrawMorph(const SPtr<MeshBase>& mesh, const SubMesh& subMe
 	rapi.SetVertexDeclaration(morphVertexDeclaration);
 
 	auto& meshBuffers = vertexData->GetBuffers();
-	SPtr<VertexBuffer> allBuffers[BS_MAX_BOUND_VERTEX_BUFFERS];
+	SPtr<GpuBuffer> allBuffers[BS_MAX_BOUND_VERTEX_BUFFERS];
 
 	u32 endSlot = 0;
 	u32 startSlot = BS_MAX_BOUND_VERTEX_BUFFERS;

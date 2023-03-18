@@ -886,7 +886,7 @@ namespace bs
 
 			SPtr<VertexDeclaration> mTileVertexDecl;
 			SPtr<GpuBuffer> mTileIndexBuffer;
-			SPtr<VertexBuffer> mTileVertexBuffer;
+			SPtr<GpuBuffer> mTileVertexBuffer;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(BokehDOFCombineParamDef)

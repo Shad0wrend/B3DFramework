@@ -81,7 +81,7 @@ namespace bs
 			SPtr<GenericGpuBuffer> BonePrevMatrixBuffer;
 
 			/** Vertex buffer containing element's morph shape vertices, if it has any. */
-			SPtr<VertexBuffer> MorphShapeBuffer;
+			SPtr<GpuBuffer> MorphShapeBuffer;
 
 			/** Vertex declaration used for rendering meshes containing morph shape information. */
 			SPtr<VertexDeclaration> MorphVertexDeclaration;

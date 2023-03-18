@@ -680,11 +680,11 @@ namespace bs
 
 			// Mesh information used for drawing near & far planes
 			mutable SPtr<GpuBuffer> mPlaneIB;
-			mutable SPtr<VertexBuffer> mPlaneVB;
+			mutable SPtr<GpuBuffer> mPlaneVB;
 
 			// Mesh information used for drawing a shadow frustum
 			mutable SPtr<GpuBuffer> mFrustumIB;
-			mutable SPtr<VertexBuffer> mFrustumVB;
+			mutable SPtr<GpuBuffer> mFrustumVB;
 
 			Vector<bool> mRenderableVisibility; // Transient
 			Vector<ShadowMapOptions> mSpotLightShadowOptions; // Transient

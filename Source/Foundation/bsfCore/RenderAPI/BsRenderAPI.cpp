@@ -32,16 +32,16 @@ void RenderAPI::SetComputePipeline(const SPtr<ComputePipelineState>& pipelineSta
 	GetCoreThread().QueueCommand(std::bind(&ct::RenderAPI::SetComputePipeline, ct::RenderAPI::InstancePtr(), pipelineState->GetCore(), nullptr));
 }
 
-void RenderAPI::SetVertexBuffers(u32 index, const Vector<SPtr<VertexBuffer>>& buffers)
+void RenderAPI::SetVertexBuffers(u32 index, const Vector<SPtr<GpuBuffer>>& buffers)
 {
-	Vector<SPtr<ct::VertexBuffer>> coreBuffers(buffers.size());
+	Vector<SPtr<ct::GpuBuffer>> coreBuffers(buffers.size());
 	for(u32 i = 0; i < (u32)buffers.size(); i++)
 		coreBuffers[i] = buffers[i] != nullptr ? buffers[i]->GetCore() : nullptr;
 
-	std::function<void(ct::RenderAPI*, u32, const Vector<SPtr<ct::VertexBuffer>>&)> resizeFunc =
-		[](ct::RenderAPI* rs, u32 idx, const Vector<SPtr<ct::VertexBuffer>>& _buffers)
+	std::function<void(ct::RenderAPI*, u32, const Vector<SPtr<ct::GpuBuffer>>&)> resizeFunc =
+		[](ct::RenderAPI* rs, u32 idx, const Vector<SPtr<ct::GpuBuffer>>& _buffers)
 	{
-		rs->SetVertexBuffers(idx, (SPtr<ct::VertexBuffer>*)_buffers.data(), (u32)_buffers.size());
+		rs->SetVertexBuffers(idx, (SPtr<ct::GpuBuffer>*)_buffers.data(), (u32)_buffers.size());
 	};
 
 	GetCoreThread().QueueCommand(std::bind(resizeFunc, ct::RenderAPI::InstancePtr(), index, coreBuffers));

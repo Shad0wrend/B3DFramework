@@ -4,7 +4,6 @@
 
 #include "BsCorePrerequisites.h"
 #include "Resources/BsGpuResourceData.h"
-#include "RenderAPI/BsVertexBuffer.h"
 #include "RenderAPI/BsVertexDeclaration.h"
 #include "RenderAPI/BsSubMesh.h"
 #include "Math/BsBounds.h"

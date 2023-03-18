@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Renderer/BsRenderable.h"
+
+#include "BsCoreApplication.h"
 #include "Private/RTTI/BsRenderableRTTI.h"
 #include "RTTI/BsMathRTTI.h"
 #include "Scene/BsSceneObject.h"
@@ -14,6 +16,7 @@
 #include "Animation/BsAnimationManager.h"
 #include "Scene/BsSceneManager.h"
 #include "CoreThread/BsCoreObjectSync.h"
+#include "RenderAPI/BsGpuDevice.h"
 
 using namespace bs;
 
@@ -585,12 +588,14 @@ void Renderable::CreateAnimationBuffers()
 		u32 vertexSize = sizeof(Vector3) + sizeof(u32);
 		u32 numVertices = morphShapes->GetNumVertices();
 
-		VertexBufferCreateInformation desc;
-		desc.VertexSize = vertexSize;
-		desc.VertexCount = numVertices;
-		desc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
+		GpuBufferCreateInformation vertexBufferCreateInformation;
+		vertexBufferCreateInformation.Type = GpuBufferType::Vertex;
+		vertexBufferCreateInformation.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
+		vertexBufferCreateInformation.Vertex.ElementSize = vertexSize;
+		vertexBufferCreateInformation.Vertex.Count = numVertices;
 
-		SPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(desc);
+		const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+		SPtr<GpuBuffer> vertexBuffer = gpuDevice->CreateGpuBuffer(vertexBufferCreateInformation);
 
 		u32 totalSize = vertexSize * numVertices;
 		u8* dest = (u8*)vertexBuffer->Lock(0, totalSize, GBL_WRITE_ONLY_DISCARD);

@@ -267,7 +267,7 @@ namespace bs
 			const SPtr<GenericGpuBuffer>& GetBonePrevMatrixBuffer() const { return mBonePrevMatrixBuffer; }
 
 			/** Returns the vertex buffer containing element's morph shape vertices, if it has any. */
-			const SPtr<VertexBuffer>& GetMorphShapeBuffer() const { return mMorphShapeBuffer; }
+			const SPtr<GpuBuffer>& GetMorphShapeBuffer() const { return mMorphShapeBuffer; }
 
 			/** Returns vertex declaration used for rendering meshes containing morph shape information. */
 			const SPtr<VertexDeclaration>& GetMorphVertexDeclaration() const { return mMorphVertexDeclaration; }
@@ -292,7 +292,7 @@ namespace bs
 
 			SPtr<GenericGpuBuffer> mBoneMatrixBuffer;
 			SPtr<GenericGpuBuffer> mBonePrevMatrixBuffer;
-			SPtr<VertexBuffer> mMorphShapeBuffer;
+			SPtr<GpuBuffer> mMorphShapeBuffer;
 			SPtr<VertexDeclaration> mMorphVertexDeclaration;
 		};
 	} // namespace ct

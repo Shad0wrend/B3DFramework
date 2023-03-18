@@ -254,10 +254,10 @@ namespace bs
 
 			TextureRowAllocator<kTexSize, kTexSize> mRowAllocator;
 
-			SPtr<VertexBuffer> mInjectUV;
+			SPtr<GpuBuffer> mInjectUV;
 			SPtr<GpuBuffer> mInjectIndices;
 			SPtr<VertexDeclaration> mInjectVertexDecl;
-			SPtr<VertexBuffer> mInjectScratch;
+			SPtr<GpuBuffer> mInjectScratch;
 		};
 
 		/**

@@ -289,12 +289,13 @@ void Mesh::Initialize()
 		if(!mVertexDesc->HasStream(i))
 			continue;
 
-		VertexBufferCreateInformation vbDesc;
-		vbDesc.VertexSize = mVertexData->VertexDeclaration->GetProperties().GetVertexSize(i);
-		vbDesc.VertexCount = mVertexData->VertexCount;
-		vbDesc.Flags = flags;
+		GpuBufferCreateInformation vertexBufferCreateInformation;
+		vertexBufferCreateInformation.Type = GpuBufferType::Vertex;
+		vertexBufferCreateInformation.Flags = flags;
+		vertexBufferCreateInformation.Vertex.ElementSize = mVertexData->VertexDeclaration->GetProperties().GetVertexSize(i);
+		vertexBufferCreateInformation.Vertex.Count = mVertexData->VertexCount;
 
-		SPtr<VertexBuffer> vertexBuffer = VertexBuffer::Create(vbDesc, mDeviceMask);
+		SPtr<GpuBuffer> vertexBuffer = gpuDevice->CreateGpuBuffer(vertexBufferCreateInformation);
 		mVertexData->SetBuffer(i, vertexBuffer);
 	}
 
@@ -396,7 +397,7 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 			continue;
 		}
 
-		SPtr<VertexBuffer> vertexBuffer = mVertexData->GetBuffer(i);
+		SPtr<GpuBuffer> vertexBuffer = mVertexData->GetBuffer(i);
 
 		u32 bufferSize = meshData.GetStreamSize(i);
 		u8* srcVertBufferData = meshData.GetStreamData(i);
@@ -469,8 +470,10 @@ void Mesh::ReadData(MeshData& meshData, u32 deviceIdx, u32 queueIdx)
 			if(!meshData.GetVertexDescription()->HasStream(streamIdx))
 				continue;
 
-			SPtr<VertexBuffer> vertexBuffer = iter->second;
-			const VertexBufferProperties& vbProps = vertexBuffer->GetProperties();
+			SPtr<GpuBuffer> vertexBuffer = iter->second;
+
+			const GpuBufferInformation& vertexBufferInformation = vertexBuffer->GetInformation();
+			B3D_ENSURE(vertexBufferInformation.Type == GpuBufferType::Vertex);
 
 			// Ensure both have the same sized vertices
 			u32 myVertSize = mVertexDesc->GetVertexStride(streamIdx);
@@ -485,7 +488,7 @@ void Mesh::ReadData(MeshData& meshData, u32 deviceIdx, u32 queueIdx)
 			}
 
 			u32 numVerticesToCopy = meshData.GetVertexCount();
-			u32 bufferSize = vbProps.GetVertexSize() * numVerticesToCopy;
+			u32 bufferSize = vertexBufferInformation.Vertex.ElementSize * numVerticesToCopy;
 
 			if(bufferSize > vertexBuffer->GetSize())
 			{

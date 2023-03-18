@@ -7,7 +7,6 @@
 #include "BsVulkanGpuParams.h"
 #include "BsVulkanQueue.h"
 #include "BsVulkanTexture.h"
-#include "BsVulkanVertexBuffer.h"
 #include "BsVulkanGpuBuffer.h"
 #include "BsVulkanFramebuffer.h"
 #include "Managers/BsVulkanVertexInputManager.h"
@@ -1414,7 +1413,7 @@ void VulkanInternalCommandBuffer::SetDrawOp(DrawOperationType drawOp)
 	mVertexInputsDirty = true;
 }
 
-void VulkanInternalCommandBuffer::SetVertexBuffers(u32 startIndex, SPtr<VertexBuffer>* buffers, u32 bufferCount)
+void VulkanInternalCommandBuffer::SetVertexBuffers(u32 startIndex, SPtr<GpuBuffer>* buffers, u32 bufferCount)
 {
 	const u32 endIndex = startIndex + bufferCount;
 	if(endIndex <= mVertexBuffers.size())
@@ -1437,7 +1436,7 @@ void VulkanInternalCommandBuffer::SetVertexBuffers(u32 startIndex, SPtr<VertexBu
 		mVertexBuffers.resize(endIndex);
 
 	for(u32 vertexBufferIndex = startIndex; vertexBufferIndex < endIndex; vertexBufferIndex++)
-		mVertexBuffers[vertexBufferIndex] = std::static_pointer_cast<VulkanVertexBuffer>(buffers[vertexBufferIndex]);
+		mVertexBuffers[vertexBufferIndex] = std::static_pointer_cast<VulkanGpuBuffer>(buffers[vertexBufferIndex]);
 
 	mVertexInputsDirty = true;
 }

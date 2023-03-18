@@ -699,12 +699,13 @@ ShadowRendering::ShadowRendering(u32 shadowMapSize)
 
 	// Create plane index and vertex buffers
 	{
-		VertexBufferCreateInformation vbDesc;
-		vbDesc.VertexCount = 8;
-		vbDesc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
-		vbDesc.VertexSize = mPositionOnlyVD->GetProperties().GetVertexSize(0);
+		GpuBufferCreateInformation vertexBufferCreateInformation;
+		vertexBufferCreateInformation.Type = GpuBufferType::Vertex;
+		vertexBufferCreateInformation.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
+		vertexBufferCreateInformation.Vertex.Count = 8;
+		vertexBufferCreateInformation.Vertex.ElementSize = mPositionOnlyVD->GetProperties().GetVertexSize(0);
 
-		mPlaneVB = VertexBuffer::Create(vbDesc);
+		mPlaneVB = gpuDevice->CreateGpuBuffer(vertexBufferCreateInformation);
 
 		GpuBufferCreateInformation indexBufferCreateInformation;
 		indexBufferCreateInformation.Type = GpuBufferType::Index;
@@ -728,12 +729,13 @@ ShadowRendering::ShadowRendering(u32 shadowMapSize)
 
 	// Create frustum index and vertex buffers
 	{
-		VertexBufferCreateInformation vbDesc;
-		vbDesc.VertexCount = 8;
-		vbDesc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
-		vbDesc.VertexSize = mPositionOnlyVD->GetProperties().GetVertexSize(0);
+		GpuBufferCreateInformation vertexBufferCreateInformation;
+		vertexBufferCreateInformation.Type = GpuBufferType::Vertex;
+		vertexBufferCreateInformation.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
+		vertexBufferCreateInformation.Vertex.Count = 8;
+		vertexBufferCreateInformation.Vertex.ElementSize = mPositionOnlyVD->GetProperties().GetVertexSize(0);
 
-		mFrustumVB = VertexBuffer::Create(vbDesc);
+		mFrustumVB = gpuDevice->CreateGpuBuffer(vertexBufferCreateInformation);
 
 		GpuBufferCreateInformation indexBufferCreateInformation;
 		indexBufferCreateInformation.Type = GpuBufferType::Index;

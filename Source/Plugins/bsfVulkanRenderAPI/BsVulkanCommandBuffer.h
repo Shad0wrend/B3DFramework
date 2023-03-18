@@ -16,8 +16,6 @@ namespace bs
 		class VulkanOcclusionQuery;
 		class VulkanTimerQuery;
 		class VulkanImage;
-		class VulkanIndexBuffer;
-		class VulkanVertexBuffer;
 
 		/** @addtogroup Vulkan
 		 *  @{
@@ -340,7 +338,7 @@ namespace bs
 			void SetDrawOp(DrawOperationType drawOp);
 
 			/** Sets one or multiple vertex buffers that will be used for subsequent draw() or drawIndexed() calls. */
-			void SetVertexBuffers(u32 startIndex, SPtr<VertexBuffer>* buffers, u32 bufferCount);
+			void SetVertexBuffers(u32 startIndex, SPtr<GpuBuffer>* buffers, u32 bufferCount);
 
 			/** Sets an index buffer that will be used for subsequent drawIndexed() calls. */
 			void SetIndexBuffer(const SPtr<GpuBuffer>& buffer);
@@ -758,7 +756,7 @@ namespace bs
 			SPtr<VulkanComputePipelineState> mComputePipeline;
 			SPtr<VertexDeclaration> mVertexDecl;
 			SPtr<VulkanGpuBuffer> mIndexBuffer;
-			Vector<SPtr<VulkanVertexBuffer>> mVertexBuffers;
+			Vector<SPtr<VulkanGpuBuffer>> mVertexBuffers;
 			Rect2 mNormalizedViewportArea{ 0.0f, 0.0f, 1.0f, 1.0f };
 			Rect2I mScissor{ 0, 0, 0, 0 };
 			bool mIsScissorTestEnabled = false;

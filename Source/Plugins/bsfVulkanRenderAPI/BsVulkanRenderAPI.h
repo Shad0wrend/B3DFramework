@@ -32,7 +32,7 @@ namespace bs
 			void EnableScissorTest(u32 left, u32 top, u32 right, u32 bottom, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 			void DisableScissorTest(const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 			void SetStencilRef(u32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
-			void SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u32 numBuffers, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
+			void SetVertexBuffers(u32 index, SPtr<GpuBuffer>* buffers, u32 numBuffers, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 			void SetIndexBuffer(const SPtr<GpuBuffer>& buffer, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 			void SetVertexDeclaration(const SPtr<VertexDeclaration>& vertexDeclaration, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 			void SetDrawOperation(DrawOperationType op, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;

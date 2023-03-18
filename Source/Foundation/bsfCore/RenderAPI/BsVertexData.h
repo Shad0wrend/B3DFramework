@@ -4,7 +4,6 @@
 
 #include "BsCorePrerequisites.h"
 #include "RenderAPI/BsVertexDeclaration.h"
-#include "RenderAPI/BsVertexBuffer.h"
 
 namespace bs
 {
@@ -26,13 +25,13 @@ namespace bs
 			~VertexData() = default;
 
 			/**	Assigns a new vertex buffer to the specified index. */
-			void SetBuffer(u32 index, SPtr<VertexBuffer> buffer);
+			void SetBuffer(u32 index, SPtr<GpuBuffer> buffer);
 
 			/**	Retrieves a vertex buffer from the specified index. */
-			SPtr<VertexBuffer> GetBuffer(u32 index) const;
+			SPtr<GpuBuffer> GetBuffer(u32 index) const;
 
 			/**	Returns a list of all bound vertex buffers. */
-			const UnorderedMap<u32, SPtr<VertexBuffer>>& GetBuffers() const { return mVertexBuffers; }
+			const UnorderedMap<u32, SPtr<GpuBuffer>>& GetBuffers() const { return mVertexBuffers; }
 
 			/**	Checks if there is a buffer at the specified index. */
 			bool IsBufferBound(u32 index) const;
@@ -52,7 +51,7 @@ namespace bs
 		private:
 			void RecalculateMaxIndex();
 
-			UnorderedMap<u32, SPtr<VertexBuffer>> mVertexBuffers;
+			UnorderedMap<u32, SPtr<GpuBuffer>> mVertexBuffers;
 			u32 mMaxBufferIdx = 0;
 		};
 

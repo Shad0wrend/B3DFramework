@@ -2,7 +2,6 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "RenderAPI/BsVertexData.h"
 #include "Managers/BsHardwareBufferManager.h"
-#include "RenderAPI/BsVertexBuffer.h"
 #include "Math/BsVector3.h"
 #include "Error/BsException.h"
 #include "RenderAPI/BsRenderAPI.h"
@@ -11,14 +10,14 @@ using namespace bs;
 
 namespace bs { namespace ct
 {
-void VertexData::SetBuffer(u32 index, SPtr<VertexBuffer> buffer)
+void VertexData::SetBuffer(u32 index, SPtr<GpuBuffer> buffer)
 {
 	mVertexBuffers[index] = buffer;
 
 	RecalculateMaxIndex();
 }
 
-SPtr<VertexBuffer> VertexData::GetBuffer(u32 index) const
+SPtr<GpuBuffer> VertexData::GetBuffer(u32 index) const
 {
 	auto iterFind = mVertexBuffers.find(index);
 	if(iterFind != mVertexBuffers.end())

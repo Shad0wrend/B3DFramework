@@ -4,7 +4,6 @@
 #include "Renderer/BsParamBlocks.h"
 #include "Renderer/BsRendererMaterial.h"
 #include "Renderer/BsGpuResourcePool.h"
-#include "RenderAPI/BsVertexBuffer.h"
 #include "RenderAPI/BsGenericGpuBuffer.h"
 #include "RenderAPI/BsVertexDataDesc.h"
 #include "RenderAPI/BsGpuPipelineParamInfo.h"
@@ -252,13 +251,13 @@ struct GpuParticleHelperBuffers
 
 	GpuParticleHelperBuffers();
 
-	SPtr<VertexBuffer> TileUVs;
-	SPtr<VertexBuffer> ParticleUVs;
+	SPtr<GpuBuffer> TileUVs;
+	SPtr<GpuBuffer> ParticleUVs;
 	SPtr<GpuBuffer> SpriteIndices;
 	SPtr<VertexDeclaration> TileVertexDecl;
 	SPtr<VertexDeclaration> InjectVertexDecl;
 	SPtr<GenericGpuBuffer> TileScratch;
-	SPtr<VertexBuffer> InjectScratch;
+	SPtr<GpuBuffer> InjectScratch;
 };
 
 GpuParticleResources::GpuParticleResources()
@@ -413,11 +412,12 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 	InjectVertexDecl = VertexDeclaration::Create(injectVertexDesc);
 
 	// Prepare UV coordinates for rendering tiles
-	VertexBufferCreateInformation tileUVBufferDesc;
-	tileUVBufferDesc.VertexCount = kParticlesPerInstance * 4;
-	tileUVBufferDesc.VertexSize = tileVertexDesc->GetVertexStride();
+	GpuBufferCreateInformation tileUVBufferCreateInformation;
+	tileUVBufferCreateInformation.Type = GpuBufferType::Vertex;
+	tileUVBufferCreateInformation.Vertex.Count = kParticlesPerInstance * 4;
+	tileUVBufferCreateInformation.Vertex.ElementSize = tileVertexDesc->GetVertexStride();
 
-	TileUVs = VertexBuffer::Create(tileUVBufferDesc);
+	TileUVs = gpuDevice->CreateGpuBuffer(tileUVBufferCreateInformation);
 
 	auto* const tileUVData = (Vector2*)TileUVs->Lock(GBL_WRITE_ONLY_DISCARD);
 	const float tileUVScale = GpuParticleResources::kTileSize / (float)GpuParticleResources::kTexSize;
@@ -432,11 +432,12 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 	TileUVs->Unlock();
 
 	// Prepare UV coordinates for rendering particles
-	VertexBufferCreateInformation particleUVBufferDesc;
-	particleUVBufferDesc.VertexCount = kParticlesPerInstance * 4;
-	particleUVBufferDesc.VertexSize = tileVertexDesc->GetVertexStride();
+	GpuBufferCreateInformation particleUVBufferCreateInformation;
+	particleUVBufferCreateInformation.Type = GpuBufferType::Vertex;
+	particleUVBufferCreateInformation.Vertex.Count = kParticlesPerInstance * 4;
+	particleUVBufferCreateInformation.Vertex.ElementSize = tileVertexDesc->GetVertexStride();
 
-	ParticleUVs = VertexBuffer::Create(particleUVBufferDesc);
+	ParticleUVs = gpuDevice->CreateGpuBuffer(particleUVBufferCreateInformation);
 
 	auto* const particleUVData = (Vector2*)ParticleUVs->Lock(GBL_WRITE_ONLY_DISCARD);
 	const float particleUVScale = 1.0f / (float)GpuParticleResources::kTexSize;
@@ -497,12 +498,13 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 	TileScratch = GenericGpuBuffer::Create(tileScratchBufferDesc);
 
 	// Prepare a scratch buffer we'll use to inject new particles
-	VertexBufferCreateInformation injectScratchBufferDesc;
-	injectScratchBufferDesc.VertexCount = kNumScratchParticles;
-	injectScratchBufferDesc.VertexSize = injectVertexDesc->GetVertexStride(0);
-	injectScratchBufferDesc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
+	GpuBufferCreateInformation injectScratchBufferCreateInformation;
+	injectScratchBufferCreateInformation.Type = GpuBufferType::Vertex;
+	injectScratchBufferCreateInformation.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
+	injectScratchBufferCreateInformation.Vertex.Count = kNumScratchParticles;
+	injectScratchBufferCreateInformation.Vertex.ElementSize = injectVertexDesc->GetVertexStride(0);
 
-	InjectScratch = VertexBuffer::Create(injectScratchBufferDesc);
+	InjectScratch = gpuDevice->CreateGpuBuffer(injectScratchBufferCreateInformation);
 }
 
 GpuParticleSystem::GpuParticleSystem(ParticleSystem* parent)
@@ -777,7 +779,7 @@ void GpuParticleSimulation::Simulate(const SceneInfo& sceneInfo, const ParticleP
 	rapi.SetRenderTarget(m->Resources.GetSimulationTarget());
 	rapi.SetVertexDeclaration(m->HelperBuffers.TileVertexDecl);
 
-	SPtr<VertexBuffer> buffers[] = { m->HelperBuffers.TileUVs };
+	SPtr<GpuBuffer> buffers[] = { m->HelperBuffers.TileUVs };
 	rapi.SetVertexBuffers(0, buffers, (u32)B3DSize(buffers));
 	rapi.SetIndexBuffer(m->HelperBuffers.SpriteIndices);
 	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
@@ -976,7 +978,7 @@ void GpuParticleSimulation::ClearTiles(const Vector<u32>& tiles)
 	RenderAPI& rapi = RenderAPI::Instance();
 	rapi.SetVertexDeclaration(m->HelperBuffers.TileVertexDecl);
 
-	SPtr<VertexBuffer> buffers[] = { m->HelperBuffers.TileUVs };
+	SPtr<GpuBuffer> buffers[] = { m->HelperBuffers.TileUVs };
 	rapi.SetVertexBuffers(0, buffers, (u32)B3DSize(buffers));
 	rapi.SetIndexBuffer(m->HelperBuffers.SpriteIndices);
 	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
@@ -1016,7 +1018,7 @@ void GpuParticleSimulation::InjectParticles(const Vector<GpuParticle>& particles
 	RenderAPI& rapi = RenderAPI::Instance();
 	rapi.SetVertexDeclaration(m->HelperBuffers.InjectVertexDecl);
 
-	SPtr<VertexBuffer> buffers[] = { m->HelperBuffers.InjectScratch, m->HelperBuffers.ParticleUVs };
+	SPtr<GpuBuffer> buffers[] = { m->HelperBuffers.InjectScratch, m->HelperBuffers.ParticleUVs };
 	rapi.SetVertexBuffers(0, buffers, (u32)B3DSize(buffers));
 	rapi.SetIndexBuffer(m->HelperBuffers.SpriteIndices);
 	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
@@ -1362,11 +1364,12 @@ GpuParticleCurves::GpuParticleCurves()
 	mInjectVertexDecl = VertexDeclaration::Create(injectVertexDesc);
 
 	// Prepare UV coordinates for injecting curves
-	VertexBufferCreateInformation injectUVBufferDesc;
-	injectUVBufferDesc.VertexCount = 4;
-	injectUVBufferDesc.VertexSize = injectVertexDesc->GetVertexStride(1);
+	GpuBufferCreateInformation injectUVBufferCreateInformation;
+	injectUVBufferCreateInformation.Type = GpuBufferType::Vertex;
+	injectUVBufferCreateInformation.Vertex.Count = 4;
+	injectUVBufferCreateInformation.Vertex.ElementSize = injectVertexDesc->GetVertexStride(1);
 
-	mInjectUV = VertexBuffer::Create(injectUVBufferDesc);
+	mInjectUV = gpuDevice->CreateGpuBuffer(injectUVBufferCreateInformation);
 
 	auto* const tileUVData = (Vector2*)mInjectUV->Lock(GBL_WRITE_ONLY_DISCARD);
 	const float tileUVScale = 1.0f / (float)kTexSize;
@@ -1413,12 +1416,13 @@ GpuParticleCurves::GpuParticleCurves()
 	mInjectIndices->Unlock();
 
 	// Prepare a scratch buffer we'll use to inject new curves
-	VertexBufferCreateInformation injectScratchBufferDesc;
-	injectScratchBufferDesc.VertexCount = kScratchNumVertices;
-	injectScratchBufferDesc.VertexSize = injectVertexDesc->GetVertexStride(0);
-	injectScratchBufferDesc.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
+	GpuBufferCreateInformation injectScratchBufferCreateInformation;
+	injectScratchBufferCreateInformation.Type = GpuBufferType::Vertex;
+	injectScratchBufferCreateInformation.Flags = GpuBufferFlag::StoreOnCPUWithGPUAccess;
+	injectScratchBufferCreateInformation.Vertex.Count = kScratchNumVertices;
+	injectScratchBufferCreateInformation.Vertex.ElementSize = injectVertexDesc->GetVertexStride(0);
 
-	mInjectScratch = VertexBuffer::Create(injectScratchBufferDesc);
+	mInjectScratch = gpuDevice->CreateGpuBuffer(injectScratchBufferCreateInformation);
 }
 
 GpuParticleCurves::~GpuParticleCurves()
@@ -1462,7 +1466,7 @@ void GpuParticleCurves::ApplyChanges()
 	rapi.SetRenderTarget(mRT);
 	rapi.SetVertexDeclaration(mInjectVertexDecl);
 
-	SPtr<VertexBuffer> buffers[] = { mInjectScratch, mInjectUV };
+	SPtr<GpuBuffer> buffers[] = { mInjectScratch, mInjectUV };
 	rapi.SetVertexBuffers(0, buffers, (u32)B3DSize(buffers));
 	rapi.SetIndexBuffer(mInjectIndices);
 	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);

@@ -1261,11 +1261,12 @@ void BokehDOFMat::Initialize()
 	mTileVertexDecl = VertexDeclaration::Create(tileVertexDesc);
 
 	// Prepare vertex buffer for rendering tiles
-	VertexBufferCreateInformation tileVertexBufferDesc;
-	tileVertexBufferDesc.VertexCount = kQuadsPerTile * 4;
-	tileVertexBufferDesc.VertexSize = tileVertexDesc->GetVertexStride();
+	GpuBufferCreateInformation tileVertexBufferCreateInformation;
+	tileVertexBufferCreateInformation.Type = GpuBufferType::Vertex;
+	tileVertexBufferCreateInformation.Vertex.Count = kQuadsPerTile * 4;
+	tileVertexBufferCreateInformation.Vertex.ElementSize = tileVertexDesc->GetVertexStride();
 
-	mTileVertexBuffer = VertexBuffer::Create(tileVertexBufferDesc);
+	mTileVertexBuffer = mGpuDevice->CreateGpuBuffer(tileVertexBufferCreateInformation);
 
 	auto* const vertexData = (Vector2*)mTileVertexBuffer->Lock(GBL_WRITE_ONLY_DISCARD);
 	for(u32 i = 0; i < kQuadsPerTile; i++)
@@ -1364,7 +1365,7 @@ void BokehDOFMat::Execute(const SPtr<Texture>& input, const RendererView& view, 
 	rapi.ClearRenderTarget(FBT_COLOR, Color::kZero);
 	rapi.SetVertexDeclaration(mTileVertexDecl);
 
-	SPtr<VertexBuffer> buffers[] = { mTileVertexBuffer };
+	SPtr<GpuBuffer> buffers[] = { mTileVertexBuffer };
 	rapi.SetVertexBuffers(0, buffers, (u32)B3DSize(buffers));
 	rapi.SetIndexBuffer(mTileIndexBuffer);
 	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);

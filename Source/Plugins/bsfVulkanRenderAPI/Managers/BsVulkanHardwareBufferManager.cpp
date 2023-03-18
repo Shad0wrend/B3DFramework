@@ -1,7 +1,6 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Managers/BsVulkanHardwareBufferManager.h"
-#include "BsVulkanVertexBuffer.h"
 #include "BsVulkanGenericGpuBuffer.h"
 #include "BsVulkanGpuBackend.h"
 #include "BsVulkanGpuParamBlockBuffer.h"
@@ -26,14 +25,6 @@ VulkanHardwareBufferManager::VulkanHardwareBufferManager()
 	mDummyUniformBuffer = std::static_pointer_cast<VulkanGpuBuffer>(vulkanGpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateUniform(16, GpuBufferFlag::StoreOnGPU)));
 	mDummyStructuredBuffer = std::static_pointer_cast<VulkanGpuBuffer>(vulkanGpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateStructuredStorage(16, 1, GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU)));
 	mDummyVertexBuffer = std::static_pointer_cast<VulkanGpuBuffer>(vulkanGpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateVertex(16, 1, GpuBufferFlag::StoreOnGPU)));
-}
-
-SPtr<ct::VertexBuffer> VulkanHardwareBufferManager::CreateVertexBufferInternal(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask)
-{
-	SPtr<VulkanVertexBuffer> ret = B3DMakeShared<VulkanVertexBuffer>(desc, deviceMask);
-	ret->SetShared(ret);
-
-	return ret;
 }
 
 SPtr<ct::GpuParamBlockBuffer> VulkanHardwareBufferManager::CreateGpuParamBlockBufferInternal(u32 size, GpuBufferFlags flags, GpuDeviceFlags deviceMask)

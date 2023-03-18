@@ -3,8 +3,8 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
+#include "RenderAPI/BsGpuBuffer.h"
 #include "Utility/BsModule.h"
-#include "RenderAPI/BsVertexBuffer.h"
 #include "RenderAPI/BsVertexDeclaration.h"
 
 namespace bs
@@ -26,14 +26,6 @@ namespace bs
 	public:
 		HardwareBufferManager() = default;
 		virtual ~HardwareBufferManager() = default;
-
-		/**
-		 * Creates a new vertex buffer used for holding number of vertices and other per-vertex data. Buffer can be bound
-		 * to the pipeline and its data can be passed to the active vertex GPU program.
-		 *
-		 * @param[in]	createInformation	Description of the buffer to create.
-		 */
-		SPtr<VertexBuffer> CreateVertexBuffer(const VertexBufferCreateInformation& createInformation);
 
 		/**
 		 * Creates an GPU parameter block that you can use for setting parameters for GPU programs. Parameter blocks may be
@@ -78,12 +70,6 @@ namespace bs
 			virtual ~HardwareBufferManager() {}
 
 			/**
-			 * @copydoc bs::HardwareBufferManager::CreateVertexBuffer
-			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
-			 */
-			SPtr<VertexBuffer> CreateVertexBuffer(const VertexBufferCreateInformation& createInformation, GpuDeviceFlags deviceMask = GDF_DEFAULT);
-
-			/**
 			 * @copydoc bs::HardwareBufferManager::CreateVertexDeclaration
 			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 			 */
@@ -116,8 +102,6 @@ namespace bs
 			SPtr<GpuParams> CreateGpuParams(const SPtr<GpuPipelineParamInfo>& paramInfo, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		protected:
-			friend class bs::VertexBuffer;
-			friend class VertexBuffer;
 			friend class bs::VertexDeclaration;
 			friend class bs::GpuParamBlockBuffer;
 			friend class bs::GenericGpuBuffer;
@@ -142,9 +126,6 @@ namespace bs
 
 				Vector<VertexElement> Elements;
 			};
-
-			/** @copydoc CreateVertexBuffer */
-			virtual SPtr<VertexBuffer> CreateVertexBufferInternal(const VertexBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) = 0;
 
 			/** @copydoc CreateGpuParamBlockBuffer(u32, GpuBufferUsage, GpuDeviceFlags) */
 			virtual SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBufferInternal(u32 size, GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU, GpuDeviceFlags deviceMask = GDF_DEFAULT) = 0;

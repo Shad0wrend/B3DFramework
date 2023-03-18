@@ -240,7 +240,7 @@ namespace bs
 			 *
 			 * @note	Core thread.
 			 */
-			void DrawMorph(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, const SPtr<VertexBuffer>& morphVertices, const SPtr<VertexDeclaration>& morphVertexDeclaration);
+			void DrawMorph(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, const SPtr<GpuBuffer>& morphVertices, const SPtr<VertexDeclaration>& morphVertexDeclaration);
 
 			/**
 			 * Blits contents of the provided texture into the currently bound render target. If the provided texture contains
@@ -315,7 +315,7 @@ namespace bs
 			static constexpr u32 kNumQuadVbSlots = 1024;
 
 			SPtr<GpuBuffer> mFullScreenQuadIB;
-			SPtr<VertexBuffer> mFullScreenQuadVB;
+			SPtr<GpuBuffer> mFullScreenQuadVB;
 			SPtr<VertexDataDesc> mFullscreenQuadVDesc;
 			SPtr<VertexDeclaration> mFullscreenQuadVDecl;
 			u32 mNextQuadVBSlot = 0;

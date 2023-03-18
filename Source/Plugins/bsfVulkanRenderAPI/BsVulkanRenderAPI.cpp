@@ -143,7 +143,7 @@ void VulkanRenderAPI::SetViewport(const Rect2& vp, const SPtr<CommandBuffer>& co
 	vkCB->SetNormalizedViewportArea(vp);
 }
 
-void VulkanRenderAPI::SetVertexBuffers(u32 index, SPtr<VertexBuffer>* buffers, u32 numBuffers, const SPtr<CommandBuffer>& commandBuffer)
+void VulkanRenderAPI::SetVertexBuffers(u32 index, SPtr<GpuBuffer>* buffers, u32 numBuffers, const SPtr<CommandBuffer>& commandBuffer)
 {
 	VulkanCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
 	VulkanInternalCommandBuffer* vkCB = cb->GetInternal();
