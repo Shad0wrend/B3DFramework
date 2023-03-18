@@ -35,13 +35,13 @@ namespace bs
 	{
 	public:
 		/** Types of GPU parameters. */
-		enum class ParamType
+		enum class GpuParameterType
 		{
-			ParamBlock,
-			Texture,
-			LoadStoreTexture,
-			Buffer,
-			SamplerState,
+			UniformBuffer,
+			SampledTexture,
+			StorageTexture,
+			StorageBuffer,
+			Sampler,
 			Count
 		};
 
@@ -56,20 +56,20 @@ namespace bs
 		u32 GetResourceCount() const { return mResourceCount; }
 
 		/** Returns the number of elements in all sets for the specified parameter type. */
-		u32 GetResourceCount(ParamType type) const { return mResourceCountPerType[(u32)type]; }
+		u32 GetResourceCount(GpuParameterType type) const { return mResourceCountPerType[(u32)type]; }
 
 		/** Returns the total number of slots across all sets. */
 		u32 GetBindingSlotCount() const { return mBindingSlotCount; }
 
 		/** Returns the number of slots in all sets for the specified parameter type. */
-		u32 GetBindingSlotCount(ParamType type) { return mBindingSlotCountPerType[(u32)type]; }
+		u32 GetBindingSlotCount(GpuParameterType type) { return mBindingSlotCountPerType[(u32)type]; }
 
 		/**
 		 * Converts a set/slot/array index combination into a sequential index that maps to the parameter in that parameter type's array.
 		 *
 		 * If the set, slot or array index is out of valid range, the method logs an error and returns ~0u. Only performs range checking in debug mode.
 		 */
-		u32 GetSequentialResourceIndex(ParamType type, u32 set, u32 slot, u32 arrayIndex) const;
+		u32 GetSequentialResourceIndex(GpuParameterType type, u32 set, u32 slot, u32 arrayIndex) const;
 
 		/**
 		 * Converts a set and slot combination into a sequential index that maps to the parameter in that parameter type's array. This is similar to
@@ -77,25 +77,25 @@ namespace bs
 		 *
 		 * If the set or slot is out of valid range, the method logs an error and returns ~0u. Only performs range checking in debug mode.
 		 */
-		u32 GetSequentialBindingIndex(ParamType type, u32 set, u32 slot) const;
+		u32 GetSequentialBindingIndex(GpuParameterType type, u32 set, u32 slot) const;
 
 		/** Converts a sequential binding index index into a set/slot combination. */
-		void GetBinding(ParamType type, u32 sequentialBindingIndex, u32& set, u32& slot) const;
+		void GetBinding(GpuParameterType type, u32 sequentialBindingIndex, u32& set, u32& slot) const;
 
 		/**
 		 * Finds set/slot indices of a parameter with the specified name for the specified GPU program stage. Set/slot
 		 * indices are set to ~0u if a stage doesn't have a block with the specified name.
 		 */
-		void GetBinding(GpuProgramType progType, ParamType type, const String& name, GpuParamBinding& binding);
+		void GetBinding(GpuProgramType progType, GpuParameterType type, const String& name, GpuParamBinding& binding);
 
 		/**
 		 * Finds set/slot indices of a parameter with the specified name for every GPU program stage. Set/slot indices are
 		 * set to -1 if a stage doesn't have a block with the specified name.
 		 */
-		void GetBindings(ParamType type, const String& name, GpuParamBinding (&bindings)[GPT_COUNT]);
+		void GetBindings(GpuParameterType type, const String& name, GpuParamBinding (&bindings)[GPT_COUNT]);
 
 		/** Returns the number of entries in the array at the specified binding index. */
-		u32 GetArraySize(ParamType type, u32 sequentialBindingIndex);
+		u32 GetArraySize(GpuParameterType type, u32 sequentialBindingIndex);
 
 		/** Returns descriptions of individual parameters for the specified GPU program type. */
 		const SPtr<GpuParamDesc>& GetParamDesc(GpuProgramType type) const { return mParamDescs[(int)type]; }
@@ -109,7 +109,7 @@ namespace bs
 			u32* SlotToSequentialSamplerBindingIndex = nullptr;
 			u32* SlotToSequentialSamplerResourceIndex = nullptr;
 			u32* SlotArraySizes = nullptr;
-			ParamType* SlotTypes = nullptr;
+			GpuParameterType* SlotTypes = nullptr;
 			u32 SlotCount = 0;
 		};
 
@@ -127,10 +127,10 @@ namespace bs
 		SetInfo* mSetInfos = nullptr;
 
 		u32 mBindingSlotCount = 0;
-		u32 mBindingSlotCountPerType[(int)ParamType::Count];
+		u32 mBindingSlotCountPerType[(int)GpuParameterType::Count];
 		u32 mResourceCount = 0;
-		u32 mResourceCountPerType[(int)ParamType::Count];
-		ResourceInfo* mResourceInfos[(int)ParamType::Count];
+		u32 mResourceCountPerType[(int)GpuParameterType::Count];
+		ResourceInfo* mResourceInfos[(int)GpuParameterType::Count];
 
 		GroupAlloc mAlloc;
 	};

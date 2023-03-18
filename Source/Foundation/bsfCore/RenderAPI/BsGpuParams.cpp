@@ -150,11 +150,11 @@ template <bool Core>
 TGpuParams<Core>::TGpuParams(const SPtr<GpuPipelineParamInfoBase>& paramInfo)
 	: GpuParamsBase(paramInfo)
 {
-	const u32 uniformBufferCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::ParamBlock);
-	const u32 sampledTextureCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::Texture);
-	const u32 storageTextureCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
-	const u32 storageBufferCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::Buffer);
-	const u32 samplerCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::SamplerState);
+	const u32 uniformBufferCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::UniformBuffer);
+	const u32 sampledTextureCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::SampledTexture);
+	const u32 storageTextureCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::StorageTexture);
+	const u32 storageBufferCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::StorageBuffer);
+	const u32 samplerCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::Sampler);
 
 	const u32 uniformBufferEntrySize = Math::RoundToMultiple((u32)sizeof(UniformBufferData), 16u);
 	const u32 textureEntrySize = Math::RoundToMultiple((u32)sizeof(TextureData), 16u);
@@ -206,11 +206,11 @@ TGpuParams<Core>::TGpuParams(const SPtr<GpuPipelineParamInfoBase>& paramInfo)
 template <bool Core>
 TGpuParams<Core>::~TGpuParams()
 {
-	const u32 uniformBufferCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::ParamBlock);
-	const u32 sampledTextureCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::Texture);
-	const u32 storageTextureCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
-	const u32 storageBufferCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::Buffer);
-	const u32 samplerCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::SamplerState);
+	const u32 uniformBufferCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::UniformBuffer);
+	const u32 sampledTextureCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::SampledTexture);
+	const u32 storageTextureCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::StorageTexture);
+	const u32 storageBufferCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::StorageBuffer);
+	const u32 samplerCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::Sampler);
 
 	for(u32 i = 0; i < uniformBufferCount; i++)
 		mUniformBufferData[i].~UniformBufferData();
@@ -240,7 +240,7 @@ TGpuParams<Core>::~TGpuParams()
 template <bool Core>
 bool TGpuParams<Core>::SetUniformBuffer(u32 set, u32 slot, const UniformBufferType& paramBlockBuffer, u32 arrayIndex, u32 offset)
 {
-	const u32 sequentialResourceIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::ParamType::ParamBlock, set, slot, arrayIndex);
+	const u32 sequentialResourceIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::GpuParameterType::UniformBuffer, set, slot, arrayIndex);
 	if (sequentialResourceIndex == ~0u)
 	{
 		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find parameter block with the set/slot combination: {0}/{1}", set, slot);
@@ -495,7 +495,7 @@ bool TGpuParams<Core>::TryGetSamplerStateParameter(GpuProgramType type, const St
 template <bool Core>
 typename TGpuParams<Core>::UniformBufferType TGpuParams<Core>::GetUniformBuffer(u32 set, u32 slot, u32 arrayIndex) const
 {
-	const u32 sequentialResourceIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::ParamType::ParamBlock, set, slot, arrayIndex);
+	const u32 sequentialResourceIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::GpuParameterType::UniformBuffer, set, slot, arrayIndex);
 	if(sequentialResourceIndex == ~0u)
 		return nullptr;
 
@@ -505,7 +505,7 @@ typename TGpuParams<Core>::UniformBufferType TGpuParams<Core>::GetUniformBuffer(
 template <bool Core>
 typename TGpuParams<Core>::TextureType TGpuParams<Core>::GetSampledTexture(u32 set, u32 slot, u32 arrayIndex) const
 {
-	const u32 sequentialResourceIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::ParamType::Texture, set, slot, arrayIndex);
+	const u32 sequentialResourceIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::GpuParameterType::SampledTexture, set, slot, arrayIndex);
 	if(sequentialResourceIndex == ~0u)
 		return TGpuParams<Core>::TextureType();
 
@@ -515,7 +515,7 @@ typename TGpuParams<Core>::TextureType TGpuParams<Core>::GetSampledTexture(u32 s
 template <bool Core>
 typename TGpuParams<Core>::TextureType TGpuParams<Core>::GetStorageTexture(u32 set, u32 slot, u32 arrayIndex) const
 {
-	const u32 sequentialResourceIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::ParamType::LoadStoreTexture, set, slot, arrayIndex);
+	const u32 sequentialResourceIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::GpuParameterType::StorageTexture, set, slot, arrayIndex);
 	if(sequentialResourceIndex == ~0u)
 		return TGpuParams<Core>::TextureType();
 
@@ -525,7 +525,7 @@ typename TGpuParams<Core>::TextureType TGpuParams<Core>::GetStorageTexture(u32 s
 template <bool Core>
 typename TGpuParams<Core>::BufferType TGpuParams<Core>::GetStorageBuffer(u32 set, u32 slot, u32 arrayIndex) const
 {
-	const u32 sequentialResourceIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::ParamType::Buffer, set, slot, arrayIndex);
+	const u32 sequentialResourceIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::GpuParameterType::StorageBuffer, set, slot, arrayIndex);
 	if(sequentialResourceIndex == ~0u)
 		return nullptr;
 
@@ -535,7 +535,7 @@ typename TGpuParams<Core>::BufferType TGpuParams<Core>::GetStorageBuffer(u32 set
 template <bool Core>
 typename TGpuParams<Core>::SamplerType TGpuParams<Core>::GetSamplerState(u32 set, u32 slot, u32 arrayIndex) const
 {
-	const u32 sequentialArrayIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::ParamType::SamplerState, set, slot, arrayIndex);
+	const u32 sequentialArrayIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::GpuParameterType::Sampler, set, slot, arrayIndex);
 	if(sequentialArrayIndex == ~0u)
 		return nullptr;
 
@@ -547,7 +547,7 @@ const TextureSurface& TGpuParams<Core>::GetTextureSurface(u32 set, u32 slot, u32
 {
 	static TextureSurface emptySurface;
 
-	const u32 sequentialArrayIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::ParamType::Texture, set, slot, arrayIndex);
+	const u32 sequentialArrayIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::GpuParameterType::SampledTexture, set, slot, arrayIndex);
 	if(sequentialArrayIndex == ~0u)
 		return emptySurface;
 
@@ -559,7 +559,7 @@ const TextureSurface& TGpuParams<Core>::GetStorageTextureSurface(u32 set, u32 sl
 {
 	static TextureSurface emptySurface;
 
-	const u32 sequentialArrayIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::ParamType::LoadStoreTexture, set, slot, arrayIndex);
+	const u32 sequentialArrayIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::GpuParameterType::StorageTexture, set, slot, arrayIndex);
 	if(sequentialArrayIndex == ~0u)
 		return emptySurface;
 
@@ -569,7 +569,7 @@ const TextureSurface& TGpuParams<Core>::GetStorageTextureSurface(u32 set, u32 sl
 template <bool Core>
 bool TGpuParams<Core>::SetSampledTexture(u32 set, u32 slot, const TextureType& texture, const TextureSurface& surface, u32 arrayIndex)
 {
-	const u32 sequentialArrayIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::ParamType::Texture, set, slot, arrayIndex);
+	const u32 sequentialArrayIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::GpuParameterType::SampledTexture, set, slot, arrayIndex);
 	if (sequentialArrayIndex == ~0u)
 	{
 		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find sampled texture parameter with the set/slot combination: {0}/{1}", set, slot);
@@ -588,7 +588,7 @@ bool TGpuParams<Core>::SetSampledTexture(u32 set, u32 slot, const TextureType& t
 template <bool Core>
 bool TGpuParams<Core>::SetStorageTexture(u32 set, u32 slot, const TextureType& texture, const TextureSurface& surface, u32 arrayIndex)
 {
-	const u32 sequentialArrayIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::ParamType::LoadStoreTexture, set, slot, arrayIndex);
+	const u32 sequentialArrayIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::GpuParameterType::StorageTexture, set, slot, arrayIndex);
 	if (sequentialArrayIndex == ~0u)
 	{
 		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find storage texture parameter with the set/slot combination: {0}/{1}", set, slot);
@@ -607,7 +607,7 @@ bool TGpuParams<Core>::SetStorageTexture(u32 set, u32 slot, const TextureType& t
 template <bool Core>
 bool TGpuParams<Core>::SetStorageBuffer(u32 set, u32 slot, const BufferType& buffer, u32 arrayIndex, u32 offset)
 {
-	const u32 sequentialArrayIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::ParamType::Buffer, set, slot, arrayIndex);
+	const u32 sequentialArrayIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::GpuParameterType::StorageBuffer, set, slot, arrayIndex);
 	if (sequentialArrayIndex == ~0u)
 	{
 		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find buffer parameter with the set/slot combination: {0}/{1}", set, slot);
@@ -626,7 +626,7 @@ bool TGpuParams<Core>::SetStorageBuffer(u32 set, u32 slot, const BufferType& buf
 template <bool Core>
 bool TGpuParams<Core>::SetSamplerState(u32 set, u32 slot, const SamplerType& sampler, u32 arrayIndex)
 {
-	const u32 sequentialArrayIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::ParamType::SamplerState, set, slot, arrayIndex);
+	const u32 sequentialArrayIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::GpuParameterType::Sampler, set, slot, arrayIndex);
 	if (sequentialArrayIndex == ~0u)
 	{
 		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find sampler parameter with the set/slot combination: {0}/{1}", set, slot);
@@ -733,11 +733,11 @@ SPtr<GpuParams> GpuParams::Create(const SPtr<GpuPipelineParamInfo>& paramInfo)
 
 CoreSyncData GpuParams::SyncToCore(FrameAlloc* allocator)
 {
-	const u32 uniformBufferCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::ParamBlock);
-	const u32 sampledTextureCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::Texture);
-	const u32 storageTextureCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
-	const u32 storageBufferCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::Buffer);
-	const u32 samplerCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::SamplerState);
+	const u32 uniformBufferCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::UniformBuffer);
+	const u32 sampledTextureCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::SampledTexture);
+	const u32 storageTextureCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::StorageTexture);
+	const u32 storageBufferCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::StorageBuffer);
+	const u32 samplerCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::Sampler);
 
 	const u32 sampledTextureSurfacesArraySize = sampledTextureCount * sizeof(TextureSurface);
 	const u32 storageTextureSurfacesArraySize = storageTextureCount * sizeof(TextureSurface);
@@ -843,8 +843,8 @@ CoreSyncData GpuParams::SyncToCore(FrameAlloc* allocator)
 
 void GpuParams::GetListenerResources(Vector<HResource>& resources)
 {
-	u32 numTextures = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::Texture);
-	u32 numStorageTextures = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
+	u32 numTextures = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::SampledTexture);
+	u32 numStorageTextures = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::StorageTexture);
 
 	for(u32 i = 0; i < numTextures; i++)
 	{
@@ -873,11 +873,11 @@ SPtr<GpuParams> GpuParams::GetThisPtrInternal() const
 
 void GpuParams::SyncToCore(const CoreSyncData& data)
 {
-	const u32 uniformBufferCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::ParamBlock);
-	const u32 sampledTextureCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::Texture);
-	const u32 storageTextureCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::LoadStoreTexture);
-	const u32 storageBufferCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::Buffer);
-	const u32 samplerCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::ParamType::SamplerState);
+	const u32 uniformBufferCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::UniformBuffer);
+	const u32 sampledTextureCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::SampledTexture);
+	const u32 storageTextureCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::StorageTexture);
+	const u32 storageBufferCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::StorageBuffer);
+	const u32 samplerCount = mParamInfo->GetResourceCount(GpuPipelineParamInfo::GpuParameterType::Sampler);
 
 	const u32 sampledTextureSurfacesArraySize = sampledTextureCount * sizeof(TextureSurface);
 	const u32 storageTextureSurfacesArraySize = storageTextureCount * sizeof(TextureSurface);

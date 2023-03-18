@@ -20,7 +20,7 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 	mParamDescs[GPT_DOMAIN_PROGRAM] = desc.DomainParams;
 	mParamDescs[GPT_COMPUTE_PROGRAM] = desc.ComputeParams;
 
-	auto fnCountElementsForType = [this](auto& entry, ParamType type)
+	auto fnCountElementsForType = [this](auto& entry, GpuParameterType type)
 	{
 		const u32 typeIndex = (u32)type;
 
@@ -34,7 +34,7 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 		mResourceCount++;
 	};
 
-	auto fnCountElementsForTypeWithArraySupport = [this](auto& entry, ParamType type)
+	auto fnCountElementsForTypeWithArraySupport = [this](auto& entry, GpuParameterType type)
 	{
 		const u32 typeIndex = (u32)type;
 		const u32 arraySize = Math::Max(1u, entry.ArraySize);
@@ -57,19 +57,19 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 			continue;
 
 		for(auto& paramBlock : paramDesc->ParamBlocks)
-			fnCountElementsForType(paramBlock.second, ParamType::ParamBlock);
+			fnCountElementsForType(paramBlock.second, GpuParameterType::UniformBuffer);
 
 		for(auto& texture : paramDesc->Textures)
-			fnCountElementsForTypeWithArraySupport(texture.second, ParamType::Texture);
+			fnCountElementsForTypeWithArraySupport(texture.second, GpuParameterType::SampledTexture);
 
 		for(auto& texture : paramDesc->LoadStoreTextures)
-			fnCountElementsForTypeWithArraySupport(texture.second, ParamType::LoadStoreTexture);
+			fnCountElementsForTypeWithArraySupport(texture.second, GpuParameterType::StorageTexture);
 
 		for(auto& buffer : paramDesc->Buffers)
-			fnCountElementsForTypeWithArraySupport(buffer.second, ParamType::Buffer);
+			fnCountElementsForTypeWithArraySupport(buffer.second, GpuParameterType::StorageBuffer);
 
 		for(auto& sampler : paramDesc->Samplers)
-			fnCountElementsForType(sampler.second, ParamType::SamplerState);
+			fnCountElementsForType(sampler.second, GpuParameterType::Sampler);
 	}
 
 	u32* slotCountPerSet = (u32*)B3DStackAllocate(mSetCount * sizeof(u32));
@@ -112,9 +112,9 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 		.Reserve<u32>(totalSlotCount)
 		.Reserve<u32>(totalSlotCount)
 		.Reserve<u32>(totalSlotCount)
-		.Reserve<ParamType>(totalSlotCount);
+		.Reserve<GpuParameterType>(totalSlotCount);
 
-	for(u32 parameterTypeIndex = 0; parameterTypeIndex < (u32)ParamType::Count; parameterTypeIndex++)
+	for(u32 parameterTypeIndex = 0; parameterTypeIndex < (u32)GpuParameterType::Count; parameterTypeIndex++)
 		mAlloc.Reserve<ResourceInfo>(mBindingSlotCountPerType[parameterTypeIndex]);
 
 	mAlloc.Init();
@@ -146,17 +146,17 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 		mSetInfos[setIndex].SlotArraySizes = mAlloc.Alloc<u32>(mSetInfos[setIndex].SlotCount);
 		memset(mSetInfos[setIndex].SlotArraySizes, 0, sizeof(u32) * mSetInfos[setIndex].SlotCount);
 
-		mSetInfos[setIndex].SlotTypes = mAlloc.Alloc<ParamType>(mSetInfos[setIndex].SlotCount);
+		mSetInfos[setIndex].SlotTypes = mAlloc.Alloc<GpuParameterType>(mSetInfos[setIndex].SlotCount);
 	}
 
-	for(u32 parameterTypeIndex = 0; parameterTypeIndex < (u32)ParamType::Count; parameterTypeIndex++)
+	for(u32 parameterTypeIndex = 0; parameterTypeIndex < (u32)GpuParameterType::Count; parameterTypeIndex++)
 	{
 		mResourceInfos[parameterTypeIndex] = mAlloc.Alloc<ResourceInfo>(mBindingSlotCountPerType[parameterTypeIndex]);
 		mBindingSlotCountPerType[parameterTypeIndex] = 0;
 		mResourceCountPerType[parameterTypeIndex] = 0;
 	}
 
-	auto fnPopulateSetInfo = [this](auto& entry, ParamType type)
+	auto fnPopulateSetInfo = [this](auto& entry, GpuParameterType type)
 	{
 		const u32 typeIndex = (u32)type;
 		const u32 sequentialBindingIndex = mBindingSlotCountPerType[typeIndex];
@@ -176,7 +176,7 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 		mResourceCountPerType[typeIndex]++;
 	};
 
-	auto fnPopulateSetInfoWithArraySupport = [this](auto& entry, ParamType type)
+	auto fnPopulateSetInfoWithArraySupport = [this](auto& entry, GpuParameterType type)
 	{
 		const u32 typeIndex = (u32)type;
 		const u32 sequentialBindingIndex = mBindingSlotCountPerType[typeIndex];
@@ -204,20 +204,20 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 			continue;
 
 		for(auto& paramBlock : paramDesc->ParamBlocks)
-			fnPopulateSetInfo(paramBlock.second, ParamType::ParamBlock);
+			fnPopulateSetInfo(paramBlock.second, GpuParameterType::UniformBuffer);
 
 		for(auto& texture : paramDesc->Textures)
-			fnPopulateSetInfoWithArraySupport(texture.second, ParamType::Texture);
+			fnPopulateSetInfoWithArraySupport(texture.second, GpuParameterType::SampledTexture);
 
 		for(auto& texture : paramDesc->LoadStoreTextures)
-			fnPopulateSetInfoWithArraySupport(texture.second, ParamType::LoadStoreTexture);
+			fnPopulateSetInfoWithArraySupport(texture.second, GpuParameterType::StorageTexture);
 
 		for(auto& buffer : paramDesc->Buffers)
-			fnPopulateSetInfoWithArraySupport(buffer.second, ParamType::Buffer);
+			fnPopulateSetInfoWithArraySupport(buffer.second, GpuParameterType::StorageBuffer);
 
 		// Samplers need to be handled specially because certain slots could be texture/buffer + sampler combinations
 		{
-			const u32 typeIndex = (u32)ParamType::SamplerState;
+			const u32 typeIndex = (u32)GpuParameterType::Sampler;
 			for(auto& entry : paramDesc->Samplers)
 			{
 				const GpuObjectParameterInformation& samplerInformation = entry.second;
@@ -231,7 +231,7 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 					setInfo.SlotToSequentialBindingIndex[samplerInformation.Slot] = sequentialBindingIndex;
 					setInfo.SlotToSequentialResourceIndex[samplerInformation.Slot] = sequentialResourceIndex;
 					setInfo.SlotArraySizes[samplerInformation.Slot] = arraySize;
-					setInfo.SlotTypes[samplerInformation.Slot] = ParamType::SamplerState;
+					setInfo.SlotTypes[samplerInformation.Slot] = GpuParameterType::Sampler;
 				}
 				else // Slot is a combination
 				{
@@ -250,7 +250,7 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 	}
 }
 
-u32 GpuPipelineParamInfoBase::GetSequentialResourceIndex(ParamType type, u32 set, u32 slot, u32 arrayIndex) const
+u32 GpuPipelineParamInfoBase::GetSequentialResourceIndex(GpuParameterType type, u32 set, u32 slot, u32 arrayIndex) const
 {
 #if B3D_DEBUG
 	if(set >= mSetCount)
@@ -271,11 +271,11 @@ u32 GpuPipelineParamInfoBase::GetSequentialResourceIndex(ParamType type, u32 set
 		return -1;
 	}
 
-	const ParamType slotType = mSetInfos[set].SlotTypes[slot];
+	const GpuParameterType slotType = mSetInfos[set].SlotTypes[slot];
 	if(slotType != type)
 	{
 		// Allow sampler states & textures/buffers to share the same slot, as some APIs combine them
-		if(type == ParamType::SamplerState)
+		if(type == GpuParameterType::Sampler)
 		{
 			if(mSetInfos[set].SlotToSequentialSamplerResourceIndex[slot] != ~0u)
 				return mSetInfos[set].SlotToSequentialSamplerResourceIndex[slot] + arrayIndex;
@@ -292,7 +292,7 @@ u32 GpuPipelineParamInfoBase::GetSequentialResourceIndex(ParamType type, u32 set
 }
 
 
-u32 GpuPipelineParamInfoBase::GetSequentialBindingIndex(ParamType type, u32 set, u32 slot) const
+u32 GpuPipelineParamInfoBase::GetSequentialBindingIndex(GpuParameterType type, u32 set, u32 slot) const
 {
 #if B3D_DEBUG
 	if(set >= mSetCount)
@@ -307,11 +307,11 @@ u32 GpuPipelineParamInfoBase::GetSequentialBindingIndex(ParamType type, u32 set,
 		return ~0u;
 	}
 
-	const ParamType slotType = mSetInfos[set].SlotTypes[slot];
+	const GpuParameterType slotType = mSetInfos[set].SlotTypes[slot];
 	if(slotType != type)
 	{
 		// Allow sampler states & textures/buffers to share the same slot, as some APIs combine them
-		if(type == ParamType::SamplerState)
+		if(type == GpuParameterType::Sampler)
 		{
 			if(mSetInfos[set].SlotToSequentialSamplerBindingIndex[slot] != ~0u)
 				return mSetInfos[set].SlotToSequentialSamplerBindingIndex[slot];
@@ -325,7 +325,7 @@ u32 GpuPipelineParamInfoBase::GetSequentialBindingIndex(ParamType type, u32 set,
 	return mSetInfos[set].SlotToSequentialBindingIndex[slot];
 }
 
-void GpuPipelineParamInfoBase::GetBinding(ParamType type, u32 sequentialBindingIndex, u32& set, u32& slot) const
+void GpuPipelineParamInfoBase::GetBinding(GpuParameterType type, u32 sequentialBindingIndex, u32& set, u32& slot) const
 {
 #if B3D_DEBUG
 	if(sequentialBindingIndex >= mBindingSlotCountPerType[(int)type])
@@ -342,7 +342,7 @@ void GpuPipelineParamInfoBase::GetBinding(ParamType type, u32 sequentialBindingI
 	slot = mResourceInfos[(u32)type][sequentialBindingIndex].Slot;
 }
 
-void GpuPipelineParamInfoBase::GetBindings(ParamType type, const String& name, GpuParamBinding (&bindings)[GPT_COUNT])
+void GpuPipelineParamInfoBase::GetBindings(GpuParameterType type, const String& name, GpuParamBinding (&bindings)[GPT_COUNT])
 {
 	constexpr u32 numParamDescs = sizeof(mParamDescs) / sizeof(mParamDescs[0]);
 	static_assert(
@@ -353,7 +353,7 @@ void GpuPipelineParamInfoBase::GetBindings(ParamType type, const String& name, G
 		GetBinding((GpuProgramType)i, type, name, bindings[i]);
 }
 
-void GpuPipelineParamInfoBase::GetBinding(GpuProgramType progType, ParamType type, const String& name, GpuParamBinding& binding)
+void GpuPipelineParamInfoBase::GetBinding(GpuProgramType progType, GpuParameterType type, const String& name, GpuParamBinding& binding)
 {
 	auto findBinding = [](auto& paramMap, const String& name, GpuParamBinding& binding)
 	{
@@ -376,19 +376,19 @@ void GpuPipelineParamInfoBase::GetBinding(GpuProgramType progType, ParamType typ
 
 	switch(type)
 	{
-	case ParamType::ParamBlock:
+	case GpuParameterType::UniformBuffer:
 		findBinding(paramDesc->ParamBlocks, name, binding);
 		break;
-	case ParamType::Texture:
+	case GpuParameterType::SampledTexture:
 		findBinding(paramDesc->Textures, name, binding);
 		break;
-	case ParamType::LoadStoreTexture:
+	case GpuParameterType::StorageTexture:
 		findBinding(paramDesc->LoadStoreTextures, name, binding);
 		break;
-	case ParamType::Buffer:
+	case GpuParameterType::StorageBuffer:
 		findBinding(paramDesc->Buffers, name, binding);
 		break;
-	case ParamType::SamplerState:
+	case GpuParameterType::Sampler:
 		findBinding(paramDesc->Samplers, name, binding);
 		break;
 	default:
@@ -396,7 +396,7 @@ void GpuPipelineParamInfoBase::GetBinding(GpuProgramType progType, ParamType typ
 	}
 }
 
-u32 GpuPipelineParamInfoBase::GetArraySize(ParamType type, u32 sequentialBindingIndex)
+u32 GpuPipelineParamInfoBase::GetArraySize(GpuParameterType type, u32 sequentialBindingIndex)
 {
 #if B3D_DEBUG
 	if(sequentialBindingIndex >= mBindingSlotCountPerType[(int)type])
