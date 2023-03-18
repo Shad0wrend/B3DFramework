@@ -19,12 +19,12 @@ namespace bs
 	{
 		using GpuParamsType = CoreVariantType<GpuParams, Core>;
 		using MaterialParamsType = CoreVariantType<MaterialParams, Core>;
-		using ParamBlockPtrType = SPtr<CoreVariantType<GpuParamBlockBuffer, Core>>;
+		using ParamBlockPtrType = SPtr<CoreVariantType<GpuBuffer, Core>>;
 		using TechniqueType = CoreVariantType<Technique, Core>;
 		using ShaderType = CoreVariantHandleType<Shader, Core>;
 		using PassType = CoreVariantType<Pass, Core>;
 		using GpuProgramPtrType = SPtr<CoreVariantType<GpuProgram, Core>>;
-		using ParamBlockType = CoreVariantType<GpuParamBlockBuffer, Core>;
+		using ParamBlockType = CoreVariantType<GpuBuffer, Core>;
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 		using BufferType = SPtr<CoreVariantType<GenericGpuBuffer, Core>>;
 		using SamplerStateType = SPtr<CoreVariantType<SamplerState, Core>>;

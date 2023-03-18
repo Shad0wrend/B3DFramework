@@ -21,9 +21,9 @@ SPtr<ct::IndexBuffer> NullHardwareBufferManager::CreateIndexBufferInternal(const
 	return ret;
 }
 
-SPtr<ct::GpuParamBlockBuffer> NullHardwareBufferManager::CreateGpuParamBlockBufferInternal(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+SPtr<ct::GpuBuffer> NullHardwareBufferManager::CreateGpuParamBlockBufferInternal(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 {
-	SPtr<GpuParamBlockBuffer> paramBlockBufferPtr = B3DMakeShared<NullGpuParamBlockBuffer>(size, usage, deviceMask);
+	SPtr<GpuBuffer> paramBlockBufferPtr = B3DMakeShared<NullGpuParamBlockBuffer>(size, usage, deviceMask);
 	paramBlockBufferPtr->SetShared(paramBlockBufferPtr);
 
 	return paramBlockBufferPtr;
@@ -71,13 +71,13 @@ void NullGpuBuffer::Initialize()
 }
 
 NullGpuParamBlockBuffer::NullGpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
-	: GpuParamBlockBuffer(size, usage, deviceMask)
+	: GpuBuffer(size, usage, deviceMask)
 {}
 
 void NullGpuParamBlockBuffer::Initialize()
 {
 	mBuffer = B3DPoolNew<NullHardwareBuffer>(mUsage, 1, mSize);
-	GpuParamBlockBuffer::Initialize();
+	GpuBuffer::Initialize();
 }
 
 NullHardwareBuffer::NullHardwareBuffer(GpuBufferUsage usage, u32 elementCount, u32 elementSize)

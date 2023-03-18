@@ -697,7 +697,7 @@ void RendererScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tf
 	rendererParticles.PerObjectParamBuffer = gPerObjectParamDef.CreateBuffer();
 	rendererParticles.UpdatePerObjectBuffer();
 
-	SPtr<GpuParamBlockBuffer> particlesParamBuffer = gParticlesParamDef.CreateBuffer();
+	SPtr<GpuBuffer> particlesParamBuffer = gParticlesParamDef.CreateBuffer();
 	rendererParticles.ParticlesParamBuffer = particlesParamBuffer;
 
 	Vector3 axisForward = settings.OrientationPlaneNormal;
@@ -910,7 +910,7 @@ void RendererScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tf
 		const float sizeScaleFrameIdxUVScale =
 			GpuParticleCurves::GetUvScale(rendererParticles.SizeScaleFrameIdxCurveAlloc);
 
-		const SPtr<GpuParamBlockBuffer>& gpuParticlesParamBuffer = rendererParticles.GpuParticlesParamBuffer;
+		const SPtr<GpuBuffer>& gpuParticlesParamBuffer = rendererParticles.GpuParticlesParamBuffer;
 		gGpuParticlesParamDef.gColorCurveOffset.Set(gpuParticlesParamBuffer, colorUVOffset);
 		gGpuParticlesParamDef.gColorCurveScale.Set(gpuParticlesParamBuffer, Vector2(colorUVScale, 0.0f));
 		gGpuParticlesParamDef.gSizeScaleFrameIdxCurveOffset.Set(gpuParticlesParamBuffer, sizeScaleFrameIdxUVOffset);
@@ -1363,7 +1363,7 @@ void RendererScene::PrepareVisibleRenderable(u32 idx, const FrameInfo& frameInfo
 	for(auto& element : rendererRenderable->Elements)
 		element.Material->UpdateParamsSet(element.Params, element.MaterialAnimationTime);
 
-	mInfo.Renderables[idx]->PerObjectParamBuffer->FlushToGpu();
+	mInfo.Renderables[idx]->PerObjectParamBuffer->FlushCache();
 	mInfo.RenderableReady[idx] = true;
 }
 
@@ -1386,7 +1386,7 @@ void RendererScene::PrepareParticleSystem(u32 idx, const FrameInfo& frameInfo)
 	ParticlesRenderElement& renElement = mInfo.ParticleSystems[idx].RenderElement;
 	renElement.Material->UpdateParamsSet(renElement.Params, 0.0f);
 
-	mInfo.ParticleSystems[idx].PerObjectParamBuffer->FlushToGpu();
+	mInfo.ParticleSystems[idx].PerObjectParamBuffer->FlushCache();
 }
 
 void RendererScene::PrepareDecal(u32 idx, const FrameInfo& frameInfo)
@@ -1395,7 +1395,7 @@ void RendererScene::PrepareDecal(u32 idx, const FrameInfo& frameInfo)
 	renElement.MaterialAnimationTime += frameInfo.Timings.TimeDelta;
 	renElement.Material->UpdateParamsSet(renElement.Params, renElement.MaterialAnimationTime);
 
-	mInfo.Decals[idx].PerObjectParamBuffer->FlushToGpu();
+	mInfo.Decals[idx].PerObjectParamBuffer->FlushCache();
 }
 
 void RendererScene::UpdateParticleSystemBounds(const ParticlePerFrameData* particleRenderData)

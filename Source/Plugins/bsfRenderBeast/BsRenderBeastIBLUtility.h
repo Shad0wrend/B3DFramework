@@ -36,7 +36,7 @@ namespace bs
 			void Execute(const SPtr<Texture>& source, u32 face, u32 mip, const SPtr<RenderTarget>& target);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mInputTexture;
 		};
 
@@ -64,7 +64,7 @@ namespace bs
 		private:
 			static const u32 kNumSamples;
 
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mInputTexture;
 		};
 
@@ -156,7 +156,7 @@ namespace bs
 			static IrradianceComputeSHMat* GetVariation(int order = 5);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mInputTexture;
 			GpuParameterBuffer mOutputBuffer;
 		};
@@ -209,7 +209,7 @@ namespace bs
 			static IrradianceReduceSHMat* GetVariation(int order = 5);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterBuffer mInputBuffer;
 			GpuParameterStorageTexture mOutputTexture;
 		};
@@ -252,7 +252,7 @@ namespace bs
 			static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& source);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mInputTexture;
 		};
 
@@ -289,7 +289,7 @@ namespace bs
 			static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& source);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mInputTexture;
 		};
 
@@ -319,7 +319,7 @@ namespace bs
 			static POOLED_RENDER_TEXTURE_DESC GetOutputDesc();
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mInputTexture;
 		};
 
@@ -348,7 +348,7 @@ namespace bs
 			void Execute(const SPtr<Texture>& shCoeffs, u32 face, const SPtr<RenderTarget>& target);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mInputTexture;
 		};
 

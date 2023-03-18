@@ -7,7 +7,7 @@ using namespace bs;
 using namespace bs::ct;
 
 GLGpuParamBlockBuffer::GLGpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
-	: GpuParamBlockBuffer(size, usage, deviceMask)
+	: GpuBuffer(size, usage, deviceMask)
 {
 	B3D_ASSERT((deviceMask == GDF_DEFAULT || deviceMask == GDF_PRIMARY) && "Multiple GPUs not supported natively on OpenGL.");
 }
@@ -21,5 +21,5 @@ GLGpuParamBlockBuffer::~GLGpuParamBlockBuffer()
 void GLGpuParamBlockBuffer::Initialize()
 {
 	mBuffer = B3DPoolNew<GLHardwareBuffer>(GL_UNIFORM_BUFFER, mSize, mUsage);
-	GpuParamBlockBuffer::Initialize();
+	GpuBuffer::Initialize();
 }

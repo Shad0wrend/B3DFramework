@@ -700,7 +700,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<Comm
 				for(auto& entry : paramDesc->ParamBlocks)
 				{
 					u32 binding = entry.second.Slot;
-					SPtr<GpuParamBlockBuffer> buffer = gpuParams->GetUniformBuffer(entry.second.Set, binding);
+					SPtr<GpuBuffer> buffer = gpuParams->GetUniformBuffer(entry.second.Set, binding);
 
 					if(buffer == nullptr)
 						continue;

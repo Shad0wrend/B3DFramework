@@ -20,7 +20,7 @@ void DeferredDirectionalLightMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gLightOcclusionTex", mLightOcclusionTexParam);
 }
 
-void DeferredDirectionalLightMat::Bind(const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion, const SPtr<GpuParamBlockBuffer>& perCamera, const SPtr<GpuParamBlockBuffer>& perLight)
+void DeferredDirectionalLightMat::Bind(const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion, const SPtr<GpuBuffer>& perCamera, const SPtr<GpuBuffer>& perLight)
 {
 	mGBufferParams.Bind(gBufferInput);
 	mLightOcclusionTexParam.Set(lightOcclusion);
@@ -49,7 +49,7 @@ void DeferredPointLightMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gLightOcclusionTex", mLightOcclusionTexParam);
 }
 
-void DeferredPointLightMat::Bind(const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion, const SPtr<GpuParamBlockBuffer>& perCamera, const SPtr<GpuParamBlockBuffer>& perLight)
+void DeferredPointLightMat::Bind(const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion, const SPtr<GpuBuffer>& perCamera, const SPtr<GpuBuffer>& perLight)
 {
 	mGBufferParams.Bind(gBufferInput);
 	mLightOcclusionTexParam.Set(lightOcclusion);
@@ -95,7 +95,7 @@ void DeferredIBLSetupMat::Initialize()
 	mIBLParams.Populate(mGPUParameters, GPT_FRAGMENT_PROGRAM, true, false, false);
 }
 
-void DeferredIBLSetupMat::Bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera, const SPtr<Texture>& ssr, const SPtr<Texture>& ao, const SPtr<GpuParamBlockBuffer>& reflProbeParams)
+void DeferredIBLSetupMat::Bind(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& ssr, const SPtr<Texture>& ao, const SPtr<GpuBuffer>& reflProbeParams)
 {
 	mGBufferParams.Bind(gBufferInput);
 
@@ -132,7 +132,7 @@ void DeferredIBLProbeMat::Initialize()
 	mGPUParameters->SetUniformBuffer("PerProbe", mParamBuffer);
 }
 
-void DeferredIBLProbeMat::Bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera, const SceneInfo& sceneInfo, const ReflProbeData& probeData, const SPtr<GpuParamBlockBuffer>& reflProbeParams)
+void DeferredIBLProbeMat::Bind(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SceneInfo& sceneInfo, const ReflProbeData& probeData, const SPtr<GpuBuffer>& reflProbeParams)
 {
 	mGBufferParams.Bind(gBufferInput);
 
@@ -193,7 +193,7 @@ void DeferredIBLSkyMat::Initialize()
 	mIBLParams.Populate(mGPUParameters, GPT_FRAGMENT_PROGRAM, true, false, false);
 }
 
-void DeferredIBLSkyMat::Bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera, const Skybox* skybox, const SPtr<GpuParamBlockBuffer>& reflProbeParams)
+void DeferredIBLSkyMat::Bind(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const Skybox* skybox, const SPtr<GpuBuffer>& reflProbeParams)
 {
 	mGBufferParams.Bind(gBufferInput);
 
@@ -229,7 +229,7 @@ void DeferredIBLFinalizeMat::Initialize()
 	mIBLParams.Populate(mGPUParameters, GPT_FRAGMENT_PROGRAM, true, false, false);
 }
 
-void DeferredIBLFinalizeMat::Bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera, const SPtr<Texture>& iblRadiance, const SPtr<Texture>& preintegratedBrdf, const SPtr<GpuParamBlockBuffer>& reflProbeParams)
+void DeferredIBLFinalizeMat::Bind(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& iblRadiance, const SPtr<Texture>& preintegratedBrdf, const SPtr<GpuBuffer>& reflProbeParams)
 {
 	mGBufferParams.Bind(gBufferInput);
 
@@ -268,7 +268,7 @@ void StandardDeferred::RenderLight(LightType lightType, const RendererLight& lig
 	const auto& viewProps = view.GetProperties();
 
 	bool isMSAA = view.GetProperties().Target.NumSamples > 1;
-	SPtr<GpuParamBlockBuffer> perViewBuffer = view.GetPerViewBuffer();
+	SPtr<GpuBuffer> perViewBuffer = view.GetPerViewBuffer();
 
 	light.GetParameters(mPerLightBuffer);
 
@@ -323,12 +323,12 @@ void StandardDeferred::RenderLight(LightType lightType, const RendererLight& lig
 	}
 }
 
-void StandardDeferred::RenderReflProbe(const ReflProbeData& probeData, const RendererView& view, const GBufferTextures& gBufferInput, const SceneInfo& sceneInfo, const SPtr<GpuParamBlockBuffer>& reflProbeParams)
+void StandardDeferred::RenderReflProbe(const ReflProbeData& probeData, const RendererView& view, const GBufferTextures& gBufferInput, const SceneInfo& sceneInfo, const SPtr<GpuBuffer>& reflProbeParams)
 {
 	const auto& viewProps = view.GetProperties();
 	bool isMSAA = viewProps.Target.NumSamples > 1;
 
-	SPtr<GpuParamBlockBuffer> perViewBuffer = view.GetPerViewBuffer();
+	SPtr<GpuBuffer> perViewBuffer = view.GetPerViewBuffer();
 
 	// When checking if viewer is inside the volume extend the bounds slighty to cover the case when the viewer is
 	// outside, but the near plane is intersecting the bounds. We need to be conservative since the material for

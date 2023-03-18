@@ -28,16 +28,6 @@ namespace bs
 		virtual ~HardwareBufferManager() = default;
 
 		/**
-		 * Creates an GPU parameter block that you can use for setting parameters for GPU programs. Parameter blocks may be
-		 * used for sharing parameter data between multiple GPU programs, requiring you to update only one buffer for all of
-		 * them, potentially improving performance.
-		 *
-		 * @param[in]	size	Size of the parameter buffer in bytes.
-		 * @param[in]	flags	Flags that control the behavior of the buffer.
-		 */
-		SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBuffer(u32 size, GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU);
-
-		/**
 		 * Creates a generic buffer that can be passed as a parameter to a GPU program. This type of buffer can hold various
 		 * type of data and can be used for various purposes. See GenericGpuBufferType for explanation of different buffer types.
 		 *
@@ -83,12 +73,6 @@ namespace bs
 			 */
 			SPtr<VertexDeclaration> CreateVertexDeclaration(const Vector<VertexElement>& elements, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
-			/** @copydoc GpuParamBlockBuffer::Create(u32, GpuBufferUsage, GpuDeviceFlags) */
-			SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBuffer(u32 size, GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU, GpuDeviceFlags deviceMask = GDF_DEFAULT);
-
-			/** @copydoc GpuParamBlockBuffer::Create(const SPtr<GpuBuffer>&, u32, u32) */
-			SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBuffer(const SPtr<GpuBuffer>& owner, u32 offset, u32 size);
-
 			/**
 			 * @copydoc bs::HardwareBufferManager::CreateGpuBuffer
 			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
@@ -103,7 +87,7 @@ namespace bs
 
 		protected:
 			friend class bs::VertexDeclaration;
-			friend class bs::GpuParamBlockBuffer;
+			friend class bs::GpuBuffer;
 			friend class bs::GenericGpuBuffer;
 			friend class GenericGpuBuffer;
 
@@ -126,12 +110,6 @@ namespace bs
 
 				Vector<VertexElement> Elements;
 			};
-
-			/** @copydoc CreateGpuParamBlockBuffer(u32, GpuBufferUsage, GpuDeviceFlags) */
-			virtual SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBufferInternal(u32 size, GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU, GpuDeviceFlags deviceMask = GDF_DEFAULT) = 0;
-
-			/** @copydoc CreateGpuParamBlockBuffer(const SPtr<GpuBuffer>&, u32, u32) */
-			virtual SPtr<GpuParamBlockBuffer> CreateGpuParamBlockBufferInternal(const SPtr<GpuBuffer>& owner, u32 offset, u32 size) = 0;
 
 			/** @copydoc CreateGpuBuffer(const GPU_BUFFER_DESC&, GpuDeviceFlags) */
 			virtual SPtr<GenericGpuBuffer> CreateGpuBufferInternal(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) = 0;

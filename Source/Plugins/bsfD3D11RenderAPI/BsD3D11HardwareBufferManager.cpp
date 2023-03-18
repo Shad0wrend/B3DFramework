@@ -30,12 +30,12 @@ SPtr<ct::IndexBuffer> D3D11HardwareBufferManager::CreateIndexBufferInternal(cons
 	return ret;
 }
 
-SPtr<ct::GpuParamBlockBuffer> D3D11HardwareBufferManager::CreateGpuParamBlockBufferInternal(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+SPtr<ct::GpuBuffer> D3D11HardwareBufferManager::CreateGpuParamBlockBufferInternal(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 {
 	D3D11GpuParamBlockBuffer* paramBlockBuffer =
 		new(B3DAllocate<D3D11GpuParamBlockBuffer>()) D3D11GpuParamBlockBuffer(size, usage, deviceMask);
 
-	SPtr<GpuParamBlockBuffer> paramBlockBufferPtr = B3DMakeSharedFromExisting<D3D11GpuParamBlockBuffer>(paramBlockBuffer);
+	SPtr<GpuBuffer> paramBlockBufferPtr = B3DMakeSharedFromExisting<D3D11GpuParamBlockBuffer>(paramBlockBuffer);
 	paramBlockBufferPtr->SetShared(paramBlockBufferPtr);
 
 	return paramBlockBufferPtr;

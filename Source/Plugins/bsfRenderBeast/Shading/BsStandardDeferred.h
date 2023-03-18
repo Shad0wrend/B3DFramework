@@ -47,7 +47,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Binds the material for rendering and sets up any parameters. */
-			void Bind(const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion, const SPtr<GpuParamBlockBuffer>& perCamera, const SPtr<GpuParamBlockBuffer>& perLight);
+			void Bind(const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion, const SPtr<GpuBuffer>& perCamera, const SPtr<GpuBuffer>& perLight);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -86,7 +86,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Binds the material for rendering and sets up any parameters. */
-			void Bind(const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion, const SPtr<GpuParamBlockBuffer>& perCamera, const SPtr<GpuParamBlockBuffer>& perLight);
+			void Bind(const GBufferTextures& gBufferInput, const SPtr<Texture>& lightOcclusion, const SPtr<GpuBuffer>& perCamera, const SPtr<GpuBuffer>& perLight);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -141,7 +141,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Binds the material for rendering and sets up any parameters. */
-			void Bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera, const SPtr<Texture>& ssr, const SPtr<Texture>& ao, const SPtr<GpuParamBlockBuffer>& reflProbeParams);
+			void Bind(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& ssr, const SPtr<Texture>& ao, const SPtr<GpuBuffer>& reflProbeParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -185,7 +185,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Binds the material for rendering and sets up any parameters. */
-			void Bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera, const SceneInfo& sceneInfo, const ReflProbeData& probeData, const SPtr<GpuParamBlockBuffer>& reflProbeParams);
+			void Bind(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SceneInfo& sceneInfo, const ReflProbeData& probeData, const SPtr<GpuBuffer>& reflProbeParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -199,7 +199,7 @@ namespace bs
 			static DeferredIBLProbeMat* GetVariation(bool inside, bool msaa, bool singleSampleMSAA = false);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GBufferParams mGBufferParams;
 			ImageBasedLightingParams mIBLParams;
 		};
@@ -230,7 +230,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Binds the material for rendering and sets up any parameters. */
-			void Bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera, const Skybox* skybox, const SPtr<GpuParamBlockBuffer>& reflProbeParams);
+			void Bind(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const Skybox* skybox, const SPtr<GpuBuffer>& reflProbeParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -273,7 +273,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Binds the material for rendering and sets up any parameters. */
-			void Bind(const GBufferTextures& gBufferInput, const SPtr<GpuParamBlockBuffer>& perCamera, const SPtr<Texture>& iblRadiance, const SPtr<Texture>& preintegratedBrdf, const SPtr<GpuParamBlockBuffer>& reflProbeParams);
+			void Bind(const GBufferTextures& gBufferInput, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& iblRadiance, const SPtr<Texture>& preintegratedBrdf, const SPtr<GpuBuffer>& reflProbeParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -305,10 +305,10 @@ namespace bs
 			 * Alpha value of the render target is used for determining the contribution and will be updated with new
 			 * contibution after blending.
 			 */
-			void RenderReflProbe(const ReflProbeData& probeData, const RendererView& view, const GBufferTextures& gBufferInput, const SceneInfo& sceneInfo, const SPtr<GpuParamBlockBuffer>& reflProbeParams);
+			void RenderReflProbe(const ReflProbeData& probeData, const RendererView& view, const GBufferTextures& gBufferInput, const SceneInfo& sceneInfo, const SPtr<GpuBuffer>& reflProbeParams);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mPerLightBuffer;
+			SPtr<GpuBuffer> mPerLightBuffer;
 		};
 	} // namespace ct
 } // namespace bs

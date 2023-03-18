@@ -28,12 +28,12 @@ SPtr<ct::IndexBuffer> GLHardwareBufferManager::CreateIndexBufferInternal(const I
 	return ret;
 }
 
-SPtr<ct::GpuParamBlockBuffer> GLHardwareBufferManager::CreateGpuParamBlockBufferInternal(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
+SPtr<ct::GpuBuffer> GLHardwareBufferManager::CreateGpuParamBlockBufferInternal(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask)
 {
 	GLGpuParamBlockBuffer* paramBlockBuffer =
 		new(B3DAllocate<GLGpuParamBlockBuffer>()) GLGpuParamBlockBuffer(size, usage, deviceMask);
 
-	SPtr<GpuParamBlockBuffer> paramBlockBufferPtr = B3DMakeSharedFromExisting<GLGpuParamBlockBuffer>(paramBlockBuffer);
+	SPtr<GpuBuffer> paramBlockBufferPtr = B3DMakeSharedFromExisting<GLGpuParamBlockBuffer>(paramBlockBuffer);
 	paramBlockBufferPtr->SetShared(paramBlockBufferPtr);
 
 	return paramBlockBufferPtr;

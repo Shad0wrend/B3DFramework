@@ -204,20 +204,20 @@ namespace bs
 		 * Writes the data into the CPU cached buffer. Buffer must have been created with AllowWriteCachingOnCPU flag. Data will be synced
 		 * with the core thread counterpart on the next sync call.
 		 */
-		virtual void WriteData(u32 offset, u32 length, const void* source);
+		void WriteCached(u32 offset, u32 length, const void* source);
 
 		/**
 		 * Clears the specified area of the cache. Buffer must have been created with AllowWriteCachingOnCPU flag. Data will be synced
 		 * with the core thread counterpart on the next sync call.
 		 */
-		virtual void ZeroOutData(u32 offset, u32 length);
+		void ZeroOutCached(u32 offset, u32 length);
 
 		/**
 		 * Reads the data from the cached buffer. Buffer must have been created with AllowWriteCachingOnCPU flag. Note the cached data
 		 * only includes writes done by WriteData() and ZeroOutData() calls. It will not account for writes done explicitly on the core
 		 * object, or on the GPU.
 		 */
-		virtual void ReadCached(u32 offset, u32 length, void* destination);
+		void ReadCached(u32 offset, u32 length, void* destination);
 
 		/** Creates a new buffer. */
 		static SPtr<GpuBuffer> Create(const GpuBufferCreateInformation& createInformation);
@@ -360,13 +360,20 @@ namespace bs::ct
 		 * Writes the data into the CPU cached buffer. Buffer must have been created with AllowWriteCachingOnCPU flag. In order
 		 * for the data to actually reach the underlying buffer you must call FlushCache().
 		 */
-		virtual void WriteToCache(u32 offset, u32 length, const void* source);
+		virtual void WriteCached(u32 offset, u32 length, const void* source);
 
 		/**
 		 * Clears the specified area of the cache. Buffer must have been created with AllowWriteCachingOnCPU flag. In order
 		 * for the data to actually reach the underlying buffer you must call FlushCache().
 		 */
-		virtual void ZeroOutCache(u32 offset, u32 length);
+		virtual void ZeroOutCached(u32 offset, u32 length);
+
+		/**
+		 * Reads the data from the cached buffer. Buffer must have been created with AllowWriteCachingOnCPU flag. Note the cached data
+		 * only includes writes done by WriteToCache() and ZeroOutCache() calls. It will not account for writes done on the GPU or writes
+		 * that skip the cache.
+		 */
+		void ReadCached(u32 offset, u32 length, void* destination);
 
 		/** Flushes the cached to the underlying buffer. Buffer must have been created with AllowWriteCachingOnCPU flag. */
 		virtual void FlushCache();

@@ -33,7 +33,7 @@ namespace bs
 		struct LightGridOutputs
 		{
 			/** Parameter block of LightGridParamDef. */
-			SPtr<GpuParamBlockBuffer> GridParams;
+			SPtr<GpuBuffer> GridParams;
 
 			/**
 			 * Flattened array of grid cells, where each entry contains the number of lights affecting that cell, and a index
@@ -73,7 +73,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Binds parameter buffers and prepares any internal buffers. Must be called before execute(). */
-			void SetParams(const Vector3I& gridSize, const SPtr<GpuParamBlockBuffer>& gridParams, const SPtr<GenericGpuBuffer>& lightsBuffer, const SPtr<GenericGpuBuffer>& probesBuffer);
+			void SetParams(const Vector3I& gridSize, const SPtr<GpuBuffer>& gridParams, const SPtr<GenericGpuBuffer>& lightsBuffer, const SPtr<GenericGpuBuffer>& probesBuffer);
 
 			/** Binds the material for rendering, sets up per-camera parameters and executes it. */
 			void Execute(const RendererView& view);
@@ -114,7 +114,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Binds parameter buffers and prepares any internal buffers. Must be called before execute(). */
-			void SetParams(const Vector3I& gridSize, const SPtr<GpuParamBlockBuffer>& gridParams, const SPtr<GenericGpuBuffer>& lightLLHeads, const SPtr<GenericGpuBuffer>& lightLL, const SPtr<GenericGpuBuffer>& probeLLHeads, const SPtr<GenericGpuBuffer>& probeLL);
+			void SetParams(const Vector3I& gridSize, const SPtr<GpuBuffer>& gridParams, const SPtr<GenericGpuBuffer>& lightLLHeads, const SPtr<GenericGpuBuffer>& lightLL, const SPtr<GenericGpuBuffer>& probeLLHeads, const SPtr<GenericGpuBuffer>& probeLL);
 
 			/** Binds the material for renderingand executes it. */
 			void Execute(const RendererView& view);
@@ -168,7 +168,7 @@ namespace bs
 			LightGridOutputs GetOutputs() const;
 
 		private:
-			SPtr<GpuParamBlockBuffer> mGridParamBuffer;
+			SPtr<GpuBuffer> mGridParamBuffer;
 		};
 
 		/** @} */

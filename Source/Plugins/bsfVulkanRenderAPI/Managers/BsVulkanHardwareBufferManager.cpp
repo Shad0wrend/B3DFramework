@@ -3,7 +3,6 @@
 #include "Managers/BsVulkanHardwareBufferManager.h"
 #include "BsVulkanGenericGpuBuffer.h"
 #include "BsVulkanGpuBackend.h"
-#include "BsVulkanGpuParamBlockBuffer.h"
 #include "BsVulkanGpuParams.h"
 #include "BsVulkanGpuBuffer.h"
 #include "RenderAPI/BsGpuParamDesc.h"
@@ -25,28 +24,6 @@ VulkanHardwareBufferManager::VulkanHardwareBufferManager()
 	mDummyUniformBuffer = std::static_pointer_cast<VulkanGpuBuffer>(vulkanGpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateUniform(16, GpuBufferFlag::StoreOnGPU)));
 	mDummyStructuredBuffer = std::static_pointer_cast<VulkanGpuBuffer>(vulkanGpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateStructuredStorage(16, 1, GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWritesOnTheGPU)));
 	mDummyVertexBuffer = std::static_pointer_cast<VulkanGpuBuffer>(vulkanGpuDevice->CreateGpuBuffer(GpuBufferCreateInformation::CreateVertex(16, 1, GpuBufferFlag::StoreOnGPU)));
-}
-
-SPtr<ct::GpuParamBlockBuffer> VulkanHardwareBufferManager::CreateGpuParamBlockBufferInternal(u32 size, GpuBufferFlags flags, GpuDeviceFlags deviceMask)
-{
-	VulkanGpuParamBlockBuffer* paramBlockBuffer =
-		new(B3DAllocate<VulkanGpuParamBlockBuffer>()) VulkanGpuParamBlockBuffer(size, flags, deviceMask);
-
-	SPtr<GpuParamBlockBuffer> paramBlockBufferPtr = B3DMakeSharedFromExisting<VulkanGpuParamBlockBuffer>(paramBlockBuffer);
-	paramBlockBufferPtr->SetShared(paramBlockBufferPtr);
-
-	return paramBlockBufferPtr;
-}
-
-SPtr<ct::GpuParamBlockBuffer> VulkanHardwareBufferManager::CreateGpuParamBlockBufferInternal(const SPtr<GpuBuffer>& backingMemory, u32 offset, u32 size)
-{
-	VulkanGpuParamBlockBuffer* parameterBlockBuffer =
-		new(B3DAllocate<VulkanGpuParamBlockBuffer>()) VulkanGpuParamBlockBuffer(backingMemory, offset, size);
-
-	SPtr<GpuParamBlockBuffer> parameterBlockBufferShared = B3DMakeSharedFromExisting<VulkanGpuParamBlockBuffer>(parameterBlockBuffer);
-	parameterBlockBufferShared->SetShared(parameterBlockBufferShared);
-
-	return parameterBlockBufferShared;
 }
 
 SPtr<ct::GenericGpuBuffer> VulkanHardwareBufferManager::CreateGpuBufferInternal(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)

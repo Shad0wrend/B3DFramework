@@ -52,9 +52,9 @@ void RunSortTest();
  * Creates a new GPU parameter block buffer according to gRadixSortParamDef definition and writes GpuSort properties
  * into the buffer.
  */
-SPtr<GpuParamBlockBuffer> CreateGpuSortParams(const GpuSortProperties& props)
+SPtr<GpuBuffer> CreateGpuSortParams(const GpuSortProperties& props)
 {
-	SPtr<GpuParamBlockBuffer> buffer = gRadixSortParamsDef.CreateBuffer();
+	SPtr<GpuBuffer> buffer = gRadixSortParamsDef.CreateBuffer();
 
 	gRadixSortParamsDef.gTilesPerGroup.Set(buffer, props.TilesPerGroup);
 	gRadixSortParamsDef.gNumGroups.Set(buffer, props.NumGroups);
@@ -134,7 +134,7 @@ void RadixSortCountMat::InitDefinesInternal(ShaderDefines& defines)
 	InitCommonDefines(defines);
 }
 
-void RadixSortCountMat::Execute(u32 numGroups, const SPtr<GpuParamBlockBuffer>& params, const SPtr<GenericGpuBuffer>& inputKeys, const SPtr<GenericGpuBuffer>& outputOffsets)
+void RadixSortCountMat::Execute(u32 numGroups, const SPtr<GpuBuffer>& params, const SPtr<GenericGpuBuffer>& inputKeys, const SPtr<GenericGpuBuffer>& outputOffsets)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -158,7 +158,7 @@ void RadixSortPrefixScanMat::InitDefinesInternal(ShaderDefines& defines)
 	InitCommonDefines(defines);
 }
 
-void RadixSortPrefixScanMat::Execute(const SPtr<GpuParamBlockBuffer>& params, const SPtr<GenericGpuBuffer>& inputCounts, const SPtr<GenericGpuBuffer>& outputOffsets)
+void RadixSortPrefixScanMat::Execute(const SPtr<GpuBuffer>& params, const SPtr<GenericGpuBuffer>& inputCounts, const SPtr<GenericGpuBuffer>& outputOffsets)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -185,7 +185,7 @@ void RadixSortReorderMat::InitDefinesInternal(ShaderDefines& defines)
 	InitCommonDefines(defines);
 }
 
-void RadixSortReorderMat::Execute(u32 numGroups, const SPtr<GpuParamBlockBuffer>& params, const SPtr<GenericGpuBuffer>& inputPrefix, const GpuSortBuffers& buffers, u32 inputBufferIdx)
+void RadixSortReorderMat::Execute(u32 numGroups, const SPtr<GpuBuffer>& params, const SPtr<GenericGpuBuffer>& inputPrefix, const GpuSortBuffers& buffers, u32 inputBufferIdx)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -250,7 +250,7 @@ u32 GpuSort::Sort(const GpuSortBuffers& buffers, u32 numKeys, u32 keyMask)
 	}
 
 	const GpuSortProperties gpuSortProps(numKeys);
-	SPtr<GpuParamBlockBuffer> params = CreateGpuSortParams(gpuSortProps);
+	SPtr<GpuBuffer> params = CreateGpuSortParams(gpuSortProps);
 
 	u32 bitOffset = 0;
 	u32 inputBufferIdx = 0;
@@ -316,7 +316,7 @@ void RunSortTest()
 
 	// Prepare buffers
 	const GpuSortProperties gpuSortProps(count);
-	SPtr<GpuParamBlockBuffer> params = CreateGpuSortParams(gpuSortProps);
+	SPtr<GpuBuffer> params = CreateGpuSortParams(gpuSortProps);
 
 	gRadixSortParamsDef.gBitOffset.Set(params, bitOffset);
 

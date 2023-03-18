@@ -110,9 +110,9 @@ namespace bs
 			Decal* Decal;
 			mutable DecalRenderElement RenderElement;
 
-			SPtr<GpuParamBlockBuffer> DecalParamBuffer;
-			SPtr<GpuParamBlockBuffer> PerObjectParamBuffer;
-			SPtr<GpuParamBlockBuffer> PerCallParamBuffer;
+			SPtr<GpuBuffer> DecalParamBuffer;
+			SPtr<GpuBuffer> PerObjectParamBuffer;
+			SPtr<GpuBuffer> PerCallParamBuffer;
 		};
 
 		/** @} */

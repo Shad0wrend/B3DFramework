@@ -4,7 +4,6 @@
 #include "BsVulkanUtility.h"
 #include "BsVulkanRenderAPI.h"
 #include "BsVulkanGpuDevice.h"
-#include "BsVulkanGpuParamBlockBuffer.h"
 #include "BsVulkanGenericGpuBuffer.h"
 #include "BsVulkanTexture.h"
 #include "BsVulkanGpuBuffer.h"
@@ -352,7 +351,7 @@ void VulkanGpuParams::Initialize()
 	GpuParams::Initialize();
 }
 
-bool VulkanGpuParams::SetUniformBuffer(u32 set, u32 slot,const SPtr<GpuParamBlockBuffer>& paramBlockBuffer, u32 arrayIndex, u32 offset)
+bool VulkanGpuParams::SetUniformBuffer(u32 set, u32 slot,const SPtr<GpuBuffer>& paramBlockBuffer, u32 arrayIndex, u32 offset)
 {
 	if (!GpuParams::SetUniformBuffer(set, slot, paramBlockBuffer, arrayIndex, offset))
 		return false;
@@ -369,7 +368,7 @@ bool VulkanGpuParams::SetUniformBuffer(u32 set, u32 slot,const SPtr<GpuParamBloc
 
 	Lock lock(mMutex);
 
-	auto* vulkanParamBlockBuffer = static_cast<VulkanGpuParamBlockBuffer*>(paramBlockBuffer.get());
+	auto* vulkanParamBlockBuffer = static_cast<VulkanGpuBuffer*>(paramBlockBuffer.get());
 	for(u32 deviceIndex = 0; deviceIndex < B3D_MAX_DEVICES; deviceIndex++)
 	{
 		if(mPerDeviceData[deviceIndex].PerSetData == nullptr)
@@ -748,7 +747,7 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 
 			if(mUniformBufferData[sequentialResourceIndex].Buffer != nullptr)
 			{
-				VulkanGpuParamBlockBuffer *const element = static_cast<VulkanGpuParamBlockBuffer*>(mUniformBufferData[sequentialResourceIndex].Buffer.get());
+				VulkanGpuBuffer *const element = static_cast<VulkanGpuBuffer*>(mUniformBufferData[sequentialResourceIndex].Buffer.get());
 				resource = element->GetResource(deviceIdx);
 				bufferSize = element->GetSize();
 				dynamicOffset = mUniformBufferData[sequentialResourceIndex].Offset;

@@ -4,7 +4,6 @@
 #include "RenderAPI/BsVertexData.h"
 #include "RenderAPI/BsGenericGpuBuffer.h"
 #include "RenderAPI/BsVertexDeclaration.h"
-#include "RenderAPI/BsGpuParamBlockBuffer.h"
 #include "RenderAPI/BsVertexDataDesc.h"
 #include "RenderAPI/BsGpuParams.h"
 
@@ -19,14 +18,6 @@ SPtr<VertexDeclaration> HardwareBufferManager::CreateVertexDeclaration(const SPt
 	declPtr->Initialize();
 
 	return declPtr;
-}
-
-SPtr<GpuParamBlockBuffer> HardwareBufferManager::CreateGpuParamBlockBuffer(u32 size, GpuBufferFlags flags)
-{
-	SPtr<GpuParamBlockBuffer> paramBlockPtr = B3DMakeCoreFromExisting<GpuParamBlockBuffer>(new(B3DAllocate<GpuParamBlockBuffer>()) GpuParamBlockBuffer(size, flags));
-	paramBlockPtr->SetShared(paramBlockPtr);
-	paramBlockPtr->Initialize();
-	return paramBlockPtr;
 }
 
 SPtr<GenericGpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GenericGpuBufferCreateInformation& createInformation)
@@ -112,22 +103,6 @@ SPtr<VertexDeclaration> HardwareBufferManager::CreateVertexDeclaration(const Vec
 
 	mCachedDeclarations[key] = declPtr;
 	return declPtr;
-}
-
-SPtr<GpuParamBlockBuffer> HardwareBufferManager::CreateGpuParamBlockBuffer(u32 size, GpuBufferFlags flags, GpuDeviceFlags deviceMask)
-{
-	SPtr<GpuParamBlockBuffer> paramBlockPtr = CreateGpuParamBlockBufferInternal(size, flags, deviceMask);
-	paramBlockPtr->Initialize();
-
-	return paramBlockPtr;
-}
-
-SPtr<GpuParamBlockBuffer> HardwareBufferManager::CreateGpuParamBlockBuffer(const SPtr<GpuBuffer>& owner, u32 offset, u32 size)
-{
-	SPtr<GpuParamBlockBuffer> paramBlockPtr = CreateGpuParamBlockBufferInternal(owner, offset, size);
-	paramBlockPtr->Initialize();
-
-	return paramBlockPtr;
 }
 
 SPtr<GenericGpuBuffer> HardwareBufferManager::CreateGpuBuffer(const GenericGpuBufferCreateInformation& desc, GpuDeviceFlags deviceMask)

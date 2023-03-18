@@ -273,7 +273,7 @@ POOLED_RENDER_TEXTURE_DESC EyeAdaptationMat::GetOutputDesc()
 	return POOLED_RENDER_TEXTURE_DESC::Create2D(PF_R32F, 1, 1, TU_RENDERTARGET);
 }
 
-void EyeAdaptationMat::PopulateParams(const SPtr<GpuParamBlockBuffer>& paramBuffer, float frameDelta, const AutoExposureSettings& settings, float exposureScale)
+void EyeAdaptationMat::PopulateParams(const SPtr<GpuBuffer>& paramBuffer, float frameDelta, const AutoExposureSettings& settings, float exposureScale)
 {
 	Vector2 histogramScaleAndOffset = EyeAdaptHistogramMat::GetHistogramScaleOffset(settings);
 
@@ -425,7 +425,7 @@ void CreateTonemap2DLUTMat::Execute(const SPtr<RenderTexture>& output, const Ren
 	rapi.SetRenderTarget(nullptr);
 }
 
-void CreateTonemap2DLUTMat::PopulateTonemappingParameterBuffer(const RenderSettings& settings, const SPtr<GpuParamBlockBuffer>& parameterBuffer)
+void CreateTonemap2DLUTMat::PopulateTonemappingParameterBuffer(const RenderSettings& settings, const SPtr<GpuBuffer>& parameterBuffer)
 {
 	// Set parameters
 	gCreateTonemapLUTParamDef.gGammaAdjustment.Set(parameterBuffer, 2.2f / settings.Gamma);
@@ -455,7 +455,7 @@ void CreateTonemap2DLUTMat::PopulateTonemappingParameterBuffer(const RenderSetti
 	gCreateTonemapLUTParamDef.gOffset.Set(parameterBuffer, settings.ColorGrading.Offset);
 }
 
-void CreateTonemap2DLUTMat::PopulateWhiteBalanceParameterBuffer(const RenderSettings& settings, const SPtr<GpuParamBlockBuffer>& parameterBuffer)
+void CreateTonemap2DLUTMat::PopulateWhiteBalanceParameterBuffer(const RenderSettings& settings, const SPtr<GpuBuffer>& parameterBuffer)
 {
 	gWhiteBalanceParamDef.gWhiteTemp.Set(parameterBuffer, settings.WhiteBalance.Temperature);
 	gWhiteBalanceParamDef.gWhiteOffset.Set(parameterBuffer, settings.WhiteBalance.Tint);
@@ -961,7 +961,7 @@ float GaussianBlurMat::CalcKernelRadius(const SPtr<Texture>& source, float scale
 	return std::min(length * scale / 2, (float)kMaxBlurSamples - 1);
 }
 
-void GaussianBlurMat::PopulateBuffer(const SPtr<GpuParamBlockBuffer>& buffer, Direction direction, const SPtr<Texture>& source, float filterSize, const Color& tint)
+void GaussianBlurMat::PopulateBuffer(const SPtr<GpuBuffer>& buffer, Direction direction, const SPtr<Texture>& source, float filterSize, const Color& tint)
 {
 	const TextureProperties& srcProps = source->GetProperties();
 
@@ -1079,7 +1079,7 @@ void GaussianDOFSeparateMat::Execute(const SPtr<Texture>& color, const SPtr<Text
 	mColorTexture.Set(color);
 	mDepthTexture.Set(depth);
 
-	SPtr<GpuParamBlockBuffer> perView = view.GetPerViewBuffer();
+	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	RenderAPI& rapi = RenderAPI::Instance();
@@ -1153,7 +1153,7 @@ void GaussianDOFCombineMat::Execute(const SPtr<Texture>& focused, const SPtr<Tex
 	mFarTexture.Set(far);
 	mDepthTexture.Set(depth);
 
-	SPtr<GpuParamBlockBuffer> perView = view.GetPerViewBuffer();
+	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	RenderAPI& rapi = RenderAPI::Instance();
@@ -1205,7 +1205,7 @@ void BokehDOFPrepareMat::Execute(const SPtr<Texture>& input, const SPtr<Texture>
 	mInputTexture.Set(input);
 	mDepthTexture.Set(depth);
 
-	SPtr<GpuParamBlockBuffer> perView = view.GetPerViewBuffer();
+	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	RenderAPI& rapi = RenderAPI::Instance();
@@ -1357,7 +1357,7 @@ void BokehDOFMat::Execute(const SPtr<Texture>& input, const RendererView& view, 
 
 	mBokehTexture.Set(bokehTexture);
 
-	SPtr<GpuParamBlockBuffer> perView = view.GetPerViewBuffer();
+	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	RenderAPI& rapi = RenderAPI::Instance();
@@ -1385,7 +1385,7 @@ POOLED_RENDER_TEXTURE_DESC BokehDOFMat::GetOutputDesc(const SPtr<Texture>& targe
 	return POOLED_RENDER_TEXTURE_DESC::Create2D(PF_RGBA16F, width, height, TU_RENDERTARGET);
 }
 
-void BokehDOFMat::PopulateDofCommonParams(const SPtr<GpuParamBlockBuffer>& buffer, const DepthOfFieldSettings& settings, const RendererView& view)
+void BokehDOFMat::PopulateDofCommonParams(const SPtr<GpuBuffer>& buffer, const DepthOfFieldSettings& settings, const RendererView& view)
 {
 	gDepthOfFieldCommonParamDef.gFocalPlaneDistance.Set(buffer, settings.FocalDistance);
 	gDepthOfFieldCommonParamDef.gApertureSize.Set(buffer, settings.ApertureSize * 0.001f); // mm to m
@@ -1456,7 +1456,7 @@ void BokehDOFCombineMat::Execute(const SPtr<Texture>& unfocused, const SPtr<Text
 	mFocusedTexture.Set(focused);
 	mDepthTexture.Set(depth);
 
-	SPtr<GpuParamBlockBuffer> perView = view.GetPerViewBuffer();
+	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	RenderAPI& rapi = RenderAPI::Instance();
@@ -1525,7 +1525,7 @@ void MotionBlurMat::Execute(const SPtr<Texture>& input, const SPtr<Texture>& dep
 	mInputTexture.Set(input);
 	mDepthTexture.Set(depth);
 
-	SPtr<GpuParamBlockBuffer> perView = view.GetPerViewBuffer();
+	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	RenderAPI& rapi = RenderAPI::Instance();
@@ -1774,7 +1774,7 @@ void SSAOMat::Execute(const RendererView& view, const SSAOTextureInputs& texture
 
 	mRandomTexture.Set(textures.RandomRotations);
 
-	SPtr<GpuParamBlockBuffer> perView = view.GetPerViewBuffer();
+	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	RenderAPI& rapi = RenderAPI::Instance();
@@ -1863,7 +1863,7 @@ void SSAODownsampleMat::Execute(const RendererView& view, const SPtr<Texture>& d
 	mDepthTexture.Set(depth);
 	mNormalsTexture.Set(normals);
 
-	SPtr<GpuParamBlockBuffer> perView = view.GetPerViewBuffer();
+	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	RenderAPI& rapi = RenderAPI::Instance();
@@ -1927,7 +1927,7 @@ void SSAOBlurMat::Execute(const RendererView& view, const SPtr<Texture>& ao, con
 	mAOTexture.Set(ao);
 	mDepthTexture.Set(depth);
 
-	SPtr<GpuParamBlockBuffer> perView = view.GetPerViewBuffer();
+	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	RenderAPI& rapi = RenderAPI::Instance();
@@ -1963,7 +1963,7 @@ void SSRStencilMat::Execute(const RendererView& view, GBufferTextures gbuffer, c
 	Vector2 roughnessScaleBias = SSRTraceMat::CalcRoughnessFadeScaleBias(settings.MaxRoughness);
 	gSSRStencilParamDef.gRoughnessScaleBias.Set(mParamBuffer, roughnessScaleBias);
 
-	SPtr<GpuParamBlockBuffer> perView = view.GetPerViewBuffer();
+	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	const RendererViewProperties& viewProps = view.GetProperties();
@@ -2069,7 +2069,7 @@ void SSRTraceMat::Execute(const RendererView& view, GBufferTextures gbuffer, con
 	gSSRTraceParamDef.gRoughnessScaleBias.Set(mParamBuffer, roughnessScaleBias);
 	gSSRTraceParamDef.gTemporalJitter.Set(mParamBuffer, temporalJitter);
 
-	SPtr<GpuParamBlockBuffer> perView = view.GetPerViewBuffer();
+	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	RenderAPI& rapi = RenderAPI::Instance();
@@ -2290,7 +2290,7 @@ void TemporalFilteringMat::Execute(const RendererView& view, const SPtr<Texture>
 		gTemporalResolveParamDef.gSampleWeightsLowpass.Set(mTemporalParamBuffer, sampleWeightsLowPass[i] / totalWeightsLowPass, i);
 	}
 
-	SPtr<GpuParamBlockBuffer> perView = view.GetPerViewBuffer();
+	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	RenderAPI& rapi = RenderAPI::Instance();
@@ -2390,7 +2390,7 @@ void MSAACoverageMat::Execute(const RendererView& view, GBufferTextures gbuffer)
 	mGBufferParams.Bind(gbuffer);
 
 	const Rect2I& viewRect = view.GetProperties().Target.ViewRect;
-	SPtr<GpuParamBlockBuffer> perView = view.GetPerViewBuffer();
+	SPtr<GpuBuffer> perView = view.GetPerViewBuffer();
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	Bind();

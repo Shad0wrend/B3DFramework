@@ -54,10 +54,10 @@ namespace bs
 			ShadowDepthNormalMat() = default;
 
 			/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
-			void Bind(const SPtr<GpuParamBlockBuffer>& shadowParams);
+			void Bind(const SPtr<GpuBuffer>& shadowParams);
 
 			/** Sets a new buffer that determines per-object properties. */
-			void SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams);
+			void SetPerObjectBuffer(const SPtr<GpuBuffer>& perObjectParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -88,10 +88,10 @@ namespace bs
 			ShadowDepthNormalNoPSMat() = default;
 
 			/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
-			void Bind(const SPtr<GpuParamBlockBuffer>& shadowParams);
+			void Bind(const SPtr<GpuBuffer>& shadowParams);
 
 			/** Sets a new buffer that determines per-object properties. */
-			void SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams);
+			void SetPerObjectBuffer(const SPtr<GpuBuffer>& perObjectParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -122,10 +122,10 @@ namespace bs
 			ShadowDepthDirectionalMat() = default;
 
 			/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
-			void Bind(const SPtr<GpuParamBlockBuffer>& shadowParams);
+			void Bind(const SPtr<GpuBuffer>& shadowParams);
 
 			/** Sets a new buffer that determines per-object properties. */
-			void SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams);
+			void SetPerObjectBuffer(const SPtr<GpuBuffer>& perObjectParams);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -168,10 +168,10 @@ namespace bs
 			ShadowDepthCubeMat() = default;
 
 			/** Binds the material to the pipeline, ready to be used on subsequent draw calls. */
-			void Bind(const SPtr<GpuParamBlockBuffer>& shadowParams, const SPtr<GpuParamBlockBuffer>& shadowCubeParams);
+			void Bind(const SPtr<GpuBuffer>& shadowParams, const SPtr<GpuBuffer>& shadowCubeParams);
 
 			/** Sets a new buffer that determines per-object properties. */
-			void SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams, const SPtr<GpuParamBlockBuffer>& shadowCubeMasks);
+			void SetPerObjectBuffer(const SPtr<GpuBuffer>& perObjectParams, const SPtr<GpuBuffer>& shadowCubeMasks);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -209,7 +209,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Binds the material and its parameters to the pipeline. */
-			void Bind(const SPtr<GpuParamBlockBuffer>& perCamera);
+			void Bind(const SPtr<GpuBuffer>& perCamera);
 
 			/** Returns the material variation matching the provided parameters.
 			 *
@@ -222,13 +222,13 @@ namespace bs
 			static ShadowProjectStencilMat* GetVariation(bool directional, bool useZFailStencil);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mVertParams;
+			SPtr<GpuBuffer> mVertParams;
 		};
 
 		/** Common parameters used by the shadow projection materials. */
 		struct ShadowProjectParams
 		{
-			ShadowProjectParams(const Light& light, const SPtr<Texture>& shadowMap, const SPtr<GpuParamBlockBuffer>& shadowParams, const SPtr<GpuParamBlockBuffer>& perCameraParams, GBufferTextures gbuffer)
+			ShadowProjectParams(const Light& light, const SPtr<Texture>& shadowMap, const SPtr<GpuBuffer>& shadowParams, const SPtr<GpuBuffer>& perCameraParams, GBufferTextures gbuffer)
 				: Light(light), ShadowMap(shadowMap), ShadowParams(shadowParams), PerCamera(perCameraParams), Gbuffer(gbuffer)
 			{}
 
@@ -239,10 +239,10 @@ namespace bs
 			const SPtr<Texture>& ShadowMap;
 
 			/** Parameter block containing parameters specific for shadow projection. */
-			const SPtr<GpuParamBlockBuffer> ShadowParams;
+			const SPtr<GpuBuffer> ShadowParams;
 
 			/** Parameter block containing parameters specific to this view. */
-			const SPtr<GpuParamBlockBuffer>& PerCamera;
+			const SPtr<GpuBuffer>& PerCamera;
 
 			/** Contains the GBuffer textures. */
 			GBufferTextures Gbuffer;
@@ -296,7 +296,7 @@ namespace bs
 
 		private:
 			SPtr<SamplerState> mSamplerState;
-			SPtr<GpuParamBlockBuffer> mVertParams;
+			SPtr<GpuBuffer> mVertParams;
 
 			GBufferParams mGBufferParams;
 
@@ -349,7 +349,7 @@ namespace bs
 
 		private:
 			SPtr<SamplerState> mSamplerState;
-			SPtr<GpuParamBlockBuffer> mVertParams;
+			SPtr<GpuBuffer> mVertParams;
 
 			GBufferParams mGBufferParams;
 

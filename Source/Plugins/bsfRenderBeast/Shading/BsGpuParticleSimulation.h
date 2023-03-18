@@ -159,7 +159,7 @@ namespace bs
 			 * @param[in]	gbuffer		Populated GBuffer with depths and normals.
 			 * @param[in]	dt			Time step to advance the simulation by.
 			 */
-			void Simulate(const SceneInfo& sceneInfo, const ParticlePerFrameData* simData, const SPtr<GpuParamBlockBuffer>& viewParams, const GBufferTextures& gbuffer, float dt);
+			void Simulate(const SceneInfo& sceneInfo, const ParticlePerFrameData* simData, const SPtr<GpuBuffer>& viewParams, const GBufferTextures& gbuffer, float dt);
 
 			/**
 			 * Sorts the particle systems for the provided view. Only sorts systems using distance based sorting and only

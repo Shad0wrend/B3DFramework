@@ -52,7 +52,7 @@ namespace bs
 			 * Populates the provided parameter block buffer with information about the light. Provided buffer's structure
 			 * must match PerLightParamDef.
 			 */
-			void GetParameters(SPtr<GpuParamBlockBuffer>& buffer) const;
+			void GetParameters(SPtr<GpuBuffer>& buffer) const;
 
 			/**
 			 * Calculates the light position that is shifted in order to account for area spot lights. For non-spot lights

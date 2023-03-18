@@ -50,7 +50,7 @@ void LightGridLLCreationMat::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("THREADGROUP_SIZE", kThreadgroupSize);
 }
 
-void LightGridLLCreationMat::SetParams(const Vector3I& gridSize, const SPtr<GpuParamBlockBuffer>& gridParams, const SPtr<GenericGpuBuffer>& lightsBuffer, const SPtr<GenericGpuBuffer>& probesBuffer)
+void LightGridLLCreationMat::SetParams(const Vector3I& gridSize, const SPtr<GpuBuffer>& gridParams, const SPtr<GenericGpuBuffer>& lightsBuffer, const SPtr<GenericGpuBuffer>& probesBuffer)
 {
 	mGridSize = gridSize;
 	u32 numCells = gridSize[0] * gridSize[1] * gridSize[2];
@@ -162,7 +162,7 @@ void LightGridLLReductionMat::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("THREADGROUP_SIZE", kThreadgroupSize);
 }
 
-void LightGridLLReductionMat::SetParams(const Vector3I& gridSize, const SPtr<GpuParamBlockBuffer>& gridParams, const SPtr<GenericGpuBuffer>& lightsLLHeads, const SPtr<GenericGpuBuffer>& lightsLL, const SPtr<GenericGpuBuffer>& probeLLHeads, const SPtr<GenericGpuBuffer>& probeLL)
+void LightGridLLReductionMat::SetParams(const Vector3I& gridSize, const SPtr<GpuBuffer>& gridParams, const SPtr<GenericGpuBuffer>& lightsLLHeads, const SPtr<GenericGpuBuffer>& lightsLL, const SPtr<GenericGpuBuffer>& probeLLHeads, const SPtr<GenericGpuBuffer>& probeLL)
 {
 	mGridSize = gridSize;
 	u32 numCells = gridSize[0] * gridSize[1] * gridSize[2];

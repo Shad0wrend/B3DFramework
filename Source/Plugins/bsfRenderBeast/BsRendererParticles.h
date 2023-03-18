@@ -225,13 +225,13 @@ namespace bs
 			mutable ParticlesRenderElement RenderElement;
 
 			/** Parameters used by the particle rendering shader. */
-			SPtr<GpuParamBlockBuffer> ParticlesParamBuffer;
+			SPtr<GpuBuffer> ParticlesParamBuffer;
 
 			/** Extra parameters required by the particle rendering shader if the particle system is GPU simulated. */
-			SPtr<GpuParamBlockBuffer> GpuParticlesParamBuffer;
+			SPtr<GpuBuffer> GpuParticlesParamBuffer;
 
 			/** Buffer containing the world transform data for the rendered object. */
-			SPtr<GpuParamBlockBuffer> PerObjectParamBuffer;
+			SPtr<GpuBuffer> PerObjectParamBuffer;
 
 			/** Information about the color over lifetime curve stored in the global curve texture. */
 			TextureRowAllocation ColorCurveAlloc;

@@ -80,7 +80,7 @@ namespace bs
 			static TetrahedraRenderMat* GetVariation(bool msaa, bool singleSampleMSAA);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mDepthBufferTex;
 		};
 
@@ -141,7 +141,7 @@ namespace bs
 
 		private:
 			GBufferParams mGBufferParams;
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mParamInputTex;
 			GpuParameterSampledTexture mParamSkyIrradianceTex;
 			GpuParameterSampledTexture mParamAmbientOcclusionTex;

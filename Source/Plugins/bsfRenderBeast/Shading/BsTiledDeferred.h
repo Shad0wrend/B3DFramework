@@ -64,7 +64,7 @@ namespace bs
 			GpuParameterSampledTexture mInColorTextureParam;
 			GpuParameterSampledTexture mMSAACoverageTexParam;
 
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 
 			static const u32 kTileSize;
 		};
@@ -155,7 +155,7 @@ namespace bs
 
 			GpuParameterStorageTexture mOutputTextureParam;
 			GpuParameterBuffer mOutputBufferParam;
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(TiledImageBasedLightingParamDef)
@@ -217,7 +217,7 @@ namespace bs
 
 			GpuParameterStorageTexture mOutputTextureParam;
 
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			ReflProbeParamBuffer mReflProbeParamBuffer;
 
 			static const u32 kTileSize;

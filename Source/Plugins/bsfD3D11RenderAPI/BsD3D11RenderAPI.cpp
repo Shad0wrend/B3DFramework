@@ -465,7 +465,7 @@ void D3D11RenderAPI::SetGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<C
 				for(auto iter = paramDesc->ParamBlocks.begin(); iter != paramDesc->ParamBlocks.end(); ++iter)
 				{
 					u32 slot = iter->second.Slot;
-					SPtr<GpuParamBlockBuffer> buffer = gpuParams->GetUniformBuffer(iter->second.Set, slot);
+					SPtr<GpuBuffer> buffer = gpuParams->GetUniformBuffer(iter->second.Set, slot);
 
 					while(slot >= (u32)constBuffers.size())
 						constBuffers.push_back(nullptr);

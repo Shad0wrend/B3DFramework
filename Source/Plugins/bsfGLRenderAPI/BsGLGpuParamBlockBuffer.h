@@ -15,7 +15,7 @@ namespace bs
 		 */
 
 		/**	OpenGL implementation of a GPU parameter buffer (Uniform buffer). */
-		class GLGpuParamBlockBuffer : public GpuParamBlockBuffer
+		class GLGpuParamBlockBuffer : public GpuBuffer
 		{
 		public:
 			GLGpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);

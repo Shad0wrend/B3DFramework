@@ -74,7 +74,7 @@ namespace bs
 			 *								representing this buffer.
 			 * @param[in]	outputCounts	Pre-allocated buffer to contain the resulting per-digit counts for each group.
 			 */
-			void Execute(u32 numGroups, const SPtr<GpuParamBlockBuffer>& params, const SPtr<GenericGpuBuffer>& inputKeys, const SPtr<GenericGpuBuffer>& outputCounts);
+			void Execute(u32 numGroups, const SPtr<GpuBuffer>& params, const SPtr<GenericGpuBuffer>& inputKeys, const SPtr<GenericGpuBuffer>& outputCounts);
 
 			GpuParameterBuffer MInputKeysParam;
 			GpuParameterBuffer MOutputCountsParam;
@@ -100,7 +100,7 @@ namespace bs
 			 * @param[in]	inputCounts		Counts as output by the RadixSortCountMat material.
 			 * @param[in]	outputCounts	Pre-allocated buffer to contain the resulting per-digit counts for each group.
 			 */
-			void Execute(const SPtr<GpuParamBlockBuffer>& params, const SPtr<GenericGpuBuffer>& inputCounts, const SPtr<GenericGpuBuffer>& outputOffsets);
+			void Execute(const SPtr<GpuBuffer>& params, const SPtr<GenericGpuBuffer>& inputCounts, const SPtr<GenericGpuBuffer>& outputOffsets);
 
 			GpuParameterBuffer MInputCountsParam;
 			GpuParameterBuffer MOutputOffsetsParam;
@@ -131,7 +131,7 @@ namespace bs
 			 * @return						Index of the buffer that should be used as input for the next iteration of the
 			 *								algorithm. (In case the keys were only partially sorted)
 			 */
-			void Execute(u32 numGroups, const SPtr<GpuParamBlockBuffer>& params, const SPtr<GenericGpuBuffer>& inputOffsets, const GpuSortBuffers& buffers, u32 inputBufferIdx);
+			void Execute(u32 numGroups, const SPtr<GpuBuffer>& params, const SPtr<GenericGpuBuffer>& inputOffsets, const GpuSortBuffers& buffers, u32 inputBufferIdx);
 
 			GpuParameterBuffer MInputOffsetsBufferParam;
 			GpuParameterBuffer MInputKeysBufferParam;

@@ -143,7 +143,7 @@ void IrradianceEvaluateMat::Execute(const RendererView& view, const GBufferTextu
 
 	gIrradianceEvaluateParamDef.gSkyBrightness.Set(mParamBuffer, skyBrightness);
 	gIrradianceEvaluateParamDef.gNumTetrahedra.Set(mParamBuffer, lightProbesInfo.NumTetrahedra);
-	mParamBuffer->FlushToGpu();
+	mParamBuffer->FlushCache();
 
 	mGPUParameters->SetUniformBuffer("PerCamera", view.GetPerViewBuffer());
 

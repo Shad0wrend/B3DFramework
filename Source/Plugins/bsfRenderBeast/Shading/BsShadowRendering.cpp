@@ -17,7 +17,7 @@ namespace bs { namespace ct {
 
 ShadowParamsDef gShadowParamsDef;
 
-void ShadowDepthNormalMat::Bind(const SPtr<GpuParamBlockBuffer>& shadowParams)
+void ShadowDepthNormalMat::Bind(const SPtr<GpuBuffer>& shadowParams)
 {
 	mGPUParameters->SetUniformBuffer("ShadowParams", shadowParams);
 
@@ -25,7 +25,7 @@ void ShadowDepthNormalMat::Bind(const SPtr<GpuParamBlockBuffer>& shadowParams)
 	RenderAPI::Instance().SetStencilRef(mStencilReferenceValue);
 }
 
-void ShadowDepthNormalMat::SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams)
+void ShadowDepthNormalMat::SetPerObjectBuffer(const SPtr<GpuBuffer>& perObjectParams)
 {
 	mGPUParameters->SetUniformBuffer("PerObject", perObjectParams);
 
@@ -50,7 +50,7 @@ ShadowDepthNormalMat* ShadowDepthNormalMat::GetVariation(bool skinned, bool morp
 	}
 }
 
-void ShadowDepthNormalNoPSMat::Bind(const SPtr<GpuParamBlockBuffer>& shadowParams)
+void ShadowDepthNormalNoPSMat::Bind(const SPtr<GpuBuffer>& shadowParams)
 {
 	mGPUParameters->SetUniformBuffer("ShadowParams", shadowParams);
 
@@ -58,7 +58,7 @@ void ShadowDepthNormalNoPSMat::Bind(const SPtr<GpuParamBlockBuffer>& shadowParam
 	RenderAPI::Instance().SetStencilRef(mStencilReferenceValue);
 }
 
-void ShadowDepthNormalNoPSMat::SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams)
+void ShadowDepthNormalNoPSMat::SetPerObjectBuffer(const SPtr<GpuBuffer>& perObjectParams)
 {
 	mGPUParameters->SetUniformBuffer("PerObject", perObjectParams);
 
@@ -83,7 +83,7 @@ ShadowDepthNormalNoPSMat* ShadowDepthNormalNoPSMat::GetVariation(bool skinned, b
 	}
 }
 
-void ShadowDepthDirectionalMat::Bind(const SPtr<GpuParamBlockBuffer>& shadowParams)
+void ShadowDepthDirectionalMat::Bind(const SPtr<GpuBuffer>& shadowParams)
 {
 	mGPUParameters->SetUniformBuffer("ShadowParams", shadowParams);
 
@@ -91,7 +91,7 @@ void ShadowDepthDirectionalMat::Bind(const SPtr<GpuParamBlockBuffer>& shadowPara
 	RenderAPI::Instance().SetStencilRef(mStencilReferenceValue);
 }
 
-void ShadowDepthDirectionalMat::SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams)
+void ShadowDepthDirectionalMat::SetPerObjectBuffer(const SPtr<GpuBuffer>& perObjectParams)
 {
 	mGPUParameters->SetUniformBuffer("PerObject", perObjectParams);
 	RenderAPI::Instance().SetGpuParams(mGPUParameters);
@@ -118,7 +118,7 @@ ShadowDepthDirectionalMat* ShadowDepthDirectionalMat::GetVariation(bool skinned,
 ShadowCubeMatricesDef gShadowCubeMatricesDef;
 ShadowCubeMasksDef gShadowCubeMasksDef;
 
-void ShadowDepthCubeMat::Bind(const SPtr<GpuParamBlockBuffer>& shadowParams, const SPtr<GpuParamBlockBuffer>& shadowCubeMatrices)
+void ShadowDepthCubeMat::Bind(const SPtr<GpuBuffer>& shadowParams, const SPtr<GpuBuffer>& shadowCubeMatrices)
 {
 	mGPUParameters->SetUniformBuffer("ShadowParams", shadowParams);
 	mGPUParameters->SetUniformBuffer("ShadowCubeMatrices", shadowCubeMatrices);
@@ -127,7 +127,7 @@ void ShadowDepthCubeMat::Bind(const SPtr<GpuParamBlockBuffer>& shadowParams, con
 	RenderAPI::Instance().SetStencilRef(mStencilReferenceValue);
 }
 
-void ShadowDepthCubeMat::SetPerObjectBuffer(const SPtr<GpuParamBlockBuffer>& perObjectParams, const SPtr<GpuParamBlockBuffer>& shadowCubeMasks)
+void ShadowDepthCubeMat::SetPerObjectBuffer(const SPtr<GpuBuffer>& perObjectParams, const SPtr<GpuBuffer>& shadowCubeMasks)
 {
 	mGPUParameters->SetUniformBuffer("PerObject", perObjectParams);
 	mGPUParameters->SetUniformBuffer("ShadowCubeMasks", shadowCubeMasks);
@@ -163,7 +163,7 @@ void ShadowProjectStencilMat::Initialize()
 		mGPUParameters->SetUniformBuffer(GPT_VERTEX_PROGRAM, "VertParams", mVertParams);
 }
 
-void ShadowProjectStencilMat::Bind(const SPtr<GpuParamBlockBuffer>& perCamera)
+void ShadowProjectStencilMat::Bind(const SPtr<GpuBuffer>& perCamera)
 {
 	Vector4 lightPosAndScale(0, 0, 0, 1);
 	gShadowProjectVertParamsDef.gPositionAndScale.Set(mVertParams, lightPosAndScale);
@@ -527,9 +527,9 @@ struct ShadowRenderQueueCubeOptions
 	ShadowRenderQueueCubeOptions(
 		const ConvexVolume (&frustums)[6],
 		const ConvexVolume& boundingVolume,
-		const SPtr<GpuParamBlockBuffer>& shadowParamsBuffer,
-		const SPtr<GpuParamBlockBuffer>& shadowCubeMatricesBuffer,
-		const SPtr<GpuParamBlockBuffer>& shadowCubeMasksBuffer)
+		const SPtr<GpuBuffer>& shadowParamsBuffer,
+		const SPtr<GpuBuffer>& shadowCubeMatricesBuffer,
+		const SPtr<GpuBuffer>& shadowCubeMasksBuffer)
 		: Frustums(frustums), BoundingVolume(boundingVolume), ShadowParamsBuffer(shadowParamsBuffer), ShadowCubeMatricesBuffer(shadowCubeMatricesBuffer), ShadowCubeMasksBuffer(shadowCubeMasksBuffer)
 	{}
 
@@ -562,9 +562,9 @@ struct ShadowRenderQueueCubeOptions
 
 	const ConvexVolume (&Frustums)[6];
 	const ConvexVolume& BoundingVolume;
-	const SPtr<GpuParamBlockBuffer>& ShadowParamsBuffer;
-	const SPtr<GpuParamBlockBuffer>& ShadowCubeMatricesBuffer;
-	const SPtr<GpuParamBlockBuffer>& ShadowCubeMasksBuffer;
+	const SPtr<GpuBuffer>& ShadowParamsBuffer;
+	const SPtr<GpuBuffer>& ShadowCubeMatricesBuffer;
+	const SPtr<GpuBuffer>& ShadowCubeMasksBuffer;
 
 	mutable ShadowDepthCubeMat* Material = nullptr;
 };
@@ -574,7 +574,7 @@ struct ShadowRenderQueueCubeSingleOptions
 {
 	ShadowRenderQueueCubeSingleOptions(
 		const ConvexVolume& boundingVolume,
-		const SPtr<GpuParamBlockBuffer>& shadowParamsBuffer)
+		const SPtr<GpuBuffer>& shadowParamsBuffer)
 		: BoundingVolume(boundingVolume), ShadowParamsBuffer(shadowParamsBuffer)
 	{}
 
@@ -601,7 +601,7 @@ struct ShadowRenderQueueCubeSingleOptions
 	}
 
 	const ConvexVolume& BoundingVolume;
-	const SPtr<GpuParamBlockBuffer>& ShadowParamsBuffer;
+	const SPtr<GpuBuffer>& ShadowParamsBuffer;
 
 	mutable ShadowDepthNormalNoPSMat* Material = nullptr;
 };
@@ -611,7 +611,7 @@ struct ShadowRenderQueueSpotOptions
 {
 	ShadowRenderQueueSpotOptions(
 		const ConvexVolume& boundingVolume,
-		const SPtr<GpuParamBlockBuffer>& shadowParamsBuffer)
+		const SPtr<GpuBuffer>& shadowParamsBuffer)
 		: BoundingVolume(boundingVolume), ShadowParamsBuffer(shadowParamsBuffer)
 	{}
 
@@ -638,7 +638,7 @@ struct ShadowRenderQueueSpotOptions
 	}
 
 	const ConvexVolume& BoundingVolume;
-	const SPtr<GpuParamBlockBuffer>& ShadowParamsBuffer;
+	const SPtr<GpuBuffer>& ShadowParamsBuffer;
 
 	mutable ShadowDepthNormalMat* Material = nullptr;
 };
@@ -648,7 +648,7 @@ struct ShadowRenderQueueDirOptions
 {
 	ShadowRenderQueueDirOptions(
 		const ConvexVolume& boundingVolume,
-		const SPtr<GpuParamBlockBuffer>& shadowParamsBuffer)
+		const SPtr<GpuBuffer>& shadowParamsBuffer)
 		: BoundingVolume(boundingVolume), ShadowParamsBuffer(shadowParamsBuffer)
 	{}
 
@@ -675,7 +675,7 @@ struct ShadowRenderQueueDirOptions
 	}
 
 	const ConvexVolume& BoundingVolume;
-	const SPtr<GpuParamBlockBuffer>& ShadowParamsBuffer;
+	const SPtr<GpuBuffer>& ShadowParamsBuffer;
 
 	mutable ShadowDepthDirectionalMat* Material = nullptr;
 };
@@ -996,15 +996,15 @@ void ShadowRendering::RenderShadowOcclusion(const RendererView& view, const Rend
 	const Matrix4& viewP = viewProps.ProjTransform;
 	Matrix4 viewInvVP = viewProps.ViewProjTransform.Inverse();
 
-	SPtr<GpuParamBlockBuffer> perViewBuffer = view.GetPerViewBuffer();
+	SPtr<GpuBuffer> perViewBuffer = view.GetPerViewBuffer();
 
 	ProfileGPUBlock sampleBlock("Render shadow occlusion");
 
 	const GpuDeviceCapabilities& caps = GetGpuDeviceCapabilities();
 	// TODO - Calculate and set a scissor rectangle for the light
 
-	SPtr<GpuParamBlockBuffer> shadowParamBuffer = gShadowProjectParamsDef.CreateBuffer();
-	SPtr<GpuParamBlockBuffer> shadowOmniParamBuffer = gShadowProjectOmniParamsDef.CreateBuffer();
+	SPtr<GpuBuffer> shadowParamBuffer = gShadowProjectParamsDef.CreateBuffer();
+	SPtr<GpuBuffer> shadowOmniParamBuffer = gShadowProjectOmniParamsDef.CreateBuffer();
 
 	u32 viewIdx = view.GetViewIdx();
 	Vector<const ShadowInfo*> shadowInfos;
@@ -1207,7 +1207,7 @@ void ShadowRendering::RenderCascadedShadowMaps(const RendererView& view, u32 lig
 
 	const Transform& tfrm = light->GetTransform();
 	Vector3 lightDir = -tfrm.GetRotation().ZAxis();
-	SPtr<GpuParamBlockBuffer> shadowParamsBuffer = gShadowParamsDef.CreateBuffer();
+	SPtr<GpuBuffer> shadowParamsBuffer = gShadowParamsDef.CreateBuffer();
 
 	ShadowInfo shadowInfo;
 	shadowInfo.LightIdx = lightIdx;
@@ -1328,7 +1328,7 @@ void ShadowRendering::RenderSpotShadowMap(const RendererLight& rendererLight, co
 {
 	Light* light = rendererLight.Internal;
 
-	SPtr<GpuParamBlockBuffer> shadowParamsBuffer = gShadowParamsDef.CreateBuffer();
+	SPtr<GpuBuffer> shadowParamsBuffer = gShadowParamsDef.CreateBuffer();
 
 	ShadowInfo mapInfo;
 	mapInfo.FadePerView = options.FadePercents;
@@ -1424,7 +1424,7 @@ void ShadowRendering::RenderRadialShadowMap(const RendererLight& rendererLight, 
 {
 	Light* light = rendererLight.Internal;
 
-	SPtr<GpuParamBlockBuffer> shadowParamsBuffer = gShadowParamsDef.CreateBuffer();
+	SPtr<GpuBuffer> shadowParamsBuffer = gShadowParamsDef.CreateBuffer();
 
 	ShadowInfo mapInfo;
 	mapInfo.LightIdx = options.LightIdx;
@@ -1493,8 +1493,8 @@ void ShadowRendering::RenderRadialShadowMap(const RendererLight& rendererLight, 
 
 	bool renderAllFacesAtOnce = caps.HasCapability(RSC_RENDER_TARGET_LAYERS);
 
-	SPtr<GpuParamBlockBuffer> shadowCubeMatricesBuffer;
-	SPtr<GpuParamBlockBuffer> shadowCubeMasksBuffer;
+	SPtr<GpuBuffer> shadowCubeMatricesBuffer;
+	SPtr<GpuBuffer> shadowCubeMasksBuffer;
 	if(renderAllFacesAtOnce)
 	{
 		shadowCubeMatricesBuffer = gShadowCubeMatricesDef.CreateBuffer();

@@ -440,14 +440,14 @@ namespace bs
 			void ClearDrawGroups(const SPtr<Camera>& camera, u64 widgetId);
 
 			/** Updates the parameter block buffer for the specified mesh. */
-			void UpdateParamBlockBuffer(const SPtr<GpuParamBlockBuffer>& buffer, float invViewportWidth, float invViewportHeight, bool flipY, const Matrix4& tfrm, GUIMeshRenderData& renderData) const;
+			void UpdateParamBlockBuffer(const SPtr<GpuBuffer>& buffer, float invViewportWidth, float invViewportHeight, bool flipY, const Matrix4& tfrm, GUIMeshRenderData& renderData) const;
 
 			struct GUIWidgetRenderData
 			{
 				u64 WidgetId;
 				u32 WidgetDepth = 0;
 				Vector<GUIDrawGroupRenderData> DrawGroups;
-				Vector<SPtr<GpuParamBlockBuffer>> ParamBlocks;
+				Vector<SPtr<GpuBuffer>> ParamBlocks;
 
 				SPtr<Mesh> TriangleMesh;
 				SPtr<Mesh> LineMesh;

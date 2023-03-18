@@ -29,24 +29,24 @@ void GpuBuffer::Destroy()
 	}
 }
 
-void GpuBuffer::WriteData(u32 offset, u32 length, const void* source)
+void GpuBuffer::WriteCached(u32 offset, u32 length, const void* source)
 {
 	if(!B3D_ENSURE(mCache != nullptr))
 		return;
 
-	if(!B3D_ENSURE((offset + length) > mSize))
+	if(!B3D_ENSURE((offset + length) <= mSize))
 		return;
 
 	memcpy(mCache + offset, source, length);
 	MarkCoreDirty();
 }
 
-void GpuBuffer::ZeroOutData(u32 offset, u32 length)
+void GpuBuffer::ZeroOutCached(u32 offset, u32 length)
 {
 	if(!B3D_ENSURE(mCache != nullptr))
 		return;
 
-	if(!B3D_ENSURE((offset + length) > mSize))
+	if(!B3D_ENSURE((offset + length) <= mSize))
 		return;
 
 	memset(mCache + offset, 0, length);
@@ -58,7 +58,7 @@ void GpuBuffer::ReadCached(u32 offset, u32 length, void* destination)
 	if(!B3D_ENSURE(mCache != nullptr))
 		return;
 
-	if(!B3D_ENSURE((offset + length) > mSize))
+	if(!B3D_ENSURE((offset + length) <= mSize))
 		return;
 
 	memcpy(destination, mCache + offset, length);
@@ -200,24 +200,24 @@ namespace bs::ct
 		}
 	}
 
-	void GpuBuffer::WriteToCache(u32 offset, u32 length, const void* source)
+	void GpuBuffer::WriteCached(u32 offset, u32 length, const void* source)
 	{
 		if(!B3D_ENSURE(mCache != nullptr))
 			return;
 
-		if(!B3D_ENSURE((offset + length) > mSize))
+		if(!B3D_ENSURE((offset + length) <= mSize))
 			return;
 
 		memcpy(mCache + offset, source, length);
 		mIsCacheDirty = true;
 	}
 
-	void GpuBuffer::ZeroOutCache(u32 offset, u32 length)
+	void GpuBuffer::ZeroOutCached(u32 offset, u32 length)
 	{
 		if(!B3D_ENSURE(mCache != nullptr))
 			return;
 
-		if(!B3D_ENSURE((offset + length) > mSize))
+		if(!B3D_ENSURE((offset + length) <= mSize))
 			return;
 
 		memset(mCache + offset, 0, length);
@@ -234,6 +234,17 @@ namespace bs::ct
 
 		WriteData(0, mSize, mCache, BWT_NORMAL);
 		mIsCacheDirty = false;
+	}
+
+	void GpuBuffer::ReadCached(u32 offset, u32 length, void* destination)
+	{
+		if(!B3D_ENSURE(mCache != nullptr))
+			return;
+
+		if(!B3D_ENSURE((offset + length) <= mSize))
+			return;
+
+		memcpy(destination, mCache + offset, length);
 	}
 
 	void GpuBuffer::SyncToCore(const CoreSyncData& data)

@@ -76,7 +76,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Binds the material for rendering and sets up any parameters. */
-			void Bind(const SPtr<GpuParamBlockBuffer>& perCamera, const SPtr<Texture>& texture, const Color& solidColor);
+			void Bind(const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& texture, const Color& solidColor);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -88,7 +88,7 @@ namespace bs
 
 		private:
 			GpuParameterSampledTexture mSkyTextureParam;
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 		};
 
 		/** Data shared between RENDERER_VIEW_DESC and RendererViewProperties */
@@ -403,7 +403,7 @@ namespace bs
 			void UpdatePerViewBuffer();
 
 			/** Returns a buffer that stores per-view parameters. */
-			SPtr<GpuParamBlockBuffer> GetPerViewBuffer() const { return mParamBuffer; }
+			SPtr<GpuBuffer> GetPerViewBuffer() const { return mParamBuffer; }
 
 			/**
 			 * Returns information about visible lights, in the form of a light grid, used for forward rendering. Only valid
@@ -527,7 +527,7 @@ namespace bs
 			SPtr<RenderSettings> mRenderSettings;
 			u32 mRenderSettingsHash;
 
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			VisibilityInfo mVisibility;
 			LightGrid mLightGrid;
 			u32 mViewIdx;

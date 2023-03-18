@@ -1624,7 +1624,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 		{
 			for(auto& entry : drawGroup.NonCachedElements)
 			{
-				const SPtr<GpuParamBlockBuffer>& buffer = widget.ParamBlocks[entry.BufferIdx];
+				const SPtr<GpuBuffer>& buffer = widget.ParamBlocks[entry.BufferIdx];
 				UpdateParamBlockBuffer(buffer, invViewportWidth, invViewportHeight, viewflipYFlip, widget.WorldTransform, entry);
 			}
 
@@ -1645,13 +1645,13 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 
 			for(auto& entry : drawGroup.CachedElements)
 			{
-				const SPtr<GpuParamBlockBuffer>& buffer = widget.ParamBlocks[entry.BufferIdx];
+				const SPtr<GpuBuffer>& buffer = widget.ParamBlocks[entry.BufferIdx];
 				UpdateParamBlockBuffer(buffer, invDrawGroupWidth, invDrawGroupHeight, viewflipYFlip, Matrix4::kIdentity, entry);
 			}
 
 			// Update draw group param buffer
 			{
-				const SPtr<GpuParamBlockBuffer>& buffer = widget.ParamBlocks[drawGroup.BufferIdx];
+				const SPtr<GpuBuffer>& buffer = widget.ParamBlocks[drawGroup.BufferIdx];
 
 				gGUISpriteParamBlockDef.gTint.Set(buffer, Color::kWhite);
 				gGUISpriteParamBlockDef.gWorldTransform.Set(buffer, widget.WorldTransform);
@@ -1660,7 +1660,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 				gGUISpriteParamBlockDef.gViewportYFlip.Set(buffer, viewflipYFlip ? -1.0f : 1.0f);
 				gGUISpriteParamBlockDef.gUVSizeOffset.Set(buffer, Vector4(1.0f, 1.0f, 0.0f, 0.0f));
 
-				buffer->FlushToGpu();
+				buffer->FlushCache();
 			}
 
 			// We need to write the alpha of the first (deepest) element for each pixel
@@ -1695,7 +1695,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 				// TODO - I shouldn't be re-applying the entire material for each entry, instead just check which programs
 				// changed, and apply only those + the modified constant buffers and/or texture.
 
-				const SPtr<GpuParamBlockBuffer>& buffer = widget.ParamBlocks[entry.BufferIdx];
+				const SPtr<GpuBuffer>& buffer = widget.ParamBlocks[entry.BufferIdx];
 				entry.Material->Render(entry.IsLine ? widget.LineMesh : widget.TriangleMesh, entry.SubMesh, entry.Texture, mSamplerState, buffer, entry.AdditionalData, true);
 			}
 
@@ -1707,7 +1707,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 				// TODO - I shouldn't be re-applying the entire material for each entry, instead just check which programs
 				// changed, and apply only those + the modified constant buffers and/or texture.
 
-				const SPtr<GpuParamBlockBuffer>& buffer = widget.ParamBlocks[entry.BufferIdx];
+				const SPtr<GpuBuffer>& buffer = widget.ParamBlocks[entry.BufferIdx];
 				entry.Material->Render(entry.IsLine ? widget.LineMesh : widget.TriangleMesh, entry.SubMesh, entry.Texture, mSamplerState, buffer, entry.AdditionalData, false);
 			}
 
@@ -1728,12 +1728,12 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 				// TODO - I shouldn't be re-applying the entire material for each entry, instead just check which programs
 				// changed, and apply only those + the modified constant buffers and/or texture.
 
-				const SPtr<GpuParamBlockBuffer>& buffer = widget.ParamBlocks[entry.BufferIdx];
+				const SPtr<GpuBuffer>& buffer = widget.ParamBlocks[entry.BufferIdx];
 				entry.Material->Render(entry.IsLine ? widget.LineMesh : widget.TriangleMesh, entry.SubMesh, entry.Texture, mSamplerState, buffer, entry.AdditionalData, false);
 			}
 
 			// Draw the group itself
-			const SPtr<GpuParamBlockBuffer>& buffer = widget.ParamBlocks[drawGroup.BufferIdx];
+			const SPtr<GpuBuffer>& buffer = widget.ParamBlocks[drawGroup.BufferIdx];
 
 			SpriteMaterial* batchedMat = SpriteManager::Instance().GetImageMaterial(SpriteMaterialTransparency::Premultiplied, false);
 			batchedMat->Render(widget.DrawGroupMesh, drawGroup.SubMesh, drawGroup.Destination->GetColorTexture(0), mSamplerState, buffer, nullptr, false);
@@ -1908,7 +1908,7 @@ void GUIRenderer::ClearDrawGroups(const SPtr<Camera>& camera, u64 widgetId)
 	}
 }
 
-void GUIRenderer::UpdateParamBlockBuffer(const SPtr<GpuParamBlockBuffer>& buffer, float invViewportWidth, float invViewportHeight, bool flipY, const Matrix4& tfrm, GUIMeshRenderData& renderData) const
+void GUIRenderer::UpdateParamBlockBuffer(const SPtr<GpuBuffer>& buffer, float invViewportWidth, float invViewportHeight, bool flipY, const Matrix4& tfrm, GUIMeshRenderData& renderData) const
 {
 	gGUISpriteParamBlockDef.gTint.Set(buffer, renderData.Tint);
 	gGUISpriteParamBlockDef.gWorldTransform.Set(buffer, tfrm);
@@ -1932,6 +1932,6 @@ void GUIRenderer::UpdateParamBlockBuffer(const SPtr<GpuParamBlockBuffer>& buffer
 	else
 		gGUISpriteParamBlockDef.gUVSizeOffset.Set(buffer, Vector4(1.0f, 1.0f, 0.0f, 0.0f));
 
-	buffer->FlushToGpu();
+	buffer->FlushCache();
 }
 }}

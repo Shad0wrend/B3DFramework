@@ -95,7 +95,7 @@ void TiledDeferredLightingMat::Execute(const RendererView& view, const VisibleLi
 		gTiledLightingParamDef.gLightStrides.Set(mParamBuffer, lightStrides);
 	}
 
-	mParamBuffer->FlushToGpu();
+	mParamBuffer->FlushCache();
 
 	mGBufferParams.Bind(gbuffer);
 	mGPUParameters->SetUniformBuffer("PerCamera", view.GetPerViewBuffer());
@@ -336,8 +336,8 @@ void TiledDeferredImageBasedLightingMat::Execute(const RendererView& view, const
 
 	mReflProbeParamBuffer.Populate(skybox, probeData.GetNumProbes(), sceneInfo.ReflProbeCubemapsTex, viewProps.CapturingReflections);
 
-	mParamBuffer->FlushToGpu();
-	mReflProbeParamBuffer.Buffer->FlushToGpu();
+	mParamBuffer->FlushCache();
+	mReflProbeParamBuffer.Buffer->FlushCache();
 
 	mGBufferA.Set(inputs.Gbuffer.Albedo);
 	mGBufferB.Set(inputs.Gbuffer.Normals);

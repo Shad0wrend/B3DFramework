@@ -1147,7 +1147,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 		rtDesc.ColorSurfaces[0].Texture = iblRadianceTex->Texture;
 		rtDesc.DepthStencilSurface.Texture = sceneDepthNode->DepthTex->Texture;
 
-		SPtr<GpuParamBlockBuffer> perViewBuffer = inputs.View.GetPerViewBuffer();
+		SPtr<GpuBuffer> perViewBuffer = inputs.View.GetPerViewBuffer();
 
 		SPtr<RenderTexture> iblRadianceRT = RenderTexture::Create(rtDesc);
 		rapi.SetRenderTarget(iblRadianceRT, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
@@ -1268,9 +1268,9 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 
 	struct StandardForwardBuffers
 	{
-		SPtr<GpuParamBlockBuffer> LightsParamBlock;
-		SPtr<GpuParamBlockBuffer> ReflProbesParamBlock;
-		SPtr<GpuParamBlockBuffer> LightAndReflProbeParamsParamBlock;
+		SPtr<GpuBuffer> LightsParamBlock;
+		SPtr<GpuBuffer> ReflProbesParamBlock;
+		SPtr<GpuBuffer> LightAndReflProbeParamsParamBlock;
 	} standardForwardBuffers;
 
 	const bool supportsClusteredForward = GetRenderBeast()->GetFeatureSet() == RenderBeastFeatureSet::Desktop;

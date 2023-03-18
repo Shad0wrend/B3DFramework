@@ -9,7 +9,7 @@
 #include "Material/BsPass.h"
 #include "RenderAPI/BsViewport.h"
 #include "RenderAPI/BsRenderTarget.h"
-#include "RenderAPI/BsGpuParamBlockBuffer.h"
+#include "RenderAPI/BsGpuBuffer.h"
 #include "Profiling/BsProfilerCPU.h"
 #include "Profiling/BsProfilerGPU.h"
 #include "Utility/BsTime.h"
@@ -484,8 +484,8 @@ void RenderBeast::RenderView(const RendererViewGroup& viewGroup, RendererView& v
 	const SceneInfo& sceneInfo = mScene->GetSceneInfo();
 	auto& viewProps = view.GetProperties();
 
-	SPtr<GpuParamBlockBuffer> perCameraBuffer = view.GetPerViewBuffer();
-	perCameraBuffer->FlushToGpu();
+	SPtr<GpuBuffer> perCameraBuffer = view.GetPerViewBuffer();
+	perCameraBuffer->FlushCache();
 
 	// Make sure light probe data is up to date
 	if(view.GetRenderSettings().EnableIndirectLighting)
@@ -542,7 +542,7 @@ bool RenderBeast::RenderOverlay(RendererView& view, const FrameInfo& frameInfo)
 {
 	GetProfilerCPU().BeginSample("Render overlay");
 
-	view.GetPerViewBuffer()->FlushToGpu();
+	view.GetPerViewBuffer()->FlushCache();
 	view.BeginFrame(frameInfo);
 
 	auto& viewProps = view.GetProperties();

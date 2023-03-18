@@ -69,6 +69,6 @@ void RendererDecal::UpdatePerCallBuffer(const Matrix4& viewProj, bool flush) con
 	gPerCallParamDef.gMatWorldViewProj.Set(PerCallParamBuffer, worldViewProjMatrix);
 
 	if(flush)
-		PerCallParamBuffer->FlushToGpu();
+		PerCallParamBuffer->FlushCache();
 }
 }} // namespace bs::ct

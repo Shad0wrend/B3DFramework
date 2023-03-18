@@ -31,14 +31,14 @@ void SkyboxMat::Initialize()
 		mGPUParameters->SetUniformBuffer("Params", mParamBuffer);
 }
 
-void SkyboxMat::Bind(const SPtr<GpuParamBlockBuffer>& perCamera, const SPtr<Texture>& texture, const Color& solidColor)
+void SkyboxMat::Bind(const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& texture, const Color& solidColor)
 {
 	mGPUParameters->SetUniformBuffer("PerCamera", perCamera);
 
 	mSkyTextureParam.Set(texture);
 
 	gSkyboxParamDef.gClearColor.Set(mParamBuffer, solidColor);
-	mParamBuffer->FlushToGpu();
+	mParamBuffer->FlushCache();
 
 	RendererMaterial::Bind();
 }

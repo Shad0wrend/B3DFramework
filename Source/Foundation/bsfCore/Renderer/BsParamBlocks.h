@@ -3,10 +3,11 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
+#include "BsCoreApplication.h"
 #include "RenderAPI/BsGpuParamDesc.h"
 #include "RenderAPI/BsGpuParams.h"
 #include "RenderAPI/BsRenderAPI.h"
-#include "RenderAPI/BsGpuParamBlockBuffer.h"
+#include "RenderAPI/BsGpuBuffer.h"
 
 namespace bs
 {
@@ -31,7 +32,7 @@ namespace bs
 			 * Sets the parameter in the provided parameter block buffer. Caller is responsible for ensuring the param block
 			 * buffer contains this parameter.
 			 */
-			void Set(const SPtr<GpuParamBlockBuffer>& paramBlock, const T& value, u32 arrayIdx = 0) const
+			void Set(const SPtr<GpuBuffer>& paramBlock, const T& value, u32 arrayIdx = 0) const
 			{
 #if B3D_DEBUG
 				if(arrayIdx >= mParamDesc.ArraySize)
@@ -47,16 +48,16 @@ namespace bs
 				if(TransposePolicy<T>::TransposeEnabled(transposeMatrices))
 				{
 					auto transposed = TransposePolicy<T>::Transpose(value);
-					paramBlock->Write((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32), &transposed, sizeBytes);
+					paramBlock->WriteCached((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32), sizeBytes, &transposed);
 				}
 				else
-					paramBlock->Write((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32), &value, sizeBytes);
+					paramBlock->WriteCached((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32), sizeBytes, &value);
 
 				// Set unused bytes to 0
 				if(sizeBytes < elementSizeBytes)
 				{
 					u32 diffSize = elementSizeBytes - sizeBytes;
-					paramBlock->ZeroOut((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32) + sizeBytes, diffSize);
+					paramBlock->ZeroOutCached((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32) + sizeBytes, diffSize);
 				}
 			}
 
@@ -104,7 +105,7 @@ namespace bs
 			 * Gets the parameter in the provided parameter block buffer. Caller is responsible for ensuring the param block
 			 * buffer contains this parameter.
 			 */
-			T Get(const SPtr<GpuParamBlockBuffer>& paramBlock, u32 arrayIdx = 0) const
+			T Get(const SPtr<GpuBuffer>& paramBlock, u32 arrayIdx = 0) const
 			{
 #if B3D_DEBUG
 				if(arrayIdx >= mParamDesc.ArraySize)
@@ -118,7 +119,7 @@ namespace bs
 				u32 sizeBytes = std::min(elementSizeBytes, (u32)sizeof(T));
 
 				T value;
-				paramBlock->Read((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32), &value, sizeBytes);
+				paramBlock->ReadCached((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32), sizeBytes, &value);
 
 				return value;
 			}
@@ -166,9 +167,9 @@ namespace bs
 			ParamBlockManager::RegisterBlock(this);                                                  \
 		}                                                                                            \
                                                                                                      \
-		SPtr<GpuParamBlockBuffer> CreateBuffer(GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU) const             \
+		SPtr<GpuBuffer> CreateBuffer(GpuBufferFlags flags = GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::AllowWriteCachingOnCPU) const             \
 		{                                                                                            \
-			return GpuParamBlockBuffer::Create(mBlockSize, flags);                                   \
+			return GetCoreApplication().GetPrimaryGpuDevice()->CreateGpuBuffer(GpuBufferCreateInformation::CreateUniform(mBlockSize, flags));	\
 		}                                                                                            \
 																									 \
 		u32 GetSize() const																			 \

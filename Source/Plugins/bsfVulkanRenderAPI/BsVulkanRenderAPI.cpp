@@ -16,7 +16,7 @@
 #include "BsVulkanCommandBuffer.h"
 #include "BsVulkanGpuParams.h"
 #include "Managers/BsVulkanVertexInputManager.h"
-#include "BsVulkanGpuParamBlockBuffer.h"
+#include "BsVulkanGpuBuffer.h"
 
 #include <vulkan/vulkan.h>
 
@@ -112,8 +112,6 @@ void VulkanRenderAPI::SetGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<
 	VulkanCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
 	VulkanInternalCommandBuffer* vkCB = cb->GetInternal();
 
-	u32 globalQueueIdx = CommandSyncMask::GetGlobalQueueIdx(cb->GetType(), cb->GetQueueIdx());
-
 	for(u32 i = 0; i < GPT_COUNT; i++)
 	{
 		SPtr<GpuParamDesc> paramDesc = gpuParams->GetParameterInformation((GpuProgramType)i);
@@ -123,10 +121,10 @@ void VulkanRenderAPI::SetGpuParams(const SPtr<GpuParams>& gpuParams, const SPtr<
 		// Flush all param block buffers
 		for(auto iter = paramDesc->ParamBlocks.begin(); iter != paramDesc->ParamBlocks.end(); ++iter)
 		{
-			SPtr<GpuParamBlockBuffer> buffer = gpuParams->GetUniformBuffer(iter->second.Set, iter->second.Slot);
+			SPtr<GpuBuffer> buffer = gpuParams->GetUniformBuffer(iter->second.Set, iter->second.Slot);
 
 			if(buffer != nullptr)
-				buffer->FlushToGpu(globalQueueIdx);
+				buffer->FlushCache();
 		}
 	}
 

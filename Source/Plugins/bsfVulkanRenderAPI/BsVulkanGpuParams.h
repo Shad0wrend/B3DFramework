@@ -20,7 +20,7 @@ namespace bs
 		public:
 			~VulkanGpuParams() override;
 
-			bool SetUniformBuffer(u32 set, u32 slot, const SPtr<GpuParamBlockBuffer>& paramBlockBuffer, u32 arrayIndex = 0, u32 offset = 0) override;
+			bool SetUniformBuffer(u32 set, u32 slot, const SPtr<GpuBuffer>& paramBlockBuffer, u32 arrayIndex = 0, u32 offset = 0) override;
 			bool SetSampledTexture(u32 set, u32 slot, const SPtr<Texture>& texture, const TextureSurface& surface = TextureSurface::kComplete, u32 arrayIndex = 0) override;
 			bool SetStorageTexture(u32 set, u32 slot, const SPtr<Texture>& texture, const TextureSurface& surface, u32 arrayIndex = 0) override;
 			bool SetStorageBuffer(u32 set, u32 slot, const SPtr<GenericGpuBuffer>& buffer, u32 arrayIndex = 0, u32 offset = 0) override;

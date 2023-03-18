@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Material/BsGpuParamsSet.h"
+
+#include "BsCoreApplication.h"
 #include "Material/BsShader.h"
 #include "Material/BsTechnique.h"
 #include "Material/BsPass.h"
@@ -9,7 +11,6 @@
 #include "Material/BsMaterialParams.h"
 #include "RenderAPI/BsGpuParamDesc.h"
 #include "RenderAPI/BsRenderAPI.h"
-#include "RenderAPI/BsGpuParamBlockBuffer.h"
 #include "Animation/BsAnimationCurve.h"
 #include "Image/BsColorGradient.h"
 #include "Image/BsSpriteTexture.h"
@@ -276,7 +277,7 @@ Vector<ShaderBlockDesc> DetermineValidShareableParamBlocks(const Vector<SPtr<Gpu
 
 		ShaderBlockDesc shaderBlockDesc;
 		shaderBlockDesc.External = false;
-		shaderBlockDesc.Flags = GpuBufferFlag::StoreOnGPU;
+		shaderBlockDesc.Flags = GpuBufferFlag::StoreOnGPU | GpuBufferFlag::AllowWriteCachingOnCPU;
 		shaderBlockDesc.Size = curBlock.BlockSize * sizeof(u32);
 		shaderBlockDesc.Name = entry.first;
 		shaderBlockDesc.Set = curBlock.Set;
@@ -464,6 +465,26 @@ UnorderedMap<ValidParamKey, String> DetermineValidParameters(const Vector<SPtr<G
 	return validParams;
 }
 
+
+template<class T>
+SPtr<T> CreateGpuBuffer(const GpuBufferCreateInformation& gpuBufferCreateInformation)
+{
+	return nullptr;
+}
+
+template<>
+SPtr<GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& gpuBufferCreateInformation)
+{
+	return GpuBuffer::Create(gpuBufferCreateInformation);
+}
+
+template<>
+SPtr<ct::GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& gpuBufferCreateInformation)
+{
+	const SPtr<GpuDevice>& device = GetCoreApplication().GetPrimaryGpuDevice();
+	return device->CreateGpuBuffer(gpuBufferCreateInformation);
+}
+
 template <bool Core>
 const u32 TGpuParamsSet<Core>::kNumStages = 6;
 
@@ -507,7 +528,7 @@ TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const S
 	{
 		ParamBlockPtrType newParamBlockBuffer;
 		if(!paramBlock.External)
-			newParamBlockBuffer = ParamBlockType::Create(paramBlock.Size, paramBlock.Flags);
+			newParamBlockBuffer = CreateGpuBuffer<ParamBlockType>(GpuBufferCreateInformation::CreateUniform(paramBlock.Size, paramBlock.Flags | GpuBufferFlag::AllowWriteCachingOnCPU));
 
 		paramBlock.SequentialIdx = (u32)mBlocks.size();
 
@@ -548,7 +569,7 @@ TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const S
 				u32 globalBlockIdx = (u32)-1;
 				if(!blockDesc.IsShareable)
 				{
-					ParamBlockPtrType newParamBlockBuffer = ParamBlockType::Create(blockDesc.BlockSize * sizeof(u32));
+					ParamBlockPtrType newParamBlockBuffer = CreateGpuBuffer<ParamBlockType>(GpuBufferCreateInformation::CreateUniform(blockDesc.BlockSize * sizeof(u32)));
 
 					globalBlockIdx = (u32)mBlocks.size();
 
@@ -920,7 +941,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 							auto transposed = temp.Transpose();
 
 							u32 writeOffset = (paramInfo.Offset + paramInfo.ArrayStride * i) * sizeof(u32);
-							paramBlock->Write(writeOffset, &transposed, paramSize);
+							paramBlock->WriteCached(writeOffset, paramSize, &transposed);
 						}
 					};
 
@@ -986,7 +1007,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 							{
 								u32 arrayOffset = i * paramSize;
 								u32 writeOffset = (paramInfo.Offset + paramInfo.ArrayStride * i) * sizeof(u32);
-								paramBlock->Write(writeOffset, data + arrayOffset, paramSize);
+								paramBlock->WriteCached(writeOffset, paramSize, data + arrayOffset);
 							}
 							break;
 						}
@@ -998,7 +1019,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 					{
 						u32 readOffset = i * paramSize;
 						u32 writeOffset = (paramInfo.Offset + paramInfo.ArrayStride * i) * sizeof(u32);
-						paramBlock->Write(writeOffset, data + readOffset, paramSize);
+						paramBlock->WriteCached(writeOffset, paramSize, data + readOffset);
 					}
 				}
 			}
@@ -1023,7 +1044,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 						else
 							memcpy(&value, data + readOffset, paramSize);
 
-						paramBlock->Write(writeOffset, &value, paramSize);
+						paramBlock->WriteCached(writeOffset, paramSize, &value);
 					}
 				}
 				else if(materialParamInfo->DataType == GPDT_FLOAT4)
@@ -1038,7 +1059,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 					if(spriteTexture != nullptr)
 						uv = spriteTexture->Evaluate(t);
 
-					paramBlock->Write(writeOffset, &uv, paramSize);
+					paramBlock->WriteCached(writeOffset, paramSize, &uv);
 
 					// Only the first array element receives sprite UVs, the rest are treated as normal
 					for(u32 i = 1; i < arraySize; i++)
@@ -1046,7 +1067,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 						u32 readOffset = i * paramSize;
 						writeOffset = (paramInfo.Offset + paramInfo.ArrayStride * i) * sizeof(u32);
 
-						paramBlock->Write(writeOffset, data + readOffset, paramSize);
+						paramBlock->WriteCached(writeOffset, paramSize, data + readOffset);
 					}
 				}
 				else if(materialParamInfo->DataType == GPDT_COLOR)
@@ -1069,7 +1090,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 						else
 							memcpy(&value, data + readOffset, paramSize);
 
-						paramBlock->Write(writeOffset, &value, paramSize);
+						paramBlock->WriteCached(writeOffset, paramSize, &value);
 					}
 				}
 			}
@@ -1083,7 +1104,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 				params->GetStructData(*materialParamInfo, paramData, paramSize, i);
 
 				u32 writeOffset = (paramInfo.Offset + paramInfo.ArrayStride * i) * sizeof(u32);
-				paramBlock->Write(writeOffset, paramData, paramSize);
+				paramBlock->WriteCached(writeOffset, paramSize, paramData);
 			}
 			B3DStackFree(paramData);
 		}

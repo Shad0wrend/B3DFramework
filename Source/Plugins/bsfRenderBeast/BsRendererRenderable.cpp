@@ -11,7 +11,7 @@ namespace ct {
 PerObjectParamDef gPerObjectParamDef;
 PerCallParamDef gPerCallParamDef;
 
-void PerObjectBuffer::Update(SPtr<GpuParamBlockBuffer>& buffer, const Matrix4& tfrm, const Matrix4& tfrmNoScale, const Matrix4& prevTfrm, u32 layer)
+void PerObjectBuffer::Update(SPtr<GpuBuffer>& buffer, const Matrix4& tfrm, const Matrix4& tfrmNoScale, const Matrix4& prevTfrm, u32 layer)
 {
 	gPerObjectParamDef.gMatWorld.Set(buffer, tfrm);
 	gPerObjectParamDef.gMatInvWorld.Set(buffer, tfrm.InverseAffine());
@@ -51,6 +51,6 @@ void RendererRenderable::UpdatePerCallBuffer(const Matrix4& viewProj, bool flush
 	gPerCallParamDef.gMatWorldViewProj.Set(PerCallParamBuffer, worldViewProjMatrix);
 
 	if(flush)
-		PerCallParamBuffer->FlushToGpu();
+		PerCallParamBuffer->FlushCache();
 }
 }} // namespace bs::ct

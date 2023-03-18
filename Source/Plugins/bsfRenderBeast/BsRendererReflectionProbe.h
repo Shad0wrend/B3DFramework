@@ -126,7 +126,7 @@ namespace bs
 			/** Updates the parameter buffer contents with required refl. probe data. */
 			void Populate(const Skybox* sky, u32 numProbes, const SPtr<Texture>& reflectionCubemaps, bool capturingReflections);
 
-			SPtr<GpuParamBlockBuffer> Buffer;
+			SPtr<GpuBuffer> Buffer;
 		};
 
 		B3D_PARAM_BLOCK_BEGIN(ReflProbesParamDef)

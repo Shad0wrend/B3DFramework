@@ -88,7 +88,7 @@ namespace bs
 			void Execute(const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint = Color::kWhite);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mSourceTex;
 		};
 
@@ -139,7 +139,7 @@ namespace bs
 			static BicubicUpsampleMat* GetVariation(bool hermite = false);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mSourceTex;
 		};
 
@@ -162,7 +162,7 @@ namespace bs
 			void Execute(u32 value);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 		};
 
 		/**

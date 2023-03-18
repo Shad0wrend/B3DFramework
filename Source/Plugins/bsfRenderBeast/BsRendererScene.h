@@ -235,7 +235,7 @@ namespace bs
 			void FreeSamplerStateOverrides(RenderElement& elem);
 
 			SceneInfo mInfo;
-			SPtr<GpuParamBlockBuffer> mPerFrameParamBuffer;
+			SPtr<GpuBuffer> mPerFrameParamBuffer;
 			UnorderedMap<SamplerOverrideKey, MaterialSamplerOverrides*> mSamplerOverrides;
 
 			SPtr<RenderBeastOptions> mOptions;

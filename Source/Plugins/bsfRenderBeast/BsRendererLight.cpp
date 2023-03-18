@@ -44,7 +44,7 @@ void RendererLight::GetParameters(LightData& output) const
 	output.ShiftedLightPosition = GetShiftedLightPosition();
 }
 
-void RendererLight::GetParameters(SPtr<GpuParamBlockBuffer>& buffer) const
+void RendererLight::GetParameters(SPtr<GpuBuffer>& buffer) const
 {
 	LightData lightData;
 	GetParameters(lightData);

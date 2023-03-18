@@ -55,7 +55,7 @@ namespace bs
 			static DownsampleMat* GetVariation(u32 quality, bool msaa);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mInputTexture;
 		};
 
@@ -97,7 +97,7 @@ namespace bs
 			static const u32 kHistogramNumTexels = (kThreadGroupSizeX * kThreadGroupSizeY) / 4;
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mSceneColor;
 			GpuParameterStorageTexture mOutputTex;
 
@@ -127,7 +127,7 @@ namespace bs
 			static POOLED_RENDER_TEXTURE_DESC GetOutputDesc();
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 
 			GpuParameterSampledTexture mHistogramTex;
 			GpuParameterSampledTexture mEyeAdaptationTex;
@@ -158,10 +158,10 @@ namespace bs
 			 * Populates the provided paramater buffer with eye adaptation parameters. The parameter buffer is expected to be
 			 * created with EyeAdaptationParamDef block definition.
 			 */
-			static void PopulateParams(const SPtr<GpuParamBlockBuffer>& paramBuffer, float frameDelta, const AutoExposureSettings& settings, float exposureScale);
+			static void PopulateParams(const SPtr<GpuBuffer>& paramBuffer, float frameDelta, const AutoExposureSettings& settings, float exposureScale);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mReducedHistogramTex;
 		};
 
@@ -187,7 +187,7 @@ namespace bs
 			static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& input);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mInputTex;
 		};
 
@@ -216,8 +216,8 @@ namespace bs
 			static POOLED_RENDER_TEXTURE_DESC GetOutputDesc();
 
 		private:
-			SPtr<GpuParamBlockBuffer> mEyeAdaptationParamsBuffer;
-			SPtr<GpuParamBlockBuffer> mParamsBuffer;
+			SPtr<GpuBuffer> mEyeAdaptationParamsBuffer;
+			SPtr<GpuBuffer> mParamsBuffer;
 			GpuParameterSampledTexture mCurFrameTexParam;
 			GpuParameterSampledTexture mPrevFrameTexParam;
 		};
@@ -257,17 +257,17 @@ namespace bs
 			POOLED_RENDER_TEXTURE_DESC GetOutputDesc() const;
 
 			/** Populates a parameter block buffer of CreateTonemapLUTParamDef type using the provided settings. */
-			static void PopulateTonemappingParameterBuffer(const RenderSettings& settings, const SPtr<GpuParamBlockBuffer>& parameterBuffer);
+			static void PopulateTonemappingParameterBuffer(const RenderSettings& settings, const SPtr<GpuBuffer>& parameterBuffer);
 
 			/** Populates a parameter block buffer of WhiteBalanceParamDef type using the provided settings. */
-			static void PopulateWhiteBalanceParameterBuffer(const RenderSettings& settings, const SPtr<GpuParamBlockBuffer>& parameterBuffer);
+			static void PopulateWhiteBalanceParameterBuffer(const RenderSettings& settings, const SPtr<GpuBuffer>& parameterBuffer);
 
 			/** Size of a single dimension in the color lookup table. */
 			static const u32 kLutSize = 32;
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			SPtr<GpuParamBlockBuffer> mWhiteBalanceParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mWhiteBalanceParamBuffer;
 		};
 
 		/** Shader that creates a 3D lookup texture that is used to apply tonemapping, color grading, white balancing and gamma correction. Uses a compute pipeline. */
@@ -286,8 +286,8 @@ namespace bs
 			POOLED_RENDER_TEXTURE_DESC GetOutputDesc() const;
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			SPtr<GpuParamBlockBuffer> mWhiteBalanceParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mWhiteBalanceParamBuffer;
 
 			GpuParameterStorageTexture mOutputTex;
 		};
@@ -333,7 +333,7 @@ namespace bs
 			static TonemappingMat* GetVariation(bool volumeLUT, bool gammaOnly, bool autoExposure, bool MSAA);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 
 			GpuParameterSampledTexture mInputTex;
 			GpuParameterSampledTexture mBloomTex;
@@ -390,7 +390,7 @@ namespace bs
 			static BloomClipMat* GetVariation(bool autoExposure);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 
 			GpuParameterSampledTexture mInputTex;
 			GpuParameterSampledTexture mEyeAdaptationTex;
@@ -452,7 +452,7 @@ namespace bs
 			static ScreenSpaceLensFlareMat* GetVariation(bool halo, bool haloAspect, bool chromaticAberration);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 
 			GpuParameterSampledTexture mInputTex;
 			GpuParameterSampledTexture mGradientTex;
@@ -504,7 +504,7 @@ namespace bs
 			static ChromaticAberrationMat* GetVariation(ChromaticAberrationType type);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 
 			GpuParameterSampledTexture mInputTex;
 			GpuParameterSampledTexture mFringeTex;
@@ -538,7 +538,7 @@ namespace bs
 			void Execute(const SPtr<Texture>& input, float time, const FilmGrainSettings& settings, const SPtr<RenderTarget>& output);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 
 			GpuParameterSampledTexture mInputTex;
 		};
@@ -603,7 +603,7 @@ namespace bs
 			 * @param[in]	filterSize	Size of the blurring filter, in percent of the source texture. In range [0, 1].
 			 * @param[in]	tint		Optional tint to apply all filtered pixels.
 			 */
-			static void PopulateBuffer(const SPtr<GpuParamBlockBuffer>& buffer, Direction direction, const SPtr<Texture>& source, float filterSize, const Color& tint = Color::kWhite);
+			static void PopulateBuffer(const SPtr<GpuBuffer>& buffer, Direction direction, const SPtr<Texture>& source, float filterSize, const Color& tint = Color::kWhite);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -620,7 +620,7 @@ namespace bs
 			/** Calculates the radius of the blur kernel depending on the source texture size and provided scale. */
 			static float CalcKernelRadius(const SPtr<Texture>& source, float scale, Direction filterDir);
 
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mInputTexture;
 			GpuParameterSampledTexture mAdditiveTexture;
 			bool mIsAdditive = false;
@@ -693,7 +693,7 @@ namespace bs
 			static GaussianDOFSeparateMat* GetVariation(bool near, bool far);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mColorTexture;
 			GpuParameterSampledTexture mDepthTexture;
 
@@ -752,7 +752,7 @@ namespace bs
 			static GaussianDOFCombineMat* GetVariation(bool near, bool far);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mFocusedTexture;
 			GpuParameterSampledTexture mNearTexture;
 			GpuParameterSampledTexture mFarTexture;
@@ -815,8 +815,8 @@ namespace bs
 			static BokehDOFPrepareMat* GetVariation(bool msaa);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			SPtr<GpuParamBlockBuffer> mCommonParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mCommonParamBuffer;
 			GpuParameterSampledTexture mInputTexture;
 			GpuParameterSampledTexture mDepthTexture;
 		};
@@ -871,14 +871,14 @@ namespace bs
 			static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& target);
 
 			/** Populates the common depth of field parameter buffers with values from the provided settings object. */
-			static void PopulateDofCommonParams(const SPtr<GpuParamBlockBuffer>& buffer, const DepthOfFieldSettings& settings, const RendererView& view);
+			static void PopulateDofCommonParams(const SPtr<GpuBuffer>& buffer, const DepthOfFieldSettings& settings, const RendererView& view);
 
 			/** Returns the material variation matching the provided parameters. */
 			static BokehDOFMat* GetVariation(bool depthOcclusion);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			SPtr<GpuParamBlockBuffer> mCommonParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mCommonParamBuffer;
 			GpuParameterSampledTexture mInputTextureVS;
 			GpuParameterSampledTexture mInputTextureFS;
 			GpuParameterSampledTexture mBokehTexture;
@@ -930,8 +930,8 @@ namespace bs
 			static BokehDOFCombineMat* GetVariation(MSAAMode msaaMode);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			SPtr<GpuParamBlockBuffer> mCommonParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mCommonParamBuffer;
 			GpuParameterSampledTexture mUnfocusedTexture;
 			GpuParameterSampledTexture mFocusedTexture;
 			GpuParameterSampledTexture mDepthTexture;
@@ -962,7 +962,7 @@ namespace bs
 			void Execute(const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view, const MotionBlurSettings& settings, const SPtr<RenderTarget>& output);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mInputTexture;
 			GpuParameterSampledTexture mDepthTexture;
 		};
@@ -1017,7 +1017,7 @@ namespace bs
 
 		private:
 			GpuParameterSampledTexture mInputTexture;
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			bool mNoTextureViews = false;
 		};
 
@@ -1045,7 +1045,7 @@ namespace bs
 			void Execute(const SPtr<Texture>& source, const SPtr<RenderTarget>& destination);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mInputTexture;
 		};
 
@@ -1128,7 +1128,7 @@ namespace bs
 			static SSAOMat* GetVariation(bool upsample, bool finalPass, int quality);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mDepthTexture;
 			GpuParameterSampledTexture mNormalsTexture;
 			GpuParameterSampledTexture mDownsampledAOTexture;
@@ -1167,7 +1167,7 @@ namespace bs
 			void Execute(const RendererView& view, const SPtr<Texture>& sceneDepth, const SPtr<Texture>& sceneNormals, const SPtr<RenderTexture>& destination, float depthRange);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mDepthTexture;
 			GpuParameterSampledTexture mNormalsTexture;
 		};
@@ -1216,7 +1216,7 @@ namespace bs
 			static SSAOBlurMat* GetVariation(bool horizontal);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mAOTexture;
 			GpuParameterSampledTexture mDepthTexture;
 		};
@@ -1267,7 +1267,7 @@ namespace bs
 			static SSRStencilMat* GetVariation(bool msaa, bool singleSampleMSAA);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GBufferParams mGBufferParams;
 		};
 
@@ -1335,7 +1335,7 @@ namespace bs
 			static SSRTraceMat* GetVariation(u32 quality, bool msaa, bool singleSampleMSAA = false);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GBufferParams mGBufferParams;
 			GpuParameterSampledTexture mSceneColorTexture;
 			GpuParameterSampledTexture mHiZTexture;
@@ -1416,8 +1416,8 @@ namespace bs
 			static TemporalFilteringMat* GetVariation(TemporalFilteringType type, bool velocity, bool msaa);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
-			SPtr<GpuParamBlockBuffer> mTemporalParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mTemporalParamBuffer;
 
 			GpuParameterSampledTexture mSceneColorTexture;
 			GpuParameterSampledTexture mPrevColorTexture;
@@ -1459,7 +1459,7 @@ namespace bs
 			void Execute(const SPtr<Texture>& depth, float near, float far, const SPtr<RenderTarget>& output);
 
 		private:
-			SPtr<GpuParamBlockBuffer> mParamBuffer;
+			SPtr<GpuBuffer> mParamBuffer;
 			GpuParameterSampledTexture mInputTexture;
 		};
 

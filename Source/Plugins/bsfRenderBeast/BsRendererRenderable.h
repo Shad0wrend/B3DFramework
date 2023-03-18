@@ -41,7 +41,7 @@ namespace bs
 		{
 		public:
 			/** Updates the provided buffer with the data from the provided matrices. */
-			static void Update(SPtr<GpuParamBlockBuffer>& buffer, const Matrix4& tfrm, const Matrix4& tfrmNoScale, const Matrix4& prevTfrm, u32 layer);
+			static void Update(SPtr<GpuBuffer>& buffer, const Matrix4& tfrm, const Matrix4& tfrmNoScale, const Matrix4& prevTfrm, u32 layer);
 		};
 
 		struct MaterialSamplerOverrides;
@@ -118,8 +118,8 @@ namespace bs
 			Renderable* Renderable;
 			Vector<RenderableElement> Elements;
 
-			SPtr<GpuParamBlockBuffer> PerObjectParamBuffer;
-			SPtr<GpuParamBlockBuffer> PerCallParamBuffer;
+			SPtr<GpuBuffer> PerObjectParamBuffer;
+			SPtr<GpuBuffer> PerCallParamBuffer;
 		};
 
 		/** @} */

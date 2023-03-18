@@ -323,7 +323,7 @@ namespace bs
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 		using BufferType = SPtr<CoreVariantType<GenericGpuBuffer, Core>>;
 		using SamplerType = SPtr<CoreVariantType<SamplerState, Core>>;
-		using UniformBufferType = SPtr<CoreVariantType<GpuParamBlockBuffer, Core>>;
+		using UniformBufferType = SPtr<CoreVariantType<GpuBuffer, Core>>;
 
 		virtual ~TGpuParams();
 

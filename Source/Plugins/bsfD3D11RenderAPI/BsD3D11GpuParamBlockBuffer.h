@@ -14,7 +14,7 @@ namespace bs
 		 */
 
 		/**	DirectX 11 implementation of a parameter block buffer (constant buffer in DX11 lingo). */
-		class D3D11GpuParamBlockBuffer : public GpuParamBlockBuffer
+		class D3D11GpuParamBlockBuffer : public GpuBuffer
 		{
 		public:
 			D3D11GpuParamBlockBuffer(u32 size, GpuBufferUsage usage, GpuDeviceFlags deviceMask);

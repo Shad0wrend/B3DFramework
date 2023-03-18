@@ -79,7 +79,7 @@ namespace bs
 	class B3D_CORE_EXPORT TGpuParameterPrimitive
 	{
 	private:
-		using GpuParamBufferType = SPtr<CoreVariantType<GpuParamBlockBuffer, Core>>;
+		using GpuParamBufferType = SPtr<CoreVariantType<GpuBuffer, Core>>;
 		using GpuParamsType = SPtr<CoreVariantType<GpuParams, Core>>;
 
 	public:
@@ -122,7 +122,7 @@ namespace bs
 	class B3D_CORE_EXPORT TGpuParameterStruct
 	{
 	public:
-		using GpuParamBufferType = SPtr<CoreVariantType<GpuParamBlockBuffer, Core>>;
+		using GpuParamBufferType = SPtr<CoreVariantType<GpuBuffer, Core>>;
 		using GpuParamsType = SPtr<CoreVariantType<GpuParams, Core>>;
 
 		TGpuParameterStruct();
