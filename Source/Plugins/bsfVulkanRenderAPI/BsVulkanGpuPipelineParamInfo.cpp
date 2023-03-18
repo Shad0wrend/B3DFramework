@@ -219,7 +219,7 @@ void VulkanGpuPipelineParamInfo::Initialize()
 				break;
 			case GPOT_STRUCTURED_BUFFER:
 			case GPOT_RWSTRUCTURED_BUFFER:
-				binding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+				binding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
 				break;
 			}
 

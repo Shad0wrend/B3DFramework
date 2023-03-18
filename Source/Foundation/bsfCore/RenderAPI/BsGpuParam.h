@@ -237,7 +237,7 @@ namespace bs
 		TGpuParameterBuffer(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::Set */
-		void Set(const BufferType& buffer, u32 arrayIndex = 0) const;
+		void Set(const BufferType& buffer, u32 arrayIndex = 0, u32 offset = 0) const;
 
 		/** @copydoc TGpuDataParam::Get */
 		BufferType Get(u32 arrayIndex = 0) const;

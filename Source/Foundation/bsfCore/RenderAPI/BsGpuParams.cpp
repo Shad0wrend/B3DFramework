@@ -158,7 +158,7 @@ TGpuParams<Core>::TGpuParams(const SPtr<GpuPipelineParamInfoBase>& paramInfo)
 
 	const u32 parameterBlockEntrySize = Math::RoundToMultiple((u32)sizeof(ParamsBufferType), 16u);
 	const u32 textureEntrySize = Math::RoundToMultiple((u32)sizeof(TextureData), 16u);
-	const u32 bufferEntrySize = Math::RoundToMultiple((u32)sizeof(BufferType), 16u);
+	const u32 bufferEntrySize = Math::RoundToMultiple((u32)sizeof(BufferData), 16u);
 	const u32 samplerStateEntrySize = Math::RoundToMultiple((u32)sizeof(SamplerType), 16u);
 
 	const u32 parameterBlockBufferSize = parameterBlockEntrySize * parameterBlockCount;
@@ -191,9 +191,9 @@ TGpuParams<Core>::TGpuParams(const SPtr<GpuPipelineParamInfoBase>& paramInfo)
 	}
 
 	data += loadStoreTexturesBufferSize;
-	mBuffers = (BufferType*)data;
+	mBufferData = (BufferData*)data;
 	for(u32 i = 0; i < bufferCount; i++)
-		new(&mBuffers[i]) BufferType();
+		new(&mBufferData[i]) BufferData();
 
 	data += buffersBufferSize;
 	mSamplerStates = (SamplerType*)data;
@@ -228,7 +228,7 @@ TGpuParams<Core>::~TGpuParams()
 	}
 
 	for(u32 i = 0; i < bufferCount; i++)
-		mBuffers[i].~BufferType();
+		mBufferData[i].~BufferData();
 
 	for(u32 i = 0; i < samplerCount; i++)
 		mSamplerStates[i].~SamplerType();
@@ -528,7 +528,7 @@ typename TGpuParams<Core>::BufferType TGpuParams<Core>::GetBuffer(u32 set, u32 s
 	if(sequentialResourceIndex == ~0u)
 		return nullptr;
 
-	return mBuffers[sequentialResourceIndex];
+	return mBufferData[sequentialResourceIndex].Buffer;
 }
 
 template <bool Core>
@@ -604,7 +604,7 @@ bool TGpuParams<Core>::SetStorageTexture(u32 set, u32 slot, const TextureType& t
 }
 
 template <bool Core>
-bool TGpuParams<Core>::SetBuffer(u32 set, u32 slot, const BufferType& buffer, u32 arrayIndex)
+bool TGpuParams<Core>::SetBuffer(u32 set, u32 slot, const BufferType& buffer, u32 arrayIndex, u32 offset)
 {
 	const u32 sequentialArrayIndex = mParamInfo->GetSequentialResourceIndex(GpuPipelineParamInfo::ParamType::Buffer, set, slot, arrayIndex);
 	if (sequentialArrayIndex == ~0u)
@@ -613,7 +613,8 @@ bool TGpuParams<Core>::SetBuffer(u32 set, u32 slot, const BufferType& buffer, u3
 		return false;
 	}
 
-	mBuffers[sequentialArrayIndex] = buffer;
+	mBufferData[sequentialArrayIndex].Buffer = buffer;
+	mBufferData[sequentialArrayIndex].Offset = offset;
 
 	MarkResourcesDirtyInternal();
 	MarkCoreDirtyInternal();
@@ -743,9 +744,11 @@ CoreSyncData GpuParams::SyncToCore(FrameAlloc* allocator)
 	u32 textureArraySize = numTextures * sizeof(SPtr<ct::Texture>);
 	u32 loadStoreTextureArraySize = numStorageTextures * sizeof(SPtr<ct::Texture>);
 	u32 bufferArraySize = numBuffers * sizeof(SPtr<ct::GenericGpuBuffer>);
+	u32 bufferOffsetArraySize = numBuffers * sizeof(u32);
+	u32 bufferFormatArraySize = numBuffers * sizeof(GpuBufferFormat);
 	u32 samplerArraySize = numSamplers * sizeof(SPtr<ct::SamplerState>);
 
-	u32 totalSize = sampledSurfacesSize + loadStoreSurfacesSize + paramBufferSize + textureArraySize + loadStoreTextureArraySize + bufferArraySize + samplerArraySize;
+	u32 totalSize = sampledSurfacesSize + loadStoreSurfacesSize + paramBufferSize + textureArraySize + loadStoreTextureArraySize + bufferArraySize + bufferOffsetArraySize + bufferFormatArraySize + samplerArraySize;
 
 	u32 sampledSurfaceOffset = 0;
 	u32 loadStoreSurfaceOffset = sampledSurfaceOffset + sampledSurfacesSize;
@@ -753,7 +756,9 @@ CoreSyncData GpuParams::SyncToCore(FrameAlloc* allocator)
 	u32 textureArrayOffset = paramBufferOffset + paramBufferSize;
 	u32 loadStoreTextureArrayOffset = textureArrayOffset + textureArraySize;
 	u32 bufferArrayOffset = loadStoreTextureArrayOffset + loadStoreTextureArraySize;
-	u32 samplerArrayOffset = bufferArrayOffset + bufferArraySize;
+	u32 bufferOffsetArrayOffset = bufferArrayOffset + bufferArraySize;
+	u32 bufferFormatArrayOffset = bufferOffsetArrayOffset + bufferOffsetArraySize;
+	u32 samplerArrayOffset = bufferFormatArrayOffset + bufferFormatArraySize;
 
 	u8* data = allocator->Alloc(totalSize);
 
@@ -763,6 +768,8 @@ CoreSyncData GpuParams::SyncToCore(FrameAlloc* allocator)
 	SPtr<ct::Texture>* textures = (SPtr<ct::Texture>*)(data + textureArrayOffset);
 	SPtr<ct::Texture>* loadStoreTextures = (SPtr<ct::Texture>*)(data + loadStoreTextureArrayOffset);
 	SPtr<ct::GenericGpuBuffer>* buffers = (SPtr<ct::GenericGpuBuffer>*)(data + bufferArrayOffset);
+	u32* bufferOffsets = (u32*)(data + bufferOffsetArrayOffset);
+	GpuBufferFormat* bufferFormats = (GpuBufferFormat*)(data + bufferFormatArrayOffset);
 	SPtr<ct::SamplerState>* samplers = (SPtr<ct::SamplerState>*)(data + samplerArrayOffset);
 
 	// Construct & copy
@@ -802,10 +809,13 @@ CoreSyncData GpuParams::SyncToCore(FrameAlloc* allocator)
 
 	for(u32 i = 0; i < numBuffers; i++)
 	{
+		bufferOffsets[i] = mBufferData->Offset;
+		bufferFormats[i] = mBufferData->ViewFormat;
+
 		new(&buffers[i]) SPtr<ct::GenericGpuBuffer>();
 
-		if(mBuffers[i] != nullptr)
-			buffers[i] = mBuffers[i]->GetCore();
+		if(mBufferData[i].Buffer != nullptr)
+			buffers[i] = mBufferData[i].Buffer->GetCore();
 		else
 			buffers[i] = nullptr;
 	}
@@ -867,9 +877,11 @@ void GpuParams::SyncToCore(const CoreSyncData& data)
 	u32 textureArraySize = numTextures * sizeof(SPtr<Texture>);
 	u32 loadStoreTextureArraySize = numStorageTextures * sizeof(SPtr<Texture>);
 	u32 bufferArraySize = numBuffers * sizeof(SPtr<GenericGpuBuffer>);
+	u32 bufferOffsetArraySize = numBuffers * sizeof(u32);
+	u32 bufferFormatArraySize = numBuffers * sizeof(GpuBufferFormat);
 	u32 samplerArraySize = numSamplers * sizeof(SPtr<SamplerState>);
 
-	u32 totalSize = sampledSurfacesSize + loadStoreSurfacesSize + paramBufferSize + textureArraySize + loadStoreTextureArraySize + bufferArraySize + samplerArraySize;
+	u32 totalSize = sampledSurfacesSize + loadStoreSurfacesSize + paramBufferSize + textureArraySize + loadStoreTextureArraySize + bufferArraySize + bufferOffsetArraySize + bufferFormatArraySize + samplerArraySize;
 
 	u32 sampledSurfacesOffset = 0;
 	u32 loadStoreSurfaceOffset = sampledSurfacesOffset + sampledSurfacesSize;
@@ -877,7 +889,9 @@ void GpuParams::SyncToCore(const CoreSyncData& data)
 	u32 textureArrayOffset = paramBufferOffset + paramBufferSize;
 	u32 loadStoreTextureArrayOffset = textureArrayOffset + textureArraySize;
 	u32 bufferArrayOffset = loadStoreTextureArrayOffset + loadStoreTextureArraySize;
-	u32 samplerArrayOffset = bufferArrayOffset + bufferArraySize;
+	u32 bufferOffsetArrayOffset = bufferArrayOffset + bufferArraySize;
+	u32 bufferFormatArrayOffset = bufferOffsetArrayOffset + bufferOffsetArraySize;
+	u32 samplerArrayOffset = bufferFormatArrayOffset + bufferFormatArraySize;
 
 	B3D_ASSERT(data.GetBufferSize() == totalSize);
 
@@ -889,6 +903,8 @@ void GpuParams::SyncToCore(const CoreSyncData& data)
 	SPtr<Texture>* textures = (SPtr<Texture>*)(dataPtr + textureArrayOffset);
 	SPtr<Texture>* loadStoreTextures = (SPtr<Texture>*)(dataPtr + loadStoreTextureArrayOffset);
 	SPtr<GenericGpuBuffer>* buffers = (SPtr<GenericGpuBuffer>*)(dataPtr + bufferArrayOffset);
+	u32* bufferOffsets = (u32*)(dataPtr + bufferOffsetArrayOffset);
+	GpuBufferFormat* bufferFormats = (GpuBufferFormat*)(dataPtr + bufferFormatArrayOffset);
 	SPtr<SamplerState>* samplers = (SPtr<SamplerState>*)(dataPtr + samplerArrayOffset);
 
 	// Copy & destruct
@@ -918,7 +934,10 @@ void GpuParams::SyncToCore(const CoreSyncData& data)
 
 	for(u32 i = 0; i < numBuffers; i++)
 	{
-		mBuffers[i] = buffers[i];
+		mBufferData[i].Buffer = buffers[i];
+		mBufferData[i].Offset = bufferOffsets[i];
+		mBufferData[i].ViewFormat = bufferFormats[i];
+
 		buffers[i].~SPtr<GenericGpuBuffer>();
 	}
 

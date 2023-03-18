@@ -441,9 +441,15 @@ namespace bs
 
 		/**
 		 * Sets a buffer at the specified set/slot combination.
-		 * Returns true if the operation succeeded, otherwise logs and errors and returns false.
+		 *
+		 * @param	set			Set at which to bind the buffer, as defined by the pipeline GPU program.
+		 * @param	slot		Slot at which to bind the buffer, as defined by the pipeline GPU program.
+		 * @param	buffer		Buffer to bind.
+		 * @param	arrayIndex	In case the bind point represents an array, index to bind the buffer to.
+		 * @param	offset		Dynamic offset in the buffer, at which the to start reading the buffer.
+		 * @return				Returns true if the operation succeeded, otherwise logs and errors and returns false.
 		 */
-		virtual bool SetBuffer(u32 set, u32 slot, const BufferType& buffer, u32 arrayIndex = 0);
+		virtual bool SetBuffer(u32 set, u32 slot, const BufferType& buffer, u32 arrayIndex = 0, u32 offset = 0);
 
 		/**
 		 * Sets a sampler state at the specified set/slot combination.
@@ -476,12 +482,20 @@ namespace bs
 			param.Set(texture, surface);
 		}
 
-		/**	Assigns a buffer to the parameter with the specified name. */
-		void SetBuffer(GpuProgramType type, const String& name, const BufferType& buffer)
+		/**
+		 * Sets a buffer with the specified name in the specified GPU program type.
+		 *
+		 * @param	type		Type of the GPU program in which to bind the buffer.
+		 * @param	name		Name of the buffer to bind.
+		 * @param	buffer		Buffer to bind.
+		 * @param	arrayIndex	In case the bind point represents an array, index to bind the buffer to.
+		 * @param	offset		Dynamic offset in the buffer, at which the to start reading the buffer.
+		 */
+		void SetBuffer(GpuProgramType type, const String& name, const BufferType& buffer, u32 arrayIndex = 0, u32 offset = 0)
 		{
 			TGpuParameterBuffer<Core> param;
 			GetBufferParameter(type, name, param);
-			param.Set(buffer);
+			param.Set(buffer, arrayIndex, offset);
 		}
 
 		/**	Assigns a sampler state to the parameter with the specified name. */
@@ -505,10 +519,25 @@ namespace bs
 			TextureSurface Surface;
 		};
 
+		/** Data for a single bound buffer. */
+		struct BufferData
+		{
+			BufferData()
+				: Offset(0)
+			{ }
+
+			BufferType Buffer;
+			union
+			{
+				u32 Offset; /**< Dynamic buffer offset, relevant for uniform and structured storage buffer types. */
+				GpuBufferFormat ViewFormat; /**< Buffer view, relevant for simple storage buffer types. */
+			};
+		};
+
 		ParamsBufferType* mParamBlockBuffers = nullptr;
 		TextureData* mSampledTextureData = nullptr;
 		TextureData* mStorageTextureData = nullptr;
-		BufferType* mBuffers = nullptr;
+		BufferData* mBufferData = nullptr;
 		SamplerType* mSamplerStates = nullptr;
 	};
 

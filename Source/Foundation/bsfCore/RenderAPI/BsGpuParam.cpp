@@ -217,12 +217,12 @@ TGpuParameterBuffer<Core>::TGpuParameterBuffer(GpuObjectParameterInformation* pa
 {}
 
 template <bool Core>
-void TGpuParameterBuffer<Core>::Set(const BufferType& buffer, u32 arrayIndex) const
+void TGpuParameterBuffer<Core>::Set(const BufferType& buffer, u32 arrayIndex, u32 offset) const
 {
 	if(mParent == nullptr)
 		return;
 
-	mParent->SetBuffer(mParamDesc->Set, mParamDesc->Slot, buffer, arrayIndex);
+	mParent->SetBuffer(mParamDesc->Set, mParamDesc->Slot, buffer, arrayIndex, offset);
 
 	mParent->MarkResourcesDirtyInternal();
 	mParent->MarkCoreDirtyInternal();

@@ -557,9 +557,9 @@ bool VulkanGpuParams::SetStorageTexture(u32 set, u32 slot, const SPtr<Texture>& 
 	return true;
 }
 
-bool VulkanGpuParams::SetBuffer(u32 set, u32 slot, const SPtr<GenericGpuBuffer>& buffer, u32 arrayIndex)
+bool VulkanGpuParams::SetBuffer(u32 set, u32 slot, const SPtr<GenericGpuBuffer>& buffer, u32 arrayIndex, u32 offset)
 {
-	if (!GpuParams::SetBuffer(set, slot, buffer, arrayIndex))
+	if (!GpuParams::SetBuffer(set, slot, buffer, arrayIndex, offset))
 		return false;
 
 	VulkanGpuPipelineParamInfo& vkParamInfo = static_cast<VulkanGpuPipelineParamInfo&>(*mParamInfo);
@@ -804,9 +804,16 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 
 			VulkanAccessFlags useFlags = VulkanAccessFlag::Read;
 			VulkanBuffer* resource = nullptr;
-			if(mBuffers[sequentialResourceIndex] != nullptr)
+
+			const bool supportsDynamicOffset = type == GPOT_STRUCTURED_BUFFER || type == GPOT_RWSTRUCTURED_BUFFER;
+			u32 dynamicOffset = supportsDynamicOffset ? 0 : ~0u;
+
+			if(mBufferData[sequentialResourceIndex].Buffer != nullptr)
 			{
-				auto* element = static_cast<VulkanGenericGpuBuffer*>(mBuffers[sequentialResourceIndex].get());
+				if(supportsDynamicOffset)
+					dynamicOffset = mBufferData[sequentialResourceIndex].Offset;
+
+				auto* element = static_cast<VulkanGenericGpuBuffer*>(mBufferData[sequentialResourceIndex].Buffer.get());
 				resource = element->GetResource(deviceIdx);
 
 				if(element->GetProperties().GetFlags().IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
@@ -855,9 +862,9 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 				VkBufferView view = VK_NULL_HANDLE;
 				if(type != GPOT_STRUCTURED_BUFFER && type != GPOT_RWSTRUCTURED_BUFFER)
 				{
-					if(mBuffers[sequentialResourceIndex] != nullptr)
+					if(mBufferData[sequentialResourceIndex].Buffer != nullptr)
 					{
-						auto* element = static_cast<VulkanGenericGpuBuffer*>(mBuffers[sequentialResourceIndex].get());
+						auto* element = static_cast<VulkanGenericGpuBuffer*>(mBufferData[sequentialResourceIndex].Buffer.get());
 						view = element->GetView(deviceIdx);
 					}
 					else
@@ -883,6 +890,8 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 
 				mSetsDirty[set] = true;
 			}
+
+			dynamicOffsetMapping[usedBindingSequentialIndex] = dynamicOffset;
 		}
 	}
 
@@ -1095,7 +1104,6 @@ void VulkanGpuParams::PrepareForBind(VulkanInternalCommandBuffer& buffer, VkDesc
 	}
 
 	// Acquire sets as needed, and updated their contents if dirty
-	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 	const SPtr<VulkanGpuDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIdx);
 	VulkanDescriptorManager& descManager = device->GetDescriptorManager();
 
