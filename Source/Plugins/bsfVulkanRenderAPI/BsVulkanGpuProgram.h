@@ -35,6 +35,7 @@ namespace bs
 		class VulkanGpuProgram : public GpuProgram
 		{
 		public:
+			VulkanGpuProgram(VulkanGpuDevice& gpuDevice, const GpuProgramCreateInformation& createInformation);
 			virtual ~VulkanGpuProgram();
 
 			void SetName(const StringView& name) override;
@@ -43,21 +44,21 @@ namespace bs
 			 * Returns the shader module for the specified device. If program device mask doesn't include the provided device,
 			 * null is returned.
 			 */
-			VulkanShaderModule* GetShaderModule(u32 deviceIdx) const { return mModules[deviceIdx]; }
+			VulkanShaderModule* GetShaderModule(u32 deviceIdx) const
+			{
+				B3D_ASSERT(deviceIdx == 0);
+				return mModule;
+			}
 
 			/** Returns the name of the program entry point function. */
 			const String& GetEntryPoint() const { return mEntryPoint; }
 
 		protected:
-			friend class VulkanGLSLProgramFactory;
-
-			VulkanGpuProgram(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask);
-
 			void Initialize() override;
 
 		private:
-			GpuDeviceFlags mDeviceMask;
-			VulkanShaderModule* mModules[B3D_MAX_DEVICES];
+			VulkanGpuDevice& mGpuDevice;
+			VulkanShaderModule* mModule = nullptr;
 		};
 
 		/** Identifier of the compiler used for compiling Vulkan GPU programs. */

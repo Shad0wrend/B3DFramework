@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Material/BsPass.h"
+
+#include "BsCoreApplication.h"
 #include "RenderAPI/BsRasterizerState.h"
 #include "RenderAPI/BsBlendState.h"
 #include "RenderAPI/BsDepthStencilState.h"
@@ -10,8 +12,28 @@
 #include "RenderAPI/BsGpuProgram.h"
 #include "RenderAPI/BsGpuPipelineState.h"
 #include "CoreThread/BsCoreObjectSync.h"
+#include "RenderAPI/BsGpuDevice.h"
 
 using namespace bs;
+
+template<bool Core>
+SPtr<CoreVariantType<GpuProgram, Core>> CreateGpuProgram(const GpuProgramCreateInformation& gpuProgramCreateInformation)
+{
+	return nullptr;
+}
+
+template<>
+SPtr<GpuProgram> CreateGpuProgram<false>(const GpuProgramCreateInformation& gpuProgramCreateInformation)
+{
+	return GpuProgram::Create(gpuProgramCreateInformation);
+}
+
+template<>
+SPtr<ct::GpuProgram> CreateGpuProgram<true>(const GpuProgramCreateInformation& gpuProgramCreateInformation)
+{
+	const SPtr<GpuDevice>& device = GetCoreApplication().GetPrimaryGpuDevice();
+	return device->CreateGpuProgram(gpuProgramCreateInformation);
+}
 
 template <bool Core>
 TPass<Core>::TPass()
@@ -72,7 +94,7 @@ void TPass<Core>::CreatePipelineState()
 {
 	if(IsCompute())
 	{
-		SPtr<GpuProgramType> program = GpuProgramType::Create(mData.ComputeProgramDesc);
+		SPtr<GpuProgramType> program = CreateGpuProgram<Core>(mData.ComputeProgramDesc);
 		mComputePipelineState = ComputePipelineStateType::Create(program);
 	}
 	else
@@ -80,19 +102,19 @@ void TPass<Core>::CreatePipelineState()
 		PipelineStateDescType desc;
 
 		if(!mData.VertexProgramDesc.Source.empty())
-			desc.VertexProgram = GpuProgramType::Create(mData.VertexProgramDesc);
+			desc.VertexProgram = CreateGpuProgram<Core>(mData.VertexProgramDesc);
 
 		if(!mData.FragmentProgramDesc.Source.empty())
-			desc.FragmentProgram = GpuProgramType::Create(mData.FragmentProgramDesc);
+			desc.FragmentProgram = CreateGpuProgram<Core>(mData.FragmentProgramDesc);
 
 		if(!mData.GeometryProgramDesc.Source.empty())
-			desc.GeometryProgram = GpuProgramType::Create(mData.GeometryProgramDesc);
+			desc.GeometryProgram = CreateGpuProgram<Core>(mData.GeometryProgramDesc);
 
 		if(!mData.HullProgramDesc.Source.empty())
-			desc.HullProgram = GpuProgramType::Create(mData.HullProgramDesc);
+			desc.HullProgram = CreateGpuProgram<Core>(mData.HullProgramDesc);
 
 		if(!mData.DomainProgramDesc.Source.empty())
-			desc.DomainProgram = GpuProgramType::Create(mData.DomainProgramDesc);
+			desc.DomainProgram = CreateGpuProgram<Core>(mData.DomainProgramDesc);
 
 		desc.BlendState = BlendStateType::Create(mData.BlendStateDesc);
 		desc.RasterizerState = RasterizerStateType::Create(mData.RasterizerStateDesc);

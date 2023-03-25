@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "RenderAPI/BsGpuProgram.h"
+
+#include "BsCoreApplication.h"
 #include "RenderAPI/BsGpuDeviceCapabilities.h"
 #include "RenderAPI/BsRenderAPI.h"
 #include "RenderAPI/BsGpuParams.h"
@@ -72,12 +74,30 @@ SPtr<ct::CoreObject> GpuProgram::CreateCore() const
 	createInformation.RequiresAdjacency = mNeedsAdjacencyInfo;
 	createInformation.Bytecode = mBytecode;
 
-	return ct::GpuProgramManager::Instance().CreateInternal(createInformation);
+	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+	if(!gpuDevice)
+		return nullptr;
+
+	return gpuDevice->CreateGpuProgram(createInformation, true);
 }
 
-SPtr<GpuProgram> GpuProgram::Create(const GpuProgramCreateInformation& desc)
+SPtr<GpuProgram> GpuProgram::Create(const GpuProgramCreateInformation& createInformation)
 {
-	return GpuProgramManager::Instance().Create(desc);
+	GpuProgram* const program = new(B3DAllocate<GpuProgram>()) GpuProgram(createInformation);
+	SPtr<GpuProgram> shared = B3DMakeCoreFromExisting<GpuProgram>(program);
+	shared->SetShared(shared);
+	shared->Initialize();
+
+	return shared;
+}
+
+SPtr<GpuProgram> GpuProgram::CreateEmpty()
+{
+	GpuProgram* program = new(B3DAllocate<GpuProgram>()) GpuProgram(GpuProgramCreateInformation());
+	SPtr<GpuProgram> shared = B3DMakeCoreFromExisting<GpuProgram>(program);
+	shared->SetShared(shared);
+
+	return shared;
 }
 
 /************************************************************************/
@@ -95,8 +115,8 @@ RTTITypeBase* GpuProgram::GetRtti() const
 
 namespace bs { namespace ct
 {
-GpuProgram::GpuProgram(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask)
-	: mNeedsAdjacencyInfo(desc.RequiresAdjacency), mName(desc.Name), mType(desc.Type), mEntryPoint(desc.EntryPoint), mSource(desc.Source), mBytecode(desc.Bytecode)
+GpuProgram::GpuProgram(const GpuProgramCreateInformation& createInformation)
+	: mNeedsAdjacencyInfo(createInformation.RequiresAdjacency), mName(createInformation.Name), mType(createInformation.Type), mEntryPoint(createInformation.EntryPoint), mSource(createInformation.Source), mBytecode(createInformation.Bytecode)
 {
 	mParametersDesc = B3DMakeShared<GpuParamDesc>();
 }
@@ -109,13 +129,8 @@ bool GpuProgram::IsSupported() const
 	return true;
 }
 
-SPtr<GpuProgram> GpuProgram::Create(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask)
+SPtr<GpuProgramBytecode> GpuProgram::CompileBytecode(const GpuProgramCreateInformation& createInformation)
 {
-	return GpuProgramManager::Instance().Create(desc, deviceMask);
-}
-
-SPtr<GpuProgramBytecode> GpuProgram::CompileBytecode(const GpuProgramCreateInformation& desc)
-{
-	return GpuProgramManager::Instance().CompileBytecode(desc);
+	return GpuProgramManager::Instance().CompileBytecode(createInformation);
 }
 }}

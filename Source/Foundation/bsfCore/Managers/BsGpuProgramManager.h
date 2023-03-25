@@ -13,25 +13,6 @@ namespace bs
 	 *  @{
 	 */
 
-	/**
-	 * Manager responsible for creating GPU programs. It will automatically try to find the appropriate handler for a
-	 * specific GPU program language and create the program if possible.
-	 *
-	 * @note	Sim thread only.
-	 */
-	class B3D_CORE_EXPORT GpuProgramManager : public Module<GpuProgramManager>
-	{
-	public:
-		/** @copydoc GpuProgram::Create */
-		SPtr<GpuProgram> Create(const GpuProgramCreateInformation& desc);
-
-		/**
-		 * Creates a completely empty and uninitialized GpuProgram. Should only be used for specific purposes, like
-		 * deserialization, as it requires additional manual initialization that is not required normally.
-		 */
-		SPtr<GpuProgram> CreateEmpty(const String& language, GpuProgramType type);
-	};
-
 	namespace ct
 	{
 		/** Factory responsible for creating GPU programs of a certain type. */
@@ -40,12 +21,6 @@ namespace bs
 		public:
 			GpuProgramFactory() = default;
 			virtual ~GpuProgramFactory() = default;
-
-			/** @copydoc GpuProgram::Create */
-			virtual SPtr<GpuProgram> Create(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) = 0;
-
-			/** @copydoc bs::GpuProgramManager::CreateEmpty */
-			virtual SPtr<GpuProgram> Create(GpuProgramType type, GpuDeviceFlags deviceMask = GDF_DEFAULT) = 0;
 
 			/** @copydoc GpuProgram::CompileBytecode */
 			virtual SPtr<GpuProgramBytecode> CompileBytecode(const GpuProgramCreateInformation& desc) = 0;
@@ -78,21 +53,11 @@ namespace bs
 			/** Query if a GPU program language is supported (for example "hlsl", "glsl"). Thread safe. */
 			bool IsLanguageSupported(const String& language);
 
-			/** @copydoc GpuProgram::Create */
-			SPtr<GpuProgram> Create(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
-
 			/** @copydoc GpuProgram::CompileBytecode */
 			SPtr<GpuProgramBytecode> CompileBytecode(const GpuProgramCreateInformation& desc);
 
 		protected:
 			friend class bs::GpuProgram;
-
-			/**
-			 * Creates a GPU program without initializing it.
-			 *
-			 * @see		create
-			 */
-			SPtr<GpuProgram> CreateInternal(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 			/** Attempts to find a factory for the specified language. Returns null if it cannot find one. */
 			GpuProgramFactory* GetFactory(const String& language);
@@ -111,8 +76,6 @@ namespace bs
 			NullProgramFactory() = default;
 			~NullProgramFactory() = default;
 
-			SPtr<GpuProgram> Create(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask) override;
-			SPtr<GpuProgram> Create(GpuProgramType type, GpuDeviceFlags deviceMask) override;
 			SPtr<GpuProgramBytecode> CompileBytecode(const GpuProgramCreateInformation& desc) override;
 		};
 	} // namespace ct

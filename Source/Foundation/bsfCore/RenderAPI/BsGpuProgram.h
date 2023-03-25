@@ -85,13 +85,18 @@ namespace bs
 		 * Creates a new GPU program using the provided source code. If compilation fails or program is not supported
 		 * isCompiled() with return false, and you will be able to retrieve the error message via getCompileErrorMessage().
 		 *
-		 * @param[in]	desc		Description of the program to create.
+		 * @param[in]	createInformation		Description of the program to create.
 		 */
-		static SPtr<GpuProgram> Create(const GpuProgramCreateInformation& desc);
+		static SPtr<GpuProgram> Create(const GpuProgramCreateInformation& createInformation);
+
+		/**
+		 * Creates a completely empty and uninitialized GpuProgram.
+		 *
+		 * @note	For serialization use only.
+		 */
+		static SPtr<GpuProgram> CreateEmpty();
 
 	protected:
-		friend class GpuProgramManager;
-
 		GpuProgram(const GpuProgramCreateInformation& createInformation);
 
 		SPtr<ct::CoreObject> CreateCore() const override;
@@ -209,19 +214,13 @@ namespace bs
 			SPtr<GpuProgramBytecode> GetBytecode() const { return mBytecode; }
 
 			/**
-			 * @copydoc bs::GpuProgram::Create(const GPU_PROGRAM_DESC&)
-			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
-			 */
-			static SPtr<GpuProgram> Create(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
-
-			/**
 			 * Compiles the GPU program to an intermediate bytecode format. The bytecode can be cached and used for
 			 * quicker compilation/creation of GPU programs.
 			 */
-			static SPtr<GpuProgramBytecode> CompileBytecode(const GpuProgramCreateInformation& desc);
+			static SPtr<GpuProgramBytecode> CompileBytecode(const GpuProgramCreateInformation& createInformation);
 
 		protected:
-			GpuProgram(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask);
+			GpuProgram(const GpuProgramCreateInformation& createInformation);
 
 			bool mNeedsAdjacencyInfo;
 

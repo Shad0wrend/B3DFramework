@@ -75,7 +75,7 @@ SPtr<ct::CoreObject> GpuBuffer::CreateCore() const
 		return nullptr;
 
 	const GpuBufferCreateInformation createInformation = mInformation;
-	return gpuDevice->CreateGpuBuffer(createInformation);
+	return gpuDevice->CreateGpuBuffer(createInformation, true);
 }
 
 CoreSyncData GpuBuffer::SyncToCore(FrameAlloc* allocator)

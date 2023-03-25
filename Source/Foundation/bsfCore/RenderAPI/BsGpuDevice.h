@@ -7,6 +7,7 @@
 namespace bs
 {
 	struct GpuBufferCreateInformation;
+	struct GpuProgramCreateInformation;
 
 	/** @addtogroup RenderAPI
 	 *  @{
@@ -31,8 +32,14 @@ namespace bs
 		/** Returns information about available output devices and their video modes. */
 		virtual const VideoModeInfo& GetVideoModeInfo() const = 0;
 
-		/** Creates a new GPU buffer. */
-		virtual SPtr<ct::GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& createInformation) = 0;
+		/**
+		 * Creates a new GPU buffer.
+		 *
+		 * @param	createInformation		Object describing the buffer to create.
+		 * @param	deferredInitialize		If true, Initialize() will not be called on the returned object, and the caller is expected to call it himself, before first using the object.
+		 * 
+		 */
+		virtual SPtr<ct::GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, bool deferredInitialize = false) = 0;
 
 		/** Create a new event query. */
 		virtual SPtr<ct::EventQuery> CreateEventQuery() = 0;
@@ -49,6 +56,16 @@ namespace bs
 		 *						until all of the geometry is rendered.
 		 */
 		virtual SPtr<ct::OcclusionQuery> CreateOcclusionQuery(bool isBinary) = 0;
+
+		/**
+		 * Creates a new GPU program using the provided source code. If compilation fails or program is not supported
+		 * GpuProgram::IsCompiled() will return false, and you will be able to retrieve the error message via GpuProgram::GetCompileErrorMessage().
+		 *
+		 * @param	createInformation		Object describing the program to create.
+		 * @param	deferredInitialize		If true, Initialize() will not be called on the returned object, and the caller is expected to call it himself, before first using the object.
+		 * 
+		 */
+		virtual SPtr<ct::GpuProgram> CreateGpuProgram(const GpuProgramCreateInformation& createInformation, bool deferredInitialize = false) = 0;
 	};
 
 	/** @} */

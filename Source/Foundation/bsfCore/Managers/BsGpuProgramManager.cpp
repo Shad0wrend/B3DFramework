@@ -5,29 +5,6 @@
 
 using namespace bs;
 
-SPtr<GpuProgram> GpuProgramManager::Create(const GpuProgramCreateInformation& desc)
-{
-	GpuProgram* program = new(B3DAllocate<GpuProgram>()) GpuProgram(desc);
-	SPtr<GpuProgram> ret = B3DMakeCoreFromExisting<GpuProgram>(program);
-	ret->SetShared(ret);
-	ret->Initialize();
-
-	return ret;
-}
-
-SPtr<GpuProgram> GpuProgramManager::CreateEmpty(const String& language, GpuProgramType type)
-{
-	GpuProgramCreateInformation desc;
-	desc.Language = language;
-	desc.Type = type;
-
-	GpuProgram* program = new(B3DAllocate<GpuProgram>()) GpuProgram(desc);
-	SPtr<GpuProgram> ret = B3DMakeCoreFromExisting<GpuProgram>(program);
-	ret->SetShared(ret);
-
-	return ret;
-}
-
 namespace bs { namespace ct
 {
 String sNullLang = "null";
@@ -37,29 +14,13 @@ class NullProgram final : public GpuProgram
 {
 public:
 	NullProgram()
-		: GpuProgram(GpuProgramCreateInformation(), GDF_DEFAULT)
+		: GpuProgram(GpuProgramCreateInformation())
 	{}
 
 	~NullProgram() = default;
 
 	bool IsSupported() const { return false; }
 };
-
-SPtr<GpuProgram> NullProgramFactory::Create(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask)
-{
-	SPtr<NullProgram> ret = B3DMakeShared<NullProgram>();
-	ret->SetShared(ret);
-
-	return ret;
-}
-
-SPtr<GpuProgram> NullProgramFactory::Create(GpuProgramType type, GpuDeviceFlags deviceMask)
-{
-	SPtr<NullProgram> ret = B3DMakeShared<NullProgram>();
-	ret->SetShared(ret);
-
-	return ret;
-}
 
 SPtr<GpuProgramBytecode> NullProgramFactory::CompileBytecode(const GpuProgramCreateInformation& desc)
 {
@@ -111,22 +72,6 @@ bool GpuProgramManager::IsLanguageSupported(const String& lang)
 
 	auto iter = mFactories.find(lang);
 	return iter != mFactories.end();
-}
-
-SPtr<GpuProgram> GpuProgramManager::Create(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask)
-{
-	SPtr<GpuProgram> ret = CreateInternal(desc, deviceMask);
-	ret->Initialize();
-
-	return ret;
-}
-
-SPtr<GpuProgram> GpuProgramManager::CreateInternal(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask)
-{
-	GpuProgramFactory* factory = GetFactory(desc.Language);
-	SPtr<GpuProgram> ret = factory->Create(desc, deviceMask);
-
-	return ret;
 }
 
 SPtr<GpuProgramBytecode> GpuProgramManager::CompileBytecode(const GpuProgramCreateInformation& desc)

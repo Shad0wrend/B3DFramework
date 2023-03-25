@@ -111,7 +111,7 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return GpuProgramManager::Instance().CreateEmpty("", GPT_VERTEX_PROGRAM); // Params don't matter, they'll get overwritten
+			return GpuProgram::CreateEmpty();
 		}
 	};
 

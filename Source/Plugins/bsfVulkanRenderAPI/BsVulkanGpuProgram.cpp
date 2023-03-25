@@ -44,18 +44,15 @@ void VulkanShaderModule::SetName(const StringView& name)
 	vkSetDebugUtilsObjectNameEXT(mOwner->GetDevice().GetLogical(), &objectNameInfo);
 }
 
-VulkanGpuProgram::VulkanGpuProgram(const GpuProgramCreateInformation& desc, GpuDeviceFlags deviceMask)
-	: GpuProgram(desc, deviceMask), mDeviceMask(deviceMask), mModules()
+VulkanGpuProgram::VulkanGpuProgram(VulkanGpuDevice& gpuDevice, const GpuProgramCreateInformation& createInformation)
+	: GpuProgram(createInformation), mGpuDevice(gpuDevice)
 {
 }
 
 VulkanGpuProgram::~VulkanGpuProgram()
 {
-	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
-	{
-		if(mModules[i] != nullptr)
-			mModules[i]->Destroy();
-	}
+	if(mModule != nullptr)
+		mModule->Destroy();
 
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResDestroyed, RenderStatObject_GpuProgram);
 }
@@ -97,9 +94,6 @@ void VulkanGpuProgram::Initialize()
 
 	if(mIsCompiled)
 	{
-		VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-		VulkanGpuDevice* devices[B3D_MAX_DEVICES];
-
 		u32 codeSize = mBytecode->Instructions.Size;
 		u8* code = mBytecode->Instructions.Data;
 
@@ -123,27 +117,19 @@ void VulkanGpuProgram::Initialize()
 		moduleCI.codeSize = codeSize;
 		moduleCI.pCode = (uint32_t*)code;
 
-		VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
+		VkDevice vkDevice = mGpuDevice.GetLogical();
+		VulkanResourceManager& rescManager = mGpuDevice.GetResourceManager();
 
-		for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
-		{
-			if(devices[i] != nullptr)
-			{
-				VkDevice vkDevice = devices[i]->GetLogical();
-				VulkanResourceManager& rescManager = devices[i]->GetResourceManager();
-
-				VkShaderModule shaderModule;
-				VkResult result = vkCreateShaderModule(vkDevice, &moduleCI, gVulkanAllocator, &shaderModule);
-				B3D_ASSERT(result == VK_SUCCESS);
+		VkShaderModule shaderModule;
+		VkResult result = vkCreateShaderModule(vkDevice, &moduleCI, gVulkanAllocator, &shaderModule);
+		B3D_ASSERT(result == VK_SUCCESS);
 
 #if B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
-				if(mType == GPT_COMPUTE_PROGRAM)
-					vkSetWorkgroupSizeMVK(shaderModule, workgroupSize[0], workgroupSize[1], workgroupSize[2]);
+		if(mType == GPT_COMPUTE_PROGRAM)
+			vkSetWorkgroupSizeMVK(shaderModule, workgroupSize[0], workgroupSize[1], workgroupSize[2]);
 #endif
-				mModules[i] = rescManager.Create<VulkanShaderModule>(shaderModule);
-				mModules[i]->SetName(mName);
-			}
-		}
+		mModule = rescManager.Create<VulkanShaderModule>(shaderModule);
+		mModule->SetName(mName);
 
 		mParametersDesc = mBytecode->ParamDesc;
 
@@ -165,15 +151,6 @@ void VulkanGpuProgram::SetName(const StringView& name)
 	if(vkSetDebugUtilsObjectNameEXT == nullptr)
 		return;
 
-	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-	VulkanGpuDevice* devices[B3D_MAX_DEVICES];
-	VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
-
-	for(UINT32 i = 0; i < B3D_MAX_DEVICES; i++)
-	{
-		if(mModules[i] == nullptr)
-			continue;
-
-		mModules[i]->SetName(name);
-	}
+	if(mModule != nullptr)
+		mModule->SetName(name);
 }

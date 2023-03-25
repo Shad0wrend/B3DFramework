@@ -123,7 +123,6 @@ CoreApplication::~CoreApplication()
 	mPrimaryGpu = nullptr;
 	RenderAPIManager::ShutDown();
 	ct::GpuProgramManager::ShutDown();
-	GpuProgramManager::ShutDown();
 
 	CoreObjectManager::ShutDown(); // Must shut down before DynLibManager to ensure all objects are destroyed before unloading their libraries
 
@@ -175,7 +174,6 @@ void CoreApplication::OnStartUp()
 	GameObjectManager::StartUp();
 	Resources::StartUp();
 	ResourceListenerManager::StartUp();
-	GpuProgramManager::StartUp();
 	RenderStateManager::StartUp();
 	ct::GpuProgramManager::StartUp();
 	RenderAPIManager::StartUp();

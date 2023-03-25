@@ -23,6 +23,7 @@ static_assert(false, "Other platform includes go here.");
 #define VMA_IMPLEMENTATION
 #include "BsVulkanEventQuery.h"
 #include "BsVulkanGpuBuffer.h"
+#include "BsVulkanGpuProgram.h"
 #include "BsVulkanOcclusionQuery.h"
 #include "BsVulkanTimerQuery.h"
 #include "ThirdParty/vk_mem_alloc.h"
@@ -245,10 +246,13 @@ VulkanGpuDevice::~VulkanGpuDevice()
 	vkDestroyDevice(mLogicalDevice, gVulkanAllocator);
 }
 
-SPtr<ct::GpuBuffer> VulkanGpuDevice::CreateGpuBuffer(const GpuBufferCreateInformation& createInformation)
+SPtr<ct::GpuBuffer> VulkanGpuDevice::CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, bool deferredInitialize)
 {
 	SPtr<GpuBuffer> output = B3DMakeSharedFromExisting(new(B3DAllocate<VulkanGpuBuffer>()) VulkanGpuBuffer(*this, createInformation));
-	output->Initialize();
+	output->SetShared(output);
+
+	if(!deferredInitialize)
+		output->Initialize();
 
 	return output;
 }
@@ -266,6 +270,17 @@ SPtr<TimerQuery> VulkanGpuDevice::CreateTimerQuery()
 SPtr<OcclusionQuery> VulkanGpuDevice::CreateOcclusionQuery(bool isBinary)
 {
 	return B3DMakeSharedFromExisting(new (B3DAllocate<VulkanOcclusionQuery>()) VulkanOcclusionQuery(*this, isBinary));
+}
+
+SPtr<ct::GpuProgram> VulkanGpuDevice::CreateGpuProgram(const GpuProgramCreateInformation& createInformation, bool deferredInitialize)
+{
+	SPtr<GpuProgram> output = B3DMakeSharedFromExisting(new(B3DAllocate<VulkanGpuProgram>()) VulkanGpuProgram(*this, createInformation));
+	output->SetShared(output);
+
+	if(!deferredInitialize)
+		output->Initialize();
+
+	return output;
 }
 
 void VulkanGpuDevice::WaitUntilIdle() const
