@@ -3,7 +3,12 @@
 #pragma once
 
 #include "BsVulkanPrerequisites.h"
-#include "Managers/BsGpuProgramManager.h"
+
+namespace bs
+{
+	struct GpuProgramCreateInformation;
+	struct GpuProgramBytecode;
+}
 
 namespace bs
 {

@@ -6,6 +6,7 @@
 
 namespace bs
 {
+	struct GpuProgramBytecode;
 	struct GpuBufferCreateInformation;
 	struct GpuProgramCreateInformation;
 
@@ -31,6 +32,15 @@ namespace bs
 
 		/** Returns information about available output devices and their video modes. */
 		virtual const VideoModeInfo& GetVideoModeInfo() const = 0;
+
+		/** Query if a GPU program language is supported (for example "hlsl", "glsl"). Thread safe. */
+		virtual bool IsGpuProgramLanguageSupported(const StringView& language) const = 0;
+
+		/**
+		 * Compiles the GPU program to an intermediate bytecode format. The bytecode can be cached and used for
+		 * quicker compilation/creation of GPU programs.
+		 */
+		virtual SPtr<GpuProgramBytecode> CompileGpuProgramBytecode(const GpuProgramCreateInformation& createInformation) const = 0;
 
 		/**
 		 * Creates a new GPU buffer.

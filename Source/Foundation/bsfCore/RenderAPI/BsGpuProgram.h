@@ -213,12 +213,6 @@ namespace bs
 			/** Returns the compiled bytecode of this program. */
 			SPtr<GpuProgramBytecode> GetBytecode() const { return mBytecode; }
 
-			/**
-			 * Compiles the GPU program to an intermediate bytecode format. The bytecode can be cached and used for
-			 * quicker compilation/creation of GPU programs.
-			 */
-			static SPtr<GpuProgramBytecode> CompileBytecode(const GpuProgramCreateInformation& createInformation);
-
 		protected:
 			GpuProgram(const GpuProgramCreateInformation& createInformation);
 

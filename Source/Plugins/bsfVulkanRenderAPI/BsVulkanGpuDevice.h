@@ -30,6 +30,13 @@ namespace bs
 		class VulkanGpuDevice : public GpuDevice
 		{
 		public:
+#if B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+			static constexpr const char* kGpuProgramLanguageName = "mvksl";
+#else
+			static constexpr const char* kGpuProgramLanguageName = "vksl";
+#endif
+
+
 			VulkanGpuDevice(VkPhysicalDevice device, u32 deviceIdx);
 			~VulkanGpuDevice();
 
@@ -38,6 +45,9 @@ namespace bs
 
 			const GpuDeviceCapabilities& GetCapabilities() override { return mCapabilities; }
 			const VideoModeInfo& GetVideoModeInfo() const override { return *mVideoModeInfo; }
+
+			bool IsGpuProgramLanguageSupported(const StringView& language) const override { return language == kGpuProgramLanguageName; }
+			SPtr<GpuProgramBytecode> CompileGpuProgramBytecode(const GpuProgramCreateInformation& createInformation) const override;
 
 			SPtr<GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, bool deferredInitialize = false) override;
 			SPtr<EventQuery> CreateEventQuery() override;

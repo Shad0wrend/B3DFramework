@@ -13,7 +13,6 @@
 
 #include "BsBSLParser.h"
 #include "BsHLSLCrossCompiler.h"
-#include "Managers/BsGpuProgramManager.h"
 
 using namespace std;
 using namespace bs;
@@ -306,7 +305,11 @@ ShaderCompilerResult BSLCompiler::TCompileVariation(const String& name, const BS
 			gpuProgramCreateInformation.EntryPoint = entry;
 			gpuProgramCreateInformation.Source = code;
 			gpuProgramCreateInformation.Type = type;
-			gpuProgramCreateInformation.Bytecode = ct::GpuProgramManager::Instance().CompileBytecode(gpuProgramCreateInformation);
+
+			const SPtr<GpuDevice> gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+
+			if(gpuDevice != nullptr)
+				gpuProgramCreateInformation.Bytecode = gpuDevice->CompileGpuProgramBytecode(gpuProgramCreateInformation);
 
 			return gpuProgramCreateInformation;
 		};

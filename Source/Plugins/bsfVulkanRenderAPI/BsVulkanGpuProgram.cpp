@@ -6,7 +6,6 @@
 #include "BsVulkanUtility.h"
 #include "RenderAPI/BsGpuParams.h"
 #include "RenderAPI/BsGpuParamDesc.h"
-#include "Managers/BsGpuProgramManager.h"
 #include "RenderAPI/BsVertexDescription.h"
 #include "Managers/BsHardwareBufferManager.h"
 #include "Profiling/BsRenderStats.h"
@@ -75,18 +74,18 @@ void VulkanGpuProgram::Initialize()
 	   mBytecode->CompilerId != VULKAN_COMPILER_ID || mBytecode->CompilerVersion != VULKAN_COMPILER_VERSION)
 #endif
 	{
-		GpuProgramCreateInformation desc;
-		desc.Name = mName;
-		desc.Type = mType;
-		desc.EntryPoint = mEntryPoint;
+		GpuProgramCreateInformation createInformation;
+		createInformation.Name = mName;
+		createInformation.Type = mType;
+		createInformation.EntryPoint = mEntryPoint;
 #if B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
 		desc.language = "mvksl";
 #else
-		desc.Language = "vksl";
+		createInformation.Language = "vksl";
 #endif
-		desc.Source = mSource;
+		createInformation.Source = mSource;
 
-		mBytecode = CompileBytecode(desc);
+		mBytecode = mGpuDevice.CompileGpuProgramBytecode(createInformation);
 	}
 
 	mCompileMessages = mBytecode->Messages;

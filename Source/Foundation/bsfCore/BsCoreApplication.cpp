@@ -19,7 +19,6 @@
 #include "Utility/BsTime.h"
 #include "Input/BsInput.h"
 #include "Renderer/BsRendererManager.h"
-#include "Managers/BsGpuProgramManager.h"
 #include "Managers/BsMeshManager.h"
 #include "Managers/BsRenderWindowManager.h"
 #include "Renderer/BsRenderer.h"
@@ -122,7 +121,6 @@ CoreApplication::~CoreApplication()
 
 	mPrimaryGpu = nullptr;
 	RenderAPIManager::ShutDown();
-	ct::GpuProgramManager::ShutDown();
 
 	CoreObjectManager::ShutDown(); // Must shut down before DynLibManager to ensure all objects are destroyed before unloading their libraries
 
@@ -175,7 +173,6 @@ void CoreApplication::OnStartUp()
 	Resources::StartUp();
 	ResourceListenerManager::StartUp();
 	RenderStateManager::StartUp();
-	ct::GpuProgramManager::StartUp();
 	RenderAPIManager::StartUp();
 
 	mPrimaryWindow = RenderAPIManager::Instance().Initialize(mStartUpDesc.RenderApi, mStartUpDesc.PrimaryWindowDesc);

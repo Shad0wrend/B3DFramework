@@ -4,7 +4,7 @@
 #include "Private/RTTI/BsShaderCompilerRTTI.h"
 #include "FileSystem/BsDataStream.h"
 #include "FileSystem/BsFileSystem.h"
-#include "Managers/BsGpuProgramManager.h"
+#include "RenderAPI/BsGpuDevice.h"
 #include "Resources/BsBuiltinResources.h"
 #include "Utility/BsPersistentCache.h"
 
@@ -113,7 +113,8 @@ SPtr<CoreVariantType<Shader, Core>> ShaderCompilers::GetOrCompileShader(const Pa
 
 ShadingLanguageFlag ShaderCompilers::DetectActiveShadingLanguage()
 {
-	if(!ct::GpuProgramManager::IsStarted())
+	const SPtr<GpuDevice> gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+	if(gpuDevice == nullptr)
 		return ShadingLanguageFlag::Unknown;
 
 	for(u32 shadingLanguageIndex = 0; shadingLanguageIndex < (u32)ShadingLanguageFlag::Count; shadingLanguageIndex++)
@@ -121,7 +122,7 @@ ShadingLanguageFlag ShaderCompilers::DetectActiveShadingLanguage()
 		const ShadingLanguageFlag shadingLanguageFlag = (ShadingLanguageFlag)(1 << shadingLanguageIndex);
 		const String shadingLanguageName = GetShadingLanguageName(shadingLanguageFlag);
 
-		if(ct::GpuProgramManager::Instance().IsLanguageSupported(shadingLanguageName))
+		if(gpuDevice->IsGpuProgramLanguageSupported(shadingLanguageName))
 			return shadingLanguageFlag;
 	}
 

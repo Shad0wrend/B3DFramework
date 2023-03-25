@@ -9,7 +9,6 @@
 #include "Renderer/BsRendererManager.h"
 #include "Material/BsPass.h"
 #include "Renderer/BsRenderer.h"
-#include "Managers/BsGpuProgramManager.h"
 #include "Private/RTTI/BsTechniqueRTTI.h"
 #include "Utility/BsPersistentCache.h"
 
@@ -22,7 +21,9 @@ TechniqueBase::TechniqueBase(const String& language, const ShaderVariationParame
 
 bool TechniqueBase::IsSupported() const
 {
-	if(ct::GpuProgramManager::Instance().IsLanguageSupported(mLanguage) || mLanguage == "Any")
+	const SPtr<GpuDevice> gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+
+	if((gpuDevice != nullptr && gpuDevice->IsGpuProgramLanguageSupported(mLanguage)) || mLanguage == "Any")
 		return true;
 
 	return false;

@@ -48,10 +48,8 @@ namespace bs
 		class Win32RenderWindow;
 		class VulkanTexture;
 		class Win32VideoMode;
-		class VulkanVertexDeclaration;
 		class VulkanGpuBuffer;
 		class VulkanGpuDevice;
-		class VulkanGLSLProgramFactory;
 		class VulkanSwapChain;
 		class VulkanFramebuffer;
 		class VulkanDescriptorLayout;

@@ -7,7 +7,6 @@
 #include "RenderAPI/BsRenderAPI.h"
 #include "RenderAPI/BsGpuParams.h"
 #include "RenderAPI/BsGpuParamDesc.h"
-#include "Managers/BsGpuProgramManager.h"
 #include "Private/RTTI/BsGpuProgramRTTI.h"
 
 using namespace bs;
@@ -127,10 +126,5 @@ GpuProgram::~GpuProgram()
 bool GpuProgram::IsSupported() const
 {
 	return true;
-}
-
-SPtr<GpuProgramBytecode> GpuProgram::CompileBytecode(const GpuProgramCreateInformation& createInformation)
-{
-	return GpuProgramManager::Instance().CompileBytecode(createInformation);
 }
 }}

@@ -6,9 +6,7 @@
 #include "Managers/BsVulkanRenderWindowManager.h"
 #include "Managers/BsVulkanHardwareBufferManager.h"
 #include "Managers/BsVulkanRenderStateManager.h"
-#include "Managers/BsGpuProgramManager.h"
 #include "Managers/BsVulkanQueryManager.h"
-#include "Managers/BsVulkanGLSLProgramFactory.h"
 #include "Managers/BsVulkanCommandBufferManager.h"
 #include "Managers/BsVulkanVertexInputManager.h"
 
@@ -449,15 +447,6 @@ void VulkanGpuBackend::OnStartUp()
 	// Create vertex input manager
 	VulkanVertexInputManager::StartUp();
 
-	// Create & register GPU program factories
-	mGLSLFactory = B3DNew<VulkanGLSLProgramFactory>();
-
-#if B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
-	ct::GpuProgramManager::Instance().AddFactory("mvksl", mGLSLFactory);
-#else
-	ct::GpuProgramManager::Instance().AddFactory("vksl", mGLSLFactory);
-#endif
-
 	// Create render state manager
 	ct::RenderStateManager::StartUp<VulkanRenderStateManager>();
 
@@ -466,12 +455,6 @@ void VulkanGpuBackend::OnStartUp()
 
 void VulkanGpuBackend::OnShutDown()
 {
-	if(mGLSLFactory != nullptr)
-	{
-		B3DDelete(mGLSLFactory);
-		mGLSLFactory = nullptr;
-	}
-
 	VulkanSubmitThread::ShutDown();
 	VulkanVertexInputManager::ShutDown();
 	ct::RenderStateManager::ShutDown();

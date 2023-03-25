@@ -37,8 +37,6 @@ namespace bs
 		SmallVector<SPtr<ct::VulkanGpuDevice>, 2> mDevices;
 		SPtr<ct::VulkanGpuDevice> mPresentDevice;
 
-		ct::VulkanGLSLProgramFactory* mGLSLFactory = nullptr;
-
 		VkDebugReportCallbackEXT mDebugReportCallback = nullptr;
 		VkDebugUtilsMessengerEXT mDebugUtilsMessenger = nullptr;
 	};
