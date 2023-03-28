@@ -346,7 +346,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 			SPtr<GpuParameters> gpuParams = element.Params->GetGpuParams();
 			for(u32 j = 0; j < GPT_COUNT; j++)
 			{
-				const GpuParamBinding& binding = element.PerCameraBindings[j];
+				const GpuParameterBinding& binding = element.PerCameraBindings[j];
 				if(binding.Slot != (u32)-1)
 					gpuParams->SetUniformBuffer(binding.Set, binding.Slot, inputs.View.GetPerViewBuffer());
 			}
@@ -401,7 +401,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 		SPtr<GpuParameters> gpuParams = renderElement.Params->GetGpuParams();
 		for(u32 j = 0; j < GPT_COUNT; j++)
 		{
-			const GpuParamBinding& binding = renderElement.PerCameraBindings[j];
+			const GpuParameterBinding& binding = renderElement.PerCameraBindings[j];
 			if(binding.Slot != (u32)-1)
 				gpuParams->SetUniformBuffer(binding.Set, binding.Slot, inputs.View.GetPerViewBuffer());
 		}
@@ -1302,7 +1302,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	{
 		for(u32 j = 0; j < GPT_COUNT; j++)
 		{
-			const GpuParamBinding& binding = fwdParams.GridParamsBindings[j];
+			const GpuParameterBinding& binding = fwdParams.GridParamsBindings[j];
 			if(binding.Slot != (u32)-1)
 				gpuParams.SetUniformBuffer(binding.Set, binding.Slot, lightGridOutputs.GridParams);
 		}

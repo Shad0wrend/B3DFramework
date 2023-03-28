@@ -3,7 +3,7 @@
 #include "RenderAPI/BsGpuParam.h"
 #include "RenderAPI/BsGpuParameters.h"
 #include "RenderAPI/BsGpuBuffer.h"
-#include "RenderAPI/BsGpuParameterDescription.h"
+#include "RenderAPI/BsGpuProgramParameterDescription.h"
 #include "RenderAPI/BsRenderAPI.h"
 #include "Debug/BsDebug.h"
 #include "Error/BsException.h"

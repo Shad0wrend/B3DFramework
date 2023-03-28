@@ -146,7 +146,7 @@ void ForwardLightingParams::Populate(const SPtr<GpuParameters>& params, bool clu
 	if(clustered)
 	{
 		params->GetPipelineParameterInformation()->GetBindings(
-			GpuPipelineParamInfoBase::GpuParameterType::UniformBuffer,
+			GpuPipelineParameterLayoutBase::GpuParameterType::UniformBuffer,
 			"GridParams",
 			GridParamsBindings);
 
@@ -166,13 +166,13 @@ void ForwardLightingParams::Populate(const SPtr<GpuParameters>& params, bool clu
 	{
 		params->GetPipelineParameterInformation()->GetBinding(
 			GPT_FRAGMENT_PROGRAM,
-			GpuPipelineParamInfoBase::GpuParameterType::UniformBuffer,
+			GpuPipelineParameterLayoutBase::GpuParameterType::UniformBuffer,
 			"Lights",
 			LightsParamBlockBinding);
 
 		params->GetPipelineParameterInformation()->GetBinding(
 			GPT_FRAGMENT_PROGRAM,
-			GpuPipelineParamInfoBase::GpuParameterType::UniformBuffer,
+			GpuPipelineParameterLayoutBase::GpuParameterType::UniformBuffer,
 			"LightAndReflProbeParams",
 			LightAndReflProbeParamsParamBlockBinding);
 	}

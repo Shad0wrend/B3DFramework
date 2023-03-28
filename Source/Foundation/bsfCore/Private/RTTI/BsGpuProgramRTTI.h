@@ -8,7 +8,7 @@
 #include "RTTI/BsStdRTTI.h"
 #include "RTTI/BsDataBlobRTTI.h"
 #include "RenderAPI/BsGpuProgram.h"
-#include "RenderAPI/BsGpuParameterDescription.h"
+#include "RenderAPI/BsGpuProgramParameterDescription.h"
 
 namespace bs
 {
@@ -47,7 +47,7 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT GpuParameterDescriptionRTTI : public RTTIType<GpuParameterDescription, IReflectable, GpuParameterDescriptionRTTI>
+	class B3D_CORE_EXPORT GpuProgramParameterDescriptionRTTI : public RTTIType<GpuProgramParameterDescription, IReflectable, GpuProgramParameterDescriptionRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
@@ -73,7 +73,7 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject()
 		{
-			return B3DMakeShared<GpuParameterDescription>();
+			return B3DMakeShared<GpuProgramParameterDescription>();
 		}
 	};
 

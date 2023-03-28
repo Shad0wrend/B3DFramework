@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsD3D11HLSLParamParser.h"
 #include "BsD3D11Mappings.h"
-#include "RenderAPI/BsGpuParameterDescription.h"
+#include "RenderAPI/BsGpuProgramParameterDescription.h"
 #include "Error/BsException.h"
 #include "Debug/BsDebug.h"
 #include "Math/BsMath.h"
@@ -10,7 +10,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-void D3D11HLSLParamParser::Parse(ID3DBlob* microcode, GpuProgramType type, GpuParameterDescription& desc, Vector<VertexElement>* inputParams)
+void D3D11HLSLParamParser::Parse(ID3DBlob* microcode, GpuProgramType type, GpuProgramParameterDescription& desc, Vector<VertexElement>* inputParams)
 {
 	const char* commentString = nullptr;
 	ID3DBlob* pIDisassembly = nullptr;
@@ -75,7 +75,7 @@ void D3D11HLSLParamParser::Parse(ID3DBlob* microcode, GpuProgramType type, GpuPa
 	shaderReflection->Release();
 }
 
-void D3D11HLSLParamParser::ParseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceDesc, GpuProgramType type, GpuParameterDescription& desc)
+void D3D11HLSLParamParser::ParseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceDesc, GpuProgramType type, GpuProgramParameterDescription& desc)
 {
 	for(u32 i = 0; i < resourceDesc.BindCount; i++)
 	{
@@ -253,7 +253,7 @@ void D3D11HLSLParamParser::ParseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceD
 	}
 }
 
-void D3D11HLSLParamParser::ParseBuffer(ID3D11ShaderReflectionConstantBuffer* bufferReflection, GpuParameterDescription& desc)
+void D3D11HLSLParamParser::ParseBuffer(ID3D11ShaderReflectionConstantBuffer* bufferReflection, GpuProgramParameterDescription& desc)
 {
 	D3D11_SHADER_BUFFER_DESC constantBufferDesc;
 	HRESULT hr = bufferReflection->GetDesc(&constantBufferDesc);
@@ -287,7 +287,7 @@ void D3D11HLSLParamParser::ParseBuffer(ID3D11ShaderReflectionConstantBuffer* buf
 	blockDesc.BlockSize = constantBufferDesc.Size / 4;
 }
 
-void D3D11HLSLParamParser::ParseVariable(D3D11_SHADER_TYPE_DESC& varTypeDesc, D3D11_SHADER_VARIABLE_DESC& varDesc, GpuParameterDescription& desc, GpuDataParameterBlockInformation& paramBlock)
+void D3D11HLSLParamParser::ParseVariable(D3D11_SHADER_TYPE_DESC& varTypeDesc, D3D11_SHADER_VARIABLE_DESC& varDesc, GpuProgramParameterDescription& desc, GpuDataParameterBlockInformation& paramBlock)
 {
 	GpuDataParameterInformation memberDesc;
 	memberDesc.Name = varDesc.Name;

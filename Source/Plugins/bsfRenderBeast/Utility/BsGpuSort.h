@@ -6,7 +6,7 @@
 #include "Utility/BsModule.h"
 #include "Renderer/BsGpuDataParameterBlock.h"
 #include "Renderer/BsRendererMaterial.h"
-#include "RenderAPI/BsGpuPipelineParamInfo.h"
+#include "RenderAPI/BsGpuPipelineParameterLayout.h"
 
 namespace bs
 {

@@ -1,24 +1,24 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "RenderAPI/BsGpuPipelineParamInfo.h"
-#include "RenderAPI/BsGpuParameterDescription.h"
+#include "RenderAPI/BsGpuPipelineParameterLayout.h"
+#include "RenderAPI/BsGpuProgramParameterDescription.h"
 #include "Managers/BsRenderStateManager.h"
 #include "Math/BsMath.h"
 
 using namespace bs;
 
-GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DESC& desc)
+GpuPipelineParameterLayoutBase::GpuPipelineParameterLayoutBase(const GpuPipelineParameterDescription& parameterDescription)
 	: mResourceInfos()
 {
 	B3DZeroOut(mBindingSlotCountPerType);
 	B3DZeroOut(mResourceCountPerType);
 
-	mParamDescs[GPT_FRAGMENT_PROGRAM] = desc.FragmentParams;
-	mParamDescs[GPT_VERTEX_PROGRAM] = desc.VertexParams;
-	mParamDescs[GPT_GEOMETRY_PROGRAM] = desc.GeometryParams;
-	mParamDescs[GPT_HULL_PROGRAM] = desc.HullParams;
-	mParamDescs[GPT_DOMAIN_PROGRAM] = desc.DomainParams;
-	mParamDescs[GPT_COMPUTE_PROGRAM] = desc.ComputeParams;
+	mPerProgramParameterDescriptions[GPT_FRAGMENT_PROGRAM] = parameterDescription.Fragment;
+	mPerProgramParameterDescriptions[GPT_VERTEX_PROGRAM] = parameterDescription.Vertex;
+	mPerProgramParameterDescriptions[GPT_GEOMETRY_PROGRAM] = parameterDescription.Geometry;
+	mPerProgramParameterDescriptions[GPT_HULL_PROGRAM] = parameterDescription.Hull;
+	mPerProgramParameterDescriptions[GPT_DOMAIN_PROGRAM] = parameterDescription.Domain;
+	mPerProgramParameterDescriptions[GPT_COMPUTE_PROGRAM] = parameterDescription.Compute;
 
 	auto fnCountElementsForType = [this](auto& entry, GpuParameterType type)
 	{
@@ -49,10 +49,10 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 		mResourceCount += arraySize;
 	};
 
-	const u32 gpuProgramParameterSetsCount = sizeof(mParamDescs) / sizeof(mParamDescs[0]);
+	const u32 gpuProgramParameterSetsCount = sizeof(mPerProgramParameterDescriptions) / sizeof(mPerProgramParameterDescriptions[0]);
 	for(u32 gpuProgramParameterSetIndex = 0; gpuProgramParameterSetIndex < gpuProgramParameterSetsCount; gpuProgramParameterSetIndex++)
 	{
-		const SPtr<GpuParameterDescription>& paramDesc = mParamDescs[gpuProgramParameterSetIndex];
+		const SPtr<GpuProgramParameterDescription>& paramDesc = mPerProgramParameterDescriptions[gpuProgramParameterSetIndex];
 		if(paramDesc == nullptr)
 			continue;
 
@@ -77,7 +77,7 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 
 	for(u32 gpuProgramParameterSetIndex = 0; gpuProgramParameterSetIndex < gpuProgramParameterSetsCount; gpuProgramParameterSetIndex++)
 	{
-		const SPtr<GpuParameterDescription>& paramDesc = mParamDescs[gpuProgramParameterSetIndex];
+		const SPtr<GpuProgramParameterDescription>& paramDesc = mPerProgramParameterDescriptions[gpuProgramParameterSetIndex];
 		if(paramDesc == nullptr)
 			continue;
 
@@ -199,7 +199,7 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 
 	for(u32 gpuProgramParameterSetIndex = 0; gpuProgramParameterSetIndex < gpuProgramParameterSetsCount; gpuProgramParameterSetIndex++)
 	{
-		const SPtr<GpuParameterDescription>& paramDesc = mParamDescs[gpuProgramParameterSetIndex];
+		const SPtr<GpuProgramParameterDescription>& paramDesc = mPerProgramParameterDescriptions[gpuProgramParameterSetIndex];
 		if(paramDesc == nullptr)
 			continue;
 
@@ -250,7 +250,7 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 	}
 }
 
-u32 GpuPipelineParamInfoBase::GetSequentialResourceIndex(GpuParameterType type, u32 set, u32 slot, u32 arrayIndex) const
+u32 GpuPipelineParameterLayoutBase::GetSequentialResourceIndex(GpuParameterType type, u32 set, u32 slot, u32 arrayIndex) const
 {
 #if B3D_DEBUG
 	if(set >= mSetCount)
@@ -292,7 +292,7 @@ u32 GpuPipelineParamInfoBase::GetSequentialResourceIndex(GpuParameterType type, 
 }
 
 
-u32 GpuPipelineParamInfoBase::GetSequentialBindingIndex(GpuParameterType type, u32 set, u32 slot) const
+u32 GpuPipelineParameterLayoutBase::GetSequentialBindingIndex(GpuParameterType type, u32 set, u32 slot) const
 {
 #if B3D_DEBUG
 	if(set >= mSetCount)
@@ -325,7 +325,7 @@ u32 GpuPipelineParamInfoBase::GetSequentialBindingIndex(GpuParameterType type, u
 	return mSetInfos[set].SlotToSequentialBindingIndex[slot];
 }
 
-void GpuPipelineParamInfoBase::GetBinding(GpuParameterType type, u32 sequentialBindingIndex, u32& set, u32& slot) const
+void GpuPipelineParameterLayoutBase::GetBinding(GpuParameterType type, u32 sequentialBindingIndex, u32& set, u32& slot) const
 {
 #if B3D_DEBUG
 	if(sequentialBindingIndex >= mBindingSlotCountPerType[(int)type])
@@ -342,9 +342,9 @@ void GpuPipelineParamInfoBase::GetBinding(GpuParameterType type, u32 sequentialB
 	slot = mResourceInfos[(u32)type][sequentialBindingIndex].Slot;
 }
 
-void GpuPipelineParamInfoBase::GetBindings(GpuParameterType type, const String& name, GpuParamBinding (&bindings)[GPT_COUNT])
+void GpuPipelineParameterLayoutBase::GetBindings(GpuParameterType type, const String& name, GpuParameterBinding (&bindings)[GPT_COUNT])
 {
-	constexpr u32 numParamDescs = sizeof(mParamDescs) / sizeof(mParamDescs[0]);
+	constexpr u32 numParamDescs = sizeof(mPerProgramParameterDescriptions) / sizeof(mPerProgramParameterDescriptions[0]);
 	static_assert(
 		numParamDescs == GPT_COUNT,
 		"Number of param descriptor structures must match the number of GPU program stages.");
@@ -353,9 +353,9 @@ void GpuPipelineParamInfoBase::GetBindings(GpuParameterType type, const String& 
 		GetBinding((GpuProgramType)i, type, name, bindings[i]);
 }
 
-void GpuPipelineParamInfoBase::GetBinding(GpuProgramType progType, GpuParameterType type, const String& name, GpuParamBinding& binding)
+void GpuPipelineParameterLayoutBase::GetBinding(GpuProgramType progType, GpuParameterType type, const String& name, GpuParameterBinding& binding)
 {
-	auto findBinding = [](auto& paramMap, const String& name, GpuParamBinding& binding)
+	auto findBinding = [](auto& paramMap, const String& name, GpuParameterBinding& binding)
 	{
 		auto iterFind = paramMap.find(name);
 		if(iterFind != paramMap.end())
@@ -367,7 +367,7 @@ void GpuPipelineParamInfoBase::GetBinding(GpuProgramType progType, GpuParameterT
 			binding.Set = binding.Slot = (u32)-1;
 	};
 
-	const SPtr<GpuParameterDescription>& paramDesc = mParamDescs[(u32)progType];
+	const SPtr<GpuProgramParameterDescription>& paramDesc = mPerProgramParameterDescriptions[(u32)progType];
 	if(paramDesc == nullptr)
 	{
 		binding.Set = binding.Slot = (u32)-1;
@@ -396,7 +396,7 @@ void GpuPipelineParamInfoBase::GetBinding(GpuProgramType progType, GpuParameterT
 	}
 }
 
-u32 GpuPipelineParamInfoBase::GetArraySize(GpuParameterType type, u32 sequentialBindingIndex)
+u32 GpuPipelineParameterLayoutBase::GetArraySize(GpuParameterType type, u32 sequentialBindingIndex)
 {
 #if B3D_DEBUG
 	if(sequentialBindingIndex >= mBindingSlotCountPerType[(int)type])
@@ -410,45 +410,45 @@ u32 GpuPipelineParamInfoBase::GetArraySize(GpuParameterType type, u32 sequential
 	return mResourceInfos[(u32)type][sequentialBindingIndex].ArraySize;
 }
 
-GpuPipelineParamInfo::GpuPipelineParamInfo(const GPU_PIPELINE_PARAMS_DESC& desc)
-	: GpuPipelineParamInfoBase(desc)
+GpuPipelineParameterLayout::GpuPipelineParameterLayout(const GpuPipelineParameterDescription& desc)
+	: GpuPipelineParameterLayoutBase(desc)
 {}
 
-SPtr<GpuPipelineParamInfo> GpuPipelineParamInfo::Create(const GPU_PIPELINE_PARAMS_DESC& desc)
+SPtr<GpuPipelineParameterLayout> GpuPipelineParameterLayout::Create(const GpuPipelineParameterDescription& desc)
 {
-	SPtr<GpuPipelineParamInfo> paramInfo =
-		B3DMakeCoreFromExisting<GpuPipelineParamInfo>(new(B3DAllocate<GpuPipelineParamInfo>()) GpuPipelineParamInfo(desc));
+	SPtr<GpuPipelineParameterLayout> paramInfo =
+		B3DMakeCoreFromExisting<GpuPipelineParameterLayout>(new(B3DAllocate<GpuPipelineParameterLayout>()) GpuPipelineParameterLayout(desc));
 	paramInfo->SetShared(paramInfo);
 	paramInfo->Initialize();
 
 	return paramInfo;
 }
 
-SPtr<ct::GpuPipelineParamInfo> GpuPipelineParamInfo::GetCore() const
+SPtr<ct::GpuPipelineParameterLayout> GpuPipelineParameterLayout::GetCore() const
 {
-	return std::static_pointer_cast<ct::GpuPipelineParamInfo>(mCoreSpecific);
+	return std::static_pointer_cast<ct::GpuPipelineParameterLayout>(mCoreSpecific);
 }
 
-SPtr<ct::CoreObject> GpuPipelineParamInfo::CreateCore() const
+SPtr<ct::CoreObject> GpuPipelineParameterLayout::CreateCore() const
 {
-	GPU_PIPELINE_PARAMS_DESC desc;
-	desc.FragmentParams = mParamDescs[GPT_FRAGMENT_PROGRAM];
-	desc.VertexParams = mParamDescs[GPT_VERTEX_PROGRAM];
-	desc.GeometryParams = mParamDescs[GPT_GEOMETRY_PROGRAM];
-	desc.HullParams = mParamDescs[GPT_HULL_PROGRAM];
-	desc.DomainParams = mParamDescs[GPT_DOMAIN_PROGRAM];
-	desc.ComputeParams = mParamDescs[GPT_COMPUTE_PROGRAM];
+	GpuPipelineParameterDescription desc;
+	desc.Fragment = mPerProgramParameterDescriptions[GPT_FRAGMENT_PROGRAM];
+	desc.Vertex = mPerProgramParameterDescriptions[GPT_VERTEX_PROGRAM];
+	desc.Geometry = mPerProgramParameterDescriptions[GPT_GEOMETRY_PROGRAM];
+	desc.Hull = mPerProgramParameterDescriptions[GPT_HULL_PROGRAM];
+	desc.Domain = mPerProgramParameterDescriptions[GPT_DOMAIN_PROGRAM];
+	desc.Compute = mPerProgramParameterDescriptions[GPT_COMPUTE_PROGRAM];
 
 	return ct::RenderStateManager::Instance().CreatePipelineParamInfoInternal(desc);
 }
 
 namespace bs { namespace ct
 {
-GpuPipelineParamInfo::GpuPipelineParamInfo(const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask)
-	: GpuPipelineParamInfoBase(desc)
+GpuPipelineParameterLayout::GpuPipelineParameterLayout(const GpuPipelineParameterDescription& desc, GpuDeviceFlags deviceMask)
+	: GpuPipelineParameterLayoutBase(desc)
 {}
 
-SPtr<GpuPipelineParamInfo> GpuPipelineParamInfo::Create(const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask)
+SPtr<GpuPipelineParameterLayout> GpuPipelineParameterLayout::Create(const GpuPipelineParameterDescription& desc, GpuDeviceFlags deviceMask)
 {
 	return RenderStateManager::Instance().CreatePipelineParamInfo(desc, deviceMask);
 }

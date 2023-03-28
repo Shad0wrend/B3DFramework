@@ -471,7 +471,7 @@ void RendererScene::RegisterRenderable(Renderable* renderable)
 		gpuParams->TrySetUniformBuffer("PerCall", rendererRenderable->PerCallParamBuffer);
 
 		gpuParams->GetPipelineParameterInformation()->GetBindings(
-			GpuPipelineParamInfoBase::GpuParameterType::UniformBuffer,
+			GpuPipelineParameterLayoutBase::GpuParameterType::UniformBuffer,
 			"PerCamera",
 			element.PerCameraBindings);
 
@@ -852,7 +852,7 @@ void RendererScene::UpdateParticleSystem(ParticleSystem* particleSystem, bool tf
 	gpuParams->GetStorageBufferParameter(GPT_VERTEX_PROGRAM, "gIndices", renElement.IndicesBuffer);
 
 	gpuParams->GetPipelineParameterInformation()->GetBindings(
-		GpuPipelineParamInfoBase::GpuParameterType::UniformBuffer,
+		GpuPipelineParameterLayoutBase::GpuParameterType::UniformBuffer,
 		"PerCamera",
 		renElement.PerCameraBindings);
 
@@ -1045,7 +1045,7 @@ void RendererScene::RegisterDecal(Decal* decal)
 	gpuParams->SetUniformBuffer("PerCall", rendererDecal.PerCallParamBuffer);
 
 	gpuParams->GetPipelineParameterInformation()->GetBindings(
-		GpuPipelineParamInfoBase::GpuParameterType::UniformBuffer,
+		GpuPipelineParameterLayoutBase::GpuParameterType::UniformBuffer,
 		"PerCamera",
 		renElement.PerCameraBindings);
 
@@ -1295,7 +1295,7 @@ void RendererScene::RefreshSamplerOverrides(bool force)
 					{
 						GpuProgramType type = (GpuProgramType)k;
 
-						SPtr<GpuParameterDescription> paramDesc = params->GetParameterInformation(type);
+						SPtr<GpuProgramParameterDescription> paramDesc = params->GetParameterInformation(type);
 						if(paramDesc == nullptr)
 							continue;
 

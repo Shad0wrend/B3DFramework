@@ -3,7 +3,7 @@
 #include "BsNullRenderAPI.h"
 #include "CoreThread/BsCoreThread.h"
 #include "Math/BsMatrix4.h"
-#include "RenderAPI/BsGpuParameterDescription.h"
+#include "RenderAPI/BsGpuProgramParameterDescription.h"
 #include "RenderAPI/BsGpuParameters.h"
 #include "Managers/BsGpuProgramManager.h"
 #include "BsNullCommandBuffer.h"

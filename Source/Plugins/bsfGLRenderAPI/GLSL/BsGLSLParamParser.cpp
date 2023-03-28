@@ -174,7 +174,7 @@ bool GLSLParamParser::AttribNameToElementSemantic(const String& name, VertexElem
 	return false;
 }
 
-void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType type, GpuParameterDescription& returnParamDesc)
+void GLSLParamParser::BuildUniformDescriptions(GLuint glProgram, GpuProgramType type, GpuProgramParameterDescription& returnParamDesc)
 {
 	// Scan through the active uniform blocks
 	GLint maxBufferSize = 0;

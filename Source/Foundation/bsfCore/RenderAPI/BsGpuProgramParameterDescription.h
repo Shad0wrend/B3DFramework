@@ -47,8 +47,8 @@ namespace bs
 		bool IsShareable; /** True for blocks that can be shared between different GPU pipeline stages. */
 	};
 
-	/** Contains all parameter information for a GPU program, including data and object parameters, plus parameter blocks. */
-	struct B3D_CORE_EXPORT GpuParameterDescription : IReflectable
+	/** Contains information about all parameters (i.e. uniforms) for a single GPU program, including data/object parameters and parameter blocks. */
+	struct B3D_CORE_EXPORT GpuProgramParameterDescription : IReflectable
 	{
 		Map<String, GpuDataParameterBlockInformation> DataParameterBlocks;
 		Map<String, GpuDataParameterInformation> DataParameters;
@@ -62,7 +62,7 @@ namespace bs
 		/* 								SERIALIZATION                      		*/
 		/************************************************************************/
 	public:
-		friend class GpuParameterDescriptionRTTI;
+		friend class GpuProgramParameterDescriptionRTTI;
 		static RTTITypeBase* GetRttiStatic();
 		RTTITypeBase* GetRtti() const;
 	};

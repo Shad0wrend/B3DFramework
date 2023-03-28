@@ -6,7 +6,7 @@
 #include "RenderAPI/BsGpuDeviceCapabilities.h"
 #include "RenderAPI/BsRenderAPI.h"
 #include "RenderAPI/BsGpuParameters.h"
-#include "RenderAPI/BsGpuParameterDescription.h"
+#include "RenderAPI/BsGpuProgramParameterDescription.h"
 #include "Private/RTTI/BsGpuProgramRTTI.h"
 
 using namespace bs;
@@ -52,7 +52,7 @@ String GpuProgram::GetCompileErrorMessage() const
 	return GetCore()->GetCompileErrorMessage();
 }
 
-SPtr<GpuParameterDescription> GpuProgram::GetParamDesc() const
+SPtr<GpuProgramParameterDescription> GpuProgram::GetParamDesc() const
 {
 	return GetCore()->GetParamDesc();
 }
@@ -117,7 +117,7 @@ namespace bs { namespace ct
 GpuProgram::GpuProgram(const GpuProgramCreateInformation& createInformation)
 	: mNeedsAdjacencyInfo(createInformation.RequiresAdjacency), mName(createInformation.Name), mType(createInformation.Type), mEntryPoint(createInformation.EntryPoint), mSource(createInformation.Source), mBytecode(createInformation.Bytecode)
 {
-	mParametersDesc = B3DMakeShared<GpuParameterDescription>();
+	mParametersDesc = B3DMakeShared<GpuProgramParameterDescription>();
 }
 
 GpuProgram::~GpuProgram()

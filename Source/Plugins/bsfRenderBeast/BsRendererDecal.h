@@ -6,7 +6,7 @@
 #include "Renderer/BsRenderElement.h"
 #include "Renderer/BsGpuDataParameterBlock.h"
 #include "Material/BsMaterialParam.h"
-#include "RenderAPI/BsGpuPipelineParamInfo.h"
+#include "RenderAPI/BsGpuPipelineParameterLayout.h"
 #include "Renderer/BsRendererMaterial.h"
 
 namespace bs
@@ -74,7 +74,7 @@ namespace bs
 			MaterialSamplerOverrides* SamplerOverrides;
 
 			/** Binding indices representing where should the per-camera param block buffer be bound to. */
-			GpuParamBinding PerCameraBindings[GPT_COUNT];
+			GpuParameterBinding PerCameraBindings[GPT_COUNT];
 
 			/** Indices for different variations of the used material. */
 			u32 TechniqueIndices[2][3];

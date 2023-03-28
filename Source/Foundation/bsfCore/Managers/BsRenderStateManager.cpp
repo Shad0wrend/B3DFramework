@@ -224,10 +224,10 @@ SPtr<ComputePipelineState> RenderStateManager::CreateComputePipelineState(const 
 	return state;
 }
 
-SPtr<GpuPipelineParamInfo> RenderStateManager::CreatePipelineParamInfo(
-	const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask) const
+SPtr<GpuPipelineParameterLayout> RenderStateManager::CreatePipelineParamInfo(
+	const GpuPipelineParameterDescription& desc, GpuDeviceFlags deviceMask) const
 {
-	SPtr<GpuPipelineParamInfo> paramInfo = CreatePipelineParamInfoInternal(desc, deviceMask);
+	SPtr<GpuPipelineParameterLayout> paramInfo = CreatePipelineParamInfoInternal(desc, deviceMask);
 	paramInfo->Initialize();
 
 	return paramInfo;
@@ -319,12 +319,12 @@ SPtr<ComputePipelineState> RenderStateManager::CreateComputePipelineStateInterna
 	return pipelineState;
 }
 
-SPtr<GpuPipelineParamInfo> RenderStateManager::CreatePipelineParamInfoInternal(
-	const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask) const
+SPtr<GpuPipelineParameterLayout> RenderStateManager::CreatePipelineParamInfoInternal(
+	const GpuPipelineParameterDescription& desc, GpuDeviceFlags deviceMask) const
 {
-	SPtr<GpuPipelineParamInfo> paramInfo =
-		B3DMakeSharedFromExisting<GpuPipelineParamInfo>(new(B3DAllocate<GpuPipelineParamInfo>())
-												GpuPipelineParamInfo(desc, deviceMask));
+	SPtr<GpuPipelineParameterLayout> paramInfo =
+		B3DMakeSharedFromExisting<GpuPipelineParameterLayout>(new(B3DAllocate<GpuPipelineParameterLayout>())
+												GpuPipelineParameterLayout(desc, deviceMask));
 
 	paramInfo->SetShared(paramInfo);
 

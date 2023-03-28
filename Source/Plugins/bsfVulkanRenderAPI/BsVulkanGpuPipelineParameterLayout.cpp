@@ -1,19 +1,19 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
-#include "BsVulkanGpuPipelineParamInfo.h"
+#include "BsVulkanGpuPipelineParameterLayout.h"
 #include "BsVulkanUtility.h"
 #include "BsVulkanRenderAPI.h"
 #include "BsVulkanGpuDevice.h"
-#include "RenderAPI/BsGpuParameterDescription.h"
+#include "RenderAPI/BsGpuProgramParameterDescription.h"
 
 using namespace bs;
 using namespace bs::ct;
 
-VulkanGpuPipelineParamInfo::VulkanGpuPipelineParamInfo(const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask)
-	: GpuPipelineParamInfo(desc, deviceMask), mDeviceMask(deviceMask), mLayouts(), mLayoutInfos()
+VulkanGpuPipelineParameterLayout::VulkanGpuPipelineParameterLayout(const GpuPipelineParameterDescription& parameterDescription, GpuDeviceFlags deviceMask)
+	: GpuPipelineParameterLayout(parameterDescription, deviceMask), mDeviceMask(deviceMask), mLayouts(), mLayoutInfos()
 {}
 
-void VulkanGpuPipelineParamInfo::Initialize()
+void VulkanGpuPipelineParameterLayout::Initialize()
 {
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 
@@ -132,10 +132,10 @@ void VulkanGpuPipelineParamInfo::Initialize()
 	stageFlagsLookup[GPT_FRAGMENT_PROGRAM] = VK_SHADER_STAGE_FRAGMENT_BIT;
 	stageFlagsLookup[GPT_COMPUTE_PROGRAM] = VK_SHADER_STAGE_COMPUTE_BIT;
 
-	u32 numParamDescs = sizeof(mParamDescs) / sizeof(mParamDescs[0]);
+	u32 numParamDescs = sizeof(mPerProgramParameterDescriptions) / sizeof(mPerProgramParameterDescriptions[0]);
 	for(u32 i = 0; i < numParamDescs; i++)
 	{
-		const SPtr<GpuParameterDescription>& paramDesc = mParamDescs[i];
+		const SPtr<GpuProgramParameterDescription>& paramDesc = mPerProgramParameterDescriptions[i];
 		if(paramDesc == nullptr)
 			continue;
 
@@ -241,7 +241,7 @@ void VulkanGpuPipelineParamInfo::Initialize()
 	}
 }
 
-VulkanDescriptorLayout* VulkanGpuPipelineParamInfo::GetLayout(u32 deviceIdx, u32 layoutIdx) const
+VulkanDescriptorLayout* VulkanGpuPipelineParameterLayout::GetLayout(u32 deviceIdx, u32 layoutIdx) const
 {
 	if(deviceIdx >= B3D_MAX_DEVICES || mLayouts[deviceIdx] == nullptr)
 		return nullptr;

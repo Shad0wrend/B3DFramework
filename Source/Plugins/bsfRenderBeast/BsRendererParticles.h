@@ -5,7 +5,7 @@
 #include "BsRenderBeastPrerequisites.h"
 #include "Renderer/BsRenderElement.h"
 #include "Renderer/BsGpuDataParameterBlock.h"
-#include "RenderAPI/BsGpuPipelineParamInfo.h"
+#include "RenderAPI/BsGpuPipelineParameterLayout.h"
 #include "Material/BsShaderVariation.h"
 #include "Particles/BsParticleSystem.h"
 #include "Allocators/BsPoolAlloc.h"
@@ -168,7 +168,7 @@ namespace bs
 			};
 
 			/** Binding locations for the per-camera param block buffer. */
-			GpuParamBinding PerCameraBindings[GPT_COUNT];
+			GpuParameterBinding PerCameraBindings[GPT_COUNT];
 
 			/** Binding spot for the buffer containing instance id -> particle index mapping. */
 			GpuParameterBuffer IndicesBuffer;

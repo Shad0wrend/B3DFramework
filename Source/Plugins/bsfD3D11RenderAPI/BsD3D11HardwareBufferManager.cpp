@@ -5,7 +5,7 @@
 #include "BsD3D11IndexBuffer.h"
 #include "BsD3D11GpuBuffer.h"
 #include "BsD3D11GpuParamBlockBuffer.h"
-#include "RenderAPI/BsGpuParameterDescription.h"
+#include "RenderAPI/BsGpuProgramParameterDescription.h"
 
 using namespace bs;
 using namespace bs::ct;

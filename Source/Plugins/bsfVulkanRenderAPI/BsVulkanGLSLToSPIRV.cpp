@@ -4,7 +4,7 @@
 #include "BsVulkanGpuProgram.h"
 #include "BsVulkanUtility.h"
 #include "RenderAPI/BsGpuParameters.h"
-#include "RenderAPI/BsGpuParameterDescription.h"
+#include "RenderAPI/BsGpuProgramParameterDescription.h"
 #include "Math/BsMath.h"
 
 #define AMD_EXTENSIONS
@@ -600,7 +600,7 @@ static void ParseStruct(const glslang::TTypeList* typeList, u32& size)
 	}
 }
 
-static bool ParseUniforms(const glslang::TProgram* program, GpuParameterDescription& desc, String& log)
+static bool ParseUniforms(const glslang::TProgram* program, GpuProgramParameterDescription& desc, String& log)
 {
 	// Parse individual uniforms
 	struct UniformInfo
@@ -962,7 +962,7 @@ SPtr<GpuProgramBytecode> GLSLToSPIRV::Convert(const GpuProgramCreateInformation&
 	GlslangToSpv(*program->getIntermediate(glslType), spirv, &logger);
 
 	// Parse uniforms
-	bytecode->ParamDesc = B3DMakeShared<GpuParameterDescription>();
+	bytecode->ParamDesc = B3DMakeShared<GpuProgramParameterDescription>();
 	if(!ParseUniforms(program, *bytecode->ParamDesc, bytecode->Messages))
 		goto cleanup;
 

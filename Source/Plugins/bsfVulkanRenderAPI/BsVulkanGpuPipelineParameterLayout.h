@@ -3,7 +3,7 @@
 #pragma once
 
 #include "BsVulkanPrerequisites.h"
-#include "RenderAPI/BsGpuPipelineParamInfo.h"
+#include "RenderAPI/BsGpuPipelineParameterLayout.h"
 #include "Allocators/BsGroupAlloc.h"
 
 namespace bs
@@ -15,11 +15,11 @@ namespace bs
 		 */
 
 		/** Holds meta-data about a set of GPU parameters used by a single pipeline state. */
-		class VulkanGpuPipelineParamInfo : public GpuPipelineParamInfo
+		class VulkanGpuPipelineParameterLayout : public GpuPipelineParameterLayout
 		{
 		public:
-			VulkanGpuPipelineParamInfo(const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask);
-			~VulkanGpuPipelineParamInfo() = default;
+			VulkanGpuPipelineParameterLayout(const GpuPipelineParameterDescription& parameterDescription, GpuDeviceFlags deviceMask);
+			~VulkanGpuPipelineParameterLayout() = default;
 
 			/** Returns the number of bindings present at the layout at the specified index. */
 			u32 GetLayoutBindingCount(u32 layoutIndex) const { return mLayoutInfos[layoutIndex].BindingCount; }

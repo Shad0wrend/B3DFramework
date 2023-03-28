@@ -12,26 +12,26 @@ namespace bs
 	 *  @{
 	 */
 
-	/** Helper structure used for initializing GpuPipelineParamInfo. */
-	struct GPU_PIPELINE_PARAMS_DESC
+	/** Helper structure used for initializing GpuPipelineParameterLayout. */
+	struct GpuPipelineParameterDescription
 	{
-		SPtr<GpuParameterDescription> FragmentParams;
-		SPtr<GpuParameterDescription> VertexParams;
-		SPtr<GpuParameterDescription> GeometryParams;
-		SPtr<GpuParameterDescription> HullParams;
-		SPtr<GpuParameterDescription> DomainParams;
-		SPtr<GpuParameterDescription> ComputeParams;
+		SPtr<GpuProgramParameterDescription> Fragment;
+		SPtr<GpuProgramParameterDescription> Vertex;
+		SPtr<GpuProgramParameterDescription> Geometry;
+		SPtr<GpuProgramParameterDescription> Hull;
+		SPtr<GpuProgramParameterDescription> Domain;
+		SPtr<GpuProgramParameterDescription> Compute;
 	};
 
 	/** Binding location for a single GPU program parameter. */
-	struct GpuParamBinding
+	struct GpuParameterBinding
 	{
-		u32 Set = (u32)-1;
-		u32 Slot = (u32)-1;
+		u32 Set = ~0u;
+		u32 Slot = ~0u;
 	};
 
-	/** Contains code common to both sim and core thread implementations of GpuPipelineParamInfo. */
-	class B3D_CORE_EXPORT GpuPipelineParamInfoBase
+	/** Contains code common to both sim and core thread implementations of GpuPipelineParameterLayout. */
+	class B3D_CORE_EXPORT GpuPipelineParameterLayoutBase
 	{
 	public:
 		/** Types of GPU parameters. */
@@ -46,8 +46,8 @@ namespace bs
 		};
 
 		/** Constructs the object using the provided GPU parameter descriptors. */
-		GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DESC& desc);
-		virtual ~GpuPipelineParamInfoBase() = default;
+		GpuPipelineParameterLayoutBase(const GpuPipelineParameterDescription& parameterDescription);
+		virtual ~GpuPipelineParameterLayoutBase() = default;
 
 		/** Gets the total number of sets. */
 		u32 GetSetCount() const { return mSetCount; }
@@ -86,19 +86,19 @@ namespace bs
 		 * Finds set/slot indices of a parameter with the specified name for the specified GPU program stage. Set/slot
 		 * indices are set to ~0u if a stage doesn't have a block with the specified name.
 		 */
-		void GetBinding(GpuProgramType progType, GpuParameterType type, const String& name, GpuParamBinding& binding);
+		void GetBinding(GpuProgramType progType, GpuParameterType type, const String& name, GpuParameterBinding& binding);
 
 		/**
 		 * Finds set/slot indices of a parameter with the specified name for every GPU program stage. Set/slot indices are
 		 * set to -1 if a stage doesn't have a block with the specified name.
 		 */
-		void GetBindings(GpuParameterType type, const String& name, GpuParamBinding (&bindings)[GPT_COUNT]);
+		void GetBindings(GpuParameterType type, const String& name, GpuParameterBinding (&bindings)[GPT_COUNT]);
 
 		/** Returns the number of entries in the array at the specified binding index. */
 		u32 GetArraySize(GpuParameterType type, u32 sequentialBindingIndex);
 
 		/** Returns descriptions of individual parameters for the specified GPU program type. */
-		const SPtr<GpuParameterDescription>& GetParamDesc(GpuProgramType type) const { return mParamDescs[(int)type]; }
+		const SPtr<GpuProgramParameterDescription>& GetParamDesc(GpuProgramType type) const { return mPerProgramParameterDescriptions[(int)type]; }
 
 	protected:
 		/** Information about a single set in the param info object. */
@@ -121,7 +121,7 @@ namespace bs
 			u32 ArraySize = 1;
 		};
 
-		std::array<SPtr<GpuParameterDescription>, 6> mParamDescs;
+		std::array<SPtr<GpuProgramParameterDescription>, 6> mPerProgramParameterDescriptions;
 
 		u32 mSetCount = 0;
 		SetInfo* mSetInfos = nullptr;
@@ -136,49 +136,49 @@ namespace bs
 	};
 
 	/** Holds meta-data about a set of GPU parameters used by a single pipeline state. */
-	class B3D_CORE_EXPORT GpuPipelineParamInfo : public CoreObject, public GpuPipelineParamInfoBase
+	class B3D_CORE_EXPORT GpuPipelineParameterLayout : public CoreObject, public GpuPipelineParameterLayoutBase
 	{
 	public:
-		virtual ~GpuPipelineParamInfo() = default;
+		virtual ~GpuPipelineParameterLayout() = default;
 
 		/**
 		 * Retrieves a core implementation of this object usable only from the core thread.
 		 *
 		 * @note	Core thread only.
 		 */
-		SPtr<ct::GpuPipelineParamInfo> GetCore() const;
+		SPtr<ct::GpuPipelineParameterLayout> GetCore() const;
 
 		/**
 		 * Constructs the object using the provided GPU parameter descriptors.
 		 *
 		 * @param[in]	desc	Object containing parameter descriptions for individual GPU program stages.
 		 */
-		static SPtr<GpuPipelineParamInfo> Create(const GPU_PIPELINE_PARAMS_DESC& desc);
+		static SPtr<GpuPipelineParameterLayout> Create(const GpuPipelineParameterDescription& desc);
 
 	private:
-		GpuPipelineParamInfo(const GPU_PIPELINE_PARAMS_DESC& desc);
+		GpuPipelineParameterLayout(const GpuPipelineParameterDescription& desc);
 
 		SPtr<ct::CoreObject> CreateCore() const override;
 	};
 
 	namespace ct
 	{
-		/** Core thread version of a bs::GpuPipelineParamInfo. */
-		class B3D_CORE_EXPORT GpuPipelineParamInfo : public CoreObject, public GpuPipelineParamInfoBase
+		/** Contains information about all GPU program parameters required when binding a particular GPU pipeline for execution. */
+		class B3D_CORE_EXPORT GpuPipelineParameterLayout : public CoreObject, public GpuPipelineParameterLayoutBase
 		{
 		public:
-			virtual ~GpuPipelineParamInfo() = default;
+			virtual ~GpuPipelineParameterLayout() = default;
 
 			/**
-			 * @copydoc bs::GpuPipelineParamInfo::Create
+			 * @copydoc bs::GpuPipelineParameterLayout::Create
 			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the buffer be created on.
 			 */
-			static SPtr<GpuPipelineParamInfo> Create(const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			static SPtr<GpuPipelineParameterLayout> Create(const GpuPipelineParameterDescription& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT);
 
 		protected:
 			friend class RenderStateManager;
 
-			GpuPipelineParamInfo(const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask);
+			GpuPipelineParameterLayout(const GpuPipelineParameterDescription& desc, GpuDeviceFlags deviceMask);
 		};
 	} // namespace ct
 

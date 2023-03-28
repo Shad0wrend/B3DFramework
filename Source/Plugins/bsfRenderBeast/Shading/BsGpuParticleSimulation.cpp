@@ -5,7 +5,7 @@
 #include "Renderer/BsRendererMaterial.h"
 #include "Renderer/BsGpuResourcePool.h"
 #include "RenderAPI/BsVertexDescription.h"
-#include "RenderAPI/BsGpuPipelineParamInfo.h"
+#include "RenderAPI/BsGpuPipelineParameterLayout.h"
 #include "Particles/BsVectorField.h"
 #include "Particles/BsParticleDistribution.h"
 #include "Math/BsVector3.h"
@@ -139,14 +139,14 @@ private:
 	GpuParameterSampledTexture mCurvesTexParam;
 	GpuParameterSampledTexture mDepthTexParam;
 	GpuParameterSampledTexture mNormalsTexParam;
-	GpuParamBinding mParamsBinding;
-	GpuParamBinding mPerCameraBinding;
-	GpuParamBinding mPerObjectBinding;
+	GpuParameterBinding mParamsBinding;
+	GpuParameterBinding mPerCameraBinding;
+	GpuParameterBinding mPerObjectBinding;
 
-	GpuParamBinding mVectorFieldBinding;
+	GpuParameterBinding mVectorFieldBinding;
 	GpuParameterSampledTexture mVectorFieldTexParam;
 
-	GpuParamBinding mDepthCollisionBinding;
+	GpuParameterBinding mDepthCollisionBinding;
 
 	bool mSupportsDepthCollisions;
 };
@@ -1107,13 +1107,13 @@ void GpuParticleSimulateMat::Initialize()
 
 	mGPUParameters->GetPipelineParameterInformation()->GetBinding(
 		GPT_FRAGMENT_PROGRAM,
-		GpuPipelineParamInfoBase::GpuParameterType::UniformBuffer,
+		GpuPipelineParameterLayoutBase::GpuParameterType::UniformBuffer,
 		"Params",
 		mParamsBinding);
 
 	mGPUParameters->GetPipelineParameterInformation()->GetBinding(
 		GPT_FRAGMENT_PROGRAM,
-		GpuPipelineParamInfoBase::GpuParameterType::UniformBuffer,
+		GpuPipelineParameterLayoutBase::GpuParameterType::UniformBuffer,
 		"VectorFieldParams",
 		mVectorFieldBinding);
 
@@ -1127,19 +1127,19 @@ void GpuParticleSimulateMat::Initialize()
 	{
 		mGPUParameters->GetPipelineParameterInformation()->GetBinding(
 			GPT_FRAGMENT_PROGRAM,
-			GpuPipelineParamInfoBase::GpuParameterType::UniformBuffer,
+			GpuPipelineParameterLayoutBase::GpuParameterType::UniformBuffer,
 			"PerCamera",
 			mPerCameraBinding);
 
 		mGPUParameters->GetPipelineParameterInformation()->GetBinding(
 			GPT_FRAGMENT_PROGRAM,
-			GpuPipelineParamInfoBase::GpuParameterType::UniformBuffer,
+			GpuPipelineParameterLayoutBase::GpuParameterType::UniformBuffer,
 			"PerObject",
 			mPerObjectBinding);
 
 		mGPUParameters->GetPipelineParameterInformation()->GetBinding(
 			GPT_FRAGMENT_PROGRAM,
-			GpuPipelineParamInfoBase::GpuParameterType::UniformBuffer,
+			GpuPipelineParameterLayoutBase::GpuParameterType::UniformBuffer,
 			"DepthCollisionParams",
 			mDepthCollisionBinding);
 

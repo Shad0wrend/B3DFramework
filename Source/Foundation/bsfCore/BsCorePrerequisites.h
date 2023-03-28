@@ -286,7 +286,7 @@ namespace bs
 	CORE_OBJECT_FORWARD_DECLARE(Renderable)
 	CORE_OBJECT_FORWARD_DECLARE(GraphicsPipelineState)
 	CORE_OBJECT_FORWARD_DECLARE(ComputePipelineState)
-	CORE_OBJECT_FORWARD_DECLARE(GpuPipelineParamInfo)
+	CORE_OBJECT_FORWARD_DECLARE(GpuPipelineParameterLayout)
 	CORE_OBJECT_FORWARD_DECLARE(ReflectionProbe)
 	CORE_OBJECT_FORWARD_DECLARE(ParticleSystem)
 	CORE_OBJECT_FORWARD_DECLARE(Texture)
@@ -377,7 +377,7 @@ namespace bs
 	class FontManager;
 	class RenderStateManager;
 	class GpuParamBlock;
-	struct GpuParameterDescription;
+	struct GpuProgramParameterDescription;
 	struct GpuDataParameterInformation;
 	struct GpuObjectParameterInformation;
 	struct GpuDataParameterBlockInformation;

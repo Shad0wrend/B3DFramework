@@ -7,7 +7,7 @@
 #include "Renderer/BsRenderable.h"
 #include "Renderer/BsGpuDataParameterBlock.h"
 #include "Material/BsMaterialParam.h"
-#include "RenderAPI/BsGpuPipelineParamInfo.h"
+#include "RenderAPI/BsGpuPipelineParameterLayout.h"
 #include "BsRendererReflectionProbe.h"
 
 namespace bs
@@ -66,7 +66,7 @@ namespace bs
 			RenderableAnimType AnimType;
 
 			/** Binding indices representing where should the per-camera param block buffer be bound to. */
-			GpuParamBinding PerCameraBindings[GPT_COUNT];
+			GpuParameterBinding PerCameraBindings[GPT_COUNT];
 
 			/** Collection of parameters used for direct lighting using the forward rendering path. */
 			ForwardLightingParams ForwardLightingParams;

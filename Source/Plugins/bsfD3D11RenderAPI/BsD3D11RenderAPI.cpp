@@ -28,7 +28,7 @@
 #include "Debug/BsDebug.h"
 #include "Error/BsException.h"
 #include "Profiling/BsRenderStats.h"
-#include "RenderAPI/BsGpuParameterDescription.h"
+#include "RenderAPI/BsGpuProgramParameterDescription.h"
 #include "BsD3D11GpuBuffer.h"
 #include "BsD3D11CommandBuffer.h"
 #include "BsD3D11CommandBufferManager.h"
@@ -368,7 +368,7 @@ void D3D11RenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SP
 				constBuffers.clear();
 				samplers.clear();
 
-				SPtr<GpuParameterDescription> paramDesc = gpuParams->GetParameterInformation(type);
+				SPtr<GpuProgramParameterDescription> paramDesc = gpuParams->GetParameterInformation(type);
 				if(paramDesc == nullptr)
 					return;
 

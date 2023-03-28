@@ -4,7 +4,7 @@
 #include "BsD3D11GpuProgram.h"
 #include "RenderAPI/BsVertexDeclaration.h"
 #include "BsD3D11HLSLParamParser.h"
-#include "RenderAPI/BsGpuParameterDescription.h"
+#include "RenderAPI/BsGpuProgramParameterDescription.h"
 #include <regex>
 
 using namespace bs;
@@ -210,7 +210,7 @@ SPtr<GpuProgramBytecode> D3D11HLSLProgramFactory::CompileBytecode(const GpuProgr
 		memcpy(bytecode->Instructions.Data, microcode->GetBufferPointer(), bytecode->Instructions.Size);
 
 		D3D11HLSLParamParser parser;
-		bytecode->ParamDesc = B3DMakeShared<GpuParameterDescription>();
+		bytecode->ParamDesc = B3DMakeShared<GpuProgramParameterDescription>();
 
 		if(desc.Type == GPT_VERTEX_PROGRAM)
 			parser.Parse(microcode, desc.Type, *bytecode->ParamDesc, &bytecode->VertexInput);

@@ -23,7 +23,7 @@
 #include "BsGLQueryManager.h"
 #include "Debug/BsDebug.h"
 #include "Profiling/BsRenderStats.h"
-#include "RenderAPI/BsGpuParameterDescription.h"
+#include "RenderAPI/BsGpuProgramParameterDescription.h"
 #include "BsGLGpuBuffer.h"
 #include "BsGLCommandBuffer.h"
 #include "BsGLCommandBufferManager.h"
@@ -437,7 +437,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SPtr<
 
 				GpuProgramType type = (GpuProgramType)i;
 
-				SPtr<GpuParameterDescription> paramDesc = gpuParams->GetParameterInformation(type);
+				SPtr<GpuProgramParameterDescription> paramDesc = gpuParams->GetParameterInformation(type);
 				if(paramDesc == nullptr)
 					continue;
 

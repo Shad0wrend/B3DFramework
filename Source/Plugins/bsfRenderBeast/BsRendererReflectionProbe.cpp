@@ -134,13 +134,13 @@ void ImageBasedLightingParams::Populate(const SPtr<GpuParameters>& params, GpuPr
 
 	params->GetPipelineParameterInformation()->GetBinding(
 		programType,
-		GpuPipelineParamInfoBase::GpuParameterType::UniformBuffer,
+		GpuPipelineParameterLayoutBase::GpuParameterType::UniformBuffer,
 		"ReflProbeParams",
 		ReflProbeParamBindings);
 
 	params->GetPipelineParameterInformation()->GetBinding(
 		programType,
-		GpuPipelineParamInfoBase::GpuParameterType::UniformBuffer,
+		GpuPipelineParameterLayoutBase::GpuParameterType::UniformBuffer,
 		"ReflectionProbes",
 		ReflProbesBinding);
 }

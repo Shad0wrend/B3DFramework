@@ -9,7 +9,7 @@
 #include "RenderAPI/BsDepthStencilState.h"
 #include "RenderAPI/BsSamplerState.h"
 #include "RenderAPI/BsGpuPipelineState.h"
-#include "RenderAPI/BsGpuPipelineParamInfo.h"
+#include "RenderAPI/BsGpuPipelineParameterLayout.h"
 
 namespace bs
 {
@@ -169,7 +169,7 @@ namespace bs
 			SPtr<ComputePipelineState> CreateComputePipelineState(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
 
 			/** @copydoc GpuPipelineParamInfo::Create */
-			SPtr<GpuPipelineParamInfo> CreatePipelineParamInfo(const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
+			SPtr<GpuPipelineParameterLayout> CreatePipelineParamInfo(const GpuPipelineParameterDescription& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
 
 			/** Creates an uninitialized sampler state. Requires manual initialization after creation. */
 			SPtr<SamplerState> CreateSamplerStateInternal(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
@@ -190,7 +190,7 @@ namespace bs
 			virtual SPtr<ComputePipelineState> CreateComputePipelineStateInternal(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
 
 			/**	Creates an uninitialized GpuPipelineParamInfo. Requires manual initialization after creation. */
-			virtual SPtr<GpuPipelineParamInfo> CreatePipelineParamInfoInternal(const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
+			virtual SPtr<GpuPipelineParameterLayout> CreatePipelineParamInfoInternal(const GpuPipelineParameterDescription& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
 
 			/** Gets a sampler state initialized with default options. */
 			const SPtr<SamplerState>& GetDefaultSamplerState() const;

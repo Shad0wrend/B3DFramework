@@ -3,7 +3,7 @@
 #include "BsVulkanRenderAPI.h"
 #include "CoreThread/BsCoreThread.h"
 #include "Profiling/BsRenderStats.h"
-#include "RenderAPI/BsGpuParameterDescription.h"
+#include "RenderAPI/BsGpuProgramParameterDescription.h"
 #include "BsVulkanGpuDevice.h"
 #include "Managers/BsVulkanTextureManager.h"
 #include "Managers/BsVulkanRenderWindowManager.h"
@@ -111,7 +111,7 @@ void VulkanRenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const S
 
 	for(u32 i = 0; i < GPT_COUNT; i++)
 	{
-		SPtr<GpuParameterDescription> paramDesc = gpuParams->GetParameterInformation((GpuProgramType)i);
+		SPtr<GpuProgramParameterDescription> paramDesc = gpuParams->GetParameterInformation((GpuProgramType)i);
 		if(paramDesc == nullptr)
 			continue;
 

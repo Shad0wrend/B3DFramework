@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Managers/BsVulkanRenderStateManager.h"
 #include "BsVulkanGpuPipelineState.h"
-#include "BsVulkanGpuPipelineParamInfo.h"
+#include "BsVulkanGpuPipelineParameterLayout.h"
 #include "BsVulkanSamplerState.h"
 
 using namespace bs;
@@ -39,12 +39,12 @@ SPtr<ct::ComputePipelineState> VulkanRenderStateManager::CreateComputePipelineSt
 	return pipelineState;
 }
 
-SPtr<ct::GpuPipelineParamInfo> VulkanRenderStateManager::CreatePipelineParamInfoInternal(
-	const GPU_PIPELINE_PARAMS_DESC& desc, GpuDeviceFlags deviceMask) const
+SPtr<ct::GpuPipelineParameterLayout> VulkanRenderStateManager::CreatePipelineParamInfoInternal(
+	const GpuPipelineParameterDescription& desc, GpuDeviceFlags deviceMask) const
 {
-	SPtr<VulkanGpuPipelineParamInfo> paramInfo =
-		B3DMakeSharedFromExisting<VulkanGpuPipelineParamInfo>(new(B3DAllocate<VulkanGpuPipelineParamInfo>())
-													  VulkanGpuPipelineParamInfo(desc, deviceMask));
+	SPtr<VulkanGpuPipelineParameterLayout> paramInfo =
+		B3DMakeSharedFromExisting<VulkanGpuPipelineParameterLayout>(new(B3DAllocate<VulkanGpuPipelineParameterLayout>())
+													  VulkanGpuPipelineParameterLayout(desc, deviceMask));
 	paramInfo->SetShared(paramInfo);
 
 	return paramInfo;

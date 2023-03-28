@@ -5,7 +5,7 @@
 #include "BsVulkanGpuDevice.h"
 #include "BsVulkanUtility.h"
 #include "RenderAPI/BsGpuParameters.h"
-#include "RenderAPI/BsGpuParameterDescription.h"
+#include "RenderAPI/BsGpuProgramParameterDescription.h"
 #include "RenderAPI/BsVertexDescription.h"
 #include "Profiling/BsRenderStats.h"
 #include "FileSystem/BsFileSystem.h"

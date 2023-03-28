@@ -6,7 +6,7 @@
 #include "Renderer/BsRendererMaterial.h"
 #include "Renderer/BsGpuDataParameterBlock.h"
 #include "Renderer/BsLight.h"
-#include "RenderAPI/BsGpuPipelineParamInfo.h"
+#include "RenderAPI/BsGpuPipelineParameterLayout.h"
 
 namespace bs
 {
@@ -105,7 +105,7 @@ namespace bs
 			void Populate(const SPtr<GpuParameters>& params, bool clustered);
 
 			/** Binding indices representing where should lights param block buffer be bound to. */
-			GpuParamBinding GridParamsBindings[GPT_COUNT];
+			GpuParameterBinding GridParamsBindings[GPT_COUNT];
 
 			/**
 			 * Parameter to which to bind a buffer containing light grid offsets and size, per grid cell. Used for forward
@@ -129,13 +129,13 @@ namespace bs
 			 * Binding for a parameter block containing a list of lights influencing this object. Only used when standard
 			 * (non-clustered) forward rendering is used.
 			 */
-			GpuParamBinding LightsParamBlockBinding;
+			GpuParameterBinding LightsParamBlockBinding;
 
 			/**
 			 * Binding for a parameter block that contains the number of lights and reflection probes in the light/refl. probe
 			 * parameter blocks. Only used when standard (non-clustered) forward rendering is used.
 			 */
-			GpuParamBinding LightAndReflProbeParamsParamBlockBinding;
+			GpuParameterBinding LightAndReflProbeParamsParamBlockBinding;
 		};
 
 		/**

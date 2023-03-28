@@ -76,7 +76,7 @@ namespace bs
 		 *
 		 * @note	Only valid after core thread has initialized the program.
 		 */
-		SPtr<GpuParameterDescription> GetParamDesc() const;
+		SPtr<GpuProgramParameterDescription> GetParamDesc() const;
 
 		/** Retrieves a core implementation of a gpu program usable only from the core thread. */
 		SPtr<ct::GpuProgram> GetCore() const;
@@ -132,7 +132,7 @@ namespace bs
 		DataBlob Instructions;
 
 		/** Reflected information about GPU program parameters. */
-		SPtr<GpuParameterDescription> ParamDesc;
+		SPtr<GpuProgramParameterDescription> ParamDesc;
 
 		/** Input parameters for a vertex GPU program. */
 		Vector<VertexElement> VertexInput;
@@ -202,7 +202,7 @@ namespace bs
 			GpuProgramType GetType() const { return mType; }
 
 			/** @copydoc bs::GpuProgram::GetParamDesc */
-			SPtr<GpuParameterDescription> GetParamDesc() const { return mParametersDesc; }
+			SPtr<GpuProgramParameterDescription> GetParamDesc() const { return mParametersDesc; }
 
 			/**	Returns a list of vertex elements that a vertex program expects as inputs. Only relevant for vertex programs. */
 			SPtr<VertexDescription> GetVertexInputDescription() const { return mVertexInputDescription; }
@@ -218,7 +218,7 @@ namespace bs
 			bool mIsCompiled = false;
 			String mCompileMessages;
 
-			SPtr<GpuParameterDescription> mParametersDesc;
+			SPtr<GpuProgramParameterDescription> mParametersDesc;
 			SPtr<VertexDescription> mVertexInputDescription;
 
 			GpuProgramType mType;

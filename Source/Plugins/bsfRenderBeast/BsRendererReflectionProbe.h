@@ -5,7 +5,7 @@
 #include "BsRenderBeastPrerequisites.h"
 #include "Renderer/BsRendererMaterial.h"
 #include "Renderer/BsGpuDataParameterBlock.h"
-#include "RenderAPI/BsGpuPipelineParamInfo.h"
+#include "RenderAPI/BsGpuPipelineParameterLayout.h"
 #include "BsRendererLight.h"
 
 namespace bs
@@ -112,10 +112,10 @@ namespace bs
 			GpuParameterBuffer ReflectionProbesParam;
 
 			GpuParameterBuffer ReflectionProbeIndicesParam;
-			GpuParamBinding ReflProbeParamBindings;
+			GpuParameterBinding ReflProbeParamBindings;
 
 			// Only utilized when standard forward rendering is used
-			GpuParamBinding ReflProbesBinding;
+			GpuParameterBinding ReflProbesBinding;
 		};
 
 		/** Parameter buffer containing information about reflection probes. */

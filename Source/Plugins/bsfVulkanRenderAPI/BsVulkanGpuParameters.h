@@ -18,7 +18,7 @@ namespace bs
 		class VulkanGpuParameters : public GpuParameters
 		{
 		public:
-			VulkanGpuParameters(VulkanGpuDevice& gpuDevice, const SPtr<GpuPipelineParamInfo>& parameterLayout);
+			VulkanGpuParameters(VulkanGpuDevice& gpuDevice, const SPtr<GpuPipelineParameterLayout>& parameterLayout);
 			~VulkanGpuParameters() override;
 
 			bool SetUniformBuffer(u32 set, u32 slot, const SPtr<GpuBuffer>& paramBlockBuffer, u32 arrayIndex = 0, u32 offset = 0) override;

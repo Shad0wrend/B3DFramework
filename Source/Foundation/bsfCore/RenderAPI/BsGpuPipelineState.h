@@ -62,14 +62,14 @@ namespace bs
 	template <>
 	struct TGpuPipelineStateTypes<false>
 	{
-		typedef GpuPipelineParamInfo GpuPipelineParamInfoType;
+		typedef GpuPipelineParameterLayout GpuPipelineParamInfoType;
 		typedef PIPELINE_STATE_DESC StateDescType;
 	};
 
 	template <>
 	struct TGpuPipelineStateTypes<true>
 	{
-		typedef ct::GpuPipelineParamInfo GpuPipelineParamInfoType;
+		typedef ct::GpuPipelineParameterLayout GpuPipelineParamInfoType;
 		typedef ct::PIPELINE_STATE_DESC StateDescType;
 	};
 

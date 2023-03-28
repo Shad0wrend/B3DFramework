@@ -5,8 +5,8 @@
 #include "RenderAPI/BsBlendState.h"
 #include "RenderAPI/BsDepthStencilState.h"
 #include "RenderAPI/BsGpuProgram.h"
-#include "RenderAPI/BsGpuParameterDescription.h"
-#include "RenderAPI/BsGpuPipelineParamInfo.h"
+#include "RenderAPI/BsGpuProgramParameterDescription.h"
+#include "RenderAPI/BsGpuPipelineParameterLayout.h"
 #include "Managers/BsRenderStateManager.h"
 
 using namespace bs;
@@ -35,38 +35,38 @@ template class TGraphicsPipelineState<true>;
 GraphicsPipelineState::GraphicsPipelineState(const PIPELINE_STATE_DESC& desc)
 	: TGraphicsPipelineState(desc)
 {
-	GPU_PIPELINE_PARAMS_DESC paramsDesc;
+	GpuPipelineParameterDescription paramsDesc;
 	if(desc.VertexProgram != nullptr)
 	{
 		desc.VertexProgram->BlockUntilCoreInitialized();
-		paramsDesc.VertexParams = desc.VertexProgram->GetParamDesc();
+		paramsDesc.Vertex = desc.VertexProgram->GetParamDesc();
 	}
 
 	if(desc.FragmentProgram != nullptr)
 	{
 		desc.FragmentProgram->BlockUntilCoreInitialized();
-		paramsDesc.FragmentParams = desc.FragmentProgram->GetParamDesc();
+		paramsDesc.Fragment = desc.FragmentProgram->GetParamDesc();
 	}
 
 	if(desc.GeometryProgram != nullptr)
 	{
 		desc.GeometryProgram->BlockUntilCoreInitialized();
-		paramsDesc.GeometryParams = desc.GeometryProgram->GetParamDesc();
+		paramsDesc.Geometry = desc.GeometryProgram->GetParamDesc();
 	}
 
 	if(desc.HullProgram != nullptr)
 	{
 		desc.HullProgram->BlockUntilCoreInitialized();
-		paramsDesc.HullParams = desc.HullProgram->GetParamDesc();
+		paramsDesc.Hull = desc.HullProgram->GetParamDesc();
 	}
 
 	if(desc.DomainProgram != nullptr)
 	{
 		desc.DomainProgram->BlockUntilCoreInitialized();
-		paramsDesc.DomainParams = desc.DomainProgram->GetParamDesc();
+		paramsDesc.Domain = desc.DomainProgram->GetParamDesc();
 	}
 
-	mParamInfo = GpuPipelineParamInfo::Create(paramsDesc);
+	mParamInfo = GpuPipelineParameterLayout::Create(paramsDesc);
 }
 
 SPtr<ct::GraphicsPipelineState> GraphicsPipelineState::GetCore() const
@@ -102,11 +102,11 @@ template class TComputePipelineState<true>;
 ComputePipelineState::ComputePipelineState(const SPtr<GpuProgram>& program)
 	: TComputePipelineState(program)
 {
-	GPU_PIPELINE_PARAMS_DESC paramsDesc;
+	GpuPipelineParameterDescription paramsDesc;
 	program->BlockUntilCoreInitialized();
-	paramsDesc.ComputeParams = program->GetParamDesc();
+	paramsDesc.Compute = program->GetParamDesc();
 
-	mParamInfo = GpuPipelineParamInfo::Create(paramsDesc);
+	mParamInfo = GpuPipelineParameterLayout::Create(paramsDesc);
 }
 
 SPtr<ct::ComputePipelineState> ComputePipelineState::GetCore() const
@@ -132,23 +132,23 @@ GraphicsPipelineState::GraphicsPipelineState(const PIPELINE_STATE_DESC& desc, Gp
 
 void GraphicsPipelineState::Initialize()
 {
-	GPU_PIPELINE_PARAMS_DESC paramsDesc;
+	GpuPipelineParameterDescription paramsDesc;
 	if(mData.VertexProgram != nullptr)
-		paramsDesc.VertexParams = mData.VertexProgram->GetParamDesc();
+		paramsDesc.Vertex = mData.VertexProgram->GetParamDesc();
 
 	if(mData.FragmentProgram != nullptr)
-		paramsDesc.FragmentParams = mData.FragmentProgram->GetParamDesc();
+		paramsDesc.Fragment = mData.FragmentProgram->GetParamDesc();
 
 	if(mData.GeometryProgram != nullptr)
-		paramsDesc.GeometryParams = mData.GeometryProgram->GetParamDesc();
+		paramsDesc.Geometry = mData.GeometryProgram->GetParamDesc();
 
 	if(mData.HullProgram != nullptr)
-		paramsDesc.HullParams = mData.HullProgram->GetParamDesc();
+		paramsDesc.Hull = mData.HullProgram->GetParamDesc();
 
 	if(mData.DomainProgram != nullptr)
-		paramsDesc.DomainParams = mData.DomainProgram->GetParamDesc();
+		paramsDesc.Domain = mData.DomainProgram->GetParamDesc();
 
-	mParamInfo = GpuPipelineParamInfo::Create(paramsDesc, mDeviceMask);
+	mParamInfo = GpuPipelineParameterLayout::Create(paramsDesc, mDeviceMask);
 
 	CoreObject::Initialize();
 }
@@ -164,10 +164,10 @@ ComputePipelineState::ComputePipelineState(const SPtr<GpuProgram>& program, GpuD
 
 void ComputePipelineState::Initialize()
 {
-	GPU_PIPELINE_PARAMS_DESC paramsDesc;
-	paramsDesc.ComputeParams = mProgram->GetParamDesc();
+	GpuPipelineParameterDescription paramsDesc;
+	paramsDesc.Compute = mProgram->GetParamDesc();
 
-	mParamInfo = GpuPipelineParamInfo::Create(paramsDesc, mDeviceMask);
+	mParamInfo = GpuPipelineParameterLayout::Create(paramsDesc, mDeviceMask);
 
 	CoreObject::Initialize();
 }
