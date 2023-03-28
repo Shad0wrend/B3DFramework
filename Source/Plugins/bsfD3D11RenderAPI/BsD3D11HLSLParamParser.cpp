@@ -2,7 +2,7 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsD3D11HLSLParamParser.h"
 #include "BsD3D11Mappings.h"
-#include "RenderAPI/BsGpuParamDesc.h"
+#include "RenderAPI/BsGpuParameterDescription.h"
 #include "Error/BsException.h"
 #include "Debug/BsDebug.h"
 #include "Math/BsMath.h"
@@ -10,7 +10,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-void D3D11HLSLParamParser::Parse(ID3DBlob* microcode, GpuProgramType type, GpuParamDesc& desc, Vector<VertexElement>* inputParams)
+void D3D11HLSLParamParser::Parse(ID3DBlob* microcode, GpuProgramType type, GpuParameterDescription& desc, Vector<VertexElement>* inputParams)
 {
 	const char* commentString = nullptr;
 	ID3DBlob* pIDisassembly = nullptr;
@@ -75,13 +75,13 @@ void D3D11HLSLParamParser::Parse(ID3DBlob* microcode, GpuProgramType type, GpuPa
 	shaderReflection->Release();
 }
 
-void D3D11HLSLParamParser::ParseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceDesc, GpuProgramType type, GpuParamDesc& desc)
+void D3D11HLSLParamParser::ParseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceDesc, GpuProgramType type, GpuParameterDescription& desc)
 {
 	for(u32 i = 0; i < resourceDesc.BindCount; i++)
 	{
 		if(resourceDesc.Type == D3D_SIT_CBUFFER || resourceDesc.Type == D3D_SIT_TBUFFER)
 		{
-			GpuParameterBlockInformation blockDesc;
+			GpuDataParameterBlockInformation blockDesc;
 			blockDesc.Name = resourceDesc.Name;
 			blockDesc.Slot = resourceDesc.BindPoint + i;
 			blockDesc.Set = MapParameterToSet(type, ParamType::ConstantBuffer);
@@ -92,7 +92,7 @@ void D3D11HLSLParamParser::ParseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceD
 			else
 				blockDesc.IsShareable = true;
 
-			desc.ParamBlocks.insert(std::make_pair(blockDesc.Name, blockDesc));
+			desc.DataParameterBlocks.insert(std::make_pair(blockDesc.Name, blockDesc));
 		}
 		else
 		{
@@ -180,31 +180,31 @@ void D3D11HLSLParamParser::ParseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceD
 					{
 					case D3D_SRV_DIMENSION_TEXTURE1D:
 						memberDesc.Type = GPOT_RWTEXTURE1D;
-						desc.LoadStoreTextures.insert(std::make_pair(memberDesc.Name, memberDesc));
+						desc.StorageTextures.insert(std::make_pair(memberDesc.Name, memberDesc));
 						break;
 					case D3D_SRV_DIMENSION_TEXTURE1DARRAY:
 						memberDesc.Type = GPOT_RWTEXTURE1DARRAY;
-						desc.LoadStoreTextures.insert(std::make_pair(memberDesc.Name, memberDesc));
+						desc.StorageTextures.insert(std::make_pair(memberDesc.Name, memberDesc));
 						break;
 					case D3D_SRV_DIMENSION_TEXTURE2D:
 						memberDesc.Type = GPOT_RWTEXTURE2D;
-						desc.LoadStoreTextures.insert(std::make_pair(memberDesc.Name, memberDesc));
+						desc.StorageTextures.insert(std::make_pair(memberDesc.Name, memberDesc));
 						break;
 					case D3D_SRV_DIMENSION_TEXTURE2DARRAY:
 						memberDesc.Type = GPOT_RWTEXTURE2DARRAY;
-						desc.LoadStoreTextures.insert(std::make_pair(memberDesc.Name, memberDesc));
+						desc.StorageTextures.insert(std::make_pair(memberDesc.Name, memberDesc));
 						break;
 					case D3D_SRV_DIMENSION_TEXTURE3D:
 						memberDesc.Type = GPOT_RWTEXTURE3D;
-						desc.LoadStoreTextures.insert(std::make_pair(memberDesc.Name, memberDesc));
+						desc.StorageTextures.insert(std::make_pair(memberDesc.Name, memberDesc));
 						break;
 					case D3D_SRV_DIMENSION_TEXTURE2DMS:
 						memberDesc.Type = GPOT_RWTEXTURE2DMS;
-						desc.LoadStoreTextures.insert(std::make_pair(memberDesc.Name, memberDesc));
+						desc.StorageTextures.insert(std::make_pair(memberDesc.Name, memberDesc));
 						break;
 					case D3D_SRV_DIMENSION_TEXTURE2DMSARRAY:
 						memberDesc.Type = GPOT_RWTEXTURE2DMSARRAY;
-						desc.LoadStoreTextures.insert(std::make_pair(memberDesc.Name, memberDesc));
+						desc.StorageTextures.insert(std::make_pair(memberDesc.Name, memberDesc));
 						break;
 					case D3D_SRV_DIMENSION_BUFFER:
 						memberDesc.Type = GPOT_RWTYPED_BUFFER;
@@ -253,7 +253,7 @@ void D3D11HLSLParamParser::ParseResource(D3D11_SHADER_INPUT_BIND_DESC& resourceD
 	}
 }
 
-void D3D11HLSLParamParser::ParseBuffer(ID3D11ShaderReflectionConstantBuffer* bufferReflection, GpuParamDesc& desc)
+void D3D11HLSLParamParser::ParseBuffer(ID3D11ShaderReflectionConstantBuffer* bufferReflection, GpuParameterDescription& desc)
 {
 	D3D11_SHADER_BUFFER_DESC constantBufferDesc;
 	HRESULT hr = bufferReflection->GetDesc(&constantBufferDesc);
@@ -266,7 +266,7 @@ void D3D11HLSLParamParser::ParseBuffer(ID3D11ShaderReflectionConstantBuffer* buf
 		return;
 	}
 
-	GpuParameterBlockInformation& blockDesc = desc.ParamBlocks[constantBufferDesc.Name];
+	GpuDataParameterBlockInformation& blockDesc = desc.DataParameterBlocks[constantBufferDesc.Name];
 
 	for(u32 j = 0; j < constantBufferDesc.Variables; j++)
 	{
@@ -287,15 +287,15 @@ void D3D11HLSLParamParser::ParseBuffer(ID3D11ShaderReflectionConstantBuffer* buf
 	blockDesc.BlockSize = constantBufferDesc.Size / 4;
 }
 
-void D3D11HLSLParamParser::ParseVariable(D3D11_SHADER_TYPE_DESC& varTypeDesc, D3D11_SHADER_VARIABLE_DESC& varDesc, GpuParamDesc& desc, GpuParameterBlockInformation& paramBlock)
+void D3D11HLSLParamParser::ParseVariable(D3D11_SHADER_TYPE_DESC& varTypeDesc, D3D11_SHADER_VARIABLE_DESC& varDesc, GpuParameterDescription& desc, GpuDataParameterBlockInformation& paramBlock)
 {
 	GpuDataParameterInformation memberDesc;
 	memberDesc.Name = varDesc.Name;
 	memberDesc.ParamBlockSlot = paramBlock.Slot;
 	memberDesc.ParamBlockSet = paramBlock.Set;
 	memberDesc.ArraySize = varTypeDesc.Elements == 0 ? 1 : varTypeDesc.Elements;
-	memberDesc.GpuMemOffset = varDesc.StartOffset / 4;
-	memberDesc.CpuMemOffset = varDesc.StartOffset / 4;
+	memberDesc.GpuOffset = varDesc.StartOffset / 4;
+	memberDesc.CpuOffset = varDesc.StartOffset / 4;
 
 	// Determine individual element size in the array
 	if(memberDesc.ArraySize > 1)
@@ -439,7 +439,7 @@ void D3D11HLSLParamParser::ParseVariable(D3D11_SHADER_TYPE_DESC& varTypeDesc, D3
 		B3D_LOG(Warning, RenderBackend, "Skipping variable because it has unsupported class: {0}", varTypeDesc.Class);
 	}
 
-	desc.Params.insert(std::make_pair(memberDesc.Name, memberDesc));
+	desc.DataParameters.insert(std::make_pair(memberDesc.Name, memberDesc));
 }
 
 u32 D3D11HLSLParamParser::MapParameterToSet(GpuProgramType progType, ParamType paramType)

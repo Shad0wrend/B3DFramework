@@ -40,7 +40,7 @@ namespace bs
 			void AddCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary) override {}
 			void SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, u32 syncMask = 0xFFFFFFFF) override {}
 			void ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest) override;
-			GpuParameterBlockInformation GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params) override;
+			GpuDataParameterBlockInformation GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params) override;
 
 		protected:
 			friend class NullRenderAPIFactory;

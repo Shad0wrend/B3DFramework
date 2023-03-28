@@ -1295,7 +1295,7 @@ void RendererScene::RefreshSamplerOverrides(bool force)
 					{
 						GpuProgramType type = (GpuProgramType)k;
 
-						SPtr<GpuParamDesc> paramDesc = params->GetParameterInformation(type);
+						SPtr<GpuParameterDescription> paramDesc = params->GetParameterInformation(type);
 						if(paramDesc == nullptr)
 							continue;
 

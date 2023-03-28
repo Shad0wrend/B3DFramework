@@ -5,7 +5,7 @@
 #include "BsVulkanGpuDevice.h"
 #include "BsVulkanUtility.h"
 #include "RenderAPI/BsGpuParameters.h"
-#include "RenderAPI/BsGpuParamDesc.h"
+#include "RenderAPI/BsGpuParameterDescription.h"
 #include "RenderAPI/BsVertexDescription.h"
 #include "Profiling/BsRenderStats.h"
 #include "FileSystem/BsFileSystem.h"
@@ -140,15 +140,4 @@ void VulkanGpuProgram::Initialize()
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResCreated, RenderStatObject_GpuProgram);
 
 	GpuProgram::Initialize();
-}
-
-void VulkanGpuProgram::SetName(const StringView& name)
-{
-	GpuProgram::SetName(name);
-
-	if(vkSetDebugUtilsObjectNameEXT == nullptr)
-		return;
-
-	if(mModule != nullptr)
-		mModule->SetName(name);
 }

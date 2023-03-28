@@ -12,7 +12,7 @@
 #include "BsVulkanGpuPipelineParamInfo.h"
 #include "BsVulkanCommandBuffer.h"
 #include "Managers/BsVulkanTextureManager.h"
-#include "RenderAPI/BsGpuParamDesc.h"
+#include "RenderAPI/BsGpuParameterDescription.h"
 
 using namespace bs;
 using namespace bs::ct;

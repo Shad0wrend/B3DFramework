@@ -5,7 +5,7 @@
 #include "RenderAPI/BsBlendState.h"
 #include "RenderAPI/BsDepthStencilState.h"
 #include "RenderAPI/BsGpuProgram.h"
-#include "RenderAPI/BsGpuParamDesc.h"
+#include "RenderAPI/BsGpuParameterDescription.h"
 #include "RenderAPI/BsGpuPipelineParamInfo.h"
 #include "Managers/BsRenderStateManager.h"
 

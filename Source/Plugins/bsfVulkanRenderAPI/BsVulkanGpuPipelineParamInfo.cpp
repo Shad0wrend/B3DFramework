@@ -4,7 +4,7 @@
 #include "BsVulkanUtility.h"
 #include "BsVulkanRenderAPI.h"
 #include "BsVulkanGpuDevice.h"
-#include "RenderAPI/BsGpuParamDesc.h"
+#include "RenderAPI/BsGpuParameterDescription.h"
 
 using namespace bs;
 using namespace bs::ct;
@@ -135,7 +135,7 @@ void VulkanGpuPipelineParamInfo::Initialize()
 	u32 numParamDescs = sizeof(mParamDescs) / sizeof(mParamDescs[0]);
 	for(u32 i = 0; i < numParamDescs; i++)
 	{
-		const SPtr<GpuParamDesc>& paramDesc = mParamDescs[i];
+		const SPtr<GpuParameterDescription>& paramDesc = mParamDescs[i];
 		if(paramDesc == nullptr)
 			continue;
 
@@ -171,9 +171,9 @@ void VulkanGpuPipelineParamInfo::Initialize()
 			}
 		};
 
-		setUpBlockBindings(paramDesc->ParamBlocks, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC);
+		setUpBlockBindings(paramDesc->DataParameterBlocks, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC);
 		setUpBindings(paramDesc->Textures, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
-		setUpBindings(paramDesc->LoadStoreTextures, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+		setUpBindings(paramDesc->StorageTextures, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
 
 		// Set up sampler bindings
 		for(auto& entry : paramDesc->Samplers)

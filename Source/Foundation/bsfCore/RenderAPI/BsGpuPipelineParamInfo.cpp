@@ -1,7 +1,7 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "RenderAPI/BsGpuPipelineParamInfo.h"
-#include "RenderAPI/BsGpuParamDesc.h"
+#include "RenderAPI/BsGpuParameterDescription.h"
 #include "Managers/BsRenderStateManager.h"
 #include "Math/BsMath.h"
 
@@ -52,17 +52,17 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 	const u32 gpuProgramParameterSetsCount = sizeof(mParamDescs) / sizeof(mParamDescs[0]);
 	for(u32 gpuProgramParameterSetIndex = 0; gpuProgramParameterSetIndex < gpuProgramParameterSetsCount; gpuProgramParameterSetIndex++)
 	{
-		const SPtr<GpuParamDesc>& paramDesc = mParamDescs[gpuProgramParameterSetIndex];
+		const SPtr<GpuParameterDescription>& paramDesc = mParamDescs[gpuProgramParameterSetIndex];
 		if(paramDesc == nullptr)
 			continue;
 
-		for(auto& paramBlock : paramDesc->ParamBlocks)
+		for(auto& paramBlock : paramDesc->DataParameterBlocks)
 			fnCountElementsForType(paramBlock.second, GpuParameterType::UniformBuffer);
 
 		for(auto& texture : paramDesc->Textures)
 			fnCountElementsForTypeWithArraySupport(texture.second, GpuParameterType::SampledTexture);
 
-		for(auto& texture : paramDesc->LoadStoreTextures)
+		for(auto& texture : paramDesc->StorageTextures)
 			fnCountElementsForTypeWithArraySupport(texture.second, GpuParameterType::StorageTexture);
 
 		for(auto& buffer : paramDesc->Buffers)
@@ -77,11 +77,11 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 
 	for(u32 gpuProgramParameterSetIndex = 0; gpuProgramParameterSetIndex < gpuProgramParameterSetsCount; gpuProgramParameterSetIndex++)
 	{
-		const SPtr<GpuParamDesc>& paramDesc = mParamDescs[gpuProgramParameterSetIndex];
+		const SPtr<GpuParameterDescription>& paramDesc = mParamDescs[gpuProgramParameterSetIndex];
 		if(paramDesc == nullptr)
 			continue;
 
-		for(auto& paramBlock : paramDesc->ParamBlocks)
+		for(auto& paramBlock : paramDesc->DataParameterBlocks)
 			slotCountPerSet[paramBlock.second.Set] =
 				std::max(slotCountPerSet[paramBlock.second.Set], paramBlock.second.Slot + 1);
 
@@ -89,7 +89,7 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 			slotCountPerSet[texture.second.Set] =
 				std::max(slotCountPerSet[texture.second.Set], texture.second.Slot + 1);
 
-		for(auto& texture : paramDesc->LoadStoreTextures)
+		for(auto& texture : paramDesc->StorageTextures)
 			slotCountPerSet[texture.second.Set] =
 				std::max(slotCountPerSet[texture.second.Set], texture.second.Slot + 1);
 
@@ -199,17 +199,17 @@ GpuPipelineParamInfoBase::GpuPipelineParamInfoBase(const GPU_PIPELINE_PARAMS_DES
 
 	for(u32 gpuProgramParameterSetIndex = 0; gpuProgramParameterSetIndex < gpuProgramParameterSetsCount; gpuProgramParameterSetIndex++)
 	{
-		const SPtr<GpuParamDesc>& paramDesc = mParamDescs[gpuProgramParameterSetIndex];
+		const SPtr<GpuParameterDescription>& paramDesc = mParamDescs[gpuProgramParameterSetIndex];
 		if(paramDesc == nullptr)
 			continue;
 
-		for(auto& paramBlock : paramDesc->ParamBlocks)
+		for(auto& paramBlock : paramDesc->DataParameterBlocks)
 			fnPopulateSetInfo(paramBlock.second, GpuParameterType::UniformBuffer);
 
 		for(auto& texture : paramDesc->Textures)
 			fnPopulateSetInfoWithArraySupport(texture.second, GpuParameterType::SampledTexture);
 
-		for(auto& texture : paramDesc->LoadStoreTextures)
+		for(auto& texture : paramDesc->StorageTextures)
 			fnPopulateSetInfoWithArraySupport(texture.second, GpuParameterType::StorageTexture);
 
 		for(auto& buffer : paramDesc->Buffers)
@@ -367,7 +367,7 @@ void GpuPipelineParamInfoBase::GetBinding(GpuProgramType progType, GpuParameterT
 			binding.Set = binding.Slot = (u32)-1;
 	};
 
-	const SPtr<GpuParamDesc>& paramDesc = mParamDescs[(u32)progType];
+	const SPtr<GpuParameterDescription>& paramDesc = mParamDescs[(u32)progType];
 	if(paramDesc == nullptr)
 	{
 		binding.Set = binding.Slot = (u32)-1;
@@ -377,13 +377,13 @@ void GpuPipelineParamInfoBase::GetBinding(GpuProgramType progType, GpuParameterT
 	switch(type)
 	{
 	case GpuParameterType::UniformBuffer:
-		findBinding(paramDesc->ParamBlocks, name, binding);
+		findBinding(paramDesc->DataParameterBlocks, name, binding);
 		break;
 	case GpuParameterType::SampledTexture:
 		findBinding(paramDesc->Textures, name, binding);
 		break;
 	case GpuParameterType::StorageTexture:
-		findBinding(paramDesc->LoadStoreTextures, name, binding);
+		findBinding(paramDesc->StorageTextures, name, binding);
 		break;
 	case GpuParameterType::StorageBuffer:
 		findBinding(paramDesc->Buffers, name, binding);

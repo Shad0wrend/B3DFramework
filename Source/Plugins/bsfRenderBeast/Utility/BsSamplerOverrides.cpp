@@ -5,7 +5,7 @@
 #include "Material/BsMaterial.h"
 #include "RenderAPI/BsGpuParameters.h"
 #include "Material/BsGpuParamsSet.h"
-#include "RenderAPI/BsGpuParamDesc.h"
+#include "RenderAPI/BsGpuParameterDescription.h"
 #include "Material/BsMaterialParams.h"
 #include "RenderAPI/BsSamplerState.h"
 #include "Managers/BsRenderStateManager.h"
@@ -74,7 +74,7 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(const
 			for(u32 j = 0; j < GpuParamsSet::kNumStages; j++)
 			{
 				GpuProgramType progType = (GpuProgramType)j;
-				SPtr<GpuParamDesc> paramDesc = paramsPtr->GetParameterInformation(progType);
+				SPtr<GpuParameterDescription> paramDesc = paramsPtr->GetParameterInformation(progType);
 				if(paramDesc == nullptr)
 					continue;
 
@@ -100,7 +100,7 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(const
 			for(u32 j = 0; j < GpuParamsSet::kNumStages; j++)
 			{
 				GpuProgramType progType = (GpuProgramType)j;
-				SPtr<GpuParamDesc> paramDesc = paramsPtr->GetParameterInformation(progType);
+				SPtr<GpuParameterDescription> paramDesc = paramsPtr->GetParameterInformation(progType);
 				if(paramDesc == nullptr)
 					continue;
 
@@ -153,7 +153,7 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(const
 			for(u32 j = 0; j < GpuParamsSet::kNumStages; j++)
 			{
 				GpuProgramType progType = (GpuProgramType)j;
-				SPtr<GpuParamDesc> paramDesc = paramsPtr->GetParameterInformation(progType);
+				SPtr<GpuParameterDescription> paramDesc = paramsPtr->GetParameterInformation(progType);
 				if(paramDesc == nullptr)
 					continue;
 

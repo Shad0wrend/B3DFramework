@@ -76,7 +76,7 @@ namespace bs
 		 *
 		 * @note	Only valid after core thread has initialized the program.
 		 */
-		SPtr<GpuParamDesc> GetParamDesc() const;
+		SPtr<GpuParameterDescription> GetParamDesc() const;
 
 		/** Retrieves a core implementation of a gpu program usable only from the core thread. */
 		SPtr<ct::GpuProgram> GetCore() const;
@@ -132,7 +132,7 @@ namespace bs
 		DataBlob Instructions;
 
 		/** Reflected information about GPU program parameters. */
-		SPtr<GpuParamDesc> ParamDesc;
+		SPtr<GpuParameterDescription> ParamDesc;
 
 		/** Input parameters for a vertex GPU program. */
 		Vector<VertexElement> VertexInput;
@@ -166,17 +166,14 @@ namespace bs
 		 */
 
 		/**
-		 * Core thread version of a bs::GpuProgram.
+		 * Contains a GPU program such as vertex or fragment program which gets compiled from the provided source code.
 		 *
-		 * @note	Core thread only.
+		 * @note	Thread safe (Immutable).
 		 */
 		class B3D_CORE_EXPORT GpuProgram : public CoreObject
 		{
 		public:
 			virtual ~GpuProgram();
-
-			/** Assigns an name to the image, primarily used for easier debugging. */
-			virtual void SetName(const StringView& name) { mName = name; }
 
 			/** Returns whether this program can be supported on the current renderer and hardware. */
 			virtual bool IsSupported() const;
@@ -205,7 +202,7 @@ namespace bs
 			GpuProgramType GetType() const { return mType; }
 
 			/** @copydoc bs::GpuProgram::GetParamDesc */
-			SPtr<GpuParamDesc> GetParamDesc() const { return mParametersDesc; }
+			SPtr<GpuParameterDescription> GetParamDesc() const { return mParametersDesc; }
 
 			/**	Returns a list of vertex elements that a vertex program expects as inputs. Only relevant for vertex programs. */
 			SPtr<VertexDescription> GetVertexInputDescription() const { return mVertexInputDescription; }
@@ -221,7 +218,7 @@ namespace bs
 			bool mIsCompiled = false;
 			String mCompileMessages;
 
-			SPtr<GpuParamDesc> mParametersDesc;
+			SPtr<GpuParameterDescription> mParametersDesc;
 			SPtr<VertexDescription> mVertexInputDescription;
 
 			GpuProgramType mType;

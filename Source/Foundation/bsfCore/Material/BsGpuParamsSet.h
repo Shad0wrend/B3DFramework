@@ -82,14 +82,14 @@ namespace bs
 		/** Information about all object parameters for a specific GPU programmable stage. */
 		struct StageParamInfo
 		{
-			ObjectParamInfo* Textures;
-			u32 NumTextures;
-			ObjectParamInfo* LoadStoreTextures;
-			u32 NumLoadStoreTextures;
+			ObjectParamInfo* SampledTextures;
+			u32 SampledTextureCount;
+			ObjectParamInfo* StorageTextures;
+			u32 StorageTextureCount;
 			ObjectParamInfo* Buffers;
-			u32 NumBuffers;
+			u32 BufferCount;
 			ObjectParamInfo* SamplerStates;
-			u32 NumSamplerStates;
+			u32 SamplerStateCount;
 		};
 
 		/** Information about all object parameters for a specific pass. */

@@ -3,7 +3,7 @@
 #include "BsVulkanRenderAPI.h"
 #include "CoreThread/BsCoreThread.h"
 #include "Profiling/BsRenderStats.h"
-#include "RenderAPI/BsGpuParamDesc.h"
+#include "RenderAPI/BsGpuParameterDescription.h"
 #include "BsVulkanGpuDevice.h"
 #include "Managers/BsVulkanTextureManager.h"
 #include "Managers/BsVulkanRenderWindowManager.h"
@@ -111,12 +111,12 @@ void VulkanRenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const S
 
 	for(u32 i = 0; i < GPT_COUNT; i++)
 	{
-		SPtr<GpuParamDesc> paramDesc = gpuParams->GetParameterInformation((GpuProgramType)i);
+		SPtr<GpuParameterDescription> paramDesc = gpuParams->GetParameterInformation((GpuProgramType)i);
 		if(paramDesc == nullptr)
 			continue;
 
 		// Flush all param block buffers
-		for(auto iter = paramDesc->ParamBlocks.begin(); iter != paramDesc->ParamBlocks.end(); ++iter)
+		for(auto iter = paramDesc->DataParameterBlocks.begin(); iter != paramDesc->DataParameterBlocks.end(); ++iter)
 		{
 			SPtr<GpuBuffer> buffer = gpuParams->GetUniformBuffer(iter->second.Set, iter->second.Slot);
 
@@ -428,9 +428,9 @@ void VulkanRenderAPI::ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& de
 	dest[2][3] = (dest[2][3] + dest[3][3]) / 2;
 }
 
-GpuParameterBlockInformation VulkanRenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params)
+GpuDataParameterBlockInformation VulkanRenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params)
 {
-	GpuParameterBlockInformation block;
+	GpuDataParameterBlockInformation block;
 	block.BlockSize = 0;
 	block.IsShareable = true;
 	block.Name = name;
@@ -451,8 +451,8 @@ GpuParameterBlockInformation VulkanRenderAPI::GenerateParamBlockDesc(const Strin
 
 		param.ElementSize = size;
 		param.ArrayElementStride = size;
-		param.CpuMemOffset = block.BlockSize;
-		param.GpuMemOffset = 0;
+		param.CpuOffset = block.BlockSize;
+		param.GpuOffset = 0;
 		block.BlockSize += size * param.ArraySize;
 		param.ParamBlockSlot = 0;
 		param.ParamBlockSet = 0;

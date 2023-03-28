@@ -28,7 +28,7 @@
 #include "Debug/BsDebug.h"
 #include "Error/BsException.h"
 #include "Profiling/BsRenderStats.h"
-#include "RenderAPI/BsGpuParamDesc.h"
+#include "RenderAPI/BsGpuParameterDescription.h"
 #include "BsD3D11GpuBuffer.h"
 #include "BsD3D11CommandBuffer.h"
 #include "BsD3D11CommandBufferManager.h"
@@ -368,7 +368,7 @@ void D3D11RenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SP
 				constBuffers.clear();
 				samplers.clear();
 
-				SPtr<GpuParamDesc> paramDesc = gpuParams->GetParameterInformation(type);
+				SPtr<GpuParameterDescription> paramDesc = gpuParams->GetParameterInformation(type);
 				if(paramDesc == nullptr)
 					return;
 
@@ -423,7 +423,7 @@ void D3D11RenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SP
 					}
 				}
 
-				for(auto iter = paramDesc->LoadStoreTextures.begin(); iter != paramDesc->LoadStoreTextures.end(); ++iter)
+				for(auto iter = paramDesc->StorageTextures.begin(); iter != paramDesc->StorageTextures.end(); ++iter)
 				{
 					u32 slot = iter->second.Slot;
 
@@ -462,7 +462,7 @@ void D3D11RenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SP
 					samplers[slot] = d3d11SamplerState->GetInternal();
 				}
 
-				for(auto iter = paramDesc->ParamBlocks.begin(); iter != paramDesc->ParamBlocks.end(); ++iter)
+				for(auto iter = paramDesc->DataParameterBlocks.begin(); iter != paramDesc->DataParameterBlocks.end(); ++iter)
 				{
 					u32 slot = iter->second.Slot;
 					SPtr<GpuBuffer> buffer = gpuParams->GetUniformBuffer(iter->second.Set, slot);
@@ -1304,9 +1304,9 @@ void D3D11RenderAPI::ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& des
 	dest[2][3] = (dest[2][3] + dest[3][3]) / 2;
 }
 
-GpuParameterBlockInformation D3D11RenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params)
+GpuDataParameterBlockInformation D3D11RenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params)
 {
-	GpuParameterBlockInformation block;
+	GpuDataParameterBlockInformation block;
 	block.BlockSize = 0;
 	block.IsShareable = true;
 	block.Name = name;
@@ -1330,8 +1330,8 @@ GpuParameterBlockInformation D3D11RenderAPI::GenerateParamBlockDesc(const String
 
 			param.ElementSize = size;
 			param.ArrayElementStride = size;
-			param.CpuMemOffset = block.BlockSize;
-			param.GpuMemOffset = 0;
+			param.CpuOffset = block.BlockSize;
+			param.GpuOffset = 0;
 
 			// Last array element isn't rounded up to four component vectors unless it's a struct
 			if(param.Type != GPDT_STRUCT)
@@ -1366,8 +1366,8 @@ GpuParameterBlockInformation D3D11RenderAPI::GenerateParamBlockDesc(const String
 
 			param.ElementSize = size;
 			param.ArrayElementStride = size;
-			param.CpuMemOffset = block.BlockSize;
-			param.GpuMemOffset = 0;
+			param.CpuOffset = block.BlockSize;
+			param.GpuOffset = 0;
 
 			block.BlockSize += size;
 		}

@@ -483,7 +483,7 @@ namespace bs
 			 * @return				Descriptor for the parameter block holding the provided parameters as laid out by the
 			 *						default render API layout.
 			 */
-			virtual GpuParameterBlockInformation GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params) = 0;
+			virtual GpuDataParameterBlockInformation GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params) = 0;
 
 			/************************************************************************/
 			/* 							INTERNAL METHODS				        	*/

@@ -452,7 +452,7 @@ static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionDat
 					}
 
 					// Warn if parameter was already registered in some previous variation with a different value
-					if(auto foundTextureParameter = outShaderCreateInformation.TextureParams.find(ident); foundTextureParameter != outShaderCreateInformation.TextureParams.end())
+					if(auto foundTextureParameter = outShaderCreateInformation.TextureParameters.find(ident); foundTextureParameter != outShaderCreateInformation.TextureParameters.end())
 					{
 						const bool isExistingValueDefault = foundTextureParameter->second.DefaultValueIndex == ~0u;
 						if (hasDefaultValue != isExistingValueDefault)
@@ -485,7 +485,7 @@ static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionDat
 				{
 					// Ignore parameters that were already registered in some previous variation. Note that this implies
 					// you cannot have same names for different parameters in different variations.
-					if(outShaderCreateInformation.BufferParams.find(ident) != outShaderCreateInformation.BufferParams.end())
+					if(outShaderCreateInformation.BufferParameters.find(ident) != outShaderCreateInformation.BufferParameters.end())
 						continue;
 
 					objType = XSCConvertBufferType((Xsc::Reflection::BufferType)entry.baseType);
@@ -503,7 +503,7 @@ static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionDat
 					if (foundSamplerReflectionData->second.isNonDefault)
 						defaultSamplerStateCreateInformation = ParseSamplerState(foundSamplerReflectionData->second);
 
-					if (auto foundSamplerParameter = outShaderCreateInformation.SamplerParams.find(ident); foundSamplerParameter != outShaderCreateInformation.SamplerParams.end())
+					if (auto foundSamplerParameter = outShaderCreateInformation.SamplerParameters.find(ident); foundSamplerParameter != outShaderCreateInformation.SamplerParameters.end())
 					{
 						const bool isExistingValueNonDefault = foundSamplerParameter->second.DefaultValueIndex != ~0u;
 						if (foundSamplerReflectionData->second.isNonDefault != isExistingValueNonDefault)
@@ -537,7 +537,7 @@ static bool ParseParameters(const Xsc::Reflection::ReflectionData& reflectionDat
 					{
 						// Ignore parameters that were already registered in some previous variation. Note that this implies
 						// you cannot have same names for different parameters in different variations.
-						if (outShaderCreateInformation.SamplerParams.find(ident) != outShaderCreateInformation.SamplerParams.end())
+						if (outShaderCreateInformation.SamplerParameters.find(ident) != outShaderCreateInformation.SamplerParameters.end())
 							continue;
 
 						outShaderCreateInformation.AddParameter(ShaderObjectParameterInformation(ident, ident, GPOT_SAMPLER2D));

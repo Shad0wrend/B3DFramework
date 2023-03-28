@@ -3,7 +3,7 @@
 #include "BsNullRenderAPI.h"
 #include "CoreThread/BsCoreThread.h"
 #include "Math/BsMatrix4.h"
-#include "RenderAPI/BsGpuParamDesc.h"
+#include "RenderAPI/BsGpuParameterDescription.h"
 #include "RenderAPI/BsGpuParameters.h"
 #include "Managers/BsGpuProgramManager.h"
 #include "BsNullCommandBuffer.h"
@@ -99,9 +99,9 @@ void NullRenderAPI::ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest
 	dest = matrix;
 }
 
-GpuParameterBlockInformation NullRenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params)
+GpuDataParameterBlockInformation NullRenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params)
 {
-	GpuParameterBlockInformation block;
+	GpuDataParameterBlockInformation block;
 	block.BlockSize = 0;
 	block.IsShareable = true;
 	block.Name = name;
@@ -125,8 +125,8 @@ GpuParameterBlockInformation NullRenderAPI::GenerateParamBlockDesc(const String&
 
 			param.ElementSize = size;
 			param.ArrayElementStride = size;
-			param.CpuMemOffset = block.BlockSize;
-			param.GpuMemOffset = 0;
+			param.CpuOffset = block.BlockSize;
+			param.GpuOffset = 0;
 
 			// Last array element isn't rounded up to four component vectors unless it's a struct
 			if(param.Type != GPDT_STRUCT)
@@ -161,8 +161,8 @@ GpuParameterBlockInformation NullRenderAPI::GenerateParamBlockDesc(const String&
 
 			param.ElementSize = size;
 			param.ArrayElementStride = size;
-			param.CpuMemOffset = block.BlockSize;
-			param.GpuMemOffset = 0;
+			param.CpuOffset = block.BlockSize;
+			param.GpuOffset = 0;
 
 			block.BlockSize += size;
 		}

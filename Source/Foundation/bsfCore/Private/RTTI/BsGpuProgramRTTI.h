@@ -8,7 +8,7 @@
 #include "RTTI/BsStdRTTI.h"
 #include "RTTI/BsDataBlobRTTI.h"
 #include "RenderAPI/BsGpuProgram.h"
-#include "RenderAPI/BsGpuParamDesc.h"
+#include "RenderAPI/BsGpuParameterDescription.h"
 
 namespace bs
 {
@@ -47,33 +47,33 @@ namespace bs
 		}
 	};
 
-	class B3D_CORE_EXPORT GpuParamDescRTTI : public RTTIType<GpuParamDesc, IReflectable, GpuParamDescRTTI>
+	class B3D_CORE_EXPORT GpuParameterDescriptionRTTI : public RTTIType<GpuParameterDescription, IReflectable, GpuParameterDescriptionRTTI>
 	{
 	private:
 		B3D_RTTI_BEGIN_MEMBERS
-			B3D_RTTI_MEMBER_PLAIN(ParamBlocks, 0)
-			B3D_RTTI_MEMBER_PLAIN(Params, 1)
+			B3D_RTTI_MEMBER_PLAIN(DataParameterBlocks, 0)
+			B3D_RTTI_MEMBER_PLAIN(DataParameters, 1)
 			B3D_RTTI_MEMBER_PLAIN(Samplers, 2)
 			B3D_RTTI_MEMBER_PLAIN(Textures, 3)
-			B3D_RTTI_MEMBER_PLAIN(LoadStoreTextures, 4)
+			B3D_RTTI_MEMBER_PLAIN(StorageTextures, 4)
 			B3D_RTTI_MEMBER_PLAIN(Buffers, 5)
 		B3D_RTTI_END_MEMBERS
 
 	public:
 		const String& GetRttiName() override
 		{
-			static String name = "GpuParamDesc";
+			static String name = "GpuParameterDescription";
 			return name;
 		}
 
 		u32 GetRttiId() override
 		{
-			return TID_GpuParamDesc;
+			return TID_GpuParameterDescription;
 		}
 
 		SPtr<IReflectable> NewRttiObject()
 		{
-			return B3DMakeShared<GpuParamDesc>();
+			return B3DMakeShared<GpuParameterDescription>();
 		}
 	};
 
@@ -175,8 +175,8 @@ namespace bs
 
 				size += B3DRTTIWrite(data.ParamBlockSlot, stream);
 				size += B3DRTTIWrite(data.ParamBlockSet, stream);
-				size += B3DRTTIWrite(data.GpuMemOffset, stream);
-				size += B3DRTTIWrite(data.CpuMemOffset, stream);
+				size += B3DRTTIWrite(data.GpuOffset, stream);
+				size += B3DRTTIWrite(data.CpuOffset, stream);
 
 				return size; });
 		}
@@ -198,8 +198,8 @@ namespace bs
 
 			B3DRTTIRead(data.ParamBlockSlot, stream);
 			B3DRTTIRead(data.ParamBlockSet, stream);
-			B3DRTTIRead(data.GpuMemOffset, stream);
-			B3DRTTIRead(data.CpuMemOffset, stream);
+			B3DRTTIRead(data.GpuOffset, stream);
+			B3DRTTIRead(data.CpuOffset, stream);
 
 			return size;
 		}
@@ -209,7 +209,7 @@ namespace bs
 			BitLength dataSize = B3DRTTISize(kVersion) + B3DRTTISize(data.Name) + B3DRTTISize(data.ElementSize) +
 				B3DRTTISize(data.ArraySize) + B3DRTTISize(data.ArrayElementStride) + B3DRTTISize(data.Type) +
 				B3DRTTISize(data.ParamBlockSlot) + B3DRTTISize(data.ParamBlockSet) +
-				B3DRTTISize(data.GpuMemOffset) + B3DRTTISize(data.CpuMemOffset);
+				B3DRTTISize(data.GpuOffset) + B3DRTTISize(data.CpuOffset);
 
 			B3DRTTIAddHeaderSize(dataSize, compress);
 			return dataSize;
@@ -280,7 +280,7 @@ namespace bs
 	};
 
 	template <>
-	struct RTTIPlainType<GpuParameterBlockInformation>
+	struct RTTIPlainType<GpuDataParameterBlockInformation>
 	{
 		enum
 		{
@@ -294,7 +294,7 @@ namespace bs
 
 		static constexpr uint32_t kVersion = 1;
 
-		static BitLength ToMemory(const GpuParameterBlockInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const GpuDataParameterBlockInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return B3DRTTIWriteWithSizeHeader(stream, data, compress, [&data, &stream]
 											   {
@@ -309,7 +309,7 @@ namespace bs
 				return size; });
 		}
 
-		static BitLength FromMemory(GpuParameterBlockInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(GpuDataParameterBlockInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			B3DRTTIReadSizeHeader(stream, compress, size);
@@ -327,7 +327,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength GetSize(const GpuParameterBlockInformation& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const GpuDataParameterBlockInformation& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = B3DRTTISize(kVersion) + B3DRTTISize(data.Name) + B3DRTTISize(data.Set) +
 				B3DRTTISize(data.Slot) + B3DRTTISize(data.BlockSize) + B3DRTTISize(data.IsShareable);

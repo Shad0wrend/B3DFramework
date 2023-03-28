@@ -319,11 +319,11 @@ namespace bs
 		/** Meta-data required by the shader compiler when compiling shader variations on demand. Can be null if the shader is being initialized with precompiled variations. */
 		SPtr<ShaderCompilerMetaData> CompilerMetaData;
 
-		Map<String, ShaderDataParameterInformation> DataParams;
-		Map<String, ShaderObjectParameterInformation> TextureParams;
-		Map<String, ShaderObjectParameterInformation> BufferParams;
-		Map<String, ShaderObjectParameterInformation> SamplerParams;
-		Map<String, ShaderParameterBlockInformation> ParamBlocks;
+		Map<String, ShaderDataParameterInformation> DataParameters;
+		Map<String, ShaderObjectParameterInformation> TextureParameters;
+		Map<String, ShaderObjectParameterInformation> BufferParameters;
+		Map<String, ShaderObjectParameterInformation> SamplerParameters;
+		Map<String, ShaderParameterBlockInformation> DataParameterBlocks;
 
 		Vector<u8> DataDefaultValues;
 		Vector<SamplerStateInformation> SamplerDefaultValues;
@@ -520,19 +520,19 @@ namespace bs
 		bool HasParamBlock(const String& name) const;
 
 		/**	Returns a map of all data parameters in the shader. */
-		const Map<String, ShaderDataParameterInformation>& GetDataParams() const { return mInformation.DataParams; }
+		const Map<String, ShaderDataParameterInformation>& GetDataParams() const { return mInformation.DataParameters; }
 
 		/**	Returns a map of all texture parameters in the shader. */
-		const Map<String, ShaderObjectParameterInformation>& GetTextureParams() const { return mInformation.TextureParams; }
+		const Map<String, ShaderObjectParameterInformation>& GetTextureParams() const { return mInformation.TextureParameters; }
 
 		/**	Returns a map of all buffer parameters in the shader. */
-		const Map<String, ShaderObjectParameterInformation>& GetBufferParams() const { return mInformation.BufferParams; }
+		const Map<String, ShaderObjectParameterInformation>& GetBufferParams() const { return mInformation.BufferParameters; }
 
 		/** Returns a map of all sampler parameters in the shader. */
-		const Map<String, ShaderObjectParameterInformation>& GetSamplerParams() const { return mInformation.SamplerParams; }
+		const Map<String, ShaderObjectParameterInformation>& GetSamplerParams() const { return mInformation.SamplerParameters; }
 
 		/** Returns a map of all parameter blocks. */
-		const Map<String, ShaderParameterBlockInformation>& GetParamBlocks() const { return mInformation.ParamBlocks; }
+		const Map<String, ShaderParameterBlockInformation>& GetParamBlocks() const { return mInformation.DataParameterBlocks; }
 
 		/** Returns a list of all parameter attributes, as referenced by individual parameters. */
 		const Vector<ShaderParameterAttribute>& GetParamAttributes() const { return mInformation.ParamAttributes; }

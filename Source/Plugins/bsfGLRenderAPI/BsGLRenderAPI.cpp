@@ -23,7 +23,7 @@
 #include "BsGLQueryManager.h"
 #include "Debug/BsDebug.h"
 #include "Profiling/BsRenderStats.h"
-#include "RenderAPI/BsGpuParamDesc.h"
+#include "RenderAPI/BsGpuParameterDescription.h"
 #include "BsGLGpuBuffer.h"
 #include "BsGLCommandBuffer.h"
 #include "BsGLCommandBufferManager.h"
@@ -437,7 +437,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SPtr<
 
 				GpuProgramType type = (GpuProgramType)i;
 
-				SPtr<GpuParamDesc> paramDesc = gpuParams->GetParameterInformation(type);
+				SPtr<GpuParameterDescription> paramDesc = gpuParams->GetParameterInformation(type);
 				if(paramDesc == nullptr)
 					continue;
 
@@ -643,7 +643,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SPtr<
 				}
 
 #if BS_OPENGL_4_2 || BS_OPENGLES_3_1
-				for(auto& entry : paramDesc->LoadStoreTextures)
+				for(auto& entry : paramDesc->StorageTextures)
 				{
 					u32 binding = entry.second.Slot;
 
@@ -697,7 +697,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SPtr<
 				}
 #endif
 
-				for(auto& entry : paramDesc->ParamBlocks)
+				for(auto& entry : paramDesc->DataParameterBlocks)
 				{
 					u32 binding = entry.second.Slot;
 					SPtr<GpuBuffer> buffer = gpuParams->GetUniformBuffer(entry.second.Set, binding);
@@ -716,39 +716,39 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SPtr<
 						u8* uniformBufferData = (u8*)B3DStackAllocate(buffer->GetSize());
 						buffer->Read(0, uniformBufferData, buffer->GetSize());
 
-						for(auto iter = paramDesc->Params.begin(); iter != paramDesc->Params.end(); ++iter)
+						for(auto iter = paramDesc->DataParameters.begin(); iter != paramDesc->DataParameters.end(); ++iter)
 						{
 							const GpuDataParameterInformation& param = iter->second;
 
 							if(param.ParamBlockSlot != 0) // 0 means uniforms are not in a block
 								continue;
 
-							const u8* ptrData = uniformBufferData + param.CpuMemOffset * sizeof(u32);
+							const u8* ptrData = uniformBufferData + param.CpuOffset * sizeof(u32);
 
 							// Note: We don't transpose matrices here even though we don't use column major format
 							// because they are assumed to be pre-transposed in the GpuParameters buffer
 							switch(param.Type)
 							{
 							case GPDT_FLOAT1:
-								glProgramUniform1fv(glProgram, param.GpuMemOffset, param.ArraySize, (GLfloat*)ptrData);
+								glProgramUniform1fv(glProgram, param.GpuOffset, param.ArraySize, (GLfloat*)ptrData);
 								B3D_CHECK_GL_ERROR();
 								break;
 							case GPDT_FLOAT2:
-								glProgramUniform2fv(glProgram, param.GpuMemOffset, param.ArraySize, (GLfloat*)ptrData);
+								glProgramUniform2fv(glProgram, param.GpuOffset, param.ArraySize, (GLfloat*)ptrData);
 								B3D_CHECK_GL_ERROR();
 								break;
 							case GPDT_FLOAT3:
-								glProgramUniform3fv(glProgram, param.GpuMemOffset, param.ArraySize, (GLfloat*)ptrData);
+								glProgramUniform3fv(glProgram, param.GpuOffset, param.ArraySize, (GLfloat*)ptrData);
 								B3D_CHECK_GL_ERROR();
 								break;
 							case GPDT_FLOAT4:
-								glProgramUniform4fv(glProgram, param.GpuMemOffset, param.ArraySize, (GLfloat*)ptrData);
+								glProgramUniform4fv(glProgram, param.GpuOffset, param.ArraySize, (GLfloat*)ptrData);
 								B3D_CHECK_GL_ERROR();
 								break;
 							case GPDT_MATRIX_2X2:
 								glProgramUniformMatrix2fv(
 									glProgram,
-									param.GpuMemOffset,
+									param.GpuOffset,
 									param.ArraySize,
 									GL_FALSE,
 									(GLfloat*)ptrData);
@@ -757,7 +757,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SPtr<
 							case GPDT_MATRIX_2X3:
 								glProgramUniformMatrix3x2fv(
 									glProgram,
-									param.GpuMemOffset,
+									param.GpuOffset,
 									param.ArraySize,
 									GL_FALSE,
 									(GLfloat*)ptrData);
@@ -766,7 +766,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SPtr<
 							case GPDT_MATRIX_2X4:
 								glProgramUniformMatrix4x2fv(
 									glProgram,
-									param.GpuMemOffset,
+									param.GpuOffset,
 									param.ArraySize,
 									GL_FALSE,
 									(GLfloat*)ptrData);
@@ -775,7 +775,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SPtr<
 							case GPDT_MATRIX_3X2:
 								glProgramUniformMatrix2x3fv(
 									glProgram,
-									param.GpuMemOffset,
+									param.GpuOffset,
 									param.ArraySize,
 									GL_FALSE,
 									(GLfloat*)ptrData);
@@ -784,7 +784,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SPtr<
 							case GPDT_MATRIX_3X3:
 								glProgramUniformMatrix3fv(
 									glProgram,
-									param.GpuMemOffset,
+									param.GpuOffset,
 									param.ArraySize,
 									GL_FALSE,
 									(GLfloat*)ptrData);
@@ -793,7 +793,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SPtr<
 							case GPDT_MATRIX_3X4:
 								glProgramUniformMatrix4x3fv(
 									glProgram,
-									param.GpuMemOffset,
+									param.GpuOffset,
 									param.ArraySize,
 									GL_FALSE,
 									(GLfloat*)ptrData);
@@ -802,7 +802,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SPtr<
 							case GPDT_MATRIX_4X2:
 								glProgramUniformMatrix2x4fv(
 									glProgram,
-									param.GpuMemOffset,
+									param.GpuOffset,
 									param.ArraySize,
 									GL_FALSE,
 									(GLfloat*)ptrData);
@@ -811,7 +811,7 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SPtr<
 							case GPDT_MATRIX_4X3:
 								glProgramUniformMatrix3x4fv(
 									glProgram,
-									param.GpuMemOffset,
+									param.GpuOffset,
 									param.ArraySize,
 									GL_FALSE,
 									(GLfloat*)ptrData);
@@ -820,30 +820,30 @@ void GLRenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SPtr<
 							case GPDT_MATRIX_4X4:
 								glProgramUniformMatrix4fv(
 									glProgram,
-									param.GpuMemOffset,
+									param.GpuOffset,
 									param.ArraySize,
 									GL_FALSE,
 									(GLfloat*)ptrData);
 								B3D_CHECK_GL_ERROR();
 								break;
 							case GPDT_INT1:
-								glProgramUniform1iv(glProgram, param.GpuMemOffset, param.ArraySize, (GLint*)ptrData);
+								glProgramUniform1iv(glProgram, param.GpuOffset, param.ArraySize, (GLint*)ptrData);
 								B3D_CHECK_GL_ERROR();
 								break;
 							case GPDT_INT2:
-								glProgramUniform2iv(glProgram, param.GpuMemOffset, param.ArraySize, (GLint*)ptrData);
+								glProgramUniform2iv(glProgram, param.GpuOffset, param.ArraySize, (GLint*)ptrData);
 								B3D_CHECK_GL_ERROR();
 								break;
 							case GPDT_INT3:
-								glProgramUniform3iv(glProgram, param.GpuMemOffset, param.ArraySize, (GLint*)ptrData);
+								glProgramUniform3iv(glProgram, param.GpuOffset, param.ArraySize, (GLint*)ptrData);
 								B3D_CHECK_GL_ERROR();
 								break;
 							case GPDT_INT4:
-								glProgramUniform4iv(glProgram, param.GpuMemOffset, param.ArraySize, (GLint*)ptrData);
+								glProgramUniform4iv(glProgram, param.GpuOffset, param.ArraySize, (GLint*)ptrData);
 								B3D_CHECK_GL_ERROR();
 								break;
 							case GPDT_BOOL:
-								glProgramUniform1uiv(glProgram, param.GpuMemOffset, param.ArraySize, (GLuint*)ptrData);
+								glProgramUniform1uiv(glProgram, param.GpuOffset, param.ArraySize, (GLuint*)ptrData);
 								B3D_CHECK_GL_ERROR();
 								break;
 							default:
@@ -2644,9 +2644,9 @@ void GLRenderAPI::ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest)
 	dest = matrix;
 }
 
-GpuParameterBlockInformation GLRenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params)
+GpuDataParameterBlockInformation GLRenderAPI::GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params)
 {
-	GpuParameterBlockInformation block;
+	GpuDataParameterBlockInformation block;
 	block.BlockSize = 0;
 	block.IsShareable = true;
 	block.Name = name;
@@ -2670,8 +2670,8 @@ GpuParameterBlockInformation GLRenderAPI::GenerateParamBlockDesc(const String& n
 		{
 			param.ElementSize = size;
 			param.ArrayElementStride = size;
-			param.CpuMemOffset = block.BlockSize;
-			param.GpuMemOffset = 0;
+			param.CpuOffset = block.BlockSize;
+			param.GpuOffset = 0;
 
 			block.BlockSize += size * param.ArraySize;
 		}
@@ -2679,8 +2679,8 @@ GpuParameterBlockInformation GLRenderAPI::GenerateParamBlockDesc(const String& n
 		{
 			param.ElementSize = size;
 			param.ArrayElementStride = size;
-			param.CpuMemOffset = block.BlockSize;
-			param.GpuMemOffset = 0;
+			param.CpuOffset = block.BlockSize;
+			param.GpuOffset = 0;
 
 			block.BlockSize += size;
 		}

@@ -38,8 +38,6 @@ namespace bs
 			VulkanGpuProgram(VulkanGpuDevice& gpuDevice, const GpuProgramCreateInformation& createInformation);
 			virtual ~VulkanGpuProgram();
 
-			void SetName(const StringView& name) override;
-
 			/**
 			 * Returns the shader module for the specified device. If program device mask doesn't include the provided device,
 			 * null is returned.

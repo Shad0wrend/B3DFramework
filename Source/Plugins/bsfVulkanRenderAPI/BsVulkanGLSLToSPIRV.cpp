@@ -4,7 +4,7 @@
 #include "BsVulkanGpuProgram.h"
 #include "BsVulkanUtility.h"
 #include "RenderAPI/BsGpuParameters.h"
-#include "RenderAPI/BsGpuParamDesc.h"
+#include "RenderAPI/BsGpuParameterDescription.h"
 #include "Math/BsMath.h"
 
 #define AMD_EXTENSIONS
@@ -600,7 +600,7 @@ static void ParseStruct(const glslang::TTypeList* typeList, u32& size)
 	}
 }
 
-static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, String& log)
+static bool ParseUniforms(const glslang::TProgram* program, GpuParameterDescription& desc, String& log)
 {
 	// Parse individual uniforms
 	struct UniformInfo
@@ -661,7 +661,7 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 				}
 
 				if(sampler.dim != glslang::EsdBuffer)
-					desc.LoadStoreTextures[name] = param;
+					desc.StorageTextures[name] = param;
 				else
 					desc.Buffers[name] = param;
 
@@ -765,7 +765,7 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 		{
 			int size = Math::DivideAndRoundUp(program->getUniformBlockSize(i), 16) * 16;
 
-			GpuParameterBlockInformation blockDesc;
+			GpuDataParameterBlockInformation blockDesc;
 			blockDesc.Name = name;
 			blockDesc.BlockSize = size / 4;
 			blockDesc.IsShareable = true;
@@ -775,7 +775,7 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 			if(blockDesc.Set == glslang::TQualifier::layoutSetEnd)
 				blockDesc.Set = 0;
 
-			desc.ParamBlocks[name] = blockDesc;
+			desc.DataParameterBlocks[name] = blockDesc;
 
 			// Parse members of the uniform buffer
 			const glslang::TTypeList* typeList = ttype->getStruct();
@@ -870,10 +870,10 @@ static bool ParseUniforms(const glslang::TProgram* program, GpuParamDesc& desc, 
 					paramDesc.ElementSize = elementSize;
 					paramDesc.ArrayElementStride = arrayStride;
 					paramDesc.ArraySize = arraySize;
-					paramDesc.CpuMemOffset = bufferOffset;
-					paramDesc.GpuMemOffset = bufferOffset;
+					paramDesc.CpuOffset = bufferOffset;
+					paramDesc.GpuOffset = bufferOffset;
 
-					desc.Params[paramName] = paramDesc;
+					desc.DataParameters[paramName] = paramDesc;
 				}
 
 				bufferOffset += stride * arraySize;
@@ -962,7 +962,7 @@ SPtr<GpuProgramBytecode> GLSLToSPIRV::Convert(const GpuProgramCreateInformation&
 	GlslangToSpv(*program->getIntermediate(glslType), spirv, &logger);
 
 	// Parse uniforms
-	bytecode->ParamDesc = B3DMakeShared<GpuParamDesc>();
+	bytecode->ParamDesc = B3DMakeShared<GpuParameterDescription>();
 	if(!ParseUniforms(program, *bytecode->ParamDesc, bytecode->Messages))
 		goto cleanup;
 

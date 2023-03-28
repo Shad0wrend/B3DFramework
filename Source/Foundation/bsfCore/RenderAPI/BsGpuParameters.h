@@ -265,7 +265,7 @@ namespace bs
 		GpuParamsBase& operator=(const GpuParamsBase& rhs) = delete;
 
 		/** Returns a description of all stored parameters. */
-		SPtr<GpuParamDesc> GetParameterInformation(GpuProgramType type) const;
+		SPtr<GpuParameterDescription> GetParameterInformation(GpuProgramType type) const;
 
 		/** Gets the object that contains the processed information about all parameters. */
 		SPtr<GpuPipelineParamInfoBase> GetPipelineParameterInformation() const { return mParameterLayout; }
@@ -297,7 +297,7 @@ namespace bs
 		bool HasUniformBuffer(const String& name) const;
 
 		/**	Gets a descriptor for a parameter block buffer with the specified name. */
-		GpuParameterBlockInformation* GetParameterBlockDesc(GpuProgramType type, const String& name) const;
+		GpuDataParameterBlockInformation* GetParameterBlockDesc(GpuProgramType type, const String& name) const;
 
 		/** Marks the sim thread object as dirty, causing it to sync its contents with its core thread counterpart. */
 		virtual void MarkCoreDirtyInternal() {}

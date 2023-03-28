@@ -4,7 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 #include "BsCoreApplication.h"
-#include "RenderAPI/BsGpuParamDesc.h"
+#include "RenderAPI/BsGpuParameterDescription.h"
 #include "RenderAPI/BsGpuParameters.h"
 #include "RenderAPI/BsRenderAPI.h"
 #include "RenderAPI/BsGpuBuffer.h"
@@ -48,16 +48,16 @@ namespace bs
 				if(TransposePolicy<T>::TransposeEnabled(transposeMatrices))
 				{
 					auto transposed = TransposePolicy<T>::Transpose(value);
-					paramBlock->WriteCached((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32), sizeBytes, &transposed);
+					paramBlock->WriteCached((mParamDesc.CpuOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32), sizeBytes, &transposed);
 				}
 				else
-					paramBlock->WriteCached((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32), sizeBytes, &value);
+					paramBlock->WriteCached((mParamDesc.CpuOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32), sizeBytes, &value);
 
 				// Set unused bytes to 0
 				if(sizeBytes < elementSizeBytes)
 				{
 					u32 diffSize = elementSizeBytes - sizeBytes;
-					paramBlock->ZeroOutCached((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32) + sizeBytes, diffSize);
+					paramBlock->ZeroOutCached((mParamDesc.CpuOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32) + sizeBytes, diffSize);
 				}
 			}
 
@@ -80,7 +80,7 @@ namespace bs
 
 				const u32 elementSizeBytes = mParamDesc.ElementSize * sizeof(u32);
 				const u32 sizeBytes = std::min(elementSizeBytes, (u32)sizeof(T)); // Truncate if it doesn't fit within parameter size
-				const u32 offset = (mParamDesc.CpuMemOffset + arrayIndex * mParamDesc.ArrayElementStride) * sizeof(u32);
+				const u32 offset = (mParamDesc.CpuOffset + arrayIndex * mParamDesc.ArrayElementStride) * sizeof(u32);
 
 				const bool transposeMatrices = GetGpuDeviceCapabilities().Conventions.MatrixOrder == Conventions::MatrixOrder::ColumnMajor;
 				if(TransposePolicy<T>::TransposeEnabled(transposeMatrices))
@@ -119,7 +119,7 @@ namespace bs
 				u32 sizeBytes = std::min(elementSizeBytes, (u32)sizeof(T));
 
 				T value;
-				paramBlock->ReadCached((mParamDesc.CpuMemOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32), sizeBytes, &value);
+				paramBlock->ReadCached((mParamDesc.CpuOffset + arrayIdx * mParamDesc.ArrayElementStride) * sizeof(u32), sizeBytes, &value);
 
 				return value;
 			}
@@ -185,7 +185,7 @@ namespace bs
 			mParams = GetEntries();                                                                  \
 			RenderAPI& rapi = RenderAPI::Instance();                                                 \
                                                                                                      \
-			GpuParameterBlockInformation blockInformation = rapi.GenerateParamBlockDesc(#Name, mParams);  \
+			GpuDataParameterBlockInformation blockInformation = rapi.GenerateParamBlockDesc(#Name, mParams);  \
 			mBlockSize = blockInformation.BlockSize * sizeof(u32);                                   \
                                                                                                      \
 			InitEntries();                                                                           \

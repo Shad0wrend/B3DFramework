@@ -44,7 +44,7 @@ namespace bs
 			void SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, u32 syncMask = 0xFFFFFFFF) override;
 			SPtr<CommandBuffer> GetMainCommandBuffer() const override;
 			void ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest) override;
-			GpuParameterBlockInformation GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params) override;
+			GpuDataParameterBlockInformation GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params) override;
 
 			/************************************************************************/
 			/* 				Internal use by DX11 backend only						*/

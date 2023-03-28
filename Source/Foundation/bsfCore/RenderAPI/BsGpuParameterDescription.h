@@ -21,8 +21,8 @@ namespace bs
 
 		u32 ParamBlockSlot;
 		u32 ParamBlockSet;
-		u32 GpuMemOffset; /**< In multiples of 4 bytes, or index for parameters not in a buffer. */
-		u32 CpuMemOffset; /**< In multiples of 4 bytes. */
+		u32 GpuOffset; /**< In multiples of 4 bytes, or index for parameters not in a buffer. */
+		u32 CpuOffset; /**< In multiples of 4 bytes. */
 	};
 
 	/**	Describes a single GPU program object (for example texture, sampler state) parameter. */
@@ -38,7 +38,7 @@ namespace bs
 	};
 
 	/**	Describes a GPU program parameter block (collection of GPU program data parameters). */
-	struct GpuParameterBlockInformation
+	struct GpuDataParameterBlockInformation
 	{
 		String Name;
 		u32 Slot; /** Slot within a set. Uniquely identifies bind location in the GPU pipeline, together with the set. */
@@ -48,21 +48,21 @@ namespace bs
 	};
 
 	/** Contains all parameter information for a GPU program, including data and object parameters, plus parameter blocks. */
-	struct B3D_CORE_EXPORT GpuParamDesc : IReflectable
+	struct B3D_CORE_EXPORT GpuParameterDescription : IReflectable
 	{
-		Map<String, GpuParameterBlockInformation> ParamBlocks;
-		Map<String, GpuDataParameterInformation> Params;
+		Map<String, GpuDataParameterBlockInformation> DataParameterBlocks;
+		Map<String, GpuDataParameterInformation> DataParameters;
 
 		Map<String, GpuObjectParameterInformation> Samplers;
 		Map<String, GpuObjectParameterInformation> Textures;
-		Map<String, GpuObjectParameterInformation> LoadStoreTextures;
+		Map<String, GpuObjectParameterInformation> StorageTextures;
 		Map<String, GpuObjectParameterInformation> Buffers;
 
 		/************************************************************************/
 		/* 								SERIALIZATION                      		*/
 		/************************************************************************/
 	public:
-		friend class GpuParamDescRTTI;
+		friend class GpuParameterDescriptionRTTI;
 		static RTTITypeBase* GetRttiStatic();
 		RTTITypeBase* GetRtti() const;
 	};

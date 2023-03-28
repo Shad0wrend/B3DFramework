@@ -401,11 +401,11 @@ namespace bs
 			B3D_RTTI_MEMBER_PLAIN(SeparablePasses, 2)
 			B3D_RTTI_MEMBER_PLAIN(Flags, 3)
 
-			B3D_RTTI_MEMBER_PLAIN_MAP(DataParams, 4, Name)
-			B3D_RTTI_MEMBER_PLAIN_MAP(TextureParams, 5, Name)
-			B3D_RTTI_MEMBER_PLAIN_MAP(SamplerParams, 6, Name)
-			B3D_RTTI_MEMBER_PLAIN_MAP(BufferParams, 7, Name)
-			B3D_RTTI_MEMBER_PLAIN_MAP(ParamBlocks, 8, Name)
+			B3D_RTTI_MEMBER_PLAIN_MAP(DataParameters, 4, Name)
+			B3D_RTTI_MEMBER_PLAIN_MAP(TextureParameters, 5, Name)
+			B3D_RTTI_MEMBER_PLAIN_MAP(SamplerParameters, 6, Name)
+			B3D_RTTI_MEMBER_PLAIN_MAP(BufferParameters, 7, Name)
+			B3D_RTTI_MEMBER_PLAIN_MAP(DataParameterBlocks, 8, Name)
 
 			B3D_RTTI_MEMBER_PLAIN_ARRAY(DataDefaultValues, 9)
 			B3D_RTTI_MEMBER_PLAIN_ARRAY(TextureDefaultValues, 10)

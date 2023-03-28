@@ -15,12 +15,12 @@ namespace bs
 	/** Helper structure used for initializing GpuPipelineParamInfo. */
 	struct GPU_PIPELINE_PARAMS_DESC
 	{
-		SPtr<GpuParamDesc> FragmentParams;
-		SPtr<GpuParamDesc> VertexParams;
-		SPtr<GpuParamDesc> GeometryParams;
-		SPtr<GpuParamDesc> HullParams;
-		SPtr<GpuParamDesc> DomainParams;
-		SPtr<GpuParamDesc> ComputeParams;
+		SPtr<GpuParameterDescription> FragmentParams;
+		SPtr<GpuParameterDescription> VertexParams;
+		SPtr<GpuParameterDescription> GeometryParams;
+		SPtr<GpuParameterDescription> HullParams;
+		SPtr<GpuParameterDescription> DomainParams;
+		SPtr<GpuParameterDescription> ComputeParams;
 	};
 
 	/** Binding location for a single GPU program parameter. */
@@ -98,7 +98,7 @@ namespace bs
 		u32 GetArraySize(GpuParameterType type, u32 sequentialBindingIndex);
 
 		/** Returns descriptions of individual parameters for the specified GPU program type. */
-		const SPtr<GpuParamDesc>& GetParamDesc(GpuProgramType type) const { return mParamDescs[(int)type]; }
+		const SPtr<GpuParameterDescription>& GetParamDesc(GpuProgramType type) const { return mParamDescs[(int)type]; }
 
 	protected:
 		/** Information about a single set in the param info object. */
@@ -121,7 +121,7 @@ namespace bs
 			u32 ArraySize = 1;
 		};
 
-		std::array<SPtr<GpuParamDesc>, 6> mParamDescs;
+		std::array<SPtr<GpuParameterDescription>, 6> mParamDescs;
 
 		u32 mSetCount = 0;
 		SetInfo* mSetInfos = nullptr;

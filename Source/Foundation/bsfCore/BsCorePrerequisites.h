@@ -377,10 +377,10 @@ namespace bs
 	class FontManager;
 	class RenderStateManager;
 	class GpuParamBlock;
-	struct GpuParamDesc;
+	struct GpuParameterDescription;
 	struct GpuDataParameterInformation;
 	struct GpuObjectParameterInformation;
-	struct GpuParameterBlockInformation;
+	struct GpuDataParameterBlockInformation;
 	class ShaderInclude;
 	class CoreObject;
 	class ImportOptions;
@@ -622,7 +622,7 @@ namespace bs
 		TID_GpuParamBlockDesc = 1146,
 		TID_GpuParamDataDesc = 1147,
 		TID_GpuParamObjectDesc = 1148,
-		TID_GpuParamDesc = 1149,
+		TID_GpuParameterDescription = 1149,
 		TID_BlendStateDesc = 1150,
 		TID_RasterizerStateDesc = 1151,
 		TID_DepthStencilStateDesc = 1152,

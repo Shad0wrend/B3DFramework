@@ -4,7 +4,7 @@
 
 #include "BsCoreApplication.h"
 #include "BsGpuDevice.h"
-#include "RenderAPI/BsGpuParamDesc.h"
+#include "RenderAPI/BsGpuParameterDescription.h"
 #include "RenderAPI/BsGpuBuffer.h"
 #include "RenderAPI/BsGpuPipelineParamInfo.h"
 #include "RenderAPI/BsGpuPipelineState.h"
@@ -24,7 +24,7 @@ GpuParamsBase::GpuParamsBase(const SPtr<GpuPipelineParamInfoBase>& parameterLayo
 	: mParameterLayout(parameterLayout)
 {}
 
-SPtr<GpuParamDesc> GpuParamsBase::GetParameterInformation(GpuProgramType type) const
+SPtr<GpuParameterDescription> GpuParamsBase::GetParameterInformation(GpuProgramType type) const
 {
 	return mParameterLayout->GetParamDesc(type);
 }
@@ -45,7 +45,7 @@ bool GpuParamsBase::HasParameter(GpuProgramType type, const String& name) const
 
 bool GpuParamsBase::HasSampledTexture(GpuProgramType type, const String& name) const
 {
-	const SPtr<GpuParamDesc>& paramDesc = mParameterLayout->GetParamDesc(type);
+	const SPtr<GpuParameterDescription>& paramDesc = mParameterLayout->GetParamDesc(type);
 	if(paramDesc == nullptr)
 		return false;
 
@@ -58,7 +58,7 @@ bool GpuParamsBase::HasSampledTexture(GpuProgramType type, const String& name) c
 
 bool GpuParamsBase::HasStorageBuffer(GpuProgramType type, const String& name) const
 {
-	const SPtr<GpuParamDesc>& paramDesc = mParameterLayout->GetParamDesc(type);
+	const SPtr<GpuParameterDescription>& paramDesc = mParameterLayout->GetParamDesc(type);
 	if(paramDesc == nullptr)
 		return false;
 
@@ -71,12 +71,12 @@ bool GpuParamsBase::HasStorageBuffer(GpuProgramType type, const String& name) co
 
 bool GpuParamsBase::HasStorageTexture(GpuProgramType type, const String& name) const
 {
-	const SPtr<GpuParamDesc>& paramDesc = mParameterLayout->GetParamDesc(type);
+	const SPtr<GpuParameterDescription>& paramDesc = mParameterLayout->GetParamDesc(type);
 	if(paramDesc == nullptr)
 		return false;
 
-	auto paramIter = paramDesc->LoadStoreTextures.find(name);
-	if(paramIter != paramDesc->LoadStoreTextures.end())
+	auto paramIter = paramDesc->StorageTextures.find(name);
+	if(paramIter != paramDesc->StorageTextures.end())
 		return true;
 
 	return false;
@@ -84,7 +84,7 @@ bool GpuParamsBase::HasStorageTexture(GpuProgramType type, const String& name) c
 
 bool GpuParamsBase::HasSamplerState(GpuProgramType type, const String& name) const
 {
-	const SPtr<GpuParamDesc>& paramDesc = mParameterLayout->GetParamDesc(type);
+	const SPtr<GpuParameterDescription>& paramDesc = mParameterLayout->GetParamDesc(type);
 	if(paramDesc == nullptr)
 		return false;
 
@@ -97,23 +97,23 @@ bool GpuParamsBase::HasSamplerState(GpuProgramType type, const String& name) con
 
 bool GpuParamsBase::HasUniformBuffer(GpuProgramType type, const String& name) const
 {
-	const SPtr<GpuParamDesc>& gpuParameterInformation = mParameterLayout->GetParamDesc(type);
+	const SPtr<GpuParameterDescription>& gpuParameterInformation = mParameterLayout->GetParamDesc(type);
 	if(gpuParameterInformation == nullptr)
 		return false;
 
-	return gpuParameterInformation->ParamBlocks.find(name) != gpuParameterInformation->ParamBlocks.end();
+	return gpuParameterInformation->DataParameterBlocks.find(name) != gpuParameterInformation->DataParameterBlocks.end();
 }
 
 bool GpuParamsBase::HasUniformBuffer(const String& name) const
 {
 	for (u32 gpuProgramTypeIndex = 0; gpuProgramTypeIndex < GPT_COUNT; gpuProgramTypeIndex++)
 	{
-		const SPtr<GpuParamDesc>& gpuParameterInformation = mParameterLayout->GetParamDesc((GpuProgramType)gpuProgramTypeIndex);
+		const SPtr<GpuParameterDescription>& gpuParameterInformation = mParameterLayout->GetParamDesc((GpuProgramType)gpuProgramTypeIndex);
 		if (gpuParameterInformation == nullptr)
 			continue;
 
-		auto found = gpuParameterInformation->ParamBlocks.find(name);
-		if (found != gpuParameterInformation->ParamBlocks.end())
+		auto found = gpuParameterInformation->DataParameterBlocks.find(name);
+		if (found != gpuParameterInformation->DataParameterBlocks.end())
 			return true;
 	}
 
@@ -122,25 +122,25 @@ bool GpuParamsBase::HasUniformBuffer(const String& name) const
 
 GpuDataParameterInformation* GpuParamsBase::GetDataParameterInformation(GpuProgramType type, const String& name) const
 {
-	const SPtr<GpuParamDesc>& paramDesc = mParameterLayout->GetParamDesc(type);
+	const SPtr<GpuParameterDescription>& paramDesc = mParameterLayout->GetParamDesc(type);
 	if(paramDesc == nullptr)
 		return nullptr;
 
-	auto paramIter = paramDesc->Params.find(name);
-	if(paramIter != paramDesc->Params.end())
+	auto paramIter = paramDesc->DataParameters.find(name);
+	if(paramIter != paramDesc->DataParameters.end())
 		return &paramIter->second;
 
 	return nullptr;
 }
 
-GpuParameterBlockInformation* GpuParamsBase::GetParameterBlockDesc(GpuProgramType type, const String& name) const
+GpuDataParameterBlockInformation* GpuParamsBase::GetParameterBlockDesc(GpuProgramType type, const String& name) const
 {
-	const SPtr<GpuParamDesc>& paramDesc = mParameterLayout->GetParamDesc(type);
+	const SPtr<GpuParameterDescription>& paramDesc = mParameterLayout->GetParamDesc(type);
 	if(paramDesc == nullptr)
 		return nullptr;
 
-	auto paramBlockIter = paramDesc->ParamBlocks.find(name);
-	if(paramBlockIter != paramDesc->ParamBlocks.end())
+	auto paramBlockIter = paramDesc->DataParameterBlocks.find(name);
+	if(paramBlockIter != paramDesc->DataParameterBlocks.end())
 		return &paramBlockIter->second;
 
 	return nullptr;
@@ -257,15 +257,15 @@ bool TGpuParams<Core>::SetUniformBuffer(u32 set, u32 slot, const UniformBufferTy
 template <bool Core>
 bool TGpuParams<Core>::SetUniformBuffer(GpuProgramType type, const String& name, const UniformBufferType& paramBlockBuffer, u32 arrayIndex, u32 offset)
 {
-	const SPtr<GpuParamDesc>& parameterInformation = mParameterLayout->GetParamDesc(type);
+	const SPtr<GpuParameterDescription>& parameterInformation = mParameterLayout->GetParamDesc(type);
 	if(parameterInformation == nullptr)
 	{
 		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find parameter block with name: {0}", name);
 		return false;
 	}
 
-	auto iterFind = parameterInformation->ParamBlocks.find(name);
-	if(iterFind == parameterInformation->ParamBlocks.end())
+	auto iterFind = parameterInformation->DataParameterBlocks.find(name);
+	if(iterFind == parameterInformation->DataParameterBlocks.end())
 	{
 		B3D_LOG(Warning, RenderBackend, "Unable to assign parameter. Cannot find parameter block with name: {0}", name);
 		return false;
@@ -299,12 +299,12 @@ bool TGpuParams<Core>::SetUniformBuffer(const String& name, const UniformBufferT
 	bool isParameterBound = false;
 	for(u32 i = 0; i < 6; i++)
 	{
-		const SPtr<GpuParamDesc>& paramDescs = mParameterLayout->GetParamDesc((GpuProgramType)i);
+		const SPtr<GpuParameterDescription>& paramDescs = mParameterLayout->GetParamDesc((GpuProgramType)i);
 		if(paramDescs == nullptr)
 			continue;
 
-		auto iterFind = paramDescs->ParamBlocks.find(name);
-		if(iterFind == paramDescs->ParamBlocks.end())
+		auto iterFind = paramDescs->DataParameterBlocks.find(name);
+		if(iterFind == paramDescs->DataParameterBlocks.end())
 			continue;
 
 		if (SetUniformBuffer(iterFind->second.Set, iterFind->second.Slot, paramBlockBuffer, arrayIndex, offset))
@@ -369,15 +369,15 @@ template <bool Core>
 template <class T>
 bool TGpuParams<Core>::TryGetParameter(GpuProgramType type, const String& name, TGpuParameterPrimitive<T, Core>& output) const
 {
-	const SPtr<GpuParamDesc>& paramDescs = mParameterLayout->GetParamDesc(type);
+	const SPtr<GpuParameterDescription>& paramDescs = mParameterLayout->GetParamDesc(type);
 	if (paramDescs == nullptr)
 	{
 		output = TGpuParameterPrimitive<T, Core>(nullptr, nullptr);
 		return false;
 	}
 
-	auto iterFind = paramDescs->Params.find(name);
-	if (iterFind == paramDescs->Params.end())
+	auto iterFind = paramDescs->DataParameters.find(name);
+	if (iterFind == paramDescs->DataParameters.end())
 	{
 		output = TGpuParameterPrimitive<T, Core>(nullptr, nullptr);
 		return false;
@@ -390,15 +390,15 @@ bool TGpuParams<Core>::TryGetParameter(GpuProgramType type, const String& name, 
 template <bool Core>
 bool TGpuParams<Core>::TryGetStructParameter(GpuProgramType type, const String& name, TGpuParameterStruct<Core>& output) const
 {
-	const SPtr<GpuParamDesc>& paramDescs = mParameterLayout->GetParamDesc(type);
+	const SPtr<GpuParameterDescription>& paramDescs = mParameterLayout->GetParamDesc(type);
 	if (paramDescs == nullptr)
 	{
 		output = TGpuParameterStruct<Core>(nullptr, nullptr);
 		return false;
 	}
 
-	auto iterFind = paramDescs->Params.find(name);
-	if (iterFind == paramDescs->Params.end() || iterFind->second.Type != GPDT_STRUCT)
+	auto iterFind = paramDescs->DataParameters.find(name);
+	if (iterFind == paramDescs->DataParameters.end() || iterFind->second.Type != GPDT_STRUCT)
 	{
 		output = TGpuParameterStruct<Core>(nullptr, nullptr);
 		return false;
@@ -411,7 +411,7 @@ bool TGpuParams<Core>::TryGetStructParameter(GpuProgramType type, const String& 
 template <bool Core>
 bool TGpuParams<Core>::TryGetSampledTextureParameter(GpuProgramType type, const String& name, TGpuParameterSampledTexture<Core>& output) const
 {
-	const SPtr<GpuParamDesc>& paramDescs = mParameterLayout->GetParamDesc(type);
+	const SPtr<GpuParameterDescription>& paramDescs = mParameterLayout->GetParamDesc(type);
 	if (paramDescs == nullptr)
 	{
 		output = TGpuParameterSampledTexture<Core>(nullptr, nullptr);
@@ -432,15 +432,15 @@ bool TGpuParams<Core>::TryGetSampledTextureParameter(GpuProgramType type, const 
 template <bool Core>
 bool TGpuParams<Core>::TryGetStorageTextureParameter(GpuProgramType type, const String& name, TGpuParameterStorageTexture<Core>& output) const
 {
-	const SPtr<GpuParamDesc>& paramDescs = mParameterLayout->GetParamDesc(type);
+	const SPtr<GpuParameterDescription>& paramDescs = mParameterLayout->GetParamDesc(type);
 	if (paramDescs == nullptr)
 	{
 		output = TGpuParameterStorageTexture<Core>(nullptr, nullptr);
 		return false;
 	}
 
-	auto iterFind = paramDescs->LoadStoreTextures.find(name);
-	if (iterFind == paramDescs->LoadStoreTextures.end())
+	auto iterFind = paramDescs->StorageTextures.find(name);
+	if (iterFind == paramDescs->StorageTextures.end())
 	{
 		output = TGpuParameterStorageTexture<Core>(nullptr, nullptr);
 		return false;
@@ -453,7 +453,7 @@ bool TGpuParams<Core>::TryGetStorageTextureParameter(GpuProgramType type, const 
 template <bool Core>
 bool TGpuParams<Core>::TryGetStorageBufferParameter(GpuProgramType type, const String& name, TGpuParameterBuffer<Core>& output) const
 {
-	const SPtr<GpuParamDesc>& paramDescs = mParameterLayout->GetParamDesc(type);
+	const SPtr<GpuParameterDescription>& paramDescs = mParameterLayout->GetParamDesc(type);
 	if (paramDescs == nullptr)
 	{
 		output = TGpuParameterBuffer<Core>(nullptr, nullptr);
@@ -474,7 +474,7 @@ bool TGpuParams<Core>::TryGetStorageBufferParameter(GpuProgramType type, const S
 template <bool Core>
 bool TGpuParams<Core>::TryGetSamplerStateParameter(GpuProgramType type, const String& name, TGpuParameterSampler<Core>& output) const
 {
-	const SPtr<GpuParamDesc>& paramDescs = mParameterLayout->GetParamDesc(type);
+	const SPtr<GpuParameterDescription>& paramDescs = mParameterLayout->GetParamDesc(type);
 	if (paramDescs == nullptr)
 	{
 		output = TGpuParameterSampler<Core>(nullptr, nullptr);

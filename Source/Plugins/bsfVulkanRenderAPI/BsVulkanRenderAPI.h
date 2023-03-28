@@ -51,7 +51,7 @@ namespace bs
 			SPtr<CommandBuffer> GetMainCommandBuffer() const override;
 			SPtr<GpuDevice> GetPrimaryGpuDevice() const override { return mPrimaryGpuDevice; }
 			void ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest) override;
-			GpuParameterBlockInformation GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params) override;
+			GpuDataParameterBlockInformation GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params) override;
 
 			/**
 			 * @name Internal

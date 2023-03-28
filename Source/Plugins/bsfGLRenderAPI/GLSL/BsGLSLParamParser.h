@@ -6,7 +6,7 @@
 #include "RenderAPI/BsVertexDeclaration.h"
 #include "Debug/BsDebug.h"
 #include "Error/BsException.h"
-#include "RenderAPI/BsGpuParamDesc.h"
+#include "RenderAPI/BsGpuParameterDescription.h"
 
 namespace bs
 {
@@ -51,7 +51,7 @@ namespace bs
 			 * @param[in]	type			Type of the GPU program we're parsing.
 			 * @param[out]	returnParamDesc	Output structure containing the parsed data.
 			 */
-			void BuildUniformDescriptions(GLuint glProgram, GpuProgramType type, GpuParamDesc& returnParamDesc);
+			void BuildUniformDescriptions(GLuint glProgram, GpuProgramType type, GpuParameterDescription& returnParamDesc);
 
 			/**
 			 * Parses a compiled OpenGL program and outputs vertex element list that describes input attributes to the program.

@@ -30,8 +30,8 @@ void ShaderInformationBase::AddParameter(ShaderDataParameterInformation paramDes
 		return;
 	}
 
-	const auto iterFind = DataParams.find(paramDesc.Name);
-	if(iterFind != DataParams.end())
+	const auto iterFind = DataParameters.find(paramDesc.Name);
+	if(iterFind != DataParameters.end())
 		return;
 
 	if(defaultValue != nullptr)
@@ -45,7 +45,7 @@ void ShaderInformationBase::AddParameter(ShaderDataParameterInformation paramDes
 	else
 		paramDesc.DefaultValueIndex = (u32)-1;
 
-	DataParams[paramDesc.Name] = paramDesc;
+	DataParameters[paramDesc.Name] = paramDesc;
 }
 
 void ShaderInformationBase::AddParameter(ShaderObjectParameterInformation paramDesc)
@@ -81,7 +81,7 @@ void ShaderInformationBase::AddParameter(ShaderObjectParameterInformation paramD
 
 void ShaderInformationBase::AddParameterInternal(ShaderObjectParameterInformation paramDesc, u32 defaultValueIdx)
 {
-	Map<String, ShaderObjectParameterInformation>* DEST_LOOKUP[] = { &TextureParams, &BufferParams, &SamplerParams };
+	Map<String, ShaderObjectParameterInformation>* DEST_LOOKUP[] = { &TextureParameters, &BufferParameters, &SamplerParameters };
 	u32 destIdx = 0;
 	if(Shader::IsBuffer(paramDesc.Type))
 		destIdx = 1;
@@ -124,28 +124,28 @@ void ShaderInformationBase::SetParameterAttribute(const String& name, const Shad
 {
 	ShaderDataParameterInformation* paramDescData = nullptr;
 
-	const auto findIterData = DataParams.find(name);
-	if(findIterData != DataParams.end())
+	const auto findIterData = DataParameters.find(name);
+	if(findIterData != DataParameters.end())
 		paramDescData = &findIterData->second;
 
 	ShaderObjectParameterInformation* paramDescObj = nullptr;
 	if(!paramDescData)
 	{
-		const auto findIterTexture = TextureParams.find(name);
-		if(findIterTexture != TextureParams.end())
+		const auto findIterTexture = TextureParameters.find(name);
+		if(findIterTexture != TextureParameters.end())
 			paramDescObj = &findIterTexture->second;
 
 		if(!paramDescObj)
 		{
-			const auto findIterSampler = SamplerParams.find(name);
-			if(findIterSampler != SamplerParams.end())
+			const auto findIterSampler = SamplerParameters.find(name);
+			if(findIterSampler != SamplerParameters.end())
 				paramDescObj = &findIterSampler->second;
 		}
 
 		if(!paramDescObj)
 		{
-			const auto findIterBuffer = BufferParams.find(name);
-			if(findIterBuffer != BufferParams.end())
+			const auto findIterBuffer = BufferParameters.find(name);
+			if(findIterBuffer != BufferParameters.end())
 				paramDescObj = &findIterBuffer->second;
 		}
 	}
@@ -212,7 +212,7 @@ void ShaderInformationBase::SetParamBlockAttribs(const String& name, bool shared
 	desc.Flags = flags;
 	desc.RendererSemantic = rendererSemantic;
 
-	ParamBlocks[name] = desc;
+	DataParameterBlocks[name] = desc;
 }
 
 RTTITypeBase* ShaderInformationBase::GetRttiStatic()
@@ -228,11 +228,11 @@ RTTITypeBase* ShaderInformationBase::GetRtti() const
 ct::ShaderInformation ShaderInformation::ConvertToCore(const ShaderInformation& value)
 {
 	ct::ShaderInformation output;
-	output.DataParams = value.DataParams;
-	output.TextureParams = value.TextureParams;
-	output.SamplerParams = value.SamplerParams;
-	output.BufferParams = value.BufferParams;
-	output.ParamBlocks = value.ParamBlocks;
+	output.DataParameters = value.DataParameters;
+	output.TextureParameters = value.TextureParameters;
+	output.SamplerParameters = value.SamplerParameters;
+	output.BufferParameters = value.BufferParameters;
+	output.DataParameterBlocks = value.DataParameterBlocks;
 	output.ParamAttributes = value.ParamAttributes;
 
 	output.DataDefaultValues = value.DataDefaultValues;
@@ -351,20 +351,20 @@ TShader<Core>::~TShader()
 template <bool Core>
 GpuParameterType TShader<Core>::GetParamType(const String& name) const
 {
-	auto findIterData = mInformation.DataParams.find(name);
-	if(findIterData != mInformation.DataParams.end())
+	auto findIterData = mInformation.DataParameters.find(name);
+	if(findIterData != mInformation.DataParameters.end())
 		return GPT_DATA;
 
-	auto findIterTexture = mInformation.TextureParams.find(name);
-	if(findIterTexture != mInformation.TextureParams.end())
+	auto findIterTexture = mInformation.TextureParameters.find(name);
+	if(findIterTexture != mInformation.TextureParameters.end())
 		return GPT_TEXTURE;
 
-	auto findIterBuffer = mInformation.BufferParams.find(name);
-	if(findIterBuffer != mInformation.BufferParams.end())
+	auto findIterBuffer = mInformation.BufferParameters.find(name);
+	if(findIterBuffer != mInformation.BufferParameters.end())
 		return GPT_BUFFER;
 
-	auto findIterSampler = mInformation.SamplerParams.find(name);
-	if(findIterSampler != mInformation.SamplerParams.end())
+	auto findIterSampler = mInformation.SamplerParameters.find(name);
+	if(findIterSampler != mInformation.SamplerParameters.end())
 		return GPT_SAMPLER;
 
 	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
@@ -374,8 +374,8 @@ GpuParameterType TShader<Core>::GetParamType(const String& name) const
 template <bool Core>
 const ShaderDataParameterInformation& TShader<Core>::GetDataParamDesc(const String& name) const
 {
-	auto findIterData = mInformation.DataParams.find(name);
-	if(findIterData != mInformation.DataParams.end())
+	auto findIterData = mInformation.DataParameters.find(name);
+	if(findIterData != mInformation.DataParameters.end())
 		return findIterData->second;
 
 	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
@@ -386,8 +386,8 @@ const ShaderDataParameterInformation& TShader<Core>::GetDataParamDesc(const Stri
 template <bool Core>
 const ShaderObjectParameterInformation& TShader<Core>::GetTextureParamDesc(const String& name) const
 {
-	auto findIterObject = mInformation.TextureParams.find(name);
-	if(findIterObject != mInformation.TextureParams.end())
+	auto findIterObject = mInformation.TextureParameters.find(name);
+	if(findIterObject != mInformation.TextureParameters.end())
 		return findIterObject->second;
 
 	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
@@ -398,8 +398,8 @@ const ShaderObjectParameterInformation& TShader<Core>::GetTextureParamDesc(const
 template <bool Core>
 const ShaderObjectParameterInformation& TShader<Core>::GetSamplerParamDesc(const String& name) const
 {
-	auto findIterObject = mInformation.SamplerParams.find(name);
-	if(findIterObject != mInformation.SamplerParams.end())
+	auto findIterObject = mInformation.SamplerParameters.find(name);
+	if(findIterObject != mInformation.SamplerParameters.end())
 		return findIterObject->second;
 
 	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
@@ -410,8 +410,8 @@ const ShaderObjectParameterInformation& TShader<Core>::GetSamplerParamDesc(const
 template <bool Core>
 const ShaderObjectParameterInformation& TShader<Core>::GetBufferParamDesc(const String& name) const
 {
-	auto findIterObject = mInformation.BufferParams.find(name);
-	if(findIterObject != mInformation.BufferParams.end())
+	auto findIterObject = mInformation.BufferParameters.find(name);
+	if(findIterObject != mInformation.BufferParameters.end())
 		return findIterObject->second;
 
 	B3D_EXCEPT(InternalErrorException, "Cannot find the parameter with the name: " + name);
@@ -422,8 +422,8 @@ const ShaderObjectParameterInformation& TShader<Core>::GetBufferParamDesc(const 
 template <bool Core>
 bool TShader<Core>::HasDataParam(const String& name) const
 {
-	auto findIterData = mInformation.DataParams.find(name);
-	if(findIterData != mInformation.DataParams.end())
+	auto findIterData = mInformation.DataParameters.find(name);
+	if(findIterData != mInformation.DataParameters.end())
 		return true;
 
 	return false;
@@ -432,8 +432,8 @@ bool TShader<Core>::HasDataParam(const String& name) const
 template <bool Core>
 bool TShader<Core>::HasTextureParam(const String& name) const
 {
-	auto findIterObject = mInformation.TextureParams.find(name);
-	if(findIterObject != mInformation.TextureParams.end())
+	auto findIterObject = mInformation.TextureParameters.find(name);
+	if(findIterObject != mInformation.TextureParameters.end())
 		return true;
 
 	return false;
@@ -442,8 +442,8 @@ bool TShader<Core>::HasTextureParam(const String& name) const
 template <bool Core>
 bool TShader<Core>::HasSamplerParam(const String& name) const
 {
-	auto findIterObject = mInformation.SamplerParams.find(name);
-	if(findIterObject != mInformation.SamplerParams.end())
+	auto findIterObject = mInformation.SamplerParameters.find(name);
+	if(findIterObject != mInformation.SamplerParameters.end())
 		return true;
 
 	return false;
@@ -452,8 +452,8 @@ bool TShader<Core>::HasSamplerParam(const String& name) const
 template <bool Core>
 bool TShader<Core>::HasBufferParam(const String& name) const
 {
-	auto findIterObject = mInformation.BufferParams.find(name);
-	if(findIterObject != mInformation.BufferParams.end())
+	auto findIterObject = mInformation.BufferParameters.find(name);
+	if(findIterObject != mInformation.BufferParameters.end())
 		return true;
 
 	return false;
@@ -462,8 +462,8 @@ bool TShader<Core>::HasBufferParam(const String& name) const
 template <bool Core>
 bool TShader<Core>::HasParamBlock(const String& name) const
 {
-	auto findIterObject = mInformation.ParamBlocks.find(name);
-	if(findIterObject != mInformation.ParamBlocks.end())
+	auto findIterObject = mInformation.DataParameterBlocks.find(name);
+	if(findIterObject != mInformation.DataParameterBlocks.end())
 		return true;
 
 	return false;
