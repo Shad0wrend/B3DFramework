@@ -311,10 +311,10 @@ namespace bs
 			void ClearViewport(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask);
 
 			/** Assigns a pipeline state to use for subsequent draw commands. */
-			void SetPipelineState(const SPtr<GraphicsPipelineState>& state);
+			void SetPipelineState(const SPtr<GpuGraphicsPipelineState>& state);
 
 			/** Assigns a pipeline state to use for subsequent dispatch commands. */
-			void SetPipelineState(const SPtr<ComputePipelineState>& state);
+			void SetPipelineState(const SPtr<GpuComputePipelineState>& state);
 
 			/** Assign GPU params to the GPU programs bound by the pipeline state. */
 			void SetGpuParams(const SPtr<GpuParameters>& gpuParams);
@@ -752,8 +752,8 @@ namespace bs
 			VkAccessFlags mMemoryBarrierSrcAccess = 0;
 			VkAccessFlags mMemoryBarrierDstAccess = 0;
 
-			SPtr<VulkanGraphicsPipelineState> mGraphicsPipeline;
-			SPtr<VulkanComputePipelineState> mComputePipeline;
+			SPtr<VulkanGpuGraphicsPipelineState> mGraphicsPipeline;
+			SPtr<VulkanGpuComputePipelineState> mComputePipeline;
 			SPtr<VertexDescription> mVertexDescription;
 			SPtr<VulkanGpuBuffer> mIndexBuffer;
 			Vector<SPtr<VulkanGpuBuffer>> mVertexBuffers;

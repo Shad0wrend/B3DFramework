@@ -37,20 +37,6 @@ namespace bs
 		/**	Creates and initializes a new BlendState. */
 		SPtr<BlendState> CreateBlendState(const BLEND_STATE_DESC& desc) const;
 
-		/**
-		 * Creates and initializes a new GraphicsPipelineState.
-		 *
-		 * @param[in]	desc	Object describing the pipeline to create.
-		 */
-		SPtr<GraphicsPipelineState> CreateGraphicsPipelineState(const PIPELINE_STATE_DESC& desc) const;
-
-		/**
-		 * Creates and initializes a new ComputePipelineState.
-		 *
-		 * @param[in]	program		Compute GPU program to be executed by the pipeline.
-		 */
-		SPtr<ComputePipelineState> CreateComputePipelineState(const SPtr<GpuProgram>& program) const;
-
 		/** Creates an uninitialized sampler state. Requires manual initialization after creation. */
 		SPtr<SamplerState> CreateSamplerStatePtrInternal(const SamplerStateCreateInformation& desc) const;
 
@@ -62,12 +48,6 @@ namespace bs
 
 		/** Creates an uninitialized blend state. Requires manual initialization after creation. */
 		SPtr<BlendState> CreateBlendStatePtrInternal(const BLEND_STATE_DESC& desc) const;
-
-		/**	Creates an uninitialized GraphicsPipelineState. Requires manual initialization after creation. */
-		virtual SPtr<GraphicsPipelineState> CreateGraphicsPipelineStateInternal(const PIPELINE_STATE_DESC& desc) const;
-
-		/**	Creates an uninitialized ComputePipelineState. Requires manual initialization after creation. */
-		virtual SPtr<ComputePipelineState> CreateComputePipelineStateInternal(const SPtr<GpuProgram>& program) const;
 
 		/** Gets a sampler state initialized with default options. */
 		const SPtr<SamplerState>& GetDefaultSamplerState() const;
@@ -156,18 +136,6 @@ namespace bs
 			/** @copydoc bs::RenderStateManager::CreateBlendState */
 			SPtr<BlendState> CreateBlendState(const BLEND_STATE_DESC& desc) const;
 
-			/**
-			 * @copydoc bs::RenderStateManager::CreateGraphicsPipelineState
-			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
-			 */
-			SPtr<GraphicsPipelineState> CreateGraphicsPipelineState(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
-
-			/**
-			 * @copydoc bs::RenderStateManager::CreateComputePipelineState
-			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
-			 */
-			SPtr<ComputePipelineState> CreateComputePipelineState(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
-
 			/** Creates an uninitialized sampler state. Requires manual initialization after creation. */
 			SPtr<SamplerState> CreateSamplerStateInternal(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
 
@@ -179,12 +147,6 @@ namespace bs
 
 			/** Creates an uninitialized blend state. Requires manual initialization after creation. */
 			SPtr<BlendState> CreateBlendStateInternal(const BLEND_STATE_DESC& desc) const;
-
-			/**	Creates an uninitialized GraphicsPipelineState. Requires manual initialization after creation. */
-			virtual SPtr<GraphicsPipelineState> CreateGraphicsPipelineStateInternal(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
-
-			/**	Creates an uninitialized ComputePipelineState. Requires manual initialization after creation. */
-			virtual SPtr<ComputePipelineState> CreateComputePipelineStateInternal(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
 
 			/** Gets a sampler state initialized with default options. */
 			const SPtr<SamplerState>& GetDefaultSamplerState() const;

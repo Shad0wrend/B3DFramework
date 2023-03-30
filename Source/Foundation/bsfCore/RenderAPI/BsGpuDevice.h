@@ -5,7 +5,12 @@
 #include "BsCorePrerequisites.h"
 
 namespace bs
-{
+{namespace ct
+	{
+		struct GpuComputePipelineStateCreateInformation;
+		struct GpuGraphicsPipelineStateCreateInformation;
+	}
+
 	struct GpuPipelineParameterLayoutCreateInformation;
 	struct GpuProgramBytecode;
 	struct GpuBufferCreateInformation;
@@ -83,6 +88,22 @@ namespace bs
 		 * @param	deferredInitialize		If true, Initialize() will not be called on the returned object, and the caller is expected to call it himself, before first using the object.
 		 */
 		virtual SPtr<ct::GpuParameters> CreateGpuParameters(const SPtr<ct::GpuPipelineParameterLayout>& parameterLayout, bool deferredInitialize = false) = 0;
+
+		/**
+		 * Creates a graphics pipeline.
+		 *
+		 * @param	createInformation		Object describing the pipeline to create.
+		 * @param	deferredInitialize		If true, Initialize() will not be called on the returned object, and the caller is expected to call it himself, before first using the object.
+		 */
+		virtual SPtr<ct::GpuGraphicsPipelineState> CreateGpuGraphicsPipelineState(const ct::GpuGraphicsPipelineStateCreateInformation& createInformation, bool deferredInitialize = false) = 0;
+
+		/**
+		 * Creates a compute pipeline.
+		 *
+		 * @param	createInformation		Object describing the pipeline to create.
+		 * @param	deferredInitialize		If true, Initialize() will not be called on the returned object, and the caller is expected to call it himself, before first using the object.
+		 */
+		virtual SPtr<ct::GpuComputePipelineState> CreateGpuComputePipelineState(const ct::GpuComputePipelineStateCreateInformation& createInformation, bool deferredInitialize = false) = 0;
 
 		/**
 		 * Creates a pipeline layout from a set of GPU program parameter descriptions. 

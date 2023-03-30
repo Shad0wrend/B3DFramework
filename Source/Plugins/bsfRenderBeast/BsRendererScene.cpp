@@ -127,7 +127,7 @@ static void ValidateBasePassMaterial(Material& material, RenderableAnimType anim
 	for(u32 j = 0; j < numPasses; j++)
 	{
 		SPtr<Pass> pass = material.GetPass(j, techniqueIdx);
-		SPtr<GraphicsPipelineState> graphicsPipeline = pass->GetGraphicsPipelineState();
+		SPtr<GpuGraphicsPipelineState> graphicsPipeline = pass->GetGraphicsPipelineState();
 
 		SPtr<VertexDescription> shaderVertexDescription = graphicsPipeline->GetVertexProgram()->GetVertexInputDescription();
 		if(shaderVertexDescription && !VertexDescription::IsCompatibleWithShaderInputs(vertexBufferDescription, *shaderVertexDescription))

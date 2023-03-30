@@ -84,7 +84,7 @@ void VulkanRenderAPI::DestroyCore()
 	RenderAPI::DestroyCore();
 }
 
-void VulkanRenderAPI::SetGraphicsPipeline(const SPtr<GraphicsPipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer)
+void VulkanRenderAPI::SetGraphicsPipeline(const SPtr<GpuGraphicsPipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer)
 {
 	VulkanCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
 	VulkanInternalCommandBuffer* vkCB = cb->GetInternal();
@@ -94,7 +94,7 @@ void VulkanRenderAPI::SetGraphicsPipeline(const SPtr<GraphicsPipelineState>& pip
 	B3D_INCREMENT_RENDER_STATISTIC(NumPipelineStateChanges);
 }
 
-void VulkanRenderAPI::SetComputePipeline(const SPtr<ComputePipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer)
+void VulkanRenderAPI::SetComputePipeline(const SPtr<GpuComputePipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer)
 {
 	VulkanCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
 	VulkanInternalCommandBuffer* vkCB = cb->GetInternal();

@@ -31,13 +31,13 @@ VulkanPipeline::~VulkanPipeline()
 	vkDestroyPipeline(mOwner->GetDevice().GetLogical(), mPipeline, gVulkanAllocator);
 }
 
-VulkanGraphicsPipelineState::GpuPipelineKey::GpuPipelineKey(
+VulkanGpuGraphicsPipelineState::GpuPipelineKey::GpuPipelineKey(
 	u32 framebufferId, u32 vertexInputId, u32 readOnlyFlags, DrawOperationType drawOp)
 	: FramebufferId(framebufferId), VertexInputId(vertexInputId), ReadOnlyFlags(readOnlyFlags), DrawOp(drawOp)
 {
 }
 
-size_t VulkanGraphicsPipelineState::HashFunc::operator()(const GpuPipelineKey& key) const
+size_t VulkanGpuGraphicsPipelineState::HashFunc::operator()(const GpuPipelineKey& key) const
 {
 	size_t hash = 0;
 	B3DCombineHash(hash, key.FramebufferId);
@@ -48,7 +48,7 @@ size_t VulkanGraphicsPipelineState::HashFunc::operator()(const GpuPipelineKey& k
 	return hash;
 }
 
-bool VulkanGraphicsPipelineState::EqualFunc::operator()(const GpuPipelineKey& a, const GpuPipelineKey& b) const
+bool VulkanGpuGraphicsPipelineState::EqualFunc::operator()(const GpuPipelineKey& a, const GpuPipelineKey& b) const
 {
 	if(a.FramebufferId != b.FramebufferId)
 		return false;
@@ -65,35 +65,23 @@ bool VulkanGraphicsPipelineState::EqualFunc::operator()(const GpuPipelineKey& a,
 	return true;
 }
 
-VulkanGraphicsPipelineState::VulkanGraphicsPipelineState(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask)
-	: GraphicsPipelineState(desc, deviceMask), mDeviceMask(deviceMask)
-{
-	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
-	{
-		mPerDeviceData[i].Device = nullptr;
-		mPerDeviceData[i].PipelineLayout = VK_NULL_HANDLE;
-	}
-}
+VulkanGpuGraphicsPipelineState::VulkanGpuGraphicsPipelineState(VulkanGpuDevice& gpuDevice, const GpuGraphicsPipelineStateInformation& createInformation)
+	: GpuGraphicsPipelineState(gpuDevice, createInformation)
+{ }
 
-VulkanGraphicsPipelineState::~VulkanGraphicsPipelineState()
+VulkanGpuGraphicsPipelineState::~VulkanGpuGraphicsPipelineState()
 {
-	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
-	{
-		if(mPerDeviceData[i].Device == nullptr)
-			continue;
-
-		for(auto& entry : mPerDeviceData[i].Pipelines)
-			entry.second->Destroy();
-	}
+	for(auto& entry : mPipelines)
+		entry.second->Destroy();
 
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResDestroyed, RenderStatObject_PipelineState);
 }
 
-void VulkanGraphicsPipelineState::Initialize()
+void VulkanGpuGraphicsPipelineState::Initialize()
 {
 	Lock lock(mMutex);
 
-	GraphicsPipelineState::Initialize();
+	GpuGraphicsPipelineState::Initialize();
 
 	std::pair<VkShaderStageFlagBits, GpuProgram*> stages[] = {
 		{ VK_SHADER_STAGE_VERTEX_BIT, mData.VertexProgram.get() },
@@ -282,64 +270,55 @@ void VulkanGraphicsPipelineState::Initialize()
 	if(mData.VertexProgram != nullptr)
 		mVertexDescription = mData.VertexProgram->GetVertexInputDescription();
 
-	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 
-	VulkanGpuDevice* devices[B3D_MAX_DEVICES];
-	VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
+	VulkanGpuDevice& gpuDevice = static_cast<VulkanGpuDevice&>(mGpuDevice);
+	VulkanDescriptorManager& descManager = gpuDevice.GetDescriptorManager();
+	VulkanGpuPipelineParameterLayout& vkParamInfo = static_cast<VulkanGpuPipelineParameterLayout&>(*mParameterLayout);
 
-	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
-	{
-		if(devices[i] == nullptr)
-			continue;
+	u32 numLayouts = vkParamInfo.GetSetCount();
+	VulkanDescriptorLayout** layouts = (VulkanDescriptorLayout**)B3DStackAllocate(sizeof(VulkanDescriptorLayout*) * numLayouts);
 
-		mPerDeviceData[i].Device = devices[i];
+	for(u32 layoutIndex = 0; layoutIndex < numLayouts; layoutIndex++)
+		layouts[layoutIndex] = vkParamInfo.GetLayout(0, layoutIndex);
 
-		VulkanDescriptorManager& descManager = mPerDeviceData[i].Device->GetDescriptorManager();
-		VulkanGpuPipelineParameterLayout& vkParamInfo = static_cast<VulkanGpuPipelineParameterLayout&>(*mParameterLayout);
+	mPipelineLayout = descManager.GetPipelineLayout(layouts, numLayouts);
 
-		u32 numLayouts = vkParamInfo.GetSetCount();
-		VulkanDescriptorLayout** layouts = (VulkanDescriptorLayout**)B3DStackAllocate(sizeof(VulkanDescriptorLayout*) * numLayouts);
-
-		for(u32 j = 0; j < numLayouts; j++)
-			layouts[j] = vkParamInfo.GetLayout(i, j);
-
-		mPerDeviceData[i].PipelineLayout = descManager.GetPipelineLayout(layouts, numLayouts);
-
-		B3DStackFree(layouts);
-	}
+	B3DStackFree(layouts);
 
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResCreated, RenderStatObject_PipelineState);
 }
 
-VulkanPipeline* VulkanGraphicsPipelineState::GetPipeline(
+VulkanPipeline* VulkanGpuGraphicsPipelineState::GetPipeline(
 	u32 deviceIdx, VulkanRenderPass* renderPass, u32 readOnlyFlags, DrawOperationType drawOp,
 	const SPtr<VulkanVertexInput>& vertexInput)
 {
 	Lock lock(mMutex);
 
-	if(mPerDeviceData[deviceIdx].Device == nullptr)
+	if(!B3D_ENSURE(deviceIdx == 0))
 		return nullptr;
 
 	readOnlyFlags &= ~FBT_COLOR; // Ignore the color
 	GpuPipelineKey key(renderPass->GetId(), vertexInput->GetId(), readOnlyFlags, drawOp);
 
-	PerDeviceData& perDeviceData = mPerDeviceData[deviceIdx];
-	auto iterFind = perDeviceData.Pipelines.find(key);
-	if(iterFind != perDeviceData.Pipelines.end())
+	auto iterFind = mPipelines.find(key);
+	if(iterFind != mPipelines.end())
 		return iterFind->second;
 
 	VulkanPipeline* newPipeline = CreatePipeline(deviceIdx, renderPass, readOnlyFlags, drawOp, vertexInput);
-	perDeviceData.Pipelines[key] = newPipeline;
+	mPipelines[key] = newPipeline;
 
 	return newPipeline;
 }
 
-VkPipelineLayout VulkanGraphicsPipelineState::GetPipelineLayout(u32 deviceIdx) const
+VkPipelineLayout VulkanGpuGraphicsPipelineState::GetPipelineLayout(u32 deviceIdx) const
 {
-	return mPerDeviceData[deviceIdx].PipelineLayout;
+	if(!B3D_ENSURE(deviceIdx == 0))
+		return VK_NULL_HANDLE;
+
+	return mPipelineLayout;
 }
 
-void VulkanGraphicsPipelineState::RegisterPipelineResources(VulkanInternalCommandBuffer* cmdBuffer)
+void VulkanGpuGraphicsPipelineState::RegisterPipelineResources(VulkanInternalCommandBuffer* cmdBuffer)
 {
 	u32 deviceIdx = cmdBuffer->GetDeviceIndex();
 
@@ -363,8 +342,11 @@ void VulkanGraphicsPipelineState::RegisterPipelineResources(VulkanInternalComman
 	}
 }
 
-VulkanPipeline* VulkanGraphicsPipelineState::CreatePipeline(u32 deviceIndex, VulkanRenderPass* renderPass, u32 readOnlyFlags, DrawOperationType primitiveType, const SPtr<VulkanVertexInput>& vertexInput)
+VulkanPipeline* VulkanGpuGraphicsPipelineState::CreatePipeline(u32 deviceIndex, VulkanRenderPass* renderPass, u32 readOnlyFlags, DrawOperationType primitiveType, const SPtr<VulkanVertexInput>& vertexInput)
 {
+	if(!B3D_ENSURE(deviceIndex == 0))
+		return nullptr;
+
 	mInputAssemblyInfo.topology = VulkanUtility::GetDrawOp(primitiveType);
 	mTesselationInfo.patchControlPoints = 3; // Not provided by our shaders for now
 	mMultiSampleInfo.rasterizationSamples = renderPass->GetSampleFlags();
@@ -404,7 +386,7 @@ VulkanPipeline* VulkanGraphicsPipelineState::CreatePipeline(u32 deviceIndex, Vul
 	// exact one currently bound. This is because load/store operations and layout transitions are allowed to differ
 	// (as per spec 7.2., such render passes are considered compatible).
 	mPipelineInfo.renderPass = renderPass->GetVkRenderPass(RT_NONE, RT_NONE, RT_NONE);
-	mPipelineInfo.layout = mPerDeviceData[deviceIndex].PipelineLayout;
+	mPipelineInfo.layout = mPipelineLayout;
 	mPipelineInfo.pVertexInputState = vertexInput->GetCreateInfo();
 
 	bool depthReadOnly;
@@ -466,8 +448,8 @@ VulkanPipeline* VulkanGraphicsPipelineState::CreatePipeline(u32 deviceIndex, Vul
 		stageOutputIdx++;
 	}
 
-	VulkanGpuDevice* device = mPerDeviceData[deviceIndex].Device;
-	VkDevice vkDevice = mPerDeviceData[deviceIndex].Device->GetLogical();
+	VulkanGpuDevice& gpuDevice = static_cast<VulkanGpuDevice&>(mGpuDevice);
+	VkDevice vkDevice = gpuDevice.GetLogical();
 
 	VkPipeline pipeline;
 	VkResult result = vkCreateGraphicsPipelines(vkDevice, VK_NULL_HANDLE, 1, &mPipelineInfo, gVulkanAllocator, &pipeline);
@@ -482,29 +464,23 @@ VulkanPipeline* VulkanGraphicsPipelineState::CreatePipeline(u32 deviceIndex, Vul
 	mDepthStencilInfo.back.failOp = oldBackFailOp;
 	mDepthStencilInfo.back.depthFailOp = oldBackZFailOp;
 
-	return device->GetResourceManager().Create<VulkanPipeline>(pipeline, colorReadOnly, depthReadOnly, vertexInput->GetVertexBufferBindingCount());
+	return gpuDevice.GetResourceManager().Create<VulkanPipeline>(pipeline, colorReadOnly, depthReadOnly, vertexInput->GetVertexBufferBindingCount());
 }
 
-VulkanComputePipelineState::VulkanComputePipelineState(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask)
-	: ComputePipelineState(program, deviceMask), mDeviceMask(deviceMask)
+VulkanGpuComputePipelineState::VulkanGpuComputePipelineState(VulkanGpuDevice& gpuDevice, const GpuComputePipelineStateCreateInformation& createInformation)
+	: GpuComputePipelineState(gpuDevice, createInformation)
 {
-	B3DZeroOut(mPerDeviceData);
 }
 
-VulkanComputePipelineState::~VulkanComputePipelineState()
+VulkanGpuComputePipelineState::~VulkanGpuComputePipelineState()
 {
-	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
-	{
-		if(mPerDeviceData[i].Device == nullptr)
-			continue;
-
-		mPerDeviceData[i].Pipeline->Destroy();
-	}
+	if(mPipeline != nullptr)
+		mPipeline->Destroy();
 }
 
-void VulkanComputePipelineState::Initialize()
+void VulkanGpuComputePipelineState::Initialize()
 {
-	ComputePipelineState::Initialize();
+	GpuComputePipelineState::Initialize();
 
 	// This might happen fairly often if shaders with unsupported languages are loaded, in which case the pipeline
 	// will never get used, and its fine not to initialize it.
@@ -532,58 +508,55 @@ void VulkanComputePipelineState::Initialize()
 
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 
-	VulkanGpuDevice* devices[B3D_MAX_DEVICES];
-	VulkanUtility::GetDevices(rapi, mDeviceMask, devices);
 
-	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
-	{
-		if(devices[i] == nullptr)
-			continue;
+	VulkanGpuDevice& gpuDevice = static_cast<VulkanGpuDevice&>(mGpuDevice);
+	VulkanDescriptorManager& descManager = gpuDevice.GetDescriptorManager();
+	VulkanResourceManager& rescManager = gpuDevice.GetResourceManager();
+	VulkanGpuPipelineParameterLayout& vkParamInfo = static_cast<VulkanGpuPipelineParameterLayout&>(*mParameterLayout);
 
-		mPerDeviceData[i].Device = devices[i];
+	u32 numLayouts = vkParamInfo.GetSetCount();
+	VulkanDescriptorLayout** layouts = (VulkanDescriptorLayout**)B3DStackAllocate(sizeof(VulkanDescriptorLayout*) * numLayouts);
 
-		VulkanDescriptorManager& descManager = devices[i]->GetDescriptorManager();
-		VulkanResourceManager& rescManager = devices[i]->GetResourceManager();
-		VulkanGpuPipelineParameterLayout& vkParamInfo = static_cast<VulkanGpuPipelineParameterLayout&>(*mParameterLayout);
+	for(u32 j = 0; j < numLayouts; j++)
+		layouts[j] = vkParamInfo.GetLayout(0, j);
 
-		u32 numLayouts = vkParamInfo.GetSetCount();
-		VulkanDescriptorLayout** layouts = (VulkanDescriptorLayout**)B3DStackAllocate(sizeof(VulkanDescriptorLayout*) * numLayouts);
+	VulkanShaderModule* module = vkProgram->GetShaderModule(0);
 
-		for(u32 j = 0; j < numLayouts; j++)
-			layouts[j] = vkParamInfo.GetLayout(i, j);
+	if(module != nullptr)
+		pipelineCI.stage.module = module->GetHandle();
+	else
+		pipelineCI.stage.module = VK_NULL_HANDLE;
 
-		VulkanShaderModule* module = vkProgram->GetShaderModule(i);
+	pipelineCI.layout = descManager.GetPipelineLayout(layouts, numLayouts);
 
-		if(module != nullptr)
-			pipelineCI.stage.module = module->GetHandle();
-		else
-			pipelineCI.stage.module = VK_NULL_HANDLE;
+	VkPipeline pipeline;
+	VkResult result = vkCreateComputePipelines(gpuDevice.GetLogical(), VK_NULL_HANDLE, 1, &pipelineCI, gVulkanAllocator, &pipeline);
+	B3D_ASSERT(result == VK_SUCCESS);
 
-		pipelineCI.layout = descManager.GetPipelineLayout(layouts, numLayouts);
-
-		VkPipeline pipeline;
-		VkResult result = vkCreateComputePipelines(devices[i]->GetLogical(), VK_NULL_HANDLE, 1, &pipelineCI, gVulkanAllocator, &pipeline);
-		B3D_ASSERT(result == VK_SUCCESS);
-
-		mPerDeviceData[i].Pipeline = rescManager.Create<VulkanPipeline>(pipeline);
-		mPerDeviceData[i].PipelineLayout = pipelineCI.layout;
-		B3DStackFree(layouts);
-	}
+	mPipeline = rescManager.Create<VulkanPipeline>(pipeline);
+	mPipelineLayout = pipelineCI.layout;
+	B3DStackFree(layouts);
 
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResCreated, RenderStatObject_PipelineState);
 }
 
-VulkanPipeline* VulkanComputePipelineState::GetPipeline(u32 deviceIndex) const
+VulkanPipeline* VulkanGpuComputePipelineState::GetPipeline(u32 deviceIndex) const
 {
-	return mPerDeviceData[deviceIndex].Pipeline;
+	if(!B3D_ENSURE(deviceIndex == 0))
+		return nullptr;
+
+	return mPipeline;
 }
 
-VkPipelineLayout VulkanComputePipelineState::GetPipelineLayout(u32 deviceIndex) const
+VkPipelineLayout VulkanGpuComputePipelineState::GetPipelineLayout(u32 deviceIndex) const
 {
-	return mPerDeviceData[deviceIndex].PipelineLayout;
+	if(!B3D_ENSURE(deviceIndex == 0))
+		return nullptr;
+
+	return mPipelineLayout;
 }
 
-void VulkanComputePipelineState::RegisterPipelineResources(VulkanInternalCommandBuffer* cmdBuffer)
+void VulkanGpuComputePipelineState::RegisterPipelineResources(VulkanInternalCommandBuffer* cmdBuffer)
 {
 	u32 deviceIdx = cmdBuffer->GetDeviceIndex();
 

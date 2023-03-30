@@ -35,6 +35,31 @@ SPtr<ct::GpuProgram> CreateGpuProgram<true>(const GpuProgramCreateInformation& g
 	return device->CreateGpuProgram(gpuProgramCreateInformation);
 }
 
+SPtr<GpuComputePipelineState> CreateComputePipeline(const SPtr<GpuProgram>& gpuProgram)
+{
+	return GpuComputePipelineState::Create(gpuProgram);
+}
+
+SPtr<ct::GpuComputePipelineState> CreateComputePipeline(const SPtr<ct::GpuProgram>& gpuProgram)
+{
+	ct::GpuComputePipelineStateCreateInformation createInformation;
+	createInformation.Program = gpuProgram;
+
+	const SPtr<GpuDevice>& device = GetCoreApplication().GetPrimaryGpuDevice();
+	return device->CreateGpuComputePipelineState(createInformation);
+}
+
+SPtr<GpuGraphicsPipelineState> CreateGraphicsPipeline(const PIPELINE_STATE_DESC& createInformation)
+{
+	return GpuGraphicsPipelineState::Create(createInformation);
+}
+
+SPtr<ct::GpuGraphicsPipelineState> CreateGraphicsPipeline(const ct::GpuGraphicsPipelineStateCreateInformation& createInformation)
+{
+	const SPtr<GpuDevice>& device = GetCoreApplication().GetPrimaryGpuDevice();
+	return device->CreateGpuGraphicsPipelineState(createInformation);
+}
+
 template <bool Core>
 TPass<Core>::TPass()
 {
@@ -95,7 +120,7 @@ void TPass<Core>::CreatePipelineState()
 	if(IsCompute())
 	{
 		SPtr<GpuProgramType> program = CreateGpuProgram<Core>(mData.ComputeProgramDesc);
-		mComputePipelineState = ComputePipelineStateType::Create(program);
+		mComputePipelineState = CreateComputePipeline(program);
 	}
 	else
 	{
@@ -120,7 +145,7 @@ void TPass<Core>::CreatePipelineState()
 		desc.RasterizerState = RasterizerStateType::Create(mData.RasterizerStateDesc);
 		desc.DepthStencilState = DepthStencilStateType::Create(mData.DepthStencilStateDesc);
 
-		mGraphicsPipelineState = GraphicsPipelineStateType::Create(desc);
+		mGraphicsPipelineState = CreateGraphicsPipeline(desc);
 	}
 }
 

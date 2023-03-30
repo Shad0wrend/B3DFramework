@@ -49,8 +49,8 @@ namespace bs
 		using RasterizerStateType = CoreVariantType<RasterizerState, Core>;
 		using DepthStencilStateType = CoreVariantType<DepthStencilState, Core>;
 		using GpuProgramType = CoreVariantType<GpuProgram, Core>;
-		using GraphicsPipelineStateType = CoreVariantType<GraphicsPipelineState, Core>;
-		using ComputePipelineStateType = CoreVariantType<ComputePipelineState, Core>;
+		using GraphicsPipelineStateType = CoreVariantType<GpuGraphicsPipelineState, Core>;
+		using ComputePipelineStateType = CoreVariantType<GpuComputePipelineState, Core>;
 		using PipelineStateDescType = typename TGpuPipelineStateTypes<Core>::StateDescType;
 
 		virtual ~TPass() = default;

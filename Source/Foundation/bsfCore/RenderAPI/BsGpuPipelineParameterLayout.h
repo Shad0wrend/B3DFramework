@@ -172,7 +172,11 @@ namespace bs
 
 	namespace ct
 	{
-		/** Contains information about all GPU program parameters required when binding a particular GPU pipeline for execution. */
+		/**
+		 * Contains information about all GPU program parameters required when binding a particular GPU pipeline for execution.
+		 *
+		 * @note	Thread safe (Immutable).
+		 */
 		class B3D_CORE_EXPORT GpuPipelineParameterLayout : public CoreObject, public GpuPipelineParameterLayoutBase
 		{
 		public:

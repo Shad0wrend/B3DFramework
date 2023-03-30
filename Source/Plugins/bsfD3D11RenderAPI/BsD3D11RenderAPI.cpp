@@ -203,9 +203,9 @@ void D3D11RenderAPI::DestroyCore()
 	RenderAPI::DestroyCore();
 }
 
-void D3D11RenderAPI::SetGraphicsPipeline(const SPtr<GraphicsPipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer)
+void D3D11RenderAPI::SetGraphicsPipeline(const SPtr<GpuGraphicsPipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer)
 {
-	auto executeRef = [&](const SPtr<GraphicsPipelineState>& pipelineState)
+	auto executeRef = [&](const SPtr<GpuGraphicsPipelineState>& pipelineState)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -294,9 +294,9 @@ void D3D11RenderAPI::SetGraphicsPipeline(const SPtr<GraphicsPipelineState>& pipe
 	B3D_INCREMENT_RENDER_STATISTIC(NumPipelineStateChanges);
 }
 
-void D3D11RenderAPI::SetComputePipeline(const SPtr<ComputePipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer)
+void D3D11RenderAPI::SetComputePipeline(const SPtr<GpuComputePipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer)
 {
-	auto executeRef = [&](const SPtr<ComputePipelineState>& pipelineState)
+	auto executeRef = [&](const SPtr<GpuComputePipelineState>& pipelineState)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 

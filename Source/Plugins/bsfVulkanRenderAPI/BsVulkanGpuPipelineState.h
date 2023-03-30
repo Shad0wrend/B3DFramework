@@ -45,10 +45,13 @@ namespace bs
 		};
 
 		/**	Vulkan implementation of a graphics pipeline state. */
-		class VulkanGraphicsPipelineState : public GraphicsPipelineState
+		class VulkanGpuGraphicsPipelineState : public GpuGraphicsPipelineState
 		{
 		public:
-			~VulkanGraphicsPipelineState();
+			VulkanGpuGraphicsPipelineState(VulkanGpuDevice& gpuDevice, const GpuGraphicsPipelineStateInformation& createInformation);
+			~VulkanGpuGraphicsPipelineState();
+
+			void Initialize() override;
 
 			/** Returns the vertex input declaration from the vertex GPU program bound on the pipeline. */
 			const SPtr<VertexDescription>& GetInputDeclaration() const { return mVertexDescription; }
@@ -82,12 +85,6 @@ namespace bs
 			void RegisterPipelineResources(VulkanInternalCommandBuffer* cmdBuffer);
 
 		protected:
-			friend class VulkanRenderStateManager;
-
-			VulkanGraphicsPipelineState(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask);
-
-			void Initialize() override;
-
 			/**
 			 * Create a new Vulkan graphics pipeline.
 			 *
@@ -128,14 +125,6 @@ namespace bs
 				bool operator()(const GpuPipelineKey& a, const GpuPipelineKey& b) const;
 			};
 
-			/** Contains pipeline data specific to a single Vulkan device. */
-			struct PerDeviceData
-			{
-				VulkanGpuDevice* Device;
-				VkPipelineLayout PipelineLayout;
-				UnorderedMap<GpuPipelineKey, VulkanPipeline*, HashFunc, EqualFunc> Pipelines;
-			};
-
 			VkPipelineShaderStageCreateInfo mShaderStageInfos[5];
 			VkPipelineInputAssemblyStateCreateInfo mInputAssemblyInfo;
 			VkPipelineTessellationStateCreateInfo mTesselationInfo;
@@ -150,17 +139,20 @@ namespace bs
 			VkGraphicsPipelineCreateInfo mPipelineInfo;
 			SPtr<VertexDescription> mVertexDescription;
 
-			GpuDeviceFlags mDeviceMask;
-			PerDeviceData mPerDeviceData[B3D_MAX_DEVICES];
+			VkPipelineLayout mPipelineLayout = VK_NULL_HANDLE;
+			UnorderedMap<GpuPipelineKey, VulkanPipeline*, HashFunc, EqualFunc> mPipelines;
 
 			Mutex mMutex;
 		};
 
 		/**	Vulkan implementation of a compute pipeline state. */
-		class VulkanComputePipelineState : public ComputePipelineState
+		class VulkanGpuComputePipelineState : public GpuComputePipelineState
 		{
 		public:
-			~VulkanComputePipelineState();
+			VulkanGpuComputePipelineState(VulkanGpuDevice& gpuDevice, const GpuComputePipelineStateCreateInformation& createInformation);
+			~VulkanGpuComputePipelineState();
+
+			void Initialize() override;
 
 			/**
 			 * Returns a pipeline object for the specified device index. If the device index doesn't match a bit in the
@@ -181,22 +173,8 @@ namespace bs
 			void RegisterPipelineResources(VulkanInternalCommandBuffer* cmdBuffer);
 
 		protected:
-			friend class VulkanRenderStateManager;
-
-			VulkanComputePipelineState(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask);
-
-			void Initialize() override;
-
-			/** Contains pipeline data specific to a single Vulkan device. */
-			struct PerDeviceData
-			{
-				VulkanGpuDevice* Device;
-				VulkanPipeline* Pipeline;
-				VkPipelineLayout PipelineLayout;
-			};
-
-			GpuDeviceFlags mDeviceMask;
-			PerDeviceData mPerDeviceData[B3D_MAX_DEVICES];
+			VulkanPipeline* mPipeline = nullptr;
+			VkPipelineLayout mPipelineLayout = VK_NULL_HANDLE;
 		};
 
 		/** @} */

@@ -21,12 +21,12 @@ void RenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams)
 	GetCoreThread().QueueCommand(std::bind(&ct::RenderAPI::SetGpuParams, ct::RenderAPI::InstancePtr(), gpuParams->GetCore(), nullptr));
 }
 
-void RenderAPI::SetGraphicsPipeline(const SPtr<GraphicsPipelineState>& pipelineState)
+void RenderAPI::SetGraphicsPipeline(const SPtr<GpuGraphicsPipelineState>& pipelineState)
 {
 	GetCoreThread().QueueCommand(std::bind(&ct::RenderAPI::SetGraphicsPipeline, ct::RenderAPI::InstancePtr(), pipelineState->GetCore(), nullptr));
 }
 
-void RenderAPI::SetComputePipeline(const SPtr<ComputePipelineState>& pipelineState)
+void RenderAPI::SetComputePipeline(const SPtr<GpuComputePipelineState>& pipelineState)
 {
 	GetCoreThread().QueueCommand(std::bind(&ct::RenderAPI::SetComputePipeline, ct::RenderAPI::InstancePtr(), pipelineState->GetCore(), nullptr));
 }

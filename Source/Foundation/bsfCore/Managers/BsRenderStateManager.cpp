@@ -40,22 +40,6 @@ SPtr<BlendState> RenderStateManager::CreateBlendState(const BLEND_STATE_DESC& de
 	return state;
 }
 
-SPtr<GraphicsPipelineState> RenderStateManager::CreateGraphicsPipelineState(const PIPELINE_STATE_DESC& desc) const
-{
-	SPtr<GraphicsPipelineState> state = CreateGraphicsPipelineStateInternal(desc);
-	state->Initialize();
-
-	return state;
-}
-
-SPtr<ComputePipelineState> RenderStateManager::CreateComputePipelineState(const SPtr<GpuProgram>& program) const
-{
-	SPtr<ComputePipelineState> state = CreateComputePipelineStateInternal(program);
-	state->Initialize();
-
-	return state;
-}
-
 SPtr<SamplerState> RenderStateManager::CreateSamplerStatePtrInternal(const SamplerStateCreateInformation& desc) const
 {
 	SPtr<SamplerState> samplerState = B3DMakeCoreFromExisting<SamplerState>(new(B3DAllocate<SamplerState>()) SamplerState(desc));
@@ -86,24 +70,6 @@ SPtr<BlendState> RenderStateManager::CreateBlendStatePtrInternal(const BLEND_STA
 	blendState->SetShared(blendState);
 
 	return blendState;
-}
-
-SPtr<GraphicsPipelineState> RenderStateManager::CreateGraphicsPipelineStateInternal(const PIPELINE_STATE_DESC& desc) const
-{
-	SPtr<GraphicsPipelineState> pipelineState =
-		B3DMakeCoreFromExisting<GraphicsPipelineState>(new(B3DAllocate<GraphicsPipelineState>()) GraphicsPipelineState(desc));
-	pipelineState->SetShared(pipelineState);
-
-	return pipelineState;
-}
-
-SPtr<ComputePipelineState> RenderStateManager::CreateComputePipelineStateInternal(const SPtr<GpuProgram>& program) const
-{
-	SPtr<ComputePipelineState> pipelineState =
-		B3DMakeCoreFromExisting<ComputePipelineState>(new(B3DAllocate<ComputePipelineState>()) ComputePipelineState(program));
-	pipelineState->SetShared(pipelineState);
-
-	return pipelineState;
 }
 
 const SPtr<SamplerState>& RenderStateManager::GetDefaultSamplerState() const
@@ -208,22 +174,6 @@ SPtr<BlendState> RenderStateManager::CreateBlendState(const BLEND_STATE_DESC& de
 	return state;
 }
 
-SPtr<GraphicsPipelineState> RenderStateManager::CreateGraphicsPipelineState(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask) const
-{
-	SPtr<GraphicsPipelineState> state = CreateGraphicsPipelineStateInternal(desc, deviceMask);
-	state->Initialize();
-
-	return state;
-}
-
-SPtr<ComputePipelineState> RenderStateManager::CreateComputePipelineState(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask) const
-{
-	SPtr<ComputePipelineState> state = CreateComputePipelineStateInternal(program, deviceMask);
-	state->Initialize();
-
-	return state;
-}
-
 SPtr<SamplerState> RenderStateManager::CreateSamplerStateInternal(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask) const
 {
 	SPtr<SamplerState> state = FindCachedState(desc);
@@ -286,28 +236,6 @@ SPtr<BlendState> RenderStateManager::CreateBlendStateInternal(const BLEND_STATE_
 	}
 
 	return state;
-}
-
-SPtr<GraphicsPipelineState> RenderStateManager::CreateGraphicsPipelineStateInternal(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask) const
-{
-	SPtr<GraphicsPipelineState> pipelineState =
-		B3DMakeSharedFromExisting<GraphicsPipelineState>(new(B3DAllocate<GraphicsPipelineState>())
-												 GraphicsPipelineState(desc, deviceMask));
-
-	pipelineState->SetShared(pipelineState);
-
-	return pipelineState;
-}
-
-SPtr<ComputePipelineState> RenderStateManager::CreateComputePipelineStateInternal(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask) const
-{
-	SPtr<ComputePipelineState> pipelineState =
-		B3DMakeSharedFromExisting<ComputePipelineState>(new(B3DAllocate<ComputePipelineState>())
-												ComputePipelineState(program, deviceMask));
-
-	pipelineState->SetShared(pipelineState);
-
-	return pipelineState;
 }
 
 void RenderStateManager::OnShutDown()

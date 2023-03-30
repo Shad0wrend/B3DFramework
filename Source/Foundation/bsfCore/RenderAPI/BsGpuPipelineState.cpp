@@ -11,12 +11,11 @@
 #include "RenderAPI/BsGpuProgram.h"
 #include "RenderAPI/BsGpuProgramParameterDescription.h"
 #include "RenderAPI/BsGpuPipelineParameterLayout.h"
-#include "Managers/BsRenderStateManager.h"
 
 using namespace bs;
 
 /** Converts a sim thread pipeline state descriptor to a core thread one. */
-void ConvertPassDesc(const PIPELINE_STATE_DESC& input, ct::PIPELINE_STATE_DESC& output)
+void ConvertPassDesc(const PIPELINE_STATE_DESC& input, ct::GpuGraphicsPipelineStateInformation& output)
 {
 	output.BlendState = input.BlendState != nullptr ? input.BlendState->GetCore() : nullptr;
 	output.RasterizerState = input.RasterizerState != nullptr ? input.RasterizerState->GetCore() : nullptr;
@@ -36,7 +35,7 @@ TGraphicsPipelineState<Core>::TGraphicsPipelineState(const StateDescType& data)
 template class TGraphicsPipelineState<false>;
 template class TGraphicsPipelineState<true>;
 
-GraphicsPipelineState::GraphicsPipelineState(const PIPELINE_STATE_DESC& desc)
+GpuGraphicsPipelineState::GpuGraphicsPipelineState(const PIPELINE_STATE_DESC& desc)
 	: TGraphicsPipelineState(desc)
 {
 	GpuPipelineParameterLayoutInformation paramsDesc;
@@ -73,22 +72,31 @@ GraphicsPipelineState::GraphicsPipelineState(const PIPELINE_STATE_DESC& desc)
 	mParameterLayout = GpuPipelineParameterLayout::Create(paramsDesc);
 }
 
-SPtr<ct::GraphicsPipelineState> GraphicsPipelineState::GetCore() const
+SPtr<ct::GpuGraphicsPipelineState> GpuGraphicsPipelineState::GetCore() const
 {
-	return std::static_pointer_cast<ct::GraphicsPipelineState>(mCoreSpecific);
+	return std::static_pointer_cast<ct::GpuGraphicsPipelineState>(mCoreSpecific);
 }
 
-SPtr<ct::CoreObject> GraphicsPipelineState::CreateCore() const
+SPtr<ct::CoreObject> GpuGraphicsPipelineState::CreateCore() const
 {
-	ct::PIPELINE_STATE_DESC desc;
-	ConvertPassDesc(mData, desc);
+	ct::GpuGraphicsPipelineStateCreateInformation createInformation;
+	ConvertPassDesc(mData, createInformation);
 
-	return ct::RenderStateManager::Instance().CreateGraphicsPipelineStateInternal(desc);
+	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+	if(!gpuDevice)
+		return nullptr;
+
+	return gpuDevice->CreateGpuGraphicsPipelineState(createInformation, true);
 }
 
-SPtr<GraphicsPipelineState> GraphicsPipelineState::Create(const PIPELINE_STATE_DESC& desc)
+SPtr<GpuGraphicsPipelineState> GpuGraphicsPipelineState::Create(const PIPELINE_STATE_DESC& desc)
 {
-	return RenderStateManager::Instance().CreateGraphicsPipelineState(desc);
+	SPtr<GpuGraphicsPipelineState> pipelineState =
+		B3DMakeCoreFromExisting<GpuGraphicsPipelineState>(new(B3DAllocate<GpuGraphicsPipelineState>()) GpuGraphicsPipelineState(desc));
+	pipelineState->SetShared(pipelineState);
+	pipelineState->Initialize();
+
+	return pipelineState;
 }
 
 template <bool Core>
@@ -103,7 +111,7 @@ TComputePipelineState<Core>::TComputePipelineState(const GpuProgramType& program
 template class TComputePipelineState<false>;
 template class TComputePipelineState<true>;
 
-ComputePipelineState::ComputePipelineState(const SPtr<GpuProgram>& program)
+GpuComputePipelineState::GpuComputePipelineState(const SPtr<GpuProgram>& program)
 	: TComputePipelineState(program)
 {
 	GpuPipelineParameterLayoutInformation paramsDesc;
@@ -113,28 +121,40 @@ ComputePipelineState::ComputePipelineState(const SPtr<GpuProgram>& program)
 	mParameterLayout = GpuPipelineParameterLayout::Create(paramsDesc);
 }
 
-SPtr<ct::ComputePipelineState> ComputePipelineState::GetCore() const
+SPtr<ct::GpuComputePipelineState> GpuComputePipelineState::GetCore() const
 {
-	return std::static_pointer_cast<ct::ComputePipelineState>(mCoreSpecific);
+	return std::static_pointer_cast<ct::GpuComputePipelineState>(mCoreSpecific);
 }
 
-SPtr<ct::CoreObject> ComputePipelineState::CreateCore() const
+SPtr<ct::CoreObject> GpuComputePipelineState::CreateCore() const
 {
-	return ct::RenderStateManager::Instance().CreateComputePipelineStateInternal(mProgram->GetCore());
+	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+	if(!gpuDevice)
+		return nullptr;
+
+	ct::GpuComputePipelineStateCreateInformation createInformation;
+	createInformation.Program = mProgram->GetCore();
+
+	return gpuDevice->CreateGpuComputePipelineState(createInformation, true);
 }
 
-SPtr<ComputePipelineState> ComputePipelineState::Create(const SPtr<GpuProgram>& program)
+SPtr<GpuComputePipelineState> GpuComputePipelineState::Create(const SPtr<GpuProgram>& program)
 {
-	return RenderStateManager::Instance().CreateComputePipelineState(program);
+	SPtr<GpuComputePipelineState> pipelineState =
+		B3DMakeCoreFromExisting<GpuComputePipelineState>(new(B3DAllocate<GpuComputePipelineState>()) GpuComputePipelineState(program));
+	pipelineState->SetShared(pipelineState);
+	pipelineState->Initialize();
+
+	return pipelineState;
 }
 
 namespace bs { namespace ct
 {
-GraphicsPipelineState::GraphicsPipelineState(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask)
-	: TGraphicsPipelineState(desc), mDeviceMask(deviceMask)
+GpuGraphicsPipelineState::GpuGraphicsPipelineState(GpuDevice& gpuDevice, const GpuGraphicsPipelineStateCreateInformation& createInformation)
+	: TGraphicsPipelineState(createInformation), mGpuDevice(gpuDevice)
 {}
 
-void GraphicsPipelineState::Initialize()
+void GpuGraphicsPipelineState::Initialize()
 {
 	GpuPipelineParameterLayoutInformation parameterLayoutCreateInformation;
 	if(mData.VertexProgram != nullptr)
@@ -152,36 +172,22 @@ void GraphicsPipelineState::Initialize()
 	if(mData.DomainProgram != nullptr)
 		parameterLayoutCreateInformation.Domain = mData.DomainProgram->GetParameterDescription();
 
-	B3D_ENSURE(mDeviceMask == GDF_PRIMARY || mDeviceMask == GDF_DEFAULT);
-	const SPtr<GpuDevice>& gpuDevice = GpuBackend::Instance().GetDevice((mDeviceMask == GDF_PRIMARY || mDeviceMask == GDF_DEFAULT) ? 0 : ~0u);
-	mParameterLayout = gpuDevice->CreateGpuPipelineParameterLayout(parameterLayoutCreateInformation);
+	mParameterLayout = mGpuDevice.CreateGpuPipelineParameterLayout(parameterLayoutCreateInformation);
 
 	CoreObject::Initialize();
 }
 
-SPtr<GraphicsPipelineState> GraphicsPipelineState::Create(const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask)
-{
-	return RenderStateManager::Instance().CreateGraphicsPipelineState(desc, deviceMask);
-}
-
-ComputePipelineState::ComputePipelineState(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask)
-	: TComputePipelineState(program), mDeviceMask(deviceMask)
+GpuComputePipelineState::GpuComputePipelineState(GpuDevice& gpuDevice, const GpuComputePipelineStateCreateInformation& createInformation)
+	: TComputePipelineState(createInformation.Program), mGpuDevice(gpuDevice)
 {}
 
-void ComputePipelineState::Initialize()
+void GpuComputePipelineState::Initialize()
 {
 	GpuPipelineParameterLayoutInformation parameterLayoutCreateInformation;
 	parameterLayoutCreateInformation.Compute = mProgram->GetParameterDescription();
 
-	B3D_ENSURE(mDeviceMask == GDF_PRIMARY || mDeviceMask == GDF_DEFAULT);
-	const SPtr<GpuDevice>& gpuDevice = GpuBackend::Instance().GetDevice((mDeviceMask == GDF_PRIMARY || mDeviceMask == GDF_DEFAULT) ? 0 : ~0u);
-	mParameterLayout = gpuDevice->CreateGpuPipelineParameterLayout(parameterLayoutCreateInformation);
+	mParameterLayout = mGpuDevice.CreateGpuPipelineParameterLayout(parameterLayoutCreateInformation);
 
 	CoreObject::Initialize();
-}
-
-SPtr<ComputePipelineState> ComputePipelineState::Create(const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask)
-{
-	return RenderStateManager::Instance().CreateComputePipelineState(program, deviceMask);
 }
 }}

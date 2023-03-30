@@ -143,8 +143,8 @@ namespace bs
 			friend class bs::RendererMaterialManager;
 
 			SPtr<GpuParameters> mGPUParameters;
-			SPtr<GraphicsPipelineState> mGraphicsPipeline;
-			SPtr<ComputePipelineState> mComputePipeline;
+			SPtr<GpuGraphicsPipelineState> mGraphicsPipeline;
+			SPtr<GpuComputePipelineState> mComputePipeline;
 			u32 mStencilReferenceValue = 0;
 
 			ShaderVariationParameters mVariationParameters;

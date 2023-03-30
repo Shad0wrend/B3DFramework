@@ -47,14 +47,14 @@ namespace bs
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void SetGraphicsPipeline(const SPtr<GraphicsPipelineState>& pipelineState);
+		static void SetGraphicsPipeline(const SPtr<GpuGraphicsPipelineState>& pipelineState);
 
 		/**
 		 * @see ct::RenderAPI::SetComputePipeline()
 		 *
 		 * @note This is an @ref asyncMethod "asynchronous method".
 		 */
-		static void SetComputePipeline(const SPtr<ComputePipelineState>& pipelineState);
+		static void SetComputePipeline(const SPtr<GpuComputePipelineState>& pipelineState);
 
 		/**
 		 * @see ct::RenderAPI::SetVertexBuffers()
@@ -202,7 +202,7 @@ namespace bs
 			 *
 			 * @see		GraphicsPipelineState
 			 */
-			virtual void SetGraphicsPipeline(const SPtr<GraphicsPipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void SetGraphicsPipeline(const SPtr<GpuGraphicsPipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Sets a pipeline state that controls how will subsequent dispatch commands execute.
@@ -212,7 +212,7 @@ namespace bs
 			 *									is executed immediately. Otherwise it is executed when executeCommands() is
 			 *									called. Buffer must support graphics operations.
 			 */
-			virtual void SetComputePipeline(const SPtr<ComputePipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void SetComputePipeline(const SPtr<GpuComputePipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Sets the active viewport that will be used for all render operations.

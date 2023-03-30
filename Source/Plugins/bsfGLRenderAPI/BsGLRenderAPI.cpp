@@ -239,9 +239,9 @@ void GLRenderAPI::DestroyCore()
 		B3DDeleteMultiple(mTextureInfos, mNumTextureUnits);
 }
 
-void GLRenderAPI::SetGraphicsPipeline(const SPtr<GraphicsPipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer)
+void GLRenderAPI::SetGraphicsPipeline(const SPtr<GpuGraphicsPipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer)
 {
-	auto executeRef = [&](const SPtr<GraphicsPipelineState>& pipelineState)
+	auto executeRef = [&](const SPtr<GpuGraphicsPipelineState>& pipelineState)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 
@@ -349,9 +349,9 @@ void GLRenderAPI::SetGraphicsPipeline(const SPtr<GraphicsPipelineState>& pipelin
 	B3D_INCREMENT_RENDER_STATISTIC(NumPipelineStateChanges);
 }
 
-void GLRenderAPI::SetComputePipeline(const SPtr<ComputePipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer)
+void GLRenderAPI::SetComputePipeline(const SPtr<GpuComputePipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer)
 {
-	auto executeRef = [&](const SPtr<ComputePipelineState>& pipelineState)
+	auto executeRef = [&](const SPtr<GpuComputePipelineState>& pipelineState)
 	{
 		THROW_IF_NOT_CORE_THREAD;
 

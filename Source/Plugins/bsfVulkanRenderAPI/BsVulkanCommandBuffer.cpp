@@ -1323,24 +1323,24 @@ void VulkanInternalCommandBuffer::ClearViewport(u32 buffers, const Color& color,
 	ClearViewport(viewportArea, buffers, color, depth, stencil, targetMask);
 }
 
-void VulkanInternalCommandBuffer::SetPipelineState(const SPtr<GraphicsPipelineState>& state)
+void VulkanInternalCommandBuffer::SetPipelineState(const SPtr<GpuGraphicsPipelineState>& state)
 {
 	if(mGraphicsPipeline == state)
 		return;
 
-	mGraphicsPipeline = std::static_pointer_cast<VulkanGraphicsPipelineState>(state);
+	mGraphicsPipeline = std::static_pointer_cast<VulkanGpuGraphicsPipelineState>(state);
 	mGfxPipelineRequiresBind = true;
 
 	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
 	mVertexInputsDirty = true;
 }
 
-void VulkanInternalCommandBuffer::SetPipelineState(const SPtr<ComputePipelineState>& state)
+void VulkanInternalCommandBuffer::SetPipelineState(const SPtr<GpuComputePipelineState>& state)
 {
 	if(mComputePipeline == state)
 		return;
 
-	mComputePipeline = std::static_pointer_cast<VulkanComputePipelineState>(state);
+	mComputePipeline = std::static_pointer_cast<VulkanGpuComputePipelineState>(state);
 	mCmpPipelineRequiresBind = true;
 }
 

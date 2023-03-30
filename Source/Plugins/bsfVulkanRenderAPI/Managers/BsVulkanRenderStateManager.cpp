@@ -16,25 +16,3 @@ SPtr<ct::SamplerState> VulkanRenderStateManager::CreateSamplerStateInternalInter
 
 	return samplerState;
 }
-
-SPtr<ct::GraphicsPipelineState> VulkanRenderStateManager::CreateGraphicsPipelineStateInternal(
-	const PIPELINE_STATE_DESC& desc, GpuDeviceFlags deviceMask) const
-{
-	SPtr<VulkanGraphicsPipelineState> pipelineState =
-		B3DMakeSharedFromExisting<VulkanGraphicsPipelineState>(new(B3DAllocate<VulkanGraphicsPipelineState>())
-													   VulkanGraphicsPipelineState(desc, deviceMask));
-	pipelineState->SetShared(pipelineState);
-
-	return pipelineState;
-}
-
-SPtr<ct::ComputePipelineState> VulkanRenderStateManager::CreateComputePipelineStateInternal(
-	const SPtr<GpuProgram>& program, GpuDeviceFlags deviceMask) const
-{
-	SPtr<VulkanComputePipelineState> pipelineState =
-		B3DMakeSharedFromExisting<VulkanComputePipelineState>(new(B3DAllocate<VulkanComputePipelineState>())
-													  VulkanComputePipelineState(program, deviceMask));
-	pipelineState->SetShared(pipelineState);
-
-	return pipelineState;
-}
