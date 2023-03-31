@@ -5,7 +5,6 @@
 #include "BsCoreApplication.h"
 #include "BsGpuBackend.h"
 #include "BsGpuDevice.h"
-#include "RenderAPI/BsRasterizerState.h"
 #include "RenderAPI/BsDepthStencilState.h"
 #include "RenderAPI/BsGpuProgram.h"
 #include "RenderAPI/BsGpuProgramParameterDescription.h"
@@ -62,11 +61,40 @@ u64 BlendStateInformation::GenerateHash(const BlendStateInformation& value)
 	return (u64)hash;
 }
 
+bool RasterizerStateInformation::operator==(const RasterizerStateInformation& rhs) const
+{
+	return PolygonMode == rhs.PolygonMode &&
+		CullMode == rhs.CullMode &&
+		DepthBias == rhs.DepthBias &&
+		DepthBiasClamp == rhs.DepthBiasClamp &&
+		SlopeScaledDepthBias == rhs.SlopeScaledDepthBias &&
+		DepthClipEnable == rhs.DepthClipEnable &&
+		ScissorEnable == rhs.ScissorEnable &&
+		MultisampleEnable == rhs.MultisampleEnable &&
+		AntialiasedLineEnable == rhs.AntialiasedLineEnable;
+}
+
+u64 RasterizerStateInformation::GenerateHash(const RasterizerStateInformation& value)
+{
+	size_t hash = 0;
+	B3DCombineHash(hash, (u32)value.PolygonMode);
+	B3DCombineHash(hash, (u32)value.CullMode);
+	B3DCombineHash(hash, value.DepthBias);
+	B3DCombineHash(hash, value.DepthBiasClamp);
+	B3DCombineHash(hash, value.SlopeScaledDepthBias);
+	B3DCombineHash(hash, value.DepthClipEnable);
+	B3DCombineHash(hash, value.ScissorEnable);
+	B3DCombineHash(hash, value.MultisampleEnable);
+	B3DCombineHash(hash, value.AntialiasedLineEnable);
+
+	return (u64)hash;
+}
+
 /** Converts a sim thread pipeline state descriptor to a core thread one. */
 void ConvertPassDesc(const PIPELINE_STATE_DESC& input, ct::GpuGraphicsPipelineStateInformation& output)
 {
 	output.BlendState = input.BlendState;
-	output.RasterizerState = input.RasterizerState != nullptr ? input.RasterizerState->GetCore() : nullptr;
+	output.RasterizerState = input.RasterizerState;
 	output.DepthStencilState = input.DepthStencilState != nullptr ? input.DepthStencilState->GetCore() : nullptr;
 	output.VertexProgram = input.VertexProgram != nullptr ? input.VertexProgram->GetCore() : nullptr;
 	output.FragmentProgram = input.FragmentProgram != nullptr ? input.FragmentProgram->GetCore() : nullptr;

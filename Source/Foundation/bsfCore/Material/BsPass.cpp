@@ -3,7 +3,6 @@
 #include "Material/BsPass.h"
 
 #include "BsCoreApplication.h"
-#include "RenderAPI/BsRasterizerState.h"
 #include "RenderAPI/BsDepthStencilState.h"
 #include "Private/RTTI/BsPassRTTI.h"
 #include "Material/BsMaterial.h"
@@ -141,7 +140,7 @@ void TPass<Core>::CreatePipelineState()
 			desc.DomainProgram = CreateGpuProgram<Core>(mData.DomainProgramDesc);
 
 		desc.BlendState = mData.BlendStateDesc;
-		desc.RasterizerState = RasterizerStateType::Create(mData.RasterizerStateDesc);
+		desc.RasterizerState = mData.RasterizerStateDesc;
 		desc.DepthStencilState = DepthStencilStateType::Create(mData.DepthStencilStateDesc);
 
 		mGraphicsPipelineState = CreateGraphicsPipeline(desc);

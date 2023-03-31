@@ -70,8 +70,6 @@ namespace bs
 	/** Describes a graphics pipeline blend state. */
 	struct B3D_CORE_EXPORT BlendStateInformation
 	{
-		bool operator==(const BlendStateInformation& rhs) const;
-
 		/**
 		 * Alpha to coverage allows you to perform blending without needing to worry about order of rendering like regular
 		 * blending does. It requires multi-sampling to be active in order to work, and you need to supply an alpha texture
@@ -93,15 +91,84 @@ namespace bs
 
 		RenderTargetBlendStateInformation RenderTargets[B3D_MAXIMUM_RENDER_TARGET_COUNT];
 
+		bool operator==(const BlendStateInformation& rhs) const;
+
 		/**	Generates a hash value from a blend state descriptor. */
 		static u64 GenerateHash(const BlendStateInformation& value);
+	};
+
+	/** Describes a graphics pipeline rasterizer state. */
+	struct B3D_CORE_EXPORT RasterizerStateInformation
+	{
+		/** Polygon mode allows you to draw polygons as solid objects or as wireframe by just drawing their edges. */
+		PolygonMode PolygonMode = PM_SOLID;
+
+		/**
+		 * Sets vertex winding order. Faces that contain vertices with this order will be culled and not rasterized. Used
+		 * primarily for saving cycles by not rendering backfacing faces.
+		 */
+		CullingMode CullMode = CULL_COUNTERCLOCKWISE;
+
+		/**
+		 * Represents a constant depth bias that will offset the depth values of new pixels by the specified amount.
+		 *
+		 * @note		This is useful if you want to avoid z fighting for objects at the same or similar depth.
+		 */
+		float DepthBias = 0;
+
+		/**	Maximum depth bias value. */
+		float DepthBiasClamp = 0.0f;
+
+		/**
+		 * Represents a dynamic depth bias that increases as the slope of the rendered polygons surface increases.
+		 * Resulting value offsets depth values of new pixels. This offset will be added on top of the constant depth bias.
+		 *
+		 * @note	This is useful if you want to avoid z fighting for objects at the same or similar depth.
+		 */
+		float SlopeScaledDepthBias = 0.0f;
+
+		/**
+		 * If true, clipping of polygons past the far Z plane is enabled. This ensures proper Z ordering for polygons
+		 * outside of valid depth range (otherwise they all have the same depth). It can be useful to disable if you are
+		 * performing stencil operations that count on objects having a front and a back (like stencil shadow) and don't
+		 * want to clip the back.
+		 */
+		bool DepthClipEnable = true;
+
+		/**
+		 * Scissor rectangle allows you to cull all pixels outside of the scissor rectangle.
+		 *
+		 * @see		ct::RenderAPI::setScissorRect
+		 */
+		bool ScissorEnable = false;
+
+		/**
+		 * Determines how are samples in multi-sample render targets handled. If disabled all samples in the render target
+		 * will be written the same value, and if enabled each sample will be generated separately.
+		 *
+		 * @note	In order to get an antialiased image you need to both enable this option and use a MSAA render target.
+		 */
+		bool MultisampleEnable = true;
+
+		/**
+		 * Determines should the lines be antialiased. This is separate from multi-sample antialiasing setting as lines can
+		 * be antialiased without multi-sampling.
+		 *
+		 * @note	This setting is usually ignored if MSAA is used, as that provides sufficient antialiasing.
+		 */
+		bool AntialiasedLineEnable = false;
+
+		bool operator==(const RasterizerStateInformation& rhs) const;
+
+		/**	Generates a hash value from a rasterizer state descriptor. */
+		static u64 GenerateHash(const RasterizerStateInformation& value);
 	};
 
 	/** Descriptor structure used for initializing a GPU pipeline state. */
 	struct PIPELINE_STATE_DESC
 	{
 		BlendStateInformation BlendState;
-		SPtr<RasterizerState> RasterizerState;
+		RasterizerStateInformation RasterizerState;
 		SPtr<DepthStencilState> DepthStencilState;
 
 		SPtr<GpuProgram> VertexProgram;
@@ -123,7 +190,7 @@ namespace bs
 		struct GpuGraphicsPipelineStateInformation
 		{
 			BlendStateInformation BlendState;
-			SPtr<RasterizerState> RasterizerState;
+			RasterizerStateInformation RasterizerState;
 			SPtr<DepthStencilState> DepthStencilState;
 
 			SPtr<GpuProgram> VertexProgram;
@@ -193,7 +260,6 @@ namespace bs
 	class B3D_CORE_EXPORT TGraphicsPipelineState
 	{
 	public:
-		using RasterizerStateType = SPtr<CoreVariantType<RasterizerState, Core>>;
 		using DepthStencilStateType = SPtr<CoreVariantType<DepthStencilState, Core>>;
 		using GpuProgramType = SPtr<CoreVariantType<GpuProgram, Core>>;
 		using StateDescType = typename TGpuPipelineStateTypes<Core>::StateDescType;
@@ -208,7 +274,7 @@ namespace bs
 		bool HasDomainProgram() const { return mData.DomainProgram != nullptr; }
 
 		BlendStateInformation GetBlendState() const { return mData.BlendState; }
-		RasterizerStateType GetRasterizerState() const { return mData.RasterizerState; }
+		RasterizerStateInformation GetRasterizerState() const { return mData.RasterizerState; }
 		DepthStencilStateType GetDepthStencilState() const { return mData.DepthStencilState; }
 
 		const GpuProgramType& GetVertexProgram() const { return mData.VertexProgram; }

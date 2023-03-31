@@ -3,7 +3,6 @@
 #include "Managers/BsRenderStateManager.h"
 #include "RenderAPI/BsSamplerState.h"
 #include "RenderAPI/BsDepthStencilState.h"
-#include "RenderAPI/BsRasterizerState.h"
 
 using namespace bs;
 
@@ -18,14 +17,6 @@ SPtr<SamplerState> RenderStateManager::CreateSamplerState(const SamplerStateCrea
 SPtr<DepthStencilState> RenderStateManager::CreateDepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc) const
 {
 	SPtr<DepthStencilState> state = CreateDepthStencilStatePtrInternal(desc);
-	state->Initialize();
-
-	return state;
-}
-
-SPtr<RasterizerState> RenderStateManager::CreateRasterizerState(const RASTERIZER_STATE_DESC& desc) const
-{
-	SPtr<RasterizerState> state = CreateRasterizerStatePtrInternal(desc);
 	state->Initialize();
 
 	return state;
@@ -47,28 +38,12 @@ SPtr<DepthStencilState> RenderStateManager::CreateDepthStencilStatePtrInternal(c
 	return depthStencilState;
 }
 
-SPtr<RasterizerState> RenderStateManager::CreateRasterizerStatePtrInternal(const RASTERIZER_STATE_DESC& desc) const
-{
-	SPtr<RasterizerState> rasterizerState = B3DMakeCoreFromExisting<RasterizerState>(new(B3DAllocate<RasterizerState>()) RasterizerState(desc));
-	rasterizerState->SetShared(rasterizerState);
-
-	return rasterizerState;
-}
-
 const SPtr<SamplerState>& RenderStateManager::GetDefaultSamplerState() const
 {
 	if(mDefaultSamplerState == nullptr)
 		mDefaultSamplerState = CreateSamplerState(SamplerStateInformation());
 
 	return mDefaultSamplerState;
-}
-
-const SPtr<RasterizerState>& RenderStateManager::GetDefaultRasterizerState() const
-{
-	if(mDefaultRasterizerState == nullptr)
-		mDefaultRasterizerState = CreateRasterizerState(RASTERIZER_STATE_DESC());
-
-	return mDefaultRasterizerState;
 }
 
 const SPtr<DepthStencilState>& RenderStateManager::GetDefaultDepthStencilState() const
@@ -113,24 +88,6 @@ SPtr<DepthStencilState> RenderStateManager::CreateDepthStencilState(const DEPTH_
 	return state;
 }
 
-SPtr<RasterizerState> RenderStateManager::CreateRasterizerState(const RASTERIZER_STATE_DESC& desc) const
-{
-	u32 id = 0;
-	SPtr<RasterizerState> state = FindCachedState(desc, id);
-	if(state == nullptr)
-	{
-		state = CreateRasterizerStateInternalInternal(desc, id);
-		state->Initialize();
-
-		CachedRasterizerState cachedData(id);
-		cachedData.State = state;
-
-		NotifyRasterizerStateCreated(desc, cachedData);
-	}
-
-	return state;
-}
-
 SPtr<SamplerState> RenderStateManager::CreateSamplerStateInternal(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask) const
 {
 	SPtr<SamplerState> state = FindCachedState(desc);
@@ -161,27 +118,9 @@ SPtr<DepthStencilState> RenderStateManager::CreateDepthStencilStateInternal(cons
 	return state;
 }
 
-SPtr<RasterizerState> RenderStateManager::CreateRasterizerStateInternal(const RASTERIZER_STATE_DESC& desc) const
-{
-	u32 id = 0;
-	SPtr<RasterizerState> state = FindCachedState(desc, id);
-	if(state == nullptr)
-	{
-		state = CreateRasterizerStateInternalInternal(desc, id);
-
-		CachedRasterizerState cachedData(id);
-		cachedData.State = state;
-
-		NotifyRasterizerStateCreated(desc, cachedData);
-	}
-
-	return state;
-}
-
 void RenderStateManager::OnShutDown()
 {
 	mDefaultDepthStencilState = nullptr;
-	mDefaultRasterizerState = nullptr;
 	mDefaultSamplerState = nullptr;
 }
 
@@ -191,14 +130,6 @@ const SPtr<SamplerState>& RenderStateManager::GetDefaultSamplerState() const
 		mDefaultSamplerState = CreateSamplerState(SamplerStateInformation());
 
 	return mDefaultSamplerState;
-}
-
-const SPtr<RasterizerState>& RenderStateManager::GetDefaultRasterizerState() const
-{
-	if(mDefaultRasterizerState == nullptr)
-		mDefaultRasterizerState = CreateRasterizerState(RASTERIZER_STATE_DESC());
-
-	return mDefaultRasterizerState;
 }
 
 const SPtr<DepthStencilState>& RenderStateManager::GetDefaultDepthStencilState() const
@@ -214,13 +145,6 @@ void RenderStateManager::NotifySamplerStateCreated(const SamplerStateCreateInfor
 	Lock lock(mMutex);
 
 	mCachedSamplerStates[desc] = state;
-}
-
-void RenderStateManager::NotifyRasterizerStateCreated(const RASTERIZER_STATE_DESC& desc, const CachedRasterizerState& state) const
-{
-	Lock lock(mMutex);
-
-	mCachedRasterizerStates[desc] = state;
 }
 
 void RenderStateManager::NotifyDepthStencilStateCreated(const DEPTH_STENCIL_STATE_DESC& desc, const CachedDepthStencilState& state) const
@@ -244,27 +168,6 @@ SPtr<SamplerState> RenderStateManager::FindCachedState(const SamplerStateInforma
 	auto iterFind = mCachedSamplerStates.find(desc);
 	if(iterFind != mCachedSamplerStates.end())
 		return iterFind->second.lock();
-
-	return nullptr;
-}
-
-SPtr<RasterizerState> RenderStateManager::FindCachedState(const RASTERIZER_STATE_DESC& desc, u32& id) const
-{
-	Lock lock(mMutex);
-
-	auto iterFind = mCachedRasterizerStates.find(desc);
-	if(iterFind != mCachedRasterizerStates.end())
-	{
-		id = iterFind->second.Id;
-
-		if(!iterFind->second.State.expired())
-			return iterFind->second.State.lock();
-
-		return nullptr;
-	}
-
-	id = mNextRasterizerStateId++;
-	B3D_ASSERT(id <= 0x3FF); // 10 bits maximum
 
 	return nullptr;
 }
@@ -302,14 +205,6 @@ SPtr<SamplerState> RenderStateManager::CreateSamplerStateInternalInternal(const 
 SPtr<DepthStencilState> RenderStateManager::CreateDepthStencilStateInternalInternal(const DEPTH_STENCIL_STATE_DESC& desc, u32 id) const
 {
 	SPtr<DepthStencilState> state = B3DMakeSharedFromExisting<DepthStencilState>(new(B3DAllocate<DepthStencilState>()) DepthStencilState(desc, id));
-	state->SetShared(state);
-
-	return state;
-}
-
-SPtr<RasterizerState> RenderStateManager::CreateRasterizerStateInternalInternal(const RASTERIZER_STATE_DESC& desc, u32 id) const
-{
-	SPtr<RasterizerState> state = B3DMakeSharedFromExisting<RasterizerState>(new(B3DAllocate<RasterizerState>()) RasterizerState(desc, id));
 	state->SetShared(state);
 
 	return state;

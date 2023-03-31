@@ -5,7 +5,6 @@
 #include "BsSLPrerequisites.h"
 #include "Material/BsShader.h"
 #include "RenderAPI/BsGpuProgram.h"
-#include "RenderAPI/BsRasterizerState.h"
 #include "RenderAPI/BsDepthStencilState.h"
 #include "Importer/BsShaderImportOptions.h"
 #include "Material/BsShaderCompiler.h"
@@ -41,7 +40,7 @@ namespace bs
 	struct BSLParsedShaderPassData
 	{
 		BlendStateInformation BlendStateInformation;
-		RASTERIZER_STATE_DESC RasterizerStateInformation;
+		RasterizerStateInformation RasterizerStateInformation;
 		DEPTH_STENCIL_STATE_DESC DepthStencilStateInformation;
 		u32 StencilReferenceValue = 0;
 		u32 SequentialIndex = 0;

@@ -275,7 +275,6 @@ namespace bs
 	CORE_OBJECT_FORWARD_DECLARE(SamplerState)
 	CORE_OBJECT_FORWARD_DECLARE(Viewport)
 	CORE_OBJECT_FORWARD_DECLARE(DepthStencilState)
-	CORE_OBJECT_FORWARD_DECLARE(RasterizerState)
 	CORE_OBJECT_FORWARD_DECLARE(GpuParameters)
 	CORE_OBJECT_FORWARD_DECLARE(GpuParamsSet)
 	CORE_OBJECT_FORWARD_DECLARE(GpuBuffer)
@@ -455,7 +454,7 @@ namespace bs
 	// Desc structs
 	struct SamplerStateInformation;
 	struct DEPTH_STENCIL_STATE_DESC;
-	struct RASTERIZER_STATE_DESC;
+	struct RasterizerStateInformation;
 	struct BlendStateInformation;
 	struct RenderTargetBlendStateInformation;
 	struct RENDER_TEXTURE_DESC;

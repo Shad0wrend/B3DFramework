@@ -9,7 +9,6 @@
 #include "BsVulkanGpuPipelineParameterLayout.h"
 #include "Managers/BsVulkanVertexInputManager.h"
 #include "BsVulkanCommandBuffer.h"
-#include "RenderAPI/BsRasterizerState.h"
 #include "RenderAPI/BsDepthStencilState.h"
 #include "Profiling/BsRenderStats.h"
 #include "BsVulkanRenderPass.h"
@@ -133,30 +132,26 @@ void VulkanGpuGraphicsPipelineState::Initialize()
 	mViewportInfo.pViewports = nullptr; // Dynamic
 	mViewportInfo.pScissors = nullptr; // Dynamic
 
-	RasterizerState* rasterizerState = GetRasterizerState().get();
-	if(rasterizerState == nullptr)
-		rasterizerState = RasterizerState::GetDefault().get();
-
 	DepthStencilState* depthStencilState = GetDepthStencilState().get();
 	if(depthStencilState == nullptr)
 		depthStencilState = DepthStencilState::GetDefault().get();
 
-	const RasterizerProperties& rstProps = rasterizerState->GetProperties();
+	const RasterizerStateInformation& rasterizerStateInformation = GetRasterizerState();
 	const BlendStateInformation& blendStateInformation = GetBlendState();
 	const DepthStencilProperties dsProps = depthStencilState->GetProperties();
 
 	mRasterizationInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 	mRasterizationInfo.pNext = nullptr;
 	mRasterizationInfo.flags = 0;
-	mRasterizationInfo.depthClampEnable = !rstProps.GetDepthClipEnable();
+	mRasterizationInfo.depthClampEnable = !rasterizerStateInformation.DepthClipEnable;
 	mRasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
-	mRasterizationInfo.polygonMode = VulkanUtility::GetPolygonMode(rstProps.GetPolygonMode());
-	mRasterizationInfo.cullMode = VulkanUtility::GetCullMode(rstProps.GetCullMode());
+	mRasterizationInfo.polygonMode = VulkanUtility::GetPolygonMode(rasterizerStateInformation.PolygonMode);
+	mRasterizationInfo.cullMode = VulkanUtility::GetCullMode(rasterizerStateInformation.CullMode);
 	mRasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
-	mRasterizationInfo.depthBiasEnable = rstProps.GetDepthBias() != 0.0f;
-	mRasterizationInfo.depthBiasConstantFactor = rstProps.GetDepthBias();
-	mRasterizationInfo.depthBiasSlopeFactor = rstProps.GetSlopeScaledDepthBias();
-	mRasterizationInfo.depthBiasClamp = mRasterizationInfo.depthClampEnable ? rstProps.GetDepthBiasClamp() : 0.0f;
+	mRasterizationInfo.depthBiasEnable = rasterizerStateInformation.DepthBias != 0.0f;
+	mRasterizationInfo.depthBiasConstantFactor = rasterizerStateInformation.DepthBias;
+	mRasterizationInfo.depthBiasSlopeFactor = rasterizerStateInformation.SlopeScaledDepthBias;
+	mRasterizationInfo.depthBiasClamp = mRasterizationInfo.depthClampEnable ? rasterizerStateInformation.DepthBiasClamp : 0.0f;
 	mRasterizationInfo.lineWidth = 1.0f;
 
 	mMultiSampleInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;

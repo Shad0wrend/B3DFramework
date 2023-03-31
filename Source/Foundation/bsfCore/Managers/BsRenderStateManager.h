@@ -4,7 +4,6 @@
 
 #include "BsCorePrerequisites.h"
 #include "Utility/BsModule.h"
-#include "RenderAPI/BsRasterizerState.h"
 #include "RenderAPI/BsDepthStencilState.h"
 #include "RenderAPI/BsSamplerState.h"
 #include "RenderAPI/BsGpuPipelineState.h"
@@ -30,34 +29,23 @@ namespace bs
 		/** Creates and initializes a new DepthStencilState. */
 		SPtr<DepthStencilState> CreateDepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc) const;
 
-		/**	Creates and initializes a new RasterizerState. */
-		SPtr<RasterizerState> CreateRasterizerState(const RASTERIZER_STATE_DESC& desc) const;
-
 		/** Creates an uninitialized sampler state. Requires manual initialization after creation. */
 		SPtr<SamplerState> CreateSamplerStatePtrInternal(const SamplerStateCreateInformation& desc) const;
 
 		/** Creates an uninitialized depth-stencil state. Requires manual initialization after creation. */
 		SPtr<DepthStencilState> CreateDepthStencilStatePtrInternal(const DEPTH_STENCIL_STATE_DESC& desc) const;
 
-		/** Creates an uninitialized rasterizer state. Requires manual initialization after creation. */
-		SPtr<RasterizerState> CreateRasterizerStatePtrInternal(const RASTERIZER_STATE_DESC& desc) const;
-
 		/** Gets a sampler state initialized with default options. */
 		const SPtr<SamplerState>& GetDefaultSamplerState() const;
-
-		/**	Gets a rasterizer state initialized with default options. */
-		const SPtr<RasterizerState>& GetDefaultRasterizerState() const;
 
 		/**	Gets a depth stencil state initialized with default options. */
 		const SPtr<DepthStencilState>& GetDefaultDepthStencilState() const;
 
 	private:
 		friend class SamplerState;
-		friend class RasterizerState;
 		friend class DepthStencilState;
 
 		mutable SPtr<SamplerState> mDefaultSamplerState;
-		mutable SPtr<RasterizerState> mDefaultRasterizerState;
 		mutable SPtr<DepthStencilState> mDefaultDepthStencilState;
 	};
 
@@ -67,19 +55,6 @@ namespace bs
 		class B3D_CORE_EXPORT RenderStateManager : public Module<RenderStateManager>
 		{
 		private:
-			/**	Contains data about a cached rasterizer state. */
-			struct CachedRasterizerState
-			{
-				CachedRasterizerState() = default;
-
-				CachedRasterizerState(u32 id)
-					: Id(id)
-				{}
-
-				std::weak_ptr<RasterizerState> State;
-				u32 Id = 0;
-			};
-
 			/** Contains data about a cached depth stencil state. */
 			struct CachedDepthStencilState
 			{
@@ -105,33 +80,22 @@ namespace bs
 			/** @copydoc bs::RenderStateManager::CreateDepthStencilState */
 			SPtr<DepthStencilState> CreateDepthStencilState(const DEPTH_STENCIL_STATE_DESC& desc) const;
 
-			/** @copydoc bs::RenderStateManager::CreateRasterizerState */
-			SPtr<RasterizerState> CreateRasterizerState(const RASTERIZER_STATE_DESC& desc) const;
-
 			/** Creates an uninitialized sampler state. Requires manual initialization after creation. */
 			SPtr<SamplerState> CreateSamplerStateInternal(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask = GDF_DEFAULT) const;
 
 			/** Creates an uninitialized depth-stencil state. Requires manual initialization after creation. */
 			SPtr<DepthStencilState> CreateDepthStencilStateInternal(const DEPTH_STENCIL_STATE_DESC& desc) const;
 
-			/** Creates an uninitialized rasterizer state. Requires manual initialization after creation. */
-			SPtr<RasterizerState> CreateRasterizerStateInternal(const RASTERIZER_STATE_DESC& desc) const;
-
 			/** Gets a sampler state initialized with default options. */
 			const SPtr<SamplerState>& GetDefaultSamplerState() const;
-
-			/**	Gets a rasterizer state initialized with default options. */
-			const SPtr<RasterizerState>& GetDefaultRasterizerState() const;
 
 			/**	Gets a depth stencil state initialized with default options. */
 			const SPtr<DepthStencilState>& GetDefaultDepthStencilState() const;
 
 		protected:
 			friend class bs::SamplerState;
-			friend class bs::RasterizerState;
 			friend class bs::DepthStencilState;
 			friend class SamplerState;
-			friend class RasterizerState;
 			friend class DepthStencilState;
 
 			void OnShutDown() override;
@@ -139,18 +103,12 @@ namespace bs
 			/** @copydoc CreateSamplerState */
 			virtual SPtr<SamplerState> CreateSamplerStateInternalInternal(const SamplerStateCreateInformation& desc, GpuDeviceFlags deviceMask) const;
 
-			/** @copydoc CreateRasterizerState */
-			virtual SPtr<RasterizerState> CreateRasterizerStateInternalInternal(const RASTERIZER_STATE_DESC& desc, u32 id) const;
-
 			/** @copydoc CreateDepthStencilState */
 			virtual SPtr<DepthStencilState> CreateDepthStencilStateInternalInternal(const DEPTH_STENCIL_STATE_DESC& desc, u32 id) const;
 
 		private:
 			/**	Triggered when a new sampler state is created. */
 			void NotifySamplerStateCreated(const SamplerStateCreateInformation& desc, const SPtr<SamplerState>& state) const;
-
-			/**	Triggered when a new sampler state is created. */
-			void NotifyRasterizerStateCreated(const RASTERIZER_STATE_DESC& desc, const CachedRasterizerState& state) const;
 
 			/**	Triggered when a new sampler state is created. */
 			void NotifyDepthStencilStateCreated(const DEPTH_STENCIL_STATE_DESC& desc, const CachedDepthStencilState& state) const;
@@ -168,26 +126,17 @@ namespace bs
 			SPtr<SamplerState> FindCachedState(const SamplerStateInformation& desc) const;
 
 			/**
-			 * Attempts to find a cached rasterizer state corresponding to the provided descriptor. Returns null if one doesn't
-			 * exist.
-			 */
-			SPtr<RasterizerState> FindCachedState(const RASTERIZER_STATE_DESC& desc, u32& id) const;
-
-			/**
 			 * Attempts to find a cached depth-stencil state corresponding to the provided descriptor. Returns null if one
 			 * doesn't exist.
 			 */
 			SPtr<DepthStencilState> FindCachedState(const DEPTH_STENCIL_STATE_DESC& desc, u32& id) const;
 
 			mutable SPtr<SamplerState> mDefaultSamplerState;
-			mutable SPtr<RasterizerState> mDefaultRasterizerState;
 			mutable SPtr<DepthStencilState> mDefaultDepthStencilState;
 
 			mutable UnorderedMap<SamplerStateInformation, std::weak_ptr<SamplerState>> mCachedSamplerStates;
-			mutable UnorderedMap<RASTERIZER_STATE_DESC, CachedRasterizerState> mCachedRasterizerStates;
 			mutable UnorderedMap<DEPTH_STENCIL_STATE_DESC, CachedDepthStencilState> mCachedDepthStencilStates;
 
-			mutable u32 mNextRasterizerStateId = 0;
 			mutable u32 mNextDepthStencilStateId = 0;
 
 			mutable Mutex mMutex;
