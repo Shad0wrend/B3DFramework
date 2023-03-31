@@ -8,7 +8,6 @@
 #include "RenderAPI/BsRenderWindow.h"
 #include "Mesh/BsMesh.h"
 #include "RenderAPI/BsGpuParameters.h"
-#include "RenderAPI/BsDepthStencilState.h"
 #include "RenderAPI/BsGpuPipelineState.h"
 
 using namespace std::placeholders;

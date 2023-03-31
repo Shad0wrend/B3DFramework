@@ -5,7 +5,6 @@
 #include "BsSLPrerequisites.h"
 #include "Material/BsShader.h"
 #include "RenderAPI/BsGpuProgram.h"
-#include "RenderAPI/BsDepthStencilState.h"
 #include "Importer/BsShaderImportOptions.h"
 #include "Material/BsShaderCompiler.h"
 #include "RenderAPI/BsGpuPipelineState.h"
@@ -41,7 +40,7 @@ namespace bs
 	{
 		BlendStateInformation BlendStateInformation;
 		RasterizerStateInformation RasterizerStateInformation;
-		DEPTH_STENCIL_STATE_DESC DepthStencilStateInformation;
+		DepthStencilStateInformation DepthStencilStateInformation;
 		u32 StencilReferenceValue = 0;
 		u32 SequentialIndex = 0;
 
@@ -180,13 +179,13 @@ namespace bs
 		 * Populates the front facing operation portion of the depth-stencil state descriptor from the provided stencil-op
 		 * AST node.
 		 */
-		static void ParseStencilFront(DEPTH_STENCIL_STATE_DESC& desc, ASTFXNode* stencilOpNode);
+		static void ParseStencilFront(DepthStencilStateInformation& desc, ASTFXNode* stencilOpNode);
 
 		/**
 		 * Populates the back backing operation portion of the depth-stencil state descriptor from the provided stencil-op
 		 * AST node.
 		 */
-		static void ParseStencilBack(DEPTH_STENCIL_STATE_DESC& desc, ASTFXNode* stencilOpNode);
+		static void ParseStencilBack(DepthStencilStateInformation& desc, ASTFXNode* stencilOpNode);
 
 		/** Populates the color (RGB) portion of the blend state descriptor from the provided blend definition AST node. */
 		static void ParseColorBlendDef(RenderTargetBlendStateInformation& desc, ASTFXNode* blendDefNode);

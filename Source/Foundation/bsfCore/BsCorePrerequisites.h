@@ -274,7 +274,6 @@ namespace bs
 	CORE_OBJECT_FORWARD_DECLARE(RenderWindow)
 	CORE_OBJECT_FORWARD_DECLARE(SamplerState)
 	CORE_OBJECT_FORWARD_DECLARE(Viewport)
-	CORE_OBJECT_FORWARD_DECLARE(DepthStencilState)
 	CORE_OBJECT_FORWARD_DECLARE(GpuParameters)
 	CORE_OBJECT_FORWARD_DECLARE(GpuParamsSet)
 	CORE_OBJECT_FORWARD_DECLARE(GpuBuffer)
@@ -453,7 +452,7 @@ namespace bs
 	class MeshRTTI;
 	// Desc structs
 	struct SamplerStateInformation;
-	struct DEPTH_STENCIL_STATE_DESC;
+	struct DepthStencilStateInformation;
 	struct RasterizerStateInformation;
 	struct BlendStateInformation;
 	struct RenderTargetBlendStateInformation;

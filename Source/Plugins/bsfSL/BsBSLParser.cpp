@@ -456,7 +456,7 @@ PolygonMode BSLParser::ParseFillMode(FillModeValue fm)
 	return PM_SOLID;
 }
 
-void BSLParser::ParseStencilFront(DEPTH_STENCIL_STATE_DESC& desc, ASTFXNode* stencilOpNode)
+void BSLParser::ParseStencilFront(DepthStencilStateInformation& desc, ASTFXNode* stencilOpNode)
 {
 	if(stencilOpNode == nullptr || stencilOpNode->Type != NT_StencilOp)
 		return;
@@ -485,7 +485,7 @@ void BSLParser::ParseStencilFront(DEPTH_STENCIL_STATE_DESC& desc, ASTFXNode* ste
 	}
 }
 
-void BSLParser::ParseStencilBack(DEPTH_STENCIL_STATE_DESC& desc, ASTFXNode* stencilOpNode)
+void BSLParser::ParseStencilBack(DepthStencilStateInformation& desc, ASTFXNode* stencilOpNode)
 {
 	if(stencilOpNode == nullptr || stencilOpNode->Type != NT_StencilOp)
 		return;

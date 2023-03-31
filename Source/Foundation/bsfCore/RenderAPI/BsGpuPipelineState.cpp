@@ -5,7 +5,6 @@
 #include "BsCoreApplication.h"
 #include "BsGpuBackend.h"
 #include "BsGpuDevice.h"
-#include "RenderAPI/BsDepthStencilState.h"
 #include "RenderAPI/BsGpuProgram.h"
 #include "RenderAPI/BsGpuProgramParameterDescription.h"
 #include "RenderAPI/BsGpuPipelineParameterLayout.h"
@@ -90,12 +89,51 @@ u64 RasterizerStateInformation::GenerateHash(const RasterizerStateInformation& v
 	return (u64)hash;
 }
 
+bool DepthStencilStateInformation::operator==(const DepthStencilStateInformation& rhs) const
+{
+	return DepthReadEnable == rhs.DepthReadEnable &&
+		DepthWriteEnable == rhs.DepthWriteEnable &&
+		DepthComparisonFunc == rhs.DepthComparisonFunc &&
+		StencilEnable == rhs.StencilEnable &&
+		StencilReadMask == rhs.StencilReadMask &&
+		StencilWriteMask == rhs.StencilWriteMask &&
+		FrontStencilFailOp == rhs.FrontStencilFailOp &&
+		FrontStencilZFailOp == rhs.FrontStencilZFailOp &&
+		FrontStencilPassOp == rhs.FrontStencilPassOp &&
+		FrontStencilComparisonFunc == rhs.FrontStencilComparisonFunc &&
+		BackStencilFailOp == rhs.BackStencilFailOp &&
+		BackStencilZFailOp == rhs.BackStencilZFailOp &&
+		BackStencilPassOp == rhs.BackStencilPassOp &&
+		BackStencilComparisonFunc == rhs.BackStencilComparisonFunc;
+}
+
+u64 DepthStencilStateInformation::GenerateHash(const DepthStencilStateInformation& value)
+{
+	size_t hash = 0;
+	B3DCombineHash(hash, value.DepthReadEnable);
+	B3DCombineHash(hash, value.DepthWriteEnable);
+	B3DCombineHash(hash, (u32)value.DepthComparisonFunc);
+	B3DCombineHash(hash, value.StencilEnable);
+	B3DCombineHash(hash, value.StencilReadMask);
+	B3DCombineHash(hash, value.StencilWriteMask);
+	B3DCombineHash(hash, (u32)value.FrontStencilFailOp);
+	B3DCombineHash(hash, (u32)value.FrontStencilZFailOp);
+	B3DCombineHash(hash, (u32)value.FrontStencilPassOp);
+	B3DCombineHash(hash, (u32)value.FrontStencilComparisonFunc);
+	B3DCombineHash(hash, (u32)value.BackStencilFailOp);
+	B3DCombineHash(hash, (u32)value.BackStencilZFailOp);
+	B3DCombineHash(hash, (u32)value.BackStencilPassOp);
+	B3DCombineHash(hash, (u32)value.BackStencilComparisonFunc);
+
+	return (u64)hash;
+}
+
 /** Converts a sim thread pipeline state descriptor to a core thread one. */
 void ConvertPassDesc(const PIPELINE_STATE_DESC& input, ct::GpuGraphicsPipelineStateInformation& output)
 {
 	output.BlendState = input.BlendState;
 	output.RasterizerState = input.RasterizerState;
-	output.DepthStencilState = input.DepthStencilState != nullptr ? input.DepthStencilState->GetCore() : nullptr;
+	output.DepthStencilState = input.DepthStencilState;
 	output.VertexProgram = input.VertexProgram != nullptr ? input.VertexProgram->GetCore() : nullptr;
 	output.FragmentProgram = input.FragmentProgram != nullptr ? input.FragmentProgram->GetCore() : nullptr;
 	output.GeometryProgram = input.GeometryProgram != nullptr ? input.GeometryProgram->GetCore() : nullptr;

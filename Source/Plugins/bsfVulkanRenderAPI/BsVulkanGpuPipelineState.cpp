@@ -3,13 +3,11 @@
 #include "BsVulkanGpuPipelineState.h"
 #include "BsVulkanGpuDevice.h"
 #include "BsVulkanGpuProgram.h"
-#include "BsVulkanFramebuffer.h"
 #include "BsVulkanUtility.h"
 #include "BsVulkanRenderAPI.h"
 #include "BsVulkanGpuPipelineParameterLayout.h"
 #include "Managers/BsVulkanVertexInputManager.h"
 #include "BsVulkanCommandBuffer.h"
-#include "RenderAPI/BsDepthStencilState.h"
 #include "Profiling/BsRenderStats.h"
 #include "BsVulkanRenderPass.h"
 
@@ -132,13 +130,9 @@ void VulkanGpuGraphicsPipelineState::Initialize()
 	mViewportInfo.pViewports = nullptr; // Dynamic
 	mViewportInfo.pScissors = nullptr; // Dynamic
 
-	DepthStencilState* depthStencilState = GetDepthStencilState().get();
-	if(depthStencilState == nullptr)
-		depthStencilState = DepthStencilState::GetDefault().get();
-
 	const RasterizerStateInformation& rasterizerStateInformation = GetRasterizerState();
 	const BlendStateInformation& blendStateInformation = GetBlendState();
-	const DepthStencilProperties dsProps = depthStencilState->GetProperties();
+	const DepthStencilStateInformation depthStencilStateInformation = GetDepthStencilState();
 
 	mRasterizationInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 	mRasterizationInfo.pNext = nullptr;
@@ -165,22 +159,22 @@ void VulkanGpuGraphicsPipelineState::Initialize()
 	mMultiSampleInfo.alphaToOneEnable = VK_FALSE;
 
 	VkStencilOpState stencilFrontInfo;
-	stencilFrontInfo.compareOp = VulkanUtility::GetCompareOp(dsProps.GetStencilFrontCompFunc());
-	stencilFrontInfo.depthFailOp = VulkanUtility::GetStencilOp(dsProps.GetStencilFrontZFailOp());
-	stencilFrontInfo.passOp = VulkanUtility::GetStencilOp(dsProps.GetStencilFrontPassOp());
-	stencilFrontInfo.failOp = VulkanUtility::GetStencilOp(dsProps.GetStencilFrontFailOp());
+	stencilFrontInfo.compareOp = VulkanUtility::GetCompareOp(depthStencilStateInformation.FrontStencilComparisonFunc);
+	stencilFrontInfo.depthFailOp = VulkanUtility::GetStencilOp(depthStencilStateInformation.FrontStencilZFailOp);
+	stencilFrontInfo.passOp = VulkanUtility::GetStencilOp(depthStencilStateInformation.FrontStencilPassOp);
+	stencilFrontInfo.failOp = VulkanUtility::GetStencilOp(depthStencilStateInformation.FrontStencilFailOp);
 	stencilFrontInfo.reference = 0; // Dynamic
-	stencilFrontInfo.compareMask = (u32)dsProps.GetStencilReadMask();
-	stencilFrontInfo.writeMask = (u32)dsProps.GetStencilWriteMask();
+	stencilFrontInfo.compareMask = (u32)depthStencilStateInformation.StencilReadMask;
+	stencilFrontInfo.writeMask = (u32)depthStencilStateInformation.StencilWriteMask;
 
 	VkStencilOpState stencilBackInfo;
-	stencilBackInfo.compareOp = VulkanUtility::GetCompareOp(dsProps.GetStencilBackCompFunc());
-	stencilBackInfo.depthFailOp = VulkanUtility::GetStencilOp(dsProps.GetStencilBackZFailOp());
-	stencilBackInfo.passOp = VulkanUtility::GetStencilOp(dsProps.GetStencilBackPassOp());
-	stencilBackInfo.failOp = VulkanUtility::GetStencilOp(dsProps.GetStencilBackFailOp());
+	stencilBackInfo.compareOp = VulkanUtility::GetCompareOp(depthStencilStateInformation.BackStencilComparisonFunc);
+	stencilBackInfo.depthFailOp = VulkanUtility::GetStencilOp(depthStencilStateInformation.BackStencilZFailOp);
+	stencilBackInfo.passOp = VulkanUtility::GetStencilOp(depthStencilStateInformation.BackStencilPassOp);
+	stencilBackInfo.failOp = VulkanUtility::GetStencilOp(depthStencilStateInformation.BackStencilFailOp);
 	stencilBackInfo.reference = 0; // Dynamic
-	stencilBackInfo.compareMask = (u32)dsProps.GetStencilReadMask();
-	stencilBackInfo.writeMask = (u32)dsProps.GetStencilWriteMask();
+	stencilBackInfo.compareMask = (u32)depthStencilStateInformation.StencilReadMask;
+	stencilBackInfo.writeMask = (u32)depthStencilStateInformation.StencilWriteMask;
 
 	mDepthStencilInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 	mDepthStencilInfo.pNext = nullptr;
@@ -188,12 +182,12 @@ void VulkanGpuGraphicsPipelineState::Initialize()
 	mDepthStencilInfo.depthBoundsTestEnable = false;
 	mDepthStencilInfo.minDepthBounds = 0.0f;
 	mDepthStencilInfo.maxDepthBounds = 1.0f;
-	mDepthStencilInfo.depthTestEnable = dsProps.GetDepthReadEnable();
-	mDepthStencilInfo.depthWriteEnable = dsProps.GetDepthWriteEnable();
-	mDepthStencilInfo.depthCompareOp = VulkanUtility::GetCompareOp(dsProps.GetDepthComparisonFunc());
+	mDepthStencilInfo.depthTestEnable = depthStencilStateInformation.DepthReadEnable;
+	mDepthStencilInfo.depthWriteEnable = depthStencilStateInformation.DepthWriteEnable;
+	mDepthStencilInfo.depthCompareOp = VulkanUtility::GetCompareOp(depthStencilStateInformation.DepthComparisonFunc);
 	mDepthStencilInfo.front = stencilFrontInfo;
 	mDepthStencilInfo.back = stencilBackInfo;
-	mDepthStencilInfo.stencilTestEnable = dsProps.GetStencilEnable();
+	mDepthStencilInfo.stencilTestEnable = depthStencilStateInformation.StencilEnable;
 
 	for(u32 i = 0; i < B3D_MAXIMUM_RENDER_TARGET_COUNT; i++)
 	{
@@ -342,12 +336,8 @@ VulkanPipeline* VulkanGpuGraphicsPipelineState::CreatePipeline(u32 deviceIndex, 
 	mMultiSampleInfo.rasterizationSamples = renderPass->GetSampleFlags();
 	mColorBlendStateInfo.attachmentCount = renderPass->GetColorAttachmentCount() > 0 ? (renderPass->GetMaximumColorAttachmentIndex() + 1) : 0;
 
-	DepthStencilState* dsState = GetDepthStencilState().get();
-	if(dsState == nullptr)
-		dsState = DepthStencilState::GetDefault().get();
-
-	const DepthStencilProperties dsProps = dsState->GetProperties();
-	bool enableDepthWrites = dsProps.GetDepthWriteEnable() && (readOnlyFlags & FBT_DEPTH) == 0;
+	const DepthStencilStateInformation depthStencilStateInformation = GetDepthStencilState();
+	bool enableDepthWrites = depthStencilStateInformation.DepthWriteEnable && (readOnlyFlags & FBT_DEPTH) == 0;
 
 	mDepthStencilInfo.depthWriteEnable = enableDepthWrites; // If depth stencil attachment is read only, depthWriteEnable must be VK_FALSE
 

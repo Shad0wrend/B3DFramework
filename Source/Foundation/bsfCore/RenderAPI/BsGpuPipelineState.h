@@ -164,12 +164,80 @@ namespace bs
 		static u64 GenerateHash(const RasterizerStateInformation& value);
 	};
 
+	/** Describes a depth stencil state on a graphics pipeline. */
+	struct B3D_CORE_EXPORT DepthStencilStateInformation
+	{
+		/**
+		 * If enabled, any pixel about to be written will be tested against the depth value currently in the buffer. If the
+		 * depth test passes (depending on the set valueand chosen depth comparison function), that pixel is written and
+		 * depth is updated (if depth write is enabled).
+		 */
+		bool DepthReadEnable = true;
+
+		/** If enabled rendering pixels will update the depth buffer value. */
+		bool DepthWriteEnable = true;
+
+		/**
+		 * Determines what operation should the renderer use when comparing previous and current depth value. If the
+		 * operation passes, pixel with the current depth value will be considered visible.
+		 */
+		CompareFunction DepthComparisonFunc = CMPF_LESS;
+
+		/**
+		 * If true then stencil buffer will also be updated when a pixel is written, and pixels will be tested against
+		 * the stencil buffer before rendering.
+		 */
+		bool StencilEnable = false;
+
+		/** Mask to apply to any value read from the stencil buffer, before applying the stencil comparison function. */
+		u8 StencilReadMask = 0xFF;
+
+		/**	Mask to apply to any value about to be written in the stencil buffer. */
+		u8 StencilWriteMask = 0xFF;
+
+		/**	Operation that happens when stencil comparison function fails on a front facing polygon. */
+		StencilOperation FrontStencilFailOp = SOP_KEEP;
+
+		/** Operation that happens when stencil comparison function passes but depth test fails on a front facing polygon. */
+		StencilOperation FrontStencilZFailOp = SOP_KEEP;
+
+		/**	Operation that happens when stencil comparison function passes on a front facing polygon. */
+		StencilOperation FrontStencilPassOp = SOP_KEEP;
+
+		/**
+		 * Stencil comparison function used for front facing polygons. Stencil buffer will be modified according to
+		 * previously set stencil operations depending whether this comparison passes or fails.
+		 */
+		CompareFunction FrontStencilComparisonFunc = CMPF_ALWAYS_PASS;
+
+		/** Operation that happens when stencil comparison function fails on a back facing polygon. */
+		StencilOperation BackStencilFailOp = SOP_KEEP;
+
+		/** Operation that happens when stencil comparison function passes but depth test fails on a back facing polygon. */
+		StencilOperation BackStencilZFailOp = SOP_KEEP;
+
+		/**	Operation that happens when stencil comparison function passes on a back facing polygon. */
+		StencilOperation BackStencilPassOp = SOP_KEEP;
+
+		/**
+		 * Stencil comparison function used for back facing polygons. Stencil buffer will be modified according	to
+		 * previously set stencil operations depending whether this comparison passes or fails.
+		 */
+		CompareFunction BackStencilComparisonFunc = CMPF_ALWAYS_PASS;
+
+		bool operator==(const DepthStencilStateInformation& rhs) const;
+
+		/**	Generates a hash value from a depth-stencil state descriptor. */
+		static u64 GenerateHash(const DepthStencilStateInformation& value);
+	};
+
+
 	/** Descriptor structure used for initializing a GPU pipeline state. */
 	struct PIPELINE_STATE_DESC
 	{
 		BlendStateInformation BlendState;
 		RasterizerStateInformation RasterizerState;
-		SPtr<DepthStencilState> DepthStencilState;
+		DepthStencilStateInformation DepthStencilState;
 
 		SPtr<GpuProgram> VertexProgram;
 		SPtr<GpuProgram> FragmentProgram;
@@ -191,7 +259,7 @@ namespace bs
 		{
 			BlendStateInformation BlendState;
 			RasterizerStateInformation RasterizerState;
-			SPtr<DepthStencilState> DepthStencilState;
+			DepthStencilStateInformation DepthStencilState;
 
 			SPtr<GpuProgram> VertexProgram;
 			SPtr<GpuProgram> FragmentProgram;
@@ -260,7 +328,6 @@ namespace bs
 	class B3D_CORE_EXPORT TGraphicsPipelineState
 	{
 	public:
-		using DepthStencilStateType = SPtr<CoreVariantType<DepthStencilState, Core>>;
 		using GpuProgramType = SPtr<CoreVariantType<GpuProgram, Core>>;
 		using StateDescType = typename TGpuPipelineStateTypes<Core>::StateDescType;
 		using GpuPipelineParameterLayoutType = typename TGpuPipelineStateTypes<Core>::GpuPipelineParameterLayoutType;
@@ -275,7 +342,7 @@ namespace bs
 
 		BlendStateInformation GetBlendState() const { return mData.BlendState; }
 		RasterizerStateInformation GetRasterizerState() const { return mData.RasterizerState; }
-		DepthStencilStateType GetDepthStencilState() const { return mData.DepthStencilState; }
+		DepthStencilStateInformation GetDepthStencilState() const { return mData.DepthStencilState; }
 
 		const GpuProgramType& GetVertexProgram() const { return mData.VertexProgram; }
 		const GpuProgramType& GetFragmentProgram() const { return mData.FragmentProgram; }

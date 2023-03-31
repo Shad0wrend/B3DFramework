@@ -4,7 +4,6 @@
 
 #include "BsCorePrerequisites.h"
 #include "Image/BsColor.h"
-#include "RenderAPI/BsDepthStencilState.h"
 #include "RenderAPI/BsGpuProgram.h"
 #include "Reflection/BsIReflectable.h"
 #include "CoreThread/BsCoreObject.h"
@@ -21,7 +20,7 @@ namespace bs
 	{
 		BlendStateInformation BlendStateDesc;
 		RasterizerStateInformation RasterizerStateDesc;
-		DEPTH_STENCIL_STATE_DESC DepthStencilStateDesc;
+		DepthStencilStateInformation DepthStencilStateDesc;
 		u32 StencilRefValue;
 
 		GpuProgramCreateInformation VertexProgramDesc;
@@ -43,7 +42,6 @@ namespace bs
 	class B3D_CORE_EXPORT TPass
 	{
 	public:
-		using DepthStencilStateType = CoreVariantType<DepthStencilState, Core>;
 		using GpuProgramType = CoreVariantType<GpuProgram, Core>;
 		using GraphicsPipelineStateType = CoreVariantType<GpuGraphicsPipelineState, Core>;
 		using ComputePipelineStateType = CoreVariantType<GpuComputePipelineState, Core>;
