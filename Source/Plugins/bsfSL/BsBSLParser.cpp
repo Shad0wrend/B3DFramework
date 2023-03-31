@@ -514,7 +514,7 @@ void BSLParser::ParseStencilBack(DEPTH_STENCIL_STATE_DESC& desc, ASTFXNode* sten
 	}
 }
 
-void BSLParser::ParseColorBlendDef(RENDER_TARGET_BLEND_STATE_DESC& desc, ASTFXNode* blendDefNode)
+void BSLParser::ParseColorBlendDef(RenderTargetBlendStateInformation& desc, ASTFXNode* blendDefNode)
 {
 	if(blendDefNode == nullptr || blendDefNode->Type != NT_BlendDef)
 		return;
@@ -526,13 +526,13 @@ void BSLParser::ParseColorBlendDef(RENDER_TARGET_BLEND_STATE_DESC& desc, ASTFXNo
 		switch(option->Type)
 		{
 		case OT_Source:
-			desc.SrcBlend = ParseBlendFactor((OpValue)option->Value.IntValue);
+			desc.ColorSourceFactor = ParseBlendFactor((OpValue)option->Value.IntValue);
 			break;
 		case OT_Dest:
-			desc.DstBlend = ParseBlendFactor((OpValue)option->Value.IntValue);
+			desc.ColorDestinationFactor = ParseBlendFactor((OpValue)option->Value.IntValue);
 			break;
 		case OT_Op:
-			desc.BlendOp = ParseBlendOp((BlendOpValue)option->Value.IntValue);
+			desc.ColorBlendOperation = ParseBlendOp((BlendOpValue)option->Value.IntValue);
 			break;
 		default:
 			break;
@@ -540,7 +540,7 @@ void BSLParser::ParseColorBlendDef(RENDER_TARGET_BLEND_STATE_DESC& desc, ASTFXNo
 	}
 }
 
-void BSLParser::ParseAlphaBlendDef(RENDER_TARGET_BLEND_STATE_DESC& desc, ASTFXNode* blendDefNode)
+void BSLParser::ParseAlphaBlendDef(RenderTargetBlendStateInformation& desc, ASTFXNode* blendDefNode)
 {
 	if(blendDefNode == nullptr || blendDefNode->Type != NT_BlendDef)
 		return;
@@ -552,13 +552,13 @@ void BSLParser::ParseAlphaBlendDef(RENDER_TARGET_BLEND_STATE_DESC& desc, ASTFXNo
 		switch(option->Type)
 		{
 		case OT_Source:
-			desc.SrcBlendAlpha = ParseBlendFactor((OpValue)option->Value.IntValue);
+			desc.AlphaSourceFactor = ParseBlendFactor((OpValue)option->Value.IntValue);
 			break;
 		case OT_Dest:
-			desc.DstBlendAlpha = ParseBlendFactor((OpValue)option->Value.IntValue);
+			desc.AlphaDestinationFactor = ParseBlendFactor((OpValue)option->Value.IntValue);
 			break;
 		case OT_Op:
-			desc.BlendOpAlpha = ParseBlendOp((BlendOpValue)option->Value.IntValue);
+			desc.AlphaBlendOperation = ParseBlendOp((BlendOpValue)option->Value.IntValue);
 			break;
 		default:
 			break;
@@ -566,7 +566,7 @@ void BSLParser::ParseAlphaBlendDef(RENDER_TARGET_BLEND_STATE_DESC& desc, ASTFXNo
 	}
 }
 
-void BSLParser::ParseRenderTargetBlendState(BLEND_STATE_DESC& desc, ASTFXNode* targetNode, u32& index)
+void BSLParser::ParseRenderTargetBlendState(BlendStateInformation& desc, ASTFXNode* targetNode, u32& index)
 {
 	if(targetNode == nullptr || targetNode->Type != NT_Target)
 		return;
@@ -588,7 +588,7 @@ void BSLParser::ParseRenderTargetBlendState(BLEND_STATE_DESC& desc, ASTFXNode* t
 	if(index >= B3D_MAXIMUM_RENDER_TARGET_COUNT)
 		return;
 
-	RENDER_TARGET_BLEND_STATE_DESC& rtDesc = desc.RenderTargetDesc[index];
+	RenderTargetBlendStateInformation& rtDesc = desc.RenderTargets[index];
 	for(int i = 0; i < targetNode->Options->Count; i++)
 	{
 		NodeOption* option = &targetNode->Options->Entries[i];
@@ -630,11 +630,11 @@ bool BSLParser::ParseBlendState(BSLParsedShaderPassData& desc, ASTFXNode* blendN
 		switch(option->Type)
 		{
 		case OT_AlphaToCoverage:
-			desc.BlendStateInformation.AlphaToCoverageEnable = option->Value.IntValue > 0;
+			desc.BlendStateInformation.EnableAlphaToCoverage = option->Value.IntValue > 0;
 			isDefault = false;
 			break;
 		case OT_IndependantBlend:
-			desc.BlendStateInformation.IndependantBlendEnable = option->Value.IntValue > 0;
+			desc.BlendStateInformation.EnableIndependantBlend = option->Value.IntValue > 0;
 			isDefault = false;
 			break;
 		case OT_Target:

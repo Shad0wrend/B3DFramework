@@ -3,10 +3,9 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
+#include "RenderAPI/BsGpuPipelineState.h"
 #include "Reflection/BsRTTIType.h"
 #include "Reflection/BsRTTIPlain.h"
-#include "RenderAPI/BsBlendState.h"
-#include "Managers/BsRenderStateManager.h"
 
 namespace bs
 {
@@ -15,48 +14,12 @@ namespace bs
 	 *  @{
 	 */
 
-	class B3D_CORE_EXPORT BlendStateRTTI : public RTTIType<BlendState, IReflectable, BlendStateRTTI>
-	{
-	private:
-		BLEND_STATE_DESC& GetData(BlendState* obj) { return obj->mProperties.mData; }
-
-		void SetData(BlendState* obj, BLEND_STATE_DESC& val) { obj->mProperties.mData = val; }
-
-	public:
-		BlendStateRTTI()
-		{
-			AddPlainField("mData", 0, &BlendStateRTTI::GetData, &BlendStateRTTI::SetData);
-		}
-
-		void OnDeserializationEnded(IReflectable* obj, SerializationContext* context) override
-		{
-			BlendState* blendState = static_cast<BlendState*>(obj);
-			blendState->Initialize();
-		}
-
-		const String& GetRttiName() override
-		{
-			static String name = "BlendState";
-			return name;
-		}
-
-		u32 GetRttiId() override
-		{
-			return TID_BlendState;
-		}
-
-		SPtr<IReflectable> NewRttiObject() override
-		{
-			return RenderStateManager::Instance().CreateBlendStatePtrInternal(BLEND_STATE_DESC());
-		}
-	};
-
 	template <>
-	struct RTTIPlainType<BLEND_STATE_DESC>
+	struct RTTIPlainType<BlendStateInformation>
 	{
 		enum
 		{
-			id = TID_BLEND_STATE_DESC
+			id = TID_BlendStateInformation
 		};
 
 		enum
@@ -64,13 +27,13 @@ namespace bs
 			hasDynamicSize = 1
 		};
 
-		static BitLength ToMemory(const BLEND_STATE_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength ToMemory(const BlendStateInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			return B3DRTTIWriteWithSizeHeader(stream, data, compress, [&data, &stream]()
 											   { return stream.WriteBytes(data); });
 		}
 
-		static BitLength FromMemory(BLEND_STATE_DESC& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength FromMemory(BlendStateInformation& data, Bitstream& stream, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength size;
 			B3DRTTIReadSizeHeader(stream, compress, size);
@@ -79,7 +42,7 @@ namespace bs
 			return size;
 		}
 
-		static BitLength GetSize(const BLEND_STATE_DESC& data, const RTTIFieldInfo& fieldInfo, bool compress)
+		static BitLength GetSize(const BlendStateInformation& data, const RTTIFieldInfo& fieldInfo, bool compress)
 		{
 			BitLength dataSize = sizeof(data);
 			B3DRTTIAddHeaderSize(dataSize, compress);

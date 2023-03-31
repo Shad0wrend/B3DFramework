@@ -4,7 +4,6 @@
 
 #include "BsCoreApplication.h"
 #include "RenderAPI/BsRasterizerState.h"
-#include "RenderAPI/BsBlendState.h"
 #include "RenderAPI/BsDepthStencilState.h"
 #include "Private/RTTI/BsPassRTTI.h"
 #include "Material/BsMaterial.h"
@@ -80,11 +79,11 @@ bool TPass<Core>::HasBlending() const
 	for(u32 i = 0; i < B3D_MAXIMUM_RENDER_TARGET_COUNT; i++)
 	{
 		// Transparent if destination color is taken into account
-		if(mData.BlendStateDesc.RenderTargetDesc[i].DstBlend != BF_ZERO ||
-		   mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_DEST_COLOR ||
-		   mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_INV_DEST_COLOR ||
-		   mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_DEST_ALPHA ||
-		   mData.BlendStateDesc.RenderTargetDesc[i].SrcBlend == BF_INV_DEST_ALPHA)
+		if(mData.BlendStateDesc.RenderTargets[i].ColorDestinationFactor != BF_ZERO ||
+		   mData.BlendStateDesc.RenderTargets[i].ColorSourceFactor == BF_DEST_COLOR ||
+		   mData.BlendStateDesc.RenderTargets[i].ColorSourceFactor == BF_INV_DEST_COLOR ||
+		   mData.BlendStateDesc.RenderTargets[i].ColorSourceFactor == BF_DEST_ALPHA ||
+		   mData.BlendStateDesc.RenderTargets[i].ColorSourceFactor == BF_INV_DEST_ALPHA)
 		{
 			transparent = true;
 		}
@@ -141,7 +140,7 @@ void TPass<Core>::CreatePipelineState()
 		if(!mData.DomainProgramDesc.Source.empty())
 			desc.DomainProgram = CreateGpuProgram<Core>(mData.DomainProgramDesc);
 
-		desc.BlendState = BlendStateType::Create(mData.BlendStateDesc);
+		desc.BlendState = mData.BlendStateDesc;
 		desc.RasterizerState = RasterizerStateType::Create(mData.RasterizerStateDesc);
 		desc.DepthStencilState = DepthStencilStateType::Create(mData.DepthStencilStateDesc);
 

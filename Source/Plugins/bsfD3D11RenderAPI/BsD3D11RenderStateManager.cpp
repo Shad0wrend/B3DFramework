@@ -17,7 +17,7 @@ SPtr<ct::SamplerState> D3D11RenderStateManager::CreateSamplerStateInternalIntern
 	return ret;
 }
 
-SPtr<ct::BlendState> D3D11RenderStateManager::CreateBlendStateInternalInternal(const BLEND_STATE_DESC& desc, u32 id) const
+SPtr<ct::BlendState> D3D11RenderStateManager::CreateBlendStateInternalInternal(const BlendStateInformation& desc, u32 id) const
 {
 	SPtr<BlendState> ret = B3DMakeSharedFromExisting<D3D11BlendState>(new(B3DAllocate<D3D11BlendState>()) D3D11BlendState(desc, id));
 	ret->SetShared(ret);

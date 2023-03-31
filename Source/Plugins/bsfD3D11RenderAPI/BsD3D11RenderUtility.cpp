@@ -111,12 +111,12 @@ void D3D11RenderUtility::DrawClearQuad(u32 clearBuffers, const Color& color, flo
 
 void D3D11RenderUtility::InitClearQuadResources()
 {
-	BLEND_STATE_DESC blendStateDescYesC;
+	BlendStateInformation blendStateDescYesC;
 	mClearQuadBlendStateYesC = RenderStateManager::Instance().CreateBlendState(blendStateDescYesC);
 
-	BLEND_STATE_DESC blendStateDescNoC;
+	BlendStateInformation blendStateDescNoC;
 	for(int i = 0; i < B3D_MAXIMUM_RENDER_TARGET_COUNT; i++)
-		blendStateDescNoC.RenderTargetDesc[i].RenderTargetWriteMask = 0;
+		blendStateDescNoC.RenderTargets[i].RenderTargetWriteMask = 0;
 
 	mClearQuadBlendStateNoC = RenderStateManager::Instance().CreateBlendState(blendStateDescNoC);
 

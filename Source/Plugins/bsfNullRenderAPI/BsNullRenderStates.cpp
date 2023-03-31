@@ -13,7 +13,7 @@ SPtr<ct::SamplerState> NullRenderStateManager::CreateSamplerStateInternalInterna
 	return ret;
 }
 
-SPtr<ct::BlendState> NullRenderStateManager::CreateBlendStateInternalInternal(const BLEND_STATE_DESC& desc, u32 id) const
+SPtr<ct::BlendState> NullRenderStateManager::CreateBlendStateInternalInternal(const BlendStateInformation& desc, u32 id) const
 {
 	SPtr<NullBlendState> ret = B3DMakeShared<NullBlendState>(desc, id);
 	ret->SetShared(ret);

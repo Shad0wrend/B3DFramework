@@ -18,7 +18,7 @@ namespace bs
 		{
 		protected:
 			SPtr<SamplerState> CreateSamplerStateInternalInternal(const SamplerStateInformation& desc, GpuDeviceFlags deviceMask) const override;
-			SPtr<BlendState> CreateBlendStateInternalInternal(const BLEND_STATE_DESC& desc, u32 id) const override;
+			SPtr<BlendState> CreateBlendStateInternalInternal(const BlendStateInformation& desc, u32 id) const override;
 			SPtr<RasterizerState> CreateRasterizerStateInternalInternal(const RASTERIZER_STATE_DESC& desc, u32 id) const override;
 			SPtr<DepthStencilState> CreateDepthStencilStateInternalInternal(const DEPTH_STENCIL_STATE_DESC& desc, u32 id) const override;
 		};
@@ -27,7 +27,7 @@ namespace bs
 		class NullBlendState : public BlendState
 		{
 		public:
-			NullBlendState(const BLEND_STATE_DESC& desc, u32 id)
+			NullBlendState(const BlendStateInformation& desc, u32 id)
 				: BlendState(desc, id)
 			{}
 		};

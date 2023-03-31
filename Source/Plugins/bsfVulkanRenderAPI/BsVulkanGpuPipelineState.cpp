@@ -11,7 +11,6 @@
 #include "BsVulkanCommandBuffer.h"
 #include "RenderAPI/BsRasterizerState.h"
 #include "RenderAPI/BsDepthStencilState.h"
-#include "RenderAPI/BsBlendState.h"
 #include "Profiling/BsRenderStats.h"
 #include "BsVulkanRenderPass.h"
 
@@ -138,16 +137,12 @@ void VulkanGpuGraphicsPipelineState::Initialize()
 	if(rasterizerState == nullptr)
 		rasterizerState = RasterizerState::GetDefault().get();
 
-	BlendState* blendState = GetBlendState().get();
-	if(blendState == nullptr)
-		blendState = BlendState::GetDefault().get();
-
 	DepthStencilState* depthStencilState = GetDepthStencilState().get();
 	if(depthStencilState == nullptr)
 		depthStencilState = DepthStencilState::GetDefault().get();
 
 	const RasterizerProperties& rstProps = rasterizerState->GetProperties();
-	const BlendProperties& blendProps = blendState->GetProperties();
+	const BlendStateInformation& blendStateInformation = GetBlendState();
 	const DepthStencilProperties dsProps = depthStencilState->GetProperties();
 
 	mRasterizationInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
@@ -171,7 +166,7 @@ void VulkanGpuGraphicsPipelineState::Initialize()
 	mMultiSampleInfo.sampleShadingEnable = VK_FALSE; // When enabled, perform shading per sample instead of per pixel (more expensive, essentially FSAA)
 	mMultiSampleInfo.minSampleShading = 1.0f; // Minimum percent of samples to run full shading for when sampleShadingEnable is enabled (1.0f to run for all)
 	mMultiSampleInfo.pSampleMask = nullptr; // Normally one bit for each sample: e.g. 0x0000000F to enable all samples in a 4-sample setup
-	mMultiSampleInfo.alphaToCoverageEnable = blendProps.GetAlphaToCoverageEnabled();
+	mMultiSampleInfo.alphaToCoverageEnable = blendStateInformation.EnableAlphaToCoverage;
 	mMultiSampleInfo.alphaToOneEnable = VK_FALSE;
 
 	VkStencilOpState stencilFrontInfo;
@@ -208,18 +203,18 @@ void VulkanGpuGraphicsPipelineState::Initialize()
 	for(u32 i = 0; i < B3D_MAXIMUM_RENDER_TARGET_COUNT; i++)
 	{
 		u32 rtIdx = 0;
-		if(blendProps.GetIndependantBlendEnable())
+		if(blendStateInformation.EnableIndependantBlend)
 			rtIdx = i;
 
 		VkPipelineColorBlendAttachmentState& blendState = mAttachmentBlendStates[i];
-		blendState.blendEnable = blendProps.GetBlendEnabled(rtIdx);
-		blendState.colorBlendOp = VulkanUtility::GetBlendOp(blendProps.GetBlendOperation(rtIdx));
-		blendState.srcColorBlendFactor = VulkanUtility::GetBlendFactor(blendProps.GetSrcBlend(rtIdx));
-		blendState.dstColorBlendFactor = VulkanUtility::GetBlendFactor(blendProps.GetDstBlend(rtIdx));
-		blendState.alphaBlendOp = VulkanUtility::GetBlendOp(blendProps.GetAlphaBlendOperation(rtIdx));
-		blendState.srcAlphaBlendFactor = VulkanUtility::GetBlendFactor(blendProps.GetAlphaSrcBlend(rtIdx));
-		blendState.dstAlphaBlendFactor = VulkanUtility::GetBlendFactor(blendProps.GetAlphaDstBlend(rtIdx));
-		blendState.colorWriteMask = blendProps.GetRenderTargetWriteMask(rtIdx) & 0xF;
+		blendState.blendEnable = blendStateInformation.RenderTargets[rtIdx].BlendEnable;
+		blendState.colorBlendOp = VulkanUtility::GetBlendOp(blendStateInformation.RenderTargets[rtIdx].ColorBlendOperation);
+		blendState.srcColorBlendFactor = VulkanUtility::GetBlendFactor(blendStateInformation.RenderTargets[rtIdx].ColorSourceFactor);
+		blendState.dstColorBlendFactor = VulkanUtility::GetBlendFactor(blendStateInformation.RenderTargets[rtIdx].ColorDestinationFactor);
+		blendState.alphaBlendOp = VulkanUtility::GetBlendOp(blendStateInformation.RenderTargets[rtIdx].AlphaBlendOperation);
+		blendState.srcAlphaBlendFactor = VulkanUtility::GetBlendFactor(blendStateInformation.RenderTargets[rtIdx].AlphaSourceFactor);
+		blendState.dstAlphaBlendFactor = VulkanUtility::GetBlendFactor(blendStateInformation.RenderTargets[rtIdx].AlphaDestinationFactor);
+		blendState.colorWriteMask = blendStateInformation.RenderTargets[rtIdx].RenderTargetWriteMask & 0xF;
 	}
 
 	mColorBlendStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;

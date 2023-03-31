@@ -7,9 +7,9 @@
 #include "RenderAPI/BsGpuProgram.h"
 #include "RenderAPI/BsRasterizerState.h"
 #include "RenderAPI/BsDepthStencilState.h"
-#include "RenderAPI/BsBlendState.h"
 #include "Importer/BsShaderImportOptions.h"
 #include "Material/BsShaderCompiler.h"
+#include "RenderAPI/BsGpuPipelineState.h"
 
 extern "C" {
 #include "BsASTFX.h"
@@ -40,7 +40,7 @@ namespace bs
 	/**	Information about a single parsed pass node. */
 	struct BSLParsedShaderPassData
 	{
-		BLEND_STATE_DESC BlendStateInformation;
+		BlendStateInformation BlendStateInformation;
 		RASTERIZER_STATE_DESC RasterizerStateInformation;
 		DEPTH_STENCIL_STATE_DESC DepthStencilStateInformation;
 		u32 StencilReferenceValue = 0;
@@ -190,16 +190,16 @@ namespace bs
 		static void ParseStencilBack(DEPTH_STENCIL_STATE_DESC& desc, ASTFXNode* stencilOpNode);
 
 		/** Populates the color (RGB) portion of the blend state descriptor from the provided blend definition AST node. */
-		static void ParseColorBlendDef(RENDER_TARGET_BLEND_STATE_DESC& desc, ASTFXNode* blendDefNode);
+		static void ParseColorBlendDef(RenderTargetBlendStateInformation& desc, ASTFXNode* blendDefNode);
 
 		/** Populates the alpha portion of the blend state descriptor from the provided blend definition AST node. */
-		static void ParseAlphaBlendDef(RENDER_TARGET_BLEND_STATE_DESC& desc, ASTFXNode* blendDefNode);
+		static void ParseAlphaBlendDef(RenderTargetBlendStateInformation& desc, ASTFXNode* blendDefNode);
 
 		/**
 		 * Populates blend state descriptor for a single render target from the provided AST node. Which target gets
 		 * updated depends on the index set in the AST node.
 		 */
-		static void ParseRenderTargetBlendState(BLEND_STATE_DESC& desc, ASTFXNode* targetNode, u32& index);
+		static void ParseRenderTargetBlendState(BlendStateInformation& desc, ASTFXNode* targetNode, u32& index);
 
 		/**
 		 * Parses the blend state AST node and populates the pass' blend state descriptor. Returns false if the descriptor

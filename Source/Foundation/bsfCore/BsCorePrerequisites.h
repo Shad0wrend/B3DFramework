@@ -276,7 +276,6 @@ namespace bs
 	CORE_OBJECT_FORWARD_DECLARE(Viewport)
 	CORE_OBJECT_FORWARD_DECLARE(DepthStencilState)
 	CORE_OBJECT_FORWARD_DECLARE(RasterizerState)
-	CORE_OBJECT_FORWARD_DECLARE(BlendState)
 	CORE_OBJECT_FORWARD_DECLARE(GpuParameters)
 	CORE_OBJECT_FORWARD_DECLARE(GpuParamsSet)
 	CORE_OBJECT_FORWARD_DECLARE(GpuBuffer)
@@ -457,8 +456,8 @@ namespace bs
 	struct SamplerStateInformation;
 	struct DEPTH_STENCIL_STATE_DESC;
 	struct RASTERIZER_STATE_DESC;
-	struct BLEND_STATE_DESC;
-	struct RENDER_TARGET_BLEND_STATE_DESC;
+	struct BlendStateInformation;
+	struct RenderTargetBlendStateInformation;
 	struct RENDER_TEXTURE_DESC;
 	struct RENDER_WINDOW_DESC;
 	struct FONT_DESC;
@@ -523,7 +522,7 @@ namespace bs
 		TID_BlendState = 1023,
 		TID_RasterizerState = 1024,
 		TID_DepthStencilState = 1025,
-		TID_BLEND_STATE_DESC = 1034,
+		TID_BlendStateInformation = 1034,
 		TID_SHADER_DATA_PARAM_DESC = 1035,
 		TID_SHADER_OBJECT_PARAM_DESC = 1036,
 		TID_SHADER_PARAM_BLOCK_DESC = 1047,

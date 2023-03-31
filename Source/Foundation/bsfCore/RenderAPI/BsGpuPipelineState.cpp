@@ -6,7 +6,6 @@
 #include "BsGpuBackend.h"
 #include "BsGpuDevice.h"
 #include "RenderAPI/BsRasterizerState.h"
-#include "RenderAPI/BsBlendState.h"
 #include "RenderAPI/BsDepthStencilState.h"
 #include "RenderAPI/BsGpuProgram.h"
 #include "RenderAPI/BsGpuProgramParameterDescription.h"
@@ -14,10 +13,59 @@
 
 using namespace bs;
 
+bool RenderTargetBlendStateInformation::operator==(const RenderTargetBlendStateInformation& rhs) const
+{
+	return BlendEnable == rhs.BlendEnable &&
+		ColorSourceFactor == rhs.ColorSourceFactor &&
+		ColorDestinationFactor == rhs.ColorDestinationFactor &&
+		ColorBlendOperation == rhs.ColorBlendOperation &&
+		AlphaSourceFactor == rhs.AlphaSourceFactor &&
+		AlphaDestinationFactor == rhs.AlphaDestinationFactor &&
+		AlphaBlendOperation == rhs.AlphaBlendOperation &&
+		RenderTargetWriteMask == rhs.RenderTargetWriteMask;
+}
+
+bool BlendStateInformation::operator==(const BlendStateInformation& rhs) const
+{
+	bool equals = EnableAlphaToCoverage == rhs.EnableAlphaToCoverage &&
+		EnableIndependantBlend == rhs.EnableIndependantBlend;
+
+	if(equals)
+	{
+		for(u32 i = 0; i < B3D_MAXIMUM_RENDER_TARGET_COUNT; i++)
+		{
+			equals &= RenderTargets[i] == rhs.RenderTargets[i];
+		}
+	}
+
+	return equals;
+}
+
+u64 BlendStateInformation::GenerateHash(const BlendStateInformation& value)
+{
+	size_t hash = 0;
+	B3DCombineHash(hash, value.EnableAlphaToCoverage);
+	B3DCombineHash(hash, value.EnableIndependantBlend);
+
+	for(u32 i = 0; i < B3D_MAXIMUM_RENDER_TARGET_COUNT; i++)
+	{
+		B3DCombineHash(hash, value.RenderTargets[i].BlendEnable);
+		B3DCombineHash(hash, (u32)value.RenderTargets[i].ColorSourceFactor);
+		B3DCombineHash(hash, (u32)value.RenderTargets[i].ColorDestinationFactor);
+		B3DCombineHash(hash, (u32)value.RenderTargets[i].ColorBlendOperation);
+		B3DCombineHash(hash, (u32)value.RenderTargets[i].AlphaSourceFactor);
+		B3DCombineHash(hash, (u32)value.RenderTargets[i].AlphaDestinationFactor);
+		B3DCombineHash(hash, (u32)value.RenderTargets[i].AlphaBlendOperation);
+		B3DCombineHash(hash, value.RenderTargets[i].RenderTargetWriteMask);
+	}
+
+	return (u64)hash;
+}
+
 /** Converts a sim thread pipeline state descriptor to a core thread one. */
 void ConvertPassDesc(const PIPELINE_STATE_DESC& input, ct::GpuGraphicsPipelineStateInformation& output)
 {
-	output.BlendState = input.BlendState != nullptr ? input.BlendState->GetCore() : nullptr;
+	output.BlendState = input.BlendState;
 	output.RasterizerState = input.RasterizerState != nullptr ? input.RasterizerState->GetCore() : nullptr;
 	output.DepthStencilState = input.DepthStencilState != nullptr ? input.DepthStencilState->GetCore() : nullptr;
 	output.VertexProgram = input.VertexProgram != nullptr ? input.VertexProgram->GetCore() : nullptr;

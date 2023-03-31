@@ -11,10 +11,96 @@ namespace bs
 	 *  @{
 	 */
 
+	/** Describes blend states for a single render target. */
+	struct B3D_CORE_EXPORT RenderTargetBlendStateInformation
+	{
+		bool operator==(const RenderTargetBlendStateInformation& rhs) const;
+
+		/**
+		 * Queries is blending enabled for the specified render target. Blending allows you to combine the color from
+		 * current and previous pixel based on some value.
+		 */
+		bool BlendEnable = false;
+
+		/**
+		 * Determines what should the source blend factor be. This value determines what will the color being generated
+		 * currently be multiplied by.
+		 */
+		BlendFactor ColorSourceFactor = BF_ONE;
+
+		/**
+		 * Determines what should the destination blend factor be. This value determines what will the color already in
+		 * render target be multiplied by.
+		 */
+		BlendFactor ColorDestinationFactor = BF_ZERO;
+
+		/**
+		 * Determines how are source and destination colors combined (after they are multiplied by their respective blend
+		 * factors).
+		 */
+		BlendOperation ColorBlendOperation = BO_ADD;
+
+		/**
+		 * Determines what should the alpha source blend factor be. This value determines what will the alpha value being
+		 * generated currently be multiplied by.
+		 */
+		BlendFactor AlphaSourceFactor = BF_ONE;
+
+		/**
+		 * Determines what should the alpha destination blend factor be. This value determines what will the alpha value
+		 * already in render target be multiplied by.
+		 */
+		BlendFactor AlphaDestinationFactor = BF_ZERO;
+
+		/**
+		 * Determines how are source and destination alpha values combined (after they are multiplied by their respective
+		 * blend factors).
+		 */
+		BlendOperation AlphaBlendOperation = BO_ADD;
+
+		/**
+		 * Render target write mask allows to choose which pixel components should the pixel shader output.
+		 *
+		 * Only the first four bits are used. First bit representing red, second green, third blue and fourth alpha value.
+		 * Set bits means pixel shader will output those channels.
+		 */
+		u8 RenderTargetWriteMask = 0xFF;
+	};
+
+	/** Describes a graphics pipeline blend state. */
+	struct B3D_CORE_EXPORT BlendStateInformation
+	{
+		bool operator==(const BlendStateInformation& rhs) const;
+
+		/**
+		 * Alpha to coverage allows you to perform blending without needing to worry about order of rendering like regular
+		 * blending does. It requires multi-sampling to be active in order to work, and you need to supply an alpha texture
+		 * that determines object transparency.
+		 *
+		 * Blending is then performed by only using sub-samples covered by the alpha texture for the current pixel and
+		 * combining them with sub-samples previously stored.
+		 *
+		 * Be aware this is a limited technique only useful for certain situations. Unless you are having performance
+		 * problems use regular blending.
+		 */
+		bool EnableAlphaToCoverage = false;
+
+		/**
+		 * When not set, only the first render target blend descriptor will be used for all render targets. If set each
+		 * render target will use its own blend descriptor.
+		 */
+		bool EnableIndependantBlend = false;
+
+		RenderTargetBlendStateInformation RenderTargets[B3D_MAXIMUM_RENDER_TARGET_COUNT];
+
+		/**	Generates a hash value from a blend state descriptor. */
+		static u64 GenerateHash(const BlendStateInformation& value);
+	};
+
 	/** Descriptor structure used for initializing a GPU pipeline state. */
 	struct PIPELINE_STATE_DESC
 	{
-		SPtr<BlendState> BlendState;
+		BlendStateInformation BlendState;
 		SPtr<RasterizerState> RasterizerState;
 		SPtr<DepthStencilState> DepthStencilState;
 
@@ -36,7 +122,7 @@ namespace bs
 		/** Descriptor structure describing a GPU graphics pipeline state. */
 		struct GpuGraphicsPipelineStateInformation
 		{
-			SPtr<BlendState> BlendState;
+			BlendStateInformation BlendState;
 			SPtr<RasterizerState> RasterizerState;
 			SPtr<DepthStencilState> DepthStencilState;
 
@@ -107,7 +193,6 @@ namespace bs
 	class B3D_CORE_EXPORT TGraphicsPipelineState
 	{
 	public:
-		using BlendStateType = SPtr<CoreVariantType<BlendState, Core>>;
 		using RasterizerStateType = SPtr<CoreVariantType<RasterizerState, Core>>;
 		using DepthStencilStateType = SPtr<CoreVariantType<DepthStencilState, Core>>;
 		using GpuProgramType = SPtr<CoreVariantType<GpuProgram, Core>>;
@@ -122,7 +207,7 @@ namespace bs
 		bool HasHullProgram() const { return mData.HullProgram != nullptr; }
 		bool HasDomainProgram() const { return mData.DomainProgram != nullptr; }
 
-		BlendStateType GetBlendState() const { return mData.BlendState; }
+		BlendStateInformation GetBlendState() const { return mData.BlendState; }
 		RasterizerStateType GetRasterizerState() const { return mData.RasterizerState; }
 		DepthStencilStateType GetDepthStencilState() const { return mData.DepthStencilState; }
 
