@@ -81,52 +81,46 @@ Vector<SPtr<GpuProgramParameterDescription>> getAllParamDescs(const SPtr<Techniq
 	{
 		SPtr<Pass> curPass = technique->GetPass(i);
 
-		const SPtr<GpuGraphicsPipelineState>& graphicsPipeline = curPass->GetGraphicsPipelineState();
+		const SPtr<ct::GpuGraphicsPipelineState>& graphicsPipeline = curPass->GetGraphicsPipelineState();
 		if(graphicsPipeline)
 		{
-			SPtr<GpuProgram> vertProgram = graphicsPipeline->GetVertexProgram();
+			SPtr<ct::GpuProgram> vertProgram = graphicsPipeline->GetVertexProgram();
 			if(vertProgram)
 			{
-				vertProgram->BlockUntilCoreInitialized();
 				allParamDescs.push_back(vertProgram->GetParameterDescription());
 			}
 
-			SPtr<GpuProgram> fragProgram = graphicsPipeline->GetFragmentProgram();
+			SPtr<ct::GpuProgram> fragProgram = graphicsPipeline->GetFragmentProgram();
 			if(fragProgram)
 			{
-				fragProgram->BlockUntilCoreInitialized();
 				allParamDescs.push_back(fragProgram->GetParameterDescription());
 			}
 
-			SPtr<GpuProgram> geomProgram = graphicsPipeline->GetGeometryProgram();
+			SPtr<ct::GpuProgram> geomProgram = graphicsPipeline->GetGeometryProgram();
 			if(geomProgram)
 			{
-				geomProgram->BlockUntilCoreInitialized();
 				allParamDescs.push_back(geomProgram->GetParameterDescription());
 			}
 
-			SPtr<GpuProgram> hullProgram = graphicsPipeline->GetHullProgram();
+			SPtr<ct::GpuProgram> hullProgram = graphicsPipeline->GetHullProgram();
 			if(hullProgram)
 			{
-				hullProgram->BlockUntilCoreInitialized();
 				allParamDescs.push_back(hullProgram->GetParameterDescription());
 			}
 
-			SPtr<GpuProgram> domainProgram = graphicsPipeline->GetDomainProgram();
+			SPtr<ct::GpuProgram> domainProgram = graphicsPipeline->GetDomainProgram();
 			if(domainProgram)
 			{
-				domainProgram->BlockUntilCoreInitialized();
 				allParamDescs.push_back(domainProgram->GetParameterDescription());
 			}
 		}
 
-		const SPtr<GpuComputePipelineState>& computePipeline = curPass->GetComputePipelineState();
+		const SPtr<ct::GpuComputePipelineState>& computePipeline = curPass->GetComputePipelineState();
 		if(computePipeline)
 		{
-			SPtr<GpuProgram> computeProgram = computePipeline->GetProgram();
+			SPtr<ct::GpuProgram> computeProgram = computePipeline->GetProgram();
 			if(computeProgram)
 			{
-				computeProgram->BlockUntilCoreInitialized();
 				allParamDescs.push_back(computeProgram->GetParameterDescription());
 			}
 		}
@@ -485,19 +479,19 @@ SPtr<ct::GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& gpuBufferC
 	return device->CreateGpuBuffer(gpuBufferCreateInformation);
 }
 
-template<bool Core>
-SPtr<CoreVariantType<GpuParameters, Core>> CreateGpuParameters(const SPtr<CoreVariantType<GpuPipelineParameterLayout, Core>>& parameterLayout)
+template <bool Core>
+SPtr<CoreVariantType<GpuParameters, Core>> CreateGpuParameters(const SPtr<ct::GpuPipelineParameterLayout>& parameterLayout)
 {
 	return nullptr;
 }
 
-template<>
-SPtr<GpuParameters> CreateGpuParameters<false>(const SPtr<GpuPipelineParameterLayout>& parameterLayout)
+template <>
+SPtr<GpuParameters> CreateGpuParameters<false>(const SPtr<ct::GpuPipelineParameterLayout>& parameterLayout)
 {
 	return GpuParameters::Create(parameterLayout);
 }
 
-template<>
+template <>
 SPtr<ct::GpuParameters> CreateGpuParameters<true>(const SPtr<ct::GpuPipelineParameterLayout>& parameterLayout)
 {
 	const SPtr<GpuDevice>& device = GetCoreApplication().GetPrimaryGpuDevice();
@@ -511,20 +505,20 @@ template <bool Core>
 TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const ShaderType& shader, const SPtr<MaterialParamsType>& params)
 	: mPassParams(technique->GetPassCount()), mParamVersion(0)
 {
-	u32 numPasses = technique->GetPassCount();
+	const u32 passCount = technique->GetPassCount();
 
 	// Create GpuParameters for each pass and shader stage
-	for(u32 i = 0; i < numPasses; i++)
+	for(u32 passIndex = 0; passIndex < passCount; passIndex++)
 	{
-		SPtr<PassType> curPass = technique->GetPass(i);
+		SPtr<PassType> curPass = technique->GetPass(passIndex);
 
-		SPtr<GraphicsPipelineStateType> gfxPipeline = curPass->GetGraphicsPipelineState();
+		SPtr<ct::GpuGraphicsPipelineState> gfxPipeline = curPass->GetGraphicsPipelineState();
 		if(gfxPipeline != nullptr)
-			mPassParams[i] = CreateGpuParameters<Core>(gfxPipeline->GetParameterLayout());
+			mPassParams[passIndex] = CreateGpuParameters<Core>(gfxPipeline->GetParameterLayout());
 		else
 		{
-			SPtr<ComputePipelineStateType> computePipeline = curPass->GetComputePipelineState();
-			mPassParams[i] = CreateGpuParameters<Core>(computePipeline->GetParameterLayout());
+			SPtr<ct::GpuComputePipelineState> computePipeline = curPass->GetComputePipelineState();
+			mPassParams[passIndex] = CreateGpuParameters<Core>(computePipeline->GetParameterLayout());
 		}
 	}
 
@@ -556,8 +550,8 @@ TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const S
 	}
 
 	//// Assign param block buffers and generate information about data parameters
-	B3D_ASSERT(numPasses < 64); // BlockInfo flags uses u64 for tracking usage
-	for(u32 i = 0; i < numPasses; i++)
+	B3D_ASSERT(passCount < 64); // BlockInfo flags uses u64 for tracking usage
+	for(u32 i = 0; i < passCount; i++)
 	{
 		SPtr<GpuParamsType> paramPtr = mPassParams[i];
 		for(u32 j = 0; j < kNumStages; j++)
@@ -655,14 +649,14 @@ TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const S
 	{
 		FrameVector<ObjectParamInfo> objParamInfos;
 
-		u32 offsetsSize = numPasses * kNumStages * 4 * sizeof(u32);
+		u32 offsetsSize = passCount * kNumStages * 4 * sizeof(u32);
 		u32* offsets = (u32*)B3DFrameAllocate(offsetsSize);
 		memset(offsets, 0, offsetsSize);
 
 		// First store all objects in temporary arrays since we don't know how many of them are
 		u32 totalNumObjects = 0;
 		u32* stageOffsets = offsets;
-		for(u32 i = 0; i < numPasses; i++)
+		for(u32 i = 0; i < passCount; i++)
 		{
 			SPtr<GpuParamsType> paramPtr = mPassParams[i];
 			for(u32 j = 0; j < kNumStages; j++)
@@ -715,8 +709,8 @@ TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const S
 
 		// Transfer all objects into their permanent storage
 		u32 numBlocks = (u32)mBlocks.size();
-		u32 blockBindingsSize = numBlocks * numPasses * sizeof(PassBlockBindings);
-		u32 objectParamInfosSize = totalNumObjects * sizeof(ObjectParamInfo) + numPasses * sizeof(PassParamInfo);
+		u32 blockBindingsSize = numBlocks * passCount * sizeof(PassBlockBindings);
+		u32 objectParamInfosSize = totalNumObjects * sizeof(ObjectParamInfo) + passCount * sizeof(PassParamInfo);
 		mData = (u8*)B3DAllocate(objectParamInfosSize + blockBindingsSize);
 		u8* dataIter = mData;
 
@@ -726,13 +720,13 @@ TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const S
 
 		StageParamInfo* stageInfos = (StageParamInfo*)mPassParamInfos;
 
-		ObjectParamInfo* objInfos = (ObjectParamInfo*)(mPassParamInfos + numPasses);
+		ObjectParamInfo* objInfos = (ObjectParamInfo*)(mPassParamInfos + passCount);
 		memcpy(objInfos, objParamInfos.data(), totalNumObjects * sizeof(ObjectParamInfo));
 
 		u32 objInfoOffset = 0;
 
 		stageOffsets = offsets;
-		for(u32 i = 0; i < numPasses; i++)
+		for(u32 i = 0; i < passCount; i++)
 		{
 			for(u32 j = 0; j < kNumStages; j++)
 			{
@@ -786,12 +780,12 @@ TGpuParamsSet<Core>::TGpuParamsSet(const SPtr<TechniqueType>& technique, const S
 		for(auto& block : mBlocks)
 		{
 			block.PassData = (PassBlockBindings*)dataIter;
-			dataIter += sizeof(PassBlockBindings) * numPasses;
+			dataIter += sizeof(PassBlockBindings) * passCount;
 		}
 
 		for(auto& block : mBlocks)
 		{
-			for(u32 i = 0; i < numPasses; i++)
+			for(u32 i = 0; i < passCount; i++)
 			{
 				SPtr<GpuParamsType> paramPtr = mPassParams[i];
 				for(u32 j = 0; j < kNumStages; j++)

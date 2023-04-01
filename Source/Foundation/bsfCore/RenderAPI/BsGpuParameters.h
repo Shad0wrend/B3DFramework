@@ -9,7 +9,12 @@
 #include "Math/BsMatrixNxM.h"
 
 namespace bs
-{
+{namespace ct
+	{
+		class GpuComputePipelineState;
+		class GpuGraphicsPipelineState;
+	}
+
 	/** @addtogroup Implementation
 	 *  @{
 	 */
@@ -578,17 +583,17 @@ namespace bs
 		 * @param[in]	pipelineState	Pipeline state for which this object can set parameters for.
 		 * @return						New GpuParameters object.
 		 */
-		static SPtr<GpuParameters> Create(const SPtr<GpuGraphicsPipelineState>& pipelineState);
+		static SPtr<GpuParameters> Create(const SPtr<ct::GpuGraphicsPipelineState>& pipelineState);
 
 		/** @copydoc GpuParameters::Create(const SPtr<GraphicsPipelineState>&) */
-		static SPtr<GpuParameters> Create(const SPtr<GpuComputePipelineState>& pipelineState);
+		static SPtr<GpuParameters> Create(const SPtr<ct::GpuComputePipelineState>& pipelineState);
 
 		/**
 		 * Creates a new set of GPU parameters using an object describing the parameters for a pipeline.
 		 *
 		 * @param[in]	parameterLayout	Description of GPU parameters for a specific GPU pipeline state.
 		 */
-		static SPtr<GpuParameters> Create(const SPtr<GpuPipelineParameterLayout>& parameterLayout);
+		static SPtr<GpuParameters> Create(const SPtr<ct::GpuPipelineParameterLayout>& parameterLayout);
 
 		/** Contains a lookup table for sizes of all data parameters. Sizes are in bytes. */
 		const static GpuDataParameterTypeInformationLookup kParamSizes;
@@ -602,7 +607,7 @@ namespace bs
 
 		/** @} */
 	protected:
-		GpuParameters(const SPtr<GpuPipelineParameterLayout>& paramInfo);
+		GpuParameters(const SPtr<ct::GpuPipelineParameterLayout>& paramInfo);
 
 		SPtr<GpuParameters> GetThisPtrInternal() const override;
 		SPtr<ct::CoreObject> CreateCore() const override;

@@ -13,50 +13,6 @@
 
 using namespace bs;
 
-template<bool Core>
-SPtr<CoreVariantType<GpuProgram, Core>> CreateGpuProgram(const GpuProgramCreateInformation& gpuProgramCreateInformation)
-{
-	return nullptr;
-}
-
-template<>
-SPtr<GpuProgram> CreateGpuProgram<false>(const GpuProgramCreateInformation& gpuProgramCreateInformation)
-{
-	return GpuProgram::Create(gpuProgramCreateInformation);
-}
-
-template<>
-SPtr<ct::GpuProgram> CreateGpuProgram<true>(const GpuProgramCreateInformation& gpuProgramCreateInformation)
-{
-	const SPtr<GpuDevice>& device = GetCoreApplication().GetPrimaryGpuDevice();
-	return device->CreateGpuProgram(gpuProgramCreateInformation);
-}
-
-SPtr<GpuComputePipelineState> CreateComputePipeline(const SPtr<GpuProgram>& gpuProgram)
-{
-	return GpuComputePipelineState::Create(gpuProgram);
-}
-
-SPtr<ct::GpuComputePipelineState> CreateComputePipeline(const SPtr<ct::GpuProgram>& gpuProgram)
-{
-	ct::GpuComputePipelineStateCreateInformation createInformation;
-	createInformation.Program = gpuProgram;
-
-	const SPtr<GpuDevice>& device = GetCoreApplication().GetPrimaryGpuDevice();
-	return device->CreateGpuComputePipelineState(createInformation);
-}
-
-SPtr<GpuGraphicsPipelineState> CreateGraphicsPipeline(const PIPELINE_STATE_DESC& createInformation)
-{
-	return GpuGraphicsPipelineState::Create(createInformation);
-}
-
-SPtr<ct::GpuGraphicsPipelineState> CreateGraphicsPipeline(const ct::GpuGraphicsPipelineStateCreateInformation& createInformation)
-{
-	const SPtr<GpuDevice>& device = GetCoreApplication().GetPrimaryGpuDevice();
-	return device->CreateGpuGraphicsPipelineState(createInformation);
-}
-
 template <bool Core>
 TPass<Core>::TPass()
 {
@@ -91,7 +47,7 @@ bool TPass<Core>::HasBlending() const
 }
 
 template <bool Core>
-const GpuProgramCreateInformation& TPass<Core>::GetProgramDesc(bs::GpuProgramType type) const
+const GpuProgramCreateInformation& TPass<Core>::GetGpuProgramCreateInformation(bs::GpuProgramType type) const
 {
 	switch(type)
 	{
@@ -114,35 +70,39 @@ const GpuProgramCreateInformation& TPass<Core>::GetProgramDesc(bs::GpuProgramTyp
 template <bool Core>
 void TPass<Core>::CreatePipelineState()
 {
+	const SPtr<GpuDevice>& device = GetCoreApplication().GetPrimaryGpuDevice();
+
 	if(IsCompute())
 	{
-		SPtr<GpuProgramType> program = CreateGpuProgram<Core>(mData.ComputeProgramDesc);
-		mComputePipelineState = CreateComputePipeline(program);
+		GpuComputePipelineStateCreateInformation createInformation;
+		createInformation.Program = device->CreateGpuProgram(mData.ComputeProgramDesc);
+
+		mComputePipelineState = device->CreateGpuComputePipelineState(createInformation);
 	}
 	else
 	{
-		PipelineStateDescType desc;
+		GpuGraphicsPipelineStateCreateInformation createInformation;
 
 		if(!mData.VertexProgramDesc.Source.empty())
-			desc.VertexProgram = CreateGpuProgram<Core>(mData.VertexProgramDesc);
+			createInformation.VertexProgram = device->CreateGpuProgram(mData.VertexProgramDesc);
 
 		if(!mData.FragmentProgramDesc.Source.empty())
-			desc.FragmentProgram = CreateGpuProgram<Core>(mData.FragmentProgramDesc);
+			createInformation.FragmentProgram = device->CreateGpuProgram(mData.FragmentProgramDesc);
 
 		if(!mData.GeometryProgramDesc.Source.empty())
-			desc.GeometryProgram = CreateGpuProgram<Core>(mData.GeometryProgramDesc);
+			createInformation.GeometryProgram = device->CreateGpuProgram(mData.GeometryProgramDesc);
 
 		if(!mData.HullProgramDesc.Source.empty())
-			desc.HullProgram = CreateGpuProgram<Core>(mData.HullProgramDesc);
+			createInformation.HullProgram = device->CreateGpuProgram(mData.HullProgramDesc);
 
 		if(!mData.DomainProgramDesc.Source.empty())
-			desc.DomainProgram = CreateGpuProgram<Core>(mData.DomainProgramDesc);
+			createInformation.DomainProgram = device->CreateGpuProgram(mData.DomainProgramDesc);
 
-		desc.BlendState = mData.BlendStateDesc;
-		desc.RasterizerState = mData.RasterizerStateDesc;
-		desc.DepthStencilState = mData.DepthStencilStateDesc;
+		createInformation.BlendState = mData.BlendStateDesc;
+		createInformation.RasterizerState = mData.RasterizerStateDesc;
+		createInformation.DepthStencilState = mData.DepthStencilStateDesc;
 
-		mGraphicsPipelineState = CreateGraphicsPipeline(desc);
+		mGraphicsPipelineState = device->CreateGpuGraphicsPipelineState(createInformation);
 	}
 }
 
@@ -185,6 +145,8 @@ void Pass::Compile()
 	// unnecessarily recompile it. However syncing them in a clean way is not trivial hard and this method is currently
 	// not being used much (at all) to warrant a complex solution. Something to keep in mind for later though.
 	CreatePipelineState();
+
+	// TODO - Non-core Pass possibly shouldn't even hold onto the pipeline states. The sync can just include a request to compile.
 
 	MarkCoreDirty();
 	CoreObject::SyncToCore();

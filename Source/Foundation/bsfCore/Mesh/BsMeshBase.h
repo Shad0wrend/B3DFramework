@@ -9,6 +9,11 @@
 
 namespace bs
 {
+	namespace ct
+	{
+		class MeshBase;
+	}
+
 	/** @addtogroup Resources
 	 *  @{
 	 */

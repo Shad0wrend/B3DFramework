@@ -631,9 +631,9 @@ bool BuiltinResourcesHelper::VerifyAndReportShader(const HShader& shader)
 		{
 			SPtr<Pass> pass = technique->GetPass(i);
 
-			std::array<SPtr<GpuProgram>, 6> gpuPrograms;
+			std::array<SPtr<ct::GpuProgram>, 6> gpuPrograms;
 
-			const SPtr<GpuGraphicsPipelineState>& graphicsPipeline = pass->GetGraphicsPipelineState();
+			const SPtr<ct::GpuGraphicsPipelineState>& graphicsPipeline = pass->GetGraphicsPipelineState();
 			if(graphicsPipeline)
 			{
 				gpuPrograms[0] = graphicsPipeline->GetVertexProgram();
@@ -643,7 +643,7 @@ bool BuiltinResourcesHelper::VerifyAndReportShader(const HShader& shader)
 				gpuPrograms[4] = graphicsPipeline->GetDomainProgram();
 			}
 
-			const SPtr<GpuComputePipelineState>& computePipeline = pass->GetComputePipelineState();
+			const SPtr<ct::GpuComputePipelineState>& computePipeline = pass->GetComputePipelineState();
 			if(computePipeline)
 				gpuPrograms[5] = computePipeline->GetProgram();
 
@@ -652,7 +652,6 @@ bool BuiltinResourcesHelper::VerifyAndReportShader(const HShader& shader)
 				if(program == nullptr)
 					continue;
 
-				program->BlockUntilCoreInitialized();
 				if(!program->IsCompiled())
 				{
 					String errMsg = "Error occured while compiling a shader \"" + shader->GetName() + "\". Error message: " + program->GetCompileErrorMessage();
@@ -688,7 +687,7 @@ void BuiltinResourcesHelper::UpdateShaderBytecode(const Path& path)
 
 			for(u32 j = 0; j < GPT_COUNT; j++)
 			{
-				const GpuProgramCreateInformation& desc = pass->GetProgramDesc((GpuProgramType)j);
+				const GpuProgramCreateInformation& desc = pass->GetGpuProgramCreateInformation((GpuProgramType)j);
 				if(desc.Source.empty())
 					continue;
 

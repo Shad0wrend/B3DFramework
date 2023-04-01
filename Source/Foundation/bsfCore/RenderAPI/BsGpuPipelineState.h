@@ -3,7 +3,6 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
-#include "CoreThread/BsCoreObject.h"
 
 namespace bs
 {
@@ -231,218 +230,44 @@ namespace bs
 		static u64 GenerateHash(const DepthStencilStateInformation& value);
 	};
 
-
-	/** Descriptor structure used for initializing a GPU pipeline state. */
-	struct PIPELINE_STATE_DESC
+	/** Descriptor structure describing a GPU graphics pipeline state. */
+	struct GpuGraphicsPipelineStateInformation
 	{
 		BlendStateInformation BlendState;
 		RasterizerStateInformation RasterizerState;
 		DepthStencilStateInformation DepthStencilState;
 
-		SPtr<GpuProgram> VertexProgram;
-		SPtr<GpuProgram> FragmentProgram;
-		SPtr<GpuProgram> GeometryProgram;
-		SPtr<GpuProgram> HullProgram;
-		SPtr<GpuProgram> DomainProgram;
+		SPtr<ct::GpuProgram> VertexProgram;
+		SPtr<ct::GpuProgram> FragmentProgram;
+		SPtr<ct::GpuProgram> GeometryProgram;
+		SPtr<ct::GpuProgram> HullProgram;
+		SPtr<ct::GpuProgram> DomainProgram;
 	};
 
-	/** @} */
-
-	namespace ct
+	/** Descriptor structure used for initializing a GPU graphics pipeline state. */
+	struct GpuGraphicsPipelineStateCreateInformation : GpuGraphicsPipelineStateInformation
 	{
-		/** @addtogroup RenderAPI-Internal
-		 *  @{
-		 */
+		GpuGraphicsPipelineStateCreateInformation() = default;
 
-		/** Descriptor structure describing a GPU graphics pipeline state. */
-		struct GpuGraphicsPipelineStateInformation
-		{
-			BlendStateInformation BlendState;
-			RasterizerStateInformation RasterizerState;
-			DepthStencilStateInformation DepthStencilState;
-
-			SPtr<GpuProgram> VertexProgram;
-			SPtr<GpuProgram> FragmentProgram;
-			SPtr<GpuProgram> GeometryProgram;
-			SPtr<GpuProgram> HullProgram;
-			SPtr<GpuProgram> DomainProgram;
-		};
-
-		/** Descriptor structure used for initializing a GPU graphics pipeline state. */
-		struct GpuGraphicsPipelineStateCreateInformation : GpuGraphicsPipelineStateInformation
-		{
-			GpuGraphicsPipelineStateCreateInformation() = default;
-
-			GpuGraphicsPipelineStateCreateInformation(const GpuGraphicsPipelineStateInformation& other)
-				: GpuGraphicsPipelineStateInformation(other)
-			{}
-		};
-
-		/** Descriptor structure describing a GPU compute pipeline state. */
-		struct GpuComputePipelineStateInformation
-		{
-			SPtr<GpuProgram> Program;
-		};
-
-		/** Descriptor structure used for initializing a GPU compute pipeline state. */
-		struct GpuComputePipelineStateCreateInformation : GpuComputePipelineStateInformation 
-		{
-			GpuComputePipelineStateCreateInformation() = default;
-
-			GpuComputePipelineStateCreateInformation(const GpuComputePipelineStateInformation& other)
-				: GpuComputePipelineStateInformation(other)
-			{}
-		};
-
-		/** @} */
-	} // namespace ct
-
-	/** @addtogroup Implementation
-	 *  @{
-	 */
-
-	/** Contains all data used by a GPU pipeline state, templated so it may contain both core and sim thread data. */
-	template <bool Core>
-	struct TGpuPipelineStateTypes
-	{};
-
-	template <>
-	struct TGpuPipelineStateTypes<false>
-	{
-		typedef GpuPipelineParameterLayout GpuPipelineParameterLayoutType;
-		typedef PIPELINE_STATE_DESC StateDescType;
+		GpuGraphicsPipelineStateCreateInformation(const GpuGraphicsPipelineStateInformation& other)
+			: GpuGraphicsPipelineStateInformation(other)
+		{}
 	};
 
-	template <>
-	struct TGpuPipelineStateTypes<true>
+	/** Descriptor structure describing a GPU compute pipeline state. */
+	struct GpuComputePipelineStateInformation
 	{
-		typedef ct::GpuPipelineParameterLayout GpuPipelineParameterLayoutType;
-		typedef ct::GpuGraphicsPipelineStateInformation StateDescType;
+		SPtr<ct::GpuProgram> Program;
 	};
 
-	/**
-	 * Templated version of GraphicsPipelineState so it can be used for both core and non-core versions of the pipeline
-	 * state.
-	 */
-	template <bool Core>
-	class B3D_CORE_EXPORT TGraphicsPipelineState
+	/** Descriptor structure used for initializing a GPU compute pipeline state. */
+	struct GpuComputePipelineStateCreateInformation : GpuComputePipelineStateInformation 
 	{
-	public:
-		using GpuProgramType = SPtr<CoreVariantType<GpuProgram, Core>>;
-		using StateDescType = typename TGpuPipelineStateTypes<Core>::StateDescType;
-		using GpuPipelineParameterLayoutType = typename TGpuPipelineStateTypes<Core>::GpuPipelineParameterLayoutType;
+		GpuComputePipelineStateCreateInformation() = default;
 
-		virtual ~TGraphicsPipelineState() = default;
-
-		bool HasVertexProgram() const { return mData.VertexProgram != nullptr; }
-		bool HasFragmentProgram() const { return mData.FragmentProgram != nullptr; }
-		bool HasGeometryProgram() const { return mData.GeometryProgram != nullptr; }
-		bool HasHullProgram() const { return mData.HullProgram != nullptr; }
-		bool HasDomainProgram() const { return mData.DomainProgram != nullptr; }
-
-		BlendStateInformation GetBlendState() const { return mData.BlendState; }
-		RasterizerStateInformation GetRasterizerState() const { return mData.RasterizerState; }
-		DepthStencilStateInformation GetDepthStencilState() const { return mData.DepthStencilState; }
-
-		const GpuProgramType& GetVertexProgram() const { return mData.VertexProgram; }
-		const GpuProgramType& GetFragmentProgram() const { return mData.FragmentProgram; }
-		const GpuProgramType& GetGeometryProgram() const { return mData.GeometryProgram; }
-		const GpuProgramType& GetHullProgram() const { return mData.HullProgram; }
-		const GpuProgramType& GetDomainProgram() const { return mData.DomainProgram; }
-
-		/** Returns an object containing the layout of all parameters in all the GPU programs used in this pipeline state. */
-		const SPtr<GpuPipelineParameterLayoutType>& GetParameterLayout() const { return mParameterLayout; }
-
-	protected:
-		TGraphicsPipelineState() = default;
-		TGraphicsPipelineState(const StateDescType& desc);
-
-		StateDescType mData;
-		SPtr<GpuPipelineParameterLayoutType> mParameterLayout;
-	};
-
-	/**
-	 * Templated version of ComputePipelineState so it can be used for both core and non-core versions of the pipeline
-	 * state.
-	 */
-	template <bool Core>
-	class B3D_CORE_EXPORT TComputePipelineState
-	{
-	public:
-		using GpuProgramType = SPtr<CoreVariantType<GpuProgram, Core>>;
-		using GpuPipelineParameterLayoutType = typename TGpuPipelineStateTypes<Core>::GpuPipelineParameterLayoutType;
-
-		virtual ~TComputePipelineState() = default;
-
-		const GpuProgramType& GetProgram() const { return mProgram; }
-
-		/** Returns an object containing the layout of all parameters in the GPU program used in this pipeline state. */
-		const SPtr<GpuPipelineParameterLayoutType>& GetParameterLayout() const { return mParameterLayout; }
-
-	protected:
-		TComputePipelineState();
-		TComputePipelineState(const GpuProgramType& program);
-
-		GpuProgramType mProgram;
-		SPtr<GpuPipelineParameterLayoutType> mParameterLayout;
-	};
-
-	/** @} */
-
-	/** @addtogroup RenderAPI
-	 *  @{
-	 */
-
-	/**
-	 * Describes the state of the GPU pipeline that determines how are primitives rendered. It consists of programmable
-	 * states (vertex, fragment, geometry, etc. GPU programs), as well as a set of fixed states (blend, rasterizer,
-	 * depth-stencil). Once created the state is immutable, and can be bound to RenderAPI for rendering.
-	 */
-	class B3D_CORE_EXPORT GpuGraphicsPipelineState : public CoreObject, public TGraphicsPipelineState<false>
-	{
-	public:
-		virtual ~GpuGraphicsPipelineState() = default;
-
-		/**
-		 * Retrieves a core implementation of the pipeline object usable only from the core thread.
-		 *
-		 * @note	Core thread only.
-		 */
-		SPtr<ct::GpuGraphicsPipelineState> GetCore() const;
-
-		/** @copydoc RenderStateManager::CreateGraphicsPipelineState */
-		static SPtr<GpuGraphicsPipelineState> Create(const PIPELINE_STATE_DESC& desc);
-
-	protected:
-		GpuGraphicsPipelineState(const PIPELINE_STATE_DESC& desc);
-
-		SPtr<ct::CoreObject> CreateCore() const override;
-	};
-
-	/**
-	 * Describes the state of the GPU pipeline that determines how are compute programs executed. It consists of
-	 * of a single programmable state (GPU program). Once created the state is immutable, and can be bound to RenderAPI for
-	 * use.
-	 */
-	class B3D_CORE_EXPORT GpuComputePipelineState : public CoreObject, public TComputePipelineState<false>
-	{
-	public:
-		virtual ~GpuComputePipelineState() = default;
-
-		/**
-		 * Retrieves a core implementation of the pipeline object usable only from the core thread.
-		 *
-		 * @note	Core thread only.
-		 */
-		SPtr<ct::GpuComputePipelineState> GetCore() const;
-
-		/** @copydoc RenderStateManager::CreateComputePipelineState */
-		static SPtr<GpuComputePipelineState> Create(const SPtr<GpuProgram>& program);
-
-	protected:
-		GpuComputePipelineState(const SPtr<GpuProgram>& program);
-
-		SPtr<ct::CoreObject> CreateCore() const override;
+		GpuComputePipelineStateCreateInformation(const GpuComputePipelineStateInformation& other)
+			: GpuComputePipelineStateInformation(other)
+		{}
 	};
 
 	/** @} */
@@ -460,16 +285,37 @@ namespace bs
 		 *
 		 * @note	Thread safe (Immutable).
 		 */
-		class B3D_CORE_EXPORT GpuGraphicsPipelineState : public CoreObject, public TGraphicsPipelineState<true>
+		class B3D_CORE_EXPORT GpuGraphicsPipelineState
 		{
 		public:
 			GpuGraphicsPipelineState(GpuDevice& gpuDevice, const GpuGraphicsPipelineStateCreateInformation& createInformation);
 			virtual ~GpuGraphicsPipelineState() = default;
 
-			void Initialize() override;
+			virtual void Initialize();
+
+			bool HasVertexProgram() const { return mData.VertexProgram != nullptr; }
+			bool HasFragmentProgram() const { return mData.FragmentProgram != nullptr; }
+			bool HasGeometryProgram() const { return mData.GeometryProgram != nullptr; }
+			bool HasHullProgram() const { return mData.HullProgram != nullptr; }
+			bool HasDomainProgram() const { return mData.DomainProgram != nullptr; }
+
+			const BlendStateInformation& GetBlendState() const { return mData.BlendState; }
+			const RasterizerStateInformation& GetRasterizerState() const { return mData.RasterizerState; }
+			const DepthStencilStateInformation& GetDepthStencilState() const { return mData.DepthStencilState; }
+
+			const SPtr<GpuProgram>& GetVertexProgram() const { return mData.VertexProgram; }
+			const SPtr<GpuProgram>& GetFragmentProgram() const { return mData.FragmentProgram; }
+			const SPtr<GpuProgram>& GetGeometryProgram() const { return mData.GeometryProgram; }
+			const SPtr<GpuProgram>& GetHullProgram() const { return mData.HullProgram; }
+			const SPtr<GpuProgram>& GetDomainProgram() const { return mData.DomainProgram; }
+
+			/** Returns an object containing the layout of all parameters in all the GPU programs used in this pipeline state. */
+			const SPtr<GpuPipelineParameterLayout>& GetParameterLayout() const { return mParameterLayout; }
 
 		protected:
 			GpuDevice& mGpuDevice;
+			GpuGraphicsPipelineStateInformation mData;
+			SPtr<GpuPipelineParameterLayout> mParameterLayout;
 		};
 
 		/**
@@ -478,16 +324,24 @@ namespace bs
 		 *
 		 * @note	Thread safe (Immutable).
 		 */
-		class B3D_CORE_EXPORT GpuComputePipelineState : public CoreObject, public TComputePipelineState<true>
+		class B3D_CORE_EXPORT GpuComputePipelineState
 		{
 		public:
 			GpuComputePipelineState(GpuDevice& gpuDevice, const GpuComputePipelineStateCreateInformation& createInformation);
 			virtual ~GpuComputePipelineState() = default;
 
-			void Initialize() override;
+			virtual void Initialize();
+
+			const SPtr<GpuProgram>& GetProgram() const { return mData.Program; }
+
+			/** Returns an object containing the layout of all parameters in the GPU program used in this pipeline state. */
+			const SPtr<GpuPipelineParameterLayout>& GetParameterLayout() const { return mParameterLayout; }
 
 		protected:
 			GpuDevice& mGpuDevice;
+
+			GpuComputePipelineStateInformation mData;
+			SPtr<GpuPipelineParameterLayout> mParameterLayout;
 		};
 
 		/** @} */

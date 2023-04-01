@@ -525,7 +525,6 @@ SPtr<ct::GpuParameters> VulkanGpuDevice::CreateGpuParameters(const SPtr<GpuPipel
 SPtr<ct::GpuGraphicsPipelineState> VulkanGpuDevice::CreateGpuGraphicsPipelineState(const GpuGraphicsPipelineStateCreateInformation& createInformation, bool deferredInitialize)
 {
 	SPtr<VulkanGpuGraphicsPipelineState> output = B3DMakeSharedFromExisting<VulkanGpuGraphicsPipelineState>(new(B3DAllocate<VulkanGpuGraphicsPipelineState>()) VulkanGpuGraphicsPipelineState(*this, createInformation));
-	output->SetShared(output);
 
 	if(!deferredInitialize)
 		output->Initialize();
@@ -536,7 +535,6 @@ SPtr<ct::GpuGraphicsPipelineState> VulkanGpuDevice::CreateGpuGraphicsPipelineSta
 SPtr<ct::GpuComputePipelineState> VulkanGpuDevice::CreateGpuComputePipelineState(const GpuComputePipelineStateCreateInformation& createInformation, bool deferredInitialize)
 {
 	SPtr<VulkanGpuComputePipelineState> output = B3DMakeSharedFromExisting<VulkanGpuComputePipelineState>(new(B3DAllocate<VulkanGpuComputePipelineState>()) VulkanGpuComputePipelineState(*this, createInformation));
-	output->SetShared(output);
 
 	if(!deferredInitialize)
 		output->Initialize();

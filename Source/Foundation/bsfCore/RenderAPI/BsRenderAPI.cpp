@@ -19,14 +19,14 @@ void RenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams)
 	GetCoreThread().QueueCommand(std::bind(&ct::RenderAPI::SetGpuParams, ct::RenderAPI::InstancePtr(), gpuParams->GetCore(), nullptr));
 }
 
-void RenderAPI::SetGraphicsPipeline(const SPtr<GpuGraphicsPipelineState>& pipelineState)
+void RenderAPI::SetGraphicsPipeline(const SPtr<ct::GpuGraphicsPipelineState>& pipelineState)
 {
-	GetCoreThread().QueueCommand(std::bind(&ct::RenderAPI::SetGraphicsPipeline, ct::RenderAPI::InstancePtr(), pipelineState->GetCore(), nullptr));
+	GetCoreThread().QueueCommand(std::bind(&ct::RenderAPI::SetGraphicsPipeline, ct::RenderAPI::InstancePtr(), pipelineState, nullptr));
 }
 
-void RenderAPI::SetComputePipeline(const SPtr<GpuComputePipelineState>& pipelineState)
+void RenderAPI::SetComputePipeline(const SPtr<ct::GpuComputePipelineState>& pipelineState)
 {
-	GetCoreThread().QueueCommand(std::bind(&ct::RenderAPI::SetComputePipeline, ct::RenderAPI::InstancePtr(), pipelineState->GetCore(), nullptr));
+	GetCoreThread().QueueCommand(std::bind(&ct::RenderAPI::SetComputePipeline, ct::RenderAPI::InstancePtr(), pipelineState, nullptr));
 }
 
 void RenderAPI::SetVertexBuffers(u32 index, const Vector<SPtr<GpuBuffer>>& buffers)

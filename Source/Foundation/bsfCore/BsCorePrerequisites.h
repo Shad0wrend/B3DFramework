@@ -281,8 +281,6 @@ namespace bs
 	CORE_OBJECT_FORWARD_DECLARE(Light)
 	CORE_OBJECT_FORWARD_DECLARE(Camera)
 	CORE_OBJECT_FORWARD_DECLARE(Renderable)
-	CORE_OBJECT_FORWARD_DECLARE(GpuGraphicsPipelineState)
-	CORE_OBJECT_FORWARD_DECLARE(GpuComputePipelineState)
 	CORE_OBJECT_FORWARD_DECLARE(GpuPipelineParameterLayout)
 	CORE_OBJECT_FORWARD_DECLARE(ReflectionProbe)
 	CORE_OBJECT_FORWARD_DECLARE(ParticleSystem)
@@ -385,6 +383,8 @@ namespace bs
 	class FontImportOptions;
 	class GpuProgramImportOptions;
 	class MeshImportOptions;
+	class GpuGraphicsPipelineState;
+	class GpuComputePipelineState;
 	struct FontBitmap;
 	class GameObject;
 	class GpuResourceData;
@@ -480,9 +480,6 @@ namespace bs
 		class VertexData;
 		class RenderAPI;
 		class CoreObject;
-		class MeshBase;
-		class TransientMesh;
-		class MeshHeap;
 		class CommandBuffer;
 		class EventQuery;
 		class TimerQuery;
@@ -492,6 +489,8 @@ namespace bs
 		class RenderWindowManager;
 		class RenderStateManager;
 		class GpuBuffer;
+		class GpuGraphicsPipelineState;
+		class GpuComputePipelineState;
 	} // namespace ct
 } // namespace bs
 

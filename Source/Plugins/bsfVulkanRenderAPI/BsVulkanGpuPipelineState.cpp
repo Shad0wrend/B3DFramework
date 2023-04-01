@@ -464,10 +464,10 @@ void VulkanGpuComputePipelineState::Initialize()
 
 	// This might happen fairly often if shaders with unsupported languages are loaded, in which case the pipeline
 	// will never get used, and its fine not to initialize it.
-	if(!mProgram->IsCompiled())
+	if(!mData.Program->IsCompiled())
 		return;
 
-	VulkanGpuProgram* vkProgram = static_cast<VulkanGpuProgram*>(mProgram.get());
+	VulkanGpuProgram* vkProgram = static_cast<VulkanGpuProgram*>(mData.Program.get());
 
 	VkPipelineShaderStageCreateInfo stageCI;
 	stageCI.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -540,7 +540,7 @@ void VulkanGpuComputePipelineState::RegisterPipelineResources(VulkanInternalComm
 {
 	u32 deviceIdx = cmdBuffer->GetDeviceIndex();
 
-	VulkanGpuProgram* program = static_cast<VulkanGpuProgram*>(mProgram.get());
+	VulkanGpuProgram* program = static_cast<VulkanGpuProgram*>(mData.Program.get());
 	if(program != nullptr)
 	{
 		VulkanShaderModule* module = program->GetShaderModule(deviceIdx);

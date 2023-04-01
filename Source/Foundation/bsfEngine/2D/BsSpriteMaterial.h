@@ -10,6 +10,11 @@
 
 namespace bs
 {
+	namespace ct
+	{
+		class MeshBase;
+	}
+
 	/** @addtogroup 2D-Internal
 	 *  @{
 	 */

@@ -21,7 +21,7 @@ namespace bs
 		BlendStateInformation BlendStateDesc;
 		RasterizerStateInformation RasterizerStateDesc;
 		DepthStencilStateInformation DepthStencilStateDesc;
-		u32 StencilRefValue;
+		u32 StencilRefValue = 0;
 
 		GpuProgramCreateInformation VertexProgramDesc;
 		GpuProgramCreateInformation FragmentProgramDesc;
@@ -42,11 +42,6 @@ namespace bs
 	class B3D_CORE_EXPORT TPass
 	{
 	public:
-		using GpuProgramType = CoreVariantType<GpuProgram, Core>;
-		using GraphicsPipelineStateType = CoreVariantType<GpuGraphicsPipelineState, Core>;
-		using ComputePipelineStateType = CoreVariantType<GpuComputePipelineState, Core>;
-		using PipelineStateDescType = typename TGpuPipelineStateTypes<Core>::StateDescType;
-
 		virtual ~TPass() = default;
 
 		/**	Returns true if this pass has some element of transparency. */
@@ -59,19 +54,19 @@ namespace bs
 		u32 GetStencilRefValue() const { return mData.StencilRefValue; }
 
 		/** Returns the GPU program descriptor for the specified GPU program type. */
-		const GpuProgramCreateInformation& GetProgramDesc(bs::GpuProgramType type) const;
+		const GpuProgramCreateInformation& GetGpuProgramCreateInformation(GpuProgramType type) const;
 
 		/**
 		 * Returns the graphics pipeline state describing this pass, or null if its a compute pass.
 		 * Only valid after Compile() has been called.
 		 */
-		const SPtr<GraphicsPipelineStateType>& GetGraphicsPipelineState() const { return mGraphicsPipelineState; }
+		const SPtr<ct::GpuGraphicsPipelineState>& GetGraphicsPipelineState() const { return mGraphicsPipelineState; }
 
 		/**
 		 * Returns the compute pipeline state describing this pass, or null if its a graphics pass.
 		 * Only valid after compile has been called.
 		 */
-		const SPtr<ComputePipelineStateType>& GetComputePipelineState() const { return mComputePipelineState; }
+		const SPtr<ct::GpuComputePipelineState>& GetComputePipelineState() const { return mComputePipelineState; }
 
 		/**
 		 * @name Internal
@@ -91,8 +86,8 @@ namespace bs
 		void CreatePipelineState();
 
 		PassCreateInformation mData;
-		SPtr<GraphicsPipelineStateType> mGraphicsPipelineState;
-		SPtr<ComputePipelineStateType> mComputePipelineState;
+		SPtr<ct::GpuGraphicsPipelineState> mGraphicsPipelineState;
+		SPtr<ct::GpuComputePipelineState> mComputePipelineState;
 	};
 
 	/** @} */

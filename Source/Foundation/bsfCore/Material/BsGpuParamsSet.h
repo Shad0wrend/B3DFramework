@@ -28,8 +28,6 @@ namespace bs
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 		using BufferType = SPtr<CoreVariantType<GpuBuffer, Core>>;
 		using SamplerStateType = SPtr<CoreVariantType<SamplerState, Core>>;
-		using GraphicsPipelineStateType = CoreVariantType<GpuGraphicsPipelineState, Core>;
-		using ComputePipelineStateType = CoreVariantType<GpuComputePipelineState, Core>;
 
 		/** Binding location for a single GPU param block buffer. */
 		struct BlockBinding

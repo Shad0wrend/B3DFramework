@@ -684,7 +684,7 @@ template B3D_CORE_EXPORT void TGpuParams<true>::GetParameter<Matrix4x3>(GpuProgr
 
 const GpuDataParameterTypeInformationLookup GpuParameters::kParamSizes;
 
-GpuParameters::GpuParameters(const SPtr<GpuPipelineParameterLayout>& paramInfo)
+GpuParameters::GpuParameters(const SPtr<ct::GpuPipelineParameterLayout>& paramInfo)
 	: TGpuParams(paramInfo)
 {
 }
@@ -719,17 +719,17 @@ void GpuParameters::MarkResourcesDirtyInternal()
 	MarkListenerResourcesDirty();
 }
 
-SPtr<GpuParameters> GpuParameters::Create(const SPtr<GpuGraphicsPipelineState>& pipelineState)
+SPtr<GpuParameters> GpuParameters::Create(const SPtr<ct::GpuGraphicsPipelineState>& pipelineState)
 {
 	return Create(pipelineState->GetParameterLayout());
 }
 
-SPtr<GpuParameters> GpuParameters::Create(const SPtr<GpuComputePipelineState>& pipelineState)
+SPtr<GpuParameters> GpuParameters::Create(const SPtr<ct::GpuComputePipelineState>& pipelineState)
 {
 	return Create(pipelineState->GetParameterLayout());
 }
 
-SPtr<GpuParameters> GpuParameters::Create(const SPtr<GpuPipelineParameterLayout>& parameterLayout)
+SPtr<GpuParameters> GpuParameters::Create(const SPtr<ct::GpuPipelineParameterLayout>& parameterLayout)
 {
 	GpuParameters* const output = new(B3DAllocate<GpuParameters>()) GpuParameters(parameterLayout);
 	SPtr<GpuParameters> shared = B3DMakeCoreFromExisting<GpuParameters>(output);
