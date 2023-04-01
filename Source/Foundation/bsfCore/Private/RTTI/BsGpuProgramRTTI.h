@@ -4,11 +4,13 @@
 
 #include "BsCorePrerequisites.h"
 #include "Reflection/BsRTTIType.h"
+#include "RenderAPI/BsGpuDevice.h"
 #include "RTTI/BsStringRTTI.h"
 #include "RTTI/BsStdRTTI.h"
 #include "RTTI/BsDataBlobRTTI.h"
 #include "RenderAPI/BsGpuProgram.h"
 #include "RenderAPI/BsGpuProgramParameterDescription.h"
+#include "BsCoreApplication.h"
 
 namespace bs
 {
@@ -110,7 +112,11 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject() override
 		{
-			return GpuProgram::CreateEmpty();
+			const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+			if(!gpuDevice)
+				return nullptr;
+
+			return gpuDevice->CreateGpuProgram(GpuProgramCreateInformation(), true);
 		}
 	};
 

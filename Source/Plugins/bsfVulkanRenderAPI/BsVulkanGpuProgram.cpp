@@ -129,7 +129,7 @@ void VulkanGpuProgram::Initialize()
 		mModule = rescManager.Create<VulkanShaderModule>(shaderModule);
 		mModule->SetName(mName);
 
-		mParametersDesc = mBytecode->ParameterDescription;
+		mParametersDescription = mBytecode->ParameterDescription;
 
 		if(mType == GPT_VERTEX_PROGRAM)
 		{

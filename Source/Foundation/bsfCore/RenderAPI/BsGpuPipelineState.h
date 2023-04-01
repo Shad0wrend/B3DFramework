@@ -237,11 +237,11 @@ namespace bs
 		RasterizerStateInformation RasterizerState;
 		DepthStencilStateInformation DepthStencilState;
 
-		SPtr<ct::GpuProgram> VertexProgram;
-		SPtr<ct::GpuProgram> FragmentProgram;
-		SPtr<ct::GpuProgram> GeometryProgram;
-		SPtr<ct::GpuProgram> HullProgram;
-		SPtr<ct::GpuProgram> DomainProgram;
+		SPtr<GpuProgram> VertexProgram;
+		SPtr<GpuProgram> FragmentProgram;
+		SPtr<GpuProgram> GeometryProgram;
+		SPtr<GpuProgram> HullProgram;
+		SPtr<GpuProgram> DomainProgram;
 	};
 
 	/** Descriptor structure used for initializing a GPU graphics pipeline state. */
@@ -257,7 +257,7 @@ namespace bs
 	/** Descriptor structure describing a GPU compute pipeline state. */
 	struct GpuComputePipelineStateInformation
 	{
-		SPtr<ct::GpuProgram> Program;
+		SPtr<GpuProgram> Program;
 	};
 
 	/** Descriptor structure used for initializing a GPU compute pipeline state. */
@@ -283,6 +283,7 @@ namespace bs
 		GpuGraphicsPipelineState(GpuDevice& gpuDevice, const GpuGraphicsPipelineStateCreateInformation& createInformation);
 		virtual ~GpuGraphicsPipelineState() = default;
 
+		/** Initializes the object. The object should not be used before this is called. */
 		virtual void Initialize();
 
 		bool HasVertexProgram() const { return mData.VertexProgram != nullptr; }
@@ -295,11 +296,11 @@ namespace bs
 		const RasterizerStateInformation& GetRasterizerState() const { return mData.RasterizerState; }
 		const DepthStencilStateInformation& GetDepthStencilState() const { return mData.DepthStencilState; }
 
-		const SPtr<ct::GpuProgram>& GetVertexProgram() const { return mData.VertexProgram; }
-		const SPtr<ct::GpuProgram>& GetFragmentProgram() const { return mData.FragmentProgram; }
-		const SPtr<ct::GpuProgram>& GetGeometryProgram() const { return mData.GeometryProgram; }
-		const SPtr<ct::GpuProgram>& GetHullProgram() const { return mData.HullProgram; }
-		const SPtr<ct::GpuProgram>& GetDomainProgram() const { return mData.DomainProgram; }
+		const SPtr<GpuProgram>& GetVertexProgram() const { return mData.VertexProgram; }
+		const SPtr<GpuProgram>& GetFragmentProgram() const { return mData.FragmentProgram; }
+		const SPtr<GpuProgram>& GetGeometryProgram() const { return mData.GeometryProgram; }
+		const SPtr<GpuProgram>& GetHullProgram() const { return mData.HullProgram; }
+		const SPtr<GpuProgram>& GetDomainProgram() const { return mData.DomainProgram; }
 
 		/** Returns an object containing the layout of all parameters in all the GPU programs used in this pipeline state. */
 		const SPtr<ct::GpuPipelineParameterLayout>& GetParameterLayout() const { return mParameterLayout; }
@@ -322,9 +323,10 @@ namespace bs
 		GpuComputePipelineState(GpuDevice& gpuDevice, const GpuComputePipelineStateCreateInformation& createInformation);
 		virtual ~GpuComputePipelineState() = default;
 
+		/** Initializes the object. The object should not be used before this is called. */
 		virtual void Initialize();
 
-		const SPtr<ct::GpuProgram>& GetProgram() const { return mData.Program; }
+		const SPtr<GpuProgram>& GetProgram() const { return mData.Program; }
 
 		/** Returns an object containing the layout of all parameters in the GPU program used in this pipeline state. */
 		const SPtr<ct::GpuPipelineParameterLayout>& GetParameterLayout() const { return mParameterLayout; }

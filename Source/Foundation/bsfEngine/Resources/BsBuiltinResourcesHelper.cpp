@@ -631,7 +631,7 @@ bool BuiltinResourcesHelper::VerifyAndReportShader(const HShader& shader)
 		{
 			SPtr<Pass> pass = technique->GetPass(i);
 
-			std::array<SPtr<ct::GpuProgram>, 6> gpuPrograms;
+			std::array<SPtr<GpuProgram>, 6> gpuPrograms;
 
 			const SPtr<GpuGraphicsPipelineState>& graphicsPipeline = pass->GetGraphicsPipelineState();
 			if(graphicsPipeline)

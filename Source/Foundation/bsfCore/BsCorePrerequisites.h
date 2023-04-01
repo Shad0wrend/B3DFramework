@@ -264,7 +264,6 @@ namespace bs
 		typedef ct::TYPE Type;                   \
 	};
 
-	CORE_OBJECT_FORWARD_DECLARE(GpuProgram)
 	CORE_OBJECT_FORWARD_DECLARE(Pass)
 	CORE_OBJECT_FORWARD_DECLARE(Technique)
 	CORE_OBJECT_FORWARD_DECLARE(Shader)
@@ -370,8 +369,7 @@ namespace bs
 	struct PointerEvent;
 	class RendererFactory;
 	class FontManager;
-	class RenderStateManager;
-	class GpuParamBlock;
+	class GpuProgram;
 	struct GpuProgramParameterDescription;
 	struct GpuDataParameterInformation;
 	struct GpuObjectParameterInformation;

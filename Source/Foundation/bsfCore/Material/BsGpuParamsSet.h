@@ -23,7 +23,6 @@ namespace bs
 		using TechniqueType = CoreVariantType<Technique, Core>;
 		using ShaderType = CoreVariantHandleType<Shader, Core>;
 		using PassType = CoreVariantType<Pass, Core>;
-		using GpuProgramPtrType = SPtr<CoreVariantType<GpuProgram, Core>>;
 		using ParamBlockType = CoreVariantType<GpuBuffer, Core>;
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 		using BufferType = SPtr<CoreVariantType<GpuBuffer, Core>>;

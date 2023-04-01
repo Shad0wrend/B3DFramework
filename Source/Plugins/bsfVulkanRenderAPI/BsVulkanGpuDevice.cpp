@@ -500,10 +500,9 @@ SPtr<OcclusionQuery> VulkanGpuDevice::CreateOcclusionQuery(bool isBinary)
 	return B3DMakeSharedFromExisting(new (B3DAllocate<VulkanOcclusionQuery>()) VulkanOcclusionQuery(*this, isBinary));
 }
 
-SPtr<ct::GpuProgram> VulkanGpuDevice::CreateGpuProgram(const GpuProgramCreateInformation& createInformation, bool deferredInitialize)
+SPtr<GpuProgram> VulkanGpuDevice::CreateGpuProgram(const GpuProgramCreateInformation& createInformation, bool deferredInitialize)
 {
 	SPtr<GpuProgram> output = B3DMakeSharedFromExisting(new(B3DAllocate<VulkanGpuProgram>()) VulkanGpuProgram(*this, createInformation));
-	output->SetShared(output);
 
 	if(!deferredInitialize)
 		output->Initialize();

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
-#include "CoreThread/BsCoreObject.h"
 #include "Reflection/BsIReflectable.h"
 #include "Utility/BsDataBlob.h"
 #include "RenderAPI/BsVertexDescription.h"
@@ -36,86 +35,6 @@ namespace bs
 		/* 								SERIALIZATION                      		*/
 		/************************************************************************/
 		friend class GpuProgramCreateInformationRTTI;
-		static RTTITypeBase* GetRttiStatic();
-		RTTITypeBase* GetRtti() const override;
-	};
-
-	/**
-	 * Contains a GPU program such as vertex or fragment program which gets compiled from the provided source code.
-	 *
-	 * @note	Sim thread only.
-	 */
-	class B3D_CORE_EXPORT GpuProgram : public IReflectable, public CoreObject
-	{
-	public:
-		/** Information returned when compiling a GPU program. */
-		struct CompileStatus
-		{
-			bool Success = false;
-			String Messages;
-		};
-
-		virtual ~GpuProgram() = default;
-
-		/**
-		 * Returns true if the program was successfully compiled.
-		 *
-		 * @note	Only valid after core thread has initialized the program.
-		 */
-		bool IsCompiled() const;
-
-		/**
-		 * Returns an error message returned by the compiler, if the compilation failed.
-		 *
-		 * @note	Only valid after core thread has initialized the program.
-		 */
-		String GetCompileErrorMessage() const;
-
-		/**
-		 * Returns description of all parameters in this GPU program.
-		 *
-		 * @note	Only valid after core thread has initialized the program.
-		 */
-		SPtr<GpuProgramParameterDescription> GetParameterDescription() const;
-
-		/** Retrieves a core implementation of a gpu program usable only from the core thread. */
-		SPtr<ct::GpuProgram> GetCore() const;
-
-		/**
-		 * Creates a new GPU program using the provided source code. If compilation fails or program is not supported
-		 * isCompiled() with return false, and you will be able to retrieve the error message via getCompileErrorMessage().
-		 *
-		 * @param[in]	createInformation		Description of the program to create.
-		 */
-		static SPtr<GpuProgram> Create(const GpuProgramCreateInformation& createInformation);
-
-		/**
-		 * Creates a completely empty and uninitialized GpuProgram.
-		 *
-		 * @note	For serialization use only.
-		 */
-		static SPtr<GpuProgram> CreateEmpty();
-
-	protected:
-		GpuProgram(const GpuProgramCreateInformation& createInformation);
-
-		SPtr<ct::CoreObject> CreateCore() const override;
-
-	protected:
-		bool mNeedsAdjacencyInfo;
-		String mLanguage;
-		String mName;
-		GpuProgramType mType;
-		String mEntryPoint;
-		String mSource;
-
-		SPtr<GpuProgramBytecode> mBytecode;
-
-		/************************************************************************/
-		/* 								SERIALIZATION                      		*/
-		/************************************************************************/
-	public:
-		friend class GpuProgramRTTI;
 		static RTTITypeBase* GetRttiStatic();
 		RTTITypeBase* GetRtti() const override;
 	};
@@ -155,80 +74,81 @@ namespace bs
 		RTTITypeBase* GetRtti() const override;
 	};
 
-	/** @} */
-
-	class CoreGpuProgramRTTI;
-
-	namespace ct
+	/**
+	 * Contains a GPU program such as vertex or fragment program which gets compiled from the provided source code.
+	 *
+	 * @note	Thread safe (Immutable).
+	 */
+	class B3D_CORE_EXPORT GpuProgram : public IReflectable
 	{
-		/** @addtogroup RenderAPI-Internal
-		 *  @{
-		 */
+	public:
+		virtual ~GpuProgram();
+
+		/** Initializes the object. The object should not be used before this is called. */
+		virtual void Initialize() { }
+
+		/** Returns whether this program can be supported on the current renderer and hardware. */
+		virtual bool IsSupported() const;
+
+		/** Returns true if program was successfully compiled. */
+		virtual bool IsCompiled() const { return mIsCompiled; }
+
+		/**	Returns an error message returned by the compiler, if the compilation failed. */
+		virtual String GetCompileErrorMessage() const { return mCompileMessages; }
 
 		/**
-		 * Contains a GPU program such as vertex or fragment program which gets compiled from the provided source code.
+		 * Sets whether this geometry program requires adjacency information from the input primitives.
 		 *
-		 * @note	Thread safe (Immutable).
+		 * @note	Only relevant for geometry programs.
 		 */
-		class B3D_CORE_EXPORT GpuProgram : public CoreObject
-		{
-		public:
-			virtual ~GpuProgram();
+		virtual void SetAdjacencyInfoRequired(bool required) { mNeedsAdjacencyInfo = required; }
 
-			/** Returns whether this program can be supported on the current renderer and hardware. */
-			virtual bool IsSupported() const;
+		/**
+		 * Returns whether this geometry program requires adjacency information from the input primitives.
+		 *
+		 * @note	Only relevant for geometry programs.
+		 */
+		virtual bool IsAdjacencyInfoRequired() const { return mNeedsAdjacencyInfo; }
 
-			/** Returns true if program was successfully compiled. */
-			virtual bool IsCompiled() const { return mIsCompiled; }
+		/**	Type of GPU program (for example fragment, vertex). */
+		GpuProgramType GetType() const { return mType; }
 
-			/**	Returns an error message returned by the compiler, if the compilation failed. */
-			virtual String GetCompileErrorMessage() const { return mCompileMessages; }
+		/** Returns description of all parameters in this GPU program. */
+		SPtr<GpuProgramParameterDescription> GetParameterDescription() const { return mParametersDescription; }
 
-			/**
-			 * Sets whether this geometry program requires adjacency information from the input primitives.
-			 *
-			 * @note	Only relevant for geometry programs.
-			 */
-			virtual void SetAdjacencyInfoRequired(bool required) { mNeedsAdjacencyInfo = required; }
+		/**	Returns a list of vertex elements that a vertex program expects as inputs. Only relevant for vertex programs. */
+		SPtr<VertexDescription> GetVertexInputDescription() const { return mVertexInputDescription; }
 
-			/**
-			 * Returns whether this geometry program requires adjacency information from the input primitives.
-			 *
-			 * @note	Only relevant for geometry programs.
-			 */
-			virtual bool IsAdjacencyInfoRequired() const { return mNeedsAdjacencyInfo; }
+		/** Returns the compiled bytecode of this program. */
+		SPtr<GpuProgramBytecode> GetBytecode() const { return mBytecode; }
 
-			/**	Type of GPU program (for example fragment, vertex). */
-			GpuProgramType GetType() const { return mType; }
+	protected:
+		GpuProgram(const GpuProgramCreateInformation& createInformation);
 
-			/** @copydoc bs::GpuProgram::GetParamDesc */
-			SPtr<GpuProgramParameterDescription> GetParameterDescription() const { return mParametersDesc; }
+		bool mNeedsAdjacencyInfo;
 
-			/**	Returns a list of vertex elements that a vertex program expects as inputs. Only relevant for vertex programs. */
-			SPtr<VertexDescription> GetVertexInputDescription() const { return mVertexInputDescription; }
+		bool mIsCompiled = false;
+		String mCompileMessages;
 
-			/** Returns the compiled bytecode of this program. */
-			SPtr<GpuProgramBytecode> GetBytecode() const { return mBytecode; }
+		SPtr<GpuProgramParameterDescription> mParametersDescription;
+		SPtr<VertexDescription> mVertexInputDescription;
 
-		protected:
-			GpuProgram(const GpuProgramCreateInformation& createInformation);
+		GpuProgramType mType;
+		String mLanguage;
+		String mName;
+		String mEntryPoint;
+		String mSource;
 
-			bool mNeedsAdjacencyInfo;
+		SPtr<GpuProgramBytecode> mBytecode;
 
-			bool mIsCompiled = false;
-			String mCompileMessages;
+		/************************************************************************/
+		/* 								SERIALIZATION                      		*/
+		/************************************************************************/
+	public:
+		friend class GpuProgramRTTI;
+		static RTTITypeBase* GetRttiStatic();
+		RTTITypeBase* GetRtti() const override;
+	};
 
-			SPtr<GpuProgramParameterDescription> mParametersDesc;
-			SPtr<VertexDescription> mVertexInputDescription;
-
-			GpuProgramType mType;
-			String mName;
-			String mEntryPoint;
-			String mSource;
-
-			SPtr<GpuProgramBytecode> mBytecode;
-		};
-
-		/** @} */
-	} // namespace ct
+	/** @} */
 } // namespace bs

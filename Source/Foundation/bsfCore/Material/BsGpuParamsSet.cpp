@@ -84,31 +84,31 @@ Vector<SPtr<GpuProgramParameterDescription>> getAllParamDescs(const SPtr<Techniq
 		const SPtr<GpuGraphicsPipelineState>& graphicsPipeline = curPass->GetGraphicsPipelineState();
 		if(graphicsPipeline)
 		{
-			SPtr<ct::GpuProgram> vertProgram = graphicsPipeline->GetVertexProgram();
+			SPtr<GpuProgram> vertProgram = graphicsPipeline->GetVertexProgram();
 			if(vertProgram)
 			{
 				allParamDescs.push_back(vertProgram->GetParameterDescription());
 			}
 
-			SPtr<ct::GpuProgram> fragProgram = graphicsPipeline->GetFragmentProgram();
+			SPtr<GpuProgram> fragProgram = graphicsPipeline->GetFragmentProgram();
 			if(fragProgram)
 			{
 				allParamDescs.push_back(fragProgram->GetParameterDescription());
 			}
 
-			SPtr<ct::GpuProgram> geomProgram = graphicsPipeline->GetGeometryProgram();
+			SPtr<GpuProgram> geomProgram = graphicsPipeline->GetGeometryProgram();
 			if(geomProgram)
 			{
 				allParamDescs.push_back(geomProgram->GetParameterDescription());
 			}
 
-			SPtr<ct::GpuProgram> hullProgram = graphicsPipeline->GetHullProgram();
+			SPtr<GpuProgram> hullProgram = graphicsPipeline->GetHullProgram();
 			if(hullProgram)
 			{
 				allParamDescs.push_back(hullProgram->GetParameterDescription());
 			}
 
-			SPtr<ct::GpuProgram> domainProgram = graphicsPipeline->GetDomainProgram();
+			SPtr<GpuProgram> domainProgram = graphicsPipeline->GetDomainProgram();
 			if(domainProgram)
 			{
 				allParamDescs.push_back(domainProgram->GetParameterDescription());
@@ -118,7 +118,7 @@ Vector<SPtr<GpuProgramParameterDescription>> getAllParamDescs(const SPtr<Techniq
 		const SPtr<GpuComputePipelineState>& computePipeline = curPass->GetComputePipelineState();
 		if(computePipeline)
 		{
-			SPtr<ct::GpuProgram> computeProgram = computePipeline->GetProgram();
+			SPtr<GpuProgram> computeProgram = computePipeline->GetProgram();
 			if(computeProgram)
 			{
 				allParamDescs.push_back(computeProgram->GetParameterDescription());
@@ -141,23 +141,23 @@ Vector<SPtr<GpuProgramParameterDescription>> getAllParamDescs(const SPtr<ct::Tec
 		const SPtr<GpuGraphicsPipelineState>& graphicsPipeline = curPass->GetGraphicsPipelineState();
 		if(graphicsPipeline)
 		{
-			SPtr<ct::GpuProgram> vertProgram = graphicsPipeline->GetVertexProgram();
+			SPtr<GpuProgram> vertProgram = graphicsPipeline->GetVertexProgram();
 			if(vertProgram)
 				allParamDescs.push_back(vertProgram->GetParameterDescription());
 
-			SPtr<ct::GpuProgram> fragProgram = graphicsPipeline->GetFragmentProgram();
+			SPtr<GpuProgram> fragProgram = graphicsPipeline->GetFragmentProgram();
 			if(fragProgram)
 				allParamDescs.push_back(fragProgram->GetParameterDescription());
 
-			SPtr<ct::GpuProgram> geomProgram = graphicsPipeline->GetGeometryProgram();
+			SPtr<GpuProgram> geomProgram = graphicsPipeline->GetGeometryProgram();
 			if(geomProgram)
 				allParamDescs.push_back(geomProgram->GetParameterDescription());
 
-			SPtr<ct::GpuProgram> hullProgram = graphicsPipeline->GetHullProgram();
+			SPtr<GpuProgram> hullProgram = graphicsPipeline->GetHullProgram();
 			if(hullProgram)
 				allParamDescs.push_back(hullProgram->GetParameterDescription());
 
-			SPtr<ct::GpuProgram> domainProgram = graphicsPipeline->GetDomainProgram();
+			SPtr<GpuProgram> domainProgram = graphicsPipeline->GetDomainProgram();
 			if(domainProgram)
 				allParamDescs.push_back(domainProgram->GetParameterDescription());
 		}
@@ -165,7 +165,7 @@ Vector<SPtr<GpuProgramParameterDescription>> getAllParamDescs(const SPtr<ct::Tec
 		const SPtr<GpuComputePipelineState>& computePipeline = curPass->GetComputePipelineState();
 		if(computePipeline)
 		{
-			SPtr<ct::GpuProgram> computeProgram = computePipeline->GetProgram();
+			SPtr<GpuProgram> computeProgram = computePipeline->GetProgram();
 			if(computeProgram)
 				allParamDescs.push_back(computeProgram->GetParameterDescription());
 		}
