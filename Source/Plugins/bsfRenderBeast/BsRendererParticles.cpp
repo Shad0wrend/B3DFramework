@@ -432,11 +432,10 @@ void ParticleRenderer::DrawBillboards(CommandBuffer& commandBuffer, u32 count)
 {
 	SPtr<GpuBuffer> vertexBuffers[] = { m->BillboardVb };
 
-	RenderAPI& rapi = RenderAPI::Instance();
 	commandBuffer.SetVertexDescription(m->BillboardVertexDescription);
 	commandBuffer.SetVertexBuffers(0, vertexBuffers, 1);
-	rapi.SetDrawOperation(DOT_TRIANGLE_STRIP);
-	rapi.Draw(0, 4, count);
+	commandBuffer.SetDrawOperation(DOT_TRIANGLE_STRIP);
+	commandBuffer.Draw(0, 4, count);
 }
 
 void ParticleRenderer::SortByDistance(const Vector3& refPoint, const PixelData& positions, u32 numParticles, u32 stride, Vector<u32>& indices)

@@ -1700,19 +1700,16 @@ void ShadowRendering::DrawNearFarPlanes(CommandBuffer& commandBuffer, float near
 	mPlaneVB->WriteData(0, sizeof(vertices), vertices, BWT_DISCARD);
 
 	// Draw the mesh
-	RenderAPI& rapi = RenderAPI::Instance();
 	commandBuffer.SetVertexDescription(mPositionOnlyVertexDescription);
 	commandBuffer.SetVertexBuffers(0, &mPlaneVB, 1);
 	commandBuffer.SetIndexBuffer(mPlaneIB);
-	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
+	commandBuffer.SetDrawOperation(DOT_TRIANGLE_LIST);
 
-	rapi.DrawIndexed(0, drawNear ? 12 : 6, 0, drawNear ? 8 : 4);
+	commandBuffer.DrawIndexed(0, drawNear ? 12 : 6, 0, drawNear ? 8 : 4);
 }
 
 void ShadowRendering::DrawFrustum(CommandBuffer& commandBuffer, const std::array<Vector3, 8>& corners) const
 {
-	RenderAPI& rapi = RenderAPI::Instance();
-
 	// Update VB with new vertices
 	mFrustumVB->WriteData(0, sizeof(Vector3) * 8, corners.data(), BWT_DISCARD);
 
@@ -1720,9 +1717,9 @@ void ShadowRendering::DrawFrustum(CommandBuffer& commandBuffer, const std::array
 	commandBuffer.SetVertexDescription(mPositionOnlyVertexDescription);
 	commandBuffer.SetVertexBuffers(0, &mFrustumVB, 1);
 	commandBuffer.SetIndexBuffer(mFrustumIB);
-	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
+	commandBuffer.SetDrawOperation(DOT_TRIANGLE_LIST);
 
-	rapi.DrawIndexed(0, 36, 0, 8);
+	commandBuffer.DrawIndexed(0, 36, 0, 8);
 }
 
 u32 ShadowRendering::GetShadowQuality(u32 requestedQuality, u32 shadowMapResolution, u32 minAllowedQuality)

@@ -143,6 +143,36 @@ namespace bs
 			 */
 			virtual void SetVertexDescription(const SPtr<VertexDescription>& vertexDescription);
 
+			/**
+			 * Sets the draw operation that determines how to interpret the elements of the index or vertex buffers.
+			 *
+			 * @param	operation			Draw operation to enable.
+			 */
+			virtual void SetDrawOperation(DrawOperationType operation);
+
+			/**
+			 * Draw an object based on currently bound GPU programs, vertex declaration and vertex buffers. Draws directly from
+			 * the vertex buffer without using indices.
+			 *
+			 * @param	vertexOffset	Offset into the currently bound vertex buffer to start drawing from.
+			 * @param	vertexCount		Number of vertices to draw.
+			 * @param	instanceCount	Number of times to draw the provided geometry, each time with an (optionally) separate per-instance data.
+			 * @param	firstInstance	ID of the first instance to draw.
+			 */
+			virtual void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0, u32 firstInstance = 0);
+
+			/**
+			 * Draw an object based on currently bound GPU programs, vertex declaration, vertex and index buffers.
+			 *
+			 * @param	startIndex		Offset into the currently bound index buffer to start drawing from.
+			 * @param	indexCount		Number of indices to draw.
+			 * @param	vertexOffset	Offset to apply to each vertex index.
+			 * @param	vertexCount		Number of vertices to draw.
+			 * @param	instanceCount	Number of times to draw the provided geometry, each time with an (optionally) separate per-instance data.
+			 * @param	firstInstance	ID of the first instance to draw.
+			 */
+			virtual void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0, u32 firstInstance = 0);
+
 			/** Returns the shared pointer to the current object. */
 			SPtr<CommandBuffer> GetShared() const { return mSelf.lock(); }
 

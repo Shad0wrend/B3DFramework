@@ -205,7 +205,6 @@ void RendererUtility::Draw(CommandBuffer& commandBuffer, const SPtr<MeshBase>& m
 
 void RendererUtility::Draw(CommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u32 numInstances)
 {
-	RenderAPI& rapi = RenderAPI::Instance();
 	SPtr<VertexData> vertexData = mesh->GetVertexData();
 
 	commandBuffer.SetVertexDescription(mesh->GetVertexData()->VertexDescription);
@@ -237,10 +236,10 @@ void RendererUtility::Draw(CommandBuffer& commandBuffer, const SPtr<MeshBase>& m
 	SPtr<GpuBuffer> indexBuffer = mesh->GetIndexBuffer();
 	commandBuffer.SetIndexBuffer(indexBuffer);
 
-	rapi.SetDrawOperation(subMesh.DrawOp);
+	commandBuffer.SetDrawOperation(subMesh.DrawOp);
 
 	u32 indexCount = subMesh.IndexCount;
-	rapi.DrawIndexed(subMesh.IndexOffset + mesh->GetIndexOffset(), indexCount, mesh->GetVertexOffset(), vertexData->VertexCount, numInstances);
+	commandBuffer.DrawIndexed(subMesh.IndexOffset + mesh->GetIndexOffset(), indexCount, mesh->GetVertexOffset(), vertexData->VertexCount, numInstances);
 
 	mesh->NotifyUsedOnGPU();
 }
@@ -248,8 +247,6 @@ void RendererUtility::Draw(CommandBuffer& commandBuffer, const SPtr<MeshBase>& m
 void RendererUtility::DrawMorph(CommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, const SPtr<GpuBuffer>& morphVertices, const SPtr<VertexDescription>& morphVertexDescription)
 {
 	// Bind buffers and draw
-	RenderAPI& rapi = RenderAPI::Instance();
-
 	SPtr<VertexData> vertexData = mesh->GetVertexData();
 	commandBuffer.SetVertexDescription(morphVertexDescription);
 
@@ -279,10 +276,10 @@ void RendererUtility::DrawMorph(CommandBuffer& commandBuffer, const SPtr<MeshBas
 	SPtr<GpuBuffer> indexBuffer = mesh->GetIndexBuffer();
 	commandBuffer.SetIndexBuffer(indexBuffer);
 
-	rapi.SetDrawOperation(subMesh.DrawOp);
+	commandBuffer.SetDrawOperation(subMesh.DrawOp);
 
 	u32 indexCount = subMesh.IndexCount;
-	rapi.DrawIndexed(subMesh.IndexOffset + mesh->GetIndexOffset(), indexCount, mesh->GetVertexOffset(), vertexData->VertexCount, 1);
+	commandBuffer.DrawIndexed(subMesh.IndexOffset + mesh->GetIndexOffset(), indexCount, mesh->GetVertexOffset(), vertexData->VertexCount, 1);
 
 	mesh->NotifyUsedOnGPU();
 }
@@ -366,13 +363,11 @@ void RendererUtility::DrawScreenQuad(CommandBuffer& commandBuffer, const Rect2& 
 	memcpy(dstData, srcVertBufferData, bufferSize);
 	mFullScreenQuadVB->Unlock();
 
-	RenderAPI& rapi = RenderAPI::Instance();
-
 	commandBuffer.SetVertexDescription(mFullscreenQuadVertexDescription);
 	commandBuffer.SetVertexBuffers(0, &mFullScreenQuadVB, 1);
 	commandBuffer.SetIndexBuffer(mFullScreenQuadIB);
-	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
-	rapi.DrawIndexed(0, 6, mNextQuadVBSlot * 4, 4, numInstances);
+	commandBuffer.SetDrawOperation(DOT_TRIANGLE_LIST);
+	commandBuffer.DrawIndexed(0, 6, mNextQuadVBSlot * 4, 4, numInstances);
 
 	mNextQuadVBSlot = (mNextQuadVBSlot + 1) % kNumQuadVbSlots;
 }

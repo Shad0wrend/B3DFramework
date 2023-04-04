@@ -115,4 +115,19 @@ void CommandBuffer::SetVertexDescription(const SPtr<VertexDescription>& vertexDe
 {
 	GetRenderAPI().SetVertexDescription(vertexDescription, GetShared());
 }
+
+void CommandBuffer::SetDrawOperation(DrawOperationType operation)
+{
+	GetRenderAPI().SetDrawOperation(operation);
+}
+
+void CommandBuffer::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance)
+{
+	GetRenderAPI().Draw(vertexOffset, vertexCount, instanceCount, firstInstance);
+}
+
+void CommandBuffer::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance)
+{
+	GetRenderAPI().DrawIndexed(startIndex, indexCount, vertexOffset, vertexCount, instanceCount, firstInstance);
+}
 }}

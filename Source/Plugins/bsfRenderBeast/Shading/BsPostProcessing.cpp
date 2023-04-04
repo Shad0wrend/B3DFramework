@@ -1369,11 +1369,11 @@ void BokehDOFMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& inp
 	SPtr<GpuBuffer> buffers[] = { mTileVertexBuffer };
 	commandBuffer.SetVertexBuffers(0, buffers, (u32)B3DSize(buffers));
 	commandBuffer.SetIndexBuffer(mTileIndexBuffer);
-	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
+	commandBuffer.SetDrawOperation(DOT_TRIANGLE_LIST);
 
 	Bind(commandBuffer);
 	const u32 numInstances = Math::DivideAndRoundUp((u32)(tileCount.X * tileCount.Y), kQuadsPerTile);
-	rapi.DrawIndexed(0, kQuadsPerTile * 6, 0, kQuadsPerTile * 4, numInstances);
+	commandBuffer.DrawIndexed(0, kQuadsPerTile * 6, 0, kQuadsPerTile * 4, numInstances);
 }
 
 POOLED_RENDER_TEXTURE_DESC BokehDOFMat::GetOutputDesc(const SPtr<Texture>& target)

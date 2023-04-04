@@ -789,7 +789,7 @@ void GpuParticleSimulation::Simulate(CommandBuffer& commandBuffer, const SceneIn
 	SPtr<GpuBuffer> buffers[] = { m->HelperBuffers.TileUVs };
 	commandBuffer.SetVertexBuffers(0, buffers, (u32)B3DSize(buffers));
 	commandBuffer.SetIndexBuffer(m->HelperBuffers.SpriteIndices);
-	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
+	commandBuffer.SetDrawOperation(DOT_TRIANGLE_LIST);
 
 	enum class SimType
 	{
@@ -840,7 +840,7 @@ void GpuParticleSimulation::Simulate(CommandBuffer& commandBuffer, const SceneIn
 
 			const u32 tileCount = entry->GetNumTiles();
 			const u32 numInstances = Math::DivideAndRoundUp(tileCount, kTilesPerInstance);
-			rapi.DrawIndexed(0, kTilesPerInstance * 6, 0, kTilesPerInstance * 4, numInstances);
+			commandBuffer.DrawIndexed(0, kTilesPerInstance * 6, 0, kTilesPerInstance * 4, numInstances);
 		}
 	}
 }
@@ -982,13 +982,12 @@ void GpuParticleSimulation::ClearTiles(CommandBuffer& commandBuffer, const Vecto
 	GpuParticleClearMat* clearMat = GpuParticleClearMat::Get();
 	clearMat->Bind(commandBuffer, m->HelperBuffers.TileScratch);
 
-	RenderAPI& rapi = RenderAPI::Instance();
 	commandBuffer.SetVertexDescription(m->HelperBuffers.TileVertexDescription);
 
 	SPtr<GpuBuffer> buffers[] = { m->HelperBuffers.TileUVs };
 	commandBuffer.SetVertexBuffers(0, buffers, (u32)B3DSize(buffers));
 	commandBuffer.SetIndexBuffer(m->HelperBuffers.SpriteIndices);
-	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
+	commandBuffer.SetDrawOperation(DOT_TRIANGLE_LIST);
 
 	u32 tileStart = 0;
 	for(u32 i = 0; i < numIterations; i++)
@@ -1008,7 +1007,7 @@ void GpuParticleSimulation::ClearTiles(CommandBuffer& commandBuffer, const Vecto
 		m->HelperBuffers.TileScratch->Unlock();
 
 		const u32 numInstances = (alignedTileEnd - tileStart) / kTilesPerInstance;
-		rapi.DrawIndexed(0, kTilesPerInstance * 6, 0, kTilesPerInstance * 4, numInstances);
+		commandBuffer.DrawIndexed(0, kTilesPerInstance * 6, 0, kTilesPerInstance * 4, numInstances);
 
 		tileStart = alignedTileEnd;
 	}
@@ -1022,13 +1021,12 @@ void GpuParticleSimulation::InjectParticles(CommandBuffer& commandBuffer, const 
 	GpuParticleInjectMat* injectMat = GpuParticleInjectMat::Get();
 	injectMat->Bind(commandBuffer);
 
-	RenderAPI& rapi = RenderAPI::Instance();
 	commandBuffer.SetVertexDescription(m->HelperBuffers.InjectVertexDescription);
 
 	SPtr<GpuBuffer> buffers[] = { m->HelperBuffers.InjectScratch, m->HelperBuffers.ParticleUVs };
 	commandBuffer.SetVertexBuffers(0, buffers, (u32)B3DSize(buffers));
 	commandBuffer.SetIndexBuffer(m->HelperBuffers.SpriteIndices);
-	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
+	commandBuffer.SetDrawOperation(DOT_TRIANGLE_LIST);
 
 	u32 particleStart = 0;
 	for(u32 i = 0; i < numIterations; i++)
@@ -1041,7 +1039,7 @@ void GpuParticleSimulation::InjectParticles(CommandBuffer& commandBuffer, const 
 
 		m->HelperBuffers.InjectScratch->Unlock();
 
-		rapi.DrawIndexed(0, 6, 0, 4, particleEnd - particleStart);
+		commandBuffer.DrawIndexed(0, 6, 0, 4, particleEnd - particleStart);
 		particleStart = particleEnd;
 	}
 }
@@ -1476,7 +1474,7 @@ void GpuParticleCurves::ApplyChanges(CommandBuffer& commandBuffer)
 	SPtr<GpuBuffer> buffers[] = { mInjectScratch, mInjectUV };
 	commandBuffer.SetVertexBuffers(0, buffers, (u32)B3DSize(buffers));
 	commandBuffer.SetIndexBuffer(mInjectIndices);
-	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
+	commandBuffer.SetDrawOperation(DOT_TRIANGLE_LIST);
 
 	u32 curveIdx = 0;
 
@@ -1504,7 +1502,7 @@ void GpuParticleCurves::ApplyChanges(CommandBuffer& commandBuffer)
 		}
 
 		mInjectScratch->Unlock();
-		rapi.DrawIndexed(0, 6, 0, 4, count);
+		commandBuffer.DrawIndexed(0, 6, 0, 4, count);
 
 		data = (GpuParticleCurveInject*)mInjectScratch->Lock(GBL_WRITE_ONLY_DISCARD);
 	}
