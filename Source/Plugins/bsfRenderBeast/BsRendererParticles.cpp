@@ -10,6 +10,7 @@
 #include "Material/BsGpuParamsSet.h"
 #include "BsRendererView.h"
 #include "Mesh/BsMeshUtility.h"
+#include "RenderAPI/BsCommandBuffer.h"
 
 namespace bs {
 namespace ct {
@@ -93,14 +94,14 @@ void WriteIndices(GpuBuffer* buffer, const Vector<u32>& input, u32 texSize)
 	buffer->Unlock();
 }
 
-void ParticlesRenderElement::Draw() const
+void ParticlesRenderElement::Draw(CommandBuffer& commandBuffer) const
 {
 	if(NumParticles > 0)
 	{
 		if(Is3D)
-			GetRendererUtility().Draw(Mesh, NumParticles);
+			GetRendererUtility().Draw(commandBuffer, Mesh, NumParticles);
 		else
-			ParticleRenderer::Instance().DrawBillboards(NumParticles);
+			ParticleRenderer::Instance().DrawBillboards(commandBuffer, NumParticles);
 	}
 }
 
@@ -427,13 +428,13 @@ ParticleRenderer::~ParticleRenderer()
 	B3DDelete(m);
 }
 
-void ParticleRenderer::DrawBillboards(u32 count)
+void ParticleRenderer::DrawBillboards(CommandBuffer& commandBuffer, u32 count)
 {
 	SPtr<GpuBuffer> vertexBuffers[] = { m->BillboardVb };
 
 	RenderAPI& rapi = RenderAPI::Instance();
-	rapi.SetVertexDescription(m->BillboardVertexDescription);
-	rapi.SetVertexBuffers(0, vertexBuffers, 1);
+	commandBuffer.SetVertexDescription(m->BillboardVertexDescription);
+	commandBuffer.SetVertexBuffers(0, vertexBuffers, 1);
 	rapi.SetDrawOperation(DOT_TRIANGLE_STRIP);
 	rapi.Draw(0, 4, count);
 }

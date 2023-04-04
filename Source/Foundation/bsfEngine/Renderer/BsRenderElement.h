@@ -38,8 +38,8 @@ namespace bs
 			/** Renderer specific value that identifies the type of this renderable element. */
 			u32 Type = 0;
 
-			/** Executes the draw call for the render element. */
-			virtual void Draw() const = 0;
+			/** Encodes the draw call for the render element. */
+			virtual void Draw(CommandBuffer& commandBuffer) const = 0;
 
 		protected:
 			~RenderElement() = default;

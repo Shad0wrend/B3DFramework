@@ -10,6 +10,7 @@
 #include "Renderer/BsGpuResourcePool.h"
 #include "BsRendererView.h"
 #include "BsRenderBeast.h"
+#include "RenderAPI/BsCommandBuffer.h"
 #include "Utility/BsRendererTextures.h"
 #include "RenderAPI/BsVertexDescription.h"
 
@@ -76,9 +77,9 @@ void DownsampleMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& i
 	Bind(commandBuffer);
 
 	if(MSAA)
-		GetRendererUtility().DrawScreenQuad(Rect2(0.0f, 0.0f, (float)rtProps.Width, (float)rtProps.Height));
+		GetRendererUtility().DrawScreenQuad(commandBuffer, Rect2(0.0f, 0.0f, (float)rtProps.Width, (float)rtProps.Height));
 	else
-		GetRendererUtility().DrawScreenQuad();
+		GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 	rapi.SetRenderTarget(nullptr);
 }
@@ -223,7 +224,7 @@ void EyeAdaptHistogramReduceMat::Execute(CommandBuffer& commandBuffer, const SPt
 	Bind(commandBuffer);
 
 	Rect2 drawUV(0.0f, 0.0f, (float)EyeAdaptHistogramMat::kHistogramNumTexels, 2.0f);
-	GetRendererUtility().DrawScreenQuad(drawUV);
+	GetRendererUtility().DrawScreenQuad(commandBuffer, drawUV);
 
 	rapi.SetRenderTarget(nullptr);
 }
@@ -263,7 +264,7 @@ void EyeAdaptationMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>
 	rapi.SetRenderTarget(output, FBT_DEPTH | FBT_STENCIL);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 	rapi.SetRenderTarget(nullptr);
 }
@@ -333,7 +334,7 @@ void EyeAdaptationBasicSetupMat::Execute(CommandBuffer& commandBuffer, const SPt
 	rapi.SetRenderTarget(output);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 	rapi.SetRenderTarget(nullptr);
 }
@@ -381,7 +382,7 @@ void EyeAdaptationBasicMat::Execute(CommandBuffer& commandBuffer, const SPtr<Tex
 	rapi.SetRenderTarget(output);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 	rapi.SetRenderTarget(nullptr);
 }
@@ -420,7 +421,7 @@ void CreateTonemap2DLUTMat::Execute(CommandBuffer& commandBuffer, const SPtr<Ren
 	rapi.SetRenderTarget(output);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 	rapi.SetRenderTarget(nullptr);
 }
@@ -546,7 +547,7 @@ void TonemappingMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& 
 	rapi.SetRenderTarget(output);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 TonemappingMat* TonemappingMat::GetVariation(bool volumeLUT, bool gammaOnly, bool autoExposure, bool MSAA)
@@ -655,7 +656,7 @@ void BloomClipMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& in
 	rapi.SetRenderTarget(output);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 BloomClipMat* BloomClipMat::GetVariation(bool autoExposure)
@@ -699,7 +700,7 @@ void ScreenSpaceLensFlareMat::Execute(CommandBuffer& commandBuffer, const SPtr<T
 	rapi.SetRenderTarget(output);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 ScreenSpaceLensFlareMat* ScreenSpaceLensFlareMat::GetVariation(bool halo, bool haloAspect, bool chromaticAberration)
@@ -768,7 +769,7 @@ void ChromaticAberrationMat::Execute(CommandBuffer& commandBuffer, const SPtr<Te
 	rapi.SetRenderTarget(output);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 ChromaticAberrationMat* ChromaticAberrationMat::GetVariation(ChromaticAberrationType type)
@@ -809,7 +810,7 @@ void FilmGrainMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& in
 	rapi.SetRenderTarget(output);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 GaussianBlurParamDef gGaussianBlurParamDef;
@@ -853,7 +854,7 @@ void GaussianBlurMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>&
 		rapi.SetRenderTarget(tempTexture->RenderTexture);
 
 		Bind(commandBuffer);
-		GetRendererUtility().DrawScreenQuad();
+		GetRendererUtility().DrawScreenQuad(commandBuffer);
 	}
 
 	// Vertical pass
@@ -873,7 +874,7 @@ void GaussianBlurMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>&
 		rapi.SetRenderTarget(destination);
 
 		Bind(commandBuffer);
-		GetRendererUtility().DrawScreenQuad();
+		GetRendererUtility().DrawScreenQuad(commandBuffer);
 	}
 }
 
@@ -1086,7 +1087,7 @@ void GaussianDOFSeparateMat::Execute(CommandBuffer& commandBuffer, const SPtr<Te
 	rapi.SetRenderTarget(rt);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 SPtr<PooledRenderTexture> GaussianDOFSeparateMat::GetOutput(u32 idx)
@@ -1160,7 +1161,7 @@ void GaussianDOFCombineMat::Execute(CommandBuffer& commandBuffer, const SPtr<Tex
 	rapi.SetRenderTarget(output);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 GaussianDOFCombineMat* GaussianDOFCombineMat::GetVariation(bool near, bool far)
@@ -1215,9 +1216,9 @@ void BokehDOFPrepareMat::Execute(CommandBuffer& commandBuffer, const SPtr<Textur
 
 	bool MSAA = mVariationParameters.GetInt("MSAA_COUNT") > 1;
 	if(MSAA)
-		GetRendererUtility().DrawScreenQuad(Rect2(0.0f, 0.0f, (float)srcProps.Width, (float)srcProps.Height));
+		GetRendererUtility().DrawScreenQuad(commandBuffer, Rect2(0.0f, 0.0f, (float)srcProps.Width, (float)srcProps.Height));
 	else
-		GetRendererUtility().DrawScreenQuad();
+		GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 POOLED_RENDER_TEXTURE_DESC BokehDOFPrepareMat::GetOutputDesc(const SPtr<Texture>& target)
@@ -1363,11 +1364,11 @@ void BokehDOFMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& inp
 	RenderAPI& rapi = RenderAPI::Instance();
 	rapi.SetRenderTarget(output, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
 	rapi.ClearRenderTarget(FBT_COLOR, Color::kZero);
-	rapi.SetVertexDescription(mTileVertexDescription);
+	commandBuffer.SetVertexDescription(mTileVertexDescription);
 
 	SPtr<GpuBuffer> buffers[] = { mTileVertexBuffer };
-	rapi.SetVertexBuffers(0, buffers, (u32)B3DSize(buffers));
-	rapi.SetIndexBuffer(mTileIndexBuffer);
+	commandBuffer.SetVertexBuffers(0, buffers, (u32)B3DSize(buffers));
+	commandBuffer.SetIndexBuffer(mTileIndexBuffer);
 	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
 
 	Bind(commandBuffer);
@@ -1463,7 +1464,7 @@ void BokehDOFCombineMat::Execute(CommandBuffer& commandBuffer, const SPtr<Textur
 	rapi.SetRenderTarget(output);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 BokehDOFCombineMat* BokehDOFCombineMat::GetVariation(MSAAMode msaaMode)
@@ -1532,7 +1533,7 @@ void MotionBlurMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& i
 	rapi.SetRenderTarget(output);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 BuildHiZFParamDef gBuildHiZParamDef;
@@ -1586,7 +1587,7 @@ void BuildHiZMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& sou
 	rapi.SetViewport(dstRect);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad(srcRect);
+	GetRendererUtility().DrawScreenQuad(commandBuffer, srcRect);
 
 	rapi.SetViewport(Rect2(0, 0, 1, 1));
 }
@@ -1624,7 +1625,7 @@ void FXAAMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source,
 	rapi.SetRenderTarget(destination);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 SSAOParamDef gSSAOParamDef;
@@ -1781,7 +1782,7 @@ void SSAOMat::Execute(CommandBuffer& commandBuffer, const RendererView& view, co
 	rapi.SetRenderTarget(destination);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 SSAOMat* SSAOMat::GetVariation(bool upsample, bool finalPass, int quality)
@@ -1870,7 +1871,7 @@ void SSAODownsampleMat::Execute(CommandBuffer& commandBuffer, const RendererView
 	rapi.SetRenderTarget(destination);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 SSAOBlurParamDef gSSAOBlurParamDef;
@@ -1934,7 +1935,7 @@ void SSAOBlurMat::Execute(CommandBuffer& commandBuffer, const RendererView& view
 	rapi.SetRenderTarget(destination);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 SSAOBlurMat* SSAOBlurMat::GetVariation(bool horizontal)
@@ -1971,9 +1972,9 @@ void SSRStencilMat::Execute(CommandBuffer& commandBuffer, const RendererView& vi
 	Bind(commandBuffer);
 
 	if(viewProps.Target.NumSamples > 1)
-		GetRendererUtility().DrawScreenQuad(Rect2(0.0f, 0.0f, (float)viewRect.Width, (float)viewRect.Height));
+		GetRendererUtility().DrawScreenQuad(commandBuffer, Rect2(0.0f, 0.0f, (float)viewRect.Width, (float)viewRect.Height));
 	else
-		GetRendererUtility().DrawScreenQuad();
+		GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 SSRStencilMat* SSRStencilMat::GetVariation(bool msaa, bool singleSampleMSAA)
@@ -2078,9 +2079,9 @@ void SSRTraceMat::Execute(CommandBuffer& commandBuffer, const RendererView& view
 	Bind(commandBuffer);
 
 	if(viewProps.Target.NumSamples > 1)
-		GetRendererUtility().DrawScreenQuad(Rect2(0.0f, 0.0f, (float)viewRect.Width, (float)viewRect.Height));
+		GetRendererUtility().DrawScreenQuad(commandBuffer, Rect2(0.0f, 0.0f, (float)viewRect.Width, (float)viewRect.Height));
 	else
-		GetRendererUtility().DrawScreenQuad();
+		GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 Vector2 SSRTraceMat::CalcRoughnessFadeScaleBias(float maxRoughness)
@@ -2302,9 +2303,9 @@ void TemporalFilteringMat::Execute(CommandBuffer& commandBuffer, const RendererV
 	Bind(commandBuffer);
 
 	if(viewProps.Target.NumSamples > 1)
-		GetRendererUtility().DrawScreenQuad(Rect2(0.0f, 0.0f, (float)viewRect.Width, (float)viewRect.Height));
+		GetRendererUtility().DrawScreenQuad(commandBuffer, Rect2(0.0f, 0.0f, (float)viewRect.Width, (float)viewRect.Height));
 	else
-		GetRendererUtility().DrawScreenQuad();
+		GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 TemporalFilteringMat* TemporalFilteringMat::GetVariation(TemporalFilteringType type, bool velocity, bool msaa)
@@ -2375,7 +2376,7 @@ void EncodeDepthMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& 
 	rapi.SetRenderTarget(output, 0, RT_COLOR0);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 void MSAACoverageMat::Initialize()
@@ -2394,7 +2395,7 @@ void MSAACoverageMat::Execute(CommandBuffer& commandBuffer, const RendererView& 
 	mGPUParameters->SetUniformBuffer("PerCamera", perView);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad(Rect2(0, 0, (float)viewRect.Width, (float)viewRect.Height));
+	GetRendererUtility().DrawScreenQuad(commandBuffer, Rect2(0, 0, (float)viewRect.Width, (float)viewRect.Height));
 }
 
 MSAACoverageMat* MSAACoverageMat::GetVariation(u32 msaaCount)
@@ -2424,6 +2425,6 @@ void MSAACoverageStencilMat::Execute(CommandBuffer& commandBuffer, const Rendere
 	mCoverageTexParam.Set(coverage);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad(Rect2(0, 0, (float)viewRect.Width, (float)viewRect.Height));
+	GetRendererUtility().DrawScreenQuad(commandBuffer, Rect2(0, 0, (float)viewRect.Width, (float)viewRect.Height));
 }
 }}

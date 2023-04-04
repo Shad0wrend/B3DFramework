@@ -152,7 +152,7 @@ void TextureArrayToMSAATexture::Execute(CommandBuffer& commandBuffer, const SPtr
 	Bind(commandBuffer);
 
 	Rect2 area(0.0f, 0.0f, (float)targetProps.Width, (float)targetProps.Height);
-	GetRendererUtility().DrawScreenQuad(area);
+	GetRendererUtility().DrawScreenQuad(commandBuffer, area);
 }
 
 ClearLoadStoreParamDef gClearLoadStoreParamDef;

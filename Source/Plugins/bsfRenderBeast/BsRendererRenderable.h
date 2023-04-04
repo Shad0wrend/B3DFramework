@@ -92,7 +92,7 @@ namespace bs
 			/** Version of the morph shape vertices in the buffer. */
 			mutable u32 MorphShapeVersion;
 
-			void Draw() const override;
+			void Draw(CommandBuffer& commandBuffer) const override;
 		};
 
 		/** Contains information about a Renderable, used by the Renderer. */

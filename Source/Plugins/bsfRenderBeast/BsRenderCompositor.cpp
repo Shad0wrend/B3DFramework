@@ -41,7 +41,7 @@ void RenderQueueElements(CommandBuffer& commandBuffer, const Vector<RenderQueueE
 
 		GetRendererUtility().SetPassParams(commandBuffer, entry.RenderElem->Params, entry.PassIdx);
 
-		entry.RenderElem->Draw();
+		entry.RenderElem->Draw(commandBuffer);
 	}
 }
 
@@ -1107,6 +1107,8 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 	RCNodeSSR* ssrNode = static_cast<RCNodeSSR*>(inputs.InputNodes[4]);
 	RCNodeSSAO* ssaoNode = static_cast<RCNodeSSAO*>(inputs.InputNodes[5]);
 
+	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+
 	GBufferTextures gbuffer;
 	gbuffer.Albedo = gbufferNode->AlbedoTex->Texture;
 	gbuffer.Normals = gbufferNode->NormalTex->Texture;
@@ -1181,17 +1183,17 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 		// Prepare the texture for refl. probe and skybox rendering
 		{
 			DeferredIBLSetupMat* mat = DeferredIBLSetupMat::GetVariation(isMSAA, true);
-			mat->Bind(*inputs.ActiveCommandBuffer, gbuffer, perViewBuffer, ssrNode->Output, ssaoNode->Output, reflProbeParams.Buffer);
+			mat->Bind(commandBuffer, gbuffer, perViewBuffer, ssrNode->Output, ssaoNode->Output, reflProbeParams.Buffer);
 
-			GetRendererUtility().DrawScreenQuad();
+			GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 			// Draw pixels requiring per-sample evaluation
 			if(isMSAA)
 			{
 				DeferredIBLSetupMat* msaaMat = DeferredIBLSetupMat::GetVariation(true, false);
-				msaaMat->Bind(*inputs.ActiveCommandBuffer, gbuffer, perViewBuffer, ssrNode->Output, ssaoNode->Output, reflProbeParams.Buffer);
+				msaaMat->Bind(commandBuffer, gbuffer, perViewBuffer, ssrNode->Output, ssaoNode->Output, reflProbeParams.Buffer);
 
-				GetRendererUtility().DrawScreenQuad();
+				GetRendererUtility().DrawScreenQuad(commandBuffer);
 			}
 		}
 
@@ -1203,7 +1205,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 			{
 				const ReflProbeData& probe = probeData.GetProbeData(i);
 
-				StandardDeferred::Instance().RenderReflProbe(*inputs.ActiveCommandBuffer, probe, inputs.View, gbuffer, inputs.Scene, reflProbeParams.Buffer);
+				StandardDeferred::Instance().RenderReflProbe(commandBuffer, probe, inputs.View, gbuffer, inputs.Scene, reflProbeParams.Buffer);
 			}
 
 			// Render sky
@@ -1214,17 +1216,17 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 			if(skyFilteredRadiance)
 			{
 				DeferredIBLSkyMat* skymat = DeferredIBLSkyMat::GetVariation(isMSAA, true);
-				skymat->Bind(*inputs.ActiveCommandBuffer, gbuffer, perViewBuffer, skybox, reflProbeParams.Buffer);
+				skymat->Bind(commandBuffer, gbuffer, perViewBuffer, skybox, reflProbeParams.Buffer);
 
-				GetRendererUtility().DrawScreenQuad();
+				GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 				// Draw pixels requiring per-sample evaluation
 				if(isMSAA)
 				{
 					DeferredIBLSkyMat* msaaMat = DeferredIBLSkyMat::GetVariation(true, false);
-					msaaMat->Bind(*inputs.ActiveCommandBuffer, gbuffer, perViewBuffer, skybox, reflProbeParams.Buffer);
+					msaaMat->Bind(commandBuffer, gbuffer, perViewBuffer, skybox, reflProbeParams.Buffer);
 
-					GetRendererUtility().DrawScreenQuad();
+					GetRendererUtility().DrawScreenQuad(commandBuffer);
 				}
 			}
 		}
@@ -1234,17 +1236,17 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 			rapi.SetRenderTarget(outputRT, FBT_DEPTH | FBT_STENCIL, RT_COLOR0 | RT_DEPTH_STENCIL);
 
 			DeferredIBLFinalizeMat* mat = DeferredIBLFinalizeMat::GetVariation(isMSAA, true);
-			mat->Bind(*inputs.ActiveCommandBuffer, gbuffer, perViewBuffer, iblRadianceTex->Texture, RendererTextures::preintegratedEnvGF, reflProbeParams.Buffer);
+			mat->Bind(commandBuffer, gbuffer, perViewBuffer, iblRadianceTex->Texture, RendererTextures::preintegratedEnvGF, reflProbeParams.Buffer);
 
-			GetRendererUtility().DrawScreenQuad();
+			GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 			// Draw pixels requiring per-sample evaluation
 			if(isMSAA)
 			{
 				DeferredIBLFinalizeMat* msaaMat = DeferredIBLFinalizeMat::GetVariation(true, false);
-				msaaMat->Bind(*inputs.ActiveCommandBuffer, gbuffer, perViewBuffer, iblRadianceTex->Texture, RendererTextures::preintegratedEnvGF, reflProbeParams.Buffer);
+				msaaMat->Bind(commandBuffer, gbuffer, perViewBuffer, iblRadianceTex->Texture, RendererTextures::preintegratedEnvGF, reflProbeParams.Buffer);
 
-				GetRendererUtility().DrawScreenQuad();
+				GetRendererUtility().DrawScreenQuad(commandBuffer);
 			}
 		}
 
@@ -1569,12 +1571,13 @@ void RCNodeSkybox::Render(const RenderCompositorNodeInputs& inputs)
 	if(inputs.View.GetRenderSettings().EnableSkybox)
 		skybox = inputs.Scene.Skybox;
 
+	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	SPtr<Texture> radiance = skybox ? skybox->GetTexture() : nullptr;
 
 	if(radiance != nullptr)
 	{
 		SkyboxMat* material = SkyboxMat::GetVariation(false);
-		material->Bind(*inputs.ActiveCommandBuffer, inputs.View.GetPerViewBuffer(), radiance, Color::kWhite);
+		material->Bind(commandBuffer, inputs.View.GetPerViewBuffer(), radiance, Color::kWhite);
 	}
 	else
 	{
@@ -1582,7 +1585,7 @@ void RCNodeSkybox::Render(const RenderCompositorNodeInputs& inputs)
 		Color clearColor = inputs.View.GetProperties().Target.ClearColor.GetLinear();
 
 		SkyboxMat* material = SkyboxMat::GetVariation(true);
-		material->Bind(*inputs.ActiveCommandBuffer, inputs.View.GetPerViewBuffer(), nullptr, clearColor);
+		material->Bind(commandBuffer, inputs.View.GetPerViewBuffer(), nullptr, clearColor);
 	}
 
 	RCNodeSceneColor* sceneColorNode = static_cast<RCNodeSceneColor*>(inputs.InputNodes[0]);
@@ -1595,7 +1598,7 @@ void RCNodeSkybox::Render(const RenderCompositorNodeInputs& inputs)
 	rapi.SetViewport(area);
 
 	SPtr<Mesh> mesh = GetRendererUtility().GetSkyBoxMesh();
-	GetRendererUtility().Draw(mesh, mesh->GetProperties().SubMeshes[0]);
+	GetRendererUtility().Draw(commandBuffer, mesh, mesh->GetProperties().SubMeshes[0]);
 }
 
 void RCNodeSkybox::Clear()

@@ -277,7 +277,7 @@ void StandardDeferred::RenderLight(CommandBuffer& commandBuffer, LightType light
 		DeferredDirectionalLightMat* material = DeferredDirectionalLightMat::GetVariation(isMSAA, true);
 		material->Bind(commandBuffer, gBufferInput, lightOcclusion, perViewBuffer, mPerLightBuffer);
 
-		GetRendererUtility().DrawScreenQuad();
+		GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 		// Draw pixels requiring per-sample evaluation
 		if(isMSAA)
@@ -285,7 +285,7 @@ void StandardDeferred::RenderLight(CommandBuffer& commandBuffer, LightType light
 			DeferredDirectionalLightMat* msaaMaterial = DeferredDirectionalLightMat::GetVariation(true, false);
 			msaaMaterial->Bind(commandBuffer, gBufferInput, lightOcclusion, perViewBuffer, mPerLightBuffer);
 
-			GetRendererUtility().DrawScreenQuad();
+			GetRendererUtility().DrawScreenQuad(commandBuffer);
 		}
 	}
 	else // Radial or spot
@@ -310,7 +310,7 @@ void StandardDeferred::RenderLight(CommandBuffer& commandBuffer, LightType light
 		material->Bind(commandBuffer, gBufferInput, lightOcclusion, perViewBuffer, mPerLightBuffer);
 
 		// Note: If MSAA is enabled this will be rendered multisampled (on polygon edges), see if this can be avoided
-		GetRendererUtility().Draw(stencilMesh);
+		GetRendererUtility().Draw(commandBuffer, stencilMesh);
 
 		// Draw pixels requiring per-sample evaluation
 		if(isMSAA)
@@ -318,7 +318,7 @@ void StandardDeferred::RenderLight(CommandBuffer& commandBuffer, LightType light
 			DeferredPointLightMat* msaaMaterial = DeferredPointLightMat::GetVariation(isInside, true, false);
 			msaaMaterial->Bind(commandBuffer, gBufferInput, lightOcclusion, perViewBuffer, mPerLightBuffer);
 
-			GetRendererUtility().Draw(stencilMesh);
+			GetRendererUtility().Draw(commandBuffer, stencilMesh);
 		}
 	}
 }
@@ -359,7 +359,7 @@ void StandardDeferred::RenderReflProbe(CommandBuffer& commandBuffer, const ReflP
 	material->Bind(commandBuffer, gBufferInput, perViewBuffer, sceneInfo, probeData, reflProbeParams);
 
 	// Note: If MSAA is enabled this will be rendered multisampled (on polygon edges), see if this can be avoided
-	GetRendererUtility().Draw(stencilMesh);
+	GetRendererUtility().Draw(commandBuffer, stencilMesh);
 
 	// Draw pixels requiring per-sample evaluation
 	if(isMSAA)
@@ -367,7 +367,7 @@ void StandardDeferred::RenderReflProbe(CommandBuffer& commandBuffer, const ReflP
 		DeferredIBLProbeMat* msaaMaterial = DeferredIBLProbeMat::GetVariation(isInside, true, false);
 		msaaMaterial->Bind(commandBuffer, gBufferInput, perViewBuffer, sceneInfo, probeData, reflProbeParams);
 
-		GetRendererUtility().Draw(stencilMesh);
+		GetRendererUtility().Draw(commandBuffer, stencilMesh);
 	}
 }
 }} // namespace bs::ct

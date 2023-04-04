@@ -54,7 +54,7 @@ void TetrahedraRenderMat::Execute(CommandBuffer& commandBuffer, const RendererVi
 	rapi.SetRenderTarget(output);
 
 	Bind(commandBuffer);
-	GetRendererUtility().Draw(mesh);
+	GetRendererUtility().Draw(commandBuffer, mesh);
 }
 
 void TetrahedraRenderMat::GetOutputDesc(const RendererView& view, POOLED_RENDER_TEXTURE_DESC& colorDesc, POOLED_RENDER_TEXTURE_DESC& depthDesc)
@@ -152,7 +152,7 @@ void IrradianceEvaluateMat::Execute(CommandBuffer& commandBuffer, const Renderer
 
 	Bind(commandBuffer);
 
-	GetRendererUtility().DrawScreenQuad(Rect2(0.0f, 0.0f, (float)viewProps.Target.ViewRect.Width, (float)viewProps.Target.ViewRect.Height));
+	GetRendererUtility().DrawScreenQuad(commandBuffer, Rect2(0.0f, 0.0f, (float)viewProps.Target.ViewRect.Width, (float)viewProps.Target.ViewRect.Height));
 
 	rapi.SetRenderTarget(nullptr);
 }

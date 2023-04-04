@@ -509,9 +509,9 @@ public:
 						const RenderableElement& element = *command.Element;
 
 						if(element.MorphVertexDefinition == nullptr)
-							GetRendererUtility().Draw(element.Mesh, element.SubMesh);
+							GetRendererUtility().Draw(commandBuffer, element.Mesh, element.SubMesh);
 						else
-							GetRendererUtility().DrawMorph(element.Mesh, element.SubMesh, element.MorphShapeBuffer, element.MorphVertexDefinition);
+							GetRendererUtility().DrawMorph(commandBuffer, element.Mesh, element.SubMesh, element.MorphShapeBuffer, element.MorphVertexDefinition);
 					}
 					else
 						opt.BindRenderable(commandBuffer, command);
@@ -1047,7 +1047,7 @@ void ShadowRendering::RenderShadowOcclusion(CommandBuffer& commandBuffer, const 
 			ShadowProjectOmniMat* mat = ShadowProjectOmniMat::GetVariation(effectiveShadowQuality, viewerInsideVolume, viewProps.Target.NumSamples > 1);
 			mat->Bind(commandBuffer, shadowParams);
 
-			GetRendererUtility().Draw(GetRendererUtility().GetSphereStencil());
+			GetRendererUtility().Draw(commandBuffer, GetRendererUtility().GetSphereStencil());
 		}
 	}
 	else // Directional & spot
@@ -1177,7 +1177,7 @@ void ShadowRendering::RenderShadowOcclusion(CommandBuffer& commandBuffer, const 
 			if(!isCSM)
 				DrawFrustum(commandBuffer, frustumVertices);
 			else
-				GetRendererUtility().DrawScreenQuad();
+				GetRendererUtility().DrawScreenQuad(commandBuffer);
 		}
 	}
 }
@@ -1701,9 +1701,9 @@ void ShadowRendering::DrawNearFarPlanes(CommandBuffer& commandBuffer, float near
 
 	// Draw the mesh
 	RenderAPI& rapi = RenderAPI::Instance();
-	rapi.SetVertexDescription(mPositionOnlyVertexDescription);
-	rapi.SetVertexBuffers(0, &mPlaneVB, 1);
-	rapi.SetIndexBuffer(mPlaneIB);
+	commandBuffer.SetVertexDescription(mPositionOnlyVertexDescription);
+	commandBuffer.SetVertexBuffers(0, &mPlaneVB, 1);
+	commandBuffer.SetIndexBuffer(mPlaneIB);
 	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
 
 	rapi.DrawIndexed(0, drawNear ? 12 : 6, 0, drawNear ? 8 : 4);
@@ -1717,9 +1717,9 @@ void ShadowRendering::DrawFrustum(CommandBuffer& commandBuffer, const std::array
 	mFrustumVB->WriteData(0, sizeof(Vector3) * 8, corners.data(), BWT_DISCARD);
 
 	// Draw the mesh
-	rapi.SetVertexDescription(mPositionOnlyVertexDescription);
-	rapi.SetVertexBuffers(0, &mFrustumVB, 1);
-	rapi.SetIndexBuffer(mFrustumIB);
+	commandBuffer.SetVertexDescription(mPositionOnlyVertexDescription);
+	commandBuffer.SetVertexBuffers(0, &mFrustumVB, 1);
+	commandBuffer.SetIndexBuffer(mFrustumIB);
 	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
 
 	rapi.DrawIndexed(0, 36, 0, 8);

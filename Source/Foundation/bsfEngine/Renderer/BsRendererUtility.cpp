@@ -198,17 +198,17 @@ void RendererUtility::SetPassParams(CommandBuffer& commandBuffer, const SPtr<Gpu
 	commandBuffer.SetGpuParameters(gpuParams);
 }
 
-void RendererUtility::Draw(const SPtr<MeshBase>& mesh, u32 numInstances)
+void RendererUtility::Draw(CommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, u32 numInstances)
 {
-	Draw(mesh, mesh->GetProperties().SubMeshes[0], numInstances);
+	Draw(commandBuffer, mesh, mesh->GetProperties().SubMeshes[0], numInstances);
 }
 
-void RendererUtility::Draw(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u32 numInstances)
+void RendererUtility::Draw(CommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u32 numInstances)
 {
 	RenderAPI& rapi = RenderAPI::Instance();
 	SPtr<VertexData> vertexData = mesh->GetVertexData();
 
-	rapi.SetVertexDescription(mesh->GetVertexData()->VertexDescription);
+	commandBuffer.SetVertexDescription(mesh->GetVertexData()->VertexDescription);
 
 	auto& vertexBuffers = vertexData->GetBuffers();
 	if(vertexBuffers.size() > 0)
@@ -231,11 +231,11 @@ void RendererUtility::Draw(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u
 			buffers[iter->first - startSlot] = iter->second;
 		}
 
-		rapi.SetVertexBuffers(startSlot, buffers, endSlot - startSlot + 1);
+		commandBuffer.SetVertexBuffers(startSlot, buffers, endSlot - startSlot + 1);
 	}
 
 	SPtr<GpuBuffer> indexBuffer = mesh->GetIndexBuffer();
-	rapi.SetIndexBuffer(indexBuffer);
+	commandBuffer.SetIndexBuffer(indexBuffer);
 
 	rapi.SetDrawOperation(subMesh.DrawOp);
 
@@ -245,13 +245,13 @@ void RendererUtility::Draw(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u
 	mesh->NotifyUsedOnGPU();
 }
 
-void RendererUtility::DrawMorph(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, const SPtr<GpuBuffer>& morphVertices, const SPtr<VertexDescription>& morphVertexDescription)
+void RendererUtility::DrawMorph(CommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, const SPtr<GpuBuffer>& morphVertices, const SPtr<VertexDescription>& morphVertexDescription)
 {
 	// Bind buffers and draw
 	RenderAPI& rapi = RenderAPI::Instance();
 
 	SPtr<VertexData> vertexData = mesh->GetVertexData();
-	rapi.SetVertexDescription(morphVertexDescription);
+	commandBuffer.SetVertexDescription(morphVertexDescription);
 
 	auto& meshBuffers = vertexData->GetBuffers();
 	SPtr<GpuBuffer> allBuffers[BS_MAX_BOUND_VERTEX_BUFFERS];
@@ -274,10 +274,10 @@ void RendererUtility::DrawMorph(const SPtr<MeshBase>& mesh, const SubMesh& subMe
 		allBuffers[iter->first - startSlot] = iter->second;
 
 	allBuffers[1] = morphVertices;
-	rapi.SetVertexBuffers(startSlot, allBuffers, endSlot - startSlot + 1);
+	commandBuffer.SetVertexBuffers(startSlot, allBuffers, endSlot - startSlot + 1);
 
 	SPtr<GpuBuffer> indexBuffer = mesh->GetIndexBuffer();
-	rapi.SetIndexBuffer(indexBuffer);
+	commandBuffer.SetIndexBuffer(indexBuffer);
 
 	rapi.SetDrawOperation(subMesh.DrawOp);
 
@@ -304,7 +304,7 @@ void RendererUtility::Blit(CommandBuffer& commandBuffer, const SPtr<Texture>& te
 	blitMat->Execute(commandBuffer, texture, fArea, flipUV);
 }
 
-void RendererUtility::DrawScreenQuad(const Rect2& uv, const Vector2I& textureSize, u32 numInstances, bool flipUV)
+void RendererUtility::DrawScreenQuad(CommandBuffer& commandBuffer, const Rect2& uv, const Vector2I& textureSize, u32 numInstances, bool flipUV)
 {
 	// Note: Consider drawing the quad using a single large triangle for possibly better performance
 	// Note2: Consider setting quad size in shader instead of rebuilding the mesh every time
@@ -368,9 +368,9 @@ void RendererUtility::DrawScreenQuad(const Rect2& uv, const Vector2I& textureSiz
 
 	RenderAPI& rapi = RenderAPI::Instance();
 
-	rapi.SetVertexDescription(mFullscreenQuadVertexDescription);
-	rapi.SetVertexBuffers(0, &mFullScreenQuadVB, 1);
-	rapi.SetIndexBuffer(mFullScreenQuadIB);
+	commandBuffer.SetVertexDescription(mFullscreenQuadVertexDescription);
+	commandBuffer.SetVertexBuffers(0, &mFullScreenQuadVB, 1);
+	commandBuffer.SetIndexBuffer(mFullScreenQuadIB);
 	rapi.SetDrawOperation(DOT_TRIANGLE_LIST);
 	rapi.DrawIndexed(0, 6, mNextQuadVBSlot * 4, 4, numInstances);
 
@@ -402,9 +402,9 @@ void BlitMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source,
 	Bind(commandBuffer);
 
 	if(!mIsFiltered)
-		GetRendererUtility().DrawScreenQuad(area, Vector2I(1, 1), 1, flipUV);
+		GetRendererUtility().DrawScreenQuad(commandBuffer, area, Vector2I(1, 1), 1, flipUV);
 	else
-		GetRendererUtility().DrawScreenQuad(Rect2(0, 0, 1, 1), Vector2I(1, 1), 1, flipUV);
+		GetRendererUtility().DrawScreenQuad(commandBuffer, Rect2(0, 0, 1, 1), Vector2I(1, 1), 1, flipUV);
 }
 
 BlitMat* BlitMat::GetVariation(u32 msaaCount, bool isColor, bool isFiltered)
@@ -462,7 +462,7 @@ void ClearMat::Execute(CommandBuffer& commandBuffer, u32 value)
 	gClearParamDef.gClearValue.Set(mParamBuffer, value);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 CompositeParamDef gCompositeParamDef;
@@ -489,7 +489,7 @@ void CompositeMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& so
 	rapi.SetRenderTarget(target);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 BicubicUpsampleParamDef gBicubicUpsampleParamDef;
@@ -525,7 +525,7 @@ void BicubicUpsampleMat::Execute(CommandBuffer& commandBuffer, const SPtr<Textur
 	rapi.SetRenderTarget(target);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 BicubicUpsampleMat* BicubicUpsampleMat::GetVariation(bool hermite)

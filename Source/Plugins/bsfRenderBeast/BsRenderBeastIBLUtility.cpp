@@ -40,7 +40,7 @@ void ReflectionCubeDownsampleMat::Execute(CommandBuffer& commandBuffer, const SP
 	rapi.SetRenderTarget(target);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 const u32 ReflectionCubeImportanceSampleMat::kNumSamples = 1024;
@@ -80,7 +80,7 @@ void ReflectionCubeImportanceSampleMat::Execute(CommandBuffer& commandBuffer, co
 	rapi.SetRenderTarget(target);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 IrradianceComputeSHParamDef gIrradianceComputeSHParamDef;
@@ -193,7 +193,7 @@ void IrradianceComputeSHFragMat::Execute(CommandBuffer& commandBuffer, const SPt
 	rapi.SetRenderTarget(output);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 	rapi.SetRenderTarget(nullptr);
 }
@@ -233,7 +233,7 @@ void IrradianceAccumulateSHMat::Execute(CommandBuffer& commandBuffer, const SPtr
 	rapi.SetRenderTarget(output);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 	rapi.SetRenderTarget(nullptr);
 }
@@ -286,7 +286,7 @@ void IrradianceAccumulateCubeSHMat::Execute(CommandBuffer& commandBuffer, const 
 	rapi.SetViewport(viewRect);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 
 	rapi.SetRenderTarget(nullptr);
 	rapi.SetViewport(Rect2(0, 0, 1, 1));
@@ -372,7 +372,7 @@ void IrradianceProjectSHMat::Execute(CommandBuffer& commandBuffer, const SPtr<Te
 	rapi.SetRenderTarget(target);
 
 	Bind(commandBuffer);
-	GetRendererUtility().DrawScreenQuad();
+	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
 void RenderBeastIBLUtility::FilterCubemapForSpecular(CommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const SPtr<Texture>& scratch) const

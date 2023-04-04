@@ -152,7 +152,7 @@ void DebugDrawMat::Execute(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& 
 	mGPUParameters->SetUniformBuffer("Params", params);
 
 	Bind(commandBuffer);
-	GetRendererUtility().Draw(mesh, subMesh);
+	GetRendererUtility().Draw(commandBuffer, mesh, subMesh);
 }
 
 DebugDrawMat* DebugDrawMat::GetVariation(DebugDrawMaterial mat)

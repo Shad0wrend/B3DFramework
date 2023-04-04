@@ -134,5 +134,5 @@ void SpriteMaterial::Render(ct::CommandBuffer& commandBuffer, const SPtr<ct::Mes
 		ct::GetRendererUtility().SetPassParams(commandBuffer, mAlphaParams);
 	}
 
-	ct::GetRendererUtility().Draw(mesh, subMesh);
+	ct::GetRendererUtility().Draw(commandBuffer, mesh, subMesh);
 }

@@ -22,12 +22,12 @@ void PerObjectBuffer::Update(SPtr<GpuBuffer>& buffer, const Matrix4& tfrm, const
 	gPerObjectParamDef.gLayer.Set(buffer, (i32)layer);
 }
 
-void RenderableElement::Draw() const
+void RenderableElement::Draw(CommandBuffer& commandBuffer) const
 {
 	if(MorphVertexDefinition == nullptr)
-		GetRendererUtility().Draw(Mesh, SubMesh);
+		GetRendererUtility().Draw(commandBuffer, Mesh, SubMesh);
 	else
-		GetRendererUtility().DrawMorph(Mesh, SubMesh, MorphShapeBuffer, MorphVertexDefinition);
+		GetRendererUtility().DrawMorph(commandBuffer, Mesh, SubMesh, MorphShapeBuffer, MorphVertexDefinition);
 }
 
 RendererRenderable::RendererRenderable()

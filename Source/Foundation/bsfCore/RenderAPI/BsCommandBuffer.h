@@ -118,6 +118,31 @@ namespace bs
 			/** Sets a pipeline state that controls how will subsequent dispatch commands execute. */
 			virtual void SetGpuComputePipelineState(const SPtr<GpuComputePipelineState>& pipelineState);
 
+			/**
+			 * Sets the provided vertex buffers starting at the specified source index.	Set buffer to nullptr to clear the
+			 * buffer at the specified index.
+			 *
+			 * @param	index			Index at which to start binding the vertex buffers.
+			 * @param	buffers			A list of buffers to bind to the pipeline.
+			 * @param	bufferCount		Number of buffers in the @p buffers list.
+			 */
+			virtual void SetVertexBuffers(u32 index, SPtr<GpuBuffer>* buffers, u32 bufferCount);
+
+			/**
+			 * Sets an index buffer to use when drawing. Indices in an index buffer reference vertices in the vertex buffer,
+			 * which increases cache coherency and reduces the size of vertex buffers by eliminating duplicate data.
+			 *
+			 * @param	buffer			Index buffer to bind, null to unbind.
+			 */
+			virtual void SetIndexBuffer(const SPtr<GpuBuffer>& buffer);
+
+			/**
+			 * Sets the description of vertex elements in the vertex buffers that will be bound when executing the vertex GPU program.
+			 *
+			 * @param	vertexDescription	Vertex description to bind.
+			 */
+			virtual void SetVertexDescription(const SPtr<VertexDescription>& vertexDescription);
+
 			/** Returns the shared pointer to the current object. */
 			SPtr<CommandBuffer> GetShared() const { return mSelf.lock(); }
 

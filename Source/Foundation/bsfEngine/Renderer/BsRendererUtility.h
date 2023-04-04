@@ -205,8 +205,8 @@ namespace bs
 			 * Sets parameters (textures, samplers, buffers) for the currently active pass.
 			 *
 			 * @param	commandBuffer	Command buffer to bind the pass parameters to.
-			 * @param	params		Object containing the parameters.
-			 * @param	passIdx		Pass for which to set the parameters.
+			 * @param	params			Object containing the parameters.
+			 * @param	passIdx			Pass for which to set the parameters.
 			 *
 			 * @note	Core thread.
 			 */
@@ -215,37 +215,40 @@ namespace bs
 			/**
 			 * Draws the specified mesh.
 			 *
-			 * @param[in]	mesh			Mesh to draw.
-			 * @param[in]	numInstances	Number of times to draw the mesh using instanced rendering.
+			 * @param	commandBuffer	Command buffer to encode the draw command on.
+			 * @param	mesh			Mesh to draw.
+			 * @param	numInstances	Number of times to draw the mesh using instanced rendering.
 			 *
 			 * @note	Core thread.
 			 */
-			void Draw(const SPtr<MeshBase>& mesh, u32 numInstances = 1);
+			void Draw(CommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, u32 numInstances = 1);
 
 			/**
 			 * Draws the specified mesh.
 			 *
-			 * @param[in]	mesh			Mesh to draw.
-			 * @param[in]	subMesh			Portion of the mesh to draw.
-			 * @param[in]	numInstances	Number of times to draw the mesh using instanced rendering.
+			 * @param	commandBuffer	Command buffer to encode the draw command on.
+			 * @param	mesh			Mesh to draw.
+			 * @param	subMesh			Portion of the mesh to draw.
+			 * @param	numInstances	Number of times to draw the mesh using instanced rendering.
 			 *
 			 * @note	Core thread.
 			 */
-			void Draw(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u32 numInstances = 1);
+			void Draw(CommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u32 numInstances = 1);
 
 			/**
 			 * Draws the specified mesh with an additional vertex buffer containing morph shape vertices.
 			 *
-			 * @param[in]	mesh					Mesh to draw.
-			 * @param[in]	subMesh					Portion of the mesh to draw.
-			 * @param[in]	morphVertices			Buffer containing the morph shape vertices. Will be bound to stream 1.
-			 *										Expected to contain the same number of vertices as the source mesh.
-			 * @param[in]	morphVertexDescription	Object describing vertices of the provided mesh and the vertices
-			 *										provided in the morph vertex buffer.
+			 * @param	commandBuffer			Command buffer to encode the draw command on.
+			 * @param	mesh					Mesh to draw.
+			 * @param	subMesh					Portion of the mesh to draw.
+			 * @param	morphVertices			Buffer containing the morph shape vertices. Will be bound to stream 1.
+			 *									Expected to contain the same number of vertices as the source mesh.
+			 * @param	morphVertexDescription	Object describing vertices of the provided mesh and the vertices
+			 *									provided in the morph vertex buffer.
 			 *
 			 * @note	Core thread.
 			 */
-			void DrawMorph(const SPtr<MeshBase>& mesh, const SubMesh& subMesh, const SPtr<GpuBuffer>& morphVertices, const SPtr<VertexDescription>& morphVertexDescription);
+			void DrawMorph(CommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, const SPtr<GpuBuffer>& morphVertices, const SPtr<VertexDescription>& morphVertexDescription);
 
 			/**
 			 * Blits contents of the provided texture into the currently bound render target. If the provided texture contains
@@ -267,33 +270,35 @@ namespace bs
 			/**
 			 * Draws a quad over the entire viewport in normalized device coordinates.
 			 *
-			 * @param[in]	uv				UV coordinates to assign to the corners of the quad.
-			 * @param[in]	textureSize		Size of the texture the UV coordinates are specified for. If the UV coordinates are
-			 *								already in normalized (0, 1) range then keep this value as is. If the UV coordinates
-			 *								are in texels then set this value to the texture size so they can be normalized
-			 *								internally.
-			 * @param[in]	numInstances	How many instances of the quad to draw (using instanced rendering). Useful when
-			 *								drawing to 3D textures.
-			 * @param[in]	flipUV			If true, vertical UV coordinate will be flipped upside down.
+			 * @param	commandBuffer	Command buffer to encode the draw command on.
+			 * @param	uv				UV coordinates to assign to the corners of the quad.
+			 * @param	textureSize		Size of the texture the UV coordinates are specified for. If the UV coordinates are
+			 *							already in normalized (0, 1) range then keep this value as is. If the UV coordinates
+			 *							are in texels then set this value to the texture size so they can be normalized
+			 *							internally.
+			 * @param	numInstances	How many instances of the quad to draw (using instanced rendering). Useful when
+			 *							drawing to 3D textures.
+			 * @param	flipUV			If true, vertical UV coordinate will be flipped upside down.
 			 *
 			 * @note	Core thread.
 			 */
-			void DrawScreenQuad(const Rect2& uv, const Vector2I& textureSize = Vector2I(1, 1), u32 numInstances = 1, bool flipUV = false);
+			void DrawScreenQuad(CommandBuffer& commandBuffer, const Rect2& uv, const Vector2I& textureSize = Vector2I(1, 1), u32 numInstances = 1, bool flipUV = false);
 
 			/**
 			 * Draws a quad over the entire viewport in normalized device coordinates.
 			 *
-			 * @param[in]	numInstances	How many instances of the quad to draw (using instanced rendering). Useful when
-			 *								drawing to 3D textures.
+			 * @param	commandBuffer	Command buffer to encode the draw command on.
+			 * @param	numInstances	How many instances of the quad to draw (using instanced rendering). Useful when
+			 *							drawing to 3D textures.
 			 *
 			 * @note	Core thread.
 			 */
-			void DrawScreenQuad(u32 numInstances = 1)
+			void DrawScreenQuad(CommandBuffer& commandBuffer, u32 numInstances = 1)
 			{
 				Rect2 uv(0.0f, 0.0f, 1.0f, 1.0f);
 				Vector2I textureSize(1, 1);
 
-				DrawScreenQuad(uv, textureSize, numInstances);
+				DrawScreenQuad(commandBuffer, uv, textureSize, numInstances);
 			}
 
 			/**

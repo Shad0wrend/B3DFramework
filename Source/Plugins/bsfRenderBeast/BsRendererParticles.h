@@ -200,7 +200,7 @@ namespace bs
 			/** Checks if the element has all the properties required for rendering. */
 			bool IsValid() const { return !Is3D || Mesh != nullptr; }
 
-			void Draw() const override;
+			void Draw(CommandBuffer& commandBuffer) const override;
 		};
 
 		/** Contains information about a ParticleSystem, used by the Renderer. */
@@ -355,7 +355,7 @@ namespace bs
 			ParticleTexturePool& GetTexturePool() { return mTexturePool; }
 
 			/** Draws @p count quads used for billboard rendering, using instanced drawing. */
-			void DrawBillboards(u32 count);
+			void DrawBillboards(CommandBuffer& commandBuffer, u32 count);
 
 			/**
 			 * Updates the provided indices buffer so they particles are sorted from further to nearest with respect to

@@ -93,11 +93,26 @@ void CommandBuffer::SetGpuParameters(const SPtr<GpuParameters>& parameters)
 
 void CommandBuffer::SetGpuGraphicsPipelineState(const SPtr<GpuGraphicsPipelineState>& pipelineState)
 {
-	GetRenderAPI().SetGraphicsPipeline(pipelineState);
+	GetRenderAPI().SetGraphicsPipeline(pipelineState, GetShared());
 }
 
 void CommandBuffer::SetGpuComputePipelineState(const SPtr<GpuComputePipelineState>& pipelineState)
 {
-	GetRenderAPI().SetComputePipeline(pipelineState);
+	GetRenderAPI().SetComputePipeline(pipelineState, GetShared());
+}
+
+void CommandBuffer::SetVertexBuffers(u32 index, SPtr<GpuBuffer>* buffers, u32 bufferCount)
+{
+	GetRenderAPI().SetVertexBuffers(index, buffers, bufferCount, GetShared());
+}
+
+void CommandBuffer::SetIndexBuffer(const SPtr<GpuBuffer>& buffer)
+{
+	GetRenderAPI().SetIndexBuffer(buffer, GetShared());
+}
+
+void CommandBuffer::SetVertexDescription(const SPtr<VertexDescription>& vertexDescription)
+{
+	GetRenderAPI().SetVertexDescription(vertexDescription, GetShared());
 }
 }}
