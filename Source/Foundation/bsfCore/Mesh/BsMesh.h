@@ -287,28 +287,25 @@ namespace bs
 			/**
 			 * Updates the current mesh with the provided data.
 			 *
-			 * @param[in]	data				Data to update the mesh with.
-			 * @param[in]	discardEntireBuffer When true the existing contents of the resource you are updating will be
+			 * @param	data					Data to update the mesh with.
+			 * @param	discardEntireBuffer		When true the existing contents of the resource you are updating will be
 			 *									discarded. This can make the operation faster. Resources with certain buffer
 			 *									types might require this flag to be in a specific state otherwise the operation
 			 *									will fail.
-			 * @param[in]	updateBounds		If true the internal bounds of the mesh will be recalculated based on the
-			 *									provided data.
-			 * @param[in]	queueIdx			Device queue to perform the write operation on. See @ref queuesDoc.
+			 * @param	updateBounds			If true the internal bounds of the mesh will be recalculated based on the provided data.
+			 * @param	commandBuffer			Command buffer on which to issue a copy operation, in case the internal buffers aren't directly writeable.
 			 */
-			virtual void WriteData(const MeshData& data, bool discardEntireBuffer, bool updateBounds = true, u32 queueIdx = 0);
+			virtual void WriteData(const MeshData& data, bool discardEntireBuffer, bool updateBounds = true, const SPtr<CommandBuffer>& commandBuffer = nullptr);
 
 			/**
 			 * Reads the current mesh data into the provided @p data parameter. Data buffer needs to be pre-allocated.
 			 *
-			 * @param[out]	data				Pre-allocated buffer of proper vertex/index format and size where data will be
+			 * @param	data					Pre-allocated buffer of proper vertex/index format and size where data will be
 			 *									read to. You can use Mesh::allocBuffer() to allocate a buffer of a correct
 			 *									format and size.
-			 * @param[in]	deviceIdx			Index of the device whose memory to read. If the buffer doesn't exist on this
-			 *									device, no data will be read.
-			 * @param[in]	queueIdx			Device queue to perform the read operation on. See @ref queuesDoc.
+			 * @param	commandBuffer			Command buffer on which to issue a copy operation, in case the internal buffers aren't directly readable.
 			 */
-			virtual void ReadData(MeshData& data, u32 deviceIdx = 0, u32 queueIdx = 0);
+			virtual void ReadData(MeshData& data, const SPtr<CommandBuffer>& commandBuffer = nullptr);
 
 			/**
 			 * Creates a new empty mesh. Created mesh will have no sub-meshes.

@@ -114,8 +114,8 @@ namespace bs
 			~VulkanGpuBuffer();
 
 			void SetName(const StringView& name) override;
-			void ReadData(u32 offset, u32 length, void* dest, u32 deviceIdx = 0, u32 queueIdx = 0) override;
-			void WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL, u32 queueIdx = 0) override;
+			void ReadData(u32 offset, u32 length, void* destination, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
+			void WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 			void CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 			/**

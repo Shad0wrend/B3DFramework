@@ -29,8 +29,9 @@ namespace bs::ct
 		 *							to the same queue.
 		 * @param	syncMask		Mask that controls which other command buffers does this command buffer depend upon
 		 *							(if any). See description of @p syncMask parameter in RenderAPI::ExecuteCommands().
+		 * @param	blocking		If true the calling thread will wait until the GPU completes the operation.
 		 */
-		void QueueSubmit(VulkanInternalCommandBuffer& commandBuffer, VulkanQueue& queue, u32 queueIndex, u32 syncMask);
+		void QueueSubmit(VulkanInternalCommandBuffer& commandBuffer, VulkanQueue& queue, u32 queueIndex, u32 syncMask, bool blocking = false);
 
 		/**
 		 * Queues an operation that acquires a swap chain image. Acquired images can be written to and eventually presented to the screen.

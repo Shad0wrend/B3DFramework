@@ -537,6 +537,7 @@ u32 VulkanInternalCommandBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 sy
 	AssertIfNotVulkanSubmitThread();
 
 	B3D_ASSERT(IsReadyForSubmit());
+	syncMask |= mSyncMask;
 
 	VulkanGpuDevice& device = queue->GetDevice();
 	VulkanCommandBufferPool& commandBufferPool = GetVulkanSubmitThread().GetCommandBufferPool(device.GetIndex());

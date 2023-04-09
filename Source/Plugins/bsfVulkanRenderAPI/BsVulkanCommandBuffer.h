@@ -165,11 +165,19 @@ namespace bs
 			 *						to the same queue.
 			 * @param	syncMask	Mask that controls which other command buffers does this command buffer depend upon
 			 *						(if any). See description of @p syncMask parameter in RenderAPI::ExecuteCommands().
+			 *						This will be ORed with the internal sync mask.
 			 * @return				Sequential index of the submit on the queue, or ~0u if nothing was submitted.
 			 *
 			 * @note	Submit thread only.
 			 */
 			u32 Submit(VulkanQueue* queue, u32 queueIdx, u32 syncMask);
+
+			/**
+			 * OR's the provided sync mask with the internal sync mask. The sync mask determines on which queues should
+			 * the buffer wait on before executing. Sync mask is reset after a flush. See CommandSyncMask on how to generate
+			 * a sync mask.
+			 */
+			void AppendSyncMask(u32 syncMask) { mSyncMask |= syncMask; }
 
 			/** Called when the command buffer is about to be sent to the submit queue for submit. */
 			void NotifyWillQueueForSubmit();
@@ -725,6 +733,7 @@ namespace bs
 			VkCommandBuffer mCmdBuffer;
 			VkFence mFence;
 			VulkanThread mOwnerThread = VulkanThread::Undefined;
+			u32 mSyncMask;
 
 			VulkanSemaphore* mIntraQueueSemaphore = nullptr;
 			VulkanSemaphore* mInterQueueSemaphores[BS_MAX_VULKAN_CB_DEPENDENCIES]{};

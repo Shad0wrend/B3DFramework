@@ -61,18 +61,18 @@ namespace bs
 			/** Returns the main command buffer, executing on the graphics queue. */
 			VulkanCommandBuffer* GetMainVulkanCommandBuffer() const { return mMainCommandBuffer.get(); }
 
+			/**
+			 * Returns a valid command buffer. Uses the provided buffer if not null. Otherwise returns the default command
+			 * buffer.
+			 */
+			VulkanCommandBuffer* EnsureCommandBuffer(const SPtr<CommandBuffer>& buffer);
+
 			/** @} */
 		protected:
 			friend class VulkanRenderAPIFactory;
 
 			void Initialize() override;
 			void DestroyCore() override;
-
-			/**
-			 * Returns a valid command buffer. Uses the provided buffer if not null. Otherwise returns the default command
-			 * buffer.
-			 */
-			VulkanCommandBuffer* EnsureCommandBuffer(const SPtr<CommandBuffer>& buffer);
 
 		private:
 			/** Queued swap chain operation. */

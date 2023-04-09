@@ -305,30 +305,36 @@ namespace bs::ct
 		}
 
 		/**
-		 * Reads data from a portion of the buffer and copies it to the destination buffer. Caller must ensure destination
-		 * buffer is large enough.
+		 * Reads data from a portion of the buffer and copies it to the destination buffer. Caller must ensure destination buffer is large enough.
+		 *
+		 * @note	If the buffer cannot be directly mapped by the CPU (i.e. doesn't have the StoreOnCPU or StoreOnCPUWithGPUAccess flags) this will
+		 *			internally create a staging buffer, on which the contents will be copied before being read by the CPU, using the provided command buffer).
+		 * @note	If the buffer is currently being used by the GPU, this method will block until the GPU is done executing, so you should call this
+		 *			method in very rare circumstances.
 		 *
 		 * @param	offset			Offset in bytes from which to copy the data.
 		 * @param	length			Length of the area you want to copy, in bytes.
 		 * @param	destination		Destination buffer large enough to store the read data. Data is written from the start
 		 *							of the buffer (@p offset is only applied to the source).
-		 * @param	deviceIdx		Index of the device whose memory to read. If the buffer doesn't exist on this device,
-		 *							no data will be read.
-		 * @param	queueIdx		Device queue to perform the read operation on. See @ref queuesDoc.
+		 * @param	commandBuffer	Command buffer on which to encode the staging buffer copy, in case the buffer is not directly readable.
 		 */
-		virtual void ReadData(u32 offset, u32 length, void* destination, u32 deviceIdx = 0, u32 queueIdx = 0) = 0;
+		virtual void ReadData(u32 offset, u32 length, void* destination, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
 		 * Writes data into a portion of the buffer from the source memory.
 		 *
-		 * @param	offset		Offset in bytes from which to copy the data.
-		 * @param	length		Length of the area you want to copy, in bytes.
-		 * @param	source		Source buffer containing the data to write. Data is read from the start of the buffer
-		 *						(@p offset is only applied to the destination).
-		 * @param	writeFlags	Optional write flags that may affect performance.
-		 * @param	queueIdx	Device queue to perform the write operation on. See @ref queuesDoc.
+		 * @note	If the buffer cannot be directly mapped by the CPU (i.e. doesn't have the StoreOnCPU or StoreOnCPUWithGPUAccess flags) this will
+		 *			internally create a staging buffer, on which the contents will be copied before being written by the GPU, using the provided command buffer).
+		 * @note	If the buffer is currently being used by the GPU, this method will block until the GPU is done executing unless Discard or NoOverwrite flags are provided.
+		 *
+		 * @param	offset			Offset in bytes from which to copy the data.
+		 * @param	length			Length of the area you want to copy, in bytes.
+		 * @param	source			Source buffer containing the data to write. Data is read from the start of the buffer
+		 *							(@p offset is only applied to the destination).
+		 * @param	writeFlags		Optional write flags that may affect performance.
+		 * @param	commandBuffer	Command buffer on which to encode the staging buffer copy, in case the buffer is not directly readable.
 		 */
-		virtual void WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL, u32 queueIdx = 0) = 0;
+		virtual void WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
 		 * Copies data from a specific portion of the source buffer into a specific portion of this buffer.

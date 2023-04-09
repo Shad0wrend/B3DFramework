@@ -330,7 +330,7 @@ SPtr<VertexDescription> Mesh::GetVertexDescription() const
 	return mVertexDescription;
 }
 
-void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool performUpdateBounds, u32 queueIdx)
+void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool performUpdateBounds, const SPtr<CommandBuffer>& commandBuffer)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
@@ -373,7 +373,7 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 		B3D_LOG(Error, Mesh, "Index buffer values are being written out of valid range.");
 	}
 
-	mIndexBuffer->WriteData(0, indicesSize, srcIdxData, discardEntireBuffer ? BWT_DISCARD : BWT_NORMAL, queueIdx);
+	mIndexBuffer->WriteData(0, indicesSize, srcIdxData, discardEntireBuffer ? BWT_DISCARD : BWT_NORMAL, commandBuffer);
 
 	// Vertices
 	for(u32 i = 0; i <= mVertexDescription->GetLargestStreamIndex(); i++)
@@ -407,14 +407,14 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 			B3D_LOG(Error, Mesh, "Vertex buffer values for stream \"{0}\" are being written out of valid range.", i);
 		}
 
-		vertexBuffer->WriteData(0, bufferSize, srcVertBufferData, discardEntireBuffer ? BWT_DISCARD : BWT_NORMAL, queueIdx);
+		vertexBuffer->WriteData(0, bufferSize, srcVertBufferData, discardEntireBuffer ? BWT_DISCARD : BWT_NORMAL, commandBuffer);
 	}
 
 	if(performUpdateBounds)
 		UpdateBounds(meshData);
 }
 
-void Mesh::ReadData(MeshData& meshData, u32 deviceIdx, u32 queueIdx)
+void Mesh::ReadData(MeshData& meshData, const SPtr<CommandBuffer>& commandBuffer)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
@@ -435,7 +435,7 @@ void Mesh::ReadData(MeshData& meshData, u32 deviceIdx, u32 queueIdx)
 			return;
 		}
 
-		u8* idxData = static_cast<u8*>(mIndexBuffer->Lock(GBL_READ_ONLY, deviceIdx, queueIdx));
+		u8* idxData = static_cast<u8*>(mIndexBuffer->Lock(GBL_READ_ONLY));
 		u32 idxElemSize = indexBufferIndexSize;
 
 		u8* indices = nullptr;
@@ -495,7 +495,7 @@ void Mesh::ReadData(MeshData& meshData, u32 deviceIdx, u32 queueIdx)
 				continue;
 			}
 
-			u8* vertDataPtr = static_cast<u8*>(vertexBuffer->Lock(GBL_READ_ONLY, deviceIdx, queueIdx));
+			u8* vertDataPtr = static_cast<u8*>(vertexBuffer->Lock(GBL_READ_ONLY));
 
 			u8* dest = meshData.GetStreamData(streamIdx);
 			memcpy(dest, vertDataPtr, bufferSize);
