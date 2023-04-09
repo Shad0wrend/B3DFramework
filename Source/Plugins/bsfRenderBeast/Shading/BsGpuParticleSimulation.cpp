@@ -424,7 +424,7 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 
 	TileUVs = gpuDevice->CreateGpuBuffer(tileUVBufferCreateInformation);
 
-	auto* const tileUVData = (Vector2*)TileUVs->Lock(GBL_WRITE_ONLY_DISCARD);
+	auto* const tileUVData = (Vector2*)B3DStackAllocate(TileUVs->GetSize());
 	const float tileUVScale = GpuParticleResources::kTileSize / (float)GpuParticleResources::kTexSize;
 	for(u32 i = 0; i < kParticlesPerInstance; i++)
 	{
@@ -434,7 +434,8 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 		tileUVData[i * 4 + 3] = Vector2(0.0f, 1.0f) * tileUVScale;
 	}
 
-	TileUVs->Unlock();
+	TileUVs->WriteData(0, TileUVs->GetSize(), tileUVData);
+	B3DStackFree(tileUVData);
 
 	// Prepare UV coordinates for rendering particles
 	GpuBufferCreateInformation particleUVBufferCreateInformation;
@@ -444,7 +445,7 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 
 	ParticleUVs = gpuDevice->CreateGpuBuffer(particleUVBufferCreateInformation);
 
-	auto* const particleUVData = (Vector2*)ParticleUVs->Lock(GBL_WRITE_ONLY_DISCARD);
+	auto* const particleUVData = (Vector2*)B3DStackAllocate(ParticleUVs->GetSize());
 	const float particleUVScale = 1.0f / (float)GpuParticleResources::kTexSize;
 	for(u32 i = 0; i < kParticlesPerInstance; i++)
 	{
@@ -454,7 +455,8 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 		particleUVData[i * 4 + 3] = Vector2(0.0f, 1.0f) * particleUVScale;
 	}
 
-	ParticleUVs->Unlock();
+	ParticleUVs->WriteData(0, ParticleUVs->GetSize(), particleUVData);
+	B3DStackFree(particleUVData);
 
 	// Prepare indices for rendering tiles & particles
 	GpuBufferCreateInformation spriteIndexBufferCreateInformation;
@@ -464,7 +466,7 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 
 	SpriteIndices = gpuDevice->CreateGpuBuffer(spriteIndexBufferCreateInformation);
 
-	auto* const indices = (u16*)SpriteIndices->Lock(GBL_WRITE_ONLY_DISCARD);
+	auto* const indices = (u16*)B3DStackAllocate(SpriteIndices->GetSize());
 
 	const GpuBackendConventions& rapiConventions = GetGpuDeviceCapabilities().Conventions;
 	for(u32 i = 0; i < kParticlesPerInstance; i++)
@@ -491,7 +493,8 @@ GpuParticleHelperBuffers::GpuParticleHelperBuffers()
 		}
 	}
 
-	SpriteIndices->Unlock();
+	SpriteIndices->WriteData(0, SpriteIndices->GetSize(), indices);
+	B3DStackFree(indices);
 
 	// Prepare a scratch buffer we'll use to clear tiles
 	GpuBufferCreateInformation tileScratchBufferCreateInformation;
@@ -651,14 +654,15 @@ void GpuParticleSystem::UpdateGpuBuffers()
 
 		mTileUVs = gpuDevice->CreateGpuBuffer(tilesBufferCreateInformation);
 
-		auto* tileUVs = (Vector2*)mTileUVs->Lock(GBL_WRITE_ONLY_NO_OVERWRITE);
+		auto* tileUVs = (Vector2*)B3DStackAllocate(mTileUVs->GetSize());
 		for(u32 i = 0; i < numTiles; i++)
 			tileUVs[i] = GpuParticleResources::GetTileCoords(mTiles[i].Id);
 
 		for(u32 i = numTiles; i < numTilesToAllocates; i++)
 			tileUVs[i] = Vector2(2.0f, 2.0f); // Out of range
 
-		mTileUVs->Unlock();
+		mTileUVs->WriteData(0, mTileUVs->GetSize(), tileUVs, BWT_NO_OVERWRITE);
+		B3DStackFree(tileUVs);
 	}
 
 	// Particle data offsets
@@ -673,7 +677,7 @@ void GpuParticleSystem::UpdateGpuBuffers()
 		particleUVCreateInformation.SimpleStorage.Count = numParticles;
 
 		mParticleIndices = gpuDevice->CreateGpuBuffer(particleUVCreateInformation);
-		auto* particleIndices = (u32*)mParticleIndices->Lock(GBL_WRITE_ONLY_NO_OVERWRITE);
+		auto* particleIndices = (u32*)B3DStackAllocate(mParticleIndices->GetSize());
 
 		u32 idx = 0;
 		for(u32 i = 0; i < numTiles; i++)
@@ -689,7 +693,8 @@ void GpuParticleSystem::UpdateGpuBuffers()
 			}
 		}
 
-		mParticleIndices->Unlock();
+		mParticleIndices->WriteData(0, mParticleIndices->GetSize(), particleIndices, BWT_NO_OVERWRITE);
+		B3DStackFree(particleIndices);
 	}
 }
 
@@ -990,11 +995,11 @@ void GpuParticleSimulation::ClearTiles(CommandBuffer& commandBuffer, const Vecto
 	u32 tileStart = 0;
 	for(u32 i = 0; i < numIterations; i++)
 	{
-		static_assert(GpuParticleHelperBuffers::kNumScratchTiles % kTilesPerInstance == 0, "Tile scratch buffer size must be divisble with number of tiles per instance.");
+		static_assert(GpuParticleHelperBuffers::kNumScratchTiles % kTilesPerInstance == 0, "Tile scratch buffer size must be divisible with number of tiles per instance.");
 
 		const u32 tileEnd = std::min(numTiles, tileStart + GpuParticleHelperBuffers::kNumScratchTiles);
 
-		auto* tileUVs = (Vector2*)m->HelperBuffers.TileScratch->Lock(GBL_WRITE_ONLY_DISCARD);
+		auto* tileUVs = (Vector2*)B3DStackAllocate(m->HelperBuffers.TileScratch->GetSize());
 		for(u32 j = tileStart; j < tileEnd; j++)
 			tileUVs[j - tileStart] = GpuParticleResources::GetTileCoords(tiles[j]);
 
@@ -1002,7 +1007,8 @@ void GpuParticleSimulation::ClearTiles(CommandBuffer& commandBuffer, const Vecto
 		for(u32 j = tileEnd; j < alignedTileEnd; j++)
 			tileUVs[j - tileEnd] = Vector2(2.0f, 2.0f); // Out of bounds (we don't want to accidentaly clear used tiles)
 
-		m->HelperBuffers.TileScratch->Unlock();
+		m->HelperBuffers.TileScratch->WriteData(0, m->HelperBuffers.TileScratch->GetSize(), tileUVs, BWT_DISCARD); // TODO - Write using the command buffer below? It wouldn't require discard.
+		B3DStackFree(tileUVs);
 
 		const u32 numInstances = (alignedTileEnd - tileStart) / kTilesPerInstance;
 		commandBuffer.DrawIndexed(0, kTilesPerInstance * 6, 0, kTilesPerInstance * 4, numInstances);
@@ -1031,11 +1037,12 @@ void GpuParticleSimulation::InjectParticles(CommandBuffer& commandBuffer, const 
 	{
 		const u32 particleEnd = std::min(numParticles, particleStart + GpuParticleHelperBuffers::kNumScratchParticles);
 
-		auto* particleData = (GpuParticleVertex*)m->HelperBuffers.InjectScratch->Lock(GBL_WRITE_ONLY_DISCARD);
+		auto* particleData = (GpuParticleVertex*)B3DStackAllocate(m->HelperBuffers.InjectScratch->GetSize());
 		for(u32 j = particleStart; j < particleEnd; j++)
 			particleData[j - particleStart] = particles[j].GetVertex();
 
-		m->HelperBuffers.InjectScratch->Unlock();
+		m->HelperBuffers.InjectScratch->WriteData(0, m->HelperBuffers.InjectScratch->GetSize(), particleData, BWT_DISCARD); // TODO - Write using the command buffer below? It wouldn't require discard.
+		B3DStackFree(particleData);
 
 		commandBuffer.DrawIndexed(0, 6, 0, 4, particleEnd - particleStart);
 		particleStart = particleEnd;
@@ -1259,14 +1266,16 @@ AABox GpuParticleBoundsMat::Execute(CommandBuffer& commandBuffer, const SPtr<Gpu
 	Vector3 min = Vector3::kInf;
 	Vector3 max = -Vector3::kInf;
 
-	const Vector3* data = (Vector3*)output->Lock(GBL_READ_ONLY);
+	Vector3* data = (Vector3*)B3DStackAllocate(output->GetSize());
+	output->ReadData(0, output->GetSize(), data);
+
 	for(u32 i = 0; i < numGroups; i++)
 	{
 		min = Vector3::Min(min, data[i * 2 + 0]);
 		max = Vector3::Min(max, data[i * 2 + 1]);
 	}
 
-	output->Unlock();
+	B3DStackFree(data);
 
 	return AABox(min, max);
 }
@@ -1374,14 +1383,15 @@ GpuParticleCurves::GpuParticleCurves()
 
 	mInjectUV = gpuDevice->CreateGpuBuffer(injectUVBufferCreateInformation);
 
-	auto* const tileUVData = (Vector2*)mInjectUV->Lock(GBL_WRITE_ONLY_DISCARD);
+	auto* const tileUVData = (Vector2*)B3DStackAllocate(mInjectUV->GetSize());
 	const float tileUVScale = 1.0f / (float)kTexSize;
 	tileUVData[0] = Vector2(0.0f, 0.0f) * tileUVScale;
 	tileUVData[1] = Vector2(1.0f, 0.0f) * tileUVScale;
 	tileUVData[2] = Vector2(1.0f, 1.0f) * tileUVScale;
 	tileUVData[3] = Vector2(0.0f, 1.0f) * tileUVScale;
 
-	mInjectUV->Unlock();
+	mInjectUV->WriteData(0, mInjectUV->GetSize(), tileUVData);
+	B3DStackFree(tileUVData);
 
 	// Prepare indices for injecting curves
 	GpuBufferCreateInformation injectIndexBufferCreateInformation;
@@ -1393,7 +1403,7 @@ GpuParticleCurves::GpuParticleCurves()
 
 	const GpuBackendConventions& rapiConventions = GetGpuDeviceCapabilities().Conventions;
 
-	auto* const indices = (u16*)mInjectIndices->Lock(GBL_WRITE_ONLY_DISCARD);
+	auto* const indices = (u16*)B3DStackAllocate(mInjectIndices->GetSize());
 
 	// If UV is flipped, then our tile will be upside down so we need to change index order so it doesn't
 	// get culled.
@@ -1416,7 +1426,8 @@ GpuParticleCurves::GpuParticleCurves()
 		indices[5] = 3;
 	}
 
-	mInjectIndices->Unlock();
+	mInjectIndices->WriteData(0, mInjectIndices->GetSize(), indices);
+	B3DStackFree(indices);
 
 	// Prepare a scratch buffer we'll use to inject new curves
 	GpuBufferCreateInformation injectScratchBufferCreateInformation;
@@ -1475,9 +1486,10 @@ void GpuParticleCurves::ApplyChanges(CommandBuffer& commandBuffer)
 
 	u32 curveIdx = 0;
 
-	auto* data = (GpuParticleCurveInject*)mInjectScratch->Lock(GBL_WRITE_ONLY_DISCARD);
 	while(curveIdx < numCurves)
 	{
+		auto* data = (GpuParticleCurveInject*)B3DStackAllocate(mInjectScratch->GetSize());
+
 		u32 count = 0;
 		for(; curveIdx < numCurves; curveIdx++)
 		{
@@ -1498,13 +1510,11 @@ void GpuParticleCurves::ApplyChanges(CommandBuffer& commandBuffer)
 			}
 		}
 
-		mInjectScratch->Unlock();
+		mInjectScratch->WriteData(0, mInjectScratch->GetSize(), data, BWT_DISCARD); // TODO - Write using the command buffer below? It wouldn't require discard.
+
+		B3DStackFree(data);
 		commandBuffer.DrawIndexed(0, 6, 0, 4, count);
-
-		data = (GpuParticleCurveInject*)mInjectScratch->Lock(GBL_WRITE_ONLY_DISCARD);
 	}
-
-	mInjectScratch->Unlock();
 
 	for(auto& entry : mPendingAllocations)
 		mPendingAllocator.Free(entry.Pixels);

@@ -146,7 +146,7 @@ namespace bs
 
 			void Initialize() override;
 
-			void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx) override;
+			void* Map(u32 offset, u32 length, GpuLockOptions options) override;
 			void Unmap() override;
 
 			/** Creates a new buffer for the specified device, matching the current buffer properties. */
@@ -155,9 +155,6 @@ namespace bs
 			VulkanGpuDevice& mDevice;
 			VulkanBuffer* mBuffer = nullptr;
 
-			VulkanBuffer* mStagingBuffer = nullptr;
-			u8* mStagingMemory = nullptr;
-			u32 mMappedGlobalQueueIdx = ~0u;
 			u32 mMappedOffset = 0;
 			u32 mMappedSize = 0;
 			GpuLockOptions mMappedLockOptions = GBL_WRITE_ONLY;

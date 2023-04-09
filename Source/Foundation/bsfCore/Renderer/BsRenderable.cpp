@@ -537,7 +537,9 @@ SPtr<GpuBuffer> CreateBoneMatrixBuffer(u32 numBones)
 
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 	SPtr<GpuBuffer> buffer = gpuDevice->CreateGpuBuffer(bufferCreateInformation);
-	u8* dest = (u8*)buffer->Lock(0, numBones * 3 * sizeof(Vector4), GBL_WRITE_ONLY_DISCARD);
+
+	const u32 bufferSize = numBones * 3 * sizeof(Vector4);
+	u8* dest = (u8*)B3DStackAllocate(bufferSize);
 
 	// Initialize bone transforms to identity, so the object renders properly even if no animation is animating it
 	for(u32 i = 0; i < numBones; i++)
@@ -546,7 +548,8 @@ SPtr<GpuBuffer> CreateBoneMatrixBuffer(u32 numBones)
 		dest += 12 * sizeof(float);
 	}
 
-	buffer->Unlock();
+	buffer->WriteData(0, bufferSize, dest, BWT_DISCARD);
+	B3DStackFree(dest);
 
 	return buffer;
 }
@@ -598,9 +601,11 @@ void Renderable::CreateAnimationBuffers()
 		SPtr<GpuBuffer> vertexBuffer = gpuDevice->CreateGpuBuffer(vertexBufferCreateInformation);
 
 		u32 totalSize = vertexSize * numVertices;
-		u8* dest = (u8*)vertexBuffer->Lock(0, totalSize, GBL_WRITE_ONLY_DISCARD);
+		u8* dest = (u8*)B3DStackAllocate(totalSize);
 		memset(dest, 0, totalSize);
-		vertexBuffer->Unlock();
+
+		vertexBuffer->WriteData(0, totalSize, dest, BWT_DISCARD);
+		B3DStackFree(dest);
 
 		mMorphShapeBuffer = vertexBuffer;
 	}
@@ -633,7 +638,8 @@ void Renderable::UpdateAnimationBuffers(const EvaluatedAnimationData& animData)
 
 		// Note: If multiple elements are using the same animation (not possible atm), this buffer should be shared by
 		// all such elements
-		u8* dest = (u8*)mBoneMatrixBuffer->Lock(0, poseInfo.NumBones * 3 * sizeof(Vector4), GBL_WRITE_ONLY_DISCARD);
+		const u32 bufferSize = poseInfo.NumBones * 3 * sizeof(Vector4);
+		u8* dest = (u8*)B3DStackAllocate(bufferSize);
 		for(u32 j = 0; j < poseInfo.NumBones; j++)
 		{
 			const Matrix4& transform = animData.Transforms[poseInfo.StartIdx + j];
@@ -642,7 +648,8 @@ void Renderable::UpdateAnimationBuffers(const EvaluatedAnimationData& animData)
 			dest += 12 * sizeof(float);
 		}
 
-		mBoneMatrixBuffer->Unlock();
+		mBoneMatrixBuffer->WriteData(0, bufferSize, dest, BWT_DISCARD);
+		B3DStackFree(dest);
 	}
 
 	if(mAnimType == RenderableAnimType::Morph || mAnimType == RenderableAnimType::SkinnedMorph)

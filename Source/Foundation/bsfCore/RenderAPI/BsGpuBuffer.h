@@ -260,7 +260,8 @@ namespace bs::ct
 		virtual void SetName(const StringView& name) { mName = name; }
 
 		/**
-		 * Locks a portion of the buffer and returns pointer to the locked area. You must call Unlock() when done.
+		 * Locks a portion of the buffer and returns pointer to the locked area. You must call Unlock() when done. This method
+		 * is only available on buffers that are accessible by the CPU (StoreOnCPU or StoreOnCPUWithGPUAcess flags).
 		 *
 		 * @param	offset		Offset in bytes from which to lock the buffer.
 		 * @param	length		Length of the area you want to lock, in bytes.
@@ -274,7 +275,7 @@ namespace bs::ct
 		virtual void* Lock(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx = 0, u32 queueIdx = 0)
 		{
 			B3D_ASSERT(!IsLocked() && "Cannot lock this buffer, it is already locked!");
-			void* ret = Map(offset, length, options, deviceIdx, queueIdx);
+			void* ret = Map(offset, length, options);
 			mIsLocked = true;
 
 			return ret;
@@ -286,13 +287,10 @@ namespace bs::ct
 		 * @param	options		Signifies what you want to do with the returned pointer. Caller must ensure not to do
 		 *						anything he hasn't requested (for example don't try to read from the buffer unless you
 		 *						requested it here).
-		 * @param	deviceIdx	Index of the device whose memory to map. If the buffer doesn't exist on this device,
-		 *						the method returns null.
-		 * @param	queueIdx	Device queue to perform any read/write operations on. See @ref queuesDoc.
 		 */
-		void* Lock(GpuLockOptions options, u32 deviceIdx = 0, u32 queueIdx = 0)
+		void* Lock(GpuLockOptions options)
 		{
-			return this->Lock(0, mSize, options, deviceIdx, queueIdx);
+			return this->Lock(0, mSize, options);
 		}
 
 		/**	Releases the lock on this buffer. */
@@ -316,7 +314,9 @@ namespace bs::ct
 		 * @param	length			Length of the area you want to copy, in bytes.
 		 * @param	destination		Destination buffer large enough to store the read data. Data is written from the start
 		 *							of the buffer (@p offset is only applied to the source).
-		 * @param	commandBuffer	Command buffer on which to encode the staging buffer copy, in case the buffer is not directly readable.
+		 * @param	commandBuffer	Command buffer on which to encode the staging buffer copy, in case the buffer is not directly readable. If not provided
+		 *							the operation will be queued on an internal command buffer that will be submitted before any regular command
+		 *							buffer submission.
 		 */
 		virtual void ReadData(u32 offset, u32 length, void* destination, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
@@ -325,14 +325,15 @@ namespace bs::ct
 		 *
 		 * @note	If the buffer cannot be directly mapped by the CPU (i.e. doesn't have the StoreOnCPU or StoreOnCPUWithGPUAccess flags) this will
 		 *			internally create a staging buffer, on which the contents will be copied before being written by the GPU, using the provided command buffer).
-		 * @note	If the buffer is currently being used by the GPU, this method will block until the GPU is done executing unless Discard or NoOverwrite flags are provided.
 		 *
 		 * @param	offset			Offset in bytes from which to copy the data.
 		 * @param	length			Length of the area you want to copy, in bytes.
 		 * @param	source			Source buffer containing the data to write. Data is read from the start of the buffer
 		 *							(@p offset is only applied to the destination).
 		 * @param	writeFlags		Optional write flags that may affect performance.
-		 * @param	commandBuffer	Command buffer on which to encode the staging buffer copy, in case the buffer is not directly readable.
+		 * @param	commandBuffer	Command buffer on which to encode the staging buffer copy, in case the buffer is not directly readable. If not provided
+		 *							the operation will be queued on an internal command buffer that will be submitted before any regular command
+		 *							buffer submission.
 		 */
 		virtual void WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
@@ -399,7 +400,7 @@ namespace bs::ct
 		void SyncToCore(const CoreSyncData& data) override;
 
 		/** @copydoc Lock */
-		virtual void* Map(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx, u32 queueIdx) { return nullptr; }
+		virtual void* Map(u32 offset, u32 length, GpuLockOptions options) { return nullptr; }
 
 		/** @copydoc Unlock */
 		virtual void Unmap() {}

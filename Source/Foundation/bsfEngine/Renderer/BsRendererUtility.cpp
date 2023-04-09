@@ -357,9 +357,11 @@ void RendererUtility::DrawScreenQuad(CommandBuffer& commandBuffer, const Rect2& 
 	u32 bufferSize = meshData->GetStreamSize(0);
 	u8* srcVertBufferData = meshData->GetStreamData(0);
 
-	void* dstData = mFullScreenQuadVB->Lock(mNextQuadVBSlot * bufferSize, bufferSize, GBL_WRITE_ONLY_NO_OVERWRITE);
+	
+	void* dstData = B3DStackAllocate(bufferSize);
 	memcpy(dstData, srcVertBufferData, bufferSize);
-	mFullScreenQuadVB->Unlock();
+	mFullScreenQuadVB->WriteData(mNextQuadVBSlot * bufferSize, bufferSize, dstData, BWT_NO_OVERWRITE, commandBuffer.GetShared());
+	B3DStackFree(dstData);
 
 	commandBuffer.SetVertexDescription(mFullscreenQuadVertexDescription);
 	commandBuffer.SetVertexBuffers(0, &mFullScreenQuadVB, 1);

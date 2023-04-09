@@ -555,7 +555,7 @@ namespace bs
 		 * also avoid CPU-GPU stalls, without requiring you to discard the entire buffer. However it is hard to guarantee
 		 * when GPU has finished using a buffer.
 		 */
-		BTW_NO_OVERWRITE
+		BWT_NO_OVERWRITE
 	};
 
 	/**

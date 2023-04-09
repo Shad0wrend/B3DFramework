@@ -435,11 +435,9 @@ void Mesh::ReadData(MeshData& meshData, const SPtr<CommandBuffer>& commandBuffer
 			return;
 		}
 
-		u8* idxData = static_cast<u8*>(mIndexBuffer->Lock(GBL_READ_ONLY));
 		u32 idxElemSize = indexBufferIndexSize;
 
 		u8* indices = nullptr;
-
 		if(indexType == IT_16BIT)
 			indices = (u8*)meshData.GetIndices16();
 		else
@@ -454,9 +452,7 @@ void Mesh::ReadData(MeshData& meshData, const SPtr<CommandBuffer>& commandBuffer
 			return;
 		}
 
-		memcpy(indices, idxData, numIndicesToCopy * idxElemSize);
-
-		mIndexBuffer->Unlock();
+		mIndexBuffer->ReadData(0, indicesSize, indices);
 	}
 
 	if(mVertexData)
@@ -495,12 +491,8 @@ void Mesh::ReadData(MeshData& meshData, const SPtr<CommandBuffer>& commandBuffer
 				continue;
 			}
 
-			u8* vertDataPtr = static_cast<u8*>(vertexBuffer->Lock(GBL_READ_ONLY));
-
 			u8* dest = meshData.GetStreamData(streamIdx);
-			memcpy(dest, vertDataPtr, bufferSize);
-
-			vertexBuffer->Unlock();
+			vertexBuffer->ReadData(0, bufferSize, dest);
 
 			streamIdx++;
 		}
