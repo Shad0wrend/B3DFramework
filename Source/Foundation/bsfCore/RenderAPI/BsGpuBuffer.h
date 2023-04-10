@@ -19,7 +19,9 @@ namespace bs
 		Index, /**< Contains mesh indices that determine which vertices form a triangle. */
 		Uniform, /**< Contains GPU program parameters. */
 		SimpleStorage, /**< Contains arbitrary data, formatted as an array of primitive types using one of the supported buffer formats. */
-		StructuredStorage /**< Contains arbitrary data, formatted as an array of structures. Structure layout is up to the user. */
+		StructuredStorage, /**< Contains arbitrary data, formatted as an array of structures. Structure layout is up to the user. */
+		StagingWrite, /**< Special type of CPU writeable buffer type used only as a source of copy operations. Ignores the store flags and is always accessible by CPU only. */
+		StagingRead, /**< Special type of CPU readable buffer type used only as a destination of copy operations. Ignores the store flags and is always accessible by CPU only. */
 	};
 
 	/** Flags that determine how a GpuBuffer behaves. */
@@ -41,12 +43,6 @@ namespace bs
 		 * integrated on the CPU die, then this memory can be accessed directly by the GPU. Mutually exclusive with StoreOnGPU and StoreOnCPU.
 		 */
 		StoreOnCPUWithGPUAccess = 1 << 1,
-
-		/**
-		 * Places the buffer into CPU memory that cannot be accessed by the GPU. You can use this for staging buffers that receive and send data from/to a buffer on the
-		 * GPU via the Copy operation. Mutually exclusive with StoreOnGPU and StoreOnCPUWithGPUAccess.
-		 */
-		StoreOnCPU = 1 << 2,
 
 		/**
 		 * Ensures that the GPU can perform write operations in the buffer. Generally this is used for buffers used in compute operations. StoreOnGPU memory

@@ -379,7 +379,20 @@ namespace bs
 			 * Issues a pipeline barrier on the provided buffer. See vkCmdPipelineBarrier in Vulkan spec. for usage
 			 * information.
 			 */
-			void MemoryBarrier(VkBuffer buffer, VkAccessFlags srcAccessFlags, VkAccessFlags dstAccessFlags, VkPipelineStageFlags srcStage, VkPipelineStageFlags dstStage);
+			void MemoryBarrier(VkBuffer buffer, VkAccessFlags sourceAccessFlags, VkAccessFlags destinationAccessFlags, VkPipelineStageFlags sourceStage, VkPipelineStageFlags destinationStage);
+
+			/** Issues a pipeline barrier on the provided buffer. Uses the default pipeline stages for provided access flags.  */
+			void MemoryBarrier(VkBuffer buffer, VkAccessFlags sourceAccessFlags, VkAccessFlags destinationAccessFlags);
+
+			/**
+			 * Copies the provided memory into the buffer.
+			 *
+			 * @param	destination		Destination to copy into.
+			 * @param	data			Data to copy into.
+			 * @param	offset			Offset in the destination buffer to copy to, in bytes. Must be a multiple of 4.
+			 * @param	length			Size of the data to copy, in bytes. Must be a multiple of 4 and less or equal than 65536.
+			 */
+			void UpdateBuffer(VulkanBuffer* destination, u8* data, VkDeviceSize offset, VkDeviceSize length);
 
 			/**
 			 * Copies the contents of the source buffer to the destination buffer. Caller must ensure the provided
@@ -496,6 +509,9 @@ namespace bs
 			 *								may perform an automated layout transition when it begins.
 			 */
 			VkImageLayout GetCurrentLayout(VulkanImage* image, const VkImageSubresourceRange& range, bool inRenderPass);
+
+			/** Returns a set of pipeline stages that can are allowed to be used for the specified set of access flags. */
+			static VkPipelineStageFlags GetPipelineStageFlags(VkAccessFlags accessFlags);
 
 		private:
 			friend class VulkanCommandBufferPool;

@@ -11,8 +11,8 @@
 using namespace bs;
 using namespace bs::ct;
 
-VulkanBuffer::VulkanBuffer(VulkanResourceManager* owner, VkBuffer buffer, VmaAllocation allocation, u32 rowPitch, u32 slicePitch)
-	: VulkanResource(owner, false), mBuffer(buffer), mAllocation(allocation), mRowPitch(rowPitch)
+VulkanBuffer::VulkanBuffer(VulkanResourceManager* owner, GpuBufferType type, GpuBufferFlags flags, VkBuffer buffer, VmaAllocation allocation, u32 rowPitch, u32 slicePitch)
+	: VulkanResource(owner, false), mType(type), mFlags(flags), mBuffer(buffer), mAllocation(allocation), mRowPitch(rowPitch)
 {
 	if(rowPitch != 0)
 		mSliceHeight = slicePitch / rowPitch;
@@ -74,11 +74,6 @@ void VulkanBuffer::Unmap(bool isFlushRequired)
 		device.FlushMemory(mAllocation, mMappedOffset, mMappedSize);
 }
 
-void VulkanBuffer::Update(VulkanInternalCommandBuffer* cb, u8* data, VkDeviceSize offset, VkDeviceSize length)
-{
-	vkCmdUpdateBuffer(cb->GetHandle(), mBuffer, offset, length, (uint32_t*)data);
-}
-
 VkBufferView VulkanBuffer::GetOrCreateView(VkFormat format)
 {
 	Lock lock(mViewsMutex);
@@ -105,8 +100,40 @@ VkBufferView VulkanBuffer::GetOrCreateView(VkFormat format)
 	return view;
 }
 
+VkAccessFlags VulkanBuffer::GetAccessFlags() const
+{
+	VkAccessFlags accessFlags = 0;
+	switch(mType)
+	{
+	case GpuBufferType::SimpleStorage:
+	case GpuBufferType::StructuredStorage:
+		accessFlags |= VK_ACCESS_SHADER_READ_BIT;
+		break;
+	case GpuBufferType::Index:
+		accessFlags |= VK_ACCESS_INDEX_READ_BIT;
+		break;
+	case GpuBufferType::Vertex:
+		accessFlags |= VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
+		break;
+	case GpuBufferType::Uniform:
+		accessFlags |= VK_ACCESS_UNIFORM_READ_BIT;
+		break;
+	case GpuBufferType::StagingRead:
+		accessFlags |= VK_ACCESS_HOST_READ_BIT;
+		break;
+	case GpuBufferType::StagingWrite:
+		accessFlags |= VK_ACCESS_HOST_WRITE_BIT;
+		break;
+	}
+
+	if(mFlags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
+		accessFlags |= VK_ACCESS_SHADER_WRITE_BIT;
+
+	return accessFlags;
+}
+
 VulkanGpuBuffer::VulkanGpuBuffer(VulkanGpuDevice& device, const GpuBufferCreateInformation& createInformation)
-	: GpuBuffer(createInformation), mDevice(device), mDirectlyMappable((createInformation.Flags.IsSetAny(GpuBufferFlag::StoreOnCPUWithGPUAccess | GpuBufferFlag::StoreOnCPU)) != 0), mSupportsGPUWrites(createInformation.Flags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU)), mIsMapped(false)
+	: GpuBuffer(createInformation), mDevice(device), mDirectlyMappable((createInformation.Flags.IsSetAny(GpuBufferFlag::StoreOnCPUWithGPUAccess)) != 0 || createInformation.Type == GpuBufferType::StagingRead || createInformation.Type == GpuBufferType::StagingWrite), mSupportsGPUWrites(createInformation.Flags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU)), mIsMapped(false)
 { }
 
 VulkanGpuBuffer::~VulkanGpuBuffer()
@@ -136,6 +163,12 @@ void VulkanGpuBuffer::Initialize()
 		break;
 	case GpuBufferType::StructuredStorage:
 		usageFlags = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+		break;
+	case GpuBufferType::StagingRead:
+		usageFlags = VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+		break;
+	case GpuBufferType::StagingWrite:
+		usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 		break;
 	}
 
@@ -179,13 +212,17 @@ VulkanBuffer* VulkanGpuBuffer::CreateBuffer(VulkanGpuDevice& device, u32 size, b
 	mBufferCI.size = size;
 
 	VmaMemoryUsage memoryUsage;
-	if(staging || mInformation.Flags.IsSet(GpuBufferFlag::StoreOnCPU)) // TODO - Staging readback should use GPU_TO_CPU (i.e. prefer cached memory)
+	if(staging)
 	{
 		if(readable)
 			memoryUsage = VMA_MEMORY_USAGE_GPU_TO_CPU;
 		else
 			memoryUsage = VMA_MEMORY_USAGE_CPU_ONLY;
 	}
+	else if(mInformation.Type == GpuBufferType::StagingRead)
+		memoryUsage = VMA_MEMORY_USAGE_GPU_TO_CPU;
+	else if(mInformation.Type == GpuBufferType::StagingWrite)
+		memoryUsage = VMA_MEMORY_USAGE_CPU_ONLY;
 	else if(mInformation.Flags.IsSet(GpuBufferFlag::StoreOnCPUWithGPUAccess))
 		memoryUsage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 	else // StoreOnGPU
@@ -200,7 +237,11 @@ VulkanBuffer* VulkanGpuBuffer::CreateBuffer(VulkanGpuDevice& device, u32 size, b
 	VmaAllocation allocation = device.AllocateMemory(buffer, memoryUsage);
 
 	mBufferCI.usage = usage; // Restore original usage
-	VulkanBuffer *const vulkanBuffer = device.GetResourceManager().Create<VulkanBuffer>(buffer, allocation);
+
+	const GpuBufferType newBufferType = staging ? readable ? GpuBufferType::StagingRead : GpuBufferType::StagingWrite : mInformation.Type;
+	const GpuBufferFlags newBufferFlags = staging ? (GpuBufferFlags)0 : mInformation.Flags;
+
+	VulkanBuffer *const vulkanBuffer = device.GetResourceManager().Create<VulkanBuffer>(newBufferType, newBufferFlags, buffer, allocation);
 
 	if(vulkanBuffer != nullptr)
 	{
@@ -438,9 +479,6 @@ void VulkanGpuBuffer::ReadData(u32 offset, u32 length, void* destination, const 
 
 	vulkanCommandBuffer->CopyBufferToBuffer(mBuffer, stagingBuffer, offset, 0, length);
 
-	// Ensure data written to the staging buffer is visible
-	vulkanCommandBuffer->MemoryBarrier(stagingBuffer->GetHandle(), VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_HOST_READ_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_HOST_BIT);
-
 	// Submit the command buffer and wait until it finishes
 	vulkanCommandBuffer->End(); // TODO - If user-provided command buffer it doesn't make sense to call End(). Perhaps better to just always use transfer buffer? Or just make this always async?
 	GetVulkanSubmitThread().QueueSubmit(*vulkanCommandBuffer, *queue, 0, syncMask, true);
@@ -506,7 +544,7 @@ void VulkanGpuBuffer::WriteData(u32 offset, u32 length, const void* source, Buff
 
 	// Can't use direct mapping, so use a staging buffer or memory
 	// See if we can use the cheaper staging memory, rather than a staging buffer
-	const bool useStagingMemory = false;// offset % 4 == 0 && length % 4 == 0 && length <= 65536; // TODO - Temporarily disabled as staging memory breaks things for an unknown reason
+	const bool useStagingMemory = offset % 4 == 0 && length % 4 == 0 && length <= 65536;
 
 	// Create a staging buffer if needed
 	VulkanBuffer* const stagingBuffer = !useStagingMemory ? CreateBuffer(mDevice, length, true, false) : nullptr;
@@ -566,7 +604,7 @@ void VulkanGpuBuffer::WriteData(u32 offset, u32 length, const void* source, Buff
 	}
 	else // Staging memory
 	{
-		mBuffer->Update(vulkanCommandBuffer, (u8*)source, offset, length);
+		vulkanCommandBuffer->UpdateBuffer(mBuffer, (u8*)source, offset, length);
 	}
 
 	// TODO - Move this within VulkanCmdBuffer::CopyBufferToBuffer?
@@ -591,3 +629,4 @@ VkBufferView VulkanGpuBuffer::GetOrCreateView(GpuBufferFormat format) const
 
 	return mBuffer->GetOrCreateView(VulkanUtility::GetBufferFormat(mInformation.SimpleStorage.Format));
 }
+

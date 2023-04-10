@@ -889,7 +889,7 @@ VulkanBuffer* VulkanTexture::CreateStaging(VulkanGpuDevice& device, const PixelD
 		slicePitchInPixels *= blockDim.X * blockDim.Y;
 	}
 
-	VulkanBuffer *const vulkanBuffer = device.GetResourceManager().Create<VulkanBuffer>(buffer, allocation, rowPitchInPixels, slicePitchInPixels);
+	VulkanBuffer *const vulkanBuffer = device.GetResourceManager().Create<VulkanBuffer>(readable ? GpuBufferType::StagingRead : GpuBufferType::StagingWrite, (GpuBufferFlags)0, buffer, allocation, rowPitchInPixels, slicePitchInPixels);
 	vulkanBuffer->SetName(StringUtil::Format("Staging buffer ({0})", mName));
 
 	return vulkanBuffer;
@@ -1596,7 +1596,7 @@ TAsyncOp<SPtr<PixelData>> VulkanTexture::ReadDataAsync(u32 mipLevel, u32 face, u
 	const SPtr<PixelData> pixelData = B3DMakeShared<PixelData>(mipWidth, mipHeight, mipDepth, mInternalFormats[deviceIndex]);
 
 	VulkanBuffer* const buffer = CreateStaging(device, *pixelData, true);
-	CopyImageSubresourceToBuffer(vulkanCommandBufffer, image, face, mipLevel, buffer, true);
+	CopyImageSubresourceToBuffer(vulkanCommandBufffer, image, face, mipLevel, buffer, true); // TODO - No need for staging if directly mappable
 
 	TAsyncOp<SPtr<PixelData>> op;
 	auto fnOnCommandBufferCompleted = [buffer, op, pixelData]() mutable

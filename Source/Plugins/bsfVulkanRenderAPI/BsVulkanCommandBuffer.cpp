@@ -133,60 +133,13 @@ VulkanInternalCommandBuffer* VulkanCommandBufferPool::CreateBuffer(u32 queueFami
 	return B3DNew<VulkanInternalCommandBuffer>(mDevice, mOwnerThread, mNextId++, poolInfo.Pool, poolInfo.QueueFamily, secondary);
 }
 
-/** Returns a set of pipeline stages that can are allowed to be used for the specified set of access flags. */
-static VkPipelineStageFlags GetPipelineStageFlags(VkAccessFlags accessFlags)
-{
-	VkPipelineStageFlags flags = 0;
-
-	if((accessFlags & VK_ACCESS_INDIRECT_COMMAND_READ_BIT) != 0)
-		flags |= VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT;
-
-	if((accessFlags & (VK_ACCESS_INDEX_READ_BIT | VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT)) != 0)
-		flags |= VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
-
-	if((accessFlags & (VK_ACCESS_UNIFORM_READ_BIT | VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT)) != 0)
-	{
-		flags |= VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
-		flags |= VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-		flags |= VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
-
-		// MoltenVK doesn't support geometry and tessellation shaders
-		// Note: Once we upgrade to a newer version they should be supported and we can remove this
-#if B3D_PLATFORM != B3D_PLATFORM_ID_MACOS
-		flags |= VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT;
-		flags |= VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT;
-		flags |= VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT;
-#endif
-	}
-
-	if((accessFlags & VK_ACCESS_INPUT_ATTACHMENT_READ_BIT) != 0)
-		flags |= VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-
-	if((accessFlags & (VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT)) != 0)
-		flags |= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-
-	if((accessFlags & (VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT)) != 0)
-		flags |= VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-
-	if((accessFlags & (VK_ACCESS_TRANSFER_READ_BIT | VK_ACCESS_TRANSFER_WRITE_BIT)) != 0)
-		flags |= VK_PIPELINE_STAGE_TRANSFER_BIT;
-
-	if((accessFlags & (VK_ACCESS_HOST_READ_BIT | VK_ACCESS_HOST_WRITE_BIT)) != 0)
-		flags |= VK_PIPELINE_STAGE_HOST_BIT;
-
-	if(flags == 0)
-		flags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-
-	return flags;
-}
-
 template <class T>
 void GetPipelineStageFlags(const Vector<T>& barriers, VkPipelineStageFlags& src, VkPipelineStageFlags& dst)
 {
 	for(auto& entry : barriers)
 	{
-		src |= GetPipelineStageFlags(entry.srcAccessMask);
-		dst |= GetPipelineStageFlags(entry.dstAccessMask);
+		src |= VulkanInternalCommandBuffer::GetPipelineStageFlags(entry.srcAccessMask);
+		dst |= VulkanInternalCommandBuffer::GetPipelineStageFlags(entry.dstAccessMask);
 	}
 
 	if(src == 0)
@@ -704,7 +657,7 @@ u32 VulkanInternalCommandBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 sy
 
 		VkPipelineStageFlags srcStage = 0;
 		VkPipelineStageFlags dstStage = 0;
-		GetPipelineStageFlags(barriers.ImageBarriers, srcStage, dstStage);
+		::GetPipelineStageFlags(barriers.ImageBarriers, srcStage, dstStage);
 
 		vkCmdPipelineBarrier(vkCmdBuffer, srcStage, dstStage, 0, 0, nullptr, bufferBarrierCount, barriers.BufferBarriers.data(), imageBarrierCount, barriers.ImageBarriers.data());
 
@@ -786,7 +739,7 @@ u32 VulkanInternalCommandBuffer::Submit(VulkanQueue* queue, u32 queueIdx, u32 sy
 
 		VkPipelineStageFlags srcStage = 0;
 		VkPipelineStageFlags dstStage = 0;
-		GetPipelineStageFlags(barriers.ImageBarriers, srcStage, dstStage);
+		::GetPipelineStageFlags(barriers.ImageBarriers, srcStage, dstStage);
 
 		vkCmdPipelineBarrier(vkCmdBuffer, srcStage, dstStage, 0, 0, nullptr, numBufferBarriers, barriers.BufferBarriers.data(), numImgBarriers, barriers.ImageBarriers.data());
 
@@ -1672,7 +1625,7 @@ void VulkanInternalCommandBuffer::ExecuteLayoutTransitions()
 
 	VkPipelineStageFlags srcStage = 0;
 	VkPipelineStageFlags dstStage = 0;
-	GetPipelineStageFlags(mLayoutTransitionBarriersTemp, srcStage, dstStage);
+	::GetPipelineStageFlags(mLayoutTransitionBarriersTemp, srcStage, dstStage);
 
 	if(!mLayoutTransitionBarriersTemp.empty())
 	{
@@ -1974,6 +1927,13 @@ void VulkanInternalCommandBuffer::ResetQuery(VulkanQuery* query)
 		query->Reset(mCmdBuffer);
 }
 
+void VulkanInternalCommandBuffer::UpdateBuffer(VulkanBuffer* destination, u8* data, VkDeviceSize offset, VkDeviceSize length)
+{
+	MemoryBarrier(destination->GetHandle(), destination->GetAccessFlags(), VK_ACCESS_TRANSFER_READ_BIT);
+	vkCmdUpdateBuffer(GetHandle(), destination->GetHandle(), offset, length, (uint32_t*)data);
+	MemoryBarrier(destination->GetHandle(), VK_ACCESS_TRANSFER_WRITE_BIT, destination->GetAccessFlags());
+}
+
 void VulkanInternalCommandBuffer::CopyBufferToBuffer(VulkanBuffer* source, VulkanBuffer* destination, VkDeviceSize sourceOffset, VkDeviceSize destinationOffset, VkDeviceSize length)
 {
 	VkBufferCopy region;
@@ -1981,7 +1941,14 @@ void VulkanInternalCommandBuffer::CopyBufferToBuffer(VulkanBuffer* source, Vulka
 	region.srcOffset = sourceOffset;
 	region.dstOffset = destinationOffset;
 
+	MemoryBarrier(source->GetHandle(), source->GetAccessFlags(), VK_ACCESS_TRANSFER_READ_BIT);
+	MemoryBarrier(destination->GetHandle(), destination->GetAccessFlags(), VK_ACCESS_TRANSFER_WRITE_BIT);
+
 	vkCmdCopyBuffer(GetHandle(), source->GetHandle(), destination->GetHandle(), 1, &region);
+
+	MemoryBarrier(source->GetHandle(), VK_ACCESS_TRANSFER_READ_BIT, source->GetAccessFlags());
+	MemoryBarrier(destination->GetHandle(), VK_ACCESS_TRANSFER_WRITE_BIT, destination->GetAccessFlags());
+
 }
 
 void VulkanInternalCommandBuffer::CopyBufferToImage(VulkanBuffer* source, VulkanImage* destination, const VkExtent3D& region, const VkImageSubresourceRange& subresourceRange, VkImageLayout layout, u32 rowPitch, u32 sliceHeight)
@@ -2005,7 +1972,10 @@ void VulkanInternalCommandBuffer::CopyBufferToImage(VulkanBuffer* source, Vulkan
 	copyRegion.imageExtent = region;
 	copyRegion.imageSubresource = rangeLayers;
 
+	MemoryBarrier(source->GetHandle(), source->GetAccessFlags(), VK_ACCESS_TRANSFER_READ_BIT);
+	// TODO - Barriers for the image
 	vkCmdCopyBufferToImage(GetHandle(), source->GetHandle(), destination->GetHandle(), layout, 1, &copyRegion);
+	MemoryBarrier(source->GetHandle(), VK_ACCESS_TRANSFER_READ_BIT, source->GetAccessFlags());
 }
 
 void VulkanInternalCommandBuffer::CopyImageToBuffer(VulkanImage* source, VulkanBuffer* destination, const VkExtent3D& region, const VkImageSubresourceRange& subresourceRange, VkImageLayout layout, u32 rowPitch, u32 sliceHeight)
@@ -2029,7 +1999,10 @@ void VulkanInternalCommandBuffer::CopyImageToBuffer(VulkanImage* source, VulkanB
 	copyRegion.imageExtent = region;
 	copyRegion.imageSubresource = rangeLayers;
 
+	MemoryBarrier(destination->GetHandle(), destination->GetAccessFlags(), VK_ACCESS_TRANSFER_READ_BIT);
+	// TODO - Barriers for the image
 	vkCmdCopyImageToBuffer(GetHandle(), source->GetHandle(), layout, destination->GetHandle(), 1, &copyRegion);
+	MemoryBarrier(destination->GetHandle(), VK_ACCESS_TRANSFER_READ_BIT, destination->GetAccessFlags());
 }
 
 void VulkanInternalCommandBuffer::CopyImageToImage(VulkanImage* source, VulkanImage* destination, VkImageLayout sourceLayout, VkImageLayout destinationLayout, const VkImageSubresourceRange& sourceSubresourceRange, const VkImageSubresourceRange& destinationSubresourceRange, uint32_t regionCount, VkImageCopy* regions)
@@ -2100,20 +2073,25 @@ void VulkanInternalCommandBuffer::InsertLabel(const StringView& name)
 	vkCmdInsertDebugUtilsLabelEXT(mCmdBuffer, &labelInfo);
 }
 
-void VulkanInternalCommandBuffer::MemoryBarrier(VkBuffer buffer, VkAccessFlags srcAccessFlags, VkAccessFlags dstAccessFlags, VkPipelineStageFlags srcStage, VkPipelineStageFlags dstStage)
+void VulkanInternalCommandBuffer::MemoryBarrier(VkBuffer buffer, VkAccessFlags sourceAccessFlags, VkAccessFlags destinationAccessFlags, VkPipelineStageFlags sourceStage, VkPipelineStageFlags destinationStage)
 {
 	VkBufferMemoryBarrier barrier;
 	barrier.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
 	barrier.pNext = nullptr;
-	barrier.srcAccessMask = srcAccessFlags;
-	barrier.dstAccessMask = dstAccessFlags;
+	barrier.srcAccessMask = sourceAccessFlags;
+	barrier.dstAccessMask = destinationAccessFlags;
 	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	barrier.buffer = buffer;
 	barrier.offset = 0;
 	barrier.size = VK_WHOLE_SIZE;
 
-	vkCmdPipelineBarrier(GetHandle(), srcStage, dstStage, 0, 0, nullptr, 1, &barrier, 0, nullptr);
+	vkCmdPipelineBarrier(GetHandle(), sourceStage, destinationStage, 0, 0, nullptr, 1, &barrier, 0, nullptr);
+}
+
+void VulkanInternalCommandBuffer::MemoryBarrier(VkBuffer buffer, VkAccessFlags sourceAccessFlags, VkAccessFlags destinationAccessFlags)
+{
+	MemoryBarrier(buffer, sourceAccessFlags, destinationAccessFlags, GetPipelineStageFlags(sourceAccessFlags), GetPipelineStageFlags(destinationAccessFlags));
 }
 
 VkImageLayout VulkanInternalCommandBuffer::GetCurrentLayout(VulkanImage* image, const VkImageSubresourceRange& range, bool inRenderPass)
@@ -2193,6 +2171,53 @@ VkImageLayout VulkanInternalCommandBuffer::GetCurrentLayout(VulkanImage* image, 
 
 	B3D_ASSERT(false);
 	return VK_IMAGE_LAYOUT_UNDEFINED;
+}
+
+/** Returns a set of pipeline stages that can are allowed to be used for the specified set of access flags. */
+VkPipelineStageFlags VulkanInternalCommandBuffer::GetPipelineStageFlags(VkAccessFlags accessFlags)
+{
+	VkPipelineStageFlags flags = 0;
+
+	if((accessFlags & VK_ACCESS_INDIRECT_COMMAND_READ_BIT) != 0)
+		flags |= VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT;
+
+	if((accessFlags & (VK_ACCESS_INDEX_READ_BIT | VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT)) != 0)
+		flags |= VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
+
+	if((accessFlags & (VK_ACCESS_UNIFORM_READ_BIT | VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT)) != 0)
+	{
+		flags |= VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
+		flags |= VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		flags |= VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+
+		// MoltenVK doesn't support geometry and tessellation shaders
+		// Note: Once we upgrade to a newer version they should be supported and we can remove this
+#if B3D_PLATFORM != B3D_PLATFORM_ID_MACOS
+		flags |= VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT;
+		flags |= VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT;
+		flags |= VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT;
+#endif
+	}
+
+	if((accessFlags & VK_ACCESS_INPUT_ATTACHMENT_READ_BIT) != 0)
+		flags |= VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+
+	if((accessFlags & (VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT)) != 0)
+		flags |= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+
+	if((accessFlags & (VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT)) != 0)
+		flags |= VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+
+	if((accessFlags & (VK_ACCESS_TRANSFER_READ_BIT | VK_ACCESS_TRANSFER_WRITE_BIT)) != 0)
+		flags |= VK_PIPELINE_STAGE_TRANSFER_BIT;
+
+	if((accessFlags & (VK_ACCESS_HOST_READ_BIT | VK_ACCESS_HOST_WRITE_BIT)) != 0)
+		flags |= VK_PIPELINE_STAGE_HOST_BIT;
+
+	if(flags == 0)
+		flags = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+
+	return flags;
 }
 
 void VulkanInternalCommandBuffer::RegisterResource(VulkanResource* res, VulkanAccessFlags flags)

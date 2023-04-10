@@ -20,13 +20,15 @@ namespace bs
 		{
 		public:
 			/**
-			 * @param[in]	owner		Manager that takes care of tracking and releasing of this object.
-			 * @param[in]	buffer		Actual low-level Vulkan buffer handle.
-			 * @param[in]	allocation	Information about memory mapped to the buffer.
-			 * @param[in]	rowPitch	If buffer maps to an image sub-resource, length of a single row (in elements).
-			 * @param[in]	slicePitch	If buffer maps to an image sub-resource, size of a single 2D surface (in elements).
+			 * @param	owner		Manager that takes care of tracking and releasing of this object.
+			 * @param	type		Type of the buffer being created.
+			 * @param	flags		Flags that specify how is the buffer intended to be used.
+			 * @param	buffer		Actual low-level Vulkan buffer handle.
+			 * @param	allocation	Information about memory mapped to the buffer.
+			 * @param	rowPitch	If buffer maps to an image sub-resource, length of a single row (in elements).
+			 * @param	slicePitch	If buffer maps to an image sub-resource, size of a single 2D surface (in elements).
 			 */
-			VulkanBuffer(VulkanResourceManager* owner, VkBuffer buffer, VmaAllocation allocation, u32 rowPitch = 0, u32 slicePitch = 0);
+			VulkanBuffer(VulkanResourceManager* owner, GpuBufferType type, GpuBufferFlags flags, VkBuffer buffer, VmaAllocation allocation, u32 rowPitch = 0, u32 slicePitch = 0);
 			~VulkanBuffer();
 
 			/** Returns the internal handle to the Vulkan object. */
@@ -67,18 +69,14 @@ namespace bs
 			void Unmap(bool isFlushRequired = false);
 
 			/**
-			 * Queues a command on the provided command buffer. The command copies the contents of the provided memory location
-			 * the destination buffer. Caller must ensure the provided offset and length are within valid bounds of
-			 * both buffers. Caller must ensure the offset and size is a multiple of 4, and size is equal to or less then 65536.
-			 */
-			void Update(VulkanInternalCommandBuffer* cb, u8* data, VkDeviceSize offset, VkDeviceSize length);
-
-			/**
 			 * Creates a new view of this buffer or returns an existing view if one of this format was already created. Views
 			 * must be freed by calling freeView() when doing using them. Only UNIFORM_TEXEL and STORAGE_TEXEL buffer types
 			 * support buffer views.
 			 */
 			VkBufferView GetOrCreateView(VkFormat format);
+
+			/** Returns the required access flags for this buffer. */
+			VkAccessFlags GetAccessFlags() const;
 
 		private:
 			/** Information about a view of this buffer. */
@@ -94,6 +92,8 @@ namespace bs
 				VkBufferView View = VK_NULL_HANDLE;
 			};
 
+			GpuBufferType mType;
+			GpuBufferFlags mFlags;
 			VkBuffer mBuffer;
 			SmallVector<ViewInformation, 2> mViews;
 			VmaAllocation mAllocation;
