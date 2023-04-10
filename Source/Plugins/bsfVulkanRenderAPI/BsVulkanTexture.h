@@ -330,15 +330,6 @@ namespace bs
 			PixelFormat mInternalFormats[B3D_MAX_DEVICES];
 			GpuDeviceFlags mDeviceMask;
 
-			VulkanBuffer* mStagingBuffer;
-			u32 mMappedDeviceIdx;
-			u32 mMappedGlobalQueueIdx;
-			u32 mMappedMip;
-			u32 mMappedFace;
-			u32 mMappedRowPitch;
-			u32 mMappedSlicePitch;
-			GpuLockOptions mMappedLockOptions;
-
 			VkImageCreateInfo mImageCI;
 			bool mDirectlyMappable : 1;
 			bool mSupportsGPUWrites : 1;

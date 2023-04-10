@@ -678,7 +678,7 @@ VulkanImageSubresource::VulkanImageSubresource(VulkanResourceManager* owner, VkI
 {}
 
 VulkanTexture::VulkanTexture(const TextureCreateInformation& createInformation, const SPtr<PixelData>& initialData, GpuDeviceFlags deviceMask)
-	: Texture(createInformation, initialData, deviceMask), mImages(), mInternalFormats(), mDeviceMask(deviceMask), mStagingBuffer(nullptr), mMappedDeviceIdx((u32)-1), mMappedGlobalQueueIdx((u32)-1), mMappedMip(0), mMappedFace(0), mMappedRowPitch(0), mMappedSlicePitch(0), mMappedLockOptions(GBL_WRITE_ONLY), mDirectlyMappable(false), mSupportsGPUWrites(false), mIsMapped(false)
+	: Texture(createInformation, initialData, deviceMask), mImages(), mInternalFormats(), mDeviceMask(deviceMask), mDirectlyMappable(false), mSupportsGPUWrites(false), mIsMapped(false)
 {
 }
 
@@ -691,8 +691,6 @@ VulkanTexture::~VulkanTexture()
 
 		mImages[i]->Destroy();
 	}
-
-	B3D_ASSERT(mStagingBuffer == nullptr);
 
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResDestroyed, RenderStatObject_Texture);
 }
@@ -1268,181 +1266,76 @@ PixelData VulkanTexture::LockInternal(GpuLockOptions options, u32 mipLevel, u32 
 	static constexpr u32 deviceIdx = 0;
 	PixelData lockedArea(mipWidth, mipHeight, mipDepth, mInternalFormats[deviceIdx]);
 
-	VulkanImage* image = mImages[deviceIdx];
-
-	if(image == nullptr)
+	if(mImages[deviceIdx] == nullptr)
 		return PixelData();
 
+	if(!mDirectlyMappable)
+	{
+		B3D_LOG(Error, RenderBackend, "Cannot map Texture memory for texture '{0}'. The texture has not been created with CPU-visible flags.", mName);
+		return PixelData();
+	}
+
 	mIsMapped = true;
-	mMappedDeviceIdx = deviceIdx;
-	mMappedGlobalQueueIdx = 0;
-	mMappedFace = face;
-	mMappedMip = mipLevel;
-	mMappedLockOptions = options;
 
 	VulkanGpuDevice& device = *GetVulkanGpuBackend().GetVulkanDevice(deviceIdx);
+	VulkanImageSubresource* const subresource = mImages[0]->GetSubresource(face, mipLevel);
 
-	VulkanCommandBufferManager& cbManager = GetVulkanCommandBufferManager();
-	GpuQueueType queueType;
-	u32 localQueueIdx = CommandSyncMask::GetQueueIdxAndType(0, queueType);
+	// Initially the texture will be in preinitialized layout, and it will transition to general layout on first
+	// use in shader. No further transitions are allowed for directly mappable textures.
+	B3D_ASSERT(subresource->GetLayout() == VK_IMAGE_LAYOUT_PREINITIALIZED || subresource->GetLayout() == VK_IMAGE_LAYOUT_GENERAL);
 
-	VulkanImageSubresource* subresource = image->GetSubresource(face, mipLevel);
+	// GPU should never be allowed to write to a directly mappable texture, since only linear tiling is supported
+	// for direct mapping, and we don't support using it with either storage textures or render targets.
+	B3D_ASSERT(!mSupportsGPUWrites);
 
-	// If memory is host visible try mapping it directly
-	if(mDirectlyMappable)
+	// Check is the GPU currently reading from the image
+	const u32 useMask = subresource->GetUseInfo(VulkanAccessFlag::Read | VulkanAccessFlag::Write);
+	bool isUsedOnGPU = useMask != 0;
+	const bool isReadRequired = options == GBL_READ_ONLY || options == GBL_READ_WRITE;
+	const bool isWrite = options != GBL_READ_ONLY;
+	const bool canDiscardImage = (options == GBL_WRITE_ONLY_DISCARD) || (options == GBL_WRITE_ONLY_DISCARD_RANGE);
+
+	// We're safe to map directly since GPU isn't using the subresource
+	if(!isUsedOnGPU || options == GBL_WRITE_ONLY_NO_OVERWRITE)
 	{
-		// Initially the texture will be in preinitialized layout, and it will transition to general layout on first
-		// use in shader. No further transitions are allowed for directly mappable textures.
-		B3D_ASSERT(subresource->GetLayout() == VK_IMAGE_LAYOUT_PREINITIALIZED || subresource->GetLayout() == VK_IMAGE_LAYOUT_GENERAL);
-
-		// GPU should never be allowed to write to a directly mappable texture, since only linear tiling is supported
-		// for direct mapping, and we don't support using it with either storage textures or render targets.
-		B3D_ASSERT(!mSupportsGPUWrites);
-
-		// Check is the GPU currently reading from the image
-		u32 useMask = subresource->GetUseInfo(VulkanAccessFlag::Read);
-		bool isUsedOnGPU = useMask != 0;
-		const bool isReadRequired = options == GBL_READ_ONLY || options == GBL_READ_WRITE;
-
-		// We're safe to map directly since GPU isn't using the subresource
-		if(!isUsedOnGPU)
+		// If some CB has an operation queued that will be using the current contents of the image, create a new
+		// image so we don't modify the previous use of the image
+		if(subresource->IsBound())
 		{
-			// If some CB has an operation queued that will be using the current contents of the image, create a new
-			// image so we don't modify the previous use of the image
-			if(subresource->IsBound())
+			// Warn if we have already bound the texture to a command buffer previously, as that could have unintended consequences since previous commands could be affected
+			if(!subresource->IsBound() || !isWrite)
 			{
-				VulkanImage* newImage = CreateImage(device, mInternalFormats[deviceIdx]);
-
-				// Copy contents of the current image to the new one, unless caller explicitly specifies he doesn't
-				// care about the current contents
-				if(options != GBL_WRITE_ONLY_DISCARD)
-				{
-					VkMemoryRequirements memReqs;
-					vkGetImageMemoryRequirements(device.GetLogical(), image->GetHandle(), &memReqs);
-
-					u8* src = image->Map(0, (u32)memReqs.size, mSupportsGPUWrites);
-					u8* dst = newImage->Map(0, (u32)memReqs.size);
-
-					memcpy(dst, src, memReqs.size);
-
-					image->Unmap();
-					newImage->Unmap(true);
-				}
-
-				image->Destroy();
-				image = newImage;
-				mImages[deviceIdx] = image;
+				mImages[deviceIdx]->Map(face, mipLevel, lockedArea, isReadRequired);
+				return lockedArea;
 			}
-
-			image->Map(face, mipLevel, lockedArea, isReadRequired);
-			return lockedArea;
-		}
-
-		// Caller guarantees he won't touch the same data as the GPU, so just map even though the GPU is using the
-		// subresource
-		if(options == GBL_WRITE_ONLY_NO_OVERWRITE)
-		{
-			image->Map(face, mipLevel, lockedArea);
-			return lockedArea;
-		}
-
-		// Caller doesn't care about buffer contents, so just discard the existing buffer and create a new one
-		if(options == GBL_WRITE_ONLY_DISCARD)
-		{
-			// We need to discard the entire image, even though we're only writing to a single sub-resource
-			image->Destroy();
-
-			image = CreateImage(device, mInternalFormats[deviceIdx]);
-			mImages[deviceIdx] = image;
-
-			image->Map(face, mipLevel, lockedArea);
-			return lockedArea;
-		}
-
-		// We need to read the buffer contents
-		if(isReadRequired)
-		{
-			VulkanTransferBuffer* transferCB = cbManager.GetTransferBuffer(deviceIdx, queueType, localQueueIdx);
-
-			// Ensure flush() will wait for all queues currently using to the texture (if any) to finish
-			// If only reading, wait for all writes to complete, otherwise wait on both writes and reads
-			if(options == GBL_READ_ONLY)
-				useMask = subresource->GetUseInfo(VulkanAccessFlag::Write);
+			else if(canDiscardImage)
+			{
+				// Fall through
+			}
 			else
-				useMask = subresource->GetUseInfo(VulkanAccessFlag::Read | VulkanAccessFlag::Write);
-
-			transferCB->AppendMask(useMask);
-
-			// Submit the command buffer and wait until it finishes
-			transferCB->Flush(true);
-
-			// If writing and some CB has an operation queued that will be using the current contents of the image,
-			// create a new image so we don't modify the previous use of the image
-			if(options == GBL_READ_WRITE && subresource->IsBound())
 			{
-				VulkanImage* newImage = CreateImage(device, mInternalFormats[deviceIdx]);
+				B3D_LOG(Warning, RenderBackend, "Writing to a texture that is currently bound on a command buffer. Previous usages of the texture will be affected. Texture: {0}", mName);
 
-				VkMemoryRequirements memReqs;
-				vkGetImageMemoryRequirements(device.GetLogical(), image->GetHandle(), &memReqs);
-
-				u8* src = image->Map(0, (u32)memReqs.size, mSupportsGPUWrites);
-				u8* dst = newImage->Map(0, (u32)memReqs.size);
-
-				memcpy(dst, src, memReqs.size);
-
-				image->Unmap();
-				newImage->Unmap(true);
-
-				image->Destroy();
-				image = newImage;
-				mImages[deviceIdx] = image;
+				mImages[deviceIdx]->Map(face, mipLevel, lockedArea, isReadRequired);
+				return lockedArea;
 			}
-
-			image->Map(face, mipLevel, lockedArea, mSupportsGPUWrites);
-			return lockedArea;
 		}
-
-		// Otherwise, we're doing write only, in which case it's best to use the staging buffer to avoid waiting
-		// and blocking, so fall through
 	}
 
-	// Can't use direct mapping, so use a staging buffer
-
-	// We might need to copy the current contents of the image to the staging buffer. Even if the user doesn't plan on
-	// reading, it is still required as we will eventually copy all of the contents back to the original image,
-	// and we can't write potentially uninitialized data. The only exception is when the caller specifies the image
-	// contents should be discarded in which he guarantees he will overwrite the entire locked area with his own
-	// contents.
-	bool needRead = options != GBL_WRITE_ONLY_DISCARD_RANGE && options != GBL_WRITE_ONLY_DISCARD;
-
-	// Allocate a staging buffer
-	mStagingBuffer = CreateStaging(device, lockedArea, needRead);
-
-	if(needRead) // If reading, we need to copy the current contents of the image to the staging buffer
+	// Caller doesn't care about image contents, so just discard the existing image and create a new one
+	if(canDiscardImage)
 	{
-		VulkanTransferBuffer* transferCB = cbManager.GetTransferBuffer(deviceIdx, queueType, localQueueIdx);
+		// We need to discard the entire image, even though we're only writing to a single sub-resource
+		mImages[deviceIdx]->Destroy();
 
-		// Similar to above, if image supports GPU writes or is currently being written to, we need to wait on any
-		// potential writes to complete
-		u32 writeUseMask = subresource->GetUseInfo(VulkanAccessFlag::Write);
+		mImages[deviceIdx] = CreateImage(device, mInternalFormats[deviceIdx]);
 
-		if(mSupportsGPUWrites || writeUseMask != 0)
-		{
-			// Ensure flush() will wait for all queues currently writing to the image (if any) to finish
-			transferCB->AppendMask(writeUseMask);
-		}
-
-		const bool isReadOnly = (options & (GBL_READ_WRITE | GBL_WRITE_ONLY | GBL_WRITE_ONLY_DISCARD | GBL_WRITE_ONLY_DISCARD_RANGE | GBL_WRITE_ONLY_NO_OVERWRITE)) == 0;
-		CopyImageSubresourceToBuffer(transferCB->GetInternalCommandBuffer(), image, face, mipLevel, mStagingBuffer, isReadOnly);
-
-		// Submit the command buffer and wait until it finishes
-		transferCB->Flush(true);
+		mImages[deviceIdx]->Map(face, mipLevel, lockedArea);
+		return lockedArea;
 	}
 
-	u8* data = mStagingBuffer->Map(0, lockedArea.GetSize());
-	lockedArea.SetExternalBuffer(data);
-
-	return lockedArea;
+	B3D_LOG(Error, RenderBackend, "Cannot map Texture memory for texture '{0}'. The texture is currently being used by the GPU.", mName);
+	return PixelData();
 }
 
 void VulkanTexture::UnlockInternal()
@@ -1451,124 +1344,15 @@ void VulkanTexture::UnlockInternal()
 	if(!mIsMapped)
 		return;
 
+	if(!B3D_ENSURE(mImages[0] != nullptr))
+		return;
+
 	// Note: If we did any writes they need to be made visible to the GPU. However there is no need to execute
 	// a pipeline barrier because (as per spec) host writes are implicitly visible to the device.
 
-	if(mStagingBuffer == nullptr)
-		mImages[mMappedDeviceIdx]->Unmap(true);
-	else
-	{
-		mStagingBuffer->Unmap();
-
-		bool isWrite = mMappedLockOptions != GBL_READ_ONLY;
-
-		// If the caller wrote anything to the staging buffer, we need to upload it back to the main buffer
-		if(isWrite)
-		{
-			VulkanGpuDevice& device = *GetVulkanGpuBackend().GetVulkanDevice(mMappedDeviceIdx);
-
-			VulkanCommandBufferManager& cbManager = GetVulkanCommandBufferManager();
-			GpuQueueType queueType;
-			u32 localQueueIdx = CommandSyncMask::GetQueueIdxAndType(mMappedGlobalQueueIdx, queueType);
-
-			VulkanImage* image = mImages[mMappedDeviceIdx];
-			VulkanTransferBuffer* transferCB = cbManager.GetTransferBuffer(mMappedDeviceIdx, queueType, localQueueIdx);
-
-			VulkanImageSubresource* subresource = image->GetSubresource(mMappedFace, mMappedMip);
-
-			// If the subresource is used in any way on the GPU, we need to wait for that use to finish before
-			// we issue our copy
-			u32 useMask = subresource->GetUseInfo(VulkanAccessFlag::Read | VulkanAccessFlag::Write);
-			bool isNormalWrite = false;
-			if(useMask != 0) // Subresource is currently used on the GPU
-			{
-				// Try to avoid the wait by checking for special write conditions
-
-				// Caller guarantees he won't touch the same data as the GPU, so just copy
-				if(mMappedLockOptions == GBL_WRITE_ONLY_NO_OVERWRITE)
-				{
-					// Fall through to copy()
-				}
-				// Caller doesn't care about buffer contents, so just discard the existing buffer and create a new one
-				else if(mMappedLockOptions == GBL_WRITE_ONLY_DISCARD)
-				{
-					// We need to discard the entire image, even though we're only writing to a single sub-resource
-					image->Destroy();
-
-					image = CreateImage(device, mInternalFormats[mMappedDeviceIdx]);
-					mImages[mMappedDeviceIdx] = image;
-
-					subresource = image->GetSubresource(mMappedFace, mMappedMip);
-				}
-				else // Otherwise we have no choice but to issue a dependency between the queues
-				{
-					transferCB->AppendMask(useMask);
-					isNormalWrite = true;
-				}
-			}
-			else
-				isNormalWrite = true;
-
-			const TextureProperties& props = GetProperties();
-
-			// Check if the subresource will still be bound somewhere after the CBs using it finish
-			if(isNormalWrite)
-			{
-				u32 useCount = subresource->GetUseCount();
-				u32 boundCount = subresource->GetBoundCount();
-
-				bool isBoundWithoutUse = boundCount > useCount;
-
-				// If image is queued for some operation on a CB, then we need to make a copy of the subresource to
-				// avoid modifying its use in the previous operation
-				if(isBoundWithoutUse)
-				{
-					VulkanImage* newImage = CreateImage(device, mInternalFormats[mMappedDeviceIdx]);
-
-					// Avoid copying original contents if the image only has one sub-resource, which we'll overwrite anyway
-					if(props.MipMapCount > 0 || props.GetFaceCount() > 1)
-					{
-						CopyImageToImage(transferCB->GetInternalCommandBuffer(), image, newImage);
-					}
-
-					image->Destroy();
-					image = newImage;
-					mImages[mMappedDeviceIdx] = image;
-				}
-			}
-
-			VkImageSubresourceRange range;
-			range.aspectMask = image->GetAspectFlags();
-			range.baseArrayLayer = mMappedFace;
-			range.layerCount = 1;
-			range.baseMipLevel = mMappedMip;
-			range.levelCount = 1;
-
-			VkExtent3D extent;
-			PixelUtil::GetSizeForMipLevel(props.Width, props.Height, props.Depth, mMappedMip, extent.width, extent.height, extent.depth);
-
-			VkImageLayout transferLayout;
-			if(mDirectlyMappable)
-				transferLayout = VK_IMAGE_LAYOUT_GENERAL;
-			else
-				transferLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-
-			const ImageSubresourcePitch pitch = GetPitchForSubresource(image, mMappedFace, mMappedMip);
-
-			// Queue copy command
-			transferCB->GetInternalCommandBuffer()->CopyBufferToImage(mStagingBuffer, image, extent, range, transferLayout, pitch.RowPitch, pitch.SliceHeight);
-
-			// We don't actually flush the transfer buffer here since it's an expensive operation, but it's instead
-			// done automatically before next "normal" command buffer submission.
-		}
-
-		mStagingBuffer->Destroy();
-		mStagingBuffer = nullptr;
-	}
-
+	mImages[0]->Unmap(true);
 	mIsMapped = false;
 }
-
 
 TAsyncOp<SPtr<PixelData>> VulkanTexture::ReadDataAsync(u32 mipLevel, u32 face, const SPtr<CommandBuffer>& commandBuffer)
 {
@@ -1631,7 +1415,7 @@ TAsyncOp<SPtr<PixelData>> VulkanTexture::ReadDataAsync(u32 mipLevel, u32 face, c
 	return op;
 }
 
-void VulkanTexture::ReadDataInternal(PixelData& dest, u32 mipLevel, u32 face)
+void VulkanTexture::ReadDataInternal(PixelData& destination, u32 mipLevel, u32 face)
 {
 	if(mProperties.SampleCount > 1)
 	{
@@ -1639,16 +1423,103 @@ void VulkanTexture::ReadDataInternal(PixelData& dest, u32 mipLevel, u32 face)
 		return;
 	}
 
-	PixelData myData = Lock(GBL_READ_ONLY, mipLevel, face);
-	PixelUtil::BulkPixelConversion(myData, dest);
-	Unlock();
+	const u32 mipWidth = std::max(1u, mProperties.Width >> mipLevel);
+	const u32 mipHeight = std::max(1u, mProperties.Height >> mipLevel);
+	const u32 mipDepth = std::max(1u, mProperties.Depth >> mipLevel);
+
+	static constexpr u32 deviceIdx = 0;
+	PixelData lockedArea(mipWidth, mipHeight, mipDepth, mInternalFormats[deviceIdx]);
+
+	if(mImages[deviceIdx] == nullptr)
+		return;
+
+	VulkanGpuDevice& device = *GetVulkanGpuBackend().GetVulkanDevice(deviceIdx);
+	VulkanImageSubresource* subresource = mImages[deviceIdx]->GetSubresource(face, mipLevel);
+
+	// We always use the graphics queue. As we do a wait idle below, it really doesn't matter.
+	VulkanQueue* const queue = device.GetQueue(GQT_GRAPHICS, 0);
+
+	VulkanInternalCommandBuffer* vulkanCommandBuffer = nullptr;
+	VulkanTransferBuffer* transferBuffer = nullptr;
+
+	// If memory is host visible try mapping it directly
+	if(mDirectlyMappable)
+	{
+		// Initially the texture will be in preinitialized layout, and it will transition to general layout on first
+		// use in shader. No further transitions are allowed for directly mappable textures.
+		B3D_ASSERT(subresource->GetLayout() == VK_IMAGE_LAYOUT_PREINITIALIZED || subresource->GetLayout() == VK_IMAGE_LAYOUT_GENERAL);
+
+		// GPU should never be allowed to write to a directly mappable texture, since only linear tiling is supported
+		// for direct mapping, and we don't support using it with either storage textures or render targets.
+		B3D_ASSERT(!mSupportsGPUWrites);
+
+		// Check is the GPU currently writing to the texture
+		const u32 writeUseMask = mImages[deviceIdx]->GetUseInfo(VulkanAccessFlag::Write);
+		const bool isUsedOnGPU = writeUseMask != 0;
+
+		// If used on the GPU, we need to wait until all write operations complete before mapping it
+		if(isUsedOnGPU)
+		{
+			if(transferBuffer == nullptr || vulkanCommandBuffer == nullptr)
+			{
+				transferBuffer = GetVulkanCommandBufferManager().GetTransferBuffer(0, GQT_GRAPHICS, 0);
+				vulkanCommandBuffer = transferBuffer->GetInternalCommandBuffer();
+			}
+
+			// Submit the command buffer and wait until it finishes
+			transferBuffer->AppendMask(writeUseMask);
+			transferBuffer->Flush(true);
+		}
+
+		PixelData myData = Lock(GBL_READ_ONLY, mipLevel, face);
+		PixelUtil::BulkPixelConversion(myData, destination);
+		Unlock();
+
+		return;
+	}
+
+	// Can't use direct mapping, so use a staging buffer
+
+	// Allocate a staging buffer
+	VulkanBuffer* const stagingBuffer = CreateStaging(device, lockedArea, true);
+
+	// Similar to above, if image supports GPU writes or is currently being written to, we need to wait on any
+	// potential writes to complete
+	const u32 writeUseMask = subresource->GetUseInfo(VulkanAccessFlag::Write);
+
+	u32 syncMask = 0;
+	if(mSupportsGPUWrites || writeUseMask != 0)
+	{
+		// Ensure flush will wait for all queues currently writing to the image (if any) to finish
+		syncMask = writeUseMask;
+	}
+
+	if(transferBuffer == nullptr || vulkanCommandBuffer == nullptr)
+	{
+		transferBuffer = GetVulkanCommandBufferManager().GetTransferBuffer(0, GQT_GRAPHICS, 0);
+		vulkanCommandBuffer = transferBuffer->GetInternalCommandBuffer();
+	}
+
+	// Queue copy command
+	CopyImageSubresourceToBuffer(vulkanCommandBuffer, mImages[0], face, mipLevel, stagingBuffer, true);
+
+	// Submit the command buffer and wait until it finishes
+	transferBuffer->AppendMask(syncMask);
+	transferBuffer->Flush(true);
+
+	u8* data = stagingBuffer->Map(0, lockedArea.GetSize());
+	lockedArea.SetExternalBuffer(data);
+	PixelUtil::BulkPixelConversion(lockedArea, destination);
+
+	stagingBuffer->Unmap();
+	stagingBuffer->Destroy();
 
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResRead, RenderStatObject_Texture);
 }
 
-void VulkanTexture::WriteDataInternal(const PixelData& src, u32 mipLevel, u32 face, bool discardWholeBuffer, const SPtr<CommandBuffer>& commandBuffer)
+void VulkanTexture::WriteDataInternal(const PixelData& source, u32 mipLevel, u32 face, bool discardWholeBuffer, const SPtr<CommandBuffer>& commandBuffer)
 {
-	if(src.GetSize() == 0)
+	if(source.GetSize() == 0)
 		return;
 
 	if(mProperties.SampleCount > 1)
@@ -1666,16 +1537,118 @@ void VulkanTexture::WriteDataInternal(const PixelData& src, u32 mipLevel, u32 fa
 		return;
 	}
 
-	// Write to every device
-	for(u32 i = 0; i < B3D_MAX_DEVICES; i++)
-	{
-		if(mImages[i] == nullptr)
-			continue;
+	if(mImages[0] == nullptr)
+		return;
 
-		PixelData myData = Lock(discardWholeBuffer ? GBL_WRITE_ONLY_DISCARD : GBL_WRITE_ONLY_DISCARD_RANGE, mipLevel, face);
-		PixelUtil::BulkPixelConversion(src, myData);
-		Unlock();
+	const u32 mipWidth = std::max(1u, mProperties.Width >> mipLevel);
+	const u32 mipHeight = std::max(1u, mProperties.Height >> mipLevel);
+	const u32 mipDepth = std::max(1u, mProperties.Depth >> mipLevel);
+	PixelData lockedArea(mipWidth, mipHeight, mipDepth, mInternalFormats[0]);
+
+	const GpuLockOptions options = discardWholeBuffer ? GBL_WRITE_ONLY_DISCARD : GBL_WRITE_ONLY; // TODO - Add NO_OVERWRITE option
+	const bool canDiscardSubresource = (options == GBL_WRITE_ONLY_DISCARD) || (options == GBL_WRITE_ONLY_DISCARD_RANGE);
+
+	VulkanGpuDevice& device = *GetVulkanGpuBackend().GetVulkanDevice(0);
+	VulkanImageSubresource* subresource = mImages[0]->GetSubresource(face, mipLevel);
+
+	// Check is the GPU currently reading or writing from the image
+	const u32 useMask = subresource->GetUseInfo(VulkanAccessFlag::Read | VulkanAccessFlag::Write);
+
+	// If memory is host visible try mapping it directly
+	if(mDirectlyMappable)
+	{
+		// Initially the texture will be in preinitialized layout, and it will transition to general layout on first
+		// use in shader. No further transitions are allowed for directly mappable textures.
+		B3D_ASSERT(subresource->GetLayout() == VK_IMAGE_LAYOUT_PREINITIALIZED || subresource->GetLayout() == VK_IMAGE_LAYOUT_GENERAL);
+
+		// GPU should never be allowed to write to a directly mappable texture, since only linear tiling is supported
+		// for direct mapping, and we don't support using it with either storage textures or render targets.
+		B3D_ASSERT(!mSupportsGPUWrites);
+
+		const bool isUsedOnGPU = useMask != 0;
+
+		// Even if the texture is directly mappable we might wish to avoid mapping it directly in these situations:
+		const bool shouldMapDirectly =
+			(!isUsedOnGPU || options == GBL_WRITE_ONLY_NO_OVERWRITE) && // GPU is currently using the texture and we cannot map it safely (unless user specifically requested the no-overwrite flag)
+			(!mImages[0]->IsBound() || (commandBuffer == nullptr && canDiscardSubresource)); // Image is bound to a command buffer already. If user provided a command buffer queue a write operation there instead of mapping directly. If not, discard the original texture and lock a new copy of the texture.
+
+		if(shouldMapDirectly)
+		{
+			PixelData myData = Lock(options, mipLevel, face);
+			PixelUtil::BulkPixelConversion(source, myData);
+			Unlock();
+
+			return;
+		}
 	}
 
+	// Can't use direct mapping, so use a staging buffer
+	// Allocate a staging buffer
+	VulkanBuffer* const stagingBuffer = CreateStaging(device, lockedArea, false);
+
+	u8* data = stagingBuffer->Map(0, lockedArea.GetSize());
+	lockedArea.SetExternalBuffer(data);
+	PixelUtil::BulkPixelConversion(source, lockedArea);
+	stagingBuffer->Unmap();
+
+	VulkanInternalCommandBuffer* vulkanCommandBuffer = commandBuffer != nullptr
+		? static_cast<VulkanCommandBuffer*>(commandBuffer.get())->GetInternal()
+		: GetVulkanCommandBufferManager().GetTransferBuffer(0, GQT_GRAPHICS, 0)->GetInternalCommandBuffer();
+
+
+		const TextureProperties& props = GetProperties();
+
+	// Check if the subresource will still be bound somewhere after the CBs using it finish
+	const u32 useCount = subresource->GetUseCount();
+	const u32 boundCount = subresource->GetBoundCount();
+
+	const bool isBoundWithoutUse = boundCount > useCount;
+
+	// If image is queued for some operation on a CB, then we need to make a copy of the subresource to
+	// avoid modifying its use in the previous operation
+	if(isBoundWithoutUse && commandBuffer == nullptr)
+	{
+		if(!canDiscardSubresource)
+		{
+			B3D_LOG(Warning, RenderBackend, "Writing to a image '{0}' that is currently bound on a command buffer, without providing an explicit command buffer. Such writes will be queued on the transfer buffer which is submitted before any user command buffers. This means multiple writes will overwrite it each other if not careful.", mName);
+		}
+		else
+		{
+			VulkanImage* const newImage = CreateImage(device, mInternalFormats[0]);
+			mImages[0]->Destroy();
+			mImages[0] = newImage;
+			
+		}
+	}
+
+	if(vulkanCommandBuffer->IsInRenderPass())
+		vulkanCommandBuffer->EndRenderPass();
+
+	VkImageSubresourceRange range;
+	range.aspectMask = mImages[0]->GetAspectFlags();
+	range.baseArrayLayer = face;
+	range.layerCount = 1;
+	range.baseMipLevel = mipLevel;
+	range.levelCount = 1;
+
+	VkExtent3D extent;
+	PixelUtil::GetSizeForMipLevel(props.Width, props.Height, props.Depth, mipLevel, extent.width, extent.height, extent.depth);
+
+	VkImageLayout transferLayout;
+	if(mDirectlyMappable)
+		transferLayout = VK_IMAGE_LAYOUT_GENERAL;
+	else
+		transferLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+
+	const ImageSubresourcePitch pitch = GetPitchForSubresource(mImages[0], face, mipLevel);
+
+	// Queue copy command
+	vulkanCommandBuffer->CopyBufferToImage(stagingBuffer, mImages[0], extent, range, transferLayout, pitch.RowPitch, pitch.SliceHeight);
+	vulkanCommandBuffer->AppendSyncMask(useMask);
+
+	stagingBuffer->Destroy();
+
+	// We don't actually flush the transfer buffer here since it's an expensive operation, but it's instead
+	// done automatically before next "normal" command buffer submission.
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResWrite, RenderStatObject_Texture);
 }

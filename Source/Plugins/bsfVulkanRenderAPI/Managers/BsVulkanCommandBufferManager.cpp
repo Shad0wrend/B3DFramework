@@ -43,7 +43,8 @@ void VulkanTransferBuffer::Allocate()
 
 void VulkanTransferBuffer::Flush(bool wait)
 {
-	if(mCommandBuffer == nullptr)
+	// If not recording we assume it was already submitted externally
+	if(mCommandBuffer == nullptr || !mCommandBuffer->IsRecording())
 		return;
 
 	const u32 syncMask = mSyncMask & ~mQueueMask; // Don't sync with itself

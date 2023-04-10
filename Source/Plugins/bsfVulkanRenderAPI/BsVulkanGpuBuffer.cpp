@@ -289,9 +289,6 @@ void* VulkanGpuBuffer::Map(u32 offset, u32 length, GpuLockOptions options)
 	}
 
 	mIsMapped = true;
-	mMappedOffset = offset;
-	mMappedSize = length;
-	mMappedLockOptions = options;
 
 	const bool canDiscardBuffer =
 		(options == GBL_WRITE_ONLY_DISCARD) ||
@@ -323,6 +320,8 @@ void* VulkanGpuBuffer::Map(u32 offset, u32 length, GpuLockOptions options)
 		else
 		{
 			B3D_LOG(Warning, RenderBackend, "Writing to a buffer that is currently bound on a command buffer. Previous usages of the buffer will be affected. Buffer: {0}", mName);
+
+			return buffer->Map(offset, length, isReadRequired);
 		}
 	}
 
@@ -419,14 +418,17 @@ void VulkanGpuBuffer::ReadData(u32 offset, u32 length, void* destination)
 	if(mBuffer == nullptr)
 		return;
 
-	VulkanQueue* const queue = mDevice.GetQueue(GQT_GRAPHICS, 0); // TODO - Allow user to specify the queue
+	// We always use the graphics queue. As we do a wait idle below, it really doesn't matter.
+	VulkanQueue* const queue = mDevice.GetQueue(GQT_GRAPHICS, 0);
+
 	VulkanInternalCommandBuffer* vulkanCommandBuffer = nullptr;
+	VulkanTransferBuffer* transferBuffer = nullptr;
+
+	// Check is the GPU currently writing to the buffer
+	const u32 writeUseMask = mBuffer->GetUseInfo(VulkanAccessFlag::Write);
 
 	if(mDirectlyMappable) // TODO - Need to check if this is memory on an integrated GPU, in which case it might be directly mappable always
 	{
-		// Check is the GPU currently writing from the buffer
-		const u32 writeUseMask = mBuffer->GetUseInfo(VulkanAccessFlag::Write);
-
 		// Note: Even if GPU isn't currently using the buffer, but the buffer supports GPU writes, we consider it as
 		// being used because the write could have completed yet still not visible, so we need to issue a pipeline
 		// barrier below.
@@ -435,8 +437,11 @@ void VulkanGpuBuffer::ReadData(u32 offset, u32 length, void* destination)
 		// If used on the GPU, we need to wait until all write operations complete before mapping it
 		if(isUsedOnGPU)
 		{
-			if(vulkanCommandBuffer == nullptr)
-				vulkanCommandBuffer = GetVulkanCommandBufferManager().GetTransferBuffer(0, GQT_GRAPHICS, 0)->GetInternalCommandBuffer();
+			if(transferBuffer == nullptr || vulkanCommandBuffer == nullptr)
+			{
+				transferBuffer = GetVulkanCommandBufferManager().GetTransferBuffer(0, GQT_GRAPHICS, 0);
+				vulkanCommandBuffer = transferBuffer->GetInternalCommandBuffer();
+			}
 
 			// Make any writes visible before mapping
 			if(mSupportsGPUWrites)
@@ -450,8 +455,8 @@ void VulkanGpuBuffer::ReadData(u32 offset, u32 length, void* destination)
 			}
 
 			// Submit the command buffer and wait until it finishes
-			vulkanCommandBuffer->End(); // TODO - If user-provided command buffer it doesn't make sense to call End(). Perhaps better to just always use transfer buffer? Or just make this always async?
-			GetVulkanSubmitThread().QueueSubmit(*vulkanCommandBuffer, *queue, 0, writeUseMask, true);
+			transferBuffer->AppendMask(writeUseMask);
+			transferBuffer->Flush(true);
 		}
 
 		void* lockedData = Lock(offset, length, GBL_READ_ONLY);
@@ -465,7 +470,6 @@ void VulkanGpuBuffer::ReadData(u32 offset, u32 length, void* destination)
 	VulkanBuffer* const stagingBuffer = CreateBuffer(mDevice, length, true, true); // TODO - Allocate this from some memory pool
 
 	// If buffer supports GPU writes or is currently being written to, we need to wait on any potential writes to complete
-	const u32 writeUseMask = mBuffer->GetUseInfo(VulkanAccessFlag::Write);
 	u32 syncMask = 0;
 	if(mSupportsGPUWrites || writeUseMask != 0)
 	{
@@ -473,19 +477,22 @@ void VulkanGpuBuffer::ReadData(u32 offset, u32 length, void* destination)
 		syncMask = writeUseMask;
 	}
 
-	// Queue copy command
-	if(vulkanCommandBuffer->IsInRenderPass())
-		vulkanCommandBuffer->EndRenderPass();
+	if(transferBuffer == nullptr || vulkanCommandBuffer == nullptr)
+	{
+		transferBuffer = GetVulkanCommandBufferManager().GetTransferBuffer(0, GQT_GRAPHICS, 0);
+		vulkanCommandBuffer = transferBuffer->GetInternalCommandBuffer();
+	}
 
+	// Queue copy command
 	vulkanCommandBuffer->CopyBufferToBuffer(mBuffer, stagingBuffer, offset, 0, length);
 
 	// Submit the command buffer and wait until it finishes
-	vulkanCommandBuffer->End(); // TODO - If user-provided command buffer it doesn't make sense to call End(). Perhaps better to just always use transfer buffer? Or just make this always async?
-	GetVulkanSubmitThread().QueueSubmit(*vulkanCommandBuffer, *queue, 0, syncMask, true);
+	transferBuffer->AppendMask(syncMask);
+	transferBuffer->Flush(true);
 
 	B3D_ASSERT(!mBuffer->IsUsed());
 
-	void* lockedStagingData = stagingBuffer->Map(0, length);
+	void* lockedStagingData = stagingBuffer->Map(0, length, true);
 	memcpy(destination, lockedStagingData, length);
 
 	stagingBuffer->Unmap();
@@ -516,18 +523,17 @@ void VulkanGpuBuffer::WriteData(u32 offset, u32 length, const void* source, Buff
 		(options == GBL_WRITE_ONLY_DISCARD) ||
 		(options == GBL_WRITE_ONLY_DISCARD_RANGE && offset == 0 && length == mSize);
 
+	// Check is the GPU currently reading or writing from the buffer
+	const u32 useMask = mBuffer->GetUseInfo(VulkanAccessFlag::Read | VulkanAccessFlag::Write);
+
 	if(mDirectlyMappable) // TODO - Need to check if this is memory on an integrated GPU, in which case it might be directly mappable always
 	{
-		// Check is the GPU currently reading or writing from the buffer
-		const u32 useMask = mBuffer->GetUseInfo(VulkanAccessFlag::Read | VulkanAccessFlag::Write);
-
 		// Note: Even if GPU isn't currently using the buffer, but the buffer supports GPU writes, we consider it as
 		// being used because the write could have completed yet still not visible, so we need to issue a pipeline
 		// barrier below.
 		const bool isUsedOnGPU = useMask != 0 || mSupportsGPUWrites;
 
 		// Even if the buffer is directly mappable we might wish to avoid mapping it directly in these situations:
-		// - 		// - Buffer is bound a command buffer already, in which case modifying it will affect previous changes
 		const bool shouldMapDirectly =
 			(!isUsedOnGPU || options == GBL_WRITE_ONLY_NO_OVERWRITE) && // GPU is currently using the buffer and we cannot map it safely (unless user specifically requested the no-overwrite flag)
 			(!mBuffer->IsBound() || (commandBuffer == nullptr && canDiscardBuffer)); // Buffer is bound to a command buffer already. If user provided a command buffer queue a write operation there instead of mapping directly. If not, discard the original buffer and lock a new copy of the buffer.
@@ -563,7 +569,6 @@ void VulkanGpuBuffer::WriteData(u32 offset, u32 length, const void* source, Buff
 	}
 
 	// If the buffer is used in any way on the GPU, we need to wait for that use to finish before we issue our copy
-	const u32 useMask = mBuffer->GetUseInfo(VulkanAccessFlag::Read | VulkanAccessFlag::Write);
 	u32 syncMask = 0;
 	if(useMask != 0 && options != GBL_WRITE_ONLY_NO_OVERWRITE) // Buffer is currently used on the GPU
 	{
@@ -581,7 +586,7 @@ void VulkanGpuBuffer::WriteData(u32 offset, u32 length, const void* source, Buff
 	{
 		if(!canDiscardBuffer)
 		{
-			B3D_LOG(Warning, RenderBackend, "Writing to a buffer '{0}' that is currently bound on a command buffer, without providing an explicit buffer. Such writes will be queued on the transfer buffer which is submitted before any user command buffers. This means multiple writes will overwrite it each other if not careful.", mName);
+			B3D_LOG(Warning, RenderBackend, "Writing to a buffer '{0}' that is currently bound on a command buffer, without providing an explicit command buffer. Such writes will be queued on the transfer buffer which is submitted before any user command buffers. This means multiple writes will overwrite it each other if not careful.", mName);
 		}
 		else
 		{

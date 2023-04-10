@@ -155,10 +155,6 @@ namespace bs
 			VulkanGpuDevice& mDevice;
 			VulkanBuffer* mBuffer = nullptr;
 
-			u32 mMappedOffset = 0;
-			u32 mMappedSize = 0;
-			GpuLockOptions mMappedLockOptions = GBL_WRITE_ONLY;
-
 			VkBufferCreateInfo mBufferCI;
 			VkBufferUsageFlags mUsageFlags;
 			bool mDirectlyMappable : 1;
