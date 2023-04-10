@@ -97,7 +97,7 @@ SPtr<ct::Texture> GeneratePreintegratedEnvBrdf()
 	desc.Height = 32;
 
 	SPtr<ct::Texture> texture = ct::Texture::Create(desc);
-	PixelData pixelData = texture->Lock(GBL_WRITE_ONLY_DISCARD);
+	const SPtr<PixelData> pixelData = texture->GetProperties().AllocBuffer(0, 0);
 
 	for(u32 y = 0; y < desc.Height; y++)
 	{
@@ -169,11 +169,11 @@ SPtr<ct::Texture> GeneratePreintegratedEnvBrdf()
 			color.R = Math::Clamp01(scale);
 			color.G = Math::Clamp01(offset);
 
-			pixelData.SetColorAt(color, x, y);
+			pixelData->SetColorAt(color, x, y);
 		}
 	}
 
-	texture->Unlock();
+	texture->WriteData(*pixelData);
 
 	return texture;
 }
@@ -197,36 +197,36 @@ SPtr<ct::Texture> GenerateDefaultIndirect()
 	u32 sides[] = { CF_PositiveX, CF_NegativeX, CF_PositiveZ, CF_NegativeZ };
 	for(u32 i = 0; i < 4; ++i)
 	{
-		PixelData data = skyTexture->Lock(GBL_WRITE_ONLY_DISCARD, 0, sides[i]);
+		const SPtr<PixelData> data = skyTexture->GetProperties().AllocBuffer(sides[i], 0);
 
-		data.SetColorAt(skyColor, 0, 0);
-		data.SetColorAt(skyColor, 1, 0);
-		data.SetColorAt(Color::kBlack, 0, 1);
-		data.SetColorAt(Color::kBlack, 1, 1);
+		data->SetColorAt(skyColor, 0, 0);
+		data->SetColorAt(skyColor, 1, 0);
+		data->SetColorAt(Color::kBlack, 0, 1);
+		data->SetColorAt(Color::kBlack, 1, 1);
 
-		skyTexture->Unlock();
+		skyTexture->WriteData(*data, 0, sides[i]);
 	}
 
 	{
-		PixelData data = skyTexture->Lock(GBL_WRITE_ONLY_DISCARD, 0, CF_PositiveY);
+		const SPtr<PixelData> data = skyTexture->GetProperties().AllocBuffer(CF_PositiveY, 0);
 
-		data.SetColorAt(skyColor, 0, 0);
-		data.SetColorAt(skyColor, 1, 0);
-		data.SetColorAt(skyColor, 0, 1);
-		data.SetColorAt(skyColor, 1, 1);
+		data->SetColorAt(skyColor, 0, 0);
+		data->SetColorAt(skyColor, 1, 0);
+		data->SetColorAt(skyColor, 0, 1);
+		data->SetColorAt(skyColor, 1, 1);
 
-		skyTexture->Unlock();
+		skyTexture->WriteData(*data, 0, CF_PositiveY);
 	}
 
 	{
-		PixelData data = skyTexture->Lock(GBL_WRITE_ONLY_DISCARD, 0, CF_NegativeY);
+		const SPtr<PixelData> data = skyTexture->GetProperties().AllocBuffer(CF_NegativeY, 0);
 
-		data.SetColorAt(Color::kBlack, 0, 0);
-		data.SetColorAt(Color::kBlack, 1, 0);
-		data.SetColorAt(Color::kBlack, 0, 1);
-		data.SetColorAt(Color::kBlack, 1, 1);
+		data->SetColorAt(Color::kBlack, 0, 0);
+		data->SetColorAt(Color::kBlack, 1, 0);
+		data->SetColorAt(Color::kBlack, 0, 1);
+		data->SetColorAt(Color::kBlack, 1, 1);
 
-		skyTexture->Unlock();
+		skyTexture->WriteData(*data, 0, CF_NegativeY);
 	}
 
 	TextureCreateInformation irradianceCubemapDesc;
