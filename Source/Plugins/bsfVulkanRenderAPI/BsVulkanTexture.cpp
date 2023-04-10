@@ -1239,7 +1239,7 @@ void VulkanTexture::BlitInternal(const SPtr<Texture>& target, const TextureBlitI
 	internalCommandBuffer->Blit(sourceImage, destinationImage, transferSourceLayout, transferDestinationLayout, sourceRange, destinationRange, 1, &imageBlit);
 }
 
-PixelData VulkanTexture::LockInternal(GpuLockOptions options, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
+PixelData VulkanTexture::LockInternal(GpuLockOptions options, u32 mipLevel, u32 face)
 {
 	const TextureProperties& props = GetProperties();
 
@@ -1265,6 +1265,7 @@ PixelData VulkanTexture::LockInternal(GpuLockOptions options, u32 mipLevel, u32 
 	u32 mipHeight = std::max(1u, props.Height >> mipLevel);
 	u32 mipDepth = std::max(1u, props.Depth >> mipLevel);
 
+	static constexpr u32 deviceIdx = 0;
 	PixelData lockedArea(mipWidth, mipHeight, mipDepth, mInternalFormats[deviceIdx]);
 
 	VulkanImage* image = mImages[deviceIdx];
@@ -1274,7 +1275,7 @@ PixelData VulkanTexture::LockInternal(GpuLockOptions options, u32 mipLevel, u32 
 
 	mIsMapped = true;
 	mMappedDeviceIdx = deviceIdx;
-	mMappedGlobalQueueIdx = queueIdx;
+	mMappedGlobalQueueIdx = 0;
 	mMappedFace = face;
 	mMappedMip = mipLevel;
 	mMappedLockOptions = options;
@@ -1283,7 +1284,7 @@ PixelData VulkanTexture::LockInternal(GpuLockOptions options, u32 mipLevel, u32 
 
 	VulkanCommandBufferManager& cbManager = GetVulkanCommandBufferManager();
 	GpuQueueType queueType;
-	u32 localQueueIdx = CommandSyncMask::GetQueueIdxAndType(queueIdx, queueType);
+	u32 localQueueIdx = CommandSyncMask::GetQueueIdxAndType(0, queueType);
 
 	VulkanImageSubresource* subresource = image->GetSubresource(face, mipLevel);
 
@@ -1569,8 +1570,10 @@ void VulkanTexture::UnlockInternal()
 }
 
 
-TAsyncOp<SPtr<PixelData>> VulkanTexture::ReadDataAsync(u32 mipLevel, u32 face, u32 deviceIndex, const SPtr<CommandBuffer>& commandBuffer)
+TAsyncOp<SPtr<PixelData>> VulkanTexture::ReadDataAsync(u32 mipLevel, u32 face, const SPtr<CommandBuffer>& commandBuffer)
 {
+	static constexpr u32 deviceIndex = 0;
+
 	VulkanImage *const image = mImages[deviceIndex];
 	if(image == nullptr)
 	{
@@ -1628,7 +1631,7 @@ TAsyncOp<SPtr<PixelData>> VulkanTexture::ReadDataAsync(u32 mipLevel, u32 face, u
 	return op;
 }
 
-void VulkanTexture::ReadDataInternal(PixelData& dest, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
+void VulkanTexture::ReadDataInternal(PixelData& dest, u32 mipLevel, u32 face)
 {
 	if(mProperties.SampleCount > 1)
 	{
@@ -1636,14 +1639,14 @@ void VulkanTexture::ReadDataInternal(PixelData& dest, u32 mipLevel, u32 face, u3
 		return;
 	}
 
-	PixelData myData = Lock(GBL_READ_ONLY, mipLevel, face, deviceIdx, queueIdx);
+	PixelData myData = Lock(GBL_READ_ONLY, mipLevel, face);
 	PixelUtil::BulkPixelConversion(myData, dest);
 	Unlock();
 
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResRead, RenderStatObject_Texture);
 }
 
-void VulkanTexture::WriteDataInternal(const PixelData& src, u32 mipLevel, u32 face, bool discardWholeBuffer, u32 queueIdx)
+void VulkanTexture::WriteDataInternal(const PixelData& src, u32 mipLevel, u32 face, bool discardWholeBuffer, const SPtr<CommandBuffer>& commandBuffer)
 {
 	if(src.GetSize() == 0)
 		return;
@@ -1669,7 +1672,7 @@ void VulkanTexture::WriteDataInternal(const PixelData& src, u32 mipLevel, u32 fa
 		if(mImages[i] == nullptr)
 			continue;
 
-		PixelData myData = Lock(discardWholeBuffer ? GBL_WRITE_ONLY_DISCARD : GBL_WRITE_ONLY_DISCARD_RANGE, mipLevel, face, i, queueIdx);
+		PixelData myData = Lock(discardWholeBuffer ? GBL_WRITE_ONLY_DISCARD : GBL_WRITE_ONLY_DISCARD_RANGE, mipLevel, face);
 		PixelUtil::BulkPixelConversion(src, myData);
 		Unlock();
 	}

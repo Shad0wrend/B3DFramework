@@ -287,13 +287,13 @@ namespace bs
 			VulkanTexture(const TextureCreateInformation& createInformation, const SPtr<PixelData>& initialData, GpuDeviceFlags deviceMask);
 
 			void Initialize() override;
-			PixelData LockInternal(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0, u32 queueIdx = 0) override;
+			PixelData LockInternal(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0) override;
 			void UnlockInternal() override;
 			void CopyInternal(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation, const SPtr<CommandBuffer>& commandBuffer) override;
 			void BlitInternal(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation, const SPtr<CommandBuffer>& commandBuffer) override;
-			TAsyncOp<SPtr<PixelData>> ReadDataAsync(UINT32 mipLevel = 0, UINT32 face = 0, UINT32 deviceIndex = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
-			void ReadDataInternal(PixelData& dest, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0, u32 queueIdx = 0) override;
-			void WriteDataInternal(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, u32 queueIdx = 0) override;
+			TAsyncOp<SPtr<PixelData>> ReadDataAsync(UINT32 mipLevel = 0, UINT32 face = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
+			void ReadDataInternal(PixelData& destination, u32 mipLevel = 0, u32 face = 0) override;
+			void WriteDataInternal(const PixelData& source, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
 
 
 		private:

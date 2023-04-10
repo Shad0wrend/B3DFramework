@@ -352,7 +352,7 @@ void RendererView::NotifyLuminanceUpdated(u64 frameIdx, SPtr<CommandBuffer> cb, 
 		return;
 	}
 
-	TAsyncOp<SPtr<PixelData>> readbackAsyncOp = texture->Texture->ReadDataAsync(0, 0, 0, cb);
+	TAsyncOp<SPtr<PixelData>> readbackAsyncOp = texture->Texture->ReadDataAsync(0, 0, cb);
 	mLuminanceUpdates.emplace_back(frameIdx, std::move(readbackAsyncOp), std::move(texture));
 }
 

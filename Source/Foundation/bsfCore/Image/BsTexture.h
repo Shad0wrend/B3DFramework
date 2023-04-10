@@ -400,20 +400,17 @@ namespace bs
 			 * @param[in]	options 	Options for controlling what you may do with the locked data.
 			 * @param[in]	mipLevel	(optional) Mipmap level to lock.
 			 * @param[in]	face		(optional) Texture face to lock.
-			 * @param[in]	deviceIdx	Index of the device whose memory to map. If the buffer doesn't exist on this device,
-			 *							the method returns null.
-			 * @param[in]	queueIdx	Device queue to perform the read/write operations on. See @ref queuesDoc.
 			 *
 			 * @note
 			 * If you are just reading or writing one block of data use readData()/writeData() methods as they can be much faster
 			 * in certain situations.
 			 */
-			PixelData Lock(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0, u32 queueIdx = 0);
+			PixelData Lock(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0);
 
 			/**
 			 * Unlocks a previously locked buffer. After the buffer is unlocked, any data returned by lock becomes invalid.
 			 *
-			 * @see	lock()
+			 * @see	Lock()
 			 */
 			void Unlock();
 
@@ -442,48 +439,56 @@ namespace bs
 			/**
 			 * Sets all the pixels of the specified face and mip level to the provided value.
 			 *
-			 * @param[in]	value			Color to clear the pixels to.
-			 * @param[in]	mipLevel		Mip level to clear.
-			 * @param[in]	face			Face (array index or cubemap face) to clear.
-			 * @param[in]	queueIdx		Device queue to perform the write operation on. See @ref queuesDoc.
+			 * @param	value			Color to clear the pixels to.
+			 * @param	mipLevel		Mip level to clear.
+			 * @param	face			Face (array index or cubemap face) to clear.
+			 * @param	commandBuffer	Command buffer on which to encode the staging texture copy, in case the texture is not directly writeable.
+			 *							If not provided the operation will be queued on an internal command buffer that will be submitted before
+			 *							any regular command buffer submission.
 			 */
-			void Clear(const Color& value, u32 mipLevel = 0, u32 face = 0, u32 queueIdx = 0);
+			void Clear(const Color& value, u32 mipLevel = 0, u32 face = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr);
 
 			/**
 			 * Reads data from the texture buffer into the provided buffer.
 			 *
-			 * @param[out]	dest		Previously allocated buffer to read data into.
-			 * @param[in]	mipLevel	(optional) Mipmap level to read from.
-			 * @param[in]	face		(optional) Texture face to read from.
-			 * @param[in]	deviceIdx	Index of the device whose memory to read. If the buffer doesn't exist on this device,
-			 *							no data will be read.
-			 * @param[in]	queueIdx	Device queue to perform the read operation on. See @ref queuesDoc.
+			 * @note	If the texture cannot be directly mapped by the CPU this will internally create a staging buffer, on which the
+			 *			contents will be copied before being read by the CPU, using an internal command buffer.
+			 * @note	If the texture is currently being used by the GPU, this method will block until the GPU is done executing, so you should call this
+			 *			method in very rare circumstances.
+			 *
+			 * @param	destination	Previously allocated buffer to read data into.
+			 * @param	mipLevel		(optional) Mipmap level to read from.
+			 * @param	face			(optional) Texture face to read from.
 			 */
-			void ReadData(PixelData& dest, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0, u32 queueIdx = 0);
+			void ReadData(PixelData& destination, u32 mipLevel = 0, u32 face = 0);
 
 			/**
 			 * Performs a non-blocking read operation. The GPU will execute the read when the command buffer reaches the execution point
 			 * and the asynchronous operation will be signaled with the return value.
 			 *
-			 * @param[in]	mipLevel		(optional) Mipmap level to read from.
-			 * @param[in]	face			(optional) Texture face to read from.
-			 * @param[in]	deviceIndex		Index of the device whose memory to read. If the buffer doesn't exist on this device,
+			 * @param	mipLevel		(optional) Mipmap level to read from.
+			 * @param	face			(optional) Texture face to read from.
 			 *								no data will be read.
-			 * @param[in]	commandBuffer	Command buffer to queue the operation on. Main command buffer is used.
+			 * @param	commandBuffer	Command buffer to queue the operation on. Main command buffer is used if none is provided.
 			 */
-			virtual TAsyncOp<SPtr<PixelData>> ReadDataAsync(u32 mipLevel = 0, u32 face = 0, u32 deviceIndex = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr);
+			virtual TAsyncOp<SPtr<PixelData>> ReadDataAsync(u32 mipLevel = 0, u32 face = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr);
 
 			/**
 			 * Writes data from the provided buffer into the texture buffer.
 			 *
-			 * @param[in]	src					Buffer to retrieve the data from.
-			 * @param[in]	mipLevel			(optional) Mipmap level to write into.
-			 * @param[in]	face				(optional) Texture face to write into.
-			 * @param[in]	discardWholeBuffer	(optional) If true any existing texture data will be discard. This can improve
-			 *									performance of the write operation.
-			 * @param[in]	queueIdx			Device queue to perform the write operation on. See @ref queuesDoc.
+			 * @note	If the texture cannot be directly mapped by the CPU this will internally create a staging buffer, on which the
+			 *			contents will be copied before being written by the GPU, using the provided command buffer, or an internal command buffer if
+			 *			none is provided.
+			 *
+			 * @param	source				Buffer to retrieve the data from.
+			 * @param	mipLevel			(optional) Mipmap level to write into.
+			 * @param	face				(optional) Texture face to write into.
+			 * @param	discardWholeBuffer	(optional) If true any existing texture data will be discard. This can improve performance of the write operation.
+			 * @param	commandBuffer		Command buffer on which to encode the staging texture copy, in case the texture is not directly writeable.
+			 *								If not provided the operation will be queued on an internal command buffer that will be submitted before
+			 *								any regular command buffer submission.
 			 */
-			void WriteData(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, u32 queueIdx = 0);
+			void WriteData(const PixelData& source, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr);
 
 			/**	Returns properties that contain information about the texture. */
 			const TextureProperties& GetProperties() const { return mProperties; }
@@ -527,7 +532,7 @@ namespace bs
 
 		protected:
 			/** @copydoc Lock */
-			virtual PixelData LockInternal(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0, u32 queueIdx = 0) = 0;
+			virtual PixelData LockInternal(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0) = 0;
 
 			/** @copydoc Unlock */
 			virtual void UnlockInternal() = 0;
@@ -539,13 +544,13 @@ namespace bs
 			virtual void BlitInternal(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation, const SPtr<CommandBuffer>& commandBuffer) = 0;
 
 			/** @copydoc ReadData */
-			virtual void ReadDataInternal(PixelData& dest, u32 mipLevel = 0, u32 face = 0, u32 deviceIdx = 0, u32 queueIdx = 0) = 0;
+			virtual void ReadDataInternal(PixelData& dest, u32 mipLevel = 0, u32 face = 0) = 0;
 
 			/** @copydoc WriteData */
-			virtual void WriteDataInternal(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, u32 queueIdx = 0) = 0;
+			virtual void WriteDataInternal(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/** @copydoc Clear */
-			virtual void ClearInternal(const Color& value, u32 mipLevel = 0, u32 face = 0, u32 queueIdx = 0);
+			virtual void ClearInternal(const Color& value, u32 mipLevel = 0, u32 face = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr);
 
 			/************************************************************************/
 			/* 								TEXTURE VIEW                      		*/

@@ -372,7 +372,7 @@ void Texture::Initialize()
 	CoreObject::Initialize();
 }
 
-void Texture::WriteData(const PixelData& src, u32 mipLevel, u32 face, bool discardEntireBuffer, u32 queueIdx)
+void Texture::WriteData(const PixelData& source, u32 mipLevel, u32 face, bool discardEntireBuffer, const SPtr<CommandBuffer>& commandBuffer)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
@@ -385,14 +385,14 @@ void Texture::WriteData(const PixelData& src, u32 mipLevel, u32 face, bool disca
 		}
 	}
 
-	WriteDataInternal(src, mipLevel, face, discardEntireBuffer, queueIdx);
+	WriteDataInternal(source, mipLevel, face, discardEntireBuffer, commandBuffer);
 }
 
-void Texture::ReadData(PixelData& dest, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
+void Texture::ReadData(PixelData& destination, u32 mipLevel, u32 face)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
-	PixelData& pixelData = static_cast<PixelData&>(dest);
+	PixelData& pixelData = static_cast<PixelData&>(destination);
 
 	u32 mipWidth, mipHeight, mipDepth;
 	PixelUtil::GetSizeForMipLevel(mProperties.Width, mProperties.Height, mProperties.Depth, mipLevel, mipWidth, mipHeight, mipDepth);
@@ -404,22 +404,15 @@ void Texture::ReadData(PixelData& dest, u32 mipLevel, u32 face, u32 deviceIdx, u
 		return;
 	}
 
-	ReadDataInternal(pixelData, mipLevel, face, deviceIdx, queueIdx);
+	ReadDataInternal(pixelData, mipLevel, face);
 }
 
-TAsyncOp<SPtr<PixelData>> Texture::ReadDataAsync(u32 mipLevel, u32 face, u32 deviceIndex, const SPtr<CommandBuffer>& commandBuffer)
+TAsyncOp<SPtr<PixelData>> Texture::ReadDataAsync(u32 mipLevel, u32 face, const SPtr<CommandBuffer>& commandBuffer)
 {
 	SPtr<PixelData> pixelData = GetProperties().AllocBuffer(face, mipLevel);
 
-	u32 queueIdx = 0;
-	const SPtr<CommandBuffer> usedCommandBuffer = commandBuffer != nullptr ? commandBuffer : RenderAPI::Instance().GetMainCommandBuffer();
-	if(usedCommandBuffer)
-	{
-		queueIdx = CommandSyncMask::GetGlobalQueueIdx(usedCommandBuffer->GetType(), usedCommandBuffer->GetQueueIdx());
-	}
-
 	// We fall-back to sync read if the backend doesn't implement an async method
-	ReadData(*pixelData, mipLevel, face, deviceIndex, queueIdx);
+	ReadData(*pixelData, mipLevel, face);
 
 	TAsyncOp<SPtr<PixelData>> output;
 	output.CompleteOperation(pixelData);
@@ -427,7 +420,7 @@ TAsyncOp<SPtr<PixelData>> Texture::ReadDataAsync(u32 mipLevel, u32 face, u32 dev
 	return output;
 }
 
-PixelData Texture::Lock(GpuLockOptions options, u32 mipLevel, u32 face, u32 deviceIdx, u32 queueIdx)
+PixelData Texture::Lock(GpuLockOptions options, u32 mipLevel, u32 face)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
@@ -443,7 +436,7 @@ PixelData Texture::Lock(GpuLockOptions options, u32 mipLevel, u32 face, u32 devi
 		return PixelData(0, 0, 0, PF_UNKNOWN);
 	}
 
-	return LockInternal(options, mipLevel, face, deviceIdx, queueIdx);
+	return LockInternal(options, mipLevel, face);
 }
 
 void Texture::Unlock()
@@ -607,7 +600,7 @@ void Texture::Blit(const SPtr<Texture>& target, const TextureBlitInformation& bl
 	BlitInternal(target, blitInformation, commandBuffer);
 }
 
-void Texture::Clear(const Color& value, u32 mipLevel, u32 face, u32 queueIdx)
+void Texture::Clear(const Color& value, u32 mipLevel, u32 face, const SPtr<CommandBuffer>& commandBuffer)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
@@ -623,15 +616,15 @@ void Texture::Clear(const Color& value, u32 mipLevel, u32 face, u32 queueIdx)
 		return;
 	}
 
-	ClearInternal(value, mipLevel, face, queueIdx);
+	ClearInternal(value, mipLevel, face, commandBuffer);
 }
 
-void Texture::ClearInternal(const Color& value, u32 mipLevel, u32 face, u32 queueIdx)
+void Texture::ClearInternal(const Color& value, u32 mipLevel, u32 face, const SPtr<CommandBuffer>& commandBuffer)
 {
 	SPtr<PixelData> data = mProperties.AllocBuffer(face, mipLevel);
 	data->SetColors(value);
 
-	WriteData(*data, mipLevel, face, true, queueIdx);
+	WriteData(*data, mipLevel, face, true, commandBuffer);
 }
 
 /************************************************************************/

@@ -264,11 +264,8 @@ namespace bs::ct
 		 * @param	options		Signifies what you want to do with the returned pointer. Caller must ensure not to do
 		 *						anything he hasn't requested (for example don't try to read from the buffer unless you
 		 *						requested it here).
-		 * @param	deviceIdx	Index of the device whose memory to map. If the buffer doesn't exist on this device,
-		 *						the method returns null.
-		 * @param	queueIdx	Device queue to perform any read/write operations on. See @ref queuesDoc.
 		 */
-		virtual void* Lock(u32 offset, u32 length, GpuLockOptions options, u32 deviceIdx = 0, u32 queueIdx = 0)
+		virtual void* Lock(u32 offset, u32 length, GpuLockOptions options)
 		{
 			B3D_ASSERT(!IsLocked() && "Cannot lock this buffer, it is already locked!");
 			void* ret = Map(offset, length, options);
@@ -302,7 +299,7 @@ namespace bs::ct
 		 * Reads data from a portion of the buffer and copies it to the destination buffer. Caller must ensure destination buffer is large enough.
 		 *
 		 * @note	If the buffer cannot be directly mapped by the CPU (i.e. doesn't have the StoreOnCPU or StoreOnCPUWithGPUAccess flags) this will
-		 *			internally create a staging buffer, on which the contents will be copied before being read by the CPU, using the provided command buffer).
+		 *			internally create a staging buffer, on which the contents will be copied before being read by the CPU, using an internal command buffer.
 		 * @note	If the buffer is currently being used by the GPU, this method will block until the GPU is done executing, so you should call this
 		 *			method in very rare circumstances.
 		 *
@@ -310,11 +307,8 @@ namespace bs::ct
 		 * @param	length			Length of the area you want to copy, in bytes.
 		 * @param	destination		Destination buffer large enough to store the read data. Data is written from the start
 		 *							of the buffer (@p offset is only applied to the source).
-		 * @param	commandBuffer	Command buffer on which to encode the staging buffer copy, in case the buffer is not directly readable. If not provided
-		 *							the operation will be queued on an internal command buffer that will be submitted before any regular command
-		 *							buffer submission.
 		 */
-		virtual void ReadData(u32 offset, u32 length, void* destination, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+		virtual void ReadData(u32 offset, u32 length, void* destination) = 0;
 
 		/**
 		 * Writes data into a portion of the buffer from the source memory.

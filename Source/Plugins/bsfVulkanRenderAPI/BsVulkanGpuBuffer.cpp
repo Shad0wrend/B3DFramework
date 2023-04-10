@@ -405,7 +405,7 @@ void VulkanGpuBuffer::CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffse
 	vkCB->RegisterBuffer(dst, BufferUseFlagBits::Transfer, VulkanAccessFlag::Write);
 }
 
-void VulkanGpuBuffer::ReadData(u32 offset, u32 length, void* destination, const SPtr<CommandBuffer>& commandBuffer)
+void VulkanGpuBuffer::ReadData(u32 offset, u32 length, void* destination)
 {
 	if((offset + length) > mSize)
 	{
@@ -420,7 +420,7 @@ void VulkanGpuBuffer::ReadData(u32 offset, u32 length, void* destination, const 
 		return;
 
 	VulkanQueue* const queue = mDevice.GetQueue(GQT_GRAPHICS, 0); // TODO - Allow user to specify the queue
-	VulkanInternalCommandBuffer* vulkanCommandBuffer = commandBuffer != nullptr ? static_cast<VulkanCommandBuffer*>(commandBuffer.get())->GetInternal() : nullptr;
+	VulkanInternalCommandBuffer* vulkanCommandBuffer = nullptr;
 
 	if(mDirectlyMappable) // TODO - Need to check if this is memory on an integrated GPU, in which case it might be directly mappable always
 	{
