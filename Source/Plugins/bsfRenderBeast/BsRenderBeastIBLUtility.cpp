@@ -19,7 +19,7 @@ void ReflectionCubeDownsampleMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTexture);
 }
 
-void ReflectionCubeDownsampleMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 face, u32 mip, const SPtr<RenderTarget>& target)
+void ReflectionCubeDownsampleMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 face, u32 mip, const SPtr<RenderTarget>& target)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -59,7 +59,7 @@ void ReflectionCubeImportanceSampleMat::InitDefinesInternal(ShaderDefines& defin
 	defines.Set("NUM_SAMPLES", kNumSamples);
 }
 
-void ReflectionCubeImportanceSampleMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 face, u32 mip, const SPtr<RenderTarget>& target)
+void ReflectionCubeImportanceSampleMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 face, u32 mip, const SPtr<RenderTarget>& target)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -107,7 +107,7 @@ void IrradianceComputeSHMat::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("PIXELS_PER_THREAD", kPixelsPerThread);
 }
 
-void IrradianceComputeSHMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 face, const SPtr<GpuBuffer>& output)
+void IrradianceComputeSHMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 face, const SPtr<GpuBuffer>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -173,7 +173,7 @@ void IrradianceComputeSHFragMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTexture);
 }
 
-void IrradianceComputeSHFragMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 face, u32 coefficientIdx, const SPtr<RenderTarget>& output)
+void IrradianceComputeSHFragMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 face, u32 coefficientIdx, const SPtr<RenderTarget>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -210,7 +210,7 @@ void IrradianceAccumulateSHMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTexture);
 }
 
-void IrradianceAccumulateSHMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 face, u32 sourceMip, const SPtr<RenderTarget>& output)
+void IrradianceAccumulateSHMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 face, u32 sourceMip, const SPtr<RenderTarget>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -251,7 +251,7 @@ void IrradianceAccumulateCubeSHMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTexture);
 }
 
-void IrradianceAccumulateCubeSHMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 sourceMip, const Vector2I& outputOffset, u32 coefficientIdx, const SPtr<RenderTarget>& output)
+void IrradianceAccumulateCubeSHMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 sourceMip, const Vector2I& outputOffset, u32 coefficientIdx, const SPtr<RenderTarget>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -302,7 +302,7 @@ void IrradianceReduceSHMat::Initialize()
 	mGPUParameters->GetStorageTextureParameter(GPT_COMPUTE_PROGRAM, "gOutput", mOutputTexture);
 }
 
-void IrradianceReduceSHMat::Execute(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& source, u32 numCoeffSets, const SPtr<Texture>& output, u32 outputIdx)
+void IrradianceReduceSHMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& source, u32 numCoeffSets, const SPtr<Texture>& output, u32 outputIdx)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -352,7 +352,7 @@ void IrradianceProjectSHMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gSHCoeffs", mInputTexture);
 }
 
-void IrradianceProjectSHMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& shCoeffs, u32 face, const SPtr<RenderTarget>& target)
+void IrradianceProjectSHMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& shCoeffs, u32 face, const SPtr<RenderTarget>& target)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -366,7 +366,7 @@ void IrradianceProjectSHMat::Execute(CommandBuffer& commandBuffer, const SPtr<Te
 	GetRendererUtility().DrawScreenQuad(commandBuffer);
 }
 
-void RenderBeastIBLUtility::FilterCubemapForSpecular(CommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const SPtr<Texture>& scratch) const
+void RenderBeastIBLUtility::FilterCubemapForSpecular(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const SPtr<Texture>& scratch) const
 {
 	auto& props = cubemap->GetProperties();
 
@@ -439,7 +439,7 @@ bool SupportsComputeSh()
 	return GetRenderBeast()->GetFeatureSet() == RenderBeastFeatureSet::Desktop;
 }
 
-void RenderBeastIBLUtility::FilterCubemapForIrradiance(CommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const SPtr<Texture>& output) const
+void RenderBeastIBLUtility::FilterCubemapForIrradiance(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const SPtr<Texture>& output) const
 {
 	SPtr<Texture> coeffTexture;
 	if(SupportsComputeSh())
@@ -477,7 +477,7 @@ void RenderBeastIBLUtility::FilterCubemapForIrradiance(CommandBuffer& commandBuf
 	}
 }
 
-void RenderBeastIBLUtility::FilterCubemapForIrradiance(CommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const SPtr<Texture>& output, u32 outputIdx) const
+void RenderBeastIBLUtility::FilterCubemapForIrradiance(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const SPtr<Texture>& output, u32 outputIdx) const
 {
 	if(SupportsComputeSh())
 	{
@@ -501,7 +501,7 @@ void RenderBeastIBLUtility::FilterCubemapForIrradiance(CommandBuffer& commandBuf
 	}
 }
 
-void RenderBeastIBLUtility::ScaleCubemap(CommandBuffer& commandBuffer, const SPtr<Texture>& src, u32 srcMip, const SPtr<Texture>& dst, u32 dstMip) const
+void RenderBeastIBLUtility::ScaleCubemap(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& src, u32 srcMip, const SPtr<Texture>& dst, u32 dstMip) const
 {
 	auto& srcProps = src->GetProperties();
 	auto& dstProps = dst->GetProperties();
@@ -555,7 +555,7 @@ void RenderBeastIBLUtility::ScaleCubemap(CommandBuffer& commandBuffer, const SPt
 		DownsampleCubemap(commandBuffer, scratchTex, srcMip, dst, dstMip);
 }
 
-void RenderBeastIBLUtility::DownsampleCubemap(CommandBuffer& commandBuffer, const SPtr<Texture>& src, u32 srcMip, const SPtr<Texture>& dst, u32 dstMip)
+void RenderBeastIBLUtility::DownsampleCubemap(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& src, u32 srcMip, const SPtr<Texture>& dst, u32 dstMip)
 {
 	for(u32 face = 0; face < 6; face++)
 	{
@@ -572,7 +572,7 @@ void RenderBeastIBLUtility::DownsampleCubemap(CommandBuffer& commandBuffer, cons
 	}
 }
 
-void RenderBeastIBLUtility::FilterCubemapForIrradianceNonCompute(CommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, u32 outputIdx, const SPtr<RenderTexture>& output)
+void RenderBeastIBLUtility::FilterCubemapForIrradianceNonCompute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, u32 outputIdx, const SPtr<RenderTexture>& output)
 {
 	static const u32 kNumCoeffs = 9;
 

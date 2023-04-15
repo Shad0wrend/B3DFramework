@@ -21,8 +21,6 @@ namespace bs
 		 *  @{
 		 */
 
-#define BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY BS_MAX_QUEUES_PER_TYPE * 128
-
 // Maximum number of command buffers that another command buffer can be dependant on (via a sync mask)
 #define BS_MAX_VULKAN_CB_DEPENDENCIES 2
 
@@ -42,35 +40,27 @@ namespace bs
 
 		class VulkanInternalCommandBuffer;
 
-		/** Pool that allocates and distributes Vulkan command buffers. */
-		class VulkanCommandBufferPool
+		/** Vulkan implementation of GpuCommandBufferPool. */
+		class VulkanGpuCommandBufferPool : public GpuCommandBufferPool
 		{
 		public:
-			VulkanCommandBufferPool(VulkanGpuDevice& device, VulkanThread ownerThread);
-			~VulkanCommandBufferPool();
+			VulkanGpuCommandBufferPool(VulkanGpuDevice& device, const GpuCommandBufferPoolCreateInformation& createInformation);
+			~VulkanGpuCommandBufferPool() override;
 
-			/**
-			 * Attempts to find a free command buffer, or creates a new one if not found. Caller must guarantee the provided
-			 * queue family is valid.
-			 */
-			VulkanInternalCommandBuffer* GetBuffer(u32 queueFamily);
+			/** Attempts to find a free command buffer, or creates a new one if not found. */
+			VulkanInternalCommandBuffer* GetBuffer();
+
+			SPtr<GpuCommandBuffer> Create(const GpuCommandBufferCreateInformation& createInformation) override;
+			void Reset() override;
 
 		private:
-			/** Command buffer pool and related information. */
-			struct PoolInfo
-			{
-				VkCommandPool Pool = VK_NULL_HANDLE;
-				VulkanInternalCommandBuffer* Buffers[BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY];
-				u32 QueueFamily = -1;
-			};
-
 			/** Creates a new command buffer. */
-			VulkanInternalCommandBuffer* CreateBuffer(u32 queueFamily);
+			VulkanInternalCommandBuffer* CreateBuffer();
 
-			VulkanGpuDevice& mDevice;
-			UnorderedMap<u32, PoolInfo> mPools;
-			u32 mNextId = 1;
-			VulkanThread mOwnerThread;
+			VkCommandPool mVulkanPool = VK_NULL_HANDLE;
+			SmallVector<VulkanInternalCommandBuffer*, 128> mAllocatedBuffers;
+			u32 mQueueFamily = ~0u;
+			u32 mNextCommandBufferId = 1;
 		};
 
 		/** Determines where are the current descriptor sets bound to. */
@@ -132,7 +122,7 @@ namespace bs
 			};
 
 		public:
-			VulkanInternalCommandBuffer(VulkanGpuDevice& device, VulkanThread ownerThread, u32 id, VkCommandPool pool);
+			VulkanInternalCommandBuffer(VulkanGpuDevice& device, ThreadId ownerThread, u32 id, VkCommandPool pool);
 			~VulkanInternalCommandBuffer();
 
 			/** Returns an unique identifier of this command buffer. */
@@ -142,7 +132,7 @@ namespace bs
 			u32 GetDeviceIndex() const;
 
 			/** Returns the thread that the command buffer is allowed to be used on. */
-			VulkanThread GetOwnerThread() const { return mOwnerThread; }
+			ThreadId GetOwnerThread() const { return mOwnerThread; }
 
 			/** Assigns an name to the command buffer, primarily used for easier debugging. */
 			void SetName(const StringView& name);
@@ -207,7 +197,7 @@ namespace bs
 			void AllocateSemaphores(VkSemaphore* semaphores);
 
 			/** Sets the VulkanCommandBuffer that currently owns this command buffer. */
-			void SetOwner(VulkanCommandBuffer* owner) { mOwner = owner; }
+			void SetOwner(VulkanGpuCommandBuffer* owner) { mOwner = owner; }
 
 			/** Returns true if the command buffer is currently being processed by the device. */
 			bool IsSubmitted() const { return mState == State::Submitted; }
@@ -508,8 +498,8 @@ namespace bs
 			static VkPipelineStageFlags GetPipelineStageFlags(VkAccessFlags accessFlags);
 
 		private:
-			friend class VulkanCommandBufferPool;
-			friend class VulkanCommandBuffer;
+			friend class VulkanGpuCommandBufferPool;
+			friend class VulkanGpuCommandBuffer;
 			friend class VulkanQueue;
 			friend class VulkanGpuBuffer;
 			friend class VulkanTexture;
@@ -737,11 +727,11 @@ namespace bs
 			u32 mId;
 			State mState = State::Ready;
 			VulkanGpuDevice& mDevice;
-			VulkanCommandBuffer* mOwner = nullptr;
+			VulkanGpuCommandBuffer* mOwner = nullptr;
 			VkCommandPool mPool;
 			VkCommandBuffer mCmdBuffer;
 			VkFence mFence;
-			VulkanThread mOwnerThread = VulkanThread::Undefined;
+			ThreadId mOwnerThread;
 			u32 mSyncMask;
 
 			VulkanSemaphore* mIntraQueueSemaphore = nullptr;
@@ -815,10 +805,10 @@ namespace bs
 		};
 
 		/** CommandBuffer implementation for Vulkan. */
-		class VulkanCommandBuffer : public CommandBuffer
+		class VulkanGpuCommandBuffer : public GpuCommandBuffer
 		{
 		public:
-			~VulkanCommandBuffer();
+			~VulkanGpuCommandBuffer();
 		
 			/**
 			 * Submits the command buffer for execution.
@@ -843,9 +833,9 @@ namespace bs
 			CommandBufferState GetState() const override;
 
 		private:
-			friend class VulkanCommandBufferManager;
+			friend class VulkanGpuCommandBufferPool;
 
-			VulkanCommandBuffer(VulkanGpuDevice& device, GpuQueueType queueType);
+			VulkanGpuCommandBuffer(VulkanGpuDevice& device, ThreadId ownerThread, GpuQueueUsage queueType, const GpuCommandBufferCreateInformation& createInformation);
 
 			/**
 			 * Tasks the command buffer to find a new internal command buffer. Call this after the command buffer has been

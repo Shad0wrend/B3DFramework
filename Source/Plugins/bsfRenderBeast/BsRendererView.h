@@ -76,7 +76,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Binds the material for rendering and sets up any parameters. */
-			void Bind(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& texture, const Color& solidColor);
+			void Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& texture, const Color& solidColor);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -412,7 +412,7 @@ namespace bs
 			const LightGrid& GetLightGrid() const { return mLightGrid; }
 
 			/** Updates the light grid used for forward rendering. */
-			void UpdateLightGrid(CommandBuffer& commandBuffer, const VisibleLightData& visibleLightData, const VisibleReflProbeData& visibleReflProbeData);
+			void UpdateLightGrid(GpuCommandBuffer& commandBuffer, const VisibleLightData& visibleLightData, const VisibleReflProbeData& visibleReflProbeData);
 
 			/**
 			 * Returns a value that can be used for transforming x, y coordinates from NDC into UV coordinates that can be used
@@ -475,7 +475,7 @@ namespace bs
 			 * Notifies the view that a new average luminance is being calculated on the provided command buffer. The results
 			 * will be read from the provided texture when the command buffer finishes executing.
 			 */
-			void NotifyLuminanceUpdated(u64 frameIdx, SPtr<CommandBuffer> cb, SPtr<PooledRenderTexture> texture) const;
+			void NotifyLuminanceUpdated(u64 frameIdx, SPtr<GpuCommandBuffer> cb, SPtr<PooledRenderTexture> texture) const;
 
 			/**
 			 * Extracts the necessary values from the projection matrix that allow you to transform device Z value (range [0, 1]
@@ -511,7 +511,7 @@ namespace bs
 				{}
 
 				u64 FrameIdx;
-				SPtr<CommandBuffer> CommandBuffer;
+				SPtr<GpuCommandBuffer> CommandBuffer;
 				SPtr<PooledRenderTexture> OutputTexture;
 				TAsyncOp<SPtr<PixelData>> ReadbackAsyncOp;
 			};
@@ -604,7 +604,7 @@ namespace bs
 			 * and updates the render queues of each individual view. Use getVisibilityInfo() to retrieve the calculated
 			 * visibility information.
 			 */
-			void DetermineVisibility(CommandBuffer& commandBuffer, const SceneInfo& sceneInfo);
+			void DetermineVisibility(GpuCommandBuffer& commandBuffer, const SceneInfo& sceneInfo);
 
 		private:
 			Vector<RendererView*> mViews;

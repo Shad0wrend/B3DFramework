@@ -6,6 +6,7 @@
 #include "BsVulkanPrerequisites.h"
 #include "RenderAPI/BsRenderAPI.h"
 #include "Managers/BsVulkanDescriptorManager.h"
+#include "RenderAPI/BsCommandBuffer.h"
 #include "RenderAPI/BsGpuDevice.h"
 #include "RenderAPI/BsGpuDeviceCapabilities.h"
 
@@ -55,6 +56,7 @@ namespace bs
 			bool IsGpuProgramLanguageSupported(const StringView& language) const override { return language == kGpuProgramLanguageName; }
 			SPtr<GpuProgramBytecode> CompileGpuProgramBytecode(const GpuProgramCreateInformation& createInformation) const override;
 
+			SPtr<GpuCommandBufferPool> CreateGpuCommandBufferPool(const GpuCommandBufferPoolCreateInformation& createInformation) override;
 			SPtr<GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, bool deferredInitialize = false) override;
 			SPtr<EventQuery> CreateEventQuery() override;
 			SPtr<TimerQuery> CreateTimerQuery() override;
@@ -96,22 +98,22 @@ namespace bs
 			const VkPhysicalDeviceMemoryProperties& GetMemoryProperties() const { return mMemoryProperties; }
 
 			/** Returns the number of queue supported on the device, per type. */
-			u32 GetQueueCountForType(GpuQueueType type) const { return (u32)mQueueInfos[(int)type].Queues.size(); }
+			u32 GetQueueCountForType(GpuQueueUsage type) const { return (u32)mQueueInfos[(int)type].Queues.size(); }
 
 			/** Returns queue of the specified type at the specified index. Index must be in range [0, getNumQueues()). */
-			VulkanQueue* GetQueue(GpuQueueType type, u32 idx) const { return mQueueInfos[(int)type].Queues[idx]; }
+			VulkanQueue* GetQueue(GpuQueueUsage type, u32 idx) const { return mQueueInfos[(int)type].Queues[idx]; }
 
 			/**
 			 * Returns index of the queue family for the specified queue type. Returns -1 if no queues for the specified type
 			 * exist. There will always be a queue family for the graphics type.
 			 */
-			u32 GetQueueFamily(GpuQueueType type) const { return mQueueInfos[(int)type].FamilyIndex; }
+			u32 GetQueueFamily(GpuQueueUsage type) const { return mQueueInfos[(int)type].FamilyIndex; }
 
 			/**
 			 * Fills out a mask that has bits set for every queue index that maps to the same physical queue as the provided
 			 * index. This is useful as different queue indices will sometimes map to the same physical queue.
 			 */
-			u32 GetQueueMask(GpuQueueType type, u32 queueIdx) const;
+			u32 GetQueueMask(GpuQueueUsage type, u32 queueIdx) const;
 
 			/** Perform an operation for each queue on the device. */
 			void DoForEachQueue(const std::function<void(VulkanQueue&)>&& callback) const;
@@ -120,7 +122,7 @@ namespace bs
 			SurfaceFormat GetSurfaceFormat(const VkSurfaceKHR& surface, bool gamma) const;
 
 			/** Returns a pool that can be used for allocating command buffers for all queues on this device. */
-			VulkanCommandBufferPool& GetCommandBufferPool() const { return *mCommandBufferPool; }
+			VulkanGpuCommandBufferPool& GetCommandBufferPool(GpuQueueUsage queueUsage) const { return *mCommandBufferPools[(u32)queueUsage]; }
 
 			/** Returns a pool that can be used for allocating queries on this device. */
 			VulkanQueryPool& GetQueryPool() const { return *mQueryPool; }
@@ -208,6 +210,8 @@ namespace bs
 			friend class VulkanRenderAPI;
 			friend class bs::VulkanGpuBackend;
 
+			static constexpr u32 kQueueUsageCombinationCount = 8; // 3^2, as there are three usage types in CommandBufferUsageFlag
+
 			/** Initializes the capabilities of the device. */
 			void InitializeCapabilities();
 
@@ -225,7 +229,7 @@ namespace bs
 			bool mIsPrimary = false;
 			u32 mDeviceIdx;
 
-			VulkanCommandBufferPool* mCommandBufferPool;
+			SPtr<VulkanGpuCommandBufferPool> mCommandBufferPools[GQT_COUNT];
 			VulkanQueryPool* mQueryPool;
 			VulkanDescriptorManager* mDescriptorManager;
 			VulkanResourceManager* mResourceManager;

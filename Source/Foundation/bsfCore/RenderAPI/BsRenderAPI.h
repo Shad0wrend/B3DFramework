@@ -190,7 +190,7 @@ namespace bs
 			 * like textures, samplers, or uniform buffers. Caller is expected to ensure the provided parameters actually
 			 * match the currently bound programs.
 			 */
-			virtual void SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Sets a pipeline state that controls how will subsequent draw commands render primitives.
@@ -202,7 +202,7 @@ namespace bs
 			 *
 			 * @see		GraphicsPipelineState
 			 */
-			virtual void SetGraphicsPipeline(const SPtr<GpuGraphicsPipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void SetGraphicsPipeline(const SPtr<GpuGraphicsPipelineState>& pipelineState, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Sets a pipeline state that controls how will subsequent dispatch commands execute.
@@ -212,7 +212,7 @@ namespace bs
 			 *									is executed immediately. Otherwise it is executed when executeCommands() is
 			 *									called. Buffer must support graphics operations.
 			 */
-			virtual void SetComputePipeline(const SPtr<GpuComputePipelineState>& pipelineState, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void SetComputePipeline(const SPtr<GpuComputePipelineState>& pipelineState, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Sets the active viewport that will be used for all render operations.
@@ -222,7 +222,7 @@ namespace bs
 			 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 			 *								Buffer must support graphics operations.
 			 */
-			virtual void SetViewport(const Rect2& area, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void SetViewport(const Rect2& area, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Allows you to set up a region in which rendering can take place. Coordinates are in pixels. No rendering will be
@@ -236,10 +236,10 @@ namespace bs
 			 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 			 *								Buffer must support graphics operations.
 			 */
-			virtual void EnableScissorTest(u32 left, u32 top, u32 right, u32 bottom, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void EnableScissorTest(u32 left, u32 top, u32 right, u32 bottom, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/** Disables scissor test set via EnableScissorTest(). */
-			virtual void DisableScissorTest(const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void DisableScissorTest(const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Sets a reference value that will be used for stencil compare operations.
@@ -249,7 +249,7 @@ namespace bs
 			 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 			 *								Buffer must support graphics operations.
 			 */
-			virtual void SetStencilRef(u32 value, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void SetStencilRef(u32 value, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Sets the provided vertex buffers starting at the specified source index.	Set buffer to nullptr to clear the
@@ -262,7 +262,7 @@ namespace bs
 			 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 			 *								Buffer must support graphics operations.
 			 */
-			virtual void SetVertexBuffers(u32 index, SPtr<GpuBuffer>* buffers, u32 numBuffers, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void SetVertexBuffers(u32 index, SPtr<GpuBuffer>* buffers, u32 numBuffers, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Sets an index buffer to use when drawing. Indices in an index buffer reference vertices in the vertex buffer,
@@ -273,7 +273,7 @@ namespace bs
 			 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 			 *								Buffer must support graphics operations.
 			 */
-			virtual void SetIndexBuffer(const SPtr<GpuBuffer>& buffer, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void SetIndexBuffer(const SPtr<GpuBuffer>& buffer, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Sets the description of vertex elements in the vertex buffers that will be bound when executing the vertex GPU program.
@@ -283,7 +283,7 @@ namespace bs
 			 *									is executed immediately. Otherwise it is executed when executeCommands() is
 			 *									called. Buffer must support graphics operations.
 			 */
-			virtual void SetVertexDescription(const SPtr<VertexDescription>& vertexDescription, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void SetVertexDescription(const SPtr<VertexDescription>& vertexDescription, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Sets the draw operation that determines how to interpret the elements of the index or vertex buffers.
@@ -293,7 +293,7 @@ namespace bs
 			 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 			 *								Buffer must support graphics operations.
 			 */
-			virtual void SetDrawOperation(DrawOperationType op, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void SetDrawOperation(DrawOperationType op, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Draw an object based on currently bound GPU programs, vertex declaration and vertex buffers. Draws directly from
@@ -308,7 +308,7 @@ namespace bs
 			 *							is executed immediately. Otherwise it is executed when executeCommands() is called.
 			 *							Buffer must support graphics operations.
 			 */
-			virtual void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0, u32 firstInstance = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0, u32 firstInstance = 0, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Draw an object based on currently bound GPU programs, vertex declaration, vertex and index buffers.
@@ -323,7 +323,7 @@ namespace bs
 			 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 			 *								Buffer must support graphics operations.
 			 */
-			virtual void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0, u32 firstInstance = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0, u32 firstInstance = 0, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Executes the currently bound compute shader.
@@ -335,7 +335,7 @@ namespace bs
 			 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 			 *								Buffer must support compute or graphics operations.
 			 */
-			virtual void DispatchCompute(u32 numGroupsX, u32 numGroupsY = 1, u32 numGroupsZ = 1, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void DispatchCompute(u32 numGroupsX, u32 numGroupsY = 1, u32 numGroupsZ = 1, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Swap the front and back buffer of the specified render target.
@@ -368,7 +368,7 @@ namespace bs
 			 *										is executed immediately. Otherwise it is executed when executeCommands() is
 			 *										called. Buffer must support graphics operations.
 			 */
-			virtual void SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags = 0, RenderSurfaceMask loadMask = RT_NONE, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags = 0, RenderSurfaceMask loadMask = RT_NONE, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Clears the currently active render target.
@@ -384,7 +384,7 @@ namespace bs
 			 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 			 *								Buffer must support graphics operations.
 			 */
-			virtual void ClearRenderTarget(u32 buffers, const Color& color = Color::kBlack, float depth = 1.0f, u16 stencil = 0, u8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void ClearRenderTarget(u32 buffers, const Color& color = Color::kBlack, float depth = 1.0f, u16 stencil = 0, u8 targetMask = 0xFF, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/**
 			 * Clears the currently active viewport (meaning it clears just a sub-area of a render-target that is covered by the
@@ -401,25 +401,25 @@ namespace bs
 			 *								is executed immediately. Otherwise it is executed when executeCommands() is called.
 			 *								Buffer must support graphics operations.
 			 */
-			virtual void ClearViewport(u32 buffers, const Color& color = Color::kBlack, float depth = 1.0f, u16 stencil = 0, u8 targetMask = 0xFF, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void ClearViewport(u32 buffers, const Color& color = Color::kBlack, float depth = 1.0f, u16 stencil = 0, u8 targetMask = 0xFF, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/** Appends all commands from the provided secondary command buffer into the primary command buffer. */
-			virtual void AddCommands(const SPtr<CommandBuffer>& commandBuffer, const SPtr<CommandBuffer>& secondary) = 0;
+			virtual void AddCommands(const SPtr<GpuCommandBuffer>& commandBuffer, const SPtr<GpuCommandBuffer>& secondary) = 0;
 
 			/**
 			 * Surrounds all following commands with the provided label, until EndLabel() is called. This may be used by external
 			 * tools for easier debugging.
 			 */
-			virtual void BeginLabel(const StringView& name, const SPtr<CommandBuffer>& commandBuffer = nullptr) { }
+			virtual void BeginLabel(const StringView& name, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) { }
 
 			/** Closes the label scope as provided by the previous call to BeginLabel(). */
-			virtual void EndLabel(const SPtr<CommandBuffer>& commandBuffer = nullptr) { }
+			virtual void EndLabel(const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) { }
 
 			/**
 			 * Inserts a label at the specified location in the command buffer. This may be used by external tools
 			 * for easier debugging.
 			 */
-			virtual void InsertLabel(const StringView& name, const SPtr<CommandBuffer>& commandBuffer = nullptr) { }
+			virtual void InsertLabel(const StringView& name, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) { }
 
 			/**
 			 * Prepares the backend for rendering a single frame. A frame involves a set of submitted command buffers followed by any optional present operations on the window surfaces.
@@ -447,7 +447,7 @@ namespace bs
 			 *
 			 * @note	Core thread only.
 			 */
-			virtual void SubmitCommandBuffer(const SPtr<CommandBuffer>& commandBuffer, u32 queueIndex = 0, u32 syncMask = 0xFFFFFFFF) = 0;
+			virtual void SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandBuffer, u32 queueIndex = 0, u32 syncMask = 0xFFFFFFFF) = 0;
 
 			/**	Waits until all the command buffers submitted thus far have finished executing on the GPU. */
 			virtual void WaitUntilIdle() const = 0;
@@ -456,7 +456,7 @@ namespace bs
 			 * Returns the currently active main command buffer instance. All commands queues without a user-provided command
 			 * buffer will be queued on this command buffer. The command buffer instance will change after it has been submitted.
 			 */
-			virtual SPtr<CommandBuffer> GetMainCommandBuffer() const = 0;
+			virtual SPtr<GpuCommandBuffer> GetMainCommandBuffer() const = 0;
 
 			/** Returns the primary GPU on which to perform rendering. */
 			virtual SPtr<GpuDevice> GetPrimaryGpuDevice() const = 0;

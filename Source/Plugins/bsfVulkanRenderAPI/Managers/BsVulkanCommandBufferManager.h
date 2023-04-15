@@ -3,7 +3,6 @@
 #pragma once
 
 #include "BsVulkanPrerequisites.h"
-#include "Managers/BsCommandBufferManager.h"
 #include "BsVulkanCommandBuffer.h"
 
 namespace bs
@@ -19,7 +18,7 @@ namespace bs
 		{
 		public:
 			VulkanTransferBuffer() = default;
-			VulkanTransferBuffer(VulkanGpuDevice* device, GpuQueueType type, u32 queueIdx);
+			VulkanTransferBuffer(VulkanGpuDevice* device, GpuQueueUsage type, u32 queueIdx);
 			~VulkanTransferBuffer();
 
 			/**
@@ -50,7 +49,7 @@ namespace bs
 			void Allocate();
 
 			VulkanGpuDevice* mDevice = nullptr;
-			GpuQueueType mType = GQT_GRAPHICS;
+			GpuQueueUsage mType = GQT_GRAPHICS;
 			u32 mQueueIndex = 0;
 			VulkanQueue* mQueue = nullptr;
 			u32 mQueueMask = 0;
@@ -60,17 +59,15 @@ namespace bs
 		};
 
 		/**
-		 * Handles creation of Vulkan command buffers. See CommandBuffer.
+		 * Provides various helper functionality for all Vulkan command buffers.
 		 *
 		 * @note Core thread only.
 		 */
-		class VulkanCommandBufferManager : public CommandBufferManager
+		class VulkanCommandBufferManager : public Module<VulkanCommandBufferManager>
 		{
 		public:
 			VulkanCommandBufferManager();
 			~VulkanCommandBufferManager();
-
-			SPtr<CommandBuffer> CreateInternal(GpuQueueType queueType) override;
 
 			/**
 			 * Returns a set of command buffer semaphores depending on the provided sync mask.
@@ -91,7 +88,7 @@ namespace bs
 			 * Transfer buffers are automatically flushed (submitted) whenever a new (normal) command buffer is about to
 			 * execute.
 			 */
-			VulkanTransferBuffer* GetTransferBuffer(u32 deviceIdx, GpuQueueType type, u32 queueIdx);
+			VulkanTransferBuffer* GetTransferBuffer(u32 deviceIdx, GpuQueueUsage type, u32 queueIdx);
 
 			/** Submits all transfer command buffers, ensuring all queued transfer operations get executed. */
 			void FlushTransferBuffers(u32 deviceIdx);
@@ -100,7 +97,7 @@ namespace bs
 			/** Contains command buffers specific to one device. */
 			struct PerDeviceData
 			{
-				VulkanTransferBuffer TransferBuffers[GQT_COUNT][BS_MAX_QUEUES_PER_TYPE];
+				VulkanTransferBuffer TransferBuffers[GQT_COUNT][BS_MAX_QUEUES_PER_TYPE]; // TODO - Move this to VulkanQueue
 			};
 
 			PerDeviceData* mDeviceData;

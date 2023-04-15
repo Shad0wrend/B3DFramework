@@ -115,8 +115,8 @@ namespace bs
 
 			void SetName(const StringView& name) override;
 			void ReadData(u32 offset, u32 length, void* destination) override;
-			void WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
-			void CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) override;
+			void WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) override;
+			void CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer = false, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) override;
 
 			/**
 			 * Gets the resource wrapping the buffer object, on the specified device. If hardware buffer device mask doesn't

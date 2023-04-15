@@ -331,7 +331,7 @@ void RenderBeast::RenderAllCore(FrameTimings timings, PerFrameData perFrameData)
 	GetProfilerCPU().BeginSample("Render");
 
 	RenderAPI& renderAPI = GetRenderAPI();
-	SPtr<CommandBuffer> commandBuffer = renderAPI.GetMainCommandBuffer();
+	SPtr<GpuCommandBuffer> commandBuffer = renderAPI.GetMainCommandBuffer();
 	const SceneInfo& sceneInfo = mScene->GetSceneInfo();
 
 	// Note: I'm iterating over all sampler states every frame. If this ends up being a performance
@@ -410,7 +410,7 @@ void RenderBeast::RenderAllCore(FrameTimings timings, PerFrameData perFrameData)
 	GetProfilerCPU().EndSample("Render");
 }
 
-bool RenderBeast::RenderViews(const SPtr<CommandBuffer>& commandBuffer, RendererViewGroup& viewGroup, const FrameInfo& frameInfo)
+bool RenderBeast::RenderViews(const SPtr<GpuCommandBuffer>& commandBuffer, RendererViewGroup& viewGroup, const FrameInfo& frameInfo)
 {
 	bool needs3DRender = false;
 	u32 numViews = viewGroup.GetNumViews();
@@ -480,7 +480,7 @@ bool RenderBeast::RenderViews(const SPtr<CommandBuffer>& commandBuffer, Renderer
 	return anythingDrawn;
 }
 
-void RenderBeast::RenderView(const SPtr<CommandBuffer>& commandBuffer, const RendererViewGroup& viewGroup, RendererView& view, const FrameInfo& frameInfo)
+void RenderBeast::RenderView(const SPtr<GpuCommandBuffer>& commandBuffer, const RendererViewGroup& viewGroup, RendererView& view, const FrameInfo& frameInfo)
 {
 	GetProfilerCPU().BeginSample("Render view");
 
@@ -542,7 +542,7 @@ void RenderBeast::RenderView(const SPtr<CommandBuffer>& commandBuffer, const Ren
 	GetProfilerCPU().EndSample("Render view");
 }
 
-bool RenderBeast::RenderOverlay(const SPtr<CommandBuffer>& commandBuffer, RendererView& view, const FrameInfo& frameInfo)
+bool RenderBeast::RenderOverlay(const SPtr<GpuCommandBuffer>& commandBuffer, RendererView& view, const FrameInfo& frameInfo)
 {
 	GetProfilerCPU().BeginSample("Render overlay");
 
@@ -707,7 +707,7 @@ void RenderBeast::UpdateReflProbeArray()
 
 void RenderBeast::CaptureSceneCubeMap(const SPtr<Texture>& cubemap, const Vector3& position, const CaptureSettings& settings)
 {
-	const SPtr<CommandBuffer> commandBuffer = GetRenderAPI().GetMainCommandBuffer();
+	const SPtr<GpuCommandBuffer> commandBuffer = GetRenderAPI().GetMainCommandBuffer();
 
 	const SceneInfo& sceneInfo = mScene->GetSceneInfo();
 	auto& texProps = cubemap->GetProperties();

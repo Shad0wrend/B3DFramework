@@ -995,7 +995,7 @@ void VulkanTexture::CopyImageSubresourceToBuffer(VulkanInternalCommandBuffer* co
 	commandBuffer->MemoryBarrier(destinationBuffer->GetHandle(), VK_ACCESS_TRANSFER_WRITE_BIT, stagingAccessFlags, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_HOST_BIT);
 }
 
-void VulkanTexture::CopyInternal(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation, const SPtr<CommandBuffer>& commandBuffer)
+void VulkanTexture::CopyInternal(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation, const SPtr<GpuCommandBuffer>& commandBuffer)
 {
 	VulkanTexture* other = static_cast<VulkanTexture*>(target.get());
 
@@ -1025,7 +1025,7 @@ void VulkanTexture::CopyInternal(const SPtr<Texture>& target, const TextureCopyI
 	VulkanRenderAPI& renderAPI = GetVulkanRenderAPI();
 	VulkanInternalCommandBuffer* internalCommandBuffer = nullptr;
 	if (commandBuffer != nullptr)
-		internalCommandBuffer = static_cast<VulkanCommandBuffer*>(commandBuffer.get())->GetInternal();
+		internalCommandBuffer = static_cast<VulkanGpuCommandBuffer*>(commandBuffer.get())->GetInternal();
 	else
 		internalCommandBuffer = renderAPI.GetMainVulkanCommandBuffer()->GetInternal();
 
@@ -1125,7 +1125,7 @@ void VulkanTexture::CopyInternal(const SPtr<Texture>& target, const TextureCopyI
 	}
 }
 
-void VulkanTexture::BlitInternal(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation, const SPtr<CommandBuffer>& commandBuffer)
+void VulkanTexture::BlitInternal(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation, const SPtr<GpuCommandBuffer>& commandBuffer)
 {
 	VulkanTexture* other = static_cast<VulkanTexture*>(target.get());
 
@@ -1205,7 +1205,7 @@ void VulkanTexture::BlitInternal(const SPtr<Texture>& target, const TextureBlitI
 	VulkanRenderAPI& renderAPI = GetVulkanRenderAPI();
 	VulkanInternalCommandBuffer* internalCommandBuffer = nullptr;
 	if (commandBuffer != nullptr)
-		internalCommandBuffer = static_cast<VulkanCommandBuffer*>(commandBuffer.get())->GetInternal();
+		internalCommandBuffer = static_cast<VulkanGpuCommandBuffer*>(commandBuffer.get())->GetInternal();
 	else
 		internalCommandBuffer = renderAPI.GetMainVulkanCommandBuffer()->GetInternal();
 
@@ -1354,7 +1354,7 @@ void VulkanTexture::UnlockInternal()
 	mIsMapped = false;
 }
 
-TAsyncOp<SPtr<PixelData>> VulkanTexture::ReadDataAsync(u32 mipLevel, u32 face, const SPtr<CommandBuffer>& commandBuffer)
+TAsyncOp<SPtr<PixelData>> VulkanTexture::ReadDataAsync(u32 mipLevel, u32 face, const SPtr<GpuCommandBuffer>& commandBuffer)
 {
 	static constexpr u32 deviceIndex = 0;
 
@@ -1372,7 +1372,7 @@ TAsyncOp<SPtr<PixelData>> VulkanTexture::ReadDataAsync(u32 mipLevel, u32 face, c
 
 	VulkanInternalCommandBuffer* vulkanCommandBufffer;
 	if(commandBuffer != nullptr)
-		vulkanCommandBufffer = static_cast<VulkanCommandBuffer*>(commandBuffer.get())->GetInternal();
+		vulkanCommandBufffer = static_cast<VulkanGpuCommandBuffer*>(commandBuffer.get())->GetInternal();
 	else
 		vulkanCommandBufffer = vulkanBackend.GetMainVulkanCommandBuffer()->GetInternal();
 
@@ -1517,7 +1517,7 @@ void VulkanTexture::ReadDataInternal(PixelData& destination, u32 mipLevel, u32 f
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResRead, RenderStatObject_Texture);
 }
 
-void VulkanTexture::WriteDataInternal(const PixelData& source, u32 mipLevel, u32 face, bool discardWholeBuffer, const SPtr<CommandBuffer>& commandBuffer)
+void VulkanTexture::WriteDataInternal(const PixelData& source, u32 mipLevel, u32 face, bool discardWholeBuffer, const SPtr<GpuCommandBuffer>& commandBuffer)
 {
 	if(source.GetSize() == 0)
 		return;
@@ -1592,7 +1592,7 @@ void VulkanTexture::WriteDataInternal(const PixelData& source, u32 mipLevel, u32
 	stagingBuffer->Unmap();
 
 	VulkanInternalCommandBuffer* vulkanCommandBuffer = commandBuffer != nullptr
-		? static_cast<VulkanCommandBuffer*>(commandBuffer.get())->GetInternal()
+		? static_cast<VulkanGpuCommandBuffer*>(commandBuffer.get())->GetInternal()
 		: GetVulkanCommandBufferManager().GetTransferBuffer(0, GQT_GRAPHICS, 0)->GetInternalCommandBuffer();
 
 

@@ -372,7 +372,7 @@ void Texture::Initialize()
 	CoreObject::Initialize();
 }
 
-void Texture::WriteData(const PixelData& source, u32 mipLevel, u32 face, bool discardEntireBuffer, const SPtr<CommandBuffer>& commandBuffer)
+void Texture::WriteData(const PixelData& source, u32 mipLevel, u32 face, bool discardEntireBuffer, const SPtr<GpuCommandBuffer>& commandBuffer)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
@@ -407,7 +407,7 @@ void Texture::ReadData(PixelData& destination, u32 mipLevel, u32 face)
 	ReadDataInternal(pixelData, mipLevel, face);
 }
 
-TAsyncOp<SPtr<PixelData>> Texture::ReadDataAsync(u32 mipLevel, u32 face, const SPtr<CommandBuffer>& commandBuffer)
+TAsyncOp<SPtr<PixelData>> Texture::ReadDataAsync(u32 mipLevel, u32 face, const SPtr<GpuCommandBuffer>& commandBuffer)
 {
 	SPtr<PixelData> pixelData = GetProperties().AllocBuffer(face, mipLevel);
 
@@ -446,7 +446,7 @@ void Texture::Unlock()
 	UnlockInternal();
 }
 
-void Texture::Copy(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation, const SPtr<CommandBuffer>& commandBuffer)
+void Texture::Copy(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation, const SPtr<GpuCommandBuffer>& commandBuffer)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
@@ -563,7 +563,7 @@ void Texture::Copy(const SPtr<Texture>& target, const TextureCopyInformation& co
 	CopyInternal(target, copyInformation, commandBuffer);
 }
 
-void Texture::Blit(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation, const SPtr<CommandBuffer>& commandBuffer)
+void Texture::Blit(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation, const SPtr<GpuCommandBuffer>& commandBuffer)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
@@ -600,7 +600,7 @@ void Texture::Blit(const SPtr<Texture>& target, const TextureBlitInformation& bl
 	BlitInternal(target, blitInformation, commandBuffer);
 }
 
-void Texture::Clear(const Color& value, u32 mipLevel, u32 face, const SPtr<CommandBuffer>& commandBuffer)
+void Texture::Clear(const Color& value, u32 mipLevel, u32 face, const SPtr<GpuCommandBuffer>& commandBuffer)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
@@ -619,7 +619,7 @@ void Texture::Clear(const Color& value, u32 mipLevel, u32 face, const SPtr<Comma
 	ClearInternal(value, mipLevel, face, commandBuffer);
 }
 
-void Texture::ClearInternal(const Color& value, u32 mipLevel, u32 face, const SPtr<CommandBuffer>& commandBuffer)
+void Texture::ClearInternal(const Color& value, u32 mipLevel, u32 face, const SPtr<GpuCommandBuffer>& commandBuffer)
 {
 	SPtr<PixelData> data = mProperties.AllocBuffer(face, mipLevel);
 	data->SetColors(value);

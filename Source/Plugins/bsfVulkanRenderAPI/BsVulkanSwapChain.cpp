@@ -384,11 +384,11 @@ void VulkanSwapChain::Present(u32 imageIndex, VulkanQueue& queue, u32 syncMask)
 	if(imageLayout != VK_IMAGE_LAYOUT_PRESENT_SRC_KHR)
 	{
 		VulkanGpuDevice& device = queue.GetDevice();
-		VulkanCommandBufferPool& commandBufferPool = GetVulkanSubmitThread().GetCommandBufferPool(device.GetIndex());
+		VulkanGpuCommandBufferPool& commandBufferPool = GetVulkanSubmitThread().GetCommandBufferPool(device.GetIndex(), queue.GetType());
 
 		const u32 queueFamily = device.GetQueueFamily(queue.GetType());
 
-		VulkanInternalCommandBuffer* const commandBuffer = commandBufferPool.GetBuffer(queueFamily);
+		VulkanInternalCommandBuffer* const commandBuffer = commandBufferPool.GetBuffer();
 		commandBuffer->SetName("Swap chain image layout transition");
 
 		VkCommandBuffer vkCommandBuffer = commandBuffer->GetHandle();
@@ -424,7 +424,7 @@ void VulkanSwapChain::Present(u32 imageIndex, VulkanQueue& queue, u32 syncMask)
 	syncMask &= ~queueMask;
 
 	const u32 deviceIndex = presentDevice.GetIndex();
-	VulkanCommandBufferManager& commandBufferManager = static_cast<VulkanCommandBufferManager&>(CommandBufferManager::Instance());
+	VulkanCommandBufferManager& commandBufferManager = GetVulkanCommandBufferManager();
 
 	u32 semaphoreCount;
 	commandBufferManager.GetSyncSemaphores(deviceIndex, syncMask, mSemaphoresBuffer, semaphoreCount);

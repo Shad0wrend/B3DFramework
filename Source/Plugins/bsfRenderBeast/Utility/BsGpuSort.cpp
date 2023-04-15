@@ -114,7 +114,7 @@ void RadixSortClearMat::InitDefinesInternal(ShaderDefines& defines)
 	InitCommonDefines(defines);
 }
 
-void RadixSortClearMat::Execute(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& outputOffsets)
+void RadixSortClearMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& outputOffsets)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -135,7 +135,7 @@ void RadixSortCountMat::InitDefinesInternal(ShaderDefines& defines)
 	InitCommonDefines(defines);
 }
 
-void RadixSortCountMat::Execute(CommandBuffer& commandBuffer, u32 numGroups, const SPtr<GpuBuffer>& params, const SPtr<GpuBuffer>& inputKeys, const SPtr<GpuBuffer>& outputOffsets)
+void RadixSortCountMat::Execute(GpuCommandBuffer& commandBuffer, u32 numGroups, const SPtr<GpuBuffer>& params, const SPtr<GpuBuffer>& inputKeys, const SPtr<GpuBuffer>& outputOffsets)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -159,7 +159,7 @@ void RadixSortPrefixScanMat::InitDefinesInternal(ShaderDefines& defines)
 	InitCommonDefines(defines);
 }
 
-void RadixSortPrefixScanMat::Execute(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& params, const SPtr<GpuBuffer>& inputCounts, const SPtr<GpuBuffer>& outputOffsets)
+void RadixSortPrefixScanMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& params, const SPtr<GpuBuffer>& inputCounts, const SPtr<GpuBuffer>& outputOffsets)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -186,7 +186,7 @@ void RadixSortReorderMat::InitDefinesInternal(ShaderDefines& defines)
 	InitCommonDefines(defines);
 }
 
-void RadixSortReorderMat::Execute(CommandBuffer& commandBuffer, u32 numGroups, const SPtr<GpuBuffer>& params, const SPtr<GpuBuffer>& inputPrefix, const GpuSortBuffers& buffers, u32 inputBufferIdx)
+void RadixSortReorderMat::Execute(GpuCommandBuffer& commandBuffer, u32 numGroups, const SPtr<GpuBuffer>& params, const SPtr<GpuBuffer>& inputPrefix, const GpuSortBuffers& buffers, u32 inputBufferIdx)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -210,7 +210,7 @@ GpuSort::GpuSort()
 	mHelperBuffers[1] = CreateHelperBuffer();
 }
 
-u32 GpuSort::Sort(CommandBuffer& commandBuffer, const GpuSortBuffers& buffers, u32 numKeys, u32 keyMask)
+u32 GpuSort::Sort(GpuCommandBuffer& commandBuffer, const GpuSortBuffers& buffers, u32 numKeys, u32 keyMask)
 {
 	// Nothing to do if no input or output key buffers
 	if(buffers.Keys[0] == nullptr || buffers.Keys[1] == nullptr)
@@ -303,7 +303,7 @@ GpuSortBuffers GpuSort::CreateSortBuffers(u32 numElements, bool values)
 // just make sure to run the test below if you modify any of the GpuSort code.
 void RunSortTest()
 {
-	SPtr<CommandBuffer> commandBuffer = GetRenderAPI().GetMainCommandBuffer();
+	SPtr<GpuCommandBuffer> commandBuffer = GetRenderAPI().GetMainCommandBuffer();
 
 	// Generate test keys
 	static constexpr u32 kNumInputKeys = 10000;

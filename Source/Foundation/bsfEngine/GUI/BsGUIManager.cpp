@@ -1618,7 +1618,7 @@ void GUIRenderer::Render(const Camera& camera, const RendererViewContext& viewCo
 	float invViewportHeight = 1.0f / (camera.GetViewport()->GetPixelArea().Height * 0.5f);
 	bool viewflipYFlip = GetGpuDeviceCapabilities().Conventions.NdcYAxis == GpuBackendConventions::Axis::Down;
 
-	CommandBuffer& commandBuffer = *viewContext.CommandBuffer;
+	GpuCommandBuffer& commandBuffer = *viewContext.CommandBuffer;
 	for(auto& widget : widgetRenderData)
 	{
 		for(auto& drawGroup : widget.DrawGroups)

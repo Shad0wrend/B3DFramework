@@ -16,7 +16,7 @@ namespace bs
 		class VulkanQueue
 		{
 		public:
-			VulkanQueue(VulkanGpuDevice& device, VkQueue queue, GpuQueueType type, u32 index);
+			VulkanQueue(VulkanGpuDevice& device, VkQueue queue, GpuQueueUsage type, u32 index);
 
 			/** Returns the internal handle to the Vulkan queue object. */
 			VkQueue GetHandle() const { return mQueue; }
@@ -25,7 +25,7 @@ namespace bs
 			VulkanGpuDevice& GetDevice() const { return mDevice; }
 
 			/** Returns the type of the queue. */
-			GpuQueueType GetType() const { return mType; }
+			GpuQueueUsage GetType() const { return mType; }
 
 			/** Returns the unique index of the queue, for its type. */
 			u32 GetIndex() const { return mIndex; }
@@ -154,7 +154,7 @@ namespace bs
 
 			VulkanGpuDevice& mDevice;
 			VkQueue mQueue;
-			GpuQueueType mType;
+			GpuQueueUsage mType;
 			u32 mIndex;
 			VkPipelineStageFlags mSubmitDstWaitMask[BS_MAX_UNIQUE_QUEUES];
 

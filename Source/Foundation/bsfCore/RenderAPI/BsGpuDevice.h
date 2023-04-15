@@ -6,6 +6,12 @@
 
 namespace bs
 {
+	namespace ct
+	{
+		struct GpuCommandBufferPoolCreateInformation;
+		class GpuCommandBufferPool;
+	}
+
 	struct GpuPipelineParameterLayoutCreateInformation;
 	struct GpuProgramBytecode;
 	struct GpuBufferCreateInformation;
@@ -44,6 +50,9 @@ namespace bs
 		 * quicker compilation/creation of GPU programs.
 		 */
 		virtual SPtr<GpuProgramBytecode> CompileGpuProgramBytecode(const GpuProgramCreateInformation& createInformation) const = 0;
+
+		/** Creates a new command buffer pool that may be used for allocating new command buffers.  */
+		virtual SPtr<ct::GpuCommandBufferPool> CreateGpuCommandBufferPool(const ct::GpuCommandBufferPoolCreateInformation& createInformation) = 0;
 
 		/**
 		 * Creates a new GPU buffer.

@@ -160,14 +160,14 @@ namespace bs
 			 * @param	gbuffer		Populated GBuffer with depths and normals.
 			 * @param	dt			Time step to advance the simulation by.
 			 */
-			void Simulate(CommandBuffer& commandBuffer, const SceneInfo& sceneInfo, const ParticlePerFrameData* simData, const SPtr<GpuBuffer>& viewParams, const GBufferTextures& gbuffer, float dt);
+			void Simulate(GpuCommandBuffer& commandBuffer, const SceneInfo& sceneInfo, const ParticlePerFrameData* simData, const SPtr<GpuBuffer>& viewParams, const GBufferTextures& gbuffer, float dt);
 
 			/**
 			 * Sorts the particle systems for the provided view. Only sorts systems using distance based sorting and only
 			 * works on systems supporting compute. Sort results are written to a global buffer accessible through
 			 * getResources(), with offsets into the buffer written into particle system objects in @p sceneInfo.
 			 */
-			void Sort(CommandBuffer& commandBuffer, const RendererView& view);
+			void Sort(GpuCommandBuffer& commandBuffer, const RendererView& view);
 
 			/** Returns textures used for storing particle data. */
 			GpuParticleResources& GetResources() const;
@@ -177,10 +177,10 @@ namespace bs
 			void PrepareBuffers(const GpuParticleSystem* system, const RendererParticles& rendererInfo);
 
 			/** Clears out all the areas in particle textures as marked by the provided tiles to their default values. */
-			void ClearTiles(CommandBuffer& commandBuffer, const Vector<u32>& tiles);
+			void ClearTiles(GpuCommandBuffer& commandBuffer, const Vector<u32>& tiles);
 
 			/** Inserts the provided set of particles into the particle textures. */
-			void InjectParticles(CommandBuffer& commandBuffer, const Vector<GpuParticle>& particles);
+			void InjectParticles(GpuCommandBuffer& commandBuffer, const Vector<GpuParticle>& particles);
 
 			Pimpl* m;
 		};
@@ -225,7 +225,7 @@ namespace bs
 			 * Injects all the newly added pixels into the curve texture (since the last call to this method). Should be
 			 * called after alloc() has been called for all new entries, but before the texture is used for reading.
 			 */
-			void ApplyChanges(CommandBuffer& commandBuffer);
+			void ApplyChanges(GpuCommandBuffer& commandBuffer);
 
 			/** Returns the internal texture the curve data is written to. */
 			const SPtr<Texture>& GetTexture() const { return mCurveTexture; }

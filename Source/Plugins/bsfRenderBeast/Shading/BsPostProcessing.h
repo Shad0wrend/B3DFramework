@@ -46,7 +46,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Renders the post-process effect with the provided parameters. */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<RenderTarget>& output);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<RenderTarget>& output);
 
 			/** Returns the texture descriptor that can be used for initializing the output render target. */
 			static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& target);
@@ -77,7 +77,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Executes the post-process effect with the provided parameters. */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<Texture>& output, const AutoExposureSettings& settings);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<Texture>& output, const AutoExposureSettings& settings);
 
 			/** Returns the texture descriptor that can be used for initializing the output render target. */
 			static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& target);
@@ -121,7 +121,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Executes the post-process effect with the provided parameters. */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& sceneColor, const SPtr<Texture>& histogram, const SPtr<Texture>& prevFrame, const SPtr<RenderTarget>& output);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& sceneColor, const SPtr<Texture>& histogram, const SPtr<Texture>& prevFrame, const SPtr<RenderTarget>& output);
 
 			/** Returns the texture descriptor that can be used for initializing the output render target. */
 			static POOLED_RENDER_TEXTURE_DESC GetOutputDesc();
@@ -149,7 +149,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Executes the post-process effect with the provided parameters. */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& reducedHistogram, const SPtr<RenderTarget>& output, float frameDelta, const AutoExposureSettings& settings, float exposureScale);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& reducedHistogram, const SPtr<RenderTarget>& output, float frameDelta, const AutoExposureSettings& settings, float exposureScale);
 
 			/** Returns the texture descriptor that can be used for initializing the output render target. */
 			static POOLED_RENDER_TEXTURE_DESC GetOutputDesc();
@@ -181,7 +181,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Executes the post-process effect with the provided parameters. */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<RenderTarget>& output, float frameDelta, const AutoExposureSettings& settings, float exposureScale);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<RenderTarget>& output, float frameDelta, const AutoExposureSettings& settings, float exposureScale);
 
 			/** Returns the texture descriptor that can be used for initializing the output render target. */
 			static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& input);
@@ -210,7 +210,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Executes the post-process effect with the provided parameters. */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& curFrame, const SPtr<Texture>& prevFrame, const SPtr<RenderTarget>& output, float frameDelta, const AutoExposureSettings& settings, float exposureScale);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& curFrame, const SPtr<Texture>& prevFrame, const SPtr<RenderTarget>& output, float frameDelta, const AutoExposureSettings& settings, float exposureScale);
 
 			/** Returns the texture descriptor that can be used for initializing the output render target. */
 			static POOLED_RENDER_TEXTURE_DESC GetOutputDesc();
@@ -251,7 +251,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Executes the post-process effect with the provided parameters, generating an unwrapped 2D LUT using the vertex & fragment shader pipeline. */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<RenderTexture>& output, const RenderSettings& settings);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTexture>& output, const RenderSettings& settings);
 
 			/** Returns the texture descriptor that can be used for initializing the output render target. */
 			POOLED_RENDER_TEXTURE_DESC GetOutputDesc() const;
@@ -280,7 +280,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Executes the post-process effect with the provided parameters, generating a 3D LUT using a compute shader. */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& output, const RenderSettings& settings);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& output, const RenderSettings& settings);
 
 			/** Returns the texture descriptor that can be used for initializing the output render target. */
 			POOLED_RENDER_TEXTURE_DESC GetOutputDesc() const;
@@ -327,7 +327,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Executes the post-process effect with the provided parameters. */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& sceneColor, const SPtr<Texture>& eyeAdaptation, const SPtr<Texture>& bloom, const SPtr<Texture>& colorLUT, const SPtr<RenderTarget>& output, const RenderSettings& settings);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& sceneColor, const SPtr<Texture>& eyeAdaptation, const SPtr<Texture>& bloom, const SPtr<Texture>& colorLUT, const SPtr<RenderTarget>& output, const RenderSettings& settings);
 
 			/** Returns the material variation matching the provided parameters. */
 			static TonemappingMat* GetVariation(bool volumeLUT, bool gammaOnly, bool autoExposure, bool MSAA);
@@ -379,7 +379,7 @@ namespace bs
 			 * @param	settings		Render settings for the current view.
 			 * @param	output			Render target to write the results to.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, float threshold, const SPtr<Texture>& eyeAdaptation, const RenderSettings& settings, const SPtr<RenderTarget>& output);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, float threshold, const SPtr<Texture>& eyeAdaptation, const RenderSettings& settings, const SPtr<RenderTarget>& output);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -439,7 +439,7 @@ namespace bs
 			 * @param	settings		Settings used for customizing the effect.
 			 * @param	output			Render target to write the results to.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, const ScreenSpaceLensFlareSettings& settings, const SPtr<RenderTarget>& output);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const ScreenSpaceLensFlareSettings& settings, const SPtr<RenderTarget>& output);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -497,7 +497,7 @@ namespace bs
 			 * @param	settings		Settings used for customizing the effect.
 			 * @param	output			Render target to write the results to.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, const ChromaticAberrationSettings& settings, const SPtr<RenderTarget>& output);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const ChromaticAberrationSettings& settings, const SPtr<RenderTarget>& output);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -539,7 +539,7 @@ namespace bs
 			 * @param	settings		Settings used for customizing the effect.
 			 * @param	output			Render target to write the results to.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, float time, const FilmGrainSettings& settings, const SPtr<RenderTarget>& output);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, float time, const FilmGrainSettings& settings, const SPtr<RenderTarget>& output);
 
 		private:
 			SPtr<GpuBuffer> mParamBuffer;
@@ -597,7 +597,7 @@ namespace bs
 			 *							in filtering). Only used if using the variation of this shader that supports additive
 			 *							input.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, float filterSize, const SPtr<RenderTexture>& destination, const Color& tint = Color::kWhite, const SPtr<Texture>& additive = nullptr);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, float filterSize, const SPtr<RenderTexture>& destination, const Color& tint = Color::kWhite, const SPtr<Texture>& additive = nullptr);
 
 			/**
 			 * Populates the provided parameter buffer with parameters required for a shader including gaussian blur.
@@ -675,7 +675,7 @@ namespace bs
 			 * @param	view			View through which the depth of field effect is viewed.
 			 * @param	settings		Settings used to control depth of field rendering.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& color, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& color, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings);
 
 			/**
 			 * Returns the texture generated after the shader was executed. Only valid to call this in-between calls to
@@ -746,7 +746,7 @@ namespace bs
 			 * @param	view			View through which the depth of field effect is viewed.
 			 * @param	settings		Settings used to control depth of field rendering.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& focused, const SPtr<Texture>& near, const SPtr<Texture>& far, const SPtr<Texture>& depth, const SPtr<RenderTarget>& output, const RendererView& view, const DepthOfFieldSettings& settings);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& focused, const SPtr<Texture>& near, const SPtr<Texture>& far, const SPtr<Texture>& depth, const SPtr<RenderTarget>& output, const RendererView& view, const DepthOfFieldSettings& settings);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -814,7 +814,7 @@ namespace bs
 			 * @param	settings		Settings used to control depth of field rendering.
 			 * @param	output			Texture to output the results to.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings, const SPtr<RenderTarget>& output);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings, const SPtr<RenderTarget>& output);
 
 			/** Returns the texture descriptor that can be used for initializing the output render target. */
 			static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& target);
@@ -874,7 +874,7 @@ namespace bs
 			 * @param	settings		Settings used to control depth of field rendering.
 			 * @param	output			Texture to output the results to.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, const RendererView& view, const DepthOfFieldSettings& settings, const SPtr<RenderTarget>& output);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const RendererView& view, const DepthOfFieldSettings& settings, const SPtr<RenderTarget>& output);
 
 			/** Returns the texture descriptor that can be used for initializing the output render target. */
 			static POOLED_RENDER_TEXTURE_DESC GetOutputDesc(const SPtr<Texture>& target);
@@ -934,7 +934,7 @@ namespace bs
 			 * @param	settings		Settings used to control depth of field rendering.
 			 * @param	output			Texture to output the results to.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& unfocused, const SPtr<Texture>& focused, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings, const SPtr<RenderTarget>& output);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& unfocused, const SPtr<Texture>& focused, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings, const SPtr<RenderTarget>& output);
 
 			/** Returns the material variation matching the provided parameters. */
 			static BokehDOFCombineMat* GetVariation(MSAAMode msaaMode);
@@ -970,7 +970,7 @@ namespace bs
 			 * @param	settings		Settings used to control the motion blur effect.
 			 * @param	output			Texture to output the results to.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view, const MotionBlurSettings& settings, const SPtr<RenderTarget>& output);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view, const MotionBlurSettings& settings, const SPtr<RenderTarget>& output);
 
 		private:
 			SPtr<GpuBuffer> mParamBuffer;
@@ -1017,7 +1017,7 @@ namespace bs
 			 * @param	dstRect			Destination rectangle to limit the writes to.
 			 * @param	output			Output target to which to write to results.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 srcMip, const Rect2& srcRect, const Rect2& dstRect, const SPtr<RenderTexture>& output);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 srcMip, const Rect2& srcRect, const Rect2& dstRect, const SPtr<RenderTexture>& output);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -1055,7 +1055,7 @@ namespace bs
 			 * @param	source			Input texture to apply FXAA to.
 			 * @param	destination		Output target to which to write the antialiased image to.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, const SPtr<RenderTarget>& destination);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, const SPtr<RenderTarget>& destination);
 
 		private:
 			SPtr<GpuBuffer> mParamBuffer;
@@ -1127,7 +1127,7 @@ namespace bs
 			 * @param	destination		Output texture to which to write the ambient occlusion data to.
 			 * @param	settings		Settings used to control the ambient occlusion effect.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const RendererView& view, const SSAOTextureInputs& textures, const SPtr<RenderTexture>& destination, const AmbientOcclusionSettings& settings);
+			void Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SSAOTextureInputs& textures, const SPtr<RenderTexture>& destination, const AmbientOcclusionSettings& settings);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -1179,7 +1179,7 @@ namespace bs
 			 * @param	destination		Output texture to which to write the downsampled data to.
 			 * @param	depthRange		Valid depth range (in view space) within which nearby samples will be averaged.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& sceneDepth, const SPtr<Texture>& sceneNormals, const SPtr<RenderTexture>& destination, float depthRange);
+			void Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& sceneDepth, const SPtr<Texture>& sceneNormals, const SPtr<RenderTexture>& destination, float depthRange);
 
 		private:
 			SPtr<GpuBuffer> mParamBuffer;
@@ -1226,7 +1226,7 @@ namespace bs
 			 * @param	destination		Output texture to which to write the blurred data to.
 			 * @param	depthRange		Valid depth range (in view space) within which nearby samples will be averaged.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& ao, const SPtr<Texture>& sceneDepth, const SPtr<RenderTexture>& destination, float depthRange);
+			void Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& ao, const SPtr<Texture>& sceneDepth, const SPtr<RenderTexture>& destination, float depthRange);
 
 			/** Returns the material variation matching the provided parameters. */
 			static SSAOBlurMat* GetVariation(bool horizontal);
@@ -1271,7 +1271,7 @@ namespace bs
 			 * @param	gbuffer			GBuffer textures.
 			 * @param	settings		Parameters used for controlling the SSR effect.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const RendererView& view, GBufferTextures gbuffer, const ScreenSpaceReflectionsSettings& settings);
+			void Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, GBufferTextures gbuffer, const ScreenSpaceReflectionsSettings& settings);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -1332,7 +1332,7 @@ namespace bs
 			 * @param	settings		Parameters used for controling the SSR effect.
 			 * @param	destination		Render target to which to write the results to.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const RendererView& view, GBufferTextures gbuffer, const SPtr<Texture>& sceneColor, const SPtr<Texture>& hiZ, const ScreenSpaceReflectionsSettings& settings, const SPtr<RenderTarget>& destination);
+			void Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, GBufferTextures gbuffer, const SPtr<Texture>& sceneColor, const SPtr<Texture>& hiZ, const ScreenSpaceReflectionsSettings& settings, const SPtr<RenderTarget>& destination);
 
 			/**
 			 * Calculates a scale & bias that is used for transforming roughness into a fade out value. Anything that is below
@@ -1421,7 +1421,7 @@ namespace bs
 			 * @param	exposure		Exposure to use when transforming from HDR to LDR image.
 			 * @param	destination		Render target to which to write the results to.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& prevFrame, const SPtr<Texture>& curFrame, const SPtr<Texture>& velocity, const SPtr<Texture>& sceneDepth, const Vector2& jitter, float exposure, const SPtr<RenderTarget>& destination);
+			void Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& prevFrame, const SPtr<Texture>& curFrame, const SPtr<Texture>& velocity, const SPtr<Texture>& sceneDepth, const Vector2& jitter, float exposure, const SPtr<RenderTarget>& destination);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -1476,7 +1476,7 @@ namespace bs
 			 *							be encoded to 0.
 			 * @param	output			Output texture to write the results in. Results will be written in the alpha channel.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& depth, float near, float far, const SPtr<RenderTarget>& output);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& depth, float near, float far, const SPtr<RenderTarget>& output);
 
 		private:
 			SPtr<GpuBuffer> mParamBuffer;
@@ -1512,7 +1512,7 @@ namespace bs
 			 * @param	view			Information about the view we're rendering from.
 			 * @param	gbuffer			GBuffer textures.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const RendererView& view, GBufferTextures gbuffer);
+			void Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, GBufferTextures gbuffer);
 
 			/** Returns the material variation matching the provided parameters. */
 			static MSAACoverageMat* GetVariation(u32 msaaCount);
@@ -1541,7 +1541,7 @@ namespace bs
 			 * @param	view			Information about the view we're rendering from.
 			 * @param	coverage		Coverage texture as output by MSAACoverageMat.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& coverage);
+			void Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& coverage);
 
 		private:
 			GpuParameterSampledTexture mCoverageTexParam;

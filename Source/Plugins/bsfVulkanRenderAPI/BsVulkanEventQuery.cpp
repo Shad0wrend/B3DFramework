@@ -56,7 +56,7 @@ VulkanEventQuery::~VulkanEventQuery()
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResDestroyed, RenderStatObject_Query);
 }
 
-void VulkanEventQuery::Begin(const SPtr<CommandBuffer>& cb)
+void VulkanEventQuery::Begin(const SPtr<GpuCommandBuffer>& cb)
 {
 	if(mEvent != nullptr)
 	{
@@ -75,11 +75,11 @@ void VulkanEventQuery::Begin(const SPtr<CommandBuffer>& cb)
 	else // Create new event
 		mEvent = mDevice.GetResourceManager().Create<VulkanEvent>();
 
-	VulkanCommandBuffer* vulkanCB;
+	VulkanGpuCommandBuffer* vulkanCB;
 	if(cb != nullptr)
-		vulkanCB = static_cast<VulkanCommandBuffer*>(cb.get());
+		vulkanCB = static_cast<VulkanGpuCommandBuffer*>(cb.get());
 	else
-		vulkanCB = static_cast<VulkanCommandBuffer*>(GetVulkanRenderAPI().GetMainVulkanCommandBuffer());
+		vulkanCB = static_cast<VulkanGpuCommandBuffer*>(GetVulkanRenderAPI().GetMainVulkanCommandBuffer());
 
 	VulkanInternalCommandBuffer* internalCB = vulkanCB->GetInternal();
 	internalCB->RegisterResource(mEvent, VulkanAccessFlag::Read);

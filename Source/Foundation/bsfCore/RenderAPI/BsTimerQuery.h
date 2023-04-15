@@ -26,13 +26,13 @@ namespace bs
 			 * any commands queued after it on the same command buffer. Must be followed by an End() call. You are
 			 * not allowed to call this again until the query completes, at which point it can be re-scheduled.
 			 */
-			virtual void Begin(const SPtr<CommandBuffer>& cb = nullptr) = 0;
+			virtual void Begin(const SPtr<GpuCommandBuffer>& cb = nullptr) = 0;
 
 			/**
 			 * Schedules the query end in the command buffer. Any commands past this call will not be measured
 			 * by the query. Must be preceded by Begin().
 			 */
-			virtual void End(const SPtr<CommandBuffer>& cb = nullptr) = 0;
+			virtual void End(const SPtr<GpuCommandBuffer>& cb = nullptr) = 0;
 
 			/**	Checks if query results are ready. */
 			virtual bool IsReady() const = 0;

@@ -62,7 +62,7 @@ namespace bs
 			 * @param	mesh			Mesh to render.
 			 * @param	output			Output texture created using the descriptor returned by getOutputDesc().
 			 */
-			void Execute(CommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& sceneDepth, const SPtr<Mesh>& mesh, const SPtr<RenderTexture>& output);
+			void Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& sceneDepth, const SPtr<Mesh>& mesh, const SPtr<RenderTexture>& output);
 
 			/**
 			 * Returns the descriptors that can be used for creating the output render texture for this material. The render
@@ -127,7 +127,7 @@ namespace bs
 			 * @param	output				Output texture to write the radiance to. The evaluated value will be added to
 			 *								existing radiance in the texture, using blending.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const RendererView& view, const GBufferTextures& gbuffer, const SPtr<Texture>& lightProbeIndices, const LightProbesInfo& lightProbesInfo, const Skybox* skybox, const SPtr<Texture>& ambientOcclusion, const SPtr<RenderTexture>& output);
+			void Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const GBufferTextures& gbuffer, const SPtr<Texture>& lightProbeIndices, const LightProbesInfo& lightProbesInfo, const Skybox* skybox, const SPtr<Texture>& ambientOcclusion, const SPtr<RenderTexture>& output);
 
 			/**
 			 * Returns the material variation matching the provided parameters.

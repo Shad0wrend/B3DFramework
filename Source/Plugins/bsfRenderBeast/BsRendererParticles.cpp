@@ -95,7 +95,7 @@ void WriteIndices(GpuBuffer* buffer, const Vector<u32>& input, u32 texSize)
 	B3DStackFree(indices);
 }
 
-void ParticlesRenderElement::Draw(CommandBuffer& commandBuffer) const
+void ParticlesRenderElement::Draw(GpuCommandBuffer& commandBuffer) const
 {
 	if(NumParticles > 0)
 	{
@@ -429,7 +429,7 @@ ParticleRenderer::~ParticleRenderer()
 	B3DDelete(m);
 }
 
-void ParticleRenderer::DrawBillboards(CommandBuffer& commandBuffer, u32 count)
+void ParticleRenderer::DrawBillboards(GpuCommandBuffer& commandBuffer, u32 count)
 {
 	SPtr<GpuBuffer> vertexBuffers[] = { m->BillboardVb };
 

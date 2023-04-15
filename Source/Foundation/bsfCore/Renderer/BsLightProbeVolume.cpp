@@ -226,7 +226,7 @@ void LightProbeVolume::RunRenderProbeTask()
 	SPtr<ct::LightProbeVolume> coreProbeVolume = GetCore();
 	auto renderProbes = [coreProbeVolume]()
 	{
-		SPtr<ct::CommandBuffer> commandBuffer = ct::GetRenderAPI().GetMainCommandBuffer();
+		SPtr<ct::GpuCommandBuffer> commandBuffer = ct::GetRenderAPI().GetMainCommandBuffer();
 
 		return coreProbeVolume->RenderProbes(*commandBuffer, 3);
 	};
@@ -441,7 +441,7 @@ void LightProbeVolume::Initialize()
 	CoreObject::Initialize();
 }
 
-bool LightProbeVolume::RenderProbes(CommandBuffer& commandBuffer, u32 maxProbes)
+bool LightProbeVolume::RenderProbes(GpuCommandBuffer& commandBuffer, u32 maxProbes)
 {
 	// Probe map only contains active probes
 	u32 numUsedProbes = (u32)mProbeMap.size();

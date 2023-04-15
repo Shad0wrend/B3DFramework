@@ -174,20 +174,20 @@ RendererUtility::RendererUtility()
 	}
 }
 
-void RendererUtility::SetPass(CommandBuffer& commandBuffer, const SPtr<Material>& material, u32 passIdx, u32 techniqueIdx)
+void RendererUtility::SetPass(GpuCommandBuffer& commandBuffer, const SPtr<Material>& material, u32 passIdx, u32 techniqueIdx)
 {
 	const SPtr<Pass>& pass = material->GetPass(passIdx, techniqueIdx);
 	commandBuffer.SetGpuGraphicsPipelineState(pass->GetGraphicsPipelineState());
 	commandBuffer.SetStencilReferenceValue(pass->GetStencilRefValue());
 }
 
-void RendererUtility::SetComputePass(CommandBuffer& commandBuffer, const SPtr<Material>& material, u32 passIdx)
+void RendererUtility::SetComputePass(GpuCommandBuffer& commandBuffer, const SPtr<Material>& material, u32 passIdx)
 {
 	const SPtr<Pass>& pass = material->GetPass(passIdx);
 	commandBuffer.SetGpuComputePipelineState(pass->GetComputePipelineState());
 }
 
-void RendererUtility::SetPassParams(CommandBuffer& commandBuffer, const SPtr<GpuParamsSet>& params, u32 passIdx)
+void RendererUtility::SetPassParams(GpuCommandBuffer& commandBuffer, const SPtr<GpuParamsSet>& params, u32 passIdx)
 {
 	const SPtr<GpuParameters>& gpuParams = params->GetGpuParams(passIdx);
 	if(gpuParams == nullptr)
@@ -196,12 +196,12 @@ void RendererUtility::SetPassParams(CommandBuffer& commandBuffer, const SPtr<Gpu
 	commandBuffer.SetGpuParameters(gpuParams);
 }
 
-void RendererUtility::Draw(CommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, u32 numInstances)
+void RendererUtility::Draw(GpuCommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, u32 numInstances)
 {
 	Draw(commandBuffer, mesh, mesh->GetProperties().SubMeshes[0], numInstances);
 }
 
-void RendererUtility::Draw(CommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u32 numInstances)
+void RendererUtility::Draw(GpuCommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u32 numInstances)
 {
 	SPtr<VertexData> vertexData = mesh->GetVertexData();
 
@@ -242,7 +242,7 @@ void RendererUtility::Draw(CommandBuffer& commandBuffer, const SPtr<MeshBase>& m
 	mesh->NotifyUsedOnGPU();
 }
 
-void RendererUtility::DrawMorph(CommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, const SPtr<GpuBuffer>& morphVertices, const SPtr<VertexDescription>& morphVertexDescription)
+void RendererUtility::DrawMorph(GpuCommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, const SPtr<GpuBuffer>& morphVertices, const SPtr<VertexDescription>& morphVertexDescription)
 {
 	// Bind buffers and draw
 	SPtr<VertexData> vertexData = mesh->GetVertexData();
@@ -282,7 +282,7 @@ void RendererUtility::DrawMorph(CommandBuffer& commandBuffer, const SPtr<MeshBas
 	mesh->NotifyUsedOnGPU();
 }
 
-void RendererUtility::Blit(CommandBuffer& commandBuffer, const SPtr<Texture>& texture, const Rect2I& area, bool flipUV, bool isDepth, bool isFiltered)
+void RendererUtility::Blit(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& texture, const Rect2I& area, bool flipUV, bool isDepth, bool isFiltered)
 {
 	auto& texProps = texture->GetProperties();
 
@@ -299,7 +299,7 @@ void RendererUtility::Blit(CommandBuffer& commandBuffer, const SPtr<Texture>& te
 	blitMat->Execute(commandBuffer, texture, fArea, flipUV);
 }
 
-void RendererUtility::DrawScreenQuad(CommandBuffer& commandBuffer, const Rect2& uv, const Vector2I& textureSize, u32 numInstances, bool flipUV)
+void RendererUtility::DrawScreenQuad(GpuCommandBuffer& commandBuffer, const Rect2& uv, const Vector2I& textureSize, u32 numInstances, bool flipUV)
 {
 	// Note: Consider drawing the quad using a single large triangle for possibly better performance
 	// Note2: Consider setting quad size in shader instead of rebuilding the mesh every time
@@ -372,7 +372,7 @@ void RendererUtility::DrawScreenQuad(CommandBuffer& commandBuffer, const Rect2& 
 	mNextQuadVBSlot = (mNextQuadVBSlot + 1) % kNumQuadVbSlots;
 }
 
-void RendererUtility::Clear(CommandBuffer& commandBuffer, u32 value)
+void RendererUtility::Clear(GpuCommandBuffer& commandBuffer, u32 value)
 {
 	ClearMat* clearMat = ClearMat::Get();
 	clearMat->Execute(commandBuffer, value);
@@ -389,7 +389,7 @@ void BlitMat::Initialize()
 	mIsFiltered = mVariationParameters.GetInt("MODE") == 1;
 }
 
-void BlitMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, const Rect2& area, bool flipUV)
+void BlitMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, const Rect2& area, bool flipUV)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -450,7 +450,7 @@ void ClearMat::Initialize()
 	mGPUParameters->SetUniformBuffer("Params", mParamBuffer);
 }
 
-void ClearMat::Execute(CommandBuffer& commandBuffer, u32 value)
+void ClearMat::Execute(GpuCommandBuffer& commandBuffer, u32 value)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -470,7 +470,7 @@ void CompositeMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gSource", mSourceTex);
 }
 
-void CompositeMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint)
+void CompositeMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -496,7 +496,7 @@ void BicubicUpsampleMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gSource", mSourceTex);
 }
 
-void BicubicUpsampleMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint)
+void BicubicUpsampleMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint)
 {
 	BS_RENMAT_PROFILE_BLOCK
 

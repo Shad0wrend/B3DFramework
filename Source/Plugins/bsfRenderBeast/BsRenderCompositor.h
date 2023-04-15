@@ -28,7 +28,7 @@ namespace bs
 				: ViewGroup(viewGroup), View(view), Scene(scene), Options(options), FrameInfo(frameInfo), FeatureSet(featureSet)
 			{}
 
-			SPtr<CommandBuffer> ActiveCommandBuffer;
+			SPtr<GpuCommandBuffer> ActiveCommandBuffer;
 
 			const RendererViewGroup& ViewGroup;
 			const RendererView& View;
@@ -243,7 +243,7 @@ namespace bs
 			SPtr<RenderTexture> RenderTarget;
 
 			/** Converts MSAA data from the texture array into the MSAA texture. */
-			void MsaaTexArrayToTexture(CommandBuffer& commandBuffer);
+			void MsaaTexArrayToTexture(GpuCommandBuffer& commandBuffer);
 
 			/**
 			 * Updates the internal scene color texture with the provided texture. MSAA scene color texture array must have
@@ -340,7 +340,7 @@ namespace bs
 			SPtr<RenderTexture> RenderTarget;
 
 			/** Converts MSAA data from the texture array into the MSAA texture. */
-			void MsaaTexArrayToTexture(CommandBuffer& commandBuffer);
+			void MsaaTexArrayToTexture(GpuCommandBuffer& commandBuffer);
 
 			static StringID GetNodeId() { return "LightAccumulation"; }
 

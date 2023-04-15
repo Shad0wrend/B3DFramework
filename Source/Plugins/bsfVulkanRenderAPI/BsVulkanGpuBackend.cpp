@@ -425,7 +425,7 @@ void VulkanGpuBackend::OnStartUp()
 	GLSLToSPIRV::StartUp();
 
 	// Create command buffer manager
-	ct::CommandBufferManager::StartUp<VulkanCommandBufferManager>();
+	ct::VulkanCommandBufferManager::StartUp();
 
 	// Create the texture manager for use by others
 	TextureManager::StartUp<VulkanTextureManager>();
@@ -463,7 +463,7 @@ void VulkanGpuBackend::OnShutDown()
 	ct::TextureManager::ShutDown();
 	TextureManager::ShutDown();
 
-	CommandBufferManager::ShutDown();
+	VulkanCommandBufferManager::ShutDown();
 	GLSLToSPIRV::ShutDown();
 
 	mPresentDevice = nullptr;

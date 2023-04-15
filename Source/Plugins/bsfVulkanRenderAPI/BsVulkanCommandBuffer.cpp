@@ -48,89 +48,80 @@ VulkanSemaphore::~VulkanSemaphore()
 	vkDestroySemaphore(mOwner->GetDevice().GetLogical(), mSemaphore, gVulkanAllocator);
 }
 
-VulkanCommandBufferPool::VulkanCommandBufferPool(VulkanGpuDevice& device, VulkanThread thread)
-	: mDevice(device), mOwnerThread(thread)
+VulkanGpuCommandBufferPool::VulkanGpuCommandBufferPool(VulkanGpuDevice& device, const GpuCommandBufferPoolCreateInformation& createInformation)
+	:  GpuCommandBufferPool(device, createInformation)
 {
-	for(u32 i = 0; i < GQT_COUNT; i++)
-	{
-		u32 familyIdx = device.GetQueueFamily((GpuQueueType)i);
+	const u32 queueFamily = device.GetQueueFamily(createInformation.Usage);
 
-		if(familyIdx == (u32)-1)
-			continue;
+	if (!B3D_ENSURE(queueFamily != ~0u))
+		return;
 
-		VkCommandPoolCreateInfo poolCI;
-		poolCI.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-		poolCI.pNext = nullptr;
-		poolCI.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-		poolCI.queueFamilyIndex = familyIdx;
+	VkCommandPoolCreateInfo vulkanPoolCreateInformation;
+	vulkanPoolCreateInformation.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	vulkanPoolCreateInformation.pNext = nullptr;
+	vulkanPoolCreateInformation.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+	vulkanPoolCreateInformation.queueFamilyIndex = queueFamily;
 
-		PoolInfo& poolInfo = mPools[familyIdx];
-		poolInfo.QueueFamily = familyIdx;
-		memset(poolInfo.Buffers, 0, sizeof(poolInfo.Buffers));
-
-		vkCreateCommandPool(device.GetLogical(), &poolCI, gVulkanAllocator, &poolInfo.Pool);
-	}
+	mQueueFamily = queueFamily;
+	vkCreateCommandPool(device.GetLogical(), &vulkanPoolCreateInformation, gVulkanAllocator, &mVulkanPool);
 }
 
-VulkanCommandBufferPool::~VulkanCommandBufferPool()
+VulkanGpuCommandBufferPool::~VulkanGpuCommandBufferPool()
 {
 	// Note: Shutdown should be the only place command buffers are destroyed at, as the system relies on the fact that
 	// they won't be destroyed during normal operation.
 
-	for(auto& entry : mPools)
+	for(auto& commandBuffer : mAllocatedBuffers)
 	{
-		PoolInfo& poolInfo = entry.second;
-		for(u32 i = 0; i < BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY; i++)
-		{
-			VulkanInternalCommandBuffer* buffer = poolInfo.Buffers[i];
-			if(buffer == nullptr)
-				break;
+		if (commandBuffer == nullptr)
+			continue;
 
-			B3DDelete(buffer);
-		}
-
-		vkDestroyCommandPool(mDevice.GetLogical(), poolInfo.Pool, gVulkanAllocator);
+		B3DDelete(commandBuffer);
 	}
+
+	vkDestroyCommandPool(static_cast<VulkanGpuDevice&>(mGpuDevice).GetLogical(), mVulkanPool, gVulkanAllocator);
 }
 
-VulkanInternalCommandBuffer* VulkanCommandBufferPool::GetBuffer(u32 queueFamily)
+VulkanInternalCommandBuffer* VulkanGpuCommandBufferPool::GetBuffer()
 {
-	auto iterFind = mPools.find(queueFamily);
-	if(iterFind == mPools.end())
-		return nullptr;
-
-	VulkanInternalCommandBuffer** buffers = iterFind->second.Buffers;
-
-	u32 i = 0;
-	for(; i < BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY; i++)
+	for(auto& commandBuffer : mAllocatedBuffers)
 	{
-		if(buffers[i] == nullptr)
+		if(commandBuffer == nullptr)
 			break;
 
-		if(buffers[i]->mState == VulkanInternalCommandBuffer::State::Ready)
+		if(commandBuffer->mState == VulkanInternalCommandBuffer::State::Ready)
 		{
-			buffers[i]->Begin();
-			return buffers[i];
+			commandBuffer->Begin();
+			return commandBuffer;
 		}
 	}
 
-	B3D_ASSERT(i < BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY && "Too many command buffers allocated. Increment BS_MAX_VULKAN_CB_PER_QUEUE_FAMILY to a higher value. ");
+	VulkanInternalCommandBuffer* const newCommandBuffer = CreateBuffer();
+	mAllocatedBuffers.Add(newCommandBuffer);
 
-	buffers[i] = CreateBuffer(queueFamily);
-	buffers[i]->Begin();
-
-	return buffers[i];
+	newCommandBuffer->Begin();
+	return newCommandBuffer;
 }
 
-VulkanInternalCommandBuffer* VulkanCommandBufferPool::CreateBuffer(u32 queueFamily)
+VulkanInternalCommandBuffer* VulkanGpuCommandBufferPool::CreateBuffer()
 {
-	auto iterFind = mPools.find(queueFamily);
-	if(iterFind == mPools.end())
-		return nullptr;
+	return B3DNew<VulkanInternalCommandBuffer>(static_cast<VulkanGpuDevice&>(mGpuDevice), mInformation.Thread, mNextCommandBufferId++, mVulkanPool);
+}
 
-	const PoolInfo& poolInfo = iterFind->second;
+SPtr<GpuCommandBuffer> VulkanGpuCommandBufferPool::Create(const GpuCommandBufferCreateInformation& createInformation)
+{
+	EnsureValidThread();
 
-	return B3DNew<VulkanInternalCommandBuffer>(mDevice, mOwnerThread, mNextId++, poolInfo.Pool);
+	SPtr<GpuCommandBuffer> commandBuffer = B3DMakeSharedFromExisting(new(B3DAllocate<VulkanGpuCommandBuffer>()) VulkanGpuCommandBuffer(static_cast<VulkanGpuDevice&>(mGpuDevice), mInformation.Thread, mInformation.Usage, createInformation));
+
+	commandBuffer->SetShared(commandBuffer);
+
+	return commandBuffer;
+}
+
+void VulkanGpuCommandBufferPool::Reset()
+{
+	// TODO - Implement and assert correct thread
 }
 
 template <class T>
@@ -152,7 +143,7 @@ void GetPipelineStageFlags(const Vector<T>& barriers, VkPipelineStageFlags& src,
 const Color kDebugLabelColor = Color::kBansheeOrange;
 constexpr u32 kMaximumBoundDescriptorSets = 64;
 
-VulkanInternalCommandBuffer::VulkanInternalCommandBuffer(VulkanGpuDevice& device, VulkanThread ownerThread, u32 id, VkCommandPool pool)
+VulkanInternalCommandBuffer::VulkanInternalCommandBuffer(VulkanGpuDevice& device, ThreadId ownerThread, u32 id, VkCommandPool pool)
 	: mId(id), mDevice(device), mPool(pool), mNeedsWARMemoryBarrier(false), mNeedsRAWMemoryBarrier(false), mGfxPipelineRequiresBind(true), mCmpPipelineRequiresBind(true), mViewportRequiresBind(true), mStencilRefRequiresBind(true), mScissorRequiresBind(true), mBoundParamsDirty(false), mVertexInputsDirty(false), mOwnerThread(ownerThread)
 {
 	const u32 maximumBoundDescriptorSets = Math::Min(kMaximumBoundDescriptorSets, device.GetDeviceProperties().limits.maxBoundDescriptorSets);
@@ -501,12 +492,12 @@ u32 VulkanInternalCommandBuffer::Submit(VulkanQueue* queue, u32 syncMask)
 	const u32 queueFamily = mDevice.GetQueueFamily(queue->GetType());
 
 	VulkanGpuDevice& device = queue->GetDevice();
-	VulkanCommandBufferPool& commandBufferPool = GetVulkanSubmitThread().GetCommandBufferPool(device.GetIndex());
+	VulkanGpuCommandBufferPool& commandBufferPool = GetVulkanSubmitThread().GetCommandBufferPool(mDevice.GetIndex(), queue->GetType());
 
 	// If there are any query resets needed, execute those first
 	if(!mQueuedQueryResets.empty())
 	{
-		VulkanInternalCommandBuffer* cmdBuffer = commandBufferPool.GetBuffer(queueFamily);
+		VulkanInternalCommandBuffer* cmdBuffer = commandBufferPool.GetBuffer();
 		cmdBuffer->SetName("Query reset");
 
 		VkCommandBuffer vkCmdBuffer = cmdBuffer->GetHandle();
@@ -655,7 +646,7 @@ u32 VulkanInternalCommandBuffer::Submit(VulkanQueue* queue, u32 syncMask)
 		if(entryQueueFamily == (u32)-1 || entryQueueFamily == queueFamily)
 			continue;
 
-		VulkanInternalCommandBuffer* cmdBuffer = commandBufferPool.GetBuffer(entryQueueFamily);
+		VulkanInternalCommandBuffer* cmdBuffer = commandBufferPool.GetBuffer();
 		cmdBuffer->SetName("Layout transition");
 		VkCommandBuffer vkCmdBuffer = cmdBuffer->GetHandle();
 
@@ -672,10 +663,10 @@ u32 VulkanInternalCommandBuffer::Submit(VulkanQueue* queue, u32 syncMask)
 		// Find an appropriate queue to execute on
 		u32 otherQueueIdx = 0;
 		VulkanQueue* otherQueue = nullptr;
-		GpuQueueType otherQueueType = GQT_GRAPHICS;
+		GpuQueueUsage otherQueueType = GQT_GRAPHICS;
 		for(u32 i = 0; i < GQT_COUNT; i++)
 		{
-			otherQueueType = (GpuQueueType)i;
+			otherQueueType = (GpuQueueUsage)i;
 			if(device.GetQueueFamily(otherQueueType) != entryQueueFamily)
 				continue;
 
@@ -710,7 +701,7 @@ u32 VulkanInternalCommandBuffer::Submit(VulkanQueue* queue, u32 syncMask)
 	}
 
 	u32 deviceIdx = device.GetIndex();
-	VulkanCommandBufferManager& cbm = static_cast<VulkanCommandBufferManager&>(CommandBufferManager::Instance());
+	VulkanCommandBufferManager& cbm = GetVulkanCommandBufferManager();
 
 	u32 semaphoreCount;
 	cbm.GetSyncSemaphores(deviceIdx, syncMask, mSemaphoresTemp.data(), semaphoreCount);
@@ -736,7 +727,7 @@ u32 VulkanInternalCommandBuffer::Submit(VulkanQueue* queue, u32 syncMask)
 		if(entryQueueFamily != (u32)-1 && entryQueueFamily != queueFamily)
 			continue;
 
-		VulkanInternalCommandBuffer* cmdBuffer = commandBufferPool.GetBuffer(queueFamily);
+		VulkanInternalCommandBuffer* cmdBuffer = commandBufferPool.GetBuffer();
 		cmdBuffer->SetName("Queue ownership");
 
 		VkCommandBuffer vkCmdBuffer = cmdBuffer->GetHandle();
@@ -2944,8 +2935,8 @@ void VulkanInternalCommandBuffer::NotifyRenderTargetModified()
 	mRenderTargetModified = true;
 }
 
-VulkanCommandBuffer::VulkanCommandBuffer(VulkanGpuDevice& device, GpuQueueType queueType)
-	: CommandBuffer(queueType), mBuffer(nullptr), mDevice(device)
+VulkanGpuCommandBuffer::VulkanGpuCommandBuffer(VulkanGpuDevice& device, ThreadId ownerThread, GpuQueueUsage queueType, const GpuCommandBufferCreateInformation& createInformation)
+	: GpuCommandBuffer(ownerThread, queueType, createInformation), mDevice(device), mBuffer(nullptr)
 {
 	AcquireNewBuffer();
 }
@@ -3015,7 +3006,7 @@ Rect2I VulkanInternalCommandBuffer::GetRenderPassArea() const
 	return area;
 }
 
-VulkanCommandBuffer::~VulkanCommandBuffer()
+VulkanGpuCommandBuffer::~VulkanGpuCommandBuffer()
 {
 	if(mBuffer != nullptr)
 	{
@@ -3030,19 +3021,18 @@ VulkanCommandBuffer::~VulkanCommandBuffer()
 	}
 }
 
-void VulkanCommandBuffer::AcquireNewBuffer()
+void VulkanGpuCommandBuffer::AcquireNewBuffer()
 {
 	B3D_ASSERT(mBuffer == nullptr || mBuffer->IsDone());
 
-	VulkanCommandBufferPool& pool = mDevice.GetCommandBufferPool();
+	VulkanGpuCommandBufferPool& pool = mDevice.GetCommandBufferPool(mQueueType);
 
-	const u32 queueFamily = mDevice.GetQueueFamily(mQueueType);
-	mBuffer = pool.GetBuffer(queueFamily);
+	mBuffer = pool.GetBuffer();
 	mBuffer->SetOwner(this);
 	mBuffer->SetName(mName);
 }
 
-void VulkanCommandBuffer::Submit(u32 queueIndex, u32 syncMask)
+void VulkanGpuCommandBuffer::Submit(u32 queueIndex, u32 syncMask)
 {
 	if(GetState() == CommandBufferState::Executing)
 	{
@@ -3087,9 +3077,9 @@ void VulkanCommandBuffer::Submit(u32 queueIndex, u32 syncMask)
 	mIsSubmitted = true;
 }
 
-void VulkanCommandBuffer::SetName(const StringView& name)
+void VulkanGpuCommandBuffer::SetName(const StringView& name)
 {
-	CommandBuffer::SetName(name);
+	GpuCommandBuffer::SetName(name);
 
 	if(vkSetDebugUtilsObjectNameEXT == nullptr)
 		return;
@@ -3098,7 +3088,7 @@ void VulkanCommandBuffer::SetName(const StringView& name)
 		mBuffer->SetName(name);
 }
 
-CommandBufferState VulkanCommandBuffer::GetState() const
+CommandBufferState VulkanGpuCommandBuffer::GetState() const
 {
 	// If null we passed the buffer to the submit thread and is currently executing or has completed execution
 	if(mBuffer == nullptr)
@@ -3118,7 +3108,7 @@ CommandBufferState VulkanCommandBuffer::GetState() const
 	return CommandBufferState::Empty;
 }
 
-void VulkanCommandBuffer::NotifyExecutionCompleted()
+void VulkanGpuCommandBuffer::NotifyExecutionCompleted()
 {
 	mIsCompleted = true;
 }

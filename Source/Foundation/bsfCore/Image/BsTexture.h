@@ -425,7 +425,7 @@ namespace bs
 			 * @param	copyInformation		Structure used for customizing the copy operation.
 			 * @param	commandBuffer		Command buffer to queue the copy operation on. If null, main command buffer is used.
 			 */
-			void Copy(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation = TextureCopyInformation::kDefault, const SPtr<CommandBuffer>& commandBuffer = nullptr);
+			void Copy(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation = TextureCopyInformation::kDefault, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
 
 			/**
 			 * Blits the contents a subresource in this texture to another texture.
@@ -434,7 +434,7 @@ namespace bs
 			 * @param	blitInformation		Structure used for customizing the copy operation.
 			 * @param	commandBuffer		Command buffer to queue the copy operation on. If null, main command buffer is used.
 			 */
-			void Blit(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation = TextureBlitInformation::kDefault, const SPtr<CommandBuffer>& commandBuffer = nullptr);
+			void Blit(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation = TextureBlitInformation::kDefault, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
 
 			/**
 			 * Sets all the pixels of the specified face and mip level to the provided value.
@@ -446,7 +446,7 @@ namespace bs
 			 *							If not provided the operation will be queued on an internal command buffer that will be submitted before
 			 *							any regular command buffer submission.
 			 */
-			void Clear(const Color& value, u32 mipLevel = 0, u32 face = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr);
+			void Clear(const Color& value, u32 mipLevel = 0, u32 face = 0, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
 
 			/**
 			 * Reads data from the texture buffer into the provided buffer.
@@ -471,7 +471,7 @@ namespace bs
 			 *								no data will be read.
 			 * @param	commandBuffer	Command buffer to queue the operation on. Main command buffer is used if none is provided.
 			 */
-			virtual TAsyncOp<SPtr<PixelData>> ReadDataAsync(u32 mipLevel = 0, u32 face = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr);
+			virtual TAsyncOp<SPtr<PixelData>> ReadDataAsync(u32 mipLevel = 0, u32 face = 0, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
 
 			/**
 			 * Writes data from the provided buffer into the texture buffer.
@@ -488,7 +488,7 @@ namespace bs
 			 *								If not provided the operation will be queued on an internal command buffer that will be submitted before
 			 *								any regular command buffer submission.
 			 */
-			void WriteData(const PixelData& source, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr);
+			void WriteData(const PixelData& source, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
 
 			/**	Returns properties that contain information about the texture. */
 			const TextureProperties& GetProperties() const { return mProperties; }
@@ -538,19 +538,19 @@ namespace bs
 			virtual void UnlockInternal() = 0;
 
 			/** @copydoc Copy */
-			virtual void CopyInternal(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation, const SPtr<CommandBuffer>& commandBuffer) = 0;
+			virtual void CopyInternal(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation, const SPtr<GpuCommandBuffer>& commandBuffer) = 0;
 
 			/** @copydoc Blit */
-			virtual void BlitInternal(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation, const SPtr<CommandBuffer>& commandBuffer) = 0;
+			virtual void BlitInternal(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation, const SPtr<GpuCommandBuffer>& commandBuffer) = 0;
 
 			/** @copydoc ReadData */
 			virtual void ReadDataInternal(PixelData& dest, u32 mipLevel = 0, u32 face = 0) = 0;
 
 			/** @copydoc WriteData */
-			virtual void WriteDataInternal(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+			virtual void WriteDataInternal(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 			/** @copydoc Clear */
-			virtual void ClearInternal(const Color& value, u32 mipLevel = 0, u32 face = 0, const SPtr<CommandBuffer>& commandBuffer = nullptr);
+			virtual void ClearInternal(const Color& value, u32 mipLevel = 0, u32 face = 0, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
 
 			/************************************************************************/
 			/* 								TEXTURE VIEW                      		*/

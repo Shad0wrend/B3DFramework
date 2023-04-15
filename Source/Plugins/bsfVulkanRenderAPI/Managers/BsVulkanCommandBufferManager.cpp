@@ -11,7 +11,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-VulkanTransferBuffer::VulkanTransferBuffer(VulkanGpuDevice* device, GpuQueueType type, u32 queueIdx)
+VulkanTransferBuffer::VulkanTransferBuffer(VulkanGpuDevice* device, GpuQueueUsage type, u32 queueIdx)
 	: mDevice(device), mType(type), mQueueIndex(queueIdx)
 {
 	u32 queueCount = device->GetQueueCountForType(mType);
@@ -37,8 +37,7 @@ void VulkanTransferBuffer::Allocate()
 	if(mCommandBuffer != nullptr)
 		return;
 
-	const u32 queueFamily = mDevice->GetQueueFamily(mType);
-	mCommandBuffer = mDevice->GetCommandBufferPool().GetBuffer(queueFamily);
+	mCommandBuffer = mDevice->GetCommandBufferPool(mType).GetBuffer();
 }
 
 void VulkanTransferBuffer::Flush(bool wait)
@@ -71,7 +70,7 @@ VulkanCommandBufferManager::VulkanCommandBufferManager()
 
 		for(u32 j = 0; j < GQT_COUNT; j++)
 		{
-			GpuQueueType queueType = (GpuQueueType)j;
+			GpuQueueUsage queueType = (GpuQueueUsage)j;
 
 			for(u32 k = 0; k < BS_MAX_QUEUES_PER_TYPE; k++)
 				mDeviceData[i].TransferBuffers[j][k] = VulkanTransferBuffer(device.get(), queueType, k);
@@ -84,15 +83,6 @@ VulkanCommandBufferManager::~VulkanCommandBufferManager()
 	B3DDeleteMultiple(mDeviceData, mDeviceCount);
 }
 
-SPtr<CommandBuffer> VulkanCommandBufferManager::CreateInternal(GpuQueueType queueType)
-{
-	const SPtr<VulkanGpuDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(0);
-
-	CommandBuffer* buffer = new(B3DAllocate<VulkanCommandBuffer>()) VulkanCommandBuffer(*device, queueType);
-
-	return B3DMakeSharedFromExisting(buffer);
-}
-
 void VulkanCommandBufferManager::GetSyncSemaphores(u32 deviceIdx, u32 syncMask, VulkanSemaphore** semaphores, u32& count)
 {
 	AssertIfNotVulkanSubmitThread();
@@ -103,7 +93,7 @@ void VulkanCommandBufferManager::GetSyncSemaphores(u32 deviceIdx, u32 syncMask, 
 	u32 semaphoreIndex = 0;
 	for(u32 queueTypeIndex = 0; queueTypeIndex < GQT_COUNT; queueTypeIndex++)
 	{
-		const GpuQueueType queueType = (GpuQueueType)queueTypeIndex;
+		const GpuQueueUsage queueType = (GpuQueueUsage)queueTypeIndex;
 
 		const u32 queueCount = device->GetQueueCountForType(queueType);
 		for(u32 queueIndex = 0; queueIndex < queueCount; queueIndex++)
@@ -143,7 +133,7 @@ void VulkanCommandBufferManager::GetSyncSemaphores(u32 deviceIdx, u32 syncMask, 
 	}
 }
 
-VulkanTransferBuffer* VulkanCommandBufferManager::GetTransferBuffer(u32 deviceIdx, GpuQueueType type, u32 queueIdx)
+VulkanTransferBuffer* VulkanCommandBufferManager::GetTransferBuffer(u32 deviceIdx, GpuQueueUsage type, u32 queueIdx)
 {
 	B3D_ASSERT(deviceIdx < mDeviceCount);
 
@@ -169,6 +159,6 @@ void VulkanCommandBufferManager::FlushTransferBuffers(u32 deviceIdx)
 namespace bs { namespace ct {
 VulkanCommandBufferManager& GetVulkanCommandBufferManager()
 {
-	return static_cast<VulkanCommandBufferManager&>(CommandBufferManager::Instance());
+	return VulkanCommandBufferManager::Instance();
 }
 }} // namespace bs::ct

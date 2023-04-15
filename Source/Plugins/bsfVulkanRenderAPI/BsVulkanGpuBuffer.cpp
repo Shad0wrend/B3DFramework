@@ -355,7 +355,7 @@ void VulkanGpuBuffer::Unmap()
 	mIsMapped = false;
 }
 
-void VulkanGpuBuffer::CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer, const SPtr<CommandBuffer>& commandBuffer)
+void VulkanGpuBuffer::CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer, const SPtr<GpuCommandBuffer>& commandBuffer)
 {
 	if((dstOffset + length) > mSize)
 	{
@@ -380,7 +380,7 @@ void VulkanGpuBuffer::CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffse
 	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
 	VulkanInternalCommandBuffer* vkCB;
 	if(commandBuffer != nullptr)
-		vkCB = static_cast<VulkanCommandBuffer*>(commandBuffer.get())->GetInternal();
+		vkCB = static_cast<VulkanGpuCommandBuffer*>(commandBuffer.get())->GetInternal();
 	else
 		vkCB = rapi.GetMainVulkanCommandBuffer()->GetInternal();
 
@@ -499,7 +499,7 @@ void VulkanGpuBuffer::ReadData(u32 offset, u32 length, void* destination)
 	stagingBuffer->Destroy();
 }
 
-void VulkanGpuBuffer::WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags, const SPtr<CommandBuffer>& commandBuffer)
+void VulkanGpuBuffer::WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags, const SPtr<GpuCommandBuffer>& commandBuffer)
 {
 	if((offset + length) > mSize)
 	{
@@ -556,7 +556,7 @@ void VulkanGpuBuffer::WriteData(u32 offset, u32 length, const void* source, Buff
 	VulkanBuffer* const stagingBuffer = !useStagingMemory ? CreateBuffer(mDevice, length, true, false) : nullptr;
 
 	VulkanInternalCommandBuffer* vulkanCommandBuffer = commandBuffer != nullptr
-		? static_cast<VulkanCommandBuffer*>(commandBuffer.get())->GetInternal()
+		? static_cast<VulkanGpuCommandBuffer*>(commandBuffer.get())->GetInternal()
 		: GetVulkanCommandBufferManager().GetTransferBuffer(0, GQT_GRAPHICS, 0)->GetInternalCommandBuffer();
 
 	// Copy the source into the staging buffer

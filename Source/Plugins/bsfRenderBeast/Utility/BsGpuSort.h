@@ -48,7 +48,7 @@ namespace bs
 			 * @param	commandBuffer	Command buffer to execute on.
 			 * @param	outputCounts	Pre-allocated buffer to zero out.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& outputCounts);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& outputCounts);
 
 			GpuParameterBuffer MOutputParam;
 		};
@@ -76,7 +76,7 @@ namespace bs
 			 *							representing this buffer.
 			 * @param	outputCounts	Pre-allocated buffer to contain the resulting per-digit counts for each group.
 			 */
-			void Execute(CommandBuffer& commandBuffer, u32 numGroups, const SPtr<GpuBuffer>& params, const SPtr<GpuBuffer>& inputKeys, const SPtr<GpuBuffer>& outputCounts);
+			void Execute(GpuCommandBuffer& commandBuffer, u32 numGroups, const SPtr<GpuBuffer>& params, const SPtr<GpuBuffer>& inputKeys, const SPtr<GpuBuffer>& outputCounts);
 
 			GpuParameterBuffer MInputKeysParam;
 			GpuParameterBuffer MOutputCountsParam;
@@ -103,7 +103,7 @@ namespace bs
 			 * @param	inputCounts		Counts as output by the RadixSortCountMat material.
 			 * @param	outputCounts	Pre-allocated buffer to contain the resulting per-digit counts for each group.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& params, const SPtr<GpuBuffer>& inputCounts, const SPtr<GpuBuffer>& outputOffsets);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& params, const SPtr<GpuBuffer>& inputCounts, const SPtr<GpuBuffer>& outputOffsets);
 
 			GpuParameterBuffer MInputCountsParam;
 			GpuParameterBuffer MOutputOffsetsParam;
@@ -135,7 +135,7 @@ namespace bs
 			 * @return					Index of the buffer that should be used as input for the next iteration of the
 			 *							algorithm. (In case the keys were only partially sorted)
 			 */
-			void Execute(CommandBuffer& commandBuffer, u32 numGroups, const SPtr<GpuBuffer>& params, const SPtr<GpuBuffer>& inputOffsets, const GpuSortBuffers& buffers, u32 inputBufferIdx);
+			void Execute(GpuCommandBuffer& commandBuffer, u32 numGroups, const SPtr<GpuBuffer>& params, const SPtr<GpuBuffer>& inputOffsets, const GpuSortBuffers& buffers, u32 inputBufferIdx);
 
 			GpuParameterBuffer MInputOffsetsBufferParam;
 			GpuParameterBuffer MInputKeysBufferParam;
@@ -175,7 +175,7 @@ namespace bs
 			 *							mask).
 			 * @return					Index of the buffer in @p buffers that will contain the final sorted keys and/or values.
 			 */
-			u32 Sort(CommandBuffer& commandBuffer, const GpuSortBuffers& buffers, u32 numKeys, u32 keyMask = 0xFFFFFFFF);
+			u32 Sort(GpuCommandBuffer& commandBuffer, const GpuSortBuffers& buffers, u32 numKeys, u32 keyMask = 0xFFFFFFFF);
 
 			/**
 			 * Creates a set of buffers buffer that can be used when calling the sort() method.

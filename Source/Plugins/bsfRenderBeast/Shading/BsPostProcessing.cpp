@@ -44,7 +44,7 @@ void DownsampleMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTexture);
 }
 
-void DownsampleMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<RenderTarget>& output)
+void DownsampleMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<RenderTarget>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -130,7 +130,7 @@ void EyeAdaptHistogramMat::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("LOOP_COUNT_Y", kLoopCountY);
 }
 
-void EyeAdaptHistogramMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<Texture>& output, const AutoExposureSettings& settings)
+void EyeAdaptHistogramMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<Texture>& output, const AutoExposureSettings& settings)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -196,7 +196,7 @@ void EyeAdaptHistogramReduceMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gEyeAdaptationTex", mEyeAdaptationTex);
 }
 
-void EyeAdaptHistogramReduceMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& sceneColor, const SPtr<Texture>& histogram, const SPtr<Texture>& prevFrame, const SPtr<RenderTarget>& output)
+void EyeAdaptHistogramReduceMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& sceneColor, const SPtr<Texture>& histogram, const SPtr<Texture>& prevFrame, const SPtr<RenderTarget>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -247,7 +247,7 @@ void EyeAdaptationMat::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("THREADGROUP_SIZE_Y", EyeAdaptHistogramMat::kThreadGroupSizeY);
 }
 
-void EyeAdaptationMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& reducedHistogram, const SPtr<RenderTarget>& output, float frameDelta, const AutoExposureSettings& settings, float exposureScale)
+void EyeAdaptationMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& reducedHistogram, const SPtr<RenderTarget>& output, float frameDelta, const AutoExposureSettings& settings, float exposureScale)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -316,7 +316,7 @@ void EyeAdaptationBasicSetupMat::Initialize()
 	SetSamplerState(mGPUParameters, GPT_FRAGMENT_PROGRAM, "gInputSamp", "gInputTex", samplerState);
 }
 
-void EyeAdaptationBasicSetupMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<RenderTarget>& output, float frameDelta, const AutoExposureSettings& settings, float exposureScale)
+void EyeAdaptationBasicSetupMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<RenderTarget>& output, float frameDelta, const AutoExposureSettings& settings, float exposureScale)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -353,7 +353,7 @@ void EyeAdaptationBasicMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gPrevFrameTex", mPrevFrameTexParam);
 }
 
-void EyeAdaptationBasicMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& curFrame, const SPtr<Texture>& prevFrame, const SPtr<RenderTarget>& output, float frameDelta, const AutoExposureSettings& settings, float exposureScale)
+void EyeAdaptationBasicMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& curFrame, const SPtr<Texture>& prevFrame, const SPtr<RenderTarget>& output, float frameDelta, const AutoExposureSettings& settings, float exposureScale)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -403,7 +403,7 @@ void CreateTonemap2DLUTMat::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("LUT_SIZE", kLutSize);
 }
 
-void CreateTonemap2DLUTMat::Execute(CommandBuffer& commandBuffer, const SPtr<RenderTexture>& output, const RenderSettings& settings)
+void CreateTonemap2DLUTMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<RenderTexture>& output, const RenderSettings& settings)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -476,7 +476,7 @@ void CreateTonemap3DLUTMat::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("LUT_SIZE", CreateTonemap2DLUTMat::kLutSize);
 }
 
-void CreateTonemap3DLUTMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& output, const RenderSettings& settings)
+void CreateTonemap3DLUTMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& output, const RenderSettings& settings)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -515,7 +515,7 @@ void TonemappingMat::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("LUT_SIZE", CreateTonemap2DLUTMat::kLutSize);
 }
 
-void TonemappingMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& sceneColor, const SPtr<Texture>& eyeAdaptation, const SPtr<Texture>& bloom, const SPtr<Texture>& colorLUT, const SPtr<RenderTarget>& output, const RenderSettings& settings)
+void TonemappingMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& sceneColor, const SPtr<Texture>& eyeAdaptation, const SPtr<Texture>& bloom, const SPtr<Texture>& colorLUT, const SPtr<RenderTarget>& output, const RenderSettings& settings)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -629,7 +629,7 @@ void BloomClipMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTex);
 }
 
-void BloomClipMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, float threshold, const SPtr<Texture>& eyeAdaptation, const RenderSettings& settings, const SPtr<RenderTarget>& output)
+void BloomClipMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, float threshold, const SPtr<Texture>& eyeAdaptation, const RenderSettings& settings, const SPtr<RenderTarget>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -666,7 +666,7 @@ void ScreenSpaceLensFlareMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gGradientTex", mGradientTex);
 }
 
-void ScreenSpaceLensFlareMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, const ScreenSpaceLensFlareSettings& settings, const SPtr<RenderTarget>& output)
+void ScreenSpaceLensFlareMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const ScreenSpaceLensFlareSettings& settings, const SPtr<RenderTarget>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -731,7 +731,7 @@ void ChromaticAberrationMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gFringeTex", mFringeTex);
 }
 
-void ChromaticAberrationMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, const ChromaticAberrationSettings& settings, const SPtr<RenderTarget>& output)
+void ChromaticAberrationMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const ChromaticAberrationSettings& settings, const SPtr<RenderTarget>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -781,7 +781,7 @@ void FilmGrainMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTex);
 }
 
-void FilmGrainMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, float time, const FilmGrainSettings& settings, const SPtr<RenderTarget>& output)
+void FilmGrainMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, float time, const FilmGrainSettings& settings, const SPtr<RenderTarget>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -817,7 +817,7 @@ void GaussianBlurMat::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("MAX_NUM_SAMPLES", kMaxBlurSamples);
 }
 
-void GaussianBlurMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, float filterSize, const SPtr<RenderTexture>& destination, const Color& tint, const SPtr<Texture>& additive)
+void GaussianBlurMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, float filterSize, const SPtr<RenderTexture>& destination, const Color& tint, const SPtr<Texture>& additive)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -1023,7 +1023,7 @@ void GaussianDOFSeparateMat::Initialize()
 	SetSamplerState(mGPUParameters, GPT_FRAGMENT_PROGRAM, "gColorSamp", "gColorTex", samplerState);
 }
 
-void GaussianDOFSeparateMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& color, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings)
+void GaussianDOFSeparateMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& color, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -1117,7 +1117,7 @@ void GaussianDOFCombineMat::Initialize()
 		mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gFarTex", mFarTexture);
 }
 
-void GaussianDOFCombineMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& focused, const SPtr<Texture>& near, const SPtr<Texture>& far, const SPtr<Texture>& depth, const SPtr<RenderTarget>& output, const RendererView& view, const DepthOfFieldSettings& settings)
+void GaussianDOFCombineMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& focused, const SPtr<Texture>& near, const SPtr<Texture>& far, const SPtr<Texture>& depth, const SPtr<RenderTarget>& output, const RendererView& view, const DepthOfFieldSettings& settings)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -1173,7 +1173,7 @@ void BokehDOFPrepareMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", mDepthTexture);
 }
 
-void BokehDOFPrepareMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings, const SPtr<RenderTarget>& output)
+void BokehDOFPrepareMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings, const SPtr<RenderTarget>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -1305,7 +1305,7 @@ void BokehDOFMat::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("QUADS_PER_TILE", kQuadsPerTile);
 }
 
-void BokehDOFMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, const RendererView& view, const DepthOfFieldSettings& settings, const SPtr<RenderTarget>& output)
+void BokehDOFMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const RendererView& view, const DepthOfFieldSettings& settings, const SPtr<RenderTarget>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -1416,7 +1416,7 @@ void BokehDOFCombineMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", mDepthTexture);
 }
 
-void BokehDOFCombineMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& unfocused, const SPtr<Texture>& focused, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings, const SPtr<RenderTarget>& output)
+void BokehDOFCombineMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& unfocused, const SPtr<Texture>& focused, const SPtr<Texture>& depth, const RendererView& view, const DepthOfFieldSettings& settings, const SPtr<RenderTarget>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -1486,7 +1486,7 @@ void MotionBlurMat::Initialize()
 		mGPUParameters->SetSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferSamp", pointSampState);
 }
 
-void MotionBlurMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view, const MotionBlurSettings& settings, const SPtr<RenderTarget>& output)
+void MotionBlurMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& input, const SPtr<Texture>& depth, const RendererView& view, const MotionBlurSettings& settings, const SPtr<RenderTarget>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -1539,7 +1539,7 @@ void BuildHiZMat::Initialize()
 	}
 }
 
-void BuildHiZMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 srcMip, const Rect2& srcRect, const Rect2& dstRect, const SPtr<RenderTexture>& output)
+void BuildHiZMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, u32 srcMip, const Rect2& srcRect, const Rect2& dstRect, const SPtr<RenderTexture>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -1587,7 +1587,7 @@ void FXAAMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTexture);
 }
 
-void FXAAMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, const SPtr<RenderTarget>& destination)
+void FXAAMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, const SPtr<RenderTarget>& destination)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -1667,7 +1667,7 @@ void SSAOMat::Initialize()
 	SetSamplerState(mGPUParameters, GPT_FRAGMENT_PROGRAM, "gRandomSamp", "gRandomTex", randomSampState);
 }
 
-void SSAOMat::Execute(CommandBuffer& commandBuffer, const RendererView& view, const SSAOTextureInputs& textures, const SPtr<RenderTexture>& destination, const AmbientOcclusionSettings& settings)
+void SSAOMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SSAOTextureInputs& textures, const SPtr<RenderTexture>& destination, const AmbientOcclusionSettings& settings)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -1820,7 +1820,7 @@ void SSAODownsampleMat::Initialize()
 	}
 }
 
-void SSAODownsampleMat::Execute(CommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& depth, const SPtr<Texture>& normals, const SPtr<RenderTexture>& destination, float depthRange)
+void SSAODownsampleMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& depth, const SPtr<Texture>& normals, const SPtr<RenderTexture>& destination, float depthRange)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -1876,7 +1876,7 @@ void SSAOBlurMat::Initialize()
 	}
 }
 
-void SSAOBlurMat::Execute(CommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& ao, const SPtr<Texture>& depth, const SPtr<RenderTexture>& destination, float depthRange)
+void SSAOBlurMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& ao, const SPtr<Texture>& depth, const SPtr<RenderTexture>& destination, float depthRange)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -1928,7 +1928,7 @@ void SSRStencilMat::Initialize()
 	mGPUParameters->SetUniformBuffer("Input", mParamBuffer);
 }
 
-void SSRStencilMat::Execute(CommandBuffer& commandBuffer, const RendererView& view, GBufferTextures gbuffer, const ScreenSpaceReflectionsSettings& settings)
+void SSRStencilMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, GBufferTextures gbuffer, const ScreenSpaceReflectionsSettings& settings)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -1991,7 +1991,7 @@ void SSRTraceMat::Initialize()
 		mGPUParameters->SetSamplerState(GPT_FRAGMENT_PROGRAM, "gHiZ", hiZSamplerState);
 }
 
-void SSRTraceMat::Execute(CommandBuffer& commandBuffer, const RendererView& view, GBufferTextures gbuffer, const SPtr<Texture>& sceneColor, const SPtr<Texture>& hiZ, const ScreenSpaceReflectionsSettings& settings, const SPtr<RenderTarget>& destination)
+void SSRTraceMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, GBufferTextures gbuffer, const SPtr<Texture>& sceneColor, const SPtr<Texture>& hiZ, const ScreenSpaceReflectionsSettings& settings, const SPtr<RenderTarget>& destination)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -2148,7 +2148,7 @@ void TemporalFilteringMat::Initialize()
 	}
 }
 
-void TemporalFilteringMat::Execute(CommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& prevFrame, const SPtr<Texture>& curFrame, const SPtr<Texture>& velocity, const SPtr<Texture>& sceneDepth, const Vector2& jitter, float exposure, const SPtr<RenderTarget>& destination)
+void TemporalFilteringMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& prevFrame, const SPtr<Texture>& curFrame, const SPtr<Texture>& velocity, const SPtr<Texture>& sceneDepth, const Vector2& jitter, float exposure, const SPtr<RenderTarget>& destination)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -2334,7 +2334,7 @@ void EncodeDepthMat::Initialize()
 	SetSamplerState(mGPUParameters, GPT_FRAGMENT_PROGRAM, "gInputSamp", "gInputTex", samplerState);
 }
 
-void EncodeDepthMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& depth, float near, float far, const SPtr<RenderTarget>& output)
+void EncodeDepthMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& depth, float near, float far, const SPtr<RenderTarget>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -2354,7 +2354,7 @@ void MSAACoverageMat::Initialize()
 	mGBufferParams.Initialize(GPT_FRAGMENT_PROGRAM, mGPUParameters);
 }
 
-void MSAACoverageMat::Execute(CommandBuffer& commandBuffer, const RendererView& view, GBufferTextures gbuffer)
+void MSAACoverageMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, GBufferTextures gbuffer)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -2387,7 +2387,7 @@ void MSAACoverageStencilMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gMSAACoverage", mCoverageTexParam);
 }
 
-void MSAACoverageStencilMat::Execute(CommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& coverage)
+void MSAACoverageStencilMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& coverage)
 {
 	BS_RENMAT_PROFILE_BLOCK
 

@@ -478,7 +478,7 @@ namespace bs
 		class VertexData;
 		class RenderAPI;
 		class CoreObject;
-		class CommandBuffer;
+		class GpuCommandBuffer;
 		class EventQuery;
 		class TimerQuery;
 		class OcclusionQuery;

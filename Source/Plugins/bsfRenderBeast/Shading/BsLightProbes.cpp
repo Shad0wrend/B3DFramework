@@ -39,7 +39,7 @@ void TetrahedraRenderMat::Initialize()
 	mGPUParameters->SetUniformBuffer("Params", mParamBuffer);
 }
 
-void TetrahedraRenderMat::Execute(CommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& sceneDepth, const SPtr<Mesh>& mesh, const SPtr<RenderTexture>& output)
+void TetrahedraRenderMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SPtr<Texture>& sceneDepth, const SPtr<Mesh>& mesh, const SPtr<RenderTexture>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -103,7 +103,7 @@ void IrradianceEvaluateMat::Initialize()
 	mGPUParameters->SetUniformBuffer("Params", mParamBuffer);
 }
 
-void IrradianceEvaluateMat::Execute(CommandBuffer& commandBuffer, const RendererView& view, const GBufferTextures& gbuffer, const SPtr<Texture>& lightProbeIndices, const LightProbesInfo& lightProbesInfo, const Skybox* skybox, const SPtr<Texture>& ambientOcclusion, const SPtr<RenderTexture>& output)
+void IrradianceEvaluateMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const GBufferTextures& gbuffer, const SPtr<Texture>& lightProbeIndices, const LightProbesInfo& lightProbesInfo, const Skybox* skybox, const SPtr<Texture>& ambientOcclusion, const SPtr<RenderTexture>& output)
 {
 	BS_RENMAT_PROFILE_BLOCK
 

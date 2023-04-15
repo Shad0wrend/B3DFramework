@@ -8,7 +8,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-VulkanQueue::VulkanQueue(VulkanGpuDevice& device, VkQueue queue, GpuQueueType type, u32 index)
+VulkanQueue::VulkanQueue(VulkanGpuDevice& device, VkQueue queue, GpuQueueUsage type, u32 index)
 	: mDevice(device), mQueue(queue), mType(type), mIndex(index)
 {
 	for(u32 i = 0; i < BS_MAX_UNIQUE_QUEUES; i++)
@@ -249,7 +249,7 @@ void VulkanQueue::RefreshCompletionStateOnSubmitThread(bool forceWait, bool queu
 			mActiveCommandBuffers.pop();
 
 			const bool isPresentCall = queueSubmissionInformation.CommandBuffer == nullptr;
-			const bool isOwnedBySubmitThread = isPresentCall || queueSubmissionInformation.CommandBuffer->GetOwnerThread() == VulkanThread::Submit;
+			const bool isOwnedBySubmitThread = isPresentCall || queueSubmissionInformation.CommandBuffer->GetOwnerThread() == B3D_CURRENT_THREAD_ID;
 
 			for(u32 semaphoreIndex = 0; semaphoreIndex < queueSubmissionInformation.SemaphoreCount; semaphoreIndex++)
 			{

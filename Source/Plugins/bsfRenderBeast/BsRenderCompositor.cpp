@@ -33,7 +33,7 @@ namespace bs { namespace ct {
 UnorderedMap<StringID, RenderCompositor::NodeType*> RenderCompositor::mNodeTypes;
 
 /** Renders all elements in a render queue. */
-void RenderQueueElements(CommandBuffer& commandBuffer, const Vector<RenderQueueElement>& elements)
+void RenderQueueElements(GpuCommandBuffer& commandBuffer, const Vector<RenderQueueElement>& elements)
 {
 	for(auto& entry : elements)
 	{
@@ -427,7 +427,7 @@ void RCNodeBasePass::Render(const RenderCompositorNodeInputs& inputs)
 	}
 
 	// Render base pass
-	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	commandBuffer.SetRenderTarget(RenderTarget);
 
 	Rect2 area(0.0f, 0.0f, 1.0f, 1.0f);
@@ -576,7 +576,7 @@ void RCNodeSceneColor::Clear()
 	SceneColorTexArray = nullptr;
 }
 
-void RCNodeSceneColor::MsaaTexArrayToTexture(CommandBuffer& commandBuffer)
+void RCNodeSceneColor::MsaaTexArrayToTexture(GpuCommandBuffer& commandBuffer)
 {
 	commandBuffer.SetRenderTarget(RenderTarget, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
 
@@ -818,7 +818,7 @@ void RCNodeLightAccumulation::Render(const RenderCompositorNodeInputs& inputs)
 	}
 }
 
-void RCNodeLightAccumulation::MsaaTexArrayToTexture(CommandBuffer& commandBuffer)
+void RCNodeLightAccumulation::MsaaTexArrayToTexture(GpuCommandBuffer& commandBuffer)
 {
 	commandBuffer.SetRenderTarget(RenderTarget, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
 
@@ -860,7 +860,7 @@ void RCNodeDeferredDirectLighting::Render(const RenderCompositorNodeInputs& inpu
 	gbuffer.RoughMetal = gbufferNode->RoughMetalTex->Texture;
 	gbuffer.Depth = sceneDepthNode->DepthTex->Texture;
 
-	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	const RendererViewProperties& viewProps = inputs.View.GetProperties();
 
 	if(!inputs.View.GetRenderSettings().EnableShadows)
@@ -1018,7 +1018,7 @@ void RCNodeIndirectDiffuseLighting::Render(const RenderCompositorNodeInputs& inp
 	RCNodeLightAccumulation* lightAccumNode = static_cast<RCNodeLightAccumulation*>(inputs.InputNodes[2]);
 	RCNodeSSAO* ssaoNode = static_cast<RCNodeSSAO*>(inputs.InputNodes[3]);
 
-	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	GpuResourcePool& resPool = GetGpuResourcePool();
 	const RendererViewProperties& viewProps = inputs.View.GetProperties();
 
@@ -1105,7 +1105,7 @@ void RCNodeDeferredIndirectSpecularLighting::Render(const RenderCompositorNodeIn
 	RCNodeSSR* ssrNode = static_cast<RCNodeSSR*>(inputs.InputNodes[4]);
 	RCNodeSSAO* ssaoNode = static_cast<RCNodeSSAO*>(inputs.InputNodes[5]);
 
-	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 
 	GBufferTextures gbuffer;
 	gbuffer.Albedo = gbufferNode->AlbedoTex->Texture;
@@ -1513,7 +1513,7 @@ void RCNodeClusteredForward::Render(const RenderCompositorNodeInputs& inputs)
 	// arrays for this, or to avoid sampling many textures, perhaps just jam it all in one or few texture channels.
 
 	// Render everything
-	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 
 	RenderQueue* opaqueQueue = inputs.View.GetOpaqueQueue(true).get();
 	RenderQueue* transparentQueue = inputs.View.GetTransparentQueue().get();
@@ -1567,7 +1567,7 @@ void RCNodeSkybox::Render(const RenderCompositorNodeInputs& inputs)
 	if(inputs.View.GetRenderSettings().EnableSkybox)
 		skybox = inputs.Scene.Skybox;
 
-	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	SPtr<Texture> radiance = skybox ? skybox->GetTexture() : nullptr;
 
 	if(radiance != nullptr)
@@ -1628,7 +1628,7 @@ void RCNodeFinalResolve::Render(const RenderCompositorNodeInputs& inputs)
 
 	SPtr<RenderTarget> target = viewProps.Target.Target;
 
-	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	commandBuffer.SetRenderTarget(target);
 	commandBuffer.SetViewport(viewProps.Target.NrmViewRect);
 
@@ -1737,7 +1737,7 @@ void RCNodeEyeAdaptation::Render(const RenderCompositorNodeInputs& inputs)
 {
 	GpuResourcePool& resPool = GetGpuResourcePool();
 
-	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	const RenderSettings& settings = inputs.View.GetRenderSettings();
 
 	const bool hdr = settings.EnableHdr;
@@ -1830,7 +1830,7 @@ void RCNodeEyeAdaptation::Render(const RenderCompositorNodeInputs& inputs)
 		const RendererView& view = inputs.View;
 
 		// Notify the view eye adaptation value will change
-		SPtr<CommandBuffer> cb = RenderAPI::Instance().GetMainCommandBuffer();
+		SPtr<GpuCommandBuffer> cb = RenderAPI::Instance().GetMainCommandBuffer();
 		view.NotifyLuminanceUpdated(inputs.FrameInfo.Timings.FrameIdx, cb, Output);
 	}
 	else
@@ -1865,7 +1865,7 @@ SmallVector<StringID, 4> RCNodeEyeAdaptation::GetDependencies(const RendererView
 
 void RCNodeTonemapping::Render(const RenderCompositorNodeInputs& inputs)
 {
-	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	const RenderSettings& settings = inputs.View.GetRenderSettings();
 
 	auto* eyeAdaptationNode = static_cast<RCNodeEyeAdaptation*>(inputs.InputNodes[0]);
@@ -1979,7 +1979,7 @@ void RCNodeBokehDOF::Render(const RenderCompositorNodeInputs& inputs)
 	if(!settings.Enabled || settings.Type != DepthOfFieldType::Bokeh)
 		return;
 
-	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	const RendererViewProperties& viewProps = inputs.View.GetProperties();
 	const bool msaa = viewProps.Target.NumSamples > 1;
 
@@ -2047,7 +2047,7 @@ void RCNodeTemporalAA::Render(const RenderCompositorNodeInputs& inputs)
 		return;
 	}
 
-	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 
 	// TODO - Resolve scene color MSAA (in a way that can be shared by multiple effects)
 
@@ -2162,7 +2162,7 @@ SmallVector<StringID, 4> RCNodeMotionBlur::GetDependencies(const RendererView& v
 
 void RCNodeGaussianDOF::Render(const RenderCompositorNodeInputs& inputs)
 {
-	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	RCNodeSceneDepth* sceneDepthNode = static_cast<RCNodeSceneDepth*>(inputs.InputNodes[1]);
 	RCNodePostProcess* postProcessNode = static_cast<RCNodePostProcess*>(inputs.InputNodes[2]);
 
@@ -2401,7 +2401,7 @@ void RCNodeResolvedSceneDepth::Render(const RenderCompositorNodeInputs& inputs)
 		Output = GetGpuResourcePool().Get(
 			POOLED_RENDER_TEXTURE_DESC::Create2D(PF_D32_S8X24, width, height, TU_DEPTHSTENCIL, 1, false));
 
-		CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+		GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 		commandBuffer.SetRenderTarget(Output->RenderTexture);
 		commandBuffer.ClearRenderTarget(FBT_STENCIL);
 		GetRendererUtility().Blit(*inputs.ActiveCommandBuffer, sceneDepthNode->DepthTex->Texture, Rect2I::kEmpty, false, true);
@@ -2423,7 +2423,7 @@ SmallVector<StringID, 4> RCNodeResolvedSceneDepth::GetDependencies(const Rendere
 
 void RCNodeHiZ::Render(const RenderCompositorNodeInputs& inputs)
 {
-	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	const RendererViewProperties& viewProps = inputs.View.GetProperties();
 
 	RCNodeResolvedSceneDepth* resolvedSceneDepth = static_cast<RCNodeResolvedSceneDepth*>(inputs.InputNodes[0]);
@@ -2520,7 +2520,7 @@ void RCNodeSSAO::Render(const RenderCompositorNodeInputs& inputs)
 		return;
 	}
 
-	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	GpuResourcePool& resPool = GetGpuResourcePool();
 	const RendererViewProperties& viewProps = inputs.View.GetProperties();
 
@@ -2708,7 +2708,7 @@ void RCNodeSSR::Render(const RenderCompositorNodeInputs& inputs)
 	RCNodeHiZ* hiZNode = static_cast<RCNodeHiZ*>(inputs.InputNodes[3]);
 	RCNodeResolvedSceneDepth* resolvedSceneDepthNode = static_cast<RCNodeResolvedSceneDepth*>(inputs.InputNodes[4]);
 
-	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	GpuResourcePool& resPool = GetGpuResourcePool();
 	const RendererViewProperties& viewProps = inputs.View.GetProperties();
 
@@ -2898,7 +2898,7 @@ SmallVector<StringID, 4> RCNodeBloom::GetDependencies(const RendererView& view)
 
 void RCNodeScreenSpaceLensFlare::Render(const RenderCompositorNodeInputs& inputs)
 {
-	CommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
+	GpuCommandBuffer& commandBuffer = *inputs.ActiveCommandBuffer;
 	GpuResourcePool& resPool = GpuResourcePool::Instance();
 	const RenderSettings& settings = inputs.View.GetRenderSettings();
 	const ScreenSpaceLensFlareSettings& lensFlareSettings = settings.ScreenSpaceLensFlare;

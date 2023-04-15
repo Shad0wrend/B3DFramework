@@ -41,7 +41,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Executes the material on the currently bound render target, copying from @p source. */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, const Rect2& area, bool flipUV);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, const Rect2& area, bool flipUV);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -86,7 +86,7 @@ namespace bs
 			 * @param	target			Render target to blend with and write the results to.
 			 * @param	tint			Optional value to multiply all the values from @p source before blending.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint = Color::kWhite);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint = Color::kWhite);
 
 		private:
 			SPtr<GpuBuffer> mParamBuffer;
@@ -131,7 +131,7 @@ namespace bs
 			 *								with the target.
 			 * @param	tint			Optional value to multiply all the values from @p source before blending.
 			 */
-			void Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint = Color::kWhite);
+			void Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& source, const SPtr<RenderTarget>& target, const Color& tint = Color::kWhite);
 
 			/**
 			 * Returns the material variation matching the provided parameters.
@@ -161,7 +161,7 @@ namespace bs
 			void Initialize() override;
 
 			/** Executes the material on the currently bound render target, clearing to to @p value. */
-			void Execute(CommandBuffer& commandBuffer, u32 value);
+			void Execute(GpuCommandBuffer& commandBuffer, u32 value);
 
 		private:
 			SPtr<GpuBuffer> mParamBuffer;
@@ -188,7 +188,7 @@ namespace bs
 			 *
 			 * @note	Core thread.
 			 */
-			void SetPass(CommandBuffer& commandBuffer, const SPtr<Material>& material, u32 passIdx = 0, u32 techniqueIdx = 0);
+			void SetPass(GpuCommandBuffer& commandBuffer, const SPtr<Material>& material, u32 passIdx = 0, u32 techniqueIdx = 0);
 
 			/**
 			 * Activates the specified material pass for compute. Any further dispatch calls will be executed using this pass.
@@ -199,7 +199,7 @@ namespace bs
 			 *
 			 * @note	Core thread.
 			 */
-			void SetComputePass(CommandBuffer& commandBuffer, const SPtr<Material>& material, u32 passIdx = 0);
+			void SetComputePass(GpuCommandBuffer& commandBuffer, const SPtr<Material>& material, u32 passIdx = 0);
 
 			/**
 			 * Sets parameters (textures, samplers, buffers) for the currently active pass.
@@ -210,7 +210,7 @@ namespace bs
 			 *
 			 * @note	Core thread.
 			 */
-			void SetPassParams(CommandBuffer& commandBuffer, const SPtr<GpuParamsSet>& params, u32 passIdx = 0);
+			void SetPassParams(GpuCommandBuffer& commandBuffer, const SPtr<GpuParamsSet>& params, u32 passIdx = 0);
 
 			/**
 			 * Draws the specified mesh.
@@ -221,7 +221,7 @@ namespace bs
 			 *
 			 * @note	Core thread.
 			 */
-			void Draw(CommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, u32 numInstances = 1);
+			void Draw(GpuCommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, u32 numInstances = 1);
 
 			/**
 			 * Draws the specified mesh.
@@ -233,7 +233,7 @@ namespace bs
 			 *
 			 * @note	Core thread.
 			 */
-			void Draw(CommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u32 numInstances = 1);
+			void Draw(GpuCommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, u32 numInstances = 1);
 
 			/**
 			 * Draws the specified mesh with an additional vertex buffer containing morph shape vertices.
@@ -248,7 +248,7 @@ namespace bs
 			 *
 			 * @note	Core thread.
 			 */
-			void DrawMorph(CommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, const SPtr<GpuBuffer>& morphVertices, const SPtr<VertexDescription>& morphVertexDescription);
+			void DrawMorph(GpuCommandBuffer& commandBuffer, const SPtr<MeshBase>& mesh, const SubMesh& subMesh, const SPtr<GpuBuffer>& morphVertices, const SPtr<VertexDescription>& morphVertexDescription);
 
 			/**
 			 * Blits contents of the provided texture into the currently bound render target. If the provided texture contains
@@ -265,7 +265,7 @@ namespace bs
 			 * @param	isFiltered		True if to apply bilinear filtering to the sampled texture. Only relevant for color
 			 *							textures with no multiple samples.
 			 */
-			void Blit(CommandBuffer& commandBuffer, const SPtr<Texture>& texture, const Rect2I& area = Rect2I::kEmpty, bool flipUV = false, bool isDepth = false, bool isFiltered = false);
+			void Blit(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& texture, const Rect2I& area = Rect2I::kEmpty, bool flipUV = false, bool isDepth = false, bool isFiltered = false);
 
 			/**
 			 * Draws a quad over the entire viewport in normalized device coordinates.
@@ -282,7 +282,7 @@ namespace bs
 			 *
 			 * @note	Core thread.
 			 */
-			void DrawScreenQuad(CommandBuffer& commandBuffer, const Rect2& uv, const Vector2I& textureSize = Vector2I(1, 1), u32 numInstances = 1, bool flipUV = false);
+			void DrawScreenQuad(GpuCommandBuffer& commandBuffer, const Rect2& uv, const Vector2I& textureSize = Vector2I(1, 1), u32 numInstances = 1, bool flipUV = false);
 
 			/**
 			 * Draws a quad over the entire viewport in normalized device coordinates.
@@ -293,7 +293,7 @@ namespace bs
 			 *
 			 * @note	Core thread.
 			 */
-			void DrawScreenQuad(CommandBuffer& commandBuffer, u32 numInstances = 1)
+			void DrawScreenQuad(GpuCommandBuffer& commandBuffer, u32 numInstances = 1)
 			{
 				Rect2 uv(0.0f, 0.0f, 1.0f, 1.0f);
 				Vector2I textureSize(1, 1);
@@ -305,7 +305,7 @@ namespace bs
 			 * Clears the currently bound render target to the provided integer value. This is similar to
 			 * RenderAPI::clearRenderTarget(), except it supports integer clears.
 			 */
-			void Clear(CommandBuffer& commandBuffer, u32 value);
+			void Clear(GpuCommandBuffer& commandBuffer, u32 value);
 
 			/** Returns a unit sphere stencil mesh. */
 			SPtr<Mesh> GetSphereStencil() const { return mUnitSphereStencilMesh; }

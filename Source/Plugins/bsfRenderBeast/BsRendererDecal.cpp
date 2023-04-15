@@ -11,7 +11,7 @@ namespace ct {
 
 DecalParamDef gDecalParamDef;
 
-void DecalRenderElement::Draw(CommandBuffer& commandBuffer) const
+void DecalRenderElement::Draw(GpuCommandBuffer& commandBuffer) const
 {
 	GetRendererUtility().Draw(commandBuffer, Mesh, SubMesh);
 }

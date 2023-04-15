@@ -49,7 +49,7 @@ void LightGridLLCreationMat::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("THREADGROUP_SIZE", kThreadgroupSize);
 }
 
-void LightGridLLCreationMat::SetParams(CommandBuffer& commandBuffer, const Vector3I& gridSize, const SPtr<GpuBuffer>& gridParams, const SPtr<GpuBuffer>& lightsBuffer, const SPtr<GpuBuffer>& probesBuffer)
+void LightGridLLCreationMat::SetParams(GpuCommandBuffer& commandBuffer, const Vector3I& gridSize, const SPtr<GpuBuffer>& gridParams, const SPtr<GpuBuffer>& lightsBuffer, const SPtr<GpuBuffer>& probesBuffer)
 {
 	mGridSize = gridSize;
 	u32 numCells = gridSize[0] * gridSize[1] * gridSize[2];
@@ -103,7 +103,7 @@ void LightGridLLCreationMat::SetParams(CommandBuffer& commandBuffer, const Vecto
 	mProbesBufferParam.Set(probesBuffer);
 }
 
-void LightGridLLCreationMat::Execute(CommandBuffer& commandBuffer, const RendererView& view)
+void LightGridLLCreationMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -158,7 +158,7 @@ void LightGridLLReductionMat::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("THREADGROUP_SIZE", kThreadgroupSize);
 }
 
-void LightGridLLReductionMat::SetParams(CommandBuffer& commandBuffer, const Vector3I& gridSize, const SPtr<GpuBuffer>& gridParams, const SPtr<GpuBuffer>& lightsLLHeads, const SPtr<GpuBuffer>& lightsLL, const SPtr<GpuBuffer>& probeLLHeads, const SPtr<GpuBuffer>& probeLL)
+void LightGridLLReductionMat::SetParams(GpuCommandBuffer& commandBuffer, const Vector3I& gridSize, const SPtr<GpuBuffer>& gridParams, const SPtr<GpuBuffer>& lightsLLHeads, const SPtr<GpuBuffer>& lightsLL, const SPtr<GpuBuffer>& probeLLHeads, const SPtr<GpuBuffer>& probeLL)
 {
 	mGridSize = gridSize;
 	u32 numCells = gridSize[0] * gridSize[1] * gridSize[2];
@@ -203,7 +203,7 @@ void LightGridLLReductionMat::SetParams(CommandBuffer& commandBuffer, const Vect
 	mProbesLLParam.Set(probeLL);
 }
 
-void LightGridLLReductionMat::Execute(CommandBuffer& commandBuffer, const RendererView& view)
+void LightGridLLReductionMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -230,7 +230,7 @@ LightGrid::LightGrid()
 	mGridParamBuffer = gLightGridParamDefDef.CreateBuffer();
 }
 
-void LightGrid::UpdateGrid(CommandBuffer& commandBuffer, const RendererView& view, const VisibleLightData& lightData, const VisibleReflProbeData& probeData, bool noLighting)
+void LightGrid::UpdateGrid(GpuCommandBuffer& commandBuffer, const RendererView& view, const VisibleLightData& lightData, const VisibleReflProbeData& probeData, bool noLighting)
 {
 	const RendererViewProperties& viewProps = view.GetProperties();
 

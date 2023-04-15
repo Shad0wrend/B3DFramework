@@ -3,7 +3,6 @@
 #pragma once
 
 #include "BsVulkanPrerequisites.h"
-#include "Managers/BsCommandBufferManager.h"
 #include "CoreThread/BsWorkerThreadWithCommandQueue.h"
 
 namespace bs::ct
@@ -64,14 +63,14 @@ namespace bs::ct
 		void RefreshCommandBufferCompletionStates() const;
 
 		/** Returns a pool that may be used for allocating command buffers for the submit thread. */
-		VulkanCommandBufferPool& GetCommandBufferPool(u32 deviceIndex) const { return *mCommandBufferPools[deviceIndex]; }
+		VulkanGpuCommandBufferPool& GetCommandBufferPool(u32 deviceIndex, GpuQueueUsage queueUsage) const { return *mCommandBufferPools[deviceIndex][queueUsage]; }
 
 		/** Returns the ID of submit worker thread. */
 		ThreadId GetThreadId() const { return mCommandQueue.GetThreadId(); }
 
 	protected:
 		WorkerThreadWithCommandQueue mCommandQueue;
-		Array<UPtr<VulkanCommandBufferPool>, B3D_MAX_DEVICES> mCommandBufferPools{ nullptr };
+		Array<Array<SPtr<VulkanGpuCommandBufferPool>, GQT_COUNT>, B3D_MAX_DEVICES> mCommandBufferPools{ {} };
 
 		mutable Mutex mImageAcquireMutex;
 		mutable Vector<VulkanSwapChain*> mSwapChainsWithAcquiredImages;

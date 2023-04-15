@@ -295,7 +295,7 @@ namespace bs
 			 * @param	updateBounds			If true the internal bounds of the mesh will be recalculated based on the provided data.
 			 * @param	commandBuffer			Command buffer on which to issue a copy operation, in case the internal buffers aren't directly writeable.
 			 */
-			virtual void WriteData(const MeshData& data, bool discardEntireBuffer, bool updateBounds = true, const SPtr<CommandBuffer>& commandBuffer = nullptr);
+			virtual void WriteData(const MeshData& data, bool discardEntireBuffer, bool updateBounds = true, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
 
 			/**
 			 * Reads the current mesh data into the provided @p data parameter. Data buffer needs to be pre-allocated.
@@ -305,7 +305,7 @@ namespace bs
 			 *									format and size.
 			 * @param	commandBuffer			Command buffer on which to issue a copy operation, in case the internal buffers aren't directly readable.
 			 */
-			virtual void ReadData(MeshData& data, const SPtr<CommandBuffer>& commandBuffer = nullptr);
+			virtual void ReadData(MeshData& data, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
 
 			/**
 			 * Creates a new empty mesh. Created mesh will have no sub-meshes.

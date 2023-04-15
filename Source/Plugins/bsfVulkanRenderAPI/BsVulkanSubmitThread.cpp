@@ -25,10 +25,19 @@ VulkanSubmitThread::VulkanSubmitThread()
 	auto fnInitialize = [this]()
 	{
 		const u32 deviceCount = GetVulkanGpuBackend().GetDeviceCount();
-		for(u32 deviceIndex = 0; deviceIndex < deviceCount; deviceIndex++)
+		for (u32 deviceIndex = 0; deviceIndex < deviceCount; deviceIndex++)
 		{
-			const SPtr<VulkanGpuDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIndex);
-			mCommandBufferPools[deviceIndex] = B3DMakeUnique<VulkanCommandBufferPool>(*device, VulkanThread::Submit);
+			for (u32 gpuQueueUsageIndex = 0; gpuQueueUsageIndex < GQT_COUNT; gpuQueueUsageIndex++)
+			{
+				const SPtr<VulkanGpuDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIndex);
+
+				// TODO - Need to match queue with submitted command buffers
+				GpuCommandBufferPoolCreateInformation poolCreateInformation;
+				poolCreateInformation.Thread = B3D_CURRENT_THREAD_ID;
+				poolCreateInformation.Usage = (GpuQueueUsage)gpuQueueUsageIndex;
+
+				mCommandBufferPools[deviceIndex][gpuQueueUsageIndex] = std::static_pointer_cast<VulkanGpuCommandBufferPool>(device->CreateGpuCommandBufferPool(poolCreateInformation));
+			}
 		}
 	};
 
@@ -39,8 +48,13 @@ VulkanSubmitThread::~VulkanSubmitThread()
 {
 	auto fnDestroy = [this]()
 	{
-		for(auto& entry : mCommandBufferPools)
-			entry = nullptr;
+		for (auto& poolsOnDevice : mCommandBufferPools)
+		{
+			for (auto& pool : poolsOnDevice)
+			{
+				pool = nullptr;
+			}
+		}
 	};
 
 	RunSubmitThreadCommand(mCommandQueue, std::move(fnDestroy), "Cleanup submit thread", true);

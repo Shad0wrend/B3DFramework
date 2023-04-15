@@ -18,13 +18,13 @@ namespace bs
 		{
 		public:
 			/** Uses the queue type and index to generate a mask with a bit set for that queue's global index. */
-			static u32 GetGlobalQueueMask(GpuQueueType type, u32 queueIdx);
+			static u32 GetGlobalQueueMask(GpuQueueUsage type, u32 queueIdx);
 
 			/** Uses the queue type and index to generate a global queue index. */
-			static u32 GetGlobalQueueIdx(GpuQueueType type, u32 queueIdx);
+			static u32 GetGlobalQueueIdx(GpuQueueUsage type, u32 queueIdx);
 
 			/** Uses the global queue index to retrieve local queue index and queue type. */
-			static u32 GetQueueIdxAndType(u32 globalQueueIdx, GpuQueueType& type);
+			static u32 GetQueueIdxAndType(u32 globalQueueIdx, GpuQueueUsage& type);
 		};
 
 		/** Possible states that a CommandBuffer can be in. */
@@ -46,23 +46,76 @@ namespace bs
 			Done
 		};
 
+		/** Object describing a GpuCommandBufferPool. */
+		struct GpuCommandBufferPoolInformation
+		{
+			GpuQueueUsage Usage = GQT_GRAPHICS; /**< Determines which commands may be executed on the command buffer. Queue on which the command buffer is submitted must match this usage. */
+			ThreadId Thread; /**< Thread on which the command buffer pool is allowed to be used on. Any created command buffers are also bound to this thread. */
+		};
+
+		/** Descriptor structure used for initialization of a GpuCommandBufferPool. */
+		struct GpuCommandBufferPoolCreateInformation : GpuCommandBufferPoolInformation
+		{
+			GpuCommandBufferPoolCreateInformation() = default;
+			GpuCommandBufferPoolCreateInformation(const GpuCommandBufferPoolInformation& other)
+				:GpuCommandBufferPoolInformation(other)
+			{ }
+		};
+
+		/** Object describing a GpuCommandBuffer. */
+		struct GpuCommandBufferInformation
+		{
+			String Name; /**< Name of the command buffer */
+		};
+
+		/** Descriptor structure used for initialization of a GpuCommandBufferPool. */
+		struct GpuCommandBufferCreateInformation : GpuCommandBufferInformation 
+		{
+			GpuCommandBufferCreateInformation() = default;
+			GpuCommandBufferCreateInformation(const GpuCommandBufferInformation& other)
+				:GpuCommandBufferInformation(other)
+			{ }
+		};
+
+		/**
+		 * Allows creation of command buffers.
+		 *
+		 * All allocated command buffers may only be used on the GPU queues that have the subset of usage flags provided by this pool.
+		 * Command buffer and all command buffers allocated from the command buffer may only be used on a single thread. Command buffers may only be used on another thread as part of command buffer submission.
+		 */
+		class B3D_CORE_EXPORT GpuCommandBufferPool
+		{
+		public:
+			virtual ~GpuCommandBufferPool() = default;
+
+			/** Creates a new command buffer. */
+			virtual SPtr<GpuCommandBuffer> Create(const GpuCommandBufferCreateInformation& createInformation) = 0;
+
+			/** Resets the command buffer pool, allowing all previously allocated command buffers to be re-used. Must be called only after all previously allocated command buffers have completed executing. */
+			virtual void Reset() = 0;
+
+		protected:
+			friend class bs::GpuDevice;
+
+			GpuCommandBufferPool(GpuDevice& gpuDevice, const GpuCommandBufferPoolCreateInformation& createInformation);
+
+			/** Reports an error if the current thread is not the thread associated with the object. */
+			void EnsureValidThread() const { B3D_DEBUG_ONLY(B3D_ENSURE(B3D_CURRENT_THREAD_ID == mInformation.Thread)); }
+
+			GpuDevice& mGpuDevice;
+			const GpuCommandBufferPoolInformation mInformation;
+		};
+
 		/**
 		 * Contains a list of render API commands that can be queued for execution on the GPU. User is allowed to populate the
 		 * command buffer from any thread, ensuring render API command generation can be multi-threaded. Command buffers
 		 * must always be created on the core thread. Same command buffer cannot be used on multiple threads simulateously
 		 * without external synchronization.
 		 */
-		class B3D_CORE_EXPORT CommandBuffer
+		class B3D_CORE_EXPORT GpuCommandBuffer
 		{
 		public:
-			virtual ~CommandBuffer();
-
-			/**
-			 * Creates a new CommandBuffer.
-			 *
-			 * @param	queueType		Type of GPU queue the command buffer is allowed to be submitted on.
-			 */
-			static SPtr<CommandBuffer> Create(GpuQueueType queueType);
+			virtual ~GpuCommandBuffer();
 
 			/** Assigns an name to the command buffer, primarily used for easier debugging. */
 			virtual void SetName(const StringView& name) { mName = name; }
@@ -229,7 +282,7 @@ namespace bs
 			virtual void InsertLabel(const StringView& name);
 
 			/** Returns the shared pointer to the current object. */
-			SPtr<CommandBuffer> GetShared() const { return mSelf.lock(); }
+			SPtr<GpuCommandBuffer> GetShared() const { return mSelf.lock(); }
 
 			/** Triggers when the command buffer finishes execution on the GPU. */
 			Event<void()> OnDidComplete;
@@ -237,17 +290,29 @@ namespace bs
 			/** Triggered just before a command buffer is about to be destroyed. Provided parameters determines if the command buffer was ever submitted or not. */
 			Event<void(bool)> OnDestroyed;
 
-		protected:
-			CommandBuffer(GpuQueueType queueType);
+			/**
+			 * @name Internal
+			 * @{
+			 */
 
 			/** Sets a pointer to itself. */
-			void SetShared(const SPtr<CommandBuffer>& value) { mSelf = value; }
+			void SetShared(const SPtr<GpuCommandBuffer>& value) { mSelf = value; }
 
-			const GpuQueueType mQueueType;
+			/** @} */
+
+		protected:
+			friend class GpuCommandBufferPool;
+
+			GpuCommandBuffer(ThreadId ownerThread, GpuQueueUsage queueType, const GpuCommandBufferCreateInformation& createInformation);
+
+			const GpuCommandBufferCreateInformation mInformation;
+			const GpuQueueUsage mQueueType;
+			const ThreadId mOwnerThread;
 			String mName;
 			bool mIsSubmitted = false;
 
-			WeakSPtr<CommandBuffer> mSelf;
+			WeakSPtr<GpuCommandBuffer> mSelf;
+
 		};
 
 		/** @} */

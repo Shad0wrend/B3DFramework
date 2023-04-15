@@ -80,7 +80,7 @@ void Skybox::FilterTexture()
 
 	auto filterSkybox = [coreFilteredRadiance, coreIrradiance, coreSkybox]()
 	{
-		const SPtr<ct::CommandBuffer> commandBuffer = ct::GetRenderAPI().GetMainCommandBuffer();
+		const SPtr<ct::GpuCommandBuffer> commandBuffer = ct::GetRenderAPI().GetMainCommandBuffer();
 
 		// Filter radiance
 		ct::GetIBLUtility().ScaleCubemap(*commandBuffer, coreSkybox->GetTexture(), 0, coreFilteredRadiance, 0);

@@ -325,7 +325,7 @@ namespace bs::ct
 		 *							the operation will be queued on an internal command buffer that will be submitted before any regular command
 		 *							buffer submission.
 		 */
-		virtual void WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL, const SPtr<CommandBuffer>& commandBuffer = nullptr) = 0;
+		virtual void WriteData(u32 offset, u32 length, const void* source, BufferWriteType writeFlags = BWT_NORMAL, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
 		 * Copies data from a specific portion of the source buffer into a specific portion of this buffer.
@@ -339,7 +339,7 @@ namespace bs::ct
 		 * @param[in]	commandBuffer		Command buffer to queue the copy operation on. If null, main command buffer is
 		 *									used.
 		 */
-		virtual void CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer = false, const SPtr<ct::CommandBuffer>& commandBuffer = nullptr) = 0;
+		virtual void CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffset, u32 length, bool discardWholeBuffer = false, const SPtr<ct::GpuCommandBuffer>& commandBuffer = nullptr) = 0;
 
 		/**
 		 * Copy data from the provided buffer into this buffer. If buffers are not the same size, smaller size will be used.
@@ -347,7 +347,7 @@ namespace bs::ct
 		 * @param	source			Hardware buffer to copy from.
 		 * @param	commandBuffer	Command buffer to queue the copy operation on. If null, main command buffer is used.
 		 */
-		virtual void CopyData(GpuBuffer& source, const SPtr<ct::CommandBuffer>& commandBuffer = nullptr)
+		virtual void CopyData(GpuBuffer& source, const SPtr<ct::GpuCommandBuffer>& commandBuffer = nullptr)
 		{
 			const u32 sizeToCopy = std::min(GetSize(), source.GetSize());
 			CopyData(source, 0, 0, sizeToCopy, true, commandBuffer);

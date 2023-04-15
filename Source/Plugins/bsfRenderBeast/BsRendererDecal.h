@@ -88,7 +88,7 @@ namespace bs
 			/** Texture input for the mask buffer. */
 			GpuParameterSampledTexture MaskInputTexture;
 
-			void Draw(CommandBuffer& commandBuffer) const override;
+			void Draw(GpuCommandBuffer& commandBuffer) const override;
 		};
 
 		/** Contains information about a Decal, used by the Renderer. */

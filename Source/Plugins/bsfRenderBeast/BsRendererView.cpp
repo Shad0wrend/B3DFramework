@@ -31,7 +31,7 @@ void SkyboxMat::Initialize()
 		mGPUParameters->SetUniformBuffer("Params", mParamBuffer);
 }
 
-void SkyboxMat::Bind(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& texture, const Color& solidColor)
+void SkyboxMat::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perCamera, const SPtr<Texture>& texture, const Color& solidColor)
 {
 	mGPUParameters->SetUniformBuffer("PerCamera", perCamera);
 
@@ -344,7 +344,7 @@ float RendererView::GetCurrentExposure() const
 	return Math::RaiseToPower(2.0f, mRenderSettings->ExposureScale);
 }
 
-void RendererView::NotifyLuminanceUpdated(u64 frameIdx, SPtr<CommandBuffer> cb, SPtr<PooledRenderTexture> texture) const
+void RendererView::NotifyLuminanceUpdated(u64 frameIdx, SPtr<GpuCommandBuffer> cb, SPtr<PooledRenderTexture> texture) const
 {
 	if(cb == nullptr)
 	{
@@ -830,7 +830,7 @@ Vector4 RendererView::GetNdcToUv() const
 	return ndcToUV;
 }
 
-void RendererView::UpdateLightGrid(CommandBuffer& commandBuffer, const VisibleLightData& visibleLightData, const VisibleReflProbeData& visibleReflProbeData)
+void RendererView::UpdateLightGrid(GpuCommandBuffer& commandBuffer, const VisibleLightData& visibleLightData, const VisibleReflProbeData& visibleReflProbeData)
 {
 	mLightGrid.UpdateGrid(commandBuffer, *this, visibleLightData, visibleReflProbeData, !mRenderSettings->EnableLighting);
 }
@@ -852,7 +852,7 @@ void RendererViewGroup::SetViews(RendererView** views, u32 numViews)
 	}
 }
 
-void RendererViewGroup::DetermineVisibility(CommandBuffer& commandBuffer, const SceneInfo& sceneInfo)
+void RendererViewGroup::DetermineVisibility(GpuCommandBuffer& commandBuffer, const SceneInfo& sceneInfo)
 {
 	const auto numViews = (u32)mViews.size();
 

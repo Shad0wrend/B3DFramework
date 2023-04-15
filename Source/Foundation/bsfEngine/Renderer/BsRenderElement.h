@@ -39,7 +39,7 @@ namespace bs
 			u32 Type = 0;
 
 			/** Encodes the draw call for the render element. */
-			virtual void Draw(CommandBuffer& commandBuffer) const = 0;
+			virtual void Draw(GpuCommandBuffer& commandBuffer) const = 0;
 
 		protected:
 			~RenderElement() = default;

@@ -75,7 +75,7 @@ namespace bs
 			SPtr<RenderTarget> CurrentTarget;
 
 			/** Command buffer that's currently being recorded. */
-			SPtr<CommandBuffer> CommandBuffer;
+			SPtr<GpuCommandBuffer> CommandBuffer;
 		};
 
 		/** Settings that control renderer scene capture. */

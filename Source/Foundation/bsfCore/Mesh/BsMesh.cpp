@@ -330,7 +330,7 @@ SPtr<VertexDescription> Mesh::GetVertexDescription() const
 	return mVertexDescription;
 }
 
-void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool performUpdateBounds, const SPtr<CommandBuffer>& commandBuffer)
+void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool performUpdateBounds, const SPtr<GpuCommandBuffer>& commandBuffer)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
@@ -414,7 +414,7 @@ void Mesh::WriteData(const MeshData& meshData, bool discardEntireBuffer, bool pe
 		UpdateBounds(meshData);
 }
 
-void Mesh::ReadData(MeshData& meshData, const SPtr<CommandBuffer>& commandBuffer)
+void Mesh::ReadData(MeshData& meshData, const SPtr<GpuCommandBuffer>& commandBuffer)
 {
 	THROW_IF_NOT_CORE_THREAD;
 

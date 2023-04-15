@@ -122,7 +122,7 @@ namespace bs
 		 *							after which the stencil value will be incremented by one. (i.e. only first element that
 		 *							writes to a pixel stores its alpha value).
 		 */
-		virtual void Render(ct::CommandBuffer& commandBuffer, const SPtr<ct::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<ct::Texture>& texture, const SPtr<ct::SamplerState>& sampler, const SPtr<ct::GpuBuffer>& paramBuffer, const SPtr<SpriteMaterialExtraInfo>& additionalData, bool alphaOnly) const;
+		virtual void Render(ct::GpuCommandBuffer& commandBuffer, const SPtr<ct::MeshBase>& mesh, const SubMesh& subMesh, const SPtr<ct::Texture>& texture, const SPtr<ct::SamplerState>& sampler, const SPtr<ct::GpuBuffer>& paramBuffer, const SPtr<SpriteMaterialExtraInfo>& additionalData, bool alphaOnly) const;
 
 	protected:
 		/** Perform initialization of core-thread specific objects. */

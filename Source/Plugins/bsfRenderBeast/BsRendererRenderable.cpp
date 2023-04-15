@@ -22,7 +22,7 @@ void PerObjectBuffer::Update(SPtr<GpuBuffer>& buffer, const Matrix4& tfrm, const
 	gPerObjectParamDef.gLayer.Set(buffer, (i32)layer);
 }
 
-void RenderableElement::Draw(CommandBuffer& commandBuffer) const
+void RenderableElement::Draw(GpuCommandBuffer& commandBuffer) const
 {
 	if(MorphVertexDefinition == nullptr)
 		GetRendererUtility().Draw(commandBuffer, Mesh, SubMesh);

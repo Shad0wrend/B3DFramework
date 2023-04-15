@@ -27,7 +27,7 @@ namespace bs
 			 * @param	scratch				Temporary cubemap texture to use for the filtering process. Must match the size of
 			 *								the source cubemap. Provide null to automatically create a scratch cubemap.
 			 */
-			virtual void FilterCubemapForSpecular(CommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const SPtr<Texture>& scratch) const = 0;
+			virtual void FilterCubemapForSpecular(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const SPtr<Texture>& scratch) const = 0;
 
 			/**
 			 * Performs filtering on the cubemap, populating the output cubemap with values that can be used for evaluating
@@ -38,7 +38,7 @@ namespace bs
 			 * @param	cubemap			Cubemap to filter. Its mip level 0 will be used as source.
 			 * @param	output			Output cubemap to store the irradiance data in.
 			 */
-			virtual void FilterCubemapForIrradiance(CommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const SPtr<Texture>& output) const = 0;
+			virtual void FilterCubemapForIrradiance(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const SPtr<Texture>& output) const = 0;
 
 			/**
 			 * Performs filtering on the cubemap, populating the output texture with values that can be used for evaluating
@@ -51,7 +51,7 @@ namespace bs
 			 *								IrradianceReduceMat::createOutputTexture();
 			 * @param	outputIdx			Index in the output buffer at which to write the output coefficients to.
 			 */
-			virtual void FilterCubemapForIrradiance(CommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const SPtr<Texture>& output, u32 outputIdx) const = 0;
+			virtual void FilterCubemapForIrradiance(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const SPtr<Texture>& output, u32 outputIdx) const = 0;
 
 			/**
 			 * Scales a cubemap and outputs it in the destination texture, using hardware acceleration. If both textures are the
@@ -63,7 +63,7 @@ namespace bs
 			 * @param   dst				Desination texture to output the scaled data to. Must be usable as a render target.
 			 * @param   dstMip			Determines which mip level of the destination texture to scale.
 			 */
-			virtual void ScaleCubemap(CommandBuffer& commandBuffer, const SPtr<Texture>& src, u32 srcMip, const SPtr<Texture>& dst, u32 dstMip) const = 0;
+			virtual void ScaleCubemap(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& src, u32 srcMip, const SPtr<Texture>& dst, u32 dstMip) const = 0;
 
 			/** Returns the size of the texture required to store the provided number of SH coefficient sets. */
 			static Vector2I GetShCoeffTextureSize(u32 numCoeffSets, u32 shOrder);

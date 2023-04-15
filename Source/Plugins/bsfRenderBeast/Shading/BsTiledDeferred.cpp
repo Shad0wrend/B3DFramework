@@ -37,7 +37,7 @@ void TiledDeferredLightingMat::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("TILE_SIZE", kTileSize);
 }
 
-void TiledDeferredLightingMat::Execute(CommandBuffer& commandBuffer, const RendererView& view, const VisibleLightData& lightData, const GBufferTextures& gbuffer, const SPtr<Texture>& inputTexture, const SPtr<Texture>& lightAccumTex, const SPtr<Texture>& lightAccumTexArray, const SPtr<Texture>& msaaCoverage)
+void TiledDeferredLightingMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const VisibleLightData& lightData, const GBufferTextures& gbuffer, const SPtr<Texture>& inputTexture, const SPtr<Texture>& lightAccumTex, const SPtr<Texture>& lightAccumTexArray, const SPtr<Texture>& msaaCoverage)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -137,7 +137,7 @@ void TextureArrayToMSAATexture::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gInput", mInputParam);
 }
 
-void TextureArrayToMSAATexture::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& inputArray, const SPtr<Texture>& target)
+void TextureArrayToMSAATexture::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& inputArray, const SPtr<Texture>& target)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -177,7 +177,7 @@ void ClearLoadStoreMat::InitDefinesInternal(ShaderDefines& defines)
 	defines.Set("NUM_THREADS", kNumThreads);
 }
 
-void ClearLoadStoreMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture>& target, const Color& clearValue, const TextureSurface& surface)
+void ClearLoadStoreMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const Color& clearValue, const TextureSurface& surface)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -202,7 +202,7 @@ void ClearLoadStoreMat::Execute(CommandBuffer& commandBuffer, const SPtr<Texture
 	commandBuffer.DispatchCompute(numGroupsX, numGroupsY);
 }
 
-void ClearLoadStoreMat::Execute(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& target, const Color& clearValue)
+void ClearLoadStoreMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& target, const Color& clearValue)
 {
 	BS_RENMAT_PROFILE_BLOCK
 
@@ -327,7 +327,7 @@ void TiledDeferredImageBasedLightingMat::InitDefinesInternal(ShaderDefines& defi
 	defines.Set("TILE_SIZE", kTileSize);
 }
 
-void TiledDeferredImageBasedLightingMat::Execute(CommandBuffer& commandBuffer, const RendererView& view, const SceneInfo& sceneInfo, const VisibleReflProbeData& probeData, const Inputs& inputs)
+void TiledDeferredImageBasedLightingMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, const SceneInfo& sceneInfo, const VisibleReflProbeData& probeData, const Inputs& inputs)
 {
 	BS_RENMAT_PROFILE_BLOCK
 

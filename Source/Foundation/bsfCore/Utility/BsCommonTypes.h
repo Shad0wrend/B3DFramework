@@ -521,18 +521,15 @@ namespace bs
 		}
 	};
 
-	/** Types of GPU queues. */
-	enum GpuQueueType
+	/** Specifies how is a GPU queue intended to be used. This controls which command buffers are allowed to be submitted on the queue. */
+	enum GpuQueueUsage
 	{
-		/**
-		 * Queue used for rendering. Allows the use of draw commands, but also all commands supported by compute
-		 * or upload buffers.
-		 */
+		/** Queue used for rendering. Allows the use of draw, compute and transfer commands. This is the default all-purpose usage. */
 		GQT_GRAPHICS,
-		/** Discrete queue used for compute operations. Allows the use of dispatch and upload commands. */
+		/** Queue used for compute operations. Allows the use of compute and transfer commands, but no draw commands allowed. */
 		GQT_COMPUTE,
-		/** Queue used for memory transfer operations only. No rendering or compute dispatch allowed. */
-		GQT_UPLOAD,
+		/** Queue used for memory transfer operations only. No draw or compute commands allowed. */
+		GQT_TRANSFER,
 		GQT_COUNT // Keep at end
 	};
 

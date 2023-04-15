@@ -278,7 +278,7 @@ namespace bs
 			 *							number of probes allows the rendering to be distributed over multiple frames.
 			 * @return					True if there are no more dirty probes to process.
 			 */
-			bool RenderProbes(CommandBuffer& commandBuffer, u32 maxProbes);
+			bool RenderProbes(GpuCommandBuffer& commandBuffer, u32 maxProbes);
 
 			/**
 			 * Resizes the internal texture that stores light probe SH coefficients, to the specified size (in the number

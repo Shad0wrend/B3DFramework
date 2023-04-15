@@ -7,7 +7,7 @@
 using namespace bs;
 using namespace ct;
 
-void RendererMaterialBase::Bind(CommandBuffer& commandBuffer, bool bindParameters) const
+void RendererMaterialBase::Bind(GpuCommandBuffer& commandBuffer, bool bindParameters) const
 {
 	if(mGraphicsPipeline)
 	{
@@ -21,7 +21,7 @@ void RendererMaterialBase::Bind(CommandBuffer& commandBuffer, bool bindParameter
 		commandBuffer.SetGpuParameters(mGPUParameters);
 }
 
-void RendererMaterialBase::BindParameters(CommandBuffer& commandBuffer) const
+void RendererMaterialBase::BindParameters(GpuCommandBuffer& commandBuffer) const
 {
 	commandBuffer.SetGpuParameters(mGPUParameters);
 }

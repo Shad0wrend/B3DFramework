@@ -180,7 +180,7 @@ SPtr<ct::Texture> GeneratePreintegratedEnvBrdf()
 
 SPtr<ct::Texture> GenerateDefaultIndirect()
 {
-	SPtr<CommandBuffer> commandBuffer = GetRenderAPI().GetMainCommandBuffer();
+	SPtr<GpuCommandBuffer> commandBuffer = GetRenderAPI().GetMainCommandBuffer();
 
 	TextureCreateInformation dummySkyDesc;
 	dummySkyDesc.Name = "Dummy Sky";

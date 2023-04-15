@@ -135,10 +135,10 @@ namespace bs
 			 * draw calls, or executing dispatch calls. If @p bindParameters is false you need to call BindParameters() separately
 			 * to bind material parameters (if any).
 			 */
-			void Bind(CommandBuffer& commandBuffer, bool bindParameters = true) const;
+			void Bind(GpuCommandBuffer& commandBuffer, bool bindParameters = true) const;
 
 			/** Binds the material parameters to the pipeline. */
-			void BindParameters(CommandBuffer& commandBuffer) const;
+			void BindParameters(GpuCommandBuffer& commandBuffer) const;
 
 		protected:
 			friend class bs::RendererMaterialManager;

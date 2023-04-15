@@ -145,7 +145,7 @@ namespace bs { namespace ct
 
 DebugDrawParamsDef gDebugDrawParamsDef;
 
-void DebugDrawMat::Execute(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& params, const SPtr<Mesh>& mesh, const SubMesh& subMesh)
+void DebugDrawMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& params, const SPtr<Mesh>& mesh, const SubMesh& subMesh)
 {
 	BS_RENMAT_PROFILE_BLOCK
 

@@ -18,7 +18,7 @@ namespace bs { namespace ct {
 
 ShadowParamsDef gShadowParamsDef;
 
-void ShadowDepthNormalMat::Bind(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& shadowParams)
+void ShadowDepthNormalMat::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& shadowParams)
 {
 	mGPUParameters->SetUniformBuffer("ShadowParams", shadowParams);
 
@@ -26,7 +26,7 @@ void ShadowDepthNormalMat::Bind(CommandBuffer& commandBuffer, const SPtr<GpuBuff
 	commandBuffer.SetStencilReferenceValue(mStencilReferenceValue);
 }
 
-void ShadowDepthNormalMat::SetPerObjectBuffer(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perObjectParams)
+void ShadowDepthNormalMat::SetPerObjectBuffer(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perObjectParams)
 {
 	mGPUParameters->SetUniformBuffer("PerObject", perObjectParams);
 
@@ -51,7 +51,7 @@ ShadowDepthNormalMat* ShadowDepthNormalMat::GetVariation(bool skinned, bool morp
 	}
 }
 
-void ShadowDepthNormalNoPSMat::Bind(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& shadowParams)
+void ShadowDepthNormalNoPSMat::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& shadowParams)
 {
 	mGPUParameters->SetUniformBuffer("ShadowParams", shadowParams);
 
@@ -59,7 +59,7 @@ void ShadowDepthNormalNoPSMat::Bind(CommandBuffer& commandBuffer, const SPtr<Gpu
 	commandBuffer.SetStencilReferenceValue(mStencilReferenceValue);
 }
 
-void ShadowDepthNormalNoPSMat::SetPerObjectBuffer(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perObjectParams)
+void ShadowDepthNormalNoPSMat::SetPerObjectBuffer(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perObjectParams)
 {
 	mGPUParameters->SetUniformBuffer("PerObject", perObjectParams);
 
@@ -84,7 +84,7 @@ ShadowDepthNormalNoPSMat* ShadowDepthNormalNoPSMat::GetVariation(bool skinned, b
 	}
 }
 
-void ShadowDepthDirectionalMat::Bind(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& shadowParams)
+void ShadowDepthDirectionalMat::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& shadowParams)
 {
 	mGPUParameters->SetUniformBuffer("ShadowParams", shadowParams);
 
@@ -92,7 +92,7 @@ void ShadowDepthDirectionalMat::Bind(CommandBuffer& commandBuffer, const SPtr<Gp
 	commandBuffer.SetStencilReferenceValue(mStencilReferenceValue);
 }
 
-void ShadowDepthDirectionalMat::SetPerObjectBuffer(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perObjectParams)
+void ShadowDepthDirectionalMat::SetPerObjectBuffer(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perObjectParams)
 {
 	mGPUParameters->SetUniformBuffer("PerObject", perObjectParams);
 	commandBuffer.SetGpuParameters(mGPUParameters);
@@ -119,7 +119,7 @@ ShadowDepthDirectionalMat* ShadowDepthDirectionalMat::GetVariation(bool skinned,
 ShadowCubeMatricesDef gShadowCubeMatricesDef;
 ShadowCubeMasksDef gShadowCubeMasksDef;
 
-void ShadowDepthCubeMat::Bind(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& shadowParams, const SPtr<GpuBuffer>& shadowCubeMatrices)
+void ShadowDepthCubeMat::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& shadowParams, const SPtr<GpuBuffer>& shadowCubeMatrices)
 {
 	mGPUParameters->SetUniformBuffer("ShadowParams", shadowParams);
 	mGPUParameters->SetUniformBuffer("ShadowCubeMatrices", shadowCubeMatrices);
@@ -128,7 +128,7 @@ void ShadowDepthCubeMat::Bind(CommandBuffer& commandBuffer, const SPtr<GpuBuffer
 	commandBuffer.SetStencilReferenceValue(mStencilReferenceValue);
 }
 
-void ShadowDepthCubeMat::SetPerObjectBuffer(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perObjectParams, const SPtr<GpuBuffer>& shadowCubeMasks)
+void ShadowDepthCubeMat::SetPerObjectBuffer(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perObjectParams, const SPtr<GpuBuffer>& shadowCubeMasks)
 {
 	mGPUParameters->SetUniformBuffer("PerObject", perObjectParams);
 	mGPUParameters->SetUniformBuffer("ShadowCubeMasks", shadowCubeMasks);
@@ -164,7 +164,7 @@ void ShadowProjectStencilMat::Initialize()
 		mGPUParameters->SetUniformBuffer(GPT_VERTEX_PROGRAM, "VertParams", mVertParams);
 }
 
-void ShadowProjectStencilMat::Bind(CommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perCamera)
+void ShadowProjectStencilMat::Bind(GpuCommandBuffer& commandBuffer, const SPtr<GpuBuffer>& perCamera)
 {
 	Vector4 lightPosAndScale(0, 0, 0, 1);
 	gShadowProjectVertParamsDef.gPositionAndScale.Set(mVertParams, lightPosAndScale);
@@ -211,7 +211,7 @@ void ShadowProjectMat::Initialize()
 		mGPUParameters->SetUniformBuffer(GPT_VERTEX_PROGRAM, "VertParams", mVertParams);
 }
 
-void ShadowProjectMat::Bind(CommandBuffer& commandBuffer, const ShadowProjectParams& params)
+void ShadowProjectMat::Bind(GpuCommandBuffer& commandBuffer, const ShadowProjectParams& params)
 {
 	Vector4 lightPosAndScale(Vector3(0.0f, 0.0f, 0.0f), 1.0f);
 	gShadowProjectVertParamsDef.gPositionAndScale.Set(mVertParams, lightPosAndScale);
@@ -282,7 +282,7 @@ void ShadowProjectOmniMat::Initialize()
 		mGPUParameters->SetUniformBuffer(GPT_VERTEX_PROGRAM, "VertParams", mVertParams);
 }
 
-void ShadowProjectOmniMat::Bind(CommandBuffer& commandBuffer, const ShadowProjectParams& params)
+void ShadowProjectOmniMat::Bind(GpuCommandBuffer& commandBuffer, const ShadowProjectParams& params)
 {
 	Vector4 lightPosAndScale(params.Light.GetTransform().GetPosition(), params.Light.GetAttenuationRadius());
 	gShadowProjectVertParamsDef.gPositionAndScale.Set(mVertParams, lightPosAndScale);
@@ -447,7 +447,7 @@ public:
 	};
 
 	template <class Options>
-	static void Execute(CommandBuffer& commandBuffer, RendererScene& scene, const FrameInfo& frameInfo, const Options& opt)
+	static void Execute(GpuCommandBuffer& commandBuffer, RendererScene& scene, const FrameInfo& frameInfo, const Options& opt)
 	{
 		static_assert((u32)RenderableAnimType::Count == 4, "RenderableAnimType is expected to have four sequential entries.");
 
@@ -545,13 +545,13 @@ struct ShadowRenderQueueCubeOptions
 			command.Mask |= (Frustums[j].Intersects(bounds) ? 1 : 0) << j;
 	}
 
-	void BindMaterial(CommandBuffer& commandBuffer, const ShaderVariationParameters& variation) const
+	void BindMaterial(GpuCommandBuffer& commandBuffer, const ShaderVariationParameters& variation) const
 	{
 		Material = ShadowDepthCubeMat::Get(variation);
 		Material->Bind(commandBuffer, ShadowParamsBuffer, ShadowCubeMatricesBuffer);
 	}
 
-	void BindRenderable(CommandBuffer& commandBuffer, ShadowRenderQueue::Command& command) const
+	void BindRenderable(GpuCommandBuffer& commandBuffer, ShadowRenderQueue::Command& command) const
 	{
 		RendererRenderable* renderable = command.Renderable;
 
@@ -588,13 +588,13 @@ struct ShadowRenderQueueCubeSingleOptions
 	{
 	}
 
-	void BindMaterial(CommandBuffer& commandBuffer, const ShaderVariationParameters& variation) const
+	void BindMaterial(GpuCommandBuffer& commandBuffer, const ShaderVariationParameters& variation) const
 	{
 		Material = ShadowDepthNormalNoPSMat::Get(variation);
 		Material->Bind(commandBuffer, ShadowParamsBuffer);
 	}
 
-	void BindRenderable(CommandBuffer& commandBuffer, ShadowRenderQueue::Command& command) const
+	void BindRenderable(GpuCommandBuffer& commandBuffer, ShadowRenderQueue::Command& command) const
 	{
 		RendererRenderable* renderable = command.Renderable;
 
@@ -625,13 +625,13 @@ struct ShadowRenderQueueSpotOptions
 	{
 	}
 
-	void BindMaterial(CommandBuffer& commandBuffer, const ShaderVariationParameters& variation) const
+	void BindMaterial(GpuCommandBuffer& commandBuffer, const ShaderVariationParameters& variation) const
 	{
 		Material = ShadowDepthNormalMat::Get(variation);
 		Material->Bind(commandBuffer, ShadowParamsBuffer);
 	}
 
-	void BindRenderable(CommandBuffer& commandBuffer, ShadowRenderQueue::Command& command) const
+	void BindRenderable(GpuCommandBuffer& commandBuffer, ShadowRenderQueue::Command& command) const
 	{
 		RendererRenderable* renderable = command.Renderable;
 
@@ -662,13 +662,13 @@ struct ShadowRenderQueueDirOptions
 	{
 	}
 
-	void BindMaterial(CommandBuffer& commandBuffer, const ShaderVariationParameters& variation) const
+	void BindMaterial(GpuCommandBuffer& commandBuffer, const ShaderVariationParameters& variation) const
 	{
 		Material = ShadowDepthDirectionalMat::Get(variation);
 		Material->Bind(commandBuffer, ShadowParamsBuffer);
 	}
 
-	void BindRenderable(CommandBuffer& commandBuffer, ShadowRenderQueue::Command& command) const
+	void BindRenderable(GpuCommandBuffer& commandBuffer, ShadowRenderQueue::Command& command) const
 	{
 		RendererRenderable* renderable = command.Renderable;
 
@@ -760,7 +760,7 @@ void ShadowRendering::SetShadowMapSize(u32 size)
 	mShadowMapSize = size;
 }
 
-void ShadowRendering::RenderShadowMaps(CommandBuffer& commandBuffer, RendererScene& scene, const RendererViewGroup& viewGroup, const FrameInfo& frameInfo)
+void ShadowRendering::RenderShadowMaps(GpuCommandBuffer& commandBuffer, RendererScene& scene, const RendererViewGroup& viewGroup, const FrameInfo& frameInfo)
 {
 	// Note: Currently all shadows are dynamic and are rebuilt every frame. I should later added support for static
 	// shadow maps which can be used for immovable lights. Such a light can then maintain a set of shadow maps,
@@ -985,7 +985,7 @@ Matrix4 CreateMixedToShadowUvMatrix(const Matrix4& viewP, const Matrix4& viewInv
 	return shadowMapTfrm * mixedToShadow;
 }
 
-void ShadowRendering::RenderShadowOcclusion(CommandBuffer& commandBuffer, const RendererView& view, const RendererLight& rendererLight, GBufferTextures gbuffer) const
+void ShadowRendering::RenderShadowOcclusion(GpuCommandBuffer& commandBuffer, const RendererView& view, const RendererLight& rendererLight, GBufferTextures gbuffer) const
 {
 	u32 shadowQuality = view.GetRenderSettings().ShadowSettings.ShadowFilteringQuality;
 
@@ -1182,7 +1182,7 @@ void ShadowRendering::RenderShadowOcclusion(CommandBuffer& commandBuffer, const 
 	}
 }
 
-void ShadowRendering::RenderCascadedShadowMaps(CommandBuffer& commandBuffer, const RendererView& view, u32 lightIdx, RendererScene& scene, const FrameInfo& frameInfo)
+void ShadowRendering::RenderCascadedShadowMaps(GpuCommandBuffer& commandBuffer, const RendererView& view, u32 lightIdx, RendererScene& scene, const FrameInfo& frameInfo)
 {
 	u32 viewIdx = view.GetViewIdx();
 	LightShadows& lightShadows = mDirectionalLightShadows[lightIdx].ViewShadows[viewIdx];
@@ -1323,7 +1323,7 @@ void ShadowRendering::RenderCascadedShadowMaps(CommandBuffer& commandBuffer, con
 	lightShadows.NumShadows = 1;
 }
 
-void ShadowRendering::RenderSpotShadowMap(CommandBuffer& commandBuffer, const RendererLight& rendererLight, const ShadowMapOptions& options, RendererScene& scene, const FrameInfo& frameInfo)
+void ShadowRendering::RenderSpotShadowMap(GpuCommandBuffer& commandBuffer, const RendererLight& rendererLight, const ShadowMapOptions& options, RendererScene& scene, const FrameInfo& frameInfo)
 {
 	Light* light = rendererLight.Internal;
 
@@ -1418,7 +1418,7 @@ void ShadowRendering::RenderSpotShadowMap(CommandBuffer& commandBuffer, const Re
 	lightShadows.NumShadows++;
 }
 
-void ShadowRendering::RenderRadialShadowMap(CommandBuffer& commandBuffer, const RendererLight& rendererLight, const ShadowMapOptions& options, RendererScene& scene, const FrameInfo& frameInfo)
+void ShadowRendering::RenderRadialShadowMap(GpuCommandBuffer& commandBuffer, const RendererLight& rendererLight, const ShadowMapOptions& options, RendererScene& scene, const FrameInfo& frameInfo)
 {
 	Light* light = rendererLight.Internal;
 
@@ -1674,7 +1674,7 @@ void ShadowRendering::CalcShadowMapProperties(const RendererLight& light, const 
 	size = std::max(effectiveMapSize - 2 * border, 1u);
 }
 
-void ShadowRendering::DrawNearFarPlanes(CommandBuffer& commandBuffer, float near, float far, bool drawNear) const
+void ShadowRendering::DrawNearFarPlanes(GpuCommandBuffer& commandBuffer, float near, float far, bool drawNear) const
 {
 	const GpuBackendConventions& rapiConventions = GetGpuDeviceCapabilities().Conventions;
 	float flipY = (rapiConventions.NdcYAxis == GpuBackendConventions::Axis::Down) ? -1.0f : 1.0f;
@@ -1705,7 +1705,7 @@ void ShadowRendering::DrawNearFarPlanes(CommandBuffer& commandBuffer, float near
 	commandBuffer.DrawIndexed(0, drawNear ? 12 : 6, 0, drawNear ? 8 : 4);
 }
 
-void ShadowRendering::DrawFrustum(CommandBuffer& commandBuffer, const std::array<Vector3, 8>& corners) const
+void ShadowRendering::DrawFrustum(GpuCommandBuffer& commandBuffer, const std::array<Vector3, 8>& corners) const
 {
 	// Update VB with new vertices
 	mFrustumVB->WriteData(0, sizeof(Vector3) * 8, corners.data(), BWT_DISCARD);

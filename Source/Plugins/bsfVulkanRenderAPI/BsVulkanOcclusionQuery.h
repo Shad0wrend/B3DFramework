@@ -20,8 +20,8 @@ namespace bs
 			VulkanOcclusionQuery(VulkanGpuDevice& device, bool binary);
 			~VulkanOcclusionQuery() override;
 
-			void Begin(const SPtr<CommandBuffer>& cb) override;
-			void End(const SPtr<CommandBuffer>& cb) override;
+			void Begin(const SPtr<GpuCommandBuffer>& cb) override;
+			void End(const SPtr<GpuCommandBuffer>& cb) override;
 			bool IsReady() const override;
 			u32 GetSampleCount() override;
 
