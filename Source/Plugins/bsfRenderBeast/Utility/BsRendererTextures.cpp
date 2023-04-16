@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsRendererTextures.h"
+
+#include "BsRenderBeast.h"
 #include "Math/BsVector2.h"
 #include "Math/BsVector3.h"
 #include "Image/BsColor.h"
@@ -180,7 +182,11 @@ SPtr<ct::Texture> GeneratePreintegratedEnvBrdf()
 
 SPtr<ct::Texture> GenerateDefaultIndirect()
 {
-	SPtr<GpuCommandBuffer> commandBuffer = GetRenderAPI().GetMainCommandBuffer();
+	const SPtr<GpuCommandBufferPool>& commandBufferPool = GetRenderBeast()->GetCommandBufferPool();
+	if (!B3D_ENSURE(commandBufferPool))
+		return nullptr;
+
+	SPtr<GpuCommandBuffer> commandBuffer = commandBufferPool->Create(GpuCommandBufferCreateInformation::Create("GenerateDefaultIndirect"));
 
 	TextureCreateInformation dummySkyDesc;
 	dummySkyDesc.Name = "Dummy Sky";
@@ -240,6 +246,8 @@ SPtr<ct::Texture> GenerateDefaultIndirect()
 
 	SPtr<ct::Texture> irradiance = ct::Texture::Create(irradianceCubemapDesc);
 	GetIBLUtility().FilterCubemapForIrradiance(*commandBuffer, skyTexture, irradiance);
+
+	GetRenderAPI().SubmitCommandBuffer(commandBuffer);
 
 	return irradiance;
 }

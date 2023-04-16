@@ -8,6 +8,7 @@
 #include "Renderer/BsIBLUtility.h"
 #include "Scene/BsSceneObject.h"
 #include "CoreThread/BsCoreObjectSync.h"
+#include "RenderAPI/BsGpuPipelineState.h"
 
 using namespace bs;
 
@@ -224,11 +225,13 @@ void LightProbeVolume::RunRenderProbeTask()
 	};
 
 	SPtr<ct::LightProbeVolume> coreProbeVolume = GetCore();
-	auto renderProbes = [coreProbeVolume]()
+	auto renderProbes = [coreProbeVolume](ct::GpuCommandBufferPool& commandBufferPool)
 	{
-		SPtr<ct::GpuCommandBuffer> commandBuffer = ct::GetRenderAPI().GetMainCommandBuffer();
+		SPtr<ct::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(ct::GpuCommandBufferCreateInformation::Create("LightProbeRendering"));
+		const bool isDone = coreProbeVolume->RenderProbes(*commandBuffer, 3);
 
-		return coreProbeVolume->RenderProbes(*commandBuffer, 3);
+		ct::GetRenderAPI().SubmitCommandBuffer(commandBuffer);
+		return isDone;
 	};
 
 	mRendererTask = ct::RendererTask::Create("RenderLightProbes", renderProbes);
@@ -472,7 +475,7 @@ bool LightProbeVolume::RenderProbes(GpuCommandBuffer& commandBuffer, u32 maxProb
 			const Quaternion& rotation = tfrm.GetRotation();
 			Vector3 transformedPos = rotation.Rotate(localPos) + position;
 
-			GetRenderer()->CaptureSceneCubeMap(cubemap, transformedPos, CaptureSettings());
+			GetRenderer()->CaptureSceneCubeMap(commandBuffer, cubemap, transformedPos, CaptureSettings());
 			GetIBLUtility().FilterCubemapForIrradiance(commandBuffer, cubemap, mCoefficients, probeInfo.BufferIdx);
 
 			probeInfo.Flags = LightProbeFlags::Clean;

@@ -159,16 +159,16 @@ void GpuCommandBuffer::SetStencilReferenceValue(u32 value)
 
 void GpuCommandBuffer::BeginLabel(const StringView& name)
 {
-	GetRenderAPI().BeginLabel(name);
+	GetRenderAPI().BeginLabel(name, GetShared());
 }
 
 void GpuCommandBuffer::EndLabel()
 {
-	GetRenderAPI().EndLabel();
+	GetRenderAPI().EndLabel(GetShared());
 }
 
 void GpuCommandBuffer::InsertLabel(const StringView& name)
 {
-	GetRenderAPI().InsertLabel(name);
+	GetRenderAPI().InsertLabel(name, GetShared());
 }
 }}

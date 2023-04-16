@@ -6,6 +6,7 @@
 #include "String/BsStringID.h"
 #include "Renderer/BsRendererMeshData.h"
 #include "Material/BsShaderVariation.h"
+#include "RenderAPI/BsGpuCommandBuffer.h"
 
 namespace bs
 {
@@ -24,6 +25,7 @@ namespace bs
 
 	namespace ct
 	{
+		class GpuCommandBufferPool;
 		class RendererTask;
 		class LightProbeVolume;
 		class Decal;
@@ -140,8 +142,11 @@ namespace bs
 			Renderer();
 			virtual ~Renderer() = default;
 
-			/** Initializes the renderer. Must be called before using the renderer. */
-			virtual void Initialize() {}
+			/** Returns the command buffer pool usable for rendering on the render thread. */
+			const SPtr<GpuCommandBufferPool>& GetCommandBufferPool() const { return mCommandBufferPool; } // TODO - Refactor this so there is one pool per frame, whose CBs we reset all at once
+
+			/** Initializes the renderer with the provided GPU device. Must be called before using the renderer. */
+			virtual void Initialize(const SPtr<GpuDevice>& gpuDevice);
 
 			/** Called every frame. Triggers render task callbacks. */
 			void Update();
@@ -322,13 +327,14 @@ namespace bs
 			/**
 			 * Captures the scene at the specified location into a cubemap.
 			 *
-			 * @param[in]	cubemap		Cubemap to store the results in.
-			 * @param[in]	position	Position to capture the scene at.
-			 * @param[in]	settings	Settings that allow you to customize the capture.
+			 * @param	commandBuffer	Command buffer on which to encode the capture.
+			 * @param	cubemap			Cubemap to store the results in.
+			 * @param	position		Position to capture the scene at.
+			 * @param	settings		Settings that allow you to customize the capture.
 			 *
 			 * @note	Core thread.
 			 */
-			virtual void CaptureSceneCubeMap(const SPtr<Texture>& cubemap, const Vector3& position, const CaptureSettings& settings) = 0;
+			virtual void CaptureSceneCubeMap(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const Vector3& position, const CaptureSettings& settings) = 0;
 
 			/**
 			 * Creates a new empty renderer mesh data.
@@ -390,6 +396,12 @@ namespace bs
 				u64 FrameIdx;
 			};
 
+			/** Performs the initialization on the render thread. */
+			virtual void InitializeOnRenderThread();
+
+			/** Performs tear-down on the render thread. */
+			virtual void DestroyOnRenderThread();
+
 			/**
 			 * Executes all renderer tasks queued for this frame.
 			 *
@@ -414,6 +426,9 @@ namespace bs
 			/** Callback to trigger when comparing the order in which renderer extensions are called. */
 			static bool CompareCallback(const RendererExtension* a, const RendererExtension* b);
 
+			SPtr<GpuDevice> mDevice;
+			SPtr<GpuCommandBufferPool> mCommandBufferPool;
+
 			Set<RendererExtension*, std::function<bool(const RendererExtension*, const RendererExtension*)>> mCallbacks;
 
 			Vector<RendererTaskQueuedInfo> mQueuedTasks; // Sim & core thread
@@ -422,6 +437,7 @@ namespace bs
 			Vector<SPtr<RendererTask>> mRunningTasks; // Core thread
 			Vector<SPtr<RendererTask>> mRemainingTasks; // Core thread
 			Mutex mTaskMutex;
+
 		};
 
 		/**	Provides easy access to Renderer. */
@@ -439,7 +455,7 @@ namespace bs
 			{};
 
 		public:
-			RendererTask(const PrivatelyConstruct& dummy, String name, std::function<bool()> taskWorker);
+			RendererTask(const PrivatelyConstruct& dummy, String name, std::function<bool(GpuCommandBufferPool&)> taskWorker);
 
 			/**
 			 * Creates a new task. Task should be provided to Renderer in order for it to start.
@@ -449,7 +465,7 @@ namespace bs
 			 *							multiple frames, in which case this method should return false (if there's more
 			 *							work to be done), or true (if the task has completed).
 			 */
-			static SPtr<RendererTask> Create(String name, std::function<bool()> taskWorker);
+			static SPtr<RendererTask> Create(String name, std::function<bool(GpuCommandBufferPool&)> taskWorker);
 
 			/** Returns true if the task has completed. */
 			bool IsComplete() const;
@@ -474,7 +490,7 @@ namespace bs
 			friend class Renderer;
 
 			String mName;
-			std::function<bool()> mTaskWorker;
+			std::function<bool(GpuCommandBufferPool&)> mTaskWorker;
 			std::atomic<u32> mState{ 0 }; /**< 0 - Inactive, 1 - In progress, 2 - Completed, 3 - Canceled */
 		};
 

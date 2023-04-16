@@ -411,7 +411,7 @@ void CoreApplication::FrameRenderingFinishedCallback()
 
 void CoreApplication::StartUpRenderer()
 {
-	RendererManager::Instance().Initialize();
+	RendererManager::Instance().Initialize(GetPrimaryGpuDevice());
 }
 
 void CoreApplication::BeginCoreProfiling()

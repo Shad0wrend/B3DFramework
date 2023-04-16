@@ -36,10 +36,10 @@ void RendererManager::SetActive(const String& name)
 	}
 }
 
-void RendererManager::Initialize()
+void RendererManager::Initialize(const SPtr<GpuDevice>& gpuDevice)
 {
 	if(mActiveRenderer != nullptr)
-		mActiveRenderer->Initialize();
+		mActiveRenderer->Initialize(gpuDevice);
 }
 
 void RendererManager::RegisterFactoryInternal(SPtr<RendererFactory> factory)

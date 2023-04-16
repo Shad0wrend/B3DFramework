@@ -107,9 +107,9 @@ void ReflectionProbe::CaptureAndFilter()
 
 	if(mCustomTexture == nullptr)
 	{
-		auto renderReflProbe = [coreTexture, coreProbe]()
+		auto renderReflProbe = [coreTexture, coreProbe](ct::GpuCommandBufferPool& commandBufferPool)
 		{
-			const SPtr<ct::GpuCommandBuffer> commandBuffer = ct::GetRenderAPI().GetMainCommandBuffer();
+			const SPtr<ct::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(ct::GpuCommandBufferCreateInformation::Create("RenderAndFilterReflectionProbe"));
 			float radius = coreProbe->mType == ReflectionProbeType::Sphere ? coreProbe->mRadius : coreProbe->mExtents.Length();
 
 			ct::CaptureSettings settings;
@@ -117,11 +117,13 @@ void ReflectionProbe::CaptureAndFilter()
 			settings.DepthEncodeNear = radius;
 			settings.DepthEncodeFar = radius + 1; // + 1 arbitrary, make it a customizable value?
 
-			ct::GetRenderer()->CaptureSceneCubeMap(coreTexture, coreProbe->GetTransform().GetPosition(), settings);
+			ct::GetRenderer()->CaptureSceneCubeMap(*commandBuffer, coreTexture, coreProbe->GetTransform().GetPosition(), settings);
 			ct::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, coreTexture, nullptr);
 
 			coreProbe->mFilteredTexture = coreTexture;
 			ct::GetRenderer()->NotifyReflectionProbeUpdated(coreProbe.get(), true);
+
+			ct::GetRenderAPI().SubmitCommandBuffer(commandBuffer);
 
 			return true;
 		};
@@ -131,15 +133,17 @@ void ReflectionProbe::CaptureAndFilter()
 	else
 	{
 		SPtr<ct::Texture> coreCustomTex = mCustomTexture->GetCore();
-		auto filterReflProbe = [coreCustomTex, coreTexture, coreProbe]()
+		auto filterReflProbe = [coreCustomTex, coreTexture, coreProbe](ct::GpuCommandBufferPool& commandBufferPool)
 		{
-			const SPtr<ct::GpuCommandBuffer> commandBuffer = ct::GetRenderAPI().GetMainCommandBuffer();
+			const SPtr<ct::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(ct::GpuCommandBufferCreateInformation::Create("FilterReflectionProbe"));
 
 			ct::GetIBLUtility().ScaleCubemap(*commandBuffer, coreCustomTex, 0, coreTexture, 0);
 			ct::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, coreTexture, nullptr);
 
 			coreProbe->mFilteredTexture = coreTexture;
 			ct::GetRenderer()->NotifyReflectionProbeUpdated(coreProbe.get(), true);
+
+			ct::GetRenderAPI().SubmitCommandBuffer(commandBuffer);
 
 			return true;
 		};

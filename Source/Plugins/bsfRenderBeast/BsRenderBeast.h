@@ -54,12 +54,12 @@ namespace bs
 			void SetOptions(const SPtr<RendererOptions>& options) override;
 			SPtr<RendererOptions> GetOptions() const override;
 
-			/** Returns the feature set the renderer is operating on. Core thread only. */
+			/** Returns the feature set the renderer is operating on. Render thread only. */
 			RenderBeastFeatureSet GetFeatureSet() const { return mFeatureSet; }
 
-			void Initialize() override;
+			void Initialize(const SPtr<GpuDevice>& gpuDevice) override;
 			void Destroy() override;
-			void CaptureSceneCubeMap(const SPtr<Texture>& cubemap, const Vector3& position, const CaptureSettings& settings) override;
+			void CaptureSceneCubeMap(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& cubemap, const Vector3& position, const CaptureSettings& settings) override;
 
 		private:
 			void NotifyCameraAdded(Camera* camera) override;
@@ -108,27 +108,27 @@ namespace bs
 			 *
 			 * @note	Core thread only.
 			 */
-			bool RenderViews(const SPtr<GpuCommandBuffer>& commandBuffer, RendererViewGroup& viewGroup, const FrameInfo& frameInfo);
+			bool RenderViews(GpuCommandBuffer& commandBuffer, RendererViewGroup& viewGroup, const FrameInfo& frameInfo);
 
 			/**
 			 * Renders all objects visible by the provided view.
 			 *
 			 * @note	Core thread only.
 			 */
-			void RenderView(const SPtr<GpuCommandBuffer>& commandBuffer, const RendererViewGroup& viewGroup, RendererView& view, const FrameInfo& frameInfo);
+			void RenderView(GpuCommandBuffer& commandBuffer, const RendererViewGroup& viewGroup, RendererView& view, const FrameInfo& frameInfo);
 
 			/**
 			 * Renders all overlay callbacks of the provided view. Returns true if anything has been rendered in any of the views.
 			 *
 			 * @note	Core thread only.
 			 */
-			bool RenderOverlay(const SPtr<GpuCommandBuffer>& commandBuffer, RendererView& view, const FrameInfo& frameInfo);
+			bool RenderOverlay(GpuCommandBuffer& commandBuffer, RendererView& view, const FrameInfo& frameInfo);
 
-			/**	Creates data used by the renderer on the core thread. */
-			void InitializeCore(const LoadedRendererTextures& rendererTextures);
+			/**	Creates data used by the renderer on the render thread. */
+			void InitializeOnRenderThread(const LoadedRendererTextures& rendererTextures);
 
-			/**	Destroys data used by the renderer on the core thread. */
-			void DestroyCore();
+			/**	Destroys data used by the renderer on the render thread. */
+			void DestroyOnRenderThread() override;
 
 			/** Updates the global reflection probe cubemap array with changed probe textures. */
 			void UpdateReflProbeArray();

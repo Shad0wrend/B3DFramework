@@ -56,7 +56,7 @@ void Application::OnStartUp()
 	VirtualInput::StartUp();
 	BuiltinResources::StartUp();
 	RendererMaterialManager::StartUp();
-	RendererManager::Instance().Initialize();
+	RendererManager::Instance().Initialize(GetPrimaryGpuDevice());
 	SpriteManager::StartUp();
 	GUIManager::StartUp();
 	ShortcutManager::StartUp();

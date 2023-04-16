@@ -12,6 +12,7 @@
 #include "Material/BsShader.h"
 #include "Profiling/BsProfilerGPU.h"
 #include "Profiling/BsProfilerCPU.h"
+#include "RenderAPI/BsGpuCommandBuffer.h"
 
 using namespace bs;
 
@@ -20,6 +21,21 @@ namespace bs { namespace ct
 Renderer::Renderer()
 	: mCallbacks(&CompareCallback)
 {}
+
+void Renderer::Initialize(const SPtr<GpuDevice>& gpuDevice)
+{
+	mDevice = gpuDevice;
+}
+
+void Renderer::InitializeOnRenderThread()
+{
+	mCommandBufferPool = mDevice->CreateGpuCommandBufferPool(GpuCommandBufferPoolCreateInformation::CreateForThisThread(GQT_GRAPHICS));
+}
+
+void Renderer::DestroyOnRenderThread()
+{
+	mCommandBufferPool = nullptr;
+}
 
 SPtr<RendererMeshData> Renderer::CreateMeshDataInternal(u32 numVertices, u32 numIndices, VertexLayout layout, IndexType indexType)
 {
@@ -74,6 +90,9 @@ void Renderer::AddTask(const SPtr<RendererTask>& task)
 
 void Renderer::ProcessTasks(bool forceAll, u64 upToFrame)
 {
+	if (!B3D_ENSURE(mCommandBufferPool != nullptr))
+		return;
+
 	// Move all tasks to the core thread queue
 	{
 		Lock lock(mTaskMutex);
@@ -101,10 +120,10 @@ void Renderer::ProcessTasks(bool forceAll, u64 upToFrame)
 
 			entry->mState.store(1);
 
-			const bool complete = [&entry]()
+			const bool complete = [this, &entry]()
 			{
 				ProfileGPUBlock sampleBlock("Renderer task: " + ProfilerString(entry->mName.data(), entry->mName.size()));
-				return entry->mTaskWorker();
+				return entry->mTaskWorker(*mCommandBufferPool);
 			}();
 
 			if(!complete)
@@ -121,6 +140,9 @@ void Renderer::ProcessTasks(bool forceAll, u64 upToFrame)
 
 void Renderer::ProcessTask(RendererTask& task, bool forceAll)
 {
+	if (!B3D_ENSURE(mCommandBufferPool != nullptr))
+		return;
+
 	// Move task to the core thread queue
 	{
 		Lock lock(mTaskMutex);
@@ -146,7 +168,7 @@ void Renderer::ProcessTask(RendererTask& task, bool forceAll)
 		GetProfilerCPU().BeginThread("RenderTask");
 		{
 			ProfileGPUBlock sampleBlock("Renderer task: " + ProfilerString(task.mName.data(), task.mName.size()));
-			complete = task.mTaskWorker();
+			complete = task.mTaskWorker(*mCommandBufferPool);
 		}
 		GetProfilerCPU().EndThread();
 		GetProfilerGPU().EndFrame(true);
@@ -164,11 +186,11 @@ SPtr<Renderer> GetRenderer()
 	return std::static_pointer_cast<Renderer>(RendererManager::Instance().GetActive());
 }
 
-RendererTask::RendererTask(const PrivatelyConstruct& dummy, String name, std::function<bool()> taskWorker)
+RendererTask::RendererTask(const PrivatelyConstruct& dummy, String name, std::function<bool(GpuCommandBufferPool&)> taskWorker)
 	: mName(std::move(name)), mTaskWorker(std::move(taskWorker))
 {}
 
-SPtr<RendererTask> RendererTask::Create(String name, std::function<bool()> taskWorker)
+SPtr<RendererTask> RendererTask::Create(String name, std::function<bool(GpuCommandBufferPool&)> taskWorker)
 {
 	return B3DMakeShared<RendererTask>(PrivatelyConstruct(), std::move(name), std::move(taskWorker));
 }

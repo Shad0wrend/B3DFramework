@@ -29,8 +29,8 @@ namespace bs
 		 */
 		void SetActive(const String& name);
 
-		/** Initializes the currently active renderer, making it ready to render. */
-		void Initialize();
+		/** Initializes the currently active renderer on the provided GPU device, making it ready to render. */
+		void Initialize(const SPtr<GpuDevice>& gpuDevice);
 
 		/**	Returns the currently active renderer. Null if no renderer is active. */
 		SPtr<ct::Renderer> GetActive() { return mActiveRenderer; }

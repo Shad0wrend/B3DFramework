@@ -78,9 +78,9 @@ void Skybox::FilterTexture()
 	SPtr<ct::Texture> coreFilteredRadiance = mFilteredRadiance->GetCore();
 	SPtr<ct::Texture> coreIrradiance = mIrradiance->GetCore();
 
-	auto filterSkybox = [coreFilteredRadiance, coreIrradiance, coreSkybox]()
+	auto filterSkybox = [coreFilteredRadiance, coreIrradiance, coreSkybox](ct::GpuCommandBufferPool& commandBufferPool)
 	{
-		const SPtr<ct::GpuCommandBuffer> commandBuffer = ct::GetRenderAPI().GetMainCommandBuffer();
+		const SPtr<ct::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(ct::GpuCommandBufferCreateInformation::Create("FilterSkybox"));
 
 		// Filter radiance
 		ct::GetIBLUtility().ScaleCubemap(*commandBuffer, coreSkybox->GetTexture(), 0, coreFilteredRadiance, 0);
@@ -91,6 +91,8 @@ void Skybox::FilterTexture()
 		// Generate irradiance
 		ct::GetIBLUtility().FilterCubemapForIrradiance(*commandBuffer, coreSkybox->GetTexture(), coreIrradiance);
 		coreSkybox->mIrradiance = coreIrradiance;
+
+		ct::GetRenderAPI().SubmitCommandBuffer(commandBuffer);
 
 		return true;
 	};
