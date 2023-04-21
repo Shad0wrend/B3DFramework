@@ -20,7 +20,7 @@ namespace bs
 			virtual ~EventQuery() = default;
 
 			/** Schedules the query for execution on the command buffer. Once the GPU reaches this point the query will be set in the signaled state. */
-			virtual void Begin(const SPtr<GpuCommandBuffer>& cb = nullptr) = 0;
+			virtual void Begin(GpuCommandBuffer& commandBuffer) = 0;
 
 			/**	Checks if query results are ready. */
 			virtual bool IsReady() const = 0;

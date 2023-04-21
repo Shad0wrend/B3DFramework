@@ -26,7 +26,7 @@ VulkanOcclusionQuery::~VulkanOcclusionQuery()
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResDestroyed, RenderStatObject_Query);
 }
 
-void VulkanOcclusionQuery::Begin(const SPtr<GpuCommandBuffer>& cb)
+void VulkanOcclusionQuery::Begin(GpuCommandBuffer& commandBuffer)
 {
 	VulkanQueryPool& queryPool = mDevice.GetQueryPool();
 
@@ -40,18 +40,13 @@ void VulkanOcclusionQuery::Begin(const SPtr<GpuCommandBuffer>& cb)
 	mNumSamples = 0;
 
 	// Retrieve and queue new query
-	VulkanGpuCommandBuffer* vulkanCB;
-	if(cb != nullptr)
-		vulkanCB = static_cast<VulkanGpuCommandBuffer*>(cb.get());
-	else
-		vulkanCB = static_cast<VulkanGpuCommandBuffer*>(GetVulkanRenderAPI().GetMainVulkanCommandBuffer());
-
-	VulkanInternalCommandBuffer* internalCB = vulkanCB->GetInternal();
+	VulkanGpuCommandBuffer& vulkanCommandBuffer = static_cast<VulkanGpuCommandBuffer&>(commandBuffer);
+	VulkanInternalCommandBuffer* internalCB = vulkanCommandBuffer.GetInternal();
 	mQueries.push_back(queryPool.BeginOcclusionQuery(internalCB, !mBinary));
 	internalCB->RegisterQuery(this);
 }
 
-void VulkanOcclusionQuery::End(const SPtr<GpuCommandBuffer>& cb)
+void VulkanOcclusionQuery::End(GpuCommandBuffer& commandBuffer)
 {
 	if(mQueries.empty())
 	{
@@ -66,14 +61,10 @@ void VulkanOcclusionQuery::End(const SPtr<GpuCommandBuffer>& cb)
 	mQueryEndCalled = true;
 	mQueryFinalized = false;
 
-	VulkanGpuCommandBuffer* vulkanCB;
-	if(cb != nullptr)
-		vulkanCB = static_cast<VulkanGpuCommandBuffer*>(cb.get());
-	else
-		vulkanCB = static_cast<VulkanGpuCommandBuffer*>(GetVulkanRenderAPI().GetMainVulkanCommandBuffer());
+	VulkanGpuCommandBuffer& vulkanCommandBuffer = static_cast<VulkanGpuCommandBuffer&>(commandBuffer);
 
 	VulkanQueryPool& queryPool = mDevice.GetQueryPool();
-	VulkanInternalCommandBuffer* internalCB = vulkanCB->GetInternal();
+	VulkanInternalCommandBuffer* internalCB = vulkanCommandBuffer.GetInternal();
 	queryPool.EndOcclusionQuery(mQueries.back(), internalCB);
 }
 

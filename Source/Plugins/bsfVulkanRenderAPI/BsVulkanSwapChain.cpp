@@ -5,8 +5,8 @@
 #include "BsVulkanRenderAPI.h"
 #include "BsVulkanGpuDevice.h"
 #include "BsVulkanGpuBackend.h"
+#include "BsVulkanGpuCommandBuffer.h"
 #include "BsVulkanGpuQueue.h"
-#include "Managers/BsVulkanCommandBufferManager.h"
 #include "BsVulkanRenderPass.h"
 #include "Threading/BsTaskScheduler.h"
 
@@ -421,11 +421,8 @@ void VulkanSwapChain::Present(u32 imageIndex, VulkanGpuQueue& queue, u32 syncMas
 	// Ignore myself as we handle this in VulkanGpuQueue::Present() already
 	syncMask &= ~queueMask;
 
-	const u32 deviceIndex = presentDevice.GetIndex();
-	VulkanCommandBufferManager& commandBufferManager = GetVulkanCommandBufferManager();
-
 	u32 semaphoreCount;
-	commandBufferManager.GetSyncSemaphores(deviceIndex, syncMask, mSemaphoresBuffer, semaphoreCount);
+	presentDevice.GetSyncSemaphores(syncMask, mSemaphoresBuffer, semaphoreCount);
 
 	// Wait on present (i.e. until the back buffer becomes available), if we haven't already done so
 	if(AppendWaitSemaphoreIfRequired(imageIndex, semaphoreCount, mSemaphoresBuffer))

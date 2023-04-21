@@ -452,12 +452,6 @@ namespace bs
 			/**	Waits until all the command buffers submitted thus far have finished executing on the GPU. */
 			virtual void WaitUntilIdle() const = 0;
 
-			/**
-			 * Returns the currently active main command buffer instance. All commands queues without a user-provided command
-			 * buffer will be queued on this command buffer. The command buffer instance will change after it has been submitted.
-			 */
-			virtual SPtr<GpuCommandBuffer> GetMainCommandBuffer() const = 0;
-
 			/** Returns the primary GPU on which to perform rendering. */
 			virtual SPtr<GpuDevice> GetPrimaryGpuDevice() const = 0;
 

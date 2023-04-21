@@ -1,7 +1,6 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanGpuCommandBuffer.h"
-#include "Managers/BsVulkanCommandBufferManager.h"
 #include "BsVulkanUtility.h"
 #include "BsVulkanGpuDevice.h"
 #include "BsVulkanGpuParameters.h"
@@ -112,7 +111,8 @@ SPtr<GpuCommandBuffer> VulkanGpuCommandBufferPool::Create(const GpuCommandBuffer
 {
 	EnsureValidThread();
 
-	SPtr<GpuCommandBuffer> commandBuffer = B3DMakeSharedFromExisting(new(B3DAllocate<VulkanGpuCommandBuffer>()) VulkanGpuCommandBuffer(static_cast<VulkanGpuDevice&>(mGpuDevice), mInformation.Thread, mInformation.Usage, createInformation));
+	VulkanInternalCommandBuffer* const internalCommandBuffer = GetBuffer();
+	SPtr<GpuCommandBuffer> commandBuffer = B3DMakeSharedFromExisting(new(B3DAllocate<VulkanGpuCommandBuffer>()) VulkanGpuCommandBuffer(static_cast<VulkanGpuDevice&>(mGpuDevice), internalCommandBuffer, mInformation.Thread, mInformation.Usage, createInformation));
 
 	commandBuffer->SetShared(commandBuffer);
 
@@ -703,11 +703,8 @@ u32 VulkanInternalCommandBuffer::Submit(VulkanGpuQueue* queue, u32 syncMask)
 		otherQueue->Submit(cmdBuffer, nullptr, 0);
 	}
 
-	u32 deviceIdx = device.GetIndex();
-	VulkanCommandBufferManager& cbm = GetVulkanCommandBufferManager();
-
 	u32 semaphoreCount;
-	cbm.GetSyncSemaphores(deviceIdx, syncMask, mSemaphoresTemp.data(), semaphoreCount);
+	mDevice.GetSyncSemaphores(syncMask, mSemaphoresTemp.data(), semaphoreCount);
 
 	// Wait on present (i.e. until the back buffer becomes available) for any swap chains
 	for(auto& entry : mAcquiredSwapChainImages)
@@ -2938,10 +2935,11 @@ void VulkanInternalCommandBuffer::NotifyRenderTargetModified()
 	mRenderTargetModified = true;
 }
 
-VulkanGpuCommandBuffer::VulkanGpuCommandBuffer(VulkanGpuDevice& device, ThreadId ownerThread, GpuQueueUsage queueType, const GpuCommandBufferCreateInformation& createInformation)
-	: GpuCommandBuffer(ownerThread, queueType, createInformation), mDevice(device), mBuffer(nullptr)
+VulkanGpuCommandBuffer::VulkanGpuCommandBuffer(VulkanGpuDevice& device, VulkanInternalCommandBuffer* internalCommandBuffer, ThreadId ownerThread, GpuQueueUsage queueType, const GpuCommandBufferCreateInformation& createInformation)
+	: GpuCommandBuffer(ownerThread, queueType, createInformation), mDevice(device), mBuffer(internalCommandBuffer)
 {
-	AcquireNewBuffer();
+	internalCommandBuffer->SetOwner(this);
+	internalCommandBuffer->SetName(mName);
 }
 
 RenderSurfaceMask VulkanInternalCommandBuffer::GetFramebufferReadMask()
@@ -3024,17 +3022,6 @@ VulkanGpuCommandBuffer::~VulkanGpuCommandBuffer()
 	}
 }
 
-void VulkanGpuCommandBuffer::AcquireNewBuffer()
-{
-	B3D_ASSERT(mBuffer == nullptr || mBuffer->IsDone());
-
-	VulkanGpuCommandBufferPool& pool = mDevice.GetCommandBufferPool(mUsage);
-
-	mBuffer = pool.GetBuffer();
-	mBuffer->SetOwner(this);
-	mBuffer->SetName(mName);
-}
-
 void VulkanGpuCommandBuffer::Submit(VulkanGpuQueue& gpuQueue, u32 syncMask)
 {
 	if (!B3D_ENSURE(gpuQueue.GetUsage() == mUsage))
@@ -3110,7 +3097,13 @@ CommandBufferState VulkanGpuCommandBuffer::GetState() const
 	return CommandBufferState::Empty;
 }
 
+void VulkanGpuCommandBuffer::End()
+{
+	mBuffer->End();
+}
+
 void VulkanGpuCommandBuffer::NotifyExecutionCompleted()
 {
 	mIsCompleted = true;
 }
+

@@ -19,8 +19,10 @@ namespace bs
 		public:
 			VulkanGpuQueue(VulkanGpuDevice& device, GpuQueueUsage usage, u32 index, VkQueue vulkanQueue);
 
-			void SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>& commandBuffer, u32 syncMask) override;
-			void SubmitCommandBuffers(const ArrayView<SPtr<ct::GpuCommandBuffer>>& commandBuffer, u32 syncMask) override;
+			void SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandBuffer, u32 syncMask) override;
+			void SubmitCommandBuffers(const ArrayView<SPtr<GpuCommandBuffer>>& commandBuffers, u32 syncMask) override;
+
+			void WaitUntilIdle() override;
 
 			/** Returns the internal handle to the Vulkan queue object. */
 			VkQueue GetHandle() const { return mQueue; }
@@ -71,13 +73,6 @@ namespace bs
 			 * @note	Submit thread only.
 			 */
 			VkResult Present(VulkanSwapChain* swapChain, u32 swapChainImageIndex, VulkanSemaphore** waitSemaphores, u32 semaphoresCount);
-
-			/**
-			 * Blocks the calling thread until all operations on the queue finish.
-			 *
-			 * @note	Submit thread only.
-			 */
-			void WaitUntilIdle() const;
 
 			/**
 			 * Checks if any of the active command buffers finished executing on the queue and updates their states accordingly. Note that you must follow this call

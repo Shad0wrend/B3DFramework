@@ -59,6 +59,9 @@ namespace bs::ct
 		 */
 		void WaitUntilIdle(bool performCleanupForShutdown = false);
 
+		/** Blocks the calling thread until all commands on the provided queue have finished executing. */
+		void WaitUntilIdle(VulkanGpuQueue& queue);
+
 		/** Refreshes the internal states of all command buffers that finished executing thus far. */
 		void RefreshCommandBufferCompletionStates() const;
 

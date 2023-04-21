@@ -130,7 +130,7 @@ namespace bs
 			 * Rebuilds any light probe related information. Should be called once immediately before rendering. If no change
 			 * is detected since the last call, the call does nothing.
 			 */
-			void UpdateLightProbes();
+			void UpdateLightProbes(GpuCommandBuffer& commandBuffer);
 
 			/** Registers a new sky texture in the scene. */
 			void RegisterSkybox(Skybox* skybox);

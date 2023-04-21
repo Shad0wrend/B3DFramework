@@ -207,20 +207,6 @@ VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device, u32 deviceIdx)
 	// Initialize capabilities
 	InitializeCapabilities();
 
-	// Create pools/managers
-	for (u32 queueUsageIndex = 0; queueUsageIndex < GQT_COUNT; ++queueUsageIndex)
-	{
-		const GpuQueueUsage queueUsage = (GpuQueueUsage)queueUsageIndex;
-		if (GetQueueCount(queueUsage) == 0)
-			continue;
-
-		GpuCommandBufferPoolCreateInformation createInformation;
-		createInformation.Thread = B3D_CURRENT_THREAD_ID;
-		createInformation.Usage = queueUsage;
-
-		mCommandBufferPools[queueUsageIndex] = std::static_pointer_cast<VulkanGpuCommandBufferPool>(CreateGpuCommandBufferPool(createInformation));
-	}
-
 	mQueryPool = B3DNew<VulkanQueryPool>(*this);
 	mDescriptorManager = B3DNew<VulkanDescriptorManager>(*this);
 	mResourceManager = B3DNew<VulkanResourceManager>(*this);
@@ -244,9 +230,6 @@ VulkanGpuDevice::~VulkanGpuDevice()
 
 	B3DDelete(mDescriptorManager);
 	B3DDelete(mQueryPool);
-
-	for (auto& pool : mCommandBufferPools)
-		pool = nullptr;
 
 	// Needs to happen after query pool & command buffer pool shutdown, to ensure their resources are destroyed
 	B3DDelete(mResourceManager);
@@ -554,7 +537,6 @@ SPtr<GpuComputePipelineState> VulkanGpuDevice::CreateGpuComputePipelineState(con
 		output->Initialize();
 
 	return output;
-	
 }
 
 SPtr<GpuPipelineParameterLayout> VulkanGpuDevice::CreateGpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation, bool deferredInitialize)
@@ -567,19 +549,17 @@ SPtr<GpuPipelineParameterLayout> VulkanGpuDevice::CreateGpuPipelineParameterLayo
 	return output;
 }
 
-void VulkanGpuDevice::WaitUntilIdle() const
+void VulkanGpuDevice::WaitUntilIdle()
 {
-	AssertIfNotVulkanSubmitThread();
-
-	VkResult result = vkDeviceWaitIdle(mLogicalDevice);
-	B3D_ASSERT(result == VK_SUCCESS);
+	GetVulkanSubmitThread().WaitUntilIdle();
+	GetVulkanSubmitThread().RefreshCommandBufferCompletionStates();
 }
 
 void VulkanGpuDevice::SubmitTransferCommandBuffers(bool wait)
 {
 	DoForEachQueue([](VulkanGpuQueue& queue)
 	{
-		queue.SubmitTransferCommandBuffers();
+		queue.SubmitTransferCommandBuffer(false);
 	});
 	
 	if(wait)
@@ -906,3 +886,51 @@ void VulkanGpuDevice::InitializeCapabilities()
 	mCapabilities.AddShaderProfile("glsl");
 }
 
+void VulkanGpuDevice::GetSyncSemaphores(u32 syncMask, VulkanSemaphore** semaphores, u32& count)
+{
+	AssertIfNotVulkanSubmitThread();
+
+	bool semaphoreRequestFailed = false;
+
+	u32 semaphoreIndex = 0;
+	for(u32 queueTypeIndex = 0; queueTypeIndex < GQT_COUNT; queueTypeIndex++)
+	{
+		const GpuQueueUsage queueType = (GpuQueueUsage)queueTypeIndex;
+
+		const u32 queueCount = GetQueueCount(queueType);
+		for(u32 queueIndex = 0; queueIndex < queueCount; queueIndex++)
+		{
+			VulkanGpuQueue* queue = static_cast<VulkanGpuQueue*>(GetQueue(queueType, queueIndex).get());
+			VulkanInternalCommandBuffer* lastCommandBuffer = queue->GetLastCommandBuffer();
+
+			// Check if a buffer is currently executing on the queue
+			if(lastCommandBuffer == nullptr || (!lastCommandBuffer->IsSubmitted() && !lastCommandBuffer->IsDone()))
+				continue;
+
+			// Check if we care about this specific queue
+			u32 queueMask = GetQueueMask(queueType, queueIndex);
+			if((syncMask & queueMask) == 0)
+				continue;
+
+			VulkanSemaphore* semaphore = lastCommandBuffer->RequestInterQueueSemaphore();
+			if(semaphore == nullptr)
+			{
+				semaphoreRequestFailed = true;
+				continue;
+			}
+
+			semaphores[semaphoreIndex++] = semaphore;
+		}
+	}
+
+	count = semaphoreIndex;
+
+	if(semaphoreRequestFailed)
+	{
+		B3D_LOG(Error, RenderBackend, "Failed to allocate semaphores for a command buffer sync. This means some of the "
+									 "dependency requests will not be fulfilled. This happened because a command buffer has too many "
+									 "dependant command buffers. The maximum allowed number is {0} but can be increased by incrementing the "
+									 "value of BS_MAX_VULKAN_CB_DEPENDENCIES.",
+			   BS_MAX_VULKAN_CB_DEPENDENCIES);
+	}
+}

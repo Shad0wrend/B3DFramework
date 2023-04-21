@@ -131,7 +131,7 @@ namespace bs
 			void DestroyOnRenderThread() override;
 
 			/** Updates the global reflection probe cubemap array with changed probe textures. */
-			void UpdateReflProbeArray();
+			void UpdateReflProbeArray(GpuCommandBuffer& commandBuffer);
 
 			// Core thread only fields
 			RenderBeastFeatureSet mFeatureSet = RenderBeastFeatureSet::Desktop;

@@ -8,6 +8,7 @@
 #include "Utility/BsUUID.h"
 #include "Renderer/BsIBLUtility.h"
 #include "CoreThread/BsCoreObjectSync.h"
+#include "Profiling/BsProfilerGPU.h"
 #include "RenderAPI/BsRenderAPI.h"
 
 using namespace bs;
@@ -82,6 +83,8 @@ void Skybox::FilterTexture()
 	{
 		const SPtr<ct::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(ct::GpuCommandBufferCreateInformation::Create("FilterSkybox"));
 
+		GetProfilerGPU().BeginSample(*commandBuffer, "FilterSkybox");
+
 		// Filter radiance
 		ct::GetIBLUtility().ScaleCubemap(*commandBuffer, coreSkybox->GetTexture(), 0, coreFilteredRadiance, 0);
 		ct::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, coreFilteredRadiance, nullptr);
@@ -92,6 +95,7 @@ void Skybox::FilterTexture()
 		ct::GetIBLUtility().FilterCubemapForIrradiance(*commandBuffer, coreSkybox->GetTexture(), coreIrradiance);
 		coreSkybox->mIrradiance = coreIrradiance;
 
+		GetProfilerGPU().EndSample(*commandBuffer, "FilterSkybox");
 		ct::GetRenderAPI().SubmitCommandBuffer(commandBuffer);
 
 		return true;

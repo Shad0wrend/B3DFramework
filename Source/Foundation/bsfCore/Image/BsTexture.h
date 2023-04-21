@@ -269,30 +269,6 @@ namespace bs
 		 */
 		void ReadCachedData(PixelData& data, u32 face = 0, u32 mipLevel = 0);
 
-		/**
-		 * Copies the contents a subresource in this texture to another texture. Texture format and size of the subresource
-		 * must match.
-		 *
-		 * You are allowed to copy from a multisampled to non-multisampled surface, which will resolve the multisampled
-		 * surface before copying.
-		 *
-		 * @param	target						Texture that contains the destination subresource.
-		 * @param	textureCopyInformation		Structure used for customizing the copy operation.
-		 *
-		 * @note This is an @ref asyncMethod "asynchronous method".
-		 */
-		void Copy(const SPtr<Texture>& target, const TextureCopyInformation& textureCopyInformation = TextureCopyInformation::kDefault) const;
-
-		/**
-		 * Blits the contents a subresource in this texture to another texture.
-		 *
-		 * @param	target						Texture that contains the destination subresource.
-		 * @param	textureBlitInformation		Structure used for customizing the blit operation.
-		 *
-		 * @note This is an @ref asyncMethod "asynchronous method".
-		 */
-		void Blit(const SPtr<Texture>& target, const TextureBlitInformation& textureBlitInformation = TextureBlitInformation::kDefault) const;
-
 		/**	Returns properties that contain information about the texture. */
 		const TextureProperties& GetProperties() const { return mProperties; }
 
@@ -421,20 +397,20 @@ namespace bs
 			 * You are allowed to copy from a multisampled to non-multisampled surface, which will resolve the multisampled
 			 * surface before copying.
 			 *
+			 * @param	commandBuffer		Command buffer to queue the copy operation on.
 			 * @param	target				Texture that contains the destination subresource.
 			 * @param	copyInformation		Structure used for customizing the copy operation.
-			 * @param	commandBuffer		Command buffer to queue the copy operation on. If null, main command buffer is used.
 			 */
-			void Copy(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation = TextureCopyInformation::kDefault, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
+			void Copy(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureCopyInformation& copyInformation = TextureCopyInformation::kDefault);
 
 			/**
 			 * Blits the contents a subresource in this texture to another texture.
 			 *
+			 * @param	commandBuffer		Command buffer to queue the blit operation on.
 			 * @param	target				Texture that contains the destination subresource.
 			 * @param	blitInformation		Structure used for customizing the copy operation.
-			 * @param	commandBuffer		Command buffer to queue the copy operation on. If null, main command buffer is used.
 			 */
-			void Blit(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation = TextureBlitInformation::kDefault, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
+			void Blit(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureBlitInformation& blitInformation = TextureBlitInformation::kDefault);
 
 			/**
 			 * Sets all the pixels of the specified face and mip level to the provided value.
@@ -459,19 +435,20 @@ namespace bs
 			 * @param	destination	Previously allocated buffer to read data into.
 			 * @param	mipLevel		(optional) Mipmap level to read from.
 			 * @param	face			(optional) Texture face to read from.
+			 * @param	gpuQueue		GPU queue on which to perform the read. If not specified the default queue will be used.
 			 */
-			void ReadData(PixelData& destination, u32 mipLevel = 0, u32 face = 0);
+			void ReadData(PixelData& destination, u32 mipLevel = 0, u32 face = 0, const SPtr<GpuQueue>& gpuQueue = nullptr);
 
 			/**
 			 * Performs a non-blocking read operation. The GPU will execute the read when the command buffer reaches the execution point
 			 * and the asynchronous operation will be signaled with the return value.
 			 *
+			 * @param	commandBuffer	Command buffer to queue the operation on.
 			 * @param	mipLevel		(optional) Mipmap level to read from.
 			 * @param	face			(optional) Texture face to read from.
-			 *								no data will be read.
-			 * @param	commandBuffer	Command buffer to queue the operation on. Main command buffer is used if none is provided.
+			 * @return					Operation that will be signaled when the data is ready to be read.
 			 */
-			virtual TAsyncOp<SPtr<PixelData>> ReadDataAsync(u32 mipLevel = 0, u32 face = 0, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr);
+			virtual TAsyncOp<SPtr<PixelData>> ReadDataAsync(GpuCommandBuffer& commandBuffer, u32 mipLevel = 0, u32 face = 0);
 
 			/**
 			 * Writes data from the provided buffer into the texture buffer.
@@ -538,13 +515,13 @@ namespace bs
 			virtual void UnlockInternal() = 0;
 
 			/** @copydoc Copy */
-			virtual void CopyInternal(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation, const SPtr<GpuCommandBuffer>& commandBuffer) = 0;
+			virtual void CopyInternal(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureCopyInformation& copyInformation) = 0;
 
 			/** @copydoc Blit */
-			virtual void BlitInternal(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation, const SPtr<GpuCommandBuffer>& commandBuffer) = 0;
+			virtual void BlitInternal(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureBlitInformation& blitInformation) = 0;
 
 			/** @copydoc ReadData */
-			virtual void ReadDataInternal(PixelData& dest, u32 mipLevel = 0, u32 face = 0) = 0;
+			virtual void ReadDataInternal(PixelData& dest, u32 mipLevel = 0, u32 face = 0, const SPtr<GpuQueue>& gpuQueue = nullptr) = 0;
 
 			/** @copydoc WriteData */
 			virtual void WriteDataInternal(const PixelData& src, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) = 0;

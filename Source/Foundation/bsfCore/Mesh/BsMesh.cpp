@@ -53,8 +53,10 @@ AsyncOp Mesh::ReadData(const SPtr<MeshData>& data)
 	std::function<void(const SPtr<ct::Mesh>&, const SPtr<MeshData>&, AsyncOp&)> func =
 		[&](const SPtr<ct::Mesh>& mesh, const SPtr<MeshData>& _meshData, AsyncOp& asyncOp)
 	{
-		// Make sure any queued command start executing before reading
-		ct::RenderAPI::Instance().SubmitCommandBuffer(nullptr);
+		// TODO - Transfer buffers should be handled by the Renderer
+		const SPtr<GpuDevice> gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+		if(gpuDevice != nullptr)
+			gpuDevice->SubmitTransferCommandBuffers();
 
 		mesh->ReadData(*_meshData);
 		_meshData->UnlockInternal();

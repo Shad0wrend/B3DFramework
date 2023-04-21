@@ -4,7 +4,6 @@
 #include "BsVulkanRenderAPI.h"
 #include "BsVulkanGpuDevice.h"
 #include "BsVulkanUtility.h"
-#include "Managers/BsVulkanCommandBufferManager.h"
 #include "BsVulkanGpuCommandBuffer.h"
 #include "BsVulkanTexture.h"
 
@@ -376,13 +375,7 @@ void VulkanGpuBuffer::CopyData(GpuBuffer& srcBuffer, u32 srcOffset, u32 dstOffse
 	}
 
 	VulkanGpuBuffer& vkSource = static_cast<VulkanGpuBuffer&>(srcBuffer);
-
-	VulkanRenderAPI& rapi = static_cast<VulkanRenderAPI&>(RenderAPI::Instance());
-	VulkanInternalCommandBuffer* vkCB;
-	if(commandBuffer != nullptr)
-		vkCB = static_cast<VulkanGpuCommandBuffer*>(commandBuffer.get())->GetInternal();
-	else
-		vkCB = rapi.GetMainVulkanCommandBuffer()->GetInternal();
+	VulkanInternalCommandBuffer* vkCB = static_cast<VulkanGpuCommandBuffer*>(commandBuffer.get())->GetInternal();
 
 	u32 deviceIdx = vkCB->GetDeviceIndex();
 	B3D_ASSERT(deviceIdx == 0);
@@ -419,9 +412,7 @@ void VulkanGpuBuffer::ReadData(u32 offset, u32 length, void* destination, const 
 		return;
 
 	GpuQueue& transferGpuQueue = gpuQueue != nullptr ? *gpuQueue : *mDevice.GetQueue(GQT_GRAPHICS, 0);
-
 	VulkanInternalCommandBuffer* vulkanCommandBuffer = nullptr;
-	VulkanTransferBuffer* transferBuffer = nullptr;
 
 	// Check is the GPU currently writing to the buffer
 	const u32 writeUseMask = mBuffer->GetUseInfo(VulkanAccessFlag::Write);
@@ -436,12 +427,8 @@ void VulkanGpuBuffer::ReadData(u32 offset, u32 length, void* destination, const 
 		// If used on the GPU, we need to wait until all write operations complete before mapping it
 		if(isUsedOnGPU)
 		{
-			if(transferBuffer == nullptr || vulkanCommandBuffer == nullptr)
-			{
-				// We always use the graphics queue. As we do a wait idle below, it really doesn't matter.
-				transferBuffer = GetVulkanCommandBufferManager().GetTransferBuffer(0, GQT_GRAPHICS, 0);
-				vulkanCommandBuffer = transferBuffer->GetInternalCommandBuffer();
-			}
+			if(vulkanCommandBuffer == nullptr)
+				vulkanCommandBuffer = static_cast<VulkanGpuCommandBuffer&>(*transferGpuQueue.GetOrCreateTransferCommandBuffer()).GetInternal();
 
 			// Make any writes visible before mapping
 			if(mSupportsGPUWrites)
@@ -455,8 +442,8 @@ void VulkanGpuBuffer::ReadData(u32 offset, u32 length, void* destination, const 
 			}
 
 			// Submit the command buffer and wait until it finishes
-			transferBuffer->AppendMask(writeUseMask);
-			transferBuffer->Flush(true);
+			vulkanCommandBuffer->AppendSyncMask(writeUseMask);
+			transferGpuQueue.SubmitTransferCommandBuffer(true);
 		}
 
 		void* lockedData = Lock(offset, length, GBL_READ_ONLY);
@@ -477,18 +464,15 @@ void VulkanGpuBuffer::ReadData(u32 offset, u32 length, void* destination, const 
 		syncMask = writeUseMask;
 	}
 
-	if(transferBuffer == nullptr || vulkanCommandBuffer == nullptr)
-	{
-		transferBuffer = GetVulkanCommandBufferManager().GetTransferBuffer(0, GQT_GRAPHICS, 0);
-		vulkanCommandBuffer = transferBuffer->GetInternalCommandBuffer();
-	}
+	if(vulkanCommandBuffer == nullptr)
+		vulkanCommandBuffer = static_cast<VulkanGpuCommandBuffer&>(*transferGpuQueue.GetOrCreateTransferCommandBuffer()).GetInternal();
 
 	// Queue copy command
 	vulkanCommandBuffer->CopyBufferToBuffer(mBuffer, stagingBuffer, offset, 0, length);
 
 	// Submit the command buffer and wait until it finishes
-	transferBuffer->AppendMask(syncMask);
-	transferBuffer->Flush(true);
+	vulkanCommandBuffer->AppendSyncMask(syncMask);
+	transferGpuQueue.SubmitTransferCommandBuffer(true);
 
 	B3D_ASSERT(!mBuffer->IsUsed());
 
@@ -557,7 +541,7 @@ void VulkanGpuBuffer::WriteData(u32 offset, u32 length, const void* source, Buff
 
 	VulkanInternalCommandBuffer* vulkanCommandBuffer = commandBuffer != nullptr
 		? static_cast<VulkanGpuCommandBuffer*>(commandBuffer.get())->GetInternal()
-		: GetVulkanCommandBufferManager().GetTransferBuffer(0, GQT_GRAPHICS, 0)->GetInternalCommandBuffer();
+		: static_cast<VulkanGpuCommandBuffer*>(mDevice.GetQueue(GQT_GRAPHICS, 0)->GetOrCreateTransferCommandBuffer().get())->GetInternal();
 
 	// Copy the source into the staging buffer
 	if(stagingBuffer != nullptr)

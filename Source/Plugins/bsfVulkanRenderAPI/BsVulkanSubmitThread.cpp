@@ -98,7 +98,9 @@ void VulkanSubmitThread::QueuePresent(VulkanGpuQueue& queue, VulkanSwapChain& sw
 		VulkanGpuDevice& device = queue.GetDevice();
 
 		TaskScheduler::Instance().AddWorker();
-		device.WaitUntilIdle();
+
+		VkResult result = vkDeviceWaitIdle(device.GetLogical());
+		B3D_ASSERT(result == VK_SUCCESS);
 
 		device.DoForEachQueue([](VulkanGpuQueue& queue)
 		{
@@ -155,7 +157,10 @@ void VulkanSubmitThread::WaitUntilIdle(bool performCleanupForShutdown)
 			const SPtr<VulkanGpuDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIndex);
 
 			TaskScheduler::Instance().AddWorker();
-			device->WaitUntilIdle();
+
+			const VkResult result = vkDeviceWaitIdle(device->GetLogical());
+			B3D_ASSERT(result == VK_SUCCESS);
+
 			TaskScheduler::Instance().RemoveWorker();
 
 			device->DoForEachQueue([performCleanupForShutdown](VulkanGpuQueue& queue)
@@ -169,6 +174,29 @@ void VulkanSubmitThread::WaitUntilIdle(bool performCleanupForShutdown)
 		TaskScheduler::Instance().AddWorker();
 
 	RunSubmitThreadCommand(mCommandQueue, std::move(fnCommand), "Device wait idle", true);
+
+	if(kEnableSubmitThread)
+		TaskScheduler::Instance().RemoveWorker();
+}
+
+void VulkanSubmitThread::WaitUntilIdle(VulkanGpuQueue& queue)
+{
+	auto fnCommand = [&queue]()
+	{
+		TaskScheduler::Instance().AddWorker();
+
+		const VkResult result = vkQueueWaitIdle(queue.GetHandle());
+		B3D_ASSERT(result == VK_SUCCESS);
+
+		TaskScheduler::Instance().RemoveWorker();
+
+		queue.RefreshCompletionStateOnSubmitThread(true);
+	};
+
+	if(kEnableSubmitThread)
+		TaskScheduler::Instance().AddWorker();
+
+	RunSubmitThreadCommand(mCommandQueue, std::move(fnCommand), "Queue wait idle", true);
 
 	if(kEnableSubmitThread)
 		TaskScheduler::Instance().RemoveWorker();

@@ -6,7 +6,6 @@
 #include "Managers/BsVulkanRenderWindowManager.h"
 #include "Managers/BsVulkanRenderStateManager.h"
 #include "Managers/BsVulkanQueryManager.h"
-#include "Managers/BsVulkanCommandBufferManager.h"
 #include "Managers/BsVulkanVertexInputManager.h"
 
 #include <vulkan/vulkan.h>
@@ -421,9 +420,6 @@ void VulkanGpuBackend::OnStartUp()
 
 	GLSLToSPIRV::StartUp();
 
-	// Create command buffer manager
-	ct::VulkanCommandBufferManager::StartUp();
-
 	// Create the texture manager for use by others
 	TextureManager::StartUp<VulkanTextureManager>();
 	ct::TextureManager::StartUp<ct::VulkanTextureManager>();
@@ -459,8 +455,6 @@ void VulkanGpuBackend::OnShutDown()
 	VulkanRenderPassCache::ShutDown();
 	ct::TextureManager::ShutDown();
 	TextureManager::ShutDown();
-
-	VulkanCommandBufferManager::ShutDown();
 	GLSLToSPIRV::ShutDown();
 
 	mPresentDevice = nullptr;

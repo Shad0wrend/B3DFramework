@@ -9,6 +9,7 @@
 #include "Utility/BsUUID.h"
 #include "Renderer/BsIBLUtility.h"
 #include "CoreThread/BsCoreObjectSync.h"
+#include "Profiling/BsProfilerGPU.h"
 #include "RenderAPI/BsRenderAPI.h"
 
 using namespace bs;
@@ -110,6 +111,7 @@ void ReflectionProbe::CaptureAndFilter()
 		auto renderReflProbe = [coreTexture, coreProbe](ct::GpuCommandBufferPool& commandBufferPool)
 		{
 			const SPtr<ct::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(ct::GpuCommandBufferCreateInformation::Create("RenderAndFilterReflectionProbe"));
+			GetProfilerGPU().BeginSample(*commandBuffer, "RenderAndFilterReflectionProbe");
 			float radius = coreProbe->mType == ReflectionProbeType::Sphere ? coreProbe->mRadius : coreProbe->mExtents.Length();
 
 			ct::CaptureSettings settings;
@@ -122,6 +124,7 @@ void ReflectionProbe::CaptureAndFilter()
 
 			coreProbe->mFilteredTexture = coreTexture;
 			ct::GetRenderer()->NotifyReflectionProbeUpdated(coreProbe.get(), true);
+			GetProfilerGPU().EndSample(*commandBuffer, "RenderAndFilterReflectionProbe");
 
 			ct::GetRenderAPI().SubmitCommandBuffer(commandBuffer);
 
@@ -136,12 +139,14 @@ void ReflectionProbe::CaptureAndFilter()
 		auto filterReflProbe = [coreCustomTex, coreTexture, coreProbe](ct::GpuCommandBufferPool& commandBufferPool)
 		{
 			const SPtr<ct::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(ct::GpuCommandBufferCreateInformation::Create("FilterReflectionProbe"));
+			GetProfilerGPU().BeginSample(*commandBuffer, "FilterReflectionProbe");
 
 			ct::GetIBLUtility().ScaleCubemap(*commandBuffer, coreCustomTex, 0, coreTexture, 0);
 			ct::GetIBLUtility().FilterCubemapForSpecular(*commandBuffer, coreTexture, nullptr);
 
 			coreProbe->mFilteredTexture = coreTexture;
 			ct::GetRenderer()->NotifyReflectionProbeUpdated(coreProbe.get(), true);
+			GetProfilerGPU().EndSample(*commandBuffer, "FilterReflectionProbe");
 
 			ct::GetRenderAPI().SubmitCommandBuffer(commandBuffer);
 

@@ -289,12 +289,11 @@ namespace bs
 			void Initialize() override;
 			PixelData LockInternal(GpuLockOptions options, u32 mipLevel = 0, u32 face = 0) override;
 			void UnlockInternal() override;
-			void CopyInternal(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation, const SPtr<GpuCommandBuffer>& commandBuffer) override;
-			void BlitInternal(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation, const SPtr<GpuCommandBuffer>& commandBuffer) override;
-			TAsyncOp<SPtr<PixelData>> ReadDataAsync(UINT32 mipLevel = 0, UINT32 face = 0, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) override;
-			void ReadDataInternal(PixelData& destination, u32 mipLevel = 0, u32 face = 0) override;
+			void CopyInternal(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureCopyInformation& copyInformation) override;
+			void BlitInternal(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureBlitInformation& blitInformation) override;
+			TAsyncOp<SPtr<PixelData>> ReadDataAsync(GpuCommandBuffer& commandBuffer, u32 mipLevel = 0, u32 face = 0) override;
+			void ReadDataInternal(PixelData& destination, u32 mipLevel = 0, u32 face = 0, const SPtr<GpuQueue>& gpuQueue = nullptr) override;
 			void WriteDataInternal(const PixelData& source, u32 mipLevel = 0, u32 face = 0, bool discardWholeBuffer = false, const SPtr<GpuCommandBuffer>& commandBuffer = nullptr) override;
-
 
 		private:
 			/** Creates a new image for the specified device, matching the current properties. */

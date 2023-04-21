@@ -55,7 +55,7 @@ namespace bs
 		virtual void SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>& commandBuffer, u32 syncMask = 0) = 0;
 
 		/** Submits multiple command buffers at the same time. See SubmitCommandBuffer(). */
-		virtual void SubmitCommandBuffers(const ArrayView<SPtr<ct::GpuCommandBuffer>>& commandBuffer, u32 syncMask = 0) = 0;
+		virtual void SubmitCommandBuffers(const ArrayView<SPtr<ct::GpuCommandBuffer>>& commandBuffers, u32 syncMask = 0) = 0;
 
 		/**
 		 * Returns a command buffer that is to be used for transfer operations when user doesn't provide an explicit command buffer.
@@ -64,15 +64,18 @@ namespace bs
 		 */
 		virtual SPtr<ct::GpuCommandBuffer> GetOrCreateTransferCommandBuffer();
 
-		/** Submits the active transfer command buffers for all threads. All existing command buffers are invalidated. */
-		virtual void SubmitTransferCommandBuffers();
+		/** Submits the active transfer command buffer for the current thread. Existing command buffer is invalidated.  If @p wait is true, calling thread will wait until the command buffer finishes executing on the GPU. */
+		virtual void SubmitTransferCommandBuffer(bool wait);
 
+		/** Blocks the calling thread until all operations on the queue finish executing on the GPU. */
+		virtual void WaitUntilIdle() = 0;
 	protected:
 		/** Information about a transfer command buffer associated with a particular thread. */
 		struct PerThreadTransferCommandBufferInformation
 		{
 			SPtr<ct::GpuCommandBufferPool> CommandBufferPool; /**< Pool for allocating the command buffers. */
 			SPtr<ct::GpuCommandBuffer> CurrentTransferCommandBuffer; /**< Currently active transfer buffer, if any. */
+			Vector<SPtr<ct::GpuCommandBuffer>> SubmittedTransferCommandBuffers; /**< Buffers that are submitted, but haven't yet finished execution. */
 		};
 
 		GpuQueue(GpuDevice& gpuDevice, GpuQueueUsage usage, u32 index);
@@ -113,8 +116,11 @@ namespace bs
 		/** Retrieves a queue with the specified usage and index. */
 		virtual SPtr<GpuQueue> GetQueue(GpuQueueUsage usage, u32 index) const = 0;
 
-		/** Submits all non-empty transfer command buffers on all queues and optionally waits until the GPU is done processing them. */
+		/** Submits all non-empty transfer command buffers on all queues, for the current thread. Optionally waits until the GPU is done processing them. */
 		virtual void SubmitTransferCommandBuffers(bool wait = false) = 0;
+
+		/** Blocks the calling thread until all operations on the device finish. */
+		virtual void WaitUntilIdle() = 0;
 
 		/**
 		 * Compiles the GPU program to an intermediate bytecode format. The bytecode can be cached and used for

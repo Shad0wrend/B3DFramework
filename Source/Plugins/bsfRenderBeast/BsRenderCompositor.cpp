@@ -168,7 +168,7 @@ void RenderCompositor::Execute(RenderCompositorNodeInputs& inputs) const
 
 #if B3D_PROFILING_ENABLED
 			const ProfilerString sampleName = ProfilerString("RC: ") + entry.NodeType->Id.CStr();
-			BS_GPU_PROFILE_BEGIN(sampleName);
+			BS_GPU_PROFILE_BEGIN(*inputs.ActiveCommandBuffer, sampleName);
 			GetProfilerCPU().BeginSample(sampleName.c_str());
 #endif
 
@@ -178,7 +178,7 @@ void RenderCompositor::Execute(RenderCompositorNodeInputs& inputs) const
 
 #if B3D_PROFILING_ENABLED
 			GetProfilerCPU().EndSample(sampleName.c_str());
-			BS_GPU_PROFILE_END(sampleName);
+			BS_GPU_PROFILE_END(*inputs.ActiveCommandBuffer, sampleName);
 #endif
 
 			activeNodes.push_back(&entry);
@@ -905,7 +905,7 @@ void RCNodeDeferredDirectLighting::Render(const RenderCompositorNodeInputs& inpu
 	// Render unshadowed lights
 	if(!tiledDeferredSupported)
 	{
-		ProfileGPUBlock sampleBlock("Standard deferred unshadowed lights");
+		ProfileGPUBlock sampleBlock(commandBuffer, "Standard deferred unshadowed lights");
 
 		commandBuffer.SetRenderTarget(Output->RenderTarget, FBT_DEPTH | FBT_STENCIL, RT_DEPTH_STENCIL);
 
@@ -957,7 +957,7 @@ void RCNodeDeferredDirectLighting::Render(const RenderCompositorNodeInputs& inpu
 
 	// Render shadowed lights
 	{
-		ProfileGPUBlock sampleBlock("Standard deferred shadowed lights");
+		ProfileGPUBlock sampleBlock(commandBuffer, "Standard deferred shadowed lights");
 
 		const ShadowRendering& shadowRenderer = inputs.ViewGroup.GetShadowRenderer();
 		for(u32 i = 0; i < (u32)LightType::Count; i++)

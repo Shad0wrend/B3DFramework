@@ -32,7 +32,7 @@ VulkanTimerQuery::~VulkanTimerQuery()
 	B3D_INCREMENT_RENDER_STATISTIC_CATEGORY(ResDestroyed, RenderStatObject_Query);
 }
 
-void VulkanTimerQuery::Begin(const SPtr<GpuCommandBuffer>& cb)
+void VulkanTimerQuery::Begin(GpuCommandBuffer& commandBuffer)
 {
 	VulkanQueryPool& queryPool = mDevice.GetQueryPool();
 
@@ -52,20 +52,15 @@ void VulkanTimerQuery::Begin(const SPtr<GpuCommandBuffer>& cb)
 	mTimeDelta = 0.0f;
 
 	// Retrieve and queue new query
-	VulkanGpuCommandBuffer* vulkanCB;
-	if(cb != nullptr)
-		vulkanCB = static_cast<VulkanGpuCommandBuffer*>(cb.get());
-	else
-		vulkanCB = static_cast<VulkanGpuCommandBuffer*>(GetVulkanRenderAPI().GetMainVulkanCommandBuffer());
-
-	VulkanInternalCommandBuffer* internalCB = vulkanCB->GetInternal();
+	VulkanGpuCommandBuffer& vulkanCommandBuffer = static_cast<VulkanGpuCommandBuffer&>(commandBuffer);
+	VulkanInternalCommandBuffer* internalCB = vulkanCommandBuffer.GetInternal();
 	VulkanQuery* beginQuery = queryPool.BeginTimerQuery(internalCB);
 	internalCB->RegisterQuery(this);
 
 	mQueries.push_back(std::make_pair(beginQuery, nullptr));
 }
 
-void VulkanTimerQuery::End(const SPtr<GpuCommandBuffer>& cb)
+void VulkanTimerQuery::End(GpuCommandBuffer& commandBuffer)
 {
 	if(mQueries.empty())
 	{
@@ -76,14 +71,10 @@ void VulkanTimerQuery::End(const SPtr<GpuCommandBuffer>& cb)
 	mQueryEndCalled = true;
 	mQueryFinalized = false;
 
-	VulkanGpuCommandBuffer* vulkanCB;
-	if(cb != nullptr)
-		vulkanCB = static_cast<VulkanGpuCommandBuffer*>(cb.get());
-	else
-		vulkanCB = static_cast<VulkanGpuCommandBuffer*>(GetVulkanRenderAPI().GetMainVulkanCommandBuffer());
+	VulkanGpuCommandBuffer& vulkanCommandBuffer = static_cast<VulkanGpuCommandBuffer&>(commandBuffer);
 
 	VulkanQueryPool& queryPool = mDevice.GetQueryPool();
-	VulkanInternalCommandBuffer* internalCB = vulkanCB->GetInternal();
+	VulkanInternalCommandBuffer* internalCB = vulkanCommandBuffer.GetInternal();
 	VulkanQuery* endQuery = queryPool.BeginTimerQuery(internalCB);
 	internalCB->RegisterQuery(this);
 

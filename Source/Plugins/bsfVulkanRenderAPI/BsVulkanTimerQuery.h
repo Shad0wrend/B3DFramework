@@ -20,8 +20,8 @@ namespace bs
 			VulkanTimerQuery(VulkanGpuDevice& device);
 			~VulkanTimerQuery() override;
 
-			void Begin(const SPtr<GpuCommandBuffer>& cb) override;
-			void End(const SPtr<GpuCommandBuffer>& cb) override;
+			void Begin(GpuCommandBuffer& commandBuffer) override;
+			void End(GpuCommandBuffer& commandBuffer) override;
 			bool IsReady() const override;
 			float GetTimeMs() override;
 

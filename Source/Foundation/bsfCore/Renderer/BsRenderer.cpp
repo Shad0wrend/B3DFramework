@@ -122,7 +122,6 @@ void Renderer::ProcessTasks(bool forceAll, u64 upToFrame)
 
 			const bool complete = [this, &entry]()
 			{
-				ProfileGPUBlock sampleBlock("Renderer task: " + ProfilerString(entry->mName.data(), entry->mName.size()));
 				return entry->mTaskWorker(*mCommandBufferPool);
 			}();
 
@@ -167,7 +166,6 @@ void Renderer::ProcessTask(RendererTask& task, bool forceAll)
 		GetProfilerGPU().BeginFrame();
 		GetProfilerCPU().BeginThread("RenderTask");
 		{
-			ProfileGPUBlock sampleBlock("Renderer task: " + ProfilerString(task.mName.data(), task.mName.size()));
 			complete = task.mTaskWorker(*mCommandBufferPool);
 		}
 		GetProfilerCPU().EndThread();

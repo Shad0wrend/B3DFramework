@@ -403,7 +403,7 @@ void RenderBeastIBLUtility::FilterCubemapForSpecular(GpuCommandBuffer& commandBu
 		copyDesc.SourceFace = face;
 		copyDesc.DestinationFace = face;
 
-		cubemap->Copy(scratchCubemap, copyDesc);
+		cubemap->Copy(commandBuffer, scratchCubemap, copyDesc);
 	}
 
 	// Fill out remaining scratch mip levels by downsampling
@@ -548,7 +548,7 @@ void RenderBeastIBLUtility::ScaleCubemap(GpuCommandBuffer& commandBuffer, const 
 			copyDesc.DestinationFace = face;
 			copyDesc.DestinationMip = dstMip;
 
-			src->Copy(dst, copyDesc);
+			src->Copy(commandBuffer, dst, copyDesc);
 		}
 	}
 	else

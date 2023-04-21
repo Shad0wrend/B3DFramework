@@ -639,9 +639,9 @@ void RendererScene::UnregisterLightProbeVolume(LightProbeVolume* volume)
 	mInfo.LightProbes.NotifyRemoved(volume);
 }
 
-void RendererScene::UpdateLightProbes()
+void RendererScene::UpdateLightProbes(GpuCommandBuffer& commandBuffer)
 {
-	mInfo.LightProbes.UpdateProbes();
+	mInfo.LightProbes.UpdateProbes(commandBuffer);
 }
 
 void RendererScene::RegisterSkybox(Skybox* skybox)

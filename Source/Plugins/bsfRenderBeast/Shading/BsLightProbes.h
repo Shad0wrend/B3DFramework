@@ -229,7 +229,7 @@ namespace bs
 			void NotifyRemoved(LightProbeVolume* volume);
 
 			/** Updates light probe tetrahedron data after probes changed (added/removed/moved). */
-			void UpdateProbes();
+			void UpdateProbes(GpuCommandBuffer& commandBuffer);
 
 			/** Returns true if there are any registered light probes. */
 			bool HasAnyProbes() const;
@@ -268,7 +268,7 @@ namespace bs
 			 * Resized the GPU buffer that stores light probe SH coefficients, to the specified number of rows (each row
 			 * holds 4096 coefficients, and each volume starts in its own row.).
 			 */
-			void ResizeCoefficientTexture(u32 numRows);
+			void ResizeCoefficientTexture(GpuCommandBuffer& commandBuffer, u32 numRows);
 
 			SPtr<GpuDevice> mGpuDevice;
 			Vector<VolumeInfo> mVolumes;

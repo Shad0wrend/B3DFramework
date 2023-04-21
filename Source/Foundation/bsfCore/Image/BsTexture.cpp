@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Image/BsTexture.h"
+
+#include "BsCoreApplication.h"
 #include "Private/RTTI/BsTextureRTTI.h"
 #include "FileSystem/BsDataStream.h"
 #include "Error/BsException.h"
@@ -133,12 +135,10 @@ AsyncOp Texture::ReadData(const SPtr<PixelData>& data, u32 face, u32 mipLevel)
 		[&](const SPtr<ct::Texture>& texture, u32 _face, u32 _mipLevel, const SPtr<PixelData>& _pixData,
 			AsyncOp& asyncOp)
 	{
-
-		// Make sure any queued command start executing before reading
-		ct::RenderAPI::Instance().SubmitCommandBuffer(nullptr);
-		// TODO - Should flush all transfer buffers that have write operations queued on them (For meshes as well)
-		// - This won't work if writes are done on some custom command buffer
-		// - Register the writes somewhere, and the wait on them, or just warn if we attempt to read?
+		// TODO - Transfer buffers should be handled by the Renderer
+		const SPtr<GpuDevice> gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+		if(gpuDevice != nullptr)
+			gpuDevice->SubmitTransferCommandBuffers();
 
 		texture->ReadData(*_pixData, _mipLevel, _face);
 		_pixData->UnlockInternal();
@@ -154,8 +154,10 @@ TAsyncOp<SPtr<PixelData>> Texture::ReadData(u32 face, u32 mipLevel)
 
 	auto func = [texture = GetCore(), face, mipLevel, op]() mutable
 	{
-		// Make sure any queued command start executing before reading
-		ct::RenderAPI::Instance().SubmitCommandBuffer(nullptr);
+		// TODO - Transfer buffers should be handled by the Renderer
+		const SPtr<GpuDevice> gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+		if(gpuDevice != nullptr)
+			gpuDevice->SubmitTransferCommandBuffers();
 
 		SPtr<PixelData> output = texture->GetProperties().AllocBuffer(face, mipLevel);
 		texture->ReadData(*output, mipLevel, face);
@@ -165,32 +167,6 @@ TAsyncOp<SPtr<PixelData>> Texture::ReadData(u32 face, u32 mipLevel)
 
 	GetCoreThread().QueueCommand(func);
 	return op;
-}
-
-void Texture::Copy(const SPtr<Texture>& target, const TextureCopyInformation& textureCopyInformation) const
-{
-	if (target == nullptr)
-	{
-		B3D_LOG(Error, RenderBackend, "Cannot perform a copy operation. Target is null.");
-		return;
-	}
-
-	GetCoreThread().QueueCommand([coreThis = GetCore(), coreTarget = target->GetCore(), textureCopyInformation]() {
-		coreThis->Copy(coreTarget, textureCopyInformation);
-	});
-}
-
-void Texture::Blit(const SPtr<Texture>& target, const TextureBlitInformation& textureBlitInformation) const
-{
-	if (target == nullptr)
-	{
-		B3D_LOG(Error, RenderBackend, "Cannot perform a blit operation. Target is null.");
-		return;
-	}
-
-	GetCoreThread().QueueCommand([coreThis = GetCore(), coreTarget = target->GetCore(), textureBlitInformation]() {
-		coreThis->Blit(coreTarget, textureBlitInformation);
-	});
 }
 
 u32 Texture::CalculateSize() const
@@ -392,7 +368,7 @@ void Texture::WriteData(const PixelData& source, u32 mipLevel, u32 face, bool di
 	WriteDataInternal(source, mipLevel, face, discardEntireBuffer, commandBuffer);
 }
 
-void Texture::ReadData(PixelData& destination, u32 mipLevel, u32 face)
+void Texture::ReadData(PixelData& destination, u32 mipLevel, u32 face, const SPtr<GpuQueue>& gpuQueue)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
@@ -408,10 +384,10 @@ void Texture::ReadData(PixelData& destination, u32 mipLevel, u32 face)
 		return;
 	}
 
-	ReadDataInternal(pixelData, mipLevel, face);
+	ReadDataInternal(pixelData, mipLevel, face, gpuQueue);
 }
 
-TAsyncOp<SPtr<PixelData>> Texture::ReadDataAsync(u32 mipLevel, u32 face, const SPtr<GpuCommandBuffer>& commandBuffer)
+TAsyncOp<SPtr<PixelData>> Texture::ReadDataAsync(GpuCommandBuffer& commandBuffer, u32 mipLevel, u32 face)
 {
 	SPtr<PixelData> pixelData = GetProperties().AllocBuffer(face, mipLevel);
 
@@ -450,7 +426,7 @@ void Texture::Unlock()
 	UnlockInternal();
 }
 
-void Texture::Copy(const SPtr<Texture>& target, const TextureCopyInformation& copyInformation, const SPtr<GpuCommandBuffer>& commandBuffer)
+void Texture::Copy(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureCopyInformation& copyInformation)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
@@ -564,10 +540,10 @@ void Texture::Copy(const SPtr<Texture>& target, const TextureCopyInformation& co
 		return;
 	}
 
-	CopyInternal(target, copyInformation, commandBuffer);
+	CopyInternal(commandBuffer, target, copyInformation);
 }
 
-void Texture::Blit(const SPtr<Texture>& target, const TextureBlitInformation& blitInformation, const SPtr<GpuCommandBuffer>& commandBuffer)
+void Texture::Blit(GpuCommandBuffer& commandBuffer, const SPtr<Texture>& target, const TextureBlitInformation& blitInformation)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
@@ -601,7 +577,7 @@ void Texture::Blit(const SPtr<Texture>& target, const TextureBlitInformation& bl
 		return;
 	}
 
-	BlitInternal(target, blitInformation, commandBuffer);
+	BlitInternal(commandBuffer, target, blitInformation);
 }
 
 void Texture::Clear(const Color& value, u32 mipLevel, u32 face, const SPtr<GpuCommandBuffer>& commandBuffer)

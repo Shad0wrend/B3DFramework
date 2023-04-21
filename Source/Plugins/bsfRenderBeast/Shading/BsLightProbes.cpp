@@ -261,7 +261,7 @@ void LightProbes::NotifyRemoved(LightProbeVolume* volume)
 	mTetrahedronVolumeDirty = true;
 }
 
-void LightProbes::UpdateProbes()
+void LightProbes::UpdateProbes(GpuCommandBuffer& commandBuffer)
 {
 	if(!mTetrahedronVolumeDirty)
 		return;
@@ -275,7 +275,7 @@ void LightProbes::UpdateProbes()
 	}
 
 	if(numRows > mMaxCoefficientRows)
-		ResizeCoefficientTexture(numRows + 4);
+		ResizeCoefficientTexture(commandBuffer, numRows + 4);
 
 	u32 rowIdx = 0;
 	for(auto& entry : mVolumes)
@@ -284,7 +284,7 @@ void LightProbes::UpdateProbes()
 		copyDesc.DestinationPosition = Vector3I(0, rowIdx, 0);
 
 		SPtr<Texture> localTexture = entry.Volume->GetCoefficientsTexture();
-		localTexture->Copy(mProbeCoefficientsGPU, copyDesc);
+		localTexture->Copy(commandBuffer, mProbeCoefficientsGPU, copyDesc);
 
 		rowIdx += localTexture->GetProperties().Height;
 	}
@@ -790,7 +790,7 @@ void LightProbes::ResizeTetrahedronFaceBuffer(u32 count)
 	mMaxFaces = count;
 }
 
-void LightProbes::ResizeCoefficientTexture(u32 numRows)
+void LightProbes::ResizeCoefficientTexture(GpuCommandBuffer& commandBuffer, u32 numRows)
 {
 	TextureCreateInformation desc;
 	desc.Width = 4096;
@@ -799,8 +799,8 @@ void LightProbes::ResizeCoefficientTexture(u32 numRows)
 	desc.Format = PF_RGBA32F;
 
 	SPtr<Texture> newTexture = Texture::Create(desc);
-	if(mProbeCoefficientsGPU)
-		mProbeCoefficientsGPU->Copy(newTexture);
+	if (mProbeCoefficientsGPU)
+		mProbeCoefficientsGPU->Copy(commandBuffer, newTexture);
 
 	mProbeCoefficientsGPU = newTexture;
 	mMaxCoefficientRows = numRows;

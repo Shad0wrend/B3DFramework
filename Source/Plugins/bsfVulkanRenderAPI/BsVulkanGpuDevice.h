@@ -58,7 +58,8 @@ namespace bs
 
 			u32 GetQueueCount(GpuQueueUsage usage) const override { return (u32)mQueueInfos[(u32)usage].Queues.size(); }
 			SPtr<GpuQueue> GetQueue(GpuQueueUsage usage, u32 index) const override;
-			void SubmitTransferCommandBuffers(bool wait) override;
+			void SubmitTransferCommandBuffers(bool wait = false) override;
+			void WaitUntilIdle() override;
 
 			SPtr<GpuCommandBufferPool> CreateGpuCommandBufferPool(const GpuCommandBufferPoolCreateInformation& createInformation) override;
 			SPtr<GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, bool deferredInitialize = false) override;
@@ -84,13 +85,6 @@ namespace bs
 
 			/** Returns the unique index of the device. */
 			u32 GetIndex() const { return mDeviceIdx; }
-
-			/**
-			 * Blocks the calling thread until all operations on the device finish.
-			 *
-			 * @note	Submit thread only.
-			 */
-			void WaitUntilIdle() const;
 
 			/** Returns a set of properties describing the physical device. */
 			const VkPhysicalDeviceProperties& GetDeviceProperties() const { return mDeviceProperties; }
@@ -119,9 +113,6 @@ namespace bs
 			/** Returns the best matching surface format according to the provided parameters. */
 			SurfaceFormat GetSurfaceFormat(const VkSurfaceKHR& surface, bool gamma) const;
 
-			/** Returns a pool that can be used for allocating command buffers for all queues on this device. */
-			VulkanGpuCommandBufferPool& GetCommandBufferPool(GpuQueueUsage queueUsage) const { return *mCommandBufferPools[(u32)queueUsage]; }
-
 			/** Returns a pool that can be used for allocating queries on this device. */
 			VulkanQueryPool& GetQueryPool() const { return *mQueryPool; }
 
@@ -133,6 +124,19 @@ namespace bs
 
 			/** Returns a set of resources that are always available. */
 			const VulkanBuiltinResources& GetBuiltinResources() const { return mBuiltinResources;  }
+
+			/**
+			 * Returns a set of command buffer semaphores depending on the provided sync mask.
+			 *
+			 * @param	syncMask	Mask that has a bit enabled for each command buffer to retrieve the semaphore for.
+			 *						If the command buffer is not currently executing, semaphore won't be returned.
+			 * @param	semaphores	List containing all the required semaphores. Semaphores are tightly packed at the
+			 *						beginning of the array. Must be able to hold at least BS_MAX_UNIQUE_QUEUES entries.
+			 * @param	count		Number of semaphores provided in the @p semaphores array.
+			 *
+			 * @note	Submit thread only.
+			 */
+			void GetSyncSemaphores(u32 syncMask, VulkanSemaphore** semaphores, u32& count);
 
 			/**
 			 * @name Memory Allocation
@@ -227,7 +231,6 @@ namespace bs
 			bool mIsPrimary = false;
 			u32 mDeviceIdx;
 
-			SPtr<VulkanGpuCommandBufferPool> mCommandBufferPools[GQT_COUNT];
 			VulkanQueryPool* mQueryPool;
 			VulkanDescriptorManager* mDescriptorManager;
 			VulkanResourceManager* mResourceManager;

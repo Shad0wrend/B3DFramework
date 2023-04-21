@@ -48,7 +48,6 @@ namespace bs
 			void EndFrame() override;
 			void SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandBuffer, u32 queueIndex = 0, u32 syncMask = 0xFFFFFFFF) override;
 			void WaitUntilIdle() const override;
-			SPtr<GpuCommandBuffer> GetMainCommandBuffer() const override;
 			SPtr<GpuDevice> GetPrimaryGpuDevice() const override { return mPrimaryGpuDevice; }
 			void ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest) override;
 			GpuDataParameterBlockInformation GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params) override;
@@ -57,9 +56,6 @@ namespace bs
 			 * @name Internal
 			 * @{
 			 */
-
-			/** Returns the main command buffer, executing on the graphics queue. */
-			VulkanGpuCommandBuffer* GetMainVulkanCommandBuffer() const { return mMainCommandBuffer.get(); }
 
 			/**
 			 * Returns a valid command buffer. Uses the provided buffer if not null. Otherwise returns the default command
@@ -87,7 +83,6 @@ namespace bs
 				u32 SyncMask = ~0u;
 			};
 
-			SPtr<VulkanGpuCommandBuffer> mMainCommandBuffer;
 			SPtr<GpuDevice> mPrimaryGpuDevice;
 			mutable Vector<SPtr<GpuCommandBuffer>> mSubmittedCommandBuffers;
 		};

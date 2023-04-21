@@ -108,12 +108,12 @@ namespace bs
 		 */
 		struct RendererMaterialProfileBlock : ProfileGPUBlock
 		{
-			RendererMaterialProfileBlock(const RendererMaterialMetaData& metaData)
-				: ProfileGPUBlock(metaData.ProfilerSampleName)
+			RendererMaterialProfileBlock(GpuCommandBuffer& commandBuffer,  const RendererMaterialMetaData& metaData)
+				: ProfileGPUBlock(commandBuffer, metaData.ProfilerSampleName)
 			{}
 		};
 
-#define BS_RENMAT_PROFILE_BLOCK RendererMaterialProfileBlock __sampleBlock(mMetaData);
+#define BS_RENMAT_PROFILE_BLOCK RendererMaterialProfileBlock __sampleBlock(commandBuffer, mMetaData);
 
 		/**	Base class for all RendererMaterial instances, containing common data and methods. */
 		class B3D_EXPORT RendererMaterialBase

@@ -15,14 +15,16 @@ VulkanGpuQueue::VulkanGpuQueue(VulkanGpuDevice& device, GpuQueueUsage usage, u32
 		mSubmitDstWaitMask[i] = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
 }
 
-void VulkanGpuQueue::SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>& commandBuffer, u32 syncMask)
+void VulkanGpuQueue::SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandBuffer, u32 syncMask)
 {
-	// TODO
+	static_cast<VulkanGpuCommandBuffer&>(*commandBuffer).Submit(*this, syncMask);
 }
 
-void VulkanGpuQueue::SubmitCommandBuffers(const ArrayView<SPtr<ct::GpuCommandBuffer>>& commandBuffer, u32 syncMask)
+void VulkanGpuQueue::SubmitCommandBuffers(const ArrayView<SPtr<GpuCommandBuffer>>& commandBuffers, u32 syncMask)
 {
-	// TODO
+	// TODO - Add a way to bulk-submit these
+	for(const auto& entry : commandBuffers)
+		static_cast<VulkanGpuCommandBuffer&>(*entry).Submit(*this, syncMask);
 }
 
 bool VulkanGpuQueue::IsExecuting() const
@@ -203,12 +205,10 @@ VkResult VulkanGpuQueue::Present(VulkanSwapChain* swapChain, u32 swapChainImageI
 	return result;
 }
 
-void VulkanGpuQueue::WaitUntilIdle() const
+void VulkanGpuQueue::WaitUntilIdle()
 {
-	AssertIfNotVulkanSubmitThread();
-
-	VkResult result = vkQueueWaitIdle(mQueue);
-	B3D_ASSERT(result == VK_SUCCESS);
+	GetVulkanSubmitThread().WaitUntilIdle(*this);
+	GetVulkanSubmitThread().RefreshCommandBufferCompletionStates();
 }
 
 void VulkanGpuQueue::RefreshCompletionStateOnSubmitThread(bool forceWait, bool queueEmpty, u32 lastSubmitIndex)

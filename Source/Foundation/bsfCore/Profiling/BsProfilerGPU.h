@@ -110,33 +110,40 @@ namespace bs
 		 * id. A top-level timing and occlusion query is issued for the entire view and all following samples will
 		 * be grouped under the view in the output report. Must be followed by endView() when done sampling.
 		 *
-		 * @param[in]	id			Identifier that can be used to uniquely identify the view.
-		 * @param[in]	title		Title describing the view.
+		 * @param	commandBuffer	Command buffer to record the view sample on.
+		 * @param	id				Identifier that can be used to uniquely identify the view.
+		 * @param	title			Title describing the view.
 		 */
-		void BeginView(u64 id, ProfilerString title);
+		void BeginView(ct::GpuCommandBuffer& commandBuffer, u64 id, ProfilerString title);
 
-		/** Signals the end of rendering for a particular view. Must match the corresponding beginView() call. */
-		void EndView();
+		/**
+		 * Signals the end of rendering for a particular view. Must match the corresponding beginView() call.
+		 *
+		 * @param	commandBuffer	Command buffer to record the view sample on. Must match the buffer provided in BeginView().
+		 */
+		void EndView(ct::GpuCommandBuffer& commandBuffer);
 
 		/**
 		 * Begins sample measurement. Must be followed by endSample().
 		 *
-		 * @param[in]	name	Unique name for the sample you can later use to find the sampling data.
+		 * @param	commandBuffer	Command buffer to record the sample on.
+		 * @param	name			Unique name for the sample you can later use to find the sampling data.
 		 *
 		 * @note	Must be called between beginFrame()/endFrame() calls.
 		 */
-		void BeginSample(ProfilerString name);
+		void BeginSample(ct::GpuCommandBuffer& commandBuffer, ProfilerString name);
 
 		/**
 		 * Ends sample measurement.
 		 *
-		 * @param[in]	name	Unique name for the sample.
+		 * @param	commandBuffer	Command buffer to record the sample on. Must match the buffer provided to BeginSample()
+		 * @param	name			Unique name for the sample.
 		 *
 		 * @note
 		 * Unique name is primarily needed to more easily identify mismatched begin/end sample pairs. Otherwise the name in
-		 * beginSample() would be enough. Must be called between beginFrame()/endFrame() calls.
+		 * BeginSample() would be enough. Must be called between BeginFrame()/EndFrame() calls.
 		 */
-		void EndSample(const ProfilerString& name);
+		void EndSample(ct::GpuCommandBuffer& commandBuffer, const ProfilerString& name);
 
 		/**
 		 * Returns number of profiling reports that are ready but haven't been retrieved yet.
@@ -172,10 +179,10 @@ namespace bs
 
 	private:
 		/** Assigns start values for the provided sample. */
-		void BeginSampleInternal(ProfiledSample& sample, bool issueOcclusion);
+		void BeginSampleInternal(ProfiledSample& sample, ct::GpuCommandBuffer& commandBuffer, bool issueOcclusion);
 
 		/**	Assigns end values for the provided sample. */
-		void EndSampleInternal(ProfiledSample& sample);
+		void EndSampleInternal(ProfiledSample& sample, ct::GpuCommandBuffer& commandBuffer);
 
 		/**	Creates a new timer query or returns an existing free query. */
 		SPtr<ct::TimerQuery> GetTimerQuery() const;
@@ -219,11 +226,11 @@ namespace bs
 
 	/** Profiling macros that allow profiling functionality to be disabled at compile time. */
 #if B3D_PROFILING_ENABLED
-#	define BS_GPU_PROFILE_BEGIN(name) GetProfilerGPU().BeginSample(name);
-#	define BS_GPU_PROFILE_END(name) GetProfilerGPU().EndSample(name);
+#	define BS_GPU_PROFILE_BEGIN(CommandBuffer, SampleName) GetProfilerGPU().BeginSample(CommandBuffer, SampleName);
+#	define BS_GPU_PROFILE_END(CommandBuffer, SampleName) GetProfilerGPU().EndSample(CommandBuffer, SampleName);
 #else
-#	define BS_GPU_PROFILE_BEGIN(name)
-#	define BS_GPU_PROFILE_END(name)
+#	define BS_GPU_PROFILE_BEGIN(CommandBuffer, SampleName)
+#	define BS_GPU_PROFILE_END(CommandBuffer, SampleName)
 #endif
 
 	/**
@@ -233,10 +240,11 @@ namespace bs
 	struct ProfileGPUBlock
 	{
 #if B3D_PROFILING_ENABLED
-		ProfileGPUBlock(ProfilerString name)
+		ProfileGPUBlock(ct::GpuCommandBuffer& commandBuffer, ProfilerString name)
+			:mCommandBuffer(commandBuffer)
 		{
 			mSampleName = std::move(name);
-			GetProfilerGPU().BeginSample(mSampleName);
+			GetProfilerGPU().BeginSample(commandBuffer, mSampleName);
 		}
 #else
 		ProfileGPUBlock(const ProfilerString& name)
@@ -246,13 +254,14 @@ namespace bs
 #if B3D_PROFILING_ENABLED
 		~ProfileGPUBlock()
 		{
-			GetProfilerGPU().EndSample(mSampleName);
+			GetProfilerGPU().EndSample(mCommandBuffer, mSampleName);
 		}
 #endif
 
 	private:
 #if B3D_PROFILING_ENABLED
 		ProfilerString mSampleName;
+		ct::GpuCommandBuffer& mCommandBuffer;
 #endif
 	};
 

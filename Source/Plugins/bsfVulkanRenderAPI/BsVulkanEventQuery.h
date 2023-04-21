@@ -41,7 +41,7 @@ namespace bs
 			VulkanEventQuery(VulkanGpuDevice& device);
 			~VulkanEventQuery() override;
 
-			void Begin(const SPtr<GpuCommandBuffer>& cb) override;
+			void Begin(GpuCommandBuffer& commandBuffer) override;
 			bool IsReady() const override;
 
 		private:

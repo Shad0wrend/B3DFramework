@@ -9,7 +9,6 @@
 #include "Managers/BsVulkanRenderWindowManager.h"
 #include "Managers/BsVulkanRenderStateManager.h"
 #include "Managers/BsVulkanQueryManager.h"
-#include "Managers/BsVulkanCommandBufferManager.h"
 #include "BsVulkanGpuCommandBuffer.h"
 #include "BsVulkanGpuParameters.h"
 #include "Managers/BsVulkanVertexInputManager.h"
@@ -45,20 +44,12 @@ void VulkanRenderAPI::Initialize()
 	mPrimaryGpuDevice = GpuBackend::Instance().GetDevice(0);
 	mPrimaryGpuDevice->Initialize();
 
-	// Create main command buffer
-	mMainCommandBuffer = std::static_pointer_cast<VulkanGpuCommandBuffer>(static_cast<VulkanGpuDevice&>(*mPrimaryGpuDevice).GetCommandBufferPool(GQT_GRAPHICS).Create(GpuCommandBufferCreateInformation::Create("Main")));
-
 	RenderAPI::Initialize();
 }
 
 void VulkanRenderAPI::DestroyCore()
 {
 	THROW_IF_NOT_CORE_THREAD;
-
-	if(mMainCommandBuffer != nullptr)
-	{
-		SubmitCommandBuffer(mMainCommandBuffer);
-	}
 
 	GetVulkanSubmitThread().WaitUntilIdle(true);
 	GetVulkanSubmitThread().RefreshCommandBufferCompletionStates();
@@ -76,7 +67,6 @@ void VulkanRenderAPI::DestroyCore()
 			++it;
 	}
 
-	mMainCommandBuffer = nullptr;
 	mPrimaryGpuDevice = nullptr;
 
 	// TODO - Move this to CoreApplication once I get rid of VulkanRenderAPI
@@ -294,9 +284,7 @@ void VulkanRenderAPI::EndFrame()
 	if(vulkanGpuDevice == nullptr)
 		return;
 
-	// Submit transfer buffers
-	VulkanCommandBufferManager& commandBufferManager = GetVulkanCommandBufferManager();
-	commandBufferManager.FlushTransferBuffers(vulkanGpuDevice->GetIndex());
+	vulkanGpuDevice->SubmitTransferCommandBuffers();
 
 	GetVulkanSubmitThread().QueueRefreshCommandBufferCompletionStates(vulkanGpuDevice);
 }
@@ -368,11 +356,6 @@ void VulkanRenderAPI::InsertLabel(const StringView& name, const SPtr<GpuCommandB
 	internalCommandBuffer->InsertLabel(name);
 }
 
-SPtr<GpuCommandBuffer> VulkanRenderAPI::GetMainCommandBuffer() const
-{
-	return mMainCommandBuffer;
-}
-
 void VulkanRenderAPI::SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandBuffer, u32 queueIndex, u32 syncMask)
 {
 	THROW_IF_NOT_CORE_THREAD;
@@ -380,8 +363,7 @@ void VulkanRenderAPI::SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandB
 	VulkanGpuCommandBuffer* vulkanCommandBuffer = EnsureCommandBuffer(commandBuffer);
 
 	// Submit all transfer buffers first
-	VulkanCommandBufferManager& commandBufferManager = GetVulkanCommandBufferManager(); // TODO - Get the manager from the GpuDevice associated with the command buffer
-	commandBufferManager.FlushTransferBuffers(0);
+	mPrimaryGpuDevice->SubmitTransferCommandBuffers();
 
 	const SPtr<VulkanGpuQueue> queue = std::static_pointer_cast<VulkanGpuQueue>(mPrimaryGpuDevice->GetQueue(vulkanCommandBuffer->GetUsage(), queueIndex));
 	if (!B3D_ENSURE(queue))
@@ -390,15 +372,7 @@ void VulkanRenderAPI::SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandB
 	B3D_ASSERT(queue != nullptr);
 	vulkanCommandBuffer->Submit(*queue, syncMask);
 
-	if(vulkanCommandBuffer == mMainCommandBuffer.get())
-	{
-		mSubmittedCommandBuffers.push_back(mMainCommandBuffer);
-		mMainCommandBuffer = std::static_pointer_cast<VulkanGpuCommandBuffer>(static_cast<VulkanGpuDevice&>(*mPrimaryGpuDevice).GetCommandBufferPool(GQT_GRAPHICS).Create(GpuCommandBufferCreateInformation::Create("Main")));
-	}
-	else
-	{
-		mSubmittedCommandBuffers.push_back(commandBuffer);
-	}
+	mSubmittedCommandBuffers.push_back(commandBuffer);
 }
 
 void VulkanRenderAPI::WaitUntilIdle() const
@@ -473,10 +447,7 @@ GpuDataParameterBlockInformation VulkanRenderAPI::GenerateParamBlockDesc(const S
 
 VulkanGpuCommandBuffer* VulkanRenderAPI::EnsureCommandBuffer(const SPtr<GpuCommandBuffer>& buffer)
 {
-	if(buffer != nullptr)
-		return static_cast<VulkanGpuCommandBuffer*>(buffer.get());
-
-	return static_cast<VulkanGpuCommandBuffer*>(mMainCommandBuffer.get());
+	return static_cast<VulkanGpuCommandBuffer*>(buffer.get());
 }
 
 namespace bs { namespace ct {

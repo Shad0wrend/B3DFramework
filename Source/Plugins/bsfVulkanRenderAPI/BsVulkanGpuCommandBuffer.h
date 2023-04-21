@@ -831,17 +831,11 @@ namespace bs
 
 			void SetName(const StringView& name) override;
 			CommandBufferState GetState() const override;
-
+			void End() override;
 		private:
 			friend class VulkanGpuCommandBufferPool;
 
-			VulkanGpuCommandBuffer(VulkanGpuDevice& device, ThreadId ownerThread, GpuQueueUsage queueType, const GpuCommandBufferCreateInformation& createInformation);
-
-			/**
-			 * Tasks the command buffer to find a new internal command buffer. Call this after the command buffer has been
-			 * submitted to a queue (it's not allowed to be used until the queue is done with it).
-			 */
-			void AcquireNewBuffer();
+			VulkanGpuCommandBuffer(VulkanGpuDevice& device, VulkanInternalCommandBuffer* internalCommandBuffer, ThreadId ownerThread, GpuQueueUsage queueType, const GpuCommandBufferCreateInformation& createInformation);
 
 			VulkanInternalCommandBuffer* mBuffer;
 			VulkanGpuDevice& mDevice;

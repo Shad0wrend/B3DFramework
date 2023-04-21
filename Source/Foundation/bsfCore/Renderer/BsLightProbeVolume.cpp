@@ -8,6 +8,7 @@
 #include "Renderer/BsIBLUtility.h"
 #include "Scene/BsSceneObject.h"
 #include "CoreThread/BsCoreObjectSync.h"
+#include "Profiling/BsProfilerGPU.h"
 #include "RenderAPI/BsGpuPipelineState.h"
 
 using namespace bs;
@@ -228,7 +229,9 @@ void LightProbeVolume::RunRenderProbeTask()
 	auto renderProbes = [coreProbeVolume](ct::GpuCommandBufferPool& commandBufferPool)
 	{
 		SPtr<ct::GpuCommandBuffer> commandBuffer = commandBufferPool.Create(ct::GpuCommandBufferCreateInformation::Create("LightProbeRendering"));
+		GetProfilerGPU().BeginSample(*commandBuffer, "LightProbeRendering");
 		const bool isDone = coreProbeVolume->RenderProbes(*commandBuffer, 3);
+		GetProfilerGPU().EndSample(*commandBuffer, "LightProbeRendering");
 
 		ct::GetRenderAPI().SubmitCommandBuffer(commandBuffer);
 		return isDone;
@@ -448,8 +451,15 @@ bool LightProbeVolume::RenderProbes(GpuCommandBuffer& commandBuffer, u32 maxProb
 {
 	// Probe map only contains active probes
 	u32 numUsedProbes = (u32)mProbeMap.size();
-	if(numUsedProbes > mCoeffBufferSize)
+	if (numUsedProbes > mCoeffBufferSize)
+	{
+		const SPtr<Texture> oldTexture = mCoefficients;
+
 		ResizeCoefficientTexture(std::max(32U, numUsedProbes * 2));
+
+		if (oldTexture)
+			oldTexture->Copy(commandBuffer, mCoefficients);
+	}
 
 	u32 numProbeUpdates = 0;
 	for(; mFirstDirtyProbe < (u32)mProbeInfos.size(); ++mFirstDirtyProbe)
@@ -669,12 +679,7 @@ void LightProbeVolume::ResizeCoefficientTexture(u32 count)
 	desc.Usage = TU_LOADSTORE | TU_RENDERTARGET;
 	desc.Format = PF_RGBA32F;
 
-	SPtr<Texture> newTexture = Texture::Create(desc);
-
-	if(mCoefficients)
-		mCoefficients->Copy(newTexture);
-
-	mCoefficients = newTexture;
+	mCoefficients = Texture::Create(desc);
 	mCoeffBufferSize = count;
 }
 }}

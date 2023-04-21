@@ -999,7 +999,7 @@ void ShadowRendering::RenderShadowOcclusion(GpuCommandBuffer& commandBuffer, con
 
 	SPtr<GpuBuffer> perViewBuffer = view.GetPerViewBuffer();
 
-	ProfileGPUBlock sampleBlock("Render shadow occlusion");
+	ProfileGPUBlock sampleBlock(commandBuffer, "Render shadow occlusion");
 
 	const GpuDeviceCapabilities& caps = GetGpuDeviceCapabilities();
 	// TODO - Calculate and set a scissor rectangle for the light
@@ -1244,7 +1244,7 @@ void ShadowRendering::RenderCascadedShadowMaps(GpuCommandBuffer& commandBuffer, 
 	Quaternion lightRotation(BsIdentity);
 	lightRotation.LookRotation(lightDir, Vector3::kUnitY);
 
-	ProfileGPUBlock profileSample("Project directional light shadow");
+	ProfileGPUBlock profileSample(commandBuffer, "Project directional light shadow");
 
 	for(u32 i = 0; i < numCascades; ++i)
 	{
@@ -1360,7 +1360,7 @@ void ShadowRendering::RenderSpotShadowMap(GpuCommandBuffer& commandBuffer, const
 	mapInfo.UpdateNormArea(kMaxAtlasSize);
 	ShadowMapAtlas& atlas = mDynamicShadowMaps[mapInfo.TextureIdx];
 
-	ProfileGPUBlock profileSample("Project spot light shadows");
+	ProfileGPUBlock profileSample(commandBuffer, "Project spot light shadows");
 
 	commandBuffer.SetRenderTarget(atlas.GetTarget());
 	commandBuffer.SetViewport(mapInfo.NormArea);
@@ -1468,7 +1468,7 @@ void ShadowRendering::RenderRadialShadowMap(GpuCommandBuffer& commandBuffer, con
 	Matrix4 proj = Matrix4::ProjectionPerspective(Degree(90.0f), 1.0f, 0.05f, light->GetAttenuationRadius(), true);
 	ConvexVolume localFrustum(proj);
 
-	ProfileGPUBlock profileSample("Project radial light shadows");
+	ProfileGPUBlock profileSample(commandBuffer, "Project radial light shadows");
 
 	const GpuDeviceCapabilities& caps = GetGpuDeviceCapabilities();
 	const GpuBackendConventions& rapiConventions = GetGpuDeviceCapabilities().Conventions;

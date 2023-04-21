@@ -143,8 +143,6 @@ void RenderBeast::InitializeOnRenderThread(const LoadedRendererTextures& rendere
 
 void RenderBeast::DestroyOnRenderThread()
 {
-	Renderer::DestroyOnRenderThread();
-
 	// Make sure all tasks finish first
 	ProcessTasks(true);
 
@@ -163,6 +161,8 @@ void RenderBeast::DestroyOnRenderThread()
 	GpuResourcePool::ShutDown();
 	GpuSort::ShutDown();
 	RendererUtility::ShutDown();
+
+	Renderer::DestroyOnRenderThread();
 }
 
 void RenderBeast::NotifyRenderableAdded(Renderable* renderable)
@@ -361,7 +361,7 @@ void RenderBeast::RenderAllCore(FrameTimings timings, PerFrameData perFrameData)
 	renderAPI.BeginFrame();
 
 	// If any reflection probes were updated or added, we need to copy them over in the global reflection probe array
-	UpdateReflProbeArray();
+	UpdateReflProbeArray(*commandBuffer);
 
 	// Update per-frame data for all renderable objects
 	for(u32 i = 0; i < sceneInfo.Renderables.size(); i++)
@@ -406,7 +406,6 @@ void RenderBeast::RenderAllCore(FrameTimings timings, PerFrameData perFrameData)
 	}
 
 	renderAPI.SubmitCommandBuffer(commandBuffer);
-	renderAPI.SubmitCommandBuffer(renderAPI.GetMainCommandBuffer()); // Still need to submit this until fully removed
 	renderAPI.EndFrame();
 
 	// Tick pool frame
@@ -460,11 +459,11 @@ bool RenderBeast::RenderViews(GpuCommandBuffer& commandBuffer, RendererViewGroup
 		auto viewId = (u64)view;
 		const RendererViewTargetData& viewTarget = view->GetProperties().Target;
 		String title = StringUtil::Format("({0} x {1})", viewTarget.TargetWidth, viewTarget.TargetHeight);
-		GetProfilerGPU().BeginView(viewId, ProfilerString(title.data(), title.size()));
+		GetProfilerGPU().BeginView(commandBuffer, viewId, ProfilerString(title.data(), title.size()));
 
 		if(!view->ShouldDraw())
 		{
-			GetProfilerGPU().EndView();
+			GetProfilerGPU().EndView(commandBuffer);
 			continue;
 		}
 
@@ -480,7 +479,7 @@ bool RenderBeast::RenderViews(GpuCommandBuffer& commandBuffer, RendererViewGroup
 			anythingDrawn = true;
 		}
 
-		GetProfilerGPU().EndView();
+		GetProfilerGPU().EndView(commandBuffer);
 	}
 
 	return anythingDrawn;
@@ -498,7 +497,7 @@ void RenderBeast::RenderView(GpuCommandBuffer& commandBuffer, const RendererView
 
 	// Make sure light probe data is up to date
 	if(view.GetRenderSettings().EnableIndirectLighting)
-		mScene->UpdateLightProbes();
+		mScene->UpdateLightProbes(commandBuffer);
 
 	view.BeginFrame(frameInfo);
 
@@ -623,7 +622,7 @@ bool RenderBeast::RenderOverlay(GpuCommandBuffer& commandBuffer, RendererView& v
 	return needsRedraw;
 }
 
-void RenderBeast::UpdateReflProbeArray()
+void RenderBeast::UpdateReflProbeArray(GpuCommandBuffer& commandBuffer)
 {
 	SceneInfo& sceneInfo = mScene->GetSceneInfoInternal();
 	u32 numProbes = (u32)sceneInfo.ReflProbes.size();
@@ -697,7 +696,7 @@ void RenderBeast::UpdateReflProbeArray()
 							copyDesc.DestinationFace = probeInfo.ArrayIdx * 6 + face;
 							copyDesc.DestinationMip = mip;
 
-							texture->Copy(sceneInfo.ReflProbeCubemapsTex, copyDesc);
+							texture->Copy(commandBuffer, sceneInfo.ReflProbeCubemapsTex, copyDesc);
 						}
 					}
 				}

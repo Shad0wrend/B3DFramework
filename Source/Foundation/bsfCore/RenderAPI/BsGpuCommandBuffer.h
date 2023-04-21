@@ -303,6 +303,9 @@ namespace bs
 			/** Inserts a label at the specified location in the command buffer. This may be used by external tools for easier debugging. */
 			virtual void InsertLabel(const StringView& name);
 
+			/** Ends command recording on the command buffer and makes it ready for submission. */
+			virtual void End() = 0;
+
 			/** Returns the shared pointer to the current object. */
 			SPtr<GpuCommandBuffer> GetShared() const { return mSelf.lock(); }
 

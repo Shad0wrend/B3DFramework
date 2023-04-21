@@ -39,29 +39,42 @@ SPtr<ct::GpuCommandBuffer> GpuQueue::GetOrCreateTransferCommandBuffer()
 	return transferCommandBufferInformation.CurrentTransferCommandBuffer;
 }
 
-void GpuQueue::SubmitTransferCommandBuffers()
+void GpuQueue::SubmitTransferCommandBuffer(bool wait)
 {
-	FrameScope frameScope;
-	FrameVector<SPtr<ct::GpuCommandBuffer>> commandBuffersToSubmit;
+	SPtr<ct::GpuCommandBuffer> commandBufferToSubmit;
 
 	{
 		Lock lock(mMutex);
-		commandBuffersToSubmit.reserve(mTransferCommandBuffers.size());
 
-		for (auto& entry : mTransferCommandBuffers)
+		if(auto found = mTransferCommandBuffers.find(B3D_CURRENT_THREAD_ID); found != mTransferCommandBuffers.end())
 		{
-			if (entry.second.CurrentTransferCommandBuffer == nullptr)
-				continue;
+			// TODO - Not the best spot to handle completion. This should be guaranteed at the start or end of frame.
+			for(auto it = found->second.SubmittedTransferCommandBuffers.begin(); it != found->second.SubmittedTransferCommandBuffers.end();)
+			{
+				if((*it)->GetState() == ct::CommandBufferState::Done)
+				{
+					(*it)->OnDidComplete();
+					it = found->second.SubmittedTransferCommandBuffers.erase(it);
+				}
+				else
+					++it;
+			}
 
-			commandBuffersToSubmit.push_back(entry.second.CurrentTransferCommandBuffer);
-			entry.second.CurrentTransferCommandBuffer = nullptr;
+			commandBufferToSubmit = found->second.CurrentTransferCommandBuffer;
+			found->second.CurrentTransferCommandBuffer = nullptr;
+
+			if (commandBufferToSubmit != nullptr)
+				found->second.SubmittedTransferCommandBuffers.push_back(commandBufferToSubmit);
 		}
 	}
 
-	if (!commandBuffersToSubmit.empty())
+	if (commandBufferToSubmit != nullptr)
 	{
-		auto commandBuffersToSubmitView = ArrayView<SPtr<ct::GpuCommandBuffer>>(commandBuffersToSubmit);
-		SubmitCommandBuffers(commandBuffersToSubmitView);
+		commandBufferToSubmit->End();
+		SubmitCommandBuffer(commandBufferToSubmit);
 	}
+
+	if (wait)
+		WaitUntilIdle();
 }
 
