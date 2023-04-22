@@ -67,9 +67,6 @@ void VulkanSubmitThread::QueueSubmit(VulkanInternalCommandBuffer& commandBuffer,
 {
 	auto fnCommand = [&commandBuffer, &queue, syncMask]()
 	{
-		if(!commandBuffer.IsReadyForSubmit())
-			return;
-
 		commandBuffer.Submit(&queue, syncMask);
 	};
 

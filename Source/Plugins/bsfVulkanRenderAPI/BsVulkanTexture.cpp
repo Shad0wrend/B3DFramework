@@ -1483,7 +1483,7 @@ void VulkanTexture::ReadDataInternal(PixelData& destination, u32 mipLevel, u32 f
 	vulkanCommandBuffer->AppendSyncMask(syncMask);
 	transferGpuQueue.SubmitTransferCommandBuffer(true);
 
-	u8* data = stagingBuffer->Map(0, lockedArea.GetSize());
+	u8* data = stagingBuffer->Map(0, lockedArea.GetSize(), true);
 	lockedArea.SetExternalBuffer(data);
 	PixelUtil::BulkPixelConversion(lockedArea, destination);
 

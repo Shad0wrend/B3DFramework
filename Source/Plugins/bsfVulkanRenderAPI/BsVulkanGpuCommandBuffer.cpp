@@ -483,7 +483,7 @@ u32 VulkanInternalCommandBuffer::Submit(VulkanGpuQueue* queue, u32 syncMask)
 {
 	AssertIfNotVulkanSubmitThread();
 
-	B3D_ASSERT(IsReadyForSubmit());
+	//B3D_ASSERT(IsReadyForSubmit());
 
 	// Add in sync mask that was requested earlier
 	syncMask |= mSyncMask;
@@ -3060,9 +3060,8 @@ void VulkanGpuCommandBuffer::Submit(VulkanGpuQueue& gpuQueue, u32 syncMask)
 	if(mBuffer->IsRecording())
 		mBuffer->End();
 
+	mBuffer->SetIsSubmitted();
 	GetVulkanSubmitThread().QueueSubmit(*mBuffer, gpuQueue, syncMask);
-
-	mBuffer = nullptr;
 	mIsSubmitted = true;
 }
 
@@ -3080,21 +3079,38 @@ void VulkanGpuCommandBuffer::SetName(const StringView& name)
 CommandBufferState VulkanGpuCommandBuffer::GetState() const
 {
 	// If null we passed the buffer to the submit thread and is currently executing or has completed execution
-	if(mBuffer == nullptr)
+	if (mBuffer == nullptr)
 	{
 		B3D_ASSERT(mIsSubmitted);
 
-		if(mIsCompleted)
+		if (mIsCompleted)
 			return CommandBufferState::Done;
 
 		return CommandBufferState::Executing;
 	}
 
 	const bool isRecording = mBuffer->IsRecording() || mBuffer->IsReadyForSubmit() || mBuffer->IsInRenderPass();
-	if(isRecording)
+	if (isRecording)
 		return CommandBufferState::Recording;
 
 	return CommandBufferState::Empty;
+
+	//const VulkanInternalCommandBuffer::State internalState = mBuffer->mState;
+
+	//switch(internalState)
+	//{
+	//default:
+	//case VulkanInternalCommandBuffer::State::Ready:
+	//	return CommandBufferState::Empty;
+	//case VulkanInternalCommandBuffer::State::Recording:
+	//case VulkanInternalCommandBuffer::State::RecordingRenderPass:
+	//case VulkanInternalCommandBuffer::State::RecordingDone:
+	//	return CommandBufferState::Recording;
+	//case VulkanInternalCommandBuffer::State::Submitted:
+	//	return CommandBufferState::Executing;
+	//case VulkanInternalCommandBuffer::State::Done:
+	//	return CommandBufferState::Done;
+	//}
 }
 
 void VulkanGpuCommandBuffer::End()

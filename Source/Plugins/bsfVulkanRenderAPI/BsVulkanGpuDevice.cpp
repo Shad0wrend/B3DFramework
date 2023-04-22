@@ -90,7 +90,7 @@ VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device, u32 deviceIdx)
 			bool familyAlreadyInUse = false;
 			for(u32 queueUsageIndex = 0; queueUsageIndex < GQT_COUNT; ++queueUsageIndex)
 			{
-				if(mQueueInfos[queueUsageIndex].FamilyIndex == queueUsageIndex)
+				if(mQueueInfos[queueUsageIndex].FamilyIndex == i)
 				{
 					familyAlreadyInUse = true;
 					break;
