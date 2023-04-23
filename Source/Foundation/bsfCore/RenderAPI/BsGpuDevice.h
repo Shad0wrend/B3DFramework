@@ -75,7 +75,6 @@ namespace bs
 		{
 			SPtr<ct::GpuCommandBufferPool> CommandBufferPool; /**< Pool for allocating the command buffers. */
 			SPtr<ct::GpuCommandBuffer> CurrentTransferCommandBuffer; /**< Currently active transfer buffer, if any. */
-			Vector<SPtr<ct::GpuCommandBuffer>> SubmittedTransferCommandBuffers; /**< Buffers that are submitted, but haven't yet finished execution. */
 		};
 
 		GpuQueue(GpuDevice& gpuDevice, GpuQueueUsage usage, u32 index);

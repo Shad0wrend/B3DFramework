@@ -48,23 +48,8 @@ void GpuQueue::SubmitTransferCommandBuffer(bool wait)
 
 		if(auto found = mTransferCommandBuffers.find(B3D_CURRENT_THREAD_ID); found != mTransferCommandBuffers.end())
 		{
-			// TODO - Not the best spot to handle completion. This should be guaranteed at the start or end of frame.
-			for(auto it = found->second.SubmittedTransferCommandBuffers.begin(); it != found->second.SubmittedTransferCommandBuffers.end();)
-			{
-				if((*it)->GetState() == ct::CommandBufferState::Done)
-				{
-					(*it)->OnDidComplete();
-					it = found->second.SubmittedTransferCommandBuffers.erase(it);
-				}
-				else
-					++it;
-			}
-
 			commandBufferToSubmit = found->second.CurrentTransferCommandBuffer;
 			found->second.CurrentTransferCommandBuffer = nullptr;
-
-			if (commandBufferToSubmit != nullptr)
-				found->second.SubmittedTransferCommandBuffers.push_back(commandBufferToSubmit);
 		}
 	}
 

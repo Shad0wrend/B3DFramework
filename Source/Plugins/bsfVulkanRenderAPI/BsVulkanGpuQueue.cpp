@@ -284,6 +284,7 @@ void VulkanGpuQueue::RefreshCompletionStateOnSubmitThread(bool forceWait, bool q
 			if(isOwnedBySubmitThread)
 			{
 				queueSubmissionInformation.CommandBuffer->mState = VulkanGpuCommandBuffer::State::Done;
+				queueSubmissionInformation.CommandBuffer->OnDidComplete();
 				queueSubmissionInformation.CommandBuffer->Reset();
 			}
 			else
@@ -306,6 +307,7 @@ void VulkanGpuQueue::RefreshCompletionStateOnRenderThread()
 	for(const auto& entry : mCommandBuffersToResetOnRenderThread)
 	{
 		entry->mState = VulkanGpuCommandBuffer::State::Done;
+		entry->OnDidComplete();
 		entry->Reset();
 	}
 

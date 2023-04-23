@@ -16,6 +16,8 @@
 #include "BsVulkanOcclusionQuery.h"
 #include "BsVulkanRenderPass.h"
 #include "BsVulkanRenderTexture.h"
+#include "Profiling/BsRenderStats.h"
+#include "RenderAPI/BsGpuProgramParameterDescription.h"
 
 #if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
 #	include "Win32/BsWin32RenderWindow.h"
@@ -143,7 +145,7 @@ VulkanGpuCommandBuffer::VulkanGpuCommandBuffer(VulkanGpuDevice& device, u32 id, 
 	const VkResult result = vkCreateFence(mDevice.GetLogical(), &fenceCI, gVulkanAllocator, &mFence);
 	B3D_ASSERT(result == VK_SUCCESS);
 
-	SetNameInternal(mName);
+	SetName(mName);
 }
 
 VulkanGpuCommandBuffer::~VulkanGpuCommandBuffer()
@@ -151,7 +153,7 @@ VulkanGpuCommandBuffer::~VulkanGpuCommandBuffer()
 	if(IsRecording())
 	{
 		// If there are any non-submitted resources, this will release them
-		CmdEnd();
+		End();
 		Reset();
 	}
 
@@ -228,21 +230,6 @@ u32 VulkanGpuCommandBuffer::GetDeviceIndex() const
 	return mDevice.GetIndex();
 }
 
-void VulkanGpuCommandBuffer::SetNameInternal(const StringView& name)
-{
-	if(vkSetDebugUtilsObjectNameEXT == nullptr)
-		return;
-
-	VkDebugUtilsObjectNameInfoEXT objectNameInfo;
-	objectNameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-	objectNameInfo.pNext = nullptr;
-	objectNameInfo.objectType = VK_OBJECT_TYPE_COMMAND_BUFFER;
-	objectNameInfo.objectHandle = (uint64_t)mCmdBuffer;
-	objectNameInfo.pObjectName = name.data();
-
-	vkSetDebugUtilsObjectNameEXT(mDevice.GetLogical(), &objectNameInfo);
-}
-
 void VulkanGpuCommandBuffer::Begin()
 {
 	B3D_ASSERT(mState == State::Ready);
@@ -259,7 +246,7 @@ void VulkanGpuCommandBuffer::Begin()
 	mState = State::Recording;
 }
 
-void VulkanGpuCommandBuffer::CmdEnd()
+void VulkanGpuCommandBuffer::End()
 {
 	B3D_ASSERT(mState == State::Recording);
 
@@ -268,7 +255,7 @@ void VulkanGpuCommandBuffer::CmdEnd()
 		ExecuteClearPass();
 
 	if(mIsDebugLabelOpen)
-		CmdEndLabel();
+		EndLabel();
 
 	VkResult result = vkEndCommandBuffer(mCmdBuffer);
 	B3D_ASSERT(result == VK_SUCCESS);
@@ -896,7 +883,7 @@ void VulkanGpuCommandBuffer::Reset()
 	mIsRenderPassInterrupted = false;
 }
 
-void VulkanGpuCommandBuffer::CmdSetRenderTarget(const SPtr<RenderTarget>& renderTarget, u32 readOnlyFlags, RenderSurfaceMask loadMask)
+void VulkanGpuCommandBuffer::SetRenderTarget(const SPtr<RenderTarget>& renderTarget, u32 readOnlyFlags, RenderSurfaceMask loadMask)
 {
 	B3D_ASSERT(mState != State::Submitted);
 
@@ -1053,7 +1040,7 @@ void VulkanGpuCommandBuffer::CmdSetRenderTarget(const SPtr<RenderTarget>& render
 	}
 
 	// Re-set the params as they will need to be re-bound
-	CmdSetGpuParams(mBoundParams);
+	SetGpuParameters(mBoundParams);
 
 	if(mFramebuffer)
 	{
@@ -1067,6 +1054,8 @@ void VulkanGpuCommandBuffer::CmdSetRenderTarget(const SPtr<RenderTarget>& render
 
 	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
 	mVertexInputsDirty = true;
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumRenderTargetChanges);
 }
 
 void VulkanGpuCommandBuffer::ClearViewport(const Rect2I& area, u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
@@ -1234,19 +1223,23 @@ void VulkanGpuCommandBuffer::ExecuteClearCommand(const Rect2I& area, RenderSurfa
 	vkCmdClearAttachments(mCmdBuffer, attachmentsToClearCount, attachments.data(), 1, &clearRect);
 }
 
-void VulkanGpuCommandBuffer::CmdClearRenderTarget(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
+void VulkanGpuCommandBuffer::ClearRenderTarget(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
 {
 	Rect2I area(0, 0, mFramebuffer->GetWidth(), mFramebuffer->GetHeight());
 	ClearViewport(area, buffers, color, depth, stencil, targetMask);
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumClears);
 }
 
-void VulkanGpuCommandBuffer::CmdClearViewport(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
+void VulkanGpuCommandBuffer::ClearViewport(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
 {
 	const Rect2I viewportArea = GetViewportArea();
 	ClearViewport(viewportArea, buffers, color, depth, stencil, targetMask);
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumClears);
 }
 
-void VulkanGpuCommandBuffer::CmdSetPipelineState(const SPtr<GpuGraphicsPipelineState>& state)
+void VulkanGpuCommandBuffer::SetGpuGraphicsPipelineState(const SPtr<GpuGraphicsPipelineState>& state)
 {
 	if(mGraphicsPipeline == state)
 		return;
@@ -1256,24 +1249,46 @@ void VulkanGpuCommandBuffer::CmdSetPipelineState(const SPtr<GpuGraphicsPipelineS
 
 	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
 	mVertexInputsDirty = true;
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumPipelineStateChanges);
 }
 
-void VulkanGpuCommandBuffer::CmdSetPipelineState(const SPtr<GpuComputePipelineState>& state)
+void VulkanGpuCommandBuffer::SetGpuComputePipelineState(const SPtr<GpuComputePipelineState>& state)
 {
 	if(mComputePipeline == state)
 		return;
 
 	mComputePipeline = std::static_pointer_cast<VulkanGpuComputePipelineState>(state);
 	mCmpPipelineRequiresBind = true;
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumPipelineStateChanges);
 }
 
-void VulkanGpuCommandBuffer::CmdSetGpuParams(const SPtr<GpuParameters>& gpuParams)
+void VulkanGpuCommandBuffer::SetGpuParameters(const SPtr<GpuParameters>& parameters)
 {
 	// Note: We keep an internal reference to GPU params even though we shouldn't keep a reference to a core thread
 	// object. But it should be fine since we expect the resource to be externally synchronized so it should never
 	// be allowed to go out of scope on a non-core thread anyway.
+	mBoundParams = std::static_pointer_cast<VulkanGpuParameters>(parameters);
 
-	mBoundParams = std::static_pointer_cast<VulkanGpuParameters>(gpuParams);
+	if (mBoundParams != nullptr)
+	{
+		for (u32 i = 0; i < GPT_COUNT; i++)
+		{
+			SPtr<GpuProgramParameterDescription> paramDesc = parameters->GetParameterInformation((GpuProgramType)i);
+			if (paramDesc == nullptr)
+				continue;
+
+			// Flush all param block buffers
+			for (auto iter = paramDesc->DataParameterBlocks.begin(); iter != paramDesc->DataParameterBlocks.end(); ++iter)
+			{
+				SPtr<GpuBuffer> buffer = parameters->GetUniformBuffer(iter->second.Set, iter->second.Slot);
+
+				if (buffer != nullptr)
+					buffer->FlushCache();
+			}
+		}
+	}
 
 	if(mBoundParams != nullptr)
 		mBoundParamsDirty = true;
@@ -1284,9 +1299,11 @@ void VulkanGpuCommandBuffer::CmdSetGpuParams(const SPtr<GpuParameters>& gpuParam
 	}
 
 	mDescriptorSetsBindState = DescriptorSetBindFlag::Graphics | DescriptorSetBindFlag::Compute;
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumGpuParamBinds);
 }
 
-void VulkanGpuCommandBuffer::CmdSetNormalizedViewportArea(const Rect2& area)
+void VulkanGpuCommandBuffer::SetViewport(const Rect2& area)
 {
 	if(mNormalizedViewportArea == area)
 		return;
@@ -1295,17 +1312,19 @@ void VulkanGpuCommandBuffer::CmdSetNormalizedViewportArea(const Rect2& area)
 	mViewportRequiresBind = true;
 }
 
-void VulkanGpuCommandBuffer::CmdEnableScissorTest(const Rect2I& value)
+void VulkanGpuCommandBuffer::EnableScissorTest(u32 left, u32 top, u32 right, u32 bottom)
 {
-	if(mIsScissorTestEnabled && mScissor == value)
+	const Rect2I area(left, top, right - left, bottom - top);
+
+	if(mIsScissorTestEnabled && mScissor == area)
 		return;
 
-	mScissor = value;
+	mScissor = area;
 	mIsScissorTestEnabled = true;
 	mScissorRequiresBind = true;
 }
 
-void VulkanGpuCommandBuffer::CmdDisableScissorTest()
+void VulkanGpuCommandBuffer::DisableScissorTest()
 {
 	if(!mIsScissorTestEnabled)
 		return;
@@ -1314,7 +1333,7 @@ void VulkanGpuCommandBuffer::CmdDisableScissorTest()
 	mScissorRequiresBind = true;
 }
 
-void VulkanGpuCommandBuffer::CmdSetStencilRef(u32 value)
+void VulkanGpuCommandBuffer::SetStencilReferenceValue(u32 value)
 {
 	if(mStencilRef == value)
 		return;
@@ -1323,19 +1342,19 @@ void VulkanGpuCommandBuffer::CmdSetStencilRef(u32 value)
 	mStencilRefRequiresBind = true;
 }
 
-void VulkanGpuCommandBuffer::CmdSetDrawOp(DrawOperationType drawOp)
+void VulkanGpuCommandBuffer::SetDrawOperation(DrawOperationType drawOperation)
 {
-	if(mDrawOp == drawOp)
+	if(mDrawOp == drawOperation)
 		return;
 
-	mDrawOp = drawOp;
+	mDrawOp = drawOperation;
 	mGfxPipelineRequiresBind = true;
 
 	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
 	mVertexInputsDirty = true;
 }
 
-void VulkanGpuCommandBuffer::CmdSetVertexBuffers(u32 startIndex, SPtr<GpuBuffer>* buffers, u32 bufferCount)
+void VulkanGpuCommandBuffer::SetVertexBuffers(u32 startIndex, SPtr<GpuBuffer>* buffers, u32 bufferCount)
 {
 	const u32 endIndex = startIndex + bufferCount;
 	if(endIndex <= mVertexBuffers.size())
@@ -1361,18 +1380,22 @@ void VulkanGpuCommandBuffer::CmdSetVertexBuffers(u32 startIndex, SPtr<GpuBuffer>
 		mVertexBuffers[vertexBufferIndex] = std::static_pointer_cast<VulkanGpuBuffer>(buffers[vertexBufferIndex]);
 
 	mVertexInputsDirty = true;
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumVertexBufferBinds);
 }
 
-void VulkanGpuCommandBuffer::CmdSetIndexBuffer(const SPtr<GpuBuffer>& buffer)
+void VulkanGpuCommandBuffer::SetIndexBuffer(const SPtr<GpuBuffer>& buffer)
 {
 	if(mIndexBuffer == buffer)
 		return;
 
 	mIndexBuffer = std::static_pointer_cast<VulkanGpuBuffer>(buffer);
 	mVertexInputsDirty = true;
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumIndexBufferBinds);
 }
 
-void VulkanGpuCommandBuffer::CmdSetVertexDescription(const SPtr<VertexDescription>& vertexDescription)
+void VulkanGpuCommandBuffer::SetVertexDescription(const SPtr<VertexDescription>& vertexDescription)
 {
 	if(mVertexDescription == vertexDescription)
 		return;
@@ -1727,7 +1750,7 @@ void VulkanGpuCommandBuffer::ExecuteClearPass()
 	mClearMask = RT_NONE;
 }
 
-void VulkanGpuCommandBuffer::CmdDraw(u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance)
+void VulkanGpuCommandBuffer::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance)
 {
 	if(!IsReadyForRender())
 		return;
@@ -1771,9 +1794,13 @@ void VulkanGpuCommandBuffer::CmdDraw(u32 vertexOffset, u32 vertexCount, u32 inst
 
 	vkCmdDraw(mCmdBuffer, vertexCount, instanceCount, vertexOffset, firstInstance);
 	NotifyRenderTargetModified();
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumDrawCalls);
+	B3D_ADD_RENDER_STATISTIC(NumVertices, vertexCount);
+	B3D_ADD_RENDER_STATISTIC(NumPrimitives, 0); // TODO - Determine accurate primitive count
 }
 
-void VulkanGpuCommandBuffer::CmdDrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 instanceCount, u32 firstInstance)
+void VulkanGpuCommandBuffer::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance)
 {
 	if(indexCount == 0)
 		return;
@@ -1820,9 +1847,13 @@ void VulkanGpuCommandBuffer::CmdDrawIndexed(u32 startIndex, u32 indexCount, u32 
 
 	vkCmdDrawIndexed(mCmdBuffer, indexCount, instanceCount, startIndex, vertexOffset, firstInstance);
 	NotifyRenderTargetModified();
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumDrawCalls);
+	B3D_ADD_RENDER_STATISTIC(NumVertices, vertexCount);
+	B3D_ADD_RENDER_STATISTIC(NumPrimitives, 0); // TODO - Determine accurate primitive count
 }
 
-void VulkanGpuCommandBuffer::CmdDispatch(u32 numGroupsX, u32 numGroupsY, u32 numGroupsZ)
+void VulkanGpuCommandBuffer::DispatchCompute(u32 groupCountX, u32 groupCountY, u32 groupCountZ)
 {
 	if(mComputePipeline == nullptr)
 		return;
@@ -1832,7 +1863,7 @@ void VulkanGpuCommandBuffer::CmdDispatch(u32 numGroupsX, u32 numGroupsY, u32 num
 
 	// Note: Should I restore the render target after? Note that this is only being done is framebuffer subresources
 	// have their "isFBAttachment" flag reset, potentially I can just clear/restore those
-	CmdSetRenderTarget(nullptr, 0, RT_ALL);
+	SetRenderTarget(nullptr, 0, RT_ALL);
 
 	// Need to bind gpu params before starting render pass, in order to make sure any layout transitions execute
 	BindGpuParams();
@@ -1864,7 +1895,7 @@ void VulkanGpuCommandBuffer::CmdDispatch(u32 numGroupsX, u32 numGroupsY, u32 num
 		mDescriptorSetsBindState.Unset(DescriptorSetBindFlag::Compute);
 	}
 
-	vkCmdDispatch(mCmdBuffer, numGroupsX, numGroupsY, numGroupsZ);
+	vkCmdDispatch(mCmdBuffer, groupCountX, groupCountY, groupCountZ);
 
 	// Remove any shader use flags on images. Note this relies on the fact that we re-bind all parameters on every
 	// dispatch call and render pass, so they can reset this flags. Otherwise clearing the flags is wrong if the
@@ -1878,6 +1909,8 @@ void VulkanGpuCommandBuffer::CmdDispatch(u32 numGroupsX, u32 numGroupsY, u32 num
 	}
 
 	mShaderBoundSubresourceInfos.clear();
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumComputeCalls);
 }
 
 void VulkanGpuCommandBuffer::SetEvent(VulkanEvent* event)
@@ -1998,7 +2031,7 @@ void VulkanGpuCommandBuffer::Resolve(VulkanImage* source, VulkanImage* destinati
 	vkCmdResolveImage(GetHandle(), source->GetHandle(), sourceLayout, destination->GetHandle(), destinationLayout, regionCount, regions);
 }
 
-void VulkanGpuCommandBuffer::CmdBeginLabel(const StringView& name)
+void VulkanGpuCommandBuffer::BeginLabel(const StringView& name)
 {
 	if(!IsRecording() || vkCmdBeginDebugUtilsLabelEXT == nullptr)
 		return;
@@ -2016,7 +2049,7 @@ void VulkanGpuCommandBuffer::CmdBeginLabel(const StringView& name)
 	mIsDebugLabelOpen = true;
 }
 
-void VulkanGpuCommandBuffer::CmdEndLabel()
+void VulkanGpuCommandBuffer::EndLabel()
 {
 	if(!IsRecording() || vkCmdBeginDebugUtilsLabelEXT == nullptr)
 		return;
@@ -2025,7 +2058,7 @@ void VulkanGpuCommandBuffer::CmdEndLabel()
 	mIsDebugLabelOpen = false;
 }
 
-void VulkanGpuCommandBuffer::CmdInsertLabel(const StringView& name)
+void VulkanGpuCommandBuffer::InsertLabel(const StringView& name)
 {
 	if(!IsRecording() || vkCmdBeginDebugUtilsLabelEXT == nullptr)
 		return;
@@ -3020,7 +3053,17 @@ void VulkanGpuCommandBuffer::SetName(const StringView& name)
 	if(vkSetDebugUtilsObjectNameEXT == nullptr)
 		return;
 
-	SetNameInternal(name);
+	if(vkSetDebugUtilsObjectNameEXT == nullptr)
+		return;
+
+	VkDebugUtilsObjectNameInfoEXT objectNameInfo;
+	objectNameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+	objectNameInfo.pNext = nullptr;
+	objectNameInfo.objectType = VK_OBJECT_TYPE_COMMAND_BUFFER;
+	objectNameInfo.objectHandle = (uint64_t)mCmdBuffer;
+	objectNameInfo.pObjectName = name.data();
+
+	vkSetDebugUtilsObjectNameEXT(mDevice.GetLogical(), &objectNameInfo);
 }
 
 CommandBufferState VulkanGpuCommandBuffer::GetState() const
@@ -3041,8 +3084,4 @@ CommandBufferState VulkanGpuCommandBuffer::GetState() const
 	}
 }
 
-void VulkanGpuCommandBuffer::End()
-{
-	CmdEnd();
-}
 

@@ -150,13 +150,13 @@ namespace bs
 			 * in their GPU programs. The caller must ensure the provided parameters match the bound graphics/compute pipeline
 			 * at the time of the draw/dispatch call.
 			 */
-			virtual void SetGpuParameters(const SPtr<GpuParameters>& parameters);
+			virtual void SetGpuParameters(const SPtr<GpuParameters>& parameters) = 0;
 
 			/** Sets a pipeline state that controls how will subsequent draw commands render primitives. */
-			virtual void SetGpuGraphicsPipelineState(const SPtr<GpuGraphicsPipelineState>& pipelineState);
+			virtual void SetGpuGraphicsPipelineState(const SPtr<GpuGraphicsPipelineState>& pipelineState) = 0;
 
 			/** Sets a pipeline state that controls how will subsequent dispatch commands execute. */
-			virtual void SetGpuComputePipelineState(const SPtr<GpuComputePipelineState>& pipelineState);
+			virtual void SetGpuComputePipelineState(const SPtr<GpuComputePipelineState>& pipelineState) = 0;
 
 			/**
 			 * Sets the provided vertex buffers starting at the specified source index.	Set buffer to nullptr to clear the
@@ -166,7 +166,7 @@ namespace bs
 			 * @param	buffers			A list of buffers to bind to the pipeline.
 			 * @param	bufferCount		Number of buffers in the @p buffers list.
 			 */
-			virtual void SetVertexBuffers(u32 index, SPtr<GpuBuffer>* buffers, u32 bufferCount);
+			virtual void SetVertexBuffers(u32 index, SPtr<GpuBuffer>* buffers, u32 bufferCount) = 0;
 
 			/**
 			 * Sets an index buffer to use when drawing. Indices in an index buffer reference vertices in the vertex buffer,
@@ -174,21 +174,21 @@ namespace bs
 			 *
 			 * @param	buffer			Index buffer to bind, null to unbind.
 			 */
-			virtual void SetIndexBuffer(const SPtr<GpuBuffer>& buffer);
+			virtual void SetIndexBuffer(const SPtr<GpuBuffer>& buffer) = 0;
 
 			/**
 			 * Sets the description of vertex elements in the vertex buffers that will be bound when executing the vertex GPU program.
 			 *
 			 * @param	vertexDescription	Vertex description to bind.
 			 */
-			virtual void SetVertexDescription(const SPtr<VertexDescription>& vertexDescription);
+			virtual void SetVertexDescription(const SPtr<VertexDescription>& vertexDescription) = 0;
 
 			/**
 			 * Sets the draw operation that determines how to interpret the elements of the index or vertex buffers.
 			 *
 			 * @param	operation			Draw operation to enable.
 			 */
-			virtual void SetDrawOperation(DrawOperationType operation);
+			virtual void SetDrawOperation(DrawOperationType operation) = 0;
 
 			/**
 			 * Draw an object based on currently bound GPU programs, vertex declaration and vertex buffers. Draws directly from
@@ -199,7 +199,7 @@ namespace bs
 			 * @param	instanceCount	Number of times to draw the provided geometry, each time with an (optionally) separate per-instance data.
 			 * @param	firstInstance	ID of the first instance to draw.
 			 */
-			virtual void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0, u32 firstInstance = 0);
+			virtual void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0, u32 firstInstance = 0) = 0;
 
 			/**
 			 * Draw an object based on currently bound GPU programs, vertex declaration, vertex and index buffers.
@@ -211,7 +211,7 @@ namespace bs
 			 * @param	instanceCount	Number of times to draw the provided geometry, each time with an (optionally) separate per-instance data.
 			 * @param	firstInstance	ID of the first instance to draw.
 			 */
-			virtual void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0, u32 firstInstance = 0);
+			virtual void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount = 0, u32 firstInstance = 0) = 0;
 
 			/**
 			 * Executes the currently bound compute shader.
@@ -220,7 +220,7 @@ namespace bs
 			 * @param	groupCountY		Number of groups to start in the Y direction. Must be in range [1, 65535].
 			 * @param	groupCountZ		Number of groups to start in the Z direction. Must be in range [1, 64].
 			 */
-			virtual void DispatchCompute(u32 groupCountX, u32 groupCountY = 1, u32 groupCountZ = 1);
+			virtual void DispatchCompute(u32 groupCountX, u32 groupCountY = 1, u32 groupCountZ = 1) = 0;
 
 			/**
 			 * Change the render target into which to draw into.
@@ -238,14 +238,14 @@ namespace bs
 			 *							Use the mask to select exactly which surfaces of the render target need
 			 *							their contents preserved.
 			 */
-			virtual void SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags = 0, RenderSurfaceMask loadMask = RT_NONE);
+			virtual void SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags = 0, RenderSurfaceMask loadMask = RT_NONE) = 0;
 
 			/**
 			 * Sets the active viewport that will be used for all following render operations.
 			 *
 			 * @param	area			Area of the viewport, in normalized ([0,1] range) coordinates.
 			 */
-			virtual void SetViewport(const Rect2& area);
+			virtual void SetViewport(const Rect2& area) = 0;
 
 			/**
 			 * Clears the currently active render target.
@@ -256,7 +256,7 @@ namespace bs
 			 * @param	stencil			The value to initialize the stencil buffer with, if enabled.
 			 * @param	targetMask		In case multiple render targets are bound, this allows you to control which ones to clear (0x01 first, 0x02 second, 0x04 third, etc., and combinations).
 			 */
-			virtual void ClearRenderTarget(u32 buffers, const Color& color = Color::kBlack, float depth = 1.0f, u16 stencil = 0, u8 targetMask = 0xFF);
+			virtual void ClearRenderTarget(u32 buffers, const Color& color = Color::kBlack, float depth = 1.0f, u16 stencil = 0, u8 targetMask = 0xFF) = 0;
 
 			/**
 			 * Clears the currently active viewport (meaning it clears just a sub-area of a render-target that is covered by the
@@ -268,7 +268,7 @@ namespace bs
 			 * @param	stencil			The value to initialize the stencil buffer with, if enabled.
 			 * @param	targetMask		In case multiple render targets are bound, this allows you to control which ones to clear (0x01 first, 0x02 second, 0x04 third, etc., and combinations).
 			 */
-			virtual void ClearViewport(u32 buffers, const Color& color = Color::kBlack, float depth = 1.0f, u16 stencil = 0, u8 targetMask = 0xFF);
+			virtual void ClearViewport(u32 buffers, const Color& color = Color::kBlack, float depth = 1.0f, u16 stencil = 0, u8 targetMask = 0xFF) = 0;
 
 			/**
 			 * Allows you to set up a region in which rendering can take place. Coordinates are in pixels. No rendering will be
@@ -279,29 +279,29 @@ namespace bs
 			 * @param	right			Right border of the scissor rectangle, in pixels.
 			 * @param	bottom			Bottom border of the scissor rectangle, in pixels.
 			 */
-			virtual void EnableScissorTest(u32 left, u32 top, u32 right, u32 bottom);
+			virtual void EnableScissorTest(u32 left, u32 top, u32 right, u32 bottom) = 0;
 
 			/** Disables scissor test set via EnableScissorTest(). */
-			virtual void DisableScissorTest();
+			virtual void DisableScissorTest() = 0;
 
 			/**
 			 * Sets a reference value that will be used for stencil compare operations.
 			 *
 			 * @param	value			Reference value to set.
 			 */
-			virtual void SetStencilReferenceValue(u32 value);
+			virtual void SetStencilReferenceValue(u32 value) = 0;
 
 			/**
 			 * Surrounds all following commands with the provided label, until EndLabel() is called. This may be used by external
 			 * tools for easier debugging.
 			 */
-			virtual void BeginLabel(const StringView& name);
+			virtual void BeginLabel(const StringView& name) = 0;
 
 			/** Closes the label scope as provided by the previous call to BeginLabel(). */
-			virtual void EndLabel();
+			virtual void EndLabel() = 0;
 
 			/** Inserts a label at the specified location in the command buffer. This may be used by external tools for easier debugging. */
-			virtual void InsertLabel(const StringView& name);
+			virtual void InsertLabel(const StringView& name) = 0;
 
 			/** Ends command recording on the command buffer and makes it ready for submission. */
 			virtual void End() = 0;

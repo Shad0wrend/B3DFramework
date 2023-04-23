@@ -54,19 +54,6 @@ void VulkanRenderAPI::DestroyCore()
 	GetVulkanSubmitThread().WaitUntilIdle(true);
 	GetVulkanSubmitThread().RefreshCommandBufferCompletionStates();
 
-	for(auto it = mSubmittedCommandBuffers.begin(); it != mSubmittedCommandBuffers.end();)
-	{
-		if((*it)->GetState() == CommandBufferState::Done)
-		{
-			SPtr<VulkanGpuCommandBuffer> vulkanCommandBuffer = std::static_pointer_cast<VulkanGpuCommandBuffer>(*it);
-			vulkanCommandBuffer->OnDidComplete();
-
-			it = mSubmittedCommandBuffers.erase(it);
-		}
-		else
-			++it;
-	}
-
 	mPrimaryGpuDevice = nullptr;
 
 	// TODO - Move this to CoreApplication once I get rid of VulkanRenderAPI
@@ -75,175 +62,11 @@ void VulkanRenderAPI::DestroyCore()
 	RenderAPI::DestroyCore();
 }
 
-void VulkanRenderAPI::SetGraphicsPipeline(const SPtr<GpuGraphicsPipelineState>& pipelineState, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	VulkanGpuCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
-	cb->CmdSetPipelineState(pipelineState);
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumPipelineStateChanges);
-}
-
-void VulkanRenderAPI::SetComputePipeline(const SPtr<GpuComputePipelineState>& pipelineState, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	VulkanGpuCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
-	cb->CmdSetPipelineState(pipelineState);
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumPipelineStateChanges);
-}
-
-void VulkanRenderAPI::SetGpuParams(const SPtr<GpuParameters>& gpuParams, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	VulkanGpuCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
-
-	for(u32 i = 0; i < GPT_COUNT; i++)
-	{
-		SPtr<GpuProgramParameterDescription> paramDesc = gpuParams->GetParameterInformation((GpuProgramType)i);
-		if(paramDesc == nullptr)
-			continue;
-
-		// Flush all param block buffers
-		for(auto iter = paramDesc->DataParameterBlocks.begin(); iter != paramDesc->DataParameterBlocks.end(); ++iter)
-		{
-			SPtr<GpuBuffer> buffer = gpuParams->GetUniformBuffer(iter->second.Set, iter->second.Slot);
-
-			if(buffer != nullptr)
-				buffer->FlushCache();
-		}
-	}
-
-	cb->CmdSetGpuParams(gpuParams);
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumGpuParamBinds);
-}
-
-void VulkanRenderAPI::SetViewport(const Rect2& vp, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	VulkanGpuCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
-	cb->CmdSetNormalizedViewportArea(vp);
-}
-
-void VulkanRenderAPI::SetVertexBuffers(u32 index, SPtr<GpuBuffer>* buffers, u32 numBuffers, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	VulkanGpuCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
-	cb->CmdSetVertexBuffers(index, buffers, numBuffers);
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumVertexBufferBinds);
-}
-
-void VulkanRenderAPI::SetIndexBuffer(const SPtr<GpuBuffer>& buffer, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	VulkanGpuCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
-	cb->CmdSetIndexBuffer(buffer);
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumIndexBufferBinds);
-}
-
-void VulkanRenderAPI::SetVertexDescription(const SPtr<VertexDescription>& vertexDescription, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	VulkanGpuCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
-	cb->CmdSetVertexDescription(vertexDescription);
-}
-
-void VulkanRenderAPI::SetDrawOperation(DrawOperationType op, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	VulkanGpuCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
-	cb->CmdSetDrawOp(op);
-}
-
-void VulkanRenderAPI::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	u32 primCount = 0;
-
-	VulkanGpuCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
-	cb->CmdDraw(vertexOffset, vertexCount, instanceCount, firstInstance);
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumDrawCalls);
-	B3D_ADD_RENDER_STATISTIC(NumVertices, vertexCount);
-	B3D_ADD_RENDER_STATISTIC(NumPrimitives, primCount);
-}
-
-void VulkanRenderAPI::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	u32 primCount = 0;
-
-	VulkanGpuCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
-	cb->CmdDrawIndexed(startIndex, indexCount, vertexOffset, instanceCount, firstInstance);
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumDrawCalls);
-	B3D_ADD_RENDER_STATISTIC(NumVertices, vertexCount);
-	B3D_ADD_RENDER_STATISTIC(NumPrimitives, primCount);
-}
-
-void VulkanRenderAPI::DispatchCompute(u32 numGroupsX, u32 numGroupsY, u32 numGroupsZ, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	VulkanGpuCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
-	cb->CmdDispatch(numGroupsX, numGroupsY, numGroupsZ);
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumComputeCalls);
-}
-
-void VulkanRenderAPI::EnableScissorTest(u32 left, u32 top, u32 right, u32 bottom, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	VulkanGpuCommandBuffer* vulkanCommandBuffer = EnsureCommandBuffer(commandBuffer);
-
-	Rect2I area(left, top, right - left, bottom - top);
-	vulkanCommandBuffer->CmdEnableScissorTest(area);
-}
-
-void VulkanRenderAPI::DisableScissorTest(const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	VulkanGpuCommandBuffer* vulkanCommandBuffer = EnsureCommandBuffer(commandBuffer);
-	vulkanCommandBuffer->CmdDisableScissorTest();
-}
-
-void VulkanRenderAPI::SetStencilRef(u32 value, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	VulkanGpuCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
-	cb->CmdSetStencilRef(value);
-}
-
-void VulkanRenderAPI::ClearViewport(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	VulkanGpuCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
-	cb->CmdClearViewport(buffers, color, depth, stencil, targetMask);
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumClears);
-}
-
-void VulkanRenderAPI::ClearRenderTarget(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	VulkanGpuCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
-	cb->CmdClearRenderTarget(buffers, color, depth, stencil, targetMask);
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumClears);
-}
-
-void VulkanRenderAPI::SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags, RenderSurfaceMask loadMask, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	VulkanGpuCommandBuffer* cb = EnsureCommandBuffer(commandBuffer);
-	cb->CmdSetRenderTarget(target, readOnlyFlags, loadMask);
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumRenderTargetChanges);
-}
-
 void VulkanRenderAPI::BeginFrame()
 {
 	THROW_IF_NOT_CORE_THREAD
 
 	GetVulkanSubmitThread().RefreshCommandBufferCompletionStates();
-
-	for(auto it = mSubmittedCommandBuffers.begin(); it != mSubmittedCommandBuffers.end();)
-	{
-		if((*it)->GetState() == CommandBufferState::Done)
-		{
-			SPtr<VulkanGpuCommandBuffer> vulkanCommandBuffer = std::static_pointer_cast<VulkanGpuCommandBuffer>(*it);
-			vulkanCommandBuffer->OnDidComplete();
-
-			it = mSubmittedCommandBuffers.erase(it);
-		}
-		else
-			++it;
-	}
 }
 
 void VulkanRenderAPI::EndFrame()
@@ -289,40 +112,11 @@ void VulkanRenderAPI::SwapBuffers(const SPtr<RenderTarget>& target, u32 syncMask
 	B3D_INCREMENT_RENDER_STATISTIC(NumPresents);
 }
 
-void VulkanRenderAPI::AddCommands(const SPtr<GpuCommandBuffer>& commandBuffer, const SPtr<GpuCommandBuffer>& secondary)
-{
-	B3D_EXCEPT(NotImplementedException, "Secondary command buffers not implemented");
-}
-
-void VulkanRenderAPI::BeginLabel(const StringView& name, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	THROW_IF_NOT_CORE_THREAD
-
-	VulkanGpuCommandBuffer* vulkanCommandBuffer = EnsureCommandBuffer(commandBuffer);
-	vulkanCommandBuffer->CmdBeginLabel(name);
-}
-
-void VulkanRenderAPI::EndLabel(const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	THROW_IF_NOT_CORE_THREAD
-
-	VulkanGpuCommandBuffer* vulkanCommandBuffer = EnsureCommandBuffer(commandBuffer);
-	vulkanCommandBuffer->CmdEndLabel();
-}
-
-void VulkanRenderAPI::InsertLabel(const StringView& name, const SPtr<GpuCommandBuffer>& commandBuffer)
-{
-	THROW_IF_NOT_CORE_THREAD
-
-	VulkanGpuCommandBuffer* vulkanCommandBuffer = EnsureCommandBuffer(commandBuffer);
-	vulkanCommandBuffer->CmdInsertLabel(name);
-}
-
 void VulkanRenderAPI::SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandBuffer, u32 queueIndex, u32 syncMask)
 {
 	THROW_IF_NOT_CORE_THREAD;
 
-	VulkanGpuCommandBuffer* vulkanCommandBuffer = EnsureCommandBuffer(commandBuffer);
+	VulkanGpuCommandBuffer* vulkanCommandBuffer = static_cast<VulkanGpuCommandBuffer*>(commandBuffer.get());
 
 	// Submit all transfer buffers first
 	mPrimaryGpuDevice->SubmitTransferCommandBuffers();
@@ -333,27 +127,12 @@ void VulkanRenderAPI::SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandB
 
 	B3D_ASSERT(queue != nullptr);
 	vulkanCommandBuffer->Submit(*queue, syncMask);
-
-	mSubmittedCommandBuffers.push_back(commandBuffer);
 }
 
 void VulkanRenderAPI::WaitUntilIdle() const
 {
 	GetVulkanSubmitThread().WaitUntilIdle();
 	GetVulkanSubmitThread().RefreshCommandBufferCompletionStates();
-
-	for(auto it = mSubmittedCommandBuffers.begin(); it != mSubmittedCommandBuffers.end();)
-	{
-		if((*it)->GetState() == CommandBufferState::Done)
-		{
-			(*it)->OnDidComplete();
-			it = mSubmittedCommandBuffers.erase(it);
-		}
-		else
-		{
-			++it;
-		}
-	}
 }
 
 void VulkanRenderAPI::ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest)
@@ -405,11 +184,6 @@ GpuDataParameterBlockInformation VulkanRenderAPI::GenerateParamBlockDesc(const S
 		block.BlockSize += (4 - (block.BlockSize % 4));
 
 	return block;
-}
-
-VulkanGpuCommandBuffer* VulkanRenderAPI::EnsureCommandBuffer(const SPtr<GpuCommandBuffer>& buffer)
-{
-	return static_cast<VulkanGpuCommandBuffer*>(buffer.get());
 }
 
 namespace bs { namespace ct {

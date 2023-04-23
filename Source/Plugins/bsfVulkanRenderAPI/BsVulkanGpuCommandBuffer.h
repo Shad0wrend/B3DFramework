@@ -92,8 +92,9 @@ namespace bs
 		B3D_FLAGS_OPERATORS(BufferUseFlagBits)
 
 		/** CommandBuffer implementation for Vulkan. */
-		class VulkanGpuCommandBuffer : public GpuCommandBuffer
+		class VulkanGpuCommandBuffer final : public GpuCommandBuffer
 		{
+		private:
 			/** Possible states a command buffer can be in. */
 			enum class State
 			{
@@ -125,6 +126,27 @@ namespace bs
 
 			void SetName(const StringView& name) override;
 			CommandBufferState GetState() const override;
+
+			void SetGpuParameters(const SPtr<GpuParameters>& parameters) override;
+			void SetGpuGraphicsPipelineState(const SPtr<GpuGraphicsPipelineState>& pipelineState) override;
+			void SetGpuComputePipelineState(const SPtr<GpuComputePipelineState>& pipelineState) override;
+			void SetVertexBuffers(u32 index, SPtr<GpuBuffer>* buffers, u32 bufferCount) override;
+			void SetIndexBuffer(const SPtr<GpuBuffer>& buffer) override;
+			void SetVertexDescription(const SPtr<VertexDescription>& vertexDescription) override;
+			void SetDrawOperation(DrawOperationType operation) override;
+			void Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance) override;
+			void DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance) override;
+			void DispatchCompute(u32 groupCountX, u32 groupCountY, u32 groupCountZ) override;
+			void SetRenderTarget(const SPtr<RenderTarget>& target, u32 readOnlyFlags, RenderSurfaceMask loadMask) override;
+			void SetViewport(const Rect2& area) override;
+			void ClearRenderTarget(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask) override;
+			void ClearViewport(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask) override;
+			void EnableScissorTest(u32 left, u32 top, u32 right, u32 bottom) override;
+			void DisableScissorTest() override;
+			void SetStencilReferenceValue(u32 value) override;
+			void BeginLabel(const StringView& name) override;
+			void EndLabel() override;
+			void InsertLabel(const StringView& name) override;
 			void End() override;
 
 			/** Returns an unique identifier of this command buffer. */
@@ -136,14 +158,8 @@ namespace bs
 			/** Returns the thread that the command buffer is allowed to be used on. */
 			ThreadId GetOwnerThread() const { return mOwnerThread; }
 
-			/** Assigns an name to the command buffer, primarily used for easier debugging. */
-			void SetNameInternal(const StringView& name);
-
 			/** Makes the command buffer ready to start recording commands. */
 			void Begin();
-
-			/** Ends command buffer command recording (as started with begin()). */
-			void CmdEnd();
 
 			/**
 			 * Submits the command buffer for execution.
@@ -290,63 +306,6 @@ namespace bs
 			void EndRenderPass() { EndRenderPass(false); }
 
 			/**
-			 * Assigns a render target the the command buffer. This render target's framebuffer and render pass will be used
-			 * when beginRenderPass() is called. Command buffer must not be currently recording a render pass.
-			 */
-			void CmdSetRenderTarget(const SPtr<RenderTarget>& renderTarget, u32 readOnlyFlags, RenderSurfaceMask loadMask);
-
-			/** Clears the entirety currently bound render target. */
-			void CmdClearRenderTarget(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask);
-
-			/** Clears the viewport portion of the currently bound render target. */
-			void CmdClearViewport(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask);
-
-			/** Assigns a pipeline state to use for subsequent draw commands. */
-			void CmdSetPipelineState(const SPtr<GpuGraphicsPipelineState>& state);
-
-			/** Assigns a pipeline state to use for subsequent dispatch commands. */
-			void CmdSetPipelineState(const SPtr<GpuComputePipelineState>& state);
-
-			/** Assign GPU params to the GPU programs bound by the pipeline state. */
-			void CmdSetGpuParams(const SPtr<GpuParameters>& gpuParams);
-
-			/** Sets the current viewport which determine to which portion of the render target to render to. */
-			void CmdSetNormalizedViewportArea(const Rect2& area);
-
-			/**
-			 * Enables scissor test and sets the scissor rectangle area which determines in which area if the viewport are the fragments allowed to be
-			 * generated.
-			 */
-			void CmdEnableScissorTest(const Rect2I& area);
-
-			/** Disables the scissor test enabled via EnableScissorTest(). */
-			void CmdDisableScissorTest();
-
-			/** Sets a stencil reference value that will be used for comparisons in stencil operations, if enabled. */
-			void CmdSetStencilRef(u32 value);
-
-			/** Changes how are primitives interpreted as during rendering. */
-			void CmdSetDrawOp(DrawOperationType drawOp);
-
-			/** Sets one or multiple vertex buffers that will be used for subsequent draw() or drawIndexed() calls. */
-			void CmdSetVertexBuffers(u32 startIndex, SPtr<GpuBuffer>* buffers, u32 bufferCount);
-
-			/** Sets an index buffer that will be used for subsequent drawIndexed() calls. */
-			void CmdSetIndexBuffer(const SPtr<GpuBuffer>& buffer);
-
-			/** Sets a declaration that determines how are vertex buffer contents interpreted. */
-			void CmdSetVertexDescription(const SPtr<VertexDescription>& vertexDescription);
-
-			/** Executes a draw command using the currently bound graphics pipeline, vertex buffer and render target. */
-			void CmdDraw(u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance);
-
-			/** Executes a draw command using the currently bound graphics pipeline, index & vertex buffer and render target. */
-			void CmdDrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 instanceCount, u32 firstInstance);
-
-			/** Executes a dispatch command using the currently bound compute pipeline. */
-			void CmdDispatch(u32 numGroupsX, u32 numGroupsY, u32 numGroupsZ);
-
-			/**
 			 * Registers a command that signals the event when executed. Will be delayed until the end of the current
 			 * render pass, if any.
 			 */
@@ -463,21 +422,6 @@ namespace bs
 			 * @param	regions						One or multiple regions which to resolve.
 			 */
 			void Resolve(VulkanImage* source, VulkanImage* destination, VkImageLayout sourceLayout, VkImageLayout destinationLayout, const VkImageSubresourceRange& sourceSubresourceRange, const VkImageSubresourceRange& destinationSubresourceRange, uint32_t regionCount, VkImageResolve* regions);
-
-			/**
-			 * Surrounds all following commands with the provided label, until EndLabel() is called. This may be used by external
-			 * tools for easier debugging.
-			 */
-			void CmdBeginLabel(const StringView& name);
-
-			/** Closes the label scope as provided by the previous call to BeginLabel(). */
-			void CmdEndLabel();
-
-			/**
-			 * Inserts a label at the specified location in the command buffer. This may be used by external tools
-			 * for easier debugging.
-			 */
-			void CmdInsertLabel(const StringView& name);
 
 			/**
 			 * Returns the current layout of the specified image, as seen by this command buffer. This is different from the
