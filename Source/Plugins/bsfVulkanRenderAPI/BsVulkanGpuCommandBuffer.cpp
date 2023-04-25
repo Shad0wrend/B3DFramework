@@ -232,6 +232,7 @@ u32 VulkanGpuCommandBuffer::GetDeviceIndex() const
 
 void VulkanGpuCommandBuffer::Begin()
 {
+	EnsureValidThread();
 	B3D_ASSERT(mState == State::Ready);
 
 	VkCommandBufferBeginInfo beginInfo;
@@ -248,6 +249,7 @@ void VulkanGpuCommandBuffer::Begin()
 
 void VulkanGpuCommandBuffer::End()
 {
+	EnsureValidThread();
 	B3D_ASSERT(mState == State::Recording);
 
 	// If a clear is queued, execute the render pass with no additional instructions
@@ -262,6 +264,611 @@ void VulkanGpuCommandBuffer::End()
 
 	mRenderTarget = nullptr;
 	mState = State::RecordingDone;
+}
+
+void VulkanGpuCommandBuffer::SetRenderTarget(const SPtr<RenderTarget>& renderTarget, u32 readOnlyFlags, RenderSurfaceMask loadMask)
+{
+	EnsureValidThread();
+	B3D_ASSERT(mState != State::Submitted);
+
+	VulkanFramebuffer* newFramebuffer;
+	VulkanSwapChain* swapChain = nullptr;
+	if(renderTarget != nullptr)
+	{
+		if(renderTarget->GetProperties().IsWindow)
+		{
+#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
+			Win32RenderWindow* window = static_cast<Win32RenderWindow*>(renderTarget.get());
+#elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
+			LinuxRenderWindow* window = static_cast<LinuxRenderWindow*>(rt.get());
+#elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
+			MacOSRenderWindow* window = static_cast<MacOSRenderWindow*>(rt.get());
+#endif
+
+			swapChain = window->GetSwapChain();
+
+			if(!swapChain->IsValid())
+			{
+				window->RebuildSwapChain();
+				swapChain = window->GetSwapChain();
+			}
+
+			u32 acquiredImageIndex;
+			bool isImageAcquired = swapChain->TryGetFirstAcquiredImageIndex(acquiredImageIndex);
+
+			// It's possible this is a fresh swap chain we haven't acquired any images for yet
+			if(!isImageAcquired)
+			{
+				const u32 maximumColorImageCount = swapChain->GetColorImageCount();
+				const u32 acquireableColorImageCount = maximumColorImageCount > 0 ? maximumColorImageCount - 1 : 0; // One is reserved for OS compositor
+				for(u32 imageIndex = 0; imageIndex < acquireableColorImageCount; imageIndex++)
+					GetVulkanSubmitThread().QueueImageAcquire(*swapChain);
+
+				swapChain->WaitUntilFirstImageAcquired();
+				isImageAcquired = swapChain->TryGetFirstAcquiredImageIndex(acquiredImageIndex);
+			}
+
+			if(isImageAcquired)
+			{
+				SwapChainImageInformation swapChainImageInformation;
+				swapChainImageInformation.SwapChain = swapChain;
+				swapChainImageInformation.ImageIndex = acquiredImageIndex;
+
+				const auto found = std::find_if(mAcquiredSwapChainImages.begin(), mAcquiredSwapChainImages.end(), [swapChain](const SwapChainImageInformation& info) { return info.SwapChain == swapChain; });
+				if(found == mAcquiredSwapChainImages.end())
+					mAcquiredSwapChainImages.push_back(swapChainImageInformation);
+
+				newFramebuffer = swapChain->GetFramebufferForImage(swapChainImageInformation.ImageIndex);
+			}
+			else
+			{
+				B3D_LOG(Error, RenderBackend, "Binding render target failed. Unable to acquire swap chain image.");
+
+				swapChain = nullptr;
+				newFramebuffer = nullptr;
+			}
+		}
+		else
+		{
+			const VulkanRenderTexture* const renderTexture = static_cast<VulkanRenderTexture*>(renderTarget.get());
+			newFramebuffer = renderTexture->GetFramebuffer();
+		}
+	}
+	else
+	{
+		newFramebuffer = nullptr;
+	}
+
+	mRenderTarget = renderTarget;
+	mRenderTargetModified = false;
+	mIsRenderPassInterrupted = false;
+
+	// Warn if invalid load mask
+	if(loadMask.IsSet(RT_DEPTH) && !loadMask.IsSet(RT_STENCIL))
+	{
+		B3D_LOG(Warning, RenderBackend, "setRenderTarget() invalid load mask, depth enabled but stencil disabled. "
+									   "This is not supported. Both will be loaded.");
+
+		loadMask.Set(RT_STENCIL);
+	}
+
+	if(!loadMask.IsSet(RT_DEPTH) && loadMask.IsSet(RT_STENCIL))
+	{
+		B3D_LOG(Warning, RenderBackend, "setRenderTarget() invalid load mask, stencil enabled but depth disabled. "
+									   "This is not supported. Both will be loaded.");
+
+		loadMask.Set(RT_DEPTH);
+	}
+
+	if(mFramebuffer == newFramebuffer && mRenderTargetReadOnlyFlags == readOnlyFlags && mRenderTargetLoadMask == loadMask)
+		return;
+
+	if(IsInRenderPass())
+		EndRenderPass();
+	else
+	{
+		// If a clear is queued for previous FB, execute the render pass with no additional instructions
+		if(mClearMask)
+			ExecuteClearPass();
+	}
+
+	// Reset isFBAttachment flags for subresources from the old framebuffer
+	if(mFramebuffer != nullptr)
+	{
+		VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
+		u32 numColorAttachments = renderPass->GetColorAttachmentCount();
+		for(u32 i = 0; i < numColorAttachments; i++)
+		{
+			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetColorAttachment(i);
+			u32 imageInfoIdx = mImages[fbAttachment.Image];
+			ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
+
+			ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
+			for(u32 j = 0; j < imageInfo.NumSubresourceInfos; j++)
+			{
+				ImageSubresourceInfo& entry = subresourceInfos[j];
+				entry.UseFlags.Unset(ImageUseFlagBits::Framebuffer);
+				entry.FbUse.Access = VulkanAccessFlag::None;
+				entry.FbUse.Stages = 0;
+			}
+		}
+
+		if(renderPass->HasDepthAttachment())
+		{
+			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetDepthStencilAttachment();
+			u32 imageInfoIdx = mImages[fbAttachment.Image];
+			ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
+
+			ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
+			for(u32 j = 0; j < imageInfo.NumSubresourceInfos; j++)
+			{
+				ImageSubresourceInfo& entry = subresourceInfos[j];
+				entry.UseFlags.Unset(ImageUseFlagBits::Framebuffer);
+				entry.FbUse.Access = VulkanAccessFlag::None;
+				entry.FbUse.Stages = 0;
+			}
+		}
+	}
+
+	if(newFramebuffer == nullptr)
+	{
+		mFramebuffer = nullptr;
+		mRenderTargetReadOnlyFlags = 0;
+		mRenderTargetLoadMask = RT_NONE;
+	}
+	else
+	{
+		mFramebuffer = newFramebuffer;
+		mRenderTargetReadOnlyFlags = readOnlyFlags;
+		mRenderTargetLoadMask = loadMask;
+	}
+
+	// Re-set the params as they will need to be re-bound
+	SetGpuParameters(mBoundParams);
+
+	if(mFramebuffer)
+	{
+		RegisterResource(mFramebuffer, loadMask, readOnlyFlags);
+
+		if(swapChain)
+			RegisterResource(swapChain);
+	}
+
+	mGfxPipelineRequiresBind = true;
+
+	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
+	mVertexInputsDirty = true;
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumRenderTargetChanges);
+}
+
+void VulkanGpuCommandBuffer::ClearRenderTarget(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
+{
+	EnsureValidThread();
+
+	Rect2I area(0, 0, mFramebuffer->GetWidth(), mFramebuffer->GetHeight());
+	ClearViewport(area, buffers, color, depth, stencil, targetMask);
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumClears);
+}
+
+void VulkanGpuCommandBuffer::ClearViewport(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
+{
+	EnsureValidThread();
+
+	const Rect2I viewportArea = GetViewportArea();
+	ClearViewport(viewportArea, buffers, color, depth, stencil, targetMask);
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumClears);
+}
+
+void VulkanGpuCommandBuffer::SetGpuGraphicsPipelineState(const SPtr<GpuGraphicsPipelineState>& state)
+{
+	EnsureValidThread();
+
+	if(mGraphicsPipeline == state)
+		return;
+
+	mGraphicsPipeline = std::static_pointer_cast<VulkanGpuGraphicsPipelineState>(state);
+	mGfxPipelineRequiresBind = true;
+
+	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
+	mVertexInputsDirty = true;
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumPipelineStateChanges);
+}
+
+void VulkanGpuCommandBuffer::SetGpuComputePipelineState(const SPtr<GpuComputePipelineState>& state)
+{
+	EnsureValidThread();
+
+	if(mComputePipeline == state)
+		return;
+
+	mComputePipeline = std::static_pointer_cast<VulkanGpuComputePipelineState>(state);
+	mCmpPipelineRequiresBind = true;
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumPipelineStateChanges);
+}
+
+void VulkanGpuCommandBuffer::SetGpuParameters(const SPtr<GpuParameters>& parameters)
+{
+	EnsureValidThread();
+
+	// Note: We keep an internal reference to GPU params even though we shouldn't keep a reference to a core thread
+	// object. But it should be fine since we expect the resource to be externally synchronized so it should never
+	// be allowed to go out of scope on a non-core thread anyway.
+	mBoundParams = std::static_pointer_cast<VulkanGpuParameters>(parameters);
+
+	if (mBoundParams != nullptr)
+	{
+		for (u32 i = 0; i < GPT_COUNT; i++)
+		{
+			SPtr<GpuProgramParameterDescription> paramDesc = parameters->GetParameterInformation((GpuProgramType)i);
+			if (paramDesc == nullptr)
+				continue;
+
+			// Flush all param block buffers
+			for (auto iter = paramDesc->DataParameterBlocks.begin(); iter != paramDesc->DataParameterBlocks.end(); ++iter)
+			{
+				SPtr<GpuBuffer> buffer = parameters->GetUniformBuffer(iter->second.Set, iter->second.Slot);
+
+				if (buffer != nullptr)
+					buffer->FlushCache();
+			}
+		}
+	}
+
+	if(mBoundParams != nullptr)
+		mBoundParamsDirty = true;
+	else
+	{
+		mBoundDescriptorSetCount = 0;
+		mBoundParamsDirty = false;
+	}
+
+	mDescriptorSetsBindState = DescriptorSetBindFlag::Graphics | DescriptorSetBindFlag::Compute;
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumGpuParamBinds);
+}
+
+void VulkanGpuCommandBuffer::SetViewport(const Rect2& area)
+{
+	EnsureValidThread();
+
+	if(mNormalizedViewportArea == area)
+		return;
+
+	mNormalizedViewportArea = area;
+	mViewportRequiresBind = true;
+}
+
+void VulkanGpuCommandBuffer::EnableScissorTest(u32 left, u32 top, u32 right, u32 bottom)
+{
+	EnsureValidThread();
+
+	const Rect2I area(left, top, right - left, bottom - top);
+
+	if(mIsScissorTestEnabled && mScissor == area)
+		return;
+
+	mScissor = area;
+	mIsScissorTestEnabled = true;
+	mScissorRequiresBind = true;
+}
+
+void VulkanGpuCommandBuffer::DisableScissorTest()
+{
+	EnsureValidThread();
+
+	if(!mIsScissorTestEnabled)
+		return;
+
+	mIsScissorTestEnabled = false;
+	mScissorRequiresBind = true;
+}
+
+void VulkanGpuCommandBuffer::SetStencilReferenceValue(u32 value)
+{
+	EnsureValidThread();
+
+	if(mStencilRef == value)
+		return;
+
+	mStencilRef = value;
+	mStencilRefRequiresBind = true;
+}
+
+void VulkanGpuCommandBuffer::SetDrawOperation(DrawOperationType drawOperation)
+{
+	EnsureValidThread();
+
+	if(mDrawOp == drawOperation)
+		return;
+
+	mDrawOp = drawOperation;
+	mGfxPipelineRequiresBind = true;
+
+	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
+	mVertexInputsDirty = true;
+}
+
+void VulkanGpuCommandBuffer::SetVertexBuffers(u32 startIndex, SPtr<GpuBuffer>* buffers, u32 bufferCount)
+{
+	EnsureValidThread();
+
+	const u32 endIndex = startIndex + bufferCount;
+	if(endIndex <= mVertexBuffers.size())
+	{
+		bool isDifferenceFound = false;
+		for(u32 vertexBufferIndex = startIndex; vertexBufferIndex < endIndex; vertexBufferIndex++)
+		{
+			if(mVertexBuffers[vertexBufferIndex] != buffers[vertexBufferIndex])
+			{
+				isDifferenceFound = true;
+				break;
+			}
+		}
+
+		if(!isDifferenceFound)
+			return;
+	}
+
+	if(mVertexBuffers.size() < endIndex)
+		mVertexBuffers.resize(endIndex);
+
+	for(u32 vertexBufferIndex = startIndex; vertexBufferIndex < endIndex; vertexBufferIndex++)
+		mVertexBuffers[vertexBufferIndex] = std::static_pointer_cast<VulkanGpuBuffer>(buffers[vertexBufferIndex]);
+
+	mVertexInputsDirty = true;
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumVertexBufferBinds);
+}
+
+void VulkanGpuCommandBuffer::SetIndexBuffer(const SPtr<GpuBuffer>& buffer)
+{
+	EnsureValidThread();
+
+	if(mIndexBuffer == buffer)
+		return;
+
+	mIndexBuffer = std::static_pointer_cast<VulkanGpuBuffer>(buffer);
+	mVertexInputsDirty = true;
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumIndexBufferBinds);
+}
+
+void VulkanGpuCommandBuffer::SetVertexDescription(const SPtr<VertexDescription>& vertexDescription)
+{
+	EnsureValidThread();
+
+	if(mVertexDescription == vertexDescription)
+		return;
+
+	mVertexDescription = vertexDescription;
+	mGfxPipelineRequiresBind = true;
+
+	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
+	mVertexInputsDirty = true;
+}
+
+void VulkanGpuCommandBuffer::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance)
+{
+	EnsureValidThread();
+
+	if(!IsReadyForRender())
+		return;
+
+	// Need to bind gpu params before starting render pass, in order to make sure any layout transitions execute
+	BindGpuParams();
+
+	if(!IsInRenderPass())
+		BeginRenderPass();
+
+	if(mGfxPipelineRequiresBind)
+	{
+		if(!BindGraphicsPipeline())
+			return;
+	}
+	else
+		BindDynamicStates(false);
+
+	// Important to call this after the pipeline is bound so we know how many vertex buffers it expects
+	if(mVertexInputsDirty)
+	{
+		BindVertexInputs();
+		mVertexInputsDirty = false;
+	}
+
+	if(mDescriptorSetsBindState.IsSet(DescriptorSetBindFlag::Graphics))
+	{
+		if(mBoundDescriptorSetCount > 0)
+		{
+			u32 deviceIdx = mDevice.GetIndex();
+			VkPipelineLayout pipelineLayout = mGraphicsPipeline->GetPipelineLayout(deviceIdx);
+
+			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, mBoundDescriptorSetCount, mDescriptorSetsTemp, (u32)mDynamicDescriptorOffsetsToBind.size(), mDynamicDescriptorOffsetsToBind.data());
+		}
+
+		mDescriptorSetsBindState.Unset(DescriptorSetBindFlag::Graphics);
+	}
+
+	if(instanceCount <= 0)
+		instanceCount = 1;
+
+	vkCmdDraw(mCmdBuffer, vertexCount, instanceCount, vertexOffset, firstInstance);
+	NotifyRenderTargetModified();
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumDrawCalls);
+	B3D_ADD_RENDER_STATISTIC(NumVertices, vertexCount);
+	B3D_ADD_RENDER_STATISTIC(NumPrimitives, 0); // TODO - Determine accurate primitive count
+}
+
+void VulkanGpuCommandBuffer::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance)
+{
+	EnsureValidThread();
+
+	if(indexCount == 0)
+		return;
+
+	if(!IsReadyForRender())
+		return;
+
+	// Need to bind gpu params before starting render pass, in order to make sure any layout transitions execute
+	BindGpuParams();
+
+	if(!IsInRenderPass())
+		BeginRenderPass();
+
+	if(mGfxPipelineRequiresBind)
+	{
+		if(!BindGraphicsPipeline())
+			return;
+	}
+	else
+		BindDynamicStates(false);
+
+	// Important to call this after the pipeline is bound so we know how many vertex buffers it expects
+	if(mVertexInputsDirty)
+	{
+		BindVertexInputs();
+		mVertexInputsDirty = false;
+	}
+
+	if(mDescriptorSetsBindState.IsSet(DescriptorSetBindFlag::Graphics))
+	{
+		if(mBoundDescriptorSetCount > 0)
+		{
+			u32 deviceIdx = mDevice.GetIndex();
+			VkPipelineLayout pipelineLayout = mGraphicsPipeline->GetPipelineLayout(deviceIdx);
+
+			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, mBoundDescriptorSetCount, mDescriptorSetsTemp, (u32)mDynamicDescriptorOffsetsToBind.size(), mDynamicDescriptorOffsetsToBind.data());
+		}
+
+		mDescriptorSetsBindState.Unset(DescriptorSetBindFlag::Graphics);
+	}
+
+	if(instanceCount <= 0)
+		instanceCount = 1;
+
+	vkCmdDrawIndexed(mCmdBuffer, indexCount, instanceCount, startIndex, vertexOffset, firstInstance);
+	NotifyRenderTargetModified();
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumDrawCalls);
+	B3D_ADD_RENDER_STATISTIC(NumVertices, vertexCount);
+	B3D_ADD_RENDER_STATISTIC(NumPrimitives, 0); // TODO - Determine accurate primitive count
+}
+
+void VulkanGpuCommandBuffer::DispatchCompute(u32 groupCountX, u32 groupCountY, u32 groupCountZ)
+{
+	EnsureValidThread();
+
+	if(mComputePipeline == nullptr)
+		return;
+
+	if(IsInRenderPass())
+		EndRenderPass();
+
+	// Note: Should I restore the render target after? Note that this is only being done is framebuffer subresources
+	// have their "isFBAttachment" flag reset, potentially I can just clear/restore those
+	SetRenderTarget(nullptr, 0, RT_ALL);
+
+	// Need to bind gpu params before starting render pass, in order to make sure any layout transitions execute
+	BindGpuParams();
+	ExecuteWriteHazardBarrier();
+	ExecuteLayoutTransitions();
+
+	u32 deviceIdx = mDevice.GetIndex();
+	if(mCmpPipelineRequiresBind)
+	{
+		VulkanPipeline* pipeline = mComputePipeline->GetPipeline(deviceIdx);
+		if(pipeline == nullptr)
+			return;
+
+		RegisterResource(pipeline, VulkanAccessFlag::Read);
+		mComputePipeline->RegisterPipelineResources(*this);
+
+		vkCmdBindPipeline(mCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->GetHandle());
+		mCmpPipelineRequiresBind = false;
+	}
+
+	if(mDescriptorSetsBindState.IsSet(DescriptorSetBindFlag::Compute))
+	{
+		if(mBoundDescriptorSetCount > 0)
+		{
+			VkPipelineLayout pipelineLayout = mComputePipeline->GetPipelineLayout(deviceIdx);
+			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout, 0, mBoundDescriptorSetCount, mDescriptorSetsTemp, (u32)mDynamicDescriptorOffsetsToBind.size(), mDynamicDescriptorOffsetsToBind.data());
+		}
+
+		mDescriptorSetsBindState.Unset(DescriptorSetBindFlag::Compute);
+	}
+
+	vkCmdDispatch(mCmdBuffer, groupCountX, groupCountY, groupCountZ);
+
+	// Remove any shader use flags on images. Note this relies on the fact that we re-bind all parameters on every
+	// dispatch call and render pass, so they can reset this flags. Otherwise clearing the flags is wrong if the
+	// images remain to be used in subsequent calls).
+	for(auto& entry : mShaderBoundSubresourceInfos)
+	{
+		ImageSubresourceInfo& subresourceInfo = mSubresourceInfoStorage[entry];
+		subresourceInfo.UseFlags.Unset(ImageUseFlagBits::Shader);
+		subresourceInfo.ShaderUse.Access = VulkanAccessFlag::None;
+		subresourceInfo.ShaderUse.Stages = 0;
+	}
+
+	mShaderBoundSubresourceInfos.clear();
+
+	B3D_INCREMENT_RENDER_STATISTIC(NumComputeCalls);
+}
+
+void VulkanGpuCommandBuffer::BeginLabel(const StringView& name)
+{
+	EnsureValidThread();
+
+	if(!IsRecording() || vkCmdBeginDebugUtilsLabelEXT == nullptr)
+		return;
+
+	VkDebugUtilsLabelEXT labelInfo;
+	labelInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+	labelInfo.pNext = nullptr;
+	labelInfo.pLabelName = name.data();
+	labelInfo.color[0] = kDebugLabelColor.R;
+	labelInfo.color[1] = kDebugLabelColor.G;
+	labelInfo.color[2] = kDebugLabelColor.B;
+	labelInfo.color[3] = kDebugLabelColor.A;
+
+	vkCmdBeginDebugUtilsLabelEXT(mCmdBuffer, &labelInfo);
+	mIsDebugLabelOpen = true;
+}
+
+void VulkanGpuCommandBuffer::EndLabel()
+{
+	EnsureValidThread();
+
+	if(!IsRecording() || vkCmdBeginDebugUtilsLabelEXT == nullptr)
+		return;
+
+	vkCmdEndDebugUtilsLabelEXT(mCmdBuffer);
+	mIsDebugLabelOpen = false;
+}
+
+void VulkanGpuCommandBuffer::InsertLabel(const StringView& name)
+{
+	EnsureValidThread();
+
+	if(!IsRecording() || vkCmdBeginDebugUtilsLabelEXT == nullptr)
+		return;
+
+	VkDebugUtilsLabelEXT labelInfo;
+	labelInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+	labelInfo.pNext = nullptr;
+	labelInfo.pLabelName = name.data();
+	labelInfo.color[0] = kDebugLabelColor.R;
+	labelInfo.color[1] = kDebugLabelColor.G;
+	labelInfo.color[2] = kDebugLabelColor.B;
+	labelInfo.color[3] = kDebugLabelColor.A;
+
+	vkCmdInsertDebugUtilsLabelEXT(mCmdBuffer, &labelInfo);
 }
 
 void VulkanGpuCommandBuffer::BeginRenderPass()
@@ -883,181 +1490,6 @@ void VulkanGpuCommandBuffer::Reset()
 	mIsRenderPassInterrupted = false;
 }
 
-void VulkanGpuCommandBuffer::SetRenderTarget(const SPtr<RenderTarget>& renderTarget, u32 readOnlyFlags, RenderSurfaceMask loadMask)
-{
-	B3D_ASSERT(mState != State::Submitted);
-
-	VulkanFramebuffer* newFramebuffer;
-	VulkanSwapChain* swapChain = nullptr;
-	if(renderTarget != nullptr)
-	{
-		if(renderTarget->GetProperties().IsWindow)
-		{
-#if B3D_PLATFORM == B3D_PLATFORM_ID_WIN32
-			Win32RenderWindow* window = static_cast<Win32RenderWindow*>(renderTarget.get());
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_LINUX
-			LinuxRenderWindow* window = static_cast<LinuxRenderWindow*>(rt.get());
-#elif B3D_PLATFORM == B3D_PLATFORM_ID_MACOS
-			MacOSRenderWindow* window = static_cast<MacOSRenderWindow*>(rt.get());
-#endif
-
-			swapChain = window->GetSwapChain();
-
-			if(!swapChain->IsValid())
-			{
-				window->RebuildSwapChain();
-				swapChain = window->GetSwapChain();
-			}
-
-			u32 acquiredImageIndex;
-			bool isImageAcquired = swapChain->TryGetFirstAcquiredImageIndex(acquiredImageIndex);
-
-			// It's possible this is a fresh swap chain we haven't acquired any images for yet
-			if(!isImageAcquired)
-			{
-				const u32 maximumColorImageCount = swapChain->GetColorImageCount();
-				const u32 acquireableColorImageCount = maximumColorImageCount > 0 ? maximumColorImageCount - 1 : 0; // One is reserved for OS compositor
-				for(u32 imageIndex = 0; imageIndex < acquireableColorImageCount; imageIndex++)
-					GetVulkanSubmitThread().QueueImageAcquire(*swapChain);
-
-				swapChain->WaitUntilFirstImageAcquired();
-				isImageAcquired = swapChain->TryGetFirstAcquiredImageIndex(acquiredImageIndex);
-			}
-
-			if(isImageAcquired)
-			{
-				SwapChainImageInformation swapChainImageInformation;
-				swapChainImageInformation.SwapChain = swapChain;
-				swapChainImageInformation.ImageIndex = acquiredImageIndex;
-
-				const auto found = std::find_if(mAcquiredSwapChainImages.begin(), mAcquiredSwapChainImages.end(), [swapChain](const SwapChainImageInformation& info) { return info.SwapChain == swapChain; });
-				if(found == mAcquiredSwapChainImages.end())
-					mAcquiredSwapChainImages.push_back(swapChainImageInformation);
-
-				newFramebuffer = swapChain->GetFramebufferForImage(swapChainImageInformation.ImageIndex);
-			}
-			else
-			{
-				B3D_LOG(Error, RenderBackend, "Binding render target failed. Unable to acquire swap chain image.");
-
-				swapChain = nullptr;
-				newFramebuffer = nullptr;
-			}
-		}
-		else
-		{
-			const VulkanRenderTexture* const renderTexture = static_cast<VulkanRenderTexture*>(renderTarget.get());
-			newFramebuffer = renderTexture->GetFramebuffer();
-		}
-	}
-	else
-	{
-		newFramebuffer = nullptr;
-	}
-
-	mRenderTarget = renderTarget;
-	mRenderTargetModified = false;
-	mIsRenderPassInterrupted = false;
-
-	// Warn if invalid load mask
-	if(loadMask.IsSet(RT_DEPTH) && !loadMask.IsSet(RT_STENCIL))
-	{
-		B3D_LOG(Warning, RenderBackend, "setRenderTarget() invalid load mask, depth enabled but stencil disabled. "
-									   "This is not supported. Both will be loaded.");
-
-		loadMask.Set(RT_STENCIL);
-	}
-
-	if(!loadMask.IsSet(RT_DEPTH) && loadMask.IsSet(RT_STENCIL))
-	{
-		B3D_LOG(Warning, RenderBackend, "setRenderTarget() invalid load mask, stencil enabled but depth disabled. "
-									   "This is not supported. Both will be loaded.");
-
-		loadMask.Set(RT_DEPTH);
-	}
-
-	if(mFramebuffer == newFramebuffer && mRenderTargetReadOnlyFlags == readOnlyFlags && mRenderTargetLoadMask == loadMask)
-		return;
-
-	if(IsInRenderPass())
-		EndRenderPass();
-	else
-	{
-		// If a clear is queued for previous FB, execute the render pass with no additional instructions
-		if(mClearMask)
-			ExecuteClearPass();
-	}
-
-	// Reset isFBAttachment flags for subresources from the old framebuffer
-	if(mFramebuffer != nullptr)
-	{
-		VulkanRenderPass* renderPass = mFramebuffer->GetRenderPass();
-		u32 numColorAttachments = renderPass->GetColorAttachmentCount();
-		for(u32 i = 0; i < numColorAttachments; i++)
-		{
-			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetColorAttachment(i);
-			u32 imageInfoIdx = mImages[fbAttachment.Image];
-			ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
-
-			ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
-			for(u32 j = 0; j < imageInfo.NumSubresourceInfos; j++)
-			{
-				ImageSubresourceInfo& entry = subresourceInfos[j];
-				entry.UseFlags.Unset(ImageUseFlagBits::Framebuffer);
-				entry.FbUse.Access = VulkanAccessFlag::None;
-				entry.FbUse.Stages = 0;
-			}
-		}
-
-		if(renderPass->HasDepthAttachment())
-		{
-			const VulkanFramebufferAttachment& fbAttachment = mFramebuffer->GetDepthStencilAttachment();
-			u32 imageInfoIdx = mImages[fbAttachment.Image];
-			ImageInfo& imageInfo = mImageInfos[imageInfoIdx];
-
-			ImageSubresourceInfo* subresourceInfos = &mSubresourceInfoStorage[imageInfo.SubresourceInfoIdx];
-			for(u32 j = 0; j < imageInfo.NumSubresourceInfos; j++)
-			{
-				ImageSubresourceInfo& entry = subresourceInfos[j];
-				entry.UseFlags.Unset(ImageUseFlagBits::Framebuffer);
-				entry.FbUse.Access = VulkanAccessFlag::None;
-				entry.FbUse.Stages = 0;
-			}
-		}
-	}
-
-	if(newFramebuffer == nullptr)
-	{
-		mFramebuffer = nullptr;
-		mRenderTargetReadOnlyFlags = 0;
-		mRenderTargetLoadMask = RT_NONE;
-	}
-	else
-	{
-		mFramebuffer = newFramebuffer;
-		mRenderTargetReadOnlyFlags = readOnlyFlags;
-		mRenderTargetLoadMask = loadMask;
-	}
-
-	// Re-set the params as they will need to be re-bound
-	SetGpuParameters(mBoundParams);
-
-	if(mFramebuffer)
-	{
-		RegisterResource(mFramebuffer, loadMask, readOnlyFlags);
-
-		if(swapChain)
-			RegisterResource(swapChain);
-	}
-
-	mGfxPipelineRequiresBind = true;
-
-	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
-	mVertexInputsDirty = true;
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumRenderTargetChanges);
-}
-
 void VulkanGpuCommandBuffer::ClearViewport(const Rect2I& area, u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
 {
 	if(buffers == 0 || mFramebuffer == nullptr)
@@ -1221,190 +1653,6 @@ void VulkanGpuCommandBuffer::ExecuteClearCommand(const Rect2I& area, RenderSurfa
 	clearRect.rect.extent.height = area.Height;
 
 	vkCmdClearAttachments(mCmdBuffer, attachmentsToClearCount, attachments.data(), 1, &clearRect);
-}
-
-void VulkanGpuCommandBuffer::ClearRenderTarget(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
-{
-	Rect2I area(0, 0, mFramebuffer->GetWidth(), mFramebuffer->GetHeight());
-	ClearViewport(area, buffers, color, depth, stencil, targetMask);
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumClears);
-}
-
-void VulkanGpuCommandBuffer::ClearViewport(u32 buffers, const Color& color, float depth, u16 stencil, u8 targetMask)
-{
-	const Rect2I viewportArea = GetViewportArea();
-	ClearViewport(viewportArea, buffers, color, depth, stencil, targetMask);
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumClears);
-}
-
-void VulkanGpuCommandBuffer::SetGpuGraphicsPipelineState(const SPtr<GpuGraphicsPipelineState>& state)
-{
-	if(mGraphicsPipeline == state)
-		return;
-
-	mGraphicsPipeline = std::static_pointer_cast<VulkanGpuGraphicsPipelineState>(state);
-	mGfxPipelineRequiresBind = true;
-
-	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
-	mVertexInputsDirty = true;
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumPipelineStateChanges);
-}
-
-void VulkanGpuCommandBuffer::SetGpuComputePipelineState(const SPtr<GpuComputePipelineState>& state)
-{
-	if(mComputePipeline == state)
-		return;
-
-	mComputePipeline = std::static_pointer_cast<VulkanGpuComputePipelineState>(state);
-	mCmpPipelineRequiresBind = true;
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumPipelineStateChanges);
-}
-
-void VulkanGpuCommandBuffer::SetGpuParameters(const SPtr<GpuParameters>& parameters)
-{
-	// Note: We keep an internal reference to GPU params even though we shouldn't keep a reference to a core thread
-	// object. But it should be fine since we expect the resource to be externally synchronized so it should never
-	// be allowed to go out of scope on a non-core thread anyway.
-	mBoundParams = std::static_pointer_cast<VulkanGpuParameters>(parameters);
-
-	if (mBoundParams != nullptr)
-	{
-		for (u32 i = 0; i < GPT_COUNT; i++)
-		{
-			SPtr<GpuProgramParameterDescription> paramDesc = parameters->GetParameterInformation((GpuProgramType)i);
-			if (paramDesc == nullptr)
-				continue;
-
-			// Flush all param block buffers
-			for (auto iter = paramDesc->DataParameterBlocks.begin(); iter != paramDesc->DataParameterBlocks.end(); ++iter)
-			{
-				SPtr<GpuBuffer> buffer = parameters->GetUniformBuffer(iter->second.Set, iter->second.Slot);
-
-				if (buffer != nullptr)
-					buffer->FlushCache();
-			}
-		}
-	}
-
-	if(mBoundParams != nullptr)
-		mBoundParamsDirty = true;
-	else
-	{
-		mBoundDescriptorSetCount = 0;
-		mBoundParamsDirty = false;
-	}
-
-	mDescriptorSetsBindState = DescriptorSetBindFlag::Graphics | DescriptorSetBindFlag::Compute;
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumGpuParamBinds);
-}
-
-void VulkanGpuCommandBuffer::SetViewport(const Rect2& area)
-{
-	if(mNormalizedViewportArea == area)
-		return;
-
-	mNormalizedViewportArea = area;
-	mViewportRequiresBind = true;
-}
-
-void VulkanGpuCommandBuffer::EnableScissorTest(u32 left, u32 top, u32 right, u32 bottom)
-{
-	const Rect2I area(left, top, right - left, bottom - top);
-
-	if(mIsScissorTestEnabled && mScissor == area)
-		return;
-
-	mScissor = area;
-	mIsScissorTestEnabled = true;
-	mScissorRequiresBind = true;
-}
-
-void VulkanGpuCommandBuffer::DisableScissorTest()
-{
-	if(!mIsScissorTestEnabled)
-		return;
-
-	mIsScissorTestEnabled = false;
-	mScissorRequiresBind = true;
-}
-
-void VulkanGpuCommandBuffer::SetStencilReferenceValue(u32 value)
-{
-	if(mStencilRef == value)
-		return;
-
-	mStencilRef = value;
-	mStencilRefRequiresBind = true;
-}
-
-void VulkanGpuCommandBuffer::SetDrawOperation(DrawOperationType drawOperation)
-{
-	if(mDrawOp == drawOperation)
-		return;
-
-	mDrawOp = drawOperation;
-	mGfxPipelineRequiresBind = true;
-
-	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
-	mVertexInputsDirty = true;
-}
-
-void VulkanGpuCommandBuffer::SetVertexBuffers(u32 startIndex, SPtr<GpuBuffer>* buffers, u32 bufferCount)
-{
-	const u32 endIndex = startIndex + bufferCount;
-	if(endIndex <= mVertexBuffers.size())
-	{
-		bool isDifferenceFound = false;
-		for(u32 vertexBufferIndex = startIndex; vertexBufferIndex < endIndex; vertexBufferIndex++)
-		{
-			if(mVertexBuffers[vertexBufferIndex] != buffers[vertexBufferIndex])
-			{
-				isDifferenceFound = true;
-				break;
-			}
-		}
-
-		if(!isDifferenceFound)
-			return;
-	}
-
-	if(mVertexBuffers.size() < endIndex)
-		mVertexBuffers.resize(endIndex);
-
-	for(u32 vertexBufferIndex = startIndex; vertexBufferIndex < endIndex; vertexBufferIndex++)
-		mVertexBuffers[vertexBufferIndex] = std::static_pointer_cast<VulkanGpuBuffer>(buffers[vertexBufferIndex]);
-
-	mVertexInputsDirty = true;
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumVertexBufferBinds);
-}
-
-void VulkanGpuCommandBuffer::SetIndexBuffer(const SPtr<GpuBuffer>& buffer)
-{
-	if(mIndexBuffer == buffer)
-		return;
-
-	mIndexBuffer = std::static_pointer_cast<VulkanGpuBuffer>(buffer);
-	mVertexInputsDirty = true;
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumIndexBufferBinds);
-}
-
-void VulkanGpuCommandBuffer::SetVertexDescription(const SPtr<VertexDescription>& vertexDescription)
-{
-	if(mVertexDescription == vertexDescription)
-		return;
-
-	mVertexDescription = vertexDescription;
-	mGfxPipelineRequiresBind = true;
-
-	// Potentially need to rebind vertex buffers as we bind dummy vertex buffers for shaders attributes not provided by the user
-	mVertexInputsDirty = true;
 }
 
 bool VulkanGpuCommandBuffer::IsReadyForRender()
@@ -1750,169 +1998,6 @@ void VulkanGpuCommandBuffer::ExecuteClearPass()
 	mClearMask = RT_NONE;
 }
 
-void VulkanGpuCommandBuffer::Draw(u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance)
-{
-	if(!IsReadyForRender())
-		return;
-
-	// Need to bind gpu params before starting render pass, in order to make sure any layout transitions execute
-	BindGpuParams();
-
-	if(!IsInRenderPass())
-		BeginRenderPass();
-
-	if(mGfxPipelineRequiresBind)
-	{
-		if(!BindGraphicsPipeline())
-			return;
-	}
-	else
-		BindDynamicStates(false);
-
-	// Important to call this after the pipeline is bound so we know how many vertex buffers it expects
-	if(mVertexInputsDirty)
-	{
-		BindVertexInputs();
-		mVertexInputsDirty = false;
-	}
-
-	if(mDescriptorSetsBindState.IsSet(DescriptorSetBindFlag::Graphics))
-	{
-		if(mBoundDescriptorSetCount > 0)
-		{
-			u32 deviceIdx = mDevice.GetIndex();
-			VkPipelineLayout pipelineLayout = mGraphicsPipeline->GetPipelineLayout(deviceIdx);
-
-			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, mBoundDescriptorSetCount, mDescriptorSetsTemp, (u32)mDynamicDescriptorOffsetsToBind.size(), mDynamicDescriptorOffsetsToBind.data());
-		}
-
-		mDescriptorSetsBindState.Unset(DescriptorSetBindFlag::Graphics);
-	}
-
-	if(instanceCount <= 0)
-		instanceCount = 1;
-
-	vkCmdDraw(mCmdBuffer, vertexCount, instanceCount, vertexOffset, firstInstance);
-	NotifyRenderTargetModified();
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumDrawCalls);
-	B3D_ADD_RENDER_STATISTIC(NumVertices, vertexCount);
-	B3D_ADD_RENDER_STATISTIC(NumPrimitives, 0); // TODO - Determine accurate primitive count
-}
-
-void VulkanGpuCommandBuffer::DrawIndexed(u32 startIndex, u32 indexCount, u32 vertexOffset, u32 vertexCount, u32 instanceCount, u32 firstInstance)
-{
-	if(indexCount == 0)
-		return;
-
-	if(!IsReadyForRender())
-		return;
-
-	// Need to bind gpu params before starting render pass, in order to make sure any layout transitions execute
-	BindGpuParams();
-
-	if(!IsInRenderPass())
-		BeginRenderPass();
-
-	if(mGfxPipelineRequiresBind)
-	{
-		if(!BindGraphicsPipeline())
-			return;
-	}
-	else
-		BindDynamicStates(false);
-
-	// Important to call this after the pipeline is bound so we know how many vertex buffers it expects
-	if(mVertexInputsDirty)
-	{
-		BindVertexInputs();
-		mVertexInputsDirty = false;
-	}
-
-	if(mDescriptorSetsBindState.IsSet(DescriptorSetBindFlag::Graphics))
-	{
-		if(mBoundDescriptorSetCount > 0)
-		{
-			u32 deviceIdx = mDevice.GetIndex();
-			VkPipelineLayout pipelineLayout = mGraphicsPipeline->GetPipelineLayout(deviceIdx);
-
-			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, mBoundDescriptorSetCount, mDescriptorSetsTemp, (u32)mDynamicDescriptorOffsetsToBind.size(), mDynamicDescriptorOffsetsToBind.data());
-		}
-
-		mDescriptorSetsBindState.Unset(DescriptorSetBindFlag::Graphics);
-	}
-
-	if(instanceCount <= 0)
-		instanceCount = 1;
-
-	vkCmdDrawIndexed(mCmdBuffer, indexCount, instanceCount, startIndex, vertexOffset, firstInstance);
-	NotifyRenderTargetModified();
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumDrawCalls);
-	B3D_ADD_RENDER_STATISTIC(NumVertices, vertexCount);
-	B3D_ADD_RENDER_STATISTIC(NumPrimitives, 0); // TODO - Determine accurate primitive count
-}
-
-void VulkanGpuCommandBuffer::DispatchCompute(u32 groupCountX, u32 groupCountY, u32 groupCountZ)
-{
-	if(mComputePipeline == nullptr)
-		return;
-
-	if(IsInRenderPass())
-		EndRenderPass();
-
-	// Note: Should I restore the render target after? Note that this is only being done is framebuffer subresources
-	// have their "isFBAttachment" flag reset, potentially I can just clear/restore those
-	SetRenderTarget(nullptr, 0, RT_ALL);
-
-	// Need to bind gpu params before starting render pass, in order to make sure any layout transitions execute
-	BindGpuParams();
-	ExecuteWriteHazardBarrier();
-	ExecuteLayoutTransitions();
-
-	u32 deviceIdx = mDevice.GetIndex();
-	if(mCmpPipelineRequiresBind)
-	{
-		VulkanPipeline* pipeline = mComputePipeline->GetPipeline(deviceIdx);
-		if(pipeline == nullptr)
-			return;
-
-		RegisterResource(pipeline, VulkanAccessFlag::Read);
-		mComputePipeline->RegisterPipelineResources(*this);
-
-		vkCmdBindPipeline(mCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->GetHandle());
-		mCmpPipelineRequiresBind = false;
-	}
-
-	if(mDescriptorSetsBindState.IsSet(DescriptorSetBindFlag::Compute))
-	{
-		if(mBoundDescriptorSetCount > 0)
-		{
-			VkPipelineLayout pipelineLayout = mComputePipeline->GetPipelineLayout(deviceIdx);
-			vkCmdBindDescriptorSets(mCmdBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineLayout, 0, mBoundDescriptorSetCount, mDescriptorSetsTemp, (u32)mDynamicDescriptorOffsetsToBind.size(), mDynamicDescriptorOffsetsToBind.data());
-		}
-
-		mDescriptorSetsBindState.Unset(DescriptorSetBindFlag::Compute);
-	}
-
-	vkCmdDispatch(mCmdBuffer, groupCountX, groupCountY, groupCountZ);
-
-	// Remove any shader use flags on images. Note this relies on the fact that we re-bind all parameters on every
-	// dispatch call and render pass, so they can reset this flags. Otherwise clearing the flags is wrong if the
-	// images remain to be used in subsequent calls).
-	for(auto& entry : mShaderBoundSubresourceInfos)
-	{
-		ImageSubresourceInfo& subresourceInfo = mSubresourceInfoStorage[entry];
-		subresourceInfo.UseFlags.Unset(ImageUseFlagBits::Shader);
-		subresourceInfo.ShaderUse.Access = VulkanAccessFlag::None;
-		subresourceInfo.ShaderUse.Stages = 0;
-	}
-
-	mShaderBoundSubresourceInfos.clear();
-
-	B3D_INCREMENT_RENDER_STATISTIC(NumComputeCalls);
-}
-
 void VulkanGpuCommandBuffer::SetEvent(VulkanEvent* event)
 {
 	if(IsInRenderPass())
@@ -2029,50 +2114,6 @@ void VulkanGpuCommandBuffer::Resolve(VulkanImage* source, VulkanImage* destinati
 	RegisterImageTransfer(destination, destinationSubresourceRange, destinationLayout, VulkanAccessFlag::Write);
 
 	vkCmdResolveImage(GetHandle(), source->GetHandle(), sourceLayout, destination->GetHandle(), destinationLayout, regionCount, regions);
-}
-
-void VulkanGpuCommandBuffer::BeginLabel(const StringView& name)
-{
-	if(!IsRecording() || vkCmdBeginDebugUtilsLabelEXT == nullptr)
-		return;
-
-	VkDebugUtilsLabelEXT labelInfo;
-	labelInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
-	labelInfo.pNext = nullptr;
-	labelInfo.pLabelName = name.data();
-	labelInfo.color[0] = kDebugLabelColor.R;
-	labelInfo.color[1] = kDebugLabelColor.G;
-	labelInfo.color[2] = kDebugLabelColor.B;
-	labelInfo.color[3] = kDebugLabelColor.A;
-
-	vkCmdBeginDebugUtilsLabelEXT(mCmdBuffer, &labelInfo);
-	mIsDebugLabelOpen = true;
-}
-
-void VulkanGpuCommandBuffer::EndLabel()
-{
-	if(!IsRecording() || vkCmdBeginDebugUtilsLabelEXT == nullptr)
-		return;
-
-	vkCmdEndDebugUtilsLabelEXT(mCmdBuffer);
-	mIsDebugLabelOpen = false;
-}
-
-void VulkanGpuCommandBuffer::InsertLabel(const StringView& name)
-{
-	if(!IsRecording() || vkCmdBeginDebugUtilsLabelEXT == nullptr)
-		return;
-
-	VkDebugUtilsLabelEXT labelInfo;
-	labelInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
-	labelInfo.pNext = nullptr;
-	labelInfo.pLabelName = name.data();
-	labelInfo.color[0] = kDebugLabelColor.R;
-	labelInfo.color[1] = kDebugLabelColor.G;
-	labelInfo.color[2] = kDebugLabelColor.B;
-	labelInfo.color[3] = kDebugLabelColor.A;
-
-	vkCmdInsertDebugUtilsLabelEXT(mCmdBuffer, &labelInfo);
 }
 
 void VulkanGpuCommandBuffer::MemoryBarrier(VkBuffer buffer, VkAccessFlags sourceAccessFlags, VkAccessFlags destinationAccessFlags, VkPipelineStageFlags sourceStage, VkPipelineStageFlags destinationStage)

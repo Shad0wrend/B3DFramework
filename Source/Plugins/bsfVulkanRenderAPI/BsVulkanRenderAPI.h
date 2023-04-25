@@ -37,18 +37,6 @@ namespace bs
 			void DestroyCore() override;
 
 		private:
-			/** Queued swap chain operation. */
-			struct QueuedSwapOperation
-			{
-				QueuedSwapOperation(const SPtr<RenderTarget>& target = nullptr, const VulkanSwapChain* swapChain = nullptr, u32 syncMask = ~0u)
-					: Target(target), SwapChain(swapChain), SyncMask(syncMask)
-				{}
-
-				SPtr<RenderTarget> Target;
-				const VulkanSwapChain* SwapChain;
-				u32 SyncMask = ~0u;
-			};
-
 			SPtr<GpuDevice> mPrimaryGpuDevice;
 		};
 

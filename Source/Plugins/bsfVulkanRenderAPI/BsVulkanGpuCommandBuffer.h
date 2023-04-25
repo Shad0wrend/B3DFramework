@@ -158,9 +158,6 @@ namespace bs
 			/** Returns the thread that the command buffer is allowed to be used on. */
 			ThreadId GetOwnerThread() const { return mOwnerThread; }
 
-			/** Makes the command buffer ready to start recording commands. */
-			void Begin();
-
 			/**
 			 * Submits the command buffer for execution.
 			 *
@@ -298,12 +295,6 @@ namespace bs
 			/************************************************************************/
 			/* 								COMMANDS	                     		*/
 			/************************************************************************/
-
-			/** Begins render pass recording. Must be called within begin()/end() calls. */
-			void BeginRenderPass();
-
-			/** Ends render pass recording (as started with BeginRenderPass(). */
-			void EndRenderPass() { EndRenderPass(false); }
 
 			/**
 			 * Registers a command that signals the event when executed. Will be delayed until the end of the current
@@ -557,6 +548,15 @@ namespace bs
 			};
 
 			VulkanGpuCommandBuffer(VulkanGpuDevice& device, u32 id, VkCommandBuffer commandBufferHandle, ThreadId ownerThread, GpuQueueUsage queueType, const GpuCommandBufferCreateInformation& createInformation);
+
+			/** Makes the command buffer ready to start recording commands. */
+			void Begin();
+
+			/** Begins render pass recording. Must be called within begin()/end() calls. */
+			void BeginRenderPass();
+
+			/** Ends render pass recording (as started with BeginRenderPass(). */
+			void EndRenderPass() { EndRenderPass(false); }
 
 			/**
 			 * Ends render pass recording (as started with BeginRenderPass().
