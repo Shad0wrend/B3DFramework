@@ -247,7 +247,8 @@ SPtr<ct::Texture> GenerateDefaultIndirect()
 	SPtr<ct::Texture> irradiance = ct::Texture::Create(irradianceCubemapDesc);
 	GetIBLUtility().FilterCubemapForIrradiance(*commandBuffer, skyTexture, irradiance);
 
-	GetRenderAPI().SubmitCommandBuffer(commandBuffer);
+	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+	gpuDevice->SubmitCommandBuffer(commandBuffer);
 
 	return irradiance;
 }

@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Renderer/BsReflectionProbe.h"
+
+#include "BsCoreApplication.h"
 #include "Private/RTTI/BsReflectionProbeRTTI.h"
 #include "RTTI/BsMathRTTI.h"
 #include "Scene/BsSceneObject.h"
@@ -126,7 +128,8 @@ void ReflectionProbe::CaptureAndFilter()
 			ct::GetRenderer()->NotifyReflectionProbeUpdated(coreProbe.get(), true);
 			GetProfilerGPU().EndSample(*commandBuffer, "RenderAndFilterReflectionProbe");
 
-			ct::GetRenderAPI().SubmitCommandBuffer(commandBuffer);
+			const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+			gpuDevice->SubmitCommandBuffer(commandBuffer);
 
 			return true;
 		};
@@ -148,7 +151,8 @@ void ReflectionProbe::CaptureAndFilter()
 			ct::GetRenderer()->NotifyReflectionProbeUpdated(coreProbe.get(), true);
 			GetProfilerGPU().EndSample(*commandBuffer, "FilterReflectionProbe");
 
-			ct::GetRenderAPI().SubmitCommandBuffer(commandBuffer);
+			const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+			gpuDevice->SubmitCommandBuffer(commandBuffer);
 
 			return true;
 		};

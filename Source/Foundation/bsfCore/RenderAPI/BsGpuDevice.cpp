@@ -39,6 +39,27 @@ SPtr<ct::GpuCommandBuffer> GpuQueue::GetOrCreateTransferCommandBuffer()
 	return transferCommandBufferInformation.CurrentTransferCommandBuffer;
 }
 
+void GpuDevice::SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>& commandBuffer, u32 syncMask, u32 queueIndex)
+{
+	if (!B3D_ENSURE(commandBuffer))
+		return;
+
+	const u32 queueCount = GetQueueCount(commandBuffer->GetUsage());
+	if (!B3D_ENSURE(queueIndex < queueCount))
+		return;
+
+	const SPtr<GpuQueue>& queue = GetQueue(commandBuffer->GetUsage(), queueIndex);
+	if (!B3D_ENSURE(queue))
+		return;
+
+	queue->SubmitCommandBuffer(commandBuffer, syncMask);
+}
+
+void GpuQueue::SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>& commandBuffer, u32 syncMask)
+{
+	SubmitCommandBuffer(commandBuffer, syncMask, true);
+}
+
 void GpuQueue::SubmitTransferCommandBuffer(bool wait)
 {
 	SPtr<ct::GpuCommandBuffer> commandBufferToSubmit;
@@ -56,7 +77,7 @@ void GpuQueue::SubmitTransferCommandBuffer(bool wait)
 	if (commandBufferToSubmit != nullptr)
 	{
 		commandBufferToSubmit->End();
-		SubmitCommandBuffer(commandBufferToSubmit);
+		SubmitCommandBuffer(commandBufferToSubmit, 0xFFFFFFFF, false);
 	}
 
 	if (wait)

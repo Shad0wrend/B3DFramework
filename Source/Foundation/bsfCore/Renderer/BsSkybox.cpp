@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Renderer/BsSkybox.h"
+
+#include "BsCoreApplication.h"
 #include "Private/RTTI/BsSkyboxRTTI.h"
 #include "Scene/BsSceneObject.h"
 #include "Image/BsTexture.h"
@@ -96,7 +98,8 @@ void Skybox::FilterTexture()
 		coreSkybox->mIrradiance = coreIrradiance;
 
 		GetProfilerGPU().EndSample(*commandBuffer, "FilterSkybox");
-		ct::GetRenderAPI().SubmitCommandBuffer(commandBuffer);
+		const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+		gpuDevice->SubmitCommandBuffer(commandBuffer);
 
 		return true;
 	};

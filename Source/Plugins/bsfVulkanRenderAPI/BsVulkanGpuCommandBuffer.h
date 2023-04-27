@@ -124,15 +124,6 @@ namespace bs
 
 		public:
 			~VulkanGpuCommandBuffer() override;
-		
-			/**
-			 * Submits the command buffer for execution.
-			 *
-			 * @param	gpuQueue		Queue to submit the command buffer on. Must match the usage the command buffer was created with.
-			 * @param	syncMask		Mask that controls which other command buffers does this command buffer depend upon
-			 *							(if any). See description of @p syncMask parameter in RenderAPI::ExecuteCommands().
-			 */
-			void Submit(VulkanGpuQueue& gpuQueue, u32 syncMask);
 
 			void SetName(const StringView& name) override;
 			CommandBufferState GetState() const override;

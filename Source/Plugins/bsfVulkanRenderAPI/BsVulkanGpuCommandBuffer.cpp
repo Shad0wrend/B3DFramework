@@ -3002,49 +3002,6 @@ Rect2I VulkanGpuCommandBuffer::GetRenderPassArea() const
 	return area;
 }
 
-void VulkanGpuCommandBuffer::Submit(VulkanGpuQueue& gpuQueue, u32 syncMask)
-{
-	if (!B3D_ENSURE(gpuQueue.GetUsage() == mUsage))
-		return;
-
-	if(GetState() == CommandBufferState::Executing)
-	{
-		B3D_LOG(Error, RenderBackend, "Cannot submit a command buffer that's still executing.");
-		return;
-	}
-
-	if(IsInRenderPass())
-		EndRenderPass();
-
-	// Execute any queued layout transitions that weren't already handled by the render pass
-	ExecuteLayoutTransitions();
-
-	// Interrupt any in-progress queries (no in-progress queries allowed during command buffer submit)
-	Vector<VulkanTimerQuery*> timerQueries;
-	Vector<VulkanOcclusionQuery*> occlusionQueries;
-	GetInProgressQueries(timerQueries, occlusionQueries);
-
-	if(!timerQueries.empty() || !occlusionQueries.empty())
-	{
-		B3D_LOG(Warning, RenderBackend, "Submitting a command buffer with {0} timer queries "
-									   "and {1} occlusion queries that are still open. The queries will be closed automatically.",
-			   timerQueries.size(), occlusionQueries.size());
-
-		for(auto& query : timerQueries)
-			query->Interrupt(*this);
-
-		for(auto& query : occlusionQueries)
-			query->Interrupt(*this);
-	}
-
-	if(IsRecording())
-		End();
-
-	SetIsSubmitted();
-	GetVulkanSubmitThread().QueueSubmit(std::static_pointer_cast<VulkanGpuCommandBuffer>(GetShared()), gpuQueue, syncMask);
-	mIsSubmitted = true;
-}
-
 void VulkanGpuCommandBuffer::SetName(const StringView& name)
 {
 	GpuCommandBuffer::SetName(name);

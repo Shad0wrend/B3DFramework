@@ -31,7 +31,7 @@ namespace bs
 	class B3D_CORE_EXPORT GpuQueue
 	{
 	public:
-		virtual ~GpuQueue() = default;
+	virtual ~GpuQueue() = default;
 
 		/** Determines which type of command buffer commands can be used on the command buffers submitted on the queue. */
 		GpuQueueUsage GetUsage() const { return mUsage; }
@@ -52,7 +52,7 @@ namespace bs
 		 *							execute sequentially in the order they are submitted. Otherwise, if there is a
 		 *							dependency you must make state it explicitly here.
 		 */
-		virtual void SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>& commandBuffer, u32 syncMask = 0) = 0;
+		void SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>& commandBuffer, u32 syncMask = 0xFFFFFFFF);
 
 		/**
 		 * Returns a command buffer that is to be used for transfer operations when user doesn't provide an explicit command buffer.
@@ -75,6 +75,9 @@ namespace bs
 		};
 
 		GpuQueue(GpuDevice& gpuDevice, GpuQueueUsage usage, u32 index);
+
+		/** Provides the same functionality as SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>&, u32), but makes the command buffer flush optional. */
+		virtual void SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>& commandBuffer, u32 syncMask, bool flushTransferCommandBuffer) = 0;
 
 		GpuDevice& mGpuDevice;
 		GpuQueueUsage mUsage;
@@ -111,6 +114,23 @@ namespace bs
 
 		/** Retrieves a queue with the specified usage and index. */
 		virtual SPtr<GpuQueue> GetQueue(GpuQueueUsage usage, u32 index) const = 0;
+
+		/**
+		 * Submits the command buffer for execution on an automatically retrieved queue.
+		 *
+		 * @param	commandBuffer	Command buffer to submit. Usage of the command buffer determines the queue to execute on.
+		 * @param	syncMask		Optional synchronization mask that determines if the submitted command buffer
+		 *							depends on any other command buffers submitted on other queues. You may use the
+		 *							CommandSyncMask class to generate a mask.
+		 *
+		 *							This mask is only relevant if your command buffers are executing on different
+		 *							queues, and are dependent. If they are executing on the same queue then they will
+		 *							execute sequentially in the order they are submitted. Otherwise, if there is a
+		 *							dependency you must make state it explicitly here.
+		 * @param	queueIndex		In case there are multiple queues supported with the command buffer's usage,
+		 *							this determines which one to execute on.
+		 */
+		virtual void SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>& commandBuffer, u32 syncMask = 0xFFFFFFFF, u32 queueIndex = 0);
 
 		/** Submits all non-empty transfer command buffers on all queues, for the current thread. Optionally waits until the GPU is done processing them. */
 		virtual void SubmitTransferCommandBuffers(bool wait = false) = 0;

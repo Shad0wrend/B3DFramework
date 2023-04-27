@@ -395,7 +395,7 @@ void RenderBeast::RenderAllCore(FrameTimings timings, PerFrameData perFrameData)
 		const bool anythingDrawn = RenderViews(*commandBuffer, *mMainViewGroup, frameInfo);
 		if(anythingDrawn)
 		{
-			renderAPI.SubmitCommandBuffer(commandBuffer);
+			mDevice->SubmitCommandBuffer(commandBuffer);
 			commandBuffer = mCommandBufferPool->Create(GpuCommandBufferCreateInformation::Create("Main"));
 
 			if(rtInfo.Target->GetProperties().IsWindow)
@@ -405,7 +405,7 @@ void RenderBeast::RenderAllCore(FrameTimings timings, PerFrameData perFrameData)
 		}
 	}
 
-	renderAPI.SubmitCommandBuffer(commandBuffer);
+	mDevice->SubmitCommandBuffer(commandBuffer);
 	renderAPI.EndFrame();
 
 	// Tick pool frame

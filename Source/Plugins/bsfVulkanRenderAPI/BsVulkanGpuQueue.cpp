@@ -2,8 +2,10 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsVulkanGpuQueue.h"
 #include "BsVulkanGpuCommandBuffer.h"
+#include "BsVulkanOcclusionQuery.h"
 #include "BsVulkanSubmitThread.h"
 #include "BsVulkanSwapChain.h"
+#include "BsVulkanTimerQuery.h"
 
 using namespace bs;
 using namespace bs::ct;
@@ -15,9 +17,55 @@ VulkanGpuQueue::VulkanGpuQueue(VulkanGpuDevice& device, GpuQueueUsage usage, u32
 		mSubmitDstWaitMask[i] = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
 }
 
-void VulkanGpuQueue::SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandBuffer, u32 syncMask)
+void VulkanGpuQueue::SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandBuffer, u32 syncMask, bool flushTransferCommandBuffer)
 {
-	static_cast<VulkanGpuCommandBuffer&>(*commandBuffer).Submit(*this, syncMask);
+	if(flushTransferCommandBuffer)
+		mGpuDevice.SubmitTransferCommandBuffers();
+
+	if (!B3D_ENSURE(commandBuffer))
+		return;
+
+	VulkanGpuCommandBuffer& vulkanCommandBuffer = static_cast<VulkanGpuCommandBuffer&>(*commandBuffer);
+	if (!B3D_ENSURE(vulkanCommandBuffer.GetUsage() == mUsage))
+		return;
+
+	if (vulkanCommandBuffer.GetState() == CommandBufferState::Executing)
+	{
+		B3D_LOG(Error, RenderBackend, "Cannot submit a command buffer that's still executing.");
+		return;
+	}
+
+	if (vulkanCommandBuffer.IsInRenderPass())
+		vulkanCommandBuffer.EndRenderPass();
+
+	// Execute any queued layout transitions that weren't already handled by the render pass
+	vulkanCommandBuffer.ExecuteLayoutTransitions();
+
+	// Interrupt any in-progress queries (no in-progress queries allowed during command buffer submit)
+	Vector<VulkanTimerQuery*> timerQueries;
+	Vector<VulkanOcclusionQuery*> occlusionQueries;
+	vulkanCommandBuffer.GetInProgressQueries(timerQueries, occlusionQueries);
+
+	if (!timerQueries.empty() || !occlusionQueries.empty())
+	{
+		B3D_LOG(Warning, RenderBackend, "Submitting a command buffer with {0} timer queries "
+			"and {1} occlusion queries that are still open. The queries will be closed automatically.",
+			timerQueries.size(), occlusionQueries.size());
+
+		for (auto& query : timerQueries)
+			query->Interrupt(vulkanCommandBuffer);
+
+		for (auto& query : occlusionQueries)
+			query->Interrupt(vulkanCommandBuffer);
+	}
+
+	if (vulkanCommandBuffer.IsRecording())
+		vulkanCommandBuffer.End();
+
+	vulkanCommandBuffer.SetIsSubmitted();
+	GetVulkanSubmitThread().QueueSubmit(std::static_pointer_cast<VulkanGpuCommandBuffer>(commandBuffer), *this, syncMask);
+	vulkanCommandBuffer.mIsSubmitted = true;
+
 }
 
 bool VulkanGpuQueue::IsExecuting() const

@@ -25,8 +25,6 @@ namespace bs
 			void SwapBuffers(const SPtr<RenderTarget>& target, u32 syncMask = 0xFFFFFFFF) override;
 			void BeginFrame() override;
 			void EndFrame() override;
-			void SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandBuffer, u32 queueIndex = 0, u32 syncMask = 0xFFFFFFFF) override;
-			void WaitUntilIdle() const override;
 			SPtr<GpuDevice> GetPrimaryGpuDevice() const override { return mPrimaryGpuDevice; }
 			void ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest) override;
 			GpuDataParameterBlockInformation GenerateParamBlockDesc(const String& name, Vector<GpuDataParameterInformation>& params) override;

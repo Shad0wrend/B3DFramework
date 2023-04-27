@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Renderer/BsLightProbeVolume.h"
+
+#include "BsCoreApplication.h"
 #include "Private/RTTI/BsLightProbeVolumeRTTI.h"
 #include "Renderer/BsRenderer.h"
 #include "Renderer/BsLight.h"
@@ -233,7 +235,9 @@ void LightProbeVolume::RunRenderProbeTask()
 		const bool isDone = coreProbeVolume->RenderProbes(*commandBuffer, 3);
 		GetProfilerGPU().EndSample(*commandBuffer, "LightProbeRendering");
 
-		ct::GetRenderAPI().SubmitCommandBuffer(commandBuffer);
+		const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+		gpuDevice->SubmitCommandBuffer(commandBuffer);
+
 		return isDone;
 	};
 

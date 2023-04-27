@@ -112,29 +112,6 @@ void VulkanRenderAPI::SwapBuffers(const SPtr<RenderTarget>& target, u32 syncMask
 	B3D_INCREMENT_RENDER_STATISTIC(NumPresents);
 }
 
-void VulkanRenderAPI::SubmitCommandBuffer(const SPtr<GpuCommandBuffer>& commandBuffer, u32 queueIndex, u32 syncMask)
-{
-	THROW_IF_NOT_CORE_THREAD;
-
-	VulkanGpuCommandBuffer* vulkanCommandBuffer = static_cast<VulkanGpuCommandBuffer*>(commandBuffer.get());
-
-	// Submit all transfer buffers first
-	mPrimaryGpuDevice->SubmitTransferCommandBuffers();
-
-	const SPtr<VulkanGpuQueue> queue = std::static_pointer_cast<VulkanGpuQueue>(mPrimaryGpuDevice->GetQueue(vulkanCommandBuffer->GetUsage(), queueIndex));
-	if (!B3D_ENSURE(queue))
-		return;
-
-	B3D_ASSERT(queue != nullptr);
-	vulkanCommandBuffer->Submit(*queue, syncMask);
-}
-
-void VulkanRenderAPI::WaitUntilIdle() const
-{
-	GetVulkanSubmitThread().WaitUntilIdle();
-	GetVulkanSubmitThread().RefreshCommandBufferCompletionStates();
-}
-
 void VulkanRenderAPI::ConvertProjectionMatrix(const Matrix4& matrix, Matrix4& dest)
 {
 	dest = matrix;

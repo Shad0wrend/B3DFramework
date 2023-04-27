@@ -463,7 +463,7 @@ void RunSortTest()
 	// PARALLEL:
 	RadixSortClearMat::Get()->Execute(*commandBuffer, helperBuffers[0]);
 	RadixSortCountMat::Get()->Execute(*commandBuffer, gpuSortProps.NumGroups, params, sortBuffers.Keys[0], helperBuffers[0]);
-	RenderAPI::Instance().SubmitCommandBuffer(commandBuffer);
+	gpuDevice->SubmitCommandBuffer(commandBuffer);
 
 	commandBuffer = commandBufferPool->Create(commandBufferCreateInformation);
 
@@ -562,7 +562,7 @@ void RunSortTest()
 
 	// PARALLEL:
 	RadixSortPrefixScanMat::Get()->Execute(*commandBuffer, params, helperBuffers[0], helperBuffers[1]);
-	RenderAPI::Instance().SubmitCommandBuffer(commandBuffer);
+	gpuDevice->SubmitCommandBuffer(commandBuffer);
 	
 	commandBuffer = commandBufferPool->Create(commandBufferCreateInformation);
 
@@ -795,7 +795,7 @@ void RunSortTest()
 
 	// PARALLEL:
 	RadixSortReorderMat::Get()->Execute(*commandBuffer, gpuSortProps.NumGroups, params, helperBuffers[1], sortBuffers, 0);
-	RenderAPI::Instance().SubmitCommandBuffer(commandBuffer);
+	gpuDevice->SubmitCommandBuffer(commandBuffer);
 
 	// Compare with GPU keys
 	Vector<u32> bufferSortedKeys(count);
