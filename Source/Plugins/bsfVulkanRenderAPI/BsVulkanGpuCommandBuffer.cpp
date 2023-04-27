@@ -1025,8 +1025,10 @@ void VulkanGpuCommandBuffer::EndRenderPass(bool isInternalInterrupt)
 	mBoundParamsDirty = true;
 }
 
-u32 VulkanGpuCommandBuffer::AllocateSemaphores(SmallVector<VkSemaphore, 8>& outSemaphores)
+u32 VulkanGpuCommandBuffer::AllocateSignalSemaphores(SmallVector<VkSemaphore, 8>& outSemaphores)
 {
+	// TODO - Do I need multiple semaphores? Can't I just have one?
+
 	u32 count = 0;
 
 	if(mIntraQueueSemaphore != nullptr)
@@ -1061,6 +1063,7 @@ VulkanSemaphore* VulkanGpuCommandBuffer::RequestInterQueueSemaphore() const
 GpuCommandBufferSubmitInformation VulkanGpuCommandBuffer::PrepareForSubmitOnSubmitThread(GpuQueueUsage queueUsage, u32 queueIndex)
 {
 	AssertIfNotVulkanSubmitThread();
+	B3D_ASSERT(IsSubmitted()); // Caller should already have set this flag
 
 	GpuCommandBufferSubmitInformation submitInformation;
 	VulkanGpuCommandBufferPool& commandBufferPool = GetVulkanSubmitThread().GetCommandBufferPool(mDevice.GetIndex(), queueUsage);

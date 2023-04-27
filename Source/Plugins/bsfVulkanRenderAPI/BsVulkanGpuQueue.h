@@ -45,29 +45,6 @@ namespace bs
 			bool IsExecuting() const;
 
 			/**
-			 * Submits the provided command buffer on the queue. Returns a sequential index of the submit on the queue, or ~0u if nothing was submitted.
-			 *
-			 * @note	Submit thread only.
-			 */
-			u32 Submit(const SPtr<VulkanGpuCommandBuffer>& commandBuffer, const ArrayView<VulkanSemaphore*>& waitSemaphores);
-
-			/**
-			 * Stores information about a submit internally, but doesn't actually execute it. The intended use is to queue
-			 * multiple submits and execute them all at once using submitQueued(), ensuring better performance than queuing them
-			 * all individually.
-			 *
-			 * @note	Submit thread only.
-			 */
-			void QueueSubmit(const SPtr<VulkanGpuCommandBuffer>& commandBuffer, const ArrayView<VulkanSemaphore*>& waitSemaphores);
-
-			/**
-			 * Submits all previously queued commands buffers, as recorded by QueueSubmit(). Returns a sequential index of the last submitted buffer on the queue, or ~0u if nothing was submitted.
-			 *
-			 * @note	Submit thread only.
-			 */
-			u32 SubmitQueued();
-
-			/**
 			 * Presents the back buffer of the provided swap chain.
 			 *
 			 * @param	swapChain			Swap chain whose back buffer to present.
@@ -107,19 +84,13 @@ namespace bs
 
 		protected:
 			/**
-			 * Generates a submit-info structure that can be used for submitting the command buffer to the queue, but doesn't
-			 * perform the actual submit.
-			 */
-			void GetSubmitInfo(VkCommandBuffer* vkCommandBuffer, const ArrayView<VkSemaphore >& signalSemaphores, const ArrayView<VkSemaphore>& waitSemaphores, VkSubmitInfo& outSubmitInfo);
-
-			/**
 			 * Prepares a list of semaphores that can be provided to submit or present calls.
 			 *
 			 * @param		inSemaphores	External wait semaphores that need to be waited on.
 			 * @param		outSemaphores	All semaphores (external ones, and possibly additional ones), as Vulkan handles. To be appended to this array.
 			 * @return						Number of semaphores appended to the output array.
 			 */
-			u32 PrepareSemaphores(const ArrayView<VulkanSemaphore*>& inSemaphores, SmallVector<VkSemaphore, 8>& outSemaphores);
+			u32 RegisterSemaphoresAndGetHandles(const ArrayView<VulkanSemaphore*>& inSemaphores, SmallVector<VkSemaphore, 8>& outSemaphores);
 
 			/** Information about one or multiple submitted command buffers on a queue. */
 			struct QueueSubmissionInformation
@@ -149,11 +120,24 @@ namespace bs
 				u32 SemaphoreCount;
 			};
 
+			/**
+			 * Registers the command buffer for submission and generates the VkSubmitInfo structure that can be submitted to the queue.
+			 *
+			 * @param	commandBuffer		Command buffer to be submitted.
+			 * @param	waitSemaphores		Set of semaphores that should be waited on before the command buffers start executing.
+			 */
+			VkSubmitInfo RegisterSubmissionAndGenerateSubmitInfo(const SPtr<VulkanGpuCommandBuffer>& commandBuffer, const ArrayView<VulkanSemaphore*>& waitSemaphores);
+
+			/**
+			 * Registers the set of command buffers for submission and generates the VkSubmitInfo structure that can be submitted to the queue.
+			 *
+			 * @param	commandBuffers		One or multiple command buffers to be submitted.
+			 * @param	waitSemaphores		Set of semaphores that should be waited on before the command buffers start executing.
+			 */
+			VkSubmitInfo RegisterSubmissionAndGenerateSubmitInfo(const ArrayView<SPtr<VulkanGpuCommandBuffer>>& commandBuffers, const ArrayView<VulkanSemaphore*>& waitSemaphores);
+
 			VkQueue mQueue;
 			VkPipelineStageFlags mSubmitDstWaitMask[BS_MAX_UNIQUE_QUEUES];
-
-			Vector<QueueSubmissionEntryInformation> mQueuedCommandBuffers;
-			Vector<VulkanSemaphore*> mQueuedSemaphores;
 
 			Queue<QueueSubmissionEntryInformation> mActiveCommandBuffers;
 			Queue<VulkanSemaphore*> mActiveSemaphores;
@@ -167,6 +151,7 @@ namespace bs
 			SmallVector<VkSemaphore, 8> mSignalSemaphoreHandleBuffer; // Helper to avoid re-allocating memory
 			SmallVector<VkSemaphore, 8> mWaitSemaphoreHandleBuffer; // Helper to avoid re-allocating memory
 			SmallVector<VulkanSemaphore*, 8> mWaitSemaphoreBuffer; // Helper to avoid re-allocating memory
+			SmallVector<VkCommandBuffer, 8> mCommandBufferHandleBuffer; // Helper to avoid re-allocating memory
 
 			Mutex mMutex;
 			Vector<SPtr<VulkanGpuCommandBuffer>> mCommandBuffersToResetOnRenderThread;

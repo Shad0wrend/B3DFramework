@@ -410,7 +410,10 @@ void VulkanSwapChain::Present(u32 imageIndex, VulkanGpuQueue& queue, u32 syncMas
 		vkCmdPipelineBarrier(vkCommandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, nullptr, 0, nullptr, 1, &layoutTransitionBarrier);
 
 		commandBuffer->End();
-		queue.Submit(commandBuffer, {});
+
+		GpuCommandBufferSubmitInformation submitInformation;
+		submitInformation.PrimaryCommandBuffer = commandBuffer;
+		queue.ExecuteSubmitOnSubmitThread(submitInformation, 0);
 
 		imageSubresource->SetLayout(VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 	}

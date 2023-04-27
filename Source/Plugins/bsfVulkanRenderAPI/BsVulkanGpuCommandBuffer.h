@@ -213,13 +213,13 @@ namespace bs
 			VulkanSemaphore* RequestInterQueueSemaphore() const;
 
 			/**
-			 * Allocates a new set of semaphores that may be used for synchronizing execution between different command buffers.
-			 * Releases the previously allocated semaphores, if they exist. Use getIntraQueueSemaphore() &
-			 * requestInterQueueSemaphore() to retrieve latest allocated semaphores.
+			 * Allocates a new set of semaphores that will be signaled when the command buffer finishes execution.
+			 * Releases the previously allocated semaphores, if they exist. Use GetIntraQueueSemaphore() &
+			 * RequestInterQueueSemaphore() to retrieve latest allocated semaphores.
 			 *
 			 * @param	outSemaphores	Output array to append all allocated semaphores in. 
 			 */
-			u32 AllocateSemaphores(SmallVector<VkSemaphore, 8>& outSemaphores);
+			u32 AllocateSignalSemaphores(SmallVector<VkSemaphore, 8>& outSemaphores);
 
 			/** Returns true if the command buffer is currently being processed by the device. */
 			bool IsSubmitted() const { return mState == State::Submitted; }
