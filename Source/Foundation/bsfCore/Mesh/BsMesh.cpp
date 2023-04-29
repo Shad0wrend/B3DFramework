@@ -107,7 +107,7 @@ SPtr<ct::CoreObject> Mesh::CreateCore() const
 	meshCreateInformation.Skeleton = mSkeleton;
 	meshCreateInformation.MorphShapes = mMorphShapes;
 
-	ct::Mesh* obj = new(B3DAllocate<ct::Mesh>()) ct::Mesh(mCPUData, meshCreateInformation, GDF_DEFAULT);
+	ct::Mesh* obj = new(B3DAllocate<ct::Mesh>()) ct::Mesh(mCPUData, meshCreateInformation);
 
 	SPtr<ct::CoreObject> meshCore = B3DMakeSharedFromExisting<ct::Mesh>(obj);
 	meshCore->SetShared(meshCore);
@@ -248,8 +248,8 @@ SPtr<Mesh> Mesh::CreateEmptyShared()
 
 namespace bs { namespace ct
 {
-Mesh::Mesh(const SPtr<MeshData>& initialMeshData, const MeshCreateInformation& meshCreateInformation, GpuDeviceFlags deviceMask)
-	: MeshBase(meshCreateInformation.VertexCount, meshCreateInformation.IndexCount, meshCreateInformation.SubMeshes), mVertexData(nullptr), mIndexBuffer(nullptr), mVertexDescription(meshCreateInformation.VertexDescription), mUsage(meshCreateInformation.Usage), mIndexType(meshCreateInformation.IndexType), mDeviceMask(deviceMask), mTempInitialMeshData(initialMeshData), mSkeleton(meshCreateInformation.Skeleton), mMorphShapes(meshCreateInformation.MorphShapes)
+Mesh::Mesh(const SPtr<MeshData>& initialMeshData, const MeshCreateInformation& meshCreateInformation)
+	: MeshBase(meshCreateInformation.VertexCount, meshCreateInformation.IndexCount, meshCreateInformation.SubMeshes), mVertexData(nullptr), mIndexBuffer(nullptr), mVertexDescription(meshCreateInformation.VertexDescription), mUsage(meshCreateInformation.Usage), mIndexType(meshCreateInformation.IndexType), mTempInitialMeshData(initialMeshData), mSkeleton(meshCreateInformation.Skeleton), mMorphShapes(meshCreateInformation.MorphShapes)
 
 {}
 
@@ -270,7 +270,6 @@ void Mesh::Initialize()
 	const bool isDynamic = (mUsage & MU_DYNAMIC) != 0;
 	const GpuBufferFlags flags = isDynamic ? GpuBufferFlag::StoreOnCPUWithGPUAccess : GpuBufferFlag::StoreOnGPU;
 
-	B3D_ENSURE(mDeviceMask == GDF_DEFAULT);
 	const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
 
 	GpuBufferInformation indexBufferCreateInformation;
@@ -508,7 +507,7 @@ void Mesh::UpdateBounds(const MeshData& meshData)
 	// TODO - Sync this to sim-thread possibly?
 }
 
-SPtr<Mesh> Mesh::Create(u32 vertexCount, u32 indexCount, const SPtr<VertexDescription>& vertexDescription, int usage, DrawOperationType primitiveType, IndexType indexType, GpuDeviceFlags deviceMask)
+SPtr<Mesh> Mesh::Create(u32 vertexCount, u32 indexCount, const SPtr<VertexDescription>& vertexDescription, int usage, DrawOperationType primitiveType, IndexType indexType)
 {
 	MeshCreateInformation meshCreateInformation;
 	meshCreateInformation.VertexCount = vertexCount;
@@ -518,16 +517,16 @@ SPtr<Mesh> Mesh::Create(u32 vertexCount, u32 indexCount, const SPtr<VertexDescri
 	meshCreateInformation.Usage = usage;
 	meshCreateInformation.IndexType = indexType;
 
-	SPtr<Mesh> mesh = B3DMakeSharedFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(nullptr, meshCreateInformation, deviceMask));
+	SPtr<Mesh> mesh = B3DMakeSharedFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(nullptr, meshCreateInformation));
 	mesh->SetShared(mesh);
 	mesh->Initialize();
 
 	return mesh;
 }
 
-SPtr<Mesh> Mesh::Create(const MeshCreateInformation& meshCreateInformation, GpuDeviceFlags deviceMask)
+SPtr<Mesh> Mesh::Create(const MeshCreateInformation& meshCreateInformation)
 {
-	SPtr<Mesh> mesh = B3DMakeSharedFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(nullptr, meshCreateInformation, deviceMask));
+	SPtr<Mesh> mesh = B3DMakeSharedFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(nullptr, meshCreateInformation));
 
 	mesh->SetShared(mesh);
 	mesh->Initialize();
@@ -535,7 +534,7 @@ SPtr<Mesh> Mesh::Create(const MeshCreateInformation& meshCreateInformation, GpuD
 	return mesh;
 }
 
-SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, const MeshCreateInformation& meshCreateInformation, GpuDeviceFlags deviceMask)
+SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, const MeshCreateInformation& meshCreateInformation)
 {
 	MeshCreateInformation meshCreateInformationCopy = meshCreateInformation;
 	meshCreateInformationCopy.VertexCount = initialMeshData->GetVertexCount();
@@ -544,7 +543,7 @@ SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, const MeshCreateI
 	meshCreateInformationCopy.IndexType = initialMeshData->GetIndexType();
 
 	SPtr<Mesh> mesh =
-		B3DMakeSharedFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(initialMeshData, meshCreateInformationCopy, deviceMask));
+		B3DMakeSharedFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(initialMeshData, meshCreateInformationCopy));
 
 	mesh->SetShared(mesh);
 	mesh->Initialize();
@@ -552,7 +551,7 @@ SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, const MeshCreateI
 	return mesh;
 }
 
-SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, int usage, DrawOperationType drawOp, GpuDeviceFlags deviceMask)
+SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, int usage, DrawOperationType drawOp)
 {
 	MeshCreateInformation meshCreateInformation;
 	meshCreateInformation.VertexCount = initialMeshData->GetVertexCount();
@@ -563,7 +562,7 @@ SPtr<Mesh> Mesh::Create(const SPtr<MeshData>& initialMeshData, int usage, DrawOp
 	meshCreateInformation.Usage = usage;
 
 	SPtr<Mesh> mesh =
-		B3DMakeSharedFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(initialMeshData, meshCreateInformation, deviceMask));
+		B3DMakeSharedFromExisting<Mesh>(new(B3DAllocate<Mesh>()) Mesh(initialMeshData, meshCreateInformation));
 
 	mesh->SetShared(mesh);
 	mesh->Initialize();

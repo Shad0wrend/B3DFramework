@@ -268,7 +268,7 @@ namespace bs
 		class B3D_CORE_EXPORT Mesh : public MeshBase
 		{
 		public:
-			Mesh(const SPtr<MeshData>& initialMeshData, const MeshCreateInformation& meshCreateInformation, GpuDeviceFlags deviceMask);
+			Mesh(const SPtr<MeshData>& initialMeshData, const MeshCreateInformation& meshCreateInformation);
 
 			~Mesh();
 
@@ -321,9 +321,8 @@ namespace bs
 			 *									option is a triangle list, where three indices represent a single triangle.
 			 * @param[in]	indexType			Size of indices, use smaller size for better performance, however be careful not to
 			 *									go over the number of vertices limited by the size.
-			 * @param[in]	deviceMask			Mask that determines on which GPU devices should the object be created on.
 			 */
-			static SPtr<Mesh> Create(u32 vertexCount, u32 indexCount, const SPtr<VertexDescription>& vertexDescription, int usage = MU_STATIC, DrawOperationType primitiveType = DOT_TRIANGLE_LIST, IndexType indexType = IT_32BIT, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			static SPtr<Mesh> Create(u32 vertexCount, u32 indexCount, const SPtr<VertexDescription>& vertexDescription, int usage = MU_STATIC, DrawOperationType primitiveType = DOT_TRIANGLE_LIST, IndexType indexType = IT_32BIT);
 
 			/**
 			 * Creates a new empty mesh.
@@ -331,7 +330,7 @@ namespace bs
 			 * @param[in]	meshCreateInformation	Descriptor containing the properties of the mesh to create.
 			 * @param[in]	deviceMask				Mask that determines on which GPU devices should the object be created on.
 			 */
-			static SPtr<Mesh> Create(const MeshCreateInformation& meshCreateInformation, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			static SPtr<Mesh> Create(const MeshCreateInformation& meshCreateInformation);
 
 			/**
 			 * Creates a new mesh from an existing mesh data. Created mesh will match the vertex and index buffers described
@@ -341,9 +340,8 @@ namespace bs
 			 * @param[in]	meshCreateInformation	Descriptor containing the properties of the mesh to create. Vertex and index count,
 			 *										vertex descriptor and index type properties are ignored and are read from provided
 			 *										mesh data instead.
-			 * @param[in]	deviceMask				Mask that determines on which GPU devices should the object be created on.
 			 */
-			static SPtr<Mesh> Create(const SPtr<MeshData>& initialData, const MeshCreateInformation& meshCreateInformation, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			static SPtr<Mesh> Create(const SPtr<MeshData>& initialData, const MeshCreateInformation& meshCreateInformation);
 
 			/**
 			 * Creates a new mesh from an existing mesh data. Created mesh will match the vertex and index buffers described
@@ -353,9 +351,8 @@ namespace bs
 			 * @param[in]	usage			Optimizes performance depending on planned usage of the mesh.
 			 * @param[in]	drawOp			Determines how should the provided indices be interpreted by the pipeline. Default
 			 *								option is a triangle strip, where three indices represent a single triangle.
-			 * @param[in]	deviceMask		Mask that determines on which GPU devices should the object be created on.
 			 */
-			static SPtr<Mesh> Create(const SPtr<MeshData>& initialData, int usage = MU_STATIC, DrawOperationType drawOp = DOT_TRIANGLE_LIST, GpuDeviceFlags deviceMask = GDF_DEFAULT);
+			static SPtr<Mesh> Create(const SPtr<MeshData>& initialData, int usage = MU_STATIC, DrawOperationType drawOp = DOT_TRIANGLE_LIST);
 
 		protected:
 			friend class bs::Mesh;
@@ -369,7 +366,6 @@ namespace bs
 			SPtr<VertexDescription> mVertexDescription;
 			int mUsage;
 			IndexType mIndexType;
-			GpuDeviceFlags mDeviceMask;
 			SPtr<MeshData> mTempInitialMeshData;
 			SPtr<Skeleton> mSkeleton; // Immutable
 			SPtr<MorphShapes> mMorphShapes; // Immutable
