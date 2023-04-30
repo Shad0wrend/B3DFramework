@@ -279,7 +279,7 @@ TGpuParameterSampler<Core>::TGpuParameterSampler(GpuObjectParameterInformation* 
 {}
 
 template <bool Core>
-void TGpuParameterSampler<Core>::Set(const SamplerStateType& samplerState, u32 arrayIndex) const
+void TGpuParameterSampler<Core>::Set(const SPtr<SamplerState>& samplerState, u32 arrayIndex) const
 {
 	if(mParent == nullptr)
 		return;
@@ -291,10 +291,10 @@ void TGpuParameterSampler<Core>::Set(const SamplerStateType& samplerState, u32 a
 }
 
 template <bool Core>
-typename TGpuParameterSampler<Core>::SamplerStateType TGpuParameterSampler<Core>::Get(u32 arrayIndex) const
+SPtr<SamplerState> TGpuParameterSampler<Core>::Get(u32 arrayIndex) const
 {
-	if(mParent == nullptr)
-		return SamplerStateType();
+	if (mParent == nullptr)
+		return nullptr;
 
 	return mParent->GetSamplerState(mParamDesc->Set, mParamDesc->Slot, arrayIndex);
 }

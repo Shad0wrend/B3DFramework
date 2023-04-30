@@ -161,8 +161,8 @@ static void ValidateBasePassMaterial(Material& material, RenderableAnimType anim
 	}
 }
 
-RendererScene::RendererScene(const SPtr<RenderBeastOptions>& options)
-	: mOptions(options)
+RendererScene::RendererScene(GpuDevice& gpuDevice, const SPtr<RenderBeastOptions>& options)
+	: mGpuDevice(gpuDevice), mOptions(options)
 {
 	mPerFrameParamBuffer = gPerFrameParamDef.CreateBuffer();
 }
@@ -1253,17 +1253,17 @@ void RendererScene::RefreshSamplerOverrides(bool force)
 			materialParams->GetSamplerState(*materialParamData, samplerState);
 
 			u64 hash = 0;
-			if(samplerState != nullptr)
-				hash = samplerState->GetProperties().GetHash();
+			if (samplerState != nullptr)
+				hash = B3DHash(samplerState->GetInformation());
 
 			if(hash != override.OriginalStateHash || force)
 			{
 				if(samplerState != nullptr)
-					override.State = SamplerOverrideUtility::GenerateSamplerOverride(samplerState, mOptions);
+					override.State = SamplerOverrideUtility::GenerateSamplerOverride(mGpuDevice, samplerState, mOptions);
 				else
-					override.State = SamplerOverrideUtility::GenerateSamplerOverride(SamplerState::GetDefault(), mOptions);
+					override.State = SamplerOverrideUtility::GenerateSamplerOverride(mGpuDevice, mGpuDevice.FindOrCreateSamplerState(SamplerStateCreateInformation()), mOptions);
 
-				override.OriginalStateHash = override.State->GetProperties().GetHash();
+				override.OriginalStateHash = B3DHash(override.State->GetInformation());
 				materialOverrides->IsDirty = true;
 			}
 
@@ -1436,7 +1436,7 @@ MaterialSamplerOverrides* RendererScene::AllocSamplerStateOverrides(RenderElemen
 	else
 	{
 		SPtr<Shader> shader = elem.Material->GetShader();
-		MaterialSamplerOverrides* samplerOverrides = SamplerOverrideUtility::GenerateSamplerOverrides(shader, elem.Material->GetInternalParamsInternal(), elem.Params, mOptions);
+		MaterialSamplerOverrides* samplerOverrides = SamplerOverrideUtility::GenerateSamplerOverrides(mGpuDevice, shader, elem.Material->GetInternalParamsInternal(), elem.Params, mOptions);
 
 		mSamplerOverrides[samplerKey] = samplerOverrides;
 

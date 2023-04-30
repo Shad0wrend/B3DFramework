@@ -7,8 +7,6 @@
 #include "Reflection/BsIReflectable.h"
 #include "CoreThread/BsCoreObject.h"
 
-#include <cfloat>
-
 namespace bs
 {
 	/** @addtogroup RenderAPI
@@ -68,101 +66,26 @@ namespace bs
 		{ }
 	};
 
-	/** Properties of SamplerState. Shared between sim and core thread versions of SamplerState. */
-	class B3D_CORE_EXPORT SamplerProperties
-	{
-	public:
-		SamplerProperties(const SamplerStateInformation& desc);
-
-		/**
-		 * Returns texture addressing mode for each possible texture coordinate. Addressing modes determine how are texture
-		 * coordinates outside of [0, 1] range handled.
-		 */
-		const UVWAddressingMode& GetTextureAddressingMode() const { return mData.AddressMode; }
-
-		/** Gets the filtering used when sampling from a texture. */
-		FilterOptions GetTextureFiltering(FilterType ftpye) const;
-
-		/**
-		 * Gets the anisotropy level. Higher anisotropy means better filtering for textures displayed on an angled slope
-		 * relative to the viewer.
-		 */
-		unsigned int GetTextureAnisotropy() const { return mData.MaxAniso; }
-
-		/** Gets a function that compares sampled data with existing sampled data. */
-		CompareFunction GetComparisonFunction() const { return mData.ComparisonFunc; }
-
-		/**
-		 * Mipmap bias allows you to adjust the mipmap selection calculation. Negative values  force a larger mipmap to be
-		 * used, and positive values smaller. Units are in values of mip levels, so -1 means use a mipmap one level higher
-		 * than default.
-		 */
-		float GetTextureMipmapBias() const { return mData.MipmapBias; }
-
-		/** Returns the minimum mip map level. */
-		float GetMinimumMip() const { return mData.MipMin; }
-
-		/** Returns the maximum mip map level. */
-		float GetMaximumMip() const { return mData.MipMax; }
-
-		/**
-		 * Gets the border color that will be used when border texture addressing is used and texture address is outside of
-		 * the valid range.
-		 */
-		const Color& GetBorderColor() const;
-
-		/**	Returns the hash value generated from the sampler state properties. */
-		u64 GetHash() const { return mHash; }
-
-		/**	Returns the descriptor originally used for creating the sampler state. */
-		SamplerStateInformation GetDesc() const { return mData; }
-
-	protected:
-		friend class SamplerState;
-		friend class ct::SamplerState;
-		friend class SamplerStateRTTI;
-
-		SamplerStateInformation mData;
-		u64 mHash;
-	};
-
-	/**
-	 * Class representing the state of a texture sampler.
-	 *
-	 * @note
-	 * Sampler units are used for retrieving and filtering data from textures set in a GPU program. Sampler states are
-	 * immutable.
-	 * @note
-	 * Sim thread.
-	 */
-	class B3D_CORE_EXPORT SamplerState : public IReflectable, public CoreObject
+	/** Defines the behaviour of a texture sampler on the GPU. */
+	class B3D_CORE_EXPORT SamplerState : public IReflectable
 	{
 	public:
 		virtual ~SamplerState() = default;
 
-		/**	Returns information about the sampler state. */
-		const SamplerProperties& GetProperties() const;
+		/** Initializes the object. The object should not be used before this is called. */
+		virtual void Initialize() {}
 
-		/**	Retrieves a core implementation of the sampler state usable only from the core thread. */
-		SPtr<ct::SamplerState> GetCore() const;
-
-		/**	Creates a new sampler state using the provided descriptor structure. */
-		static SPtr<SamplerState> Create(const SamplerStateCreateInformation& desc);
-
-		/**	Returns the default sampler state. */
-		static const SPtr<SamplerState>& GetDefault();
+		/** Returns information describing the sampler state. */
+		const SamplerStateInformation& GetInformation() const { return mInformation; }
 
 		/**	Generates a hash value from a sampler state descriptor. */
-		static u64 GenerateHash(const SamplerStateInformation& desc);
-
+		static u64 GenerateHash(const SamplerStateInformation& information);
 	protected:
-		SamplerState(const SamplerStateCreateInformation& desc);
-
-		SPtr<ct::CoreObject> CreateCore() const override;
-
-		SamplerProperties mProperties;
-
 		friend class RenderStateManager;
+
+		SamplerState(const SamplerStateCreateInformation& createInformation);
+
+		SamplerStateInformation mInformation;
 
 		/************************************************************************/
 		/* 								RTTI		                     		*/
@@ -175,48 +98,6 @@ namespace bs
 	};
 
 	/** @} */
-
-	namespace ct
-	{
-		/** @addtogroup RenderAPI-Internal
-		 *  @{
-		 */
-
-		/**
-		 * Core thread version of bs::SamplerState.
-		 *
-		 * @note	Core thread.
-		 */
-		class B3D_CORE_EXPORT SamplerState : public CoreObject
-		{
-		public:
-			virtual ~SamplerState();
-
-			/**	Returns information about the sampler state. */
-			const SamplerProperties& GetProperties() const;
-
-			/**	@copydoc RenderStateManager::CreateSamplerState */
-			static SPtr<SamplerState> Create(const SamplerStateCreateInformation& desc);
-
-			/**	Returns the default sampler state. */
-			static const SPtr<SamplerState>& GetDefault();
-
-		protected:
-			friend class RenderStateManager;
-
-			SamplerState(const SamplerStateCreateInformation& desc);
-
-			/** @copydoc CoreObject::Initialize */
-			void Initialize() override;
-
-			/**	Creates any API-specific state objects. */
-			virtual void CreateInternal() {}
-
-			SamplerProperties mProperties;
-		};
-
-		/** @} */
-	} // namespace ct
 } // namespace bs
 
 /** @cond STDLIB */
@@ -226,11 +107,21 @@ namespace bs
 
 namespace std
 {
-	/**	Hash value generator for SAMPLER_STATE_DESC. */
+	/**	Hash value generator for SamplerStateInformation. */
 	template <>
 	struct hash<bs::SamplerStateInformation>
 	{
 		size_t operator()(const bs::SamplerStateInformation& value) const
+		{
+			return (size_t)bs::SamplerState::GenerateHash(value);
+		}
+	};
+
+	/**	Hash value generator for SamplerStateCreateInformation. */
+	template <>
+	struct hash<bs::SamplerStateCreateInformation>
+	{
+		size_t operator()(const bs::SamplerStateCreateInformation& value) const
 		{
 			return (size_t)bs::SamplerState::GenerateHash(value);
 		}

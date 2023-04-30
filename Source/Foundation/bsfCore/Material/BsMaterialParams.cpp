@@ -332,7 +332,7 @@ TMaterialParams<Core>::TMaterialParams(const ShaderType& shader, u64 initialPara
 	mBufferParams = mAlloc.Construct<ParamBufferDataType>(mNumBufferParams);
 	mSamplerStateParams = mAlloc.Construct<ParamSamplerStateDataType>(mNumSamplerParams);
 	mDefaultTextureParams = mAlloc.Construct<TextureType>(mNumTextureParams);
-	mDefaultSamplerStateParams = mAlloc.Construct<SamplerType>(mNumSamplerParams);
+	mDefaultSamplerStateParams = mAlloc.Construct<SPtr<SamplerState>>(mNumSamplerParams);
 
 	auto& textureParams = shader->GetTextureParams();
 	u32 textureIdx = 0;
@@ -567,7 +567,7 @@ void TMaterialParams<Core>::SetBuffer(const String& name, const BufferType& valu
 }
 
 template <bool Core>
-void TMaterialParams<Core>::GetSamplerState(const String& name, SamplerType& value) const
+void TMaterialParams<Core>::GetSamplerState(const String& name, SPtr<SamplerState>& value) const
 {
 	const ParamData* param = nullptr;
 	GetParamResult result = GetParamData(name, ParamType::Sampler, GPDT_UNKNOWN, 0, &param);
@@ -581,7 +581,7 @@ void TMaterialParams<Core>::GetSamplerState(const String& name, SamplerType& val
 }
 
 template <bool Core>
-void TMaterialParams<Core>::SetSamplerState(const String& name, const SamplerType& value)
+void TMaterialParams<Core>::SetSamplerState(const String& name, const SPtr<SamplerState>& value)
 {
 	const ParamData* param = nullptr;
 	GetParamResult result = GetParamData(name, ParamType::Sampler, GPDT_UNKNOWN, 0, &param);
@@ -730,13 +730,13 @@ void TMaterialParams<Core>::SetStorageTexture(const ParamData& param, const Text
 }
 
 template <bool Core>
-void TMaterialParams<Core>::GetSamplerState(const ParamData& param, SamplerType& value) const
+void TMaterialParams<Core>::GetSamplerState(const ParamData& param, SPtr<SamplerState>& value) const
 {
 	value = mSamplerStateParams[param.Index].Value;
 }
 
 template <bool Core>
-void TMaterialParams<Core>::SetSamplerState(const ParamData& param, const SamplerType& value)
+void TMaterialParams<Core>::SetSamplerState(const ParamData& param, const SPtr<SamplerState>& value)
 {
 	mSamplerStateParams[param.Index].Value = value;
 
@@ -786,7 +786,7 @@ void TMaterialParams<Core>::GetDefaultTexture(const ParamData& param, TextureTyp
 }
 
 template <bool Core>
-void TMaterialParams<Core>::GetDefaultSamplerState(const ParamData& param, SamplerType& value) const
+void TMaterialParams<Core>::GetDefaultSamplerState(const ParamData& param, SPtr<SamplerState>& value) const
 {
 	value = mDefaultSamplerStateParams[param.Index];
 }
@@ -1045,8 +1045,7 @@ void MaterialParams::GetSyncData(u8* buffer, u32& size, bool forceAll)
 				MaterialParamSamplerStateDataCore* coreSamplerData = (MaterialParamSamplerStateDataCore*)stream.Cursor();
 				new(coreSamplerData) MaterialParamSamplerStateDataCore();
 
-				if(samplerData.Value != nullptr)
-					coreSamplerData->Value = samplerData.Value->GetCore();
+				coreSamplerData->Value = samplerData.Value;
 
 				dirtySamplerParamIdx++;
 			}
@@ -1099,15 +1098,6 @@ void MaterialParams::GetCoreObjectDependencies(Vector<CoreObject*>& coreObjects)
 
 				if(bufferData.Value != nullptr)
 					coreObjects.push_back(bufferData.Value.get());
-			}
-			break;
-		case ParamType::Sampler:
-			{
-
-				const MaterialParamSamplerStateData& samplerData = mSamplerStateParams[param.Index];
-
-				if(samplerData.Value != nullptr)
-					coreObjects.push_back(samplerData.Value.get());
 			}
 			break;
 		default:
@@ -1203,12 +1193,8 @@ MaterialParams::MaterialParams(const SPtr<Shader>& shader, const SPtr<bs::Materi
 			break;
 		case ParamType::Sampler:
 			{
-				SPtr<bs::SamplerState> sampState = params->mSamplerStateParams[param.Index].Value;
-				SPtr<SamplerState> sampStateCore;
-				if(sampState != nullptr)
-					sampStateCore = sampState->GetCore();
-
-				mSamplerStateParams[param.Index].Value = sampStateCore;
+				SPtr<SamplerState> sampState = params->mSamplerStateParams[param.Index].Value;
+				mSamplerStateParams[param.Index].Value = sampState;
 			}
 			break;
 		default:

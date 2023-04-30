@@ -2,11 +2,12 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
+#include "BsCoreApplication.h"
 #include "BsCorePrerequisites.h"
 #include "Reflection/BsRTTIType.h"
 #include "Reflection/BsRTTIPlain.h"
+#include "RenderAPI/BsGpuDevice.h"
 #include "RenderAPI/BsSamplerState.h"
-#include "Managers/BsRenderStateManager.h"
 
 namespace bs
 {
@@ -20,9 +21,8 @@ namespace bs
 	class B3D_CORE_EXPORT SamplerStateRTTI : public RTTIType<SamplerState, IReflectable, SamplerStateRTTI>
 	{
 	private:
-		SamplerStateInformation& GetData(SamplerState* obj) { return obj->mProperties.mData; }
-
-		void SetData(SamplerState* obj, SamplerStateInformation& val) { obj->mProperties.mData = val; }
+		SamplerStateInformation& GetData(SamplerState* obj) { return obj->mInformation; }
+		void SetData(SamplerState* obj, SamplerStateInformation& val) { obj->mInformation = val; }
 
 	public:
 		SamplerStateRTTI()
@@ -49,7 +49,11 @@ namespace bs
 
 		SPtr<IReflectable> NewRttiObject()
 		{
-			return RenderStateManager::Instance().CreateSamplerStatePtrInternal(SamplerStateInformation());
+			const SPtr<GpuDevice>& gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+			if(!gpuDevice)
+				return nullptr;
+
+			return gpuDevice->CreateSamplerState(SamplerStateCreateInformation(), true);
 		}
 	};
 

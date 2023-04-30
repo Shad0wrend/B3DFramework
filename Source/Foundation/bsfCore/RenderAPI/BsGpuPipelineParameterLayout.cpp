@@ -5,7 +5,6 @@
 #include "BsCoreApplication.h"
 #include "BsGpuDevice.h"
 #include "RenderAPI/BsGpuProgramParameterDescription.h"
-#include "Managers/BsRenderStateManager.h"
 #include "Math/BsMath.h"
 
 using namespace bs;

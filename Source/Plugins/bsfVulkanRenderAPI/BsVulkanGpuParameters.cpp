@@ -8,9 +8,9 @@
 #include "BsVulkanGpuBuffer.h"
 #include "BsVulkanDescriptorSet.h"
 #include "BsVulkanDescriptorLayout.h"
-#include "BsVulkanSamplerState.h"
 #include "BsVulkanGpuPipelineParameterLayout.h"
 #include "BsVulkanGpuCommandBuffer.h"
+#include "BsVulkanSamplerState.h"
 #include "Managers/BsVulkanTextureManager.h"
 #include "RenderAPI/BsGpuProgramParameterDescription.h"
 
@@ -120,7 +120,7 @@ void VulkanGpuParameters::Initialize()
 	mSetsDirty = mAlloc.Alloc<bool>(setCount);
 	B3DZeroOut(mSetsDirty, setCount);
 
-	VulkanSamplerState* defaultSampler = static_cast<VulkanSamplerState*>(SamplerState::GetDefault().get());
+	SPtr<VulkanSamplerState> defaultSampler = std::static_pointer_cast<VulkanSamplerState>(mGpuDevice.FindOrCreateSamplerState(SamplerStateCreateInformation()));
 	VulkanTextureManager& vkTexManager = static_cast<VulkanTextureManager&>(TextureManager::Instance());
 	const VulkanBuiltinResources& builtinResources = (mGpuDevice.GetBuiltinResources());
 
@@ -630,14 +630,13 @@ bool VulkanGpuParameters::SetSamplerState(u32 set, u32 slot, const SPtr<SamplerS
 
 	PerSetData& perSetData = mPerDeviceData.PerSetData[set];
 
+	SPtr<VulkanSamplerState> defaultSampler;
 	VulkanSampler* samplerRes;
 	if(vulkanSampler != nullptr)
 		samplerRes = vulkanSampler->GetVulkanResource();
 	else
 	{
-		const VulkanSamplerState* const defaultSampler =
-			static_cast<const VulkanSamplerState* const>(SamplerState::GetDefault().get());
-
+		defaultSampler = std::static_pointer_cast<VulkanSamplerState>(mGpuDevice.FindOrCreateSamplerState(SamplerStateCreateInformation()));
 		samplerRes = defaultSampler->GetVulkanResource();
 	}
 

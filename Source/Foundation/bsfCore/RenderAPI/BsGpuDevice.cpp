@@ -55,6 +55,23 @@ void GpuDevice::SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>& commandBuf
 	queue->SubmitCommandBuffer(commandBuffer, syncMask);
 }
 
+SPtr<SamplerState> GpuDevice::FindOrCreateSamplerState(const SamplerStateCreateInformation& createInformation)
+{
+	Lock lock(mSamplerStateMutex);
+
+	if (auto found = mCachedSamplerStates.find(createInformation); found != mCachedSamplerStates.end())
+	{
+		SPtr<SamplerState> existingSamplerState = found->second;
+		if (existingSamplerState != nullptr)
+			return existingSamplerState;
+	}
+
+	SPtr<SamplerState> newSamplerState = CreateSamplerState(createInformation);
+	mCachedSamplerStates[createInformation] = newSamplerState;
+
+	return newSamplerState;
+}
+
 void GpuQueue::SubmitCommandBuffer(const SPtr<ct::GpuCommandBuffer>& commandBuffer, u32 syncMask)
 {
 	SubmitCommandBuffer(commandBuffer, syncMask, true);

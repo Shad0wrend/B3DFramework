@@ -4,7 +4,6 @@
 #include "BsVulkanGpuDevice.h"
 #include "Managers/BsVulkanTextureManager.h"
 #include "Managers/BsVulkanRenderWindowManager.h"
-#include "Managers/BsVulkanRenderStateManager.h"
 #include "Managers/BsVulkanQueryManager.h"
 #include "Managers/BsVulkanVertexInputManager.h"
 
@@ -438,9 +437,6 @@ void VulkanGpuBackend::OnStartUp()
 	// Create vertex input manager
 	VulkanVertexInputManager::StartUp();
 
-	// Create render state manager
-	ct::RenderStateManager::StartUp<VulkanRenderStateManager>();
-
 	Super::OnStartUp();
 }
 
@@ -448,7 +444,6 @@ void VulkanGpuBackend::OnShutDown()
 {
 	VulkanSubmitThread::ShutDown();
 	VulkanVertexInputManager::ShutDown();
-	ct::RenderStateManager::ShutDown();
 	ct::RenderWindowManager::ShutDown();
 	RenderWindowManager::ShutDown();
 	VulkanFramebufferCache::ShutDown();

@@ -1186,7 +1186,7 @@ void TGpuParamsSet<Core>::Update(const SPtr<MaterialParamsType>& params, float t
 				if(materialParamInfo->Version <= mParamVersion && !updateAll)
 					continue;
 
-				SamplerStateType samplerState;
+				SPtr<SamplerState> samplerState;
 				params->GetSamplerState(*materialParamInfo, samplerState);
 
 				paramPtr->SetSamplerState(paramInfo.SetIdx, paramInfo.SlotIdx, samplerState, 0);

@@ -35,7 +35,6 @@
 #include "Image/BsTexture.h"
 #include "RenderAPI/BsRenderTexture.h"
 #include "RenderAPI/BsSamplerState.h"
-#include "Managers/BsRenderStateManager.h"
 #include "Resources/BsBuiltinResources.h"
 #include "2D/BsSpriteManager.h"
 #include "RenderAPI/BsGpuCommandBuffer.h"
@@ -1570,12 +1569,14 @@ GUIRenderer::GUIRenderer()
 
 void GUIRenderer::Initialize(const Any& data)
 {
+	const SPtr<GpuDevice> gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+
 	SamplerStateInformation ssDesc;
 	ssDesc.MagFilter = FO_POINT;
 	ssDesc.MinFilter = FO_POINT;
 	ssDesc.MipFilter = FO_POINT;
 
-	mSamplerState = RenderStateManager::Instance().CreateSamplerState(ssDesc);
+	mSamplerState = gpuDevice->FindOrCreateSamplerState(ssDesc);
 }
 
 RendererExtensionRequest GUIRenderer::Check(const Camera& camera)

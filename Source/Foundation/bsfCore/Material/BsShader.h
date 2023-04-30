@@ -412,7 +412,6 @@ namespace bs
 	public:
 		using TechniqueType = CoreVariantType<Technique, Core>;
 		using TextureType = CoreVariantHandleType<Texture, Core>;
-		using SamplerStateType = CoreVariantType<SamplerState, Core>;
 		using ShaderInformationType = CoreVariantType<ShaderInformation, Core>;
 		using ShaderCreateInformationType = CoreVariantType<ShaderCreateInformation, Core>;
 
@@ -553,7 +552,7 @@ namespace bs
 		 * Returns a default sampler state for a parameter that has the specified default value index (retrieved from the
 		 * parameters descriptor).
 		 */
-		SPtr<SamplerStateType> GetDefaultSampler(u32 index) const;
+		SPtr<SamplerState> GetDefaultSampler(u32 index) const;
 
 		/**
 		 * Returns a pointer to the internal buffer containing the default value for a data parameter that has the

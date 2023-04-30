@@ -16,7 +16,7 @@ PerLightParamDef gPerLightParamDef;
 
 void DeferredDirectionalLightMat::Initialize()
 {
-	mGBufferParams.Initialize(GPT_FRAGMENT_PROGRAM, mGPUParameters);
+	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gLightOcclusionTex", mLightOcclusionTexParam);
 }
 
@@ -45,7 +45,7 @@ DeferredDirectionalLightMat* DeferredDirectionalLightMat::GetVariation(bool msaa
 
 void DeferredPointLightMat::Initialize()
 {
-	mGBufferParams.Initialize(GPT_FRAGMENT_PROGRAM, mGPUParameters);
+	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gLightOcclusionTex", mLightOcclusionTexParam);
 }
 
@@ -91,7 +91,7 @@ PerProbeParamDef gPerProbeParamDef;
 
 void DeferredIBLSetupMat::Initialize()
 {
-	mGBufferParams.Initialize(GPT_FRAGMENT_PROGRAM, mGPUParameters);
+	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
 	mIBLParams.Populate(mGPUParameters, GPT_FRAGMENT_PROGRAM, true, false, false);
 }
 
@@ -125,7 +125,7 @@ DeferredIBLSetupMat* DeferredIBLSetupMat::GetVariation(bool msaa, bool singleSam
 
 void DeferredIBLProbeMat::Initialize()
 {
-	mGBufferParams.Initialize(GPT_FRAGMENT_PROGRAM, mGPUParameters);
+	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
 	mIBLParams.Populate(mGPUParameters, GPT_FRAGMENT_PROGRAM, true, false, false);
 
 	mParamBuffer = gPerProbeParamDef.CreateBuffer();
@@ -189,7 +189,7 @@ DeferredIBLProbeMat* DeferredIBLProbeMat::GetVariation(bool inside, bool msaa, b
 
 void DeferredIBLSkyMat::Initialize()
 {
-	mGBufferParams.Initialize(GPT_FRAGMENT_PROGRAM, mGPUParameters);
+	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
 	mIBLParams.Populate(mGPUParameters, GPT_FRAGMENT_PROGRAM, true, false, false);
 }
 
@@ -223,7 +223,7 @@ DeferredIBLSkyMat* DeferredIBLSkyMat::GetVariation(bool msaa, bool singleSampleM
 
 void DeferredIBLFinalizeMat::Initialize()
 {
-	mGBufferParams.Initialize(GPT_FRAGMENT_PROGRAM, mGPUParameters);
+	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gIBLRadianceTex", mIBLRadiance);
 
 	mIBLParams.Populate(mGPUParameters, GPT_FRAGMENT_PROGRAM, true, false, false);

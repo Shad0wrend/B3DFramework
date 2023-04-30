@@ -5,7 +5,7 @@
 using namespace bs;
 using namespace bs::ct;
 
-SPtr<ct::SamplerState> NullRenderStateManager::CreateSamplerStateInternalInternal(const SamplerStateInformation& desc, GpuDeviceFlags deviceMask) const
+SPtr<SamplerState> NullRenderStateManager::CreateSamplerStateInternalInternal(const SamplerStateInformation& desc, GpuDeviceFlags deviceMask) const
 {
 	SPtr<NullSamplerState> ret = B3DMakeShared<NullSamplerState>(desc, deviceMask);
 	ret->SetShared(ret);

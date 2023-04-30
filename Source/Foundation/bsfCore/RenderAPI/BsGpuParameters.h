@@ -320,7 +320,6 @@ namespace bs
 		using GpuParamsType = CoreVariantType<GpuParameters, Core>;
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 		using BufferType = SPtr<CoreVariantType<GpuBuffer, Core>>;
-		using SamplerType = SPtr<CoreVariantType<SamplerState, Core>>;
 		using UniformBufferType = SPtr<CoreVariantType<GpuBuffer, Core>>;
 
 		virtual ~TGpuParams();
@@ -382,7 +381,7 @@ namespace bs
 		BufferType GetStorageBuffer(u32 set, u32 slot, u32 arrayIndex = 0) const;
 
 		/**	Gets a sampler state bound to the specified set/slot/array index combination. */
-		SamplerType GetSamplerState(u32 set, u32 slot, u32 arrayIndex = 0) const;
+		SPtr<SamplerState> GetSamplerState(u32 set, u32 slot, u32 arrayIndex = 0) const;
 
 		/** Gets information that determines which texture surfaces to bind as a sampled texture parameter. */
 		const TextureSurface& GetTextureSurface(u32 set, u32 slot, u32 arrayIndex = 0) const;
@@ -461,7 +460,7 @@ namespace bs
 		 * Sets a sampler state at the specified set/slot combination.
 		 * Returns true if the operation succeeded, otherwise logs and errors and returns false.
 		 */
-		virtual bool SetSamplerState(u32 set, u32 slot, const SamplerType& sampler, u32 arrayIndex = 0);
+		virtual bool SetSamplerState(u32 set, u32 slot, const SPtr<SamplerState>& sampler, u32 arrayIndex = 0);
 
 		/**	Assigns a data value to the parameter with the specified name. */
 		template <class T>
@@ -505,7 +504,7 @@ namespace bs
 		}
 
 		/**	Assigns a sampler state to the parameter with the specified name. */
-		void SetSamplerState(GpuProgramType type, const String& name, const SamplerType& sampler)
+		void SetSamplerState(GpuProgramType type, const String& name, const SPtr<SamplerState>& sampler)
 		{
 			TGpuParameterSampler<Core> param;
 			GetSamplerStateParameter(type, name, param);
@@ -546,7 +545,7 @@ namespace bs
 		TextureData* mSampledTextureData = nullptr;
 		TextureData* mStorageTextureData = nullptr;
 		StorageBufferData* mStorageBufferData = nullptr;
-		SamplerType* mSamplerStates = nullptr;
+		SPtr<SamplerState>* mSamplerStates = nullptr;
 	};
 
 	/** @} */

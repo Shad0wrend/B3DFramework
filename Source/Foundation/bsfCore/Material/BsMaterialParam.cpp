@@ -414,7 +414,7 @@ TMaterialParameterSampler<Core>::TMaterialParameterSampler(const String& name, c
 }
 
 template <bool Core>
-void TMaterialParameterSampler<Core>::Set(const SamplerStateType& sampState) const
+void TMaterialParameterSampler<Core>::Set(const SPtr<SamplerState>& sampState) const
 {
 	if(mMaterial == nullptr)
 		return;
@@ -423,7 +423,7 @@ void TMaterialParameterSampler<Core>::Set(const SamplerStateType& sampState) con
 	const MaterialParams::ParamData* data = params->GetParamData(mParamIndex);
 
 	// If there is a default value, assign that instead of null
-	SamplerStateType newValue = sampState;
+	SPtr<SamplerState> newValue = sampState;
 	if(newValue == nullptr)
 		params->GetDefaultSamplerState(*data, newValue);
 
@@ -433,9 +433,9 @@ void TMaterialParameterSampler<Core>::Set(const SamplerStateType& sampState) con
 }
 
 template <bool Core>
-typename TMaterialParameterSampler<Core>::SamplerStateType TMaterialParameterSampler<Core>::Get() const
+SPtr<SamplerState> TMaterialParameterSampler<Core>::Get() const
 {
-	SamplerStateType samplerState;
+	SPtr<SamplerState> samplerState;
 	if(mMaterial == nullptr)
 		return samplerState;
 

@@ -513,7 +513,7 @@ void TMaterial<Core>::InitDefaultParameters()
 		if(param.second.DefaultValueIndex == (u32)-1)
 			continue;
 
-		SamplerStateType defaultSampler = mShader->GetDefaultSampler(param.second.DefaultValueIndex);
+		SPtr<SamplerState> defaultSampler = mShader->GetDefaultSampler(param.second.DefaultValueIndex);
 		GetParamSamplerState(param.first).Set(defaultSampler);
 	}
 }

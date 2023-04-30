@@ -210,6 +210,8 @@ namespace bs
 
 			static constexpr u32 kQueueUsageCombinationCount = 8; // 3^2, as there are three usage types in CommandBufferUsageFlag
 
+			SPtr<SamplerState> CreateSamplerState(const SamplerStateCreateInformation& createInformation, bool deferredInitialize = false) override;
+
 			/** Initializes the capabilities of the device. */
 			void InitializeCapabilities();
 

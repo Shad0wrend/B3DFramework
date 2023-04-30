@@ -8,12 +8,12 @@
 #include "RenderAPI/BsGpuProgramParameterDescription.h"
 #include "Material/BsMaterialParams.h"
 #include "RenderAPI/BsSamplerState.h"
-#include "Managers/BsRenderStateManager.h"
+#include "RenderAPI/BsGpuDevice.h"
 
 namespace bs {
 namespace ct {
 
-MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(const SPtr<Shader>& shader, const SPtr<MaterialParams>& params, const SPtr<GpuParamsSet>& paramsSet, const SPtr<RenderBeastOptions>& options)
+MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(GpuDevice& gpuDevice, const SPtr<Shader>& shader, const SPtr<MaterialParams>& params, const SPtr<GpuParamsSet>& paramsSet, const SPtr<RenderBeastOptions>& options)
 {
 	MaterialSamplerOverrides* output = nullptr;
 
@@ -43,17 +43,17 @@ MaterialSamplerOverrides* SamplerOverrideUtility::GenerateSamplerOverrides(const
 			SPtr<SamplerState> samplerState;
 			params->GetSamplerState(*materialParamData, samplerState);
 
-			if(samplerState == nullptr)
-				samplerState = SamplerState::GetDefault();
+			if (samplerState == nullptr)
+				samplerState = gpuDevice.FindOrCreateSamplerState(SamplerStateCreateInformation());
 
 			override.ParamIdx = paramIdx;
 
 			if(CheckNeedsOverride(samplerState, options))
-				override.State = GenerateSamplerOverride(samplerState, options);
+				override.State = GenerateSamplerOverride(gpuDevice, samplerState, options);
 			else
 				override.State = samplerState;
 
-			override.OriginalStateHash = override.State->GetProperties().GetHash();
+			override.OriginalStateHash = B3DHash(override.State->GetInformation());
 
 			for(auto& entry : samplerParam.second.GpuVariableNames)
 				overrideLookup[entry] = overrideIdx;
@@ -212,46 +212,46 @@ void SamplerOverrideUtility::DestroySamplerOverrides(MaterialSamplerOverrides* o
 
 bool SamplerOverrideUtility::CheckNeedsOverride(const SPtr<SamplerState>& samplerState, const SPtr<RenderBeastOptions>& options)
 {
-	const SamplerProperties& props = samplerState->GetProperties();
+	const SamplerStateInformation& samplerStateInformation = samplerState->GetInformation();
 
 	switch(options->Filtering)
 	{
 	case RenderBeastFiltering::Bilinear:
 		{
-			if(props.GetTextureFiltering(FT_MIN) != FO_LINEAR)
+			if(samplerStateInformation.MinFilter != FO_LINEAR)
 				return true;
 
-			if(props.GetTextureFiltering(FT_MAG) != FO_LINEAR)
+			if(samplerStateInformation.MagFilter != FO_LINEAR)
 				return true;
 
-			if(props.GetTextureFiltering(FT_MIP) != FO_POINT)
+			if(samplerStateInformation.MipFilter != FO_POINT)
 				return true;
 		}
 		break;
 	case RenderBeastFiltering::Trilinear:
 		{
-			if(props.GetTextureFiltering(FT_MIN) != FO_LINEAR)
+			if(samplerStateInformation.MinFilter != FO_LINEAR)
 				return true;
 
-			if(props.GetTextureFiltering(FT_MAG) != FO_LINEAR)
+			if(samplerStateInformation.MagFilter != FO_LINEAR)
 				return true;
 
-			if(props.GetTextureFiltering(FT_MIP) != FO_LINEAR)
+			if(samplerStateInformation.MipFilter != FO_LINEAR)
 				return true;
 		}
 		break;
 	case RenderBeastFiltering::Anisotropic:
 		{
-			if(props.GetTextureFiltering(FT_MIN) != FO_ANISOTROPIC)
+			if(samplerStateInformation.MinFilter != FO_ANISOTROPIC)
 				return true;
 
-			if(props.GetTextureFiltering(FT_MAG) != FO_ANISOTROPIC)
+			if(samplerStateInformation.MagFilter != FO_ANISOTROPIC)
 				return true;
 
-			if(props.GetTextureFiltering(FT_MIP) != FO_ANISOTROPIC)
+			if(samplerStateInformation.MipFilter != FO_ANISOTROPIC)
 				return true;
 
-			if(props.GetTextureAnisotropy() != options->AnisotropyMax)
+			if(samplerStateInformation.MaxAniso != options->AnisotropyMax)
 				return true;
 		}
 		break;
@@ -260,32 +260,31 @@ bool SamplerOverrideUtility::CheckNeedsOverride(const SPtr<SamplerState>& sample
 	return false;
 }
 
-SPtr<SamplerState> SamplerOverrideUtility::GenerateSamplerOverride(const SPtr<SamplerState>& samplerState, const SPtr<RenderBeastOptions>& options)
+SPtr<SamplerState> SamplerOverrideUtility::GenerateSamplerOverride(GpuDevice& gpuDevice, const SPtr<SamplerState>& samplerState, const SPtr<RenderBeastOptions>& options)
 {
-	const SamplerProperties& props = samplerState->GetProperties();
-	SamplerStateInformation desc = props.GetDesc();
+	SamplerStateCreateInformation samplerStateCreateInformation = samplerState->GetInformation();
 
 	switch(options->Filtering)
 	{
 	case RenderBeastFiltering::Bilinear:
-		desc.MinFilter = FO_LINEAR;
-		desc.MagFilter = FO_LINEAR;
-		desc.MipFilter = FO_POINT;
+		samplerStateCreateInformation.MinFilter = FO_LINEAR;
+		samplerStateCreateInformation.MagFilter = FO_LINEAR;
+		samplerStateCreateInformation.MipFilter = FO_POINT;
 		break;
 	case RenderBeastFiltering::Trilinear:
-		desc.MinFilter = FO_LINEAR;
-		desc.MagFilter = FO_LINEAR;
-		desc.MipFilter = FO_LINEAR;
+		samplerStateCreateInformation.MinFilter = FO_LINEAR;
+		samplerStateCreateInformation.MagFilter = FO_LINEAR;
+		samplerStateCreateInformation.MipFilter = FO_LINEAR;
 		break;
 	case RenderBeastFiltering::Anisotropic:
-		desc.MinFilter = FO_ANISOTROPIC;
-		desc.MagFilter = FO_ANISOTROPIC;
-		desc.MipFilter = FO_ANISOTROPIC;
+		samplerStateCreateInformation.MinFilter = FO_ANISOTROPIC;
+		samplerStateCreateInformation.MagFilter = FO_ANISOTROPIC;
+		samplerStateCreateInformation.MipFilter = FO_ANISOTROPIC;
 		break;
 	}
 
-	desc.MaxAniso = options->AnisotropyMax;
+	samplerStateCreateInformation.MaxAniso = options->AnisotropyMax;
 
-	return RenderStateManager::Instance().CreateSamplerState(desc);
+	return gpuDevice.FindOrCreateSamplerState(samplerStateCreateInformation);
 }
 }} // namespace bs::ct

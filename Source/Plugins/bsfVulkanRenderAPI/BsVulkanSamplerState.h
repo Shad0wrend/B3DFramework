@@ -38,11 +38,11 @@ namespace bs
 			VulkanSampler* GetVulkanResource() const { return mSampler; }
 
 		protected:
-			friend class VulkanRenderStateManager;
+			friend class VulkanGpuDevice;
 
-			VulkanSamplerState(VulkanGpuDevice& gpuDevice, const SamplerStateInformation& desc);
+			VulkanSamplerState(VulkanGpuDevice& gpuDevice, const SamplerStateCreateInformation& createInformation);
 
-			void CreateInternal() override;
+			void Initialize() override;
 
 			VulkanGpuDevice& mGpuDevice;
 			VulkanSampler* mSampler = nullptr;

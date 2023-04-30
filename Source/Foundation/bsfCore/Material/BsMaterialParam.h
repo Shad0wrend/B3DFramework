@@ -250,7 +250,6 @@ namespace bs
 	{
 		using MaterialPtrType = SPtr<CoreVariantType<Material, Core>>;
 		using MaterialParamsType = CoreVariantType<MaterialParams, Core>;
-		using SamplerStateType = SPtr<CoreVariantType<SamplerState, Core>>;
 
 	public:
 		TMaterialParameterSampler(const String& name, const MaterialPtrType& material);
@@ -258,10 +257,10 @@ namespace bs
 		TMaterialParameterSampler() {}
 
 		/** @copydoc GpuParamSampState::Set */
-		void Set(const SamplerStateType& sampState) const;
+		void Set(const SPtr<SamplerState>& sampState) const;
 
 		/** @copydoc GpuParamSampState::Get */
-		SamplerStateType Get() const;
+		SPtr<SamplerState> Get() const;
 
 		/** Checks if param is initialized. */
 		bool operator==(const std::nullptr_t& nullval) const

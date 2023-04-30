@@ -189,7 +189,7 @@ ShadowProjectStencilMat* ShadowProjectStencilMat::GetVariation(bool directional,
 
 void ShadowProjectMat::Initialize()
 {
-	mGBufferParams.Initialize(GPT_FRAGMENT_PROGRAM, mGPUParameters);
+	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gShadowTex", mShadowMapParam);
 	if(mGPUParameters->HasSamplerState(GPT_FRAGMENT_PROGRAM, "gShadowSampler"))
 		mGPUParameters->GetSamplerStateParameter(GPT_FRAGMENT_PROGRAM, "gShadowSampler", mShadowSamplerParam);
@@ -204,7 +204,7 @@ void ShadowProjectMat::Initialize()
 	desc.AddressMode.V = TAM_CLAMP;
 	desc.AddressMode.W = TAM_CLAMP;
 
-	mSamplerState = SamplerState::Create(desc);
+	mSamplerState = mGpuDevice->FindOrCreateSamplerState(desc);
 
 	mVertParams = gShadowProjectVertParamsDef.CreateBuffer();
 	if(mGPUParameters->HasUniformBuffer(GPT_VERTEX_PROGRAM, "VertParams"))
@@ -258,7 +258,7 @@ ShadowProjectOmniParamsDef gShadowProjectOmniParamsDef;
 
 void ShadowProjectOmniMat::Initialize()
 {
-	mGBufferParams.Initialize(GPT_FRAGMENT_PROGRAM, mGPUParameters);
+	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gShadowCubeTex", mShadowMapParam);
 
 	if(mGPUParameters->HasSamplerState(GPT_FRAGMENT_PROGRAM, "gShadowCubeSampler"))
@@ -275,7 +275,7 @@ void ShadowProjectOmniMat::Initialize()
 	desc.AddressMode.W = TAM_CLAMP;
 	desc.ComparisonFunc = CMPF_GREATER_EQUAL;
 
-	mSamplerState = SamplerState::Create(desc);
+	mSamplerState = mGpuDevice->FindOrCreateSamplerState(desc);
 
 	mVertParams = gShadowProjectVertParamsDef.CreateBuffer();
 	if(mGPUParameters->HasUniformBuffer(GPT_VERTEX_PROGRAM, "VertParams"))

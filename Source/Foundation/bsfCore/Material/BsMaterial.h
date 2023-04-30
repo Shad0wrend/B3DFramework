@@ -111,7 +111,6 @@ namespace bs
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 		using SpriteTextureType = CoreVariantHandleType<SpriteTexture, Core>;
 		using BufferType = SPtr<CoreVariantType<GpuBuffer, Core>>;
-		using SamplerStateType = SPtr<CoreVariantType<SamplerState, Core>>;
 		using PassType = CoreVariantType<Pass, Core>;
 		using TechniqueType = CoreVariantType<Technique, Core>;
 		using ShaderType = CoreVariantHandleType<Shader, Core>;
@@ -326,7 +325,7 @@ namespace bs
 		void SetBuffer(const String& name, const BufferType& value) { return GetParamBuffer(name).Set(value); }
 
 		/** Assigns a sampler state to the shader parameter with the specified name. */
-		void SetSamplerState(const String& name, const SamplerStateType& value) { return GetParamSamplerState(name).Set(value); }
+		void SetSamplerState(const String& name, const SPtr<SamplerState>& value) { return GetParamSamplerState(name).Set(value); }
 
 		/**
 		 * Returns a float value assigned with the parameter with the specified name. If a curve is assigned to this
@@ -441,7 +440,7 @@ namespace bs
 		SpriteTextureType GetSpriteTexture(const String& name) const { return GetParamSpriteTexture(name).Get(); }
 
 		/** Returns a sampler state assigned with the parameter with the specified name. */
-		SamplerStateType GetSamplerState(const String& name) const { return GetParamSamplerState(name).Get(); }
+		SPtr<SamplerState> GetSamplerState(const String& name) const { return GetParamSamplerState(name).Get(); }
 
 		/**
 		 * Returns a buffer representing a structure assigned to the parameter with the specified name.

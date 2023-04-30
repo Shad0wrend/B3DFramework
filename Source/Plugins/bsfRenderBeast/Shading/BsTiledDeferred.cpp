@@ -16,7 +16,7 @@ const u32 TiledDeferredLightingMat::kTileSize = 16;
 
 void TiledDeferredLightingMat::Initialize()
 {
-	mGBufferParams.Initialize(GPT_COMPUTE_PROGRAM, mGPUParameters);
+	mGBufferParams.Initialize(*mGpuDevice, GPT_COMPUTE_PROGRAM, mGPUParameters);
 	mSampleCount = mVariationParameters.GetUInt("MSAA_COUNT");
 
 	mGPUParameters->GetStorageBufferParameter(GPT_COMPUTE_PROGRAM, "gLights", mLightBufferParam);

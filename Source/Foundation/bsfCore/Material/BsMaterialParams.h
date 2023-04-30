@@ -474,7 +474,7 @@ namespace bs
 	class B3D_CORE_EXPORT MaterialParamSamplerStateDataCore
 	{
 	public:
-		SPtr<ct::SamplerState> Value;
+		SPtr<SamplerState> Value;
 	};
 
 	/** Data for a single sampler state parameter. */
@@ -517,7 +517,6 @@ namespace bs
 		using ShaderType = CoreVariantHandleType<Shader, Core>;
 		using SpriteTextureType = CoreVariantHandleType<SpriteTexture, Core>;
 		using BufferType = SPtr<CoreVariantType<GpuBuffer, Core>>;
-		using SamplerType = SPtr<CoreVariantType<SamplerState, Core>>;
 
 		using ParamStructDataType = typename TMaterialParamsTypes<Core>::StructParamDataType;
 		using ParamTextureDataType = typename TMaterialParamsTypes<Core>::TextureParamDataType;
@@ -645,7 +644,7 @@ namespace bs
 		 * @param[in]	name		Name of the shader parameter.
 		 * @param[out]	value		Output value of the parameter.
 		 */
-		void GetSamplerState(const String& name, SamplerType& value) const;
+		void GetSamplerState(const String& name, SPtr<SamplerState>& value) const;
 
 		/**
 		 * Sets the value of a shader sampler state parameter with the specified name. If the parameter name or type is not
@@ -654,7 +653,7 @@ namespace bs
 		 * @param[in]	name		Name of the shader parameter.
 		 * @param[in]	value		New value of the parameter.
 		 */
-		void SetSamplerState(const String& name, const SamplerType& value);
+		void SetSamplerState(const String& name, const SPtr<SamplerState>& value);
 
 		/**
 		 * Checks does the data parameter with the specified name currently contains animated data. This could be
@@ -763,14 +762,14 @@ namespace bs
 		 * directly, avoiding the name lookup. Caller must guarantee the parameter reference is valid and belongs to this
 		 * object.
 		 */
-		void GetSamplerState(const ParamData& param, SamplerType& value) const;
+		void GetSamplerState(const ParamData& param, SPtr<SamplerState>& value) const;
 
 		/**
 		 * Equivalent to setSamplerState(const String&, const SPtr<SamplerState>&) except it uses the internal parameter
 		 * reference directly, avoiding the name lookup. Caller must guarantee the parameter reference is valid and belongs
 		 * to this object.
 		 */
-		void SetSamplerState(const ParamData& param, const SamplerType& value);
+		void SetSamplerState(const ParamData& param, const SPtr<SamplerState>& value);
 
 		/**
 		 * Returns the default texture (one assigned when no other is provided), if available for the specified parameter.
@@ -784,7 +783,7 @@ namespace bs
 		 * parameter. Parameter is represented using the internal parameter reference and the caller must guarantee the
 		 * parameter reference is valid and belongs to this object.
 		 */
-		void GetDefaultSamplerState(const ParamData& param, SamplerType& value) const;
+		void GetDefaultSamplerState(const ParamData& param, SPtr<SamplerState>& value) const;
 
 	protected:
 		ParamStructDataType* mStructParams = nullptr;
@@ -792,7 +791,7 @@ namespace bs
 		ParamBufferDataType* mBufferParams = nullptr;
 		ParamSamplerStateDataType* mSamplerStateParams = nullptr;
 		TextureType* mDefaultTextureParams = nullptr;
-		SamplerType* mDefaultSamplerStateParams = nullptr;
+		SPtr<SamplerState>* mDefaultSamplerStateParams = nullptr;
 	};
 
 	/**

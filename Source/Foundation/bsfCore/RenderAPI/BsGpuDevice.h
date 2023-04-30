@@ -3,9 +3,11 @@
 #pragma once
 
 #include "BsCorePrerequisites.h"
+#include "BsSamplerState.h"
 
 namespace bs
 {
+	struct SamplerStateCreateInformation;
 	struct TextureCreateInformation;
 
 	namespace ct
@@ -165,6 +167,21 @@ namespace bs
 		 */
 		virtual SPtr<ct::GpuBuffer> CreateGpuBuffer(const GpuBufferCreateInformation& createInformation, bool deferredInitialize = false) = 0;
 
+		/**
+		 * Creates a new sampler state, or returns an existing one if one with the same create information was already created.
+		 *
+		 * @param	createInformation		Object describing the sampler state to create.
+		 */
+		virtual SPtr<SamplerState> FindOrCreateSamplerState(const SamplerStateCreateInformation& createInformation);
+
+		/**
+		 *  Creates a sampler state.
+		 *
+		 * @param	createInformation		Object describing the sampler state to create.
+		 * @param	deferredInitialize		If true, Initialize() will not be called on the returned object, and the caller is expected to call it himself, before first using the object.
+		 */
+		virtual SPtr<SamplerState> CreateSamplerState(const SamplerStateCreateInformation& createInformation, bool deferredInitialize = false) = 0;
+
 		/** Create a new event query. */
 		virtual SPtr<ct::EventQuery> CreateEventQuery() = 0;
 
@@ -221,6 +238,10 @@ namespace bs
 		 * @param	deferredInitialize		If true, Initialize() will not be called on the returned object, and the caller is expected to call it himself, before first using the object.
 		 */
 		virtual SPtr<GpuPipelineParameterLayout> CreateGpuPipelineParameterLayout(const GpuPipelineParameterLayoutCreateInformation& createInformation, bool deferredInitialize = false) = 0;
+
+	protected:
+		mutable UnorderedMap<SamplerStateCreateInformation, SPtr<SamplerState>> mCachedSamplerStates;
+		mutable Mutex mSamplerStateMutex;
 	};
 
 	/** @} */

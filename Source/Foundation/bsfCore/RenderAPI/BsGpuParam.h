@@ -282,17 +282,16 @@ namespace bs
 		friend class ct::GpuParameters;
 
 		using GpuParamsType = SPtr<CoreVariantType<GpuParameters, Core>>;
-		using SamplerStateType = SPtr<CoreVariantType<SamplerState, Core>>;
 
 	public:
 		TGpuParameterSampler();
 		TGpuParameterSampler(GpuObjectParameterInformation* paramDesc, const GpuParamsType& parent);
 
 		/** @copydoc TGpuDataParam::Set */
-		void Set(const SamplerStateType& samplerState, u32 arrayIndex = 0) const;
+		void Set(const SPtr<SamplerState>& samplerState, u32 arrayIndex = 0) const;
 
 		/** @copydoc TGpuDataParam::Get */
-		SamplerStateType Get(u32 arrayIndex = 0) const;
+		SPtr<SamplerState> Get(u32 arrayIndex = 0) const;
 
 		/** @copydoc TGpuDataParam::GetDesc */
 		const GpuObjectParameterInformation& GetDesc() const { return *mParamDesc; }

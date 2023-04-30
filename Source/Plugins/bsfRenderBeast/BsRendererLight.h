@@ -78,7 +78,7 @@ namespace bs
 		{
 		public:
 			/** Initializes the required parameters. To be called once before use. */
-			void Initialize(GpuProgramType type, const SPtr<GpuParameters>& gpuParams);
+			void Initialize(GpuDevice& gpuDevice, GpuProgramType type, const SPtr<GpuParameters>& gpuParams);
 
 			/** Binds the GBuffer textures to the pipeline. */
 			void Bind(const GBufferTextures& gbuffer);

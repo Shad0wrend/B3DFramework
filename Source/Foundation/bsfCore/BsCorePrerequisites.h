@@ -271,7 +271,6 @@ namespace bs
 	CORE_OBJECT_FORWARD_DECLARE(RenderTarget)
 	CORE_OBJECT_FORWARD_DECLARE(RenderTexture)
 	CORE_OBJECT_FORWARD_DECLARE(RenderWindow)
-	CORE_OBJECT_FORWARD_DECLARE(SamplerState)
 	CORE_OBJECT_FORWARD_DECLARE(Viewport)
 	CORE_OBJECT_FORWARD_DECLARE(GpuParameters)
 	CORE_OBJECT_FORWARD_DECLARE(GpuParamsSet)
@@ -295,6 +294,7 @@ namespace bs
 	CORE_OBJECT_FORWARD_DECLARE_STRUCT(ShaderCreateInformation)
 
 	class Collider;
+	class SamplerState;
 	class Rigidbody;
 	class BoxCollider;
 	class SphereCollider;

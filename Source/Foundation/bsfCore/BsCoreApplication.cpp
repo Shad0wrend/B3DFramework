@@ -33,7 +33,6 @@
 #include "Profiling/BsRenderStats.h"
 #include "Utility/BsMessageHandler.h"
 #include "Managers/BsResourceListenerManager.h"
-#include "Managers/BsRenderStateManager.h"
 #include "Material/BsShaderManager.h"
 #include "Physics/BsPhysicsManager.h"
 #include "Physics/BsPhysics.h"
@@ -102,7 +101,6 @@ CoreApplication::~CoreApplication()
 	// destroyed since they implement the IResourceListener interface
 	AudioManager::ShutDown();
 	ResourceListenerManager::ShutDown();
-	RenderStateManager::ShutDown();
 	ParticleManager::ShutDown();
 	AnimationManager::ShutDown();
 
@@ -172,7 +170,6 @@ void CoreApplication::OnStartUp()
 	GameObjectManager::StartUp();
 	Resources::StartUp();
 	ResourceListenerManager::StartUp();
-	RenderStateManager::StartUp();
 	RenderAPIManager::StartUp();
 
 	mPrimaryWindow = RenderAPIManager::Instance().Initialize(mStartUpDesc.RenderApi, mStartUpDesc.PrimaryWindowDesc);

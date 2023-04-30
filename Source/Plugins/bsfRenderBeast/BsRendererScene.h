@@ -75,7 +75,7 @@ namespace bs
 		class RendererScene
 		{
 		public:
-			RendererScene(const SPtr<RenderBeastOptions>& options);
+			RendererScene(GpuDevice& gpuDevice, const SPtr<RenderBeastOptions>& options);
 			~RendererScene();
 
 			/** Registers a new camera in the scene. */
@@ -234,6 +234,7 @@ namespace bs
 			/** Frees sampler state overrides previously allocated with allocSamplerStateOverrides(). */
 			void FreeSamplerStateOverrides(RenderElement& elem);
 
+			GpuDevice& mGpuDevice;
 			SceneInfo mInfo;
 			SPtr<GpuBuffer> mPerFrameParamBuffer;
 			UnorderedMap<SamplerOverrideKey, MaterialSamplerOverrides*> mSamplerOverrides;

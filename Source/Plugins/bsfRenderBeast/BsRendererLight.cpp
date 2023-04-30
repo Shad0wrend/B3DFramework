@@ -102,7 +102,7 @@ Vector3 RendererLight::GetShiftedLightPosition() const
 		return tfrm.GetPosition();
 }
 
-void GBufferParams::Initialize(GpuProgramType type, const SPtr<GpuParameters>& gpuParams)
+void GBufferParams::Initialize(GpuDevice& gpuDevice, GpuProgramType type, const SPtr<GpuParameters>& gpuParams)
 {
 	mParams = gpuParams;
 
@@ -128,7 +128,7 @@ void GBufferParams::Initialize(GpuProgramType type, const SPtr<GpuParameters>& g
 		desc.MagFilter = FO_POINT;
 		desc.MipFilter = FO_POINT;
 
-		SPtr<SamplerState> ss = SamplerState::Create(desc);
+		SPtr<SamplerState> ss = gpuDevice.FindOrCreateSamplerState(desc);
 		samplerStateParam.Set(ss);
 	}
 }

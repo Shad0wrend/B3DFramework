@@ -12,6 +12,7 @@
 #include "Material/BsPass.h"
 #include "RenderAPI/BsSamplerState.h"
 #include "Image/BsTexture.h"
+#include "RenderAPI/BsGpuDevice.h"
 #include "Resources/BsBuiltinResources.h"
 #include "ThirdParty/CityHash/city.h"
 
@@ -488,12 +489,18 @@ typename TShader<Core>::TextureType TShader<Core>::GetDefault3DTexture(u32 index
 }
 
 template <bool Core>
-SPtr<typename TShader<Core>::SamplerStateType> TShader<Core>::GetDefaultSampler(u32 index) const
+SPtr<SamplerState> TShader<Core>::GetDefaultSampler(u32 index) const
 {
-	if(index < (u32)mInformation.SamplerDefaultValues.size())
-		return SamplerStateType::Create(mInformation.SamplerDefaultValues[index]);
+	if (index < (u32)mInformation.SamplerDefaultValues.size())
+	{
+		const SPtr<GpuDevice> gpuDevice = GetCoreApplication().GetPrimaryGpuDevice();
+		if (!B3D_ENSURE(gpuDevice))
+			return nullptr;
 
-	return SPtr<SamplerStateType>();
+		return gpuDevice->CreateSamplerState(mInformation.SamplerDefaultValues[index]);
+	}
+
+	return SPtr<SamplerState>();
 }
 
 template <bool Core>

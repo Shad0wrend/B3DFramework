@@ -20,15 +20,15 @@ void TetrahedraRenderMat::Initialize()
 {
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gDepthBufferTex", mDepthBufferTex);
 
-	SamplerStateInformation pointSampDesc;
-	pointSampDesc.MinFilter = FO_POINT;
-	pointSampDesc.MagFilter = FO_POINT;
-	pointSampDesc.MipFilter = FO_POINT;
-	pointSampDesc.AddressMode.U = TAM_CLAMP;
-	pointSampDesc.AddressMode.V = TAM_CLAMP;
-	pointSampDesc.AddressMode.W = TAM_CLAMP;
+	SamplerStateInformation pointSamplerStateCreateInformation;
+	pointSamplerStateCreateInformation.MinFilter = FO_POINT;
+	pointSamplerStateCreateInformation.MagFilter = FO_POINT;
+	pointSamplerStateCreateInformation.MipFilter = FO_POINT;
+	pointSamplerStateCreateInformation.AddressMode.U = TAM_CLAMP;
+	pointSamplerStateCreateInformation.AddressMode.V = TAM_CLAMP;
+	pointSamplerStateCreateInformation.AddressMode.W = TAM_CLAMP;
 
-	SPtr<SamplerState> pointSampState = SamplerState::Create(pointSampDesc);
+	SPtr<SamplerState> pointSampState = mGpuDevice->FindOrCreateSamplerState(pointSamplerStateCreateInformation);
 
 	if(mGPUParameters->HasSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferSamp"))
 		mGPUParameters->SetSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferSamp", pointSampState);
@@ -85,7 +85,7 @@ IrradianceEvaluateParamDef gIrradianceEvaluateParamDef;
 
 void IrradianceEvaluateMat::Initialize()
 {
-	mGBufferParams.Initialize(GPT_FRAGMENT_PROGRAM, mGPUParameters);
+	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
 	mSkyOnly = mVariationParameters.GetBool("SKY_ONLY");
 
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gSkyIrradianceTex", mParamSkyIrradianceTex);

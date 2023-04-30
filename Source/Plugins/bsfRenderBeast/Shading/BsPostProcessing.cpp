@@ -307,12 +307,12 @@ void EyeAdaptationBasicSetupMat::Initialize()
 	mGPUParameters->SetUniformBuffer("EyeAdaptationParams", mParamBuffer);
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gInputTex", mInputTex);
 
-	SamplerStateInformation desc;
-	desc.MinFilter = FO_POINT;
-	desc.MagFilter = FO_POINT;
-	desc.MipFilter = FO_POINT;
+	SamplerStateCreateInformation samplerStateCreateInformation;
+	samplerStateCreateInformation.MinFilter = FO_POINT;
+	samplerStateCreateInformation.MagFilter = FO_POINT;
+	samplerStateCreateInformation.MipFilter = FO_POINT;
 
-	SPtr<SamplerState> samplerState = SamplerState::Create(desc);
+	SPtr<SamplerState> samplerState = mGpuDevice->FindOrCreateSamplerState(samplerStateCreateInformation);
 	SetSamplerState(mGPUParameters, GPT_FRAGMENT_PROGRAM, "gInputSamp", "gInputTex", samplerState);
 }
 
@@ -1011,15 +1011,15 @@ void GaussianDOFSeparateMat::Initialize()
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gColorTex", mColorTexture);
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gDepthTex", mDepthTexture);
 
-	SamplerStateInformation desc;
-	desc.MinFilter = FO_POINT;
-	desc.MagFilter = FO_POINT;
-	desc.MipFilter = FO_POINT;
-	desc.AddressMode.U = TAM_CLAMP;
-	desc.AddressMode.V = TAM_CLAMP;
-	desc.AddressMode.W = TAM_CLAMP;
+	SamplerStateCreateInformation samplerStateCreateInformation;
+	samplerStateCreateInformation.MinFilter = FO_POINT;
+	samplerStateCreateInformation.MagFilter = FO_POINT;
+	samplerStateCreateInformation.MipFilter = FO_POINT;
+	samplerStateCreateInformation.AddressMode.U = TAM_CLAMP;
+	samplerStateCreateInformation.AddressMode.V = TAM_CLAMP;
+	samplerStateCreateInformation.AddressMode.W = TAM_CLAMP;
 
-	SPtr<SamplerState> samplerState = SamplerState::Create(desc);
+	SPtr<SamplerState> samplerState = mGpuDevice->FindOrCreateSamplerState(samplerStateCreateInformation);
 	SetSamplerState(mGPUParameters, GPT_FRAGMENT_PROGRAM, "gColorSamp", "gColorTex", samplerState);
 }
 
@@ -1480,7 +1480,7 @@ void MotionBlurMat::Initialize()
 	pointSampDesc.AddressMode.V = TAM_CLAMP;
 	pointSampDesc.AddressMode.W = TAM_CLAMP;
 
-	SPtr<SamplerState> pointSampState = SamplerState::Create(pointSampDesc);
+	SPtr<SamplerState> pointSampState = mGpuDevice->FindOrCreateSamplerState(pointSampDesc);
 
 	if(mGPUParameters->HasSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferSamp"))
 		mGPUParameters->SetSamplerState(GPT_FRAGMENT_PROGRAM, "gDepthBufferSamp", pointSampState);
@@ -1534,7 +1534,7 @@ void BuildHiZMat::Initialize()
 		inputSampDesc.MagFilter = FO_POINT;
 		inputSampDesc.MipFilter = FO_POINT;
 
-		SPtr<SamplerState> inputSampState = SamplerState::Create(inputSampDesc);
+		SPtr<SamplerState> inputSampState = mGpuDevice->FindOrCreateSamplerState(inputSampDesc);
 		SetSamplerState(mGPUParameters, GPT_FRAGMENT_PROGRAM, "gDepthSamp", "gDepthTex", inputSampState);
 	}
 }
@@ -1637,7 +1637,7 @@ void SSAOMat::Initialize()
 	inputSampDesc.AddressMode.V = TAM_CLAMP;
 	inputSampDesc.AddressMode.W = TAM_CLAMP;
 
-	SPtr<SamplerState> inputSampState = SamplerState::Create(inputSampDesc);
+	SPtr<SamplerState> inputSampState = mGpuDevice->FindOrCreateSamplerState(inputSampDesc);
 	if(mGPUParameters->HasSamplerState(GPT_FRAGMENT_PROGRAM, "gInputSamp"))
 		mGPUParameters->SetSamplerState(GPT_FRAGMENT_PROGRAM, "gInputSamp", inputSampState);
 	else
@@ -1663,7 +1663,7 @@ void SSAOMat::Initialize()
 	randomSampDesc.AddressMode.V = TAM_WRAP;
 	randomSampDesc.AddressMode.W = TAM_WRAP;
 
-	SPtr<SamplerState> randomSampState = SamplerState::Create(randomSampDesc);
+	SPtr<SamplerState> randomSampState = mGpuDevice->FindOrCreateSamplerState(randomSampDesc);
 	SetSamplerState(mGPUParameters, GPT_FRAGMENT_PROGRAM, "gRandomSamp", "gRandomTex", randomSampState);
 }
 
@@ -1809,7 +1809,7 @@ void SSAODownsampleMat::Initialize()
 	inputSampDesc.AddressMode.V = TAM_CLAMP;
 	inputSampDesc.AddressMode.W = TAM_CLAMP;
 
-	SPtr<SamplerState> inputSampState = SamplerState::Create(inputSampDesc);
+	SPtr<SamplerState> inputSampState = mGpuDevice->FindOrCreateSamplerState(inputSampDesc);
 
 	if(mGPUParameters->HasSamplerState(GPT_FRAGMENT_PROGRAM, "gInputSamp"))
 		mGPUParameters->SetSamplerState(GPT_FRAGMENT_PROGRAM, "gInputSamp", inputSampState);
@@ -1866,7 +1866,7 @@ void SSAOBlurMat::Initialize()
 	inputSampDesc.AddressMode.V = TAM_CLAMP;
 	inputSampDesc.AddressMode.W = TAM_CLAMP;
 
-	SPtr<SamplerState> inputSampState = SamplerState::Create(inputSampDesc);
+	SPtr<SamplerState> inputSampState = mGpuDevice->FindOrCreateSamplerState(inputSampDesc);
 	if(mGPUParameters->HasSamplerState(GPT_FRAGMENT_PROGRAM, "gInputSamp"))
 		mGPUParameters->SetSamplerState(GPT_FRAGMENT_PROGRAM, "gInputSamp", inputSampState);
 	else
@@ -1923,7 +1923,7 @@ SSRStencilParamDef gSSRStencilParamDef;
 
 void SSRStencilMat::Initialize()
 {
-	mGBufferParams.Initialize(GPT_FRAGMENT_PROGRAM, mGPUParameters);
+	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
 	mParamBuffer = gSSRStencilParamDef.CreateBuffer();
 	mGPUParameters->SetUniformBuffer("Input", mParamBuffer);
 }
@@ -1967,7 +1967,7 @@ SSRTraceParamDef gSSRTraceParamDef;
 
 void SSRTraceMat::Initialize()
 {
-	mGBufferParams.Initialize(GPT_FRAGMENT_PROGRAM, mGPUParameters);
+	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
 	mParamBuffer = gSSRTraceParamDef.CreateBuffer();
 
 	mGPUParameters->GetSampledTextureParameter(GPT_FRAGMENT_PROGRAM, "gSceneColor", mSceneColorTexture);
@@ -1984,7 +1984,7 @@ void SSRTraceMat::Initialize()
 	desc.AddressMode.V = TAM_CLAMP;
 	desc.AddressMode.W = TAM_CLAMP;
 
-	SPtr<SamplerState> hiZSamplerState = SamplerState::Create(desc);
+	SPtr<SamplerState> hiZSamplerState = mGpuDevice->FindOrCreateSamplerState(desc);
 	if(mGPUParameters->HasSamplerState(GPT_FRAGMENT_PROGRAM, "gHiZSamp"))
 		mGPUParameters->SetSamplerState(GPT_FRAGMENT_PROGRAM, "gHiZSamp", hiZSamplerState);
 	else if(mGPUParameters->HasSamplerState(GPT_FRAGMENT_PROGRAM, "gHiZ"))
@@ -2123,7 +2123,7 @@ void TemporalFilteringMat::Initialize()
 	pointSampDesc.AddressMode.V = TAM_CLAMP;
 	pointSampDesc.AddressMode.W = TAM_CLAMP;
 
-	SPtr<SamplerState> pointSampState = SamplerState::Create(pointSampDesc);
+	SPtr<SamplerState> pointSampState = mGpuDevice->FindOrCreateSamplerState(pointSampDesc);
 
 	if(mGPUParameters->HasSamplerState(GPT_FRAGMENT_PROGRAM, "gPointSampler"))
 		mGPUParameters->SetSamplerState(GPT_FRAGMENT_PROGRAM, "gPointSampler", pointSampState);
@@ -2138,7 +2138,7 @@ void TemporalFilteringMat::Initialize()
 	linearSampDesc.AddressMode.V = TAM_CLAMP;
 	linearSampDesc.AddressMode.W = TAM_CLAMP;
 
-	SPtr<SamplerState> linearSampState = SamplerState::Create(linearSampDesc);
+	SPtr<SamplerState> linearSampState = mGpuDevice->FindOrCreateSamplerState(linearSampDesc);
 	if(mGPUParameters->HasSamplerState(GPT_FRAGMENT_PROGRAM, "gLinearSampler"))
 		mGPUParameters->SetSamplerState(GPT_FRAGMENT_PROGRAM, "gLinearSampler", linearSampState);
 	else
@@ -2330,7 +2330,7 @@ void EncodeDepthMat::Initialize()
 	sampDesc.AddressMode.V = TAM_CLAMP;
 	sampDesc.AddressMode.W = TAM_CLAMP;
 
-	SPtr<SamplerState> samplerState = SamplerState::Create(sampDesc);
+	SPtr<SamplerState> samplerState = mGpuDevice->FindOrCreateSamplerState(sampDesc);
 	SetSamplerState(mGPUParameters, GPT_FRAGMENT_PROGRAM, "gInputSamp", "gInputTex", samplerState);
 }
 
@@ -2351,7 +2351,7 @@ void EncodeDepthMat::Execute(GpuCommandBuffer& commandBuffer, const SPtr<Texture
 
 void MSAACoverageMat::Initialize()
 {
-	mGBufferParams.Initialize(GPT_FRAGMENT_PROGRAM, mGPUParameters);
+	mGBufferParams.Initialize(*mGpuDevice, GPT_FRAGMENT_PROGRAM, mGPUParameters);
 }
 
 void MSAACoverageMat::Execute(GpuCommandBuffer& commandBuffer, const RendererView& view, GBufferTextures gbuffer)

@@ -26,7 +26,6 @@ namespace bs
 		using ParamBlockType = CoreVariantType<GpuBuffer, Core>;
 		using TextureType = CoreVariantHandleType<Texture, Core>;
 		using BufferType = SPtr<CoreVariantType<GpuBuffer, Core>>;
-		using SamplerStateType = SPtr<CoreVariantType<SamplerState, Core>>;
 
 		/** Binding location for a single GPU param block buffer. */
 		struct BlockBinding

@@ -28,6 +28,7 @@ static_assert(false, "Other platform includes go here.");
 #include "BsVulkanGpuPipelineParameterLayout.h"
 #include "BsVulkanGpuProgram.h"
 #include "BsVulkanOcclusionQuery.h"
+#include "BsVulkanSamplerState.h"
 #include "BsVulkanTexture.h"
 #include "BsVulkanTimerQuery.h"
 #include "ThirdParty/vk_mem_alloc.h"
@@ -488,6 +489,16 @@ SPtr<ct::GpuBuffer> VulkanGpuDevice::CreateGpuBuffer(const GpuBufferCreateInform
 {
 	SPtr<GpuBuffer> output = B3DMakeSharedFromExisting(new(B3DAllocate<VulkanGpuBuffer>()) VulkanGpuBuffer(*this, createInformation));
 	output->SetShared(output);
+
+	if(!deferredInitialize)
+		output->Initialize();
+
+	return output;
+}
+
+SPtr<SamplerState> VulkanGpuDevice::CreateSamplerState(const SamplerStateCreateInformation& createInformation, bool deferredInitialize)
+{
+	SPtr<SamplerState> output = B3DMakeSharedFromExisting(new (B3DAllocate<VulkanSamplerState>()) VulkanSamplerState(*this, createInformation));
 
 	if(!deferredInitialize)
 		output->Initialize();

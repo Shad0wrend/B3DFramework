@@ -159,7 +159,7 @@ TGpuParams<Core>::TGpuParams(const SPtr<GpuPipelineParameterLayout>& parameterLa
 	const u32 uniformBufferEntrySize = Math::RoundToMultiple((u32)sizeof(UniformBufferData), 16u);
 	const u32 textureEntrySize = Math::RoundToMultiple((u32)sizeof(TextureData), 16u);
 	const u32 storageBufferEntrySize = Math::RoundToMultiple((u32)sizeof(StorageBufferData), 16u);
-	const u32 samplerStateEntrySize = Math::RoundToMultiple((u32)sizeof(SamplerType), 16u);
+	const u32 samplerStateEntrySize = Math::RoundToMultiple((u32)sizeof(SPtr<SamplerState>), 16u);
 
 	const u32 uniformBufferBufferSize = uniformBufferEntrySize * uniformBufferCount;
 	const u32 sampledTexturesBufferSize = textureEntrySize * sampledTextureCount;
@@ -196,9 +196,9 @@ TGpuParams<Core>::TGpuParams(const SPtr<GpuPipelineParameterLayout>& parameterLa
 		new(&mStorageBufferData[i]) StorageBufferData();
 
 	data += storageBufferBufferSize;
-	mSamplerStates = (SamplerType*)data;
+	mSamplerStates = (SPtr<SamplerState>*)data;
 	for(u32 i = 0; i < samplerCount; i++)
-		new(&mSamplerStates[i]) SamplerType();
+		new(&mSamplerStates[i]) SPtr<SamplerState>();
 
 	data += samplerStatesBufferSize;
 }
@@ -231,7 +231,7 @@ TGpuParams<Core>::~TGpuParams()
 		mStorageBufferData[i].~StorageBufferData();
 
 	for(u32 i = 0; i < samplerCount; i++)
-		mSamplerStates[i].~SamplerType();
+		mSamplerStates[i].~SPtr<SamplerState>();
 
 	// Everything is allocated in a single block, so it's enough to free the first element
 	B3DFree(mUniformBufferData);
@@ -533,7 +533,7 @@ typename TGpuParams<Core>::BufferType TGpuParams<Core>::GetStorageBuffer(u32 set
 }
 
 template <bool Core>
-typename TGpuParams<Core>::SamplerType TGpuParams<Core>::GetSamplerState(u32 set, u32 slot, u32 arrayIndex) const
+SPtr<SamplerState> TGpuParams<Core>::GetSamplerState(u32 set, u32 slot, u32 arrayIndex) const
 {
 	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(GpuPipelineParameterLayout::GpuParameterType::Sampler, set, slot, arrayIndex);
 	if(sequentialArrayIndex == ~0u)
@@ -624,7 +624,7 @@ bool TGpuParams<Core>::SetStorageBuffer(u32 set, u32 slot, const BufferType& buf
 }
 
 template <bool Core>
-bool TGpuParams<Core>::SetSamplerState(u32 set, u32 slot, const SamplerType& sampler, u32 arrayIndex)
+bool TGpuParams<Core>::SetSamplerState(u32 set, u32 slot, const SPtr<SamplerState>& sampler, u32 arrayIndex)
 {
 	const u32 sequentialArrayIndex = mParameterLayout->GetSequentialResourceIndex(GpuPipelineParameterLayout::GpuParameterType::Sampler, set, slot, arrayIndex);
 	if (sequentialArrayIndex == ~0u)
@@ -756,7 +756,7 @@ CoreSyncData GpuParameters::SyncToCore(FrameAlloc* allocator)
 	const u32 storageBufferArraySize = storageBufferCount * sizeof(SPtr<ct::GpuBuffer>);
 	const u32 storageBufferOffsetArraySize = storageBufferCount * sizeof(u32);
 	const u32 storageBufferFormatArraySize = storageBufferCount * sizeof(GpuBufferFormat);
-	const u32 samplerArraySize = samplerCount * sizeof(SPtr<ct::SamplerState>);
+	const u32 samplerArraySize = samplerCount * sizeof(SPtr<SamplerState>);
 
 	const u32 totalSize = sampledTextureSurfacesArraySize + storageTextureSurfacesArraySize + uniformBufferArraySize + uniformBufferOffsetsArraySize + sampledTextureArraySize + storageTextureArraySize + storageBufferArraySize + storageBufferOffsetArraySize + storageBufferFormatArraySize + samplerArraySize;
 
@@ -782,7 +782,7 @@ CoreSyncData GpuParameters::SyncToCore(FrameAlloc* allocator)
 	SPtr<ct::GpuBuffer>* storageBuffers = (SPtr<ct::GpuBuffer>*)(data + storageBufferArrayOffset);
 	u32* storageBufferOffsets = (u32*)(data + storageBufferOffsetArrayOffset);
 	GpuBufferFormat* storageBufferFormats = (GpuBufferFormat*)(data + storageBufferFormatArrayOffset);
-	SPtr<ct::SamplerState>* samplers = (SPtr<ct::SamplerState>*)(data + samplerArrayOffset);
+	SPtr<SamplerState>* samplers = (SPtr<SamplerState>*)(data + samplerArrayOffset);
 
 	// Construct & copy
 	for(u32 i = 0; i < uniformBufferCount; i++)
@@ -838,12 +838,8 @@ CoreSyncData GpuParameters::SyncToCore(FrameAlloc* allocator)
 
 	for(u32 i = 0; i < samplerCount; i++)
 	{
-		new(&samplers[i]) SPtr<ct::SamplerState>();
-
-		if(mSamplerStates[i] != nullptr)
-			samplers[i] = mSamplerStates[i]->GetCore();
-		else
-			samplers[i] = nullptr;
+		new(&samplers[i]) SPtr<SamplerState>();
+		samplers[i] = mSamplerStates[i];
 	}
 
 	return CoreSyncData(data, totalSize);
