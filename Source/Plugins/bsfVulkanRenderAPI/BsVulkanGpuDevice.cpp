@@ -228,6 +228,7 @@ VulkanGpuDevice::VulkanGpuDevice(VkPhysicalDevice device)
 
 VulkanGpuDevice::~VulkanGpuDevice()
 {
+	mCachedSamplerStates.clear();
 	mBuiltinResources.Cleanup();
 
 	B3DDelete(mDescriptorManager);
