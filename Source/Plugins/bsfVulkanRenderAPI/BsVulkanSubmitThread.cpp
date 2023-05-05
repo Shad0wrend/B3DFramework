@@ -140,25 +140,19 @@ void VulkanSubmitThread::QueueRefreshCommandBufferCompletionStates(const VulkanG
 
 void VulkanSubmitThread::WaitUntilIdle(bool performCleanupForShutdown)
 {
-	auto fnCommand = [performCleanupForShutdown]()
+	auto fnCommand = [this, performCleanupForShutdown]()
 	{
-		const u32 deviceCount = GetVulkanGpuBackend().GetDeviceCount();
-		for(u32 deviceIndex = 0; deviceIndex < deviceCount; deviceIndex++)
+		TaskScheduler::Instance().AddWorker();
+
+		const VkResult result = vkDeviceWaitIdle(mGpuDevice.GetLogical());
+		B3D_ASSERT(result == VK_SUCCESS);
+
+		TaskScheduler::Instance().RemoveWorker();
+
+		mGpuDevice.DoForEachQueue([performCleanupForShutdown](VulkanGpuQueue& queue)
 		{
-			const SPtr<VulkanGpuDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIndex);
-
-			TaskScheduler::Instance().AddWorker();
-
-			const VkResult result = vkDeviceWaitIdle(device->GetLogical());
-			B3D_ASSERT(result == VK_SUCCESS);
-
-			TaskScheduler::Instance().RemoveWorker();
-
-			device->DoForEachQueue([performCleanupForShutdown](VulkanGpuQueue& queue)
-			{
-				queue.RefreshCompletionStateOnSubmitThread(true, performCleanupForShutdown);
-			});
-		}
+			queue.RefreshCompletionStateOnSubmitThread(true, performCleanupForShutdown);
+		});
 	};
 
 	if(kEnableSubmitThread)
@@ -195,13 +189,7 @@ void VulkanSubmitThread::WaitUntilIdle(VulkanGpuQueue& queue)
 
 void VulkanSubmitThread::RefreshCommandBufferCompletionStates() const
 {
-	const u32 deviceCount = GetVulkanGpuBackend().GetDeviceCount();
-	for(u32 deviceIndex = 0; deviceIndex < deviceCount; deviceIndex++)
-	{
-		const SPtr<VulkanGpuDevice>& device = GetVulkanGpuBackend().GetVulkanDevice(deviceIndex);
-
-		device->DoForEachQueue([](VulkanGpuQueue& queue) { queue.RefreshCompletionStateOnRenderThread(); });
-	}
+	mGpuDevice.DoForEachQueue([](VulkanGpuQueue& queue) { queue.RefreshCompletionStateOnRenderThread(); });
 
 	Lock lock(mImageAcquireMutex);
 	for(VulkanSwapChain* swapChain : mSwapChainsWithAcquiredImages)

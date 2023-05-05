@@ -69,7 +69,44 @@ VulkanGpuCommandBufferPool::VulkanGpuCommandBufferPool(VulkanGpuDevice& device, 
 
 VulkanGpuCommandBufferPool::~VulkanGpuCommandBufferPool()
 {
+	EnsureValidThread();
+
+	bool areAnyCommandBuffersStillExecuting = false;
+	for(const auto& commandBufferPair : mCommandBuffers)
+	{
+		if(commandBufferPair.second->GetState() != CommandBufferState::Ready)
+		{
+			areAnyCommandBuffersStillExecuting = true;
+			break;
+		}
+	}
+
+	if(areAnyCommandBuffersStillExecuting)
+	{
+		GetVulkanSubmitThread().WaitUntilIdle();
+		GetVulkanSubmitThread().RefreshCommandBufferCompletionStates();
+	}
+
+	mCommandBuffers.clear();
 	vkDestroyCommandPool(static_cast<VulkanGpuDevice&>(mGpuDevice).GetLogical(), mVulkanPool, gVulkanAllocator);
+}
+
+SPtr<GpuCommandBuffer> VulkanGpuCommandBufferPool::FindOrCreate(const GpuCommandBufferCreateInformation& createInformation)
+{
+	EnsureValidThread();
+
+	for(const auto& commandBufferPair : mCommandBuffers)
+	{
+		if (commandBufferPair.second->GetState() != CommandBufferState::Ready)
+			continue;
+
+		commandBufferPair.second->SetName(createInformation.Name);
+		commandBufferPair.second->Begin();
+
+		return commandBufferPair.second;
+	}
+
+	return Create(createInformation);
 }
 
 SPtr<GpuCommandBuffer> VulkanGpuCommandBufferPool::Create(const GpuCommandBufferCreateInformation& createInformation)
@@ -87,7 +124,6 @@ SPtr<GpuCommandBuffer> VulkanGpuCommandBufferPool::Create(const GpuCommandBuffer
 	VkResult result = vkAllocateCommandBuffers(static_cast<VulkanGpuDevice&>(mGpuDevice).GetLogical(), &cmdBufferAllocInfo, &commandBufferHandle);
 	B3D_ASSERT(result == VK_SUCCESS);
 
-	// TODO - Pool and re-use the command buffers
 	SPtr<VulkanGpuCommandBuffer> commandBuffer = B3DMakeSharedFromExisting(new(B3DAllocate<VulkanGpuCommandBuffer>()) VulkanGpuCommandBuffer(static_cast<VulkanGpuDevice&>(mGpuDevice), mNextCommandBufferId++, commandBufferHandle, mInformation.Thread, mInformation.Usage, createInformation),
 		[this](VulkanGpuCommandBuffer* commandBuffer)
 		{
@@ -97,6 +133,8 @@ SPtr<GpuCommandBuffer> VulkanGpuCommandBufferPool::Create(const GpuCommandBuffer
 			B3DDelete(commandBuffer);
 			
 		});
+
+	mCommandBuffers[commandBuffer->GetId()] = commandBuffer;
 
 	commandBuffer->SetShared(commandBuffer);
 	commandBuffer->Begin();
@@ -3020,7 +3058,7 @@ CommandBufferState VulkanGpuCommandBuffer::GetState() const
 	{
 	default:
 	case State::Ready:
-		return CommandBufferState::Empty;
+		return CommandBufferState::Ready;
 	case State::Recording:
 	case State::RecordingRenderPass:
 	case State::RecordingDone:

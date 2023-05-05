@@ -48,12 +48,15 @@ namespace bs
 			~VulkanGpuCommandBufferPool() override;
 
 			SPtr<GpuCommandBuffer> Create(const GpuCommandBufferCreateInformation& createInformation) override;
+			SPtr<GpuCommandBuffer> FindOrCreate(const GpuCommandBufferCreateInformation& createInformation) override;
 			void Reset() override;
 
 		private:
 			VkCommandPool mVulkanPool = VK_NULL_HANDLE;
 			u32 mQueueFamily = ~0u;
 			u32 mNextCommandBufferId = 1;
+
+			UnorderedMap<u32, SPtr<VulkanGpuCommandBuffer>> mCommandBuffers;
 		};
 
 		/** Determines where are the current descriptor sets bound to. */

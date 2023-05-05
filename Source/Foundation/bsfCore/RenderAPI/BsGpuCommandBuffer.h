@@ -31,7 +31,7 @@ namespace bs
 		enum class CommandBufferState
 		{
 			/** Command buffer doesn't have any commands recorded, nor has it been queued for execution. */
-			Empty,
+			Ready,
 
 			/** Command buffer has one or multiple commands recorded, but they haven't been queued for execution. */
 			Recording,
@@ -109,6 +109,9 @@ namespace bs
 
 			/** Creates a new command buffer. */
 			virtual SPtr<GpuCommandBuffer> Create(const GpuCommandBufferCreateInformation& createInformation) = 0;
+
+			/** Attempts to find a free command buffer from the pool, or creates a new one if it cannot be found. */
+			virtual SPtr<GpuCommandBuffer> FindOrCreate(const GpuCommandBufferCreateInformation& createInformation) = 0;
 
 			/** Resets the command buffer pool, allowing all previously allocated command buffers to be re-used. Must be called only after all previously allocated command buffers have completed executing. */
 			virtual void Reset() = 0;
