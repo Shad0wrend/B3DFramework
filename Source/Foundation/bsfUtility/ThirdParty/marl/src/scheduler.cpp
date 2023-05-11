@@ -18,23 +18,13 @@
 
 #include "ThirdParty/marl/include/marl/debug.h"
 #include "ThirdParty/marl/include/marl/thread.h"
-#include "ThirdParty/marl/include/marl/trace.h"
 
 #if defined(_WIN32)
 #include <intrin.h>  // __nop()
 #endif
 
-// Enable to trace scheduler events.
-#define ENABLE_TRACE_EVENTS 0
-
 // Enable to print verbose debug logging.
 #define ENABLE_DEBUG_LOGGING 0
-
-#if ENABLE_TRACE_EVENTS
-#define TRACE(...) MARL_SCOPED_EVENT(__VA_ARGS__)
-#else
-#define TRACE(...)
-#endif
 
 #if ENABLE_DEBUG_LOGGING
 #define DBG_LOG(msg, ...) \
@@ -567,7 +557,6 @@ bool Scheduler::Worker::steal(Task& out) {
 
 void Scheduler::Worker::run() {
   if (mode == Mode::MultiThreaded) {
-    MARL_NAME_THREAD("Thread<%.2d> Fiber<%.2d>", int(id), Fiber::current()->id);
     // This is the entry point for a multi-threaded worker.
     // Start with a regular condition-variable wait for work. This avoids
     // starting the thread with a spinForWork().
@@ -636,7 +625,6 @@ void Scheduler::Worker::setFiberState(Fiber* fiber, Fiber::State to) const {
 }
 
 void Scheduler::Worker::spinForWork() {
-  TRACE("SPIN");
   Task stolen;
 
   constexpr auto duration = std::chrono::milliseconds(1);

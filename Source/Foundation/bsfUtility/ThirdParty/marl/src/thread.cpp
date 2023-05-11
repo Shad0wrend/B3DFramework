@@ -16,7 +16,6 @@
 
 #include "ThirdParty/marl/include/marl/debug.h"
 #include "ThirdParty/marl/include/marl/defer.h"
-#include "ThirdParty/marl/include/marl/trace.h"
 
 #include <algorithm>  // std::sort
 
@@ -364,7 +363,6 @@ void Thread::setName(const char* fmt, ...) {
   wchar_t wname[1024];
   mbstowcs(wname, name, 1024);
   setThreadDescription(GetCurrentThread(), wname);
-  MARL_NAME_THREAD("%s", name);
 }
 
 unsigned int Thread::numLogicalCPUs() {
@@ -447,8 +445,6 @@ void Thread::setName(const char* fmt, ...) {
 #elif !defined(__Fuchsia__) && !defined(__EMSCRIPTEN__)
   pthread_setname_np(pthread_self(), name);
 #endif
-
-  MARL_NAME_THREAD("%s", name);
 }
 
 unsigned int Thread::numLogicalCPUs() {
