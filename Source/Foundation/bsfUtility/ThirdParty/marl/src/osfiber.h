@@ -12,19 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "ThirdParty/marl/include/marl/sanitizers.h"
-
 #ifndef MARL_USE_FIBER_STACK_GUARDS
-#if !defined(NDEBUG) && !ADDRESS_SANITIZER_ENABLED
+#if !defined(NDEBUG)
 #define MARL_USE_FIBER_STACK_GUARDS 1
 #else
 #define MARL_USE_FIBER_STACK_GUARDS 0
 #endif
 #endif  // MARL_USE_FIBER_STACK_GUARDS
-
-#if MARL_USE_FIBER_STACK_GUARDS && ADDRESS_SANITIZER_ENABLED
-#warning "ASAN can raise spurious failures when using mmap() allocated stacks"
-#endif
 
 #if defined(_WIN32)
 #include "osfiber_windows.h"

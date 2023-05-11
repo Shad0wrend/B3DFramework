@@ -21,7 +21,6 @@
 #include "export.h"
 #include "memory.h"
 #include "mutex.h"
-#include "sanitizers.h"
 #include "task.h"
 #include "thread.h"
 #include "thread_local.h"
