@@ -133,6 +133,8 @@
  */
 
 #define B3D_PROFILING_ENABLED 1
+#define B3D_CONCAT_(a, b) a##b
+#define B3D_CONCAT(a, b) B3D_CONCAT_(a, b)
 
 // Config from the build system
 #include "BsFrameworkConfig.h"

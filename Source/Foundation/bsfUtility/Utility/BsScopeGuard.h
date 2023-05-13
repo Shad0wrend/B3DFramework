@@ -26,5 +26,9 @@ namespace bs
 		Function<void()> Callback;
 	};
 
+
+	/** Ensures a piece of code executes when the current scope ends. */
+#define B3D_SCOPE_CLEANUP(x) auto B3D_CONCAT(scopeGuard_, __LINE__) = ScopeGuard([&] { x; })
+
 	/** @} */
 } // namespace bs

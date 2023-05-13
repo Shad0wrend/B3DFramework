@@ -204,7 +204,7 @@ std::shared_ptr<Thread::Affinity::Policy> Thread::Affinity::Policy::anyOf(Affini
       }
       return out;
 #else
-      return Affinity(affinity, allocator);
+      return Affinity(affinity);
 #endif
     }
   };
