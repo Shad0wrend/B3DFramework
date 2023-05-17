@@ -133,6 +133,7 @@ namespace bs
 	/** Wrapper for an OS thread. */
 	class B3D_UTILITY_EXPORT B3DThread final : INonCopyable
 	{
+	public:
 		B3DThread() = default;
 		B3DThread(const ThreadCoreMask& affinity, Function<void()>&& workerFunction);
 		B3DThread(B3DThread&&);
