@@ -9,65 +9,59 @@ using namespace std::placeholders;
 
 using namespace bs;
 
-CoreThread::QueueData CoreThread::mPerThreadQueue;
-B3D_THREADLOCAL CoreThread::ThreadQueueContainer* CoreThread::QueueData::current = nullptr;
-
 #if BS_CORE_THREAD_IS_MAIN
 bool CoreThread::sAppStarted = false;
 Mutex CoreThread::sAppStartedMutex;
 Signal CoreThread::sAppStartedCondition;
 #endif
 
+CoreThread::CoreThread()
+	:mScheduler(SchedulerCreateInformation())
+{
+	
+}
+
 void CoreThread::OnStartUp()
 {
-	mSimThreadId = B3D_CURRENT_THREAD_ID;
-	mCoreThreadId = mSimThreadId; // For now
-	mCommandQueue = B3DNew<CommandQueue<CommandQueueSync>>(B3D_CURRENT_THREAD_ID);
+	mCoreThreadId = B3D_CURRENT_THREAD_ID;
 
-	InitCoreThread();
-}
-
-CoreThread::~CoreThread()
-{
-	// TODO - What if something gets queued between the queued call to destroy_internal and this!?
-	ShutdownCoreThread();
-
+#if !BS_CORE_THREAD_IS_MAIN
+	auto fnRunThread = [this]()
 	{
-		Lock lock(mSubmitMutex);
+		{
+			Lock lock(mThreadStartedMutex);
 
-		for(auto& queue : mAllQueues)
-			B3DDelete(queue);
+			mCoreThreadStarted = true;
+			mCoreThreadId = B3D_CURRENT_THREAD_ID;
+		}
 
-		mAllQueues.clear();
-	}
+		mCoreThreadStartedCondition.notify_one();
 
-	if(mCommandQueue != nullptr)
-	{
-		B3DDelete(mCommandQueue);
-		mCommandQueue = nullptr;
-	}
-}
+		mScheduler.BindToCurrentThread();
+		mCommandQueue.RunUntilShutdown();
+		mScheduler.UnbindFromCurrentThread();
+	};
 
-void CoreThread::InitCoreThread()
-{
-#if !BS_FORCE_SINGLETHREADED_RENDERING
-#	if !BS_CORE_THREAD_IS_MAIN
-	mCoreThread = ThreadPool::Instance().Run("Core", std::bind(&::bs::CoreThread::RunCoreThread, this));
-#	else
-	{
-		Lock lock(sAppStartedMutex);
-		sAppStarted = true;
-	}
-
-	sAppStartedCondition.notify_one();
-#	endif
+	mCoreThread = ThreadPool::Instance().Run("Core", fnRunThread);
 
 	// Need to wait to unsure thread ID is correctly set before continuing
 	Lock lock(mThreadStartedMutex);
 
 	while(!mCoreThreadStarted)
 		mCoreThreadStartedCondition.wait(lock);
+#else
+	{
+		Lock lock(sAppStartedMutex);
+		sAppStarted = true;
+	}
+
+	sAppStartedCondition.notify_one();
 #endif
+}
+
+CoreThread::~CoreThread()
+{
+	mCommandQueue.PostRequestShutdownCommand(true);
 }
 
 #if BS_CORE_THREAD_IS_MAIN
@@ -81,271 +75,15 @@ void CoreThread::RunInternal()
 			sAppStartedCondition.wait(lock);
 	}
 
-	ThreadDefaultPolicy::onThreadStarted("Core");
-	instance().runCoreThread();
-	ThreadDefaultPolicy::onThreadEnded("Core");
+	mScheduler.BindToCurrentThread();
+	mCommandQueue.RunUntilShutdown();
+	mScheduler.UnbindFromCurrentThread();
 }
 #endif
 
-void CoreThread::RunCoreThread()
+void CoreThread::PostCommand(std::function<void()>&& commandCallback, bool waitUntilComplete)
 {
-#if !BS_FORCE_SINGLETHREADED_RENDERING
-	TaskScheduler::Instance().RemoveWorker(); // One less worker because we are reserving one core for this thread
-
-	{
-		Lock lock(mThreadStartedMutex);
-
-		mCoreThreadStarted = true;
-		mCoreThreadId = B3D_CURRENT_THREAD_ID;
-	}
-
-	mCoreThreadStartedCondition.notify_one();
-
-	while(true)
-	{
-		// Wait until we get some ready commands
-		Queue<QueuedCommand>* commands = nullptr;
-		{
-			Lock lock(mCommandQueueMutex);
-
-			while(mCommandQueue->IsEmpty())
-			{
-				if(mCoreThreadShutdown)
-				{
-					TaskScheduler::Instance().AddWorker();
-					return;
-				}
-
-				TaskScheduler::Instance().AddWorker(); // Do something else while we wait, otherwise this core will be unused
-				mCommandReadyCondition.wait(lock);
-				TaskScheduler::Instance().RemoveWorker();
-			}
-
-			commands = mCommandQueue->Flush();
-		}
-
-		// Play commands
-		mCommandQueue->PlaybackWithNotify(commands, std::bind(&::bs::CoreThread::CommandCompletedNotify, this, _1));
-	}
-#endif
-}
-
-void CoreThread::ShutdownCoreThread()
-{
-#if !BS_FORCE_SINGLETHREADED_RENDERING
-
-	{
-		Lock lock(mCommandQueueMutex);
-		mCoreThreadShutdown = true;
-	}
-
-	// Wake all threads. They will quit after they see the shutdown flag
-	mCommandReadyCondition.notify_all();
-
-	mCoreThreadId = B3D_CURRENT_THREAD_ID;
-
-#	if !BS_CORE_THREAD_IS_MAIN
-	mCoreThread.BlockUntilComplete();
-#	endif
-#endif
-}
-
-SPtr<CommandQueue<CommandQueueSync>> CoreThread::GetQueue()
-{
-	if(mPerThreadQueue.current == nullptr)
-	{
-		SPtr<CommandQueue<CommandQueueSync>> newQueue = B3DMakeShared<CommandQueue<CommandQueueSync>>(B3D_CURRENT_THREAD_ID);
-		mPerThreadQueue.current = B3DNew<ThreadQueueContainer>();
-		mPerThreadQueue.current->Queue = newQueue;
-		mPerThreadQueue.current->IsMain = B3D_CURRENT_THREAD_ID == mSimThreadId;
-
-		Lock lock(mSubmitMutex);
-		mAllQueues.push_back(mPerThreadQueue.current);
-	}
-
-	return mPerThreadQueue.current->Queue;
-}
-
-void CoreThread::SubmitCommandQueue(CommandQueue<CommandQueueSync>& queue, bool blockUntilComplete)
-{
-	Queue<QueuedCommand>* commands = queue.Flush();
-
-	CoreThreadQueueFlags flags = CTQF_InternalQueue;
-
-	if(blockUntilComplete)
-		flags |= CTQF_BlockUntilComplete;
-
-	QueueCommand(std::bind(&::bs::CommandQueueBase::Playback, &queue, commands), flags);
-}
-
-void CoreThread::SubmitAll(bool blockUntilComplete)
-{
-	u32 blockCommandId = (u32)-1;
-
-	{
-		// This lock is needed mainly because of blocking. Without it another submitting thread might flush a command
-		// we want to wait on.
-		Lock lock(mSubmitMutex);
-
-		// Submit workers first
-		ThreadQueueContainer* mainQueue = nullptr;
-		for(auto& queue : mAllQueues)
-		{
-			if(!queue->IsMain)
-				SubmitCommandQueue(*queue->Queue, false);
-			else
-				mainQueue = queue;
-		}
-
-		// Then main
-		if(mainQueue != nullptr)
-			SubmitCommandQueue(*mainQueue->Queue, false);
-
-		if(blockUntilComplete)
-		{
-			Lock lock2(mCommandQueueMutex);
-
-			blockCommandId = mMaxCommandNotifyId++;
-			mCommandQueue->Queue([]() {}, true, blockCommandId);
-		}
-	}
-
-	if(blockUntilComplete)
-	{
-		mCommandReadyCondition.notify_all();
-		BlockUntilCommandCompleted(blockCommandId);
-	}
-}
-
-void CoreThread::Submit(bool blockUntilComplete)
-{
-	Lock lock(mSubmitMutex);
-
-	CommandQueue<CommandQueueSync>& queue = *GetQueue();
-	Queue<QueuedCommand>* commands = queue.Flush();
-
-	u32 commandId = -1;
-	{
-		Lock lock2(mCommandQueueMutex);
-
-		if(blockUntilComplete)
-		{
-			commandId = mMaxCommandNotifyId++;
-
-			mCommandQueue->Queue([commands, &queue]()
-								 { queue.Playback(commands); },
-								 true, commandId);
-		}
-		else
-			mCommandQueue->Queue([commands, &queue]()
-								 { queue.Playback(commands); });
-	}
-
-	mCommandReadyCondition.notify_all();
-
-	if(blockUntilComplete)
-		BlockUntilCommandCompleted(commandId);
-}
-
-AsyncOp CoreThread::QueueReturnCommand(std::function<void(AsyncOp&)> commandCallback, CoreThreadQueueFlags flags)
-{
-#if !BS_FORCE_SINGLETHREADED_RENDERING
-	B3D_ASSERT(B3D_CURRENT_THREAD_ID != GetCoreThreadId() && "Cannot queue commands on the core thread for the core thread");
-#endif
-
-	if(!flags.IsSet(CTQF_InternalQueue))
-		return GetQueue()->QueueReturn(commandCallback);
-	else
-	{
-		bool blockUntilComplete = flags.IsSet(CTQF_BlockUntilComplete);
-
-		AsyncOp op;
-		u32 commandId = -1;
-		{
-			Lock lock(mCommandQueueMutex);
-
-			if(blockUntilComplete)
-			{
-				commandId = mMaxCommandNotifyId++;
-				op = mCommandQueue->QueueReturn(commandCallback, true, commandId);
-			}
-			else
-				op = mCommandQueue->QueueReturn(commandCallback);
-		}
-
-		mCommandReadyCondition.notify_all();
-
-		if(blockUntilComplete)
-			BlockUntilCommandCompleted(commandId);
-
-		return op;
-	}
-}
-
-void CoreThread::QueueCommand(std::function<void()> commandCallback, CoreThreadQueueFlags flags)
-{
-#if !BS_FORCE_SINGLETHREADED_RENDERING
-	B3D_ASSERT(B3D_CURRENT_THREAD_ID != GetCoreThreadId() && "Cannot queue commands on the core thread for the core thread");
-#endif
-
-	if(!flags.IsSet(CTQF_InternalQueue))
-		GetQueue()->Queue(commandCallback);
-	else
-	{
-		bool blockUntilComplete = flags.IsSet(CTQF_BlockUntilComplete);
-
-		u32 commandId = -1;
-		{
-			Lock lock(mCommandQueueMutex);
-
-			if(blockUntilComplete)
-			{
-				commandId = mMaxCommandNotifyId++;
-				mCommandQueue->Queue(commandCallback, true, commandId);
-			}
-			else
-				mCommandQueue->Queue(commandCallback);
-		}
-
-		mCommandReadyCondition.notify_all();
-
-		if(blockUntilComplete)
-			BlockUntilCommandCompleted(commandId);
-	}
-}
-
-void CoreThread::BlockUntilCommandCompleted(u32 commandId)
-{
-#if !BS_FORCE_SINGLETHREADED_RENDERING
-
-	while(true)
-	{
-		Lock lock(mCommandNotifyMutex);
-
-		// Check if our command id is in the completed list
-		auto iter = mCommandsCompleted.begin();
-		for(; iter != mCommandsCompleted.end(); ++iter)
-		{
-			if(*iter == commandId)
-			{
-				mCommandsCompleted.erase(iter);
-				return;
-			}
-		}
-
-		mCommandCompleteCondition.wait(lock);
-	}
-#endif
-}
-
-void CoreThread::CommandCompletedNotify(u32 commandId)
-{
-	{
-		Lock lock(mCommandNotifyMutex);
-		mCommandsCompleted.push_back(commandId);
-	}
-
-	mCommandCompleteCondition.notify_all();
+	mCommandQueue.PostCommand(std::move(commandCallback), "CoreThread Command", waitUntilComplete);
 }
 
 namespace bs
@@ -357,17 +95,13 @@ CoreThread& GetCoreThread()
 
 void ThrowIfNotCoreThread()
 {
-#if !BS_FORCE_SINGLETHREADED_RENDERING
 	if(B3D_CURRENT_THREAD_ID != CoreThread::Instance().GetCoreThreadId())
 		B3D_EXCEPT(InternalErrorException, "This method can only be accessed from the core thread.");
-#endif
 }
 
 void ThrowIfCoreThread()
 {
-#if !BS_FORCE_SINGLETHREADED_RENDERING
 	if(B3D_CURRENT_THREAD_ID == CoreThread::Instance().GetCoreThreadId())
 		B3D_EXCEPT(InternalErrorException, "This method cannot be accessed from the core thread.");
-#endif
 }
 } // namespace bs

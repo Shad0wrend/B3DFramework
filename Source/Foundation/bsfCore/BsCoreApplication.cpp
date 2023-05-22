@@ -114,7 +114,7 @@ CoreApplication::~CoreApplication()
 	// All CoreObject related modules should be shut down now. They have likely queued CoreObjects for destruction, so
 	// we need to wait for those objects to get destroyed before continuing.
 	CoreObjectManager::Instance().SyncToCore(true);
-	GetCoreThread().SubmitAll(true);
+	GetCoreThread().PostCommand([] {}, true);
 
 	UnloadPlugin(mStartUpDesc.Renderer);
 
@@ -327,7 +327,6 @@ void CoreApplication::RunMainLoopFrame()
 	RendererManager::Instance().GetActive()->Update();
 
 	GetSceneManager().UpdateCoreObjectTransformsInternal();
-	PROFILE_CALL(RendererManager::Instance().GetActive()->RenderAll(perFrameData), "Render");
 
 	// Core and sim thread run in lockstep. This will result in a larger input latency than if I was
 	// running just a single thread. Latency becomes worse if the core thread takes longer than sim
@@ -346,15 +345,14 @@ void CoreApplication::RunMainLoopFrame()
 		mIsFrameRenderingFinished = false;
 	}
 
-	GetCoreThread().QueueCommand(std::bind(&::bs::CoreApplication::BeginCoreProfiling, this), CTQF_InternalQueue);
-	GetCoreThread().QueueCommand(&Platform::CoreUpdateInternal, CTQF_InternalQueue);
-	GetCoreThread().QueueCommand(std::bind(&ct::RenderWindowManager::UpdateInternal, ct::RenderWindowManager::InstancePtr()), CTQF_InternalQueue);
+	GetCoreThread().PostCommand([this] { BeginCoreProfiling(); });
+	GetCoreThread().PostCommand([] { Platform::CoreUpdateInternal(); });
+	GetCoreThread().PostCommand([] { RenderWindowManager::Instance().UpdateInternal(); });
 
-	GetCoreThread().SubmitAll();
+	PROFILE_CALL(RendererManager::Instance().GetActive()->RenderAll(perFrameData), "Render");
 
-	GetCoreThread().QueueCommand(std::bind(&::bs::CoreApplication::FrameRenderingFinishedCallback, this), CTQF_InternalQueue);
-
-	GetCoreThread().QueueCommand(std::bind(&::bs::CoreApplication::EndCoreProfiling, this), CTQF_InternalQueue);
+	GetCoreThread().PostCommand([this] { FrameRenderingFinishedCallback(); });
+	GetCoreThread().PostCommand([this] { EndCoreProfiling(); });
 
 	GetProfilerCPU().EndThread();
 	GetProfiler().UpdateInternal();
@@ -421,19 +419,15 @@ void CoreApplication::StartUpRenderer()
 
 void CoreApplication::BeginCoreProfiling()
 {
-#if !BS_FORCE_SINGLETHREADED_RENDERING
 	GetProfilerCPU().BeginThread("Core");
-#endif
 }
 
 void CoreApplication::EndCoreProfiling()
 {
 	ProfilerGPU::Instance().UpdateInternal();
 
-#if !BS_FORCE_SINGLETHREADED_RENDERING
 	GetProfilerCPU().EndThread();
 	GetProfiler().UpdateCoreInternal();
-#endif
 }
 
 void* CoreApplication::LoadPlugin(const String& pluginName, DynamicLibrary** outLibrary, void* passThrough)

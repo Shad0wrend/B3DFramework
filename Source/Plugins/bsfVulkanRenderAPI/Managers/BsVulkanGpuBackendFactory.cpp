@@ -15,7 +15,7 @@ void VulkanGpuBackendFactory::Create()
 		GpuBackend::StartUp<VulkanGpuBackend>();
 	};
 
-	CoreThread::Instance().QueueCommand(fnStartUp, CTQF_InternalQueue | CTQF_BlockUntilComplete);
+	CoreThread::Instance().PostCommand(fnStartUp, true);
 }
 
 VulkanGpuBackendFactory::InitOnStart VulkanGpuBackendFactory::initOnStart;

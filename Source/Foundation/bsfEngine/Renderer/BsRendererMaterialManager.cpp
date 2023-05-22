@@ -10,12 +10,12 @@ using namespace bs;
 
 RendererMaterialManager::RendererMaterialManager()
 {
-	GetCoreThread().QueueCommand([this]() { InitOnCore(); }, CTQF_InternalQueue);
+	GetCoreThread().PostCommand([this]() { InitOnCore(); });
 }
 
 RendererMaterialManager::~RendererMaterialManager()
 {
-	GetCoreThread().QueueCommand(std::bind(&RendererMaterialManager::DestroyOnCore));
+	GetCoreThread().PostCommand(std::bind(&RendererMaterialManager::DestroyOnCore));
 }
 
 void RendererMaterialManager::RegisterMaterial(ct::RendererMaterialMetaData* metaData, const char* shaderPath)
@@ -76,7 +76,7 @@ void RendererMaterialManager::Update()
 		BlockUntilQueueEmpty();
 	};
 
-	GetCoreThread().QueueCommand(fnUpdateOnRenderThread, CTQF_InternalQueue);
+	GetCoreThread().PostCommand(fnUpdateOnRenderThread);
 }
 
 ShaderDefines RendererMaterialManager::GetDefinesInternal(const Path& shaderPath)

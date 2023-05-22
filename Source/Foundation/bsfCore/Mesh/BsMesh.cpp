@@ -44,7 +44,10 @@ AsyncOp Mesh::WriteData(const SPtr<MeshData>& data, bool discardEntireBuffer)
 		asyncOp.CompleteOperation();
 	};
 
-	return GetCoreThread().QueueReturnCommand(std::bind(func, GetCore(), data, discardEntireBuffer, std::placeholders::_1));
+	AsyncOp asyncOp;
+	GetCoreThread().PostCommand([func = std::move(func), core = GetCore(), data, discardEntireBuffer, asyncOp]() mutable { func(core, data, discardEntireBuffer, asyncOp); });
+
+	return asyncOp;
 }
 
 AsyncOp Mesh::ReadData(const SPtr<MeshData>& data)
@@ -64,7 +67,10 @@ AsyncOp Mesh::ReadData(const SPtr<MeshData>& data)
 		asyncOp.CompleteOperation();
 	};
 
-	return GetCoreThread().QueueReturnCommand(std::bind(func, GetCore(), data, std::placeholders::_1));
+	AsyncOp asyncOp;
+	GetCoreThread().PostCommand([func = std::move(func), core = GetCore(), data, asyncOp]() mutable { func(core, data, asyncOp); });
+
+	return asyncOp;
 }
 
 SPtr<MeshData> Mesh::AllocBuffer() const

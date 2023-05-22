@@ -35,7 +35,7 @@ Application::~Application()
 {
 	// Cleanup any new objects queued for destruction by unloaded scripts
 	CoreObjectManager::Instance().SyncToCore(true);
-	GetCoreThread().SubmitAll(true);
+	GetCoreThread().PostCommand([]{}, true);
 
 	Cursor::ShutDown();
 

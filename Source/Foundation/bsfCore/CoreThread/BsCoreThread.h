@@ -4,7 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 #include "Utility/BsModule.h"
-#include "CoreThread/BsCommandQueue.h"
+#include "Threading/BsSingleConsumerQueue.h"
 #include "Threading/BsThreadPool.h"
 
 namespace bs
@@ -12,31 +12,6 @@ namespace bs
 	/** @addtogroup CoreThread-Internal
 	 *  @{
 	 */
-
-	/** Flags that control how is a command submitted to the command queue. */
-	enum CoreThreadQueueFlag
-	{
-		/**
-		 * Default flag, meaning the commands will be added to the per-thread queue and only begin executing after
-		 * submit() has been called.
-		 */
-		CTQF_Default = 0,
-		/**
-		 * Specifies that the queued command should be executed on the internal queue. Internal queue doesn't require
-		 * a separate CoreThread::submit() call, and the queued command is instead immediately visible to the core thread.
-		 * The downside is that the queue requires additional synchronization and is slower than the normal queue.
-		 */
-		CTQF_InternalQueue = 1 << 0,
-		/**
-		 * If true, the method will block until the command finishes executing on the core thread. Only relevant for the
-		 * internal queue commands since contents of the normal queue won't be submitted to the core thread until the
-		 * CoreThread::submit() call.
-		 */
-		CTQF_BlockUntilComplete = 1 << 1
-	};
-
-	typedef Flags<CoreThreadQueueFlag> CoreThreadQueueFlags;
-	B3D_FLAGS_OPERATORS(CoreThreadQueueFlag)
 
 	/**
 	 * Manager for the core thread. Takes care of starting, running, queuing commands and shutting down the core thread.
@@ -56,22 +31,8 @@ namespace bs
 	 */
 	class B3D_CORE_EXPORT CoreThread : public Module<CoreThread>
 	{
-		/** Contains data about an queue for a specific thread. */
-		struct ThreadQueueContainer
-		{
-			SPtr<CommandQueue<CommandQueueSync>> Queue;
-			bool IsMain;
-		};
-
-		/** Wrapper for the thread-local variable because MSVC can't deal with a thread-local variable marked with dllimport or dllexport,
-		 *  and we cannot use per-member dllimport/dllexport specifiers because Module's members will then not be exported and its static
-		 *  members will not have external linkage. */
-		struct QueueData
-		{
-			static B3D_THREADLOCAL ThreadQueueContainer* current;
-		};
-
 	public:
+		CoreThread();
 		~CoreThread();
 
 		void OnStartUp() override;
@@ -79,35 +40,15 @@ namespace bs
 		/** Returns the id of the core thread.  */
 		ThreadId GetCoreThreadId() const { return mCoreThreadId; }
 
-		/** Submits the commands from all queues and starts executing them on the core thread. */
-		void SubmitAll(bool blockUntilComplete = false);
-
-		/** Submits the commands from the current thread's queue and starts executing them on the core thread. */
-		void Submit(bool blockUntilComplete = false);
-
 		/**
-		 * Queues a new command that will be added to the command queue. Command returns a value.
+		 * Queues a new command that will be added to the core thread command queue.
 		 *
-		 * @param[in]	commandCallback		Command to queue.
-		 * @param[in]	flags				Flags that further control command submission.
-		 * @return							Structure that can be used to check if the command completed execution,
-		 *									and to retrieve the return value once it has.
+		 * @param	commandCallback		Command to queue.
+		 * @param	waitUntilComplete	If true, the caller will block until the command finishes executing.
 		 *
-		 * @see		CommandQueue::queueReturn()
-		 * @note	Thread safe
+		 * @note	Thread safe.
 		 */
-		AsyncOp QueueReturnCommand(std::function<void(AsyncOp&)> commandCallback, CoreThreadQueueFlags flags = CTQF_Default);
-
-		/**
-		 * Queues a new command that will be added to the global command queue.
-		 *
-		 * @param[in]	commandCallback		Command to queue.
-		 * @param[in]	flags				Flags that further control command submission.
-		 *
-		 * @see		CommandQueue::queue()
-		 * @note	Thread safe
-		 */
-		void QueueCommand(std::function<void()> commandCallback, CoreThreadQueueFlags flags = CTQF_Default);
+		void PostCommand(std::function<void()>&& commandCallback, bool waitUntilComplete = false);
 
 		/**
 		 * @name Internal
@@ -140,19 +81,9 @@ namespace bs
 		static constexpr int kSyncBufferCount = 2;
 
 	private:
-		static QueueData mPerThreadQueue;
-		Vector<ThreadQueueContainer*> mAllQueues;
-
-		volatile bool mCoreThreadShutdown = false;
-
 		bool mCoreThreadStarted = false;
-		ThreadId mSimThreadId;
+		Scheduler mScheduler;
 		ThreadId mCoreThreadId;
-		Mutex mCommandQueueMutex;
-		Mutex mSubmitMutex;
-		Signal mCommandReadyCondition;
-		Mutex mCommandNotifyMutex;
-		Signal mCommandCompleteCondition;
 		Mutex mThreadStartedMutex;
 		Signal mCoreThreadStartedCondition;
 #if BS_CORE_THREAD_IS_MAIN
@@ -163,42 +94,7 @@ namespace bs
 		HThread mCoreThread;
 #endif
 
-		CommandQueue<CommandQueueSync>* mCommandQueue = nullptr;
-
-		u32 mMaxCommandNotifyId = 0; /**< ID that will be assigned to the next command with a notifier callback. */
-		Vector<u32> mCommandsCompleted; /**< Completed commands that have notifier callbacks set up */
-
-		/** Starts the core thread worker method. Should only be called once. */
-		void InitCoreThread();
-
-		/**	Main worker method of the core thread. Called once thread is started. */
-		void RunCoreThread();
-
-		/** Shutdowns the core thread. It will complete all ready commands before shutdown. */
-		void ShutdownCoreThread();
-
-		/** Creates or retrieves a queue for the calling thread. */
-		SPtr<CommandQueue<CommandQueueSync>> GetQueue();
-
-		/**
-		 * Submits all the commands from the provided command queue to the internal command queue. Optionally blocks the
-		 * calling thread until all the submitted commands have done executing.
-		 */
-		void SubmitCommandQueue(CommandQueue<CommandQueueSync>& queue, bool blockUntilComplete);
-
-		/**
-		 * Blocks the calling thread until the command with the specified ID completes. Make sure that the specified ID
-		 * actually exists, otherwise this will block forever.
-		 */
-		void BlockUntilCommandCompleted(u32 commandId);
-
-		/**
-		 * Callback called by the command list when a specific command finishes executing. This is only called on commands that
-		 * have a special notify on complete flag set.
-		 *
-		 * @param[in]	commandId	Identifier for the command.
-		 */
-		void CommandCompletedNotify(u32 commandId);
+		SingleConsumerQueue mCommandQueue;
 	};
 
 	/**

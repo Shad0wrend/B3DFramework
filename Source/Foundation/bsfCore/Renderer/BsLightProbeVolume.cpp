@@ -262,8 +262,7 @@ void LightProbeVolume::UpdateCoefficients()
 		coreVolume->GetProbeCoefficients(coeffInfo);
 	};
 
-	GetCoreThread().QueueCommand(getSaveData);
-	GetCoreThread().Submit(true);
+	GetCoreThread().PostCommand(getSaveData, true);
 
 	for(auto& entry : coeffInfo)
 	{

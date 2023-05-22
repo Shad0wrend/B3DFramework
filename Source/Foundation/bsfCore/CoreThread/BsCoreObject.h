@@ -127,24 +127,13 @@ namespace bs
 		virtual ~CoreObject();
 
 		/**
-		 * Queues a command to be executed on the core thread, without a return value.
+		 * Queues a command to be executed on the core thread.
 		 *
 		 * @note
 		 * Requires a shared pointer to the object this function will be executed on, in order to make sure the object is
 		 * not deleted before the command executes. Can be null if the function is static or global.
 		 */
 		static void QueueGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void()> func);
-
-		/**
-		 * Queues a command to be executed on the core thread, with a return value in the form of AsyncOp.
-		 *
-		 * @see		AsyncOp
-		 *
-		 * @note
-		 * Requires a shared pointer to the object this function will be executed on, in order to make sure the object is
-		 * not deleted before the command executes. Can be null if the function is static or global.
-		 */
-		static AsyncOp QueueReturnGpuCommand(const SPtr<ct::CoreObject>& obj, std::function<void(AsyncOp&)> func);
 
 		bool RequiresInitOnCoreThread() const { return (mFlags & CGO_INIT_ON_CORE_THREAD) != 0; }
 

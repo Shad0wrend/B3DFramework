@@ -223,7 +223,7 @@ void CoreObjectManager::SyncToCore(bool swapBuffers)
 	Lock lock(mObjectsMutex);
 
 	SyncDownload(mSyncAllocators[mActiveFrameAllocatorIndex]);
-	GetCoreThread().QueueCommand(std::bind(&CoreObjectManager::SyncUpload, this));
+	GetCoreThread().PostCommand(std::bind(&CoreObjectManager::SyncUpload, this));
 
 	if(swapBuffers)
 	{
@@ -302,7 +302,7 @@ void CoreObjectManager::SyncToCore(CoreObject* object)
 	};
 
 	if(syncData.size() > 0)
-		GetCoreThread().QueueCommand(std::bind(callback, syncData));
+		GetCoreThread().PostCommand(std::bind(callback, syncData));
 }
 
 void CoreObjectManager::SyncDownload(FrameAlloc* allocator)

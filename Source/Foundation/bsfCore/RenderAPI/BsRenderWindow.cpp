@@ -46,8 +46,7 @@ void RenderWindow::Resize(u32 width, u32 height)
 		renderWindow->Resize(width, height);
 	};
 
-	GetCoreThread().QueueCommand(std::bind(resizeFunc, GetCore(), width, height));
-	GetCoreThread().Submit(true);
+	GetCoreThread().PostCommand([core = GetCore(), resizeFunc, width, height] { resizeFunc(core, width, height); }, true);
 
 	{
 		ScopedSpinLock lock(GetCore()->mLock);
@@ -67,8 +66,7 @@ void RenderWindow::Move(i32 left, i32 top)
 		renderWindow->Move(left, top);
 	};
 
-	GetCoreThread().QueueCommand(std::bind(moveFunc, GetCore(), left, top));
-	GetCoreThread().Submit(true);
+	GetCoreThread().PostCommand([core = GetCore(), moveFunc, left, top] { moveFunc(core, left, top); }, true);
 
 	{
 		ScopedSpinLock lock(GetCore()->mLock);
@@ -90,7 +88,7 @@ void RenderWindow::Hide()
 
 	GetMutableProperties().IsHidden = true;
 
-	GetCoreThread().QueueCommand(std::bind(hideFunc, GetCore()));
+	GetCoreThread().PostCommand(std::bind(hideFunc, GetCore()));
 }
 
 void RenderWindow::Show()
@@ -103,7 +101,7 @@ void RenderWindow::Show()
 
 	GetMutableProperties().IsHidden = false;
 
-	GetCoreThread().QueueCommand(std::bind(showFunc, GetCore()));
+	GetCoreThread().PostCommand(std::bind(showFunc, GetCore()));
 }
 
 void RenderWindow::Minimize()
@@ -116,7 +114,7 @@ void RenderWindow::Minimize()
 
 	GetMutableProperties().IsMaximized = false;
 
-	GetCoreThread().QueueCommand(std::bind(minimizeFunc, GetCore()));
+	GetCoreThread().PostCommand(std::bind(minimizeFunc, GetCore()));
 }
 
 void RenderWindow::Maximize()
@@ -129,8 +127,7 @@ void RenderWindow::Maximize()
 
 	GetMutableProperties().IsMaximized = true;
 
-	GetCoreThread().QueueCommand(std::bind(maximizeFunc, GetCore()));
-	GetCoreThread().Submit(true);
+	GetCoreThread().PostCommand(std::bind(maximizeFunc, GetCore()), true);
 
 	{
 		ScopedSpinLock lock(GetCore()->mLock);
@@ -152,8 +149,7 @@ void RenderWindow::Restore()
 
 	GetMutableProperties().IsMaximized = false;
 
-	GetCoreThread().QueueCommand(std::bind(restoreFunc, GetCore()));
-	GetCoreThread().Submit(true);
+	GetCoreThread().PostCommand(std::bind(restoreFunc, GetCore()), true);
 
 	{
 		ScopedSpinLock lock(GetCore()->mLock);
@@ -173,8 +169,7 @@ void RenderWindow::SetFullscreen(u32 width, u32 height, float refreshRate, u32 m
 		renderWindow->SetFullscreen(width, height, refreshRate, monitorIdx);
 	};
 
-	GetCoreThread().QueueCommand(std::bind(fullscreenFunc, GetCore(), width, height, refreshRate, monitorIdx));
-	GetCoreThread().Submit(true);
+	GetCoreThread().PostCommand(std::bind(fullscreenFunc, GetCore(), width, height, refreshRate, monitorIdx), true);
 
 	{
 		ScopedSpinLock lock(GetCore()->mLock);
@@ -194,8 +189,7 @@ void RenderWindow::SetFullscreen(const VideoMode& mode)
 		renderWindow->SetFullscreen(mode);
 	};
 
-	GetCoreThread().QueueCommand(std::bind(fullscreenFunc, GetCore(), std::cref(mode)));
-	GetCoreThread().Submit(true);
+	GetCoreThread().PostCommand(std::bind(fullscreenFunc, GetCore(), std::cref(mode)), true);
 
 	{
 		ScopedSpinLock lock(GetCore()->mLock);
@@ -215,8 +209,7 @@ void RenderWindow::SetWindowed(u32 width, u32 height)
 		renderWindow->SetWindowed(width, height);
 	};
 
-	GetCoreThread().QueueCommand(std::bind(windowedFunc, GetCore(), width, height));
-	GetCoreThread().Submit(true);
+	GetCoreThread().PostCommand(std::bind(windowedFunc, GetCore(), width, height), true);
 
 	{
 		ScopedSpinLock lock(GetCore()->mLock);

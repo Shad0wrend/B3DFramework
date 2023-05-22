@@ -86,7 +86,7 @@ BuiltinResources::~BuiltinResources()
 	mCursorSizeWE = nullptr;
 	mFrameworkIcon = nullptr;
 
-	GetCoreThread().QueueCommand([]() { ct::BuiltinResources::ShutDown(); }, CTQF_InternalQueue);
+	GetCoreThread().PostCommand([]() { ct::BuiltinResources::ShutDown(); });
 }
 
 BuiltinResources::BuiltinResources()
@@ -155,7 +155,7 @@ BuiltinResources::BuiltinResources()
 		coreBuiltinResources.BlackTexture3D = blackTexture3D;
 	};
 
-	GetCoreThread().QueueCommand(fnInitializeCoreBuiltinResources, CTQF_InternalQueue);
+	GetCoreThread().PostCommand(fnInitializeCoreBuiltinResources);
 
 	/************************************************************************/
 	/* 								CURSOR		                     		*/
@@ -214,7 +214,7 @@ BuiltinResources::BuiltinResources()
 	mFrameworkIcon = iconTex->GetProperties().AllocBuffer(0, 0);
 	iconTex->ReadData(mFrameworkIcon);
 
-	GetCoreThread().Submit(true);
+	GetCoreThread().PostCommand([] {}, true);
 }
 
 HSpriteTexture BuiltinResources::GetSkinTexture(const String& name) const

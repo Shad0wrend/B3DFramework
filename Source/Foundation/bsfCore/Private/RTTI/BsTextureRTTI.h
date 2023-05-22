@@ -56,7 +56,7 @@ namespace bs
 			SPtr<PixelData> pixelData = obj->mProperties.AllocBuffer(face, mipmap);
 
 			obj->ReadData(pixelData, face, mipmap);
-			GetCoreThread().SubmitAll(true);
+			GetCoreThread().PostCommand([] {}, true);
 
 			return pixelData;
 		}

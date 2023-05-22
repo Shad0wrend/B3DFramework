@@ -184,7 +184,6 @@
 
 /** Maximum number of color surfaces that can be attached to a multi render target. */
 #define B3D_MAXIMUM_RENDER_TARGET_COUNT 8
-#define BS_FORCE_SINGLETHREADED_RENDERING 0
 
 /**
  * Runs the core thead on the application's main (initial) thread, rather than on a separate worker. Important for macOS

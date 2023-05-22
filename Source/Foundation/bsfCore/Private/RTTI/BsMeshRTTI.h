@@ -33,7 +33,7 @@ namespace bs
 			SPtr<MeshData> meshData = obj->AllocBuffer();
 
 			obj->ReadData(meshData);
-			GetCoreThread().SubmitAll(true);
+			GetCoreThread().PostCommand([] {}, true);
 
 			return meshData;
 		}

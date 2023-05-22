@@ -3,7 +3,6 @@
 #pragma once
 
 #include "BsVulkanPrerequisites.h"
-#include "CoreThread/BsWorkerThreadWithCommandQueue.h"
 #include "Threading/BsFiberSignal.h"
 #include "Threading/BsSingleConsumerQueue.h"
 

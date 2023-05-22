@@ -480,7 +480,7 @@ void VulkanGpuBackend::OnShutDown()
 		fnShutdown();
 	else
 	{
-		CoreThread::Instance().QueueCommand(fnShutdown, CTQF_InternalQueue | CTQF_BlockUntilComplete);
+		CoreThread::Instance().PostCommand(fnShutdown, true);
 	}
 
 	Super::OnShutDown();
