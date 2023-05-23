@@ -10,6 +10,7 @@
 #include "Math/BsRect2.h"
 #include "Math/BsRect2I.h"
 #include "RenderAPI/BsGpuDeviceCapabilities.h"
+#include "Threading/BsSingleConsumerQueue.h"
 #include "Utility/BsDenseMap.h"
 
 namespace bs
@@ -50,6 +51,9 @@ namespace bs
 			VulkanGpuCommandBufferPool(VulkanGpuDevice& device, const GpuCommandBufferPoolCreateInformation& createInformation);
 			~VulkanGpuCommandBufferPool() override;
 
+			/** Returns queue that may be used for posting messages to the command buffer pool (e.g. command buffer completion notifies). */
+			SingleConsumerQueue& GetMessageQueue() { return mMessageQueue; }
+
 			SPtr<GpuCommandBuffer> Create(const GpuCommandBufferCreateInformation& createInformation) override;
 			SPtr<GpuCommandBuffer> FindOrCreate(const GpuCommandBufferCreateInformation& createInformation) override;
 			void Reset() override;
@@ -60,6 +64,7 @@ namespace bs
 			u32 mNextCommandBufferId = 1;
 
 			UnorderedMap<u32, SPtr<VulkanGpuCommandBuffer>> mCommandBuffers;
+			SingleConsumerQueue mMessageQueue;
 		};
 
 		/** Determines where are the current descriptor sets bound to. */

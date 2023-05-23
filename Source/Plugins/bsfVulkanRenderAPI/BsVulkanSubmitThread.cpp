@@ -167,13 +167,7 @@ void VulkanSubmitThread::WaitUntilIdle(bool performCleanupForShutdown)
 		}
 	};
 
-	if(kEnableSubmitThread)
-		TaskScheduler::Instance().AddWorker();
-
 	RunSubmitThreadCommand(mCommandQueue, std::move(fnCommand), "Device wait idle", true);
-
-	if(kEnableSubmitThread)
-		TaskScheduler::Instance().RemoveWorker();
 }
 
 void VulkanSubmitThread::WaitUntilIdle(VulkanGpuQueue& queue)
@@ -187,13 +181,7 @@ void VulkanSubmitThread::WaitUntilIdle(VulkanGpuQueue& queue)
 		queue.RefreshCompletionStateOnSubmitThread(true);
 	};
 
-	if(kEnableSubmitThread)
-		TaskScheduler::Instance().AddWorker();
-
 	RunSubmitThreadCommand(mCommandQueue, std::move(fnCommand), "Queue wait idle", true);
-
-	if(kEnableSubmitThread)
-		TaskScheduler::Instance().RemoveWorker();
 }
 
 void VulkanSubmitThread::RefreshCommandBufferCompletionStates() const
