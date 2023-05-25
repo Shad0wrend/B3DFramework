@@ -6,6 +6,7 @@
 #include "BsVulkanGpuDevice.h"
 #include "BsVulkanGpuQueue.h"
 #include "BsVulkanSwapChain.h"
+#include "Threading/BsBlockingCall.h"
 #include "Threading/BsScheduler.h"
 #include "Threading/BsTaskScheduler.h"
 
@@ -99,8 +100,7 @@ void VulkanSubmitThread::QueuePresent(VulkanGpuQueue& queue, VulkanSwapChain& sw
 	{
 		VulkanGpuDevice& device = queue.GetDevice();
 
-		// TODO - BlockingCall()
-		VkResult result = vkDeviceWaitIdle(device.GetLogical());
+		const VkResult result = RunBlockingCallAsYieldable(vkDeviceWaitIdle, device.GetLogical());
 		B3D_ASSERT(result == VK_SUCCESS);
 
 		device.DoForEachQueue([](VulkanGpuQueue& queue)
@@ -119,8 +119,7 @@ void VulkanSubmitThread::QueueImageAcquire(VulkanSwapChain& swapChain)
 {
 	auto fnCommand = [this, &swapChain]
 	{
-		// TODO - BlockingCall()
-		swapChain.AcquireImage();
+		RunBlockingCallAsYieldable([&swapChain] { swapChain.AcquireImage(); });
 
 		Lock acquireLock(mImageAcquireMutex);
 		mSwapChainsWithAcquiredImages.push_back(&swapChain);
@@ -149,8 +148,7 @@ void VulkanSubmitThread::WaitUntilIdle(bool performCleanupForShutdown)
 {
 	auto fnCommand = [this, performCleanupForShutdown]()
 	{
-		// TODO - BlockingCall()
-		const VkResult result = vkDeviceWaitIdle(mGpuDevice.GetLogical());
+		const VkResult result = RunBlockingCallAsYieldable(vkDeviceWaitIdle, mGpuDevice.GetLogical());
 		B3D_ASSERT(result == VK_SUCCESS);
 
 		mGpuDevice.DoForEachQueue([performCleanupForShutdown](VulkanGpuQueue& queue)
@@ -174,8 +172,7 @@ void VulkanSubmitThread::WaitUntilIdle(VulkanGpuQueue& queue)
 {
 	auto fnCommand = [&queue]()
 	{
-		// TODO - BlockingCall()
-		const VkResult result = vkQueueWaitIdle(queue.GetVulkanHandle());
+		const VkResult result = RunBlockingCallAsYieldable(vkQueueWaitIdle, queue.GetVulkanHandle());
 		B3D_ASSERT(result == VK_SUCCESS);
 
 		queue.RefreshCompletionStateOnSubmitThread(true);

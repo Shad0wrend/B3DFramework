@@ -1,0 +1,82 @@
+//************************************ bs::framework - Copyright 2023 Marko Pintera **************************************//
+//*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
+#pragma once
+
+#include "Prerequisites/BsPrerequisitesUtil.h"
+#include "BsSignal.h"
+#include "BsSignalEvent.h"
+#include "BsThreadPool.h"
+#include "Debug/BsDebug.h"
+
+namespace bs
+{
+	namespace detail
+	{
+		template <typename ReturnType>
+		class RunOnNewThreadHelper
+		{
+		public:
+			template <typename F, typename... Args>
+			static ReturnType Run(F&& f, Args&&... args) {
+				ReturnType result;
+
+				SignalEvent event;
+				Scheduler* const scheduler = Scheduler::Get();
+
+				const SPtr<PooledThread> thread = ThreadPool::Instance().Run("BlockingCall",
+					[&result, &f, &args..., scheduler, &event]()
+					{
+						if (scheduler != nullptr)
+							scheduler->BindToCurrentThread();
+
+						result = std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
+
+						if (scheduler != nullptr)
+							Scheduler::UnbindFromCurrentThread();
+
+						event.Signal();
+					});
+
+				event.Wait();
+				thread->BlockUntilComplete();
+
+				return result;
+			}
+		};
+
+		template <>
+		class RunOnNewThreadHelper<void>
+		{
+		public:
+			template <typename F, typename... Args>
+			static void Run(F&& f, Args&&... args) {
+				SignalEvent event;
+				Scheduler* const scheduler = Scheduler::Get();
+
+				const SPtr<PooledThread> thread = ThreadPool::Instance().Run("BlockingCall",
+					[&f, &args..., scheduler, &event]()
+					{
+						if (scheduler != nullptr)
+							scheduler->BindToCurrentThread();
+
+						std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
+
+						if (scheduler != nullptr)
+							Scheduler::UnbindFromCurrentThread();
+
+						event.Signal();
+					});
+
+				event.Wait();
+				thread->BlockUntilComplete();
+			}
+		};
+	}  // namespace detail
+
+	/** Runs the provided function on its own thread and allows the calling fiber to yield and let other work happen. Useful if you expect the provided function to block for a longer period of time, but still want to let the current thread continue doing work. */
+	template <typename F, typename... Args>
+	auto RunBlockingCallAsYieldable(F&& f, Args&&... args) -> decltype(f(args...))
+	{
+		return detail::RunOnNewThreadHelper<decltype(f(args...))>::Run(std::forward<F>(f), std::forward<Args>(args)...);
+	}
+}  // namespace bs
