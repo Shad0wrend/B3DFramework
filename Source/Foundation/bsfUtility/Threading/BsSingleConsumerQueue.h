@@ -65,7 +65,7 @@ namespace bs
 		Stack<Queue<QueuedCommand>*> mEmptyCommandQueues; /**< List of empty queues for reuse. */
 		bool mIsShutdownRequested = false;
 		Mutex mCommandQueueMutex;
-		FiberSignal mSignal;
+		Signal mSignal;
 	};
 
 	/** @} */

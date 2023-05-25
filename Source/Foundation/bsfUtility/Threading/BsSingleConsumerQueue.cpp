@@ -55,7 +55,7 @@ void SingleConsumerQueue::PostCommand(Function<void()>&& callback, const char* d
 	if (waitUntilComplete)
 	{
 		Mutex completionMutex;
-		FiberSignal completionSignal;
+		Signal completionSignal;
 		bool isCompleted = false;
 
 		auto fnRunBlocking = [&completionMutex, &completionSignal, &isCompleted, function = std::move(callback)]()

@@ -41,7 +41,7 @@ namespace bs
 
 	private:
 		Mutex mMutex;
-		FiberSignal mSignal;
+		Signal mSignal;
 		const Mode mMode;
 		bool mIsSignalled;
 	};
