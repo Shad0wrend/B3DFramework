@@ -2,8 +2,8 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
-#include "BsSignal.h"
 #include "Prerequisites/BsPrerequisitesUtil.h"
+#include "BsSignal.h"
 
 namespace bs
 {
@@ -41,7 +41,7 @@ namespace bs
 
 	private:
 		Mutex mMutex;
-		Signal mSignal;
+		class Signal mSignal;
 		const Mode mMode;
 		bool mIsSignalled;
 	};
