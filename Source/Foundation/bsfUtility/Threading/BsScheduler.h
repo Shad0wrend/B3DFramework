@@ -2,9 +2,9 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
+#include "Prerequisites/BsPrerequisitesUtil.h"
 #include "BsThread.h"
 #include "Math/BsRandom.h"
-#include "Prerequisites/BsPrerequisitesUtil.h"
 
 namespace marl
 {
@@ -13,6 +13,7 @@ namespace marl
 
 namespace bs
 {
+	class SingleConsumerQueue;
 	/** @addtogroup Threading
 	 *  @{
 	 */
@@ -24,6 +25,7 @@ namespace bs
 	{
 		None = 0,
 		SameThread = 1 << 0, /**< Ensures the task runs on the same thread it was queued on. */
+		NoStealing = 1 << 1, /**< Ensures the task cannot be stolen by another thread. Always true if SameThread flag is provided. */
 	};
 
 	using SchedulerTaskFlags = Flags<SchedulerTaskFlag>;
@@ -260,38 +262,14 @@ namespace bs
 		/** Returns the underlying thread object. */
 		B3D_UTILITY_EXPORT const Thread& GetThread() const { return mThread; }
 
-		/** Starts execution of the thread. Must be called before enqueuing any work. */
-		B3D_UTILITY_EXPORT void Start();
+		/** Returns a message queue that may be used for posting messages to this thread. */
+		B3D_UTILITY_EXPORT SingleConsumerQueue& GetMessageQueue() { return *mMessageQueue; }
 
-		/** Stops execution of the thread. This will block until all pending tasks have finished. Must be called before shutdown. */
-		B3D_UTILITY_EXPORT void Stop();
-
-		/** Suspends execution of the current task until the task is woken up via a call to Enqueue() or timeout expires. See Fiber::Wait() overloads for more information. */
-		B3D_UTILITY_EXPORT bool Wait(Lock& lock, const TimePoint* timeout, const Function<bool()>& predicate);
-
-		/** Suspends execution of the current task until the task is woken up via a call to Enqueue() or timeout expires. See Fiber::Wait() overloads for more information. */
-		B3D_UTILITY_EXPORT bool Wait(const TimePoint* timeout);
-
-		/** Enqueues a suspended fiber to continue execution. */
-		B3D_UTILITY_EXPORT void Enqueue(Fiber* fiber);
-
-		/** Enqueues a new unstarted task. Only safe to use if mode is SingleThreaded. */
-		B3D_UTILITY_EXPORT void Enqueue(SchedulerTask&& task);
-
-		/** Attempts to lock the object for task enqueuing. Returns true if the lock was successful, after which caller must call EnqueueAndUnlock. You should use this instead of Enqueue() if the mode is MultiThreaded. */
-		B3D_UTILITY_EXPORT bool TryLockForEnqueue();
-
-		/** Enqueues a task and unlocks the lock acquired via TryLock(). */
-		B3D_UTILITY_EXPORT void EnqueueAndUnlock(SchedulerTask&& task);
-
-		/** Processes all tasks and fibers until there are no more and shutdown flag is set. */
-		B3D_UTILITY_EXPORT void RunUntilShutdown();
-
-		/** Attempts to steal a Task from another worker. Returns true if a task was successfully stolen. */
-		B3D_UTILITY_EXPORT bool TryStealTask(SchedulerTask& out);
+		/** Queues a new task for execution on this thread. */
+		B3D_UTILITY_EXPORT void Post(SchedulerTask&& task);
 
 		/** Returns the fiber currently being executed. */
-		B3D_UTILITY_EXPORT Fiber* GetCurrentFiber() const { return mCurrentFiber; }
+		Fiber* GetCurrentFiber() const { return mCurrentFiber; }
 
 		const u32 Id; /**< Unique identifier of the scheduler thread. */
 
@@ -299,11 +277,44 @@ namespace bs
 		B3D_UTILITY_EXPORT static SchedulerThread* Get() { return Current; }
 
 	private:
-		/** Processes all tasks until Stop() is called. */
-		void Run();
+		friend class Scheduler;
+		friend class Fiber;
+
+		/** Starts execution of the thread. Must be called before enqueuing any work. */
+		void Start();
+
+		/** Stops execution of the thread. This will block until all pending tasks have finished. Must be called before shutdown. */
+		void Stop();
+
+		/** Suspends execution of the current task until the task is woken up via a call to Enqueue() or timeout expires. See Fiber::Wait() overloads for more information. */
+		bool B3D_UTILITY_EXPORT Wait(Lock& lock, const TimePoint* timeout, const Function<bool()>& predicate);
+
+		/** Suspends execution of the current task until the task is woken up via a call to Enqueue() or timeout expires. See Fiber::Wait() overloads for more information. */
+		bool B3D_UTILITY_EXPORT Wait(const TimePoint* timeout);
 
 		/** Suspends execution of the current task until the task is woken up via a call to Enqueue() or timeout expires. See Fiber::Wait() overloads for more information. Mutex must be locked when this is called. */
-		void Suspend(const TimePoint* timeout);
+		void WaitWithoutLocking(const TimePoint* timeout);
+
+		/** Enqueues a suspended fiber to continue execution. */
+		void Enqueue(Fiber* fiber);
+
+		/** Enqueues a new unstarted task. Only safe to use if mode is SingleThreaded. */
+		void Enqueue(SchedulerTask&& task);
+
+		/** Attempts to lock the object for task enqueuing. Returns true if the lock was successful, after which caller must call EnqueueAndUnlock. You should use this instead of Enqueue() if the mode is MultiThreaded. */
+		bool TryLockForEnqueue();
+
+		/** Enqueues a task and unlocks the lock acquired via TryLock(). */
+		void EnqueueAndUnlock(SchedulerTask&& task);
+
+		/** Processes all tasks and fibers until there are no more and shutdown flag is set. */
+		void RunUntilShutdown();
+
+		/** Attempts to steal a Task from another worker. Returns true if a task was successfully stolen. */
+		bool TryStealTask(SchedulerTask& out);
+
+		/** Processes all tasks until Stop() is called. */
+		void Run();
 
 		/** Creates a new fiber that calls Run(). */
 		Fiber* CreateWorkerFiber();
@@ -336,6 +347,7 @@ namespace bs
 
 		Thread mThread;
 		Random mRandomNumberGenerator;
+		SingleConsumerQueue* mMessageQueue = nullptr;
 
 		std::atomic<u64> mReadyOperationCount = { 0 };
 		u64 mBlockedFiberCount = 0;

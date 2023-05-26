@@ -3,6 +3,7 @@
 #include "ThirdParty/marl/src/osfiber.h"  // Must come first. See osfiber_ucontext.h.
 #include "Threading/BsScheduler.h"
 
+#include "BsSingleConsumerQueue.h"
 #include "BsThreadPool.h"
 #include "Debug/BsDebug.h"
 
@@ -151,6 +152,9 @@ SchedulerThread::SchedulerThread(Scheduler* scheduler, Mode mode, u32 id)
 
 void SchedulerThread::Start()
 {
+	if (mMessageQueue == nullptr)
+		mMessageQueue = B3DNew<SingleConsumerQueue>();
+
 	switch (mMode)
 	{
 		case Mode::MultiThreaded:
@@ -194,10 +198,15 @@ void SchedulerThread::Start()
 			break;
 		}
 	}
+
+	Post(SchedulerTask("Scheduler thread message queue", [this] { mMessageQueue->RunUntilShutdown(); }));
 }
 
 void SchedulerThread::Stop()
 {
+	if(mMessageQueue != nullptr)
+		mMessageQueue->PostRequestShutdownCommand(false);
+
 	switch (mMode)
 	{
 		case Mode::MultiThreaded:
@@ -215,13 +224,19 @@ void SchedulerThread::Stop()
 			break;
 		}
 	}
+
+	if (mMessageQueue != nullptr)
+	{
+		B3DDelete(mMessageQueue);
+		mMessageQueue = nullptr;
+	}
 }
 
 bool SchedulerThread::Wait(const TimePoint* timeout)
 {
 	{
 		Lock lock(mMutex);
-		Suspend(timeout);
+		WaitWithoutLocking(timeout);
 	}
 
 	return timeout == nullptr || std::chrono::system_clock::now() < *timeout;
@@ -237,7 +252,7 @@ bool SchedulerThread::Wait(Lock& waitLock, const TimePoint* timeout, const Funct
 		waitLock.unlock();
 
 		// Let another fiber take over, or just spin/wait if no work. This will internally unlock the mMutex.
-		Suspend(timeout);
+		WaitWithoutLocking(timeout);
 
 		mMutex.unlock();
 
@@ -253,7 +268,7 @@ bool SchedulerThread::Wait(Lock& waitLock, const TimePoint* timeout, const Funct
 	return true;
 }
 
-void SchedulerThread::Suspend(const TimePoint* timeout)
+void SchedulerThread::WaitWithoutLocking(const TimePoint* timeout)
 {
 	if (timeout != nullptr)
 	{
@@ -350,6 +365,12 @@ void SchedulerThread::EnqueueAndUnlock(SchedulerTask&& task)
 		mAddedSignal.notify_one();
 }
 
+void SchedulerThread::Post(SchedulerTask&& task)
+{
+	task.GetFlags().Set(SchedulerTaskFlag::NoStealing);
+	Enqueue(std::move(task));
+}
+
 bool SchedulerThread::TryStealTask(SchedulerTask& out)
 {
 	if (mReadyOperationCount.load() == 0)
@@ -358,7 +379,7 @@ bool SchedulerThread::TryStealTask(SchedulerTask& out)
 	if (!mMutex.try_lock())
 		return false;
 
-	if (mPendingTasks.empty() || mPendingTasks.front().GetFlags().IsSet(SchedulerTaskFlag::SameThread))
+	if (mPendingTasks.empty() || mPendingTasks.front().GetFlags().IsSetAny(SchedulerTaskFlag::SameThread | SchedulerTaskFlag::NoStealing))
 	{
 		mMutex.unlock();
 		return false;

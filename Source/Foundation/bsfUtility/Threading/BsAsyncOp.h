@@ -2,10 +2,9 @@
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #pragma once
 
-#include "BsSignal.h"
-#include "BsSignalEvent.h"
-#include "BsWaitGroup.h"
 #include "Prerequisites/BsPrerequisitesUtil.h"
+#include "BsSignal.h"
+#include "BsWaitGroup.h"
 #include "Utility/BsAny.h"
 
 namespace bs
