@@ -66,17 +66,18 @@ VulkanGpuCommandBufferPool::VulkanGpuCommandBufferPool(VulkanGpuDevice& device, 
 
 	mQueueFamily = queueFamily;
 	vkCreateCommandPool(device.GetLogical(), &vulkanPoolCreateInformation, gVulkanAllocator, &mVulkanPool);
-
-	// Process messages related to this command buffer pool on this thread. Mostly these are command buffer resets once they are done executing.
-	Scheduler* const scheduler = Scheduler::Get();
-	if (B3D_ENSURE(scheduler))
-	{
-		mMessageQueue.ScheduleRunUntilShutdown(*scheduler, true);
-	}
 }
 
 VulkanGpuCommandBufferPool::~VulkanGpuCommandBufferPool()
 {
+	VulkanGpuCommandBufferPool::Destroy();
+}
+
+void VulkanGpuCommandBufferPool::Destroy()
+{
+	if (mIsDestroyed)
+		return;
+
 	EnsureValidThread();
 
 	bool areAnyCommandBuffersStillExecuting = false;
@@ -96,6 +97,8 @@ VulkanGpuCommandBufferPool::~VulkanGpuCommandBufferPool()
 
 	mCommandBuffers.clear();
 	vkDestroyCommandPool(static_cast<VulkanGpuDevice&>(mGpuDevice).GetLogical(), mVulkanPool, gVulkanAllocator);
+
+	Base::Destroy();
 }
 
 SPtr<GpuCommandBuffer> VulkanGpuCommandBufferPool::FindOrCreate(const GpuCommandBufferCreateInformation& createInformation)

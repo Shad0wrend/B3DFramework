@@ -31,6 +31,7 @@ SingleConsumerQueue::~SingleConsumerQueue()
 void SingleConsumerQueue::RunUntilShutdown()
 {
 	mThreadId = Thread::GetCurrentThreadId();
+	mSchedulerThread = SchedulerThread::Get();
 
 	while (true)
 	{
@@ -53,6 +54,7 @@ void SingleConsumerQueue::ScheduleRunUntilShutdown(Scheduler& scheduler, bool ru
 	auto fnRun = [this, yieldInterval, &scheduler, isDone](const auto& run)
 	{
 		mThreadId = Thread::GetCurrentThreadId();
+		mSchedulerThread = SchedulerThread::Get();
 
 		TimePoint startTime = Clock::now();
 
@@ -94,7 +96,7 @@ void SingleConsumerQueue::PostRequestShutdownCommand(bool waitUntilComplete)
 	PostCommand([this]() { mIsShutdownRequested = true; }, "Request shutdown", waitUntilComplete);
 }
 
-void SingleConsumerQueue::PostCommand(Function<void()>&& callback, const char* debugName, bool waitUntilComplete)
+void SingleConsumerQueue::PostCommand(Function<void()>&& callback, const char* debugName, bool waitUntilComplete, const String& extraInformation)
 {
 	if (waitUntilComplete)
 	{
@@ -114,7 +116,7 @@ void SingleConsumerQueue::PostCommand(Function<void()>&& callback, const char* d
 			completionSignal.NotifyOne();
 		};
 
-		QueuedCommand newCommand(std::move(fnRunBlocking), debugName);
+		QueuedCommand newCommand(std::move(fnRunBlocking), debugName, extraInformation);
 
 		{
 			Lock lock(mCommandQueueMutex);
@@ -130,7 +132,7 @@ void SingleConsumerQueue::PostCommand(Function<void()>&& callback, const char* d
 	}
 	else
 	{
-		QueuedCommand newCommand(std::move(callback), debugName);
+		QueuedCommand newCommand(std::move(callback), debugName, extraInformation);
 
 		{
 			Lock lock(mCommandQueueMutex);

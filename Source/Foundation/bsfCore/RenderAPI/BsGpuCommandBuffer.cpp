@@ -59,7 +59,22 @@ u32 CommandSyncMask::GetQueueIdxAndType(u32 globalQueueIdx, GpuQueueUsage& type)
 
 GpuCommandBufferPool::GpuCommandBufferPool(GpuDevice& gpuDevice, const GpuCommandBufferPoolCreateInformation& createInformation)
 	:mGpuDevice(gpuDevice), mInformation(createInformation)
-{}
+{
+	// Process messages related to this command buffer pool on this thread. Mostly these are command buffer resets once they are done executing.
+	Scheduler* const scheduler = Scheduler::Get();
+	if (B3D_ENSURE(scheduler))
+	{
+		mMessageQueue.ScheduleRunUntilShutdown(*scheduler, true);
+	}
+}
+
+void GpuCommandBufferPool::Destroy()
+{
+	if (mIsDestroyed)
+		return;
+
+	mIsDestroyed = true;
+}
 
 GpuCommandBuffer::GpuCommandBuffer(GpuDevice& gpuDevice, ThreadId ownerThread, GpuQueueUsage queueType, const GpuCommandBufferCreateInformation& createInformation)
 	:mGpuDevice(gpuDevice), mUsage(queueType), mOwnerThread(ownerThread), mInformation(createInformation)

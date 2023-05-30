@@ -15,9 +15,7 @@ CoreObject::CoreObject()
 {}
 
 CoreObject::~CoreObject()
-{
-	THROW_IF_NOT_CORE_THREAD;
-}
+{ }
 
 void CoreObject::Initialize()
 {

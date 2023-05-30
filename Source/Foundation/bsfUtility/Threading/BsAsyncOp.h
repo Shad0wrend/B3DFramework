@@ -115,7 +115,7 @@ namespace bs
 			if (!B3D_ENSURE(scheduler))
 				return;
 
-			scheduler->Post(SchedulerTask("AsyncOp continuation", std::move(fnContinuation), SchedulerTaskFlag::SameThread));
+			scheduler->Post(SchedulerTask(std::move(fnContinuation), "AsyncOp continuation", SchedulerTaskFlag::SameThread));
 		}
 
 		/**

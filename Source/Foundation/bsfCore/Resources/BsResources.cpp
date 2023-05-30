@@ -405,11 +405,11 @@ Resources::LoadInfo Resources::LoadInternal(const UUID& uuid, const Path& filePa
 				if (iterFind != mInProgressResources.end())
 					iterFind->second->LoadingEvent = loadingEvent;
 
-				GetCoreApplication().GetTaskScheduler().Post(SchedulerTask("Resource load", [this, loadingEvent, filePath, resource = output.Resource, keepSourceData]() mutable
+				GetCoreApplication().GetTaskScheduler().Post(SchedulerTask([this, loadingEvent, filePath, resource = output.Resource, keepSourceData]() mutable
 				{
 					LoadCallback(filePath, resource, keepSourceData);
 					loadingEvent->Signal();
-				}, SchedulerTaskFlag::None, fileName));
+				}, "ResourceLoad", SchedulerTaskFlag::None, fileName));
 			}
 		}
 	}

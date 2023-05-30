@@ -4,6 +4,7 @@
 
 #include "BsCorePrerequisites.h"
 #include "Image/BsColor.h"
+#include "Threading/BsSingleConsumerQueue.h"
 
 namespace bs
 {
@@ -107,6 +108,9 @@ namespace bs
 		public:
 			virtual ~GpuCommandBufferPool() = default;
 
+			/** Returns queue that may be used for posting messages to the command buffer pool (e.g. command buffer completion notifies). */
+			SingleConsumerQueue& GetMessageQueue() { return mMessageQueue; }
+
 			/** Creates a new command buffer. */
 			virtual SPtr<GpuCommandBuffer> Create(const GpuCommandBufferCreateInformation& createInformation) = 0;
 
@@ -115,6 +119,9 @@ namespace bs
 
 			/** Resets the command buffer pool, allowing all previously allocated command buffers to be re-used. Must be called only after all previously allocated command buffers have completed executing. */
 			virtual void Reset() = 0;
+
+			/** Destroys the pool. Will be called automatically on destruction, but may be called earlier if desired. */
+			virtual void Destroy();
 
 		protected:
 			friend class bs::GpuDevice;
@@ -126,6 +133,8 @@ namespace bs
 
 			GpuDevice& mGpuDevice;
 			const GpuCommandBufferPoolInformation mInformation;
+			SingleConsumerQueue mMessageQueue;
+			bool mIsDestroyed = false;
 		};
 
 		/**

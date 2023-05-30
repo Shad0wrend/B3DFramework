@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "Importer/BsImporter.h"
+
+#include "BsCoreApplication.h"
 #include "Resources/BsResource.h"
 #include "FileSystem/BsFileSystem.h"
 #include "Importer/BsSpecificImporter.h"
@@ -11,6 +13,7 @@
 #include "Error/BsException.h"
 #include "Utility/BsUUID.h"
 #include "Resources/BsResources.h"
+#include "Threading/BsSingleConsumerQueue.h"
 #include "Threading/BsThreadPool.h"
 #include "Threading/BsTaskScheduler.h"
 
@@ -114,23 +117,8 @@ SPtr<Resource> Importer::ImportInternal(const Path& inputFilePath, SPtr<const Im
 	if(importer == nullptr)
 		return nullptr;
 
-	const u64 taskId = WaitForAsync(importer);
-	SPtr<Resource> output = importer->Import(inputFilePath, importOptions);
-
-	if(importer->GetAsyncMode() == ImporterAsyncMode::Single)
-	{
-		Lock lock(mLastTaskMutex);
-		auto iterFind = mLastQueuedTask.find(importer);
-		if(iterFind != mLastQueuedTask.end())
-		{
-			if(iterFind->second.Id == taskId)
-				mLastQueuedTask.erase(iterFind);
-
-			mTaskCompleted.notify_one();
-		}
-	}
-
-	return output;
+	WaitForAsync(importer);
+	return importer->Import(inputFilePath, importOptions);
 }
 
 Vector<SubResourceRaw> Importer::ImportAllInternal(const Path& inputFilePath, SPtr<const ImportOptions> importOptions)
@@ -139,22 +127,8 @@ Vector<SubResourceRaw> Importer::ImportAllInternal(const Path& inputFilePath, SP
 	if(!importer)
 		return Vector<SubResourceRaw>();
 
-	const u64 taskId = WaitForAsync(importer);
-	Vector<SubResourceRaw> output = importer->ImportAll(inputFilePath, importOptions);
-
-	if(importer->GetAsyncMode() == ImporterAsyncMode::Single)
-	{
-		Lock lock(mLastTaskMutex);
-		auto iterFind = mLastQueuedTask.find(importer);
-		if(iterFind != mLastQueuedTask.end())
-		{
-			if(iterFind->second.Id == taskId)
-				mLastQueuedTask.erase(iterFind);
-
-			mTaskCompleted.notify_one();
-		}
-	}
-	return output;
+	WaitForAsync(importer);
+	return importer->ImportAll(inputFilePath, importOptions);
 }
 
 SpecificImporter* Importer::PrepareForImport(const Path& filePath, SPtr<const ImportOptions>& importOptions) const
@@ -185,31 +159,17 @@ SpecificImporter* Importer::PrepareForImport(const Path& filePath, SPtr<const Im
 	return importer;
 }
 
-u64 Importer::WaitForAsync(SpecificImporter* importer)
+void Importer::WaitForAsync(SpecificImporter* importer)
 {
-	u64 taskId = 0;
-
 	const ImporterAsyncMode asyncMode = importer->GetAsyncMode();
-	if(asyncMode == ImporterAsyncMode::Single)
-	{
-		Lock lock(mLastTaskMutex);
+	if (asyncMode != ImporterAsyncMode::Single)
+		return;
 
-		// Wait for any existing async tasks to complete
-		while(true)
-		{
-			const auto iterFind = mLastQueuedTask.find(importer);
-			if(iterFind != mLastQueuedTask.end())
-				mTaskCompleted.wait(lock);
-			else
-				break;
-		}
+	auto found = mPerImporterQueues.find(importer);
+	if (found == mPerImporterQueues.end())
+		return;
 
-		// Register a new task so other calls to this method know to wait
-		taskId = mTaskId++;
-		mLastQueuedTask[importer] = QueuedTask(nullptr, taskId);
-	}
-
-	return taskId;
+	found->second.PostCommand([] {}, "Wait until completion", true);
 }
 
 template <class ReturnType>
@@ -250,49 +210,20 @@ void DoImport(TAsyncOp<SPtr<MultiResource>> op, SpecificImporter* importer, cons
 template <class ReturnType>
 void Importer::QueueForImport(SpecificImporter* importer, const Path& inputFilePath, const SPtr<const ImportOptions>& importOptions, const UUID& uuid, TAsyncOp<ReturnType>& op)
 {
+	auto fnDoImport = [this, importer, inputFilePath, importOptions, uuid, op]
+	{
+		DoImport(op, importer, inputFilePath, uuid, importOptions);
+	};
+
 	ImporterAsyncMode asyncMode = importer->GetAsyncMode();
-
-	// If the importer only supports single thread import, the tasks need to be chained using dependencies so they get
-	// executed in sequence
-	u64 taskId = 0;
-	SPtr<Task> dependency;
-	if(asyncMode == ImporterAsyncMode::Single)
+	if (asyncMode == ImporterAsyncMode::Multi)
 	{
-		mLastTaskMutex.lock();
-		taskId = mTaskId++;
-
-		auto iterFind = mLastQueuedTask.find(importer);
-		if(iterFind != mLastQueuedTask.end())
-			dependency = iterFind->second.Task;
+		GetCoreApplication().GetTaskScheduler().Post(SchedulerTask(std::move(fnDoImport), "ImportWorker", SchedulerTaskFlag::None, inputFilePath.ToString()));
 	}
-
-	SPtr<Task> task = Task::Create(
-		"ImportWorker",
-		[this, importer, inputFilePath, importOptions, uuid, taskId, op]
-		{
-			DoImport(op, importer, inputFilePath, uuid, importOptions);
-
-			// Clear itself from the task list so we don't unnecessarily keep a reference. But first make sure we are the
-			// last task by comparing the ids.
-			Lock lock(mLastTaskMutex);
-			auto iterFind = mLastQueuedTask.find(importer);
-			if(iterFind != mLastQueuedTask.end())
-			{
-				if(iterFind->second.Id == taskId)
-					mLastQueuedTask.erase(iterFind);
-
-				mTaskCompleted.notify_one();
-			}
-		},
-		TaskPriority::Normal, dependency);
-
-	if(asyncMode == ImporterAsyncMode::Single)
+	else
 	{
-		mLastQueuedTask[importer] = QueuedTask(task, taskId);
-		mLastTaskMutex.unlock();
+		mPerImporterQueues[importer].PostCommand(std::move(fnDoImport), "ImportWorker", false, inputFilePath.ToString());
 	}
-
-	TaskScheduler::Instance().AddTask(task);
 }
 
 template void Importer::QueueForImport(SpecificImporter*, const Path&, const SPtr<const ImportOptions>&, const UUID&, TAsyncOp<HResource>&);

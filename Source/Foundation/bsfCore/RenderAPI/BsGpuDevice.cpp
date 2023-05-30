@@ -14,6 +14,26 @@ GpuQueue::GpuQueue(GpuDevice& gpuDevice, GpuQueueUsage usage, u32 index)
 	
 }
 
+GpuQueue::~GpuQueue()
+{
+	WaitGroup waitGroup;
+	for(const auto& entry : mTransferCommandBuffers)
+	{
+		if (entry.second.CommandBufferPool == nullptr)
+			continue;
+
+		waitGroup.Increment();
+
+		// It's important we queue the destroy on the thread the command buffer pool was created on, as command buffers are bound to a single thread. We don't use the command buffer pool message queue directly
+		// as the destroy operation may wait on the queue to complete, which would result in a deadlock.
+		const SPtr<SchedulerThread> ownerSchedulerThread = entry.second.CommandBufferPool->GetMessageQueue().GetSchedulerThread();
+		if (B3D_ENSURE(ownerSchedulerThread))
+			ownerSchedulerThread->Post(SchedulerTask([&waitGroup, commandBufferPool = entry.second.CommandBufferPool] { commandBufferPool->Destroy(); waitGroup.NotifyDone(); }, "Destroy GpuCommandBufferPool"));
+	}
+
+	waitGroup.Wait();
+}
+
 SPtr<ct::GpuCommandBuffer> GpuQueue::GetOrCreateTransferCommandBuffer()
 {
 	Lock lock(mMutex);

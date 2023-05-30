@@ -342,7 +342,7 @@ namespace bs
 			};
 
 			mMetaData.ShaderInitializeOperation = TAsyncOp<SPtr<Shader>>();
-			GetCoreApplication().GetTaskScheduler().Post(SchedulerTask("Compile shader meta-data", std::move(fnInitializeShader)));
+			GetCoreApplication().GetTaskScheduler().Post(SchedulerTask(std::move(fnInitializeShader), "Compile shader meta-data"));
 
 			return mMetaData.ShaderInitializeOperation;
 		}

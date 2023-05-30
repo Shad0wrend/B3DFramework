@@ -24,12 +24,13 @@ namespace bs
 		/** Command queue for execution. */
 		struct QueuedCommand
 		{
-			QueuedCommand(Function<void()>&& callback = nullptr, const char* debugName = nullptr)
-				: Callback(std::move(callback)), DebugName(debugName)
+			QueuedCommand(Function<void()>&& callback = nullptr, const char* debugName = nullptr, const String& debugExtraInformation = StringUtil::kBlank)
+				: Callback(std::move(callback)), DebugName(debugName), DebugExtraInformation(debugExtraInformation)
 			{}
 
 			Function<void()> Callback; /**< Callback associated with the command. */
 			const char* DebugName; /**< Name of the command, for easier debugging. */
+			const String DebugExtraInformation; /**< Additional information for debugging. */
 		};
 
 		SingleConsumerQueue();
@@ -38,8 +39,11 @@ namespace bs
 		/** Returns the thread id on which the queue commands are being processed on. Only valid after RunUntilShutdown() is called. */
 		u32 GetThreadId() const { return mThreadId; }
 
+		/** Returns the scheduler thread that the queue is executing commands on. May be null if not scheduler is associated with the thread. */
+		const SPtr<SchedulerThread>& GetSchedulerThread() const { return mSchedulerThread; }
+
 		/** Posts a command for execution on the queue. Optionally blocks the calling fiber/thread until the command completes. Thread safe. */
-		void PostCommand(Function<void()>&& callback, const char* debugName = nullptr, bool waitUntilComplete = false);
+		void PostCommand(Function<void()>&& callback, const char* debugName = nullptr, bool waitUntilComplete = false, const String& extraInformation = StringUtil::kBlank);
 
 		/** Posts a special command that requests shutdown. Optionally blocks the calling fiber/thread until the command completes. Thread safe. */
 		void PostRequestShutdownCommand(bool waitUntilComplete);
@@ -79,6 +83,7 @@ namespace bs
 
 	private:
 		u32 mThreadId = 0;
+		SPtr<SchedulerThread> mSchedulerThread;
 
 		Queue<QueuedCommand>* mCommandQueue;
 		Stack<Queue<QueuedCommand>*> mEmptyCommandQueues; /**< List of empty queues for reuse. */

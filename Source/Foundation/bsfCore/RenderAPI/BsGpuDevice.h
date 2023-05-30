@@ -35,7 +35,7 @@ namespace bs
 	class B3D_CORE_EXPORT GpuQueue
 	{
 	public:
-	virtual ~GpuQueue() = default;
+		virtual ~GpuQueue();
 
 		/** Determines which type of command buffer commands can be used on the command buffers submitted on the queue. */
 		GpuQueueUsage GetUsage() const { return mUsage; }

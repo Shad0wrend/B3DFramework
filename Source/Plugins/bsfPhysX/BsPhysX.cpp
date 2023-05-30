@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsPhysX.h"
+
+#include "BsCoreApplication.h"
 #include "PxPhysicsAPI.h"
 #include "BsPhysXMaterial.h"
 #include "BsPhysXMesh.h"
@@ -293,16 +295,8 @@ class PhysXCPUDispatcher : public PxCpuDispatcher
 public:
 	void submitTask(PxBaseTask& physxTask) override
 	{
-		// Note: Framework's task scheduler is pretty low granularity. Consider a better task manager in case PhysX ends
-		// up submitting many tasks.
-		// - PhysX's task manager doesn't seem much lighter either. But perhaps I can at least create a task pool to
-		//   avoid allocating them constantly.
-
-		auto runTask = [&]()
-		{ physxTask.run(); physxTask.release(); };
-		SPtr<Task> task = Task::Create("PhysX", runTask);
-
-		TaskScheduler::Instance().AddTask(task);
+		auto runTask = [&physxTask]() { physxTask.run(); physxTask.release(); };
+		GetCoreApplication().GetTaskScheduler().Post(SchedulerTask(std::move(runTask), "PhysXWorker"));
 	}
 
 	PxU32 getWorkerCount() const override

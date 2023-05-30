@@ -38,7 +38,7 @@ namespace bs
 		SchedulerTask() = default;
 		SchedulerTask(const SchedulerTask& other): mWorkerFunction(other.mWorkerFunction), mFlags(other.mFlags) { }
 		SchedulerTask(SchedulerTask&& other): mWorkerFunction(std::move(other.mWorkerFunction)), mFlags(other.mFlags) { }
-		SchedulerTask(const char* name, const Function<void()>& workerFunction, SchedulerTaskFlags flags = SchedulerTaskFlag::None, const String& extraInformation = StringUtil::kBlank)
+		SchedulerTask(const Function<void()>& workerFunction, const char* name, SchedulerTaskFlags flags = SchedulerTaskFlag::None, const String& extraInformation = StringUtil::kBlank)
 			: mName(name), mWorkerFunction(workerFunction), mFlags(flags), mExtraInformation(extraInformation)
 		{ }
 

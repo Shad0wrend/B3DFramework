@@ -443,45 +443,34 @@ void VulkanGpuBackend::OnStartUp()
 
 void VulkanGpuBackend::OnShutDown()
 {
-	auto fnShutdown = [this]()
+	for (const auto& device : mDevices)
 	{
-		for (const auto& device : mDevices)
-		{
-			if (!device->IsInitialized())
-				continue;
+		if (!device->IsInitialized())
+			continue;
 
-			device->WaitUntilIdle();
-		}
-
-		VulkanSubmitThread::ShutDown();
-		VulkanVertexInputManager::ShutDown();
-		ct::RenderWindowManager::ShutDown();
-		RenderWindowManager::ShutDown();
-		VulkanFramebufferCache::ShutDown();
-		VulkanRenderPassCache::ShutDown();
-		ct::TextureManager::ShutDown();
-		TextureManager::ShutDown();
-		GLSLToSPIRV::ShutDown();
-
-		mPresentDevice = nullptr;
-		mDevices.clear();
-
-		if (mDebugReportCallback != nullptr)
-			vkDestroyDebugReportCallbackEXT(mInstance, mDebugReportCallback, gVulkanAllocator);
-
-		if (mDebugUtilsMessenger != nullptr)
-			vkDestroyDebugUtilsMessengerEXT(mInstance, mDebugUtilsMessenger, gVulkanAllocator);
-
-		vkDestroyInstance(mInstance, gVulkanAllocator);
-	};
-
-		// TODO - Device::WaitUntilIdle is not thread safe yet, ensure it only triggers on the core thread
-	if (B3D_CURRENT_THREAD_ID == CoreThread::Instance().GetCoreThreadId())
-		fnShutdown();
-	else
-	{
-		CoreThread::Instance().PostCommand(fnShutdown, true);
+		device->WaitUntilIdle();
 	}
+
+	VulkanSubmitThread::ShutDown();
+	VulkanVertexInputManager::ShutDown();
+	ct::RenderWindowManager::ShutDown();
+	RenderWindowManager::ShutDown();
+	VulkanFramebufferCache::ShutDown();
+	VulkanRenderPassCache::ShutDown();
+	ct::TextureManager::ShutDown();
+	TextureManager::ShutDown();
+	GLSLToSPIRV::ShutDown();
+
+	mPresentDevice = nullptr;
+	mDevices.clear();
+
+	if (mDebugReportCallback != nullptr)
+		vkDestroyDebugReportCallbackEXT(mInstance, mDebugReportCallback, gVulkanAllocator);
+
+	if (mDebugUtilsMessenger != nullptr)
+		vkDestroyDebugUtilsMessengerEXT(mInstance, mDebugUtilsMessenger, gVulkanAllocator);
+
+	vkDestroyInstance(mInstance, gVulkanAllocator);
 
 	Super::OnShutDown();
 }

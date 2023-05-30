@@ -9,6 +9,7 @@
 
 namespace bs
 {
+	class SignalEvent;
 	/** @addtogroup Importer
 	 *  @{
 	 */
@@ -186,33 +187,12 @@ namespace bs
 
 		/**
 		 * Checks is the specific importer currently importing something asynchronously. If the importer doesn't support
-		 * multiple threads then the method will wait until async. import completes, register a new task (so further
-		 * calls to the same method appropriately wait), and return an index of the task. The caller must check to
-		 * remove the task when import is done.
+		 * multiple threads then the method will wait until async. import completes.
 		 */
-		u64 WaitForAsync(SpecificImporter* importer);
+		void WaitForAsync(SpecificImporter* importer);
 
 		Vector<SpecificImporter*> mAssetImporters;
-
-		mutable Mutex mLastTaskMutex;
-		mutable ConditionVariable mTaskCompleted;
-		mutable Mutex mImportMutex;
-		mutable u64 mTaskId = 0;
-
-		/** Information about a task queued for a specific import operation. */
-		struct QueuedTask
-		{
-			QueuedTask() = default;
-
-			QueuedTask(SPtr<Task> task, u64 id)
-				: Task(std::move(task)), Id(id)
-			{}
-
-			SPtr<Task> Task;
-			u64 Id;
-		};
-
-		UnorderedMap<SpecificImporter*, QueuedTask> mLastQueuedTask;
+		UnorderedMap<SpecificImporter*, SingleConsumerQueue> mPerImporterQueues; /**< Queues for importers having to run sequential tasks. */
 	};
 
 	/** Provides easier access to Importer. */

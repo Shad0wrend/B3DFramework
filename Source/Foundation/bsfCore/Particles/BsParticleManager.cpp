@@ -433,7 +433,7 @@ ParticlePerFrameData* ParticleManager::Update(const EvaluatedAnimationData& anim
 			mWorkerDoneSignal.notify_one();
 		};
 
-		GetCoreApplication().GetTaskScheduler().Post(SchedulerTask("ParticleWorker", evaluateWorker));
+		GetCoreApplication().GetTaskScheduler().Post(SchedulerTask(evaluateWorker, "ParticleWorker"));
 	}
 
 	// Wait for tasks to complete

@@ -140,7 +140,7 @@ const EvaluatedAnimationData* AnimationManager::Update(bool async)
 			mWorkerDoneSignal.notify_one();
 		};
 
-		GetCoreApplication().GetTaskScheduler().Post(SchedulerTask("AnimWorker", evaluateAnimWorker));
+		GetCoreApplication().GetTaskScheduler().Post(SchedulerTask(evaluateAnimWorker, "AnimWorker"));
 
 		if(anim->Skeleton != nullptr)
 			curBoneIdx += anim->Skeleton->GetNumBones();
