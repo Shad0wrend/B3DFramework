@@ -1,6 +1,8 @@
 //************************************ bs::framework - Copyright 2018 Marko Pintera **************************************//
 //*********** Licensed under the MIT license. See LICENSE.md for full terms. This notice is not to be removed. ***********//
 #include "BsOAAudio.h"
+
+#include "BsCoreApplication.h"
 #include "BsOAAudioClip.h"
 #include "BsOAAudioListener.h"
 #include "BsOAAudioSource.h"
@@ -8,10 +10,12 @@
 #include "Threading/BsTaskScheduler.h"
 #include "Audio/BsAudioUtility.h"
 #include "AL/al.h"
+#include "Threading/BsSignalEvent.h"
 
 using namespace bs;
 
 OAAudio::OAAudio()
+	:mStreamingTaskSignal(SignalEvent::Mode::ManuallyReset, true)
 {
 	bool enumeratedDevices;
 	if(alcIsExtensionPresent(nullptr, "ALC_ENUMERATE_ALL_EXT") != ALC_FALSE)
@@ -103,15 +107,12 @@ void OAAudio::SetPaused(bool paused)
 
 void OAAudio::UpdateInternal()
 {
-	auto worker = [this]()
-	{ UpdateStreaming(); };
-
 	// If previous task still hasn't completed, just skip streaming this frame, queuing more tasks won't help
-	if(mStreamingTask != nullptr && !mStreamingTask->IsComplete())
+	if(!mStreamingTaskSignal.IsSignalled())
 		return;
 
-	mStreamingTask = Task::Create("AudioStream", worker, TaskPriority::VeryHigh);
-	TaskScheduler::Instance().AddTask(mStreamingTask);
+	mStreamingTaskSignal.Reset();
+	GetCoreApplication().GetTaskScheduler().Post(SchedulerTask([this] { UpdateStreaming(); mStreamingTaskSignal.Signal(); }, "AudioStreaming"));
 
 	Audio::UpdateInternal();
 }

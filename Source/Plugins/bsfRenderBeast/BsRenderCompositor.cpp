@@ -703,10 +703,9 @@ void RCNodeParticleSort::Render(const RenderCompositorNodeInputs& inputs)
 				systemsToSort.push_back({ particleSystem, simulationData });
 		}
 
-		const auto worker = [&systemsToSort, viewOrigin = viewProps.ViewOrigin](u32 idx)
+		WaitGroup waitGroup((u32)systemsToSort.size());
+		const auto fnSortWorker = [&waitGroup, viewOrigin = viewProps.ViewOrigin](const SortData& data)
 		{
-			const SortData& data = systemsToSort[idx];
-
 			Vector3 refPoint = viewOrigin;
 
 			// Transform the view point into particle system's local space
@@ -724,12 +723,17 @@ void RCNodeParticleSort::Render(const RenderCompositorNodeInputs& inputs)
 				auto renderData = static_cast<ParticleMeshRenderData*>(data.RenderData);
 				ParticleRenderer::SortByDistance(refPoint, renderData->Position, renderData->NumParticles, 3, renderData->Indices);
 			}
+
+			waitGroup.NotifyDone();
 		};
 
-		SPtr<TaskGroup> sortTask = TaskGroup::Create("ParticleSort", worker, (u32)systemsToSort.size());
+		Scheduler& taskScheduler = GetCoreApplication().GetTaskScheduler();
+		for (const auto& data : systemsToSort)
+		{
+			taskScheduler.Post(SchedulerTask([&fnSortWorker, &data] { fnSortWorker(data); }, "ParticleSort"));
+		}
 
-		TaskScheduler::Instance().AddTaskGroup(sortTask);
-		sortTask->Wait();
+		waitGroup.Wait();
 	}
 	B3DClearAllocatorFrame();
 }

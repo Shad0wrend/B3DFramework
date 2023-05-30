@@ -306,7 +306,7 @@ ImageAcquireResult VulkanSwapChain::AcquireImage()
 
 		Lock lock(mImageAcquireMutex);
 		mImageAcquireResults.Add(output);
-		mImageAcquireSignal.notify_all();
+		mImageAcquireSignal.NotifyAll();
 
 		return output;
 	}
@@ -321,7 +321,7 @@ ImageAcquireResult VulkanSwapChain::AcquireImage()
 
 		Lock lock(mImageAcquireMutex);
 		mImageAcquireResults.Add(output);
-		mImageAcquireSignal.notify_all();
+		mImageAcquireSignal.NotifyAll();
 
 		return output;
 	}
@@ -343,7 +343,7 @@ ImageAcquireResult VulkanSwapChain::AcquireImage()
 	{
 		Lock lock(mImageAcquireMutex);
 		mImageAcquireResults.Add(output);
-		mImageAcquireSignal.notify_all();
+		mImageAcquireSignal.NotifyAll();
 	}
 
 	return output;
@@ -358,12 +358,7 @@ void VulkanSwapChain::WaitUntilFirstImageAcquired()
 		return;
 
 	// Wait until all the acquire operations finish
-	while(mQueuedImageAcquireOperationCount != (u32)mImageAcquireResults.size())
-	{
-		TaskScheduler::Instance().AddWorker();
-		mImageAcquireSignal.wait(lock);
-		TaskScheduler::Instance().RemoveWorker();
-	}
+	mImageAcquireSignal.Wait(lock, [this] { return mQueuedImageAcquireOperationCount == (u32)mImageAcquireResults.size(); });
 
 	for(const auto& acquireResult : mImageAcquireResults)
 	{

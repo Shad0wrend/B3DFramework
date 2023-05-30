@@ -72,7 +72,7 @@ namespace bs
 using namespace bs;
 
 CoreApplication::CoreApplication(START_UP_DESC desc)
-	: mPrimaryWindow(nullptr), mStartUpDesc(desc), mIsFrameRenderingFinished(true), mSimThreadId(B3D_CURRENT_THREAD_ID), mRunMainLoop(false)
+	: mPrimaryWindow(nullptr), mStartUpDesc(desc), mFrameRenderingFinishedSignal(SignalEvent::Mode::AutomaticallyReset, true), mSimThreadId(B3D_CURRENT_THREAD_ID), mRunMainLoop(false), mMainThreadScheduler(SchedulerCreateInformation())
 {
 	// Ensure all errors are reported properly
 	CrashHandler::StartUp(desc.CrashHandling);
@@ -138,6 +138,7 @@ CoreApplication::~CoreApplication()
 	ShaderCompilers::ShutDown();
 
 	mTaskScheduler = nullptr;
+	Scheduler::UnbindFromCurrentThread();
 
 	ThreadPool::ShutDown();
 	MemStack::EndThread();
@@ -151,6 +152,8 @@ void CoreApplication::OnStartUp()
 	Platform::StartUpInternal();
 	MemStack::BeginThread();
 	ThreadPool::StartUp<TThreadPool<ThreadDefaultPolicy>>((Thread::GetLogicalCoreCount()));
+
+	mMainThreadScheduler.BindToCurrentThread();
 
 	SchedulerCreateInformation schedulerCreateInformation;
 	schedulerCreateInformation.WorkerThreadCount = (u32)Math::Max(1, (i32)Thread::GetLogicalCoreCount() - 2); // Reserve two threads for main + render thread
@@ -332,18 +335,7 @@ void CoreApplication::RunMainLoopFrame()
 	// running just a single thread. Latency becomes worse if the core thread takes longer than sim
 	// thread, in which case sim thread needs to wait. Optimal solution would be to get an average
 	// difference between sim/core thread and start the sim thread a bit later so they finish at nearly the same time.
-	{
-		Lock lock(mFrameRenderingFinishedMutex);
-
-		while(!mIsFrameRenderingFinished)
-		{
-			TaskScheduler::Instance().AddWorker();
-			mFrameRenderingFinishedCondition.wait(lock);
-			TaskScheduler::Instance().RemoveWorker();
-		}
-
-		mIsFrameRenderingFinished = false;
-	}
+	WaitUntilFrameFinished();
 
 	GetCoreThread().PostCommand([this] { BeginCoreProfiling(); });
 	GetCoreThread().PostCommand([] { Platform::CoreUpdateInternal(); });
@@ -360,14 +352,7 @@ void CoreApplication::RunMainLoopFrame()
 
 void CoreApplication::WaitUntilFrameFinished()
 {
-	Lock lock(mFrameRenderingFinishedMutex);
-
-	while(!mIsFrameRenderingFinished)
-	{
-		TaskScheduler::Instance().AddWorker();
-		mFrameRenderingFinishedCondition.wait(lock);
-		TaskScheduler::Instance().RemoveWorker();
-	}
+	mFrameRenderingFinishedSignal.Wait();
 }
 
 void CoreApplication::PreUpdate()
@@ -406,10 +391,7 @@ void CoreApplication::SetFpsLimit(u32 limit)
 
 void CoreApplication::FrameRenderingFinishedCallback()
 {
-	Lock lock(mFrameRenderingFinishedMutex);
-
-	mIsFrameRenderingFinished = true;
-	mFrameRenderingFinishedCondition.notify_one();
+	mFrameRenderingFinishedSignal.Signal();
 }
 
 void CoreApplication::StartUpRenderer()

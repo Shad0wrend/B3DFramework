@@ -40,7 +40,7 @@ void CoreThread::OnStartUp()
 
 		mScheduler.BindToCurrentThread();
 		mCommandQueue.ScheduleRunUntilShutdown(mScheduler, true, 10ms, true);
-		mScheduler.UnbindFromCurrentThread();
+		Scheduler::UnbindFromCurrentThread();
 	};
 
 	mCoreThread = ThreadPool::Instance().Run("Core", fnRunThread);

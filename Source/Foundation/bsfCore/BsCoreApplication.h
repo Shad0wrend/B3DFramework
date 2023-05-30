@@ -5,6 +5,7 @@
 #include "BsCorePrerequisites.h"
 #include "Utility/BsModule.h"
 #include "RenderAPI/BsRenderWindow.h"
+#include "Threading/BsSignalEvent.h"
 #include "Utility/BsEvent.h"
 #include "Utility/BsPersistentCache.h"
 
@@ -124,6 +125,9 @@ namespace bs
 		/** Returns the scheduler on which you can queue tasks on for execution on worker threads. */
 		Scheduler& GetTaskScheduler() const { return *mTaskScheduler; }
 
+		/** Returns the scheduler responsible for running tasks on the main thread. */
+		Scheduler& GetMainThreadScheduler() { return mMainThreadScheduler; }
+
 		/**
 		 * Loads a plugin.
 		 *
@@ -181,6 +185,7 @@ namespace bs
 
 		SPtr<RenderWindow> mPrimaryWindow;
 		SPtr<GpuDevice> mPrimaryGpu;
+		Scheduler mMainThreadScheduler;
 		SPtr<Scheduler> mTaskScheduler;
 		START_UP_DESC mStartUpDesc;
 
@@ -191,9 +196,7 @@ namespace bs
 		SPtr<PersistentCache> mApplicationCache;
 		UnorderedMap<String, LoadedPlugin> mLoadedPlugins;
 
-		bool mIsFrameRenderingFinished;
-		Mutex mFrameRenderingFinishedMutex;
-		ConditionVariable mFrameRenderingFinishedCondition;
+		SignalEvent mFrameRenderingFinishedSignal;
 		ThreadId mSimThreadId;
 
 		volatile bool mRunMainLoop;

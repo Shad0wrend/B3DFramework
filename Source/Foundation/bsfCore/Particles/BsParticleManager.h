@@ -163,10 +163,8 @@ namespace bs
 		u32 mReadBufferIdx = 1;
 		u32 mWriteBufferIdx = 0;
 
-		ConditionVariable mWorkerDoneSignal;
 		Mutex mMutex;
 
-		u32 mNumActiveWorkers = 0;
 		bool mSwapBuffers = false;
 	};
 

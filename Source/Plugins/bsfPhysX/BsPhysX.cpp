@@ -301,7 +301,7 @@ public:
 
 	PxU32 getWorkerCount() const override
 	{
-		return (PxU32)TaskScheduler::Instance().GetNumWorkers();
+		return (PxU32)GetCoreApplication().GetTaskScheduler().GetInformation().WorkerThreadCount;
 	}
 };
 

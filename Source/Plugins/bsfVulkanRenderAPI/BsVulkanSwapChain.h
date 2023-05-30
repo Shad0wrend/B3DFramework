@@ -174,7 +174,7 @@ namespace bs
 			bool mIsRetired = false;
 
 			Mutex mImageAcquireMutex;
-			ConditionVariable mImageAcquireSignal;
+			Signal mImageAcquireSignal;
 			u32 mQueuedImageAcquireOperationCount = 0;
 			SmallVector<ImageAcquireResult, 4> mImageAcquireResults;
 

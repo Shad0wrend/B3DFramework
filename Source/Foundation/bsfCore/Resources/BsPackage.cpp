@@ -436,12 +436,8 @@ void Package::SetResource(const SPtr<Resource>& resource, bool markAsDirty)
 	if (!resourceInformation)
 		return;
 
-	while (resourceInformation->LoadState == PackageResourceLoadState::InProgress)
-	{
-		TaskScheduler::Instance().AddWorker();
-		resourceInformation->LoadSignal.wait(lock);
-		TaskScheduler::Instance().RemoveWorker();
-	}
+	// Wait if load in progress
+	resourceInformation->LoadSignal.Wait(lock, [resourceInformation] { return resourceInformation->LoadState != PackageResourceLoadState::InProgress; });
 
 	// Always make a copy and user might be reading from the meta-data, and we cannot modify it in a thread safe way
 	const SPtr<PackageResourceMetaData> metaDataCopy = B3DRTTIClone(resourceInformation->MetaData);
@@ -623,12 +619,7 @@ SPtr<Resource> Package::LoadResource(const UUID& id)
 		else
 		{
 			// Wait if in progress
-			while (resourceInformation->LoadState == PackageResourceLoadState::InProgress)
-			{
-				TaskScheduler::Instance().AddWorker();
-				resourceInformation->LoadSignal.wait(lock);
-				TaskScheduler::Instance().RemoveWorker();
-			}
+			resourceInformation->LoadSignal.Wait(lock, [resourceInformation] { return resourceInformation->LoadState != PackageResourceLoadState::InProgress; });
 
 			if(resourceInformation->LoadState == PackageResourceLoadState::Loaded)
 			{
@@ -661,7 +652,7 @@ SPtr<Resource> Package::LoadResource(const UUID& id)
 			resourceInformation->LoadState = PackageResourceLoadState::Unloaded;
 			resourceInformation->LoadProgress.store(0.0f, std::memory_order_relaxed);
 
-			resourceInformation->LoadSignal.notify_all();
+			resourceInformation->LoadSignal.NotifyAll();
 			return nullptr;
 		}
 
@@ -673,7 +664,7 @@ SPtr<Resource> Package::LoadResource(const UUID& id)
 		resourceInformation->LoadProgress.store(1.0f, std::memory_order_relaxed);
 		resourceInformation->LoadedResource = resource;
 
-		resourceInformation->LoadSignal.notify_all();
+		resourceInformation->LoadSignal.NotifyAll();
 
 		return resourceInformation->LoadedResource;
 	}
@@ -795,12 +786,7 @@ void Package::UnloadResource(const UUID& id)
 			ResourceInformation* resourceInformation = found->second.get();
 
 			// Wait for the load to complete if in progress, we don't have a mechanism to abort the load
-			while(resourceInformation->LoadState == PackageResourceLoadState::InProgress)
-			{
-				TaskScheduler::Instance().AddWorker();
-				resourceInformation->LoadSignal.wait(lock);
-				TaskScheduler::Instance().RemoveWorker();
-			}
+			resourceInformation->LoadSignal.Wait(lock, [resourceInformation] { return resourceInformation->LoadState != PackageResourceLoadState::InProgress; });
 
 			if(resourceInformation->LoadState == PackageResourceLoadState::Loaded)
 				UnloadResource(resourceInformation);
@@ -821,12 +807,7 @@ void Package::UnloadAllResources()
 		ResourceInformation *const resourceInformation= entryPair.second.get();
 
 		// Wait for the load to complete if in progress, we don't have a mechanism to abort the load
-		while (resourceInformation->LoadState == PackageResourceLoadState::InProgress)
-		{
-			TaskScheduler::Instance().AddWorker();
-			resourceInformation->LoadSignal.wait(lock);
-			TaskScheduler::Instance().RemoveWorker();
-		}
+		resourceInformation->LoadSignal.Wait(lock, [resourceInformation] { return resourceInformation->LoadState != PackageResourceLoadState::InProgress; });
 
 		if (resourceInformation->LoadState == PackageResourceLoadState::Loaded)
 			UnloadResource(resourceInformation);
@@ -933,7 +914,7 @@ void Package::UnloadResource(ResourceInformation* resourceInformation)
 	resourceInformation->LoadedResource = nullptr;
 	resourceInformation->LoadProgress.store(0.0f, std::memory_order_relaxed);
 	resourceInformation->LoadState = PackageResourceLoadState::Unloaded;
-	resourceInformation->LoadSignal.notify_all();
+	resourceInformation->LoadSignal.NotifyAll();
 }
 
 SPtr<Package> Package::Create(const String& name, const UUID& id)
@@ -1143,12 +1124,7 @@ SPtr<Package> Package::Clone() const
 	{
 		// We cannot clone a package with in-progress loads, so we need to wait for them to complete
 		const ResourceInformation* const resourceInformation = entry.second.get();
-		while (resourceInformation->LoadState == PackageResourceLoadState::InProgress)
-		{
-			TaskScheduler::Instance().AddWorker();
-			resourceInformation->LoadSignal.wait(lock);
-			TaskScheduler::Instance().RemoveWorker();
-		}
+		resourceInformation->LoadSignal.Wait(lock, [resourceInformation] { return resourceInformation->LoadState != PackageResourceLoadState::InProgress; });
 
 		B3D_ASSERT(entry.second->LoadState != PackageResourceLoadState::InProgress);
 

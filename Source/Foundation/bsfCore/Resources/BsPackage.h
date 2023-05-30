@@ -5,6 +5,7 @@
 #include "BsCorePrerequisites.h"
 #include "Utility/BsCompression.h"
 #include "Allocators/BsPoolAlloc.h"
+#include "Threading/BsSignal.h"
 
 namespace bs
 {
@@ -184,7 +185,7 @@ namespace bs
 
 			PackageResourceLoadState LoadState = PackageResourceLoadState::Unloaded; /**< Load state of the resource. */
 			std::atomic<float> LoadProgress { 0 }; /**< State of resource load, in case resource loading is in progress. */
-			mutable ConditionVariable LoadSignal; /**< Signal that triggers when resource load completes. */
+			mutable Signal LoadSignal; /**< Signal that triggers when resource load completes. */
 		};
 
 	public:

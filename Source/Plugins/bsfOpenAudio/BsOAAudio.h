@@ -5,9 +5,11 @@
 #include "BsOAPrerequisites.h"
 #include "Audio/BsAudio.h"
 #include "AL/alc.h"
+#include "Threading/BsSignalEvent.h"
 
 namespace bs
 {
+	class SignalEvent;
 	/** @addtogroup OpenAudio
 	 *  @{
 	 */
@@ -125,7 +127,7 @@ namespace bs
 		Vector<StreamingCommand> mStreamingCommandQueue;
 		UnorderedSet<OAAudioSource*> mStreamingSources;
 		UnorderedSet<OAAudioSource*> mDestroyedSources;
-		SPtr<Task> mStreamingTask;
+		SignalEvent mStreamingTaskSignal;
 		mutable Mutex mMutex;
 	};
 

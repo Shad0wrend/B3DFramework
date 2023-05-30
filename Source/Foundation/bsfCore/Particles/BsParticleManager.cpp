@@ -360,19 +360,15 @@ ParticlePerFrameData* ParticleManager::Update(const EvaluatedAnimationData& anim
 	simulationData.GpuData.clear();
 
 	// Queue evaluation tasks
-	{
-		Lock lock(mMutex);
-		mNumActiveWorkers = (u32)mSystems.size();
-	}
-
 	float timeDelta = GetTime().GetFrameDelta();
 
 	ParticleSimulationDataPool& simDataPool = m->SimDataPool[mWriteBufferIdx];
 	simDataPool.Clear();
 
+	WaitGroup waitGroup((u32)mSystems.size());
 	for(auto& system : mSystems)
 	{
-		const auto evaluateWorker = [this, timeDelta, system, &animData, &simDataPool, &simulationData]()
+		const auto evaluateWorker = [this, &waitGroup, timeDelta, system, &animData, &simDataPool, &simulationData]()
 		{
 			// Advance the simulation
 			system->SimulateInternal(timeDelta, &animData);
@@ -421,31 +417,19 @@ ParticlePerFrameData* ParticleManager::Update(const EvaluatedAnimationData& anim
 			{
 				Lock lock(mMutex);
 
-				B3D_ASSERT(mNumActiveWorkers > 0);
-				mNumActiveWorkers--;
-
 				if(simulationDataCPU)
 					simulationData.CpuData[system->mId] = simulationDataCPU;
 				else if(simulationDataGPU)
 					simulationData.GpuData[system->mId] = simulationDataGPU;
 			}
 
-			mWorkerDoneSignal.notify_one();
+			waitGroup.NotifyDone();
 		};
 
 		GetCoreApplication().GetTaskScheduler().Post(SchedulerTask(evaluateWorker, "ParticleWorker"));
 	}
 
-	// Wait for tasks to complete
-	TaskScheduler::Instance().AddWorker(); // Make the current core available for work (since this thread waits)
-	{
-		Lock lock(mMutex);
-
-		while(mNumActiveWorkers > 0)
-			mWorkerDoneSignal.wait(lock);
-	}
-	TaskScheduler::Instance().RemoveWorker();
-
+	waitGroup.Wait();
 	mSwapBuffers = true;
 
 	return &mSimulationData[mWriteBufferIdx];
