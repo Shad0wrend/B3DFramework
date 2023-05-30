@@ -10,7 +10,7 @@
 
 using namespace bs;
 
-ConditionVariable ResourceHandleBase::mResourceCreatedCondition;
+Signal ResourceHandleBase::mResourceCreatedCondition;
 Mutex ResourceHandleBase::mResourceCreatedMutex;
 
 bool ResourceHandleBase::IsLoaded(bool checkDependencies) const
@@ -31,10 +31,7 @@ void ResourceHandleBase::BlockUntilLoaded(bool waitForDependencies) const
 	if(!mData->MIsCreated)
 	{
 		Lock lock(mResourceCreatedMutex);
-		while(!mData->MIsCreated)
-		{
-			mResourceCreatedCondition.wait(lock);
-		}
+		mResourceCreatedCondition.Wait(lock, [this] { return mData->MIsCreated; });
 
 		// Send out ResourceListener events right away, as whatever called this method probably also expects the
 		// listener events to trigger immediately as well
@@ -86,7 +83,7 @@ void ResourceHandleBase::NotifyLoadComplete()
 			mData->MIsCreated = true;
 		}
 
-		mResourceCreatedCondition.notify_all();
+		mResourceCreatedCondition.NotifyAll();
 	}
 }
 

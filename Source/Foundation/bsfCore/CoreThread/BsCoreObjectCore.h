@@ -90,7 +90,7 @@ namespace bs
 			volatile u8 mFlags;
 			std::weak_ptr<CoreObject> mThis;
 
-			static ConditionVariable mCoreGpuObjectLoadedCondition;
+			static Signal mCoreGpuObjectLoadedCondition;
 			static Mutex mCoreGpuObjectLoadedMutex;
 		};
 

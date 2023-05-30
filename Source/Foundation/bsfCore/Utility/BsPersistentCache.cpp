@@ -500,7 +500,7 @@ void PersistentCache::NotifyOperationWillEnd(const Path& path, CacheOperationTyp
 		mTotalActiveWriteOperationCount--;
 	}
 
-	mOperationCompletedSignal.notify_all();
+	mOperationCompletedSignal.NotifyAll();
 }
 
 Optional<PersistentCache::CacheOperation> PersistentCache::AcquireReadOperation(const Path& path)
@@ -510,23 +510,19 @@ Optional<PersistentCache::CacheOperation> PersistentCache::AcquireReadOperation(
 	if(mCacheFolder.IsEmpty())
 		return {};
 
+	mOperationCompletedSignal.Wait(lock, [this, &path]
+	{
+		auto found = mEntries.find(path);
+		if (found == mEntries.end())
+			return true;
+
+		return !found->second.IsWriteOperationActive;
+	});
+
+	// Entry could have been deleted
 	auto found = mEntries.find(path);
 	if (found == mEntries.end())
 		return {};
-
-	// If there is a write operation, it needs to complete first
-	bool isWriteOperationActive = found->second.IsWriteOperationActive;
-	while (isWriteOperationActive)
-	{
-		mOperationCompletedSignal.wait(lock);
-
-		// Entry could have been deleted
-		found = mEntries.find(path);
-		if (found == mEntries.end())
-			return {};
-
-		isWriteOperationActive = found->second.IsWriteOperationActive;
-	}
 
 	found->second.LastUsedTimestamp = (u64)std::time(nullptr);
 	found->second.IsMetaDataOutOfDate = true;
@@ -551,6 +547,16 @@ Optional<PersistentCache::CacheOperation> PersistentCache::AcquireWriteOperation
 		return CacheOperation(shared_from_this(), path, CacheOperationType::Write);
 	};
 
+	// If there are any existing read or write operation, they need to complete first
+	mOperationCompletedSignal.Wait(lock, [this, &path]
+	{
+		auto found = mEntries.find(path);
+		if (found == mEntries.end())
+			return true;
+
+		return !found->second.IsWriteOperationActive && found->second.ActiveReadOperationCount == 0;
+	});
+
 	auto found = mEntries.find(path);
 	if(found == mEntries.end())
 	{
@@ -558,30 +564,6 @@ Optional<PersistentCache::CacheOperation> PersistentCache::AcquireWriteOperation
 			return {};
 
 		return fnCreateNewEntry(path, priority);
-	}
-
-	// If there are any existing read or write operation, they need to complete first
-	u32 activeReadOperationCount = found->second.ActiveReadOperationCount;
-	bool isWriteOperationActive = found->second.IsWriteOperationActive;
-	while (activeReadOperationCount > 0 || isWriteOperationActive)
-	{
-		if(!blocking)
-			return {};
-
-		mOperationCompletedSignal.wait(lock);
-
-		// Entry could have been deleted
-		found = mEntries.find(path);
-		if(found == mEntries.end())
-		{
-			if(!createNewIfMissing)
-				return {};
-
-			return fnCreateNewEntry(path, priority);
-		}
-
-		activeReadOperationCount = found->second.ActiveReadOperationCount;
-		isWriteOperationActive = found->second.IsWriteOperationActive;
 	}
 
 	found->second.LastUsedTimestamp = (u64)std::time(nullptr);
@@ -790,10 +772,7 @@ Path PersistentCache::GetPackagePathForEntry(const Path& path) const
 
 void PersistentCache::WaitForAllOperationsToComplete(Lock& lock)
 {
-	while (mTotalActiveWriteOperationCount > 0 || mTotalActiveReadOperationCount > 0)
-	{
-		mOperationCompletedSignal.wait(lock);
-	}
+	mOperationCompletedSignal.Wait(lock, [this] { return mTotalActiveWriteOperationCount == 0 && mTotalActiveReadOperationCount == 0; });
 }
 
 void PersistentCache::SetMaximumCacheSize(u64 sizeLimitInMb)

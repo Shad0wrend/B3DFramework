@@ -40,10 +40,7 @@ const EvaluatedAnimationData* AnimationManager::Update(bool async)
 {
 	// Wait for any workers to complete
 	{
-		Lock lock(mMutex);
-
-		while(mNumActiveWorkers > 0)
-			mWorkerDoneSignal.wait(lock);
+		mWorkerWaitGroup.Wait();
 
 		// Advance the buffers (last write buffer becomes read buffer)
 		if(mSwapBuffers)
@@ -119,7 +116,7 @@ const EvaluatedAnimationData* AnimationManager::Update(bool async)
 	// Queue animation evaluation tasks
 	{
 		Lock lock(mMutex);
-		mNumActiveWorkers = (u32)mProxies.size();
+		mWorkerWaitGroup.Increment((u32)mProxies.size());
 	}
 
 	u32 curBoneIdx = 0;
@@ -130,13 +127,7 @@ const EvaluatedAnimationData* AnimationManager::Update(bool async)
 			u32 boneIdx = curBoneIdx;
 			EvaluateAnimation(anim.get(), boneIdx);
 
-			Lock lock(mMutex);
-			{
-				B3D_ASSERT(mNumActiveWorkers > 0);
-				mNumActiveWorkers--;
-			}
-
-			mWorkerDoneSignal.notify_one();
+			mWorkerWaitGroup.NotifyDone();
 		};
 
 		GetCoreApplication().GetTaskScheduler().Post(SchedulerTask(evaluateAnimWorker, "AnimWorker"));
@@ -148,12 +139,7 @@ const EvaluatedAnimationData* AnimationManager::Update(bool async)
 	// Wait for tasks to complete
 	if(!async)
 	{
-		{
-			Lock lock(mMutex);
-
-			while(mNumActiveWorkers > 0)
-				mWorkerDoneSignal.wait(lock);
-		}
+		mWorkerWaitGroup.Wait();
 
 		// Trigger events and update attachments (for the data we just evaluated)
 		for(auto& anim : mAnimations)

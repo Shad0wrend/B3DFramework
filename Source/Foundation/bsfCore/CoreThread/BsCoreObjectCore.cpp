@@ -7,7 +7,7 @@ using namespace bs;
 
 namespace bs { namespace ct
 {
-ConditionVariable CoreObject::mCoreGpuObjectLoadedCondition;
+Signal CoreObject::mCoreGpuObjectLoadedCondition;
 Mutex CoreObject::mCoreGpuObjectLoadedMutex;
 
 CoreObject::CoreObject()
@@ -26,7 +26,7 @@ void CoreObject::Initialize()
 
 	SetScheduledToBeInitialized(false);
 
-	mCoreGpuObjectLoadedCondition.notify_all();
+	mCoreGpuObjectLoadedCondition.NotifyAll();
 }
 
 void CoreObject::Synchronize()
@@ -41,13 +41,10 @@ void CoreObject::Synchronize()
 		GetCoreThread().PostCommand([] {}, true);
 
 		Lock lock(mCoreGpuObjectLoadedMutex);
-		while(!IsInitialized())
-		{
-			if(!IsScheduledToBeInitialized())
-				B3D_EXCEPT(InternalErrorException, "Attempting to wait until initialization finishes but object is not scheduled to be initialized.");
+		if(!IsInitialized() && !IsScheduledToBeInitialized())
+			B3D_EXCEPT(InternalErrorException, "Attempting to wait until initialization finishes but object is not scheduled to be initialized.");
 
-			mCoreGpuObjectLoadedCondition.wait(lock);
-		}
+		mCoreGpuObjectLoadedCondition.Wait(lock, [this] { return IsInitialized(); });
 	}
 }
 

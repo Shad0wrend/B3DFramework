@@ -7,6 +7,7 @@
 #include "CoreThread/BsCoreThread.h"
 #include "Math/BsConvexVolume.h"
 #include "RenderAPI/BsVertexDescription.h"
+#include "Threading/BsWaitGroup.h"
 
 namespace bs
 {
@@ -137,10 +138,9 @@ namespace bs
 		u32 mPoseReadBufferIdx = 2;
 		u32 mPoseWriteBufferIdx = 0;
 
-		ConditionVariable mWorkerDoneSignal;
 		Mutex mMutex;
+		WaitGroup mWorkerWaitGroup;
 
-		u32 mNumActiveWorkers = 0;
 		bool mSwapBuffers = false;
 	};
 

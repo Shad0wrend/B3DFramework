@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Reflection/BsIReflectable.h"
+#include "Threading/BsSignal.h"
 #include "Utility/BsUUID.h"
 
 namespace bs
@@ -107,7 +108,7 @@ namespace bs
 	private:
 		friend class Resources;
 
-		static ConditionVariable mResourceCreatedCondition;
+		static Signal mResourceCreatedCondition;
 		static Mutex mResourceCreatedMutex;
 
 	protected:
