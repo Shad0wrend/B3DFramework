@@ -807,6 +807,11 @@ void VulkanGpuCommandBuffer::DispatchCompute(u32 groupCountX, u32 groupCountY, u
 	if(mComputePipeline == nullptr)
 		return;
 
+	if (groupCountX == 0 || groupCountY == 0 || groupCountZ == 0)
+	{
+		B3D_LOG(Warning, RenderBackend, "Ignoring call to DispatchCompute(). Thread count is zero.");
+	}
+
 	if(IsInRenderPass())
 		EndRenderPass();
 
@@ -1912,16 +1917,16 @@ void VulkanGpuCommandBuffer::ExecuteWriteHazardBarrier()
 	for(auto& entry : mShaderBoundSubresourceInfos)
 	{
 		ImageSubresourceInfo& subresourceInfo = mSubresourceInfoStorage[entry];
-		subresourceInfo.WriteHazardUse.Access = VulkanAccessFlag::None;
-		subresourceInfo.WriteHazardUse.Stages = 0;
+		subresourceInfo.WriteHazardUse = subresourceInfo.NewWriteHazardUse;
+		subresourceInfo.NewWriteHazardUse = ResourcePipelineUse();
 	}
 
 	// Note: I should keep track of any buffers modified and only clear those, to prevent excess iteration
 	for(auto& entry : mBuffers)
 	{
 		BufferInfo& bufferInfo = entry.second;
-		bufferInfo.WriteHazardUse.Access = VulkanAccessFlag::None;
-		bufferInfo.WriteHazardUse.Stages = 0;
+		bufferInfo.WriteHazardUse = bufferInfo.NewWriteHazardUse;
+		bufferInfo.NewWriteHazardUse = ResourcePipelineUse();
 	}
 }
 
@@ -2325,6 +2330,7 @@ void VulkanGpuCommandBuffer::RegisterResource(VulkanImage* image, const VkImageS
 			subresourceInfo.ShaderUse.Stages = stages;
 			subresourceInfo.WriteHazardUse.Access = access;
 			subresourceInfo.WriteHazardUse.Stages = stages;
+			subresourceInfo.NewWriteHazardUse = subresourceInfo.WriteHazardUse;
 			break;
 		case ImageUseFlagBits::Framebuffer:
 			subresourceInfo.FbUse.Access = access;
@@ -2549,6 +2555,7 @@ void VulkanGpuCommandBuffer::RegisterBuffer(VulkanBuffer* res, BufferUseFlagBits
 		{
 			bufferInfo.WriteHazardUse.Access = access;
 			bufferInfo.WriteHazardUse.Stages = stages;
+			bufferInfo.NewWriteHazardUse = bufferInfo.WriteHazardUse;
 		}
 
 		res->NotifyBound();
@@ -2624,6 +2631,9 @@ void VulkanGpuCommandBuffer::RegisterBuffer(VulkanBuffer* res, BufferUseFlagBits
 
 			bufferInfo.WriteHazardUse.Access |= access;
 			bufferInfo.WriteHazardUse.Stages |= stages;
+
+			bufferInfo.NewWriteHazardUse.Access |= access;
+			bufferInfo.NewWriteHazardUse.Stages |= stages;
 		}
 
 		bufferInfo.UseHandle.Flags |= access;
@@ -2813,6 +2823,9 @@ void VulkanGpuCommandBuffer::UpdateShaderSubresource(VulkanImage* image, u32 ima
 
 	subresourceInfo.WriteHazardUse.Access |= access;
 	subresourceInfo.WriteHazardUse.Stages |= stages;
+
+	subresourceInfo.NewWriteHazardUse.Access |= access;
+	subresourceInfo.NewWriteHazardUse.Stages |= stages;
 
 	subresourceInfo.UseFlags |= ImageUseFlagBits::Shader;
 

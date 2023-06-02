@@ -475,6 +475,12 @@ namespace bs
 				 * issued.
 				 */
 				ResourcePipelineUse WriteHazardUse;
+
+				/**
+				 * Use flags to set after running the pipeline barrier. Ensures that resource accesses after the barrier
+				 * trigger barriers on their next use.
+				 */
+				ResourcePipelineUse NewWriteHazardUse;
 			};
 
 			/** Contains information about a single Vulkan image resource bound/used on this command buffer. */
@@ -517,6 +523,12 @@ namespace bs
 				 * which handle the barriers explicitly). Reset after a memory barrier is issued.
 				 */
 				ResourcePipelineUse WriteHazardUse;
+
+				/**
+				 * Use flags to set after running the pipeline barrier. Ensures that resource accesses after the barrier
+				 * trigger barriers on their next use.
+				 */
+				ResourcePipelineUse NewWriteHazardUse;
 
 				/**
 				 * Specifies how will the subresource be used during the current render pass or dispatch call. Reset
