@@ -1,3 +1,23 @@
+#ifndef LIGHTING_DATA
+	#define LIGHTING_DATA 1
+#endif
+
+#ifndef CLIP_POS
+	#define CLIP_POS 0
+#endif
+
+#ifndef PREV_CLIP_POS
+	#define PREV_CLIP_POS 0
+#endif
+
+#ifndef POSITION_2D
+	#define POSITION_2D 0
+#endif
+
+#ifndef VERTEX_INPUT_UV
+	#define VERTEX_INPUT_UV 1
+#endif
+
 mixin VertexCommon
 {
 	code
@@ -5,7 +25,10 @@ mixin VertexCommon
 		struct VStoFS
 		{
 			float4 position : SV_Position;
-			float2 uv0 : TEXCOORD0;
+
+			#if VERTEX_INPUT_UV
+				float2 uv0 : TEXCOORD0;
+			#endif
 			
 			#if LIGHTING_DATA
 				float3 worldPosition : TEXCOORD1;
@@ -30,7 +53,9 @@ mixin VertexCommon
 				float3 position : POSITION;
 			#endif
 			
-			float2 uv0 : TEXCOORD0;
+			#if VERTEX_INPUT_UV
+				float2 uv0 : TEXCOORD0;
+			#endif
 			
 			#if LIGHTING_DATA
 				float3 normal : NORMAL; // Note: Half-precision could be used
@@ -178,13 +203,18 @@ mixin VertexCommon
 			float tangentSign;
 			#if SKINNED
 				result.blendMatrix = getBlendMatrix(input.blendWeights, input.blendIndices);
-				float3x3 tangentToLocal = getTangentToLocal(input, tangentSign, result.blendMatrix);
+
+				#if LIGHTING_DATA
+					float3x3 tangentToLocal = getTangentToLocal(input, tangentSign, result.blendMatrix);
+				#endif
 				
 				#if PREV_CLIP_POS
 					result.prevBlendMatrix = getPrevBlendMatrix(input.blendWeights, input.blendIndices);
 				#endif
 			#else
-				float3x3 tangentToLocal = getTangentToLocal(input, tangentSign);
+				#if LIGHTING_DATA
+					float3x3 tangentToLocal = getTangentToLocal(input, tangentSign);
+				#endif
 			#endif
 			
 			#if LIGHTING_DATA
@@ -200,7 +230,9 @@ mixin VertexCommon
 				
 		void populateVertexOutput(VertexInput input, VertexIntermediate intermediate, inout VStoFS result)
 		{
-			result.uv0 = input.uv0;
+			#if VERTEX_INPUT_UV
+				result.uv0 = input.uv0;
+			#endif
 			
 			#if LIGHTING_DATA
 				result.tangentToWorldZ = intermediate.worldNormal;

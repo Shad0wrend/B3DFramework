@@ -236,7 +236,7 @@ shader Surface
 		{
 			DecalVStoFS output;
 		
-			float4 worldPosition = getVertexWorldPosition(input);
+			float4 worldPosition = GetVertexWorldPosition(input, gMatWorld);
 			
 			output.position = mul(gMatViewProj, worldPosition);
 			output.clipPos = output.position;

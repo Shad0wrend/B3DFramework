@@ -27,13 +27,13 @@ mixin BasePass
 			VStoFS output;
 		
 			VertexIntermediate intermediate = getVertexIntermediate(input);
-			float4 worldPosition = getVertexWorldPosition(input, intermediate);
+			float4 worldPosition = GetVertexWorldPosition(input, intermediate, gMatWorld);
 			
 			output.worldPosition = worldPosition.xyz;
 			output.position = mul(gMatViewProj, worldPosition);
 			
 			#if PREV_CLIP_POS
-				float4 prevWorldPosition = getPrevVertexWorldPosition(input, intermediate);
+				float4 prevWorldPosition = GetPrevVertexWorldPosition(input, intermediate, gMatPrevWorld);
 				output.prevClipPos = mul(gMatPrevViewProj, prevWorldPosition);
 			#endif
 			

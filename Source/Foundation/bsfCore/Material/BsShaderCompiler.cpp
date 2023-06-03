@@ -50,6 +50,9 @@ SPtr<CoreVariantType<Shader, Core>> ShaderCompilers::GetOrCompileShader(const Pa
 		for(const auto& searchPath : mSearchPaths)
 		{
 			const Path absolutePath = shaderPath.GetAbsolute(searchPath);
+			if (!FileSystem::Exists(absolutePath))
+				continue;
+
 			shaderFileStream = FileSystem::OpenFile(absolutePath);
 
 			if (shaderFileStream != nullptr)

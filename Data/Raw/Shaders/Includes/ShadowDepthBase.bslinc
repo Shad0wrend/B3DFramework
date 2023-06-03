@@ -51,7 +51,7 @@ mixin ShadowDepthBase
 		{
 			ShadowVStoFS output;
 		
-			float4 worldPosition = getVertexWorldPosition(input);
+			float4 worldPosition = GetVertexWorldPosition(input, gMatWorld);
 			
 			// If using a geometry shader, just pass through the relevant information
 			// as the GS does the necessary transform and applies the depth bias

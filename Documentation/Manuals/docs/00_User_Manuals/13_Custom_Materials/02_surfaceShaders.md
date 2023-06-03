@@ -69,7 +69,7 @@ shader VertexTransform
 
 When populating **VStoFS** output structure you can use the following helper methods to make the job easier:
  - `VertexIntermediate getVertexIntermediate(VertexInput input)` - Calculates world space normal/tangent, as well as potentially other properties required for animation. Normally you do not need to read the returned value directly, it is instead provided to the methods below.
- - `float4 getVertexWorldPosition(VertexInput input, VertexIntermediate intermediate)` - Calculates the world space position of the vertex. It is preferable to call this method instead of calculating the world position yourself because the method will automatically account for any potential animation (skinned or morph).
+ - `float4 GetVertexWorldPosition(VertexInput input, VertexIntermediate intermediate, float4x4 worldTransform)` - Calculates the world space position of the vertex. It is preferable to call this method instead of calculating the world position yourself because the method will automatically account for any potential animation (skinned or morph).
  - `void populateVertexOutput(VertexInput input, VertexIntermediate intermediate, inout VStoFS result)` - Populates the UV and normal/tangent fields of the **VStoFS** structure.
 
 You are of course not forced to use any of the methods above, as long as you properly populate the **VStoFS** structure. An example shader making use of these methods would look like so:
@@ -92,7 +92,7 @@ shader VertexTransform
 			VStoFS output;
 		
 			VertexIntermediate intermediate = getVertexIntermediate(input);
-			float4 worldPosition = getVertexWorldPosition(input, intermediate);
+			float4 worldPosition = GetVertexWorldPosition(input, intermediate, gMatWorld);
 			
 			output.worldPosition = worldPosition.xyz;
 			output.position = mul(gMatViewProj, worldPosition);
