@@ -109,10 +109,13 @@ namespace bs
 	{
 	public:
 		/** Registers a new shader compiler for the provided language. */
-		void RegisterCompiler(const String& language, const SPtr<IShaderCompiler>& compiler) { _compilers[language] = compiler; }
+		void RegisterCompiler(const String& language, const SPtr<IShaderCompiler>& compiler) { mCompilers[language] = compiler; }
 
 		/** Unregisters a shader compiler. */
-		void UnregisterCompiler(const String& language) { _compilers.erase(language); }
+		void UnregisterCompiler(const String& language) { mCompilers.erase(language); }
+
+		/** Registers a path that will be used for looking for shader files. Thread safe. */
+		void RegisterSearchPath(const Path& folder);
 
 		/** Returns the compiler for the specified language. */
 		SPtr<IShaderCompiler> GetCompiler(const String& language);
@@ -120,7 +123,8 @@ namespace bs
 		/**
 		 * Attempts to retrieve a Shader object from cache or builds the Shader and adds it to the cache.
 		 *
-		 * @param	shaderPath		Absolute path to the shader source file.
+		 * @param	shaderPath		Relative or absolute path to the shader source file. If relative, search paths provided through
+		 *							RegisterSearchPath() will be searched for the file.
 		 * @param	cachePrefix		Folder within the cache to perform the lookup in.
 		 * @param	defines			Optional set of defines to use when compiling the shader.
 		 * @return					Shader object on success, or null on failure.
@@ -138,7 +142,9 @@ namespace bs
 		static const char* GetShadingLanguageName(ShadingLanguageFlag language);
 
 	private:
-		UnorderedMap<String, SPtr<IShaderCompiler>> _compilers;
+		UnorderedMap<String, SPtr<IShaderCompiler>> mCompilers;
+		Vector<Path> mSearchPaths;
+		Mutex mSearchPathMutex;
 	};
 
 

@@ -22,11 +22,17 @@ RTTITypeBase* ShaderCompilerMetaData::GetRtti() const
 
 SPtr<IShaderCompiler> ShaderCompilers::GetCompiler(const String& language)
 {
-	auto found = _compilers.find(language);
-	if(found != _compilers.end())
+	auto found = mCompilers.find(language);
+	if(found != mCompilers.end())
 		return found->second;
 
 	return nullptr;
+}
+
+void ShaderCompilers::RegisterSearchPath(const Path& folder)
+{
+	Lock lock(mSearchPathMutex);
+	mSearchPaths.push_back(folder);
 }
 
 template <bool Core>
@@ -34,7 +40,23 @@ SPtr<CoreVariantType<Shader, Core>> ShaderCompilers::GetOrCompileShader(const Pa
 {
 	using ShaderType = CoreVariantType<Shader, Core>;
 
-	const SPtr<DataStream> shaderFileStream = FileSystem::OpenFile(shaderPath);
+	SPtr<DataStream> shaderFileStream = nullptr;
+
+	if(shaderPath.IsAbsolute())
+		shaderFileStream = FileSystem::OpenFile(shaderPath);
+	else
+	{
+		Lock lock(mSearchPathMutex);
+		for(const auto& searchPath : mSearchPaths)
+		{
+			const Path absolutePath = shaderPath.GetAbsolute(searchPath);
+			shaderFileStream = FileSystem::OpenFile(absolutePath);
+
+			if (shaderFileStream != nullptr)
+				break;
+		}
+	}
+
 	if(shaderFileStream == nullptr)
 	{
 		B3D_LOG(Error, Resources, "Shader compilation failed for shader \"{0}\". Shader source cannot be found.", shaderPath);

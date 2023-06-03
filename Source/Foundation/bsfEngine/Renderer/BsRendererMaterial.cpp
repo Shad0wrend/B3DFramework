@@ -7,6 +7,8 @@
 using namespace bs;
 using namespace ct;
 
+B3D_LOG_CATEGORY(RendererMaterial)
+
 void RendererMaterialBase::Bind(GpuCommandBuffer& commandBuffer, bool bindParameters) const
 {
 	if(mGraphicsPipeline)

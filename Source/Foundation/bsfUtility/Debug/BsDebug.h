@@ -119,22 +119,22 @@ namespace bs
 #endif
 
 /** Defines a new log category to use with B3D_LOG. A matching call to B3D_LOG_CATEGORY must be done in the implementation file. */
-#define B3D_LOG_CATEGORY_EXTERN(Name, DefaultRunTimeVerbosity)										\
-	extern struct LogCategory##Name : public LogCategory<LogVerbosity::DefaultRunTimeVerbosity>		\
-	{																								\
-		B3D_FORCEINLINE LogCategory##Name()															\
-			: LogCategory(#Name) {}																	\
+#define B3D_LOG_CATEGORY_EXTERN(Name, DefaultRunTimeVerbosity)											\
+	extern struct LogCategory##Name : public bs::LogCategory<bs::LogVerbosity::DefaultRunTimeVerbosity> \
+	{																									\
+		B3D_FORCEINLINE LogCategory##Name()																\
+			: LogCategory(#Name) {}																		\
 	} LogCategory##Name##Instance;
 
 /** Defines a new log category to use with B3D_LOG. A matching call to B3D_LOG_CATEGORY_EXTERN must be done in the header file. */
 #define B3D_LOG_CATEGORY(Name) LogCategory##Name LogCategory##Name##Instance;
 
 /** Defines a new log category to use with B3D_LOG. Can only be used in implementation files. Category is only valid for a single implementation file. */
-#define B3D_LOG_CATEGORY_STATIC(Name, DefaultRunTimeVerbosity)										\
-	static  struct LogCategory##Name : public LogCategory<LogVerbosity::DefaultRunTimeVerbosity>	\
-	{																								\
-		B3D_FORCEINLINE LogCategory##Name()															\
-			: LogCategory(#Name) {}																	\
+#define B3D_LOG_CATEGORY_STATIC(Name, DefaultRunTimeVerbosity)												\
+	static  struct LogCategory##Name : public bs::LogCategory<bs::LogVerbosity::DefaultRunTimeVerbosity>	\
+	{																										\
+		B3D_FORCEINLINE LogCategory##Name()																	\
+			: LogCategory(#Name) {}																			\
 	} LogCategory##Name##Instance;
 
 #define B3D_LOG(Verbosity, Category, Message, ...)                                                                                                                                                                           \

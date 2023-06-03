@@ -17,6 +17,8 @@
 #	include "Profiling/BsProfilerGPU.h"
 #endif
 
+B3D_CORE_EXPORT B3D_LOG_CATEGORY_EXTERN(RendererMaterial, Log)
+
 /** @addtogroup Renderer-Engine-Internal
  *  @{
  */
@@ -272,6 +274,12 @@ namespace bs
 			// Finishes shader initialization on render thread (i.e. this thread).
 			auto fnFinishInitializeShader = []()
 			{
+				if (!B3D_ENSURE(mMetaData.Shader))
+				{
+					B3D_LOG(Error, RendererMaterial, "Cannot initialize renderer material. Failed to compile shader {0}.", mMetaData.ShaderPath);
+					return;
+				}
+
 				const Vector<SPtr<Technique>> variations = mMetaData.Shader->GetCompatibleTechniques();
 
 				static SmallVector<RendererMaterialVariationInformation, 4> newVariationInformation;
@@ -334,9 +342,7 @@ namespace bs
 			{
 				static const String kRendererMaterialShaderCachePrefix = "RendererMaterialShaders/";
 
-				const Path fullPathToShader = GetBuiltinResources().GetRawShaderFolder() + mMetaData.ShaderPath;
-				mMetaData.Shader = ShaderCompilers::Instance().GetOrCompileShader<true>(fullPathToShader, kRendererMaterialShaderCachePrefix, mMetaData.Defines);
-
+				mMetaData.Shader = ShaderCompilers::Instance().GetOrCompileShader<true>(mMetaData.ShaderPath, kRendererMaterialShaderCachePrefix, mMetaData.Defines);
 				initializeAsyncOp.CompleteOperation();
 			};
 
@@ -379,6 +385,11 @@ namespace bs
 				variationParameters.SetIdx(mMetaData.VariationParameterSet.Find(variationParameters));
 
 			const u32 variationIndex = variationParameters.GetIdx();
+			if(!B3D_ENSURE(variationIndex != ~0u))
+			{
+				B3D_LOG(Error, RendererMaterial, "Cannot compile renderer material variation for {0}. Variation parameters cannot be found.", mMetaData.ShaderPath);
+			}
+
 			return CompileRendererMaterialVariation(variationIndex);
 		}
 

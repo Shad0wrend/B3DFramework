@@ -110,6 +110,7 @@ BuiltinResources::BuiltinResources()
 		mResourceManifest = ResourceManifest::Create("BuiltinResources");
 
 	GetResources().RegisterResourceManifest(mResourceManifest);
+	ShaderCompilers::Instance().RegisterSearchPath(GetRawShaderFolder());
 
 	// Load basic resources
 	mShaderSpriteText = GetShader(kShaderSpriteTextFile);
@@ -241,7 +242,6 @@ HShader BuiltinResources::GetOrCompileShader(const Path& path) const
 	HShader shader;
 	if(shader == nullptr)
 	{
-				//const Path fullPathToShader = BuiltinResources::GetRawShaderFolder() + mMetaData.ShaderPath;
 		static const String kBuiltinShaderCachePrefix = "BuiltinShaders/";
 		const SPtr<Shader> shaderShared = ShaderCompilers::Instance().GetOrCompileShader<false>(path, kBuiltinShaderCachePrefix, {});
 
