@@ -426,6 +426,8 @@ void RendererScene::RegisterRenderable(Renderable* renderable)
 
 			renElement.DefaultTechniqueIdx = InitAndRetrieveBasePassTechnique(*renElement.Material, useForwardRendering, supportsClusteredForward, shaderCanWriteVelocity, false, animType);
 
+
+
 #if B3D_DEBUG
 			ValidateBasePassMaterial(*renElement.Material, animType, renElement.DefaultTechniqueIdx, *vertexDescription);
 #endif
@@ -1285,7 +1287,7 @@ void RendererScene::RefreshSamplerOverrides(bool force)
 			MaterialSamplerOverrides* overrides = element.SamplerOverrides;
 			if(overrides != nullptr && overrides->IsDirty)
 			{
-				u32 numPasses = element.Material->GetNumPasses();
+				u32 numPasses = element.Material->GetNumPasses(element.DefaultTechniqueIdx);
 				for(u32 j = 0; j < numPasses; j++)
 				{
 					SPtr<GpuParameters> params = element.Params->GetGpuParams(j);

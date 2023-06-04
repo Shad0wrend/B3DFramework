@@ -76,7 +76,7 @@ const char* CheckSortBuffer(GpuBuffer& buffer)
 	static constexpr const char* kInvalidTypeMsg =
 		"All buffers provided to GpuSort must be of GBT_STANDARD type.";
 	static constexpr const char* kInvalidFormatMsg =
-		"All buffers provided to GpuSort must use a 32-bit unsigned integer format.";
+		"All buffers provided to GpuSort must use a 32-bit unsigned integer format, or a format that may be viewed as such.";
 
 	const GpuBufferInformation& bufferInformation = buffer.GetInformation();
 	if(!bufferInformation.Flags.IsSet(GpuBufferFlag::AllowWritesOnTheGPU))
@@ -85,7 +85,7 @@ const char* CheckSortBuffer(GpuBuffer& buffer)
 	if(bufferInformation.Type != GpuBufferType::SimpleStorage)
 		return kInvalidTypeMsg;
 
-	if(bufferInformation.SimpleStorage.Format != BF_32X1U)
+	if(bufferInformation.SimpleStorage.Format != BF_32X1U && bufferInformation.SimpleStorage.Format != BF_16X2U)
 		return kInvalidFormatMsg;
 
 	return nullptr;
